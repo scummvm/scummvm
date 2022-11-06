@@ -335,19 +335,17 @@ void DrillerEngine::loadAssetsFullGame() {
 
 void DrillerEngine::drawUI() {
 	_gfx->renderCrossair(0, _crossairPosition);
+	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);
+	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+	uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
 
+	Graphics::Surface *surface = nullptr;
 	if (_currentAreaMessages.size() == 2) {
-		_gfx->setViewport(_fullscreenViewArea);
-
-		Graphics::Surface *surface = new Graphics::Surface();
+		surface = new Graphics::Surface();
 		surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
-		uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
 		surface->fillRect(_fullscreenViewArea, gray);
 
 		int score = _gameStateVars[k8bitVariableScore];
-
-		uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);
-		uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 
 		drawStringInSurface(_currentAreaMessages[0], 196, 177, yellow, black, surface);
 		drawStringInSurface(_currentAreaMessages[1], 196, 185, yellow, black, surface);
@@ -357,39 +355,40 @@ void DrillerEngine::drawUI() {
 		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 57, 161, yellow, black, surface);
 
 		drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
-
-		if (!_uiTexture)
-			_uiTexture = _gfx->createTexture(surface);
-		else
-			_uiTexture->update(surface);
-
-		_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
-		surface->free();
-		delete surface;
 	}
 
 	int energy = _gameStateVars[k8bitVariableEnergy];
 	int shield = _gameStateVars[k8bitVariableShield];
 	if (_renderMode == Common::kRenderEGA && _border) {
-		// Common::Rect black(20, 177, 87, 191);
-		//_gfx->drawRect2D(black, 255, 0, 0, 0);
-
 		if (energy >= 0) {
-			Common::Rect black(20, 186, 87 - energy, 191);
-			_gfx->drawRect2D(black, 255, 0, 0, 0);
-			Common::Rect energyBar(87 - energy, 186, 87, 191);
-			_gfx->drawRect2D(energyBar, 255, 0xfc, 0xfc, 0x54);
+			Common::Rect back(20, 185, 88 - energy, 191);
+			surface->fillRect(back, black);
+			Common::Rect energyBar(87 - energy, 185, 88, 191);
+			surface->fillRect(energyBar, yellow);
 		}
 
 		if (shield >= 0) {
-			Common::Rect black(20, 178, 87 - shield, 183);
-			_gfx->drawRect2D(black, 255, 0, 0, 0);
+			Common::Rect back(20, 176, 88 - shield, 183);
+			surface->fillRect(back, black);
 
-			Common::Rect shieldBar(87 - shield, 178, 87, 183);
-			_gfx->drawRect2D(shieldBar, 255, 0xfc, 0xfc, 0x54);
+			Common::Rect shieldBar(87 - shield, 176, 88, 183);
+			surface->fillRect(shieldBar, yellow);
 		}
 	}
-	_gfx->setViewport(_viewArea);
+	if (surface) {
+		if (!_uiTexture)
+			_uiTexture = _gfx->createTexture(surface);
+		else
+			_uiTexture->update(surface);
+
+		_gfx->setViewport(_fullscreenViewArea);
+		_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
+		_gfx->setViewport(_viewArea);
+
+		surface->free();
+		delete surface;
+	}
+
 }
 
 void DrillerEngine::pressedKey(const int keycode) {
