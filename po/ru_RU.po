@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-06 16:27+0000\n"
+"POT-Creation-Date: 2022-11-06 19:03+0000\n"
 "PO-Revision-Date: 2022-10-26 11:42+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -2826,7 +2826,7 @@ msgstr "Диалог предиктивного ввода"
 msgid "Confirm"
 msgstr "Подтвердить"
 
-#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:173
+#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:172
 msgid "OpenGL"
 msgstr "OpenGL"
 
@@ -3103,37 +3103,37 @@ msgstr "Щелчки выключены"
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr "Режим 'касаний' тачскрина - Пролёт (клики DPad)"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:252
+#: backends/graphics/opengl/opengl-graphics.cpp:251
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:235
 #: engines/twine/metaengine.cpp:228
 msgid "Center"
 msgstr "По центру"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:253
+#: backends/graphics/opengl/opengl-graphics.cpp:252
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:236
 msgid "Pixel-perfect scaling"
 msgstr "Масштабирование пиксель-в-пиксель"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:254
+#: backends/graphics/opengl/opengl-graphics.cpp:253
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:237
 msgid "Even pixels scaling"
 msgstr "Равеомерное масштабирование пиксель-в-пиксель"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:255
+#: backends/graphics/opengl/opengl-graphics.cpp:254
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:238
 msgid "Fit to window"
 msgstr "Уменьшить до размеров окна"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:256
+#: backends/graphics/opengl/opengl-graphics.cpp:255
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:239
 msgid "Stretch to window"
 msgstr "Растянуть до размеров окна"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:257
+#: backends/graphics/opengl/opengl-graphics.cpp:256
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:240
 msgid "Fit to window (4:3)"

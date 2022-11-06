@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-06 16:27+0000\n"
+"POT-Creation-Date: 2022-11-06 19:03+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -2800,7 +2800,7 @@ msgstr "예측 입력 창"
 msgid "Confirm"
 msgstr "확인"
 
-#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:173
+#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:172
 msgid "OpenGL"
 msgstr "OpenGL"
 
@@ -3077,37 +3077,37 @@ msgstr "클릭 비활성됨"
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr "터치스크린 '탭 모드' - 호버 (D패드 클릭)"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:252
+#: backends/graphics/opengl/opengl-graphics.cpp:251
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:235
 #: engines/twine/metaengine.cpp:228
 msgid "Center"
 msgstr "중앙"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:253
+#: backends/graphics/opengl/opengl-graphics.cpp:252
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:236
 msgid "Pixel-perfect scaling"
 msgstr "픽셀 맞춤 크기조절"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:254
+#: backends/graphics/opengl/opengl-graphics.cpp:253
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:237
 msgid "Even pixels scaling"
 msgstr "균일 픽셀 크기조절"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:255
+#: backends/graphics/opengl/opengl-graphics.cpp:254
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:238
 msgid "Fit to window"
 msgstr "창 크기에 맞춤"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:256
+#: backends/graphics/opengl/opengl-graphics.cpp:255
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:239
 msgid "Stretch to window"
 msgstr "창에 맞게 늘림"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:257
+#: backends/graphics/opengl/opengl-graphics.cpp:256
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:240
 msgid "Fit to window (4:3)"
