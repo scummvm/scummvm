@@ -1109,6 +1109,15 @@ void ImageElement::render(Window *window) {
 	}
 }
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void ImageElement::debugInspect(IDebugInspectionReport *report) const {
+	VisualElement::debugInspect(report);
+
+	if (report->declareStatic("assetID"))
+		report->declareStaticContents(Common::String::format("%i", static_cast<int>(_assetID)));
+}
+#endif
+
 MiniscriptInstructionOutcome ImageElement::scriptSetFlushPriority(MiniscriptThread *thread, const DynamicValue &value) {
 	// We don't support flushing media, and this value isn't readable, so just discard it
 	return kMiniscriptInstructionOutcomeContinue;
