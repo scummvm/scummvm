@@ -186,7 +186,8 @@ bool MADSEngine::canLoadGameStateCurrently() {
 bool MADSEngine::canSaveGameStateCurrently() {
 	return !_game->_winStatus && !_game->globals()[5]
 		&& _dialogs->_pendingDialog == DIALOG_NONE
-		&& _events->_cursorId != CURSOR_WAIT;
+		&& _events->_cursorId != CURSOR_WAIT
+		&& _game->_scene._sceneLogic;
 }
 
 void MADSEngine::syncSoundSettings() {
