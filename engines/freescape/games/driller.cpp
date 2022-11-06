@@ -127,8 +127,8 @@ void DrillerEngine::loadAssets() {
 	_angleRotations.push_back(5.0);
 	_angleRotations.push_back(9.5);
 
-	// Start playing music, if any
-	playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme.ogg");
+	// Start playing music, if any, in any supported format
+	playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme");
 }
 
 void DrillerEngine::loadAssetsDemo() {
