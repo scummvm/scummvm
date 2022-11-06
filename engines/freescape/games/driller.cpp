@@ -341,7 +341,7 @@ void DrillerEngine::drawUI() {
 
 		Graphics::Surface *surface = new Graphics::Surface();
 		surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
-		uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xA0, 0xA0, 0xA0);
+		uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
 		surface->fillRect(_fullscreenViewArea, gray);
 
 		int score = _gameStateVars[k8bitVariableScore];
