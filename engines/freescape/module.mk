@@ -1,9 +1,8 @@
 MODULE := engines/freescape
 
 MODULE_OBJS := \
-	metaengine.o \
-	freescape.o \
 	area.o \
+	freescape.o \
 	games/castle.o \
 	games/dark.o \
 	games/driller.o \
@@ -11,16 +10,17 @@ MODULE_OBJS := \
 	games/palettes.o \
 	gfx.o \
 	keyboard.o \
-	objects/object.o \
-	objects/entrance.o \
-	objects/geometricobject.o \
-	objects/global.o \
-	objects/sensor.o \
 	loaders/8bitBinaryLoader.o \
 	language/8bitDetokeniser.o \
 	language/instruction.o \
+	metaengine.o \
 	movement.o \
 	neo.o \
+	objects/entrance.o \
+	objects/geometricobject.o \
+	objects/global.o \
+	objects/object.o \
+	objects/sensor.o \
 	sound.o
 
 ifdef USE_TINYGL
