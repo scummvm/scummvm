@@ -18,7 +18,6 @@ MODULE_OBJS := \
 	neo.o \
 	objects/entrance.o \
 	objects/geometricobject.o \
-	objects/global.o \
 	sound.o
 
 ifdef USE_TINYGL

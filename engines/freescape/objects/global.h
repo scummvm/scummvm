@@ -29,7 +29,11 @@ namespace Freescape {
 class GlobalStructure : public Object {
 public:
 	Common::Array<byte> _structure;
-	GlobalStructure(const Common::Array<byte> _structure);
+	GlobalStructure(const Common::Array<byte> structure_) {
+		_objectID = 255;
+		_structure = structure_;
+	}
+
 	ObjectType getType() override { return ObjectType::kEntranceType; };
 	void draw(Freescape::Renderer *gfx) override { error("cannot render GlobalStructure"); };
 };
