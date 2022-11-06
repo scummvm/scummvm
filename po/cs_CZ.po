@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-06 14:55+0000\n"
+"POT-Creation-Date: 2022-11-06 16:27+0000\n"
 "PO-Revision-Date: 2022-05-01 15:27+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -2081,17 +2081,17 @@ msgid "<"
 msgstr "<"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
-#: gui/predictivedialog.cpp:114 gui/predictivedialog.cpp:601
+#: gui/predictivedialog.cpp:114 gui/predictivedialog.cpp:599
 msgid "*  Pre"
 msgstr "*  Prediktivní"
 
 #. I18N: 'Num' means Numbers
-#: gui/predictivedialog.cpp:604
+#: gui/predictivedialog.cpp:602
 msgid "*  Num"
 msgstr "*  Čísla"
 
 #. I18N: 'Abc' means Latin alphabet input
-#: gui/predictivedialog.cpp:607
+#: gui/predictivedialog.cpp:605
 msgid "*  Abc"
 msgstr "*  Abc"
 
