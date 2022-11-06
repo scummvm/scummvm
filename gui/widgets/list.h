@@ -154,6 +154,7 @@ public:
 	static Common::U32String getThemeColor(ThemeEngine::FontColor color);
 	static ThemeEngine::FontColor getThemeColor(const Common::U32String &color);
 	static Common::U32String stripGUIformatting(const Common::U32String &str);
+	static Common::U32String escapeString(const Common::U32String &str);
 
 protected:
 	void drawWidget() override;
