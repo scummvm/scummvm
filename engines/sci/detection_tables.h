@@ -28,6 +28,7 @@ namespace Sci {
 #define GUIO_STD16_SPEECH GUIO4(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING)
 #define GUIO_STD16_SPEECH_GM GUIO5(GUIO_MIDIGM, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING)
 #define GUIO_STD16_MAC GUIO5(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING, GAMEOPTION_TTS)
+#define GUIO_STD16_MAC_HIRESFONTS GUIO6(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_MIDI_MODE, GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, GAMEOPTION_RGB_RENDERING, GAMEOPTION_TTS)
 #define GUIO_STD16_MAC_UNDITHER GUIO6(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING, GAMEOPTION_TTS)
 #define GUIO_STD16_MAC_PALETTEMODS GUIO7(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING, GAMEOPTION_PALETTE_MODS, GAMEOPTION_TTS)
 #define GUIO_STD16_MAC_SPEECH GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING)
@@ -84,7 +85,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "e1a6b6f1060f60be9dcb6d28ad7a2a20", 1168310},
 		{"resource.003", 0, "6c3d1bb26ad532c94046bc9ac49b5ff4", 891295},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC },
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC_HIRESFONTS },
 
 	// Castle of Dr. Brain - English DOS Non-Interactive Demo
 	// SCI interpreter version 1.000.005
@@ -817,7 +818,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"Data1", 0, "ef7cbd62727989818f1cfae69c9fd61d", 3038236},
 		{"Data2", 0, "2424b418f7d52c385cea4701f529c69a", 4721476},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16_MAC },
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16_MAC_HIRESFONTS },
 
 	// Fun Seeker's Guide - English DOS
 	// SCI interpreter version 0.000.506
@@ -2298,7 +2299,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"Data1", 0, "a183fc0c22fcbd9be4c8800d974b5599", 3891868},
 		{"Data2", 0, "b3722460dfd3097a1fbaf99a21ad8ea5", 15031016},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16_MAC },
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16_MAC_HIRESFONTS },
 
 #undef GUIO_KQ6_DEMO
 #undef GUIO_KQ6_CD
@@ -2866,7 +2867,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "aa6f153f70f1e32d1bde465fff08eecf", 1137418},
 		{"resource.002", 0, "b22c616aa789ebef990290c7ffd86548", 1097477},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC },
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC_HIRESFONTS },
 
 	// Larry 1 VGA Remake - English DOS Non-Interactive Demo
 	// SCI interpreter version 1.000.084
@@ -3286,7 +3287,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "dda27ce00682aa76198dac124bbbe334", 1110043},
 		{"resource.007", 0, "ac443fae1285fb359bf2b2bc6a7301ae", 989801},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC },
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC_HIRESFONTS },
 
 	// Larry 5 - German DOS (from Tobis87)
 	// SCI interpreter version T.A00.196
@@ -3431,7 +3432,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"Data1", 0, "482e6bcdda3a89390d5c4bcbfb5896b4", 2754651},
 		{"Data2", 0, "ba0799a45076780dfbceb8fce4c549c9", 5846089},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_STD16_MAC },
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_STD16_MAC_HIRESFONTS },
 
 	// Crazy Nick's Software Picks: Leisure Suit Larry's Casino - English DOS (from the Leisure Suit Larry Collection)
 	// Executable scanning reports "1.001.029", VERSION file reports "1.000"
@@ -4729,7 +4730,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"Data1", 0, "106527ff8756e4e1a795d63d23e8b833", 1752102},
 		{"Data2", 0, "5cdd92033231159c6e9c71d43e9f194d", 6574490},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16_MAC },
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16_MAC_HIRESFONTS },
 
 	// Quest for Glory 2 - English Amiga
 	// Game version 1.109
@@ -5319,7 +5320,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "ae46e195e66df5a131917f0aa80b5669", 1242794},
 		{"resource.004", 0, "91d58a9eb2187c38424990afe4c12bc6", 1250949},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC },
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC_HIRESFONTS },
 
 	// Space Quest 1 VGA Remake - English Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.000.181

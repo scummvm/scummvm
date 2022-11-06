@@ -761,8 +761,6 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 		kPlatformWin311OrHigher = 7
 	};
 
-	bool isWindows = g_sci->getPlatform() == Common::kPlatformWindows;
-
 	if (argc == 0) {
 		// This is called in KQ5CD with no parameters, where it seems to do some
 		// graphics driver check. This kernel function didn't have subfunctions
@@ -772,10 +770,9 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	if (g_sci->forceHiresGraphics()) {
-		// force Windows platform, so that hires-graphics are enabled
-		isWindows = true;
-	}
+	// treat DOS with hires graphics as Windows so that hires graphics are enabled
+	bool isWindows = (g_sci->getPlatform() == Common::kPlatformWindows) ||
+		             (g_sci->getPlatform() == Common::kPlatformDOS && g_sci->forceHiresGraphics());
 
 	uint16 operation = (argc == 0) ? 0 : argv[0].toUint16();
 

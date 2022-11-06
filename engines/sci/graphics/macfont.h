@@ -66,9 +66,10 @@ namespace Sci {
  * values from Sierra's interpreter.
  *
  * GfxMacFontManager only exposes the small and large fonts. When Mac fonts are
- * present, the game is upscaled to 200% and the large font is used for drawing.
- * The small font is used for text calculations that determine the size of
- * the text area, regardless of which font size is drawn on it.
+ * present and high resolution graphics are enabled, the game is upscaled to
+ * 200% and the large font is used. If high resolution graphics are disabled
+ * then the small font is used with no upscaling. Either way, the small font is
+ * always used for the calculations that determine the size of the text area.
  *
  * TODO: Add KQ5 support. It did things differently and it only had two window
  * sizes. The mapping table changed and it appears to have its own sizing logic.
