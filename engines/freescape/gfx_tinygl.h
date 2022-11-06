@@ -30,7 +30,7 @@ namespace Freescape {
 
 class TinyGLRenderer : public Renderer {
 public:
-	TinyGLRenderer(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode);
+	TinyGLRenderer(int screenW, int screenH, Common::RenderMode renderMode);
 	virtual ~TinyGLRenderer();
 
 	struct Vertex {

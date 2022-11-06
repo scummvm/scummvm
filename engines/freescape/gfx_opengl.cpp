@@ -32,11 +32,11 @@
 
 namespace Freescape {
 
-Renderer *CreateGfxOpenGL(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode) {
-	return new OpenGLRenderer(system, screenW, screenH, renderMode);
+Renderer *CreateGfxOpenGL(int screenW, int screenH, Common::RenderMode renderMode) {
+	return new OpenGLRenderer(screenW, screenH, renderMode);
 }
 
-OpenGLRenderer::OpenGLRenderer(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode) : Renderer(system, screenW, screenH, renderMode) {
+OpenGLRenderer::OpenGLRenderer(int screenW, int screenH, Common::RenderMode renderMode) : Renderer(screenW, screenH, renderMode) {
 	_verts = (Vertex*) malloc(sizeof(Vertex) * 20);
 	_texturePixelFormat = OpenGLTexture::getRGBAPixelFormat();
 }

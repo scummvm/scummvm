@@ -33,11 +33,11 @@
 
 namespace Freescape {
 
-Renderer *CreateGfxTinyGL(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode) {
-	return new TinyGLRenderer(system, screenW, screenH, renderMode);
+Renderer *CreateGfxTinyGL(int screenW, int screenH, Common::RenderMode renderMode) {
+	return new TinyGLRenderer(screenW, screenH, renderMode);
 }
 
-TinyGLRenderer::TinyGLRenderer(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode) : Renderer(system, screenW, screenH, renderMode) {
+TinyGLRenderer::TinyGLRenderer(int screenW, int screenH, Common::RenderMode renderMode) : Renderer(screenW, screenH, renderMode) {
 	_verts = (Vertex*) malloc(sizeof(Vertex) * 20);
 	_texturePixelFormat = TinyGLTexture::getRGBAPixelFormat();
 }
