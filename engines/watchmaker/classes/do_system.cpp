@@ -662,7 +662,7 @@ void InitMain(WGame &game) {
 	Event(EventClass::MC_SYSTEM, ME_START, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
 
 	if (!rClearBuffers(rCLEARBACKBUFFER | rCLEARZBUFFER))   // Cancella buffers
-		//warning("Unable to clear backbuffers");
+		warning("Unable to clear backbuffers");
 
 	T1.tnum = T2.tnum = -1;
 	T1t = T2t = nullptr;
