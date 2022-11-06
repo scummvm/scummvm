@@ -48,6 +48,7 @@ MODULE_OBJS := \
 	messages.o \
 	msurface.o \
 	metaengine.o \
+	mps_installer.o \
 	palette.o \
 	player.o \
 	rails.o \
