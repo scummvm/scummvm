@@ -38,7 +38,7 @@ Renderer *CreateGfxOpenGL(int screenW, int screenH, Common::RenderMode renderMod
 }
 
 OpenGLRenderer::OpenGLRenderer(int screenW, int screenH, Common::RenderMode renderMode) : Renderer(screenW, screenH, renderMode) {
-	_verts = (Vertex*) malloc(sizeof(Vertex) * 20);
+	_verts = (Vertex *)malloc(sizeof(Vertex) * kVertexArraySize);
 	_texturePixelFormat = OpenGLTexture::getRGBAPixelFormat();
 }
 
