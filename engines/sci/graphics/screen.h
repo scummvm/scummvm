@@ -118,7 +118,7 @@ public:
 	}
 	void enableUndithering(bool flag);
 
-	void putHiresChar(const Graphics::Font *commonFont, int16 x, int16 y, uint16 chr, byte color);
+	void putMacChar(const Graphics::Font *commonFont, int16 x, int16 y, uint16 chr, byte color);
 	void putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, uint16 chr, byte color);
 	void putHangulChar(Graphics::FontKorean *commonFont, int16 x, int16 y, uint16 chr, byte color);
 

@@ -55,9 +55,11 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 
 	// King's Quest 6 has hires content in the Windows version which we also
 	// allow to be optionally enabled in the DOS version.
-	if ((g_sci->getPlatform() == Common::kPlatformWindows) || (g_sci->forceHiresGraphics())) {
-		if (g_sci->getGameId() == GID_KQ6)
+	if (g_sci->getGameId() == GID_KQ6) {
+		if ((g_sci->getPlatform() == Common::kPlatformWindows) ||
+			(g_sci->getPlatform() == Common::kPlatformDOS && g_sci->forceHiresGraphics())) {
 			_upscaledHires = GFX_SCREEN_UPSCALED_640x440;
+		}
 	}
 
 	// Korean versions of games use hi-res font on upscaled version of the game.
@@ -74,8 +76,8 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 			_width = 480;
 			_height = 300; // regular visual, priority and control map are 480x300 (this is different than other upscaled SCI games)
 		} else {
-			// Macintosh SCI1/1.1 games use hi-res native fonts
-			if (g_sci->hasMacFonts()) {
+			// Macintosh SCI1/1.1 games use hi-res native fonts if hi-res graphics are enabled
+			if (g_sci->hasMacFonts() && g_sci->forceHiresGraphics()) {
 				_upscaledHires = GFX_SCREEN_UPSCALED_640x400;
 			}
 		}
@@ -640,9 +642,10 @@ void GfxScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte 
 	}
 }
 
-// We put hi-res native Mac fonts onto an upscaled background.
-// The incoming coordinates are already hi-res.
-void GfxScreen::putHiresChar(const Graphics::Font *commonFont, int16 x, int16 y, uint16 chr, byte color) {
+// We put native Mac fonts onto an upscaled background if they are hires,
+// otherwise lores Mac fonts are used with no upscaling. The caller handles
+// all of this so there are no scaling adjustments to make here.
+void GfxScreen::putMacChar(const Graphics::Font *commonFont, int16 x, int16 y, uint16 chr, byte color) {
 	commonFont->drawChar(&_displayScreenSurface, chr, x, y, color);
 }
 

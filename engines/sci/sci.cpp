@@ -289,12 +289,19 @@ Common::Error SciEngine::run() {
 	_scriptPatcher = new ScriptPatcher();
 	SegManager *segMan = new SegManager(_resMan, _scriptPatcher);
 
+	// Load the Mac executable and fonts if available
+	if (getSciVersion() < SCI_VERSION_2 && getPlatform() == Common::kPlatformMacintosh) {
+		loadMacExecutable();
+		loadMacFonts();
+	}
+
 	// Read user option for forcing hires graphics
 	// Only show/selectable for:
 	//  - King's Quest 6 CD
 	//  - King's Quest 6 CD demo
 	//  - Gabriel Knight 1 CD
 	//  - Police Quest 4 CD
+	//  - SCI1/1.1 Mac games with hires fonts
 	//
 	// Gabriel Knight 1 on Mac is hi-res only, so it should NOT get this option.
 	// Confirmed by [md5] and originally by clone2727.
@@ -304,16 +311,12 @@ Common::Error SciEngine::run() {
 		// We need to do this, because the option's default is "true", but we don't want "true"
 		// for any game that does not have this option.
 		_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
+	} else if (hasMacFonts()) {
+		// Default to using hires Mac fonts if GUI option isn't present, as it was added later.
+		_forceHiresGraphics = true;
 	}
 
 	if (getSciVersion() < SCI_VERSION_2) {
-		// Load the Mac executable and fonts if available.
-		// If fonts are found then GfxScreen will enable upscaling.
-		if (getPlatform() == Common::kPlatformMacintosh) {
-			loadMacExecutable();
-			loadMacFonts();
-		}
-		
 		// Initialize the game screen
 		_gfxScreen = new GfxScreen(_resMan);
 		_gfxScreen->enableUndithering(ConfMan.getBool("disable_dithering"));

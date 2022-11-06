@@ -906,7 +906,8 @@ void GfxText16::macTextSize(const Common::String &text, GuiResourceId sciFontId,
 	// Leading can be zero for fonts that have spacing embedded in their glyphs.
 	*textHeight = lineCount * (font->getFontHeight() + font->getFontLeading());
 
-	if (_macFontManager->usesSystemFonts()) {
+	if (_macFontManager->usesSystemFonts() && 
+		g_sci->_gfxScreen->getUpscaledHires() == GFX_SCREEN_UPSCALED_640x400) {
 		// QFG1VGA and LSL6 make this adjustment when the large font is used.
 		*textHeight -= (lineCount + 1);
 	}
@@ -922,22 +923,29 @@ void GfxText16::macDraw(const Common::String &text, Common::Rect rect, TextAlign
 		sciFontId = origSciFontId;
 	}
 
-	// Always use the large font
-	const Graphics::Font *font = _macFontManager->getLargeFont(sciFontId);
+	// Use the large font in hires mode, otherwise use the small font
+	const Graphics::Font *font;
+	uint16 scale;
+	if (g_sci->_gfxScreen->getUpscaledHires() == GFX_SCREEN_UPSCALED_640x400) {
+		font = _macFontManager->getLargeFont(sciFontId);
+		scale = 2;
+	} else {
+		font = _macFontManager->getSmallFont(sciFontId);
+		scale = 1;
+	}
 
 	if (color == -1) {
 		color = g_sci->_gfxPorts->_curPort->penClr;
 	}
 
-	// We are drawing in high resolution
-	rect.left *= 2;
-	rect.top *= 2;
-	rect.right *= 2;
-	rect.bottom *= 2;
+	rect.left *= scale;
+	rect.top *= scale;
+	rect.right *= scale;
+	rect.bottom *= scale;
 
 	// Draw each line of text
 	int16 maxWidth = rect.width();
-	int16 y = (g_sci->_gfxPorts->_curPort->top * 2) + rect.top;
+	int16 y = (g_sci->_gfxPorts->_curPort->top * scale) + rect.top;
 	for (uint i = 0; i < text.size(); ++i) {
 		int16 lineWidth;
 		int16 lineCharCount = macGetLongest(text, i, font, maxWidth, &lineWidth);
@@ -953,10 +961,10 @@ void GfxText16::macDraw(const Common::String &text, Common::Rect rect, TextAlign
 		}
 
 		// Draw each character in the line
-		int16 x = (g_sci->_gfxPorts->_curPort->left * 2) + rect.left + offset;
+		int16 x = (g_sci->_gfxPorts->_curPort->left * scale) + rect.left + offset;
 		for (int16 j = 0; j < lineCharCount; ++j) {
 			char ch = text[i + j];
-			g_sci->_gfxScreen->putHiresChar(font, x, y, ch, color);
+			g_sci->_gfxScreen->putMacChar(font, x, y, ch, color);
 			x += font->getCharWidth(ch);
 		}
 
