@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-06 19:03+0000\n"
+"POT-Creation-Date: 2022-11-06 21:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4658,6 +4658,14 @@ msgstr ""
 
 #: engines/dreamweb/detection.cpp:89
 msgid "Use TTS to read the subtitles (if TTS is available)"
+msgstr ""
+
+#: engines/freescape/detection.cpp:259
+msgid "Prerecorded sounds"
+msgstr ""
+
+#: engines/freescape/detection.cpp:260
+msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
 
 #: engines/glk/detection.cpp:239
