@@ -586,7 +586,7 @@ void CharacterInfo::combatUseItem(Inventory &inv, Inventory::Entry &invEntry, bo
 
 			if (item->_effectId == 0xff) {
 				setSpell(item->_spellId, 0, 0);
-				Game::Spells::cast(_spellIndex, g_globals->_currCharacter);
+				Game::SpellsParty::cast(_spellIndex, g_globals->_currCharacter);
 
 			} else {
 				// TODO: find out area of Character _effectId is used as an offset for
@@ -631,7 +631,7 @@ void CharacterInfo::nonCombatUseItem(Inventory &inv, Inventory::Entry &invEntry,
 
 			if (item->_effectId == 0xff) {
 				setSpell(item->_spellId, 0, 0);
-				Game::Spells::cast(_spellIndex, g_globals->_currCharacter);
+				Game::SpellsParty::cast(_spellIndex, g_globals->_currCharacter);
 
 			} else {
 				// TODO: find out area of Character _effectId is used as an offset for

@@ -39,7 +39,7 @@ extern byte FLY_MAP_ID2[20];
 extern byte FLY_MAP_X[20];
 extern byte FLY_MAP_Y[20];
 
-class Spells {
+class SpellsParty {
 	typedef SpellResult(*SpellFn)(Character *chr);
 private:
 	/**

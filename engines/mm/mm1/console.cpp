@@ -309,7 +309,7 @@ bool Console::cmdCast(int argc, const char **argv) {
 
 		int spellIndex = getSpellIndex(c, strToInt(argv[1]), strToInt(argv[2]));
 		setSpell(spellIndex, 0, 0);
-		Game::Spells::cast(_spellIndex, c);
+		Game::SpellsParty::cast(_spellIndex, c);
 		return false;
 	}
 }
