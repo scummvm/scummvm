@@ -1,5 +1,9 @@
 #include "hpl1/engine/libraries/angelscript/add-ons/scriptstdstring.h"
+#include <assert.h> // assert() // FIXME: Refactor to remove this system header
 #include <sstream>  // std::stringstream
+#include <string.h> // strstr() // FIXME: Refactor to remove this system header
+#include <stdio.h>	// sprintf() // FIXME: Refactor to remove this system header
+#include <stdlib.h> // strtod() // FIXME: Refactor to remove this system header
 #ifndef __psp2__
 	#include <locale.h> // setlocale()
 #endif
