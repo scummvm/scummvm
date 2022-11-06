@@ -93,14 +93,12 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
 	return true;
 }
 
-Graphics::Surface *Renderer::convertImageFormatIfNecessary(Graphics::Surface *surface) {
+void Renderer::convertImageFormatIfNecessary(Graphics::Surface *surface) {
 	if (!surface)
-		return surface;
+		return;
 
 	if (surface->format != _texturePixelFormat)
-		return surface->convertTo(_texturePixelFormat);
-
-	return surface;
+		surface->convertToInPlace(_texturePixelFormat);
 }
 
 Common::Rect Renderer::viewport() const {

@@ -408,8 +408,8 @@ Common::Error FreescapeEngine::run() {
 	loadColorPalette();
 
 
-	_title = _gfx->convertImageFormatIfNecessary(_title);
-	_border = _gfx->convertImageFormatIfNecessary(_border);
+	_gfx->convertImageFormatIfNecessary(_title);
+	_gfx->convertImageFormatIfNecessary(_border);
 
 	// Simple main event loop
 	int saveSlot = ConfMan.getInt("save_slot");
