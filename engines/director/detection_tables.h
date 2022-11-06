@@ -4294,7 +4294,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("paws", "", "Start the Dog!", "af8fad5423f5416fe7743198e3909294", 325061, 404),
 	MACDEMO1("paws", "Making of", "The Making of P.A.W.S", "a55b1e9e9d04a2234189a6bcfbe69e4c", 295404, 404),
-	WINGAME1("paws", "", "STARTDOG.EXE", "5c9a56c88b4bb8732377f93f62a885a4", 818961, 404),
+	WINGAME1("paws", "", "PAWS_HD/STARTDOG.EXE", "5c9a56c88b4bb8732377f93f62a885a4", 818961, 404),
 	WINDEMO1("paws", "Making of", "MAKEPAWS.EXE", "559f4c728a348c18b96cddaf102e3413", 874293, 404),
 
 	WINDEMO1("pbbear", "Sampler", "PBBEAR.EXE", "dc58e6e06807f4a4a4cc278f8748659f", 696807, 404),
