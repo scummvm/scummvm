@@ -98,22 +98,15 @@ bool Globals::load(bool isEnhanced) {
 void Globals::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_startingTown);
 
-	// Sync the party
-	int partySize = _party.size();
-	s.syncAsByte(partySize);
-	if (s.isLoading())
-		_party.resize(partySize);
-
-	for (int i = 0; i < partySize; ++i)
-		_party[i].synchronize(s);
+	// Sync the state information
+	_party.synchronize(s);
+	_activeSpells.synchronize(s);
+	_spellsState.synchronize(s);
+	_treasure.synchronize(s);
 
 	// Sync map data and visited tiles
 	_maps.synchronize(s);
 	_maps.synchronizeCurrent(s);
-
-	// Sync miscellaneous data
-	_treasure.synchronize(s);
-	_activeSpells.synchronize(s);
 
 	if (s.isLoading()) {
 		_currCharacter = nullptr;
