@@ -32,6 +32,8 @@
 
 namespace Freescape {
 
+#define kVertexArraySize 20
+
 typedef Common::Array<byte *> ColorMap;
 
 class Renderer;
