@@ -19,7 +19,6 @@ MODULE_OBJS := \
 	objects/entrance.o \
 	objects/geometricobject.o \
 	objects/global.o \
-	objects/sensor.o \
 	sound.o
 
 ifdef USE_TINYGL
