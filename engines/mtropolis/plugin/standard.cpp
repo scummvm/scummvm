@@ -2816,6 +2816,28 @@ bool ListVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue 
 
 		size_t index = thread->getRuntime()->getRandom()->getRandomNumber(_list->getSize() - 1);
 		return _list->getAtIndex(index, result);
+	} else if (attrib == "shuffle") {
+		_list = _list->clone();
+
+		Common::RandomSource *rng = thread->getRuntime()->getRandom();
+
+		size_t listSize = _list->getSize();
+		for (size_t i = 1; i < listSize; i++) {
+			size_t sourceIndex = i;
+			size_t destIndex = rng->getRandomNumber(static_cast<uint>(listSize - 1 - i));
+			if (sourceIndex != destIndex) {
+				DynamicValue srcValue;
+				DynamicValue destValue;
+				(void)_list->getAtIndex(sourceIndex, srcValue);
+				(void)_list->getAtIndex(destIndex, destValue);
+
+				(void)_list->setAtIndex(destIndex, srcValue);
+				(void)_list->setAtIndex(sourceIndex, destValue);
+			}
+		}
+
+		result.setInt(listSize);
+		return true;
 	}
 
 	return Modifier::readAttribute(thread, result, attrib);
