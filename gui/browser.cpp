@@ -242,9 +242,9 @@ void BrowserDialog::updateListing() {
 		}
 
 		if (i->isDirectory())
-			list.push_back(color + Common::U32String(i->getName() + "/"));
+			list.push_back(color + ListWidget::escapeString(Common::U32String(i->getName()) + "/"));
 		else
-			list.push_back(color + Common::U32String(i->getName()));
+			list.push_back(color + ListWidget::escapeString(Common::U32String(i->getName())));
 	}
 
 	_fileList->setList(list);
