@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-06 19:03+0000\n"
+"POT-Creation-Date: 2022-11-06 21:40+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4879,6 +4879,14 @@ msgstr "자막에 TTS를 활성화"
 #: engines/dreamweb/detection.cpp:89
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr "TTS를 사용하여 자막 읽기 (TTS를 사용할 수있는 경우)"
+
+#: engines/freescape/detection.cpp:259
+msgid "Prerecorded sounds"
+msgstr ""
+
+#: engines/freescape/detection.cpp:260
+msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
+msgstr ""
 
 #: engines/glk/detection.cpp:239
 msgid "Use TTS to read the text"

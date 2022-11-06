@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-06 19:03+0000\n"
+"POT-Creation-Date: 2022-11-06 21:40+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -4757,6 +4757,14 @@ msgstr "खेल का पूरा नाम"
 
 #: engines/dreamweb/detection.cpp:89
 msgid "Use TTS to read the subtitles (if TTS is available)"
+msgstr ""
+
+#: engines/freescape/detection.cpp:259
+msgid "Prerecorded sounds"
+msgstr ""
+
+#: engines/freescape/detection.cpp:260
+msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
 
 #: engines/glk/detection.cpp:239

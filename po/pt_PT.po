@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-06 19:03+0000\n"
+"POT-Creation-Date: 2022-11-06 21:40+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -4836,6 +4836,14 @@ msgstr "Ativar Legendas para Voz"
 #: engines/dreamweb/detection.cpp:89
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr "Usar Narrador para ler as legendas (se disponível)"
+
+#: engines/freescape/detection.cpp:259
+msgid "Prerecorded sounds"
+msgstr ""
+
+#: engines/freescape/detection.cpp:260
+msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
+msgstr ""
 
 #: engines/glk/detection.cpp:239
 msgid "Use TTS to read the text"

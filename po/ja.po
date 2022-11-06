@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-06 19:03+0000\n"
+"POT-Creation-Date: 2022-11-06 21:40+0000\n"
 "PO-Revision-Date: 2022-10-26 11:33+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4844,6 +4844,14 @@ msgstr "字幕の音声読み上げを有効化"
 #: engines/dreamweb/detection.cpp:89
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr "音声合成で字幕を読み上げる(利用可能な場合のみ)"
+
+#: engines/freescape/detection.cpp:259
+msgid "Prerecorded sounds"
+msgstr ""
+
+#: engines/freescape/detection.cpp:260
+msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
+msgstr ""
 
 #: engines/glk/detection.cpp:239
 msgid "Use TTS to read the text"
