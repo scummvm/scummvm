@@ -27,6 +27,7 @@
 
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/low_level_system.h"
+#include <limits> // FIXME: Refactor to remove this system header
 #include "hpl1/hpl1.h"
 
 namespace hpl {

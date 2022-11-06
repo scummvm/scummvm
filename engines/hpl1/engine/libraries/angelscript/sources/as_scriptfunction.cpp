@@ -843,7 +843,7 @@ int asCScriptFunction::FindNextLineWithCode(int line) const
 
 		struct C
 		{
-			static int cmp(const void *a, const void *b) { return *(int*)a - *(int*)b; }
+			static int cmp(const void *a, const void *b) { return *(const int*)a - *(const int*)b; }
 		};
 		std::qsort(&lineNbrs[0], lineNbrs.GetLength(), sizeof(int), C::cmp);
 

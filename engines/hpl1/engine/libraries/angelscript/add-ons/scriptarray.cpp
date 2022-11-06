@@ -1,4 +1,7 @@
+#include <string.h> // FIXME: Refactor to remove this system header
+#include <assert.h> // assert() // FIXME: Refactor to remove this system header
 #include <string>
+#include <algorithm> // std::sort // FIXME: Refactor to remove this system header
 
 #include "scriptarray.h"
 
