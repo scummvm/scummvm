@@ -2603,6 +2603,11 @@ MiniscriptInstructionOutcome WorldManagerInterface::writeRefAttribute(Miniscript
 		DynamicValueWriteBoolHelper::create(&_gameMode, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
+	if (attrib == "scenefades") {
+		// TODO
+		DynamicValueWriteDiscardHelper::create(result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
 	return RuntimeObject::writeRefAttribute(thread, result, attrib);
 }
 
