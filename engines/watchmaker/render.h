@@ -212,7 +212,6 @@ bool                    rGetStencilBitDepth();
 
 //Misc functions
 void                    rBlitScreenBuffer(WGame &game);
-void                    rPrintText(const char *s, unsigned int dst,  unsigned int src, unsigned short *FontTable, unsigned short x, unsigned short y);
 void                    rBlitter(WGame &game, int dst, int src, int dposx, int dposy, int sposx, int sposy, int sdimx, int sdimy);
 
 //D3d specific geometry trasf. functions
