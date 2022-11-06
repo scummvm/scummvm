@@ -37,6 +37,7 @@ namespace Common {
  *          - Mohawk
  *          - Neverhood
  *          - SCI
+ *          - MADS (exclusively for the Rex Nebular installer) 
  * @{
  */
 
