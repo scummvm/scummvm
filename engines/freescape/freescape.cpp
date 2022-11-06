@@ -517,9 +517,12 @@ void FreescapeEngine::updateCamera() {
 }
 
 bool FreescapeEngine::hasFeature(EngineFeature f) const {
+	// The TinyGL renderer does not support arbitrary resolutions for now
+	bool softRenderer = determinateRenderType() == Graphics::kRendererTypeTinyGL;
 	return (f == kSupportsReturnToLauncher) ||
 		   (f == kSupportsLoadingDuringRuntime) ||
-		   (f == kSupportsSavingDuringRuntime);
+		   (f == kSupportsSavingDuringRuntime) ||
+		   (f == kSupportsArbitraryResolutions && !softRenderer);
 }
 
 void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface) {

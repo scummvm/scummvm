@@ -23,7 +23,6 @@
 #include "common/system.h"
 
 #include "gui/message.h"
-#include "graphics/renderer.h"
 #include "engines/util.h"
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
@@ -437,10 +436,8 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 	polygonOffset(false);
 }
 
-
-Renderer *createRenderer(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode) {
+Graphics::RendererType determinateRenderType() {
 	Common::String rendererConfig = ConfMan.get("renderer");
-	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	Graphics::RendererType desiredRendererType = Graphics::Renderer::parseTypeCode(rendererConfig);
 	Graphics::RendererType matchingRendererType = Graphics::Renderer::getBestMatchingAvailableType(desiredRendererType,
 #if defined(USE_OPENGL_GAME)
@@ -456,7 +453,29 @@ Renderer *createRenderer(OSystem *system, int screenW, int screenH, Common::Rend
 		matchingRendererType = desiredRendererType = Graphics::kRendererTypeTinyGL;
 	#endif
 
-	bool isAccelerated = matchingRendererType != Graphics::kRendererTypeTinyGL;
+	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
+		// Display a warning if unable to use the desired renderer
+		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
+	}
+
+	#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
+		if (matchingRendererType == Graphics::kRendererTypeOpenGL)
+			return matchingRendererType;
+	#endif
+
+	#if defined(USE_TINYGL)
+	if (desiredRendererType == Graphics::kRendererTypeTinyGL)
+		return desiredRendererType;
+	#endif
+
+	return Graphics::kRendererTypeDefault;
+}
+
+Renderer *createRenderer(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode) {
+	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	Graphics::RendererType rendererType = determinateRenderType();
+
+	bool isAccelerated = rendererType != Graphics::kRendererTypeTinyGL;
 
 	if (isAccelerated) {
 		initGraphics3d(screenW, screenH);
@@ -464,19 +483,14 @@ Renderer *createRenderer(OSystem *system, int screenW, int screenH, Common::Rend
 		initGraphics(screenW, screenH, &pixelFormat);
 	}
 
-	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
-		// Display a warning if unable to use the desired renderer
-		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
-	}
-
 	#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
-		if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
+		if (rendererType == Graphics::kRendererTypeOpenGL) {
 			return CreateGfxOpenGL(system, screenW, screenH, renderMode);
 		}
 	#endif
 
 	#if defined(USE_TINYGL)
-	if (desiredRendererType == Graphics::kRendererTypeTinyGL) {
+	if (rendererType == Graphics::kRendererTypeTinyGL) {
 		return CreateGfxTinyGL(system, screenW, screenH, renderMode);
 	}
 	#endif
