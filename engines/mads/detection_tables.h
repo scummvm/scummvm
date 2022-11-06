@@ -24,7 +24,6 @@ namespace MADS {
 static const MADSGameDescription gameDescriptions[] = {
 	{
 		// Rex Nebular and the Cosmic Gender Bender DOS English (compressed)
-		// Removed for now, until the original floppy compression is supported
 		{
 			"nebular",
 			0,
