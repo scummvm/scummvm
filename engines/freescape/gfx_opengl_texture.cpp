@@ -128,29 +128,6 @@ void OpenGLTexture::updatePartial(const Graphics::Surface *surface, const Common
 	updateTexture(surface, rect);
 }
 
-void OpenGLTexture::copyFromFramebuffer(const Common::Rect &screen) {
-	_internalFormat = GL_RGB;
-	_width  = screen.width();
-	_height = screen.height();
-	_upsideDown = true;
-
-	// Pad the textures if non power of two support is unavailable
-	if (OpenGLContext.NPOTSupported) {
-		_internalHeight = _height;
-		_internalWidth = _width;
-	} else {
-		_internalHeight = upperPowerOfTwo(_height);
-		_internalWidth = upperPowerOfTwo(_width);
-	}
-
-	glBindTexture(GL_TEXTURE_2D, _id);
-	glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, _internalWidth, _internalHeight, 0, _internalFormat, GL_UNSIGNED_BYTE, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glCopyTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, screen.left, screen.top, _internalWidth, _internalHeight, 0);
-}
-
 } // End of namespace Freescape
 
 #endif
