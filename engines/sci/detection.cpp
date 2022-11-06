@@ -89,7 +89,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"sq3",             "Space Quest III: The Pirates of Pestulon"},
 	// === SCI01 games ========================================================
 	{"qfg2",            "Quest for Glory II: Trial by Fire"},
-	{"kq1sci",          "Roberta Williams' King's Quest I: Quest for the Crown"},	// Note: There was also an AGI version of this called King's Quest: Quest for the Crown
+	{"kq1sci",          "King's Quest I: Quest for the Crown"},	// Note: There was also an AGI version of this called King's Quest: Quest for the Crown
 	// === SCI1 games =========================================================
 	{"castlebrain",     "Castle of Dr. Brain"},
 	{"christmas1990",   "Christmas Card 1990: The Seasoned Professional"},
