@@ -72,13 +72,13 @@ void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset)
 			int v = file->readUint16BE();
 			r = (v & 0xf00) >> 8;
 			r = r << 4 | r;
-			palette[c][0] = byte(r);
+			palette[c][0] = r & 0xff;
 			g = (v & 0xf0) >> 4;
 			g = g << 4 | g;
-			palette[c][1] = byte(g);
+			palette[c][1] = g & 0xff;
 			b = v & 0xf;
 			b = b << 4 | b;
-			palette[c][2] = byte(b);
+			palette[c][2] = b & 0xff;
 		}
 
 		assert(!_paletteByArea.contains(label));
