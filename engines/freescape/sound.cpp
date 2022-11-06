@@ -20,8 +20,8 @@
  */
 
 #include "common/file.h"
+#include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
-#include "audio/decoders/vorbis.h"
 
 #include "freescape/freescape.h"
 
@@ -230,17 +230,13 @@ void FreescapeEngine::playWav(const Common::String filename) {
 }
 
 void FreescapeEngine::playMusic(const Common::String filename) {
-	Common::File *file = new Common::File();
-
-	if (!file->open(filename)) {
-		debugC(1, kFreescapeDebugMedia, "Unable to find sound file %s", filename.c_str());
-		return;
+	Audio::SeekableAudioStream *stream = nullptr;
+	stream = Audio::SeekableAudioStream::openStreamFile(filename);
+	if (stream) {
+		Audio::LoopingAudioStream *loop = new Audio::LoopingAudioStream(stream, 0);
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loop);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume / 4);
 	}
-
-	Audio::LoopingAudioStream *stream;
-	stream = new Audio::LoopingAudioStream(Audio::makeVorbisStream(file, DisposeAfterUse::YES), 0);
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, stream);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume / 4);
 }
 
 void FreescapeEngine::playSoundFx(int index, bool sync) {
