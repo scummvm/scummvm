@@ -111,38 +111,39 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 
 void DarkEngine::drawUI() {
 	_gfx->renderCrossair(0, _crossairPosition);
+	uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
+	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);
+	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+
+	Graphics::Surface *surface = nullptr;
+	if (_border) {
+		surface = new Graphics::Surface();
+		surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+		surface->fillRect(_fullscreenViewArea, gray);
+	}
 
 	if (_currentAreaMessages.size() == 1) {
-		_gfx->setViewport(_fullscreenViewArea);
-
-		Graphics::Surface *surface = new Graphics::Surface();
-		surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
-		uint32 gray = _gfx->_currentPixelFormat.RGBToColor(0xA0, 0xA0, 0xA0);
-		surface->fillRect(_fullscreenViewArea, gray);
-
 		int score = _gameStateVars[k8bitVariableScore];
-
-		uint32 yellow = _gfx->_currentPixelFormat.RGBToColor(0xFF, 0xFF, 0x55);
-		uint32 black = _gfx->_currentPixelFormat.RGBToColor(0x00, 0x00, 0x00);
-
 		drawStringInSurface(_currentAreaMessages[0], 112, 177, yellow, black, surface);
 		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 201, 137, yellow, black, surface);
 		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 201, 145, yellow, black, surface);
 		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 201, 153, yellow, black, surface);
-
 		drawStringInSurface(Common::String::format("%07d", score), 95, 8, yellow, black, surface);
+	}
 
+	if (surface) {
 		if (!_uiTexture)
 			_uiTexture = _gfx->createTexture(surface);
 		else
 			_uiTexture->update(surface);
 
+		_gfx->setViewport(_fullscreenViewArea);
 		_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
+		_gfx->setViewport(_viewArea);
+
 		surface->free();
 		delete surface;
 	}
-
-	_gfx->setViewport(_viewArea);
 }
 
 } // End of namespace Freescape
