@@ -26,6 +26,7 @@
 #include "common/rect.h"
 
 #include "graphics/pixelformat.h"
+#include "graphics/renderer.h"
 #include "math/frustum.h"
 #include "math/vector3d.h"
 
@@ -155,6 +156,7 @@ private:
 	uint _startFrameTime;
 };
 
+Graphics::RendererType determinateRenderType();
 Renderer *CreateGfxOpenGL(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode);
 Renderer *CreateGfxOpenGLShader(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode);
 Renderer *CreateGfxTinyGL(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode);
