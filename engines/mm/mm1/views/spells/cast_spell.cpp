@@ -193,7 +193,7 @@ void CastSpell::performSpell(Character *chr) {
 		spellDone(STRING["dialogs.misc.magic_doesnt_work"], 5);
 	} else {
 		// Cast the spell
-		switch (Game::Spells::cast(_spellIndex, chr)) {
+		switch (Game::SpellsParty::cast(_spellIndex, chr)) {
 		case Game::SR_FAILED:
 			// Spell failed
 			spellFailed();
