@@ -473,7 +473,8 @@ void Game::synchronize(Common::Serializer &s, bool phase1) {
 		_screenObjects.synchronize(s);
 	} else {
 		// Load scene specific data for the loaded scene
-		_scene._sceneLogic->synchronize(s);
+		if (_scene._sceneLogic)
+			_scene._sceneLogic->synchronize(s);
 	}
 }
 
