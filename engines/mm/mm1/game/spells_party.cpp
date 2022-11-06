@@ -206,8 +206,8 @@ SpellResult SpellsParty::cleric13_blind() {
 	s._newCondition = BLINDED;
 	s._resistanceType = static_cast<Resistance>((int)s._resistanceType + 1);
 
-	iterateMonsters1();
-	return SR_SUCCESS_DONE;
+	g_events->send("Combat", GameMessage("ITERATE1"));
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult SpellsParty::cleric14_firstAid() {
@@ -641,6 +641,8 @@ SpellResult SpellsParty::wizard72_duplication() {
 
 void SpellsParty::restoreHp(Character *destChar, uint16 hp) {
 	destChar->_hpBase = MIN((int)(_destChar->_hpBase + hp), (int)_destChar->_hpMax);
+	if (!(destChar->_condition & BAD_CONDITION))
+		destChar->_condition &= ~UNCONSCIOUS;
 }
 
 void SpellsParty::addLight(int amount) {
