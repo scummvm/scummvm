@@ -338,6 +338,10 @@ void FreescapeEngine::processInput() {
 			quitGame();
 			return;
 
+		case Common::EVENT_SCREEN_CHANGED:
+			_gfx->computeScreenViewport();
+			break;
+
 		case Common::EVENT_MOUSEMOVE:
 			mousePos = event.mouse;
 
