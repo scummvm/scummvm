@@ -391,6 +391,7 @@ void Inter_v6::o6_fillRect(OpFuncParams &params) {
 	}
 
 	if (destSurf & 0x80) {
+		// Implemented in Inter_v7::o7_fillRect, consider merging if needed
 		warning("Urban Stub: o6_fillRect(), destSurf & 0x80");
 		return;
 	}

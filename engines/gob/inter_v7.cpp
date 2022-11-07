@@ -90,6 +90,7 @@ void Inter_v7::setupOpcodesDraw() {
 
 void Inter_v7::setupOpcodesFunc() {
 	Inter_Playtoons::setupOpcodesFunc();
+	OPCODEFUNC(0x33, o7_fillRect);
 	OPCODEFUNC(0x4D, o7_readData);
 	OPCODEFUNC(0x4E, o7_writeData);
 }
@@ -963,6 +964,85 @@ void Inter_v7::o7_getDBString() {
 
 	storeString(result.c_str());
 	WRITE_VAR(27, 1); // Success
+}
+
+void Inter_v7::o7_fillRect(OpFuncParams &params) {
+	_vm->_draw->_destSurface = _vm->_game->_script->readInt16();
+
+	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
+	_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
+	_vm->_draw->_spriteRight = _vm->_game->_script->readValExpr();
+	_vm->_draw->_spriteBottom = _vm->_game->_script->readValExpr();
+
+	uint32 patternColor = _vm->_game->_script->evalInt();
+
+	int16 savedPattern = _vm->_draw->_pattern;
+
+	_vm->_draw->_backColor = patternColor & 0xFFFF;
+	_vm->_draw->_pattern   = patternColor >> 16;
+
+	if (_vm->_draw->_spriteRight < 0) {
+		_vm->_draw->_destSpriteX += _vm->_draw->_spriteRight - 1;
+		_vm->_draw->_spriteRight = -_vm->_draw->_spriteRight + 2;
+	}
+	if (_vm->_draw->_spriteBottom < 0) {
+		_vm->_draw->_destSpriteY += _vm->_draw->_spriteBottom - 1;
+		_vm->_draw->_spriteBottom = -_vm->_draw->_spriteBottom + 2;
+	}
+
+	if (_vm->_draw->_destSurface & 0x80) {
+		_vm->_draw->_destSurface &= 0x7F;
+		if (_vm->_draw->_destSurface > 100)
+			_vm->_draw->_destSurface -= 80;
+
+		if (_vm->_draw->_pattern & 0x8000)
+			warning("o7_fillRect: pattern %d & 0x8000 != 0 stub", _vm->_draw->_pattern);
+		else {
+			// Replace a specific color in the rectangle
+			uint8 colorToReplace = (_vm->_draw->_backColor >> 8) & 0xFF;
+			_vm->_draw->_pattern = 4;
+			_vm->_draw->_backColor = _vm->_draw->_backColor & 0xFF;
+			// Additional condition on surface.field_10 in executables (video mode ?), seems to be always true for Adibou2
+			// if (_vm->_draw->_spritesArray[_vm->_draw->_destSurface].field_10  & 0x80)) {
+			SurfacePtr newSurface = _vm->_video->initSurfDesc(_vm->_draw->_spriteRight,
+															  _vm->_draw->_spriteBottom,
+															  8);
+			newSurface->blit(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface],
+							 _vm->_draw->_destSpriteX,
+							 _vm->_draw->_destSpriteY,
+							 _vm->_draw->_destSpriteX + _vm->_draw->_spriteRight - 1,
+							 _vm->_draw->_destSpriteY + _vm->_draw->_spriteRight - 1,
+							 0,
+							 0,
+							 0);
+
+			for (int y = 0; y < _vm->_draw->_spriteBottom; y++) {
+				for (int x = 0; x < _vm->_draw->_spriteRight; x++) {
+					if ((colorToReplace & 0xFF) == newSurface->get(x, y).get())
+						newSurface->putPixel(x, y, _vm->_draw->_backColor);
+				}
+			}
+
+			_vm->_draw->_spritesArray[_vm->_draw->_destSurface]->blit(*newSurface,
+																	  0,
+																	  0,
+																	  _vm->_draw->_spriteRight - 1,
+																	  _vm->_draw->_spriteBottom - 1,
+																	  _vm->_draw->_destSpriteX,
+																	  _vm->_draw->_destSpriteY,
+																	  0);
+
+			_vm->_draw->dirtiedRect(_vm->_draw->_destSurface,
+									_vm->_draw->_destSpriteX,
+									_vm->_draw->_destSpriteY,
+									_vm->_draw->_destSpriteX + _vm->_draw->_spriteRight - 1,
+									_vm->_draw->_destSpriteY + _vm->_draw->_spriteBottom - 1);
+
+		}
+	}
+	else
+		_vm->_draw->spriteOperation(DRAW_FILLRECT);
+	_vm->_draw->_pattern = savedPattern;
 }
 
 void Inter_v7::o7_readData(OpFuncParams &params) {
