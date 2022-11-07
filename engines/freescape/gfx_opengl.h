@@ -24,6 +24,7 @@
 
 #include "graphics/opengl/system_headers.h"
 #include "math/vector3d.h"
+#include "math/vector2d.h"
 
 #include "freescape/gfx.h"
 
@@ -46,6 +47,18 @@ public:
 	}
 
 	Vertex *_verts;
+
+	struct Coord {
+		GLfloat x;
+		GLfloat y;
+	};
+
+	Coord *_coords;
+
+	void copyToCoordArray(uint idx, const Math::Vector2d &src) {
+		assert(idx < kCoordsArraySize);
+		_coords[idx].x = src.getValue(0); _coords[idx].y = src.getValue(1);
+	}
 
 	virtual void init() override;
 	virtual void clear() override;

@@ -39,6 +39,7 @@ Renderer *CreateGfxOpenGL(int screenW, int screenH, Common::RenderMode renderMod
 
 OpenGLRenderer::OpenGLRenderer(int screenW, int screenH, Common::RenderMode renderMode) : Renderer(screenW, screenH, renderMode) {
 	_verts = (Vertex *)malloc(sizeof(Vertex) * kVertexArraySize);
+	_coords = (Coord *)malloc(sizeof(Coord) * kCoordsArraySize);
 	_texturePixelFormat = OpenGLTexture::getRGBAPixelFormat();
 }
 
@@ -121,20 +122,26 @@ void OpenGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	glColor4f(1.0, 1.0, 1.0, 1.0);
 	glDepthMask(GL_FALSE);
 
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	copyToVertexArray(0, Math::Vector3d(sLeft + 0, sBottom, 1.0f));
+	copyToVertexArray(1, Math::Vector3d(sRight, sBottom, 1.0f));
+	copyToVertexArray(2, Math::Vector3d(sLeft + 0, sTop + 0, 1.0f));
+	copyToVertexArray(3, Math::Vector3d(sRight, sTop + 0, 1.0));
+	glVertexPointer(3, GL_FLOAT, 0, _verts);
+
+	copyToCoordArray(0, Math::Vector2d(tLeft, tTop + tHeight));
+	copyToCoordArray(1, Math::Vector2d(tLeft + tWidth, tTop + tHeight));
+	copyToCoordArray(2, Math::Vector2d(tLeft, tTop));
+	copyToCoordArray(3, Math::Vector2d(tLeft + tWidth, tTop));
+	glTexCoordPointer(2, GL_FLOAT, 0, _coords);
+
 	glBindTexture(GL_TEXTURE_2D, glTexture->_id);
-	glBegin(GL_TRIANGLE_STRIP);
-	glTexCoord2f(tLeft, tTop + tHeight);
-	glVertex3f(sLeft + 0, sBottom, 1.0f);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-	glTexCoord2f(tLeft + tWidth, tTop + tHeight);
-	glVertex3f(sRight, sBottom, 1.0f);
-
-	glTexCoord2f(tLeft, tTop);
-	glVertex3f(sLeft + 0, sTop + 0, 1.0f);
-
-	glTexCoord2f(tLeft + tWidth, tTop);
-	glVertex3f(sRight, sTop + 0, 1.0f);
-	glEnd();
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);

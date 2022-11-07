@@ -33,6 +33,7 @@
 namespace Freescape {
 
 #define kVertexArraySize 20
+#define kCoordsArraySize 4
 
 typedef Common::Array<byte *> ColorMap;
 
