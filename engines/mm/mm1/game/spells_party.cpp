@@ -39,28 +39,28 @@ int SpellsParty::_destMonsterNum;
 
 SpellsParty::SpellFn SpellsParty::SPELLS[SPELLS_COUNT] = {
 	// Cleric spells
-	placeholder,
-	placeholder,
-	placeholder,
+	cleric11_awaken,
+	cleric12_bless,
+	cleric13_blind,
 	cleric14_firstAid,
 	cleric15_light,
 	cleric16_powerCure,
 	cleric17_protectionFromFear,
 	cleric18_turnUndead,
 	cleric21_cureWounds,
-	placeholder,
-	placeholder,
+	cleric22_heroism,
+	cleric23_pain,
 	cleric24_protectionFromCold,
 	cleric25_protectionFromIce,
 	cleric26_protectionFromPoison,
-	placeholder,
-	placeholder,
+	cleric27_silence,
+	cleric28_suggestion,
 	cleric31_createFood,
 	cleric32_cureBlindness,
 	cleric33_cureParalysis,
 	cleric34_lastingLight,
-	placeholder,
-	placeholder,
+	cleric35_produceFlame,
+	cleric36_produceFrost,
 	cleric37_removeQuest,
 	cleric38_walkOnWater,
 	cleric41_cureDisease,
@@ -68,8 +68,8 @@ SpellsParty::SpellFn SpellsParty::SPELLS[SPELLS_COUNT] = {
 	cleric43_protectionFromAcid,
 	cleric44_protectionFromElectricity,
 	cleric45_restoreAlignment,
-	placeholder,
-	placeholder,
+	cleric46_summonLightning,
+	cleric47_superHeroism,
 	cleric48_surface,
 	placeholder,
 	cleric52_dispelMagic,
@@ -290,6 +290,28 @@ SpellResult SpellsParty::cleric26_protectionFromPoison() {
 	return SR_SUCCESS_DONE;
 }
 
+SpellResult SpellsParty::cleric27_silence() {
+	SpellsState &ss = g_globals->_spellsState;
+	ss._mmVal1++;
+	ss._mmVal2 = 7;
+	ss._newCondition = SILENCED;
+	ss._resistanceType = (Resistance)((int)ss._resistanceType + 1);
+
+	g_globals->_combat->iterateMonsters1();
+	return SR_SUCCESS_SILENT;
+}
+
+SpellResult SpellsParty::cleric28_suggestion() {
+	SpellsState &ss = g_globals->_spellsState;
+	ss._mmVal1++;
+	ss._mmVal2 = 6;
+	ss._newCondition = PARALYZED;
+	ss._resistanceType = (Resistance)((int)ss._resistanceType + 1);
+
+	g_globals->_combat->iterateMonsters1();
+	return SR_SUCCESS_SILENT;
+}
+
 SpellResult SpellsParty::cleric31_createFood() {
 	if (_destChar->_food == MAX_FOOD) {
 		return SR_FAILED;
@@ -319,6 +341,27 @@ SpellResult SpellsParty::cleric33_cureParalysis() {
 
 SpellResult SpellsParty::cleric34_lastingLight() {
 	addLight(19);
+	return SR_SUCCESS_SILENT;
+}
+
+SpellResult SpellsParty::cleric35_produceFlame() {
+	SpellsState &ss = g_globals->_spellsState;
+	ss._mmVal1++;
+	ss._resistanceType = (Resistance)((int)ss._resistanceType + 1);
+	ss._mmVal2 = 4;
+	ss._newCondition = getRandomNumber(6) +
+		getRandomNumber(6) + getRandomNumber(6);
+	g_globals->_combat->iterateMonsters2();
+	return SR_SUCCESS_SILENT;
+}
+
+SpellResult SpellsParty::cleric36_produceFrost() {
+	SpellsState &ss = g_globals->_spellsState;
+	ss._mmVal1++;
+	ss._mmVal2++;
+	ss._newCondition = getRandomNumber(6) +
+		getRandomNumber(6) + getRandomNumber(6);
+	g_globals->_combat->iterateMonsters2();
 	return SR_SUCCESS_SILENT;
 }
 
@@ -366,6 +409,21 @@ SpellResult SpellsParty::cleric44_protectionFromElectricity() {
 
 SpellResult SpellsParty::cleric45_restoreAlignment() {
 	_destChar->_alignment = _destChar->_alignmentInitial;
+	return SR_SUCCESS_DONE;
+}
+
+SpellResult SpellsParty::cleric46_summonLightning() {
+	g_globals->_combat->summonLightning(_destMonsterNum);
+	return SR_SUCCESS_SILENT;
+}
+
+SpellResult SpellsParty::cleric47_superHeroism() {
+	if (_destChar->_level._current != _destChar->_level._base)
+		return SR_FAILED;
+
+	_destChar->_level._current = MIN(
+		(int)_destChar->_level._current + 3, 255);
+	restoreHp(10);
 	return SR_SUCCESS_DONE;
 }
 

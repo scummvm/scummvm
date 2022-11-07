@@ -248,6 +248,7 @@ public:
 	void iterateMonsters2();
 
 	void turnUndead();
+	void summonLightning(int destMonsterIndex);
 };
 
 } // namespace Game

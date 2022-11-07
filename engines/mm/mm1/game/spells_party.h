@@ -85,10 +85,14 @@ private:
 	static SpellResult cleric24_protectionFromCold();
 	static SpellResult cleric25_protectionFromIce();
 	static SpellResult cleric26_protectionFromPoison();
+	static SpellResult cleric27_silence();
+	static SpellResult cleric28_suggestion();
 	static SpellResult cleric31_createFood();
 	static SpellResult cleric32_cureBlindness();
 	static SpellResult cleric33_cureParalysis();
 	static SpellResult cleric34_lastingLight();
+	static SpellResult cleric35_produceFlame();
+	static SpellResult cleric36_produceFrost();
 	static SpellResult cleric37_removeQuest();
 	static SpellResult cleric38_walkOnWater();
 	static SpellResult cleric41_cureDisease();
@@ -96,6 +100,8 @@ private:
 	static SpellResult cleric43_protectionFromAcid();
 	static SpellResult cleric44_protectionFromElectricity();
 	static SpellResult cleric45_restoreAlignment();
+	static SpellResult cleric46_summonLightning();
+	static SpellResult cleric47_superHeroism();
 	static SpellResult cleric48_surface();
 	static SpellResult cleric52_dispelMagic();
 	static SpellResult cleric54_removeCondition();
