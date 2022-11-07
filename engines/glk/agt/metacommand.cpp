@@ -978,7 +978,7 @@ static void scan_for_actor(integer m_actor, int *start, int *end) {
 }
 
 
-/* m_<word> are the matching criterion; they have no *neccessary*
+/* m_<word> are the matching criterion; they have no *necessary*
   connection to dobj, iobj, etc. */
 
 int scan_metacommand(integer m_actor, int vcode,

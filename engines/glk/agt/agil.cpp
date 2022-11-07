@@ -331,7 +331,7 @@ static rbool check_dot(char *prevtext, int prevcnt, char *lookahead)
 	if (!PURE_DOT) return 1;  /* No words with periods in them, so it must
 				   be punctuation. */
 	/*  We just start scanning the dictionary to see if any of them
-	    are possible matches, looking ahead as neccessary. */
+	    are possible matches, looking ahead as necessary. */
 
 	/* Find the next unambiguous word end. This ignores possible
 	   word ends caused by periods. */
