@@ -40,7 +40,7 @@ class Renderer;
 
 class Texture {
 public:
-	Texture(){};
+	Texture(){ _width = 0; _height = 0; };
 	virtual ~Texture(){};
 
 	uint _width;
