@@ -73,9 +73,14 @@ struct MouseUpMessage : public MouseMessage {
 
 struct GameMessage : public Message {
 	Common::String _name;
+	int _value;
+
 	GameMessage() : Message() {}
 	GameMessage(const Common::String &name) : Message(),
-		_name(name) {}
+		_name(name), _value(-1) {}
+	GameMessage(const Common::String &name, int value) : Message(),
+		_name(name), _value(value) {
+	}
 };
 
 struct HeaderMessage : public Message {

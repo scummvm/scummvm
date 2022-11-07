@@ -22,13 +22,19 @@
 #include "mm/mm1/game/combat.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
 namespace Game {
 
 Combat::Combat() : _monsterList(g_globals->_encounters._monsterList) {
+	g_globals->_combat = this;
 	clear();
+}
+
+Combat::~Combat() {
+	g_globals->_combat = nullptr;
 }
 
 void Combat::clear() {
@@ -61,6 +67,10 @@ void Combat::clear() {
 	_attackAttr2.clear();
 	_timesHit = 0;
 	_isShooting = false;
+	_monstersDestroyedCtr = 0;
+
+	_turnUndeadUsed = false;
+	_monstersDestroyedCtr = 0;
 
 	// TODO: clear everything
 
@@ -819,6 +829,43 @@ void Combat::updateMonsterStatus() {
 		_arr1[_monsterIndex] = val;
 		_monsterStatus[_monsterIndex] &= ~(MONFLAG_ASLEEP | MONFLAG_HELD);
 	}
+}
+
+void Combat::displaySpellResult(const InfoMessage &msg) {
+	// TODO: displaySpellResult
+	warning("TODO: displaySpellResult");
+}
+
+void Combat::turnUndead() {
+	if (_turnUndeadUsed) {
+		// Already been used in the current combat, can't be used again
+		displaySpellResult(InfoMessage(15, 1, STRING["spells.no_effect"]));
+
+	} else {
+		_turnUndeadUsed = true;
+
+		for (uint i = 0; i < _monsterList.size(); ++i) {
+			monsterSetPtr(i);
+			Monster *monster = _monsterP;
+
+			if ((monster->_field19 & FIELD19_UNDEAD) &&
+					(getRandomNumber(20) + g_globals->_currCharacter->_level) >=
+					(_arr1[i] * 2 + 10)) {
+				destroyUndead();
+				++_monstersDestroyedCtr;
+			}
+		}
+
+		if (_monstersDestroyedCtr)
+			displaySpellResult(InfoMessage(5, 1, STRING["spells.monsters_destroyed"]));
+	}
+
+	_arr3[_currentChar] = 1;
+}
+
+void Combat::destroyUndead() {
+	_monsterStatus[getMonsterIndex()] = 0xff;
+	Sound::sound2(SOUND_9);
 }
 
 } // namespace Game
