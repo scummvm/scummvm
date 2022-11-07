@@ -300,9 +300,9 @@ void PaintInventory(WGame &game) {
 			}
 		}
 	} else if ((bUseWith & UW_ON) && (bUseWith & UW_USEDI)) {
-		DisplayD3DRect(renderer, UseIconRect.x1 + 3, UseIconRect.y1 + 3, 63, 63, 22, 31, 22, 75);
-		DisplayDDBitmap(renderer, IconsPics[UseWith[USED]], UseIconRect.x1 + 3, UseIconRect.y1 + 3,  0, 0, 0, 0);
-		DisplayDDBitmap(renderer, Console2, UseIconRect.x1, UseIconRect.y1,  0, 0, 0, 0);
+		DisplayD3DRect(renderer, game._gameRect._useIconRect.x1 + 3, game._gameRect._useIconRect.y1 + 3, 63, 63, 22, 31, 22, 75);
+		DisplayDDBitmap(renderer, IconsPics[UseWith[USED]], game._gameRect._useIconRect.x1 + 3, game._gameRect._useIconRect.y1 + 3,  0, 0, 0, 0);
+		DisplayDDBitmap(renderer, Console2, game._gameRect._useIconRect.x1, game._gameRect._useIconRect.y1,  0, 0, 0, 0);
 	}
 	PaintDialog(game);
 }

@@ -62,6 +62,7 @@ public:
 	Init init;
 	sdl_wrapper *sdl;
 	GameVars _gameVars;
+	GameRect _gameRect;
 	Fonts _fonts;
 	WGame();
 	~WGame();

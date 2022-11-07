@@ -29,19 +29,21 @@
 namespace Watchmaker {
 
 // GAME RECT
-struct SRect BigIconRect = { INV_MARG_DX + 30, INV_MARG_UP - 12, 775, 587/*INV_MARG_DOWN+10 */};
-struct SRect UseIconRect = { 720, 517, 787, 587 };
-struct SRect CloseInvRect = { 667, 13, 782, 73 };
-struct SRect QuitGameRect = { 563, 13, 667, 73 };
-struct SRect PlayerInvRect = { 22, 13, 200, 73 };
-struct SRect InvSaveRect = { 223, 13, 284, 73 };
-struct SRect InvLoadRect = { 332, 13, 401, 73 };
-struct SRect InvOptionsRect = { 437, 13, 523, 73 };
-struct SRect Inv1Up = { 3 + 16, 67 + 56, 3 + 28, 67 + 96 };
-struct SRect Inv1Down = { 3 + 205, 67 + 411, 3 + 224, 67 + 444 };
-struct SRect Diag2Up = { 768, 510, 797, 537 };
-struct SRect Diag2Down = { 768, 568, 797, 595 };
-struct SRect CallOtherPlayerRect = { 22, 13, 22 + 192, 13 + 60 };
+GameRect::GameRect() {
+	_bigIconRect = {INV_MARG_DX + 30, INV_MARG_UP - 12, 775, 587 /*INV_MARG_DOWN+10 */};
+	_useIconRect = {720, 517, 787, 587};
+	_closeInvRect = {667, 13, 782, 73};
+	_quitGameRect = {563, 13, 667, 73};
+	_playerInvRect = {22, 13, 200, 73};
+	_invSaveRect = {223, 13, 284, 73};
+	_invLoadRect = {332, 13, 401, 73};
+	_invOptionsRect = {437, 13, 523, 73};
+	_inv1Up = {3 + 16, 67 + 56, 3 + 28, 67 + 96};
+	_inv1Down = {3 + 205, 67 + 411, 3 + 224, 67 + 444};
+	_diag2Up = {768, 510, 797, 537};
+	_diag2Down = {768, 568, 797, 595};
+	_callOtherPlayerRect = {22, 13, 22 + 192, 13 + 60};
+}
 struct SD3DRect D3DRectsList[MAX_D3D_RECTS];
 struct SD3DTriangle D3DTrianglesList[MAX_D3D_TRIANGLES];
 struct SD3DBitmap D3DBitmapsList[MAX_D3D_BITMAPS];
