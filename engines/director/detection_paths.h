@@ -185,7 +185,6 @@ const char *directoryGlobs[] = {
 	"CHRISTMAS PRESENT",			// Christmas Present
 	"Subotnick Hummingbirds",		// All My Hummingbirds Have Alibis
 	"Silly Noisy House Folder",		// A Silly Noisy House
-	"Installer Files",				// Encarta '95
 	"Treasures of the AMNH",		// Treasures of the American Museum of Natural History (Mac)
 	"TAMNH",						// Treasures of the American Museum of Natural History (Win)
 	"xn--Sacred and Secular -ere",	// Sacred and Secular (Mac) ("Sacred and Secular ƒ")

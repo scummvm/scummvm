@@ -2016,9 +2016,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1("emigre", "Demo", "play cheese", "7c80091b84d4d5d48f7c773b30b10598", 990413, 310),
 
-	MACGAME1("encarta94", "", "Encarta Projector", "7f443f2e63fd497a9ad85b10dc880a91", 385727, 313),
+	MACGAME1("encarta94", "", "Installer Files/Encarta Projector", "7f443f2e63fd497a9ad85b10dc880a91", 385727, 313),
 
-	MACGAME1("encarta95", "", "Encarta Projector", "7f443f2e63fd497a9ad85b10dc880a91", 385729, 313),
+	MACGAME1("encarta95", "", "Installer Files/Encarta Projector", "7f443f2e63fd497a9ad85b10dc880a91", 385729, 313),
 	WINDEMO1("encarta95", "Demo", "ENDEM95.EXE", "61d63911d437806fd473ffc31ddfc53d", 12109799, 311),
 
 	// HyperCard application, calls movie using external MacroMind Player
