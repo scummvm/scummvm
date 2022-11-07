@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-07 07:05+0000\n"
-"PO-Revision-Date: 2022-11-02 09:44+0000\n"
+"PO-Revision-Date: 2022-11-07 19:26+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -4995,11 +4995,13 @@ msgstr ""
 
 #: engines/freescape/detection.cpp:259
 msgid "Prerecorded sounds"
-msgstr ""
+msgstr "Προηχογραφημένα ηχητικά εφέ"
 
 #: engines/freescape/detection.cpp:260
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
+"Χρήση προ-ηχογραφημένων ηχητικών εφέ υψηλής ποιότητας αντί ήχου εξομοίωσης "
+"ηχείου PC (PC speaker)"
 
 #: engines/glk/detection.cpp:239
 msgid "Use TTS to read the text"
