@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-06 22:27+0000\n"
+"POT-Creation-Date: 2022-11-07 07:05+0000\n"
 "PO-Revision-Date: 2022-10-26 11:42+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -4557,7 +4557,7 @@ msgstr "Автор перекладу проти того, щоб його пе�
 #: engines/mohawk/detection_tables.h:3211 engines/myst3/detection.cpp:142
 #: engines/neverhood/detection.cpp:124 engines/saga/detection_tables.h:186
 #: engines/saga/detection_tables.h:1241 engines/saga/detection_tables.h:1300
-#: engines/sci/detection_tables.h:5190 engines/sci/detection_tables.h:5198
+#: engines/sci/detection_tables.h:5191 engines/sci/detection_tables.h:5199
 #: engines/sherlock/detection_tables.h:223 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:212
 #: engines/trecision/detection.cpp:199 engines/zvision/detection_tables.h:200
@@ -6671,7 +6671,7 @@ msgstr "Roland D-110 / D-10 / D-20"
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
-#: engines/sci/detection_tables.h:4489
+#: engines/sci/detection_tables.h:4490
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr "Неповна версія гри. Ви мусите скопіювати дані з усіх CD."
 
@@ -6686,7 +6686,7 @@ msgstr ""
 "Будь-ласка, використовуйте іншу програму для переглядання файлу допомоги "
 "ігри: %s"
 
-#: engines/sci/engine/kmisc.cpp:883
+#: engines/sci/engine/kmisc.cpp:880
 msgid ""
 "The Poker logic is hardcoded in an external DLL, and is not implemented yet. "
 "There exists some dummy logic for now, where opponent actions are chosen "
@@ -6732,7 +6732,7 @@ msgstr ""
 "працювати невірно. Будь-ласка, перевірте вікно з консоллю для подальшої "
 "інформації, а також пересвідчіться що файли гри було правильно скопійовано."
 
-#: engines/sci/sci.cpp:388
+#: engines/sci/sci.cpp:398
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -6746,7 +6746,7 @@ msgstr ""
 "відображаються належним чином або відображають фактичну промову гри. Це не "
 "помилка ScummVM - це проблема з активами гри."
 
-#: engines/sci/sci.cpp:412
+#: engines/sci/sci.cpp:422
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -6768,7 +6768,7 @@ msgstr ""
 "Без цього виправлення музика General MIDI для цієї гри буде звучати погано "
 "спотворено."
 
-#: engines/sci/sci.cpp:431
+#: engines/sci/sci.cpp:441
 msgid ""
 "Your game is patched with a fan made script patch. Such patches have been "
 "reported to cause issues, as they modify game scripts extensively. The "
@@ -6782,11 +6782,11 @@ msgstr ""
 "виникають у ScummVM, тому вам рекомендується видалити цей патч із папки "
 "ігор, щоб уникнути виникнення несподіваних помилок та / або проблем пізніше."
 
-#: engines/sci/sci.cpp:510
+#: engines/sci/sci.cpp:520
 msgid "Download patch"
 msgstr "Завантажити патч"
 
-#: engines/sci/sci.cpp:511
+#: engines/sci/sci.cpp:521
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -6794,7 +6794,7 @@ msgstr ""
 "(або натисніть кнопку \"Завантажити патч\". Але зауважте - вона просто "
 "завантажить, вам буде потрібно продовжити самостійно)\n"
 
-#: engines/sci/sci.cpp:518
+#: engines/sci/sci.cpp:528
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -6809,7 +6809,7 @@ msgstr ""
 "- завантажте http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 
-#: engines/sci/sci.cpp:849
+#: engines/sci/sci.cpp:863
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "

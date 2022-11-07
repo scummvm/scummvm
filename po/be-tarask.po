@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-06 22:27+0000\n"
+"POT-Creation-Date: 2022-11-07 07:05+0000\n"
 "PO-Revision-Date: 2022-08-02 15:16+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -4537,7 +4537,7 @@ msgstr "Аматарскі перакладнік не пажадаў, каб я
 #: engines/mohawk/detection_tables.h:3211 engines/myst3/detection.cpp:142
 #: engines/neverhood/detection.cpp:124 engines/saga/detection_tables.h:186
 #: engines/saga/detection_tables.h:1241 engines/saga/detection_tables.h:1300
-#: engines/sci/detection_tables.h:5190 engines/sci/detection_tables.h:5198
+#: engines/sci/detection_tables.h:5191 engines/sci/detection_tables.h:5199
 #: engines/sherlock/detection_tables.h:223 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:212
 #: engines/trecision/detection.cpp:199 engines/zvision/detection_tables.h:200
@@ -6689,7 +6689,7 @@ msgstr "Roland D-110 / D-10 / D-20"
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
-#: engines/sci/detection_tables.h:4489
+#: engines/sci/detection_tables.h:4490
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "Знойдзена няпоўная гульня. Вам трэ скапіяваць зьвесткі з усіх кампактных "
@@ -6706,7 +6706,7 @@ msgstr ""
 "Калі ласка, скарыстайцеся зьнешнім праглядачом, каб адкрыць файл дапамогі па "
 "гульне: %s"
 
-#: engines/sci/engine/kmisc.cpp:883
+#: engines/sci/engine/kmisc.cpp:880
 msgid ""
 "The Poker logic is hardcoded in an external DLL, and is not implemented yet. "
 "There exists some dummy logic for now, where opponent actions are chosen "
@@ -6752,7 +6752,7 @@ msgstr ""
 "могуць працаваць няправільна. Калі ласка, праглядзіце кансоль для "
 "падрабязнасьцей, а таксама праверце, што вашыя файлы гульні вартыя."
 
-#: engines/sci/sci.cpp:388
+#: engines/sci/sci.cpp:398
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -6765,7 +6765,7 @@ msgstr ""
 "заўжды правільна выглядаюць ці перадаюць пэўны сэнс, бо былі выдалены з "
 "арыґінальнай гульні. Гэта хіба ня ScummVM, а рэсурсаў гульні."
 
-#: engines/sci/sci.cpp:412
+#: engines/sci/sci.cpp:422
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -6785,7 +6785,7 @@ msgstr ""
 "пераназваць улучаны файл *.PAT на 4.PAT й памясьціць у тэчцы гульні. Без "
 "гэатй латкі, музыка MIDI будзе даволі крывой."
 
-#: engines/sci/sci.cpp:431
+#: engines/sci/sci.cpp:441
 msgid ""
 "Your game is patched with a fan made script patch. Such patches have been "
 "reported to cause issues, as they modify game scripts extensively. The "
@@ -6798,11 +6798,11 @@ msgstr ""
 "латкі няма ў ScummVM, таму вам раіцца выдаліць гэтую латку з вашай тэчкі "
 "гульні, каб пазьбегнуць непрадбачных праблемаў у будучыні."
 
-#: engines/sci/sci.cpp:510
+#: engines/sci/sci.cpp:520
 msgid "Download patch"
 msgstr "Заладаваць латку"
 
-#: engines/sci/sci.cpp:511
+#: engines/sci/sci.cpp:521
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -6810,7 +6810,7 @@ msgstr ""
 "(або націсьніце „Заладаваць латку“. Але заўважце — яна проста заладуецца, "
 "далей вы самі)\n"
 
-#: engines/sci/sci.cpp:518
+#: engines/sci/sci.cpp:528
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -6824,7 +6824,7 @@ msgstr ""
 "Каб усталяваць, заладуйце:\n"
 "http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip\n"
 
-#: engines/sci/sci.cpp:849
+#: engines/sci/sci.cpp:863
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "

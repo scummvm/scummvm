@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-06 22:27+0000\n"
+"POT-Creation-Date: 2022-11-07 07:05+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4525,7 +4525,7 @@ msgstr "패치 제작자가 번역물이 ScummVM에서 구동되길 원하지 �
 #: engines/mohawk/detection_tables.h:3211 engines/myst3/detection.cpp:142
 #: engines/neverhood/detection.cpp:124 engines/saga/detection_tables.h:186
 #: engines/saga/detection_tables.h:1241 engines/saga/detection_tables.h:1300
-#: engines/sci/detection_tables.h:5190 engines/sci/detection_tables.h:5198
+#: engines/sci/detection_tables.h:5191 engines/sci/detection_tables.h:5199
 #: engines/sherlock/detection_tables.h:223 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:212
 #: engines/trecision/detection.cpp:199 engines/zvision/detection_tables.h:200
@@ -6653,7 +6653,7 @@ msgstr "Roland D-110 / D-10 / D-20"
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
-#: engines/sci/detection_tables.h:4489
+#: engines/sci/detection_tables.h:4490
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "불완전한 게임이 감지되었습니다. 모든 CD로부터 데이터를 복사해야 합니다."
@@ -6667,7 +6667,7 @@ msgstr "(자동 저장)"
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr "외부 뷰어를 사용해 게임 도움말 파일을 열어 주세요: %s"
 
-#: engines/sci/engine/kmisc.cpp:883
+#: engines/sci/engine/kmisc.cpp:880
 msgid ""
 "The Poker logic is hardcoded in an external DLL, and is not implemented yet. "
 "There exists some dummy logic for now, where opponent actions are chosen "
@@ -6711,7 +6711,7 @@ msgstr ""
 "이 정상적으로 동작하지 않을 수 있습니다. 콘솔 창을 확인해 추가 정보를 확인하"
 "고 게임 파일이 정상인지 확인해 주십시오."
 
-#: engines/sci/sci.cpp:388
+#: engines/sci/sci.cpp:398
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -6724,7 +6724,7 @@ msgstr ""
 "음성과 차이가 발생할 수 있습니다. 이것은 ScummVM의 버그가 아니며 게임 애셋 파"
 "일의 문제입니다."
 
-#: engines/sci/sci.cpp:412
+#: engines/sci/sci.cpp:422
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -6744,7 +6744,7 @@ msgstr ""
 "뒤 게임 폴더에 넣을 수도 있습니다. 이 패치를 사용하지 않으면 이 게임의 "
 "General MIDI 음악이 심하게 왜곡되어 들립니다."
 
-#: engines/sci/sci.cpp:431
+#: engines/sci/sci.cpp:441
 msgid ""
 "Your game is patched with a fan made script patch. Such patches have been "
 "reported to cause issues, as they modify game scripts extensively. The "
@@ -6757,11 +6757,11 @@ msgstr ""
 "는 문제는 ScummVM에서는 발생하지 않으므로, 예상치 않은 오류를 피하기 위해 게"
 "임 폴더로부터 패치를 제거할 것을 권장합니다."
 
-#: engines/sci/sci.cpp:510
+#: engines/sci/sci.cpp:520
 msgid "Download patch"
 msgstr "패치 다운로드"
 
-#: engines/sci/sci.cpp:511
+#: engines/sci/sci.cpp:521
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -6769,7 +6769,7 @@ msgstr ""
 "(혹은 '패치 다운로드' 버튼을 클릭합니다. 다만 다운로드 이후의 작업은 직접 해"
 "야 합니다)\n"
 
-#: engines/sci/sci.cpp:518
+#: engines/sci/sci.cpp:528
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -6784,7 +6784,7 @@ msgstr ""
 "- http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip 을 "
 "다운로드\n"
 
-#: engines/sci/sci.cpp:849
+#: engines/sci/sci.cpp:863
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
