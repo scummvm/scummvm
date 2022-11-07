@@ -151,7 +151,7 @@ public:
 
 //------------------------------------------------
 
-typedef std::map<tString, iHudModel *> tHudModelMap;
+typedef Hpl1::std::map<tString, iHudModel *> tHudModelMap;
 typedef tHudModelMap::iterator tHudModelMapIt;
 
 //------------------------------------------------

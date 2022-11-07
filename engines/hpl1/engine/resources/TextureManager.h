@@ -39,8 +39,8 @@ class iTexture;
 
 //------------------------------------------------------
 
-typedef std::map<tString, iTexture *> tTextureAttenuationMap;
-typedef std::map<tString, iTexture *>::iterator tTextureAttenuationMapIt;
+typedef Hpl1::std::map<tString, iTexture *> tTextureAttenuationMap;
+typedef Hpl1::std::map<tString, iTexture *>::iterator tTextureAttenuationMapIt;
 
 //------------------------------------------------------
 

@@ -83,7 +83,7 @@ public:
 	bool GetBool(const tString &asName, bool abDefault);
 
 private:
-	std::map<tString, tString> m_mapVars;
+	Hpl1::std::map<tString, tString> m_mapVars;
 	tString msBlank;
 };
 

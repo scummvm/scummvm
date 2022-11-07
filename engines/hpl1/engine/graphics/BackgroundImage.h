@@ -31,7 +31,7 @@
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/Material.h"
 #include "hpl1/engine/math/MathTypes.h"
-#include <map>
+#include "hpl1/std/map.h"
 
 namespace hpl {
 
@@ -57,7 +57,7 @@ private:
 	cVector2f mvVel;
 };
 
-typedef std::map<float, cBackgroundImage *> tBackgroundImageMap;
+typedef Hpl1::std::map<float, cBackgroundImage *> tBackgroundImageMap;
 typedef tBackgroundImageMap::iterator tBackgroundImageMapIt;
 
 }     // namespace hpl

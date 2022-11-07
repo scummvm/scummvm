@@ -33,7 +33,7 @@
 #include "hpl1/engine/physics/PhysicsMaterial.h"
 #include "hpl1/engine/system/SystemTypes.h"
 #include "common/list.h"
-#include <map>
+#include "hpl1/std/map.h"
 
 namespace hpl {
 
@@ -50,7 +50,7 @@ class cHaptic;
 typedef Common::List<iPhysicsWorld *> tPhysicsWorldList;
 typedef tPhysicsWorldList::iterator tPhysicsWorldListIt;
 
-typedef std::map<tString, cSurfaceData *> tSurfaceDataMap;
+typedef Hpl1::std::map<tString, cSurfaceData *> tSurfaceDataMap;
 typedef tSurfaceDataMap::iterator tSurfaceDataMapIt;
 
 //------------------------------------------------

@@ -28,8 +28,6 @@
 #ifndef HPL_MESH_ENTITY_H
 #define HPL_MESH_ENTITY_H
 
-#include <map>
-
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/Renderable.h"
 #include "hpl1/engine/math/MathTypes.h"
@@ -41,6 +39,7 @@
 
 #include "hpl1/engine/scene/AnimationState.h"
 #include "common/array.h"
+#include "hpl1/std/map.h"
 
 namespace hpl {
 

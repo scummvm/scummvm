@@ -28,14 +28,13 @@
 #ifndef HPL_WORLD2D_H
 #define HPL_WORLD2D_H
 
-#include <map>
-
 #include "hpl1/engine/game/GameTypes.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
 
 #include "hpl1/engine/scene/SoundSource.h"
+#include "hpl1/std/map.h"
 
 class TiXmlElement;
 

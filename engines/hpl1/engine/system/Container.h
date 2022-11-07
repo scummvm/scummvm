@@ -28,11 +28,11 @@
 #ifndef HPL_CONTAINER_H
 #define HPL_CONTAINER_H
 
-#include <map>
-
 #include "hpl1/engine/system/MemoryManager.h"
 #include "common/list.h"
 #include "common/array.h"
+#include "hpl1/std/map.h"
+
 
 namespace hpl {
 

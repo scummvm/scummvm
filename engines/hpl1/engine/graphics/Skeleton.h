@@ -28,11 +28,10 @@
 #ifndef HPL_SKELETON_H
 #define HPL_SKELETON_H
 
-#include <map>
-
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include "hpl1/std/map.h"
 
 namespace hpl {
 
@@ -41,7 +40,7 @@ class cBone;
 typedef Common::Array<cBone *> tBoneVec;
 typedef tBoneVec::iterator tBoneVecIt;
 
-typedef std::map<tString, int> tBoneIdxNameMap;
+typedef Hpl1::std::map<tString, int> tBoneIdxNameMap;
 typedef tBoneIdxNameMap::iterator tBoneIdxNameMapIt;
 
 class cSkeleton {

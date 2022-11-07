@@ -30,7 +30,7 @@
 
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include <map>
+#include "hpl1/std/map.h"
 
 #include "hpl1/engine/game/SaveGame.h"
 
@@ -44,7 +44,7 @@ class cSoundEntity;
 class iPhysicsJoint;
 class iPhysicsController;
 
-typedef std::map<tString, iPhysicsController *> tPhysicsControllerMap;
+typedef Hpl1::std::map<tString, iPhysicsController *> tPhysicsControllerMap;
 typedef tPhysicsControllerMap::iterator tPhysicsControllerMapIt;
 
 typedef cSTLMapIterator<iPhysicsController *, tPhysicsControllerMap, tPhysicsControllerMapIt> cPhysicsControllerIterator;

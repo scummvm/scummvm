@@ -42,7 +42,7 @@ class Bitmap2D;
 typedef Common::List<cFrameBitmap *> tFrameBitmapList;
 typedef tFrameBitmapList::iterator tFrameBitmapListIt;
 
-typedef std::map<int, cFrameTexture *> tFrameTextureMap;
+typedef Hpl1::std::map<int, cFrameTexture *> tFrameTextureMap;
 typedef tFrameTextureMap::iterator tFrameTextureMapIt;
 
 class cImageManager : public iResourceManager {

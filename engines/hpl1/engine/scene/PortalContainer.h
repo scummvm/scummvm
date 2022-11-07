@@ -32,7 +32,7 @@
 #include "hpl1/engine/math/BoundingVolume.h"
 #include "hpl1/engine/scene/RenderableContainer.h"
 #include "common/list.h"
-#include <map>
+#include "hpl1/std/map.h"
 #include "hpl1/std/set.h"
 
 namespace hpl {
@@ -56,8 +56,8 @@ class cSector;
 
 //----------------------------------------------------
 
-typedef std::map<tString, cSector *> tSectorMap;
-typedef std::map<tString, cSector *>::iterator tSectorMapIt;
+typedef Hpl1::std::map<tString, cSector *> tSectorMap;
+typedef Hpl1::std::map<tString, cSector *>::iterator tSectorMapIt;
 
 //----------------------------------------------------
 
@@ -116,8 +116,8 @@ private:
 class cSector;
 class cPortal;
 
-typedef std::map<int, cPortal *> tPortalMap;
-typedef std::map<int, cPortal *>::iterator tPortalMapIt;
+typedef Hpl1::std::map<int, cPortal *> tPortalMap;
+typedef Hpl1::std::map<int, cPortal *>::iterator tPortalMapIt;
 
 typedef Common::List<cPortal *> tPortalList;
 typedef Common::List<cPortal *>::iterator tPortalListIt;
