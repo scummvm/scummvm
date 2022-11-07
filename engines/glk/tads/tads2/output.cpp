@@ -3124,7 +3124,7 @@ void outcaps(void)
 }
 
 /*
- *   outnocaps() - sets the next letter to a miniscule, whether it came in
+ *   outnocaps() - sets the next letter to a minuscule, whether it came in
  *   that way or not.
  */
 void outnocaps(void)
