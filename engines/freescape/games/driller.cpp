@@ -321,7 +321,7 @@ void DrillerEngine::loadAssetsFullGame() {
 		loadFonts(&file, 0x99dd);
 		loadGlobalObjects(&file, 0x3b42);
 		load8bitBinary(&file, 0x9b40, 16);
-	} else if (_renderMode == Common::kRenderEGA) {
+	} else if (_renderMode == Common::kRenderCGA) {
 		loadBundledImages();
 		_title = _border;
 		file.open("DRILLC.EXE");
