@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-07 07:05+0000\n"
-"PO-Revision-Date: 2022-10-27 16:30+0000\n"
+"PO-Revision-Date: 2022-11-07 13:57+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -4939,11 +4939,13 @@ msgstr ""
 
 #: engines/freescape/detection.cpp:259
 msgid "Prerecorded sounds"
-msgstr ""
+msgstr "Sonidos pregrabados"
 
 #: engines/freescape/detection.cpp:260
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
+"Utiliza sonidos pregrabados a alta calidad en lugar de la emulación de un "
+"altavoz de PC"
 
 #: engines/glk/detection.cpp:239
 msgid "Use TTS to read the text"
