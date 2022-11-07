@@ -876,6 +876,15 @@ void Combat::destroyUndead() {
 	Sound::sound2(SOUND_9);
 }
 
+void Combat::summonLightning(int destMonsterIndex) {
+	// TODO: Summon lightning
+	//SpellsState &ss = g_globals->_spellsState;
+
+	if (destMonsterIndex < _attackerVal) {
+		// TODO
+	}
+}
+
 } // namespace Game
 } // namespace MM1
 } // namespace MM
