@@ -33,6 +33,9 @@ TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface) {
 	_width = surface->w;
 	_height = surface->h;
 	_format = surface->format;
+	_id = 0;
+	_internalFormat = 0;
+	_sourceFormat = 0;
 
 	_blitImage = tglGenBlitImage();
 
