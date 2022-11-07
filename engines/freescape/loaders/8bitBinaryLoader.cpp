@@ -236,9 +236,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			v);
 		break;
 	}
-
-	file->seek(byteSizeOfObject, SEEK_CUR);
-	return nullptr;
+	// Unreachable
 }
 
 static const char *eclipseRoomName[] = {
