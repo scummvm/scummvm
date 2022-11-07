@@ -43,6 +43,7 @@ Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode) {
 	_palette = nullptr;
 	_colorMap = nullptr;
 	_renderMode = renderMode;
+	_isAccelerated = false;
 }
 
 Renderer::~Renderer() {}
