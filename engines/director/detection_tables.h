@@ -2008,13 +2008,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("ebisu", "", "xn--u9jy52g7nc5q2bdxi", "f5277c53bacd27936158dd3867e587e2", 392209, Common::JA_JPN, 311),
 
 	// 1994 demo for Millie's Math House, Thinkin' Things, Kid Desk
-	MACGAME1_l("edmark", "", "EDMARK", "276bee761e48a6fd709df77d5c2f60dd", 392693, Common::JA_JPN, 313),
+	MACGAME1_l("edmark", "", "EDMARK", "276bee761e48a6fd709df77d5c2f60dd", 392437, Common::JA_JPN, 313),
 
 	// Demo contains Apparelizer 1.0 minigame; full game is D4
 	// Found on Disc Inferno from APC magazine (Australia), Dec 1999
 	WINDEMO1("elroycostume", "Demo", "elroy.exe", "9d18c6a224dd0e5be4ad03a05c74254b", 854349, 311),
 
-	MACDEMO1("emigre", "Demo", "play cheese", "7c80091b84d4d5d48f7c773b30b10598", 990669, 310),
+	MACDEMO1("emigre", "Demo", "play cheese", "7c80091b84d4d5d48f7c773b30b10598", 990413, 310),
 
 	MACGAME1("encarta94", "", "Encarta Projector", "7f443f2e63fd497a9ad85b10dc880a91", 385727, 313),
 
@@ -2024,7 +2024,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// HyperCard application, calls movie using external MacroMind Player
 	MACGAME2("exoticjapan", "", "MacroMind Player", "7f443f2e63fd497a9ad85b10dc880a91", 2196398,
 								"Exotic Japan Stack", "28bdf606d2fbec537716ceae5edfaa93", 878941, 313),
-	MACDEMO1("exoticjapan", "Sampler", "Exotic Japan Sampler", "e59139ac60997f52af77d7f03275ab30", 1790832, 311),
+	MACDEMO1("exoticjapan", "Sampler", "Exotic Japan Sampler", "e59139ac60997f52af77d7f03275ab30", 1790576, 311),
 
 	WINDEMO1("explorapedia", "1994 Demo", "XPLDMO6.EXE", "d61e2e1e9f9d9907005adc992a451d02", 4724919, 311),
 
@@ -2032,7 +2032,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("famdoc3", "", "How To Use Anatomy", "2ce360c9ea2da80a2c6d1040b0ad92dd", 3747110, 313),
 
 	// Original filename 'FANTAZION™'
-	MACGAME1_l("fantazion", "", "xn--FANTAZION-oz64c", "276bee761e48a6fd709df77d5c2f60dd", 420924, Common::JA_JPN, 310),
+	MACGAME1_l("fantazion", "", "xn--FANTAZION-eh2e", "276bee761e48a6fd709df77d5c2f60dd", 420924, Common::JA_JPN, 310),
 	WINGAME1_l("fantazion", "", "FTZ.EXE", "7c8230a804abf9353b05627a675b5ffb", 406250, Common::JA_JPN, 310),
 
 	MACGAME1_l("erikotamuraoz", "", "OZ", "7f443f2e63fd497a9ad85b10dc880a91", 384207, Common::JA_JPN, 313),
@@ -2041,16 +2041,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("erikotamuraoz", "Demo", "OZ DEMO", "f5277c53bacd27936158dd3867e587e2", 391591, Common::JA_JPN, 311),
 
 	// All four languages on one disc. Original Mac file name is Parents’ Guide FFF
-	MACGAME1("fff",   "", "Friends",      "7f443f2e63fd497a9ad85b10dc880a91", 413963, 313),
-	WINGAME1("fff",   "", "FRIENDS.EXE",  "65d06b5fef155a2473434571aff5bc29", 384557, 313),
-	MACGAME1_l("fff", "", "Los Amigos",   "7f443f2e63fd497a9ad85b10dc880a91", 413962, Common::ES_ESP, 313),
-	MACGAME1_l("fff", "", "Les Amis",     "7f443f2e63fd497a9ad85b10dc880a91", 413962, Common::FR_FRA, 313),
-	MACGAME1_l("fff", "", "Otomodachi",   "7f443f2e63fd497a9ad85b10dc880a91", 413962, Common::JA_JPN, 313),
-	WINGAME1_l("fff", "", "AMIGOS.EXE",   "65d06b5fef155a2473434571aff5bc29", 384556, Common::ES_ESP, 313),
-	WINGAME1_l("fff", "", "LESAMIS.EXE",  "65d06b5fef155a2473434571aff5bc29", 384554, Common::FR_FRA, 313),
-	WINGAME1_l("fff", "", "OTOMODAC.EXE", "65d06b5fef155a2473434571aff5bc29", 384554, Common::JA_JPN, 313),
-	MACDEMO1("fff", "Parents' Guide", "Parents' Guide FFF", "7f443f2e63fd497a9ad85b10dc880a91", 539017, 313),
-	WINDEMO1("fff", "Parents' Guide", "PG_FFF.EXE", "65d06b5fef155a2473434571aff5bc29", 524393, 313),
+	MACGAME1("fff",   "", "VroomBooks/Friends",    "7f443f2e63fd497a9ad85b10dc880a91", 413707, 313),
+	WINGAME1("fff",   "", "VROOMBKS/FRIENDS.EXE",  "65d06b5fef155a2473434571aff5bc29", 384557, 313),
+	MACGAME1_l("fff", "", "VroomBooks/Los Amigos", "7f443f2e63fd497a9ad85b10dc880a91", 413706, Common::ES_ESP, 313),
+	MACGAME1_l("fff", "", "VroomBooks/Les Amis",   "7f443f2e63fd497a9ad85b10dc880a91", 413706, Common::FR_FRA, 313),
+	MACGAME1_l("fff", "", "VroomBooks/Otomodachi", "7f443f2e63fd497a9ad85b10dc880a91", 413706, Common::JA_JPN, 313),
+	WINGAME1_l("fff", "", "VROOMBKS/AMIGOS.EXE",   "65d06b5fef155a2473434571aff5bc29", 384556, Common::ES_ESP, 313),
+	WINGAME1_l("fff", "", "VROOMBKS/LESAMIS.EXE",  "65d06b5fef155a2473434571aff5bc29", 384554, Common::FR_FRA, 313),
+	WINGAME1_l("fff", "", "VROOMBKS/OTOMODAC.EXE", "65d06b5fef155a2473434571aff5bc29", 384554, Common::JA_JPN, 313),
+	MACDEMO1("fff", "Parents' Guide", "VroomBooks/xn--Parents Guide FFF-j42j", "7f443f2e63fd497a9ad85b10dc880a91", 538761, 313),
+	WINDEMO1("fff", "Parents' Guide", "VROOMBKS/PG_FFF.EXE", "65d06b5fef155a2473434571aff5bc29", 524393, 313),
 	MACDEMO1("fff", "Demo", "Demo", "1ae45c23586b41997ba52e2e7c771c4c", 446649, 311),
 
 	WINDEMO1("flw", "Demo", "FLWDEMO.EXE", "2b3543a9131a49f665982d26513a84f8", 373260, 310),
