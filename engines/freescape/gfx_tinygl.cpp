@@ -137,13 +137,14 @@ void TinyGLRenderer::renderCrossair(byte color, const Common::Point position) {
 
 	tglColor3ub(r, g, b);
 
-	tglBegin(TGL_LINES);
-	tglVertex2f(position.x - 1, position.y);
-	tglVertex2f(position.x + 3, position.y);
-
-	tglVertex2f(position.x, position.y - 3);
-	tglVertex2f(position.x, position.y + 3);
-	tglEnd();
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	copyToVertexArray(0, Math::Vector3d(position.x - 1, position.y, 0));
+	copyToVertexArray(1, Math::Vector3d(position.x + 3, position.y, 0));
+	copyToVertexArray(2, Math::Vector3d(position.x, position.y - 3, 0));
+	copyToVertexArray(3, Math::Vector3d(position.x, position.y + 3, 0));
+	tglVertexPointer(3, TGL_FLOAT, 0, _verts);
+	tglDrawArrays(TGL_LINES, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
 
 	tglDepthMask(TGL_TRUE);
 	tglEnable(TGL_DEPTH_TEST);
@@ -167,20 +168,20 @@ void TinyGLRenderer::renderShoot(byte color, const Common::Point position) {
 	int viewPort[4];
 	tglGetIntegerv(TGL_VIEWPORT, viewPort);
 
-	tglBegin(TGL_LINES);
-	tglVertex2f(0, _screenH - 2);
-	tglVertex2f(position.x, position.y);
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	copyToVertexArray(0, Math::Vector3d(0, _screenH - 2, 0));
+	copyToVertexArray(1, Math::Vector3d(position.x, position.y, 0));
+	copyToVertexArray(2, Math::Vector3d(0, _screenH - 2, 0));
+	copyToVertexArray(3, Math::Vector3d(position.x, position.y, 0));
 
-	tglVertex2f(0, _screenH - 2);
-	tglVertex2f(position.x, position.y);
+	copyToVertexArray(4, Math::Vector3d(_screenW, _screenH - 2, 0));
+	copyToVertexArray(5, Math::Vector3d(position.x, position.y, 0));
+	copyToVertexArray(6, Math::Vector3d(_screenW, _screenH, 0));
+	copyToVertexArray(7, Math::Vector3d(position.x, position.y, 0));
 
-	tglVertex2f(_screenW, _screenH - 2);
-	tglVertex2f(position.x, position.y);
-
-	tglVertex2f(_screenW, _screenH);
-	tglVertex2f(position.x, position.y);
-
-	tglEnd();
+	tglVertexPointer(3, TGL_FLOAT, 0, _verts);
+	tglDrawArrays(TGL_LINES, 0, 8);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
 
 	tglEnable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_TRUE);
