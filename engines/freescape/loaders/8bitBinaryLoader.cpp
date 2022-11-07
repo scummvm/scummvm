@@ -66,6 +66,7 @@ Common::Array<uint8> FreescapeEngine::readArray(Common::SeekableReadStream *file
 		data[i] = readField(file, 8);
 	}
 	Common::Array<uint8> array(data, size);
+	free(data);
 	return array;
 }
 
