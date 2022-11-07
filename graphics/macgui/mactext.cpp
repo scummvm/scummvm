@@ -1528,7 +1528,7 @@ void MacText::drawSelection(int xoff, int yoff) {
 			if (y + _scrollPos >= lastLineStart)
 				x2 = s.endX;
 
-			// if we are selecting text reversely, and we are at the first line but not the select from begining, then we add offset to x1
+			// if we are selecting text reversely, and we are at the first line but not the select from beginning, then we add offset to x1
 			// the reason here is if we are not drawing the single line, then we draw selection from x1 to x2 + offset. i.e. we draw from begin
 			// otherwise, we draw selection from x1 + offset to x2 + offset
 			if (row == s.startRow && s.startCol != 0) {
