@@ -223,7 +223,7 @@ char *rstrncpy(char *dest, const char *src, int max) {
 
 /* This does a case-insensitive match of the beginning of *pstr to match */
 /* <match> must be all upper case */
-/* *pstr is updated to point after the match, if it is succesful.
+/* *pstr is updated to point after the match, if it is successful.
    Otherwise *pstr is left alone. */
 rbool match_str(const char **pstr, const char *match) {
 	int i;

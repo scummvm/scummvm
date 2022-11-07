@@ -1356,7 +1356,7 @@ const opdef *get_opdef(integer op) {
 
 long new_str(char *buff, int max_leng, rbool pasc)
 /* Stores the (up to leng) characters of a string
-  into our master string space (enlarging it if neccessary)
+  into our master string space (enlarging it if necessary)
   and returns the offset into the array.
   pasc=1 ==> pascal-style string
   pasc=0 ==> C-style string; ignore max_leng and NONE strings
