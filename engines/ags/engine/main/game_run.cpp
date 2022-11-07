@@ -271,7 +271,7 @@ bool run_service_key_controls(KeyInput &out_key) {
 	// * if no other key was pressed meanwhile,
 	// * if at least one of those gathered mod-keys was released.
 	//
-	// TODO: maybe split this mod handling into sep procedure and make it easier to use (not that it's used alot)?
+	// TODO: maybe split this mod handling into sep procedure and make it easier to use (not that it's used a lot)?
 
 	// First, check mods
 	const int cur_mod = make_merged_mod(key_evt.kbd.flags);
