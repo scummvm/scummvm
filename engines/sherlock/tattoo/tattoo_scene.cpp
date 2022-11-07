@@ -649,7 +649,7 @@ int TattooScene::startCAnim(int cAnimNum, int playRate) {
 	if (talk._talkToAbort)
 		return 1;
 
-	// Turn the player (and NPC #1 if neccessary) off before running the canimation
+	// Turn the player (and NPC #1 if necessary) off before running the canimation
 	if (teleport1.x != -1 && savedPlayerType == CHARACTER)
 		people[HOLMES]._type = REMOVE;
 

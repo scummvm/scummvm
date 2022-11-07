@@ -972,7 +972,7 @@ void TattooPerson::checkWalkGraphics() {
 		_sequences = &_walkSequences[_sequenceNumber]._sequences[0];
 		_seqSize = _walkSequences[_sequenceNumber]._sequences.size();
 
-		// WORKAROUND: Occassionally when switching to a new walk sequence the existing frame number may be outside
+		// WORKAROUND: Occasionally when switching to a new walk sequence the existing frame number may be outside
 		// the allowed range for the new sequence. In such cases, reset the frame number
 		if (_frameNumber < 0 || _frameNumber >= (int)_seqSize || _walkSequences[_sequenceNumber][_frameNumber] == 0)
 			_frameNumber = 0;
