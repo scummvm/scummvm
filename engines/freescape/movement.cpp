@@ -53,8 +53,8 @@ void FreescapeEngine::shoot() {
 	_mixer->stopHandle(_soundFxHandle);
 	_gfx->renderShoot(0, _crossairPosition);
 
-	float xoffset = _crossairPosition.x - _screenW / 2;
-	float yoffset = _crossairPosition.y - _screenH / 2;
+	float xoffset = _crossairPosition.x - float(_screenW) / 2;
+	float yoffset = _crossairPosition.y - float(_screenH) / 2;
 
 	Math::Vector3d direction = directionToVector(_pitch + yoffset, _yaw - xoffset);
 	Math::Ray ray(_position, direction);
