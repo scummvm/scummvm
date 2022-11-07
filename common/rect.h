@@ -299,7 +299,7 @@ struct Rect {
 	}
 
    	/**
-	 * Reduce the dimensions of this rectangle by setting max width and max heigth.
+	 * Reduce the dimensions of this rectangle by setting max width and max height.
 	 */
 	void clip(int16 maxw, int16 maxh) {
 		clip(Rect(0, 0, maxw, maxh));
