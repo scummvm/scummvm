@@ -704,6 +704,7 @@ protected:
 	void o7_closedBase();
 	void o7_getDBString();
 
+	void o7_fillRect(OpFuncParams &params);
 	void o7_readData(OpFuncParams &params);
 	void o7_writeData(OpFuncParams &params);
 
