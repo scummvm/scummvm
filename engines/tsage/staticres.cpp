@@ -71,6 +71,7 @@ char const *const DEFAULT_SCENE_HOTSPOT = "That accomplishes nothing.";
 char const *const SAVE_ERROR_MSG = "Error occurred saving game. Please do not try to restore this game!";
 char const *const SAVING_NOT_ALLOWED_MSG = "Saving is not allowed at this time.";
 char const *const RESTORING_NOT_ALLOWED_MSG = "Restoring is not allowed at this time.";
+// FIXME: Spelling incorrect. possesion should be possession. Fixing changes game data and thus may cause issues
 char const *const INV_EMPTY_MSG = "You have nothing in your possesion.";
 
 char const *const QUIT_CONFIRM_MSG = "Do you want to quit playing this game?";
