@@ -169,7 +169,7 @@ void MidiParser::hangingNote(byte channel, byte note, uint32 timeLeft, bool recy
 		}
 	}
 
-	// Occassionally we might get a zero or negative note
+	// Occasionally we might get a zero or negative note
 	// length, if the note should be turned on and off in
 	// the same iteration. For now just set it to 1 and
 	// we'll turn it off in the next cycle.

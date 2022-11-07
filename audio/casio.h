@@ -99,7 +99,7 @@ public:
 	 * @param driver The driver that will receive MIDI events from this driver.
 	 * @param deviceType The type of MIDI device that will receive MIDI events
 	 * from this driver (MT-540 or CT-460/CSM-1).
-	 * @return 0 if the driver was opened successfully; >0 if an error occured.
+	 * @return 0 if the driver was opened successfully; >0 if an error occurred.
 	 */
 	virtual int open(MidiDriver *driver, MusicType deviceType);
 	void close() override;
