@@ -33,7 +33,6 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 	_playerHeights.push_back(48);
 
 	_playerHeight = _playerHeights[_playerHeightNumber];
-	_playerHeight = 64;
 	_playerWidth = 12;
 	_playerDepth = 32;
 }
