@@ -836,6 +836,14 @@ void Combat::displaySpellResult(const InfoMessage &msg) {
 	warning("TODO: displaySpellResult");
 }
 
+void Combat::iterateMonsters1() {
+	// TODO: iterateMonsters1
+}
+
+void Combat::iterateMonsters2() {
+	// TODO: iterateMonsters2
+}
+
 void Combat::turnUndead() {
 	if (_turnUndeadUsed) {
 		// Already been used in the current combat, can't be used again
