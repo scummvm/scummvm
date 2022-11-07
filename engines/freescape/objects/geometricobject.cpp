@@ -208,6 +208,8 @@ void GeometricObject::computeBoundingBox() {
 		_boundingBox.expand(_origin + _size);
 		break;
 	case kLineType:
+		if (!_ordinates)
+			error("Ordinates needed to compute bounding box!");
 		for (uint i = 0; i < _ordinates->size(); i = i + 3) {
 			_boundingBox.expand(Math::Vector3d((*_ordinates)[i], (*_ordinates)[i + 1], (*_ordinates)[i + 2]));
 		}
@@ -233,12 +235,16 @@ void GeometricObject::computeBoundingBox() {
 	case kQuadrilateralType:
 	case kPentagonType:
 	case kHexagonType:
+		if (!_ordinates)
+			error("Ordinates needed to compute bounding box!");
 		for (uint i = 0; i < _ordinates->size(); i = i + 3) {
 			_boundingBox.expand(Math::Vector3d((*_ordinates)[i], (*_ordinates)[i + 1], (*_ordinates)[i + 2]));
 		}
 		break;
 
 	case kEastPyramidType:
+		if (!_ordinates)
+			error("Ordinates needed to compute bounding box!");
 		_boundingBox.expand(_origin + Math::Vector3d(0, 0, _size.z()));
 		_boundingBox.expand(_origin + Math::Vector3d(0, _size.y(), _size.z()));
 		_boundingBox.expand(_origin + Math::Vector3d(0, _size.y(), 0));
@@ -249,6 +255,8 @@ void GeometricObject::computeBoundingBox() {
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), (*_ordinates)[0], (*_ordinates)[1]));
 		break;
 	case kWestPyramidType:
+		if (!_ordinates)
+			error("Ordinates needed to compute bounding box!");
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), 0, 0));
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), _size.y(), 0));
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), _size.y(), _size.z()));
@@ -260,6 +268,8 @@ void GeometricObject::computeBoundingBox() {
 		_boundingBox.expand(_origin + Math::Vector3d(0, (*_ordinates)[0], (*_ordinates)[3]));
 		break;
 	case kUpPyramidType:
+		if (!_ordinates)
+			error("Ordinates needed to compute bounding box!");
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), 0, 0));
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), 0, _size.z()));
 		_boundingBox.expand(_origin + Math::Vector3d(0, 0, _size.z()));
@@ -270,6 +280,8 @@ void GeometricObject::computeBoundingBox() {
 		_boundingBox.expand(_origin + Math::Vector3d((*_ordinates)[0], _size.y(), (*_ordinates)[3]));
 		break;
 	case kDownPyramidType:
+		if (!_ordinates)
+			error("Ordinates needed to compute bounding box!");
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), _size.y(), 0));
 		_boundingBox.expand(_origin + Math::Vector3d(0, _size.y(), 0));
 		_boundingBox.expand(_origin + Math::Vector3d(0, _size.y(), _size.z()));
@@ -281,6 +293,8 @@ void GeometricObject::computeBoundingBox() {
 		_boundingBox.expand(_origin + Math::Vector3d((*_ordinates)[2], 0, (*_ordinates)[3]));
 		break;
 	case kNorthPyramidType:
+		if (!_ordinates)
+			error("Ordinates needed to compute bounding box!");
 		_boundingBox.expand(_origin + Math::Vector3d(0, _size.y(), 0));
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), _size.y(), 0));
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), 0, 0));
@@ -291,6 +305,8 @@ void GeometricObject::computeBoundingBox() {
 		_boundingBox.expand(_origin + Math::Vector3d((*_ordinates)[0], (*_ordinates)[1], _size.z()));
 		break;
 	case kSouthPyramidType:
+		if (!_ordinates)
+			error("Ordinates needed to compute bounding box!");
 		_boundingBox.expand(_origin + Math::Vector3d(0, 0, _size.z()));
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), 0, _size.z()));
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), _size.y(), _size.z()));
