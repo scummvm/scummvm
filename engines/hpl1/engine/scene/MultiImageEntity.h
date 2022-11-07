@@ -29,7 +29,7 @@
 #define HPL_MULTI_IMAGE_ENTITY_H
 
 #include "hpl1/engine/scene/ImageEntity.h"
-#include <map>
+#include "hpl1/std/map.h"
 
 namespace hpl {
 
@@ -48,7 +48,7 @@ public:
 	bool mbSyncFrame;
 };
 
-typedef std::map<unsigned int, cMultiImagePart> tMultiImagePartMap;
+typedef Hpl1::std::map<unsigned int, cMultiImagePart> tMultiImagePartMap;
 typedef tMultiImagePartMap::iterator tMultiImagePartMapIt;
 
 class cMultiImageEntity {

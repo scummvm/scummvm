@@ -28,9 +28,8 @@
 #ifndef HPL_GUI_SKIN_H
 #define HPL_GUI_SKIN_H
 
-#include <map>
-
 #include "hpl1/engine/gui/GuiTypes.h"
+#include "hpl1/std/map.h"
 
 namespace hpl {
 

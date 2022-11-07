@@ -28,12 +28,11 @@
 #ifndef HPL_GUI_H
 #define HPL_GUI_H
 
-#include <map>
-
 #include "hpl1/engine/game/Updateable.h"
 
 #include "hpl1/engine/gui/GuiTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include "hpl1/std/map.h"
 
 namespace hpl {
 
@@ -50,23 +49,23 @@ class iGuiMaterial;
 
 //------------------------------------------------
 
-typedef std::map<tString, cGuiSet *> tGuiSetMap;
+typedef Hpl1::std::map<tString, cGuiSet *> tGuiSetMap;
 typedef tGuiSetMap::iterator tGuiSetMapIt;
 
 //-------------------------------------
 
-typedef std::map<tString, cGuiSkin *> tGuiSkinMap;
+typedef Hpl1::std::map<tString, cGuiSkin *> tGuiSkinMap;
 typedef tGuiSkinMap::iterator tGuiSkinMapIt;
 
 //-------------------------------------
 
-typedef std::map<tString, eGuiSkinGfx> tGuiSkinGfxMap;
+typedef Hpl1::std::map<tString, eGuiSkinGfx> tGuiSkinGfxMap;
 typedef tGuiSkinGfxMap::iterator tGuiSkinGfxMapIt;
 
-typedef std::map<tString, eGuiSkinFont> tGuiSkinFontMap;
+typedef Hpl1::std::map<tString, eGuiSkinFont> tGuiSkinFontMap;
 typedef tGuiSkinFontMap::iterator tGuiSkinFontMapIt;
 
-typedef std::map<tString, eGuiSkinAttribute> tGuiSkinAttributeMap;
+typedef Hpl1::std::map<tString, eGuiSkinAttribute> tGuiSkinAttributeMap;
 typedef tGuiSkinAttributeMap::iterator tGuiSkinAttributeMapIt;
 
 //------------------------------------------------

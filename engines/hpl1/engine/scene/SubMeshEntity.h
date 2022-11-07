@@ -28,8 +28,6 @@
 #ifndef HPL_SUB_MESH_ENTITY_H
 #define HPL_SUB_MESH_ENTITY_H
 
-#include <map>
-
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/Renderable.h"
 #include "hpl1/engine/math/MathTypes.h"
@@ -38,6 +36,7 @@
 #include "hpl1/engine/scene/SectorVisibility.h"
 #include "hpl1/engine/system/SystemTypes.h"
 #include "common/array.h"
+#include "hpl1/std/map.h"
 
 namespace hpl {
 
@@ -59,13 +58,13 @@ class cBoneState;
 typedef Common::Array<cAnimationState *> tAnimationStateVec;
 typedef tAnimationStateVec::iterator tAnimationStateVecIt;
 
-typedef std::map<tString, int> tAnimationStateIndexMap;
+typedef Hpl1::std::map<tString, int> tAnimationStateIndexMap;
 typedef tAnimationStateIndexMap::iterator tAnimationStateIndexMapIt;
 
 typedef Common::Array<cBoneState *> tNodeStateVec;
 typedef tNodeStateVec::iterator tNodeStateVecIt;
 
-typedef std::map<tString, int> tNodeStateIndexMap;
+typedef Hpl1::std::map<tString, int> tNodeStateIndexMap;
 typedef tNodeStateIndexMap::iterator tNodeStateIndexMapIt;
 
 //-----------------------------------------------------------------------

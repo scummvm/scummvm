@@ -31,7 +31,7 @@
 #include "hpl1/engine/math/MathTypes.h"
 
 #include "hpl1/engine/scene/Entity2D.h"
-#include <map>
+#include "hpl1/std/map.h"
 #include "common/list.h"
 
 namespace hpl {

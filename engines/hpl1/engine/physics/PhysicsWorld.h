@@ -31,7 +31,7 @@
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include <map>
+#include "hpl1/std/map.h"
 
 #include "hpl1/engine/physics/CollideData.h"
 
@@ -72,7 +72,7 @@ typedef tPhysicsControllerList::iterator tPhysicsControllerListIt;
 typedef Common::List<iCharacterBody *> tCharacterBodyList;
 typedef tCharacterBodyList::iterator tCharacterBodyListIt;
 
-typedef std::map<tString, iPhysicsMaterial *> tPhysicsMaterialMap;
+typedef Hpl1::std::map<tString, iPhysicsMaterial *> tPhysicsMaterialMap;
 typedef tPhysicsMaterialMap::iterator tPhysicsMaterialMapIt;
 
 typedef cSTLMapIterator<iPhysicsMaterial *, tPhysicsMaterialMap, tPhysicsMaterialMapIt> cPhysicsMaterialIterator;

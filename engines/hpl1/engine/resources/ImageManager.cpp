@@ -344,7 +344,7 @@ cFrameBitmap *cImageManager::CreateBitmapFrame(cVector2l avSize) {
 
 	mlstBitmapFrames.push_back(pBFrame);
 
-	std::pair<tFrameTextureMap::iterator, bool> ret = m_mapTextureFrames.insert(tFrameTextureMap::value_type(mlFrameHandle, pTFrame));
+	auto ret = m_mapTextureFrames.insert(tFrameTextureMap::value_type(mlFrameHandle, pTFrame));
 	if (ret.second == false) {
 		Error("Could not add texture frame %d with handle %d! Handle already exist!\n", pTFrame, mlFrameHandle);
 	} else {

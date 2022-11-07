@@ -28,9 +28,9 @@
 #ifndef HPL_GAME_TYPES_H
 #define HPL_GAME_TYPES_H
 
-#include <map>
 
 #include "hpl1/engine/system/SerializeClass.h"
+#include "hpl1/std/map.h"
 
 namespace hpl {
 
@@ -41,7 +41,7 @@ class cScriptVar : public iSerializable {
 	int mlVal;
 };
 
-typedef std::map<tString, cScriptVar> tScriptVarMap;
+typedef Hpl1::std::map<tString, cScriptVar> tScriptVarMap;
 typedef tScriptVarMap::iterator tScriptVarMapIt;
 
 } // namespace hpl

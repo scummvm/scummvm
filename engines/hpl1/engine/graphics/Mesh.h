@@ -28,8 +28,6 @@
 #ifndef HPL_MESH_H
 #define HPL_MESH_H
 
-#include <map>
-
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/resources/ResourceBase.h"
@@ -40,6 +38,7 @@
 
 #include "hpl1/engine/scene/Light3D.h"
 #include "common/array.h"
+#include "hpl1/std/map.h"
 
 namespace hpl {
 
@@ -65,7 +64,7 @@ class cWorld3D;
 typedef Common::Array<cAnimation *> tAnimationVec;
 typedef tAnimationVec::iterator tAnimationVecIt;
 
-typedef std::map<tString, int> tAnimationIndexMap;
+typedef Hpl1::std::map<tString, int> tAnimationIndexMap;
 typedef tAnimationIndexMap::iterator tAnimationIndexMapIt;
 
 typedef Common::Array<cSubMesh *> tSubMeshVec;

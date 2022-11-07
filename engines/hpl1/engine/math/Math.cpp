@@ -29,6 +29,7 @@
 #include "hpl1/engine/system/low_level_system.h"
 #include <limits> // FIXME: Refactor to remove this system header
 #include "hpl1/hpl1.h"
+#include <limits>
 
 namespace hpl {
 
@@ -1391,7 +1392,7 @@ public:
 	tUIntList mlstIndices;
 };
 
-typedef std::map<cVector3f, cVertexIndices> tVtxIdxMap;
+typedef Hpl1::std::map<cVector3f, cVertexIndices> tVtxIdxMap;
 typedef tVtxIdxMap::iterator tVtxIdxMapIt;
 
 //////////////////////////////////////////////////////

@@ -280,7 +280,7 @@ public:
 	bool mbDeleteMe;
 };
 
-typedef std::map<tString, cGameCollideScript *> tGameCollideScriptMap;
+typedef Hpl1::std::map<tString, cGameCollideScript *> tGameCollideScriptMap;
 typedef tGameCollideScriptMap::iterator tGameCollideScriptMapIt;
 
 //---------------------------------

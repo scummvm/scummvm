@@ -28,8 +28,8 @@
 #ifndef HPL_MEMORY_MANAGER_H
 #define HPL_MEMORY_MANAGER_H
 
-#include <map>
 #include <string>
+#include "hpl1/std/map.h"
 
 namespace hpl {
 
@@ -47,7 +47,7 @@ public:
 
 //------------------------------------
 
-typedef std::map<void *, cAllocatedPointer> tAllocatedPointerMap;
+typedef Hpl1::std::map<void *, cAllocatedPointer> tAllocatedPointerMap;
 typedef tAllocatedPointerMap::iterator tAllocatedPointerMapIt;
 
 //------------------------------------

@@ -208,7 +208,7 @@ cSectorVisibility *cSectorVisibilityContainer::GetSectorVisibilty(cSector *apSec
 		cSectorVisibility *pVisSector = hplNew(cSectorVisibility, (this));
 		pVisSector->mpSector = apSector;
 
-		m_mapSectors.insert(tSectorVisibilityMapIt::value_type(apSector, pVisSector));
+		m_mapSectors.insert(tSectorVisibilityMap::value_type(apSector, pVisSector));
 
 		return pVisSector;
 	}

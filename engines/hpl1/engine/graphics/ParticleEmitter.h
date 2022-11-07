@@ -33,7 +33,7 @@
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
 #include "common/list.h"
-#include <map>
+#include "hpl1/std/map.h"
 #include "common/array.h"
 
 namespace hpl {
@@ -233,7 +233,7 @@ protected:
 	float mfWarmUpStepsPerSec;
 };
 
-typedef std::map<tString, iParticleEmitterData *> tParticleEmitterDataMap;
+typedef Hpl1::std::map<tString, iParticleEmitterData *> tParticleEmitterDataMap;
 typedef tParticleEmitterDataMap::iterator tParticleEmitterDataMapIt;
 
 }     // namespace hpl

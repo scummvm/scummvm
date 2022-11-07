@@ -28,10 +28,10 @@
 #ifndef HPL_HAPTIC_TYPES_H
 #define HPL_HAPTIC_TYPES_H
 
-#include <map>
 #include "hpl1/engine/system/SystemTypes.h"
 #include "common/list.h"
 #include "common/array.h"
+#include "hpl1/std/map.h"
 
 namespace hpl {
 
@@ -88,7 +88,7 @@ typedef tHapticForceList::iterator tHapticForceListIt;
 typedef Common::List<iHapticSurface *> tHapticSurfaceList;
 typedef tHapticSurfaceList::iterator tHapticSurfaceListIt;
 
-typedef std::map<tString, iHapticSurface *> tHapticSurfaceMap;
+typedef Hpl1::std::map<tString, iHapticSurface *> tHapticSurfaceMap;
 typedef tHapticSurfaceMap::iterator tHapticSurfaceMapIt;
 
 typedef cSTLIterator<iHapticShape *, tHapticShapeList, tHapticShapeListIt> cHapticShapeIterator;

@@ -162,7 +162,7 @@ bool cLanguageFile::LoadFromFile(const tString asFile) {
 
 			// if(sE == "Motion blur:") Log("After String: '%s'\n",cString::To8Char(pEntry->mwsText).c_str());
 
-			std::pair<tLanguageEntryMap::iterator, bool> ret = pCategory->m_mapEntries.insert(tLanguageEntryMap::value_type(sEntryName, pEntry));
+			auto ret = pCategory->m_mapEntries.insert(tLanguageEntryMap::value_type(sEntryName, pEntry));
 			if (ret.second == false) {
 				Warning("Language entry '%s' in category '%s' already exists!\n", sEntryName.c_str(), sCatName.c_str());
 				hplDelete(pEntry);

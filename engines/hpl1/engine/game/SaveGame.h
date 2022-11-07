@@ -33,6 +33,7 @@
 
 #include "hpl1/engine/system/SerializeClass.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include "hpl1/std/map.h"
 
 class TiXmlElement;
 
