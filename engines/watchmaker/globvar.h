@@ -91,19 +91,22 @@ private:
 };
 
 // GAME RECT
-extern struct SRect BigIconRect;
-extern struct SRect UseIconRect;
-extern struct SRect QuitGameRect;
-extern struct SRect CloseInvRect;
-extern struct SRect PlayerInvRect;
-extern struct SRect InvSaveRect;
-extern struct SRect InvLoadRect;
-extern struct SRect InvOptionsRect;
-extern struct SRect Inv1Up;
-extern struct SRect Inv1Down;
-extern struct SRect Diag2Up;
-extern struct SRect Diag2Down;
-extern struct SRect CallOtherPlayerRect;
+struct GameRect {
+	GameRect();
+	SRect _bigIconRect;
+	SRect _useIconRect;
+	SRect _quitGameRect;
+	SRect _closeInvRect;
+	SRect _playerInvRect;
+	SRect _invSaveRect;
+	SRect _invLoadRect;
+	SRect _invOptionsRect;
+	SRect _inv1Up;
+	SRect _inv1Down;
+	SRect _diag2Up;
+	SRect _diag2Down;
+	SRect _callOtherPlayerRect;
+};
 extern struct SD3DRect D3DRectsList[];
 extern struct SD3DTriangle D3DTrianglesList[];
 extern struct SD3DBitmap D3DBitmapsList[];

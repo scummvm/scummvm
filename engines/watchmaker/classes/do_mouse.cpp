@@ -79,7 +79,7 @@ void doMouseButton(WGame &game) {
 	// se sono su inventario
 	if (InvStatus & INV_ON) {
 		if ((InvStatus & INV_ON) && (InvStatus & INV_MODE1) && PlayerCanCall(game._gameVars)) {
-			if (CheckRect(renderer, CallOtherPlayerRect, TheMessage->wparam1, TheMessage->wparam2)) {
+			if (CheckRect(renderer, game._gameRect._callOtherPlayerRect, TheMessage->wparam1, TheMessage->wparam2)) {
 				Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dRCALLOTHERPLAYER, 0, 0, nullptr, nullptr, nullptr);
 				return;
 			}
@@ -87,17 +87,17 @@ void doMouseButton(WGame &game) {
 
 		CurInvObj = WhatIcon(*game._renderer, TheMessage->wparam1, TheMessage->wparam2);
 
-		if ((CurInvObj == iNULL) && (InvStatus & INV_MODE2) && CheckRect(renderer, BigIconRect, TheMessage->wparam1, TheMessage->wparam2))
+		if ((CurInvObj == iNULL) && (InvStatus & INV_MODE2) && CheckRect(renderer, game._gameRect._bigIconRect, TheMessage->wparam1, TheMessage->wparam2))
 			CurInvObj = BigInvObj;
 
 		if (CurInvObj == iNULL) {
 			// se ho cliccato su icona grande
 			if (InvStatus & INV_MODE2) {
-				if (CheckRect(renderer, Inv1Up, TheMessage->wparam1, TheMessage->wparam2))
+				if (CheckRect(renderer, game._gameRect._inv1Up, TheMessage->wparam1, TheMessage->wparam2))
 					InventoryUp();
-				else if (CheckRect(renderer, Inv1Down, TheMessage->wparam1, TheMessage->wparam2))
+				else if (CheckRect(renderer, game._gameRect._inv1Down, TheMessage->wparam1, TheMessage->wparam2))
 					InventoryDown();
-				else if (CheckRect(renderer, CloseInvRect, TheMessage->wparam1, TheMessage->wparam2)) {
+				else if (CheckRect(renderer, game._gameRect._closeInvRect, TheMessage->wparam1, TheMessage->wparam2)) {
 					if (InvStatus & INV_MODE4) {
 						CurPlayer ^= 1;
 						ChangePlayer(game, (uint8)((CurPlayer ^ 1) + ocDARRELL));
@@ -115,17 +115,17 @@ void doMouseButton(WGame &game) {
 						game._renderer->setCurCameraViewport(t3dCurCamera->Fov, bSuperView);
 
 					BigInvObj = iNULL;
-				} else if (CheckRect(renderer, QuitGameRect, TheMessage->wparam1, TheMessage->wparam2))
+				} else if (CheckRect(renderer, game._gameRect._quitGameRect, TheMessage->wparam1, TheMessage->wparam2))
 					CloseSys(game);
-				else if (CheckRect(renderer, InvSaveRect, TheMessage->wparam1, TheMessage->wparam2) && !(InvStatus & INV_MODE4) && PlayerCanSave())
+				else if (CheckRect(renderer, game._gameRect._invSaveRect, TheMessage->wparam1, TheMessage->wparam2) && !(InvStatus & INV_MODE4) && PlayerCanSave())
 					Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_SAVE, 0, tOPTIONS, nullptr, nullptr, nullptr);
-				else if (CheckRect(renderer, InvLoadRect, TheMessage->wparam1, TheMessage->wparam2) && !(InvStatus & INV_MODE4))
+				else if (CheckRect(renderer, game._gameRect._invLoadRect, TheMessage->wparam1, TheMessage->wparam2) && !(InvStatus & INV_MODE4))
 					Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_LOAD, 0, tOPTIONS, nullptr, nullptr, nullptr);
-				else if (CheckRect(renderer, InvOptionsRect, TheMessage->wparam1, TheMessage->wparam2) && !(InvStatus & INV_MODE4))
+				else if (CheckRect(renderer, game._gameRect._invOptionsRect, TheMessage->wparam1, TheMessage->wparam2) && !(InvStatus & INV_MODE4))
 					Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_OPTIONS, 0, tOPTIONS, nullptr, nullptr, nullptr);
 				else {
 					ClearUseWith();
-					if ((CheckRect(renderer, PlayerInvRect, TheMessage->wparam1, TheMessage->wparam2)) || (InvStatus & INV_MODE4)) {
+					if ((CheckRect(renderer, game._gameRect._playerInvRect, TheMessage->wparam1, TheMessage->wparam2)) || (InvStatus & INV_MODE4)) {
 						if (PlayerCanSwitch(game._gameVars, 0)) {
 							InvStatus ^= INV_MODE4;
 							CurPlayer ^= VICTORIA;
@@ -134,9 +134,9 @@ void doMouseButton(WGame &game) {
 						}
 					}
 				}
-			} else if (CheckRect(renderer, Inv1Up, TheMessage->wparam1, TheMessage->wparam2))
+			} else if (CheckRect(renderer, game._gameRect._inv1Up, TheMessage->wparam1, TheMessage->wparam2))
 				InventoryUp();
-			else if (CheckRect(renderer, Inv1Down, TheMessage->wparam1, TheMessage->wparam2))
+			else if (CheckRect(renderer, game._gameRect._inv1Down, TheMessage->wparam1, TheMessage->wparam2))
 				InventoryDown();
 			else {
 
@@ -162,7 +162,7 @@ void doMouseButton(WGame &game) {
 		//CurInvObj = iNULL;
 
 		return;
-	} else if ((bUseWith & UW_ON) && (bUseWith & UW_USEDI) && CheckRect(renderer, UseIconRect, TheMessage->wparam1, TheMessage->wparam2)) {
+	} else if ((bUseWith & UW_ON) && (bUseWith & UW_USEDI) && CheckRect(renderer, game._gameRect._useIconRect, TheMessage->wparam1, TheMessage->wparam2)) {
 		ClearUseWith();
 		ClearText();
 		return;
@@ -282,13 +282,13 @@ void doMouseUpdate(WGame &game) {
 	if (InvStatus & INV_ON) {
 		if ((bLPressed) && (InvStatus & INV_MODE2)) {
 			t3dM3X3F t;
-			t3dMatRot(&t, ((t3dF32)(TheMessage->lparam[1]) / (t3dF32)(BigIconRect.y2 - BigIconRect.y1))*T3D_PI * 2.0f,
-			          ((t3dF32)(TheMessage->lparam[0]) / (t3dF32)(BigIconRect.x1 - BigIconRect.x2))*T3D_PI * 2.0f, 0.0f);
+			t3dMatRot(&t, ((t3dF32)(TheMessage->lparam[1]) / (t3dF32)(game._gameRect._bigIconRect.y2 - game._gameRect._bigIconRect.y1))*T3D_PI * 2.0f,
+			          ((t3dF32)(TheMessage->lparam[0]) / (t3dF32)(game._gameRect._bigIconRect.x1 - game._gameRect._bigIconRect.x2))*T3D_PI * 2.0f, 0.0f);
 			t3dMatMul(&BigIconM, &t, &BigIconM);
 			CurInvObj = BigInvObj;
 		} else {
 			CurInvObj = WhatIcon(*game._renderer, TheMessage->wparam1, TheMessage->wparam2);
-			if ((CurInvObj == iNULL) && CheckRect(renderer, BigIconRect, TheMessage->wparam1, TheMessage->wparam2))
+			if ((CurInvObj == iNULL) && CheckRect(renderer, game._gameRect._bigIconRect, TheMessage->wparam1, TheMessage->wparam2))
 				CurInvObj = BigInvObj;
 			ShowInvObjName(init, CurInvObj);
 		}

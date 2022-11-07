@@ -480,9 +480,9 @@ void UpdateDialogMenu(WGame &game, int16 dmx, int16 dmy, uint8 db) {
 	CurDlgItem = -1;
 	if ((db == ME_MLEFT) || (db == ME_MRIGHT)) {
 		//  Se si cambia la logica di incremento variarla anche in PaintDialog() nella gestione delle freccette
-		if (CheckRect(renderer, Diag2Up, dmx, dmy))
+		if (CheckRect(renderer, game._gameRect._diag2Up, dmx, dmy))
 			Diag2Base = ((Diag2Base - 1) < 0) ? 0 : Diag2Base - 1;
-		else if (CheckRect(renderer, Diag2Down, dmx, dmy))
+		else if (CheckRect(renderer, game._gameRect._diag2Down, dmx, dmy))
 			if ((Diag2Base + 1 + MAX_DIAG2_ITEMS) <= ca2)
 				Diag2Base ++;
 	}
