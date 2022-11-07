@@ -1,0 +1,216 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef HPL1_STD_MAP_H
+#define HPL1_STD_MAP_H
+
+#include "common/hashmap.h"
+#include "pair.h"
+
+namespace Hpl1 {
+namespace std {
+
+template<class Key, class Val, class CompFunc = Common::Less<Key> >
+class map {
+public:
+	using value_type = pair<Key, Val>;
+	using iterator = typename Common::Array<value_type>::iterator;
+	using const_iterator = typename Common::Array<value_type>::const_iterator;
+
+	/**
+	 * Clears the map
+	 */
+	void clear() {
+		_items.clear();
+	}
+
+	/**
+	 * Gets the iterator start
+	 */
+	iterator begin() {
+		return _items.begin();
+	}
+
+	/**
+	 * Get the iterator end
+	 */
+	iterator end() {
+		return _items.end();
+	}
+
+	/**
+	 * Get the const iterator start
+	 */
+	const_iterator begin() const {
+		return _items.begin();
+	}
+
+	/**
+	 * Get the const iterator end
+	 */
+	const_iterator end() const {
+		return _items.end();
+	}
+
+	/**
+	 * Returns an iterator for the first element of the map that is
+	 * not less than the given key
+	 */
+	const_iterator lower_bound(const Key &theKey) const {
+		const_iterator first = this->begin();
+		const_iterator it;
+		int count_ = _items.size(), step;
+
+		while (count_ > 0) {
+			it = first;
+			step = count_ / 2;
+			it += step;
+
+			if (_comp(it->first, theKey)) {
+				first = ++it;
+				count_ -= step + 1;
+			} else {
+				count_ = step;
+			}
+		}
+
+		return first;
+	}
+
+	iterator lower_bound(const Key &theKey) {
+		iterator first = this->begin();
+		iterator it;
+		int count_ = _items.size(), step;
+
+		while (count_ > 0) {
+			it = first;
+			step = count_ / 2;
+			it += step;
+
+			if (_comp(it->first, theKey)) {
+				first = ++it;
+				count_ -= step + 1;
+			} else {
+				count_ = step;
+			}
+		}
+
+		return first;
+	}
+
+	iterator upper_bound(const Key &k)
+	{
+		return lower_bound(k) + 1;
+	}
+
+	/**
+	 * Find the entry with the given key
+	 */
+	iterator find(const Key &theKey) {
+		iterator it = this->lower_bound(theKey);
+
+		if (it != this->end() && it->first == theKey)
+			return it;
+		return this->end();
+	}
+
+	const_iterator find(const Key &theKey) const {
+		const_iterator it = this->lower_bound(theKey);
+
+		if (it != this->end() && it->first == theKey)
+			return it;
+		return this->end();
+	}
+
+	/**
+	 * Square brackets operator accesses items by key, creating if necessary
+	 */
+	Val &operator[](const Key &theKey) {
+		iterator it = this->lower_bound(theKey);
+		if (it == this->end() || it->first != theKey) {
+			size_t idx = it - this->begin();
+			_items.insert_at(idx, {});
+			_items[idx].first = theKey;
+			return _items[idx].second;
+		} else {
+			return _items[it - this->begin()].second;
+		}
+	}
+
+	/**
+	 * Erases an entry in the map
+	 */
+	iterator erase(iterator it) {
+		iterator next = it;
+		++next;
+		_items.remove_at(it - begin());
+		return next;
+	}
+
+	iterator erase(const Key &theKey) {
+		iterator it = find(theKey);
+		if (it != this->end())
+			return erase(it);
+		return it;
+	}
+
+	std::pair<iterator, bool> insert(value_type const& val) {
+		iterator it = this->lower_bound(val.first);
+		if (it == this->end() || !(it->first == val.first)) {
+			size_t idx = it - this->begin();
+			_items.insert_at(idx, val);
+			return {it, true};
+		}
+		return {it, false};
+	}
+
+	/**
+	 * Returns the size of the map
+	 */
+	size_t size() const {
+		return _items.size();
+	}
+
+	bool empty() const {
+		return _items.empty();
+	}
+
+	/**
+	 * Returns the number of elements with a matching key
+	 */
+	size_t count(const Key &theKey) {
+		int count_ = 0;
+		for (iterator it = this->begin(); it != this->end(); ++it) {
+			if (it->first == theKey)
+				++count_;
+		}
+
+		return count_;
+	}
+private:
+	Common::Array<value_type> _items;
+	CompFunc _comp;
+};
+
+} // namespace std
+} // namespace Hpl1
+
+#endif
