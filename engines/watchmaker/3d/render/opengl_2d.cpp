@@ -39,12 +39,8 @@
 
 namespace Watchmaker {
 
-Rect            gBlitterExtends;
-int     gStencilBitDepth;
-
-gLogo       Logos[10];
-gMaterial   LogosMaterials[10];
-int         NumLogosMaterials = 0, GlobalLogosDelay = 60 * 3;
+Rect gBlitterExtends;
+int gStencilBitDepth;
 
 unsigned int CurLoaderFlags;
 

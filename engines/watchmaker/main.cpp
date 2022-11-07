@@ -104,9 +104,6 @@ int WMakerMain() {
 	} /*else
         g_bReady = true;*/
 
-	//  rShowLogos(WmMiscDir,(char)sCheckEAX());                         // Mostra Loghi schede 3D
-//	rShowTrecLogo(WmMiscDir,1);                          // Mostra Loghi schede 3D
-
 	t3dAllocMemoryPool(1000000);                                // Alloca memory-pool
 	InitMessageSystem();
 
