@@ -206,12 +206,12 @@ SpellResult SpellsParty::cleric13_blind() {
 	s._newCondition = BLINDED;
 	s._resistanceType = static_cast<Resistance>((int)s._resistanceType + 1);
 
-	g_events->send("Combat", GameMessage("ITERATE1"));
+	g_globals->_combat->iterateMonsters1();
 	return SR_SUCCESS_SILENT;
 }
 
 SpellResult SpellsParty::cleric14_firstAid() {
-	restoreHp(_destChar, 8);
+	restoreHp(8);
 	return SR_SUCCESS_DONE;
 }
 
@@ -225,7 +225,7 @@ SpellResult SpellsParty::cleric16_powerCure() {
 	for (uint i = 0; i < g_globals->_currCharacter->_level._current; ++i)
 		totalHp += g_engine->getRandomNumber(10);
 
-	restoreHp(_destChar, MIN(totalHp, 250));
+	restoreHp(MIN(totalHp, 250));
 	return SR_SUCCESS_DONE;
 }
 
@@ -246,8 +246,30 @@ SpellResult SpellsParty::cleric18_turnUndead() {
 }
 
 SpellResult SpellsParty::cleric21_cureWounds() {
-	restoreHp(_destChar, 16);
+	restoreHp(16);
 	return SR_SUCCESS_DONE;
+}
+
+SpellResult SpellsParty::cleric22_heroism() {
+	if (g_globals->_currCharacter->_alignment != _destChar->_alignment ||
+		_destChar->_level._current != _destChar->_level._base)
+		return SR_FAILED;
+
+	_destChar->_level._current = MIN(
+		(int)_destChar->_level._current + 2, 255);
+	restoreHp(6);
+	return SR_SUCCESS_DONE;
+}
+
+SpellResult SpellsParty::cleric23_pain() {
+	SpellsState &ss = g_globals->_spellsState;
+	ss._newCondition = getRandomNumber(6) + getRandomNumber(6);
+	ss._mmVal1++;
+	ss._resistanceType = (Resistance)((int)ss._resistanceType + 1);
+	ss._mmVal2 = 6;
+
+	g_globals->_combat->iterateMonsters2();
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult SpellsParty::cleric24_protectionFromCold() {
@@ -390,7 +412,7 @@ SpellResult SpellsParty::cleric54_removeCondition() {
 
 		if (!_destChar->_hpBase)
 			_destChar->_hpBase = 1;
-		restoreHp(_destChar, 1);
+		restoreHp(1);
 
 		return SR_SUCCESS_DONE;
 	}
@@ -517,7 +539,7 @@ SpellResult SpellsParty::cleric74_resurrection() {
 
 	_destChar->_endurance._base = MAX((int)_destChar->_endurance._base - 1, 1);
 	_destChar->_condition = FINE;
-	restoreHp(_destChar, 1);
+	restoreHp(1);
 
 	return SR_SUCCESS_DONE;
 }
@@ -649,10 +671,10 @@ SpellResult SpellsParty::wizard72_duplication() {
 	return SR_FAILED;
 }
 
-void SpellsParty::restoreHp(Character *destChar, uint16 hp) {
-	destChar->_hpBase = MIN((int)(_destChar->_hpBase + hp), (int)_destChar->_hpMax);
-	if (!(destChar->_condition & BAD_CONDITION))
-		destChar->_condition &= ~UNCONSCIOUS;
+void SpellsParty::restoreHp(uint16 hp) {
+	_destChar->_hpBase = MIN((int)(_destChar->_hpBase + hp), (int)_destChar->_hpMax);
+	if (!(_destChar->_condition & BAD_CONDITION))
+		_destChar->_condition &= ~UNCONSCIOUS;
 }
 
 void SpellsParty::addLight(int amount) {

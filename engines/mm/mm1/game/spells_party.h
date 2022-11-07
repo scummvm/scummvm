@@ -23,6 +23,7 @@
 #define MM1_GAME_SPELLS_H
 
 #include "mm/mm1/data/character.h"
+#include "mm/mm1/game/game_logic.h"
 #include "mm/mm1/messages.h"
 
 namespace MM {
@@ -40,7 +41,7 @@ extern byte FLY_MAP_ID2[20];
 extern byte FLY_MAP_X[20];
 extern byte FLY_MAP_Y[20];
 
-class SpellsParty {
+class SpellsParty : public GameLogic {
 	typedef SpellResult(*SpellFn)();
 private:
 	static Character *_destChar;
@@ -54,7 +55,7 @@ private:
 	/**
 	 * Restores an amount of Hp
 	 */
-	static void restoreHp(Character *chr, uint16 hp);
+	static void restoreHp(uint16 hp);
 
 	/**
 	 * Increases light duration
@@ -79,6 +80,8 @@ private:
 	static SpellResult cleric17_protectionFromFear();
 	static SpellResult cleric18_turnUndead();
 	static SpellResult cleric21_cureWounds();
+	static SpellResult cleric22_heroism();
+	static SpellResult cleric23_pain();
 	static SpellResult cleric24_protectionFromCold();
 	static SpellResult cleric25_protectionFromIce();
 	static SpellResult cleric26_protectionFromPoison();

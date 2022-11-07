@@ -244,6 +244,9 @@ public:
 	 */
 	virtual void displaySpellResult(const InfoMessage &msg);
 
+	void iterateMonsters1();
+	void iterateMonsters2();
+
 	void turnUndead();
 };
 
