@@ -112,7 +112,7 @@ public:
 	 * Flip the backbuffer onto the screen-buffer
 	 * The screen will NOT be updated before calling this function.
 	 *
-	 * @return true if successfull, false on error.
+	 * @return true if successful, false on error.
 	 */
 	virtual bool flip() = 0;
 	/**
