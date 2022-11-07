@@ -70,7 +70,7 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 
 	if (g_gui.useRTL()) {
 		/** If using RTL, swap the internal name of odd columns, to be flipped again when drawing.
-			We flip them back to orignal, because the keyboard layout stays the same in LTR & RTL.
+			We flip them back to original, because the keyboard layout stays the same in LTR & RTL.
 			The rest, like okButton, cancel, etc are all flipped.
 		*/
 
