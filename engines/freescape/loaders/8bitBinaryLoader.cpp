@@ -503,7 +503,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		}
 	}
 
-	delete [] fileOffsetForArea;
+	delete[] fileOffsetForArea;
 
 	if (!_areaMap.contains(startArea))
 		_startArea = newArea->getAreaID();
