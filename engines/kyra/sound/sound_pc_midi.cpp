@@ -259,7 +259,7 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 	// channels, but pitch bend is not reset to neutral when the track loops.
 	// This causes two instruments to be out of tune after the track loops.
 	// This occurs in both the MT-32 and GM versions, but in the GM version the
-	// pitch bend is smaller, so it is much less noticable. It was fixed in the
+	// pitch bend is smaller, so it is much less noticeable. It was fixed in the
 	// CD version for MT-32 by adding pitch bend neutral events to the end of
 	// the track.
 	// It is fixed here for the MT-32 floppy version and both GM versions by
