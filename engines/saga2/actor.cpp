@@ -3437,7 +3437,7 @@ ResourceActor::ResourceActor(Common::SeekableReadStream *stream) : ResourceGameO
 		knowledge[i] = stream->readUint16LE();
 	}
 	schedule = stream->readUint16LE();
-	for (int i = 0; i < 18; ++i) { // padding bytes = not neccessary?
+	for (int i = 0; i < 18; ++i) { // padding bytes = not necessary?
 		reserved[i] = stream->readByte();
 	}
 }
