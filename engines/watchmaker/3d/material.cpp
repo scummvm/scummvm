@@ -137,8 +137,9 @@ MaterialPtr rMergeMaterial(MaterialPtr Mat1, MaterialPtr Mat2) {
 
 void rRemoveMaterials(Common::Array<Common::SharedPtr<gMaterial>> &m) {
 	for (auto &material : m) {
-		m.clear();
+		material->clear();
 	}
+	m.clear();
 }
 
 Common::SharedPtr<gMaterial> rCopyMaterial(Common::SharedPtr<gMaterial> Mat1, Common::SharedPtr<gMaterial> Mat2) {
@@ -222,19 +223,18 @@ void rRemoveMaterial(Common::SharedPtr<gMaterial> &m) {
  *  Aggiunge un materiale alla MaterialList
  * --------------------------------------------------*/
 void rAddToMaterialList(gMaterial &mat, signed short int ViewMatrixNum) {
-	//warning("Stubbed: rAddToMaterialList");
-	//D3DVERTEXBUFFERDESC VBDesc;
-	gMaterial *cm;
-	gBatchBlock *bb;
-	int j;
-#if 0
-	if (!mat)
-		return;
-#endif
-	if ((mat.Flags & T3D_MATERIAL_MOVIE))
+	gBatchBlock *bb = nullptr;
+
+	if ((mat.Flags & T3D_MATERIAL_MOVIE)) {
+		warning("Movie: %s %d", mat.Movie->_name.c_str(), mat.Texture->ID);
 		mat.Movie->updateMovie();
+	}
 
 	if ((mat.NumFaces() >= 3) && (mat.VBO)) {
+		if (mat.Texture) {
+	//		if (mat.Texture->name == "./TMaps/bianco.tga")
+	//			return;
+		}
 		bb = rNewBatchBlock(mat.Texture->ID, mat.Flags, 0, 0);
 		bb->ViewMatrixNum = ViewMatrixNum;
 		bb->FacesList = mat.getFacesList();
@@ -248,17 +248,6 @@ void rAddToMaterialList(gMaterial &mat, signed short int ViewMatrixNum) {
 			}
 		}
 		mat.emptyFacesList(); // We may want to keep the reservation to avoid the extra reallocs here.
-//		if ( bb->VB == g_lpD3DUserVertexBuffer )
-//			DebugLogFile("User VB %s with %d verts",mat->Texture->Name,bb->NumVerts);
-#if 0
-		if ((bb->NumVerts == 0) && (bb->VBO)) {
-			if (bb->VB->GetVertexBufferDesc(&VBDesc) != D3D_OK)
-				DebugLogFile("Can't get VB information for %s", mat->Texture->Name);
-			else
-				bb->NumVerts = (unsigned short int) VBDesc.dwNumVertices;
-//			DebugLogFile("Saving VB %s with %d verts",mat->Texture->Name,bb->NumVerts);
-		}
-#endif
 	}
 
 	for (auto &cm : mat.AddictionalMaterial) {
@@ -269,15 +258,6 @@ void rAddToMaterialList(gMaterial &mat, signed short int ViewMatrixNum) {
 		bb->FacesList = cm->getFacesList();
 		bb->VBO = cm->VBO;
 		cm->emptyFacesList();
-#if 0
-		if (bb->NumVerts == 0) {
-			if (bb->VBO->GetVertexBufferDesc(&VBDesc) != D3D_OK)
-				DebugLogFile("Can't get VB information for %s", mat->Texture->Name);
-			else
-				bb->NumVerts = (unsigned short int) VBDesc.dwNumVertices;
-//			DebugLogFile("Saving VB %s with %d verts",mat->Texture->Name,bb->NumVerts);
-		}
-#endif
 	}
 }
 
