@@ -181,7 +181,7 @@ struct gsc_locale_t {
  * Locale for Latin1 -- cp1252 and cp850.
  *
  * The ascii representations of characters in this table are based on the
- * general look of the characters, rather than pronounciation.  Accented
+ * general look of the characters, rather than pronunciation.  Accented
  * characters are generally rendered unaccented, and box drawing, shading,
  * and other non-alphanumeric glyphs as either a similar shape, or as a
  * character that might be recognizable as what it's trying to emulate.
