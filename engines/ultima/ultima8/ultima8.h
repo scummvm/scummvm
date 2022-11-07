@@ -348,7 +348,7 @@ public:
 	bool saveGame(int slot, const Std::string &desc);
 
 	//! start a new game
-	//! \return true if succesful.
+	//! \return true if successful.
 	bool newGame(int saveSlot = -1);
 
 	//! Display an error message box
