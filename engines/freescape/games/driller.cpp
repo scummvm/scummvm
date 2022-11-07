@@ -412,12 +412,15 @@ void DrillerEngine::pressedKey(const int keycode) {
 			return;
 		}
 
-		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
-		_gameStateVars[32]++;
-		// TODO: check if there is space for the drill
 		Math::Vector3d drillPosition = _cameraFront;
 		drillPosition = _position + 256 * drillPosition;
+		if (!checkDrill(drillPosition)) {
+			_currentAreaMessages[0] = _messagesList[4];
+			return;
+		}
 
+		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
+		_gameStateVars[32]++;
 		debugC(1, kFreescapeDebugMove, "Current position at %f %f %f", _position.x(), _position.y(), _position.z());
 		drillPosition.setValue(1, _position.y() - _playerHeight * _currentArea->getScale());
 		debugC(1, kFreescapeDebugMove, "Trying to adding drill at %f %f %f", drillPosition.x(), drillPosition.y(), drillPosition.z());
@@ -459,6 +462,81 @@ void DrillerEngine::pressedKey(const int keycode) {
 bool DrillerEngine::drillDeployed() {
 	return (_currentArea->objectWithID(252) != nullptr);
 }
+
+bool DrillerEngine::checkDrill(const Math::Vector3d position) {
+	GeometricObject *obj = nullptr;
+	Math::Vector3d origin = position;
+
+	int16 id;
+	int heightLastObject;
+
+	id = 255;
+	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+	assert(obj);
+	obj = obj->duplicate();
+	obj->setOrigin(origin);
+	if (!_currentArea->checkCollisions(obj->_boundingBox))
+		return false;
+
+	heightLastObject = obj->getSize().y();
+	delete obj;
+
+	id = 254;
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
+	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+	assert(obj);
+	// Set position for object
+	origin.setValue(0, origin.x() - obj->getSize().x() / 5);
+	origin.setValue(1, origin.y() + heightLastObject);
+	origin.setValue(2, origin.z() - obj->getSize().z() / 5);
+
+	obj = obj->duplicate();
+	obj->setOrigin(origin);
+	if (_currentArea->checkCollisions(obj->_boundingBox))
+		return false;
+
+	// Undo offset
+	origin.setValue(0, origin.x() + obj->getSize().x() / 5);
+	heightLastObject = obj->getSize().y();
+	origin.setValue(2, origin.z() + obj->getSize().z() / 5);
+	delete obj;
+
+	id = 253;
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
+	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+	assert(obj);
+	obj = obj->duplicate();
+
+	origin.setValue(0, origin.x() + obj->getSize().x() / 5);
+	origin.setValue(1, origin.y() + heightLastObject);
+	origin.setValue(2, origin.z() + obj->getSize().z() / 5);
+
+	obj->setOrigin(origin);
+	if (_currentArea->checkCollisions(obj->_boundingBox))
+		return false;
+
+	// Undo offset
+	// origin.setValue(0, origin.x() - obj->getSize().x() / 5);
+	heightLastObject = obj->getSize().y();
+	// origin.setValue(2, origin.z() - obj->getSize().z() / 5);
+	delete obj;
+
+	id = 252;
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
+	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+	assert(obj);
+	obj = obj->duplicate();
+	origin.setValue(1, origin.y() + heightLastObject);
+	obj->setOrigin(origin);
+	assert(obj);
+
+	if (_currentArea->checkCollisions(obj->_boundingBox))
+		return false;
+
+	delete obj;
+	return true;
+}
+
 
 void DrillerEngine::addDrill(const Math::Vector3d position) {
 	// int drillObjectIDs[8] = {255, 254, 253, 252, 251, 250, 248, 247};

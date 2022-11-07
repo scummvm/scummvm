@@ -313,6 +313,7 @@ private:
 	void loadGlobalObjects(Common::SeekableReadStream *file, int offset);
 	bool drillDeployed();
 	void addDrill(const Math::Vector3d position);
+	bool checkDrill(const Math::Vector3d position);
 	void removeDrill();
 
 	void loadAssetsDemo();

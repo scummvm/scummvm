@@ -169,14 +169,23 @@ void GeometricObject::setOrigin(Math::Vector3d origin_) {
 };
 
 GeometricObject *GeometricObject::duplicate() {
+	Common::Array<uint8> *colours_copy = nullptr;
+	Common::Array<uint16> *ordinates_copy = nullptr;
+
+	if (_colours)
+		colours_copy = new Common::Array<uint8>(*_colours);
+
+	if (_ordinates)
+		ordinates_copy = new Common::Array<uint16>(*_ordinates);
+
 	return new GeometricObject(
 		_type,
 		_objectID,
 		_flags,
 		_origin,
 		_size,
-		_colours,
-		_ordinates,
+		colours_copy,
+		ordinates_copy,
 		_condition,
 		_conditionSource);
 }
