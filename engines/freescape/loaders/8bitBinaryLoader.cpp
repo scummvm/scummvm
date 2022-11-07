@@ -550,6 +550,7 @@ void FreescapeEngine::loadMessagesFixedSize(Common::SeekableReadStream *file, in
 		_messagesList.push_back(message);
 		debugC(1, kFreescapeDebugParser, "%s", _messagesList[i].c_str());
 	}
+	free(buffer);
 }
 
 void FreescapeEngine::loadDemoData(Common::SeekableReadStream *file, int offset, int size) {
