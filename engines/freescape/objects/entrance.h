@@ -32,13 +32,18 @@ namespace Freescape {
 class Entrance : public Object {
 public:
 	Entrance(
-		uint16 objectID,
-		const Math::Vector3d &origin,
-		const Math::Vector3d &rotation);
-	virtual ~Entrance();
+		uint16 objectID_,
+		const Math::Vector3d &origin_,
+		const Math::Vector3d &rotation_) {
+		_objectID = objectID_;
+		_origin = origin_;
+		_rotation = rotation_;
+		_flags = 0;
+	}
+	virtual ~Entrance() {}
 
-	bool isDrawable() override;
-	bool isPlanar() override;
+	bool isDrawable() { return false; }
+	bool isPlanar() { return true; }
 	ObjectType getType() override { return ObjectType::kEntranceType; };
 	Math::Vector3d getRotation() { return _rotation; }
 

@@ -16,7 +16,6 @@ MODULE_OBJS := \
 	metaengine.o \
 	movement.o \
 	neo.o \
-	objects/entrance.o \
 	objects/geometricobject.o \
 	sound.o
 
