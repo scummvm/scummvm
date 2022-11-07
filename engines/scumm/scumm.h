@@ -134,7 +134,7 @@ enum {
 	/**
 	 * Lighting flag that indicates whether the normal palette, or the 'dark'
 	 * palette shall be used to draw actors.
-	 * Apparantly only used in very old games (so far only NESCostumeRenderer
+	 * Apparently only used in very old games (so far only NESCostumeRenderer
 	 * checks it).
 	 */
 	LIGHTMODE_actor_use_base_palette	= 1 << 0,
