@@ -398,7 +398,6 @@ void RenderGeometry(void) {
 bool rRenderScene(void) {
 	unsigned int    i, j;
 	bool            hres;
-	static int  Logostops = 0;
 	static unsigned int dwFrameCount = 0;
 
 	g_renderer->setRenderState(RenderState::LIGHT, false);
@@ -502,70 +501,6 @@ bool rRenderScene(void) {
 				}
 		}
 //tb
-	}
-
-	// Display logos if exists
-	if ((NumLogosMaterials) && (NumLogosMaterials != Logostops)) {
-		gLogo   *lpLogos = Logos;
-		WORD    Array[2 * 3];
-
-		Logostops = 0;
-
-		Array[0] = 0;
-		Array[1] = 1;
-		Array[2] = 2;
-		Array[3] = 3;
-		Array[4] = 2;
-		Array[5] = 1;
-
-		g_renderer->setTextureWrapMode(0, TextureWrapMode::CLAMP);
-
-		g_renderer->setRenderState(RenderState::ALPHABLEND, false);
-		g_renderer->setBlendFunc(BlendFactor::ONE, BlendFactor::ZERO);
-		if (g_renderer->error()) {
-			goto closescene;
-		}
-
-		rSetZBufferState(FALSE);
-
-		for (i = 0; i < (unsigned int)NumLogosMaterials; i++,   lpLogos++) {
-			if (lpLogos->Verts[0].sy == lpLogos->Verts[2].sy) {
-				Logostops++;
-				continue;
-			}
-
-			if (lpLogos->Material->Texture) {
-				g_renderer->setTexture(0, lpLogos->Material->Texture);
-			}
-#if 0 // TODO!
-			hres = g_renderer->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,
-			                                        D3DFVF_TLVERTEX,
-			                                        lpLogos->Verts, 4,
-			                                        Array, 6, 0x0);
-#endif
-			lpLogos->Delay--;
-			if (lpLogos->Delay < 0) {
-				lpLogos->Verts[0].sx += 0.5f;
-				lpLogos->Verts[0].sy += 1.0f;
-				lpLogos->Verts[0].sz += 0.008f;
-				lpLogos->Verts[0].rhw = 1.0f / lpLogos->Verts[0].sz;
-				lpLogos->Verts[1].sx -= 0.5f;
-				lpLogos->Verts[1].sy += 1.0f;
-				lpLogos->Verts[1].sz += 0.008f;
-				lpLogos->Verts[1].rhw = 1.0f / lpLogos->Verts[1].sz;
-				lpLogos->Verts[2].sx -= 0.5f;
-				lpLogos->Verts[2].sy -= 1.0f;
-				lpLogos->Verts[2].sz -= 0.008f;
-				lpLogos->Verts[2].rhw = 1.0f / lpLogos->Verts[2].sz;
-				lpLogos->Verts[3].sx += 0.5f;
-				lpLogos->Verts[3].sy -= 1.0f;
-				lpLogos->Verts[3].sz -= 0.008f;
-				lpLogos->Verts[3].rhw = 1.0f / lpLogos->Verts[3].sz;
-			}
-		}
-
-		rSetZBufferState(TRUE);
-		g_renderer->setTextureWrapMode(0, TextureWrapMode::WRAP);
 	}
 
 	if (gNumLinesArray && gNumPointsBuffer) {

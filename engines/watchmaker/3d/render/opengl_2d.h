@@ -29,16 +29,6 @@ namespace Watchmaker {
 
 extern int      gStencilBitDepth;
 
-struct gLogo {
-	gMaterial   *Material;
-	Vertex  Verts[4];
-	int         Delay;
-};
-
-extern gLogo        Logos[];
-extern gMaterial    LogosMaterials[];
-extern int          NumLogosMaterials;
-
 extern unsigned int CurLoaderFlags;
 
 } // End of namespace Watchmaker
