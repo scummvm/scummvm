@@ -46,7 +46,7 @@ SpellsParty::SpellFn SpellsParty::SPELLS[SPELLS_COUNT] = {
 	cleric15_light,
 	cleric16_powerCure,
 	cleric17_protectionFromFear,
-	placeholder,
+	cleric18_turnUndead,
 	cleric21_cureWounds,
 	placeholder,
 	placeholder,
@@ -231,8 +231,18 @@ SpellResult SpellsParty::cleric16_powerCure() {
 
 SpellResult SpellsParty::cleric17_protectionFromFear() {
 	g_globals->_activeSpells._s.fear =
-		MIN(g_globals->_currCharacter->_level._current + 20, 255);
+		MIN((int)g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
+}
+
+SpellResult SpellsParty::cleric18_turnUndead() {
+	if (g_globals->_currCharacter->_alignment !=
+		g_globals->_currCharacter->_alignmentInitial)
+		// Cleric's current alignment differs from initial, so spell fails
+		return SR_FAILED;
+
+	g_globals->_combat->turnUndead();
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult SpellsParty::cleric21_cureWounds() {
@@ -242,19 +252,19 @@ SpellResult SpellsParty::cleric21_cureWounds() {
 
 SpellResult SpellsParty::cleric24_protectionFromCold() {
 	g_globals->_activeSpells._s.cold =
-		MIN(g_globals->_currCharacter->_level._current + 20, 255);
+		MIN((int)g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
 }
 
 SpellResult SpellsParty::cleric25_protectionFromIce() {
 	g_globals->_activeSpells._s.fire =
-		MIN(g_globals->_currCharacter->_level._current + 20, 255);
+		MIN((int)g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
 }
 
 SpellResult SpellsParty::cleric26_protectionFromPoison() {
 	g_globals->_activeSpells._s.poison =
-		MIN(g_globals->_currCharacter->_level._current + 20, 255);
+		MIN((int)g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
 }
 
@@ -650,12 +660,8 @@ void SpellsParty::addLight(int amount) {
 	g_events->send("Game", GameMessage("UPDATE"));
 }
 
-void SpellsParty::iterateMonsters1() {
-	
-}
-
-void SpellsParty::iterateMonsters2() {
-
+void SpellsParty::display(const InfoMessage &msg) {
+	g_globals->_combat->displaySpellResult(msg);
 }
 
 } // namespace Game

@@ -33,6 +33,7 @@
 #include "mm/mm1/data/monsters.h"
 #include "mm/mm1/data/roster.h"
 #include "mm/mm1/data/treasure.h"
+#include "mm/mm1/game/combat.h"
 #include "mm/mm1/game/encounter.h"
 #include "mm/mm1/maps/maps.h"
 
@@ -51,6 +52,7 @@ public:
 	BitmapFont _font;
 	bool _heardRumor = false;
 	Game::Encounter _encounters;
+	Game::Combat *_combat = nullptr;
 	Monsters _monsters;
 	Treasure _treasure;
 	byte _delay = 5;

@@ -79,6 +79,9 @@ protected:
 	};
 	Mode _mode = SELECT_OPTION;
 
+	int _monstersDestroyedCtr = 0;
+	bool _turnUndeadUsed = false;
+
 	/**
 	 * Constructor
 	 */
@@ -87,7 +90,7 @@ protected:
 	/**
 	 * Destructor
 	 */
-	virtual ~Combat() {}
+	virtual ~Combat();
 
 	/**
 	 * Sets the combat display mode
@@ -231,6 +234,17 @@ protected:
 	 * Updates a monster's status
 	 */
 	void updateMonsterStatus();
+
+private:
+	void destroyUndead();
+
+public:
+	/**
+	 * Display a combat spell's result
+	 */
+	virtual void displaySpellResult(const InfoMessage &msg);
+
+	void turnUndead();
 };
 
 } // namespace Game

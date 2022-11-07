@@ -23,6 +23,7 @@
 #define MM1_GAME_SPELLS_H
 
 #include "mm/mm1/data/character.h"
+#include "mm/mm1/messages.h"
 
 namespace MM {
 namespace MM1 {
@@ -60,8 +61,10 @@ private:
 	 */
 	static void addLight(int amount);
 
-	static void iterateMonsters1();
-	static void iterateMonsters2();
+	/**
+	 * Display a message
+	 */
+	static void display(const InfoMessage &msg);
 
 private:
 	static SpellResult placeholder() {
@@ -74,6 +77,7 @@ private:
 	static SpellResult cleric15_light();
 	static SpellResult cleric16_powerCure();
 	static SpellResult cleric17_protectionFromFear();
+	static SpellResult cleric18_turnUndead();
 	static SpellResult cleric21_cureWounds();
 	static SpellResult cleric24_protectionFromCold();
 	static SpellResult cleric25_protectionFromIce();

@@ -26,7 +26,8 @@ namespace MM {
 namespace MM1 {
 
 enum SoundId {
-	SOUND_1 = 1, SOUND_2 = 2, SOUND_3 = 3, SOUND_4 = 4, SOUND_8 = 8
+	SOUND_1 = 1, SOUND_2 = 2, SOUND_3 = 3, SOUND_4 = 4, SOUND_8 = 8,
+	SOUND_9 = 9
 };
 
 class Sound {

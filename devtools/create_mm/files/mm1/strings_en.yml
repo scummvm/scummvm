@@ -798,6 +798,8 @@ spells:
 	magic_doesnt_work: "MAGIC DOESN'T WORK HERE"
 	outdoors_only: "OUTDOOR ONLY"
 	failed: "SPELL FAILED"
+	no_effect: "NO EFFECT!"
+	monsters_destroyed: "SOME MONSTERS WERE DESTROYED!"
 
 	enter_to_cast: "'ENTER' TO CAST"
 	cast_on_char: "CAST ON: '1'-'%d'?"
