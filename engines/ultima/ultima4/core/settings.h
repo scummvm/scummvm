@@ -170,7 +170,7 @@ public:
 
 	/**
 	 * Write the settings out into a human readable file.  This also
-	 * notifies observers that changes have been commited.
+	 * notifies observers that changes have been committed.
 	 */
 	bool write();
 
