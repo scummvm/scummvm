@@ -120,7 +120,8 @@ void DarkEngine::drawUI() {
 		surface = new Graphics::Surface();
 		surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
 		surface->fillRect(_fullscreenViewArea, gray);
-	}
+	} else
+		return;
 
 	if (_currentAreaMessages.size() == 1) {
 		int score = _gameStateVars[k8bitVariableScore];
@@ -131,19 +132,17 @@ void DarkEngine::drawUI() {
 		drawStringInSurface(Common::String::format("%07d", score), 95, 8, yellow, black, surface);
 	}
 
-	if (surface) {
-		if (!_uiTexture)
-			_uiTexture = _gfx->createTexture(surface);
-		else
-			_uiTexture->update(surface);
+	if (!_uiTexture)
+		_uiTexture = _gfx->createTexture(surface);
+	else
+		_uiTexture->update(surface);
 
-		_gfx->setViewport(_fullscreenViewArea);
-		_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
-		_gfx->setViewport(_viewArea);
+	_gfx->setViewport(_fullscreenViewArea);
+	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
+	_gfx->setViewport(_viewArea);
 
-		surface->free();
-		delete surface;
-	}
+	surface->free();
+	delete surface;
 }
 
 } // End of namespace Freescape
