@@ -315,7 +315,9 @@ void FreescapeEngine::processInput() {
 				_flyMode = _noClipMode;
 				break;
 			case Common::KEYCODE_ESCAPE:
+				_system->lockMouse(false);
 				openMainMenuDialog();
+				_system->lockMouse(true);
 				break;
 			case Common::KEYCODE_SPACE:
 				_shootMode = !_shootMode;
@@ -410,6 +412,7 @@ Common::Error FreescapeEngine::run() {
 
 	// Simple main event loop
 	int saveSlot = ConfMan.getInt("save_slot");
+	_system->lockMouse(true);
 
 	if (_title) {
 		if (saveSlot == -1) {
@@ -431,7 +434,6 @@ Common::Error FreescapeEngine::run() {
 		gotoArea(_startArea, _startEntrance);
 
 	debugC(1, kFreescapeDebugMove, "Starting area %d", _currentArea->getAreaID());
-	_system->lockMouse(true);
 	bool endGame = false;
 	// Draw first frame
 
