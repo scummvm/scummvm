@@ -325,6 +325,8 @@ public:
 
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::ListVariableModifier &data);
 
+	bool isListVariable() const override;
+
 	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;

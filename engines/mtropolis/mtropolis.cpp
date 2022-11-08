@@ -115,8 +115,6 @@ Common::Error MTropolisEngine::run() {
 
 	subRenderer.reset();
 
-	Common::SharedPtr<ProjectDescription> projectDesc = bootProject(*_gameDescription);
-
 	if (_gameDescription->gameID == GID_OBSIDIAN) {
 		preferredWidth = 640;
 		preferredHeight = 480;
@@ -156,8 +154,6 @@ Common::Error MTropolisEngine::run() {
 
 	if (ConfMan.getBool("mtropolis_mod_minimum_transition_duration"))
 		_runtime->getHacks().minTransitionDuration = 75;
-
-	_runtime->queueProject(projectDesc);
 
 	// Figure out pixel formats
 	Graphics::PixelFormat modePixelFormats[kColorDepthModeCount];
@@ -254,6 +250,13 @@ Common::Error MTropolisEngine::run() {
 	_runtime->setDisplayResolution(preferredWidth, preferredHeight);
 
 	initGraphics(preferredWidth, preferredHeight, &modePixelFormats[selectedMode]);
+
+
+
+	// Start the project
+	Common::SharedPtr<ProjectDescription> projectDesc = bootProject(*_gameDescription);
+	_runtime->queueProject(projectDesc);
+
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	if (ConfMan.getBool("mtropolis_debug_at_start")) {

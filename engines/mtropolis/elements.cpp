@@ -474,11 +474,11 @@ MiniscriptInstructionOutcome MovieElement::writeRefAttribute(MiniscriptThread *t
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "volume") {
-		DynamicValueWriteFuncHelper<MovieElement, &MovieElement::scriptSetVolume>::create(this, result);
+		DynamicValueWriteFuncHelper<MovieElement, &MovieElement::scriptSetVolume, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "timevalue") {
-		DynamicValueWriteFuncHelper<MovieElement, &MovieElement::scriptSetTimestamp>::create(this, result);
+		DynamicValueWriteFuncHelper<MovieElement, &MovieElement::scriptSetTimestamp, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -918,11 +918,11 @@ MiniscriptInstructionOutcome MovieElement::scriptSetRangeEnd(MiniscriptThread *t
 
 MiniscriptInstructionOutcome MovieElement::scriptRangeWriteRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
 	if (attrib == "start") {
-		DynamicValueWriteFuncHelper<MovieElement, &MovieElement::scriptSetRangeStart>::create(this, result);
+		DynamicValueWriteFuncHelper<MovieElement, &MovieElement::scriptSetRangeStart, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 	if (attrib == "end") {
-		DynamicValueWriteFuncHelper<MovieElement, &MovieElement::scriptSetRangeStart>::create(this, result);
+		DynamicValueWriteFuncHelper<MovieElement, &MovieElement::scriptSetRangeStart, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
@@ -1039,7 +1039,7 @@ MiniscriptInstructionOutcome ImageElement::writeRefAttribute(MiniscriptThread *t
 		DynamicValueWriteStringHelper::create(&_text, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "flushpriority") {
-		DynamicValueWriteFuncHelper<ImageElement, &ImageElement::scriptSetFlushPriority>::create(this, writeProxy);
+		DynamicValueWriteFuncHelper<ImageElement, &ImageElement::scriptSetFlushPriority, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -1082,12 +1082,21 @@ void ImageElement::render(Window *window) {
 		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.width(), _cachedAbsoluteOrigin.y + _rect.height());
 
 		if (optimized->format.bytesPerPixel == 1) {
-			const Palette *palette = getPalette().get();
-			if (!palette)
-				palette = &_runtime->getGlobalPalette();
-
 			// FIXME: Pass palette to blit functions instead
-			optimized->setPalette(palette->getPalette(), 0, 256);
+			if (_cachedImage->getOriginalColorDepth() == kColorDepthMode1Bit) {
+				const Graphics::PixelFormat &fmt = window->getPixelFormat();
+				uint32 blackColor = fmt.RGBToColor(0, 0, 0);
+				uint32 whiteColor = fmt.RGBToColor(255, 255, 255);
+
+				const uint32 bwPalette[2] = {whiteColor, blackColor};
+				optimized->setPalette(bwPalette, 0, 2);
+			} else {
+				const Palette *palette = getPalette().get();
+				if (!palette)
+					palette = &_runtime->getGlobalPalette();
+
+				optimized->setPalette(palette->getPalette(), 0, 256);
+			}
 		}
 
 		uint8 alpha = _transitionProps.getAlpha();
@@ -1177,7 +1186,7 @@ bool MToonElement::readAttribute(MiniscriptThread *thread, DynamicValue &result,
 
 MiniscriptInstructionOutcome MToonElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
 	if (attrib == "cel") {
-		DynamicValueWriteFuncHelper<MToonElement, &MToonElement::scriptSetCel>::create(this, result);
+		DynamicValueWriteFuncHelper<MToonElement, &MToonElement::scriptSetCel, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "flushpriority") {
 		DynamicValueWriteIntegerHelper<int32>::create(&_flushPriority, result);
@@ -1186,7 +1195,7 @@ MiniscriptInstructionOutcome MToonElement::writeRefAttribute(MiniscriptThread *t
 		DynamicValueWriteBoolHelper::create(&_maintainRate, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "rate") {
-		DynamicValueWriteFuncHelper<MToonElement, &MToonElement::scriptSetRate>::create(this, result);
+		DynamicValueWriteFuncHelper<MToonElement, &MToonElement::scriptSetRate, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "range") {
 		DynamicValueWriteOrRefAttribFuncHelper<MToonElement, &MToonElement::scriptSetRange, &MToonElement::scriptRangeWriteRefAttribute>::create(this, result);
@@ -1568,10 +1577,10 @@ MiniscriptInstructionOutcome MToonElement::scriptSetRangeEnd(MiniscriptThread *t
 
 MiniscriptInstructionOutcome MToonElement::scriptRangeWriteRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
 	if (attrib == "start") {
-		DynamicValueWriteFuncHelper<MToonElement, &MToonElement::scriptSetRangeStart>::create(this, result);
+		DynamicValueWriteFuncHelper<MToonElement, &MToonElement::scriptSetRangeStart, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "end") {
-		DynamicValueWriteFuncHelper<MToonElement, &MToonElement::scriptSetRangeEnd>::create(this, result);
+		DynamicValueWriteFuncHelper<MToonElement, &MToonElement::scriptSetRangeEnd, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -1695,7 +1704,7 @@ bool TextLabelElement::readAttributeIndexed(MiniscriptThread *thread, DynamicVal
 
 MiniscriptInstructionOutcome TextLabelElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
 	if (attrib == "text") {
-		DynamicValueWriteFuncHelper<TextLabelElement, &TextLabelElement::scriptSetText>::create(this, writeProxy);
+		DynamicValueWriteFuncHelper<TextLabelElement, &TextLabelElement::scriptSetText, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -1961,7 +1970,9 @@ MiniscriptInstructionOutcome TextLabelElement::scriptSetText(MiniscriptThread *t
 
 
 MiniscriptInstructionOutcome TextLabelElement::scriptSetLine(MiniscriptThread *thread, size_t lineIndex, const DynamicValue &value) {
-	if (value.getType() != DynamicValueTypes::kString) {
+	DynamicValue derefValue = value.dereference();
+
+	if (derefValue.getType() != DynamicValueTypes::kString) {
 		thread->error("Tried to set a text label element's text to something that wasn't a string");
 		return kMiniscriptInstructionOutcomeFailed;
 	}
@@ -1969,14 +1980,14 @@ MiniscriptInstructionOutcome TextLabelElement::scriptSetLine(MiniscriptThread *t
 	uint32 startPos;
 	uint32 endPos;
 	if (findLineRange(lineIndex, startPos, endPos))
-		_text = _text.substr(0, startPos) + value.getString() + _text.substr(endPos, _text.size() - endPos);
+		_text = _text.substr(0, startPos) + derefValue.getString() + _text.substr(endPos, _text.size() - endPos);
 	else {
 		size_t numLines = countLines();
 		while (numLines <= lineIndex) {
 			_text += '\r';
 			numLines++;
 		}
-		_text += value.getString();
+		_text += derefValue.getString();
 	}
 
 	_needsRender = true;
@@ -2070,13 +2081,13 @@ bool SoundElement::readAttribute(MiniscriptThread *thread, DynamicValue &result,
 
 MiniscriptInstructionOutcome SoundElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
 	if (attrib == "loop") {
-		DynamicValueWriteFuncHelper<SoundElement, &SoundElement::scriptSetLoop>::create(this, writeProxy);
+		DynamicValueWriteFuncHelper<SoundElement, &SoundElement::scriptSetLoop, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "volume") {
-		DynamicValueWriteFuncHelper<SoundElement, &SoundElement::scriptSetVolume>::create(this, writeProxy);
+		DynamicValueWriteFuncHelper<SoundElement, &SoundElement::scriptSetVolume, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "balance") {
-		DynamicValueWriteFuncHelper<SoundElement, &SoundElement::scriptSetBalance>::create(this, writeProxy);
+		DynamicValueWriteFuncHelper<SoundElement, &SoundElement::scriptSetBalance, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 

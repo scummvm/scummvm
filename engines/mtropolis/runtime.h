@@ -856,6 +856,8 @@ struct DynamicValue {
 
 	bool convertToType(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const;
 
+	DynamicValue dereference() const;
+
 	DynamicValue &operator=(const DynamicValue &other);
 
 	bool operator==(const DynamicValue &other) const;
@@ -903,6 +905,9 @@ private:
 	bool convertIntToType(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const;
 	bool convertFloatToType(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const;
 	bool convertBoolToType(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const;
+	bool convertStringToType(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const;
+
+	bool convertToTypeNoDereference(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const;
 
 	void setFromOther(const DynamicValue &other);
 
@@ -951,13 +956,15 @@ private:
 template<class TFloat>
 struct DynamicValueWriteFloatHelper {
 	static MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
+		DynamicValue derefValue = value.dereference();
+
 		TFloat &dest = *static_cast<TFloat *>(objectRef);
-		switch (value.getType()) {
+		switch (derefValue.getType()) {
 		case DynamicValueTypes::kFloat:
-			dest = static_cast<TFloat>(value.getFloat());
+			dest = static_cast<TFloat>(derefValue.getFloat());
 			return kMiniscriptInstructionOutcomeContinue;
 		case DynamicValueTypes::kInteger:
-			dest = static_cast<TFloat>(value.getInt());
+			dest = static_cast<TFloat>(derefValue.getInt());
 			return kMiniscriptInstructionOutcomeContinue;
 		default:
 			return kMiniscriptInstructionOutcomeFailed;
@@ -980,13 +987,15 @@ struct DynamicValueWriteFloatHelper {
 template<class TInteger>
 struct DynamicValueWriteIntegerHelper {
 	static MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
+		DynamicValue derefValue = value.dereference();
+
 		TInteger &dest = *static_cast<TInteger *>(objectRef);
-		switch (value.getType()) {
+		switch (derefValue.getType()) {
 		case DynamicValueTypes::kFloat:
-			dest = static_cast<TInteger>(floor(value.getFloat() + 0.5));
+			dest = static_cast<TInteger>(floor(derefValue.getFloat() + 0.5));
 			return kMiniscriptInstructionOutcomeContinue;
 		case DynamicValueTypes::kInteger:
-			dest = static_cast<TInteger>(value.getInt());
+			dest = static_cast<TInteger>(derefValue.getInt());
 			return kMiniscriptInstructionOutcomeContinue;
 		default:
 			return kMiniscriptInstructionOutcomeFailed;
@@ -1041,7 +1050,9 @@ struct DynamicValueWriteDiscardHelper {
 template<class TClass, MiniscriptInstructionOutcome (TClass::*TWriteMethod)(MiniscriptThread *thread, const DynamicValue &dest), MiniscriptInstructionOutcome (TClass::*TRefAttribMethod)(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib)>
 struct DynamicValueWriteOrRefAttribFuncHelper {
 	static MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset) {
-		return (static_cast<TClass *>(objectRef)->*TWriteMethod)(thread, dest);
+		DynamicValue derefValue = dest.dereference();
+
+		return (static_cast<TClass *>(objectRef)->*TWriteMethod)(thread, derefValue);
 	}
 	static MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) {
 		return (static_cast<TClass *>(objectRef)->*TRefAttribMethod)(thread, proxy, attrib);
@@ -1057,10 +1068,13 @@ struct DynamicValueWriteOrRefAttribFuncHelper {
 	}
 };
 
-template<class TClass, MiniscriptInstructionOutcome (TClass::*TWriteMethod)(MiniscriptThread *thread, const DynamicValue &dest)>
+template<class TClass, MiniscriptInstructionOutcome (TClass::*TWriteMethod)(MiniscriptThread *thread, const DynamicValue &dest), bool TDereference>
 struct DynamicValueWriteFuncHelper {
 	static MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset) {
-		return (static_cast<TClass *>(objectRef)->*TWriteMethod)(thread, dest);
+		if (TDereference) {
+			return (static_cast<TClass *>(objectRef)->*TWriteMethod)(thread, dest.dereference());
+		} else
+			return (static_cast<TClass *>(objectRef)->*TWriteMethod)(thread, dest);
 	}
 	static MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) {
 		return kMiniscriptInstructionOutcomeFailed;
@@ -1072,7 +1086,7 @@ struct DynamicValueWriteFuncHelper {
 	static void create(TClass *obj, DynamicValueWriteProxy &proxy) {
 		proxy.pod.ptrOrOffset = 0;
 		proxy.pod.objectRef = obj;
-		proxy.pod.ifc = DynamicValueWriteInterfaceGlue<DynamicValueWriteFuncHelper<TClass, TWriteMethod> >::getInstance();
+		proxy.pod.ifc = DynamicValueWriteInterfaceGlue<DynamicValueWriteFuncHelper<TClass, TWriteMethod, TDereference> >::getInstance();
 	}
 };
 
@@ -2860,6 +2874,8 @@ protected:
 class VariableModifier : public Modifier {
 public:
 	virtual bool isVariable() const override;
+	virtual bool isListVariable() const;
+
 	virtual bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) = 0;
 	virtual void varGetValue(DynamicValue &dest) const = 0;
 	virtual Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override = 0;

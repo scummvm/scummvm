@@ -2395,19 +2395,11 @@ Common::SharedPtr<ModifierSaveLoad> BooleanVariableModifier::getSaveLoad() {
 }
 
 bool BooleanVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
-	switch (value.getType()) {
-	case DynamicValueTypes::kBoolean:
-		_value = value.getBool();
-		break;
-	case DynamicValueTypes::kFloat:
-		_value = (value.getFloat() != 0.0);
-		break;
-	case DynamicValueTypes::kInteger:
-		_value = (value.getInt() != 0);
-		break;
-	default:
+	DynamicValue boolValue;
+	if (!value.convertToType(DynamicValueTypes::kBoolean, boolValue))
 		return false;
-	}
+
+	_value = boolValue.getBool();
 
 	return true;
 }
@@ -2470,18 +2462,11 @@ Common::SharedPtr<ModifierSaveLoad> IntegerVariableModifier::getSaveLoad() {
 }
 
 bool IntegerVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
-	if (value.getType() == DynamicValueTypes::kFloat)
-		_value = static_cast<int32>(floor(value.getFloat() + 0.5));
-	else if (value.getType() == DynamicValueTypes::kInteger)
-		_value = value.getInt();
-	else if (value.getType() == DynamicValueTypes::kString) {
-		// Should this scan %lf to a double and round it instead?
-		int i;
-		if (!sscanf(value.getString().c_str(), "%i", &i))
-			return false;
-		_value = i;
-	} else
+	DynamicValue intValue;
+	if (!value.convertToType(DynamicValueTypes::kInteger, intValue))
 		return false;
+
+	_value = intValue.getInt();
 
 	return true;
 }
@@ -2542,10 +2527,11 @@ Common::SharedPtr<ModifierSaveLoad> IntegerRangeVariableModifier::getSaveLoad() 
 }
 
 bool IntegerRangeVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
-	if (value.getType() == DynamicValueTypes::kIntegerRange)
-		_range = value.getIntRange();
-	else
+	DynamicValue intRangeValue;
+	if (!value.convertToType(DynamicValueTypes::kIntegerRange, intRangeValue))
 		return false;
+
+	_range = intRangeValue.getIntRange();
 
 	return true;
 }
@@ -2632,10 +2618,11 @@ Common::SharedPtr<ModifierSaveLoad> VectorVariableModifier::getSaveLoad() {
 }
 
 bool VectorVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
-	if (value.getType() == DynamicValueTypes::kVector)
-		_vector = value.getVector();
-	else
+	DynamicValue vectorValue;
+	if (!value.convertToType(DynamicValueTypes::kVector, vectorValue))
 		return false;
+
+	_vector = vectorValue.getVector();
 
 	return true;
 }
@@ -2722,10 +2709,11 @@ Common::SharedPtr<ModifierSaveLoad> PointVariableModifier::getSaveLoad() {
 }
 
 bool PointVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
-	if (value.getType() == DynamicValueTypes::kPoint)
-		_value = value.getPoint();
-	else
+	DynamicValue pointValue;
+	if (!value.convertToType(DynamicValueTypes::kPoint, pointValue))
 		return false;
+
+	_value = pointValue.getPoint();
 
 	return true;
 }
@@ -2816,12 +2804,11 @@ Common::SharedPtr<ModifierSaveLoad> FloatingPointVariableModifier::getSaveLoad()
 }
 
 bool FloatingPointVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
-	if (value.getType() == DynamicValueTypes::kInteger)
-		_value = value.getInt();
-	else if (value.getType() == DynamicValueTypes::kFloat)
-		_value = value.getFloat();
-	else
+	DynamicValue floatValue;
+	if (!value.convertToType(DynamicValueTypes::kFloat, floatValue))
 		return false;
+
+	_value = floatValue.getFloat();
 
 	return true;
 }
@@ -2881,10 +2868,11 @@ Common::SharedPtr<ModifierSaveLoad> StringVariableModifier::getSaveLoad() {
 }
 
 bool StringVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
-	if (value.getType() == DynamicValueTypes::kString)
-		_value = value.getString();
-	else
+	DynamicValue stringValue;
+	if (!value.convertToType(DynamicValueTypes::kString, stringValue))
 		return false;
+
+	_value = stringValue.getString();
 
 	return true;
 }
@@ -2971,6 +2959,8 @@ Common::SharedPtr<ModifierSaveLoad> ObjectReferenceVariableModifierV1::getSaveLo
 }
 
 bool ObjectReferenceVariableModifierV1::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
+	// Somewhat tricky aspect: If this is set to another object reference variable modifier, then this will reference
+	// the other object variable modifier, it will NOT copy it.
 	if (value.getType() == DynamicValueTypes::kNull)
 		_value.reset();
 	else if (value.getType() == DynamicValueTypes::kObject)
@@ -2982,10 +2972,7 @@ bool ObjectReferenceVariableModifierV1::varSetValue(MiniscriptThread *thread, co
 }
 
 void ObjectReferenceVariableModifierV1::varGetValue(DynamicValue &dest) const {
-	if (_value.expired())
-		dest.clear();
-	else
-		dest.setObject(_value);
+	dest.setObject(getSelfReference());
 }
 
 Common::SharedPtr<Modifier> ObjectReferenceVariableModifierV1::shallowClone() const {

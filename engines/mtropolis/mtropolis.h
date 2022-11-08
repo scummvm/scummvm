@@ -82,7 +82,8 @@ private:
 
 	Common::String getUnpromptedSaveFileName(const Common::String &fileName);
 
-	static const uint kCurrentSaveFileVersion = 1;
+	static const uint kCurrentSaveFileVersion = 2;
+	static const uint kEarliestSupportedSaveFileVersion = 2;
 	static const uint kSavegameSignature = 0x6d545356;	// mTSV
 
 	ISaveWriter *_saveWriter;

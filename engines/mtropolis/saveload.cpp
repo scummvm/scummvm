@@ -162,6 +162,14 @@ bool MTropolisEngine::load(ISaveReader *reader, const Common::String &saveFileNa
 		return false;
 	}
 
+	if (saveFileVersion < kEarliestSupportedSaveFileVersion) {
+		GUI::MessageDialog dialog(_("Saved game was created with an earlier, incompatible version of ScummVM. Unable to load."));
+		dialog.runModal();
+
+		warning("An error occurred while reading file '%s'", saveFileName.c_str());
+		return false;
+	}
+
 	if (!reader->readSave(in.get(), saveFileVersion)) {
 		GUI::MessageDialog dialog(_("Failed to load save, an error occurred when reading the save game data."));
 		dialog.runModal();

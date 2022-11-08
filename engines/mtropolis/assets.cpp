@@ -798,6 +798,10 @@ void CachedImage::resetSurface(ColorDepthMode colorDepth, const Common::SharedPt
 	_surface = surface;
 }
 
+ColorDepthMode CachedImage::getOriginalColorDepth() const {
+	return _colorDepth;
+}
+
 const Common::SharedPtr<Graphics::ManagedSurface> &CachedImage::optimize(Runtime *runtime) {
 	ColorDepthMode renderDepth = runtime->getRealColorDepth();
 	const Graphics::PixelFormat &renderFmt = runtime->getRenderPixelFormat();

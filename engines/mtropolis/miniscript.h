@@ -420,8 +420,7 @@ public:
 	void popValues(size_t count);
 	size_t getStackSize() const;
 	MiniscriptStackValue &getStackValueFromTop(size_t offset);
-
-	MiniscriptInstructionOutcome dereferenceRValue(size_t offset, bool cloneLists);
+	MiniscriptInstructionOutcome dereferenceRValue(size_t offset);
 
 	void jumpOffset(size_t offset);
 

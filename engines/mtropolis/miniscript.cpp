@@ -38,6 +38,8 @@ bool miniscriptEvaluateTruth(const DynamicValue &value) {
 		return (value.getInt() != 0);
 	case DynamicValueTypes::kFloat:
 		return !(value.getFloat() == 0.0);
+	case DynamicValueTypes::kObject:
+		return !value.getObject().object.expired();
 	default:
 		return false;
 	}
@@ -487,9 +489,7 @@ MiniscriptInstructionOutcome Set::execute(MiniscriptThread *thread) const {
 	}
 
 	// Convert value
-	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, true);
-	if (outcome != kMiniscriptInstructionOutcomeContinue)
-		return outcome;
+	MiniscriptInstructionOutcome outcome = kMiniscriptInstructionOutcomeContinue;
 
 	const MiniscriptStackValue &srcValue = thread->getStackValueFromTop(0);
 	MiniscriptStackValue &target = thread->getStackValueFromTop(1);
@@ -510,10 +510,7 @@ MiniscriptInstructionOutcome Set::execute(MiniscriptThread *thread) const {
 		}
 
 		if (var != nullptr) {
-			if (!var->varSetValue(thread, srcValue.value)) {
-				thread->error("Couldn't assign value to variable, probably wrong type");
-				return kMiniscriptInstructionOutcomeFailed;
-			}
+			(void)var->varSetValue(thread, srcValue.value);
 		} else {
 			thread->error("Can't assign to rvalue");
 			return kMiniscriptInstructionOutcomeFailed;
@@ -533,14 +530,6 @@ MiniscriptInstructionOutcome Send::execute(MiniscriptThread *thread) const {
 		thread->error("Invalid stack state for send instruction");
 		return kMiniscriptInstructionOutcomeFailed;
 	}
-
-	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
-	if (outcome != kMiniscriptInstructionOutcomeContinue)
-		return outcome;
-
-	outcome = thread->dereferenceRValue(1, true);
-	if (outcome != kMiniscriptInstructionOutcomeContinue)
-		return outcome;
 
 	DynamicValue &targetValue = thread->getStackValueFromTop(0).value;
 	DynamicValue &payloadValue = thread->getStackValueFromTop(1).value;
@@ -590,11 +579,11 @@ MiniscriptInstructionOutcome BinaryArithInstruction::execute(MiniscriptThread *t
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
-	outcome = thread->dereferenceRValue(1, false);
+	outcome = thread->dereferenceRValue(1);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
@@ -719,11 +708,11 @@ MiniscriptInstructionOutcome UnorderedCompareInstruction::execute(MiniscriptThre
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
-	outcome = thread->dereferenceRValue(1, false);
+	outcome = thread->dereferenceRValue(1);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
@@ -827,11 +816,11 @@ MiniscriptInstructionOutcome And::execute(MiniscriptThread *thread) const {
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
-	outcome = thread->dereferenceRValue(1, false);
+	outcome = thread->dereferenceRValue(1);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
@@ -850,11 +839,11 @@ MiniscriptInstructionOutcome Or::execute(MiniscriptThread *thread) const {
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
-	outcome = thread->dereferenceRValue(1, false);
+	outcome = thread->dereferenceRValue(1);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
@@ -873,7 +862,7 @@ MiniscriptInstructionOutcome Neg::execute(MiniscriptThread *thread) const {
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
@@ -903,7 +892,7 @@ MiniscriptInstructionOutcome Not::execute(MiniscriptThread *thread) const {
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
@@ -919,11 +908,11 @@ MiniscriptInstructionOutcome OrderedCompareInstruction::execute(MiniscriptThread
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
-	outcome = thread->dereferenceRValue(1, false);
+	outcome = thread->dereferenceRValue(1);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
@@ -969,7 +958,7 @@ MiniscriptInstructionOutcome BuiltinFunc::execute(MiniscriptThread *thread) cons
 	}
 
 	for (size_t i = 0; i < stackArgsNeeded; i++) {
-		MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(i, false);
+		MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(i);
 		if (outcome != kMiniscriptInstructionOutcomeContinue)
 			return outcome;
 	}
@@ -1211,11 +1200,11 @@ MiniscriptInstructionOutcome StrConcat::execute(MiniscriptThread *thread) const 
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
-	outcome = thread->dereferenceRValue(1, false);
+	outcome = thread->dereferenceRValue(1);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
@@ -1244,11 +1233,11 @@ MiniscriptInstructionOutcome PointCreate::execute(MiniscriptThread *thread) cons
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
-	outcome = thread->dereferenceRValue(1, false);
+	outcome = thread->dereferenceRValue(1);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
@@ -1302,11 +1291,11 @@ MiniscriptInstructionOutcome RangeCreate::execute(MiniscriptThread *thread) cons
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
-	outcome = thread->dereferenceRValue(1, false);
+	outcome = thread->dereferenceRValue(1);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
@@ -1376,7 +1365,7 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 		}
 
 		// Convert index
-		outcome = thread->dereferenceRValue(0, false);
+		outcome = thread->dereferenceRValue(0);
 		if (outcome != kMiniscriptInstructionOutcomeContinue)
 			return outcome;
 
@@ -1607,24 +1596,16 @@ MiniscriptInstructionOutcome ListCreate::execute(MiniscriptThread *thread) const
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
-	if (outcome != kMiniscriptInstructionOutcomeContinue)
-		return outcome;
-
-	outcome = thread->dereferenceRValue(1, false);
-	if (outcome != kMiniscriptInstructionOutcomeContinue)
-		return outcome;
-
 	MiniscriptStackValue &rs = thread->getStackValueFromTop(0);
 	MiniscriptStackValue &lsDest = thread->getStackValueFromTop(1);
 
 	Common::SharedPtr<DynamicList> list(new DynamicList());
-	if (!list->setAtIndex(1, rs.value)) {
-		thread->error("Failed to set value 2 of list");
-		return kMiniscriptInstructionOutcomeFailed;
-	}
 	if (!list->setAtIndex(0, lsDest.value)) {
 		thread->error("Failed to set value 1 of list");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+	if (!list->setAtIndex(1, rs.value)) {
+		thread->error("Failed to set value 2 of list");
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
@@ -1639,14 +1620,6 @@ MiniscriptInstructionOutcome ListAppend::execute(MiniscriptThread *thread) const
 		thread->error("Stack underflow");
 		return kMiniscriptInstructionOutcomeFailed;
 	}
-
-	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
-	if (outcome != kMiniscriptInstructionOutcomeContinue)
-		return outcome;
-
-	outcome = thread->dereferenceRValue(1, false);
-	if (outcome != kMiniscriptInstructionOutcomeContinue)
-		return outcome;
 
 	MiniscriptStackValue &rs = thread->getStackValueFromTop(0);
 	MiniscriptStackValue &lsDest = thread->getStackValueFromTop(1);
@@ -1826,7 +1799,7 @@ MiniscriptInstructionOutcome Jump::execute(MiniscriptThread *thread) const {
 			return kMiniscriptInstructionOutcomeFailed;
 		}
 
-		MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+		MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0);
 		if (outcome != kMiniscriptInstructionOutcomeContinue)
 			return outcome;
 
@@ -1906,7 +1879,7 @@ MiniscriptStackValue &MiniscriptThread::getStackValueFromTop(size_t offset) {
 	return _stack[_stack.size() - 1 - offset];
 }
 
-MiniscriptInstructionOutcome MiniscriptThread::dereferenceRValue(size_t offset, bool cloneLists) {
+MiniscriptInstructionOutcome MiniscriptThread::dereferenceRValue(size_t offset) {
 	assert(offset < _stack.size());
 	MiniscriptStackValue &stackValue = _stack[_stack.size() - 1 - offset];
 
@@ -1924,9 +1897,8 @@ MiniscriptInstructionOutcome MiniscriptThread::dereferenceRValue(size_t offset, 
 		this->error("Attempted to dereference an lvalue proxy");
 		return kMiniscriptInstructionOutcomeFailed;
 	case DynamicValueTypes::kList:
-			if (cloneLists)
-				stackValue.value.setList(stackValue.value.getList()->clone());
-			break;
+		stackValue.value.setList(stackValue.value.getList()->clone());
+		break;
 	default:
 		break;
 	}
@@ -1950,7 +1922,7 @@ bool MiniscriptThread::evaluateTruthOfResult(bool &isTrue) {
 		return false;
 	}
 
-	MiniscriptInstructionOutcome outcome = dereferenceRValue(0, false);
+	MiniscriptInstructionOutcome outcome = dereferenceRValue(0);
 	if (outcome != kMiniscriptInstructionOutcomeContinue) {
 		this->error("Miniscript program result couldn't be dereferenced");
 		return false;

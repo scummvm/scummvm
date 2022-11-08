@@ -399,10 +399,10 @@ MiniscriptInstructionOutcome TextWorkModifier::writeRefAttribute(MiniscriptThrea
 		DynamicValueWriteStringHelper::create(&_token, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "firstword") {
-		DynamicValueWriteFuncHelper<TextWorkModifier, &TextWorkModifier::scriptSetFirstWord>::create(this, result);
+		DynamicValueWriteFuncHelper<TextWorkModifier, &TextWorkModifier::scriptSetFirstWord, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "lastword") {
-		DynamicValueWriteFuncHelper<TextWorkModifier, &TextWorkModifier::scriptSetLastWord>::create(this, result);
+		DynamicValueWriteFuncHelper<TextWorkModifier, &TextWorkModifier::scriptSetLastWord, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -518,11 +518,11 @@ bool DictionaryModifier::readAttribute(MiniscriptThread *thread, DynamicValue &r
 
 MiniscriptInstructionOutcome DictionaryModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
 	if (attrib == "index") {
-		DynamicValueWriteFuncHelper<DictionaryModifier, &DictionaryModifier::scriptSetIndex>::create(this, result);
+		DynamicValueWriteFuncHelper<DictionaryModifier, &DictionaryModifier::scriptSetIndex, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "string") {
-		DynamicValueWriteFuncHelper<DictionaryModifier, &DictionaryModifier::scriptSetString>::create(this, result);
+		DynamicValueWriteFuncHelper<DictionaryModifier, &DictionaryModifier::scriptSetString, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -651,11 +651,11 @@ bool WordMixerModifier::readAttribute(MiniscriptThread *thread, DynamicValue &re
 
 MiniscriptInstructionOutcome WordMixerModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
 	if (attrib == "input") {
-		DynamicValueWriteFuncHelper<WordMixerModifier, &WordMixerModifier::scriptSetInput>::create(this, result);
+		DynamicValueWriteFuncHelper<WordMixerModifier, &WordMixerModifier::scriptSetInput, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "search") {
-		DynamicValueWriteFuncHelper<WordMixerModifier, &WordMixerModifier::scriptSetSearch>::create(this, result);
+		DynamicValueWriteFuncHelper<WordMixerModifier, &WordMixerModifier::scriptSetSearch, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -872,7 +872,7 @@ bool XorCheckModifier::readAttribute(MiniscriptThread *thread, DynamicValue &res
 
 MiniscriptInstructionOutcome XorCheckModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
 	if (attrib == "checknow") {
-		DynamicValueWriteFuncHelper<XorCheckModifier, &XorCheckModifier::scriptSetCheckNow>::create(this, result);
+		DynamicValueWriteFuncHelper<XorCheckModifier, &XorCheckModifier::scriptSetCheckNow, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 

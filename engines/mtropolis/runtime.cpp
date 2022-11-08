@@ -1018,21 +1018,20 @@ MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::write(MiniscriptT
 MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) {
 	DynamicList *list = static_cast<DynamicList *>(objectRef);
 
+	if (ptrOrOffset >= list->getSize()) {
+		// Only direct sets of elements may change the size of a list.  Accessing attributes of elements that aren't set is an error.
+		thread->error("List attrib write dereference was out of bounds");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
 	switch (list->getType()) {
 	case DynamicValueTypes::kPoint:
-		list->expandToMinimumSize(ptrOrOffset + 1);
 		return pointWriteRefAttrib(list->getPoint()[ptrOrOffset], thread, proxy, attrib);
 	case DynamicValueTypes::kIntegerRange:
-		list->expandToMinimumSize(ptrOrOffset + 1);
 		return list->getIntRange()[ptrOrOffset].refAttrib(thread, proxy, attrib);
 	case DynamicValueTypes::kVector:
-		list->expandToMinimumSize(ptrOrOffset + 1);
 		return list->getVector()[ptrOrOffset].refAttrib(thread, proxy, attrib);
 	case DynamicValueTypes::kObject: {
-			if (list->getSize() <= ptrOrOffset) {
-				return kMiniscriptInstructionOutcomeFailed;
-				}
-
 			Common::SharedPtr<RuntimeObject> obj = list->getObjectReference()[ptrOrOffset].object.lock();
 			proxy.containerList.reset();
 			if (!obj) {
@@ -1064,7 +1063,7 @@ MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::refAttribIndexed(
 			subList->createWriteProxyForIndex(subIndex, proxy);
 			proxy.containerList = subList;
 			return kMiniscriptInstructionOutcomeContinue;
-		}
+		} break;
 	case DynamicValueTypes::kObject: {
 			if (list->getSize() <= ptrOrOffset)
 				return kMiniscriptInstructionOutcomeFailed;
@@ -1075,7 +1074,7 @@ MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::refAttribIndexed(
 				return kMiniscriptInstructionOutcomeFailed;
 
 			return kMiniscriptInstructionOutcomeContinue;
-		}
+		} break;
 	default:
 		return kMiniscriptInstructionOutcomeFailed;
 	}
@@ -1375,22 +1374,78 @@ bool DynamicValue::roundToInt(int32 &outInt) const {
 }
 
 bool DynamicValue::convertToType(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const {
+	if (_type == DynamicValueTypes::kObject && targetType != DynamicValueTypes::kObject) {
+		RuntimeObject *obj = this->_value.asObj.object.lock().get();
+		if (obj && obj->isModifier() && static_cast<Modifier *>(obj)->isVariable()) {
+			DynamicValue varContents;
+			static_cast<VariableModifier *>(obj)->varGetValue(varContents);
+			return varContents.convertToTypeNoDereference(targetType, result);
+		}
+	}
+
+	if (_type == DynamicValueTypes::kList && targetType != DynamicValueTypes::kList) {
+		if (_value.asList.get() && _value.asList->getSize() == 1) {
+			// Single-value lists are convertible
+			DynamicValue firstListElement;
+			(void)_value.asList->getAtIndex(0, firstListElement);
+
+			return firstListElement.convertToType(targetType, result);
+		}
+	}
+
+	return convertToTypeNoDereference(targetType, result);
+}
+
+DynamicValue DynamicValue::dereference() const {
+	if (_type == DynamicValueTypes::kObject) {
+		RuntimeObject *obj = this->_value.asObj.object.lock().get();
+		if (obj && obj->isModifier() && static_cast<Modifier *>(obj)->isVariable()) {
+			DynamicValue varContents;
+			static_cast<VariableModifier *>(obj)->varGetValue(varContents);
+			return varContents;
+		}
+	}
+
+	if (_type == DynamicValueTypes::kList) {
+		if (_value.asList.get() && _value.asList->getSize() == 1) {
+			// Single-value lists are convertible
+			DynamicValue firstListElement;
+			(void)_value.asList->getAtIndex(0, firstListElement);
+
+			return firstListElement;
+		}
+	}
+
+	return *this;
+}
+
+bool DynamicValue::convertToTypeNoDereference(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const {
 	if (_type == targetType) {
 		result = *this;
 		return true;
 	}
 
 	switch (_type) {
+	case DynamicValueTypes::kNull:
+		if (targetType == DynamicValueTypes::kObject) {
+			result.setObject(Common::WeakPtr<RuntimeObject>());
+			return true;
+		}
+		break;
 	case DynamicValueTypes::kInteger:
 		return convertIntToType(targetType, result);
 	case DynamicValueTypes::kFloat:
 		return convertFloatToType(targetType, result);
 	case DynamicValueTypes::kBoolean:
 		return convertBoolToType(targetType, result);
+	case DynamicValueTypes::kString:
+		return convertStringToType(targetType, result);
 	default:
-		warning("Couldn't convert dynamic value from source type");
-		return false;
+		break;
 	}
+
+	warning("Couldn't convert dynamic value from source type");
+	return false;
 }
 
 void DynamicValue::setObject(const ObjectReference &value) {
@@ -1554,6 +1609,35 @@ bool DynamicValue::convertBoolToType(DynamicValueTypes::DynamicValueType targetT
 		warning("Unable to implicitly convert dynamic value");
 		return false;
 	}
+}
+
+bool DynamicValue::convertStringToType(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const {
+	const Common::String &value = this->getString();
+
+	// Docs say that strings are always false but they are not convertible
+	switch (targetType) {
+	case DynamicValueTypes::kInteger: {
+			// Passing float values is allowed, but they are truncated toward zero instead of rounded
+			double floatValue = 0;
+			if (sscanf(value.c_str(), "%lf", &floatValue))
+				result.setInt(static_cast<int>(floatValue));
+			else
+				result.setInt(0);
+			return true;
+		} break;
+	case DynamicValueTypes::kFloat: {
+			double floatValue = 0;
+			if (sscanf(value.c_str(), "%lf", &floatValue))
+				result.setFloat(floatValue);
+			else
+				result.setFloat(0.0);
+			return true;
+		} break;
+	default:
+		break;
+	}
+	warning("Unable to implicitly convert dynamic value");
+	return false;
 }
 
 void DynamicValue::setFromOther(const DynamicValue &other) {
@@ -1723,7 +1807,7 @@ DynamicValue DynamicValueSource::produceValue(const DynamicValue &incomingData) 
 		return incomingData;
 	case DynamicValueSourceTypes::kVariableReference: {
 			Common::SharedPtr<Modifier> resolution = _valueUnion._varReference.resolution.lock();
-			if (resolution->isVariable()) {
+			if (resolution && resolution->isVariable()) {
 				DynamicValue result;
 				static_cast<VariableModifier *>(resolution.get())->varGetValue(result);
 				return result;
@@ -1795,8 +1879,10 @@ void DynamicValueSource::initFromOther(DynamicValueSource &&other) {
 }
 
 MiniscriptInstructionOutcome DynamicValueWriteStringHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
+	DynamicValue derefValue = value.dereference();
+
 	Common::String &dest = *static_cast<Common::String *>(objectRef);
-	switch (value.getType()) {
+	switch (derefValue.getType()) {
 	case DynamicValueTypes::kString:
 		dest = value.getString();
 		return kMiniscriptInstructionOutcomeContinue;
@@ -1839,6 +1925,8 @@ void DynamicValueWriteDiscardHelper::create(DynamicValueWriteProxy &proxy) {
 
 
 MiniscriptInstructionOutcome DynamicValueWritePointHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
+	DynamicValue derefValue = value.dereference();
+
 	if (value.getType() != DynamicValueTypes::kPoint) {
 		thread->error("Can't set point to invalid type");
 		return kMiniscriptInstructionOutcomeFailed;
@@ -1874,10 +1962,12 @@ void DynamicValueWritePointHelper::create(Common::Point *pointValue, DynamicValu
 }
 
 MiniscriptInstructionOutcome DynamicValueWriteBoolHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
+	DynamicValue derefValue = value.dereference();
+
 	bool &dest = *static_cast<bool *>(objectRef);
-	switch (value.getType()) {
+	switch (derefValue.getType()) {
 	case DynamicValueTypes::kBoolean:
-		dest = value.getBool();
+		dest = derefValue.getBool();
 		return kMiniscriptInstructionOutcomeContinue;
 	default:
 		return kMiniscriptInstructionOutcomeFailed;
@@ -2584,19 +2674,19 @@ bool WorldManagerInterface::readAttribute(MiniscriptThread *thread, DynamicValue
 
 MiniscriptInstructionOutcome WorldManagerInterface::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
 	if (attrib == "currentscene") {
-		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setCurrentScene>::create(this, result);
+		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setCurrentScene, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "refreshcursor") {
-		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setRefreshCursor>::create(this, result);
+		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setRefreshCursor, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "autoresetcursor") {
-		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setAutoResetCursor>::create(this, result);
+		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setAutoResetCursor, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "winsndbuffersize") {
-		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setWinSndBufferSize>::create(this, result);
+		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setWinSndBufferSize, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "gamemode") {
@@ -2709,19 +2799,19 @@ bool SystemInterface::readAttributeIndexed(MiniscriptThread *thread, DynamicValu
 
 MiniscriptInstructionOutcome SystemInterface::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
 	if (attrib == "ejectcd") {
-		DynamicValueWriteFuncHelper<SystemInterface, &SystemInterface::setEjectCD>::create(this, result);
+		DynamicValueWriteFuncHelper<SystemInterface, &SystemInterface::setEjectCD, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "gamemode") {
-		DynamicValueWriteFuncHelper<SystemInterface, &SystemInterface::setGameMode>::create(this, result);
+		DynamicValueWriteFuncHelper<SystemInterface, &SystemInterface::setGameMode, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "mastervolume") {
-		DynamicValueWriteFuncHelper<SystemInterface, &SystemInterface::setMasterVolume>::create(this, result);
+		DynamicValueWriteFuncHelper<SystemInterface, &SystemInterface::setMasterVolume, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "monitorbitdepth") {
-		DynamicValueWriteFuncHelper<SystemInterface, &SystemInterface::setMonitorBitDepth>::create(this, result);
+		DynamicValueWriteFuncHelper<SystemInterface, &SystemInterface::setMonitorBitDepth, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "volumename") {
-		DynamicValueWriteFuncHelper<SystemInterface, &SystemInterface::setVolumeName>::create(this, result);
+		DynamicValueWriteFuncHelper<SystemInterface, &SystemInterface::setVolumeName, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -2969,7 +3059,7 @@ MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thr
 		DynamicValueWriteStringHelper::create(&_name, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "paused") {
-		DynamicValueWriteFuncHelper<Structural, &Structural::scriptSetPaused>::create(this, result);
+		DynamicValueWriteFuncHelper<Structural, &Structural::scriptSetPaused, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "this") {
 		// Yes, "this" is an attribute
@@ -3010,10 +3100,10 @@ MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thr
 			return kMiniscriptInstructionOutcomeFailed;
 		}
 	} else if (attrib == "loop") {
-		DynamicValueWriteFuncHelper<Structural, &Structural::scriptSetLoop>::create(this, result);
+		DynamicValueWriteFuncHelper<Structural, &Structural::scriptSetLoop, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "debug") {
-		DynamicValueWriteFuncHelper<Structural, &Structural::scriptSetDebug>::create(this, result);
+		DynamicValueWriteFuncHelper<Structural, &Structural::scriptSetDebug, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "flushpriority") {
 		DynamicValueWriteIntegerHelper<int32>::create(&_flushPriority, result);
@@ -7801,10 +7891,10 @@ bool VisualElement::readAttribute(MiniscriptThread *thread, DynamicValue &result
 
 MiniscriptInstructionOutcome VisualElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
 	if (attrib == "visible") {
-		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetVisibility>::create(this, writeProxy);
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetVisibility, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "direct") {
-		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetDirect>::create(this, writeProxy);
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetDirect, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "position") {
 		DynamicValueWriteOrRefAttribFuncHelper<VisualElement, &VisualElement::scriptSetPosition, &VisualElement::scriptWriteRefPositionAttribute>::create(this, writeProxy);
@@ -7813,13 +7903,13 @@ MiniscriptInstructionOutcome VisualElement::writeRefAttribute(MiniscriptThread *
 		DynamicValueWriteOrRefAttribFuncHelper<VisualElement, &VisualElement::scriptSetCenterPosition, &VisualElement::scriptWriteRefCenterPositionAttribute>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "width") {
-		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetWidth>::create(this, writeProxy);
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetWidth, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "height") {
-		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetHeight>::create(this, writeProxy);
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetHeight, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "layer") {
-		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetLayer>::create(this, writeProxy);
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetLayer, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -8152,10 +8242,10 @@ MiniscriptInstructionOutcome VisualElement::scriptSetLayer(MiniscriptThread *thr
 
 MiniscriptInstructionOutcome VisualElement::scriptWriteRefPositionAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
 	if (attrib == "x") {
-		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetPositionX>::create(this, writeProxy);
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetPositionX, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "y") {
-		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetPositionY>::create(this, writeProxy);
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetPositionY, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -8164,10 +8254,10 @@ MiniscriptInstructionOutcome VisualElement::scriptWriteRefPositionAttribute(Mini
 
 MiniscriptInstructionOutcome VisualElement::scriptWriteRefCenterPositionAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
 	if (attrib == "x") {
-		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetCenterPositionX>::create(this, writeProxy);
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetCenterPositionX, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "y") {
-		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetCenterPositionY>::create(this, writeProxy);
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetCenterPositionY, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -8488,6 +8578,10 @@ void Modifier::debugInspect(IDebugInspectionReport *report) const {
 
 bool VariableModifier::isVariable() const {
 	return true;
+}
+
+bool VariableModifier::isListVariable() const {
+	return false;
 }
 
 bool VariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
