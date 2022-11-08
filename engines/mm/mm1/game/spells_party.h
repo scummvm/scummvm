@@ -45,7 +45,6 @@ class SpellsParty : public GameLogic {
 	typedef SpellResult(*SpellFn)();
 private:
 	static Character *_destChar;
-	static int _destMonsterNum;
 private:
 	/**
 	 * Returns true if in combat
@@ -103,6 +102,7 @@ private:
 	static SpellResult cleric46_summonLightning();
 	static SpellResult cleric47_superHeroism();
 	static SpellResult cleric48_surface();
+	static SpellResult cleric51_deadlySwarm();
 	static SpellResult cleric52_dispelMagic();
 	static SpellResult cleric54_removeCondition();
 	static SpellResult cleric55_restoreEnergy();
@@ -141,7 +141,7 @@ public:
 	 * Casts a spell
 	 */
 	static SpellResult cast(uint spell, Character *destChar);
-	static SpellResult cast(uint spell, int destMonsterIdx);
+	static SpellResult cast(uint spellx);
 };
 
 } // namespace Game

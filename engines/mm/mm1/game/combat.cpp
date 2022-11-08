@@ -837,11 +837,33 @@ void Combat::displaySpellResult(const InfoMessage &msg) {
 }
 
 void Combat::iterateMonsters1() {
+	Common::String line1 = Common::String::format("|%s| %s",
+		g_globals->_currCharacter->_name,
+		STRING["spells.casts_spell"].c_str());
+	_spellMonsterCount = _monsterList.size();
+
+	for (;;) {
+		// TODO
+	}
+
 	// TODO: iterateMonsters1
 }
 
 void Combat::iterateMonsters2() {
 	// TODO: iterateMonsters2
+}
+
+void Combat::resetDestMonster() {
+	_destMonsterNum = 0;
+	_monsterP = &_monsterList[0];
+	monsterIndexOf();
+	g_globals->_spellsState._resistanceType = RESISTANCE_15;
+}
+
+bool Combat::monsterLevelThreshold() const {
+	int level = _monsterP->_field19 & FIELD19_LEVEL;
+	return (level != 0) &&
+		getRandomNumber(g_globals->_currCharacter->_level + 100) < level;
 }
 
 void Combat::turnUndead() {
@@ -876,11 +898,11 @@ void Combat::destroyUndead() {
 	Sound::sound2(SOUND_9);
 }
 
-void Combat::summonLightning(int destMonsterIndex) {
+void Combat::summonLightning() {
 	// TODO: Summon lightning
 	//SpellsState &ss = g_globals->_spellsState;
 
-	if (destMonsterIndex < _attackerVal) {
+	if (_destMonsterNum < _attackerVal) {
 		// TODO
 	}
 }

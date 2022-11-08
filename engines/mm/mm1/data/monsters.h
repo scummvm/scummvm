@@ -45,6 +45,7 @@ enum MonsterStatusFlag {
 };
 
 enum Field19 {
+	FIELD19_LEVEL = 0x7f,
 	FIELD19_UNDEAD = 0x80
 };
 

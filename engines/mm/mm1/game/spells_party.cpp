@@ -35,7 +35,6 @@ namespace MM1 {
 namespace Game {
 
 Character *SpellsParty::_destChar;
-int SpellsParty::_destMonsterNum;
 
 SpellsParty::SpellFn SpellsParty::SPELLS[SPELLS_COUNT] = {
 	// Cleric spells
@@ -119,7 +118,7 @@ SpellsParty::SpellFn SpellsParty::SPELLS[SPELLS_COUNT] = {
 	wizard46_psychicProtection,
 	placeholder,
 	placeholder,
-	placeholder,
+	cleric51_deadlySwarm,
 	wizard52_dispelMagic,
 	placeholder,
 	wizard54_shelter,
@@ -167,15 +166,6 @@ byte FLY_MAP_Y[20] = {
 SpellResult SpellsParty::cast(uint spell, Character *destChar) {
 	assert(spell < SPELLS_COUNT);
 	_destChar = destChar;
-	_destMonsterNum = -1;
-
-	return SPELLS[spell]();
-}
-
-SpellResult SpellsParty::cast(uint spell, int destMonsterIdx) {
-	assert(spell < SPELLS_COUNT);
-	_destChar = nullptr;
-	_destMonsterNum = destMonsterIdx;
 
 	return SPELLS[spell]();
 }
@@ -413,7 +403,7 @@ SpellResult SpellsParty::cleric45_restoreAlignment() {
 }
 
 SpellResult SpellsParty::cleric46_summonLightning() {
-	g_globals->_combat->summonLightning(_destMonsterNum);
+	g_globals->_combat->summonLightning();
 	return SR_SUCCESS_SILENT;
 }
 
@@ -440,6 +430,17 @@ SpellResult SpellsParty::cleric48_surface() {
 			map[Maps::MAP_SURFACE_DEST_SECTION]);
 		return SR_SUCCESS_SILENT;
 	}
+}
+
+SpellResult SpellsParty::cleric51_deadlySwarm() {
+	SpellsState &ss = g_globals->_spellsState;
+	g_globals->_combat->resetDestMonster();
+	ss._mmVal1++;
+	ss._mmVal2 = 0;
+	ss._newCondition = getRandomNumber(10) + getRandomNumber(10);
+
+	g_globals->_combat->iterateMonsters2();
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult SpellsParty::cleric52_dispelMagic() {
