@@ -79,8 +79,10 @@ protected:
 	};
 	Mode _mode = SELECT_OPTION;
 
+	int _destMonsterNum = 0;
 	int _monstersDestroyedCtr = 0;
 	bool _turnUndeadUsed = false;
+	size_t _spellMonsterCount = 0;
 
 	/**
 	 * Constructor
@@ -237,6 +239,7 @@ protected:
 
 private:
 	void destroyUndead();
+	bool monsterLevelThreshold() const;
 
 public:
 	/**
@@ -246,9 +249,10 @@ public:
 
 	void iterateMonsters1();
 	void iterateMonsters2();
+	void resetDestMonster();
 
 	void turnUndead();
-	void summonLightning(int destMonsterIndex);
+	void summonLightning();
 };
 
 } // namespace Game

@@ -800,6 +800,7 @@ spells:
 	failed: "SPELL FAILED"
 	no_effect: "NO EFFECT!"
 	monsters_destroyed: "SOME MONSTERS WERE DESTROYED!"
+	casts_spell: "CASTS A SPELL:"
 
 	enter_to_cast: "'ENTER' TO CAST"
 	cast_on_char: "CAST ON: '1'-'%d'?"
