@@ -49,8 +49,8 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 }
 
 void FreescapeEngine::shoot() {
+	//_mixer->stopHandle(_soundFxHandle);
 	playSound(1, true);
-	_mixer->stopHandle(_soundFxHandle);
 	_gfx->renderShoot(0, _crossairPosition);
 
 	float xoffset = _crossairPosition.x - float(_screenW) / 2;
