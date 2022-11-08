@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-07 07:05+0000\n"
+"POT-Creation-Date: 2022-11-08 04:19+0000\n"
 "PO-Revision-Date: 2022-10-27 16:30+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -6216,18 +6216,29 @@ msgstr ""
 "d'information de version valide."
 
 #: engines/mtropolis/saveload.cpp:166
+#, fuzzy
+#| msgid ""
+#| "Saved game was created with a newer version of ScummVM. Unable to load."
+msgid ""
+"Saved game was created with an earlier, incompatible version of ScummVM. "
+"Unable to load."
+msgstr ""
+"Sauvegarde créée avec une version plus récente de ScummVM. Chargement "
+"impossible."
+
+#: engines/mtropolis/saveload.cpp:174
 msgid "Failed to load save, an error occurred when reading the save game data."
 msgstr ""
 "Impossible de charger la sauvegarde, une erreur s'est produite lors de la "
 "lecture des données de sauvegarde de la partie."
 
-#: engines/mtropolis/saveload.cpp:226
+#: engines/mtropolis/saveload.cpp:234
 msgid "An internal error occurred while attempting to write save game data"
 msgstr ""
 "Une erreur interne s'est produite lors de l'écriture des données de "
 "sauvegarde de la partie"
 
-#: engines/mtropolis/saveload.cpp:234
+#: engines/mtropolis/saveload.cpp:242
 msgid "An error occurred while writing the save game"
 msgstr ""
 "Une erreur s'est produite lors de l'écriture de la sauvegarde de la partie"

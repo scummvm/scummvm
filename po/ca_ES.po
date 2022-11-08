@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-07 07:05+0000\n"
+"POT-Creation-Date: 2022-11-08 04:19+0000\n"
 "PO-Revision-Date: 2022-10-22 04:33+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -5948,14 +5948,26 @@ msgid ""
 msgstr ""
 
 #: engines/mtropolis/saveload.cpp:166
+#, fuzzy
+#| msgid ""
+#| "This saved game was created with a different version of the game, unable "
+#| "to load it"
+msgid ""
+"Saved game was created with an earlier, incompatible version of ScummVM. "
+"Unable to load."
+msgstr ""
+"Aquesta partida desada es va crear amb una versió del joc diferent, no es "
+"pot carregar"
+
+#: engines/mtropolis/saveload.cpp:174
 msgid "Failed to load save, an error occurred when reading the save game data."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:226
+#: engines/mtropolis/saveload.cpp:234
 msgid "An internal error occurred while attempting to write save game data"
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:234
+#: engines/mtropolis/saveload.cpp:242
 msgid "An error occurred while writing the save game"
 msgstr "S'ha produït un error en escriure la partida desada"
 

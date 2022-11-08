@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-07 07:05+0000\n"
+"POT-Creation-Date: 2022-11-08 04:19+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -6191,14 +6191,23 @@ msgid ""
 msgstr ""
 
 #: engines/mtropolis/saveload.cpp:166
+#, fuzzy
+msgid ""
+"Saved game was created with an earlier, incompatible version of ScummVM. "
+"Unable to load."
+msgstr ""
+"Det gemte spil blev oprettet med en anden version af spillet, kunne ikke "
+"indlæse det"
+
+#: engines/mtropolis/saveload.cpp:174
 msgid "Failed to load save, an error occurred when reading the save game data."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:226
+#: engines/mtropolis/saveload.cpp:234
 msgid "An internal error occurred while attempting to write save game data"
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:234
+#: engines/mtropolis/saveload.cpp:242
 #, fuzzy
 #| msgid ", error while mounting the share"
 msgid "An error occurred while writing the save game"
