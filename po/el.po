@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-08 04:19+0000\n"
-"PO-Revision-Date: 2022-11-07 19:26+0000\n"
+"PO-Revision-Date: 2022-11-08 13:44+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -6264,15 +6264,12 @@ msgstr ""
 "περιέχει έγκυρση πληροφορία έκδοσης."
 
 #: engines/mtropolis/saveload.cpp:166
-#, fuzzy
-#| msgid ""
-#| "Saved game was created with a newer version of ScummVM. Unable to load."
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
 msgstr ""
-"Το αποθηκευμένο παιχνίδι δημιουργήθηκε με νεότερη έκδοση του ScummVM. "
-"Αδυναμία φόρτωσης."
+"Το αποθηκευμένο παιχνίδι δημιουργήθηκε με προηγούμενη, ασύμβατη έκδοση του "
+"ScummVM. Αδυναμία φόρτωσης."
 
 #: engines/mtropolis/saveload.cpp:174
 msgid "Failed to load save, an error occurred when reading the save game data."
