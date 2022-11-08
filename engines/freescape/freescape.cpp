@@ -109,6 +109,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 }
 
 FreescapeEngine::~FreescapeEngine() {
+	removeTimers();
 	delete _rnd;
 
 	if (_title && _title != _border) {

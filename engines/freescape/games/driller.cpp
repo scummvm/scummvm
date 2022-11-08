@@ -356,6 +356,13 @@ void DrillerEngine::drawUI() {
 		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 150, 161, yellow, black, surface);
 		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 57, 161, yellow, black, surface);
 		drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
+
+		int hours = _countdown / 3600;
+		drawStringInSurface(Common::String::format("%02d", hours), 208, 8, yellow, black, surface);
+		int minutes = (_countdown - hours * 3600) / 60;
+		drawStringInSurface(Common::String::format("%02d", minutes), 230, 8, yellow, black, surface);
+		int seconds = _countdown - hours * 3600 - minutes * 60;
+		drawStringInSurface(Common::String::format("%02d", seconds), 254, 8, yellow, black, surface);
 	}
 
 	int energy = _gameStateVars[k8bitVariableEnergy];
