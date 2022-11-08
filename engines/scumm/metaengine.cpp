@@ -299,6 +299,29 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) {
 		}
 	}
 
+	// Still no unique match found. Narrow down again excluding demos using extra
+	// metadata
+	if (results.size() > 1 && ConfMan.hasKey("extra")) {
+		Common::String extra_cfg = ConfMan.get("extra");
+		Common::List<DetectorResult> tmp;
+
+		for (Common::List<DetectorResult>::iterator
+				  x = results.begin(); x != results.end(); ++x) {
+
+			// FIXME: there's no demo flag in confman, this is not 100% reliable
+			if (Common::String(x->extra).contains("Demo") && extra_cfg.contains("Demo"))
+				tmp.push_back(*x);
+		}
+
+		// If we narrowed it down too much, print a warning, else use the list
+		// we just computed as new candidates list.
+		if (tmp.empty()) {
+			warning("Engine_SCUMM_create: Game data inconsistent with extra metadata settings");
+		} else {
+			results = tmp;
+		}
+	}
+
 	// Still no unique match found -> print a warning.
 	if (results.size() > 1)
 		warning("Engine_SCUMM_create: No unique game candidate found, using first one");
