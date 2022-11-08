@@ -29,6 +29,7 @@
 #include "audio/decoders/wave.h"
 #include "audio/mixer.h"
 #include "audio/softsynth/pcspk.h"
+#include "graphics/framelimiter.h"
 
 #include "freescape/area.h"
 #include "freescape/gfx.h"
@@ -250,6 +251,7 @@ public:
 	// Rendering
 	int _screenW, _screenH;
 	Renderer *_gfx;
+	Graphics::FrameLimiter *_frameLimiter;
 	Common::RenderMode _renderMode;
 	ColorMap _colorMap;
 	void drawFrame();

@@ -106,6 +106,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 
 	_timerStarted = false;
 	_countdown = 0;
+	_frameLimiter = nullptr;
 }
 
 FreescapeEngine::~FreescapeEngine() {
@@ -395,6 +396,7 @@ void FreescapeEngine::processInput() {
 }
 
 Common::Error FreescapeEngine::run() {
+	_frameLimiter = new Graphics::FrameLimiter(g_system, ConfMan.getInt("engine_speed"));
 	// Initialize graphics
 	_gfx = createRenderer(_screenW, _screenH, _renderMode);
 	// The following error code will force return to launcher
@@ -454,8 +456,9 @@ Common::Error FreescapeEngine::run() {
 
 		processInput();
 		_gfx->flipBuffer();
+		_frameLimiter->delayBeforeSwap();
 		g_system->updateScreen();
-		g_system->delayMillis(10);
+		_frameLimiter->startFrame();
 		endGame = checkIfGameEnded();
 	}
 
