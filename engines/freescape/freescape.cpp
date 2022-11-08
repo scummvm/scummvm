@@ -24,6 +24,7 @@
 #include "common/math.h"
 #include "common/unzip.h"
 #include "common/random.h"
+#include "common/timer.h"
 #include "graphics/cursorman.h"
 
 #include "freescape/freescape.h"
@@ -102,6 +103,9 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_viewArea = _fullscreenViewArea;
 	_rnd = new Common::RandomSource("freescape");
 	_gfx = nullptr;
+
+	_timerStarted = false;
+	_countdown = 0;
 }
 
 FreescapeEngine::~FreescapeEngine() {
@@ -642,5 +646,23 @@ Graphics::Surface *FreescapeEngine::loadAndConvertNeoImage(Common::SeekableReadS
 	surface->convertToInPlace(_gfx->_currentPixelFormat, decoder.getPalette());
 	return surface;
 }
+
+static void countdownCallback(void *refCon) {
+	FreescapeEngine* self = (FreescapeEngine *)refCon;
+	self->_countdown--;
+}
+
+bool FreescapeEngine::startCountdown(uint32 delay) {
+	_countdown = delay;
+	_timerStarted = true;
+	uint32 oneSecond = 1000000;
+	return g_system->getTimerManager()->installTimerProc(&countdownCallback, oneSecond, (void *)this, "countdown");
+}
+
+void FreescapeEngine::removeTimers() {
+	_timerStarted = false;
+	g_system->getTimerManager()->removeTimerProc(&countdownCallback);
+}
+
 
 } // namespace Freescape

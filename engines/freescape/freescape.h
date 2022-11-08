@@ -282,6 +282,12 @@ public:
 	bool canSaveGameStateCurrently() override { return true; }
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+
+	// Timers
+	bool startCountdown(uint32 delay);
+	void removeTimers();
+	bool _timerStarted;
+	int _countdown;
 };
 
 enum DrillerReleaseFlags {

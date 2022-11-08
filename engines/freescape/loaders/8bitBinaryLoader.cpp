@@ -472,6 +472,31 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
 	}
 
+	if (isDriller()) {
+		if (isAmiga() || isAtariST())
+			file->seek(offset + 0x168);
+		else
+			file->seek(offset + 0xb4);
+		Common::String n;
+		n += char(readField(file, 8));
+		n += char(readField(file, 8));
+		_countdown = _countdown + 3600 * atoi(n.c_str());
+		n.clear();
+		n += char(readField(file, 8));
+		assert(n == ":");
+		n.clear();
+		n += char(readField(file, 8));
+		n += char(readField(file, 8));
+		_countdown = _countdown + 60 * atoi(n.c_str());
+		n.clear();
+		n += char(readField(file, 8));
+		assert(n == ":");
+		n.clear();
+		n += char(readField(file, 8));
+		n += char(readField(file, 8));
+		_countdown = _countdown + atoi(n.c_str());
+	}
+
 	if (isAmiga() || isAtariST())
 		file->seek(offset + 0x190);
 	else

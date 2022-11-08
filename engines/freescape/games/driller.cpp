@@ -631,6 +631,8 @@ void DrillerEngine::initGameState() {
 
 	_gameStateVars[k8bitVariableEnergy] = _initialProveEnergy;
 	_gameStateVars[k8bitVariableShield] = _initialProveShield;
+	if (_countdown > 0)
+		startCountdown(_countdown);
 }
 
 bool DrillerEngine::checkIfGameEnded() {
