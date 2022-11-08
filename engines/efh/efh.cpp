@@ -836,6 +836,9 @@ void EfhEngine::loadNPCS() {
 
 Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
 	warning("STUB: playSong");
+
+	
+	
 	_system->delayMillis(1000);
 	
 	return Common::KEYCODE_INVALID;
@@ -4162,8 +4165,59 @@ bool EfhEngine::checkSpecialItemsOnCurrentPlace(int16 itemId) {
 	}
 }
 
+void EfhEngine::generateSound1(int arg0, int arg2, int duration) {
+	warning("STUB: generateSound1 %d %d %d", arg0, arg2, duration);
+}
+
+void EfhEngine::generateSound2(int startFreq, int endFreq, int arg4) {
+	warning("STUB: generateSound2 %d %d %d", startFreq, endFreq, arg4);
+
+	// Arg4 doesn't seem to be used.
+}
+
+void EfhEngine::generateSound3() {
+	warning("STUB: generateSound3");
+}
+
+void EfhEngine::generateSound4(int arg0) {
+	warning("STUB: generateSound4 %d", arg0);
+}
+
+void EfhEngine::generateSound5(int arg0) {
+	warning("STUB: generateSound5 %d", arg0);
+}
+
 void EfhEngine::generateSound(int16 soundType) {
-	warning("STUB: generateSound");
+	switch (soundType) {
+		case 5:
+			generateSound3();
+			break;
+		case 9:
+			generateSound1(20, 888, 3000);
+			generateSound1(20, 888, 3000);
+			break;
+		case 10:
+			generateSound5(1);
+			break;
+		case 13:
+			generateSound2(256, 4096, 18);
+			break;
+		case 14:
+			generateSound2(20, 400, 100);
+			break;
+		case 15:
+			generateSound2(100, 888, 88);
+			break;
+		case 16:
+			generateSound1(2000, 6096, 1500);
+			break;
+		case 17:
+			generateSound4(1);
+			break;
+		default:
+			// Not implemented because not used by the engine
+			break;
+	}
 }
 
 void EfhEngine::genericGenerateSound(int16 soundType, int16 repeatCount) {

@@ -387,6 +387,11 @@ private:
 	int16 sub1DEC8(int16 groupNumber);
 	int16 getCharacterScore(int16 charId, int16 itemId);
 	bool checkSpecialItemsOnCurrentPlace(int16 itemId);
+	void generateSound1(int arg0, int arg2, int duration);
+	void generateSound2(int startFreq, int endFreq, int arg4);
+	void generateSound3();
+	void generateSound4(int arg0);
+	void generateSound5(int arg0);
 	void generateSound(int16 soundType);
 	void genericGenerateSound(int16 soundType, int16 repeatCount);
 	bool hasAdequateDefense(int16 monsterId, uint8 attackType);
@@ -584,6 +589,7 @@ private:
 	Stru32686 _stru32686[5];
 	Stru3244C _stru3244C[8];
 };
+
 
 } // End of namespace Efh
 
