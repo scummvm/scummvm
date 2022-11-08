@@ -374,7 +374,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 
 	// Driller specific
 	area->_gasPocketPosition = Common::Point(32 * gasPocketX, 32 * gasPocketY);
-	area->_gasPocketRadius = gasPocketRadius;
+	area->_gasPocketRadius = 32 * gasPocketRadius;
 
 	while (numConditions--) {
 		FCLInstructionVector instructions;

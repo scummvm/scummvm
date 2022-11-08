@@ -414,24 +414,30 @@ void DrillerEngine::pressedKey(const int keycode) {
 
 		Math::Vector3d drillPosition = _cameraFront;
 		drillPosition = _position + 256 * drillPosition;
+		debugC(1, kFreescapeDebugMove, "Current position at %f %f %f", _position.x(), _position.y(), _position.z());
+		drillPosition.setValue(1, _position.y() - _playerHeight * _currentArea->getScale());
+		debugC(1, kFreescapeDebugMove, "Trying to adding drill at %f %f %f", drillPosition.x(), drillPosition.y(), drillPosition.z());
+		debugC(1, kFreescapeDebugMove, "with pitch: %f and yaw %f", _pitch, _yaw);
+
 		if (!checkDrill(drillPosition)) {
 			_currentAreaMessages[0] = _messagesList[4];
 			return;
 		}
 
 		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
-		_gameStateVars[32]++;
-		debugC(1, kFreescapeDebugMove, "Current position at %f %f %f", _position.x(), _position.y(), _position.z());
-		drillPosition.setValue(1, _position.y() - _playerHeight * _currentArea->getScale());
-		debugC(1, kFreescapeDebugMove, "Trying to adding drill at %f %f %f", drillPosition.x(), drillPosition.y(), drillPosition.z());
-		debugC(1, kFreescapeDebugMove, "with pitch: %f and yaw %f", _pitch, _yaw);
-
-		const Math::Vector3d gasPocket3D(gasPocket.x, 1, gasPocket.y);
+		const Math::Vector3d gasPocket3D(gasPocket.x, drillPosition.y(), gasPocket.y);
 		addDrill(drillPosition);
-		float distance = (gasPocket3D - drillPosition).length();
-		debugC(1, kFreescapeDebugMove, "length to gas pocket: %f with radius %d", distance, _currentArea->_gasPocketRadius);
-		// TODO: show the result of the drilling
-		_currentAreaMessages[0] = _messagesList[3];
+		float distanceToPocket = (gasPocket3D - drillPosition).length();
+		float success = 100.0 * (1.0 - distanceToPocket / _currentArea->_gasPocketRadius);
+
+		if (success <= 0) {
+			_currentAreaMessages[0] = _messagesList[9];
+			return;
+		}
+
+		_gameStateVars[32]++; // TODO: save a boolean to indicate if a level is safe or not
+		_currentAreaMessages[0] = _messagesList[6];
+		_currentAreaMessages[0].replace(0, 4, Common::String::format("%d", int(success)));
 
 	} else if (keycode == Common::KEYCODE_c) {
 		uint32 gasPocketRadius = _currentArea->_gasPocketRadius;
@@ -454,6 +460,8 @@ void DrillerEngine::pressedKey(const int keycode) {
 		}
 
 		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
+
+		// TODO: check if level is safe and decrement if necessary
 		_gameStateVars[32]--;
 		removeDrill();
 	}
@@ -475,8 +483,8 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 	assert(obj);
 	obj = obj->duplicate();
 	obj->setOrigin(origin);
-	if (!_currentArea->checkCollisions(obj->_boundingBox))
-		return false;
+	//if (!_currentArea->checkCollisions(obj->_boundingBox))
+	//	return false;
 
 	heightLastObject = obj->getSize().y();
 	delete obj;
