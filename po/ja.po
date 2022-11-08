@@ -6053,7 +6053,8 @@ msgstr "ロードに失敗、セーブファイルに有効なバージョン情
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
-msgstr "互換性が無い、旧バージョンのScummVMで作成されたセーブです。ロードできません。"
+msgstr ""
+"互換性が無い、旧バージョンのScummVMで作成されたセーブです。ロードできません。"
 
 #: engines/mtropolis/saveload.cpp:174
 msgid "Failed to load save, an error occurred when reading the save game data."
