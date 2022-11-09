@@ -57,6 +57,11 @@ struct Rect {
 		bottom += offset;
 	}
 
+	// Check if the rectangle is empty (its width or length is 0) or invalid (its width or length are negative).
+	bool isEmpty() const {
+		return (left >= right || top >= bottom);
+	}
+
 	// Check to see if a Rectangle is 'valid'
 	bool isValidRect() const {
 		return (left <= right && top <= bottom);

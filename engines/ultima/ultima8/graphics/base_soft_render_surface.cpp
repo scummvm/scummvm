@@ -341,7 +341,7 @@ int16 BaseSoftRenderSurface::CheckClipped(const Rect &c) const {
 	r.clip(_clipWindow);
 
 	// Clipped away to the void
-	if (!r.isValidRect())
+	if (r.isEmpty())
 		return -1;
 	else if (r == c) return 0;
 	else return 1;
