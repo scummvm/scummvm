@@ -383,11 +383,16 @@ bool FreescapeEngine::executeEndIfBitNotEqual(FCLInstruction &instruction) {
 }
 
 void FreescapeEngine::executeSwapJet(FCLInstruction &instruction) {
+	playSound(15, false);
 	_flyMode = !_flyMode;
-	if (_flyMode)
+	if (_flyMode) {
 		debugC(1, kFreescapeDebugCode, "Swaping to ship mode");
-	else
+		_playerHeightNumber = -1;
+		_playerHeight = 1;
+	} else {
 		debugC(1, kFreescapeDebugCode, "Swaping to tank mode");
+		_playerHeightNumber = 0;
+	}
 	// TODO: implement the rest of the changes (e.g. border)
 }
 

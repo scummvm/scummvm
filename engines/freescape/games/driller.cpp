@@ -362,7 +362,11 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 150, 145, yellow, black, surface);
 	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 150, 153, yellow, black, surface);
 	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 150, 161, yellow, black, surface);
-	drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 57, 161, yellow, black, surface);
+	if (_playerHeightNumber >= 0)
+		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 57, 161, yellow, black, surface);
+	else
+		drawStringInSurface(Common::String::format("%s", "J"), 57, 161, yellow, black, surface);
+
 	drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
 
 	int hours = _countdown / 3600;
