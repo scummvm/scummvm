@@ -325,17 +325,37 @@ void DrillerEngine::loadAssetsFullGame() {
 
 void DrillerEngine::drawUI() {
 	_gfx->renderCrossair(0, _crossairPosition);
-	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);
-	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
-	uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
 
 	Graphics::Surface *surface = nullptr;
 	if (_border) { // This can be removed when all the borders are loaded
+		uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
 		surface = new Graphics::Surface();
 		surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
 		surface->fillRect(_fullscreenViewArea, gray);
 	} else
 		return;
+
+	if (isDOS())
+		drawDOSUI(surface);
+	else if (isAmiga() || isAtariST())
+		drawAmigaAtariSTUI(surface);
+
+	if (!_uiTexture)
+		_uiTexture = _gfx->createTexture(surface);
+	else
+		_uiTexture->update(surface);
+
+	_gfx->setViewport(_fullscreenViewArea);
+	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
+	_gfx->setViewport(_viewArea);
+
+	surface->free();
+	delete surface;
+}
+
+void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
+	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);
+	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 
 	int score = _gameStateVars[k8bitVariableScore];
 	drawStringInSurface(_currentArea->_name, 195, 177, yellow, black, surface);
@@ -381,18 +401,10 @@ void DrillerEngine::drawUI() {
 			surface->fillRect(shieldBar, yellow);
 		}
 	}
+}
 
-	if (!_uiTexture)
-		_uiTexture = _gfx->createTexture(surface);
-	else
-		_uiTexture->update(surface);
-
-	_gfx->setViewport(_fullscreenViewArea);
-	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
-	_gfx->setViewport(_viewArea);
-
-	surface->free();
-	delete surface;
+void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
+	// TODO: this needs to have fonts already parsed
 }
 
 void DrillerEngine::pressedKey(const int keycode) {
