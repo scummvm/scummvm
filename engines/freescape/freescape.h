@@ -312,6 +312,8 @@ public:
 	uint32 _initialProveEnergy;
 	uint32 _initialProveShield;
 
+	StateBits _completeAreas;
+
 	void initGameState() override;
 	bool checkIfGameEnded() override;
 

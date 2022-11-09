@@ -453,11 +453,14 @@ void DrillerEngine::pressedKey(const int keycode) {
 			return;
 		}
 
-		_gameStateVars[32]++; // TODO: save a boolean to indicate if a level is safe or not
 		insertTemporaryMessage(_messagesList[5], _countdown - 4);
 		Common::String successMessage = _messagesList[6];
 		successMessage.replace(0, 4, Common::String::format("%d", int(success)));
 		insertTemporaryMessage(successMessage, _countdown - 6);
+		if (success >= 50.0) {
+			_completeAreas[_currentArea->getAreaID()] = true;
+			_gameStateVars[32]++; // TODO: save a boolean to indicate if a level is safe or not
+		}
 	} else if (keycode == Common::KEYCODE_c) {
 		uint32 gasPocketRadius = _currentArea->_gasPocketRadius;
 		if (gasPocketRadius == 0)
@@ -480,8 +483,10 @@ void DrillerEngine::pressedKey(const int keycode) {
 
 		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
 
-		// TODO: check if level is safe and decrement if necessary
-		_gameStateVars[32]--;
+		if (_completeAreas[_currentArea->getAreaID()]) {
+			_completeAreas[_currentArea->getAreaID()] = false;
+			_gameStateVars[32]--;
+		}
 		removeDrill();
 		insertTemporaryMessage(_messagesList[10], _countdown - 2);
 	}
@@ -646,8 +651,10 @@ void DrillerEngine::initGameState() {
 	for (int i = 0; i < k8bitMaxVariable; i++) // TODO: check maximum variable
 		_gameStateVars[i] = 0;
 
-	for (auto &it : _areaMap)
+	for (auto &it : _areaMap) {
 		_gameStateBits[it._key] = 0;
+		_completeAreas[it._key] = 0;
+	}
 
 	_gameStateVars[k8bitVariableEnergy] = _initialProveEnergy;
 	_gameStateVars[k8bitVariableShield] = _initialProveShield;
