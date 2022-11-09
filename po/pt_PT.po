@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-08 23:54+0000\n"
+"POT-Creation-Date: 2022-11-09 11:28+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -788,7 +788,7 @@ msgstr "Selecione um critério de agrupamento dos jogos"
 msgid "~Q~uit"
 msgstr "~S~air"
 
-#: gui/launcher.cpp:245 backends/platform/sdl/macosx/appmenu_osx.mm:229
+#: gui/launcher.cpp:245 backends/platform/sdl/macosx/appmenu_osx.mm:234
 msgid "Quit ScummVM"
 msgstr "Sair do ScummVM"
 
@@ -796,7 +796,7 @@ msgstr "Sair do ScummVM"
 msgid "A~b~out"
 msgstr "So~b~re"
 
-#: gui/launcher.cpp:247 backends/platform/sdl/macosx/appmenu_osx.mm:223
+#: gui/launcher.cpp:247 backends/platform/sdl/macosx/appmenu_osx.mm:228
 msgid "About ScummVM"
 msgstr "Sobre o ScummVM"
 
@@ -3803,23 +3803,23 @@ msgstr "Modo ecrã táctil desativado."
 msgid "Click Mode"
 msgstr "Modo clique"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:225
+#: backends/platform/sdl/macosx/appmenu_osx.mm:230
 msgid "Hide ScummVM"
 msgstr "Ocultar ScummVM"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:226
+#: backends/platform/sdl/macosx/appmenu_osx.mm:231
 msgid "Hide Others"
 msgstr "Ocultar outros"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:227
+#: backends/platform/sdl/macosx/appmenu_osx.mm:232
 msgid "Show All"
 msgstr "Mostrar tudo"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:232
+#: backends/platform/sdl/macosx/appmenu_osx.mm:237
 msgid "Window"
 msgstr "Janela"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:234
+#: backends/platform/sdl/macosx/appmenu_osx.mm:239
 msgid "Minimize"
 msgstr "Minimizar"
 
@@ -3827,44 +3827,44 @@ msgstr "Minimizar"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ONLINE HELP
-#: backends/platform/sdl/macosx/appmenu_osx.mm:239
+#: backends/platform/sdl/macosx/appmenu_osx.mm:244
 #: engines/bladerunner/metaengine.cpp:231 engines/zvision/metaengine.cpp:157
 msgid "Help"
 msgstr "Ajuda"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:244
+#: backends/platform/sdl/macosx/appmenu_osx.mm:249
 msgid "User Manual"
 msgstr "Manual do utilizador"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:246
+#: backends/platform/sdl/macosx/appmenu_osx.mm:251
 msgid "General Information"
 msgstr "Informações gerais"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:247
+#: backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "What's New in ScummVM"
 msgstr "Novidades do ScummVM"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:249
+#: backends/platform/sdl/macosx/appmenu_osx.mm:254
 msgid "Credits"
 msgstr "Créditos"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:250
+#: backends/platform/sdl/macosx/appmenu_osx.mm:255
 msgid "GPL License"
 msgstr "Licença GPL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:251
+#: backends/platform/sdl/macosx/appmenu_osx.mm:256
 msgid "LGPL License"
 msgstr "Licença LGPL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:252
+#: backends/platform/sdl/macosx/appmenu_osx.mm:257
 msgid "Freefont License"
 msgstr "Licença Freefont"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:253
+#: backends/platform/sdl/macosx/appmenu_osx.mm:258
 msgid "OFL License"
 msgstr "Licença OFL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:254
+#: backends/platform/sdl/macosx/appmenu_osx.mm:259
 msgid "BSD License"
 msgstr "Licença BSD"
 

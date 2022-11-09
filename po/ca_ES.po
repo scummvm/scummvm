@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-08 23:54+0000\n"
+"POT-Creation-Date: 2022-11-09 11:28+0000\n"
 "PO-Revision-Date: 2022-10-22 04:33+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -792,7 +792,7 @@ msgstr "Seleccioneu un criteri per agrupar les entrades"
 msgid "~Q~uit"
 msgstr "~T~anca"
 
-#: gui/launcher.cpp:245 backends/platform/sdl/macosx/appmenu_osx.mm:229
+#: gui/launcher.cpp:245 backends/platform/sdl/macosx/appmenu_osx.mm:234
 msgid "Quit ScummVM"
 msgstr "Surt de ScummVM"
 
@@ -800,7 +800,7 @@ msgstr "Surt de ScummVM"
 msgid "A~b~out"
 msgstr "~Q~uant a"
 
-#: gui/launcher.cpp:247 backends/platform/sdl/macosx/appmenu_osx.mm:223
+#: gui/launcher.cpp:247 backends/platform/sdl/macosx/appmenu_osx.mm:228
 msgid "About ScummVM"
 msgstr "Quant a ScummVM"
 
@@ -3825,23 +3825,23 @@ msgstr "Mode Touchpad desactivat."
 msgid "Click Mode"
 msgstr "Mode clic"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:225
+#: backends/platform/sdl/macosx/appmenu_osx.mm:230
 msgid "Hide ScummVM"
 msgstr "Amaga ScummVM"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:226
+#: backends/platform/sdl/macosx/appmenu_osx.mm:231
 msgid "Hide Others"
 msgstr "Oculta els altres"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:227
+#: backends/platform/sdl/macosx/appmenu_osx.mm:232
 msgid "Show All"
 msgstr "Mostra-ho tot"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:232
+#: backends/platform/sdl/macosx/appmenu_osx.mm:237
 msgid "Window"
 msgstr "Finestra"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:234
+#: backends/platform/sdl/macosx/appmenu_osx.mm:239
 msgid "Minimize"
 msgstr "Minimitza"
 
@@ -3849,44 +3849,44 @@ msgstr "Minimitza"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ONLINE HELP
-#: backends/platform/sdl/macosx/appmenu_osx.mm:239
+#: backends/platform/sdl/macosx/appmenu_osx.mm:244
 #: engines/bladerunner/metaengine.cpp:231 engines/zvision/metaengine.cpp:157
 msgid "Help"
 msgstr "Ajuda"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:244
+#: backends/platform/sdl/macosx/appmenu_osx.mm:249
 msgid "User Manual"
 msgstr "Manual d'usuari"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:246
+#: backends/platform/sdl/macosx/appmenu_osx.mm:251
 msgid "General Information"
 msgstr "Informació general"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:247
+#: backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "What's New in ScummVM"
 msgstr "Què hi ha de nou en ScummVM"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:249
+#: backends/platform/sdl/macosx/appmenu_osx.mm:254
 msgid "Credits"
 msgstr "Crèdits"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:250
+#: backends/platform/sdl/macosx/appmenu_osx.mm:255
 msgid "GPL License"
 msgstr "Llicència GPL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:251
+#: backends/platform/sdl/macosx/appmenu_osx.mm:256
 msgid "LGPL License"
 msgstr "Llicència LGPL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:252
+#: backends/platform/sdl/macosx/appmenu_osx.mm:257
 msgid "Freefont License"
 msgstr "Llicència Freefont"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:253
+#: backends/platform/sdl/macosx/appmenu_osx.mm:258
 msgid "OFL License"
 msgstr "Llicència OFL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:254
+#: backends/platform/sdl/macosx/appmenu_osx.mm:259
 msgid "BSD License"
 msgstr "Llicència BSD"
 
