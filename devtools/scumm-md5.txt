@@ -410,6 +410,7 @@ comi	The Curse of Monkey Island
 	fe60d6b5ff51b0553ac59963123b5777	76791	All	Windows	-	-	-	Fingolfin
 	861e59ed72a1cd0e6d454f7ee7e2bf3d	-1	ru	Windows	-	-	-
 	813fbcd24a46728cf142cb62057a69cd	76791	he	Windows	-	-	-	orgads
+	6de988b29a50eb7a198ded20b839b6b4	76791	he	Windows	-	v1.1	-	orgads
 
 	8fec68383202d38c0d25e9e3b757c5df	18041	All	Windows	Demo	Demo	-	Fingolfin
 
