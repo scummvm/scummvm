@@ -806,6 +806,7 @@ spells:
 	cast_on_char: "CAST ON: '1'-'%d'?"
 	cast_on_monster: "CAST ON: 'A'-'%c'?"
 	which_town: "WHICH TOWN (1-5)?"
+	is_not_affected: "IS NOT AFFECTED!"
 	monster_effects:
 		0: "IS SCARED"
 		1: "IS BLINDED"

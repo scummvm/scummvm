@@ -245,7 +245,8 @@ public:
 	/**
 	 * Display a combat spell's result
 	 */
-	virtual void displaySpellResult(const InfoMessage &msg);
+	virtual void displaySpellResult(const Common::Array<InfoMessage> &msgs);
+	void displaySpellResult(const InfoMessage &msg);
 
 	void iterateMonsters1();
 	void iterateMonsters2();
