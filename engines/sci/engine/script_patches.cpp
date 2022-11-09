@@ -6656,6 +6656,44 @@ static const uint16 kq6MacPatchMacOpeningMovieDelay[] = {
 	PATCH_END
 };
 
+// In KQ6 Mac, the About dialogs break the game. There are four buttons that
+//  display a series of messages, but three of them permanently disable input.
+//  This is an incompatibility between the existing PC scripts and the kPlatform
+//  calls that were added to system scripts to enable/disable the Mac icon bar.
+//
+// We fix this by changing the three broken button scripts to act like the one
+//  that survives the bug. The "About King's Quest VI" button happens to work
+//  because sixScript sets a 1 cycle delay before calling Kq6Messager:say. The
+//  others call say immediately, deep within nested event loops. Patching in a
+//  new first state that sets a 1 cycle delay fixes the other button scripts.
+//
+// Applies to: English Mac only
+// Responsible methods: oneThroughFive:changeState, tips:changeState,
+//                      walkThrough:changeState
+static const uint16 kq6MacSignatureAboutDialogs[] = {
+	SIG_MAGICDWORD,
+	0x87, 0x01,                         // lap 01
+	0x65, 0x14,                         // aTop state
+	0x36,                               // push
+	0x3c,                               // dup
+	0x35, 0x00,                         // ldi 00
+	0x1a,                               // eq?
+	0x31, SIG_ADDTOOFFSET(+1),          // bnt [ state 1 ]
+	0x38, SIG_SELECTOR16(say),          // pushi say
+	SIG_END
+};
+
+static const uint16 kq6MacPatchAboutDialogs[] = {
+	0x78,                               // push1
+	0x69, 0x1a,                         // sTop cycles [ cycles = 1 ]
+	0x6f, 0x14,                         // ipTos state [ increment state ]
+	0x35, 0x01,                         // ldi 01
+	0x04,                               // sub  [ state - 1 ]
+	0x36,                               // push [ use previous state value in switch ]
+	0x2f,                               // bt   [ state 1 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,    52, "CD: Girl In The Tower playback",                 1, kq6CDSignatureGirlInTheTowerPlayback,     kq6CDPatchGirlInTheTowerPlayback },
@@ -6677,6 +6715,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   481, "fix duplicate baby tears point",                 1, kq6SignatureDuplicateBabyTearsPoint,      kq6PatchDuplicateBabyTearsPoint },
 	{  true,   640, "fix 'Tickets Only' audio timing",                1, kq6CDSignatureTicketsOnlyAudioTiming,     kq6CDPatchTicketsOnlyAudioTiming },
 	{  true,   745, "fix wedding genie lamp message",                 1, kq6SignatureWeddingGenieLampMessage,      kq6PatchWeddingGenieLampMessage },
+	{ false,   905, "Mac: fix about dialogs",                         3, kq6MacSignatureAboutDialogs,              kq6MacPatchAboutDialogs },
 	{  true,   907, "fix inventory stack leak",                       1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
 	{  true,   907, "fix hair detection for ribbon's look msg",       1, kq6SignatureLookRibbonFix,                kq6PatchLookRibbonFix },
 	{  true,   907, "talking inventory workaround",                   4, kq6SignatureTalkingInventory,             kq6PatchTalkingInventory },
@@ -24386,6 +24425,8 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 				if (_isMacSci11) {
 					// Enables Mac-only patch to work around missing pic
 					enablePatch(signatureTable, "Mac: Drink Me pic");
+					// Enables Mac-only patch for dialog box incompatibilities
+					enablePatch(signatureTable, "Mac: fix about dialogs");
 				}
 				break;
 			case GID_LAURABOW2:
