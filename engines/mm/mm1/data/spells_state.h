@@ -29,10 +29,10 @@ namespace MM {
 namespace MM1 {
 
 struct SpellsState {
-	int _mmVal1 = 0, _mmVal2 = 0;
-	int _mmVal5 = 0;
-	int _mmVal7 = 0;
-	Resistance _resistanceType = RESISTANCE_MAGIC;
+	byte _mmVal1 = 0, _mmVal2 = 0;
+	byte _mmVal5 = 0;
+	byte _mmVal7 = 0;
+	byte _resistanceType = RESISTANCE_MAGIC;
 	byte _newCondition = 0;
 
 	/**

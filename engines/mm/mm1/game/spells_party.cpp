@@ -255,7 +255,7 @@ SpellResult SpellsParty::cleric23_pain() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._newCondition = getRandomNumber(6) + getRandomNumber(6);
 	ss._mmVal1++;
-	ss._resistanceType = (Resistance)((int)ss._resistanceType + 1);
+	ss._resistanceType++;
 	ss._mmVal2 = 6;
 
 	g_globals->_combat->iterateMonsters2();
@@ -285,7 +285,7 @@ SpellResult SpellsParty::cleric27_silence() {
 	ss._mmVal1++;
 	ss._mmVal2 = 7;
 	ss._newCondition = SILENCED;
-	ss._resistanceType = (Resistance)((int)ss._resistanceType + 1);
+	ss._resistanceType++;
 
 	g_globals->_combat->iterateMonsters1();
 	return SR_SUCCESS_SILENT;
@@ -296,7 +296,7 @@ SpellResult SpellsParty::cleric28_suggestion() {
 	ss._mmVal1++;
 	ss._mmVal2 = 6;
 	ss._newCondition = PARALYZED;
-	ss._resistanceType = (Resistance)((int)ss._resistanceType + 1);
+	ss._resistanceType++;
 
 	g_globals->_combat->iterateMonsters1();
 	return SR_SUCCESS_SILENT;
@@ -337,7 +337,7 @@ SpellResult SpellsParty::cleric34_lastingLight() {
 SpellResult SpellsParty::cleric35_produceFlame() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1++;
-	ss._resistanceType = (Resistance)((int)ss._resistanceType + 1);
+	ss._resistanceType++;
 	ss._mmVal2 = 4;
 	ss._newCondition = getRandomNumber(6) +
 		getRandomNumber(6) + getRandomNumber(6);
