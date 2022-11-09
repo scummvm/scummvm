@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-08 04:19+0000\n"
+"POT-Creation-Date: 2022-11-08 23:54+0000\n"
 "PO-Revision-Date: 2022-10-26 11:42+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -7610,7 +7610,7 @@ msgstr "Громк. музыки: "
 msgid "Subtitle speed: "
 msgstr "Скорость титров: "
 
-#: engines/scumm/metaengine.cpp:334
+#: engines/scumm/metaengine.cpp:357
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -7619,11 +7619,11 @@ msgstr ""
 "Во избежание пиратства Lite-версия игры Putt-Putt Saves the Zoo для iOS\n"
 "не поддерживается. Полную версию игры можно купить в iTunes Store."
 
-#: engines/scumm/metaengine.cpp:431
+#: engines/scumm/metaengine.cpp:454
 msgid "HE v71+ support is not compiled in"
 msgstr "Поддержка для версии HE v71+ не скомпилирована"
 
-#: engines/scumm/metaengine.cpp:455
+#: engines/scumm/metaengine.cpp:478
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "Поддержка для версии SCUMM v7-8 не скомпилирована"
 
