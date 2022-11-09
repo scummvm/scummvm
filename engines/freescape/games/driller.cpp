@@ -91,6 +91,11 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	if (isAmiga() || isAtariST())
 		swapPalette(areaID);
+
+	if (areaID != _startArea || entranceID != _startEntrance) {
+		_lastMousePos = g_system->getEventManager()->getMousePos();
+		rotate(_lastMousePos, _lastMousePos);
+	}
 }
 
 void DrillerEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset) {
