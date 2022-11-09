@@ -1327,6 +1327,12 @@ static const SciMessageWorkaroundEntry messageWorkarounds[] = {
 	{ GID_LAURABOW2,     SCI_MEDIA_FLOPPY, K_LANG_NONE,     -1,  550,   5,  39,   6,  1, { MSG_WORKAROUND_REMAP,    550,  45,  39,   6,  1,  0,   0,   0, nullptr } },
 	// Looking at coal in room 720, message is prepended with carriage return and newline
 	{ GID_LAURABOW2,     SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  720,  12,   1,   0,  1, { MSG_WORKAROUND_EXTRACT,  720,  12,   1,   0,  1, 99,   2, 255, nullptr } },
+	// Asking Olympia about Pippin Carter during Act 2 in German version - bug #5170
+	//  This message contains over seventy trailing newlines, causing the graphics code to
+	//  draw a window larger than the screen and crash. We trim the trailing newlines.
+	{ GID_LAURABOW2,     SCI_MEDIA_FLOPPY, K_LANG_GERMAN,   -1, 1892,   1,   6,   3,  1, { MSG_WORKAROUND_EXTRACT, 1892,   1,   6,   3,  1, 25,   0, 249, nullptr } },
+	// Asking Ramses about snake oil in German version. Same as above: excessive trailing newlines.
+	{ GID_LAURABOW2,     SCI_MEDIA_FLOPPY, K_LANG_GERMAN,   -1, 1891,   1,   6,  41,  1, { MSG_WORKAROUND_EXTRACT, 1891,   1,   6,  41,  1, 27,   0, 146, nullptr } },
 	// Using the hand icon on Keith in the Blue Room (missing message) - bug #6253
 	{ GID_PQ1,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,   38,  10,   4,   8,  1, { MSG_WORKAROUND_REMAP,     38,  10,   4,   9,  1,  0,   0,   0, nullptr } },
 	// Using the eye icon on Keith in the Blue Room (no message and wrong talker) - bug #6253

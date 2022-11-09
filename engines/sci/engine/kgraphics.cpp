@@ -366,21 +366,6 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	const bool useMacFonts = g_sci->hasMacFonts() && (argc < 6);
 	if (!useMacFonts) {
 		g_sci->_gfxText16->kernelTextSize(splitText.c_str(), languageSplitter, font, maxWidth, &textWidth, &textHeight);
-
-		// One of the game texts in LB2 German contains loads of spaces in
-		// its end. We trim the text here, otherwise the graphics code will
-		// attempt to draw a very large window (larger than the screen) to
-		// show the text, and crash.
-		// Fixes bug #5710.
-		if (textWidth >= g_sci->_gfxScreen->getDisplayWidth() ||
-			textHeight >= g_sci->_gfxScreen->getDisplayHeight()) {
-			warning("kTextSize: string would be too big to fit on screen. Trimming it");
-			text.trim();
-			// Copy over the trimmed string...
-			s->_segMan->strcpy_(argv[1], text.c_str());
-			// ...and recalculate bounding box dimensions
-			g_sci->_gfxText16->kernelTextSize(splitText.c_str(), languageSplitter, font, maxWidth, &textWidth, &textHeight);
-		}
 	} else {
 		// Mac games with native fonts always use them for sizing unless a sixth
 		// parameter is passed to indicate that SCI font sizing should be used.
