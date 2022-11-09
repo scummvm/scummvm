@@ -124,7 +124,8 @@ enum SciMessageWorkaroundType {
 enum SciMedia {
 	SCI_MEDIA_ALL,
 	SCI_MEDIA_FLOPPY,
-	SCI_MEDIA_CD
+	SCI_MEDIA_CD,
+	SCI_MEDIA_MAC, // mac floppy
 };
 
 struct SciMessageWorkaroundSolution {

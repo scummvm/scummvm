@@ -1309,6 +1309,12 @@ static const SciMessageWorkaroundEntry messageWorkarounds[] = {
 	// Clicking the drink-me potion on ego in the castle basement hallways while guards are around
 	{ GID_KQ6,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  840,   3,  14,   1,  1, { MSG_WORKAROUND_REMAP,    899,   0,   0, 198,  1, 99,   0,   0, nullptr } },
 	{ GID_KQ6,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  899,   1,  14,   1,  1, { MSG_WORKAROUND_REMAP,    899,   0,   0, 198,  1, 99,   0,   0, nullptr } },
+	// "Tips for playing King's Quest VI" displays a message that's too long to display on the screen
+	// with Macintosh fonts and causes the graphics code to crash. In the original this "worked" because
+	// of a script bug that truncated all CD and Mac messages to 400 characters, even though KQ6 has
+	// several important messages that are much longer. We fix the truncation bug with a script patch,
+	// but this one message needs to remain shorter.
+	{ GID_KQ6,           SCI_MEDIA_MAC,    K_LANG_NONE,     -1,  908,   0,   0,  16, 27, { MSG_WORKAROUND_EXTRACT,  908,   0,   0,  16, 27, 99,   0, 466, nullptr } },
 	// Asking Yvette about Tut in act 2 party in floppy version - bug #10723
 	//  The last two sequences in this five part message reveal a murder that hasn't occurred yet.
 	//  We skip these as to not spoil the plot, but only in the act 2 rooms, as the message is used
@@ -1418,7 +1424,8 @@ static SciMessageWorkaroundSolution findMessageWorkaround(int module, byte noun,
 		if (workaround->gameId == g_sci->getGameId() &&
 			(workaround->media == SCI_MEDIA_ALL ||
 			(workaround->media == SCI_MEDIA_FLOPPY && !g_sci->isCD()) ||
-			(workaround->media == SCI_MEDIA_CD && g_sci->isCD())) &&
+			(workaround->media == SCI_MEDIA_CD && g_sci->isCD()) ||
+			(workaround->media == SCI_MEDIA_MAC && g_sci->getPlatform() == Common::kPlatformMacintosh && !g_sci->isCD())) &&
 			(workaround->language == K_LANG_NONE ||
 			workaround->language == g_sci->getSciLanguage()) &&
 			(workaround->roomNumber == -1 ||
