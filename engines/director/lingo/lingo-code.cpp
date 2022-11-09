@@ -224,7 +224,7 @@ void Lingo::switchStateFromWindow() {
 	_state = window->getLingoState();
 }
 
-void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal) {
+void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal, int paramCount) {
 	Common::Array<CFrame *> &callstack = _state->callstack;
 
 	debugC(5, kDebugLingoExec, "Pushing frame %d", callstack.size() + 1);
@@ -238,6 +238,7 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 	fp->sp = funcSym;
 	fp->allowRetVal = allowRetVal;
 	fp->defaultRetVal = defaultRetVal;
+	fp->paramCount = paramCount;
 
 	_state->script = funcSym.u.defn;
 
@@ -1553,6 +1554,7 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 }
 
 void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
+	int paramCount = nargs;
 	Datum target = funcSym.target;
 
 	if (funcSym.type == VOIDSYM) {
@@ -1655,7 +1657,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 		defaultRetVal = funcSym.target; // return me
 	}
 
-	g_lingo->pushContext(funcSym, allowRetVal, defaultRetVal);
+	g_lingo->pushContext(funcSym, allowRetVal, defaultRetVal, paramCount);
 }
 
 void LC::c_procret() {

@@ -719,6 +719,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheOptionDown:
 		d = (movie->_keyFlags & Common::KBD_ALT) ? 1 : 0;
 		break;
+	case kTheParamCount:
+		d = g_lingo->_state->callstack[g_lingo->_state->callstack.size() - 1]->paramCount;
+		break;
 	case kThePauseState:
 		d = (int) g_director->_playbackPaused;
 		break;

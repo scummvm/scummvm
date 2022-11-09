@@ -246,6 +246,7 @@ struct CFrame {	/* proc/func call stack frame */
 	uint			stackSizeBefore;
 	bool			allowRetVal;		/* whether to allow a return value */
 	Datum			defaultRetVal;		/* default return value */
+	int				paramCount;			/* original number of arguments submitted */
 };
 
 struct LingoEvent {
@@ -359,7 +360,7 @@ public:
 	void switchStateFromWindow();
 	void freezeState();
 	bool hasFrozenState();
-	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal);
+	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal, int paramCount);
 	void popContext(bool aborting = false);
 	void cleanLocalVars();
 	void varAssign(const Datum &var, const Datum &value);
