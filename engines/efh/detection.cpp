@@ -69,12 +69,12 @@ public:
 	EfhMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(EfhGameDescription), efhGames) {
 	}
 
-	const char *getEngineId() const override {
-		return "efh";
+	const char *getEngineName() const override {
+		return "Efh";
 	}
 
 	const char *getName() const override {
-		return "Efh";
+		return "efh";
 	}
 
 	const char *getOriginalCopyright() const override {

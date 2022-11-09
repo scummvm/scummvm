@@ -1330,11 +1330,11 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 				copyString(_npcBuf[charId]._name, buffer);
 				setTextPos(16, textPosY);
 				displayStringAtTextPos(buffer);
-				sprintf(buffer, "%d", getEquipmentDefense(charId, false));
+				snprintf(buffer, 80, "%d", getEquipmentDefense(charId, false));
 				displayCenteredString(buffer, 104, 128, textPosY);
-				sprintf(buffer, "%d", _npcBuf[charId]._hitPoints);
+				snprintf(buffer, 80, "%d", _npcBuf[charId]._hitPoints);
 				displayCenteredString(buffer, 144, 176, textPosY);
-				sprintf(buffer, "%d", _npcBuf[charId]._maxHP);
+				snprintf(buffer, 80, "%d", _npcBuf[charId]._maxHP);
 				displayCenteredString(buffer, 192, 224, textPosY);
 
 				if (_npcBuf[charId]._hitPoints <= 0) {
@@ -1346,19 +1346,19 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 				case 0: {
 					uint16 var4 = sub1C80A(charId, 9, true);
 					if (var4 == 0x7FFF)
-						strcpy(_nameBuffer, "(NONE)");
+						strncpy(_nameBuffer, "(NONE)", 20);
 					else
 						copyString(_items[var4]._name, _nameBuffer);
 					}
 					break;				
 				case 1:
-					strcpy(_nameBuffer, "* ASLEEP *");
+						strncpy(_nameBuffer, "* ASLEEP *", 20);
 					break;
 				case 2:
-					strcpy(_nameBuffer, "* FROZEN *");
+					strncpy(_nameBuffer, "* FROZEN *", 20);
 					break;
 				default:
-					strcpy(_nameBuffer, "* DISABLED *");
+					strncpy(_nameBuffer, "* DISABLED *", 20);
 					break;
 				}
 
@@ -1667,15 +1667,15 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 						displayStringAtTextPos(curLine);
 
 					*curLine = 0;
-					strcpy(curLine, nextWord);
-					strcat(curLine, " ");
+					strncpy(curLine, nextWord, 80);
+					strncat(curLine, " ",2);
 					++curLineNb;
 					setTextPos(posX, posY + curLineNb * 9);
 					curWordPos = 0;
 				}
 			} else {
-				strcat(curLine, nextWord);
-				strcat(curLine, " ");
+				strncat(curLine, nextWord, 80);
+				strncat(curLine, " ", 2);
 				curWordPos = 0;
 			}
 			++buffer;
@@ -1967,7 +1967,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 				} else {
 					copyString(_npcBuf[_teamCharId[counter]]._name, _enemyNamePt2);
 					copyString(_items[var110]._name, _nameBuffer);
-					sprintf(curLine, "%s finds a %s!", _enemyNamePt2, _nameBuffer);
+					snprintf(curLine, 150, "%s finds a %s!", _enemyNamePt2, _nameBuffer);
 					drawMapWindow();
 					displayFctFullScreen();
 					drawMapWindow();
@@ -3120,7 +3120,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 				displayMonsterAnim(monsterId);
 				copyString(_npcBuf[var58]._name, _enemyNamePt2);
 				copyString(_npcBuf[_teamCharId[counter]]._name, _characterNamePt2);
-				sprintf(buffer, "%s asks that %s leave your party.", _enemyNamePt2, _characterNamePt2);
+				snprintf(buffer, 80, "%s asks that %s leave your party.", _enemyNamePt2, _characterNamePt2);
 				for (int16 i = 0; i < 2; ++i) {
 					clearBottomTextZone(0);
 					_textColor = 0xE;
@@ -3894,12 +3894,12 @@ void EfhEngine::sub1C4CA(bool whiteFl) {
 
 		setTextPos(129, textPosY);
 		char buffer[80];
-		sprintf(buffer, "%c)", 'A' + counter);
+		snprintf(buffer, 80, "%c)", 'A' + counter);
 		displayStringAtTextPos(buffer);
 		setTextColorRed();
 		int16 var1 = _mapMonsters[_teamMonsterIdArray[counter]]._possessivePronounSHL6 & 0x3F;
 		if (var1 <= 0x3D) {
-			sprintf(buffer, "%d %s", var6E, kEncounters[_mapMonsters[_teamMonsterIdArray[counter]]._monsterRef]._name);
+			snprintf(buffer, 80, "%d %s", var6E, kEncounters[_mapMonsters[_teamMonsterIdArray[counter]]._monsterRef]._name);
 			displayStringAtTextPos(buffer);
 			if (var6E > 1)
 				displayStringAtTextPos("s");
@@ -3945,7 +3945,7 @@ void EfhEngine::displayCombatMenu(int16 charId) {
 
 	char buffer[80];
 	copyString(_npcBuf[charId]._name, buffer);
-	strcat(buffer, ":");
+	strncat(buffer, ":", 2);
 	setTextColorWhite();
 	setTextPos(144, 7);
 	displayStringAtTextPos(buffer);
@@ -4008,7 +4008,7 @@ void EfhEngine::handleFight_checkEndEffect(int16 charId) {
 	// At this point : The status is different to 0 (normal) and the effect duration is finally 0 (end of effect)
 	copyString(_npcBuf[_teamCharId[charId]]._name, _enemyNamePt2);
 	if ((_npcBuf[_teamCharId[charId]]._possessivePronounSHL6 >> 6) == 2) {
-		strcpy(_enemyNamePt1, "The ");
+		strncpy(_enemyNamePt1, "The ", 5);
 	} else {
 		_enemyNamePt1[0] = 0;
 	}
@@ -4016,13 +4016,13 @@ void EfhEngine::handleFight_checkEndEffect(int16 charId) {
 	// End of effect message depends on the type of effect
 	switch (_teamCharStatus[charId]._status) {
 	case 1:
-		sprintf((char *)_messageToBePrinted, "%s%s wakes up!", _enemyNamePt1, _enemyNamePt2);
+		snprintf((char *)_messageToBePrinted, 400, "%s%s wakes up!", _enemyNamePt1, _enemyNamePt2);
 		break;
 	case 2:
-		sprintf((char *)_messageToBePrinted, "%s%s thaws out!", _enemyNamePt1, _enemyNamePt2);
+		snprintf((char *)_messageToBePrinted, 400, "%s%s thaws out!", _enemyNamePt1, _enemyNamePt2);
 		break;
 	default:
-		sprintf((char *)_messageToBePrinted, "%s%s recovers!", _enemyNamePt1, _enemyNamePt2);
+		snprintf((char *)_messageToBePrinted, 400, "%s%s recovers!", _enemyNamePt1, _enemyNamePt2);
 		break;
 	}
 
@@ -4334,70 +4334,80 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	int16 rndDescrForDeathType = getRandom((3)) - 1;
 	char buffer[80];
 	memset(buffer, 0, 80);
-	sprintf(buffer, "DUDE IS TOAST!");
+	snprintf(buffer, 80, "DUDE IS TOAST!");
 	switch (deathType) {
 	case 0:
 		switch (rndDescrForDeathType) {
 		case 0:
-			sprintf(buffer, ", killing %s!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", killing %s!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			sprintf(buffer, ", slaughtering %s!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", slaughtering %s!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			sprintf(buffer, ", annihilating %s!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", annihilating %s!", kPersonal[possessivePronoun]);
+			break;
+		default:
 			break;
 		}
 		break;
 	case 1:
 		switch (rndDescrForDeathType) {
 		case 0:
-			sprintf(buffer, ", cutting %s in two!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", cutting %s in two!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			sprintf(buffer, ", dicing %s into small cubes!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", dicing %s into small cubes!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			sprintf(buffer, ", butchering %s into lamb chops!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", butchering %s into lamb chops!", kPersonal[possessivePronoun]);
+			break;
+		default:
 			break;
 		}
 		break;
 	case 2:
 		switch (rndDescrForDeathType) {
 		case 0:
-			sprintf(buffer, ", piercing %s heart!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", piercing %s heart!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			sprintf(buffer, ", leaving %s a spouting mass of blood!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", leaving %s a spouting mass of blood!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			sprintf(buffer, ", popping %s like a zit!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", popping %s like a zit!", kPersonal[possessivePronoun]);
+			break;
+		default:
 			break;
 		}
 		break;
 	case 3:
 		switch (rndDescrForDeathType) {
 		case 0:
-			sprintf(buffer, ", pulping %s head over a wide area!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", pulping %s head over a wide area!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			sprintf(buffer, ", smashing %s into a meat patty!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", smashing %s into a meat patty!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			sprintf(buffer, ", squashing %s like a ripe tomato!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", squashing %s like a ripe tomato!", kPersonal[possessivePronoun]);
+			break;
+		default:
 			break;
 		}
 		break;
 	case 4:
 		switch (rndDescrForDeathType) {
 		case 0:
-			sprintf(buffer, ", totally incinerating %s!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", totally incinerating %s!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			sprintf(buffer, ", reducing %s to a pile of ash!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", reducing %s to a pile of ash!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			sprintf(buffer, ", leaving a blistered mass of flesh behind!");
+			snprintf(buffer, 80, ", leaving a blistered mass of flesh behind!");
+			break;
+		default:
 			break;
 		}
 		break;
@@ -4405,52 +4415,60 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 		switch (rndDescrForDeathType) {
 		case 0:
 			// The original has a typo: popscicle
-			sprintf(buffer, ", turning %s into a popsicle!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", turning %s into a popsicle!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			sprintf(buffer, ", encasing %s in a block of ice!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", encasing %s in a block of ice!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			sprintf(buffer, ", shattering %s into shards!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", shattering %s into shards!", kPersonal[possessivePronoun]);
+			break;
+		default:
 			break;
 		}
 		break;
 	case 6:
 		switch (rndDescrForDeathType) {
 		case 0:
-			sprintf(buffer, ", leaving pudding for brains");
+			snprintf(buffer, 80, ", leaving pudding for brains");
 			break;
 		case 1:
-			sprintf(buffer, ", bursting %s head like a bubble!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", bursting %s head like a bubble!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			sprintf(buffer, ", turning %s into a mindless vegetable", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", turning %s into a mindless vegetable", kPersonal[possessivePronoun]);
+			break;
+		default:
 			break;
 		}
 		break;
 	case 7:
 		switch (rndDescrForDeathType) {
 		case 0:
-			sprintf(buffer, ", reducing %s to an oozing pile of flesh!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", reducing %s to an oozing pile of flesh!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			sprintf(buffer, ", melting %s like an ice cube in hot coffee!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", melting %s like an ice cube in hot coffee!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			sprintf(buffer, ", vaporizing %s into a steaming cloud!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", vaporizing %s into a steaming cloud!", kPersonal[possessivePronoun]);
+			break;
+		default:
 			break;
 		}
 		break;
 	case 8:
 		switch (rndDescrForDeathType) {
 		case 0:
-			sprintf(buffer, ", engulfing %s in black smoke puffs!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", engulfing %s in black smoke puffs!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			sprintf(buffer, ", sucking %s into eternity!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", sucking %s into eternity!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			sprintf(buffer, ", turning %s into a mindless zombie!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", turning %s into a mindless zombie!", kPersonal[possessivePronoun]);
+			break;
+		default:
 			break;
 		}
 		break;
@@ -4459,13 +4477,15 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 11:
 		switch (rndDescrForDeathType) {
 		case 0:
-			sprintf(buffer, ", completely disintegrating %s!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", completely disintegrating %s!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			sprintf(buffer, ", spreading %s into a fine mist!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", spreading %s into a fine mist!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			sprintf(buffer, ", leaving a smoking crater in %s place!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", leaving a smoking crater in %s place!", kPersonal[possessivePronoun]);
+			break;
+		default:
 			break;
 		}
 		break;
@@ -4474,39 +4494,45 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 14:
 		switch (rndDescrForDeathType) {
 		case 0:
-			sprintf(buffer, ", tearing a chunk out of %s back!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", tearing a chunk out of %s back!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			sprintf(buffer, ", blowing %s brains out!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", blowing %s brains out!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			sprintf(buffer, ", exploding %s entire chest!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", exploding %s entire chest!", kPersonal[possessivePronoun]);
+			break;
+		default:
 			break;
 		}
 		break;
 	case 15:
 		switch (rndDescrForDeathType) {
 		case 0:
-			sprintf(buffer, ", choking %s to death!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", choking %s to death!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			sprintf(buffer, ", melting %s lungs!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", melting %s lungs!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			sprintf(buffer, ", leaving %s gasping for air as %s collapses!", kPersonal[possessivePronoun], kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", leaving %s gasping for air as %s collapses!", kPersonal[possessivePronoun], kPersonal[possessivePronoun]);
+			break;
+		default:
 			break;
 		}
 		break;
 	case 16:
 		switch (rndDescrForDeathType) {
 		case 0:
-			sprintf(buffer, ", tearing a chunk out of %s back!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", tearing a chunk out of %s back!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			sprintf(buffer, ", piercing %s heart!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", piercing %s heart!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			sprintf(buffer, ", impaling %s brain!", kPersonal[possessivePronoun]);
+			snprintf(buffer, 80, ", impaling %s brain!", kPersonal[possessivePronoun]);
+			break;
+		default:
 			break;
 		}
 		break;
@@ -4514,7 +4540,7 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 		break;
 	}	
 
-	strcat((char *)_messageToBePrinted, buffer);
+	strncat((char *)_messageToBePrinted, buffer, 80);
 }
 
 bool EfhEngine::characterSearchesMonsterCorpse(int16 charId, int16 monsterId) {
@@ -4535,8 +4561,8 @@ bool EfhEngine::characterSearchesMonsterCorpse(int16 charId, int16 monsterId) {
 	char tmpString[20];
 	copyString(_items[itemId]._name, tmpString);
 	char buffer[80];
-	sprintf(buffer, " and finds a %s!", tmpString);
-	strcat((char *)_messageToBePrinted, buffer);
+	snprintf(buffer, 80, " and finds a %s!", tmpString);
+	strncat((char *)_messageToBePrinted, buffer, 80);
 	return true;
 }
 
@@ -4546,7 +4572,7 @@ void EfhEngine::getXPAndSearchCorpse(int16 charId, char *namePt1, char *namePt2,
 	int16 xpLevel = getXPLevel(_npcBuf[charId]._xp);
 	_npcBuf[charId]._xp += kEncounters[_mapMonsters[monsterId]._monsterRef]._xpGiven;
 	char buffer[80];
-	sprintf(buffer, "  %s%s gains %d experience", namePt1, namePt2, kEncounters[_mapMonsters[monsterId]._monsterRef]._xpGiven);
+	snprintf(buffer, 80, "  %s%s gains %d experience", namePt1, namePt2, kEncounters[_mapMonsters[monsterId]._monsterRef]._xpGiven);
 	if (getXPLevel(_npcBuf[charId]._xp) > xpLevel) {
 		generateSound(15);
 		int16 var2 = getRandom(20) + getRandom(_npcBuf[charId]._infoScore[4]);
@@ -4558,9 +4584,9 @@ void EfhEngine::getXPAndSearchCorpse(int16 charId, char *namePt1, char *namePt2,
 		_npcBuf[charId]._infoScore[3] += getRandom(3) - 1;
 		_npcBuf[charId]._infoScore[4] += getRandom(3) - 1;
 	}
-	strcat((char *)_messageToBePrinted, buffer);
+	strncat((char *)_messageToBePrinted, buffer, 80);
 	if (!characterSearchesMonsterCorpse(charId, monsterId))
-		strcat((char *)_messageToBePrinted, "!");
+		strncat((char *)_messageToBePrinted, "!", 2);
 	
 }
 
@@ -4575,13 +4601,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 0:
 		switch (rand3) {
 		case 1:
-			sprintf(buffer, "  %s%s reels from the blow!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s reels from the blow!", _characterNamePt1, _characterNamePt2);
 			break;
 		case 2:
-			sprintf(buffer, "  %s%s sways from the attack!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s sways from the attack!", _characterNamePt1, _characterNamePt2);
 			break;
 		case 3:
-			sprintf(buffer, "  %s%s looks dazed!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s looks dazed!", _characterNamePt1, _characterNamePt2);
 			break;
 		default:
 			break;
@@ -4590,13 +4616,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 1:
 		switch (rand3) {
 		case 1:
-			sprintf(buffer, "  %s%s cries out in agony!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s cries out in agony!", _characterNamePt1, _characterNamePt2);
 			break;
 		case 2:
-			sprintf(buffer, "  %s%s screams from the abuse!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s screams from the abuse!", _characterNamePt1, _characterNamePt2);
 			break;
 		case 3:
-			sprintf(buffer, "  %s%s wails terribly!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s wails terribly!", _characterNamePt1, _characterNamePt2);
 			break;
 		default:
 			break;
@@ -4605,13 +4631,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 2:
 		switch (rand3) {
 		case 1:
-			sprintf(buffer, "  %s%s is staggering!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s is staggering!", _characterNamePt1, _characterNamePt2);
 			break;
 		case 2:
-			sprintf(buffer, "  %s%s falters for a moment!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s falters for a moment!", _characterNamePt1, _characterNamePt2);
 			break;
 		case 3:
-			sprintf(buffer, "  %s%s is stumbling about!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s is stumbling about!", _characterNamePt1, _characterNamePt2);
 			break;
 		default:
 			break;
@@ -4620,13 +4646,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 3:
 		switch (rand3) {
 		case 1:
-			sprintf(buffer, "  %s%s winces from the pain!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s winces from the pain!", _characterNamePt1, _characterNamePt2);
 			break;
 		case 2:
-			sprintf(buffer, "  %s%s cringes from the damage!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s cringes from the damage!", _characterNamePt1, _characterNamePt2);
 			break;
 		case 3:
-			sprintf(buffer, "  %s%s shrinks from the wound!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s shrinks from the wound!", _characterNamePt1, _characterNamePt2);
 			break;
 		default:
 			break;
@@ -4635,13 +4661,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 4:
 		switch (rand3) {
 		case 1:
-			sprintf(buffer, "  %s%s screams!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s screams!", _characterNamePt1, _characterNamePt2);
 			break;
 		case 2:
-			sprintf(buffer, "  %s%s bellows!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s bellows!", _characterNamePt1, _characterNamePt2);
 			break;
 		case 3:
-			sprintf(buffer, "  %s%s shrills!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s shrills!", _characterNamePt1, _characterNamePt2);
 			break;
 		default:
 			break;
@@ -4650,13 +4676,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 5:
 		switch (rand3) {
 		case 1:
-			sprintf(buffer, "  %s%s chortles!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s chortles!", _characterNamePt1, _characterNamePt2);
 			break;
 		case 2:
-			sprintf(buffer, "  %s%s seems amused!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s seems amused!", _characterNamePt1, _characterNamePt2);
 			break;
 		case 3:
-			sprintf(buffer, "  %s%s looks concerned!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s looks concerned!", _characterNamePt1, _characterNamePt2);
 			break;
 		default:
 			break;
@@ -4665,13 +4691,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 6:
 		switch (rand3) {
 		case 1:
-			sprintf(buffer, "  %s%s laughs at the feeble attack!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s laughs at the feeble attack!", _characterNamePt1, _characterNamePt2);
 			break;
 		case 2:
-			sprintf(buffer, "  %s%s smiles at the pathetic attack!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s smiles at the pathetic attack!", _characterNamePt1, _characterNamePt2);
 			break;
 		case 3:
-			sprintf(buffer, "  %s%s laughs at the ineffective assault!", _characterNamePt1, _characterNamePt2);
+			snprintf(buffer, 80, "  %s%s laughs at the ineffective assault!", _characterNamePt1, _characterNamePt2);
 			break;
 		default:
 			break;
@@ -4681,7 +4707,7 @@ void EfhEngine::addReactionText(int16 id) {
 		break;
 	}
 
-	strcat((char *)_messageToBePrinted, buffer);
+	strncat((char *)_messageToBePrinted, buffer, 80);
 }
 
 void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
@@ -4775,7 +4801,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 					if (var62 > 0) {
 						_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] -= originalDamage;
 						if (var62 > 1) {
-							sprintf(_attackBuffer, "%d times ", var62);
+							snprintf(_attackBuffer, 20, "%d times ", var62);
 						} else {
 							*_attackBuffer = 0;
 						}
@@ -4783,41 +4809,41 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 					int16 var68 = _items[unk_monsterField5_itemId]._attackType + 1;
 					int16 var6A = getRandom(3) - 1;
 					if (var5E == 2) {
-						strcpy(_characterNamePt1, "The ");
+						strncpy(_characterNamePt1, "The ", 5);
 					} else {
 						*_characterNamePt1 = 0;
 					}
 
 					if (var70 == 2) {
-						strcpy(_enemyNamePt1, "The ");
+						strncpy(_enemyNamePt1, "The ", 5);
 					} else {
 						*_enemyNamePt1 = 0;
 					}
 
-					strcpy(_characterNamePt2, kEncounters[_mapMonsters[_teamMonsterIdArray[groupId]]._monsterRef]._name);
+					strncpy(_characterNamePt2, kEncounters[_mapMonsters[_teamMonsterIdArray[groupId]]._monsterRef]._name, 14);
 					copyString(_npcBuf[_teamCharId[teamCharId]]._name, _enemyNamePt2);
 					copyString(_items[unk_monsterField5_itemId]._name, _nameBuffer);
 					if (checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId)) {
 						// Action A - Check damages - Start
 						if (var62 == 0) {
-							sprintf((char *)_messageToBePrinted, "%s%s %s at %s%s with %s %s, but misses!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, kPossessive[var70], _nameBuffer);
+							snprintf((char *)_messageToBePrinted, 400, "%s%s %s at %s%s with %s %s, but misses!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, kPossessive[var70], _nameBuffer);
 						} else if (hitPoints <= 0){
-							sprintf((char *)_messageToBePrinted, "%s%s %s %s%s %swith %s %s, but does no damage!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer);
+							snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s, but does no damage!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer);
 						} else if (hitPoints == 1) {
-							sprintf((char *)_messageToBePrinted, "%s%s %s %s%s %swith %s %s for 1 point", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer);
+							snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s for 1 point", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer);
 							if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] <= 0) {
 								getDeathTypeDescription(groupId, teamCharId + 1000);
 								getXPAndSearchCorpse(_teamCharId[teamCharId], _enemyNamePt1, _enemyNamePt2, _teamMonsterIdArray[groupId]);
 							} else {
-								strcat((char *)_messageToBePrinted, "!");
+								strncat((char *)_messageToBePrinted, "!", 2);
 							}
 						} else {
-							sprintf((char *)_messageToBePrinted, "%s%s %s %s%s %swith %s %s for %d points", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer, hitPoints);
+							snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s for %d points", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer, hitPoints);
 							if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] <= 0) {
 								getDeathTypeDescription(groupId, teamCharId + 1000);
 								getXPAndSearchCorpse(_teamCharId[teamCharId], _enemyNamePt1, _enemyNamePt2, _teamMonsterIdArray[groupId]);
 							} else {
-								strcat((char *)_messageToBePrinted, "!");
+								strncat((char *)_messageToBePrinted, "!", 2);
 							}
 						}
 						// Action A - Check damages - End
@@ -4848,16 +4874,16 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 							char buffer[80];
 							memset(buffer, 0, 80);
 							if (damagePointsAbsorbed <= 1)
-								sprintf(buffer, "  %s%s's armor absorbs 1 point!", _characterNamePt1, _characterNamePt2);
+								snprintf(buffer, 80, "  %s%s's armor absorbs 1 point!", _characterNamePt1, _characterNamePt2);
 							else
-								sprintf(buffer, "  %s%s',27h,'s armor absorbs %d points!", _characterNamePt1, _characterNamePt2, damagePointsAbsorbed);
+								snprintf(buffer, 80, "  %s%s',27h,'s armor absorbs %d points!", _characterNamePt1, _characterNamePt2, damagePointsAbsorbed);
 
-							strcat((char *)_messageToBePrinted, buffer);
+							strncat((char *)_messageToBePrinted, buffer, 80);
 						}
 						// Action A - Add armor absorb text - End
 
 						if (var5C)
-							strcat((char *)_messageToBePrinted, "  Your actions do not go un-noticed...");
+							strncat((char *)_messageToBePrinted, "  Your actions do not go un-noticed...", 400);
 
 						// Action A - Check item durability - Start
 						varInt = _teamCharId[teamCharId];
@@ -4868,8 +4894,8 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 							if (var51 <= 0) {
 								char buffer[80];
 								memset(buffer, 0, 80);
-								sprintf(buffer, "  * %s%s's %s breaks!", _enemyNamePt1, _enemyNamePt2, _nameBuffer);
-								strcat((char *)_messageToBePrinted, buffer);
+								snprintf(buffer, 80, "  * %s%s's %s breaks!", _enemyNamePt1, _enemyNamePt2, _nameBuffer);
+								strncat((char *)_messageToBePrinted, buffer, 80);
 								setCharacterObjectToBroken(varInt, var64);
 								var6E = false;
 							} else {
@@ -4885,20 +4911,20 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 								_stru32686[var7E]._field2[groupId] = getRandom(10);
 								char buffer[80];
 								memset(buffer, 0, 80);
-								sprintf(buffer, "  %s%s falls asleep!", _characterNamePt1, _characterNamePt2);
-								strcat((char *)_messageToBePrinted, buffer);
+								snprintf(buffer, 80, "  %s%s falls asleep!", _characterNamePt1, _characterNamePt2);
+								strncat((char *)_messageToBePrinted, buffer, 80);
 							}
 						} else if (_items[unk_monsterField5_itemId].field_16 == 2 && _mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] > 0) {
 							_stru32686[var7E]._field0[groupId] = 2;
 							_stru32686[var7E]._field2[groupId] = getRandom(10);
 							char buffer[80];
 							memset(buffer, 0, 80);
-							sprintf(buffer, "  %s%s is frozen!", _characterNamePt1, _characterNamePt2);
-							strcat((char *)_messageToBePrinted, buffer);
+							snprintf(buffer, 80, "  %s%s is frozen!", _characterNamePt1, _characterNamePt2);
+							strncat((char *)_messageToBePrinted, buffer, 80);
 						}
 						// Action A - Check effect - End
 					} else {
-						sprintf((char *)_messageToBePrinted, "%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer);
+						snprintf((char *)_messageToBePrinted, 400, "%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer);
 					}
 
 					genericGenerateSound(_items[unk_monsterField5_itemId]._attackType, var62);
@@ -4917,11 +4943,11 @@ void EfhEngine::handleFight_lastAction_D(int16 teamCharId) {
 	int16 var70 = _npcBuf[_teamCharId[teamCharId]]._possessivePronounSHL6 >> 6;
 
 	if (var70 == 2)
-		strcpy(_enemyNamePt1, "The ");
+		strncpy(_enemyNamePt1, "The ", 5);
 	else
 		*_enemyNamePt1 = 0;
 
-	sprintf((char *)_messageToBePrinted, "%s%s prepares to defend %sself!", _enemyNamePt1, _enemyNamePt2, kPersonal[var70]);
+	snprintf((char *)_messageToBePrinted, 400, "%s%s prepares to defend %sself!", _enemyNamePt1, _enemyNamePt2, kPersonal[var70]);
 	sub1C219(_messageToBePrinted, 1, 2, true);
 }
 
@@ -4936,11 +4962,11 @@ void EfhEngine::handleFight_lastAction_H(int16 teamCharId) {
 	int16 var70 = _npcBuf[_teamCharId[teamCharId]]._possessivePronounSHL6 >> 6;
 
 	if (var70 == 2)
-		strcpy(_enemyNamePt1, "The ");
+		strncpy(_enemyNamePt1, "The ", 5);
 	else
 		*_enemyNamePt1 = 0;
 
-	sprintf((char *)_messageToBePrinted, "%s%s attempts to hide %sself!", _enemyNamePt1, _enemyNamePt2, kPersonal[var70]);
+	snprintf((char *)_messageToBePrinted, 400, "%s%s attempts to hide %sself!", _enemyNamePt1, _enemyNamePt2, kPersonal[var70]);
 	sub1C219(_messageToBePrinted, 1, 2, true);
 }
 
@@ -4954,11 +4980,11 @@ void EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
 	copyString(_items[unk_monsterField5_itemId]._name, _nameBuffer);
 	int16 var70 = _npcBuf[_teamCharId[teamCharId]]._possessivePronounSHL6 >> 6;
 	if (var70 == 2)
-		strcpy(_enemyNamePt1, "The ");
+		strncpy(_enemyNamePt1, "The ", 5);
 	else
 		*_enemyNamePt1 = 0;
 
-	sprintf((char *)_messageToBePrinted, "%s%s uses %s %s!  ", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer);
+	snprintf((char *)_messageToBePrinted, 400, "%s%s uses %s %s!  ", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer);
 	sub1C219(_messageToBePrinted, 1, 2, true);
 }
 
@@ -5006,12 +5032,12 @@ void EfhEngine::sub1D8C2(int16 charId, int16 damage) {
 
 			if (var42 == 0) {
 				var42 = 1;
-				sprintf(buffer, ", but %s %s", kPossessive[var40], buffer2);
-				strcat((char *)_messageToBePrinted, buffer);
+				snprintf(buffer, 40, ", but %s %s", kPossessive[var40], buffer2);
+				strncat((char *)_messageToBePrinted, buffer, 40);
 			} else {
 				++var42;
-				sprintf(buffer, ", %s", buffer2);
-				strcat((char *)_messageToBePrinted, buffer);
+				snprintf(buffer, 40, ", %s", buffer2);
+				strncat((char *)_messageToBePrinted, buffer, 40);
 			}
 		}
 
@@ -5020,11 +5046,11 @@ void EfhEngine::sub1D8C2(int16 charId, int16 damage) {
 	}
 
 	if (var42 == 0) {
-		strcat((char *)_messageToBePrinted, "!");
+		strncat((char *)_messageToBePrinted, "!", 2);
 	} else if (var42 > 1 || getFightMessageLastCharacter((char *)_messageToBePrinted) == 's' || getFightMessageLastCharacter((char *)_messageToBePrinted) == 'S') {
-		strcat((char *)_messageToBePrinted, " are destroyed!");
+		strncat((char *)_messageToBePrinted, " are destroyed!", 17);
 	} else {
-		strcat((char *)_messageToBePrinted, " is destroyed!");
+		strncat((char *)_messageToBePrinted, " is destroyed!", 16);
 	}
 }
 
@@ -5180,7 +5206,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 								if (var62 > 0) {
 									_npcBuf[_teamCharId[var7E]]._hitPoints -= originalDamage;
 									if (var62 > 1)
-										sprintf(_attackBuffer, "%d times ", var62);
+										snprintf(_attackBuffer, 20, "%d times ", var62);
 									else
 										*_attackBuffer = 0;
 								}
@@ -5188,36 +5214,36 @@ bool EfhEngine::handleFight(int16 monsterId) {
 								int16 var68 = _items[unk_monsterField5_itemId]._attackType + 1;
 								int16 var6A = getRandom(3);
 								if (var5E == 2)
-									sprintf(_characterNamePt1, "The ");
+									snprintf(_characterNamePt1, 5, "The ");
 								else
 									*_characterNamePt1 = 0;
 
 								if (var7E == 2)
-									sprintf(_enemyNamePt1, "The ");
+									snprintf(_enemyNamePt1, 5, "The ");
 								else
 									*_enemyNamePt1 = 0;
 
-								strcpy(_enemyNamePt2, kEncounters[_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._monsterRef]._name);
+								strncpy(_enemyNamePt2, kEncounters[_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._monsterRef]._name, 20);
 								copyString(_npcBuf[_teamCharId[var7E]]._name, _characterNamePt2);
 								copyString(_items[unk_monsterField5_itemId]._name, _nameBuffer);
 								if (checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId)) {
 									// handleFight - check damages - Start
 									if (var62 == 0) {
-										sprintf((char *)_messageToBePrinted, "%s%s %s at %s%s with %s %s, but misses!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, kPossessive[var70], _nameBuffer);
+										snprintf((char *)_messageToBePrinted, 400, "%s%s %s at %s%s with %s %s, but misses!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, kPossessive[var70], _nameBuffer);
 									} else if (hitPoints <= 0) {
-										sprintf((char *)_messageToBePrinted, "%s%s %s %s%s %swith %s %s, but does no damage!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer);
+										snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s, but does no damage!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer);
 									} else if (hitPoints == 1) {
-										sprintf((char *)_messageToBePrinted, "%s%s %s %s%s %swith %s %s for 1 point", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer);
+										snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s for 1 point", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer);
 										if (_npcBuf[_teamCharId[var7E]]._hitPoints <= 0)
 											getDeathTypeDescription(var7E + 1000, monsterGroupIdOrMonsterId);
 										else
-											strcat((char *)_messageToBePrinted, "!");
+											strncat((char *)_messageToBePrinted, "!", 2);
 									} else {
-										sprintf((char *)_messageToBePrinted, "%s%s %s %s%s %swith %s %s for %d points", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer, hitPoints);
+										snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s for %d points", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer, hitPoints);
 										if (_npcBuf[_teamCharId[var7E]]._hitPoints <= 0)
 											getDeathTypeDescription(var7E + 1000, monsterGroupIdOrMonsterId);
 										else
-											strcat((char *)_messageToBePrinted, "!");
+											strncat((char *)_messageToBePrinted, "!", 2);
 									}
 									// handleFight - check damages - End
 
@@ -5247,11 +5273,11 @@ bool EfhEngine::handleFight(int16 monsterId) {
 										char buffer[80];
 										memset(buffer, 0, 80);
 										if (damagePointsAbsorbed <= 1)
-											sprintf(buffer, "  %s%s's armor absorbs 1 point!", _characterNamePt1, _characterNamePt2);
+											snprintf(buffer, 80, "  %s%s's armor absorbs 1 point!", _characterNamePt1, _characterNamePt2);
 										else
-											sprintf(buffer, "  %s%s's armor absorbs %d points!", _characterNamePt1, _characterNamePt2, damagePointsAbsorbed);
+											snprintf(buffer, 80, "  %s%s's armor absorbs %d points!", _characterNamePt1, _characterNamePt2, damagePointsAbsorbed);
 
-										strcat((char *)_messageToBePrinted, buffer);
+										strncat((char *)_messageToBePrinted, buffer, 80);
 										varInt = (originalDamage + damagePointsAbsorbed) / 10;
 										sub1D8C2(_teamCharId[var7E], varInt);
 									}
@@ -5265,23 +5291,23 @@ bool EfhEngine::handleFight(int16 monsterId) {
 										if (getRandom(100) < 20) {
 											_teamCharStatus[var7E]._status = 1;
 											_teamCharStatus[var7E]._duration = getRandom(10);
-											sprintf(buffer, "  %s%s falls asleep!", _characterNamePt1, _characterNamePt2);
-											strcat((char *)_messageToBePrinted, buffer);
+											snprintf(buffer, 80, "  %s%s falls asleep!", _characterNamePt1, _characterNamePt2);
+											strncat((char *)_messageToBePrinted, buffer, 80);
 										}
 										break;
 									case 2:
 										if (getRandom(100) < 20) {
 											_teamCharStatus[var7E]._status = 2;
 											_teamCharStatus[var7E]._duration = getRandom(10);
-											sprintf(buffer, "  %s%s is frozen!", _characterNamePt1, _characterNamePt2);
-											strcat((char *)_messageToBePrinted, buffer);
+											snprintf(buffer, 80, "  %s%s is frozen!", _characterNamePt1, _characterNamePt2);
+											strncat((char *)_messageToBePrinted, buffer, 80);
 										}
 										break;
 									case 5:
 									case 6:
 										if (getRandom(100) < 20) {
-											sprintf(buffer, "  %s%s's life energy is gone!", _characterNamePt1, _characterNamePt2);
-											strcat((char *)_messageToBePrinted, buffer);
+											snprintf(buffer, 80, "  %s%s's life energy is gone!", _characterNamePt1, _characterNamePt2);
+											strncat((char *)_messageToBePrinted, buffer, 80);
 											_npcBuf[_teamCharId[var7E]]._hitPoints = 0;
 										}
 										break;
@@ -5290,7 +5316,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 									} 
 									// handleFight - Check effect - end
 								} else {
-									sprintf((char *)_messageToBePrinted, "%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer);
+									snprintf((char *)_messageToBePrinted, 400, "%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer);
 								}
 								genericGenerateSound(_items[unk_monsterField5_itemId]._attackType, var62);
 								sub1C219(_messageToBePrinted, 1, 2, true);
@@ -5300,22 +5326,22 @@ bool EfhEngine::handleFight(int16 monsterId) {
 					} else if (_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._pictureRef[var86] > 0 && _stru32686[monsterGroupIdOrMonsterId]._field0[var86]) {
 						--_stru32686[monsterGroupIdOrMonsterId]._field2[var86];
 						if (_stru32686[monsterGroupIdOrMonsterId]._field2[var86] <= 0) {
-							strcpy(_enemyNamePt2, kEncounters[_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._monsterRef]._name);
+							strncpy(_enemyNamePt2, kEncounters[_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._monsterRef]._name, 20);
 							int16 var70 = kEncounters[_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._monsterRef]._nameArticle;
 							if (var70 == 2)
-								strcpy(_enemyNamePt1, "The ");
+								strncpy(_enemyNamePt1, "The ", 5);
 							else
 								*_enemyNamePt1 = 0;
 
 							switch (_stru32686[monsterGroupIdOrMonsterId]._field0[var86]) {
 							case 1:
-								sprintf((char *)_messageToBePrinted, "%s%s wakes up!", _enemyNamePt1, _enemyNamePt2);
+								snprintf((char *)_messageToBePrinted, 400, "%s%s wakes up!", _enemyNamePt1, _enemyNamePt2);
 								break;
 							case 2:
-								sprintf((char *)_messageToBePrinted, "%s%s thaws out!", _enemyNamePt1, _enemyNamePt2);
+								snprintf((char *)_messageToBePrinted, 400, "%s%s thaws out!", _enemyNamePt1, _enemyNamePt2);
 								break;
 							default:
-								sprintf((char *)_messageToBePrinted, "%s%s recovers!", _enemyNamePt1, _enemyNamePt2);
+								snprintf((char *)_messageToBePrinted, 400, "%s%s recovers!", _enemyNamePt1, _enemyNamePt2);
 								break;
 							}
 							_stru32686[monsterGroupIdOrMonsterId]._field0[var86] = 0;
@@ -5349,7 +5375,7 @@ void EfhEngine::displayMenuItemString(int16 menuBoxId, int16 thisBoxId, int16 mi
 		else
 			setTextColorGrey();
 
-		sprintf(buffer, "> %s <", str);
+		snprintf(buffer, 20,"> %s <", str);
 		displayCenteredString(buffer, minX, maxX, minY);
 		setTextColorRed();
 	} else {
@@ -5468,22 +5494,22 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 	setTextPos(146, 27);
 	displayStringAtTextPos("Name: ");
 	displayStringAtTextPos(buffer1);
-	sprintf(buffer1, "Level: %d", getXPLevel(_npcBuf[npcId]._xp));
+	snprintf(buffer1, 40, "Level: %d", getXPLevel(_npcBuf[npcId]._xp));
 	setTextPos(146, 36);
 	displayStringAtTextPos(buffer1);
-	sprintf(buffer1, "XP: %lu", _npcBuf[npcId]._xp);
+	snprintf(buffer1, 40, "XP: %lu", _npcBuf[npcId]._xp);
 	setTextPos(227, 36);
 	displayStringAtTextPos(buffer1);
-	sprintf(buffer1, "Speed: %d", _npcBuf[npcId]._speed);
+	snprintf(buffer1, 40, "Speed: %d", _npcBuf[npcId]._speed);
 	setTextPos(146, 45);
 	displayStringAtTextPos(buffer1);
-	sprintf(buffer1, "Defense: %d", getEquipmentDefense(npcId, false));
+	snprintf(buffer1, 40, "Defense: %d", getEquipmentDefense(npcId, false));
 	setTextPos(146, 54);
 	displayStringAtTextPos(buffer1);
-	sprintf(buffer1, "Hit Points: %d", _npcBuf[npcId]._hitPoints);
+	snprintf(buffer1, 40, "Hit Points: %d", _npcBuf[npcId]._hitPoints);
 	setTextPos(146, 63);
 	displayStringAtTextPos(buffer1);
-	sprintf(buffer1, "Max HP: %d", _npcBuf[npcId]._maxHP);
+	snprintf(buffer1, 40, "Max HP: %d", _npcBuf[npcId]._maxHP);
 	setTextPos(227, 63);
 	displayStringAtTextPos(buffer1);
 	displayCenteredString("Inventory", 144, 310, 72);
@@ -5515,16 +5541,16 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 
 		setTextPos(152, textPosY);
 		if (counter == curMenuLine) {
-			sprintf(buffer1, "%c>", 'A' + counter);
+			snprintf(buffer1, 40, "%c>", 'A' + counter);
 		} else {
-			sprintf(buffer1, "%c)", 'A' + counter);
+			snprintf(buffer1, 40, "%c)", 'A' + counter);
 		}
 		displayStringAtTextPos(buffer1);
 
 		if (itemId != 0x7FFF) {
 			setTextPos(168, textPosY);
 			copyString(_items[itemId]._name, buffer2);
-			sprintf(buffer1, "  %s", buffer2);
+			snprintf(buffer1, 40, "  %s", buffer2);
 			displayStringAtTextPos(buffer1);
 			setTextPos(262, textPosY);
 
@@ -5534,7 +5560,7 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 					// useless?
 					var54 = _items[_npcBuf[npcId]._inventory[_word3273A[counter]]._ref]._defense;
 				} else {
-					sprintf(buffer1, "%d", 1 + var54 / 8);
+					snprintf(buffer1, 40, "%d", 1 + var54 / 8);
 					displayStringAtTextPos(buffer1);
 					setTextPos(286, textPosY);
 					displayStringAtTextPos("Def");
@@ -5542,7 +5568,7 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 			} else if (_items[itemId]._uses != 0x7F) {
 				int16 var52 = _npcBuf[npcId]._inventory[_word3273A[counter]]._stat1;
 				if (var52 != 0x7F) {
-					sprintf(buffer1, "%d", var52);
+					snprintf(buffer1, 40, "%d", var52);
 					displayStringAtTextPos(buffer1);
 					setTextPos(286, textPosY);
 					if (var52 == 1)
@@ -5581,15 +5607,15 @@ void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 cha
 		int16 textPosY = 38 + counter * 9;
 		setTextPos(146, textPosY);
 		if (counter == curMenuLine) {
-			sprintf(buffer, "%c>", 'A' + counter);
+			snprintf(buffer, 40, "%c>", 'A' + counter);
 		} else {
-			sprintf(buffer, "%c)", 'A' + counter);
+			snprintf(buffer, 40, "%c)", 'A' + counter);
 		}
 
 		displayStringAtTextPos(buffer);
 		setTextPos(163, textPosY);
 		displayStringAtTextPos(kSkillArray[_word3273A[counter]]);
-		sprintf(buffer, "%d", _npcBuf[charId]._activeScore[_word3273A[counter]]);
+		snprintf(buffer, 40, "%d", _npcBuf[charId]._activeScore[_word3273A[counter]]);
 		setTextPos(278, textPosY);
 		displayStringAtTextPos(buffer);
 		setTextColorRed();
@@ -5812,7 +5838,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			displayString_3("The item emits a low droning hum...", false, charId, windowId, menuId, curMenuLine);
 		} else {
 			int16 victims = 0;
-			strcat((char *)_messageToBePrinted, "  The item emits a low droning hum...");
+			strncat((char *)_messageToBePrinted, "  The item emits a low droning hum...", 400);
 			if (getRandom(100) < 50) {
 				for (int16 counter = 0; counter < 9; ++counter) {
 					if (isMonsterActive(windowId, counter)) {
@@ -5837,11 +5863,11 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			}
 			// The original was duplicating this code in each branch of the previous random check. 
 			if (victims > 1) {
-				sprintf(buffer1, "%d %ss fall asleep!", victims, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._monsterRef]._name);
+				snprintf(buffer1, 80, "%d %ss fall asleep!", victims, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._monsterRef]._name);
 			} else {
-				sprintf(buffer1, "%d %s falls asleep!", victims, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._monsterRef]._name);
+				snprintf(buffer1, 80, "%d %s falls asleep!", victims, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._monsterRef]._name);
 			}
-			strcat((char *)_messageToBePrinted, buffer1);
+			strncat((char *)_messageToBePrinted, buffer1, 400);
 		}
 
 		varA6 = true;
@@ -5850,7 +5876,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if (argA == 2) {
 			displayString_3("The item grows very cold for a moment...", false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strcat((char *)_messageToBePrinted, "  The item emits a blue beam...");
+			strncat((char *)_messageToBePrinted, "  The item emits a blue beam...", 400);
 			int16 victim = 0;
 			if (getRandom(100) < 50) {
 				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
@@ -5877,11 +5903,11 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			// <CHECKME>: This part is only present in the original in the case < 50, but for me
 			// it's missing in the other case as there's an effect (frozen enemies) but no feedback to the player
 			if (victim > 1) {
-				sprintf(buffer1, "%d %ss are frozen in place!", victim, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._monsterRef]._name);
+				snprintf(buffer1, 80, "%d %ss are frozen in place!", victim, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._monsterRef]._name);
 			} else {
-				sprintf(buffer1, "%d %s is frozen in place!", victim, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._monsterRef]._name);
+				snprintf(buffer1, 80, "%d %s is frozen in place!", victim, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._monsterRef]._name);
 			}
-			strcat((char *)_messageToBePrinted, buffer1);
+			strncat((char *)_messageToBePrinted, buffer1, 80);
 			// </CHECKME>
 		}
 
@@ -5891,7 +5917,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if (argA == 2) {
 			displayString_3("A serene feeling passes through the air...", false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strcat((char *)_messageToBePrinted, "  The combat pauses...as there is a moment of forgiveness...");
+			strncat((char *)_messageToBePrinted, "  The combat pauses...as there is a moment of forgiveness...", 400);
 			_unkArray2C8AA[0] = 0;
 		}
 
@@ -5901,7 +5927,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if (argA == 2) {
 			displayString_3("A dark sense fills your soul...then fades!", false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strcat((char *)_messageToBePrinted, "  A dark gray fiery whirlwind surrounds the poor victim...the power fades and death abounds!");
+			strncat((char *)_messageToBePrinted, "  A dark gray fiery whirlwind surrounds the poor victim...the power fades and death abounds!", 400);
 			if (getRandom(100) < 50) {
 				for (int16 counter = 0; counter < 9; ++counter) {
 					if (getRandom(100) < 50) {
@@ -5926,12 +5952,12 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			displayString_3("A dark sense fills your soul...then fades!", false, charId, windowId, menuId, curMenuLine);
 		} else {
 			if (getRandom(100) < 50) {
-				strcat((char *)_messageToBePrinted, "  A dark fiery whirlwind surrounds the poor victim...the power fades and all targeted die!");
+				strncat((char *)_messageToBePrinted, "  A dark fiery whirlwind surrounds the poor victim...the power fades and all targeted die!", 400);
 				for (int16 counter = 0; counter < 9; ++counter) {
 					_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
 				}
 			} else {
-				strcat((char *)_messageToBePrinted, "  A dark fiery whirlwind surrounds the poor victim...the power fades and one victim dies!");
+				strncat((char *)_messageToBePrinted, "  A dark fiery whirlwind surrounds the poor victim...the power fades and one victim dies!", 400);
 				for (int16 counter = 0; counter < 9; ++counter) {
 					if (isMonsterActive(windowId, counter)) {
 						_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
@@ -5946,7 +5972,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if (argA == 2) {
 			displayString_3("There is no apparent affect!", false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strcat((char *)_messageToBePrinted, "  The magic sparkles brilliant hues in the air!");
+			strncat((char *)_messageToBePrinted, "  The magic sparkles brilliant hues in the air!", 400);
 			sub1E028(windowId, _items[itemId].field17_attackTypeDefense, true);
 		}
 		varA6 = true;
@@ -5961,11 +5987,11 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		}
 
 		if (varAA != 0x1B) {
-			strcpy(buffer1, "  The magic makes the user as quick and agile as a bird!");
+			strncpy(buffer1, "  The magic makes the user as quick and agile as a bird!", 80);
 			if (argA == 2) {
 				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
-				strcat((char *)_messageToBePrinted, buffer1);
+				strncat((char *)_messageToBePrinted, buffer1, 80);
 			}
 			_word32482[varAA] -= 50;
 			if (_word32482[varAA] < 0)
@@ -5985,11 +6011,11 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		}
 
 		if (teamCharId != 0x1B) {
-			strcpy(buffer1, "  The magic makes the user invisible!");
+			strncpy(buffer1, "  The magic makes the user invisible!", 80);
 			if (argA == 2) {
 				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine); 
 			} else {
-				strcat((char *)_messageToBePrinted, buffer1);
+				strncat((char *)_messageToBePrinted, buffer1, 80);
 			}
 
 			_word32680[teamCharId] -= 50;
@@ -6009,29 +6035,29 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 
 		if (_tileFact[varAE]._field0 == 0) {
 			totalPartyKill();
-			strcpy(buffer1, "The entire party vanishes in a flash... only to appear in stone !");
+			strncpy(buffer1, "The entire party vanishes in a flash... only to appear in stone !", 80);
 			if (argA == 2) {
 				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
-				strcat((char *)_messageToBePrinted, buffer1);
+				strncat((char *)_messageToBePrinted, buffer1, 80);
 				retVal = true;
 			}
 			// emptyFunction(2);
 		} else {
 			if (varAE == 0 || varAE == 0x48) {
-				strcpy(buffer1, "The entire party vanishes in a flash...but re-appears, as if nothing happened!");
+				strncpy(buffer1, "The entire party vanishes in a flash...but re-appears, as if nothing happened!", 80);
 				if (argA == 2) {
 					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 				} else {
-					strcat((char *)_messageToBePrinted, buffer1);
+					strncat((char *)_messageToBePrinted, buffer1, 80);
 					retVal = true;
 				}
 			} else {
-				strcpy(buffer1, "The entire party vanishes in a flash...only to appear elsewhere!");
+				strncpy(buffer1, "The entire party vanishes in a flash...only to appear elsewhere!", 80);
 				if (argA == 2) {
 					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 				} else {
-					strcat((char *)_messageToBePrinted, buffer1);
+					strncat((char *)_messageToBePrinted, buffer1, 80);
 					retVal = true;
 				}
 			}
@@ -6046,29 +6072,29 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		int16 varAE = sub15538(_mapPosX, _mapPosY);
 		if (_tileFact[varAE]._field0 == 0) {
 			totalPartyKill();
-			strcpy(buffer1, "The entire party vanishes in a flash... only to appear in stone !");
+			strncpy(buffer1, "The entire party vanishes in a flash... only to appear in stone !", 80);
 			if (argA == 2) {
 				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
-				strcat((char *)_messageToBePrinted, buffer1);
+				strncat((char *)_messageToBePrinted, buffer1, 80);
 				retVal = true;
 			}
 			// emptyFunction(2);
 		} else {
 			if (varAE == 0 || varAE == 0x48) {
-				strcpy(buffer1, "The entire party vanishes in a flash...but re-appears, as if nothing happened!");
+				strncpy(buffer1, "The entire party vanishes in a flash...but re-appears, as if nothing happened!", 80);
 				if (argA == 2) {
 					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 				} else {
-					strcat((char *)_messageToBePrinted, buffer1);
+					strncat((char *)_messageToBePrinted, buffer1, 80);
 					retVal = true;
 				}
 			} else {
-				strcpy(buffer1, "The entire party vanishes in a flash...only to appear elsewhere!");
+				strncpy(buffer1, "The entire party vanishes in a flash...only to appear elsewhere!",80);
 				if (argA == 2) {
 					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 				} else {
-					strcat((char *)_messageToBePrinted, buffer1);
+					strncat((char *)_messageToBePrinted, buffer1, 80);
 					retVal = true;
 				}
 			}
@@ -6084,11 +6110,11 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			int16 teamCharId = windowId;
 			if (teamCharId != 0x1B) {
 				if (_teamCharStatus[teamCharId]._status == 2) { // frozen
-					strcat((char *)_messageToBePrinted, "  The item makes a loud noise, awakening the character!");
+					strncat((char *)_messageToBePrinted, "  The item makes a loud noise, awakening the character!", 80);
 					_teamCharStatus[teamCharId]._status = 0;
 					_teamCharStatus[teamCharId]._duration = 0;
 				} else {
-					strcat((char *)_messageToBePrinted, "  The item makes a loud noise, but has no effect!");
+					strncat((char *)_messageToBePrinted, "  The item makes a loud noise, but has no effect!", 80);
 				}
 			}
 		}
@@ -6096,48 +6122,48 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		varA6 = true;
 		break;
 	case 19: // "Junk"
-		strcpy(buffer1, "  * The item breaks!");
+		strncpy(buffer1, "  * The item breaks!", 80);
 		if (argA == 2) {
 			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strcat((char *)_messageToBePrinted, buffer1);
+			strncat((char *)_messageToBePrinted, buffer1, 80);
 		}
 		setCharacterObjectToBroken(charId, objectId);
 		varA6 = true;
 		break;
 	case 23: // "Divining Rod"
 		copyString(_items[itemId]._name, buffer2);
-		sprintf(buffer1, "The %s says, '", buffer2);
+		snprintf(buffer1, 80, "The %s says, '", buffer2);
 		if (_items[itemId].field_19 < _mapPosX) {
 			if (_items[itemId].field_1A < _mapPosY) {
-				strcat(buffer1, "North West!");
+				strncat(buffer1, "North West!", 80);
 			} else if (_items[itemId].field_1A > _mapPosY) {
-				strcat(buffer1, "South West!");
+				strncat(buffer1, "South West!", 80);
 			} else {
-				strcat(buffer1, "West!");
+				strncat(buffer1, "West!", 80);
 			}
 		} else if (_items[itemId].field_19 > _mapPosX) {
 			if (_items[itemId].field_1A < _mapPosY) {
-				strcat(buffer1, "North East!");
+				strncat(buffer1, "North East!", 80);
 			} else if (_items[itemId].field_1A > _mapPosY) {
-				strcat(buffer1, "South East!");
+				strncat(buffer1, "South East!", 80);
 			} else {
-				strcat(buffer1, "East!");
+				strncat(buffer1, "East!", 80);
 			}
 		} else { // equals _mapPosX
 			if (_items[itemId].field_1A < _mapPosY) {
-				strcat(buffer1, "North!");
+				strncat(buffer1, "North!", 80);
 			} else if (_items[itemId].field_1A > _mapPosY) {
-				strcat(buffer1, "South!");
+				strncat(buffer1, "South!", 80);
 			} else {
-				strcat(buffer1, "Here!!!");
+				strncat(buffer1, "Here!!!",80);
 			}
 		}
-		strcat(buffer1, "'");
+		strncat(buffer1, "'", 2);
 		if (argA == 2) {
 			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strcat((char *)_messageToBePrinted, buffer1);
+			strncat((char *)_messageToBePrinted, buffer1, 80);
 			retVal = true;
 		}
 
@@ -6159,14 +6185,14 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] = 20;
 			}
 			if (effectPoints > 1)
-				sprintf(buffer1, "%s increased %d points!", kSkillArray[varAE], effectPoints);
+				snprintf(buffer1, 80, "%s increased %d points!", kSkillArray[varAE], effectPoints);
 			else
-				sprintf(buffer1, "%s increased 1 point!", kSkillArray[varAE]);
+				snprintf(buffer1, 80, "%s increased 1 point!", kSkillArray[varAE]);
 
 			if (argA == 2) {
 				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
-				strcat((char *)_messageToBePrinted, buffer1);
+				strncat((char *)_messageToBePrinted, buffer1, 80);
 				retVal = true;
 			}
 		}
@@ -6190,14 +6216,14 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] = 1;
 			}
 			if (effectPoints > 1)
-				sprintf(buffer1, "%s lowered %d points!", kSkillArray[varAE], effectPoints);
+				snprintf(buffer1, 80, "%s lowered %d points!", kSkillArray[varAE], effectPoints);
 			else
-				sprintf(buffer1, "%s lowered 1 point!", kSkillArray[varAE]);
+				snprintf(buffer1, 80, "%s lowered 1 point!", kSkillArray[varAE]);
 
 			if (argA == 2) {
 				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
-				strcat((char *)_messageToBePrinted, buffer1);
+				strncat((char *)_messageToBePrinted, buffer1, 80);
 				retVal = true;
 			}
 		}
@@ -6206,11 +6232,11 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		}
 		break;
 	case 26: // "Black Sphere"
-		strcpy(buffer1, "The entire party collapses, dead!!!");
+		strncpy(buffer1, "The entire party collapses, dead!!!", 80);
 		if (argA == 2) {
 			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strcat((char *)_messageToBePrinted, buffer1);
+			strncat((char *)_messageToBePrinted, buffer1, 80);
 			retVal = true;
 		}
 		totalPartyKill();
@@ -6229,11 +6255,11 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if (teamCharId != 0x1B) {
 			_npcBuf[_teamCharId[teamCharId]]._hitPoints = 0;
 			copyString(_npcBuf[_teamCharId[teamCharId]]._name, buffer2);
-			sprintf(buffer1, "%s collapses, dead!!!", buffer2);
+			snprintf(buffer1, 80, "%s collapses, dead!!!", buffer2);
 			if (argA == 2) {
 				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
-				strcat((char *)_messageToBePrinted, buffer1);
+				strncat((char *)_messageToBePrinted, buffer1, 80);
 				retVal = true;
 			}
 			// emptyFunction(2);
@@ -6249,11 +6275,11 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			int16 teamCharId = windowId;
 			if (teamCharId != 0x1B) {
 				if (_teamCharStatus[teamCharId]._status == 0) {
-					strcat((char *)_messageToBePrinted, "  The item makes a loud noise, awakening the character!");
+					strncat((char *)_messageToBePrinted, "  The item makes a loud noise, awakening the character!", 80);
 					_teamCharStatus[teamCharId]._status = 0;
 					_teamCharStatus[teamCharId]._duration = 0; 
 				} else {
-					strcat((char *)_messageToBePrinted, "  The item makes a loud noise, but has no effect!");
+					strncat((char *)_messageToBePrinted, "  The item makes a loud noise, but has no effect!", 80);
 				}
 			}
 		}
@@ -6277,15 +6303,15 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 
 			copyString(_npcBuf[_teamCharId[teamCharId]]._name, buffer2);
 			if (varAE > 1)
-				sprintf(buffer1, "%s is healed %d points!", buffer2, varAE);
+				snprintf(buffer1, 80, "%s is healed %d points!", buffer2, varAE);
 			else
-				sprintf(buffer1, "%s is healed 1 point!", buffer2);
+				snprintf(buffer1, 80, "%s is healed 1 point!", buffer2);
 		}
 
 		if (argA == 2) {
 			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strcat((char *)_messageToBePrinted, buffer1);
+			strncat((char *)_messageToBePrinted, buffer1, 80);
 			retVal = true;
 		}
 
@@ -6309,15 +6335,15 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 
 			copyString(_npcBuf[_teamCharId[teamCharId]]._name, buffer2);
 			if (varAE > 1)
-				sprintf(buffer1, "%s is harmed for %d points!", buffer2, varAE);
+				snprintf(buffer1, 80, "%s is harmed for %d points!", buffer2, varAE);
 			else
-				sprintf(buffer1, "%s is harmed for 1 point!", buffer2);
+				snprintf(buffer1, 80, "%s is harmed for 1 point!", buffer2);
 		}
 
 		if (argA == 2) {
 			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strcat((char *)_messageToBePrinted, buffer1);
+			strncat((char *)_messageToBePrinted, buffer1, 80);
 			retVal = true;
 		}
 
@@ -6344,12 +6370,12 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if ((_npcBuf[charId]._inventory[objectId]._stat1 & 0x7F) != 0x7F) {
 			int8 varA1 = (_npcBuf[charId]._inventory[objectId]._stat1 & 0x7F) - 1;
 			if (varA1 <= 0) {
-				strcpy(buffer1, "  * The item breaks!");
+				strncpy(buffer1, "  * The item breaks!", 80);
 				if (argA == 2) {
 					Common::KeyCode varAE = getLastCharAfterAnimCount(_guessAnimationAmount);
 					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 				} else {
-					strcat((char *)_messageToBePrinted, buffer1);
+					strncat((char *)_messageToBePrinted, buffer1, 80);
 				}
 				setCharacterObjectToBroken(charId, objectId);
 			} else {
@@ -6770,17 +6796,17 @@ bool EfhEngine::checkMonsterCollision() {
 			for (int16 var6C = 0; var6C < 2; ++var6C) {
 				int16 var1 = _mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F;
 				if (var1 <= 0x3D) {
-					strcpy(dest, kEncounters[_mapMonsters[monsterId]._monsterRef]._name);
+					strncpy(dest, kEncounters[_mapMonsters[monsterId]._monsterRef]._name, 80);
 					if (var6A > 1)
-						strcat(dest, " ");
+						strncat(dest, " ", 2);
 
-					sprintf(buffer, "with %d %s", var6A, dest);
+					snprintf(buffer, 80, "with %d %s", var6A, dest);
 				} else if (var1 == 0x3E) {
-					strcpy(buffer, "(NOT DEFINED)");
+					strncpy(buffer, "(NOT DEFINED)", 80);
 				} else if (var1 == 0x3F) { // Useless check, it's the last possible value
 					// Special character name
 					copyString(_npcBuf[_mapMonsters[monsterId]._field_1]._name, dest);
-					sprintf(buffer, "with %s", dest);
+					snprintf(buffer, 80, "with %s", dest);
 				}
 
 				clearBottomTextZone(0);
@@ -6791,13 +6817,13 @@ bool EfhEngine::checkMonsterCollision() {
 				setTextColorWhite();
 				displayStringAtTextPos("T");
 				setTextColorRed();
-				sprintf(buffer, "alk to the %s", dest);
+				snprintf(buffer, 80, "alk to the %s", dest);
 				displayStringAtTextPos(buffer);
 				setTextPos(24, 178);
 				setTextColorWhite();
 				displayStringAtTextPos("A");
 				setTextColorRed();
-				sprintf(buffer, "ttack the %s", dest);
+				snprintf(buffer, 80, "ttack the %s", dest);
 				displayStringAtTextPos(buffer);
 				setTextPos(198, 169);
 				setTextColorWhite();
