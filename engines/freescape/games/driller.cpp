@@ -57,16 +57,6 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	_currentArea = _areaMap[areaID];
 	_currentArea->show();
 
-	_currentAreaMessages.clear();
-	if (_messagesList.size() > 2) {
-		if (_currentArea->_gasPocketRadius > 0)
-			_currentAreaMessages.push_back(_messagesList[1]);
-		else
-			_currentAreaMessages.push_back(_messagesList[2]);
-
-		_currentAreaMessages.push_back(_currentArea->_name);
-	}
-
 	if (entranceID > 0 || areaID == 127) {
 		traverseEntrance(entranceID);
 	} else if (entranceID == 0) {
@@ -347,22 +337,30 @@ void DrillerEngine::drawUI() {
 	} else
 		return;
 
-	if (_currentAreaMessages.size() == 2) {
-		int score = _gameStateVars[k8bitVariableScore];
-		drawStringInSurface(_currentAreaMessages[0], 196, 177, yellow, black, surface);
-		drawStringInSurface(_currentAreaMessages[1], 196, 185, yellow, black, surface);
-		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 150, 145, yellow, black, surface);
-		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 150, 153, yellow, black, surface);
-		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 150, 161, yellow, black, surface);
-		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 57, 161, yellow, black, surface);
-		drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
+	int score = _gameStateVars[k8bitVariableScore];
+	drawStringInSurface(_currentArea->_name, 195, 177, yellow, black, surface);
+	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 150, 145, yellow, black, surface);
+	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 150, 153, yellow, black, surface);
+	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 150, 161, yellow, black, surface);
+	drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 57, 161, yellow, black, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
 
-		int hours = _countdown / 3600;
-		drawStringInSurface(Common::String::format("%02d", hours), 208, 8, yellow, black, surface);
-		int minutes = (_countdown - hours * 3600) / 60;
-		drawStringInSurface(Common::String::format("%02d", minutes), 230, 8, yellow, black, surface);
-		int seconds = _countdown - hours * 3600 - minutes * 60;
-		drawStringInSurface(Common::String::format("%02d", seconds), 254, 8, yellow, black, surface);
+	int hours = _countdown / 3600;
+	drawStringInSurface(Common::String::format("%02d", hours), 208, 8, yellow, black, surface);
+	int minutes = (_countdown - hours * 3600) / 60;
+	drawStringInSurface(Common::String::format("%02d", minutes), 230, 8, yellow, black, surface);
+	int seconds = _countdown - hours * 3600 - minutes * 60;
+	drawStringInSurface(Common::String::format("%02d", seconds), 254, 8, yellow, black, surface);
+
+	Common::String temporaryMessage;
+	int temporaryMessageDeadline;
+	getLatestMessages(temporaryMessage, temporaryMessageDeadline);
+	if (temporaryMessageDeadline <= _countdown) {
+		drawStringInSurface(temporaryMessage, 191, 177, black, yellow, surface);
+		_temporaryMessages.push_back(temporaryMessage);
+		_temporaryMessageDeadlines.push_back(temporaryMessageDeadline);
+	} else {
+		drawStringInSurface(_messagesList[1], 191, 177, yellow, black, surface);
 	}
 
 	int energy = _gameStateVars[k8bitVariableEnergy];
@@ -405,17 +403,17 @@ void DrillerEngine::pressedKey(const int keycode) {
 			return;
 
 		if (_flyMode) {
-			_currentAreaMessages[0] = _messagesList[8];
+			insertTemporaryMessage(_messagesList[8], _countdown - 2);
 			return;
 		}
 
 		if (drillDeployed()) {
-			_currentAreaMessages[0] = _messagesList[12];
+			insertTemporaryMessage(_messagesList[12], _countdown - 2);
 			return;
 		}
 
 		if (_gameStateVars[k8bitVariableEnergy] < 5) {
-			_currentAreaMessages[0] = _messagesList[7];
+			insertTemporaryMessage(_messagesList[7], _countdown - 2);
 			return;
 		}
 
@@ -427,7 +425,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 		debugC(1, kFreescapeDebugMove, "with pitch: %f and yaw %f", _pitch, _yaw);
 
 		if (!checkDrill(drillPosition)) {
-			_currentAreaMessages[0] = _messagesList[4];
+			insertTemporaryMessage(_messagesList[4], _countdown - 2);
 			return;
 		}
 
@@ -436,33 +434,35 @@ void DrillerEngine::pressedKey(const int keycode) {
 		addDrill(drillPosition);
 		float distanceToPocket = (gasPocket3D - drillPosition).length();
 		float success = 100.0 * (1.0 - distanceToPocket / _currentArea->_gasPocketRadius);
+		insertTemporaryMessage(_messagesList[3], _countdown - 2);
 
 		if (success <= 0) {
-			_currentAreaMessages[0] = _messagesList[9];
+			insertTemporaryMessage(_messagesList[9], _countdown - 4);
 			return;
 		}
 
 		_gameStateVars[32]++; // TODO: save a boolean to indicate if a level is safe or not
-		_currentAreaMessages[0] = _messagesList[6];
-		_currentAreaMessages[0].replace(0, 4, Common::String::format("%d", int(success)));
-
+		insertTemporaryMessage(_messagesList[5], _countdown - 4);
+		Common::String successMessage = _messagesList[6];
+		successMessage.replace(0, 4, Common::String::format("%d", int(success)));
+		insertTemporaryMessage(successMessage, _countdown - 6);
 	} else if (keycode == Common::KEYCODE_c) {
 		uint32 gasPocketRadius = _currentArea->_gasPocketRadius;
 		if (gasPocketRadius == 0)
 			return;
 
 		if (_flyMode) {
-			_currentAreaMessages[0] = _messagesList[8];
+			insertTemporaryMessage(_messagesList[8], _countdown - 2);
 			return;
 		}
 
 		if (!drillDeployed()) {
-			_currentAreaMessages[0] = _messagesList[13];
+			insertTemporaryMessage(_messagesList[13], _countdown - 2);
 			return;
 		}
 
 		if (_gameStateVars[k8bitVariableEnergy] < 5) {
-			_currentAreaMessages[0] = _messagesList[7];
+			insertTemporaryMessage(_messagesList[7], _countdown - 2);
 			return;
 		}
 
@@ -471,6 +471,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 		// TODO: check if level is safe and decrement if necessary
 		_gameStateVars[32]--;
 		removeDrill();
+		insertTemporaryMessage(_messagesList[10], _countdown - 2);
 	}
 }
 

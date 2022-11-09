@@ -632,6 +632,22 @@ void FreescapeEngine::loadDataBundle() {
 	}
 }
 
+void FreescapeEngine::insertTemporaryMessage(const Common::String message, int deadline) {
+	_temporaryMessages.insert_at(0, message);
+	_temporaryMessageDeadlines.insert_at(0, deadline);
+}
+
+void FreescapeEngine::getLatestMessages(Common::String &message, int &deadline) {
+	deadline = _countdown + 1;
+	message.clear();
+	while (!_temporaryMessages.empty() && deadline > _countdown) {
+		message = _temporaryMessages.back();
+		deadline = _temporaryMessageDeadlines.back();
+		_temporaryMessages.pop_back();
+		_temporaryMessageDeadlines.pop_back();
+	}
+}
+
 byte *FreescapeEngine::getPaletteFromNeoImage(Common::SeekableReadStream *stream, int offset) {
 	stream->seek(offset);
 	NeoDecoder decoder;

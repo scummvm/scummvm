@@ -261,7 +261,12 @@ public:
 	float _farClipPlane;
 
 	// Text messages and Fonts
+	void insertTemporaryMessage(const Common::String message, int deadline);
+	void getLatestMessages(Common::String &message, int &deadline);
+	Common::StringArray _temporaryMessages;
+	Common::Array<int> _temporaryMessageDeadlines;
 	Common::StringArray _messagesList;
+
 	void loadMessagesFixedSize(Common::SeekableReadStream *file, int offset, int size, int number);
 	void loadMessagesVariableSize(Common::SeekableReadStream *file, int offset, int number);
 
