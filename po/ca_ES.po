@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-09 11:28+0000\n"
-"PO-Revision-Date: 2022-10-22 04:33+0000\n"
+"PO-Revision-Date: 2022-11-10 03:33+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -264,6 +264,8 @@ msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
 "icon files. Do you want to proceed?"
 msgstr ""
+"Esteu a punt d'eliminar %s %s de dades, suprimint tots els fitxers d'icones "
+"baixats prèviament. Voleu continuar?"
 
 #: gui/downloadiconsdialog.cpp:452 gui/updates-dialog.cpp:115
 msgid "Proceed"
@@ -1001,7 +1003,7 @@ msgstr "Tots"
 
 #: gui/launcher.cpp:1567
 msgid "Icons per row:"
-msgstr ""
+msgstr "Icones per línia:"
 
 #: gui/massadd.cpp:77 gui/massadd.cpp:80
 msgid "... progress ..."
@@ -1517,6 +1519,8 @@ msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
 msgstr ""
+"Indica on es col·loquen les partides desades. Una coloració vermella indica "
+"que el valor és temporal i no es desarà"
 
 #: gui/options.cpp:2364
 msgid "Theme Path:"
@@ -2045,11 +2049,13 @@ msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
 msgstr ""
+"S'ha de mostrar un patró de prova.\n"
+"Voleu mantenir aquesta configuració de l'escalador de l'ombrejat?"
 
 #: gui/options.cpp:3664
 #, c-format
 msgid "Reverting automatically in %d seconds"
-msgstr ""
+msgstr "S'està revertint automàticament en %d segons"
 
 #: gui/predictivedialog.cpp:66
 msgid "Enter Text"
@@ -2141,7 +2147,7 @@ msgstr "Executa en segon pla"
 #: gui/saveload-dialog.cpp:126
 #, c-format
 msgid "%s (%s %S / %s %S, %s / %s files)"
-msgstr ""
+msgstr "%s (%s %S / %s %S, %s / %s fitxers)"
 
 #: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:632
 msgid "No date saved"
@@ -2463,6 +2469,11 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
+"ScummVM és un programa que permet executar una àmplia varietat de jocs "
+"clàssics d'aventures gràfiques «point-and-click» i jocs de rol, sempre que "
+"ja tingueu els seus fitxers de dades. La part intel·ligent sobre això: "
+"ScummVM només substitueix els executables originals del joc, permetent-vos "
+"jugar-los en sistemes per als quals mai van ser dissenyats!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:45
@@ -2472,6 +2483,10 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
+"Actualment, ScummVM suporta una enorme biblioteca d'aventures amb més de "
+"4.000 jocs en total. Dóna suport a molts clàssics publicats per estudis "
+"llegendaris com LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. i "
+"Westwood Studios."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:51
@@ -2480,6 +2495,9 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
+"Al costat de títols innovadors com la sèrie Monkey Island, Broken Sword, "
+"Myst, Blade Runner i molts altres jocs trobareu algunes aventures realment "
+"fosques i altres gemmes realment ocultes per explorar."
 
 #: engines/advancedDetector.cpp:245
 msgid "Illegitimate game copy detected. We provide no support in such cases"
@@ -2864,7 +2882,7 @@ msgstr "OPL3LPT"
 
 #: audio/fmopl.cpp:96
 msgid "RetroWave OPL3"
-msgstr ""
+msgstr "RetroWave OPL3"
 
 #: audio/mididrv.cpp:219
 #, c-format
@@ -3469,6 +3487,8 @@ msgid ""
 "The page is not available without the resources. Make sure file wwwroot.zip "
 "from ScummVM distribution is available in 'themepath'."
 msgstr ""
+"La pàgina no està disponible sense els recursos. Assegureu-vos que el fitxer "
+"wwwroot.zip de la distribució ScummVM estigui disponible al 'themepath'."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:66
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
@@ -3695,6 +3715,8 @@ msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
+"Mode d'ampliació desactivat. Reactivació del mode d'arrossegament.\n"
+"S'està tornant al Llançador..."
 
 #: backends/platform/3ds/osystem-events.cpp:361
 msgid "Magnify Mode Off. Returning to Launcher..."
@@ -3702,19 +3724,21 @@ msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:395
 msgid "Hover Mode"
-msgstr ""
+msgstr "Mode passar per sobre"
 
 #: backends/platform/3ds/osystem-events.cpp:399
 msgid "Drag Mode"
-msgstr ""
+msgstr "Mode d'arrossegament"
 
 #: backends/platform/3ds/osystem-events.cpp:401
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
 msgstr ""
+"No es pot canviar al mode d'arrossegament mentre el mode d'ampliació està "
+"activat"
 
 #: backends/platform/3ds/osystem-events.cpp:408
 msgid "Magnify Mode cannot be activated in menus."
-msgstr ""
+msgstr "El mode d'ampliació no es pot activar en els menús."
 
 #: backends/platform/3ds/osystem-events.cpp:411
 msgid ""
@@ -5948,16 +5972,12 @@ msgid ""
 msgstr ""
 
 #: engines/mtropolis/saveload.cpp:166
-#, fuzzy
-#| msgid ""
-#| "This saved game was created with a different version of the game, unable "
-#| "to load it"
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
 msgstr ""
-"Aquesta partida desada es va crear amb una versió del joc diferent, no es "
-"pot carregar"
+"La partida guardada es va crear amb una versió anterior i incompatible de "
+"ScummVM. No s'ha pogut carregar."
 
 #: engines/mtropolis/saveload.cpp:174
 msgid "Failed to load save, an error occurred when reading the save game data."
@@ -7938,16 +7958,14 @@ msgid "Next location"
 msgstr "Ubicació següent"
 
 #: engines/twine/parser/text.cpp:33
-#, fuzzy
 msgctxt "Options menu"
 msgid "High resolution on"
-msgstr "Activa la barra gràfica dels punts d'impacte"
+msgstr "Alta resolució activada"
 
 #: engines/twine/parser/text.cpp:34
-#, fuzzy
 msgctxt "Options menu"
 msgid "High resolution off"
-msgstr "Activa la barra gràfica dels punts d'impacte"
+msgstr "Alta resolució desactivada"
 
 #: engines/twine/parser/text.cpp:35
 msgctxt "Options menu"
@@ -7955,10 +7973,9 @@ msgid "Wall collision on"
 msgstr ""
 
 #: engines/twine/parser/text.cpp:36
-#, fuzzy
 msgctxt "Options menu"
 msgid "Wall collision off"
-msgstr "Desplaçament suau"
+msgstr "Col·lisió amb parets desactivada"
 
 #: engines/ultima/detection.cpp:66
 msgid "Enable frame skipping"
@@ -7969,9 +7986,8 @@ msgid "Allow the game to skip animation frames when running too slow."
 msgstr ""
 
 #: engines/ultima/detection.cpp:77
-#, fuzzy
 msgid "Enable frame limiting"
-msgstr "Activa els cursors flotants"
+msgstr "Activa la limitació de fotogrames"
 
 #: engines/ultima/detection.cpp:78
 msgid "Limits the speed of the game to prevent running too fast."
@@ -7994,9 +8010,8 @@ msgid "Plays sound when the player moves."
 msgstr ""
 
 #: engines/ultima/detection.cpp:121
-#, fuzzy
 msgid "Enable jump to mouse position"
-msgstr "Títol complet del joc"
+msgstr "Activa el salt a la posició del ratolí"
 
 #: engines/ultima/detection.cpp:122
 msgid ""
@@ -8004,9 +8019,8 @@ msgid ""
 msgstr ""
 
 #: engines/ultima/detection.cpp:132
-#, fuzzy
 msgid "Enable font replacement"
-msgstr "Activa els cursors flotants"
+msgstr "Activa la substitució del tipus de lletra"
 
 #: engines/ultima/detection.cpp:133
 msgid "Replaces game fonts with rendered fonts"
@@ -8059,9 +8073,8 @@ msgid "Original Save"
 msgstr ""
 
 #: engines/ultima/nuvie/save/save_game.cpp:211
-#, fuzzy
 msgid "Transfer Character"
-msgstr "Commuta el personatge"
+msgstr "Transfereix el personatge"
 
 #: engines/ultima/ultima8/meta_engine.cpp:135
 msgid "Ultima VIII"
@@ -8088,14 +8101,12 @@ msgid "[outdated]"
 msgstr ""
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:305
-#, fuzzy
 msgid "[too modern]"
-msgstr "Mode de color"
+msgstr "[massa modern]"
 
 #: engines/wintermute/detection.cpp:52
-#, fuzzy
 msgid "Show FPS-counter"
-msgstr "Mostra-ho tot"
+msgstr "Mostra el comptador d'FPS"
 
 #: engines/wintermute/detection.cpp:53
 msgid "Show the current number of frames per second in the upper left corner"
@@ -8151,24 +8162,21 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:731
 #: engines/wintermute/keymapper_tables.h:2088
 #: engines/wintermute/keymapper_tables.h:2188
-#, fuzzy
 msgid "Walk forward"
-msgstr "Vés a"
+msgstr "Camina cap endavant"
 
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2210
-#, fuzzy
 msgid "Walk backward"
-msgstr "Vés a"
+msgstr "Camina cap enrere"
 
 #. I18N: Debug feature to draw lines of scene geometry: walls, walking areas, etc
 #: engines/wintermute/keymapper_tables.h:174
 #: engines/wintermute/keymapper_tables.h:685
 #: engines/wintermute/keymapper_tables.h:1827
-#, fuzzy
 msgid "Show scene geometry"
-msgstr "Mostra el control En-pantalla"
+msgstr "Mostra la geometria de l'escena"
 
 #: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
@@ -8176,9 +8184,8 @@ msgstr "Mostra el control En-pantalla"
 #: engines/wintermute/keymapper_tables.h:906
 #: engines/wintermute/keymapper_tables.h:1103
 #: engines/wintermute/keymapper_tables.h:1231
-#, fuzzy
 msgid "Previous page"
-msgstr "~A~nterior"
+msgstr "Pàgina anterior"
 
 #: engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
@@ -8186,9 +8193,8 @@ msgstr "~A~nterior"
 #: engines/wintermute/keymapper_tables.h:913
 #: engines/wintermute/keymapper_tables.h:1110
 #: engines/wintermute/keymapper_tables.h:1236
-#, fuzzy
 msgid "Next page"
-msgstr "Següent"
+msgstr "Pàgina següent"
 
 #: engines/wintermute/keymapper_tables.h:239
 #: engines/wintermute/keymapper_tables.h:262
@@ -8214,9 +8220,8 @@ msgstr "Següent"
 #: engines/wintermute/keymapper_tables.h:1762
 #: engines/wintermute/keymapper_tables.h:1955
 #: engines/wintermute/keymapper_tables.h:2075
-#, fuzzy
 msgid "Show hints"
-msgstr "Mostra els fitxers ocults"
+msgstr "Mostra suggeriments"
 
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:396
@@ -8228,9 +8233,8 @@ msgstr "Mostra els fitxers ocults"
 #: engines/wintermute/keymapper_tables.h:1651
 #: engines/wintermute/keymapper_tables.h:1660
 #: engines/wintermute/keymapper_tables.h:1922
-#, fuzzy
 msgid "Show inventory"
-msgstr "Inventari"
+msgstr "Mostra l'inventari"
 
 #: engines/wintermute/keymapper_tables.h:269
 #: engines/wintermute/keymapper_tables.h:332
