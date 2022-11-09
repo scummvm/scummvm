@@ -372,15 +372,22 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 	int seconds = _countdown - hours * 3600 - minutes * 60;
 	drawStringInSurface(Common::String::format("%02d", seconds), 254, 8, yellow, black, surface);
 
-	Common::String temporaryMessage;
-	int temporaryMessageDeadline;
-	getLatestMessages(temporaryMessage, temporaryMessageDeadline);
-	if (temporaryMessageDeadline <= _countdown) {
-		drawStringInSurface(temporaryMessage, 191, 177, black, yellow, surface);
-		_temporaryMessages.push_back(temporaryMessage);
-		_temporaryMessageDeadlines.push_back(temporaryMessageDeadline);
+	Common::String message;
+	int deadline;
+	getLatestMessages(message, deadline);
+	if (deadline <= _countdown) {
+		drawStringInSurface(message, 191, 177, black, yellow, surface);
+		_temporaryMessages.push_back(message);
+		_temporaryMessageDeadlines.push_back(deadline);
 	} else {
-		drawStringInSurface(_messagesList[1], 191, 177, yellow, black, surface);
+		if (_currentArea->_gasPocketRadius == 0)
+			message = _messagesList[2];
+		else if (_completeAreas[_currentArea->getAreaID()])
+			message = _messagesList[0];
+		else
+			message = _messagesList[1];
+
+		drawStringInSurface(message, 191, 177, yellow, black, surface);
 	}
 
 	int energy = _gameStateVars[k8bitVariableEnergy];
