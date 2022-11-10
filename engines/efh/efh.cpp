@@ -235,7 +235,7 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	memset(_characterNamePt2, 0, 20);
 	memset(_enemyNamePt1, 0, 5);
 	memset(_enemyNamePt2, 0, 20);
-	memset(_nameBuffer, 0, 20);
+	_nameBuffer = "";
 	memset(_attackBuffer, 0, 20);
 
 	for (int i = 0; i < 100; ++i) {
@@ -1346,23 +1346,23 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 				case 0: {
 					uint16 var4 = sub1C80A(charId, 9, true);
 					if (var4 == 0x7FFF)
-						strncpy(_nameBuffer, "(NONE)", 20);
+						_nameBuffer = "(NONE)";
 					else
-						copyString(_items[var4]._name, _nameBuffer);
+						snprintf(_items[var4]._name, 15, "%s", _nameBuffer.c_str());
 					}
 					break;				
 				case 1:
-						strncpy(_nameBuffer, "* ASLEEP *", 20);
+					_nameBuffer = "* ASLEEP *";
 					break;
 				case 2:
-					strncpy(_nameBuffer, "* FROZEN *", 20);
+					_nameBuffer = "* FROZEN *";
 					break;
 				default:
-					strncpy(_nameBuffer, "* DISABLED *", 20);
+					_nameBuffer = "* DISABLED *";
 					break;
 				}
 
-				displayCenteredString(_nameBuffer, 225, 302, textPosY);
+				displayCenteredString(_nameBuffer.c_str(), 225, 302, textPosY);
 			}
 		}
 
@@ -1965,9 +1965,9 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 					var110 = sub1C219((uint8 *)"Nothing...", 1, 2, true);
 					displayFctFullScreen();
 				} else {
-					copyString(_npcBuf[_teamCharId[counter]]._name, _enemyNamePt2);
-					copyString(_items[var110]._name, _nameBuffer);
-					snprintf(curLine, 150, "%s finds a %s!", _enemyNamePt2, _nameBuffer);
+					snprintf(_npcBuf[_teamCharId[counter]]._name, 11, "%s", _enemyNamePt2);
+					snprintf(_items[var110]._name, 15, "%s", _nameBuffer.c_str());
+					snprintf(curLine, 150, "%s finds a %s!", _enemyNamePt2, _nameBuffer.c_str());
 					drawMapWindow();
 					displayFctFullScreen();
 					drawMapWindow();
@@ -4809,28 +4809,28 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 					int16 var68 = _items[unk_monsterField5_itemId]._attackType + 1;
 					int16 var6A = getRandom(3) - 1;
 					if (var5E == 2) {
-						strncpy(_characterNamePt1, "The ", 5);
+						snprintf(_characterNamePt1, 5, "The ");
 					} else {
 						*_characterNamePt1 = 0;
 					}
 
 					if (var70 == 2) {
-						strncpy(_enemyNamePt1, "The ", 5);
+						snprintf(_enemyNamePt1, 5, "The ");
 					} else {
 						*_enemyNamePt1 = 0;
 					}
 
-					strncpy(_characterNamePt2, kEncounters[_mapMonsters[_teamMonsterIdArray[groupId]]._monsterRef]._name, 14);
-					copyString(_npcBuf[_teamCharId[teamCharId]]._name, _enemyNamePt2);
-					copyString(_items[unk_monsterField5_itemId]._name, _nameBuffer);
+					snprintf(_characterNamePt2, 20, "%s", kEncounters[_mapMonsters[_teamMonsterIdArray[groupId]]._monsterRef]._name);
+					snprintf(_npcBuf[_teamCharId[teamCharId]]._name, 11, "%s", _enemyNamePt2);
+					snprintf(_items[unk_monsterField5_itemId]._name, 15, "%s", _nameBuffer.c_str());
 					if (checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId)) {
 						// Action A - Check damages - Start
 						if (var62 == 0) {
-							snprintf((char *)_messageToBePrinted, 400, "%s%s %s at %s%s with %s %s, but misses!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, kPossessive[var70], _nameBuffer);
+							snprintf((char *)_messageToBePrinted, 400, "%s%s %s at %s%s with %s %s, but misses!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, kPossessive[var70], _nameBuffer.c_str());
 						} else if (hitPoints <= 0){
-							snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s, but does no damage!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer);
+							snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s, but does no damage!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer.c_str());
 						} else if (hitPoints == 1) {
-							snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s for 1 point", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer);
+							snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s for 1 point", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer.c_str());
 							if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] <= 0) {
 								getDeathTypeDescription(groupId, teamCharId + 1000);
 								getXPAndSearchCorpse(_teamCharId[teamCharId], _enemyNamePt1, _enemyNamePt2, _teamMonsterIdArray[groupId]);
@@ -4838,7 +4838,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 								strncat((char *)_messageToBePrinted, "!", 2);
 							}
 						} else {
-							snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s for %d points", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer, hitPoints);
+							snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s for %d points", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer.c_str(), hitPoints);
 							if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] <= 0) {
 								getDeathTypeDescription(groupId, teamCharId + 1000);
 								getXPAndSearchCorpse(_teamCharId[teamCharId], _enemyNamePt1, _enemyNamePt2, _teamMonsterIdArray[groupId]);
@@ -4894,7 +4894,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 							if (var51 <= 0) {
 								char buffer[80];
 								memset(buffer, 0, 80);
-								snprintf(buffer, 80, "  * %s%s's %s breaks!", _enemyNamePt1, _enemyNamePt2, _nameBuffer);
+								snprintf(buffer, 80, "  * %s%s's %s breaks!", _enemyNamePt1, _enemyNamePt2, _nameBuffer.c_str());
 								strncat((char *)_messageToBePrinted, buffer, 80);
 								setCharacterObjectToBroken(varInt, var64);
 								var6E = false;
@@ -4924,7 +4924,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						}
 						// Action A - Check effect - End
 					} else {
-						snprintf((char *)_messageToBePrinted, 400, "%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer);
+						snprintf((char *)_messageToBePrinted, 400, "%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer.c_str());
 					}
 
 					genericGenerateSound(_items[unk_monsterField5_itemId]._attackType, var62);
@@ -4976,15 +4976,15 @@ void EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
 	// In the original, this function is part of handleFight.
 	// It has been split for readability purposes.
 	int16 unk_monsterField5_itemId = _npcBuf[_teamCharId[teamCharId]]._inventory[_word31780[teamCharId]]._ref;
-	copyString(_npcBuf[_teamCharId[teamCharId]]._name, _enemyNamePt2);
-	copyString(_items[unk_monsterField5_itemId]._name, _nameBuffer);
+	snprintf(_npcBuf[_teamCharId[teamCharId]]._name, 11, "%s", _enemyNamePt2);
+	snprintf(_items[unk_monsterField5_itemId]._name, 15, "%s", _nameBuffer.c_str());
 	int16 var70 = _npcBuf[_teamCharId[teamCharId]]._possessivePronounSHL6 >> 6;
 	if (var70 == 2)
-		strncpy(_enemyNamePt1, "The ", 5);
+		snprintf(_enemyNamePt1, 5, "The ");
 	else
 		*_enemyNamePt1 = 0;
 
-	snprintf((char *)_messageToBePrinted, 400, "%s%s uses %s %s!  ", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer);
+	snprintf((char *)_messageToBePrinted, 400, "%s%s uses %s %s!  ", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer.c_str());
 	sub1C219(_messageToBePrinted, 1, 2, true);
 }
 
@@ -5224,22 +5224,22 @@ bool EfhEngine::handleFight(int16 monsterId) {
 									*_enemyNamePt1 = 0;
 
 								strncpy(_enemyNamePt2, kEncounters[_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._monsterRef]._name, 20);
-								copyString(_npcBuf[_teamCharId[var7E]]._name, _characterNamePt2);
-								copyString(_items[unk_monsterField5_itemId]._name, _nameBuffer);
+								snprintf(_npcBuf[_teamCharId[var7E]]._name, 11, "%s", _characterNamePt2);
+								snprintf(_items[unk_monsterField5_itemId]._name, 15, "%s", _nameBuffer.c_str());
 								if (checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId)) {
 									// handleFight - check damages - Start
 									if (var62 == 0) {
-										snprintf((char *)_messageToBePrinted, 400, "%s%s %s at %s%s with %s %s, but misses!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, kPossessive[var70], _nameBuffer);
+										snprintf((char *)_messageToBePrinted, 400, "%s%s %s at %s%s with %s %s, but misses!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, kPossessive[var70], _nameBuffer.c_str());
 									} else if (hitPoints <= 0) {
-										snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s, but does no damage!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer);
+										snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s, but does no damage!", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer.c_str());
 									} else if (hitPoints == 1) {
-										snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s for 1 point", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer);
+										snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s for 1 point", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer.c_str());
 										if (_npcBuf[_teamCharId[var7E]]._hitPoints <= 0)
 											getDeathTypeDescription(var7E + 1000, monsterGroupIdOrMonsterId);
 										else
 											strncat((char *)_messageToBePrinted, "!", 2);
 									} else {
-										snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s for %d points", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer, hitPoints);
+										snprintf((char *)_messageToBePrinted, 400, "%s%s %s %s%s %swith %s %s for %d points", _enemyNamePt1, _enemyNamePt2, kAttackVerbs[var68 * 3 + var6A], _characterNamePt1, _characterNamePt2, _attackBuffer, kPossessive[var70], _nameBuffer.c_str(), hitPoints);
 										if (_npcBuf[_teamCharId[var7E]]._hitPoints <= 0)
 											getDeathTypeDescription(var7E + 1000, monsterGroupIdOrMonsterId);
 										else
@@ -5316,7 +5316,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 									} 
 									// handleFight - Check effect - end
 								} else {
-									snprintf((char *)_messageToBePrinted, 400, "%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer);
+									snprintf((char *)_messageToBePrinted, 400, "%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1, _enemyNamePt2, kPossessive[var70], _nameBuffer.c_str());
 								}
 								genericGenerateSound(_items[unk_monsterField5_itemId]._attackType, var62);
 								sub1C219(_messageToBePrinted, 1, 2, true);
