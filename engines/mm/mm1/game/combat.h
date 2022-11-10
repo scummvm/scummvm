@@ -240,6 +240,7 @@ protected:
 private:
 	void destroyUndead();
 	bool monsterLevelThreshold() const;
+	void iterateMonsters1Inner();
 
 public:
 	/**
