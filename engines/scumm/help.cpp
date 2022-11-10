@@ -232,6 +232,9 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND("i", _("Inventory"));
 			ADD_BIND("p", _("Punch"));
 			ADD_BIND("k", _("Kick"));
+			ADD_LINE;
+			// I18N: A shortcut to skip the bike fight and derby sequences in Full Throttle
+			ADD_BIND(_("Shift") + U32String(" v"), _("Fight cheat"));
 			break;
 		case GID_DIG:
 			ADD_BIND("e", _("Examine"));
