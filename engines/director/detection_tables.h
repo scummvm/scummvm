@@ -2088,23 +2088,23 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1t("gadget", "Demo", "GADGET.EXE", "52a854cc16777395d05aa87859e6be5a", 684203, 311),
 
 	// Original filename is 我流競馬ｵｰﾄﾃﾞﾓ
-	MACDEMO1_l("garyukeiba", "Demo", "Garyu Keiba Auto Demo", "276bee761e48a6fd709df77d5c2f60dd", 393175, Common::JA_JPN, 313),
+	MACDEMO1_l("garyukeiba", "Demo", "Garyu Keiba Auto Demo", "276bee761e48a6fd709df77d5c2f60dd", 392919, Common::JA_JPN, 313),
 
 	MACDEMO1_l("goalrush1", "Demo", "GOAL RUSH!! DEMO", "f5277c53bacd27936158dd3867e587e2", 394728, Common::JA_JPN, 311),
 	MACDEMO1_l("goalrush1", "Demo", "GOAL RUSH!! DEMO", "f5277c53bacd27936158dd3867e587e2", 392276, Common::JA_JPN, 311),
-	MACDEMO1_l("goalrush2", "Demo", "GOAL RUSH!! DEMO", "276bee761e48a6fd709df77d5c2f60dd", 397408, Common::JA_JPN, 313),
+	MACDEMO1_l("goalrush2", "Demo", "GOAL RUSH!! DEMO", "276bee761e48a6fd709df77d5c2f60dd", 397152, Common::JA_JPN, 313),
 
 	WINGAME1t("goferwinkel", "", "GOFERWIN/GOFER.EXE", "cba909306680f788d77244147ddf76ae", 1065773, 300),
 
 	// Mac also has an 8-bit color binary. Win is limited to 8-bit color in D3.
-	MACGAME1("golfcd", "", "Great Golf CD (24bit)", "7f443f2e63fd497a9ad85b10dc880a91", 3633557, 313),
+	MACGAME1("golfcd", "", "Great Golf CD (24bit)", "7f443f2e63fd497a9ad85b10dc880a91", 3633301, 313),
 	WINGAME1("golfcd", "", "GOLF.EXE", "65d06b5fef155a2473434571aff5bc29", 370009, 313),
 
 	MACGAME1_l("gocoo", "", "GO-COO", "276bee761e48a6fd709df77d5c2f60dd", 394940, Common::JA_JPN, 313),
 
-	MACDEMO1_l("granmarmalade", "Demo", "GranMarmalade", "f5277c53bacd27936158dd3867e587e2", 1077206, Common::JA_JPN, 311),
+	MACDEMO1_l("granmarmalade", "Demo", "GranMarmalade", "f5277c53bacd27936158dd3867e587e2", 1076950, Common::JA_JPN, 311),
 
-	MACGAME1("gustown", "", "GUS", "7f443f2e63fd497a9ad85b10dc880a91", 384462, 313),
+	MACGAME1("gustown", "", "GUS", "7f443f2e63fd497a9ad85b10dc880a91", 384206, 313),
 	WINGAME1("gustown", "", "GUS.EXE", "65d06b5fef155a2473434571aff5bc29", 369999, 310),
 
 	// Original filename is "   Hell Cab™"
@@ -2116,7 +2116,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1t("hellcab", "Demo", "HELLCAB.EXE", "0ae05c878664bdfd2e7314d739a9f914", 370005, 310),
 	MACDEMO1_l("hellcab", "Demo",   "HELLCAB Demo", "f5277c53bacd27936158dd3867e587e2", 389980, Common::JA_JPN, 311),
 
-	MACDEMO1_l("henachoco", "Trial Version", "Hena Choco Derby Demo", "f5277c53bacd27936158dd3867e587e2", 1794267, Common::JA_JPN, 311),
+	MACDEMO1_l("henachoco", "Trial Version", "Hena Choco Derby Demo", "f5277c53bacd27936158dd3867e587e2", 1794011, Common::JA_JPN, 311),
 
 	// Original demo filename is ﾑｽﾞｶｼｲﾎﾝｦﾖﾑﾄﾈﾑｸﾅﾙ
 	MACDEMO1_l("henachoco03", "Demo", "xn--oj7cxalkre7cjz1d2agc0e8b1cm", "f5277c53bacd27936158dd3867e587e2", 1058521, Common::JA_JPN, 311),
@@ -2134,7 +2134,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("hikaruhana", "Auto", "Shining Flower (Auto)", "a6e50f2b8f294640a1d0cbe91a73e81c", 392231, 311),
 	MACGAME1_l("hikaruhana", "", "HikaruHana", "cebba8af8bf6e1131bdd0c7dfebfc3aa", 392231, Common::JA_JPN, 311),
 	MACGAME1_l("hikaruhana", "Auto", "HikaruHana(Auto)", "cebba8af8bf6e1131bdd0c7dfebfc3aa", 392231, Common::JA_JPN, 311),
-	MACDEMO1_l("hikaruhana", "Sample Version", "HikaruHana", "1e3c3caae3ba8ab04479ebc84fab326c", 393095, Common::JA_JPN, 311),
+	MACDEMO1_l("hikaruhana", "Sample Version", "HikaruHana", "1e3c3caae3ba8ab04479ebc84fab326c", 392839, Common::JA_JPN, 311),
 
 	MACDEMO1("hirezaudio", "Vol. 1 Demo", "Hi Rez Demo Projector", "1ae45c23586b41997ba52e2e7c771c4c", 1562852, 310),
 
@@ -2150,10 +2150,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Movies are played from HyperCard. Each of the 10 lessons and 3 practice examples are Director.
 	MACDEMO1_l("hypercardlessons", "Demo", "Lesson1movie", "8ac6b58b68561d6227921cbfef30a02d", 62177, Common::JA_JPN, 300),
 
-	MACDEMO1_l("hypermaterial", "Demo", "Browser_Demo", "f5277c53bacd27936158dd3867e587e2", 966309, Common::JA_JPN, 311),
+	MACDEMO1_l("hypermaterial", "Demo", "Browser_Demo", "f5277c53bacd27936158dd3867e587e2", 966053, Common::JA_JPN, 311),
 
 	// Sanctuary Woods promos from Bird's Life, not present in the Win files.
-	MACGAME1("ilearn", "", "More Fun!", "2ce360c9ea2da80a2c6d1040b0ad92dd", 14008121, 313),
+	MACGAME1("ilearn", "", "More Fun!", "2ce360c9ea2da80a2c6d1040b0ad92dd", 14007865, 313),
 
 	MACDEMO1("iliad", "", "Iliad 3.0 Demo", "cfa68a1bc49251497ebde18e5fc9c217", 270830, 200),
 
@@ -2162,37 +2162,38 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("imaginopolis", "1994 Demo", "MSKIDS.EXE", "2b3543a9131a49f665982d26513a84f8", 370009, 310),
 
 	// Original filesname is IMPACT!ムービー
-	MACDEMO1_l("imgimpact", "Demo", "IMPACT! Movie", "a03ae8a9bf211bcb26388b6b6da17c2b", 1806631, Common::JA_JPN, 311),
+	MACDEMO1_l("imgimpact", "Demo", "IMPACT! Movie", "a03ae8a9bf211bcb26388b6b6da17c2b", 1806375, Common::JA_JPN, 311),
 
 	// Original filenames are ﾌﾟﾛｼﾞｪｸﾀ and 1.ノート
-	MACDEMO2_l("intelligentnote", "Demo", "Projector", "a03ae8a9bf211bcb26388b6b6da17c2b", 321006,
-										  "1.Note",    "9afa1fce2f0f999e00af7d32cb8bd82d", 4946, Common::JA_JPN, 311),
+	MACDEMO2_l("intelligentnote", "Demo", "Projector", "a03ae8a9bf211bcb26388b6b6da17c2b", 320750,
+										  "1.Note",    "9afa1fce2f0f999e00af7d32cb8bd82d", 4690, Common::JA_JPN, 311),
 
 	MACGAME1_l("intro", "", "xn--w8jm4fv92r", "f5277c53bacd27936158dd3867e587e2", 392314, Common::JA_JPN, 311),
 
 	WINGAME1t_l("intro1", "", "INTRO_01.EXE", "fe7c54b4af5508ef7378474c7e909a2b", 370007, Common::JA_JPN, 311),
 
 	// Original filename is 犬組デモ
-	MACDEMO1_l("inugumi", "Demo", "Inugumi Demo", "f5277c53bacd27936158dd3867e587e2", 2366693, Common::JA_JPN, 311),
+	MACDEMO1_l("inugumi", "Demo", "Inugumi Demo", "f5277c53bacd27936158dd3867e587e2", 2366437, Common::JA_JPN, 311),
 
-	MACGAME1("ipc", "", "About InterActive Publishing", "ec7aaa66647e526d72cb1c1d802df48b", 3056526, 313),
+	MACGAME1("ipc", "", "About InterActive Publishing", "ec7aaa66647e526d72cb1c1d802df48b", 3056270, 313),
 	WINGAME1("ipc", "", "ABOUTIPC.EXE", "65d06b5fef155a2473434571aff5bc29", 4270544, 310),
 
 	// Bilingual English/Spanish
 	// Uses audio tracks
 	MACGAME1("iptr", "CD", "I Photograph to Remember", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 405746, 300),
 	MACGAME1("iptr", "Hard Disk", "I Photograph to Remember", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 400353, 300),
-	MACDEMO1("iptr", "Sampler", "I Photograph to RememberBIG", "a46f8441517e09088aad16decb13580d", 2632411, 311),
+	MACDEMO1("iptr", "Sampler", "I Photograph to RememberBIG", "a46f8441517e09088aad16decb13580d", 2632155, 311),
 
 	// Windows version is not Director
 	// Mac version requires installation, 'Iron Helix™ Installer' / 'Iron Helix™ Minimum Installer', Stuffit
 	// Original English filenames are 'Iron Helix™' and 'Iron Helix™ Minimum'
 	MACGAME1("ironhelix", "", "xn--Iron Helix-398e/xn--Iron Helix-398e", "1ae45c23586b41997ba52e2e7c771c4c", 1757732, 311),
 	MACGAME1("ironhelix", "Minimum", "xn--Iron Helix Minimum-lu3k/xn--Iron Helix Minimum-lu3k", "1ae45c23586b41997ba52e2e7c771c4c", 1608601, 311),
-	MACGAME1_l("ironhelix", "", "Iron Helix Compact", "f5277c53bacd27936158dd3867e587e2", 1596478, Common::JA_JPN, 311),
-	MACDEMO1("ironhelix", "1992 Demo", "IRON HELIX DEMO", "7c80091b84d4d5d48f7c773b30b10598", 1634901, 310),
-	MACDEMO1_l("ironhelix", "1993 Demo", "Iron Helix Demo (Japanese)", "1ae45c23586b41997ba52e2e7c771c4c", 378801, Common::JA_JPN, 311),
-	MACDEMO1("ironhelix", "1994 Demo", "Iron Helix Demo", "7f443f2e63fd497a9ad85b10dc880a91", 2031871, 313),
+	MACGAME1_l("ironhelix", "", "Iron Helix", "f5277c53bacd27936158dd3867e587e2", 1746029, Common::JA_JPN, 311),
+	MACGAME1_l("ironhelix", "Compact", "Iron Helix Compact", "f5277c53bacd27936158dd3867e587e2", 1596222, Common::JA_JPN, 311),
+	MACDEMO1("ironhelix", "1992 Demo", "IRON HELIX DEMO", "7c80091b84d4d5d48f7c773b30b10598", 1634645, 310),
+	MACDEMO1_l("ironhelix", "1993 Demo", "Iron Helix Demo (Japanese)", "1ae45c23586b41997ba52e2e7c771c4c", 378545, Common::JA_JPN, 311),
+	MACDEMO1("ironhelix", "1994 Demo", "IRON HELIX DEMO", "7f443f2e63fd497a9ad85b10dc880a91", 2031615, 313),
 
 	// From the two-floppy set Japan Art Today 04; this is the only Director application.
 	// The others use different tools.
