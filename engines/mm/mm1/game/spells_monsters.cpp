@@ -692,7 +692,7 @@ void SpellsMonsters::writeConditionEffect() {
 		}
 	}
 
-	add(STRING[Common::String::format("monster_spellsState.effects.%d",
+	add(STRING[Common::String::format("spells.char_effects.%d",
 		effectNum)]);
 	add('!');
 }
