@@ -89,5 +89,16 @@ InfoMessage::InfoMessage(int x1, int y1, const Common::String &str1,
 	_lines.push_back(Line(x2, y2, str2));
 }
 
+InfoMessage &InfoMessage::operator=(const InfoMessage &src) {
+	_lines = src._lines;
+	_ynCallback = src._ynCallback;
+	_keyCallback = src._keyCallback;
+	_largeMessage = src._largeMessage;
+	_sound = src._sound;
+	_delaySeconds = src._delaySeconds;
+	return *this;
+}
+
+
 } // namespace MM1
 } // namespace MM
