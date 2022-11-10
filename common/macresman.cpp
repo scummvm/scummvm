@@ -37,6 +37,49 @@
 
 namespace Common {
 
+MacFinderInfo::MacFinderInfo() : type{0, 0, 0, 0}, creator{0, 0, 0, 0}, flags(0), position(0, 0), windowID(0) {
+}
+
+MacFinderInfo::MacFinderInfo(const MacFinderInfoData &data) {
+	memcpy(type, data.data + 0, 4);
+	memcpy(creator, data.data + 4, 4);
+	flags = READ_BE_UINT16(data.data + 8);
+	position.y = READ_BE_INT16(data.data + 10);
+	position.x = READ_BE_INT16(data.data + 12);
+	windowID = READ_BE_INT16(data.data + 14);
+}
+
+MacFinderInfoData MacFinderInfo::toData() const {
+	MacFinderInfoData data;
+	memcpy(data.data + 0, type, 4);
+	memcpy(data.data + 4, creator, 4);
+	WRITE_BE_UINT16(data.data + 8, flags);
+	WRITE_BE_INT16(data.data + 10, position.y);
+	WRITE_BE_INT16(data.data + 12, position.x);
+	WRITE_BE_INT16(data.data + 14, windowID);
+
+	return data;
+}
+
+MacFinderExtendedInfo::MacFinderExtendedInfo() : iconID(0), commentID(0), homeDirectoryID(0) {
+}
+
+MacFinderExtendedInfo::MacFinderExtendedInfo(const MacFinderExtendedInfoData &data) {
+	iconID = READ_BE_INT16(data.data + 0);
+	commentID = READ_BE_INT16(data.data + 10);
+	homeDirectoryID = READ_BE_INT32(data.data + 12);
+}
+
+MacFinderExtendedInfoData MacFinderExtendedInfo::toData() const {
+	MacFinderExtendedInfoData data;
+	WRITE_BE_INT16(data.data + 0, iconID);
+	memset(data.data + 2, 0, 8);
+	WRITE_BE_INT16(data.data + 10, commentID);
+	WRITE_BE_INT32(data.data + 12, homeDirectoryID);
+
+	return data;
+}
+
 #define MBI_ZERO1 0
 #define MBI_NAMELEN 1
 #define MBI_ZERO2 74
