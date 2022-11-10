@@ -1065,7 +1065,7 @@ void Insane::postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	Common::sprintf_s(buf, "^f01%04d", tmp);
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 202, 168, 1, 2, 0, "%s", buf);
 
-	Common::sprintf_s(buf, "^f01%02o", curFrame & 0xff);
+	Common::sprintf_s(buf, "^f01%02x", curFrame & 0xff);
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 240, 168, 1, 2, 0, "%s", buf);
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 170, 43, 1, 2, 0, "%s", buf);
 
