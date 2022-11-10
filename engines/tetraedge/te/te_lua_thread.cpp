@@ -60,9 +60,8 @@ void TeLuaThread::_resume(int nargs) {
 		const char *msg = lua_tolstring(_luaThread, -1, nullptr);
 		warning("TeLuaThread::_resume: %s", msg);
 	}
-	// TODO: This seems suspicous... but it's what the original does.
 	if (_lastResumeResult != 1 && _released) {
-		warning("TeLuaThread:: deleting this??");
+		warning("TeLuaThread:: deleting this.");
 		delete this;
 	}
 }

@@ -256,7 +256,7 @@ private:
 	bool _markersVisible;
 	bool _saveRequested;
 	bool _randomSoundFinished;
-	
+
 	Common::RandomSource _randomSource;
 	RandomSound *_randomSound;
 	TeTimer _randomSoundTimer;

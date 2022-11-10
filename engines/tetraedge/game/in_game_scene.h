@@ -53,7 +53,7 @@ public:
 		Common::String _name;
 		TeSpriteLayout *_layout;
 	};
-	
+
 	struct Callback {
 		float _f;
 		Common::String _name;
@@ -193,6 +193,7 @@ public:
 	void setCurve(TeIntrusivePtr<TeBezierCurve> &c) { c = _curve; }
 	Common::Array<TeIntrusivePtr<TeModel>> &zoneModels() { return _zoneModels; }
 	Common::Array<TeRectBlocker> &rectBlockers() { return _rectBlockers; }
+	Common::Array<Object3D *> object3Ds() { return _object3Ds; }
 
 private:
 	TeColor _shadowColor;

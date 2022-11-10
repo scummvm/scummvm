@@ -317,7 +317,7 @@ void TeFreeMoveZoneGraph::deserialize(Common::ReadStream &stream) {
 	TeVector2s32::deserialize(stream, _size);
 	uint32 flaglen = stream.readUint32LE();
 	if (flaglen > 1000000 || (int)flaglen != _size._x * _size._y)
-		error("Flags unexpected size, expect %d got %d", _size._x * _size._y, flaglen);
+		error("TeFreeMoveZoneGraph: Flags unexpected size, expect %d got %d", _size._x * _size._y, flaglen);
 	_flags.resize(flaglen);
 	for (unsigned int i = 0; i < flaglen; i++) {
 		_flags[i] = stream.readByte();

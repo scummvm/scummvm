@@ -31,7 +31,7 @@ TeInterpolation::TeInterpolation() {
 void TeInterpolation::load(Common::ReadStream &stream) {
 	uint32 len = stream.readUint32LE();
 	if (len > 1000000)
-		error("Unexpected interpolation length");
+		error("TeInterpolation: Unexpected interpolation length %d", len);
 	_array.resize(len);
 	for (uint32 i = 0; i < len && !stream.err(); i++)
 		_array[i] = stream.readFloatLE();

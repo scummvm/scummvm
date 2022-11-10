@@ -38,8 +38,8 @@ bool TeVector3f32::parse(const Common::String &val) {
 }
 
 void TeVector3f32::rotate(const TeQuaternion &rot) {
-	Math::Matrix4 matrix = rot.toMatrix();
-	matrix.transform(this, false);
+	const TeMatrix4x4 matrix = rot.toTeMatrix();
+	*this = (matrix * *this);
 }
 
 TeVector3f32 operator^(const TeVector3f32 &left, const TeVector3f32 &right) {

@@ -100,6 +100,9 @@ TeQuaternion TeModelAnimation::getNMORotation(unsigned long boneNo, float amount
 			while (i < arr.size() && arr[i]._f < amount)
 				i++;
 
+			if (i == 0)
+				return arr.front()._rot;
+
 			if (i == arr.size() || arr.size() == 1 || arr[i]._f - arr[i-1]._f == 0) {
 				return arr.back()._rot;
 			}
@@ -118,6 +121,9 @@ TeVector3f32 TeModelAnimation::getNMOTranslation(unsigned long boneNo, float amo
 			unsigned int i = 0;
 			while (i < arr.size() && arr[i]._f < amount)
 				i++;
+
+			if (i == 0)
+				return arr.front()._trans;
 
 			if (i == arr.size() || arr.size() == 1 || arr[i]._f - arr[i-1]._f == 0) {
 				return arr.back()._trans;
@@ -201,8 +207,12 @@ bool TeModelAnimation::load(Common::SeekableReadStream &stream) {
 	}
 
 	_useNMOArrays = stream.readUint32LE();
-	_numNMOFrames = stream.readUint32LE();
+	uint32 nmoFrames = stream.readUint32LE();
+	if (_useNMOArrays)
+		_numNMOFrames = nmoFrames;
 	uint32 numBones = stream.readUint32LE();
+	if (numBones > 100000)
+		error("TeModelAnimation::load: Improbable number of bones %d", numBones);
 
 	if (_useNMOArrays == 0) {
 		_fbxArrays.resize(numBones);
@@ -217,24 +227,29 @@ bool TeModelAnimation::load(Common::SeekableReadStream &stream) {
 		if (!Te3DObject2::loadAndCheckFourCC(stream, "BONE"))
 			return false;
 		const Common::String boneName = Te3DObject2::deserializeString(stream);
+		TeModel::loadAlign(stream);
 		setBoneName(i, boneName);
 		if (!Te3DObject2::loadAndCheckFourCC(stream, "BTRA"))
 			return false;
 		uint32 numTrans = stream.readUint32LE();
+		if (numTrans > 100000)
+			error("TeModelAnimation::load: Improbable number of bone translations %d", numTrans);
 		for (unsigned int j = 0; j < numTrans; j++) {
 			float f = stream.readFloatLE();
 			TeVector3f32 trans;
 			TeVector3f32::deserialize(stream, trans);
-			setTranslation(j, f, trans);
+			setTranslation(i, f, trans);
 		}
 		if (!Te3DObject2::loadAndCheckFourCC(stream, "BROT"))
 			return false;
 		uint32 numRots = stream.readUint32LE();
+		if (numRots > 100000)
+			error("TeModelAnimation::load: Improbable number of bone rotations %d", numRots);
 		for (unsigned int j = 0; j < numRots; j++) {
 			float f = stream.readFloatLE();
 			TeQuaternion rot;
 			TeQuaternion::deserialize(stream, rot);
-			setRotation(j, f, rot);
+			setRotation(i, f, rot);
 		}
 	}
 	return true;

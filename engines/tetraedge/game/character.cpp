@@ -24,7 +24,9 @@
 #include "common/file.h"
 #include "common/debug.h"
 
+#include "tetraedge/tetraedge.h"
 #include "tetraedge/game/character.h"
+#include "tetraedge/game/game.h"
 #include "tetraedge/game/character_settings_xml_parser.h"
 #include "tetraedge/te/te_model_animation.h"
 
@@ -62,6 +64,29 @@ _freeMoveZone(nullptr), _animSoundOffset(0), _lastAnimFrame(0), _charLookingAt(n
 	_curModelAnim.setDeleteFn(&TeModelAnimation::deleteLater);
 }
 
+Character::~Character() {
+	_model->setVisible(false);
+	_model->bonesUpdatedSignal().remove(this, &Character::onBonesUpdate);
+	deleteAnim();
+	Game *game = g_engine->getGame();
+	Common::Array<TeIntrusivePtr<TeModel>> &models = game->scene().models();
+	for (unsigned int i = 0; i < models.size(); i++) {
+		if (models[i] == _model) {
+			models.remove_at(i);
+			break;
+		}
+	}
+	removeAnim();
+	for (unsigned int s = 0; s < 2; s++) {
+		for (unsigned int i = 0; i < models.size(); i++) {
+			if (models[i] == _shadowModel[s]) {
+				models.remove_at(i);
+				break;
+			}
+		}
+	}
+}
+
 void Character::addCallback(const Common::String &key, const Common::String &s2, float f1, float f2) {
 	/*Callback *c = new Callback();
 	c->x = (int)f1;
@@ -89,7 +114,9 @@ void Character::addCallback(const Common::String &key, const Common::String &s2,
 		return _cache.getVal(pathStr);
 
 	TeIntrusivePtr<TeModelAnimation> modelAnim = new TeModelAnimation();
-	modelAnim->load(path);
+	if (!modelAnim->load(path)) {
+		warning("Failed to load anim %s", path.toString().c_str());
+	}
 
 	_cache.setVal(pathStr, modelAnim);
 	return modelAnim;
@@ -138,8 +165,10 @@ bool Character::blendAnimation(const Common::String &animname, float amount, boo
 			|| animname.contains(walkAnim(WalkPart_EndG))
 			|| animname.contains(walkAnim(WalkPart_EndD)));
 
-	if (_curModelAnim)
+	if (_curModelAnim) {
 		_curModelAnim->onFinished().remove(this, &Character::onModelAnimationFinished);
+		_curModelAnim->unbind();
+	}
 
 	_curModelAnim = animCacheLoad(animpath);
 	_curModelAnim->onFinished().add(this, &Character::onModelAnimationFinished);
@@ -238,11 +267,10 @@ int Character::rightStepFrame(enum Character::WalkPart walkpart) {
 bool Character::loadModel(const Common::String &mname, bool unused) {
 	assert(_globalCharacterSettings);
 	if (_model) {
-		//TODO
-		//_model->bonesUpdateSignal().remove(this, &Character::onBonesUpdate);
+		_model->bonesUpdatedSignal().remove(this, &Character::onBonesUpdate);
 	}
 	_model = new TeModel();
-	//_model->bonesUpdateSignal().add(this, &Character::onBonesUpdate);
+	_model->bonesUpdatedSignal().add(this, &Character::onBonesUpdate);
 
 	if (!_globalCharacterSettings->contains(mname))
 		return false;
@@ -339,9 +367,100 @@ bool Character::loadModel(const Common::String &mname, bool unused) {
 	return false;
 }
 
-bool Character::onBonesUpdate(const Common::String &boneName, const TeMatrix4x4 &param_2) {
-	error("TODO: Implement Character::onBonesUpdate");
-	return false;
+bool Character::onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneMatrix) {
+	if (!_model || !_model->anim())
+		return false;
+
+	Game *game = g_engine->getGame();
+	if (boneName == "Pere") {
+		const Common::String animfile = _model->anim()->_loadedPath.getLastComponent().toString();
+		bool resetX = false;
+		if (game->scene()._character == this) {
+			for (const auto &walkSettings : _characterSettings._walkSettings) {
+				resetX |= (walkSettings._key.contains("Walk") || walkSettings._key.contains("Jog"));
+				resetX |= (walkSettings._value._walkParts[0]._file == animfile ||
+						walkSettings._value._walkParts[1]._file == animfile ||
+						walkSettings._value._walkParts[2]._file == animfile ||
+						walkSettings._value._walkParts[3]._file == animfile);
+			}
+			resetX |= animfile.contains(_characterSettings._walkFileName);
+		} else {
+			resetX = (animfile.contains(_characterSettings._walkFileName) ||
+					  animfile.contains(walkAnim(WalkPart_Start)) ||
+					  animfile.contains(walkAnim(WalkPart_Loop)) ||
+					  animfile.contains(walkAnim(WalkPart_EndD)) ||
+					  animfile.contains(walkAnim(WalkPart_EndG)));
+		}
+		if (resetX) {
+			boneMatrix.setValue(0, 3, 0.0f);
+			boneMatrix.setValue(2, 3, 0.0f);
+		}
+	}
+
+	if (boneName.contains("Bip01 Head")) {
+		if (_hasAnchor) {
+			game->scene().currentCamera()->apply();
+			_lastHeadRotation = _headRotation;
+			TeQuaternion rot1 = TeQuaternion::fromAxisAndAngle(TeVector3f32(-1, 0, 0), _lastHeadRotation.getX());
+			TeQuaternion rot2 = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 0, 1), _lastHeadRotation.getY());
+			boneMatrix.rotate(rot1);
+			boneMatrix.rotate(rot2);
+		} else {
+			float lastHeadX = _lastHeadRotation.getX();
+			float minX = (lastHeadX > 0) ? -0.1 : 0.1;
+			float newX = (fabs(minX) > fabs(lastHeadX)) ? 0.0 : minX + lastHeadX;
+			_lastHeadRotation.setX(newX);
+
+			float lastHeadY = _lastHeadRotation.getY();
+			float minY = (lastHeadY > 0) ? -0.1 : 0.1;
+			float newY = (fabs(minY) > fabs(lastHeadY)) ? 0.0 : minY + lastHeadY;
+			_lastHeadRotation.setY(newY);
+
+			_headRotation.setX(_lastHeadRotation.getX());
+			_headRotation.setY(_lastHeadRotation.getY());
+
+			TeQuaternion rot1 = TeQuaternion::fromAxisAndAngle(TeVector3f32(-1, 0, 0), _lastHeadRotation.getX());
+			TeQuaternion rot2 = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 0, 1), _lastHeadRotation.getY());
+			boneMatrix.rotate(rot1);
+			boneMatrix.rotate(rot2);
+			_lastHeadBoneTrans = boneMatrix.translation();
+		}
+	}
+
+	if (boneName.contains("Bip01 L Foot") || boneName.contains("Bip01 R Foot")) {
+		TeVector3f32 trans = boneMatrix.translation();
+		trans.rotate(_model->rotation());
+		const TeVector3f32 modelScale = _model->scale();
+		trans.x() *= modelScale.x();
+		trans.y() = 0.0;
+		trans.z() *= modelScale.z();
+		TeVector3f32 pos = _model->position() + trans;
+		if (_freeMoveZone) {
+			bool flag;
+			pos = _freeMoveZone->correctCharacterPosition(pos, &flag, true);
+		}
+		_shadowModel[1]->setPosition(pos);
+		_shadowModel[1]->setRotation(_model->rotation());
+		_shadowModel[1]->setScale(_model->scale());
+	}
+
+	// Move any objects attached to the bone
+	for (Object3D *obj : game->scene().object3Ds()) {
+		if (obj->_onCharName == _model->name() && boneName == obj->_onCharBone) {
+			obj->model()->setVisible(true);
+			TeMatrix4x4 objmatrix = boneMatrix;
+			objmatrix.scale(obj->_objScale);
+			objmatrix.rotate(obj->_objRotation);
+			objmatrix.scale(obj->_objScale);
+			objmatrix.translate(obj->_objTranslation);
+			obj->model()->forceMatrix(objmatrix);
+			obj->model()->setPosition(_model->position());
+			obj->model()->setRotation(_model->rotation());
+			obj->model()->setScale(_model->scale());
+		}
+	}
+
+	return true;
 }
 
 bool Character::onModelAnimationFinished() {
@@ -361,6 +480,7 @@ void Character::placeOnCurve(TeIntrusivePtr<TeBezierCurve> &curve) {
 void Character::removeAnim() {
 	if (_curModelAnim) {
 		_curModelAnim->onFinished().remove(this, &Character::onModelAnimationFinished);
+		_curModelAnim->unbind();
 	}
 	_model->removeAnim();
 	if (_curModelAnim) {
@@ -378,12 +498,12 @@ bool Character::setAnimation(const Common::String &aname, bool repeat, bool para
 
 	Common::Path animPath("models/Anims");
 	animPath.joinInPlace(aname);
-	bool validAnim = (aname.contains(_characterSettings._walkFileName) ||
+	bool isWalkAnim = (aname.contains(_characterSettings._walkFileName) ||
 					  aname.contains(walkAnim(WalkPart_Start)) ||
 					  aname.contains(walkAnim(WalkPart_Loop)) ||
 					  aname.contains(walkAnim(WalkPart_EndD)) ||
 					  aname.contains(walkAnim(WalkPart_EndG)));
-	_missingCurrentAnim = !validAnim;
+	_missingCurrentAnim = !isWalkAnim;
 
 	if (_curModelAnim) {
 		_curModelAnim->onFinished().remove(this, &Character::onModelAnimationFinished);
@@ -451,6 +571,10 @@ TeTRS Character::trsFromAnim(const TeModelAnimation &anim, long bone, long frame
 }
 
 void Character::update(double percentval) {
+	if (!_curve || !_runTimer.running())
+		return;
+	//float speed = speedFromAnim(percentval);
+
 	error("TODO: Implement Character::update");
 }
 

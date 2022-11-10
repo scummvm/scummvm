@@ -270,7 +270,7 @@ void Game::enter(bool newgame) {
 	Common::SharedPtr<TeCallback1Param<Game, const Common::Point &>> callbackptr(new TeCallback1Param<Game, const Common::Point &>(this, &Game::onMouseClick, -1000.0f));
 	g_engine->getInputMgr()->_mouseLUpSignal.insert(callbackptr);
 	_movePlayerCharacterDisabled = false;
-	warning("TODO: Game::enter set some other fields here");
+	warning("TODO: Game::enter set some other field here");
 	_sceneCharacterVisibleFromLoad = false;
 	Character::loadSettings("models/ModelsSettings.xml");
 	Object3D::loadSettings("objects/ObjectsSettings.xml");
@@ -1163,7 +1163,7 @@ void Game::playMovie(const Common::String &vidPath, const Common::String &musicP
 	music.play();
 	videoSpriteLayout->play();
 
-	// FIXME TODO!! Stop the movie and soundearly for testing.
+	// Stop the movie and sound early for testing if skip_videos set
 	if (ConfMan.get("skip_videos") == "true") {
 		videoSpriteLayout->_tiledSurfacePtr->_frameAnim._nbFrames = 10;
 		music.stop();
@@ -1243,7 +1243,7 @@ void Game::playSound(const Common::String &name, int repeats, float volume) {
 				return;
 			}
 		}
-		
+
 		GameSound *sound = new GameSound();
 		sound->setChannelName("sfx");
 		sound->load(name);
