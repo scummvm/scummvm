@@ -71,8 +71,7 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 	case 1:
 		title = _("Common keyboard commands:");
 		ADD_BIND("F5", _("Save / Load dialog"));
-		if (version >= 5)
-			ADD_BIND(".", _("Skip line of text"));
+		ADD_BIND(".", _("Skip line of text"));
 		ADD_BIND(_("Esc"), _("Skip cutscene"));
 		ADD_BIND(_("Space"), _("Pause game"));
 		ADD_BIND(_("Ctrl") + U32String(" 0-9"), _("Load saved game 1-10"));
