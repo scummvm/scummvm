@@ -26,6 +26,7 @@
 
 #include "common/array.h"
 #include "common/fs.h"
+#include "common/rect.h"
 #include "common/str.h"
 #include "common/str-array.h"
 
@@ -41,8 +42,11 @@ namespace Common {
  * @brief API for Macintosh resource fork manager.
  *
  * @details Used in engines:
+ *          - director
  *          - groovie
+ *          - kyra
  *          - mohawk
+ *          - mtropolis
  *          - pegasus
  *          - sci
  *          - scumm
@@ -51,6 +55,68 @@ namespace Common {
 
 typedef Array<uint16> MacResIDArray;
 typedef Array<uint32> MacResTagArray;
+
+/**
+ * Class containing the raw data bytes for a Macintosh Finder Info data block.
+ */
+struct MacFinderInfoData {
+	byte data[16];
+};
+
+/**
+ * Class containing the raw data bytes for a Macintosh Extended Finder Info data block.
+ */
+struct MacFinderExtendedInfoData {
+	byte data[16];
+};
+
+/**
+ * Class containing Macintosh Finder Info.
+ */
+struct MacFinderInfo {
+	enum FinderFlags {
+		kFinderFlagAlias = (1 << 15),
+		kFinderFlagInvisible = (1 << 14),
+		kFinderFlagBundle = (1 << 13),
+		kFinderFlagNameLocked = (1 << 12),
+		kFinderFlagStationery = (1 << 11),
+		kFinderFlagCustomIcon = (1 << 10),
+		kFinderFlagInited = (1 << 8),
+		kFinderFlagNoInit = (1 << 7),
+		kFinderFlagShared = (1 << 6),
+
+		kFinderFlagColorBit2 = (1 << 3),
+		kFinderFlagColorBit1 = (1 << 2),
+		kFinderFlagColorBit0 = (1 << 1),
+	};
+
+	MacFinderInfo();
+	explicit MacFinderInfo(const MacFinderInfoData &data);
+
+	MacFinderInfoData toData() const;
+
+	byte type[4];
+	byte creator[4];
+	uint16 flags;
+	Common::Point position;
+	int16 windowID;
+};
+
+/**
+ * Class containing Macintosh Extended Finder Info.
+ */
+struct MacFinderExtendedInfo {
+	static const uint kDataSize = 16;
+
+	MacFinderExtendedInfo();
+	explicit MacFinderExtendedInfo(const MacFinderExtendedInfoData &data);
+
+	MacFinderExtendedInfoData toData() const;
+
+	int16 iconID;
+	int16 commentID;
+	int32 homeDirectoryID;
+};
 
 /**
  * Class for handling Mac data and resource forks.
