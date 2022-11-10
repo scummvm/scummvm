@@ -42,8 +42,8 @@ public:
 	}
 	virtual ~Entrance() {}
 
-	bool isDrawable() { return false; }
-	bool isPlanar() { return true; }
+	bool isDrawable() override { return false; }
+	bool isPlanar() override { return true; }
 	ObjectType getType() override { return ObjectType::kEntranceType; };
 	Math::Vector3d getRotation() { return _rotation; }
 
