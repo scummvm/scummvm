@@ -873,7 +873,7 @@ void Combat::iterateMonsters1Inner() {
 
 	Common::String effect;
 	if (!affects) {
-		effect = STRING["spells.is_not_affected"];
+		effect = STRING["monster_spells.not_affected"];
 
 	} else {
 		_monsterStatus[getMonsterIndex()] |=
@@ -913,10 +913,100 @@ void Combat::iterateMonsters1Inner() {
 			g_globals->_combat->iterateMonsters1Inner();
 		};
 	}
+
+	displaySpellResult(msg);
 }
 
 void Combat::iterateMonsters2() {
-	// TODO: iterateMonsters2
+	_spellMonsterCount = _monsterList.size();
+	iterateMonsters2Inner();
+}
+
+void Combat::iterateMonsters2Inner() {
+	Common::String line1 = Common::String::format("|%s| %s",
+		g_globals->_currCharacter->_name,
+		STRING["spells.casts_spell"].c_str());
+	const Common::String monsterName = _monsterP->_name;
+
+	_damage = g_globals->_spellsState._newCondition;
+
+	bool affects = !monsterLevelThreshold();
+	if (affects) {
+		if (g_globals->_spellsState._mmVal1) {
+			proc2();
+			if (_val9)
+				_damage >>= 1;
+		}
+
+		byte idx = g_globals->_spellsState._mmVal2;
+		if (idx) {
+			if (--idx >= 8)
+				idx = 0;
+
+			static const byte FLAGS[8] = {
+			0x40, 0x20, 0x60, 0x10, 8, 4, 2, 1
+			};
+			if ((_monsterP->_field1a & FLAGS[idx]) == FLAGS[idx])
+				_damage >>= 2;
+		}
+
+		affects = _damage > 0;
+	}
+
+	InfoMessage msg(0, 0, line1);
+
+	if (!affects) {
+		msg._lines.push_back(Line(
+			0, 1, Common::String::format("%s %s",
+				monsterName.c_str(),
+				STRING["monster_spells.not_affected"].c_str()
+			)
+		));
+
+	} else {
+		Common::String line2 = Common::String::format("%s %s %d %s %s",
+			monsterName.c_str(),
+			STRING["monster_spells.takes"].c_str(),
+			_damage,
+			STRING[_damage == 1 ? "monster_spells.point" : "monster_spells.points"].c_str(),
+			STRING["monster_spells.of_damage"].c_str()
+		);
+
+		msg._lines.push_back(Line(0, 1, line2));
+
+		if (_damage >= _arr1[getMonsterIndex()]) {
+			msg._lines.push_back(Line(0, 2, STRING["monster_spells.and_goes_down"]));
+		}
+	}
+
+	msg._delaySeconds = 3;
+
+	bool isEnd = !--g_globals->_spellsState._resistanceType;
+	if (!isEnd) {
+		++_destMonsterNum;
+		if ((int)_spellMonsterCount <= _destMonsterNum)
+			isEnd = true;
+	}
+	if (!isEnd)
+		isEnd = ((int)_monsterList.size() + _destMonsterNum - _spellMonsterCount) < 0;
+
+	if (!isEnd) {
+		// Move to next iteration after display timeout
+		msg._ynCallback = []() {
+			g_globals->_combat->iterateMonsters2Inner();
+		};
+	} else {
+		msg._ynCallback = []() {
+			g_globals->_combat->updateArr3();
+		};
+	}
+
+	displaySpellResult(msg);
+}
+
+void Combat::updateArr3() {
+	_arr3[_currentChar] = 1;
+	combatLoop();
 }
 
 void Combat::resetDestMonster() {

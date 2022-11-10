@@ -241,6 +241,8 @@ private:
 	void destroyUndead();
 	bool monsterLevelThreshold() const;
 	void iterateMonsters1Inner();
+	void iterateMonsters2Inner();
+	void updateArr3();
 
 public:
 	/**
