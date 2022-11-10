@@ -83,15 +83,16 @@ void TeMesh::draw() {
 				renderer->popMatrix();
 				return;
 			}
-		} else if (!_materials.empty()) {
+		} else {
+			assert(_faceCounts.size() == _materials.size());
+			int totalFaceCount = 0;
 			for (unsigned int i = 0; i < _faceCounts.size(); i++) {
-				int totalFaceCount = 0;
-				if (_faceCounts[i]) {
-					if (hasAlpha(i)) {
-						renderer->addTransparentMesh(*this, totalFaceCount, _faceCounts[i], i);
-					}
-					totalFaceCount += _faceCounts[i];
+				if (!_faceCounts[i])
+					continue;
+				if (hasAlpha(i)) {
+					renderer->addTransparentMesh(*this, totalFaceCount, _faceCounts[i], i);
 				}
+				totalFaceCount += _faceCounts[i];
 			}
 		}
 	}
@@ -136,17 +137,18 @@ void TeMesh::draw() {
 			renderer->disableTexture();
 		}
 	} else {
-		int totalfacecount = 0;
+		int totalFaceCount = 0;
+		assert(_faceCounts.size() == _materials.size());
 		for (unsigned int i = 0; i < _materials.size(); i++) {
 			if (!_faceCounts[i])
 				continue;
 			if (!hasAlpha(i) || renderer->shadowMode() == TeRenderer::ShadowMode1 || !_shouldDraw) {
 				_materials[i].apply();
-				glDrawElements(_glMeshMode, _faceCounts[i] * 3, GL_UNSIGNED_SHORT, _indexes.data() + totalfacecount * 3);
+				glDrawElements(_glMeshMode, _faceCounts[i] * 3, GL_UNSIGNED_SHORT, _indexes.data() + totalFaceCount * 3);
 				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 				renderer->disableTexture();
 			}
-			totalfacecount += _faceCounts[i];
+			totalFaceCount += _faceCounts[i];
 		}
 	}
 
@@ -179,7 +181,7 @@ void TeMesh::draw() {
 }
 
 TeMesh::Mode TeMesh::getMode() const {
-	// Do the reverse translation of setMode... why? I dunno.. the game does that..
+	// Do the reverse translation of setConf... why? I dunno.. the game does that..
 	switch(_glMeshMode) {
 	case GL_POINTS:
 		return MeshMode_Points;
@@ -365,7 +367,7 @@ void TeMesh::updateTo(const Common::Array<TeMatrix4x4> *matricies1, const Common
 				Common::Array<TeVector3f32> &verts, Common::Array<TeVector3f32> &normals) {
 	static const TeMatrix4x4 emptyMatrix;
 	for (unsigned int i = 0; i < _verticies.size(); i++) {
-		unsigned long m = _matricies[i];
+		unsigned int m = _matricies[i];
 		const TeMatrix4x4 *mat;
 		if (m < matricies1->size()) {
 			mat = &((*matricies1)[m]);

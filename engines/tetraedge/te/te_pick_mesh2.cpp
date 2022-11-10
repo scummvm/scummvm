@@ -78,7 +78,7 @@ bool TePickMesh2::intersect(const TeVector3f32 &v1, const TeVector3f32 v2, TeVec
 			return true;
 		}
 	}
-	
+
 	float hitf = FLT_MAX;
 	for (unsigned int i = 0; i < _verticies.size() / 3; i++) {
 		const TeVector3f32 triv1 = worldTrans * _verticies[i * 3 + 0];
@@ -157,6 +157,9 @@ void TePickMesh2::serialize(Common::WriteStream &stream, const TePickMesh2 &mesh
 void TePickMesh2::deserialize(Common::ReadStream &stream, TePickMesh2 &mesh) {
 	Te3DObject2::deserialize(stream, mesh);
 	uint32 ntriangles = stream.readUint32LE();
+	if (ntriangles > 100000)
+		error("TePickMesh2::deserialize: Improbable number of triangles %d", ntriangles);
+
 	mesh._verticies.resize(ntriangles * 3);
 	mesh._lastTriangleHit = 0;
 

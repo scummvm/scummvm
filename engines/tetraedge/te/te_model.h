@@ -32,6 +32,7 @@
 #include "tetraedge/te/te_model_vertex_animation.h"
 #include "tetraedge/te/te_tiled_texture.h"
 #include "tetraedge/te/te_intrusive_ptr.h"
+#include "tetraedge/te/te_quaternion.h"
 
 namespace Tetraedge {
 
@@ -55,7 +56,6 @@ public:
 	class MeshBlender {
 	public:
 		MeshBlender(const Common::String &s1, const Common::String &s2, float amount, TeModel *model);
-	private:
 		Common::String _name;
 		uint _meshNo;
 		float _amount;
@@ -69,7 +69,7 @@ public:
 	};
 
 	struct weightElement {
-		float _w;
+		float _weight;
 		unsigned short _x;
 	};
 
@@ -97,7 +97,7 @@ public:
 	int findOrAddWeights(const Common::Array<weightElement> &weights);
 	void forceMatrix(const TeMatrix4x4 &matrix);
 	TeTRS getBone(TeIntrusivePtr<TeModelAnimation> anim, unsigned int num);
-	TeMatrix4x4 lerpElementsMatrix(unsigned long weightNum, Common::Array<TeMatrix4x4> &matricies);
+	TeMatrix4x4 lerpElementsMatrix(unsigned int weightNum, const Common::Array<TeMatrix4x4> &matricies);
 
 	/* Align the stream to the nearest 4 byte boudary*/
 	static void loadAlign(Common::SeekableReadStream &stream);
@@ -126,6 +126,8 @@ public:
 
 	TeMatrix4x4 skinOffset(unsigned long boneno) const;
 
+	TeSignal2Param<const Common::String &, TeMatrix4x4 &> &bonesUpdatedSignal() { return _bonesUpdatedSignal; }
+
 	static Common::SeekableReadStream *tryLoadZlibStream(Common::SeekableReadStream &instr);
 	TeIntrusivePtr<TeTiledTexture> _tiledTexture;
 
@@ -146,9 +148,12 @@ protected:
 	Common::Array<Common::Array<weightElement>> _weightElements;
 	Common::Array<BonesBlender *> _boneBlenders;
 
+	TeQuaternion _boneRotation;
+
 	TeIntrusivePtr<TeModelAnimation> _modelAnim;
 	TeIntrusivePtr<TeModelVertexAnimation> _modelVertexAnim;
 
+	TeSignal2Param<const Common::String &, TeMatrix4x4 &> _bonesUpdatedSignal;
 };
 
 } // end namespace Tetraedge

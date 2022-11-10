@@ -152,7 +152,7 @@ void TeCamera::getRay(const TeVector2s32 &pxloc, TeVector3f32 &out1, TeVector3f3
 	TeQuaternion rot = rotation();
 	out1 = pos;
 	rot.normalize();
-	TeMatrix4x4 rotmatrix = rot.toMatrix();
+	TeMatrix4x4 rotmatrix = rot.toTeMatrix();
 	out2 = rotmatrix * out2;
 }
 

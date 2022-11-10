@@ -97,6 +97,15 @@ void TeMatrix4x4::translate(const TeVector3f32 &vec) {
 	*this = (*this * translMatrix);
 }
 
+void TeMatrix4x4::rotate(const TeQuaternion &rot) {
+	const TeMatrix4x4 rotMatrix = rot.toTeMatrix();
+	*this = (*this * rotMatrix);
+}
+
+TeVector3f32 TeMatrix4x4::translation() const {
+	return TeVector3f32(_data[12], _data[13], _data[14]);
+}
+
 TeVector3f32 TeMatrix4x4::mult4x3(const TeVector3f32 &vec) const {
 	const float f1 = vec.x();
 	const float f2 = vec.y();
@@ -324,21 +333,19 @@ TeMatrix4x4 TeMatrix4x4::fromTRS(const TeTRS &trs) {
 	TeMatrix4x4 result;
 	const TeVector3f32 trans = trs.getTranslation();
 	TeMatrix4x4 transm;
-	float *tm = transm.getData();
-	tm[12] = trans.x();
-	tm[13] = trans.y();
-	tm[14] = trans.z();
+	transm(0, 3) = trans.x();
+	transm(1, 3) = trans.y();
+	transm(2, 3) = trans.z();
 	result = result * transm;
 
-	const TeMatrix4x4 rotm = trs.getRotation().toMatrix();
+	const TeMatrix4x4 rotm = trs.getRotation().toTeMatrix();
 	result = result * rotm;
 
 	const TeVector3f32 scle = trs.getScale();
 	TeMatrix4x4 scalem;
-	float *sm = scalem.getData();
-	sm[0] = scle.x();
-	sm[5] = scle.y();
-	sm[10] = scle.z();
+	scalem(0, 0) = scle.x();
+	scalem(1, 1) = scle.y();
+	scalem(2, 2) = scle.z();
 	result = result * scalem;
 
 	return result;

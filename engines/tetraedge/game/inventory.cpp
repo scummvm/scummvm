@@ -270,7 +270,7 @@ bool Inventory::onZoomed() {
 void Inventory::pauseAnims() {
 	Game *game = g_engine->getGame();
 	if (game->scene()._character) {
-		
+
 	}
 	error("TODO: implement Inventory::pauseAnims");
 }
@@ -278,7 +278,7 @@ void Inventory::pauseAnims() {
 void Inventory::unPauseAnims() {
 	Game *game = g_engine->getGame();
 	if (game->scene()._character) {
-		
+
 	}
 	error("TODO: implement Inventory::unPauseAnims");
 }

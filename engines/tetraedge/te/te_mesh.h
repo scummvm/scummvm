@@ -115,6 +115,11 @@ public:
 	void setHasAlpha(bool val) { _hasAlpha = val; }
 
 	Common::Array<TeMaterial> &materials() { return _materials; }
+	void setUpdatedVertex(unsigned int idx, const TeVector3f32 &val) { _updatedVerticies[idx] = val; }
+	void setUpdatedNormal(unsigned int idx, const TeVector3f32 &val) { _updatedNormals[idx] = val; }
+
+	const TeVector3f32 &preUpdatedVertex(unsigned int idx) const { return _verticies[idx]; }
+	const TeVector3f32 &preUpdatedNormal(unsigned int idx) const { return _normals[idx]; }
 
 private:
 	Common::Array<unsigned char> _materialIndexes;

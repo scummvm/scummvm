@@ -123,7 +123,7 @@ template<class S, class T> class TeSignal2Param : public Common::SortedArray<TeI
 public:
 	TeSignal2Param() : Common::SortedArray<TeICallback2ParamPtr<S, T>, const TeICallback2ParamPtr<S, T> &>(_teCallbackSorter) {};
 
-	bool call(T t, S s) {
+	bool call(S s, T t) {
 		typename Common::Array<TeICallback2ParamPtr<S, T>>::iterator i = this->begin();
 		typename Common::Array<TeICallback2ParamPtr<S, T>>::iterator end_ = this->end();
 		for (; i < end_; i++) {

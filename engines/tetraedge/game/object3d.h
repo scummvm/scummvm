@@ -53,11 +53,22 @@ public:
 	TeTimer _rotateTimer;
 	TeVector3f32 _rotateStart;
 	TeVector3f32 _rotateAmount;
-	
+
 	float _translateTime;
 	TeTimer _translateTimer;
 	TeVector3f32 _translateStart;
 	TeVector3f32 _translateAmount;
+
+	Common::String _onCharName;
+	Common::String _onCharBone;
+
+	// TRS relative to the character this object is "on"
+	TeVector3f32 _objTranslation;
+	TeQuaternion _objRotation;
+	TeVector3f32 _objScale;
+
+	int _startFrame;
+	int _endFrame;
 
 private:
 	static Common::HashMap<Common::String, ObjectSettings> *_objectSettings;

@@ -57,11 +57,11 @@ void TeMatriciesStack::pushMatrix() {
 }
 
 void TeMatriciesStack::rotate(const TeQuaternion &rot) {
-	_stack.top() = _stack.top() * rot.toMatrix();
+	_stack.top() = _stack.top() * rot.toTeMatrix();
 }
 
 void TeMatriciesStack::rotate(float angle, const TeVector3f32 &axis) {
-	_stack.top() = _stack.top() * TeQuaternion::fromAxisAndAngle(axis, angle).toMatrix();
+	rotate(TeQuaternion::fromAxisAndAngle(axis, angle));
 }
 
 void TeMatriciesStack::scale(const TeVector3f32 &scale) {

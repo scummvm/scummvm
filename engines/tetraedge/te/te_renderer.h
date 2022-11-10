@@ -41,9 +41,9 @@ public:
 	};
 
 	enum ShadowMode {
-		ShadowMode0,
-		ShadowMode1,
-		ShadowMode2
+		ShadowMode0 = 0,
+		ShadowMode1 = 1,
+		ShadowMode2 = 2
 	};
 
 	class TransparentMeshProperties {

@@ -23,9 +23,26 @@
 
 namespace Tetraedge {
 
-Document::Document() {
+Document::Document(DocumentsBrowser *browser) : _browser(browser) {
+
 }
 
-// TODO: Add more functions here.
+void Document::load(const Common::String &name) {
+	error("TODO: Implement Document::load");
+}
+
+void Document::unload() {
+	removeChild(_gui.layoutChecked("object"));
+	_gui.unload();
+}
+
+bool Document::onButtonDown() {
+	_onButtonDownSignal.call(*this);
+	return false;
+}
+
+Common::Path Document::spritePath() const {
+	return Common::Path("DocumentsBrowser/Documents").join(name()).append(".png");
+}
 
 } // end namespace Tetraedge

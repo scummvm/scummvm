@@ -24,28 +24,37 @@
 
 #include "common/str.h"
 
+#include "tetraedge/te/te_layout.h"
+#include "tetraedge/te/te_lua_gui.h"
+
 namespace Tetraedge {
 
-class Document {
+class DocumentsBrowser;
+
+class Document : public TeLayout {
 public:
-	Document();
+	Document(DocumentsBrowser *browser);
 	~Document() {
 		unload();
-		// TODO: check for other destructor things.
+		if (parent()) {
+			// TODO: do something with parent here.
+		}
 	}
 
 	void load(const Common::String &name);
 	//void loadFromBackup(TiXmlElement &node) {
 	// load(node->Attribute("id");
 	//}
+
 	bool onButtonDown();
 	//void saveToBackup(TiXmlElement &node);
-	Common::String spritePath() const;
+	Common::Path spritePath() const;
 	void unload();
 
 private:
-	// TODO add private members
-
+	DocumentsBrowser *_browser;
+	TeLuaGUI _gui;
+	TeSignal1Param<Document &> _onButtonDownSignal;
 };
 
 } // end namespace Tetraedge

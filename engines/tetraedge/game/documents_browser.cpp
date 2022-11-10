@@ -89,7 +89,13 @@ void DocumentsBrowser::currentPage(long page) {
 }
 
 bool DocumentsBrowser::onQuitDocumentDoubleClickTimer() {
-	error("TODO: Implement DocumentsBrowser::onQuitDocumentDoubleClickTimer");
+	long time = _timer.getTimeFromStart();
+	_timer.stop();
+	if (time >= 200000)
+		error("TODO: Implement DocumentsBrowser::onQuitDocumentDoubleClickTimer");
+	else
+		hideDocument();
+	return false;
 }
 
 bool DocumentsBrowser::onNextPage() {

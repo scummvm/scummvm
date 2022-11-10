@@ -326,7 +326,7 @@ void TeRenderer::multiplyMatrix(const TeMatrix4x4 &matrix) {
 
 void TeRenderer::optimiseTransparentMeshProperties() {
 	if (!_transparentMeshProperties.empty()) {
-		//warning("FIXME: Implement TeRenderer::optimiseTransparentMeshProperties.");
+		// TODO: Implement TeRenderer::optimiseTransparentMeshProperties.
 	}
 }
 

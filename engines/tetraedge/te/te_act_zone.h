@@ -38,7 +38,6 @@ public:
 	bool flag2;
 
 private:
-	// TODO add private members
 
 };
 

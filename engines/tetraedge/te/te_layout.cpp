@@ -406,12 +406,11 @@ void TeLayout::updateSize() {
 		}
 	}
 
-	// FIXME: Original doesn't call this here, but I seem to need it.
-	updateMesh();
-
 	_updatingSize = false;
 	// TODO: check this, is it the right flag to set?
 	_positionChanged = true;
+
+	updateMesh();
 
 	if (_size != oldSize) {
 		onSizeChanged().call();

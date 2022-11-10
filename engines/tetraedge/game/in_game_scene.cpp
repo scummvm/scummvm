@@ -301,9 +301,13 @@ void InGameScene::deserializeModel(Common::ReadStream &stream, TeIntrusivePtr<Te
 	uint32 indexcount = stream.readUint32LE();
 	uint32 vertexcount = stream.readUint32LE();
 
+	if (indexcount > 100000 || vertexcount > 100000)
+		error("InGameScene::deserializeModel: Unxpected counts %d %d", indexcount, vertexcount);
+
 	mesh.setConf(vertexcount, indexcount, TeMesh::MeshMode_Triangles, 0, 0);
 	for (unsigned int i = 0; i < indexcount; i++)
 		mesh.setIndex(i, stream.readUint32LE());
+
 	for (unsigned int i = 0; i < vertexcount; i++) {
 		TeVector3f32::deserialize(stream, vec);
 		mesh.setVertex(i, vec);
@@ -527,7 +531,7 @@ bool InGameScene::load(const Common::Path &path) {
 	if (!Common::File::exists(path))
 		return false;
 
-	TeScene::close();
+	close();
 	_loadedPath = path;
 	Common::File scenefile;
 	if (!scenefile.open(path))
@@ -563,7 +567,7 @@ bool InGameScene::load(const Common::Path &path) {
 			delete pickmesh;
 			if (modelname.substr(0, 2) != "ZB") {
 				if (objname.empty()) {
-					warning("[InGameScene::load] Unknown type of object named : %s", modelname.c_str());
+					debug("[InGameScene::load] Unknown type of object named : %s", modelname.c_str());
 				} else {
 					InGameScene::Object obj;
 					obj._name = objname;
@@ -619,12 +623,6 @@ bool InGameScene::load(const Common::Path &path) {
 	_charactersShadow = new CharactersShadow();
 	_charactersShadow->create(this);
 	onMainWindowSizeChanged();
-
-	// FIXME: For some reason the game never re-adds kate's model to the list here..
-	// how does it ever get drawn???
-	if (!findKate()) {
-		models().push_back(_character->_model);
-	}
 
 	return true;
 }
@@ -755,6 +753,8 @@ void InGameScene::loadBlockers() {
 		blockersfile.seek(0);
 
 	uint32 nblockers = blockersfile.readUint32LE();
+	if (nblockers > 1024)
+		error("Improbable number of blockers %d", nblockers);
 	_blockers.resize(nblockers);
 	for (unsigned int i = 0; i < nblockers; i++) {
 		_blockers[i]._s = Te3DObject2::deserializeString(blockersfile);
@@ -765,6 +765,8 @@ void InGameScene::loadBlockers() {
 
 	if (hasHeader) {
 		uint32 nrectblockers = blockersfile.readUint32LE();
+		if (nrectblockers > 1024)
+			error("Improbable number of rectblockers %d", nrectblockers);
 		_rectBlockers.resize(nrectblockers);
 		for (unsigned int i = 0; i < nrectblockers; i++) {
 			_rectBlockers[i]._s = Te3DObject2::deserializeString(blockersfile);
@@ -1034,14 +1036,11 @@ void InGameScene::update() {
 		}
 	}
 
-	// TODO: some other stuff with callbacks and spritelayouts here
-	for (auto &callback : _callbacks) {
-	
-	}
-
 	TeLuaGUI::StringMap<TeSpriteLayout *> &sprites = bgGui().spriteLayouts();
 	for (auto &sprite : sprites) {
-	
+		if (_callbacks.contains(sprite._key)) {
+			error("TODO: handle sprite callback in InGameScene::update");
+		}
 	}
 
 	TeScene::update();
@@ -1065,10 +1064,10 @@ void InGameScene::update() {
 	for (Object3D *obj : _object3Ds) {
 		// TODO: update object3ds if they are translating or rotating.
 		if (obj->_translateTime >= 0) {
-		
+			error("TODO: handle _translateTime > 0 in InGameScene::update");
 		}
 		if (obj->_rotateTime >= 0) {
-		
+			error("TODO: handle _rotateTime > 0 in InGameScene::update");
 		}
 	}
 }

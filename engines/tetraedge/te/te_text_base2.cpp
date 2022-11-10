@@ -197,7 +197,7 @@ void TeTextBase2::drawEmptyChar(unsigned int offset) {
 void TeTextBase2::drawLine(TeImage &img, const Common::String &str, int yoffset) {
 	TeIntrusivePtr<TeFont3> font = _fonts[0];
 
-	// FIXME: Add multi-color support if needed.
+	// TODO: Add multi-color support if needed.
 	font->draw(img, str, _fontSize, yoffset, _globalColor, _alignStyle);
 }
 

@@ -158,8 +158,7 @@ void Te3DObject2::removeChildren() {
 }
 
 void Te3DObject2::rotate(const TeQuaternion &rot) {
-	TeQuaternion newRot = rotation();
-	newRot *= rot;
+	const TeQuaternion newRot = rotation() * rot;
 	setRotation(newRot);
 }
 
@@ -243,7 +242,7 @@ void Te3DObject2::setZPosition(float zpos) {
 TeMatrix4x4 Te3DObject2::transformationMatrix() {
 	TeMatrix4x4 retval;
 	retval.translate(position());
-	retval = retval * rotation().toMatrix();
+	retval.rotate(rotation());
 	retval.scale(scale());
 	return retval;
 }

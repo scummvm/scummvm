@@ -25,6 +25,7 @@
 #include "math/quat.h"
 
 #include "tetraedge/te/te_vector3f32.h"
+#include "tetraedge/te/te_matrix4x4.h"
 
 namespace Tetraedge {
 
@@ -68,18 +69,23 @@ public:
 		return retval;
 	}
 
+	TeMatrix4x4 toTeMatrix() const {
+		const TeMatrix4x4 retval = toMatrix();
+		return retval.transpose();
+	}
+
 	static void deserialize(Common::ReadStream &stream, TeQuaternion &dest) {
-		dest.value(0) = stream.readFloatLE();
-		dest.value(1) = stream.readFloatLE();
-		dest.value(2) = stream.readFloatLE();
-		dest.value(3) = stream.readFloatLE();
+		dest.x() = stream.readFloatLE();
+		dest.y() = stream.readFloatLE();
+		dest.z() = stream.readFloatLE();
+		dest.w() = stream.readFloatLE();
 	}
 
 	static void serialize(Common::WriteStream &stream, const TeQuaternion &src) {
-		stream.writeFloatLE(src.value(0));
-		stream.writeFloatLE(src.value(1));
-		stream.writeFloatLE(src.value(2));
-		stream.writeFloatLE(src.value(3));
+		stream.writeFloatLE(src.x());
+		stream.writeFloatLE(src.y());
+		stream.writeFloatLE(src.z());
+		stream.writeFloatLE(src.w());
 	}
 
 	Common::String dump() const;

@@ -40,7 +40,7 @@ namespace Tetraedge {
 class Character : public TeAnimation {
 public:
 	Character();
-	virtual ~Character() {}
+	virtual ~Character();
 
 	struct AnimSettings {
 		AnimSettings() : _stepLeft(0), _stepRight(0) {};
@@ -117,7 +117,7 @@ public:
 	bool loadModel(const Common::String &name, bool param_2);
 	static bool loadSettings(const Common::String &path);
 
-	bool onBonesUpdate(const Common::String &boneName, const TeMatrix4x4 &param_2);
+	bool onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneMatrix);
 	bool onModelAnimationFinished();
 	void permanentUpdate();
 	void placeOnCurve(TeIntrusivePtr<TeBezierCurve> &curve);
@@ -137,7 +137,7 @@ public:
 	float translationFromAnim(const TeModelAnimation &anim, long bone, long frame);
 	TeVector3f32 translationVectorFromAnim(const TeModelAnimation &anim, long bone, long frame);
 	TeTRS trsFromAnim(const TeModelAnimation &anim, long bone, long frame);
-	void update(double percentval);
+	void update(double percentval) override;
 	void updateAnimFrame();
 	void updatePosition(float curveOffset);
 	Common::String walkAnim(WalkPart part);
@@ -171,7 +171,6 @@ public:
 	Character *charLookingAt() { return _charLookingAt; }
 	bool lookingAtTallThing() const { return _lookingAtTallThing; }
 	void setLookingAtTallThing(bool val) { _lookingAtTallThing = val; }
-	
 
 private:
 	float _curveOffset;
@@ -209,10 +208,11 @@ private:
 	bool _needsSomeUpdate;
 	bool _positionFlag;
 	bool _lookingAtTallThing;
-	
 	bool _hasAnchor;
+
 	TeVector2f32 _headRotation;
 	TeVector2f32 _lastHeadRotation;
+	TeVector3f32 _lastHeadBoneTrans;
 
 	TeVector3f32 _positionCharacter;
 

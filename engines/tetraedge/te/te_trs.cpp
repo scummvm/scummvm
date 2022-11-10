@@ -41,8 +41,8 @@ TeTRS::TeTRS() {
 TeTRS TeTRS::lerp(const TeTRS &other, float amount) {
 	TeTRS result;
 	result._rot = _rot.slerpQuat(other._rot, amount);
-	result._trans = _trans * (1.0 - amount) + other._trans;
-	result._scale = _scale * (1.0 - amount) + other._scale;
+	result._trans = _trans * (1.0 - amount) + other._trans * amount;
+	result._scale = _scale * (1.0 - amount) + other._scale * amount;
 	return result;
 }
 

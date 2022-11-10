@@ -34,8 +34,6 @@
 namespace Tetraedge {
 
 TeModel::TeModel() : _enableLights(false), _skipSkinOffsets(false), _matrixForced(false) {
-	// TODO: set 0x17c to 1.0
-	// TODO: set 0x178, 0x170 to 0
 	_modelAnim.setDeleteFn(&TeModelAnimation::deleteLater);
 	_modelVertexAnim.setDeleteFn(&TeModelVertexAnimation::deleteLater);
 	create();
@@ -45,7 +43,7 @@ TeModel::~TeModel() {
 	destroy();
 }
 
-void TeModel::blendAnim(TeIntrusivePtr<TeModelAnimation>& anim, float seconds, bool repeat) {
+void TeModel::blendAnim(TeIntrusivePtr<TeModelAnimation> &anim, float seconds, bool repeat) {
 	if (!_modelAnim) {
 		setAnim(anim, repeat);
 	} else {
@@ -83,7 +81,7 @@ void TeModel::create() {
 
 void TeModel::destroy() {
 	_weightElements.clear();
-	// TODO: clear matrix array 0x148
+	_lerpedElements.clear();
 	_meshes.clear();
 	_bones.clear();
 	_boneMatricies.clear();
@@ -104,18 +102,18 @@ void TeModel::draw() {
 		renderer->sendModelMatrix(transform);
 		renderer->pushMatrix();
 		renderer->multiplyMatrix(transform);
-		/*if (name() == "Kate") {
+		if (name() == "Kate") {
 			debug("Draw model %p (%s, %d meshes)", this, name().empty() ? "no name" : name().c_str(), _meshes.size());
 			//adebug("   renderMatrix %s", renderer->currentMatrix().toString().c_str());
 			//debug("   position   %s", position().dump().c_str());
 			debug("   worldPos   %s", worldPosition().dump().c_str());
 			//debug("   scale      %s", scale().dump().c_str());
-			debug("   worldScale %s", worldScale().dump().c_str());
+			//debug("   worldScale %s", worldScale().dump().c_str());
 			//debug("   rotation   %s", rotation().dump().c_str());
 			debug("   worldRot   %s", worldRotation().dump().c_str());
-		}*/
+		}
 		for (TeMesh &mesh : _meshes) {
-			// TODO: Set some flag in the mesh here to this->field_0x158??
+			// TODO: Set some flag (_drawWires?) in mesh to this->field_0x158??
 			mesh.draw();
 		}
 		renderer->popMatrix();
@@ -137,16 +135,17 @@ TeTRS TeModel::getBone(TeIntrusivePtr<TeModelAnimation> anim, unsigned int num) 
 	return _bones[num]._trs;
 }
 
-TeMatrix4x4 TeModel::lerpElementsMatrix(unsigned long weightsNum, Common::Array<TeMatrix4x4> &matricies) {
+TeMatrix4x4 TeModel::lerpElementsMatrix(unsigned int weightsNum, const Common::Array<TeMatrix4x4> &matricies) {
 	TeMatrix4x4 retval;
+	// Start with a 0 matrix.
 	for (unsigned int i = 0; i < 4; i++)
 		retval.setValue(i, i, 0);
 
-	// TODO: Finish this.
-	for (auto &weights : _weightElements) {
-	
+	const Common::Array<weightElement> &weights = _weightElements[weightsNum];
+	for (const auto &weight : weights) {
+		const TeMatrix4x4 offset = matricies[weight._x].meshScale(weight._weight);
+		retval.meshAdd(offset);
 	}
-
 
 	return retval;
 }
@@ -172,14 +171,14 @@ void TeModel::update() {
 		matricies.resize(_bones.size());
 		for (unsigned int i = 0; i < _bones.size(); i++) {
 			const bone &b = _bones[i];
-			TeMatrix4x4 matrix = TeMatrix4x4::fromTRS(b._trs);
+			const TeMatrix4x4 matrix = TeMatrix4x4::fromTRS(b._trs);
 			if (b._x == -1 || _bones.size() < 2) {
 				matricies[0] = matrix;
 			} else {
 				matricies[i] = matricies[b._x] * matrix;
 			}
 		}
-		
+
 		_boneMatricies.resize(_bones.size());
 		_lerpedElements.resize(_weightElements.size());
 
@@ -210,38 +209,83 @@ void TeModel::update() {
 			}
 			if (_bones.size() < 2 || _bones[b]._x == -1) {
 				_boneMatricies[b] = matrix;
-				// TODO: Rotate by _field_0x170
+				_boneMatricies[b].rotate(_boneRotation);
 			} else {
 				_boneMatricies[b] = (invertx * _boneMatricies[_bones[b]._x]) * matrix;
 			}
 			_boneMatricies[b] = invertx * _boneMatricies[b];
-			// TODO: bonesUpdateSignal.call(_bones[b]._name, _boneMatricies[b]);
+			_bonesUpdatedSignal.call(_bones[b]._name, _boneMatricies[b]);
 		}
-		
+
 		if (!_skinOffsets.empty() && !_bones.empty()) {
 			for (unsigned int b = 0; b < _bones.size(); b++) {
 				_boneMatricies[b] = _boneMatricies[b] * _skinOffsets[b];
 			}
 		}
-		
-		if (_skipSkinOffsets == 0 && !_weightElements.empty()) {
+
+		if (!_skipSkinOffsets && !_weightElements.empty()) {
 			for (unsigned int i = 0; i < _weightElements.size(); i++) {
 				_lerpedElements[i] = lerpElementsMatrix(i, _boneMatricies);
 			}
 		}
-		
+
 		for (unsigned int m = 0; m < _meshes.size(); m++) {
-			if (!_meshes[m].visible())
+			TeMesh &mesh = _meshes[m];
+			if (!mesh.visible())
 				continue;
+
 			if (!_skipSkinOffsets && _bones.size() < 2 ) {
-				if (_meshes[m].name() == _modelVertexAnim->head()) {
-					_meshes[m].update(_modelVertexAnim);
-					// TODO: lines 440 - 443.. set some vals and goto LAB_doMeshBlends;
+				if (_modelVertexAnim && mesh.name() == _modelVertexAnim->head()) {
+					mesh.update(_modelVertexAnim);
+					// TODO: lines 422 - 427.. set some vals and goto LAB_doMeshBlends;
 				}
-				_meshes[m].update(&_boneMatricies, &_lerpedElements);
-				// TODO: Set some vals here..
+				mesh.update(&_boneMatricies, &_lerpedElements);
 			} else {
-				//warning("TODO: Finish TeModel::update. (disasm 456 ~ 693)");
+				mesh.resizeUpdatedTables(mesh.numVerticies());
+				const Common::Array<TeVector3f32> *verticies = nullptr;
+				if (_modelVertexAnim && mesh.name() == _modelVertexAnim->head())
+					verticies = &_modelVertexAnim->getVertices();
+
+				for (unsigned int i = 0; i < mesh.numVerticies(); i++) {
+					TeVector3f32 vertex;
+					if (!verticies) {
+						vertex = mesh.preUpdatedVertex(i);
+					} else {
+						if (i < verticies->size())
+							vertex = (*verticies)[i];
+					}
+					TeVector3f32 normal = mesh.preUpdatedNormal(i);
+					int idx = (int)mesh.matrixIndex(i);
+
+					TeVector3f32 updatedvertex;
+					TeVector3f32 updatednormal;
+
+					if (idx < (int)_bones.size()) {
+						updatedvertex = vertex;
+						if (!verticies)
+							updatedvertex = _boneMatricies[idx] * updatedvertex;
+						updatednormal = _boneMatricies[idx] * normal;
+					} else {
+						idx -= _bones.size();
+						for (unsigned int w = 0; w < _weightElements[idx].size(); w++) {
+							const TeMatrix4x4 &wmatrix = _boneMatricies[_weightElements[idx][w]._x];
+							float weight = _weightElements[idx][w]._weight;
+							updatedvertex = updatedvertex + ((wmatrix * vertex) * weight);
+							updatednormal = updatednormal + (wmatrix.mult3x3(normal) * weight);
+						}
+					}
+
+					mesh.setUpdatedVertex(i, updatedvertex);
+					mesh.setUpdatedNormal(i, updatednormal);
+				}
+			}
+
+			for (MeshBlender *mb : _meshBlenders) {
+				if (mesh.name().contains(mb->_name)) {
+					// TODO: Finish TeModel::update. (disasm 585 ~ 644), LAB_doMeshBlends
+					//float blendamount = MIN(mb->_timer.getTimeFromStart() / 1000000.0f, 1.0f);
+
+				}
 			}
 		}
 	} else {
@@ -394,7 +438,7 @@ bool TeModel::loadWeights(Common::ReadStream &stream, Common::Array<weightElemen
 		error("Improbable number of weights %d", (int)nweights);
 	weights.resize(nweights);
 	for (unsigned int i = 0; i < nweights; i++) {
-		weights[i]._w = stream.readFloatLE();
+		weights[i]._weight = stream.readFloatLE();
 		weights[i]._x = stream.readUint16LE();
 		stream.readUint16LE();
 	}
@@ -413,7 +457,7 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 	if (vertcount > 100000 || matcount > 100000 || matidxcount > 100000 || idxcount > 100000)
 		error("Improbable mesh sizes %d %d %d %d", vertcount, matcount, matidxcount, idxcount);
 
-	mesh.setConf(vertcount, idxcount, TeMesh::MeshMode_TriangleFan, matcount, matidxcount);
+	mesh.setConf(vertcount, idxcount, TeMesh::MeshMode_Triangles, matcount, matidxcount);
 
 	uint32 flags = stream.readUint32LE();
 	if (flags & 1)

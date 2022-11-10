@@ -105,6 +105,8 @@ void TeBezierCurve::deserialize(Common::ReadStream &stream, TeBezierCurve &curve
 	curve._lengthNeedsUpdate = false;
 	curve._length = stream.readFloatLE();
 	uint32 npoints = stream.readUint32LE();
+	if (npoints > 1000000)
+		error("TeBezierCurve::deserialize improbable number of control ponts %d", npoints);
 
 	for (unsigned int i = 0; i < npoints; i++) {
 		TeVector3f32 vec;
