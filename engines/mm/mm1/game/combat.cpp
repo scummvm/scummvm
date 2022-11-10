@@ -842,72 +842,77 @@ void Combat::displaySpellResult(const Common::Array<InfoMessage> &msgs) {
 }
 
 void Combat::iterateMonsters1() {
+	_spellMonsterCount = _monsterList.size();
+	iterateMonsters1Inner();
+}
+
+void Combat::iterateMonsters1Inner() {
 	Common::String line1 = Common::String::format("|%s| %s",
 		g_globals->_currCharacter->_name,
 		STRING["spells.casts_spell"].c_str());
-	Common::Array<InfoMessage> msgs;
-	_spellMonsterCount = _monsterList.size();
 
-	// TODO: Finish loop
-	for (;;) {
-		const Common::String monsterName = _monsterP->_name;
-		bool affects = !monsterLevelThreshold();
-		if (affects) {
-			if (g_globals->_spellsState._mmVal1) {
-				proc2();
-				affects = !_val9;
-			}
+	const Common::String monsterName = _monsterP->_name;
+	bool affects = !monsterLevelThreshold();
+	if (affects) {
+		if (g_globals->_spellsState._mmVal1) {
+			proc2();
+			affects = !_val9;
+		}
+	}
+
+	byte idx = g_globals->_spellsState._mmVal2;
+	if (affects && idx) {
+		if (--idx >= 8)
+			idx = 0;
+
+		static const byte FLAGS[8] = {
+			0x40, 0x20, 0x60, 0x10, 8, 4, 2, 1
+		};
+		affects = (_monsterP->_field1a & FLAGS[idx]) != FLAGS[idx];
+	}
+
+	Common::String effect;
+	if (!affects) {
+		effect = STRING["spells.is_not_affected"];
+
+	} else {
+		_monsterStatus[getMonsterIndex()] |=
+			g_globals->_spellsState._newCondition;
+
+		byte bits = g_globals->_spellsState._newCondition;
+		int effectNum;
+		for (effectNum = 0; effectNum < 8; ++effectNum, bits >>= 1) {
+			if (bits & 1)
+				break;
 		}
 
-		byte idx = g_globals->_spellsState._mmVal2;
-		if (affects && idx) {
-			if (--idx >= 8)
-				idx = 0;
+		effect = STRING[Common::String::format(
+			"spells.monster_effects.%d", effectNum)];
+	}
 
-			static const byte FLAGS[8] = {
-				0x40, 0x20, 0x60, 0x10, 8, 4, 2, 1
-			};
-			affects = (_monsterP->_field1a & FLAGS[idx]) != FLAGS[idx];
-		}
+	InfoMessage msg(
+		0, 0, line1,
+		0, 2, Common::String::format("%s %s",
+			monsterName.c_str(), effect.c_str()
+	));
 
-		Common::String effect;
-		if (!affects) {
-			effect = STRING["spells.is_not_affected"];
+	msg._delaySeconds = 3;
 
-		} else {
-			_monsterStatus[getMonsterIndex()] |=
-				g_globals->_spellsState._newCondition;
-
-			byte bits = g_globals->_spellsState._newCondition;
-			int effectNum;
-			for (effectNum = 0; effectNum < 8; ++effectNum, bits >>= 1) {
-				if (bits & 1)
-					break;
-			}
-
-			effect = STRING[Common::String::format(
-				"spells.monster_effects.%d", effectNum)];
-		}
-
-		msgs.push_back(InfoMessage(
-			0, 0, line1,
-			0, 2, Common::String::format("%s %s",
-				monsterName.c_str(),
-				STRING["spells.is_not_affected"].c_str()
-			)
-		));
-
-		if (!--g_globals->_spellsState._resistanceType)
-			break;
+	bool isEnd = !--g_globals->_spellsState._resistanceType;
+	if (!isEnd) {
 		++_destMonsterNum;
 		if ((int)_spellMonsterCount <= _destMonsterNum)
-			break;
-		if (((int)_monsterList.size() + _destMonsterNum - _spellMonsterCount) < 0)
-			break;
+			isEnd = true;
+	}
+	if (!isEnd)
+		isEnd = ((int)_monsterList.size() + _destMonsterNum - _spellMonsterCount) < 0;
 
-		// TODO: Redraw monster list, display message, and wait
-		// before moving to next monster
-	} 
+	if (!isEnd) {
+		// Move to next iteration after display timeout
+		msg._ynCallback = []() {
+			g_globals->_combat->iterateMonsters1Inner();
+		};
+	}
 }
 
 void Combat::iterateMonsters2() {
