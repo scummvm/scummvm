@@ -909,7 +909,7 @@ void Combat::iterateMonsters1Inner() {
 
 	if (!isEnd) {
 		// Move to next iteration after display timeout
-		msg._ynCallback = []() {
+		msg._timeoutCallback = []() {
 			g_globals->_combat->iterateMonsters1Inner();
 		};
 	}
@@ -992,7 +992,7 @@ void Combat::iterateMonsters2Inner() {
 
 	if (!isEnd) {
 		// Move to next iteration after display timeout
-		msg._ynCallback = []() {
+		msg._timeoutCallback = []() {
 			g_globals->_combat->iterateMonsters2Inner();
 		};
 	} else {

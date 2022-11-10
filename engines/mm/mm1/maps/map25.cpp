@@ -104,7 +104,7 @@ void Map25::special() {
 				SoundMessage msg(STRING["maps.map25.weeping"]);
 				if (getRandomNumber(100) >= 99) {
 					msg._delaySeconds = 3;
-					msg._ynCallback = []() {
+					msg._timeoutCallback = []() {
 						g_globals->_encounters.execute();
 					};
 				}
