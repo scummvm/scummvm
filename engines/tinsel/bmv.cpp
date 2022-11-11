@@ -361,7 +361,7 @@ void BMVPlayer::t3PrepBMV(const byte *src, uint32 len, int32 deltaOffset) {
 
 	Length of each operation can be encoded either directly or via special variable length encoding. From a nibble two bottom bits are preprended to final value, then next nibble is processed, if a new nibble is needed next byte is read from the stream. Process ends if any of two upper bits are set, in that case two upper bits are prepended as well.
 
-	Which length is going to be used depends on an quite convoluted encoding and there are two ways how they are encoded (note that operations still keep switching).
+	Which length is going to be used depends on a quite convoluted encoding and there are two ways how they are encoded (note that operations still keep switching).
 	In outer loop, if:
 	- hi nibble has any of 2 upper bits set then only byte is read in this iteration and if:
 		- lo nibble has any of 2 upper bits set then length is between 7-30

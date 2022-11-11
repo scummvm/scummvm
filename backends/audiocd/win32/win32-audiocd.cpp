@@ -62,7 +62,7 @@
 #include <winioctl.h>
 #if _MSC_VER < 1900
 // WORKAROUND: Older versions of MSVC might not supply DDK headers by default.
-// Visual Studio 2015 contains the required headers. We use a compatability
+// Visual Studio 2015 contains the required headers. We use a compatibility
 // header from MinGW's w32api for all older versions.
 // TODO: Limit this to the Visual Studio versions which actually require this.
 #include "msvc/ntddcdrm.h"

@@ -1722,7 +1722,7 @@ void BladeRunnerEngine::setExtraCNotify(uint8 val) {
 	_extraCNotify = val;
 }
 
-// Check if an polled event belongs to a currently disabled keymap and, if so, drop it.
+// Check if a polled event belongs to a currently disabled keymap and, if so, drop it.
 bool BladeRunnerEngine::shouldDropRogueCustomEvent(const Common::Event &evt) {
 	if (getEventManager()->getKeymapper() != nullptr) {
 		Common::KeymapArray kmpsArr = getEventManager()->getKeymapper()->getKeymaps();

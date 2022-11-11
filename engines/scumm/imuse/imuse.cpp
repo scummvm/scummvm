@@ -1588,7 +1588,7 @@ void IMuseInternal::copyGlobalInstrument(byte slot, Instrument *dest) {
 	const byte defaultInstr[30] = { 0 };
 
 	if (_global_instruments[slot].isValid()) {
-		// In case we have an valid instrument set up, copy it to the part.
+		// In case we have a valid instrument set up, copy it to the part.
 		_global_instruments[slot].copy_to(dest);
 	} else if (_soundType == MDT_PCSPK) {
 		debug(0, "Trying to use non-existent global PC Speaker instrument %d", slot);
