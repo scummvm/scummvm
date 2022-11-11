@@ -82,6 +82,7 @@ protected:
 	int _destMonsterNum = 0;
 	int _monstersDestroyedCtr = 0;
 	bool _turnUndeadUsed = false;
+	bool _divineInterventionUsed = false;
 	size_t _spellMonsterCount = 0;
 
 	/**
@@ -238,11 +239,13 @@ protected:
 	void updateMonsterStatus();
 
 private:
+	void spellFailed();
 	void destroyUndead();
 	bool monsterLevelThreshold() const;
 	void iterateMonsters1Inner();
 	void iterateMonsters2Inner();
 	void updateArr3();
+	void summonLightning2();
 
 public:
 	/**
@@ -257,6 +260,9 @@ public:
 
 	void turnUndead();
 	void summonLightning();
+	void paralyze();
+	bool divineIntervention();
+	void holyWord();
 };
 
 } // namespace Game

@@ -54,6 +54,7 @@ private:
 	/**
 	 * Restores an amount of Hp
 	 */
+	static void restoreHp(Character &c, uint16 hp);
 	static void restoreHp(uint16 hp);
 
 	/**
@@ -104,14 +105,19 @@ private:
 	static SpellResult cleric48_surface();
 	static SpellResult cleric51_deadlySwarm();
 	static SpellResult cleric52_dispelMagic();
+	static SpellResult cleric53_paralyze();
 	static SpellResult cleric54_removeCondition();
 	static SpellResult cleric55_restoreEnergy();
+	static SpellResult cleric61_moonRay();
 	static SpellResult cleric62_raiseDead();
 	static SpellResult cleric63_rejuvinate();
 	static SpellResult cleric64_stoneToFlesh();
 	static SpellResult cleric65_townPortal();
+	static SpellResult cleric71_divineIntervention();
+	static SpellResult cleric72_holyWord();
 	static SpellResult cleric73_protectionFromElements();
 	static SpellResult cleric74_resurrection();
+	static SpellResult cleric75_sunRay();
 
 	static SpellResult wizard12_detectMagic();
 	static SpellResult wizard15_leatherSkin();
