@@ -70,21 +70,21 @@ SpellsParty::SpellFn SpellsParty::SPELLS[SPELLS_COUNT] = {
 	cleric46_summonLightning,
 	cleric47_superHeroism,
 	cleric48_surface,
-	placeholder,
+	cleric51_deadlySwarm,
 	cleric52_dispelMagic,
-	placeholder,
+	cleric53_paralyze,
 	cleric54_removeCondition,
 	cleric55_restoreEnergy,
-	placeholder,
+	cleric61_moonRay,
 	cleric62_raiseDead,
 	cleric63_rejuvinate,
 	cleric64_stoneToFlesh,
 	cleric65_townPortal,
-	placeholder,
-	placeholder,
+	cleric71_divineIntervention,
+	cleric72_holyWord,
 	cleric73_protectionFromElements,
 	cleric74_resurrection,
-	placeholder,
+	cleric75_sunRay,
 
 	placeholder,
 	wizard12_detectMagic,
@@ -463,6 +463,11 @@ SpellResult SpellsParty::cleric52_dispelMagic() {
 	}
 }
 
+SpellResult SpellsParty::cleric53_paralyze() {
+	g_globals->_combat->paralyze();
+	return SR_SUCCESS_SILENT;
+}
+
 SpellResult SpellsParty::cleric54_removeCondition() {
 	if (_destChar->_condition & BAD_CONDITION) {
 		return SR_FAILED;
@@ -487,6 +492,28 @@ SpellResult SpellsParty::cleric55_restoreEnergy() {
 	} else {
 		return SR_FAILED;
 	}
+}
+
+SpellResult SpellsParty::cleric61_moonRay() {
+	SpellsState &ss = g_globals->_spellsState;
+
+	// Heal the party
+	int hp = getRandomNumber(10) + getRandomNumber(10) +
+		getRandomNumber(10);
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		restoreHp(c, hp);
+	}
+
+	// Damage the monsters
+	g_globals->_combat->resetDestMonster();
+	ss._newCondition = hp;
+	ss._mmVal1++;
+	ss._mmVal2 = 5;
+
+	g_globals->_combat->iterateMonsters2();
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult SpellsParty::cleric62_raiseDead() {
@@ -577,6 +604,20 @@ SpellResult SpellsParty::cleric65_townPortal() {
 	return SR_SUCCESS_SILENT;
 }
 
+SpellResult SpellsParty::cleric71_divineIntervention() {
+	return g_globals->_combat->divineIntervention() ?
+		SR_SUCCESS_DONE : SR_FAILED;
+}
+
+SpellResult SpellsParty::cleric72_holyWord() {
+	Character &c = *g_globals->_currCharacter;
+	if (c._alignment != c._alignmentInitial)
+		return SR_FAILED;
+
+	g_globals->_combat->holyWord();
+	return SR_SUCCESS_SILENT;
+}
+
 SpellResult SpellsParty::cleric73_protectionFromElements() {
 	int amount = g_globals->_currCharacter->_level._current + 25;
 
@@ -601,6 +642,17 @@ SpellResult SpellsParty::cleric74_resurrection() {
 	restoreHp(1);
 
 	return SR_SUCCESS_DONE;
+}
+
+SpellResult SpellsParty::cleric75_sunRay() {
+	SpellsState &ss = g_globals->_spellsState;
+	ss._newCondition = getRandomNumber(51) + 49;
+	ss._mmVal1++;
+	ss._mmVal2++;
+	ss._resistanceType = RESISTANCE_FIRE;
+
+	g_globals->_combat->iterateMonsters2();
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult SpellsParty::wizard12_detectMagic() {
@@ -731,9 +783,13 @@ SpellResult SpellsParty::wizard72_duplication() {
 }
 
 void SpellsParty::restoreHp(uint16 hp) {
-	_destChar->_hpBase = MIN((int)(_destChar->_hpBase + hp), (int)_destChar->_hpMax);
-	if (!(_destChar->_condition & BAD_CONDITION))
-		_destChar->_condition &= ~UNCONSCIOUS;
+	restoreHp(*_destChar, hp);
+}
+
+void SpellsParty::restoreHp(Character &c, uint16 hp) {
+	c._hpBase = MIN((int)(c._hpBase + hp), (int)c._hpMax);
+	if (!(c._condition & BAD_CONDITION))
+		c._condition &= ~UNCONSCIOUS;
 }
 
 void SpellsParty::addLight(int amount) {

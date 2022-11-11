@@ -167,11 +167,6 @@ private:
 	 */
 	void handlePartyEffects();
 
-	/**
-	 * Adds text for damage effects on the party
-	 */
-	void handlePartyDamage();
-
 	void setCondition(byte newCondition);
 	void proc9();
 
@@ -184,6 +179,11 @@ protected:
 	virtual int getMonsterIndex() const = 0;
 	virtual void dispelParty() = 0;
 	virtual void removeMonster() = 0;
+
+	/**
+	 * Adds text for damage effects on the party
+	 */
+	void handlePartyDamage();
 
 public:
 	SpellsMonsters();

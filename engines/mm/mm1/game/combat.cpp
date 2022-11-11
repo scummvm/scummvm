@@ -67,9 +67,9 @@ void Combat::clear() {
 	_attackAttr2.clear();
 	_timesHit = 0;
 	_isShooting = false;
-	_monstersDestroyedCtr = 0;
 
 	_turnUndeadUsed = false;
+	_divineInterventionUsed = false;
 	_monstersDestroyedCtr = 0;
 
 	// TODO: clear everything
@@ -1016,6 +1016,15 @@ void Combat::resetDestMonster() {
 	g_globals->_spellsState._resistanceType = RESISTANCE_15;
 }
 
+void Combat::spellFailed() {
+	_arr3[_currentChar] = 1;
+
+	SoundMessage msg(10, 2, Common::String::format("*** %s ***",
+		STRING["spells.failed"].c_str()));
+	msg._delaySeconds = 3;
+	displaySpellResult(msg);
+}
+
 bool Combat::monsterLevelThreshold() const {
 	int level = _monsterP->_field19 & FIELD19_LEVEL;
 	return (level != 0) &&
@@ -1044,6 +1053,8 @@ void Combat::turnUndead() {
 
 		if (_monstersDestroyedCtr)
 			displaySpellResult(InfoMessage(5, 1, STRING["spells.monsters_destroyed"]));
+		else
+			displaySpellResult(InfoMessage(15, 1, STRING["spells.no_effect"]));
 	}
 
 	_arr3[_currentChar] = 1;
@@ -1055,12 +1066,92 @@ void Combat::destroyUndead() {
 }
 
 void Combat::summonLightning() {
-	// TODO: Summon lightning
-	//SpellsState &ss = g_globals->_spellsState;
+	SpellsState &ss = g_globals->_spellsState;
 
 	if (_destMonsterNum < _attackerVal) {
-		// TODO
+		Common::String line1 = Common::String::format("|%s| %s",
+			g_globals->_currCharacter->_name,
+			STRING["spells.casts_spell"].c_str());
+
+		ss._newCondition = g_globals->_currCharacter->_level * 2 + 4;
+		ss._mmVal1++;
+		ss._mmVal2++;
+		ss._resistanceType = RESISTANCE_ELECTRICITY;
+		handlePartyDamage();
+
+		InfoMessage msg(0, 0, line1);
+		msg._delaySeconds = 3;
+		msg._timeoutCallback = []() {
+			g_globals->_combat->summonLightning2();
+		};
+		displaySpellResult(msg);
+	} else {
+		summonLightning2();
 	}
+}
+
+void Combat::summonLightning2() {
+	SpellsState &ss = g_globals->_spellsState;
+	ss._mmVal1 = 1;
+	ss._mmVal2 = 2;
+	ss._resistanceType = RESISTANCE_ELECTRICITY;
+	ss._newCondition = getRandomNumber(29) + 3;
+
+	iterateMonsters2();
+}
+
+void Combat::paralyze() {
+	SpellsState &ss = g_globals->_spellsState;
+	g_globals->_combat->resetDestMonster();
+
+	ss._mmVal1++;
+	ss._mmVal2 = 6;
+	ss._resistanceType = _attackerVal;
+	ss._newCondition = BAD_CONDITION;
+
+	iterateMonsters1();
+}
+
+bool Combat::divineIntervention() {
+	Character &c = *g_globals->_currCharacter;
+	if (c._alignment != c._alignmentInitial || _divineInterventionUsed)
+		return false;
+
+	_divineInterventionUsed = true;
+	int age = (int)c._level + 5;
+	if (c._level > 255)
+		return false;
+
+	c._age = age;
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		c = g_globals->_party[i];
+
+		if (c._condition != ERADICATED) {
+			c._condition = 0;
+			c._hpBase = c._hp;
+			c._hpMax = c._hpBase;
+		}
+	}
+
+	return true;
+}
+
+void Combat::holyWord() {
+	_monstersDestroyedCtr = 0;
+	for (uint i = 0; i < _monsterList.size(); ++i) {
+		monsterSetPtr(i);
+		if (_monsterP->_field19 & FIELD19_UNDEAD) {
+			destroyUndead();
+			++_monstersDestroyedCtr;
+		}
+	}
+
+	if (_monstersDestroyedCtr)
+		displaySpellResult(InfoMessage(5, 1, STRING["spells.monsters_destroyed"]));
+	else
+		displaySpellResult(InfoMessage(15, 1, STRING["spells.no_effect"]));
+	_arr3[_currentChar] = 1;
 }
 
 } // namespace Game

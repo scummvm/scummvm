@@ -33,6 +33,10 @@ struct SpellsState {
 	byte _mmVal5 = 0;
 	byte _mmVal7 = 0;
 	byte _resistanceType = RESISTANCE_MAGIC;
+
+	// TODO: Is this variable different in different contexts?
+	// In some places it's used to hold a new condition,
+	// but others, like moonRay, uses it to hold Hp
 	byte _newCondition = 0;
 
 	/**
