@@ -212,7 +212,7 @@ bool EoBInfProcessor::preventRest() const {
 	return _preventRest ? true : false;
 }
 
-void EoBInfProcessor::loadState(Common::SeekableSubReadStreamEndian &in, bool origFile) {
+void EoBInfProcessor::loadState(Common::SeekableReadStreamEndian &in, bool origFile) {
 	_preventRest = (_vm->game() == GI_EOB1 && origFile) ? 0 : in.readByte();
 	int numFlags = (_vm->game() == GI_EOB1 && origFile) ? 12 : 18;
 	for (int i = 0; i < numFlags; i++)
