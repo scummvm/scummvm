@@ -27,12 +27,12 @@
 namespace Gob {
 
 RXYFile::RXYFile(Common::SeekableReadStream &rxy) : _width(0), _height(0) {
-	Common::SeekableSubReadStreamEndian sub(&rxy, 0, rxy.size(), false, DisposeAfterUse::NO);
+	Common::SeekableReadStreamEndianWrapper sub(&rxy, false, DisposeAfterUse::NO);
 
 	load(sub);
 }
 
-RXYFile::RXYFile(Common::SeekableSubReadStreamEndian &rxy) : _width(0), _height(0) {
+RXYFile::RXYFile(Common::SeekableReadStreamEndian &rxy) : _width(0), _height(0) {
 	load(rxy);
 }
 
@@ -70,7 +70,7 @@ const RXYFile::Coordinates &RXYFile::operator[](uint i) const {
 	return _coords[i];
 }
 
-void RXYFile::load(Common::SeekableSubReadStreamEndian &rxy) {
+void RXYFile::load(Common::SeekableReadStreamEndian &rxy) {
 	if (rxy.size() < 2)
 		return;
 
