@@ -108,7 +108,7 @@ Common::SeekableReadStreamEndian *SegaCDResource::resStreamEndian(int resID) {
 	if (!str)
 		return 0;
 
-	return new EndianAwareStreamWrapper(str, _str->isBE(), true);
+	return new Common::SeekableReadStreamEndianWrapper(str, _str->isBE(), DisposeAfterUse::YES);
 }
 
 Common::SeekableReadStream *SegaCDResource::resStream(int resID) {

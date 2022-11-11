@@ -44,7 +44,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 	if (!saveFile)
 		return Common::Error(Common::kReadingFailed);
 
-	Common::SeekableSubReadStreamEndian in(saveFile, saveFile->pos(), saveFile->size(), !header.originalSave, DisposeAfterUse::YES);
+	Common::SeekableReadStreamEndianWrapper in(saveFile, !header.originalSave, DisposeAfterUse::YES);
 	_loading = true;
 
 	if (slot != -1)
@@ -698,7 +698,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 	if (sourcePlatform == Common::kPlatformDOS && padding && (exp & 0xFF000000))
 		sourcePlatform = Common::kPlatformAmiga;
 
-	Common::SeekableSubReadStreamEndian in(fs, 0, fs->size(), sourcePlatform == Common::kPlatformAmiga, DisposeAfterUse::YES);
+	Common::SeekableReadStreamEndianWrapper in(fs, sourcePlatform == Common::kPlatformAmiga, DisposeAfterUse::YES);
 
 	if (_flags.gameID == GI_EOB1) {
 		// Nothing to read here for EOB 1. Original EOB 1 has
