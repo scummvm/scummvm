@@ -120,7 +120,6 @@ bool SRTParser::parseFile(const char *fname) {
 	cleanup();
 
 	if (!f.open(fname)) {
-		_entries.push_back(new SRTEntry(0, 0, 99999999, fname));
 		return false;
 	}
 
@@ -267,6 +266,9 @@ void Subtitles::setFont(const char *fontname, int height) {
 void Subtitles::loadSRTFile(const char *fname) {
 	debug(1, "loadSRTFile('%s')", fname);
 
+	if (_subtitleDev) {
+		_fname = fname;
+	}
 	_loaded = _srtParser.parseFile(fname);
 }
 
@@ -290,18 +292,20 @@ void Subtitles::setPadding(uint16 horizontal, uint16 vertical) {
 }
 
 bool Subtitles::drawSubtitle(uint32 timestamp, bool force) {
-	Common::String subtitle = _srtParser.getSubtitle(timestamp);
-	
-	if (!_loaded) {
-		if (!_subtitleDev)
-			return false;
+	Common::String subtitle;
+	if (_loaded) {
+		subtitle = _srtParser.getSubtitle(timestamp);
+	} else if (_subtitleDev) {
+		subtitle = _fname;
 		uint32 hours, mins, secs, msecs;
 		secs = timestamp / 1000;
 		hours = secs / 3600;
 		mins = (secs / 60) % 60;
 		secs %= 60;
 		msecs = timestamp % 1000;
-		subtitle += " " + Common::String::format("%u:%u:%u,%u", hours, mins, secs, msecs);
+		subtitle += " " + Common::String::format("%02u:%02u:%02u,%03u", hours, mins, secs, msecs);
+	} else {
+		return false;
 	}
 
 	if (!force && _overlayHasAlpha && subtitle == _subtitle)
