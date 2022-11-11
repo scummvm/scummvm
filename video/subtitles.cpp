@@ -231,7 +231,7 @@ Common::String SRTParser::getSubtitle(uint32 timestamp) {
 
 #define SHADOW 1
 
-Subtitles::Subtitles() : _loaded(false), _font(nullptr), _hPad(0), _vPad(0) {
+Subtitles::Subtitles() : _loaded(false), _font(nullptr), _hPad(0), _vPad(0), _overlayHasAlpha(true) {
 	_surface = new Graphics::Surface();
 	_subtitleDev = ConfMan.getBool("subtitle_dev");
 }
@@ -273,7 +273,9 @@ void Subtitles::loadSRTFile(const char *fname) {
 void Subtitles::setBBox(const Common::Rect bbox) {
 	_bbox = bbox;
 
-	_surface->create(_bbox.width() + SHADOW * 2, _bbox.height() + SHADOW * 2, g_system->getOverlayFormat());
+	Graphics::PixelFormat overlayFormat = g_system->getOverlayFormat();
+	_overlayHasAlpha = overlayFormat.aBits() != 0;
+	_surface->create(_bbox.width() + SHADOW * 2, _bbox.height() + SHADOW * 2, overlayFormat);
 }
 
 void Subtitles::setColor(byte r, byte g, byte b) {
@@ -287,12 +289,12 @@ void Subtitles::setPadding(uint16 horizontal, uint16 vertical) {
 	_vPad = vertical;
 }
 
-void Subtitles::drawSubtitle(uint32 timestamp, bool force) {
+bool Subtitles::drawSubtitle(uint32 timestamp, bool force) {
 	Common::String subtitle = _srtParser.getSubtitle(timestamp);
 	
 	if (!_loaded) {
 		if (!_subtitleDev)
-			return;
+			return false;
 		uint32 hours, mins, secs, msecs;
 		secs = timestamp / 1000;
 		hours = secs / 3600;
@@ -302,21 +304,46 @@ void Subtitles::drawSubtitle(uint32 timestamp, bool force) {
 		subtitle += " " + Common::String::format("%u:%u:%u,%u", hours, mins, secs, msecs);
 	}
 
-	if (!force && subtitle == _prevSubtitle)
-		return;
+	if (!force && _overlayHasAlpha && subtitle == _subtitle)
+		return false;
 
-	debug(1, "%d: %s", timestamp, subtitle.c_str());
+	if (force || subtitle != _subtitle) {
+		debug(1, "%d: %s", timestamp, subtitle.c_str());
 
+		_subtitle = subtitle;
+		renderSubtitle();
+	}
+
+	if (_overlayHasAlpha) {
+		// When we have alpha, draw the whole surface without thinking it more
+		g_system->copyRectToOverlay(_surface->getPixels(), _surface->pitch, _bbox.left, _bbox.top, _surface->w, _surface->h);
+	} else {
+		// When overlay doesn't have alpha, showing it hides the underlying game screen
+		// We force a copy of the game screen to the overlay by clearing it
+		// We then draw the smallest possible surface to minimize black rectangle behind text
+		g_system->clearOverlay();
+		g_system->copyRectToOverlay((byte *)_surface->getPixels() + _drawRect.top * _surface->pitch + _drawRect.left * _surface->format.bytesPerPixel, _surface->pitch,
+				_bbox.left + _drawRect.left, _bbox.top + _drawRect.top, _drawRect.width(), _drawRect.height());
+	}
+
+	return true;
+}
+
+void Subtitles::renderSubtitle() {
 	_surface->fillRect(Common::Rect(0, 0, _surface->w, _surface->h), _transparentColor);
-
-	_prevSubtitle = subtitle;
 
 	Common::Array<Common::U32String> lines;
 
-	_font->wordWrapText(convertUtf8ToUtf32(subtitle), _bbox.width(), lines);
+	_font->wordWrapText(convertUtf8ToUtf32(_subtitle), _bbox.width(), lines);
 
-	if (lines.empty())
+	if (lines.empty()) {
+		_drawRect.left = 0;
+		_drawRect.top = 0;
+		_drawRect.right = 0;
+		_drawRect.bottom = 0;
+
 		return;
+	}
 
 	int height = _vPad;
 
@@ -325,15 +352,17 @@ void Subtitles::drawSubtitle(uint32 timestamp, bool force) {
 		width = MAX(_font->getStringWidth(lines[i]), width);
 	width = MIN(width + 2 * _hPad, (int)_bbox.width());
 
+	int originX = (_bbox.width() - width) / 2;
+
 	for (uint i = 0; i < lines.size(); i++) {
 		Common::U32String line = convertBiDiU32String(lines[i]).visual;
 
-		_font->drawString(_surface, line, 0, height, width, _blackColor, Graphics::kTextAlignCenter);
-		_font->drawString(_surface, line, SHADOW * 2, height, width, _blackColor, Graphics::kTextAlignCenter);
-		_font->drawString(_surface, line, 0, height + SHADOW * 2, width, _blackColor, Graphics::kTextAlignCenter);
-		_font->drawString(_surface, line, SHADOW * 2, height + SHADOW * 2, width, _blackColor, Graphics::kTextAlignCenter);
+		_font->drawString(_surface, line, originX, height, width, _blackColor, Graphics::kTextAlignCenter);
+		_font->drawString(_surface, line, originX + SHADOW * 2, height, width, _blackColor, Graphics::kTextAlignCenter);
+		_font->drawString(_surface, line, originX, height + SHADOW * 2, width, _blackColor, Graphics::kTextAlignCenter);
+		_font->drawString(_surface, line, originX + SHADOW * 2, height + SHADOW * 2, width, _blackColor, Graphics::kTextAlignCenter);
 
-		_font->drawString(_surface, line, SHADOW, height + SHADOW, width, _color, Graphics::kTextAlignCenter);
+		_font->drawString(_surface, line, originX + SHADOW, height + SHADOW, width, _color, Graphics::kTextAlignCenter);
 
 		height += _font->getFontHeight();
 
@@ -343,8 +372,10 @@ void Subtitles::drawSubtitle(uint32 timestamp, bool force) {
 
 	height += _vPad;
 
-	g_system->copyRectToOverlay(_surface->getPixels(), _surface->pitch, _bbox.left + (_bbox.width() - width) / 2, _bbox.top, width + SHADOW * 2, height + SHADOW * 2);
-	g_system->updateScreen();
+	_drawRect.left = originX;
+	_drawRect.top = 0;
+	_drawRect.setWidth(width + SHADOW * 2);
+	_drawRect.setHeight(height + SHADOW * 2);
 }
 
 } // End of namespace Video
