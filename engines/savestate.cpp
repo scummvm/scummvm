@@ -45,13 +45,19 @@ SaveStateDescriptor::SaveStateDescriptor(const MetaEngine *metaEngine, int slot,
 }
 
 void SaveStateDescriptor::initSaveSlot(const MetaEngine *metaEngine) {
-	// Do not allow auto-save slot to be deleted or overwritten.
 	if (!metaEngine && g_engine)
 		metaEngine = g_engine->getMetaEngine();
-	const bool autosave =
-			metaEngine && ConfMan.getInt("autosave_period") && _slot == metaEngine->getAutosaveSlot();
-	_isWriteProtected = autosave;
-	_isDeletable = !autosave;
+	int autosaveSlot = metaEngine ? metaEngine->getAutosaveSlot() : -1;
+	
+	if (autosaveSlot >= 0 && _slot == autosaveSlot) {
+		const bool autosaveEnabled = ConfMan.getInt("autosave_period");
+		// If autosaving enabled, do not allow autosave slot to be deleted or overwritten
+		_isWriteProtected = autosaveEnabled;
+		_isDeletable = !autosaveEnabled;	
+	} else {
+		_isWriteProtected = false;
+		_isDeletable = true;		
+	}
 }
 
 void SaveStateDescriptor::setThumbnail(Graphics::Surface *t) {
