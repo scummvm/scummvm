@@ -512,7 +512,7 @@ private:
 	char _enemyNamePt1[5];
 	Common::String _enemyNamePt2;
 	char _characterNamePt1[5];
-	char _characterNamePt2[20];
+	Common::String _characterNamePt2;
 	Common::String _nameBuffer;
 	char _attackBuffer[20];
 	uint8 _messageToBePrinted[400];
