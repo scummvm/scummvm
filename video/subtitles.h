@@ -68,12 +68,16 @@ public:
 	void setBBox(const Common::Rect bbox);
 	void setColor(byte r, byte g, byte b);
 	void setPadding(uint16 horizontal, uint16 vertical);
-	void drawSubtitle(uint32 timestamp, bool force = false);
+	bool drawSubtitle(uint32 timestamp, bool force = false);
+	bool isLoaded() const { return _loaded || _subtitleDev; }
 
 private:
+	void renderSubtitle();
+
 	SRTParser _srtParser;
 	bool _loaded;
 	bool _subtitleDev;
+	bool _overlayHasAlpha;
 
 	const Graphics::Font *_font;
 	int _fontHeight;
@@ -81,9 +85,9 @@ private:
 	Graphics::Surface *_surface;
 
 	Common::Rect _bbox;
-	Common::Rect _dirtyRect;
+	Common::Rect _drawRect;
 
-	Common::String _prevSubtitle;
+	Common::String _subtitle;
 	uint32 _color;
 	uint32 _blackColor;
 	uint32 _transparentColor;
