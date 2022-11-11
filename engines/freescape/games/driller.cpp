@@ -103,7 +103,7 @@ void DrillerEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offs
 	ObjectMap *globalObjectsByID = new ObjectMap;
 	file->seek(offset);
 	for (int i = 0; i < 8; i++) {
-		Object *gobj = load8bitObject(file);
+		Object *gobj = load8bitObject(file, 1);
 		assert(gobj);
 		assert(!globalObjectsByID->contains(gobj->getObjectID()));
 		debugC(1, kFreescapeDebugParser, "Adding global object: %d", gobj->getObjectID());

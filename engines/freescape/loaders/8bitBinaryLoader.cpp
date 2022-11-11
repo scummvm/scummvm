@@ -70,7 +70,7 @@ Common::Array<uint8> FreescapeEngine::readArray(Common::SeekableReadStream *file
 	return array;
 }
 
-Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
+Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file, int scale) {
 
 	byte rawFlagsAndType = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Raw object data flags and type: %d", rawFlagsAndType);
@@ -160,7 +160,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			for (int ordinate = 0; ordinate < numberOfOrdinates; ordinate++) {
 				ord = readField(file, 8);
 				debugC(1, kFreescapeDebugParser, "ord: %x", ord);
-				ordinates->push_back(32 * ord);
+				ordinates->push_back(32 * ord / scale);
 				byteSizeOfObject--;
 			}
 		}
@@ -184,8 +184,8 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			objectType,
 			objectID,
 			rawFlagsAndType, // flags
-			position,
-			32 * v, // size
+			position / scale,
+			32 * v / scale, // size
 			colours,
 			ordinates,
 			instructions,
@@ -206,7 +206,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		// create an entrance
 		return new Entrance(
 			objectID,
-			32 * position,
+			32 * position / scale,
 			5 * v); // rotation
 	} break;
 
@@ -224,7 +224,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		// create an entrance
 		return new Sensor(
 			objectID,
-			32 * position,
+			32 * position / scale,
 			5 * v); // rotation
 	} break;
 
@@ -233,7 +233,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		file->seek(byteSizeOfObject, SEEK_CUR);
 		return new Sensor(
 			objectID,
-			position,
+			position / scale,
 			v);
 		break;
 	}
@@ -343,7 +343,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	ObjectMap *entrancesByID = new ObjectMap;
 	for (uint8 object = 0; object < numberOfObjects && areaNumber != 192; object++) {
 		debugC(1, kFreescapeDebugParser, "Reading object: %d", object);
-		Object *newObject = load8bitObject(file);
+		Object *newObject = load8bitObject(file, scale);
 
 		if (newObject) {
 			if (newObject->getType() == kEntranceType) {

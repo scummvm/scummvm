@@ -140,7 +140,7 @@ public:
 	// 8-bit
 	void load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors);
 	Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors);
-	Object *load8bitObject(Common::SeekableReadStream *file);
+	Object *load8bitObject(Common::SeekableReadStream *file, int scale);
 
 	// Areas
 	uint16 _startArea;

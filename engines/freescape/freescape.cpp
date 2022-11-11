@@ -186,7 +186,7 @@ void FreescapeEngine::drawUI() {
 }
 
 void FreescapeEngine::drawFrame() {
-	_gfx->updateProjectionMatrix(60.0, _nearClipPlane, _farClipPlane);
+	_gfx->updateProjectionMatrix(70.0, _nearClipPlane, _farClipPlane);
 	_gfx->positionCamera(_position, _position + _cameraFront);
 	_currentArea->draw(_gfx);
 	drawBorder();
