@@ -87,10 +87,9 @@ bool VideoPlayer::playFrame() {
 	// Process the next frame while the file is open
 	if (_file) {
 		end = playFrameInternal();
-	}
 
-	uint32 currTime = _syst->getMillis();
-	_subtitles.drawSubtitle(currTime - _startTime);
+		_subtitles.drawSubtitle(_lastFrameTime - _startTime);
+	}
 
 	// The file has been completely processed
 	if (end) {
@@ -108,7 +107,10 @@ bool VideoPlayer::playFrame() {
 			}
 		}
 
-		g_system->hideOverlay();
+		if (_subtitles.isLoaded()) {
+			_subtitles.close();
+			g_system->hideOverlay();
+		}
 	}
 
 	return end;
@@ -124,8 +126,10 @@ void VideoPlayer::waitFrame() {
 		_lastFrameTime = currTime;
 		_frameTimeDrift = 0.0f;
 
-		g_system->showOverlay(false);
-		g_system->clearOverlay();
+		if (_subtitles.isLoaded()) {
+			g_system->showOverlay(false);
+			g_system->clearOverlay();
+		}
 	} else {
 		uint32 millisDiff = currTime - _lastFrameTime;
 		float fMillis = _millisBetweenFrames + _frameTimeDrift;
