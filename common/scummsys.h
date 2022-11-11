@@ -427,6 +427,18 @@
 	#endif
 #endif
 
+#ifndef WARN_DEPRECATED
+	#if __cplusplus >= 201703L
+		#define WARN_DEPRECATED(msg) [[deprecated(msg)]]
+	#elif defined(__GNUC__)
+		#define WARN_DEPRECATED(msg) __attribute__((__deprecated__(msg)))
+	#elif defined(_MSC_VER)
+		#define WARN_DEPRECATED(msg) __declspec(deprecated(msg))
+	#else
+		#define WARN_DEPRECATED(msg)
+	#endif
+#endif
+
 #ifndef STRINGBUFLEN
 	#if defined(__N64__) || defined(__DS__) || defined(__3DS__)
 		#define STRINGBUFLEN 256
