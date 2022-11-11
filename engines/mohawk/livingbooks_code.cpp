@@ -180,7 +180,7 @@ LBCode::LBCode(MohawkEngine_LivingBooks *vm, uint16 baseId) : _vm(vm) {
 		return;
 	}
 
-	Common::SeekableSubReadStreamEndian *bcodStream = _vm->wrapStreamEndian(ID_BCOD, baseId);
+	Common::SeekableReadStreamEndian *bcodStream = _vm->wrapStreamEndian(ID_BCOD, baseId);
 
 	uint32 totalSize = bcodStream->readUint32();
 	if (totalSize != (uint32)bcodStream->size())
