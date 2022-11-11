@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# coding: utf-8
 #
 # Dumper for HFS/HFS+ images and files with non-ASCII
 # file names.
@@ -22,7 +23,7 @@ import unicodedata
 import urllib.request
 import zipfile
 from binascii import crc_hqx
-from io import BytesIO, StringIO
+from io import BytesIO, StringIO, IOBase
 from pathlib import Path
 from struct import pack, unpack
 from typing import Any, ByteString, List, Tuple
@@ -156,10 +157,10 @@ def decode_macjapanese(text: ByteString) -> str:
     return res
 
 
-def file_to_macbin(f: machfs.File, name: ByteString) -> bytes:
+def file_to_macbin(out_f: IOBase, f: machfs.File, name: ByteString) -> bytes:
     oldFlags = f.flags >> 8
     newFlags = f.flags & 0xFF
-    macbin = pack(
+    macbin_header = pack(
         ">x64p4s4sBxHHHBxIIIIHB14xIHBB",
         name,
         f.type,
@@ -180,16 +181,15 @@ def file_to_macbin(f: machfs.File, name: ByteString) -> bytes:
         129,
         129,
     )
-    macbin += pack(">H2x", crc_hqx(macbin, 0))
+    macbin_header += pack(">H2x", crc_hqx(macbin_header, 0))
+    out_f.write(macbin_header)
     if f.data:
-        macbin += f.data
-        macbin += b"\x00" * (-len(f.data) % 128)
+        out_f.write(f.data)
+        out_f.write(b"\x00" * (-len(f.data) % 128))
 
     if f.rsrc:
-        macbin += f.rsrc
-        macbin += b"\x00" * (-len(f.rsrc) % 128)
-
-    return macbin
+        out_f.write(f.rsrc)
+        out_f.write(b"\x00" * (-len(f.rsrc) % 128))
 
 
 def macbin_get_datafork(f: bytes) -> bytes:
@@ -299,6 +299,7 @@ def extract_volume(args: argparse.Namespace) -> int:
     dryrun: bool = args.dryrun
     rawtext: bool = args.nopunycode
     loglevel: string = args.log
+    force_macbinary: bool = args.forcemacbinary
 
     numeric_level = getattr(logging, loglevel.upper(), None)
     if not isinstance(numeric_level, int):
@@ -371,13 +372,12 @@ def extract_volume(args: argparse.Namespace) -> int:
         else:
             print(upath)
             if not dryrun:
-                if obj.data and not obj.rsrc:
+                if obj.data and not obj.rsrc and not force_macbinary:
                     upath.write_bytes(obj.data)
 
-                elif obj.rsrc:
-                    upath.write_bytes(
-                        file_to_macbin(obj, hpath[-1].encode("mac_roman"))
-                    )
+                elif obj.rsrc or force_macbinary:
+                    with upath.open('wb') as out_file:
+                        file_to_macbin(out_file, obj, hpath[-1].encode("mac_roman"))
 
                 elif not obj.data and not obj.rsrc:
                     upath.touch()
@@ -501,11 +501,13 @@ def collect_forks(args: argparse.Namespace) -> int:
     """
     directory: bytes = bytes(args.dir)
     punify: bool = args.punycode
+    force_macbinary: bool = args.forcemacbinary
     count_resources = 0
     count_renames = 0
     for dirpath, _, filenames in os.walk(directory):
         for filename in filenames:
-            if has_resource_fork(dirpath, filename):
+            has_rsrc = has_resource_fork(dirpath, filename)
+            if has_rsrc or force_macbinary:
                 logging.info(f"Resource in {filename}")
                 count_resources += 1
                 resource_filename = filename + bytes("/..namedfork/rsrc", "utf8")
@@ -530,12 +532,13 @@ def collect_forks(args: argparse.Namespace) -> int:
 
                 file.type, file.creator, file.flags = unpack("4s4sB", finderInfo)
 
-                with open(resourcepath, "rb") as rsrc:
-                    file.rsrc = rsrc.read()
                 with open(filepath, "rb") as data:
                     file.data = data.read()
                 with open(filepath, "wb") as to_file:
-                    to_file.write(file_to_macbin(file, to_filename))
+                    if has_rsrc:
+                        with open(resourcepath, "rb") as rsrc:
+                            file.rsrc = rsrc.read()
+                    file_to_macbin(to_file, file, to_filename)
 
                     if to_filename != filename:
                         os.remove(filepath)  # Remove the original file
@@ -680,9 +683,9 @@ def create_macfonts(args: argparse.Namespace) -> int:
     ) as fontzip:
         for hpath, obj in vol.iter_paths():
             print(f"Compressing {hpath[-1]}...")
-            fontzip.writestr(
-                f"{hpath[-1]}.bin", file_to_macbin(obj, hpath[-1].encode("mac_roman"))
-            )
+            with io.BytesIO() as fonts_bytesio:
+                file_to_macbin(fonts_bytesio, obj, hpath[-1].encode("mac_roman"))
+                fontzip.writestr(f"{hpath[-1]}.bin", fonts_bytesio.getvalue())
 
     print("Done")
     return 0
@@ -713,6 +716,9 @@ def generate_parser() -> argparse.ArgumentParser:
     )
     parser_iso.add_argument(
         "--log", metavar="LEVEL", help="set logging level", default="INFO"
+    )
+    parser_iso.add_argument(
+        "--forcemacbinary", action="store_true", help="always encode using MacBinary, even for files with no resource fork"
     )
     parser_iso.add_argument(
         "dir", metavar="OUTPUT", type=Path, help="Destination folder"
@@ -756,6 +762,12 @@ def generate_parser() -> argparse.ArgumentParser:
             metavar="source_encoding",
             type=str,
             help="encoding used for filenames in this path",
+        )
+        parser_macbinary.add_argument(
+            "--forcemacbinary",
+            action="store_true",
+            help="always encode using MacBinary, even for files with no resource fork",
+            default=False,
         )
         parser_macbinary.add_argument(
             "dir", metavar="directory", type=Path, help="input directory"
