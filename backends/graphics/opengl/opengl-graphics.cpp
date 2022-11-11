@@ -349,6 +349,11 @@ bool OpenGLGraphicsManager::setShader(const Common::String &fileName) {
 
 bool OpenGLGraphicsManager::loadShader(const Common::String &fileName) {
 #if !USE_FORCED_GLES
+	if (!_libretroPipeline) {
+		warning("Libretro is not supported");
+		return true;
+	}
+
 	// Load selected shader preset
 	if (!fileName.empty()) {
 		if (!_libretroPipeline->open(Common::FSNode(fileName))) {
