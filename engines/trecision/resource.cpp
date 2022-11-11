@@ -42,7 +42,7 @@
 namespace Trecision {
 
 Common::SeekableReadStreamEndian *TrecisionEngine::readEndian(Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose) {
-	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), isAmiga(), dispose);
+	return new Common::SeekableReadStreamEndianWrapper(stream, isAmiga(), dispose);
 }
 
 void TrecisionEngine::loadAll() {
