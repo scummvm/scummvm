@@ -23,6 +23,7 @@
 #define COMMON_STREAM_H
 
 #include "common/endian.h"
+#include "common/ptr.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 
@@ -857,6 +858,38 @@ public:
 	 *                  If false, create a little endian stream.
 	 */
 	SeekableReadStreamEndian(bool bigEndian) : ReadStreamEndian(bigEndian) {}
+};
+
+/**
+ * SeekableReadStreamEndian subclass that wraps around an existing stream.
+ *
+ * Altering the position of the substream will affect the position of
+ * the parent stream, and vice versa.
+ */
+class SeekableReadStreamEndianWrapper final : virtual public SeekableReadStreamEndian {
+protected:
+	DisposablePtr<SeekableReadStream> _parentStream;
+
+public:
+	SeekableReadStreamEndianWrapper(SeekableReadStream *parentStream, bool bigEndian, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO)
+		: _parentStream(parentStream, disposeParentStream),
+		  SeekableReadStreamEndian(bigEndian),
+		  ReadStreamEndian(bigEndian) {
+		assert(parentStream);
+	}
+
+	/* Stream APIs */
+	bool err() const override { return _parentStream->err(); }
+	void clearErr() override { _parentStream->clearErr(); }
+
+	/* ReadStream APIs */
+	bool eos() const override { return _parentStream->eos(); }
+	uint32 read(void *dataPtr, uint32 dataSize) override { return _parentStream->read(dataPtr, dataSize); }
+
+	/* SeekableReadStream APIs */
+	int64 pos() const override { return _parentStream->pos(); }
+	int64 size() const override { return _parentStream->size(); }
+	bool seek(int64 offset, int whence = SEEK_SET) override { return _parentStream->seek(offset, whence); }
 };
 
 /** @} */
