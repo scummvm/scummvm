@@ -160,6 +160,8 @@ private:
 	int _trackball_scale;
 	int _dpad_scale;
 	int _joystick_scale;
+	int _axisPosX;
+	int _axisPosY;
 //	int _fingersDown;
 	int _firstPointerId;
 	int _secondPointerId;
