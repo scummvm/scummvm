@@ -64,7 +64,7 @@ public:
 	~Subtitles();
 
 	void loadSRTFile(const char *fname);
-	void close() { _loaded = false; _srtParser.cleanup(); }
+	void close() { _loaded = false; _subtitle.clear(); _fname.clear(); _srtParser.cleanup(); }
 	void setFont(const char *fontname, int height = 18);
 	void setBBox(const Common::Rect bbox);
 	void setColor(byte r, byte g, byte b);
@@ -88,6 +88,7 @@ private:
 	Common::Rect _bbox;
 	Common::Rect _drawRect;
 
+	Common::String _fname;
 	Common::String _subtitle;
 	uint32 _color;
 	uint32 _blackColor;
