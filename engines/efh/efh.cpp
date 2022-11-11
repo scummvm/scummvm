@@ -1348,7 +1348,7 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 					if (var4 == 0x7FFF)
 						_nameBuffer = "(NONE)";
 					else
-						snprintf(_items[var4]._name, 15, "%s", _nameBuffer.c_str());
+						_nameBuffer = _items[var4]._name;
 					}
 					break;				
 				case 1:
@@ -1965,8 +1965,8 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 					var110 = sub1C219((uint8 *)"Nothing...", 1, 2, true);
 					displayFctFullScreen();
 				} else {
-					snprintf(_npcBuf[_teamCharId[counter]]._name, 11, "%s", _enemyNamePt2);
-					snprintf(_items[var110]._name, 15, "%s", _nameBuffer.c_str());
+					snprintf(_enemyNamePt2, 11, "%s", _npcBuf[_teamCharId[counter]]._name);
+					_nameBuffer = _items[var110]._name;
 					snprintf(curLine, 150, "%s finds a %s!", _enemyNamePt2, _nameBuffer.c_str());
 					drawMapWindow();
 					displayFctFullScreen();
@@ -4821,8 +4821,8 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 					}
 
 					snprintf(_characterNamePt2, 20, "%s", kEncounters[_mapMonsters[_teamMonsterIdArray[groupId]]._monsterRef]._name);
-					snprintf(_npcBuf[_teamCharId[teamCharId]]._name, 11, "%s", _enemyNamePt2);
-					snprintf(_items[unk_monsterField5_itemId]._name, 15, "%s", _nameBuffer.c_str());
+					snprintf(_enemyNamePt2, 11, "%s", _npcBuf[_teamCharId[teamCharId]]._name);
+					_nameBuffer = _items[unk_monsterField5_itemId]._name;
 					if (checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId)) {
 						// Action A - Check damages - Start
 						if (var62 == 0) {
@@ -4976,8 +4976,8 @@ void EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
 	// In the original, this function is part of handleFight.
 	// It has been split for readability purposes.
 	int16 unk_monsterField5_itemId = _npcBuf[_teamCharId[teamCharId]]._inventory[_word31780[teamCharId]]._ref;
-	snprintf(_npcBuf[_teamCharId[teamCharId]]._name, 11, "%s", _enemyNamePt2);
-	snprintf(_items[unk_monsterField5_itemId]._name, 15, "%s", _nameBuffer.c_str());
+	snprintf(_enemyNamePt2, 11, "%s", _npcBuf[_teamCharId[teamCharId]]._name);
+	_nameBuffer = _items[unk_monsterField5_itemId]._name;
 	int16 var70 = _npcBuf[_teamCharId[teamCharId]]._possessivePronounSHL6 >> 6;
 	if (var70 == 2)
 		snprintf(_enemyNamePt1, 5, "The ");
@@ -5224,8 +5224,8 @@ bool EfhEngine::handleFight(int16 monsterId) {
 									*_enemyNamePt1 = 0;
 
 								strncpy(_enemyNamePt2, kEncounters[_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._monsterRef]._name, 20);
-								snprintf(_npcBuf[_teamCharId[var7E]]._name, 11, "%s", _characterNamePt2);
-								snprintf(_items[unk_monsterField5_itemId]._name, 15, "%s", _nameBuffer.c_str());
+								snprintf(_characterNamePt2, 11, "%s", _npcBuf[_teamCharId[var7E]]._name);
+								_nameBuffer = _items[unk_monsterField5_itemId]._name;
 								if (checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId)) {
 									// handleFight - check damages - Start
 									if (var62 == 0) {
