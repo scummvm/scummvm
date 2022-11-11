@@ -112,6 +112,8 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 	}
 
 	private void processJoystickInput(MotionEvent event, int historyPos) {
+		// TODO: make left stick, right stick, and d-pad distinguishable
+		// from each other. Also, handle analog triggers.
 
 		InputDevice inputDevice = event.getDevice();
 
@@ -121,7 +123,9 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 		float x = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_X, historyPos);
 		//Log.d(ScummVM.LOG_TAG, "JOYSTICK - LEFT: x= " +x);
 		if (x == 0) {
-			x = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_HAT_X, historyPos);
+			// reducing to 1/3 since hat axis is non-analog, and 100% of axis max
+			// is way too fast when used for cursor movement
+			x = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_HAT_X, historyPos) * 0.33f;
 			//Log.d(ScummVM.LOG_TAG, "JOYSTICK - HAT: x= " +x);
 		}
 		if (x == 0) {
@@ -135,7 +139,7 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 		float y = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_Y, historyPos);
 		//Log.d(ScummVM.LOG_TAG, "JOYSTICK - LEFT: y= " +y);
 		if (y == 0) {
-			y = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_HAT_Y, historyPos);
+			y = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_HAT_Y, historyPos) * 0.33f;
 			//Log.d(ScummVM.LOG_TAG, "JOYSTICK - HAT: y= " +y);
 		}
 		if (y == 0) {
@@ -149,10 +153,11 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 		if (Math.abs(x * 100) < 20.0f && Math.abs(y * 100) < 20.0f) {
 			//Log.d(ScummVM.LOG_TAG, "JOYSTICK - pushEvent(): STOPPED: " + (int)(x * 100) + " y= " + (int)(y * 100));
 			removeMessages();
-			// do the move anyway, just don't repeat
+			// do the move, then signal the joystick has returned to center pos
 			repeatMove();
 			repeatingX = 0.0f;
 			repeatingY = 0.0f;
+			repeatMove();
 		} else {
 			//Log.d(ScummVM.LOG_TAG, "JOYSTICK - pushEvent(): x= " + (int)(x * 100) + " y= " + (int)(y * 100));
 			if (repeatingX != 0.0f || repeatingY != 0.0f) {

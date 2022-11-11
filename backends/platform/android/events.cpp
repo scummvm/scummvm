@@ -1175,19 +1175,26 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		switch (arg1) {
 		// AMOTION_EVENT_ACTION_MOVE is 2 in NDK (https://developer.android.com/ndk/reference/group/input)
 		case AMOTION_EVENT_ACTION_MOVE:
-			e.mouse = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
-			e.type = Common::EVENT_MOUSEMOVE;
-
 			// already multiplied by 100
-			e.mouse.x += arg2 * _joystick_scale / _eventScaleX;
-			e.mouse.y += arg3 * _joystick_scale / _eventScaleY;
+			_axisPosX = (int32)arg2 * Common::JOYAXIS_MAX / _eventScaleX;
+			_axisPosY = (int32)arg3 * Common::JOYAXIS_MAX / _eventScaleY;
+
+			e.type = Common::EVENT_JOYAXIS_MOTION;
+
+			e.joystick.axis = Common::JOYSTICK_AXIS_LEFT_STICK_X;
+			e.joystick.position = CLIP<int32>(_axisPosX, Common::JOYAXIS_MIN, Common::JOYAXIS_MAX);
+			pushEvent(e);
+
+			e.joystick.axis = Common::JOYSTICK_AXIS_LEFT_STICK_Y;
+			e.joystick.position = CLIP<int32>(_axisPosY, Common::JOYAXIS_MIN, Common::JOYAXIS_MAX);
+			pushEvent(e);
 
 			break;
 		case AKEY_EVENT_ACTION_DOWN:
-			e.type = Common::EVENT_KEYDOWN;
+			e.type = Common::EVENT_JOYBUTTON_DOWN;
 			break;
 		case AKEY_EVENT_ACTION_UP:
-			e.type = Common::EVENT_KEYUP;
+			e.type = Common::EVENT_JOYBUTTON_UP;
 			break;
 		default:
 			LOGE("unhandled jaction on joystick: %d", arg1);
@@ -1197,40 +1204,28 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		if (arg1 != AMOTION_EVENT_ACTION_MOVE) {
 			switch (arg2) {
 			case AKEYCODE_BUTTON_1:
+				e.joystick.button = Common::JOYSTICK_BUTTON_A;
+				break;
+
 			case AKEYCODE_BUTTON_2:
-				switch (arg1) {
-				case AKEY_EVENT_ACTION_DOWN:
-					e.type = (arg2 == AKEYCODE_BUTTON_1?
-						  Common::EVENT_LBUTTONDOWN :
-						  Common::EVENT_RBUTTONDOWN);
-					break;
-				case AKEY_EVENT_ACTION_UP:
-					e.type = (arg2 == AKEYCODE_BUTTON_1?
-						  Common::EVENT_LBUTTONUP :
-						  Common::EVENT_RBUTTONUP);
-					break;
-				}
-
-				e.mouse = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
-
+				e.joystick.button = Common::JOYSTICK_BUTTON_B;
 				break;
 
 			case AKEYCODE_BUTTON_3:
-				e.kbd.keycode = Common::KEYCODE_ESCAPE;
-				e.kbd.ascii = Common::ASCII_ESCAPE;
+				e.joystick.button = Common::JOYSTICK_BUTTON_X;
 				break;
 
 			case AKEYCODE_BUTTON_4:
-				e.type = Common::EVENT_MAINMENU;
+				e.joystick.button = Common::JOYSTICK_BUTTON_Y;
 				break;
 
 			default:
 				LOGW("unmapped gamepad key: %d", arg2);
 				return;
 			}
-		}
 
-		pushEvent(e);
+			pushEvent(e);
+		}
 
 		return;
 
