@@ -229,8 +229,8 @@ void TextRenderer_v7::drawString(const char *str, byte *buffer, Common::Rect &cl
 
 	clipRect.left = MAX<int>(0, ((flags & kStyleAlignCenter) ? x - maxWidth / 2 : ((flags & kStyleAlignRight) ? x - maxWidth : x)) - xAdj);
 	clipRect.right = MIN<int>(clipRect.right, clipRect.left + xAdj + maxWidth);
-	clipRect.top = y2;
-	clipRect.bottom = y + (_newStyle ? 0 : 1);
+	clipRect.top = y2 - (_newStyle ? 0 : 2);
+	clipRect.bottom = y + (_newStyle ? 0 : 2);
 }
 
 void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags) {
@@ -384,8 +384,8 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 
 	clipRect.left = MAX<int>(0, ((flags & kStyleAlignCenter) ? x - maxWidth / 2 : ((flags & kStyleAlignRight) ? x - maxWidth : x)) - xAdj);
 	clipRect.right = MIN<int>(clipRect.right, clipRect.left + xAdj + maxWidth);
-	clipRect.top = y2;
-	clipRect.bottom = y + (_newStyle ? 0 : 1);
+	clipRect.top = y2 - (_newStyle ? 0 : 2);
+	clipRect.bottom = y + (_newStyle ? 0 : 2);
 }
 
 Common::Rect TextRenderer_v7::calcStringDimensions(const char *str, int x, int y, TextStyleFlags flags) {
