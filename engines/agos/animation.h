@@ -62,7 +62,6 @@ public:
 	virtual void playVideo() = 0;
 	virtual void nextFrame() = 0;
 	virtual void stopVideo() = 0;
-	void loadSubtitles(const char *fname) { _subtitles.loadSRTFile(fname); }
 
 protected:
 	virtual void handleNextFrame();
