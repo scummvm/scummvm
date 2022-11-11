@@ -438,7 +438,7 @@ bool MoviePlayerSMK::load() {
 	CursorMan.showMouse(false);
 
 	Common::String subtitlesName = Common::String::format("%s.srt", baseName);
-	loadSubtitles(subtitlesName.c_str());
+	_subtitles.loadSRTFile(subtitlesName.c_str());
 
 	return true;
 }
@@ -466,16 +466,19 @@ void MoviePlayerSMK::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 }
 
 void MoviePlayerSMK::playVideo() {
-	while (!endOfVideo() && !_skipMovie && !_vm->shouldQuit()) {
-		_subtitles.drawSubtitle(getTime(), true);
-		handleNextFrame();
-		g_system->showOverlay(false);
+	if (_subtitles.isLoaded()) {
 		g_system->clearOverlay();
+		g_system->showOverlay(false);
+	}
+	while (!endOfVideo() && !_skipMovie && !_vm->shouldQuit()) {
+		handleNextFrame();
 	}
 }
 
 void MoviePlayerSMK::stopVideo() {
-	g_system->hideOverlay();
+	if (_subtitles.isLoaded()) {
+		g_system->hideOverlay();
+	}
 	close();
 }
 
@@ -518,6 +521,8 @@ bool MoviePlayerSMK::processFrame() {
 		warning("dropped frame %i", getCurFrame());
 		return false;
 	}
+
+	_subtitles.drawSubtitle(getTime(), false);
 
 	_vm->_system->updateScreen();
 
