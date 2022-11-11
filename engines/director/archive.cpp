@@ -349,7 +349,7 @@ Common::SeekableReadStreamEndian *MacArchive::getResource(uint32 tag, uint16 id)
 		error("MacArchive::getResource(): Archive does not contain '%s' %d", tag2str(tag), id);
 	}
 
-	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), true, DisposeAfterUse::YES);
+	return new Common::SeekableReadStreamEndianWrapper(stream, true, DisposeAfterUse::YES);
 }
 
 // RIFF Archive code
@@ -524,7 +524,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		return false;
 	}
 
-	Common::SeekableSubReadStreamEndian endianStream(stream, 0, stream->size(), _isBigEndian, DisposeAfterUse::NO);
+	Common::SeekableReadStreamEndianWrapper endianStream(stream, _isBigEndian, DisposeAfterUse::NO);
 	endianStream.seek(startOffset + moreOffset + 4);
 
 	uint32 sz = endianStream.readUint32(); // size
