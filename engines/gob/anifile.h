@@ -28,7 +28,7 @@
 #include "common/list.h"
 
 namespace Common {
-	class SeekableSubReadStreamEndian;
+	class SeekableReadStreamEndian;
 }
 
 namespace Gob {
@@ -129,13 +129,13 @@ private:
 
 	// Loading helpers
 
-	void load(Common::SeekableSubReadStreamEndian &ani, const Common::String &fileName);
+	void load(Common::SeekableReadStreamEndian &ani, const Common::String &fileName);
 
-	CMPFile *loadLayer(Common::SeekableSubReadStreamEndian &ani);
+	CMPFile *loadLayer(Common::SeekableReadStreamEndian &ani);
 
 	void loadAnimation(Animation &animation, FrameArray &frames,
-	                   Common::SeekableSubReadStreamEndian &ani);
-	void loadFrames(FrameArray &frames, Common::SeekableSubReadStreamEndian &ani);
+	                   Common::SeekableReadStreamEndian &ani);
+	void loadFrames(FrameArray &frames, Common::SeekableReadStreamEndian &ani);
 
 	// Drawing helpers
 
