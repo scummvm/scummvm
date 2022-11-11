@@ -464,6 +464,9 @@ private:
 	void displayColoredMenuBox(int16 minX, int16 minY, int16 maxX, int16 maxY, int16 color);
 
 	// Utils
+	#if true
+	void copyString(char *srcStr, char *destStr);
+	#endif
 	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);
 	void setDefaultNoteDuration();
 	void decryptImpFile(bool techMapFl);
@@ -478,7 +481,6 @@ private:
 	Common::KeyCode handleAndMapInput(bool animFl);
 	Common::KeyCode getInputBlocking();
 	void setNumLock();
-	void copyString(char *srcStr, char *destStr);
 	bool getValidationFromUser();
 
 
@@ -508,7 +510,7 @@ private:
 	uint8 _history[256];
 	uint8 _techData[4096];
 	char _enemyNamePt1[5];
-	char _enemyNamePt2[20];
+	Common::String _enemyNamePt2;
 	char _characterNamePt1[5];
 	char _characterNamePt2[20];
 	Common::String _nameBuffer;
