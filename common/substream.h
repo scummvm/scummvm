@@ -96,6 +96,7 @@ public:
  */
 class SeekableSubReadStreamEndian :  virtual public SeekableSubReadStream, virtual public SeekableReadStreamEndian {
 public:
+	WARN_DEPRECATED("Use SeekableReadStreamEndianWrapper with SeekableSubReadStream instead")
 	SeekableSubReadStreamEndian(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool bigEndian, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO)
 		: SeekableSubReadStream(parentStream, begin, end, disposeParentStream),
 		  SeekableReadStreamEndian(bigEndian),
