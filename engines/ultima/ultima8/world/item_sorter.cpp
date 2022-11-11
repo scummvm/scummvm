@@ -26,7 +26,6 @@
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/misc/rect.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/ultima8.h"
 
@@ -41,10 +40,10 @@
 namespace Ultima {
 namespace Ultima8 {
 
-ItemSorter::ItemSorter() :
-	_shapes(nullptr), _surf(nullptr), _items(nullptr), _itemsTail(nullptr),
-	_itemsUnused(nullptr), _sortLimit(0), _camSx(0), _camSy(0), _orderCounter(0) {
-	int i = 2048;
+ItemSorter::ItemSorter(int capacity) :
+	_shapes(nullptr), _clipWindow(0, 0, 0, 0), _items(nullptr), _itemsTail(nullptr),
+	_itemsUnused(nullptr), _painted(nullptr), _sortLimit(0), _camSx(0), _camSy(0) {
+	int i = capacity;
 	while (i--) _itemsUnused = new SortItem(_itemsUnused);
 }
 
@@ -66,22 +65,21 @@ ItemSorter::~ItemSorter() {
 	delete [] _items;
 }
 
-void ItemSorter::BeginDisplayList(RenderSurface *rs,
-								  int32 camx, int32 camy, int32 camz) {
+void ItemSorter::BeginDisplayList(const Rect &clipWindow, int32 camx, int32 camy, int32 camz) {
 	// Get the _shapes, if required
 	if (!_shapes) _shapes = GameData::get_instance()->getMainShapes();
 
-	//
+	// Set the clip window, and reset the item list
+	_clipWindow = clipWindow;
+
 	if (_itemsTail) {
 		_itemsTail->_next = _itemsUnused;
 		_itemsUnused = _items;
 	}
+
 	_items = nullptr;
 	_itemsTail = nullptr;
-
-	// Set the RenderSurface, and reset the item list
-	_surf = rs;
-	_orderCounter = 0;
+	_painted = nullptr;
 
 	// Screenspace bounding box bottom x coord (RNB x coord)
 	_camSx = (camx - camy) / 4;
@@ -151,7 +149,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	si->_sy2 = si->_sy + frame->_height;   // Bottom
 
 	// Do Clipping here
-	int16 clipped = _surf->CheckClipped(Rect(si->_sx, si->_sy, si->_sx2, si->_sy2));
+	int16 clipped = CheckClipped(Rect(si->_sx, si->_sy, si->_sx2, si->_sy2));
 	if (clipped < 0)
 		// Clipped away entirely - don't add to the list.
 		return;
@@ -252,15 +250,12 @@ void ItemSorter::AddItem(const Item *add) {
 			add->getFlags(), add->getExtFlags(), add->getObjId());
 }
 
-SortItem *_prev = nullptr;
-
-void ItemSorter::PaintDisplayList(bool item_highlight) {
-	_prev = nullptr;
+void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight) {
 	SortItem *it = _items;
 	SortItem *end = nullptr;
-	_orderCounter = 0;  // Reset the _orderCounter
+	_painted = nullptr;  // Reset the paint tracking
 	while (it != end) {
-		if (it->_order == -1) if (PaintSortItem(it)) return;
+		if (it->_order == -1) if (PaintSortItem(surf, it)) return;
 		it = it->_next;
 	}
 
@@ -269,7 +264,7 @@ void ItemSorter::PaintDisplayList(bool item_highlight) {
 		it = _items;
 		while (it != end) {
 			if (!(it->_flags & (Item::FLG_DISPOSABLE | Item::FLG_FAST_ONLY)) && !it->_fixed) {
-				_surf->PaintHighlightInvis(it->_shape,
+				surf->PaintHighlightInvis(it->_shape,
 				                          it->_frame,
 				                          it->_sxBot,
 				                          it->_syBot,
@@ -287,7 +282,7 @@ void ItemSorter::PaintDisplayList(bool item_highlight) {
  * Recursively paint this item and all its dependencies.
  * Returns true if recursion should stop.
  */
-bool ItemSorter::PaintSortItem(SortItem *si) {
+bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si) {
 	// Don't paint this, or dependencies (yet) if occluded
 	if (si->_occluded)
 		return false;
@@ -305,94 +300,67 @@ bool ItemSorter::PaintSortItem(SortItem *si) {
 			break;
 		}
 		else if ((*it)->_order == -1) {
-			if (PaintSortItem(*it))
+			if (PaintSortItem(surf, *it))
 				return true;
 		}
 		++it;
 	}
 
-	// Set our painting _order
-	si->_order = _orderCounter;
-	_orderCounter++;
+	// Set our painting _order based on previously painted item
+	si->_order = _painted ? _painted->_order + 1 : 0;
 
 	// Now paint us!
+	if (surf) {
+		//	if (wire) si->info->draw_box_back(s, dispx, dispy, 255);
 
-//	if (wire) si->info->draw_box_back(s, dispx, dispy, 255);
+		if (si->_extFlags & Item::EXT_HIGHLIGHT && si->_extFlags & Item::EXT_TRANSPARENT)
+			surf->PaintHighlightInvis(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans, (si->_flags & Item::FLG_FLIPPED) != 0, 0x7F00007F);
+		if (si->_extFlags & Item::EXT_HIGHLIGHT)
+			surf->PaintHighlight(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans, (si->_flags & Item::FLG_FLIPPED) != 0, 0x7F00007F);
+		else if (si->_extFlags & Item::EXT_TRANSPARENT)
+			surf->PaintInvisible(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans, (si->_flags & Item::FLG_FLIPPED) != 0);
+		else if (si->_flags & Item::FLG_FLIPPED)
+			surf->PaintMirrored(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans);
+		else if (si->_trans)
+			surf->PaintTranslucent(si->_shape, si->_frame, si->_sxBot, si->_syBot);
+		else if (!si->_clipped)
+			surf->PaintNoClip(si->_shape, si->_frame, si->_sxBot, si->_syBot);
+		else
+			surf->Paint(si->_shape, si->_frame, si->_sxBot, si->_syBot);
 
-	if (si->_extFlags & Item::EXT_HIGHLIGHT && si->_extFlags & Item::EXT_TRANSPARENT)
-		_surf->PaintHighlightInvis(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans, (si->_flags & Item::FLG_FLIPPED) != 0, 0x7F00007F);
-	if (si->_extFlags & Item::EXT_HIGHLIGHT)
-		_surf->PaintHighlight(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans, (si->_flags & Item::FLG_FLIPPED) != 0, 0x7F00007F);
-	else if (si->_extFlags & Item::EXT_TRANSPARENT)
-		_surf->PaintInvisible(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans, (si->_flags & Item::FLG_FLIPPED) != 0);
-	else if (si->_flags & Item::FLG_FLIPPED)
-		_surf->PaintMirrored(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans);
-	else if (si->_trans)
-		_surf->PaintTranslucent(si->_shape, si->_frame, si->_sxBot, si->_syBot);
-	else if (!si->_clipped)
-		_surf->PaintNoClip(si->_shape, si->_frame, si->_sxBot, si->_syBot);
-	else
-		_surf->Paint(si->_shape, si->_frame, si->_sxBot, si->_syBot);
+	//	if (wire) si->info->draw_box_front(s, dispx, dispy, 255);
 
-//	if (wire) si->info->draw_box_front(s, dispx, dispy, 255);
-
-	// weapon overlay
-	// FIXME: use highlight/invisibility, also add to Trace() ?
-	if (si->_shapeNum == 1 && si->_itemNum == 1) {
-		MainActor *av = getMainActor();
-		const WeaponOverlayFrame *wo_frame = nullptr;
-		uint32 wo_shapenum;
-		av->getWeaponOverlay(wo_frame, wo_shapenum);
-		if (wo_frame) {
-			const Shape *wo_shape = GameData::get_instance()->getMainShapes()->getShape(wo_shapenum);
-			_surf->Paint(wo_shape, wo_frame->_frame,
-			            si->_sxBot + wo_frame->_xOff,
-			            si->_syBot + wo_frame->_yOff);
+		// weapon overlay
+		// FIXME: use highlight/invisibility, also add to Trace() ?
+		if (si->_shapeNum == 1 && si->_itemNum == 1) {
+			MainActor *av = getMainActor();
+			const WeaponOverlayFrame *wo_frame = nullptr;
+			uint32 wo_shapenum;
+			av->getWeaponOverlay(wo_frame, wo_shapenum);
+			if (wo_frame) {
+				const Shape *wo_shape = GameData::get_instance()->getMainShapes()->getShape(wo_shapenum);
+				surf->Paint(wo_shape, wo_frame->_frame,
+							si->_sxBot + wo_frame->_xOff,
+							si->_syBot + wo_frame->_yOff);
+			}
 		}
 	}
 
 	if (_sortLimit) {
-		if (_orderCounter == _sortLimit) {
-			static uint32 previt = 0;
-			if (!previt || previt != si->_itemNum) {
-				previt = si->_itemNum;
+		if (si->_order == _sortLimit) {
+			if (!_painted || _painted->_itemNum != si->_itemNum) {
 				pout << "SortItem: " << *si << Std::endl;
-				if (_prev && si->overlap(_prev)) {
-					pout << "Overlaps: " << *_prev << Std::endl;
+				if (_painted && si->overlap(_painted)) {
+					pout << "Overlaps: " << *_painted << Std::endl;
 				}
 			}
+
+			_painted = si;
 			return true;
 		}
-		_prev = si;
 	}
 
-	return false;
-}
-
-bool ItemSorter::NullPaintSortItem(SortItem *si) {
-	// Don't paint this, or dependencies if occluded
-	if (si->_occluded) return false;
-
-	// Resursion, detection
-	si->_order = -2;
-
-	// Iterate through our dependancies, and paint them, if possible
-	SortItem::DependsList::iterator it = si->_depends.begin();
-	SortItem::DependsList::iterator end = si->_depends.end();
-	while (it != end) {
-		// Well, it can't. Implies recursive sorting. Can happen though so
-		// you had best leave this commented out
-		//if ((*it)->_order == -2) CANT_HAPPEN_MSG("Recursive item sorting");
-
-		if ((*it)->_order == -1) if (NullPaintSortItem((*it))) return true;
-
-		++it;
-	}
-
-	// Set our painting/sorting _order
-	si->_order = _orderCounter;
-	_orderCounter++;
-
+	_painted = si;
 	return false;
 }
 
@@ -400,11 +368,11 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 	SortItem *it;
 	SortItem *selected;
 
-	if (!_orderCounter) { // If no _orderCounter we need to sort the _items
+	if (!_painted) { // If no painted item found, we need to sort the items
 		it = _items;
-		_orderCounter = 0;  // Reset the _orderCounter
+		_painted = nullptr;
 		while (it != nullptr) {
-			if (it->_order == -1) if (NullPaintSortItem(it)) break;
+			if (it->_order == -1) if (PaintSortItem(nullptr ,it)) break;
 
 			it = it->_next;
 		}
@@ -514,6 +482,25 @@ void ItemSorter::IncSortLimit(int count) {
 	_sortLimit += count;
 	if (_sortLimit < 0)
 		_sortLimit = 0;
+}
+
+//
+// int16 ItemSorter::CheckClipped(Rect &r)
+//
+// Desc: Check for a clipped rectangle
+// Returns: -1 if off screen,
+//           0 if not clipped,
+//           1 if clipped
+//
+int16 ItemSorter::CheckClipped(const Rect &c) const {
+	Rect r = c;
+	r.clip(_clipWindow);
+
+	// Clipped away to the void
+	if (r.isEmpty())
+		return -1;
+	else if (r == c) return 0;
+	else return 1;
 }
 
 } // End of namespace Ultima8

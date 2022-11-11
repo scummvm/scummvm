@@ -112,9 +112,6 @@ public:
 	//! Set Clipping Rectangle
 	virtual void SetClippingRect(const Rect &) = 0;
 
-	//! Check Clipped. -1 if off screen, 0 if not clipped, 1 if clipped
-	virtual int16 CheckClipped(const Rect &) const = 0;
-
 	//! Flip the surface
 	virtual void SetFlipped(bool flipped) = 0;
 

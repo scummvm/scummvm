@@ -22,6 +22,8 @@
 #ifndef ULTIMA8_WORLD_ITEMSORTER_H
 #define ULTIMA8_WORLD_ITEMSORTER_H
 
+#include "ultima/ultima8/misc/rect.h"
+
 namespace Ultima {
 namespace Ultima8 {
 
@@ -32,19 +34,18 @@ struct SortItem;
 
 class ItemSorter {
 	MainShapeArchive    *_shapes;
-	RenderSurface   *_surf;
+	Rect        _clipWindow;
 
 	SortItem    *_items;
 	SortItem    *_itemsTail;
 	SortItem    *_itemsUnused;
+	SortItem    *_painted;
+
 	int32       _sortLimit;
-
-	int32       _orderCounter;
-
 	int32       _camSx, _camSy;
 
 public:
-	ItemSorter();
+	ItemSorter(int capacity);
 	~ItemSorter();
 
 	enum HitFace {
@@ -52,13 +53,13 @@ public:
 	};
 
 	// Begin creating the display list
-	void BeginDisplayList(RenderSurface *,
-	                      int32 camx, int32 camy, int32 camz);
+	void BeginDisplayList(const Rect &clipWindow, int32 camx, int32 camy, int32 camz);
 
 	void AddItem(int32 x, int32 y, int32 z, uint32 shape_num, uint32 frame_num, uint32 item_flags, uint32 ext_flags, uint16 item_num = 0);
 	void AddItem(const Item *);                   // Add an Item. SetupLerp() MUST have been called
 
-	void PaintDisplayList(bool item_highlight = false);             // Finishes the display list and Paints
+	// Finishes the display list and Paints
+	void PaintDisplayList(RenderSurface *surf, bool item_highlight = false);
 
 	// Trace and find an object. Returns objid.
 	// If face is non-NULL, also return the face of the 3d bbox (x,y) is on
@@ -67,8 +68,11 @@ public:
 	void IncSortLimit(int count);
 
 private:
-	bool PaintSortItem(SortItem *);
-	bool NullPaintSortItem(SortItem *);
+	bool PaintSortItem(RenderSurface *surf, SortItem *si);
+
+	//! Check Clipped. -1 if off screen, 0 if not clipped, 1 if clipped
+	int16 CheckClipped(const Rect &) const;
+
 };
 
 } // End of namespace Ultima8

@@ -329,25 +329,6 @@ void BaseSoftRenderSurface::SetClippingRect(const Rect &r) {
 }
 
 //
-// int16 BaseSoftRenderSurface::CheckClipped(Rect &r)
-//
-// Desc: Check for a clipped rectangle
-// Returns: -1 if off screen,
-//           0 if not clipped,
-//           1 if clipped
-//
-int16 BaseSoftRenderSurface::CheckClipped(const Rect &c) const {
-	Rect r = c;
-	r.clip(_clipWindow);
-
-	// Clipped away to the void
-	if (r.isEmpty())
-		return -1;
-	else if (r == c) return 0;
-	else return 1;
-}
-
-//
 // void BaseSoftRenderSurface::SetFlipped(bool _flipped)
 //
 // Desc: Flip the surface

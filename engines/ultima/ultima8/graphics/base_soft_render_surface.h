@@ -110,9 +110,6 @@ public:
 	// Set Clipping Rectangle
 	void SetClippingRect(const Rect &) override;
 
-	// Check Clipped. -1 if off screen, 0 if not clipped, 1 if clipped
-	int16 CheckClipped(const Rect &) const override;
-
 	// Flip the surface
 	void SetFlipped(bool flipped) override;
 
