@@ -832,12 +832,19 @@ void Combat::updateMonsterStatus() {
 }
 
 void Combat::displaySpellResult(const InfoMessage &msg) {
-	Common::Array<InfoMessage> msgs;
-	msgs.push_back(msg);
-	displaySpellResult(msgs);
+	InfoMessage iMsg = msg;
+	if (iMsg._delaySeconds == 0)
+		iMsg._delaySeconds = 3;
+	if (!iMsg._timeoutCallback) {
+		iMsg._timeoutCallback = []() {
+			g_globals->_combat->combatLoop();
+		};
+	}
+
+	// Descendant view classes will handle message display
 }
 
-void Combat::displaySpellResult(const Common::Array<InfoMessage> &msgs) {
+void displaySpellResult(const Common::Array<InfoMessage> &msgs) {
 	warning("TODO: displaySpellResult");
 }
 
