@@ -2286,7 +2286,7 @@ fi
 
 if test "$_release_build" = yes; then
 	# Add a define, which indicates we are doing
-	# an build for a release version.
+	# a build for a release version.
 	append_var DEFINES "-DRELEASE_BUILD"
 fi
 
@@ -2939,7 +2939,7 @@ EOF
 			append_var LDFLAGS "-s USE_ZLIB=1"
 		fi
 	;;
-	freebsd*)
+	freebsd* | dragonfly*)
 		append_var LDFLAGS "-L/usr/local/lib"
 		append_var CXXFLAGS "-I/usr/local/include"
 		;;
@@ -4021,7 +4021,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | morphos | n64 | ps3 | psp2 | psp | riscos | wii)
 		_posix=no
 		;;
-	3ds | android | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | serenity* | solaris* | sunos* | switch | uclinux*)
+	3ds | android | beos* | bsd* | darwin* | dragonfly* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | serenity* | solaris* | sunos* | switch | uclinux*)
 		_posix=yes
 		;;
 	os2-emx*)
