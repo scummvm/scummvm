@@ -864,7 +864,7 @@ void Scene::loadSceneDescriptor(uint32 resourceId) {
 		if (sceneDescriptorData.size() == 16)
 			_sceneDescription.musicResourceId = readS.readSint16();
 	} else {
-		warning("Scene::loadSceneDescriptor: Unknown scene descriptor data size (%d)", sceneDescriptorData.size());
+		error("Scene::loadSceneDescriptor: Unknown scene descriptor data size (%d)", sceneDescriptorData.size());
 	}
 }
 
