@@ -240,8 +240,18 @@ void DefaultFont::textDrawRect(FontId fontId, const char *text, const Common::Re
 	searchPointer = text;
 	endPointer = text + textLength;
 
+	bool isBig5 = !!_chineseFont;
+
 	for (;;) {
-		foundPointer = strchr(searchPointer, ' ');
+		if (isBig5) {
+			if (*searchPointer & 0x80)
+				foundPointer = searchPointer + 2;
+			else if (*searchPointer)
+				foundPointer = searchPointer + 1;
+			else
+				foundPointer = nullptr;
+		} else
+			foundPointer = strchr(searchPointer, ' ');
 		if (foundPointer == nullptr) {
 			// Ran to the end of the buffer
 			len = endPointer - measurePointer;
@@ -301,7 +311,10 @@ void DefaultFont::textDrawRect(FontId fontId, const char *text, const Common::Re
 					effectColor, flags);
 				return;
 			}
-			searchPointer = measurePointer + 1;
+			if (isBig5 && (*measurePointer & 0x80))
+				searchPointer = measurePointer + 2;
+			else
+				searchPointer = measurePointer + 1;
 		}
 	}
 }
@@ -324,9 +337,19 @@ int DefaultFont::getStringWidth(FontId fontId, const char *text, size_t count, F
 	const byte *txt;
 	FontData *font = getFont(fontId);
 	txt = (const byte *) text;
+	byte isBig5 = _chineseFont ? true : false;
 
 	for (ct = count; *txt && (!count || ct > 0); txt++, ct--) {
 		ch = *txt & 0xFFU;
+		if ((ch & 0x80) && isBig5) {
+			byte trailing = *++txt & 0xFFU;
+			ct--;
+			if (ct == 0 || trailing == 0)
+				break;
+			width += _chineseFontWidth;
+			continue;
+		}
+
 		// Translate character
 		ch = translateChar(ch);
 		assert(ch < FONT_CHARCOUNT);
