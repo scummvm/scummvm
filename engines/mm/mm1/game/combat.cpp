@@ -1036,7 +1036,7 @@ void Combat::turnUndead() {
 			if ((monster->_resistUndead & IS_UNDEAD) &&
 					(getRandomNumber(20) + g_globals->_currCharacter->_level) >=
 					(_monsterHP[i] * 2 + 10)) {
-				destroyUndead();
+				destroyMonster();
 				++_monstersDestroyedCtr;
 			}
 		}
@@ -1050,7 +1050,7 @@ void Combat::turnUndead() {
 	_arr3[_currentChar] = 1;
 }
 
-void Combat::destroyUndead() {
+void Combat::destroyMonster() {
 	_monsterStatus[getMonsterIndex()] = 0xff;
 	Sound::sound2(SOUND_9);
 }
@@ -1150,7 +1150,7 @@ void Combat::holyWord() {
 	for (uint i = 0; i < _monsterList.size(); ++i) {
 		monsterSetPtr(i);
 		if (_monsterP->_resistUndead & IS_UNDEAD) {
-			destroyUndead();
+			destroyMonster();
 			++_monstersDestroyedCtr;
 		}
 	}
@@ -1260,10 +1260,17 @@ void Combat::slow() {
 }
 
 void Combat::weaken() {
+	SpellsState &ss = g_globals->_spellsState;
+
 	for (uint i = 0; i < _monsterList.size(); ++i) {
 		monsterSetPtr(i);
 		_monsterAC[i] = MAX((int)_monsterAC[i] - 1, 1);
 	}
+
+	resetDestMonster();
+	ss._mmVal1++;
+	ss._newCondition = 2;
+	iterateMonsters2();
 }
 
 bool Combat::web() {
@@ -1281,12 +1288,87 @@ bool Combat::web() {
 }
 
 bool Combat::acidRain() {
+	SpellsState &ss = g_globals->_spellsState;
 	if (_attackerVal >= (int)_monsterList.size())
 		return false;
 
-	// TODO: Acid rain
+	_destMonsterNum = _attackerVal;
+	monsterSetPtr(_destMonsterNum);
+	monsterIndexOf();
 
+	ss._mmVal1 = 1;
+	ss._mmVal2 = 3;
+	ss._resistanceType = 15;
+	ss._newCondition = 0;
+
+	for (int i = 0; i < 5; ++i)
+		ss._newCondition += getRandomNumber(10);
+
+	iterateMonsters2();
 	return true;
+}
+
+void Combat::fingerOfDeath() {
+	Common::String line1 = Common::String::format("|%s| %s",
+		g_globals->_currCharacter->_name,
+		STRING["spells.casts_spell"].c_str());
+
+	const Common::String monsterName = _monsterP->_name;
+	bool kills = !(_monsterP->_resistUndead & IS_UNDEAD) &&
+		!monsterLevelThreshold();
+	if (kills) {
+		proc2();
+		kills = !_val9;
+
+		if (kills)
+			destroyMonster();
+	}
+	removeMonster();
+
+	Common::String line2 = Common::String::format("|%s| %s",
+		kills ? STRING["spells.char_effects.7"].c_str() :
+		STRING["monster_spells.not_affected"].c_str()
+	);
+
+	InfoMessage msg(0, 0, line1, 0, 2, line2);
+	msg._delaySeconds = 3;
+	msg._timeoutCallback = []() {
+		g_globals->_combat->_arr3[g_globals->_combat->_currentChar] = 1;
+		g_globals->_combat->combatLoop();
+	};
+
+	displaySpellResult(msg);
+}
+
+void Combat::disintegration() {
+	Common::String line1 = Common::String::format("|%s| %s",
+		g_globals->_currCharacter->_name,
+		STRING["spells.casts_spell"].c_str());
+
+	const Common::String monsterName = _monsterP->_name;
+	bool kills = !monsterLevelThreshold();
+	if (kills) {
+		proc2();
+		kills = !_val9;
+
+		if (kills)
+			destroyMonster();
+	}
+	removeMonster();
+
+	Common::String line2 = Common::String::format("|%s| %s",
+		kills ? STRING["spells.char_effects.disintegrated"].c_str() :
+		STRING["monster_spells.not_affected"].c_str()
+	);
+
+	InfoMessage msg(0, 0, line1, 0, 2, line2);
+	msg._delaySeconds = 3;
+	msg._timeoutCallback = []() {
+		g_globals->_combat->_arr3[g_globals->_combat->_currentChar] = 1;
+		g_globals->_combat->combatLoop();
+	};
+
+	displaySpellResult(msg);
 }
 
 } // namespace Game

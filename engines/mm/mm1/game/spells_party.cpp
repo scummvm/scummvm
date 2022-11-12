@@ -123,16 +123,16 @@ SpellsParty::SpellFn SpellsParty::SPELLS[SPELLS_COUNT] = {
 	wizard53_fingerOfDeath,
 	wizard54_shelter,
 	wizard55_teleport,
-	placeholder,
-	placeholder,
+	wizard61_dancingSword,
+	wizard62_disintegration,
 	wizard63_etherialize,
 	wizard64_protectionFromMagic,
 	wizard65_rechargeItem,
 	wizard71_astralSpell,
 	wizard72_duplication,
-	placeholder,
-	placeholder,
-	placeholder,
+	wizard73_meteorShower,
+	wizard74_powerShield,
+	wizard75_prismaticLight
 };
 
 byte FLY_MAP_ID1[20] = {
@@ -826,7 +826,7 @@ SpellResult SpellsParty::wizard36_slow() {
 
 SpellResult SpellsParty::wizard37_weaken() {
 	g_globals->_combat->weaken();
-	return SR_SUCCESS_DONE;
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult SpellsParty::wizard38_web() {
@@ -907,8 +907,8 @@ SpellResult SpellsParty::wizard51_acidRain() {
 }
 
 SpellResult SpellsParty::wizard53_fingerOfDeath() {
-	// TODO: finger of death
-	return SR_FAILED;
+	g_globals->_combat->fingerOfDeath();
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult SpellsParty::wizard54_shelter() {
@@ -921,6 +921,23 @@ SpellResult SpellsParty::wizard54_shelter() {
 
 SpellResult SpellsParty::wizard55_teleport() {
 	Views::Spells::Teleport::show();
+	return SR_SUCCESS_SILENT;
+}
+
+SpellResult SpellsParty::wizard61_dancingSword() {
+	SpellsState &ss = g_globals->_spellsState;
+	g_globals->_combat->resetDestMonster();
+
+	ss._mmVal1 = 0;
+	ss._mmVal2 = 0;
+	ss._newCondition = getRandomNumber(30);
+
+	g_globals->_combat->iterateMonsters2();
+	return SR_SUCCESS_SILENT;
+}
+
+SpellResult SpellsParty::wizard62_disintegration() {
+	g_globals->_combat->disintegration();
 	return SR_SUCCESS_SILENT;
 }
 
@@ -952,7 +969,47 @@ SpellResult SpellsParty::wizard71_astralSpell() {
 }
 
 SpellResult SpellsParty::wizard72_duplication() {
+	// TODO: Implement duplication
 	return SR_FAILED;
+}
+
+SpellResult SpellsParty::wizard73_meteorShower() {
+	SpellsState &ss = g_globals->_spellsState;
+	g_globals->_combat->resetDestMonster();
+
+	ss._mmVal1++;
+	ss._mmVal2 = 5;
+	ss._newCondition = MIN((int)getRandomNumber(120) +
+		(int)g_globals->_currCharacter->_level._current, 120);
+
+	g_globals->_combat->iterateMonsters2();
+	return SR_SUCCESS_SILENT;
+}
+
+SpellResult SpellsParty::wizard74_powerShield() {
+	g_globals->_activeSpells._s.power_shield++;
+	return SR_SUCCESS_DONE;
+}
+
+SpellResult SpellsParty::wizard75_prismaticLight() {
+	SpellsState &ss = g_globals->_spellsState;
+	g_globals->_combat->resetDestMonster();
+
+	if (getRandomNumber(100) < 20)
+		return SR_FAILED;
+
+	if (ss._mmVal1 < 50) {
+		uint count = getRandomNumber(4);
+		ss._newCondition <<= count;
+		g_globals->_combat->iterateMonsters2();
+
+	} else {
+		uint count = getRandomNumber(8);
+		ss._newCondition <<= count;
+		g_globals->_combat->iterateMonsters1();
+	}
+
+	return SR_SUCCESS_SILENT;
 }
 
 void SpellsParty::restoreHp(uint16 hp) {

@@ -240,7 +240,7 @@ protected:
 
 private:
 	void spellFailed();
-	void destroyUndead();
+	void destroyMonster();
 	bool monsterLevelThreshold() const;
 	void iterateMonsters1Inner();
 	void iterateMonsters2Inner();
@@ -275,6 +275,8 @@ public:
 	void weaken();
 	bool web();
 	bool acidRain();
+	void fingerOfDeath();
+	void disintegration();
 };
 
 } // namespace Game

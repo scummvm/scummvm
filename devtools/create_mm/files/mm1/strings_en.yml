@@ -828,6 +828,7 @@ spells:
 		8: "IS TURNED TO STONE"
 		9: "IS ERADICATED"
 		10: "IS AFFECTED"
+		disintegrated: "IS DISINTEGRATED!"
 	monster_effects:
 		0: "IS SCARED"
 		1: "IS BLINDED"

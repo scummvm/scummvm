@@ -68,9 +68,6 @@ private:
 	static void display(const InfoMessage &msg);
 
 private:
-	static SpellResult placeholder() {
-		return SR_FAILED;
-	}
 	static SpellResult cleric11_awaken();
 	static SpellResult cleric12_bless();
 	static SpellResult cleric13_blind();
@@ -164,11 +161,16 @@ private:
 	static SpellResult wizard53_fingerOfDeath();
 	static SpellResult wizard54_shelter();
 	static SpellResult wizard55_teleport();
+	static SpellResult wizard61_dancingSword();
+	static SpellResult wizard62_disintegration();
 	static SpellResult wizard63_etherialize();
 	static SpellResult wizard64_protectionFromMagic();
 	static SpellResult wizard65_rechargeItem();
 	static SpellResult wizard71_astralSpell();
 	static SpellResult wizard72_duplication();
+	static SpellResult wizard73_meteorShower();
+	static SpellResult wizard74_powerShield();
+	static SpellResult wizard75_prismaticLight();
 
 	static SpellFn SPELLS[SPELLS_COUNT];
 public:
