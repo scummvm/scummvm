@@ -138,12 +138,30 @@ private:
 	static SpellResult wizard23_identifyMonster();
 	static SpellResult wizard24_jump();
 	static SpellResult wizard25_levitate();
+	static SpellResult wizard26_power();
+	static SpellResult wizard27_quickness();
+	static SpellResult wizard28_scare();
+	static SpellResult wizard31_fireball();
 	static SpellResult wizard32_fly();
+	static SpellResult wizard33_invisibility();
+	static SpellResult wizard34_lightningBolt();
+	static SpellResult wizard35_makeRoom();
+	static SpellResult wizard36_slow();
+	static SpellResult wizard37_weaken();
+	static SpellResult wizard38_web();
+	static SpellResult wizard41_acidArrow();
+	static SpellResult wizard42_coldBeam();
+	static SpellResult wizard43_feebleMind();
+	static SpellResult wizard44_freeze();
 	static SpellResult wizard45_guardDog();
 	static SpellResult wizard46_psychicProtection();
+	static SpellResult wizard47_shield();
+	static SpellResult wizard48_timeDistortion();
+	static SpellResult wizard51_acidRain();
 	static SpellResult wizard52_dispelMagic() {
 		return cleric52_dispelMagic();
 	}
+	static SpellResult wizard53_fingerOfDeath();
 	static SpellResult wizard54_shelter();
 	static SpellResult wizard55_teleport();
 	static SpellResult wizard63_etherialize();
