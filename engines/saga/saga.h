@@ -475,6 +475,7 @@ private:
 
 public:
 	bool decodeBGImage(const ByteArray &imageData, ByteArray &outputBuffer, int *w, int *h, bool flip = false);
+  	bool decodeBGImageMask(const ByteArray &imageData, ByteArray &outputBuffer, int *w, int *h, bool flip = false);
 	const byte *getImagePal(const ByteArray &imageData) {
 		if (imageData.size() <= SAGA_IMAGE_HEADER_LEN) {
 			return NULL;

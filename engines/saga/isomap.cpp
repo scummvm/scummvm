@@ -124,10 +124,11 @@ void IsoMap::loadImages(const ByteArray &resourceData) {
 		error("IsoMap::loadImages wrong resourceLength");
 	}
 
+	bool longOffset = _vm->isAGA() || _vm->isECS();
 
 	ByteArrayReadStreamEndian readS(resourceData, _vm->isBigEndian());
 	readS.readUint16(); // skip
-	i = readS.readUint16();
+	i = longOffset ? readS.readUint32() : readS.readUint16();
 	i = i / SAGA_ISOTILEDATA_LEN;
 	_tilesTable.resize(i);
 	Common::Array<size_t> tempOffsets;
@@ -139,7 +140,7 @@ void IsoMap::loadImages(const ByteArray &resourceData) {
 		tileData = &_tilesTable[i];
 		tileData->height = readS.readByte();
 		tileData->attributes = readS.readSByte();
-		tempOffsets[i] = readS.readUint16();
+		tempOffsets[i] = longOffset ? readS.readUint32() : readS.readUint16();
 		tileData->terrainMask = readS.readUint16();
 		tileData->FGDBGDAttr = readS.readByte();
 		readS.readByte(); //skip
@@ -152,6 +153,7 @@ void IsoMap::loadImages(const ByteArray &resourceData) {
 
 	for (i = 0; i < _tilesTable.size(); i++) {
 		_tilesTable[i].tilePointer = _tileData.getBuffer() + tempOffsets[i] - offsetDiff;
+		_tilesTable[i].tileSize = i + 1 == (int)_tilesTable.size() ? resourceData.size() - tempOffsets[i] : tempOffsets[i+1] - tempOffsets[i];
 	}
 }
 
@@ -819,6 +821,40 @@ void IsoMap::drawTile(uint16 tileIndex, const Point &point, const Location *loca
 
 	readPointer = tilePointer;
 	lowBound = MIN((int)(drawPoint.y + height), (int)_tileClip.bottom);
+
+	if (_vm->isAGA() || _vm->isECS()) {
+		if (height == 0)
+			return;
+		int pitchLine = _tilesTable[tileIndex].tileSize / height;
+		int pitchPlane = _vm->isAGA() ? pitchLine / 8 : pitchLine / 5;
+		int width = pitchPlane * 8;
+		int bitnum = _vm->isAGA() ? 8 : 5;
+		Common::Rect bounds(
+			MAX((int)drawPoint.x, (int)_tileClip.left),
+			MAX((int)drawPoint.y, (int)_tileClip.top),
+			MIN((int)drawPoint.x + width, (int)_tileClip.right),
+			MIN((int)drawPoint.y + height, (int)_tileClip.bottom)
+			);
+		for (row = bounds.top; row < bounds.bottom; row++)
+			for (col = bounds.left; col < bounds.right; col++) {
+				int sourceX = (col - drawPoint.x);
+				int sourceY = (row - drawPoint.y);
+				byte res = 0;
+
+				for (int bit = 0; bit < bitnum; bit++) {
+				        unsigned inOff = sourceY * pitchLine + sourceX / 8 + pitchPlane * bit;
+					if (inOff >= _tilesTable[tileIndex].tileSize) {
+					  //warning("Overrun sourceX=%d, sourceY=%d, pitch=%d, height=%d", sourceX, sourceY, pitchLine, height);
+						continue;
+					}
+					res |= ((tilePointer[inOff] >> (7 - sourceX % 8)) & 1) << bit;
+				}
+				if (res != 0)
+					_vm->_gfx->getBackBufferPixels()[col + (row * _vm->_gfx->getBackBufferPitch())] = res;
+			}
+		return;
+	}
+
 	for (row = drawPoint.y; row < lowBound; row++) {
 		widthCount = 0;
 		if (row >= _tileClip.top) {

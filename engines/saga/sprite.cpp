@@ -33,6 +33,83 @@
 
 namespace Saga {
 
+namespace {
+
+template<int bitsPerPixel, int bitsPerEntry>
+bool blitAmigaSprite(byte *outBuf, int outPitch, const byte *inputBuffer, size_t inLength, int width, int height) {
+	byte *outPointer = outBuf;
+	int c;
+	int widthAligned = (width + 15) & ~15;
+
+	Common::MemoryReadStream readS(inputBuffer, inLength);
+	const byte *ptr = inputBuffer, *end = inputBuffer + inLength;
+
+	for (int bitOut = 0; bitOut < bitsPerPixel; bitOut++)
+		for (int x = 0; x < widthAligned; x += bitsPerEntry) {
+			for (int y = 0; y < height; ) {
+				int bg_runcount = bitsPerEntry == 16 ? READ_BE_UINT16(ptr) : *ptr;
+				ptr += bitsPerEntry / 8;
+				if (ptr >= end)
+					return true;
+
+				// Transparent
+				y += bg_runcount;
+
+				if (y > height) {
+					warning("Sprite height overrun in transparent run: coord=%d+%dx%d, size=%dx%d, pos=%d",
+						x, bitOut, y, width, height, (int)readS.pos());
+					return true;
+				}
+
+				if (y == height) {
+					continue;
+				}
+
+				int fg_runcount = bitsPerEntry == 16 ? READ_BE_UINT16(ptr) : *ptr;
+				ptr += bitsPerEntry / 8;
+				if (ptr >= end)
+					return true;
+
+				for (c = 0; c < fg_runcount && ptr < end; c++, y++) {
+					uint16 val = bitsPerEntry == 16 ? READ_BE_UINT16(ptr) : *ptr;
+					ptr += bitsPerEntry / 8;
+					if (y >= height) {
+						warning("Sprite height overrun in opaque run: coord=%d+%dx%d, size=%dx%d, pos=%d",
+							x, bitOut, y, width, height, (int)readS.pos());
+						return false;
+					}
+					for (int bitIn = 0; bitIn < bitsPerEntry; bitIn++) {
+						int realX = x + (bitsPerEntry - 1 - bitIn);
+						if (realX >= width) {
+							continue;
+						}
+						outPointer[y * outPitch + realX] =
+							(outPointer[y * outPitch + realX] & ~(1 << bitOut)) | (((val >> bitIn) & 1) << bitOut);
+					}
+				}
+				if (bitsPerEntry < 8) {
+					byte mask = (byte) ~(0xff << bitsPerEntry);
+					for (c = 0, y -= fg_runcount; c < fg_runcount; c++, y++) {
+						for (int z = 0; z < bitsPerEntry; z++) {
+							int realX = x + z;
+							if (realX >= width) {
+								continue;
+							}
+							outPointer[y * outPitch + realX] &= mask;
+						}
+					}
+				}
+				if (fg_runcount == 0 && bg_runcount == 0) {
+					warning("Sprite zero-sized run: coord=%d+%dx%d, size=%dx%d, pos=%d",
+						x, bitOut, y, width, height, (int)readS.pos());
+					return false;
+				}
+			}
+		}
+	return true;
+}
+
+}
 #define RID_IHNM_ARROW_SPRITES 13
 #define RID_IHNM_SAVEREMINDER_SPRITES 14
 #define RID_IHNMDEMO_ARROW_SPRITES 8
@@ -92,7 +169,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 
 	for (uint i = oldSpriteCount; i < spriteList.size(); i++) {
 		uint32 offset;
-		if (bigHeader)
+		if (bigHeader || _vm->isITEAmiga())
 			offset = readS.readUint32();
 		else
 			offset = readS.readUint16();
@@ -134,7 +211,15 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		int inputLength = spriteListData.size() - (spriteDataPointer - spriteListData.getBuffer());
 		spriteInfo->decodedBuffer.resize(outputLength);
 		if (outputLength > 0) {
-			decodeRLEBuffer(spriteDataPointer, inputLength, outputLength);
+			if (_vm->isAGA() || _vm->isECS()) {
+				_decodeBuf.resize(spriteInfo->width * spriteInfo->height);
+				memset(&_decodeBuf.front(), 0, _decodeBuf.size());
+				if (_vm->isAGA())
+					blitAmigaSprite<8, 16>(&_decodeBuf.front(), spriteInfo->width, spriteDataPointer, inputLength, spriteInfo->width, spriteInfo->height);
+				else
+					blitAmigaSprite<4, 8>(&_decodeBuf.front(), spriteInfo->width, spriteDataPointer, inputLength, spriteInfo->width, spriteInfo->height);
+			} else
+				decodeRLEBuffer(spriteDataPointer, inputLength, outputLength);
 			byte *dst = &spriteInfo->decodedBuffer.front();
 #ifdef ENABLE_IHNM
 			// IHNM sprites are upside-down, for reasons which i can only
