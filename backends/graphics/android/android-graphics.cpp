@@ -168,7 +168,7 @@ void AndroidGraphicsManager::showOverlay(bool inGUI) {
 		JNI::setTouchMode(_old_touch_mode);
 	}
 
-	OpenGL::OpenGLGraphicsManager::showOverlay();
+	OpenGL::OpenGLGraphicsManager::showOverlay(inGUI);
 }
 
 void AndroidGraphicsManager::hideOverlay() {
