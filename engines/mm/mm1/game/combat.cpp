@@ -1090,6 +1090,24 @@ void Combat::summonLightning2() {
 	iterateMonsters2();
 }
 
+void Combat::fireball2() {
+	SpellsState &ss = g_globals->_spellsState;
+	ss._mmVal1 = 1;
+	ss._mmVal2 = 1;
+	ss._resistanceType = 5;
+	ss._newCondition = 0;
+
+	levelAdjust();
+}
+
+void Combat::levelAdjust() {
+	SpellsState &ss = g_globals->_spellsState;
+	for (uint i = 0; i < g_globals->_currCharacter->_level._current; ++i)
+		ss._newCondition += getRandomNumber(6);
+
+	iterateMonsters2();
+}
+
 void Combat::paralyze() {
 	SpellsState &ss = g_globals->_spellsState;
 	g_globals->_combat->resetDestMonster();
@@ -1192,6 +1210,83 @@ void Combat::identifyMonster() {
 	};
 
 	displaySpellResult(msg);
+}
+#undef COL2
+
+void Combat::fireball() {
+	SpellsState &ss = g_globals->_spellsState;
+
+	if (_destMonsterNum < _attackerVal) {
+		Common::String line1 = Common::String::format("|%s| %s",
+			g_globals->_currCharacter->_name,
+			STRING["spells.casts_spell"].c_str());
+
+		ss._newCondition = g_globals->_currCharacter->_level * 2 + 4;
+		ss._mmVal1++;
+		ss._mmVal2++;
+		ss._resistanceType++;
+		handlePartyDamage();
+
+		InfoMessage msg(0, 0, line1);
+		msg._delaySeconds = 3;
+		msg._timeoutCallback = []() {
+			g_globals->_combat->fireball2();
+		};
+		displaySpellResult(msg);
+	} else {
+		fireball2();
+	}
+}
+
+void Combat::lightningBolt() {
+	SpellsState &ss = g_globals->_spellsState;
+	ss._mmVal1++;
+	ss._resistanceType = 3;
+	ss._mmVal2 = 2;
+
+	levelAdjust();
+}
+
+void Combat::makeRoom() {
+	for (int i = 0; i < 5; ++i)
+		_canAttack[i] = 1;
+}
+
+void Combat::slow() {
+	for (uint i = 0; i < _monsterList.size(); ++i) {
+		monsterSetPtr(i);
+		_monsterP->_speed = MAX(_monsterP->_speed / 2, 1);
+	}
+}
+
+void Combat::weaken() {
+	for (uint i = 0; i < _monsterList.size(); ++i) {
+		monsterSetPtr(i);
+		_monsterAC[i] = MAX((int)_monsterAC[i] - 1, 1);
+	}
+}
+
+bool Combat::web() {
+	SpellsState &ss = g_globals->_spellsState;
+	if (_destMonsterNum < _attackerVal)
+		return false;
+
+	ss._mmVal1++;
+	ss._mmVal2 = 0;
+	ss._resistanceType = 5;
+	ss._newCondition = UNCONSCIOUS;
+
+	iterateMonsters1();
+	return true;
+}
+
+bool Combat::acidRain() {
+	if (_attackerVal >= (int)_monsterList.size())
+		return false;
+
+	// TODO: Acid rain
+
+	return true;
 }
 
 } // namespace Game

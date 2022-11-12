@@ -99,28 +99,28 @@ SpellsParty::SpellFn SpellsParty::SPELLS[SPELLS_COUNT] = {
 	wizard23_identifyMonster,
 	wizard24_jump,
 	wizard25_levitate,
-	placeholder,
-	placeholder,
-	placeholder,
-	placeholder,
+	wizard26_power,
+	wizard27_quickness,
+	wizard28_scare,
+	wizard31_fireball,
 	wizard32_fly,
-	placeholder,
-	placeholder,
-	placeholder,
-	placeholder,
-	placeholder,
-	placeholder,
-	placeholder,
-	placeholder,
-	placeholder,
-	placeholder,
+	wizard33_invisibility,
+	wizard34_lightningBolt,
+	wizard35_makeRoom,
+	wizard36_slow,
+	wizard37_weaken,
+	wizard38_web,
+	wizard41_acidArrow,
+	wizard42_coldBeam,
+	wizard43_feebleMind,
+	wizard44_freeze,
 	wizard45_guardDog,
 	wizard46_psychicProtection,
-	placeholder,
-	placeholder,
-	cleric51_deadlySwarm,
+	wizard47_shield,
+	wizard48_timeDistortion,
+	wizard51_acidRain,
 	wizard52_dispelMagic,
-	placeholder,
+	wizard53_fingerOfDeath,
 	wizard54_shelter,
 	wizard55_teleport,
 	placeholder,
@@ -761,6 +761,32 @@ SpellResult SpellsParty::wizard25_levitate() {
 	return SR_SUCCESS_DONE;
 }
 
+SpellResult SpellsParty::wizard26_power() {
+	g_globals->_currCharacter->_might._current += getRandomNumber(4);
+	return SR_SUCCESS_DONE;
+}
+
+SpellResult SpellsParty::wizard27_quickness() {
+	g_globals->_currCharacter->_speed._current += getRandomNumber(4);
+	return SR_SUCCESS_DONE;
+}
+
+SpellResult SpellsParty::wizard28_scare() {
+	SpellsState &ss = g_globals->_spellsState;
+	ss._mmVal1++;
+	ss._mmVal2 = 7;
+	ss._resistanceType++;
+	ss._newCondition = 1;
+
+	g_globals->_combat->iterateMonsters1();
+	return SR_SUCCESS_SILENT;
+}
+
+SpellResult SpellsParty::wizard31_fireball() {
+	g_globals->_combat->fireball();
+	return SR_SUCCESS_SILENT;
+}
+
 SpellResult SpellsParty::wizard32_fly() {
 	Views::Spells::Fly::show(
 		[](int mapIndex) {
@@ -778,6 +804,82 @@ SpellResult SpellsParty::wizard32_fly() {
 	return SR_SUCCESS_SILENT;
 }
 
+SpellResult SpellsParty::wizard33_invisibility() {
+	g_globals->_activeSpells._s.invisbility++;
+	return SR_SUCCESS_DONE;
+}
+
+SpellResult SpellsParty::wizard34_lightningBolt() {
+	g_globals->_combat->lightningBolt();
+	return SR_SUCCESS_SILENT;
+}
+
+SpellResult SpellsParty::wizard35_makeRoom() {
+	g_globals->_combat->makeRoom();
+	return SR_SUCCESS_DONE;
+}
+
+SpellResult SpellsParty::wizard36_slow() {
+	g_globals->_combat->slow();
+	return SR_SUCCESS_DONE;
+}
+
+SpellResult SpellsParty::wizard37_weaken() {
+	g_globals->_combat->weaken();
+	return SR_SUCCESS_DONE;
+}
+
+SpellResult SpellsParty::wizard38_web() {
+	return g_globals->_combat->web() ? SR_SUCCESS_SILENT : SR_FAILED;
+}
+
+SpellResult SpellsParty::wizard41_acidArrow() {
+	SpellsState &ss = g_globals->_spellsState;
+	ss._mmVal1++;
+	ss._resistanceType++;
+	ss._mmVal2 = 3;
+	ss._newCondition += getRandomNumber(10) +
+		getRandomNumber(10) + getRandomNumber(10);
+
+	g_globals->_combat->iterateMonsters2();
+	return SR_SUCCESS_SILENT;
+}
+
+SpellResult SpellsParty::wizard42_coldBeam() {
+	SpellsState &ss = g_globals->_spellsState;
+	ss._mmVal1++;
+	ss._resistanceType++;
+	ss._mmVal2 = 4;
+
+	ss._newCondition = getRandomNumber(10) + getRandomNumber(10) +
+		getRandomNumber(10) + getRandomNumber(10);
+
+	g_globals->_combat->iterateMonsters2();
+	return SR_SUCCESS_SILENT;
+}
+
+SpellResult SpellsParty::wizard43_feebleMind() {
+	SpellsState &ss = g_globals->_spellsState;
+	ss._mmVal1++;
+	ss._mmVal2 = 0;
+	ss._resistanceType++;
+	ss._newCondition = 8;
+
+	g_globals->_combat->iterateMonsters1();
+	return SR_SUCCESS_SILENT;
+}
+
+SpellResult SpellsParty::wizard44_freeze() {
+	SpellsState &ss = g_globals->_spellsState;
+	ss._mmVal1 = 0;
+	ss._mmVal2 = 6;
+	ss._resistanceType++;
+	ss._newCondition = 128;
+
+	g_globals->_combat->iterateMonsters1();
+	return SR_SUCCESS_SILENT;
+}
+
 SpellResult SpellsParty::wizard45_guardDog() {
 	g_globals->_activeSpells._s.guard_dog =
 		g_globals->_currCharacter->_level._current;
@@ -788,6 +890,25 @@ SpellResult SpellsParty::wizard46_psychicProtection() {
 	g_globals->_activeSpells._s.psychic_protection =
 		g_globals->_currCharacter->_level._current;
 	return SR_SUCCESS_DONE;
+}
+
+SpellResult SpellsParty::wizard47_shield() {
+	g_globals->_activeSpells._s.shield++;
+	return SR_SUCCESS_DONE;
+}
+
+SpellResult SpellsParty::wizard48_timeDistortion() {
+	// TODO: time distortion
+	return SR_FAILED;
+}
+
+SpellResult SpellsParty::wizard51_acidRain() {
+	return g_globals->_combat->acidRain() ? SR_SUCCESS_SILENT : SR_FAILED;
+}
+
+SpellResult SpellsParty::wizard53_fingerOfDeath() {
+	// TODO: finger of death
+	return SR_FAILED;
 }
 
 SpellResult SpellsParty::wizard54_shelter() {

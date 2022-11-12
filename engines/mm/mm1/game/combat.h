@@ -246,6 +246,8 @@ private:
 	void iterateMonsters2Inner();
 	void updateArr3();
 	void summonLightning2();
+	void fireball2();
+	void levelAdjust();
 
 public:
 	/**
@@ -266,6 +268,13 @@ public:
 
 	// Wizard spells that need access to internal fields
 	void identifyMonster();
+	void fireball();
+	void lightningBolt();
+	void makeRoom();
+	void slow();
+	void weaken();
+	bool web();
+	bool acidRain();
 };
 
 } // namespace Game
