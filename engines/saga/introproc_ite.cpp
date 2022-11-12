@@ -49,52 +49,19 @@ namespace Saga {
 #define DISSOLVE_DURATION 3000
 #define LOGO_DISSOLVE_DURATION 1000
 
-// Intro scenes
-#define RID_ITE_INTRO_ANIM_SCENE 1538
-#define RID_ITE_CAVE_SCENE_1 1542
-#define RID_ITE_CAVE_SCENE_2 1545
-#define RID_ITE_CAVE_SCENE_3 1548
-#define RID_ITE_CAVE_SCENE_4 1551
-#define RID_ITE_VALLEY_SCENE 1556
-#define RID_ITE_TREEHOUSE_SCENE 1560
-#define RID_ITE_FAIREPATH_SCENE 1564
-#define RID_ITE_FAIRETENT_SCENE 1567
-
-// Intro scenes - DOS demo
-#define RID_ITE_INTRO_ANIM_SCENE_DOS_DEMO 298
-#define RID_ITE_CAVE_SCENE_DOS_DEMO 302
-#define RID_ITE_VALLEY_SCENE_DOS_DEMO 310
-
 // ITE intro music
 #define MUSIC_INTRO 9
 #define MUSIC_TITLE_THEME 10
 
-LoadSceneParams ITE_IntroList[] = {
-	{RID_ITE_INTRO_ANIM_SCENE, kLoadByResourceId, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_CAVE_SCENE_1, kLoadByResourceId, Scene::SC_ITEIntroCave1Proc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_CAVE_SCENE_2, kLoadByResourceId, Scene::SC_ITEIntroCave2Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_CAVE_SCENE_3, kLoadByResourceId, Scene::SC_ITEIntroCave3Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_CAVE_SCENE_4, kLoadByResourceId, Scene::SC_ITEIntroCave4Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_VALLEY_SCENE, kLoadByResourceId, Scene::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_TREEHOUSE_SCENE, kLoadByResourceId, Scene::SC_ITEIntroTreeHouseProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_FAIREPATH_SCENE, kLoadByResourceId, Scene::SC_ITEIntroFairePathProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_FAIRETENT_SCENE, kLoadByResourceId, Scene::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE}
-};
-
-LoadSceneParams ITE_DOS_Demo_IntroList[] = {
-	{RID_ITE_INTRO_ANIM_SCENE_DOS_DEMO, kLoadByResourceId, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_CAVE_SCENE_DOS_DEMO, kLoadByResourceId, Scene::SC_ITEIntroCaveDemoProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_VALLEY_SCENE_DOS_DEMO, kLoadByResourceId, Scene::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
-};
-
 int Scene::ITEStartProc() {
 	LoadSceneParams firstScene;
 	LoadSceneParams tempScene;
-	bool dosDemo = (_vm->getFeatures() & GF_ITE_DOS_DEMO);
-	int scenesCount = (!dosDemo) ? ARRAYSIZE(ITE_IntroList) : ARRAYSIZE(ITE_DOS_Demo_IntroList);
+	const LoadSceneParams *scenes;
 
-	for (int i = 0; i < scenesCount; i++) {
-		tempScene = (!dosDemo) ? ITE_IntroList[i] : ITE_DOS_Demo_IntroList[i];
+	scenes = _vm->getIntroScenes();
+
+	for (int i = 0; scenes[i].sceneDescriptor; i++) {
+		tempScene = scenes[i];
 		tempScene.sceneDescriptor = _vm->_resource->convertResourceId(tempScene.sceneDescriptor);
 		_vm->_scene->queueScene(tempScene);
 	}
@@ -323,7 +290,7 @@ EventColumns *Scene::queueCredits(int delta_time, int duration, int n_credits, c
 	return eventColumns;
 }
 
-int Scene::SC_ITEIntroAnimProc(int param, void *refCon) {
+int SceneHandlers::SC_ITEIntroAnimProc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroAnimProc(param);
 }
 
@@ -503,31 +470,31 @@ int Scene::ITEIntroCaveDemoProc(int param) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroCaveDemoProc(int param, void *refCon) {
+int SceneHandlers::SC_ITEIntroCaveDemoProc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroCaveDemoProc(param);
 }
 
 // Handles first introductory cave painting scene
-int Scene::SC_ITEIntroCave1Proc(int param, void *refCon) {
+int SceneHandlers::SC_ITEIntroCave1Proc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroCaveCommonProc(param, 1);
 }
 
 // Handles second introductory cave painting scene
-int Scene::SC_ITEIntroCave2Proc(int param, void *refCon) {
+int SceneHandlers::SC_ITEIntroCave2Proc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroCaveCommonProc(param, 2);
 }
 
 // Handles third introductory cave painting scene
-int Scene::SC_ITEIntroCave3Proc(int param, void *refCon) {
+int SceneHandlers::SC_ITEIntroCave3Proc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroCaveCommonProc(param, 3);
 }
 
 // Handles fourth introductory cave painting scene
-int Scene::SC_ITEIntroCave4Proc(int param, void *refCon) {
+int SceneHandlers::SC_ITEIntroCave4Proc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroCaveCommonProc(param, 4);
 }
 
-int Scene::SC_ITEIntroValleyProc(int param, void *refCon) {
+int SceneHandlers::SC_ITEIntroValleyProc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroValleyProc(param);
 }
 
@@ -608,7 +575,7 @@ int Scene::ITEIntroValleyProc(int param) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroTreeHouseProc(int param, void *refCon) {
+int SceneHandlers::SC_ITEIntroTreeHouseProc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroTreeHouseProc(param);
 }
 
@@ -664,7 +631,7 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroFairePathProc(int param, void *refCon) {
+int SceneHandlers::SC_ITEIntroFairePathProc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroFairePathProc(param);
 }
 
@@ -718,7 +685,7 @@ int Scene::ITEIntroFairePathProc(int param) {
 	return 0;
 }
 
-int Scene::SC_ITEIntroFaireTentProc(int param, void *refCon) {
+int SceneHandlers::SC_ITEIntroFaireTentProc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroFaireTentProc(param);
 }
 

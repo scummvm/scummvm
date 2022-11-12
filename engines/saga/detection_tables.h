@@ -114,6 +114,42 @@ static const GameFontDescription IHNMDEMO_GameFonts[]   = { {2}, {3}, {4} };
 // Font 6 is kIHNMFont8, font 8 is kIHNMMainFont
 static const GameFontDescription IHNMCD_GameFonts[]     = { {2}, {3}, {4}, {5}, {6}, {7}, {8} };
 
+// Intro scenes
+#define RID_ITE_INTRO_ANIM_SCENE 1538
+#define RID_ITE_CAVE_SCENE_1 1542
+#define RID_ITE_CAVE_SCENE_2 1545
+#define RID_ITE_CAVE_SCENE_3 1548
+#define RID_ITE_CAVE_SCENE_4 1551
+#define RID_ITE_VALLEY_SCENE 1556
+#define RID_ITE_TREEHOUSE_SCENE 1560
+#define RID_ITE_FAIREPATH_SCENE 1564
+#define RID_ITE_FAIRETENT_SCENE 1567
+
+// Intro scenes - DOS demo
+#define RID_ITE_INTRO_ANIM_SCENE_DOS_DEMO 298
+#define RID_ITE_CAVE_SCENE_DOS_DEMO 302
+#define RID_ITE_VALLEY_SCENE_DOS_DEMO 310
+
+LoadSceneParams ITE_IntroListDefault[] = {
+	{RID_ITE_INTRO_ANIM_SCENE, kLoadByResourceId, SceneHandlers::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_CAVE_SCENE_1, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave1Proc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_CAVE_SCENE_2, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave2Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_CAVE_SCENE_3, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave3Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_CAVE_SCENE_4, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave4Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_VALLEY_SCENE, kLoadByResourceId, SceneHandlers::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_TREEHOUSE_SCENE, kLoadByResourceId, SceneHandlers::SC_ITEIntroTreeHouseProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_FAIREPATH_SCENE, kLoadByResourceId, SceneHandlers::SC_ITEIntroFairePathProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_FAIRETENT_SCENE, kLoadByResourceId, SceneHandlers::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByResourceId, nullptr, false, kTransitionNoFade, 0, 0}
+};
+
+static const LoadSceneParams ITE_DOS_Demo_IntroList[] = {
+	{RID_ITE_INTRO_ANIM_SCENE_DOS_DEMO, kLoadByResourceId, SceneHandlers::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_CAVE_SCENE_DOS_DEMO, kLoadByResourceId, SceneHandlers::SC_ITEIntroCaveDemoProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_VALLEY_SCENE_DOS_DEMO, kLoadByResourceId, SceneHandlers::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByResourceId, nullptr, false, kTransitionNoFade, 0, 0}
+};
+
 // Patch files. Files not found will be ignored
 static const GamePatchDescription ITEPatch_Files[] = {
 	{       "cave.mid", GAME_RESOURCEFILE,    9},
@@ -203,6 +239,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEDEMO_GameFonts),
 		ITEDEMO_GameFonts,
 		NULL,
+		ITE_DOS_Demo_IntroList,
 	},
 
 	// Inherit the earth - MAC Demo version
@@ -227,6 +264,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		ITEMacPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 
@@ -253,6 +291,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		ITEMacPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 
@@ -279,6 +318,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 
@@ -305,6 +345,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 
@@ -338,6 +379,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		NULL,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - MAC CD First edition
@@ -365,6 +407,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		NULL,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - MAC CD Wyrmkeep version
@@ -389,6 +432,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		ITEMacPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - MAC CD GOG version 1.1
@@ -413,6 +457,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		NULL,
+		ITE_IntroListDefault,
 	},
 
 
@@ -445,6 +490,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		NULL,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - German Wyrmkeep combined Windows/Mac/Linux CD
@@ -472,6 +518,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		NULL,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - Italian Wyrmkeep combined Windows/Mac/Linux CD (fan translation)
@@ -503,6 +550,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		NULL,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - Wyrmkeep Windows CD version
@@ -529,6 +577,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - Wyrmkeep Linux CD version
@@ -555,6 +604,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - DOS CD version - 17-06-1994
@@ -580,6 +630,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - Wyrmkeep Italian Windows CD version (fan translation)
@@ -605,6 +656,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - Wyrmkeep Italian Linux CD version (fan translation)
@@ -630,6 +682,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - Italian DOS CD version (fan translation)
@@ -654,6 +707,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - Wyrmkeep French Windows CD version (fan translation)
@@ -679,6 +733,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - Wyrmkeep French Linux CD version (fan translation)
@@ -704,6 +759,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - French DOS CD version (fan translation)
@@ -728,6 +784,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - DOS CD version - 30-06-1994
@@ -752,6 +809,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - Hebrew fan translation
@@ -776,6 +834,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		NULL,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - DOS CD German version
@@ -801,6 +860,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		NULL,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - Windows Trial
@@ -828,6 +888,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		NULL,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - macOS Trial
@@ -854,6 +915,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		NULL,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - Pocket PC Trial
@@ -880,6 +942,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the Earth - Japanese PC-98 CD version
@@ -904,6 +967,7 @@ static const SAGAGameDescription gameDescriptions[] = {
  		ARRAYSIZE(ITE_GameFonts),
  		ITE_GameFonts,
  		NULL,
+		ITE_IntroListDefault,
  	},
 
 	// Inherit the earth - Russian CD version (fan translation)
@@ -928,6 +992,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 	// ITE floppy versions ////////////////////////////////////////////////////////////////////////////////////
@@ -954,6 +1019,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		NULL,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - Disk version
@@ -978,6 +1044,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - Italian Disk version (fan translation)
@@ -1002,6 +1069,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - Chinese Disk version
@@ -1026,6 +1094,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 	// Inherit the earth - Russian Disk version (fan translation)
@@ -1050,6 +1119,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
 		ITEPatch_Files,
+		ITE_IntroListDefault,
 	},
 
 	// ITE Amiga versions /////////////////////////////////////////////////////////////////////////////////////
@@ -1081,6 +1151,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&IHNMDEMO_Resources,
 		ARRAYSIZE(IHNMDEMO_GameFonts),
 		IHNMDEMO_GameFonts,
+		NULL,
 		NULL,
 	},
 
@@ -1114,6 +1185,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		NULL,
+		NULL,
 	},
 
 	// I Have No Mouth And I Must Scream - De CD version
@@ -1143,6 +1215,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&IHNM_Resources,
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
+		NULL,
 		NULL,
 	},
 
@@ -1174,6 +1247,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		NULL,
+		NULL,
 	},
 
 	// I Have No Mouth And I Must Scream - Hungarian fan CD translation
@@ -1204,6 +1278,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		NULL,
+		NULL,
 	},
 
 	// I Have No Mouth And I Must Scream - Sp CD version
@@ -1231,6 +1306,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&IHNM_Resources,
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
+		NULL,
 		NULL,
 	},
 
@@ -1261,6 +1337,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		NULL,
+		NULL,
 	},
 
 	// I Have No Mouth And I Must Scream - Fr CD version
@@ -1289,6 +1366,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&IHNM_Resources,
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
+		NULL,
 		NULL,
 	},
 
@@ -1319,6 +1397,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		NULL,
+		NULL,
 	},
 
 	// I Have No Mouth And I Must Scream - Italian fan CD translation
@@ -1346,6 +1425,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&IHNM_Resources,
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
+		NULL,
 		NULL,
 	},
 
@@ -1379,6 +1459,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		NULL,
+		NULL,
 	},
 
 	// I Have No Mouth And I Must Scream - Mac English CD
@@ -1405,9 +1486,10 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
 		NULL,
+		NULL,
 	},
 
-	{ AD_TABLE_END_MARKER, 0, 0, 0, NULL, 0, NULL, NULL }
+	{ AD_TABLE_END_MARKER, 0, 0, 0, NULL, 0, NULL, NULL, NULL }
 };
 
 } // End of namespace Saga

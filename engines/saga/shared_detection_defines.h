@@ -24,3 +24,43 @@
 #define IHNM_DEFAULT_SCENE 151
 #define ITEDEMO_DEFAULT_SCENE 68
 #define IHNMDEMO_DEFAULT_SCENE 144
+
+namespace Saga {
+typedef int (SceneProc) (int, void *);
+
+class SceneHandlers {
+public:
+	static int SC_ITEIntroAnimProc(int param, void *refCon);
+	static int SC_ITEIntroCave1Proc(int param, void *refCon);
+	static int SC_ITEIntroCave2Proc(int param, void *refCon);
+	static int SC_ITEIntroCave3Proc(int param, void *refCon);
+	static int SC_ITEIntroCave4Proc(int param, void *refCon);
+	static int SC_ITEIntroValleyProc(int param, void *refCon);
+	static int SC_ITEIntroTreeHouseProc(int param, void *refCon);
+	static int SC_ITEIntroFairePathProc(int param, void *refCon);
+	static int SC_ITEIntroFaireTentProc(int param, void *refCon);
+	static int SC_ITEIntroCaveDemoProc(int param, void *refCon);
+};
+
+enum SceneTransitionType {
+	kTransitionNoFade,
+	kTransitionFade
+};
+
+enum SceneLoadFlags {
+	kLoadByResourceId,
+	kLoadBySceneNumber
+};
+
+struct LoadSceneParams {
+	int32 sceneDescriptor;
+	SceneLoadFlags loadFlag;
+	SceneProc *sceneProc;
+	bool sceneSkipTarget;
+	SceneTransitionType transitionType;
+	int actorsEntrance;
+	int chapter;
+};
+
+#define NO_CHAPTER_CHANGE -2
+}

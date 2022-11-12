@@ -86,6 +86,7 @@ enum GameFileTypes {
 	GAME_PATCHFILE        = 1 << 10    // IHNM patch file (patch.re_/patch.res)
 };
 
+struct LoadSceneParams;
 struct SAGAGameDescription {
 	ADGameDescription desc;
 
@@ -96,7 +97,10 @@ struct SAGAGameDescription {
 	int fontsCount;
 	const GameFontDescription *fontDescriptions;
 	const GamePatchDescription *patchDescriptions;
+	const LoadSceneParams *introScenes;
 };
+
+extern LoadSceneParams ITE_IntroListDefault[];
 
 } // End of namespace Saga
 

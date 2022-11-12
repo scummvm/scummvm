@@ -420,6 +420,8 @@ public:
 
 	bool isIHNMDemo() const { return _isIHNMDemo; }
 
+	const LoadSceneParams *getIntroScenes() const { return _gameDescription->introScenes; }
+
 	int16 _framesEsc;
 
 	uint32 _globalFlags;
