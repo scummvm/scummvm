@@ -398,7 +398,7 @@ private:
 	bool hasAdequateDefense_2(int16 charId, uint8 attackType);
 	void getDeathTypeDescription(int16 attackerId, int16 victimId);
 	bool characterSearchesMonsterCorpse(int16 charId, int16 monsterId);
-	void getXPAndSearchCorpse(int16 charId, char* namePt1, char* namePt2, int16 monsterId);
+	void getXPAndSearchCorpse(int16 charId, Common::String namePt1, Common::String namePt2, int16 monsterId);
 	void addReactionText(int16 id);
 	void handleFight_lastAction_A(int16 teamCharId);
 	void handleFight_lastAction_D(int16 teamCharId);
@@ -509,7 +509,7 @@ private:
 	AnimInfo _animInfo[100];
 	uint8 _history[256];
 	uint8 _techData[4096];
-	char _enemyNamePt1[5];
+	Common::String _enemyNamePt1;
 	Common::String _enemyNamePt2;
 	char _characterNamePt1[5];
 	Common::String _characterNamePt2;
