@@ -204,6 +204,8 @@ public:
 	Combat();
 	virtual ~Combat() {}
 
+	void displaySpellResult(const InfoMessage &msg) override;
+
 	/**
 	 * Disable the flags for allowing attacks for
 	 * the current character

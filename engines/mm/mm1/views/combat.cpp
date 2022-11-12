@@ -691,6 +691,14 @@ void Combat::setOption(SelectedOption option) {
 	_option = option;
 }
 
+void Combat::displaySpellResult(const InfoMessage &msg) {
+	assert(msg._timeoutCallback || msg._keyCallback);
+	assert(!msg._delaySeconds || !msg._timeoutCallback);
+
+	// TODO: Display the spell result
+	warning("TODO: displaySpellResult");
+}
+
 } // namespace Views
 } // namespace MM1
 } // namespace MM
