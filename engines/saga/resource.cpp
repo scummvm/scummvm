@@ -35,6 +35,27 @@
 
 namespace Saga {
 
+bool ResourceContext::loadResIteAmiga(uint32 contextOffset, uint32 contextSize, int type) {
+	_file.seek(contextOffset);
+	uint16 resourceCount = _file.readUint16BE();
+	uint16 scriptCount = _file.readUint16BE();
+	uint32 count = (type &  GAME_SCRIPTFILE) ? scriptCount : resourceCount;
+
+	if (type &  GAME_SCRIPTFILE)
+		_file.seek(resourceCount * 10, SEEK_CUR);
+
+	_table.resize(count);
+
+	for (uint32 i = 0; i < count; i++) {
+		ResourceData *resourceData = &_table[i];
+		resourceData->offset = _file.readUint32BE();
+		resourceData->size = _file.readUint32BE();
+		resourceData->diskNum = _file.readUint16BE();
+	}
+
+	return true;
+}
+
 bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 	size_t i;
 	bool result;
@@ -116,14 +137,15 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 			_file.seek(83);
 			uint32 macDataSize = _file.readSint32BE();
 			// Skip the MacBinary headers, and read the resource data.
-			return loadRes(MAC_BINARY_HEADER_SIZE, macDataSize);
+			return loadRes(MAC_BINARY_HEADER_SIZE, macDataSize, _fileType);
 		} else {
 			// Unpack MacBinary packed MIDI files
 			return loadMacMIDI();
 		}
 	}
 
-	if (!loadRes(0, _fileSize))
+
+	if (!loadRes(0, _fileSize, _fileType))
 		return false;
 
 	processPatches(resource, vm->getPatchDescriptions());
@@ -170,6 +192,8 @@ bool Resource::createContexts() {
 		gameFileDescription->fileName; gameFileDescription++) {
 		if (gameFileDescription->fileType > 0)
 			addContext(gameFileDescription->fileName, gameFileDescription->fileType);
+		if ((gameFileDescription->fileType & GAME_RESOURCEFILE) && _vm->getPlatform() == Common::kPlatformAmiga && _vm->getGameId() == GID_ITE)
+			addContext(gameFileDescription->fileName, (gameFileDescription->fileType & ~GAME_RESOURCEFILE) | GAME_SCRIPTFILE | GAME_SWAPENDIAN);
 		if (gameFileDescription->fileType == GAME_SOUNDFILE) {
 			soundFileInArray = true;
 		}
@@ -312,8 +336,23 @@ void Resource::clearContexts() {
 
 void Resource::loadResource(ResourceContext *context, uint32 resourceId, ByteArray &resourceBuffer) {
 	ResourceData *resourceData = context->getResourceData(resourceId);
-	Common::File *file = context->getFile(resourceData);
+	Common::File *file = nullptr;
 	uint32 resourceOffset = resourceData->offset;
+
+	if (resourceData->diskNum < 0)
+		file = context->getFile(resourceData);
+	else {
+		file = new Common::File();
+		Common::String fileName = context->_fileName;
+		int sz = fileName.size();
+		while(sz > 0 && fileName[sz - 1] != '.')
+			sz--;
+		if (sz > 0)
+			sz--;
+		fileName = Common::String::format("%s.%03d", fileName.substr(0, sz).c_str(), resourceData->diskNum);
+		if (!file->open(fileName))
+			error("Resource::loadResource() failed to open %s", fileName.c_str());
+	}
 
 	debug(8, "loadResource %d 0x%X:0x%X", resourceId, resourceOffset, uint(resourceData->size));
 	resourceBuffer.resize(resourceData->size);
