@@ -167,13 +167,13 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 }
 
 void EclipseEngine::drawUI() {
-	_gfx->renderCrossair(0, _crossairPosition);
 	_gfx->setViewport(_fullscreenViewArea);
 
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
 	uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
 	surface->fillRect(_fullscreenViewArea, gray);
+	drawCrossair(surface);
 
 	int score = _gameStateVars[k8bitVariableScore];
 	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);

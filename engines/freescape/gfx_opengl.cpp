@@ -172,37 +172,6 @@ void OpenGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 	glTranslatef(-pos.x(), -pos.y(), -pos.z());
 }
 
-void OpenGLRenderer::renderCrossair(byte color, const Common::Point position) {
-	uint8 r, g, b;
-	readFromPalette(color, r, g, b); // TODO: should use opposite color
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, _screenW, _screenH, 0, 0, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glDisable(GL_DEPTH_TEST);
-	glDepthMask(GL_FALSE);
-
-	glColor3ub(r, g, b);
-
-	glLineWidth(15); // It will not work in every OpenGL implementation since the
-					 // spec doesn't require support for line widths other than 1
-	glEnableClientState(GL_VERTEX_ARRAY);
-	copyToVertexArray(0, Math::Vector3d(position.x - 1, position.y, 0));
-	copyToVertexArray(1, Math::Vector3d(position.x + 3, position.y, 0));
-	copyToVertexArray(2, Math::Vector3d(position.x, position.y - 3, 0));
-	copyToVertexArray(3, Math::Vector3d(position.x, position.y + 3, 0));
-	glVertexPointer(3, GL_FLOAT, 0, _verts);
-	glDrawArrays(GL_LINES, 0, 4);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glLineWidth(1);
-
-	glDepthMask(GL_TRUE);
-	glEnable(GL_DEPTH_TEST);
-}
-
 void OpenGLRenderer::renderShoot(byte color, const Common::Point position) {
 	uint8 r, g, b;
 	readFromPalette(color, r, g, b); // TODO: should use opposite color

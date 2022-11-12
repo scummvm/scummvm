@@ -177,8 +177,23 @@ Math::Vector3d FreescapeEngine::directionToVector(float pitch, float heading) {
 }
 
 void FreescapeEngine::drawUI() {
-	_gfx->renderCrossair(0, _crossairPosition);
+	// TODO: crossair
 	_gfx->setViewport(_viewArea);
+}
+
+void FreescapeEngine::drawCrossair(Graphics::Surface *surface) {
+	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+
+	surface->drawLine(_crossairPosition.x - 3, _crossairPosition.y, _crossairPosition.x - 2, _crossairPosition.y, white);
+	surface->drawLine(_crossairPosition.x + 2, _crossairPosition.y, _crossairPosition.x + 3, _crossairPosition.y, white);
+
+	surface->drawLine(_crossairPosition.x, _crossairPosition.y - 3, _crossairPosition.x, _crossairPosition.y - 2, white);
+	surface->drawLine(_crossairPosition.x, _crossairPosition.y + 2, _crossairPosition.x, _crossairPosition.y + 3, white);
+}
+
+void FreescapeEngine::centerCrossair() {
+	_crossairPosition.x = _viewArea.left + _viewArea.width() / 2;
+	_crossairPosition.y = _viewArea.top + _viewArea.height() / 2;
 }
 
 void FreescapeEngine::drawFrame() {
@@ -325,10 +340,8 @@ void FreescapeEngine::processInput() {
 				break;
 			case Common::KEYCODE_SPACE:
 				_shootMode = !_shootMode;
-				if (!_shootMode) {
-					_crossairPosition.x = _screenW / 2;
-					_crossairPosition.y = _screenH / 2;
-				}
+				if (!_shootMode)
+					centerCrossair();
 				break;
 			default:
 				pressedKey(event.kbd.keycode);
@@ -418,6 +431,7 @@ Common::Error FreescapeEngine::run() {
 	// Simple main event loop
 	int saveSlot = ConfMan.getInt("save_slot");
 	_system->lockMouse(true);
+	centerCrossair();
 
 	if (_title) {
 		if (saveSlot == -1) {

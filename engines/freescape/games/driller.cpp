@@ -333,14 +333,13 @@ void DrillerEngine::loadAssetsFullGame() {
 }
 
 void DrillerEngine::drawUI() {
-	_gfx->renderCrossair(0, _crossairPosition);
-
 	Graphics::Surface *surface = nullptr;
 	if (_border) { // This can be removed when all the borders are loaded
 		uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
 		surface = new Graphics::Surface();
 		surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
 		surface->fillRect(_fullscreenViewArea, gray);
+		drawCrossair(surface);
 	} else
 		return;
 

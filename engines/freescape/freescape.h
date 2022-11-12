@@ -103,11 +103,13 @@ public:
 	// UI
 	Common::Rect _viewArea;
 	Common::Rect _fullscreenViewArea;
+	void centerCrossair();
 
 	void convertBorder();
 	void drawBorder();
 	void drawTitle();
 	virtual void drawUI();
+	virtual void drawCrossair(Graphics::Surface *surface);
 	Graphics::Surface *_border;
 	Graphics::Surface *_title;
 	Texture *_borderTexture;

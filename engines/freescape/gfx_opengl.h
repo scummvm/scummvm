@@ -73,7 +73,6 @@ public:
 	void freeTexture(Texture *texture) override;
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) override;
 
-	virtual void renderCrossair(byte color, const Common::Point position) override;
 	virtual void renderShoot(byte color, const Common::Point position) override;
 	virtual void renderFace(const Common::Array<Math::Vector3d> &vertices) override;
 

@@ -122,34 +122,6 @@ void TinyGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 	tglTranslatef(-pos.x(), -pos.y(), -pos.z());
 }
 
-void TinyGLRenderer::renderCrossair(byte color, const Common::Point position) {
-	uint8 r, g, b;
-	readFromPalette(color, r, g, b); // TODO: should use opposite color
-
-	tglMatrixMode(TGL_PROJECTION);
-	tglLoadIdentity();
-	tglOrtho(0, _screenW, _screenH, 0, 0, 1);
-	tglMatrixMode(TGL_MODELVIEW);
-	tglLoadIdentity();
-
-	tglDisable(TGL_DEPTH_TEST);
-	tglDepthMask(TGL_FALSE);
-
-	tglColor3ub(r, g, b);
-
-	tglEnableClientState(TGL_VERTEX_ARRAY);
-	copyToVertexArray(0, Math::Vector3d(position.x - 1, position.y, 0));
-	copyToVertexArray(1, Math::Vector3d(position.x + 3, position.y, 0));
-	copyToVertexArray(2, Math::Vector3d(position.x, position.y - 3, 0));
-	copyToVertexArray(3, Math::Vector3d(position.x, position.y + 3, 0));
-	tglVertexPointer(3, TGL_FLOAT, 0, _verts);
-	tglDrawArrays(TGL_LINES, 0, 4);
-	tglDisableClientState(TGL_VERTEX_ARRAY);
-
-	tglDepthMask(TGL_TRUE);
-	tglEnable(TGL_DEPTH_TEST);
-}
-
 void TinyGLRenderer::renderShoot(byte color, const Common::Point position) {
 	uint8 r, g, b;
 	readFromPalette(color, r, g, b); // TODO: should use opposite color
