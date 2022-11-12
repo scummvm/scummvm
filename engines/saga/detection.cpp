@@ -40,6 +40,7 @@ public:
 		static const char *const DIRECTORY_GLOBS[2] = { "music", nullptr };
 		_maxScanDepth = 2;
 		_directoryGlobs = DIRECTORY_GLOBS;
+		_flags = kADFlagUseExtraAsHint;
 	}
 
 	const char *getName() const override {

@@ -66,7 +66,9 @@ enum GameFeatures {
 	GF_EXTRA_ITE_CREDITS = 1 << 2,
 	GF_8BIT_UNSIGNED_PCM = 1 << 3,
 	GF_IHNM_COLOR_FIX    = 1 << 4,
-	GF_SOME_MAC_RESOURCES= 1 << 5
+	GF_SOME_MAC_RESOURCES= 1 << 5,
+	GF_AGA_GRAPHICS      = 1 << 6,
+	GF_ECS_GRAPHICS      = 1 << 7
 };
 
 enum GameFileTypes {
