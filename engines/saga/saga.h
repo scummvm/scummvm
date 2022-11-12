@@ -420,6 +420,10 @@ public:
 
 	bool isIHNMDemo() const { return _isIHNMDemo; }
 
+	bool isITEAmiga() const { return getPlatform() == Common::kPlatformAmiga && getGameId() == GID_ITE; }
+	bool isAGA() const { return _gameDescription->features & GF_AGA_GRAPHICS; }
+	bool isECS() const { return _gameDescription->features & GF_ECS_GRAPHICS; }
+	unsigned getPalNumEntries() const { return isECS() ? 32 : 256; }
 	const LoadSceneParams *getIntroScenes() const { return _gameDescription->introScenes; }
 
 	int16 _framesEsc;
