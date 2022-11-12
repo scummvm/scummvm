@@ -41,7 +41,7 @@
 
 namespace Saga {
 
-bool SagaEngine::isBigEndian() const { return isMacResources() && getGameId() == GID_ITE; }
+bool SagaEngine::isBigEndian() const { return (isMacResources() || (getPlatform() == Common::kPlatformAmiga)) && getGameId() == GID_ITE; }
 bool SagaEngine::isMacResources() const { return (getPlatform() == Common::kPlatformMacintosh); }
 const GameResourceDescription *SagaEngine::getResourceDescription() const { return _gameDescription->resourceDescription; }
 
