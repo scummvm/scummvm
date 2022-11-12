@@ -52,7 +52,8 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm), _sfxContext(nullptr), _voiceContext(nu
 	// Load sound module resource file contexts
 	_sfxContext = _vm->_resource->getContext(GAME_SOUNDFILE);
 	if (_sfxContext == nullptr) {
-		error("SndRes::SndRes resource context not found");
+		warning("SndRes::SndRes resource context not found");
+		return;
 	}
 
 	setVoiceBank(0);
@@ -105,6 +106,8 @@ SndRes::~SndRes() {
 
 void SndRes::setVoiceBank(int serial) {
 	Common::File *file;
+	if (_sfxContext == nullptr)
+		return;
 	if (_voiceSerial == serial)
 		return;
 
@@ -141,6 +144,9 @@ void SndRes::playSound(uint32 resourceId, int volume, bool loop) {
 
 	debug(4, "SndRes::playSound %i", resourceId);
 
+	if (_sfxContext == nullptr)
+		return;
+
 	if (!load(_sfxContext, resourceId, buffer, false)) {
 		warning("Failed to load sound");
 		return;
@@ -151,6 +157,9 @@ void SndRes::playSound(uint32 resourceId, int volume, bool loop) {
 
 void SndRes::playVoice(uint32 resourceId) {
 	SoundBuffer buffer;
+
+	if (_sfxContext == nullptr)
+		return;
 
 	if (!(_vm->_voiceFilesExist))
 		return;
@@ -194,6 +203,9 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	GameSoundType resourceType = kSoundPCM;
 	int rate = 0, size = 0;
 	Common::File *file;
+
+	if (_sfxContext == nullptr)
+		return false;
 
 	if (resourceId == (uint32)-1) {
 		return false;
@@ -454,6 +466,9 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 int SndRes::getVoiceLength(uint32 resourceId) {
 	SoundBuffer buffer;
+
+	if (_sfxContext == nullptr)
+		return -1;
 
 	if (!(_vm->_voiceFilesExist))
 		return -1;
