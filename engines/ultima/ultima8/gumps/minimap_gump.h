@@ -35,7 +35,8 @@ private:
 	Graphics::ManagedSurface _minimap;
 	unsigned int        _lastMapNum;
 
-	uint32 sampleAtPoint(int x, int y, CurrentMap *map);
+	uint32 sampleAtPoint(CurrentMap *map, int x, int y);
+	uint32 sampleAtPoint(const Item *item, int x, int y);
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
