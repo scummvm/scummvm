@@ -137,7 +137,7 @@ void Font::textDraw(FontId fontId, const char *text, const Common::Point &point,
 	draw(fontId, text, textLength, textPoint, color, effectColor, flags);
 }
 
-DefaultFont::DefaultFont(SagaEngine *vm) : Font(vm), _fontMapping(0) {
+DefaultFont::DefaultFont(SagaEngine *vm) : Font(vm), _fontMapping(0), _chineseFont(nullptr), _chineseFontWidth(0), _chineseFontHeight(0) {
 	int i;
 
 	// Load font module resource context
@@ -152,6 +152,9 @@ DefaultFont::DefaultFont(SagaEngine *vm) : Font(vm), _fontMapping(0) {
 #endif
 		loadFont(&_fonts[i],	_vm->getFontDescription(i)->fontResourceId);
 	}
+
+	if (_vm->getGameId() == GID_ITE && _vm->getLanguage() == Common::ZH_CHN)
+		loadChineseFontITE("ite.fnt");
 }
 
 DefaultFont::~DefaultFont() {
@@ -168,6 +171,29 @@ DefaultFont::~DefaultFont() {
 		}
 	}
 #endif
+	if (_chineseFont) {
+		delete[] _chineseFont;
+		_chineseFont = nullptr;
+	}
+}
+
+void DefaultFont::loadChineseFontITE(const Common::String& fileName) {
+	Common::File f;
+	if (!f.open(fileName))
+		return;
+	_chineseFontWidth = 16;
+	_chineseFontHeight = 14;
+	_chineseFontIndex = Common::move(Common::Array<int>(0x8000, -1));
+	size_t sz = f.size();
+	_chineseFont = new byte[sz];
+	f.read(_chineseFont, sz);
+	static const int kGlyphSize = 30;
+	for (unsigned i = 0; i < sz / kGlyphSize; i++) {
+		uint16 ch = READ_BE_UINT16(_chineseFont + kGlyphSize * i);
+		if (!(ch & 0x8000))
+			continue;
+		_chineseFontIndex[ch&0x7fff] = kGlyphSize * i + 2;
+	}
 }
 
 void DefaultFont::textDrawRect(FontId fontId, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) {
@@ -204,7 +230,7 @@ void DefaultFont::textDrawRect(FontId fontId, const char *text, const Common::Re
 	}
 
 	// String won't fit on one line
-	h = getHeight(fontId);
+	h = getHeight(fontId, text);
 	w_total = 0;
 	len_total = 0;
 	wc = 0;
@@ -331,7 +357,7 @@ int DefaultFont::getHeight(FontId fontId, const char *text, int width, FontEffec
 
 	textLength = getStringLength(text);
 	textWidth = getStringWidth(fontId, text, textLength, flags);
-	h = getHeight(fontId);
+	h = getHeight(fontId, text);
 	fitWidth = width;
 
 	textPoint.x = (fitWidth / 2);
@@ -415,6 +441,19 @@ void DefaultFont::draw(FontId fontId, const char *text, size_t count, const Comm
 	}
 }
 
+int DefaultFont::getHeight(FontId fontId, const char *text) {
+	int singleByteHeight = getHeight(fontId);
+	if (!_chineseFont || _chineseFontHeight < singleByteHeight)
+		return singleByteHeight;
+
+	for (const byte* textPointer = (const byte *)text; *textPointer; textPointer++)
+		if (*textPointer & 0x80)
+			return _chineseFontHeight;
+
+	return singleByteHeight;
+}
+
+
 void DefaultFont::outFont(const FontStyle &drawFont, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags) {
 	const byte *textPointer;
 	const byte *c_dataPointer;
@@ -442,59 +481,90 @@ void DefaultFont::outFont(const FontStyle &drawFont, const char *text, size_t co
 	textPointer = (const byte *)text;
 	ct = count;
 
+	byte isBig5 = _chineseFont ? true : false;
+
 	// Draw string one character at a time, maximum of 'draw_str'_ct
 	// characters, or no limit if 'draw_str_ct' is 0
 	for (; *textPointer && (!count || ct); textPointer++, ct--) {
+		int charWidth;
+		int charHeight;
+		int charTracking;
+		int rowLength;
+		const byte *bitmap;
 		c_code = *textPointer & 0xFFU;
 
-		// Translate character
-		if (_fontMapping == 0) {	// Check font mapping debug flag
-			// Default game behavior
-
-			// It seems that this font mapping causes problems with non-english
-			// versions of IHNM, so it has been changed to apply for ITE only.
-			// It doesn't make any difference for the English version of IHNM.
-			// Fixes bug #3405: "IHNM: Spanish font wrong".
-			if (!(flags & kFontDontmap) && _vm->getGameId() == GID_ITE) {
-				if (_vm->getLanguage() != Common::IT_ITA) {
-					c_code = translateChar(c_code);
-				} else {
-					// The in-game fonts of the Italian version should not be mapped.
-					// The ones in the intro are hardcoded and should be mapped normally.
-					if (_vm->_scene->isInIntro())
-						c_code = translateChar(c_code);
-				}
-			}
-		} else if (_fontMapping == 1) {
-			// Force font mapping
-			c_code = translateChar(c_code);
-		} else {
-			// In all other cases, ignore font mapping
-		}
-		assert(c_code < FONT_CHARCOUNT);
-
-		// Check if character is defined
-		if ((drawFont.fontCharEntry[c_code].index == 0) && (c_code != FONT_FIRSTCHAR)) {
-#if FONT_SHOWUNDEFINED
-			// A tab character appears in the IHNM demo instructions screen, so filter
-			// it out here
-			if (c_code == FONT_CH_SPACE || c_code == FONT_CH_TAB) {
-				textPoint.x += drawFont.fontCharEntry[c_code].tracking;
+		if ((c_code & 0x80) && isBig5) {
+			byte leading = c_code;
+			byte trailing = *++textPointer & 0xFFU;
+			ct--;
+			if (ct == 0 || trailing == 0)
+				break;
+			int idx = _chineseFontIndex[((leading & 0x7f) << 8) | trailing];
+			if (idx < 0) {
+				textPoint.x += _chineseFontWidth;
 				continue;
 			}
-			c_code = FONT_CH_QMARK;
+			charWidth = _chineseFontWidth;
+			charHeight = _chineseFontHeight;
+			rowLength = _chineseFontWidth / 8;
+			charTracking = _chineseFontWidth;
+			bitmap = _chineseFont + idx;
+		} else {
+			// Translate character
+			if (_fontMapping == 0) {	// Check font mapping debug flag
+				// Default game behavior
+
+				// It seems that this font mapping causes problems with non-english
+				// versions of IHNM, so it has been changed to apply for ITE only.
+				// It doesn't make any difference for the English version of IHNM.
+				// Fixes bug #3405: "IHNM: Spanish font wrong".
+				if (!(flags & kFontDontmap) && _vm->getGameId() == GID_ITE) {
+					if (_vm->getLanguage() != Common::IT_ITA) {
+						c_code = translateChar(c_code);
+					} else {
+						// The in-game fonts of the Italian version should not be mapped.
+						// The ones in the intro are hardcoded and should be mapped normally.
+						if (_vm->_scene->isInIntro())
+							c_code = translateChar(c_code);
+					}
+				}
+			} else if (_fontMapping == 1) {
+				// Force font mapping
+				c_code = translateChar(c_code);
+			} else {
+				// In all other cases, ignore font mapping
+			}
+			assert(c_code < FONT_CHARCOUNT);
+
+			// Check if character is defined
+			if ((drawFont.fontCharEntry[c_code].index == 0) && (c_code != FONT_FIRSTCHAR)) {
+#if FONT_SHOWUNDEFINED
+				// A tab character appears in the IHNM demo instructions screen, so filter
+				// it out here
+				if (c_code == FONT_CH_SPACE || c_code == FONT_CH_TAB) {
+					textPoint.x += drawFont.fontCharEntry[c_code].tracking;
+					continue;
+				}
+				c_code = FONT_CH_QMARK;
 #else
-			// Character code is not defined, but advance tracking
-			// ( Not defined if offset is 0, except for 33 ('!') which
-			//   is defined )
-			textPoint.x += drawFont.fontCharEntry[c_code].tracking;
-			continue;
+				// Character code is not defined, but advance tracking
+				// ( Not defined if offset is 0, except for 33 ('!') which
+				//   is defined )
+				textPoint.x += drawFont.fontCharEntry[c_code].tracking;
+				continue;
 #endif
+			}
+
+			charWidth = drawFont.fontCharEntry[c_code].width;
+			charHeight = drawFont.header.charHeight;
+			rowLength = drawFont.header.rowLength;
+			bitmap = &drawFont.font[drawFont.fontCharEntry[c_code].index];
+			charTracking = drawFont.fontCharEntry[c_code].tracking;
 		}
 
 		// Get length of character in bytes
-		c_byte_len = ((drawFont.fontCharEntry[c_code].width - 1) / 8) + 1;
-		rowLimit = (_vm->_gfx->getBackBufferHeight() < (textPoint.y + drawFont.header.charHeight)) ? _vm->_gfx->getBackBufferHeight() : textPoint.y + drawFont.header.charHeight;
+		c_byte_len = ((charWidth - 1) / 8) + 1;
+		rowLimit = (_vm->_gfx->getBackBufferHeight() < (textPoint.y + charHeight)) ? _vm->_gfx->getBackBufferHeight() : textPoint.y + charHeight;
 		charRow = 0;
 
 		for (row = textPoint.y; row < rowLimit; row++, charRow++) {
@@ -512,7 +582,7 @@ void DefaultFont::outFont(const FontStyle &drawFont, const char *text, size_t co
 				break;
 			}
 
-			c_dataPointer = &drawFont.font[charRow * drawFont.header.rowLength + drawFont.fontCharEntry[c_code].index];
+			c_dataPointer = bitmap + charRow * rowLength;
 
 			for (c_byte = 0; c_byte < c_byte_len; c_byte++, c_dataPointer++) {
 				// Check each bit, draw pixel if bit is set
@@ -526,7 +596,7 @@ void DefaultFont::outFont(const FontStyle &drawFont, const char *text, size_t co
 		} // end per-row processing
 
 		// Advance tracking position
-		textPoint.x += drawFont.fontCharEntry[c_code].tracking;
+		textPoint.x += charTracking;
 	} // end per-character processing
 
 	rowLimit = (_vm->_gfx->getBackBufferHeight() < (textPoint.y + drawFont.header.charHeight)) ? _vm->_gfx->getBackBufferHeight() : textPoint.y + drawFont.header.charHeight;
