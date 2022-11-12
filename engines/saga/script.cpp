@@ -906,7 +906,7 @@ void Script::loadModule(uint scriptModuleNumber) {
 
 	_vm->_resource->loadResource(_scriptContext, _modules[scriptModuleNumber].stringsResourceId, resourceData);
 
-	_vm->loadStrings(_modules[scriptModuleNumber].strings, resourceData, _vm->isBigEndian());
+	_vm->loadStrings(_modules[scriptModuleNumber].strings, resourceData, _vm->isBigEndian() && !_vm->isITEAmiga());
 
 	if (_modules[scriptModuleNumber].voicesResourceId > 0) {
 		_vm->_resource->loadResource(_scriptContext, _modules[scriptModuleNumber].voicesResourceId, resourceData);
