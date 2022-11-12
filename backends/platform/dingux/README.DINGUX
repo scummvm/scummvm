@@ -30,7 +30,7 @@ file included into the scummvm directory you copied to the SD card, and then lau
 Building from binaries
 ==============================
 It's pretty simple if you are running Linux on an x86/amd64 machine:
-1. Download and install the OpenDingux toolchain (http://www.treewalker.org/opendingux/)
+1. Download and install the OpenDingux toolchain (https://github.com/OpenDingux/buildroot/releases)
 2. Download ScummVM sources and uncompress them
 3. Create a build directory and run configure specifying the correct library path. Eg.
 	mkdir build_dingux
@@ -45,7 +45,7 @@ Kernel and rootfs WARNINGS
 ==============================
 
 *** A WARNING about the WARNING! ***
-The info below should no longer be valid relating to the new OpenDingux (http://www.treewalker.org/opendingux/)
+The info below should no longer be valid relating to the new OpenDingux (https://github.com/OpenDingux/buildroot/releases)
 toolchain. When using OpenDingux you don't need custom kernels or libraries,
 after some checking I will remove the following warnings and keep OpenDingux
 as the only supported toolchain.
