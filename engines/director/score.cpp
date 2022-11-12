@@ -471,12 +471,6 @@ void Score::update() {
 	debugC(1, kDebugLoading, "******************************  Current frame: %d, time: %d", _currentFrame, g_system->getMillis(false));
 	g_debugger->frameHook();
 
-	if (_window->hasFrozenLingoState()) {
-		_window->thawLingoState();
-		g_lingo->switchStateFromWindow();
-		g_lingo->execute();
-	}
-
 	_lingo->executeImmediateScripts(_frames[_currentFrame]);
 
 	if (_vm->getVersion() >= 600) {
@@ -492,7 +486,26 @@ void Score::update() {
 
 	// Enter and exit from previous frame
 	if (!_vm->_playbackPaused) {
-		_movie->processEvent(kEventEnterFrame); // Triggers the frame script in D2-3, explicit enterFrame handlers in D4+
+		uint32 count = _window->frozenLingoStateCount();
+		// Triggers the frame script in D2-3, explicit enterFrame handlers in D4+
+		_movie->processEvent(kEventEnterFrame);
+		// If another frozen state gets triggered, wait another update() before thawing
+		if (_window->frozenLingoStateCount() > count)
+			return;
+	}
+
+	// Attempt to thaw and continue any frozen execution after startMovie and enterFrame
+	while (uint32 count = _window->frozenLingoStateCount()) {
+		_window->thawLingoState();
+		g_lingo->switchStateFromWindow();
+		g_lingo->execute();
+		if (_window->frozenLingoStateCount() >= count) {
+			debugC(3, kDebugLingoExec, "State froze again mid-thaw, interrupting");
+			return;
+		}
+	}
+
+	if (!_vm->_playbackPaused) {
 		if ((_vm->getVersion() >= 300 && _vm->getVersion() < 400) || _movie->_allowOutdatedLingo) {
 			// Movie version of enterFrame, for D3 only. The D3 Interactivity Manual claims
 			// "This handler executes before anything else when the playback head moves."
@@ -502,6 +515,7 @@ void Score::update() {
 		if (_movie->_timeOutPlay)
 			_movie->_lastTimeOut = _vm->getMacTicks();
 	}
+
 	// TODO Director 6 - another order
 
 	// TODO: Figure out when exactly timeout events are processed

@@ -359,7 +359,6 @@ public:
 	void execute();
 	void switchStateFromWindow();
 	void freezeState();
-	bool hasFrozenState();
 	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal, int paramCount);
 	void popContext(bool aborting = false);
 	void cleanLocalVars();

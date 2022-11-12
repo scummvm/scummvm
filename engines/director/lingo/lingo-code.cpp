@@ -362,11 +362,6 @@ void Lingo::popContext(bool aborting) {
 	g_debugger->popContextHook();
 }
 
-bool Lingo::hasFrozenState() {
-	Window *window = _vm->getCurrentWindow();
-	return window->hasFrozenLingoState();
-}
-
 void Lingo::freezeState() {
 	Window *window = _vm->getCurrentWindow();
 	window->freezeLingoState();

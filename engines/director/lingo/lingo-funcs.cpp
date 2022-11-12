@@ -197,9 +197,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 
 	// If there isn't already frozen Lingo (e.g. from a previous func_goto we haven't yet unfrozen),
 	// freeze this script context. We'll return to it after entering the next frame.
-	if (!g_lingo->hasFrozenState()) {
-		g_lingo->_freezeState = true;
-	}
+	g_lingo->_freezeState = true;
 
 	if (movie.type != VOID) {
 		Common::String movieFilenameRaw = movie.asString();
