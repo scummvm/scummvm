@@ -508,9 +508,6 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 
 	debug(9, "wrappedPathMakeRelative(): s2 %s", convPath.c_str());
 
-	// Strip the leading whitespace from the path
-	initialPath.trim();
-
 	if (testPath(initialPath, directory))
 		return initialPath;
 
