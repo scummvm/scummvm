@@ -152,7 +152,7 @@ public:
 	Common::String getSharedCastPath();
 
 	LingoState *getLingoState() { return _lingoState; };
-	bool hasFrozenLingoState() { return _frozenLingoState != nullptr; };
+	uint32 frozenLingoStateCount() { return _frozenLingoStates.size(); };
 	void freezeLingoState();
 	void thawLingoState();
 
@@ -204,7 +204,7 @@ private:
 	DirectorEngine *_vm;
 	DirectorSound *_soundManager;
 	LingoState *_lingoState;
-	LingoState *_frozenLingoState;
+	Common::Array<LingoState *> _frozenLingoStates;
 	bool _isStage;
 	Archive *_mainArchive;
 	Movie *_currentMovie;

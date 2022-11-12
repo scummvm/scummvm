@@ -568,9 +568,9 @@ void Lingo::execute() {
 				debug("me: %s", _state->me.asString(true).c_str());
 		}
 
-		if (debugChannelSet(3, kDebugLingoExec)) {
+		if (debugChannelSet(4, kDebugLingoExec)) {
 			Common::String instr = decodeInstruction(_state->script, _state->pc);
-			debugC(3, kDebugLingoExec, "[%5d]: %s", current, instr.c_str());
+			debugC(4, kDebugLingoExec, "[%5d]: %s", current, instr.c_str());
 		}
 
 		g_debugger->stepHook();
