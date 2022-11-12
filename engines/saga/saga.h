@@ -476,7 +476,7 @@ public:
 
 		return &imageData.front() + SAGA_IMAGE_HEADER_LEN;
 	}
-	void loadStrings(StringsTable &stringsTable, const ByteArray &stringsData);
+	void loadStrings(StringsTable &stringsTable, const ByteArray &stringsData, bool isBigEndian);
 
 	const char *getObjectName(uint16 objectId) const;
 public:
