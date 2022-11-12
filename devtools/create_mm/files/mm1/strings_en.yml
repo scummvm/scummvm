@@ -806,6 +806,16 @@ spells:
 	cast_on_char: "CAST ON: '1'-'%d'?"
 	cast_on_monster: "CAST ON: 'A'-'%c'?"
 	which_town: "WHICH TOWN (1-5)?"
+
+	info:
+		hp: "HP = "
+		ac: "AC = "
+		speed: "SPEED = "
+		bonus_on_touch: "BONUS ON TOUCH   "
+		num_attacks: "# OF ATTACKS = "
+		special_ability: "SPECIAL ABILITY "
+		max_damage: "MAXIMUM DAMAGE = "
+		magic_resistance: "MAGIC RESISTANCE "
 	char_effects:
 		0: "IS SLEPT"
 		1: "IS BLINDED"

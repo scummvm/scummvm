@@ -119,12 +119,23 @@ private:
 	static SpellResult cleric74_resurrection();
 	static SpellResult cleric75_sunRay();
 
+	static SpellResult wizard11_awaken() {
+		return cleric11_awaken();
+	}
 	static SpellResult wizard12_detectMagic();
+	static SpellResult wizard13_energyBlast();
+	static SpellResult wizard14_flameArrow();
 	static SpellResult wizard15_leatherSkin();
 	static SpellResult wizard16_light() {
 		return cleric15_light();
 	}
 	static SpellResult wizard17_location();
+	static SpellResult wizard18_sleep();
+	static SpellResult wizard21_electricArrow();
+	static SpellResult wizard22_hypnotize() {
+		return cleric28_suggestion();
+	}
+	static SpellResult wizard23_identifyMonster();
 	static SpellResult wizard24_jump();
 	static SpellResult wizard25_levitate();
 	static SpellResult wizard32_fly();

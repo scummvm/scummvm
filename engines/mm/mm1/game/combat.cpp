@@ -38,8 +38,8 @@ Combat::~Combat() {
 }
 
 void Combat::clear() {
-	Common::fill(&_arr1[0], &_arr1[MAX_COMBAT_MONSTERS], 0);
-	Common::fill(&_arr2[0], &_arr2[MAX_COMBAT_MONSTERS], 0);
+	Common::fill(&_monsterHP[0], &_monsterHP[MAX_COMBAT_MONSTERS], 0);
+	Common::fill(&_monsterAC[0], &_monsterAC[MAX_COMBAT_MONSTERS], 0);
 	Common::fill(&_arr3[0], &_arr3[MAX_PARTY_SIZE / 2], 0);
 	Common::fill(&_arr4[0], &_arr4[MAX_COMBAT_MONSTERS], 0);
 	Common::fill(&_monsterStatus[0], &_monsterStatus[MAX_COMBAT_MONSTERS], 0);
@@ -89,8 +89,8 @@ void Combat::loadArrays() {
 		int val = getRandomNumber(8);
 
 		mon._field11 += val;
-		_arr1[i] = mon._field11;
-		_arr2[i] = mon._field12;
+		_monsterHP[i] = mon._field11;
+		_monsterAC[i] = mon._field12;
 
 		monsterIndexOf();
 	}
@@ -307,7 +307,7 @@ void Combat::loop1() {
 		_monsterP = &_monsterList[i];
 		monsterIndexOf();
 
-		if (_monsterP->_field15 && _monsterP->_field15 >= _handicap3
+		if (_monsterP->_speed && _monsterP->_speed >= _handicap3
 				&& !_arr4[i]) {
 			_arr4[i] = true;
 
@@ -487,13 +487,13 @@ bool Combat::monsterChanges() {
 		monsterSetPtr(i);
 
 		if ((_monsterP->_field1e & FIELD1E_40) &&
-			(_monsterP->_field11 != _arr1[i])) {
+			(_monsterP->_field11 != _monsterHP[i])) {
 			_monstersRegenerate = true;
-			int newVal = _arr1[i] + 5;
-			_arr1[i] = (byte)newVal;
+			int newVal = _monsterHP[i] + 5;
+			_monsterHP[i] = (byte)newVal;
 
 			if (newVal >= 256 || newVal >= _monsterP->_field11) {
-				_arr1[i] = _monsterP->_field11;
+				_monsterHP[i] = _monsterP->_field11;
 			}
 		}
 
@@ -587,7 +587,7 @@ void Combat::checkMonsterFlees() {
 	if (getRandomNumber(100) >= threshold) {
 		_monsterP->_experience = 0;
 		_monsterP->_field18 = 0;
-		_arr1[_monsterIndex] = 0;
+		_monsterHP[_monsterIndex] = 0;
 		_monsterStatus[_monsterIndex] = MONFLAG_DEAD;
 		removeMonster();
 		setMode(MONSTER_FLEES);
@@ -605,17 +605,17 @@ void Combat::checkMonsterSpells() {
 	if (_monsterStatus[_monsterIndex] & MONFLAG_MINDLESS) {
 		setMode(MONSTER_WANDERS);
 	} else {
-		if (!_monsterP->_field1c || (_monsterP->_field1c & 0x80) ||
+		if (!_monsterP->_specialAbility || (_monsterP->_specialAbility & 0x80) ||
 			(getRandomNumber(100) >= _monsterP->_field1d) ||
 			!(_monsterP->_field1e & 0xf))
 			checkMonsterActions();
 		else {
 			_monsterP->_field1e--;
-			if (!_monsterP->_field1c || _monsterP->_field1c >= 33) {
+			if (!_monsterP->_specialAbility || _monsterP->_specialAbility >= 33) {
 				checkMonsterActions();
 			} else {
 				castMonsterSpell(_monsterList[_monsterIndex]._name,
-					_monsterP->_field1c);
+					_monsterP->_specialAbility);
 				setMode(MONSTER_SPELL);
 			}
 			return;
@@ -821,12 +821,12 @@ void Combat::addAttackDamage() {
 }
 
 void Combat::updateMonsterStatus() {
-	int val = _arr1[_monsterIndex] - _damage;
+	int val = _monsterHP[_monsterIndex] - _damage;
 	if (val <= 0) {
-		_arr1[_monsterIndex] = 0;
+		_monsterHP[_monsterIndex] = 0;
 		_monsterStatus[_monsterIndex] = MONFLAG_DEAD;
 	} else {
-		_arr1[_monsterIndex] = val;
+		_monsterHP[_monsterIndex] = val;
 		_monsterStatus[_monsterIndex] &= ~(MONFLAG_ASLEEP | MONFLAG_HELD);
 	}
 }
@@ -981,7 +981,7 @@ void Combat::iterateMonsters2Inner() {
 
 		msg._lines.push_back(Line(0, 1, line2));
 
-		if (_damage >= _arr1[getMonsterIndex()]) {
+		if (_damage >= _monsterHP[getMonsterIndex()]) {
 			msg._lines.push_back(Line(0, 2, STRING["monster_spells.and_goes_down"]));
 		}
 	}
@@ -1033,7 +1033,7 @@ void Combat::spellFailed() {
 }
 
 bool Combat::monsterLevelThreshold() const {
-	int level = _monsterP->_field19 & FIELD19_LEVEL;
+	int level = _monsterP->_resistUndead & MAGIC_RESISTANCE;
 	return (level != 0) &&
 		getRandomNumber(g_globals->_currCharacter->_level + 100) < level;
 }
@@ -1050,9 +1050,9 @@ void Combat::turnUndead() {
 			monsterSetPtr(i);
 			Monster *monster = _monsterP;
 
-			if ((monster->_field19 & FIELD19_UNDEAD) &&
+			if ((monster->_resistUndead & IS_UNDEAD) &&
 					(getRandomNumber(20) + g_globals->_currCharacter->_level) >=
-					(_arr1[i] * 2 + 10)) {
+					(_monsterHP[i] * 2 + 10)) {
 				destroyUndead();
 				++_monstersDestroyedCtr;
 			}
@@ -1148,7 +1148,7 @@ void Combat::holyWord() {
 	_monstersDestroyedCtr = 0;
 	for (uint i = 0; i < _monsterList.size(); ++i) {
 		monsterSetPtr(i);
-		if (_monsterP->_field19 & FIELD19_UNDEAD) {
+		if (_monsterP->_resistUndead & IS_UNDEAD) {
 			destroyUndead();
 			++_monstersDestroyedCtr;
 		}
@@ -1159,6 +1159,56 @@ void Combat::holyWord() {
 	else
 		displaySpellResult(InfoMessage(15, 1, STRING["spells.no_effect"]));
 	_arr3[_currentChar] = 1;
+}
+
+#define COL2 21
+void Combat::identifyMonster() {
+	InfoMessage msg;
+	Common::String line;
+
+	line = _monsterList[_destMonsterNum]._name;
+	line += ':';
+	while (line.size() < COL2)
+		line += ' ';
+	line += STRING["spells.info.hp"];
+	line += Common::String::format("%d", _monsterHP[_destMonsterNum]);
+	line += "  ";
+	line += STRING["spells.info.ac"];
+	line += Common::String::format("%d", _monsterAC[_destMonsterNum]);
+	msg._lines.push_back(Line(0, 0, line));
+
+	line = STRING["spells.info.speed"];
+	line += Common::String::format("%d", _monsterP->_speed);
+	while (line.size() < COL2)
+		line += ' ';
+	line += STRING["spells.info.bonus_on_touch"];
+	line += _monsterP->_bonusOnTouch ? 'Y' : 'N';
+	msg._lines.push_back(Line(0, 1, line));
+
+	line = STRING["spells.info.num_attacks"];
+	line += Common::String::format("%d", _monsterP->_numberOfAttacks);
+	while (line.size() < COL2)
+		line += ' ';
+	line += STRING["spells.info.special_ability"];
+	line += (_monsterP->_specialAbility & 0x80) ||
+		!_monsterP->_specialAbility ? 'N' : 'Y';
+	msg._lines.push_back(Line(0, 2, line));
+
+	line = STRING["spells.info.max_damage"];
+	line += Common::String::format("%d", _monsterP->_maxDamage);
+	while (line.size() < COL2)
+		line += ' ';
+	line += STRING["spells.info.magic_resistance"];
+	line += Common::String::format("%d",
+		_monsterP->_resistUndead & MAGIC_RESISTANCE);
+	msg._lines.push_back(Line(0, 3, line));
+
+	msg._timeoutCallback = []() {
+		g_globals->_combat->_arr3[g_globals->_combat->_currentChar] = 1;
+		g_globals->_combat->combatLoop();
+	};
+
+	displaySpellResult(msg);
 }
 
 } // namespace Game

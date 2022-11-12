@@ -40,8 +40,8 @@ protected:
 	int _monstersCount = 0;
 	Common::Array<Character *> _party;
 	Monster *_monsterP;
-	byte _arr1[MAX_COMBAT_MONSTERS];
-	byte _arr2[MAX_COMBAT_MONSTERS];
+	byte _monsterHP[MAX_COMBAT_MONSTERS];
+	byte _monsterAC[MAX_COMBAT_MONSTERS];
 	int _arr3[MAX_PARTY_SIZE / 2];
 	byte _arr4[MAX_COMBAT_MONSTERS];
 	bool _canAttack[MAX_PARTY_SIZE];
@@ -257,11 +257,15 @@ public:
 	void iterateMonsters2();
 	void resetDestMonster();
 
+	// Cleric spells that need access to internal fields
 	void turnUndead();
 	void summonLightning();
 	void paralyze();
 	bool divineIntervention();
 	void holyWord();
+
+	// Wizard spells that need access to internal fields
+	void identifyMonster();
 };
 
 } // namespace Game

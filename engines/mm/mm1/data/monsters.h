@@ -44,9 +44,9 @@ enum MonsterStatusFlag {
 	MONFLAG_PARALYZED = 0x80, MONFLAG_DEAD = 0xff
 };
 
-enum Field19 {
-	FIELD19_LEVEL = 0x7f,
-	FIELD19_UNDEAD = 0x80
+enum MonsterResistUndead {
+	MAGIC_RESISTANCE = 0x7f,
+	IS_UNDEAD = 0x80
 };
 
 enum Fiedl1A {
@@ -64,15 +64,15 @@ struct Monster {
 	byte _field10;
 	byte _field11;
 	byte _field12;
-	byte _field13;
-	byte _field14;
-	byte _field15;
+	byte _maxDamage;
+	byte _numberOfAttacks;
+	byte _speed;
 	uint16 _experience;
 	byte _field18;
-	byte _field19;
+	byte _resistUndead;
 	byte _field1a;
-	byte _field1b;
-	byte _field1c;
+	byte _bonusOnTouch;
+	byte _specialAbility;
 	byte _field1d;
 	byte _field1e;
 	byte _field1f;
