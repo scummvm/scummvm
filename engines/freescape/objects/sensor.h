@@ -44,6 +44,9 @@ public:
 	virtual ~Sensor() {}
 	bool isDrawable() override { return false; }
 	bool isPlanar() override { return true; }
+	void scale(int factor) override { _origin = _origin / factor; };
+	Object *duplicate() override { return (new Sensor(_objectID, _origin, _rotation)); };
+
 	ObjectType getType() override { return kSensorType; };
 	Math::Vector3d getRotation() { return _rotation; }
 

@@ -103,7 +103,7 @@ void DrillerEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offs
 	ObjectMap *globalObjectsByID = new ObjectMap;
 	file->seek(offset);
 	for (int i = 0; i < 8; i++) {
-		Object *gobj = load8bitObject(file, 1);
+		Object *gobj = load8bitObject(file);
 		assert(gobj);
 		assert(!globalObjectsByID->contains(gobj->getObjectID()));
 		debugC(1, kFreescapeDebugParser, "Adding global object: %d", gobj->getObjectID());
@@ -522,7 +522,7 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 	id = 255;
 	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
 	assert(obj);
-	obj = obj->duplicate();
+	obj = (GeometricObject *)obj->duplicate();
 	obj->setOrigin(origin);
 	//if (!_currentArea->checkCollisions(obj->_boundingBox))
 	//	return false;
@@ -539,7 +539,7 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 	origin.setValue(1, origin.y() + heightLastObject);
 	origin.setValue(2, origin.z() - obj->getSize().z() / 5);
 
-	obj = obj->duplicate();
+	obj = (GeometricObject *)obj->duplicate();
 	obj->setOrigin(origin);
 	if (_currentArea->checkCollisions(obj->_boundingBox))
 		return false;
@@ -554,7 +554,7 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
 	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
 	assert(obj);
-	obj = obj->duplicate();
+	obj = (GeometricObject *)obj->duplicate();
 
 	origin.setValue(0, origin.x() + obj->getSize().x() / 5);
 	origin.setValue(1, origin.y() + heightLastObject);
@@ -574,7 +574,7 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
 	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
 	assert(obj);
-	obj = obj->duplicate();
+	obj = (GeometricObject *)obj->duplicate();
 	origin.setValue(1, origin.y() + heightLastObject);
 	obj->setOrigin(origin);
 	assert(obj);
@@ -599,7 +599,7 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
 	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
 	assert(obj);
-	obj = obj->duplicate();
+	obj = (GeometricObject *)obj->duplicate();
 	obj->setOrigin(origin);
 	// offset.setValue(1, offset.y() + obj->getSize().y());
 	obj->makeVisible();
@@ -616,7 +616,7 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 	origin.setValue(1, origin.y() + heightLastObject);
 	origin.setValue(2, origin.z() - obj->getSize().z() / 5);
 
-	obj = obj->duplicate();
+	obj = (GeometricObject *)obj->duplicate();
 	obj->setOrigin(origin);
 	obj->makeVisible();
 	_currentArea->addObject(obj);
@@ -630,7 +630,7 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
 	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
 	assert(obj);
-	obj = obj->duplicate();
+	obj = (GeometricObject *)obj->duplicate();
 
 	origin.setValue(0, origin.x() + obj->getSize().x() / 5);
 	origin.setValue(1, origin.y() + heightLastObject);
@@ -649,7 +649,7 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
 	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
 	assert(obj);
-	obj = obj->duplicate();
+	obj = (GeometricObject *)obj->duplicate();
 	origin.setValue(1, origin.y() + heightLastObject);
 	obj->setOrigin(origin);
 	assert(obj);

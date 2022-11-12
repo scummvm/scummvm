@@ -50,7 +50,8 @@ public:
 	virtual ~GeometricObject();
 	void setOrigin(Math::Vector3d origin) override;
 
-	GeometricObject *duplicate();
+	Object *duplicate() override;
+	void scale(int factor) override;
 	void computeBoundingBox();
 	bool collides(const Math::AABB &boundingBox);
 	void draw(Freescape::Renderer *gfx) override;

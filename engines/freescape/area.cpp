@@ -223,13 +223,19 @@ void Area::addObjectFromArea(int16 id, Area *global) {
 	Object *obj = global->objectWithID(id);
 	if (!obj) {
 		assert(global->entranceWithID(id));
-		_addedObjects[id] = global->entranceWithID(id);
-		(*_entrancesByID)[id] = global->entranceWithID(id);
+		obj = global->entranceWithID(id);
+		obj = obj->duplicate();
+		obj->scale(_scale);
+		_addedObjects[id] = obj;
+		(*_entrancesByID)[id] = obj;
 	} else {
-		(*_objectsByID)[id] = global->objectWithID(id);
-		_addedObjects[id] = global->objectWithID(id);
-		if (obj->isDrawable())
+		obj = obj->duplicate();
+		obj->scale(_scale);
+		(*_objectsByID)[id] = obj;
+		_addedObjects[id] = obj;
+		if (obj->isDrawable()) {
 			_drawableObjects.insert_at(0, obj);
+		}
 	}
 }
 

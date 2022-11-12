@@ -128,12 +128,8 @@ FreescapeEngine::~FreescapeEngine() {
 	delete _titleTexture;
 
 	for (auto &it : _areaMap) {
-		if (it._value->getAreaID() != 255)
-			delete it._value;
+		delete it._value;
 	}
-
-	if (_areaMap.contains(255))
-		delete _areaMap[255];
 
 	delete _gfx;
 	delete _dataBundle;

@@ -168,7 +168,19 @@ void GeometricObject::setOrigin(Math::Vector3d origin_) {
 	computeBoundingBox();
 };
 
-GeometricObject *GeometricObject::duplicate() {
+void GeometricObject::scale(int factor) {
+	_origin = _origin / factor;
+	_size = _size / factor;
+	if (_ordinates) {
+		for (uint i = 0; i < _ordinates->size(); i++) {
+			// This division is always exact because each ordinate was multipled by 32
+			(*_ordinates)[i] = (*_ordinates)[i] / factor;
+		}
+	}
+	computeBoundingBox();
+}
+
+Object *GeometricObject::duplicate() {
 	Common::Array<uint8> *colours_copy = nullptr;
 	Common::Array<uint16> *ordinates_copy = nullptr;
 

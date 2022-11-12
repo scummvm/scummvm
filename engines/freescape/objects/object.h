@@ -65,6 +65,7 @@ public:
 
 	virtual bool isDrawable() { return false; }
 	virtual bool isPlanar() { return false; }
+	virtual void scale(int factor) = 0;
 
 	bool isInvisible() { return _flags & 0x80; }
 	void makeInvisible() { _flags = _flags | 0x80; }
@@ -74,6 +75,7 @@ public:
 	void toggleVisibility() { _flags = _flags ^ 0x80; }
 
 	virtual ~Object() {}
+	virtual Object *duplicate() = 0;
 
 	virtual void draw(Freescape::Renderer *gfx) = 0;
 
