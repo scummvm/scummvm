@@ -528,14 +528,19 @@ bool Scene::offscreenPath(Point &testPoint) {
 		return false;
 	}
 
+	int h = _bgMask.h;
+
+	if (h == 0)
+		h = _vm->getDisplayInfo().height;
+
 	point.x = CLIP<int>(testPoint.x, 0, _vm->getDisplayInfo().width - 1);
-	point.y = CLIP<int>(testPoint.y, 0, _bgMask.h - 1);
+	point.y = CLIP<int>(testPoint.y, 0, h - 1);
 	if (point == testPoint) {
 		return false;
 	}
 
-	if (point.y >= _bgMask.h - 1) {
-		point.y = _bgMask.h - 2;
+	if (point.y >= h - 1) {
+		point.y = h - 2;
 	}
 	testPoint = point;
 
