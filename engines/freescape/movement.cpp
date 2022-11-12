@@ -138,6 +138,7 @@ void FreescapeEngine::rise() {
 
 	_lastPosition = _position;
 	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+	executeLocalGlobalConditions(false, true); // Only execute "on collision" room/global conditions
 }
 
 void FreescapeEngine::lower() {
@@ -163,6 +164,7 @@ void FreescapeEngine::lower() {
 
 	_lastPosition = _position;
 	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+	executeLocalGlobalConditions(false, true); // Only execute "on collision" room/global conditions
 }
 
 void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTime) {
