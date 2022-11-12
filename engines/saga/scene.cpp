@@ -925,6 +925,12 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList, SceneLoa
 			}
 		}
 
+		// Thos resources are bogus. Skip them
+		if (_vm->isITEAmiga() && resourceData.size() == 12 && memcmp(resourceData.getBuffer(), "ECHO is on\r\n", 12) == 0) {
+			resource->invalid = true;
+			warning("DUMMY resource %i", resource->resourceId);
+		}
+
 		if (resource->invalid) {
 			continue;
 		}
