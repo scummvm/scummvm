@@ -69,7 +69,7 @@ struct Monster {
 	byte _speed;
 	uint16 _experience;
 	byte _field18;
-	byte _resistUndead;
+	byte _resistUndead;		// MonsterResistUndead
 	byte _field1a;
 	byte _bonusOnTouch;
 	byte _specialAbility;

@@ -831,23 +831,6 @@ void Combat::updateMonsterStatus() {
 	}
 }
 
-void Combat::displaySpellResult(const InfoMessage &msg) {
-	InfoMessage iMsg = msg;
-	if (iMsg._delaySeconds == 0)
-		iMsg._delaySeconds = 3;
-	if (!iMsg._timeoutCallback) {
-		iMsg._timeoutCallback = []() {
-			g_globals->_combat->combatLoop();
-		};
-	}
-
-	// Descendant view classes will handle message display
-}
-
-void displaySpellResult(const Common::Array<InfoMessage> &msgs) {
-	warning("TODO: displaySpellResult");
-}
-
 void Combat::iterateMonsters1() {
 	_spellMonsterCount = _monsterList.size();
 	iterateMonsters1Inner();
