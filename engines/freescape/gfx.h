@@ -81,7 +81,7 @@ public:
 	virtual void freeTexture(Texture *texture) = 0;
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) = 0;
 
-	virtual void renderShoot(byte color, const Common::Point position) = 0;
+	virtual void renderShoot(byte color, const Common::Point position, const Common::Rect viewPort) = 0;
 	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours);
 	virtual void renderRectangle(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours);
 	virtual void renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours);

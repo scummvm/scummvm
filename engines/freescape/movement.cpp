@@ -60,7 +60,7 @@ void FreescapeEngine::shoot() {
 	//_mixer->stopHandle(_soundFxHandle);
 	playSound(1, true);
 	_gfx->setViewport(_fullscreenViewArea);
-	_gfx->renderShoot(0, _crossairPosition);
+	_gfx->renderShoot(0, _crossairPosition, _viewArea);
 	_gfx->setViewport(_viewArea);
 
 	Common::Point center(_viewArea.left + _viewArea.width() / 2, _viewArea.top + _viewArea.height() / 2);
