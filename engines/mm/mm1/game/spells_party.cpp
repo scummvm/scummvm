@@ -969,8 +969,8 @@ SpellResult SpellsParty::wizard71_astralSpell() {
 }
 
 SpellResult SpellsParty::wizard72_duplication() {
-	// TODO: Implement duplication
-	return SR_FAILED;
+	g_events->addView("Duplication");
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult SpellsParty::wizard73_meteorShower() {
