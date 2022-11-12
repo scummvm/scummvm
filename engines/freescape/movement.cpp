@@ -95,6 +95,20 @@ void FreescapeEngine::changePlayerHeight(int index) {
 	_position.setValue(1, _position.y() + _playerHeight);
 }
 
+void FreescapeEngine::increaseStepSize() {
+	if (_playerStepIndex == int(_playerSteps.size()) - 1)
+		return;
+
+	_playerStepIndex++;
+}
+
+void FreescapeEngine::decreaseStepSize() {
+	if (_playerStepIndex == 0)
+		return;
+
+	_playerStepIndex--;
+}
+
 void FreescapeEngine::rise() {
 	debugC(1, kFreescapeDebugMove, "playerHeightNumber: %d", _playerHeightNumber);
 	int previousAreaID = _currentArea->getAreaID();
@@ -155,20 +169,22 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	debugC(1, kFreescapeDebugMove, "old player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	int previousAreaID = _currentArea->getAreaID();
 
-	float velocity = _movementSpeed * deltaTime;
+	Math::Vector3d stepFront = _cameraFront * (_playerSteps[_playerStepIndex] * 0.5 / _cameraFront.length());
+	Math::Vector3d stepRight = _cameraRight * (_playerSteps[_playerStepIndex] * 0.5 / _cameraRight.length());
+
 	float positionY = _position.y();
 	switch (direction) {
 	case kForwardMovement:
-		_position = _position + _cameraFront * velocity;
+		_position = _position + stepFront;
 		break;
 	case kBackwardMovement:
-		_position = _position - _cameraFront * velocity;
+		_position = _position - stepFront;
 		break;
 	case kRightMovement:
-		_position = _position - _cameraRight * velocity;
+		_position = _position - stepRight;
 		break;
 	case kLeftMovement:
-		_position = _position + _cameraRight * velocity;
+		_position = _position + stepRight;
 		break;
 	}
 

@@ -164,7 +164,9 @@ public:
 	void generateInput();
 	virtual void pressedKey(const int keycode);
 	void move(CameraMovement direction, uint8 scale, float deltaTime);
-	void changePlayerHeight(int delta);
+	void changePlayerHeight(int index);
+	void increaseStepSize();
+	void decreaseStepSize();
 	void rise();
 	void lower();
 	bool checkFloor(Math::Vector3d currentPosition);
@@ -204,6 +206,9 @@ public:
 	uint16 _playerHeight;
 	uint16 _playerWidth;
 	uint16 _playerDepth;
+
+	int _playerStepIndex;
+	Common::Array<int> _playerSteps;
 
 	// Effects
 	Common::Array<Common::String> _conditionSources;

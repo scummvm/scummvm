@@ -80,6 +80,17 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_noClipMode = false;
 	_playerHeightNumber = 1;
 	_angleRotationIndex = 0;
+
+	// TODO: this is not the same for every game
+	_playerStepIndex = 6;
+	_playerSteps.push_back(1);
+	_playerSteps.push_back(2);
+	_playerSteps.push_back(5);
+	_playerSteps.push_back(10);
+	_playerSteps.push_back(25);
+	_playerSteps.push_back(50);
+	_playerSteps.push_back(100);
+
 	_border = nullptr;
 	_title = nullptr;
 	_titleTexture = nullptr;
@@ -320,6 +331,12 @@ void FreescapeEngine::processInput() {
 				break;
 			case Common::KEYCODE_w:
 				rotate(_angleRotations[_angleRotationIndex], 0);
+				break;
+			case Common::KEYCODE_s:
+				increaseStepSize();
+				break;
+			case Common::KEYCODE_x:
+				decreaseStepSize();
 				break;
 			case Common::KEYCODE_r:
 				rise();

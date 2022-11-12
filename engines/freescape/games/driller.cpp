@@ -375,6 +375,7 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 	else
 		drawStringInSurface(Common::String::format("%s", "J"), 57, 161, yellow, black, surface);
 
+	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 46, 153, yellow, black, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
 
 	int hours = _countdown / 3600;
