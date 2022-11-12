@@ -292,7 +292,7 @@ class Scene {
 	void loadSceneDescriptor(uint32 resourceId);
 	void loadSceneResourceList(uint32 resourceId, SceneResourceDataArray &resourceList);
 	void loadSceneEntryList(const ByteArray &resourceData);
-	void processSceneResources(SceneResourceDataArray &resourceList);
+	void processSceneResources(SceneResourceDataArray &resourceList, SceneLoadFlags flags);
 	void getResourceTypes(SAGAResourceTypes *&types, int &typesCount);
 
 
