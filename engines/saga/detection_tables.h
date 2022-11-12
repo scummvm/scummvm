@@ -29,8 +29,65 @@
 
 namespace Saga {
 
+static const GameResourceDescription ITE_Resources_GermanAGACD = {
+	1810,	// Scene lookup table RN
+	216,	// Script lookup table RN
+	3,		// Main panel
+	4,		// Converse panel
+	5,		// Option panel
+	6,		// Main sprites
+	7,		// Main panel sprites
+	35,		// Main strings
+	// ITE specific resources
+	36,		// Actor names
+	125,	// Default portraits
+	// IHNM specific resources
+	0,		// Option panel sprites
+	0,		// Warning panel
+	0,		// Warning panel sprites
+	0		// Psychic profile background
+};
+
+static const GameResourceDescription ITE_Resources_GermanECSCD = {
+	1816,	// Scene lookup table RN
+	216,	// Script lookup table RN
+	3,		// Main panel
+	4,		// Converse panel
+	5,		// Option panel
+	6,		// Main sprites
+	7,		// Main panel sprites
+	35,		// Main strings
+	// ITE specific resources
+	36,		// Actor names
+	125,	// Default portraits
+	// IHNM specific resources
+	0,		// Option panel sprites
+	0,		// Warning panel
+	0,		// Warning panel sprites
+	0		// Psychic profile background
+};
+
 static const GameResourceDescription ITE_Resources = {
 	1806,	// Scene lookup table RN
+	216,	// Script lookup table RN
+	3,		// Main panel
+	4,		// Converse panel
+	5,		// Option panel
+	6,		// Main sprites
+	7,		// Main panel sprites
+	35,		// Main strings
+	// ITE specific resources
+	36,		// Actor names
+	125,	// Default portraits
+	// IHNM specific resources
+	0,		// Option panel sprites
+	0,		// Warning panel
+	0,		// Warning panel sprites
+	0		// Psychic profile background
+};
+
+static const GameResourceDescription ITE_Resources_EnglishECSCD = {
+	1812,	// Scene lookup table RN
 	216,	// Script lookup table RN
 	3,		// Main panel
 	4,		// Converse panel
@@ -140,6 +197,45 @@ LoadSceneParams ITE_IntroListDefault[] = {
 	{RID_ITE_TREEHOUSE_SCENE, kLoadByResourceId, SceneHandlers::SC_ITEIntroTreeHouseProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
 	{RID_ITE_FAIREPATH_SCENE, kLoadByResourceId, SceneHandlers::SC_ITEIntroFairePathProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
 	{RID_ITE_FAIRETENT_SCENE, kLoadByResourceId, SceneHandlers::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByResourceId, nullptr, false, kTransitionNoFade, 0, 0}
+};
+
+static const LoadSceneParams ITE_AmigaEnglishECSCD_IntroList[] = {
+//	{1544, kLoadByResourceId, SceneHandlers::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE}, // Crashes, skip for now
+	{1548, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave1Proc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{1551, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave2Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1554, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave3Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1557, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave4Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1562, (Saga::SceneLoadFlags) (kLoadByResourceId | kLoadBgMaskIsImage), SceneHandlers::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{1566, kLoadByResourceId, SceneHandlers::SC_ITEIntroTreeHouseProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1570, kLoadByResourceId, SceneHandlers::SC_ITEIntroFairePathProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1573, kLoadByResourceId, SceneHandlers::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByResourceId, nullptr, false, kTransitionNoFade, 0, 0}
+};
+
+static const LoadSceneParams ITE_AmigaGermanAGA_IntroList[] = {
+	{1538, kLoadByResourceId, SceneHandlers::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1543, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave1Proc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{1547, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave2Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1551, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave3Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1555, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave4Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1560, (Saga::SceneLoadFlags) (kLoadByResourceId | kLoadBgMaskIsImage), SceneHandlers::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{1564, kLoadByResourceId, SceneHandlers::SC_ITEIntroTreeHouseProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1568, kLoadByResourceId, SceneHandlers::SC_ITEIntroFairePathProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1571, kLoadByResourceId, SceneHandlers::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByResourceId, nullptr, false, kTransitionNoFade, 0, 0}
+};
+
+static const LoadSceneParams ITE_AmigaGermanECS_IntroList[] = {
+	{1544, kLoadByResourceId, SceneHandlers::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1549, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave1Proc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{1553, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave2Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1557, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave3Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1561, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave4Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1566, (Saga::SceneLoadFlags) (kLoadByResourceId | kLoadBgMaskIsImage), SceneHandlers::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{1570, kLoadByResourceId, SceneHandlers::SC_ITEIntroTreeHouseProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1574, kLoadByResourceId, SceneHandlers::SC_ITEIntroFairePathProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1577, kLoadByResourceId, SceneHandlers::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
 	{0, kLoadByResourceId, nullptr, false, kTransitionNoFade, 0, 0}
 };
 
@@ -1124,7 +1220,100 @@ static const SAGAGameDescription gameDescriptions[] = {
 
 	// ITE Amiga versions /////////////////////////////////////////////////////////////////////////////////////
 
-	// TODO: Add the Amiga versions here (not supported yet)
+	// Official Dreamers Guild German release
+	{
+		{
+			"ite",
+			"AGA CD",
+			{
+				{"ite.rtn",		GAME_RESOURCEFILE,	"9d97f645eb877d1c9eb9d906930c3257", 18564},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformAmiga,
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_ITE,
+		GF_EXTRA_ITE_CREDITS | GF_AGA_GRAPHICS,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources_GermanAGACD,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		ITEPatch_Files,
+		ITE_AmigaGermanAGA_IntroList,
+	},
+	// This is on the same disk as previous but it's for ECS systems
+	{
+		{
+			"ite",
+			"ECS CD",
+			{
+				{"ecs.rtn",		GAME_RESOURCEFILE,	"62d738d3201c1624f0e4bfcc8fb587dd", 18624},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformAmiga,
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_ITE,
+		GF_EXTRA_ITE_CREDITS | GF_ECS_GRAPHICS,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources_GermanECSCD,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		ITEPatch_Files,
+		ITE_AmigaGermanECS_IntroList,
+	},
+	// Amiga Future coverdisk/Wyrmkeep English edition
+	{
+		{
+			"ite",
+			"AGA CD",
+			{
+				{"ite.rtn",		GAME_RESOURCEFILE,	"749885c0f7eaab4e977dc26a41d99ad8", 18524},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_ITE,
+		GF_EXTRA_ITE_CREDITS | GF_AGA_GRAPHICS,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		ITEPatch_Files,
+		ITE_IntroListDefault + 1, // Skip first (logo) scene until we figure it out
+	},
+	// This is on the same disk as previous but it's for ECS systems
+	{
+		{
+			"ite",
+			"ECS CD",
+			{
+				{"ecs.rtn",		GAME_RESOURCEFILE,	"c9d09514839d771efdc82ad761413349", 18584},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_ITE,
+		GF_EXTRA_ITE_CREDITS | GF_ECS_GRAPHICS,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources_EnglishECSCD,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		ITEPatch_Files,
+		ITE_AmigaEnglishECSCD_IntroList,
+	},
+
+	// TODO: Add Amiga floppy versions
 
 	// IHNM Section ///////////////////////////////////////////////////////////////////////////////////////////
 
