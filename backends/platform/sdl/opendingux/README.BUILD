@@ -2,14 +2,22 @@ Build instructions
 ==================
 Running Linux on an x86/amd64 machine:
 
-1. Download and install the desired toolchain (http://od.abstraction.se/opendingux/toolchain/) in /opt/
+1. Download and install the desired toolchain (https://github.com/OpenDingux/buildroot/releases) in /opt/
+
+   For example, for gcw0:
+
+       curl -L https://github.com/OpenDingux/buildroot/releases/download/od-2022.09.22/opendingux-gcw0-toolchain.2022-09-22.tar.xz -o gcw0-toolchain.tar.xz && \
+       sudo mkdir -p /opt/gcw0-toolchain && sudo chown -R "${USER}:" /opt/gcw0-toolchain && \
+       tar -C /opt -xf gcw0-toolchain.tar.xz && \
+       cd /opt/gcw0-toolchain && \
+       ./relocate-sdk.sh
 
 2. git clone the ScummVM repository
 
 3. Run 'backends/platform/sdl/opendingux/build_odbeta.sh x'
-   where x=gcw0|lepus|rg99 
+   where x=gcw0|lepus|rg99
 
-   Or if you want a dual opk with one launcher capable of starting games directly 
+   Or if you want a dual opk with one launcher capable of starting games directly
    for e.g. simplemenu integration :
    'backends/platform/sdl/opendingux/build_odbeta.sh x dualopk'
 
