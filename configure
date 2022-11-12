@@ -3516,11 +3516,24 @@ if test -n "$_host"; then
 			;;
 		opendingux-*)
 			_sysroot=`$CXX --print-sysroot`
+			# the -gcc- variants of ar and ranlib allow link time optimization
+			_ar="$_host_alias-gcc-ar cr"
+			_ranlib=$_host_alias-gcc-ranlib
 			_sdlpath=$_sysroot/usr/bin
 			append_var DEFINES  "-DDINGUX -DOPENDINGUX -DREDUCE_MEMORY_USAGE"
-			append_var CXXFLAGS "-ffast-math -fdata-sections -ffunction-sections -mplt -mno-shared"
-			append_var LDFLAGS  "-ffast-math -fdata-sections -ffunction-sections -mplt -mno-shared"
-			append_var LDFLAGS  "-O3 -Wl,--as-needed,--gc-sections"
+			append_var CXXFLAGS "-ffast-math -fdata-sections -ffunction-sections -mplt -mno-shared -flto"
+			append_var LDFLAGS  "-ffast-math -fdata-sections -ffunction-sections -mplt -mno-shared -flto=jobserver"
+			append_var PLUGIN_LDFLAGS "-flto=jobserver"
+			append_var LDFLAGS "-Wl,--as-needed,--gc-sections"
+			case "$_host" in
+				opendingux-rg99)
+					# RG99 is RAM constrained, optimize for size to reduce binary size
+					_optimization_level=-Os
+					;;
+				*)
+					_optimization_level=-O3
+					;;
+			esac
 			_vkeybd=yes
 			_alsa=no
 			_vorbis=no
@@ -3531,7 +3544,6 @@ if test -n "$_host"; then
 			_seq_midi=no
 			_nuked_opl=no
 			_curl=no
-			_optimization_level=-O3
 			_backend="opendingux"
 			_port_mk="backends/platform/sdl/opendingux/opendingux.mk"
 			add_line_to_config_mk 'OPENDINGUX = 1'
