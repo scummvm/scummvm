@@ -90,6 +90,7 @@ enum TileMapEdgeType {
 
 struct IsoTileData {
 	byte height;
+	size_t tileSize;
 	int8 attributes;
 	byte *tilePointer;
 	uint16 terrainMask;

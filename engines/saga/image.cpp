@@ -43,11 +43,45 @@ static int granulate(int value, int granularity) {
 	}
 }
 
+bool SagaEngine::decodeBGImageMask(const ByteArray &imageData, ByteArray &outputBuffer, int *w, int *h, bool flip) {
+	if (isAGA() || isECS()) {
+		if (imageData.size() < 160 * 137 + 64)
+			return false;
+		*w = 320;
+		*h = 137;
+		outputBuffer.resize(320*137);
+
+		// First read types
+		for (int i = 0; i < 160*137; i++) {
+			outputBuffer[2 * i] = (imageData[i] << 4) | 0xf;
+			outputBuffer[2 * i + 1] = (imageData[i] << 4) | 0xf;
+		}
+
+		// Now instead of storing depth amiga variant stores precomputed mask for every
+		// depth. Obviously not every set of precomputed masks is valid but we assume
+		// that it is. So far it has always been the case. If ever it isn't then we'll
+		// get a minor graphical glitch
+		for (int depth = 15; depth > 0; depth--) {
+			uint32 off = READ_BE_UINT32(&imageData[160 * 137 + 4 * (15 - depth)]);
+			if (off == 0)
+				continue;
+			off += 160 * 137;
+			if (imageData.size() < off + 137 * 40)
+				return false;
+			for (int y = 0; y < 137; y++)
+				for (int x = 0; x < 320; x++)
+					if ((imageData[y * 40 + (x / 8) + off] << (x % 8)) & 0x80)
+						outputBuffer[y * 320 + x] = (outputBuffer[y * 320 + x] & 0xf0) | (depth - 1);
+		}
+
+		return true;
+	}
+
+	return decodeBGImage(imageData, outputBuffer, w, h, flip);
+}
+
 bool SagaEngine::decodeBGImage(const ByteArray &imageData, ByteArray &outputBuffer, int *w, int *h, bool flip) {
 	ImageHeader hdr;
-	int modex_height;
-	const byte *RLE_data_ptr;
-	size_t RLE_data_len;
 	ByteArray decodeBuffer;
 
 	if (imageData.size() <= SAGA_IMAGE_DATA_OFFSET) {
@@ -62,20 +96,38 @@ bool SagaEngine::decodeBGImage(const ByteArray &imageData, ByteArray &outputBuff
 	readS.readUint16();
 	readS.readUint16();
 
-	RLE_data_ptr = &imageData.front() + SAGA_IMAGE_DATA_OFFSET;
-	RLE_data_len = imageData.size() - SAGA_IMAGE_DATA_OFFSET;
-
-	modex_height = granulate(hdr.height, 4);
-
-	decodeBuffer.resize(hdr.width * modex_height);
-
 	outputBuffer.resize(hdr.width * hdr.height);
 
-	if (!decodeBGImageRLE(RLE_data_ptr, RLE_data_len, decodeBuffer)) {
-		return false;
-	}
+	if (isAGA() || isECS()) {
+		int planePitch = (hdr.width + 15) & ~15;
+		int linePitch = isAGA() ? planePitch : (planePitch * 5 / 8);
+		unsigned bitnum = isAGA() ? 8 : 5;
+		int headerSize = 8 + (3 << bitnum);
+		const byte *RLE_data_ptr = &imageData.front() + headerSize;
+		size_t RLE_data_len = imageData.size() - headerSize;
 
-	unbankBGImage(outputBuffer.getBuffer(), decodeBuffer.getBuffer(), hdr.width, hdr.height);
+		if (RLE_data_len != (size_t) linePitch * hdr.height)
+			return false;
+
+		memset(outputBuffer.getBuffer(), 0, hdr.width * hdr.height);
+		for (int y = 0; y < hdr.height; y++)
+			for (int x = 0; x < hdr.width; x++)
+				for (unsigned bit = 0; bit < bitnum; bit++) {
+					int inXbit = x + bit * planePitch;
+					outputBuffer[y * hdr.width + x] |= ((RLE_data_ptr[y * linePitch + inXbit / 8] >> (7 - inXbit % 8)) & 1) << bit;
+				}
+	} else {
+		int modex_height = granulate(hdr.height, 4);
+		const byte *RLE_data_ptr;
+		size_t RLE_data_len;
+		decodeBuffer.resize(hdr.width * modex_height);
+		RLE_data_ptr = &imageData.front() + SAGA_IMAGE_DATA_OFFSET;
+		RLE_data_len = imageData.size() - SAGA_IMAGE_DATA_OFFSET;
+		if (!decodeBGImageRLE(RLE_data_ptr, RLE_data_len, decodeBuffer)) {
+			return false;
+		}
+		unbankBGImage(outputBuffer.getBuffer(), decodeBuffer.getBuffer(), hdr.width, hdr.height);
+	}
 
 	// For some reason bg images in IHNM are upside down
 	if (getGameId() == GID_IHNM && !flip) {

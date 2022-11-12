@@ -971,7 +971,10 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList, SceneLoa
 				error("Scene::ProcessSceneResources(): Duplicate background mask resource encountered");
 
 			debug(3, "Loading BACKGROUND MASK resource.");
-			_vm->decodeBGImage(resourceData, _bgMask.buffer, &_bgMask.w, &_bgMask.h, true);
+			if (flags & kLoadBgMaskIsImage)
+				_vm->decodeBGImage(resourceData, _bgMask.buffer, &_bgMask.w, &_bgMask.h, true);
+			else
+				_vm->decodeBGImageMask(resourceData, _bgMask.buffer, &_bgMask.w, &_bgMask.h, true);
 			_bgMask.loaded = true;
 
 			// At least in ITE the mask needs to be clipped.
@@ -1053,14 +1056,20 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList, SceneLoa
 			{
 				PalEntry pal[PAL_ENTRIES];
 				byte *palPtr = resourceData.getBuffer();
+				uint16 c;
 
-				if (resourceData.size() < 3 * PAL_ENTRIES)
+				if (resourceData.size() < 3 * _vm->getPalNumEntries())
 					error("Too small scene palette %i", (int)resourceData.size());
 
-				for (uint16 c = 0; c < PAL_ENTRIES; c++) {
+				for (c = 0; c < _vm->getPalNumEntries(); c++) {
 					pal[c].red = *palPtr++;
 					pal[c].green = *palPtr++;
 					pal[c].blue = *palPtr++;
+				}
+				for (; c < PAL_ENTRIES; c++) {
+					pal[c].red = 0;
+					pal[c].green = 0;
+					pal[c].blue = 0;
 				}
 				_vm->_gfx->setPalette(pal);
 			}

@@ -389,7 +389,7 @@ void Anim::load(uint16 animId, const ByteArray &resourceData) {
 	} else
 		anim = _animations[animId] = new AnimationData();
 
-	ByteArrayReadStreamEndian headerReadS(resourceData, _vm->isBigEndian());
+	ByteArrayReadStreamEndian headerReadS(resourceData, _vm->isBigEndian() && !_vm->isAGA() && !_vm->isECS());
 	anim->magic = headerReadS.readUint16LE(); // cause ALWAYS LE
 	anim->screenWidth = headerReadS.readUint16();
 	anim->screenHeight = headerReadS.readUint16();
@@ -689,6 +689,70 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 #define VALIDATE_WRITE_POINTER
 #endif
 
+	if (_vm->isAGA() || _vm->isECS()) {
+		int curY = 0, curX = 0;
+		unsigned realY;
+		unsigned outbit;
+		// TODO: Check if we want to use tempaltes instead to optimize AGA case
+		unsigned int pixelSize = _vm->isAGA() ? 8 : 5;
+		while (1) {
+			markByte = readS.readByte();
+			if (markByte == SAGA_FRAME_AMIGA_END)
+				break;
+			if (markByte == SAGA_FRAME_AMIGA_START) {
+				xStart = readS.readByte();
+				yStart = readS.readUint16BE();
+				/* int xPos = */ readS.readUint16BE();
+				/* int yPos = */ readS.readUint16BE();
+				/* int width = */ readS.readUint16BE();
+				/*int height = */ readS.readUint16BE();
+				curX = xStart;
+				curY = yStart;
+				realY = curY / pixelSize;
+				outbit = curY % pixelSize;
+				continue;
+			}
+
+			uint8 param = markByte & SAGA_FRAME_AMIGA_PARAM_MASK;
+			
+			switch (markByte & SAGA_FRAME_AMIGA_OPCODE_MASK) {
+			case SAGA_FRAME_AMIGA_OPCODE_LITERAL:
+				for (i = 0; i < param + 1; i++, curX++) {
+					byte b = readS.readByte();
+					for (unsigned inbit = 0;inbit < 8; inbit++) {
+						unsigned realX = (curX << 3) + 7 - inbit;
+						if (realX < screenWidth && realY < screenHeight) {
+							buf[realX + realY * screenWidth] =
+								(buf[realX + realY * screenWidth] & (~(1 << outbit))) | (((b >> inbit) & 1) << outbit);
+						}
+					}
+				}
+				continue;
+
+			case SAGA_FRAME_AMIGA_OPCODE_TRANSPARENT:
+				curX += param;
+				continue;
+				
+			case SAGA_FRAME_AMIGA_OPCODE_NEWLINE:
+				curY++;
+				curX = param;
+				outbit++;
+				if (outbit >= pixelSize) {
+					outbit -= pixelSize;
+					realY++;
+				}
+				continue;
+			case SAGA_FRAME_AMIGA_OPCODE_REPOSITION:
+				curY = readS.readUint16BE();
+				realY = curY / pixelSize;
+				outbit = curY % pixelSize;
+				curX = param;
+				continue;
+			}
+		}
+		
+		return;
+	}
 
 	// Begin RLE decompression to output buffer
 	do {
@@ -814,6 +878,44 @@ int Anim::fillFrameOffsets(AnimationData *anim, bool reallyFill) {
 	bool longData = isLongData();
 
 	Common::MemoryReadStreamEndian readS(&anim->resourceData.front(), anim->resourceData.size(), !_vm->isBigEndian()); // RLE has inversion BE<>LE
+
+	if (_vm->isAGA() || _vm->isECS()) {
+	  	while (readS.pos() != readS.size()) {
+			if (reallyFill) {
+				anim->frameOffsets[currentFrame] = readS.pos();
+
+				if (currentFrame == anim->maxFrame) {
+					break;
+				}
+			}
+			currentFrame++;
+
+			while (1) {
+				markByte = readS.readByte();
+
+				// debug(7, "_pos=%X currentFrame=%i markByte=%X", (int) readS.pos(), (int) currentFrame, (int) markByte);
+				if (markByte == SAGA_FRAME_AMIGA_END)
+					break;
+				if (markByte == SAGA_FRAME_AMIGA_START) {
+					readS.seek(11, SEEK_CUR);
+					continue;
+				}
+				switch (markByte & SAGA_FRAME_AMIGA_OPCODE_MASK) {
+				case SAGA_FRAME_AMIGA_OPCODE_LITERAL:
+					readS.seek((markByte & SAGA_FRAME_AMIGA_PARAM_MASK) + 1, SEEK_CUR);
+					continue;
+
+				case SAGA_FRAME_AMIGA_OPCODE_TRANSPARENT:
+				case SAGA_FRAME_AMIGA_OPCODE_NEWLINE:
+					continue;
+				case SAGA_FRAME_AMIGA_OPCODE_REPOSITION:
+					readS.readSint16BE();
+					continue;
+				}
+			}
+		}
+		return currentFrame;
+	}
 
 	while (readS.pos() != readS.size()) {
 		if (reallyFill) {
