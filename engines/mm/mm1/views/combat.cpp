@@ -473,7 +473,7 @@ void Combat::writeMonsterStatus(int monsterNum) {
 
 		writeString(STRING[Common::String::format("dialogs.combat.status.%d",
 			status)]);
-	} else if (_arr1[monsterNum] != _monsterP->_field11) {
+	} else if (_monsterHP[monsterNum] != _monsterP->_field11) {
 		writeDots();
 		writeString(STRING["dialogs.combat.status.wounded"]);
 	} else {

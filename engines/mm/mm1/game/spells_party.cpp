@@ -86,17 +86,17 @@ SpellsParty::SpellFn SpellsParty::SPELLS[SPELLS_COUNT] = {
 	cleric74_resurrection,
 	cleric75_sunRay,
 
-	placeholder,
+	wizard11_awaken,
 	wizard12_detectMagic,
-	placeholder,
-	placeholder,
+	wizard13_energyBlast,
+	wizard14_flameArrow,
 	wizard15_leatherSkin,
 	wizard16_light,
 	wizard17_location,
-	placeholder,
-	placeholder,
-	placeholder,
-	placeholder,
+	wizard18_sleep,
+	wizard21_electricArrow,
+	wizard22_hypnotize,
+	wizard23_identifyMonster,
 	wizard24_jump,
 	wizard25_levitate,
 	placeholder,
@@ -660,6 +660,31 @@ SpellResult SpellsParty::wizard12_detectMagic() {
 	return SR_SUCCESS_SILENT;
 }
 
+SpellResult SpellsParty::wizard13_energyBlast() {
+	SpellsState &ss = g_globals->_spellsState;
+	int damage = 0;
+	for (int i = 0; i < g_globals->_currCharacter->_level._current; ++i)
+		damage += getRandomNumber(4);
+
+	ss._newCondition = MIN(damage, 255);
+	ss._mmVal2 = 5;
+	ss._resistanceType++;
+
+	g_globals->_combat->iterateMonsters2();
+	return SR_SUCCESS_SILENT;
+}
+
+SpellResult SpellsParty::wizard14_flameArrow() {
+	SpellsState &ss = g_globals->_spellsState;
+	ss._newCondition = getRandomNumber(6);
+	ss._mmVal1++;
+	ss._mmVal2 = 1;
+	ss._resistanceType++;
+
+	g_globals->_combat->iterateMonsters2();
+	return SR_SUCCESS_SILENT;
+}
+
 SpellResult SpellsParty::wizard15_leatherSkin() {
 	g_globals->_activeSpells._s.leather_skin = g_globals->_currCharacter->_level._current;
 	return SR_SUCCESS_DONE;
@@ -667,6 +692,33 @@ SpellResult SpellsParty::wizard15_leatherSkin() {
 
 SpellResult SpellsParty::wizard17_location() {
 	Views::Spells::Location::show();
+	return SR_SUCCESS_SILENT;
+}
+
+SpellResult SpellsParty::wizard18_sleep() {
+	SpellsState &ss = g_globals->_spellsState;
+	ss._mmVal1++;
+	ss._mmVal2 = 8;
+	ss._resistanceType = RESISTANCE_FEAR;
+	ss._newCondition = 16;
+
+	g_globals->_combat->iterateMonsters1();
+	return SR_SUCCESS_SILENT;
+}
+
+SpellResult SpellsParty::wizard21_electricArrow() {
+	SpellsState &ss = g_globals->_spellsState;
+	ss._newCondition = getRandomNumber(6) + getRandomNumber(6);
+	ss._mmVal1++;
+	ss._resistanceType++;
+	ss._mmVal2 = 2;
+
+	g_globals->_combat->iterateMonsters2();
+	return SR_SUCCESS_SILENT;
+}
+
+SpellResult SpellsParty::wizard23_identifyMonster() {
+	g_globals->_combat->identifyMonster();
 	return SR_SUCCESS_SILENT;
 }
 
