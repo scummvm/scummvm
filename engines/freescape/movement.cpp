@@ -59,10 +59,13 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 void FreescapeEngine::shoot() {
 	//_mixer->stopHandle(_soundFxHandle);
 	playSound(1, true);
+	_gfx->setViewport(_fullscreenViewArea);
 	_gfx->renderShoot(0, _crossairPosition);
+	_gfx->setViewport(_viewArea);
 
-	float xoffset = _crossairPosition.x - float(_screenW) / 2;
-	float yoffset = _crossairPosition.y - float(_screenH) / 2;
+	Common::Point center(_viewArea.left + _viewArea.width() / 2, _viewArea.top + _viewArea.height() / 2);
+	float xoffset = _crossairPosition.x - center.x;
+	float yoffset = _crossairPosition.y - center.y;
 
 	Math::Vector3d direction = directionToVector(_pitch + yoffset, _yaw - xoffset);
 	Math::Ray ray(_position, direction);
