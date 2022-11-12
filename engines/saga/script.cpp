@@ -1129,7 +1129,7 @@ void Script::setVerb(int verb) {
 bool Script::isNonInteractiveDemo() {
 	// This detection only works in ITE. The early non-interactive demos had
 	// a very small script file
-	return _vm->getGameId() == GID_ITE && _scriptContext->fileSize() < 50000;
+	return _vm->getGameId() == GID_ITE && _scriptContext->fileSize() < 50000 && !_vm->isITEAmiga();
 }
 
 void Script::setLeftButtonVerb(int verb) {
