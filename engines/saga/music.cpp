@@ -466,6 +466,8 @@ void Music::playQuickTime(uint32 resourceId, MusicFlags flags) {
 }
 
 void Music::playMidi(uint32 resourceId, MusicFlags flags) {
+	if (_vm->isITEAmiga()) // Not supported yet
+		return;
 	if (_currentMusicBuffer == &_musicBuffer[1]) {
 		_currentMusicBuffer = &_musicBuffer[0];
 	} else {
