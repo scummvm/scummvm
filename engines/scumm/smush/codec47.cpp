@@ -75,23 +75,23 @@ namespace Scumm {
 #define DRAW_GLYPH 0xFD
 #define COPY_PREV_BUFFER 0xFC
 
-static const  int8 codec47_glyph4_xvec[] = {
+static const  int8 codec47Glyph4XVec[] = {
   0, 1, 2, 3, 3, 3, 3, 2, 1, 0, 0, 0, 1, 2, 2, 1,
 };
 
-static const int8 codec47_glyph4_yvec[] = {
+static const int8 codec47Glyph4YVec[] = {
   0, 0, 0, 0, 1, 2, 3, 3, 3, 3, 2, 1, 1, 1, 2, 2,
 };
 
-static const int8 codec47_glyph8_xvec[] = {
+static const int8 codec47Glyph8XVec[] = {
   0, 2, 5, 7, 7, 7, 7, 7, 7, 5, 2, 0, 0, 0, 0, 0,
 };
 
-static const int8 codec47_glyph8_yvec[] = {
+static const int8 codec47Glyph8YVec[] = {
   0, 0, 0, 0, 1, 3, 4, 6, 7, 7, 7, 7, 6, 4, 3, 1,
 };
 
-static const int8 codec47_table[] = {
+static const int8 codec47Table[] = {
 		0,   0,  -1, -43,   6, -43,  -9, -42,  13, -41,
 	-16, -40,  19, -39, -23, -36,  26, -34,  -2, -33,
 	  4, -33, -29, -32,  -9, -32,  11, -31, -16, -29,
@@ -160,14 +160,14 @@ void Codec47Decoder::makeTablesInterpolation(int sideLength) {
 	int32 edge0, edge1;
 	int32 x1, x0, y1, y0;
 	int32 tableSmallBig[64], s;
-	const int8 *glyph_x = nullptr, *glyph_y = nullptr;
-	int32 *ptr_small_big;
+	const int8 *xGlyph = nullptr, *yGlyph = nullptr;
+	int32 *ptrSmallBig;
 	byte *ptr;
 	int i, x, y;
 
 	if (sideLength == 8) {
-		glyph_x = codec47_glyph8_xvec;
-		glyph_y = codec47_glyph8_yvec;
+		xGlyph = codec47Glyph8XVec;
+		yGlyph = codec47Glyph8YVec;
 		ptr = _tableBig;
 		for (i = 0; i < NGLYPHS; i++) {
 			ptr[384] = 0;
@@ -175,8 +175,8 @@ void Codec47Decoder::makeTablesInterpolation(int sideLength) {
 			ptr += 388;
 		}
 	} else if (sideLength == 4) {
-		glyph_x = codec47_glyph4_xvec;
-		glyph_y = codec47_glyph4_yvec;
+		xGlyph = codec47Glyph4XVec;
+		yGlyph = codec47Glyph4YVec;
 		ptr = _tableSmall;
 		for (i = 0; i < NGLYPHS; i++) {
 			ptr[96] = 0;
@@ -189,8 +189,8 @@ void Codec47Decoder::makeTablesInterpolation(int sideLength) {
 
 	s = 0;
 	for (x = 0; x < 16; x++) {
-		x0 = glyph_x[x];
-		y0 = glyph_y[x];
+		x0 = xGlyph[x];
+		y0 = yGlyph[x];
 
 		if (y0 == 0) {
 			edge0 = kEdgeBottom;
@@ -205,8 +205,8 @@ void Codec47Decoder::makeTablesInterpolation(int sideLength) {
 		}
 
 		for (y = 0; y < 16; y++) {
-			x1 = glyph_x[y];
-			y1 = glyph_y[y];
+			x1 = xGlyph[y];
+			y1 = yGlyph[y];
 
 			if (y1 == 0) {
 				edge1 = kEdgeBottom;
@@ -236,31 +236,31 @@ void Codec47Decoder::makeTablesInterpolation(int sideLength) {
 					xPoint = x0;
 					yPoint = y0;
 				}
-				ptr_small_big = &tableSmallBig[sideLength * yPoint + xPoint];
-				*ptr_small_big = 1;
+				ptrSmallBig = &tableSmallBig[sideLength * yPoint + xPoint];
+				*ptrSmallBig = 1;
 
 				if ((edge0 == kEdgeLeft && edge1 == kEdgeRight) || (edge1 == kEdgeLeft && edge0 == kEdgeRight) ||
 				    (edge0 == kEdgeBottom && edge1 != kEdgeTop) || (edge1 == kEdgeBottom && edge0 != kEdgeTop)) {
 					if (yPoint >= 0) {
 						i = yPoint + 1;
 						while (i--) {
-							*ptr_small_big = 1;
-							ptr_small_big -= sideLength;
+							*ptrSmallBig = 1;
+							ptrSmallBig -= sideLength;
 						}
 					}
 				} else if ((edge1 != kEdgeBottom && edge0 == kEdgeTop) || (edge0 != kEdgeBottom && edge1 == kEdgeTop)) {
 					if (sideLength > yPoint) {
 						i = sideLength - yPoint;
 						while (i--) {
-							*ptr_small_big = 1;
-							ptr_small_big += sideLength;
+							*ptrSmallBig = 1;
+							ptrSmallBig += sideLength;
 						}
 					}
 				} else if ((edge0 == kEdgeLeft && edge1 != kEdgeRight) || (edge1 == kEdgeLeft && edge0 != kEdgeRight)) {
 					if (xPoint >= 0) {
 						i = xPoint + 1;
 						while (i--) {
-							*(ptr_small_big--) = 1;
+							*(ptrSmallBig--) = 1;
 						}
 					}
 				} else if ((edge0 == kEdgeBottom && edge1 == kEdgeTop) || (edge1 == kEdgeBottom && edge0 == kEdgeTop) ||
@@ -268,7 +268,7 @@ void Codec47Decoder::makeTablesInterpolation(int sideLength) {
 					if (sideLength > xPoint) {
 						i = sideLength - xPoint;
 						while (i--) {
-							*(ptr_small_big++) = 1;
+							*(ptrSmallBig++) = 1;
 						}
 					}
 				}
@@ -311,8 +311,8 @@ void Codec47Decoder::makeTables47(int width) {
 	int32 a, c, d;
 	int16 tmp;
 
-	for (int l = 0; l < ARRAYSIZE(codec47_table); l += 2) {
-		_table[l / 2] = (int16)(codec47_table[l + 1] * width + codec47_table[l]);
+	for (int l = 0; l < ARRAYSIZE(codec47Table); l += 2) {
+		_table[l / 2] = (int16)(codec47Table[l + 1] * width + codec47Table[l]);
 	}
 	// Note: _table[255] is never inited; but since only the first 0xF8
 	// entries of it are used anyway, this doesn't matter.
