@@ -98,7 +98,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	if (areaID != _startArea || entranceID != _startEntrance) {
 		_lastMousePos = g_system->getEventManager()->getMousePos();
-		rotate(_lastMousePos, _lastMousePos);
+		rotate(0, 0);
 	}
 }
 
