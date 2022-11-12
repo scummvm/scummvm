@@ -317,9 +317,11 @@ void FreescapeEngine::processInput() {
 				_flyMode = _noClipMode;
 				break;
 			case Common::KEYCODE_ESCAPE:
+				_gfx->setViewport(_fullscreenViewArea);
 				_system->lockMouse(false);
 				openMainMenuDialog();
 				_system->lockMouse(true);
+				_gfx->setViewport(_viewArea);
 				break;
 			case Common::KEYCODE_SPACE:
 				_shootMode = !_shootMode;
