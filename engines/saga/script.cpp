@@ -125,7 +125,7 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 
 	_vm->_resource->loadResource(resourceContext, _vm->getResourceDescription()->mainStringsResourceId, stringsData);
 
-	_vm->loadStrings(_mainStrings, stringsData);
+	_vm->loadStrings(_mainStrings, stringsData, _vm->isBigEndian());
 
 	setupScriptOpcodeList();
 
@@ -906,7 +906,7 @@ void Script::loadModule(uint scriptModuleNumber) {
 
 	_vm->_resource->loadResource(_scriptContext, _modules[scriptModuleNumber].stringsResourceId, resourceData);
 
-	_vm->loadStrings(_modules[scriptModuleNumber].strings, resourceData);
+	_vm->loadStrings(_modules[scriptModuleNumber].strings, resourceData, _vm->isBigEndian());
 
 	if (_modules[scriptModuleNumber].voicesResourceId > 0) {
 		_vm->_resource->loadResource(_scriptContext, _modules[scriptModuleNumber].voicesResourceId, resourceData);

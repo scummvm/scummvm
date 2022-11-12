@@ -370,7 +370,7 @@ Common::Error SagaEngine::run() {
 	return Common::kNoError;
 }
 
-void SagaEngine::loadStrings(StringsTable &stringsTable, const ByteArray &stringsData) {
+void SagaEngine::loadStrings(StringsTable &stringsTable, const ByteArray &stringsData, bool isBigEndian) {
 	uint16 stringsCount;
 	size_t offset;
 	size_t prevOffset = 0;
@@ -382,7 +382,7 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const ByteArray &string
 	}
 
 
-	ByteArrayReadStreamEndian scriptS(stringsData, isBigEndian()); //TODO: get endianess from context
+	ByteArrayReadStreamEndian scriptS(stringsData, isBigEndian);
 
 	offset = scriptS.readUint16();
 	stringsCount = offset / 2;

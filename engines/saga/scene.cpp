@@ -983,7 +983,7 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList) {
 			break;
 		case SAGA_STRINGS:
 			debug(3, "Loading scene strings resource...");
-			_vm->loadStrings(_sceneStrings, resourceData);
+			_vm->loadStrings(_sceneStrings, resourceData, _vm->isBigEndian());
 			break;
 		case SAGA_OBJECT_MAP:
 			debug(3, "Loading object map resource...");

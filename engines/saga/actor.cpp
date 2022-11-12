@@ -248,7 +248,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 
 		_vm->_resource->loadResource(_actorContext, _vm->getResourceDescription()->actorsStringsResourceId, stringsData);
 
-		_vm->loadStrings(_actorsStrings, stringsData);
+		_vm->loadStrings(_actorsStrings, stringsData, _vm->isBigEndian());
 	}
 
 	if (_vm->getGameId() == GID_ITE) {
