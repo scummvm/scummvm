@@ -151,9 +151,8 @@ void FreescapeEngine::lower() {
 void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTime) {
 	debugC(1, kFreescapeDebugMove, "old player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	int previousAreaID = _currentArea->getAreaID();
-	int areaScale = _currentArea->getScale();
 
-	float velocity = _movementSpeed * deltaTime /** areaScale*/;
+	float velocity = _movementSpeed * deltaTime;
 	float positionY = _position.y();
 	switch (direction) {
 	case kForwardMovement:
@@ -223,7 +222,6 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 			}
 		}
 	}
-	areaScale = _currentArea->getScale();
 
 	_lastPosition = _position;
 	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
@@ -244,7 +242,6 @@ bool FreescapeEngine::checkFloor(Math::Vector3d currentPosition) {
 
 bool FreescapeEngine::tryStepUp(Math::Vector3d currentPosition) {
 	debugC(1, kFreescapeDebugMove, "Try to step up!");
-	int areaScale = _currentArea->getScale();
 	_position.set(_position.x(), _position.y() + 64, _position.z());
 	bool collided = checkCollisions(false);
 	if (collided) {
@@ -258,7 +255,6 @@ bool FreescapeEngine::tryStepUp(Math::Vector3d currentPosition) {
 
 bool FreescapeEngine::tryStepDown(Math::Vector3d currentPosition) {
 	debugC(1, kFreescapeDebugMove, "Try to step down!");
-	int areaScale = _currentArea->getScale();
 	_position.set(_position.x(), _position.y() - 1, _position.z());
 	if (checkFloor(_position)) {
 		return true;
@@ -271,7 +267,6 @@ bool FreescapeEngine::tryStepDown(Math::Vector3d currentPosition) {
 bool FreescapeEngine::checkCollisions(bool executeCode) {
 	if (_noClipMode)
 		return false;
-	int areaScale = _currentArea->getScale();
 	Math::AABB boundingBox(_lastPosition, _lastPosition);
 
 	Math::Vector3d v1(_position.x() - 1, _position.y() - _playerHeight, _position.z() - 1);
