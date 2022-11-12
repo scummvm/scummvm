@@ -217,6 +217,8 @@ class DefaultFont : public Font {
 		 return getFont(fontId)->normal.header.charHeight;
 	 }
 
+	 int getHeight(FontId fontId, const char *text);
+
 	 void validate(FontId fontId) {
 		 if (!valid(fontId)) {
 			 error("Font::validate: Invalid font id");
@@ -235,6 +237,7 @@ class DefaultFont : public Font {
 	 void draw(FontId fontId, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) override;
 	 void outFont(const FontStyle &drawFont, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags);
 	 void loadFont(FontData *font, uint32 fontResourceId);
+	 void loadChineseFontITE(const Common::String& fileName);
 	 void createOutline(FontData *font);
 
 	 int getByteLen(int numBits) const {
@@ -251,6 +254,11 @@ class DefaultFont : public Font {
 
 	Common::Array<FontData> _fonts;
 	int _fontMapping;
+
+	byte *_chineseFont;
+	Common::Array<int> _chineseFontIndex;
+	int _chineseFontWidth;
+	int _chineseFontHeight;
 };
 
 class SJISFont : public Font {
