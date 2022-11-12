@@ -576,7 +576,7 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 
 #ifdef ENABLE_IHNM
 	if ((_vm->getGameId() == GID_IHNM) && (loadSceneParams.chapter != NO_CHAPTER_CHANGE)) {
-		if (loadSceneParams.loadFlag != kLoadBySceneNumber) {
+		if ((loadSceneParams.loadFlag & kLoadIdTypeMask) != kLoadBySceneNumber) {
 			error("loadScene wrong usage");
 		}
 
@@ -621,13 +621,13 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 
 #ifdef ENABLE_IHNM
 	if (_vm->getGameId() == GID_IHNM) {
-		if (loadSceneParams.loadFlag == kLoadBySceneNumber) // When will we get rid of it?
+		if ((loadSceneParams.loadFlag & kLoadIdTypeMask) == kLoadBySceneNumber) // When will we get rid of it?
 			if (loadSceneParams.sceneDescriptor <= 0)
 				loadSceneParams.sceneDescriptor = _vm->_resource->getMetaResource()->sceneIndex;
 	}
 #endif
 
-	switch (loadSceneParams.loadFlag) {
+	switch (loadSceneParams.loadFlag & kLoadIdTypeMask) {
 	case kLoadByResourceId:
 		_sceneNumber = 0;		// original assign zero for loaded by resource id
 		_sceneResourceId = loadSceneParams.sceneDescriptor;
@@ -660,7 +660,7 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 	loadSceneResourceList(_sceneDescription.resourceListResourceId, resourceList);
 
 	// Process resources from scene resource list
-	processSceneResources(resourceList);
+	processSceneResources(resourceList, loadSceneParams.loadFlag);
 
 	if (_sceneDescription.flags & kSceneFlagISO) {
 		_outsetSceneNumber = _sceneNumber;
@@ -901,7 +901,7 @@ void Scene::loadSceneResourceList(uint32 resourceId, SceneResourceDataArray &res
 	}
 }
 
-void Scene::processSceneResources(SceneResourceDataArray &resourceList) {
+void Scene::processSceneResources(SceneResourceDataArray &resourceList, SceneLoadFlags flags) {
 	ByteArray resourceData;
 	const byte *palPointer;
 	SAGAResourceTypes *types = nullptr;

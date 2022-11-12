@@ -48,8 +48,10 @@ enum SceneTransitionType {
 };
 
 enum SceneLoadFlags {
-	kLoadByResourceId,
-	kLoadBySceneNumber
+	kLoadByResourceId = 0,
+	kLoadBySceneNumber = 1,
+	kLoadIdTypeMask = 1,
+	kLoadBgMaskIsImage = 1 << 16,
 };
 
 struct LoadSceneParams {

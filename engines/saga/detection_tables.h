@@ -136,7 +136,7 @@ LoadSceneParams ITE_IntroListDefault[] = {
 	{RID_ITE_CAVE_SCENE_2, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave2Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
 	{RID_ITE_CAVE_SCENE_3, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave3Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
 	{RID_ITE_CAVE_SCENE_4, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave4Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{RID_ITE_VALLEY_SCENE, kLoadByResourceId, SceneHandlers::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_VALLEY_SCENE, (Saga::SceneLoadFlags) (kLoadByResourceId | kLoadBgMaskIsImage), SceneHandlers::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
 	{RID_ITE_TREEHOUSE_SCENE, kLoadByResourceId, SceneHandlers::SC_ITEIntroTreeHouseProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
 	{RID_ITE_FAIREPATH_SCENE, kLoadByResourceId, SceneHandlers::SC_ITEIntroFairePathProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
 	{RID_ITE_FAIRETENT_SCENE, kLoadByResourceId, SceneHandlers::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
