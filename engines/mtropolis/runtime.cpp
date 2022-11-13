@@ -1884,7 +1884,7 @@ MiniscriptInstructionOutcome DynamicValueWriteStringHelper::write(MiniscriptThre
 	Common::String &dest = *static_cast<Common::String *>(objectRef);
 	switch (derefValue.getType()) {
 	case DynamicValueTypes::kString:
-		dest = value.getString();
+		dest = derefValue.getString();
 		return kMiniscriptInstructionOutcomeContinue;
 	default:
 		return kMiniscriptInstructionOutcomeFailed;
