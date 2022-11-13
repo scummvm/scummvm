@@ -321,8 +321,6 @@ public:
 	uint32 _initialTankEnergy;
 	uint32 _initialTankShield;
 
-	StateBits _completeAreas;
-
 	void initGameState() override;
 	bool checkIfGameEnded() override;
 
@@ -337,10 +335,11 @@ public:
 
 private:
 	void loadGlobalObjects(Common::SeekableReadStream *file, int offset);
-	bool drillDeployed();
+	bool drillDeployed(Area *area);
 	void addDrill(const Math::Vector3d position);
 	bool checkDrill(const Math::Vector3d position);
-	void removeDrill();
+	void removeDrill(Area *area);
+	StateBits _drilledAreas;
 
 	void loadAssetsDemo();
 	void loadAssetsFullGame();

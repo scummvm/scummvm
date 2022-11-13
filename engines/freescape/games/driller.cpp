@@ -27,6 +27,12 @@
 
 namespace Freescape {
 
+enum {
+	kDrillerNoRig = 0,
+	kDrillerRigInPlace = 1,
+	kDrillerRigOutOfPlace = 2,
+};
+
 DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
 	// if (isAmiga())
 	//	_viewArea = Common::Rect(72, 66, 567, 269);
@@ -392,7 +398,7 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 	} else {
 		if (_currentArea->_gasPocketRadius == 0)
 			message = _messagesList[2];
-		else if (_completeAreas[_currentArea->getAreaID()])
+		else if (_drilledAreas[_currentArea->getAreaID()])
 			message = _messagesList[0];
 		else
 			message = _messagesList[1];
@@ -436,7 +442,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 			return;
 		}
 
-		if (drillDeployed()) {
+		if (drillDeployed(_currentArea)) {
 			insertTemporaryMessage(_messagesList[12], _countdown - 2);
 			return;
 		}
@@ -475,9 +481,10 @@ void DrillerEngine::pressedKey(const int keycode) {
 		successMessage.replace(0, 4, Common::String::format("%d", int(success)));
 		insertTemporaryMessage(successMessage, _countdown - 6);
 		if (success >= 50.0) {
-			_completeAreas[_currentArea->getAreaID()] = true;
+			_drilledAreas[_currentArea->getAreaID()] = kDrillerRigInPlace;
 			_gameStateVars[32]++;
-		}
+		} else
+			_drilledAreas[_currentArea->getAreaID()] = kDrillerRigOutOfPlace;
 	} else if (keycode == Common::KEYCODE_c) {
 		uint32 gasPocketRadius = _currentArea->_gasPocketRadius;
 		if (gasPocketRadius == 0)
@@ -488,7 +495,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 			return;
 		}
 
-		if (!drillDeployed()) {
+		if (!drillDeployed(_currentArea)) {
 			insertTemporaryMessage(_messagesList[13], _countdown - 2);
 			return;
 		}
@@ -500,17 +507,19 @@ void DrillerEngine::pressedKey(const int keycode) {
 
 		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
 
-		if (_completeAreas[_currentArea->getAreaID()]) {
-			_completeAreas[_currentArea->getAreaID()] = false;
-			_gameStateVars[32]--;
+		uint16 areaID = _currentArea->getAreaID();
+		if (_drilledAreas[areaID] > 0) {
+			if (_drilledAreas[areaID] == kDrillerRigInPlace)
+				_gameStateVars[32]--;
+			_drilledAreas[areaID] = kDrillerNoRig;
 		}
-		removeDrill();
+		removeDrill(_currentArea);
 		insertTemporaryMessage(_messagesList[10], _countdown - 2);
 	}
 }
 
-bool DrillerEngine::drillDeployed() {
-	return (_currentArea->objectWithID(252) != nullptr);
+bool DrillerEngine::drillDeployed(Area *area) {
+	return (area->objectWithID(252) != nullptr);
 }
 
 bool DrillerEngine::checkDrill(const Math::Vector3d position) {
@@ -658,9 +667,9 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 	_currentArea->addObject(obj);
 }
 
-void DrillerEngine::removeDrill() {
+void DrillerEngine::removeDrill(Area *area) {
 	for (int16 id = 252; id < 256; id++) {
-		_currentArea->removeObject(id);
+		area->removeObject(id);
 	}
 }
 
@@ -670,7 +679,7 @@ void DrillerEngine::initGameState() {
 
 	for (auto &it : _areaMap) {
 		_gameStateBits[it._key] = 0;
-		_completeAreas[it._key] = 0;
+		_drilledAreas[it._key] = kDrillerNoRig;
 	}
 
 	_gameStateVars[k8bitVariableEnergy] = _initialTankEnergy;
@@ -702,7 +711,7 @@ bool DrillerEngine::checkIfGameEnded() {
 Common::Error DrillerEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
 	for (auto &it : _areaMap) {
 		stream->writeUint16LE(it._key);
-		stream->writeUint32LE(_completeAreas[it._key]);
+		stream->writeUint32LE(_drilledAreas[it._key]);
 	}
 
 	return Common::kNoError;
@@ -712,7 +721,10 @@ Common::Error DrillerEngine::loadGameStreamExtended(Common::SeekableReadStream *
 	for (uint i = 0; i < _areaMap.size(); i++) {
 		uint16 key = stream->readUint16LE();
 		assert(_areaMap.contains(key));
-		_completeAreas[key] = stream->readUint32LE();
+		_drilledAreas[key] = stream->readUint32LE();
+		if (_drilledAreas[key] == kDrillerNoRig)
+			if (drillDeployed(_areaMap[key]))
+				removeDrill(_areaMap[key]);
 	}
 
 	return Common::kNoError;
