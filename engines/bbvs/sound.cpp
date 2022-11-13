@@ -48,11 +48,18 @@ void Sound::load(const Common::String &filename) {
 
 void Sound::play(bool loop) {
 	debug(0, "Sound::play() [%s] loop:%d", _filename.c_str(), loop);
+
 	stop();
 	_stream->rewind();
-	Audio::AudioStream *audioStream = Audio::makeLoopingAudioStream(_stream, loop ? 0 : 1);
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_handle, audioStream,
-		-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+
+	if (loop) {
+		Audio::AudioStream *audioStream = new Audio::LoopingAudioStream(_stream, 0, DisposeAfterUse::NO);
+		g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_handle, audioStream,
+			-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
+	} else {
+		g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_handle, _stream,
+			-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+	}
 }
 
 void Sound::stop() {
