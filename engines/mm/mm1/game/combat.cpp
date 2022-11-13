@@ -830,6 +830,22 @@ void Combat::updateMonsterStatus() {
 	}
 }
 
+bool Combat::monsterTouch(Common::String &line) {
+	line.clear();
+
+	if (_val10 || !_monsterP->_bonusOnTouch)
+		return false;
+	if (_monsterP->_bonusOnTouch & 0x80) {
+		proc9();
+		// Original returned value, but caller didn't use.
+		// So for ScummVM we return true only if an action is done
+		//return g_globals->_spellsState._mmVal7;
+		return false;
+	}
+
+	return MonsterTouch::monsterTouch(_monsterP->_bonusOnTouch, line);
+}
+
 void Combat::iterateMonsters1() {
 	_spellMonsterCount = _monsterList.size();
 	iterateMonsters1Inner();
