@@ -276,10 +276,10 @@ struct ConversationConditionals {
 	int _numImports;
 
 	int _currentNode;
-	Common::Array<int> _messageList1;
-	Common::Array<int> _messageList2;
-	Common::Array<int> _messageList3;
-	Common::Array<int> _messageList4;
+	Common::Array<int> _playerMessageList;
+	Common::Array<int> _actorMessageList;
+	Common::Array<int> _playerSpeechList;
+	Common::Array<int> _actorSpeechList;
 
 	/**
 	 * Constructor
