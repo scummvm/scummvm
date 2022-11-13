@@ -987,6 +987,8 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 
 			_bitflags = 0;
 
+			_vm->_videoPlayer->unloadSubtitles();
+
 			// End the playback
 			return true;
 		}

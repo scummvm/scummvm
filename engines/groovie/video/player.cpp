@@ -107,13 +107,17 @@ bool VideoPlayer::playFrame() {
 			}
 		}
 
-		if (_subtitles.isLoaded()) {
-			_subtitles.close();
-			g_system->hideOverlay();
-		}
+		unloadSubtitles();
 	}
 
 	return end;
+}
+
+void VideoPlayer::unloadSubtitles() {
+	if (_subtitles.isLoaded()) {
+		_subtitles.close();
+		g_system->hideOverlay();
+	}
 }
 
 void VideoPlayer::waitFrame() {
