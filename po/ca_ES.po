@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-13 00:01+0000\n"
+"POT-Creation-Date: 2022-11-13 23:16+0000\n"
 "PO-Revision-Date: 2022-11-10 03:33+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -7339,19 +7339,19 @@ msgstr "Vola a la dreta"
 msgid "Fly to lower right"
 msgstr "Vola avall i a la dreta"
 
-#: engines/scumm/input.cpp:1073
+#: engines/scumm/input.cpp:1102
 msgid "Snap scroll on"
 msgstr "Activa el desplaçament ràpid"
 
-#: engines/scumm/input.cpp:1075
+#: engines/scumm/input.cpp:1104
 msgid "Snap scroll off"
 msgstr "Desactiva el desplaçament ràpid"
 
-#: engines/scumm/input.cpp:1088
+#: engines/scumm/input.cpp:1117
 msgid "Music volume: "
 msgstr "Volum de música: "
 
-#: engines/scumm/input.cpp:1105
+#: engines/scumm/input.cpp:1134
 msgid "Subtitle speed: "
 msgstr "Velocitat dels subtítols: "
 
