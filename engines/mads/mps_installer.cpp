@@ -82,7 +82,7 @@ const Common::ArchiveMemberPtr MpsInstaller::getMember(const Common::Path &path)
 	if (!_files.contains(translated))
 		return nullptr;
 
-	return Common::SharedPtr<Common::ArchiveMember>(new Common::GenericArchiveMember(_files.getVal(translated)._fileName, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(_files.getVal(translated)._fileName, this));
 }
 
 // TODO: Make streams stay valid after destruction of archive
