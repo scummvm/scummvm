@@ -29,7 +29,11 @@ namespace Freescape {
 enum {
 	k8bitVariableShield = 63,
 	k8bitVariableEnergy = 62,
-	k8bitVariableScore = 61
+	k8bitVariableScore = 61,
+	k8bitVariableShieldDrillerTank = 60,
+	k8bitVariableEnergyDrillerTank = 59,
+	k8bitVariableShieldDrillerJet = 58,
+	k8bitVariableEnergyDrillerJet = 57
 };
 
 extern uint8 k8bitMaxVariable;

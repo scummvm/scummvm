@@ -46,8 +46,8 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_playerWidth = 12;
 	_playerDepth = 32;
 
-	_initialProveEnergy = 48;
-	_initialProveShield = 50;
+	_initialTankEnergy = 48;
+	_initialTankShield = 50;
 	_initialJetEnergy = 29;
 	_initialJetShield = 34;
 }
@@ -676,8 +676,15 @@ void DrillerEngine::initGameState() {
 		_completeAreas[it._key] = 0;
 	}
 
-	_gameStateVars[k8bitVariableEnergy] = _initialProveEnergy;
-	_gameStateVars[k8bitVariableShield] = _initialProveShield;
+	_gameStateVars[k8bitVariableEnergy] = _initialTankEnergy;
+	_gameStateVars[k8bitVariableShield] = _initialTankShield;
+
+	_gameStateVars[k8bitVariableEnergyDrillerTank] = _initialTankEnergy;
+	_gameStateVars[k8bitVariableShieldDrillerTank] = _initialTankShield;
+
+	_gameStateVars[k8bitVariableEnergyDrillerJet] = _initialJetEnergy;
+	_gameStateVars[k8bitVariableShieldDrillerJet] = _initialJetShield;
+
 	if (_countdown > 0)
 		startCountdown(_countdown);
 }

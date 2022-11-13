@@ -318,8 +318,8 @@ public:
 	uint32 _initialJetEnergy;
 	uint32 _initialJetShield;
 
-	uint32 _initialProveEnergy;
-	uint32 _initialProveShield;
+	uint32 _initialTankEnergy;
+	uint32 _initialTankShield;
 
 	StateBits _completeAreas;
 

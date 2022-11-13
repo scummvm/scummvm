@@ -395,6 +395,14 @@ void FreescapeEngine::executeSwapJet(FCLInstruction &instruction) {
 		}
 		_playerHeight = 2;
 		_playerHeightNumber = -1;
+
+		// Save tank energy and shield
+		_gameStateVars[k8bitVariableEnergyDrillerTank] = _gameStateVars[k8bitVariableEnergy];
+		_gameStateVars[k8bitVariableShieldDrillerTank] = _gameStateVars[k8bitVariableShield];
+
+		// Restore ship energy and shield
+		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergyDrillerJet];
+		_gameStateVars[k8bitVariableShield] = _gameStateVars[k8bitVariableShieldDrillerJet];
 	} else {
 		debugC(1, kFreescapeDebugCode, "Swaping to tank mode");
 		_playerHeightNumber = 0;
@@ -402,6 +410,14 @@ void FreescapeEngine::executeSwapJet(FCLInstruction &instruction) {
 			traverseEntrance(27);
 			_lastPosition = _position;
 		}
+
+		// Save shield energy and shield
+		_gameStateVars[k8bitVariableEnergyDrillerJet] = _gameStateVars[k8bitVariableEnergy];
+		_gameStateVars[k8bitVariableShieldDrillerJet] = _gameStateVars[k8bitVariableShield];
+
+		// Restore ship energy and shield
+		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergyDrillerTank];
+		_gameStateVars[k8bitVariableShield] = _gameStateVars[k8bitVariableShieldDrillerTank];
 	}
 	// TODO: implement the rest of the changes (e.g. border)
 }
