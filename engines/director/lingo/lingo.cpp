@@ -552,8 +552,10 @@ void Lingo::execute() {
 		if (localCounter > 0 && localCounter % 100 == 0) {
 			_vm->processEvents();
 			g_system->updateScreen();
-			if (_vm->getCurrentMovie()->getScore()->_playState == kPlayStopped)
+			if (_vm->getCurrentMovie()->getScore()->_playState == kPlayStopped) {
+				_freezeState = true;
 				break;
+			}
 		}
 
 		uint current = _state->pc;
