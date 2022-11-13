@@ -160,6 +160,7 @@ static const char HELP_STRING4[] =
 	"  --dump-midi              Dumps MIDI events to 'dump.mid', until quitting from game\n"
 	"                           (if file already exists, it will be overwritten)\n"
 	"  --enable-gs              Enable Roland GS mode for MIDI playback\n"
+	"  --output-channels=CHANNELS Select output channel count (e.g. 2 for stereo)\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
 	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame"
 #ifndef DISABLE_NUKED_OPL
@@ -662,6 +663,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 			DO_LONG_COMMAND("list-audio-devices")
 			END_COMMAND
+
+			DO_LONG_OPTION_INT("output-channels")
+			END_OPTION
 
 			DO_LONG_OPTION_INT("output-rate")
 			END_OPTION
