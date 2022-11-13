@@ -45,7 +45,7 @@ void OSystem_IPHONE::mixCallback(void *sys, byte *samples, int len) {
 }
 
 void OSystem_IPHONE::setupMixer() {
-	_mixer = new Audio::MixerImpl(AUDIO_SAMPLE_RATE, WAVE_BUFFER_SIZE);
+	_mixer = new Audio::MixerImpl(AUDIO_SAMPLE_RATE, true, WAVE_BUFFER_SIZE);
 
 	s_soundCallback = mixCallback;
 	s_soundParam = this;

@@ -73,7 +73,7 @@ void SdlMixerManager::init() {
 		warning("Could not open audio device: %s", SDL_GetError());
 
 		// The mixer is not marked as ready
-		_mixer = new Audio::MixerImpl(desired.freq, desired.samples);
+		_mixer = new Audio::MixerImpl(desired.freq, true, desired.samples);
 		return;
 	}
 
@@ -88,7 +88,7 @@ void SdlMixerManager::init() {
 			warning("Could not open audio device: %s", SDL_GetError());
 
 			// The mixer is not marked as ready
-			_mixer = new Audio::MixerImpl(desired.freq, desired.samples);
+			_mixer = new Audio::MixerImpl(desired.freq, true, desired.samples);
 			return;
 		}
 
@@ -106,7 +106,7 @@ void SdlMixerManager::init() {
 	if (_obtained.channels != 2)
 		error("SDL mixer output requires stereo output device");
 
-	_mixer = new Audio::MixerImpl(_obtained.freq, desired.samples);
+	_mixer = new Audio::MixerImpl(_obtained.freq, true, desired.samples);
 	assert(_mixer);
 	_mixer->setReady(true);
 

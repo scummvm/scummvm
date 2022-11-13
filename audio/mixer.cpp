@@ -176,8 +176,8 @@ private:
 #pragma mark --- Mixer ---
 #pragma mark -
 
-MixerImpl::MixerImpl(uint sampleRate, uint outBufSize)
-	: _mutex(), _sampleRate(sampleRate), _outBufSize(outBufSize), _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
+MixerImpl::MixerImpl(uint sampleRate, bool stereo, uint outBufSize)
+	: _mutex(), _sampleRate(sampleRate), _stereo(stereo), _outBufSize(outBufSize), _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
 
 	assert(sampleRate > 0);
 
@@ -198,6 +198,10 @@ void MixerImpl::setReady(bool ready) {
 
 uint MixerImpl::getOutputRate() const {
 	return _sampleRate;
+}
+
+bool MixerImpl::getOutputStereo() const {
+	return _stereo;
 }
 
 uint MixerImpl::getOutputBufSize() const {
@@ -280,15 +284,21 @@ int MixerImpl::mixCallback(byte *samples, uint len) {
 	Common::StackLock lock(_mutex);
 
 	int16 *buf = (int16 *)samples;
-	// we store stereo, 16-bit samples
-	assert(len % 4 == 0);
-	len >>= 2;
 
 	// Since the mixer callback has been called, the mixer must be ready...
 	_mixerReady = true;
 
 	//  zero the buf
-	memset(buf, 0, 2 * len * sizeof(int16));
+	memset(buf, 0, len);
+
+	// we store 16-bit samples
+	if (_stereo) {
+		assert(len % 4 == 0);
+		len >>= 2;
+	} else {
+		assert(len % 2 == 0);
+		len >>= 1;
+	}
 
 	// mix all channels
 	int res = 0, tmp;
@@ -524,7 +534,7 @@ Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *stream,
 	assert(stream);
 
 	// Get a rate converter instance
-	_converter = makeRateConverter(_stream->getRate(), mixer->getOutputRate(), _stream->isStereo(), reverseStereo);
+	_converter = makeRateConverter(_stream->getRate(), mixer->getOutputRate(), _stream->isStereo(), mixer->getOutputStereo(), reverseStereo);
 }
 
 Channel::~Channel() {
