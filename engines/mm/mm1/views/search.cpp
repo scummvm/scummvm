@@ -175,8 +175,8 @@ void Search::timeout() {
 		_val1 = MIN(g_globals->_treasure._container * 8 +
 			map[Maps::MAP_TRAP_THRESHOLD], 255);
 
-		if (!g_globals->_treasure[1]) {
-			g_globals->_treasure[1] = (getRandomNumber(100) < _val1) ? 1 : 2;
+		if (!g_globals->_treasure._trapType) {
+			g_globals->_treasure._trapType = (getRandomNumber(100) < _val1) ? 1 : 2;
 		}
 
 		// Show the name of the container type in the game view
@@ -279,8 +279,8 @@ void Search::detectMagicTrap() {
 
 	} else {
 		c._sp._current--;
-		char magic = g_globals->_treasure[3] || g_globals->_treasure[4]
-			|| g_globals->_treasure[5] || g_globals->_treasure[8] ? 'Y' : 'N';
+		char magic = g_globals->_treasure.hasItems() ||
+			g_globals->_treasure.getGems() ? 'Y' : 'N';
 		char trapped = g_globals->_treasure._trapType == 1 ? 'Y' : 'N';
 
 		clearSurface();
@@ -365,7 +365,7 @@ void Search::drawTreasure() {
 
 void Search::drawItem() {
 	Treasure &treasure = g_globals->_treasure;
-	int itemId = treasure.getItem();
+	int itemId = treasure.removeItem();
 
 	// Iterate through any treasure items
 	if (itemId != 0) {

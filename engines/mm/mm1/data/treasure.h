@@ -100,7 +100,7 @@ public:
 	/**
 	 * Get any item, and remove it from the treasure
 	 */
-	byte getItem();
+	byte removeItem();
 };
 
 } // namespace MM1
