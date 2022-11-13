@@ -290,23 +290,34 @@ bool FreescapeEngine::checkCollisions(bool executeCode) {
 		return false;
 	Math::AABB boundingBox(_lastPosition, _lastPosition);
 
-	Math::Vector3d v1(_position.x() - 1, _position.y() - _playerHeight, _position.z() - 1);
-	Math::Vector3d v2(_position.x() + 1, _position.y() + 1, _position.z() + 1);
+	Math::Vector3d v1(_position.x() + 1, _position.y() + 1, _position.z() + 1);
+	Math::Vector3d v2(_position.x() - 1, _position.y() - _playerHeight, _position.z() - 1);
 
 	boundingBox.expand(v1);
 	boundingBox.expand(v2);
-	Object *obj = _currentArea->checkCollisions(boundingBox);
+	ObjectArray objs = _currentArea->checkCollisions(boundingBox);
+	bool collided = !objs.empty();
 
-	if (obj != nullptr) {
-		debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", obj->getObjectID(), obj->getSize().x(), obj->getSize().y(), obj->getSize().z());
-		GeometricObject *gobj = (GeometricObject *)obj;
-		if (!executeCode) // Avoid executing code
-			return true;
-
-		executeObjectConditions(gobj, false, true);
-		return true;
+	// If we don't need to execute code, we can finish here
+	if (!executeCode) {
+		return collided;
 	}
-	return false;
+
+	// If we need to execute code, we need to make sure the bounding box touches the floor
+	// so we will expand it and re-run the collision checking
+	uint tolerance = 1;
+	Math::Vector3d v3(_position.x() - 1, _position.y() - _playerHeight - tolerance, _position.z() - 1);
+	boundingBox.expand(v3);
+
+	objs = _currentArea->checkCollisions(boundingBox);
+	for (auto &obj : objs) {
+		GeometricObject *gobj = (GeometricObject *)obj;
+		debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
+		executeObjectConditions(gobj, false, true);
+	}
+	// We still need to return the original result, not the collision using the expanded bounding box
+	// This will avoid detecting the floor constantly
+	return collided;
 }
 
 } // namespace Freescape

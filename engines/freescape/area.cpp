@@ -178,16 +178,13 @@ Object *Area::shootRay(const Math::Ray &ray) {
 	return collided;
 }
 
-Object *Area::checkCollisions(const Math::AABB &boundingBox) {
-	float size = 3.0 * 8192.0 * 8192.0; // TODO: check if this is max size
-	Object *collided = nullptr;
+ObjectArray Area::checkCollisions(const Math::AABB &boundingBox) {
+	ObjectArray collided;
 	for (auto &obj : _drawableObjects) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
 			GeometricObject *gobj = (GeometricObject *)obj;
-			float objSize = gobj->getSize().length();
-			if (gobj->collides(boundingBox) && size > objSize) {
-				collided = gobj;
-				size = objSize;
+			if (gobj->collides(boundingBox)) {
+				collided.push_back(gobj);
 			}
 		}
 	}

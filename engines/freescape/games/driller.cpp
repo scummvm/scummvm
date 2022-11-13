@@ -551,7 +551,7 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 
 	obj = (GeometricObject *)obj->duplicate();
 	obj->setOrigin(origin);
-	if (_currentArea->checkCollisions(obj->_boundingBox))
+	if (!_currentArea->checkCollisions(obj->_boundingBox).empty())
 		return false;
 
 	// Undo offset
@@ -571,7 +571,7 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 	origin.setValue(2, origin.z() + obj->getSize().z() / 5);
 
 	obj->setOrigin(origin);
-	if (_currentArea->checkCollisions(obj->_boundingBox))
+	if (!_currentArea->checkCollisions(obj->_boundingBox).empty())
 		return false;
 
 	// Undo offset
@@ -589,7 +589,7 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 	obj->setOrigin(origin);
 	assert(obj);
 
-	if (_currentArea->checkCollisions(obj->_boundingBox))
+	if (!_currentArea->checkCollisions(obj->_boundingBox).empty())
 		return false;
 
 	delete obj;

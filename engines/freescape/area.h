@@ -34,7 +34,7 @@
 namespace Freescape {
 
 typedef Common::HashMap<uint16, Object *> ObjectMap;
-
+typedef Common::Array<Object *> ObjectArray;
 class Area {
 public:
 	Area(uint16 areaID, uint16 areaFlags, ObjectMap *objectsByID, ObjectMap *entrancesByID);
@@ -50,7 +50,7 @@ public:
 	void show();
 
 	Object *shootRay(const Math::Ray &ray);
-	Object *checkCollisions(const Math::AABB &boundingBox);
+	ObjectArray checkCollisions(const Math::AABB &boundingBox);
 	void addObjectFromArea(int16 id, Area *global);
 	void addObject(Object *obj);
 	void addStructure(Area *global);
@@ -76,7 +76,7 @@ private:
 	uint16 _areaFlags;
 	ObjectMap *_objectsByID;
 	ObjectMap *_entrancesByID;
-	Common::Array<Object *> _drawableObjects;
+	ObjectArray _drawableObjects;
 	ObjectMap _addedObjects;
 	Object *objectWithIDFromMap(ObjectMap *map, uint16 objectID);
 };
