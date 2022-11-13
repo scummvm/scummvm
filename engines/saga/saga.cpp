@@ -488,7 +488,7 @@ int SagaEngine::getLanguageIndex() {
 		return 6;
 	case Common::HE_ISR:
 		return 7;
-	case Common::ZH_CHN:
+	case Common::ZH_TWN:
 		return 8;
 	default:
 		return 0;

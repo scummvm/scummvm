@@ -229,7 +229,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_mainPanel.y = _vm->getDisplayInfo().mainPanelYOffset;
 	_mainPanel.currentButton = nullptr;
 
-	if (_vm->getGameId() == GID_ITE && _vm->getLanguage() == Common::ZH_CHN) {
+	if (_vm->getGameId() == GID_ITE && _vm->getLanguage() == Common::ZH_TWN) {
 		ByteArray n;
 		static const int kSkipLines = 4;
 		_mainPanel.imageHeight -= kSkipLines;
@@ -772,7 +772,7 @@ void Interface::drawVerbPanel(PanelButton* panelButton) {
 	point.y = _mainPanel.y + panelButton->yOffset;
 
 	// TODO: Find the correct sprite for Chinese version.
-	if (!(_vm->getGameId() == GID_ITE && _vm->getLanguage() == Common::ZH_CHN)) {
+	if (!(_vm->getGameId() == GID_ITE && _vm->getLanguage() == Common::ZH_TWN)) {
 		_vm->_sprite->draw(_mainPanel.sprites, spriteNumber, point, 256);
 	}
 
