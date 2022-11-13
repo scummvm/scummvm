@@ -73,7 +73,7 @@ static const Common::AxisTableEntry odJoystickAxes[] = {
 Common::KeymapperDefaultBindings *OSystem_SDL_Opendingux::getKeymapperDefaultBindings() {
 	Common::KeymapperDefaultBindings *keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
 
-	if (!Posix::assureDirectoryExists(JOYSTICK_DIR)) { 
+	if (!Posix::assureDirectoryExists(JOYSTICK_DIR)) {
 		keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "VMOUSEUP", "JOY_UP");
 		keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "VMOUSEDOWN", "JOY_DOWN");
 		keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "VMOUSELEFT", "JOY_LEFT");
@@ -134,6 +134,9 @@ void OSystem_SDL_Opendingux::initBackend() {
 	if (!ConfMan.hasKey("opl_driver")) {
 		ConfMan.set("opl_driver", "db");
 	}
+	if (!ConfMan.hasKey("kbdmouse_speed")) {
+		ConfMan.setInt("kbdmouse_speed", 2);
+	}
 #ifdef LEPUS
 	if (!ConfMan.hasKey("output_rate")) {
 		ConfMan.set("output_rate", "22050");
@@ -161,12 +164,15 @@ Common::String OSystem_SDL_Opendingux::getDefaultLogFileName() {
 }
 
 bool OSystem_SDL_Opendingux::hasFeature(Feature f) {
-	if (f == kFeatureFullscreenMode)
+	switch (f) {
+	case kFeatureFullscreenMode:
+	case kFeatureAspectRatioCorrection:
 		return false;
-	if (f == kFeatureAspectRatioCorrection)
-		return false;
-
-	return OSystem_SDL::hasFeature(f);
+	case kFeatureKbdMouseSpeed:
+		return true;
+	default:
+		return OSystem_SDL::hasFeature(f);
+	}
 }
 
 void OSystem_SDL_Opendingux::setFeatureState(Feature f, bool enable) {
