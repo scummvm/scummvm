@@ -2155,6 +2155,8 @@ void ObjectReferenceVariableModifier::resolveRelativePath(RuntimeObject *obj, co
 			obj = getObjectParent(obj);
 			if (obj == nullptr)
 				return;
+
+			continue;
 		}
 
 		const Common::Array<Common::SharedPtr<Modifier> > *modifierChildren = nullptr;
