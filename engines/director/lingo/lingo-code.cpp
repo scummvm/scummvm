@@ -851,7 +851,7 @@ Datum LC::negateData(Datum &d) {
 	} else if (res.type == FLOAT) {
 		res.u.f = -res.u.f;
 	} else {
-		warning("LC::negateData(): not supported for type %s", res.type2str());
+		warning("LC::negateData(): not supported for type %s", d.type2str());
 	}
 
 	return res;
