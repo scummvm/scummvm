@@ -151,8 +151,6 @@ private:
 	 */
 	void handlePartyEffects();
 
-	void proc9();
-
 protected:
 	byte _arr1[MAX_COMBAT_MONSTERS];
 	byte _monsterStatus[MAX_COMBAT_MONSTERS];
@@ -188,6 +186,8 @@ protected:
 	bool damageType5();
 	bool damageType6();
 	bool damageType7();
+
+	void proc9();
 
 public:
 	SpellsMonsters();

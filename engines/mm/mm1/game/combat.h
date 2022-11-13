@@ -238,6 +238,11 @@ protected:
 	 */
 	void updateMonsterStatus();
 
+	/**
+	 * Handles a monster touch action, if any
+	 */
+	bool monsterTouch(Common::String &line);
+
 private:
 	void spellFailed();
 	void destroyMonster();
