@@ -50,6 +50,7 @@ public:
 	void setOverrideSpeed(bool isOverride);
 
 	void loadSubtitles(const char *fname) { _subtitles.loadSRTFile(fname); }
+	void unloadSubtitles();
 
 protected:
 	// To be implemented by subclasses
