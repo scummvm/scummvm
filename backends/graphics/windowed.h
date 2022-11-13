@@ -79,7 +79,7 @@ public:
 		if (!_overlayVisible)
 			return;
 
-		_overlayInGUI = true;
+		_overlayInGUI = false;
 
 		_activeArea.drawRect = _gameDrawRect;
 		_activeArea.width = getWidth();
