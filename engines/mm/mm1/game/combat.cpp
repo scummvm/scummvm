@@ -397,12 +397,12 @@ void Combat::selectTreasure2(int count) {
 	_val1 += getRandomNumber(_allowFight) - 1;
 
 	auto &treasure = g_globals->_treasure;
-	if (!treasure[3])
-		treasure[3] = _val1;
-	else if (!treasure[4])
-		treasure[4] = _val1;
-	else if (!treasure[5])
-		treasure[5] = _val1;
+	if (!treasure._items[0])
+		treasure._items[0] = _val1;
+	else if (!treasure._items[1])
+		treasure._items[1] = _val1;
+	else if (!treasure._items[2])
+		treasure._items[2] = _val1;
 }
 
 void Combat::nextRound() {

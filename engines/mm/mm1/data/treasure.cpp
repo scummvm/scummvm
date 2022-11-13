@@ -56,7 +56,7 @@ bool Treasure::hasItems() const {
 	return false;
 }
 
-byte Treasure::getItem() {
+byte Treasure::removeItem() {
 	for (int i = 0; i < 3; ++i) {
 		if (_items[i]) {
 			byte result = _items[i];
