@@ -544,7 +544,29 @@ const char *ITEinterfaceTextStrings[][53] = {
 		"\xE4\xF6\xE2\xFA \xE3\xE5-\xF9\xE9\xE7",
 		"\xEE\xE4 \xFA\xE2\xE5\xE1\xFA\xE5 \xF9\xEC \xF8\xE9\xF3?",
 		"\xE8\xF2\xE9\xF0\xFA \xEE\xF9\xE7\xF7 \xF9\xEE\xE5\xF8"
-	}
+	},
+	// Chinese
+	{
+		// Note that the "Load Successful!" string is never used in ScummVM
+		"Walk to", "Look At", "Pick Up", "Talk to", "Open",
+		"Close", "Use", "Give", "Options", "Test",
+		"Demo", "Help", "Quit Game", "Fast", "Slow",
+		"On", "Off", "Continue Playing", "Load", "Save",
+		"Game Options", "Reading Speed", "Music", "Sound", "Cancel",
+		"Quit", "OK", "Mid", "Click", "10%",
+		"20%", "30%", "40%", "50%", "60%",
+		"70%", "80%", "90%", "Max", "Quit the Game?",
+		"Load Successful!", "Enter Save Game Name", "Give %s to %s", "Use %s with %s",
+		"[New Save Game]",
+		"I can't pick that up.",
+		"I see nothing special about it.",
+		"There's no place to open it.",
+		"There's no opening to close.",
+		"I don't know how to do that.",
+		"Show Dialog",
+		"What is Rif's reply?",
+		"Loading a saved game"
+	},
 };
 
 const RawPoint pieceOrigins[PUZZLE_PIECES] = {
@@ -620,7 +642,13 @@ const char *pieceNames[][PUZZLE_PIECES] = {
 		"\xEE\xE1\xF8\xE2", "\xF6\xE1\xFA", "\xEB\xEC\xE9\xE1\xE4", "\xEE\xEC\xE7\xF6\xE9\xE9\xED", "\xF4\xEC\xF1",
 		"\xE7\xE5\xE8 \xEE\xF9\xE9\xE7\xE4", "\xEE\xF7\xF6\xE5\xF2\xE4", "\xF4\xE8\xE9\xF9 \xF0\xE2\xF8\xE9\xED", "\xF1\xF8\xE8 \xEE\xE9\xE3\xE4", "\xF7\xF8\xE3\xE5\xED",
 		"\xEE\xE6\xEE\xF8\xE4", "\xF1\xF8\xE2\xEC", "\xEE\xF1\xE5\xF8", "\xEE\xF7\xE1\xFA", "\xEE\xE1\xF8\xF9\xFA \xF6\xE1\xF2"
-	}
+	},
+	// Chinese
+	{
+		"screwdriver", "pliers", "c-clamp", "wood clamp", "level",
+		"twine", "wood plane", "claw hammer", "tape measure", "hatchet",
+		"shears", "ruler", "saw", "mallet", "paint brush"
+	},
 };
 
 // hints
@@ -688,7 +716,14 @@ const char *hintStr[][4] = {
 		"\xE1\xE3\xF7\xE5 \xEC\xE0\xE9\xEC\xE5 \xF4\xE9\xF0\xE4 \xE9\xF9 \xE4\xEB\xE9 \xEE\xF2\xE8 \xE7\xFA\xE9\xEB\xE5\xFA \xF9\xF2\xF9\xE5\xE9\xE5\xFA \xEC\xE4\xFA\xE0\xE9\xED \xE5\xE4\xFA\xE7\xE9\xEC\xE5 \xEE\xF9\xED.",
 		"\xE1\xE3\xF7\xE5 \xEB\xEC \xF4\xE9\xF0\xE4 \xE7\xE3\xF9\xE4 \xE5\xEB\xEC \xF6\xE3 \xE7\xE3\xF9 \xE0\xED \xE9\xF9 \xE7\xFA\xE9\xEB\xE4 \xEE\xFA\xE0\xE9\xEE\xE4.",
 		"\xE0\xE9\xF0\xE9 \xF8\xE5\xE0\xE4 \xF9\xE5\xED \xE3\xE1\xF8 \xF9\xE0\xE9\xF0\xE5 \xE1\xEE\xF7\xE5\xEE\xE5."
-	}
+	},
+	// Chinese
+	{
+		"Check which pieces could fit in each corner first.",
+		"Check which corner has the least number of pieces that can fit and start from there.",
+		"Check each new corner and any new side for pieces that fit.",
+		"I don't see anything out of place."
+	},
 };
 
 const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
@@ -766,6 +801,14 @@ const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
 		"\xF4\xF1\xF1! \xF8\xE5\xF6\xE4 \xF8\xEE\xE6?",
 		"\xE0\xF0\xE9 \xE4\xE9\xE9\xFA\xE9 \xF2\xE5\xF9\xE4 \xE6\xE0\xFA \xE0\xE7\xF8\xFA, \xE0\xFA\xE4 \xE9\xE5\xE3\xF2."
 	},
+	// Chinese
+	{
+		"Hey, Fox! Would you like a hint?",
+		"Would you like some help?",
+		"Umm...Umm...",
+		"Psst! want a hint?",
+		"I would have done this differently, you know."
+	},
 };
 
 const char *sakkaStr[][NUM_SAKKA] = {
@@ -822,7 +865,13 @@ const char *sakkaStr[][NUM_SAKKA] = {
 		"\xE4\xE9\xE9, \xE0\xFA\xE4 \xEC\xE0 \xE0\xEE\xE5\xF8 \xEC\xF1\xE9\xE9\xF2 \xEC\xEE\xE5\xF2\xEE\xE3\xE9\xED!",
 		"\xE7\xE1\xF8'\xE4! \xE6\xE4 \xE0\xEE\xE5\xF8 \xEC\xE4\xE9\xE5\xFA \xEE\xE1\xE7\xEF!",
 		"\xE1\xE7\xE9\xE9\xEB\xED, \xE6\xE4 \xEC\xE0 \xEE\xE5\xF4\xE9\xF2 \xE1\xE7\xE5\xF7\xE9\xED!"
-	}
+	},
+	// Chinese
+	{
+		"Hey, you're not supposed to help the applicants!",
+		"Guys! This is supposed to be a test!",
+		"C'mon fellows, that's not in the rules!"
+	},
 };
 
 const char *whineStr[][NUM_WHINES] = {
@@ -899,7 +948,15 @@ const char *whineStr[][NUM_WHINES] = {
 		"\xF0\xE5 \xE8\xE5\xE1...",
 		"\xF0\xF8\xE0\xE4 \xEC\xE9 \xF9\xEC\xE5\xE7 \xE4\xEB\xFA\xE9\xE1\xE4 \xF2\xEC\xE4 \xEC\xEA \xEC\xF8\xE0\xF9, \xF1\xE0\xF7\xE4!",
 		"\xE8\xE5\xE1, \xE0\xF0\xE9 \xEC\xE0 \xE6\xE5\xEB\xF8 \xF9\xE9\xF9 \xE7\xE5\xF7 \xEE\xF4\xE5\xF8\xF9 \xF9\xEE\xFA\xF0\xE2\xE3 \xEC\xF8\xEE\xE6\xE9\xED."
-	}
+	},
+	// Chinese
+	{
+		"Aww, c'mon Sakka!",
+		"One hint won't hurt, will it?",
+		"Sigh...",
+		"I think that clipboard has gone to your head, Sakka!",
+		"Well, I don't recall any specific rule against hinting."
+	},
 };
 
 const char *optionsStr[][4] = {
@@ -966,7 +1023,14 @@ const char *optionsStr[][4] = {
 		"\"\xEB\xEF, \xE0\xF9\xEE\xE7 \xEC\xF8\xEE\xE6 \xE1\xE1\xF7\xF9\xE4.\"",
 		"\"\xEC\xE0, \xFA\xE5\xE3\xE4 \xF8\xE1\xE4, \xE0\xF9\xEE\xE7 \xEC\xF0\xF1\xE5\xFA \xEC\xF4\xFA\xE5\xF8 \xE1\xF2\xF6\xEE\xE9.\"",
 		"\xF0\xF8\xE0\xE4 \xEC\xE9 \xF9\xE4\xEE\xF7\xE5\xED \xF9\xE1\xE5 \xF9\xEE\xFA\xE9 \xE0\xFA \xE4%s \xEC\xE0 \xF0\xEB\xE5\xEF."
-	}
+	},
+	// Chinese
+	{
+		"\"I'll do this puzzle later.\"",
+		"\"Yes, I'd like a hint please.\"",
+		"\"No, thank you, I'd like to try and solve it myself.\"",
+		"I think the %s is in the wrong place."
+	},
 };
 
 const IntroDialogue introDialogueCave1[][4] = {
@@ -1155,7 +1219,27 @@ const IntroDialogue introDialogueCave1[][4] = {
 		3,		// cave voice 3
 		"\xE4\xED \xE9\xE3\xF2\xE5 \xE0\xFA \xF1\xE5\xE3 \xE4\xFA\xF2\xE5\xF4\xE4, \xE0\xFA \xF1\xE5\xE3 \xE4\xE0\xE5\xF9\xF8, \xE5\xF1\xE5\xE3\xE5\xFA \xF0\xE5\xF1\xF4\xE9\xED "
 		"\xEE\xF2\xE1\xF8 \xEC\xEE\xE4 \xF9\xE0\xF0\xE7\xF0\xE5 \xEE\xF1\xE5\xE2\xEC\xE9\xED \xEC\xE3\xEE\xE9\xE9\xEF."
-	} }
+	} },
+	{ { // Chinese
+		0,		// cave voice 0
+		"We see the sky, we see the land, we see the water, "
+		"and we wonder: Are we the only ones?"
+	},
+	{
+		1,		// cave voice 1
+		"Long before we came to exist, the humans ruled the "
+		"Earth."
+	},
+	{
+		2,		// cave voice 2
+		"They made marvelous things, and moved whole "
+		"mountains."
+	},
+	{
+		3,		// cave voice 3
+		"They knew the Secret of Flight, the Secret of "
+		"Happiness, and other secrets beyond our imagining."
+	} },
 };
 
 const IntroDialogue introDialogueCave2[][3] = {
@@ -1292,6 +1376,20 @@ const IntroDialogue introDialogueCave2[][3] = {
 		6,		// cave voice 6
 		"\xE0\xF0\xE7\xF0\xE5 \xE4\xE9\xE9\xF0\xE5 \xEC\xE4\xED \xEC\xE9\xEC\xE3\xE9\xED."
 	} },
+	{ { // Chinese
+		4,		// cave voice 4
+		"The humans also knew the Secret of Life, and they "
+		"used it to give us the Four Great Gifts:"
+	},
+	{
+		5,		// cave voice 5
+		"Thinking minds, feeling hearts, speaking mouths, and "
+		"reaching hands."
+	},
+	{
+		6,		// cave voice 6
+		"We are their children."
+	} },
 };
 
 const IntroDialogue introDialogueCave3[][3] = {
@@ -1426,7 +1524,21 @@ const IntroDialogue introDialogueCave3[][3] = {
 	{
 		9,		// cave voice 9
 		"\xE4\xED \xE0\xE4\xE1\xE5 \xE0\xE5\xFA\xF0\xE5, \xE5\xEB\xF9\xE4\xE9\xE9\xF0\xE5 \xEE\xE5\xEB\xF0\xE9\xED, \xE4\xED \xE1\xE5\xE5\xE3\xE0\xE9 \xE4\xE9\xE5 \xEE\xF2\xF0\xE9\xF7\xE9\xED \xEC\xF0\xE5 \xE0\xFA \xF1\xE5\xE3 \xE4\xE0\xE5\xF9\xF8."
-	} }
+	} },
+	{ { // Chinese
+		7,		// cave voice 7
+		"They taught us how to use our hands, and how to "
+		"speak."
+	},
+	{
+		8,		// cave voice 8
+		"They showed us the joy of using our minds."
+	},
+	{
+		9,		// cave voice 9
+		"They loved us, and when we were ready, they surely "
+		"would have given us the Secret of Happiness."
+	} },
 };
 
 const IntroDialogue introDialogueCave4[][4] = {
@@ -1607,7 +1719,25 @@ const IntroDialogue introDialogueCave4[][4] = {
 	{
 		13,		// cave voice 13
 		"\xE5\xE4\xE0\xED \xF0\xE7\xEC\xE5\xF7 \xF2\xEE\xED \xE0\xFA \xE0\xE5\xFA\xE5 \xE4\xE2\xE5\xF8\xEC \xE1\xE9\xE5\xED \xEE\xEF \xE4\xE9\xEE\xE9\xED?"
-	} }
+	} },
+	{ { // Chinese
+		10,		// cave voice 10
+		"And now we see the sky, the land, and the water that "
+		"we are heirs to, and we wonder: why did they leave?"
+	},
+	{
+		11,		// cave voice 11
+		"Do they live still, in the stars? In the oceans "
+		"depths? In the wind?"
+	},
+	{
+		12,		// cave voice 12
+		"We wonder, was their fate good or evil?"
+	},
+	{
+		13,		// cave voice 13
+		"And will we also share the same fate one day?"
+	} },
 };
 
 const IntroCredit creditsValley[] = {
