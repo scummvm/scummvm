@@ -666,6 +666,7 @@ protected:
 	void drawInternalGUIControl(int id, bool highlightColor);
 	int getInternalGUIControlFromCoordinates(int x, int y);
 	virtual bool isSmushActive() { return false; }
+	virtual bool isInsaneActive() { return false; }
 
 	virtual void queryQuit(bool returnToLauncher);
 	virtual void queryRestart();

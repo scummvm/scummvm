@@ -397,6 +397,35 @@ void ScummEngine::processInput() {
 			VAR(VAR_LEFTBTN_DOWN) = (_leftBtnPressed & msClicked) != 0;
 			VAR(VAR_RIGHTBTN_DOWN) = (_rightBtnPressed & msClicked) != 0;
 
+			// Full Throttle in its interpreter has two separate input handlers, in order to handle:
+			// - The SCUMM system;
+			// - The INSANE/SMUSH system.
+			//
+			// We currently fetch all input events in ScummEngine::parseEvents() and then
+			// handle them in this function, and this seems to be working fine nonetheless;
+			// unfortunately there is at least one situation in which a mouse button press
+			// can become "sticky" because of this: the mineroad sequence executed on the INSANE system.
+			//
+			// If we press one of the mouse buttons at the wrong time, we end up losing the corresponding
+			// BUTTONUP event, and said button will remain registered as pressed until we press and release
+			// it again.
+			//
+			// Since the SMUSH input handler in the original interpreter gets the input events right at the
+			// source (i.e. the OS), I guess there is no harm in doing the same thing in our code,
+			// fetching the correct state for the mouse buttons right from the event manager, only when
+			// the INSANE/SMUSH system is active.
+			if (_game.id == GID_FT && isInsaneActive()) {
+				VAR(VAR_LEFTBTN_HOLD) = (getEventManager()->getButtonState() & 0x1) != 0 ? 1 : 0;
+				VAR(VAR_RIGHTBTN_HOLD) = (getEventManager()->getButtonState() & 0x2) != 0 ? 1 : 0;
+
+				// Also, fix the state of these two variables, which might still be out of sync...
+				if ((getEventManager()->getButtonState() & 0x1) != 0)
+					_leftBtnPressed &= ~msDown;
+
+				if ((getEventManager()->getButtonState() & 0x2) != 0)
+					_rightBtnPressed &= ~msDown;
+			}
+
 			// WORKAROUND: In COMI main menu, sometimes clicks are not registered
 			// correctly; in particular there usually a situation in which both
 			// states for a mouse button (msClicked and msDown) are being captured.

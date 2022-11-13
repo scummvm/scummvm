@@ -26,6 +26,7 @@
 
 #include "scumm/scumm_v6.h"
 #include "scumm/charset_v7.h"
+#include "scumm/insane/insane.h"
 
 namespace Scumm {
 
@@ -100,6 +101,7 @@ public:
 	void clearSubtitleQueue();
 	void CHARSET_1() override;
 	bool isSmushActive() override { return _smushActive; }
+	bool isInsaneActive() override { return _insane ? _insane->isInsaneActive() : false; }
 	void removeBlastTexts() override;
 	void restoreBlastTextsRects();
 
