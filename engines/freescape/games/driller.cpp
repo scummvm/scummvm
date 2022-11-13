@@ -88,10 +88,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	playSound(5, false);
 	// Ignore sky/ground fields
-	if (_currentArea->getAreaFlags() == 1)
-		_gfx->_keyColor = 0;
-	else
-		_gfx->_keyColor = 255;
+	_gfx->_keyColor = 0;
 
 	if (isAmiga() || isAtariST())
 		swapPalette(areaID);
