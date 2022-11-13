@@ -2218,43 +2218,43 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("jman", "Demo", "JMDEMO.EXE", "7c8230a804abf9353b05627a675b5ffb", 375305, 300),
 
 	// Original filename is JOINT-net/DEMO
-	MACDEMO1_l("jointnet", "Demo", "JOINT-net-DEMO", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 895582, Common::JA_JPN, 300),
+	MACDEMO1_l("jointnet", "Demo", "JOINT-net-DEMO", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 895326, Common::JA_JPN, 300),
 
 	// HyperCard game calls movie using external MacroMind Player
 	MACGAME2_l("jyajya", "", "MacroMind Player", "f5277c53bacd27936158dd3867e587e2", 390204,
 							 "JyajyaInit",		 "5d96a5c42b500370663431f360af3629", 669, Common::JA_JPN, 311),
 
 	// Original filename is 信光の勝馬道場ｵｰﾄﾃﾞﾓ
-	MACDEMO1_l("katsumadojo", "Demo", "Shinko's Katsuma Dojo Auto Demo", "a1da9af48fe47cf9c7e90f83dd5ddd0f", 2138762, Common::JA_JPN, 313),
+	MACDEMO1_l("katsumadojo", "Demo", "Shinko's Katsuma Dojo Auto Demo", "a1da9af48fe47cf9c7e90f83dd5ddd0f", 2138506, Common::JA_JPN, 313),
 
 	// Original filename is 数ヤ君デモ
-	MACDEMO1_l("kazuyakun", "Demo", "Kazuya-kun Demo", "276bee761e48a6fd709df77d5c2f60dd", 8631832, Common::JA_JPN, 313),
+	MACDEMO1_l("kazuyakun", "Demo", "Kazuya-kun Demo", "276bee761e48a6fd709df77d5c2f60dd", 8631576, Common::JA_JPN, 313),
 
 	// Series of HyperCard stacks with 22 Director movies
-	MACGAME2_l("keiri", "", "Title",   "99da7ea12500740dc3aa1ee4c7408e86", 24589,
-							"Title2a", "4f246b30ccbad438e09fdd7c13b97c86", 37325, Common::JA_JPN, 300),
+	MACGAME2_l("keiri", "", "Title",   "99da7ea12500740dc3aa1ee4c7408e86", 24333,
+							"Title2a", "4f246b30ccbad438e09fdd7c13b97c86", 37069, Common::JA_JPN, 300),
 
 	WINGAME1("keroppi", "", "KEROPPI.EXE", "65d06b5fef155a2473434571aff5bc29", 371272, 310),
 
 	// Original filename is 棋士道
-	MACDEMO1_l("kishido", "Demo", "Kishido", "f5277c53bacd27936158dd3867e587e2", 4026429, Common::JA_JPN, 311),
+	MACDEMO1_l("kishido", "Demo", "Kishido", "f5277c53bacd27936158dd3867e587e2", 4026173, Common::JA_JPN, 311),
 
 	// Original filename is KOYOSHA INSPIRE シリーズ
-	MACDEMO1_l("koyosha", "Demo", "KOYOSHA INSPIRE series", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384314, Common::JA_JPN, 313),
+	MACDEMO1_l("koyosha", "Demo", "KOYOSHA INSPIRE series", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384058, Common::JA_JPN, 313),
 
 	// Original filename is Kai's Power Tools™ Demo 1.0dj-j
-	MACDEMO1_l("kpt", "Demo", "Kai's Power Tools Demo 1.0dj-j", "1ae45c23586b41997ba52e2e7c771c4c", 381400, Common::JA_JPN, 311),
+	MACDEMO1_l("kpt", "Demo", "Kai's Power Tools Demo 1.0dj-j", "1ae45c23586b41997ba52e2e7c771c4c", 381144, Common::JA_JPN, 311),
 
-	MACGAME1("kyoto", "v1.01", "Cosmology of KYOTO", "f5277c53bacd27936158dd3867e587e2", 392505, 311),
-	MACDEMO1("kyoto", "Demo", "COK Overview-E", "f5277c53bacd27936158dd3867e587e2", 2140801, 311),
+	MACGAME1("kyoto", "v1.01", "Cosmology of KYOTO", "f5277c53bacd27936158dd3867e587e2", 392249, 311),
+	MACDEMO1("kyoto", "Demo", "COK Overview-E", "f5277c53bacd27936158dd3867e587e2", 2140545, 311),
 	MACDEMO1_l("kyoto", "Demo", "DemoStart(J)", "f5277c53bacd27936158dd3867e587e2", 441040, Common::JA_JPN, 311),
 
 	// Full product lineup for The Learning Company (1994)
 	// Windows version includes a 16-color executable
-	MACGAME1("learningsystem", "Billboard", "The Learning System", "7f443f2e63fd497a9ad85b10dc880a91", 384486, 313),
+	MACGAME1("learningsystem", "Billboard", "The Learning System", "7f443f2e63fd497a9ad85b10dc880a91", 384230, 313),
 	WINGAME1("learningsystem", "Billboard", "BBWIN256.EXE", "7c8230a804abf9353b05627a675b5ffb", 375297, 313),
 
-	MACGAME1("legendsofoz", "", "OZMM", "ef9b835d26074e9e5ba10e0432404253", 1051620, 313),
+	MACGAME1("legendsofoz", "", "OZMM", "ef9b835d26074e9e5ba10e0432404253", 1051364, 313),
 	WINGAME1("legendsofoz", "", "OZMM.EXE", "236c3b91788d7d5308691ef27fe91aa0", 369250, 313),
 
 	// Portuguese version is D4
@@ -2265,10 +2265,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("lingoexpo", "", "Navigator", "4dacf23c1bb75093a882c4fd89dededb", 38, 400),
 
-	MACGAME1_l("lvi", "Nº1", "LVI_8Mo", "7f443f2e63fd497a9ad85b10dc880a91", 384462, Common::FR_FRA, 310),
+	MACGAME1_l("lvi", "Nº1", "xn--LVI8Mo-ka28a", "7f443f2e63fd497a9ad85b10dc880a91", 384206, Common::FR_FRA, 310),
 	WINGAME1_l("lvi", "Nº1", "LVI.EXE", "65d06b5fef155a2473434571aff5bc29", 634203, Common::FR_FRA, 310),
 
-	MACDEMO1_l("lotus123", "Tour", "Tour of 1-2-3.v3", "1ed38b71d8d0f075483117f7fa559e7c", 367333, Common::JA_JPN, 302),
+	MACDEMO1_l("lotus123", "Tour", "Tour of 1-2-3.v3", "1ed38b71d8d0f075483117f7fa559e7c", 367077, Common::JA_JPN, 302),
 
 #undef SUPPORT_STATUS
 #define SUPPORT_STATUS ADGF_NO_FLAGS
