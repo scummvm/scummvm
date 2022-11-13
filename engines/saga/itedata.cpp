@@ -591,17 +591,17 @@ const char *ITEinterfaceTextStrings[][53] = {
 		"\xb8\xfc\xa4\x4a\xa6\xa8\xa5\x5c" /* 載入成功, Load Successful! */,
 		"\xbd\xd0\xbf\xe9\xa4\x4a\xa6\x73\xc0\xc9\xa6\x57\xba\xd9" /* 請輸入存檔名稱, Enter Save Game Name */,
 
-		"Give %s to %s",
-		"Use %s with %s",
+		"Give %s to %s", // TODO: Find string for this
+		"Use %s with %s", // TODO: Find string for this
 		"[New Save Game]",
-		"I can't pick that up.",
-		"I see nothing special about it.",
-		"There's no place to open it.",
-		"There's no opening to close.",
-		"I don't know how to do that.",
-		"Show Dialog",
+		"I can't pick that up.", // TODO: Find string for this
+		"I see nothing special about it.", // TODO: Find string for this
+		"There's no place to open it.", // TODO: Find string for this
+		"There's no opening to close.", // TODO: Find string for this
+		"I don't know how to do that.", // TODO: Find string for this
+		"Show Dialog", // TODO: Find string for this
 		"\xa7\x51\xa4\xd2\xaa\xba\xa6\x5e\xb5\xaa\xac\x4f\xa4\xb0\xbb\xf2\xa1\x48" /* 利夫的回答是什麼？; What is Rif's reply? */,
-		"Loading a saved game"
+		"Loading a saved game" // TODO: Find string for this
 	},
 };
 
