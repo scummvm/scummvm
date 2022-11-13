@@ -253,6 +253,8 @@ bool SagaEngine::initGame() {
 const GameDisplayInfo &SagaEngine::getDisplayInfo() {
 	switch (_gameDescription->gameId) {
 		case GID_ITE:
+			if (getLanguage() == Common::ZH_CHN)
+				return ITE_DisplayInfo_ZH;
 			return ITE_DisplayInfo;
 #ifdef ENABLE_IHNM
 		case GID_IHNM:
