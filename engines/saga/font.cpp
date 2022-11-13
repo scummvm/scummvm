@@ -337,7 +337,7 @@ int DefaultFont::getStringWidth(FontId fontId, const char *text, size_t count, F
 	const byte *txt;
 	FontData *font = getFont(fontId);
 	txt = (const byte *) text;
-	byte isBig5 = _chineseFont ? true : false;
+	bool isBig5 = !!_chineseFont;
 
 	for (ct = count; *txt && (!count || ct > 0); txt++, ct--) {
 		ch = *txt & 0xFFU;
@@ -504,7 +504,7 @@ void DefaultFont::outFont(const FontStyle &drawFont, const char *text, size_t co
 	textPointer = (const byte *)text;
 	ct = count;
 
-	byte isBig5 = _chineseFont ? true : false;
+	bool isBig5 = !!_chineseFont;
 
 	// Draw string one character at a time, maximum of 'draw_str'_ct
 	// characters, or no limit if 'draw_str_ct' is 0
