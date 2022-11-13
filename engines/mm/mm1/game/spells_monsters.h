@@ -119,11 +119,6 @@ private:
 	bool charAffected();
 
 	/**
-	 * Returns true if character is affected so spell
-	 */
-	bool isCharAffected() const;
-
-	/**
 	 * Checks random range
 	 */
 	bool randomThreshold(int threshold) const {
@@ -147,17 +142,6 @@ private:
 	bool testElementalResistance();
 
 	/**
-	 * Test whether character resists different damage types
-	 */
-	bool damageType1();
-	bool damageType2();
-	bool damageType3();
-	bool damageType4();
-	bool damageType5();
-	bool damageType6();
-	bool damageType7();
-
-	/**
 	 * Adds different spell effects to the lines
 	 */
 	void writeConditionEffect();
@@ -167,7 +151,6 @@ private:
 	 */
 	void handlePartyEffects();
 
-	void setCondition(byte newCondition);
 	void proc9();
 
 protected:
@@ -184,6 +167,27 @@ protected:
 	 * Adds text for damage effects on the party
 	 */
 	void handlePartyDamage();
+
+	/**
+	 * Sets the condition to apply
+	 */
+	void setCondition(byte newCondition);
+
+	/**
+	 * Returns true if character is affected so spell
+	 */
+	bool isCharAffected() const;
+
+	/**
+	 * Test whether character resists different damage types
+	 */
+	bool damageType1();
+	bool damageType2();
+	bool damageType3();
+	bool damageType4();
+	bool damageType5();
+	bool damageType6();
+	bool damageType7();
 
 public:
 	SpellsMonsters();
