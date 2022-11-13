@@ -469,7 +469,7 @@ int DefaultFont::getHeight(FontId fontId, const char *text) {
 	if (!_chineseFont || _chineseFontHeight < singleByteHeight)
 		return singleByteHeight;
 
-	for (const byte* textPointer = (const byte *)text; *textPointer; textPointer++)
+	for (const byte *textPointer = (const byte *)text; *textPointer; textPointer++)
 		if (*textPointer & 0x80)
 			return _chineseFontHeight;
 
