@@ -19,32 +19,26 @@
  *
  */
 
-#ifndef MTROPOLIS_PLUGINS_H
-#define MTROPOLIS_PLUGINS_H
-
-#include "common/ptr.h"
-
-class MidiDriver;
+#include "mtropolis/plugin/spqr_data.h"
 
 namespace MTropolis {
 
-namespace Obsidian {
+namespace Data {
 
-class WordGameData;
+namespace SPQR {
 
-} // End of namespace Obsidian
+DataReadErrorCode FadeModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 1)
+		return kDataReadErrorUnsupportedRevision;
 
-class PlugIn;
+	if (!unknown1Event.load(reader) || !unknown2Event.load(reader) || !unknown3Int.load(reader) || !unknown4Int.load(reader) || !unknown5Int.load(reader))
+		return kDataReadErrorReadFailed;
 
-namespace PlugIns {
+	return kDataReadErrorNone;
+}
 
-Common::SharedPtr<PlugIn> createStandard();
-Common::SharedPtr<PlugIn> createObsidian(const Common::SharedPtr<Obsidian::WordGameData> &wgData);
-Common::SharedPtr<PlugIn> createMTI();
-Common::SharedPtr<PlugIn> createSPQR();
+} // End of namespace SPQR
 
-} // End of namespace PlugIns
+} // End of namespace Data
 
 } // End of namespace MTropolis
-
-#endif

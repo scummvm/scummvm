@@ -27,16 +27,6 @@ namespace Data {
 
 namespace MTI {
 
-DataReadErrorCode PanningModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
-	if (prefix.plugInRevision != 3)
-		return kDataReadErrorUnsupportedRevision;
-
-	if (!unknown1Event.load(reader) || !unknown2Event.load(reader) || !unknown3Int.load(reader) || !unknown4Int.load(reader) || !unknown5Int.load(reader))
-		return kDataReadErrorReadFailed;
-
-	return kDataReadErrorNone;
-}
-
 DataReadErrorCode ShanghaiModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
 	if (prefix.plugInRevision != 0)
 		return kDataReadErrorUnsupportedRevision;

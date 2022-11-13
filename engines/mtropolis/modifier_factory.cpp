@@ -114,6 +114,10 @@ SIModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectTyp
 		return ModifierFactory<GraphicModifier, Data::GraphicModifier>::getInstance();
 	case Data::DataObjectTypes::kImageEffectModifier:
 		return ModifierFactory<ImageEffectModifier, Data::ImageEffectModifier>::getInstance();
+	case Data::DataObjectTypes::kReturnModifier:
+		return ModifierFactory<ReturnModifier, Data::ReturnModifier>::getInstance();
+	case Data::DataObjectTypes::kCursorModifierV1:
+		return ModifierFactory<CursorModifierV1, Data::CursorModifierV1>::getInstance();
 	case Data::DataObjectTypes::kMessengerModifier:
 		return ModifierFactory<MessengerModifier, Data::MessengerModifier>::getInstance();
 	case Data::DataObjectTypes::kSetModifier:

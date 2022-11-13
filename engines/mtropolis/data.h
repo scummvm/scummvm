@@ -102,7 +102,7 @@ enum DataObjectType {
 
 	kAliasModifier							= 0x27,
 	kChangeSceneModifier					= 0x136,
-	kReturnModifier							= 0x140,	// NYI
+	kReturnModifier							= 0x140,
 	kSoundEffectModifier					= 0x1a4,
 	kDragMotionModifier						= 0x208,
 	kPathMotionModifierV1					= 0x21c,
@@ -123,7 +123,7 @@ enum DataObjectType {
 	kGraphicModifier						= 0x334,
 	kImageEffectModifier					= 0x384,
 	kMiniscriptModifier						= 0x3c0,
-	kCursorModifierV1						= 0x3ca,	// NYI - Obsolete version
+	kCursorModifierV1						= 0x3ca,
 	kGradientModifier						= 0x4b0,	// NYI
 	kColorTableModifier						= 0x4c4,
 	kSoundFadeModifier						= 0x4ce,
@@ -1587,6 +1587,39 @@ struct ImageEffectModifier : public DataObject {
 	uint16 bevelWidth;
 	uint16 toneAmount;
 	uint8 unknown2[2];
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct ReturnModifier : public DataObject {
+	ReturnModifier();
+
+	TypicalModifierHeader modHeader;
+
+	Event executeWhen;
+	uint16 unknown1;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct CursorModifierV1 : public DataObject {
+	CursorModifierV1();
+
+	struct MacOnlyPart {
+		MacOnlyPart();
+
+		Event applyWhen;
+		uint32 unknown1;
+		uint16 unknown2;
+		uint32 cursorIndex;
+	};
+
+	TypicalModifierHeader modHeader;
+
+	bool hasMacOnlyPart;
+	MacOnlyPart macOnlyPart;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;

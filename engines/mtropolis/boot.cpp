@@ -37,6 +37,7 @@
 
 #include "mtropolis/plugin/mti.h"
 #include "mtropolis/plugin/obsidian.h"
+#include "mtropolis/plugin/spqr.h"
 #include "mtropolis/plugin/standard.h"
 #include "mtropolis/plugins.h"
 
@@ -397,7 +398,7 @@ MTIGameDataHandler::MTIGameDataHandler(const Game &game, const MTropolisGameDesc
 }
 
 void MTIGameDataHandler::addPlugIns(ProjectDescription &projectDesc, const Common::Array<FileIdentification> &files) {
-	Common::SharedPtr<MTropolis::PlugIn> mtiPlugIn(new MTI::MTIPlugIn());
+	Common::SharedPtr<MTropolis::PlugIn> mtiPlugIn(PlugIns::createMTI());
 	projectDesc.addPlugIn(mtiPlugIn);
 
 	Common::SharedPtr<MTropolis::PlugIn> standardPlugIn = PlugIns::createStandard();
@@ -409,6 +410,7 @@ class SPQRGameDataHandler : public GameDataHandler {
 public:
 	SPQRGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc);
 
+	void addPlugIns(ProjectDescription &projectDesc, const Common::Array<FileIdentification> &files) override;
 	void unpackAdditionalFiles(Common::Array<Common::SharedPtr<ProjectPersistentResource> > &persistentResources, Common::Array<FileIdentification> &files) override;
 
 private:
@@ -668,53 +670,63 @@ bool SPQRGameDataHandler::VISE3Archive::getFileDescIndex(const Common::Path &pat
 SPQRGameDataHandler::SPQRGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc) : GameDataHandler(game, gameDesc), _isMac(gameDesc.desc.platform == Common::kPlatformMacintosh) {
 }
 
+void SPQRGameDataHandler::addPlugIns(ProjectDescription &projectDesc, const Common::Array<FileIdentification> &files) {
+	Common::SharedPtr<MTropolis::PlugIn> standardPlugIn = PlugIns::createStandard();
+	projectDesc.addPlugIn(standardPlugIn);
+
+	Common::SharedPtr<MTropolis::PlugIn> spqrPlugIn = PlugIns::createSPQR();
+	projectDesc.addPlugIn(spqrPlugIn);
+}
+
 void SPQRGameDataHandler::unpackAdditionalFiles(Common::Array<Common::SharedPtr<ProjectPersistentResource> > &persistentResources, Common::Array<FileIdentification> &files) {
-	const MacVISE3InstallerUnpackRequest unpackRequests[] = {
-		{"Basic.rPP", false, true, MTFT_EXTENSION},
-		{"Extras.rPP", false, true, MTFT_EXTENSION},
-		{"mCursors.cPP", false, true, MTFT_EXTENSION},
-		{"SPQR PPC Start", false, true, MTFT_PLAYER},
-		{"Data File SPQR", true, false, MTFT_MAIN},
-	};
+	if (_isMac) {
+		const MacVISE3InstallerUnpackRequest unpackRequests[] = {
+			{"Basic.rPP", false, true, MTFT_EXTENSION},
+			{"Extras.rPP", false, true, MTFT_EXTENSION},
+			{"mCursors.cPP", false, true, MTFT_EXTENSION},
+			{"SPQR PPC Start", false, true, MTFT_PLAYER},
+			{"Data File SPQR", true, false, MTFT_MAIN},
+		};
 
-	Common::SharedPtr<Common::MacResManager> installerResMan(new Common::MacResManager());
+		Common::SharedPtr<Common::MacResManager> installerResMan(new Common::MacResManager());
 
-	if (!installerResMan->open("Install.vct"))
-		error("Failed to open SPQR installer");
+		if (!installerResMan->open("Install.vct"))
+			error("Failed to open SPQR installer");
 
-	if (!installerResMan->hasDataFork())
-		error("SPQR installer has no data fork");
+		if (!installerResMan->hasDataFork())
+			error("SPQR installer has no data fork");
 
-	Common::SharedPtr<Common::SeekableReadStream> installerDataForkStream(installerResMan->getDataFork());
+		Common::SharedPtr<Common::SeekableReadStream> installerDataForkStream(installerResMan->getDataFork());
 
-	VISE3Archive archive(installerDataForkStream.get());
+		VISE3Archive archive(installerDataForkStream.get());
 
-	debug(1, "Unpacking files...");
+		debug(1, "Unpacking files...");
 
-	for (const MacVISE3InstallerUnpackRequest &request : unpackRequests) {
-		const VISE3FileDesc *fileDesc = archive.getFileDesc(request.fileName);
+		for (const MacVISE3InstallerUnpackRequest &request : unpackRequests) {
+			const VISE3FileDesc *fileDesc = archive.getFileDesc(request.fileName);
 
-		if (!fileDesc)
-			error("Couldn't find file '%s' in VISE 3 archive", request.fileName);
+			if (!fileDesc)
+				error("Couldn't find file '%s' in VISE 3 archive", request.fileName);
 
-		FileIdentification ident;
-		ident.fileName = fileDesc->fileName;
-		ident.macCreator.value = MKTAG(fileDesc->creator[0], fileDesc->creator[1], fileDesc->creator[2], fileDesc->creator[3]);
-		ident.macType.value = MKTAG(fileDesc->type[0], fileDesc->type[1], fileDesc->type[2], fileDesc->type[3]);
-		ident.category = request.fileType;
+			FileIdentification ident;
+			ident.fileName = fileDesc->fileName;
+			ident.macCreator.value = MKTAG(fileDesc->creator[0], fileDesc->creator[1], fileDesc->creator[2], fileDesc->creator[3]);
+			ident.macType.value = MKTAG(fileDesc->type[0], fileDesc->type[1], fileDesc->type[2], fileDesc->type[3]);
+			ident.category = request.fileType;
 
-		if (request.extractResources) {
-			Common::SharedPtr<Common::MacResManager> resMan(new Common::MacResManager());
-			if (!resMan->open(request.fileName, archive))
-				error("Failed to open Mac res manager for file '%s'", request.fileName);
+			if (request.extractResources) {
+				Common::SharedPtr<Common::MacResManager> resMan(new Common::MacResManager());
+				if (!resMan->open(request.fileName, archive))
+					error("Failed to open Mac res manager for file '%s'", request.fileName);
 
-			ident.resMan = resMan;
+				ident.resMan = resMan;
+			}
+
+			if (request.extractData)
+				ident.stream.reset(archive.createReadStreamForMember(request.fileName));
+
+			files.push_back(ident);
 		}
-
-		if (request.extractData)
-			ident.stream.reset(archive.createReadStreamForMember(request.fileName));
-
-		files.push_back(ident);
 	}
 }
 
@@ -1214,7 +1226,7 @@ const Game games[] = {
 		spqrRetailWinEnFiles,
 		spqrRetailWinDirectories,
 		nullptr,
-		GameDataHandlerFactory<GameDataHandler>::create
+		GameDataHandlerFactory<SPQRGameDataHandler>::create
 	},
 	// SPQR: The Empire's Darkest Hour - Retail - Macintosh - English
 	{

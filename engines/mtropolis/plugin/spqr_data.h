@@ -19,31 +19,34 @@
  *
  */
 
-#ifndef MTROPOLIS_PLUGINS_H
-#define MTROPOLIS_PLUGINS_H
+#ifndef MTROPOLIS_PLUGIN_SPQR_DATA_H
+#define MTROPOLIS_PLUGIN_SPQR_DATA_H
 
-#include "common/ptr.h"
-
-class MidiDriver;
+#include "mtropolis/data.h"
 
 namespace MTropolis {
 
-namespace Obsidian {
+namespace Data {
 
-class WordGameData;
+namespace SPQR {
 
-} // End of namespace Obsidian
+// Known SPQR - The Empire's Darkest Hour custom modifiers:
+// fade - ???
 
-class PlugIn;
+struct FadeModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue unknown1Event; // Probably "Enable When"
+	PlugInTypeTaggedValue unknown2Event; // Probably "Disable When"
+	PlugInTypeTaggedValue unknown3Int;   // Int
+	PlugInTypeTaggedValue unknown4Int;   // Int
+	PlugInTypeTaggedValue unknown5Int;   // Int
 
-namespace PlugIns {
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
 
-Common::SharedPtr<PlugIn> createStandard();
-Common::SharedPtr<PlugIn> createObsidian(const Common::SharedPtr<Obsidian::WordGameData> &wgData);
-Common::SharedPtr<PlugIn> createMTI();
-Common::SharedPtr<PlugIn> createSPQR();
+} // End of namespace SPQR
 
-} // End of namespace PlugIns
+} // End of namespace Data
 
 } // End of namespace MTropolis
 

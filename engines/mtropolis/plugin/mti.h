@@ -33,28 +33,6 @@ namespace MTI {
 
 class MTIPlugIn;
 
-class PanningModifier : public Modifier {
-public:
-	PanningModifier();
-	~PanningModifier();
-
-	bool load(const PlugInModifierLoaderContext &context, const Data::MTI::PanningModifier &data);
-
-	bool respondsToEvent(const Event &evt) const override;
-	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
-
-	void disable(Runtime *runtime) override;
-
-#ifdef MTROPOLIS_DEBUG_ENABLE
-	const char *debugGetTypeName() const override { return "Panning Modifier"; }
-	void debugInspect(IDebugInspectionReport *report) const override;
-#endif
-
-private:
-	Common::SharedPtr<Modifier> shallowClone() const override;
-	const char *getDefaultName() const override;
-};
-
 class ShanghaiModifier : public Modifier {
 public:
 	ShanghaiModifier();
@@ -108,7 +86,6 @@ public:
 	void registerModifiers(IPlugInModifierRegistrar *registrar) const override;
 
 private:
-	PlugInModifierFactory<PanningModifier, Data::MTI::PanningModifier> _panningModifierFactory;
 	PlugInModifierFactory<ShanghaiModifier, Data::MTI::ShanghaiModifier> _shanghaiModifierFactory;
 	PlugInModifierFactory<PrintModifier, Data::MTI::PrintModifier> _printModifierFactory;
 };

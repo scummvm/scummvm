@@ -881,6 +881,69 @@ private:
 	bool _includeBorders;
 };
 
+class ReturnModifier : public Modifier {
+public:
+	ReturnModifier();
+
+	bool load(ModifierLoaderContext &context, const Data::ReturnModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Return Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusNone; }
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+
+	Event _executeWhen;
+};
+
+class CursorModifierV1 : public Modifier {
+public:
+	CursorModifierV1();
+
+	bool load(ModifierLoaderContext &context, const Data::CursorModifierV1 &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Cursor Modifier V1"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusNone; }
+#endif
+
+private:
+	enum {
+		kCursor_Inactive,
+		kCursor_Interact,
+		kCursor_HandGrabBW,
+		kCursor_HandOpenBW,
+		kCursor_HandPointUp,
+		kCursor_HandPointRight,
+		kCursor_HandPointLeft,
+		kCursor_HandPointDown,
+		kCursor_HandGrabColor,
+		kCursor_HandOpenColor,
+		kCursor_Arrow,
+		kCursor_Pencil,
+		kCursor_Smiley,
+		kCursor_Wait,
+		kCursor_Hidden,
+	};
+
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+
+	Event _applyWhen;
+	uint32 _cursorIndex;
+};
+
 // Compound variable modifiers are not true variable modifiers.
 // They aren't treated as values by Miniscript and they aren't
 // treated as unique objects by aliases.  The only way that

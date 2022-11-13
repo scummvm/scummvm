@@ -399,6 +399,28 @@ struct StandardPlugInHacks {
 	bool allowGarbledListModData;
 };
 
+class PanningModifier : public Modifier {
+public:
+	PanningModifier();
+	~PanningModifier();
+
+	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::PanningModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void disable(Runtime *runtime) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Panning Modifier"; }
+	void debugInspect(IDebugInspectionReport *report) const override;
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+};
+
 class StandardPlugIn : public MTropolis::PlugIn {
 public:
 	explicit StandardPlugIn(bool useDynamicMidi);
@@ -419,6 +441,7 @@ private:
 	PlugInModifierFactory<MidiModifier, Data::Standard::MidiModifier> _midiModifierFactory;
 	PlugInModifierFactory<ListVariableModifier, Data::Standard::ListVariableModifier> _listVarModifierFactory;
 	PlugInModifierFactory<SysInfoModifier, Data::Standard::SysInfoModifier> _sysInfoModifierFactory;
+	PlugInModifierFactory<PanningModifier, Data::Standard::PanningModifier> _panningModifierFactory;
 
 	Common::SharedPtr<MultiMidiPlayer> _midi;
 	StandardPlugInHacks _hacks;

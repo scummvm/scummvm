@@ -3220,6 +3220,41 @@ const char *SysInfoModifier::getDefaultName() const {
 	return "SysInfo Modifier";
 }
 
+PanningModifier::PanningModifier() {
+}
+
+PanningModifier::~PanningModifier() {
+}
+
+bool PanningModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::PanningModifier &data) {
+	return true;
+}
+
+bool PanningModifier::respondsToEvent(const Event &evt) const {
+	return false;
+}
+
+VThreadState PanningModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+void PanningModifier::disable(Runtime *runtime) {
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void PanningModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+}
+#endif
+
+Common::SharedPtr<Modifier> PanningModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new PanningModifier(*this));
+}
+
+const char *PanningModifier::getDefaultName() const {
+	return "Panning Modifier"; // ???
+}
+
 StandardPlugInHacks::StandardPlugInHacks() : allowGarbledListModData(false) {
 }
 
@@ -3230,7 +3265,8 @@ StandardPlugIn::StandardPlugIn(bool useDynamicMidi)
 	, _objRefVarModifierFactory(this)
 	, _midiModifierFactory(this)
 	, _listVarModifierFactory(this)
-	, _sysInfoModifierFactory(this) {
+	, _sysInfoModifierFactory(this)
+	, _panningModifierFactory(this) {
 	_midi.reset(new MultiMidiPlayer(useDynamicMidi));
 }
 
@@ -3245,6 +3281,8 @@ void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) cons
 	registrar->registerPlugInModifier("MIDIModf", &_midiModifierFactory);
 	registrar->registerPlugInModifier("ListMod", &_listVarModifierFactory);
 	registrar->registerPlugInModifier("SysInfo", &_sysInfoModifierFactory);
+
+	registrar->registerPlugInModifier("panning", &_panningModifierFactory);
 }
 
 const StandardPlugInHacks &StandardPlugIn::getHacks() const {

@@ -2232,6 +2232,74 @@ const char *ImageEffectModifier::getDefaultName() const {
 	return "Image Effect Modifier";
 }
 
+ReturnModifier::ReturnModifier() {
+}
+
+bool ReturnModifier::load(ModifierLoaderContext &context, const Data::ReturnModifier &data) {
+	if (!loadTypicalHeader(data.modHeader) || !_executeWhen.load(data.executeWhen))
+		return false;
+
+	return true;
+}
+
+bool ReturnModifier::respondsToEvent(const Event &evt) const {
+	return _executeWhen.respondsTo(evt);
+}
+
+VThreadState ReturnModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	warning("Return modifier not implemented");
+	return kVThreadReturn;
+}
+
+void ReturnModifier::disable(Runtime *runtime) {
+}
+
+Common::SharedPtr<Modifier> ReturnModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new ReturnModifier(*this));
+}
+
+const char *ReturnModifier::getDefaultName() const {
+	return "Return Modifier";
+}
+
+
+CursorModifierV1::CursorModifierV1() : _cursorIndex(kCursor_Interact) {
+}
+
+bool CursorModifierV1::load(ModifierLoaderContext &context, const Data::CursorModifierV1 &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (data.hasMacOnlyPart)
+		_cursorIndex = data.macOnlyPart.cursorIndex;
+
+	return true;
+}
+
+bool CursorModifierV1::respondsToEvent(const Event &evt) const {
+	return _applyWhen.respondsTo(evt);
+}
+
+VThreadState CursorModifierV1::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_applyWhen.respondsTo(msg->getEvent())) {
+		warning("Cursor modifier V1 should be applied, but is not implemented");
+		return kVThreadReturn;
+	}
+	return kVThreadReturn;
+}
+
+void CursorModifierV1::disable(Runtime *runtime) {
+	warning("Cursor modifier V1 should probably dismiss when disabled?");
+}
+
+Common::SharedPtr<Modifier> CursorModifierV1::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new CursorModifierV1(*this));
+}
+
+const char *CursorModifierV1::getDefaultName() const {
+	return "Cursor Modifier";
+}
+
 bool CompoundVariableModifier::load(ModifierLoaderContext &context, const Data::CompoundVariableModifier &data) {
 	if (data.numChildren > 0) {
 		ChildLoaderContext loaderContext;

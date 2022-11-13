@@ -19,32 +19,51 @@
  *
  */
 
-#ifndef MTROPOLIS_PLUGINS_H
-#define MTROPOLIS_PLUGINS_H
-
-#include "common/ptr.h"
-
-class MidiDriver;
+#include "mtropolis/plugin/spqr.h"
+#include "mtropolis/plugins.h"
 
 namespace MTropolis {
 
-namespace Obsidian {
+namespace SPQR {
 
-class WordGameData;
+FadeModifier::FadeModifier() {
+}
 
-} // End of namespace Obsidian
+FadeModifier::~FadeModifier() {
+}
 
-class PlugIn;
+bool FadeModifier::load(const PlugInModifierLoaderContext &context, const Data::SPQR::FadeModifier &data) {
+	return true;
+}
+
+
+void FadeModifier::disable(Runtime *runtime) {
+}
+
+Common::SharedPtr<Modifier> FadeModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new FadeModifier(*this));
+}
+
+const char *FadeModifier::getDefaultName() const {
+	return "Fade Modifier"; // ???
+}
+
+SPQRPlugIn::SPQRPlugIn()
+	: _fadeModifierFactory(this) {
+}
+
+void SPQRPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
+	registrar->registerPlugInModifier("fade", &_fadeModifierFactory);
+}
+
+} // namespace SPQR
 
 namespace PlugIns {
 
-Common::SharedPtr<PlugIn> createStandard();
-Common::SharedPtr<PlugIn> createObsidian(const Common::SharedPtr<Obsidian::WordGameData> &wgData);
-Common::SharedPtr<PlugIn> createMTI();
-Common::SharedPtr<PlugIn> createSPQR();
+Common::SharedPtr<PlugIn> createSPQR() {
+	return Common::SharedPtr<PlugIn>(new SPQR::SPQRPlugIn());
+}
 
 } // End of namespace PlugIns
 
 } // End of namespace MTropolis
-
-#endif

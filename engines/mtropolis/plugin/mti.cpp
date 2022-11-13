@@ -30,40 +30,6 @@ namespace MTropolis {
 
 namespace MTI {
 
-PanningModifier::PanningModifier() {
-}
-
-PanningModifier::~PanningModifier() {
-}
-
-bool PanningModifier::load(const PlugInModifierLoaderContext &context, const Data::MTI::PanningModifier &data) {
-	return true;
-}
-
-bool PanningModifier::respondsToEvent(const Event &evt) const {
-	return false;
-}
-
-VThreadState PanningModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	return kVThreadReturn;
-}
-
-void PanningModifier::disable(Runtime *runtime) {
-}
-
-#ifdef MTROPOLIS_DEBUG_ENABLE
-void PanningModifier::debugInspect(IDebugInspectionReport *report) const {
-}
-#endif
-
-Common::SharedPtr<Modifier> PanningModifier::shallowClone() const {
-	return Common::SharedPtr<Modifier>(new PanningModifier(*this));
-}
-
-const char *PanningModifier::getDefaultName() const {
-	return "Panning Modifier";	// ???
-}
-
 ShanghaiModifier::ShanghaiModifier() {
 }
 
@@ -146,11 +112,10 @@ const char *PrintModifier::getDefaultName() const {
 }
 
 MTIPlugIn::MTIPlugIn()
-	: _panningModifierFactory(this), _shanghaiModifierFactory(this), _printModifierFactory(this) {
+	: _shanghaiModifierFactory(this), _printModifierFactory(this) {
 }
 
 void MTIPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
-	registrar->registerPlugInModifier("panning", &_panningModifierFactory);
 	registrar->registerPlugInModifier("Shanghai", &_shanghaiModifierFactory);
 	registrar->registerPlugInModifier("Print", &_printModifierFactory);
 }

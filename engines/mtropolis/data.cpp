@@ -1729,6 +1729,45 @@ DataReadErrorCode ImageEffectModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+ReturnModifier::ReturnModifier()  {
+}
+
+DataReadErrorCode ReturnModifier::load(DataReader &reader) {
+	if (_revision != 1001)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !executeWhen.load(reader) || !reader.readU16(unknown1))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+CursorModifierV1::CursorModifierV1() : hasMacOnlyPart(false) {
+}
+
+DataReadErrorCode CursorModifierV1::load(DataReader &reader) {
+	if (_revision != 1001)
+		return kDataReadErrorUnsupportedRevision;
+
+	int64 startPos = reader.tell();
+
+	if (!modHeader.load(reader))
+		return kDataReadErrorReadFailed;
+
+	int64 distFromStart = reader.tell() - startPos + 6;
+	if (reader.getProjectFormat() == kProjectFormatMacintosh || modHeader.sizeIncludingTag > distFromStart) {
+		hasMacOnlyPart = true;
+
+		if (!macOnlyPart.applyWhen.load(reader) || !reader.readU32(macOnlyPart.unknown1) || !reader.readU16(macOnlyPart.unknown2) || !reader.readU32(macOnlyPart.cursorIndex))
+			return kDataReadErrorReadFailed;
+	}
+
+	return kDataReadErrorNone;
+}
+
+CursorModifierV1::MacOnlyPart::MacOnlyPart() : unknown1(0), unknown2(0), cursorIndex(0) {
+}
+
 CompoundVariableModifier::CompoundVariableModifier()
 	: modifierFlags(0), sizeIncludingTag(0), unknown1{0, 0}, guid(0), unknown4{0, 0, 0, 0, 0, 0}, unknown5(0),
 	  lengthOfName(0), numChildren(0), unknown7{0, 0, 0, 0} {
@@ -2481,6 +2520,12 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kImageEffectModifier:
 		dataObject = new ImageEffectModifier();
+		break;
+	case DataObjectTypes::kReturnModifier:
+		dataObject = new ReturnModifier();
+		break;
+	case DataObjectTypes::kCursorModifierV1:
+		dataObject = new CursorModifierV1();
 		break;
 
 	case DataObjectTypes::kColorTableAsset:
