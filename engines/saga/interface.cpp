@@ -228,6 +228,19 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_mainPanel.x = _vm->getDisplayInfo().mainPanelXOffset;
 	_mainPanel.y = _vm->getDisplayInfo().mainPanelYOffset;
 	_mainPanel.currentButton = nullptr;
+
+	if (_vm->getGameId() == GID_ITE && _vm->getLanguage() == Common::ZH_CHN) {
+		ByteArray n;
+		static const int kSkipLines = 4;
+		_mainPanel.imageHeight -= kSkipLines;
+		n.resize(_mainPanel.imageHeight * _mainPanel.imageWidth);
+		memcpy(n.getBuffer(), _mainPanel.image.getBuffer() + kSkipLines * _mainPanel.imageWidth, _mainPanel.imageHeight * _mainPanel.imageWidth);
+		// Fill button panel with blue to remove western button outlies. No idea why it was done in the code rather than resource itself
+		for (unsigned y = 0; y < 43; y++)
+			memset(n.getBuffer() + y * _mainPanel.imageWidth + 53, kITEColorBlue89, 114);
+		_mainPanel.image = n;
+	}
+
 	_inventoryUpButton = _mainPanel.getButton(_vm->getDisplayInfo().inventoryUpButtonIndex);
 	_inventoryDownButton = _mainPanel.getButton(_vm->getDisplayInfo().inventoryDownButtonIndex);
 
@@ -758,7 +771,10 @@ void Interface::drawVerbPanel(PanelButton* panelButton) {
 	point.x = _mainPanel.x + panelButton->xOffset;
 	point.y = _mainPanel.y + panelButton->yOffset;
 
-	_vm->_sprite->draw(_mainPanel.sprites, spriteNumber, point, 256);
+	// TODO: Find the correct sprite for Chinese version.
+	if (!(_vm->getGameId() == GID_ITE && _vm->getLanguage() == Common::ZH_CHN)) {
+		_vm->_sprite->draw(_mainPanel.sprites, spriteNumber, point, 256);
+	}
 
 	drawVerbPanelText(panelButton, textColor, kKnownColorVerbTextShadow);
 }

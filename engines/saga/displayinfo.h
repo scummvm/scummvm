@@ -156,6 +156,29 @@ static PanelButton ITE_MainPanelButtons[] = {
 	{kPanelButtonInventory,	181 + 32*3,27,	27,18,	7,'-',0,	0,0,0}
 };
 
+static PanelButton ITE_MainPanelButtons_ZH[] = {
+	{kPanelButtonVerb,		52,0,	36,14,	kVerbITEWalkTo,'w',0,	0,1,0},
+	{kPanelButtonVerb,		52,14,	36,14,	kVerbITELookAt,'l',0,	2,3,0},
+	{kPanelButtonVerb,		52,28,	36,14,	kVerbITEPickUp,'p',0,	4,5,0},
+	{kPanelButtonVerb,		88,0,	36,14,	kVerbITETalkTo,'t',0,	0,1,0},
+	{kPanelButtonVerb,		88,14,	36,14,	kVerbITEOpen,'o',0,	6,7,0},
+	{kPanelButtonVerb,		88,28,	36,14,	kVerbITEClose,'c',0,	8,9,0},
+	{kPanelButtonVerb,		124,0,	36,14,	kVerbITEUse,'u',0,		10,11,0},
+	{kPanelButtonVerb,		124,14,	36,14,	kVerbITEGive,'g',0,	12,13,0},
+	{kPanelButtonArrow,		306,6,	8,5,	-1,'U',0,			0,4,2},
+	{kPanelButtonArrow,		306,41,	8,5,	1,'D',0,			1,5,3},
+
+	{kPanelButtonInventory,	181 + 32*0,2,	27,18,	0,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*1,2,	27,18,	1,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*2,2,	27,18,	2,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*3,2,	27,18,	3,'-',0,	0,0,0},
+
+	{kPanelButtonInventory,	181 + 32*0,23,	27,18,	4,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*1,23,	27,18,	5,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*2,23,	27,18,	6,'-',0,	0,0,0},
+	{kPanelButtonInventory,	181 + 32*3,23,	27,18,	7,'-',0,	0,0,0}
+};
+
 static PanelButton ITE_ConversePanelButtons[] = {
 	{kPanelButtonConverseText,	52,6 + ITE_CONVERSE_TEXT_HEIGHT * 0, ITE_CONVERSE_MAX_TEXT_WIDTH,ITE_CONVERSE_TEXT_HEIGHT,	0,'1',0,	0,0,0},
 	{kPanelButtonConverseText,	52,6 + ITE_CONVERSE_TEXT_HEIGHT * 1, ITE_CONVERSE_MAX_TEXT_WIDTH,ITE_CONVERSE_TEXT_HEIGHT,	1,'2',0,	0,0,0},
@@ -276,6 +299,70 @@ static const GameDisplayInfo ITE_DisplayInfo = {
 	ITE_ProtectPanelButtons
 };
 
+static const GameDisplayInfo ITE_DisplayInfo_ZH = {
+	320, 200,		// logical width&height
+
+	35,				// scene path y offset
+	137,			// scene height
+
+	0,				// status x offset
+	137,			// status y offset
+	320,			// status width
+	15,				// status height
+	0,				// status text y offset
+	186,			// status text color
+	15,				// status BG color
+	308,137,		// save reminder pos
+	12,12,			// save reminder w & h
+	6,				// save reminder first sprite number
+	2,				// number of save reminder sprites
+
+	5, 0,			// left portrait x, y offset
+	274, 0,			// right portrait x, y offset
+
+	8, 9,			// inventory Up & Down button indexes
+	2, 4,			// inventory rows, columns
+
+	0, 152,			// main panel offsets
+	ARRAYSIZE(ITE_MainPanelButtons_ZH),
+	ITE_MainPanelButtons_ZH,
+
+	ITE_CONVERSE_MAX_TEXT_WIDTH,
+	ITE_CONVERSE_TEXT_HEIGHT,
+	ITE_CONVERSE_TEXT_LINES,
+	4, 5,			// converse Up & Down button indexes
+	0, 148,			// converse panel offsets
+	ARRAYSIZE(ITE_ConversePanelButtons),
+	ITE_ConversePanelButtons,
+
+	8, 0,			// save file index
+	8,				// optionSaveFileVisible
+	8, 8,			// option panel offsets
+	ARRAYSIZE(ITE_OptionPanelButtons),
+	ITE_OptionPanelButtons,
+
+	64,54,			// quit panel offsets
+	192,38,			// quit panel width & height
+	ARRAYSIZE(ITE_QuitPanelButtons),
+	ITE_QuitPanelButtons,
+
+	74, 53,			// load panel offsets
+	172, 40,		// load panel width & height
+	ARRAYSIZE(ITE_LoadPanelButtons),
+	ITE_LoadPanelButtons,
+
+	2,				// save edit index
+	74, 44,			// save panel offsets
+	172, 58,		// save panel width & height
+	ARRAYSIZE(ITE_SavePanelButtons),
+	ITE_SavePanelButtons,
+
+	0,				// protect edit index
+	74, 44,			// protect panel offsets
+	172, 58,		// protect panel width & height
+	ARRAYSIZE(ITE_ProtectPanelButtons),
+	ITE_ProtectPanelButtons
+};
 
 #if defined(ENABLE_IHNM)
 
