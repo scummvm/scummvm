@@ -2645,7 +2645,7 @@ void MessageProperties::setValue(const DynamicValue &value) {
 		_value = value;
 }
 
-WorldManagerInterface::WorldManagerInterface() : _gameMode(false) {
+WorldManagerInterface::WorldManagerInterface() : _gameMode(false), _combineRedraws(true), _opInt(0) {
 }
 
 bool WorldManagerInterface::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
@@ -2663,9 +2663,11 @@ bool WorldManagerInterface::readAttribute(MiniscriptThread *thread, DynamicValue
 
 		result.setInt(bitDepth);
 		return true;
-	}
-	else if (attrib == "gamemode") {
+	} else if (attrib == "gamemode") {
 		result.setBool(_gameMode);
+		return true;
+	} else if (attrib == "combineredraws") {
+		result.setBool(_combineRedraws);
 		return true;
 	}
 
@@ -2676,24 +2678,30 @@ MiniscriptInstructionOutcome WorldManagerInterface::writeRefAttribute(Miniscript
 	if (attrib == "currentscene") {
 		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setCurrentScene, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
-	}
-	if (attrib == "refreshcursor") {
+	} else if (attrib == "refreshcursor") {
 		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setRefreshCursor, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
-	}
-	if (attrib == "autoresetcursor") {
+	} else if (attrib == "autoresetcursor") {
 		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setAutoResetCursor, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
-	}
-	if (attrib == "winsndbuffersize") {
+	} else if (attrib == "winsndbuffersize") {
 		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setWinSndBufferSize, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
-	}
-	if (attrib == "gamemode") {
+	} else if (attrib == "gamemode") {
 		DynamicValueWriteBoolHelper::create(&_gameMode, result);
 		return kMiniscriptInstructionOutcomeContinue;
-	}
-	if (attrib == "scenefades") {
+	} else if (attrib == "combineredraws") {
+		DynamicValueWriteBoolHelper::create(&_combineRedraws, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "qtpalettehack") {
+		DynamicValueWriteDiscardHelper::create(result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "opint") {
+		// This is used by SPQR before changing scenes in many instances.  It's not clear what it does.
+		// It's usually set to 2 or 4, sometimes 7
+		DynamicValueWriteIntegerHelper<int32>::create(&_opInt, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "scenefades") {
 		// TODO
 		DynamicValueWriteDiscardHelper::create(result);
 		return kMiniscriptInstructionOutcomeContinue;
@@ -6620,7 +6628,7 @@ VThreadState Project::consumeCommand(Runtime *runtime, const Common::SharedPtr<M
 }
 
 MiniscriptInstructionOutcome Project::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
-	if (attrib == "allowquit") {
+	if (attrib == "allowquit" || attrib == "allowquitkey") {
 		DynamicValueWriteDiscardHelper::create(result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}

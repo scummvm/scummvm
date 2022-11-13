@@ -2022,7 +2022,9 @@ private:
 	MiniscriptInstructionOutcome setAutoResetCursor(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome setWinSndBufferSize(MiniscriptThread *thread, const DynamicValue &value);
 
+	int32 _opInt;
 	bool _gameMode;
+	bool _combineRedraws;
 };
 
 class AssetManagerInterface : public RuntimeObject {
