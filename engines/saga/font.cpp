@@ -153,7 +153,7 @@ DefaultFont::DefaultFont(SagaEngine *vm) : Font(vm), _fontMapping(0), _chineseFo
 		loadFont(&_fonts[i],	_vm->getFontDescription(i)->fontResourceId);
 	}
 
-	if (_vm->getGameId() == GID_ITE && _vm->getLanguage() == Common::ZH_CHN)
+	if (_vm->getGameId() == GID_ITE && _vm->getLanguage() == Common::ZH_TWN)
 		loadChineseFontITE("ite.fnt");
 }
 

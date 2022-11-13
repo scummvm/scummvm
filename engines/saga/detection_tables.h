@@ -1178,7 +1178,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 				{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", 281071},
 				AD_LISTEND
 			},
-			Common::ZH_CHN,
+			Common::ZH_TWN,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)

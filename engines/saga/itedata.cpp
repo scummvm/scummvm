@@ -1787,7 +1787,7 @@ const IntroCredit creditsValley[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsHeader, "\xEE\xF4\xE9\xF7"},
 	// "Продюсер"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xCF\xF0\xEE\xE4\xFE\xF1\xE5\xF0"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xbb\x73\xa7\x40\xc1\x60\xba\xca" /* 製作總監 */},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsHeader, "\xbb\x73\xa7\x40\xc1\x60\xba\xca" /* 製作總監 */},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
@@ -1796,7 +1796,7 @@ const IntroCredit creditsValley[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
 	// "Уолтер Хохбрюкнер"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD3\xEE\xEB\xF2\xE5\xF0 \xD5\xEE\xF5\xE1\xF0\xFE\xEA\xED\xE5\xF0"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Executive Producer"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Ausf\201hrender Produzent"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Produttore Esecutivo"},
@@ -1805,7 +1805,7 @@ const IntroCredit creditsValley[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsHeader, "\xEE\xF4\xE9\xF7 \xE1\xF4\xE5\xF2\xEC"},
 	// "Исполнительный продюсер"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xC8\xF1\xEF\xEE\xEB\xED\xE8\xF2\xE5\xEB\xFC\xED\xFB\xE9 \xEF\xF0\xEE\xE4\xFE\xF1\xE5\xF0"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xb0\xf5\xa6\xe6\xbb\x73\xa7\x40" /* 執行製作 */},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsHeader, "\xb0\xf5\xa6\xe6\xbb\x73\xa7\x40" /* 執行製作 */},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Robert McNally"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Robert McNally"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Robert McNally"},
@@ -1814,7 +1814,7 @@ const IntroCredit creditsValley[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsText, "Robert McNally"},
 	// "Роберт Макнелли"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD0\xEE\xE1\xE5\xF0\xF2 \xCC\xE0\xEA\xED\xE5\xEB\xEB\xE8"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Robert McNally"},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsText, "Robert McNally"},
 	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsHeader, "2nd Executive Producer"},
 	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsHeader, "Publisher"},
 	{Common::DE_DEU, kITECreditsNotWyrmKeep, kITECreditsHeader, "Herausgeber"},
@@ -1824,7 +1824,7 @@ const IntroCredit creditsValley[] = {
 	{Common::HE_ISR, kITECreditsNotWyrmKeep, kITECreditsHeader, "\xF2\xF8\xE9\xEB\xE4"},
 	// "Издатель"
 	{Common::RU_RUS, kITECreditsNotWyrmKeep, kITECreditsHeader, "\xC8\xE7\xE4\xE0\xF2\xE5\xEB\xFC"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xa5\x58\xab\x7e\xa4\x48" /* 出品人 */},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsHeader, "\xa5\x58\xab\x7e\xa4\x48" /* 出品人 */},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"},
@@ -1833,7 +1833,7 @@ const IntroCredit creditsValley[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"},
 	// "Джон Ван Канегем"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xC4\xE6\xEE\xED \xC2\xE0\xED \xCA\xE0\xED\xE5\xE3\xE5\xEC"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"},
 };
 
 const IntroCredit creditsTreeHouse1[] = {
@@ -1845,7 +1845,7 @@ const IntroCredit creditsTreeHouse1[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsHeader, "\xF2\xE9\xF6\xE5\xE1 \xE4\xEE\xF9\xE7\xF7"},
 	// "Дизайн игры"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xC4\xE8\xE7\xE0\xE9\xED \xE8\xE3\xF0\xFB"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xb9\x43\xc0\xb8\xb3\x5d\xad\x70" /* 遊戲設計 */},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsHeader, "\xb9\x43\xc0\xb8\xb3\x5d\xad\x70" /* 遊戲設計 */},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
@@ -1854,7 +1854,7 @@ const IntroCredit creditsTreeHouse1[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
 	// "Талин, Джо Пирс, Роберт Макнелли"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD2\xE0\xEB\xE8\xED, \xC4\xE6\xEE \xCF\xE8\xF0\xF1, \xD0\xEE\xE1\xE5\xF0\xF2 \xCC\xE0\xEA\xED\xE5\xEB\xEB\xE8"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "and Carolly Hauksdottir"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "und Carolly Hauksdottir"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "e Carolly Hauksdottir"},
@@ -1863,7 +1863,7 @@ const IntroCredit creditsTreeHouse1[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsText, "and Carolly Hauksdottir"},
 	// "и Кэролли Хёйхсдоттир"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xE8 \xCA\xFD\xF0\xEE\xEB\xEB\xE8 \xD5\xB8\xE9\xF5\xF1\xE4\xEE\xF2\xF2\xE8\xF0"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "\xa4\xce Carolly Hauksdottir" /* 及 Carolly Hauksdottir */},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsText, "\xa4\xce Carolly Hauksdottir" /* 及 Carolly Hauksdottir */},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Screenplay and Dialog"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein, and Bill Rotsler"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Geschichte und Dialoge"},
@@ -1881,16 +1881,16 @@ const IntroCredit creditsTreeHouse1[] = {
 	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xD1\xF6\xE5\xED\xE0\xF0\xE8\xE9 \xE8 \xE4\xE8\xE0\xEB\xEE\xE3\xE8"},
 	// "Роберт Ле, Лен Уэйн и Билл Ротслер"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD0\xEE\xE1\xE5\xF0\xF2 \xCB\xE5, \xCB\xE5\xED \xD3\xFD\xE9\xED \xE8 \xC1\xE8\xEB\xEB \xD0\xEE\xF2\xF1\xEB\xE5\xF0"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xb5\x65\xad\xb1\xa4\xce\xb9\xef\xa5\xd5" /* 畫面及對白 */},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "\xa4\xce Bill Rotsler" /*  及 Bill Rotsler */},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsHeader, "\xb5\x65\xad\xb1\xa4\xce\xb9\xef\xa5\xd5" /* 畫面及對白 */},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein"},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsText, "\xa4\xce Bill Rotsler" /*  及 Bill Rotsler */},
 };
 
 const IntroCredit creditsTreeHouse2[] = {
 	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsHeader, "Art Direction"},
 	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xac\xfc\xa4\x75\xab\xfc\xbe\xc9" /* 美工指導 */},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Allison Hershey"},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsHeader, "\xac\xfc\xa4\x75\xab\xfc\xbe\xc9" /* 美工指導 */},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsText, "Allison Hershey"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Art"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Grafiken"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Grafica"},
@@ -1957,7 +1957,7 @@ const IntroCredit creditsFairePath1[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsHeader, "\xF4\xE9\xFA\xE5\xE7"},
 	// "Программирование"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xCF\xF0\xEE\xE3\xF0\xE0\xEC\xEC\xE8\xF0\xEE\xE2\xE0\xED\xE8\xE5"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xb5\x7b\xa6\xa1\xb3\x5d\xad\x70" /* 程式設計 */},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsHeader, "\xb5\x7b\xa6\xa1\xb3\x5d\xad\x70" /* 程式設計 */},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Talin, Walter Hochbrueckner,"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Talin, Walter Hochbrueckner,"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Talin, Walter Hochbrueckner,"},
@@ -1974,7 +1974,7 @@ const IntroCredit creditsFairePath1[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsText, "Joe Burks and Robert Wiggins"},
 	// "Джо Буркс и Роберт Виггинс"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xC4\xE6\xEE \xC1\xF3\xF0\xEA\xF1 \xE8 \xD0\xEE\xE1\xE5\xF0\xF2 \xC2\xE8\xE3\xE3\xE8\xED\xF1"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Joe Burks \xa4\xce Robert Wiggins" /* Joe Burks 及 Robert Wiggins */},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsText, "Joe Burks \xa4\xce Robert Wiggins" /* Joe Burks 及 Robert Wiggins */},
 	{Common::EN_ANY, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsHeader, "Additional Programming"},
 	{Common::FR_FRA, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsHeader, "Programmeur Additionnel"},
 	{Common::HE_ISR, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsHeader, "\xF4\xE9\xFA\xE5\xE7 \xF0\xE5\xF1\xF3"},
@@ -1995,7 +1995,7 @@ const IntroCredit creditsFairePath1[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsHeader, "\xEE\xE5\xE6\xE9\xF7\xE4 \xE5\xF6\xEC\xE9\xEC\xE9\xED"},
 	// "Музыка и звук"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xCC\xF3\xE7\xFB\xEA\xE0 \xE8 \xE7\xE2\xF3\xEA"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xCC\xF3\xE7\xFB\xEA\xE0 \xE8 \xE7\xE2\xF3\xEA" "\xad\xb5\xbc\xd6\xa4\xce\xad\xb5\xae\xc4" /* 音樂及音效 */},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsHeader, "\xCC\xF3\xE7\xFB\xEA\xE0 \xE8 \xE7\xE2\xF3\xEA" "\xad\xb5\xbc\xd6\xa4\xce\xad\xb5\xae\xc4" /* 音樂及音效 */},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Matt Nathan"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Matt Nathan"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Matt Nathan"},
@@ -2004,7 +2004,7 @@ const IntroCredit creditsFairePath1[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsText, "Matt Nathan"},
 	// "Мэтт Натан"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xCC\xFD\xF2\xF2 \xCD\xE0\xF2\xE0\xED"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Matt Nathan"},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsText, "Matt Nathan"},
 };
 
 const IntroCredit creditsFairePath2[] = {
@@ -2016,14 +2016,14 @@ const IntroCredit creditsFairePath2[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsHeader, "\xE1\xE9\xEE\xE5\xE9"},
 	// "Директор проекта"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xC4\xE8\xF0\xE5\xEA\xF2\xEE\xF0 \xEF\xF0\xEE\xE5\xEA\xF2\xE0"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xb9\x43\xc0\xb8\xbe\xc9\xba\x74" /* 遊戲導演 */},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsHeader, "\xb9\x43\xc0\xb8\xbe\xc9\xba\x74" /* 遊戲導演 */},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Talin"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Talin"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Talin"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Talin"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Talin"},
 	{Common::HE_ISR, kITECreditsAny, kITECreditsText, "Talin"},
-	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Talin"},
+	{Common::ZH_TWN, kITECreditsAny, kITECreditsText, "Talin"},
 	// "Талин"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD2\xE0\xEB\xE8\xED"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Traduction Francaise"},
