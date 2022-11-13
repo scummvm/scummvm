@@ -38,12 +38,34 @@ byte &Treasure::operator[](uint i) {
 }
 
 bool Treasure::present() const {
+	// Checks for items, treasure, and/or gems
 	for (int i = 0; i < TREASURE_COUNT; ++i) {
 		if (_data[i + 3])
 			return true;
 	}
 
 	return false;
+}
+
+bool Treasure::hasItems() const {
+	for (int i = 0; i < 3; ++i) {
+		if (_items[i])
+			return true;
+	}
+
+	return false;
+}
+
+byte Treasure::getItem() {
+	for (int i = 0; i < 3; ++i) {
+		if (_items[i]) {
+			byte result = _items[i];
+			_items[i] = 0;
+			return result;
+		}
+	}
+
+	return 0;
 }
 
 void Treasure::synchronize(Common::Serializer &s) {

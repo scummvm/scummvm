@@ -168,6 +168,11 @@
 		magic_trap: "MAGIC (%c)  TRAP (%c)"
 		who_will_try: "WHO WILL TRY '1'-'%c'"
 		check_condition: "*** CHECK CONDITION ***"
+		it_opens: "IT OPENS!"
+		receives: "RECEIVES"
+		each_share: "EACH SHARE IS WORTH %d GOLD"
+		found_gems: "%s FOUND %d GEMS"
+		found_item: "%s FOUND %s"
 	statues:
 		stone: "ON THIS STONE STATUE OF "
 		plaque: "A PLAQUE READS..."

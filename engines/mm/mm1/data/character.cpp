@@ -593,6 +593,10 @@ bool Character::hasItem(byte itemId) const {
 		_equipped.indexOf(itemId) != -1;
 }
 
+Common::String Character::getDisplayName() const {
+	return Common::String::format("|%s|", _name);
+}
+
 #define PERF16(x) ((x & 0xff) + ((x >> 8) & 0xff))
 #define PERF32(x) ((x & 0xff) + ((x >> 8) & 0xff) + \
 	((x >> 16) & 0xff) + ((x >> 24) & 0xff))
