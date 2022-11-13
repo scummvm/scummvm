@@ -4872,6 +4872,8 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 				sharedSceneEntry.scene = targetSharedScene;
 
 				_sceneStack[0] = sharedSceneEntry;
+
+				_activeSharedScene = targetSharedScene;
 			}
 		} break;
 	default:
