@@ -548,15 +548,51 @@ const char *ITEinterfaceTextStrings[][53] = {
 	// Chinese
 	{
 		// Note that the "Load Successful!" string is never used in ScummVM
-		"Walk to", "Look At", "Pick Up", "Talk to", "Open",
-		"Close", "Use", "Give", "Options", "Test",
-		"Demo", "Help", "Quit Game", "Fast", "Slow",
-		"On", "Off", "Continue Playing", "Load", "Save",
-		"Game Options", "Reading Speed", "Music", "Sound", "Cancel",
-		"Quit", "OK", "Mid", "Click", "10%",
-		"20%", "30%", "40%", "50%", "60%",
-		"70%", "80%", "90%", "Max", "Quit the Game?",
-		"Load Successful!", "Enter Save Game Name", "Give %s to %s", "Use %s with %s",
+		"\xa8\xab\xa6\x56" /* 走向, Walk to */,
+		"\xac\x64\xac\xdd" /* 查看, Look at */,
+		"\xae\xb3\xb0\x5f" /* 拿起, Pick up */,
+		"\xa5\xe6\xbd\xcd" /* 交談, Talk to */,
+		"\xa5\xb4\xb6\x7d" /* 打開, Open */,
+		"\xc3\xf6\xb3\xac" /* 關閉, Close */,
+		"\xa8\xcf\xa5\xce" /* 使用, Use */,
+		"\xb5\xb9\xbb\x50" /* 給與, Give */,
+		"\xbf\xef\xb6\xb5" /* 選項, Options */,
+		"\xb4\xfa\xb8\xd5" /* 測試, Test */,
+		"\xae\x69\xa5\xdc" /* 展示, Demo */,
+		"\xa8\x44\xa7\x55" /* 求助, Help */,
+		"\xb5\xb2\xa7\xf4" /* 結束, Quit game */,
+		"\xa7\xd6\xb3\x74" /* 快速, Fast */,
+		"\xbd\x77\xba\x43" /* 緩慢, Slow */,
+		"\xb6\x7d" /* 開, On */,
+		"\xc3\xf6" /* 關, Off */,
+		"\xc4\x7e\xc4\xf2\xb9\x43\xc0\xb8" /* 繼續遊戲, Continue Playing */,
+		"\xb8\xfc\xa4\x4a" /* 載入, Load */,
+		"\xc0\x78\xa6\x73" /* 儲存, Save */,
+		"\xb9\x43\xc0\xb8\xbf\xef\xb6\xb5" /* 遊戲選項, Game Options */,
+		"\xb0\x54\xae\xa7\xb3\x74\xab\xd7" /* 訊息速度, Reading Speed */,
+		"\xad\xb5\xbc\xd6" /* 音樂, Music */,
+		"\xad\xb5\xae\xc4" /* 音效, Sound */,
+		"\xa8\xfa\xae\xf8" /* 取消, Cancel */,
+		"\xb5\xb2\xa7\xf4" /* 結束, Quit */,
+		"\xa7\xb9\xb2\xa6" /* 完畢, OK */,
+		"\xa4\xa4\xb5\xa5" /* 中等, Mid */,
+		"\xba\x56\xc1\xe4" /* 敲鍵, Click */,
+		"\xa2\xb0\xa2\xaf\xa2\x48" /* １０％ */,
+		"\xa2\xb1\xa2\xaf\xa2\x48" /* ２０％ */,
+		"\xa2\xb2\xa2\xaf\xa2\x48" /* ３０％ */,
+		"\xa2\xb3\xa2\xaf\xa2\x48" /* ４０％ */,
+		"\xa2\xb4\xa2\xaf\xa2\x48" /* ５０％ */,
+		"\xa2\xb5\xa2\xaf\xa2\x48" /* ６０％ */,
+		"\xa2\xb6\xa2\xaf\xa2\x48" /* ７０％ */,
+		"\xa2\xb7\xa2\xaf\xa2\x48" /* ８０％ */,
+		"\xa2\xb8\xa2\xaf\xa2\x48" /* ９０％ */,
+		"\xb3\xcc\xa4\x6a" /* 最大, Max */,
+		"\xad\x6e\xb5\xb2\xa7\xf4\xb9\x43\xc0\xb8\xb6\xdc\x3f" /* 要結束遊戲嗎?; Quit the Game? */,
+		"\xb8\xfc\xa4\x4a\xa6\xa8\xa5\x5c" /* 載入成功, Load Successful! */,
+		"\xbd\xd0\xbf\xe9\xa4\x4a\xa6\x73\xc0\xc9\xa6\x57\xba\xd9" /* 請輸入存檔名稱, Enter Save Game Name */,
+
+		"Give %s to %s",
+		"Use %s with %s",
 		"[New Save Game]",
 		"I can't pick that up.",
 		"I see nothing special about it.",
@@ -564,7 +600,7 @@ const char *ITEinterfaceTextStrings[][53] = {
 		"There's no opening to close.",
 		"I don't know how to do that.",
 		"Show Dialog",
-		"What is Rif's reply?",
+		"\xa7\x51\xa4\xd2\xaa\xba\xa6\x5e\xb5\xaa\xac\x4f\xa4\xb0\xbb\xf2\xa1\x48" /* 利夫的回答是什麼？; What is Rif's reply? */,
 		"Loading a saved game"
 	},
 };
@@ -645,9 +681,21 @@ const char *pieceNames[][PUZZLE_PIECES] = {
 	},
 	// Chinese
 	{
-		"screwdriver", "pliers", "c-clamp", "wood clamp", "level",
-		"twine", "wood plane", "claw hammer", "tape measure", "hatchet",
-		"shears", "ruler", "saw", "mallet", "paint brush"
+		"\xc1\xb3\xb5\xb7\xb0\x5f\xa4\x6c" /* 螺絲起子, screwdriver */,
+		"\xb9\x58\xa4\x6c" /* 鉗子, pliers */,
+		"\xa2\xd1\xab\xac\xb9\x58" /* Ｃ型鉗, c-clamp */,
+		"\xa4\xec\xb9\x58" /* 木鉗, wood clamp */,
+		"\xa4\xf4\xa5\xad\xbb\xf6" /* 水平儀, level */,
+		"\xb3\xc2\xbd\x75" /* 麻線, twine */,
+		"\xa4\xec\xaa\x4f" /* 木板, wood plane */,
+		"\xa9\xde\xb0\x76\xc2\xf1" /* 拔釘鎚, claw hammer */,
+		"\xa5\xd6\xa4\xd8" /* 皮尺, tape measure */,
+		"\xa9\xf2\xc0\x59" /* 斧頭, hatchet */,
+		"\xb0\xc5\xa4\x4d" /* 剪刀, shears */,
+		"\xaa\xbd\xa4\xd8" /* 直尺, ruler */,
+		"\xbf\xf7\xa4\x6c" /* 鋸子, saw */,
+		"\xa4\xec\xba\x6c" /* 木槌, mallet */,
+		"\xaa\x6f\xba\xa3\xa8\xea" /* 油漆刷, paint brush */,
 	},
 };
 
@@ -719,10 +767,10 @@ const char *hintStr[][4] = {
 	},
 	// Chinese
 	{
-		"Check which pieces could fit in each corner first.",
-		"Check which corner has the least number of pieces that can fit and start from there.",
-		"Check each new corner and any new side for pieces that fit.",
-		"I don't see anything out of place."
+		"\xa5\xfd\xac\xdd\xac\xdd\xa8\xba\xa8\xc7\xb8\x48\xa4\xf9\xa5\x69\xa5\x48\xb1\xc6\xa6\x62\xa6\x55\xad\xd3\xa8\xa4\xa1\x45" /* 先看看那些碎片可以排在各個角‧; Check which pieces could fit in each corner first. */,
+		"\xac\xdd\xac\xdd\xa8\xba\xa4\x40\xad\xd3\xa8\xa4\xaf\xe0\xb1\xc6\xb6\x69\xa5\x68\xaa\xba\xb8\x48\xa4\xf9\xb3\xcc\xa4\xd6\xa1\x41\xb4\x4e\xb1\x71\xa8\xba\xad\xd3\xa8\xa4\xb8\xa8\xb6\x7d\xa9\x6c\xa1\x45" /* 看看那一個角能排進去的碎片最少，就從那個角落開始‧; Check which corner has the least number of pieces that can fit and start from there. */,
+		"\xc0\xcb\xac\x64\xa8\x43\xad\xd3\xb7\x73\xa5\x58\xb2\x7b\xaa\xba\xa8\xa4\xa5\x48\xa4\xce\xb7\x73\xa5\x58\xb2\x7b\xaa\xba\xc3\xe4\xa1\x41\xac\xdd\xac\xdd\xa6\xb3\xa8\x53\xa6\xb3\xb8\x48\xa4\xf9\xa7\x6b\xa6\x58\xb8\xd3\xb3\x42" /* 檢查每個新出現的角以及新出現的邊，看看有沒有碎片吻合該處; Check each new corner and any new side for pieces that fit. */,
+		"\xa7\xda\xac\xdd\xa4\xa3\xa5\x58\xa8\xd3\xa6\xb3\xa8\xba\xa4\x40\xb6\xf4\xac\x4f\xa4\xa3\xbe\x41\xa6\x58\xaa\xba\xa1\x45" /* 我看不出來有那一塊是不適合的‧; I don't see anything out of place. */,
 	},
 };
 
@@ -803,11 +851,11 @@ const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
 	},
 	// Chinese
 	{
-		"Hey, Fox! Would you like a hint?",
-		"Would you like some help?",
-		"Umm...Umm...",
-		"Psst! want a hint?",
-		"I would have done this differently, you know."
+		"\xbc\x4b\xa1\x41\xaa\xb0\xaf\x57\xa1\x49\xa7\x41\xbb\xdd\xa4\xa3\xbb\xdd\xad\x6e\xb4\xa3\xa5\xdc\xa1\x48" /* 嘿，狐狸！你需不需要提示？; Hey, Fox! Would you like a hint? */,
+		"\xa7\x41\xbb\xdd\xad\x6e\xc0\xb0\xa7\x55\xb6\xdc\xa1\x48" /* 你需要幫助嗎？; Would you like some help? */,
+		"\xb6\xe2\x2e\x2e\x2e\xb6\xe2\x2e\x2e\x2e" /* 嗯...嗯...; Umm...Umm... */,
+		"\xb3\xde\xa1\x49\xad\x6e\xa4\xa3\xad\x6e\xb4\xa3\xa5\xdc\xa1\x48" /* 喂！要不要提示？; Psst! want a hint? */,
+		"\xa7\xda\xb7\x7c\xa5\xce\xa4\xa3\xa6\x50\xaa\xba\xa4\xe8\xaa\x6b\xa8\xd3\xb0\xb5\xb3\x6f\xa5\xf3\xa8\xc6\xa1\x45" /* 我會用不同的方法來做這件事‧; I would have done this differently, you know. */,
 	},
 };
 
@@ -868,9 +916,9 @@ const char *sakkaStr[][NUM_SAKKA] = {
 	},
 	// Chinese
 	{
-		"Hey, you're not supposed to help the applicants!",
-		"Guys! This is supposed to be a test!",
-		"C'mon fellows, that's not in the rules!"
+		"\xb3\xde\xa1\x41\xa7\x41\xa4\xa3\xa5\x69\xa5\x48\xc0\xb0\xa7\x55\xc0\xb3\xbc\x78\xaa\xba\xa4\x48\xa1\x49" /* 喂，你不可以幫助應徵的人！; Hey, you're not supposed to help the applicants! */,
+		"\xa6\xd1\xa5\x53\xa1\x41\xb3\x6f\xa5\x69\xac\x4f\xb4\xfa\xc5\xe7\xad\xfe\xa1\x49" /* 老兄，這可是測驗哪！; Guys! This is supposed to be a test! */,
+		"\xa1\x41\xaa\x42\xa4\xcd\xa1\x41\xb3\x6f\xa5\x69\xac\x4f\xa4\xa3\xa6\x58\xb3\x57\xa9\x77\xaa\xba\xb3\xe1\xa1\x49" /* ，朋友，這可是不合規定的喔！; C'mon fellows, that's not in the rules! */
 	},
 };
 
@@ -951,11 +999,11 @@ const char *whineStr[][NUM_WHINES] = {
 	},
 	// Chinese
 	{
-		"Aww, c'mon Sakka!",
-		"One hint won't hurt, will it?",
-		"Sigh...",
-		"I think that clipboard has gone to your head, Sakka!",
-		"Well, I don't recall any specific rule against hinting."
+		"\xbe\xbe\xa1\x41\xa7\x4f\xb3\x6f\xbc\xcb\xa1\x41\xc2\xc4\xa5\x64\xa1\x49" /* 噢，別這樣，薩卡！; Aww, c'mon Sakka! */,
+		"\xa4\x40\xad\xd3\xa4\x70\xb4\xa3\xa5\xdc\xa4\xa3\xb7\x7c\xab\xe7\xbc\xcb\xb9\xc0\xa1\x49" /* 一個小提示不會怎樣嘛！; One hint won't hurt, will it? */,
+		"\xad\xfc\x2e\x2e\x2e" /* 唉...; Sigh... */,
+		"\xa7\xda\xac\xdd\xa7\x41\xac\x4f\xa4\xd3\xb9\x4c\xa9\xf3\xb9\x78\xa9\x54\xa4\x46\xa1\x41\xc2\xc4\xa5\x5b\xa1\x49" /* 我看你是太過於頑固了，薩加！; I think that clipboard has gone to your head, Sakka! */,
+		"\xb6\xe2\xa1\x41\xa7\xda\xa4\xa3\xb0\x4f\xb1\x6f\xa6\xb3\xa8\xba\xb1\xf8\xb3\x57\xa9\x77\xa4\xa3\xad\xe3\xb4\xa3\xa5\xdc\xa1\x45" /* 嗯，我不記得有那條規定不准提示‧; Well, I don't recall any specific rule against hinting. */,
 	},
 };
 
@@ -1026,10 +1074,10 @@ const char *optionsStr[][4] = {
 	},
 	// Chinese
 	{
-		"\"I'll do this puzzle later.\"",
-		"\"Yes, I'd like a hint please.\"",
-		"\"No, thank you, I'd like to try and solve it myself.\"",
-		"I think the %s is in the wrong place."
+		"\xb5\xa5\xa4\x40\xa4\x55\xa7\xda\xa6\x41\xa8\xd3\xb8\xd1\xa8\x4d\xb3\x6f\xad\xd3\xc1\xbc\xc3\x44\xa1\x45" /* 等一下我再來解決這個謎題‧; I'll do this puzzle later. */,
+		"\xbd\xd0\xb5\xb9\xa7\xda\xa4\x40\xa8\xc7\xb4\xa3\xa5\xdc\xa1\x45" /* 請給我一些提示‧; Yes, I'd like a hint please. */,
+		"\xa4\xa3\xa1\x41\xc1\xc2\xc1\xc2\xa7\x41\xa1\x45\xa7\xda\xb7\x51\xb8\xd5\xb8\xd5\xac\xdd\xa6\xdb\xa4\x76\xb8\xd1\xa8\x4d\xb3\x6f\xad\xd3\xb0\xdd\xc3\x44\xa1\x45" /* 不，謝謝你‧我想試試看自己解決這個問題‧; No, thank you, I'd like to try and solve it myself. */,
+		"\xa7\xda\xc4\xb1\xb1\x6f\x25\x73\xa9\xf1\xbf\xf9\xa6\x61\xa4\xe8\xa4\x46\xa1\x45" /* 我覺得%s放錯地方了‧; I think the %s is in the wrong place. */,
 	},
 };
 
@@ -1222,23 +1270,19 @@ const IntroDialogue introDialogueCave1[][4] = {
 	} },
 	{ { // Chinese
 		0,		// cave voice 0
-		"We see the sky, we see the land, we see the water, "
-		"and we wonder: Are we the only ones?"
+		"\xa9\xef\xc0\x59\xb1\xe6\xa4\xd1\x2c\xad\xc1\xad\xba\xa8\xa3\xa6\x61\x2c\xa9\xf1\xb2\xb4\xb1\xe6\xa5\x68\xa7\xf3\xa6\xb3\xa4\x6a\xae\xfc\xaa\x65\xac\x79\x2c\xa7\xda\xad\xcc\xa4\xa3\xb8\x54\xc3\x68\xba\xc3\x3a\xa7\xda\xad\xcc\xac\x4f\xb6\xc8\xa6\x73\xaa\xba\xb1\xda\xc3\xfe\xb6\xdc\xa1\x48" /* 抬頭望天,俯首見地,放眼望去更有大海河流,我們不禁懷疑:我們是僅存的族類嗎？; We see the sky, we see the land, we see the water, */
 	},
 	{
 		1,		// cave voice 1
-		"Long before we came to exist, the humans ruled the "
-		"Earth."
+		"\xab\xdc\xa4\x5b\xab\xdc\xa4\x5b\xa5\x48\xab\x65\x2c\xa7\xda\xad\xcc\xc1\xd9\xa8\x53\xa6\xb3\xa5\x58\xb2\x7b\xaa\xba\xae\xc9\xad\xd4\x2c\xa4\x48\xc3\xfe\xb4\x78\xba\xde\xa4\x46\xa6\x61\xb2\x79\x2e" /* 很久很久以前,我們還沒有出現的時候,人類掌管了地球.; Long before we came to exist, the humans ruled the Earth.  */
 	},
 	{
 		2,		// cave voice 2
-		"They made marvelous things, and moved whole "
-		"mountains."
+		"\xa5\x4c\xad\xcc\xbb\x73\xb3\x79\xaf\xab\xa9\x5f\xaa\xba\xbe\xb9\xa8\xe3\x2c\xa6\xd3\xa5\x42\xb2\xbe\xa5\x68\xa9\xd2\xa6\xb3\xaa\xba\xb0\xaa\xa4\x73\xc2\x4f\xc0\xad\x2e" /* 他們製造神奇的器具,而且移去所有的高山叢嶺.; They made marvelous things, and moved whole mountains. */
 	},
 	{
 		3,		// cave voice 3
-		"They knew the Secret of Flight, the Secret of "
-		"Happiness, and other secrets beyond our imagining."
+		"\xa5\x4c\xad\xcc\xa9\xfa\xa5\xd5\xad\xb8\xa6\xe6\xaa\xba\xaf\xb5\xb1\x4b\x2c\xa7\xd6\xbc\xd6\xaa\xba\xaf\xb5\xb1\x4b\x2c\xa5\x48\xa4\xce\xa8\xe4\xa5\xa6\xa7\xda\xad\xcc\xb5\x4c\xaa\x6b\xb7\x51\xb9\xb3\xaa\xba\xaf\xb5\xb1\x4b\x2e" /* 他們明白飛行的秘密,快樂的秘密,以及其它我們無法想像的秘密.; They knew the Secret of Flight, the Secret of Happiness, and other secrets beyond our imagining. */
 	} },
 };
 
@@ -1378,17 +1422,15 @@ const IntroDialogue introDialogueCave2[][3] = {
 	} },
 	{ { // Chinese
 		4,		// cave voice 4
-		"The humans also knew the Secret of Life, and they "
-		"used it to give us the Four Great Gifts:"
+		"\xa4\x48\xc3\xfe\xa4\x5d\xaa\xbe\xb9\x44\xa5\xcd\xa9\x52\xaa\xba\xaf\xb5\xb1\x4b\x2c\xa6\xd3\xa5\x42\xa7\x51\xa5\xce\xa5\xa6\xb5\xb9\xa4\x46\xa7\xda\xad\xcc\xa5\x7c\xa4\x6a\xa4\xd1\xbd\xe1\xa1\x47" /* 人類也知道生命的秘密,而且利用它給了我們四大天賦：; The humans also knew the Secret of Life, and they used it to give us the Four Great Gifts: */
 	},
 	{
 		5,		// cave voice 5
-		"Thinking minds, feeling hearts, speaking mouths, and "
-		"reaching hands."
+		"\xaf\xe0\xab\xe4\xaf\xe0\xb7\x51\xaa\xba\xb7\x4e\xa7\xd3\x2c\xb7\x50\xa8\xfc\xb1\xd3\xbe\x55\xaa\xba\xa4\xdf\xc6\x46\x2c\x20\xaf\xe0\xbb\xa1\xb5\xbd\xb9\x44\xaa\xba\xa4\x66\xa6\xde\x2c\xa5\x48\xa4\xce\xc6\x46\xa5\xa9\xa4\xe8\xab\x4b\xaa\xba\xc2\xf9\xa4\xe2\x2e" /* 能思能想的意志,感受敏銳的心靈, 能說善道的口舌,以及靈巧方便的雙手.; Thinking minds, feeling hearts, speaking mouths, and reaching hands. */
 	},
 	{
 		6,		// cave voice 6
-		"We are their children."
+		"\xa7\xda\xad\xcc\xac\x4f\xa5\x4c\xad\xcc\xaa\xba\xa4\x6c\xae\x5d\x2e" /* 我們是他們的子孫.; We are their children. */
 	} },
 };
 
@@ -1527,17 +1569,15 @@ const IntroDialogue introDialogueCave3[][3] = {
 	} },
 	{ { // Chinese
 		7,		// cave voice 7
-		"They taught us how to use our hands, and how to "
-		"speak."
+		"\xa5\x4c\xad\xcc\xb1\xd0\xbe\xc9\xa7\xda\xad\xcc\xa6\x70\xa6\xf3\xa8\xcf\xa5\xce\xc2\xf9\xa4\xe2\x2c\xc1\xd9\xa6\xb3\xbb\xa1\xb8\xdc\xaa\xba\xa4\xe8\xaa\x6b\x2e" /* 他們教導我們如何使用雙手,還有說話的方法.; They taught us how to use our hands, and how to speak. */
 	},
 	{
 		8,		// cave voice 8
-		"They showed us the joy of using our minds."
+		"\xa5\x4c\xad\xcc\xa8\xcf\xa7\xda\xad\xcc\xa9\xfa\xa5\xd5\xa8\xcf\xa5\xce\xb7\x4e\xa7\xd3\xaa\xba\xb3\xdf\xae\xae\x2e" /* 他們使我們明白使用意志的喜悅.; They showed us the joy of using our minds.  */
 	},
 	{
 		9,		// cave voice 9
-		"They loved us, and when we were ready, they surely "
-		"would have given us the Secret of Happiness."
+		"\xa5\x4c\xad\xcc\xb7\x52\xc5\x40\xa7\xda\xad\xcc\x2c\xb5\xa5\xa7\xda\xad\xcc\xb9\x77\xb3\xc6\xa6\x6e\xa4\x46\x2c\xa5\x4c\xad\xcc\xa4\x40\xa9\x77\xb7\x7c\xa7\x69\xb6\x44\xa7\xda\xad\xcc\xa7\xd6\xbc\xd6\xaa\xba\xaf\xb5\xb1\x4b\x2e" /* 他們愛護我們,等我們預備好了,他們一定會告訴我們快樂的秘密.; They loved us, and when we were ready, they surely would have given us the Secret of Happiness.  */
 	} },
 };
 
@@ -1722,21 +1762,19 @@ const IntroDialogue introDialogueCave4[][4] = {
 	} },
 	{ { // Chinese
 		10,		// cave voice 10
-		"And now we see the sky, the land, and the water that "
-		"we are heirs to, and we wonder: why did they leave?"
+		"\xb5\x4d\xa6\xd3\xb2\x7b\xa6\x62\xa7\xda\xad\xcc\xac\xdd\xa8\xa3\xa7\xda\xad\xcc\xa9\xd2\xc4\x7e\xa9\xd3\xaa\xba\xa4\xd1\xaa\xc5\xa1\x42\xa4\x6a\xa6\x61\x2c\xa5\x48\xa4\xce\xae\xfc\xac\x76\x2c\xa7\xda\xad\xcc\xa4\x5d\xa6\x6e\xa9\x5f\xa1\x47\xa4\x48\xc3\xfe\xac\xb0\xa4\xb0\xbb\xf2\xc2\xf7\xb6\x7d\xa4\x46\xa1\x48" /* 然而現在我們看見我們所繼承的天空、大地,以及海洋,我們也好奇：人類為什麼離開了？; And now we see the sky, the land, and the water that we are heirs to, and we wonder: why did they leave?  */
 	},
 	{
 		11,		// cave voice 11
-		"Do they live still, in the stars? In the oceans "
-		"depths? In the wind?"
+		"\xa5\x4c\xad\xcc\xac\x4f\xa4\xa3\xac\x4f\xa4\xb4\xb5\x4d\xa6\xed\xa6\x62\xa4\xd1\xa4\x57\xaa\xba\xac\x50\xb2\x79\xb8\xcc\xa1\x48\xa6\xed\xa6\x62\xae\xfc\xac\x76\xaa\xba\xb2\x60\xb3\x42\xa1\x48\xc1\xd9\xac\x4f\xa9\x7e\xa6\xed\xa6\x62\xad\xb7\xa4\xa4\xa1\x48" /* 他們是不是仍然住在天上的星球裡？住在海洋的深處？還是居住在風中？; Do they live still, in the stars? In the oceans depths? In the wind?  */
 	},
 	{
 		12,		// cave voice 12
-		"We wonder, was their fate good or evil?"
+		"\xa7\xda\xad\xcc\xb7\x51\xaa\xbe\xb9\x44\xa1\x47\xa5\x4c\xad\xcc\xaa\xba\xa9\x52\xb9\x42\xac\x4f\xa6\x6e\xac\x4f\xc3\x61\xa1\x48" /* 我們想知道：他們的命運是好是壞？; We wonder, was their fate good or evil?  */
 	},
 	{
 		13,		// cave voice 13
-		"And will we also share the same fate one day?"
+		"\xac\x4f\xa4\xa3\xac\x4f\xb1\x4e\xa8\xd3\xa7\xda\xad\xcc\xa4\x5d\xb7\x7c\xbe\x44\xb9\x4a\xa6\x50\xbc\xcb\xaa\xba\xa9\x52\xb9\x42\xa1\x48" /* 是不是將來我們也會遭遇同樣的命運？ And will we also share the same fate one day?  */
 	} },
 };
 
@@ -1749,6 +1787,7 @@ const IntroCredit creditsValley[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsHeader, "\xEE\xF4\xE9\xF7"},
 	// "Продюсер"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xCF\xF0\xEE\xE4\xFE\xF1\xE5\xF0"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xbb\x73\xa7\x40\xc1\x60\xba\xca" /* 製作總監 */},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
@@ -1757,6 +1796,7 @@ const IntroCredit creditsValley[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
 	// "Уолтер Хохбрюкнер"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD3\xEE\xEB\xF2\xE5\xF0 \xD5\xEE\xF5\xE1\xF0\xFE\xEA\xED\xE5\xF0"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Executive Producer"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Ausf\201hrender Produzent"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Produttore Esecutivo"},
@@ -1765,6 +1805,7 @@ const IntroCredit creditsValley[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsHeader, "\xEE\xF4\xE9\xF7 \xE1\xF4\xE5\xF2\xEC"},
 	// "Исполнительный продюсер"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xC8\xF1\xEF\xEE\xEB\xED\xE8\xF2\xE5\xEB\xFC\xED\xFB\xE9 \xEF\xF0\xEE\xE4\xFE\xF1\xE5\xF0"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xb0\xf5\xa6\xe6\xbb\x73\xa7\x40" /* 執行製作 */},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Robert McNally"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Robert McNally"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Robert McNally"},
@@ -1773,6 +1814,7 @@ const IntroCredit creditsValley[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsText, "Robert McNally"},
 	// "Роберт Макнелли"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD0\xEE\xE1\xE5\xF0\xF2 \xCC\xE0\xEA\xED\xE5\xEB\xEB\xE8"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Robert McNally"},
 	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsHeader, "2nd Executive Producer"},
 	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsHeader, "Publisher"},
 	{Common::DE_DEU, kITECreditsNotWyrmKeep, kITECreditsHeader, "Herausgeber"},
@@ -1782,6 +1824,7 @@ const IntroCredit creditsValley[] = {
 	{Common::HE_ISR, kITECreditsNotWyrmKeep, kITECreditsHeader, "\xF2\xF8\xE9\xEB\xE4"},
 	// "Издатель"
 	{Common::RU_RUS, kITECreditsNotWyrmKeep, kITECreditsHeader, "\xC8\xE7\xE4\xE0\xF2\xE5\xEB\xFC"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xa5\x58\xab\x7e\xa4\x48" /* 出品人 */},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"},
@@ -1789,7 +1832,8 @@ const IntroCredit creditsValley[] = {
 	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"},
 	{Common::HE_ISR, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"},
 	// "Джон Ван Канегем"
-	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xC4\xE6\xEE\xED \xC2\xE0\xED \xCA\xE0\xED\xE5\xE3\xE5\xEC"}
+	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xC4\xE6\xEE\xED \xC2\xE0\xED \xCA\xE0\xED\xE5\xE3\xE5\xEC"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"},
 };
 
 const IntroCredit creditsTreeHouse1[] = {
@@ -1801,6 +1845,7 @@ const IntroCredit creditsTreeHouse1[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsHeader, "\xF2\xE9\xF6\xE5\xE1 \xE4\xEE\xF9\xE7\xF7"},
 	// "Дизайн игры"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xC4\xE8\xE7\xE0\xE9\xED \xE8\xE3\xF0\xFB"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xb9\x43\xc0\xb8\xb3\x5d\xad\x70" /* 遊戲設計 */},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
@@ -1809,6 +1854,7 @@ const IntroCredit creditsTreeHouse1[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
 	// "Талин, Джо Пирс, Роберт Макнелли"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD2\xE0\xEB\xE8\xED, \xC4\xE6\xEE \xCF\xE8\xF0\xF1, \xD0\xEE\xE1\xE5\xF0\xF2 \xCC\xE0\xEA\xED\xE5\xEB\xEB\xE8"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "and Carolly Hauksdottir"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "und Carolly Hauksdottir"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "e Carolly Hauksdottir"},
@@ -1817,6 +1863,7 @@ const IntroCredit creditsTreeHouse1[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsText, "and Carolly Hauksdottir"},
 	// "и Кэролли Хёйхсдоттир"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xE8 \xCA\xFD\xF0\xEE\xEB\xEB\xE8 \xD5\xB8\xE9\xF5\xF1\xE4\xEE\xF2\xF2\xE8\xF0"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "\xa4\xce Carolly Hauksdottir" /* 及 Carolly Hauksdottir */},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Screenplay and Dialog"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein, and Bill Rotsler"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Geschichte und Dialoge"},
@@ -1833,12 +1880,17 @@ const IntroCredit creditsTreeHouse1[] = {
 	// "Сценарий и диалоги"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xD1\xF6\xE5\xED\xE0\xF0\xE8\xE9 \xE8 \xE4\xE8\xE0\xEB\xEE\xE3\xE8"},
 	// "Роберт Ле, Лен Уэйн и Билл Ротслер"
-	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD0\xEE\xE1\xE5\xF0\xF2 \xCB\xE5, \xCB\xE5\xED \xD3\xFD\xE9\xED \xE8 \xC1\xE8\xEB\xEB \xD0\xEE\xF2\xF1\xEB\xE5\xF0"}
+	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD0\xEE\xE1\xE5\xF0\xF2 \xCB\xE5, \xCB\xE5\xED \xD3\xFD\xE9\xED \xE8 \xC1\xE8\xEB\xEB \xD0\xEE\xF2\xF1\xEB\xE5\xF0"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xb5\x65\xad\xb1\xa4\xce\xb9\xef\xa5\xd5" /* 畫面及對白 */},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "\xa4\xce Bill Rotsler" /*  及 Bill Rotsler */},
 };
 
 const IntroCredit creditsTreeHouse2[] = {
 	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsHeader, "Art Direction"},
 	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xac\xfc\xa4\x75\xab\xfc\xbe\xc9" /* 美工指導 */},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Allison Hershey"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Art"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Grafiken"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Grafica"},
@@ -1905,6 +1957,7 @@ const IntroCredit creditsFairePath1[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsHeader, "\xF4\xE9\xFA\xE5\xE7"},
 	// "Программирование"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xCF\xF0\xEE\xE3\xF0\xE0\xEC\xEC\xE8\xF0\xEE\xE2\xE0\xED\xE8\xE5"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xb5\x7b\xa6\xa1\xb3\x5d\xad\x70" /* 程式設計 */},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Talin, Walter Hochbrueckner,"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Talin, Walter Hochbrueckner,"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Talin, Walter Hochbrueckner,"},
@@ -1921,6 +1974,7 @@ const IntroCredit creditsFairePath1[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsText, "Joe Burks and Robert Wiggins"},
 	// "Джо Буркс и Роберт Виггинс"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xC4\xE6\xEE \xC1\xF3\xF0\xEA\xF1 \xE8 \xD0\xEE\xE1\xE5\xF0\xF2 \xC2\xE8\xE3\xE3\xE8\xED\xF1"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Joe Burks \xa4\xce Robert Wiggins" /* Joe Burks 及 Robert Wiggins */},
 	{Common::EN_ANY, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsHeader, "Additional Programming"},
 	{Common::FR_FRA, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsHeader, "Programmeur Additionnel"},
 	{Common::HE_ISR, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsHeader, "\xF4\xE9\xFA\xE5\xE7 \xF0\xE5\xF1\xF3"},
@@ -1941,6 +1995,7 @@ const IntroCredit creditsFairePath1[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsHeader, "\xEE\xE5\xE6\xE9\xF7\xE4 \xE5\xF6\xEC\xE9\xEC\xE9\xED"},
 	// "Музыка и звук"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xCC\xF3\xE7\xFB\xEA\xE0 \xE8 \xE7\xE2\xF3\xEA"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xCC\xF3\xE7\xFB\xEA\xE0 \xE8 \xE7\xE2\xF3\xEA" "\xad\xb5\xbc\xd6\xa4\xce\xad\xb5\xae\xc4" /* 音樂及音效 */},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Matt Nathan"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Matt Nathan"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Matt Nathan"},
@@ -1948,7 +2003,8 @@ const IntroCredit creditsFairePath1[] = {
 	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Matt Nathan"},
 	{Common::HE_ISR, kITECreditsAny, kITECreditsText, "Matt Nathan"},
 	// "Мэтт Натан"
-	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xCC\xFD\xF2\xF2 \xCD\xE0\xF2\xE0\xED"}
+	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xCC\xFD\xF2\xF2 \xCD\xE0\xF2\xE0\xED"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Matt Nathan"},
 };
 
 const IntroCredit creditsFairePath2[] = {
@@ -1960,12 +2016,14 @@ const IntroCredit creditsFairePath2[] = {
 	{Common::HE_ISR, kITECreditsAny, kITECreditsHeader, "\xE1\xE9\xEE\xE5\xE9"},
 	// "Директор проекта"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xC4\xE8\xF0\xE5\xEA\xF2\xEE\xF0 \xEF\xF0\xEE\xE5\xEA\xF2\xE0"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsHeader, "\xb9\x43\xc0\xb8\xbe\xc9\xba\x74" /* 遊戲導演 */},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Talin"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Talin"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Talin"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Talin"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Talin"},
 	{Common::HE_ISR, kITECreditsAny, kITECreditsText, "Talin"},
+	{Common::ZH_CHN, kITECreditsAny, kITECreditsText, "Talin"},
 	// "Талин"
 	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD2\xE0\xEB\xE8\xED"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Traduction Francaise"},
