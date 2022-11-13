@@ -455,7 +455,7 @@ private:
 	void setTextColorWhite();
 	void setTextColorRed();
 	void setTextColorGrey();
-	void displayStringAtTextPos(const char *message);
+	void displayStringAtTextPos(Common::String message);
 	void clearBottomTextZone(int16 color);
 	void clearBottomTextZone_2(int16 color);
 	void setNextCharacterPos();
