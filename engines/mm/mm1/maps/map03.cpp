@@ -147,8 +147,8 @@ void Map03::special07() {
 
 void Map03::special08() {
 	g_globals->_treasure._container = GOLD_CHEST;
-	g_globals->_treasure[5] = 200;
-	g_globals->_treasure[8] = 200;
+	g_globals->_treasure._items[2] = 200;
+	g_globals->_treasure.setGems(200);
 	g_events->addAction(KEYBIND_SEARCH);
 }
 

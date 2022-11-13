@@ -61,13 +61,13 @@ void IcePrincess::answerEntered() {
 				for (uint i = 0; i < g_globals->_party.size(); ++i) {
 					g_globals->_currCharacter = &g_globals->_party[i];
 					if (g_globals->_currCharacter->_backpack.indexOf(DIAMOND_KEY_ID) != -1) {
-						g_globals->_treasure[5] = 237;
+						g_globals->_treasure._items[2] = 237;
 						g_events->addAction(KEYBIND_SEARCH);
 						return;
 					}
 				}
 
-				g_globals->_treasure[5] = 240;
+				g_globals->_treasure._items[2] = 240;
 				g_events->addAction(KEYBIND_SEARCH);
 			}
 		);

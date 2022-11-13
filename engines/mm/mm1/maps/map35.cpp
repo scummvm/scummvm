@@ -103,7 +103,7 @@ void Map35::special05() {
 
 void Map35::special06() {
 	g_maps->clearSpecial();
-	g_globals->_treasure[8] = 30;
+	g_globals->_treasure.setGems(30);
 	g_events->addAction(KEYBIND_SEARCH);
 }
 
@@ -115,7 +115,7 @@ void Map35::special07() {
 
 void Map35::special09() {
 	g_maps->clearSpecial();
-	g_globals->_treasure[8] = 50;
+	g_globals->_treasure.setGems(50);
 	special07();
 }
 

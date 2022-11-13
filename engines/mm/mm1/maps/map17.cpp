@@ -88,7 +88,7 @@ void Map17::special01() {
 
 void Map17::special02() {
 	if (_data[VAL3]) {
-		g_globals->_treasure[5] = 236;
+		g_globals->_treasure._items[2] = 236;
 		g_events->addAction(KEYBIND_SEARCH);
 	} else {
 		g_events->addKeypress((Common::KeyCode)211);

@@ -195,10 +195,9 @@ void Map06::special26() {
 	if (_data[VAL3]) {
 		send(SoundMessage(STRING["maps.map06.wizard"]));
 	} else {
-		g_globals->_treasure[6] = 224;
-		g_globals->_treasure[7] = 46;
-		g_globals->_treasure[4] = 237;
-		g_globals->_treasure[5] = getRandomNumber(12) + 182;
+		g_globals->_treasure.setGold(12000);
+		g_globals->_treasure._items[1] = BRONZE_KEY_ID;
+		g_globals->_treasure._items[2] = getRandomNumber(12) + 182;
 		g_events->addAction(KEYBIND_SEARCH);
 	}
 }

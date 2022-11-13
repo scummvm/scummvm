@@ -56,7 +56,7 @@ bool Ghost::msgKeypress(const KeypressMessage &msg) {
 		}
 
 		close();
-		g_globals->_treasure[5] = RING_OF_OKRIM_ID;
+		g_globals->_treasure._items[2] = RING_OF_OKRIM_ID;
 		g_events->addAction(KEYBIND_SEARCH);
 	}
 

@@ -92,7 +92,7 @@ void Map31::special02() {
 
 void Map31::special06() {
 	if (_data[VAL1]) {
-		g_globals->_treasure[5] = 243;
+		g_globals->_treasure._items[2] = 243;
 		g_events->addAction(KEYBIND_SEARCH);
 	} else {
 		none160();

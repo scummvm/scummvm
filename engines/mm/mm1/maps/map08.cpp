@@ -115,15 +115,15 @@ void Map08::special08() {
 
 void Map08::special20() {
 	g_maps->clearSpecial();
-	g_globals->_treasure[5] = getRandomNumber(48);
-	g_globals->_treasure[1] = 1;
+	g_globals->_treasure._items[2] = getRandomNumber(48);
+	g_globals->_treasure._trapType = 1;
 	g_globals->_treasure._container = SILVER_BOX;
 	addTreasure();
 }
 
 void Map08::addTreasure() {
-	g_globals->_treasure[6] = getRandomNumber(150) + 100;
-	g_globals->_treasure[8] = getRandomNumber(4);
+	g_globals->_treasure.setGold(getRandomNumber(150) + 100);
+	g_globals->_treasure.setGems(getRandomNumber(4));
 	g_events->addAction(KEYBIND_SEARCH);
 }
 

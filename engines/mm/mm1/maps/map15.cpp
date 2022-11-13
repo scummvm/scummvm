@@ -32,7 +32,7 @@ namespace Maps {
 #define VAL1 350
 #define VAL2 118
 #define VAL3 361
-#define VAL4 362
+#define GEMS 362
 
 void Map15::special() {
 	Game::Encounter &enc = g_globals->_encounters;
@@ -105,7 +105,7 @@ void Map15::special01() {
 
 	if (_data[VAL2]) {
 		send(SoundMessage(STRING["maps.map15.dragon"]));
-		g_globals->_treasure[5] = 244;
+		g_globals->_treasure._items[2] = 244;
 		g_events->addAction(KEYBIND_SEARCH);
 
 	} else {
@@ -149,13 +149,13 @@ void Map15::special03() {
 
 void Map15::special04() {
 	_data[VAL3] = 250;
-	_data[VAL4] = 100;
+	_data[GEMS] = 100;
 	cove();
 }
 
 void Map15::special05() {
 	_data[VAL3] = 251;
-	_data[VAL4] = 200;
+	_data[GEMS] = 200;
 	cove();
 }
 
@@ -165,7 +165,7 @@ void Map15::special06() {
 		[](const Common::KeyState &ks) {
 			if (ks.keycode == Common::KEYCODE_y) {
 				g_events->close();
-				g_globals->_treasure[5] = 233;
+				g_globals->_treasure._items[2] = 233;
 				g_events->addAction(KEYBIND_SEARCH);
 			} else if (ks.keycode == Common::KEYCODE_n) {
 				g_events->send(SoundMessage(STRING["maps.map15.percella1"]));
@@ -192,9 +192,8 @@ void Map15::cove() {
 				int idx = c._backpack.indexOf(map[VAL3]);
 				if (idx != -1) {
 					c._backpack.removeAt(idx);
-					g_globals->_treasure[8] = map[VAL4];
-					g_globals->_treasure[7] = 7;
-					g_globals->_treasure[6] = 208;
+					g_globals->_treasure.setGold(2000);
+					g_globals->_treasure.setGems(map[GEMS]);
 					break;
 				}
 			}

@@ -48,7 +48,7 @@ void Map11::special() {
 		}
 	}
 
-	g_globals->_treasure[5] = 0;
+	g_globals->_treasure._items[2] = 0;
 
 	if (getRandomNumber(50) == 10) {
 		pit();

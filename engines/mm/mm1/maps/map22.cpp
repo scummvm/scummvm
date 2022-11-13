@@ -106,7 +106,7 @@ void Map22::special02() {
 		[]() {
 			g_maps->clearSpecial();
 			if (g_maps->_mapPos.x == 5) {
-				g_globals->_treasure[5] = 234;
+				g_globals->_treasure._items[2] = 234;
 				g_events->addAction(KEYBIND_SEARCH);
 
 			} else {
