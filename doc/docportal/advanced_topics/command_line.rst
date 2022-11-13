@@ -200,6 +200,7 @@ Short options are listed where they are available.
         ``--no-filtering``,,"Forces unfiltered graphics mode"
         ``--no-fullscreen``,``-F``,"Forces windowed mode"
         ``--opl-driver=DRIVER``,,":ref:`Selects AdLib (OPL) emulator <opl>`"
+        ``--output-channels=CHANNELS``,,"Select output channel count"
         ``--output-rate=RATE``,,"Selects output sample rate in Hz"
         ``--path=PATH``,``-p``,"Sets path to where the game is installed"
         ``--platform=STRING``,,":ref:`Specifes platform of game <platform>`. Allowed values: 2gs, 3do, acorn, amiga, atari, c64, fmtowns, nes, mac, pc pc98, pce, segacd, wii, windows."

@@ -73,7 +73,7 @@ void SdlMixerManager::init() {
 		warning("Could not open audio device: %s", SDL_GetError());
 
 		// The mixer is not marked as ready
-		_mixer = new Audio::MixerImpl(desired.freq, true, desired.samples);
+		_mixer = new Audio::MixerImpl(desired.freq, desired.channels >= 2, desired.samples);
 		return;
 	}
 
@@ -88,7 +88,7 @@ void SdlMixerManager::init() {
 			warning("Could not open audio device: %s", SDL_GetError());
 
 			// The mixer is not marked as ready
-			_mixer = new Audio::MixerImpl(desired.freq, true, desired.samples);
+			_mixer = new Audio::MixerImpl(desired.freq, desired.channels >= 2, desired.samples);
 			return;
 		}
 
@@ -103,10 +103,11 @@ void SdlMixerManager::init() {
 	if (_obtained.samples != desired.samples)
 		warning("SDL mixer output buffer size: %d differs from desired: %d", _obtained.samples, desired.samples);
 
-	if (_obtained.channels != 2)
-		error("SDL mixer output requires stereo output device");
+	debug(1, "Output channels: %d", _obtained.channels);
+	if (_obtained.channels != 1 && _obtained.channels != 2)
+		error("SDL mixer output requires mono or stereo output device");
 
-	_mixer = new Audio::MixerImpl(_obtained.freq, true, desired.samples);
+	_mixer = new Audio::MixerImpl(_obtained.freq, _obtained.channels >= 2, desired.samples);
 	assert(_mixer);
 	_mixer->setReady(true);
 
@@ -143,6 +144,12 @@ SDL_AudioSpec SdlMixerManager::getAudioSpec(uint32 outputRate) {
 	if (freq <= 0)
 		freq = outputRate;
 
+	uint32 channels = 2;
+	if (ConfMan.hasKey("output_channels"))
+		channels = ConfMan.getInt("output_channels");
+	if (channels > 2 || channels <= 0)
+		channels = 2;
+
 	// One SDL "sample" is a complete audio frame (i.e. all channels = 1 sample)
 	uint32 samples = 0;
 
@@ -166,7 +173,7 @@ SDL_AudioSpec SdlMixerManager::getAudioSpec(uint32 outputRate) {
 	memset(&desired, 0, sizeof(desired));
 	desired.freq = freq;
 	desired.format = AUDIO_S16SYS;
-	desired.channels = 2;
+	desired.channels = channels;
 	desired.samples = roundDownPowerOfTwo(samples);
 	desired.callback = sdlCallback;
 	desired.userdata = this;
