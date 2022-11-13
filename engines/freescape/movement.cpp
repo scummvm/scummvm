@@ -54,7 +54,7 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 	if (_playerHeightNumber >= 0)
 		_playerHeight = _playerHeights[_playerHeightNumber] + delta;
 	else
-		_playerHeight = 1;
+		_playerHeight = 2;
 	debugC(1, kFreescapeDebugMove, "player height: %d", _playerHeight);
 	_position.setValue(1, _position.y() + _playerHeight);
 }
@@ -115,10 +115,8 @@ void FreescapeEngine::decreaseStepSize() {
 void FreescapeEngine::rise() {
 	debugC(1, kFreescapeDebugMove, "playerHeightNumber: %d", _playerHeightNumber);
 	int previousAreaID = _currentArea->getAreaID();
-	int scale = _currentArea->getScale();
-
 	if (_flyMode) {
-		_position.setValue(1, _position.y() + scale * 32);
+		_position.setValue(1, _position.y() + _playerSteps[_playerStepIndex]);
 	} else {
 		if (_playerHeightNumber == int(_playerHeights.size()) - 1)
 			return;
@@ -147,10 +145,9 @@ void FreescapeEngine::rise() {
 void FreescapeEngine::lower() {
 	debugC(1, kFreescapeDebugMove, "playerHeightNumber: %d", _playerHeightNumber);
 	int previousAreaID = _currentArea->getAreaID();
-	int scale = _currentArea->getScale();
 
 	if (_flyMode) {
-		_position.setValue(1, _position.y() - scale * 32);
+		_position.setValue(1, _position.y() - (_playerSteps[_playerStepIndex] * 0.5));
 		bool collided = checkCollisions(true);
 		if (collided) {
 			if (_currentArea->getAreaID() == previousAreaID) {

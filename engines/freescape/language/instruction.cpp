@@ -389,11 +389,11 @@ void FreescapeEngine::executeSwapJet(FCLInstruction &instruction) {
 
 	if (_flyMode) {
 		debugC(1, kFreescapeDebugCode, "Swaping to ship mode");
-		_playerHeight = 1;
 		if (areaID == 27) {
 			traverseEntrance(26);
 			_lastPosition = _position;
 		}
+		_playerHeight = 2;
 		_playerHeightNumber = -1;
 	} else {
 		debugC(1, kFreescapeDebugCode, "Swaping to tank mode");
