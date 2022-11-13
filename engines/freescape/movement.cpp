@@ -51,7 +51,10 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 	else if (scale == 4)
 		delta = 12;
 
-	_playerHeight = _playerHeights[_playerHeightNumber] + delta;
+	if (_playerHeightNumber >= 0)
+		_playerHeight = _playerHeights[_playerHeightNumber] + delta;
+	else
+		_playerHeight = 1;
 	debugC(1, kFreescapeDebugMove, "player height: %d", _playerHeight);
 	_position.setValue(1, _position.y() + _playerHeight);
 }
