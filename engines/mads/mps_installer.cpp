@@ -32,7 +32,7 @@ namespace MADS {
 
 MpsInstaller* MpsInstaller::open(const Common::Path& baseName) {
 	Common::File indexFile;
-	Common::HashMap<Common::String, FileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> files;
+	FileMap _files;
 
 	if (!indexFile.open(baseName.append(".IDX")))
 		return nullptr;
@@ -50,10 +50,10 @@ MpsInstaller* MpsInstaller::open(const Common::Path& baseName) {
 		FileDescriptorBin descBin;
 		indexFile.read(&descBin, sizeof(descBin));
 		FileDescriptor desc(descBin);
-		files[desc._fileName] = desc;
+		_files[desc._fileName] = desc;
 	}
 
-	return new MpsInstaller(files, baseName);
+	return new MpsInstaller(_files, baseName);
 }
 
 // Use of \\ as path separator is a guess. Never seen an archive with subfolders
@@ -66,15 +66,11 @@ bool MpsInstaller::hasFile(const Common::Path &path) const {
 }
 
 int MpsInstaller::listMembers(Common::ArchiveMemberList &list) const {
-	int members = 0;
-
-	for (Common::HashMap<Common::String, FileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::const_iterator i = _files.begin(), end = _files.end();
-	     i != end; ++i) {
+	for (FileMap::const_iterator i = _files.begin(), end = _files.end(); i != end; ++i) {
 		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, this)));
-		++members;
 	}
 
-	return members;
+	return _files.size();
 }
 
 const Common::ArchiveMemberPtr MpsInstaller::getMember(const Common::Path &path) const {

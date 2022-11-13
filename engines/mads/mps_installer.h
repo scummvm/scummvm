@@ -80,10 +80,12 @@ private:
 		friend class MpsInstaller;
 	};
 
-	MpsInstaller(const Common::HashMap<Common::String, FileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>& files,
+    	typedef Common::HashMap<Common::String, FileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+
+	MpsInstaller(const FileMap& files,
 		     const Common::Path& baseName) : _files(files), _baseName(baseName) {}
 
-	Common::HashMap<Common::String, FileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _files;
+	FileMap _files;
 	mutable Common::HashMap<Common::String, Common::ScopedPtr<byte, Common::ArrayDeleter<byte>>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _cache;
 	Common::Path _baseName;
 };
