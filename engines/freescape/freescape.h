@@ -296,6 +296,8 @@ public:
 	bool canSaveGameStateCurrently() override { return true; }
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	virtual Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false);
+	virtual Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream);
 
 	// Timers
 	bool startCountdown(uint32 delay);
@@ -330,6 +332,8 @@ public:
 	void drawUI() override;
 
 	void pressedKey(const int keycode) override;
+	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
 
 private:
 	void loadGlobalObjects(Common::SeekableReadStream *file, int offset);
@@ -352,6 +356,8 @@ public:
 	void loadAssets() override;
 	void gotoArea(uint16 areaID, int entranceID) override;
 	void drawUI() override;
+	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
 };
 
 class EclipseEngine : public FreescapeEngine {
@@ -363,6 +369,8 @@ public:
 	void gotoArea(uint16 areaID, int entranceID) override;
 
 	void drawUI() override;
+	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
 };
 
 class CastleEngine : public FreescapeEngine {
@@ -372,7 +380,8 @@ public:
 	void loadAssets() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
-
+	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
 private:
 	Common::SeekableReadStream *decryptFile(const Common::String filename);
 };

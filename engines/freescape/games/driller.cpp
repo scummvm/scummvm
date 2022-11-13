@@ -695,4 +695,12 @@ bool DrillerEngine::checkIfGameEnded() {
 	return false;
 }
 
+Common::Error DrillerEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
+	return Common::kNoError;
+}
+
+Common::Error DrillerEngine::loadGameStreamExtended(Common::SeekableReadStream *stream) {
+	return Common::kNoError;
+}
+
 } // End of namespace Freescape

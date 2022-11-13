@@ -98,4 +98,12 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 		_gfx->_keyColor = 255;
 }
 
+Common::Error CastleEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
+	return Common::kNoError;
+}
+
+Common::Error CastleEngine::loadGameStreamExtended(Common::SeekableReadStream *stream) {
+	return Common::kNoError;
+}
+
 } // End of namespace Freescape

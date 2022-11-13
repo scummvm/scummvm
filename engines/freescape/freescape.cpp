@@ -617,7 +617,7 @@ Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream
 	_playerHeightNumber = stream->readByte();
 	if (!_currentArea || _currentArea->getAreaID() != areaID)
 		gotoArea(areaID, -1); // Do not change position nor rotation
-	return Common::kNoError;
+	return loadGameStreamExtended(stream);
 }
 
 Common::Error FreescapeEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
@@ -653,6 +653,14 @@ Common::Error FreescapeEngine::saveGameStream(Common::WriteStream *stream, bool 
 
 	stream->writeByte(_flyMode);
 	stream->writeByte(_playerHeightNumber);
+	return saveGameStreamExtended(stream, isAutosave);
+}
+
+Common::Error FreescapeEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
+	return Common::kNoError;
+}
+
+Common::Error FreescapeEngine::loadGameStreamExtended(Common::SeekableReadStream *stream) {
 	return Common::kNoError;
 }
 

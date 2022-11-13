@@ -197,4 +197,12 @@ void EclipseEngine::drawUI() {
 	_gfx->setViewport(_viewArea);
 }
 
+Common::Error EclipseEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
+	return Common::kNoError;
+}
+
+Common::Error EclipseEngine::loadGameStreamExtended(Common::SeekableReadStream *stream) {
+	return Common::kNoError;
+}
+
 } // End of namespace Freescape

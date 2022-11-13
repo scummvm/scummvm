@@ -144,4 +144,12 @@ void DarkEngine::drawUI() {
 	delete surface;
 }
 
+Common::Error DarkEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
+	return Common::kNoError;
+}
+
+Common::Error DarkEngine::loadGameStreamExtended(Common::SeekableReadStream *stream) {
+	return Common::kNoError;
+}
+
 } // End of namespace Freescape
