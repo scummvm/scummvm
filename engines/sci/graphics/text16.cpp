@@ -192,8 +192,8 @@ static const uint16 text16_shiftJIS_punctuation_SCI01[] = {
 //  Laura Bow 2 - Credits in the game menu - all the text lines start with spaces (bug #5159)
 //                Act 6 Coroner questionnaire - the text of all control buttons has trailing spaces
 //                                              "Detective Ryan Hanrahan O'Riley" contains even more spaces (bug #5334)
-//  Conquests of Camelot - talking with Cobb - one text box of the dialogue contains a longer word,
-//                                              that will be broken into 2 lines (bug #5159)
+//  Conquests of the Longbow - talking with Lobb - one text box of the dialogue contains a longer word,
+//                                                 that will be broken into 2 lines (bug #5159)
 int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId orgFontId) {
 	uint16 curChar = 0;
 	const char *textStartPtr = textPtr;
@@ -549,7 +549,6 @@ void GfxText16::Draw(const char *text, int16 from, int16 len, GuiResourceId orgF
 	}
 }
 
-// returns maximum font height used
 void GfxText16::Show(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor) {
 	Common::Rect rect;
 
