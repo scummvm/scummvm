@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-09 11:28+0000\n"
+"POT-Creation-Date: 2022-11-13 00:01+0000\n"
 "PO-Revision-Date: 2022-10-26 11:42+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -246,9 +246,9 @@ msgstr "Завантаження закінчено, завантажено %d �
 
 #: gui/downloadiconsdialog.cpp:283 gui/downloadiconsdialog.cpp:375
 #: gui/gui-manager.cpp:228 gui/unknown-game-dialog.cpp:53
-#: engines/nancy/dialogs.cpp:313 engines/scumm/help.cpp:124
-#: engines/scumm/help.cpp:139 engines/scumm/help.cpp:164
-#: engines/scumm/help.cpp:190 engines/scumm/help.cpp:208
+#: engines/nancy/dialogs.cpp:313 engines/scumm/help.cpp:123
+#: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
+#: engines/scumm/help.cpp:189 engines/scumm/help.cpp:207
 msgid "Close"
 msgstr "Закрити"
 
@@ -3031,8 +3031,8 @@ msgstr ""
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:260 engines/hdb/metaengine.cpp:255
 #: engines/mohawk/myst_stacks/menu.cpp:317
-#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/scumm/help.cpp:81
-#: engines/scumm/help.cpp:83 engines/zvision/metaengine.cpp:203
+#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/scumm/help.cpp:80
+#: engines/scumm/help.cpp:82 engines/zvision/metaengine.cpp:203
 #: engines/zvision/metaengine.cpp:221
 msgid "Quit"
 msgstr "Вихід"
@@ -3191,11 +3191,11 @@ msgstr "Не вдалося зберегти екран"
 msgid "Windowed mode"
 msgstr "Віконний режим"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:427 engines/scumm/help.cpp:85
+#: backends/graphics/sdl/sdl-graphics.cpp:427 engines/scumm/help.cpp:84
 msgid "Toggle fullscreen"
 msgstr "Перемикання повноекранного режиму"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:434 engines/scumm/help.cpp:98
+#: backends/graphics/sdl/sdl-graphics.cpp:434 engines/scumm/help.cpp:97
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr "Перемикання захоплення миші"
@@ -4605,7 +4605,7 @@ msgid "Toggle Combat"
 msgstr "Перемкнути режим бою"
 
 #. I18N: This keymap allows skipping video cutscenes
-#: engines/bladerunner/metaengine.cpp:139 engines/scumm/help.cpp:76
+#: engines/bladerunner/metaengine.cpp:139 engines/scumm/help.cpp:75
 #: engines/zvision/metaengine.cpp:215
 msgid "Skip cutscene"
 msgstr "Пропустити ролік"
@@ -4843,14 +4843,14 @@ msgstr "Змінити команду"
 #: engines/dragons/metaengine.cpp:149 engines/griffon/metaengine.cpp:126
 #: engines/grim/grim.cpp:493 engines/grim/grim.cpp:589
 #: engines/hdb/metaengine.cpp:231 engines/nancy/dialogs.cpp:145
-#: engines/scumm/help.cpp:224 engines/scumm/help.cpp:233
-#: engines/scumm/help.cpp:240 engines/scumm/help.cpp:248
+#: engines/scumm/help.cpp:223 engines/scumm/help.cpp:232
+#: engines/scumm/help.cpp:242 engines/scumm/help.cpp:250
 #: engines/twine/metaengine.cpp:286 engines/zvision/metaengine.cpp:163
 msgid "Inventory"
 msgstr "Інвентар"
 
-#: engines/dragons/metaengine.cpp:154 engines/scumm/help.cpp:85
-#: engines/scumm/help.cpp:88
+#: engines/dragons/metaengine.cpp:154 engines/scumm/help.cpp:84
+#: engines/scumm/help.cpp:87
 msgid "Enter"
 msgstr "Enter"
 
@@ -5074,8 +5074,8 @@ msgstr ""
 msgid "Run"
 msgstr "Бігти"
 
-#: engines/grim/grim.cpp:478 engines/scumm/help.cpp:238
-#: engines/scumm/help.cpp:246
+#: engines/grim/grim.cpp:478 engines/scumm/help.cpp:240
+#: engines/scumm/help.cpp:248
 msgid "Examine"
 msgstr "Розглянути"
 
@@ -5293,10 +5293,10 @@ msgstr "Рухатись наліво"
 msgid "Move right"
 msgstr "Рухатись направо"
 
-#: engines/hdb/metaengine.cpp:217 engines/scumm/help.cpp:127
-#: engines/scumm/help.cpp:151 engines/scumm/help.cpp:169
-#: engines/scumm/help.cpp:197 engines/scumm/help.cpp:212
-#: engines/scumm/help.cpp:223 engines/scumm/help.cpp:249
+#: engines/hdb/metaengine.cpp:217 engines/scumm/help.cpp:126
+#: engines/scumm/help.cpp:150 engines/scumm/help.cpp:168
+#: engines/scumm/help.cpp:196 engines/scumm/help.cpp:211
+#: engines/scumm/help.cpp:222 engines/scumm/help.cpp:251
 #: engines/sky/metaengine.cpp:91 engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1524
 msgid "Use"
@@ -7086,504 +7086,515 @@ msgstr "Основні команди клавіатури:"
 msgid "Save / Load dialog"
 msgstr "Діалог збереження / завантаження"
 
-#: engines/scumm/help.cpp:75
+#: engines/scumm/help.cpp:74
 msgid "Skip line of text"
 msgstr "Пропустити рядок тексту"
 
-#: engines/scumm/help.cpp:76
+#: engines/scumm/help.cpp:75
 msgid "Esc"
 msgstr "Esc"
 
-#: engines/scumm/help.cpp:77 engines/wintermute/keymapper_tables.h:2108
+#: engines/scumm/help.cpp:76 engines/wintermute/keymapper_tables.h:2108
 msgid "Space"
 msgstr "Space"
 
-#: engines/scumm/help.cpp:77
+#: engines/scumm/help.cpp:76
 msgid "Pause game"
 msgstr "Пауза гри"
 
-#: engines/scumm/help.cpp:78 engines/scumm/help.cpp:83
-#: engines/scumm/help.cpp:94 engines/scumm/help.cpp:95
-#: engines/scumm/help.cpp:96 engines/scumm/help.cpp:97
-#: engines/scumm/help.cpp:98 engines/scumm/help.cpp:99
-#: engines/scumm/help.cpp:100 engines/scumm/help.cpp:101
+#: engines/scumm/help.cpp:77 engines/scumm/help.cpp:82
+#: engines/scumm/help.cpp:93 engines/scumm/help.cpp:94
+#: engines/scumm/help.cpp:95 engines/scumm/help.cpp:96
+#: engines/scumm/help.cpp:97 engines/scumm/help.cpp:98
+#: engines/scumm/help.cpp:99 engines/scumm/help.cpp:100
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: engines/scumm/help.cpp:78
+#: engines/scumm/help.cpp:77
 msgid "Load saved game 1-10"
 msgstr "Завантажити ігри 1-10"
 
-#: engines/scumm/help.cpp:79 engines/scumm/help.cpp:83
-#: engines/scumm/help.cpp:85 engines/scumm/help.cpp:99
-#: engines/scumm/help.cpp:100 engines/scumm/help.cpp:101
+#: engines/scumm/help.cpp:78 engines/scumm/help.cpp:82
+#: engines/scumm/help.cpp:84 engines/scumm/help.cpp:98
+#: engines/scumm/help.cpp:99 engines/scumm/help.cpp:100
 msgid "Alt"
 msgstr "Alt"
 
-#: engines/scumm/help.cpp:79
+#: engines/scumm/help.cpp:78
 msgid "Save game 1-10"
 msgstr "Зберегти ігри 1-10"
 
-#: engines/scumm/help.cpp:86
+#: engines/scumm/help.cpp:85
 msgid "Music volume up / down"
 msgstr "Гучність музики вище / нижче"
 
-#: engines/scumm/help.cpp:87
+#: engines/scumm/help.cpp:86
 msgid "Text speed slower / faster"
 msgstr "Швидкість тексту повільніше / швидше"
 
-#: engines/scumm/help.cpp:88
+#: engines/scumm/help.cpp:87
 msgid "Simulate left mouse button"
 msgstr "Симулювати лівий клік миші"
 
-#: engines/scumm/help.cpp:89 engines/wintermute/keymapper_tables.h:2163
+#: engines/scumm/help.cpp:88 engines/wintermute/keymapper_tables.h:2163
 msgid "Tab"
 msgstr "Tab"
 
-#: engines/scumm/help.cpp:89
+#: engines/scumm/help.cpp:88
 msgid "Simulate right mouse button"
 msgstr "Симулювати правий клік миші"
 
-#: engines/scumm/help.cpp:92
+#: engines/scumm/help.cpp:91
 msgid "Special keyboard commands:"
 msgstr "Спеціальні команди клавіатури:"
 
-#: engines/scumm/help.cpp:93
+#: engines/scumm/help.cpp:92
 msgid "Show / Hide console"
 msgstr "Показати / cховати консоль"
 
-#: engines/scumm/help.cpp:94
+#: engines/scumm/help.cpp:93
 msgid "Start the debugger"
 msgstr "Запуск відладчика"
 
-#: engines/scumm/help.cpp:95
+#: engines/scumm/help.cpp:94
 msgid "Show memory consumption"
 msgstr "Показати споживання пам'яті"
 
-#: engines/scumm/help.cpp:96
+#: engines/scumm/help.cpp:95
 msgid "Run in fast mode (*)"
 msgstr "Виконати в швидкому режимі (*)"
 
-#: engines/scumm/help.cpp:97
+#: engines/scumm/help.cpp:96
 msgid "Run in really fast mode (*)"
 msgstr "Виконати в дуже швидкому режимі (*)"
 
-#: engines/scumm/help.cpp:99
+#: engines/scumm/help.cpp:98
 msgid "Switch between graphics filters"
 msgstr "Переключення між графічними фільтрами"
 
-#: engines/scumm/help.cpp:100
+#: engines/scumm/help.cpp:99
 msgid "Increase / Decrease scale factor"
 msgstr "Збільшення / Зменшення масштабу"
 
-#: engines/scumm/help.cpp:101
+#: engines/scumm/help.cpp:100
 msgid "Toggle aspect-ratio correction"
 msgstr "Перемикання корекції співвідношення сторін"
 
-#: engines/scumm/help.cpp:106
+#: engines/scumm/help.cpp:105
 msgid "* Note that using ctrl-f and"
 msgstr "* Зауважимо, що використання ctrl-f та"
 
-#: engines/scumm/help.cpp:107
+#: engines/scumm/help.cpp:106
 msgid "  ctrl-g are not recommended"
 msgstr "  ctrl-g не рекомендується"
 
-#: engines/scumm/help.cpp:108
+#: engines/scumm/help.cpp:107
 msgid "  since they may cause crashes"
 msgstr "  оскільки вони можуть викликати збої"
 
-#: engines/scumm/help.cpp:109
+#: engines/scumm/help.cpp:108
 msgid "  or incorrect game behavior."
 msgstr "  або неправильну поведінку гри."
 
-#: engines/scumm/help.cpp:113
+#: engines/scumm/help.cpp:112
 msgid "Spinning drafts on the keyboard:"
 msgstr "Змінні чорновики на клавіатурі:"
 
-#: engines/scumm/help.cpp:115
+#: engines/scumm/help.cpp:114
 msgid "Main game controls:"
 msgstr "Основні опції керування:"
 
-#: engines/scumm/help.cpp:120 engines/scumm/help.cpp:135
-#: engines/scumm/help.cpp:160
+#: engines/scumm/help.cpp:119 engines/scumm/help.cpp:134
+#: engines/scumm/help.cpp:159
 msgid "Push"
 msgstr "Штовхати"
 
-#: engines/scumm/help.cpp:121 engines/scumm/help.cpp:136
-#: engines/scumm/help.cpp:161
+#: engines/scumm/help.cpp:120 engines/scumm/help.cpp:135
+#: engines/scumm/help.cpp:160
 msgid "Pull"
 msgstr "Тягнути"
 
-#: engines/scumm/help.cpp:122 engines/scumm/help.cpp:137
-#: engines/scumm/help.cpp:162 engines/scumm/help.cpp:196
-#: engines/scumm/help.cpp:206
+#: engines/scumm/help.cpp:121 engines/scumm/help.cpp:136
+#: engines/scumm/help.cpp:161 engines/scumm/help.cpp:195
+#: engines/scumm/help.cpp:205
 msgid "Give"
 msgstr "Дати"
 
-#: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
-#: engines/scumm/help.cpp:163 engines/scumm/help.cpp:189
-#: engines/scumm/help.cpp:207
+#: engines/scumm/help.cpp:122 engines/scumm/help.cpp:137
+#: engines/scumm/help.cpp:162 engines/scumm/help.cpp:188
+#: engines/scumm/help.cpp:206
 msgid "Open"
 msgstr "Відкрити"
 
-#: engines/scumm/help.cpp:125
+#: engines/scumm/help.cpp:124
 msgid "Go to"
 msgstr "Йти до"
 
-#: engines/scumm/help.cpp:126
+#: engines/scumm/help.cpp:125
 msgid "Get"
 msgstr "Отримати"
 
-#: engines/scumm/help.cpp:128 engines/scumm/help.cpp:140
+#: engines/scumm/help.cpp:127 engines/scumm/help.cpp:139
 msgid "Read"
 msgstr "Читати"
 
-#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:146
+#: engines/scumm/help.cpp:128 engines/scumm/help.cpp:145
 msgid "New kid"
 msgstr "Нова дитина"
 
-#: engines/scumm/help.cpp:130 engines/scumm/help.cpp:152
-#: engines/scumm/help.cpp:170
+#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:151
+#: engines/scumm/help.cpp:169
 msgid "Turn on"
 msgstr "Увімкнути"
 
-#: engines/scumm/help.cpp:131 engines/scumm/help.cpp:153
-#: engines/scumm/help.cpp:171
+#: engines/scumm/help.cpp:130 engines/scumm/help.cpp:152
+#: engines/scumm/help.cpp:170
 msgid "Turn off"
 msgstr "Вимкнути"
 
-#: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
-#: engines/scumm/help.cpp:193 engines/wintermute/keymapper_tables.h:1512
+#: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
+#: engines/scumm/help.cpp:192 engines/wintermute/keymapper_tables.h:1512
 msgid "Walk to"
 msgstr "Іти до"
 
-#: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
-#: engines/scumm/help.cpp:194 engines/scumm/help.cpp:209
-#: engines/scumm/help.cpp:226 engines/wintermute/keymapper_tables.h:134
+#: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
+#: engines/scumm/help.cpp:193 engines/scumm/help.cpp:208
+#: engines/scumm/help.cpp:225 engines/wintermute/keymapper_tables.h:134
 #: engines/wintermute/keymapper_tables.h:1518
 msgid "Pick up"
 msgstr "Підібрати"
 
-#: engines/scumm/help.cpp:143 engines/scumm/help.cpp:168
+#: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
 msgid "What is"
 msgstr "Що є"
 
-#: engines/scumm/help.cpp:145
+#: engines/scumm/help.cpp:144
 msgid "Unlock"
 msgstr "Відкрити"
 
-#: engines/scumm/help.cpp:148
+#: engines/scumm/help.cpp:147
 msgid "Put on"
 msgstr "Поставити на"
 
-#: engines/scumm/help.cpp:149
+#: engines/scumm/help.cpp:148
 msgid "Take off"
 msgstr "Зняти"
 
-#: engines/scumm/help.cpp:155
+#: engines/scumm/help.cpp:154
 msgid "Fix"
 msgstr "Налагодити"
 
-#: engines/scumm/help.cpp:157
+#: engines/scumm/help.cpp:156
 msgid "Switch"
 msgstr "Перемкнути"
 
-#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:227
+#: engines/scumm/help.cpp:164 engines/scumm/help.cpp:226
 msgid "Look"
 msgstr "Глянути"
 
-#: engines/scumm/help.cpp:172 engines/scumm/help.cpp:222
+#: engines/scumm/help.cpp:171 engines/scumm/help.cpp:221
 msgid "Talk"
 msgstr "Говорити"
 
-#: engines/scumm/help.cpp:173
+#: engines/scumm/help.cpp:172
 msgid "Travel"
 msgstr "Подорож"
 
-#: engines/scumm/help.cpp:174
+#: engines/scumm/help.cpp:173
 msgid "To Henry / To Indy"
 msgstr "У Генрі / У Інді"
 
 #. I18N: These are different musical notes
-#: engines/scumm/help.cpp:178
+#: engines/scumm/help.cpp:177
 msgid "play C minor on distaff"
 msgstr "грати до мінор на прядці"
 
-#: engines/scumm/help.cpp:179
+#: engines/scumm/help.cpp:178
 msgid "play D on distaff"
 msgstr "грати ре на прядці"
 
-#: engines/scumm/help.cpp:180
+#: engines/scumm/help.cpp:179
 msgid "play E on distaff"
 msgstr "грати мі на прядці"
 
-#: engines/scumm/help.cpp:181
+#: engines/scumm/help.cpp:180
 msgid "play F on distaff"
 msgstr "грати фа на прядці"
 
-#: engines/scumm/help.cpp:182
+#: engines/scumm/help.cpp:181
 msgid "play G on distaff"
 msgstr "грати соль на прядці"
 
-#: engines/scumm/help.cpp:183
+#: engines/scumm/help.cpp:182
 msgid "play A on distaff"
 msgstr "грати ля на прядці"
 
-#: engines/scumm/help.cpp:184
+#: engines/scumm/help.cpp:183
 msgid "play B on distaff"
 msgstr "грати сі на прядці"
 
-#: engines/scumm/help.cpp:185
+#: engines/scumm/help.cpp:184
 msgid "play C major on distaff"
 msgstr "грати до мажор на прядці"
 
-#: engines/scumm/help.cpp:191 engines/scumm/help.cpp:213
+#: engines/scumm/help.cpp:190 engines/scumm/help.cpp:212
 msgid "puSh"
 msgstr "Поштовх"
 
-#: engines/scumm/help.cpp:192 engines/scumm/help.cpp:214
+#: engines/scumm/help.cpp:191 engines/scumm/help.cpp:213
 msgid "pull (Yank)"
 msgstr "тягнути (Смикнути)"
 
-#: engines/scumm/help.cpp:195 engines/scumm/help.cpp:211
-#: engines/scumm/help.cpp:247 engines/wintermute/keymapper_tables.h:128
+#: engines/scumm/help.cpp:194 engines/scumm/help.cpp:210
+#: engines/scumm/help.cpp:249 engines/wintermute/keymapper_tables.h:128
 #: engines/wintermute/keymapper_tables.h:1530
 msgid "Talk to"
 msgstr "Говорити до"
 
-#: engines/scumm/help.cpp:198 engines/scumm/help.cpp:210
+#: engines/scumm/help.cpp:197 engines/scumm/help.cpp:209
 #: engines/wintermute/keymapper_tables.h:122
 #: engines/wintermute/keymapper_tables.h:1506
 msgid "Look at"
 msgstr "Глянути на"
 
-#: engines/scumm/help.cpp:199
+#: engines/scumm/help.cpp:198
 msgid "turn oN"
 msgstr "Увімкнути"
 
-#: engines/scumm/help.cpp:200
+#: engines/scumm/help.cpp:199
 msgid "turn oFf"
 msgstr "Вимкнути"
 
-#: engines/scumm/help.cpp:216
+#: engines/scumm/help.cpp:215
 msgid "KeyUp"
 msgstr "Догори"
 
-#: engines/scumm/help.cpp:216
+#: engines/scumm/help.cpp:215
 msgid "Highlight prev dialogue"
 msgstr "Виділити попередній діалог"
 
-#: engines/scumm/help.cpp:217
+#: engines/scumm/help.cpp:216
 msgid "KeyDown"
 msgstr "Донизу"
 
-#: engines/scumm/help.cpp:217
+#: engines/scumm/help.cpp:216
 msgid "Highlight next dialogue"
 msgstr "Виділити наступний діалог"
 
-#: engines/scumm/help.cpp:221
+#: engines/scumm/help.cpp:220
 msgid "Walk"
 msgstr "Іти"
 
-#: engines/scumm/help.cpp:225
+#: engines/scumm/help.cpp:224
 msgid "Object"
 msgstr "Об'єкт"
 
-#: engines/scumm/help.cpp:228
+#: engines/scumm/help.cpp:227
 msgid "Black and White / Color"
 msgstr "Чорно-білий / Кольоровий"
 
-#: engines/scumm/help.cpp:231
+#: engines/scumm/help.cpp:230
 msgid "Eyes"
 msgstr "Очі"
 
-#: engines/scumm/help.cpp:232
+#: engines/scumm/help.cpp:231
 msgid "Tongue"
 msgstr "Язик"
 
-#: engines/scumm/help.cpp:234
+#: engines/scumm/help.cpp:233
 msgid "Punch"
 msgstr "Вдарити кулаком"
 
-#: engines/scumm/help.cpp:235
+#: engines/scumm/help.cpp:234
 msgid "Kick"
 msgstr "Вдарити ногою"
 
-#: engines/scumm/help.cpp:239
+#. I18N: A shortcut to skip the bike fight and derby sequences in Full Throttle
+#: engines/scumm/help.cpp:237
+#, fuzzy
+#| msgid "Shift key"
+msgid "Shift"
+msgstr "Кнопка Shift"
+
+#: engines/scumm/help.cpp:237
+msgid "Fight cheat"
+msgstr ""
+
+#: engines/scumm/help.cpp:241
 msgid "Regular cursor"
 msgstr "Звичайний курсор"
 
 #. I18N: Comm is a communication device
-#: engines/scumm/help.cpp:242
+#: engines/scumm/help.cpp:244
 msgid "Comm"
 msgstr "Комм"
 
-#: engines/scumm/help.cpp:245
+#: engines/scumm/help.cpp:247
 msgid "Save / Load / Options"
 msgstr "Збереження / Завантаження / Налаштування"
 
-#: engines/scumm/help.cpp:256
+#: engines/scumm/help.cpp:258
 msgid "Other game controls:"
 msgstr "Інше керування грою:"
 
-#: engines/scumm/help.cpp:258 engines/scumm/help.cpp:268
+#: engines/scumm/help.cpp:260 engines/scumm/help.cpp:270
 msgid "Inventory:"
 msgstr "Інвентар:"
 
-#: engines/scumm/help.cpp:259 engines/scumm/help.cpp:275
+#: engines/scumm/help.cpp:261 engines/scumm/help.cpp:277
 msgid "Scroll list up"
 msgstr "Прокручення списку догори"
 
-#: engines/scumm/help.cpp:260 engines/scumm/help.cpp:276
+#: engines/scumm/help.cpp:262 engines/scumm/help.cpp:278
 msgid "Scroll list down"
 msgstr "Прокручення списку донизу"
 
-#: engines/scumm/help.cpp:261 engines/scumm/help.cpp:269
+#: engines/scumm/help.cpp:263 engines/scumm/help.cpp:271
 msgid "Upper left item"
 msgstr "Верхня ліва річ"
 
-#: engines/scumm/help.cpp:262 engines/scumm/help.cpp:271
+#: engines/scumm/help.cpp:264 engines/scumm/help.cpp:273
 msgid "Lower left item"
 msgstr "Нижня ліва річ"
 
-#: engines/scumm/help.cpp:263 engines/scumm/help.cpp:272
+#: engines/scumm/help.cpp:265 engines/scumm/help.cpp:274
 msgid "Upper right item"
 msgstr "Верхня права річ"
 
-#: engines/scumm/help.cpp:264 engines/scumm/help.cpp:274
+#: engines/scumm/help.cpp:266 engines/scumm/help.cpp:276
 msgid "Lower right item"
 msgstr "Нижня права річ"
 
-#: engines/scumm/help.cpp:270
+#: engines/scumm/help.cpp:272
 msgid "Middle left item"
 msgstr "Середня ліва річ"
 
-#: engines/scumm/help.cpp:273
+#: engines/scumm/help.cpp:275
 msgid "Middle right item"
 msgstr "Середня права річ"
 
-#: engines/scumm/help.cpp:280 engines/scumm/help.cpp:285
+#: engines/scumm/help.cpp:282 engines/scumm/help.cpp:287
 msgid "Switching characters:"
 msgstr "Переключення героїв:"
 
-#: engines/scumm/help.cpp:282
+#: engines/scumm/help.cpp:284
 msgid "Second kid"
 msgstr "Друга дитина"
 
-#: engines/scumm/help.cpp:283
+#: engines/scumm/help.cpp:285
 msgid "Third kid"
 msgstr "Третя дитина"
 
-#: engines/scumm/help.cpp:292
+#: engines/scumm/help.cpp:294
 msgid "Toggle Inventory/IQ Points display"
 msgstr "Перемикання показування інвентарю або значення IQ"
 
-#: engines/scumm/help.cpp:293
+#: engines/scumm/help.cpp:295
 msgid "Toggle Keyboard/Mouse Fighting (*)"
 msgstr "Перемикання керування бійкою Клавіатура/Миша (*)"
 
-#: engines/scumm/help.cpp:295
+#: engines/scumm/help.cpp:297
 msgid "* Keyboard Fighting is always on,"
 msgstr "* Управління клавіатурою завжди влючене, тому,"
 
-#: engines/scumm/help.cpp:296
+#: engines/scumm/help.cpp:298
 msgid "  so despite the in-game message this"
 msgstr "  незважаючи на повідомлення гри, це налаштування"
 
-#: engines/scumm/help.cpp:297
+#: engines/scumm/help.cpp:299
 msgid "  actually toggles Mouse Fighting Off/On"
 msgstr "  насправді перемикає управління мишею"
 
-#: engines/scumm/help.cpp:304
+#: engines/scumm/help.cpp:306
 msgid "Fighting controls (numpad):"
 msgstr "Керування бійкою (numpad):"
 
-#: engines/scumm/help.cpp:305 engines/scumm/help.cpp:306
-#: engines/scumm/help.cpp:307
+#: engines/scumm/help.cpp:307 engines/scumm/help.cpp:308
+#: engines/scumm/help.cpp:309
 msgid "Step back"
 msgstr "Крок назад"
 
-#: engines/scumm/help.cpp:308
+#: engines/scumm/help.cpp:310
 msgid "Block high"
 msgstr "Блокувати зверху"
 
-#: engines/scumm/help.cpp:309
+#: engines/scumm/help.cpp:311
 msgid "Block middle"
 msgstr "Блокувати посередині"
 
-#: engines/scumm/help.cpp:310
+#: engines/scumm/help.cpp:312
 msgid "Block low"
 msgstr "Блокувати знизу"
 
-#: engines/scumm/help.cpp:311
+#: engines/scumm/help.cpp:313
 msgid "Punch high"
 msgstr "Бити зверху"
 
-#: engines/scumm/help.cpp:312
+#: engines/scumm/help.cpp:314
 msgid "Punch middle"
 msgstr "Бити посередині"
 
-#: engines/scumm/help.cpp:313
+#: engines/scumm/help.cpp:315
 msgid "Punch low"
 msgstr "Бити знизу"
 
-#: engines/scumm/help.cpp:315
+#: engines/scumm/help.cpp:317
 msgid "Sucker punch"
 msgstr "Бити ззаду"
 
-#: engines/scumm/help.cpp:318
+#: engines/scumm/help.cpp:320
 msgid "These are for Indy on left."
 msgstr "У випадку для Інді зліва."
 
-#: engines/scumm/help.cpp:319
+#: engines/scumm/help.cpp:321
 msgid "When Indy is on the right,"
 msgstr "Коли Інді є справа,"
 
-#: engines/scumm/help.cpp:320
+#: engines/scumm/help.cpp:322
 msgid "7, 4, and 1 are switched with"
 msgstr "7, 4, і 1 перемикаються на"
 
-#: engines/scumm/help.cpp:321
+#: engines/scumm/help.cpp:323
 msgid "9, 6, and 3, respectively."
 msgstr "9, 6 і 3 відповідно."
 
-#: engines/scumm/help.cpp:330
+#: engines/scumm/help.cpp:332
 msgid "Biplane controls (numpad):"
 msgstr "Керування біпланом (numpad):"
 
-#: engines/scumm/help.cpp:331
+#: engines/scumm/help.cpp:333
 msgid "Fly to upper left"
 msgstr "Летіти догори наліво"
 
-#: engines/scumm/help.cpp:332
+#: engines/scumm/help.cpp:334
 msgid "Fly to left"
 msgstr "Летіти наліво"
 
-#: engines/scumm/help.cpp:333
+#: engines/scumm/help.cpp:335
 msgid "Fly to lower left"
 msgstr "Летіти нижче наліво"
 
-#: engines/scumm/help.cpp:334
+#: engines/scumm/help.cpp:336
 msgid "Fly upwards"
 msgstr "Летіти догори"
 
-#: engines/scumm/help.cpp:335
+#: engines/scumm/help.cpp:337
 msgid "Fly straight"
 msgstr "Летіти прямо"
 
-#: engines/scumm/help.cpp:336
+#: engines/scumm/help.cpp:338
 msgid "Fly down"
 msgstr "Летіти донизу"
 
-#: engines/scumm/help.cpp:337
+#: engines/scumm/help.cpp:339
 msgid "Fly to upper right"
 msgstr "Летіти догори направо"
 
-#: engines/scumm/help.cpp:338
+#: engines/scumm/help.cpp:340
 msgid "Fly to right"
 msgstr "Летіти направо"
 
-#: engines/scumm/help.cpp:339
+#: engines/scumm/help.cpp:341
 msgid "Fly to lower right"
 msgstr "Летіти донизу направо"
 
