@@ -479,7 +479,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 		insertTemporaryMessage(successMessage, _countdown - 6);
 		if (success >= 50.0) {
 			_completeAreas[_currentArea->getAreaID()] = true;
-			_gameStateVars[32]++; // TODO: save a boolean to indicate if a level is safe or not
+			_gameStateVars[32]++;
 		}
 	} else if (keycode == Common::KEYCODE_c) {
 		uint32 gasPocketRadius = _currentArea->_gasPocketRadius;
@@ -696,10 +696,21 @@ bool DrillerEngine::checkIfGameEnded() {
 }
 
 Common::Error DrillerEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
+	for (auto &it : _areaMap) {
+		stream->writeUint16LE(it._key);
+		stream->writeUint32LE(_completeAreas[it._key]);
+	}
+
 	return Common::kNoError;
 }
 
 Common::Error DrillerEngine::loadGameStreamExtended(Common::SeekableReadStream *stream) {
+	for (uint i = 0; i < _areaMap.size(); i++) {
+		uint16 key = stream->readUint16LE();
+		assert(_areaMap.contains(key));
+		_completeAreas[key] = stream->readUint32LE();
+	}
+
 	return Common::kNoError;
 }
 
