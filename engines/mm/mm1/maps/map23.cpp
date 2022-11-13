@@ -181,10 +181,10 @@ void Map23::special12() {
 void Map23::special13() {
 	g_maps->clearSpecial();
 	g_globals->_treasure._container = IRON_BOX;
-	g_globals->_treasure[3] = 171;
-	g_globals->_treasure[4] = 183;
-	g_globals->_treasure[5] = 191;
-	g_globals->_treasure[6] = 12;
+	g_globals->_treasure._items[0] = 171;
+	g_globals->_treasure._items[1] = 183;
+	g_globals->_treasure._items[2] = 191;
+	g_globals->_treasure.setGold(12);
 	g_events->addAction(KEYBIND_SEARCH);
 }
 

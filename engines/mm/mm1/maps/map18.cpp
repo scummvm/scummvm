@@ -163,11 +163,10 @@ void Map18::special08() {
 
 void Map18::special09() {
 	g_maps->clearSpecial();
-	g_globals->_treasure[5] = 238;
-	g_globals->_treasure[1] = 4;
+	g_globals->_treasure._items[2] = 238;
+	g_globals->_treasure._trapType = 4;
 	g_globals->_treasure._container = IRON_BOX;
-	g_globals->_treasure[6] = 96;
-	g_globals->_treasure[7] = 9;
+	g_globals->_treasure.setGold(2400);
 	g_events->addAction(KEYBIND_SEARCH);
 }
 

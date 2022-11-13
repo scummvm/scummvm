@@ -111,8 +111,7 @@ void Map43::special05() {
 
 void Map43::special06() {
 	if (_data[VAL1]) {
-		g_globals->_treasure[6] = 80;
-		g_globals->_treasure[7] = 70;
+		g_globals->_treasure.setGold(18000);
 		g_maps->clearSpecial();
 		g_events->addAction(KEYBIND_SEARCH);
 	} else {

@@ -141,8 +141,7 @@ void Map49::special16() {
 }
 
 void Map49::special20() {
-	g_globals->_treasure[7] = 46;
-	g_globals->_treasure[6] = 224;
+	g_globals->_treasure.setGold(12000);
 	g_events->addAction(KEYBIND_SEARCH);
 }
 

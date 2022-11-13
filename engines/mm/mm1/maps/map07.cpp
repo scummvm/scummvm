@@ -191,8 +191,8 @@ void Map07::special16() {
 
 void Map07::special17() {
 	poolYN([]() {
-		g_globals->_treasure[5] = getRandomNumber(12) + 24;
-		g_globals->_treasure[8] = 20;
+		g_globals->_treasure._items[2] = getRandomNumber(12) + 24;
+		g_globals->_treasure.setGems(20);
 		g_events->addAction(KEYBIND_SEARCH);
 	});
 }

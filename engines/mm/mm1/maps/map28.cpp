@@ -146,21 +146,21 @@ void Map28::special00() {
 				switch (ks.keycode) {
 				case Common::KEYCODE_a:
 					g_events->close();
-					g_globals->_treasure[7] = getRandomNumber(8) + 8;
+					g_globals->_treasure.setGold((getRandomNumber(8) + 8) * 256);
 					g_maps->clearSpecial();
 					g_events->addAction(KEYBIND_SEARCH);
 					break;
 
 				case Common::KEYCODE_b:
 					g_events->close();
-					g_globals->_treasure[8] = getRandomNumber(50) + 200;
+					g_globals->_treasure.setGems(getRandomNumber(50) + 200);
 					g_maps->clearSpecial();
 					g_events->addAction(KEYBIND_SEARCH);
 					break;
 
 				case Common::KEYCODE_c:
 					g_events->close();
-					g_globals->_treasure[5] = getRandomNumber(22) + 196;
+					g_globals->_treasure._items[2] = getRandomNumber(22) + 196;
 					g_maps->clearSpecial();
 					g_events->addAction(KEYBIND_SEARCH);
 					break;

@@ -338,15 +338,14 @@ void Combat::proc1() {
 
 	if (_val7 & 6) {
 		if (!(_val7 & 2)) {
-			WRITE_LE_UINT16(&g_globals->_treasure[6],
-				READ_LE_UINT16(&g_globals->_treasure[6]) +
+			g_globals->_treasure.setGold(g_globals->_treasure.getGold() +
 				getRandomNumber(10));
 		} else if (!(_val7 & 4)) {
-			WRITE_LE_UINT16(&g_globals->_treasure[6],
-				READ_LE_UINT16(&g_globals->_treasure[6]) +
+			g_globals->_treasure.setGold(g_globals->_treasure.getGold() +
 				getRandomNumber(100));
 		} else {
-			g_globals->_treasure[7] += getRandomNumber(4);
+			g_globals->_treasure.setGold(g_globals->_treasure.getGold() +
+				getRandomNumber(4) * 256);
 		}
 	}
 }

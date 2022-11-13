@@ -129,7 +129,7 @@ void Map25::special() {
 						g_globals->_currCharacter->_flags[7] |= CHARFLAG7_10;
 					}
 
-					g_globals->_treasure[8] = 20;
+					g_globals->_treasure.setGems(20);
 				} else {
 					g_globals->_activeSpells._s.cursed = 10;
 					g_globals->_encounters.execute();

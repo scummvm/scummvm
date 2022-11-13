@@ -172,7 +172,7 @@ void Map33::special04() {
 		STRING["maps.map33.corpse"],
 		[]() {
 			g_events->send(SoundMessage(STRING["maps.map33.thanks"]));
-			g_globals->_treasure[8] = 50;
+			g_globals->_treasure.setGems(50);
 			g_events->addAction(KEYBIND_SEARCH);
 		}
 	));

@@ -155,14 +155,14 @@ void Map37::special15() {
 	send(SoundMessage(STRING["maps.wall_painted"]));
 
 	if (!g_globals->_party.hasItem(B_QUEEN_IDOL_ID)) {
-		g_globals->_treasure[5] = B_QUEEN_IDOL_ID;
+		g_globals->_treasure._items[2] = B_QUEEN_IDOL_ID;
 	}
 }
 
 void Map37::special16() {
 	g_maps->clearSpecial();
 	g_globals->_treasure._container = GOLD_BOX;
-	g_globals->_treasure[8] = 100;
+	g_globals->_treasure.setGems(100);
 	g_events->addAction(KEYBIND_SEARCH);
 }
 

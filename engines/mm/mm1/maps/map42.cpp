@@ -145,8 +145,7 @@ void Map42::special15() {
 }
 
 void Map42::special17() {
-	g_globals->_treasure[6] = 76;
-	g_globals->_treasure[7] = 29;
+	g_globals->_treasure.setGold(7500);
 	g_globals->_treasure._container = GOLD_BOX;
 	g_events->addAction(KEYBIND_SEARCH);
 }
@@ -158,8 +157,8 @@ void Map42::dogSuccess() {
 		c._exp += 10000;
 	}
 
-	g_globals->_treasure[5] = GOLD_KEY_ID;
-	g_globals->_treasure[1] = 2;
+	g_globals->_treasure._items[2] = GOLD_KEY_ID;
+	g_globals->_treasure._trapType = 2;
 	none160();
 }
 

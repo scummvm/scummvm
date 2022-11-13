@@ -54,7 +54,7 @@ void Map53::special() {
 void Map53::special00() {
 	send(SoundMessage(STRING["maps.wall_painted"]));
 	if (!_data[VAL1]) {
-		g_globals->_treasure[5] = W_QUEEN_IDOL_ID;
+		g_globals->_treasure._items[2] = W_QUEEN_IDOL_ID;
 		_data[VAL1]++;
 	}
 }

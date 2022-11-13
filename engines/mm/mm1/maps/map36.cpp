@@ -113,7 +113,7 @@ void Map36::special07() {
 }
 
 void Map36::special11() {
-	g_globals->_treasure[8] = 30;
+	g_globals->_treasure.setGems(30);
 	special07();
 }
 

@@ -120,8 +120,8 @@ void Map10::special19() {
 
 void Map10::special20() {
 	g_maps->clearSpecial();
-	g_globals->_treasure[5] = 252;
-	g_globals->_treasure[8] = 20;
+	g_globals->_treasure._items[2] = 252;
+	g_globals->_treasure.setGems(20);
 	g_globals->_treasure._container = SILVER_CHEST;
 	g_events->addAction(KEYBIND_SEARCH);
 }
@@ -165,7 +165,7 @@ void Map10::special29() {
 void Map10::special30() {
 	Game::Encounter &enc = g_globals->_encounters;
 	int monsterCount = getRandomNumber(4) + 3;
-	g_globals->_treasure[5] = 252;
+	g_globals->_treasure._items[2] = 252;
 
 	enc.clearMonsters();
 	for (int i = 0; i < monsterCount; ++i)
@@ -183,7 +183,7 @@ void Map10::special31() {
 void Map10::special32() {
 	Game::Encounter &enc = g_globals->_encounters;
 	int monsterCount = getRandomNumber(4) + 3;
-	g_globals->_treasure[5] = 243;
+	g_globals->_treasure._items[2] = 243;
 
 	enc.clearMonsters();
 	for (int i = 0; i < monsterCount; ++i)

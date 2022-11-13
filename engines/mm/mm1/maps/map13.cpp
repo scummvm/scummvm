@@ -88,7 +88,7 @@ void Map13::special00() {
 void Map13::special01() {
 	if (_data[VAL1]) {
 		g_maps->clearSpecial();
-		g_globals->_treasure[5] = 246;
+		g_globals->_treasure._items[2] = 246;
 		g_events->addAction(KEYBIND_SEARCH);
 	} else {
 		_data[VAL1]++;
