@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-13 23:16+0000\n"
+"POT-Creation-Date: 2022-11-13 23:27+0000\n"
 "PO-Revision-Date: 2022-07-13 06:51+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4578,8 +4578,8 @@ msgstr "De vertaler wil niet dat zijn vertaling geïntegreerd wordt in ScummVM."
 #: engines/mohawk/detection_tables.h:1130
 #: engines/mohawk/detection_tables.h:1145
 #: engines/mohawk/detection_tables.h:3211 engines/myst3/detection.cpp:142
-#: engines/neverhood/detection.cpp:124 engines/saga/detection_tables.h:186
-#: engines/saga/detection_tables.h:1241 engines/saga/detection_tables.h:1300
+#: engines/neverhood/detection.cpp:124 engines/saga/detection_tables.h:318
+#: engines/saga/detection_tables.h:1506 engines/saga/detection_tables.h:1567
 #: engines/sci/detection_tables.h:5191 engines/sci/detection_tables.h:5199
 #: engines/sherlock/detection_tables.h:223 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:212
@@ -6596,17 +6596,17 @@ msgid "Use an easier to read custom font"
 msgstr ""
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:813
+#: engines/saga/detection_tables.h:969
 msgid "Windows Trial version is not supported"
 msgstr "Windows Probeerversie wordt niet ondersteund"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:839
+#: engines/saga/detection_tables.h:996
 msgid "macOS Trial version is not supported"
 msgstr "macOS Probeerversie wordt niet ondersteund"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:864
+#: engines/saga/detection_tables.h:1022
 msgid "Pocket PC Trial version is not supported"
 msgstr "Pocket PC Probeerversie wordt niet ondersteund"
 
