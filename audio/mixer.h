@@ -306,6 +306,13 @@ public:
 	virtual uint getOutputRate() const = 0;
 
 	/**
+	 * Check whether the output is stereo.
+	 *
+	 * @return true if output is stereo, false if not.
+	 */
+	virtual bool getOutputStereo() const = 0;
+
+	/**
 	 * Return the output sample buffer size of the system.
 	 *
 	 * @return The number of samples processed at each audio callback.

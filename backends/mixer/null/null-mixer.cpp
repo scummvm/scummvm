@@ -36,7 +36,7 @@ NullMixerManager::~NullMixerManager() {
 }
 
 void NullMixerManager::init() {
-	_mixer = new Audio::MixerImpl(_outputRate, _samples);
+	_mixer = new Audio::MixerImpl(_outputRate, true, _samples);
 	assert(_mixer);
 	_mixer->setReady(true);
 }
