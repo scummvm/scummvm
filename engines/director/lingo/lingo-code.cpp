@@ -845,11 +845,11 @@ Datum LC::negateData(Datum &d) {
 		return res;
 	}
 
-	Datum res = d;
-	if (res.type == INT) {
-		res.u.i = -res.u.i;
-	} else if (res.type == FLOAT) {
-		res.u.f = -res.u.f;
+	Datum res;
+	if (d.type == INT) {
+		res = Datum(-d.asInt());
+	} else if (d.type == FLOAT) {
+		res = Datum(-d.asFloat());
 	} else {
 		warning("LC::negateData(): not supported for type %s", d.type2str());
 	}
