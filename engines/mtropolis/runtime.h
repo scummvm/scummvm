@@ -1835,6 +1835,7 @@ private:
 	Common::SharedPtr<Graphics::ManagedSurface> _sceneTransitionNewFrame;
 	uint32 _sceneTransitionStartTime;
 	uint32 _sceneTransitionEndTime;
+	bool _sharedSceneWasSetExplicitly;
 
 	Common::WeakPtr<Window> _mainWindow;
 	Common::Array<Common::SharedPtr<Window> > _windows;

@@ -3042,6 +3042,14 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 	} else if (attrib == "flushpriority") {
 		result.setInt(_flushPriority);
 		return true;
+	} else if (attrib == "firstchild") {
+		// Despite documentation describing modifiers as children, "firstchild" on a structural element always returns
+		// the first structural child.
+		if (_children.size() == 0)
+			result.clear();
+		else
+			result.setObject(_children[0]->getSelfReference());
+		return true;
 	}
 
 	// Traverse children (modifiers must be first)
@@ -3639,19 +3647,17 @@ MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msg
 
 MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Modifier *root, bool cascade, bool relay, bool couldBeCommand)
 	: _cascade(cascade), _relay(relay), _terminated(false), _msg(msgProps), _isCommand(false) {
-	if (couldBeCommand && EventIDs::isCommand(msgProps->getEvent().eventType)) {
-		_isCommand = true;
-		// Can't actually send this so don't even bother.  Modifiers are not allowed to respond to commands.
-	} else {
-		PropagationStack topEntry;
-		topEntry.index = 0;
-		topEntry.propagationStage = PropagationStack::kStageCheckAndSendToModifier;
-		topEntry.ptr.modifier = root;
 
-		_isCommand = (couldBeCommand && EventIDs::isCommand(msgProps->getEvent().eventType));
+	// Apparently if a command message is sent to a modifier, it's handled as a message.
+	// SPQR depends on this to send "Element Select" messages to pick the palette.
+	PropagationStack topEntry;
+	topEntry.index = 0;
+	topEntry.propagationStage = PropagationStack::kStageCheckAndSendToModifier;
+	topEntry.ptr.modifier = root;
 
-		_propagationStack.push_back(topEntry);
-	}
+	_isCommand = false;
+
+	_propagationStack.push_back(topEntry);
 
 	_root = root->getSelfReference();
 }
@@ -4140,7 +4146,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	  _cachedMousePosition(Common::Point(0, 0)), _realMousePosition(Common::Point(0, 0)), _trackedMouseOutside(false),
 	  _forceCursorRefreshOnce(true), _autoResetCursor(false), _haveModifierOverrideCursor(false), _sceneGraphChanged(false), _isQuitting(false),
 	  _collisionCheckTime(0), _defaultVolumeState(true), _activeSceneTransitionEffect(nullptr), _sceneTransitionStartTime(0), _sceneTransitionEndTime(0),
-	  _modifierOverrideCursorID(0), _subtitleRenderer(subRenderer) {
+	  _sharedSceneWasSetExplicitly(false), _modifierOverrideCursorID(0), _subtitleRenderer(subRenderer) {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
 	_vthread.reset(new VThread());
@@ -4677,7 +4683,12 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 	if (_sceneStack.size() == 0)
 		_sceneStack.resize(1);	// Reserve shared scene slot
 
-	Common::SharedPtr<Structural> targetSharedScene = findDefaultSharedSceneForScene(targetScene.get());
+	Common::SharedPtr<Structural> targetSharedScene;
+
+	if (_sharedSceneWasSetExplicitly)
+		targetSharedScene = _activeSharedScene;
+	else
+		targetSharedScene = findDefaultSharedSceneForScene(targetScene.get());
 
 	for (const Common::SharedPtr<SceneTransitionHooks> &hooks : _hacks.sceneTransitionHooks)
 		hooks->onSceneTransitionSetup(this, _activeMainScene, targetScene);
@@ -4796,7 +4807,12 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 
 			if (transition.addToDestinationScene) {
 				if (targetScene != _activeMainScene) {
-					Common::SharedPtr<Structural> targetSharedScene = findDefaultSharedSceneForScene(targetScene.get());
+					Common::SharedPtr<Structural> targetSharedScene;
+
+					if (_sharedSceneWasSetExplicitly)
+						targetSharedScene = _activeSharedScene;
+					else
+						targetSharedScene = findDefaultSharedSceneForScene(targetScene.get());
 
 					if (targetScene == targetSharedScene)
 						error("Transitioned into a default shared scene, this is not supported");
@@ -4875,6 +4891,8 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 
 				_activeSharedScene = targetSharedScene;
 			}
+
+			_sharedSceneWasSetExplicitly = true;
 		} break;
 	default:
 		error("Unknown high-level scene transition type");
