@@ -325,27 +325,6 @@ BinkDecoder::BinkVideoTrack::~BinkVideoTrack() {
 	_surface.free();
 }
 
-/**
- * An AudioStream that just returns silent samples and runs infinitely.
- */
-class SilentAudioStream : public Audio::AudioStream {
-public:
-	SilentAudioStream(int rate, bool stereo) : _rate(rate), _isStereo(stereo) {}
-
-	int readBuffer(int16 *buffer, const int numSamples) override {
-		memset(buffer, 0, numSamples * 2);
-		return numSamples;
-	}
-
-	bool endOfData() const override { return false; } // it never ends!
-	bool isStereo() const override { return _isStereo; }
-	int getRate() const override { return _rate; }
-
-private:
-	int _rate;
-	bool _isStereo;
-};
-
 Common::Rational BinkDecoder::getFrameRate() {
 	BinkVideoTrack *videoTrack = (BinkVideoTrack *)getTrack(0);
 
@@ -435,7 +414,7 @@ bool BinkDecoder::BinkAudioTrack::seek(const Audio::Timestamp &time) {
 		// with silence.
 		// The official bink decoder behavior is documented here:
 		// http://www.radgametools.com/bnkhist.htm#Changes from 1.2i to 1.2J (02-18-2002)
-		SilentAudioStream *silence = new SilentAudioStream(_audioInfo->outSampleRate, _audioInfo->outChannels == 2);
+		Audio::AudioStream *silence = Audio::makeSilentAudioStream(_audioInfo->outSampleRate, _audioInfo->outChannels == 2);
 		Audio::AudioStream *prebuffer = Audio::makeLimitingAudioStream(silence, Audio::Timestamp(750));
 		_audioStream->queueAudioStream(prebuffer);
 	}
