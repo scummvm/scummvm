@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-13 00:01+0000\n"
-"PO-Revision-Date: 2022-10-26 11:42+0000\n"
+"PO-Revision-Date: 2022-11-13 18:14+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -4905,11 +4905,12 @@ msgstr ""
 
 #: engines/freescape/detection.cpp:259
 msgid "Prerecorded sounds"
-msgstr ""
+msgstr "Заздалегідь записані звуки"
 
 #: engines/freescape/detection.cpp:260
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
+"Використовувати записані звуки з високою якістю замість емуляції PC Speaker"
 
 #: engines/glk/detection.cpp:239
 msgid "Use TTS to read the text"
@@ -6130,15 +6131,12 @@ msgstr ""
 "версію."
 
 #: engines/mtropolis/saveload.cpp:166
-#, fuzzy
-#| msgid ""
-#| "Saved game was created with a newer version of ScummVM. Unable to load."
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
 msgstr ""
-"Цей файл зі збереженою грою було створено у новішій версії ScummVM. Не зможу "
-"його заватнажити."
+"Цей файл зі збереженою грою було створено у новішій, несумісній версії "
+"ScummVM. Його неможливо завантажити."
 
 #: engines/mtropolis/saveload.cpp:174
 msgid "Failed to load save, an error occurred when reading the save game data."
@@ -7411,14 +7409,12 @@ msgstr "Вдарити ногою"
 
 #. I18N: A shortcut to skip the bike fight and derby sequences in Full Throttle
 #: engines/scumm/help.cpp:237
-#, fuzzy
-#| msgid "Shift key"
 msgid "Shift"
-msgstr "Кнопка Shift"
+msgstr "Shift"
 
 #: engines/scumm/help.cpp:237
 msgid "Fight cheat"
-msgstr ""
+msgstr "Чіт для бійок"
 
 #: engines/scumm/help.cpp:241
 msgid "Regular cursor"
