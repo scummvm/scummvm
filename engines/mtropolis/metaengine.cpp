@@ -100,6 +100,10 @@ Common::Array<Common::Keymap *> MTropolisMetaEngine::initKeymaps(const char *tar
 	act->addDefaultInputMapping("F10");
 	keymap->addAction(act);
 
+	act = new Common::Action("DEBUG_SKIP_MOVIES", _("Force any playing movies to end"));
+	act->setCustomEngineActionEvent(MTropolis::Actions::kDebugSkipMovies);
+	keymap->addAction(act);
+
 	return Common::Keymap::arrayOf(keymap);
 }
 

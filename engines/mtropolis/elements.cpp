@@ -814,6 +814,16 @@ void MovieElement::setResizeFilter(const Common::SharedPtr<MovieResizeFilter> &f
 	_resizeFilter = filter;
 }
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void MovieElement::debugSkipMovies() {
+	if (_videoDecoder && !_videoDecoder->endOfVideo()) {
+		const IntRange realRange = computeRealRange();
+
+		_videoDecoder->seek(Audio::Timestamp(0, _timeScale).addFrames(_reversed ? realRange.min : realRange.max));
+	}
+}
+#endif
+
 void MovieElement::onSegmentUnloaded(int segmentIndex) {
 	_videoDecoder.reset();
 }

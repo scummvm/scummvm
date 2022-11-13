@@ -93,6 +93,7 @@ public:
 	void onMouseMove(int32 x, int32 y) override;
 	void onMouseUp(int32 x, int32 y, int mouseButton) override;
 	void onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) override;
+	void onAction(MTropolis::Actions::Action action) override;
 
 private:
 	bool _mouseButtonStates[Actions::kMouseButtonCount];
@@ -129,6 +130,10 @@ void MainWindow::onMouseUp(int32 x, int32 y, int mouseButton) {
 
 void MainWindow::onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
 	_runtime->queueOSEvent(Common::SharedPtr<OSEvent>(new KeyboardInputEvent(kOSEventTypeKeyboard, evtType, repeat, keyEvt)));
+}
+
+void MainWindow::onAction(MTropolis::Actions::Action action) {
+	_runtime->queueOSEvent(Common::SharedPtr<OSEvent>(new ActionEvent(kOSEventTypeAction, action)));
 }
 
 
@@ -3440,6 +3445,11 @@ void Structural::debugInspect(IDebugInspectionReport *report) const {
 		report->declareStaticContents(Common::String::format("%x", getStaticGUID()));
 }
 
+void Structural::debugSkipMovies() {
+	for (Common::SharedPtr<Structural> &child : _children)
+		child->debugSkipMovies();
+}
+
 #endif /* MTROPOLIS_DEBUG_ENABLE */
 
 void Structural::linkInternalReferences(ObjectLinkingScope *scope) {
@@ -4040,6 +4050,13 @@ const Common::KeyState &KeyboardInputEvent::getKeyState() const {
 	return _keyEvt;
 }
 
+ActionEvent::ActionEvent(OSEventType osEventType, Actions::Action action) : OSEvent(osEventType), _action(action) {
+}
+
+Actions::Action ActionEvent::getAction() const {
+	return _action;
+}
+
 Runtime::SceneStackEntry::SceneStackEntry() {
 }
 
@@ -4262,6 +4279,12 @@ bool Runtime::runFrame() {
 						taskData->x = mouseEvt->getX();
 						taskData->y = mouseEvt->getY();
 					}
+				} break;
+			case kOSEventTypeAction: {
+					Actions::Action action = static_cast<ActionEvent *>(evt.get())->getAction();
+
+					DispatchActionTaskData *taskData = _vthread->pushTask("Runtime::dispatchAction", this, &Runtime::dispatchActionTask);
+					taskData->action = action;
 				} break;
 			default:
 				break;
@@ -5399,6 +5422,22 @@ VThreadState Runtime::dispatchKeyTask(const DispatchKeyTaskData &data) {
 	}
 }
 
+VThreadState Runtime::dispatchActionTask(const DispatchActionTaskData &data) {
+	switch (data.action)
+	{
+	case Actions::kDebugSkipMovies:
+#ifdef MTROPOLIS_DEBUG_ENABLE
+		_project->debugSkipMovies();
+#endif
+		break;
+	default:
+		warning("Unhandled action %i", static_cast<int>(data.action));
+		break;
+	}
+
+	return kVThreadReturn;
+}
+
 VThreadState Runtime::consumeMessageTask(const ConsumeMessageTaskData &data) {
 	IMessageConsumer *consumer = data.consumer;
 	assert(consumer->respondsToEvent(data.message->getEvent()));
@@ -5749,6 +5788,13 @@ void Runtime::onKeyboardEvent(const Common::EventType evtType, bool repeat, cons
 	Common::SharedPtr<Window> focusWindow = _keyFocusWindow.lock();
 	if (focusWindow)
 		focusWindow->onKeyboardEvent(evtType, repeat, keyEvt);
+}
+
+
+void Runtime::onAction(MTropolis::Actions::Action action) {
+	Common::SharedPtr<Window> focusWindow = _keyFocusWindow.lock();
+	if (focusWindow)
+		focusWindow->onAction(action);
 }
 
 const Common::Point &Runtime::getCachedMousePosition() const {

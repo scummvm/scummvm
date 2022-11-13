@@ -198,6 +198,9 @@ void Window::onMouseUp(int32 x, int32 y, int mouseButton) {
 void Window::onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
 }
 
+void Window::onAction(Actions::Action action) {
+}
+
 namespace Render {
 
 uint32 resolveRGB(uint8 r, uint8 g, uint8 b, const Graphics::PixelFormat &fmt) {

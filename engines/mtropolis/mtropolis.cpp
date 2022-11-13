@@ -92,6 +92,9 @@ void MTropolisEngine::handleEvents() {
 		case Common::EVENT_KEYUP:
 			_runtime->onKeyboardEvent(evt.type, evt.kbdRepeat, evt.kbd);
 			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			_runtime->onAction(static_cast<MTropolis::Actions::Action>(evt.customType));
+			break;
 
 		default:
 			break;
