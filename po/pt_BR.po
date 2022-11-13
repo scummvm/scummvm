@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-13 00:01+0000\n"
-"PO-Revision-Date: 2022-11-10 03:33+0000\n"
+"PO-Revision-Date: 2022-11-13 18:14+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -7452,14 +7452,12 @@ msgstr "Chute"
 
 #. I18N: A shortcut to skip the bike fight and derby sequences in Full Throttle
 #: engines/scumm/help.cpp:237
-#, fuzzy
-#| msgid "Shift key"
 msgid "Shift"
-msgstr "Tecla Shift"
+msgstr "Shift"
 
 #: engines/scumm/help.cpp:237
 msgid "Fight cheat"
-msgstr ""
+msgstr "Trapaça de luta"
 
 #: engines/scumm/help.cpp:241
 msgid "Regular cursor"
