@@ -421,7 +421,7 @@ const char *ITEinterfaceTextStrings[][53] = {
 		NULL,
 		NULL,
 		NULL,
-		"Cardango una partida guardada"
+		"Cargando una partida guardada"
 	},
 	// French fan translation : ACTIONS
 	{
