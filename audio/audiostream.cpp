@@ -485,4 +485,29 @@ AudioStream *makeNullAudioStream() {
 	return new NullAudioStream();
 }
 
+/**
+ * An AudioStream that just returns silent samples and runs infinitely.
+ */
+class SilentAudioStream : public AudioStream {
+public:
+	SilentAudioStream(int rate, bool stereo) : _rate(rate), _isStereo(stereo) {}
+
+	int readBuffer(int16 *buffer, const int numSamples) override {
+		memset(buffer, 0, numSamples * 2);
+		return numSamples;
+	}
+
+	bool endOfData() const override { return false; } // it never ends!
+	bool isStereo() const override { return _isStereo; }
+	int getRate() const override { return _rate; }
+
+private:
+	int _rate;
+	bool _isStereo;
+};
+
+AudioStream *makeSilentAudioStream(int rate, bool stereo) {
+	return new SilentAudioStream(rate, stereo);
+}
+
 } // End of namespace Audio

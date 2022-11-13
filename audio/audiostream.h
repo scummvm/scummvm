@@ -497,6 +497,12 @@ private:
  * endOfStream() has been reached.
  */
 AudioStream *makeNullAudioStream();
+
+/**
+ * Create an AudioStream that just returns silent samples and runs infinitely.
+ */
+AudioStream *makeSilentAudioStream(int rate, bool stereo);
+
 /** @} */
 } // End of namespace Audio
 
