@@ -43,13 +43,29 @@ MpsInstaller* MpsInstaller::open(const Common::Path& baseName) {
 
 	uint32 indexSize = indexFile.size();
 
-	if (filecnt > (indexSize - 12) / sizeof(FileDescriptorBin))
-		filecnt = (indexSize - 12) / sizeof(FileDescriptorBin);
+	static const int kNameFieldLength = 0x52;
+	static const int kEntryLength = kNameFieldLength + 0x10;
+
+	if (filecnt > (indexSize - 12) / kEntryLength)
+		filecnt = (indexSize - 12) / kEntryLength;
 
 	for (uint i = 0; i < filecnt; i++) {
-		FileDescriptorBin descBin;
-		indexFile.read(&descBin, sizeof(descBin));
-		FileDescriptor desc(descBin);
+		char nameField[kNameFieldLength];
+		int nameLen = kNameFieldLength;
+		indexFile.read(nameField, kNameFieldLength);
+		for (uint j = 0; j < kNameFieldLength; j++) {
+			if (!nameField[j]) {
+				nameLen = j;
+				break;
+			}
+		}
+		uint16 compression = indexFile.readUint16LE();
+		uint16 volumeNumber = indexFile.readUint16LE();
+		uint32 offsetInVolume = indexFile.readUint32LE();
+		uint32 compressedSize = indexFile.readUint32LE();
+		uint32 uncompressedSize = indexFile.readUint32LE();
+		Common::String name(nameField, nameLen);
+		FileDescriptor desc(name, compression, volumeNumber, offsetInVolume, compressedSize, uncompressedSize);
 		_files[desc._fileName] = desc;
 	}
 
