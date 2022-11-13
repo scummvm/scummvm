@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-13 00:01+0000\n"
-"PO-Revision-Date: 2022-11-08 13:33+0000\n"
+"PO-Revision-Date: 2022-11-13 18:14+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -7297,14 +7297,12 @@ msgstr "蹴る"
 
 #. I18N: A shortcut to skip the bike fight and derby sequences in Full Throttle
 #: engines/scumm/help.cpp:237
-#, fuzzy
-#| msgid "Shift key"
 msgid "Shift"
-msgstr "Shiftキー"
+msgstr "シフト"
 
 #: engines/scumm/help.cpp:237
 msgid "Fight cheat"
-msgstr ""
+msgstr "戦闘チート"
 
 #: engines/scumm/help.cpp:241
 msgid "Regular cursor"
