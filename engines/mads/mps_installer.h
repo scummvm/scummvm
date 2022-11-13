@@ -30,19 +30,6 @@
 
 namespace MADS {
 
-#include "common/pack-start.h"  // START STRUCT PACKING
-
-struct FileDescriptorBin {
-	char name[0x52]; // zero-terminated, rest is filled with what looks like garbage
-	uint16 compression;
-	uint16 volumeNumber;
-	uint32 offsetInVolume;
-	uint32 compressedSize;
-	uint32 uncompressedSize;
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"    // END STRUCT PACKING
-
 class MpsInstaller : public Common::Archive {
 public:
 	bool hasFile(const Common::Path &path) const override;
@@ -63,12 +50,18 @@ private:
 				   _offsetInVolume(0),
 				   _volumeNumber(0) {}
 	protected:
-		FileDescriptor(const FileDescriptorBin &raw) : _fileName(raw.name),
-							       _compressedSize(FROM_LE_32(raw.compressedSize)),
-							       _uncompressedSize(FROM_LE_32(raw.uncompressedSize)),
-							       _compressionAlgo(FROM_LE_16(raw.compression)),
-							       _offsetInVolume(FROM_LE_32(raw.offsetInVolume)),
-							       _volumeNumber(FROM_LE_16(raw.volumeNumber)) {}
+		FileDescriptor(const Common::String& name,
+			       uint16 compression,
+			       uint16 volumeNumber,
+			       uint32 offsetInVolume,
+			       uint32 compressedSize,
+			       uint32 uncompressedSize) :
+			_fileName(name),
+			_compressionAlgo(compression),
+			_volumeNumber(volumeNumber),
+			_offsetInVolume(offsetInVolume),
+			_compressedSize(compressedSize),
+			_uncompressedSize(uncompressedSize) {}
 		
 		Common::String _fileName;
 		uint _compressionAlgo;
