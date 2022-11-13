@@ -27,13 +27,13 @@
 #include "mm/mm1/data/party.h"
 #include "mm/mm1/game/game_logic.h"
 #include "mm/mm1/game/encounter.h"
-#include "mm/mm1/game/monster_actions.h"
+#include "mm/mm1/game/monster_touch.h"
 
 namespace MM {
 namespace MM1 {
 namespace Game {
 
-class Combat : public MonsterActions {
+class Combat : public MonsterTouch {
 protected:
 	Common::Array<Monster> &_monsterList;
 	Common::Array<Line> _message;

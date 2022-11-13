@@ -19,7 +19,7 @@
  *
  */
 
-#include "mm/mm1/game/monster_actions.h"
+#include "mm/mm1/game/monster_touch.h"
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
@@ -28,47 +28,47 @@ namespace MM {
 namespace MM1 {
 namespace Game {
 
-const MonsterActionsAction MonsterActions::ACTIONS[25] = {
-	&MonsterActions::action00,
-	&MonsterActions::action01,
-	&MonsterActions::action02,
-	&MonsterActions::action03,
-	&MonsterActions::action04,
-	&MonsterActions::action05,
-	&MonsterActions::action06,
-	&MonsterActions::action07,
-	&MonsterActions::action08,
-	&MonsterActions::action09,
-	&MonsterActions::action10,
-	&MonsterActions::action11,
-	&MonsterActions::action12,
-	&MonsterActions::action13,
-	&MonsterActions::action14,
-	&MonsterActions::action15,
-	&MonsterActions::action16,
-	&MonsterActions::action17,
-	&MonsterActions::action18,
-	&MonsterActions::action19,
-	&MonsterActions::action20,
-	&MonsterActions::action21,
-	&MonsterActions::action22,
-	&MonsterActions::action23,
-	&MonsterActions::action24
+const MonsterTouchAction MonsterTouch::ACTIONS[25] = {
+	&MonsterTouch::action00,
+	&MonsterTouch::action01,
+	&MonsterTouch::action02,
+	&MonsterTouch::action03,
+	&MonsterTouch::action04,
+	&MonsterTouch::action05,
+	&MonsterTouch::action06,
+	&MonsterTouch::action07,
+	&MonsterTouch::action08,
+	&MonsterTouch::action09,
+	&MonsterTouch::action10,
+	&MonsterTouch::action11,
+	&MonsterTouch::action12,
+	&MonsterTouch::action13,
+	&MonsterTouch::action14,
+	&MonsterTouch::action15,
+	&MonsterTouch::action16,
+	&MonsterTouch::action17,
+	&MonsterTouch::action18,
+	&MonsterTouch::action19,
+	&MonsterTouch::action20,
+	&MonsterTouch::action21,
+	&MonsterTouch::action22,
+	&MonsterTouch::action23,
+	&MonsterTouch::action24
 };
 
 #define LINE(ACTION) line = Common::String::format("    %s%s", \
 	STRING["monster_actions.and"].c_str(), STRING[ACTION].c_str())
 
-bool MonsterActions::monsterAction(uint index, Common::String &line) {
+bool MonsterTouch::monsterTouch(uint index, Common::String &line) {
 	line = "";
 	return (this->*ACTIONS[index])(line);
 }
 
-bool MonsterActions::canPerform(int level) const {
+bool MonsterTouch::canPerform(int level) const {
 	return getRandomNumber(level) == level;
 }
 
-bool MonsterActions::action00(Common::String &line) {
+bool MonsterTouch::action00(Common::String &line) {
 	if (canPerform(3)) {
 		g_globals->_currCharacter->_food = 0;
 		LINE("monster_actions.takes_food");
@@ -79,7 +79,7 @@ bool MonsterActions::action00(Common::String &line) {
 	}
 }
 
-bool MonsterActions::action01(Common::String &line) {
+bool MonsterTouch::action01(Common::String &line) {
 	if (canPerform(20)) {
 		setCondition(DISEASED);
 		LINE("monster_actions.inflicts_disease");
@@ -89,7 +89,7 @@ bool MonsterActions::action01(Common::String &line) {
 	return true;
 }
 
-bool MonsterActions::action02(Common::String &line) {
+bool MonsterTouch::action02(Common::String &line) {
 	if (canPerform(20)) {
 		return action07(line);
 
@@ -98,7 +98,7 @@ bool MonsterActions::action02(Common::String &line) {
 	}
 }
 
-bool MonsterActions::action03(Common::String &line) {
+bool MonsterTouch::action03(Common::String &line) {
 	if (canPerform(20)) {
 		return action11(line);
 
@@ -107,7 +107,7 @@ bool MonsterActions::action03(Common::String &line) {
 	}
 }
 
-bool MonsterActions::action04(Common::String &line) {
+bool MonsterTouch::action04(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	if (canPerform(2) && c._gems != 0) {
@@ -120,7 +120,7 @@ bool MonsterActions::action04(Common::String &line) {
 	}
 }
 
-bool MonsterActions::action05(Common::String &line) {
+bool MonsterTouch::action05(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	if (c._endurance._current == 0 || --c._endurance._current == 0)
@@ -131,7 +131,7 @@ bool MonsterActions::action05(Common::String &line) {
 	return true;
 }
 
-bool MonsterActions::action06(Common::String &line) {
+bool MonsterTouch::action06(Common::String &line) {
 	if (damageType7()) {
 		setCondition(ASLEEP);
 		LINE("monster_actions.induces_sleep");
@@ -141,7 +141,7 @@ bool MonsterActions::action06(Common::String &line) {
 	return false;
 }
 
-bool MonsterActions::action07(Common::String &line) {
+bool MonsterTouch::action07(Common::String &line) {
 	if (damageType5()) {
 		setCondition(3);
 		LINE("monster_actions.cures_paralysis");
@@ -151,7 +151,7 @@ bool MonsterActions::action07(Common::String &line) {
 	return false;
 }
 
-bool MonsterActions::action08(Common::String &line) {
+bool MonsterTouch::action08(Common::String &line) {
 	if (canPerform(4)) {
 		setCondition(DISEASED);
 		LINE("monster_actions.inflicts_disease");
@@ -162,7 +162,7 @@ bool MonsterActions::action08(Common::String &line) {
 	}
 }
 
-bool MonsterActions::action09(Common::String &line) {
+bool MonsterTouch::action09(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	if (canPerform(2) && c._gold != 0) {
@@ -177,7 +177,7 @@ bool MonsterActions::action09(Common::String &line) {
 	return true;
 }
 
-bool MonsterActions::action10(Common::String &line) {
+bool MonsterTouch::action10(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	if (canPerform(2) && !c._backpack.empty()) {
@@ -190,7 +190,7 @@ bool MonsterActions::action10(Common::String &line) {
 	}
 }
 
-bool MonsterActions::action11(Common::String &line) {
+bool MonsterTouch::action11(Common::String &line) {
 	if (damageType6()) {
 		setCondition(16);
 		LINE("monster_actions.induces_poison");
@@ -200,7 +200,7 @@ bool MonsterActions::action11(Common::String &line) {
 	return false;
 }
 
-bool MonsterActions::action12(Common::String &line) {
+bool MonsterTouch::action12(Common::String &line) {
 	if (canPerform(3)) {
 		setCondition(BLINDED);
 		LINE("monster_actions.causes_blindness");
@@ -211,7 +211,7 @@ bool MonsterActions::action12(Common::String &line) {
 	}
 }
 
-bool MonsterActions::action13(Common::String &line) {
+bool MonsterTouch::action13(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	if (c._level._current == 0 || --c._level._current == 0)
@@ -222,7 +222,7 @@ bool MonsterActions::action13(Common::String &line) {
 	return true;
 }
 
-bool MonsterActions::action14(Common::String &line) {
+bool MonsterTouch::action14(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	if (canPerform(3) && isCharAffected()) {
@@ -238,7 +238,7 @@ bool MonsterActions::action14(Common::String &line) {
 	}
 }
 
-bool MonsterActions::action15(Common::String &line) {
+bool MonsterTouch::action15(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	if (isCharAffected()) {
@@ -258,7 +258,7 @@ bool MonsterActions::action15(Common::String &line) {
 	}
 }
 
-bool MonsterActions::action16(Common::String &line) {
+bool MonsterTouch::action16(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	if (c._level < 3) {
@@ -274,7 +274,7 @@ bool MonsterActions::action16(Common::String &line) {
 	return true;
 }
 
-bool MonsterActions::action17(Common::String &line) {
+bool MonsterTouch::action17(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	if (canPerform(3) && isCharAffected()) {
@@ -290,7 +290,7 @@ bool MonsterActions::action17(Common::String &line) {
 	}
 }
 
-bool MonsterActions::action18(Common::String &line) {
+bool MonsterTouch::action18(Common::String &line) {
 	if (canPerform(3) && isCharAffected()) {
 		setCondition(UNCONSCIOUS);
 		LINE("monster_actions.induces_unconsciousness");
@@ -301,7 +301,7 @@ bool MonsterActions::action18(Common::String &line) {
 	}
 }
 
-bool MonsterActions::action19(Common::String &line) {
+bool MonsterTouch::action19(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	if (c._might._current < 4) {
@@ -316,7 +316,7 @@ bool MonsterActions::action19(Common::String &line) {
 	return true;
 }
 
-bool MonsterActions::action20(Common::String &line) {
+bool MonsterTouch::action20(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	for (int i = 0; i < 7; ++i) {
@@ -335,7 +335,7 @@ bool MonsterActions::action20(Common::String &line) {
 	return true;
 }
 
-bool MonsterActions::action21(Common::String &line) {
+bool MonsterTouch::action21(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	if (canPerform(2)) {
@@ -348,7 +348,7 @@ bool MonsterActions::action21(Common::String &line) {
 	}
 }
 
-bool MonsterActions::action22(Common::String &line) {
+bool MonsterTouch::action22(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	if (canPerform(2)) {
@@ -363,7 +363,7 @@ bool MonsterActions::action22(Common::String &line) {
 	}
 }
 
-bool MonsterActions::action23(Common::String &line) {
+bool MonsterTouch::action23(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	setCondition(ERADICATED);
@@ -375,7 +375,7 @@ bool MonsterActions::action23(Common::String &line) {
 	return true;
 }
 
-bool MonsterActions::action24(Common::String &line) {
+bool MonsterTouch::action24(Common::String &line) {
 	Character &c = *g_globals->_currCharacter;
 
 	c._sp._current = 0;
