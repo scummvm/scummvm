@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MM1_GAME_MONSTER_ACTIONS
-#define MM1_GAME_MONSTER_ACTIONS
+#ifndef MM1_GAME_MONSTER_TOUCH_H
+#define MM1_GAME_MONSTER_TOUCH_H
 
 #include "mm/mm1/game/spells_monsters.h"
 
@@ -28,12 +28,12 @@ namespace MM {
 namespace MM1 {
 namespace Game {
 
-class MonsterActions;
-typedef bool (MonsterActions:: *MonsterActionsAction)(Common::String &line);
+class MonsterTouch;
+typedef bool (MonsterTouch::*MonsterTouchAction)(Common::String &line);
 
-class MonsterActions : public SpellsMonsters {
+class MonsterTouch : public SpellsMonsters {
 private:
-	static const MonsterActionsAction ACTIONS[25];
+	static const MonsterTouchAction ACTIONS[25];
 
 	bool canPerform(int level) const;
 private:
@@ -64,9 +64,9 @@ private:
 	bool action24(Common::String &line);
 
 public:
-	virtual ~MonsterActions() {}
+	virtual ~MonsterTouch() {}
 
-	bool monsterAction(uint index, Common::String &line);
+	bool monsterTouch(uint index, Common::String &line);
 };
 
 } // namespace Game
