@@ -41,6 +41,7 @@ private:
 public:
 	byte &_trapType = _data[1];
 	byte &_container = _data[2];
+	byte *const _items = &_data[3];
 
 	Treasure() {
 		clear();
@@ -59,9 +60,47 @@ public:
 	bool present() const;
 
 	/**
+	 * Returns true if any items are present
+	 */
+	bool hasItems() const;
+
+	/**
 	 * Synchronize savegame data
 	 */
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Return the gold value for the treasure
+	 */
+	uint16 getGold() const {
+		return READ_LE_UINT16(&_data[6]);
+	}
+
+	/**
+	 * Sets the gold value for the treasure
+	 */
+	void setGold(uint16 amount) {
+		WRITE_LE_UINT16(&_data[6], amount);
+	}
+
+	/**
+	 * Return the gems amount
+	 */
+	byte getGems() const {
+		return _data[8];
+	}
+
+	/**
+	 * Set the gems amount
+	 */
+	void setGems(byte amount) {
+		_data[8] = amount;
+	}
+
+	/**
+	 * Get any item, and remove it from the treasure
+	 */
+	byte getItem();
 };
 
 } // namespace MM1

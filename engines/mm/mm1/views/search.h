@@ -30,10 +30,15 @@ namespace Views {
 
 class Search : public TextView {
 private:
-	enum Mode { INITIAL, OPTIONS, RESPONSE, WHO_WILL_TRY };
+	enum Mode {
+		INITIAL, OPTIONS, RESPONSE, WHO_WILL_TRY,
+		FOCUS_GET_TREASURE, GET_TREASURE, GET_ITEMS,
+		GET_ITEMS_DONE
+	};
 	Mode _mode = INITIAL;
 	bool _removing = false;
 	byte _val1 = 0;
+	int _lineNum = 0;
 
 	/**
 	 * Open the container
@@ -52,7 +57,25 @@ private:
 	 */
 	void detectMagicTrap();
 
+	/**
+	 * Select which user to try and remove trap or detect magic
+	 */
 	bool whoWillTry();
+
+	/**
+	 * Finally give the treasure
+	 */
+	void getTreasure();
+
+	/**
+	 * Draw the treasure result
+	 */
+	void drawTreasure();
+
+	/**
+	 * Get any treasure items
+	 */
+	void drawItem();
 
 public:
 	Search();

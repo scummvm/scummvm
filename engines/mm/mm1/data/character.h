@@ -528,6 +528,11 @@ struct Character : public PrimaryAttributes {
 	bool hasItem(byte itemId) const;
 
 	/**
+	 * Return a display version of the character's name
+	 */
+	Common::String getDisplayName() const;
+
+	/**
 	 * Gets the numeric value of every property a character
 	 * has and totals it up to give a stupid 'performance'
 	 * value for the party at the end of the game

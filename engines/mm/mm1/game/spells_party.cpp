@@ -898,8 +898,14 @@ SpellResult SpellsParty::wizard47_shield() {
 }
 
 SpellResult SpellsParty::wizard48_timeDistortion() {
-	// TODO: time distortion
-	return SR_FAILED;
+	Maps::Map &map = *g_maps->_currentMap;
+
+	if (getRandomNumber(100) < map[Maps::MAP_DISPEL_THRESHOLD])
+		return SR_FAILED;
+
+	// End combat by closing the combat view
+	g_events->focusedView()->close();
+	return SR_SUCCESS_SILENT;
 }
 
 SpellResult SpellsParty::wizard51_acidRain() {

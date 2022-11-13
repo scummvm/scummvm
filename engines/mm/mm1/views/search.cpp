@@ -51,13 +51,26 @@ bool Search::msgGame(const GameMessage &msg) {
 }
 
 bool Search::msgFocus(const FocusMessage &msg) {
-	_mode = INITIAL;
+	_bounds = getLineBounds(20, 24);
+	_lineNum = 0;
+
+	if (_mode == FOCUS_GET_TREASURE) {
+		// Returning from trap display
+		if (g_globals->_party.checkPartyDead())
+			return true;
+
+		getTreasure();
+	} else {
+		_mode = INITIAL;
+	}
+
 	return true;
 }
 
 void Search::draw() {
 	Common::String line;
-	clearSurface();
+	if (_mode != GET_ITEMS)
+		clearSurface();
 
 	switch (_mode) {
 	case INITIAL:
@@ -73,6 +86,15 @@ void Search::draw() {
 		writeString(20, 2, STRING["dialogs.search.options2"]);
 		writeString(20, 3, STRING["dialogs.search.options3"]);
 		escToGoBack(0, 3);
+		break;
+
+	case GET_TREASURE:
+		drawTreasure();
+		break;
+
+	case GET_ITEMS:
+		// This may be called up to three times, for each item
+		drawItem();
 		break;
 
 	default:
@@ -135,6 +157,12 @@ bool Search::msgKeypress(const KeypressMessage &msg) {
 			}
 		}
 		break;
+
+	case GET_TREASURE:
+
+
+	default:
+		break;
 	}
 
 	return true;
@@ -174,6 +202,19 @@ void Search::timeout() {
 		draw();
 		break;
 
+	case GET_TREASURE:
+		_mode = GET_ITEMS;
+		draw();
+		break;
+
+	case GET_ITEMS:
+		draw();
+		break;
+
+	case GET_ITEMS_DONE:
+		close();
+		break;
+
 	default:
 		break;
 	}
@@ -186,7 +227,19 @@ void Search::openContainer() {
 }
 
 void Search::openContainer2() {
+	if (g_globals->_treasure._trapType == 1) {
+		Maps::Map &map = *g_maps->_currentMap;
+		int thresold = map[Maps::MAP_TRAP_THRESHOLD] +
+			g_globals->_treasure._container;
 
+		if (getRandomNumber(thresold + 5) < thresold) {
+			// Triggered a trap
+			g_events->send("Trap", GameMessage("TRAP"));
+			return;
+		}
+	}
+
+	getTreasure();
 }
 
 void Search::findRemoveTrap() {
@@ -201,7 +254,9 @@ void Search::findRemoveTrap2() {
 	if (g_globals->_treasure._trapType == 1) {
 		byte val = c._trapCtr;
 		if (getRandomNumber(val >= 100 ? val + 5 : 100) >= val) {
-			// TODO
+			// Triggered a trap
+			g_events->send("Trap", GameMessage("TRAP"));
+			return;
 		}
 	}
 }
@@ -247,6 +302,101 @@ bool Search::whoWillTry() {
 		draw();
 		return false;
 	}
+}
+
+void Search::getTreasure() {
+	_mode = GET_TREASURE;
+	_bounds = getLineBounds(17, 24);
+
+	// Display a graphic for the container type
+	int gfxNum = g_globals->_treasure._container < WOODEN_BOX ? 3 : 1;
+	send("View", DrawGraphicMessage(gfxNum + 65));
+
+	uint gems = g_globals->_treasure.getGems();
+	if (gems) {
+
+	}
+
+	draw();
+}
+
+void Search::drawTreasure() {
+	writeString(15, 0, STRING["dialogs.search.it_opens"]);
+
+	// Split up the gold across the party
+	uint32 goldPerPerson = g_globals->_treasure.getGold() /
+		g_globals->_party.size();
+	g_globals->_treasure.setGold(0);
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		uint32 newGold = c._gold + goldPerPerson;
+		if (newGold < c._gold)
+			// As unlikely as it to overflow 32-bits
+			newGold = 0xffffffff;
+		c._gold = newGold;
+	}
+	
+	writeString(0, 2, Common::String::format(
+		STRING["dialogs.search.each_share"].c_str(),
+		goldPerPerson));
+	g_globals->_treasure.setGold(0);
+
+	// Assign any gems to a random person
+	int gems = g_globals->_treasure.getGems();
+	g_globals->_treasure.setGems(0);
+
+	_lineNum = 3;
+	if (gems) {
+		// Choose a random recipient
+		uint charNum = getRandomNumber(g_globals->_party.size()) - 1;
+		Character &c = g_globals->_party[charNum];
+
+		writeString(0, _lineNum++, Common::String::format(
+			STRING["dialogs.search.found_gems"].c_str(),
+			c.getDisplayName().c_str(),
+			gems));
+		c._gems = MIN((int)c._gems + gems, 0xffff);
+	}
+
+	Sound::sound2(SOUND_5);
+	delaySeconds(2);
+}
+
+void Search::drawItem() {
+	Treasure &treasure = g_globals->_treasure;
+	int itemId = treasure.getItem();
+
+	// Iterate through any treasure items
+	if (itemId != 0) {
+		// Find a person with free backpack space for the item
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			Character &c = g_globals->_party[i];
+
+			// Check if character has backpack space
+			if (c._backpack.full())
+				continue;
+
+			Item *item = g_globals->_items.getItem(itemId);
+			c._backpack.add(itemId, item->_maxCharges);
+
+			// Add line for found item
+			writeString(0, _lineNum++, Common::String::format(
+				STRING["dialogs.search.found_item"].c_str(),
+				c.getDisplayName().c_str(),
+				item->_name.c_str()
+			));
+
+			delaySeconds(2);
+			return;
+		}
+	}
+
+	// At this point we've either displayed the up to 3 item
+	// lines (in addition to gold and/or gems), or the party's
+	// backpacks were completely full up. Wait for 7 seconds
+	_mode = GET_ITEMS_DONE;
+	delaySeconds(7);
 }
 
 } // namespace Views

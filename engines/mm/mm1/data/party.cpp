@@ -116,8 +116,7 @@ bool Party::checkPartyDead() const {
 	if (isPartyDead()) {
 		// At this point, there's no good characters.
 		// So redirect to the death screen
-		g_events->clearViews();
-		g_events->addView("Dead");
+		g_events->replaceView("Dead", true);
 		return true;
 	} else {
 		return false;
