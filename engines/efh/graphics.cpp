@@ -337,11 +337,11 @@ void EfhEngine::setTextColorGrey() {
 		_textColor = 0x8;
 }
 
-void EfhEngine::displayStringAtTextPos(const char *message) {
-	debugC(1, kDebugGraphics, "displayStringAtTextPos %s", message);
+void EfhEngine::displayStringAtTextPos(Common::String message) {
+	debugC(1, kDebugGraphics, "displayStringAtTextPos %s", message.c_str());
 
-	drawString(message, _textPosX, _textPosY, _textColor);
-	_textPosX += getStringWidth(message) + 1;
+	drawString(message.c_str(), _textPosX, _textPosY, _textColor);
+	_textPosX += getStringWidth(message.c_str()) + 1;
 	setNextCharacterPos();
 }
 

@@ -1307,9 +1307,6 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 	static char strMaxHp[7] = "Max HP";
 	static char strWeapon[7] = "Weapon";
 	static char strDead[9] = "* DEAD *";
-
-	char buffer[80];
-	memset(buffer, 0, 80);
 	
 	for (int counter = 0; counter < 2; ++counter) {
 		if (counter == 0 || flag) {
@@ -1327,15 +1324,15 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 					continue;
 				int16 charId = _teamCharId[i];
 				int16 textPosY = 161 + 9 * i;
-				snprintf(buffer, 11, "%s", _npcBuf[charId]._name);
+				Common::String buffer = _npcBuf[charId]._name;
 				setTextPos(16, textPosY);
 				displayStringAtTextPos(buffer);
-				snprintf(buffer, 80, "%d", getEquipmentDefense(charId, false));
-				displayCenteredString(buffer, 104, 128, textPosY);
-				snprintf(buffer, 80, "%d", _npcBuf[charId]._hitPoints);
-				displayCenteredString(buffer, 144, 176, textPosY);
-				snprintf(buffer, 80, "%d", _npcBuf[charId]._maxHP);
-				displayCenteredString(buffer, 192, 224, textPosY);
+				buffer = Common::String::format("%d", getEquipmentDefense(charId, false));
+				displayCenteredString(buffer.c_str(), 104, 128, textPosY);
+				buffer = Common::String::format("%d", _npcBuf[charId]._hitPoints);
+				displayCenteredString(buffer.c_str(), 144, 176, textPosY);
+				buffer = Common::String::format("%d", _npcBuf[charId]._maxHP);
+				displayCenteredString(buffer.c_str(), 192, 224, textPosY);
 
 				if (_npcBuf[charId]._hitPoints <= 0) {
 					displayCenteredString(strDead, 225, 302, textPosY);
@@ -3943,9 +3940,8 @@ void EfhEngine::sub1C4CA(bool whiteFl) {
 void EfhEngine::displayCombatMenu(int16 charId) {
 	debug("displayCombatMenu %d", charId);
 
-	char buffer[80];
-	copyString(_npcBuf[charId]._name, buffer);
-	strncat(buffer, ":", 2);
+	Common::String buffer = _npcBuf[charId]._name;
+	buffer += ":";
 	setTextColorWhite();
 	setTextPos(144, 7);
 	displayStringAtTextPos(buffer);
@@ -5484,32 +5480,30 @@ int16 EfhEngine::getXPLevel(int32 xp) {
 void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 	debug("displayCharacterSummary %d %d", curMenuLine, npcId);
 
-	char buffer1[40];
 	char buffer2[40];
-	memset(buffer1, 0, 40);
 	memset(buffer2, 0, 40);
 	
 	setTextColorRed();
-	copyString(_npcBuf[npcId]._name, buffer1);
+	Common::String buffer1 = _npcBuf[npcId]._name;
 	setTextPos(146, 27);
 	displayStringAtTextPos("Name: ");
 	displayStringAtTextPos(buffer1);
-	snprintf(buffer1, 40, "Level: %d", getXPLevel(_npcBuf[npcId]._xp));
+	buffer1 = Common::String::format("Level: %d", getXPLevel(_npcBuf[npcId]._xp));
 	setTextPos(146, 36);
 	displayStringAtTextPos(buffer1);
-	snprintf(buffer1, 40, "XP: %lu", _npcBuf[npcId]._xp);
+	buffer1 = Common::String::format("XP: %lu", _npcBuf[npcId]._xp);
 	setTextPos(227, 36);
 	displayStringAtTextPos(buffer1);
-	snprintf(buffer1, 40, "Speed: %d", _npcBuf[npcId]._speed);
+	buffer1 = Common::String::format("Speed: %d", _npcBuf[npcId]._speed);
 	setTextPos(146, 45);
 	displayStringAtTextPos(buffer1);
-	snprintf(buffer1, 40, "Defense: %d", getEquipmentDefense(npcId, false));
+	buffer1 = Common::String::format("Defense: %d", getEquipmentDefense(npcId, false));
 	setTextPos(146, 54);
 	displayStringAtTextPos(buffer1);
-	snprintf(buffer1, 40, "Hit Points: %d", _npcBuf[npcId]._hitPoints);
+	buffer1 = Common::String::format("Hit Points: %d", _npcBuf[npcId]._hitPoints);
 	setTextPos(146, 63);
 	displayStringAtTextPos(buffer1);
-	snprintf(buffer1, 40, "Max HP: %d", _npcBuf[npcId]._maxHP);
+	buffer1 = Common::String::format("Max HP: %d", _npcBuf[npcId]._maxHP);
 	setTextPos(227, 63);
 	displayStringAtTextPos(buffer1);
 	displayCenteredString("Inventory", 144, 310, 72);
@@ -5541,16 +5535,16 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 
 		setTextPos(152, textPosY);
 		if (counter == curMenuLine) {
-			snprintf(buffer1, 40, "%c>", 'A' + counter);
+			buffer1 = Common::String::format("%c>", 'A' + counter);
 		} else {
-			snprintf(buffer1, 40, "%c)", 'A' + counter);
+			buffer1 = Common::String::format("%c)", 'A' + counter);
 		}
 		displayStringAtTextPos(buffer1);
 
 		if (itemId != 0x7FFF) {
 			setTextPos(168, textPosY);
 			copyString(_items[itemId]._name, buffer2);
-			snprintf(buffer1, 40, "  %s", buffer2);
+			buffer1 = Common::String::format("  %s", buffer2);
 			displayStringAtTextPos(buffer1);
 			setTextPos(262, textPosY);
 
@@ -5560,7 +5554,7 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 					// useless?
 					var54 = _items[_npcBuf[npcId]._inventory[_word3273A[counter]]._ref]._defense;
 				} else {
-					snprintf(buffer1, 40, "%d", 1 + var54 / 8);
+					buffer1 = Common::String::format("%d", 1 + var54 / 8);
 					displayStringAtTextPos(buffer1);
 					setTextPos(286, textPosY);
 					displayStringAtTextPos("Def");
@@ -5568,7 +5562,7 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 			} else if (_items[itemId]._uses != 0x7F) {
 				int16 var52 = _npcBuf[npcId]._inventory[_word3273A[counter]]._stat1;
 				if (var52 != 0x7F) {
-					snprintf(buffer1, 40, "%d", var52);
+					buffer1 = Common::String::format("%d", var52);
 					displayStringAtTextPos(buffer1);
 					setTextPos(286, textPosY);
 					if (var52 == 1)
@@ -5585,11 +5579,8 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 charId) {
 	debug("displayCharacterInformationOrSkills %d %d", curMenuLine, charId);
 	
-	char buffer[40];
-	memset(buffer, 0, 40);
-
 	setTextColorRed();
-	copyString(_npcBuf[charId]._name, buffer);
+	Common::String buffer = _npcBuf[charId]._name;
 	setTextPos(146, 27);
 	displayStringAtTextPos("Name: ");
 	displayStringAtTextPos(buffer);
@@ -5607,15 +5598,15 @@ void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 cha
 		int16 textPosY = 38 + counter * 9;
 		setTextPos(146, textPosY);
 		if (counter == curMenuLine) {
-			snprintf(buffer, 40, "%c>", 'A' + counter);
+			buffer = Common::String::format("%c>", 'A' + counter);
 		} else {
-			snprintf(buffer, 40, "%c)", 'A' + counter);
+			buffer = Common::String::format("%c)", 'A' + counter);
 		}
 
 		displayStringAtTextPos(buffer);
 		setTextPos(163, textPosY);
 		displayStringAtTextPos(kSkillArray[_word3273A[counter]]);
-		snprintf(buffer, 40, "%d", _npcBuf[charId]._activeScore[_word3273A[counter]]);
+		buffer = Common::String::format("%d", _npcBuf[charId]._activeScore[_word3273A[counter]]);
 		setTextPos(278, textPosY);
 		displayStringAtTextPos(buffer);
 		setTextColorRed();
@@ -6760,7 +6751,6 @@ bool EfhEngine::checkMonsterCollision() {
 
 	int16 var68 = 0;
 	char dest[20];
-	char buffer[80];
 	
 	int16 monsterId;
 	for (monsterId = 0; monsterId < 64; ++monsterId) {
@@ -6792,6 +6782,7 @@ bool EfhEngine::checkMonsterCollision() {
 				++var6A;
 		}
 
+		Common::String buffer = "";
 		do {
 			for (int16 var6C = 0; var6C < 2; ++var6C) {
 				int16 var1 = _mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F;
@@ -6800,30 +6791,30 @@ bool EfhEngine::checkMonsterCollision() {
 					if (var6A > 1)
 						strncat(dest, " ", 2);
 
-					snprintf(buffer, 80, "with %d %s", var6A, dest);
+					buffer = Common::String::format("with %d %s", var6A, dest);
 				} else if (var1 == 0x3E) {
-					strncpy(buffer, "(NOT DEFINED)", 80);
+					buffer = "(NOT DEFINED)";
 				} else if (var1 == 0x3F) { // Useless check, it's the last possible value
 					// Special character name
 					copyString(_npcBuf[_mapMonsters[monsterId]._field_1]._name, dest);
-					snprintf(buffer, 80, "with %s", dest);
+					buffer = Common::String::format("with %s", dest);
 				}
 
 				clearBottomTextZone(0);
 				_textColor = 0xE;
 				displayCenteredString("Interaction", 24, 296, 152);
-				displayCenteredString(buffer, 24, 296, 161);
+				displayCenteredString(buffer.c_str(), 24, 296, 161);
 				setTextPos(24, 169);
 				setTextColorWhite();
 				displayStringAtTextPos("T");
 				setTextColorRed();
-				snprintf(buffer, 80, "alk to the %s", dest);
+				buffer = Common::String::format("alk to the %s", dest);
 				displayStringAtTextPos(buffer);
 				setTextPos(24, 178);
 				setTextColorWhite();
 				displayStringAtTextPos("A");
 				setTextColorRed();
-				snprintf(buffer, 80, "ttack the %s", dest);
+				buffer = Common::String::format("ttack the %s", dest);
 				displayStringAtTextPos(buffer);
 				setTextPos(198, 169);
 				setTextColorWhite();
