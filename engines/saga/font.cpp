@@ -39,6 +39,9 @@ static const GameFontDescription ITE_GameFonts[]        = { {2}, {0}, {1} };
 static const GameFontDescription IHNMDEMO_GameFonts[]   = { {2}, {3}, {4} };
 // Font 6 is kIHNMFont8, font 8 is kIHNMMainFont
 static const GameFontDescription IHNMCD_GameFonts[]     = { {2}, {3}, {4}, {5}, {6}, {7}, {8} };
+// Resource 2 is a CJK font. Resource 3 looks like some image. 4 to 8 are single-byte
+// fonts (not really useful)
+static const GameFontDescription IHNMZH_GameFonts[]     = { {2}, {4}, {5}, {6}, {7}, {8} };
 
 static struct {
 	const GameFontDescription *list;
@@ -50,6 +53,7 @@ static struct {
 	/* FONTLIST_ITE_WIN_DEMO */ { ITEWINDEMO_GameFonts, ARRAYSIZE(ITEWINDEMO_GameFonts) },
 	/* FONTLIST_IHNM_DEMO */    { IHNMDEMO_GameFonts,   ARRAYSIZE(IHNMDEMO_GameFonts)   },
 	/* FONTLIST_IHNM_CD */      { IHNMCD_GameFonts,     ARRAYSIZE(IHNMCD_GameFonts)     },
+	/* FONTLIST_IHNM_ZH */      { IHNMZH_GameFonts,     ARRAYSIZE(IHNMZH_GameFonts)     },
 };
 
 Font::FontId Font::knownFont2FontIdx(KnownFont font) {
@@ -80,6 +84,10 @@ Font::FontId Font::knownFont2FontIdx(KnownFont font) {
 		break;
 		}
 #ifdef ENABLE_IHNM
+	} else if (_vm->getGameId() == GID_IHNM && _vm->getLanguage() == Common::ZH_ANY) {
+		// There is only one Chinese font in Chinese version AFAICT.
+		// And very little non-Chinese characters to care about them
+		fontId = kSmallFont;
 	} else if (_vm->getGameId() == GID_IHNM && !_vm->isIHNMDemo()) {
 		switch (font) {
 		case (kKnownFontSmall):
@@ -173,7 +181,10 @@ DefaultFont::DefaultFont(SagaEngine *vm) : Font(vm), _fontMapping(0), _chineseFo
 		_fonts[i].outline.font = NULL;
 		_fonts[i].normal.font = NULL;
 #endif
-		loadFont(&_fonts[i],	FontLists[index].list[i].fontResourceId);
+		if (i == 0 && index == FONTLIST_IHNM_ZH)
+			loadChineseFontIHNM(&_fonts[i],	FontLists[index].list[i].fontResourceId);
+		else
+			loadFont(&_fonts[i], FontLists[index].list[i].fontResourceId);
 	}
 
 	if (_vm->getGameId() == GID_ITE && _vm->getLanguage() == Common::ZH_TWN)
@@ -217,6 +228,120 @@ void DefaultFont::loadChineseFontITE(const Common::String& fileName) {
 			continue;
 		_chineseFontIndex[ch&0x7fff] = kGlyphSize * i + 2;
 	}
+}
+
+void DefaultFont::saveBig5Index(byte head, byte tail, uint curIdx) {
+	_chineseFontIndex[((head & 0x7f) << 8) | tail] = curIdx;
+}
+
+void DefaultFont::loadChineseFontIHNM(FontData *font, uint32 fontResourceId) {
+	ByteArray fontResourceData;
+	int c;
+	ResourceContext *fontContext;
+
+	debug(1, "Font::loadChineseFontIHNM(): Reading fontResourceId %d...", fontResourceId);
+
+	fontContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
+	if (fontContext == nullptr) {
+		error("DefaultFont::Font() resource context not found");
+	}
+
+	// Load font resource
+	_vm->_resource->loadResource(fontContext, fontResourceId, fontResourceData);
+
+	ByteArrayReadStreamEndian readS(fontResourceData, fontContext->isBigEndian());
+
+	// Read font header
+	font->normal.header.charHeight = 15;
+	font->normal.header.charWidth = 8;
+	font->normal.header.rowLength = 1;
+
+	for (c = 0; c < FONT_CHARCOUNT; c++) {
+		font->normal.fontCharEntry[c].width = 8;
+		font->normal.fontCharEntry[c].byteWidth = 1;
+		font->normal.fontCharEntry[c].flag = 0;
+		font->normal.fontCharEntry[c].tracking = 8;
+	}
+
+	_chineseFont = new byte[fontResourceData.size()];
+	memcpy(_chineseFont, fontResourceData.getBuffer(), fontResourceData.size());
+	_chineseFontWidth = 16;
+	_chineseFontHeight = 15;
+	_chineseFontIndex = Common::move(Common::Array<int>(0x8000, -1));
+
+	// No idea what is the beginning, some 3 values and then some bitmask,
+	// anyway file is constant and as long as we know how to interpret
+	// and match glyphs we're good
+	int curIdx = 1286;
+
+	// It's just sequential big5 codepoints by compartments specified in
+	// Big5 specification. Compartments are out of order
+	// 0x8140 to 0xA0FE	Reserved for user-defined characters 造字
+	// Not present
+	// 0xA440 to 0xC67E	Frequently used characters 常用字
+	for (byte head = 0xa4; head <= 0xc5; head++) {
+		for (byte tail = 0x40; tail <= 0x7e; tail++, curIdx += 30)
+			saveBig5Index(head, tail, curIdx);
+		for (byte tail = 0xa1; tail <= 0xfe; tail++, curIdx += 30)
+			saveBig5Index(head, tail, curIdx);
+	}
+
+	for (byte tail = 0x40; tail <= 0x7e; tail++, curIdx += 30)
+		saveBig5Index(0xc6, tail, curIdx);
+
+	// 0xC6A1 to 0xC8FE	Reserved for user-defined characters.
+	// Not present
+
+	// 0xC940 to 0xF9D5	Less frequently used characters 次常用字
+	// Rounded up to F9FE with pseudographics characters
+	for (byte head = 0xc9; head <= 0xf9; head++) {
+		for (byte tail = 0x40; tail <= 0x7e; tail++, curIdx += 30)
+			saveBig5Index(head, tail, curIdx);
+		for (byte tail = 0xa1; tail <= 0xfe; tail++, curIdx += 30)
+			saveBig5Index(head, tail, curIdx);
+	}
+
+	// 0xFA40 to 0xFEFE	Reserved for user-defined characters
+	// Not present
+
+	// Then comes back to a140
+	// 0xA140 to 0xA3BF	"Graphical characters" 圖形碼
+	for (byte head = 0xa1; head <= 0xa2; head++) {
+		for (byte tail = 0x40; tail <= 0x7e; tail++, curIdx += 30)
+			saveBig5Index(head, tail, curIdx);
+		for (byte tail = 0xa1; tail <= 0xfe; tail++, curIdx += 30)
+			saveBig5Index(head, tail, curIdx);
+	}
+
+	for (byte tail = 0x40; tail <= 0x7e; tail++, curIdx += 30)
+		saveBig5Index(0xa3, tail, curIdx);
+	for (byte tail = 0xa1; tail <= 0xbf; tail++, curIdx += 30)
+		saveBig5Index(0xa3, tail, curIdx);
+
+	// 0xA3C0 to 0xA3FE	Reserved, not for user-defined characters
+	// Not present
+
+	// Then single-width ASCII
+	int startASCII = curIdx;
+
+	for (c = 0; c < FONT_CHARCOUNT; c++, curIdx += 15) {
+		font->normal.fontCharEntry[c].index = curIdx - startASCII;
+	}
+
+#ifndef __DS__
+	font->normal.font.resize(fontResourceData.size() - startASCII);
+	memcpy(font->normal.font.getBuffer(), fontResourceData.getBuffer() + startASCII, fontResourceData.size() - startASCII);
+#else
+	if (font->normal.font) {
+		free(font->normal.font);
+	}
+
+	font->normal.font = (byte *)malloc(fontResourceData.size() - startASCII);
+	memcpy(font->normal.font, fontResourceData.getBuffer() + startASCII, fontResourceData.size() - startASCII);
+#endif
+
+	// Create outline font style
+	createOutline(font);
 }
 
 void DefaultFont::textDrawRect(FontId fontId, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) {
