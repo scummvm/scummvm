@@ -26,35 +26,6 @@
 
 namespace Saga {
 
-struct GameResourceDescription {
-	uint32 sceneLUTResourceId;
-	uint32 moduleLUTResourceId;
-	uint32 mainPanelResourceId;
-	uint32 conversePanelResourceId;
-	uint32 optionPanelResourceId;
-	uint32 mainSpritesResourceId;
-	uint32 mainPanelSpritesResourceId;
-	uint32 mainStringsResourceId;
-	// ITE specific resources
-	uint32 actorsStringsResourceId;
-	uint32 defaultPortraitsResourceId;
-	// IHNM specific resources
-	uint32 optionPanelSpritesResourceId;
-	uint32 warningPanelResourceId;
-	uint32 warningPanelSpritesResourceId;
-	uint32 psychicProfileResourceId;
-};
-
-struct GameFontDescription {
-	uint32 fontResourceId;
-};
-
-struct GamePatchDescription {
-	const char *fileName;
-	uint16 fileType;
-	uint32 resourceId;
-};
-
 enum GameIds {
 	GID_ITE = 0,
 	GID_IHNM = 1
@@ -88,7 +59,39 @@ enum GameFileTypes {
 	GAME_PATCHFILE        = 1 << 10    // IHNM patch file (patch.re_/patch.res)
 };
 
-// Make sure to update ITE_IntroLists if this enum is reordered.
+// Make sure to update ResourceLists in saga.c if this enum is reordered.
+enum GameResourceList : uint8 {
+	RESOURCELIST_NONE = 0,
+	RESOURCELIST_ITE,
+	RESOURCELIST_ITE_ENGLISH_ECS_CD,
+	RESOURCELIST_ITE_GERMAN_AGA_CD,
+	RESOURCELIST_ITE_GERMAN_ECS_CD,
+	RESOURCELIST_ITE_DEMO,
+	RESOURCELIST_IHNM,
+	RESOURCELIST_IHNM_DEMO,
+	RESOURCELIST_MAX
+};
+
+// Make sure to update FontLists in font.c if this enum is reordered.
+enum GameFontList : uint8 {
+	FONTLIST_NONE = 0,
+	FONTLIST_ITE,
+	FONTLIST_ITE_DEMO,
+	FONTLIST_ITE_WIN_DEMO,
+	FONTLIST_IHNM_DEMO,
+	FONTLIST_IHNM_CD,
+	FONTLIST_MAX
+};
+
+// Make sure to update PatchLists in resource.c if this enum is reordered.
+enum GamePatchList : uint8 {
+	PATCHLIST_NONE = 0,
+	PATCHLIST_ITE,
+	PATCHLIST_ITE_MAC,
+	PATCHLIST_MAX
+};
+
+// Make sure to update ITE_IntroLists in introproc_ite.c if this enum is reordered.
 enum GameIntroList : uint8 {
 	INTROLIST_NONE = 0,
 	INTROLIST_ITE_DEFAULT,
@@ -106,10 +109,9 @@ struct SAGAGameDescription {
 	int gameId;
 	uint32 features;
 	int startSceneNumber;
-	const GameResourceDescription *resourceDescription;
-	int fontsCount;
-	const GameFontDescription *fontDescriptions;
-	const GamePatchDescription *patchDescriptions;
+	GameResourceList resourceList;
+	GameFontList fontList;
+	GamePatchList patchList;
 	GameIntroList introList;
 };
 

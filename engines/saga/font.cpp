@@ -33,6 +33,25 @@
 
 namespace Saga {
 
+static const GameFontDescription ITEDEMO_GameFonts[]    = { {0}, {1} };
+static const GameFontDescription ITEWINDEMO_GameFonts[] = { {2}, {0} };
+static const GameFontDescription ITE_GameFonts[]        = { {2}, {0}, {1} };
+static const GameFontDescription IHNMDEMO_GameFonts[]   = { {2}, {3}, {4} };
+// Font 6 is kIHNMFont8, font 8 is kIHNMMainFont
+static const GameFontDescription IHNMCD_GameFonts[]     = { {2}, {3}, {4}, {5}, {6}, {7}, {8} };
+
+static struct {
+	const GameFontDescription *list;
+	int count;
+} FontLists[FONTLIST_MAX] = {
+	/* FONTLIST_NONE */         { nullptr,              0                               },
+	/* FONTLIST_ITE */          { ITE_GameFonts,        ARRAYSIZE(ITE_GameFonts)        },
+	/* FONTLIST_ITE_DEMO */     { ITEDEMO_GameFonts,    ARRAYSIZE(ITEDEMO_GameFonts)    },
+	/* FONTLIST_ITE_WIN_DEMO */ { ITEWINDEMO_GameFonts, ARRAYSIZE(ITEWINDEMO_GameFonts) },
+	/* FONTLIST_IHNM_DEMO */    { IHNMDEMO_GameFonts,   ARRAYSIZE(IHNMDEMO_GameFonts)   },
+	/* FONTLIST_IHNM_CD */      { IHNMCD_GameFonts,     ARRAYSIZE(IHNMCD_GameFonts)     },
+};
+
 Font::FontId Font::knownFont2FontIdx(KnownFont font) {
 	FontId fontId = kSmallFont;
 
@@ -138,19 +157,23 @@ void Font::textDraw(FontId fontId, const char *text, const Common::Point &point,
 }
 
 DefaultFont::DefaultFont(SagaEngine *vm) : Font(vm), _fontMapping(0), _chineseFont(nullptr), _chineseFontWidth(0), _chineseFontHeight(0) {
-	int i;
+	uint i;
 
 	// Load font module resource context
 
-	assert(_vm->getFontsCount() > 0);
+	GameFontList index = _vm->getFontList();
+	assert(index < FONTLIST_MAX && index > FONTLIST_NONE);
+	assert(FontLists[index].list);
+	assert(FontLists[index].count > 0);
 
-	_fonts.resize(_vm->getFontsCount());
-	for (i = 0; i < _vm->getFontsCount(); i++) {
+	_fonts.resize(FontLists[index].count);
+
+	for (i = 0; i < _fonts.size(); i++) {
 #ifdef __DS__
 		_fonts[i].outline.font = NULL;
 		_fonts[i].normal.font = NULL;
 #endif
-		loadFont(&_fonts[i],	_vm->getFontDescription(i)->fontResourceId);
+		loadFont(&_fonts[i],	FontLists[index].list[i].fontResourceId);
 	}
 
 	if (_vm->getGameId() == GID_ITE && _vm->getLanguage() == Common::ZH_TWN)
@@ -161,7 +184,7 @@ DefaultFont::~DefaultFont() {
 	debug(8, "DefaultFont::~DefaultFont(): Freeing fonts.");
 
 #ifdef __DS__
-	for (int i = 0; i < _vm->getFontsCount(); i++) {
+	for (uint i = 0; i < _fonts.size(); i++) {
 		if (_fonts[i].outline.font) {
 			free(_fonts[i].outline.font);
 		}
