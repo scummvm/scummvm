@@ -50,7 +50,7 @@ void Combat::clear() {
 	_val1 = 0;
 	_val6 = _val7 = 0;
 	_val8 = _val9 = _val10 = 0;
-	_val11 = 0;
+	_destAC = 0;
 	_numberOfTimes = 0;
 	_attackerLevel = 0;
 	_advanceIndex = 0;
@@ -789,8 +789,8 @@ void Combat::attackMonster(int monsterNum) {
 		}
 
 		if (g_globals->_activeSpells._s.cursed) {
-			if (++_val11 > 255)
-				_val11 = 200;
+			if (++_destAC > 255)
+				_destAC = 200;
 		}
 
 		addAttackDamage();
@@ -807,11 +807,11 @@ void Combat::attackMonster(int monsterNum) {
 void Combat::addAttackDamage() {
 	_damage = 0;
 	_timesHit = 0;
-	_val11 += 10;
+	_destAC += 10;
 
 	for (int i = 0; i < _numberOfTimes; ++i) {
 		int val = getRandomNumber(20);
-		if (val == 20 || (val != 1 && (val + _attackerLevel) >= _val11)) {
+		if (val == 20 || (val != 1 && (val + _attackerLevel) >= _destAC)) {
 			_damage = MAX(_damage + (int)_attackAttr2._current +
 				getRandomNumber(_attackAttr2._base), 255);
 			++_timesHit;
@@ -1384,6 +1384,103 @@ void Combat::disintegration() {
 	};
 
 	displaySpellResult(msg);
+}
+
+void Combat::monsterAttack(InfoMessage &msg) {
+	int styleNum = getRandomNumber(
+		(msg._lines.back().size() < 13) ? 15 : 11);
+	Common::String attackStyle = STRING[Common::String::format(
+		"dialogs.combat.attack_types.%d", styleNum)];
+	_val10 = 0;
+
+	msg._lines.back()._text += attackStyle;
+	monsterAttack2(msg);
+}
+
+void Combat::monsterAttack2(InfoMessage &msg) {
+	Character &c = *g_globals->_currCharacter;
+
+	// Add the destination character being attacked
+	msg._lines.back()._text += ' ';
+	msg._lines.back()._text += c.getDisplayName();
+
+	_destAC = c._ac._base;
+	int monsterIndex = getMonsterIndex();
+	_attackerLevel = _arr1[monsterIndex] * 2 + 4;
+
+	if (c._condition & (ASLEEP | BLINDED | PARALYZED))
+		_attackerLevel += 5;
+
+	if (_val10) {
+		_attackAttr2._base = _monsterP->_specialAbility & 0x7f;
+		_numberOfTimes = 1;
+
+	} else {
+		_numberOfTimes = _monsterP->_numberOfAttacks;
+		_attackAttr2._base = _monsterP->_maxDamage;
+	}
+
+	if (g_globals->_activeSpells._s.invisbility)
+		_destAC += 3;
+
+	if (g_globals->_activeSpells._s.cursed) {
+		_attackAttr2._current = g_globals->_activeSpells._s.cursed;
+
+		int attackerLevel = attackerLevel + _attackAttr2._current;
+		_attackerLevel = (attackerLevel > 255) ? 192 : attackerLevel;
+	}
+
+	msg._lines.back()._text += ' ';
+	msg._lines.back()._text += getAttackString();
+
+	if (g_globals->_activeSpells._s.power_shield)
+		_damage /= 2;
+
+	if (_val10 && g_globals->_activeSpells._s.shield)
+		_damage = MAX((int)_damage - 8, 0);
+
+	// TODO
+}
+
+Common::String Combat::getAttackString() {
+	Common::String line1;
+	if (_numberOfTimes == 1) {
+		line1 = STRING["dialogs.combat.once"];
+	} else {
+		line1 = Common::String::format("%d %s", _numberOfTimes,
+			STRING["dialogs.combat.times"].c_str());
+	}
+
+	line1 += Common::String::format(" %s ", STRING["dialogs.combat.and"].c_str());
+
+	if (_damage == 0) {
+		line1 += STRING["dialogs.combat.misses"];
+	} else {
+		line1 += STRING["dialogs.combat.hit"];
+		line1 += ' ';
+
+		if (_numberOfTimes > 1) {
+			if (_timesHit == 1) {
+				line1 += STRING["dialogs.combat.once"];
+			} else {
+				line1 += Common::String::format("%d %s", _timesHit,
+					STRING["dialogs.combat.times"].c_str());
+			}
+		}
+
+		line1 += Common::String::format(" %s %d %s",
+			STRING["dialogs.combat.for"].c_str(), _damage,
+			STRING[_damage == 1 ? "dialogs.combat.point" : "dialogs.combat.points"].c_str());
+
+		if (line1.size() < 30) {
+			line1 += ' ';
+			line1 += STRING["dialogs.combat.of_damage"];
+		} else {
+			line1 += '!';
+		}
+	}
+
+	return line1;
 }
 
 } // namespace Game

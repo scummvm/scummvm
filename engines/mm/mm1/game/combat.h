@@ -52,7 +52,8 @@ protected:
 	bool _allowFight, _allowShoot, _allowCast, _allowAttack;
 	byte _val6, _val7;
 	int _val8, _val9, _val10;
-	int _val11, _numberOfTimes;
+	int _destAC;
+	int _numberOfTimes;
 	int _attackerLevel;
 	int _advanceIndex;
 	int _handicap1, _handicap2;
@@ -75,7 +76,7 @@ protected:
 		SELECT_OPTION, FIGHT_WHICH, DEFEATED_MONSTERS,
 		NEXT_ROUND, MONSTER_ADVANCES, MONSTERS_AFFECTED,
 		MONSTER_FLEES, MONSTER_WANDERS, MONSTER_SPELL,
-		CHAR_ATTACKS
+		CHAR_ATTACKS, MONSTER_ATTACK
 	};
 	Mode _mode = SELECT_OPTION;
 
@@ -242,6 +243,17 @@ protected:
 	 * Handles a monster touch action, if any
 	 */
 	bool monsterTouch(Common::String &line);
+
+	/**
+	 * Handles monster atttack logic
+	 */
+	void monsterAttack(InfoMessage &msg);
+	void monsterAttack2(InfoMessage &msg);
+
+	/**
+	 * Get attack damage string
+	 */
+	Common::String getAttackString();
 
 private:
 	void spellFailed();
