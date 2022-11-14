@@ -1,6 +1,6 @@
-/* ScummVM Tools
+/* cummVM - Graphic Adventure Engine
  *
- * ScummVM Tools is the legal property of its developers, whose names
+ * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
@@ -112,7 +112,7 @@ Common::SeekableReadStream *MpsInstaller::createReadStreamForMember(const Common
 		return nullptr;
 	}
 
-       
+
 	uint32 off = desc._offsetInVolume;
 	uint vol = desc._volumeNumber;
 	uint32 rem = desc._compressedSize;
@@ -133,7 +133,7 @@ Common::SeekableReadStream *MpsInstaller::createReadStreamForMember(const Common
 			delete[] compressedBuf;
 			return nullptr;
 		}
-	       
+
 		rem -= actual;
 		outptr += actual;
 		if (actual == 0)
@@ -161,7 +161,7 @@ Common::SeekableReadStream *MpsInstaller::createReadStreamForMember(const Common
 		}
 		delete[] compressedBuf;
 		compressedBuf = nullptr;
-				
+
 		break;
 	}
 
