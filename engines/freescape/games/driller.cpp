@@ -472,11 +472,10 @@ void DrillerEngine::pressedKey(const int keycode) {
 
 		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
 		const Math::Vector3d gasPocket3D(gasPocket.x, drill.y(), gasPocket.y);
-		addDrill(drill);
 		float distanceToPocket = (gasPocket3D - drill).length();
 		float success = 100.0 * (1.0 - distanceToPocket / _currentArea->_gasPocketRadius);
 		insertTemporaryMessage(_messagesList[3], _countdown - 2);
-
+		addDrill(drill, success > 0);
 		if (success <= 0) {
 			insertTemporaryMessage(_messagesList[9], _countdown - 4);
 			return;
@@ -537,7 +536,7 @@ Math::Vector3d DrillerEngine::drillPosition() {
 }
 
 bool DrillerEngine::drillDeployed(Area *area) {
-	return (area->objectWithID(252) != nullptr);
+	return (area->objectWithID(255) != nullptr);
 }
 
 bool DrillerEngine::checkDrill(const Math::Vector3d position) {
@@ -615,7 +614,7 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 }
 
 
-void DrillerEngine::addDrill(const Math::Vector3d position) {
+void DrillerEngine::addDrill(const Math::Vector3d position, bool gasFound) {
 	// int drillObjectIDs[8] = {255, 254, 253, 252, 251, 250, 248, 247};
 	GeometricObject *obj = nullptr;
 	Math::Vector3d origin = position;
@@ -673,36 +672,41 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 	heightLastObject = obj->getSize().y();
 	// origin.setValue(2, origin.z() - obj->getSize().z() / 5);
 
-	id = 252;
-	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
-	assert(obj);
-	obj = (GeometricObject *)obj->duplicate();
-	origin.setValue(0, origin.x() + obj->getSize().x());
-	origin.setValue(1, origin.y() + heightLastObject);
-	origin.setValue(2, origin.z() + obj->getSize().z());
-	obj->setOrigin(origin);
-	assert(obj);
-	obj->makeVisible();
-	_currentArea->addObject(obj);
+	if (gasFound) {
+		id = 252;
+		debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
+		obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+		assert(obj);
+		obj = (GeometricObject *)obj->duplicate();
+		origin.setValue(0, origin.x() + obj->getSize().x());
+		origin.setValue(1, origin.y() + heightLastObject);
+		origin.setValue(2, origin.z() + obj->getSize().z());
+		obj->setOrigin(origin);
+		assert(obj);
+		obj->makeVisible();
+		_currentArea->addObject(obj);
+		heightLastObject = obj->getSize().y();
 
-	heightLastObject = obj->getSize().y();
-
-	id = 251;
-	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
-	assert(obj);
-	obj = (GeometricObject *)obj->duplicate();
-	origin.setValue(1, origin.y() + heightLastObject);
-	obj->setOrigin(origin);
-	assert(obj);
-	obj->makeVisible();
-	_currentArea->addObject(obj);
+		id = 251;
+		debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
+		obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+		assert(obj);
+		obj = (GeometricObject *)obj->duplicate();
+		origin.setValue(1, origin.y() + heightLastObject);
+		obj->setOrigin(origin);
+		assert(obj);
+		obj->makeVisible();
+		_currentArea->addObject(obj);
+	}
 }
 
 void DrillerEngine::removeDrill(Area *area) {
 	for (int16 id = 251; id < 256; id++) {
-		area->removeObject(id);
+		if (id > 252)
+			assert(area->objectWithID(id));
+
+		if (area->objectWithID(id))
+			area->removeObject(id);
 	}
 }
 

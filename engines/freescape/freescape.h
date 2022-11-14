@@ -337,7 +337,7 @@ private:
 	void loadGlobalObjects(Common::SeekableReadStream *file, int offset);
 	bool drillDeployed(Area *area);
 	Math::Vector3d drillPosition();
-	void addDrill(const Math::Vector3d position);
+	void addDrill(const Math::Vector3d position, bool gasFound);
 	bool checkDrill(const Math::Vector3d position);
 	void removeDrill(Area *area);
 	StateBits _drilledAreas;
