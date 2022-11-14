@@ -1987,7 +1987,7 @@ void ScummEngine_v7::saveLoadWithSerializer(Common::Serializer &s) {
 
 	if (s.getVersion() <= VER(68) && s.isLoading()) {
 		// WORKAROUND bug #3483: Reset the default charset color to a sane value.
-		_string[0]._default.charset = 1;
+		_string[0]._default.charset = _game.version == 7 ? 2 : 1;
 	}
 
 	// The original Save/Load screen for COMI saves a heap savegame when it is entered
