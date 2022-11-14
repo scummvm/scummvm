@@ -38,7 +38,7 @@ static const DebugChannelDef debugFlagList[] = {
 };
 
 static const PlainGameDescriptor draciGames[] = {
-	{ "draci", "Draci Historie" },
+	{ "draci", "Dra\304\215\303\255 Historie" },
 	{ nullptr, nullptr }
 };
 
@@ -100,11 +100,11 @@ public:
 	}
 
 	const char *getEngineName() const override {
-		return "Draci Historie";
+		return "Dra\304\215\303\255 Historie";
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Draci Historie (C) 1995 NoSense";
+		return "Dra\304\215\303\255 Historie (C) 1995 NoSense";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {
