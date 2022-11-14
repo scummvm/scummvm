@@ -550,10 +550,20 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
 	assert(obj);
 	obj = (GeometricObject *)obj->duplicate();
+	origin.setValue(1, origin.y() - 5);
 	obj->setOrigin(origin);
-	//if (!_currentArea->checkCollisions(obj->_boundingBox))
-	//	return false;
 
+	// This bounding box is too large and can result in the drill to float next to a wall
+	if (_currentArea->checkCollisions(obj->_boundingBox).empty())
+		return false;
+
+	origin.setValue(1, origin.y() + 15);
+	obj->setOrigin(origin);
+
+	if (!_currentArea->checkCollisions(obj->_boundingBox).empty())
+		return false;
+
+	origin.setValue(1, origin.y() - 10);
 	heightLastObject = obj->getSize().y();
 	delete obj;
 
@@ -595,20 +605,6 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 	// origin.setValue(0, origin.x() - obj->getSize().x() / 5);
 	heightLastObject = obj->getSize().y();
 	// origin.setValue(2, origin.z() - obj->getSize().z() / 5);
-	delete obj;
-
-	id = 252;
-	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
-	assert(obj);
-	obj = (GeometricObject *)obj->duplicate();
-	origin.setValue(1, origin.y() + heightLastObject);
-	obj->setOrigin(origin);
-	assert(obj);
-
-	if (!_currentArea->checkCollisions(obj->_boundingBox).empty())
-		return false;
-
 	delete obj;
 	return true;
 }
