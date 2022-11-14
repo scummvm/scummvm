@@ -678,6 +678,21 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
 	assert(obj);
 	obj = (GeometricObject *)obj->duplicate();
+	origin.setValue(0, origin.x() + obj->getSize().x());
+	origin.setValue(1, origin.y() + heightLastObject);
+	origin.setValue(2, origin.z() + obj->getSize().z());
+	obj->setOrigin(origin);
+	assert(obj);
+	obj->makeVisible();
+	_currentArea->addObject(obj);
+
+	heightLastObject = obj->getSize().y();
+
+	id = 251;
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
+	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+	assert(obj);
+	obj = (GeometricObject *)obj->duplicate();
 	origin.setValue(1, origin.y() + heightLastObject);
 	obj->setOrigin(origin);
 	assert(obj);
@@ -686,7 +701,7 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 }
 
 void DrillerEngine::removeDrill(Area *area) {
-	for (int16 id = 252; id < 256; id++) {
+	for (int16 id = 251; id < 256; id++) {
 		area->removeObject(id);
 	}
 }
