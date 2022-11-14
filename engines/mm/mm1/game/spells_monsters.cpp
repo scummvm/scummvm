@@ -447,11 +447,7 @@ bool SpellsMonsters::casts() {
 }
 
 void SpellsMonsters::addCharName() {
-	// Wrap name in special characters so that characters
-	// with multiple word names will capitalize each word
-	// of the name
-	add(Common::String("|%s|",
-		g_globals->_currCharacter->_name));
+	add(g_globals->_currCharacter->getDisplayName());
 }
 
 void SpellsMonsters::damageRandomChar() {

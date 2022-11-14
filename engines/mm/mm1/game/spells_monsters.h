@@ -40,7 +40,6 @@ typedef void (SpellsMonsters::*SpellMonstersSpell)();
 class SpellsMonsters : public GameLogic {
 private:
 	static const SpellMonstersSpell SPELLS[MONSTER_SPELLS_COUNT];
-	LineArray _lines;
 
 	void spell01_curse();
 	void spell02_energyBlast();
@@ -146,6 +145,7 @@ private:
 	void handlePartyEffects();
 
 protected:
+	LineArray _lines;
 	byte _arr1[MAX_COMBAT_MONSTERS];
 	byte _monsterStatus[MAX_COMBAT_MONSTERS];
 	int _damage = 0;
