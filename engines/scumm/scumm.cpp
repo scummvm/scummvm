@@ -2032,10 +2032,8 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 		// support this with the Player_AD code at the moment. The reason here
 		// is that multi MIDI is supported internally by our iMuse output.
 		_musicEngine = new Player_AD(this, _mixer->mutex());
-#ifdef ENABLE_HE
 	} else if (_game.platform == Common::kPlatformDOS && _sound->_musicType == MDT_ADLIB && _game.heversion >= 60) {
 		_musicEngine = new Player_HE(this);
-#endif
 	} else if (_game.version >= 3 && _game.heversion <= 62) {
 		MidiDriver *nativeMidiDriver = nullptr;
 		MidiDriver *adlibMidiDriver = nullptr;

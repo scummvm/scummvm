@@ -29,8 +29,6 @@
 
 class MidiParser;
 
-#ifdef ENABLE_HE
-
 namespace Scumm {
 class ScummEngine;
 
@@ -69,7 +67,5 @@ private:
 	void loadAdLibBank();
 };
 }
-
-#endif
 
 #endif

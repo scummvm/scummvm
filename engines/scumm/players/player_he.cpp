@@ -19,8 +19,6 @@
  *
  */
 
-#ifdef ENABLE_HE
-
 #include "scumm/players/player_he.h"
 #include "scumm/scumm.h"
 #include "scumm/file.h"
@@ -236,5 +234,3 @@ void Player_HE::send(uint32 b) {
 }
 
 }
-
-#endif
