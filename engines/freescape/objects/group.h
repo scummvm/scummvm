@@ -19,50 +19,29 @@
  *
  */
 
-// Based on Phantasma code by Thomas Harte (2013),
-// available at https://github.com/TomHarte/Phantasma/ (MIT)
-
-#ifndef FREESCAPE_SENSOR_H
-#define FREESCAPE_SENSOR_H
+#ifndef FREESCAPE_GROUP_H
+#define FREESCAPE_GROUP_H
 
 #include "freescape/objects/object.h"
 
 namespace Freescape {
 
-class Sensor : public Object {
+class Group : public Object {
 public:
-	Sensor(
-		uint16 objectID_,
+	Group(uint16 objectID_,
 		const Math::Vector3d &origin_,
-		const Math::Vector3d &rotation_,
-		byte color_,
-		byte firingInterval_,
-		uint16 firingRange_,
-		uint16 flags_) {
+		const Math::Vector3d &rotation_) {
 		_objectID = objectID_;
 		_origin = origin_;
 		_rotation = rotation_;
-		_color = color_;
-		_firingInterval = firingInterval_;
-		_firingRange = firingRange_;
-		_flags = flags_;
 	}
-	byte _color;
-	byte _firingInterval;
-	uint16 _firingRange;
 
-	virtual ~Sensor() {}
-	bool isDrawable() override { return false; }
-	bool isPlanar() override { return true; }
-	void scale(int factor) override { _origin = _origin / factor; };
-	Object *duplicate() override { return (new Sensor(_objectID, _origin, _rotation, _color, _firingInterval, _firingRange, _flags)); };
-
-	ObjectType getType() override { return kSensorType; };
-	Math::Vector3d getRotation() { return _rotation; }
-
-	void draw(Freescape::Renderer *gfx) override { error("cannot render sensor"); };
+	ObjectType getType() override { return ObjectType::kGroupType; };
+	void draw(Freescape::Renderer *gfx) override { error("cannot render Group"); };
+	void scale(int factor) override { warning("cannot scale Group"); };
+	Object *duplicate() override { error("cannot duplicate Group"); };
 };
 
 } // End of namespace Freescape
 
-#endif // FREESCAPE_SENSOR_H
+#endif // FREESCAPE_GLOBAL_H

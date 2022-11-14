@@ -27,6 +27,7 @@
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
 #include "freescape/objects/global.h"
+#include "freescape/objects/group.h"
 #include "freescape/objects/sensor.h"
 
 namespace Freescape {
@@ -212,6 +213,23 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
 	case kSensorType: {
 		debugC(1, kFreescapeDebugParser, "rotation: %f %f %f", v.x(), v.y(), v.z());
+		if (isCastle()) { // TODO
+			return new Sensor(
+				objectID,
+				32 * position,
+				5 * v,
+				0,
+				0,
+				0,
+				0);
+		}
+
+		assert(byteSizeOfObject >= 5);
+		byte color = readField(file, 8);
+		byte firingInterval = readField(file, 8);
+		uint16 firingRange = readField(file, 16);
+		byte sensorFlags = readField(file, 8);
+		byteSizeOfObject = byteSizeOfObject - 5;
 		if (byteSizeOfObject > 0) {
 			// TODO: there is something here
 			debugC(1, kFreescapeDebugParser, "Warning: extra %d bytes in sensor", byteSizeOfObject);
@@ -225,13 +243,17 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		return new Sensor(
 			objectID,
 			32 * position,
-			5 * v); // rotation
+			5 * v, // rotation?
+			color,
+			firingInterval,
+			firingRange,
+			sensorFlags);
 	} break;
 
 	case kGroupType:
 		debugC(1, kFreescapeDebugParser, "Object of type 'group'");
 		file->seek(byteSizeOfObject, SEEK_CUR);
-		return new Sensor(
+		return new Group(
 			objectID,
 			position,
 			v);
