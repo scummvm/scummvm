@@ -1386,23 +1386,17 @@ void Combat::disintegration() {
 	displaySpellResult(msg);
 }
 
-void Combat::monsterAttack(InfoMessage &msg) {
-	int styleNum = getRandomNumber(
-		(msg._lines.back().size() < 13) ? 15 : 11);
-	Common::String attackStyle = STRING[Common::String::format(
-		"dialogs.combat.attack_types.%d", styleNum)];
+void Combat::monsterAttackRandom() {
+	size_t monsterNameSize = _monsterList[getMonsterIndex()]._name.size() + 1;
+
+	_monsterAttackStyle = getRandomNumber((monsterNameSize < 13) ? 15 : 11);
 	_val10 = 0;
 
-	msg._lines.back()._text += attackStyle;
-	monsterAttack2(msg);
+	monsterAttackInner();
 }
 
-void Combat::monsterAttack2(InfoMessage &msg) {
+void Combat::monsterAttackInner() {
 	Character &c = *g_globals->_currCharacter;
-
-	// Add the destination character being attacked
-	msg._lines.back()._text += ' ';
-	msg._lines.back()._text += c.getDisplayName();
 
 	_destAC = c._ac._base;
 	int monsterIndex = getMonsterIndex();
@@ -1430,57 +1424,7 @@ void Combat::monsterAttack2(InfoMessage &msg) {
 		_attackerLevel = (attackerLevel > 255) ? 192 : attackerLevel;
 	}
 
-	msg._lines.back()._text += ' ';
-	msg._lines.back()._text += getAttackString();
-
-	if (g_globals->_activeSpells._s.power_shield)
-		_damage /= 2;
-
-	if (_val10 && g_globals->_activeSpells._s.shield)
-		_damage = MAX((int)_damage - 8, 0);
-
-	// TODO
-}
-
-Common::String Combat::getAttackString() {
-	Common::String line1;
-	if (_numberOfTimes == 1) {
-		line1 = STRING["dialogs.combat.once"];
-	} else {
-		line1 = Common::String::format("%d %s", _numberOfTimes,
-			STRING["dialogs.combat.times"].c_str());
-	}
-
-	line1 += Common::String::format(" %s ", STRING["dialogs.combat.and"].c_str());
-
-	if (_damage == 0) {
-		line1 += STRING["dialogs.combat.misses"];
-	} else {
-		line1 += STRING["dialogs.combat.hit"];
-		line1 += ' ';
-
-		if (_numberOfTimes > 1) {
-			if (_timesHit == 1) {
-				line1 += STRING["dialogs.combat.once"];
-			} else {
-				line1 += Common::String::format("%d %s", _timesHit,
-					STRING["dialogs.combat.times"].c_str());
-			}
-		}
-
-		line1 += Common::String::format(" %s %d %s",
-			STRING["dialogs.combat.for"].c_str(), _damage,
-			STRING[_damage == 1 ? "dialogs.combat.point" : "dialogs.combat.points"].c_str());
-
-		if (line1.size() < 30) {
-			line1 += ' ';
-			line1 += STRING["dialogs.combat.of_damage"];
-		} else {
-			line1 += '!';
-		}
-	}
-
-	return line1;
+	setMode(MONSTER_ATTACK);
 }
 
 } // namespace Game

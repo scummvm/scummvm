@@ -86,6 +86,8 @@ protected:
 	bool _divineInterventionUsed = false;
 	size_t _spellMonsterCount = 0;
 
+	int _monsterAttackStyle = -1;
+
 	/**
 	 * Constructor
 	 */
@@ -247,13 +249,8 @@ protected:
 	/**
 	 * Handles monster atttack logic
 	 */
-	void monsterAttack(InfoMessage &msg);
-	void monsterAttack2(InfoMessage &msg);
-
-	/**
-	 * Get attack damage string
-	 */
-	Common::String getAttackString();
+	void monsterAttackRandom();
+	void monsterAttackInner();
 
 private:
 	void spellFailed();

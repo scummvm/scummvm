@@ -121,6 +121,11 @@ private:
 	void writeMonsterSpell();
 
 	/**
+	 * Write out monster's attack
+	 */
+	void writeMonsterAttack();
+
+	/**
 	 * Whether there's messages remaining
 	 */
 	void checkMonsterSpellDone();
@@ -174,6 +179,11 @@ private:
 	 * Write message for characters attacking monsters
 	 */
 	void writeCharAttackDamage();
+
+	/**
+	 * Get attack damage string
+	 */
+	Common::String getAttackString();
 
 	/**
 	 * Writes out a message
