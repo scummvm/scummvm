@@ -76,6 +76,10 @@ struct Monster {
 	byte _field1d;
 	byte _field1e;
 	byte _field1f;
+
+	Common::String getDisplayName() const {
+		return Common::String::format("|%s|", _name.c_str());
+	}
 };
 
 class Monsters : public TextParser {

@@ -108,11 +108,16 @@ void Combat::draw() {
 		writeMonsterAttack();
 		delaySeconds(4);
 		return;
+	case INFILTRATION:
+		writeInfiltration();
+		delaySeconds(3);
+		return;
 	case CHAR_ATTACKS:
 		writeMonsters();
 		writeCharAttackDamage();
 		delaySeconds(3);
 		return;
+
 	default:
 		break;
 	}
@@ -157,6 +162,8 @@ void Combat::timeout() {
 		checkMonsterSpells();
 		return;
 	case MONSTER_WANDERS:
+	case INFILTRATION:
+	case MONSTER_ATTACK:
 		writeParty();
 		writeMonsters();
 		checkParty();
@@ -175,9 +182,6 @@ void Combat::timeout() {
 		g_events->send("Game", GameMessage("UPDATE"));
 		return;
 	}
-	case MONSTER_ATTACK:
-		checkParty();
-		return;
 	default:
 		 break;
 	}
@@ -614,6 +618,17 @@ void Combat::writeMonsterAttack() {
 		if (!_lines.back()._text.empty())
 			writeString(0, 22, _lines.back()._text);
 	}
+}
+
+void Combat::writeInfiltration() {
+	Common::String line = Common::String::format("%s %s",
+		_monsterP->getDisplayName().c_str(),
+		STRING["dialogs.combat.infiltration"].c_str());
+
+	resetBottom();
+	writeString(0, 20, line);
+	Sound::sound(SOUND_2);
+	Sound::sound(SOUND_2);
 }
 
 void Combat::checkMonsterSpellDone() {

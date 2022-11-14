@@ -49,7 +49,8 @@ void Combat::clear() {
 	_allowFight = _allowShoot = _allowCast = _allowAttack = false;
 	_val1 = 0;
 	_val6 = _val7 = 0;
-	_val8 = _val9 = _val10 = 0;
+	_partyIndex = _val9 = 0;
+	_val10 = _destCharCtr = 0;
 	_destAC = 0;
 	_numberOfTimes = 0;
 	_attackerLevel = 0;
@@ -411,7 +412,7 @@ void Combat::nextRound() {
 	clearArrays();
 	g_globals->_party.updateAC();
 
-	_val8 = getRandomNumber(_party.size());
+	_partyIndex = getRandomNumber(_party.size());
 	updateHighestLevel();
 
 	setMode(NEXT_ROUND);
@@ -647,17 +648,8 @@ void Combat::removeMonster() {
 void Combat::checkParty() {
 	_val10 = 0;
 
-	bool partyAlive = false;
-	for (auto &c : _party) {
-		if (!(c->_condition & (DEAD | BAD_CONDITION)))
-			partyAlive = true;
-	}
-
-	if (!partyAlive) {
-		g_events->clearViews();
-		g_events->replaceView("Dead");
+	if (g_globals->_party.checkPartyDead())
 		return;
-	}
 
 	// Update the array for the party
 	for (uint i = 0; i < _party.size(); ++i) {
@@ -1425,6 +1417,45 @@ void Combat::monsterAttackInner() {
 	}
 
 	setMode(MONSTER_ATTACK);
+}
+
+void Combat::selectMonsterTarget() {
+	// Iterate through finding a character target for the monster
+	do {
+		uint idx = _partyIndex + 1;
+		if (idx >= g_globals->_party.size())
+			idx = 0;
+
+		// Find a party position that can attack
+		int wrapCount = 0;
+		while (!_canAttack[idx]) {
+			if (++idx >= g_globals->_party.size()) {
+				idx = 0;
+				if (++wrapCount > 1)
+					error("No-one in party could attack. Shouldn't happen");
+			}
+		}
+		_partyIndex = idx;
+		Character &c = g_globals->_party[_partyIndex];
+		g_globals->_currCharacter = &c;
+
+		if (!(c._condition & BAD_CONDITION) && !(c._condition & UNCONSCIOUS)) {
+			// Monster will attack character using a random attack style
+			// message (which doesn't make any real difference)
+			monsterAttackRandom();
+			return;
+		}
+
+	} while (++_destCharCtr < g_globals->_party.size());
+
+	// At this point, fall back on a generic display message
+	// that the monster infiltrates the ranks, which basically
+	// means enabling the whole party to be able to attack directly
+	for (int i = 0; i < 6; ++i)
+		_canAttack[i] = true;
+	_attackerVal = g_globals->_party.size() * 2;
+
+	setMode(INFILTRATION);
 }
 
 } // namespace Game

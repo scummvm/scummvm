@@ -51,7 +51,8 @@ protected:
 	int _monsterIndex, _currentChar;
 	bool _allowFight, _allowShoot, _allowCast, _allowAttack;
 	byte _val6, _val7;
-	int _val8, _val9, _val10;
+	int _partyIndex, _val9, _val10;
+	int _destCharCtr;
 	int _destAC;
 	int _numberOfTimes;
 	int _attackerLevel;
@@ -76,7 +77,7 @@ protected:
 		SELECT_OPTION, FIGHT_WHICH, DEFEATED_MONSTERS,
 		NEXT_ROUND, MONSTER_ADVANCES, MONSTERS_AFFECTED,
 		MONSTER_FLEES, MONSTER_WANDERS, MONSTER_SPELL,
-		CHAR_ATTACKS, MONSTER_ATTACK
+		CHAR_ATTACKS, MONSTER_ATTACK, INFILTRATION
 	};
 	Mode _mode = SELECT_OPTION;
 
@@ -251,6 +252,11 @@ protected:
 	 */
 	void monsterAttackRandom();
 	void monsterAttackInner();
+
+	/**
+	 * Selects monster to attack
+	 */
+	void selectMonsterTarget();
 
 private:
 	void spellFailed();
