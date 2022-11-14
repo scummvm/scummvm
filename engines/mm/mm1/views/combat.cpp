@@ -104,6 +104,10 @@ void Combat::draw() {
 		writeMonsterSpell();
 		delaySeconds(2);
 		return;
+	case MONSTER_ATTACK:
+		writeMonsterAttack();
+		delaySeconds(4);
+		return;
 	case CHAR_ATTACKS:
 		writeMonsters();
 		writeCharAttackDamage();
@@ -563,6 +567,44 @@ void Combat::writeMonsterSpell() {
 	}
 }
 
+void Combat::writeMonsterAttack() {
+	Common::String monsterName = _monsterP->_name;
+	Common::String attackStyle = STRING[Common::String::format(
+		"dialogs.combat.attack_types.%d", _monsterAttackStyle)];
+	Character &c = *g_globals->_currCharacter;
+
+	Common::String line = Common::String::format("%s %s %s",
+		monsterName.c_str(),
+		attackStyle.c_str(),
+		getAttackString().c_str()
+	);
+	writeString(0, 20, line);
+
+	// It's not ideal, but we have to do some final minor damage
+	// adjustment here after we've written the basic damage the
+	// character will receive
+	if (g_globals->_activeSpells._s.power_shield)
+		_damage /= 2;
+
+	if (_val10 && g_globals->_activeSpells._s.shield)
+		_damage = MAX((int)_damage - 8, 0);
+
+	if (_damage) {
+		// Attacks wake up sleeping characters
+		if (!(c._condition & BAD_CONDITION))
+			c._condition &= ~ASLEEP;
+
+		// Also check for secondary monster touch action here
+		// This returns a text line to display, and can also
+		// adjust the damage amount. Another reason why we
+		// can't actually apply damage until here
+		if (monsterTouch(line))
+			writeString(0, 21, line);
+
+		subtractDamage();
+	}
+}
+
 void Combat::checkMonsterSpellDone() {
 	for (uint i = 0; i < _monsterSpellLines.size(); ++i) {
 		if (i > 0 && _monsterSpellLines[i].y ==
@@ -647,6 +689,47 @@ void Combat::writeCharAttackDamage() {
 	_isShooting = false;
 
 	writeString(0, 1, getAttackString());
+}
+
+Common::String Combat::getAttackString() {
+	Common::String line1;
+	if (_numberOfTimes == 1) {
+		line1 = STRING["dialogs.combat.once"];
+	} else {
+		line1 = Common::String::format("%d %s", _numberOfTimes,
+			STRING["dialogs.combat.times"].c_str());
+	}
+
+	line1 += Common::String::format(" %s ", STRING["dialogs.combat.and"].c_str());
+
+	if (_damage == 0) {
+		line1 += STRING["dialogs.combat.misses"];
+	} else {
+		line1 += STRING["dialogs.combat.hit"];
+		line1 += ' ';
+
+		if (_numberOfTimes > 1) {
+			if (_timesHit == 1) {
+				line1 += STRING["dialogs.combat.once"];
+			} else {
+				line1 += Common::String::format("%d %s", _timesHit,
+					STRING["dialogs.combat.times"].c_str());
+			}
+		}
+
+		line1 += Common::String::format(" %s %d %s",
+			STRING["dialogs.combat.for"].c_str(), _damage,
+			STRING[_damage == 1 ? "dialogs.combat.point" : "dialogs.combat.points"].c_str());
+
+		if (line1.size() < 30) {
+			line1 += ' ';
+			line1 += STRING["dialogs.combat.of_damage"];
+		} else {
+			line1 += '!';
+		}
+	}
+
+	return line1;
 }
 
 void Combat::setOption(SelectedOption option) {

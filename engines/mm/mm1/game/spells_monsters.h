@@ -133,12 +133,6 @@ private:
 	 */
 	void writeDamage();
 
-	/**
-	 * Subtracts the damage from the character, making
-	 * them unconscious or die if needed
-	 */
-	void subtractDamage();
-
 	bool testElementalResistance();
 
 	/**
@@ -188,6 +182,12 @@ protected:
 	bool damageType7();
 
 	void proc9();
+
+	/**
+	 * Subtracts the damage from the character, making
+	 * them unconscious or die if needed
+	 */
+	void subtractDamage();
 
 public:
 	SpellsMonsters();
