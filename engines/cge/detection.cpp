@@ -41,7 +41,7 @@ namespace CGE {
 #define GAMEOPTION_TTS  					GUIO_GAMEOPTIONS2
 
 static const PlainGameDescriptor CGEGames[] = {
-	{ "soltys", "Soltys" },
+	{ "soltys", "So\305\202tys" },
 	{ nullptr, nullptr }
 };
 
@@ -150,7 +150,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Soltys (C) 1994-1996 L.K. Avalon";
+		return "So\305\202tys (C) 1994-1996 L.K. Avalon";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {
