@@ -84,7 +84,7 @@ Font::FontId Font::knownFont2FontIdx(KnownFont font) {
 		break;
 		}
 #ifdef ENABLE_IHNM
-	} else if (_vm->getGameId() == GID_IHNM && _vm->getLanguage() == Common::ZH_ANY) {
+	} else if (_vm->getGameId() == GID_IHNM && _vm->getLanguage() == Common::ZH_TWN) {
 		// There is only one Chinese font in Chinese version AFAICT.
 		// And very little non-Chinese characters to care about them
 		fontId = kSmallFont;

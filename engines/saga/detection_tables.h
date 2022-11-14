@@ -1256,7 +1256,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 				{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", 22561056},
 				AD_LISTEND
 			},
-			Common::ZH_ANY,
+			Common::ZH_TWN,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
