@@ -213,6 +213,9 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
 	case kSensorType: {
 		debugC(1, kFreescapeDebugParser, "rotation: %f %f %f", v.x(), v.y(), v.z());
+		FCLInstructionVector instructions;
+		Common::String conditionSource;
+
 		if (isCastle()) { // TODO
 			return new Sensor(
 				objectID,
@@ -221,7 +224,9 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 				0,
 				0,
 				0,
-				0);
+				0,
+				instructions,
+				conditionSource);
 		}
 
 		assert(byteSizeOfObject >= 5);
@@ -230,14 +235,12 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		uint16 firingRange = readField(file, 16);
 		byte sensorFlags = readField(file, 8);
 		byteSizeOfObject = byteSizeOfObject - 5;
-		if (byteSizeOfObject > 0) {
-			// TODO: there is something here
-			debugC(1, kFreescapeDebugParser, "Warning: extra %d bytes in sensor", byteSizeOfObject);
-			for (int i = 0; i < byteSizeOfObject; i++)
-				readField(file, 8);
-			byteSizeOfObject = 0;
+		// grab the object condition, if there is one
+		if (byteSizeOfObject) {
+			Common::Array<uint8> conditionArray = readArray(file, byteSizeOfObject);
+			conditionSource = detokenise8bitCondition(conditionArray, instructions);
+			debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
 		}
-		assert(byteSizeOfObject == 0);
 		debugC(1, kFreescapeDebugParser, "End of object at %lx", file->pos());
 		// create an entrance
 		return new Sensor(
@@ -247,7 +250,9 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			color,
 			firingInterval,
 			firingRange,
-			sensorFlags);
+			sensorFlags,
+			instructions,
+			conditionSource);
 	} break;
 
 	case kGroupType:

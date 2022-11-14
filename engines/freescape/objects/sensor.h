@@ -26,6 +26,7 @@
 #define FREESCAPE_SENSOR_H
 
 #include "freescape/objects/object.h"
+#include "freescape/language/instruction.h"
 
 namespace Freescape {
 
@@ -38,7 +39,9 @@ public:
 		byte color_,
 		byte firingInterval_,
 		uint16 firingRange_,
-		uint16 flags_) {
+		uint16 flags_,
+		FCLInstructionVector condition_,
+		Common::String conditionSource_) {
 		_objectID = objectID_;
 		_origin = origin_;
 		_rotation = rotation_;
@@ -46,16 +49,21 @@ public:
 		_firingInterval = firingInterval_;
 		_firingRange = firingRange_;
 		_flags = flags_;
+		_conditionSource = conditionSource_;
+		_condition = condition_;
 	}
 	byte _color;
 	byte _firingInterval;
 	uint16 _firingRange;
 
+	Common::String _conditionSource;
+	FCLInstructionVector _condition;
+
 	virtual ~Sensor() {}
 	bool isDrawable() override { return false; }
 	bool isPlanar() override { return true; }
 	void scale(int factor) override { _origin = _origin / factor; };
-	Object *duplicate() override { return (new Sensor(_objectID, _origin, _rotation, _color, _firingInterval, _firingRange, _flags)); };
+	Object *duplicate() override { return (new Sensor(_objectID, _origin, _rotation, _color, _firingInterval, _firingRange, _flags, _condition, _conditionSource)); };
 
 	ObjectType getType() override { return kSensorType; };
 	Math::Vector3d getRotation() { return _rotation; }
