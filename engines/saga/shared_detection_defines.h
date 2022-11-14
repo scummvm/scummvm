@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef SAGA_SHARED_DETECTION_DEFINES_H
+#define SAGA_SHARED_DETECTION_DEFINES_H
+
 // Default scenes
 #define ITE_DEFAULT_SCENE 32
 #define IHNM_DEFAULT_SCENE 151
@@ -26,43 +29,24 @@
 #define IHNMDEMO_DEFAULT_SCENE 144
 
 namespace Saga {
-typedef int (SceneProc) (int, void *);
 
-class SceneHandlers {
-public:
-	static int SC_ITEIntroAnimProc(int param, void *refCon);
-	static int SC_ITEIntroCave1Proc(int param, void *refCon);
-	static int SC_ITEIntroCave2Proc(int param, void *refCon);
-	static int SC_ITEIntroCave3Proc(int param, void *refCon);
-	static int SC_ITEIntroCave4Proc(int param, void *refCon);
-	static int SC_ITEIntroValleyProc(int param, void *refCon);
-	static int SC_ITEIntroTreeHouseProc(int param, void *refCon);
-	static int SC_ITEIntroFairePathProc(int param, void *refCon);
-	static int SC_ITEIntroFaireTentProc(int param, void *refCon);
-	static int SC_ITEIntroCaveDemoProc(int param, void *refCon);
+struct ITEIntroSceneDesc {
+	int sceneDescriptor;
+
+	enum LoadSceneType {
+		kTypeEndMarker,
+		kTypeIntroAnim,
+		kTypeIntroCave1,
+		kTypeIntroCave2,
+		kTypeIntroCave3,
+		kTypeIntroCave4,
+		kTypeIntroValley,
+		kTypeIntroTreeHouse,
+		kTypeIntroFairePath,
+		kTypeIntroFaireTent,
+		kTypeIntroCaveDemo,
+	} sceneType;
 };
-
-enum SceneTransitionType {
-	kTransitionNoFade,
-	kTransitionFade
-};
-
-enum SceneLoadFlags {
-	kLoadByResourceId = 0,
-	kLoadBySceneNumber = 1,
-	kLoadIdTypeMask = 1,
-	kLoadBgMaskIsImage = 1 << 16,
-};
-
-struct LoadSceneParams {
-	int32 sceneDescriptor;
-	SceneLoadFlags loadFlag;
-	SceneProc *sceneProc;
-	bool sceneSkipTarget;
-	SceneTransitionType transitionType;
-	int actorsEntrance;
-	int chapter;
-};
-
-#define NO_CHAPTER_CHANGE -2
 }
+
+#endif

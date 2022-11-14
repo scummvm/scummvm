@@ -85,6 +85,32 @@ enum SAGAResourceTypes {
 	SAGA_PALETTE
 };
 
+typedef int (SceneProc) (int, void *);
+
+enum SceneTransitionType {
+	kTransitionNoFade,
+	kTransitionFade
+};
+
+enum SceneLoadFlags {
+	kLoadByResourceId = 0,
+	kLoadBySceneNumber = 1,
+	kLoadIdTypeMask = 1,
+	kLoadBgMaskIsImage = 1 << 16,
+};
+
+struct LoadSceneParams {
+	int32 sceneDescriptor;
+	SceneLoadFlags loadFlag;
+	SceneProc *sceneProc;
+	bool sceneSkipTarget;
+	SceneTransitionType transitionType;
+	int actorsEntrance;
+	int chapter;
+};
+
+#define NO_CHAPTER_CHANGE -2
+
 #define SAGA_RESLIST_ENTRY_LEN 4
 
 struct SceneResourceData {
@@ -146,6 +172,8 @@ typedef Common::List<LoadSceneParams> SceneQueueList;
 #define IHNM_TITLE_TIME_FM   19500
 
 #define CREDIT_DURATION1 4000
+
+class SceneHandlers;
 
 class Scene {
  public:

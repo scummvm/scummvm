@@ -424,7 +424,7 @@ public:
 	bool isAGA() const { return _gameDescription->features & GF_AGA_GRAPHICS; }
 	bool isECS() const { return _gameDescription->features & GF_ECS_GRAPHICS; }
 	unsigned getPalNumEntries() const { return isECS() ? 32 : 256; }
-	const LoadSceneParams *getIntroScenes() const { return _gameDescription->introScenes; }
+	const ITEIntroSceneDesc *getIntroScenes() const { return _gameDescription->introScenes; }
 
 	int16 _framesEsc;
 

@@ -23,6 +23,7 @@
 #define SAGA_DETECTION_H
 
 #include "engines/advancedDetector.h"
+#include "engines/saga/shared_detection_defines.h"
 
 namespace Saga {
 
@@ -99,10 +100,8 @@ struct SAGAGameDescription {
 	int fontsCount;
 	const GameFontDescription *fontDescriptions;
 	const GamePatchDescription *patchDescriptions;
-	const LoadSceneParams *introScenes;
+	const ITEIntroSceneDesc *introScenes;
 };
-
-extern LoadSceneParams ITE_IntroListDefault[];
 
 } // End of namespace Saga
 

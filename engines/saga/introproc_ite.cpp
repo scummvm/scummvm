@@ -37,6 +37,20 @@
 
 namespace Saga {
 
+class SceneHandlers {
+public:
+	static int SC_ITEIntroAnimProc(int param, void *refCon);
+	static int SC_ITEIntroCave1Proc(int param, void *refCon);
+	static int SC_ITEIntroCave2Proc(int param, void *refCon);
+	static int SC_ITEIntroCave3Proc(int param, void *refCon);
+	static int SC_ITEIntroCave4Proc(int param, void *refCon);
+	static int SC_ITEIntroValleyProc(int param, void *refCon);
+	static int SC_ITEIntroTreeHouseProc(int param, void *refCon);
+	static int SC_ITEIntroFairePathProc(int param, void *refCon);
+	static int SC_ITEIntroFaireTentProc(int param, void *refCon);
+	static int SC_ITEIntroCaveDemoProc(int param, void *refCon);
+};
+
 #define INTRO_FRAMETIME 90
 #define INTRO_CAPTION_Y 170
 #define INTRO_DE_CAPTION_Y 160
@@ -53,16 +67,32 @@ namespace Saga {
 #define MUSIC_INTRO 9
 #define MUSIC_TITLE_THEME 10
 
+namespace {
+LoadSceneParams sceneParams[] = {
+	{0, kLoadByResourceId, nullptr, false, kTransitionNoFade, 0, 0},
+	{0, kLoadByResourceId, SceneHandlers::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+       	{0, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave1Proc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave2Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave3Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByResourceId, SceneHandlers::SC_ITEIntroCave4Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{0, (Saga::SceneLoadFlags) (kLoadByResourceId | kLoadBgMaskIsImage), SceneHandlers::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByResourceId, SceneHandlers::SC_ITEIntroTreeHouseProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByResourceId, SceneHandlers::SC_ITEIntroFairePathProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByResourceId, SceneHandlers::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByResourceId, SceneHandlers::SC_ITEIntroCaveDemoProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+};
+}
+
 int Scene::ITEStartProc() {
 	LoadSceneParams firstScene;
 	LoadSceneParams tempScene;
-	const LoadSceneParams *scenes;
+	const ITEIntroSceneDesc *scenes;
 
 	scenes = _vm->getIntroScenes();
 
-	for (int i = 0; scenes[i].sceneDescriptor; i++) {
-		tempScene = scenes[i];
-		tempScene.sceneDescriptor = _vm->_resource->convertResourceId(tempScene.sceneDescriptor);
+	for (int i = 0; scenes[i].sceneType != ITEIntroSceneDesc::kTypeEndMarker; i++) {
+		tempScene = sceneParams[scenes[i].sceneType];
+		tempScene.sceneDescriptor = _vm->_resource->convertResourceId(scenes[i].sceneDescriptor);
 		_vm->_scene->queueScene(tempScene);
 	}
 
