@@ -646,44 +646,7 @@ void Combat::writeCharAttackDamage() {
 	));
 	_isShooting = false;
 
-	Common::String line1;
-	if (_numberOfTimes == 1) {
-		line1 = STRING["dialogs.combat.once"];
-	} else {
-		line1 = Common::String::format("%d %s", _numberOfTimes,
-			STRING["dialogs.combat.times"].c_str());
-	}
-
-	line1 += Common::String::format(" %s ", STRING["dialogs.combat.and"].c_str());
-
-	if (_damage == 0) {
-		line1 += STRING["dialogs.combat.misses"];
-	} else {
-		line1 += STRING["dialogs.combat.hit"];
-		line1 += ' ';
-
-		if (_numberOfTimes > 1) {
-			if (_timesHit == 1) {
-				line1 += STRING["dialogs.combat.once"];
-			} else {
-				line1 += Common::String::format("%d %s", _timesHit,
-					STRING["dialogs.combat.times"].c_str());
-			}
-		}
-
-		line1 += Common::String::format(" %s %d %s",
-			STRING["dialogs.combat.for"].c_str(), _damage,
-			STRING[_damage == 1 ? "dialogs.combat.point" : "dialogs.combat.points"].c_str());
-
-		if (line1.size() < 30) {
-			line1 += ' ';
-			line1 += STRING["dialogs.combat.of_damage"];
-		} else {
-			line1 += '!';
-		}
-	}
-
-	writeString(0, 1, line1);
+	writeString(0, 1, getAttackString());
 }
 
 void Combat::setOption(SelectedOption option) {

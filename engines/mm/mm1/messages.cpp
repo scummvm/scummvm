@@ -99,6 +99,15 @@ InfoMessage &InfoMessage::operator=(const InfoMessage &src) {
 	return *this;
 }
 
+size_t Line::size() const {
+	size_t total = 0;
+	for (uint i = 0; i < _text.size(); ++i) {
+		if (_text[i] != '|')
+			++total;
+	}
+
+	return total;
+}
 
 } // namespace MM1
 } // namespace MM

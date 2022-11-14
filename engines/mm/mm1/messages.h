@@ -101,6 +101,8 @@ struct Line : public Common::Point {
 	Line(int x1, int y1, const Common::String &text) :
 		Common::Point(x1, y1), _text(text) {
 	}
+
+	size_t size() const;
 };
 typedef Common::Array<Line> LineArray;
 
