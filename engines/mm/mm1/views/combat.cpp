@@ -175,6 +175,9 @@ void Combat::timeout() {
 		g_events->send("Game", GameMessage("UPDATE"));
 		return;
 	}
+	case MONSTER_ATTACK:
+		checkParty();
+		return;
 	default:
 		 break;
 	}
@@ -601,7 +604,15 @@ void Combat::writeMonsterAttack() {
 		if (monsterTouch(line))
 			writeString(0, 21, line);
 
+		// TODO: Maybe refactor subtractDamage to not use
+		// the _lines/add methods, which would make it cleaner
+		// to call it from here
+		_lines.clear();
+		_lines.push_back(Line(0, 2, ""));
 		subtractDamage();
+
+		if (!_lines.back()._text.empty())
+			writeString(0, 22, _lines.back()._text);
 	}
 }
 

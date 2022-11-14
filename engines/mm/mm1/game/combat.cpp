@@ -1420,7 +1420,7 @@ void Combat::monsterAttackInner() {
 	if (g_globals->_activeSpells._s.cursed) {
 		_attackAttr2._current = g_globals->_activeSpells._s.cursed;
 
-		int attackerLevel = attackerLevel + _attackAttr2._current;
+		int attackerLevel = _attackerLevel + _attackAttr2._current;
 		_attackerLevel = (attackerLevel > 255) ? 192 : attackerLevel;
 	}
 
