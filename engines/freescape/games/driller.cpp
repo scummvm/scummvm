@@ -430,6 +430,14 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	// TODO: this needs to have fonts already parsed
 }
 
+Math::Vector3d getProjectionToPlane(const Math::Vector3d &vect, const Math::Vector3d normal) {
+	assert (normal.length() == 1);
+	// Formula: return p - n * (n . p)
+	Math::Vector3d result = vect;
+	result -= normal * normal.dotProduct(vect);
+	return result;
+}
+
 void DrillerEngine::pressedKey(const int keycode) {
 	if (keycode == Common::KEYCODE_d) {
 		Common::Point gasPocket = _currentArea->_gasPocketPosition;
@@ -452,22 +460,20 @@ void DrillerEngine::pressedKey(const int keycode) {
 			return;
 		}
 
-		Math::Vector3d drillPosition = _cameraFront;
-		drillPosition = _position + 256 * drillPosition;
+		Math::Vector3d drill = drillPosition();
 		debugC(1, kFreescapeDebugMove, "Current position at %f %f %f", _position.x(), _position.y(), _position.z());
-		drillPosition.setValue(1, _position.y() - _playerHeight * _currentArea->getScale());
-		debugC(1, kFreescapeDebugMove, "Trying to adding drill at %f %f %f", drillPosition.x(), drillPosition.y(), drillPosition.z());
+		debugC(1, kFreescapeDebugMove, "Trying to adding drill at %f %f %f", drill.x(), drill.y(), drill.z());
 		debugC(1, kFreescapeDebugMove, "with pitch: %f and yaw %f", _pitch, _yaw);
 
-		if (!checkDrill(drillPosition)) {
+		if (!checkDrill(drill)) {
 			insertTemporaryMessage(_messagesList[4], _countdown - 2);
 			return;
 		}
 
 		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
-		const Math::Vector3d gasPocket3D(gasPocket.x, drillPosition.y(), gasPocket.y);
-		addDrill(drillPosition);
-		float distanceToPocket = (gasPocket3D - drillPosition).length();
+		const Math::Vector3d gasPocket3D(gasPocket.x, drill.y(), gasPocket.y);
+		addDrill(drill);
+		float distanceToPocket = (gasPocket3D - drill).length();
 		float success = 100.0 * (1.0 - distanceToPocket / _currentArea->_gasPocketRadius);
 		insertTemporaryMessage(_messagesList[3], _countdown - 2);
 
@@ -516,6 +522,18 @@ void DrillerEngine::pressedKey(const int keycode) {
 		removeDrill(_currentArea);
 		insertTemporaryMessage(_messagesList[10], _countdown - 2);
 	}
+}
+
+Math::Vector3d DrillerEngine::drillPosition() {
+	Math::Vector3d position = _position;
+	position.setValue(1, position.y() - _playerHeight);
+	position = position + 300 * getProjectionToPlane(_cameraFront, Math::Vector3d(0, 1, 0));
+
+	Object *obj = (GeometricObject *)_areaMap[255]->objectWithID(255); // Drill base
+	assert(obj);
+	position.setValue(0, position.x() - obj->getSize().x() / 2);
+	position.setValue(2, position.z() - obj->getSize().z() / 2);
+	return position;
 }
 
 bool DrillerEngine::drillDeployed(Area *area) {
