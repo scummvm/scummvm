@@ -88,7 +88,18 @@ enum GameFileTypes {
 	GAME_PATCHFILE        = 1 << 10    // IHNM patch file (patch.re_/patch.res)
 };
 
-struct LoadSceneParams;
+// Make sure to up
+enum GameIntroList : uint8 {
+	INTROLIST_NONE = 0,
+	INTROLIST_ITE_DEFAULT,
+	INTROLIST_ITE_AMIGA_ENGLISH_AGA_CD,
+	INTROLIST_ITE_AMIGA_ENGLISH_ECS_CD,
+	INTROLIST_ITE_AMIGA_GERMAN_AGA,
+	INTROLIST_ITE_AMIGA_GERMAN_ECS,
+	INTROLIST_ITE_DOS_DEMO,
+	INTROLIST_MAX
+};
+
 struct SAGAGameDescription {
 	ADGameDescription desc;
 
@@ -99,10 +110,8 @@ struct SAGAGameDescription {
 	int fontsCount;
 	const GameFontDescription *fontDescriptions;
 	const GamePatchDescription *patchDescriptions;
-	const LoadSceneParams *introScenes;
+	GameIntroList introList;
 };
-
-extern LoadSceneParams ITE_IntroListDefault[];
 
 } // End of namespace Saga
 

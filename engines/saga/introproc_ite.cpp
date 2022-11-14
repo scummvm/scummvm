@@ -49,21 +49,112 @@ namespace Saga {
 #define DISSOLVE_DURATION 3000
 #define LOGO_DISSOLVE_DURATION 1000
 
+// Intro scenes
+#define RID_ITE_INTRO_ANIM_SCENE 1538
+#define RID_ITE_CAVE_SCENE_1 1542
+#define RID_ITE_CAVE_SCENE_2 1545
+#define RID_ITE_CAVE_SCENE_3 1548
+#define RID_ITE_CAVE_SCENE_4 1551
+#define RID_ITE_VALLEY_SCENE 1556
+#define RID_ITE_TREEHOUSE_SCENE 1560
+#define RID_ITE_FAIREPATH_SCENE 1564
+#define RID_ITE_FAIRETENT_SCENE 1567
+
+// Intro scenes - DOS demo
+#define RID_ITE_INTRO_ANIM_SCENE_DOS_DEMO 298
+#define RID_ITE_CAVE_SCENE_DOS_DEMO 302
+#define RID_ITE_VALLEY_SCENE_DOS_DEMO 310
+
 // ITE intro music
 #define MUSIC_INTRO 9
 #define MUSIC_TITLE_THEME 10
 
+static LoadSceneParams ITE_IntroListDefault[] = {
+	{RID_ITE_INTRO_ANIM_SCENE, kLoadByResourceId, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_CAVE_SCENE_1, kLoadByResourceId, Scene::SC_ITEIntroCave1Proc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_CAVE_SCENE_2, kLoadByResourceId, Scene::SC_ITEIntroCave2Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_CAVE_SCENE_3, kLoadByResourceId, Scene::SC_ITEIntroCave3Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_CAVE_SCENE_4, kLoadByResourceId, Scene::SC_ITEIntroCave4Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_VALLEY_SCENE, (Saga::SceneLoadFlags) (kLoadByResourceId | kLoadBgMaskIsImage), Scene::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_TREEHOUSE_SCENE, kLoadByResourceId, Scene::SC_ITEIntroTreeHouseProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_FAIREPATH_SCENE, kLoadByResourceId, Scene::SC_ITEIntroFairePathProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_FAIRETENT_SCENE, kLoadByResourceId, Scene::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByResourceId, nullptr, false, kTransitionNoFade, 0, 0}
+};
+
+static const LoadSceneParams ITE_AmigaEnglishECSCD_IntroList[] = {
+//	{1544, kLoadByResourceId, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE}, // Crashes, skip for now
+	{1548, kLoadByResourceId, Scene::SC_ITEIntroCave1Proc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{1551, kLoadByResourceId, Scene::SC_ITEIntroCave2Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1554, kLoadByResourceId, Scene::SC_ITEIntroCave3Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1557, kLoadByResourceId, Scene::SC_ITEIntroCave4Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1562, (Saga::SceneLoadFlags) (kLoadByResourceId | kLoadBgMaskIsImage), Scene::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{1566, kLoadByResourceId, Scene::SC_ITEIntroTreeHouseProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1570, kLoadByResourceId, Scene::SC_ITEIntroFairePathProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1573, kLoadByResourceId, Scene::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByResourceId, nullptr, false, kTransitionNoFade, 0, 0}
+};
+
+static const LoadSceneParams ITE_AmigaGermanAGA_IntroList[] = {
+	{1538, kLoadByResourceId, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1543, kLoadByResourceId, Scene::SC_ITEIntroCave1Proc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{1547, kLoadByResourceId, Scene::SC_ITEIntroCave2Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1551, kLoadByResourceId, Scene::SC_ITEIntroCave3Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1555, kLoadByResourceId, Scene::SC_ITEIntroCave4Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1560, (Saga::SceneLoadFlags) (kLoadByResourceId | kLoadBgMaskIsImage), Scene::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{1564, kLoadByResourceId, Scene::SC_ITEIntroTreeHouseProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1568, kLoadByResourceId, Scene::SC_ITEIntroFairePathProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1571, kLoadByResourceId, Scene::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByResourceId, nullptr, false, kTransitionNoFade, 0, 0}
+};
+
+static const LoadSceneParams ITE_AmigaGermanECS_IntroList[] = {
+	{1544, kLoadByResourceId, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1549, kLoadByResourceId, Scene::SC_ITEIntroCave1Proc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{1553, kLoadByResourceId, Scene::SC_ITEIntroCave2Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1557, kLoadByResourceId, Scene::SC_ITEIntroCave3Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1561, kLoadByResourceId, Scene::SC_ITEIntroCave4Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1566, (Saga::SceneLoadFlags) (kLoadByResourceId | kLoadBgMaskIsImage), Scene::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{1570, kLoadByResourceId, Scene::SC_ITEIntroTreeHouseProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1574, kLoadByResourceId, Scene::SC_ITEIntroFairePathProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{1577, kLoadByResourceId, Scene::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByResourceId, nullptr, false, kTransitionNoFade, 0, 0}
+};
+
+static const LoadSceneParams ITE_DOS_Demo_IntroList[] = {
+	{RID_ITE_INTRO_ANIM_SCENE_DOS_DEMO, kLoadByResourceId, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_CAVE_SCENE_DOS_DEMO, kLoadByResourceId, Scene::SC_ITEIntroCaveDemoProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_VALLEY_SCENE_DOS_DEMO, kLoadByResourceId, Scene::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{0, kLoadByResourceId, nullptr, false, kTransitionNoFade, 0, 0}
+};
+
+static const LoadSceneParams *ITE_IntroLists[INTROLIST_MAX] = {
+	/* INTROLIST_ITE_NONE */                 nullptr,
+	/* INTROLIST_ITE_DEFAULT */              ITE_IntroListDefault,
+	/* INTROLIST_ITE_AMIGA_ENGLISH_AGA_CD */ ITE_IntroListDefault + 1, // Skip first (logo) scene until we figure it out
+	/* INTROLIST_ITE_AMIGA_ENGLISH_ECS_CD */ ITE_AmigaEnglishECSCD_IntroList,
+	/* INTROLIST_ITE_AMIGA_GERMAN_AGA */     ITE_AmigaGermanAGA_IntroList,
+	/* INTROLIST_ITE_AMIGA_GERMAN_ECS */     ITE_AmigaGermanECS_IntroList,
+	/* INTROLIST_ITE_DOS_DEMO */             ITE_DOS_Demo_IntroList
+};
+
 int Scene::ITEStartProc() {
 	LoadSceneParams firstScene;
 	LoadSceneParams tempScene;
-	const LoadSceneParams *scenes;
+	const LoadSceneParams *scenes = nullptr;
 
-	scenes = _vm->getIntroScenes();
+	GameIntroList index = _vm->getIntroList();
+	if (index < INTROLIST_MAX && index > INTROLIST_NONE)
+		scenes = ITE_IntroLists[index];
 
-	for (int i = 0; scenes[i].sceneDescriptor; i++) {
-		tempScene = scenes[i];
-		tempScene.sceneDescriptor = _vm->_resource->convertResourceId(tempScene.sceneDescriptor);
-		_vm->_scene->queueScene(tempScene);
+	if (scenes) {
+		for (int i = 0; scenes[i].sceneDescriptor; i++) {
+			tempScene = scenes[i];
+			tempScene.sceneDescriptor = _vm->_resource->convertResourceId(tempScene.sceneDescriptor);
+			_vm->_scene->queueScene(tempScene);
+		}
+	} else {
+		warning("Missing intro list");
 	}
 
 	firstScene.loadFlag = kLoadBySceneNumber;
@@ -290,7 +381,7 @@ EventColumns *Scene::queueCredits(int delta_time, int duration, int n_credits, c
 	return eventColumns;
 }
 
-int SceneHandlers::SC_ITEIntroAnimProc(int param, void *refCon) {
+int Scene::SC_ITEIntroAnimProc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroAnimProc(param);
 }
 
@@ -470,31 +561,31 @@ int Scene::ITEIntroCaveDemoProc(int param) {
 	return 0;
 }
 
-int SceneHandlers::SC_ITEIntroCaveDemoProc(int param, void *refCon) {
+int Scene::SC_ITEIntroCaveDemoProc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroCaveDemoProc(param);
 }
 
 // Handles first introductory cave painting scene
-int SceneHandlers::SC_ITEIntroCave1Proc(int param, void *refCon) {
+int Scene::SC_ITEIntroCave1Proc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroCaveCommonProc(param, 1);
 }
 
 // Handles second introductory cave painting scene
-int SceneHandlers::SC_ITEIntroCave2Proc(int param, void *refCon) {
+int Scene::SC_ITEIntroCave2Proc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroCaveCommonProc(param, 2);
 }
 
 // Handles third introductory cave painting scene
-int SceneHandlers::SC_ITEIntroCave3Proc(int param, void *refCon) {
+int Scene::SC_ITEIntroCave3Proc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroCaveCommonProc(param, 3);
 }
 
 // Handles fourth introductory cave painting scene
-int SceneHandlers::SC_ITEIntroCave4Proc(int param, void *refCon) {
+int Scene::SC_ITEIntroCave4Proc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroCaveCommonProc(param, 4);
 }
 
-int SceneHandlers::SC_ITEIntroValleyProc(int param, void *refCon) {
+int Scene::SC_ITEIntroValleyProc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroValleyProc(param);
 }
 
@@ -575,7 +666,7 @@ int Scene::ITEIntroValleyProc(int param) {
 	return 0;
 }
 
-int SceneHandlers::SC_ITEIntroTreeHouseProc(int param, void *refCon) {
+int Scene::SC_ITEIntroTreeHouseProc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroTreeHouseProc(param);
 }
 
@@ -631,7 +722,7 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 	return 0;
 }
 
-int SceneHandlers::SC_ITEIntroFairePathProc(int param, void *refCon) {
+int Scene::SC_ITEIntroFairePathProc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroFairePathProc(param);
 }
 
@@ -685,7 +776,7 @@ int Scene::ITEIntroFairePathProc(int param) {
 	return 0;
 }
 
-int SceneHandlers::SC_ITEIntroFaireTentProc(int param, void *refCon) {
+int Scene::SC_ITEIntroFaireTentProc(int param, void *refCon) {
 	return ((Scene *)refCon)->ITEIntroFaireTentProc(param);
 }
 

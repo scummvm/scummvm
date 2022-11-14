@@ -38,6 +38,7 @@ namespace Saga {
 //#define SCENE_DEBUG // for scene debugging
 
 #define SCENE_DOORS_MAX 16
+#define NO_CHAPTER_CHANGE -2
 
 // Scenes
 #define ITE_SCENE_INV -1
@@ -57,6 +58,9 @@ struct BGInfo {
 	Rect bounds;
 	byte *buffer;
 };
+
+typedef int (SceneProc) (int, void *);
+
 
 enum SCENE_PROC_PARAMS {
 	SCENE_BEGIN = 0,
@@ -135,6 +139,28 @@ struct SceneImage {
 	}
 };
 
+
+enum SceneTransitionType {
+	kTransitionNoFade,
+	kTransitionFade
+};
+
+enum SceneLoadFlags {
+	kLoadByResourceId = 0,
+	kLoadBySceneNumber = 1,
+	kLoadIdTypeMask = 1,
+	kLoadBgMaskIsImage = 1 << 16,
+};
+
+struct LoadSceneParams {
+	int32 sceneDescriptor;
+	SceneLoadFlags loadFlag;
+	SceneProc *sceneProc;
+	bool sceneSkipTarget;
+	SceneTransitionType transitionType;
+	int actorsEntrance;
+	int chapter;
+};
 
 typedef Common::List<LoadSceneParams> SceneQueueList;
 
@@ -338,6 +364,18 @@ class Scene {
 	bool playTitle(int title, int time, int mode = kPanelVideo);
 	bool playLoopingTitle(int title, int seconds);
 
+ public:
+	static int SC_ITEIntroAnimProc(int param, void *refCon);
+	static int SC_ITEIntroCave1Proc(int param, void *refCon);
+	static int SC_ITEIntroCave2Proc(int param, void *refCon);
+	static int SC_ITEIntroCave3Proc(int param, void *refCon);
+	static int SC_ITEIntroCave4Proc(int param, void *refCon);
+	static int SC_ITEIntroValleyProc(int param, void *refCon);
+	static int SC_ITEIntroTreeHouseProc(int param, void *refCon);
+	static int SC_ITEIntroFairePathProc(int param, void *refCon);
+	static int SC_ITEIntroFaireTentProc(int param, void *refCon);
+	static int SC_ITEIntroCaveDemoProc(int param, void *refCon);
+
  private:
 	EventColumns *queueIntroDialogue(EventColumns *eventColumns, int n_dialogues, const IntroDialogue dialogue[]);
 	EventColumns *queueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]);
@@ -348,8 +386,6 @@ class Scene {
 	int ITEIntroTreeHouseProc(int param);
 	int ITEIntroFairePathProc(int param);
 	int ITEIntroFaireTentProc(int param);
-
-	friend SceneHandlers;
 };
 
 } // End of namespace Saga
