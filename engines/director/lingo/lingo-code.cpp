@@ -242,8 +242,7 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 
 	_state->script = funcSym.u.defn;
 
-	if (funcSym.target)
-		_state->me = funcSym.target;
+	_state->me = funcSym.target;
 
 	if (funcSym.ctx) {
 		_state->context = funcSym.ctx;
