@@ -369,7 +369,7 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 
 	int score = _gameStateVars[k8bitVariableScore];
-	drawStringInSurface(_currentArea->_name, 195, 185, yellow, black, surface);
+	drawStringInSurface(_currentArea->_name, 196, 185, yellow, black, surface);
 	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 150, 145, yellow, black, surface);
 	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 150, 153, yellow, black, surface);
 	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 150, 161, yellow, black, surface);
@@ -379,7 +379,7 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 		drawStringInSurface(Common::String::format("%s", "J"), 57, 161, yellow, black, surface);
 
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 46, 153, yellow, black, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 238, 129, yellow, black, surface);
 
 	int hours = _countdown / 3600;
 	drawStringInSurface(Common::String::format("%02d", hours), 208, 8, yellow, black, surface);
@@ -392,7 +392,7 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 191, 177, black, yellow, surface);
+		drawStringInSurface(message, 190, 177, black, yellow, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else {
@@ -484,6 +484,8 @@ void DrillerEngine::pressedKey(const int keycode) {
 		insertTemporaryMessage(_messagesList[5], _countdown - 4);
 		Common::String successMessage = _messagesList[6];
 		successMessage.replace(0, 4, Common::String::format("%d", int(success)));
+		while (successMessage.size() < 14)
+			successMessage += " ";
 		insertTemporaryMessage(successMessage, _countdown - 6);
 		if (success >= 50.0) {
 			_drilledAreas[_currentArea->getAreaID()] = kDrillerRigInPlace;
