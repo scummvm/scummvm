@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-13 23:27+0000\n"
+"POT-Creation-Date: 2022-11-14 19:55+0000\n"
 "PO-Revision-Date: 2022-11-13 18:14+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4502,8 +4502,8 @@ msgstr "ファンの翻訳者は、ScummVMに翻訳が組み込まれる事を�
 #: engines/mohawk/detection_tables.h:1130
 #: engines/mohawk/detection_tables.h:1145
 #: engines/mohawk/detection_tables.h:3211 engines/myst3/detection.cpp:142
-#: engines/neverhood/detection.cpp:124 engines/saga/detection_tables.h:318
-#: engines/saga/detection_tables.h:1506 engines/saga/detection_tables.h:1567
+#: engines/neverhood/detection.cpp:124 engines/saga/detection_tables.h:243
+#: engines/saga/detection_tables.h:1431 engines/saga/detection_tables.h:1492
 #: engines/sci/detection_tables.h:5191 engines/sci/detection_tables.h:5199
 #: engines/sherlock/detection_tables.h:223 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:212
@@ -6423,17 +6423,17 @@ msgid "Use an easier to read custom font"
 msgstr "読みやすいカスタムフォントを使用"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:969
+#: engines/saga/detection_tables.h:894
 msgid "Windows Trial version is not supported"
 msgstr "Windows試用版はサポートされていません"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:996
+#: engines/saga/detection_tables.h:921
 msgid "macOS Trial version is not supported"
 msgstr "macOS用の体験版はサポートされていません"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:1022
+#: engines/saga/detection_tables.h:947
 msgid "Pocket PC Trial version is not supported"
 msgstr "Pocket PC用の体験版はサポートされていません"
 
