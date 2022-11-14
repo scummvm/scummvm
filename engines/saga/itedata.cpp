@@ -590,15 +590,14 @@ const char *ITEinterfaceTextStrings[][53] = {
 		"\xad\x6e\xb5\xb2\xa7\xf4\xb9\x43\xc0\xb8\xb6\xdc\x3f" /* 要結束遊戲嗎?; Quit the Game? */,
 		"\xb8\xfc\xa4\x4a\xa6\xa8\xa5\x5c" /* 載入成功, Load Successful! */,
 		"\xbd\xd0\xbf\xe9\xa4\x4a\xa6\x73\xc0\xc9\xa6\x57\xba\xd9" /* 請輸入存檔名稱, Enter Save Game Name */,
-
-		"Give %s to %s", // TODO: Find string for this
-		"Use %s with %s", // TODO: Find string for this
+		"\xB1N%s\xB5\xB9\xBBP%s", /* 將%s給與%s; Give %s to %s */
+		"\xB1\x4e%s\xA8\xCF\xA5\xCE\xA6\x62%s", /* 將%s使用在%s; Use %s with %s */
 		"[New Save Game]",
-		"I can't pick that up.", // TODO: Find string for this
-		"I see nothing special about it.", // TODO: Find string for this
-		"There's no place to open it.", // TODO: Find string for this
-		"There's no opening to close.", // TODO: Find string for this
-		"I don't know how to do that.", // TODO: Find string for this
+		"\xA7\xDA\xB5\x4C\xAA\x6B\xAE\xB3\xB0\x5F\xA8\xBA\xAD\xD3\xAA\x46\xA6\xE8\xA1\x45", /* 我無法拿起那個東西‧; I can't pick that up. */
+		"\xA7\xDA\xAC\xDD\xA4\xA3\xA5\x58\xA6\xB3\xA4\xB0\xBB\xF2\xAF\x53\xAE\xED\xA4\xA7\xB3\x42\xA1\x45", /* 我看不出有什麼特殊之處‧; I see nothing special about it.  */
+		"\xA8\x53\xA6\xB3\xA6\x61\xA4\xE8\xA5\x69\xA5\x48\xA5\xB4\xB6\x7D\xA1\x45", /* 沒有地方可以打開‧; There's no place to open it.  */
+		"\xA8\x53\xA6\xB3\xA5\x69\xA5\x48\xC3\xF6\xB3\xAC\xAA\xBA\xA6\x61\xA4\xE8\xA1\x45", /* 沒有可以關閉的地方‧; There's no opening to close. */
+		"\xA7\xDA\xA4\xA3\xAA\xBE\xB9\x44\xAD\x6E\xAB\xE7\xBB\xF2\xB0\xB5\xB3\x6F\xA5\xF3\xA8\xC6\xA1\x45", /* 我不知道要怎麼做這件事‧; I don't know how to do that.  */
 		"Show Dialog", // TODO: Find string for this
 		"\xa7\x51\xa4\xd2\xaa\xba\xa6\x5e\xb5\xaa\xac\x4f\xa4\xb0\xbb\xf2\xa1\x48" /* 利夫的回答是什麼？; What is Rif's reply? */,
 		"Loading a saved game" // TODO: Find string for this
