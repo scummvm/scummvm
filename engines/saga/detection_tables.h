@@ -1246,7 +1246,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{
 		{
 			"ihnm",
-			_s("Missing game code"), // Reason for being unsupported
+			"",
 			{
 				{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", 302676},
 				{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", 314020},
@@ -1258,14 +1258,14 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::ZH_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSUPPORTED,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_IHNM,
 		0,
 		IHNM_DEFAULT_SCENE,
 		RESOURCELIST_IHNM,
-		FONTLIST_IHNM_CD,
+		FONTLIST_IHNM_ZH,
 		PATCHLIST_NONE,
 		INTROLIST_NONE,
 	},
