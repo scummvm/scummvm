@@ -23,6 +23,7 @@
 #define HPL1_STD_MAP_H
 
 #include "common/hashmap.h"
+#include "hpl1/algorithms.h"
 #include "pair.h"
 
 namespace Hpl1 {
@@ -74,51 +75,16 @@ public:
 	 * Returns an iterator for the first element of the map that is
 	 * not less than the given key
 	 */
-	const_iterator lower_bound(const Key &theKey) const {
-		const_iterator first = this->begin();
-		const_iterator it;
-		int count_ = _items.size(), step;
-
-		while (count_ > 0) {
-			it = first;
-			step = count_ / 2;
-			it += step;
-
-			if (_comp(it->first, theKey)) {
-				first = ++it;
-				count_ -= step + 1;
-			} else {
-				count_ = step;
-			}
-		}
-
-		return first;
+	const_iterator lower_bound(const Key &key) const {
+		return lowerBound(this->begin(), this->end(), key, [&](value_type const &p, Key const &k) { return _comp(p.first, k); });
 	}
 
-	iterator lower_bound(const Key &theKey) {
-		iterator first = this->begin();
-		iterator it;
-		int count_ = _items.size(), step;
-
-		while (count_ > 0) {
-			it = first;
-			step = count_ / 2;
-			it += step;
-
-			if (_comp(it->first, theKey)) {
-				first = ++it;
-				count_ -= step + 1;
-			} else {
-				count_ = step;
-			}
-		}
-
-		return first;
+	iterator lower_bound(const Key &key) {
+		return lowerBound(this->begin(), this->end(), key, [&](value_type const &p, Key const &k) { return _comp(p.first, k); });
 	}
 
-	iterator upper_bound(const Key &k)
-	{
-		return lower_bound(k) + 1;
+	iterator upper_bound(const Key &key) {
+		return upperBound(this->begin(), this->end(), key, [&](Key const &k, value_type const &p) { return _comp(k, p.first); });
 	}
 
 	/**
@@ -172,7 +138,7 @@ public:
 		return it;
 	}
 
-	std::pair<iterator, bool> insert(value_type const& val) {
+	std::pair<iterator, bool> insert(value_type const &val) {
 		iterator it = this->lower_bound(val.first);
 		if (it == this->end() || !(it->first == val.first)) {
 			size_t idx = it - this->begin();
@@ -205,6 +171,7 @@ public:
 
 		return count_;
 	}
+
 private:
 	Common::Array<value_type> _items;
 	CompFunc _comp;
