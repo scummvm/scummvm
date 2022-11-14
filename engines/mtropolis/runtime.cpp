@@ -2674,6 +2674,9 @@ bool WorldManagerInterface::readAttribute(MiniscriptThread *thread, DynamicValue
 	} else if (attrib == "combineredraws") {
 		result.setBool(_combineRedraws);
 		return true;
+	} else if (attrib == "postponeredraws") {
+		result.setBool(_postponeRedraws);
+		return true;
 	}
 
 	return RuntimeObject::readAttribute(thread, result, attrib);
@@ -2697,6 +2700,9 @@ MiniscriptInstructionOutcome WorldManagerInterface::writeRefAttribute(Miniscript
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "combineredraws") {
 		DynamicValueWriteBoolHelper::create(&_combineRedraws, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "postponeredraws") {
+		DynamicValueWriteBoolHelper::create(&_postponeRedraws, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "qtpalettehack") {
 		DynamicValueWriteDiscardHelper::create(result);

@@ -2044,6 +2044,7 @@ private:
 	int32 _opInt;
 	bool _gameMode;
 	bool _combineRedraws;
+	bool _postponeRedraws;
 };
 
 class AssetManagerInterface : public RuntimeObject {
