@@ -28,6 +28,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for the Korean version of Legend of Kyrandia 1.
    - Added support for the Hebrew version of Legend of Kyrandia 3.
 
+ MADS:
+   - Added support for original floppy installer file layout for Rex Nebular.
+
  Queen:
    - Added option for using a better font in Hebrew version.
 
