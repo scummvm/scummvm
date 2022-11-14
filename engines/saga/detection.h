@@ -88,7 +88,7 @@ enum GameFileTypes {
 	GAME_PATCHFILE        = 1 << 10    // IHNM patch file (patch.re_/patch.res)
 };
 
-// Make sure to up
+// Make sure to update ITE_IntroLists if this enum is reordered.
 enum GameIntroList : uint8 {
 	INTROLIST_NONE = 0,
 	INTROLIST_ITE_DEFAULT,
