@@ -463,6 +463,9 @@ void GameConversations::generateMessage(Common::Array<int> &messageList, Common:
 	// Show the dialog
 	_popupVisible = true;
 	_dialog->show();
+
+	if (voiceList.size() > 0)
+		_vm->_audio->stop();
 }
 
 bool GameConversations::nextNode() {
