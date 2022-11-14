@@ -126,6 +126,11 @@ private:
 	void writeMonsterAttack();
 
 	/**
+	 * Write message for monster infiltrating the party
+	 */
+	void writeInfiltration();
+
+	/**
 	 * Whether there's messages remaining
 	 */
 	void checkMonsterSpellDone();
