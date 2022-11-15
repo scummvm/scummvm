@@ -230,7 +230,8 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		}
 
 		assert(byteSizeOfObject >= 5);
-		byte color = readField(file, 8);
+		byte color = readField(file, 8) & 0xf;
+		assert(color > 0);
 		byte firingInterval = readField(file, 8);
 		uint16 firingRange = readField(file, 16);
 		byte sensorFlags = readField(file, 8);
