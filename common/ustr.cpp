@@ -236,6 +236,10 @@ int U32String::vformat(const value_type *fmt, const value_type *fmtEnd, U32Strin
 				output.insertChar(int_temp, pos);
 				++length;
 				break;
+			case '%':
+				output.insertChar('%', pos);
+				++length;
+				break;
 			default:
 				warning("Unexpected formatting type for U32String::Format.");
 				break;

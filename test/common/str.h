@@ -377,6 +377,8 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS( Common::U32String::format("%d", 0).encode(), "0" );
 		TS_ASSERT_EQUALS( Common::U32String::format("%d", 1234).encode(), "1234" );
 		TS_ASSERT_EQUALS( Common::U32String::format("%d", -1234).encode(), "-1234" );
+
+		TS_ASSERT_EQUALS( Common::U32String::format("%u %%", 100).encode(), "100 %" );
 	}
 
 	void test_strlcpy() {
