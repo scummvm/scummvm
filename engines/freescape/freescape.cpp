@@ -212,6 +212,8 @@ void FreescapeEngine::centerCrossair() {
 void FreescapeEngine::checkSensors() {
 	for (auto &it : _sensors) {
 		Sensor *sensor = (Sensor *)it;
+		if (sensor->isDestroyed() || sensor->isInvisible())
+			continue;
 		if ((sensor->getOrigin() - _position).length() <= sensor->_firingRange) {
 			if (_ticks % sensor->_firingInterval == 0)
 				warning("shoot!");
