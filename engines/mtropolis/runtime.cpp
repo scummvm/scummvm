@@ -7985,6 +7985,10 @@ MiniscriptInstructionOutcome VisualElement::writeRefAttribute(MiniscriptThread *
 	} else if (attrib == "layer") {
 		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetLayer, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "invalidaterect") {
+		// Not sure what this does, MTI uses it frequently
+		DynamicValueWriteDiscardHelper::create(writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	return Element::writeRefAttribute(thread, writeProxy, attrib);
