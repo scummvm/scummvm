@@ -49,7 +49,11 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_playerHeights.push_back(112);
 
 	_angleRotations.push_back(5);
-	_angleRotations.push_back(9.5);
+	_angleRotations.push_back(10);
+	_angleRotations.push_back(15);
+	_angleRotations.push_back(30);
+	_angleRotations.push_back(45);
+	_angleRotations.push_back(90);
 
 	_playerHeight = _playerHeights[_playerHeightNumber];
 	_playerWidth = 12;
