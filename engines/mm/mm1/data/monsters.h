@@ -54,6 +54,7 @@ enum Fiedl1A {
 };
 
 enum Field1E {
+	FIELD1E_F = 0xf,
 	FIELD1E_10 = 0x10, FIELD1E_20 = 0x20,
 	FIELD1E_40 = 0x40, FIELD1E_80 = 0x80
 };

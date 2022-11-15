@@ -416,6 +416,7 @@
 			12: "SLASHES AT"
 			13: "STRIKES AT"
 			14: "THRASHES AT"
+			99: "SHOOTS AT"
 enhdialogs:
 	character:
 		stats:

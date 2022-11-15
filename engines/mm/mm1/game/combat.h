@@ -52,6 +52,7 @@ protected:
 	bool _allowFight, _allowShoot, _allowCast, _allowAttack;
 	byte _val6, _val7;
 	int _partyIndex, _val9, _val10;
+	int _val2;
 	int _destCharCtr;
 	int _destAC;
 	int _numberOfTimes;
@@ -77,7 +78,8 @@ protected:
 		SELECT_OPTION, FIGHT_WHICH, DEFEATED_MONSTERS,
 		NEXT_ROUND, MONSTER_ADVANCES, MONSTERS_AFFECTED,
 		MONSTER_FLEES, MONSTER_WANDERS, MONSTER_SPELL,
-		CHAR_ATTACKS, MONSTER_ATTACK, INFILTRATION
+		CHAR_ATTACKS, MONSTER_ATTACK, INFILTRATION,
+		WAITS_FOR_OPENING
 	};
 	Mode _mode = SELECT_OPTION;
 
@@ -205,7 +207,7 @@ protected:
 	/**
 	 * Check if monster is mindless and wandering
 	 */
-	void checkMonsterSpells();
+	bool checkMonsterSpells();
 
 	/**
 	 * Check other monster actions
@@ -252,6 +254,11 @@ protected:
 	 */
 	void monsterAttackRandom();
 	void monsterAttackInner();
+
+	/**
+	 * Handles monster shooting a character
+	 */
+	void monsterAttackShooting();
 
 	/**
 	 * Selects monster to attack

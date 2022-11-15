@@ -112,6 +112,10 @@ void Combat::draw() {
 		writeInfiltration();
 		delaySeconds(3);
 		return;
+	case WAITS_FOR_OPENING:
+		writeWaitsForOpening();
+		delaySeconds(2);
+		return;
 	case CHAR_ATTACKS:
 		writeMonsters();
 		writeCharAttackDamage();
@@ -170,6 +174,9 @@ void Combat::timeout() {
 		return;
 	case MONSTER_SPELL:
 		checkMonsterSpellDone();
+		return;
+	case WAITS_FOR_OPENING:
+		loop1();
 		return;
 	case DEFEATED_MONSTERS: {
 		auto &spells = g_globals->_activeSpells;
@@ -629,6 +636,16 @@ void Combat::writeInfiltration() {
 	writeString(0, 20, line);
 	Sound::sound(SOUND_2);
 	Sound::sound(SOUND_2);
+}
+
+void Combat::writeWaitsForOpening() {
+	Common::String line = Common::String::format("%s %s",
+		_monsterP->getDisplayName().c_str(),
+		STRING["dialogs.combat.infiltration"].c_str()
+	);
+
+	resetBottom();
+	writeString(0, 20, line);
 }
 
 void Combat::checkMonsterSpellDone() {
