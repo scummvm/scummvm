@@ -51,6 +51,7 @@ void Combat::clear() {
 	_val6 = _val7 = 0;
 	_partyIndex = _val9 = 0;
 	_val10 = _destCharCtr = 0;
+	_val2 = 0;
 	_destAC = 0;
 	_numberOfTimes = 0;
 	_attackerLevel = 0;
@@ -596,38 +597,72 @@ void Combat::checkMonsterFlees() {
 	}
 }
 
-void Combat::checkMonsterSpells() {
+bool Combat::checkMonsterSpells() {
 	if (_monsterList.empty()) {
 		setMode(DEFEATED_MONSTERS);
-		return;
+		return true;
 	}
 
 	if (_monsterStatus[_monsterIndex] & MONFLAG_MINDLESS) {
 		setMode(MONSTER_WANDERS);
-	} else {
-		if (!_monsterP->_specialAbility || (_monsterP->_specialAbility & 0x80) ||
-			(getRandomNumber(100) >= _monsterP->_field1d) ||
-			!(_monsterP->_field1e & 0xf))
-			checkMonsterActions();
-		else {
-			_monsterP->_field1e--;
-			if (!_monsterP->_specialAbility || _monsterP->_specialAbility >= 33) {
-				checkMonsterActions();
-			} else {
-				castMonsterSpell(_monsterList[_monsterIndex]._name,
-					_monsterP->_specialAbility);
-				setMode(MONSTER_SPELL);
-			}
-			return;
-		}
+		return true;
 	}
+
+	if (!_monsterP->_specialAbility || (_monsterP->_specialAbility & 0x80) ||
+		(getRandomNumber(100) >= _monsterP->_field1d) ||
+		!(_monsterP->_field1e & 0xf))
+		return false;
+
+	_monsterP->_field1e--;
+	if (!_monsterP->_specialAbility || _monsterP->_specialAbility >= 33)
+		return false;
+
+	castMonsterSpell(_monsterList[_monsterIndex]._name,
+		_monsterP->_specialAbility);
+	setMode(MONSTER_SPELL);
+	return true;
 }
 
 void Combat::checkMonsterActions() {
+	if (checkMonsterSpells())
+		// Monster wandered or cast spell, so things are taken care of. Exit
+		return;
 
+	_destCharCtr = 0;
+	if (_val2 < _attackerVal) {
+		selectMonsterTarget();
+		return;
+	}
 
+	if (!(_monsterP->_specialAbility & 0x80) || !(_monsterP->_field1e & FIELD1E_F)) {
+		setMode(WAITS_FOR_OPENING);
+		return;
+	}
 
-	// TODO
+	_monsterP->_field1e--;
+
+	// Pick a random character to shoot at
+	int charNum = getRandomNumber(g_globals->_party.size()) - 1;
+	Character &c = g_globals->_party[charNum];
+	g_globals->_currCharacter = &c;
+
+	if (!(c._condition & (BAD_CONDITION | UNCONSCIOUS))) {
+		monsterAttackShooting();
+		return;
+	}
+
+	// Chosen character was incapitated, so scan through party
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		c = g_globals->_party[i];
+
+		if (!(c._condition & (BAD_CONDITION | UNCONSCIOUS))) {
+			g_globals->_currCharacter = &c;
+			monsterAttackShooting();
+			return;
+		}
+	}
+
+	checkParty();
 }
 
 void Combat::removeMonster() {
@@ -1387,6 +1422,14 @@ void Combat::monsterAttackRandom() {
 	monsterAttackInner();
 }
 
+void Combat::monsterAttackShooting() {
+	++_val10;
+	_monsterAttackStyle = 99;	// shooting
+
+	monsterAttackInner();
+}
+
+
 void Combat::monsterAttackInner() {
 	Character &c = *g_globals->_currCharacter;
 
@@ -1446,7 +1489,7 @@ void Combat::selectMonsterTarget() {
 			return;
 		}
 
-	} while (++_destCharCtr < g_globals->_party.size());
+	} while (++_destCharCtr < (int)g_globals->_party.size());
 
 	// At this point, fall back on a generic display message
 	// that the monster infiltrates the ranks, which basically

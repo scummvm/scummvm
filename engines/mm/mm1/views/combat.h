@@ -131,6 +131,11 @@ private:
 	void writeInfiltration();
 
 	/**
+	 * Write message for monster waits for an opening
+	 */
+	void writeWaitsForOpening();
+
+	/**
 	 * Whether there's messages remaining
 	 */
 	void checkMonsterSpellDone();
