@@ -59,7 +59,7 @@ enum GameFileTypes {
 	GAME_PATCHFILE        = 1 << 10    // IHNM patch file (patch.re_/patch.res)
 };
 
-// Make sure to update ResourceLists in saga.c if this enum is reordered.
+// Make sure to update ResourceLists in saga.cpp if this enum is reordered.
 enum GameResourceList : uint8 {
 	RESOURCELIST_NONE = 0,
 	RESOURCELIST_ITE,
@@ -72,7 +72,7 @@ enum GameResourceList : uint8 {
 	RESOURCELIST_MAX
 };
 
-// Make sure to update FontLists in font.c if this enum is reordered.
+// Make sure to update FontLists in font.cpp if this enum is reordered.
 enum GameFontList : uint8 {
 	FONTLIST_NONE = 0,
 	FONTLIST_ITE,
@@ -83,7 +83,7 @@ enum GameFontList : uint8 {
 	FONTLIST_MAX
 };
 
-// Make sure to update PatchLists in resource.c if this enum is reordered.
+// Make sure to update PatchLists in resource.cpp if this enum is reordered.
 enum GamePatchList : uint8 {
 	PATCHLIST_NONE = 0,
 	PATCHLIST_ITE,
