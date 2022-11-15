@@ -34,6 +34,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  Queen:
    - Added option for using a better font in Hebrew version.
 
+ SAGA:
+   - Added support for Chinese Inherit the Eath.
+   - Added support for Chinese I Have no Mouth and I Must Scream.
+
  SCUMM:
    - Added support for CGA, CGA Composite, CGA black & white and Hercules modes
      for SCUMM 1 versions of Zak McKracken and Maniac Mansion.
