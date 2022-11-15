@@ -35,7 +35,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added option for using a better font in Hebrew version.
 
  SAGA:
-   - Added support for Chinese Inherit the Eath.
+   - Added support for Chinese Inherit the Earth.
    - Added support for Chinese I Have no Mouth and I Must Scream.
 
  SCUMM:
