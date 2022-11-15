@@ -115,13 +115,11 @@ void FrameBuffer::init() {
 
 void FrameBuffer::attach() {
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-	glGetIntegerv(GL_VIEWPORT, _prevStateViewport);
 	glViewport(0, 0, _width, _height);
 }
 
 void FrameBuffer::detach() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(_prevStateViewport[0], _prevStateViewport[1], _prevStateViewport[2], _prevStateViewport[3]);
 }
 
 #if !USE_FORCED_GLES2
@@ -174,7 +172,6 @@ void MultiSampleFrameBuffer::init() {
 void MultiSampleFrameBuffer::attach() {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, getFrameBufferName());
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _msFrameBufferId);
-	glGetIntegerv(GL_VIEWPORT, _prevStateViewport);
 	glViewport(0, 0, getWidth(), getHeight());
 }
 
@@ -183,7 +180,6 @@ void MultiSampleFrameBuffer::detach() {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, getFrameBufferName());
 	glBlitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(_prevStateViewport[0], _prevStateViewport[1], _prevStateViewport[2], _prevStateViewport[3]);
 }
 
 #endif // !USE_FORCED_GLES2

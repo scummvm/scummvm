@@ -637,6 +637,8 @@ OpenGL::FrameBuffer *OpenGLSdlGraphics3dManager::createFramebuffer(uint width, u
 }
 
 void OpenGLSdlGraphics3dManager::updateScreen() {
+	GLint prevStateViewport[4];
+	glGetIntegerv(GL_VIEWPORT, prevStateViewport);
 	if (_frameBuffer) {
 		_frameBuffer->detach();
 		_surfaceRenderer->prepareState();
@@ -666,6 +668,7 @@ void OpenGLSdlGraphics3dManager::updateScreen() {
 	if (_frameBuffer) {
 		_frameBuffer->attach();
 	}
+	glViewport(prevStateViewport[0], prevStateViewport[1], prevStateViewport[2], prevStateViewport[3]);
 }
 
 int16 OpenGLSdlGraphics3dManager::getHeight() const {
