@@ -180,13 +180,22 @@ Common::SharedPtr<gMaterial> rCopyMaterial(Common::SharedPtr<gMaterial> Mat1, Co
 	Mat1->b = Mat2->b;
 	Mat1->NumAddictionalMaterial = Mat2->NumAddictionalMaterial;
 
-	if (Mat2->NumAddictionalMaterial)
-		Mat1->AddictionalMaterial.resize(Mat2->NumAddictionalMaterial); // TODO: Does this mean that we don't copy any extras?
-
-	for (int i = 0; i < Mat2->NumAddictionalMaterial; i++)
-		rCopyMaterial(Mat1->AddictionalMaterial[i], Mat2->AddictionalMaterial[i]);
+	rCopyMaterialList(Mat1->AddictionalMaterial, Mat2->AddictionalMaterial, Mat2->NumAddictionalMaterial); // TODO: Does this mean that we don't copy any extras?
 
 	return Mat1;
+}
+
+void rCopyMaterialList(MaterialTable &dst, MaterialTable &src, int count) {
+	dst.resize(count);
+	if (count > src.size()) {
+		error("Copying more materials than there are in the src");
+	}
+	for (int i = 0; i < count; i++) {
+		if (!dst[i]) {
+			dst[i] = Common::SharedPtr<gMaterial>(new gMaterial());
+		}
+		rCopyMaterial(dst[i], src[i]);
+	}
 }
 
 void gMaterial::clear() {
@@ -281,6 +290,8 @@ void rBuildMaterialList(MaterialTable &MatList, unsigned int NumMat, signed shor
 
 MaterialTable rCreateMaterialList(int num) {
 	MaterialTable list;
+	// We avoid actually allocating the gMaterial-objects, as we want the size() to
+	// represent the actually loaded elements.
 	list.reserve(num);
 	return list;
 }

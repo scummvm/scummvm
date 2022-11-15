@@ -592,12 +592,8 @@ t3dBODY *t3dBODY::loadFromStream(WGame &game, const Common::String &pname, Commo
 #endif
 
 	if (Mirror) {                                                                               // Se c'era uno specchio
-		gMaterial *mat1, *mat2;
-
 		this->MirrorMatTable = rCreateMaterialList(this->NumMaterials());
-
-		for (uint16 i = 0; i < this->NumMaterials(); i++, mat1++, mat2++)                                   // Per ogni materiale allocato
-			rCopyMaterial(this->MirrorMatTable[i], this->MatTable[i]);
+		rCopyMaterialList(this->MirrorMatTable, this->MatTable, this->NumMaterials());
 	}
 
 
