@@ -103,8 +103,8 @@ bool Party::hasItem(byte itemId) const {
 }
 
 bool Party::isPartyDead() const {
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		Character &c = g_globals->_party[i];
+	for (uint i = 0; i < size(); ++i) {
+		const Character &c = (*this)[i];
 		if (!(c._condition & (ASLEEP | PARALYZED | UNCONSCIOUS | BAD_CONDITION)))
 			return false;
 	}
@@ -116,6 +116,21 @@ bool Party::checkPartyDead() const {
 	if (isPartyDead()) {
 		// At this point, there's no good characters.
 		// So redirect to the death screen
+		g_events->replaceView("Dead", true);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool Party::checkPartyIncapacitated() const {
+	bool isActive = false;
+	for (uint i = 0; i < size() && !isActive; ++i) {
+		const Character &c = (*this)[i];
+		isActive = !(c._condition & (BAD_CONDITION | UNCONSCIOUS));
+	}
+
+	if (isActive) {
 		g_events->replaceView("Dead", true);
 		return true;
 	} else {

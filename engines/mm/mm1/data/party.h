@@ -83,6 +83,12 @@ struct Party : public Common::Array<Character> {
 	bool checkPartyDead() const;
 
 	/**
+	 * Checks whether the party is incapitated, and if so,
+	 * switches to the death screen
+	 */
+	bool checkPartyIncapacitated() const;
+
+	/**
 	 * Synchronizes the party to/from savegames
 	 */
 	void synchronize(Common::Serializer &s);
