@@ -77,6 +77,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_demoIndex = 0;
 	_currentDemoInputCode = 0;
 	_currentDemoInputRepetition = 0;
+	_currentDemoMousePosition = _crossairPosition;
 	_flyMode = false;
 	_noClipMode = false;
 	_playerHeightNumber = 1;
@@ -247,14 +248,13 @@ void FreescapeEngine::generateInput() {
 		}
 
 		if (_currentDemoInputCode >= 0x16 && _currentDemoInputCode <= 0x1a) {
-			// 0x16 -> left click / shoot
-			// 0x17 -> right?
-			// 0x18 -> left
-			// 0x19 -> down?
-			// 0x1a -> up
-			// TODO: mouse events
+			event = decodeDOSMouseEvent(_currentDemoInputCode, _currentDemoInputRepetition);
+			g_system->getEventManager()->pushEvent(event);
+			g_system->delayMillis(10);
+			_currentDemoInputRepetition = 0;
 		} else if (_currentDemoInputCode == 0x7f) {
 			// NOP
+			_currentDemoInputRepetition--;
 		} else {
 			event = Common::Event();
 			event.type = Common::EVENT_KEYDOWN;
@@ -263,8 +263,9 @@ void FreescapeEngine::generateInput() {
 			g_system->getEventManager()->pushEvent(event);
 			debugC(1, kFreescapeDebugMove, "Pushing key: %x with repetition %d", event.kbd.keycode, _currentDemoInputRepetition);
 			g_system->delayMillis(100);
+			_currentDemoInputRepetition--;
 		}
-		_currentDemoInputRepetition--;
+
 		return;
 	}
 

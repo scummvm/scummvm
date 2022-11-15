@@ -19,11 +19,36 @@
  *
  */
 
-#include "common/events.h"
-
 #include "freescape/freescape.h"
 
 namespace Freescape {
+
+Common::Event FreescapeEngine::decodeDOSMouseEvent(int index, int repetition) {
+	Common::Event event;
+	event.type = Common::EVENT_MOUSEMOVE;
+	event.customType = 0xde00;
+	switch(index) {
+		case 0x16:
+			event.type = Common::EVENT_LBUTTONDOWN;
+			break;
+		case 0x17:
+			_currentDemoMousePosition.x -= repetition;
+			break;
+		case 0x18:
+			_currentDemoMousePosition.x += repetition;
+			break;
+		case 0x19:
+			_currentDemoMousePosition.y -= repetition;
+			break;
+		case 0x1a:
+			_currentDemoMousePosition.y += repetition;
+			break;
+		default:
+			error("Unreachable");
+	}
+	event.mouse = _currentDemoMousePosition;
+	return event;
+}
 
 int FreescapeEngine::decodeAmigaAtariKey(int index) {
 	switch (index) {

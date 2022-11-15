@@ -23,6 +23,7 @@
 #define FREESCAPE_H
 
 #include "common/bitarray.h"
+#include "common/events.h"
 #include "engines/advancedDetector.h"
 #include "graphics/surface.h"
 
@@ -132,9 +133,11 @@ public:
 	int _demoIndex;
 	int _currentDemoInputCode;
 	int _currentDemoInputRepetition;
+	Common::Point _currentDemoMousePosition;
 	void loadDemoData(Common::SeekableReadStream *file, int offset, int size);
 	int decodeAmigaAtariKey(int code);
 	int decodeDOSKey(int code);
+	Common::Event decodeDOSMouseEvent(int code, int repetition);
 
 	uint16 readField(Common::SeekableReadStream *file, int nbits);
 	Common::Array<uint8> readArray(Common::SeekableReadStream *file, int size);
