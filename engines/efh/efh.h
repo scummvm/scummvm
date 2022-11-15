@@ -464,7 +464,7 @@ private:
 	void displayColoredMenuBox(int16 minX, int16 minY, int16 maxX, int16 maxY, int16 color);
 
 	// Utils
-	#if true
+	#if false
 	void copyString(char *srcStr, char *destStr);
 	#endif
 	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);
