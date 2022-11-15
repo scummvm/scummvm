@@ -156,12 +156,6 @@ public:
 	 */
 	static int vformat(const value_type *fmt, const value_type *fmtEnd, U32String &output, va_list args);
 
-	/**
-	 * Helper function for vformat. Convert an int to string.
-	 * Minimal implementation, only for base 10.
-	 */
-	static char* itoa(int num, char* str, int base);
-
 	using BaseString<value_type>::insertString;
 	void insertString(const char *s, uint32 p, CodePage page = kUtf8);   /*!< Insert string @p s into this string at position @p p. */
 	void insertString(const String &s, uint32 p, CodePage page = kUtf8); /*!< @overload */
@@ -193,6 +187,18 @@ public:
 
 private:
 	static U32String formatInternal(const U32String *fmt, ...);
+
+	/**
+	 * Helper function for vformat. Convert an int to a string.
+	 * Minimal implementation, only for base 10.
+	 */
+	static char* itoa(int num, char* str, uint base);
+
+	/**
+	 * Helper function for vformat. Convert an unsigned int to a string.
+	 * Minimal implementation, only for base 10.
+	 */
+	static char* uitoa(uint num, char* str, uint base);
 
 	void decodeInternal(const char *str, uint32 len, CodePage page);
 	void decodeOneByte(const char *str, uint32 len, CodePage page);

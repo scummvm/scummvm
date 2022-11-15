@@ -176,6 +176,7 @@ U32String U32String::format(const char *fmt, ...) {
 
 int U32String::vformat(const value_type *fmt, const value_type *fmtEnd, U32String &output, va_list args) {
 	int int_temp;
+	uint uint_temp;
 	char *string_temp;
 
 	value_type ch;
@@ -221,8 +222,8 @@ int U32String::vformat(const value_type *fmt, const value_type *fmtEnd, U32Strin
 				pos += len - 1;
 				break;
 			case 'u':
-				int_temp = va_arg(args, uint);
-				itoa(int_temp, buffer, 10);
+				uint_temp = va_arg(args, uint);
+				uitoa(uint_temp, buffer, 10);
 				len = strlen(buffer);
 				length += len;
 
@@ -247,7 +248,18 @@ int U32String::vformat(const value_type *fmt, const value_type *fmtEnd, U32Strin
 	return length;
 }
 
-char* U32String::itoa(int num, char* str, int base) {
+char* U32String::itoa(int num, char* str, uint base) {
+	if (num < 0) {
+		str[0] = '-';
+		uitoa(-num, str + 1, base);
+	} else {
+		uitoa(num, str, base);
+	}
+
+	return str;
+}
+
+char* U32String::uitoa(uint num, char* str, uint base) {
 	int i = 0;
 
 	if (num) {

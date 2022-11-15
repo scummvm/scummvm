@@ -370,6 +370,13 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS( Common::U32String::format("%s", "test").encode(), "test" );
 		TS_ASSERT_EQUALS( Common::U32String::format("%s%c%s", "Press ", 'X', " to win").encode(), "Press X to win" );
 		TS_ASSERT_EQUALS( Common::U32String::format("Some %s to make this string longer than the default built-in %s %d", "text", "capacity", 123456).encode(), "Some text to make this string longer than the default built-in capacity 123456" );
+
+		TS_ASSERT_EQUALS( Common::U32String::format("%u", 0).encode(), "0" );
+		TS_ASSERT_EQUALS( Common::U32String::format("%u", 1234).encode(), "1234" );
+
+		TS_ASSERT_EQUALS( Common::U32String::format("%d", 0).encode(), "0" );
+		TS_ASSERT_EQUALS( Common::U32String::format("%d", 1234).encode(), "1234" );
+		TS_ASSERT_EQUALS( Common::U32String::format("%d", -1234).encode(), "-1234" );
 	}
 
 	void test_strlcpy() {
