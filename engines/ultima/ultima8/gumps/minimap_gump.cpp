@@ -27,7 +27,6 @@
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/world/item_sorter.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -65,19 +64,22 @@ void MiniMapGump::run() {
 	}
 
 	// Draw into the map surface
-	for (int yv = 0; yv < MAP_NUM_CHUNKS; yv++) {
-		for (int xv = 0; xv < MAP_NUM_CHUNKS; xv++) {
-			if (currentmap->isChunkFast(xv, yv)) {
-				for (int j = 0; j < MINMAPGUMP_SCALE; j++) for (int i = 0; i < MINMAPGUMP_SCALE; i++) {
-					int x = xv * MINMAPGUMP_SCALE + i;
-					int y = yv * MINMAPGUMP_SCALE + j;
-					uint32 val = _minimap.getPixel(x, y);
-					if (val == 0) {
-						val = sampleAtPoint(currentmap,
-							xv * mapChunkSize + mapChunkSize / (MINMAPGUMP_SCALE * 2) + (mapChunkSize * i) / MINMAPGUMP_SCALE,
-							yv * mapChunkSize + mapChunkSize / (MINMAPGUMP_SCALE * 2) + (mapChunkSize * j) / MINMAPGUMP_SCALE);
-						_minimap.setPixel(x, y, val);
-					}
+	for (int x = 0; x < _minimap.w; x++) {
+		for (int y = 0; y < _minimap.h; y++) {
+			uint32 val = _minimap.getPixel(x, y);
+			if (val == 0) {
+				int cx = x / MINMAPGUMP_SCALE;
+				int cy = y / MINMAPGUMP_SCALE;
+				if (currentmap->isChunkFast(cx, cy)) {
+					int mx = (x * mapChunkSize) / MINMAPGUMP_SCALE;
+					int my = (y * mapChunkSize) / MINMAPGUMP_SCALE;
+
+					// Offset produces nicer samples but may need altering
+					mx += mapChunkSize / (MINMAPGUMP_SCALE * 2);
+					my += mapChunkSize / (MINMAPGUMP_SCALE * 2);
+
+					val = sampleAtPoint(currentmap, mx, my);
+					_minimap.setPixel(x, y, val);
 				}
 			}
 		}
@@ -158,7 +160,6 @@ uint32 MiniMapGump::sampleAtPoint(CurrentMap *currentmap, int x, int y) {
 	return val;
 }
 
-
 uint32 MiniMapGump::sampleAtPoint(const Item *item, int x, int y)
 {
 	int32 ix, iy, iz, idx, idy, idz;
@@ -184,6 +185,17 @@ uint32 MiniMapGump::sampleAtPoint(const Item *item, int x, int y)
 	int sx = (ix - iy) / 4;
 	// Screenspace bounding box bottom extent  (RNB y_ coord)
 	int sy = (ix + iy) / 8 + idz;
+
+	// Ensure sample is in bounds of frame
+	if (frame->_xoff - sx < 0)
+		sx = frame->_xoff;
+	else if (frame->_xoff - sx >= frame->_width - 2)
+		sx = frame->_xoff - frame->_width + 2;
+
+	if (frame->_yoff - sy < 0)
+		sy = frame->_yoff;
+	else if (frame->_yoff - sy >= frame->_height - 2)
+		sy = frame->_yoff - frame->_height + 2;
 
 	uint16 r = 0, g = 0, b = 0, c = 0;
 
