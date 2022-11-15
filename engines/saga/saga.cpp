@@ -52,6 +52,153 @@
 
 namespace Saga {
 
+static const GameResourceDescription ITE_Resources_GermanAGACD = {
+	1810,	// Scene lookup table RN
+	216,	// Script lookup table RN
+	3,		// Main panel
+	4,		// Converse panel
+	5,		// Option panel
+	6,		// Main sprites
+	7,		// Main panel sprites
+	35,		// Main strings
+	// ITE specific resources
+	36,		// Actor names
+	125,	// Default portraits
+	// IHNM specific resources
+	0,		// Option panel sprites
+	0,		// Warning panel
+	0,		// Warning panel sprites
+	0		// Psychic profile background
+};
+
+static const GameResourceDescription ITE_Resources_GermanECSCD = {
+	1816,	// Scene lookup table RN
+	216,	// Script lookup table RN
+	3,		// Main panel
+	4,		// Converse panel
+	5,		// Option panel
+	6,		// Main sprites
+	7,		// Main panel sprites
+	35,		// Main strings
+	// ITE specific resources
+	36,		// Actor names
+	125,	// Default portraits
+	// IHNM specific resources
+	0,		// Option panel sprites
+	0,		// Warning panel
+	0,		// Warning panel sprites
+	0		// Psychic profile background
+};
+
+static const GameResourceDescription ITE_Resources = {
+	1806,	// Scene lookup table RN
+	216,	// Script lookup table RN
+	3,		// Main panel
+	4,		// Converse panel
+	5,		// Option panel
+	6,		// Main sprites
+	7,		// Main panel sprites
+	35,		// Main strings
+	// ITE specific resources
+	36,		// Actor names
+	125,	// Default portraits
+	// IHNM specific resources
+	0,		// Option panel sprites
+	0,		// Warning panel
+	0,		// Warning panel sprites
+	0		// Psychic profile background
+};
+
+static const GameResourceDescription ITE_Resources_EnglishECSCD = {
+	1812,	// Scene lookup table RN
+	216,	// Script lookup table RN
+	3,		// Main panel
+	4,		// Converse panel
+	5,		// Option panel
+	6,		// Main sprites
+	7,		// Main panel sprites
+	35,		// Main strings
+	// ITE specific resources
+	36,		// Actor names
+	125,	// Default portraits
+	// IHNM specific resources
+	0,		// Option panel sprites
+	0,		// Warning panel
+	0,		// Warning panel sprites
+	0		// Psychic profile background
+};
+
+// FIXME: Option panel should be 4 but it is an empty resource.
+// Proper fix would be to not load the options panel when the demo is running
+static const GameResourceDescription ITEDemo_Resources = {
+	318,	// Scene lookup table RN
+	146,	// Script lookup table RN
+	2,		// Main panel
+	3,		// Converse panel
+	3,		// Option panel
+	5,		// Main sprites
+	6,		// Main panel sprites
+	8,		// Main strings
+	// ITE specific resources
+	9,		// Actor names
+	80,		// Default portraits
+	// IHNM specific resources
+	0,		// Option panel sprites
+	0,		// Warning panel
+	0,		// Warning panel sprites
+	0		// Psychic profile background
+};
+
+static const GameResourceDescription IHNM_Resources = {
+	1272,	// Scene lookup table RN
+	29,		// Script lookup table RN
+	9,		// Main panel
+	10,		// Converse panel
+	15,		// Option panel
+	12,		// Main sprites
+	12,		// Main panel sprites
+	21,		// Main strings
+	// ITE specific resources
+	0,		// Actor names
+	0,		// Default portraits
+	// IHNM specific resources
+	16,		// Option panel sprites
+	17,		// Warning panel
+	18,		// Warning panel sprites
+	20		// Psychic profile background
+};
+
+static const GameResourceDescription IHNMDEMO_Resources = {
+	286,	// Scene lookup table RN
+	18,		// Script lookup table RN
+	5,		// Main panel
+	6,		// Converse panel
+	10,		// Option panel
+	7,		// Main sprites
+	7,		// Main panel sprites
+	16,		// Main strings
+	// ITE specific resources
+	0,		// Actor names
+	0,		// Default portraits
+	// IHNM specific resources
+	11,		// Option panel sprites
+	12,		// Warning panel
+	13,		// Warning panel sprites
+	15		// Psychic profile background
+};
+
+static const GameResourceDescription *ResourceLists[RESOURCELIST_MAX] = {
+	/* RESOURCELIST_NONE */               nullptr,
+	/* RESOURCELIST_ITE */                &ITE_Resources,
+	/* RESOURCELIST_ITE_ENGLISH_ECS_CD */ &ITE_Resources_EnglishECSCD,
+	/* RESOURCELIST_ITE_GERMAN_AGA_CD */  &ITE_Resources_GermanAGACD,
+	/* RESOURCELIST_ITE_GERMAN_ECS_CD */  &ITE_Resources_GermanECSCD,
+	/* RESOURCELIST_ITE_DEMO */           &ITEDemo_Resources,
+	/* RESOURCELIST_IHNM */               &IHNM_Resources,
+	/* RESOURCELIST_IHNM_DEMO */          &IHNMDEMO_Resources
+};
+
+
 #define MAX_TIME_DELTA 100
 
 SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
@@ -368,6 +515,12 @@ Common::Error SagaEngine::run() {
 	_music->close();
 
 	return Common::kNoError;
+}
+
+const GameResourceDescription *SagaEngine::getResourceDescription() const {
+	GameResourceList index = getResourceList();
+	assert(index < RESOURCELIST_MAX && index > RESOURCELIST_NONE);
+	return ResourceLists[index];
 }
 
 void SagaEngine::loadStrings(StringsTable &stringsTable, const ByteArray &stringsData, bool isBigEndian) {

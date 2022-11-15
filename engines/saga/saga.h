@@ -220,7 +220,36 @@ enum TextStringIds {
 	kTextLoadSavedGame
 };
 
+struct GameResourceDescription {
+	uint32 sceneLUTResourceId;
+	uint32 moduleLUTResourceId;
+	uint32 mainPanelResourceId;
+	uint32 conversePanelResourceId;
+	uint32 optionPanelResourceId;
+	uint32 mainSpritesResourceId;
+	uint32 mainPanelSpritesResourceId;
+	uint32 mainStringsResourceId;
+	// ITE specific resources
+	uint32 actorsStringsResourceId;
+	uint32 defaultPortraitsResourceId;
+	// IHNM specific resources
+	uint32 optionPanelSpritesResourceId;
+	uint32 warningPanelResourceId;
+	uint32 warningPanelSpritesResourceId;
+	uint32 psychicProfileResourceId;
+};
+
+struct GameFontDescription {
+	uint32 fontResourceId;
+};
+
 struct GameDisplayInfo;
+
+struct GamePatchDescription {
+	const char *fileName;
+	uint16 fileType;
+	uint32 resourceId;
+};
 
 enum GameObjectTypes {
 	kGameObjectNone = 0,
@@ -543,8 +572,9 @@ public:
 	bool isMacResources() const;
 	const GameResourceDescription *getResourceDescription() const;
 
-	const GameFontDescription *getFontDescription(int index) const;
-	int getFontsCount() const;
+	GameResourceList getResourceList() const;
+	GameFontList getFontList() const;
+	GamePatchList getPatchList() const;
 
 	int getGameId() const;
 	uint32 getFeatures() const;
@@ -552,8 +582,6 @@ public:
 	Common::Platform getPlatform() const;
 	int getGameNumber() const;
 	int getStartSceneNumber() const;
-
-	const GamePatchDescription *getPatchDescriptions() const;
 
 	const ADGameFileDescription *getFilesDescriptions() const;
 
