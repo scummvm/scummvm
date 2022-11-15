@@ -289,6 +289,9 @@ public:
 	StateVars _gameStateVars;
 	StateBits _gameStateBits;
 	virtual bool checkIfGameEnded();
+	ObjectArray _sensors;
+	void checkSensors();
+
 
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }
@@ -304,6 +307,7 @@ public:
 	void removeTimers();
 	bool _timerStarted;
 	int _countdown;
+	int _ticks;
 };
 
 enum DrillerReleaseFlags {

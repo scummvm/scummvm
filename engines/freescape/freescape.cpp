@@ -30,6 +30,7 @@
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
 #include "freescape/neo.h"
+#include "freescape/objects/sensor.h"
 
 namespace Freescape {
 
@@ -117,6 +118,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 
 	_timerStarted = false;
 	_countdown = 0;
+	_ticks = 0;
 	_frameLimiter = nullptr;
 }
 
@@ -205,6 +207,16 @@ void FreescapeEngine::drawCrossair(Graphics::Surface *surface) {
 void FreescapeEngine::centerCrossair() {
 	_crossairPosition.x = _viewArea.left + _viewArea.width() / 2;
 	_crossairPosition.y = _viewArea.top + _viewArea.height() / 2;
+}
+
+void FreescapeEngine::checkSensors() {
+	for (auto &it : _sensors) {
+		Sensor *sensor = (Sensor *)it;
+		if ((sensor->getOrigin() - _position).length() <= sensor->_firingRange) {
+			if (_ticks % sensor->_firingInterval == 0)
+				warning("shoot!");
+		}
+	}
 }
 
 void FreescapeEngine::drawFrame() {
@@ -479,6 +491,7 @@ Common::Error FreescapeEngine::run() {
 	g_system->updateScreen();
 
 	while (!shouldQuit() && !endGame) {
+		checkSensors();
 		drawFrame();
 		if (_demoMode)
 			generateInput();
@@ -708,14 +721,16 @@ Graphics::Surface *FreescapeEngine::loadAndConvertNeoImage(Common::SeekableReadS
 
 static void countdownCallback(void *refCon) {
 	FreescapeEngine* self = (FreescapeEngine *)refCon;
-	self->_countdown--;
+	self->_ticks++;
+	if (self->_ticks % 50 == 0)
+		self->_countdown--;
 }
 
 bool FreescapeEngine::startCountdown(uint32 delay) {
 	_countdown = delay;
 	_timerStarted = true;
-	uint32 oneSecond = 1000000;
-	return g_system->getTimerManager()->installTimerProc(&countdownCallback, oneSecond, (void *)this, "countdown");
+	uint32 oneTick = 1000000 / 50;
+	return g_system->getTimerManager()->installTimerProc(&countdownCallback, oneTick, (void *)this, "countdown");
 }
 
 void FreescapeEngine::removeTimers() {

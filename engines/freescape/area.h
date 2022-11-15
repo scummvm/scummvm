@@ -43,6 +43,7 @@ public:
 	Common::String _name;
 	Object *objectWithID(uint16 objectID);
 	Object *entranceWithID(uint16 objectID);
+	ObjectArray getSensors();
 	uint16 getAreaID();
 	uint16 getAreaFlags();
 	uint8 getScale();

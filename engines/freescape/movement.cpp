@@ -57,6 +57,8 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 		_playerHeight = 2;
 	debugC(1, kFreescapeDebugMove, "player height: %d", _playerHeight);
 	_position.setValue(1, _position.y() + _playerHeight);
+
+	_sensors = _currentArea->getSensors();
 }
 
 void FreescapeEngine::shoot() {

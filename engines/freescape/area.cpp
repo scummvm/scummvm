@@ -109,6 +109,16 @@ Area::~Area() {
 	delete _objectsByID;
 }
 
+ObjectArray Area::getSensors() {
+	ObjectArray sensors;
+	debugC(1, kFreescapeDebugMove, "Area name: %s", _name.c_str());
+	for (auto &it : *_objectsByID) {
+		if (it._value->getType() == kSensorType)
+			sensors.push_back(it._value);
+	}
+	return sensors;
+}
+
 void Area::show() {
 	debugC(1, kFreescapeDebugMove, "Area name: %s", _name.c_str());
 	for (auto &it : *_objectsByID)
