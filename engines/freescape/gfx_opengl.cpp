@@ -193,14 +193,14 @@ void OpenGLRenderer::renderShoot(byte color, const Common::Point position, const
 	glLineWidth(10); // It will not work in every OpenGL implementation since the
 					 // spec doesn't require support for line widths other than 1
 	glEnableClientState(GL_VERTEX_ARRAY);
-	copyToVertexArray(0, Math::Vector3d(0, _screenH - 2, 0));
+	copyToVertexArray(0, Math::Vector3d(viewArea.left, viewArea.height() + viewArea.top - 1, 0));
 	copyToVertexArray(1, Math::Vector3d(position.x, position.y, 0));
-	copyToVertexArray(2, Math::Vector3d(0, _screenH - 2, 0));
+	copyToVertexArray(2, Math::Vector3d(viewArea.left, viewArea.height() + viewArea.top - 1, 0));
 	copyToVertexArray(3, Math::Vector3d(position.x, position.y, 0));
 
-	copyToVertexArray(4, Math::Vector3d(_screenW, _screenH - 2, 0));
+	copyToVertexArray(4, Math::Vector3d(viewArea.right, viewArea.width() - viewArea.bottom, 0));
 	copyToVertexArray(5, Math::Vector3d(position.x, position.y, 0));
-	copyToVertexArray(6, Math::Vector3d(_screenW, _screenH, 0));
+	copyToVertexArray(6, Math::Vector3d(viewArea.right, viewArea.width() - viewArea.bottom, 0));
 	copyToVertexArray(7, Math::Vector3d(position.x, position.y, 0));
 
 	glVertexPointer(3, GL_FLOAT, 0, _verts);
