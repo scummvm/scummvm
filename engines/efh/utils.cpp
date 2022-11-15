@@ -26,6 +26,20 @@
 
 namespace Efh {
 
+#if 0
+// Note : The original engine is using copyString(src, dest). It has been replaced either by a string assignment or a snprintf
+void EfhEngine::copyString(char *srcStr, char *destStr) {
+	debugC(1, kDebugUtils, "copyString %s", srcStr);
+	char lastChar = 1;
+	int16 idx = 0;
+
+	while (lastChar != 0) {
+		lastChar = destStr[idx] = srcStr[idx];
+		++idx;
+	}
+}
+#endif
+
 int32 EfhEngine::readFileToBuffer(Common::String &filename, uint8 *destBuffer) {
 	debugC(1, kDebugUtils, "readFileToBuffer %s", filename.c_str());
 	Common::File f;
@@ -321,17 +335,6 @@ Common::KeyCode EfhEngine::getInputBlocking() {
 
 void EfhEngine::setNumLock() {
 	// No implementation in ScummVM
-}
-
-void EfhEngine::copyString(char *srcStr, char *destStr) {
-	debugC(1, kDebugUtils, "copyString %s", srcStr);
-	char lastChar = 1;
-	int16 idx = 0;
-
-	while (lastChar != 0) {
-		lastChar = destStr[idx] = srcStr[idx];
-		++idx;
-	}
 }
 
 bool EfhEngine::getValidationFromUser() {
