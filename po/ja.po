@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-14 19:55+0000\n"
+"POT-Creation-Date: 2022-11-15 20:16+0000\n"
 "PO-Revision-Date: 2022-11-13 18:14+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4788,7 +4788,7 @@ msgstr "コマンドを変更"
 #: engines/grim/grim.cpp:493 engines/grim/grim.cpp:589
 #: engines/hdb/metaengine.cpp:231 engines/nancy/dialogs.cpp:145
 #: engines/scumm/help.cpp:223 engines/scumm/help.cpp:232
-#: engines/scumm/help.cpp:242 engines/scumm/help.cpp:250
+#: engines/scumm/help.cpp:246 engines/scumm/help.cpp:254
 #: engines/twine/metaengine.cpp:286 engines/zvision/metaengine.cpp:163
 msgid "Inventory"
 msgstr "インベントリー"
@@ -5016,8 +5016,8 @@ msgstr ""
 msgid "Run"
 msgstr "走る"
 
-#: engines/grim/grim.cpp:478 engines/scumm/help.cpp:240
-#: engines/scumm/help.cpp:248
+#: engines/grim/grim.cpp:478 engines/scumm/help.cpp:244
+#: engines/scumm/help.cpp:252
 msgid "Examine"
 msgstr "調べる"
 
@@ -5233,7 +5233,7 @@ msgstr "右に行く"
 #: engines/hdb/metaengine.cpp:217 engines/scumm/help.cpp:126
 #: engines/scumm/help.cpp:150 engines/scumm/help.cpp:168
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:211
-#: engines/scumm/help.cpp:222 engines/scumm/help.cpp:251
+#: engines/scumm/help.cpp:222 engines/scumm/help.cpp:255
 #: engines/sky/metaengine.cpp:91 engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1524
 msgid "Use"
@@ -7232,7 +7232,7 @@ msgid "pull (Yank)"
 msgstr "引く"
 
 #: engines/scumm/help.cpp:194 engines/scumm/help.cpp:210
-#: engines/scumm/help.cpp:249 engines/wintermute/keymapper_tables.h:128
+#: engines/scumm/help.cpp:253 engines/wintermute/keymapper_tables.h:128
 #: engines/wintermute/keymapper_tables.h:1530
 msgid "Talk to"
 msgstr "話す"
@@ -7295,190 +7295,191 @@ msgstr "パンチ"
 msgid "Kick"
 msgstr "蹴る"
 
-#. I18N: A shortcut to skip the bike fight and derby sequences in Full Throttle
-#: engines/scumm/help.cpp:237
+#. I18N: The name of the 'Shift' key on a PC keyboard
+#: engines/scumm/help.cpp:238
 msgid "Shift"
 msgstr "シフト"
 
-#: engines/scumm/help.cpp:237
+#. I18N: Lets one skip the bike/car fight sequences in Full Throttle
+#: engines/scumm/help.cpp:240
 msgid "Fight cheat"
 msgstr "戦闘チート"
 
-#: engines/scumm/help.cpp:241
+#: engines/scumm/help.cpp:245
 msgid "Regular cursor"
 msgstr "レギュラーカーソル"
 
 #. I18N: Comm is a communication device
-#: engines/scumm/help.cpp:244
+#: engines/scumm/help.cpp:248
 msgid "Comm"
 msgstr "通信機"
 
-#: engines/scumm/help.cpp:247
+#: engines/scumm/help.cpp:251
 msgid "Save / Load / Options"
 msgstr "セーブ/ロード/オプション"
 
-#: engines/scumm/help.cpp:258
+#: engines/scumm/help.cpp:262
 msgid "Other game controls:"
 msgstr "その他ゲームの操作:"
 
-#: engines/scumm/help.cpp:260 engines/scumm/help.cpp:270
+#: engines/scumm/help.cpp:264 engines/scumm/help.cpp:274
 msgid "Inventory:"
 msgstr "所持品:"
 
-#: engines/scumm/help.cpp:261 engines/scumm/help.cpp:277
+#: engines/scumm/help.cpp:265 engines/scumm/help.cpp:281
 msgid "Scroll list up"
 msgstr "リストを上へスクロール"
 
-#: engines/scumm/help.cpp:262 engines/scumm/help.cpp:278
+#: engines/scumm/help.cpp:266 engines/scumm/help.cpp:282
 msgid "Scroll list down"
 msgstr "リストを下へスクロール"
 
-#: engines/scumm/help.cpp:263 engines/scumm/help.cpp:271
+#: engines/scumm/help.cpp:267 engines/scumm/help.cpp:275
 msgid "Upper left item"
 msgstr "左上のアイテム"
 
-#: engines/scumm/help.cpp:264 engines/scumm/help.cpp:273
+#: engines/scumm/help.cpp:268 engines/scumm/help.cpp:277
 msgid "Lower left item"
 msgstr "左下のアイテム"
 
-#: engines/scumm/help.cpp:265 engines/scumm/help.cpp:274
+#: engines/scumm/help.cpp:269 engines/scumm/help.cpp:278
 msgid "Upper right item"
 msgstr "右上のアイテム"
 
-#: engines/scumm/help.cpp:266 engines/scumm/help.cpp:276
+#: engines/scumm/help.cpp:270 engines/scumm/help.cpp:280
 msgid "Lower right item"
 msgstr "右下のアイテム"
 
-#: engines/scumm/help.cpp:272
+#: engines/scumm/help.cpp:276
 msgid "Middle left item"
 msgstr "左中央のアイテム"
 
-#: engines/scumm/help.cpp:275
+#: engines/scumm/help.cpp:279
 msgid "Middle right item"
 msgstr "右中央のアイテム"
 
-#: engines/scumm/help.cpp:282 engines/scumm/help.cpp:287
+#: engines/scumm/help.cpp:286 engines/scumm/help.cpp:291
 msgid "Switching characters:"
 msgstr "キャラクターの切り替え："
 
-#: engines/scumm/help.cpp:284
+#: engines/scumm/help.cpp:288
 msgid "Second kid"
 msgstr "2人目の子供"
 
-#: engines/scumm/help.cpp:285
+#: engines/scumm/help.cpp:289
 msgid "Third kid"
 msgstr "3人目の子供"
 
-#: engines/scumm/help.cpp:294
+#: engines/scumm/help.cpp:298
 msgid "Toggle Inventory/IQ Points display"
 msgstr "インベントリー/IQポイント表示の切り替え"
 
-#: engines/scumm/help.cpp:295
+#: engines/scumm/help.cpp:299
 msgid "Toggle Keyboard/Mouse Fighting (*)"
 msgstr "戦闘の操作をキーボード/マウスに切り替え(*)"
 
-#: engines/scumm/help.cpp:297
+#: engines/scumm/help.cpp:301
 msgid "* Keyboard Fighting is always on,"
 msgstr "* ゲーム中のメッセージにもかかわらず、"
 
-#: engines/scumm/help.cpp:298
+#: engines/scumm/help.cpp:302
 msgid "  so despite the in-game message this"
 msgstr "  キーボードでの戦闘は常に可能です"
 
-#: engines/scumm/help.cpp:299
+#: engines/scumm/help.cpp:303
 msgid "  actually toggles Mouse Fighting Off/On"
 msgstr "  実際には、マウスでの戦闘のON/OFFを切り替えます"
 
-#: engines/scumm/help.cpp:306
+#: engines/scumm/help.cpp:310
 msgid "Fighting controls (numpad):"
 msgstr "戦闘の操作(テンキー)："
 
-#: engines/scumm/help.cpp:307 engines/scumm/help.cpp:308
-#: engines/scumm/help.cpp:309
+#: engines/scumm/help.cpp:311 engines/scumm/help.cpp:312
+#: engines/scumm/help.cpp:313
 msgid "Step back"
 msgstr "後ろに下がる"
 
-#: engines/scumm/help.cpp:310
+#: engines/scumm/help.cpp:314
 msgid "Block high"
 msgstr "上段ガード"
 
-#: engines/scumm/help.cpp:311
+#: engines/scumm/help.cpp:315
 msgid "Block middle"
 msgstr "中段ガード"
 
-#: engines/scumm/help.cpp:312
+#: engines/scumm/help.cpp:316
 msgid "Block low"
 msgstr "下段ガード"
 
-#: engines/scumm/help.cpp:313
+#: engines/scumm/help.cpp:317
 msgid "Punch high"
 msgstr "上パンチ"
 
-#: engines/scumm/help.cpp:314
+#: engines/scumm/help.cpp:318
 msgid "Punch middle"
 msgstr "中パンチ"
 
-#: engines/scumm/help.cpp:315
+#: engines/scumm/help.cpp:319
 msgid "Punch low"
 msgstr "下パンチ"
 
-#: engines/scumm/help.cpp:317
+#: engines/scumm/help.cpp:321
 msgid "Sucker punch"
 msgstr "不意打ち"
 
-#: engines/scumm/help.cpp:320
+#: engines/scumm/help.cpp:324
 msgid "These are for Indy on left."
 msgstr "これらはIndyから見て左側にあります。"
 
-#: engines/scumm/help.cpp:321
+#: engines/scumm/help.cpp:325
 msgid "When Indy is on the right,"
 msgstr "Indyが向かって右側にいる場合、"
 
-#: engines/scumm/help.cpp:322
+#: engines/scumm/help.cpp:326
 msgid "7, 4, and 1 are switched with"
 msgstr "7, 4, 1キーと"
 
-#: engines/scumm/help.cpp:323
+#: engines/scumm/help.cpp:327
 msgid "9, 6, and 3, respectively."
 msgstr "9, 6, 3キーで、それぞれスイッチできます。"
 
-#: engines/scumm/help.cpp:332
+#: engines/scumm/help.cpp:336
 msgid "Biplane controls (numpad):"
 msgstr "機体制御(テンキー)："
 
-#: engines/scumm/help.cpp:333
+#: engines/scumm/help.cpp:337
 msgid "Fly to upper left"
 msgstr "左へ上昇"
 
-#: engines/scumm/help.cpp:334
+#: engines/scumm/help.cpp:338
 msgid "Fly to left"
 msgstr "左へ飛ぶ"
 
-#: engines/scumm/help.cpp:335
+#: engines/scumm/help.cpp:339
 msgid "Fly to lower left"
 msgstr "左へ降下"
 
-#: engines/scumm/help.cpp:336
+#: engines/scumm/help.cpp:340
 msgid "Fly upwards"
 msgstr "上昇"
 
-#: engines/scumm/help.cpp:337
+#: engines/scumm/help.cpp:341
 msgid "Fly straight"
 msgstr "直進"
 
-#: engines/scumm/help.cpp:338
+#: engines/scumm/help.cpp:342
 msgid "Fly down"
 msgstr "降下"
 
-#: engines/scumm/help.cpp:339
+#: engines/scumm/help.cpp:343
 msgid "Fly to upper right"
 msgstr "右へ上昇"
 
-#: engines/scumm/help.cpp:340
+#: engines/scumm/help.cpp:344
 msgid "Fly to right"
 msgstr "右へ飛ぶ"
 
-#: engines/scumm/help.cpp:341
+#: engines/scumm/help.cpp:345
 msgid "Fly to lower right"
 msgstr "右へ降下"
 
