@@ -48,6 +48,9 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_playerHeights.push_back(80);
 	_playerHeights.push_back(112);
 
+	_angleRotations.push_back(5);
+	_angleRotations.push_back(9.5);
+
 	_playerHeight = _playerHeights[_playerHeightNumber];
 	_playerWidth = 12;
 	_playerDepth = 32;
@@ -125,9 +128,6 @@ void DrillerEngine::loadAssets() {
 		loadAssetsDemo();
 	else
 		loadAssetsFullGame();
-
-	_angleRotations.push_back(5.0);
-	_angleRotations.push_back(9.5);
 
 	// Start playing music, if any, in any supported format
 	playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme");
@@ -378,6 +378,7 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 	else
 		drawStringInSurface(Common::String::format("%s", "J"), 57, 161, yellow, black, surface);
 
+	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 46, 145, yellow, black, surface);
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 46, 153, yellow, black, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 238, 129, yellow, black, surface);
 

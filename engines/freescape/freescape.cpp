@@ -239,9 +239,9 @@ void FreescapeEngine::generateInput() {
 			_currentDemoInputRepetition = 1;
 			_currentDemoInputCode = _demoData[_demoIndex++];
 			if (_currentDemoInputCode & 0x80) {
-				_currentDemoInputRepetition = (_currentDemoInputCode & 0x7F) + 1;
-				if (_currentDemoInputRepetition == 1)
-					_currentDemoInputRepetition = 255;
+				_currentDemoInputRepetition = (_currentDemoInputCode & 0x7F) /*+ 1*/;
+				//if (_currentDemoInputRepetition == 1)
+				//	_currentDemoInputRepetition = 255;
 				_currentDemoInputCode = _demoData[_demoIndex++];
 			}
 		}
