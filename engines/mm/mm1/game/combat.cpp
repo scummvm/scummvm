@@ -683,12 +683,12 @@ void Combat::removeMonster() {
 void Combat::checkParty() {
 	_val10 = 0;
 
-	if (g_globals->_party.checkPartyDead())
+	if (g_globals->_party.checkPartyIncapacitated())
 		return;
 
 	// Update the array for the party
 	for (uint i = 0; i < _party.size(); ++i) {
-		Character &c = *_party[i];
+		const Character &c = *_party[i];
 		if ((c._condition & BAD_CONDITION) || !c._hpBase)
 			_arr3[i] = 1;
 	}
