@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-15 20:16+0000\n"
+"POT-Creation-Date: 2022-11-15 20:46+0000\n"
 "PO-Revision-Date: 2022-10-17 00:33+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4541,8 +4541,8 @@ msgstr ""
 #: engines/mohawk/detection_tables.h:1130
 #: engines/mohawk/detection_tables.h:1145
 #: engines/mohawk/detection_tables.h:3211 engines/myst3/detection.cpp:142
-#: engines/neverhood/detection.cpp:124 engines/saga/detection_tables.h:243
-#: engines/saga/detection_tables.h:1431 engines/saga/detection_tables.h:1492
+#: engines/neverhood/detection.cpp:124 engines/saga/detection_tables.h:46
+#: engines/saga/detection_tables.h:1190 engines/saga/detection_tables.h:1249
 #: engines/sci/detection_tables.h:5191 engines/sci/detection_tables.h:5199
 #: engines/sherlock/detection_tables.h:223 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:212
@@ -6493,21 +6493,21 @@ msgid "Use an easier to read custom font"
 msgstr "Käytä helppolukuisempaa räätälöityä kirjasinmallia"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:894
+#: engines/saga/detection_tables.h:673
 msgid "Windows Trial version is not supported"
 msgstr "Windows:in koeversio ei ole vielä tuettu"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:921
+#: engines/saga/detection_tables.h:699
 msgid "macOS Trial version is not supported"
 msgstr "macOS:n koeversio ei ole tuettu"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:947
+#: engines/saga/detection_tables.h:724
 msgid "Pocket PC Trial version is not supported"
 msgstr "Pocket PC:n koeversio ei ole tuettu"
 
-#: engines/saga/metaengine.cpp:112
+#: engines/saga/metaengine.cpp:108
 msgid "I Have No Mouth support not compiled in"
 msgstr "I Have No Mouth-tukea ei ole käännetty mukaan"
 
@@ -6522,7 +6522,7 @@ msgstr ""
 "Musiikki ei tule kuulostamaan samalta kuin\n"
 "alkuperäisessä pelissä ilman niitä."
 
-#: engines/saga/saga.cpp:228
+#: engines/saga/saga.cpp:375
 msgid "Error loading game resources."
 msgstr "Peliresursseja lukiessa tapahtui virhe."
 
