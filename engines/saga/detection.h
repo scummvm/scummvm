@@ -91,7 +91,7 @@ enum GamePatchList : uint8 {
 	PATCHLIST_MAX
 };
 
-// Make sure to update ITE_IntroLists in introproc_ite.c if this enum is reordered.
+// Make sure to update ITE_IntroLists in introproc_ite.cpp if this enum is reordered.
 enum GameIntroList : uint8 {
 	INTROLIST_NONE = 0,
 	INTROLIST_ITE_DEFAULT,
