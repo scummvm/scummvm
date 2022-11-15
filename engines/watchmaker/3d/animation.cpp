@@ -611,9 +611,7 @@ t3dCHARACTER *t3dLoadCharacter(WGame &game, const char *pname, t3dCHARACTER *b, 
 	if (Mirror) {                                                                               // Ogni personaggio potrebbe apparire in uno specchio
 		b->Body->MirrorMatTable.resize(b->Body->NumMaterials());
 
-		for (i = 0; i < b->Body->NumMaterials(); i++) {
-			rCopyMaterial(b->Body->MirrorMatTable[i], b->Body->MatTable[i]);
-		}
+		rCopyMaterialList(b->Body->MirrorMatTable, b->Body->MatTable, b->Body->NumMaterials());
 	}
 
 //	Per le ombre, altezza e raggio del cilindro
