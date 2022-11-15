@@ -35,7 +35,7 @@ void resizeAndFill(Common::Array<T> &container, const typename Common::Array<T>:
 }
 
 template<typename RandomIt, typename V, typename Comp = Common::Less<V>>
-RandomIt lowerBound(RandomIt begin, RandomIt end, V const& val, Comp comp = {}) {
+RandomIt lowerBound(RandomIt begin, RandomIt end, V const &val, Comp comp = {}) {
 	while (begin < end) {
 		const auto mid = begin + Common::distance(begin, end) / 2;
 		if (comp(*mid, val))
@@ -47,17 +47,16 @@ RandomIt lowerBound(RandomIt begin, RandomIt end, V const& val, Comp comp = {}) 
 }
 
 template<typename RandomIt, typename V, typename Comp = Common::Less<V>>
-RandomIt upperBound(RandomIt begin, RandomIt end, V const& val, Comp comp = {})
-{
+RandomIt upperBound(RandomIt begin, RandomIt end, V const &val, Comp comp = {}) {
 	while (begin < end) {
 		const auto mid = begin + Common::distance(begin, end) / 2;
 		if (!comp(val, *mid))
 			begin = mid + 1;
 		else
-		 	end = mid;
+			end = mid;
 	}
 }
 
-}
+} // namespace Hpl1
 
-#endif //HPL1_ALGORITHMS
+#endif // HPL1_ALGORITHMS
