@@ -217,6 +217,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		Common::String conditionSource;
 
 		if (isCastle()) { // TODO
+			assert(byteSizeOfObject == 0);
 			return new Sensor(
 				objectID,
 				32 * position,
