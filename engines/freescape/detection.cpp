@@ -19,11 +19,8 @@
  *
  */
 
-#include "common/translation.h"
-
 #include "freescape/freescape.h"
-
-#define GAMEOPTION_PRERECORDED_SOUNDS   GUIO_GAMEOPTIONS1
+#include "freescape/detection.h"
 
 namespace Freescape {
 
@@ -252,24 +249,9 @@ static const DebugChannelDef debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_PRERECORDED_SOUNDS,
-		{
-			_s("Prerecorded sounds"),
-			_s("Use high-quality pre-recorded sounds instead of pc speaker emulation"),
-			"prerecorded_sounds",
-			true,
-			0,
-			0
-		}
-	},
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
 class FreescapeMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	FreescapeMetaEngineDetection() : AdvancedMetaEngineDetection(Freescape::gameDescriptions, sizeof(ADGameDescription), Freescape::freescapeGames, optionsList) {
+	FreescapeMetaEngineDetection() : AdvancedMetaEngineDetection(Freescape::gameDescriptions, sizeof(ADGameDescription), Freescape::freescapeGames) {
 		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_PRERECORDED_SOUNDS);
 	}
 

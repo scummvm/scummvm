@@ -19,12 +19,34 @@
  *
  */
 
+#include "common/translation.h"
+
 #include "freescape/freescape.h"
+#include "freescape/detection.h"
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_PRERECORDED_SOUNDS,
+		{
+			_s("Prerecorded sounds"),
+			_s("Use high-quality pre-recorded sounds instead of pc speaker emulation"),
+			"prerecorded_sounds",
+			true,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 class FreescapeMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "freescape";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
