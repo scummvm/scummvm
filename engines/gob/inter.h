@@ -671,7 +671,7 @@ protected:
 class Inter_v7 : public Inter_Playtoons {
 public:
 	Inter_v7(GobEngine *vm);
-	~Inter_v7() override;
+	~Inter_v7() override {};
 
 protected:
 	void setupOpcodesDraw() override;
@@ -679,7 +679,7 @@ protected:
 	void setupOpcodesGob() override;
 
 	void o7_draw0x0C();
-	void o7_loadCursorFromExec();
+	void o7_setCursorToLoadFromExec();
 	void o7_freeMult();
 	void o7_loadMultObject();
 	void o7_displayWarning();
@@ -722,15 +722,11 @@ private:
 	INIConfig _inis;
 	Databases _databases;
 
-	Common::WinResources *_cursors;
 	Common::ArchiveMemberList _remainingFilesFromPreviousSearch;
 	Common::String _currentCDPath;
 
 	Common::String findFile(const Common::String &mask, const Common::String &previousFile);
 	void copyFile(const Common::String &sourceFile, const Common::String &destFile);
-
-	bool loadCursorFile();
-	void resizeCursors(int16 width, int16 height, int16 count, bool transparency);
 
 	bool setCurrentCDPath(const Common::FSNode &dir);
 	Common::Array<uint32> getAdibou2InstalledApplications();
