@@ -75,41 +75,5 @@ MODULE_OBJS += \
 	updates.o
 endif
 
-ifdef USE_LUA
-MODULE_OBJS += \
-	lua/double_serialization.o \
-	lua/lapi.o \
-	lua/lauxlib.o \
-	lua/lbaselib.o \
-	lua/lcode.o \
-	lua/ldblib.o \
-	lua/ldebug.o \
-	lua/ldo.o \
-	lua/lfunc.o \
-	lua/lgc.o \
-	lua/linit.o \
-	lua/liolib.o \
-	lua/llex.o \
-	lua/lmathlib.o \
-	lua/lmem.o \
-	lua/loadlib.o \
-	lua/lobject.o \
-	lua/lopcodes.o \
-	lua/loslib.o \
-	lua/lparser.o \
-	lua/lstate.o \
-	lua/lstring.o \
-	lua/lstrlib.o \
-	lua/ltable.o \
-	lua/ltablib.o \
-	lua/ltm.o \
-	lua/lua_persist.o \
-	lua/lua_persistence_util.o \
-	lua/lua_unpersist.o \
-	lua/lvm.o \
-	lua/lzio.o \
-	lua/scummvm_file.o
-endif
-
 # Include common rules
 include $(srcdir)/rules.mk
