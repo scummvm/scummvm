@@ -52,18 +52,14 @@ namespace Gob {
 #define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
 #define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
-Inter_v7::Inter_v7(GobEngine *vm) : Inter_Playtoons(vm), _cursors(nullptr) {
-}
-
-Inter_v7::~Inter_v7() {
-	delete _cursors;
+Inter_v7::Inter_v7(GobEngine *vm) : Inter_Playtoons(vm) {
 }
 
 void Inter_v7::setupOpcodesDraw() {
 	Inter_Playtoons::setupOpcodesDraw();
 
 	OPCODEDRAW(0x0C, o7_draw0x0C);
-	OPCODEDRAW(0x0D, o7_loadCursorFromExec);
+	OPCODEDRAW(0x0D, o7_setCursorToLoadFromExec);
 	OPCODEDRAW(0x15, o7_freeMult);
 	OPCODEDRAW(0x17, o7_loadMultObject);
 	OPCODEDRAW(0x44, o7_displayWarning);
@@ -112,110 +108,6 @@ void Inter_v7::setupOpcodesGob() {
 
 void Inter_v7::o7_draw0x0C() {
 	WRITE_VAR(17, 0);
-}
-
-void Inter_v7::resizeCursors(int16 width, int16 height, int16 count, bool transparency) {
-	if (width <= 0)
-		width = _vm->_draw->_cursorWidth;
-	if (height <= 0)
-		height = _vm->_draw->_cursorHeight;
-
-	_vm->_draw->_transparentCursor = transparency;
-
-	bool sameCursorDimensions = (_vm->_draw->_cursorWidth == width) && (_vm->_draw->_cursorHeight == height);
-
-	// Cursors sprite already big enough
-	if (sameCursorDimensions &&
-		_vm->_draw->_cursorCount >= count &&
-		_vm->_draw->_doCursorPalettes != nullptr)
-		return;
-
-	debugC(5, kDebugGraphics, "Resizing cursors: size %dx%d -> %dx%d, cursor count %d -> %d)",
-		   _vm->_draw->_cursorWidth,
-		   width,
-		   _vm->_draw->_cursorHeight,
-		   height,
-		   _vm->_draw->_cursorCount,
-		   count);
-	SurfacePtr oldCursorsSprites = _vm->_draw->_cursorSprites;
-	int oldCursorCount = _vm->_draw->_cursorCount;
-	_vm->_draw->_cursorCount  = count;
-	_vm->_draw->_cursorWidth  = width;
-	_vm->_draw->_cursorHeight = height;
-
-	_vm->_draw->freeSprite(Draw::kCursorSurface);
-	_vm->_draw->_cursorSprites.reset();
-	_vm->_draw->_cursorSpritesBack.reset();
-	_vm->_draw->_scummvmCursor.reset();
-
-	_vm->_draw->initSpriteSurf(Draw::kCursorSurface, width * count, height, 2);
-
-	_vm->_draw->_cursorSpritesBack = _vm->_draw->_spritesArray[Draw::kCursorSurface];
-	_vm->_draw->_cursorSprites     = _vm->_draw->_cursorSpritesBack;
-
-	if (sameCursorDimensions && oldCursorCount < count)
-		_vm->_draw->_cursorSprites->blit(*oldCursorsSprites);
-	oldCursorsSprites.reset();
-
-	_vm->_draw->_scummvmCursor = _vm->_video->initSurfDesc(width, height, SCUMMVM_CURSOR);
-
-	for (int i = sameCursorDimensions ? oldCursorCount : 0; i < count; i++) {
-		_vm->_draw->_cursorAnimLow[i] = -1;
-		_vm->_draw->_cursorAnimDelays[i] = 0;
-		_vm->_draw->_cursorAnimHigh[i] = 0;
-	}
-	_vm->_draw->_cursorAnimLow[1] = 0;
-
-	if (oldCursorCount < count || _vm->_draw->_doCursorPalettes == nullptr) {
-		bool *oldDoCursorPalettes = _vm->_draw->_doCursorPalettes;
-		byte *oldCursorPalettes = _vm->_draw->_cursorPalettes;
-		byte *oldCursorKeyColors = _vm->_draw->_cursorKeyColors;
-		uint16 *oldCursorPaletteStarts = _vm->_draw->_cursorPaletteStarts;
-		uint16 *oldCursorPaletteCounts = _vm->_draw->_cursorPaletteCounts;
-		int32 *oldCursorHotspotsX = _vm->_draw->_cursorHotspotsX;
-		int32 *oldCursorHotspotsY = _vm->_draw->_cursorHotspotsY;
-
-		_vm->_draw->_cursorPalettes      = new byte[256 * 3 * count];
-		_vm->_draw->_doCursorPalettes    = new bool[count];
-		_vm->_draw->_cursorKeyColors     = new byte[count];
-		_vm->_draw->_cursorPaletteStarts = new uint16[count];
-		_vm->_draw->_cursorPaletteCounts = new uint16[count];
-		_vm->_draw->_cursorHotspotsX     = new int32[count];
-		_vm->_draw->_cursorHotspotsY     = new int32[count];
-
-		memset(_vm->_draw->_cursorPalettes     , 0, count * 256 * 3);
-		memset(_vm->_draw->_doCursorPalettes   , 0, count * sizeof(bool));
-		memset(_vm->_draw->_cursorKeyColors    , 0, count * sizeof(byte));
-		memset(_vm->_draw->_cursorPaletteStarts, 0, count * sizeof(uint16));
-		memset(_vm->_draw->_cursorPaletteCounts, 0, count * sizeof(uint16));
-		memset(_vm->_draw->_cursorHotspotsX    , 0, count * sizeof(int32));
-		memset(_vm->_draw->_cursorHotspotsY    , 0, count * sizeof(int32));
-
-		if (sameCursorDimensions && oldCursorCount < count) {
-			if (oldCursorPalettes != nullptr)
-				memcpy(_vm->_draw->_cursorPalettes, oldCursorPalettes, oldCursorCount * 256 * 3);
-			if (oldDoCursorPalettes != nullptr)
-				memcpy(_vm->_draw->_doCursorPalettes, oldDoCursorPalettes, oldCursorCount * sizeof(bool));
-			if (oldCursorKeyColors != nullptr)
-				memcpy(_vm->_draw->_cursorKeyColors, oldCursorKeyColors, oldCursorCount * sizeof(byte));
-			if (oldCursorPaletteStarts != nullptr)
-				memcpy(_vm->_draw->_cursorPaletteStarts, oldCursorPaletteStarts, oldCursorCount * sizeof(uint16));
-			if (oldCursorPaletteCounts != nullptr)
-				memcpy(_vm->_draw->_cursorPaletteCounts, oldCursorPaletteCounts, oldCursorCount * sizeof(uint16));
-			if (oldCursorHotspotsX != nullptr)
-				memcpy(_vm->_draw->_cursorHotspotsX, oldCursorHotspotsX, oldCursorCount * sizeof(int32));
-			if (oldCursorHotspotsY != nullptr)
-				memcpy(_vm->_draw->_cursorHotspotsY, oldCursorHotspotsY, oldCursorCount * sizeof(int32));
-		}
-
-		delete[] oldDoCursorPalettes;
-		delete[] oldCursorPalettes;
-		delete[] oldCursorKeyColors;
-		delete[] oldCursorPaletteStarts;
-		delete[] oldCursorPaletteCounts;
-		delete[] oldCursorHotspotsX;
-		delete[] oldCursorHotspotsY;
-	}
 }
 
 void Inter_v7::o7_loadCursor(OpFuncParams &params) {
@@ -275,7 +167,7 @@ void Inter_v7::o7_loadCursor(OpFuncParams &params) {
 
 	int16 cursorWidth = MAX(_vm->_draw->_cursorWidth, resource->getWidth());
 	int16 cursorHeight = MAX(_vm->_draw->_cursorHeight, resource->getHeight());
-	resizeCursors(cursorWidth, cursorHeight, index + 1, true);
+	_vm->_draw->resizeCursors(cursorWidth, cursorHeight, index + 1, true);
 	if ((index * _vm->_draw->_cursorWidth) >= _vm->_draw->_cursorSprites->getWidth())
 		return;
 
@@ -291,57 +183,12 @@ void Inter_v7::o7_loadCursor(OpFuncParams &params) {
 	delete resource;
 }
 
-void Inter_v7::o7_loadCursorFromExec() {
+void Inter_v7::o7_setCursorToLoadFromExec() {
 	int16          cursorIndex = _vm->_game->_script->readValExpr();
 	Common::String cursorName  = _vm->_game->_script->evalString();
+	debugC(1, kDebugGraphics, "o7_setCursorToLoadFromExec : index=%d, cursorName=%s", cursorIndex, cursorName.c_str());
 
-	// Clear the cursor sprite at that index
-	_vm->_draw->_cursorSprites->fillRect(cursorIndex * _vm->_draw->_cursorWidth, 0,
-			cursorIndex * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
-			_vm->_draw->_cursorHeight - 1, 0);
-
-	// If the cursor name is empty, that cursor will be drawn by the scripts
-	if (cursorName.empty() || cursorName == "VIDE") { // "VIDE" is "empty" in french
-		// Make sure the cursors sprite is big enough and set to non-extern palette
-		resizeCursors(-1, -1, cursorIndex + 1, true);
-		_vm->_draw->_doCursorPalettes[cursorIndex] = false;
-		return;
-	}
-
-	Graphics::WinCursorGroup *cursorGroup = nullptr;
-	Graphics::Cursor *defaultCursor = nullptr;
-
-	// Load the cursor file and cursor group
-	if (loadCursorFile())
-		cursorGroup = Graphics::WinCursorGroup::createCursorGroup(_cursors, Common::WinResourceID(cursorName));
-
-	// If the requested cursor does not exist, create a default one
-	const Graphics::Cursor *cursor = nullptr;
-	if (!cursorGroup || cursorGroup->cursors.empty() || !cursorGroup->cursors[0].cursor) {
-		defaultCursor = Graphics::makeDefaultWinCursor();
-
-		cursor = defaultCursor;
-	} else
-		cursor = cursorGroup->cursors[0].cursor;
-
-	// Make sure the cursors sprite it big enough
-	resizeCursors(cursor->getWidth(), cursor->getHeight(), cursorIndex + 1, true);
-
-	Surface cursorSurf(cursor->getWidth(), cursor->getHeight(), 1, cursor->getSurface());
-
-	_vm->_draw->_cursorSprites->blit(cursorSurf, cursorIndex * _vm->_draw->_cursorWidth, 0);
-
-	memcpy(_vm->_draw->_cursorPalettes + cursorIndex * 256 * 3, cursor->getPalette(), cursor->getPaletteCount() * 3);
-
-	_vm->_draw->_doCursorPalettes   [cursorIndex] = true;
-	_vm->_draw->_cursorKeyColors    [cursorIndex] = cursor->getKeyColor();
-	_vm->_draw->_cursorPaletteStarts[cursorIndex] = cursor->getPaletteStartIndex();
-	_vm->_draw->_cursorPaletteCounts[cursorIndex] = cursor->getPaletteCount();
-	_vm->_draw->_cursorHotspotsX    [cursorIndex] = cursor->getHotspotX();
-	_vm->_draw->_cursorHotspotsY    [cursorIndex] = cursor->getHotspotY();
-
-	delete cursorGroup;
-	delete defaultCursor;
+	_vm->_draw->_cursorNames[cursorIndex] = cursorName;
 }
 
 void Inter_v7::o7_freeMult() {
@@ -1537,26 +1384,4 @@ void Inter_v7::o7_gob0x201(OpGobParams &params) {
 
 	WRITE_VAR(varIndex, 1);
 }
-
-bool Inter_v7::loadCursorFile() {
-	if (_cursors)
-		return true;
-
-	if (_vm->_dataIO->hasFile("cursor32.dll")) {
-		_cursors = new Common::PEResources();
-		if (_cursors->loadFromEXE("cursor32.dll"))
-			return true;
-	}
-	else if (_vm->_dataIO->hasFile("cursor.dll")) {
-		_cursors = new Common::NEResources();
-		if (_cursors->loadFromEXE("cursor.dll"))
-			return true;
-	}
-
-	delete _cursors;
-	_cursors = nullptr;
-
-	return false;
-}
-
 } // End of namespace Gob

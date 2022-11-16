@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	draw.o \
 	draw_v1.o \
 	draw_v2.o \
+	draw_v7.o \
 	draw_bargon.o \
 	draw_fascin.o \
 	draw_playtoons.o \
