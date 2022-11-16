@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-16 07:30+0000\n"
-"PO-Revision-Date: 2022-11-08 15:19+0000\n"
+"PO-Revision-Date: 2022-11-16 12:42+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -7490,15 +7490,13 @@ msgstr "Patada"
 
 #. I18N: The name of the 'Shift' key on a PC keyboard
 #: engines/scumm/help.cpp:238
-#, fuzzy
-#| msgid "Shift key"
 msgid "Shift"
-msgstr "Tecla Mayúsculas"
+msgstr "Mayúsculas"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/help.cpp:240
 msgid "Fight cheat"
-msgstr ""
+msgstr "Truco para las peleas"
 
 #: engines/scumm/help.cpp:245
 msgid "Regular cursor"
