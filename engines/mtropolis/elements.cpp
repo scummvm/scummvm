@@ -1558,7 +1558,6 @@ MiniscriptInstructionOutcome MToonElement::scriptSetRange(MiniscriptThread *thre
 	if (value.getType() == DynamicValueTypes::kPoint)
 		return scriptSetRangeTyped(thread, value.getPoint());
 
-	return scriptSetRangeTyped(thread, value.getIntRange());
 	thread->error("Invalid type for mToon range");
 	return kMiniscriptInstructionOutcomeFailed;
 }

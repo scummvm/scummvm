@@ -2650,7 +2650,7 @@ void MessageProperties::setValue(const DynamicValue &value) {
 		_value = value;
 }
 
-WorldManagerInterface::WorldManagerInterface() : _gameMode(false), _combineRedraws(true), _opInt(0) {
+WorldManagerInterface::WorldManagerInterface() : _gameMode(false), _combineRedraws(true), _postponeRedraws(false), _opInt(0) {
 }
 
 bool WorldManagerInterface::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
