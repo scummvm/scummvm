@@ -308,6 +308,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "shivah", "The Shivah" },
 	{ "shivahkosher", "The Shivah: Kosher Edition" },
 	{ "shoaly", "Shoaly You Can't Be Serious!" },
+	{ "signalecho", "Signal & Echo: Iris is Missing" },
 	{ "sisterssecret", "Sisters' Secret" },
 	{ "smallsister", "Small Sister" },
 	{ "snowproblem", "Snow Problem" },
@@ -3884,6 +3885,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("brotherswreckers", "Brothers & Wreckers.exe", "f24c533ce89a2566c157b871f87a4ce4", 42831964),
 	DEMO_ENTRY_EN("bytheswordconspiracy", "bts.exe", "7dc7f61f79ba7a77d4ef8168bfd3d173", 60246329),
 	DEMO_ENTRY_EN("byzantine", "byza.exe", "39d7a558298a9f1d40c1f415daf9bb74", 3708632),
+	DEMO_ENTRY_EN("byzantine", "byza.exe", "ecc8eaa38fe3adea61ffc525d2ce5c0e", 3660405),
 	DEMO_ENTRY_EN("calvin", "CalvinENG.exe", "7a3096ac0237cb6aa8e1718e28caf039", 85555229),
 	DEMO_ENTRY_LANG("calvin", "Calvin.exe", "7a3096ac0237cb6aa8e1718e28caf039", 85557724, Common::FR_FRA),
 	DEMO_ENTRY_EN("captaindisaster", "cd-dhamsb-demo-1-3-0.exe", "9d991dd1f9e7fee653d3a9bb2546f968", 153646768),
@@ -4167,6 +4169,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("shardlight", "shardlight demo.exe", "ee801fba52d252249677a9170bd2db96", 642366257),
 	DEMO_ENTRY_EN("shivah", "shivahdemo.exe", "6e3d6225dee662ff6450a3bfa942773b", 20897850),
 	DEMO_ENTRY_EN("shivahkosher", "shivah-demo.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 23987292),
+	DEMO_ENTRY_EN("signalecho", "Signal & Echo - Iris is Missing (demo).exe", "f9e3e0193fbc975daa3a7c95edf04e0a", 39177267),
 	DEMO_ENTRY_EN("simonthesorcerer3", "simon3.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 8189928),
 	DEMO_ENTRY_EN("simonthesorcerersbrother", "stsb-trailer.exe", "06a03fe35791b0578068ab1873455463", 2283838),
 	DEMO_ENTRY_EN("sisterssecret", "SistersSecret.exe", "f8d06c339ca2af5160b662c7a19572d6", 18660074),  // v1.0.1
