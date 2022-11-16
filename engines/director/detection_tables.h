@@ -5113,7 +5113,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("colormind", "v1.5", "ColorMind 1.5", "37faaf693259d7a4fa031f4a2edf3098", 126087, 501),
 
-	WINGAME1t("cracking", "", "crack.exe", "c2093c2b5dc9d3dc5b491e4df027e202", 1842361, 500),
+	WINGAME2t("cracking", "", "crack.exe", "c2093c2b5dc9d3dc5b491e4df027e202", 1842361,
+							  "ufog8.dxr", "7c8222a010d40b59dd96a97f0b4fa974", 542472, 500),
 
 	MACGAME1_l("crusader", "", "Croisades", "6e7e31d05709e1d38d63f4df6a59eec0", 718381, Common::FR_FRA, 501),
 	WINGAME1("crusader", "", "CRUSAD95.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1410427, 501),
