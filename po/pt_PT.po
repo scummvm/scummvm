@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-16 07:29+0000\n"
+"POT-Creation-Date: 2022-11-16 07:30+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -4506,11 +4506,11 @@ msgstr ""
 #: engines/mohawk/detection_tables.h:1145
 #: engines/mohawk/detection_tables.h:3211 engines/myst3/detection.cpp:142
 #: engines/neverhood/detection.cpp:124 engines/saga/detection_tables.h:46
-#: engines/saga/detection_tables.h:1190 engines/saga/detection_tables.h:1249
-#: engines/sci/detection_tables.h:5191 engines/sci/detection_tables.h:5199
-#: engines/sherlock/detection_tables.h:223 engines/stark/detection.cpp:319
-#: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:212
-#: engines/trecision/detection.cpp:199 engines/zvision/detection_tables.h:200
+#: engines/saga/detection_tables.h:1190 engines/sci/detection_tables.h:5191
+#: engines/sci/detection_tables.h:5199 engines/sherlock/detection_tables.h:223
+#: engines/stark/detection.cpp:319 engines/teenagent/detection.cpp:117
+#: engines/toltecs/detection.cpp:212 engines/trecision/detection.cpp:199
+#: engines/zvision/detection_tables.h:200
 #: engines/zvision/detection_tables.h:220
 msgid "Missing game code"
 msgstr ""
