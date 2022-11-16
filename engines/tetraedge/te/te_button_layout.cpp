@@ -40,7 +40,7 @@ namespace Tetraedge {
 }
 
 TeButtonLayout::TeButtonLayout() :
-_currentState(BUTTON_STATE_UP), _clickPassThrough(false), _validationSoundVolume(1.0),
+_currentState(BUTTON_STATE_UP), _clickPassThrough(true), _validationSoundVolume(1.0),
 _someClickFlag(false), _doubleValidationProtectionEnabled(true), _upLayout(nullptr),
 _downLayout(nullptr), _rolloverLayout(nullptr), _disabledLayout(nullptr),
 _hitZoneLayout(nullptr)

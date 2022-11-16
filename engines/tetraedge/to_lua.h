@@ -55,17 +55,19 @@ void tolua_open(lua_State *L);
 void tolua_module (lua_State *L, const char *name, int hasvar);
 void tolua_beginmodule (lua_State *L, const char *name);
 void tolua_endmodule(lua_State *L);
-void tolua_function (lua_State *L, const char *name, lua_CFunction func);
+void tolua_function(lua_State *L, const char *name, lua_CFunction func);
 
-int tolua_isboolean (lua_State *L, int lo, int def, tolua_Error *err);
-int tolua_isnoobj (lua_State *L, int lo, tolua_Error *err);
-int tolua_isnumber (lua_State *L, int lo, int def, tolua_Error *err);
-int tolua_isstring (lua_State *L, int lo, int def, tolua_Error *err);
+int tolua_isboolean(lua_State *L, int lo, int def, tolua_Error *err);
+int tolua_isnoobj(lua_State *L, int lo, tolua_Error *err);
+int tolua_isnumber(lua_State *L, int lo, int def, tolua_Error *err);
+int tolua_isstring(lua_State *L, int lo, int def, tolua_Error *err);
 
-double tolua_tonumber (lua_State *L, int narg, double def);
-const char* tolua_tostring (lua_State *L, int narg, const char *def);
-void* tolua_tousertype (lua_State *L, int narg, void *def);
-int tolua_toboolean (lua_State *L, int narg, int def);
+double tolua_tonumber(lua_State *L, int narg, double def);
+const char* tolua_tostring(lua_State *L, int narg, const char *def);
+void* tolua_tousertype(lua_State *L, int narg, void *def);
+int tolua_toboolean(lua_State *L, int narg, int def);
+
+void tolua_pushboolean(lua_State *L, bool val);
 
 } // end namespace ToLua
 

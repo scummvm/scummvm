@@ -434,6 +434,10 @@ int tolua_toboolean(lua_State *L, int narg, int def) {
 	return lua_gettop(L) < abs(narg) ?  def : lua_toboolean(L,narg);
 }
 
+void tolua_pushboolean(lua_State *L, bool val) {
+	lua_pushboolean(L, val);
+}
+
 } // end namespace ToLua
 
 } // end namespace Tetraedge

@@ -20,6 +20,7 @@
  */
 
 #include "common/util.h"
+#include "common/math.h"
 
 #include "tetraedge/tetraedge.h"
 

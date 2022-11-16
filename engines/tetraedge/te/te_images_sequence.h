@@ -27,7 +27,7 @@
 
 namespace Graphics {
 struct Surface;
-};
+}
 
 namespace Tetraedge {
 

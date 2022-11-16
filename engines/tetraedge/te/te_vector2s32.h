@@ -46,6 +46,14 @@ public:
 		return *this;
 	}
 
+	TeVector2s32 operator-(const TeVector2s32 &other) {
+		return TeVector2s32(_x - other._x, _y - other._y);
+	}
+
+	long squaredLength() const {
+		return _x * _x + _y * _y;
+	}
+
 	static void deserialize(Common::ReadStream &stream, TeVector2s32 &dest);
 
 public:

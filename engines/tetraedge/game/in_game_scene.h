@@ -190,7 +190,7 @@ public:
 	int _shadowLightNo;
 	CharactersShadow *_charactersShadow;
 	TeIntrusivePtr<TeBezierCurve> curve() { return _curve; }
-	void setCurve(TeIntrusivePtr<TeBezierCurve> &c) { c = _curve; }
+	void setCurve(TeIntrusivePtr<TeBezierCurve> &c) { _curve = c; }
 	Common::Array<TeIntrusivePtr<TeModel>> &zoneModels() { return _zoneModels; }
 	Common::Array<TeRectBlocker> &rectBlockers() { return _rectBlockers; }
 	Common::Array<Object3D *> object3Ds() { return _object3Ds; }

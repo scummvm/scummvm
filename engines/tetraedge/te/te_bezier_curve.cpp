@@ -77,7 +77,44 @@ float TeBezierCurve::rawLength() {
 	return _rawLength;
 }
 
-TeVector3f32 TeBezierCurve::retrievePoint(float offset) const {
+TeVector3f32 TeBezierCurve::retrievePoint(float offset) {
+	const unsigned int npoints = _controlPoints.size();
+
+	// Simple cases for small numbers of points.
+	if (npoints == 0)
+		return TeVector3f32();
+	else if (npoints == 1)
+		return _controlPoints[0];
+	else if (npoints == 2)
+		return _controlPoints[0] + (_controlPoints[1] - _controlPoints[0]) * offset;
+
+	// else, there are at least 3 points so need to actually interpolate.
+	TeVector3f32 points[5];
+	const float rawlen = rawLength();
+
+	float proportion = 0.0f;
+	unsigned int i = 0;
+	while (i < npoints) {
+		proportion = _rawLengths[i] / rawlen;
+		if (proportion >= offset)
+			break;
+		i++;
+	}
+	float t;
+	if (proportion == offset) {
+		t = 0.0f;
+	} else {
+		float p1 = _rawLengths[i - 1];
+		float p2 = _rawLengths[i];
+		t = (rawlen * offset - p1) / (p2 - p1);
+		i--;
+	}
+
+	for (unsigned int p = -1; p < 3; p++) {
+		
+	}
+	// TODO: Finish this, line 77 to 129.
+
 	error("TODO: Implement TeBezierCurve::retrievePoint");
 }
 
@@ -114,5 +151,25 @@ void TeBezierCurve::deserialize(Common::ReadStream &stream, TeBezierCurve &curve
 		curve._controlPoints.push_back(vec);
 	}
 }
+
+/*static*/
+TeVector3f32 TeBezierCurve::hermiteInterpolate(float t, const TeVector3f32 *points, float param_4, float param_5) {
+	assert(points);
+	const TeVector3f32 delta1 =  ((points[1] - points[0]) * (param_5 + 1.0) * (1.0 - param_4)) / 2.0;
+	const TeVector3f32 delta2a = ((points[2] - points[1]) * (1.0 - param_5) * (1.0 - param_4)) / 2.0;
+	const TeVector3f32 delta2b = ((points[2] - points[1]) * (param_5 + 1.0) * (1.0 - param_4)) / 2.0;
+	const TeVector3f32 delta3  = ((points[3] - points[2]) * (1.0 - param_5) * (1.0 - param_4)) / 2.0;
+
+	const TeVector3f32 x1 = delta1 + delta2a;
+	const TeVector3f32 x2 = delta2b + delta3;
+
+	const float t2 = t * t;
+	const float t3 = t * t * t;
+	const TeVector3f32 h1a = points[1] * ((t3 + t3) - t2 * 3.0);
+	const TeVector3f32 h1b = x1 * ((t3 - (t2 + t2)) + t);
+	const TeVector3f32 h1 = (h1a + h1b) + (x2 * (t3 - t2));
+	return h1 + (points[2] * (t3 * -2.0 + t2 * 3.0));
+}
+
 
 } // end namespace Tetraedge

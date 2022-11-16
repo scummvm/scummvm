@@ -102,7 +102,7 @@ void TeModel::draw() {
 		renderer->sendModelMatrix(transform);
 		renderer->pushMatrix();
 		renderer->multiplyMatrix(transform);
-		if (name() == "Kate") {
+		/*if (name() == "Kate") {
 			debug("Draw model %p (%s, %d meshes)", this, name().empty() ? "no name" : name().c_str(), _meshes.size());
 			//adebug("   renderMatrix %s", renderer->currentMatrix().toString().c_str());
 			//debug("   position   %s", position().dump().c_str());
@@ -111,7 +111,7 @@ void TeModel::draw() {
 			//debug("   worldScale %s", worldScale().dump().c_str());
 			//debug("   rotation   %s", rotation().dump().c_str());
 			debug("   worldRot   %s", worldRotation().dump().c_str());
-		}
+		}*/
 		for (TeMesh &mesh : _meshes) {
 			// TODO: Set some flag (_drawWires?) in mesh to this->field_0x158??
 			mesh.draw();

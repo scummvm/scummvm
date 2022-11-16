@@ -57,10 +57,11 @@ void Character::WalkSettings::clear() {
 }
 
 Character::Character() : _curveOffset(0), _lastFrame(-1), _callbacksChanged(false),
-_missingCurrentAnim(false), _someRepeatFlag(false), _walkModeStr("Walk"),
+_notWalkAnim(false), _someRepeatFlag(false), _walkModeStr("Walk"),
 _needsSomeUpdate(false), _positionFlag(false), _lookingAtTallThing(false),
 _stepSound1("sounds/SFX/PAS_H_BOIS1.ogg"), _stepSound2("sounds/SFX/PAS_H_BOIS2.ogg"),
-_freeMoveZone(nullptr), _animSoundOffset(0), _lastAnimFrame(0), _charLookingAt(nullptr) {
+_freeMoveZone(nullptr), _animSoundOffset(0), _lastAnimFrame(0), _charLookingAt(nullptr),
+_recallageY(true) {
 	_curModelAnim.setDeleteFn(&TeModelAnimation::deleteLater);
 }
 
@@ -159,7 +160,7 @@ bool Character::blendAnimation(const Common::String &animname, float amount, boo
 	Common::Path animpath("models/Anims");
 	animpath.joinInPlace(animname);
 
-	_missingCurrentAnim = !(animname.contains(_characterSettings._walkFileName)
+	_notWalkAnim = !(animname.contains(_characterSettings._walkFileName)
 			|| animname.contains(walkAnim(WalkPart_Start))
 			|| animname.contains(walkAnim(WalkPart_Loop))
 			|| animname.contains(walkAnim(WalkPart_EndG))
@@ -239,7 +240,7 @@ bool Character::isFramePassed(int frameno) {
 }
 
 bool Character::isWalkEnd() {
-	Common::String animFile = _model->anim()->_loadedPath.getLastComponent().toString();
+	const Common::String animFile = _model->anim()->_loadedPath.getLastComponent().toString();
 	for (const auto & walkSettings : _characterSettings._walkSettings) {
 		if (walkSettings._value._walkParts[WalkPart_EndD]._file.contains(animFile)
 				|| walkSettings._value._walkParts[WalkPart_EndG]._file.contains(animFile))
@@ -358,7 +359,7 @@ bool Character::loadModel(const Common::String &mname, bool unused) {
 		}
 	}
 
-	if (!parser.loadBuffer((unsigned char *)fixedbuf.c_str(), bufsize))
+	if (!parser.loadBuffer((const byte *)fixedbuf.c_str(), bufsize))
 		error("Character::loadSettings: Can't open %s", path.c_str());
 
 	if (!parser.parse())
@@ -464,7 +465,65 @@ bool Character::onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneM
 }
 
 bool Character::onModelAnimationFinished() {
-	error("TODO: Implement Character::onModelAnimationFinished");
+	const Common::Path &loadedPath = _model->anim()->_loadedPath;
+	const Common::String animfile = loadedPath.getLastComponent().toString();
+
+	// TODO: Do something with _unrecalAnims here.
+
+	Game *game = g_engine->getGame();
+	bool isWalkAnim = false;
+	if (game->scene()._character == this) {
+		// TODO: check if this logic matches..
+		for (const auto &walkSettings : _characterSettings._walkSettings) {
+			isWalkAnim |= (walkSettings._key.contains("Walk") || walkSettings._key.contains("Jog"));
+			isWalkAnim |= (walkSettings._value._walkParts[0]._file == animfile ||
+					walkSettings._value._walkParts[1]._file == animfile ||
+					walkSettings._value._walkParts[2]._file == animfile ||
+					walkSettings._value._walkParts[3]._file == animfile);
+		}
+		isWalkAnim |= animfile.contains(_characterSettings._walkFileName);
+	} else {
+		isWalkAnim = (animfile.contains(_characterSettings._walkFileName) ||
+				  animfile.contains(walkAnim(WalkPart_Start)) ||
+				  animfile.contains(walkAnim(WalkPart_Loop)) ||
+				  animfile.contains(walkAnim(WalkPart_EndD)) ||
+				  animfile.contains(walkAnim(WalkPart_EndG)));
+	}
+
+	if (isWalkAnim) {
+		int pereBone = _curModelAnim->findBone("Pere");
+		const TeTRS endTRS = trsFromAnim(*_curModelAnim, pereBone, _curModelAnim->lastFrame());
+		TeVector3f32 trans = endTRS.getTranslation();
+		trans.x() = -trans.x();
+
+		TeVector3f32 newpos;
+		if (!_recallageY) {
+			const TeTRS startTRS = trsFromAnim(*_curModelAnim, pereBone, _curModelAnim->firstFrame());
+			trans = trans - startTRS.getTranslation();
+			const TeTRS nearEndTRS = trsFromAnim(*_curModelAnim, pereBone, _curModelAnim->lastFrame() - 1);
+			trans  = trans + (endTRS.getTranslation() - nearEndTRS.getTranslation());
+			newpos = _model->worldTransformationMatrix() * trans;
+		} else if (!_freeMoveZone) {
+			trans.x() = -trans.x();
+			newpos = _model->worldTransformationMatrix() * trans;
+		} else {
+			newpos = correctPosition(_model->worldTransformationMatrix() * trans);
+		}
+		_model->setPosition(newpos);
+	}
+
+	if (game->scene()._character == this) {
+		_characterAnimPlayerFinishedSignal.call(loadedPath.toString());
+	} else {
+		_onCharacterAnimFinishedSignal.call(_model->name());
+	}
+
+	if (_someRepeatFlag && loadedPath.toString().contains(_setAnimName)) {
+		_notWalkAnim = false;
+		_someRepeatFlag = false;
+		setAnimation(_characterSettings._walkFileName, true);
+	}
+
 	return false;
 }
 
@@ -503,7 +562,7 @@ bool Character::setAnimation(const Common::String &aname, bool repeat, bool para
 					  aname.contains(walkAnim(WalkPart_Loop)) ||
 					  aname.contains(walkAnim(WalkPart_EndD)) ||
 					  aname.contains(walkAnim(WalkPart_EndG)));
-	_missingCurrentAnim = !isWalkAnim;
+	_notWalkAnim = !isWalkAnim;
 
 	if (_curModelAnim) {
 		_curModelAnim->onFinished().remove(this, &Character::onModelAnimationFinished);
@@ -511,6 +570,7 @@ bool Character::setAnimation(const Common::String &aname, bool repeat, bool para
 	}
 
 	_curModelAnim = animCacheLoad(animPath);
+	_curModelAnim->onFinished().add(this, &Character::onModelAnimationFinished);
 	_curModelAnim->bind(_model);
 	_curModelAnim->setFrameLimits(startFrame, endFrame);
 	_model->setAnim(_curModelAnim, repeat);
@@ -585,6 +645,7 @@ void Character::updateAnimFrame() {
 }
 
 void Character::updatePosition(float curveOffset) {
+	assert(_curve);
 	if (!_curve->controlPoints().empty()) {
 		TeVector3f32 pt = _curve->retrievePoint(curveOffset) + _curveStartLocation;
 		if (_freeMoveZone) {
@@ -605,10 +666,14 @@ Common::String Character::walkAnim(Character::WalkPart part) {
 }
 
 void Character::walkMode(const Common::String &mode) {
-	error("TODO: Implement Character::walkMode");
+	if (_walkModeStr != mode)
+		_walkModeStr = mode;
+	_walkPart0AnimLen = animLengthFromFile(walkAnim(WalkPart_Start), &_walkPart0AnimFrameCount, 9999);
+	_walkPart3AnimLen = animLengthFromFile(walkAnim(WalkPart_EndG), &_walkPart3AnimFrameCount, 9999);
+	_walkPart1AnimLen = animLengthFromFile(walkAnim(WalkPart_Loop), &_walkPart1AnimFrameCount, 9999);
 }
 
-void Character::walkTo(float param_1, bool param_2) {
+void Character::walkTo(float curveEnd, bool walkFlag) {
 	error("TODO: Implement Character::walkTo");
 }
 
