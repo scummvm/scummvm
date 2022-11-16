@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-16 07:30+0000\n"
-"PO-Revision-Date: 2022-10-27 16:30+0000\n"
+"PO-Revision-Date: 2022-11-16 11:28+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -4917,11 +4917,13 @@ msgstr ""
 
 #: engines/freescape/detection.cpp:259
 msgid "Prerecorded sounds"
-msgstr ""
+msgstr "Forhåndsgjorte lydopptak"
 
 #: engines/freescape/detection.cpp:260
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
+"Bruk forhåndsgjorte lydopptak av høy kvalitet, fremfor emulering av PC-"
+"speakeren"
 
 #: engines/glk/detection.cpp:239
 msgid "Use TTS to read the text"
@@ -6150,15 +6152,12 @@ msgstr ""
 "versjonsinformasjon."
 
 #: engines/mtropolis/saveload.cpp:166
-#, fuzzy
-#| msgid ""
-#| "Saved game was created with a newer version of ScummVM. Unable to load."
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
 msgstr ""
-"Lagret spill ble opprettet med en nyere versjon av ScummVM. Kan ikke laste "
-"inn."
+"Lagret spill ble opprettet med en tidligere, inkompatibel versjon av "
+"ScummVM. Kan ikke laste inn."
 
 #: engines/mtropolis/saveload.cpp:174
 msgid "Failed to load save, an error occurred when reading the save game data."
@@ -7439,15 +7438,13 @@ msgstr "Spark"
 
 #. I18N: The name of the 'Shift' key on a PC keyboard
 #: engines/scumm/help.cpp:238
-#, fuzzy
-#| msgid "Shift key"
 msgid "Shift"
-msgstr "Shift-tast"
+msgstr "Shift"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/help.cpp:240
 msgid "Fight cheat"
-msgstr ""
+msgstr "Kampjuks"
 
 #: engines/scumm/help.cpp:245
 msgid "Regular cursor"
