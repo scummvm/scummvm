@@ -239,8 +239,10 @@ class DefaultFont : public Font {
 	 void loadFont(FontData *font, uint32 fontResourceId);
 	 void loadChineseFontIHNM(FontData *font, uint32 fontResourceId);
 	 void loadChineseFontITE(const Common::String& fileName);
+	 void loadKoreanFontIHNM(const Common::String& fileName);
 	 void saveBig5Index(byte head, byte tail, uint curIdx);
 	 void createOutline(FontData *font);
+	 void blitGlyph(const Common::Point &textPoint, const byte* bitmap, int charWidth, int charHeight, int rowLength, byte color);
 
 	 int getByteLen(int numBits) const {
 		 int byteLength = numBits / 8;
@@ -259,8 +261,22 @@ class DefaultFont : public Font {
 
 	byte *_chineseFont;
 	Common::Array<int> _chineseFontIndex;
-	int _chineseFontWidth;
-	int _chineseFontHeight;
+	int _cjkFontWidth;
+	int _cjkFontHeight;
+
+	byte *_koreanFont;
+
+	static const int kIHNMKoreanGlyphBytes = 32;
+	static const int kIHNMKoreanInitials = 20;
+	static const int kIHNMKoreanInitialVariants = 8;
+	static const int kIHNMKoreanMidOffset = kIHNMKoreanInitialVariants * kIHNMKoreanInitials;
+	static const int kIHNMKoreanMids = 22;
+	static const int kIHNMKoreanMidVariants = 4;
+	static const int kIHNMKoreanFinalsOffset = kIHNMKoreanMidOffset + kIHNMKoreanMids * kIHNMKoreanMidVariants;
+	static const int kIHNMKoreanFinals = 28;
+	static const int kIHNMKoreanFinalVariants = 4;
+	static const int kIHNMKoreanNonJamoOffset = kIHNMKoreanFinalsOffset + kIHNMKoreanFinals * kIHNMKoreanFinalVariants;
+	static const int kIHNMKoreanNonJamo = 126;
 };
 
 class SJISFont : public Font {

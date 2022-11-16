@@ -164,7 +164,7 @@ void Font::textDraw(FontId fontId, const char *text, const Common::Point &point,
 	draw(fontId, text, textLength, textPoint, color, effectColor, flags);
 }
 
-DefaultFont::DefaultFont(SagaEngine *vm) : Font(vm), _fontMapping(0), _chineseFont(nullptr), _chineseFontWidth(0), _chineseFontHeight(0) {
+DefaultFont::DefaultFont(SagaEngine *vm) : Font(vm), _fontMapping(0), _chineseFont(nullptr), _cjkFontWidth(0), _cjkFontHeight(0), _koreanFont(nullptr) {
 	uint i;
 
 	// Load font module resource context
@@ -189,6 +189,9 @@ DefaultFont::DefaultFont(SagaEngine *vm) : Font(vm), _fontMapping(0), _chineseFo
 
 	if (_vm->getGameId() == GID_ITE && _vm->getLanguage() == Common::ZH_TWN)
 		loadChineseFontITE("ite.fnt");
+
+	if (_vm->getGameId() == GID_IHNM && _vm->getLanguage() == Common::KO_KOR)
+		loadKoreanFontIHNM("sbh1616.fnt");
 }
 
 DefaultFont::~DefaultFont() {
@@ -209,14 +212,19 @@ DefaultFont::~DefaultFont() {
 		delete[] _chineseFont;
 		_chineseFont = nullptr;
 	}
+
+	if (_koreanFont) {
+		delete[] _koreanFont;
+		_koreanFont = nullptr;
+	}
 }
 
 void DefaultFont::loadChineseFontITE(const Common::String& fileName) {
 	Common::File f;
 	if (!f.open(fileName))
 		return;
-	_chineseFontWidth = 16;
-	_chineseFontHeight = 14;
+	_cjkFontWidth = 16;
+	_cjkFontHeight = 14;
 	_chineseFontIndex = Common::move(Common::Array<int>(0x8000, -1));
 	size_t sz = f.size();
 	_chineseFont = new byte[sz];
@@ -229,6 +237,22 @@ void DefaultFont::loadChineseFontITE(const Common::String& fileName) {
 		_chineseFontIndex[ch&0x7fff] = kGlyphSize * i + 2;
 	}
 }
+
+void DefaultFont::loadKoreanFontIHNM(const Common::String& fileName) {
+	Common::File f;
+	if (!f.open(fileName))
+		return;
+	size_t sz = f.size();
+	if (sz < kIHNMKoreanNonJamoOffset * kIHNMKoreanGlyphBytes)
+		return;
+
+	_cjkFontWidth = 16;
+	_cjkFontHeight = 16;
+
+	_koreanFont = new byte[sz];
+	f.read(_koreanFont, sz);
+}
+
 
 void DefaultFont::saveBig5Index(byte head, byte tail, uint curIdx) {
 	_chineseFontIndex[((head & 0x7f) << 8) | tail] = curIdx;
@@ -265,8 +289,8 @@ void DefaultFont::loadChineseFontIHNM(FontData *font, uint32 fontResourceId) {
 
 	_chineseFont = new byte[fontResourceData.size()];
 	memcpy(_chineseFont, fontResourceData.getBuffer(), fontResourceData.size());
-	_chineseFontWidth = 16;
-	_chineseFontHeight = 15;
+	_cjkFontWidth = 16;
+	_cjkFontHeight = 15;
 	_chineseFontIndex = Common::move(Common::Array<int>(0x8000, -1));
 
 	// No idea what is the beginning, some 3 values and then some bitmask,
@@ -388,6 +412,7 @@ void DefaultFont::textDrawRect(FontId fontId, const char *text, const Common::Re
 	searchPointer = text;
 	endPointer = text + textLength;
 
+	// IHNM korean uses spaces, so we use western algorithm for it.
 	bool isBig5 = !!_chineseFont;
 
 	for (;;) {
@@ -485,16 +510,16 @@ int DefaultFont::getStringWidth(FontId fontId, const char *text, size_t count, F
 	const byte *txt;
 	FontData *font = getFont(fontId);
 	txt = (const byte *) text;
-	bool isBig5 = !!_chineseFont;
+	bool isCJK = _chineseFont || _koreanFont;
 
 	for (ct = count; *txt && (!count || ct > 0); txt++, ct--) {
 		ch = *txt & 0xFFU;
-		if ((ch & 0x80) && isBig5) {
+		if ((ch & 0x80) && isCJK) {
 			byte trailing = *++txt & 0xFFU;
 			ct--;
 			if (ct == 0 || trailing == 0)
 				break;
-			width += _chineseFontWidth;
+			width += _cjkFontWidth;
 			continue;
 		}
 
@@ -614,34 +639,56 @@ void DefaultFont::draw(FontId fontId, const char *text, size_t count, const Comm
 
 int DefaultFont::getHeight(FontId fontId, const char *text) {
 	int singleByteHeight = getHeight(fontId);
-	if (!_chineseFont || _chineseFontHeight < singleByteHeight)
+	if ((!_chineseFont && !_koreanFont) || _cjkFontHeight < singleByteHeight)
 		return singleByteHeight;
 
 	for (const byte *textPointer = (const byte *)text; *textPointer; textPointer++)
 		if (*textPointer & 0x80)
-			return _chineseFontHeight;
+			return _cjkFontHeight;
 
 	return singleByteHeight;
 }
 
+void DefaultFont::blitGlyph(const Common::Point &textPoint, const byte* bitmap, int charWidth, int charHeight, int rowLength, byte color) {
+	// Get length of character in bytes
+	int c_byte_len = ((charWidth - 1) / 8) + 1;
+	int rowLimit = (_vm->_gfx->getBackBufferHeight() < (textPoint.y + charHeight)) ? _vm->_gfx->getBackBufferHeight() : textPoint.y + charHeight;
+	int charRow = 0;
+
+	for (int row = textPoint.y; row < rowLimit; row++, charRow++) {
+		// Clip negative rows */
+		if (row < 0) {
+			continue;
+		}
+
+		byte *outputPointer = _vm->_gfx->getBackBufferPixels() + (_vm->_gfx->getBackBufferPitch() * row) + textPoint.x;
+		byte *outputPointer_min = _vm->_gfx->getBackBufferPixels() + (_vm->_gfx->getBackBufferPitch() * row) + (textPoint.x > 0 ? textPoint.x : 0);
+		byte *outputPointer_max = outputPointer + (_vm->_gfx->getBackBufferPitch() - textPoint.x);
+
+		// If character starts off the screen, jump to next character
+		if (outputPointer < outputPointer_min) {
+			break;
+		}
+
+		const byte *c_dataPointer = bitmap + charRow * rowLength;
+
+		for (int c_byte = 0; c_byte < c_byte_len; c_byte++, c_dataPointer++) {
+			// Check each bit, draw pixel if bit is set
+			for (int c_bit = 7; c_bit >= 0 && (outputPointer < outputPointer_max); c_bit--) {
+				if ((*c_dataPointer >> c_bit) & 0x01) {
+					*outputPointer = (byte)color;
+				}
+				outputPointer++;
+			} // end per-bit processing
+		} // end per-byte processing
+	} // end per-row processing
+}
 
 void DefaultFont::outFont(const FontStyle &drawFont, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags) {
 	const byte *textPointer;
-	const byte *c_dataPointer;
 	int c_code;
-	int charRow = 0;
 	Point textPoint(point);
 
-	byte *outputPointer;
-	byte *outputPointer_min;
-	byte *outputPointer_max;
-
-	int row = 0;
-	int rowLimit = 0;
-
-	int c_byte_len;
-	int c_byte;
-	int c_bit;
 	int ct;
 
 	if ((point.x > _vm->_gfx->getBackBufferWidth()) || (point.y > _vm->_gfx->getBackBufferHeight())) {
@@ -653,16 +700,68 @@ void DefaultFont::outFont(const FontStyle &drawFont, const char *text, size_t co
 	ct = count;
 
 	bool isBig5 = !!_chineseFont;
+	bool isJohab = !!_koreanFont;
 
 	// Draw string one character at a time, maximum of 'draw_str'_ct
 	// characters, or no limit if 'draw_str_ct' is 0
 	for (; *textPointer && (!count || ct); textPointer++, ct--) {
-		int charWidth;
-		int charHeight;
-		int charTracking;
-		int rowLength;
-		const byte *bitmap;
 		c_code = *textPointer & 0xFFU;
+
+		if ((c_code & 0x80) && isJohab) {
+			byte leading = c_code;
+			byte trailing = *++textPointer & 0xFFU;
+			ct--;
+			if (ct == 0 || trailing == 0)
+				break;
+			uint16 full = ((leading & 0x7f) << 8) | trailing;
+			int initial = (full >> 10) & 0x1f;
+			int mid = (full >> 5) & 0x1f;
+			int fin = full & 0x1f;
+			int initidx = initial - 1;
+			static const int mididxlut[0x20] = {
+				-1, -1, 0, 1, 2, 3, 4, 5, -1, -1, 6, 7, 8, 9,
+				10, 11, -1, -1, 12, 13, 14, 15, 16, 17, -1, -1,
+				18, 19, 20, 21, -1, -1};
+			// TODO: check this.
+			static const int mid2inivariant[32] = {
+				0, 0, 1, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 1, 3, 3,
+				0, 0, 3, 1, 1, 3, 3, 3,
+				0, 0, 1, 1, 3, 0, 0, 0,
+			};
+			int mididx = mididxlut[mid];
+			int finidx = fin >= 0x12 ? fin - 2 : fin - 1;
+			if (initial >= 0x15 || initidx < 0 || mididx < 0 || fin == 0 || fin == 0x12 || fin >= 0x1e) {
+				// TODO: non-jamo
+				textPoint.x += _cjkFontWidth;
+				continue;
+			}
+
+			int midvariant = 0;
+
+			if (fin != 1)
+				midvariant += 2;
+			if (!(initial == 2 || initial == 3 || initial == 17))
+				midvariant++;
+
+			// TODO: variants slightly move final consonant.
+			// Idk enough to choose the right one
+			int finvariant = 0;
+
+			int inivariant = mid2inivariant[mid];
+
+			int initialoff = kIHNMKoreanGlyphBytes * (initidx + inivariant * kIHNMKoreanInitials);
+			blitGlyph(textPoint, _koreanFont + initialoff, _cjkFontWidth, _cjkFontHeight, _cjkFontWidth / 8, (byte)color);
+			int midoff = kIHNMKoreanGlyphBytes * (mididx + midvariant * kIHNMKoreanMids + kIHNMKoreanMidOffset);
+			blitGlyph(textPoint, _koreanFont + midoff, _cjkFontWidth, _cjkFontHeight, _cjkFontWidth / 8, (byte)color);
+			int finoff = kIHNMKoreanGlyphBytes * (finidx + finvariant * kIHNMKoreanFinals + kIHNMKoreanFinalsOffset);
+			blitGlyph(textPoint, _koreanFont + finoff, _cjkFontWidth, _cjkFontHeight, _cjkFontWidth / 8, (byte)color);
+
+			// Advance tracking position
+			textPoint.x += _cjkFontWidth;
+			continue;
+		}
+
 
 		if ((c_code & 0x80) && isBig5) {
 			byte leading = c_code;
@@ -672,105 +771,68 @@ void DefaultFont::outFont(const FontStyle &drawFont, const char *text, size_t co
 				break;
 			int idx = _chineseFontIndex[((leading & 0x7f) << 8) | trailing];
 			if (idx < 0) {
-				textPoint.x += _chineseFontWidth;
+				textPoint.x += _cjkFontWidth;
 				continue;
 			}
-			charWidth = _chineseFontWidth;
-			charHeight = _chineseFontHeight;
-			rowLength = _chineseFontWidth / 8;
-			charTracking = _chineseFontWidth;
-			bitmap = _chineseFont + idx;
-		} else {
-			// Translate character
-			if (_fontMapping == 0) {	// Check font mapping debug flag
-				// Default game behavior
+			blitGlyph(textPoint, _chineseFont + idx, _cjkFontWidth, _cjkFontHeight, _cjkFontWidth / 8, (byte)color);
+			// Advance tracking position
+			textPoint.x += _cjkFontWidth;
+			continue;
+		}
+		
+		// Translate character
+		if (_fontMapping == 0) {	// Check font mapping debug flag
+			// Default game behavior
 
-				// It seems that this font mapping causes problems with non-english
-				// versions of IHNM, so it has been changed to apply for ITE only.
-				// It doesn't make any difference for the English version of IHNM.
-				// Fixes bug #3405: "IHNM: Spanish font wrong".
-				if (!(flags & kFontDontmap) && _vm->getGameId() == GID_ITE) {
-					if (_vm->getLanguage() != Common::IT_ITA) {
+			// It seems that this font mapping causes problems with non-english
+			// versions of IHNM, so it has been changed to apply for ITE only.
+			// It doesn't make any difference for the English version of IHNM.
+			// Fixes bug #3405: "IHNM: Spanish font wrong".
+			if (!(flags & kFontDontmap) && _vm->getGameId() == GID_ITE) {
+				if (_vm->getLanguage() != Common::IT_ITA) {
+					c_code = translateChar(c_code);
+				} else {
+					// The in-game fonts of the Italian version should not be mapped.
+					// The ones in the intro are hardcoded and should be mapped normally.
+					if (_vm->_scene->isInIntro())
 						c_code = translateChar(c_code);
-					} else {
-						// The in-game fonts of the Italian version should not be mapped.
-						// The ones in the intro are hardcoded and should be mapped normally.
-						if (_vm->_scene->isInIntro())
-							c_code = translateChar(c_code);
-					}
 				}
-			} else if (_fontMapping == 1) {
-				// Force font mapping
-				c_code = translateChar(c_code);
-			} else {
-				// In all other cases, ignore font mapping
 			}
-			assert(c_code < FONT_CHARCOUNT);
+		} else if (_fontMapping == 1) {
+			// Force font mapping
+			c_code = translateChar(c_code);
+		} else {
+			// In all other cases, ignore font mapping
+		}
+		assert(c_code < FONT_CHARCOUNT);
 
-			// Check if character is defined
-			if ((drawFont.fontCharEntry[c_code].index == 0) && (c_code != FONT_FIRSTCHAR)) {
+		// Check if character is defined
+		if ((drawFont.fontCharEntry[c_code].index == 0) && (c_code != FONT_FIRSTCHAR)) {
 #if FONT_SHOWUNDEFINED
-				// A tab character appears in the IHNM demo instructions screen, so filter
-				// it out here
-				if (c_code == FONT_CH_SPACE || c_code == FONT_CH_TAB) {
-					textPoint.x += drawFont.fontCharEntry[c_code].tracking;
-					continue;
-				}
-				c_code = FONT_CH_QMARK;
-#else
-				// Character code is not defined, but advance tracking
-				// ( Not defined if offset is 0, except for 33 ('!') which
-				//   is defined )
+			// A tab character appears in the IHNM demo instructions screen, so filter
+			// it out here
+			if (c_code == FONT_CH_SPACE || c_code == FONT_CH_TAB) {
 				textPoint.x += drawFont.fontCharEntry[c_code].tracking;
 				continue;
-#endif
 			}
-
-			charWidth = drawFont.fontCharEntry[c_code].width;
-			charHeight = drawFont.header.charHeight;
-			rowLength = drawFont.header.rowLength;
-			bitmap = &drawFont.font[drawFont.fontCharEntry[c_code].index];
-			charTracking = drawFont.fontCharEntry[c_code].tracking;
+			c_code = FONT_CH_QMARK;
+#else
+			// Character code is not defined, but advance tracking
+			// ( Not defined if offset is 0, except for 33 ('!') which
+			//   is defined )
+			textPoint.x += drawFont.fontCharEntry[c_code].tracking;
+			continue;
+#endif
 		}
 
-		// Get length of character in bytes
-		c_byte_len = ((charWidth - 1) / 8) + 1;
-		rowLimit = (_vm->_gfx->getBackBufferHeight() < (textPoint.y + charHeight)) ? _vm->_gfx->getBackBufferHeight() : textPoint.y + charHeight;
-		charRow = 0;
-
-		for (row = textPoint.y; row < rowLimit; row++, charRow++) {
-			// Clip negative rows */
-			if (row < 0) {
-				continue;
-			}
-
-			outputPointer = _vm->_gfx->getBackBufferPixels() + (_vm->_gfx->getBackBufferPitch() * row) + textPoint.x;
-			outputPointer_min = _vm->_gfx->getBackBufferPixels() + (_vm->_gfx->getBackBufferPitch() * row) + (textPoint.x > 0 ? textPoint.x : 0);
-			outputPointer_max = outputPointer + (_vm->_gfx->getBackBufferPitch() - textPoint.x);
-
-			// If character starts off the screen, jump to next character
-			if (outputPointer < outputPointer_min) {
-				break;
-			}
-
-			c_dataPointer = bitmap + charRow * rowLength;
-
-			for (c_byte = 0; c_byte < c_byte_len; c_byte++, c_dataPointer++) {
-				// Check each bit, draw pixel if bit is set
-				for (c_bit = 7; c_bit >= 0 && (outputPointer < outputPointer_max); c_bit--) {
-					if ((*c_dataPointer >> c_bit) & 0x01) {
-						*outputPointer = (byte)color;
-					}
-					outputPointer++;
-				} // end per-bit processing
-			} // end per-byte processing
-		} // end per-row processing
+		blitGlyph(textPoint, &drawFont.font[drawFont.fontCharEntry[c_code].index], drawFont.fontCharEntry[c_code].width, drawFont.header.charHeight,
+			drawFont.header.rowLength, (byte)color);
 
 		// Advance tracking position
-		textPoint.x += charTracking;
+		textPoint.x += drawFont.fontCharEntry[c_code].tracking;
 	} // end per-character processing
 
-	rowLimit = (_vm->_gfx->getBackBufferHeight() < (textPoint.y + drawFont.header.charHeight)) ? _vm->_gfx->getBackBufferHeight() : textPoint.y + drawFont.header.charHeight;
+	int rowLimit = (_vm->_gfx->getBackBufferHeight() < (textPoint.y + drawFont.header.charHeight)) ? _vm->_gfx->getBackBufferHeight() : textPoint.y + drawFont.header.charHeight;
 	_vm->_render->addDirtyRect(Common::Rect(point.x, point.y, textPoint.x, rowLimit));
 }
 
