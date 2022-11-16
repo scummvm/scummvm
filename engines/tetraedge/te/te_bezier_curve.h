@@ -40,9 +40,11 @@ public:
 
 	float rawLength();
 
-	TeVector3f32 retrievePoint(float offset) const;
+	TeVector3f32 retrievePoint(float offset);
 	void setControlPoints(const Common::Array<TeVector3f32> &points);
 	void setNbIterations(unsigned long iterations);
+
+	static TeVector3f32 hermiteInterpolate(float param_2, const TeVector3f32 *points, float param_4, float param_5);
 
 	static void serialize(Common::WriteStream &stream, const TeBezierCurve &curve);
 	static void deserialize(Common::ReadStream &stream, TeBezierCurve &curve);

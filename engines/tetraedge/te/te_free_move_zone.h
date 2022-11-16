@@ -71,8 +71,8 @@ public:
 	Common::Array<TeVector3f32> collisions(const TeVector3f32 &v1, const TeVector3f32 &v2);
 	TeVector3f32 correctCharacterPosition(const TeVector3f32 &pos, bool *flagout, bool f);
 
-	TeIntrusivePtr<TeBezierCurve> curve(const TeVector3f32 &param_3, const TeVector2s32 &param_4, float param_5, bool findMeshFlag);
-	TeIntrusivePtr<TeBezierCurve> curve(const TeVector3f32 &param_3, const TeVector3f32 &param_4);
+	TeIntrusivePtr<TeBezierCurve> curve(const TeVector3f32 &startpt, const TeVector2s32 &endpt, float param_5, bool findMeshFlag);
+	TeIntrusivePtr<TeBezierCurve> curve(const TeVector3f32 &startpt, const TeVector3f32 &endpt);
 
 	void draw() override;
 	TeVector3f32 findNearestPointOnBorder(const TeVector2f32 &pt);
@@ -90,14 +90,14 @@ public:
 
 	bool onViewportChanged();
 	void preUpdateGrid();
-	TeVector3f32 projectOnAStarGrid(const TeVector3f32 &pt);
-	Common::Array<TeVector3f32> &removeInsignificantPoints(const Common::Array<TeVector3f32> &points);
+	TeVector2s32 projectOnAStarGrid(const TeVector3f32 &pt);
+	Common::Array<TeVector3f32> removeInsignificantPoints(const Common::Array<TeVector3f32> &points);
 	void setBordersDistance(float dist);
 	void setCamera(TeIntrusivePtr<TeCamera> &cam, bool noRecalcProjPoints);
 	void setNbTriangles(unsigned int len);
 	void setPathFindingOccluder(const TeOBP &occluder);
 	void setVertex(unsigned int offset, const TeVector3f32 &vertex);
-	TeVector2s32 transformAStarGridInWorldSpace(const TeVector2s32 &gridpt);
+	TeVector3f32 transformAStarGridInWorldSpace(const TeVector2s32 &gridpt);
 	float transformHeightMin(float minval);
 	TeVector3f32 transformVectorInWorldSpace(float param_3,float param_4);
 	void updateBorders();
@@ -110,6 +110,9 @@ public:
 	static void deserialize(Common::ReadStream &stream, TeFreeMoveZone &dest, Common::Array<TeBlocker> *blockers,
                Common::Array<TeRectBlocker> *rectblockers, Common::Array<TeActZone> *actzones);
 	static void serialize(Common::WriteStream &stream, const TeFreeMoveZone &src, bool updateFirst);
+
+	static TePickMesh2 *findNearestMesh(TeIntrusivePtr<TeCamera> &camera, const TeVector2s32 &frompt,
+			Common::Array<TePickMesh2*> &pickMeshes, TeVector3f32 *outloc, bool lastHitFirst);
 
 private:
 	Common::Array<TeActZone> *_actzones;
@@ -132,12 +135,15 @@ private:
 	TeIntrusivePtr<TeCamera> _camera;
 	//static TeIntrusivePtr<TeCamera> _globalCamera;
 
-	bool _gridDirty;
 	TeFreeMoveZoneGraph *_graph;
+
+	bool _loadedFromBin;
+	bool _gridDirty;
 	bool _transformedVerticiesDirty;
 	bool _bordersDirty;
 	bool _pickMeshDirty;
 	bool _projectedPointsDirty;
+
 	micropather::MicroPather *_micropather;
 	TeTimer _updateTimer;
 };

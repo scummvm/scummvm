@@ -24,6 +24,7 @@
 #include "tetraedge/te/te_free_move_zone.h"
 #include "tetraedge/te/micropather.h"
 #include "tetraedge/te/te_renderer.h"
+#include "tetraedge/te/te_ray_intersection.h"
 
 namespace Tetraedge {
 
@@ -51,7 +52,8 @@ class TeFreeMoveZoneGraph : micropather::Graph {
 
 
 TeFreeMoveZone::TeFreeMoveZone() : _actzones(nullptr), _blockers(nullptr), _rectBlockers(nullptr),
-_transformedVerticiesDirty(true), _bordersDirty(true), _pickMeshDirty(true), _projectedPointsDirty(true)
+_transformedVerticiesDirty(true), _bordersDirty(true), _pickMeshDirty(true), _projectedPointsDirty(true),
+_loadedFromBin(false)
 {
 	_graph = new TeFreeMoveZoneGraph();
 	_graph->_bordersDistance = 2048.0f;
@@ -112,12 +114,52 @@ TeVector3f32 TeFreeMoveZone::correctCharacterPosition(const TeVector3f32 &pos, b
 	return intersectPoint;
 }
 
-TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &param_3, const TeVector2s32 &param_4, float param_5, bool findMeshFlag) {
+TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt, const TeVector2s32 &endpt, float param_5, bool findMeshFlag) {
+	updateGrid(false);
 	error("TODO: Implement TeFreeMoveZone::curve");
 }
 
-TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &param_3, const TeVector3f32 &param_4) {
-	error("TODO: Implement TeFreeMoveZone::curve");
+TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt, const TeVector3f32 &endpt) {
+	updateGrid(false);
+	Common::Array<TeVector3f32> points;
+	points.push_back(startpt);
+	points.push_back(endpt);
+
+	TeVector2s32 projectedStart = projectOnAStarGrid(startpt);
+	TeVector2s32 projectedEnd = projectOnAStarGrid(endpt);
+	int xsize = _graph->_size._x;
+	float cost = 0;
+	// Passing an int to void*, yuck? but it's what the original does..
+	Common::Array<void *> path;
+	int pathResult = _micropather->Solve((void *)(xsize * projectedStart._y + projectedStart._x), (void *)(xsize * projectedEnd._y + projectedEnd._x), &path, &cost);
+
+	TeIntrusivePtr<TeBezierCurve> retval;
+
+	if (pathResult == micropather::MicroPather::SOLVED || pathResult == micropather::MicroPather::START_END_SAME) {
+		Common::Array<TeVector2s32> points;
+		points.resize(path.size());
+
+		for (auto &pathpt : path) {
+			// each path point is an array offset
+			int offset = static_cast<int>(reinterpret_cast<long>(pathpt));
+			int yoff = (offset / _graph->_size._x);
+			int xoff = offset % _graph->_size._x;
+			points.push_back(TeVector2s32(xoff, yoff));
+		}
+
+		Common::Array<TeVector3f32> pts3d;
+		for (auto &pt : points) {
+			pts3d.push_back(transformAStarGridInWorldSpace(pt));
+		}
+
+		pts3d.front() = startpt;
+		pts3d.back() = endpt;
+		removeInsignificantPoints(pts3d);
+		retval = new TeBezierCurve();
+		retval->setControlPoints(pts3d);
+	}
+
+	return retval;
 }
 
 /*static*/
@@ -191,12 +233,20 @@ void TeFreeMoveZone::preUpdateGrid() {
 	error("TODO: Implement TeFreeMoveZone::preUpdateGrid");
 }
 
-TeVector3f32 TeFreeMoveZone::projectOnAStarGrid(const TeVector3f32 &pt) {
-	error("TODO: Implement TeFreeMoveZone::projectOnAStarGrid");
+TeVector2s32 TeFreeMoveZone::projectOnAStarGrid(const TeVector3f32 &pt) {
+	TeVector2f32 otherpt;
+	if (!_loadedFromBin) {
+		otherpt = TeVector2f32(pt.x() - _someGridVec1.getX(), pt.z() - _someGridVec1.getY());
+	} else {
+		error("TODO: Implement TeFreeMoveZone::projectOnAStarGrid for _loadedFromBin");
+	}
+	TeVector2f32 projected = otherpt / _gridOffsetSomething;
+	return TeVector2s32((int)projected.getX(), (int)projected.getY());
 }
 
-Common::Array<TeVector3f32> &TeFreeMoveZone::removeInsignificantPoints(const Common::Array<TeVector3f32> &points) {
-	error("TODO: Implement TeFreeMoveZone::removeInsignificantPoints");
+Common::Array<TeVector3f32> TeFreeMoveZone::removeInsignificantPoints(const Common::Array<TeVector3f32> &points) {
+	warning("TODO: Implement TeFreeMoveZone::removeInsignificantPoints");
+	return points;
 }
 
 void TeFreeMoveZone::setBordersDistance(float dist) {
@@ -238,7 +288,14 @@ void TeFreeMoveZone::setVertex(unsigned int offset, const TeVector3f32 &vertex) 
 	_projectedPointsDirty = true;
 }
 
-TeVector2s32 TeFreeMoveZone::transformAStarGridInWorldSpace(const TeVector2s32 &gridpt) {
+TeVector3f32 TeFreeMoveZone::transformAStarGridInWorldSpace(const TeVector2s32 &gridpt) {
+	float offsety = (float)gridpt._y * _gridOffsetSomething.getY() + _someGridVec1.getY() +
+				_gridOffsetSomething.getY() * 0.5;
+	float offsetx = (float)gridpt._x * _gridOffsetSomething.getX() + _someGridVec1.getX() +
+				_gridOffsetSomething.getX() * 0.5;
+	if (!_loadedFromBin) {
+		return TeVector3f32(offsetx, _someGridFloat, offsety);
+	}
 	error("TODO: Implement TeFreeMoveZone::transformAStarGridInWorldSpace");
 }
 
@@ -289,12 +346,58 @@ void TeFreeMoveZone::updateTransformedVertices() {
 
 /*========*/
 
-float TeFreeMoveZoneGraph::LeastCostEstimate(void * stateStart, void *stateEnd) {
-	error("TODO: Implement TeFreeMoveZone::TeFreeMoveZoneGraph::LeastCostEstimate");
+float TeFreeMoveZoneGraph::LeastCostEstimate(void *stateStart, void *stateEnd) {
+	int startInt = static_cast<int>(reinterpret_cast<long>(stateStart));
+	int endInt = static_cast<int>(reinterpret_cast<long>(stateEnd));
+	int starty = startInt / _size._x;
+	int endy = endInt / _size._x;
+	TeVector2s32 start(startInt - starty * _size._x, starty);
+	TeVector2s32 end(endInt - endy * _size._x, endy);
+	return (end - start).squaredLength();
 }
 
 void TeFreeMoveZoneGraph::AdjacentCost(void *state, Common::Array<micropather::StateCost> *adjacent) {
-	error("TODO: Implement TeFreeMoveZone::TeFreeMoveZoneGraph::AdjacentCost");
+	int stateInt = static_cast<int>(reinterpret_cast<long>(state));
+	int stateY = stateInt / _size._x;
+	const TeVector2s32 statept(stateInt - stateY * _size._x, stateY);
+
+	micropather::StateCost cost;
+	TeVector2s32 pt;
+
+	pt = TeVector2s32(statept._x - 1, statept._y);
+	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
+	cost.cost = (flag(pt) == 1 ? FLT_MAX : _bordersDistance);
+	adjacent->push_back(cost);
+
+	pt = TeVector2s32(statept._x - 1, statept._y + 1);
+	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
+	cost.cost = (flag(pt) == 1 ? FLT_MAX : _bordersDistance);
+	adjacent->push_back(cost);
+
+	pt = TeVector2s32(statept._x + 1, statept._y + 1);
+	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
+	cost.cost = (flag(pt) == 1 ? FLT_MAX : _bordersDistance);
+	adjacent->push_back(cost);
+
+	pt = TeVector2s32(statept._x + 1, statept._y);
+	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
+	cost.cost = (flag(pt) == 1 ? FLT_MAX : _bordersDistance);
+	adjacent->push_back(cost);
+
+	pt = TeVector2s32(statept._x + 1, statept._y - 1);
+	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
+	cost.cost = (flag(pt) == 1 ? FLT_MAX : _bordersDistance);
+	adjacent->push_back(cost);
+
+	pt = TeVector2s32(statept._x, statept._y - 1);
+	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
+	cost.cost = (flag(pt) == 1 ? FLT_MAX : _bordersDistance);
+	adjacent->push_back(cost);
+
+	pt = TeVector2s32(statept._x - 1, statept._y - 1);
+	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
+	cost.cost = (flag(pt) == 1 ? FLT_MAX : _bordersDistance);
+	adjacent->push_back(cost);
 }
 
 void TeFreeMoveZoneGraph::PrintStateInfo(void *state) {
@@ -327,6 +430,57 @@ void TeFreeMoveZoneGraph::deserialize(Common::ReadStream &stream) {
 
 void TeFreeMoveZoneGraph::serialize(Common::WriteStream &stream) const {
 	error("TODO: Implement TeFreeMoveZoneGraph::serialize");
+}
+
+/*static*/
+TePickMesh2 *TeFreeMoveZone::findNearestMesh(TeIntrusivePtr<TeCamera> &camera, const TeVector2s32 &frompt,
+			Common::Array<TePickMesh2*> &pickMeshes, TeVector3f32 *outloc, bool lastHitFirst) {
+	TeVector3f32 locresult;
+	TePickMesh2 *nearest = nullptr;
+	float furthest = camera->_orthFarVal;
+	if (!pickMeshes.empty()) {
+		TeVector3f32 v1;
+		TeVector3f32 v2;
+		for (unsigned int i = 0; i < pickMeshes.size(); i++) {
+			TePickMesh2 *mesh = pickMeshes[i];
+			const TeMatrix4x4 transform = mesh->worldTransformationMatrix();
+			if (lastHitFirst) {
+				unsigned int tricount = mesh->verticies().size() / 3;
+				unsigned int vert = mesh->lastTriangleHit() * 3;
+				if (mesh->lastTriangleHit() >= tricount)
+					vert = 0;
+				const TeVector3f32 v3 = transform * mesh->verticies()[vert];
+				const TeVector3f32 v4 = transform * mesh->verticies()[vert + 1];
+				const TeVector3f32 v5 = transform * mesh->verticies()[vert + 2];
+				TeVector3f32 result;
+				float fresult;
+				int intresult = TeRayIntersection::intersect(v1, v2, v3, v4, v5, result, fresult);
+				if (intresult == 1 && fresult < furthest && fresult >= camera->_orthNearVal)
+					return mesh;
+			}
+			for (unsigned int tri = 0; tri < mesh->verticies().size() / 3; tri++) {
+				const TeVector3f32 v3 = transform * mesh->verticies()[tri * 3];
+				const TeVector3f32 v4 = transform * mesh->verticies()[tri * 3 + 1];
+				const TeVector3f32 v5 = transform * mesh->verticies()[tri * 3 + 1];
+				camera->getRay(frompt, v1, v2);
+				TeVector3f32 result;
+				float fresult;
+				int intresult = TeRayIntersection::intersect(v1, v2, v3, v4, v5, result, fresult);
+				if (intresult == 1 && fresult < furthest && fresult >= camera->_orthNearVal) {
+					mesh->setLastTriangleHit(tri);
+					locresult = result;
+					furthest = fresult;
+					nearest = mesh;
+					if (lastHitFirst)
+						break;
+				}
+			}
+		}
+	}
+	if (outloc) {
+		*outloc = locresult;
+	}
+	return nearest;
 }
 
 

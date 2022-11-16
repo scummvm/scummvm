@@ -95,25 +95,24 @@ bool InGameScene::addMarker(const Common::String &markerName, const Common::Stri
 		markerSprite->setAnchor(TeVector3f32(0.0f, 0.0f, 0.0f));
 		markerSprite->load(imgPath);
 		markerSprite->setSizeType(TeILayout::RELATIVE_TO_PARENT);
-			markerSprite->setPositionType(TeILayout::RELATIVE_TO_PARENT);
-		TeVector3f32 newSize;
+		markerSprite->setPositionType(TeILayout::RELATIVE_TO_PARENT);
+		TeVector3f32 newPos;
 		if (locType == "PERCENT") {
 			Application *app = g_engine->getApplication();
 			TeVector3f32 frontLayoutSize = app->_frontLayout.userSize();
-			newSize.x() = frontLayoutSize.x() * (x / 100.0);
-			newSize.y() = frontLayoutSize.y() * (y / 100.0);
+			newPos.x() = frontLayoutSize.x() * (x / 100.0);
+			newPos.y() = frontLayoutSize.y() * (y / 100.0);
 		} else {
-			newSize.x() = x / 800.0;
-			newSize.y() = y / 600.0;
+			newPos.x() = x / 800.0;
+			newPos.y() = y / 600.0;
 		}
-		markerSprite->setSize(newSize);
+		markerSprite->setPosition(newPos);
 
-		float screenWidth = (float)g_engine->getDefaultScreenWidth();
-		float screenHeight = (float)g_engine->getDefaultScreenHeight();
+		const TeVector3f32 winSize = g_engine->getApplication()->getMainWindow().size();
 		if (g_engine->getCore()->fileFlagSystemFlag("definition") == "SD") {
-			markerSprite->setPosition(TeVector3f32(0.07, (4.0 / ((screenWidth / screenHeight) * 4.0)) * 0.04, 0.0));
+			markerSprite->setSize(TeVector3f32(0.07, (4.0 / ((winSize.y() / winSize.x()) * 4.0)) * 0.07, 0.0));
 		} else {
-			markerSprite->setPosition(TeVector3f32(0.04, (4.0 / ((screenWidth / screenHeight) * 4.0)) * 0.04, 0.0));
+			markerSprite->setSize(TeVector3f32(0.04, (4.0 / ((winSize.y() / winSize.x()) * 4.0)) * 0.04, 0.0));
 		}
 		markerSprite->setVisible(game->markersVisible());
 		markerSprite->_tiledSurfacePtr->_frameAnim._loopCount = -1;

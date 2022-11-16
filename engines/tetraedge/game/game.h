@@ -171,6 +171,9 @@ public:
 	bool _returnToMainMenu;
 	bool _firstInventory;
 	bool _movePlayerCharacterDisabled;
+	bool _sceneCharacterVisibleFromLoad;
+	bool _isCharacterWalking;
+	bool _isCharacterIdle;
 
 	const Common::String &currentZone() { return _currentZone; }
 	const Common::String &currentScene() { return _currentScene; }
@@ -185,6 +188,9 @@ public:
 	Common::Array<YieldedCallback> &yieldedCallbacks() { return _yieldedCallbacks; }
 	void setSaveRequested() { _saveRequested = true; }
 	bool markersVisible() const { return _markersVisible; }
+	const TeVector3f32 &posPlayer() const { return _posPlayer; }
+	void setPosPlayer(const TeVector3f32 &pos) { _posPlayer = pos; }
+	TeTimer &walkTimer() { return _walkTimer; }
 
 private:
 	bool _luaShowOwnerError;
@@ -219,6 +225,7 @@ private:
 	Common::String _currentScene;
 	Common::String _exitZone;
 	Common::String _prevSceneName;
+	Common::String _someSceneName;
 	Common::Path _sceneZonePath;
 
 	Common::String _loadName;
@@ -252,7 +259,6 @@ private:
 	int _objectsTakenVal;
 	int _dialogsTold;
 
-	bool _sceneCharacterVisibleFromLoad;
 	bool _markersVisible;
 	bool _saveRequested;
 	bool _randomSoundFinished;

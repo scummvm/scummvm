@@ -135,7 +135,7 @@ void Inventory::loadXMLFile(const Common::Path &path) {
 	xmlfile.close();
 
 	InventoryObjectsXmlParser parser;
-	if (!parser.loadBuffer((byte *)xmlContents.c_str(), xmlContents.size()))
+	if (!parser.loadBuffer((const byte *)xmlContents.c_str(), xmlContents.size()))
 		error("Couldn't load inventory xml.");
 	if (!parser.parse())
 		error("Couldn't parse inventory xml.");

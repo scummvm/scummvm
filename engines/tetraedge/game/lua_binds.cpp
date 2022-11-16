@@ -790,6 +790,85 @@ static int tolua_ExportedFunctions_SetObjectFrames00(lua_State *L) {
 	error("#ferror in function 'SetObjectFrames': %d %d %s", err.index, err.array, err.type);
 }
 
+static bool CurrentCharacterAnimation(const Common::String &charname, const Common::String &anim) {
+	Character *character = g_engine->getGame()->scene().character(charname);
+
+	if (!character) {
+		debug("[CurrentCharacterAnimation] Character\'s\"%s\" doesn't exist", charname.c_str());
+		return true;
+	} else {
+		return anim == character->curAnimName();
+	}
+}
+
+static int tolua_ExportedFunctions_CurrentCharacterAnimation00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err) && tolua_isnoobj(L, 3, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		Common::String s2(tolua_tostring(L, 2, nullptr));
+		bool result = CurrentCharacterAnimation(s1, s2);
+		tolua_pushboolean(L, result);
+		return 1;
+	}
+	error("#ferror in function 'CurrentCharacterAnimation': %d %d %s", err.index, err.array, err.type);
+}
+
+static void MoveCharacterPlayerTo(float x, float y, float z, bool walkFlag) {
+	Game *game = g_engine->getGame();
+	if (game->_movePlayerCharacterDisabled)
+		return;
+
+	TeVector3f32 loc(x, y, z);
+	game->resetPreviousMousePos();
+
+	Character *character = game->scene()._character;
+	if (loc == game->posPlayer() && character->walkModeStr() == "Walk")
+		return;
+
+	if (game->walkTimer().running() && game->walkTimer().timeElapsed() < 300000) {
+		unsigned long elapsed = game->walkTimer().timeElapsed();
+		game->walkTimer().stop();
+		if (elapsed < 300000) {
+			character->walkMode("Jog");
+		}
+	} else {
+		game->walkTimer().stop();
+		game->walkTimer().start();
+		character->walkMode("Walk");
+	}
+
+	game->_sceneCharacterVisibleFromLoad = false;
+	TeIntrusivePtr<TeBezierCurve> curve = character->freeMoveZone()->curve(character->_model->position(), loc);
+	if (!curve) {
+		game->luaScript().execute("OnDisplacementFinished");
+	} else {
+		game->scene().setCurve(curve);
+		character->setCurveStartLocation(TeVector3f32(0, 0, 0));
+		character->placeOnCurve(curve);
+		character->setCurveOffset(0);
+		character->setAnimation(character->walkAnim(Character::WalkPart_Loop), true);
+		character->walkTo(1.0, walkFlag);
+		game->_isCharacterWalking = true;
+		game->setPosPlayer(loc);
+	}
+}
+
+static int tolua_ExportedFunctions_MoveCharacterPlayerTo00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isnumber(L, 1, 0, &err) && tolua_isnumber(L, 2, 0, &err)
+		&& tolua_isnumber(L, 3, 0, &err) && tolua_isboolean(L, 4, 1, &err)
+		&& tolua_isnoobj(L, 5, &err)) {
+		float f1 = tolua_tonumber(L, 1, 0.0);
+		float f2 = tolua_tonumber(L, 2, 0.0);
+		float f3 = tolua_tonumber(L, 3, 0.0);
+		bool b1 = tolua_toboolean(L, 4, 0);
+		MoveCharacterPlayerTo(f1, f2, f3, b1);
+		return 0;
+	}
+	error("#ferror in function 'MoveCharacterPlayerTo': %d %d %s", err.index, err.array, err.type);
+}
+
+
 // ////////////////////////////////////////////////////////////////////////
 
 
@@ -860,9 +939,9 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "GetZPositionCharacter", tolua_ExportedFunctions_GetZPositionCharacter00);
 	tolua_function(L, "MoveCharacterTo", tolua_ExportedFunctions_MoveCharacterTo00);
 	tolua_function(L, "MoveCharacterToAndWaitForEnd",
-				 tolua_ExportedFunctions_MoveCharacterToAndWaitForEnd00);
+				 tolua_ExportedFunctions_MoveCharacterToAndWaitForEnd00);*/
 	tolua_function(L, "MoveCharacterPlayerTo", tolua_ExportedFunctions_MoveCharacterPlayerTo00);
-	tolua_function(L, "MoveCharacterPlayerToAndWaitForEnd",
+	/*tolua_function(L, "MoveCharacterPlayerToAndWaitForEnd",
 				 tolua_ExportedFunctions_MoveCharacterPlayerToAndWaitForEnd00);
 	tolua_function(L, "MoveCharacterPlayerAtTo", tolua_ExportedFunctions_MoveCharacterPlayerAtTo00);*/
 	tolua_function(L, "SetCharacterPosition", tolua_ExportedFunctions_SetCharacterPosition00);
@@ -874,8 +953,8 @@ void LuaOpenBinds(lua_State *L) {
 				 tolua_ExportedFunctions_SetCharacterAnimationAndWaitForEnd00);
 	tolua_function(L, "BlendCharacterAnimation", tolua_ExportedFunctions_BlendCharacterAnimation00);
 	tolua_function(L, "BlendCharacterAnimationAndWaitForEnd",
-				 tolua_ExportedFunctions_BlendCharacterAnimationAndWaitForEnd00);
-	tolua_function(L, "CurrentCharacterAnimation", tolua_ExportedFunctions_CurrentCharacterAnimation00);*/
+				 tolua_ExportedFunctions_BlendCharacterAnimationAndWaitForEnd00);*/
+	tolua_function(L, "CurrentCharacterAnimation", tolua_ExportedFunctions_CurrentCharacterAnimation00);
 	tolua_function(L, "SetCharacterPlayerVisible", tolua_ExportedFunctions_SetCharacterPlayerVisible00);
 	tolua_function(L, "MoveCharacterPlayerDisabled",
 				 tolua_ExportedFunctions_MoveCharacterPlayerDisabled00);

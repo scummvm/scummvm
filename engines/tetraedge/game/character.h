@@ -202,13 +202,14 @@ private:
 
 	int _lastFrame;
 	int _lastAnimFrame;
-	bool _missingCurrentAnim;
+	bool _notWalkAnim;
 	bool _someRepeatFlag; // TODO: what is this?
 	bool _callbacksChanged;
 	bool _needsSomeUpdate;
 	bool _positionFlag;
 	bool _lookingAtTallThing;
 	bool _hasAnchor;
+	bool _recallageY;
 
 	TeVector2f32 _headRotation;
 	TeVector2f32 _lastHeadRotation;

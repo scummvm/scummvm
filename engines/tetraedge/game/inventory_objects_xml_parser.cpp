@@ -30,6 +30,6 @@ bool InventoryObjectsXmlParser::parserCallback_Object(ParserNode *node) {
 	data._isDocument = node->values.contains("isDocument");
 	_objects.setVal(data._id, data);
 	return true;
-};
+}
 
 } // end namespace Tetraedge

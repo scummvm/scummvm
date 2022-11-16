@@ -127,7 +127,7 @@ Common::String TetraedgeEngine::getGameId() const {
 
 void TetraedgeEngine::configureSearchPaths() {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "Resources", 0, 4);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Resources", 0, 5);
 }
 
 int TetraedgeEngine::getDefaultScreenWidth() const {

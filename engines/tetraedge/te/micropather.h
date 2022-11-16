@@ -453,9 +453,9 @@ namespace micropather
 		PathCache* pathCache;
 	};
 
-};	// namespace micropather
+}	// namespace micropather
 
-};	// namespace Tetraedge
+}	// namespace Tetraedge
 
 #endif // TETRAEDGE_TE_MICROPATHER
 

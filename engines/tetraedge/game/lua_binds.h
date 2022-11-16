@@ -30,7 +30,7 @@ namespace LuaBinds {
 
 void LuaOpenBinds(lua_State *L);
 
-};
+} // end namespace LuaBinds
 
 } // end namespace Tetraedge
 

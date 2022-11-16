@@ -68,8 +68,8 @@ bool TeImagesSequence::load(const Common::Path &path) {
 		Common::Path filePath(filePathStr);
 		Common::String fname = filePath.getLastComponent().toString();
 		Common::String fstart = fname.substr(0, fname.size() - 7);
-		unsigned int frameno = 0;
-		unsigned int fps = 0;
+		int frameno = 0;
+		int fps = 0;
 		if (sscanf(fstart.c_str(), "%d-%d", &frameno, &fps) != 2) {
 			warning("TeImagesSequence::load can't match %s", fname.c_str());
 			continue;

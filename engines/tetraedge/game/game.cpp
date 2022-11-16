@@ -204,7 +204,9 @@ bool Game::changeWarp2(const Common::String &zone, const Common::String &scene, 
 	_warped = false;
 	_movePlayerCharacterDisabled = false;
 	_sceneCharacterVisibleFromLoad = false;
-	// TODO: set 3 other fields here (0x3f40 = -1, 0x4249 = 1, 0x424b = 0)
+	// TODO: set another field here (0x3f40 = -1)
+	_isCharacterIdle = true;
+	_isCharacterWalking = false;
 	Common::Path luapath("scenes");
 	luapath.joinInPlace(zone);
 	luapath.joinInPlace(scene);
@@ -457,13 +459,19 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	const Common::Path intLuaPath = scenePath.join(Common::String::format("Int%s.lua", scene.c_str()));
 	const Common::Path logicLuaPath = scenePath.join(Common::String::format("Logic%s.lua", scene.c_str()));
 	const Common::Path setLuaPath = scenePath.join(Common::String::format("Set%s.lua", scene.c_str()));
-	const Common::Path forLuaPath = scenePath.join(Common::String::format("For%s.lua", scene.c_str()));
+	Common::Path forLuaPath = scenePath.join(Common::String::format("For%s.lua", scene.c_str()));
 	const Common::Path markerLuaPath = scenePath.join(Common::String::format("Marker%s.lua", scene.c_str()));
 
 	bool intLuaExists = Common::File::exists(intLuaPath);
 	bool logicLuaExists = Common::File::exists(logicLuaPath);
 	bool setLuaExists = Common::File::exists(setLuaPath);
 	bool forLuaExists = Common::File::exists(forLuaPath);
+	if (!forLuaExists) {
+		// slight hack.. try an alternate For lua path.
+		forLuaPath = scenePath.join("Android-MacOSX").join(Common::String::format("For%s.lua", scene.c_str()));
+		forLuaExists = Common::File::exists(forLuaPath);
+		debug("searched for %s", forLuaPath.toString().c_str());
+	}
 	bool markerLuaExists = Common::File::exists(markerLuaPath);
 
 	if (!intLuaExists && !logicLuaExists && !setLuaExists && !forLuaExists && !markerLuaExists) {
@@ -751,8 +759,54 @@ bool Game::onCharacterAnimationFinished(const Common::String &val) {
 	error("TODO: Implemet Game::onCharacterAnimationFinished %s", val.c_str());
 }
 
-bool Game::onCharacterAnimationPlayerFinished(const Common::String &val) {
-	error("TODO: Implemet Game::onCharacterAnimationPlayerFinished %s", val.c_str());
+bool Game::onCharacterAnimationPlayerFinished(const Common::String &anim) {
+	if (_gameLoadState != 0)
+		return false;
+
+	bool callScripts = true;
+	for (unsigned int i = 0; i < _yieldedCallbacks.size(); i++) {
+		YieldedCallback &cb = _yieldedCallbacks[i];
+		if (cb._luaFnName == "OnCharacterAnimationFinished" && cb._luaParam == "Kate") {
+			TeLuaThread *lua = cb._luaThread;
+			_yieldedCallbacks.remove_at(i);
+			if (lua) {
+				lua->resume();
+				callScripts = false;
+				return false;
+			}
+			break;
+		}
+	}
+	if (callScripts) {
+		_luaScript.execute("OnCharacterAnimationFinished", "Kate");
+		_luaScript.execute("OnCellCharacterAnimationPlayerFinished", anim);
+	}
+
+	Character *character = scene()._character;
+	assert(character);
+
+	const Common::String &curAnimName = character->curAnimName();
+	if (_currentScene == _someSceneName) {
+		if (curAnimName == character->walkAnim(Character::WalkPart_Start)
+			|| curAnimName == character->walkAnim(Character::WalkPart_Loop)
+			|| curAnimName == character->walkAnim(Character::WalkPart_EndD)
+			|| curAnimName == character->walkAnim(Character::WalkPart_EndG))
+			character->stop();
+	} else {
+		if (!_sceneCharacterVisibleFromLoad && curAnimName != character->walkAnim(Character::WalkPart_Start)) {
+			character->setAnimation(character->walkAnim(Character::WalkPart_Loop), true);
+			return false;
+		}
+		if (curAnimName == character->walkAnim(Character::WalkPart_EndD)
+			|| curAnimName == character->walkAnim(Character::WalkPart_EndG)) {
+			character->updatePosition(1.0);
+			character->endMove();
+			// Note: original checks walkAnim again.. is there a reason to do that?
+			character->setAnimation(character->characterSettings()._walkFileName, true);
+		}
+	}
+
+	return false;
 }
 
 bool Game::onDialogFinished(const Common::String &val) {
@@ -779,14 +833,12 @@ bool Game::onDisplacementFinished() {
 	_scene._character->stop();
 	_scene._character->setAnimation(_scene._character->characterSettings()._walkFileName, true);
 
-	// TODO: Twiddle flags 0x424b and 0x4249
-	/*
-	if (!_field_0x424b) {
-		_field_0x4249 = false;
+	if (!_isCharacterWalking) {
+		_isCharacterWalking = false;
+		_isCharacterIdle = true;
 	} else {
-		_field_0x424b = false;
-		_field_0x4249 = true;
-	}*/
+		_isCharacterIdle = false;
+	}
 
 	TeLuaThread *thread = nullptr;
 
@@ -848,57 +900,6 @@ bool Game::onMarkersVisible(TeCheckboxLayout::State state) {
 	return false;
 }
 
-static
-TePickMesh2 *findNearestMesh(TeIntrusivePtr<TeCamera> &camera, const TeVector2s32 &frompt,
-			Common::Array<TePickMesh2*> &pickMeshes, TeVector3f32 *outloc, bool lastHitFirst) {
-	TeVector3f32 locresult;
-	TePickMesh2 *nearest = nullptr;
-	float furthest = camera->_orthFarVal;
-	if (!pickMeshes.empty()) {
-		TeVector3f32 v1;
-		TeVector3f32 v2;
-		for (unsigned int i = 0; i < pickMeshes.size(); i++) {
-			TePickMesh2 *mesh = pickMeshes[i];
-			const TeMatrix4x4 transform = mesh->worldTransformationMatrix();
-			if (lastHitFirst) {
-				unsigned int tricount = mesh->verticies().size() / 3;
-				unsigned int vert = mesh->lastTriangleHit() * 3;
-				if (mesh->lastTriangleHit() >= tricount)
-					vert = 0;
-				const TeVector3f32 v3 = transform * mesh->verticies()[vert];
-				const TeVector3f32 v4 = transform * mesh->verticies()[vert + 1];
-				const TeVector3f32 v5 = transform * mesh->verticies()[vert + 2];
-				TeVector3f32 result;
-				float fresult;
-				int intresult = TeRayIntersection::intersect(v1, v2, v3, v4, v5, result, fresult);
-				if (intresult == 1 && fresult < furthest && fresult >= camera->_orthNearVal)
-					return mesh;
-			}
-			for (unsigned int tri = 0; tri < mesh->verticies().size() / 3; tri++) {
-				const TeVector3f32 v3 = transform * mesh->verticies()[tri * 3];
-				const TeVector3f32 v4 = transform * mesh->verticies()[tri * 3 + 1];
-				const TeVector3f32 v5 = transform * mesh->verticies()[tri * 3 + 1];
-				camera->getRay(frompt, v1, v2);
-				TeVector3f32 result;
-				float fresult;
-				int intresult = TeRayIntersection::intersect(v1, v2, v3, v4, v5, result, fresult);
-				if (intresult == 1 && fresult < furthest && fresult >= camera->_orthNearVal) {
-					mesh->setLastTriangleHit(tri);
-					locresult = result;
-					furthest = fresult;
-					nearest = mesh;
-					if (lastHitFirst)
-						break;
-				}
-			}
-		}
-	}
-	if (outloc) {
-		*outloc = locresult;
-	}
-	return nearest;
-}
-
 bool Game::onMouseClick(const Common::Point &pt) {
 	Application *app = g_engine->getApplication();
 
@@ -928,7 +929,7 @@ bool Game::onMouseClick(const Common::Point &pt) {
 	Common::String nearestMeshName = "None";
 	TeIntrusivePtr<TeCamera> curCamera = _scene.currentCamera();
 	Common::Array<TePickMesh2*> pickMeshes = _scene.pickMeshes();
-	TePickMesh2 *nearestMesh = findNearestMesh(curCamera, pt, pickMeshes, nullptr, false);
+	TePickMesh2 *nearestMesh = TeFreeMoveZone::findNearestMesh(curCamera, pt, pickMeshes, nullptr, false);
 	if (nearestMesh) {
 		nearestMeshName = nearestMesh->name();
 		_lastCharMoveMousePos = TeVector2s32(0, 0);
@@ -982,14 +983,14 @@ bool Game::onMouseClick(const Common::Point &pt) {
 		TeVector3f32 lastPoint = _scene.curve()->controlPoints().back();
 		character->setAnimation(character->walkAnim(Character::WalkPart_Loop), true);
 		character->walkTo(1.0, false);
-		// TODO: Set app field field_0x424b to true
+		_isCharacterWalking = true;
 		_posPlayer = lastPoint;
 	}
 
 	if (!_sceneCharacterVisibleFromLoad || (character->curAnimName() == character->characterSettings()._walkFileName)) {
 		_lastCharMoveMousePos = TeVector2s32(0, 0);
 		_movePlayerCharacterDisabled = true;
-		// TODO: Set field 	0x4249 to false
+		_isCharacterWalking = false;
 		if (nearestMesh) {
 			character->stop();
 			_luaScript.execute("OnWarpObjectHit", nearestMeshName);
@@ -1445,18 +1446,18 @@ void Game::update() {
 						player->setCurveOffset(0.0f);
 						player->setAnimation(player->walkAnim(Character::WalkPart_Start), false);
 						player->walkTo(1.0f, false);
-						// TODO: Set app field field_0x424b
+						_isCharacterWalking = true;
 					}
 					player->setNeedsSomeUpdate(false);
 				}
 
 				const Common::String &charAnim = _scene._character->curAnimName();
-				bool lockCursor = (charAnim == _scene._character->walkAnim(Character::WalkPart_Start) ||
+				bool unlockCursor = (charAnim == _scene._character->walkAnim(Character::WalkPart_Start) ||
 						charAnim == _scene._character->walkAnim(Character::WalkPart_Loop) ||
 						charAnim == _scene._character->walkAnim(Character::WalkPart_EndD) ||
 						charAnim == _scene._character->walkAnim(Character::WalkPart_EndG) ||
 						charAnim == _scene._character->characterSettings()._walkFileName);
-				app->lockCursor(lockCursor);
+				app->lockCursor(!unlockCursor);
 			}
 		}
 
@@ -1494,20 +1495,20 @@ bool Game::HitObject::onChangeWarp() {
 
 bool Game::HitObject::onDown() {
 	_game->luaScript().execute("OnButtonDown", _name);
-	// TODO: set this field _game->field_0x4249 = true;
+	_game->_isCharacterIdle = true;
 	return false;
 }
 
 bool Game::HitObject::onUp() {
 	_game->luaScript().execute("OnButtonUp", _name);
-	// TODO: set this field _game->field_0x4249 = true;
+	_game->_isCharacterIdle = true;
 	return false;
 }
 
 bool Game::HitObject::onValidated() {
 	if (!g_engine->getApplication()->isLockCursor()) {
 		_game->luaScript().execute("OnWarpObjectHit", _name);
-		// TODO: set this field _game->field_0x4249 = true;
+		_game->_isCharacterIdle = true;
 	}
 	return false;
 }
