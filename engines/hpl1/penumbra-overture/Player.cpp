@@ -535,10 +535,10 @@ void cPlayer::RemoveCollideScriptWithChildEntity(iGameEntity *apEntity) {
 				pCallback->mbDeleteMe = true;
 			} else {
 				hplDelete(pCallback);
-				m_mapCollideCallbacks.erase(currentIt);
 			}
 		}
 	}
+	m_mapCollideCallbacks.clear();
 }
 
 //-----------------------------------------------------------------------
