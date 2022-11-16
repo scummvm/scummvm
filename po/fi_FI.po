@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-15 20:46+0000\n"
+"POT-Creation-Date: 2022-11-16 07:29+0000\n"
 "PO-Revision-Date: 2022-10-17 00:33+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4255,7 +4255,7 @@ msgstr "Lataa tallenne"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "Pelin pikalataus tai tallennus ei ole tuettu tässä sijainnissa"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2698
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2696
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4266,7 +4266,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2685
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2683
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4277,7 +4277,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2714
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2712
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7675,7 +7675,7 @@ msgstr ""
 "vaadittuja käytön mahdollistavia osasia MT-32:lle. Otetaan sen sijasta "
 "käyttöön AdLib."
 
-#: engines/scumm/scumm.cpp:3242
+#: engines/scumm/scumm.cpp:3240
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
