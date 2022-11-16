@@ -2283,25 +2283,26 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// This may be a hybrid of media from Director, HyperCard, and Farallon MediaTracks
 	// Original filenames are MB.DemoMovie/C and MB.DemoMovie/M
-	MACDEMO1_l("macbasic", "Color Demo", "MB.DemoMovie-C", "7ed88097881eaf2ae4b05c9bf7efdc7c", 170579, Common::JA_JPN, 300),
-	MACDEMO1_l("macbasic", "Monochrome Demo", "MB.DemoMovie-M", "3c3f3b36eb63d8148b5a3517e3febdfc", 40132, Common::JA_JPN, 300),
+	MACDEMO1_l("macbasic", "Color Demo", "MB.DemoMovie-C", "7ed88097881eaf2ae4b05c9bf7efdc7c", 170323, Common::JA_JPN, 310),
+	MACDEMO1_l("macbasic", "Monochrome Demo", "MB.DemoMovie-M", "3c3f3b36eb63d8148b5a3517e3febdfc", 39876, Common::JA_JPN, 310),
 
 	// Training movies that came with preinstalled Mac OS 7 installs
 	MACGAME1("macbasics", "v5.0.3", "Macintosh Basics", "2ce360c9ea2da80a2c6d1040b0ad92dd", 403625, 310),
 	MACGAME1("mousebasics", "v4.5", "Mouse Basics", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 360662, 300),
+	MACGAME1("mousebasics", "", "Mouse Basics", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 360704, 300),
 
 	MACGAME2_l("macintosho20", "", "DOB", "f5277c53bacd27936158dd3867e587e2", 392248, "data", "7379e695efd1cb858c3cb28ec2e8fac6", 1513714, Common::JA_JPN, 311),
 
-	MACGAME1("macweekvideo", "", "Click Here To Get Started!", "dc99af32d1580cd6177dc77d49a103d6", 383587, 313),
+	MACGAME1("macweekvideo", "", "Click Here To Get Started!", "dc99af32d1580cd6177dc77d49a103d6", 383331, 313),
 
 	// HyperCard stack that calls a single movie using PlayAccel and MacroMind Player 3.1
 	// Original HyperCard filename is EXPO CD™ Boston 1992
 	// This nice looping intro movie is QTMoovs:Expo intro anim.mma
-	MACGAME2("macworldexpo92", "", "MacroMind Player",	  "1ae45c23586b41997ba52e2e7c771c4c", 372993,
-								   "EXPO CD Boston 1992", "4799cdcd7394a1eccb14b667a1ee2707", 71362, 310),
+	MACGAME2("macworldexpo92", "", "MacroMind Player",	  "1ae45c23586b41997ba52e2e7c771c4c", 372737,
+								   "xn--EXPO CD Boston 1992 -vh7l", "4799cdcd7394a1eccb14b667a1ee2707", 71106, 310),
 
 	// Original filename is ﾌﾟﾛｼﾞｪｸﾀ
-	MACDEMO2_l("maczaurus", "Demo", "Projector", "a03ae8a9bf211bcb26388b6b6da17c2b", 309519,
+	MACDEMO2_l("maczaurus", "Demo", "Projector", "a03ae8a9bf211bcb26388b6b6da17c2b", 309263,
 									"MSI C-S",   "224006f035e5f5fc0dd0133fbc5c6b89", 142729, Common::JA_JPN, 311),
 
 	// Original Mac filename is Maniac Sports™
@@ -2309,7 +2310,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("maniacsports", "", "MANIAC.EXE", "65d06b5fef155a2473434571aff5bc29", 371274,
 								 "SUPPORT/MSWORLD.MMM", "e9cdd7f30fb3386e7b67c6769147f60a", 218378, 311),
 
-	MACDEMO1_l("marinefantasy", "Demo", "MarineFantasy", "276bee761e48a6fd709df77d5c2f60dd", 395226, Common::JA_JPN, 313),
+	MACDEMO1_l("marinefantasy", "Demo", "MarineFantasy", "276bee761e48a6fd709df77d5c2f60dd", 394970, Common::JA_JPN, 313),
 
 	// Mac version on same disc is D4
 	// Developed by MetroLight Studios, Los Angeles
@@ -2331,6 +2332,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("mathacejr", "v2.0.14", "BBMV.EXE", "4eb5532666489fd01c605f64e268d9b6", 678289, Common::PT_BRA, 310),
 
 	MACGAME1("maze", "", "Maze", "c4917547b9d9fda87567a9b3544489c4", 384278, 300),
+	MACGAME1("maze", "", "Maze", "39b6473190fb6f175c9dc5fbd7349de0", 327110, 300),
 
 	// Selection of demos narrated by the MazeBox Tone Cruise mascot:
 	//		Pyramid Interactive, Virtual Cocktail Bar, MazeBrew, Virtual Edo Castle,
@@ -2342,7 +2344,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("mazebrew", "Demo", "MBW", "3350d8c895d47d217d2dfa58aa95496d", 558, Common::JA_JPN, 311),
 	MACGAME1_l("mazebrew", "v2.0", "MazeBrew  v.2.0", "f5277c53bacd27936158dd3867e587e2", 491957, Common::JA_JPN, 311),
 
-	MACDEMO1("meetingmaker", "Demo", "Meeting Maker Demo", "19fe54e0b5c60405c7a88d9e4e032965", 721976, 300),
+	MACDEMO1("meetingmaker", "Demo", "Meeting Maker Demo", "19fe54e0b5c60405c7a88d9e4e032965", 721720, 300),
 
 	WINDEMO1("mindbrain", "Demo", "INSTALL.EXE", "54fbe8edce6731ba6e89c16fd3be8e6d", 2558723, 404),
 
@@ -2353,8 +2355,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Decomposed variant of the above filename
 	MACDEMO1_l("mipeterwolf", "Demo", "xn--o9j5ete2cvkb7839i", "f5277c53bacd27936158dd3867e587e2", 394644, Common::JA_JPN, 311),
 
-	MACDEMO1("mmmozart", "Sampler", "Mozart Sampler", "67fb0a6c1b3c11367b06e2cf30c9ced9", 1700540, 311),
-	MACDEMO1("mmschubert", "Sampler", "Schubert Sampler", "52890d7211ae1258734c612f636da2c0", 1703468, 311),
+	MACDEMO1("mmmozart", "Sampler", "Mozart Sampler", "67fb0a6c1b3c11367b06e2cf30c9ced9", 1700284, 311),
+	MACDEMO1("mmschubert", "Sampler", "Schubert Sampler", "52890d7211ae1258734c612f636da2c0", 1703212, 311),
 
 	MACDEMO1_l("moderntimes", "Demo", "ModernTimes", "f5277c53bacd27936158dd3867e587e2", 391357, Common::JA_JPN, 311),
 	MACDEMO1_l("moderntimes", "Demo", "ModernTimes", "f5277c53bacd27936158dd3867e587e2", 391334, Common::JA_JPN, 311),
@@ -2389,11 +2391,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("msproject", "Demo", "MS Project demo", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 1059914, 300),
 
 	// "Message from Apple" found on Nikkei Mac CD-ROM (1994-2-17)
-	MACGAME1_l("msgfromapple", "", "Message", "4c7fddccfe5ab2e9c6398efa5dbe37c1", 395782, Common::JA_JPN, 313),
+	MACGAME1_l("msgfromapple", "", "Message", "4c7fddccfe5ab2e9c6398efa5dbe37c1", 395526, Common::JA_JPN, 313),
 	MACGAME1_l("msgfromapple", "", "Message from Apple", "4c7fddccfe5ab2e9c6398efa5dbe37c1", 395566, Common::JA_JPN, 313),
 
 	// French version is D5
-	MACGAME1("murderbrett", "", "The Environmental Surfer", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384469, 300),
+	MACGAME1("murderbrett", "", "The Environmental Surfer", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384213, 300),
 	WINGAME1("murderbrett", "", "BRETTP.EXE", "65d06b5fef155a2473434571aff5bc29", 370010, 300),
 
 	MACGAME1("murdermagic", "", "The Magic Death", "a8788e8b79dccc582b9818ec63734bed", 736498, 313),
@@ -2402,14 +2404,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original Mac English filename is Who Killed Sam Rupert?
 	// Original Japanese demo filename is サム・ルパート殺人事件ﾃﾞﾓ
 	// English Mac demo from The Family Doctor, 3rd Edition
-	MACGAME1("murdersam", "",		"Who Killed Sam Rupert",  "243ed9ef948de907401784d0938a4ed5", 518996, 310),
+	MACGAME1("murdersam", "",		"xn--Who Killed Sam Rupert-iba04l",  "243ed9ef948de907401784d0938a4ed5", 518740, 310),
 	WINGAME1("murdersam", "1993", "RUPERT.EXE", "5c6862a40a48881913ee7c50d25cd984", 225256, 300),
 	WINGAME1("murdersam", "1994", "SAM.EXE",	"65d06b5fef155a2473434571aff5bc29", 370016, 310),
 	MACDEMO1("murdersam", "Demo", "Sam Rupert Demo", "1ae45c23586b41997ba52e2e7c771c4c", 375280, 310),
-	MACDEMO1_l("murdersam", "Demo", "Sam Rupert Murder Demo", "2ce360c9ea2da80a2c6d1040b0ad92dd", 382525, Common::JA_JPN, 313),
+	MACDEMO1_l("murdersam", "Demo", "Sam Rupert Murder Demo", "2ce360c9ea2da80a2c6d1040b0ad92dd", 382269, Common::JA_JPN, 313),
 
 	// German and Korean versions are D4
-	MACGAME1("murdertaylor", "", "Taylor French", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384469, 300),
+	MACGAME1("murdertaylor", "", "Taylor French", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384213, 300),
 	WINGAME1("murdertaylor", "", "TAYLORF.EXE", "65d06b5fef155a2473434571aff5bc29", 370010, 300),
 
 	// Found on CD-ROM Today, #4
@@ -2419,45 +2421,45 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("mylk", "", "Mylk DoubleClickMe!", "8a33471513b6896d3d13b8a9c8790d86", 356024, 300),
 
-	MACDEMO1("necrobius", "Demo", "Necrobius (Demo)", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 356865, 300),
+	MACDEMO1("necrobius", "Demo", "Necrobius (Demo)", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 356609, 300),
 
-	MACDEMO1("necromancer", "Demo", "Necromancer Launch", "7f443f2e63fd497a9ad85b10dc880a91", 385697, 313),
+	MACDEMO1("necromancer", "Demo", "Necromancer Launch", "7f443f2e63fd497a9ad85b10dc880a91", 385441, 313),
 
 	// Original filename is 建築見積ｿﾌﾄ Movie
-	MACDEMO1_l("negishihomes", "Demo", "Kenchiku Mitsumori Sofuto Movie", "276bee761e48a6fd709df77d5c2f60dd", 1880339, Common::JA_JPN, 313),
+	MACDEMO1_l("negishihomes", "Demo", "Kenchiku Mitsumori Sofuto Movie", "276bee761e48a6fd709df77d5c2f60dd", 1880083, Common::JA_JPN, 313),
 
 	PIPGAME1_l("nemurenu", "", "Sleepless", "5ac60d4dafefa00dd8060b6a4f9c4c4c", 48184, Common::JA_JPN, 404),
 
-	MACDEMO1("newton", "Demo", "Complete Newton Demo", "7f443f2e63fd497a9ad85b10dc880a91", 383575, 313),
+	MACDEMO1("newton", "Demo", "Complete Newton Demo", "7f443f2e63fd497a9ad85b10dc880a91", 383319, 313),
 
 	MACGAME1("nightrider", "", "Night Rider", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 351573, 301),
 
 	WINDEMO1("nmm", "Demo", "NMMDEMO.EXE", "27f013955218ac0b57241d0b4768ad6c", 7621747, 311),
 
-	MACDEMO1_l("nonta", "Demo", "Nonta", "f5277c53bacd27936158dd3867e587e2", 390262, Common::JA_JPN, 311),
+	MACDEMO1_l("nonta", "Demo", "Nonta", "f5277c53bacd27936158dd3867e587e2", 390006, Common::JA_JPN, 311),
 
 	// Original movie filename is NOVA オープニングZ
-	MACDEMO2_l("novacity", "Demo", "demo",			 "f5277c53bacd27936158dd3867e587e2", 390381,
-								   "NOVA Opening Z", "1ffe4ff06bb9a2a97d76e5e20c51dcc8", 3811151, Common::JA_JPN, 311),
+	MACDEMO2_l("novacity", "Demo", "demo",			 "f5277c53bacd27936158dd3867e587e2", 390125,
+								   "NOVA Opening Z", "1ffe4ff06bb9a2a97d76e5e20c51dcc8", 3810895, Common::JA_JPN, 311),
 
-	MACDEMO1_l("nsxpress", "Demo", "NSX Press", "f5277c53bacd27936158dd3867e587e2", 452135, Common::JA_JPN, 311),
-	MACDEMO1_l("oceansbelow", "Demo", "Oceans Below Auto-Demo", "f5277c53bacd27936158dd3867e587e2", 2680311, Common::JA_JPN, 311),
+	MACDEMO1_l("nsxpress", "Demo", "NSX Press", "f5277c53bacd27936158dd3867e587e2", 451879, Common::JA_JPN, 311),
+	MACDEMO1_l("oceansbelow", "Demo", "Oceans Below Auto-Demo", "f5277c53bacd27936158dd3867e587e2", 2680055, Common::JA_JPN, 311),
 
 	MACDEMO1("ofoto", "Tour", "Ofoto Tour", "5cc0930b4cd0b9dfc587b241ba37bf54", 353745, 300),
 
 	// Original projector filenames are OLﾌﾟﾛｼﾞｪｸﾀ and ﾌﾟﾛｼﾞｪｸﾀ
 	// Second filename is 藤沢.ムービー
-	MACDEMO1_l("olnet", "Light Demo", "OL Projector",	"f5277c53bacd27936158dd3867e587e2", 4447378, Common::JA_JPN, 311),
-	MACDEMO2_l("olnet", "Net Demo",	  "Projector",		"a03ae8a9bf211bcb26388b6b6da17c2b", 439934,
-									  "Fujisawa.Movie", "dbb8c3b27f5017f5fa10c3fc77da8282", 5810, Common::JA_JPN, 311),
+	MACDEMO1_l("olnet", "Light Demo", "OL Projector",	"f5277c53bacd27936158dd3867e587e2", 4447122, Common::JA_JPN, 311),
+	MACDEMO2_l("olnet", "Net Demo",	  "Projector",		"a03ae8a9bf211bcb26388b6b6da17c2b", 439678,
+									  "Fujisawa.Movie", "dbb8c3b27f5017f5fa10c3fc77da8282", 5554, Common::JA_JPN, 311),
 
 	// Game is HyperCard based. Movies will play with --start-movie from console.
-	MACGAME1("osmo", "v1.6 Floppy", "vwLogos", "7ca99dfa4b620da808266ce75cabc311", 2026, 311),
+	MACGAME1("osmo", "v1.6 Floppy", "vwLogos", "7ca99dfa4b620da808266ce75cabc311", 1770, 311),
 
 	{
 		{
 			"osmo", "v1.2 CD",
-			AD_ENTRY1s("vwIntroOsmo", "910c6e4bf76294802e985e5b55994a73", 11374),
+			AD_ENTRY1s("vwIntroOsmo", "910c6e4bf76294802e985e5b55994a73", 11118),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			(ADGF_CD|ADGF_MACRESFORK|SUPPORT_STATUS),
