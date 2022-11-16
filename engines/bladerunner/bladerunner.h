@@ -25,9 +25,7 @@
 #include "bladerunner/archive.h"
 
 #include "common/array.h"
-#include "common/cosinetables.h"
 #include "common/random.h"
-#include "common/sinetables.h"
 #include "common/stream.h"
 #include "common/keyboard.h"
 #include "common/events.h"
@@ -35,6 +33,9 @@
 #include "engines/engine.h"
 
 #include "graphics/surface.h"
+
+#include "math/cosinetables.h"
+#include "math/sinetables.h"
 
 //TODO: change this to debugflag
 #define BLADERUNNER_DEBUG_CONSOLE     0
@@ -213,8 +214,8 @@ public:
 
 	Debugger *_debugger;
 
-	Common::CosineTable *_cosTable1024;
-	Common::SineTable   *_sinTable1024;
+	Math::CosineTable *_cosTable1024;
+	Math::SineTable   *_sinTable1024;
 
 	bool _isWalkingInterruptible;
 	bool _interruptWalking;

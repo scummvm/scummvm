@@ -25,9 +25,10 @@
 // Copyright (c) 2010 Alex Converse <alex.converse@gmail.com>
 // Copyright (c) 2010 Vitor Sessak
 
-#include "common/dct.h"
+#include "math/dct.h"
+#include "math/rdft.h"
 
-namespace Common {
+namespace Math {
 
 DCT::DCT(int bits, TransformType trans) : _bits(bits), _cos(1 << (_bits + 2) ), _trans(trans), _rdft(nullptr) {
 	int n = 1 << _bits;
@@ -205,4 +206,4 @@ void DCT::calcDSTI(float *data) {
 	data[n - 1] = 0;
 }
 
-} // End of namespace Common
+} // End of namespace Math

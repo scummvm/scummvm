@@ -19,14 +19,16 @@
  *
  */
 
-#ifndef COMMON_SINETABLES_H
-#define COMMON_SINETABLES_H
+#ifndef MATH_SINETABLES_H
+#define MATH_SINETABLES_H
 
-namespace Common {
+#include "common/scummsys.h"
+
+namespace Math {
 
 /**
- * @defgroup common_sinetables Sine tables
- * @ingroup common
+ * @defgroup math_sinetables Sine tables
+ * @ingroup math
  *
  * @brief API for managing sine tables.
  *
@@ -79,6 +81,6 @@ private:
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Math
 
-#endif // COMMON_SINETABLES_H
+#endif // MATH_SINETABLES_H

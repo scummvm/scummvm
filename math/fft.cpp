@@ -25,12 +25,12 @@
 // Copyright (c) 2002 Fabrice Bellard
 // Partly based on libdjbfft by D. J. Bernstein
 
-#include "common/cosinetables.h"
-#include "common/fft.h"
+#include "math/fft.h"
+#include "math/cosinetables.h"
+#include "math/utils.h"
 #include "common/util.h"
-#include "common/textconsole.h"
 
-namespace Common {
+namespace Math {
 
 FFT::FFT(int bits, int inverse) : _bits(bits), _inverse(inverse) {
 	assert((_bits >= 2) && (_bits <= 16));
@@ -50,7 +50,7 @@ FFT::FFT(int bits, int inverse) : _bits(bits), _inverse(inverse) {
 	for (int i = 0; i < ARRAYSIZE(_cosTables); i++) {
 		if (i + 4 <= _bits) {
 			nPoints = 1 << (i + 4);
-			_cosTables[i] = new Common::CosineTable(nPoints);
+			_cosTables[i] = new CosineTable(nPoints);
 		}
 		else
 			_cosTables[i] = nullptr;
@@ -255,4 +255,4 @@ void FFT::calc(Complex *z) {
 	fft(1 << _bits, _bits, z);
 }
 
-} // End of namespace Common
+} // End of namespace Math

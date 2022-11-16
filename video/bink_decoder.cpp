@@ -35,12 +35,13 @@
 #include "common/str.h"
 #include "common/bitstream.h"
 #include "common/huffman.h"
-#include "common/rdft.h"
-#include "common/dct.h"
 #include "common/system.h"
 
 #include "graphics/yuv_to_rgb.h"
 #include "graphics/surface.h"
+
+#include "math/rdft.h"
+#include "math/dct.h"
 
 #include "video/binkdata.h"
 #include "video/bink_decoder.h"
@@ -1725,9 +1726,9 @@ void BinkDecoder::initAudioTrack(AudioInfo &audio) {
 	audio.codec = ((audio.flags & kAudioFlagDCT) != 0) ? kAudioCodecDCT : kAudioCodecRDFT;
 
 	if      (audio.codec == kAudioCodecRDFT)
-		audio.rdft = new Common::RDFT(frameLenBits, Common::RDFT::DFT_C2R);
+		audio.rdft = new Math::RDFT(frameLenBits, Math::RDFT::DFT_C2R);
 	else if (audio.codec == kAudioCodecDCT)
-		audio.dct  = new Common::DCT(frameLenBits, Common::DCT::DCT_III);
+		audio.dct  = new Math::DCT(frameLenBits, Math::DCT::DCT_III);
 
 	addTrack(new BinkAudioTrack(audio, getSoundType()));
 }

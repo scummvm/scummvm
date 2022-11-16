@@ -322,7 +322,7 @@ MSNImage *ResourceManager::getImage(int filenumber) {
 // Generate a tone which minimal length is the length and ends at the end
 // of sine period
 // NOTE: Size of the SineTable has to be the same as audioRate and a multiple of 4
-byte *ResourceManager::generateTone(byte *buffer, int frequency, int length, int audioRate, Common::SineTable &table) {
+byte *ResourceManager::generateTone(byte *buffer, int frequency, int length, int audioRate, Math::SineTable &table) {
 	int i = 0;
 
 	// Make sure length is a multiple of audioRate / frequency to end on a full sine wave and not in the middle.
@@ -345,7 +345,7 @@ void ResourceManager::initSiren() {
 	// * 60 for the minimal length, another 20 * length as a spare, for longer tones
 	byte *buffer = new byte[length * 80];
 	byte *pBuffer = buffer;
-	Common::SineTable table(audioRate);
+	Math::SineTable table(audioRate);
 
 	for (int i = 0; i < 30; i++)
 		pBuffer = generateTone(pBuffer, 1800 - i * 10, length, audioRate, table);

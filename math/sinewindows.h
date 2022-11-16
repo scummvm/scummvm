@@ -19,31 +19,17 @@
  *
  */
 
-#ifndef MATH_UTILS_H
-#define MATH_UTILS_H
+// Based on xoreos' SineWindow code
+
+#ifndef MATH_SINEWINDOWS_H
+#define MATH_SINEWINDOWS_H
 
 #include "common/scummsys.h"
 
 namespace Math {
 
-/** A complex number. */
-struct Complex {
-	float re, im;
-};
+const float *getSineWindow(int bits);
 
-/* Math::epsilon is a constant with a small value which is used for comparing
- * floating point numbers.
- *
- * The value is based on the previous hard-coded numbers in
- * Line2d.cpp. Smaller numbers could be used unless they are
- * smaller than the float granularity.
- */
-static const float epsilon = 0.0001f;
+} // End of namespace Math
 
-inline float square(float x) {
-	return x * x;
-}
-
-}
-
-#endif
+#endif // MATH_SINEWINDOWS_H

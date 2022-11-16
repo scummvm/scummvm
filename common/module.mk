@@ -24,7 +24,6 @@ MODULE_OBJS := \
 	macresman.o \
 	memorypool.o \
 	md5.o \
-	mdct.o \
 	mutex.o \
 	osd_message_queue.o \
 	path.o \
@@ -34,7 +33,6 @@ MODULE_OBJS := \
 	random.o \
 	rational.o \
 	rendermode.o \
-	sinewindows.o \
 	str.o \
 	stream.o \
 	streamdebug.o \
@@ -57,13 +55,6 @@ MODULE_OBJS := \
 	xmlparser.o \
 	xpfloat.o \
 	zlib.o
-
-MODULE_OBJS += \
-	cosinetables.o \
-	dct.o \
-	fft.o \
-	rdft.o \
-	sinetables.o
 
 ifdef ENABLE_EVENTRECORDER
 MODULE_OBJS += \

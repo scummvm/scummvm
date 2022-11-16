@@ -23,9 +23,11 @@
 // Based upon the (I)RDFT code in FFmpeg
 // Copyright (c) 2009 Alex Converse <alex dot converse at gmail dot com>
 
-#include "common/rdft.h"
+#include "math/rdft.h"
+#include "math/fft.h"
+#include "math/utils.h"
 
-namespace Common {
+namespace Math {
 
 RDFT::RDFT(int bits, TransformType trans) : _bits(bits), _sin(1 << bits), _cos(1 << bits), _fft(nullptr) {
 	assert((_bits >= 4) && (_bits <= 16));
@@ -96,4 +98,4 @@ void RDFT::calc(float *data) {
 
 }
 
-} // End of namespace Common
+} // End of namespace Math

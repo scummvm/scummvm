@@ -25,20 +25,18 @@
 // Copyright (c) 2010 Alex Converse <alex.converse@gmail.com>
 // Copyright (c) 2010 Vitor Sessak
 
-#ifndef COMMON_DCT_H
-#define COMMON_DCT_H
+#ifndef MATH_DCT_H
+#define MATH_DCT_H
 
-#include "common/scummsys.h"
-#include "common/math.h"
-#include "common/rdft.h"
+#include "math/cosinetables.h"
 
-#include "common/cosinetables.h"
+namespace Math {
 
-namespace Common {
+class RDFT;
 
 /**
- * @defgroup common_dct Discrete Cosine Transforms
- * @ingroup common
+ * @defgroup math_dct Discrete Cosine Transforms
+ * @ingroup math
  *
  * @brief  Discrete Cosine Transforms.
  *
@@ -84,6 +82,6 @@ private:
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Math
 
-#endif // COMMON_DCT_H
+#endif // MATH_DCT_H
