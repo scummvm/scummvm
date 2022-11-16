@@ -93,7 +93,7 @@ public:
 	iterator find(const Key &theKey) {
 		iterator it = this->lower_bound(theKey);
 
-		if (it != this->end() && it->first == theKey)
+		if (it != this->end() && compareEqual(it->first, theKey))
 			return it;
 		return this->end();
 	}
@@ -101,7 +101,7 @@ public:
 	const_iterator find(const Key &theKey) const {
 		const_iterator it = this->lower_bound(theKey);
 
-		if (it != this->end() && it->first == theKey)
+		if (it != this->end() && compareEqual(it->first, theKey))
 			return it;
 		return this->end();
 	}
@@ -111,7 +111,7 @@ public:
 	 */
 	Val &operator[](const Key &theKey) {
 		iterator it = this->lower_bound(theKey);
-		if (it == this->end() || it->first != theKey) {
+		if (it == this->end() || !compareEqual(it->first, theKey)) {
 			size_t idx = it - this->begin();
 			_items.insert_at(idx, {});
 			_items[idx].first = theKey;
@@ -140,7 +140,7 @@ public:
 
 	std::pair<iterator, bool> insert(const value_type &val) {
 		iterator it = this->lower_bound(val.first);
-		if (it == this->end() || !(it->first == val.first)) {
+		if (it == this->end() || compareEqual(it->first, val.first)) {
 			size_t idx = it - this->begin();
 			_items.insert_at(idx, val);
 			return {it, true};
@@ -165,7 +165,7 @@ public:
 	size_t count(const Key &theKey) {
 		int count_ = 0;
 		for (iterator it = this->begin(); it != this->end(); ++it) {
-			if (it->first == theKey)
+			if (compareEqual(it->first, theKey))
 				++count_;
 		}
 
@@ -173,6 +173,10 @@ public:
 	}
 
 private:
+	bool compareEqual(const Key &a, const Key &b) {
+		return !_comp(a, b) && !_comp(b, a);
+	}
+
 	Common::Array<value_type> _items;
 	CompFunc _comp;
 };
