@@ -39,6 +39,10 @@ MODULES += \
 	po \
 	doc
 
+ifdef USE_LUA
+MODULES += common/lua
+endif
+
 ifdef USE_MT32EMU
 MODULES += audio/softsynth/mt32
 endif
