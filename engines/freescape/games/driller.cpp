@@ -238,7 +238,7 @@ void DrillerEngine::loadAssetsDemo() {
 		error("Unsupported demo for Driller");
 
 	_demoMode = true;
-	_angleRotationIndex = 1;
+	_angleRotationIndex = 0;
 }
 
 void DrillerEngine::loadAssetsFullGame() {

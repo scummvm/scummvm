@@ -129,10 +129,13 @@ public:
 	void swapPalette(uint16 areaID);
 	Common::HashMap<uint16, byte *> _paletteByArea;
 	void loadColorPalette();
+
+	// Demo
 	Common::Array<byte> _demoData;
 	int _demoIndex;
 	int _currentDemoInputCode;
 	int _currentDemoInputRepetition;
+	Common::Array<Common::Event> _demoEvents;
 	Common::Point _currentDemoMousePosition;
 	void loadDemoData(Common::SeekableReadStream *file, int offset, int size);
 	int decodeAmigaAtariKey(int code);
