@@ -138,7 +138,7 @@ public:
 		return it;
 	}
 
-	std::pair<iterator, bool> insert(value_type const &val) {
+	std::pair<iterator, bool> insert(const value_type &val) {
 		iterator it = this->lower_bound(val.first);
 		if (it == this->end() || !(it->first == val.first)) {
 			size_t idx = it - this->begin();
