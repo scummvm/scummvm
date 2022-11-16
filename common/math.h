@@ -61,11 +61,6 @@
 
 namespace Common {
 
-/** A complex number. */
-struct Complex {
-	float re, im;
-};
-
 #if defined(__GNUC__)
 inline int intLog2(uint32 v) {
 	// This is a slightly optimized implementation of log2 for natural numbers

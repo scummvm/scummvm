@@ -19,12 +19,12 @@
  *
  */
 
-#include "common/cosinetables.h"
-#include "common/sinetables.h"
 #include "common/random.h"
 #include "common/memstream.h"
 #include "graphics/cursor.h"
 #include "graphics/cursorman.h"
+#include "math/cosinetables.h"
+#include "math/sinetables.h"
 
 #include "hdb/hdb.h"
 #include "hdb/ai.h"
@@ -42,8 +42,8 @@ Gfx::Gfx() {
 	_gfxCache = new Common::Array<GfxCache *>;
 	_globalSurface.create(g_hdb->_screenWidth, g_hdb->_screenHeight, g_hdb->_format);
 	_pointerDisplayable = 1;
-	_sines = new Common::SineTable(360);
-	_cosines = new Common::CosineTable(360);
+	_sines = new Math::SineTable(360);
+	_cosines = new Math::CosineTable(360);
 	_systemInit = false;
 
 	_numTiles = 0;

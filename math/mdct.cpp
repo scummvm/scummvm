@@ -23,16 +23,16 @@
 // Based upon the (I)MDCT code in FFmpeg
 // Copyright (c) 2002 Fabrice Bellard
 
-/** @file common/mdct.cpp
+/** @file math/mdct.cpp
  *  (Inverse) Modified Discrete Cosine Transforms.
  */
 
-#include "common/math.h"
+#include "math/mdct.h"
+#include "math/fft.h"
+#include "math/utils.h"
 #include "common/util.h"
-#include "common/fft.h"
-#include "common/mdct.h"
 
-namespace Common {
+namespace Math {
 
 MDCT::MDCT(int bits, bool inverse, double scale) : _bits(bits), _fft(nullptr) {
 	_size = 1 << bits;
@@ -156,4 +156,4 @@ void MDCT::calcHalfIMDCT(float *output, const float *input) {
 	}
 }
 
-} // End of namespace Common
+} // End of namespace Math

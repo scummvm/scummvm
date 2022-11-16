@@ -19,14 +19,13 @@
  *
  */
 
-// Based on eos' cosine tables
+// Based on eos' sine tables
 
-#include "common/cosinetables.h"
-#include "common/scummsys.h"
+#include "math/sinetables.h"
 
-namespace Common {
+namespace Math {
 
-CosineTable::CosineTable(int nPoints) {
+SineTable::SineTable(int nPoints) {
 	assert((nPoints >= 16) && (nPoints <= 65536)); // log2 space is in [4,16]
 	assert(nPoints % 4 == 0);
 
@@ -37,42 +36,45 @@ CosineTable::CosineTable(int nPoints) {
 	_table = new float[_nPoints];
 
 	for (int i = 0; i < _nPoints; i++)
-		_table[i] = cos(i * _radResolution);
+		_table[i] = sin(i * _radResolution);
 
-	// Table contains cos(2*pi*i/_nPoints) for 0<=i<=_nPoints/4,
-	// followed by 3_nPoints/4<=i<_nPoints
-	for (int i = 0; i <= _nPoints / 4; i++)
-		_tableEOS[i] = cos(i * _radResolution);
+	// Table contains sin(2*pi*i/_nPoints) for 0<=i<_nPoints/4,
+	// followed by _nPoints/2<=i<3_nPoints/4
+	for (int i = 0; i < _nPoints / 4; i++)
+		_tableEOS[i] = sin(i * _radResolution);
 
-	for (int i = 1; i < _nPoints / 4; i++)
-		_tableEOS[_nPoints / 2 - i] = _tableEOS[i];
+	for (int i = 0; i < _nPoints / 4; i++)
+		_tableEOS[_nPoints / 4 + i] = -_tableEOS[i];
 }
 
-float CosineTable::at(int index) const {
+float SineTable::at(int index) const {
 	assert((index >= 0) && (index < _nPoints));
 	return _table[index];
 }
 
-float CosineTable::atLegacy(int index) const {
+float SineTable::atLegacy(int index) const {
 	assert((index >= 0) && (index < _nPoints));
 	if (index < _refSize)
 		// [0,pi/2)
 		return _tableEOS[index];
+	if (index == _refSize)
+		// pi/2
+		return 1.0f; // sin(pi/2) = 1.0
 	if ((index > _refSize) && (index < 2 * _refSize))
 		// (pi/2,pi)
-		return -_tableEOS[2 * _refSize - index];
+		return _tableEOS[2 * _refSize - index];
 	if ((index >= 2 * _refSize) && (index < 3 * _refSize))
 		// [pi,3/2pi)
 		return -_tableEOS[index - 2 * _refSize];
 	if ((index > 3 * _refSize) && (index < _nPoints))
 		// (3/2pi,2pi)
-		return _tableEOS[_nPoints - index];
-	return 0.0f; // cos(pi/2) and cos(3pi/2) = 0
+		return -_tableEOS[_nPoints - index];
+	return -1.0f; // sin(3pi/2) = -1.0
 }
 
-CosineTable::~CosineTable() {
+SineTable::~SineTable() {
 	delete[] _tableEOS;
 	delete[] _table;
 }
 
-} // End of namespace Common
+} // End of namespace Math

@@ -25,17 +25,16 @@
 // Copyright (c) 2002 Fabrice Bellard
 // Partly based on libdjbfft by D. J. Bernstein
 
-#ifndef COMMON_FFT_H
-#define COMMON_FFT_H
+#ifndef MATH_FFT_H
+#define MATH_FFT_H
 
 #include "common/scummsys.h"
-#include "common/math.h"
 
-namespace Common {
+namespace Math {
 
 /**
- * @defgroup common_fft Fast Fourier Transform (FFT)
- * @ingroup common
+ * @defgroup math_fft Fast Fourier Transform (FFT)
+ * @ingroup math
  *
  * @brief  API for the FFT algorithm.
  *
@@ -43,6 +42,7 @@ namespace Common {
  */
 
 class CosineTable;
+struct Complex;
 
 /**
  * (Inverse) Fast Fourier Transform.
@@ -90,6 +90,6 @@ private:
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Math
 
-#endif // COMMON_FFT_H
+#endif // MATH_FFT_H

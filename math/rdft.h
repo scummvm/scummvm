@@ -23,21 +23,19 @@
 // Based upon the (I)RDFT code in FFmpeg
 // Copyright (c) 2009 Alex Converse <alex dot converse at gmail dot com>
 
-#ifndef COMMON_RDFT_H
-#define COMMON_RDFT_H
+#ifndef MATH_RDFT_H
+#define MATH_RDFT_H
 
-#include "common/scummsys.h"
-#include "common/math.h"
-#include "common/fft.h"
+#include "math/cosinetables.h"
+#include "math/sinetables.h"
 
-#include "common/cosinetables.h"
-#include "common/sinetables.h"
+namespace Math {
 
-namespace Common {
+class FFT;
 
 /**
- * @defgroup common_rdft RDFT algorithm
- * @ingroup common
+ * @defgroup math_rdft RDFT algorithm
+ * @ingroup math
  *
  * @brief API for the Real Discrete Fourier Transform (RDFT) algorithm.
  *
@@ -117,6 +115,6 @@ private:
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Math
 
-#endif // COMMON_RDFT_H
+#endif // MATH_RDFT_H

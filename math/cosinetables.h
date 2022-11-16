@@ -19,14 +19,16 @@
  *
  */
 
-#ifndef COMMON_COSINETABLES_H
-#define COMMON_COSINETABLES_H
+#ifndef MATH_COSINETABLES_H
+#define MATH_COSINETABLES_H
 
-namespace Common {
+#include "common/scummsys.h"
+
+namespace Math {
 
 /**
- * @defgroup common_cosinetables Cosine tables
- * @ingroup common
+ * @defgroup math_cosinetables Cosine tables
+ * @ingroup math
  *
  * @brief  Functions for working with cosine tables.
  *
@@ -79,6 +81,6 @@ private:
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Math
 
-#endif // COMMON_COSINETABLES_H
+#endif // MATH_COSINETABLES_H

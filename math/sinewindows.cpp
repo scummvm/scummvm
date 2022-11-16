@@ -19,10 +19,9 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/sinewindows.h"
+#include "math/sinewindows.h"
 
-namespace Common {
+namespace Math {
 
 static const float sineWindow32[32] = {
 	0.024541, 0.073565, 0.122411, 0.170962, 0.219101, 0.266713, 0.313682, 0.359895,
@@ -1080,4 +1079,4 @@ const float *getSineWindow(int bits) {
 	return sineWindows[bits];
 }
 
-} // End of namespace Common
+} // End of namespace Math

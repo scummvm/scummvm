@@ -19,15 +19,47 @@
  *
  */
 
-// Based on xoreos' SineWindow code
+// Based on xoreos' (I)RDFT code which is in turn
+// Based upon the (I)MDCT code in FFmpeg
+// Copyright (c) 2002 Fabrice Bellard
 
-#ifndef COMMON_SINEWINDOWS_H
-#define COMMON_SINEWINDOWS_H
 
-namespace Common {
+#ifndef MATH_MDCT_H
+#define MATH_MDCT_H
 
-const float *getSineWindow(int bits);
+#include "common/scummsys.h"
 
-} // End of namespace Common
+namespace Math {
 
-#endif // COMMON_SINEWINDOWS_H
+class FFT;
+
+/** (Inverse) Modified Discrete Cosine Transforms. */
+class MDCT {
+public:
+	MDCT(int bits, bool inverse, double scale);
+	~MDCT();
+
+	/** Compute MDCT of size N = 2^nbits. */
+	void calcMDCT(float *output, const float *input);
+
+	/** Compute inverse MDCT of size N = 2^nbits. */
+	void calcIMDCT(float *output, const float *input);
+
+private:
+	int _bits;
+	int _size;
+
+	float *_tCos;
+	float *_tSin;
+
+	FFT *_fft;
+
+	/** Compute the middle half of the inverse MDCT of size N = 2^nbits,
+	 *  thus excluding the parts that can be derived by symmetry.
+	 */
+	void calcHalfIMDCT(float *output, const float *input);
+};
+
+} // End of namespace Math
+
+#endif // MATH_MDCT_H

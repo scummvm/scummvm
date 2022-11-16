@@ -24,11 +24,12 @@
 
 #include "common/util.h"
 #include "common/math.h"
-#include "common/sinewindows.h"
 #include "common/error.h"
 #include "common/memstream.h"
-#include "common/mdct.h"
 #include "common/huffman.h"
+
+#include "math/mdct.h"
+#include "math/sinewindows.h"
 
 #include "audio/audiostream.h"
 
@@ -114,7 +115,7 @@ WMACodec::~WMACodec() {
 		delete _coefHuffman[i];
 	}
 
-	for (Common::Array<Common::MDCT *>::iterator m = _mdct.begin(); m != _mdct.end(); ++m)
+	for (Common::Array<Math::MDCT *>::iterator m = _mdct.begin(); m != _mdct.end(); ++m)
 		delete *m;
 }
 
@@ -459,12 +460,12 @@ void WMACodec::initCoefHuffman(float bps) {
 void WMACodec::initMDCT() {
 	_mdct.reserve(_blockSizeCount);
 	for (int i = 0; i < _blockSizeCount; i++)
-		_mdct.push_back(new Common::MDCT(_frameLenBits - i + 1, true, 1.0));
+		_mdct.push_back(new Math::MDCT(_frameLenBits - i + 1, true, 1.0));
 
 	// Init MDCT windows (simple sine window)
 	_mdctWindow.reserve(_blockSizeCount);
 	for (int i = 0; i < _blockSizeCount; i++)
-		_mdctWindow.push_back(Common::getSineWindow(_frameLenBits - i));
+		_mdctWindow.push_back(Math::getSineWindow(_frameLenBits - i));
 }
 
 void WMACodec::initExponents() {
@@ -801,7 +802,7 @@ bool WMACodec::decodeChannels(Common::BitStream8MSB &bits, int bSize,
 }
 
 bool WMACodec::calculateIMDCT(int bSize, bool msStereo, bool *hasChannel) {
-	Common::MDCT &mdct = *_mdct[bSize];
+	Math::MDCT &mdct = *_mdct[bSize];
 
 	for (int i = 0; i < _channels; i++) {
 		int n4 = _blockLen / 2;
