@@ -181,26 +181,32 @@ uint32 MiniMapGump::sampleAtPoint(const Item *item, int x, int y)
 	if (!pal)
 		return 0;
 
+	if (item->canDrag())
+		return 0;
+
 	// Screenspace bounding box bottom x_ coord (RNB x_ coord)
 	int sx = (ix - iy) / 4;
 	// Screenspace bounding box bottom extent  (RNB y_ coord)
 	int sy = (ix + iy) / 8 + idz;
 
+	int w = 2;
+	int h = 2;
+
 	// Ensure sample is in bounds of frame
 	if (frame->_xoff - sx < 0)
 		sx = frame->_xoff;
-	else if (frame->_xoff - sx >= frame->_width - 2)
-		sx = frame->_xoff - frame->_width + 2;
+	else if (frame->_xoff - sx >= frame->_width - w)
+		sx = frame->_xoff - frame->_width + w;
 
 	if (frame->_yoff - sy < 0)
 		sy = frame->_yoff;
-	else if (frame->_yoff - sy >= frame->_height - 2)
-		sy = frame->_yoff - frame->_height + 2;
+	else if (frame->_yoff - sy >= frame->_height - h)
+		sy = frame->_yoff - frame->_height + h;
 
 	uint16 r = 0, g = 0, b = 0, c = 0;
 
-	for (int j = 0; j < 2; j++) {
-		for (int i = 0; i < 2; i++) {
+	for (int j = 0; j < w; j++) {
+		for (int i = 0; i < h; i++) {
 			if (!frame->hasPoint(i - sx, j - sy)) continue;
 
 			byte r2, g2, b2;
