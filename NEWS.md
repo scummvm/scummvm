@@ -37,6 +37,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  SAGA:
    - Added support for Chinese Inherit the Earth.
    - Added support for Chinese I Have no Mouth and I Must Scream.
+   - Added support for Korean I Have no Mouth and I Must Scream.
 
  SCUMM:
    - Added support for CGA, CGA Composite, CGA black & white and Hercules modes
