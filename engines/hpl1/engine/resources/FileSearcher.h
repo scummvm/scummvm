@@ -28,17 +28,16 @@
 #ifndef HPL_FILESEARCHER_H
 #define HPL_FILESEARCHER_H
 
-#include <map>
-
 #include "hpl1/engine/resources/ResourcesTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/std/map.h"
+#include "hpl1/std/multimap.h"
 
 namespace hpl {
 
 class LowLevelResources;
 
-typedef std::multimap<tString, tString> tFilePathMap;
+typedef Hpl1::std::multimap<tString, tString> tFilePathMap;
 typedef tFilePathMap::iterator tFilePathMapIt;
 
 class cFileSearcher {

@@ -37,6 +37,7 @@
 #include "hpl1/engine/system/SystemTypes.h"
 #include "common/array.h"
 #include "hpl1/std/map.h"
+#include "hpl1/std/multimap.h"
 
 namespace hpl {
 
@@ -176,7 +177,7 @@ private:
 typedef Common::Array<cSubMeshEntity *> tSubMeshEntityVec;
 typedef Common::Array<cSubMeshEntity *>::iterator tSubMeshEntityVecIt;
 
-typedef std::multimap<tString, cSubMeshEntity *> tSubMeshEntityMap;
+typedef Hpl1::std::multimap<tString, cSubMeshEntity *> tSubMeshEntityMap;
 typedef tSubMeshEntityMap::iterator tSubMeshEntityMapIt;
 
 }     // namespace hpl
