@@ -35,7 +35,6 @@
 #include "hpl1/engine/physics/SurfaceData.h"
 
 #include "hpl1/engine/system/low_level_system.h"
-//#include <algorithm>
 
 namespace hpl {
 
