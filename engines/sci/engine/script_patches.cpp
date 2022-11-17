@@ -152,6 +152,7 @@ static const char *const selectorNameTable[] = {
 	"owner",        // Longbow, QFG4
 	"fade",         // Longbow, Shivers
 	"enable",       // Longbow, SQ6
+	"alterEgo",     // LSL5
 	"delete",       // EcoQuest 1
 	"size",         // EcoQuest 1
 	"signal",       // EcoQuest 1, GK1
@@ -291,6 +292,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_owner,
 	SELECTOR_fade,
 	SELECTOR_enable,
+	SELECTOR_alterEgo,
 	SELECTOR_delete,
 	SELECTOR_size,
 	SELECTOR_signal,
@@ -8471,6 +8473,52 @@ static const SciScriptPatcherEntry larry3Signatures[] = {
 
 // ===========================================================================
 // Leisure Suit Larry 5
+
+// When switching between Larry and Patti, global 0 is set to the new actor but
+//  the script fails to update the pointer in stopGroop:client. This causes
+//  Patti to spin instead of walking. In the original this happened to work
+//  because both actors ended up in the same memory location. Script 0 disposed
+//  of the old actor's script immediately before loading the new one.
+//
+// In our implementation, each new object is loaded in a different memory
+//  location, and we can't overwrite the old one.
+//
+// We fix this by updating stopGroop:client when updating global 0 (ego).
+//
+// Applies to: All versions
+// Responsible method: Export 1 in script 0
+static const uint16 larry5SignatureUpdateStopGroopClient[] = {
+	0x38, SIG_SELECTOR16(alterEgo),     // pushi alterEgo
+	SIG_ADDTOOFFSET(+0x0f),
+	0x32, SIG_UINT16(0x0021),           // jmp 0021 [ toss, ret ]
+	SIG_ADDTOOFFSET(+0x0f),
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(alterEgo),     // pushi alterEgo
+	0x78,                               // push1
+	0x89, 0x00,                         // lsg 00
+	0x51, SIG_ADDTOOFFSET(+1),          // class User
+	0x4a, 0x06,                         // send 06 [ User alterEgo: ego ]
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi setuUpInv
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x04,                         // send 04 [ ego setUpInv: ]
+	SIG_END
+};
+
+static const uint16 larry5PatchUpdateStopGroopClient[] = {
+	PATCH_ADDTOOFFSET(+0x12),
+	0x32, PATCH_UINT16(0x0011),         // jmp 0011 [ stopGroop client: ego ]
+	PATCH_ADDTOOFFSET(+0x0f),
+	0x33, 0xda,                         // jmp da [ User alterEgo:, ego setUpInv: ]
+	0x39, PATCH_SELECTOR8(client),      // pushi client
+	0x78,                               // push1
+	0x89, 0x00,                         // lsg 00
+	0x81, 0x64,                         // lag 64
+	0x4a, 0x06,                         // send 06 [ stopGroop client: ego ]
+	0x33, 0x05,                         // jmp 05  [ toss, ret ] 
+	PATCH_END
+};
+
 // In Miami the player can call the green card telephone number and get
 //  green card including limo at the same time in the English 1.000 PC release.
 // This results later in a broken game in case the player doesn't read
@@ -8525,6 +8573,7 @@ static const uint16 larry5PatchGermanEndingPattiTalker[] = {
 
 //          script, description,                                      signature                               patch
 static const SciScriptPatcherEntry larry5Signatures[] = {
+	{  true,     0, "update stopGroop client",                     1, larry5SignatureUpdateStopGroopClient,   larry5PatchUpdateStopGroopClient },
 	{  true,   280, "English-only: fix green card limo bug",       1, larry5SignatureGreenCardLimoBug,        larry5PatchGreenCardLimoBug },
 	{  true,   380, "German-only: Enlarge Patti Textbox",          1, larry5SignatureGermanEndingPattiTalker, larry5PatchGermanEndingPattiTalker },
 	SCI_SIGNATUREENTRY_TERMINATOR

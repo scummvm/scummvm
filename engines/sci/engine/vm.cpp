@@ -162,35 +162,6 @@ static reg_t read_var(EngineState *s, int type, int index) {
 static void write_var(EngineState *s, int type, int index, reg_t value) {
 	if (validate_variable(s->variables[type], s->stack_base, type, s->variablesMax[type], index)) {
 
-		// WORKAROUND: This code is needed to work around a probable script bug, or a
-		// limitation of the original SCI engine, which can be observed in LSL5.
-		//
-		// In some games, ego walks via the "Grooper" object, in particular its "stopGroop"
-		// child. In LSL5, during the game, ego is swapped from Larry to Patti. When this
-		// happens in the original interpreter, the new actor is loaded in the same memory
-		// location as the old one, therefore the client variable in the stopGroop object
-		// points to the new actor. This is probably why the reference of the stopGroop
-		// object is never updated (which is why I mentioned that this is either a script
-		// bug or some kind of limitation).
-		//
-		// In our implementation, each new object is loaded in a different memory location,
-		// and we can't overwrite the old one. This means that in our implementation,
-		// whenever ego is changed, we need to update the "client" variable of the
-		// stopGroop object, which points to ego, to the new ego object. If this is not
-		// done, ego's movement will not be updated properly, so the result is
-		// unpredictable (for example in LSL5, Patti spins around instead of walking).
-		if (index == kGlobalVarEgo && type == VAR_GLOBAL && getSciVersion() > SCI_VERSION_0_EARLY) {
-			reg_t stopGroopPos = s->_segMan->findObjectByName("stopGroop");
-			if (!stopGroopPos.isNull()) {	// does the game have a stopGroop object?
-				// Find the "client" member variable of the stopGroop object, and update it
-				ObjVarRef varp;
-				if (lookupSelector(s->_segMan, stopGroopPos, SELECTOR(client), &varp, nullptr) == kSelectorVariable) {
-					reg_t *clientVar = varp.getPointer(s->_segMan);
-					*clientVar = value;
-				}
-			}
-		}
-
 		// If we are writing an uninitialized value into a temp, we remove the uninitialized segment
 		//  this happens at least in sq1/room 44 (slot-machine), because a send is missing parameters, then
 		//  those parameters are taken from uninitialized stack and afterwards they are copied back into temps
