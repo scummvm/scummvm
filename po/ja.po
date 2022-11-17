@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-16 22:59+0000\n"
-"PO-Revision-Date: 2022-11-13 18:14+0000\n"
+"PO-Revision-Date: 2022-11-17 09:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4109,7 +4109,7 @@ msgstr "テキストをNTSCコンポジットでエミュレートしない"
 
 #: engines/agi/detection_tables.h:310
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
-msgstr ""
+msgstr "Tandy Color Computer用の初期のAGIゲームは未サポートです。"
 
 #: engines/agi/font.cpp:1096
 msgid ""
@@ -4672,10 +4672,8 @@ msgid "Skip support"
 msgstr "スキップ機能をサポート"
 
 #: engines/buried/metaengine.cpp:41
-#, fuzzy
-#| msgid "Allow text and cutscenes to be skipped"
 msgid "Allow cutscenes to be skipped"
-msgstr "テキストとムービーのスキップを許可する"
+msgstr "ムービーのスキップを許可"
 
 #: engines/buried/saveload.cpp:66
 msgid ""
@@ -4718,10 +4716,8 @@ msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "音声合成を使用してゲーム内のテキストを読み上げる(利用可能な場合のみ)"
 
 #: engines/cge2/metaengine.cpp:55
-#, fuzzy
-#| msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgid "Enable Text to Speech for Objects and Options"
-msgstr "オブジェクト、オプション、聖書の引用の読み上げを有効化"
+msgstr "オブジェクト、オプションを読み上げる"
 
 #: engines/cge2/metaengine.cpp:56 engines/dreamweb/metaengine.cpp:62
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:40
@@ -6062,14 +6058,12 @@ msgid "Starts with the debugger dashboard active."
 msgstr "デバッガーをダッシュボードありで起動します。"
 
 #: engines/mtropolis/metaengine.cpp:172
-#, fuzzy
-#| msgid "Toggle Clue Privacy"
 msgid "Toggle debug overlay"
-msgstr "手がかり表示の切替"
+msgstr "デバッグオーバーレイの切替"
 
 #: engines/mtropolis/metaengine.cpp:177
 msgid "Force any playing movies to end"
-msgstr ""
+msgstr "再生中のムービーを強制終了"
 
 #: engines/mtropolis/saveload.cpp:142
 msgid "Failed to read version information from save file"
