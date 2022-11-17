@@ -28,13 +28,12 @@
 #ifndef HPL_INPUT_H
 #define HPL_INPUT_H
 
-#include <map>
-
 #include "hpl1/engine/game/Updateable.h"
 #include "hpl1/engine/input/InputTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
 #include "common/list.h"
 #include "hpl1/std/map.h"
+#include "hpl1/std/multimap.h"
 
 namespace hpl {
 
@@ -47,7 +46,7 @@ class iAction;
 typedef Hpl1::std::map<tString, iAction *> tActionMap;
 typedef tActionMap::iterator tActionMapIt;
 
-typedef std::multimap<tString, iAction *> tActionMultiMap;
+typedef Hpl1::std::multimap<tString, iAction *> tActionMultiMap;
 typedef tActionMultiMap::iterator tActionMultiMapIt;
 
 typedef Common::List<iInputDevice *> tInputDeviceList;

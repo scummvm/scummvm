@@ -44,7 +44,7 @@ class cSavedWorld;
 class cGameTimer;
 class cGameItem;
 
-typedef std::multimap<tString, iGameEntity *> tGameEntityMap;
+typedef Hpl1::std::multimap<tString, iGameEntity *> tGameEntityMap;
 typedef tGameEntityMap::iterator tGameEntityMapIt;
 
 typedef Common::Array<iGameEntity *> tGameEntityVec;

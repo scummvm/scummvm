@@ -29,11 +29,11 @@
 #define HPL_SAVE_GAME_H
 
 #include <cassert>
-#include <map>
 
 #include "hpl1/engine/system/SerializeClass.h"
 #include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/std/map.h"
+#include "hpl1/std/multimap.h"
 
 class TiXmlElement;
 
@@ -174,7 +174,7 @@ private:
 
 //---------------------------------------------------------
 
-typedef std::multimap<int, iSaveObject *> tSaveObjectMap;
+typedef Hpl1::std::multimap<int, iSaveObject *> tSaveObjectMap;
 typedef tSaveObjectMap::iterator tSaveObjectMapIt;
 
 typedef cSTLMapIterator<iSaveObject *, tSaveObjectMap, tSaveObjectMapIt> cSaveObjectIterator;
@@ -205,7 +205,7 @@ private:
 
 //---------------------------------------------------------
 
-typedef std::multimap<int, iSaveData *> tSaveDataMap;
+typedef Hpl1::std::multimap<int, iSaveData *> tSaveDataMap;
 typedef tSaveDataMap::iterator tSaveDataMapIt;
 
 typedef cSTLMapIterator<iSaveData *, tSaveDataMap, tSaveDataMapIt> cSaveDataIterator;
