@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-16 22:59+0000\n"
-"PO-Revision-Date: 2022-11-13 12:43+0000\n"
+"PO-Revision-Date: 2022-11-17 10:38+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -4768,10 +4768,8 @@ msgid "Skip support"
 msgstr "Interruzione dialoghi"
 
 #: engines/buried/metaengine.cpp:41
-#, fuzzy
-#| msgid "Allow text and cutscenes to be skipped"
 msgid "Allow cutscenes to be skipped"
-msgstr "Permette di saltare i dialoghi e le scene di intermezzo"
+msgstr "Permette di saltare le scene di intermezzo"
 
 #: engines/buried/saveload.cpp:66
 msgid ""
@@ -4815,11 +4813,8 @@ msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Legge i testi del gioco utilizzando la sintesi vocale (se disponibile)"
 
 #: engines/cge2/metaengine.cpp:55
-#, fuzzy
-#| msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgid "Enable Text to Speech for Objects and Options"
-msgstr ""
-"Abilita Sintesi Vocale per gli oggetti, le opzioni e i passaggi della Bibbia"
+msgstr "Abilita Sintesi Vocale per gli oggetti e le opzioni"
 
 #: engines/cge2/metaengine.cpp:56 engines/dreamweb/metaengine.cpp:62
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:40
