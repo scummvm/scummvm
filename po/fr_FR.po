@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-16 22:59+0000\n"
-"PO-Revision-Date: 2022-11-17 13:11+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2022-11-17 13:32+0000\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -4183,6 +4183,7 @@ msgstr "Ne pas émuler les artefacts NTSC pour le texte"
 #: engines/agi/detection_tables.h:310
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
 msgstr ""
+"Les premiers jeux AGI pour Tandy Color Computer ne sont pas encore supportés."
 
 #: engines/agi/font.cpp:1096
 msgid ""
@@ -4767,10 +4768,8 @@ msgid "Skip support"
 msgstr "Support des interruptions"
 
 #: engines/buried/metaengine.cpp:41
-#, fuzzy
-#| msgid "Allow text and cutscenes to be skipped"
 msgid "Allow cutscenes to be skipped"
-msgstr "Permet de passer les textes et scènes cinématiques"
+msgstr "Permet de passer les scènes cinématiques"
 
 #: engines/buried/saveload.cpp:66
 msgid ""
@@ -4815,12 +4814,8 @@ msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Utilise la synthèse vocale pour lire les textes du jeu (si disponible)"
 
 #: engines/cge2/metaengine.cpp:55
-#, fuzzy
-#| msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgid "Enable Text to Speech for Objects and Options"
-msgstr ""
-"Activer la synthèse vocale pour les objets, les options et la citation de la "
-"Bible"
+msgstr "Activer la synthèse vocale pour les objets et les options"
 
 #: engines/cge2/metaengine.cpp:56 engines/dreamweb/metaengine.cpp:62
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:40
@@ -6229,14 +6224,12 @@ msgid "Starts with the debugger dashboard active."
 msgstr "Démarre avec le panneau de débogage activé."
 
 #: engines/mtropolis/metaengine.cpp:172
-#, fuzzy
-#| msgid "Toggle Clue Privacy"
 msgid "Toggle debug overlay"
-msgstr "Act./Désact. Indice Privé"
+msgstr "Act./Désact. l'overlay de débogage"
 
 #: engines/mtropolis/metaengine.cpp:177
 msgid "Force any playing movies to end"
-msgstr ""
+msgstr "Forcer l'arrêt des films en cours de lecture"
 
 #: engines/mtropolis/saveload.cpp:142
 msgid "Failed to read version information from save file"
