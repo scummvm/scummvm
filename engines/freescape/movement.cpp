@@ -251,7 +251,8 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	_lastPosition = _position;
 	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	//debugC(1, kFreescapeDebugMove, "player height: %f", _position.y() - areaScale * _playerHeight);
-	executeLocalGlobalConditions(false, true); // Only execute "on collision" room/global conditions
+	if (_currentArea->getAreaID() == previousAreaID)
+		executeLocalGlobalConditions(false, true); // Only execute "on collision" room/global conditions
 }
 
 bool FreescapeEngine::checkFloor(Math::Vector3d currentPosition) {
