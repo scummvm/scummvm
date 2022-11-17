@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-17 17:09+0000\n"
-"PO-Revision-Date: 2022-11-17 15:04+0000\n"
+"PO-Revision-Date: 2022-11-17 19:18+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -4665,12 +4665,14 @@ msgstr ""
 
 #: engines/bladerunner/metaengine.cpp:111
 msgid "Fix credits for voice actors"
-msgstr ""
+msgstr "Διόρθωση τίτλων τέλους για τους καλλιτέχνες φωνής"
 
 #: engines/bladerunner/metaengine.cpp:112
 msgid ""
 "Updates the end credits with corrected credits for the Spanish voice actors"
 msgstr ""
+"Ενημέρωση των τίτλων τέλους με διορθωμένα στοιχεία για τους Ισπανούς "
+"καλλιτέχνες φωνής"
 
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 #: engines/bladerunner/metaengine.cpp:199
