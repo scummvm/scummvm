@@ -132,12 +132,12 @@ ItemDragger::ItemDragger(PegasusEngine *owner) : _inventoryDropSpot(kInventoryDr
 	Common::Rect r(kInventoryDropLeft, kInventoryDropTop, kInventoryDropRight, kInventoryDropBottom);
 	_inventoryDropSpot.setArea(r);
 	_inventoryDropSpot.setHotspotFlags(kDropItemSpotFlag);
-	g_allHotspots.push_back(&_inventoryDropSpot);
+	owner->getAllHotspots().push_back(&_inventoryDropSpot);
 
 	r = Common::Rect(kBiochipDropLeft, kBiochipDropTop, kBiochipDropRight, kBiochipDropBottom);
 	_biochipDropSpot.setArea(r);
 	_biochipDropSpot.setHotspotFlags(kDropBiochipSpotFlag);
-	g_allHotspots.push_back(&_biochipDropSpot);
+	owner->getAllHotspots().push_back(&_biochipDropSpot);
 }
 
 void ItemDragger::startTracking(const Input &input) {

@@ -68,7 +68,7 @@ TimeBase::TimeBase(const TimeScale preferredScale) {
 	_pausedRate = 0;
 	_pauseStart = 0;
 
-	g_vm->addTimeBase(this);
+	((PegasusEngine *)g_engine)->addTimeBase(this);
 }
 
 TimeBase::~TimeBase() {
