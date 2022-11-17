@@ -38,7 +38,6 @@
 #include "hpl1/engine/scene/Light3DSpot.h"
 #include "hpl1/engine/scene/PortalContainer.h"
 #include "hpl1/engine/system/String.h"
-#include <cstddef>
 
 namespace hpl {
 
