@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-16 22:59+0000\n"
-"PO-Revision-Date: 2022-11-13 20:14+0000\n"
-"Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
+"PO-Revision-Date: 2022-11-17 13:11+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -4982,11 +4982,13 @@ msgstr ""
 
 #: engines/freescape/metaengine.cpp:31
 msgid "Prerecorded sounds"
-msgstr ""
+msgstr "Sons préenregistrés"
 
 #: engines/freescape/metaengine.cpp:32
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
+"Utilise des sons préenregistrés de haute qualité à la place de l'émulation "
+"du PC Speaker"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -6249,15 +6251,12 @@ msgstr ""
 "d'information de version valide."
 
 #: engines/mtropolis/saveload.cpp:166
-#, fuzzy
-#| msgid ""
-#| "Saved game was created with a newer version of ScummVM. Unable to load."
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
 msgstr ""
-"Sauvegarde créée avec une version plus récente de ScummVM. Chargement "
-"impossible."
+"Sauvegarde créée avec une version antérieure et incompatible de ScummVM. "
+"Chargement impossible."
 
 #: engines/mtropolis/saveload.cpp:174
 msgid "Failed to load save, an error occurred when reading the save game data."
