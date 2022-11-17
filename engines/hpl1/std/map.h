@@ -140,7 +140,7 @@ public:
 
 	std::pair<iterator, bool> insert(const value_type &val) {
 		iterator it = this->lower_bound(val.first);
-		if (it == this->end() || compareEqual(it->first, val.first)) {
+		if (it == this->end() || !compareEqual(it->first, val.first)) {
 			size_t idx = it - this->begin();
 			_items.insert_at(idx, val);
 			return {it, true};
