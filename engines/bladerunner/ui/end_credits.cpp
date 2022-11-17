@@ -40,9 +40,129 @@ namespace BladeRunner {
 
 EndCredits::EndCredits(BladeRunnerEngine *vm) {
 	_vm = vm;
+	// TODO Make this a checkbox option?
+	_spanishCreditsCorrection = false;
 }
 
 EndCredits::~EndCredits() {
+}
+
+// Aux method with hardcoded fixes for the credits
+// in the official localizations
+// ENG (not needed)
+// ITA, FRA, ESP, DEU
+void EndCredits::creditsCheckAndFix(int &textResourceId, Common::String &textStr) {
+	switch (_vm->_language) {
+	case Common::IT_ITA:
+		switch (textResourceId) {
+		case 71: // Grafici Ideatori
+			textStr = "Ideatori Grafici";
+			break;
+
+		case 211:
+			textStr.trim();
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case Common::DE_DEU:
+		switch (textResourceId) {
+		case 312:
+			textStr.trim();
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case Common::FR_FRA:
+		switch (textResourceId) {
+		case 97:
+			// fall through
+		case 265:
+			// fall through
+		case 266:
+			textStr.trim();
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	if (_vm->_language == Common::ES_ESP && _spanishCreditsCorrection) {
+		// Corrections in credited names according to
+		// https://www.doblajevideojuegos.es/fichajuego/blade-runner
+		// Move 280-283 two lines above to accomodate new addition (Early Q actor)
+		switch (textResourceId) {
+		case 278:
+			textStr = "Voces"; // moved two lines above
+			break;
+
+		case 280:
+			textStr = "McCoy"; // moved two lines above
+			break;
+
+		case 281:
+			textStr = "^Carlos Salamanca"; // from "^Luis Casanovas" (also moved two lines above)
+			break;
+
+		case 282:
+			textStr = "Early Q"; // originally uncredited
+			break;
+
+		case 283:
+			textStr = Common::U32String("^Tino Martín", Common::kISO8859_1).encode(Common::kDos850); // originally uncredited
+			break;
+
+		case 300:
+			textStr = Common::U32String("Piernas Locas Larry", Common::kISO8859_1).encode(Common::kDos850); // from "Crazylegs" (use translated name as elsewhere)
+			break;
+
+		case 303:
+			textStr = "^Antonio Cobos"; // from "^Antonio Fernández" for Chew
+			break;
+
+		case 311:
+			textStr = Common::U32String("^Carmen Gambín", Common::kISO8859_1).encode(Common::kDos850); // from "^María Palacios" for Lucy
+			break;
+
+		case 312:
+			textStr = "Bob Bala"; // from "Bollet Bob" (use proper translated name)
+			break;
+
+		case 313:
+			textStr = Common::U32String("^Enrique Jordá", Common::kISO8859_1).encode(Common::kDos850); // from "^Enrique Jorda" for Bullet Bob (accent change)
+			break;
+
+		case 317:
+			textStr = Common::U32String("^Beatriz Suárez Cerrato", Common::kISO8859_1).encode(Common::kDos850); // from "^Beatriz Suarez" for Isabella
+			break;
+
+		case 318:
+			textStr = "Presentadora"; // from "Newscaster" (use translated name as elsewhere)
+			break;
+
+		case 319:
+			textStr = "^Montse Herranz"; // from "^Montse Pastor" for Presentadora (Newscaster)
+			break;
+
+		case 321:
+			textStr = Common::U32String("^Beatriz Suárez Cerrato", Common::kISO8859_1).encode(Common::kDos850); // from "^Beatriz Cerrato" for Contestador (Answering Machine)
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
 void EndCredits::show() {
@@ -61,29 +181,64 @@ void EndCredits::show() {
 	textResource->open("ENDCRED");
 
 	int textCount = textResource->getCount();
-	int *textPositions = (int *)malloc(textCount * sizeof(int));
-	int y = 452;
+
+	int *textYPositions = new int[textCount]();
+	int *textXPositions = new int[textCount]();
+
+	int y = 480 - fontBig->getFontHeight();
 	bool small = false;
+	int textStrWidth = 0;
+	const int bigToSmallTextYPosDiff = ((fontBig->getFontHeight() - fontSmall->getFontHeight()) / 2);
+	const int smallestMarginXToCreditName = 6; // px
 
 	for (int i = 0; i < textCount; ++i) {
 		Common::String s = textResource->getText(i);
+		creditsCheckAndFix(i, s);
+
 		if (s.hasPrefix("^")) {
 			if (!small) {
-				y += 28;
+				y += fontBig->getFontHeight();
 			}
 			small = false;
+			textYPositions[i] = y;
+			textXPositions[i] = 280;
 		} else {
 			if (small) {
-				y += 24;
+				y += fontSmall->getFontHeight();
 			} else {
-				y += 28;
+				y += fontBig->getFontHeight();
 			}
 			small = true;
-		}
-		if (s.hasPrefix("^")) {
-			textPositions[i] = y;
-		} else {
-			textPositions[i] = y + 2;
+			textYPositions[i] = y + bigToSmallTextYPosDiff;
+			if (_vm->_language == Common::ES_ESP
+			    && _spanishCreditsCorrection
+			    && i == 277) {
+				y +=  2 * fontSmall->getFontHeight();
+			}
+			textStrWidth = fontSmall->getStringWidth(s);
+			textXPositions[i] = 270 - textStrWidth;
+			//
+			// Check here if horizontal alignment of this credit "title"
+			// may cause clipping off the right edge of the screen.
+			// Note, that we don't do the same check for a credit "name"
+			// clipping off the left edge of the screen, as this does not happen
+			// with the text resources for the credits in the official releases.
+			// For fan made credits, the new text resources can be designed
+			// with custom line wrapping and line spacing
+			// so as to avoid any clipping, so this is no issue there.
+			if (textXPositions[i] < 0) {
+				textXPositions[i] = 0;
+				if (textStrWidth > 280 - smallestMarginXToCreditName
+				    && (i + 1 < textResource->getCount())) {
+					Common::String sNext = textResource->getText(i + 1);
+					if (sNext.hasPrefix("^")) {
+						// If, for this case, the next string is a credit "name", ie.
+						// aligned starting from the center (or near the center anyway),
+						// then insert an extra line to avoid overlap with the title
+						y +=  fontSmall->getFontHeight();
+					}
+				}
+			}
 		}
 	}
 
@@ -93,8 +248,11 @@ void EndCredits::show() {
 	double position = 0.0;
 	uint32 timeLast = _vm->_time->currentSystem();
 
+	Font *font;
+	int height;
+
 	while (!_vm->_vqaStopIsRequested && !_vm->shouldQuit()) {
-		if (position >= textPositions[textCount - 1]) {
+		if (position >= textYPositions[textCount - 1]) {
 			break;
 		}
 
@@ -114,35 +272,26 @@ void EndCredits::show() {
 
 		for (int i = 0; i < textCount; ++i) {
 			Common::String s = textResource->getText(i);
-			Font *font;
-			int height;
+			creditsCheckAndFix(i, s);
 
 			if (s.hasPrefix("^")) {
 				font = fontBig;
-				height = 28;
+				height = fontBig->getFontHeight();
 				s.deleteChar(0);
 			} else {
 				font = fontSmall;
-				height = 24;
+				height = fontSmall->getFontHeight();
 			}
 
-			y = textPositions[i] - (int)position;
+			y = textYPositions[i] - (int)position;
 
-			if (y < 452 && y + height > 28) {
-				int x;
-
-				if (font == fontBig) {
-					x = 280;
-				} else {
-					x = 270 - font->getStringWidth(s);
-				}
-
-				font->drawString(&_vm->_surfaceFront, s, x, y, _vm->_surfaceFront.w, 0);
+			if (y < 452 && y + height > fontBig->getFontHeight()) {
+				font->drawString(&_vm->_surfaceFront, s, textXPositions[i], y, _vm->_surfaceFront.w, 0);
 			}
 		}
 
-		_vm->_surfaceFront.fillRect(Common::Rect(0, 0, BladeRunnerEngine::kOriginalGameWidth, 28), 0);
-		_vm->_surfaceFront.fillRect(Common::Rect(0, BladeRunnerEngine::kOriginalGameHeight - 28, BladeRunnerEngine::kOriginalGameWidth, BladeRunnerEngine::kOriginalGameHeight), 0);
+		_vm->_surfaceFront.fillRect(Common::Rect(0, 0, BladeRunnerEngine::kOriginalGameWidth, fontBig->getFontHeight()), 0);
+		_vm->_surfaceFront.fillRect(Common::Rect(0, BladeRunnerEngine::kOriginalGameHeight - fontBig->getFontHeight(), BladeRunnerEngine::kOriginalGameWidth, BladeRunnerEngine::kOriginalGameHeight), 0);
 
 		_vm->blitToScreen(_vm->_surfaceFront);
 	}
@@ -150,7 +299,8 @@ void EndCredits::show() {
 	_vm->_vqaIsPlaying = false;
 	_vm->_vqaStopIsRequested = false;
 
-	free(textPositions);
+	delete[] textYPositions;
+	delete[] textXPositions;
 	delete textResource;
 
 	delete fontSmall;
