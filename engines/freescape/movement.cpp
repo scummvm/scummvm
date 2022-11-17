@@ -314,10 +314,23 @@ bool FreescapeEngine::checkCollisions(bool executeCode) {
 	boundingBox.expand(v3);
 
 	objs = _currentArea->checkCollisions(boundingBox);
+
+	// sort so the condition from those objects that are larger are executed last
+	struct {
+		bool operator()(Object *object1, Object *object2) {
+			return object1->getSize().length() < object2->getSize().length();
+		};
+	} compareObjectsSizes;
+
+	Common::sort(objs.begin(), objs.end(), compareObjectsSizes);
+	uint16 areaID = _currentArea->getAreaID();
+
 	for (auto &obj : objs) {
 		GeometricObject *gobj = (GeometricObject *)obj;
 		debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
 		executeObjectConditions(gobj, false, true);
+		if (areaID != _currentArea->getAreaID())
+			break;
 	}
 	// We still need to return the original result, not the collision using the expanded bounding box
 	// This will avoid detecting the floor constantly
