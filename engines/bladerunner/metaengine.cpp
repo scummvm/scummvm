@@ -105,6 +105,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_FIX_SPANISH_CREDITS,
+		{
+			_s("Fix credits for voice actors"),
+			_s("Updates the end credits with corrected credits for the Spanish voice actors"),
+			"correct_spanish_credits",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

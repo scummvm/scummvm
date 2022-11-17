@@ -237,6 +237,7 @@ public:
 	bool _noDelayMillisFramelimiter;
 	bool _framesPerSecondMax;
 	bool _disableStaminaDrain;
+	bool _spanishCreditsCorrection;
 	bool _cutContent;
 	bool _enhancedEdition;
 	bool _validBootParam;

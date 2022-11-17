@@ -128,6 +128,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_noDelayMillisFramelimiter    = false;
 	_framesPerSecondMax           = false;
 	_disableStaminaDrain          = false;
+	_spanishCreditsCorrection     = false;
 	_cutContent                   = Common::String(desc->gameId).contains("bladerunner-final");
 	_enhancedEdition              = Common::String(desc->gameId).contains("bladerunner-ee");
 	_validBootParam               = false;
@@ -643,10 +644,14 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 		ConfMan.registerDefault("sitcom", "false");
 		ConfMan.registerDefault("shorty", "false");
 		ConfMan.registerDefault("disable_stamina_drain", "false");
+		ConfMan.registerDefault("correct_spanish_credits", "false");
 
 		_sitcomMode                = ConfMan.getBool("sitcom");
 		_shortyMode                = ConfMan.getBool("shorty");
 		_disableStaminaDrain       = ConfMan.getBool("disable_stamina_drain");
+		if (_language == Common::ES_ESP) {
+			_spanishCreditsCorrection  = ConfMan.getBool("correct_spanish_credits");
+		}
 
 		// These are static objects in original game
 		_screenEffects = new ScreenEffects(this, 0x8000);
