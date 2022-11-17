@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-17 17:09+0000\n"
+"POT-Creation-Date: 2022-11-17 20:40+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -4990,6 +4990,14 @@ msgstr ""
 
 #: engines/freescape/metaengine.cpp:32
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:42
+msgid "Automatic drilling"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:43
+msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr ""
 
 #: engines/glk/glk_api.cpp:62
