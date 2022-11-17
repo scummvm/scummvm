@@ -40,8 +40,6 @@ namespace BladeRunner {
 
 EndCredits::EndCredits(BladeRunnerEngine *vm) {
 	_vm = vm;
-	// TODO Make this a checkbox option?
-	_spanishCreditsCorrection = false;
 }
 
 EndCredits::~EndCredits() {
@@ -98,7 +96,7 @@ void EndCredits::creditsCheckAndFix(int &textResourceId, Common::String &textStr
 		break;
 	}
 
-	if (_vm->_language == Common::ES_ESP && _spanishCreditsCorrection) {
+	if (_vm->_language == Common::ES_ESP && _vm->_spanishCreditsCorrection) {
 		// Corrections in credited names according to
 		// https://www.doblajevideojuegos.es/fichajuego/blade-runner
 		// Move 280-283 two lines above to accomodate new addition (Early Q actor)
@@ -120,7 +118,7 @@ void EndCredits::creditsCheckAndFix(int &textResourceId, Common::String &textStr
 			break;
 
 		case 283:
-			textStr = Common::U32String("^Tino Martín", Common::kISO8859_1).encode(Common::kDos850); // originally uncredited
+			textStr = Common::U32String("^Tino Mart\xedn", Common::kISO8859_1).encode(Common::kDos850); // originally uncredited
 			break;
 
 		case 300:
@@ -128,11 +126,11 @@ void EndCredits::creditsCheckAndFix(int &textResourceId, Common::String &textStr
 			break;
 
 		case 303:
-			textStr = "^Antonio Cobos"; // from "^Antonio Fernández" for Chew
+			textStr = "^Antonio Cobos"; // from "^Antonio FernÃ¡ndez" for Chew
 			break;
 
 		case 311:
-			textStr = Common::U32String("^Carmen Gambín", Common::kISO8859_1).encode(Common::kDos850); // from "^María Palacios" for Lucy
+			textStr = Common::U32String("^Carmen Gamb\xedn", Common::kISO8859_1).encode(Common::kDos850); // from "^MarÃ­a Palacios" for Lucy
 			break;
 
 		case 312:
@@ -140,11 +138,11 @@ void EndCredits::creditsCheckAndFix(int &textResourceId, Common::String &textStr
 			break;
 
 		case 313:
-			textStr = Common::U32String("^Enrique Jordá", Common::kISO8859_1).encode(Common::kDos850); // from "^Enrique Jorda" for Bullet Bob (accent change)
+			textStr = Common::U32String("^Enrique Jord\xe1", Common::kISO8859_1).encode(Common::kDos850); // from "^Enrique Jorda" for Bullet Bob (accent change)
 			break;
 
 		case 317:
-			textStr = Common::U32String("^Beatriz Suárez Cerrato", Common::kISO8859_1).encode(Common::kDos850); // from "^Beatriz Suarez" for Isabella
+			textStr = Common::U32String("^Beatriz Su\xe1rez Cerrato", Common::kISO8859_1).encode(Common::kDos850); // from "^Beatriz Suarez" for Isabella
 			break;
 
 		case 318:
@@ -156,7 +154,7 @@ void EndCredits::creditsCheckAndFix(int &textResourceId, Common::String &textStr
 			break;
 
 		case 321:
-			textStr = Common::U32String("^Beatriz Suárez Cerrato", Common::kISO8859_1).encode(Common::kDos850); // from "^Beatriz Cerrato" for Contestador (Answering Machine)
+			textStr = Common::U32String("^Beatriz Su\xe1rez Cerrato", Common::kISO8859_1).encode(Common::kDos850); // from "^Beatriz Cerrato" for Contestador (Answering Machine)
 			break;
 
 		default:
@@ -172,6 +170,7 @@ void EndCredits::show() {
 	_vm->_ambientSounds->removeAllLoopingSounds(4u);
 	_vm->_audioSpeech->stopSpeech();
 
+	// ASDF volume is 100 here (correct it should be from 0..100)
 	_vm->_music->play(_vm->_gameInfo->getMusicTrack(kMusicCredits), 100, 0, 2, -1, kMusicLoopPlayOnce, 3);
 
 	Font *fontBig = Font::load(_vm, "TAHOMA24.FON", 1, true);
@@ -211,7 +210,7 @@ void EndCredits::show() {
 			small = true;
 			textYPositions[i] = y + bigToSmallTextYPosDiff;
 			if (_vm->_language == Common::ES_ESP
-			    && _spanishCreditsCorrection
+			    && _vm->_spanishCreditsCorrection
 			    && i == 277) {
 				y +=  2 * fontSmall->getFontHeight();
 			}

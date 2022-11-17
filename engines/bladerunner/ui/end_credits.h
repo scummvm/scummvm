@@ -28,7 +28,6 @@ class BladeRunnerEngine;
 
 class EndCredits {
 	BladeRunnerEngine *_vm;
-	bool _spanishCreditsCorrection;
 
 private:
 	void creditsCheckAndFix(int &textResourceId, Common::String &textStr);
