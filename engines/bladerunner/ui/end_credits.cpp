@@ -129,6 +129,10 @@ void EndCredits::creditsCheckAndFix(int &textResourceId, Common::String &textStr
 			textStr = "^Antonio Cobos"; // from "^Antonio Fernández" for Chew
 			break;
 
+		case 304:
+			textStr = "Crystal"; // from "Cristal"
+			break;
+
 		case 311:
 			textStr = Common::U32String("^Carmen Gamb\xedn", Common::kISO8859_1).encode(Common::kDos850); // from "^María Palacios" for Lucy
 			break;
@@ -139,6 +143,10 @@ void EndCredits::creditsCheckAndFix(int &textResourceId, Common::String &textStr
 
 		case 313:
 			textStr = Common::U32String("^Enrique Jord\xe1", Common::kISO8859_1).encode(Common::kDos850); // from "^Enrique Jorda" for Bullet Bob (accent change)
+			break;
+
+		case 314:
+			textStr = "Peruana"; // from "Peru Lady"
 			break;
 
 		case 317:
