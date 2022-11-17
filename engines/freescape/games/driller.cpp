@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
 
@@ -34,9 +35,10 @@ enum {
 };
 
 DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
-	// if (isAmiga())
-	//	_viewArea = Common::Rect(72, 66, 567, 269);
-	// else
+
+	if (!Common::parseBool(ConfMan.get("automatic_drilling"), _useAutomaticDrilling))
+		error("Failed to parse bool from automatic_drilling option");
+
 	if (isDOS())
 		_viewArea = Common::Rect(40, 16, 280, 117);
 	else if (isAmiga() || isAtariST())
@@ -478,7 +480,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
 		const Math::Vector3d gasPocket3D(gasPocket.x, drill.y(), gasPocket.y);
 		float distanceToPocket = (gasPocket3D - drill).length();
-		float success = 100.0 * (1.0 - distanceToPocket / _currentArea->_gasPocketRadius);
+		float success = _useAutomaticDrilling ? 100.0 : 100.0 * (1.0 - distanceToPocket / _currentArea->_gasPocketRadius);
 		insertTemporaryMessage(_messagesList[3], _countdown - 2);
 		addDrill(drill, success > 0);
 		if (success <= 0) {

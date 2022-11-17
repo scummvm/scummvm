@@ -252,7 +252,7 @@ static const DebugChannelDef debugFlagList[] = {
 class FreescapeMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	FreescapeMetaEngineDetection() : AdvancedMetaEngineDetection(Freescape::gameDescriptions, sizeof(ADGameDescription), Freescape::freescapeGames) {
-		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_PRERECORDED_SOUNDS);
+		_guiOptions = GUIO3(GUIO_NOMIDI, GAMEOPTION_PRERECORDED_SOUNDS, GAMEOPTION_AUTOMATIC_DRILLING);
 	}
 
 	const char *getName() const override {

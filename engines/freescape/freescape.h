@@ -331,6 +331,8 @@ public:
 	uint32 _initialTankEnergy;
 	uint32 _initialTankShield;
 
+	bool _useAutomaticDrilling;
+
 	void initGameState() override;
 	bool checkIfGameEnded() override;
 
