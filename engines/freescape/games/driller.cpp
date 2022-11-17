@@ -760,6 +760,8 @@ Common::Error DrillerEngine::saveGameStreamExtended(Common::WriteStream *stream,
 Common::Error DrillerEngine::loadGameStreamExtended(Common::SeekableReadStream *stream) {
 	for (uint i = 0; i < _areaMap.size(); i++) {
 		uint16 key = stream->readUint16LE();
+		if (key == 255)
+			continue;
 		assert(_areaMap.contains(key));
 		_drilledAreas[key] = stream->readUint32LE();
 		if (_drilledAreas[key] == kDrillerNoRig)
