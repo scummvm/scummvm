@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-16 22:59+0000\n"
+"POT-Creation-Date: 2022-11-17 17:09+0000\n"
 "PO-Revision-Date: 2022-11-17 09:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -2777,7 +2777,7 @@ msgstr "予測変換"
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows confirming popup dialogue prompts (eg. for save game deletion or overwriting)
 #. and also submitting a new save game name, or choosing an existing save game for overwriting.
-#: engines/metaengine.cpp:109 engines/bladerunner/metaengine.cpp:262
+#: engines/metaengine.cpp:109 engines/bladerunner/metaengine.cpp:273
 #: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:510
 #: engines/grim/grim.cpp:606 engines/sky/metaengine.cpp:100
 #: engines/wintermute/keymapper_tables.h:54
@@ -3819,7 +3819,7 @@ msgstr "最小化"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ONLINE HELP
 #: backends/platform/sdl/macosx/appmenu_osx.mm:244
-#: engines/bladerunner/metaengine.cpp:310 engines/zvision/metaengine.cpp:226
+#: engines/bladerunner/metaengine.cpp:321 engines/zvision/metaengine.cpp:226
 msgid "Help"
 msgstr "ヘルプ"
 
@@ -4406,15 +4406,15 @@ msgstr "警告: 旧バージョンのセーブをロードしようとしてい�
 msgid "Load anyway"
 msgstr "とにかくロードする"
 
-#: engines/bladerunner/bladerunner.cpp:397
+#: engines/bladerunner/bladerunner.cpp:398
 msgid "Failed to initialize resources"
 msgstr "リソースの初期化に失敗しました"
 
-#: engines/bladerunner/bladerunner.cpp:1161
+#: engines/bladerunner/bladerunner.cpp:1166
 msgid "A required game resource was not found"
 msgstr "必要なゲームリソースが見つかりませんでした"
 
-#: engines/bladerunner/bladerunner.cpp:2743
+#: engines/bladerunner/bladerunner.cpp:2748
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4424,7 +4424,7 @@ msgstr ""
 "ナルモードでプレイ中です。ゲームを完全に終了するまで、ディレクターズカット"
 "モードとして調整されます。"
 
-#: engines/bladerunner/bladerunner.cpp:2745
+#: engines/bladerunner/bladerunner.cpp:2750
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4434,7 +4434,7 @@ msgstr ""
 "カットモードでプレイ中です。ゲームを完全に終了するまで、オリジナルモードとし"
 "て調整されます。"
 
-#: engines/bladerunner/bladerunner.cpp:2747
+#: engines/bladerunner/bladerunner.cpp:2752
 msgid "Continue"
 msgstr "つづく"
 
@@ -4527,24 +4527,33 @@ msgstr "テキストクロール中は字幕を表示"
 msgid "During the intro cutscene, show subtitles during the text crawl"
 msgstr "イントロのカットシーンで、テキストクロール中に字幕を表示"
 
+#: engines/bladerunner/metaengine.cpp:111
+msgid "Fix credits for voice actors"
+msgstr ""
+
+#: engines/bladerunner/metaengine.cpp:112
+msgid ""
+"Updates the end credits with corrected credits for the Spanish voice actors"
+msgstr ""
+
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
-#: engines/bladerunner/metaengine.cpp:188
+#: engines/bladerunner/metaengine.cpp:199
 msgid "common shortcuts"
 msgstr "共通ショートカット"
 
 #. I18N: These are keymaps which work only in the main gameplay and not within KIA's (Knowledge Integration Assistant) screens.
-#: engines/bladerunner/metaengine.cpp:190
+#: engines/bladerunner/metaengine.cpp:201
 msgid "main game shortcuts"
 msgstr "メインのショートカット"
 
 #. I18N: These are keymaps that work only within KIA's (Knowledge Integration Assistant) screens.
-#: engines/bladerunner/metaengine.cpp:192
+#: engines/bladerunner/metaengine.cpp:203
 msgid "KIA only shortcuts"
 msgstr "KIA用ショートカット"
 
 #. I18N: This keymap is the main way for the user interact with the game.
 #. It is used with the game's cursor to select, walk-to, run-to, look-at, talk-to, pick up, use, shoot (combat mode), open KIA (when clicking on McCoy).
-#: engines/bladerunner/metaengine.cpp:199
+#: engines/bladerunner/metaengine.cpp:210
 msgid "Walk / Look / Talk / Select / Shoot"
 msgstr "歩く / 見る / 話す / 選ぶ / 撃つ"
 
@@ -4552,12 +4561,12 @@ msgstr "歩く / 見る / 話す / 選ぶ / 撃つ"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. TOGGLE MCCOY'S COMBAT MODE
-#: engines/bladerunner/metaengine.cpp:209
+#: engines/bladerunner/metaengine.cpp:220
 msgid "Toggle Combat"
 msgstr "モードの切替"
 
 #. I18N: This keymap allows skipping video cutscenes
-#: engines/bladerunner/metaengine.cpp:218 engines/scumm/help.cpp:75
+#: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:75
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "ムービーをスキップ"
@@ -4566,7 +4575,7 @@ msgstr "ムービーをスキップ"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SKIP PAST CURRENT LINE OF DIALOGUE
-#: engines/bladerunner/metaengine.cpp:231
+#: engines/bladerunner/metaengine.cpp:242
 msgid "Skip dialogue"
 msgstr "ダイアログをスキップ"
 
@@ -4574,7 +4583,7 @@ msgstr "ダイアログをスキップ"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. GAME OPTIONS
-#: engines/bladerunner/metaengine.cpp:242
+#: engines/bladerunner/metaengine.cpp:253
 msgid "Game Options"
 msgstr "ゲーム設定"
 
@@ -4583,29 +4592,29 @@ msgstr "ゲーム設定"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ACTIVATE KIA CLUE DATABASE SYSTEM
-#: engines/bladerunner/metaengine.cpp:253
+#: engines/bladerunner/metaengine.cpp:264
 msgid "Open KIA Database"
 msgstr "KIAのDBを開く"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows submitting a selected existing save game for deletion.
-#: engines/bladerunner/metaengine.cpp:271
+#: engines/bladerunner/metaengine.cpp:282
 msgid "Delete Selected Saved Game"
 msgstr "選択したセーブを削除"
 
 #. I18N: This keymap allows scrolling texts and lists upwards
-#: engines/bladerunner/metaengine.cpp:285
+#: engines/bladerunner/metaengine.cpp:296
 msgid "Scroll Up"
 msgstr "上にスクロール"
 
 #. I18N: This keymap allows scrolling texts and lists downwards
-#: engines/bladerunner/metaengine.cpp:292
+#: engines/bladerunner/metaengine.cpp:303
 msgid "Scroll Down"
 msgstr "下にスクロール"
 
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
-#: engines/bladerunner/metaengine.cpp:300
+#: engines/bladerunner/metaengine.cpp:311
 msgid "Toggle Clue Privacy"
 msgstr "手がかり表示の切替"
 
@@ -4613,7 +4622,7 @@ msgstr "手がかり表示の切替"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
-#: engines/bladerunner/metaengine.cpp:319 engines/pegasus/pegasus.cpp:2824
+#: engines/bladerunner/metaengine.cpp:330 engines/pegasus/pegasus.cpp:2824
 msgid "Save Game"
 msgstr "ゲームをセーブ"
 
@@ -4621,7 +4630,7 @@ msgstr "ゲームをセーブ"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
-#: engines/bladerunner/metaengine.cpp:328 engines/pegasus/pegasus.cpp:2830
+#: engines/bladerunner/metaengine.cpp:339 engines/pegasus/pegasus.cpp:2830
 msgid "Load Game"
 msgstr "ゲームをロード"
 
@@ -4629,7 +4638,7 @@ msgstr "ゲームをロード"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. CRIME SCENE DATABASE
-#: engines/bladerunner/metaengine.cpp:337
+#: engines/bladerunner/metaengine.cpp:348
 msgid "Crime Scene Database"
 msgstr "犯罪現場データベース"
 
@@ -4637,7 +4646,7 @@ msgstr "犯罪現場データベース"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SUSPECT DATABASE
-#: engines/bladerunner/metaengine.cpp:346
+#: engines/bladerunner/metaengine.cpp:357
 msgid "Suspect Database"
 msgstr "容疑者データベース"
 
@@ -4645,7 +4654,7 @@ msgstr "容疑者データベース"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. CLUE DATABASE
-#: engines/bladerunner/metaengine.cpp:355
+#: engines/bladerunner/metaengine.cpp:366
 msgid "Clue Database"
 msgstr "手がかりデータベース"
 
@@ -4653,7 +4662,7 @@ msgstr "手がかりデータベース"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. QUIT GAME
-#: engines/bladerunner/metaengine.cpp:364 engines/dragons/metaengine.cpp:225
+#: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:225
 msgid "Quit Game"
 msgstr "ゲームを終了する"
 

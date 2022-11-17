@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-16 22:59+0000\n"
+"POT-Creation-Date: 2022-11-17 17:09+0000\n"
 "PO-Revision-Date: 2022-11-17 15:04+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -2872,7 +2872,7 @@ msgstr "Παράθυρο διαλόγου με πρόβλεψη κειμένου
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows confirming popup dialogue prompts (eg. for save game deletion or overwriting)
 #. and also submitting a new save game name, or choosing an existing save game for overwriting.
-#: engines/metaengine.cpp:109 engines/bladerunner/metaengine.cpp:262
+#: engines/metaengine.cpp:109 engines/bladerunner/metaengine.cpp:273
 #: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:510
 #: engines/grim/grim.cpp:606 engines/sky/metaengine.cpp:100
 #: engines/wintermute/keymapper_tables.h:54
@@ -3920,7 +3920,7 @@ msgstr "Ελαχιστοποίηση"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ONLINE HELP
 #: backends/platform/sdl/macosx/appmenu_osx.mm:244
-#: engines/bladerunner/metaengine.cpp:310 engines/zvision/metaengine.cpp:226
+#: engines/bladerunner/metaengine.cpp:321 engines/zvision/metaengine.cpp:226
 msgid "Help"
 msgstr "Βοήθεια"
 
@@ -4525,15 +4525,15 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Φόρτωση όπως και να 'χει"
 
-#: engines/bladerunner/bladerunner.cpp:397
+#: engines/bladerunner/bladerunner.cpp:398
 msgid "Failed to initialize resources"
 msgstr "Αποτυχία αρχικοποίησης πόρων"
 
-#: engines/bladerunner/bladerunner.cpp:1161
+#: engines/bladerunner/bladerunner.cpp:1166
 msgid "A required game resource was not found"
 msgstr "Δεν βρέθηκε ένας απαιτούμενος πόρος του παιχνιδιού"
 
-#: engines/bladerunner/bladerunner.cpp:2743
+#: engines/bladerunner/bladerunner.cpp:2748
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4544,7 +4544,7 @@ msgstr ""
 "λειτουργία θα αλλάξει σε \"Αποκατεστημένου Περιεχομένου\" για αυτή τη "
 "συνεδρία μέχρι να βγείτε εντελώς από το παιχνίδι."
 
-#: engines/bladerunner/bladerunner.cpp:2745
+#: engines/bladerunner/bladerunner.cpp:2750
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4555,7 +4555,7 @@ msgstr ""
 "θα αλλάξει σε \"Αρχικού Περιεχομένου\" για αυτή τη συνεδρία μέχρι να βγείτε "
 "εντελώς από το παιχνίδι."
 
-#: engines/bladerunner/bladerunner.cpp:2747
+#: engines/bladerunner/bladerunner.cpp:2752
 msgid "Continue"
 msgstr "Συνέχεια"
 
@@ -4663,24 +4663,33 @@ msgstr ""
 "Κατά τη διάρκεια του εισαγωγικού βίντεου, να προβάλλονται υπότιτλοι μαζί με "
 "το κρόουλ (κείμενο που διατρέχει την οθόνη)"
 
+#: engines/bladerunner/metaengine.cpp:111
+msgid "Fix credits for voice actors"
+msgstr ""
+
+#: engines/bladerunner/metaengine.cpp:112
+msgid ""
+"Updates the end credits with corrected credits for the Spanish voice actors"
+msgstr ""
+
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
-#: engines/bladerunner/metaengine.cpp:188
+#: engines/bladerunner/metaengine.cpp:199
 msgid "common shortcuts"
 msgstr "κοινές συντομεύσεις"
 
 #. I18N: These are keymaps which work only in the main gameplay and not within KIA's (Knowledge Integration Assistant) screens.
-#: engines/bladerunner/metaengine.cpp:190
+#: engines/bladerunner/metaengine.cpp:201
 msgid "main game shortcuts"
 msgstr "συντομεύσεις για το κυρίως παιχνίδι"
 
 #. I18N: These are keymaps that work only within KIA's (Knowledge Integration Assistant) screens.
-#: engines/bladerunner/metaengine.cpp:192
+#: engines/bladerunner/metaengine.cpp:203
 msgid "KIA only shortcuts"
 msgstr "συντομεύσεις για το KIA"
 
 #. I18N: This keymap is the main way for the user interact with the game.
 #. It is used with the game's cursor to select, walk-to, run-to, look-at, talk-to, pick up, use, shoot (combat mode), open KIA (when clicking on McCoy).
-#: engines/bladerunner/metaengine.cpp:199
+#: engines/bladerunner/metaengine.cpp:210
 msgid "Walk / Look / Talk / Select / Shoot"
 msgstr "Περπάτα / Κοίτα / Μίλα / Επέλεξε / Πυροβόλησε"
 
@@ -4688,12 +4697,12 @@ msgstr "Περπάτα / Κοίτα / Μίλα / Επέλεξε / Πυροβόλ
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. TOGGLE MCCOY'S COMBAT MODE
-#: engines/bladerunner/metaengine.cpp:209
+#: engines/bladerunner/metaengine.cpp:220
 msgid "Toggle Combat"
 msgstr "Εναλλαγή Ετοιμότητας για Μάχη"
 
 #. I18N: This keymap allows skipping video cutscenes
-#: engines/bladerunner/metaengine.cpp:218 engines/scumm/help.cpp:75
+#: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:75
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Παράλειψη ταινίας"
@@ -4702,7 +4711,7 @@ msgstr "Παράλειψη ταινίας"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SKIP PAST CURRENT LINE OF DIALOGUE
-#: engines/bladerunner/metaengine.cpp:231
+#: engines/bladerunner/metaengine.cpp:242
 msgid "Skip dialogue"
 msgstr "Παράκαμψη διαλόγου"
 
@@ -4710,7 +4719,7 @@ msgstr "Παράκαμψη διαλόγου"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. GAME OPTIONS
-#: engines/bladerunner/metaengine.cpp:242
+#: engines/bladerunner/metaengine.cpp:253
 msgid "Game Options"
 msgstr "Ρυθμίσεις Παιχνιδιού"
 
@@ -4719,29 +4728,29 @@ msgstr "Ρυθμίσεις Παιχνιδιού"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ACTIVATE KIA CLUE DATABASE SYSTEM
-#: engines/bladerunner/metaengine.cpp:253
+#: engines/bladerunner/metaengine.cpp:264
 msgid "Open KIA Database"
 msgstr "Άνοιγμα της Βάσης Δεδομένων KIA"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows submitting a selected existing save game for deletion.
-#: engines/bladerunner/metaengine.cpp:271
+#: engines/bladerunner/metaengine.cpp:282
 msgid "Delete Selected Saved Game"
 msgstr "Διαγραφή Επιλεγμένου Αποθηκευμένου Παιχνιδιού"
 
 #. I18N: This keymap allows scrolling texts and lists upwards
-#: engines/bladerunner/metaengine.cpp:285
+#: engines/bladerunner/metaengine.cpp:296
 msgid "Scroll Up"
 msgstr "Κύλιση Πάνω"
 
 #. I18N: This keymap allows scrolling texts and lists downwards
-#: engines/bladerunner/metaengine.cpp:292
+#: engines/bladerunner/metaengine.cpp:303
 msgid "Scroll Down"
 msgstr "Κύλιση Κάτω"
 
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
-#: engines/bladerunner/metaengine.cpp:300
+#: engines/bladerunner/metaengine.cpp:311
 msgid "Toggle Clue Privacy"
 msgstr "Εναλλαγή Ιδιωτικότητας Ευρημάτων"
 
@@ -4749,7 +4758,7 @@ msgstr "Εναλλαγή Ιδιωτικότητας Ευρημάτων"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
-#: engines/bladerunner/metaengine.cpp:319 engines/pegasus/pegasus.cpp:2824
+#: engines/bladerunner/metaengine.cpp:330 engines/pegasus/pegasus.cpp:2824
 msgid "Save Game"
 msgstr "Αποθήκευση παιχνιδιού"
 
@@ -4757,7 +4766,7 @@ msgstr "Αποθήκευση παιχνιδιού"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
-#: engines/bladerunner/metaengine.cpp:328 engines/pegasus/pegasus.cpp:2830
+#: engines/bladerunner/metaengine.cpp:339 engines/pegasus/pegasus.cpp:2830
 msgid "Load Game"
 msgstr "Φόρτωση Παιχνιδιού"
 
@@ -4765,7 +4774,7 @@ msgstr "Φόρτωση Παιχνιδιού"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. CRIME SCENE DATABASE
-#: engines/bladerunner/metaengine.cpp:337
+#: engines/bladerunner/metaengine.cpp:348
 msgid "Crime Scene Database"
 msgstr "Βάση Δεδομένων Σκηνών Εγκλήματος"
 
@@ -4773,7 +4782,7 @@ msgstr "Βάση Δεδομένων Σκηνών Εγκλήματος"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SUSPECT DATABASE
-#: engines/bladerunner/metaengine.cpp:346
+#: engines/bladerunner/metaengine.cpp:357
 msgid "Suspect Database"
 msgstr "Βάση Δεδομένων Υπόπτων"
 
@@ -4781,7 +4790,7 @@ msgstr "Βάση Δεδομένων Υπόπτων"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. CLUE DATABASE
-#: engines/bladerunner/metaengine.cpp:355
+#: engines/bladerunner/metaengine.cpp:366
 msgid "Clue Database"
 msgstr "Βάση Δεδομένων Στοιχείων Έρευνας"
 
@@ -4789,7 +4798,7 @@ msgstr "Βάση Δεδομένων Στοιχείων Έρευνας"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. QUIT GAME
-#: engines/bladerunner/metaengine.cpp:364 engines/dragons/metaengine.cpp:225
+#: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:225
 msgid "Quit Game"
 msgstr "Έξοδος από το παιχνίδι"
 
