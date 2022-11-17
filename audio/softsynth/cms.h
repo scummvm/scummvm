@@ -66,11 +66,12 @@ struct SAA1099 {
 
 class CMSEmulator {
 public:
-	CMSEmulator(uint32 sampleRate) {
+	CMSEmulator(uint32 sampleRate, uint32 basePort = 0x220) {
 		// In PCs the chips run at 7.15909 MHz instead of 8 MHz.
 		// Adjust sampling rate upwards to bring pitch down.
 		_sampleRate = (sampleRate * 352) / 315;
 		memset(_saa1099, 0, sizeof(SAA1099)*2);
+		_basePort = basePort;
 	}
 
 	~CMSEmulator() { }
@@ -81,6 +82,7 @@ public:
 
 private:
 	uint32 _sampleRate;
+	uint32 _basePort;
 
 	SAA1099 _saa1099[2];
 

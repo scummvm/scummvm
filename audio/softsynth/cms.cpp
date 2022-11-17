@@ -82,35 +82,21 @@ static const int amplitude_lookup[16] = {
 };
 
 void CMSEmulator::portWrite(int port, int val) {
-	switch (port) {
-	case 0x220:
+	switch (port-_basePort) {
+	case 0:
+		portWriteIntern(0, 0, val);
+		break;
+
+	case 1:
 		portWriteIntern(0, 1, val);
 		break;
 
-	case 0x221:
-		_saa1099[0].selected_reg = val & 0x1f;
-		if (_saa1099[0].selected_reg == 0x18 || _saa1099[0].selected_reg == 0x19) {
-			/* clock the envelope channels */
-			if (_saa1099[0].env_clock[0])
-				envelope(0, 0);
-			if (_saa1099[0].env_clock[1])
-				envelope(0, 1);
-		}
+	case 2:
+		portWriteIntern(1, 0, val);
 		break;
 
-	case 0x222:
+	case 3:
 		portWriteIntern(1, 1, val);
-		break;
-
-	case 0x223:
-		_saa1099[1].selected_reg = val & 0x1f;
-		if (_saa1099[1].selected_reg == 0x18 || _saa1099[1].selected_reg == 0x19) {
-			/* clock the envelope channels */
-			if (_saa1099[1].env_clock[0])
-				envelope(1, 0);
-			if (_saa1099[1].env_clock[1])
-				envelope(1, 1);
-		}
 		break;
 
 	default:
@@ -252,6 +238,18 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 
 void CMSEmulator::portWriteIntern(int chip, int offset, int data) {
 	SAA1099 *saa = &_saa1099[chip];
+	if(offset == 1) {
+		// address port
+		saa->selected_reg = data & 0x1f;
+		if (saa->selected_reg == 0x18 || saa->selected_reg == 0x19) {
+			/* clock the envelope channels */
+			if (saa->env_clock[0])
+				envelope(chip,0);
+			if (saa->env_clock[1])
+				envelope(chip,1);
+		}
+		return;
+	}
 	int reg = saa->selected_reg;
 	int ch;
 
