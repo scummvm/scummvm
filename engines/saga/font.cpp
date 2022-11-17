@@ -722,33 +722,49 @@ void DefaultFont::outFont(const FontStyle &drawFont, const char *text, size_t co
 				-1, -1, 0, 1, 2, 3, 4, 5, -1, -1, 6, 7, 8, 9,
 				10, 11, -1, -1, 12, 13, 14, 15, 16, 17, -1, -1,
 				18, 19, 20, 21, -1, -1};
-			// TODO: check this.
-			static const int mid2inivariant[32] = {
-				0, 0, 1, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 1, 3, 3,
-				0, 0, 3, 1, 1, 3, 3, 3,
-				0, 0, 1, 1, 3, 0, 0, 0,
-			};
 			int mididx = mididxlut[mid];
 			int finidx = fin >= 0x12 ? fin - 2 : fin - 1;
+
+			// Validate character
 			if (initial >= 0x15 || initidx < 0 || mididx < 0 || fin == 0 || fin == 0x12 || fin >= 0x1e) {
-				// TODO: non-jamo
+				// Characters with initial over 0x15 means "non-jamo-based", e.g. Hanja, pictograms
+				// and so on. They are present in the font but not supported by renderer neither in
+				// the original nor in the scummvm
 				textPoint.x += _cjkFontWidth;
 				continue;
 			}
 
+			static const int mid2inivariant[2][32] = {
+				// Special case: empty final
+				{
+					0, 0, 0, 0, 0, 0, 0, 0,
+					0, 0, 0, 0, 0, 1, 3, 3,
+					0, 0, 3, 1, 2, 4, 4, 4,
+					0, 0, 2, 1, 3, 0, 0, 0,
+				},
+				// Otherwise we have a final
+				{
+					0, 0, 0, 5, 5, 5, 5, 5,
+					0, 0, 5, 5, 5, 6, 7, 7,
+					0, 0, 7, 6, 6, 7, 7, 7,
+					0, 0, 6, 6, 7, 5, 0, 0,
+				}
+			};
+			int inivariant = mid2inivariant[fin != 1][mid];
 			int midvariant = 0;
 
 			if (fin != 1)
 				midvariant += 2;
-			if (!(initial == 2 || initial == 3 || initial == 17))
+			if (initial == 2 || initial == 17)
 				midvariant++;
 
-			// TODO: variants slightly move final consonant.
-			// Idk enough to choose the right one
-			int finvariant = 0;
-
-			int inivariant = mid2inivariant[mid];
+			static const int mid2finvariant[32] = {
+				0, 0, 0, 0, 2, 0, 2, 1,
+				0, 0, 2, 1, 2, 3, 0, 2,
+				0, 0, 1, 3, 3, 1, 2, 1,
+				0, 0, 3, 3, 1, 1, 0, 0,
+			};
+			int finvariant = mid2finvariant[mid];
 
 			int initialoff = kIHNMKoreanGlyphBytes * (initidx + inivariant * kIHNMKoreanInitials);
 			blitGlyph(textPoint, _koreanFont + initialoff, _cjkFontWidth, _cjkFontHeight, _cjkFontWidth / 8, (byte)color);
