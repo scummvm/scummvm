@@ -31,6 +31,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  MADS:
    - Added support for original floppy installer file layout for Rex Nebular.
 
+ Neverhood:
+   - Added support for Japanese version of Neverhood.
+
  Queen:
    - Added option for using a better font in Hebrew version.
 
