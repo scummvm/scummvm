@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-17 20:57+0000\n"
+"POT-Creation-Date: 2022-11-18 00:23+0000\n"
 "PO-Revision-Date: 2022-11-10 03:33+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -4392,13 +4392,13 @@ msgstr "Força el text suavitzat"
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 
-#: engines/ags/ags.cpp:131
+#: engines/ags/ags.cpp:132
 msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
 "supported."
 msgstr ""
 
-#: engines/ags/ags.cpp:139
+#: engines/ags/ags.cpp:140
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."

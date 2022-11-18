@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-17 20:57+0000\n"
+"POT-Creation-Date: 2022-11-18 00:23+0000\n"
 "PO-Revision-Date: 2022-11-17 14:20+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -4431,7 +4431,7 @@ msgstr ""
 "Applica l'antialiasing ai testi, anche se il gioco non lo richiede "
 "esplicitamente"
 
-#: engines/ags/ags.cpp:131
+#: engines/ags/ags.cpp:132
 msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
 "supported."
@@ -4439,7 +4439,7 @@ msgstr ""
 "Il gioco selezionato utilizza una versione del motore AGS, precedente alla "
 "versione 2.5, che non è supportata."
 
-#: engines/ags/ags.cpp:139
+#: engines/ags/ags.cpp:140
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."
