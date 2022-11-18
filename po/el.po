@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-18 16:12+0000\n"
-"PO-Revision-Date: 2022-11-17 19:18+0000\n"
+"PO-Revision-Date: 2022-11-18 18:00+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -5038,11 +5038,11 @@ msgstr ""
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Automatic drilling"
-msgstr ""
+msgstr "Αυτόματη γεώτρηση"
 
 #: engines/freescape/metaengine.cpp:43
 msgid "Allow to succefully drill in any part of the area in Driller"
-msgstr ""
+msgstr "Επιτρέπει την επιτυχημένη γεώτρηση σε οποιαδήποτε περιοχή στο Driller"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -7562,7 +7562,7 @@ msgstr "Πλήκτρο Shift"
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/help.cpp:240
 msgid "Win the bike fight cheat"
-msgstr ""
+msgstr "Κόλπο για νίκη στη μάχη με τις μηχανές"
 
 #: engines/scumm/help.cpp:245
 msgid "Regular cursor"
