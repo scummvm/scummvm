@@ -2006,7 +2006,7 @@ int CharsetRendererV7::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, i
 		x -= _width;
 
 	int width = MIN(_origWidth, clipRect.right - x);
-	int height = MIN(_origHeight, clipRect.bottom - y);
+	int height = MIN(_origHeight, clipRect.bottom - (y + _offsY));
 
 	_vm->_charsetColorMap[1] = col;
 	byte *cmap = _vm->_charsetColorMap;
@@ -2020,7 +2020,7 @@ int CharsetRendererV7::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, i
 	while (height--) {
 		for (int dx = x; dx < x + _origWidth; ++dx) {
 			byte color = (bits >> (8 - bpp)) & 0xFF;
-			if (color && dx >= 0 && dx < x + width && y >= 0)
+			if (color && dx >= 0 && dx < x + width && (y + _offsY) >= 0)
 				*dst = cmap[color];
 			dst++;
 			bits <<= bpp;
