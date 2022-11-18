@@ -292,7 +292,7 @@ private:
 	void preLoadMaps();
 	void initEngine();
 	void initMapMonsters();
-	void loadMapArrays();
+	void loadMapArrays(int idx);
 	void saveAnimImageSetId();
 	int16 getEquipmentDefense(int16 charId, bool flag);
 	uint16 sub1C80A(int16 charId, int16 field18, bool flag);
@@ -498,7 +498,7 @@ private:
 	uint8 _loResImageBuf[40100];
 	uint8 _menuBuf[12500];
 	uint8 _windowWithBorderBuf[1500];
-	uint8 _map[7000];
+	uint8 _mapArr[19][7000];
 	uint8 _places[12000];
 	uint8 _curPlace[24][24];
 	NPCStruct _npcBuf[100];
@@ -518,7 +518,7 @@ private:
 	char _attackBuffer[20];
 	uint8 _messageToBePrinted[400];
 	
-	uint8 *_mapBitmapRef;
+	uint8 *_mapBitmapRefArr[19];
 	UnkMapStruct _mapUnknown[100];
 	MapMonster _mapMonsters[64];
 	uint8 _mapGameMap[64][64];

@@ -194,7 +194,9 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 
 	_videoMode = 0;
 	_graphicsStruct = nullptr;
-	_mapBitmapRef = nullptr;
+
+	for (int i = 0; i < 19; ++i)
+		_mapBitmapRefArr[i] = nullptr;
 
 	_defaultBoxColor = 0;
 
@@ -320,7 +322,6 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	memset(_loResImageBuf, 0, ARRAYSIZE(_loResImageBuf));
 	memset(_menuBuf, 0, ARRAYSIZE(_menuBuf));
 	memset(_windowWithBorderBuf, 0, ARRAYSIZE(_windowWithBorderBuf));
-	memset(_map, 0, ARRAYSIZE(_map));
 	memset(_places, 0, ARRAYSIZE(_places));
 	for (int i = 0; i < 24; ++i)
 		memset(_curPlace[i], 0, ARRAYSIZE(_curPlace[i]));
@@ -332,8 +333,10 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	memset(_tileFact, 0, ARRAYSIZE(_tileFact));
 	memset(_animInfo, 0, ARRAYSIZE(_animInfo));
 	memset(_history, 0, ARRAYSIZE(_history));
-	for(int i = 0; i < 20; ++i)
+	for (int i = 0; i < 19; ++i) {
 		memset(_techDataArr[i], 0, ARRAYSIZE(_techDataArr[i]));
+		memset(_mapArr[i], 0, ARRAYSIZE(_mapArr[i]));
+	}
 	memset(_mapMonsters, 0, ARRAYSIZE(_mapMonsters));
 	memset(_mapGameMap, 0, ARRAYSIZE(_mapGameMap));
 	memset(_imageSetSubFilesArray, 0, ARRAYSIZE(_imageSetSubFilesArray));
@@ -682,15 +685,15 @@ void EfhEngine::loadTechMapImp(int16 fileId) {
 	_techId = fileId;
 	findMapFile(_techId);
 
-	Common::String fileName = Common::String::format("map.%d", _techId);
-	readFileToBuffer(fileName, _hiResImageBuf);
-	uncompressBuffer(_hiResImageBuf, _map);
+	// The original was loading the specific tech.%d and map.%d files.
+	// This is gone in our implementation as we pre-load all the files to save them inside the savegames
+	
 	// This is not present in the original.
 	// The purpose is to properly load the misc map data in arrays in order to use them without being a pain afterwards
-	loadMapArrays();
-
-	loadImageSetToTileBank(1, _mapBitmapRef[0] + 1);
-	loadImageSetToTileBank(2, _mapBitmapRef[1] + 1);
+	loadMapArrays(_techId);
+	
+	loadImageSetToTileBank(1, _mapBitmapRefArr[_techId][0] + 1);
+	loadImageSetToTileBank(2, _mapBitmapRefArr[_techId][1] + 1);
 
 	initMapMonsters();
 	readImpFile(_techId, true);
@@ -937,9 +940,15 @@ void EfhEngine::playIntro() {
  */
 void EfhEngine::preLoadMaps() {
 	for (int i = 0; i < 19; ++i) {
-		Common::String fileName = Common::String::format("tech.%d", _techId);
+		Common::String fileName = Common::String::format("tech.%d", i);
 		readFileToBuffer(fileName, _hiResImageBuf);
-		uncompressBuffer(_hiResImageBuf, _techDataArr[_techId]);
+		uncompressBuffer(_hiResImageBuf, _techDataArr[i]);
+
+		fileName = Common::String::format("map.%d", i);
+		readFileToBuffer(fileName, _hiResImageBuf);
+		uncompressBuffer(_hiResImageBuf, _mapArr[i]);
+
+		_mapBitmapRefArr[i] = &_mapArr[i][0];
 	}
 }
 
@@ -947,8 +956,6 @@ void EfhEngine::initEngine() {
 	_videoMode = 2; // In the original, 2 = VGA/MCGA, EGA = 4, Tandy = 6, cga = 8.
 	_graphicsStruct = new EfhGraphicsStruct;
 	_graphicsStruct->copy(_vgaGraphicsStruct1);
-
-	_mapBitmapRef = &_map[0];
 
 	_vgaGraphicsStruct2->copy(_vgaGraphicsStruct1);
 	_vgaGraphicsStruct2->_shiftValue = 0x2000;
@@ -1055,10 +1062,10 @@ void EfhEngine::initMapMonsters() {
 	}
 }
 
-void EfhEngine::loadMapArrays() {
-	debug("loadMapArrays");
+void EfhEngine::loadMapArrays(int idx) {
+	debug("loadMapArrays %d", idx);
 
-	uint8 *_mapUnknownPtr = &_map[2];
+	uint8 *_mapUnknownPtr = &_mapArr[idx][2];
 
 	for (int i = 0; i < 100; ++i) {
 		_mapUnknown[i]._placeId = _mapUnknownPtr[9 * i];
@@ -1070,7 +1077,7 @@ void EfhEngine::loadMapArrays() {
 		_mapUnknown[i]._field7 = READ_LE_UINT16(&_mapUnknownPtr[9 * i + 7]);
 	}
 	
-	uint8 *mapMonstersPtr = &_map[902];
+	uint8 *mapMonstersPtr = &_mapArr[idx][902];
 
 	for (int i = 0; i < 64; ++i) {
 		_mapMonsters[i]._possessivePronounSHL6 = mapMonstersPtr[29 * i];
@@ -1088,7 +1095,7 @@ void EfhEngine::loadMapArrays() {
 			_mapMonsters[i]._pictureRef[j] = READ_LE_INT16(&mapMonstersPtr[29 * i + 11 + j * 2]);
 	}
 
-	uint8 *mapPtr = &_map[2758];
+	uint8 *mapPtr = &_mapArr[idx][2758];
 	for (int i = 0; i < 64; ++i) {
 		for (int j = 0; j < 64; ++j)
 			_mapGameMap[i][j] = *mapPtr++;
@@ -6876,7 +6883,7 @@ void EfhEngine::loadImageSetToTileBank(int16 tileBankId, int16 imageSetId) {
 	_currentTileBankImageSetId[bankId] = setId;
 
 	if (bankId == 0 || bankId == 1)
-		_mapBitmapRef[bankId] = setId;
+		_mapBitmapRefArr[_techId][bankId] = setId;
 
 	int16 ptrIndex = bankId * 72;
 	loadImageSet(setId, _tileBank[bankId], &_imageSetSubFilesArray[ptrIndex], _hiResImageBuf);
