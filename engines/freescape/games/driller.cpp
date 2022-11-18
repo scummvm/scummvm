@@ -780,6 +780,10 @@ bool DrillerEngine::checkIfGameEnded() {
 	}
 
 	if (_currentArea->getAreaID() == 127) {
+		if (_gameStateVars[32] == 18) { // All areas are complete
+			insertTemporaryMessage(_messagesList[19], _countdown - 2);
+			_gameStateVars[32] = 0;  // Avoid repeating the message
+		}
 		drawFrame();
 		_gfx->flipBuffer();
 		g_system->updateScreen();
