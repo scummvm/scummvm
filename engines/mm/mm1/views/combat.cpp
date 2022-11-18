@@ -444,7 +444,7 @@ void Combat::writeRound() {
 }
 
 void Combat::writePartyNumbers() {
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+	for (uint i = 0; i < _party.size(); ++i) {
 		writeChar(2 + 4 * (i % 2), 3 + (i / 2),
 			_party[i]->_canAttack ? '+' : ' ');
 		writeChar('1' + i);
@@ -506,7 +506,7 @@ void Combat::writeDots() {
 void Combat::writeParty() {
 	clearPartyArea();
 
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+	for (uint i = 0; i < _party.size(); ++i) {
 		writeChar(1 + 21 * (i % 2), 16 + (i / 2), '1' + i);
 		writeString(") ");
 		writeString(g_globals->_party[i]._name);
