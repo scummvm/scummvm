@@ -85,14 +85,27 @@ static void openFromBundle(NSString *file) {
 		}
 	}
 
+	// RTF and HTML files are widely recognized and we can rely on the default
+	// file association working for those. For the other ones this might not be
+	// the case so we explicitly indicate they should be open with TextEdit.
 	if (path) {
-		// RTF and HTML files are widely recognized and we can rely on the default
-		// file association working for those. For the other ones this might not be
-		// the case so we explicitly indicate they should be open with TextEdit.
+#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_15
 		if ([path hasSuffix:@".html"] || [path hasSuffix:@".rtf"])
 			[[NSWorkspace sharedWorkspace] openFile:path];
 		else
 			[[NSWorkspace sharedWorkspace] openFile:path withApplication:@"TextEdit"];
+#else
+		NSURL *pathUrl = [NSURL fileURLWithPath:path isDirectory:NO];
+		if ([path hasSuffix:@".html"] || [path hasSuffix:@".rtf"]) {
+			[[NSWorkspace sharedWorkspace] openURL:pathUrl];
+		} else {
+			[[NSWorkspace sharedWorkspace] openURLs:[NSArray arrayWithObjects:pathUrl, nil]
+				withApplicationAtURL:[[NSWorkspace sharedWorkspace] URLForApplicationWithBundleIdentifier:@"com.apple.TextEdit"]
+				configuration:[NSWorkspaceOpenConfiguration configuration]
+				completionHandler:nil
+			];
+		}
+#endif
 	}
 }
 
@@ -147,7 +160,12 @@ static void openFromBundle(NSString *file) {
 		NSString *file;
 		while ((file = [dirEnum nextObject])) {
 			if ([file hasPrefix:@"ScummVM Manual"] && [file hasSuffix:@".pdf"]) {
+#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_15
 				[[NSWorkspace sharedWorkspace] openFile:[bundlePath stringByAppendingPathComponent:file]];
+#else
+				NSURL *fileUrl = [NSURL fileURLWithPath:[bundlePath stringByAppendingPathComponent:file] isDirectory:NO];
+				[[NSWorkspace sharedWorkspace] openURL:fileUrl];
+#endif
 				return;
 			}
 		}
