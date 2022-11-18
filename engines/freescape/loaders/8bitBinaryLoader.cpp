@@ -373,9 +373,9 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	for (uint8 object = 0; object < numberOfObjects && areaNumber != 192; object++) {
 		debugC(1, kFreescapeDebugParser, "Reading object: %d", object);
 		Object *newObject = load8bitObject(file);
-		newObject->scale(scale);
 
 		if (newObject) {
+			newObject->scale(scale);
 			if (newObject->getType() == kEntranceType) {
 				if (entrancesByID->contains(newObject->getObjectID() & 0x7fff))
 					error("WARNING: replacing object id %d (%d)", newObject->getObjectID(), newObject->getObjectID() & 0x7fff);
