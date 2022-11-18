@@ -230,7 +230,8 @@ Common::String SRTParser::getSubtitle(uint32 timestamp) {
 
 #define SHADOW 1
 
-Subtitles::Subtitles() : _loaded(false), _font(nullptr), _hPad(0), _vPad(0), _overlayHasAlpha(true) {
+Subtitles::Subtitles() : _loaded(false), _font(nullptr), _hPad(0), _vPad(0), _overlayHasAlpha(true),
+	_lastOverlayWidth(-1), _lastOverlayHeight(-1) {
 	_surface = new Graphics::Surface();
 	_subtitleDev = ConfMan.getBool("subtitle_dev");
 }
@@ -273,11 +274,14 @@ void Subtitles::loadSRTFile(const char *fname) {
 }
 
 void Subtitles::setBBox(const Common::Rect bbox) {
-	_bbox = bbox;
+	_requestedBBox = bbox;
 
 	Graphics::PixelFormat overlayFormat = g_system->getOverlayFormat();
 	_overlayHasAlpha = overlayFormat.aBits() != 0;
-	_surface->create(_bbox.width() + SHADOW * 2, _bbox.height() + SHADOW * 2, overlayFormat);
+	_surface->create(_requestedBBox.width() + SHADOW * 2, _requestedBBox.height() + SHADOW * 2, overlayFormat);
+	// Force recalculation of real bounding box
+	_lastOverlayWidth = -1;
+	_lastOverlayHeight = -1;
 }
 
 void Subtitles::setColor(byte r, byte g, byte b) {
@@ -308,6 +312,40 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force) {
 		return false;
 	}
 
+	int16 width = g_system->getOverlayWidth(),
+		  height = g_system->getOverlayHeight();
+
+	if (width != _lastOverlayWidth ||
+		height != _lastOverlayHeight) {
+		_lastOverlayWidth = width;
+		_lastOverlayHeight = height;
+
+		// Recalculate the real bounding box to use
+		_realBBox = _requestedBBox;
+
+		if (_realBBox.bottom > height) {
+			// First try to move the bounding box
+			_realBBox.top -= _realBBox.bottom - height;
+			_realBBox.bottom = height;
+		}
+		if (_realBBox.top < 0) {
+			// Not enough space
+			_realBBox.top = 0;
+		}
+
+		if (_realBBox.right > width) {
+			// First try to move the bounding box
+			_realBBox.left -= _realBBox.right - width;
+			_realBBox.right = width;
+		}
+		if (_realBBox.left < 0) {
+			// Not enough space
+			_realBBox.left = 0;
+		}
+
+		force = true;
+	}
+
 	if (!force && _overlayHasAlpha && subtitle == _subtitle)
 		return false;
 
@@ -320,14 +358,14 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force) {
 
 	if (_overlayHasAlpha) {
 		// When we have alpha, draw the whole surface without thinking it more
-		g_system->copyRectToOverlay(_surface->getPixels(), _surface->pitch, _bbox.left, _bbox.top, _surface->w, _surface->h);
+		g_system->copyRectToOverlay(_surface->getPixels(), _surface->pitch, _realBBox.left, _realBBox.top, _realBBox.width(), _realBBox.height());
 	} else {
 		// When overlay doesn't have alpha, showing it hides the underlying game screen
 		// We force a copy of the game screen to the overlay by clearing it
 		// We then draw the smallest possible surface to minimize black rectangle behind text
 		g_system->clearOverlay();
 		g_system->copyRectToOverlay((byte *)_surface->getPixels() + _drawRect.top * _surface->pitch + _drawRect.left * _surface->format.bytesPerPixel, _surface->pitch,
-				_bbox.left + _drawRect.left, _bbox.top + _drawRect.top, _drawRect.width(), _drawRect.height());
+				_realBBox.left + _drawRect.left, _realBBox.top + _drawRect.top, _drawRect.width(), _drawRect.height());
 	}
 
 	return true;
@@ -338,7 +376,7 @@ void Subtitles::renderSubtitle() {
 
 	Common::Array<Common::U32String> lines;
 
-	_font->wordWrapText(convertUtf8ToUtf32(_subtitle), _bbox.width(), lines);
+	_font->wordWrapText(convertUtf8ToUtf32(_subtitle), _realBBox.width(), lines);
 
 	if (lines.empty()) {
 		_drawRect.left = 0;
@@ -354,9 +392,9 @@ void Subtitles::renderSubtitle() {
 	int width = 0;
 	for (uint i = 0; i < lines.size(); i++)
 		width = MAX(_font->getStringWidth(lines[i]), width);
-	width = MIN(width + 2 * _hPad, (int)_bbox.width());
+	width = MIN(width + 2 * _hPad, (int)_realBBox.width());
 
-	int originX = (_bbox.width() - width) / 2;
+	int originX = (_realBBox.width() - width) / 2;
 
 	for (uint i = 0; i < lines.size(); i++) {
 		Common::U32String line = convertBiDiU32String(lines[i]).visual;
@@ -370,7 +408,7 @@ void Subtitles::renderSubtitle() {
 
 		height += _font->getFontHeight();
 
-		if (height + _vPad > _bbox.bottom)
+		if (height + _vPad > _realBBox.bottom)
 			break;
 	}
 
