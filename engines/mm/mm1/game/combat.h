@@ -260,6 +260,11 @@ protected:
 	void selectMonsterTarget();
 
 	/**
+	 * Retreat option
+	 */
+	void retreat();
+
+	/**
 	 * Does final cleanup when combat is done
 	 */
 	void combatDone();

@@ -32,6 +32,10 @@ void Treasure::clear() {
 	Common::fill(&_data[0], &_data[ARRAY_COUNT], 0);
 }
 
+void Treasure::clear0() {
+	Common::fill(&_data[1], &_data[ARRAY_COUNT], 0);
+}
+
 byte &Treasure::operator[](uint i) {
 	assert(i < ARRAY_COUNT);
 	return _data[i];

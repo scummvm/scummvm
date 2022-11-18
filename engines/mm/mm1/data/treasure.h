@@ -55,6 +55,11 @@ public:
 	void clear();
 
 	/**
+	 * Clears everything byte byte 0
+	 */
+	void clear0();
+
+	/**
 	 * Returns true if any treasure has been assigned
 	 */
 	bool present() const;
