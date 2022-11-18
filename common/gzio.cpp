@@ -1118,7 +1118,7 @@ uint32 GzioReadStream::read(void *dataPtr, uint32 dataSize) {
 
 	_streamPos += actualRead;
 
-	if (maybeEos &&	actualRead == dataSize)
+	if (maybeEos &&	actualRead == (int32)dataSize)
 		_eos = true;
 
 	return actualRead;
