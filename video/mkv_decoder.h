@@ -90,7 +90,7 @@ protected:
 private:
 	class VPXVideoTrack : public VideoTrack {
 	public:
-		VPXVideoTrack(const mkvparser::Track *const pTrack);
+		VPXVideoTrack(const Graphics::PixelFormat &format, const mkvparser::Track *const pTrack);
 		~VPXVideoTrack();
 
 		bool endOfTrack() const { return _endOfVideo; }
@@ -101,7 +101,7 @@ private:
 		uint32 getNextFrameStartTime() const { return (uint32)(_nextFrameStartTime * 1000); }
 		const Graphics::Surface *decodeNextFrame() { return &_displaySurface; }
 
-		bool decodePacket(ogg_packet &oggPacket);
+		bool decodeFrame(byte *frame, long size);
 		void setEndOfVideo() { _endOfVideo = true; }
 
 	private:
@@ -115,6 +115,8 @@ private:
 
 		th_dec_ctx *_theoraDecode;
 
+		vpx_codec_ctx_t *_codec = nullptr;
+
 		void translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer);
 	};
 
@@ -123,7 +125,7 @@ private:
 		VorbisAudioTrack(const mkvparser::Track *const pTrack);
 		~VorbisAudioTrack();
 
-		bool decodeSamples(ogg_packet &oggPacket);
+		bool decodeSamples(byte *frame, long size);
 		bool hasAudio() const;
 		bool needsAudio() const;
 		void synthesizePacket(ogg_packet &oggPacket);
@@ -143,6 +145,8 @@ private:
 		vorbis_dsp_state _vorbisDSP;
 
 		bool _endOfAudio;
+
+		ogg_packet oggPacket;
 	};
 
 	void queuePage(ogg_page *page);
@@ -163,7 +167,6 @@ private:
 	VPXVideoTrack *_videoTrack = nullptr;
 	VorbisAudioTrack *_audioTrack = nullptr;
 
-	vpx_codec_ctx_t *_codec = nullptr;
 	mkvparser::MkvReader *_reader = nullptr;
 
 	const mkvparser::Cluster *_cluster = nullptr;

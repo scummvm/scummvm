@@ -107,7 +107,6 @@ MKVDecoder::MKVDecoder() {
 	_audioTrack = 0;
 	_hasVideo = _hasAudio = false;
 
-	_codec = nullptr;
 	_reader = nullptr;
 }
 
@@ -149,7 +148,6 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	_fileStream = stream;
 
-	_codec = new vpx_codec_ctx_t;
 	_reader = new mkvparser::MkvReader(stream);
 
 	long long pos = 0;
@@ -192,7 +190,7 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 		if (trackType == mkvparser::Track::kVideo && videoTrack < 0) {
 			videoTrack = pTrack->GetNumber();
 
-			_videoTrack = new VPXVideoTrack(pTrack);
+			_videoTrack = new VPXVideoTrack(getDefaultHighColorFormat(), pTrack);
 
 			addTrack(_videoTrack);
 			//setRate(_videoTrack->getFrameRate());
@@ -247,10 +245,6 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 		error("Movie error: Segment has no clusters.\n");
 	}
 
-	/* Initialize video codec */
-	if (vpx_codec_dec_init(_codec, &vpx_codec_vp8_dx_algo, NULL, 0))
-		error("Failed to initialize decoder for movie.");
-
 	frame = new byte[256 * 1024];
 	if (!frame)
 		return false;
@@ -283,7 +277,6 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 void MKVDecoder::close() {
 	VideoDecoder::close();
 
-	delete _codec;
 	delete _reader;
 }
 
@@ -342,72 +335,14 @@ void MKVDecoder::readNextPacket() {
 
 			theFrame.Read(_reader, frame);
 
-			/* Decode the frame */
-			if (vpx_codec_decode(_codec, frame, size, NULL, 0))
-				error("Failed to decode frame");
-
-			// Let's decode an image frame!
-			vpx_codec_iter_t  iter = NULL;
-			vpx_image_t      *img;
-
-			/* Get frame data */
-			while ((img = vpx_codec_get_frame(_codec, &iter))) {
-				if (img->fmt != VPX_IMG_FMT_I420)
-					error("Movie error. The movie is not in I420 colour format, which is the only one I can hanlde at the moment.");
-
-
-				YUVToRGBMan.convert420(&_displaySurface, Graphics::YUVToRGBManager::kScaleITU, img->planes[0], img->planes[1], img->planes[2], img->d_w, img->d_h, img->stride[0], img->stride[1]);
-
-				unsigned int y;
-#if 0
-				GLubyte *ytex = NULL;
-				GLubyte *utex = NULL;
-				GLubyte *vtex = NULL;
-
-				if (! ytex) {
-					ytex = new GLubyte[img->d_w * img->d_h];
-					utex = new GLubyte[(img->d_w >> 1) * (img->d_h >> 1)];
-					vtex = new GLubyte[(img->d_w >> 1) * (img->d_h >> 1)];
-					if (!ytex || !utex || !vtex)
-						error("MKVDecoder: Out of memory"
-
-				}
-
-				unsigned char *buf =img->planes[0];
-				for (y = 0; y < img->d_h; y++) {
-					memcpy(ytex + y * img->d_w, buf, img->d_w);
-					buf += img->stride[0];
-				}
-				buf = img->planes[1];
-				for (y = 0; y < img->d_h >> 1; y++) {
-					memcpy(utex + y * (img->d_w >> 1), buf, img->d_w >> 1);
-					buf += img->stride[1];
-				}
-				buf = img->planes[2];
-				for (y = 0; y < img->d_h >> 1; y++) {
-					memcpy(vtex + y * (img->d_w >> 1), buf, img->d_w >> 1);
-					buf += img->stride[2];
-				}
-				video_queue_put(&videoQ, ytex, utex, vtex,
-								img->d_w, img->d_h, time_ns/1000000);
-#endif
-
-
-			}
+			_videoTrack->decodeFrame(frame, size);
 		} else if (trackNum == audioTrack) {
 			warning("MKVDecoder::readNextPacket(): audio track");
 
 			if (size > 0) {
-				ogg_packet oggPacket;
-
 				theFrame.Read(_reader, frame);
-				oggPacket.packet = frame;
-				oggPacket.bytes = size;
-				oggPacket.b_o_s = false;
-				oggPacket.packetno++;
-				oggPacket.granulepos = -1;
 
-				_audioTrack->decodeSamples(oggPacket);
+				_audioTrack->decodeSamples(frame, size);
 			}
 		}
 		++frameCounter;
@@ -417,7 +352,7 @@ void MKVDecoder::readNextPacket() {
 	ensureAudioBufferSize();
 }
 
-MKVDecoder::VPXVideoTrack::VPXVideoTrack(const mkvparser::Track *const pTrack) {
+MKVDecoder::VPXVideoTrack::VPXVideoTrack(const Graphics::PixelFormat &format, const mkvparser::Track *const pTrack) {
 	const mkvparser::VideoTrack *const pVideoTrack = static_cast<const mkvparser::VideoTrack *>(pTrack);
 
 	const long long width = pVideoTrack->GetWidth();
@@ -427,41 +362,81 @@ MKVDecoder::VPXVideoTrack::VPXVideoTrack(const mkvparser::Track *const pTrack) {
 
 	warning("VideoTrack: %lld x %lld @ %g fps", width, height, rate);
 
+	_displaySurface.create(width, height, format);
+
 	_frameRate = 10; // FIXME
 
 	_endOfVideo = false;
 	_nextFrameStartTime = 0.0;
 	_curFrame = -1;
+
+	_codec = new vpx_codec_ctx_t;
+
+	/* Initialize video codec */
+	if (vpx_codec_dec_init(_codec, &vpx_codec_vp8_dx_algo, NULL, 0))
+		error("Failed to initialize decoder for movie.");
 }
 
 MKVDecoder::VPXVideoTrack::~VPXVideoTrack() {
-	_surface.free();
-	_displaySurface.setPixels(0);
+	_displaySurface.free();
+	delete _codec;
 }
 
-bool MKVDecoder::VPXVideoTrack::decodePacket(ogg_packet &_oggPacket) {
-	warning("VPXVideoTrack::decodePacket()");
-	if (th_decode_packetin(_theoraDecode, &_oggPacket, 0) == 0) {
-		_curFrame++;
+bool MKVDecoder::VPXVideoTrack::decodeFrame(byte *frame, long size) {
 
-		// Convert YUV data to RGB data
-		th_ycbcr_buffer yuv;
-		th_decode_ycbcr_out(_theoraDecode, yuv);
-		translateYUVtoRGBA(yuv);
+	/* Decode the frame */
+	if (vpx_codec_decode(_codec, frame, size, NULL, 0))
+		error("Failed to decode frame");
 
-		double time = th_granule_time(_theoraDecode, _oggPacket.granulepos);
+	// Let's decode an image frame!
+	vpx_codec_iter_t  iter = NULL;
+	vpx_image_t      *img;
 
-		// We need to calculate when the next frame should be shown
-		// This is all in floating point because that's what the Ogg code gives us
-		// Ogg is a lossy container format, so it doesn't always list the time to the
-		// next frame. In such cases, we need to calculate it ourselves.
-		if (time == -1.0)
-			_nextFrameStartTime += _frameRate.getInverse().toDouble();
-		else
-			_nextFrameStartTime = time;
+	/* Get frame data */
+	while ((img = vpx_codec_get_frame(_codec, &iter))) {
+		if (img->fmt != VPX_IMG_FMT_I420)
+			error("Movie error. The movie is not in I420 colour format, which is the only one I can hanlde at the moment.");
 
-		return true;
+
+		YUVToRGBMan.convert420(&_displaySurface, Graphics::YUVToRGBManager::kScaleITU, img->planes[0], img->planes[1], img->planes[2], img->d_w, img->d_h, img->stride[0], img->stride[1]);
+
+		unsigned int y;
+#if 0
+		GLubyte *ytex = NULL;
+		GLubyte *utex = NULL;
+		GLubyte *vtex = NULL;
+
+		if (! ytex) {
+			ytex = new GLubyte[img->d_w * img->d_h];
+			utex = new GLubyte[(img->d_w >> 1) * (img->d_h >> 1)];
+			vtex = new GLubyte[(img->d_w >> 1) * (img->d_h >> 1)];
+			if (!ytex || !utex || !vtex)
+				error("MKVDecoder: Out of memory"
+
+		}
+
+		unsigned char *buf =img->planes[0];
+		for (y = 0; y < img->d_h; y++) {
+			memcpy(ytex + y * img->d_w, buf, img->d_w);
+			buf += img->stride[0];
+		}
+		buf = img->planes[1];
+		for (y = 0; y < img->d_h >> 1; y++) {
+			memcpy(utex + y * (img->d_w >> 1), buf, img->d_w >> 1);
+			buf += img->stride[1];
+		}
+		buf = img->planes[2];
+		for (y = 0; y < img->d_h >> 1; y++) {
+			memcpy(vtex + y * (img->d_w >> 1), buf, img->d_w >> 1);
+			buf += img->stride[2];
+		}
+		video_queue_put(&videoQ, ytex, utex, vtex,
+						img->d_w, img->d_h, time_ns/1000000);
+#endif
+
+
 	}
+
 
 	return false;
 }
@@ -591,8 +566,14 @@ static double rint(double v) {
 }
 #endif
 
-bool MKVDecoder::VorbisAudioTrack::decodeSamples(ogg_packet &oggPacket) {
+bool MKVDecoder::VorbisAudioTrack::decodeSamples(byte *frame, long size) {
 	return true;
+
+	oggPacket.packet = frame;
+	oggPacket.bytes = size;
+	oggPacket.b_o_s = false;
+	oggPacket.packetno++;
+	oggPacket.granulepos = -1;
 
 	if(!vorbis_synthesis(&vorbisBlock, &oggPacket) ) {
 		if (vorbis_synthesis_blockin(&vorbisDspState, &vorbisBlock))
