@@ -40,6 +40,9 @@ void Encounter::execute() {
 	_bribeFleeCtr = _bribeAlignmentCtr = 0;
 	_alignmentsChanged = 0;
 
+	byte combat1[MAX_COMBAT_MONSTERS];
+	Common::fill(&combat1[0], &combat1[MAX_COMBAT_MONSTERS], 0);
+
 	if (!_flag) {
 		_monsterList.clear();
 		_levelIndex = 0;
@@ -80,7 +83,7 @@ void Encounter::execute() {
 		}
 
 		assert(_monsterCount < MAX_COMBAT_MONSTERS);
-		_arr1[_monsterCount] = comp;
+		combat1[_monsterCount] = comp;
 		_monsterNum16 = comp;
 		_levelIndex += comp;
 
@@ -97,8 +100,8 @@ void Encounter::execute() {
 
 			for (int i = 0; i < maxVal; ++i) {
 				assert(_monsterCount > 0);
-				_arr1[_monsterCount] = _arr1[_monsterCount - 1];
-				_levelIndex += _arr1[_monsterCount];
+				combat1[_monsterCount] = combat1[_monsterCount - 1];
+				_levelIndex += combat1[_monsterCount];
 				_monsIndexes[_monsterCount] = _monsIndexes[_monsterCount - 1];
 
 				if (++_monsterCount >= MAX_COMBAT_MONSTERS)
@@ -116,16 +119,18 @@ exit_loop:
 	_monsterList.clear();
 
 	for (int i = 0; i < _monsterCount; ++i) {
-		maxVal = (_arr1[i] - 1) * 16 + _monsIndexes[i];
-		if (_arr1[i] < 1 || _arr1[i] > 12 || maxVal >= 196) {
-			_arr1[i] = 10;
+		maxVal = (combat1[i] - 1) * 16 + _monsIndexes[i];
+		if (combat1[i] < 1 || combat1[i] > 12 || maxVal >= 196) {
+			combat1[i] = 10;
 			_monsIndexes[i] = getRandomNumber(MAX_COMBAT_MONSTERS);
 		}
 
 		// Add monster details to list
-		_monsterNum16 = _arr1[i];
-		const Monster &mons = g_globals->_monsters[_monsIndexes[i]];
-		_monsterList.push_back(mons);
+		_monsterNum16 = combat1[i];
+		const Monster &srcMons = g_globals->_monsters[_monsIndexes[i]];
+		_monsterList.push_back(srcMons);
+		Monster &mons = _monsterList.back();
+		mons._combat1 = combat1[i];
 
 		if (_monsterNum16 > _val9) {
 			_val9 = _monsterNum16;
@@ -175,7 +180,7 @@ void Encounter::clearMonsters() {
 void Encounter::addMonster(byte id, byte arr1) {
 	const Monster &mons = g_globals->_monsters[id];
 	_monsterList.push_back(mons);
-	_arr1[_monsterList.size() - 1] = arr1;
+	_monsterList.back()._combat1 = arr1;
 }
 
 } // namespace Game

@@ -24,6 +24,7 @@
 
 #include "mm/mm1/game/game_logic.h"
 #include "mm/mm1/data/character.h"
+#include "mm/mm1/data/monsters.h"
 #include "mm/mm1/messages.h"
 #include "common/str.h"
 
@@ -145,9 +146,8 @@ private:
 	void handlePartyEffects();
 
 protected:
+	Common::Array<Monster> &_monsterList;
 	LineArray _lines;
-	byte _arr1[MAX_COMBAT_MONSTERS];
-	byte _monsterStatus[MAX_COMBAT_MONSTERS];
 	int _damage = 0;
 
 	virtual bool canMonsterCast() const = 0;

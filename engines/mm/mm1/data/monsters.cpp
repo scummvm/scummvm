@@ -42,8 +42,8 @@ bool Monsters::load() {
 
 		mon._count = getNextValue(line);
 		mon._field10 = getNextValue(line);
-		mon._field11 = getNextValue(line);
-		mon._field12 = getNextValue(line);
+		mon._defaultHP = getNextValue(line);
+		mon._defaultAC = getNextValue(line);
 		mon._maxDamage = getNextValue(line);
 		mon._numberOfAttacks = getNextValue(line);
 		mon._speed = getNextValue(line);

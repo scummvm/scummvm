@@ -63,8 +63,8 @@ struct Monster {
 	Common::String _name; // char _name[15];
 	byte _count;
 	byte _field10;
-	byte _field11;
-	byte _field12;
+	byte _defaultHP;
+	byte _defaultAC;
 	byte _maxDamage;
 	byte _numberOfAttacks;
 	byte _speed;
@@ -77,6 +77,12 @@ struct Monster {
 	byte _field1d;
 	byte _field1e;
 	byte _field1f;
+
+	// Runtime combat fields
+	byte _combat1 = 0;
+	byte _status = 0;
+	byte _hp = 0;
+	byte _ac = 0;
 
 	Common::String getDisplayName() const {
 		return Common::String::format("|%s|", _name.c_str());

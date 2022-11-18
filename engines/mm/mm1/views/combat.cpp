@@ -121,7 +121,6 @@ void Combat::draw() {
 		writeCharAttackDamage();
 		delaySeconds(3);
 		return;
-
 	default:
 		break;
 	}
@@ -142,7 +141,7 @@ void Combat::draw() {
 	case DEFEATED_MONSTERS:
 		writeDefeat();
 		Sound::sound2(SOUND_3);
-		delaySeconds(3);
+		delaySeconds(5);
 		break;
 
 	default:
@@ -475,7 +474,7 @@ void Combat::writeMonsters() {
 
 void Combat::writeMonsterStatus(int monsterNum) {
 	monsterSetPtr(monsterNum);
-	byte statusBits = _monsterStatus[monsterNum];
+	byte statusBits = _monsterList[monsterNum]._status;
 
 	if (statusBits) {
 		writeDots();
@@ -491,7 +490,7 @@ void Combat::writeMonsterStatus(int monsterNum) {
 
 		writeString(STRING[Common::String::format("dialogs.combat.status.%d",
 			status)]);
-	} else if (_monsterHP[monsterNum] != _monsterP->_field11) {
+	} else if (_monsterList[monsterNum]._hp != _monsterP->_defaultHP) {
 		writeDots();
 		writeString(STRING["dialogs.combat.status.wounded"]);
 	} else {
@@ -528,7 +527,7 @@ void Combat::writeDefeat() {
 	writeString(10, 0, "+----------------------------+");
 
 	writeString(10, 2, STRING["dialogs.combat.defeating1"]);
-	writeString(10, 4, STRING["dialogs.combat.defeating1"]);
+	writeString(10, 4, STRING["dialogs.combat.defeating2"]);
 	writeNumber(14, 6, _totalExperience);
 	_textPos.x++;
 	writeString(STRING["dialogs.combat.xp"]);

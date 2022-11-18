@@ -98,6 +98,9 @@ private:
 	 */
 	void clearPartyArea();
 
+	/**
+	 * Writes the result of defeating all the monsters
+	 */
 	void writeDefeat();
 
 	/**

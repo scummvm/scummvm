@@ -57,7 +57,6 @@ public:
 	int _highestLevel = 0;
 	EncounterType _encounterType = NORMAL_SURPRISED;
 	byte _fleeThreshold = 0;
-	byte _arr1[MAX_COMBAT_MONSTERS];
 	bool _flag = false;
 	int _levelIndex = 0;
 
