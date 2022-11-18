@@ -80,6 +80,7 @@ struct Monster {
 
 	// Runtime combat fields
 	byte _combat1 = 0;
+	bool _checked = false;
 	byte _status = 0;
 	byte _hp = 0;
 	byte _ac = 0;
