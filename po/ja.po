@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-18 16:03+0000\n"
+"POT-Creation-Date: 2022-11-18 16:12+0000\n"
 "PO-Revision-Date: 2022-11-18 09:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -6875,11 +6875,21 @@ msgstr ""
 "Scumm VMがゲームに対し、他のバージョンに基づいた小さな拡張を行う事を許可しま"
 "す。"
 
-#: engines/scumm/dialogs.cpp:942
+#: engines/scumm/dialogs.cpp:925 engines/scumm/metaengine.cpp:665
+msgid "Enable the original GUI and Menu"
+msgstr "オリジナルGUIとメニューを有効化"
+
+#: engines/scumm/dialogs.cpp:925 engines/scumm/metaengine.cpp:666
+msgid ""
+"Allow the game to use the in-engine graphical interface and the original "
+"save/load menu."
+msgstr "エンジン内のGUIとオリジナルのセーブ/ロードメニューを使用可能にします。"
+
+#: engines/scumm/dialogs.cpp:946
 msgid "Overture Timing:"
 msgstr "Overtureのタイミング："
 
-#: engines/scumm/dialogs.cpp:946
+#: engines/scumm/dialogs.cpp:950
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
@@ -6887,11 +6897,11 @@ msgstr ""
 "BGMを置き換える際、OvertureがLucasfilmとLoomのロゴに切り替わるタイミングを調"
 "整します。"
 
-#: engines/scumm/dialogs.cpp:1022
+#: engines/scumm/dialogs.cpp:1034
 msgid "Playback Adjust:"
 msgstr "再生アジャスト："
 
-#: engines/scumm/dialogs.cpp:1026
+#: engines/scumm/dialogs.cpp:1038
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
@@ -6899,11 +6909,11 @@ msgstr ""
 "CDオーディオトラックを再生する際、開始位置を調整します。サウンドに問題がある"
 "場合に使用して下さい。"
 
-#: engines/scumm/dialogs.cpp:1098
+#: engines/scumm/dialogs.cpp:1117
 msgid "Intro Adjust:"
 msgstr "イントロ調整："
 
-#: engines/scumm/dialogs.cpp:1102
+#: engines/scumm/dialogs.cpp:1121
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
@@ -6912,11 +6922,11 @@ msgstr ""
 "イントロトラックを、この位置から再生します。曲が途中で切れたり、同期が正しく"
 "ない場合に使用して下さい。"
 
-#: engines/scumm/dialogs.cpp:1111
+#: engines/scumm/dialogs.cpp:1130
 msgid "Outlook Adjust:"
 msgstr "アウトルック調整："
 
-#: engines/scumm/dialogs.cpp:1115
+#: engines/scumm/dialogs.cpp:1134
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
@@ -7547,16 +7557,6 @@ msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
 msgstr "可能なら、BGM・SE・スピーチクリップを改造ファイルに置き換えて下さい。"
-
-#: engines/scumm/metaengine.cpp:665
-msgid "Enable the original GUI and Menu"
-msgstr "オリジナルGUIとメニューを有効化"
-
-#: engines/scumm/metaengine.cpp:666
-msgid ""
-"Allow the game to use the in-engine graphical interface and the original "
-"save/load menu."
-msgstr "エンジン内のGUIとオリジナルのセーブ/ロードメニューを使用可能にします。"
 
 #: engines/scumm/scumm.cpp:261
 msgid ""

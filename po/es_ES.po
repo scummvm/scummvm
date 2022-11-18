@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-18 16:03+0000\n"
+"POT-Creation-Date: 2022-11-18 16:12+0000\n"
 "PO-Revision-Date: 2022-11-17 10:38+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -7059,11 +7059,23 @@ msgstr ""
 "Permite que ScummVM haga leves ajustes al juego que, por lo general, están "
 "basados en otras versiones del mismo."
 
-#: engines/scumm/dialogs.cpp:942
+#: engines/scumm/dialogs.cpp:925 engines/scumm/metaengine.cpp:665
+msgid "Enable the original GUI and Menu"
+msgstr "Activar menú e interfaz originales"
+
+#: engines/scumm/dialogs.cpp:925 engines/scumm/metaengine.cpp:666
+msgid ""
+"Allow the game to use the in-engine graphical interface and the original "
+"save/load menu."
+msgstr ""
+"Permite al juego utilizar la interfaz gráfica interna y los menús originales "
+"para guardar y cargar."
+
+#: engines/scumm/dialogs.cpp:946
 msgid "Overture Timing:"
 msgstr "Cadencia de la obertura:"
 
-#: engines/scumm/dialogs.cpp:946
+#: engines/scumm/dialogs.cpp:950
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
@@ -7072,11 +7084,11 @@ msgstr ""
 "tarda en cambiar la obertura a la escena con los logotipos de Lucasfilm y "
 "Loom."
 
-#: engines/scumm/dialogs.cpp:1022
+#: engines/scumm/dialogs.cpp:1034
 msgid "Playback Adjust:"
 msgstr "Ajuste de reproducción:"
 
-#: engines/scumm/dialogs.cpp:1026
+#: engines/scumm/dialogs.cpp:1038
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
@@ -7085,11 +7097,11 @@ msgstr ""
 "de inicio de cada sonido según esta cantidad. Utiliza esta opción si oyes "
 "fragmentos de otro sonido que no corresponda."
 
-#: engines/scumm/dialogs.cpp:1098
+#: engines/scumm/dialogs.cpp:1117
 msgid "Intro Adjust:"
 msgstr "Ajuste de la introducción:"
 
-#: engines/scumm/dialogs.cpp:1102
+#: engines/scumm/dialogs.cpp:1121
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
@@ -7099,11 +7111,11 @@ msgstr ""
 "punto. Utiliza esta opción en caso de que la música se corte antes de tiempo "
 "o si no te gusta cómo está sincronizada con la introducción."
 
-#: engines/scumm/dialogs.cpp:1111
+#: engines/scumm/dialogs.cpp:1130
 msgid "Outlook Adjust:"
 msgstr "Ajuste del mirador:"
 
-#: engines/scumm/dialogs.cpp:1115
+#: engines/scumm/dialogs.cpp:1134
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
@@ -7740,18 +7752,6 @@ msgid ""
 msgstr ""
 "Sustituye músicas, efectos de sonido y clips de diálogos con archivos "
 "modificados de audio en caso de que estén disponibles."
-
-#: engines/scumm/metaengine.cpp:665
-msgid "Enable the original GUI and Menu"
-msgstr "Activar menú e interfaz originales"
-
-#: engines/scumm/metaengine.cpp:666
-msgid ""
-"Allow the game to use the in-engine graphical interface and the original "
-"save/load menu."
-msgstr ""
-"Permite al juego utilizar la interfaz gráfica interna y los menús originales "
-"para guardar y cargar."
 
 #: engines/scumm/scumm.cpp:261
 msgid ""
