@@ -448,6 +448,9 @@ struct Character : public PrimaryAttributes {
 
 	// Non persistent fields
 	byte _numDrinks = 0;
+	// Combat fields
+	byte _combat3 = 0;
+	bool _canAttack = false;
 
 	Character();
 
