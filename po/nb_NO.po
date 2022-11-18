@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-18 00:23+0000\n"
+"POT-Creation-Date: 2022-11-18 16:03+0000\n"
 "PO-Revision-Date: 2022-11-16 11:28+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -7404,8 +7404,8 @@ msgstr "Shift"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/help.cpp:240
-msgid "Fight cheat"
-msgstr "Kampjuks"
+msgid "Win the bike fight cheat"
+msgstr ""
 
 #: engines/scumm/help.cpp:245
 msgid "Regular cursor"
@@ -9253,6 +9253,9 @@ msgstr ""
 "Liberation Fonts-pakken eller GNU FreeFont-pakken. Du trenger alle fontene "
 "fra fontpakken du velger å bruke, dvs. enten LiberationMono, LiberationSans "
 "og LiberationSerif eller FreeMono, FreeSans og FreeSerif."
+
+#~ msgid "Fight cheat"
+#~ msgstr "Kampjuks"
 
 #~ msgid "Override global shader settings"
 #~ msgstr "Overstyr globale shader-instillinger"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-18 00:23+0000\n"
+"POT-Creation-Date: 2022-11-18 16:03+0000\n"
 "PO-Revision-Date: 2022-11-17 21:28+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -7493,8 +7493,8 @@ msgstr "Shift"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/help.cpp:240
-msgid "Fight cheat"
-msgstr "Passer les combats"
+msgid "Win the bike fight cheat"
+msgstr ""
 
 #: engines/scumm/help.cpp:245
 msgid "Regular cursor"
@@ -9373,6 +9373,9 @@ msgstr ""
 "les polices du paquet de polices que vous avez choisi, c'est-à-dire "
 "LiberationMono, LiberationSans et LiberationSerif, ou respectivement "
 "FreeMono, FreeSans et FreeSerif."
+
+#~ msgid "Fight cheat"
+#~ msgstr "Passer les combats"
 
 #~ msgid "Override global shader settings"
 #~ msgstr "Utiliser des shaders spécifiques à ce jeu"

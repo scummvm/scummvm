@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-18 00:23+0000\n"
+"POT-Creation-Date: 2022-11-18 16:03+0000\n"
 "PO-Revision-Date: 2022-11-18 09:34+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -7361,8 +7361,8 @@ msgstr "Shift"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/help.cpp:240
-msgid "Fight cheat"
-msgstr "Harc csalással"
+msgid "Win the bike fight cheat"
+msgstr ""
 
 #: engines/scumm/help.cpp:245
 msgid "Regular cursor"
@@ -9190,6 +9190,9 @@ msgstr ""
 "FreeFont csomagot. Szükséged lesz az összes betűtípusra a választott "
 "betűkészletből, azaz, LiberationMono, LiberationSans és LiberationSerif, "
 "vagy FreeMono, FreeSans és FreeSerif választhatóan."
+
+#~ msgid "Fight cheat"
+#~ msgstr "Harc csalással"
 
 #~ msgid "Override global shader settings"
 #~ msgstr "Globális árnyékolóbeállítások felülbírálása"

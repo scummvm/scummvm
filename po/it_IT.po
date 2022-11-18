@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-18 00:23+0000\n"
+"POT-Creation-Date: 2022-11-18 16:03+0000\n"
 "PO-Revision-Date: 2022-11-17 14:20+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -7464,8 +7464,8 @@ msgstr "Tasto Maiusc"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/help.cpp:240
-msgid "Fight cheat"
-msgstr "Cheat combattimenti"
+msgid "Win the bike fight cheat"
+msgstr ""
 
 #: engines/scumm/help.cpp:245
 msgid "Regular cursor"
@@ -9332,6 +9332,9 @@ msgstr ""
 "GNU. Ti serviranno tutti i font presenti nel pacchetto di tua preferenza, "
 "precisamente: LiberationMono, LiberationSans e LiberationSerif; oppure "
 "FreeMono, FreeSans e FreeSerif."
+
+#~ msgid "Fight cheat"
+#~ msgstr "Cheat combattimenti"
 
 #~ msgid "Override global shader settings"
 #~ msgstr "Ignora impostazioni shader globali"
