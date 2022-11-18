@@ -275,7 +275,7 @@ private:
 	bool monsterLevelThreshold() const;
 	void iterateMonsters1Inner();
 	void iterateMonsters2Inner();
-	void updateArr3();
+	void characterDone();
 	void summonLightning2();
 	void fireball2();
 	void levelAdjust();

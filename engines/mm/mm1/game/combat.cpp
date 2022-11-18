@@ -42,7 +42,7 @@ void Combat::clear() {
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
-		c._combat3 = 0;
+		c._checked = false;
 		c._canAttack = false;
 	}
 
@@ -445,10 +445,10 @@ void Combat::nextRound3() {
 
 void Combat::clearArrays() {
 	for (uint i = 0; i < _party.size(); ++i)
-		_party[i]->_combat3 = 0;
+		_party[i]->_checked = false;
 
 	for (uint i = 0; i < _monsterList.size(); ++i)
-		_monsterList[i]._checked = 0;
+		_monsterList[i]._checked = false;
 }
 
 void Combat::updateHighestLevel() {
@@ -699,7 +699,7 @@ void Combat::checkParty() {
 	for (uint i = 0; i < _party.size(); ++i) {
 		const Character &c = *_party[i];
 		if ((c._condition & BAD_CONDITION) || !c._hpBase)
-			_party[i]->_combat3 = 1;
+			_party[i]->_checked = true;
 	}
 
 	loop1();
@@ -836,7 +836,7 @@ void Combat::attackMonster(int monsterNum) {
 		_message.push_back(Line(0, 1, STRING["dialogs.combat.weapon_no_effect"]));
 	}
 
-	_party[_currentChar]->_combat3 = 1;
+	_party[_currentChar]->_checked = true;
 	setMode(CHAR_ATTACKS);
 }
 
@@ -1038,15 +1038,15 @@ void Combat::iterateMonsters2Inner() {
 		};
 	} else {
 		msg._ynCallback = []() {
-			g_globals->_combat->updateArr3();
+			g_globals->_combat->characterDone();
 		};
 	}
 
 	displaySpellResult(msg);
 }
 
-void Combat::updateArr3() {
-	_party[_currentChar]->_combat3 = 1;
+void Combat::characterDone() {
+	_party[_currentChar]->_checked = true;
 	combatLoop();
 }
 
@@ -1058,7 +1058,7 @@ void Combat::resetDestMonster() {
 }
 
 void Combat::spellFailed() {
-	_party[_currentChar]->_combat3 = 1;
+	_party[_currentChar]->_checked = true;
 
 	SoundMessage msg(10, 2, Common::String::format("*** %s ***",
 		STRING["spells.failed"].c_str()));
@@ -1098,7 +1098,7 @@ void Combat::turnUndead() {
 			displaySpellResult(InfoMessage(15, 1, STRING["spells.no_effect"]));
 	}
 
-	_party[_currentChar]->_combat3 = 1;
+	_party[_currentChar]->_checked = true;
 }
 
 void Combat::destroyMonster() {
@@ -1210,7 +1210,7 @@ void Combat::holyWord() {
 		displaySpellResult(InfoMessage(5, 1, STRING["spells.monsters_destroyed"]));
 	else
 		displaySpellResult(InfoMessage(15, 1, STRING["spells.no_effect"]));
-	_party[_currentChar]->_combat3 = 1;
+	_party[_currentChar]->_checked = true;
 }
 
 #define COL2 21
@@ -1256,8 +1256,7 @@ void Combat::identifyMonster() {
 	msg._lines.push_back(Line(0, 3, line));
 
 	msg._timeoutCallback = []() {
-		g_globals->_combat->_party[g_globals->_combat->_currentChar]->_combat3 = 1;
-		g_globals->_combat->combatLoop();
+		g_globals->_combat->characterDone();
 	};
 
 	displaySpellResult(msg);
@@ -1384,8 +1383,7 @@ void Combat::fingerOfDeath() {
 	InfoMessage msg(0, 0, line1, 0, 2, line2);
 	msg._delaySeconds = 3;
 	msg._timeoutCallback = []() {
-		g_globals->_combat->_party[g_globals->_combat->_currentChar]->_combat3 = 1;
-		g_globals->_combat->combatLoop();
+		g_globals->_combat->characterDone();
 	};
 
 	displaySpellResult(msg);
@@ -1415,8 +1413,7 @@ void Combat::disintegration() {
 	InfoMessage msg(0, 0, line1, 0, 2, line2);
 	msg._delaySeconds = 3;
 	msg._timeoutCallback = []() {
-		g_globals->_combat->_party[g_globals->_combat->_currentChar]->_combat3 = 1;
-		g_globals->_combat->combatLoop();
+		g_globals->_combat->characterDone();
 	};
 
 	displaySpellResult(msg);
@@ -1528,8 +1525,7 @@ void Combat::retreat() {
 			// Increase threshold to gradually make it easier to flee
 			enc._fleeThreshold++;
 
-		_party[_currentChar]->_combat3 = true;
-		combatLoop();
+		g_globals->_combat->characterDone();
 	}
 }
 
