@@ -591,7 +591,6 @@ void LB::b_addProp(int nargs) {
 	TYPECHECK(list, PARRAY);
 
 	PCell cell = PCell(prop, value);
-	list.u.parr->arr.push_back(cell);
 
 	if (list.u.parr->_sorted) {
 		if (list.u.parr->arr.empty())
