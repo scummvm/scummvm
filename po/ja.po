@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-18 00:23+0000\n"
-"PO-Revision-Date: 2022-11-17 19:18+0000\n"
+"PO-Revision-Date: 2022-11-18 09:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4885,11 +4885,11 @@ msgstr "スピーカーエミュレーションの代わりに高品質なサウ
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Automatic drilling"
-msgstr ""
+msgstr "自動穿孔"
 
 #: engines/freescape/metaengine.cpp:43
 msgid "Allow to succefully drill in any part of the area in Driller"
-msgstr ""
+msgstr "Drillerで任意の場所に穴を開けられるようにします"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
