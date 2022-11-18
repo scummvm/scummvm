@@ -38,9 +38,7 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 	Math::Vector3d rotation = entrance->getRotation();
 	_position = entrance->getOrigin();
 	_pitch = rotation.x();
-	if (_lastPosition == Math::Vector3d(0, 0, 0))
-		_yaw = rotation.y() + 110; // TODO: check why Driller needs this when it starts
-	else if (ABS(diff.x()) > ABS(diff.z()))
+	if (ABS(diff.x()) > ABS(diff.z()))
 		_yaw = rotation.y() - 90;
 	else
 		_yaw = rotation.y() + 90;

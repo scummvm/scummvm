@@ -100,6 +100,13 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	}
 	_lastPosition = _position;
 
+	if (areaID == _startArea) {
+		_yaw = 280;
+	} else if (areaID == 127) {
+		_yaw = 90;
+		_pitch = 335;
+	}
+
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	playSound(5, false);
 	// Ignore sky/ground fields
@@ -738,7 +745,14 @@ void DrillerEngine::initGameState() {
 }
 
 bool DrillerEngine::checkIfGameEnded() {
+	bool endGame = false;
+
 	if (_gameStateVars[k8bitVariableShield] == 0) {
+		insertTemporaryMessage(_messagesList[15], _countdown - 2);
+		endGame = true;
+	}
+
+	if (endGame) {
 		_flyMode = true;
 		gotoArea(127, 0);
 		drawFrame();
