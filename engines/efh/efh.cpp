@@ -4880,7 +4880,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 							if (damagePointsAbsorbed <= 1)
 								snprintf(buffer, 80, "  %s%s's armor absorbs 1 point!", _characterNamePt1, _characterNamePt2.c_str());
 							else
-								snprintf(buffer, 80, "  %s%s',27h,'s armor absorbs %d points!", _characterNamePt1, _characterNamePt2.c_str(), damagePointsAbsorbed);
+								snprintf(buffer, 80, "  %s%s's armor absorbs %d points!", _characterNamePt1, _characterNamePt2.c_str(), damagePointsAbsorbed);
 
 							strncat((char *)_messageToBePrinted, buffer, 80);
 						}
