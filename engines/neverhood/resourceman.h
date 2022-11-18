@@ -70,7 +70,7 @@ class ResourceMan {
 public:
 	ResourceMan();
 	~ResourceMan();
-	void addArchive(const Common::String &filename);
+	void addArchive(const Common::String &filename, bool isOptional = false);
 	ResourceFileEntry *findEntrySimple(uint32 fileHash);
 	ResourceFileEntry *findEntry(uint32 fileHash, ResourceFileEntry **firstEntry = NULL);
 	Common::SeekableReadStream *createStream(uint32 fileHash);
