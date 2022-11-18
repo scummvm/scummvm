@@ -754,6 +754,9 @@ bool DrillerEngine::checkIfGameEnded() {
 
 	if (endGame) {
 		_flyMode = true;
+		Common::String clearedMessage = _areaMap[127]->_name;
+		int cleared = _gameStateVars[32];
+		_areaMap[127]->_name.replace(0, 3, Common::String::format("%4d", cleared));
 		gotoArea(127, 0);
 		drawFrame();
 		_gfx->flipBuffer();
