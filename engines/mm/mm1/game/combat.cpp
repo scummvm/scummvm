@@ -40,8 +40,12 @@ Combat::~Combat() {
 void Combat::clear() {
 	_monsterList.clear();
 
-	Common::fill(&_arr3[0], &_arr3[MAX_PARTY_SIZE / 2], 0);
-	Common::fill(&_canAttack[0], &_canAttack[6], false);
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		c._combat3 = 0;
+		c._canAttack = false;
+	}
+
 	Common::fill(&_treasureFlags[0], &_treasureFlags[MAX_PARTY_SIZE], false);
 
 	_allowFight = _allowShoot = _allowCast = _allowAttack = false;
@@ -115,15 +119,17 @@ void Combat::monsterSetPtr(int monsterNum) {
 void Combat::setupCanAttacks() {
 	const Encounter &enc = g_globals->_encounters;
 	const Maps::Map &map = *g_maps->_currentMap;
-	Common::fill(&_canAttack[0], &_canAttack[MAX_PARTY_SIZE], false);
+
+	for (uint i = 0; i < _party.size(); ++i)
+		_party[i]->_canAttack = false;
 
 	if ((int8)map[Maps::MAP_ID] < 0) {
 		if (enc._encounterType != FORCE_SURPRISED) {
 			for (uint i = 0; i < _party.size(); ++i) {
 				if (i < (MAX_PARTY_SIZE - 1)) {
-					_canAttack[i] = true;
+					_party[i]->_canAttack = true;
 				} else {
-					_canAttack[MAX_PARTY_SIZE - 1] =
+					_party[MAX_PARTY_SIZE - 1]->_canAttack =
 						getRandomNumber(100) <= 10;
 				}
 			}
@@ -133,20 +139,20 @@ void Combat::setupCanAttacks() {
 		}
 	} else {
 		if (enc._encounterType != FORCE_SURPRISED) {
-			_canAttack[0] = true;
+			_party[0]->_canAttack = true;
 			if (_party.size() > 1)
-				_canAttack[1] = true;
+				_party[1]->_canAttack = true;
 			if (_party.size() > 2)
 				checkLeftWall();
 			if (_party.size() > 3)
 				checkRightWall();
 			if (_party.size() > 4) {
-				if (_canAttack[2] && getRandomNumber(100) <= 5)
-					_canAttack[4] = true;
+				if (_party[2]->_canAttack && getRandomNumber(100) <= 5)
+					_party[4]->_canAttack = true;
 			}
 			if (_party.size() > 5) {
-				if (_canAttack[3] && getRandomNumber(100) <= 5)
-					_canAttack[5] = true;
+				if (_party[3]->_canAttack && getRandomNumber(100) <= 5)
+					_party[5]->_canAttack = true;
 			}
 
 			setupAttackerVal();
@@ -157,14 +163,16 @@ void Combat::setupCanAttacks() {
 	// Entire party is allowed to attack, I guess
 	// because the monsters are surrounding the party,
 	// placing them within reach
-	Common::fill(&_canAttack[0], &_canAttack[_party.size()], true);
+	for (uint i = 0; i < _party.size(); ++i)
+		_party[i]->_canAttack = true;
+
 	setupAttackerVal();
 }
 
 void Combat::setupAttackerVal() {
 	_attackerVal = 0;
 	for (uint i = 0; i < _party.size(); ++i) {
-		if (_canAttack[i])
+		if (_party[i]->_canAttack)
 			++_attackerVal;
 	}
 
@@ -174,14 +182,14 @@ void Combat::setupAttackerVal() {
 void Combat::checkLeftWall() {
 	Maps::Maps &maps = *g_maps;
 
-	_canAttack[2] = !(maps._currentWalls & maps._leftMask) ||
+	_party[2]->_canAttack = !(maps._currentWalls & maps._leftMask) ||
 		getRandomNumber(100) <= 25;
 }
 
 void Combat::checkRightWall() {
 	Maps::Maps &maps = *g_maps;
 
-	_canAttack[3] = !(maps._currentWalls & maps._rightMask) ||
+	_party[3]->_canAttack = !(maps._currentWalls & maps._rightMask) ||
 		getRandomNumber(100) <= 25;
 }
 
@@ -436,7 +444,8 @@ void Combat::nextRound3() {
 }
 
 void Combat::clearArrays() {
-	Common::fill(&_arr3[0], &_arr3[MAX_PARTY_SIZE], 0);
+	for (uint i = 0; i < _party.size(); ++i)
+		_party[i]->_combat3 = 0;
 
 	for (uint i = 0; i < _monsterList.size(); ++i)
 		_monsterList[i]._checked = 0;
@@ -690,7 +699,7 @@ void Combat::checkParty() {
 	for (uint i = 0; i < _party.size(); ++i) {
 		const Character &c = *_party[i];
 		if ((c._condition & BAD_CONDITION) || !c._hpBase)
-			_arr3[i] = 1;
+			_party[i]->_combat3 = 1;
 	}
 
 	loop1();
@@ -827,7 +836,7 @@ void Combat::attackMonster(int monsterNum) {
 		_message.push_back(Line(0, 1, STRING["dialogs.combat.weapon_no_effect"]));
 	}
 
-	_arr3[_currentChar] = 1;
+	_party[_currentChar]->_combat3 = 1;
 	setMode(CHAR_ATTACKS);
 }
 
@@ -1037,7 +1046,7 @@ void Combat::iterateMonsters2Inner() {
 }
 
 void Combat::updateArr3() {
-	_arr3[_currentChar] = 1;
+	_party[_currentChar]->_combat3 = 1;
 	combatLoop();
 }
 
@@ -1049,7 +1058,7 @@ void Combat::resetDestMonster() {
 }
 
 void Combat::spellFailed() {
-	_arr3[_currentChar] = 1;
+	_party[_currentChar]->_combat3 = 1;
 
 	SoundMessage msg(10, 2, Common::String::format("*** %s ***",
 		STRING["spells.failed"].c_str()));
@@ -1089,7 +1098,7 @@ void Combat::turnUndead() {
 			displaySpellResult(InfoMessage(15, 1, STRING["spells.no_effect"]));
 	}
 
-	_arr3[_currentChar] = 1;
+	_party[_currentChar]->_combat3 = 1;
 }
 
 void Combat::destroyMonster() {
@@ -1201,7 +1210,7 @@ void Combat::holyWord() {
 		displaySpellResult(InfoMessage(5, 1, STRING["spells.monsters_destroyed"]));
 	else
 		displaySpellResult(InfoMessage(15, 1, STRING["spells.no_effect"]));
-	_arr3[_currentChar] = 1;
+	_party[_currentChar]->_combat3 = 1;
 }
 
 #define COL2 21
@@ -1247,7 +1256,7 @@ void Combat::identifyMonster() {
 	msg._lines.push_back(Line(0, 3, line));
 
 	msg._timeoutCallback = []() {
-		g_globals->_combat->_arr3[g_globals->_combat->_currentChar] = 1;
+		g_globals->_combat->_party[g_globals->_combat->_currentChar]->_combat3 = 1;
 		g_globals->_combat->combatLoop();
 	};
 
@@ -1290,8 +1299,8 @@ void Combat::lightningBolt() {
 }
 
 void Combat::makeRoom() {
-	for (int i = 0; i < 5; ++i)
-		_canAttack[i] = 1;
+	for (uint i = 0; i < MIN(_party.size(), 5U); ++i)
+		_party[i]->_canAttack = true;
 }
 
 void Combat::slow() {
@@ -1375,7 +1384,7 @@ void Combat::fingerOfDeath() {
 	InfoMessage msg(0, 0, line1, 0, 2, line2);
 	msg._delaySeconds = 3;
 	msg._timeoutCallback = []() {
-		g_globals->_combat->_arr3[g_globals->_combat->_currentChar] = 1;
+		g_globals->_combat->_party[g_globals->_combat->_currentChar]->_combat3 = 1;
 		g_globals->_combat->combatLoop();
 	};
 
@@ -1406,7 +1415,7 @@ void Combat::disintegration() {
 	InfoMessage msg(0, 0, line1, 0, 2, line2);
 	msg._delaySeconds = 3;
 	msg._timeoutCallback = []() {
-		g_globals->_combat->_arr3[g_globals->_combat->_currentChar] = 1;
+		g_globals->_combat->_party[g_globals->_combat->_currentChar]->_combat3 = 1;
 		g_globals->_combat->combatLoop();
 	};
 
@@ -1471,7 +1480,7 @@ void Combat::selectMonsterTarget() {
 
 		// Find a party position that can attack
 		int wrapCount = 0;
-		while (!_canAttack[idx]) {
+		while (!_party[idx]->_canAttack) {
 			if (++idx >= g_globals->_party.size()) {
 				idx = 0;
 				if (++wrapCount > 1)
@@ -1494,8 +1503,8 @@ void Combat::selectMonsterTarget() {
 	// At this point, fall back on a generic display message
 	// that the monster infiltrates the ranks, which basically
 	// means enabling the whole party to be able to attack directly
-	for (int i = 0; i < 6; ++i)
-		_canAttack[i] = true;
+	for (uint i = 0; i < _party.size(); ++i)
+		_party[i]->_canAttack = true;
 	_attackerVal = g_globals->_party.size() * 2;
 
 	setMode(INFILTRATION);

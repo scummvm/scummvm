@@ -339,7 +339,7 @@ void Combat::writeAllOptions() {
 		break;
 	}
 
-	bool canAttack = _canAttack[_currentChar];
+	bool canAttack = _party[_currentChar]->_canAttack;
 	if (canAttack) {
 		writeAttackOptions();
 		_allowAttack = true;
@@ -446,7 +446,7 @@ void Combat::writeRound() {
 void Combat::writePartyNumbers() {
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		writeChar(2 + 4 * (i % 2), 3 + (i / 2),
-			_canAttack[i] ? '+' : ' ');
+			_party[i]->_canAttack ? '+' : ' ');
 		writeChar('1' + i);
 	}
 }
