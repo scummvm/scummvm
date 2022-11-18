@@ -105,6 +105,9 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	} else if (areaID == 127) {
 		_yaw = 90;
 		_pitch = 335;
+		_flyMode = true; // Avoid falling
+		// Show the number of completed areas
+		_areaMap[127]->_name.replace(0, 3, Common::String::format("%4d", _gameStateVars[32]));
 	}
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
@@ -336,6 +339,22 @@ void DrillerEngine::loadAssetsFullGame() {
 		loadFonts(&file, 0x99dd);
 		loadGlobalObjects(&file, 0x3b42);
 		load8bitBinary(&file, 0x9b40, 16);
+
+		FCLInstructionVector instructions;
+		Common::Array<uint8> conditionArray;
+
+		conditionArray.push_back(0xb);
+		conditionArray.push_back(0x20);
+		conditionArray.push_back(0x12);
+		conditionArray.push_back(0x12);
+		conditionArray.push_back(0x7f);
+		conditionArray.push_back(0x0);
+
+		Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions);
+		debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
+		_areaMap[18]->_conditions.push_back(instructions);
+		_areaMap[18]->_conditionSources.push_back(conditionSource);
+
 	} else if (_renderMode == Common::kRenderCGA) {
 		loadBundledImages();
 		_title = _border;
@@ -745,19 +764,12 @@ void DrillerEngine::initGameState() {
 }
 
 bool DrillerEngine::checkIfGameEnded() {
-	bool endGame = false;
-
 	if (_gameStateVars[k8bitVariableShield] == 0) {
 		insertTemporaryMessage(_messagesList[15], _countdown - 2);
-		endGame = true;
+		gotoArea(127, 0);
 	}
 
-	if (endGame) {
-		_flyMode = true;
-		Common::String clearedMessage = _areaMap[127]->_name;
-		int cleared = _gameStateVars[32];
-		_areaMap[127]->_name.replace(0, 3, Common::String::format("%4d", cleared));
-		gotoArea(127, 0);
+	if (_currentArea->getAreaID() == 127) {
 		drawFrame();
 		_gfx->flipBuffer();
 		g_system->updateScreen();
