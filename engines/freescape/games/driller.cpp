@@ -340,6 +340,14 @@ void DrillerEngine::loadAssetsFullGame() {
 		loadGlobalObjects(&file, 0x3b42);
 		load8bitBinary(&file, 0x9b40, 16);
 
+		/*
+		We are going to inject a small script in the
+		last area to force the game to end:
+		IF COLLIDED? THEN
+		IF VAR!=? (v32, 18) THEN END ENDIF
+		GOTO (127, 0)
+		*/
+
 		FCLInstructionVector instructions;
 		Common::Array<uint8> conditionArray;
 
