@@ -34,6 +34,7 @@ class MiniMapGump : public Gump {
 private:
 	Graphics::ManagedSurface _minimap;
 	unsigned int        _lastMapNum;
+	int32 _ax, _ay;
 
 	uint32 sampleAtPoint(CurrentMap *map, int x, int y);
 	uint32 sampleAtPoint(const Item *item, int x, int y);

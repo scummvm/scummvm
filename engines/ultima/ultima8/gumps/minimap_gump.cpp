@@ -38,12 +38,12 @@ static const int MINMAPGUMP_SCALE = 8;
 
 MiniMapGump::MiniMapGump(int x, int y) :
 	Gump(x, y, MAP_NUM_CHUNKS * 2 + 2, MAP_NUM_CHUNKS * 2 + 2, 0,
-	     FLAG_DRAGGABLE, LAYER_NORMAL), _minimap(), _lastMapNum(0) {
+	     FLAG_DRAGGABLE, LAYER_NORMAL), _minimap(), _lastMapNum(0), _ax(0), _ay(0) {
 	_minimap.create((MAP_NUM_CHUNKS * MINMAPGUMP_SCALE), (MAP_NUM_CHUNKS * MINMAPGUMP_SCALE),
 		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 }
 
-MiniMapGump::MiniMapGump() : Gump() , _lastMapNum(0){
+MiniMapGump::MiniMapGump() : Gump(), _minimap(), _lastMapNum(0), _ax(0), _ay(0) {
 	_minimap.create((MAP_NUM_CHUNKS * MINMAPGUMP_SCALE), (MAP_NUM_CHUNKS * MINMAPGUMP_SCALE),
 		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 }
@@ -61,6 +61,15 @@ void MiniMapGump::run() {
 	if (currentmap->getNum() != _lastMapNum) {
 		_lastMapNum = currentmap->getNum();
 		_minimap.clear();
+	}
+
+	MainActor *av = getMainActor();
+	if (av && !av->isDead()) {
+		int32 ax, ay, az;
+		av->getLocation(ax, ay, az);
+
+		_ax = ax / (mapChunkSize / MINMAPGUMP_SCALE);
+		_ay = ay / (mapChunkSize / MINMAPGUMP_SCALE);
 	}
 
 	// Draw into the map surface
@@ -87,10 +96,6 @@ void MiniMapGump::run() {
 }
 
 void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
-	World *world = World::get_instance();
-	CurrentMap *currentmap = world->getCurrentMap();
-	int mapChunkSize = currentmap->getChunkSize();
-
 	// Draw the yellow border
 	surf->Fill32(0xFFFFAF00, 0, 0, _dims.width(), 1);
 	surf->Fill32(0xFFFFAF00, 0, 1, 1, _dims.height());
@@ -105,15 +110,8 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	surf->Fill32(0xFF000000, dims.left, dims.top, dims.width(), dims.height());
 
 	// Center on avatar
-	MainActor *av = getMainActor();
-	int32 ax, ay, az;
-	av->getLocation(ax, ay, az);
-
-	ax = ax / (mapChunkSize / MINMAPGUMP_SCALE);
-	ay = ay / (mapChunkSize / MINMAPGUMP_SCALE);
-
-	int sx = ax - dims.width() / 2;
-	int sy = ay - dims.height() / 2;
+	int sx = _ax - dims.width() / 2;
+	int sy = _ay - dims.height() / 2;
 	int dx = 1;
 	int dy = 1;
 
@@ -139,8 +137,8 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		surf->Blit(_minimap, r, dx, dy);
 	}
 
-	ax = ax - sx;
-	ay = ay - sy;
+	int32 ax = _ax - sx;
+	int32 ay = _ay - sy;
 
 	// Paint the avatar position marker
 	surf->Fill32(0xFFFFFF00, 1 + ax - 2, 1 + ay + 0, 2, 1);
