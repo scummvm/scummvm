@@ -119,7 +119,8 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		swapPalette(areaID);
 
 	if (areaID != _startArea || entranceID != _startEntrance) {
-		_lastMousePos = g_system->getEventManager()->getMousePos();
+		g_system->warpMouse(_crossairPosition.x, _crossairPosition.y);
+		_lastMousePos = _crossairPosition;
 		rotate(0, 0);
 	}
 }
