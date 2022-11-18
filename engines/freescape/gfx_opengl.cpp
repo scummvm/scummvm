@@ -45,6 +45,7 @@ OpenGLRenderer::OpenGLRenderer(int screenW, int screenH, Common::RenderMode rend
 
 OpenGLRenderer::~OpenGLRenderer() {
 	free(_verts);
+	free(_coords);
 }
 
 Texture *OpenGLRenderer::createTexture(const Graphics::Surface *surface) {
