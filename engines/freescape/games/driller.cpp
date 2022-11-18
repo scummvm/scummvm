@@ -324,8 +324,8 @@ void DrillerEngine::loadAssetsFullGame() {
 		}
 		_title = loadAndConvertNeoImage(&file, 0x10, palette);
 
-		//loadMessagesFixedSize(&file, 0xc66e, 14, 20);
-		//loadGlobalObjects(&file, 0xbd62);
+		loadMessagesFixedSize(&file, 0xc5d8, 14, 20);
+		loadGlobalObjects(&file, 0xbccc);
 		load8bitBinary(&file, 0x29b3c, 16);
 		loadPalettes(&file, 0x296fa);
 		loadSoundsFx(&file, 0x30da6, 25);
