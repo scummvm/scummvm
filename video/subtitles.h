@@ -85,8 +85,10 @@ private:
 
 	Graphics::Surface *_surface;
 
-	Common::Rect _bbox;
 	Common::Rect _drawRect;
+	Common::Rect _requestedBBox;
+	Common::Rect _realBBox;
+	int16 _lastOverlayWidth, _lastOverlayHeight;
 
 	Common::String _fname;
 	Common::String _subtitle;
