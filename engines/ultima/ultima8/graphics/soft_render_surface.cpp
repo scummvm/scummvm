@@ -325,16 +325,16 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(const Graphics::M
 					} else if (alpha) {
 						uintX *dest = reinterpret_cast<uintX *>(pixel);
 
-						uint32 src = *texel;
+						uint32 Tsrc = *texel;
 						uint32 dr, dg, db;
 						UNPACK_RGB8(*dest, dr, dg, db);
 
-						dr *= 256 - TEX32_A(src);
-						dg *= 256 - TEX32_A(src);
-						db *= 256 - TEX32_A(src);
-						dr += TEX32_R(src) * ia + ((r * TEX32_A(src)) >> 8);
-						dg += TEX32_G(src) * ia + ((g * TEX32_A(src)) >> 8);
-						db += TEX32_B(src) * ia + ((b * TEX32_A(src)) >> 8);
+						dr *= 256 - TEX32_A(Tsrc);
+						dg *= 256 - TEX32_A(Tsrc);
+						db *= 256 - TEX32_A(Tsrc);
+						dr += TEX32_R(Tsrc) * ia + ((r * TEX32_A(Tsrc)) >> 8);
+						dg += TEX32_G(Tsrc) * ia + ((g * TEX32_A(Tsrc)) >> 8);
+						db += TEX32_B(Tsrc) * ia + ((b * TEX32_A(Tsrc)) >> 8);
 
 						*dest = PACK_RGB16(dr, dg, db);
 					}
@@ -460,16 +460,16 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(const Graphics::
 							    )
 							);
 						} else if (alpha) {
-							uint32 src = *texel;
+							uint32 Tsrc = *texel;
 							uint32 dr, dg, db;
 							UNPACK_RGB8(*dest, dr, dg, db);
 
-							dr *= 256 - TEX32_A(src);
-							dg *= 256 - TEX32_A(src);
-							db *= 256 - TEX32_A(src);
-							dr += TEX32_R(src) * ia + ((r * TEX32_A(src)) >> 8);
-							dg += TEX32_G(src) * ia + ((g * TEX32_A(src)) >> 8);
-							db += TEX32_B(src) * ia + ((b * TEX32_A(src)) >> 8);
+							dr *= 256 - TEX32_A(Tsrc);
+							dg *= 256 - TEX32_A(Tsrc);
+							db *= 256 - TEX32_A(Tsrc);
+							dr += TEX32_R(Tsrc) * ia + ((r * TEX32_A(Tsrc)) >> 8);
+							dg += TEX32_G(Tsrc) * ia + ((g * TEX32_A(Tsrc)) >> 8);
+							db += TEX32_B(Tsrc) * ia + ((b * TEX32_A(Tsrc)) >> 8);
 
 							*dest = PACK_RGB16(dr, dg, db);
 						}
