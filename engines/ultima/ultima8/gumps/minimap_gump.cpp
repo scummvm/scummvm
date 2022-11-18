@@ -105,8 +105,6 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	surf->Fill32(0xFF000000, dims.left, dims.top, dims.width(), dims.height());
 
 	// Center on avatar
-	int sx = 0, sy = 0, ox = 0, oy = 0, lx = 0, ly = 0;
-
 	MainActor *av = getMainActor();
 	int32 ax, ay, az;
 	av->getLocation(ax, ay, az);
@@ -114,25 +112,35 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	ax = ax / (mapChunkSize / MINMAPGUMP_SCALE);
 	ay = ay / (mapChunkSize / MINMAPGUMP_SCALE);
 
-	sx = ax - (mapChunkSize / (4 * 2));
-	sy = ay - (mapChunkSize / (4 * 2));
+	int sx = ax - dims.width() / 2;
+	int sy = ay - dims.height() / 2;
+	int dx = 1;
+	int dy = 1;
+
+	Common::Rect r(sx, sy, sx + dims.width(), sy + dims.height());
+
+	if (r.left < 0) {
+		dx -= r.left;
+		r.left = 0;
+	}
+	if (r.right > _minimap.w) {
+		r.right = _minimap.w;
+	}
+
+	if (r.top < 0) {
+		dy -= r.top;
+		r.top = 0;
+	}
+	if (r.bottom > _minimap.h) {
+		r.bottom = _minimap.h;
+	}
+
+	if (r.isValidRect()) {
+		surf->Blit(_minimap, r, dx, dy);
+	}
+
 	ax = ax - sx;
 	ay = ay - sy;
-
-	if (sx < 0) {
-		ox = -sx;
-	} else if ((sx + dims.width()) > _minimap.w) {
-		lx = (sx + dims.width()) - _minimap.w;
-	}
-
-	if (sy < 0) {
-		oy = -sy;
-	} else if ((sy + dims.height()) > _minimap.h) {
-		ly = (sy + dims.height()) - _minimap.h;
-	}
-
-	Common::Rect srcRect(sx + ox, sy + oy, sx - lx + dims.width(), sy - ly + dims.height());
-	surf->Blit(_minimap, srcRect, 1 + ox, 1 + oy);
 
 	// Paint the avatar position marker
 	surf->Fill32(0xFFFFFF00, 1 + ax - 2, 1 + ay + 0, 2, 1);
