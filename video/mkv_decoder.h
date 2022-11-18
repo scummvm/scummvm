@@ -176,6 +176,8 @@ private:
 
 	int videoTrack = -1;
 	int audioTrack = -1;
+
+	Graphics::Surface _displaySurface;
 };
 
 } // End of namespace Video

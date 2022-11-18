@@ -355,6 +355,9 @@ void MKVDecoder::readNextPacket() {
 				if (img->fmt != VPX_IMG_FMT_I420)
 					error("Movie error. The movie is not in I420 colour format, which is the only one I can hanlde at the moment.");
 
+
+				YUVToRGBMan.convert420(&_displaySurface, Graphics::YUVToRGBManager::kScaleITU, img->planes[0], img->planes[1], img->planes[2], img->d_w, img->d_h, img->stride[0], img->stride[1]);
+
 				unsigned int y;
 #if 0
 				GLubyte *ytex = NULL;
@@ -437,6 +440,7 @@ MKVDecoder::VPXVideoTrack::~VPXVideoTrack() {
 }
 
 bool MKVDecoder::VPXVideoTrack::decodePacket(ogg_packet &_oggPacket) {
+	warning("VPXVideoTrack::decodePacket()");
 	if (th_decode_packetin(_theoraDecode, &_oggPacket, 0) == 0) {
 		_curFrame++;
 
@@ -588,6 +592,8 @@ static double rint(double v) {
 #endif
 
 bool MKVDecoder::VorbisAudioTrack::decodeSamples(ogg_packet &oggPacket) {
+	return true;
+
 	if(!vorbis_synthesis(&vorbisBlock, &oggPacket) ) {
 		if (vorbis_synthesis_blockin(&vorbisDspState, &vorbisBlock))
 			warning("Vorbis Synthesis block in error");
