@@ -38,8 +38,9 @@ Combat::~Combat() {
 }
 
 void Combat::clear() {
+	_monsterList.clear();
+
 	Common::fill(&_arr3[0], &_arr3[MAX_PARTY_SIZE / 2], 0);
-	Common::fill(&_arr4[0], &_arr4[MAX_COMBAT_MONSTERS], 0);
 	Common::fill(&_canAttack[0], &_canAttack[6], false);
 	Common::fill(&_treasureFlags[0], &_treasureFlags[MAX_PARTY_SIZE], false);
 
@@ -307,8 +308,8 @@ void Combat::loop1() {
 		monsterIndexOf();
 
 		if (_monsterP->_speed && _monsterP->_speed >= _handicap3
-				&& !_arr4[i]) {
-			_arr4[i] = true;
+				&& !_monsterList[i]._checked) {
+			_monsterList[i]._checked = true;
 
 			if (_monsterList[i]._status & (MONFLAG_ASLEEP | MONFLAG_HELD |
 					MONFLAG_WEBBED | MONFLAG_PARALYZED)) {
@@ -436,7 +437,9 @@ void Combat::nextRound3() {
 
 void Combat::clearArrays() {
 	Common::fill(&_arr3[0], &_arr3[MAX_PARTY_SIZE], 0);
-	Common::fill(&_arr4[0], &_arr4[MAX_COMBAT_MONSTERS], 0);
+
+	for (uint i = 0; i < _monsterList.size(); ++i)
+		_monsterList[i]._checked = 0;
 }
 
 void Combat::updateHighestLevel() {

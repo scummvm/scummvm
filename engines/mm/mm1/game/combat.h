@@ -40,7 +40,6 @@ protected:
 	Common::Array<Character *> _party;
 	Monster *_monsterP;
 	int _arr3[MAX_PARTY_SIZE / 2];
-	byte _arr4[MAX_COMBAT_MONSTERS];
 	bool _canAttack[MAX_PARTY_SIZE];
 	bool _treasureFlags[MAX_PARTY_SIZE];
 	int _val1;
