@@ -636,7 +636,7 @@ void OpenGLGraphicsManager::updateScreen() {
 	// Clear the screen buffer.
 	GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
 
-	if (!_overlayInGUI) {
+	if (!_overlayVisible) {
 		// The scissor test is enabled to:
 		// - Clip the cursor to the game screen
 		// - Clip the game screen when the shake offset is non-zero
@@ -694,7 +694,7 @@ void OpenGLGraphicsManager::updateScreen() {
 		                         _cursorWidthScaled, _cursorHeightScaled);
 	}
 
-	if (!_overlayInGUI) {
+	if (!_overlayVisible) {
 		_backBuffer.enableScissorTest(false);
 	}
 
