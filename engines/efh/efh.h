@@ -289,6 +289,7 @@ private:
 	Common::KeyCode playSong(uint8 *buffer);
 	void readImpFile(int16 id, bool techMapFl);
 	void playIntro();
+	void preLoadMaps();
 	void initEngine();
 	void initMapMonsters();
 	void loadMapArrays();
@@ -508,7 +509,7 @@ private:
 	TileFactStruct _tileFact[432];
 	AnimInfo _animInfo[100];
 	uint8 _history[256];
-	uint8 _techData[4096];
+	uint8 _techDataArr[19][4100];
 	Common::String _enemyNamePt1;
 	Common::String _enemyNamePt2;
 	char _characterNamePt1[5];
@@ -575,9 +576,11 @@ private:
 
 	uint16 _tempTextDelay;
 	uint8 *_tempTextPtr;
+	// TODO: Remove those useless debug flags
 	bool _dbgForceDisplayUpperRightBorder; // Original debug flag? Always false.
 	bool _dbgForceMonsterBlock; // Original debug flag? Always false.
 	bool _word2C8D7; // Original debug flag? Always true.
+
 	bool _ongoingFightFl;
 	bool _statusMenuActive;
 	int16 _menuDepth;

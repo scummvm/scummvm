@@ -332,7 +332,8 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	memset(_tileFact, 0, ARRAYSIZE(_tileFact));
 	memset(_animInfo, 0, ARRAYSIZE(_animInfo));
 	memset(_history, 0, ARRAYSIZE(_history));
-	memset(_techData, 0, ARRAYSIZE(_techData));
+	for(int i = 0; i < 20; ++i)
+		memset(_techDataArr[i], 0, ARRAYSIZE(_techDataArr[i]));
 	memset(_mapMonsters, 0, ARRAYSIZE(_mapMonsters));
 	memset(_mapGameMap, 0, ARRAYSIZE(_mapGameMap));
 	memset(_imageSetSubFilesArray, 0, ARRAYSIZE(_imageSetSubFilesArray));
@@ -681,11 +682,7 @@ void EfhEngine::loadTechMapImp(int16 fileId) {
 	_techId = fileId;
 	findMapFile(_techId);
 
-	Common::String fileName = Common::String::format("tech.%d", _techId);
-	readFileToBuffer(fileName, _hiResImageBuf);
-	uncompressBuffer(_hiResImageBuf, _techData);
-
-	fileName = Common::String::format("map.%d", _techId);
+	Common::String fileName = Common::String::format("map.%d", _techId);
 	readFileToBuffer(fileName, _hiResImageBuf);
 	uncompressBuffer(_hiResImageBuf, _map);
 	// This is not present in the original.
@@ -934,6 +931,18 @@ void EfhEngine::playIntro() {
 	getLastCharAfterAnimCount(80);
 }
 
+/**
+ * Pre-Loads MAP and TECH files.
+ * This is required in order to implement a clean savegame feature
+ */
+void EfhEngine::preLoadMaps() {
+	for (int i = 0; i < 19; ++i) {
+		Common::String fileName = Common::String::format("tech.%d", _techId);
+		readFileToBuffer(fileName, _hiResImageBuf);
+		uncompressBuffer(_hiResImageBuf, _techDataArr[_techId]);
+	}
+}
+
 void EfhEngine::initEngine() {
 	_videoMode = 2; // In the original, 2 = VGA/MCGA, EGA = 4, Tandy = 6, cga = 8.
 	_graphicsStruct = new EfhGraphicsStruct;
@@ -957,6 +966,9 @@ void EfhEngine::initEngine() {
 	_fontDescr._extraHorizontalSpace = 1;
 	_word31E9E = false;
 
+	// Pre-load stuff required for savegames
+	preLoadMaps();
+	
 	saveAnimImageSetId();
 
 	// Load Title Screen
@@ -2159,7 +2171,7 @@ void EfhEngine::sub2455E(int16 arg0, int16 arg2, int16 arg4) {
 
 	for (int16 var4 = varC; var4 <= var8; ++var4) {
 		for (int16 var2 = varA; var2 <= var6; ++var2) {
-			_techData[var2 + var4 * 64] = varD;
+			_techDataArr[_techId][var2 + var4 * 64] = varD;
 		}
 	}
 }
@@ -4146,7 +4158,7 @@ int16 EfhEngine::getCharacterScore(int16 charId, int16 itemId) {
 bool EfhEngine::checkSpecialItemsOnCurrentPlace(int16 itemId) {
 	debug("checkSpecialItemsOnCurrentPlace %d", itemId);
 
-	switch(_techData[_techDataId_MapPosX * 64 + _techDataId_MapPosY]) {
+	switch(_techDataArr[_techId][_techDataId_MapPosX * 64 + _techDataId_MapPosY]) {
 	case 1:
 		if ((itemId < 0x58 || itemId > 0x68) && (itemId < 0x86 || itemId > 0x89) && (itemId < 0x74 || itemId > 0x76) && (itemId != 0x8C))
 			return true;
