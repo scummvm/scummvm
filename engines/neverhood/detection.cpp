@@ -117,11 +117,11 @@ static const ADGameDescription gameDescriptions[] = {
 	// Bugreport #11074
 	{
 		"neverhood",
-		_s("Missing game code"), // Reason for being unsupported
+		"",
 		AD_ENTRY1s("hd.blb", "c791725bbbc23c0f8bf78eece4555565", 4308928),
 		Common::JA_JPN,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_UNSUPPORTED,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 

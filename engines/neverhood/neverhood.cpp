@@ -94,7 +94,8 @@ Common::Error NeverhoodEngine::run() {
 		_res->addArchive("c.blb");
 		_res->addArchive("hd.blb");
 		_res->addArchive("i.blb");
-		_res->addArchive("m.blb");
+		// Japanese version is missing "making of".
+		_res->addArchive("m.blb", getLanguage() == Common::Language::JA_JPN);
 		_res->addArchive("s.blb");
 		_res->addArchive("t.blb");
 	}

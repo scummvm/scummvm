@@ -54,14 +54,17 @@ BlbArchive::~BlbArchive() {
 	delete[] _extData;
 }
 
-void BlbArchive::open(const Common::String &filename) {
+bool BlbArchive::open(const Common::String &filename, bool isOptional) {
 	BlbHeader header;
 	uint16 *extDataOffsets;
 
 	_entries.clear();
 
-	if (!_fd.open(filename))
-		error("BlbArchive::open() Could not open %s", filename.c_str());
+	if (!_fd.open(filename)) {
+		if (!isOptional)
+			error("BlbArchive::open() Could not open %s", filename.c_str());
+		return false;
+	}
 
 	header.id1 = _fd.readUint32LE();
 	header.id2 = _fd.readUint16LE();
@@ -69,8 +72,10 @@ void BlbArchive::open(const Common::String &filename) {
 	header.fileSize = _fd.readUint32LE();
 	header.fileCount = _fd.readUint32LE();
 
-	if (header.id1 != 0x2004940 || header.id2 != 7 || header.fileSize != _fd.size())
+	if (header.id1 != 0x2004940 || header.id2 != 7 || header.fileSize != _fd.size()) {
 		error("BlbArchive::open() %s seems to be corrupt", filename.c_str());
+		return false;
+	}
 
 	debug(4, "%s: fileCount = %d", filename.c_str(), header.fileCount);
 
@@ -111,6 +116,7 @@ void BlbArchive::open(const Common::String &filename) {
 
 	delete[] extDataOffsets;
 
+	return true;
 }
 
 void BlbArchive::load(uint index, byte *buffer, uint32 size) {
