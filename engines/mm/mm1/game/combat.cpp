@@ -1510,6 +1510,29 @@ void Combat::selectMonsterTarget() {
 	setMode(INFILTRATION);
 }
 
+void Combat::retreat() {
+	Encounter &enc = g_globals->_encounters;
+
+	if (getRandomNumber(100) <= enc._fleeThreshold ||
+			getRandomNumber(100) < _roundNum) {
+		Maps::Maps &maps = g_globals->_maps;
+		Maps::Map &map = *maps._currentMap;
+		maps._mapPos = Common::Point(map[Maps::MAP_FLEE_X],
+			map[Maps::MAP_FLEE_Y]);
+
+		g_globals->_treasure.clear0();
+		combatDone();
+
+	} else {
+		if (enc._fleeThreshold)
+			// Increase threshold to gradually make it easier to flee
+			enc._fleeThreshold++;
+
+		_party[_currentChar]->_combat3 = true;
+		combatLoop();
+	}
+}
+
 void Combat::combatDone() {
 	// Reset several active spells
 	g_globals->_activeSpells._s.bless = 0;

@@ -690,9 +690,6 @@ void Combat::fight() {
 	}
 }
 
-void Combat::retreat() {
-}
-
 void Combat::shoot() {
 	if (_allowShoot) {
 		if (_monsterList.size() < 2) {

@@ -174,11 +174,6 @@ private:
 	void fight();
 
 	/**
-	 * Retreat option
-	 */
-	void retreat();
-
-	/**
 	 * Shoot option
 	 */
 	void shoot();
