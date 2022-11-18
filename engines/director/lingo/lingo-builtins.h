@@ -54,6 +54,7 @@ void b_addProp(int nargs);
 void b_append(int nargs);
 void b_count(int nargs);
 void b_deleteAt(int nargs);
+void b_deleteOne(int nargs);
 void b_deleteProp(int nargs);
 void b_findPos(int nargs);
 void b_findPosNear(int nargs);

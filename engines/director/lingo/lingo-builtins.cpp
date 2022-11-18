@@ -82,6 +82,7 @@ static BuiltinProto builtins[] = {
 	{ "append",			LB::b_append,		2, 2, 400, HBLTIN },	//			D4 h
 	{ "count",			LB::b_count,		1, 1, 400, FBLTIN },	//			D4 f
 	{ "deleteAt",		LB::b_deleteAt,		2, 2, 400, HBLTIN },	//			D4 h
+	{ "deleteOne",		LB::b_deleteOne,	2, 2, 400, HBLTIN },	//			D4 h, undocumented?
 	{ "deleteProp",		LB::b_deleteProp,	2, 2, 400, HBLTIN },	//			D4 h
 	{ "findPos",		LB::b_findPos,		2, 2, 400, FBLTIN },	//			D4 f
 	{ "findPosNear",	LB::b_findPosNear,	2, 2, 400, FBLTIN },	//			D4 f
@@ -671,6 +672,37 @@ void LB::b_deleteAt(int nargs) {
 		break;
 	}
 }
+
+void LB::b_deleteOne(int nargs) {
+	Datum indexD = g_lingo->pop();
+	Datum list = g_lingo->pop();
+	TYPECHECK3(indexD, INT, FLOAT, SYMBOL);
+	TYPECHECK2(list, ARRAY, PARRAY);
+
+	switch (list.type) {
+	case ARRAY: {
+		g_lingo->push(list);
+		g_lingo->push(indexD);
+		b_getPos(nargs);
+		int index = g_lingo->pop().asInt();
+		if (index > 0) {
+			list.u.farr->arr.remove_at(index - 1);
+		}
+		break;
+	}
+	case PARRAY: {
+		Datum d;
+		int index = LC::compareArrays(LC::eqData, list, indexD, true, true).u.i;
+		if (index > 0) {
+			list.u.parr->arr.remove_at(index - 1);
+		}
+		break;
+	}
+	default:
+		TYPECHECK2(list, ARRAY, PARRAY);
+	}
+}
+
 
 void LB::b_deleteProp(int nargs) {
 	Datum prop = g_lingo->pop();
