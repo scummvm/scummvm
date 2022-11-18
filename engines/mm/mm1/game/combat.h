@@ -35,13 +35,10 @@ namespace Game {
 
 class Combat : public MonsterTouch {
 protected:
-	Common::Array<Monster> &_monsterList;
 	Common::Array<Line> _message;
 	int _monstersCount = 0;
 	Common::Array<Character *> _party;
 	Monster *_monsterP;
-	byte _monsterHP[MAX_COMBAT_MONSTERS];
-	byte _monsterAC[MAX_COMBAT_MONSTERS];
 	int _arr3[MAX_PARTY_SIZE / 2];
 	byte _arr4[MAX_COMBAT_MONSTERS];
 	bool _canAttack[MAX_PARTY_SIZE];
@@ -217,7 +214,7 @@ protected:
 	void defeatedMonsters();
 	void selectParty();
 	void loop1();
-	void proc1();
+	void setTreasure();
 	void clearArrays();
 	bool moveMonsters();
 	void monsterAdvances();
@@ -264,6 +261,11 @@ protected:
 	 * Selects monster to attack
 	 */
 	void selectMonsterTarget();
+
+	/**
+	 * Does final cleanup when combat is done
+	 */
+	void combatDone();
 
 private:
 	void spellFailed();

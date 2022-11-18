@@ -89,6 +89,11 @@ struct Party : public Common::Array<Character> {
 	bool checkPartyIncapacitated() const;
 
 	/**
+	 * Reorder the party based on a passed array of character pointers
+	 */
+	void rearrange(const Common::Array<Character *> &party);
+
+	/**
 	 * Synchronizes the party to/from savegames
 	 */
 	void synchronize(Common::Serializer &s);

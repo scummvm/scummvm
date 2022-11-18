@@ -28,7 +28,7 @@ namespace MM {
 namespace MM1 {
 namespace Game {
 
-Combat::Combat() : _monsterList(g_globals->_encounters._monsterList) {
+Combat::Combat() : MonsterTouch() {
 	g_globals->_combat = this;
 	clear();
 }
@@ -38,11 +38,8 @@ Combat::~Combat() {
 }
 
 void Combat::clear() {
-	Common::fill(&_monsterHP[0], &_monsterHP[MAX_COMBAT_MONSTERS], 0);
-	Common::fill(&_monsterAC[0], &_monsterAC[MAX_COMBAT_MONSTERS], 0);
 	Common::fill(&_arr3[0], &_arr3[MAX_PARTY_SIZE / 2], 0);
 	Common::fill(&_arr4[0], &_arr4[MAX_COMBAT_MONSTERS], 0);
-	Common::fill(&_monsterStatus[0], &_monsterStatus[MAX_COMBAT_MONSTERS], 0);
 	Common::fill(&_canAttack[0], &_canAttack[6], false);
 	Common::fill(&_treasureFlags[0], &_treasureFlags[MAX_PARTY_SIZE], false);
 
@@ -90,9 +87,9 @@ void Combat::loadArrays() {
 		Monster &mon = enc._monsterList[i];
 		int val = getRandomNumber(8);
 
-		mon._field11 += val;
-		_monsterHP[i] = mon._field11;
-		_monsterAC[i] = mon._field12;
+		mon._defaultHP += val;
+		mon._hp = mon._defaultHP;
+		mon._ac = mon._defaultAC;
 
 		monsterIndexOf();
 	}
@@ -217,7 +214,7 @@ void Combat::setupHandicap() {
 
 bool Combat::canMonsterCast() const {
 	return !(g_maps->_currentState & Maps::SFLAG_DISABLE_MONSTER_SPELLS) &&
-		!(_monsterStatus[_monsterIndex] & (MONFLAG_BLIND | MONFLAG_SILENCED));
+		!(_monsterList[_monsterIndex]._status & (MONFLAG_BLIND | MONFLAG_SILENCED));
 }
 
 void Combat::dispelParty() {
@@ -240,7 +237,7 @@ void Combat::dispelParty() {
 
 	for (uint i = 0; i < _monsterList.size(); ++i) {
 		monsterSetPtr(i);
-		_monsterStatus[i] = 0;
+		_monsterList[i]._status = 0;
 	}
 
 	_monsterP = tmpM;
@@ -282,7 +279,7 @@ void Combat::defeatedMonsters() {
 		monsterIndexOf();
 
 		_totalExperience += _monsterP->_experience;
-		proc1();
+		setTreasure();
 	}
 
 	// Count number of active characters
@@ -301,7 +298,7 @@ void Combat::defeatedMonsters() {
 	// Update the party's characters
 	g_globals->_party.combatDone();
 
-	// TODO
+	combatDone();
 }
 
 void Combat::loop1() {
@@ -313,7 +310,7 @@ void Combat::loop1() {
 				&& !_arr4[i]) {
 			_arr4[i] = true;
 
-			if (_monsterStatus[i] & (MONFLAG_ASLEEP | MONFLAG_HELD |
+			if (_monsterList[i]._status & (MONFLAG_ASLEEP | MONFLAG_HELD |
 					MONFLAG_WEBBED | MONFLAG_PARALYZED)) {
 				checkMonsterFlees();
 				return;
@@ -331,7 +328,7 @@ void Combat::loop1() {
 	}
 }
 
-void Combat::proc1() {
+void Combat::setTreasure() {
 	_val7 = _monsterP->_field18;
 	_val6 = MAX(_val6, _val7);
 
@@ -465,7 +462,7 @@ bool Combat::moveMonsters() {
 	for (uint i = 0; i < _monsterList.size(); ++i) {
 		_advanceIndex = i;
 
-		if (!(_monsterStatus[i] & ~MONFLAG_SILENCED) &&
+		if (!(_monsterList[i]._status & ~MONFLAG_SILENCED) &&
 			_monsterList[i]._field1e & FIELD1E_80) {
 			monsterAdvances();
 			hasAdvance = true;
@@ -488,52 +485,52 @@ bool Combat::monsterChanges() {
 		monsterSetPtr(i);
 
 		if ((_monsterP->_field1e & FIELD1E_40) &&
-			(_monsterP->_field11 != _monsterHP[i])) {
+			(_monsterP->_defaultHP != _monsterList[i]._hp)) {
 			_monstersRegenerate = true;
-			int newVal = _monsterHP[i] + 5;
-			_monsterHP[i] = (byte)newVal;
+			int newVal = _monsterList[i]._hp + 5;
+			_monsterList[i]._hp = (byte)newVal;
 
-			if (newVal >= 256 || newVal >= _monsterP->_field11) {
-				_monsterHP[i] = _monsterP->_field11;
+			if (newVal >= 256 || newVal >= _monsterP->_defaultHP) {
+				_monsterList[i]._hp = _monsterP->_defaultHP;
 			}
 		}
 
-		if (_monsterStatus[i]) {
+		if (_monsterList[i]._status) {
 			proc2();
 
 			if (_val9) {
 				_monstersResistSpells = true;
-				byte v = _monsterStatus[i];
+				byte v = _monsterList[i]._status;
 
 				v &= 0x7f;
-				if (v != _monsterStatus[i]) {
-					_monsterStatus[i] = v;
+				if (v != _monsterList[i]._status) {
+					_monsterList[i]._status = v;
 				} else {
 					v &= 0x3f;
-					if (v != _monsterStatus[i]) {
-						_monsterStatus[i] = v;
+					if (v != _monsterList[i]._status) {
+						_monsterList[i]._status = v;
 					} else {
 						v &= 0x1f;
-						if (v != _monsterStatus[i]) {
-							_monsterStatus[i] = v;
+						if (v != _monsterList[i]._status) {
+							_monsterList[i]._status = v;
 						} else {
 							v &= 0xf;
-							if (v != _monsterStatus[i]) {
-								_monsterStatus[i] = v;
+							if (v != _monsterList[i]._status) {
+								_monsterList[i]._status = v;
 							} else {
 								v &= 7;
-								if (v != _monsterStatus[i]) {
-									_monsterStatus[i] = v;
+								if (v != _monsterList[i]._status) {
+									_monsterList[i]._status = v;
 								} else {
 									v &= 3;
-									if (v != _monsterStatus[i]) {
-										_monsterStatus[i] = v;
+									if (v != _monsterList[i]._status) {
+										_monsterList[i]._status = v;
 									} else {
 										v &= 1;
-										if (v != _monsterStatus[i])
-											_monsterStatus[i] = v;
+										if (v != _monsterList[i]._status)
+											_monsterList[i]._status = v;
 										else
-											_monsterStatus[i] = 0;
+											_monsterList[i]._status = 0;
 									}
 								}
 							}
@@ -588,8 +585,8 @@ void Combat::checkMonsterFlees() {
 	if (getRandomNumber(100) >= threshold) {
 		_monsterP->_experience = 0;
 		_monsterP->_field18 = 0;
-		_monsterHP[_monsterIndex] = 0;
-		_monsterStatus[_monsterIndex] = MONFLAG_DEAD;
+		_monsterList[_monsterIndex]._hp = 0;
+		_monsterList[_monsterIndex]._status = MONFLAG_DEAD;
 		removeMonster();
 		setMode(MONSTER_FLEES);
 	} else {
@@ -603,7 +600,7 @@ bool Combat::checkMonsterSpells() {
 		return true;
 	}
 
-	if (_monsterStatus[_monsterIndex] & MONFLAG_MINDLESS) {
+	if (_monsterList[_monsterIndex]._status & MONFLAG_MINDLESS) {
 		setMode(MONSTER_WANDERS);
 		return true;
 	}
@@ -671,7 +668,7 @@ void Combat::removeMonster() {
 		changed = false;
 		for (uint i = 0; i < _monsterList.size(); ++i) {
 			_monsterP = &_monsterList[i];
-			if (_monsterStatus[i] == MONFLAG_DEAD) {
+			if (_monsterList[i]._status == MONFLAG_DEAD) {
 				_monsterList.remove_at(i);
 				changed = true;
 				break;
@@ -806,7 +803,7 @@ void Combat::attackMonster(int monsterNum) {
 		_attackAttr2._current += (c._level + 1) / 2;
 
 	if (_attackAttr1._current || !(_monsterP->_field1a & FIELD1A_80)) {
-		if (_monsterStatus[_monsterIndex] & (MONFLAG_ASLEEP |
+		if (_monsterList[_monsterIndex]._status & (MONFLAG_ASLEEP |
 				MONFLAG_HELD | MONFLAG_WEBBED | MONFLAG_PARALYZED))
 			++_attackerLevel;
 
@@ -847,13 +844,13 @@ void Combat::addAttackDamage() {
 }
 
 void Combat::updateMonsterStatus() {
-	int val = _monsterHP[_monsterIndex] - _damage;
+	int val = _monsterList[_monsterIndex]._hp - _damage;
 	if (val <= 0) {
-		_monsterHP[_monsterIndex] = 0;
-		_monsterStatus[_monsterIndex] = MONFLAG_DEAD;
+		_monsterList[_monsterIndex]._hp = 0;
+		_monsterList[_monsterIndex]._status = MONFLAG_DEAD;
 	} else {
-		_monsterHP[_monsterIndex] = val;
-		_monsterStatus[_monsterIndex] &= ~(MONFLAG_ASLEEP | MONFLAG_HELD);
+		_monsterList[_monsterIndex]._hp = val;
+		_monsterList[_monsterIndex]._status &= ~(MONFLAG_ASLEEP | MONFLAG_HELD);
 	}
 }
 
@@ -908,7 +905,7 @@ void Combat::iterateMonsters1Inner() {
 		effect = STRING["monster_spells.not_affected"];
 
 	} else {
-		_monsterStatus[getMonsterIndex()] |=
+		_monsterList[getMonsterIndex()]._status |=
 			g_globals->_spellsState._newCondition;
 
 		byte bits = g_globals->_spellsState._newCondition;
@@ -1006,7 +1003,7 @@ void Combat::iterateMonsters2Inner() {
 
 		msg._lines.push_back(Line(0, 1, line2));
 
-		if (_damage >= _monsterHP[getMonsterIndex()]) {
+		if (_damage >= _monsterList[getMonsterIndex()]._hp) {
 			msg._lines.push_back(Line(0, 2, STRING["monster_spells.and_goes_down"]));
 		}
 	}
@@ -1077,7 +1074,7 @@ void Combat::turnUndead() {
 
 			if ((monster->_resistUndead & IS_UNDEAD) &&
 					(getRandomNumber(20) + g_globals->_currCharacter->_level) >=
-					(_monsterHP[i] * 2 + 10)) {
+					(_monsterList[i]._hp * 2 + 10)) {
 				destroyMonster();
 				++_monstersDestroyedCtr;
 			}
@@ -1093,7 +1090,7 @@ void Combat::turnUndead() {
 }
 
 void Combat::destroyMonster() {
-	_monsterStatus[getMonsterIndex()] = 0xff;
+	_monsterList[getMonsterIndex()]._status = 0xff;
 	Sound::sound2(SOUND_9);
 }
 
@@ -1214,10 +1211,10 @@ void Combat::identifyMonster() {
 	while (line.size() < COL2)
 		line += ' ';
 	line += STRING["spells.info.hp"];
-	line += Common::String::format("%d", _monsterHP[_destMonsterNum]);
+	line += Common::String::format("%d", _monsterList[_destMonsterNum]._hp);
 	line += "  ";
 	line += STRING["spells.info.ac"];
-	line += Common::String::format("%d", _monsterAC[_destMonsterNum]);
+	line += Common::String::format("%d", _monsterList[_destMonsterNum]._ac);
 	msg._lines.push_back(Line(0, 0, line));
 
 	line = STRING["spells.info.speed"];
@@ -1306,7 +1303,7 @@ void Combat::weaken() {
 
 	for (uint i = 0; i < _monsterList.size(); ++i) {
 		monsterSetPtr(i);
-		_monsterAC[i] = MAX((int)_monsterAC[i] - 1, 1);
+		_monsterList[i]._ac = MAX((int)_monsterList[i]._ac - 1, 1);
 	}
 
 	resetDestMonster();
@@ -1435,7 +1432,7 @@ void Combat::monsterAttackInner() {
 
 	_destAC = c._ac._base;
 	int monsterIndex = getMonsterIndex();
-	_attackerLevel = _arr1[monsterIndex] * 2 + 4;
+	_attackerLevel = _monsterList[monsterIndex]._combat1 * 2 + 4;
 
 	if (c._condition & (ASLEEP | BLINDED | PARALYZED))
 		_attackerLevel += 5;
@@ -1499,6 +1496,17 @@ void Combat::selectMonsterTarget() {
 	_attackerVal = g_globals->_party.size() * 2;
 
 	setMode(INFILTRATION);
+}
+
+void Combat::combatDone() {
+	// Reset several active spells
+	g_globals->_activeSpells._s.bless = 0;
+	g_globals->_activeSpells._s.invisbility = 0;
+	g_globals->_activeSpells._s.shield = 0;
+	g_globals->_activeSpells._s.power_shield = 0;
+
+	// Rearrange the party to match the combat order
+	g_globals->_party.rearrange(_party);
 }
 
 } // namespace Game

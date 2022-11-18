@@ -148,5 +148,19 @@ void Party::synchronize(Common::Serializer &s) {
 		(*this)[i].synchronize(s);
 }
 
+void Party::rearrange(const Common::Array<Character *> &party) {
+	assert(party.size() == size());
+
+	for (uint i = 0; i < size(); ++i) {
+		for (uint j = i; j < size(); ++j) {
+			if (party[i] == &(*this)[j]) {
+				if (j != i)
+					insert_at(i, remove_at(j));
+				break;
+			}
+		}
+	}
+}
+
 } // namespace MM1
 } // namespace MM
