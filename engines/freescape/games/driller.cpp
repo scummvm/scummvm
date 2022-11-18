@@ -100,9 +100,10 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	}
 	_lastPosition = _position;
 
-	if (areaID == _startArea) {
+	if (areaID == _startArea && entranceID == _startEntrance) {
 		_yaw = 280;
 	} else if (areaID == 127) {
+		assert(entranceID == 0);
 		_yaw = 90;
 		_pitch = 335;
 		_flyMode = true; // Avoid falling
