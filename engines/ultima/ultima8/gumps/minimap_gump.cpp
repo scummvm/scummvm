@@ -131,7 +131,8 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		ly = (sy + dims.height()) - _minimap.h;
 	}
 
-	surf->Blit(&_minimap, sx + ox, sy + oy, dims.width() - (ox + lx), dims.height() - (oy + ly), 1 + ox, 1 + oy);
+	Common::Rect srcRect(sx + ox, sy + oy, sx - lx + dims.width(), sy - ly + dims.height());
+	surf->Blit(_minimap, srcRect, 1 + ox, 1 + oy);
 
 	// Paint the avatar position marker
 	surf->Fill32(0xFFFFFF00, 1 + ax - 2, 1 + ay + 0, 2, 1);

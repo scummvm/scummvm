@@ -48,9 +48,10 @@ CruDemoGump::CruDemoGump(Common::SeekableReadStream *bmprs, uint32 flags, int32 
 	if (decoder.loadStream(*bmprs)) {
 		// This does an extra copy via the ManagedSurface, but it's a once-off.
 		const Graphics::Surface *bmpsurf = decoder.getSurface();
-		Graphics::ManagedSurface *ms = new Graphics::ManagedSurface(bmpsurf);
-		ms->setPalette(decoder.getPalette(), decoder.getPaletteStartIndex(), decoder.getPaletteColorCount());
-		_background->Blit(ms, 0, 0, 640, 480, 0, 0);
+		Graphics::ManagedSurface ms(bmpsurf);
+		ms.setPalette(decoder.getPalette(), decoder.getPaletteStartIndex(), decoder.getPaletteColorCount());
+		Common::Rect srcRect(640, 480);
+		_background->Blit(ms, srcRect, 0, 0);
 	} else {
 		warning("couldn't load bitmap background for demo screen.");
 	}
@@ -88,7 +89,8 @@ void CruDemoGump::Close(bool no_del) {
 }
 
 void CruDemoGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
-	surf->Blit(_background->getRawSurface(), 0, 0, 640, 480, 0, 0);
+	Common::Rect srcRect(640, 480);
+	surf->Blit(*_background->getRawSurface(), srcRect, 0, 0);
 }
 
 bool CruDemoGump::OnKeyDown(int key, int mod) {

@@ -117,8 +117,8 @@ void AVIPlayer::paint(RenderSurface *surf, int /*lerp*/) {
 	}
 
 	surf->Fill32(0, _xoff, _yoff, _currentFrame.w, _currentFrame.h);
-	surf->Blit(&_currentFrame, 0, 0, _currentFrame.w, _currentFrame.h,
-			_xoff, _yoff);
+	Common::Rect srcRect(_currentFrame.w, _currentFrame.h);
+	surf->Blit(_currentFrame, srcRect, _xoff, _yoff);
 }
 
 void AVIPlayer::run() {

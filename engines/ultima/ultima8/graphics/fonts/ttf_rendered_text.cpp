@@ -41,22 +41,20 @@ TTFRenderedText::~TTFRenderedText() {
 void TTFRenderedText::draw(RenderSurface *surface, int x, int y, bool destmasked) {
 	if (!_width)
 		return;
+	Common::Rect srcRect(_width, _height);
 	if (!destmasked)
-		surface->Blit(_texture, 0, 0, _width, _height, x, y - _baseline,
-			_antiAliased);
+		surface->Blit(*_texture, srcRect, x, y - _baseline, _antiAliased);
 	else
-		surface->MaskedBlit(_texture, 0, 0, _width, _height,
-			x, y - _baseline, 0, _antiAliased);
+		surface->MaskedBlit(*_texture, srcRect, x, y - _baseline, 0, _antiAliased);
 }
 
 void TTFRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 		uint32 col, bool destmasked) {
+	Common::Rect srcRect(_width, _height);
 	if (!destmasked)
-		surface->FadedBlit(_texture, 0, 0, _width, _height,
-			x, y - _baseline, col, _antiAliased);
+		surface->FadedBlit(*_texture, srcRect, x, y - _baseline, col, _antiAliased);
 	else
-		surface->MaskedBlit(_texture, 0, 0, _width, _height,
-			x, y - _baseline, col, _antiAliased);
+		surface->MaskedBlit(*_texture, srcRect, x, y - _baseline, col, _antiAliased);
 }
 
 } // End of namespace Ultima8

@@ -125,13 +125,15 @@ void SKFPlayer::paint(RenderSurface *surf, int /*lerp*/) {
 	if (!_buffer) return;
 
 	if (!_fadeLevel) {
-		surf->Blit(_buffer->getRawSurface(), 0, 0, _width, _height, 0, 0);
+		Common::Rect srcRect(_width, _height);
+		surf->Blit(*_buffer->getRawSurface(), srcRect, 0, 0);
 		if (_subs)
 			_subs->draw(surf, 60, _subtitleY);
 	} else {
 		uint32 fade = TEX32_PACK_RGBA(_fadeColour, _fadeColour, _fadeColour,
 		                              (_fadeLevel * 255) / FADESTEPS);
-		surf->FadedBlit(_buffer->getRawSurface(), 0, 0, _width, _height, 0, 0, fade);
+		Common::Rect srcRect(_width, _height);
+		surf->FadedBlit(*_buffer->getRawSurface(), srcRect, 0, 0, fade);
 		if (_subs)
 			_subs->drawBlended(surf, 60, _subtitleY, fade);
 	}

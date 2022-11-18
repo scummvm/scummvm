@@ -230,35 +230,36 @@ template<class uintX> void SoftRenderSurface<uintX>::DrawLine32(uint32 rgb, int3
 
 
 //
-// SoftRenderSurface::Blit(Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend)
+// SoftRenderSurface::Blit(Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, bool alpha_blend)
 //
 // Desc: Blit a region from a Texture (Alpha == 0 -> skipped)
 //
-template<class uintX> void SoftRenderSurface<uintX>::Blit(const Graphics::ManagedSurface *tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend) {
-	Common::Rect srect = Common::Rect(sx, sy, sx + w, sy + h);
+template<class uintX> void SoftRenderSurface<uintX>::Blit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, bool alpha_blend) {
 	Common::Point dpoint = Common::Point(_ox + dx, _oy + dy);
 	if (alpha_blend) {
-		_surface->transBlitFrom(*tex, srect, dpoint);
+		_surface->transBlitFrom(src, srcRect, dpoint);
 	}
 	else {
-		_surface->blitFrom(*tex, srect, dpoint);
+		_surface->blitFrom(src, srcRect, dpoint);
 	}
 }
 
 
 //
-// void SoftRenderSurface::FadedBlit(Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32)
+// void SoftRenderSurface::FadedBlit(Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, uint32 col32)
 //
 // Desc: Blit a region from a Texture (Alpha == 0 -> skipped)
 //
-template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(const Graphics::ManagedSurface *tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
+template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
+	int32 w = srcRect.width();
+	int32 h = srcRect.height();
 
 	// Clamp or wrap or return?
-	if (w > static_cast<int32>(tex->w))
+	if (w > static_cast<int32>(src.w))
 		return;
 
 	// Clamp or wrap or return?
-	if (h > static_cast<int32>(tex->h))
+	if (h > static_cast<int32>(src.h))
 		return;
 
 	// Clip to window
@@ -272,6 +273,9 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(const Graphics::M
 	h = rect.height();
 
 	if (!w || !h) return;
+
+	int32 sx = srcRect.left;
+	int32 sy = srcRect.top;
 
 	// Adjust source x and y
 	if (px != dx) sx += dx - px;
@@ -288,11 +292,11 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(const Graphics::M
 	uint32 g = (TEX32_G(col32) * a);
 	uint32 b = (TEX32_B(col32) * a);
 
-	const Graphics::PixelFormat &texformat = tex->rawSurface().format;
+	const Graphics::PixelFormat &texformat = src.rawSurface().format;
 
 	if (texformat.bpp() == 32) {
-		const uint32 *texel = static_cast<const uint32 *>(tex->getBasePtr(sx, sy));
-		int tex_diff = tex->w - w;
+		const uint32 *texel = static_cast<const uint32 *>(src.getBasePtr(sx, sy));
+		int tex_diff = src.w - w;
 
 		while (pixel != end) {
 			if (!alpha_blend) while (pixel != line_end) {
@@ -343,8 +347,8 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(const Graphics::M
 			texel += tex_diff;
 		}
 	} else if (texformat == *_format) {
-		const uintX *texel = reinterpret_cast<const uintX *>(tex->getBasePtr(sx, sy));
-		int tex_diff = tex->w - w;
+		const uintX *texel = reinterpret_cast<const uintX *>(src.getBasePtr(sx, sy));
+		int tex_diff = src.w - w;
 
 		while (pixel != end) {
 			while (pixel != line_end) {
@@ -368,18 +372,21 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(const Graphics::M
 
 
 //
-// void SoftRenderSurface::MaskedBlit(Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend=false)
+// void SoftRenderSurface::MaskedBlit(Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, uint32 col32, bool alpha_blend=false)
 //
 // Desc Blit a region from a Texture with a Colour blend masked based on DestAlpha (AlphaTex == 0 || AlphaDest == 0 -> skipped. AlphaCol32 -> Blend Factors)
 //
 //
-template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(const Graphics::ManagedSurface *tex, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
+template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, uint32 col32, bool alpha_blend) {
+	int32 w = srcRect.width();
+	int32 h = srcRect.height();
+
 	// Clamp or wrap or return?
-	if (w > static_cast<int32>(tex->w))
+	if (w > static_cast<int32>(src.w))
 		return;
 
 	// Clamp or wrap or return?
-	if (h > static_cast<int32>(tex->h))
+	if (h > static_cast<int32>(src.h))
 		return;
 
 	// Clip to window
@@ -394,6 +401,9 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(const Graphics::
 
 	if (!w || !h)
 		return;
+
+	int32 sx = srcRect.left;
+	int32 sy = srcRect.top;
 
 	// Adjust source x and y
 	if (px != dx) sx += dx - px;
@@ -410,11 +420,11 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(const Graphics::
 	uint32 g = (TEX32_G(col32) * a);
 	uint32 b = (TEX32_B(col32) * a);
 
-	int texbpp = tex->rawSurface().format.bpp();
+	int texbpp = src.rawSurface().format.bpp();
 
 	if (texbpp == 32) {
-		const uint32 *texel = static_cast<const uint32 *>(tex->getBasePtr(sx, sy));
-		int tex_diff = tex->w - w;
+		const uint32 *texel = static_cast<const uint32 *>(src.getBasePtr(sx, sy));
+		int tex_diff = src.w - w;
 
 		while (pixel != end) {
 			if (!alpha_blend) {
@@ -474,8 +484,8 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(const Graphics::
 			texel += tex_diff;
 		}
 	} else if (texbpp == _format->bpp()) {
-		const uintX *texel = reinterpret_cast<const uintX *>(tex->getBasePtr(sx, sy));
-		int tex_diff = tex->w - w;
+		const uintX *texel = reinterpret_cast<const uintX *>(src.getBasePtr(sx, sy));
+		int tex_diff = src.w - w;
 
 		while (pixel != end) {
 			while (pixel != line_end) {

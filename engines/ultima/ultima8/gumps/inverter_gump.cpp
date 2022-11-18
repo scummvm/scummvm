@@ -104,8 +104,8 @@ void InverterGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sc
 
 	for (int i = 0; i < height; ++i) {
 		int src = getLine(getIndex(i, height / 2) + t, height / 2);
-//		pout << src << " -> " << i << Std::endl;
-		surf->Blit(_buffer->getRawSurface(), 0, src, width, 1, 0, i);
+		Common::Rect srcRect(0, src, width, src + 1);
+		surf->Blit(*_buffer->getRawSurface(), srcRect, 0, i);
 	}
 }
 
