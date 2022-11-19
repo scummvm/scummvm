@@ -33,6 +33,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  MADS:
    - Unterstützung für das Datei-Layout des Installationsprogramms der Disketten-Version von Rex Nebular hinzugefügt.Added support for original floppy installer file layout for Rex Nebular.
 
+ Neverhood:
+   - Unterstützung für die japanische Version von Neverhood hinzugefügt.
+
  Queen:
    - Eine zusätzliche Option erlaubt die Verwendung einer verbesserten Schriftart für die hebräische Version.
 
