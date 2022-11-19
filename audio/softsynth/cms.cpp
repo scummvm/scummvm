@@ -30,8 +30,9 @@
 
 #define LEFT	0x00
 #define RIGHT	0x01
+#define FRAC_ONE_CMS (1UL << 8)
 /*#define MASTER_CLOCK 14318180/2 */
-#define MASTER_CLOCK 7159090
+#define MASTER_CLOCK (7159090UL * FRAC_ONE_CMS)
 
 static const byte envelope[8][64] = {
 	/* zero amplitude */
@@ -166,9 +167,9 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 
 	for (ch = 0; ch < 2; ch++) {
 		switch (saa->noise_params[ch]) {
-		case 0: saa->noise[ch].freq = MASTER_CLOCK/256  * 2; break;
-		case 1: saa->noise[ch].freq = MASTER_CLOCK/512  * 2; break;
-		case 2: saa->noise[ch].freq = MASTER_CLOCK/1024 * 2; break;
+		case 0: saa->noise[ch].freq = (MASTER_CLOCK * 2) / 256;   break;
+		case 1: saa->noise[ch].freq = (MASTER_CLOCK * 2) / 512;   break;
+		case 2: saa->noise[ch].freq = (MASTER_CLOCK * 2) / 1024;  break;
 		case 3: saa->noise[ch].freq = saa->channels[ch * 3].freq; break;
 		default: break;
 		}
@@ -180,18 +181,18 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 
 		/* for each channel */
 		for (ch = 0; ch < 6; ch++) {
-			if (saa->channels[ch].freq == 0.0)
-				saa->channels[ch].freq = (double)((2 * MASTER_CLOCK/512) << saa->channels[ch].octave) /
-					(511.0 - (double)saa->channels[ch].frequency);
+			if (saa->channels[ch].freq == 0)
+				saa->channels[ch].freq = (((2 * MASTER_CLOCK) / 512) << saa->channels[ch].octave) /
+					(511 - saa->channels[ch].frequency);
 
 			/* check the actual position in the square wave */
 			saa->channels[ch].counter -= saa->channels[ch].freq;
 			while (saa->channels[ch].counter < 0) {
 				/* calculate new frequency now after the half wave is updated */
-				saa->channels[ch].freq = (double)((2 * MASTER_CLOCK/512) << saa->channels[ch].octave) /
-					(511.0 - (double)saa->channels[ch].frequency);
+				saa->channels[ch].freq = (((2 * MASTER_CLOCK) / 512) << saa->channels[ch].octave) /
+					(511 - saa->channels[ch].frequency);
 
-				saa->channels[ch].counter += _sampleRate;
+				saa->channels[ch].counter += _sampleRate * FRAC_ONE_CMS;
 				saa->channels[ch].level ^= 1;
 
 				/* eventually clock the envelope counters */
@@ -225,7 +226,7 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 			/* check the actual position in noise generator */
 			saa->noise[ch].counter -= saa->noise[ch].freq;
 			while (saa->noise[ch].counter < 0) {
-				saa->noise[ch].counter += _sampleRate;
+				saa->noise[ch].counter += _sampleRate * FRAC_ONE_CMS;
 				if (((saa->noise[ch].level & 0x4000) == 0) == ((saa->noise[ch].level & 0x0040) == 0) )
 					saa->noise[ch].level = (saa->noise[ch].level << 1) | 1;
 				else
@@ -336,7 +337,7 @@ void CMSEmulator::portWriteIntern(int chip, int offset, int data) {
 			/* Synch & Reset generators */
 			for (i = 0; i < 6; i++) {
 				saa->channels[i].level = 0;
-				saa->channels[i].counter = 0.0;
+				saa->channels[i].counter = 0;
 			}
 		}
 		break;
