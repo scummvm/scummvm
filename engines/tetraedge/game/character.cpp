@@ -292,8 +292,9 @@ bool Character::loadModel(const Common::String &mname, bool unused) {
 
 	for (auto &mesh : _model->_meshes)
 		mesh.setVisible(true);
-
+	// Set all mouthes not visible by default
 	_model->setVisibleByName("_B_", false);
+	// Set all eyes not visible by default
 	_model->setVisibleByName("_Y_", false);
 
 	// Note: game loops through "faces" here, but it only ever uses the default ones.
@@ -689,8 +690,7 @@ void Character::update(double msFromStart) {
 
 	float endOffset = _walkCurveStart;
 	while (_walkedLength < _walkCurveCurOffset) {
-		lastNextPos = nextPos;
-		float nextOffset = (4.0 / _curve->numIterations() * sign + lastOffset);
+		float nextOffset = (4.0 / _curve->numIterations()) * sign + lastOffset;
 		float offset = CLIP(nextOffset, 0.0f, 1.0f);
 
 		newPos = _curve->retrievePoint(offset) + _curveStartLocation;
@@ -704,6 +704,7 @@ void Character::update(double msFromStart) {
 		if (offset == 1.0 || offset == 0.0)
 			break;
 		lastOffset = offset;
+		lastNextPos = nextPos;
 	}
 
 	_walkedLength = lastWalkedLength;

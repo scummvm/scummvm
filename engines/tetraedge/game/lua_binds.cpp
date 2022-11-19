@@ -437,7 +437,7 @@ static int tolua_ExportedFunctions_SetGroundObjectPosition00(lua_State *L) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		float f1 = tolua_tonumber(L, 2, 0.0);
 		float f2 = tolua_tonumber(L, 3, 0.0);
-		float f3 = tolua_tonumber(L, 4, 1.0);
+		float f3 = tolua_tonumber(L, 4, 0.0);
 		SetGroundObjectPosition(s1, f1, f2, f3);
 		return 0;
 	}
@@ -465,7 +465,7 @@ static int tolua_ExportedFunctions_SetGroundObjectRotation00(lua_State *L) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		float f1 = tolua_tonumber(L, 2, 0.0);
 		float f2 = tolua_tonumber(L, 3, 0.0);
-		float f3 = tolua_tonumber(L, 4, 1.0);
+		float f3 = tolua_tonumber(L, 4, 0.0);
 		SetGroundObjectRotation(s1, f1, f2, f3);
 		return 0;
 	}
@@ -545,7 +545,8 @@ static void AddAnchorZone(const Common::String &s1, const Common::String &s2, fl
 
 static int tolua_ExportedFunctions_AddAnchorZone00(lua_State *L) {
 	tolua_Error err;
-	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err) && tolua_isnumber(L, 3, 1, &err) && tolua_isnoobj(L, 4, &err)) {
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err)
+			&& tolua_isnumber(L, 3, 1, &err) && tolua_isnoobj(L, 4, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
 		double d1 = tolua_tonumber(L, 3, 1.0);

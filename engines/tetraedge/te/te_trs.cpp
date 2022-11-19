@@ -24,6 +24,13 @@
 namespace Tetraedge {
 
 TeTRS::TeTRS() {
+	setIdentity();
+}
+
+void TeTRS::setIdentity() {
+	_trans = TeVector3f32(0, 0, 0);
+	_rot = TeQuaternion();
+	_scale = TeVector3f32(1, 1, 1);
 }
 
 /*static*/ void TeTRS::deserialize(Common::ReadStream &stream, TeTRS &dest) {

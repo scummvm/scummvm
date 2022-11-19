@@ -67,12 +67,26 @@ void TeMesh::destroy() {
 }
 
 void TeMesh::draw() {
+	if (!worldVisible())
+		return;
+
 	TeRenderer *renderer = g_engine->getRenderer();
 	renderer->pushMatrix();
 	if (_matrixForced)
 		renderer->multiplyMatrix(_forceMatrix);
 	else
 		renderer->multiplyMatrix(worldTransformationMatrix());
+
+	/*
+	debug("Draw mesh %p (%s, %d verts %d norms %d indexes %d materials %d updated)", this, name().empty() ? "no name" : name().c_str(), _verticies.size(), _normals.size(), _indexes.size(), _materials.size(), _updatedVerticies.size());
+	debug("   renderMatrix %s", renderer->currentMatrix().toString().c_str());
+	debug("   position   %s", position().dump().c_str());
+	debug("   worldPos   %s", worldPosition().dump().c_str());
+	debug("   scale      %s", scale().dump().c_str());
+	debug("   worldScale %s", worldScale().dump().c_str());
+	debug("   rotation   %s", rotation().dump().c_str());
+	debug("   worldRot   %s", worldRotation().dump().c_str());
+	*/
 
 	Common::Array<TeVector3f32> &normals = (_updatedVerticies.empty() ? _normals : _updatedNormals);
 	Common::Array<TeVector3f32> &verticies = (_updatedVerticies.empty() ? _verticies : _updatedVerticies);
