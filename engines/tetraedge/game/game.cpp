@@ -439,7 +439,7 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		_scene._character->_model->setVisible(true);
 		_scene._character->deleteAllCallback();
 		_scene._character->stop();
-		_scene._character->setAnimation(_scene._character->characterSettings()._walkFileName, true);
+		_scene._character->setAnimation(_scene._character->characterSettings()._idleAnimFileName, true);
 		if (!_scene.findKate()) {
 			_scene.models().push_back(_scene._character->_model);
 			_scene.models().push_back(_scene._character->_shadowModel[0]);
@@ -648,10 +648,31 @@ bool Game::isMoviePlaying() {
 	return false;
 }
 
+static const char *DIALOG_IDS[20] = {
+	"KFJ1", "KH", "KJ", "KL",
+	"KO", "KS", "KCa", "KFE2",
+	"KFE3", "KG", "KMa", "KP",
+	"KR", "KCo", "KD", "KA",
+	"KFJ", "KM", "KN", "KFM"};
+
 bool Game::launchDialog(const Common::String &dname, uint param_2, const Common::String &charname,
 				  const Common::String &animfile, float param_5) {
-	error("TODO: Implemet Game::launchDialog %s %d %s %s %f", dname.c_str(),
-			param_2, charname.c_str(), animfile.c_str(), param_5);
+	Application *app = g_engine->getApplication();
+	const Common::String *locdname = app->_loc.value(dname);
+	if (!locdname)
+		locdname = &dname;
+
+	if (!locdname)
+		return false;
+
+	for (unsigned int i = 0; i < ARRAYSIZE(DIALOG_IDS); i++) {
+		if (dname.contains(Common::String::format("_%s_", DIALOG_IDS[i])))
+			_dialogsTold++;
+	}
+
+	const Common::String sndfile = dname + ".ogg";
+	_dialog2.pushDialog(*locdname, *locdname, sndfile, charname, animfile, param_5);
+	return true;
 }
 
 void Game::leave(bool flag) {
@@ -793,7 +814,7 @@ bool Game::onCharacterAnimationPlayerFinished(const Common::String &anim) {
 			|| curAnimName == character->walkAnim(Character::WalkPart_EndG))
 			character->stop();
 	} else {
-		if (!_sceneCharacterVisibleFromLoad && curAnimName != character->walkAnim(Character::WalkPart_Start)) {
+		if (!_sceneCharacterVisibleFromLoad && curAnimName == character->walkAnim(Character::WalkPart_Start)) {
 			character->setAnimation(character->walkAnim(Character::WalkPart_Loop), true);
 			return false;
 		}
@@ -802,7 +823,7 @@ bool Game::onCharacterAnimationPlayerFinished(const Common::String &anim) {
 			character->updatePosition(1.0);
 			character->endMove();
 			// Note: original checks walkAnim again.. is there a reason to do that?
-			character->setAnimation(character->characterSettings()._walkFileName, true);
+			character->setAnimation(character->characterSettings()._idleAnimFileName, true);
 		}
 	}
 
@@ -831,7 +852,7 @@ bool Game::onDialogFinished(const Common::String &val) {
 bool Game::onDisplacementFinished() {
 	_sceneCharacterVisibleFromLoad = true;
 	_scene._character->stop();
-	_scene._character->setAnimation(_scene._character->characterSettings()._walkFileName, true);
+	_scene._character->setAnimation(_scene._character->characterSettings()._idleAnimFileName, true);
 
 	if (!_isCharacterWalking) {
 		_isCharacterWalking = false;
@@ -941,7 +962,7 @@ bool Game::onMouseClick(const Common::Point &pt) {
 	Character *character = _scene._character;
 	const Common::String &charAnim = character->curAnimName();
 
-	if (charAnim == character->characterSettings()._walkFileName
+	if (charAnim == character->characterSettings()._idleAnimFileName
 		|| charAnim == character->walkAnim(Character::WalkPart_Start)
 		|| charAnim == character->walkAnim(Character::WalkPart_Loop)
 		|| charAnim == character->walkAnim(Character::WalkPart_EndD)
@@ -987,7 +1008,7 @@ bool Game::onMouseClick(const Common::Point &pt) {
 		_posPlayer = lastPoint;
 	}
 
-	if (!_sceneCharacterVisibleFromLoad || (character->curAnimName() == character->characterSettings()._walkFileName)) {
+	if (!_sceneCharacterVisibleFromLoad || (character->curAnimName() == character->characterSettings()._idleAnimFileName)) {
 		_lastCharMoveMousePos = TeVector2s32(0, 0);
 		_movePlayerCharacterDisabled = true;
 		_isCharacterWalking = false;
@@ -1456,7 +1477,7 @@ void Game::update() {
 						charAnim == _scene._character->walkAnim(Character::WalkPart_Loop) ||
 						charAnim == _scene._character->walkAnim(Character::WalkPart_EndD) ||
 						charAnim == _scene._character->walkAnim(Character::WalkPart_EndG) ||
-						charAnim == _scene._character->characterSettings()._walkFileName);
+						charAnim == _scene._character->characterSettings()._idleAnimFileName);
 				app->lockCursor(!unlockCursor);
 			}
 		}

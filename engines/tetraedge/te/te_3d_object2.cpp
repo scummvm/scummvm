@@ -196,6 +196,11 @@ void Te3DObject2::setPosition(const TeVector3f32 &pos) {
 	if (_position == pos)
 		return;
 
+	if ((_position - pos).length() > 2.0f && name() == "Kate" && _position != TeVector3f32()) {
+		debug("Large position move %s %s -> %s", name().c_str(),
+			_position.dump().c_str(), pos.dump().c_str());
+	}
+
 	_position = pos;
 	_onPositionChangedSignal.call();
 	_onParentWorldTransformationMatrixChangedSignal.call();

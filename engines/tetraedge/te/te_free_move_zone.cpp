@@ -53,7 +53,7 @@ class TeFreeMoveZoneGraph : micropather::Graph {
 
 TeFreeMoveZone::TeFreeMoveZone() : _actzones(nullptr), _blockers(nullptr), _rectBlockers(nullptr),
 _transformedVerticiesDirty(true), _bordersDirty(true), _pickMeshDirty(true), _projectedPointsDirty(true),
-_loadedFromBin(false)
+_loadedFromBin(false), _gridWorldY(0.0), _gridOffsetSomething(5.0f, 5.0f), _gridDirty(true)
 {
 	_graph = new TeFreeMoveZoneGraph();
 	_graph->_bordersDistance = 2048.0f;
@@ -102,8 +102,9 @@ Common::Array<TeVector3f32> TeFreeMoveZone::collisions(const TeVector3f32 &v1, c
 TeVector3f32 TeFreeMoveZone::correctCharacterPosition(const TeVector3f32 &pos, bool *flagout, bool intersectFlag) {
 	float f = 0.0;
 	TeVector3f32 intersectPoint;
-	if (!intersect(pos, TeVector3f32(0, -1, 0), intersectPoint, f, intersectFlag, nullptr)) {
-		if (!intersect(pos, TeVector3f32(0, 1, 0), intersectPoint, f, intersectFlag, nullptr)) {
+	TeVector3f32 testPos(pos.x(), 0, pos.z());
+	if (!intersect(testPos, TeVector3f32(0, -1, 0), intersectPoint, f, intersectFlag, nullptr)) {
+		if (!intersect(testPos, TeVector3f32(0, 1, 0), intersectPoint, f, intersectFlag, nullptr)) {
 			if (*flagout)
 				*flagout = false;
 			return pos;
@@ -131,7 +132,7 @@ TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt,
 	updateGrid(false);
 	const TeVector2s32 projectedStart = projectOnAStarGrid(startpt);
 	const TeVector2s32 projectedEnd = projectOnAStarGrid(endpt);
-	int xsize = _graph->_size._x;
+	const int xsize = _graph->_size._x;
 	float cost = 0;
 	// Passing an int to void*, yuck? but it's what the original does..
 	Common::Array<void *> path;
@@ -147,9 +148,7 @@ TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt,
 		for (auto pathpt : path) {
 			// each path point is an array offset
 			int offset = static_cast<int>(reinterpret_cast<size_t>(pathpt));
-			int yoff = offset / _graph->_size._x;
-			int xoff = offset % _graph->_size._x;
-			points[i] = TeVector2s32(xoff, yoff);
+			points[i] = TeVector2s32(offset % xsize, offset / xsize);
 			i++;
 		}
 
@@ -195,7 +194,7 @@ void TeFreeMoveZone::deserialize(Common::ReadStream &stream, TeFreeMoveZone &des
 
 	TeVector2f32::deserialize(stream, dest._someGridVec1);
 	TeVector2f32::deserialize(stream, dest._someGridVec2);
-	dest._someGridFloat = stream.readFloatLE();
+	dest._gridWorldY = stream.readFloatLE();
 
 	dest._graph->deserialize(stream);
 	if (dest.name().contains("19000")) {
@@ -216,8 +215,22 @@ void TeFreeMoveZone::draw() {
 	TePickMesh2::draw();
 	TeMesh mesh;
 	mesh.setConf(_uintArray2.size(), _uintArray2.size(), TeMesh::MeshMode_Lines, 0, 0);
+	for (unsigned int i = 0; i < _uintArray2.size(); i++) {
+		mesh.setIndex(i, i);
+		mesh.setVertex(i, verticies()[_uintArray2[i]]);
+	}
 
-	error("TODO: Finish TeFreeMoveZone::draw");
+	const TeColor prevColor = renderer->currentColor();
+	renderer->pushMatrix();
+	renderer->multiplyMatrix(worldTransformationMatrix());
+	renderer->setCurrentColor(TeColor(0, 0x80, 0xff, 0xff));
+	mesh.draw();
+	renderer->popMatrix();
+	renderer->setCurrentColor(prevColor);
+
+	// TODO: do a bunch of other drawing stuff here.
+
+	renderer->disableWireFrame();
 }
 
 TeVector3f32 TeFreeMoveZone::findNearestPointOnBorder(const TeVector2f32 &pt) {
@@ -363,7 +376,7 @@ TeVector3f32 TeFreeMoveZone::transformAStarGridInWorldSpace(const TeVector2s32 &
 	float offsetx = (float)gridpt._x * _gridOffsetSomething.getX() + _someGridVec1.getX() +
 				_gridOffsetSomething.getX() * 0.5;
 	if (!_loadedFromBin) {
-		return TeVector3f32(offsetx, _someGridFloat, offsety);
+		return TeVector3f32(offsetx, _gridWorldY, offsety);
 	}
 	error("TODO: Implement TeFreeMoveZone::transformAStarGridInWorldSpace");
 }

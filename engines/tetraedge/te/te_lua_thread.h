@@ -57,7 +57,7 @@ public:
 	void resume(const TeVariant &p1, const TeVariant &p2, const TeVariant &p3);
 
 	static TeLuaThread *threadFromState(lua_State *state);
-	void yield();
+	int yield();
 
 private:
 	void _resume(int nargs);

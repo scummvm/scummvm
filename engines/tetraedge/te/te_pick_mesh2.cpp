@@ -59,7 +59,7 @@ void TePickMesh2::draw() {
 	renderer->setCurrentColor(prevCol);
 }
 
-bool TePickMesh2::intersect(const TeVector3f32 &v1, const TeVector3f32 &v2, TeVector3f32 &v3, float &fout, bool lastHitFirst, unsigned long *triangleHitOut) {
+bool TePickMesh2::intersect(const TeVector3f32 &v1, const TeVector3f32 &v2, TeVector3f32 &vout, float &fout, bool lastHitFirst, unsigned long *triangleHitOut) {
 	if (_verticies.size() / 3 == 0)
 		return false;
 
@@ -72,7 +72,7 @@ bool TePickMesh2::intersect(const TeVector3f32 &v1, const TeVector3f32 &v2, TeVe
 		const TeVector3f32 triv3 = worldTrans * _verticies[_lastTriangleHit * 3 + 2];
 		int result = TeRayIntersection::intersect(v1, v2, triv1, triv2, triv3, intersection, f);
 		if (result == 1 && f >= 0.0 && f < FLT_MAX) {
-			v3 = v1 + v2 * f;
+			vout = v1 + v2 * f;
 			fout = f;
 			if (triangleHitOut)
 				*triangleHitOut = _lastTriangleHit;
@@ -94,7 +94,7 @@ bool TePickMesh2::intersect(const TeVector3f32 &v1, const TeVector3f32 &v2, TeVe
 		}
 	}
 	if (hitf != FLT_MAX) {
-		v3 = v1 + v2 * hitf;
+		vout = v1 + v2 * hitf;
 		fout = hitf;
 		if (triangleHitOut)
 			*triangleHitOut = _lastTriangleHit;
@@ -167,7 +167,7 @@ void TePickMesh2::deserialize(Common::ReadStream &stream, TePickMesh2 &mesh) {
 	for (unsigned int i = 0; i < ntriangles * 3; i++) {
 		TeVector3f32 vec;
 		TeVector3f32::deserialize(stream, vec);
-		mesh._verticies.push_back(vec);
+		mesh._verticies[i] = vec;
 	}
 }
 

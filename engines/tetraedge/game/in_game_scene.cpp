@@ -42,6 +42,8 @@
 #include "tetraedge/te/te_lua_script.h"
 #include "tetraedge/te/te_lua_thread.h"
 
+#define DEBUG_PATHFINDING 1
+
 namespace Tetraedge {
 
 InGameScene::InGameScene() : _character(nullptr), _charactersShadow(nullptr),
@@ -338,6 +340,19 @@ void InGameScene::draw() {
 		return;
 
 	currentCamera()->apply();
+
+#if DEBUG_PATHFINDING
+	if (_character && _character->curve()) {
+		_character->curve()->setVisible(true);
+		_character->curve()->draw();
+	}
+
+	for (TeFreeMoveZone *zone : _freeMoveZones) {
+		zone->setVisible(true);
+		zone->draw();
+	}
+#endif
+
 	TeLight::updateGlobal();
 	for (unsigned int i = 0; i < _lights.size(); i++)
 		_lights[i].update(i);
@@ -920,8 +935,8 @@ void InGameScene::setPositionCharacter(const Common::String &charName, const Com
 		TeFreeMoveZone *zone = pathZone(freeMoveZoneName);
 		if (!zone) {
 			warning("[SetCharacterPosition] PathZone not found %s", freeMoveZoneName.c_str());
-			for (TeFreeMoveZone *zone : _freeMoveZones)
-				warning("zone: %s", zone->name().c_str());
+			for (TeFreeMoveZone *z : _freeMoveZones)
+				warning("zone: %s", z->name().c_str());
 			return;
 		}
 		TeIntrusivePtr<TeCamera> cam = currentCamera();
@@ -973,7 +988,13 @@ void InGameScene::unloadCharacter(const Common::String &name) {
 }
 
 void InGameScene::unloadObject(const Common::String &name) {
-	error("TODO: InGameScene::unloadObject");
+	for (unsigned int i = 0; i < _object3Ds.size(); i++) {
+		if (_object3Ds[i]->model()->name() == name) {
+			_object3Ds[i]->deleteLater();
+			_object3Ds.remove_at(i);
+			break;
+		}
+	}
 }
 
 void InGameScene::unloadSpriteLayouts() {

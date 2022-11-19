@@ -170,17 +170,17 @@ bool Te3DTexture::load(const TeImage &img) {
 
 	const void *imgdata = img.getPixels();
 	if (_format == TeImage::RGB8) {
-		GLenum glpxformat = GL_RGB;
+		/*GLenum glpxformat = GL_RGB;
 		if (_glPixelFormat != GL_INVALID_ENUM) {
 			glpxformat = _glPixelFormat;
-		}
+		}*/
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, _texWidth, _texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img.pitch / 3, img.h, GL_RGB, GL_UNSIGNED_BYTE, imgdata);
 	} else if (_format == TeImage::RGBA8) {
-		GLenum glpxformat = GL_RGBA8;
+		/*GLenum glpxformat = GL_RGBA8;
 		if (_glPixelFormat != GL_INVALID_ENUM) {
 			glpxformat = _glPixelFormat;
-		}
+		}*/
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img.w, img.h, GL_RGBA, GL_UNSIGNED_BYTE, imgdata);
 	} else {

@@ -32,8 +32,13 @@ class Dialog2 : public TeLayout {
 public:
 	Dialog2();
 
-	class DialogData {
-		bool operator=(const DialogData &other);
+	struct DialogData {
+		Common::String _name;
+		Common::String _stringVal;
+		Common::Path _sound;
+		Common::String _charname;
+		Common::String _animfile;
+		float _animBlend;
 	};
 
 	bool isDialogPlaying();
@@ -46,9 +51,9 @@ public:
 	bool onSkipButton();
 	bool onSoundFinished();
 
-	void pushDialog(const Common::String &param_1, const Common::String &param_2, const Common::String &param_3, int param_4);
-	void pushDialog(const Common::String &param_1, const Common::String &param_2, const Common::String &param_3,
-					const Common::String &param_4, const Common::String &param_5, float param_6);
+	void pushDialog(const Common::String &name, const Common::String &textVal, const Common::String &sound, int param_4);
+	void pushDialog(const Common::String &name, const Common::String &textVal, const Common::String &sound,
+					const Common::String &charName, const Common::String &animFile, float animBlend);
 	//void saveToBackup(TiXmlNode *node)
 	void startDownAnimation();
 	void unload();
@@ -58,6 +63,8 @@ public:
 	Common::String prevSceneName() { return _prevSceneName; };
 
 private:
+	Common::Array<DialogData> _dialogs;
+
 	TeTimer _minimumTimeTimer;
 
 	Common::String _prevSceneName;
@@ -65,6 +72,8 @@ private:
 
 	TeLuaGUI _gui;
 	TeMusic _music;
+	
+	DialogData _currentDialogData;
 
 	TeSignal1Param<const Common::String &> _onAnimationDownFinishedSignal;
 };

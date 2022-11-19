@@ -26,12 +26,12 @@ namespace Tetraedge {
 InventoryObject::InventoryObject() {
 }
 
-void InventoryObject::load(const Common::String &name) {
+void InventoryObject::load(const Common::String &newName) {
 	setSizeType(RELATIVE_TO_PARENT);
 	setSize(TeVector3f32(1.0f, 1.0f, 1.0f));
 	_gui.load("Inventory/InventoryObject.lua");
 	addChild(_gui.layoutChecked("object"));
-	setName(name);
+	setName(newName);
 	_gui.spriteLayoutChecked("upLayout")->load(spritePath());
 	TeButtonLayout *btn = _gui.buttonLayoutChecked("object");
 	btn->onMouseClickValidated().add(this, &InventoryObject::onButtonDown);

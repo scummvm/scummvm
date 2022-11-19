@@ -70,7 +70,7 @@ const Common::Array<TeVector3f32> &TeModelVertexAnimation::getVertices() {
 	for (unsigned int i = 0; i < _keydata[0]._vectors.size(); i++) {
 		const TeVector3f32 prevVector = getKeyVertex(keyno, i);
 		const TeVector3f32 nextVector = getKeyVertex(keyno + 1, i);
-		lerpVtx.push_back(prevVector * (1.0 - interp) + nextVector * interp);
+		lerpVtx[i] = prevVector * (1.0 - interp) + nextVector * interp;
 	}
 
 	return lerpVtx;

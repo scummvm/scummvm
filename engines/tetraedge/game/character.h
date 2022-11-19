@@ -61,7 +61,7 @@ public:
 		Common::String _name;
 		Common::String _modelFileName;
 		TeVector3f32 _defaultScale;
-		Common::String _walkFileName;
+		Common::String _idleAnimFileName;
 		Common::HashMap<Common::String, WalkSettings> _walkSettings; // keys are "Walk", "Jog", etc
 		float _walkSpeed;
 
@@ -86,10 +86,10 @@ public:
 	};
 
 	struct Callback {
-		int x;
-		Common::String s;
-		int y;
-		float f;
+		int _x;
+		Common::String _s;
+		int _y;
+		float _f;
 	};
 
 	void addCallback(const Common::String &s1, const Common::String &s2, float f1, float f2);
@@ -171,14 +171,15 @@ public:
 	Character *charLookingAt() { return _charLookingAt; }
 	bool lookingAtTallThing() const { return _lookingAtTallThing; }
 	void setLookingAtTallThing(bool val) { _lookingAtTallThing = val; }
+	TeIntrusivePtr<TeBezierCurve> curve() { return _curve; }
 
 private:
-	float _curveOffset;
 	float _walkCurveStart;
+	float _walkCurveLast;
 	float _walkCurveEnd;
 	float _walkCurveLen;
 	float _walkCurveIncrement;
-	float _walkCurveCurOffset;
+	float _walkCurveNextLength;
 	float _walkedLength;
 	int _walkTotalFrames;
 	bool _walkToFlag;
@@ -201,13 +202,13 @@ private:
 
 	CharacterSettings _characterSettings;
 
-	int _walkPart0AnimLen;
-	int _walkPart1AnimLen;
-	int _walkPart3AnimLen;
+	float _walkStartAnimLen;
+	float _walkLoopAnimLen;
+	float _walkEndGAnimLen;
 
-	uint32 _walkPart0AnimFrameCount;
-	uint32 _walkPart1AnimFrameCount;
-	uint32 _walkPart3AnimFrameCount;
+	uint32 _walkStartAnimFrameCount;
+	uint32 _walkLoopAnimFrameCount;
+	uint32 _walkEndGAnimFrameCount;
 
 	int _lastFrame;
 	int _lastAnimFrame;

@@ -42,7 +42,7 @@ void Inventory::enter() {
 	Game *game = g_engine->getGame();
 	Character *character = game->scene()._character;
 	character->stop();
-	character->setAnimation(character->characterSettings()._walkFileName, true);
+	character->setAnimation(character->characterSettings()._idleAnimFileName, true);
 	_gui.layoutChecked("textObject")->setVisible(false);
 
 	if (!game->_firstInventory) {
@@ -188,9 +188,62 @@ void Inventory::addObject(const Common::String &objId) {
 }
 
 bool Inventory::addObject(InventoryObject &obj) {
-	_invObjects.push_back(&obj);
+	_invObjects.push_front(&obj);
 	obj.selectedSignal().add(this, &Inventory::onObjectSelected);
-	error("TODO: implement Inventory::addObject.");
+	if (_invObjects.size() > 1) {
+		int pageno = 0;
+		while (true) {
+			TeLayout *page = _gui.layout(Common::String::format("page%d", pageno));
+			int slotno = 0;
+			if (!page)
+				break;
+			while (true) {
+				TeLayout *slot = _gui.layout(Common::String::format("page%dSlot%d", pageno, slotno));
+				if (!slot)
+					break;
+				for (unsigned int c = 0; c < slot->childCount(); c++) {
+					Te3DObject2 *child = slot->child(c);
+					InventoryObject *obj = dynamic_cast<InventoryObject *>(child);
+					if (obj) {
+						slot->removeChild(child);
+						c--;
+					}
+				}
+			}
+			pageno++;
+		}
+    }
+	
+	int pageno = 0;
+	unsigned int totalSlots = 0;
+	bool retval;
+	while (true) {
+		TeLayout *page = _gui.layout(Common::String::format("page%d", pageno));
+		retval = false;
+		if (!page)
+			break;
+		int slotno = 0;
+		while (true) {
+			TeLayout *slot = _gui.layout(Common::String::format("page%dSlot%d", pageno, slotno));
+			if (!slot)
+				break;
+			retval = true;
+
+			if (totalSlots == _invObjects.size()) {
+				// break from both loops (slight hack..)
+				pageno = 9999;
+				break;
+			}
+			
+			TeTextLayout *newText = new TeTextLayout();
+			error("TODO: finish Inventory::addObject.");
+
+			totalSlots++;
+			slotno++;
+		}
+		pageno++;
+	}
+	return retval;
 }
 
 bool Inventory::isDocument(const Common::String &objId) {

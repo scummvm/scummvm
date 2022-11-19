@@ -84,7 +84,7 @@ private:
 	void loadXMLFile(const Common::Path &path);
 
 	TeLuaGUI _gui;
-	Common::Array<InventoryObject *> _invObjects;
+	Common::List<InventoryObject *> _invObjects;
 	Cellphone *_cellphone;
 	InventoryObject *_selectedObject;
 	Common::HashMap<Common::String, InventoryObjectData> _objectData;

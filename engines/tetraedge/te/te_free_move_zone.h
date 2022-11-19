@@ -129,7 +129,7 @@ private:
 	TeVector2f32 _someGridVec1;
 	TeVector2f32 _someGridVec2;
 
-	float _someGridFloat;
+	float _gridWorldY;
 
 	TeOBP _obp;
 	TeIntrusivePtr<TeCamera> _camera;

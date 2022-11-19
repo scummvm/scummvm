@@ -141,7 +141,7 @@ bool CharacterSettingsXmlParser::textCallback(const Common::String &val) {
 		_curCharacter->_defaultScale.parse(val);
 		break;
 	case TagAnimationFileName:
-		_curCharacter->_walkFileName = val;
+		_curCharacter->_idleAnimFileName = val;
 		break;
 	case TagEyes:
 		_curCharacter->_defaultEyes = val;
