@@ -55,7 +55,7 @@ public:
 	void clear();
 
 	/**
-	 * Clears everything byte byte 0
+	 * Clears everything except byte 0
 	 */
 	void clear0();
 

@@ -485,9 +485,13 @@ bool Combat::moveMonsters() {
 }
 
 void Combat::monsterAdvances() {
-	// TODO: Shouldn't placement changes affect the arrays
-	_monsterList.remove_at(_advanceIndex);
-	_monsterName = _monsterList[_advanceIndex]._name;
+	// TODO: I can't understand the advancement logic at all.
+	// So for now, I'm simply moving the monster forward one slot
+	assert(_advanceIndex > 0);
+	Monster mon = _monsterList.remove_at(_advanceIndex);
+	_monsterList.insert_at(_advanceIndex - 1, mon);
+
+	setMode(MONSTER_ADVANCES);
 }
 
 bool Combat::monsterChanges() {
@@ -1102,7 +1106,7 @@ void Combat::turnUndead() {
 }
 
 void Combat::destroyMonster() {
-	_monsterList[getMonsterIndex()]._status = 0xff;
+	_monsterList[getMonsterIndex()]._status = MONFLAG_DEAD;
 	Sound::sound2(SOUND_9);
 }
 
