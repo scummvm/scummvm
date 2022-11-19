@@ -168,12 +168,6 @@ uint16 AnimAutoPush;
 int32 CameraTargetObj, CameraTargetBone;
 int32 TimeWalk, TimeAnim;
 
-// INV VARS
-t3dBODY *t3dIcons;
-t3dMESH CameraDummy;
-t3dCAMERA t3dIconCamera;
-t3dM3X3F BigIconM;
-
 // MOUSE VARS
 char ObjectUnderCursor[MAX_STRING_LEN];
 t3dV3F mPos;

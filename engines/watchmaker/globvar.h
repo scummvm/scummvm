@@ -23,72 +23,11 @@
 #define WATCHMAKER_GLOBVAR_H
 
 #include "watchmaker/struct.h"
+#include "watchmaker/3d/t3d_mesh.h"
 
 namespace Watchmaker {
 
 #define MAX_PATH 256
-
-// INIT
-struct Init : public SerializableAsset {
-	SerializableArray<SRoom, MAX_ROOMS> Room;
-	SerializableArray<SObject, MAX_OBJS> Obj;
-	SerializableArray<SInvObject, MAX_ICONS> InvObj;
-	SerializableArray<SSound, MAX_SOUNDS> Sound;
-	SerializableArray<SMusic, MAX_MUSICS> Music;
-	SerializableArray<SAnim, MAX_ANIMS> Anim;
-	SerializableArray<SDialog, MAX_DIALOGS> Dialog;
-	SerializableArray<SDiary, MAX_DIARIES> Diary;
-	SerializableArray<SDlgMenu, MAX_DLG_MENUS> DlgMenu;
-	SerializableArray<SDlgItem, MAX_DLG_ITEMS> DlgItem;
-
-	// Sentences?
-	SerializableArray<SPDALog, MAX_PDALOGS> PDALog;
-
-	SerializableDynamicArray<SCreditsName> _creditsNames;
-	SerializableDynamicArray<SCreditsRole> _creditsRoles;
-
-	void loadFromStream(Common::SeekableReadStream &stream) {
-		warning("Init");
-		Room.loadFromStream(stream);
-		Obj.loadFromStream(stream);
-		InvObj.loadFromStream(stream);
-		Sound.loadFromStream(stream);
-		Music.loadFromStream(stream);
-		Anim.loadFromStream(stream);
-		Dialog.loadFromStream(stream);
-		Diary.loadFromStream(stream);
-		DlgMenu.loadFromStream(stream);
-		DlgItem.loadFromStream(stream);
-
-		PDALog.loadFromStream(stream);
-
-		uint16 numNames = stream.readUint16LE();
-		uint16 numRoles = stream.readUint16LE();
-		_creditsNames = SerializableDynamicArray<SCreditsName>(numNames);
-		_creditsRoles = SerializableDynamicArray<SCreditsRole>(numRoles);
-		_creditsNames.loadFromStream(stream);
-		_creditsRoles.loadFromStream(stream);
-
-		treatCredits();
-	}
-private:
-	void treatCredits() {
-
-		for (int i = 0; i < _creditsNames.size(); i++) {
-			char *c = _creditsNames[i].name;
-			for (int k = 0; k < 32; k++, c++) {
-				(*c) ^= 0xA0;
-			}
-		}
-
-		for (int i = 0; i < _creditsRoles.size(); i++) {
-			char *c = _creditsRoles[i].role;
-			for (int k = 0; k < 48; k++, c++) {
-				(*c) ^= 0xC4;
-			}
-		}
-	}
-};
 
 // GAME RECT
 struct GameRect {
@@ -139,10 +78,12 @@ extern uint32 LoaderFlags;
 extern char WmGameDataPak_FilePath[];
 
 // INV VARS
-extern t3dBODY *t3dIcons;
-extern t3dMESH CameraDummy;
-extern t3dCAMERA t3dIconCamera;
-extern t3dM3X3F BigIconM;
+struct InvVars {
+	t3dBODY *t3dIcons;
+	t3dMESH CameraDummy;
+	t3dCAMERA t3dIconCamera;
+	t3dM3X3F BigIconM;
+};
 
 // MOUSE VARS
 extern char ObjectUnderCursor[];
@@ -259,6 +200,74 @@ extern uint8 bShowExtraLocalizationStrings;
 
 // DIALOG VARS
 extern uint8 UsedDlgMenu[MAX_PLAYERS][T3D_MAX_CHARACTERS][MAX_DLG_MENUS];
+
+struct Globals {
+	InvVars _invVars;
+};
+
+// INIT
+struct Init : public SerializableAsset {
+	SerializableArray<SRoom, MAX_ROOMS> Room;
+	SerializableArray<SObject, MAX_OBJS> Obj;
+	SerializableArray<SInvObject, MAX_ICONS> InvObj;
+	SerializableArray<SSound, MAX_SOUNDS> Sound;
+	SerializableArray<SMusic, MAX_MUSICS> Music;
+	SerializableArray<SAnim, MAX_ANIMS> Anim;
+	SerializableArray<SDialog, MAX_DIALOGS> Dialog;
+	SerializableArray<SDiary, MAX_DIARIES> Diary;
+	SerializableArray<SDlgMenu, MAX_DLG_MENUS> DlgMenu;
+	SerializableArray<SDlgItem, MAX_DLG_ITEMS> DlgItem;
+
+	// Sentences?
+	SerializableArray<SPDALog, MAX_PDALOGS> PDALog;
+
+	SerializableDynamicArray<SCreditsName> _creditsNames;
+	SerializableDynamicArray<SCreditsRole> _creditsRoles;
+
+	Globals _globals;
+
+	void loadFromStream(Common::SeekableReadStream &stream) {
+		warning("Init");
+		Room.loadFromStream(stream);
+		Obj.loadFromStream(stream);
+		InvObj.loadFromStream(stream);
+		Sound.loadFromStream(stream);
+		Music.loadFromStream(stream);
+		Anim.loadFromStream(stream);
+		Dialog.loadFromStream(stream);
+		Diary.loadFromStream(stream);
+		DlgMenu.loadFromStream(stream);
+		DlgItem.loadFromStream(stream);
+
+		PDALog.loadFromStream(stream);
+
+		uint16 numNames = stream.readUint16LE();
+		uint16 numRoles = stream.readUint16LE();
+		_creditsNames = SerializableDynamicArray<SCreditsName>(numNames);
+		_creditsRoles = SerializableDynamicArray<SCreditsRole>(numRoles);
+		_creditsNames.loadFromStream(stream);
+		_creditsRoles.loadFromStream(stream);
+
+		treatCredits();
+	}
+private:
+	void treatCredits() {
+
+		for (int i = 0; i < _creditsNames.size(); i++) {
+			char *c = _creditsNames[i].name;
+			for (int k = 0; k < 32; k++, c++) {
+				(*c) ^= 0xA0;
+			}
+		}
+
+		for (int i = 0; i < _creditsRoles.size(); i++) {
+			char *c = _creditsRoles[i].role;
+			for (int k = 0; k < 48; k++, c++) {
+				(*c) ^= 0xC4;
+			}
+		}
+	}
+};
 
 } // End of namespace Watchmaker
 

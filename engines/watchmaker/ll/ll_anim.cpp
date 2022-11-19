@@ -1512,7 +1512,7 @@ void StartAnim(WGame &game, int32 an) {
 			h->sub[a].ptr->CurFrame = 0;
 
 //		Se e' un'animazione di una camera
-		if (h->sub[a].ptr == &CameraDummy) StartAnimCamera(game);
+		if (h->sub[a].ptr == &game.init._globals._invVars.CameraDummy) StartAnimCamera(game);
 	}
 	if (AnimAutoPush) {
 		PushATF(AnimAutoPush);

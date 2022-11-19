@@ -275,7 +275,7 @@ t3dMESH *LinkMeshToStr(Init &init, const Common::String &str) {
 
 //	Cerca tra le camere
 	if (str.equalsIgnoreCase("camera"))
-		return &CameraDummy;
+		return &init._globals._invVars.CameraDummy;
 //	Cerca tra i personaggi
 	for (uint16 i = 0; i < T3D_MAX_CHARACTERS; i++)
 		if ((Character[i]) && (str.equalsIgnoreCase((char *)init.Obj[i].meshlink[0])))

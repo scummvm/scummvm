@@ -166,7 +166,7 @@ void Render3DEnvironment(WGame &game) {
 	} else if (((InvStatus & INV_MODE2) && (InvStatus & INV_ON)) /*|| ( bT2DActive == tOPTIONS )*/) { // Se sono nell'inventario
 		t3dCAMERA *tmp = t3dCurCamera;                                                          // Salvo camera attuale in tmp
 		t3dMatIdentity(&t3dCurViewMatrix);
-		t3dCurCamera = &t3dIconCamera;                                                          // Attivo camera per icone
+		t3dCurCamera = &game.init._globals._invVars.t3dIconCamera;                                                          // Attivo camera per icone
 		t3dCurCamera->Fov = CAMERA_FOV_ICON;
 		game._renderer->setCurCameraViewport(t3dCurCamera->Fov, bSuperView);
 		auto windowInfo = game._renderer->getScreenInfos();
@@ -175,17 +175,17 @@ void Render3DEnvironment(WGame &game) {
 		t3dVectInit(&t3dCurCamera->Target, 1000.0f, 0.0f, 0.0f);
 		t3dMatView(&t3dCurViewMatrix, &t3dCurCamera->Source, &t3dCurCamera->Target);   // Creo matrice
 
-		for (i = 0; i < (int32)t3dIcons->NumMeshes(); i++) {
-			t3dIcons->MeshTable[i].Flags |= T3D_MESH_HIDDEN;                                    // Disattivo tutte le icone
-			t3dMatCopy(&t3dIcons->MeshTable[i].Matrix, &BigIconM);
+		for (i = 0; i < (int32)game.init._globals._invVars.t3dIcons->NumMeshes(); i++) {
+			game.init._globals._invVars.t3dIcons->MeshTable[i].Flags |= T3D_MESH_HIDDEN;                                    // Disattivo tutte le icone
+			t3dMatCopy(&game.init._globals._invVars.t3dIcons->MeshTable[i].Matrix, &game.init._globals._invVars.BigIconM);
 
 			if (BigInvObj) {
-				if (t3dIcons->MeshTable[i].name.equalsIgnoreCase((char *)game.init.InvObj[BigInvObj].meshlink.rawArray()))
-					t3dIcons->MeshTable[i].Flags &= ~T3D_MESH_HIDDEN;                           // Fuorche' quella selezinata
+				if (game.init._globals._invVars.t3dIcons->MeshTable[i].name.equalsIgnoreCase((char *)game.init.InvObj[BigInvObj].meshlink.rawArray()))
+					game.init._globals._invVars.t3dIcons->MeshTable[i].Flags &= ~T3D_MESH_HIDDEN;                           // Fuorche' quella selezinata
 			}
 		}
 
-		if (!t3dTransformBody(t3dIcons))
+		if (!t3dTransformBody(game.init._globals._invVars.t3dIcons))
 			DebugLogWindow("Can't transform Icons");
 		t3dCurCamera = tmp;                                                                     // Rirpristino camera precedente
 		t3dSortMeshes();                                                                        // Ordina le mesh

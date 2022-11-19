@@ -254,11 +254,11 @@ void NextCameraStep(WGame &game) {
 	Init &init = game.init;
 
 	if (bMovingCamera == 2) {
-		if ((CameraDummy.CurFrame >= 0) && (CameraDummy.Anim.BoneTable)) {
-			if ((bone = &CameraDummy.Anim.BoneTable[33]) && (bone->Trasl))
-				t3dVectCopy(&t3dCurCamera->Source, &bone->Trasl[CameraDummy.CurFrame]);
-			if ((bone = &CameraDummy.Anim.BoneTable[34]) && (bone->Trasl))
-				t3dVectCopy(&t3dCurCamera->Target, &bone->Trasl[CameraDummy.CurFrame]);
+		if ((game.init._globals._invVars.CameraDummy.CurFrame >= 0) && (game.init._globals._invVars.CameraDummy.Anim.BoneTable)) {
+			if ((bone = &game.init._globals._invVars.CameraDummy.Anim.BoneTable[33]) && (bone->Trasl))
+				t3dVectCopy(&t3dCurCamera->Source, &bone->Trasl[game.init._globals._invVars.CameraDummy.CurFrame]);
+			if ((bone = &game.init._globals._invVars.CameraDummy.Anim.BoneTable[34]) && (bone->Trasl))
+				t3dVectCopy(&t3dCurCamera->Target, &bone->Trasl[game.init._globals._invVars.CameraDummy.CurFrame]);
 		} else {
 			t3dCurCamera = DestCamera;
 			CurCameraSubStep = CurCameraStep = NumCameraSteps = 0;

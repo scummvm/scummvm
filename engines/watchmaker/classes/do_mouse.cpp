@@ -147,7 +147,7 @@ void doMouseButton(WGame &game) {
 		}
 
 		if ((BigInvObj != CurInvObj) && !(bUseWith & UW_ON)) {
-			t3dMatIdentity(&BigIconM);
+			t3dMatIdentity(&game.init._globals._invVars.BigIconM);
 			BigInvObj = CurInvObj;
 		}
 
@@ -284,7 +284,7 @@ void doMouseUpdate(WGame &game) {
 			t3dM3X3F t;
 			t3dMatRot(&t, ((t3dF32)(TheMessage->lparam[1]) / (t3dF32)(game._gameRect._bigIconRect.y2 - game._gameRect._bigIconRect.y1))*T3D_PI * 2.0f,
 			          ((t3dF32)(TheMessage->lparam[0]) / (t3dF32)(game._gameRect._bigIconRect.x1 - game._gameRect._bigIconRect.x2))*T3D_PI * 2.0f, 0.0f);
-			t3dMatMul(&BigIconM, &t, &BigIconM);
+			t3dMatMul(&game.init._globals._invVars.BigIconM, &t, &game.init._globals._invVars.BigIconM);
 			CurInvObj = BigInvObj;
 		} else {
 			CurInvObj = WhatIcon(*game._renderer, TheMessage->wparam1, TheMessage->wparam2);
