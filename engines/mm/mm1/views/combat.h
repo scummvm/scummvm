@@ -33,6 +33,7 @@ class Combat : public TextView, public Game::Combat {
 private:
 	LineArray _monsterSpellLines;
 	uint _fightCount = 0;
+	InfoMessage _spellResult;
 	// Combat options that have sub-option selection
 	enum SelectedOption {
 		OPTION_NONE, OPTION_DELAY, OPTION_FIGHT,
@@ -137,6 +138,11 @@ private:
 	 * Write message for monster waits for an opening
 	 */
 	void writeWaitsForOpening();
+
+	/**
+	 * Writes the result of a spell
+	 */
+	void writeSpellResult();
 
 	/**
 	 * Whether there's messages remaining
