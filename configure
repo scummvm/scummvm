@@ -2819,6 +2819,10 @@ EOF
 			# When building for MacOS X 10.5 or below
 			if test "$_macos_min_version" -lt 1060 ; then
 				add_line_to_config_mk 'MACOSX_LEOPARD_OR_BELOW = 1'
+				if test "$_debug_build" != no ; then
+					# Newer compiler but ancient gdb
+					append_var CXXFLAGS "-gstabs+"
+				fi
 			fi
 
 			# When building with SDK 10.14 or above, we cannot compile the 32 bits dock plugin
