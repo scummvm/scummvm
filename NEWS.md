@@ -41,6 +41,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Chinese I Have no Mouth and I Must Scream.
    - Added support for Korean I Have no Mouth and I Must Scream.
 
+ SCI:
+   - Improved text rendering for Macintosh titles.
+
  SCUMM:
    - Added support for CGA, CGA Composite, CGA black & white and Hercules modes
      for SCUMM 1 versions of Zak McKracken and Maniac Mansion.
