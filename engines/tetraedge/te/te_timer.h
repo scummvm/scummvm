@@ -31,6 +31,7 @@ namespace Tetraedge {
 class TeTimer {
 public:
 	TeTimer();
+	~TeTimer();
 
 	void stop();
 	void start();

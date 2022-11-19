@@ -103,12 +103,14 @@ TeQuaternion TeModelAnimation::getNMORotation(unsigned long boneNo, float amount
 			if (i == 0)
 				return arr.front()._rot;
 
-			if (i == arr.size() || arr.size() == 1 || arr[i]._f - arr[i-1]._f == 0) {
+			if (i == arr.size() || arr.size() == 1)
 				return arr.back()._rot;
-			}
 
-			float interp = (amount - arr[i-1]._f) / (arr[i]._f - arr[i-1]._f);
-			return arr[i-1]._rot.slerpQuat(arr[i]._rot, interp);
+			if (arr[i]._f - arr[i-1]._f == 0)
+				return arr[i]._rot;
+
+			float interp = (amount - arr[i - 1]._f) / (arr[i]._f - arr[i - 1]._f);
+			return arr[i - 1]._rot.slerpQuat(arr[i]._rot, interp);
 		}
 	}
 	return TeQuaternion(0, 0, 0, 1.0);
@@ -125,12 +127,14 @@ TeVector3f32 TeModelAnimation::getNMOTranslation(unsigned long boneNo, float amo
 			if (i == 0)
 				return arr.front()._trans;
 
-			if (i == arr.size() || arr.size() == 1 || arr[i]._f - arr[i-1]._f == 0) {
+			if (i == arr.size() || arr.size() == 1)
 				return arr.back()._trans;
-			}
 
-			float interp = (amount - arr[i-1]._f) / (arr[i]._f - arr[i-1]._f);
-			return arr[i-1]._trans * (1.0 - interp) + arr[i]._trans * interp;
+			if (arr[i]._f - arr[i - 1]._f == 0)
+				return arr[i - 1]._trans;
+
+			float interp = (amount - arr[i - 1]._f) / (arr[i]._f - arr[i - 1]._f);
+			return arr[i - 1]._trans * (1.0 - interp) + arr[i]._trans * interp;
 		}
 	}
 	return TeVector3f32(0, 0, 0);

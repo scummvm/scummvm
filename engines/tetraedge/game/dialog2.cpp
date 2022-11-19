@@ -19,7 +19,10 @@
  *
  */
 
+#include "tetraedge/tetraedge.h"
 #include "tetraedge/game/dialog2.h"
+#include "tetraedge/game/game.h"
+#include "tetraedge/game/character.h"
 #include "tetraedge/te/te_button_layout.h"
 
 namespace Tetraedge {
@@ -39,7 +42,53 @@ bool Dialog2::isDialogPlaying() {
 }
 
 void Dialog2::launchNextDialog() {
-	error("TODO: Implement Dialog2::launchNextDialog.");
+	Game *game = g_engine->getGame();
+	if (_dialogs.empty()) {
+		game->showMarkers(false);
+		_gui.buttonLayoutChecked("dialogLockButton")->setVisible(false);
+		return;
+	}
+
+	TeButtonLayout *dialog = _gui.buttonLayoutChecked("dialog");
+	if (dialog->anchor().y() >= 1.0) {
+		TeCurveAnim2<TeLayout, TeVector3f32> *anim = _gui.layoutAnchorLinearAnimation("dialogAnimationDown");
+		anim->stop();
+		anim->play();
+	} else {
+		dialog->setSizeType(CoordinatesType::ABSOLUTE);
+		TeButtonLayout *lockBtn = _gui.buttonLayoutChecked("dialogLockButton");
+		dialog->setSize(lockBtn->size());
+		_currentDialogData = _dialogs.front();
+		_dialogs.remove_at(0);
+		const Common::String formatStr = _gui.value("textFormat").toString();
+		Common::String formattedVal = Common::String::format(formatStr.c_str(), _currentDialogData._stringVal.c_str());
+		_gui.textLayout("text")->setText(formattedVal);
+		_music.load(_currentDialogData._sound.toString());
+		_music.setChannelName("dialog");
+		_music.play();
+		if (!_currentDialogData._charname.empty()) {
+			Character *c = game->scene().character(_currentDialogData._charname);
+			if (!c) {
+				error("[Dialog2::launchNextDialog] Character's \"%s\" doesn\'t exist", _currentDialogData._charname.c_str());
+			}
+
+			if (_currentDialogData._animBlend == 0.0f) {
+				if (!c->setAnimation(_currentDialogData._animfile, false))
+					error("[Dialog2::launchNextDialog] Character's animation \"%s\" doesn't exist for the character\"%s\"  \n",
+							_currentDialogData._animfile.c_str(), _currentDialogData._charname.c_str());
+			} else {
+				if (!c->blendAnimation(_currentDialogData._animfile, _currentDialogData._animBlend, false, true))
+					error("[Dialog2::launchNextDialog] Character's animation \"%s\" doesn't exist for the character\"%s\"  \n",
+							_currentDialogData._animfile.c_str(), _currentDialogData._charname.c_str());
+			}
+		}
+		_gui.buttonLayoutChecked("dialogLockButton")->setVisible(true);
+		TeCurveAnim2<TeLayout, TeVector3f32> *anim = _gui.layoutAnchorLinearAnimation("dialogAnimationDown");
+		anim->stop();
+		anim->play();
+		_minimumTimeTimer.start();
+		_minimumTimeTimer.setAlarmIn(1500000);
+	}
 }
 
 void Dialog2::load() {
@@ -115,13 +164,29 @@ bool Dialog2::onSoundFinished() {
 	return false;
 }
 
-void Dialog2::pushDialog(const Common::String &param_1, const Common::String &param_2, const Common::String &param_3, int param_4) {
+void Dialog2::pushDialog(const Common::String &name, const Common::String &textVal, const Common::String &sound, int param_4) {
 	error("TODO: Implement Dialog2::pushDialog");
 }
 
-void Dialog2::pushDialog(const Common::String &param_1, const Common::String &param_2, const Common::String &param_3,
-						 const Common::String &param_4, const Common::String &param_5, float param_6) {
-	error("TODO: Implement Dialog2::pushDialog");
+void Dialog2::pushDialog(const Common::String &name, const Common::String &textVal, const Common::String &sound,
+						 const Common::String &charname, const Common::String &animfile, float animBlend) {
+	DialogData data;
+	data._name = name;
+	data._stringVal = textVal;
+	data._charname = charname;
+	data._animfile = animfile;
+	data._sound = Common::Path("sounds/Dialogs").join(sound);
+	data._animBlend = animBlend;
+	if (sound.empty()) {
+		data._sound = Common::Path("sounds/dialogs/silence5s.ogg");
+	}
+	_dialogs.push_back(data);
+	if (_dialogs.size() == 1) {
+		Game *game = g_engine->getGame();
+		game->showMarkers(true);
+	}
+	if (!_music.isPlaying())
+		launchNextDialog();
 }
 
 //void saveToBackup(TiXmlNode *node)

@@ -28,7 +28,7 @@
 
 namespace Tetraedge {
 
-class InventoryObject : TeLayout {
+class InventoryObject : public TeLayout {
 public:
 	InventoryObject();
 
@@ -37,9 +37,7 @@ public:
 	bool onButtonDown();
 	TeSignal1Param<InventoryObject&> &selectedSignal() { return _selectedSignal; };
 
-	const Common::String &name() const { return _name; }
 private:
-	Common::String _name;
 	TeLuaGUI _gui;
 	TeSignal1Param<InventoryObject&> _selectedSignal;
 };

@@ -39,6 +39,17 @@ _startTime(0), _lastTimeElapsed(0), _startTimeOffset(0), _updated(false) {
 	}
 }
 
+TeTimer::~TeTimer() {
+	if (!_stopped) {
+		for (uint i = 0; i < _timers.size(); i++) {
+			if (_timers[i] == this) {
+				_timers.remove_at(i);
+				break;
+			}
+		}
+	}
+}
+
 void TeTimer::stop() {
 	pause();
 	_lastTimeElapsed = 0;

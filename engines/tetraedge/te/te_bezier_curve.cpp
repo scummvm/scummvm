@@ -20,6 +20,10 @@
  */
 
 #include "tetraedge/te/te_bezier_curve.h"
+#include "tetraedge/te/te_mesh.h"
+#include "tetraedge/te/te_renderer.h"
+#include "tetraedge/tetraedge.h"
+
 
 namespace Tetraedge {
 
@@ -37,7 +41,36 @@ void TeBezierCurve::clear() {
 }
 
 void TeBezierCurve::draw() {
-	error("TODO: Implement TeBezierCurve::draw");
+	if (!worldVisible() || _controlPoints.empty())
+		return;
+
+    TeMesh mesh1;
+    TeMesh mesh2;
+    unsigned int npoints = _controlPoints.size();
+
+	mesh1.setConf(npoints, npoints, TeMesh::MeshMode_Points, 0, 0);
+	for (unsigned int i = 0; i < npoints; i++) {
+		mesh1.setVertex(i, _controlPoints[i]);
+		mesh1.setIndex(i, i);
+	}
+
+	mesh2.setConf(npoints, npoints, TeMesh::MeshMode_LineStrip, 0, 0);
+	for (unsigned int i = 0; i < npoints; i++) {
+		mesh2.setVertex(i, _controlPoints[i]);
+		mesh2.setNormal(i, TeVector3f32(0.0f, 1.0f, 0.0));
+		mesh2.setIndex(i, i);
+	}
+
+	TeRenderer *renderer = g_engine->getRenderer();
+	const TeColor prevColor = renderer->currentColor();
+	renderer->pushMatrix();
+	renderer->multiplyMatrix(worldTransformationMatrix());
+	renderer->setCurrentColor(TeColor(0, 0xff, 0xff, 0xff));
+	mesh2.draw();
+	renderer->setCurrentColor(TeColor(0xff, 0, 0xff, 0xff));
+	mesh1.draw();
+	renderer->popMatrix();
+	renderer->setCurrentColor(prevColor);
 }
 
 float TeBezierCurve::length() {
@@ -47,9 +80,11 @@ float TeBezierCurve::length() {
 		_lengths.clear();
 
 		TeVector3f32 lastpt = _controlPoints[0];
+		lastpt.y() = 0;
 		for (unsigned int i = 0; i < _numiterations; i++) {
 			float amount = (float)i / _numiterations;
-			const TeVector3f32 pt = retrievePoint(amount);
+			TeVector3f32 pt = retrievePoint(amount);
+			pt.y() = 0;
 			float len = (lastpt - pt).length();
 			_length += len;
 			_lengths.push_back(_length);
@@ -59,15 +94,14 @@ float TeBezierCurve::length() {
 	return _length;
 }
 
-void TeBezierCurve::pseudoTangent(float f, TeVector3f32 &v1, TeVector3f32 &v2) {
-	const float numiters = _numiterations;
-
-	if (1.0 / numiters + f <= 1.0) {
-		v1 = retrievePoint(f);
-		v2 = retrievePoint(1.0 / numiters + f);
+void TeBezierCurve::pseudoTangent(float offset, TeVector3f32 &v1, TeVector3f32 &v2) {
+	const float step = 1.0f / _numiterations;
+	if (step + offset <= 1.0f) {
+		v1 = retrievePoint(offset);
+		v2 = retrievePoint(step + offset);
 	} else {
-		v2 = retrievePoint(f);
-		v1 = retrievePoint(f - 1.0 / numiters);
+		v1 = retrievePoint(offset - step);
+		v2 = retrievePoint(offset);
 	}
 }
 
@@ -77,13 +111,10 @@ float TeBezierCurve::rawLength() {
 		_rawLength = 0.0;
 		_rawLengths.clear();
 		_rawLengths.push_back(0.0);
-		if (_controlPoints.size() > 1) {
-			for (unsigned int i = 1; i < _controlPoints.size(); i++) {
-				const TeVector3f32 diff = _controlPoints[i] - _controlPoints[i - 1];
-				float len = diff.length();
-				_rawLength += len;
-				_rawLengths.push_back(_rawLength);
-			}
+		for (unsigned int i = 1; i < _controlPoints.size(); i++) {
+			const TeVector3f32 diff = _controlPoints[i] - _controlPoints[i - 1];
+			_rawLength += diff.length();
+			_rawLengths.push_back(_rawLength);
 		}
 	}
 	return _rawLength;
@@ -104,50 +135,40 @@ TeVector3f32 TeBezierCurve::retrievePoint(float offset) {
 	const float rawlen = rawLength();
 
 	float proportion = 0.0f;
-	int i = 0;
-	while (i < npoints) {
-		proportion = _rawLengths[i] / rawlen;
+	int startpt = 0;
+	while (startpt < npoints) {
+		proportion = _rawLengths[startpt] / rawlen;
 		if (proportion >= offset)
 			break;
-		i++;
+		startpt++;
 	}
+
 	float t;
 	if (proportion == offset) {
+		// Exactly on a point
 		t = 0.0f;
 	} else {
-		float p1 = _rawLengths[i - 1];
-		float p2 = _rawLengths[i];
+		// Proportion between two points
+		float p1 = _rawLengths[startpt - 1];
+		float p2 = _rawLengths[startpt];
 		t = (rawlen * offset - p1) / (p2 - p1);
-		i--;
+		startpt--;
 	}
 
+	// Collect 4 points around the startpt (1 before, 2 after)
 	TeVector3f32 points[4];
-	TeVector3f32 *ptbuf = points;
 	const int maxPt = _controlPoints.size() - 1;
-	int p = -1;
-	do {
-		int ptno = 0;
-		if (i + p >= 0)
-			ptno = MIN(i + p, maxPt);
-		*ptbuf = _controlPoints[ptno];
-		ptbuf = ptbuf + 1;
-		p = p + 1;
-	} while (p != 3);
-
-	if (i < 0) {
-		points[0] += (points[1] - points[2]);
-	} else {
-		int ptno = MIN(i, maxPt);
-		if (ptno == 0)
-			points[0] += (points[1] - points[2]);
+	for (int p = 0; p < 4; p++) {
+		int ptno = CLIP(startpt + p - 1, 0, maxPt);
+		points[p] = _controlPoints[ptno];
 	}
-	int ptno = 0;
-	i++;
-	if (i >= 0)
-		ptno = MIN(i, maxPt);
 
-	if (ptno == maxPt)
-		points[3] += points[2] - points[1];
+	// If we hit the end, linearly extend the last gradient.
+	if (startpt <= 0)
+		points[0] += (points[1] - points[2]);
+
+	if (startpt + 1 >= maxPt)
+		points[3] += (points[2] - points[1]);
 
 	return hermiteInterpolate(t, points, 0.0, 0.0);
 }

@@ -140,6 +140,11 @@ void TeLuaThread::executeFile(const Common::Path &path) {
 	scriptFile.read(buf, fileLen);
 	buf[fileLen] = 0;
 	scriptFile.close();
+	// WORKAROUND: Some script files have rogue ";" lines in them with nothing else, clean those up.
+	char *fixline = strstr(buf, "\n\t;");
+	if (fixline)
+		fixline[2] = '\t';
+
 	_lastResumeResult = luaL_loadbuffer(_luaThread, buf, fileLen, path.toString().c_str());
 	if (_lastResumeResult) {
 		const char *msg = lua_tostring(_luaThread, -1);
@@ -228,8 +233,8 @@ void TeLuaThread::resume(const TeVariant &p1, const TeVariant &p2, const TeVaria
 	return nullptr;
 }
 
-void TeLuaThread::yield() {
-	lua_yield(_luaThread, 0);
+int TeLuaThread::yield() {
+	return lua_yield(_luaThread, 0);
 }
 
 } // end namespace Tetraedge

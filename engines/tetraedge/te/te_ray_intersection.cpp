@@ -45,6 +45,7 @@ int intersect(const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32
 	if (fabs(f2) > 1e-9) {
 		f2 = -f1 / f2;
 		fout = f2;
+		result = 0;
 		if (f2 >= 0.0) {
 			vout = v1 + (v2 * f2);
 			float dot1 = v4_v3.dotProduct(v4_v3);
@@ -64,6 +65,10 @@ int intersect(const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32
 				}
 			}
 		}
+	} else {
+		// Sorry about the logic.. this is what the decompiler gave me
+		// and I'm not brave enough to figure it out.
+		result = (-(uint)(f1 == -0.0) & 1) * 2;
 	}
 	return result;
 }
