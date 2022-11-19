@@ -31,7 +31,7 @@ TePickMesh *getMesh(const TeVector3f32 &param_1, const TeVector3f32 &param_2, co
 }
 
 int intersect(const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32 &v3,
-              const TeVector3f32 &v4, const TeVector3f32 &v5, TeVector3f32 &vout, float &fout) {
+			  const TeVector3f32 &v4, const TeVector3f32 &v5, TeVector3f32 &vout, float &fout) {
 	const TeVector3f32 v4_v3 = (v4 - v3);
 	const TeVector3f32 v5_v3 = (v5 - v3);
 	TeVector3f32 v = v4_v3 ^ v5_v3;

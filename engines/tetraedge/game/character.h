@@ -132,7 +132,7 @@ public:
 	void setFreeMoveZone(TeFreeMoveZone *zone);
 	bool setShadowVisible(bool visible);
 	void setStepSound(const Common::String &stepSound1, const Common::String &stepSound2);
-	float speedFromAnim(double movepercent);
+	float speedFromAnim(double amount);
 	//void stop(); // just maps to TeAnimation::stop();
 	float translationFromAnim(const TeModelAnimation &anim, long bone, long frame);
 	TeVector3f32 translationVectorFromAnim(const TeModelAnimation &anim, long bone, long frame);
@@ -174,6 +174,15 @@ public:
 
 private:
 	float _curveOffset;
+	float _walkCurveStart;
+	float _walkCurveEnd;
+	float _walkCurveLen;
+	float _walkCurveIncrement;
+	float _walkCurveCurOffset;
+	float _walkedLength;
+	int _walkTotalFrames;
+	bool _walkToFlag;
+	bool _walkEndAnimG;
 	TeIntrusivePtr<TeBezierCurve> _curve;
 	TeVector3f32 _curveStartLocation;
 

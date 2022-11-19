@@ -57,6 +57,10 @@ public:
 		return getX() * other.getX() - getY() * other.getY();
 	}
 
+	float length() const {
+		return sqrt(getX() * getX() + getY() * getY());
+	}
+
 	/*
 	TODO: do we need anything that isn't already in Vector2d here?
 	TeVector2f32(const TeVector2f32 &other);
@@ -64,7 +68,6 @@ public:
 	TeVector2f32(float *vals);
 
 	float dotProduct(const TeVector2f32 &other) const;
-	float length() const;
 	float squaredLength() const;
 
 	void normalize();

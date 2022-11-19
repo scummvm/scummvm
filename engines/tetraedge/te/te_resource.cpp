@@ -49,7 +49,7 @@ void TeResource::generateAccessName() {
 	name[4] = hexaChars[_idCounter >> 12 & 0xf];
 	name[5] = hexaChars[_idCounter >> 8  & 0xf];
 	name[6] = hexaChars[_idCounter >> 4  & 0xf];
-	name[7] = hexaChars[_idCounter       & 0xf];
+	name[7] = hexaChars[_idCounter		 & 0xf];
 	name[8] = '\0';
 
 	_idCounter++;

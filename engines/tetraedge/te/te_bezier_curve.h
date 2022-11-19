@@ -38,6 +38,8 @@ public:
 	void draw() override;
 	float length();
 
+	void pseudoTangent(float f, TeVector3f32 &v1, TeVector3f32 &v2);
+
 	float rawLength();
 
 	TeVector3f32 retrievePoint(float offset);
@@ -50,6 +52,7 @@ public:
 	static void deserialize(Common::ReadStream &stream, TeBezierCurve &curve);
 
 	const Common::Array<TeVector3f32> &controlPoints() { return _controlPoints; }
+	unsigned int numIterations() const { return _numiterations; }
 
 private:
 	unsigned int _numiterations;

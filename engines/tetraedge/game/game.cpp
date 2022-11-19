@@ -47,7 +47,7 @@ namespace Tetraedge {
 Game::Game() : _objectsTakenVal(0), _score(0), _entered(false), _gameLoadState(0),
 _noScaleLayout(nullptr), _noScaleLayout2(nullptr), _warped(false), _saveRequested(false),
 _firstInventory(true), _movePlayerCharacterDisabled(false), _enteredFlag2(false),
-_luaShowOwnerError(false), _markersVisible(true), _running(false), _loadName("save.xml"),
+_luaShowOwnerError(false), _markersVisible(false), _running(false), _loadName("save.xml"),
 _randomSoundFinished(false), _randomSource("SyberiaGameRandom") {
 	for (int i = 0; i < NUM_OBJECTS_TAKEN_IDS; i++) {
 		_objectsTakenBits[i] = false;
@@ -1177,9 +1177,9 @@ void Game::playRandomSound(const Common::String &name) {
 	if (!_randomSounds.contains(name)) {
 		warning("Game::playRandomSound: can't find sound list %s", name.c_str());
 		return;
-    }
-    
-    if (!_randomSoundFinished) {
+	}
+
+	if (!_randomSoundFinished) {
 		_randomSoundTimer.start();
 		int r = _randomSource.getRandomNumber(RAND_MAX);
 		float f = (r + 1 + (r / 100) * -100);

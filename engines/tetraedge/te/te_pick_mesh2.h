@@ -35,7 +35,7 @@ public:
 
 	void draw() override;
 
-	bool intersect(const TeVector3f32 &v1, const TeVector3f32 v2, TeVector3f32 &v3, float &fout, bool useLastHit, unsigned long *triangleHitOut);
+	bool intersect(const TeVector3f32 &v1, const TeVector3f32 &v2, TeVector3f32 &v3, float &fout, bool useLastHit, unsigned long *triangleHitOut);
 	bool intersect2D(const TeVector2f32 &pt);
 	unsigned long lastTriangleHit() const;
 

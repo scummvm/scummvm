@@ -59,7 +59,7 @@ void TePickMesh2::draw() {
 	renderer->setCurrentColor(prevCol);
 }
 
-bool TePickMesh2::intersect(const TeVector3f32 &v1, const TeVector3f32 v2, TeVector3f32 &v3, float &fout, bool lastHitFirst, unsigned long *triangleHitOut) {
+bool TePickMesh2::intersect(const TeVector3f32 &v1, const TeVector3f32 &v2, TeVector3f32 &v3, float &fout, bool lastHitFirst, unsigned long *triangleHitOut) {
 	if (_verticies.size() / 3 == 0)
 		return false;
 
