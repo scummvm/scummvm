@@ -490,6 +490,7 @@ void Combat::monsterAdvances() {
 	assert(_advanceIndex > 0);
 	Monster mon = _monsterList.remove_at(_advanceIndex);
 	_monsterList.insert_at(_advanceIndex - 1, mon);
+	_monsterP = &_monsterList[_advanceIndex - 1];
 
 	setMode(MONSTER_ADVANCES);
 }
