@@ -144,6 +144,12 @@ void Combat::draw() {
 		delaySeconds(5);
 		break;
 
+	case SPELL_RESULT:
+		writeSpellResult();
+		if (_spellResult._delaySeconds)
+			delaySeconds(_spellResult._delaySeconds);
+		break;
+
 	default:
 		break;
 	}
@@ -153,30 +159,30 @@ void Combat::timeout() {
 	switch (_mode) {
 	case NEXT_ROUND:
 		nextRound2();
-		return;
+		break;
 	case MONSTER_ADVANCES:
 		nextRound3();
-		return;
+		break;
 	case MONSTERS_AFFECTED:
 	case CHAR_ATTACKS:
 		combatLoop();
-		return;
+		break;
 	case MONSTER_FLEES:
 		checkMonsterSpells();
-		return;
+		break;
 	case MONSTER_WANDERS:
 	case INFILTRATION:
 	case MONSTER_ATTACK:
 		writeParty();
 		writeMonsters();
 		checkParty();
-		return;
+		break;
 	case MONSTER_SPELL:
 		checkMonsterSpellDone();
-		return;
+		break;
 	case WAITS_FOR_OPENING:
 		loop1();
-		return;
+		break;
 	case DEFEATED_MONSTERS: {
 		auto &spells = g_globals->_activeSpells;
 		spells._s.bless = 0;
@@ -186,13 +192,14 @@ void Combat::timeout() {
 
 		close();
 		g_events->send("Game", GameMessage("UPDATE"));
-		return;
+		break;
 	}
+	case SPELL_RESULT:
+		_spellResult._timeoutCallback();
+		break;
 	default:
 		 break;
 	}
-
-//	redraw();
 }
 
 bool Combat::msgKeypress(const KeypressMessage &msg) {
@@ -225,6 +232,16 @@ bool Combat::msgKeypress(const KeypressMessage &msg) {
 		default:
 			break;
 		}
+	} else if (_mode == SPELL_RESULT && !isDelayActive()) {
+		// Displaying a spell result that required waiting for keypress
+		assert(_spellResult._timeoutCallback);
+		_spellResult._timeoutCallback();
+
+	} else if (isDelayActive()) {
+		// In all other modes, if a delay is active, any keypress
+		// will cause the delay to end immediately
+		cancelDelay();
+		timeout();
 	}
 
 	return true;
@@ -647,6 +664,13 @@ void Combat::writeWaitsForOpening() {
 	writeString(0, 20, line);
 }
 
+void Combat::writeSpellResult() {
+	for (uint i = 0; i < _spellResult._lines.size(); ++i) {
+		const Line &l = _spellResult._lines[i];
+		writeString(l.x, l.y + 20, l._text);
+	}
+}
+
 void Combat::checkMonsterSpellDone() {
 	for (uint i = 0; i < _monsterSpellLines.size(); ++i) {
 		if (i > 0 && _monsterSpellLines[i].y ==
@@ -779,9 +803,9 @@ void Combat::setOption(SelectedOption option) {
 void Combat::displaySpellResult(const InfoMessage &msg) {
 	assert(msg._timeoutCallback || msg._keyCallback);
 	assert(!msg._delaySeconds || !msg._timeoutCallback);
+	_spellResult = msg;
 
-	// TODO: Display the spell result
-	warning("TODO: displaySpellResult");
+	setMode(SPELL_RESULT);
 }
 
 } // namespace Views
