@@ -136,6 +136,7 @@ public:
 	bool _skipSkinOffsets;
 
 	Common::Array<TeMesh> _meshes;
+	Common::Array<BonesBlender *> _boneBlenders;
 
 protected:
 	bool _matrixForced;
@@ -146,7 +147,6 @@ protected:
 	Common::Array<TeMatrix4x4> _boneMatricies;
 	Common::Array<TeMatrix4x4> _lerpedElements;
 	Common::Array<Common::Array<weightElement>> _weightElements;
-	Common::Array<BonesBlender *> _boneBlenders;
 
 	TeQuaternion _boneRotation;
 

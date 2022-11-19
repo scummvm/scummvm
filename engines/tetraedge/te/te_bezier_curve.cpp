@@ -59,6 +59,18 @@ float TeBezierCurve::length() {
 	return _length;
 }
 
+void TeBezierCurve::pseudoTangent(float f, TeVector3f32 &v1, TeVector3f32 &v2) {
+	const float numiters = _numiterations;
+
+	if (1.0 / numiters + f <= 1.0) {
+		v1 = retrievePoint(f);
+		v2 = retrievePoint(1.0 / numiters + f);
+	} else {
+		v2 = retrievePoint(f);
+		v1 = retrievePoint(f - 1.0 / numiters);
+	}
+}
+
 float TeBezierCurve::rawLength() {
 	if (_rawLengthNeedsUpdate) {
 		_rawLengthNeedsUpdate = false;
@@ -78,7 +90,7 @@ float TeBezierCurve::rawLength() {
 }
 
 TeVector3f32 TeBezierCurve::retrievePoint(float offset) {
-	const unsigned int npoints = _controlPoints.size();
+	const int npoints = _controlPoints.size();
 
 	// Simple cases for small numbers of points.
 	if (npoints == 0)
@@ -89,11 +101,10 @@ TeVector3f32 TeBezierCurve::retrievePoint(float offset) {
 		return _controlPoints[0] + (_controlPoints[1] - _controlPoints[0]) * offset;
 
 	// else, there are at least 3 points so need to actually interpolate.
-	TeVector3f32 points[5];
 	const float rawlen = rawLength();
 
 	float proportion = 0.0f;
-	unsigned int i = 0;
+	int i = 0;
 	while (i < npoints) {
 		proportion = _rawLengths[i] / rawlen;
 		if (proportion >= offset)
@@ -110,12 +121,35 @@ TeVector3f32 TeBezierCurve::retrievePoint(float offset) {
 		i--;
 	}
 
-	for (unsigned int p = -1; p < 3; p++) {
-		
-	}
-	// TODO: Finish this, line 77 to 129.
+	TeVector3f32 points[4];
+	TeVector3f32 *ptbuf = points;
+	const int maxPt = _controlPoints.size() - 1;
+	int p = -1;
+	do {
+		int ptno = 0;
+		if (i + p >= 0)
+			ptno = MIN(i + p, maxPt);
+		*ptbuf = _controlPoints[ptno];
+		ptbuf = ptbuf + 1;
+		p = p + 1;
+	} while (p != 3);
 
-	error("TODO: Implement TeBezierCurve::retrievePoint");
+	if (i < 0) {
+		points[0] += (points[1] - points[2]);
+	} else {
+		int ptno = MIN(i, maxPt);
+		if (ptno == 0)
+			points[0] += (points[1] - points[2]);
+	}
+	int ptno = 0;
+	i++;
+	if (i >= 0)
+		ptno = MIN(i, maxPt);
+
+	if (ptno == maxPt)
+		points[3] += points[2] - points[1];
+
+	return hermiteInterpolate(t, points, 0.0, 0.0);
 }
 
 void TeBezierCurve::setControlPoints(const Common::Array<TeVector3f32> &points) {
@@ -165,7 +199,7 @@ TeVector3f32 TeBezierCurve::hermiteInterpolate(float t, const TeVector3f32 *poin
 
 	const float t2 = t * t;
 	const float t3 = t * t * t;
-	const TeVector3f32 h1a = points[1] * ((t3 + t3) - t2 * 3.0);
+	const TeVector3f32 h1a = points[1] * ((t3 + t3) - t2 * 3.0 + 1.0);
 	const TeVector3f32 h1b = x1 * ((t3 - (t2 + t2)) + t);
 	const TeVector3f32 h1 = (h1a + h1b) + (x2 * (t3 - t2));
 	return h1 + (points[2] * (t3 * -2.0 + t2 * 3.0));

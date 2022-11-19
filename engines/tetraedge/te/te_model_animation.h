@@ -54,6 +54,10 @@ public:
 
 	TeModelAnimation();
 
+	~TeModelAnimation() {
+		destroy();
+	}
+
 	void bind(const TeIntrusivePtr<TeModel> &ptr) {
 		_model = ptr;
 	};
@@ -88,6 +92,7 @@ public:
 	void update(double proportion) override;
 
 	int curFrame2() const { return _curFrame2; }
+	float speed() const { return _speed; }
 
 	TeIntrusivePtr<TeModel> _model;
 	int _firstFrame;

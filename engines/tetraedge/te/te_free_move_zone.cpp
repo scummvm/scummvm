@@ -116,17 +116,21 @@ TeVector3f32 TeFreeMoveZone::correctCharacterPosition(const TeVector3f32 &pos, b
 
 TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt, const TeVector2s32 &endpt, float param_5, bool findMeshFlag) {
 	updateGrid(false);
-	error("TODO: Implement TeFreeMoveZone::curve");
+	Common::Array<TePickMesh2 *> meshes;
+	TeVector3f32 newend;
+	meshes.push_back(this);
+
+	TePickMesh2 *nearest = findNearestMesh(_camera, endpt, meshes, &newend, findMeshFlag);
+	if (!nearest)
+		return TeIntrusivePtr<TeBezierCurve>();
+
+	return curve(startpt, newend);
 }
 
 TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt, const TeVector3f32 &endpt) {
 	updateGrid(false);
-	Common::Array<TeVector3f32> points;
-	points.push_back(startpt);
-	points.push_back(endpt);
-
-	TeVector2s32 projectedStart = projectOnAStarGrid(startpt);
-	TeVector2s32 projectedEnd = projectOnAStarGrid(endpt);
+	const TeVector2s32 projectedStart = projectOnAStarGrid(startpt);
+	const TeVector2s32 projectedEnd = projectOnAStarGrid(endpt);
 	int xsize = _graph->_size._x;
 	float cost = 0;
 	// Passing an int to void*, yuck? but it's what the original does..
@@ -137,14 +141,16 @@ TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt,
 
 	if (pathResult == micropather::MicroPather::SOLVED || pathResult == micropather::MicroPather::START_END_SAME) {
 		Common::Array<TeVector2s32> points;
-		points.resize(path.size());
+		points.resize(path.size() + 2);
 
-		for (auto &pathpt : path) {
+		int i = 1;
+		for (auto pathpt : path) {
 			// each path point is an array offset
-			int offset = static_cast<int>(reinterpret_cast<long>(pathpt));
-			int yoff = (offset / _graph->_size._x);
+			int offset = static_cast<int>(reinterpret_cast<size_t>(pathpt));
+			int yoff = offset / _graph->_size._x;
 			int xoff = offset % _graph->_size._x;
-			points.push_back(TeVector2s32(xoff, yoff));
+			points[i] = TeVector2s32(xoff, yoff);
+			i++;
 		}
 
 		Common::Array<TeVector3f32> pts3d;
@@ -157,6 +163,12 @@ TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt,
 		removeInsignificantPoints(pts3d);
 		retval = new TeBezierCurve();
 		retval->setControlPoints(pts3d);
+	} else {
+		Common::Array<TeVector3f32> points;
+		points.push_back(startpt);
+		points.push_back(endpt);
+		retval = new TeBezierCurve();
+		retval->setControlPoints(points);
 	}
 
 	return retval;
@@ -244,9 +256,66 @@ TeVector2s32 TeFreeMoveZone::projectOnAStarGrid(const TeVector3f32 &pt) {
 	return TeVector2s32((int)projected.getX(), (int)projected.getY());
 }
 
+static int segmentIntersection(const TeVector2f32 &s1start, const TeVector2f32 &s1end,
+						const TeVector2f32 &s2start, const TeVector2f32 &s2end,
+                       TeVector2f32 *sout, float *fout1, float *fout2) {
+	TeVector2f32 s1len = s1end - s1start;
+	TeVector2f32 s2len = s2end - s2start;
+	float squarelen = s1len.getX() * s2len.getX() + s1len.getY() * s2len.getY();
+	int result = 0;
+	if (squarelen != 0) {
+		result = 1;
+		float intersection1 = -((s1len.getY() * s1start.getX() +
+						(s1len.getX() * s2start.getY() - s1len.getX() * s1start.getY())) -
+                          s1len.getY() * s2start.getX()) / squarelen;
+		if (intersection1 >= 0.0f && intersection1 <= 1.0f) {
+			float intersection2 = -((s2len.getY() * s2start.getY() +
+						(s2len.getX() * s1start.getX() - s2len.getX() * s2start.getX())) -
+                          s2len.getY() * s1start.getY()) / squarelen;
+			if (intersection2 >= 0.0f && intersection2 <= 1.0f) {
+				result = 2;
+				if (sout || fout1 || fout2) {
+					warning("TODO: implement output in segmentIntersection");
+				}
+			}
+		}
+	}
+	return result;
+}
+
 Common::Array<TeVector3f32> TeFreeMoveZone::removeInsignificantPoints(const Common::Array<TeVector3f32> &points) {
-	warning("TODO: Implement TeFreeMoveZone::removeInsignificantPoints");
-	return points;
+	if (points.size() < 2)
+		return points;
+
+	Common::Array<TeVector3f32> result;
+	result.push_back(points[0]);
+
+	if (points.size() > 2) {
+		int point1 = 0;
+		int point2 = 2;
+        do {
+			const TeVector2f32 pt1(points[point1].x(), points[point1].z());
+			const TeVector2f32 pt2(points[point2].x(), points[point2].z());
+			for (unsigned int i = 0; i * 2 < _uintArray2.size() / 2; i++) {
+				const TeVector3f32 transpt3d1 = worldTransformationMatrix() * verticies()[_uintArray2[i * 2]];
+				const TeVector2f32 transpt1(transpt3d1.x(), transpt3d1.z());
+				const TeVector3f32 transpt3d2 = worldTransformationMatrix() * verticies()[_uintArray2[i * 2 + 1]];
+				const TeVector2f32 transpt2(transpt3d2.x(), transpt3d2.z());
+				if (segmentIntersection(pt1, pt2, transpt1, transpt2, nullptr, nullptr, nullptr) == 2)
+					break;
+			}
+			point1 = point2 - 1;
+			result.push_back(points[point1]);
+			point2++;
+		} while (point2 < points.size());
+	}
+
+	if (result.back() != points[points.size() - 2]) {
+        result.push_back(points[points.size() - 1]);
+	} else {
+        result.back() = points[points.size() - 1];
+	}
+	return result;
 }
 
 void TeFreeMoveZone::setBordersDistance(float dist) {
@@ -347,8 +416,8 @@ void TeFreeMoveZone::updateTransformedVertices() {
 /*========*/
 
 float TeFreeMoveZoneGraph::LeastCostEstimate(void *stateStart, void *stateEnd) {
-	int startInt = static_cast<int>(reinterpret_cast<long>(stateStart));
-	int endInt = static_cast<int>(reinterpret_cast<long>(stateEnd));
+	int startInt = static_cast<int>(reinterpret_cast<size_t>(stateStart));
+	int endInt = static_cast<int>(reinterpret_cast<size_t>(stateEnd));
 	int starty = startInt / _size._x;
 	int endy = endInt / _size._x;
 	TeVector2s32 start(startInt - starty * _size._x, starty);
@@ -357,7 +426,7 @@ float TeFreeMoveZoneGraph::LeastCostEstimate(void *stateStart, void *stateEnd) {
 }
 
 void TeFreeMoveZoneGraph::AdjacentCost(void *state, Common::Array<micropather::StateCost> *adjacent) {
-	int stateInt = static_cast<int>(reinterpret_cast<long>(state));
+	int stateInt = static_cast<int>(reinterpret_cast<size_t>(state));
 	int stateY = stateInt / _size._x;
 	const TeVector2s32 statept(stateInt - stateY * _size._x, stateY);
 

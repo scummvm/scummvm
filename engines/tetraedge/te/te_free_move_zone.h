@@ -108,7 +108,7 @@ public:
 
 	static float normalizeAngle(float angle);
 	static void deserialize(Common::ReadStream &stream, TeFreeMoveZone &dest, Common::Array<TeBlocker> *blockers,
-               Common::Array<TeRectBlocker> *rectblockers, Common::Array<TeActZone> *actzones);
+			Common::Array<TeRectBlocker> *rectblockers, Common::Array<TeActZone> *actzones);
 	static void serialize(Common::WriteStream &stream, const TeFreeMoveZone &src, bool updateFirst);
 
 	static TePickMesh2 *findNearestMesh(TeIntrusivePtr<TeCamera> &camera, const TeVector2s32 &frompt,

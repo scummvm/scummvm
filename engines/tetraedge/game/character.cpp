@@ -23,6 +23,7 @@
 #include "common/path.h"
 #include "common/file.h"
 #include "common/debug.h"
+#include "common/util.h"
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/character.h"
@@ -61,7 +62,9 @@ _notWalkAnim(false), _someRepeatFlag(false), _walkModeStr("Walk"),
 _needsSomeUpdate(false), _positionFlag(false), _lookingAtTallThing(false),
 _stepSound1("sounds/SFX/PAS_H_BOIS1.ogg"), _stepSound2("sounds/SFX/PAS_H_BOIS2.ogg"),
 _freeMoveZone(nullptr), _animSoundOffset(0), _lastAnimFrame(0), _charLookingAt(nullptr),
-_recallageY(true) {
+_recallageY(true), _walkToFlag(false), _walkCurveEnd(0.0f), _walkCurveStart(0.0f),
+_walkCurveLen(0.0f), _walkCurveIncrement(0.0f), _walkEndAnimG(false), _walkTotalFrames(0),
+_walkCurveCurOffset(0.0f) {
 	_curModelAnim.setDeleteFn(&TeModelAnimation::deleteLater);
 }
 
@@ -570,6 +573,7 @@ bool Character::setAnimation(const Common::String &aname, bool repeat, bool para
 	}
 
 	_curModelAnim = animCacheLoad(animPath);
+	_curModelAnim->reset();
 	_curModelAnim->onFinished().add(this, &Character::onModelAnimationFinished);
 	_curModelAnim->bind(_model);
 	_curModelAnim->setFrameLimits(startFrame, endFrame);
@@ -609,9 +613,39 @@ bool Character::setShadowVisible(bool visible) {
 	return false;
 }
 
-float Character::speedFromAnim(double movepercent) {
-	error("TODO: Implement Character::speedFromAnim");
-	return 0;
+float Character::speedFromAnim(double msFromStart) {
+	if (!_model)
+		return 0.0f;
+
+	TeIntrusivePtr<TeModelAnimation> modelAnim;
+	if (_model->_boneBlenders.empty()) {
+		modelAnim = _model->anim();
+	} else {
+		modelAnim = _model->_boneBlenders.back()->_anim;
+	}
+
+	if (!modelAnim)
+		return 0.0f;
+
+	const int pereBone = modelAnim->findBone("Pere");
+	int curFrame = modelAnim->calcCurrentFrame(msFromStart);
+
+	float result;
+	if (_lastFrame == -1) {
+		const TeVector3f32 nowvec = translationVectorFromAnim(*modelAnim, pereBone, 0);
+		const TeVector3f32 lastvec = translationVectorFromAnim(*modelAnim, pereBone, 1);
+		result = lastvec.z() - nowvec.z();
+	} else {
+		const TeVector3f32 nowvec = translationVectorFromAnim(*modelAnim, pereBone, curFrame);
+		const TeVector3f32 lastvec = translationVectorFromAnim(*modelAnim, pereBone, _lastFrame);
+		result = nowvec.z() - lastvec.z();
+		if (curFrame < _lastFrame) {
+			result += animLength(*modelAnim, pereBone, 9999);
+		}
+	}
+	_lastFrame = curFrame;
+	result *= _model->scale().z();
+	return result;
 }
 
 float Character::translationFromAnim(const TeModelAnimation &anim, long bone, long param_3) {
@@ -630,12 +664,116 @@ TeTRS Character::trsFromAnim(const TeModelAnimation &anim, long bone, long frame
 	return anim.getTRS(bone, frame, false);
 }
 
-void Character::update(double percentval) {
+void Character::update(double msFromStart) {
 	if (!_curve || !_runTimer.running())
 		return;
-	//float speed = speedFromAnim(percentval);
 
-	error("TODO: Implement Character::update");
+	_walkCurveCurOffset = speedFromAnim(msFromStart) * _walkCurveIncrement + _walkCurveCurOffset;
+
+	if (_curve->controlPoints().size() < 2) {
+		blendAnimation(_characterSettings._walkFileName, 0.0667, true, false);
+		endMove();
+		return;
+	}
+
+	const float baseAngle = (_curveOffset > _walkCurveEnd ? M_PI : 0);
+	const float sign = (_curveOffset > _walkCurveEnd ? -1 : 1);
+	updatePosition(_walkCurveStart);
+	const TeVector3f32 modelpos = _model->position();
+
+	float lastWalkedLength = _walkedLength;
+	TeVector3f32 lastNextPos = modelpos;
+	TeVector3f32 nextPos = modelpos;
+	TeVector3f32 newPos = modelpos;
+	float lastOffset = _walkCurveStart;
+
+	float endOffset = _walkCurveStart;
+	while (_walkedLength < _walkCurveCurOffset) {
+		lastNextPos = nextPos;
+		float nextOffset = (4.0 / _curve->numIterations() * sign + lastOffset);
+		float offset = CLIP(nextOffset, 0.0f, 1.0f);
+
+		newPos = _curve->retrievePoint(offset) + _curveStartLocation;
+		const TeVector2f32 dist = TeVector2f32(nextPos.x(), nextPos.z()) - TeVector2f32(newPos.x(), newPos.z());
+
+		lastWalkedLength = _walkedLength;
+		_walkedLength += dist.length();
+
+		nextPos = newPos;
+		endOffset = lastOffset;
+		if (offset == 1.0 || offset == 0.0)
+			break;
+		lastOffset = offset;
+	}
+
+	_walkedLength = lastWalkedLength;
+	nextPos = lastNextPos;
+
+	while (_walkedLength < _walkCurveCurOffset) {
+		float nextOffset = (1.0 / _curve->numIterations()) * sign + endOffset;
+		endOffset = CLIP(nextOffset, 0.0f, 1.0f);
+
+		newPos = _curve->retrievePoint(endOffset) + _curveStartLocation;
+		const TeVector2f32 dist = TeVector2f32(nextPos.x(), nextPos.z()) - TeVector2f32(newPos.x(), newPos.z());
+		_walkedLength += dist.length();
+		nextPos = newPos;
+		if (endOffset == 1.0 || endOffset == 0.0)
+			break;
+	}
+
+	if (_freeMoveZone) {
+		bool correctflag;
+		newPos = _freeMoveZone->correctCharacterPosition(newPos, &correctflag, true);
+	}
+
+	_walkCurveStart = endOffset;
+	_model->setPosition(newPos);
+
+	TeVector3f32 t1;
+	TeVector3f32 t2;
+	_curve->pseudoTangent(endOffset, t1, t2);
+	const TeVector3f32 normalizedTangent = (t2 - t1).getNormalized();
+	float angle = TeVector3f32(0.0, 0.0, 1.0).dotProduct(normalizedTangent);
+	TeVector3f32 crossprod = TeVector3f32::crossProduct(TeVector3f32(0.0, 0.0, 1.0), normalizedTangent);
+	angle = acos(angle);
+	if (crossprod.y() >= 0.0f) {
+		angle = -angle;
+	}
+
+	TeQuaternion rot = TeQuaternion::fromAxisAndAngle(TeVector3f32(0.0, 1.0, 0.0), baseAngle + angle);
+	_model->setRotation(rot);
+
+	const Common::String endGAnim = walkAnim(WalkPart_EndG);
+	if (_walkCurveStart == _walkCurveEnd || fabs(_walkCurveEnd - _curveOffset) < fabs(_walkCurveStart - _curveOffset)) {
+		if (_walkToFlag) {
+			_walkToFlag = false;
+			endMove();
+		}
+		if (endGAnim.empty()) {
+			blendAnimation(_characterSettings._walkFileName, 0.0667, true, false);
+			endMove();
+		}
+	}
+
+	if (!endGAnim.empty() && _curAnimName == walkAnim(WalkPart_Loop) &&
+		   ((_curModelAnim->speed() * (msFromStart / 1000.0)) >= _walkTotalFrames)) {
+		if (_walkToFlag) {
+		  _walkToFlag = false;
+		  endMove();
+		} else {
+			if (_walkEndAnimG) {
+			  setAnimation(walkAnim(WalkPart_EndG), false);
+			} else {
+			  setAnimation(walkAnim(WalkPart_EndD), false);
+			}
+		}
+	}
+
+	// Note:
+	// The game does a bunch of extra things here (line 252 on)
+	// that seem to have no actual effect??
+
+	updateAnimFrame();
 }
 
 void Character::updateAnimFrame() {
@@ -674,7 +812,87 @@ void Character::walkMode(const Common::String &mode) {
 }
 
 void Character::walkTo(float curveEnd, bool walkFlag) {
-	error("TODO: Implement Character::walkTo");
+	_walkToFlag = walkFlag;
+	stop();
+	_walkCurveEnd = curveEnd;
+	_walkCurveStart = _curveOffset;
+	_walkCurveCurOffset = 0.0f;
+	_walkedLength = 0.0f;
+	const float f = (walkFlag ? _walkPart3AnimLen : 0);
+	if (_curve->controlPoints().size()) {
+		_walkCurveLen = _curve->length();
+		_walkEndAnimG = false;
+		const float f2 = ((_walkCurveLen - f) - _walkPart0AnimLen) / _walkPart1AnimLen;
+		float animLen;
+		if (f2 >= 0) {
+			Game *game = g_engine->getGame();
+			if (game->scene()._character == this && _walkModeStr == "Walk") {
+				int part1len = (int)(f2 * _walkPart1AnimFrameCount);
+				int repeats = part1len / _walkPart1AnimFrameCount;
+				uint remainder = part1len % _walkPart1AnimFrameCount;
+
+				uint framecounts[4];
+
+				if (repeats == 0)
+					framecounts[0] = UINT_MAX;
+				else
+					framecounts[0] = (repeats - 1) * _walkPart1AnimFrameCount + 29;
+
+				framecounts[1] = _walkPart1AnimFrameCount * repeats + 13;
+				framecounts[2] = _walkPart1AnimFrameCount * repeats + 29;
+				framecounts[3] = _walkPart1AnimFrameCount * (repeats + 1) + 13;
+
+				for (int i = 0; i < 4; i++) {
+					framecounts[i] = abs((int)(framecounts[i] - (int)(f2 * _walkPart1AnimFrameCount)));
+				}
+
+				int minoffset = 0;
+				for (int i = 0; i < 4; i++) {
+					if (framecounts[i] < framecounts[minoffset])
+						minoffset = i;
+				}
+
+				switch(minoffset) {
+				case 0:
+				  remainder = 29;
+				  _walkEndAnimG = true;
+				  repeats--;
+				  break;
+				case 1:
+				  remainder = 13;
+				  break;
+				case 2:
+				  remainder = 29;
+				  _walkEndAnimG = true;
+				  break;
+				case 3:
+				  remainder = 13;
+				  repeats++;
+				}
+				_walkTotalFrames = _walkPart1AnimFrameCount * repeats + _walkPart0AnimFrameCount + remainder;
+				animLen = _walkPart1AnimLen;
+				const float loopAnimLen = animLengthFromFile(walkAnim(WalkPart_Loop), &remainder, remainder);
+				_walkCurveIncrement = _walkCurveLen / (repeats * animLen + f + _walkPart0AnimLen + loopAnimLen);
+				play();
+				return; // NOTE: early return here.
+			} else {
+				double intpart;
+				double remainder = modf(f, &intpart);
+				if (remainder >= 0.5) {
+					_walkEndAnimG = true;
+					intpart += 0.75;
+				} else {
+					intpart += 0.25;
+				}
+				_walkTotalFrames = (int)(_walkPart1AnimFrameCount * intpart) + _walkPart0AnimFrameCount;
+				animLen = f + (float)_walkPart0AnimLen + intpart * _walkPart1AnimLen;
+			}
+		} else {
+			animLen = (float)(_walkPart0AnimLen + _walkPart3AnimLen);
+		}
+		_walkCurveIncrement = _walkCurveLen / animLen;
+	}
+	play();
 }
 
 } // end namespace Tetraedge
