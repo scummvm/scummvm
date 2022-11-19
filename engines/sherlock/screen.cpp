@@ -297,11 +297,11 @@ void Screen::print(const Common::Point &pt, uint color, const char *formatStr, .
 		// Center text horizontally
 		pos.x = (this->width() - width_) / 2;
 
-	Common::Rect textBounds(pos.x, pos.y, pos.x + width_, pos.y + _fontHeight);
+	Common::Rect textBounds(pos.x, pos.y, pos.x + width_, pos.y + fontHeight());
 	if (textBounds.right > this->width())
 		textBounds.moveTo(this->width() - width_, textBounds.top);
 	if (textBounds.bottom > this->height())
-		textBounds.moveTo(textBounds.left, this->height() - _fontHeight);
+		textBounds.moveTo(textBounds.left, this->height() - fontHeight());
 
 	// Write out the string at the given position
 	writeString(str, Common::Point(textBounds.left, textBounds.top), color);
@@ -345,7 +345,7 @@ Common::Rect Screen::getDisplayBounds() {
 }
 
 void Screen::synchronize(Serializer &s) {
-	int fontNumb = _fontNumber;
+	int fontNumb = fontNumber();
 	s.syncAsByte(fontNumb);
 	if (s.isLoading())
 		setFont(fontNumb);

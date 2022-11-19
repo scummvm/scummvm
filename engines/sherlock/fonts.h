@@ -36,17 +36,18 @@ class Fonts {
 private:
 	static ImageFile *_font;
 	static byte _yOffsets[255];
-protected:
-	static SherlockEngine *_vm;
 	static int _fontNumber;
 	static int _fontHeight;
 	static int _widestChar;
 	static uint16 _charCount;
 
+	static inline byte translateChar(byte c);
+protected:
+	static SherlockEngine *_vm;
+
 	static void writeString(BaseSurface *surface, const Common::String &str,
 		const Common::Point &pt, int overrideColor = 0);
 
-	static inline byte translateChar(byte c);
 public:
 	/**
 	 * Initialise the font manager
