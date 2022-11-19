@@ -636,7 +636,7 @@ void ProcessCamera(WGame &game) {
 		game._gameVars.setCurRoomId(getRoomFromStr(init, croom->name));
 		t3dCurRoom = PortalCrossed;
 		PortalCrossed = nullptr;
-		UpdateRoomVisibility(init);
+		UpdateRoomVisibility(game);
 
 		if (Player && t3dCurRoom) {
 			Player->Walk.Panel = t3dCurRoom->Panel[t3dCurRoom->CurLevel];

@@ -440,7 +440,7 @@ void ProcessATFDO(WGame &game, int32 in) {
 				init.Obj[o43CANCELLO01].flags |= EXTRA2;
 			}
 
-			SetBndLevel(init, "r43.t3d", 1);
+			SetBndLevel(game, "r43.t3d", 1);
 			StartSound(game, w428B);
 		}
 		break;
@@ -479,7 +479,7 @@ void ProcessATFDO(WGame &game, int32 in) {
 		break;
 
 	case f4ASETBND44:
-		SetBndLevel(init, "r44.t3d", t3dCurRoom->CurLevel);
+		SetBndLevel(game, "r44.t3d", t3dCurRoom->CurLevel);
 
 		if (!(init.Obj[o4ALEVA].flags & EXTRA2)) {
 			IncCurTime(game, 15);
@@ -734,7 +734,7 @@ void ProcessATF(WGame &game, int32 an, int32 atf) {
 		ForcedCamera = in;
 		break;
 	case ATF_SET_BND_LEVEL:
-		SetBndLevel(init, (char *) ha->RoomName.rawArray(), in);
+		SetBndLevel(game, (char *) ha->RoomName.rawArray(), in);
 		break;
 	case ATF_TO_1ST_SENT:
 		ToFirstPersonSent = (in >= TEXT1) ? init.Obj[obj].text[in - TEXT1] : init.Obj[obj].action[CurPlayer];
@@ -768,7 +768,7 @@ void ProcessATF(WGame &game, int32 an, int32 atf) {
 		break;
 	case ATF_SUB_MUSIC:
 		CurSubMusic = in;
-		UpdateRoomVisibility(init);
+		UpdateRoomVisibility(game);
 		break;
 	case ATF_EXIT:
 		StopAnim(game, an);
@@ -853,11 +853,11 @@ void ProcessATF(WGame &game, int32 an, int32 atf) {
 
 	case ATFP_OFF:
 		ChangeMeshFlags(h->sub[in - 1].ptr, +1, T3D_MESH_NOPORTALCHECK);
-		UpdateRoomVisibility(init);
+		UpdateRoomVisibility(game);
 		break;
 	case ATFP_ON:
 		ChangeMeshFlags(h->sub[in - 1].ptr, -1, T3D_MESH_NOPORTALCHECK);
-		UpdateRoomVisibility(init);
+		UpdateRoomVisibility(game);
 		break;
 	case ATFM_OFF:
 		ChangeMeshFlags(h->sub[in - 1].ptr, +1, T3D_MESH_HIDDEN);
@@ -1110,7 +1110,7 @@ void ProcessATF(WGame &game, int32 an, int32 atf) {
 		bGolfMode = in;
 		break;
 	case ATF_VISIBILITY:
-		UpdateRoomVisibility(init);
+		UpdateRoomVisibility(game);
 		break;
 
 	case ATF_INC_TIME:

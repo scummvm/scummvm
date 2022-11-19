@@ -358,7 +358,7 @@ void ProcessKeyboard(WGame &game) {
 		if (KeyUp(Common::KEYCODE_p)) {
 			if (KeyDown(Common::KEYCODE_LSHIFT) || KeyDown(Common::KEYCODE_RSHIFT)) {
 				if (++bnd_lev > 5) bnd_lev = 0;
-				SetBndLevel(game.init, NULL, bnd_lev);
+				SetBndLevel(game, NULL, bnd_lev);
 				DebugLogWindow("BndLev %d", bnd_lev);
 			} else
 				bShowPanels ^= 1;   // Escono Pannelli

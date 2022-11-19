@@ -30,6 +30,7 @@
 #include "watchmaker/3d/math/llmath.h"
 #include "watchmaker/3d/t3d_face.h"
 #include "watchmaker/3d/t3d_mesh.h"
+#include "watchmaker/file_utils.h"
 #include "watchmaker/game.h"
 #include "watchmaker/ll/ll_system.h"
 #include "watchmaker/renderer.h"
@@ -300,14 +301,15 @@ void LoadBounds(WorkDirs &workDirs, const char *pname, t3dBODY *b) {
 /* -----------------10/06/99 16.03-------------------
  *                  LoadLightmaps
  * --------------------------------------------------*/
-void LoadLightmaps(WorkDirs &workDirs, t3dBODY *b) {
+void LoadLightmaps(WGame &game, t3dBODY *b) {
 	uint32  NumLightmaps;//, num;
 	gVertex *gv;
 	uint8   rr, gg, bb;
 	int32  Map, alphaval1, alphaval2, alphaval3;
+	WorkDirs &workDirs = game.workDirs;
 
 	Common::String Appo = setDirectoryAndName(workDirs._lightmapsDir, b->name);
-	Appo = Appo.substr(0, Appo.size() - 3) + "map"; // TODO: Create util-functions for this lookup
+	Appo = replaceExtension(Appo.c_str(), "map");
 
 	auto stream = workDirs.resolveFile(Appo);
 	if (!stream) {
@@ -329,7 +331,10 @@ void LoadLightmaps(WorkDirs &workDirs, t3dBODY *b) {
 		Appo = Common::String::format("%s_%d.tga", root.c_str(), i);
 
 		/*num = */stream->readSint32LE();
-		if (rAddMaterial(*b->LightmapTable[i], Appo, 0, 0) == nullptr)
+		MaterialPtr mat(new gMaterial());
+		assert(b->LightmapTable.size() == i);
+		b->LightmapTable.push_back(mat);
+		if (!game._renderer->addMaterial(*b->LightmapTable[i], Appo, 0, 0))
 			return;
 
 		b->LightmapTable[i]->clear();
@@ -562,7 +567,7 @@ t3dBODY *t3dBODY::loadFromStream(WGame &game, const Common::String &pname, Commo
 		// TODO: This looks odd
 		if (!pname.equalsIgnoreCase("rxt.t3d") || !pname.equalsIgnoreCase("rxt-b.t3d") || !pname.equalsIgnoreCase("rxt-c.t3d") ||
 		        !pname.equalsIgnoreCase("rxt-d.t3d") || !pname.equalsIgnoreCase("rxt-e.t3d") || !pname.equalsIgnoreCase("rxt.t3d-f"))
-			LoadLightmaps(workdirs, this);
+			LoadLightmaps(game, this);
 	}
 	if ((LoaderFlags & T3D_OUTDOORLIGHTS)) {                                                    // Carica le luci per l'esterno
 		if (pname.equalsIgnoreCase("rxt.t3d")) {

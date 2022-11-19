@@ -499,7 +499,7 @@ bool WGame::LoadAndSetup(const Common::String &name, uint8 lite) {
  * --------------------------------------------------*/
 void WGame::UpdateAll() {
 	int32 i;
-	UpdateRoomVisibility(init);
+	UpdateRoomVisibility(*this);
 	for (i = 0; i < NumLoadedFiles; i++) {
 		if (LoadedFiles[i].b) {
 			HideRoomMeshes(init, LoadedFiles[i].b);

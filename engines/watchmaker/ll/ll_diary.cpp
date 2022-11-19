@@ -142,7 +142,7 @@ void StartDiary(WGame &game, int32 room, t3dV3F *pos) {
 		init.Anim[ca].flags |= ANIM_DIARY;
 		if ((d->item[d->cur].bnd < 255) && !(bPlayerSuBasamento && (d->room == rXT))) {
 			d->item[d->cur].saved_bnd = GetBndLevel((char *) init.Anim[ca].RoomName.rawArray());
-			SetBndLevel(init, (char *)init.Anim[ca].RoomName.rawArray(), d->item[d->cur].bnd);
+			SetBndLevel(game, (char *)init.Anim[ca].RoomName.rawArray(), d->item[d->cur].bnd);
 		} else d->item[d->cur].saved_bnd = 255;
 
 		if (d->obj) CharSetPosition(d->obj, init.Anim[ca].pos, (char *)init.Anim[ca].RoomName.rawArray());
@@ -239,7 +239,7 @@ void StopDiary(WGame &game, int32 room, int32 obj, uint8 only_overtime) {
 		StopAnim(game, an);
 		if ((d->item[d->cur].saved_bnd < 255)) {
 			if (!(bPlayerSuBasamento && (d->room == rXT)))
-				SetBndLevel(init, (char *)init.Anim[an].RoomName.rawArray(), d->item[d->cur].saved_bnd);
+				SetBndLevel(game, (char *)init.Anim[an].RoomName.rawArray(), d->item[d->cur].saved_bnd);
 			d->item[d->cur].saved_bnd = 255;
 		}
 		Character[d->obj]->Flags |= T3D_CHARACTER_HIDE;
