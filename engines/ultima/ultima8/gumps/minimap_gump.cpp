@@ -63,14 +63,22 @@ void MiniMapGump::run() {
 		_minimap.clear();
 	}
 
-	MainActor *av = getMainActor();
-	if (av && !av->isDead()) {
-		int32 ax, ay, az;
-		av->getLocation(ax, ay, az);
+	MainActor *actor = getMainActor();
+	if (!actor || actor->isDead())
+		return;
 
-		_ax = ax / (mapChunkSize / MINMAPGUMP_SCALE);
-		_ay = ay / (mapChunkSize / MINMAPGUMP_SCALE);
-	}
+	int32 ax, ay, az;
+	actor->getLocation(ax, ay, az);
+
+	ax = ax / (mapChunkSize / MINMAPGUMP_SCALE);
+	ay = ay / (mapChunkSize / MINMAPGUMP_SCALE);
+
+	// Skip map update if location has not changed
+	if (ax == _ax && ay == _ay)
+		return;
+
+	_ax = ax;
+	_ay = ay;
 
 	// Draw into the map surface
 	for (int x = 0; x < _minimap.w; x++) {
