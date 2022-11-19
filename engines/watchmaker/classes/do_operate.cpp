@@ -951,8 +951,8 @@ void doOperate(WGame &game, int32 obj) {
 
 			init.Sound[wB451].flags &= ~SOUND_ON;
 			StopSound(wB451);
-			SetBndLevel(init, nullptr, 1);
-			SetBndLevel(init, "r47.t3d", 0);
+			SetBndLevel(game, nullptr, 1);
+			SetBndLevel(game, "r47.t3d", 0);
 
 			if (!(init.Obj[o45ALLOGGIAMENTO].flags & EXTRA)) {
 				IncCurTime(game, 15);
@@ -984,8 +984,8 @@ void doOperate(WGame &game, int32 obj) {
 
 			init.Sound[wB451].flags |= SOUND_ON;
 			StartSound(game, wB451);
-			SetBndLevel(init, nullptr, 0);
-			SetBndLevel(init, "r47.t3d", 1);
+			SetBndLevel(game, nullptr, 0);
+			SetBndLevel(game, "r47.t3d", 1);
 			RemoveEvent(&Game, EventClass::MC_PLAYER, ME_PLAYERTIMER);
 
 			if (init.Dialog[dR471].flags & DIALOG_DONE)

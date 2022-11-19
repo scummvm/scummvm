@@ -32,11 +32,11 @@ namespace Watchmaker {
 
 int32 LoadDDBitmap(WGame &game, const char *n, uint8 flags);
 void LoadFont(WGame &game, struct SFont *f, const char *n);
-void UpdateRoomVisibility(Init &init);
+void UpdateRoomVisibility(WGame &game);
 t3dMESH *LinkMeshToStr(Init &init, const Common::String &str);
 int16 getRoomFromStr(Init &init, const Common::String &s);
 void ChangeRoom(WGame &game, Common::String n, uint8 pos, int32 an);
-bool SetBndLevel(Init &init, const char *roomname, int32 lev);
+bool SetBndLevel(WGame &game, const char *roomname, int32 lev);
 int32 GetBndLevel(char *roomname);
 void GetDDBitmapExtends(Renderer &renderer, struct SRect *r, struct SDDBitmap *b);
 void DisplayDDBitmap(Renderer &, int32 tnum, int32 px, int32 py, int32 ox, int32 oy, int32 dx, int32 dy);

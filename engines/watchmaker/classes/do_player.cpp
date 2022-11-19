@@ -427,7 +427,7 @@ void ChangePlayer(WGame &game, uint8 oc) {
 	warning("Changing Room to |%s| pos: %d an: %d", PlayerStand[CurPlayer].roomName.c_str(), PlayerStand[CurPlayer].pos, PlayerStand[CurPlayer].an);
 	ChangeRoom(game, PlayerStand[CurPlayer].roomName, PlayerStand[CurPlayer].pos, 0);
 	if ((curRoom == r15) || (curRoom == r1F))
-		SetBndLevel(init, nullptr, PlayerStand[CurPlayer].bnd);
+		SetBndLevel(game, nullptr, PlayerStand[CurPlayer].bnd);
 	CharStop(ocCURPLAYER);
 	Player->Mesh->Flags |= T3D_MESH_DEFAULTANIM;
 

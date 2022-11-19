@@ -26,29 +26,30 @@
 #include <cstring>
 #include <stdarg.h>
 #include "watchmaker/ll/ll_util.h"
-#include "watchmaker/types.h"
-#include "watchmaker/sysdef.h"
-#include "watchmaker/globvar.h"
-#include "watchmaker/windows_hacks.h"
-#include "watchmaker/utils.h"
-#include "watchmaker/3d/loader.h"
-#include "watchmaker/3d/geometry.h"
-#include "watchmaker/define.h"
-#include "watchmaker/message.h"
-#include "watchmaker/schedule.h"
-#include "watchmaker/walk/act.h"
-#include "watchmaker/classes/do_system.h"
 #include "watchmaker/ll/ll_anim.h"
-#include "watchmaker/3d/t3d_mesh.h"
-#include "watchmaker/3d/math/llmath.h"
-#include "watchmaker/ll/ll_regen.h"
-#include "watchmaker/main.h"
-#include "watchmaker/classes/do_camera.h"
-#include "watchmaker/ll/ll_mesh.h"
-#include "watchmaker/3d/animation.h"
 #include "watchmaker/ll/ll_diary.h"
+#include "watchmaker/ll/ll_mesh.h"
+#include "watchmaker/ll/ll_regen.h"
+#include "watchmaker/3d/animation.h"
+#include "watchmaker/3d/geometry.h"
+#include "watchmaker/3d/loader.h"
+#include "watchmaker/3d/math/llmath.h"
+#include "watchmaker/3d/t3d_mesh.h"
+#include "watchmaker/classes/do_camera.h"
+#include "watchmaker/classes/do_operate.h"
+#include "watchmaker/classes/do_system.h"
+#include "watchmaker/define.h"
+#include "watchmaker/globvar.h"
+#include "watchmaker/main.h"
+#include "watchmaker/message.h"
 #include "watchmaker/renderer.h"
+#include "watchmaker/schedule.h"
+#include "watchmaker/sysdef.h"
 #include "watchmaker/t2d/t2d_internal.h"
+#include "watchmaker/types.h"
+#include "watchmaker/utils.h"
+#include "watchmaker/walk/act.h"
+#include "watchmaker/windows_hacks.h"
 
 namespace Watchmaker {
 
@@ -314,12 +315,12 @@ void UpdateRoomInfo(Init &init) {
 /* -----------------13/10/98 15.00-------------------
  *                  UpdateRoomVisibility
  * --------------------------------------------------*/
-void UpdateRoomVisibility(Init &init) {
-	warning("Stubbed UpdateRoomVisibility");
-#if 0
-	t3dU16 i, j;
+void UpdateRoomVisibility(WGame &game) {
+	uint32 i, j;
 	t3dBODY *pr;
-	t3dU8 cr;
+	uint8 cr;
+
+	Init &init = game.init;
 
 	if (!t3dCurRoom) return;
 
@@ -331,11 +332,11 @@ void UpdateRoomVisibility(Init &init) {
 	}
 
 //	Aggiunge room attuale
-	if (cr = (t3dU8)getRoomFromStr(t3dCurRoom->Name))
+	if (cr = (uint8)getRoomFromStr(init, t3dCurRoom->name))
 		init.Room[cr].flags |= ROOM_VISIBLE;
 
 	if (bShowRoomDescriptions)
-		UpdateRoomInfo();
+		UpdateRoomInfo(init);
 //	if( !( Room[cr].flags & ROOM_OLDVISIBLE ) )
 //		Event( EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND*3, 0, EFFECT_ROOMINFO, NULL, NULL, NULL );
 
@@ -354,27 +355,29 @@ void UpdateRoomVisibility(Init &init) {
 		if ((cr == r48) && !(init.Room[cr].flags & ROOM_VISITED))
 			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR481, 0, 0, NULL, NULL, NULL);
 	}
+#if 0
 //	Se ha cambiato stanza cambia anche l'environment
 	sSetEnvironment(init.Room[cr].env);
 //	Se ha cambiato stanza cambia anche la musica
 	if (!(LoaderFlags & T3D_NOMUSIC) && (init.Room[cr].music != nNULL))
 		PlayMusic(init.Room[cr].music, 3000, 3000);
+#endif
 	init.Room[cr].flags |= ROOM_VISITED;
 
 //	Aggiorna oggetti speciali
-	UpdateSpecial(cr);
+	UpdateSpecial(game, cr);
 
 //	Cerca nelle stanze visbili con ricorsione 2
-	for (i = 0; i < t3dCurRoom->NumMeshes; i++) {
+	for (i = 0; i < t3dCurRoom->NumMeshes(); i++) {
 		if (!(pr = t3dCurRoom->MeshTable[i].PortalList) || (t3dCurRoom->MeshTable[i].Flags & T3D_MESH_NOPORTALCHECK))
 			continue;
 
-		if (cr = (t3dU8)getRoomFromStr(init, pr->Name))
+		if (cr = (uint8)getRoomFromStr(init, pr->name))
 			init.Room[cr].flags |= ROOM_VISIBLE;
 
-		for (j = 0; j < pr->NumMeshes; j++)
+		for (j = 0; j < pr->NumMeshes(); j++)
 			if ((pr->MeshTable[j].PortalList) && !(pr->MeshTable[j].Flags & T3D_MESH_NOPORTALCHECK))
-				if (cr = (t3dU8)getRoomFromStr(init, pr->MeshTable[j].PortalList->Name))
+				if (cr = (uint8)getRoomFromStr(init, pr->MeshTable[j].PortalList->name))
 					init.Room[cr].flags |= ROOM_VISIBLE;
 	}
 
@@ -392,8 +395,9 @@ void UpdateRoomVisibility(Init &init) {
 					if ((init.Room[i].sounds[j] == wFONTANA) &&
 					        (((t3dCurTime >= 1300) && (t3dCurTime <= 1310)) || (t3dCurTime >= 1800))
 					   )   continue;
-
+#if 0
 					StartSound(init.Room[i].sounds[j]);
+#endif
 				}
 
 //			DebugFile("%d: %d %s",i,RoomVisibility[i],Room[RoomVisibility[i]].name);
@@ -402,39 +406,41 @@ void UpdateRoomVisibility(Init &init) {
 					if (!(init.Anim[init.Room[i].anims[j]].active)) {
 						if ((init.Anim[init.Room[i].anims[j]].obj != aNULL) && (Character[init.Anim[init.Room[i].anims[j]].obj])) {
 							Character[init.Anim[init.Room[i].anims[j]].obj]->Flags &= ~T3D_CHARACTER_HIDE;
-							CharSetPosition(init.Anim[init.Room[i].anims[j]].obj, init.Anim[init.Room[i].anims[j]].pos, init.Anim[init.Room[i].anims[j]].RoomName);
+							CharSetPosition(init.Anim[init.Room[i].anims[j]].obj, init.Anim[init.Room[i].anims[j]].pos, (const char*)init.Anim[init.Room[i].anims[j]].RoomName.rawArray());
 						}
-						DebugLogWindow("Staring Bkg Anim %d | Obj %d Pos %d", init.Room[i].anims[j], init.Anim[init.Room[i].anims[j]].obj, Anim[Room[i].anims[j]].pos);
-						StartAnim(init.Room[i].anims[j]);
+						DebugLogWindow("Staring Bkg Anim %d | Obj %d Pos %d", init.Room[i].anims[j], init.Anim[init.Room[i].anims[j]].obj, init.Anim[init.Room[i].anims[j]].pos);
+						StartAnim(game, init.Room[i].anims[j]);
 					}
 
-			StartDiary(i, NULL);
+			StartDiary(game, i, NULL);
 		}
 //		Spegne le animazioni delle stanze che non si vedono piu'
 		else if (init.Room[i].flags & ROOM_OLDVISIBLE) {
 //			Leva effetti di background
-			for (j = 0; j < MAX_SOUNDS_IN_ROOM; j++)
+			for (j = 0; j < MAX_SOUNDS_IN_ROOM; j++) {
+#if 0
 				if ((init.Room[i].sounds[j]) && (init.Sound[init.Room[i].sounds[j]].flags & SOUND_ON))
 					StopSound(init.Room[i].sounds[j]);
+#endif
+			}
 
 //			Se non e' piu' in vista
 			for (j = 0; j < MAX_ANIMS_IN_ROOM; j++)
 				if ((init.Room[i].anims[j]) && (init.Anim[init.Room[i].anims[j]].flags & ANIM_ON)) {
 					if (Character[init.Anim[init.Room[i].anims[j]].obj]) Character[init.Anim[init.Room[i].anims[j]].obj]->Flags |= T3D_CHARACTER_HIDE;
-					StopAnim(init.Room[i].anims[j]);
+					StopAnim(game, init.Room[i].anims[j]);
 				}
 			init.Room[i].flags &= ~ROOM_OLDVISIBLE;
 
 			StopDiary(game, i, 0, 0);
 		}
 	}
-#endif
 }
 
 /* -----------------12/06/00 10.12-------------------
  *                  SetBndLevel
  * --------------------------------------------------*/
-bool SetBndLevel(Init &init, const char *roomname, int32 lev) {
+bool SetBndLevel(WGame &game, const char *roomname, int32 lev) {
 	t3dBODY *t;
 	int32 i;
 
@@ -460,7 +466,7 @@ bool SetBndLevel(Init &init, const char *roomname, int32 lev) {
 		CurFloorY = t->PanelHeight[t->CurLevel];
 
 	AddMeshModifier(t->name, MM_SET_BND_LEVEL, &lev);
-	UpdateRoomVisibility(init);
+	UpdateRoomVisibility(game);
 
 	DebugLogFile("SETBND: %s, %d", t->name.c_str(), lev);
 
