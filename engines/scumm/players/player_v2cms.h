@@ -23,19 +23,19 @@
 #define SCUMM_PLAYERS_PLAYER_V2CMS_H
 
 #include "scumm/players/player_v2base.h"	// for channel_data
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
 
-class CMSEmulator;
+namespace CMS {
+class CMS;
+}
 
 namespace Scumm {
 
 /**
  * Scumm V2 CMS/Gameblaster MIDI driver.
  */
-class Player_V2CMS : public Audio::AudioStream, public Player_V2Base {
+class Player_V2CMS : public Player_V2Base {
 public:
-	Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer);
+	Player_V2CMS(ScummEngine *scumm);
 	~Player_V2CMS() override;
 
 	// MusicEngine API
@@ -46,17 +46,9 @@ public:
 	int  getMusicTimer() override;
 	int  getSoundStatus(int sound) const override;
 
-	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples) override;
-	bool isStereo() const override { return true; }
-	bool endOfData() const override { return false; }
-	int getRate() const override { return _sampleRate; }
+	void onTimer();
 
 private:
-	enum {
-		FIXP_SHIFT = 16
-	};
-
 	struct Voice {
 		byte attack;
 		byte decay;
@@ -176,16 +168,9 @@ private:
 	static const byte _volumeTable[16];
 	static const byte _cmsInitData[26];
 
-	CMSEmulator *_cmsEmu;
-
-	Audio::Mixer *_mixer;
-	Audio::SoundHandle _soundHandle;
-	const uint32 _sampleRate;
+	CMS::CMS *_cmsEmu;
 
 	Common::Mutex _mutex;
-
-	uint32 _next_tick;
-	uint32 _tick_len;
 };
 
 } // End of namespace Scumm
