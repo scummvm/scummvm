@@ -526,7 +526,7 @@ void t3dFinalizeMaterialList(t3dBODY *b) {
 			if (Face.lightmap) {
 				Mat = nullptr;
 				for (auto material : Face.getMaterial()->AddictionalMaterial) {
-					if (Mat->Texture->ID == Face.lightmap->Texture->ID) {
+					if (material->Texture->ID == Face.lightmap->Texture->ID) {
 						Mat = material;
 						break;
 					}
