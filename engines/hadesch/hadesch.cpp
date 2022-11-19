@@ -31,7 +31,7 @@
 #include "common/keyboard.h"
 #include "common/macresman.h"
 #include "common/util.h"
-#include "common/zlib.h"
+#include "common/gzio.h"
 #include "common/config-manager.h"
 
 #include "engines/advancedDetector.h"
@@ -129,8 +129,6 @@ void HadeschEngine::newGame() {
 	moveToRoom(kWallOfFameRoom);
 }
 
-#if defined(USE_ZLIB)
-
 struct WiseFile {
 	uint start;
 	uint end;
@@ -161,8 +159,8 @@ Common::MemoryReadStream *readWiseFile(Common::File &setupFile, const struct Wis
 	byte *uncompressedBuffer = new byte[wiseFile.uncompressedLength];
 	setupFile.seek(wiseFile.start);
 	setupFile.read(compressedBuffer, wiseFile.end - wiseFile.start - 4);
-	if (!Common::inflateZlibHeaderless(uncompressedBuffer, wiseFile.uncompressedLength,
-					   compressedBuffer, wiseFile.end - wiseFile.start - 4)) {
+	if (Common::GzioReadStream::deflateDecompress(uncompressedBuffer, wiseFile.uncompressedLength,
+					   compressedBuffer, wiseFile.end - wiseFile.start - 4) != wiseFile.uncompressedLength) {
 		debug("wise inflate failed");
 		delete[] compressedBuffer;
 		delete[] uncompressedBuffer;
@@ -172,7 +170,6 @@ Common::MemoryReadStream *readWiseFile(Common::File &setupFile, const struct Wis
 	delete[] compressedBuffer;
 	return new Common::MemoryReadStream(uncompressedBuffer, wiseFile.uncompressedLength);
 }
-#endif
 
 Common::ErrorCode HadeschEngine::loadWindowsCursors(const Common::ScopedPtr<Common::PEResources>& exe) {
 	for (unsigned i = 0; i < ARRAYSIZE(cursorids); i++) {
@@ -231,7 +228,6 @@ Common::ErrorCode HadeschEngine::loadCursors() {
 		return Common::kNoError;
 	}
 
-#if defined(USE_ZLIB)
 	Common::File setupFile;
 	if (setupFile.open("Setup.exe")) {
 		uint len = setupFile.size();
@@ -260,7 +256,6 @@ Common::ErrorCode HadeschEngine::loadCursors() {
 			}
 		}
 	}
-#endif
 
 	debug("Cannot open hadesch.exe");
 	return Common::kUnsupportedGameidError;
