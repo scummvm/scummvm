@@ -22,8 +22,6 @@
 #include "scumm/players/player_v2base.h"
 #include "scumm/scumm.h"
 
-#define FREQ_HZ 236 // Don't change!
-
 #define MAX_OUTPUT 0x7fff
 
 namespace Scumm {
@@ -316,11 +314,9 @@ static const uint16 pcjr_freq_table[12] = {
 };
 
 
-Player_V2Base::Player_V2Base(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr)
+Player_V2Base::Player_V2Base(ScummEngine *scumm, bool pcjr)
 	: _vm(scumm),
-	_mixer(mixer),
-	_pcjr(pcjr),
-	_sampleRate(_mixer->getOutputRate()) {
+	_pcjr(pcjr) {
 
 	_isV3Game = (scumm->_game.version >= 3);
 
@@ -335,9 +331,6 @@ Player_V2Base::Player_V2Base(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr)
 	// Initialize channel code
 	for (int i = 0; i < 4; ++i)
 		clear_channel(i);
-
-	_next_tick = 0;
-	_tick_len = (_sampleRate << FIXP_SHIFT) / FREQ_HZ;
 
 	// Initialize V3 music timer
 	_music_timer_ctr = _music_timer = 0;
