@@ -58,7 +58,7 @@ public:
 		playSound(sound, sound, type, handle, loop, vol);
 	}
 	virtual void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0);
-	virtual Audio::AudioStream *makeAudioStream(uint sound) = 0;
+	virtual Audio::RewindableAudioStream *makeAudioStream(uint sound) = 0;
 };
 
 BaseSound::BaseSound(Audio::Mixer *mixer, const Common::String &filename, uint32 base, bool bigEndian)
@@ -133,67 +133,6 @@ Common::SeekableReadStream *BaseSound::getSoundStream(uint sound) const {
 ///////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-class LoopingAudioStream : public Audio::AudioStream {
-private:
-	BaseSound *_parent;
-	Audio::AudioStream *_stream;
-	bool _loop;
-	uint _sound;
-	uint _loopSound;
-public:
-	LoopingAudioStream(BaseSound *parent, uint sound, uint loopSound, bool loop);
-	~LoopingAudioStream() override;
-	int readBuffer(int16 *buffer, const int numSamples) override;
-	bool isStereo() const override { return _stream ? _stream->isStereo() : 0; }
-	bool endOfData() const override;
-	int getRate() const override { return _stream ? _stream->getRate() : 22050; }
-};
-
-LoopingAudioStream::LoopingAudioStream(BaseSound *parent, uint sound, uint loopSound, bool loop) {
-	_parent = parent;
-	_sound = sound;
-	_loop = loop;
-	_loopSound = loopSound;
-
-	_stream = _parent->makeAudioStream(sound);
-}
-
-LoopingAudioStream::~LoopingAudioStream() {
-	delete _stream;
-}
-
-int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
-	if (!_loop) {
-		return _stream->readBuffer(buffer, numSamples);
-	}
-
-	int16 *buf = buffer;
-	int samplesLeft = numSamples;
-
-	while (samplesLeft > 0) {
-		int len = _stream->readBuffer(buf, samplesLeft);
-		if (len < samplesLeft) {
-			delete _stream;
-			_stream = _parent->makeAudioStream(_loopSound);
-		}
-		samplesLeft -= len;
-		buf += len;
-	}
-
-	return numSamples;
-}
-
-bool LoopingAudioStream::endOfData() const {
-	if (!_stream)
-		return true;
-	if (_loop)
-		return false;
-	return _stream->endOfData();
-}
-
-///////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
 static void convertVolume(int &vol) {
 	// DirectSound was originally used, which specifies volume
 	// and panning differently than ScummVM does, using a logarithmic scale
@@ -244,7 +183,7 @@ static void convertPan(int &pan) {
 // TODO: Move to a better place?
 void BaseSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
 	convertVolume(vol);
-	_mixer->playStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
+	_mixer->playStream(type, handle, Audio::makeLoopingAudioStream(makeAudioStream(sound), loop ? loopSound : 1), -1, vol);
 }
 
 class WavSound : public BaseSound {
@@ -252,10 +191,10 @@ public:
 	WavSound(Audio::Mixer *mixer, const Common::String &filename, uint32 base = 0)
 		: BaseSound(mixer, filename, base, false) {}
 	WavSound(Audio::Mixer *mixer, const Common::String &filename, uint32 *offsets) : BaseSound(mixer, filename, offsets) {}
-	Audio::AudioStream *makeAudioStream(uint sound) override;
+	Audio::RewindableAudioStream *makeAudioStream(uint sound) override;
 };
 
-Audio::AudioStream *WavSound::makeAudioStream(uint sound) {
+Audio::RewindableAudioStream *WavSound::makeAudioStream(uint sound) {
 	Common::SeekableReadStream *tmp = getSoundStream(sound);
 	if (!tmp)
 		return nullptr;
@@ -270,10 +209,10 @@ class VocSound : public BaseSound {
 public:
 	VocSound(Audio::Mixer *mixer, const Common::String &filename, bool isUnsigned, uint32 base = 0, bool bigEndian = false)
 		: BaseSound(mixer, filename, base, bigEndian), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
-	Audio::AudioStream *makeAudioStream(uint sound) override;
+	Audio::RewindableAudioStream *makeAudioStream(uint sound) override;
 };
 
-Audio::AudioStream *VocSound::makeAudioStream(uint sound) {
+Audio::RewindableAudioStream *VocSound::makeAudioStream(uint sound) {
 	Common::SeekableReadStream *tmp = getSoundStream(sound);
 	if (!tmp)
 		return nullptr;
@@ -289,11 +228,11 @@ class RawSound : public BaseSound {
 public:
 	RawSound(Audio::Mixer *mixer, const Common::String &filename, bool isUnsigned)
 		: BaseSound(mixer, filename, 0, SOUND_BIG_ENDIAN), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
-	Audio::AudioStream *makeAudioStream(uint sound) override;
+	Audio::RewindableAudioStream *makeAudioStream(uint sound) override;
 	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0) override;
 };
 
-Audio::AudioStream *RawSound::makeAudioStream(uint sound) {
+Audio::RewindableAudioStream *RawSound::makeAudioStream(uint sound) {
 	if (_offsets == nullptr)
 		return nullptr;
 
@@ -323,7 +262,7 @@ void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 class MP3Sound : public BaseSound {
 public:
 	MP3Sound(Audio::Mixer *mixer, const Common::String &filename, uint32 base = 0) : BaseSound(mixer, filename, base, false) {}
-	Audio::AudioStream *makeAudioStream(uint sound) override {
+	Audio::RewindableAudioStream *makeAudioStream(uint sound) override {
 		Common::SeekableReadStream *tmp = getSoundStream(sound);
 		if (!tmp)
 			return nullptr;
@@ -339,7 +278,7 @@ public:
 class VorbisSound : public BaseSound {
 public:
 	VorbisSound(Audio::Mixer *mixer, const Common::String &filename, uint32 base = 0) : BaseSound(mixer, filename, base, false) {}
-	Audio::AudioStream *makeAudioStream(uint sound) override {
+	Audio::RewindableAudioStream *makeAudioStream(uint sound) override {
 		Common::SeekableReadStream *tmp = getSoundStream(sound);
 		if (!tmp)
 			return nullptr;
@@ -355,7 +294,7 @@ public:
 class FLACSound : public BaseSound {
 public:
 	FLACSound(Audio::Mixer *mixer, const Common::String &filename, uint32 base = 0) : BaseSound(mixer, filename, base, false) {}
-	Audio::AudioStream *makeAudioStream(uint sound) override {
+	Audio::RewindableAudioStream *makeAudioStream(uint sound) override {
 		Common::SeekableReadStream *tmp = getSoundStream(sound);
 		if (!tmp)
 			return nullptr;
