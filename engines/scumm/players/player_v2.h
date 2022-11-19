@@ -23,6 +23,8 @@
 #define SCUMM_PLAYERS_PLAYER_V2_H
 
 #include "scumm/players/player_v2base.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 namespace Scumm {
 
@@ -31,7 +33,7 @@ namespace Scumm {
  * This simulates the pc speaker sound, which is driven  by the 8253 (square
  * wave generator) and a low-band filter.
  */
-class Player_V2 : public Player_V2Base {
+class Player_V2 : public Audio::AudioStream, public Player_V2Base {
 public:
 	Player_V2(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr);
 	~Player_V2() override;
@@ -46,8 +48,15 @@ public:
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return true; }
+	bool endOfData() const override { return false; }
+	int getRate() const override { return _sampleRate; }
 
 protected:
+	enum {
+		FIXP_SHIFT = 16
+	};
+
 	unsigned int _update_step;
 	unsigned int _decay;
 	int _level;
@@ -56,6 +65,15 @@ protected:
 
 	int _timer_count[4];
 	int _timer_output;
+
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundHandle;
+	const uint32 _sampleRate;
+
+	Common::Mutex _mutex;
+
+	uint32 _next_tick;
+	uint32 _tick_len;
 
 protected:
 	virtual void generateSpkSamples(int16 *data, uint len);

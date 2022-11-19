@@ -24,16 +24,21 @@
 #include "audio/mixer.h"
 #include "audio/softsynth/cms.h"
 
+#define FREQ_HZ 236 // Don't change!
+
 namespace Scumm {
 
 Player_V2CMS::Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer)
-	: Player_V2Base(scumm, mixer, true), _cmsVoicesBase(), _cmsVoices(),
+	: Player_V2Base(scumm, true), _mixer(mixer),_cmsVoicesBase(), _cmsVoices(),
 	  _cmsChips(), _midiDelay(0), _octaveMask(0), _looping(0), _tempo(0),
 	  _tempoSum(0), _midiData(nullptr), _midiSongBegin(nullptr), _musicTimer(0),
 	  _musicTimerTicks(0), _voiceTimer(0), _loadedMidiSong(0),
 	  _outputTableReady(0), _midiChannel(), _midiChannelUse(),
-	  _lastMidiCommand(0) {
+	  _lastMidiCommand(0), _sampleRate(_mixer->getOutputRate()) {
 	setMusicVolume(255);
+
+	_next_tick = 0;
+	_tick_len = (_sampleRate << FIXP_SHIFT) / FREQ_HZ;
 
 	memset(_sfxFreq, 0xFF, sizeof(_sfxFreq));
 	memset(_sfxAmpl, 0x00, sizeof(_sfxAmpl));
