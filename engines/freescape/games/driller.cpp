@@ -179,12 +179,6 @@ void DrillerEngine::loadAssetsDemo() {
 		if (!file.isOpen())
 			error("Failed to open 'data' file");
 
-		// loadGlobalObjects(file, 0xbd62);
-		/*file->seek(0x29efe);
-		load8bitArea(file, 16);
-		file->seek(0x2a450);
-		load8bitArea(file, 16);*/
-
 		load8bitBinary(&file, 0x442, 16);
 		loadPalettes(&file, 0x0);
 
@@ -193,6 +187,7 @@ void DrillerEngine::loadAssetsDemo() {
 		if (!file.isOpen())
 			error("Failed to open 'driller' file");
 		loadMessagesFixedSize(&file, 0x3960, 14, 20);
+		loadGlobalObjects(&file, 0x3716);
 
 		file.close();
 		file.open("soundfx");
@@ -227,12 +222,6 @@ void DrillerEngine::loadAssetsDemo() {
 		if (!file.isOpen())
 			error("Failed to open 'data' file");
 
-		// loadGlobalObjects(file, 0xbd62);
-		/*file->seek(0x29efe);
-		load8bitArea(file, 16);
-		file->seek(0x2a450);
-		load8bitArea(file, 16);*/
-
 		load8bitBinary(&file, 0x442, 16);
 		loadPalettes(&file, 0x0);
 
@@ -241,6 +230,7 @@ void DrillerEngine::loadAssetsDemo() {
 		if (!file.isOpen())
 			error("Failed to open 'x.prg' file");
 		loadMessagesFixedSize(&file, 0x3b90, 14, 20);
+		loadGlobalObjects(&file, 0x3946);
 
 		file.close();
 		file.open("soundfx");
@@ -297,6 +287,8 @@ void DrillerEngine::loadAssetsFullGame() {
 			if (!file.isOpen())
 				error("Failed to open 'driller' executable for Amiga");
 
+			loadMessagesFixedSize(&file, 0x499a, 14, 20);
+			loadGlobalObjects(&file, 0x4098);
 			load8bitBinary(&file, 0x21a3e, 16);
 			loadPalettes(&file, 0x215fc);
 
