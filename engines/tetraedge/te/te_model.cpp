@@ -102,13 +102,14 @@ void TeModel::draw() {
 		renderer->sendModelMatrix(transform);
 		renderer->pushMatrix();
 		renderer->multiplyMatrix(transform);
-		/*if (name() == "Kate") {
+		/*
+		if (name().contains("Kate")) {
 			debug("Draw model %p (%s, %d meshes)", this, name().empty() ? "no name" : name().c_str(), _meshes.size());
-			//adebug("   renderMatrix %s", renderer->currentMatrix().toString().c_str());
+			debug("   renderMatrix %s", renderer->currentMatrix().toString().c_str());
 			//debug("   position   %s", position().dump().c_str());
 			debug("   worldPos   %s", worldPosition().dump().c_str());
 			//debug("   scale      %s", scale().dump().c_str());
-			//debug("   worldScale %s", worldScale().dump().c_str());
+			debug("   worldScale %s", worldScale().dump().c_str());
 			//debug("   rotation   %s", rotation().dump().c_str());
 			debug("   worldRot   %s", worldRotation().dump().c_str());
 		}*/
@@ -166,6 +167,8 @@ void TeModel::setColor(const TeColor &col) {
 }
 
 void TeModel::update() {
+	//if (name().contains("Kate"))
+	//	debug("TeModel::update model %s", name().c_str());
 	if (_bones.size()) {
 		Common::Array<TeMatrix4x4> matricies;
 		matricies.resize(_bones.size());

@@ -35,6 +35,8 @@ public:
 	static void deserialize(Common::ReadStream &stream, TeTRS &dest);
 	static void serialize(Common::WriteStream &stream, const TeTRS &src);
 
+	void setIdentity();
+
 	void setRotation(const TeQuaternion &rot) {
 		_rot = rot;
 	}
