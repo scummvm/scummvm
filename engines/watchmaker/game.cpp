@@ -290,7 +290,7 @@ bool WGame::LoadAndSetup(const Common::String &name, uint8 lite) {
 	uint16 i = 0;
 
 	warning("--=>> %s <<=--: LoaderFlags: %08X", name.c_str(), LoaderFlags);
-	t3dCurCamera = &t3dIconCamera;
+	t3dCurCamera = &init._globals._invVars.t3dIconCamera;
 
 	auto windowInfo = _renderer->getScreenInfos();
 
@@ -308,7 +308,7 @@ bool WGame::LoadAndSetup(const Common::String &name, uint8 lite) {
 //				PrintLoading();
 
 			if (!(LoaderFlags & T3D_NOICONS))
-				if (!(t3dIcons = t3dLoadRoom(*this, "Icons.t3d", t3dIcons, &i, (LoaderFlags | T3D_NORECURSION | T3D_NOLIGHTMAPS | T3D_NOBOUNDS | T3D_NOCAMERAS | T3D_STATIC_SET1)))) {
+				if (!(init._globals._invVars.t3dIcons = t3dLoadRoom(*this, "Icons.t3d", init._globals._invVars.t3dIcons, &i, (LoaderFlags | T3D_NORECURSION | T3D_NOLIGHTMAPS | T3D_NOBOUNDS | T3D_NOCAMERAS | T3D_STATIC_SET1)))) {
 					warning("Error loading Icons");
 					return false;
 				}
@@ -467,13 +467,14 @@ bool WGame::LoadAndSetup(const Common::String &name, uint8 lite) {
 
 	CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
 
-	t3dMatIdentity(&CameraDummy.Matrix);
+	t3dMatIdentity(&init._globals._invVars.CameraDummy.Matrix);
 	t3dStartTime();
 
 	if (!t3dCurRoom->CameraTable.empty())
 		if (!(t3dCurCamera = PickCamera(t3dCurRoom, 0)))
 			t3dCurCamera = &t3dCurRoom->CameraTable[0];
-	if (t3dCurCamera) memcpy(&t3dIconCamera, t3dCurCamera, sizeof(t3dCAMERA));
+	if (t3dCurCamera)
+		init._globals._invVars.t3dIconCamera = *t3dCurCamera;
 
 	SetCurPlayerPosTo_9x(_gameVars, init);
 
