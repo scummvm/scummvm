@@ -37,4 +37,4 @@ public:
 
 } // End of namespace Xyzzy
 
-#endif
+#endif // XYZZY_CONSOLE_H

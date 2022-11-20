@@ -35,4 +35,4 @@ bool Console::Cmd_test(int argc, const char **argv) {
 	return true;
 }
 
-} // namespace Xyzzy
+} // End of namespace Xyzzy
