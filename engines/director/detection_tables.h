@@ -2573,12 +2573,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t("smithamerica", "", "AMERICA.EXE", "762716cefb27adf3156d5978ce62c0d8", 370010, 310),
 
 	// Original Mac version uses audio tracks, hybrid Mac/Win uses WAV files
-	// Das Bi-Ba-Butze-Haus published by Systhema, Munich (1995) and later by Rowohlt-Systhema (1999)
+	// German version (Das Bi-Ba-Butze-Haus) published by Systhema, Munich (1995) and later by Rowohlt-Systhema (1999)
+	// 1999 version is D4
 	MACGAME1("snh", "", "A Silly Noisy House", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 353764, 300),
 	MACGAME1("snh", "Hybrid release", "A Silly Noisy House", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 356886, 300),
 	WINGAME1t("snh", "Hybrid release", "SNH.EXE", "6b1c74a8dbe1f083ee942859016d3345", 378901, 310),
 	MACDEMO1("snh", "Sampler", "Silly Noisy House Sampler", "2064fd9b1871f02d216d20e92019a7ac", 1592078, 311),
-	WINGAME1_l("snh", "", "DBBBH.EXE", "9e13813fd39da5e27627ee28894d6ec0", 738336, Common::DE_DEU, 311),
 
 	// Game is HyperCard based. Movies will play with --start-movie from console.
 	MACGAME1("spelunx", "v2.01 Color", "Spelunx", "8c4ac0488e92704a257698ee45affea5", 1208328, 313),
@@ -4529,6 +4529,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("skyborg", "Demo", "SKYBORG.EXE", "a2c76a72f703012808ab241c0e189694", 22368545, 404),
 
 	WINDEMO1("smashsounds1", "Demo", "SMASH.EXE", "cc9f6f623ef61d2ac364eb41f65957ed", 2076581, 404),
+
+	// German version of Silly Noisy House (1999)
+	WINGAME1_l("snh", "", "DBBBH.EXE", "9e13813fd39da5e27627ee28894d6ec0", 738336, Common::DE_DEU, 404),
 
 	MACGAME1("sorgato", "", "SORGATO'S VARIABLE COLOR", "4011dd51c0eed1b5cf1fbf55360a7f60", 304189, 400),
 
