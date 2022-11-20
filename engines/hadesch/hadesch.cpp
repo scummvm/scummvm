@@ -160,7 +160,7 @@ Common::MemoryReadStream *readWiseFile(Common::File &setupFile, const struct Wis
 	setupFile.seek(wiseFile.start);
 	setupFile.read(compressedBuffer, wiseFile.end - wiseFile.start - 4);
 	if (Common::GzioReadStream::deflateDecompress(uncompressedBuffer, wiseFile.uncompressedLength,
-					   compressedBuffer, wiseFile.end - wiseFile.start - 4) != wiseFile.uncompressedLength) {
+					   compressedBuffer, wiseFile.end - wiseFile.start - 4) != (int)wiseFile.uncompressedLength) {
 		debug("wise inflate failed");
 		delete[] compressedBuffer;
 		delete[] uncompressedBuffer;
