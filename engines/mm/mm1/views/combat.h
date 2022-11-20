@@ -155,16 +155,6 @@ private:
 	void attack();
 
 	/**
-	 * Block option
-	 */
-	void block();
-
-	/**
-	 * Cast option
-	 */
-	void cast();
-
-	/**
 	 * Delay option
 	 */
 	void delay();
@@ -245,6 +235,11 @@ public:
 	 * Called when the view is unfocused
 	 */
 	bool msgUnfocus(const UnfocusMessage &msg) override;
+
+	/**
+	 * Called for game messages
+	 */
+	bool msgGame(const GameMessage &msg) override;
 
 	/**
 	 * Draw the Combat details overlayed on

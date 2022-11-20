@@ -76,6 +76,15 @@ bool Combat::msgUnfocus(const UnfocusMessage &msg) {
 	return TextView::msgUnfocus(msg);
 }
 
+bool Combat::msgGame(const GameMessage &msg) {
+	if (msg._name == "SPELL_RESULT") {
+		displaySpellResult(msg._stringValue);
+		return true;
+	}
+
+	return false;
+}
+
 void Combat::draw() {
 	switch (_mode) {
 	case NEXT_ROUND:
@@ -689,12 +698,6 @@ void Combat::checkMonsterSpellDone() {
 void Combat::attack() {
 	if (_allowAttack)
 		attackMonsterPhysical();
-}
-
-void Combat::block() {
-}
-
-void Combat::cast() {
 }
 
 void Combat::delay() {

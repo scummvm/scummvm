@@ -74,13 +74,15 @@ struct MouseUpMessage : public MouseMessage {
 struct GameMessage : public Message {
 	Common::String _name;
 	int _value;
+	Common::String _stringValue;
 
-	GameMessage() : Message() {}
+	GameMessage() : Message(), _value(-1) {}
 	GameMessage(const Common::String &name) : Message(),
 		_name(name), _value(-1) {}
 	GameMessage(const Common::String &name, int value) : Message(),
-		_name(name), _value(value) {
-	}
+		_name(name), _value(value) {}
+	GameMessage(const Common::String &name, const Common::String &value) :
+		Message(), _name(name), _stringValue(value) {}
 };
 
 struct HeaderMessage : public Message {
