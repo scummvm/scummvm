@@ -110,12 +110,12 @@ void process_file(FILE *in, FILE *out) {
 // Copies and processes the specified file
 void process_file(const char *filename, const char *prefix, const char *prefix2) {
 	char srcFilename[MAX_LINE_LENGTH], destFilename[MAX_LINE_LENGTH];
-	sprintf(srcFilename, "%s/files/%s", prefix2, filename);
+	snprintf(srcFilename, MAX_LINE_LENGTH, "%s/files/%s", prefix2, filename);
 	if (!strncmp(filename, "xyzzy.", 6))
-		sprintf(destFilename, "%s/engines/%s/%s.%s",
+		snprintf(destFilename, MAX_LINE_LENGTH, "%s/engines/%s/%s.%s",
 			prefix, engineLowercase, engineLowercase, filename + 6);
 	else
-		sprintf(destFilename, "%s/engines/%s/%s",
+		snprintf(destFilename, MAX_LINE_LENGTH, "%s/engines/%s/%s",
 			prefix, engineLowercase, filename);
 
 	printf("Creating file %s...", destFilename);
@@ -148,13 +148,13 @@ void create_batch_file(const char *prefix) {
 	char line[MAX_LINE_LENGTH];
 	char destFilename[MAX_LINE_LENGTH];
 
-	sprintf(destFilename, "%s/dists/msvc/create_msvc.bat", prefix);
+	snprintf(destFilename, MAX_LINE_LENGTH, "%s/dists/msvc/create_msvc.bat", prefix);
 	if (!(in = fopen(destFilename, "r"))) {
 		printf("Could not open create_msvc.bat\n");
 		exit(0);
 	}
 
-	sprintf(destFilename, "%s/dists/msvc/%s.bat", prefix, engineLowercase);
+	snprintf(destFilename, MAX_LINE_LENGTH, "%s/dists/msvc/%s.bat", prefix, engineLowercase);
 
 	printf("Creating file %s...", destFilename);
 	fflush(stdout);
@@ -167,7 +167,7 @@ void create_batch_file(const char *prefix) {
 	// Get each line until there are none left
 	while (fgets(line, MAX_LINE_LENGTH, in)) {
 		if (!strcmp(line, ENGINES)) {
-			sprintf(line + strlen(line) - 1,
+			snprintf(line + strlen(line) - 1, MAX_LINE_LENGTH - strlen(line) + 1,
 				" --disable-all-engines --enable-engine=%s\n",
 				engineLowercase);
 		}
@@ -212,7 +212,7 @@ int main(int argc, char *argv[]) {
 
 	// Create a directory for the new engine
 	char folder[MAX_LINE_LENGTH];
-	sprintf(folder, "%s/engines/%s", prefix, engineLowercase);
+	snprintf(folder, MAX_LINE_LENGTH, "%s/engines/%s", prefix, engineLowercase);
 
 	printf("Creating directory %s...", folder);
 	fflush(stdout);
