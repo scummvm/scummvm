@@ -259,6 +259,17 @@ protected:
 	 */
 	void selectMonsterTarget();
 
+
+	/**
+	 * Block option
+	 */
+	void block();
+
+	/**
+	 * Cast option
+	 */
+	void cast();
+
 	/**
 	 * Retreat option
 	 */

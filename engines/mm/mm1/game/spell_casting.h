@@ -38,15 +38,16 @@ enum SpellState {
  * Support class for handling spell casting logic
  */
 class SpellCasting {
-private:
-	/**
-	 * Returns true if combat is in progress
-	 */
-	bool isInCombat() const;
 protected:
 	int _spellIndex = 0;
 	int _requiredSp = 0, _requiredGems = 0;
 	SpellState _spellState = SS_OK;
+
+	/**
+	 * Returns true if combat is in progress
+	 */
+	bool isInCombat() const;
+
 public:
 	/**
 	 * Sets the current spell

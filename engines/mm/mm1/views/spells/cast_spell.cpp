@@ -226,11 +226,17 @@ void CastSpell::spellDone() {
 }
 
 void CastSpell::spellDone(const Common::String &msg, int xp) {
-	_state = ENDING;
-	Sound::sound(SOUND_2);
-	clearSurface();
-	writeString(xp, 1, msg);
-	delaySeconds(3);
+	if (isInCombat()) {
+		close();
+		g_events->focusedView()->send(GameMessage("SPELL_RESULT", msg));
+
+	} else {
+		_state = ENDING;
+		Sound::sound(SOUND_2);
+		clearSurface();
+		writeString(xp, 1, msg);
+		delaySeconds(3);
+	}
 }
 
 } // namespace Spells

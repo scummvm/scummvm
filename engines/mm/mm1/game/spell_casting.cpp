@@ -146,6 +146,9 @@ Common::String SpellCasting::getSpellError() const {
 	case SS_COMBAT_ONLY:
 		msg = STRING["spells.combat_only"];
 		break;
+	case SS_NONCOMBAT_ONLY:
+		msg = STRING["spells.noncombat_only"];
+		break;
 	case SS_OUTDOORS_ONLY:
 		msg = STRING["spells.outdoors_only"];
 		break;

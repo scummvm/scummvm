@@ -1512,6 +1512,14 @@ void Combat::selectMonsterTarget() {
 	setMode(INFILTRATION);
 }
 
+void Combat::block() {
+	// TODO
+}
+
+void Combat::cast() {
+	g_events->addView("CastSpell");
+}
+
 void Combat::retreat() {
 	Encounter &enc = g_globals->_encounters;
 
