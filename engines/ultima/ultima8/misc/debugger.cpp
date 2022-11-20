@@ -205,7 +205,8 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("InverterProcess::invertScreen", WRAP_METHOD(Debugger, cmdInvertScreen));
 	registerCmd("MenuGump::showMenu", WRAP_METHOD(Debugger, cmdShowMenu));
 	registerCmd("MiniMapGump::toggle", WRAP_METHOD(Debugger, cmdToggleMinimap));
-	registerCmd("MiniMapGump::generateWholeMap", WRAP_METHOD(Debugger, cmdGenerateWholeMap));
+	registerCmd("MiniMapGump::generate", WRAP_METHOD(Debugger, cmdGenerateMinimap));
+	registerCmd("MiniMapGump::clear", WRAP_METHOD(Debugger, cmdClearMinimap));
 	registerCmd("MovieGump::play", WRAP_METHOD(Debugger, cmdPlayMovie));
 	registerCmd("MusicProcess::playMusic", WRAP_METHOD(Debugger, cmdPlayMusic));
 	registerCmd("QuitGump::verifyQuit", WRAP_METHOD(Debugger, cmdVerifyQuit));
@@ -1806,10 +1807,26 @@ bool Debugger::cmdToggleMinimap(int argc, const char **argv) {
 	return false;
 }
 
-bool Debugger::cmdGenerateWholeMap(int argc, const char **argv) {
-	World *world = World::get_instance();
-	CurrentMap *currentmap = world->getCurrentMap();
-	currentmap->setWholeMapFast();
+bool Debugger::cmdGenerateMinimap(int argc, const char **argv) {
+	Ultima8Engine *app = Ultima8Engine::get_instance();
+	Gump *desktop = app->getDesktopGump();
+	MiniMapGump *gump = dynamic_cast<MiniMapGump *>(desktop->FindGump<MiniMapGump>());
+
+	if (gump) {
+		gump->generate();
+	}
+	return false;
+}
+
+
+bool Debugger::cmdClearMinimap(int argc, const char **argv) {
+	Ultima8Engine *app = Ultima8Engine::get_instance();
+	Gump *desktop = app->getDesktopGump();
+	MiniMapGump *gump = dynamic_cast<MiniMapGump *>(desktop->FindGump<MiniMapGump>());
+
+	if (gump) {
+		gump->clear();
+	}
 	return false;
 }
 

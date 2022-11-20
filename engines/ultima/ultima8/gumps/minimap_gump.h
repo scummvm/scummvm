@@ -36,6 +36,7 @@ private:
 	unsigned int        _lastMapNum;
 	int32 _ax, _ay;
 
+	void update(CurrentMap *map);
 	uint32 sampleAtPoint(CurrentMap *map, int x, int y);
 	uint32 sampleAtPoint(const Item *item, int x, int y);
 public:
@@ -46,6 +47,9 @@ public:
 	~MiniMapGump() override;
 
 	void run() override;
+
+	void generate();
+	void clear();
 
 	void        PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 	uint16      TraceObjId(int32 mx, int32 my) override;

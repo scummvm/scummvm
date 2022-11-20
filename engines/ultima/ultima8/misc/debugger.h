@@ -274,8 +274,9 @@ private:
 	bool cmdVerifyQuit(int argc, const char **argv);
 	bool cmdU8ShapeViewer(int argc, const char **argv);
 	bool cmdShowMenu(int argc, const char **argv);
-	bool cmdGenerateWholeMap(int argc, const char **argv);
 	bool cmdToggleMinimap(int argc, const char **argv);
+	bool cmdGenerateMinimap(int argc, const char **argv);
+	bool cmdClearMinimap(int argc, const char **argv);
 	bool cmdInvertScreen(int argc, const char **argv);
 	bool cmdPlayMovie(int argc, const char **argv);
 	bool cmdPlayMusic(int argc, const char **argv);

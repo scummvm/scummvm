@@ -80,6 +80,11 @@ void MiniMapGump::run() {
 	_ax = ax;
 	_ay = ay;
 
+	update(currentmap);
+}
+void MiniMapGump::update(CurrentMap *currentmap) {
+	int mapChunkSize = currentmap->getChunkSize();
+
 	// Draw into the map surface
 	for (int x = 0; x < _minimap.w; x++) {
 		for (int y = 0; y < _minimap.h; y++) {
@@ -101,6 +106,20 @@ void MiniMapGump::run() {
 			}
 		}
 	}
+}
+
+void MiniMapGump::generate() {
+	World *world = World::get_instance();
+	CurrentMap *currentmap = world->getCurrentMap();
+	// TODO - do not leave whole map fast after generation
+	currentmap->setWholeMapFast();
+
+	_minimap.clear();
+	update(currentmap);
+}
+
+void MiniMapGump::clear() {
+	_minimap.clear();
 }
 
 void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
