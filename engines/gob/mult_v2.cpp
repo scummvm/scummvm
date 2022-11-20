@@ -720,6 +720,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 		if ((animData.animation < 0) && (animObj.videoSlot > 0)) {
 			_vm->_vidPlayer->closeVideo(animObj.videoSlot - 1);
 			animObj.videoSlot = 0;
+			animObj.animName[0] = 0;
 		}
 		return;
 	}

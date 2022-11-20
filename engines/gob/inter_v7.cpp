@@ -221,7 +221,8 @@ void Inter_v7::o7_loadMultObject() {
 	if (((int32)*obj.pPosX == -1234) && ((int32)*obj.pPosY == -4321)) {
 		if (obj.videoSlot > 0) {
 			_vm->_mult->closeObjVideo(obj);
-		}
+		} else
+			_vm->_draw->freeSprite(50 + objIndex);
 
 		objAnim.isStatic = 1;
 
