@@ -35,11 +35,13 @@ class BaseSurface;
 class Fonts {
 private:
 	static ImageFile *_font;
+	static byte *_chineseFont;
 	static byte _yOffsets[255];
 	static int _fontNumber;
 	static int _fontHeight;
 	static int _widestChar;
 	static uint16 _charCount;
+	static bool _isModifiedEucCn;
 
 	static inline byte translateChar(byte c);
 protected:
@@ -87,7 +89,7 @@ public:
 	/**
 	 * Return the font height
 	 */
-	int fontHeight() const { return _fontHeight; }
+	int fontHeight() const { return _chineseFont ? MAX(_fontHeight, 16) : _fontHeight; }
 
 	/**
 	 * Return the width of the widest character in the font

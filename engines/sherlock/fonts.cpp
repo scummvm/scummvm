@@ -35,11 +35,14 @@ int Fonts::_fontHeight;
 int Fonts::_widestChar;
 uint16 Fonts::_charCount;
 byte Fonts::_yOffsets[255];
+bool Fonts::_isModifiedEucCn;
+byte *Fonts::_chineseFont;
 
 void Fonts::setVm(SherlockEngine *vm) {
 	_vm = vm;
 	_font = nullptr;
 	_charCount = 0;
+	_isModifiedEucCn = _vm->getLanguage() == Common::Language::ZH_ANY && _vm->getGameID() == GameType::GType_RoseTattoo;
 }
 
 void Fonts::freeFont() {
@@ -62,6 +65,16 @@ void Fonts::setFont(int fontNum) {
 	}
 
 	Common::String fontFilename;
+
+	if (_isModifiedEucCn && _chineseFont == nullptr) {
+		Common::File hzk;
+		if (!hzk.open("Hzk16.lib")) {
+			_isModifiedEucCn = false;
+		} else {
+			_chineseFont = new byte[hzk.size()];
+			hzk.read(_chineseFont, hzk.size());
+		}
+	}
 
 	if (_vm->getPlatform() != Common::kPlatform3DO) {
 		// PC
@@ -201,8 +214,38 @@ void Fonts::writeString(BaseSurface *surface, const Common::String &str,
 	if (!_font)
 		return;
 
+	bool isInEucEscape = false;
+
 	for (const char *curCharPtr = str.c_str(); *curCharPtr; ++curCharPtr) {
 		byte curChar = *curCharPtr;
+		byte nextChar = curCharPtr[1];
+
+		if (_isModifiedEucCn && !isInEucEscape && curChar == '@' && nextChar == '$') {
+			charPos.x += 10;
+			curCharPtr++;
+			isInEucEscape = true;
+			continue;
+		}
+
+		if (_isModifiedEucCn && isInEucEscape && curChar == '$' && nextChar == '@') {
+			charPos.x += 10;
+			curCharPtr++;
+			isInEucEscape = false;
+			continue;
+		}
+
+		if (_isModifiedEucCn && curChar >= 0x41 && nextChar >= 0x41 && (isInEucEscape || ((curChar >= 0xa1) && (nextChar >= 0xa1)))) {
+			int a = curChar >= 0xa1 ? curChar - 0xa1 : curChar - 0x41;
+			int b = nextChar >= 0xa1 ? nextChar - 0xa1 : nextChar - 0x41;
+			curCharPtr++;
+			if (a >= 0 && a <= 93 && b >= 0 && b <= 93) {
+				surface->SHbitmapBlitFrom(_chineseFont + 32 * (94 * a + b), 16, 16, 2, Common::Point(charPos.x, charPos.y), overrideColor);
+				charPos.x += 16;
+				continue;
+			} else {
+				curChar = '?';
+			}
+		}
 
 		if (curChar == ' ') {
 			charPos.x += 5; // hardcoded space
@@ -238,8 +281,33 @@ int Fonts::stringHeight(const Common::String &str) {
 	if (!_font)
 		return 0;
 
-	for (const char *c = str.c_str(); *c; ++c)
+	bool isInEucEscape = false;
+
+	for (const char *c = str.c_str(); *c; ++c) {
+		byte curChar = *c;
+		byte nextChar = c[1];
+		
+		if (_isModifiedEucCn && !isInEucEscape && curChar == '@' && nextChar == '$') {
+			height = MAX(height, charHeight(' '));
+			c++;
+			isInEucEscape = true;
+			continue;
+		}
+
+		if (_isModifiedEucCn && isInEucEscape && curChar == '$' && nextChar == '@') {
+			height = MAX(height, charHeight(' '));
+			c++;
+			isInEucEscape = false;
+			continue;
+		}
+
+		if (_isModifiedEucCn && curChar >= 0x41 && nextChar >= 0x41 && (isInEucEscape || ((curChar >= 0xa1) && (nextChar >= 0xa1)))) {
+			height = MAX(height, 16);
+			continue;
+		}
+
 		height = MAX(height, charHeight(*c));
+	}
 
 	return height;
 }
