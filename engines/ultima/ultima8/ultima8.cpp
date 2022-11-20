@@ -1265,11 +1265,6 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 		return Common::kReadingFailed;
 	}
 
-	if (state != SavegameReader::SAVE_VALID) {
-		Error("Unsupported savegame version", "Error Loading savegame");
-		delete sg;
-		return Common::kReadingFailed;
-	}
 
 	_mouse->pushMouseCursor();
 	_mouse->setMouseCursor(Mouse::MOUSE_PENTAGRAM);
