@@ -478,7 +478,10 @@ bool Scene::loadScene(const Common::String &filename) {
 				_bgShapes[idx]._imageFrame = !_bgShapes[idx]._images ? (ImageFrame *)nullptr :
 					&(*_bgShapes[idx]._images)[0];
 
-				_bgShapes[idx]._examine = Common::String(&_descText[_bgShapes[idx]._descOffset]);
+				if (_bgShapes[idx]._descOffset >= _descText.size())
+					_bgShapes[idx]._examine = "";
+				else
+					_bgShapes[idx]._examine = Common::String(&_descText[_bgShapes[idx]._descOffset]);
 				_bgShapes[idx]._sequences = &_sequenceBuffer[_bgShapes[idx]._sequenceOffset];
 				_bgShapes[idx]._misc = 0;
 				_bgShapes[idx]._seqCounter = 0;
