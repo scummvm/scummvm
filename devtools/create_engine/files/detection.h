@@ -38,7 +38,9 @@ extern const PlainGameDescriptor xyzzyGames[];
 
 extern const ADGameDescription gameDescriptions[];
 
-} // namespace Xyzzy
+#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
+
+} // End of namespace Xyzzy
 
 class XyzzyMetaEngineDetection : public AdvancedMetaEngineDetection {
 	static const DebugChannelDef debugFlagList[];

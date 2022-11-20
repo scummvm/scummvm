@@ -19,12 +19,37 @@
  *
  */
 
+#include "common/translation.h"
+
 #include "xyzzy/metaengine.h"
 #include "xyzzy/detection.h"
 #include "xyzzy/xyzzy.h"
 
+namespace Xyzzy {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"original_menus",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+} // End of namespace Xyzzy
+
 const char *XyzzyMetaEngine::getName() const {
 	return "xyzzy";
+}
+
+const ADExtraGuiOptionsMap *XyzzyMetaEngine::getAdvancedExtraGuiOptions() const {
+	return Xyzzy::optionsList;
 }
 
 Common::Error XyzzyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

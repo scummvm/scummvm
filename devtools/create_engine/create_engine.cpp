@@ -45,7 +45,7 @@ static const char *const FILENAMES[] = {
 	"credits.pl", "detection.cpp", "detection.h",
 	"detection_tables.h", "metaengine.cpp",
 	"metaengine.h", "module.mk", "xyzzy.cpp",
-	"xyzzy.h", nullptr
+	"xyzzy.h", "POTFILES", nullptr
 };
 const char *const ENGINES = "create_project ..\\.. --use-canonical-lib-names --msvc\n";
 
