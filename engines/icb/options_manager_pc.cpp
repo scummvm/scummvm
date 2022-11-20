@@ -548,7 +548,7 @@ void OptionsManager::MakeAllSurfii() {
 		// Create movie thumbnail surfii
 		for (i = 0; i < 24; i++) {
 			m_movieSurfaceIDs[i] = surface_manager->Create_new_surface(pxVString("MovieLib thumb %d", i), 100, 56, SYSTEM);
-			m_grayMovieSurfaceIDs[i] = surface_manager->Create_new_surface(pxVString("Gray MovieLib thumb", i), 100, 56, SYSTEM);
+			m_grayMovieSurfaceIDs[i] = surface_manager->Create_new_surface(pxVString("Gray MovieLib thumb %d", i), 100, 56, SYSTEM);
 		}
 	} else
 		Fatal_error("OptionsManager::MakeAllSurfii() function called when surface_manager is NULL");
