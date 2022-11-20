@@ -219,6 +219,7 @@ int main(int argc, char *argv[]) {
 
 	if (!createDirectory(folder)) {
 		printf("Could not create engine folder.\n");
+		perror(folder);
 		return 0;
 	}
 	printf("done\n");
