@@ -72,6 +72,9 @@ public:
 		Graphics::ManagedSurface::blitFrom(src, srcBounds, destPos);
 	}
 
+	virtual void SHbitmapBlitFrom(const byte *src, int width, int height, int pitchSrc, const Common::Point &pt,
+				      int overrideColor = 0);
+
 	/**
 	 * Draws an image frame at a given position within this surface with transparency
 	 */
