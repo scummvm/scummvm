@@ -70,5 +70,28 @@ void BaseSurface::SHtransBlitFrom(const Graphics::Surface &src, const Common::Po
 		flipped, overrideColor);
 }
 
+void BaseSurface::SHbitmapBlitFrom(const byte *src, int widthSrc, int heightSrc, int pitchSrc, const Common::Point &pt,
+				   int overrideColor) {
+	const byte *ptr = src;
+	int yin = 0, yout = pt.y;
+	int xin = 0, xout = pt.x;
+	byte bit = 0x80;
+	int ymax = MIN(heightSrc, h - pt.y);
+	int xmax = MIN(widthSrc, w - pt.x);
+	int pitchskip = pitchSrc - (xmax / 8);
+	for (yin = 0; yin < ymax; yin++, yout++) {
+		bit = 0x80;
+		for (xin = 0, xout = pt.x; xin < xmax; xin++, xout++) {
+			if (*ptr & bit)
+				setPixel(xout, yout, overrideColor);
+			bit >>= 1;
+			if (!bit) {
+				bit = 0x80;
+				ptr++;
+			}
+		}
+		ptr += pitchskip;
+	}
+}
 
 } // End of namespace Sherlock
