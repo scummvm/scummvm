@@ -59,7 +59,7 @@ bool fileExists(const char *name) {
 
 bool createDirectory(const char *name) {
 #ifdef _MSC_VER
-	return CreateDirectoryA(name);
+	return CreateDirectoryA(name, nullptr);
 #else
 	return (!mkdir(name, 0755));
 #endif
