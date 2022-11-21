@@ -257,7 +257,8 @@ bool Combat::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool Combat::msgAction(const ActionMessage &msg) {
-	if (_mode != SELECT_OPTION || _option != OPTION_NONE)
+	if (_mode != SELECT_OPTION || (_option != OPTION_NONE &&
+			_option != OPTION_EXCHANGE))
 		return false;
 
 	switch (msg._action) {
@@ -269,8 +270,13 @@ bool Combat::msgAction(const ActionMessage &msg) {
 	case KEYBIND_VIEW_PARTY6: {
 		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
 		if (charNum < _party.size()) {
-			g_globals->_currCharacter = _party[charNum];
-			addView("CharacterInfo");
+			if (_option == OPTION_EXCHANGE) {
+				if (_party[charNum] != g_globals->_currCharacter)
+					exchangeWith(charNum);
+			} else {
+				g_globals->_currCharacter = _party[charNum];
+				addView("CharacterInfo");
+			}
 			return true;
 		}
 		break;
@@ -309,6 +315,12 @@ bool Combat::msgAction(const ActionMessage &msg) {
 	case KEYBIND_COMBAT_USE:
 		use();
 		break;
+	case KEYBIND_ESCAPE:
+		if (_mode == SELECT_OPTION) {
+			_option = OPTION_NONE;
+			combatLoop();
+		}
+		break;
 	default:
 		// TODO: Character and quickref views
 		break;
@@ -326,6 +338,9 @@ void Combat::writeOptions() {
 		break;
 	case OPTION_DELAY:
 		writeDelaySelect();
+		break;
+	case OPTION_EXCHANGE:
+		writeExchangeSelect();
 		break;
 	case OPTION_FIGHT:
 		writeFightSelect();
@@ -395,6 +410,14 @@ void Combat::writeDelaySelect() {
 		STRING["dialogs.combat.delay_currently"].c_str(),
 		g_globals->_delay));
 	escToGoBack(0, 3);
+}
+
+void Combat::writeExchangeSelect() {
+	resetBottom();
+	writeString(7, 20, Common::String::format(
+		STRING["dialogs.combat.exchange_places"].c_str(),
+		'0' + _party.size()));
+	escToGoBack(12, 23);
 }
 
 void Combat::writeFightSelect() {
@@ -695,16 +718,13 @@ void Combat::checkMonsterSpellDone() {
 	checkParty();
 }
 
-void Combat::attack() {
-	if (_allowAttack)
-		attackMonsterPhysical();
-}
-
 void Combat::delay() {
 	setOption(OPTION_DELAY);
 }
 
 void Combat::exchange() {
+	if (_party.size() > 1)
+		setOption(OPTION_EXCHANGE);
 }
 
 void Combat::fight() {
@@ -725,11 +745,6 @@ void Combat::shoot() {
 			setOption(OPTION_SHOOT);
 		}
 	}
-}
-
-void Combat::use() {
-	// Show the character info view in USE mode
-	g_events->send("CharacterInfo", GameMessage("USE"));
 }
 
 void Combat::writeMessage() {
@@ -799,7 +814,9 @@ Common::String Combat::getAttackString() {
 }
 
 void Combat::setOption(SelectedOption option) {
-	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
+	MetaEngine::setKeybindingMode((option == OPTION_EXCHANGE) ?
+		KeybindingMode::KBMODE_PARTY_MENUS :
+		KeybindingMode::KBMODE_MENUS);
 	_option = option;
 }
 

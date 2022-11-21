@@ -389,6 +389,7 @@
 		set_delay: "SET DELAY (0-9):"
 		delay_currently: "(CURRENTLY= %d)"
 		infiltration: "INFILTRATES THE RANKS!"
+		exchange_places: "EXCHANGE PLACES WITH (1-%c)?"
 		status:
 			0: "(PARALYZE)"
 			1: "(WEBBED)  "
