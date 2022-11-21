@@ -548,7 +548,12 @@ public:
 		/**
 		* For platforms that should not have a Quit button.
 		*/
-		kFeatureNoQuit
+		kFeatureNoQuit,
+
+		/**
+		* Supports getDoubleClickTime call.
+		*/
+		kFeatureDoubleClickTime,
 	};
 
 	/**
@@ -1388,6 +1393,16 @@ public:
 	 * @see kFeatureCursorPalette
 	 */
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) {}
+
+	
+
+	/** Get the system-configured double-click time interval.
+	 *
+	 * Backends which implement this should have the kFeatureDoubleClickTime flag set.
+	 *
+	 * @see kFeatureDoubleClickTime
+	 */
+	virtual uint32 getDoubleClickTime() const { return 0; }
 
 	/** @} */
 

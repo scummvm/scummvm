@@ -89,6 +89,7 @@ public:
 	MixerManager *getMixerManager() override;
 	Common::TimerManager *getTimerManager() override;
 	Common::SaveFileManager *getSavefileManager() override;
+	uint32 getDoubleClickTime() const override;
 
 	// Default paths
 	virtual Common::String getDefaultIconsPath();
@@ -187,6 +188,9 @@ protected:
 	bool setGraphicsMode(int mode, uint flags) override;
 	int getGraphicsMode() const override;
 #endif
+
+	bool _haveDoubleClickTime;
+	uint32 _doubleClickTime;
 };
 
 #endif

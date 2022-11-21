@@ -512,6 +512,9 @@ void EventRecorder::getConfigFromDomain(const Common::ConfigManager::Domain *dom
 }
 
 void EventRecorder::getConfig() {
+	if (g_system->hasFeature(OSystem::kFeatureDoubleClickTime))
+		_recordFile->getHeader().settingsRecords["double_click_time"] = Common::String::format("%u", static_cast<unsigned int>(g_system->getDoubleClickTime()));
+
 	getConfigFromDomain(ConfMan.getDomain(ConfMan.kApplicationDomain));
 	getConfigFromDomain(ConfMan.getActiveDomain());
 	_recordFile->getHeader().settingsRecords["save_slot"] = ConfMan.get("save_slot");
@@ -684,6 +687,27 @@ Common::SeekableReadStream *EventRecorder::processSaveStream(const Common::Strin
 		return saveFile;
 	default:
 		return nullptr;
+	}
+}
+
+void EventRecorder::processHaveDoubleClickTime(bool &haveDoubleClickTime) {
+	if (_initialized && (_recordMode == kRecorderPlayback || _recordMode == kRecorderUpdate))
+		haveDoubleClickTime = _playbackFile->getHeader().settingsRecords.contains("double_click_time");
+}
+
+void EventRecorder::processDoubleClickTime(uint32 &doubleClickTime) {
+	if (_initialized && (_recordMode == kRecorderPlayback || _recordMode == kRecorderUpdate)) {
+		const Common::StringMap &settings = _playbackFile->getHeader().settingsRecords;
+		Common::StringMap::const_iterator it = settings.find("double_click_time");
+		if (it == settings.end())
+			doubleClickTime = 0;
+		else {
+			unsigned int temp = 0;
+			if (sscanf(it->_value.c_str(), "%u", &temp))
+				doubleClickTime = temp;
+			else
+				doubleClickTime = 0;
+		}
 	}
 }
 
