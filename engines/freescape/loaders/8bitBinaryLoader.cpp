@@ -585,11 +585,21 @@ void FreescapeEngine::loadBundledImages() {
 void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {
 	file->seek(offset);
 	int charNumber = 60;
-	byte *font = (byte *)malloc(6 * charNumber);
-	file->read(font, 6 * charNumber);
+	byte *font;
+	if (isDOS()) {
+		font = (byte *)malloc(6 * charNumber);
+		file->read(font, 6 * charNumber);
 
-	_font.set_size(48 * charNumber);
-	_font.set_bits((byte *)font);
+		_font.set_size(48 * charNumber);
+		_font.set_bits((byte *)font);
+	} else if (isAmiga()) {
+		int fontSize = 4654; // Driller
+		font = (byte *)malloc(fontSize);
+		file->read(font, fontSize);
+
+		_font.set_size(fontSize * 8);
+		_font.set_bits((byte *)font);
+	}
 	_fontLoaded = true;
 	free(font);
 }

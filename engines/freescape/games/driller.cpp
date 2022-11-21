@@ -263,6 +263,7 @@ void DrillerEngine::loadAssetsFullGame() {
 			}
 			_title = loadAndConvertNeoImage(&file, 0x10, palette);
 
+			loadFonts(&file, 0x8940);
 			loadMessagesFixedSize(&file, 0xc66e, 14, 20);
 			loadGlobalObjects(&file, 0xbd62);
 			load8bitBinary(&file, 0x29c16, 16);
@@ -287,6 +288,7 @@ void DrillerEngine::loadAssetsFullGame() {
 			if (!file.isOpen())
 				error("Failed to open 'driller' executable for Amiga");
 
+			loadFonts(&file, 0xa62);
 			loadMessagesFixedSize(&file, 0x499a, 14, 20);
 			loadGlobalObjects(&file, 0x4098);
 			load8bitBinary(&file, 0x21a3e, 16);
@@ -462,7 +464,12 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 }
 
 void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
-	// TODO: this needs to have fonts already parsed
+	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);
+	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+
+	int score = _gameStateVars[k8bitVariableScore];
+	drawStringInSurface(_currentArea->_name, 188, 178, yellow, black, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
 }
 
 Math::Vector3d getProjectionToPlane(const Math::Vector3d &vect, const Math::Vector3d normal) {

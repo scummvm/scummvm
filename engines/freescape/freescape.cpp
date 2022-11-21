@@ -602,13 +602,30 @@ void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int 
 		return;
 	Common::String ustr = str;
 	ustr.toUppercase();
-	for (uint32 c = 0; c < ustr.size(); c++) {
-		for (int j = 0; j < 6; j++) {
-			for (int i = 0; i < 8; i++) {
-				if (_font.get(48 * (ustr[c] - 32) + 1 + j * 8 + i))
-					surface->setPixel(x + 8 - i + 8 * c, y + j, fontColor);
-				else
-					surface->setPixel(x + 8 - i + 8 * c, y + j, backColor);
+
+	if (isDOS()) {
+		for (uint32 c = 0; c < ustr.size(); c++) {
+			assert(ustr[c] >= 32);
+			for (int j = 0; j < 6; j++) {
+				for (int i = 0; i < 8; i++) {
+					if (_font.get(48 * (ustr[c] - 32) + 1 + j * 8 + i))
+						surface->setPixel(x + 8 - i + 8 * c, y + j, fontColor);
+					else
+						surface->setPixel(x + 8 - i + 8 * c, y + j, backColor);
+				}
+			}
+		}
+	} else if (isAmiga()) {
+		for (uint32 c = 0; c < ustr.size(); c++) {
+			assert(ustr[c] >= 32);
+			int position = 8 * (33*(ustr[c] - 32) + 1);
+			for (int j = 0; j < 8; j++) {
+				for (int i = 0; i < 8; i++) {
+					if (_font.get(position + j * 32 + i))
+						surface->setPixel(x + 8 - i + 8 * c, y + j, fontColor);
+					else
+						surface->setPixel(x + 8 - i + 8 * c, y + j, backColor);;
+				}
 			}
 		}
 	}
