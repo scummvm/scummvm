@@ -261,6 +261,11 @@ protected:
 
 
 	/**
+	 * Attack option
+	 */
+	void attack();
+
+	/**
 	 * Block option
 	 */
 	void block();
@@ -269,6 +274,16 @@ protected:
 	 * Cast option
 	 */
 	void cast();
+
+	/**
+	 * Exchange current character with another
+	 */
+	void exchangeWith(int charNum);
+
+	/**
+	 * Use option
+	 */
+	void use();
 
 	/**
 	 * Retreat option

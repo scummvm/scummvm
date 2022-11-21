@@ -36,8 +36,8 @@ private:
 	InfoMessage _spellResult;
 	// Combat options that have sub-option selection
 	enum SelectedOption {
-		OPTION_NONE, OPTION_DELAY, OPTION_FIGHT,
-		OPTION_SHOOT
+		OPTION_NONE, OPTION_DELAY, OPTION_EXCHANGE,
+		OPTION_FIGHT, OPTION_SHOOT
 	};
 	SelectedOption _option = OPTION_NONE;
 
@@ -150,11 +150,6 @@ private:
 	void checkMonsterSpellDone();
 
 	/**
-	 * Attack option
-	 */
-	void attack();
-
-	/**
 	 * Delay option
 	 */
 	void delay();
@@ -175,11 +170,6 @@ private:
 	void shoot();
 
 	/**
-	 * Use option
-	 */
-	void use();
-
-	/**
 	 * Write message for characters attacking monsters
 	 */
 	void writeCharAttackDamage();
@@ -198,6 +188,11 @@ private:
 	 * Writes text for delay number selection
 	 */
 	void writeDelaySelect();
+
+	/**
+	 * Write text for exchange party member
+	 */
+	void writeExchangeSelect();
 
 	/**
 	 * Having selected to fight, selects monster to attack

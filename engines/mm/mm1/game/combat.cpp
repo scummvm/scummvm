@@ -1512,19 +1512,35 @@ void Combat::selectMonsterTarget() {
 	setMode(INFILTRATION);
 }
 
+void Combat::attack() {
+	if (_allowAttack)
+		attackMonsterPhysical();
+}
+
 void Combat::block() {
-	// TODO
+	characterDone();
 }
 
 void Combat::cast() {
 	g_events->addView("CastSpell");
 }
 
+void Combat::exchangeWith(int charNum) {
+	_party[_currentChar]->_checked = true;
+	Character *c1 = _party[_currentChar];
+	Character *c2 = _party[charNum];
+	_party[_currentChar] = c2;
+	_party[charNum] = c1;
+
+	_currentChar = charNum;
+	combatLoop();
+}
+
 void Combat::retreat() {
 	Encounter &enc = g_globals->_encounters;
 
 	if (getRandomNumber(100) <= enc._fleeThreshold ||
-			getRandomNumber(100) < _roundNum) {
+		getRandomNumber(100) < _roundNum) {
 		Maps::Maps &maps = g_globals->_maps;
 		Maps::Map &map = *maps._currentMap;
 		maps._mapPos = Common::Point(map[Maps::MAP_FLEE_X],
@@ -1540,6 +1556,11 @@ void Combat::retreat() {
 
 		g_globals->_combat->characterDone();
 	}
+}
+
+void Combat::use() {
+	// Show the character info view in USE mode
+	g_events->send("CharacterInfo", GameMessage("USE"));
 }
 
 void Combat::combatDone() {
