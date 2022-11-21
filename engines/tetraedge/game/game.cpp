@@ -155,16 +155,16 @@ void Game::addRandomSound(const Common::String &name, const Common::String &path
 	_randomSounds[name].push_back(randsound);
 }
 
-void Game::addToBag(const Common::String &objname) {
-	if (_inventory.objectCount(objname) != 0)
+void Game::addToBag(const Common::String &objid) {
+	if (_inventory.objectCount(objid) != 0)
 		return;
-	_inventory.addObject(objname);
+	_inventory.addObject(objid);
 	Common::String imgpath("Inventory/Objects/");
-	imgpath += _inventory.objectName(objname);
+	imgpath += objid;
 	imgpath += ".png";
-	_notifier.push(objname, imgpath);
+	_notifier.push(_inventory.objectName(objid), imgpath);
 	for (int i = 0; i < NUM_OBJECTS_TAKEN_IDS; i++) {
-		if (objname == OBJECTS_TAKEN_IDS[i] && !_objectsTakenBits[i]) {
+		if (objid == OBJECTS_TAKEN_IDS[i] && !_objectsTakenBits[i]) {
 			_objectsTakenBits[i] = true;
 			_objectsTakenVal++;
 		}

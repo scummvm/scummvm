@@ -36,17 +36,17 @@ bool Billboard::load(const Common::String &path) {
 	Game *game = g_engine->getGame();
 	Common::Path texpath = game->sceneZonePath().join(path);
 	texture->load(texpath);
-	_model->setName(texpath.toString());
+	_model->setName(path);
 	Common::Array<TeVector3f32> quad;
 	quad.resize(4);
 	_model->setQuad(texture, quad, TeColor(0xff, 0xff, 0xff, 0xff));
 	game->scene().models().push_back(_model);
-	return false;
+	return true;
 }
 
 void Billboard::calcVertex() {
 	//Game *game = g_engine->getGame();
-	error("TODO: implement Billboard::calcVertex");
+	warning("TODO: implement Billboard::calcVertex");
 }
 
 void Billboard::position(const TeVector3f32 &pos) {

@@ -22,11 +22,13 @@
 #include "tetraedge/tetraedge.h"
 
 #include "tetraedge/game/application.h"
+#include "tetraedge/game/billboard.h"
 #include "tetraedge/game/character.h"
 #include "tetraedge/game/game.h"
 #include "tetraedge/game/lua_binds.h"
 #include "tetraedge/game/object3d.h"
 #include "tetraedge/to_lua.h"
+#include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_lua_thread.h"
 
 namespace Tetraedge {
@@ -586,6 +588,133 @@ static int tolua_ExportedFunctions_SetGroundObjectRotation00(lua_State *L) {
 	error("#ferror in function 'SetGroundObjectRotation': %d %d %s", err.index, err.array, err.type);
 }
 
+static void LoadBillBoard(const Common::String &name) {
+	Game *game = g_engine->getGame();
+	game->scene().loadBillboard(name);
+}
+
+static int tolua_ExportedFunctions_LoadBillBoard00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		LoadBillBoard(s1);
+		return 0;
+	}
+	error("#ferror in function 'LoadBillBoard': %d %d %s", err.index, err.array, err.type);
+}
+
+static void SetBillboardPosition(const Common::String &name, float x, float y, float z) {
+	Game *game = g_engine->getGame();
+	Billboard *bb = game->scene().billboard(name);
+	if (!bb) {
+		error("[SetBillboardPosition] Billboard not found %s", name.c_str());
+	}
+	bb->position(TeVector3f32(x, y, z));
+}
+
+static int tolua_ExportedFunctions_SetBillboardPosition00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnumber(L, 2, 0, &err)
+		&& tolua_isnumber(L, 3, 0, &err) && tolua_isnumber(L, 4, 0, &err)
+		&& tolua_isnoobj(L, 5, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		float f1 = tolua_tonumber(L, 2, 0.0);
+		float f2 = tolua_tonumber(L, 3, 0.0);
+		float f3 = tolua_tonumber(L, 4, 0.0);
+		SetBillboardPosition(s1, f1, f2, f3);
+		return 0;
+	}
+	error("#ferror in function 'SetBillboardPosition': %d %d %s", err.index, err.array, err.type);
+}
+
+static void SetBillboardPosition2(const Common::String &name, float x1, float y1, float x2, float y2, float z) {
+	Game *game = g_engine->getGame();
+	Billboard *bb = game->scene().billboard(name);
+	if (!bb) {
+		error("[SetBillboardPosition2] Billboard not found %s", name.c_str());
+	}
+	bb->position(TeVector3f32(x1, y1, 0.0));
+	bb->position2(TeVector3f32(x2, y2, z));
+}
+
+static int tolua_ExportedFunctions_SetBillboardPosition200(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnumber(L, 2, 0, &err)
+		&& tolua_isnumber(L, 3, 0, &err) && tolua_isnumber(L, 4, 0, &err)
+		&& tolua_isnumber(L, 5, 0, &err) && tolua_isnumber(L, 6, 0, &err)
+		&& tolua_isnoobj(L, 7, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		float f1 = tolua_tonumber(L, 2, 0.0);
+		float f2 = tolua_tonumber(L, 3, 0.0);
+		float f3 = tolua_tonumber(L, 4, 0.0);
+		float f4 = tolua_tonumber(L, 5, 0.0);
+		float f5 = tolua_tonumber(L, 6, 0.0);
+		SetBillboardPosition2(s1, f1, f2, f3, f4, f5);
+		return 0;
+	}
+	error("#ferror in function 'SetBillboardPosition2': %d %d %s", err.index, err.array, err.type);
+}
+
+static void SetBillboardSize(const Common::String &name, float xs, float ys) {
+	Game *game = g_engine->getGame();
+	Billboard *bb = game->scene().billboard(name);
+	if (!bb) {
+		error("[SetBillboardSize] Billboard not found %s", name.c_str());
+	}
+	bb->size(TeVector2f32(xs, ys));
+}
+
+static int tolua_ExportedFunctions_SetBillboardSize00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnumber(L, 2, 0, &err)
+		&& tolua_isnumber(L, 3, 0, &err) && tolua_isnoobj(L, 4, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		float f1 = tolua_tonumber(L, 2, 0.0);
+		float f2 = tolua_tonumber(L, 3, 0.0);
+		SetBillboardSize(s1, f1, f2);
+		return 0;
+	}
+	error("#ferror in function 'SetBillboardSize': %d %d %s", err.index, err.array, err.type);
+}
+
+static void ShowBillboard(const Common::String &name) {
+	Game *game = g_engine->getGame();
+	Billboard *bb = game->scene().billboard(name);
+	if (!bb) {
+		error("[ShowBillboard] Billboard not found %s", name.c_str());
+	}
+	bb->model()->setVisible(true);
+}
+
+static int tolua_ExportedFunctions_ShowBillboard00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		ShowBillboard(s1);
+		return 0;
+	}
+	error("#ferror in function 'ShowBillboard': %d %d %s", err.index, err.array, err.type);
+}
+
+static void HideBillboard(const Common::String &name) {
+	Game *game = g_engine->getGame();
+	Billboard *bb = game->scene().billboard(name);
+	if (!bb) {
+		error("[HideBillboard] Billboard not found %s", name.c_str());
+	}
+	bb->model()->setVisible(false);
+}
+
+static int tolua_ExportedFunctions_HideBillboard00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		HideBillboard(s1);
+		return 0;
+	}
+	error("#ferror in function 'HideBillboard': %d %d %s", err.index, err.array, err.type);
+}
+
 static void SetBackground(const Common::String &name) {
 	Game *game = g_engine->getGame();
 	if (!game->setBackground(name))
@@ -668,6 +797,55 @@ static int tolua_ExportedFunctions_PushTask00(lua_State *L) {
 		return 0;
 	}
 	error("#ferror in function 'PushTask': %d %d %s", err.index, err.array, err.type);
+}
+
+static void DeleteTask(const Common::String &s1, const Common::String &s2) {
+	Game *game = g_engine->getGame();
+	game->objectif().deleteObjectif(s1, s2);
+}
+
+static int tolua_ExportedFunctions_DeleteTask00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err) && tolua_isnoobj(L, 3, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		Common::String s2(tolua_tostring(L, 2, nullptr));
+		DeleteTask(s1, s2);
+		return 0;
+	}
+	error("#ferror in function 'DeleteTask': %d %d %s", err.index, err.array, err.type);
+}
+
+static bool TestFileFlagSystemFlag(const Common::String &flagname, const Common::String &val) {
+	if (flagname == "platform" && val == "Android")
+		return true;
+	return g_engine->getCore()->fileFlagSystemFlag(flagname) == val;
+}
+
+static int tolua_ExportedFunctions_TestFileFlagSystemFlag00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err) && tolua_isnoobj(L, 3, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		Common::String s2(tolua_tostring(L, 2, nullptr));
+		bool result = TestFileFlagSystemFlag(s1, s2);
+		tolua_pushboolean(L, result);
+		return 1;
+	}
+	error("#ferror in function 'TestFileFlagSystemFlag': %d %d %s", err.index, err.array, err.type);
+}
+
+static void ExitZone(const Common::String &zone) {
+	Game *game = g_engine->getGame();
+	game->setExitZone(zone);
+}
+
+static int tolua_ExportedFunctions_ExitZone00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		ExitZone(s1);
+		return 0;
+	}
+	error("#ferror in function 'ExitZone': %d %d %s", err.index, err.array, err.type);
 }
 
 static void EnableRectBlocker(uint offset, bool enabled) {
@@ -1022,6 +1200,7 @@ static void MoveCharacterPlayerTo(float x, float y, float z, bool walkFlag) {
 		character->walkMode("Walk");
 	}
 
+	assert(character->freeMoveZone());
 	game->_sceneCharacterVisibleFromLoad = false;
 	TeIntrusivePtr<TeBezierCurve> curve = character->freeMoveZone()->curve(character->_model->position(), dest);
 	if (!curve) {
@@ -1096,8 +1275,8 @@ void LuaOpenBinds(lua_State *L) {
 	/*tolua_function(L, "PushAnswer", tolua_ExportedFunctions_PushAnswer00);
 	tolua_function(L, "HideAnswers", tolua_ExportedFunctions_HideAnswers00);*/
 	tolua_function(L, "PushTask", tolua_ExportedFunctions_PushTask00);
-	/*tolua_function(L, "DeleteTask", tolua_ExportedFunctions_DeleteTask00);
-	tolua_function(L, "SetVisibleButtonHelp", tolua_ExportedFunctions_SetVisibleButtonHelp00);
+	tolua_function(L, "DeleteTask", tolua_ExportedFunctions_DeleteTask00);
+	/*tolua_function(L, "SetVisibleButtonHelp", tolua_ExportedFunctions_SetVisibleButtonHelp00);
 	tolua_function(L, "HideTasks", tolua_ExportedFunctions_HideTasks00);*/
 	tolua_function(L, "PlaySound", tolua_ExportedFunctions_PlaySound00);
 	/*tolua_function(L, "PlaySoundAndWaitForEnd", tolua_ExportedFunctions_PlaySoundAndWaitForEnd00);*/
@@ -1170,14 +1349,14 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "EnableLight", tolua_ExportedFunctions_EnableLight00);
 	tolua_function(L, "SetLightDiffuse", tolua_ExportedFunctions_SetLightDiffuse00);
 	tolua_function(L, "SetLightAmbient", tolua_ExportedFunctions_SetLightAmbient00);
-	tolua_function(L, "SetLightSpecular", tolua_ExportedFunctions_SetLightSpecular00);
+	tolua_function(L, "SetLightSpecular", tolua_ExportedFunctions_SetLightSpecular00);*/
 	tolua_function(L, "LoadBillBoard", tolua_ExportedFunctions_LoadBillBoard00);
 	tolua_function(L, "SetBillboardPosition", tolua_ExportedFunctions_SetBillboardPosition00);
 	tolua_function(L, "SetBillboardPosition2", tolua_ExportedFunctions_SetBillboardPosition200);
 	tolua_function(L, "SetBillboardSize", tolua_ExportedFunctions_SetBillboardSize00);
 	tolua_function(L, "ShowBillboard", tolua_ExportedFunctions_ShowBillboard00);
 	tolua_function(L, "HideBillboard", tolua_ExportedFunctions_HideBillboard00);
-	tolua_function(L, "UnlockAchievement", tolua_ExportedFunctions_UnlockAchievement00);
+	/*tolua_function(L, "UnlockAchievement", tolua_ExportedFunctions_UnlockAchievement00);
 	tolua_function(L, "Save", tolua_ExportedFunctions_Save00);
 	tolua_function(L, "Wait", tolua_ExportedFunctions_Wait00);
 	tolua_function(L, "WaitAndWaitForEnd", tolua_ExportedFunctions_WaitAndWaitForEnd00);
@@ -1187,10 +1366,10 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "BFGRateImmediately", tolua_ExportedFunctions_BFGRateImmediately00);
 	tolua_function(L, "BFGReportEvent", tolua_ExportedFunctions_BFGReportEvent00);
 	tolua_function(L, "BFGReportEventWithValue", tolua_ExportedFunctions_BFGReportEventWithValue00);
-	tolua_function(L, "BFGReachedFreemiumLimit", tolua_ExportedFunctions_BFGReachedFreemiumLimit00);
+	tolua_function(L, "BFGReachedFreemiumLimit", tolua_ExportedFunctions_BFGReachedFreemiumLimit00);*/
 	tolua_function(L, "TestFileFlagSystemFlag", tolua_ExportedFunctions_TestFileFlagSystemFlag00);
 	// tolua_function(L, "PrintDebugMessage", tolua_ExportedFunctions_PrintDebugMessage00); // Unused
-	tolua_function(L, "ExitZone", tolua_ExportedFunctions_ExitZone00);*/
+	tolua_function(L, "ExitZone", tolua_ExportedFunctions_ExitZone00);
 	tolua_function(L, "EnableRectBlocker", tolua_ExportedFunctions_EnableRectBlocker00);
 	/*tolua_function(L, "EnableBlocker", tolua_ExportedFunctions_EnableBlocker00);*/
 	tolua_function(L, "AddAnchorZone", tolua_ExportedFunctions_AddAnchorZone00);

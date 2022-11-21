@@ -121,6 +121,15 @@ void Objectif::pushObjectif(Common::String const &head, Common::String const &su
 	_tasks.back()._taskFlag = true;
 }
 
+void Objectif::deleteObjectif(Common::String const &head, Common::String const &sub) {
+	for (Task &t : _tasks) {
+		if (t._taskFlag && t._headTask == head && t._subTask == sub) {
+			t._taskFlag = false;
+			return;
+		}
+	}
+}
+
 void Objectif::reattachLayout(TeLayout *layout) {
 	TeButtonLayout *btn;
 
