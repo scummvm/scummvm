@@ -561,6 +561,22 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(s4, "TestTestTestTestTestTestTestTestTestTestTest");
 	}
 
+	void test_find() {
+		Common::String a("0123012"), b;
+
+		TS_ASSERT_EQUALS(a.find('1'), 1);
+		TS_ASSERT_EQUALS(a.find('3'), 3);
+		TS_ASSERT_EQUALS(a.find('1', 3), 5);
+		TS_ASSERT_EQUALS(b.find('*'), Common::String::npos);
+		TS_ASSERT_EQUALS(b.find('*', 1), Common::String::npos);
+
+		TS_ASSERT_EQUALS(a.rfind('1'), 5);
+		TS_ASSERT_EQUALS(a.rfind('3'), 3);
+		TS_ASSERT_EQUALS(a.rfind('1', 3), 1);
+		TS_ASSERT_EQUALS(b.rfind('*'), Common::String::npos);
+		TS_ASSERT_EQUALS(b.rfind('*', 1), Common::String::npos);
+	}
+
 	void test_setChar() {
 		Common::String testString("123456");
 		testString.setChar('2', 0);
