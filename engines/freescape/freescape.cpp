@@ -615,7 +615,7 @@ void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int 
 				}
 			}
 		}
-	} else if (isAmiga()) {
+	} else if (isAmiga() || isAtariST()) {
 		for (uint32 c = 0; c < ustr.size(); c++) {
 			assert(ustr[c] >= 32);
 			int position = 8 * (33*(ustr[c] - 32) + 1);

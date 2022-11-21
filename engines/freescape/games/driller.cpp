@@ -186,6 +186,8 @@ void DrillerEngine::loadAssetsDemo() {
 		file.open("driller");
 		if (!file.isOpen())
 			error("Failed to open 'driller' file");
+
+		loadFonts(&file, 0xa30);
 		loadMessagesFixedSize(&file, 0x3960, 14, 20);
 		loadGlobalObjects(&file, 0x3716);
 
@@ -229,6 +231,8 @@ void DrillerEngine::loadAssetsDemo() {
 		file.open("x.prg");
 		if (!file.isOpen())
 			error("Failed to open 'x.prg' file");
+
+		loadFonts(&file, 0x7bc);
 		loadMessagesFixedSize(&file, 0x3b90, 14, 20);
 		loadGlobalObjects(&file, 0x3946);
 
@@ -318,6 +322,7 @@ void DrillerEngine::loadAssetsFullGame() {
 		}
 		_title = loadAndConvertNeoImage(&file, 0x10, palette);
 
+		loadFonts(&file, 0x8a32);
 		loadMessagesFixedSize(&file, 0xc5d8, 14, 20);
 		loadGlobalObjects(&file, 0xbccc);
 		load8bitBinary(&file, 0x29b3c, 16);
@@ -468,8 +473,33 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 
 	int score = _gameStateVars[k8bitVariableScore];
-	drawStringInSurface(_currentArea->_name, 188, 178, yellow, black, surface);
+	drawStringInSurface(_currentArea->_name, 188, 185, yellow, black, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
+
+	int hours = _countdown / 3600;
+	drawStringInSurface(Common::String::format("%02d:", hours), 208, 7, yellow, black, surface);
+	int minutes = (_countdown - hours * 3600) / 60;
+	drawStringInSurface(Common::String::format("%02d:", minutes), 230, 7, yellow, black, surface);
+	int seconds = _countdown - hours * 3600 - minutes * 60;
+	drawStringInSurface(Common::String::format("%02d", seconds), 254, 7, yellow, black, surface);
+
+	Common::String message;
+	int deadline;
+	getLatestMessages(message, deadline);
+	if (deadline <= _countdown) {
+		drawStringInSurface(message, 188, 177, black, yellow, surface);
+		_temporaryMessages.push_back(message);
+		_temporaryMessageDeadlines.push_back(deadline);
+	} else {
+		if (_currentArea->_gasPocketRadius == 0)
+			message = _messagesList[2];
+		else if (_drilledAreas[_currentArea->getAreaID()])
+			message = _messagesList[0];
+		else
+			message = _messagesList[1];
+
+		drawStringInSurface(message, 188, 177, yellow, black, surface);
+	}
 }
 
 Math::Vector3d getProjectionToPlane(const Math::Vector3d &vect, const Math::Vector3d normal) {
