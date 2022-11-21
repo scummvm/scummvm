@@ -42,6 +42,7 @@ public:
 	bool hideBouton();
 	bool isMouseIn(const TeVector2s32 &mousept);
 	bool isVisibleObjectif();
+	void deleteObjectif(Common::String const &head, Common::String const &sub);
 	void leave();
 	void load();
 	bool onHelpButtonValidated();

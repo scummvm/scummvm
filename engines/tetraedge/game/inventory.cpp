@@ -213,10 +213,12 @@ bool Inventory::addObject(InventoryObject &obj) {
 			pageno++;
 		}
     }
-	
+
 	int pageno = 0;
 	unsigned int totalSlots = 0;
 	bool retval;
+	const Common::String newObjName = obj.name();
+	auto invObjIter = _invObjects.begin();
 	while (true) {
 		TeLayout *page = _gui.layout(Common::String::format("page%d", pageno));
 		retval = false;
@@ -236,10 +238,22 @@ bool Inventory::addObject(InventoryObject &obj) {
 			}
 			
 			TeTextLayout *newText = new TeTextLayout();
-			error("TODO: finish Inventory::addObject.");
+			newText->setSizeType(CoordinatesType::RELATIVE_TO_PARENT);
+			newText->setPosition(TeVector3f32(1.0,1.0,0.0));
+			newText->setSize(TeVector3f32(1.0,1.0,0.0));
+			newText->setTextSizeType(1);
+			newText->setTextSizeProportionalToWidth(200);
+			newText->setText(_gui.value("textAttributs").toString() + (*invObjIter)->name());
+			newText->setName((*invObjIter)->name());
+			newText->setVisible(false);
+
+			TeLayout *layout = _gui.layout("textObject");
+			layout->addChild(newText);
+			slot->addChild(*invObjIter);
 
 			totalSlots++;
 			slotno++;
+			invObjIter++;
 		}
 		pageno++;
 	}
@@ -268,7 +282,7 @@ Common::String Inventory::objectDescription(const Common::String &objId) {
 Common::String Inventory::objectName(const Common::String &objId) {
 	if (!_objectData.contains(objId))
 		return "";
-	return _objectData.getVal(objId)._name;
+	return _objectData.getVal(objId)._id;
 }
 
 bool Inventory::onMainMenuButton() {
