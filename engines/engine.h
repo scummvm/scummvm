@@ -78,7 +78,14 @@ void GUIErrorMessageWithURL(const Common::String &msg, const char *url);
 /**
  * Initialize graphics and show an error message.
  */
-void GUIErrorMessageFormat(Common::U32String fmt, ...);
+void GUIErrorMessageFormatU32StringPtr(const Common::U32String *fmt, ...);
+/**
+ * Initialize graphics and show an error message.
+ */
+template<class... TParam>
+inline void GUIErrorMessageFormat(const Common::U32String &fmt, TParam... param) {
+	GUIErrorMessageFormatU32StringPtr(&fmt, Common::forward<TParam>(param)...);
+}
 /**
  * Initialize graphics and show an error message.
  */
