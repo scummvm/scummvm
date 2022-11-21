@@ -163,6 +163,7 @@ public:
 
 	// Input
 	bool _demoMode;
+	bool _disableDemoMode;
 	bool _flyMode;
 	bool _shootMode;
 	bool _noClipMode;

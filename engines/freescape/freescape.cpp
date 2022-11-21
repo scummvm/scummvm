@@ -56,6 +56,9 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	if (!Common::parseBool(ConfMan.get("prerecorded_sounds"), _usePrerecordedSounds))
 		error("Failed to parse bool from prerecorded_sounds option");
 
+	if (!Common::parseBool(ConfMan.get("disable_demo_mode"), _disableDemoMode))
+		error("Failed to parse bool from disable_demo_mode option");
+
 	_startArea = 0;
 	_startEntrance = 0;
 	_currentArea = nullptr;

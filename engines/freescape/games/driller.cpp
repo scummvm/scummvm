@@ -245,7 +245,7 @@ void DrillerEngine::loadAssetsDemo() {
 	} else
 		error("Unsupported demo for Driller");
 
-	_demoMode = true;
+	_demoMode = !_disableDemoMode;
 	_angleRotationIndex = 0;
 }
 

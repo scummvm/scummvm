@@ -47,6 +47,18 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_DISABLE_DEMO_MODE,
+		{
+			_s("Disable demo mode"),
+			_s("Never activate demo mode"),
+			"disable_demo_mode",
+			false,
+			0,
+			0
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
