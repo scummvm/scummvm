@@ -48,7 +48,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::EN_ANY,
 	 Common::kPlatformDOS,
 	 ADGF_UNSTABLE,
-	 GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)},
+	 GUIO4(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_AUTOMATIC_DRILLING)},
 	{"driller",
 	 "",
 	 {
@@ -59,7 +59,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::EN_ANY,
 	 Common::kPlatformAtariST,
 	 ADGF_UNSTABLE,
-	 GUIO1(GUIO_NOMIDI)},
+	 GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)},
 	{"spacestationoblivion",
 	 "",
 	 {
@@ -70,7 +70,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::EN_ANY,
 	 Common::kPlatformAtariST,
 	 ADGF_UNSUPPORTED,
-	 GUIO1(GUIO_NOMIDI)},
+	 GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)},
 	{"driller",
 	 "",
 	 {
@@ -81,7 +81,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::EN_ANY,
 	 Common::kPlatformAmiga,
 	 ADGF_AMIGA_RETAIL | ADGF_UNSTABLE,
-	 GUIO1(GUIO_NOMIDI)},
+	 GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)},
 	{"driller",
 	 "",
 	 {
@@ -92,7 +92,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::EN_ANY,
 	 Common::kPlatformAmiga,
 	 ADGF_AMIGA_BUDGET | ADGF_UNSTABLE,
-	 GUIO1(GUIO_NOMIDI)},
+	 GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)},
 	{"driller",
 	 "Rolling Demo",
 	 {
@@ -104,7 +104,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::EN_ANY,
 	 Common::kPlatformAmiga,
 	 ADGF_UNSTABLE | ADGF_DEMO,
-	 GUIO1(GUIO_NOMIDI)},
+	 GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)},
 	{"driller",
 	 "Rolling Demo",
 	 {
@@ -116,7 +116,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::EN_ANY,
 	 Common::kPlatformAtariST,
 	 ADGF_UNSTABLE | ADGF_DEMO,
-	 GUIO1(GUIO_NOMIDI)},
+	 GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)},
 	{"darkside",
 	 "",
 	 {
@@ -156,7 +156,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::EN_ANY,
 	 Common::kPlatformDOS,
 	 ADGF_UNSTABLE,
-	 GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)},
+	 GUIO4(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_AUTOMATIC_DRILLING)},
 	{"castlemaster",
 	 "",
 	 {
@@ -252,7 +252,7 @@ static const DebugChannelDef debugFlagList[] = {
 class FreescapeMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	FreescapeMetaEngineDetection() : AdvancedMetaEngineDetection(Freescape::gameDescriptions, sizeof(ADGameDescription), Freescape::freescapeGames) {
-		_guiOptions = GUIO3(GUIO_NOMIDI, GAMEOPTION_PRERECORDED_SOUNDS, GAMEOPTION_AUTOMATIC_DRILLING);
+		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_PRERECORDED_SOUNDS);
 	}
 
 	const char *getName() const override {
