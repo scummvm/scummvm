@@ -83,7 +83,7 @@ SaveStateList EfhMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
-	pattern += "-##.SAV";
+	pattern += ".###";
 
 	filenames = saveFileMan->listSavefiles(pattern);
 
@@ -91,24 +91,25 @@ SaveStateList EfhMetaEngine::listSaves(const char *target) const {
 	char slot[3];
 	int slotNum = 0;
 	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
-		slot[0] = filename->c_str()[filename->size() - 6];
-		slot[1] = filename->c_str()[filename->size() - 5];
+		slot[0] = filename->c_str()[filename->size() - 2];
+		slot[1] = filename->c_str()[filename->size() - 1];
 		slot[2] = '\0';
 		// Obtain the last 2 digits of the filename (without extension), since they correspond to the save slot
 		slotNum = atoi(slot);
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
 			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
 			if (file) {
-				int saveVersion = file->readByte();
+				uint32 sign = file->readUint32LE();
+				uint8 saveVersion = file->readByte();
 
-				if (saveVersion != kSavegameVersion) {
-					warning("Savegame of incompatible version");
+				if (sign != EFH_SAVE_HEADER || saveVersion > kSavegameVersion) {
+					warning("Incompatible savegame");
 					delete file;
 					continue;
 				}
 
 				// read name
-				uint16 nameSize = file->readUint16BE();
+				uint16 nameSize = file->readUint16LE();
 				if (nameSize >= 255) {
 					delete file;
 					continue;
@@ -128,19 +129,20 @@ SaveStateList EfhMetaEngine::listSaves(const char *target) const {
 }
 
 SaveStateDescriptor EfhMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
+	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
 
 	if (file) {
-		int saveVersion = file->readByte();
+		uint32 sign = file->readUint32LE();
+		uint8 saveVersion = file->readByte();
 
-		if (saveVersion != kSavegameVersion) {
-			warning("Savegame of incompatible version");
+		if (sign != EFH_SAVE_HEADER || saveVersion > kSavegameVersion) {
+			warning("Incompatible savegame");
 			delete file;
 			return SaveStateDescriptor();
 		}
 
-		uint32 saveNameLength = file->readUint16BE();
+		uint32 saveNameLength = file->readUint16LE();
 		Common::String saveName;
 		for (uint32 i = 0; i < saveNameLength; ++i) {
 			char curChr = file->readByte();
@@ -156,22 +158,6 @@ SaveStateDescriptor EfhMetaEngine::querySaveMetaInfos(const char *target, int sl
 		}
 		desc.setThumbnail(thumbnail);
 
-		desc.setDeletableFlag(true);
-		desc.setWriteProtectedFlag(false);
-
-		uint32 saveDate = file->readUint32BE();
-		uint16 saveTime = file->readUint16BE();
-
-		int day = (saveDate >> 24) & 0xFF;
-		int month = (saveDate >> 16) & 0xFF;
-		int year = saveDate & 0xFFFF;
-
-		desc.setSaveDate(year, month, day);
-
-		int hour = (saveTime >> 8) & 0xFF;
-		int minutes = saveTime & 0xFF;
-
-		desc.setSaveTime(hour, minutes);
 		desc.setDeletableFlag(slot != 0);
 		desc.setWriteProtectedFlag(slot == 0);
 
@@ -182,7 +168,7 @@ SaveStateDescriptor EfhMetaEngine::querySaveMetaInfos(const char *target, int sl
 }
 
 void EfhMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
+	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 

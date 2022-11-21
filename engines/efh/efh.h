@@ -29,6 +29,7 @@
 #include "common/file.h"
 #include "common/rect.h"
 #include "common/events.h"
+#include "common/serializer.h"
 
 #include "engines/engine.h"
 #include "graphics/surface.h"
@@ -42,18 +43,20 @@ class RandomSource;
  * This is the namespace of the Efh engine.
  *
  * Status of this engine:
- * - Skeletton
+ * - No savegames
+ * - No music in intro
+ * - No random PC speaker farts (aka sounds)
  *
  * Games using this engine:
  * - Escape From Hell
  * 
- * Escape From Hell is based on a modified Wasteland engine, so this engine could eventually, one day, also support:
- * - Wasteland
- * - Fountain of Dreams
+ * Note: Wasteland and Fountain of dreams *seem* to use the same engine, but it's not the case.
+ * This engine was written from scratch based on the visual look of the other
  */
 namespace Efh {
 
-static const int kSavegameVersion = 1;
+static const uint8 kSavegameVersion = 1;
+#define EFH_SAVE_HEADER MKTAG('E', 'F', 'H', 'S')
 
 enum AccessDebugChannels {
 	kDebugEngine = 1 << 0,
@@ -257,6 +260,12 @@ public:
 	const char *getCopyrightString() const;
 
 	Common::String getSavegameFilename(int slot);
+
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+
 	void syncSoundSettings() override;
 
 	bool _shouldQuit;
@@ -264,10 +273,8 @@ public:
 protected:
 	Common::EventManager *_eventMan;
 	int _lastTime;
-	void saveGame();
 	// Engine APIs
 	Common::Error run() override;
-	void handleMenu();
 
 private:
 	static EfhEngine *s_Engine;
@@ -430,6 +437,7 @@ private:
 	int16 sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA);
 	int16 handleStatusMenu(int16 gameMode, int16 charId);
 	bool checkMonsterCollision();
+	void synchronize(Common::Serializer &s);
 
 	// Graphics
 	void initPalette();
