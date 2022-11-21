@@ -25,7 +25,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 #define SAVEGAME_IDENT MKTAG('V', 'M', 'U', '8')
-#define SAVEGAME_VERSION 5
+#define SAVEGAME_VERSION 6
 #define SAVEGAME_MIN_VERSION 2
 
 SavegameReader::SavegameReader(Common::SeekableReadStream *rs, bool metadataOnly) : _file(rs), _version(0) {

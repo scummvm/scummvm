@@ -32,8 +32,8 @@ namespace Ultima8 {
 
 class MiniMapGump : public Gump {
 private:
-	Graphics::ManagedSurface _minimap;
-	unsigned int        _lastMapNum;
+	Common::Array<Graphics::Surface> _minimaps;
+	Graphics::PixelFormat _format;
 	int32 _ax, _ay;
 
 	void update(CurrentMap *map);
