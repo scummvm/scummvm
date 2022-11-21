@@ -64,6 +64,8 @@ public:
 	 */
 	static void freeFont();
 
+	static bool isModifiedEucCn() { return _isModifiedEucCn; }
+
 	/**
 	 * Set the font to use for writing text on the screen
 	 */
@@ -78,6 +80,8 @@ public:
 	 * Returns the height of a string in pixels (i.e. the tallest displayed character)
 	 */
 	int stringHeight(const Common::String &str);
+
+	static Common::String unescape(const Common::String& in);
 
 	/**
 	 * Returns the width of a character in pixels

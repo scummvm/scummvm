@@ -209,6 +209,42 @@ inline byte Fonts::translateChar(byte c) {
 	}
 }
 
+Common::String Fonts::unescape(const Common::String& in) {
+	if (!_isModifiedEucCn)
+		return in;
+
+	bool isInEucEscape = false;
+	Common::String out;
+
+	for (const char *curCharPtr = in.c_str(); *curCharPtr; ++curCharPtr) {
+		byte curChar = *curCharPtr;
+		byte nextChar = curCharPtr[1];
+
+		if (_isModifiedEucCn && !isInEucEscape && curChar == '@' && nextChar == '$') {
+			curCharPtr++;
+			isInEucEscape = true;
+			out += ' ';
+			continue;
+		}
+
+		if (_isModifiedEucCn && isInEucEscape && curChar == '$' && nextChar == '@') {
+			curCharPtr++;
+			isInEucEscape = false;
+			out += ' ';
+			continue;
+		}
+
+		if (_isModifiedEucCn && curChar >= 0x41 && curChar < 0xa0) {
+			out += curChar + 0x60;
+			continue;
+		}
+
+		out += curChar;
+	}
+
+	return out;
+}
+
 void Fonts::writeString(BaseSurface *surface, const Common::String &str,
 		const Common::Point &pt, int overrideColor) {
 	Common::Point charPos = pt;
