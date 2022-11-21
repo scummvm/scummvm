@@ -89,7 +89,10 @@ OSystem_SDL::OSystem_SDL()
 	_logger(nullptr),
 	_eventSource(nullptr),
 	_eventSourceWrapper(nullptr),
-	_window(nullptr) {
+	_window(nullptr),
+	_haveDoubleClickTime(false),
+	_doubleClickTime(0)
+{
 }
 
 OSystem_SDL::~OSystem_SDL() {
@@ -188,6 +191,15 @@ bool OSystem_SDL::hasFeature(Feature f) {
 	if (f == kFeatureOpenGLForGame) return true;
 	if (f == kFeatureShadersForGame) return _supportsShaders;
 #endif
+
+	if (f == kFeatureDoubleClickTime) {
+		bool haveDoubleClickTime = _haveDoubleClickTime;
+#ifdef ENABLE_EVENTRECORDER
+		g_eventRec.processHaveDoubleClickTime(haveDoubleClickTime);
+#endif
+		return haveDoubleClickTime;
+	}
+
 	return ModularGraphicsBackend::hasFeature(f);
 }
 
@@ -760,6 +772,14 @@ Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
 #else
 	return _savefileManager;
 #endif
+}
+
+uint32 OSystem_SDL::getDoubleClickTime() const {
+	uint32 doubleClickTime = _doubleClickTime;
+#ifdef ENABLE_EVENTRECORDER
+	g_eventRec.processDoubleClickTime(doubleClickTime);
+#endif
+	return _doubleClickTime;
 }
 
 //Not specified in base class
