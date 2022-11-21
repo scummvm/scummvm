@@ -168,7 +168,7 @@ void create_batch_file(const char *prefix) {
 	while (fgets(line, MAX_LINE_LENGTH, in)) {
 		if (!strcmp(line, ENGINES)) {
 			snprintf(line + strlen(line) - 1, MAX_LINE_LENGTH - strlen(line) + 1,
-				" --disable-all-engines --enable-engine=%s\n",
+				" --disable-all-engines --disable-detection-full --enable-engine=%s\n",
 				engineLowercase);
 		}
 
