@@ -2650,7 +2650,7 @@ void MessageProperties::setValue(const DynamicValue &value) {
 		_value = value;
 }
 
-WorldManagerInterface::WorldManagerInterface() : _gameMode(false), _combineRedraws(true), _opInt(0) {
+WorldManagerInterface::WorldManagerInterface() : _gameMode(false), _combineRedraws(true), _postponeRedraws(false), _opInt(0) {
 }
 
 bool WorldManagerInterface::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
@@ -2673,6 +2673,9 @@ bool WorldManagerInterface::readAttribute(MiniscriptThread *thread, DynamicValue
 		return true;
 	} else if (attrib == "combineredraws") {
 		result.setBool(_combineRedraws);
+		return true;
+	} else if (attrib == "postponeredraws") {
+		result.setBool(_postponeRedraws);
 		return true;
 	}
 
@@ -2697,6 +2700,9 @@ MiniscriptInstructionOutcome WorldManagerInterface::writeRefAttribute(Miniscript
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "combineredraws") {
 		DynamicValueWriteBoolHelper::create(&_combineRedraws, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "postponeredraws") {
+		DynamicValueWriteBoolHelper::create(&_postponeRedraws, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "qtpalettehack") {
 		DynamicValueWriteDiscardHelper::create(result);
