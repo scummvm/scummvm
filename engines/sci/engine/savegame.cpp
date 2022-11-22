@@ -568,7 +568,7 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 
 	s.skip(4, VER(14), VER(19));		// OBSOLETE: Used to be _numExports
 	s.skip(4, VER(14), VER(19));		// OBSOLETE: Used to be _numSynonyms
-	s.syncAsSint32LE(_lockers);
+	s.syncAsUint32LE(_lockers);
 
 	// Sync _objects. This is a hashmap, and we use the following on disk format:
 	// First we store the number of items in the hashmap, then we store each

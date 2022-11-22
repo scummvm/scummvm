@@ -841,6 +841,21 @@ void Script::relocateSci3(const SegmentId segmentId) {
 
 void Script::incrementLockers() {
 	assert(!_markedAsDeleted);
+	if (_lockers == 0xffffffff) {
+		// FIXME
+		// The locker on system scripts, most notably script 999, increases throughout
+		// the game and can eventually overflow, causing script 999 to be unloaded
+		// and crash. We have been provided QFG1 SCI0 save games where this occurred
+		// within hours of play over the course of three days. Debugging shows that
+		// this value increases rapidly, for example: on every `class Event` opcode
+		// during input polling, or when our kAnimate code calls `doit` on objects.
+		// Until this is fixed properly, log these overflow attempts and lower the
+		// counter so that the warnings continue without flooding the log.
+		// At the point where a resource usage counter reaches the billions, its value
+		// no longer has meaning, so the important thing for now is that it not crash.
+		warning("script %d locker maximum reached, resetting", _nr);
+		_lockers = 0x80000000;
+	}
 	_lockers++;
 }
 
@@ -849,11 +864,11 @@ void Script::decrementLockers() {
 		_lockers--;
 }
 
-int Script::getLockers() const {
+uint Script::getLockers() const {
 	return _lockers;
 }
 
-void Script::setLockers(int lockers) {
+void Script::setLockers(uint lockers) {
 	assert(lockers == 0 || !_markedAsDeleted);
 	_lockers = lockers;
 }
