@@ -167,6 +167,19 @@ public:
 	static bool exists(const Path &fileName);
 
 	/**
+	 * Attempt to read the Mac Finder info metadata for a file path.
+	 * @param fileName The base file name of the file
+	 * @param archive The archive to search in
+	 * @param outFinderInfo The loaded and parsed Finder info
+	 * @param outFinderExtendedInfo The loaded and parsed Finder extended info
+	 * @return True if finder info was available for a path, false if not
+	 */
+	static bool getFileFinderInfo(const Path &fileName, Archive &archive, MacFinderInfo &outFinderInfo);
+	static bool getFileFinderInfo(const Path &fileName, Archive &archive, MacFinderInfo &outFinderInfo, MacFinderExtendedInfo &outFinderExtendedInfo);
+	static bool getFileFinderInfo(const Path &fileName, MacFinderInfo &outFinderInfo);
+	static bool getFileFinderInfo(const Path &fileName, MacFinderInfo &outFinderInfo, MacFinderExtendedInfo &outFinderExtendedInfo);
+
+	/**
 	 * List all filenames matching pattern for opening with open().
 	 *
 	 * @param files Array containing all matching filenames discovered. Only
@@ -301,6 +314,18 @@ private:
 
 	bool loadFromRawFork(SeekableReadStream *stream);
 	bool loadFromAppleDouble(SeekableReadStream *stream);
+
+	/**
+	 * Get Finder info from a file in MacBinary format
+	 */
+	static bool getFinderInfoFromMacBinary(SeekableReadStream *stream, MacFinderInfo &outFinderInfo, MacFinderExtendedInfo &outFinderExtendedInfo);
+
+	/**
+	 * Get Finder info from a file in AppleDouble format
+	 */
+	static bool getFinderInfoFromAppleDouble(SeekableReadStream *stream, MacFinderInfo &outFinderInfo, MacFinderExtendedInfo &outFinderExtendedInfo);
+
+	static bool readAndValidateMacBinaryHeader(SeekableReadStream &stream, byte (&outMacBinaryHeader)[MBI_INFOHDR]);
 
 	static Path constructAppleDoubleName(Path name);
 	static Path disassembleAppleDoubleName(Path name, bool *isAppleDouble);

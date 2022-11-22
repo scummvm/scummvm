@@ -82,10 +82,17 @@ MacFinderExtendedInfoData MacFinderExtendedInfo::toData() const {
 
 #define MBI_ZERO1 0
 #define MBI_NAMELEN 1
+#define MBI_TYPE 65
+#define MBI_CREATOR 69
+#define MBI_FLAGSHIGH 73
 #define MBI_ZERO2 74
+#define MBI_POSY 75
+#define MBI_POSX 77
+#define MBI_FOLDERID 79
 #define MBI_ZERO3 82
 #define MBI_DFLEN 83
 #define MBI_RFLEN 87
+#define MBI_FLAGSLOW 101
 #define MAXNAMELEN 63
 
 MacResManager::MacResManager() {
@@ -305,6 +312,81 @@ bool MacResManager::exists(const Path &fileName) {
 	return false;
 }
 
+bool MacResManager::getFileFinderInfo(const Path &fileName, Archive &archive, MacFinderInfo &outFinderInfo) {
+	MacFinderExtendedInfo fxinfo;
+	return getFileFinderInfo(fileName, archive, outFinderInfo, fxinfo);
+}
+
+bool MacResManager::getFileFinderInfo(const Path &fileName, Archive &archive, MacFinderInfo &outFinderInfo, MacFinderExtendedInfo &outFinderExtendedInfo) {
+	// Prefer standalone .finf files first (especially since this can avoid decompressing entire files from slow archive formats like StuffIt Installer)
+	Common::ScopedPtr<SeekableReadStream> stream(archive.createReadStreamForMember(fileName.append(".finf")));
+	if (stream) {
+		MacFinderInfoData finfoData;
+		MacFinderExtendedInfoData fxinfoData;
+
+		uint32 finfoSize = stream->read(&finfoData, sizeof(finfoData));
+		uint32 fxinfoSize = stream->read(&fxinfoData, sizeof(fxinfoData));
+
+		if (finfoSize == sizeof(MacFinderInfoData)) {
+			outFinderInfo = MacFinderInfo(finfoData);
+
+			if (fxinfoSize == sizeof(MacFinderExtendedInfoData)) {
+				outFinderExtendedInfo = MacFinderExtendedInfo(fxinfoData);
+			} else {
+				outFinderExtendedInfo = MacFinderExtendedInfo();
+				if (fxinfoSize != 0)
+					warning("Finder extended info metadata file was too small");
+			}
+
+			return true;
+		} else if (finfoSize != 0) {
+			warning("Finder info metadata file was too small");
+		}
+	}
+
+	// Might have AppleDouble in the resource file
+	stream.reset();
+	stream.reset(archive.createReadStreamForMember(fileName.append(".rsrc")));
+
+	if (stream) {
+		bool appleDouble = (stream->readUint32BE() == 0x00051607);
+		stream->seek(0);
+
+		if (appleDouble && getFinderInfoFromAppleDouble(stream.get(), outFinderInfo, outFinderExtendedInfo))
+			return true;
+	}
+
+	// Try for AppleDouble using Apple's naming
+	stream.reset();
+	stream.reset(archive.createReadStreamForMember(constructAppleDoubleName(fileName)));
+	if (stream && getFinderInfoFromAppleDouble(stream.get(), outFinderInfo, outFinderExtendedInfo))
+		return true;
+
+	// Check .bin for MacBinary next
+	stream.reset();
+	stream.reset(archive.createReadStreamForMember(fileName.append(".bin")));
+	if (stream && getFinderInfoFromMacBinary(stream.get(), outFinderInfo, outFinderExtendedInfo))
+		return true;
+
+	// Check if the file is in MacBinary format
+	stream.reset();
+	stream.reset(archive.createReadStreamForMember(fileName));
+	if (stream && getFinderInfoFromMacBinary(stream.get(), outFinderInfo, outFinderExtendedInfo))
+		return true;
+
+	// No metadata
+	return false;
+}
+
+bool MacResManager::getFileFinderInfo(const Path &fileName, MacFinderInfo &outFinderInfo) {
+	MacFinderExtendedInfo fxinfo;
+	return getFileFinderInfo(fileName, outFinderInfo, fxinfo);
+}
+
+bool MacResManager::getFileFinderInfo(const Path &fileName, MacFinderInfo &outFinderInfo, MacFinderExtendedInfo &outFinderExtendedInfo) {
+	return getFileFinderInfo(fileName, SearchMan, outFinderInfo, outFinderExtendedInfo);
+}
+
 void MacResManager::listFiles(StringArray &files, const String &pattern) {
 	// Base names discovered so far.
 	typedef HashMap<String, bool, IgnoreCase_Hash, IgnoreCase_EqualTo> BaseNameSet;
@@ -403,8 +485,71 @@ bool MacResManager::loadFromAppleDouble(SeekableReadStream *stream) {
 	return false;
 }
 
-bool MacResManager::isMacBinary(SeekableReadStream &stream) {
+bool MacResManager::getFinderInfoFromMacBinary(SeekableReadStream *stream, MacFinderInfo &outFinderInfo, MacFinderExtendedInfo &outFinderExtendedInfo) {
 	byte infoHeader[MBI_INFOHDR];
+	if (!readAndValidateMacBinaryHeader(*stream, infoHeader))
+		return false;
+
+	MacFinderInfo finfo;
+
+	// Parse fields
+	memcpy(finfo.type, infoHeader + MBI_TYPE, 4);
+	memcpy(finfo.creator, infoHeader + MBI_CREATOR, 4);
+	finfo.flags = (infoHeader[MBI_FLAGSHIGH] << 8) + infoHeader[MBI_FLAGSLOW];
+	finfo.position.x = READ_BE_INT16(infoHeader + MBI_POSX);
+	finfo.position.y = READ_BE_INT16(infoHeader + MBI_POSY);
+	finfo.windowID = READ_BE_INT16(infoHeader + MBI_FOLDERID);
+
+	outFinderInfo = finfo;
+	outFinderExtendedInfo = MacFinderExtendedInfo();
+
+	return true;
+}
+
+bool MacResManager::getFinderInfoFromAppleDouble(SeekableReadStream *stream, MacFinderInfo &outFinderInfo, MacFinderExtendedInfo &outFinderExtendedInfo) {
+	if (!stream)
+		return false;
+
+	if (stream->readUint32BE() != 0x00051607) // tag
+		return false;
+
+	stream->skip(20); // version + home file system
+
+	uint16 entryCount = stream->readUint16BE();
+
+	uint32 finderInfoPos = 0;
+	uint32 finderInfoLength = 0;
+
+	for (uint16 i = 0; i < entryCount; i++) {
+		uint32 id = stream->readUint32BE();
+		uint32 offset = stream->readUint32BE();
+		uint32 length = stream->readUint32BE(); // length
+
+		if (id == 9) {
+			finderInfoPos = offset;
+			finderInfoLength = length;
+			break;
+		}
+	}
+
+	if (finderInfoLength < sizeof(MacFinderInfoData) + sizeof(MacFinderExtendedInfoData))
+		return false;
+
+	if (!stream->seek(finderInfoPos))
+		return false;
+
+	MacFinderInfoData finfo;
+	MacFinderExtendedInfoData fxinfo;
+	if (stream->read(&finfo, sizeof(finfo)) != sizeof(finfo) || stream->read(&fxinfo, sizeof(fxinfo)) != sizeof(fxinfo))
+		return false;
+
+	outFinderInfo = MacFinderInfo(finfo);
+	outFinderExtendedInfo = MacFinderExtendedInfo(fxinfo);
+
+	return true;
+}
+
+bool MacResManager::readAndValidateMacBinaryHeader(SeekableReadStream &stream, byte (&infoHeader)[MBI_INFOHDR]) {
 	int resForkOffset = -1;
 
 	if (stream.read(infoHeader, MBI_INFOHDR) != MBI_INFOHDR)
@@ -427,7 +572,7 @@ bool MacResManager::isMacBinary(SeekableReadStream &stream) {
 
 		uint32 dataSizePad = (((dataSize + 127) >> 7) << 7);
 		// Files produced by ISOBuster are not padded, thus, compare with the actual size
-		//uint32 rsrcSizePad = (((rsrcSize + 127) >> 7) << 7);
+		// uint32 rsrcSizePad = (((rsrcSize + 127) >> 7) << 7);
 
 		// Length check
 		if (MBI_INFOHDR + dataSizePad + rsrcSize <= (uint32)stream.size()) {
@@ -439,6 +584,11 @@ bool MacResManager::isMacBinary(SeekableReadStream &stream) {
 		return false;
 
 	return true;
+}
+
+bool MacResManager::isMacBinary(SeekableReadStream &stream) {
+	byte infoHeader[MBI_INFOHDR];
+	return readAndValidateMacBinaryHeader(stream, infoHeader);
 }
 
 bool MacResManager::isRawFork(SeekableReadStream &stream) {
