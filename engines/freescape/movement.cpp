@@ -71,8 +71,10 @@ void FreescapeEngine::shoot() {
 	Common::Point center(_viewArea.left + _viewArea.width() / 2, _viewArea.top + _viewArea.height() / 2);
 	float xoffset = _crossairPosition.x - center.x;
 	float yoffset = _crossairPosition.y - center.y;
+	xoffset = xoffset * 0.33;
+	yoffset = yoffset * 0.50;
 
-	Math::Vector3d direction = directionToVector(_pitch + yoffset, _yaw - xoffset);
+	Math::Vector3d direction = directionToVector(_pitch - yoffset, _yaw - xoffset);
 	Math::Ray ray(_position, direction);
 	Object *shot = _currentArea->shootRay(ray);
 	if (shot) {
