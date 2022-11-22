@@ -113,6 +113,7 @@ public:
 	uint16 getVersion() const;
 	uint32 getGameID() const;
 	uint32 getGameFeatures() const;
+	bool isDemo() const;
 
 	int getRandomNumber(int maxNumber);
 	int getRandomNumber(int minNumber, int maxNumber);

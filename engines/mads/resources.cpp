@@ -156,14 +156,26 @@ void HagArchive::loadIndex(MADSEngine *vm) {
  		if (sectionIndex == 0 && !Common::File::exists("SECTION0.HAG"))
 			continue;
 
+		// Rex Nebular and Dragonsphere demos only have sections 1 and 9 - skip the rest
+		if ((vm->getGameID() == GType_RexNebular || vm->getGameID() == GType_Dragonsphere) && vm->isDemo())  {
+			if (sectionIndex != 1 && sectionIndex != 9)
+				continue;
+		}
+
+		// Phantom demo only has sections 1, 2 and 9 - skip the rest
+		if (vm->getGameID() == GType_Phantom && vm->isDemo())  {
+			if (sectionIndex != 1 && sectionIndex != 2 && sectionIndex != 9)
+				continue;
+		}
+
 		// Dragonsphere does not have some sections - skip them
 		if (vm->getGameID() == GType_Dragonsphere)  {
 			if (sectionIndex == 7 || sectionIndex == 8)
 				continue;
 		}
 
-		// Phantom does not have some sections - skip them
-		if (vm->getGameID() == GType_Phantom)  {
+		// Phantom and Forest don't have some sections - skip them
+		if (vm->getGameID() == GType_Phantom || vm->getGameID() == GType_Forest)  {
 			if (sectionIndex == 6 || sectionIndex == 7 || sectionIndex == 8)
 				continue;
 		}

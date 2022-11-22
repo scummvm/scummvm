@@ -130,6 +130,10 @@ uint32 MADSEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
 }
 
+bool MADSEngine::isDemo() const {
+	return (bool)(_gameDescription->desc.flags & ADGF_DEMO);
+}
+
 Common::Language MADSEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
