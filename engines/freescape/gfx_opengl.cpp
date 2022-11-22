@@ -173,7 +173,10 @@ void OpenGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 	glTranslatef(-pos.x(), -pos.y(), -pos.z());
 }
 
-void OpenGLRenderer::renderShoot(byte color, const Common::Point position, const Common::Rect viewArea) {
+void OpenGLRenderer::renderSensorShoot(byte color, const Math::Vector3d position, const Common::Rect viewArea) {
+}
+
+void OpenGLRenderer::renderPlayerShoot(byte color, const Common::Point position, const Common::Rect viewArea) {
 	uint8 r, g, b;
 	readFromPalette(color, r, g, b); // TODO: should use opposite color
 

@@ -220,11 +220,23 @@ void FreescapeEngine::checkSensors() {
 		if (sensor->isDestroyed() || sensor->isInvisible())
 			continue;
 		if ((sensor->getOrigin() - _position).length() <= sensor->_firingRange) {
-			if (_ticks % sensor->_firingInterval == 0)
-				warning("shoot!");
+			if (_ticks % sensor->_firingInterval == 0) {
+				drawSensorShoot(sensor);
+				takeDamageFromSensor();
+			}
 		}
 	}
 }
+
+void FreescapeEngine::drawSensorShoot(Sensor *sensor) {
+	assert(sensor);
+	_gfx->renderSensorShoot(1, sensor->getOrigin(), _viewArea);
+}
+
+void FreescapeEngine::takeDamageFromSensor() {
+	_gameStateVars[k8bitVariableShield]--;
+}
+
 
 void FreescapeEngine::drawFrame() {
 	_gfx->updateProjectionMatrix(70.0, _nearClipPlane, _farClipPlane);

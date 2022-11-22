@@ -122,7 +122,11 @@ void TinyGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 	tglTranslatef(-pos.x(), -pos.y(), -pos.z());
 }
 
-void TinyGLRenderer::renderShoot(byte color, const Common::Point position, const Common::Rect viewArea) {
+void TinyGLRenderer::renderSensorShoot(byte color, const Math::Vector3d position, const Common::Rect viewArea) {
+
+}
+
+void TinyGLRenderer::renderPlayerShoot(byte color, const Common::Point position, const Common::Rect viewArea) {
 	uint8 r, g, b;
 	readFromPalette(color, r, g, b); // TODO: should use opposite color
 

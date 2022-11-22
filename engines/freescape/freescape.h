@@ -36,6 +36,7 @@
 #include "freescape/gfx.h"
 #include "freescape/objects/entrance.h"
 #include "freescape/objects/geometricobject.h"
+#include "freescape/objects/sensor.h"
 
 namespace Common {
 class RandomSource;
@@ -298,7 +299,8 @@ public:
 	virtual bool checkIfGameEnded();
 	ObjectArray _sensors;
 	void checkSensors();
-
+	void drawSensorShoot(Sensor *sensor);
+	void takeDamageFromSensor();
 
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }
