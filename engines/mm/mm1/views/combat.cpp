@@ -508,7 +508,12 @@ void Combat::writeMonsters() {
 		for (int i = 0; i < (int)_monsterList.size(); ++i) {
 			_textPos = Common::Point(11, i);
 			writeChar(i < _attackerVal ? '+' : ' ');
-			writeChar('A' + i);
+			unsigned char c = 'A' + i;
+			if ((i == _activeMonsterNum) && (_mode == MONSTER_ADVANCES ||
+				_mode == MONSTER_ATTACK || _mode == MONSTER_SPELL))
+				c |= 0x80;
+
+			writeChar(c);
 			writeString(") ");
 			writeString(_monsterList[i]._name);
 			writeMonsterStatus(i);

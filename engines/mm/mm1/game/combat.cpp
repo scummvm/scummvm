@@ -53,7 +53,7 @@ void Combat::clear() {
 	_val6 = _val7 = 0;
 	_partyIndex = _val9 = 0;
 	_val10 = _destCharCtr = 0;
-	_val2 = 0;
+	_activeMonsterNum = 0;
 	_destAC = 0;
 	_numberOfTimes = 0;
 	_attackerLevel = 0;
@@ -573,6 +573,8 @@ void Combat::checkMonsterFlees() {
 	const Encounter &enc = g_globals->_encounters;
 	byte bitset = _monsterP->_field1e;
 	int threshold = -1;
+
+	_activeMonsterNum = _monsterIndex;
 	_monsterName = _monsterP->_name;
 	monsterIndexOf();
 
@@ -643,7 +645,7 @@ void Combat::checkMonsterActions() {
 		return;
 
 	_destCharCtr = 0;
-	if (_val2 < _attackerVal) {
+	if (_activeMonsterNum < _attackerVal) {
 		selectMonsterTarget();
 		return;
 	}
@@ -735,7 +737,8 @@ void Combat::attackMonsterShooting() {
 }
 
 void Combat::attackMonster(int monsterNum) {
-	monsterSetPtr(0);
+	_activeMonsterNum = monsterNum;
+	monsterSetPtr(monsterNum);
 
 	Character &c = *g_globals->_currCharacter;
 	_attackerLevel = c._level._current;
@@ -865,6 +868,7 @@ void Combat::updateMonsterStatus() {
 	if (val <= 0) {
 		_monsterList[_monsterIndex]._hp = 0;
 		_monsterList[_monsterIndex]._status = MONFLAG_DEAD;
+		warning("TODO: message that monster goes down");
 	} else {
 		_monsterList[_monsterIndex]._hp = val;
 		_monsterList[_monsterIndex]._status &= ~(MONFLAG_ASLEEP | MONFLAG_HELD);
