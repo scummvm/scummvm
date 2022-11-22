@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-21 22:57+0000\n"
+"POT-Creation-Date: 2022-11-22 18:08+0000\n"
 "PO-Revision-Date: 2022-10-27 02:33+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -4412,7 +4412,7 @@ msgstr "המתרגם לא מעוניין לשלב את תרגומו בתוך Scu
 #: engines/lure/detection.cpp:229 engines/mohawk/detection_tables.h:1024
 #: engines/mohawk/detection_tables.h:1130
 #: engines/mohawk/detection_tables.h:1145
-#: engines/mohawk/detection_tables.h:3211 engines/myst3/detection.cpp:142
+#: engines/mohawk/detection_tables.h:3227 engines/myst3/detection.cpp:142
 #: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5191
 #: engines/sci/detection_tables.h:5199 engines/sherlock/detection_tables.h:223
 #: engines/stark/detection.cpp:319 engines/teenagent/detection.cpp:117
