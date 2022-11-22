@@ -152,6 +152,21 @@ static const MADSGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{
+		// Once Upon a Forest DOS English
+		{
+			"forest",
+			"",
+			AD_ENTRY1s("section1.hag", "042518994daa7f96f9602e3b7e14a672", 816076),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GAMEOPTION_EASY_MOUSE)
+		},
+		GType_Forest,
+		0
+	},
+
 #endif
 
 	{ AD_TABLE_END_MARKER, 0, 0 }
