@@ -730,6 +730,21 @@ void SPQRGameDataHandler::unpackAdditionalFiles(Common::Array<Common::SharedPtr<
 	}
 }
 
+class STTGSGameDataHandler : public GameDataHandler {
+public:
+	STTGSGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc);
+
+	void addPlugIns(ProjectDescription &projectDesc, const Common::Array<FileIdentification> &files) override;
+};
+
+STTGSGameDataHandler::STTGSGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc) : GameDataHandler(game, gameDesc) {
+}
+
+void STTGSGameDataHandler::addPlugIns(ProjectDescription &projectDesc, const Common::Array<FileIdentification> &files) {
+	Common::SharedPtr<MTropolis::PlugIn> standardPlugIn = PlugIns::createStandard();
+	static_cast<Standard::StandardPlugIn *>(standardPlugIn.get())->getHacks().allowGarbledListModData = true;
+	projectDesc.addPlugIn(standardPlugIn);
+}
 
 static bool getMacTypesForMacBinary(const char *fileName, uint32 &outType, uint32 &outCreator) {
 	Common::SharedPtr<Common::SeekableReadStream> stream(SearchMan.createReadStreamForMember(fileName));
@@ -1107,6 +1122,12 @@ const char *spqrRetailMacDirectories[] = {
 	nullptr
 };
 
+const ManifestFile sttgsDemoWinFiles[] = {
+	{"MTPLAY95.EXE", MTFT_PLAYER},
+	{"Trektriv.mpl", MTFT_MAIN},
+	{nullptr, MTFT_AUTO}
+};
+
 const Game games[] = {
 	// Obsidian - Retail - Macintosh - English
 	{
@@ -1235,6 +1256,14 @@ const Game games[] = {
 		spqrRetailMacDirectories,
 		nullptr,
 		GameDataHandlerFactory<SPQRGameDataHandler>::create
+	},
+	// Star Trek: The Game Show - Demo - Windows
+	{
+		MTBOOT_STTGS_DEMO_WIN,
+		sttgsDemoWinFiles,
+		nullptr,
+		nullptr,
+		GameDataHandlerFactory<STTGSGameDataHandler>::create
 	},
 };
 

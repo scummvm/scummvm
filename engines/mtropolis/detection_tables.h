@@ -481,6 +481,25 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_SPQR_RETAIL_MAC,
 	},
 
+	{ // Star Trek: The Game Show demo
+		{
+			"sttgs",
+			"Demo",
+			{
+				// { "MTPLAY95.EXE", 0, "3ce9559e8c8047243fb7393a90d8b8f5", 756736 },
+				{ "Trektriv.mpl", 0, "2dfab3665f9d7a24473f7cd17a0615ba", 43003276 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_STTGS,
+		0,
+		MTBOOT_STTGS_DEMO_WIN,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, MTBOOT_INVALID }
 };
 
