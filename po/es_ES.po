@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-20 16:18+0000\n"
+"POT-Creation-Date: 2022-11-21 22:57+0000\n"
 "PO-Revision-Date: 2022-11-18 16:46+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -4989,6 +4989,16 @@ msgstr "Perforación automática"
 msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr ""
 "Permite perforar con éxito cualquier parte de la zona disponible en Driller"
+
+#: engines/freescape/metaengine.cpp:53
+#, fuzzy
+#| msgid "Enable debug mode"
+msgid "Disable demo mode"
+msgstr "Activar modo de depuración"
+
+#: engines/freescape/metaengine.cpp:54
+msgid "Never activate demo mode"
+msgstr ""
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"

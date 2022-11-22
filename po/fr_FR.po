@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-20 16:18+0000\n"
+"POT-Creation-Date: 2022-11-21 22:57+0000\n"
 "PO-Revision-Date: 2022-11-19 08:27+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -5003,6 +5003,16 @@ msgstr "Forage automatique"
 msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr ""
 "Dans Driller, permet de forer avec succès à n'importe quel endroit de la zone"
+
+#: engines/freescape/metaengine.cpp:53
+#, fuzzy
+#| msgid "Enable debug mode"
+msgid "Disable demo mode"
+msgstr "Activer le debug mode"
+
+#: engines/freescape/metaengine.cpp:54
+msgid "Never activate demo mode"
+msgstr ""
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"

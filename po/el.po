@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-20 16:18+0000\n"
+"POT-Creation-Date: 2022-11-21 22:57+0000\n"
 "PO-Revision-Date: 2022-11-18 18:00+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -5043,6 +5043,16 @@ msgstr "Αυτόματη γεώτρηση"
 #: engines/freescape/metaengine.cpp:43
 msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr "Επιτρέπει την επιτυχημένη γεώτρηση σε οποιαδήποτε περιοχή στο Driller"
+
+#: engines/freescape/metaengine.cpp:53
+#, fuzzy
+#| msgid "Enable debug mode"
+msgid "Disable demo mode"
+msgstr "Χρήση λειτουργίας αποσφαλμάτωσης"
+
+#: engines/freescape/metaengine.cpp:54
+msgid "Never activate demo mode"
+msgstr ""
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
