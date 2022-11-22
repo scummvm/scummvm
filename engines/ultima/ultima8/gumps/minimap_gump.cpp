@@ -38,10 +38,10 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MiniMapGump)
 
 MiniMapGump::MiniMapGump(int x, int y) :
 	Gump(x, y, MAP_NUM_CHUNKS * 2 + 2, MAP_NUM_CHUNKS * 2 + 2, 0,
-	     FLAG_DRAGGABLE, LAYER_NORMAL), _minimaps(MAX_NUM_MAPS), _format(4, 8, 8, 8, 8, 24, 16, 8, 0), _ax(0), _ay(0) {
+	     FLAG_DRAGGABLE, LAYER_NORMAL), _minimaps(MAX_NUM_MAPS), _format(2, 5, 5, 5, 1, 11, 6, 1, 0), _ax(0), _ay(0) {
 }
 
-MiniMapGump::MiniMapGump() : Gump(), _minimaps(MAX_NUM_MAPS), _format(4, 8, 8, 8, 8, 24, 16, 8, 0), _ax(0), _ay(0) {
+MiniMapGump::MiniMapGump() : Gump(), _minimaps(MAX_NUM_MAPS), _format(2, 5, 5, 5, 1, 11, 6, 1, 0), _ax(0), _ay(0) {
 }
 
 MiniMapGump::~MiniMapGump(void) {
@@ -283,9 +283,9 @@ void MiniMapGump::saveData(Common::WriteStream *ws) {
 		ws->writeUint16LE(minimap.w);
 		ws->writeUint16LE(minimap.h);
 		for (int y = 0; y < minimap.h; ++y) {
-			const uint32 *pixels = (const uint32 *)minimap.getBasePtr(0, y);
+			const uint16 *pixels = (const uint16 *)minimap.getBasePtr(0, y);
 			for (int x = 0; x < minimap.w; ++x) {
-				ws->writeUint32LE(*pixels++);
+				ws->writeUint16LE(*pixels++);
 			}
 		}
 	}
@@ -329,9 +329,9 @@ bool MiniMapGump::loadData(Common::ReadStream *rs, uint32 version) {
 			minimap.create(w, h, _format);
 
 			for (int y = 0; y < minimap.h; ++y) {
-				uint32 *pixels = (uint32 *)minimap.getBasePtr(0, y);
+				uint16 *pixels = (uint16 *)minimap.getBasePtr(0, y);
 				for (int x = 0; x < minimap.w; ++x) {
-					*pixels++ = rs->readUint32LE();
+					*pixels++ = rs->readUint16LE();
 				}
 			}
 		}
