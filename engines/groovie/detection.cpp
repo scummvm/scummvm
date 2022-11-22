@@ -274,6 +274,23 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieTLC
 	},
 
+	// Tender Loving Care PC Trailer (CD-ROM 1998-05-14)
+	// Included on the English version of the full game. The preview.grv
+	// file is also on the Englissh DVD (1998-09-10), but I do not know if
+	// it actually has the trailer or not. Since the trailer does not
+	// contain any spoken language, it's possible that this entry can be
+	// merged with the German one above.
+	{
+		{
+			"tlc", "Trailer",
+			AD_ENTRY2s("preview.grv", "d95401509a0ef251e8c340737edf728c", 19,
+							"drama1.gjd", "0ac95ecdd0c8388199bf453de9f7b527", 396742303),
+			UNK_LANG, kPlatformWindows, ADGF_DEMO,
+			GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GUIO_NOLAUNCHLOAD)
+		},
+		kGroovieTLC
+	},
+
 	{AD_TABLE_END_MARKER, kGroovieT7G}
 };
 // clang-format on
