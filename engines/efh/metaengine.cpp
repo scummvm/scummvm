@@ -81,21 +81,19 @@ int EfhMetaEngine::getMaximumSaveSlot() const {
 
 SaveStateList EfhMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
 	Common::String pattern = target;
 	pattern += ".###";
 
-	filenames = saveFileMan->listSavefiles(pattern);
+	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
 
 	SaveStateList saveList;
 	char slot[3];
-	int slotNum = 0;
 	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
 		slot[0] = filename->c_str()[filename->size() - 2];
 		slot[1] = filename->c_str()[filename->size() - 1];
 		slot[2] = '\0';
 		// Obtain the last 2 digits of the filename (without extension), since they correspond to the save slot
-		slotNum = atoi(slot);
+		int slotNum = atoi(slot);
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
 			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
 			if (file) {
@@ -157,6 +155,7 @@ SaveStateDescriptor EfhMetaEngine::querySaveMetaInfos(const char *target, int sl
 			return SaveStateDescriptor();
 		}
 		desc.setThumbnail(thumbnail);
+		
 		// Read in save date/time
 		int16 year = file->readSint16LE();
 		int16 month = file->readSint16LE();
