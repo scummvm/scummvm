@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-21 22:57+0000\n"
-"PO-Revision-Date: 2022-11-18 16:46+0000\n"
+"PO-Revision-Date: 2022-11-22 10:30+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4892,14 +4892,12 @@ msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr "Drillerで任意の場所に穴を開けられるようにします"
 
 #: engines/freescape/metaengine.cpp:53
-#, fuzzy
-#| msgid "Enable debug mode"
 msgid "Disable demo mode"
-msgstr "デバッグモードを有効にする"
+msgstr "デモを無効化"
 
 #: engines/freescape/metaengine.cpp:54
 msgid "Never activate demo mode"
-msgstr ""
+msgstr "デモを起動させません"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
