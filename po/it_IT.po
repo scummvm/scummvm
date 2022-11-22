@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-21 22:57+0000\n"
-"PO-Revision-Date: 2022-11-19 12:12+0000\n"
+"PO-Revision-Date: 2022-11-22 18:42+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -5001,14 +5001,12 @@ msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr "Permette di perforare con successo in qualsiasi area del gioco"
 
 #: engines/freescape/metaengine.cpp:53
-#, fuzzy
-#| msgid "Enable debug mode"
 msgid "Disable demo mode"
-msgstr "Attiva modalità debug"
+msgstr "Disabilita modalità demo"
 
 #: engines/freescape/metaengine.cpp:54
 msgid "Never activate demo mode"
-msgstr ""
+msgstr "Non attiva mai la modalità dimostrativa"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
