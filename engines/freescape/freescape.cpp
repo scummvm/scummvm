@@ -211,6 +211,7 @@ void FreescapeEngine::drawCrossair(Graphics::Surface *surface) {
 void FreescapeEngine::centerCrossair() {
 	_crossairPosition.x = _viewArea.left + _viewArea.width() / 2;
 	_crossairPosition.y = _viewArea.top + _viewArea.height() / 2;
+	_currentDemoMousePosition = _crossairPosition;
 }
 
 void FreescapeEngine::checkSensors() {
