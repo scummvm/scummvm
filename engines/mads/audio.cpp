@@ -54,6 +54,7 @@ void AudioPlayer::setDefaultSoundGroup() {
 		setSoundGroup("rex009.dsr");
 		break;
 	case GType_Dragonsphere:
+	case GType_Forest:
 		setSoundGroup("drag009.dsr");
 		break;
 	case GType_Phantom:
