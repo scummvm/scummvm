@@ -376,7 +376,7 @@ def extract_volume(args: argparse.Namespace) -> int:
                     upath.write_bytes(obj.data)
 
                 elif obj.rsrc or force_macbinary:
-                    with upath.open('wb') as out_file:
+                    with upath.open("wb") as out_file:
                         file_to_macbin(out_file, obj, hpath[-1].encode("mac_roman"))
 
                 elif not obj.data and not obj.rsrc:
@@ -718,7 +718,9 @@ def generate_parser() -> argparse.ArgumentParser:
         "--log", metavar="LEVEL", help="set logging level", default="INFO"
     )
     parser_iso.add_argument(
-        "--forcemacbinary", action="store_true", help="always encode using MacBinary, even for files with no resource fork"
+        "--forcemacbinary",
+        action="store_true",
+        help="always encode using MacBinary, even for files with no resource fork",
     )
     parser_iso.add_argument(
         "dir", metavar="OUTPUT", type=Path, help="Destination folder"
