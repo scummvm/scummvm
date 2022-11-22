@@ -438,6 +438,15 @@ Common::Error EfhEngine::saveGameState(int slot, const Common::String &desc, boo
 	thumb->free();
 	delete thumb; 
 
+	// Write out the save date/time
+	TimeDate td;
+	g_system->getTimeAndDate(td);
+	out->writeSint16LE(td.tm_year + 1900);
+	out->writeSint16LE(td.tm_mon + 1);
+	out->writeSint16LE(td.tm_mday);
+	out->writeSint16LE(td.tm_hour);
+	out->writeSint16LE(td.tm_min);
+
 	Common::Serializer s(nullptr, out);	
 	synchronize(s);
 
