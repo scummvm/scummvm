@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-21 22:57+0000\n"
-"PO-Revision-Date: 2022-11-13 18:14+0000\n"
+"PO-Revision-Date: 2022-11-22 19:32+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -4150,7 +4150,7 @@ msgstr "Не емулюйте артефакти NTSC для тексту"
 
 #: engines/agi/detection_tables.h:310
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
-msgstr ""
+msgstr "Ранішні гри AGI для Tandy Color Computer ще не підтримуються."
 
 #: engines/agi/font.cpp:1096
 msgid ""
@@ -4582,12 +4582,12 @@ msgstr ""
 
 #: engines/bladerunner/metaengine.cpp:111
 msgid "Fix credits for voice actors"
-msgstr ""
+msgstr "Виправити список голосових акторів"
 
 #: engines/bladerunner/metaengine.cpp:112
 msgid ""
 "Updates the end credits with corrected credits for the Spanish voice actors"
-msgstr ""
+msgstr "Виправляє список іспанських голосових акторів у фінальних титрах"
 
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 #: engines/bladerunner/metaengine.cpp:199
@@ -4734,10 +4734,8 @@ msgid "Skip support"
 msgstr "Дозволити пропуски"
 
 #: engines/buried/metaengine.cpp:41
-#, fuzzy
-#| msgid "Allow text and cutscenes to be skipped"
 msgid "Allow cutscenes to be skipped"
-msgstr "Дозволити пропускати текст і ролики"
+msgstr "Дозволити пропускати ролики"
 
 #: engines/buried/saveload.cpp:66
 msgid ""
@@ -4782,10 +4780,8 @@ msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Використовувати автоматичний читач текста (якщо TTS доступне)"
 
 #: engines/cge2/metaengine.cpp:55
-#, fuzzy
-#| msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgid "Enable Text to Speech for Objects and Options"
-msgstr "Ввімкнути генератор мови для об'єктів, налаштувань та біблійної цитати"
+msgstr "Ввімкнути генератор мови для об'єктів та налаштувань"
 
 #: engines/cge2/metaengine.cpp:56 engines/dreamweb/metaengine.cpp:62
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:40
@@ -4948,21 +4944,19 @@ msgstr ""
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Automatic drilling"
-msgstr ""
+msgstr "Автоматичне свердління"
 
 #: engines/freescape/metaengine.cpp:43
 msgid "Allow to succefully drill in any part of the area in Driller"
-msgstr ""
+msgstr "Дозволяє успішне свердління будь-якої частини простору у грі Driller"
 
 #: engines/freescape/metaengine.cpp:53
-#, fuzzy
-#| msgid "Enable debug mode"
 msgid "Disable demo mode"
-msgstr "Ввімкнути режим відладки"
+msgstr "Вимкнути демо-режим"
 
 #: engines/freescape/metaengine.cpp:54
 msgid "Never activate demo mode"
-msgstr ""
+msgstr "Ніколи не вмикати демо-режим"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -6167,14 +6161,12 @@ msgid "Starts with the debugger dashboard active."
 msgstr "Відразу запускати активну панель відладчика."
 
 #: engines/mtropolis/metaengine.cpp:172
-#, fuzzy
-#| msgid "Toggle Clue Privacy"
 msgid "Toggle debug overlay"
-msgstr "Перемкнути приватність підказок"
+msgstr "Перемкнути шар відладки"
 
 #: engines/mtropolis/metaengine.cpp:177
 msgid "Force any playing movies to end"
-msgstr ""
+msgstr "Примусове програвання роликів до кінця"
 
 #: engines/mtropolis/saveload.cpp:142
 msgid "Failed to read version information from save file"
@@ -7401,7 +7393,7 @@ msgstr "Shift"
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/help.cpp:240
 msgid "Win the bike fight cheat"
-msgstr ""
+msgstr "Чіт вигравання бою на мотиках"
 
 #: engines/scumm/help.cpp:245
 msgid "Regular cursor"
