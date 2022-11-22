@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-21 22:57+0000\n"
-"PO-Revision-Date: 2022-11-19 08:27+0000\n"
+"PO-Revision-Date: 2022-11-22 18:23+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -5005,14 +5005,12 @@ msgstr ""
 "Dans Driller, permet de forer avec succès à n'importe quel endroit de la zone"
 
 #: engines/freescape/metaengine.cpp:53
-#, fuzzy
-#| msgid "Enable debug mode"
 msgid "Disable demo mode"
-msgstr "Activer le debug mode"
+msgstr "Désactiver le mode démo"
 
 #: engines/freescape/metaengine.cpp:54
 msgid "Never activate demo mode"
-msgstr ""
+msgstr "N'active jamais le mode démo"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
