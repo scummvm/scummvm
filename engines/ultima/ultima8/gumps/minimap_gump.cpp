@@ -277,9 +277,9 @@ void MiniMapGump::saveData(Common::WriteStream *ws) {
 	ws->writeByte(_format.bShift);
 	ws->writeByte(_format.aShift);
 
+	ws->writeUint32LE(static_cast<uint32>(_minimaps.size()));
 	for (unsigned int i = 0; i < _minimaps.size(); ++i) {
 		const Graphics::Surface &minimap = _minimaps[i];
-		ws->writeByte(i);
 		ws->writeUint16LE(minimap.w);
 		ws->writeUint16LE(minimap.h);
 		for (int y = 0; y < minimap.h; ++y) {
@@ -298,6 +298,10 @@ bool MiniMapGump::loadData(Common::ReadStream *rs, uint32 version) {
 	_ax = 0;
 	_ay = 0;
 
+	for (unsigned int i = 0; i < _minimaps.size(); ++i) {
+		_minimaps[i].free();
+	}
+	
 	if (version >= 6) {
 		_format.bytesPerPixel = rs->readByte();
 		_format.rLoss = rs->readByte();
@@ -309,11 +313,16 @@ bool MiniMapGump::loadData(Common::ReadStream *rs, uint32 version) {
 		_format.bShift = rs->readByte();
 		_format.aShift = rs->readByte();
 
-		for (unsigned int i = 0; i < _minimaps.size(); ++i) {
+		uint32 mapcount = rs->readUint32LE();
+
+		// Integrity check
+		if (mapcount > _minimaps.size()) {
+			warning("Invalid minimap count in save: %d.  Corrupt save?", mapcount);
+			return false;
+		}
+
+		for (unsigned int i = 0; i < mapcount; ++i) {
 			Graphics::Surface &minimap = _minimaps[i];
-			if (i != rs->readByte()) {
-				return false;
-			}
 
 			uint w = rs->readUint16LE();
 			uint h = rs->readUint16LE();
@@ -325,10 +334,6 @@ bool MiniMapGump::loadData(Common::ReadStream *rs, uint32 version) {
 					*pixels++ = rs->readUint32LE();
 				}
 			}
-		}
-	} else {
-		for (unsigned int i = 0; i < _minimaps.size(); ++i) {
-			_minimaps[i].free();
 		}
 	}
 	return true;
