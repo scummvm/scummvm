@@ -53,22 +53,38 @@ Common::Event FreescapeEngine::decodeDOSMouseEvent(int index, int repetition) {
 
 int FreescapeEngine::decodeAmigaAtariKey(int index) {
 	switch (index) {
+	case 0x41:
+		return Common::KEYCODE_a;
 	case 0x44:
 		return Common::KEYCODE_d;
+	case 0x46:
+		return Common::KEYCODE_f;
 	case 0x4c:
 		return Common::KEYCODE_l;
+	case 0x4e:
+		return Common::KEYCODE_n;
 	case 0x50:
 		return Common::KEYCODE_p;
+	case 0x52:
+		return Common::KEYCODE_r;
+	case 0x53:
+		return Common::KEYCODE_s;
 	case 0x55:
 		return Common::KEYCODE_u;
+	case 0x58:
+		return Common::KEYCODE_x;
+	case 0x5a:
+		return Common::KEYCODE_z;
+	case 0x5f:
+		return Common::KEYCODE_UNDERSCORE;
 	case 0x96:
 		return Common::KEYCODE_UP;
 	case 0x97:
 		return Common::KEYCODE_DOWN;
 	case 0x98:
-		return Common::KEYCODE_w;
+		return Common::KEYCODE_w; // Right
 	case 0x99:
-		return Common::KEYCODE_q;
+		return Common::KEYCODE_q; // Left
 	default:
 		error("Invalid key index: %x", index);
 	}
