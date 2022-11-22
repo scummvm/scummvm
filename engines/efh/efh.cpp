@@ -391,22 +391,26 @@ Common::Error EfhEngine::loadGameState(int slot) {
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(getSaveStateName(slot));
 	if (!saveFile)
 		return Common::kReadingFailed;
-/*
-	Common::Serializer s(saveFile, nullptr);
 
-	uint32 signature;
-	s.syncAsUint32LE(signature);
-	uint8 version;
-	s.syncAsByte(version);
+	uint32 signature = saveFile->readUint32LE();
+	byte version = saveFile->readByte();
+
 	if (signature != EFH_SAVE_HEADER || version > kSavegameVersion)
 		error("Invalid savegame");
 	
-	// Load the thumbnail
-	Graphics::Surface *thumbnail;
-	Graphics::loadThumbnail(*srf, thumbnail)
+	// Skip savegame name
+	uint16 size = saveFile->readUint16BE();
+	saveFile->skip(size);
 
+	// Skip the thumbnail
+	Graphics::Surface *thumbnail;
+	Graphics::loadThumbnail(*saveFile, thumbnail, true);
+
+	// Skip the savegame date
+	saveFile->skip(10); // year, month, day, hours, minutes (all int16) 
+	
+	Common::Serializer s(saveFile, nullptr);
 	synchronize(s);
-*/
 
 	delete saveFile;
 
@@ -592,7 +596,8 @@ Common::Error EfhEngine::run() {
 			if (input == Common::KEYCODE_y) {
 				displayMenuAnswerString("-> Yes <-", 24, 296, 169);
 				getInput(2);
-				loadEfhGame();
+//				loadEfhGame();
+				saveEfhGame();
 				clearBottomTextZone_2(0);
 				displayLowStatusScreen(true);
 			} else {
