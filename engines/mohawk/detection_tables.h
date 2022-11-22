@@ -1391,6 +1391,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Living Books Player"
 	},
 
+	// From MacFormat June 1994 cover disc [Spanish, English]. Bug #12979
+	{
+		{
+			"tortoise",
+			"",
+			AD_ENTRY1s("BookOutline", "91245b8ac388a54378b94fce65c29d02", 582),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"The Tortoise & The Hare"
+	},
+
 	{
 		{
 			"arthur",
