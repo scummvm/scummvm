@@ -833,6 +833,36 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"orly",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("DEMO_STO.MHK", "9ab19aa65e72ae34ce3ec2c54f4e6f8b", 6245780),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ORLY,
+		0,
+		0
+	},
+
+	{
+		{
+			"alientales",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("ATDEMO.DAT", "7ac30ba63080cd5ad6af9946707e01cc", 1656768),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ORLY,
+		0,
+		0
+	},
+
+	{
+		{
 			"csworld",
 			_s("Missing game code"), // Reason for being unsupported // "v3.0",
 			AD_ENTRY1("C2K.MHK", "605fe88380848031bbd0ff84ade6fe40"),

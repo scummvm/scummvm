@@ -43,6 +43,8 @@ enum MohawkGameType {
 	GType_TREEHOUSE,
 	GType_1STDEGREE,
 	GType_CSUSA,
+	GType_ORLY,
+	GType_ALIENTALES,
 };
 
 #define GAMEOPTION_ME   GUIO_GAMEOPTIONS1

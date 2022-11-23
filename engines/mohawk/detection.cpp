@@ -37,6 +37,8 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"makingofmyst", "The Making of Myst"},
 	{"riven", "Riven: The Sequel to Myst"},
 	{"zoombini", "Logical Journey of the Zoombinis"},
+	{"alientales", "Alien Tales"},
+	{"orly", "Orly's Draw-A-Story"},
 	{"cstime", "Where in Time is Carmen Sandiego?"},
 	{"csworld", "Where in the World is Carmen Sandiego?"},
 	{"csamtrak", "Where in America is Carmen Sandiego? (The Great Amtrak Train Adventure)"},
