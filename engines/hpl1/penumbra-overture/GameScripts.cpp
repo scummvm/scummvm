@@ -25,6 +25,8 @@
  * This file is part of Penumbra Overture.
  */
 
+#include <string>
+
 #include "hpl1/penumbra-overture/GameScripts.h"
 #include "hpl1/engine/engine.h"
 
