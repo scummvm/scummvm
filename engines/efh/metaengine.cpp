@@ -155,7 +155,7 @@ SaveStateDescriptor EfhMetaEngine::querySaveMetaInfos(const char *target, int sl
 			return SaveStateDescriptor();
 		}
 		desc.setThumbnail(thumbnail);
-		
+
 		// Read in save date/time
 		int16 year = file->readSint16LE();
 		int16 month = file->readSint16LE();
@@ -164,7 +164,7 @@ SaveStateDescriptor EfhMetaEngine::querySaveMetaInfos(const char *target, int sl
 		int16 minute = file->readSint16LE();
 		desc.setSaveDate(year, month, day);
 		desc.setSaveTime(hour, minute);
-		
+
 		desc.setDeletableFlag(slot != 0);
 		desc.setWriteProtectedFlag(slot == 0);
 
