@@ -47,6 +47,7 @@ public:
 	uint16 getAreaID();
 	uint16 getAreaFlags();
 	uint8 getScale();
+	void remapColor(int index, int color);
 	void draw(Renderer *gfx);
 	void show();
 
@@ -71,6 +72,7 @@ public:
 	uint8 _scale;
 	uint8 _skyColor;
 	uint8 _groundColor;
+	ColorReMap _colorRemaps;
 
 private:
 	uint16 _areaID;

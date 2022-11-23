@@ -42,6 +42,7 @@ Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode) {
 	_keyColor = -1;
 	_palette = nullptr;
 	_colorMap = nullptr;
+	_colorRemaps = nullptr;
 	_renderMode = renderMode;
 	_isAccelerated = false;
 }
@@ -54,7 +55,15 @@ void Renderer::readFromPalette(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
 	b = _palette[3 * index + 2];
 }
 
+void Renderer::setColorRemaps(ColorReMap *colorRemaps) {
+	_colorRemaps = colorRemaps;
+}
+
 bool Renderer::getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
+
+	if (_colorRemaps && _colorRemaps->contains(index)) {
+		index = (*_colorRemaps)[index];
+	}
 
 	if (index == _keyColor)
 		return false;
@@ -76,7 +85,6 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
 	for (int i = 0; i < 4; i++) {
 		byte be = *entry;
 		if (be != 0 && be != 0xff) {
-			// TODO: fix colors for non-DOS releases
 			readFromPalette(index, r, g, b);
 			return true;
 		}

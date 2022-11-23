@@ -69,6 +69,7 @@ public:
 		START,
 		STARTANIM,
 		STOPANIM,
+		SPFX,
 		SUBVAR,
 		SYNCSND,
 		THEN,

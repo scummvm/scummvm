@@ -328,6 +328,14 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 		case 25:
 			// this should toggle border colour or the room palette
 			detokenisedStream += "SPFX (";
+			currentInstruction = FCLInstruction(Token::SPFX);
+			currentInstruction.setSource(tokenisedCondition[bytePointer] >> 4);
+			currentInstruction.setDestination(tokenisedCondition[bytePointer] & 0xf);
+			detokenisedStream += Common::String::format("%d, %d)", currentInstruction._source, currentInstruction._destination);
+			conditionalInstructions->push_back(currentInstruction);
+			currentInstruction = FCLInstruction(Token::UNKNOWN);
+			bytePointer++;
+			numberOfArguments = 0;
 			break;
 
 		case 20:

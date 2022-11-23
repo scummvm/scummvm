@@ -164,7 +164,13 @@ void Area::saveObjects(Common::WriteStream *stream) {
 	}
 }
 
+void Area::remapColor(int index, int color) {
+	_colorRemaps[index] = color;
+}
+
+
 void Area::draw(Freescape::Renderer *gfx) {
+	gfx->setColorRemaps(&_colorRemaps);
 	gfx->clear();
 	assert(_drawableObjects.size() > 0);
 	for (auto &obj : _drawableObjects) {

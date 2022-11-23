@@ -36,6 +36,7 @@ namespace Freescape {
 #define kCoordsArraySize 4
 
 typedef Common::Array<byte *> ColorMap;
+typedef Common::HashMap<int, int> ColorReMap;
 
 class Renderer;
 
@@ -89,6 +90,7 @@ public:
 	virtual void renderPyramid(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours, int type);
 	virtual void renderFace(const Common::Array<Math::Vector3d> &vertices) = 0;
 
+	void setColorRemaps(ColorReMap *colorRemaps);
 	virtual void setSkyColor(uint8 color) = 0;
 	virtual void drawFloor(uint8 color) = 0;
 
@@ -99,6 +101,7 @@ public:
 	bool getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b);
 	byte *_palette;
 	ColorMap *_colorMap;
+	ColorReMap *_colorRemaps;
 	int _keyColor;
 
 	/**

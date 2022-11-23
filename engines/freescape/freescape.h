@@ -247,6 +247,7 @@ public:
 	bool executeEndIfVisibilityIsEqual(FCLInstruction &instruction);
 	void executeSwapJet(FCLInstruction &instruction);
 	void executePrint(FCLInstruction &instruction);
+	void executeSPFX(FCLInstruction &instruction);
 
 	// Sound
 	Audio::SoundHandle _soundFxHandle;

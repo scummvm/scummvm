@@ -161,6 +161,9 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 		case Token::PRINT:
 			executePrint(instruction);
 			break;
+		case Token::SPFX:
+			executeSPFX(instruction);
+			break;
 		case Token::BITNOTEQ:
 			if (executeEndIfBitNotEqual(instruction))
 				ip = codeSize;
@@ -202,6 +205,19 @@ void FreescapeEngine::executePrint(FCLInstruction &instruction) {
 	_currentAreaMessages.clear();
 	_currentAreaMessages.push_back(_messagesList[index]);
 }
+
+void FreescapeEngine::executeSPFX(FCLInstruction &instruction) {
+	uint16 index = instruction._source;
+	uint16 color = instruction._destination;
+
+	debugC(1, kFreescapeDebugCode, "Switching palette from position %d to %d", index, color);
+	_currentArea->remapColor(index, color);
+	drawFrame();
+	_gfx->flipBuffer();
+	g_system->updateScreen();
+	g_system->delayMillis(10);
+}
+
 
 bool FreescapeEngine::executeEndIfVisibilityIsEqual(FCLInstruction &instruction) {
 	uint16 source = instruction._source;
