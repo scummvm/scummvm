@@ -43,15 +43,15 @@ class RandomSource;
  * This is the namespace of the Efh engine.
  *
  * Status of this engine:
- * - No savegames
  * - No music in intro
  * - No random PC speaker farts (aka sounds)
+ * - The rest is more or less working :)
  *
  * Games using this engine:
  * - Escape From Hell
  * 
  * Note: Wasteland and Fountain of dreams *seem* to use the same engine, but it's not the case.
- * This engine was written from scratch based on the visual look of the other
+ * Escape From Hell was written from scratch based on the visual look of the other
  */
 namespace Efh {
 
@@ -281,6 +281,7 @@ private:
 
 	GameType _gameType;
 	Common::Platform _platform;
+	int _loadSaveSlot;
 
 	void initialize();
 	void readAnimInfo();
