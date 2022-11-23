@@ -830,6 +830,48 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 		0
 	},
+	{
+		{
+			"zoombini",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("ZOOMBINI.MHK", "6d95ef2148043b51ef31d3a35d3b7521", 23853146),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ZOOMBINI,
+		0,
+		0
+	},
+	{
+		{
+			"zoombini",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("ZOOMBINI.MHK", "8191a3568facff94cecc8d99f83a7772", 1964112),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ZOOMBINI,
+		0,
+		0
+	},
+	{
+		{
+			"zoombini",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("ZOOMBINI.MHK", "cfa2db71d571a40a4ae692606547e391", 1492603),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ZOOMBINI,
+		0,
+		0
+	},
 
 	{
 		{
