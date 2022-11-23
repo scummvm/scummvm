@@ -35,6 +35,7 @@
 #include "hpl1/engine/physics/SurfaceData.h"
 
 #include "hpl1/engine/system/low_level_system.h"
+#include "common/util.h"
 
 namespace hpl {
 
@@ -155,9 +156,9 @@ void cPhysicsMaterialNewton::UpdateMaterials() {
 	while (MatIt.HasNext()) {
 		cPhysicsMaterialNewton *pMat = static_cast<cPhysicsMaterialNewton *>(MatIt.Next());
 
-		ePhysicsMaterialCombMode frictionMode = (ePhysicsMaterialCombMode)std::max(mFrictionMode,
+		ePhysicsMaterialCombMode frictionMode = (ePhysicsMaterialCombMode)MAX(mFrictionMode,
 																				   pMat->mFrictionMode);
-		ePhysicsMaterialCombMode elasticityMode = (ePhysicsMaterialCombMode)std::max(mElasticityMode,
+		ePhysicsMaterialCombMode elasticityMode = (ePhysicsMaterialCombMode)MAX(mElasticityMode,
 																					 pMat->mElasticityMode);
 
 		// If the material is the same do not blend.
@@ -188,9 +189,9 @@ float cPhysicsMaterialNewton::Combine(ePhysicsMaterialCombMode aMode, float afX,
 	case ePhysicsMaterialCombMode_Average:
 		return (afX + afY) / 2;
 	case ePhysicsMaterialCombMode_Min:
-		return std::min(afX, afY);
+		return MIN(afX, afY);
 	case ePhysicsMaterialCombMode_Max:
-		return std::max(afX, afY);
+		return MAX(afX, afY);
 	case ePhysicsMaterialCombMode_Multiply:
 		return afX * afY;
 	default:
