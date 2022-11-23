@@ -42,7 +42,12 @@ bool Title::msgFocus(const FocusMessage &msg) {
 	decoder._indexes[2] = 4;
 	decoder._indexes[3] = 15;
 
-	for (int i = 0; i < SCREEN_COUNT; ++i) {
+	for (int i = 0; i < SCREENS_COUNT; ++i) {
+		if (i == 2) {
+			decoder._indexes[1] = 3;
+			decoder._indexes[2] = 5;
+		}
+
 		if (decoder.loadFile(
 			Common::String::format("screen%d", i))) {
 			_screens[i].copyFrom(decoder.getSurface());
@@ -58,7 +63,7 @@ bool Title::msgFocus(const FocusMessage &msg) {
 }
 
 bool Title::msgUnfocus(const UnfocusMessage & msg) {
-	for (int i = 0; i < SCREEN_COUNT; ++i)
+	for (int i = 0; i < SCREENS_COUNT; ++i)
 		_screens[i].clear();
 
 	return true;
@@ -76,7 +81,7 @@ void Title::draw() {
 		_fadeIndex = 0;
 		delaySeconds(1);
 
-	} else if (_fadeIndex == 0) {
+	} else if (_screenNum < 2 && _fadeIndex == 0) {
 		// Brief pause before starting next screen scroll in
 		delaySeconds(1);
 
@@ -97,6 +102,13 @@ void Title::draw() {
 		surf.blitFrom(src, bottom, bottom);
 
 		delayFrames(2);
+
+	} else {
+		// Scene screens
+		const Graphics::ManagedSurface &src = _screens[_screenNum];
+		surf.blitFrom(src);
+
+		delaySeconds(5);
 	}
 }
 
@@ -106,10 +118,33 @@ void Title::timeout() {
 			_screenNum = (_screenNum == 0) ? 1 : 0;
 			_fadeIndex = 0;
 		}
+	} else {
+		if (++_screenNum >= SCREENS_COUNT) {
+			// Go back to alternating first two screens
+			_screenNum = -1;
+			_fadeIndex = 0;
+		}
+	}
 
+	redraw();
+}
+
+bool Title::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode == Common::KEYCODE_ESCAPE) {
+		// Show the main menu
+		g_events->replaceView("MainMenu");
+
+	} else if (msg.keycode == Common::KEYCODE_SPACE) {
+		// Start showing game screens slideshow
+		cancelDelay();
+		_screenNum = 2;
+		_fadeIndex = 0;
 		redraw();
 	}
+
+	return true;
 }
+
 
 } // namespace Views
 } // namespace MM1
