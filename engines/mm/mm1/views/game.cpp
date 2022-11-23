@@ -29,7 +29,7 @@ namespace Views {
 
 Game::Game() : TextView("Game"),
 		_view(this), _commands(this), _messages(this), _party(this) {
-	_view.setBounds(Common::Rect(0, 0, 245, 128));
+	_view.setBounds(Common::Rect(0, 0, 240, 128));
 }
 
 bool Game::msgFocus(const FocusMessage &msg) {
@@ -44,6 +44,9 @@ bool Game::msgUnfocus(const UnfocusMessage &msg) {
 
 void Game::draw() {
 	clearSurface();
+	Graphics::ManagedSurface surf = getSurface();
+	surf.hLine(0, 128, 320, 2);
+	surf.vLine(240, 0, 128, 2);
 }
 
 bool Game::msgAction(const ActionMessage &msg) {
