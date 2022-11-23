@@ -115,6 +115,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	playSound(5, false);
 	// Ignore sky/ground fields
 	_gfx->_keyColor = 0;
+	_gfx->setColorRemaps(&_currentArea->_colorRemaps);
 
 	if (isAmiga() || isAtariST())
 		swapPalette(areaID);
