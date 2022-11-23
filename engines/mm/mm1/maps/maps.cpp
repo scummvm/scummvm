@@ -368,6 +368,11 @@ void Maps::loadTile() {
 	tiles.resize(RESOURCE_TILES_COUNT);
 
 	Gfx::ScreenDecoder decoder;
+	decoder._indexes[0] = 0;
+	decoder._indexes[1] = 6;
+	decoder._indexes[2] = 14;
+	decoder._indexes[3] = 15;
+
 	for (int i = 0; i < RESOURCE_TILES_COUNT; ++i) {
 		if (!decoder.loadStream(*entry,
 			TILE_WIDTHS[i], TILE_HEIGHTS[i]))
