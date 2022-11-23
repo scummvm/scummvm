@@ -28,11 +28,11 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
-#define SCREEN_COUNT 2
+#define SCREENS_COUNT 10
 
 class Title : public UIElement {
 private:
-	Graphics::ManagedSurface _screens[SCREEN_COUNT];
+	Graphics::ManagedSurface _screens[SCREENS_COUNT];
 	int _screenNum = -1;
 	int _fadeIndex = 0;
 public:
@@ -58,6 +58,12 @@ public:
 	 * Delay timeout
 	 */
 	void timeout() override;
+
+	/**
+	 * Handles keypresses
+	 */
+	bool msgKeypress(const KeypressMessage &msg) override;
+
 };
 
 } // namespace Views
