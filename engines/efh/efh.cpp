@@ -399,13 +399,14 @@ Common::Error EfhEngine::loadGameState(int slot) {
 		error("Invalid savegame");
 	
 	// Skip savegame name
-	uint16 size = saveFile->readUint16BE();
+	uint16 size = saveFile->readUint16LE();
 	saveFile->skip(size);
 
 	// Skip the thumbnail
 	Graphics::Surface *thumbnail;
-	Graphics::loadThumbnail(*saveFile, thumbnail, true);
-
+	Graphics::loadThumbnail(*saveFile, thumbnail);
+	delete (thumbnail);
+	
 	// Skip the savegame date
 	saveFile->skip(10); // year, month, day, hours, minutes (all int16) 
 	
