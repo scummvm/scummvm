@@ -22,8 +22,6 @@
 #ifndef EFH_EFH_H
 #define EFH_EFH_H
 
-#include "efh/constants.h"
-
 #include "engines/advancedDetector.h"
 
 #include "common/file.h"
@@ -34,6 +32,7 @@
 #include "engines/engine.h"
 #include "graphics/surface.h"
 
+#include "efh/constants.h"
 
 namespace Common {
 class RandomSource;

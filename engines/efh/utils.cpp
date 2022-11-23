@@ -19,9 +19,9 @@
  *
  */
 
-#include "efh/efh.h"
 #include "common/system.h"
 #include "common/random.h"
+#include "efh/efh.h"
 
 namespace Efh {
 
