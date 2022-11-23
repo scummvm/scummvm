@@ -2614,21 +2614,21 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1t("tlc", "", "TLC.EXE", "0b70b84c5ccaa5e1568fbddf04117477", 375297, 310),
 
 	// Original filename is 闘魂V/デモ
-	MACDEMO1_l("tokon5", "Demo", "Tokon V-Demo", "f5277c53bacd27936158dd3867e587e2", 392497, Common::JA_JPN, 311),
+	MACDEMO1_l("tokon5", "Demo", "Tokon V-Demo", "f5277c53bacd27936158dd3867e587e2", 392241, Common::JA_JPN, 311),
 
-	MACDEMO1_l("toonet11", "Demo", "TooNet11_DEMO", "f5277c53bacd27936158dd3867e587e2", 829762, Common::JA_JPN, 311),
+	MACDEMO1_l("toonet11", "Demo", "TooNet11_DEMO", "f5277c53bacd27936158dd3867e587e2", 829506, Common::JA_JPN, 311),
 
-	MACDEMO1("totaldistortion", "Demo", "TD Demo!", "1ae45c23586b41997ba52e2e7c771c4c", 381059, 311),
-	MACDEMO1_l("totaldistortion", "Demo", "TD Demo", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384455, Common::JA_JPN, 313),
+	MACDEMO1("totaldistortion", "Demo", "TD Demo!", "1ae45c23586b41997ba52e2e7c771c4c", 380803, 311),
+	MACDEMO1_l("totaldistortion", "Demo", "TD Demo", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384199, Common::JA_JPN, 313),
 	// from Macromind Director 4.0.4 CD
 	MACDEMO1("totaldistortion", "Great Big Demo", "TD CD Demo!", "1ae45c23586b41997ba52e2e7c771c4c", 287839, 311),
 
-	MACDEMO1_l("transland", "Demo", "Trans Demo", "f5277c53bacd27936158dd3867e587e2", 2339365, Common::JA_JPN, 311),
+	MACDEMO1_l("transland", "Demo", "Trans Demo", "f5277c53bacd27936158dd3867e587e2", 2339109, Common::JA_JPN, 311),
 
 	// from the Macromind Director 4.0.4 CD, full game is D4
 	MACDEMO1("travelrama", "Preview", "Travelrama Preview", "7f443f2e63fd497a9ad85b10dc880a91", 388022, 314),
 
-	MACDEMO1_l("tree", "Demo", "TREE Demo", "f54ac20d51c496911f9144ee595ade60", 1104947, Common::JA_JPN, 311),
+	MACDEMO1_l("tree", "Demo", "TREE Demo", "f54ac20d51c496911f9144ee595ade60", 1104691, Common::JA_JPN, 311),
 
 	WINDEMO1("trekfinalunity", "Demo", "PLAYDEMO.EXE", "65d06b5fef155a2473434571aff5bc29", 370018, 310),
 
@@ -2636,14 +2636,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("ttw", "", "whales", "e184bbb4cc78e49733829ea7e2dc728a", 67777, Common::JA_JPN, 302),
 
 	// Full version is D4
-	MACDEMO2_l("ukiuki1", "Demo", "DEMO",	   "f5277c53bacd27936158dd3867e587e2", 392508,
-								  "D_opening", "107b285846b271eda498870c2ea5ccf7", 1677174, Common::JA_JPN, 311),
+	MACDEMO2_l("ukiuki1", "Demo", "DEMO",	   "f5277c53bacd27936158dd3867e587e2", 392252,
+								  "D_opening", "107b285846b271eda498870c2ea5ccf7", 1676918, Common::JA_JPN, 311),
 
 	// Original filename is うきうきスタンプ3のおしらせ
-	MACDEMO1_l("ukiukistamp", "Vol.3 Demo", "Notice of Ukiuki Stamp 3", "f5277c53bacd27936158dd3867e587e2", 392544, Common::JA_JPN, 311),
+	MACDEMO1_l("ukiukistamp", "Vol.3 Demo", "Notice of Ukiuki Stamp 3", "f5277c53bacd27936158dd3867e587e2", 392288, Common::JA_JPN, 311),
 
 	// Original filename is うきょー1デモ版
-	MACDEMO1_l("ukyo1", "Demo", "Ukyo 1 demo version", "f5277c53bacd27936158dd3867e587e2", 392773, Common::JA_JPN, 311),
+	MACDEMO1_l("ukyo1", "Demo", "Ukyo 1 demo version", "f5277c53bacd27936158dd3867e587e2", 392517, Common::JA_JPN, 311),
 
 	// Isaac Asimov's The Ultimate Robot CD-ROM
 	MACGAME1("ultrobotkit", "", "Robotoid Assembly", "1ae45c23586b41997ba52e2e7c771c4c", 1639801, 311),
@@ -2679,8 +2679,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("vvvampire", "", "The Vampire's Coffin", "7f443f2e63fd497a9ad85b10dc880a91", 384070, 313),
 	WINGAME1t("vvvampire", "", "VAMPIRE.EXE", "97019593c1c86ac3be60c3ba468c07b6", 370837, 300),
 
-	MACGAME1_l("vvs", "", "VVS Theater-ExtraLarge", "f5277c53bacd27936158dd3867e587e2", 912907, Common::JA_JPN, 311),
-	MACDEMO1_l("vvs", "Demo", "VVS Theater", "f5277c53bacd27936158dd3867e587e2", 639768, Common::JA_JPN, 311),
+	MACGAME1_l("vvs", "", "VVS Theater-ExtraLarge", "f5277c53bacd27936158dd3867e587e2", 912651, Common::JA_JPN, 311),
+	MACDEMO1_l("vvs", "Demo", "VVS Theater", "f5277c53bacd27936158dd3867e587e2", 639512, Common::JA_JPN, 311),
 
 	MACGAME1("wackyjacks", "v1.2", "Wacky Jacks 1.2/Wacky Jacks", "7f443f2e63fd497a9ad85b10dc880a91", 428279, 310),
 	// from the Macromind Director 4.0.4 CD
@@ -2739,7 +2739,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 								   "WINDEMO.MMM", "0c13c2c5768cd54b01e5b9b1ef093f28", 2824822, 300),
 
 	// Original filename is WONDEROMPM4.5J Ver.2 ｻﾝﾌﾟﾙ
-	MACDEMO1_l("wonderompm", "Sample Version", "WONDEROMPM4.5J Ver.2 sample", "f5277c53bacd27936158dd3867e587e2", 392574, Common::JA_JPN, 311),
+	MACDEMO1_l("wonderompm", "Sample Version", "WONDEROMPM4.5J Ver.2 sample", "f5277c53bacd27936158dd3867e587e2", 392318, Common::JA_JPN, 311),
 
 	WINGAME1("woodstock25", "",     "FESTIVAL.EXE", "65d06b5fef155a2473434571aff5bc29", 370006, 310),
 	WINDEMO1t("woodstock25", "Demo", "WDSTOCK.EXE",  "35aaa39965705c32d927a0c8fbed27af", 2099951, 310),
@@ -2755,12 +2755,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2("wrath", "Demo", "000WRATH.EXE", "3162423a1d0885eb1eb94f557a86b258", 372970,
 							  "SHARDCST.MMM", "85d166abe18730d96e9d4137c66255a1", 3553330, 300),
 
-	MACDEMO1("wriggle", "Demo", "'93 Wriggle Demo", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 353993, 300),
+	MACDEMO1("wriggle", "Demo", "'93 Wriggle Demo", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 353737, 300),
 
 	MACGAME1("wti", "", "WTI Projector", "1ae45c23586b41997ba52e2e7c771c4c", 3715229, 310),
 
 	// may be vaporware; original name is ∆ X A N T H U S ∆
-	MACDEMO1("xanthus", "Demo", "xn-- X A N T H U S -hd6ipa", "1ae45c23586b41997ba52e2e7c771c4c", 375447, 300),
+	MACDEMO1("xanthus", "Demo", "xn-- X A N T H U S -hd6ipa", "1ae45c23586b41997ba52e2e7c771c4c", 375191, 300),
 
 	// Requires installation, 'Installer', uses Smaller Installer by Cyclos
 	MACGAME1("y2lflintcoloring", "", "Coloring Book", "2ce360c9ea2da80a2c6d1040b0ad92dd", 490543, 313),
@@ -2771,7 +2771,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Developed by Image Smith
 	// Requires installation from floppy disks, uses Smaller Installer by Cyclos
 	MACGAME1("y2lpeanuts", "v1.2 Floppy", "Peanuts", "1ae45c23586b41997ba52e2e7c771c4c", 543503, 311),
-	MACGAME1("y2lpeanuts", "v1.2a Floppy", "Peanuts", "1ae45c23586b41997ba52e2e7c771c4c", 543787, 311),
+	MACGAME1("y2lpeanuts", "v1.2a Floppy", "Peanuts", "1ae45c23586b41997ba52e2e7c771c4c", 543531, 311),
 	// from the Macromind Director 4.0.4 CD
 	MACDEMO1("y2lpeanuts", "Crippled Version", "PEANUTS", "1ae45c23586b41997ba52e2e7c771c4c", 546601, 311),
 	MACDEMO1("y2lpeanuts", "1 minute Demo", "Y-2-L Demo", "1ae45c23586b41997ba52e2e7c771c4c", 381129, 311),
@@ -2796,28 +2796,29 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1t("y2lsnoopy", "QuickTime Preview", "SNOOPY.EXE", "6a1c5ea0d9870bacd2017e1f2267a743", 370016, 310),
 
 	// Original filename is スヌーピー Demo
-	MACDEMO1_l("y2lsnoopy", "v1.2 Demo", "Snoopy Demo", "1ae45c23586b41997ba52e2e7c771c4c", 402263, Common::JA_JPN, 311),
+	MACDEMO1_l("y2lsnoopy", "v1.2 Demo", "Snoopy Demo", "1ae45c23586b41997ba52e2e7c771c4c", 402007, Common::JA_JPN, 311),
 
 	WINGAME1("y2lsnoopy", "", "SNOOPY.EXE", "65d06b5fef155a2473434571aff5bc29", 418576, 310),
 
 	// Requires installation from floppy disks
 	WINGAME1("y2lspelling", "v1.0 Floppy", "SPELLACE.EXE", "65d06b5fef155a2473434571aff5bc29", 438552, 310),
 
-	MACDEMO1_l("ybr1", "Demo", "YBR-DEMO", "f5277c53bacd27936158dd3867e587e2", 392247, Common::JA_JPN, 310),
-	MACGAME1("ybr1", "",   "YBR",		"f5277c53bacd27936158dd3867e587e2", 414242, 300),
-	WINGAME2("ybr1", "",   "YBR.EXE",	"2cc9e2dacb90fb130f6ee9519b66c5a8", 369007,
-						   "START.MMM",	"69012b34b3f0e6f1886133b807db4476", 2566872, 300),
-	MACGAME2_l("ybr1", "", "YBR",		"f5277c53bacd27936158dd3867e587e2", 414242,
-						   "START",		"ca4a6650d8f8ce04b26bcbc941bf0a86", 2417242, Common::JA_JPN, 300),
-	PIPGAME2_l("ybr1", "", "YBR",		"f5277c53bacd27936158dd3867e587e2", 414242,
-						   "START",		"9fad29c4cf9f7791e5dda075259e2fdd", 2418439, Common::JA_JPN, 300),
-	WINGAME2_l("ybr1", "", "YBR.EXE",	"2cc9e2dacb90fb130f6ee9519b66c5a8", 369007,
-						   "START.MMM",	"9e02f41270708101b1d5d04cb822a784", 2563274, Common::JA_JPN, 300),
+	MACDEMO1_l("ybr1", "Demo", "YBR-DEMO",	"f5277c53bacd27936158dd3867e587e2", 392247, Common::JA_JPN, 310),
+	MACGAME2("ybr1", "",   "xn-- YBR -",	"f5277c53bacd27936158dd3867e587e2", 414242,
+						   "DATA-Mac/START","19000b57887e228ec0cbffd500ee5faa",	2412880, 310),
+	WINGAME2("ybr1", "",   "YBR/YBR.EXE",	"2cc9e2dacb90fb130f6ee9519b66c5a8", 369007,
+						   "DATA/START.MMM","69012b34b3f0e6f1886133b807db4476", 2566872, 310),
+	MACGAME2_l("ybr1", "", "xn-- YBR -",	"f5277c53bacd27936158dd3867e587e2", 414242,
+						   "DATA-Mac/START","ca4a6650d8f8ce04b26bcbc941bf0a86", 2416986, Common::JA_JPN, 310),
+	PIPGAME2_l("ybr1", "", "YBR",			"f5277c53bacd27936158dd3867e587e2", 414242,
+						   "START",			"9fad29c4cf9f7791e5dda075259e2fdd", 2418439, Common::JA_JPN, 300),
+	WINGAME2_l("ybr1", "", "YBR/YBR.EXE",	"2cc9e2dacb90fb130f6ee9519b66c5a8", 369007,
+						   "DATA/START.MMM","9e02f41270708101b1d5d04cb822a784", 2563274, Common::JA_JPN, 310),
 	WINGAME2_l("ybr1", "IBM release", "YBR/YBR.EXE",	"2cc9e2dacb90fb130f6ee9519b66c5a8", 369007,
 						   "DATA/START.MMM",	"6b913b1747abc48c230523e916e5e60a", 2554968, Common::JA_JPN, 310),
 
 	// Original filename is 財閥銀行
-	MACDEMO1_l("zaibatsu", "Demo", "Zaibatsu Bank", "a03ae8a9bf211bcb26388b6b6da17c2b", 1830610, Common::JA_JPN, 311),
+	MACDEMO1_l("zaibatsu", "Demo", "Zaibatsu Bank", "a03ae8a9bf211bcb26388b6b6da17c2b", 1830354, Common::JA_JPN, 311),
 
 //////////////////////////////////////////////////
 //
