@@ -1851,7 +1851,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("asylum300", "Demo", "ASYLUM 300 DEMO", "4c7fddccfe5ab2e9c6398efa5dbe37c1", 1038023, Common::JA_JPN, 313),
 
 	// Original filename is Babylon 5 Interactive/Mac
-	MACGAME1("babylon5int", "", "Babylon 5 Interactive-Mac", "7f443f2e63fd497a9ad85b10dc880a91", 1262641, 313),
+	MACGAME1("babylon5int", "", "xn--Babylon 5 InteractiveMac-lba01j", "7f443f2e63fd497a9ad85b10dc880a91", 1262385, 313),
 
 	MACDEMO2_l("bakkunooni", "Wabi Demo", "Browser",	"7ba588d9fde9f714a42fec0a2c9d9655", 2835379,
 										  "Main-Help-J", "2358b56196b9d9148990f5f5e9c7fb43", 8265, Common::JA_JPN, 311),
@@ -1868,6 +1868,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t("bestservice", "", "BESTDEMO.EXE", "437d0bc26a89a5f8cda3bef31db23897", 370015, 310),
 
 	MACGAME1("beyondthewall", "", "Beyond The Wall Of Stars", "107c6a6d3cce957eaa26d427e672000c", 465267, 300),
+	MACGAME1("beyondthewall", "", "Desktop Folder/bstars", "107c6a6d3cce957eaa26d427e672000c", 465267, 300),
 	WINGAME1("beyondthewall", "", "WALL.EXE", "5c6862a40a48881913ee7c50d25cd984", 225253, 300),
 
 	MACDEMO1_l("bigtimemovie", "Demo", "BIG TIME MOVIE-Studios", "f5277c53bacd27936158dd3867e587e2", 392265, Common::JA_JPN, 311),
@@ -1953,6 +1954,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1("clarisworks", "Demo", "ClarisWorks SRD Projector", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 353743, 300),
 
+	// Found on The Family Doctor, 3rd Edition
 	MACGAME1("cmc", "1993", "xn--Other Products...-", "1ae45c23586b41997ba52e2e7c771c4c", 5748468, 310),
 
 	WINGAME1t("compuserve", "", "CSDEMO.EXE", "df9fd39763c4cc922e2cdad28d086a4c", 5331595, 404),
@@ -2058,7 +2060,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is 256カラーでみてください。
 	MACGAME1_l("fontfriends", "Catalog", "Try 256 colors", "f5277c53bacd27936158dd3867e587e2", 1577548, Common::JA_JPN, 311),
 
-	MACGAME1("foocastle", "", "Foo Castle", "7f443f2e63fd497a9ad85b10dc880a91", 385555, 313),
+	MACGAME1("foocastle", "", "Foo Castle", "7f443f2e63fd497a9ad85b10dc880a91", 385299, 313),
 	WINGAME1("foocastle", "", "FCASTLE.EXE", "65d06b5fef155a2473434571aff5bc29", 370481, 313),
 
 	MACGAME1("fortuneteller", "v1.3", "The Fortune Teller 1.3", "1ae45c23586b41997ba52e2e7c771c4c", 1455979, 310),
@@ -2177,6 +2179,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("ipc", "", "About InterActive Publishing", "ec7aaa66647e526d72cb1c1d802df48b", 3056270, 313),
 	WINGAME1("ipc", "", "ABOUTIPC.EXE", "65d06b5fef155a2473434571aff5bc29", 4270544, 310),
+	// From Supersonic: A Multimedia Guide to Modern Military Aircraft
+	MACGAME1("ipc", "", "About InterActive Publishing", "ec7aaa66647e526d72cb1c1d802df48b", 3033242, 313),
+	WINGAME1("ipc", "", "ABOUTIPC.EXE", "4e6303630f4dd588e730d09241cf7e76", 3275100, 310),
 
 	// Bilingual English/Spanish
 	// Uses audio tracks
