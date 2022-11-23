@@ -182,7 +182,7 @@ void EfhMetaEngine::removeSaveState(const char *target, int slot) const {
 #if PLUGIN_ENABLED_DYNAMIC(EFH)
 	REGISTER_PLUGIN_DYNAMIC(EFH, PLUGIN_TYPE_ENGINE, Efh::EfhMetaEngine);
 #else
-REGISTER_PLUGIN_STATIC(EFH, PLUGIN_TYPE_ENGINE, Efh::EfhMetaEngine);
+	REGISTER_PLUGIN_STATIC(EFH, PLUGIN_TYPE_ENGINE, Efh::EfhMetaEngine);
 #endif
 
 namespace Efh {

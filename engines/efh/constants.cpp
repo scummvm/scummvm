@@ -21,8 +21,6 @@
 
 #include "efh/constants.h"
 
-#include "engines/engine.h"
-
 namespace Efh {
 
 const uint8 kFontWidthArray[96] = {

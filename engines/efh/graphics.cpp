@@ -19,9 +19,9 @@
  *
  */
 
-#include "efh/efh.h"
 #include "graphics/palette.h"
 #include "common/system.h"
+#include "efh/efh.h"
 
 namespace Efh {
 
