@@ -54,10 +54,10 @@ public:
 
 	uint32 read(void *dataPtr, uint32 dataSize) override;
 
-	bool eos() const { return _eos; }
+	bool eos() const override { return _eos; }
 	bool err() const override { return _err; }
 	void clearErr() override { _eos = false; _err = false; }
-  
+
 	int64 pos() const override { return _streamPos; }
 	int64 size() const override { return _uncompressedSize; }
 
