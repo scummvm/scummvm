@@ -30,6 +30,11 @@ namespace Views {
 
 Title::Title() : UIElement("Title", g_engine) {
 	Gfx::ScreenDecoder decoder;
+	decoder._indexes[0] = 0;
+	decoder._indexes[1] = 2;
+	decoder._indexes[2] = 4;
+	decoder._indexes[3] = 15;
+
 	if (decoder.loadFile("screen0")) {
 		_surface.copyFrom(decoder.getSurface());
 	} else {
@@ -38,7 +43,7 @@ Title::Title() : UIElement("Title", g_engine) {
 }
 
 void Title::draw() {
-	getSurface().copyFrom(_surface);
+	getSurface().blitFrom(_surface);
 }
 
 } // namespace Views

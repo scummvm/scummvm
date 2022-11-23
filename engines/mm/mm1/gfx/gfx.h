@@ -33,7 +33,17 @@ namespace Gfx {
 
 class GFX {
 public:
-	static void setEgaPalette(int palNum);
+	/**
+	 * Sets the EGA palette
+	 */
+	static void setEgaPalette();
+
+	/**
+	 * Internal method used for enhanced mode
+	 * when I needed to figure out which Xeen
+	 * colors most closely matched the EGA palette
+	 */
+	static void findPalette();
 };
 
 } // namespace Gfx
