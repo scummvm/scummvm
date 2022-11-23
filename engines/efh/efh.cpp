@@ -415,6 +415,14 @@ Common::Error EfhEngine::loadGameState(int slot) {
 
 	delete saveFile;
 
+	_oldMapPosX = _mapPosX;
+	_oldMapPosY = _mapPosY;
+	_unkRelatedToAnimImageSetId = 0;
+
+	loadTechMapImp(_techId);
+	_lastMainPlaceId = 0xFFFF;
+	loadPlacesFile(_fullPlaceId, true);
+
 	return Common::kNoError;
 }
 
