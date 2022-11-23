@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-22 18:08+0000\n"
+"POT-Creation-Date: 2022-11-23 12:23+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -4518,10 +4518,23 @@ msgstr ""
 #: engines/bladerunner/detection_tables.h:123 engines/cge/detection.cpp:54
 #: engines/cge/detection.cpp:60 engines/cge/detection.cpp:66
 #: engines/groovie/detection.cpp:112 engines/kyra/detection_tables.h:291
-#: engines/lure/detection.cpp:229 engines/mohawk/detection_tables.h:1024
-#: engines/mohawk/detection_tables.h:1130
-#: engines/mohawk/detection_tables.h:1145
-#: engines/mohawk/detection_tables.h:3227 engines/myst3/detection.cpp:142
+#: engines/lure/detection.cpp:229 engines/mohawk/detection_tables.h:764
+#: engines/mohawk/detection_tables.h:779 engines/mohawk/detection_tables.h:794
+#: engines/mohawk/detection_tables.h:808 engines/mohawk/detection_tables.h:822
+#: engines/mohawk/detection_tables.h:836 engines/mohawk/detection_tables.h:850
+#: engines/mohawk/detection_tables.h:864 engines/mohawk/detection_tables.h:878
+#: engines/mohawk/detection_tables.h:893 engines/mohawk/detection_tables.h:908
+#: engines/mohawk/detection_tables.h:923 engines/mohawk/detection_tables.h:937
+#: engines/mohawk/detection_tables.h:952 engines/mohawk/detection_tables.h:1196
+#: engines/mohawk/detection_tables.h:1212
+#: engines/mohawk/detection_tables.h:1227
+#: engines/mohawk/detection_tables.h:1273
+#: engines/mohawk/detection_tables.h:1379
+#: engines/mohawk/detection_tables.h:1394
+#: engines/mohawk/detection_tables.h:1409
+#: engines/mohawk/detection_tables.h:1427
+#: engines/mohawk/detection_tables.h:1442
+#: engines/mohawk/detection_tables.h:3524 engines/myst3/detection.cpp:142
 #: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5191
 #: engines/sci/detection_tables.h:5199 engines/sherlock/detection_tables.h:223
 #: engines/stark/detection.cpp:319 engines/teenagent/detection.cpp:117
