@@ -24,6 +24,8 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/file.h"
+#include "common/md5.h"
 
 #include "sky/control.h"
 #include "sky/debug.h"
@@ -70,6 +72,8 @@ namespace Sky {
 void *SkyEngine::_itemList[300];
 SystemVars *SkyEngine::_systemVars = nullptr;
 const char *SkyEngine::shortcutsKeymapId = "sky-shortcuts";
+uint32 SkyEngine::_chineseTraditionalOffsets[8];
+char *SkyEngine::_chineseTraditionalBlock;
 
 SkyEngine::SkyEngine(OSystem *syst)
 	: Engine(syst), _fastMode(0), _debugger(0) {
@@ -83,6 +87,9 @@ SkyEngine::SkyEngine(OSystem *syst)
 	_systemVars->currentMusic   = 0;
 	_systemVars->pastIntro      = false;
 	_systemVars->paused         = false;
+
+	memset (_chineseTraditionalOffsets, 0, sizeof(_chineseTraditionalOffsets));
+	_chineseTraditionalBlock = nullptr;
 
 	_action     = kSkyActionNone;
 	_skyLogic   = nullptr;
@@ -114,6 +121,8 @@ SkyEngine::~SkyEngine() {
 			free(_itemList[i]);
 
 	delete _systemVars;
+	delete [] _chineseTraditionalBlock;
+	_chineseTraditionalBlock = nullptr;
 }
 
 void SkyEngine::syncSoundSettings() {
@@ -273,6 +282,62 @@ Common::Error SkyEngine::go() {
 	return Common::kNoError;
 }
 
+static const struct {
+	// Identification
+	const char *md5; // File MD5
+	uint length; // File length
+	// Main section
+	// Offset from the beginning of file to virtual address 0
+	uint32 virtualBase;
+	// Offset to index of string sections
+	uint stringSectionIndexOffset;
+	// Offset to the font
+	uint fontOffset;
+	// Next one isn't strictly necessarry but makes logic simpler
+	// by allowing to read string block into memory as whole
+	// without any parsing. Just has to cover the block containing
+	// the strings. Reading more (up to whole file) is OK.
+	// End of strings block.
+	uint stringBlockEnd;
+} chineseExes[] = {
+	{
+		// Identification
+		"7bc128ba9bfaecb9bb4ef328b756057a", 575538,
+		// Main
+		0x5191, 0x6427e, 0x54afc,
+		// Value to simplify code
+		0x7eee1
+	}
+};
+
+bool SkyEngine::loadChineseTraditional() {
+	Common::File skyExe;
+	if (!skyExe.open("sky.exe"))
+		return false;
+	uint length = skyExe.size();
+	Common::String md5 = Common::computeStreamMD5AsString(skyExe, length);
+
+	for (uint i = 0; i < ARRAYSIZE(chineseExes); i++) {
+		if (md5 == chineseExes[i].md5 && length == chineseExes[i].length) {
+			skyExe.seek(chineseExes[i].stringSectionIndexOffset);
+			for (uint j = 0; j < 8; j++)
+				_chineseTraditionalOffsets[j] = skyExe.readUint32LE() + chineseExes[i].virtualBase;
+			uint stringBlockOffset = _chineseTraditionalOffsets[0];
+			for (uint j = 1; j < 8; j++)
+				stringBlockOffset = MIN(_chineseTraditionalOffsets[j], stringBlockOffset);
+			for (uint j = 0; j < 8; j++)
+				_chineseTraditionalOffsets[j] -= stringBlockOffset;
+			uint stringBlockLen = chineseExes[i].stringBlockEnd - stringBlockOffset;
+			_chineseTraditionalBlock = new char[stringBlockLen];
+			skyExe.seek(stringBlockOffset);
+			skyExe.read(_chineseTraditionalBlock, stringBlockLen);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 Common::Error SkyEngine::init() {
 	initGraphics(320, 200);
 
@@ -355,12 +420,21 @@ Common::Error SkyEngine::init() {
 	case Common::EN_GRB:
 		_systemVars->language = SKY_ENGLISH;
 		break;
+	case Common::ZH_TWN:
+		_systemVars->language = SKY_CHINESE_TRADITIONAL;
+		break;
+
 	default:
 		_systemVars->language = SKY_ENGLISH;
 		break;
 	}
 
-	if (!_skyDisk->fileExists(60600 + SkyEngine::_systemVars->language * 8)) {
+	if (_systemVars->language == SKY_CHINESE_TRADITIONAL && !loadChineseTraditional()) {
+		_systemVars->language = SKY_ENGLISH;
+	}
+
+	if (_systemVars->language != SKY_CHINESE_TRADITIONAL &&
+	    !_skyDisk->fileExists(60600 + SkyEngine::_systemVars->language * 8)) {
 		warning("The language you selected does not exist in your BASS version");
 		if (_skyDisk->fileExists(60600))
 			SkyEngine::_systemVars->language = SKY_ENGLISH; // default to GB english if it exists..
