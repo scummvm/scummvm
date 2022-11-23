@@ -28,22 +28,87 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
+#define FADE_SEGMENTS 20
+#define FADE_SEGMENT_X (SCREEN_W / 2 / FADE_SEGMENTS)
+#define FADE_SEGMENT_Y (SCREEN_H / 2 / FADE_SEGMENTS)
+
 Title::Title() : UIElement("Title", g_engine) {
+}
+
+bool Title::msgFocus(const FocusMessage &msg) {
 	Gfx::ScreenDecoder decoder;
 	decoder._indexes[0] = 0;
 	decoder._indexes[1] = 2;
 	decoder._indexes[2] = 4;
 	decoder._indexes[3] = 15;
 
-	if (decoder.loadFile("screen0")) {
-		_surface.copyFrom(decoder.getSurface());
-	} else {
-		error("Could not load screen0");
+	for (int i = 0; i < SCREEN_COUNT; ++i) {
+		if (decoder.loadFile(
+			Common::String::format("screen%d", i))) {
+			_screens[i].copyFrom(decoder.getSurface());
+		} else {
+			error("Could not load title screen");
+		}
 	}
+
+	_screenNum = -1;
+	_fadeIndex = 0;
+
+	return true;
+}
+
+bool Title::msgUnfocus(const UnfocusMessage & msg) {
+	for (int i = 0; i < SCREEN_COUNT; ++i)
+		_screens[i].clear();
+
+	return true;
 }
 
 void Title::draw() {
-	getSurface().blitFrom(_surface);
+	Graphics::ManagedSurface surf = getSurface();
+
+	if (_screenNum == -1) {
+		// Initially, display the entire first screen
+		surf.blitFrom(_screens[0]);
+
+		// Start up fading in the second one
+		_screenNum = 1;
+		_fadeIndex = 0;
+		delaySeconds(1);
+
+	} else if (_fadeIndex == 0) {
+		// Brief pause before starting next screen scroll in
+		delaySeconds(1);
+
+	} else if (_screenNum < 2) {
+		// Gradually displaying more of the next screen
+		int deltaX = _fadeIndex * FADE_SEGMENT_X;
+		int deltaY = _fadeIndex * FADE_SEGMENT_Y;
+
+		const Graphics::ManagedSurface &src = _screens[_screenNum];
+		const Common::Rect top(0, 0, SCREEN_W, deltaY);
+		const Common::Rect left(0, 0, deltaX, SCREEN_H);
+		const Common::Rect right(SCREEN_W - deltaX, 0, SCREEN_W, SCREEN_H);
+		const Common::Rect bottom(0, SCREEN_H - deltaY, SCREEN_W, SCREEN_H);
+
+		surf.blitFrom(src, top, top);
+		surf.blitFrom(src, left, left);
+		surf.blitFrom(src, right, right);
+		surf.blitFrom(src, bottom, bottom);
+
+		delayFrames(2);
+	}
+}
+
+void Title::timeout() {
+	if (_screenNum < 2) {
+		if (_fadeIndex++ == FADE_SEGMENTS) {
+			_screenNum = (_screenNum == 0) ? 1 : 0;
+			_fadeIndex = 0;
+		}
+
+		redraw();
+	}
 }
 
 } // namespace Views

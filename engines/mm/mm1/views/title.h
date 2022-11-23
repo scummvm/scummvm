@@ -28,14 +28,36 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
+#define SCREEN_COUNT 2
+
 class Title : public UIElement {
 private:
-	Graphics::ManagedSurface _surface;
+	Graphics::ManagedSurface _screens[SCREEN_COUNT];
+	int _screenNum = -1;
+	int _fadeIndex = 0;
 public:
 	Title();
 	virtual ~Title() {}
 
+	/**
+	 * Called when the screen is displayed
+	 */
+	bool msgFocus(const FocusMessage &msg) override;
+
+	/**
+	 * Called when the screen is hidden
+	 */
+	bool msgUnfocus(const UnfocusMessage &msg) override;
+
+	/**
+	 * Draw the screen
+	 */
 	void draw() override;
+
+	/**
+	 * Delay timeout
+	 */
+	void timeout() override;
 };
 
 } // namespace Views
