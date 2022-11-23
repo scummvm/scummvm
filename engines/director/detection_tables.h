@@ -585,7 +585,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sciencesmart",		"Science Smart" },
 	{ "scrutiny",			"ScruTiny in the Great Round" },
 	{ "sentence",			"this is a sentence" },
-	{ "shiningflower",		"Shining Flower: HikaruHana" },
 	{ "sialmanac94",		"Sports Illustrated 1994 Multimedia Almanac" },
 	{ "sk8board",			"RIDE: An Interactive Skateboarding Experience" },
 	{ "skieurope96",		"Ski Europe '96" },
@@ -2562,9 +2561,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("sfk", "", "More SFK Products!", "1ae45c23586b41997ba52e2e7c771c4c", 377667, 310),
 
 	MACGAME1_l("directorshokai", "", "Director Movie", "276bee761e48a6fd709df77d5c2f60dd", 395882, Common::JA_JPN, 313),
-
-	MACGAME1("shiningflower", "", "Shining Flower", "a6e50f2b8f294640a1d0cbe91a73e81c", 392231, 311),
-	MACGAME1("shiningflower", "Auto", "Shining Flower (Auto)", "a6e50f2b8f294640a1d0cbe91a73e81c", 392231, 311),
 
 	// Found on The Cat Came Back
 	WINDEMO1("sitfarm", "Demo", "MOREFUN.EXE", "65d06b5fef155a2473434571aff5bc29", 4397800, 310),
