@@ -28,8 +28,8 @@
 #ifndef HPL_MEMORY_MANAGER_H
 #define HPL_MEMORY_MANAGER_H
 
-#include <string>
 #include "hpl1/std/map.h"
+#include "common/str.h"
 
 namespace hpl {
 
@@ -37,9 +37,9 @@ namespace hpl {
 
 class cAllocatedPointer {
 public:
-	cAllocatedPointer(void *apData, const std::string &asFile, int alLine, size_t alMemory);
+	cAllocatedPointer(void *apData, const Common::String &asFile, int alLine, size_t alMemory);
 
-	std::string msFile;
+	Common::String msFile;
 	int mlLine;
 	size_t mlMemory;
 	void *mpData;

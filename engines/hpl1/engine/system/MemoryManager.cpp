@@ -43,7 +43,7 @@ int cMemoryManager::mlCreationCount = 0;
 
 //-----------------------------------------------------------------------
 
-cAllocatedPointer::cAllocatedPointer(void *apData, const std::string &asFile, int alLine, size_t alMemory) {
+cAllocatedPointer::cAllocatedPointer(void *apData, const Common::String &asFile, int alLine, size_t alMemory) {
 	mpData = apData;
 	msFile = asFile;
 	mlLine = alLine;
@@ -113,8 +113,8 @@ void cMemoryManager::LogResults() {
 		tAllocatedPointerMapIt it = m_mapPointers.begin();
 		for (; it != m_mapPointers.end(); ++it) {
 			cAllocatedPointer &ap = it->second;
-			if ((int)ap.msFile.length() > lMax)
-				lMax = (int)ap.msFile.length();
+			if ((int)ap.msFile.size() > lMax)
+				lMax = (int)ap.msFile.size();
 		}
 
 		lMax += 5;
@@ -130,7 +130,7 @@ void cMemoryManager::LogResults() {
 		for (; it != m_mapPointers.end(); ++it) {
 			cAllocatedPointer &ap = it->second;
 			Log("| %d\t %s", ap.mpData, ap.msFile.c_str());
-			for (int i = 0; i < lMax - (int)ap.msFile.length(); ++i)
+			for (int i = 0; i < lMax - (int)ap.msFile.size(); ++i)
 				Log(" ");
 			Log("%d\t\t %d\t\n", ap.mlLine, ap.mlMemory);
 		}
