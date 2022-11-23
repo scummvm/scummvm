@@ -877,7 +877,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"zoombini",
 			_s("Missing game code"), // Reason for being unsupported,
 			AD_ENTRY1s("ZOOMBINI.MHK", "3133e8d164958f8a3f740cb1f4e49f15", 24120142),
-			Common::JA_JAP,
+			Common::JA_JPN,
 			Common::kPlatformMacintosh,
 			ADGF_UNSUPPORTED | ADGF_DEMO,
 			GUIO1(GUIO_NOASPECT)
