@@ -111,6 +111,12 @@ const int BASE_FLAGS = ADGF_NO_FLAGS;
 #define TLCDVDENTRY(f1, x1, s1, f2, x2, s2, language, platform) \
 	GROOVIEGAME("tlc", _s("Missing game code"), f1, x1, s1, f2, x2, s2, language, platform, ADGF_UNSUPPORTED | ADGF_DVD, GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_SPEEDRUN), kGroovieTLC)
 
+#define TLCDEMOENTRY(f1, x1, s1, f2, x2, s2, language, platform, flags) \
+	GROOVIEGAME("tlc", "Demo", f1, x1, s1, f2, x2, s2, language, platform, flags | ADGF_DEMO, GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GUIO_NOLAUNCHLOAD), kGroovieTLC)
+
+#define TLCTRAILERENTRY(f1, x1, s1, f2, x2, s2, language, platform, flags) \
+	GROOVIEGAME("tlc", "Trailer", f1, x1, s1, f2, x2, s2, language, platform, flags | ADGF_DEMO, GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GUIO_NOLAUNCHLOAD), kGroovieTLC)
+
 // clang-format off
 static const GroovieGameDescription gameDescriptions[] = {
 	// groovie.cpp requires the first file to be the main .grv file for v2 games, might as well stick to that convention for v1 games from now on too
@@ -251,28 +257,11 @@ static const GroovieGameDescription gameDescriptions[] = {
 
 	// Tender Loving Care PC Demo German (CD-ROM 1998-03-23)
 	// https://archive.org/details/Tender_Loving_Care_demo
-	{
-		{
-			"tlc", "Demo",
-			AD_ENTRY2s("tlcmain.grv", "6ec818f595eedca6570280af0c681642", 17361, "tlcnav.gjd", nullptr, -1),
-			DE_DEU, kPlatformWindows, ADGF_DEMO,
-			GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GUIO_NOLAUNCHLOAD)
-		},
-		kGroovieTLC
-	},
+	TLCDEMOENTRY("tlcmain.grv", "6ec818f595eedca6570280af0c681642", 17361, "tlcnav.gjd", nullptr, -1, DE_DEU, kPlatformWindows, BASE_FLAGS),
 
 	// Tender Loving Care PC Trailer (CD-ROM 1998-03-23)
 	// On the same disc with the above German demo
-	{
-		{
-			"tlc", "Trailer",
-			AD_ENTRY2s("preview.grv", "d95401509a0ef251e8c340737edf728c", 19,
-							"drama1.gjd", "2a4ca274d832675248e51baf7e537bb3", 390727225),
-			UNK_LANG, kPlatformWindows, ADGF_DEMO,
-			GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GUIO_NOLAUNCHLOAD)
-		},
-		kGroovieTLC
-	},
+	TLCTRAILERENTRY("preview.grv", "d95401509a0ef251e8c340737edf728c", 19, "drama1.gjd", "2a4ca274d832675248e51baf7e537bb3", 390727225, UNK_LANG, kPlatformWindows, BASE_FLAGS),
 
 	// Tender Loving Care PC Trailer (CD-ROM 1998-05-14)
 	// Included on the English version of the full game. The preview.grv
@@ -280,16 +269,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 	// it actually has the trailer or not. Since the trailer does not
 	// contain any spoken language, it's possible that this entry can be
 	// merged with the German one above.
-	{
-		{
-			"tlc", "Trailer",
-			AD_ENTRY2s("preview.grv", "d95401509a0ef251e8c340737edf728c", 19,
-							"drama1.gjd", "0ac95ecdd0c8388199bf453de9f7b527", 396742303),
-			UNK_LANG, kPlatformWindows, ADGF_DEMO,
-			GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GUIO_NOLAUNCHLOAD)
-		},
-		kGroovieTLC
-	},
+	TLCTRAILERENTRY("preview.grv", "d95401509a0ef251e8c340737edf728c", 19, "drama1.gjd", "0ac95ecdd0c8388199bf453de9f7b527", 396742303, UNK_LANG, kPlatformWindows, BASE_FLAGS),
 
 	{AD_TABLE_END_MARKER, kGroovieT7G}
 };
