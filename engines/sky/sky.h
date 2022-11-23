@@ -109,10 +109,13 @@ public:
 	static void *_itemList[300];
 	static SystemVars *_systemVars;
 	static const char *shortcutsKeymapId;
+	static uint32 _chineseTraditionalOffsets[8];
+	static char *_chineseTraditionalBlock;
 
 protected:
 	// Engine APIs
 	Common::Error init();
+	bool loadChineseTraditional();
 	Common::Error go();
 	Common::Error run() override {
 		Common::Error err;

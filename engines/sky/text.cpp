@@ -121,6 +121,24 @@ void Text::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 
 	uint32 sectionNo = (textNr & 0x0F000) >> 12;
 
+	if (SkyEngine::_systemVars->language == SKY_CHINESE_TRADITIONAL) {
+		uint32 sectionOffset = SkyEngine::_chineseTraditionalOffsets[sectionNo];
+		const char *ptr = SkyEngine::_chineseTraditionalBlock + sectionOffset;
+		uint nrInBlock = textNr & 0xFFF;
+		if (sectionNo != 7)
+			nrInBlock--;
+		for (uint32 i = 0; i < nrInBlock; i++) {
+			while (*ptr)
+				ptr++;
+			ptr++;
+		}
+		char *dest = (char *)_textBuffer;
+		while (*ptr)
+			*dest++ = *ptr++;
+		*dest = 0;
+		return;
+	}
+
 	if (SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo] == NULL) { //check if already loaded
 		debug(5, "Loading Text item(s) for Section %d", (sectionNo >> 2));
 
@@ -453,6 +471,8 @@ void Text::initHuffTree() {
 }
 
 bool Text::patchMessage(uint32 textNum) {
+	if (SkyEngine::_systemVars->language == SKY_CHINESE_TRADITIONAL)
+		return false;
 	uint16 patchIdx = _patchLangIdx[SkyEngine::_systemVars->language];
 	uint16 patchNum = _patchLangNum[SkyEngine::_systemVars->language];
 	for (uint16 cnt = 0; cnt < patchNum; cnt++) {

@@ -1621,6 +1621,9 @@ void Control::showGameQuitMsg() {
 	if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS) {
 		_skyText->displayText(_quitTexts[8 * 2 + 0], textBuf1, true, 320, 255);
 		_skyText->displayText(_quitTexts[8 * 2 + 1], textBuf2, true, 320, 255);
+	} else if (SkyEngine::_systemVars->language == SKY_CHINESE_TRADITIONAL) { // Not translated in original
+		_skyText->displayText(_quitTexts[0], textBuf1, true, 320, 255);
+		_skyText->displayText(_quitTexts[1], textBuf2, true, 320, 255);
 	} else {
 		_skyText->displayText(_quitTexts[SkyEngine::_systemVars->language * 2 + 0], textBuf1, true, 320, 255);
 		_skyText->displayText(_quitTexts[SkyEngine::_systemVars->language * 2 + 1], textBuf2, true, 320, 255);
