@@ -103,7 +103,7 @@ void EfhEngine::displayAnimFrames(int16 animId, bool displayMenuBoxFl) {
 
 void EfhEngine::displayFctFullScreen() {
 	debugC(1, kDebugGraphics, "displayFctFullScreen");
-	
+
 	// CHECKME: 319 is in the original but looks suspicious.
 	// copyDirtyRect(0, 0, 319, 200);
 

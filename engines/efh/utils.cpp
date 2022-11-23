@@ -285,7 +285,7 @@ Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
 	_system->getEventManager()->pollEvent(event);
 	Common::KeyCode retVal = Common::KEYCODE_INVALID;
 
-	uint32 lastMs = _system->getMillis(); 
+	uint32 lastMs = _system->getMillis();
 	while (retVal == Common::KEYCODE_INVALID) {
 		_system->getEventManager()->pollEvent(event);
 

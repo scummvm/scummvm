@@ -49,7 +49,7 @@ class RandomSource;
  *
  * Games using this engine:
  * - Escape From Hell
- * 
+ *
  * Note: Wasteland and Fountain of dreams *seem* to use the same engine, but it's not the case.
  * Escape From Hell was written from scratch based on the visual look of the other
  */
@@ -481,7 +481,7 @@ private:
 	void setDefaultNoteDuration();
 	void decryptImpFile(bool techMapFl);
 	void loadImageSet(int16 imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer);
-	void rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, uint8 *packedBuffer);	
+	void rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, uint8 *packedBuffer);
 	uint32 uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf);
 	int16 getRandom(int16 maxVal);
 	Common::KeyCode getLastCharAfterAnimCount(int16 delay);
@@ -526,7 +526,7 @@ private:
 	Common::String _nameBuffer;
 	char _attackBuffer[20];
 	uint8 _messageToBePrinted[400];
-	
+
 	uint8 *_mapBitmapRefArr[19];
 	UnkMapStruct _mapUnknown[100];
 	MapMonster _mapMonsters[64];
@@ -558,7 +558,7 @@ private:
 	int16 _teamCharId[3];
 	int16 _textPosX;
 	int16 _textPosY;
-	
+
 	Common::Rect _initRect;
 	bool _engineInitPending;
 	bool _protectionPassed;
