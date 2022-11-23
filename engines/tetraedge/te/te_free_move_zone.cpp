@@ -288,7 +288,8 @@ static int segmentIntersection(const TeVector2f32 &s1start, const TeVector2f32 &
 			if (intersection2 >= 0.0f && intersection2 <= 1.0f) {
 				result = 2;
 				if (sout || fout1 || fout2) {
-					warning("TODO: implement output in segmentIntersection");
+					// Seems like these are always null?
+					error("TODO: implement output in segmentIntersection");
 				}
 			}
 		}

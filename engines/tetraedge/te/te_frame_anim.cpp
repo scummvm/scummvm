@@ -25,7 +25,7 @@
 
 namespace Tetraedge {
 
-TeFrameAnim::TeFrameAnim() : _nbFrames(0), _frameRate(25.0), _reversed(false), _minFrame(0),
+TeFrameAnim::TeFrameAnim() : _nbFrames(0), _frameRate(25.0f), _reversed(false), _minFrame(0),
 _numFramesToShow(-1), _startTime(0), _endTime(FLT_MAX), _loopCount(0), _lastFrameShown(-1) {
 }
 

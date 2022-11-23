@@ -30,8 +30,7 @@ namespace Tetraedge {
 
 TeTextBase2::TeTextBase2() : _drawRect(0, 0), _size(0, 0),
 _alignStyle(TeFont3::AlignLeft), _interLine(0.0f), _globalColor(0xff, 0xff, 0xff, 0xff),
-_wrapMode(WrapModeFixed), _strikethrough(false), _fontSize(10), _valueWasSet(true)
-{
+_wrapMode(WrapModeFixed), _strikethrough(false), _fontSize(10), _valueWasSet(true) {
 	_mesh.setglTexEnv(GL_BLEND);
 	_mesh.setShouldDraw(true);
 }
@@ -94,25 +93,24 @@ void TeTextBase2::build() {
 	_mesh.setConf(4, 4, TeMesh::MeshMode_TriangleStrip, 0, 0);
 	_mesh.defaultMaterial(texture);
 
-	TeColor col(255, 255, 255, 255);
 	_mesh.setShouldDraw(true);
-	_mesh.setColor(col);
+	_mesh.setColor(_globalColor);
 	_mesh.setVertex(0, TeVector3f32(_size._x * -0.5f, _size._y * -0.5f, 0.0f));
 	_mesh.setTextureUV(0, TeVector2f32(0, 1));
 	_mesh.setNormal(0, TeVector3f32(0.0f, 0.0f, 1.0f));
-	_mesh.setColor(0, col);
+	_mesh.setColor(0, _globalColor);
 	_mesh.setVertex(1, TeVector3f32(_size._x * 0.5f, _size._y * -0.5f, 0.0f));
 	_mesh.setTextureUV(1, TeVector2f32(1, 1));
 	_mesh.setNormal(1, TeVector3f32(0.0f, 0.0f, 1.0f));
-	_mesh.setColor(1, col);
+	_mesh.setColor(1, _globalColor);
 	_mesh.setVertex(2, TeVector3f32(_size._x * 0.5f, _size._y * 0.5f, 0.0f));
 	_mesh.setTextureUV(2, TeVector2f32(1, 0));
 	_mesh.setNormal(2, TeVector3f32(0.0f, 0.0f, 1.0f));
-	_mesh.setColor(2, col);
+	_mesh.setColor(2, _globalColor);
 	_mesh.setVertex(3, TeVector3f32(_size._x * -0.5f, _size._y * 0.5f, 0.0f));
 	_mesh.setTextureUV(3, TeVector2f32(0, 0));
 	_mesh.setNormal(3, TeVector3f32(0.0f, 0.0f, 1.0f));
-	_mesh.setColor(3, col);
+	_mesh.setColor(3, _globalColor);
 	_mesh.setIndex(0, 0);
 	_mesh.setIndex(1, 1);
 	_mesh.setIndex(2, 3);
@@ -248,7 +246,7 @@ void TeTextBase2::setFont(unsigned int offset, const TeIntrusivePtr<TeFont3> &ne
 
 void TeTextBase2::setFontSize(unsigned long newSize) {
 	// Bit of a hack here to get the right font size.
-	newSize *= 1.5;
+	newSize *= 1.2;
 	if (_fontSize != newSize) {
 		_fontSize = newSize;
 		_valueWasSet = true;

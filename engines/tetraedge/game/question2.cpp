@@ -88,9 +88,9 @@ bool Question2::onAnswerValidated(Answer &answer) {
 	return false;
 }
 
-void Question2::pushAnswer(const Common::String &name, const Common::String &unk, const Common::String &path) {
+void Question2::pushAnswer(const Common::String &name, const Common::String &locName, const Common::String &path) {
 	Answer *answer = new Answer();
-	answer->load(name, unk, path);
+	answer->load(name, locName, path);
 	answer->_onButtonValidatedSignal.add(this, &Question2::onAnswerValidated);
 	TeLayout *alayout = answer->layout();
 	if (!alayout)
@@ -134,7 +134,7 @@ TeLayout *Question2::Answer::layout() {
 	return _gui.layout("answer");
 }
 
-void Question2::Answer::load(const Common::String &name, const Common::String &unk, const Common::String &path) {
+void Question2::Answer::load(const Common::String &name, const Common::String &locName, const Common::String &path) {
 	_str = name;
 	_gui.load(path);
 	TeButtonLayout *answerButton = _gui.buttonLayout("answer");

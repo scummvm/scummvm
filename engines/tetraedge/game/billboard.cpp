@@ -27,7 +27,7 @@
 
 namespace Tetraedge {
 
-Billboard::Billboard() {
+Billboard::Billboard() : _hasPos2(false) {
 }
 
 bool Billboard::load(const Common::String &path) {
@@ -40,13 +40,52 @@ bool Billboard::load(const Common::String &path) {
 	Common::Array<TeVector3f32> quad;
 	quad.resize(4);
 	_model->setQuad(texture, quad, TeColor(0xff, 0xff, 0xff, 0xff));
+	_model->setVisible(false);
 	game->scene().models().push_back(_model);
 	return true;
 }
 
 void Billboard::calcVertex() {
-	//Game *game = g_engine->getGame();
-	warning("TODO: implement Billboard::calcVertex");
+	Game *game = g_engine->getGame();
+	TeIntrusivePtr<TeCamera> currentCam = game->scene().currentCamera();
+	assert(currentCam);
+	currentCam->apply();
+	const TeMatrix4x4 camProjMatrix = currentCam->projectionMatrix();
+	TeMatrix4x4 camWorldInverse = currentCam->worldTransformationMatrix();
+	camWorldInverse.inverse();
+	
+	const TeMatrix4x4 camTotalTransform = camProjMatrix * camWorldInverse;
+	TeMatrix4x4 camTotalInverse = camTotalTransform;
+	camTotalInverse.inverse();
+
+	TeVector3f32 posvec(0.0f, 0.0f, _pos.z());
+	if (_hasPos2) {
+		posvec = _pos2;
+	}
+	posvec = camTotalTransform * posvec;
+	
+	TeVector3f32 meshVertex;
+	float fx, fy;
+
+	fx = _pos.x();
+	fy = _pos.y();
+	meshVertex = camTotalInverse * TeVector3f32(fx + fx - 1.0f, fy + fy - 1.0f, posvec.z());
+	_model->_meshes[0].setVertex(0, meshVertex);
+
+	fx = _pos.x();
+	fy = _pos.y() + _size.getY();
+	meshVertex = camTotalInverse * TeVector3f32(fx + fx - 1.0f, fy + fy - 1.0f, posvec.z());
+	_model->_meshes[0].setVertex(1, meshVertex);
+
+	fx = _pos.x() + _size.getX();
+	fy = _pos.y();
+	meshVertex = camTotalInverse * TeVector3f32(fx + fx - 1.0f, fy + fy - 1.0f, posvec.z());
+	_model->_meshes[0].setVertex(2, meshVertex);
+	
+	fx = _pos.x() + _size.getX();
+	fy = _pos.y() + _size.getY();
+	meshVertex = camTotalInverse * TeVector3f32(fx + fx - 1.0f, fy + fy - 1.0f, posvec.z());
+	_model->_meshes[0].setVertex(3, meshVertex);
 }
 
 void Billboard::position(const TeVector3f32 &pos) {

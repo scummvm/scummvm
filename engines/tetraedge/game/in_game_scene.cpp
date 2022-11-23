@@ -700,11 +700,11 @@ bool InGameScene::loadObject(const Common::String &name) {
 	return true;
 }
 
-void InGameScene::loadObjectMaterials(const Common::String &name) {
+bool InGameScene::loadObjectMaterials(const Common::String &name) {
 	error("TODO: InGameScene::loadObjectMaterials");
 }
 
-void InGameScene::loadObjectMaterials(const Common::String &path, const Common::String &name) {
+bool InGameScene::loadObjectMaterials(const Common::String &path, const Common::String &name) {
 	error("TODO: InGameScene::loadObjectMaterials");
 }
 

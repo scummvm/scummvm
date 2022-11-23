@@ -69,9 +69,7 @@ void Inventory::load() {
 	setSizeType(RELATIVE_TO_PARENT);
 	setSize(TeVector3f32(1.0f, 1.0f, userSize().z()));
 	_gui.load("Inventory/Inventory.lua");
-	TeLayout *invlayout = _gui.layout("inventory");
-	if (!invlayout)
-		error("Inventory::load: Couldn't find inventory layout after loading");
+	TeLayout *invlayout = _gui.layoutChecked("inventory");
 	addChild(invlayout);
 
 	TeButtonLayout *btn;
@@ -83,7 +81,6 @@ void Inventory::load() {
 	btn->onMouseClickValidated().add(this, &Inventory::onTakeObjectSelected);
 
 	btn = _gui.buttonLayoutChecked("lire");
-	btn->setVisible(false);
 	btn->setEnable(false);
 	btn->onMouseClickValidated().add(this, &Inventory::onZoomed);
 
@@ -119,6 +116,7 @@ void Inventory::load() {
 
 	TeLayout *layout = _gui.layout("selectionSprite");
 	layout->setVisible(false);
+	_invObjects.clear();
 
 	setVisible(false);
 }
@@ -183,13 +181,13 @@ void Inventory::loadCellphone() {
 void Inventory::addObject(const Common::String &objId) {
 	InventoryObject *newobj = new InventoryObject();
 	newobj->load(objId);
-	if (!addObject(*newobj))
+	if (!addObject(newobj))
 		delete newobj;
 }
 
-bool Inventory::addObject(InventoryObject &obj) {
-	_invObjects.push_front(&obj);
-	obj.selectedSignal().add(this, &Inventory::onObjectSelected);
+bool Inventory::addObject(InventoryObject *obj) {
+	_invObjects.push_front(obj);
+	obj->selectedSignal().add(this, &Inventory::onObjectSelected);
 	if (_invObjects.size() > 1) {
 		int pageno = 0;
 		while (true) {
@@ -217,9 +215,10 @@ bool Inventory::addObject(InventoryObject &obj) {
 	int pageno = 0;
 	unsigned int totalSlots = 0;
 	bool retval;
-	const Common::String newObjName = obj.name();
+	const Common::String newObjName = obj->name();
 	auto invObjIter = _invObjects.begin();
-	while (true) {
+	bool finished = false;
+	while (!finished) {
 		TeLayout *page = _gui.layout(Common::String::format("page%d", pageno));
 		retval = false;
 		if (!page)
@@ -232,8 +231,7 @@ bool Inventory::addObject(InventoryObject &obj) {
 			retval = true;
 
 			if (totalSlots == _invObjects.size()) {
-				// break from both loops (slight hack..)
-				pageno = 9999;
+				finished = true;
 				break;
 			}
 			
@@ -282,7 +280,7 @@ Common::String Inventory::objectDescription(const Common::String &objId) {
 Common::String Inventory::objectName(const Common::String &objId) {
 	if (!_objectData.contains(objId))
 		return "";
-	return _objectData.getVal(objId)._id;
+	return _objectData.getVal(objId)._name;
 }
 
 bool Inventory::onMainMenuButton() {

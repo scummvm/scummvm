@@ -343,7 +343,7 @@ bool TeModel::load(Common::SeekableReadStream &stream) {
 	}
 
 	uint version = stream.readUint32LE();
-	if (!(version == 11) || (version == 13)) {
+	if (!((version == 11) || (version == 13))) {
 		error("[TeModel::load] Unsupported version %d", version);
 	}
 
@@ -430,8 +430,8 @@ Common::SeekableReadStream *TeModel::tryLoadZlibStream(Common::SeekableReadStrea
 		return nullptr;
 	}
 	uint32 uncompressedSize = stream.readUint32LE();
-	Common::SeekableSubReadStream substream(&stream, stream.pos(), stream.size());
-	return Common::wrapCompressedReadStream(&substream, uncompressedSize);
+	Common::SeekableSubReadStream *substream = new Common::SeekableSubReadStream(&stream, stream.pos(), stream.size());
+	return Common::wrapCompressedReadStream(substream, uncompressedSize);
 }
 
 bool TeModel::loadWeights(Common::ReadStream &stream, Common::Array<weightElement> &weights) {

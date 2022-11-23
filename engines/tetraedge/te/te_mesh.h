@@ -108,7 +108,7 @@ public:
 	uint numIndexes() const { return _indexes.size(); }
 	uint numVerticies() const { return _verticies.size(); }
 	bool shouldDrawMaybe() const { return _shouldDraw; }
-	uint gltexenvMode() const { return _gltexEnvMode; }
+	uint gltexEnvMode() const { return _gltexEnvMode; }
 
 	void setShouldDraw(bool val) { _shouldDraw = val; }
 	void setglTexEnv(unsigned int val) { _gltexEnvMode = val; }

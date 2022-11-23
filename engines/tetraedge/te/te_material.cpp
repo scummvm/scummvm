@@ -64,7 +64,7 @@ Common::String TeMaterial::dump() const {
 			  _shininess, _enableLights ? "on" : "off");
 }
 
-void TeMaterial::apply() {
+void TeMaterial::apply() const {
 	//debug("TeMaterial::apply (%s)", dump().c_str());
 	static const float constColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	TeRenderer *renderer = g_engine->getRenderer();

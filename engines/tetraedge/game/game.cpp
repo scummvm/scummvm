@@ -44,11 +44,14 @@
 
 namespace Tetraedge {
 
-Game::Game() : _objectsTakenVal(0), _score(0), _entered(false), _gameLoadState(0),
-_noScaleLayout(nullptr), _noScaleLayout2(nullptr), _warped(false), _saveRequested(false),
-_firstInventory(true), _movePlayerCharacterDisabled(false), _enteredFlag2(false),
-_luaShowOwnerError(false), _markersVisible(false), _running(false), _loadName("save.xml"),
-_randomSoundFinished(false), _randomSource("SyberiaGameRandom") {
+Game::Game() : _objectsTakenVal(0), _returnToMainMenu(false), _entered(false),
+_enteredFlag2(false), _running(false), _movePlayerCharacterDisabled(false),
+_noScaleLayout(nullptr), _noScaleLayout2(nullptr), _isCharacterIdle(true),
+_sceneCharacterVisibleFromLoad(false), _isCharacterWalking(false),
+_lastCharMoveMousePos(0.0f, 0.0f), _randomSoundFinished(false),
+_previousMousePos(-1, -1), _markersVisible(true), _saveRequested(false),
+_gameLoadState(0), _luaShowOwnerError(false), _score(0), _warped(false),
+_firstInventory(true), _loadName("save.xml"), _randomSource("SyberiaGameRandom") {
 	for (int i = 0; i < NUM_OBJECTS_TAKEN_IDS; i++) {
 		_objectsTakenBits[i] = false;
 	}
@@ -337,7 +340,7 @@ void Game::enter(bool newgame) {
 	_sceneCharacterVisibleFromLoad = true;
 	_scene._character->onFinished().remove(this, &Game::onDisplacementFinished);
 	_scene._character->onFinished().add(this, &Game::onDisplacementFinished);
-	_dialog2.prevSceneName().clear();
+	_prevSceneName.clear();
 	_notifier.load();
 }
 
@@ -549,9 +552,9 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	video->_tiledSurfacePtr->_frameAnim.onFinished().add(this, &Game::onVideoFinished);
 
 	TeButtonLayout *invbtn = _inGameGui.buttonLayout("inventoryButton");
-	invbtn->setSizeType(TeILayout::RELATIVE_TO_PARENT); // TODO: Double-check if this is the right virt fn.
 	invbtn->onMouseClickValidated().remove(this, &Game::onInventoryButtonValidated);
 	invbtn->onMouseClickValidated().add(this, &Game::onInventoryButtonValidated);
+	invbtn->setSizeType(TeILayout::RELATIVE_TO_PARENT);
 
 	const TeVector3f32 winSize = app->getMainWindow().size();
 	if (g_engine->getCore()->fileFlagSystemFlag("definition") == "SD") {
@@ -1436,11 +1439,8 @@ void Game::update() {
 				app->_lockCursorButton.setVisible(false);
 		}
 
-		TeButtonLayout *invbtn = _inGameGui.buttonLayout("inventoryButton");
-		if (invbtn)
-			invbtn->setVisible(!app->isLockCursor() && !_dialog2.isDialogPlaying());
-		else
-			warning("Game::update: InventoryButton is null.");
+		TeButtonLayout *invbtn = _inGameGui.buttonLayoutChecked("inventoryButton");
+		invbtn->setVisible(!app->isLockCursor() && !_dialog2.isDialogPlaying());
 
 		Character *player = _scene._character;
 		if (player) {

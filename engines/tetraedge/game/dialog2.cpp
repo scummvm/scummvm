@@ -69,7 +69,7 @@ void Dialog2::launchNextDialog() {
 		if (!_currentDialogData._charname.empty()) {
 			Character *c = game->scene().character(_currentDialogData._charname);
 			if (!c) {
-				error("[Dialog2::launchNextDialog] Character's \"%s\" doesn\'t exist", _currentDialogData._charname.c_str());
+				error("[Dialog2::launchNextDialog] Character's \"%s\" doesn't exist", _currentDialogData._charname.c_str());
 			}
 
 			if (_currentDialogData._animBlend == 0.0f) {
@@ -82,8 +82,8 @@ void Dialog2::launchNextDialog() {
 							_currentDialogData._animfile.c_str(), _currentDialogData._charname.c_str());
 			}
 		}
-		_gui.buttonLayoutChecked("dialogLockButton")->setVisible(true);
-		TeCurveAnim2<TeLayout, TeVector3f32> *anim = _gui.layoutAnchorLinearAnimation("dialogAnimationDown");
+		lockBtn->setVisible(true);
+		TeCurveAnim2<TeLayout, TeVector3f32> *anim = _gui.layoutAnchorLinearAnimation("dialogAnimationUp");
 		anim->stop();
 		anim->play();
 		_minimumTimeTimer.start();
@@ -126,7 +126,7 @@ void Dialog2::loadFromBackup() {
 }
 
 bool Dialog2::onAnimationDownFinished() {
-	Common::String param(_animDownFinishedResultString);
+	Common::String param(_currentDialogData._name);
 	launchNextDialog();
 	_onAnimationDownFinishedSignal.call(param);
 	return false;
@@ -165,7 +165,7 @@ bool Dialog2::onSoundFinished() {
 }
 
 void Dialog2::pushDialog(const Common::String &name, const Common::String &textVal, const Common::String &sound, int param_4) {
-	error("TODO: Implement Dialog2::pushDialog");
+	error("TODO: Implement Dialog2::pushDialog 3 param");
 }
 
 void Dialog2::pushDialog(const Common::String &name, const Common::String &textVal, const Common::String &sound,
@@ -204,10 +204,9 @@ void Dialog2::unload() {
 	dialogAnimDown->stop();
 	_music.close();
 	_gui.unload();
-	error("TODO: Finish Dialog2::unload");
 
-	//_dialogDataList.clear();
-	//_minimumTimeTimer.stop();
+	_dialogs.clear();
+	_minimumTimeTimer.stop();
 }
 
 } // end namespace Tetraedge
