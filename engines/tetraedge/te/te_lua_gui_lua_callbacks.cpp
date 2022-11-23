@@ -600,6 +600,7 @@ int layoutAnchorLinearAnimationBindings(lua_State *L) {
 				static const TeVector3f32 defaultEnd(0.0f, 0.0f, 0.0f);
 				anim->_endVal = TeLuaToTeVector3f32(L, -1, defaultEnd);
 			} else if (!strcmp(s, "layout")) {
+				// skip.
 			} else if (!strcmp(s, "curve")) {
 				const Common::Array<float> curve = TeLuaToFloatArray(L, -1);
 				anim->setCurve(curve);

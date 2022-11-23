@@ -39,7 +39,7 @@ public:
 	Te3DTexture();
 	virtual ~Te3DTexture();
 
-	void bind();
+	void bind() const;
 	void copyCurrentRender(uint xoffset, uint yoffset, uint x, uint y);
 	void create();
 	void destroy();

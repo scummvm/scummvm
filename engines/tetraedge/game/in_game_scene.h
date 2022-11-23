@@ -143,8 +143,8 @@ public:
 	bool loadLights(const Common::Path &path);
 	void loadMarkers(const Common::Path &path);
 	bool loadObject(const Common::String &oname);
-	void loadObjectMaterials(const Common::String &name);
-	void loadObjectMaterials(const Common::String &path, const Common::String &name);
+	bool loadObjectMaterials(const Common::String &name);
+	bool loadObjectMaterials(const Common::String &path, const Common::String &name);
 	bool loadPlayerCharacter(const Common::String &cname);
 
 	void moveCharacterTo(const Common::String &charName, const Common::String &curveName, float curveOffset, float curveEnd);

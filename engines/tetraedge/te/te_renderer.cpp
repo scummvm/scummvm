@@ -33,96 +33,82 @@ TeRenderer::TeRenderer() : _textureEnabled(false), _shadowMode(ShadowMode0), _ma
 _numTransparentMeshes(0), _pendingTransparentMeshProperties(0) {
 }
 
-void TeRenderer::TransparentMeshProperties::setFromMaterial(const TeMaterial &material) {
-	_texture = material._texture;
-	_enableLights = material._enableLights;
-	_enableSomethingDefault0 = material._enableSomethingDefault0;
-	_shininess = material._shininess;
-	_emissionColor = material._emissionColor;
-	_specularColor = material._specularColor;
-	_diffuseColor = material._diffuseColor;
-	_ambientColor = material._ambientColor;
-	_materialMode = material._mode;
-}
-
-void TeRenderer::addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsigned long meshno, unsigned long materialno) {
+void TeRenderer::addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsigned long tricount, unsigned long materialno) {
 	const float orthNearVal = _currentCamera->_orthNearVal;
 	const TeMesh::Mode meshMode = mesh.getMode();
-	if (!meshno) {
+	if (!tricount) {
 		if (meshMode == TeMesh::MeshMode_TriangleStrip) {
-			meshno = mesh.numVerticies() - 2;
+			tricount = mesh.numVerticies() - 2;
 		} else if (meshMode == TeMesh::MeshMode_Triangles) {
-			meshno = mesh.numIndexes() / 3;
-		} else {
-			return;
+			tricount = mesh.numIndexes() / 3;
 		}
-		if (meshno == 0)
+		if (!tricount)
 			return;
 	}
-	_transparentMeshVertexes.resize((_numTransparentMeshes + meshno) * 3);
-	_transparentMeshNormals.resize((_numTransparentMeshes + meshno) * 3);
-	_transparentMeshCoords.resize((_numTransparentMeshes + meshno) * 3);
-	_transparentMeshColors.resize((_numTransparentMeshes + meshno) * 3);
-	_transparentMeshTriangleNums.resize((_numTransparentMeshes + meshno) * 3);
+	_transparentMeshVertexes.resize((_numTransparentMeshes + tricount) * 3);
+	_transparentMeshNormals.resize((_numTransparentMeshes + tricount) * 3);
+	_transparentMeshCoords.resize((_numTransparentMeshes + tricount) * 3);
+	_transparentMeshColors.resize((_numTransparentMeshes + tricount) * 3);
+	_transparentMeshVertexNums.resize((_numTransparentMeshes + tricount) * 3);
 
-	int newPropsSize = mesh.shouldDrawMaybe() ? _pendingTransparentMeshProperties + meshno : _pendingTransparentMeshProperties + 1;
-	_transparentMeshProperties.resize(newPropsSize);
-	if (meshMode == TeMesh::MeshMode_Triangles && meshno > 0) {
-		for (unsigned int i = 0; i < meshno; i++) {
+	int newPropsSize = _pendingTransparentMeshProperties + (mesh.shouldDrawMaybe() ? tricount : 1);
+	_transparentMeshProps.resize(newPropsSize);
+	if (meshMode == TeMesh::MeshMode_Triangles) {
+		for (unsigned int i = 0; i < tricount; i++) {
 			const uint meshNo0 = (i1 + i) * 3;
-			const uint meshPropNo = (_numTransparentMeshes + i) * 3;
+			const uint propNo = (_numTransparentMeshes + i) * 3;
 
-			_transparentMeshVertexes[meshPropNo] = mesh.vertex(mesh.index(meshNo0));
-			_transparentMeshVertexes[meshPropNo + 1] = mesh.vertex(mesh.index(meshNo0 + 1));
-			_transparentMeshVertexes[meshPropNo + 2] = mesh.vertex(mesh.index(meshNo0 + 2));
+			_transparentMeshVertexes[propNo] = mesh.vertex(mesh.index(meshNo0));
+			_transparentMeshVertexes[propNo + 1] = mesh.vertex(mesh.index(meshNo0 + 1));
+			_transparentMeshVertexes[propNo + 2] = mesh.vertex(mesh.index(meshNo0 + 2));
 
-			_transparentMeshNormals[meshPropNo] = mesh.normal(mesh.index(meshNo0));
-			_transparentMeshNormals[meshPropNo + 1] = mesh.normal(mesh.index(meshNo0 + 1));
-			_transparentMeshNormals[meshPropNo + 2] = mesh.normal(mesh.index(meshNo0 + 2));
+			_transparentMeshNormals[propNo] = mesh.normal(mesh.index(meshNo0));
+			_transparentMeshNormals[propNo + 1] = mesh.normal(mesh.index(meshNo0 + 1));
+			_transparentMeshNormals[propNo + 2] = mesh.normal(mesh.index(meshNo0 + 2));
 
 			if (mesh.hasUvs()) {
-				_transparentMeshCoords[meshPropNo] = mesh.textureUV(mesh.index(meshNo0));
-				_transparentMeshCoords[meshPropNo + 1] = mesh.textureUV(mesh.index(meshNo0) + 1);
-				_transparentMeshCoords[meshPropNo + 2] = mesh.textureUV(mesh.index(meshNo0) + 2);
+				_transparentMeshCoords[propNo] = mesh.textureUV(mesh.index(meshNo0));
+				_transparentMeshCoords[propNo + 1] = mesh.textureUV(mesh.index(meshNo0 + 1));
+				_transparentMeshCoords[propNo + 2] = mesh.textureUV(mesh.index(meshNo0 + 2));
 			}
 
 			if (!mesh.hasColor()) {
-				_transparentMeshColors[meshPropNo] = mesh.material(materialno)->_diffuseColor;
-				_transparentMeshColors[meshPropNo + 1] = mesh.material(materialno)->_diffuseColor;
-				_transparentMeshColors[meshPropNo + 2] = mesh.material(materialno)->_diffuseColor;
+				_transparentMeshColors[propNo] = mesh.material(materialno)->_diffuseColor;
+				_transparentMeshColors[propNo + 1] = mesh.material(materialno)->_diffuseColor;
+				_transparentMeshColors[propNo + 2] = mesh.material(materialno)->_diffuseColor;
 			} else {
-				_transparentMeshColors[meshPropNo] = mesh.color(mesh.index(meshNo0));
-				_transparentMeshColors[meshPropNo + 1] = mesh.color(mesh.index(meshNo0) + 1);
-				_transparentMeshColors[meshPropNo + 2] = mesh.color(mesh.index(meshNo0) + 2);
+				_transparentMeshColors[propNo] = mesh.color(mesh.index(meshNo0));
+				_transparentMeshColors[propNo + 1] = mesh.color(mesh.index(meshNo0 + 1));
+				_transparentMeshColors[propNo + 2] = mesh.color(mesh.index(meshNo0 + 2));
 			}
 		}
-	} else if (meshMode == TeMesh::MeshMode_TriangleStrip && meshno > 0) {
-		for (unsigned int i = 0; i < meshno; i++) {
+	} else if (meshMode == TeMesh::MeshMode_TriangleStrip && tricount > 0) {
+		for (unsigned int i = 0; i < tricount; i++) {
 			const uint meshNo0 = (i1 + i);  // TODO: This appears to be the only difference between this and the above?
-			const uint meshPropNo = (_numTransparentMeshes + i) * 3;
+			const uint propNo = (_numTransparentMeshes + i) * 3;
 
-			_transparentMeshVertexes[meshPropNo] = mesh.vertex(mesh.index(meshNo0));
-			_transparentMeshVertexes[meshPropNo + 1] = mesh.vertex(mesh.index(meshNo0 + 1));
-			_transparentMeshVertexes[meshPropNo + 2] = mesh.vertex(mesh.index(meshNo0 + 2));
+			_transparentMeshVertexes[propNo] = mesh.vertex(mesh.index(meshNo0));
+			_transparentMeshVertexes[propNo + 1] = mesh.vertex(mesh.index(meshNo0 + 1));
+			_transparentMeshVertexes[propNo + 2] = mesh.vertex(mesh.index(meshNo0 + 2));
 
-			_transparentMeshNormals[meshPropNo] = mesh.normal(mesh.index(meshNo0));
-			_transparentMeshNormals[meshPropNo + 1] = mesh.normal(mesh.index(meshNo0 + 1));
-			_transparentMeshNormals[meshPropNo + 2] = mesh.normal(mesh.index(meshNo0 + 2));
+			_transparentMeshNormals[propNo] = mesh.normal(mesh.index(meshNo0));
+			_transparentMeshNormals[propNo + 1] = mesh.normal(mesh.index(meshNo0 + 1));
+			_transparentMeshNormals[propNo + 2] = mesh.normal(mesh.index(meshNo0 + 2));
 
 			if (mesh.hasUvs()) {
-				_transparentMeshCoords[meshPropNo] = mesh.textureUV(mesh.index(meshNo0));;
-				_transparentMeshCoords[meshPropNo + 1] = mesh.textureUV(mesh.index(meshNo0 + 1));
-				_transparentMeshCoords[meshPropNo + 2] = mesh.textureUV(mesh.index(meshNo0 + 2));
+				_transparentMeshCoords[propNo] = mesh.textureUV(mesh.index(meshNo0));;
+				_transparentMeshCoords[propNo + 1] = mesh.textureUV(mesh.index(meshNo0 + 1));
+				_transparentMeshCoords[propNo + 2] = mesh.textureUV(mesh.index(meshNo0 + 2));
 			}
 
 			if (!mesh.hasColor()) {
-				_transparentMeshColors[meshPropNo] =  mesh.material(materialno)->_diffuseColor;
-				_transparentMeshColors[meshPropNo + 1] =  mesh.material(materialno)->_diffuseColor;
-				_transparentMeshColors[meshPropNo + 2] =  mesh.material(materialno)->_diffuseColor;
+				_transparentMeshColors[propNo] =  mesh.material(materialno)->_diffuseColor;
+				_transparentMeshColors[propNo + 1] =  mesh.material(materialno)->_diffuseColor;
+				_transparentMeshColors[propNo + 2] =  mesh.material(materialno)->_diffuseColor;
 			} else {
-				_transparentMeshColors[meshPropNo] = mesh.color(mesh.index(meshNo0));
-				_transparentMeshColors[meshPropNo + 1] = mesh.color(mesh.index(meshNo0 + 1));
-				_transparentMeshColors[meshPropNo + 2] = mesh.color(mesh.index(meshNo0 + 2));
+				_transparentMeshColors[propNo] = mesh.color(mesh.index(meshNo0));
+				_transparentMeshColors[propNo + 1] = mesh.color(mesh.index(meshNo0 + 1));
+				_transparentMeshColors[propNo + 2] = mesh.color(mesh.index(meshNo0 + 2));
 			}
 		}
 	}
@@ -130,34 +116,32 @@ void TeRenderer::addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsign
 	if (!mesh.shouldDrawMaybe()) {
 		// TODO: better variable names.
 		const TeMatrix4x4 &currentMatrix = _matriciesStacks[MM_GL_MODELVIEW].currentMatrix();
-		const TeVector3f32 local_268 = currentMatrix.mult4x3(_transparentMeshVertexes[_numTransparentMeshes * 3]);
-		const TeVector3f32 local_278 = currentMatrix.mult4x3(_transparentMeshVertexes[_numTransparentMeshes * 3 + 1]);
-		const TeVector3f32 local_288 = currentMatrix.mult4x3(_transparentMeshVertexes[_numTransparentMeshes * 3 + 2]);
-		TeVector3f32 local_298 = (local_268 + local_278 + local_288) / 3.0;
+		const TeVector3f32 v1trans = currentMatrix.mult4x3(_transparentMeshVertexes[_numTransparentMeshes * 3]);
+		const TeVector3f32 v2trans = currentMatrix.mult4x3(_transparentMeshVertexes[_numTransparentMeshes * 3 + 1]);
+		const TeVector3f32 v3trans = currentMatrix.mult4x3(_transparentMeshVertexes[_numTransparentMeshes * 3 + 2]);
+		TeVector3f32 midpoint = (v1trans + v2trans + v3trans) / 3.0;
 
-		local_298.z() -= orthNearVal;
-		float length;
+		midpoint.z() -= orthNearVal;
+		float zOrder;
 		if (_currentCamera->_projectionMatrixType < 4) {
-			length = -local_298.squaredLength();
+			zOrder = -midpoint.squaredLength();
 		} else if (_currentCamera->_projectionMatrixType == 4) {
-			length = local_298.z() * local_298.z();
+			zOrder = midpoint.z() * midpoint.z();
 		} else {
-			length = local_298.squaredLength();
+			zOrder = midpoint.squaredLength();
 		}
 
-		TransparentMeshProperties &destProperties = _transparentMeshProperties[_pendingTransparentMeshProperties];
+		TransparentMeshProperties &destProperties = _transparentMeshProps[_pendingTransparentMeshProperties];
 
-		destProperties._triangleCount = meshno * 3;
+		destProperties._vertexCount = tricount * 3;
 		destProperties._camera = _currentCamera;
 
-		const TeMaterial *material = mesh.material(materialno);
-		destProperties.setFromMaterial(*material);
+		destProperties._material = *mesh.material(materialno);
 		destProperties._matrix = currentMatrix;
-
-		destProperties._glTexEnvMode = mesh.gltexenvMode();
+		destProperties._glTexEnvMode = mesh.gltexEnvMode();
 		destProperties._sourceTransparentMesh = _numTransparentMeshes * 3;
 		destProperties._hasColor = mesh.hasColor();
-		destProperties._zLength = length;
+		destProperties._zOrder = zOrder;
 		destProperties._scissorEnabled = _scissorEnabled;
 		destProperties._scissorX = _scissorX;
 		destProperties._scissorY = _scissorY;
@@ -165,7 +149,7 @@ void TeRenderer::addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsign
 		destProperties._scissorHeight = _scissorHeight;
 		destProperties._shouldDraw = false;
 	} else {
-		for (uint i = 0; i < meshno; i++) {
+		for (uint i = 0; i < tricount; i++) {
 			const TeMatrix4x4 &currentMatrix = _matriciesStacks[MM_GL_MODELVIEW].currentMatrix();
 
 			const int meshPropNo = (_numTransparentMeshes + i) * 3;
@@ -177,28 +161,27 @@ void TeRenderer::addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsign
 			_transparentMeshNormals[meshPropNo + 1] = currentMatrix.mult3x3(_transparentMeshNormals[meshPropNo + 1]);
 			_transparentMeshNormals[meshPropNo + 2] = currentMatrix.mult3x3(_transparentMeshNormals[meshPropNo + 2]);
 
-			TeVector3f32 local_208 = (_transparentMeshVertexes[meshPropNo] + _transparentMeshVertexes[meshPropNo + 1] + _transparentMeshVertexes[meshPropNo + 2]) / 3.0;
-			local_208.z() -= orthNearVal;
+			TeVector3f32 midpoint = (_transparentMeshVertexes[meshPropNo] + _transparentMeshVertexes[meshPropNo + 1] + _transparentMeshVertexes[meshPropNo + 2]) / 3.0;
+			midpoint.z() -= orthNearVal;
 
-			float length;
+			float zOrder;
 			if (_currentCamera->_projectionMatrixType < 4) {
-				length = -local_208.squaredLength();
+				zOrder = -midpoint.squaredLength();
 			} else if (_currentCamera->_projectionMatrixType == 4) {
-				length = local_208.z() * local_208.z();
+				zOrder = midpoint.z() * midpoint.z();
 			} else {
-				length = local_208.squaredLength();
+				zOrder = midpoint.squaredLength();
 			}
 
-			TransparentMeshProperties &destProperties = _transparentMeshProperties[_pendingTransparentMeshProperties + i];
-			destProperties._triangleCount = 3;
+			TransparentMeshProperties &destProperties = _transparentMeshProps[_pendingTransparentMeshProperties + i];
+			destProperties._vertexCount = 3;
 			destProperties._camera = _currentCamera;
 
-			const TeMaterial *material = mesh.material(materialno);
-			destProperties.setFromMaterial(*material);
-			destProperties._glTexEnvMode = mesh.gltexenvMode();
+			destProperties._material = *mesh.material(materialno);
+			destProperties._glTexEnvMode = mesh.gltexEnvMode();
 			destProperties._sourceTransparentMesh = meshPropNo;
 			destProperties._hasColor = mesh.hasColor();
-			destProperties._zLength = length;
+			destProperties._zOrder = zOrder;
 			destProperties._scissorEnabled = _scissorEnabled;
 			destProperties._scissorX = _scissorX;
 			destProperties._scissorY = _scissorY;
@@ -207,8 +190,8 @@ void TeRenderer::addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsign
 			destProperties._shouldDraw = true;
 		}
 	}
-	_numTransparentMeshes += meshno;
-	_pendingTransparentMeshProperties = _transparentMeshProperties.size();
+	_numTransparentMeshes += tricount;
+	_pendingTransparentMeshProperties = _transparentMeshProps.size();
 }
 
 void TeRenderer::clearBuffer(TeRenderer::Buffer buf) {
@@ -325,8 +308,22 @@ void TeRenderer::multiplyMatrix(const TeMatrix4x4 &matrix) {
 }
 
 void TeRenderer::optimiseTransparentMeshProperties() {
-	if (!_transparentMeshProperties.empty()) {
-		// TODO: Implement TeRenderer::optimiseTransparentMeshProperties.
+	if (_transparentMeshProps.size() > 1) {
+		for (unsigned int i = 0; i < _transparentMeshProps.size() - 1; i++) {
+			if (_transparentMeshProps[i]._camera == _transparentMeshProps[i + 1]._camera
+				&& _transparentMeshProps[i]._material == _transparentMeshProps[i + 1]._material
+				&& _transparentMeshProps[i]._glTexEnvMode == _transparentMeshProps[i + 1]._glTexEnvMode
+				&& _transparentMeshProps[i]._matrix == _transparentMeshProps[i + 1]._matrix
+				&& _transparentMeshProps[i]._hasColor == _transparentMeshProps[i + 1]._hasColor
+				&& _transparentMeshProps[i]._scissorEnabled == _transparentMeshProps[i + 1]._scissorEnabled
+				&& _transparentMeshProps[i]._scissorX == _transparentMeshProps[i + 1]._scissorX
+				&& _transparentMeshProps[i]._scissorY == _transparentMeshProps[i + 1]._scissorY
+				&& _transparentMeshProps[i]._scissorWidth == _transparentMeshProps[i + 1]._scissorWidth
+				&& _transparentMeshProps[i]._scissorHeight == _transparentMeshProps[i + 1]._scissorHeight) {
+				_transparentMeshProps[i]._vertexCount += _transparentMeshProps[i + 1]._vertexCount;
+				_transparentMeshProps[i + 1]._shouldDraw = false;
+			}
+		}
 	}
 }
 
@@ -345,11 +342,11 @@ Common::String TeRenderer::renderer() {
 
 static int compareTransparentMeshProperties(const TeRenderer::TransparentMeshProperties &p1,
 											const TeRenderer::TransparentMeshProperties &p2) {
-	if (p1._zLength < p2._zLength)
-		return -1;
-	if (p1._zLength == p2._zLength)
+	if (p1._zOrder > p2._zOrder)
+		return 1;
+	if (p1._zOrder == p2._zOrder)
 		return 0;
-	return 1;
+	return -1;
 }
 
 void TeRenderer::dumpTransparentMeshes() const {
@@ -361,7 +358,7 @@ void TeRenderer::dumpTransparentMeshes() const {
 			  _transparentMeshNormals[i].dump().c_str(),
 			  _transparentMeshCoords[i].dump().c_str(),
 			  _transparentMeshColors[i].dump().c_str(),
-			  _transparentMeshTriangleNums[i]
+			  _transparentMeshVertexNums[i]
 			  );
 	}
 }
@@ -371,15 +368,15 @@ void TeRenderer::renderTransparentMeshes() {
 		return;
 
 	glDepthMask(GL_FALSE);
-	Common::sort(_transparentMeshProperties.begin(), _transparentMeshProperties.end(),
+	Common::sort(_transparentMeshProps.begin(), _transparentMeshProps.end(),
 		 compareTransparentMeshProperties);
 
-	int triangles = 0;
-	for (unsigned int i = 0; i < _transparentMeshProperties.size(); i++) {
-		const uint tcount = _transparentMeshProperties[i]._triangleCount;
-		for (unsigned int j = 0; j < tcount; j++)
-			_transparentMeshTriangleNums[triangles + j] = (short)(_transparentMeshProperties[i]._sourceTransparentMesh + j);
-		triangles += tcount;
+	int vertsDrawn = 0;
+	for (unsigned int i = 0; i < _transparentMeshProps.size(); i++) {
+		const uint vcount = _transparentMeshProps[i]._vertexCount;
+		for (unsigned int j = 0; j < vcount; j++)
+			_transparentMeshVertexNums[vertsDrawn + j] = (short)(_transparentMeshProps[i]._sourceTransparentMesh + j);
+		vertsDrawn += vcount;
 	}
 
 	//dumpTransparentMeshes();
@@ -396,24 +393,16 @@ void TeRenderer::renderTransparentMeshes() {
 	glColorPointer(4, GL_UNSIGNED_BYTE, 4, _transparentMeshColors.data());
 
 	TeMaterial lastMaterial;
+	TeMatrix4x4 lastMatrix;
 
-	triangles = 0;
-	for (unsigned int i = 0; i < _transparentMeshProperties.size(); i++) {
-		const TransparentMeshProperties &meshProperties = _transparentMeshProperties[i];
+	vertsDrawn = 0;
+	for (unsigned int i = 0; i < _transparentMeshProps.size(); i++) {
+		const TransparentMeshProperties &meshProperties = _transparentMeshProps[i];
 		if (!meshProperties._shouldDraw)
 			continue;
 
-		const TeIntrusivePtr<Te3DTexture> &texture = meshProperties._texture;
-
-		TeMaterial material(texture, meshProperties._materialMode);
-		material._ambientColor = meshProperties._ambientColor;
-		material._diffuseColor = meshProperties._diffuseColor;
-		material._specularColor = meshProperties._specularColor;
-		material._emissionColor = meshProperties._emissionColor;
-		material._shininess = meshProperties._shininess;
-		material._enableLights = meshProperties._enableLights;
-		material._enableSomethingDefault0 = meshProperties._enableSomethingDefault0;
-
+		const TeMaterial &material = meshProperties._material;
+		
 		meshProperties._camera->applyProjection();
 		glMatrixMode(GL_MODELVIEW);
 		_matrixMode = MM_GL_MODELVIEW;
@@ -422,7 +411,7 @@ void TeRenderer::renderTransparentMeshes() {
 		_matriciesStacks[_matrixMode].loadMatrix(meshProperties._matrix);
 		glPushMatrix();
 		loadCurrentMatrixToGL();
-		if (texture) {
+		if (material._texture) {
 			glEnable(GL_TEXTURE_2D);
 			_textureEnabled = true;
 		}
@@ -444,10 +433,10 @@ void TeRenderer::renderTransparentMeshes() {
 					  meshProperties._scissorHeight);
 		}
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, meshProperties._glTexEnvMode);
-		glDrawElements(GL_TRIANGLES, meshProperties._triangleCount, GL_UNSIGNED_SHORT,
-				   _transparentMeshTriangleNums.data() + triangles);
+		glDrawElements(GL_TRIANGLES, meshProperties._vertexCount, GL_UNSIGNED_SHORT,
+				   _transparentMeshVertexNums.data() + vertsDrawn);
 
-		triangles += meshProperties._triangleCount;
+		vertsDrawn += meshProperties._vertexCount;
 
 		if (material._enableSomethingDefault0) {
 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -457,7 +446,7 @@ void TeRenderer::renderTransparentMeshes() {
 		if (meshProperties._scissorEnabled) {
 			glDisable(GL_SCISSOR_TEST);
 		}
-		if (texture) {
+		if (material._texture) {
 			glDisable(GL_TEXTURE_2D);
 			_textureEnabled = false;
 		}
@@ -473,7 +462,7 @@ void TeRenderer::renderTransparentMeshes() {
 	_numTransparentMeshes = 0;
 	_pendingTransparentMeshProperties = 0;
 	glDepthMask(GL_TRUE);
-	_transparentMeshProperties.clear();
+	_transparentMeshProps.clear();
 }
 
 void TeRenderer::reset() {

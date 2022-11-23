@@ -171,7 +171,8 @@ int TeModelAnimation::lastFrame() const {
 	if (!_useNMOArrays) {
 		if (_fbxArrays.empty())
 			result = 0;
-		result = _fbxArrays[0].size();
+		else
+			result = _fbxArrays[0].size();
 	} else {
 		result = _numNMOFrames;
 	}

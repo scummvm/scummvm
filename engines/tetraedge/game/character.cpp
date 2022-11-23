@@ -192,7 +192,7 @@ bool Character::blendAnimation(const Common::String &animname, float amount, boo
 	_lastFrame = -1;
 	_curModelAnim->play();
 	_curAnimName = animname;
-	warning("TODO: Set field 0x2d1 in Character::blendAnimation");
+	_someRepeatFlag = !(repeat | !param_4);
 	return true;
 }
 
@@ -743,8 +743,8 @@ void Character::update(double msFromStart) {
 		newPos = _freeMoveZone->correctCharacterPosition(newPos, &correctflag, true);
 	}
 
-	debug("Character::update %4d %.04f %s -> %s %.4f", (int)msFromStart, offset, _model->position().dump().c_str(),
-			newPos.dump().c_str(), (newPos - _model->position()).length());
+	//debug("Character::update %4d %.04f %s -> %s %.4f", (int)msFromStart, offset, _model->position().dump().c_str(),
+	//		newPos.dump().c_str(), (newPos - _model->position()).length());
 
 	_walkCurveLast = offset;
 	_model->setPosition(newPos);

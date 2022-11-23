@@ -60,15 +60,10 @@ public:
 
 	TeLuaGUI &gui() { return _gui; }
 
-	Common::String prevSceneName() { return _prevSceneName; };
-
 private:
 	Common::Array<DialogData> _dialogs;
 
 	TeTimer _minimumTimeTimer;
-
-	Common::String _prevSceneName;
-	Common::String _animDownFinishedResultString;
 
 	TeLuaGUI _gui;
 	TeMusic _music;

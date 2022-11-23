@@ -39,7 +39,7 @@ Te3DTexture::~Te3DTexture() {
 	destroy();
 }
 
-void Te3DTexture::bind() {
+void Te3DTexture::bind() const {
 	TeRenderer *renderer = g_engine->getRenderer();
 	glBindTexture(GL_TEXTURE_2D, _glTexture);
 	renderer->setMatrixMode(TeRenderer::MM_GL_TEXTURE);
@@ -66,11 +66,11 @@ void Te3DTexture::copyCurrentRender(uint xoffset, uint yoffset, uint x, uint y) 
 }
 
 void Te3DTexture::create() {
-	_flipY = true;
+	_flipY = false;
 	_leftBorder = _btmBorder = _texWidth = _texHeight = 0;
 	_rightBorder = _topBorder = _width = _height = 0;
 	_format = TeImage::INVALID;
-	_loaded = 0;
+	_loaded = false;
 	if (!_createdTexture)
 		glGenTextures(1, &_glTexture);
 	if (_glTexture == NO_TEXTURE) {

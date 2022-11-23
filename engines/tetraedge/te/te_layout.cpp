@@ -36,7 +36,7 @@ TeLayout::TeLayout() : Te3DObject2(), _updatingZ(false), _updatingZSize(false),
 	_safeAreaRatio(1.3333334f), _ratioMode(RATIO_MODE_NONE),
 	_positionType(CoordinatesType::RELATIVE_TO_PARENT)
 {
-	_userPosition = _position = TeVector3f32(0.5f, 0.5f, 0.0f);
+	_userPosition = _position = TeVector3f32(0.5f, 0.5f, 0.5f);
 	_size = TeVector3f32(1.0f, 1.0f, 1.0f);
 	_onChildSizeChangedCallback.reset(
 		new TeCallback0Param<TeLayout>(this, &TeLayout::onChildSizeChanged));

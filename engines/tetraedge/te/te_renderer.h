@@ -48,27 +48,17 @@ public:
 
 	class TransparentMeshProperties {
 	public:
-		void setFromMaterial(const TeMaterial &material);
 
-		TeIntrusivePtr<Te3DTexture> _texture;
 		TeCamera *_camera;
-		int _triangleCount;
+		int _vertexCount;
 		TeMatrix4x4 _matrix;
-		bool _enableLights;
-		bool _enableSomethingDefault0;
 
-		enum TeMaterial::Mode _materialMode;
-
-		TeColor _ambientColor;
-		TeColor _diffuseColor;
-		TeColor _specularColor;
-		TeColor _emissionColor;
-		float _shininess;
+		TeMaterial _material;
 
 		uint _glTexEnvMode;
 		uint _sourceTransparentMesh;
 		bool _hasColor;
-		float _zLength;
+		float _zOrder;
 		bool _scissorEnabled;
 		int _scissorX;
 		int _scissorY;
@@ -150,10 +140,10 @@ private:
 	Common::Array<TeVector3f32> _transparentMeshNormals;
 	Common::Array<TeVector2f32> _transparentMeshCoords;
 	Common::Array<TeColor> _transparentMeshColors;
-	Common::Array<unsigned short> _transparentMeshTriangleNums;
+	Common::Array<unsigned short> _transparentMeshVertexNums;
 
 	int _pendingTransparentMeshProperties;
-	Common::Array<TransparentMeshProperties> _transparentMeshProperties;
+	Common::Array<TransparentMeshProperties> _transparentMeshProps;
 
 	TeMatriciesStack _matriciesStacks[3];  // one per matrix mode.
 

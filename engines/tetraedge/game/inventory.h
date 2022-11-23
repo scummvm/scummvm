@@ -51,7 +51,7 @@ public:
 	//void saveToBackup(TiXmlNode *node);
 
 	void addObject(const Common::String &objname);
-	bool addObject(InventoryObject &obj);
+	bool addObject(InventoryObject *obj);
 	bool isDocument(const Common::String &objname);
 
 	int objectCount(const Common::String &objname);

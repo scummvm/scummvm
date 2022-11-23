@@ -252,7 +252,7 @@ void Application::create() {
 	_autoSaveIcon2.setName("autosaveIcon");
 	_autoSaveIcon2.setAnchor(TeVector3f32(0.5f, 0.5f, 0.0f));
 	_autoSaveIcon2.setPosition(TeVector3f32(0.2f, 0.7f, 0.0f));
-	_autoSaveIcon2.setSize(TeVector3f32(68.0f, 86.0f, 0.0f));
+	_autoSaveIcon2.setSize(TeVector3f32(64.0f, 86.0f, 0.0f));
 	_autoSaveIcon2.load("menus/inGame/NoCel.png");
 	_autoSaveIcon2.setVisible(false);
 	_frontOrientationLayout.addChild(&_autoSaveIcon2);

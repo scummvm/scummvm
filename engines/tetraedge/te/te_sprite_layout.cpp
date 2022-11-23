@@ -26,7 +26,7 @@
 
 namespace Tetraedge {
 
-TeSpriteLayout::TeSpriteLayout() : _tiledSurfacePtr(new TeTiledSurface()), _sizeSet(false), _allowFloatTranslate(false) {
+TeSpriteLayout::TeSpriteLayout() : _tiledSurfacePtr(new TeTiledSurface()), _sizeSet(false) {
 	_tiledSurfacePtr->setColor(TeColor(255, 255, 255, 255));
 	updateMesh();
 }
@@ -50,7 +50,7 @@ void TeSpriteLayout::draw() {
 		  _tiledSurfacePtr->size().x(), _tiledSurfacePtr->size().y(), color().dump().c_str());*/
 	TeMatrix4x4 matrix = worldTransformationMatrix();
 
-	if (!_allowFloatTranslate) {
+	if (sizeType() == ABSOLUTE) {
 		matrix(0, 3) = (int)matrix(0, 3);
 		matrix(1, 3) = (int)matrix(1, 3);
 	}
