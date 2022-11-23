@@ -21,7 +21,7 @@
 
 #include "efh/constants.h"
 
-#include "engine.h"
+#include "engines/engine.h"
 
 namespace Efh {
 

@@ -22,8 +22,9 @@
 #ifndef EFH_EFH_H
 #define EFH_EFH_H
 
-#include "efh/detection.h"
 #include "efh/constants.h"
+
+#include "engines/advancedDetector.h"
 
 #include "common/file.h"
 #include "common/rect.h"
@@ -62,8 +63,6 @@ enum AccessDebugChannels {
 	kDebugUtils = 1 << 1,
 	kDebugGraphics = 1 << 2
 };
-
-struct EfhGameDescription;
 
 class EfhGraphicsStruct {
 public:
@@ -240,19 +239,18 @@ struct TileFactStruct {
 
 class EfhEngine : public Engine {
 public:
-	EfhEngine(OSystem *syst, const EfhGameDescription *gd);
+	EfhEngine(OSystem *syst, const ADGameDescription *gd);
 	~EfhEngine() override;
 
 	OSystem *_system;
 	Graphics::Surface *_mainSurface;
 	Common::RandomSource *_rnd;
 
-	const EfhGameDescription *_gameDescription;
+	const ADGameDescription *_gameDescription;
 	uint32 getFeatures() const;
 	const char *getGameId() const;
 
-	void initGame(const EfhGameDescription *gd);
-	GameType getGameType() const;
+	void initGame(const ADGameDescription *gd);
 	Common::Platform getPlatform() const;
 
 	bool hasFeature(EngineFeature f) const override;
@@ -278,7 +276,6 @@ protected:
 private:
 	static EfhEngine *s_Engine;
 
-	GameType _gameType;
 	Common::Platform _platform;
 	int _loadSaveSlot;
 
