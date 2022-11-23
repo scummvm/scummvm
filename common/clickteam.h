@@ -61,12 +61,12 @@ public:
 	ClickteamTag* getTag(ClickteamTagId tagId) const;
 
 	static ClickteamInstaller* open(Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose = DisposeAfterUse::NO);
-	
+
 private:
 	class ClickteamFileDescriptor {
 	private:
 		Common::String _fileName;
-		
+
 		// Offset of the file contents relative to the beginning of block3
 		uint32 _fileDataOffset;
 		// Offset of file descriptor
@@ -85,14 +85,14 @@ private:
 	ClickteamInstaller(Common::HashMap<Common::String, ClickteamFileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> files,
 			   Common::HashMap<uint16, Common::SharedPtr<ClickteamTag>> tags,
 			   uint32 crcXor, uint32 block3Offset, uint32 block3Size, Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose)
-		: _files(files), _tags(tags), _crcXor(crcXor), _block3Offset(block3Offset), _block3Size(block3Size), _stream(stream, dispose) {
+		: _files(files), _tags(tags), _crcXor(crcXor), _block3Offset(block3Offset), /*_block3Size(block3Size), */_stream(stream, dispose) {
 	}
 
 	Common::HashMap<Common::String, ClickteamFileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _files;
 	Common::HashMap<uint16, Common::SharedPtr<ClickteamTag>> _tags;
 	Common::DisposablePtr<Common::SeekableReadStream> _stream;
 	mutable Common::HashMap<Common::String, Common::ScopedPtr<byte, Common::ArrayDeleter<byte>>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _cache;
-	uint32 _crcXor, _block3Offset, _block3Size;
+	uint32 _crcXor, _block3Offset/*, _block3Size*/;
 };
 }
 #endif
