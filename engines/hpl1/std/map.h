@@ -22,7 +22,6 @@
 #ifndef HPL1_STD_MAP_H
 #define HPL1_STD_MAP_H
 
-#include "common/hashmap.h"
 #include "hpl1/algorithms.h"
 #include "pair.h"
 
