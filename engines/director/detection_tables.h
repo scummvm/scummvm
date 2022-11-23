@@ -5585,7 +5585,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("nycalling", "", "NYC_PPC",	   "67c3c173091ee69b1e67a5ac494cc3c7", 108452, Common::JA_JPN, 501),
 	WINGAME1t_l("nycalling", "", "NYC.EXE", "7637d3433f7b8679fe1ff4b4f1c25a24", 1409654, Common::JA_JPN, 501),
 
-	WINDEMO1("orly", "Demo", "_ORLYDEM.EXE", "2e62abdad839e42068afdcd0644d7dcf", 917641, 500),
+	WINDEMO1("orly", "Director Demo", "_ORLYDEM.EXE", "2e62abdad839e42068afdcd0644d7dcf", 917641, 500),
 
 	MACDEMO1_l("osaka2", "Demo", "OSAKA2",	   "2e75b0d7a218c71d5dd00a27eb755f00", 719012, Common::JA_JPN, 501),
 	WINDEMO1_l("osaka2", "Demo", "OSAKA2.EXE", "38b75ecdedf662326fe4931a68ae60cd", 1410110, Common::JA_JPN, 501),
