@@ -174,7 +174,7 @@ void TileFactStruct::init() {
 	_field0 = _field1 = 0;
 }
 
-EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst), _gameDescription(gd) {
+EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst), _gameDescription(gd) {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "gendata");
@@ -188,7 +188,6 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_shouldQuit = false;
 	_eventMan = nullptr;
 	_lastTime = 0;
-	_gameType = kGameTypeNone;
 	_platform = Common::kPlatformUnknown;
 	_mainSurface = nullptr;
 
@@ -366,10 +365,6 @@ bool EfhEngine::hasFeature(EngineFeature f) const {
 
 const char *EfhEngine::getCopyrightString() const {
 	return "Escape From Hell (C) Electronic Arts, 1990";
-}
-
-GameType EfhEngine::getGameType() const {
-	return _gameType;
 }
 
 Common::Platform EfhEngine::getPlatform() const {

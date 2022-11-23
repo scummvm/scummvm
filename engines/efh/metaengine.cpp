@@ -27,16 +27,15 @@
 #include "graphics/surface.h"
 
 #include "efh/efh.h"
-#include "efh/detection.h"
 
 namespace Efh {
 
 uint32 EfhEngine::getFeatures() const {
-	return _gameDescription->desc.flags;
+	return _gameDescription->flags;
 }
 
 const char *EfhEngine::getGameId() const {
-	return _gameDescription->desc.gameId;
+	return _gameDescription->gameId;
 }
 
 } // End of namespace Efh
@@ -59,8 +58,8 @@ public:
 };
 
 Common::Error EfhMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	*engine = new EfhEngine(syst, (const EfhGameDescription *)gd);
-	((EfhEngine *)*engine)->initGame((const EfhGameDescription *)gd);
+	*engine = new EfhEngine(syst, gd);
+	((EfhEngine *)*engine)->initGame(gd);
 	return Common::kNoError;
 }
 
@@ -188,9 +187,8 @@ REGISTER_PLUGIN_STATIC(EFH, PLUGIN_TYPE_ENGINE, Efh::EfhMetaEngine);
 
 namespace Efh {
 
-void EfhEngine::initGame(const EfhGameDescription *gd) {
-	_gameType = gd->gameType;
-	_platform = gd->desc.platform;
+void EfhEngine::initGame(const ADGameDescription *gd) {
+	_platform = gd->platform;
 }
 
 } // End of namespace Efh

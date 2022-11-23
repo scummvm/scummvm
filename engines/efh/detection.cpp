@@ -21,9 +21,7 @@
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
-#include "common/textconsole.h"
 
-#include "efh/detection.h"
 #include "efh/efh.h"
 
 namespace Efh {
@@ -34,27 +32,25 @@ static const PlainGameDescriptor efhGames[] = {
 	{nullptr, nullptr}
 };
 
-static const EfhGameDescription gameDescriptions[] = {
+static const ADGameDescription gameDescriptions[] = {
 
 	// Escape From Hell English - Unpacked version
 	{
-		{"efh", nullptr, AD_ENTRY1s("escape.exe", "2702f8f713e113a853a925d29aecc709", 147312),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
-			GUIO0()
-		},
-		kGameTypeEfh
+		"efh", nullptr, AD_ENTRY1s("escape.exe", "2702f8f713e113a853a925d29aecc709", 147312),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO0()
 	},
 	// Escape From Hell English
 	{
-		{"efh", nullptr, AD_ENTRY1s("escape.exe", "1ca4ae3f2ea66c30d1ef3e257a86cd05", 141487),
-		 Common::EN_ANY,
-		 Common::kPlatformDOS,
-		 ADGF_UNSTABLE,
-		 GUIO0()},
-		kGameTypeEfh},
-	{AD_TABLE_END_MARKER, kGameTypeNone}
+		"efh", nullptr, AD_ENTRY1s("escape.exe", "1ca4ae3f2ea66c30d1ef3e257a86cd05", 141487),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	AD_TABLE_END_MARKER
 };
 
 static const DebugChannelDef debugFlagList[] = {
@@ -65,7 +61,7 @@ static const DebugChannelDef debugFlagList[] = {
 
 class EfhMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	EfhMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(EfhGameDescription), efhGames) {
+	EfhMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(ADGameDescription), efhGames) {
 	}
 
 	const char *getEngineName() const override {
