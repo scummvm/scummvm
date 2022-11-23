@@ -52,12 +52,7 @@ void Events::runGame() {
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot == -1 ||
 			g_engine->loadGameState(saveSlot).getCode() != Common::kNoError) {
-		// ***DEBUG*** start directly in-game
-		for (uint i = 0; i < 6; ++i)
-			g_globals->_party.push_back(g_globals->_roster[i]);
-		g_globals->_maps.loadTown(Maps::SORPIGAL);
-		msgGame(GameMessage("UPDATE"));
-		//addView("Title");
+		addView("Title");
 	}
 
 	Common::Event e;
