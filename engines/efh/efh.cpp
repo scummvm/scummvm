@@ -344,6 +344,14 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	memset(_mapMonsters, 0, ARRAYSIZE(_mapMonsters));
 	memset(_mapGameMap, 0, ARRAYSIZE(_mapGameMap));
 	memset(_imageSetSubFilesArray, 0, ARRAYSIZE(_imageSetSubFilesArray));
+
+	// If requested, load a savegame instead of showing the intro
+	_loadSaveSlot = -1;
+	if (ConfMan.hasKey("save_slot")) {
+		int saveSlot = ConfMan.getInt("save_slot");
+		if (saveSlot >= 0 && saveSlot <= 999)
+			_loadSaveSlot = saveSlot;
+	}
 }
 
 EfhEngine::~EfhEngine() {
@@ -1073,12 +1081,14 @@ void EfhEngine::initEngine() {
 	
 	saveAnimImageSetId();
 
-	// Load Title Screen
+	// Load Title Screen, skip if loading a savegame from launcher
 	loadImageSet(11, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
-	displayFctFullScreen();
-	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 0);
-	displayFctFullScreen();
-	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 0);
+	if (_loadSaveSlot == -1) {
+		displayFctFullScreen();
+		displayRawDataAtPos(_circleImageSubFileArray[0], 0, 0);
+		displayFctFullScreen();
+		displayRawDataAtPos(_circleImageSubFileArray[0], 0, 0);
+	}
 
 	// Load map tiles bitmaps
 	loadImageSetToTileBank(1, 1);
@@ -1110,7 +1120,7 @@ void EfhEngine::initEngine() {
 	setDefaultNoteDuration();
 	Common::KeyCode lastInput = playSong(_titleSong);
 
-	if (lastInput != Common::KEYCODE_ESCAPE) {
+	if (lastInput != Common::KEYCODE_ESCAPE && _loadSaveSlot == -1) {
 		playIntro();
 	}
 
@@ -1122,7 +1132,12 @@ void EfhEngine::initEngine() {
 	// Note: The original at this point saves int 24h and sets a new int24 to handle fatal failure
 
 	checkProtection();
-	loadEfhGame();
+	if (_loadSaveSlot == -1) {
+		loadEfhGame();
+	} else {
+		loadGameState(_loadSaveSlot);
+		_loadSaveSlot = -1;
+	}
 	_engineInitPending = false;
 }
 
