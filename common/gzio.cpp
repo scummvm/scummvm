@@ -269,16 +269,16 @@ huft_build (unsigned *b,	/* code lengths in bits (all assumed <= BMAX) */
   unsigned f;			/* i repeats in table every f entries */
   int g;			/* maximum code length */
   int h;			/* table level */
-  register unsigned i;		/* counter, current code */
-  register unsigned j;		/* counter */
-  register int k;		/* number of bits in current code */
+  unsigned i;			/* counter, current code */
+  unsigned j;			/* counter */
+  int k;			/* number of bits in current code */
   int l;			/* bits per table (returned in m) */
-  register unsigned *p;		/* pointer into c[], b[], or v[] */
-  register struct huft *q;	/* points to current table */
+  unsigned *p;			/* pointer into c[], b[], or v[] */
+  struct huft *q;		/* points to current table */
   struct huft r = {0, 0, {0}};		/* table entry for structure assignment */
   struct huft *u[BMAX];		/* table stack */
   unsigned v[N_MAX];		/* values in order of bit length */
-  register int w;		/* bits before this table == (l * h) */
+  int w;			/* bits before this table == (l * h) */
   unsigned x[BMAX + 1];		/* bit offsets, then code stack */
   unsigned *xp;			/* pointer into x */
   int y;			/* number of dummy codes added */
@@ -460,7 +460,7 @@ huft_build (unsigned *b,	/* code lengths in bits (all assumed <= BMAX) */
 static int
 huft_free (struct huft *t)
 {
-  register struct huft *p, *q;
+  struct huft *p, *q;
 
 
   /* Go through linked list, freeing from the malloced (t[-1]) address. */
@@ -483,13 +483,13 @@ huft_free (struct huft *t)
 int
 GzioReadStream::inflate_codes_in_window()
 {
-  register unsigned e;		/* table entry flag/number of extra bits */
+  unsigned e;			/* table entry flag/number of extra bits */
   unsigned n, d;		/* length and index for copy */
   unsigned w;			/* current window position */
   struct huft *t;		/* pointer to table entry */
   unsigned ml, md;		/* masks for bl and bd bits */
-  register ulg b;		/* bit buffer */
-  register unsigned k;		/* number of bits in bit buffer */
+  ulg b;			/* bit buffer */
+  unsigned k;			/* number of bits in bit buffer */
 
   /* make local copies of globals */
   d = _inflateD;
@@ -629,8 +629,8 @@ GzioReadStream::inflate_codes_in_window()
 void
 GzioReadStream::init_stored_block ()
 {
-  register ulg b;		/* bit buffer */
-  register unsigned k;		/* number of bits in bit buffer */
+  ulg b;			/* bit buffer */
+  unsigned k;			/* number of bits in bit buffer */
 
   /* make local copies of globals */
   b = _bb;			/* initialize bit buffer */
@@ -714,8 +714,8 @@ GzioReadStream::init_dynamic_block ()
   unsigned nl;			/* number of literal/length codes */
   unsigned nd;			/* number of distance codes */
   unsigned ll[286 + 30];	/* literal/length and distance code lengths */
-  register ulg b;		/* bit buffer */
-  register unsigned k;		/* number of bits in bit buffer */
+  ulg b;			/* bit buffer */
+  unsigned k;			/* number of bits in bit buffer */
   unsigned *bitorder = (_mode == GzioReadStream::Mode::CLICKTEAM) ? bitorder_clickteam : bitorder_zlib;
 
   /* make local bit buffer */
@@ -861,8 +861,8 @@ GzioReadStream::init_dynamic_block ()
 void
 GzioReadStream::get_new_block()
 {
-  register ulg b;		/* bit buffer */
-  register unsigned k;		/* number of bits in bit buffer */
+  ulg b;			/* bit buffer */
+  unsigned k;			/* number of bits in bit buffer */
 
   /* make local bit buffer */
   b = _bb;
@@ -1071,8 +1071,8 @@ GzioReadStream::readAtOffset (int64 offset, byte *buf, uint32 len)
 
   while (len > 0 && !_err)
     {
-      register uint32 size;
-      register char *srcaddr;
+      uint32 size;
+      char *srcaddr;
 
       while (offset >= _savedOffset)
 	{
