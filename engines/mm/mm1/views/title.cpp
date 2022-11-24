@@ -132,7 +132,7 @@ void Title::timeout() {
 bool Title::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode == Common::KEYCODE_ESCAPE) {
 		// Show the main menu
-		g_events->replaceView("MainMenu");
+		g_events->replaceView("AreYouReady");
 
 	} else if (msg.keycode == Common::KEYCODE_SPACE) {
 		// Start showing game screens slideshow
