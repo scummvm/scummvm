@@ -65,7 +65,9 @@ bool XyzzyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSupportsDeleteSave) ||
 	    (f == kSavesSupportMetaInfo) ||
 	    (f == kSavesSupportThumbnail) ||
-	    (f == kSupportsLoadingDuringStartup);
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime) ||
+		(f == kSupportsLoadingDuringStartup);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(XYZZY)
