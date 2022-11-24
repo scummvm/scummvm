@@ -817,7 +817,7 @@ void Script::o_videofromref() {			// 0x09
 		break;
 
 	case 0x2420:	// load from the main menu
-		if (_version == kGroovieT7G && !ConfMan.getBool("originalsaveload")) {
+		if (_version == kGroovieT7G && !ConfMan.getBool("originalsaveload") && _currentInstruction == 381) {
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 			int slot = dialog->runModalWithCurrentTarget();
 			delete dialog;
@@ -835,7 +835,7 @@ void Script::o_videofromref() {			// 0x09
 		break;
 
 	case 0x2422: // save from the in-game menu
-		if (_version == kGroovieT7G && !ConfMan.getBool("originalsaveload")) {
+		if (_version == kGroovieT7G && !ConfMan.getBool("originalsaveload") && _currentInstruction == 7618) {
 			GUI::MessageDialog saveOrLoad(_("Would you like to save or restore a game?"), _("Save"), _("Restore"));
 
 			int choice = saveOrLoad.runModal();
