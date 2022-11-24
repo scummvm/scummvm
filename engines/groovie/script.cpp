@@ -698,7 +698,7 @@ void Script::printString(Graphics::Surface *surface, const char *str) {
 		message[i] = str[i];
 	}
 	Common::rtrim(message);
-	
+
 	// Draw the string
 	if (_version == kGroovieT7G) {
 		_vm->_font->drawString(surface, message, 0, 16, 640, 0xE2, Graphics::kTextAlignCenter);
@@ -959,8 +959,8 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 			Common::String subtitleName = _vm->_resMan->getGjdName(info);
 			subtitleName = subtitleName.substr(0, subtitleName.size() - 4);
 			subtitleName.toUppercase();
-			// add the filename without the extension, then add the srt extension
-			subtitleName += "-" + info.filename.substr(0, info.filename.size() - 3) + "srt";
+			// add the filename without the extension, then add the .txt extension
+			subtitleName += "-" + info.filename.substr(0, info.filename.size() - 3) + "txt";
 
 			_vm->_videoPlayer->loadSubtitles(subtitleName.c_str());
 		} else {
@@ -2406,7 +2406,7 @@ void Script::o2_copyfgtobg() {
 	uint8 arg = readScript8bits();
 	debugC(1, kDebugScript, "Groovie::Script: o2_copyfgtobg (0x%02X)", arg);
 	debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: o2_copyfgtobg (0x%02X)", _currentInstruction-2, arg);
-	
+
 	_vm->_videoPlayer->copyfgtobg(arg);
 }
 
