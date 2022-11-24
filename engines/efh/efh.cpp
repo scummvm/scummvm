@@ -205,7 +205,7 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	_fontDescr._charHeight = 0;
 	_fontDescr._extraHorizontalSpace = _fontDescr._extraVerticalSpace = 0;
 
-	_word31E9E = false;
+	_introDoneFl = false;
 	_oldAnimImageSetId = -1;
 	_animImageSetId = 0xFE;
 	_paletteTransformationConstant = 10;
@@ -356,22 +356,10 @@ EfhEngine::~EfhEngine() {
 	delete _vgaGraphicsStruct2;
 }
 
-bool EfhEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsReturnToLauncher) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
-}
-
-const char *EfhEngine::getCopyrightString() const {
-	return "Escape From Hell (C) Electronic Arts, 1990";
-}
-
-Common::Platform EfhEngine::getPlatform() const {
-	return _platform;
-}
-
 void EfhEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
-	//	_sound->syncVolume();
+	warning("TODO: _sound->syncVolume();");
 }
 
 Common::Error EfhEngine::run() {
@@ -583,7 +571,7 @@ Common::Error EfhEngine::run() {
 
 void EfhEngine::initialize() {
 	_rnd = new Common::RandomSource("Hell");
-	_rnd->setSeed(666);                              // Kick random number generator
+	_rnd->setSeed(g_system->getMillis());   // Kick random number generator
 	_shouldQuit = false;
 }
 
@@ -691,7 +679,7 @@ void EfhEngine::initEngine() {
 	_fontDescr._charHeight = 8;
 	_fontDescr._extraVerticalSpace = 3;
 	_fontDescr._extraHorizontalSpace = 1;
-	_word31E9E = false;
+	_introDoneFl = false;
 
 	// Pre-load stuff required for savegames
 	preLoadMaps();
@@ -743,7 +731,7 @@ void EfhEngine::initEngine() {
 
 	loadImageSet(6, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
 	readImpFile(99, false);
-	_word31E9E = true;
+	_introDoneFl = true;
 	restoreAnimImageSetId();
 
 	// Note: The original at this point saves int 24h and sets a new int24 to handle fatal failure

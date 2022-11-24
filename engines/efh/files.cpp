@@ -74,7 +74,7 @@ void EfhEngine::readAnimInfo() {
 void EfhEngine::findMapFile(int16 mapId) {
 	debugC(7, kDebugEngine, "findMapFile %d", mapId);
 
-	if (!_word31E9E)
+	if (!_introDoneFl)
 		return;
 
 	Common::String fileName = Common::String::format("map.%d", mapId);

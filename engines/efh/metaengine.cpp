@@ -38,6 +38,21 @@ const char *EfhEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+void EfhEngine::initGame(const ADGameDescription *gd) {
+	_platform = gd->platform;
+}
+
+bool EfhEngine::hasFeature(EngineFeature f) const {
+	return (f == kSupportsReturnToLauncher) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
+}
+
+const char *EfhEngine::getCopyrightString() const {
+	return "Escape From Hell (C) Electronic Arts, 1990";
+}
+
+Common::Platform EfhEngine::getPlatform() const {
+	return _platform;
+}
 } // End of namespace Efh
 
 namespace Efh {
@@ -175,10 +190,6 @@ SaveStateDescriptor EfhMetaEngine::querySaveMetaInfos(const char *target, int sl
 void EfhMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
-}
-
-void EfhEngine::initGame(const ADGameDescription *gd) {
-	_platform = gd->platform;
 }
 
 } // End of namespace Efh
