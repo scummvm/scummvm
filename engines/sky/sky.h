@@ -23,6 +23,7 @@
 #define SKY_SKY_H
 
 
+#include "common/array.h"
 #include "common/error.h"
 #include "common/keyboard.h"
 #include "engines/engine.h"
@@ -111,6 +112,16 @@ public:
 	static const char *shortcutsKeymapId;
 	static uint32 _chineseTraditionalOffsets[8];
 	static char *_chineseTraditionalBlock;
+	static const int kChineseTraditionalWidth = 16;
+	static const int kChineseTraditionalHeight = 15;
+	struct ChineseTraditionalGlyph {
+		byte bitmap[kChineseTraditionalHeight][kChineseTraditionalWidth / 8];
+		byte outline[kChineseTraditionalHeight][kChineseTraditionalWidth / 8];
+
+		void makeOutline();
+	};
+	static Common::Array<ChineseTraditionalGlyph> _chineseTraditionalFont;
+	static Common::Array<int> _chineseTraditionalIndex;
 
 protected:
 	// Engine APIs
