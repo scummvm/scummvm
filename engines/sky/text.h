@@ -66,6 +66,7 @@ private:
 	char getTextChar(uint8 **data, uint32 *bitPos);
 	bool getTextBit(uint8 **data, uint32 *bitPos);
 	void makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&data, uint8 color, uint16 bufPitch);
+	void makeChineseGameCharacter(uint16 textChar, uint8 *charSetPtr, uint8 *&dest, uint8 color, uint16 bufPitch);
 
 	bool patchMessage(uint32 textNum);
 

@@ -335,7 +335,8 @@ DisplayedText Text::displayText(char *textPtr, uint32 bufLen, uint8 *dest, bool 
 	if (numLines > MAX_NO_LINES)
 		error("Maximum no. of lines exceeded");
 
-	uint32 dtLineSize = pixelWidth * _charHeight;
+	int charHeight = isBig5 ? MAX<int>(_charHeight, SkyEngine::kChineseTraditionalHeight) : _charHeight;
+	uint32 dtLineSize = pixelWidth * charHeight;
 	uint32 numBytes = (dtLineSize * numLines) + sizeof(DataFileHeader) + 4;
 
 	if (!dest)
@@ -346,8 +347,8 @@ DisplayedText Text::displayText(char *textPtr, uint32 bufLen, uint8 *dest, bool 
 
 	//make the header
 	((DataFileHeader *)dest)->s_width = pixelWidth;
-	((DataFileHeader *)dest)->s_height = (uint16)(_charHeight * numLines);
-	((DataFileHeader *)dest)->s_sp_size = (uint16)(pixelWidth * _charHeight * numLines);
+	((DataFileHeader *)dest)->s_height = (uint16)(charHeight * numLines);
+	((DataFileHeader *)dest)->s_sp_size = (uint16)(pixelWidth * charHeight * numLines);
 	((DataFileHeader *)dest)->s_offset_x = 0;
 	((DataFileHeader *)dest)->s_offset_y = 0;
 
@@ -367,7 +368,12 @@ DisplayedText Text::displayText(char *textPtr, uint32 bufLen, uint8 *dest, bool 
 
 		textChar = (uint8)*curPos++;
 		while (textChar >= 0x20) {
-			makeGameCharacter(textChar - 0x20, _characterSet, curDest, color, pixelWidth);
+			if (isBig5 && (textChar & 0x80)) {
+				uint8 trail = *curPos++;
+				uint16 fullCh = (textChar << 8) | trail;
+				makeChineseGameCharacter(fullCh, _characterSet, curDest, color, pixelWidth);
+			} else
+				makeGameCharacter(textChar - 0x20, _characterSet, curDest, color, pixelWidth);
 			textChar = *curPos++;
 		}
 
@@ -380,6 +386,29 @@ DisplayedText Text::displayText(char *textPtr, uint32 bufLen, uint8 *dest, bool 
 	ret.textData = dest;
 	ret.textWidth = dtLastWidth;
 	return ret;
+}
+
+void Text::makeChineseGameCharacter(uint16 textChar, uint8 *charSetPtr, uint8 *&dest, uint8 color, uint16 bufPitch) {
+	int glyphIdx = SkyEngine::_chineseTraditionalIndex[textChar & 0x7fff];
+	if (glyphIdx < 0) {
+		makeGameCharacter('?' - 0x20, charSetPtr, dest, color, bufPitch);
+		return;
+	}
+
+	const SkyEngine::ChineseTraditionalGlyph& glyph = SkyEngine::_chineseTraditionalFont[glyphIdx];
+
+	for (int y = 0; y < SkyEngine::kChineseTraditionalHeight; y++) {
+		uint8 *cur = dest + y * bufPitch;
+
+		for (int byte = 0; byte < 2; byte++)
+			for (int bit = 0; bit < 8; bit++, cur++)
+				if ((glyph.bitmap[y][byte] << bit) & 0x80)
+					*cur = color;
+				else if ((glyph.outline[y][byte] << bit) & 0x80)
+					*cur = 240;
+	}
+	//update position
+	dest += SkyEngine::kChineseTraditionalWidth;
 }
 
 void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, uint8 color, uint16 bufPitch) {
