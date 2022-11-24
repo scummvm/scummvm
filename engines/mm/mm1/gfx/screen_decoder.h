@@ -33,7 +33,7 @@ class ScreenDecoder : public Image::ImageDecoder {
 private:
 	Graphics::Surface _surface;
 public:
-	byte _indexes[4] = { 0 };	// Palete indexes used
+	byte _indexes[4] = { 0 };		// EGA palete indexes used
 public:
 	ScreenDecoder() {}
 	~ScreenDecoder() override;

@@ -29,7 +29,6 @@
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/console.h"
 #include "mm/mm1/gfx/gfx.h"
-//#include "mm/xeen/files.h"
 #include "mm/mm1/views/game.h"
 #include "mm/mm1/views_enh/game.h"
 
@@ -106,6 +105,7 @@ bool MM1Engine::setupEnhanced() {
 	for (int i = 0; i < PALETTE_SIZE; ++i)
 		pal[i] = f.readByte() << 2;
 	g_system->getPaletteManager()->setPalette(pal, 0, PALETTE_COUNT);
+	Gfx::GFX::findPalette(pal);
 
 	// Show the mouse cursor
 	g_events->loadCursors();
