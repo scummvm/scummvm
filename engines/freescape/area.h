@@ -72,6 +72,8 @@ public:
 	uint8 _scale;
 	uint8 _skyColor;
 	uint8 _groundColor;
+	uint8 _usualBackgroundColor;
+	uint8 _underFireBackgroundColor;
 	ColorReMap _colorRemaps;
 
 private:
