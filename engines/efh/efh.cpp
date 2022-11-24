@@ -6627,7 +6627,7 @@ void EfhEngine::loadEfhGame() {
 	// The savegame is used to initialize the engine, so this part is reimplemented.
 	// The check for existence is replaced by an error.
 
-	Common::String fileName = "savegame";
+	Common::String fileName("savegame");
 	Common::File f;
 
 	if (!f.open(fileName))
