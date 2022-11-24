@@ -15,7 +15,7 @@ int ExecuteString(asIScriptEngine *engine, const char *code, asIScriptModule *mo
 int ExecuteString(asIScriptEngine *engine, const char *code, void *ref, int refTypeId, asIScriptModule *mod, asIScriptContext *ctx)
 {
 	// Wrap the code in a function so that it can be compiled and executed
-	string funcCode = " ExecuteString() {\n";
+	Common::String funcCode = " ExecuteString() {\n";
 	funcCode += code;
 	funcCode += "\n;}";
 

@@ -197,7 +197,7 @@
 
 // Parameter Macros
 // FIXME: string types
-#define SCRIPT_ARG_string(n) tString _arg##n = (*(std::string *)gen->GetArgObject(n)).c_str()
+#define SCRIPT_ARG_string(n) tString _arg##n = (*(Common::String *)gen->GetArgObject(n))
 #define SCRIPT_ARG_float(n) float _arg##n = gen->GetArgFloat(n)
 #define SCRIPT_ARG_int(n) int _arg##n = gen->GetArgDWord(n)
 #define SCRIPT_ARG_bool(n) bool _arg##n = gen->GetArgByte(n)

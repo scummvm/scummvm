@@ -1,8 +1,6 @@
 #ifndef SCRIPTHELPER_H
 #define SCRIPTHELPER_H
 
-#include <string>
-
 #ifndef ANGELSCRIPT_H
 // Avoid having to inform include path if header is already include before
 #include "hpl1/engine/libraries/angelscript/angelscript.h"
