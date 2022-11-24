@@ -38,32 +38,30 @@ void EfhEngine::readAnimInfo() {
 	debugC(6, kDebugEngine, "readAnimInfo");
 
 	Common::String fileName = "animinfo";
-	uint8 animInfoBuf[9000];
-	memset(animInfoBuf, 0, 9000);
-	uint8 *curPtr = animInfoBuf;
+	Common::File f;
+	if (!f.open(fileName))
+		error("Unable to find file %s", fileName.c_str());
 
-	readFileToBuffer(fileName, animInfoBuf);
 	for (int i = 0; i < 100; ++i) {
 		for (int id = 0; id < 15; ++id) {
-			_animInfo[i]._unkAnimArray[id]._field[0] = *curPtr++;
-			_animInfo[i]._unkAnimArray[id]._field[1] = *curPtr++;
-			_animInfo[i]._unkAnimArray[id]._field[2] = *curPtr++;
-			_animInfo[i]._unkAnimArray[id]._field[3] = *curPtr++;
+			_animInfo[i]._unkAnimArray[id]._field[0] = f.readByte();
+			_animInfo[i]._unkAnimArray[id]._field[1] = f.readByte();
+			_animInfo[i]._unkAnimArray[id]._field[2] = f.readByte();
+			_animInfo[i]._unkAnimArray[id]._field[3] = f.readByte();
 
 			debugC(6, kDebugEngine, "%d %d %d %d", _animInfo[i]._unkAnimArray[id]._field[0], _animInfo[i]._unkAnimArray[id]._field[1], _animInfo[i]._unkAnimArray[id]._field[2], _animInfo[i]._unkAnimArray[id]._field[3]);
 		}
 
 		Common::String debugStr = "";
 		for (int id = 0; id < 10; ++id) {
-			_animInfo[i]._field3C_startY[id] = *curPtr++;
+			_animInfo[i]._field3C_startY[id] = f.readByte();
 			debugStr += Common::String::format("%d ", _animInfo[i]._field3C_startY[id]);
 		}
 		debugC(6, kDebugEngine, "%s", debugStr.c_str());
 
 		debugStr = "";
 		for (int id = 0; id < 10; ++id) {
-			_animInfo[i]._field46_startX[id] = READ_LE_INT16(curPtr);
-			curPtr += 2;
+			_animInfo[i]._field46_startX[id] = f.readUint16LE();
 			debugStr += Common::String::format("%d ", _animInfo[i]._field46_startX[id]);
 		}
 		debugC(6, kDebugEngine, "%s", debugStr.c_str());
@@ -133,26 +131,26 @@ void EfhEngine::readItems() {
 	debugC(7, kDebugEngine, "readItems");
 
 	Common::String fileName = "items";
-	uint8 itemBuff[8100];
-	readFileToBuffer(fileName, itemBuff);
-	uint8 *curPtr = itemBuff;
+	Common::File f;
+	if (!f.open(fileName))
+		error("Unable to find file %s", fileName.c_str());
 
 	for (int i = 0; i < 300; ++i) {
 		for (int16 idx = 0; idx < 15; ++idx)
-			_items[i]._name[idx] = *curPtr++;
+			_items[i]._name[idx] = f.readByte();
 
-		_items[i]._damage = *curPtr++;
-		_items[i]._defense = *curPtr++;
-		_items[i]._attacks = *curPtr++;
-		_items[i]._uses = *curPtr++;
-		_items[i].field_13 = *curPtr++;
-		_items[i]._range = *curPtr++;
-		_items[i]._attackType = *curPtr++;
-		_items[i].field_16 = *curPtr++;
-		_items[i].field17_attackTypeDefense = *curPtr++;
-		_items[i].field_18 = *curPtr++;
-		_items[i].field_19 = *curPtr++;
-		_items[i].field_1A = *curPtr++;
+		_items[i]._damage = f.readByte();
+		_items[i]._defense = f.readByte();
+		_items[i]._attacks = f.readByte();
+		_items[i]._uses = f.readByte();
+		_items[i].field_13 = f.readByte();
+		_items[i]._range = f.readByte();
+		_items[i]._attackType = f.readByte();
+		_items[i].field_16 = f.readByte();
+		_items[i].field17_attackTypeDefense = f.readByte();
+		_items[i].field_18 = f.readByte();
+		_items[i].field_19 = f.readByte();
+		_items[i].field_1A = f.readByte();
 
 		debugC(7, kDebugEngine, "%s\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x", _items[i]._name, _items[i]._damage, _items[i]._defense, _items[i]._attacks, _items[i]._uses, _items[i].field_13, _items[i]._range, _items[i]._attackType, _items[i].field_16, _items[i].field17_attackTypeDefense, _items[i].field_18, _items[i].field_19, _items[i].field_1A);
 	}
@@ -243,82 +241,78 @@ void EfhEngine::readTileFact() {
 	debugC(7, kDebugEngine, "readTileFact");
 
 	Common::String fileName = "tilefact";
-	uint8 tileFactBuff[864];
-	readFileToBuffer(fileName, tileFactBuff);
-	uint8 *curPtr = tileFactBuff;
+	Common::File f;
+	if (!f.open(fileName))
+		error("Unable to find file %s", fileName.c_str());
+
 	for (int i = 0; i < 432; ++i) {
-		_tileFact[i]._field0 = *curPtr++;
-		_tileFact[i]._field1 = *curPtr++;
+		_tileFact[i]._field0 = f.readByte();
+		_tileFact[i]._field1 = f.readByte();
 	}
 }
 
 void EfhEngine::loadNPCS() {
 	debugC(7, kDebugEngine, "loadNPCS");
 
-	Common::String fileName = "npcs";
-	uint8 npcLoading[13400];
-	readFileToBuffer(fileName, npcLoading);
-	uint8 *curPtr = npcLoading;
+	Common::String fileName("npcs");
+	Common::File f;
+	if (!f.open(fileName))
+		error("Unable to find file %s", fileName.c_str());
 
 	for (int i = 0; i < 99; ++i) {
 		for (int idx = 0; idx < 11; ++idx)
-			_npcBuf[i]._name[idx] = *curPtr++;
-		_npcBuf[i].field_B = *curPtr++;
-		_npcBuf[i].field_C = *curPtr++;
-		_npcBuf[i].field_D = *curPtr++;
-		_npcBuf[i].field_E = *curPtr++;
-		_npcBuf[i].field_F = *curPtr++;
-		_npcBuf[i].field_10 = *curPtr++;
-		_npcBuf[i].field_11 = *curPtr++;
-		_npcBuf[i].field_12 = READ_LE_INT16(curPtr);
-		_npcBuf[i].field_14 = READ_LE_INT16(curPtr + 2);
-		curPtr += 4;
-		_npcBuf[i]._xp = READ_LE_INT32(curPtr);
-		curPtr += 4;
+			_npcBuf[i]._name[idx] = f.readByte();
+		_npcBuf[i].field_B = f.readByte();
+		_npcBuf[i].field_C = f.readByte();
+		_npcBuf[i].field_D = f.readByte();
+		_npcBuf[i].field_E = f.readByte();
+		_npcBuf[i].field_F = f.readByte();
+		_npcBuf[i].field_10 = f.readByte();
+		_npcBuf[i].field_11 = f.readByte();
+		_npcBuf[i].field_12 = f.readUint16LE();
+		_npcBuf[i].field_14 = f.readUint16LE();
+		_npcBuf[i]._xp = f.readUint32LE();
 		for (int idx = 0; idx < 15; ++idx) {
-			_npcBuf[i]._activeScore[idx] = *curPtr++;
+			_npcBuf[i]._activeScore[idx] = f.readByte();
 		}
 		for (int idx = 0; idx < 11; ++idx) {
-			_npcBuf[i]._passiveScore[idx] = *curPtr++;
+			_npcBuf[i]._passiveScore[idx] = f.readByte();
 		}
 		for (int idx = 0; idx < 11; ++idx) {
-			_npcBuf[i]._infoScore[idx] = *curPtr++;
+			_npcBuf[i]._infoScore[idx] = f.readByte();
 		}
-		_npcBuf[i].field_3F = *curPtr++;
-		_npcBuf[i].field_40 = *curPtr++;
+		_npcBuf[i].field_3F = f.readByte();
+		_npcBuf[i].field_40 = f.readByte();
 		for (int idx = 0; idx < 10; ++idx) {
-			_npcBuf[i]._inventory[idx]._ref = READ_LE_INT16(curPtr);
-			curPtr += 2;
-			_npcBuf[i]._inventory[idx]._stat1 = *curPtr++;
-			_npcBuf[i]._inventory[idx]._stat2 = *curPtr++;
+			_npcBuf[i]._inventory[idx]._ref = f.readSint16LE();
+			_npcBuf[i]._inventory[idx]._stat1 = f.readByte();
+			_npcBuf[i]._inventory[idx]._stat2 = f.readByte();
 		}
-		_npcBuf[i]._possessivePronounSHL6 = *curPtr++;
-		_npcBuf[i]._speed = *curPtr++;
-		_npcBuf[i].field_6B = *curPtr++;
-		_npcBuf[i].field_6C = *curPtr++;
-		_npcBuf[i].field_6D = *curPtr++;
-		_npcBuf[i]._unkItemId = *curPtr++;
-		_npcBuf[i].field_6F = *curPtr++;
-		_npcBuf[i].field_70 = *curPtr++;
-		_npcBuf[i].field_71 = *curPtr++;
-		_npcBuf[i].field_72 = *curPtr++;
-		_npcBuf[i].field_73 = *curPtr++;
-		_npcBuf[i]._hitPoints = READ_LE_INT16(curPtr);
-		_npcBuf[i]._maxHP = READ_LE_INT16(curPtr + 2);
-		curPtr += 4;
-		_npcBuf[i].field_78 = *curPtr++;
-		_npcBuf[i].field_79 = READ_LE_INT16(curPtr);
-		_npcBuf[i].field_7B = READ_LE_INT16(curPtr + 2);
-		curPtr += 4;
-		_npcBuf[i].field_7D = *curPtr++;
-		_npcBuf[i].field_7E = *curPtr++;
-		_npcBuf[i].field_7F = *curPtr++;
-		_npcBuf[i].field_80 = *curPtr++;
-		_npcBuf[i].field_81 = *curPtr++;
-		_npcBuf[i].field_82 = *curPtr++;
-		_npcBuf[i].field_83 = *curPtr++;
-		_npcBuf[i].field_84 = *curPtr++;
-		_npcBuf[i].field_85 = *curPtr++;
+		_npcBuf[i]._possessivePronounSHL6 = f.readByte();
+		_npcBuf[i]._speed = f.readByte();
+		_npcBuf[i].field_6B = f.readByte();
+		_npcBuf[i].field_6C = f.readByte();
+		_npcBuf[i].field_6D = f.readByte();
+		_npcBuf[i]._unkItemId = f.readByte();
+		_npcBuf[i].field_6F = f.readByte();
+		_npcBuf[i].field_70 = f.readByte();
+		_npcBuf[i].field_71 = f.readByte();
+		_npcBuf[i].field_72 = f.readByte();
+		_npcBuf[i].field_73 = f.readByte();
+		_npcBuf[i]._hitPoints = f.readSint16LE();
+		_npcBuf[i]._maxHP = f.readSint16LE();
+		_npcBuf[i].field_78 = f.readByte();
+		_npcBuf[i].field_79 = f.readUint16LE();
+		_npcBuf[i].field_7B = f.readUint16LE();
+		_npcBuf[i].field_7D = f.readByte();
+		_npcBuf[i].field_7E = f.readByte();
+		_npcBuf[i].field_7F = f.readByte();
+		_npcBuf[i].field_80 = f.readByte();
+		_npcBuf[i].field_81 = f.readByte();
+		_npcBuf[i].field_82 = f.readByte();
+		_npcBuf[i].field_83 = f.readByte();
+		_npcBuf[i].field_84 = f.readByte();
+		_npcBuf[i].field_85 = f.readByte();
 	}
 }
 
