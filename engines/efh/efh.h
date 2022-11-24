@@ -255,14 +255,14 @@ public:
 	bool hasFeature(EngineFeature f) const override;
 	const char *getCopyrightString() const;
 
-	Common::String getSavegameFilename(int slot);
+	void syncSoundSettings() override;
 
+	// Savegames.cpp
+	Common::String getSavegameFilename(int slot);
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-
-	void syncSoundSettings() override;
 
 	bool _shouldQuit;
 
@@ -279,20 +279,8 @@ private:
 	int _loadSaveSlot;
 
 	void initialize();
-	void readAnimInfo();
-	void findMapFile(int16 mapId);
-	void loadNewPortrait();
-	void loadAnimImageSet();
-	void loadHistory();
-	void loadTechMapImp(int16 fileId);
-	void loadPlacesFile(uint16 fullPlaceId, bool forceReloadFl);
-	void readTileFact();
-	void readItems();
-	void loadNPCS();
 	Common::KeyCode playSong(uint8 *buffer);
-	void readImpFile(int16 id, bool techMapFl);
 	void playIntro();
-	void preLoadMaps();
 	void initEngine();
 	void initMapMonsters();
 	void loadMapArrays(int idx);
@@ -433,7 +421,22 @@ private:
 	int16 sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA);
 	int16 handleStatusMenu(int16 gameMode, int16 charId);
 	bool checkMonsterCollision();
-	void synchronize(Common::Serializer &s);
+
+	// Files
+	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);
+	void readAnimInfo();
+	void findMapFile(int16 mapId);
+	void rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, uint8 *packedBuffer);
+	void readItems();
+	void readImpFile(int16 id, bool techMapFl);
+	void loadNewPortrait();
+	void loadAnimImageSet();
+	void loadHistory();
+	void loadTechMapImp(int16 fileId);
+	void loadPlacesFile(uint16 fullPlaceId, bool forceReloadFl);
+	void readTileFact();
+	void loadNPCS();
+	void preLoadMaps();
 
 	// Graphics
 	void initPalette();
@@ -468,15 +471,13 @@ private:
 	void displayWindow(uint8 *buffer, int16 posX, int16 posY, uint8 *dest);
 	void displayColoredMenuBox(int16 minX, int16 minY, int16 maxX, int16 maxY, int16 color);
 
+	// Savegames
+	void synchronize(Common::Serializer &s);
+
 	// Utils
-	#if false
-	void copyString(char *srcStr, char *destStr);
-	#endif
-	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);
 	void setDefaultNoteDuration();
 	void decryptImpFile(bool techMapFl);
 	void loadImageSet(int16 imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer);
-	void rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, uint8 *packedBuffer);
 	uint32 uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf);
 	int16 getRandom(int16 maxVal);
 	Common::KeyCode getLastCharAfterAnimCount(int16 delay);
@@ -487,7 +488,6 @@ private:
 	Common::KeyCode getInputBlocking();
 	void setNumLock();
 	bool getValidationFromUser();
-
 
 	uint8 _videoMode;
 	uint8 _bufferCharBM[128];

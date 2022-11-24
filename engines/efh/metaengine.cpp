@@ -177,6 +177,10 @@ void EfhMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
+void EfhEngine::initGame(const ADGameDescription *gd) {
+	_platform = gd->platform;
+}
+
 } // End of namespace Efh
 
 #if PLUGIN_ENABLED_DYNAMIC(EFH)
@@ -184,11 +188,3 @@ void EfhMetaEngine::removeSaveState(const char *target, int slot) const {
 #else
 	REGISTER_PLUGIN_STATIC(EFH, PLUGIN_TYPE_ENGINE, Efh::EfhMetaEngine);
 #endif
-
-namespace Efh {
-
-void EfhEngine::initGame(const ADGameDescription *gd) {
-	_platform = gd->platform;
-}
-
-} // End of namespace Efh
