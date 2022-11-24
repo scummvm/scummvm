@@ -246,18 +246,18 @@ public:
 	Common::RandomSource *_rnd;
 
 	const ADGameDescription *_gameDescription;
-	uint32 getFeatures() const;
-	const char *getGameId() const;
-
-	void initGame(const ADGameDescription *gd);
-	Common::Platform getPlatform() const;
-
-	bool hasFeature(EngineFeature f) const override;
-	const char *getCopyrightString() const;
 
 	void syncSoundSettings() override;
 
-	// Savegames.cpp
+	// metaengine.cpp
+	void initGame(const ADGameDescription *gd);
+	uint32 getFeatures() const;
+	const char *getGameId() const;
+	Common::Platform getPlatform() const;
+	bool hasFeature(EngineFeature f) const override;
+	const char *getCopyrightString() const;
+
+	// savegames.cpp
 	Common::String getSavegameFilename(int slot);
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
@@ -530,7 +530,7 @@ private:
 	uint8 _defaultBoxColor;
 	FontDescr _fontDescr;
 
-	bool _word31E9E;
+	bool _introDoneFl;
 	uint16 _textColor;
 
 	int16 _oldAnimImageSetId;
