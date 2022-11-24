@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-24 03:54+0000\n"
-"PO-Revision-Date: 2022-11-10 03:33+0000\n"
+"PO-Revision-Date: 2022-11-25 06:34+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -4727,10 +4727,8 @@ msgid "Skip support"
 msgstr "Suport per saltar text i escenes"
 
 #: engines/buried/metaengine.cpp:41
-#, fuzzy
-#| msgid "Allow text and cutscenes to be skipped"
 msgid "Allow cutscenes to be skipped"
-msgstr "Permet que se saltin textos i escenes"
+msgstr "Permet ometre les escenes de tall"
 
 #: engines/buried/saveload.cpp:66
 msgid ""
@@ -4773,10 +4771,8 @@ msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Utilitza TextToSpeech per llegir text del joc (si TTS està disponible)"
 
 #: engines/cge2/metaengine.cpp:55
-#, fuzzy
-#| msgid "Enable Text to Speech for Subtitles"
 msgid "Enable Text to Speech for Objects and Options"
-msgstr "Habilita la conversió de text a veu per als subtítols"
+msgstr "Activa la conversió de text a veu per als objectes i les opcions"
 
 #: engines/cge2/metaengine.cpp:56 engines/dreamweb/metaengine.cpp:62
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:40
@@ -4931,10 +4927,8 @@ msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:53
-#, fuzzy
-#| msgid "Enable debug mode"
 msgid "Disable demo mode"
-msgstr "Habilita el mode de depuració"
+msgstr "Desactiva el mode de demostració"
 
 #: engines/freescape/metaengine.cpp:54
 msgid "Never activate demo mode"
@@ -6023,10 +6017,8 @@ msgid "Starts with the debugger dashboard active."
 msgstr "Inicia amb el tauler de control del depurador actiu."
 
 #: engines/mtropolis/metaengine.cpp:172
-#, fuzzy
-#| msgid "Toggle Clue Privacy"
 msgid "Toggle debug overlay"
-msgstr "Commuta la privadesa de la pista"
+msgstr "Commuta la superposició de depuració"
 
 #: engines/mtropolis/metaengine.cpp:177
 msgid "Force any playing movies to end"
@@ -8324,9 +8316,8 @@ msgstr "Mostra l'inventari"
 #: engines/wintermute/keymapper_tables.h:533
 #: engines/wintermute/keymapper_tables.h:1904
 #: engines/wintermute/keymapper_tables.h:1962
-#, fuzzy
 msgid "GUI variant A"
-msgstr "Variant desconeguda"
+msgstr "Variant A de la interfície gràfica"
 
 #: engines/wintermute/keymapper_tables.h:276
 #: engines/wintermute/keymapper_tables.h:339
@@ -8336,9 +8327,8 @@ msgstr "Variant desconeguda"
 #: engines/wintermute/keymapper_tables.h:540
 #: engines/wintermute/keymapper_tables.h:1910
 #: engines/wintermute/keymapper_tables.h:1968
-#, fuzzy
 msgid "GUI variant B"
-msgstr "Variant desconeguda"
+msgstr "Variant B de la interfície gràfica"
 
 #: engines/wintermute/keymapper_tables.h:283
 #: engines/wintermute/keymapper_tables.h:414
@@ -8351,9 +8341,8 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:419
 #: engines/wintermute/keymapper_tables.h:552
 #: engines/wintermute/keymapper_tables.h:1122
-#, fuzzy
 msgid "Phone up button"
-msgstr "Simula el botó esquerre del ratolí"
+msgstr "Botó amunt del telèfon"
 
 #: engines/wintermute/keymapper_tables.h:294
 #: engines/wintermute/keymapper_tables.h:425
@@ -8365,103 +8354,89 @@ msgstr ""
 #. I18N: Some items are scripted to have alternative "Use" action, when MiddleClick is used
 #. It may result in actor saying different text or item being decomposed to it's parts
 #: engines/wintermute/keymapper_tables.h:360
-#, fuzzy
 msgid "Alternative action"
-msgstr "Introducció alternativa"
+msgstr "Acció alternativa"
 
 #: engines/wintermute/keymapper_tables.h:431
 #: engines/wintermute/keymapper_tables.h:564
 #: engines/wintermute/keymapper_tables.h:1134
-#, fuzzy
 msgid "Phone 0 button"
-msgstr "Simula el botó dret del ratolí"
+msgstr "Botó 0 del telèfon"
 
 #: engines/wintermute/keymapper_tables.h:436
 #: engines/wintermute/keymapper_tables.h:569
 #: engines/wintermute/keymapper_tables.h:1139
 #: engines/wintermute/keymapper_tables.h:1789
-#, fuzzy
 msgid "Phone 1 button"
-msgstr "Simula el botó dret del ratolí"
+msgstr "Botó 1 del telèfon"
 
 #: engines/wintermute/keymapper_tables.h:441
 #: engines/wintermute/keymapper_tables.h:574
 #: engines/wintermute/keymapper_tables.h:1144
 #: engines/wintermute/keymapper_tables.h:1794
-#, fuzzy
 msgid "Phone 2 button"
-msgstr "Simula el botó dret del ratolí"
+msgstr "Botó 2 del telèfon"
 
 #: engines/wintermute/keymapper_tables.h:446
 #: engines/wintermute/keymapper_tables.h:579
 #: engines/wintermute/keymapper_tables.h:1149
 #: engines/wintermute/keymapper_tables.h:1799
-#, fuzzy
 msgid "Phone 3 button"
-msgstr "Simula el botó dret del ratolí"
+msgstr "Botó 3 del telèfon"
 
 #: engines/wintermute/keymapper_tables.h:451
 #: engines/wintermute/keymapper_tables.h:584
 #: engines/wintermute/keymapper_tables.h:1154
-#, fuzzy
 msgid "Phone 4 button"
-msgstr "Simula el botó dret del ratolí"
+msgstr "Botó 4 del telèfon"
 
 #: engines/wintermute/keymapper_tables.h:456
 #: engines/wintermute/keymapper_tables.h:589
 #: engines/wintermute/keymapper_tables.h:1159
-#, fuzzy
 msgid "Phone 5 button"
-msgstr "Simula el botó dret del ratolí"
+msgstr "Botó 5 del telèfon"
 
 #: engines/wintermute/keymapper_tables.h:461
 #: engines/wintermute/keymapper_tables.h:594
 #: engines/wintermute/keymapper_tables.h:1164
-#, fuzzy
 msgid "Phone 6 button"
-msgstr "Simula el botó dret del ratolí"
+msgstr "Botó 6 del telèfon"
 
 #: engines/wintermute/keymapper_tables.h:466
 #: engines/wintermute/keymapper_tables.h:599
 #: engines/wintermute/keymapper_tables.h:1169
-#, fuzzy
 msgid "Phone 7 button"
-msgstr "Simula el botó dret del ratolí"
+msgstr "Botó 7 del telèfon"
 
 #: engines/wintermute/keymapper_tables.h:471
 #: engines/wintermute/keymapper_tables.h:604
 #: engines/wintermute/keymapper_tables.h:1174
-#, fuzzy
 msgid "Phone 8 button"
-msgstr "Simula el botó dret del ratolí"
+msgstr "Botó 8 del telèfon"
 
 #: engines/wintermute/keymapper_tables.h:476
 #: engines/wintermute/keymapper_tables.h:609
 #: engines/wintermute/keymapper_tables.h:1179
-#, fuzzy
 msgid "Phone 9 button"
-msgstr "Simula el botó dret del ratolí"
+msgstr "Botó 9 del telèfon"
 
 #: engines/wintermute/keymapper_tables.h:481
 #: engines/wintermute/keymapper_tables.h:614
 #: engines/wintermute/keymapper_tables.h:1184
-#, fuzzy
 msgid "Phone * button"
-msgstr "Simula el botó dret del ratolí"
+msgstr "Botó * del telèfon"
 
 #: engines/wintermute/keymapper_tables.h:486
 #: engines/wintermute/keymapper_tables.h:619
 #: engines/wintermute/keymapper_tables.h:1189
-#, fuzzy
 msgid "Phone # button"
-msgstr "Simula el botó dret del ratolí"
+msgstr "Botó # del telèfon"
 
 #: engines/wintermute/keymapper_tables.h:664
 #: engines/wintermute/keymapper_tables.h:1338
 #: engines/wintermute/keymapper_tables.h:1394
-#, fuzzy
 msgid "Show help"
-msgstr "Mostra-ho tot"
+msgstr "Mostra l'ajuda"
 
 #: engines/wintermute/keymapper_tables.h:670
 #: engines/wintermute/keymapper_tables.h:871
@@ -8474,9 +8449,8 @@ msgstr "Mostra-ho tot"
 #: engines/wintermute/keymapper_tables.h:1667
 #: engines/wintermute/keymapper_tables.h:1941
 #: engines/wintermute/keymapper_tables.h:2143
-#, fuzzy
 msgid "Scroll up"
-msgstr "Desplaça la llista amunt"
+msgstr "Desplaçament amunt"
 
 #: engines/wintermute/keymapper_tables.h:677
 #: engines/wintermute/keymapper_tables.h:878
@@ -8489,9 +8463,8 @@ msgstr "Desplaça la llista amunt"
 #: engines/wintermute/keymapper_tables.h:1674
 #: engines/wintermute/keymapper_tables.h:1948
 #: engines/wintermute/keymapper_tables.h:2148
-#, fuzzy
 msgid "Scroll down"
-msgstr "Desplaça la llista avall"
+msgstr "Desplaçament avall"
 
 #: engines/wintermute/keymapper_tables.h:690
 msgid "Change shadow type"
@@ -8499,15 +8472,13 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:700
 #: engines/wintermute/keymapper_tables.h:819
-#, fuzzy
 msgid "Volume max"
-msgstr "Volum"
+msgstr "Volum màxim"
 
 #. I18N: Displays a debug interface with a CLI for various features
 #: engines/wintermute/keymapper_tables.h:706
-#, fuzzy
 msgid "Show debug parser"
-msgstr "Mostra/Oculta el cursor"
+msgstr "Mostra l'analitzador de depuració"
 
 #. I18N: Displays a debug text message
 #: engines/wintermute/keymapper_tables.h:714
@@ -8515,9 +8486,8 @@ msgstr "Mostra/Oculta el cursor"
 #: engines/wintermute/keymapper_tables.h:1553
 #: engines/wintermute/keymapper_tables.h:1805
 #: engines/wintermute/keymapper_tables.h:1850
-#, fuzzy
 msgid "Debug print"
-msgstr "Depurador"
+msgstr "Imprimeix la depuració"
 
 #. I18N: Exits the game
 #: engines/wintermute/keymapper_tables.h:720
@@ -8531,53 +8501,45 @@ msgid "Light helper window"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:751
-#, fuzzy
 msgid "Run forward"
-msgstr "Mou endavant"
+msgstr "Corre cap endavant"
 
 #: engines/wintermute/keymapper_tables.h:756
-#, fuzzy
 msgid "Run backward"
-msgstr "Mou endavant"
+msgstr "Corre cap enrere"
 
 #: engines/wintermute/keymapper_tables.h:761
-#, fuzzy
 msgid "Turn left fast"
-msgstr "Gira a l'esquerra"
+msgstr "Gira a l'esquerra de pressa"
 
 #: engines/wintermute/keymapper_tables.h:766
-#, fuzzy
 msgid "Turn right fast"
-msgstr "Gira a la dreta"
+msgstr "Gira a la dreta de pressa"
 
 #. I18N: Displays a blueprint with robot parts
 #: engines/wintermute/keymapper_tables.h:772
-#, fuzzy
 msgid "Show blueprint"
-msgstr "Mostra les etiquetes dels objectes"
+msgstr "Mostra el plànol"
 
 #: engines/wintermute/keymapper_tables.h:792
 #: engines/wintermute/keymapper_tables.h:1559
 #: engines/wintermute/keymapper_tables.h:1742
 #: engines/wintermute/keymapper_tables.h:1775
 #: engines/wintermute/keymapper_tables.h:2061
-#, fuzzy
 msgid "Next action"
-msgstr "~A~nterior"
+msgstr "Acció següent"
 
 #: engines/wintermute/keymapper_tables.h:799
 #: engines/wintermute/keymapper_tables.h:1567
 #: engines/wintermute/keymapper_tables.h:1749
 #: engines/wintermute/keymapper_tables.h:1782
 #: engines/wintermute/keymapper_tables.h:2069
-#, fuzzy
 msgid "Previous action"
-msgstr "~A~nterior"
+msgstr "Acció anterior"
 
 #: engines/wintermute/keymapper_tables.h:826
-#, fuzzy
 msgid "Volume off"
-msgstr "Volum"
+msgstr "Volum desactivat"
 
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Change font size"
@@ -8602,19 +8564,16 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:955
 #: engines/wintermute/keymapper_tables.h:1286
 #: engines/wintermute/keymapper_tables.h:1844
-#, fuzzy
 msgid "Cancel waiting"
-msgstr "Cancel·lar descàrrega"
+msgstr "Cancel·la l'espera"
 
 #: engines/wintermute/keymapper_tables.h:965
-#, fuzzy
 msgid "First page"
-msgstr "Escull l'encanteri"
+msgstr "Primera pàgina"
 
 #: engines/wintermute/keymapper_tables.h:970
-#, fuzzy
 msgid "Last page"
-msgstr "Escull l'encanteri"
+msgstr "Última pàgina"
 
 #. I18N: ultra_super_mega_fast_walk is the name of the variable used at game script for this speed
 #: engines/wintermute/keymapper_tables.h:978
@@ -8622,9 +8581,8 @@ msgid "Walking speed: Ultra Super Mega Fast"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:994
-#, fuzzy
 msgid "Show game credits"
-msgstr "Mostra el cursor del ratolí"
+msgstr "Mostra els crèdits del joc"
 
 #: engines/wintermute/keymapper_tables.h:999
 msgid "Play selected music record"
@@ -8695,45 +8653,36 @@ msgid "Ability: Exorcist"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1200
-#, fuzzy
 msgid "Show hints / Dance move"
-msgstr "Mostra els fitxers ocults"
+msgstr "Mostra suggeriments / Moviment de ball"
 
 #: engines/wintermute/keymapper_tables.h:1207
-#, fuzzy
 msgid "Dance move up"
-msgstr "Cancel·lar descàrrega"
+msgstr "Moviment de ball amunt"
 
 #: engines/wintermute/keymapper_tables.h:1213
-#, fuzzy
 msgid "Dance move down"
-msgstr "Cancel·lar descàrrega"
+msgstr "Moviment de ball avall"
 
 #: engines/wintermute/keymapper_tables.h:1219
-#, fuzzy
 msgid "Dance move left"
-msgstr "Mou a la dreta"
+msgstr "Moviment de ball a l'esquerra"
 
 #: engines/wintermute/keymapper_tables.h:1225
-#, fuzzy
 msgid "Dance move right"
-msgstr "Mou a la dreta"
+msgstr "Moviment de ball a la dreta"
 
 #: engines/wintermute/keymapper_tables.h:1255
-#, fuzzy
 msgid "Cancel input"
-msgstr "Cancel·la"
+msgstr "Cancel·la l'entrada"
 
 #: engines/wintermute/keymapper_tables.h:1317
-#, fuzzy
 msgid "Toggle subtitles"
-msgstr "Commuta la captura del ratolí"
+msgstr "Commuta els subtítols"
 
 #: engines/wintermute/keymapper_tables.h:1381
-#, fuzzy
-#| msgid "Hide Others"
 msgid "Hide hints"
-msgstr "Oculta els altres"
+msgstr "Amaga els suggeriments"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1436
@@ -8743,9 +8692,8 @@ msgstr ""
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
 #: engines/wintermute/keymapper_tables.h:1538
-#, fuzzy
 msgid "Chapayev's action"
-msgstr "~A~nterior"
+msgstr "Acció de Chapayev"
 
 #: engines/wintermute/keymapper_tables.h:1586
 #: engines/wintermute/keymapper_tables.h:1839
@@ -8780,20 +8728,17 @@ msgid "Spin wheel faster"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1703
-#, fuzzy
 msgid "Zoom out"
-msgstr "Amplia"
+msgstr "Disminueix el zoom"
 
 #: engines/wintermute/keymapper_tables.h:1710
-#, fuzzy
 msgid "Zoom in"
-msgstr "Amplia"
+msgstr "Amplia el zoom"
 
 #: engines/wintermute/keymapper_tables.h:1723
 #: engines/wintermute/keymapper_tables.h:1929
-#, fuzzy
 msgid "Show journal"
-msgstr "Mostra-ho tot"
+msgstr "Mostra el diari"
 
 #. I18N: Displays a debug interface with Bezier curves
 #: engines/wintermute/keymapper_tables.h:1856
@@ -8802,9 +8747,8 @@ msgstr ""
 
 #. I18N: Use droid to perform an action
 #: engines/wintermute/keymapper_tables.h:1873
-#, fuzzy
 msgid "Droid's action"
-msgstr "~A~nterior"
+msgstr "Acció del droide"
 
 #. I18N: It's a Tetris game clone, this action rotates current tetris item
 #: engines/wintermute/keymapper_tables.h:1981
@@ -8813,9 +8757,8 @@ msgstr "Rotar"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
 #: engines/wintermute/keymapper_tables.h:2007
-#, fuzzy
 msgid "Drop"
-msgstr "~D~escarta la pàgina"
+msgstr "Deixa anar"
 
 #: engines/wintermute/keymapper_tables.h:2015
 msgid "Player 1: Up"
@@ -8881,9 +8824,8 @@ msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
 
 #: engines/xeen/saves.cpp:290
-#, fuzzy
 msgid "Failed to autosave"
-msgstr "No s'ha pogut desar l'estat del joc"
+msgstr "No s'ha pogut desar automàticament"
 
 #: engines/zvision/file/save_manager.cpp:221
 #, c-format
@@ -8893,23 +8835,20 @@ msgid ""
 msgstr ""
 
 #: engines/zvision/metaengine.cpp:58
-#, fuzzy
 msgid "Double FPS"
-msgstr "Depurador"
+msgstr "Doble FPS"
 
 #: engines/zvision/metaengine.cpp:59
 msgid "Increase framerate from 30 to 60 FPS"
 msgstr ""
 
 #: engines/zvision/metaengine.cpp:70
-#, fuzzy
 msgid "Enable Venus"
-msgstr "Activa el mode heli"
+msgstr "Activa Venus"
 
 #: engines/zvision/metaengine.cpp:71
-#, fuzzy
 msgid "Enable the Venus help system"
-msgstr "Activa el mode heli"
+msgstr "Activa el sistema d'ajuda de Venus"
 
 #: engines/zvision/metaengine.cpp:82
 msgid "Disable animation while turning"
@@ -8924,21 +8863,17 @@ msgid "Use high resolution MPEG video"
 msgstr "Fer servir MPEG video d'alta resolució"
 
 #: engines/zvision/metaengine.cpp:95
-#, fuzzy
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
-"Utilitza el conjunt alternatiu de cursors platejats, en lloc dels normals "
-"daurats"
+"Usa el vídeo MPEG de la versió DVD en lloc de l'AVI de resolució inferior"
 
 #: engines/zvision/metaengine.cpp:197
-#, fuzzy
 msgid "Look Up"
-msgstr "Mira"
+msgstr "Mira cap amunt"
 
 #: engines/zvision/metaengine.cpp:203
-#, fuzzy
 msgid "Look Down"
-msgstr "Redueix"
+msgstr "Mira cap avall"
 
 #: engines/zvision/metaengine.cpp:238
 msgid "Spellbook"
