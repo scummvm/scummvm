@@ -1,6 +1,5 @@
 #include "hpl1/engine/libraries/angelscript/add-ons/scriptstdstring.h"
 #include <assert.h> // assert() // FIXME: Refactor to remove this system header
-#include <sstream>  // std::stringstream
 #include <string.h> // strstr() // FIXME: Refactor to remove this system header
 #include <stdio.h>	// sprintf() // FIXME: Refactor to remove this system header
 #include <stdlib.h> // strtod() // FIXME: Refactor to remove this system header
@@ -8,25 +7,17 @@
 	#include <locale.h> // setlocale()
 #endif
 
-using namespace std;
+#include "common/str.h"
+#include "hpl1/std/map.h"
+#include "hpl1/debug.h"
 
 // This macro is used to avoid warnings about unused variables.
 // Usually where the variables are only used in debug mode.
 #define UNUSED_VAR(x) (void)(x)
 
-#ifdef AS_CAN_USE_CPP11
-// The string factory doesn't need to keep a specific order in the
-// cache, so the unordered_map is faster than the ordinary map
-#include <unordered_map>  // std::unordered_map
-BEGIN_AS_NAMESPACE
-typedef unordered_map<string, int> map_t;
-END_AS_NAMESPACE
-#else
-#include <map>      // std::map
-BEGIN_AS_NAMESPACE
-typedef map<string, int> map_t;
-END_AS_NAMESPACE
-#endif
+#include <map>
+
+using map_t = std::map<Common::String, int>;
 
 BEGIN_AS_NAMESPACE
 class CStdStringFactory : public asIStringFactory
@@ -46,7 +37,7 @@ public:
 		// threads, so it is necessary to use a mutex.
 		asAcquireExclusiveLock();
 
-		string str(data, length);
+		Common::String str(data, length);
 		map_t::iterator it = stringCache.find(str);
 		if (it != stringCache.end())
 			it->second++;
@@ -69,7 +60,7 @@ public:
 		// threads, so it is necessary to use a mutex.
 		asAcquireExclusiveLock();
 
-		map_t::iterator it = stringCache.find(*reinterpret_cast<const string*>(str));
+		map_t::iterator it = stringCache.find(*reinterpret_cast<const Common::String*>(str));
 		if (it == stringCache.end())
 			ret = asERROR;
 		else
@@ -90,10 +81,10 @@ public:
 			return asERROR;
 
 		if (length)
-			*length = (asUINT)reinterpret_cast<const string*>(str)->length();
+			*length = (asUINT)reinterpret_cast<const Common::String*>(str)->size();
 
 		if (data)
-			memcpy(data, reinterpret_cast<const string*>(str)->c_str(), reinterpret_cast<const string*>(str)->length());
+			memcpy(data, reinterpret_cast<const Common::String*>(str)->c_str(), reinterpret_cast<const Common::String*>(str)->size());
 
 		return asSUCCESS;
 	}
@@ -143,22 +134,22 @@ public:
 static CStdStringFactoryCleaner cleaner;
 
 
-static void ConstructString(string *thisPointer)
+static void ConstructString(Common::String *thisPointer)
 {
-	new(thisPointer) string();
+	new(thisPointer) Common::String();
 }
 
-static void CopyConstructString(const string &other, string *thisPointer)
+static void CopyConstructString(const Common::String &other, Common::String *thisPointer)
 {
-	new(thisPointer) string(other);
+	new(thisPointer) Common::String(other);
 }
 
-static void DestructString(string *thisPointer)
+static void DestructString(Common::String *thisPointer)
 {
-	thisPointer->~string();
+	thisPointer->Common::String::~String();
 }
 
-static string &AddAssignStringToString(const string &str, string &dest)
+static Common::String &AddAssignStringToString(const Common::String &str, Common::String &dest)
 {
 	// We don't register the method directly because some compilers
 	// and standard libraries inline the definition, resulting in the
@@ -170,166 +161,126 @@ static string &AddAssignStringToString(const string &str, string &dest)
 
 // bool string::isEmpty()
 // bool string::empty() // if AS_USE_STLNAMES == 1
-static bool StringIsEmpty(const string &str)
+static bool StringIsEmpty(const Common::String &str)
 {
 	// We don't register the method directly because some compilers
 	// and standard libraries inline the definition, resulting in the
 	// linker being unable to find the declaration
 	// Example: CLang/LLVM with XCode 4.3 on OSX 10.7
-	return str.empty();
+	return str.size() > 0;
 }
 
-static string &AssignUInt64ToString(asQWORD i, string &dest)
+static Common::String &AssignUInt64ToString(asQWORD i, Common::String &dest)
 {
-	ostringstream stream;
-	stream << i;
-	dest = stream.str();
+	dest = Common::String::format("%lu", i);
 	return dest;
 }
 
-static string &AddAssignUInt64ToString(asQWORD i, string &dest)
+static Common::String &AddAssignUInt64ToString(asQWORD i, Common::String &dest)
 {
-	ostringstream stream;
-	stream << i;
-	dest += stream.str();
+	dest += Common::String::format("%lu", i);
 	return dest;
 }
 
-static string AddStringUInt64(const string &str, asQWORD i)
+static Common::String AddStringUInt64(const Common::String &str, asQWORD i)
 {
-	ostringstream stream;
-	stream << i;
-	return str + stream.str();
+	return str + Common::String::format("%lu", i);
 }
 
-static string AddInt64String(asINT64 i, const string &str)
+static Common::String AddInt64String(asINT64 i, const Common::String &str)
 {
-	ostringstream stream;
-	stream << i;
-	return stream.str() + str;
+	return Common::String::format("%li", i) + str;
 }
 
-static string &AssignInt64ToString(asINT64 i, string &dest)
+static Common::String &AssignInt64ToString(asINT64 i, Common::String &dest)
 {
-	ostringstream stream;
-	stream << i;
-	dest = stream.str();
+	dest = Common::String::format("%li", i);
 	return dest;
 }
 
-static string &AddAssignInt64ToString(asINT64 i, string &dest)
+static Common::String &AddAssignInt64ToString(asINT64 i, Common::String &dest)
 {
-	ostringstream stream;
-	stream << i;
-	dest += stream.str();
+	dest += Common::String::format("%li", i);
 	return dest;
 }
 
-static string AddStringInt64(const string &str, asINT64 i)
+static Common::String AddStringInt64(const Common::String &str, asINT64 i)
 {
-	ostringstream stream;
-	stream << i;
-	return str + stream.str();
+	return str + Common::String::format("%li", i);
 }
 
-static string AddUInt64String(asQWORD i, const string &str)
+static Common::String AddUInt64String(asQWORD i, const Common::String &str)
 {
-	ostringstream stream;
-	stream << i;
-	return stream.str() + str;
+	return Common::String::format("%li", i) + str;
 }
 
-static string &AssignDoubleToString(double f, string &dest)
+static Common::String &AssignDoubleToString(double f, Common::String &dest)
 {
-	ostringstream stream;
-	stream << f;
-	dest = stream.str();
+	dest = Common::String::format("%f", f);
 	return dest;
 }
 
-static string &AddAssignDoubleToString(double f, string &dest)
+static Common::String &AddAssignDoubleToString(double f, Common::String &dest)
 {
-	ostringstream stream;
-	stream << f;
-	dest += stream.str();
+	dest += Common::String::format("%f", f);
 	return dest;
 }
 
-static string &AssignFloatToString(float f, string &dest)
+static Common::String &AssignFloatToString(float f, Common::String &dest)
 {
-	ostringstream stream;
-	stream << f;
-	dest = stream.str();
+	dest = Common::String::format("%f", f);
 	return dest;
 }
 
-static string &AddAssignFloatToString(float f, string &dest)
+static Common::String &AddAssignFloatToString(float f, Common::String &dest)
 {
-	ostringstream stream;
-	stream << f;
-	dest += stream.str();
+	dest += Common::String::format("%f", f);
 	return dest;
 }
 
-static string &AssignBoolToString(bool b, string &dest)
+static Common::String &AssignBoolToString(bool b, Common::String &dest)
 {
-	ostringstream stream;
-	stream << (b ? "true" : "false");
-	dest = stream.str();
+	dest = (b ? "true" : "false");
 	return dest;
 }
 
-static string &AddAssignBoolToString(bool b, string &dest)
+static Common::String &AddAssignBoolToString(bool b, Common::String &dest)
 {
-	ostringstream stream;
-	stream << (b ? "true" : "false");
-	dest += stream.str();
+	dest += (b ? "true" : "false");
 	return dest;
 }
 
-static string AddStringDouble(const string &str, double f)
+static Common::String AddStringDouble(const Common::String &str, double f)
 {
-	ostringstream stream;
-	stream << f;
-	return str + stream.str();
+	return str + Common::String::format("%f", f);
 }
 
-static string AddDoubleString(double f, const string &str)
+static Common::String AddDoubleString(double f, const Common::String &str)
 {
-	ostringstream stream;
-	stream << f;
-	return stream.str() + str;
+	return Common::String::format("%f", f) + str;
 }
 
-static string AddStringFloat(const string &str, float f)
+static Common::String AddStringFloat(const Common::String &str, float f)
 {
-	ostringstream stream;
-	stream << f;
-	return str + stream.str();
+	return str + Common::String::format("%f", f);
 }
 
-static string AddFloatString(float f, const string &str)
+static Common::String AddFloatString(float f, const Common::String &str)
 {
-	ostringstream stream;
-	stream << f;
-	return stream.str() + str;
+	return Common::String::format("%f", f) + str;
 }
 
-static string AddStringBool(const string &str, bool b)
+static Common::String AddStringBool(const Common::String &str, bool b)
 {
-	ostringstream stream;
-	stream << (b ? "true" : "false");
-	return str + stream.str();
+	return str + (b ? "true" : "false");
 }
 
-static string AddBoolString(bool b, const string &str)
+static Common::String AddBoolString(bool b, const Common::String &str)
 {
-	ostringstream stream;
-	stream << (b ? "true" : "false");
-	return stream.str() + str;
+	return (b ? "true" : "false") + str;
 }
 
-static char *StringCharAt(unsigned int i, string &str)
+static char *StringCharAt(unsigned int i, Common::String &str)
 {
 	if( i >= str.size() )
 	{
@@ -341,12 +292,12 @@ static char *StringCharAt(unsigned int i, string &str)
 		return 0;
 	}
 
-	return &str[i];
+	return str.begin() + i;
 }
 
 // AngelScript signature:
 // int string::opCmp(const string &in) const
-static int StringCmp(const string &a, const string &b)
+static int StringCmp(const Common::String &a, const Common::String &b)
 {
 	int cmp = 0;
 	if( a < b ) cmp = -1;
@@ -360,7 +311,7 @@ static int StringCmp(const string &a, const string &b)
 //
 // AngelScript signature:
 // int string::findFirst(const string &in sub, uint start = 0) const
-static int StringFindFirst(const string &sub, asUINT start, const string &str)
+static int StringFindFirst(const Common::String &sub, asUINT start, const Common::String &str)
 {
 	// We don't register the method directly because the argument types change between 32bit and 64bit platforms
 	return (int)str.find(sub, (size_t)start);
@@ -372,10 +323,10 @@ static int StringFindFirst(const string &sub, asUINT start, const string &str)
 //
 // AngelScript signature:
 // int string::findFirstOf(const string &in sub, uint start = 0) const
-static int StringFindFirstOf(const string &sub, asUINT start, const string &str)
+static int StringFindFirstOf(const Common::String &sub, asUINT start, const Common::String &str)
 {
 	// We don't register the method directly because the argument types change between 32bit and 64bit platforms
-	return (int)str.find_first_of(sub, (size_t)start);
+	return (int)str.findFirstOf(sub, (size_t)start);
 }
 
 // This function returns the index of the last position where the one of the bytes in substring
@@ -384,10 +335,10 @@ static int StringFindFirstOf(const string &sub, asUINT start, const string &str)
 //
 // AngelScript signature:
 // int string::findLastOf(const string &in sub, uint start = -1) const
-static int StringFindLastOf(const string &sub, asUINT start, const string &str)
+static int StringFindLastOf(const Common::String &sub, asUINT start, const Common::String &str)
 {
 	// We don't register the method directly because the argument types change between 32bit and 64bit platforms
-	return (int)str.find_last_of(sub, (size_t)start);
+	return (int)str.findLastOf(sub, (size_t)start);
 }
 
 // This function returns the index of the first position where a byte other than those in substring
@@ -395,10 +346,10 @@ static int StringFindLastOf(const string &sub, asUINT start, const string &str)
 //
 // AngelScript signature:
 // int string::findFirstNotOf(const string &in sub, uint start = 0) const
-static int StringFindFirstNotOf(const string &sub, asUINT start, const string &str)
+static int StringFindFirstNotOf(const Common::String &sub, asUINT start, const Common::String &str)
 {
 	// We don't register the method directly because the argument types change between 32bit and 64bit platforms
-	return (int)str.find_first_not_of(sub, (size_t)start);
+	return (int)str.findFirstNotOf(sub, (size_t)start);
 }
 
 // This function returns the index of the last position where a byte other than those in substring
@@ -406,10 +357,9 @@ static int StringFindFirstNotOf(const string &sub, asUINT start, const string &s
 //
 // AngelScript signature:
 // int string::findLastNotOf(const string &in sub, uint start = -1) const
-static int StringFindLastNotOf(const string &sub, asUINT start, const string &str)
+static int StringFindLastNotOf(const Common::String &sub, asUINT start, const Common::String &str)
 {
-	// We don't register the method directly because the argument types change between 32bit and 64bit platforms
-	return (int)str.find_last_not_of(sub, (size_t)start);
+	HPL1_UNIMPLEMENTED(__func__);
 }
 
 // This function returns the index of the last position where the substring
@@ -418,298 +368,81 @@ static int StringFindLastNotOf(const string &sub, asUINT start, const string &st
 //
 // AngelScript signature:
 // int string::findLast(const string &in sub, int start = -1) const
-static int StringFindLast(const string &sub, int start, const string &str)
+static int StringFindLast(const Common::String &sub, int start, const Common::String &str)
 {
-	// We don't register the method directly because the argument types change between 32bit and 64bit platforms
-	return (int)str.rfind(sub, (size_t)(start < 0 ? string::npos : start));
+	HPL1_UNIMPLEMENTED(__func__);
 }
 
 // AngelScript signature:
 // void string::insert(uint pos, const string &in other)
-static void StringInsert(unsigned int pos, const string &other, string &str)
+static void StringInsert(unsigned int pos, const Common::String &other, Common::String &str)
 {
-	// We don't register the method directly because the argument types change between 32bit and 64bit platforms
-	str.insert(pos, other);
+	HPL1_UNIMPLEMENTED(__func__);
 }
 
 // AngelScript signature:
 // void string::erase(uint pos, int count = -1)
-static void StringErase(unsigned int pos, int count, string &str)
+static void StringErase(unsigned int pos, int count, Common::String &str)
 {
-	// We don't register the method directly because the argument types change between 32bit and 64bit platforms
-	str.erase(pos, (size_t)(count < 0 ? string::npos : count));
+	HPL1_UNIMPLEMENTED(__func__);
 }
 
 
 // AngelScript signature:
 // uint string::length() const
-static asUINT StringLength(const string &str)
+static asUINT StringLength(const Common::String &str)
 {
-	// We don't register the method directly because the return type changes between 32bit and 64bit platforms
-	return (asUINT)str.length();
+	HPL1_UNIMPLEMENTED(__func__);
 }
 
 
 // AngelScript signature:
 // void string::resize(uint l)
-static void StringResize(asUINT l, string &str)
+static void StringResize(asUINT l, Common::String &str)
 {
-	// We don't register the method directly because the argument types change between 32bit and 64bit platforms
-	str.resize(l);
+	HPL1_UNIMPLEMENTED(__func__);
 }
 
 // AngelScript signature:
 // string formatInt(int64 val, const string &in options, uint width)
-static string formatInt(asINT64 value, const string &options, asUINT width)
+static Common::String formatInt(asINT64 value, const Common::String &options, asUINT width)
 {
-	bool leftJustify = options.find("l") != string::npos;
-	bool padWithZero = options.find("0") != string::npos;
-	bool alwaysSign  = options.find("+") != string::npos;
-	bool spaceOnSign = options.find(" ") != string::npos;
-	bool hexSmall    = options.find("h") != string::npos;
-	bool hexLarge    = options.find("H") != string::npos;
-
-	string fmt = "%";
-	if( leftJustify ) fmt += "-";
-	if( alwaysSign ) fmt += "+";
-	if( spaceOnSign ) fmt += " ";
-	if( padWithZero ) fmt += "0";
-
-#ifdef _WIN32
-	fmt += "*I64";
-#else
-#ifdef _LP64
-	fmt += "*l";
-#else
-	fmt += "*ll";
-#endif
-#endif
-
-	if( hexSmall ) fmt += "x";
-	else if( hexLarge ) fmt += "X";
-	else fmt += "d";
-
-	string buf;
-	buf.resize(width+30);
-#if defined(_MSC_VER) && _MSC_VER >= 1400 && !defined(__S3E__)
-	// MSVC 8.0 / 2005 or newer
-	sprintf_s(&buf[0], buf.size(), fmt.c_str(), width, value);
-#else
-	snprintf(&buf[0], width+30, fmt.c_str(), width, value);
-#endif
-	buf.resize(strlen(&buf[0]));
-
-	return buf;
+	HPL1_UNIMPLEMENTED(__func__);
 }
 
 // AngelScript signature:
 // string formatUInt(uint64 val, const string &in options, uint width)
-static string formatUInt(asQWORD value, const string &options, asUINT width)
+static Common::String formatUInt(asQWORD value, const Common::String &options, asUINT width)
 {
-	bool leftJustify = options.find("l") != string::npos;
-	bool padWithZero = options.find("0") != string::npos;
-	bool alwaysSign  = options.find("+") != string::npos;
-	bool spaceOnSign = options.find(" ") != string::npos;
-	bool hexSmall    = options.find("h") != string::npos;
-	bool hexLarge    = options.find("H") != string::npos;
-
-	string fmt = "%";
-	if( leftJustify ) fmt += "-";
-	if( alwaysSign ) fmt += "+";
-	if( spaceOnSign ) fmt += " ";
-	if( padWithZero ) fmt += "0";
-
-#ifdef _WIN32
-	fmt += "*I64";
-#else
-#ifdef _LP64
-	fmt += "*l";
-#else
-	fmt += "*ll";
-#endif
-#endif
-
-	if( hexSmall ) fmt += "x";
-	else if( hexLarge ) fmt += "X";
-	else fmt += "u";
-
-	string buf;
-	buf.resize(width+30);
-#if defined(_MSC_VER) && _MSC_VER >= 1400 && !defined(__S3E__)
-	// MSVC 8.0 / 2005 or newer
-	sprintf_s(&buf[0], buf.size(), fmt.c_str(), width, value);
-#else
-	snprintf(&buf[0], width+30, fmt.c_str(), width, value);
-#endif
-	buf.resize(strlen(&buf[0]));
-
-	return buf;
+	HPL1_UNIMPLEMENTED(__func__);
 }
 
 // AngelScript signature:
 // string formatFloat(double val, const string &in options, uint width, uint precision)
-static string formatFloat(double value, const string &options, asUINT width, asUINT precision)
+static Common::String formatFloat(double value, const Common::String &options, asUINT width, asUINT precision)
 {
-	bool leftJustify = options.find("l") != string::npos;
-	bool padWithZero = options.find("0") != string::npos;
-	bool alwaysSign  = options.find("+") != string::npos;
-	bool spaceOnSign = options.find(" ") != string::npos;
-	bool expSmall    = options.find("e") != string::npos;
-	bool expLarge    = options.find("E") != string::npos;
-
-	string fmt = "%";
-	if( leftJustify ) fmt += "-";
-	if( alwaysSign ) fmt += "+";
-	if( spaceOnSign ) fmt += " ";
-	if( padWithZero ) fmt += "0";
-
-	fmt += "*.*";
-
-	if( expSmall ) fmt += "e";
-	else if( expLarge ) fmt += "E";
-	else fmt += "f";
-
-	string buf;
-	buf.resize(width+precision+50);
-#if defined(_MSC_VER) && _MSC_VER >= 1400 && !defined(__S3E__)
-	// MSVC 8.0 / 2005 or newer
-	sprintf_s(&buf[0], buf.size(), fmt.c_str(), width, precision, value);
-#else
-	snprintf(&buf[0], width+precision+50, fmt.c_str(), width, precision, value);
-#endif
-	buf.resize(strlen(&buf[0]));
-
-	return buf;
+	HPL1_UNIMPLEMENTED(__func__);
 }
 
 // AngelScript signature:
 // int64 parseInt(const string &in val, uint base = 10, uint &out byteCount = 0)
-static asINT64 parseInt(const string &val, asUINT base, asUINT *byteCount)
+static asINT64 parseInt(const Common::String &val, asUINT base, asUINT *byteCount)
 {
-	// Only accept base 10 and 16
-	if( base != 10 && base != 16 )
-	{
-		if( byteCount ) *byteCount = 0;
-		return 0;
-	}
-
-	const char *end = &val[0];
-
-	// Determine the sign
-	bool sign = false;
-	if( *end == '-' )
-	{
-		sign = true;
-		end++;
-	}
-	else if( *end == '+' )
-		end++;
-
-	asINT64 res = 0;
-	if( base == 10 )
-	{
-		while( *end >= '0' && *end <= '9' )
-		{
-			res *= 10;
-			res += *end++ - '0';
-		}
-	}
-	else if( base == 16 )
-	{
-		while( (*end >= '0' && *end <= '9') ||
-		       (*end >= 'a' && *end <= 'f') ||
-		       (*end >= 'A' && *end <= 'F') )
-		{
-			res *= 16;
-			if( *end >= '0' && *end <= '9' )
-				res += *end++ - '0';
-			else if( *end >= 'a' && *end <= 'f' )
-				res += *end++ - 'a' + 10;
-			else if( *end >= 'A' && *end <= 'F' )
-				res += *end++ - 'A' + 10;
-		}
-	}
-
-	if( byteCount )
-		*byteCount = asUINT(size_t(end - val.c_str()));
-
-	if( sign )
-		res = -res;
-
-	return res;
+	HPL1_UNIMPLEMENTED(__func__);
 }
 
 // AngelScript signature:
 // uint64 parseUInt(const string &in val, uint base = 10, uint &out byteCount = 0)
-static asQWORD parseUInt(const string &val, asUINT base, asUINT *byteCount)
+static asQWORD parseUInt(const Common::String &val, asUINT base, asUINT *byteCount)
 {
-	// Only accept base 10 and 16
-	if (base != 10 && base != 16)
-	{
-		if (byteCount) *byteCount = 0;
-		return 0;
-	}
-
-	const char *end = &val[0];
-
-	asQWORD res = 0;
-	if (base == 10)
-	{
-		while (*end >= '0' && *end <= '9')
-		{
-			res *= 10;
-			res += *end++ - '0';
-		}
-	}
-	else if (base == 16)
-	{
-		while ((*end >= '0' && *end <= '9') ||
-			(*end >= 'a' && *end <= 'f') ||
-			(*end >= 'A' && *end <= 'F'))
-		{
-			res *= 16;
-			if (*end >= '0' && *end <= '9')
-				res += *end++ - '0';
-			else if (*end >= 'a' && *end <= 'f')
-				res += *end++ - 'a' + 10;
-			else if (*end >= 'A' && *end <= 'F')
-				res += *end++ - 'A' + 10;
-		}
-	}
-
-	if (byteCount)
-		*byteCount = asUINT(size_t(end - val.c_str()));
-
-	return res;
+	HPL1_UNIMPLEMENTED(__func__);
 }
 
 // AngelScript signature:
 // double parseFloat(const string &in val, uint &out byteCount = 0)
-double parseFloat(const string &val, asUINT *byteCount)
+double parseFloat(const Common::String &val, asUINT *byteCount)
 {
-	char *end;
-
-	// WinCE doesn't have setlocale. Some quick testing on my current platform
-	// still manages to parse the numbers such as "3.14" even if the decimal for the
-	// locale is ",".
-#if !defined(_WIN32_WCE) && !defined(ANDROID) && !defined(__psp2__)
-	// Set the locale to C so that we are guaranteed to parse the float value correctly
-	char *tmp = setlocale(LC_NUMERIC, 0);
-	string orig = tmp ? tmp : "C";
-	setlocale(LC_NUMERIC, "C");
-#endif
-
-	double res = strtod(val.c_str(), &end);
-
-#if !defined(_WIN32_WCE) && !defined(ANDROID) && !defined(__psp2__)
-	// Restore the locale
-	setlocale(LC_NUMERIC, orig.c_str());
-#endif
-
-	if( byteCount )
-		*byteCount = asUINT(size_t(end - val.c_str()));
-
-	return res;
+	HPL1_UNIMPLEMENTED(__func__);
 }
 
 // This function returns a string containing the substring of the input string
@@ -717,14 +450,9 @@ double parseFloat(const string &val, asUINT *byteCount)
 //
 // AngelScript signature:
 // string string::substr(uint start = 0, int count = -1) const
-static string StringSubString(asUINT start, int count, const string &str)
+static Common::String StringSubString(asUINT start, int count, const Common::String &str)
 {
-	// Check for out-of-bounds
-	string ret;
-	if( start < str.length() && count != 0 )
-		ret = str.substr(start, (size_t)(count < 0 ? string::npos : count));
-
-	return ret;
+	HPL1_UNIMPLEMENTED(__func__);
 }
 
 // String equality comparison.
@@ -733,7 +461,7 @@ static string StringSubString(asUINT start, int count, const string &str)
 // For some reason gcc 4.7 has difficulties resolving the
 // asFUNCTIONPR(operator==, (const string &, const string &)
 // makro, so this wrapper was introduced as work around.
-static bool StringEquals(const std::string& lhs, const std::string& rhs)
+static bool StringEquals(const Common::String& lhs, const Common::String& rhs)
 {
 	return lhs == rhs;
 }
@@ -746,9 +474,9 @@ void RegisterStdString_Native(asIScriptEngine *engine)
 	// Register the string type
 #if AS_CAN_USE_CPP11
 	// With C++11 it is possible to use asGetTypeTraits to automatically determine the correct flags to use
-	r = engine->RegisterObjectType("string", sizeof(string), asOBJ_VALUE | asGetTypeTraits<string>()); assert( r >= 0 );
+	r = engine->RegisterObjectType("string", sizeof(Common::String), asOBJ_VALUE | asGetTypeTraits<Common::String>()); assert( r >= 0 );
 #else
-	r = engine->RegisterObjectType("string", sizeof(string), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK); assert( r >= 0 );
+	r = engine->RegisterObjectType("string", sizeof(Common::String), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK); assert( r >= 0 );
 #endif
 
 	r = engine->RegisterStringFactory("string", GetStdStringFactorySingleton());
@@ -757,15 +485,15 @@ void RegisterStdString_Native(asIScriptEngine *engine)
 	r = engine->RegisterObjectBehaviour("string", asBEHAVE_CONSTRUCT,  "void f()",                    asFUNCTION(ConstructString), asCALL_CDECL_OBJLAST); assert( r >= 0 );
 	r = engine->RegisterObjectBehaviour("string", asBEHAVE_CONSTRUCT,  "void f(const string &in)",    asFUNCTION(CopyConstructString), asCALL_CDECL_OBJLAST); assert( r >= 0 );
 	r = engine->RegisterObjectBehaviour("string", asBEHAVE_DESTRUCT,   "void f()",                    asFUNCTION(DestructString),  asCALL_CDECL_OBJLAST); assert( r >= 0 );
-	r = engine->RegisterObjectMethod("string", "string &opAssign(const string &in)", asMETHODPR(string, operator =, (const string&), string&), asCALL_THISCALL); assert( r >= 0 );
+	r = engine->RegisterObjectMethod("string", "string &opAssign(const string &in)", asMETHODPR(Common::String, operator =, (const Common::String&), Common::String&), asCALL_THISCALL); assert( r >= 0 );
 	// Need to use a wrapper on Mac OS X 10.7/XCode 4.3 and CLang/LLVM, otherwise the linker fails
 	r = engine->RegisterObjectMethod("string", "string &opAddAssign(const string &in)", asFUNCTION(AddAssignStringToString), asCALL_CDECL_OBJLAST); assert( r >= 0 );
 //	r = engine->RegisterObjectMethod("string", "string &opAddAssign(const string &in)", asMETHODPR(string, operator+=, (const string&), string&), asCALL_THISCALL); assert( r >= 0 );
 
 	// Need to use a wrapper for operator== otherwise gcc 4.7 fails to compile
-	r = engine->RegisterObjectMethod("string", "bool opEquals(const string &in) const", asFUNCTIONPR(StringEquals, (const string &, const string &), bool), asCALL_CDECL_OBJFIRST); assert( r >= 0 );
+	r = engine->RegisterObjectMethod("string", "bool opEquals(const string &in) const", asFUNCTIONPR(StringEquals, (const Common::String &, const Common::String &), bool), asCALL_CDECL_OBJFIRST); assert( r >= 0 );
 	r = engine->RegisterObjectMethod("string", "int opCmp(const string &in) const", asFUNCTION(StringCmp), asCALL_CDECL_OBJFIRST); assert( r >= 0 );
-	r = engine->RegisterObjectMethod("string", "string opAdd(const string &in) const", asFUNCTIONPR(operator +, (const string &, const string &), string), asCALL_CDECL_OBJFIRST); assert( r >= 0 );
+	r = engine->RegisterObjectMethod("string", "string opAdd(const string &in) const", asFUNCTIONPR(Common::operator +, (const Common::String &, const Common::String &), Common::String), asCALL_CDECL_OBJFIRST); assert( r >= 0 );
 
 	// The string length can be accessed through methods or through virtual property
 	// TODO: Register as size() for consistency with other types
@@ -851,48 +579,48 @@ void RegisterStdString_Native(asIScriptEngine *engine)
 
 static void ConstructStringGeneric(asIScriptGeneric * gen)
 {
-	new (gen->GetObject()) string();
+	new (gen->GetObject()) Common::String();
 }
 
 static void CopyConstructStringGeneric(asIScriptGeneric * gen)
 {
-	string * a = static_cast<string *>(gen->GetArgObject(0));
-	new (gen->GetObject()) string(*a);
+	Common::String * a = static_cast<Common::String *>(gen->GetArgObject(0));
+	new (gen->GetObject()) Common::String(*a);
 }
 
 static void DestructStringGeneric(asIScriptGeneric * gen)
 {
-	string * ptr = static_cast<string *>(gen->GetObject());
-	ptr->~string();
+	Common::String * ptr = static_cast<Common::String *>(gen->GetObject());
+	ptr->Common::String::~String();
 }
 
 static void AssignStringGeneric(asIScriptGeneric *gen)
 {
-	string * a = static_cast<string *>(gen->GetArgObject(0));
-	string * self = static_cast<string *>(gen->GetObject());
+	Common::String * a = static_cast<Common::String *>(gen->GetArgObject(0));
+	Common::String * self = static_cast<Common::String *>(gen->GetObject());
 	*self = *a;
 	gen->SetReturnAddress(self);
 }
 
 static void AddAssignStringGeneric(asIScriptGeneric *gen)
 {
-	string * a = static_cast<string *>(gen->GetArgObject(0));
-	string * self = static_cast<string *>(gen->GetObject());
+	Common::String * a = static_cast<Common::String *>(gen->GetArgObject(0));
+	Common::String * self = static_cast<Common::String *>(gen->GetObject());
 	*self += *a;
 	gen->SetReturnAddress(self);
 }
 
 static void StringEqualsGeneric(asIScriptGeneric * gen)
 {
-	string * a = static_cast<string *>(gen->GetObject());
-	string * b = static_cast<string *>(gen->GetArgAddress(0));
+	Common::String * a = static_cast<Common::String *>(gen->GetObject());
+	Common::String * b = static_cast<Common::String *>(gen->GetArgAddress(0));
 	*(bool*)gen->GetAddressOfReturnLocation() = (*a == *b);
 }
 
 static void StringCmpGeneric(asIScriptGeneric * gen)
 {
-	string * a = static_cast<string *>(gen->GetObject());
-	string * b = static_cast<string *>(gen->GetArgAddress(0));
+	Common::String * a = static_cast<Common::String *>(gen->GetObject());
+	Common::String * b = static_cast<Common::String *>(gen->GetArgAddress(0));
 
 	int cmp = 0;
 	if( *a < *b ) cmp = -1;
@@ -903,41 +631,40 @@ static void StringCmpGeneric(asIScriptGeneric * gen)
 
 static void StringAddGeneric(asIScriptGeneric * gen)
 {
-	string * a = static_cast<string *>(gen->GetObject());
-	string * b = static_cast<string *>(gen->GetArgAddress(0));
-	string ret_val = *a + *b;
+	Common::String * a = static_cast<Common::String *>(gen->GetObject());
+	Common::String * b = static_cast<Common::String *>(gen->GetArgAddress(0));
+	Common::String ret_val = *a + *b;
 	gen->SetReturnObject(&ret_val);
 }
 
 static void StringLengthGeneric(asIScriptGeneric * gen)
 {
-	string * self = static_cast<string *>(gen->GetObject());
-	*static_cast<asUINT *>(gen->GetAddressOfReturnLocation()) = (asUINT)self->length();
+	Common::String * self = static_cast<Common::String *>(gen->GetObject());
+	*static_cast<asUINT *>(gen->GetAddressOfReturnLocation()) = (asUINT)self->size();
 }
 
 static void StringIsEmptyGeneric(asIScriptGeneric * gen)
 {
-	string * self = reinterpret_cast<string *>(gen->GetObject());
+	Common::String * self = reinterpret_cast<Common::String *>(gen->GetObject());
 	*reinterpret_cast<bool *>(gen->GetAddressOfReturnLocation()) = StringIsEmpty(*self);
 }
 
 static void StringResizeGeneric(asIScriptGeneric * gen)
 {
-	string * self = static_cast<string *>(gen->GetObject());
-	self->resize(*static_cast<asUINT *>(gen->GetAddressOfArg(0)));
+	HPL1_UNIMPLEMENTED(StringResizeGeneric);
 }
 
 static void StringInsert_Generic(asIScriptGeneric *gen)
 {
-	string * self = static_cast<string *>(gen->GetObject());
+	Common::String * self = static_cast<Common::String *>(gen->GetObject());
 	asUINT pos = gen->GetArgDWord(0);
-	string *other = reinterpret_cast<string*>(gen->GetArgAddress(1));
+	Common::String *other = reinterpret_cast<Common::String*>(gen->GetArgAddress(1));
 	StringInsert(pos, *other, *self);
 }
 
 static void StringErase_Generic(asIScriptGeneric *gen)
 {
-	string * self = static_cast<string *>(gen->GetObject());
+	Common::String * self = static_cast<Common::String *>(gen->GetObject());
 	asUINT pos = gen->GetArgDWord(0);
 	int count = int(gen->GetArgDWord(1));
 	StringErase(pos, count, *self);
@@ -945,80 +672,80 @@ static void StringErase_Generic(asIScriptGeneric *gen)
 
 static void StringFindFirst_Generic(asIScriptGeneric * gen)
 {
-	string *find = reinterpret_cast<string*>(gen->GetArgAddress(0));
+	Common::String *find = reinterpret_cast<Common::String*>(gen->GetArgAddress(0));
 	asUINT start = gen->GetArgDWord(1);
-	string *self = reinterpret_cast<string *>(gen->GetObject());
+	Common::String *self = reinterpret_cast<Common::String *>(gen->GetObject());
 	*reinterpret_cast<int *>(gen->GetAddressOfReturnLocation()) = StringFindFirst(*find, start, *self);
 }
 
 static void StringFindLast_Generic(asIScriptGeneric * gen)
 {
-	string *find = reinterpret_cast<string*>(gen->GetArgAddress(0));
+	Common::String *find = reinterpret_cast<Common::String*>(gen->GetArgAddress(0));
 	asUINT start = gen->GetArgDWord(1);
-	string *self = reinterpret_cast<string *>(gen->GetObject());
+	Common::String *self = reinterpret_cast<Common::String *>(gen->GetObject());
 	*reinterpret_cast<int *>(gen->GetAddressOfReturnLocation()) = StringFindLast(*find, start, *self);
 }
 
 static void StringFindFirstOf_Generic(asIScriptGeneric * gen)
 {
-	string *find = reinterpret_cast<string*>(gen->GetArgAddress(0));
+	Common::String *find = reinterpret_cast<Common::String*>(gen->GetArgAddress(0));
 	asUINT start = gen->GetArgDWord(1);
-	string *self = reinterpret_cast<string *>(gen->GetObject());
+	Common::String *self = reinterpret_cast<Common::String *>(gen->GetObject());
 	*reinterpret_cast<int *>(gen->GetAddressOfReturnLocation()) = StringFindFirstOf(*find, start, *self);
 }
 
 static void StringFindLastOf_Generic(asIScriptGeneric * gen)
 {
-	string *find = reinterpret_cast<string*>(gen->GetArgAddress(0));
+	Common::String *find = reinterpret_cast<Common::String*>(gen->GetArgAddress(0));
 	asUINT start = gen->GetArgDWord(1);
-	string *self = reinterpret_cast<string *>(gen->GetObject());
+	Common::String *self = reinterpret_cast<Common::String *>(gen->GetObject());
 	*reinterpret_cast<int *>(gen->GetAddressOfReturnLocation()) = StringFindLastOf(*find, start, *self);
 }
 
 static void StringFindFirstNotOf_Generic(asIScriptGeneric * gen)
 {
-	string *find = reinterpret_cast<string*>(gen->GetArgAddress(0));
+	Common::String *find = reinterpret_cast<Common::String*>(gen->GetArgAddress(0));
 	asUINT start = gen->GetArgDWord(1);
-	string *self = reinterpret_cast<string *>(gen->GetObject());
+	Common::String *self = reinterpret_cast<Common::String *>(gen->GetObject());
 	*reinterpret_cast<int *>(gen->GetAddressOfReturnLocation()) = StringFindFirstNotOf(*find, start, *self);
 }
 
 static void StringFindLastNotOf_Generic(asIScriptGeneric * gen)
 {
-	string *find = reinterpret_cast<string*>(gen->GetArgAddress(0));
+	Common::String *find = reinterpret_cast<Common::String*>(gen->GetArgAddress(0));
 	asUINT start = gen->GetArgDWord(1);
-	string *self = reinterpret_cast<string *>(gen->GetObject());
+	Common::String *self = reinterpret_cast<Common::String *>(gen->GetObject());
 	*reinterpret_cast<int *>(gen->GetAddressOfReturnLocation()) = StringFindLastNotOf(*find, start, *self);
 }
 
 static void formatInt_Generic(asIScriptGeneric * gen)
 {
 	asINT64 val = gen->GetArgQWord(0);
-	string *options = reinterpret_cast<string*>(gen->GetArgAddress(1));
+	Common::String *options = reinterpret_cast<Common::String*>(gen->GetArgAddress(1));
 	asUINT width = gen->GetArgDWord(2);
-	new(gen->GetAddressOfReturnLocation()) string(formatInt(val, *options, width));
+	new(gen->GetAddressOfReturnLocation()) Common::String(formatInt(val, *options, width));
 }
 
 static void formatUInt_Generic(asIScriptGeneric * gen)
 {
 	asQWORD val = gen->GetArgQWord(0);
-	string *options = reinterpret_cast<string*>(gen->GetArgAddress(1));
+	Common::String *options = reinterpret_cast<Common::String*>(gen->GetArgAddress(1));
 	asUINT width = gen->GetArgDWord(2);
-	new(gen->GetAddressOfReturnLocation()) string(formatUInt(val, *options, width));
+	new(gen->GetAddressOfReturnLocation()) Common::String(formatUInt(val, *options, width));
 }
 
 static void formatFloat_Generic(asIScriptGeneric *gen)
 {
 	double val = gen->GetArgDouble(0);
-	string *options = reinterpret_cast<string*>(gen->GetArgAddress(1));
+	Common::String *options = reinterpret_cast<Common::String*>(gen->GetArgAddress(1));
 	asUINT width = gen->GetArgDWord(2);
 	asUINT precision = gen->GetArgDWord(3);
-	new(gen->GetAddressOfReturnLocation()) string(formatFloat(val, *options, width, precision));
+	new(gen->GetAddressOfReturnLocation()) Common::String(formatFloat(val, *options, width, precision));
 }
 
 static void parseInt_Generic(asIScriptGeneric *gen)
 {
-	string *str = reinterpret_cast<string*>(gen->GetArgAddress(0));
+	Common::String *str = reinterpret_cast<Common::String*>(gen->GetArgAddress(0));
 	asUINT base = gen->GetArgDWord(1);
 	asUINT *byteCount = reinterpret_cast<asUINT*>(gen->GetArgAddress(2));
 	gen->SetReturnQWord(parseInt(*str,base,byteCount));
@@ -1026,7 +753,7 @@ static void parseInt_Generic(asIScriptGeneric *gen)
 
 static void parseUInt_Generic(asIScriptGeneric *gen)
 {
-	string *str = reinterpret_cast<string*>(gen->GetArgAddress(0));
+	Common::String *str = reinterpret_cast<Common::String*>(gen->GetArgAddress(0));
 	asUINT base = gen->GetArgDWord(1);
 	asUINT *byteCount = reinterpret_cast<asUINT*>(gen->GetArgAddress(2));
 	gen->SetReturnQWord(parseUInt(*str, base, byteCount));
@@ -1034,7 +761,7 @@ static void parseUInt_Generic(asIScriptGeneric *gen)
 
 static void parseFloat_Generic(asIScriptGeneric *gen)
 {
-	string *str = reinterpret_cast<string*>(gen->GetArgAddress(0));
+	Common::String *str = reinterpret_cast<Common::String*>(gen->GetArgAddress(0));
 	asUINT *byteCount = reinterpret_cast<asUINT*>(gen->GetArgAddress(1));
 	gen->SetReturnDouble(parseFloat(*str,byteCount));
 }
@@ -1042,7 +769,7 @@ static void parseFloat_Generic(asIScriptGeneric *gen)
 static void StringCharAtGeneric(asIScriptGeneric * gen)
 {
 	unsigned int index = gen->GetArgDWord(0);
-	string * self = static_cast<string *>(gen->GetObject());
+	Common::String * self = static_cast<Common::String *>(gen->GetObject());
 
 	if (index >= self->size())
 	{
@@ -1054,219 +781,179 @@ static void StringCharAtGeneric(asIScriptGeneric * gen)
 	}
 	else
 	{
-		gen->SetReturnAddress(&(self->operator [](index)));
+		gen->SetReturnAddress(self->begin() + index);
 	}
 }
 
 static void AssignInt2StringGeneric(asIScriptGeneric *gen)
 {
 	asINT64 *a = static_cast<asINT64*>(gen->GetAddressOfArg(0));
-	string *self = static_cast<string*>(gen->GetObject());
-	std::stringstream sstr;
-	sstr << *a;
-	*self = sstr.str();
+	Common::String *self = static_cast<Common::String*>(gen->GetObject());
+	*self = Common::String::format("%ld", *a);
 	gen->SetReturnAddress(self);
 }
 
 static void AssignUInt2StringGeneric(asIScriptGeneric *gen)
 {
 	asQWORD *a = static_cast<asQWORD*>(gen->GetAddressOfArg(0));
-	string *self = static_cast<string*>(gen->GetObject());
-	std::stringstream sstr;
-	sstr << *a;
-	*self = sstr.str();
+	Common::String *self = static_cast<Common::String*>(gen->GetObject());
+	*self = Common::String::format("%lu", *a);
 	gen->SetReturnAddress(self);
 }
 
 static void AssignDouble2StringGeneric(asIScriptGeneric *gen)
 {
 	double *a = static_cast<double*>(gen->GetAddressOfArg(0));
-	string *self = static_cast<string*>(gen->GetObject());
-	std::stringstream sstr;
-	sstr << *a;
-	*self = sstr.str();
+	Common::String *self = static_cast<Common::String*>(gen->GetObject());
+	*self = Common::String::format("%f", *a);
 	gen->SetReturnAddress(self);
 }
 
 static void AssignFloat2StringGeneric(asIScriptGeneric *gen)
 {
 	float *a = static_cast<float*>(gen->GetAddressOfArg(0));
-	string *self = static_cast<string*>(gen->GetObject());
-	std::stringstream sstr;
-	sstr << *a;
-	*self = sstr.str();
+	Common::String *self = static_cast<Common::String*>(gen->GetObject());
+	*self = Common::String::format("%f", *a);
 	gen->SetReturnAddress(self);
 }
 
 static void AssignBool2StringGeneric(asIScriptGeneric *gen)
 {
 	bool *a = static_cast<bool*>(gen->GetAddressOfArg(0));
-	string *self = static_cast<string*>(gen->GetObject());
-	std::stringstream sstr;
-	sstr << (*a ? "true" : "false");
-	*self = sstr.str();
+	Common::String *self = static_cast<Common::String*>(gen->GetObject());
+	*self = (*a ? "true" : "false");
 	gen->SetReturnAddress(self);
 }
 
 static void AddAssignDouble2StringGeneric(asIScriptGeneric * gen)
 {
-	double * a = static_cast<double *>(gen->GetAddressOfArg(0));
-	string * self = static_cast<string *>(gen->GetObject());
-	std::stringstream sstr;
-	sstr << *a;
-	*self += sstr.str();
+	double *a = static_cast<double*>(gen->GetAddressOfArg(0));
+	Common::String *self = static_cast<Common::String*>(gen->GetObject());
+	*self += Common::String::format("%f", *a);
 	gen->SetReturnAddress(self);
 }
 
 static void AddAssignFloat2StringGeneric(asIScriptGeneric * gen)
 {
-	float * a = static_cast<float *>(gen->GetAddressOfArg(0));
-	string * self = static_cast<string *>(gen->GetObject());
-	std::stringstream sstr;
-	sstr << *a;
-	*self += sstr.str();
+	float *a = static_cast<float*>(gen->GetAddressOfArg(0));
+	Common::String *self = static_cast<Common::String*>(gen->GetObject());
+	*self += Common::String::format("%f", *a);
 	gen->SetReturnAddress(self);
 }
 
 static void AddAssignInt2StringGeneric(asIScriptGeneric * gen)
 {
 	asINT64 * a = static_cast<asINT64 *>(gen->GetAddressOfArg(0));
-	string * self = static_cast<string *>(gen->GetObject());
-	std::stringstream sstr;
-	sstr << *a;
-	*self += sstr.str();
+	Common::String *self = static_cast<Common::String*>(gen->GetObject());
+	*self += Common::String::format("%ld", *a);
 	gen->SetReturnAddress(self);
 }
 
 static void AddAssignUInt2StringGeneric(asIScriptGeneric * gen)
 {
 	asQWORD * a = static_cast<asQWORD *>(gen->GetAddressOfArg(0));
-	string * self = static_cast<string *>(gen->GetObject());
-	std::stringstream sstr;
-	sstr << *a;
-	*self += sstr.str();
+	Common::String *self = static_cast<Common::String*>(gen->GetObject());
+	*self += Common::String::format("%lu", *a);
 	gen->SetReturnAddress(self);
 }
 
 static void AddAssignBool2StringGeneric(asIScriptGeneric * gen)
 {
 	bool * a = static_cast<bool *>(gen->GetAddressOfArg(0));
-	string * self = static_cast<string *>(gen->GetObject());
-	std::stringstream sstr;
-	sstr << (*a ? "true" : "false");
-	*self += sstr.str();
+	Common::String * self = static_cast<Common::String *>(gen->GetObject());
+	*self += (*a ? "true" : "false");
 	gen->SetReturnAddress(self);
 }
 
 static void AddString2DoubleGeneric(asIScriptGeneric * gen)
 {
-	string * a = static_cast<string *>(gen->GetObject());
+	Common::String * a = static_cast<Common::String *>(gen->GetObject());
 	double * b = static_cast<double *>(gen->GetAddressOfArg(0));
-	std::stringstream sstr;
-	sstr << *a << *b;
-	std::string ret_val = sstr.str();
+	Common::String ret_val = *a + Common::String::format("%f", *b);
 	gen->SetReturnObject(&ret_val);
 }
 
 static void AddString2FloatGeneric(asIScriptGeneric * gen)
 {
-	string * a = static_cast<string *>(gen->GetObject());
+	Common::String * a = static_cast<Common::String *>(gen->GetObject());
 	float * b = static_cast<float *>(gen->GetAddressOfArg(0));
-	std::stringstream sstr;
-	sstr << *a << *b;
-	std::string ret_val = sstr.str();
+	Common::String ret_val = *a + Common::String::format("%f", *b);
 	gen->SetReturnObject(&ret_val);
 }
 
 static void AddString2IntGeneric(asIScriptGeneric * gen)
 {
-	string * a = static_cast<string *>(gen->GetObject());
+	Common::String * a = static_cast<Common::String *>(gen->GetObject());
 	asINT64 * b = static_cast<asINT64 *>(gen->GetAddressOfArg(0));
-	std::stringstream sstr;
-	sstr << *a << *b;
-	std::string ret_val = sstr.str();
+	Common::String ret_val = *a + Common::String::format("%ld", *b);
 	gen->SetReturnObject(&ret_val);
 }
 
 static void AddString2UIntGeneric(asIScriptGeneric * gen)
 {
-	string * a = static_cast<string *>(gen->GetObject());
+	Common::String * a = static_cast<Common::String *>(gen->GetObject());
 	asQWORD * b = static_cast<asQWORD *>(gen->GetAddressOfArg(0));
-	std::stringstream sstr;
-	sstr << *a << *b;
-	std::string ret_val = sstr.str();
+	Common::String ret_val = *a + Common::String::format("%lu", *b);
 	gen->SetReturnObject(&ret_val);
 }
 
 static void AddString2BoolGeneric(asIScriptGeneric * gen)
 {
-	string * a = static_cast<string *>(gen->GetObject());
+	Common::String * a = static_cast<Common::String *>(gen->GetObject());
 	bool * b = static_cast<bool *>(gen->GetAddressOfArg(0));
-	std::stringstream sstr;
-	sstr << *a << (*b ? "true" : "false");
-	std::string ret_val = sstr.str();
+	Common::String ret_val = *a + (*b ? "true" : "false");
 	gen->SetReturnObject(&ret_val);
 }
 
 static void AddDouble2StringGeneric(asIScriptGeneric * gen)
 {
 	double* a = static_cast<double *>(gen->GetAddressOfArg(0));
-	string * b = static_cast<string *>(gen->GetObject());
-	std::stringstream sstr;
-	sstr << *a << *b;
-	std::string ret_val = sstr.str();
+	Common::String * b = static_cast<Common::String *>(gen->GetObject());
+	Common::String ret_val = Common::String::format("%f", *a) + *b;
 	gen->SetReturnObject(&ret_val);
 }
 
 static void AddFloat2StringGeneric(asIScriptGeneric * gen)
 {
 	float* a = static_cast<float *>(gen->GetAddressOfArg(0));
-	string * b = static_cast<string *>(gen->GetObject());
-	std::stringstream sstr;
-	sstr << *a << *b;
-	std::string ret_val = sstr.str();
+	Common::String * b = static_cast<Common::String *>(gen->GetObject());
+	Common::String ret_val = Common::String::format("%f", *a) + *b;
 	gen->SetReturnObject(&ret_val);
 }
 
 static void AddInt2StringGeneric(asIScriptGeneric * gen)
 {
 	asINT64* a = static_cast<asINT64 *>(gen->GetAddressOfArg(0));
-	string * b = static_cast<string *>(gen->GetObject());
-	std::stringstream sstr;
-	sstr << *a << *b;
-	std::string ret_val = sstr.str();
+	Common::String * b = static_cast<Common::String *>(gen->GetObject());
+	Common::String ret_val = Common::String::format("%ld", *a) + *b;
 	gen->SetReturnObject(&ret_val);
 }
 
 static void AddUInt2StringGeneric(asIScriptGeneric * gen)
 {
 	asQWORD* a = static_cast<asQWORD *>(gen->GetAddressOfArg(0));
-	string * b = static_cast<string *>(gen->GetObject());
-	std::stringstream sstr;
-	sstr << *a << *b;
-	std::string ret_val = sstr.str();
+	Common::String * b = static_cast<Common::String *>(gen->GetObject());
+	Common::String ret_val = Common::String::format("%lu", *a) + *b;
 	gen->SetReturnObject(&ret_val);
 }
 
 static void AddBool2StringGeneric(asIScriptGeneric * gen)
 {
 	bool* a = static_cast<bool *>(gen->GetAddressOfArg(0));
-	string * b = static_cast<string *>(gen->GetObject());
-	std::stringstream sstr;
-	sstr << (*a ? "true" : "false") << *b;
-	std::string ret_val = sstr.str();
+	Common::String * b = static_cast<Common::String *>(gen->GetObject());
+	Common::String ret_val = (*a ? "true" : "false") + *b;
 	gen->SetReturnObject(&ret_val);
 }
 
 static void StringSubString_Generic(asIScriptGeneric *gen)
 {
 	// Get the arguments
-	string *str   = (string*)gen->GetObject();
+	Common::String *str   = (Common::String*)gen->GetObject();
 	asUINT  start = *(int*)gen->GetAddressOfArg(0);
 	int     count = *(int*)gen->GetAddressOfArg(1);
 
 	// Return the substring
-	new(gen->GetAddressOfReturnLocation()) string(StringSubString(start, count, *str));
+	new(gen->GetAddressOfReturnLocation()) Common::String(StringSubString(start, count, *str));
 }
 
 void RegisterStdString_Generic(asIScriptEngine *engine)
@@ -1275,7 +962,7 @@ void RegisterStdString_Generic(asIScriptEngine *engine)
 	UNUSED_VAR(r);
 
 	// Register the string type
-	r = engine->RegisterObjectType("string", sizeof(string), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK); assert( r >= 0 );
+	r = engine->RegisterObjectType("string", sizeof(Common::String), asOBJ_VALUE | asOBJ_APP_CLASS_CDAK); assert( r >= 0 );
 
 	r = engine->RegisterStringFactory("string", GetStdStringFactorySingleton());
 

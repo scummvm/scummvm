@@ -1,9 +1,9 @@
 #include <string.h> // FIXME: Refactor to remove this system header
 #include <assert.h> // assert() // FIXME: Refactor to remove this system header
-#include <string>
-#include <algorithm> // std::sort // FIXME: Refactor to remove this system header
 
 #include "scriptarray.h"
+#include "common/str.h"
+#include "common/algorithm.h"
 
 using namespace std;
 
@@ -370,7 +370,7 @@ CScriptArray &CScriptArray::operator=(const CScriptArray &other)
 CScriptArray::CScriptArray(asITypeInfo *ti, void *buf)
 {
 	// The object type should be the template instance of the array
-	assert( ti && string(ti->GetName()) == "array" );
+	assert( ti && Common::String(ti->GetName()) == "array" );
 
 	refCount = 1;
 	gcFlag = false;
@@ -463,7 +463,7 @@ CScriptArray::CScriptArray(asITypeInfo *ti, void *buf)
 CScriptArray::CScriptArray(asUINT length, asITypeInfo *ti)
 {
 	// The object type should be the template instance of the array
-	assert( ti && string(ti->GetName()) == "array" );
+	assert( ti && Common::String(ti->GetName()) == "array" );
 
 	refCount = 1;
 	gcFlag = false;
@@ -517,7 +517,7 @@ CScriptArray::CScriptArray(const CScriptArray &other)
 CScriptArray::CScriptArray(asUINT length, void *defVal, asITypeInfo *ti)
 {
 	// The object type should be the template instance of the array
-	assert( ti && string(ti->GetName()) == "array" );
+	assert( ti && Common::String(ti->GetName()) == "array" );
 
 	refCount = 1;
 	gcFlag = false;
@@ -1506,7 +1506,7 @@ void CScriptArray::Sort(asUINT startAt, asUINT count, bool asc)
 				return false;
 			}
 		} customLess = {asc, cmpContext, cache ? cache->cmpFunc : 0};
-		std::sort((void**)GetArrayItemPointer(start), (void**)GetArrayItemPointer(end), customLess);
+		Common::sort((void**)GetArrayItemPointer(start), (void**)GetArrayItemPointer(end), customLess);
 
 		// Clean up
 		if( cmpContext )
