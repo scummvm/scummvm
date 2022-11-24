@@ -25,8 +25,6 @@
  * This file is part of HPL1 Engine.
  */
 
-#include <string>
-
 #include "hpl1/engine/game/ScriptFuncs.h"
 
 #include "hpl1/engine/game/Game.h"
