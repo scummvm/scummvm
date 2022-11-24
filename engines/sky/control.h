@@ -213,7 +213,7 @@ private:
 	void delay(unsigned int amount);
 
 	void animClick(ConResource *pButton);
-	bool getYesNo(char *text);
+	bool getYesNo(char *text, uint bufSize);
 	void buttonControl(ConResource *pButton);
 	uint16 handleClick(ConResource *pButton);
 	uint16 doMusicSlide();
