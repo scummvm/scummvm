@@ -176,7 +176,7 @@ void ControlStatus::setToText(const char *newText) {
 		_statusText->flushForRedraw();
 		free(_textData);
 	}
-	DisplayedText disText = _skyText->displayText(tmpLine, NULL, true, STATUS_WIDTH, 255);
+	DisplayedText disText = _skyText->displayText(tmpLine, sizeof(tmpLine), NULL, true, STATUS_WIDTH, 255);
 	_textData = (DataFileHeader *)disText.textData;
 	_statusText->setSprite(_textData);
 	_statusText->drawToScreen(WITH_MASK);
@@ -373,7 +373,7 @@ void Control::buttonControl(ConResource *pButton) {
 		if (pButton->_text) {
 			DisplayedText textRes;
 			if (pButton->_text == 0xFFFF) // text for autosave button
-				textRes = _skyText->displayText(autoSave, NULL, false, PAN_LINE_WIDTH, 255);
+				textRes = _skyText->displayText(autoSave, sizeof(autoSave), NULL, false, PAN_LINE_WIDTH, 255);
 			else
 				textRes = _skyText->displayText(pButton->_text, NULL, false, PAN_LINE_WIDTH, 255);
 			_textSprite = (DataFileHeader *)textRes.textData;
@@ -625,14 +625,14 @@ uint16 Control::handleClick(ConResource *pButton) {
 		return QUIT_PANEL;
 	case RESTART:
 		animClick(pButton);
-		if (getYesNo(restart)) {
+		if (getYesNo(restart, sizeof(restart))) {
 			restartGame();
 			return GAME_RESTORED;
 		} else
 			return 0;
 	case QUIT_TO_DOS:
 		animClick(pButton);
-		if (getYesNo(quitDos))
+		if (getYesNo(quitDos, sizeof(quitDos)))
 			Engine::quitGame();
 		return 0;
 	default:
@@ -640,7 +640,7 @@ uint16 Control::handleClick(ConResource *pButton) {
 	}
 }
 
-bool Control::getYesNo(char *text) {
+bool Control::getYesNo(char *text, uint bufSize) {
 	bool retVal = false;
 	bool quitPanel = false;
 	uint8 mouseType = MOUSE_NORMAL;
@@ -650,7 +650,7 @@ bool Control::getYesNo(char *text) {
 
 	_yesNo->drawToScreen(WITH_MASK);
 	if (text) {
-		DisplayedText dlgLtm = _skyText->displayText(text, NULL, true, _yesNo->_spriteData->s_width - 8, 37);
+		DisplayedText dlgLtm = _skyText->displayText(text, bufSize, NULL, true, _yesNo->_spriteData->s_width - 8, 37);
 		dlgTextDat = (DataFileHeader *)dlgLtm.textData;
 		textY = MPNL_Y + 44 + (28 - dlgTextDat->s_height) / 2;
 	} else
@@ -1067,7 +1067,7 @@ void Control::setUpGameSprites(const Common::StringArray &saveGameNames, DataFil
 	char cursorChar[2] = "-";
 	DisplayedText textSpr;
 	if (!nameSprites[MAX_ON_SCREEN]) {
-		textSpr = _skyText->displayText(cursorChar, NULL, false, 15, 0);
+		textSpr = _skyText->displayText(cursorChar, sizeof(cursorChar), NULL, false, 15, 0);
 		nameSprites[MAX_ON_SCREEN] = (DataFileHeader *)textSpr.textData;
 	}
 	for (uint16 cnt = 0; cnt < MAX_ON_SCREEN; cnt++) {
@@ -1075,10 +1075,10 @@ void Control::setUpGameSprites(const Common::StringArray &saveGameNames, DataFil
 
 		if (firstNum + cnt == selectedGame) {
 			Common::sprintf_s(nameBuf, "%3d: %s", firstNum + cnt + 1, dirtyString.c_str());
-			textSpr = _skyText->displayText(nameBuf, NULL, false, PAN_LINE_WIDTH, 0);
+			textSpr = _skyText->displayText(nameBuf, sizeof(nameBuf), NULL, false, PAN_LINE_WIDTH, 0);
 		} else {
 			Common::sprintf_s(nameBuf, "%3d: %s", firstNum + cnt + 1, saveGameNames[firstNum + cnt].c_str());
-			textSpr = _skyText->displayText(nameBuf, NULL, false, PAN_LINE_WIDTH, 37);
+			textSpr = _skyText->displayText(nameBuf, sizeof(nameBuf), NULL, false, PAN_LINE_WIDTH, 37);
 		}
 		nameSprites[cnt] = (DataFileHeader *)textSpr.textData;
 		if (firstNum + cnt == selectedGame) {
@@ -1619,14 +1619,14 @@ void Control::showGameQuitMsg() {
 	screenData = _skyScreen->giveCurrent();
 
 	if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS) {
-		_skyText->displayText(_quitTexts[8 * 2 + 0], textBuf1, true, 320, 255);
-		_skyText->displayText(_quitTexts[8 * 2 + 1], textBuf2, true, 320, 255);
+		_skyText->displayText(_quitTexts[8 * 2 + 0], sizeof(_quitTexts[8 * 2 + 0]), textBuf1, true, 320, 255);
+		_skyText->displayText(_quitTexts[8 * 2 + 1], sizeof(_quitTexts[8 * 2 + 1]), textBuf2, true, 320, 255);
 	} else if (SkyEngine::_systemVars->language == SKY_CHINESE_TRADITIONAL) { // Not translated in original
-		_skyText->displayText(_quitTexts[0], textBuf1, true, 320, 255);
-		_skyText->displayText(_quitTexts[1], textBuf2, true, 320, 255);
+		_skyText->displayText(_quitTexts[0], sizeof(_quitTexts[0]), textBuf1, true, 320, 255);
+		_skyText->displayText(_quitTexts[1], sizeof(_quitTexts[1]), textBuf2, true, 320, 255);
 	} else {
-		_skyText->displayText(_quitTexts[SkyEngine::_systemVars->language * 2 + 0], textBuf1, true, 320, 255);
-		_skyText->displayText(_quitTexts[SkyEngine::_systemVars->language * 2 + 1], textBuf2, true, 320, 255);
+		_skyText->displayText(_quitTexts[SkyEngine::_systemVars->language * 2 + 0], sizeof(_quitTexts[SkyEngine::_systemVars->language * 2 + 0]), textBuf1, true, 320, 255);
+		_skyText->displayText(_quitTexts[SkyEngine::_systemVars->language * 2 + 1], sizeof(_quitTexts[SkyEngine::_systemVars->language * 2 + 1]), textBuf2, true, 320, 255);
 	}
 	uint8 *curLine1 = textBuf1 + sizeof(DataFileHeader);
 	uint8 *curLine2 = textBuf2 + sizeof(DataFileHeader);

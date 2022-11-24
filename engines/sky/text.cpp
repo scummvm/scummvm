@@ -250,10 +250,11 @@ char Text::getTextChar(uint8 **data, uint32 *bitPos) {
 DisplayedText Text::displayText(uint32 textNum, uint8 *dest, bool center, uint16 pixelWidth, uint8 color) {
 	//Render text into buffer *dest
 	getText(textNum);
-	return displayText(_textBuffer, dest, center, pixelWidth, color);
+	return displayText(_textBuffer, sizeof(_textBuffer), dest, center, pixelWidth, color);
 }
 
-DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool center, uint16 pixelWidth, uint8 color) {
+// TODO: Don't use caller-supplied buffer for editing operations
+DisplayedText Text::displayText(char *textPtr, uint32 bufLen, uint8 *dest, bool center, uint16 pixelWidth, uint8 color) {
 	//Render text pointed to by *textPtr in buffer *dest
 	uint32 centerTable[10];
 	uint16 lineWidth = 0;
@@ -278,23 +279,44 @@ DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool center, uint16 
 	char *curPos = textPtr;
 	char *lastSpace = textPtr;
 	uint8 textChar = (uint8)*curPos++;
+	bool isBig5 = SkyEngine::_systemVars->language == SKY_CHINESE_TRADITIONAL;
 
 	while (textChar >= 0x20) {
-		if ((_curCharSet == 1) && (textChar >= 0x80))
-			textChar = 0x20;
+		bool isDoubleChar = false;
+		int oldLineWidth = lineWidth;
+		if (isBig5 && (textChar & 0x80)) {
+			isDoubleChar = true;
+			curPos++;
+			lineWidth += SkyEngine::kChineseTraditionalWidth;
+		} else {
+			if ((_curCharSet == 1) && (textChar >= 0x80))
+				textChar = 0x20;
 
-		textChar -= 0x20;
-		if (textChar == 0) {
-			lastSpace = curPos; //keep track of last space
-			centerTable[numLines] = lineWidth;
+			textChar -= 0x20;
+			if (textChar == 0) {
+				lastSpace = curPos; //keep track of last space
+				centerTable[numLines] = lineWidth;
+			}
+
+			lineWidth += _characterSet[textChar];	//add character width
+			lineWidth += (uint16)_dtCharSpacing;	//include character spacing
 		}
 
-		lineWidth += _characterSet[textChar];	//add character width
-		lineWidth += (uint16)_dtCharSpacing;	//include character spacing
-
 		if (pixelWidth <= lineWidth) {
-			if (*(lastSpace-1) == 10)
-				error("line width exceeded");
+			// If no space is found just break here. This is common in e.g. Chinese
+			// that doesn't use spaces.
+			if (lastSpace == textPtr || *(lastSpace-1) == 10) {
+				curPos -= isDoubleChar ? 2 : 1;
+				if (curPos < textPtr)
+					curPos = textPtr;
+				if (strlen(textPtr) + 2 >= bufLen)
+					error("Ran out of buffer size when word-wrapping");
+				// Add a place for linebreak
+				memmove(curPos + 1, curPos, textPtr + bufLen - curPos - 2);
+				textPtr[bufLen - 1] = 0;
+				lastSpace = curPos + 1;
+				centerTable[numLines] = oldLineWidth;
+			}
 
 			*(lastSpace-1) = 10;
 			lineWidth = 0;
@@ -399,7 +421,7 @@ void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, ui
 
 DisplayedText Text::lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool center) {
 	getText(textNum);
-	DisplayedText textInfo = displayText(_textBuffer, NULL, center, width, color);
+	DisplayedText textInfo = displayText(_textBuffer, sizeof(_textBuffer), NULL, center, width, color);
 
 	uint32 compactNum = FIRST_TEXT_COMPACT;
 	Compact *cpt = _skyCompact->fetchCpt(compactNum);
