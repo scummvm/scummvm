@@ -23,6 +23,7 @@
 #include "common/system.h"
 #include "graphics/palette.h"
 #include "graphics/screen.h"
+#include "mm/mm1/gfx/gfx.h"
 #include "mm/mm1/gfx/screen_decoder.h"
 
 namespace MM {
@@ -91,7 +92,7 @@ bool ScreenDecoder::loadStream(Common::SeekableReadStream &stream,
 	for (int i = 0; i < w * h / 4; ++i, ++srcP) {
 		v = *srcP;
 		for (int j = 0; j < 4; ++j, v <<= 2)
-			*destP++ = _indexes[v >> 6];
+			*destP++ = EGA_INDEXES[_indexes[v >> 6]];
 	}
 
 	return true;

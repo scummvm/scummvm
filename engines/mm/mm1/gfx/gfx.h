@@ -30,6 +30,9 @@ namespace Gfx {
 
 #define SCREEN_W 320
 #define SCREEN_H 200
+#define EGA_PALETTE_COUNT 16
+
+extern byte EGA_INDEXES[EGA_PALETTE_COUNT];
 
 class GFX {
 public:
@@ -39,11 +42,10 @@ public:
 	static void setEgaPalette();
 
 	/**
-	 * Internal method used for enhanced mode
-	 * when I needed to figure out which Xeen
-	 * colors most closely matched the EGA palette
+	 * Called after the Xeen palette has been loaded, to determine
+	 * which palette indexes most closely match the EGA colors
 	 */
-	static void findPalette();
+	static void findPalette(const byte palette[256 * 3]);
 };
 
 } // namespace Gfx
