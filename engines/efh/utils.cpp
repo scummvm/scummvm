@@ -25,31 +25,6 @@
 
 namespace Efh {
 
-#if 0
-// Note : The original engine is using copyString(src, dest). It has been replaced either by a string assignment or a snprintf
-void EfhEngine::copyString(char *srcStr, char *destStr) {
-	debugC(1, kDebugUtils, "copyString %s", srcStr);
-	char lastChar = 1;
-	int16 idx = 0;
-
-	while (lastChar != 0) {
-		lastChar = destStr[idx] = srcStr[idx];
-		++idx;
-	}
-}
-#endif
-
-int32 EfhEngine::readFileToBuffer(Common::String &filename, uint8 *destBuffer) {
-	debugC(1, kDebugUtils, "readFileToBuffer %s", filename.c_str());
-	Common::File f;
-	if (!f.open(filename))
-		error("Unable to find file %s", filename.c_str());
-
-	int size = f.size();
-
-	return f.read(destBuffer, size);
-}
-
 void EfhEngine::setDefaultNoteDuration() {
 	// Original implementation is based on the int1C, which is triggered at 18.2065Hz.
 	// Every 4 times, it sets a flag (thus, approx every 220ms)
@@ -85,7 +60,8 @@ void EfhEngine::decryptImpFile(bool techMapFl) {
 			++curPtr;
 	} while (*curPtr != 0x60 && counter <= target);
 
-// TODO: remove the dump part
+#ifdef debug
+// Dump the decompressed IMP file
 	Common::DumpFile dump;
 	if (!techMapFl) {
 		dump.open("imp2_unc.dump");
@@ -96,39 +72,13 @@ void EfhEngine::decryptImpFile(bool techMapFl) {
 	}
 	dump.flush();
 	dump.close();
+#endif
 }
 
 void EfhEngine::loadImageSet(int16 imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer) {
 	debugC(1, kDebugUtils, "loadImageSet %d", imageSetId);
 	Common::String fileName = Common::String::format("imageset.%d", imageSetId);
 	rImageFile(fileName, buffer, subFilesArray, destBuffer);
-}
-
-void EfhEngine::rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, uint8 *packedBuffer) {
-	debugC(1, kDebugUtils, "rImageFile %s", filename.c_str());
-	readFileToBuffer(filename, packedBuffer);
-	uint32 size = uncompressBuffer(packedBuffer, targetBuffer);
-	// TODO: Keep this dump for debug purposes only
-	Common::DumpFile dump;
-	dump.open(filename + ".dump");
-	dump.write(targetBuffer, size);
-	dump.flush();
-	dump.close();
-	// End of dump
-
-	// TODO: Refactoring: once uncompressed, the container contains for each image its width, its height, and raw data (4 Bpp)
-	// => Write a class to handle that more properly
-	uint8 *ptr = targetBuffer;
-	uint16 counter = 0;
-	while (READ_LE_INT16(ptr) != 0) {
-		subFilesArray[counter] = ptr;
-		++counter;
-		int16 imageWidth = READ_LE_INT16(ptr);
-		ptr += 2;
-		int16 imageHeight = READ_LE_INT16(ptr);
-		ptr += 2;
-		ptr += (imageWidth * imageHeight);
-	}
 }
 
 uint32 EfhEngine::uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf) {
