@@ -111,7 +111,7 @@ enum {
 };
 
 /* SCUMM Debug Channels */
-void debugC(int level, const char *s, ...) GCC_PRINTF(2, 3);
+void debugC(int level, MSVC_PRINTF const char *s, ...) GCC_PRINTF(2, 3);
 
 enum {
 	DEBUG_GENERAL	=	1 << 0,		// General debug
@@ -702,7 +702,7 @@ protected:
 	void restoreSurfacesPostGUI();
 
 public:
-	char displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);
+	char displayMessage(const char *altButton, MSVC_PRINTF const char *message, ...) GCC_PRINTF(3, 4);
 
 protected:
 	byte _fastMode = 0;
