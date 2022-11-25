@@ -41,7 +41,7 @@ bool Dead::msgFocus(const FocusMessage &msg) {
 void Dead::draw() {
 	clearSurface();
 	writeLine(4);
-	writeString(6, 10, STRING["dialogs.dead.1"]);
+	writeString(11, 6, STRING["dialogs.dead.1"]);
 	writeString(7, 8, STRING["dialogs.dead.2"]);
 	writeString(7, 10, STRING["dialogs.dead.3"]);
 	writeString(8, 12, STRING["dialogs.dead.4"]);
