@@ -68,7 +68,7 @@ void Map11::special() {
 
 void Map11::special00() {
 	send(SoundMessage(
-		STRING["maps.ladder_up"],
+		STRING["maps.map11.ladder"],
 		[]() {
 			g_maps->_mapPos = Common::Point(7, 2);
 			g_maps->changeMap(0xf04, 2);
