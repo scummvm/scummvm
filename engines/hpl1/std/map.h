@@ -124,10 +124,11 @@ public:
 	 * Erases an entry in the map
 	 */
 	iterator erase(iterator it) {
-		iterator next = it;
-		++next;
-		_items.remove_at(it - begin());
-		return next;
+		return _items.erase(it);
+	}
+
+	iterator erase(iterator first, iterator last) {
+		return _items.erase(first, last);
 	}
 
 	iterator erase(const Key &theKey) {
