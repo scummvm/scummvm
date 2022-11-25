@@ -95,6 +95,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"idiotstale",      "The Idiot's Tale"},
 	{"imustkill",       "I Must Kill...: Fresh Meat"},
 	{"jamesperis",      "James Peris: No License Nor Control"},
+	{"jamesperis2",     "James Peris 2: The Fountain of Eternal Drunkenness"},
 	{"klaymen1",        "Klaymen Episodes: Pilot"},
 	{"knossos",         "K'NOSSOS"},
 	{"kulivocko",       "Kulivocko"},
@@ -1365,7 +1366,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Fred (English) (PreAlpha)
 	WME_WINENTRY("fred", "PreAlpha",
 		WME_ENTRY2s("string.tab", "76b48c26e611071810d8182fc27f7d0e", 12590,
-		            "data.dcp", "e18b1f9815b9e9cf1d1357bc48269b0b", 7632855), Common::EN_ANY, ADGF_UNSUPPORTED | ADGF_DEMO, WME_1_0_31),
+					"data.dcp", "e18b1f9815b9e9cf1d1357bc48269b0b", 7632855), Common::EN_ANY, ADGF_UNSUPPORTED | ADGF_DEMO, WME_1_0_31),
 
 	// Fred (French) (PreAlpha)
 	WME_WINENTRY("fred", "PreAlpha",
@@ -1579,6 +1580,16 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("jamesperis", "Demo",
 		WME_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507), Common::ES_ESP, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
+	// James Peris 2: The Fountain of Eternal Drunkenness (English)
+	WME_WINENTRY("jamesperis2", "Steam",
+		WME_ENTRY2s("data.dcp", "1d19fac76ab9267881214d7c7968acb6", 980791568,
+					"audio.dcp", "0a768e0266238772b698b5a26a9c2b50", 488048201), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// James Peris 2: The Fountain of Eternal Drunkenness (Spanish)
+	WME_WINENTRY("jamesperis2", "Steam",
+		WME_ENTRY2s("data.dcp", "1d19fac76ab9267881214d7c7968acb6", 980791568,
+					"audio.dcp", "0a768e0266238772b698b5a26a9c2b50", 488048201), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Lov Mamuta
 	WME_WINENTRY("lovmamuta", "",
 		WME_ENTRY1s("data.dcp", "ce2be4691fa0104cfdd63656cedaf810", 11198933), Common::CS_CZE, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
@@ -1727,8 +1738,8 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("lotl", "",
 		WME_ENTRY1s("data.dcp", "2042ea14f2d7c52a139d768e962040c1", 354370575), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_7_2),
 
-    // Tale of The Lost Bride and A Hidden Treasure (Russian)
-    WME_WINENTRY("lostbride", "",
+	// Tale of The Lost Bride and A Hidden Treasure (Russian)
+	WME_WINENTRY("lostbride", "",
 		WME_ENTRY1s("data.dcp", "cb45b579c6d5767341a9b07bc807df5f", 106683613), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Machu Mayu (Demo)

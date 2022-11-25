@@ -1244,6 +1244,34 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("PAGEDOWN"); // original keyboard
 		//TODO: extra joy control, e.g. "JOY_R+JOY_B"
 		gameKeyMap->addAction(act);
+	} else if (gameId == "jamesperis2") {
+		act = new Action("HINT", _("Show hints"));
+		act->setKeyEvent(KeyState(KEYCODE_SPACE, ASCII_SPACE));
+		act->addDefaultInputMapping("SPACE"); // original keyboard
+		act->addDefaultInputMapping("MOUSE_MIDDLE"); // extra mouse
+		act->addDefaultInputMapping("JOY_Y"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action("PAGEUP", _("Previous page"));
+		act->setMouseWheelUpEvent();
+		act->addDefaultInputMapping("MOUSE_WHEEL_UP"); // original mouse
+		gameKeyMap->addAction(act);
+
+		act = new Action("PAGEDN", _("Next page"));
+		act->setMouseWheelDownEvent();
+		act->addDefaultInputMapping("MOUSE_WHEEL_DOWN"); // original mouse
+		gameKeyMap->addAction(act);
+
+		act = new Action(kStandardActionLoad, _("Load game"));
+		act->setKeyEvent(KEYCODE_F5);
+		act->addDefaultInputMapping("F5"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action(kStandardActionEE, _("???"));
+		act->setKeyEvent(KeyState(KEYCODE_t, 't', KBD_CTRL));
+		act->addDefaultInputMapping("C+t"); // original keyboard
+		//TODO: extra joy control, e.g. "JOY_R+JOY_B"
+		gameKeyMap->addAction(act);
 	} else if (gameId == "julia") {
 		act = new Action(kStandardActionSkip, _("Skip"));
 		act->setKeyEvent(KEYCODE_F12);
