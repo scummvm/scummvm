@@ -903,11 +903,27 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 #endif
 	}
 
-	_cursor->allocate(w, h);
+	Common::Point topLeftCoord(0, 0);
+
+	// If the cursor is scalable, add a 1-texel transparent border.
+	// This ensures that linear filtering falloff from the edge pixels has room to completely fade out instead of
+	// being cut off at half-way.  Could use border clamp too, but GLES2 doesn't support that.
+	if (!_cursorDontScale) {
+		topLeftCoord = Common::Point(1, 1);
+		_cursor->allocate(w + 2, h + 2);
+	} else {
+		_cursor->allocate(w, h);
+	}
+
+	_cursorHotspotX += topLeftCoord.x;
+	_cursorHotspotY += topLeftCoord.y;
+
 	if (inputFormat.bytesPerPixel == 1) {
 		// For CLUT8 cursors we can simply copy the input data into the
 		// texture.
-		_cursor->copyRectToTexture(0, 0, w, h, buf, w * inputFormat.bytesPerPixel);
+		if (!_cursorDontScale)
+			_cursor->fill(keycolor);
+		_cursor->copyRectToTexture(topLeftCoord.x, topLeftCoord.y, w, h, buf, w * inputFormat.bytesPerPixel);
 	} else {
 		// Otherwise it is a bit more ugly because we have to handle a key
 		// color properly.
@@ -922,20 +938,25 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 		// The pre-multiplication allows using a blend mode that prevents
 		// color fringes due to filtering.
 
+		if (!_cursorDontScale)
+			_cursor->fill(0);
+
+		byte *topLeftPixelPtr = static_cast<byte *>(dst->getBasePtr(topLeftCoord.x, topLeftCoord.y));
+
 		if (dst->format.bytesPerPixel == 2) {
 			if (inputFormat.bytesPerPixel == 2) {
-				multiplyColorWithAlpha<uint16, uint16>((const byte *) buf, (byte *) dst->getPixels(), w, h,
+				multiplyColorWithAlpha<uint16, uint16>((const byte *)buf, topLeftPixelPtr, w, h,
 				                                       inputFormat, dst->format, srcPitch, dst->pitch, keycolor);
 			} else if (inputFormat.bytesPerPixel == 4) {
-				multiplyColorWithAlpha<uint32, uint16>((const byte *) buf, (byte *) dst->getPixels(), w, h,
+				multiplyColorWithAlpha<uint32, uint16>((const byte *)buf, topLeftPixelPtr, w, h,
 				                                       inputFormat, dst->format, srcPitch, dst->pitch, keycolor);
 			}
 		} else {
 			if (inputFormat.bytesPerPixel == 2) {
-				multiplyColorWithAlpha<uint16, uint32>((const byte *) buf, (byte *) dst->getPixels(), w, h,
+				multiplyColorWithAlpha<uint16, uint32>((const byte *)buf, topLeftPixelPtr, w, h,
 				                                       inputFormat, dst->format, srcPitch, dst->pitch, keycolor);
 			} else if (inputFormat.bytesPerPixel == 4) {
-				multiplyColorWithAlpha<uint32, uint32>((const byte *) buf, (byte *) dst->getPixels(), w, h,
+				multiplyColorWithAlpha<uint32, uint32>((const byte *)buf, topLeftPixelPtr, w, h,
 				                                       inputFormat, dst->format, srcPitch, dst->pitch, keycolor);
 			}
 		}
