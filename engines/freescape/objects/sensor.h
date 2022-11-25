@@ -39,7 +39,8 @@ public:
 		byte color_,
 		byte firingInterval_,
 		uint16 firingRange_,
-		uint16 flags_,
+		uint16 axis_,
+		uint8 flags_,
 		FCLInstructionVector condition_,
 		Common::String conditionSource_) {
 		_objectID = objectID_;
@@ -51,12 +52,14 @@ public:
 			_colours->push_back(color_);
 		_firingInterval = firingInterval_;
 		_firingRange = firingRange_;
+		_axis = axis_;
 		_flags = flags_;
 		_conditionSource = conditionSource_;
 		_condition = condition_;
 	}
 	byte _firingInterval;
 	uint16 _firingRange;
+	uint16 _axis;
 
 	Common::String _conditionSource;
 	FCLInstructionVector _condition;
@@ -67,7 +70,7 @@ public:
 	bool isDrawable() override { return true; }
 	bool isPlanar() override { return true; }
 	void scale(int factor) override { _origin = _origin / factor; };
-	Object *duplicate() override { return (new Sensor(_objectID, _origin, _rotation, (*_colours)[0], _firingInterval, _firingRange, _flags, _condition, _conditionSource)); };
+	Object *duplicate() override { return (new Sensor(_objectID, _origin, _rotation, (*_colours)[0], _firingInterval, _firingRange, _axis, _flags, _condition, _conditionSource)); };
 
 	ObjectType getType() override { return kSensorType; };
 	Math::Vector3d getRotation() { return _rotation; }

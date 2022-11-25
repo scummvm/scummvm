@@ -226,6 +226,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 				0,
 				0,
 				0,
+				0,
 				instructions,
 				conditionSource);
 		}
@@ -235,7 +236,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		assert(color > 0);
 		byte firingInterval = readField(file, 8);
 		uint16 firingRange = readField(file, 16);
-		byte sensorFlags = readField(file, 8);
+		byte sensorAxis = readField(file, 8);
 		byteSizeOfObject = byteSizeOfObject - 5;
 		// grab the object condition, if there is one
 		if (byteSizeOfObject) {
@@ -252,7 +253,8 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			color,
 			firingInterval,
 			firingRange,
-			sensorFlags,
+			sensorAxis,
+			rawFlagsAndType,
 			instructions,
 			conditionSource);
 	} break;

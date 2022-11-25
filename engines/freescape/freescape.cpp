@@ -231,8 +231,26 @@ void FreescapeEngine::checkSensors() {
 		Sensor *sensor = (Sensor *)it;
 		if (sensor->isDestroyed() || sensor->isInvisible())
 			continue;
-		if ((sensor->getOrigin() - _position).length() <= sensor->_firingRange) {
-			if (_ticks % sensor->_firingInterval == 0) {
+
+		Math::Vector3d diff = sensor->getOrigin() - _position;
+		bool playerDetected = false;
+
+		if (sensor->_axis == 0x01 && diff.x() >= 0)
+			playerDetected = true;
+		else if (sensor->_axis == 0x02 && diff.x() <= 0)
+			playerDetected = true;
+		else if (sensor->_axis == 0x04 && diff.y() >= 0)
+			playerDetected = true;
+		else if (sensor->_axis == 0x08 && diff.y() <= 0)
+			playerDetected = true;
+		else if (sensor->_axis == 0x10 && diff.z() >= 0)
+			playerDetected = true;
+		else if (sensor->_axis == 0x20 && diff.z() <= 0)
+			playerDetected = true;
+
+		if (playerDetected) {
+			if ((ABS(diff.x() + ABS(diff.y())) + ABS(diff.z()) <= sensor->_firingRange) &&
+			    (_ticks % sensor->_firingInterval == 0)) {
 				drawSensorShoot(sensor);
 				takeDamageFromSensor();
 			}
