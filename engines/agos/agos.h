@@ -728,7 +728,7 @@ protected:
 	void uncompressText(byte *ptr);
 	byte *uncompressToken(byte a, byte *ptr);
 
-	void showMessageFormat(const char *s, ...) GCC_PRINTF(2, 3);
+	void showMessageFormat(MSVC_PRINTF const char *s, ...) GCC_PRINTF(2, 3);
 	const byte *getStringPtrByID(uint16 stringId, bool upperCase = false);
 	const byte *getLocalStringByID(uint16 stringId);
 	uint getNextStringID();
@@ -2083,7 +2083,7 @@ protected:
 	void printScreenText(uint vgaSpriteId, uint color, const char *stringPtr, int16 x, int16 y, int16 width) override;
 
 	void printInteractText(uint16 num, const char *string);
-	void sendInteractText(uint16 num, const char *fmt, ...) GCC_PRINTF(3, 4);
+	void sendInteractText(uint16 num, MSVC_PRINTF const char *fmt, ...) GCC_PRINTF(3, 4);
 
 	void checkLinkBox();
 	void hyperLinkOn(uint16 x);
