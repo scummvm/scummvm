@@ -161,7 +161,7 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	if (_currentArea->_skyColor > 0 && _currentArea->_skyColor != 255) {
 		_gfx->_keyColor = 0;
-		_gfx->setSkyColor(_currentArea->_skyColor);
+		_gfx->clear(_currentArea->_skyColor);
 	} else
 		_gfx->_keyColor = 255;
 }

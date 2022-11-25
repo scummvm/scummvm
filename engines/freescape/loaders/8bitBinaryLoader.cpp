@@ -301,8 +301,6 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 
 	if (groundColor == 0)
 		groundColor = 255;
-	if (skyColor == 0)
-		skyColor = 255;
 
 	uint8 usualBackgroundColor = readField(file, 8);
 	uint8 underFireBackgroundColor = readField(file, 8);

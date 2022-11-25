@@ -89,11 +89,6 @@ void OpenGLRenderer::setViewport(const Common::Rect &rect) {
 	glScissor(_viewport.left, g_system->getHeight() - _viewport.bottom, _viewport.width(), _viewport.height());
 }
 
-void OpenGLRenderer::clear() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glColor3f(1.0f, 1.0f, 1.0f);
-}
-
 void OpenGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) {
 	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
 
@@ -263,9 +258,14 @@ void OpenGLRenderer::useColor(uint8 r, uint8 g, uint8 b) {
 	glColor3ub(r, g, b);
 }
 
-void OpenGLRenderer::setSkyColor(uint8 color) {
+void OpenGLRenderer::clear(uint8 color) {
 	uint8 r, g, b;
-	assert(getRGBAt(color, r, g, b)); // TODO: move check inside this function
+
+	if (_colorRemaps && _colorRemaps->contains(color)) {
+		color = (*_colorRemaps)[color];
+	}
+
+	readFromPalette(color, r, g, b);
 	glClearColor(r / 255., g / 255., b / 255., 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

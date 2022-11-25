@@ -110,6 +110,7 @@ public:
 	void convertBorder();
 	void drawBorder();
 	void drawTitle();
+	void drawBackground();
 	virtual void drawUI();
 	virtual void drawCrossair(Graphics::Surface *surface);
 	Graphics::Surface *_border;

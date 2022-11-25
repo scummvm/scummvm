@@ -48,6 +48,7 @@ public:
 	uint16 getAreaFlags();
 	uint8 getScale();
 	void remapColor(int index, int color);
+	void unremapColor(int index);
 	void draw(Renderer *gfx);
 	void show();
 

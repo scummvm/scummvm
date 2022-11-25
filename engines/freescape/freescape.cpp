@@ -157,8 +157,20 @@ void FreescapeEngine::drawBorder() {
 		return;
 
 	_gfx->setViewport(_fullscreenViewArea);
-	if (!_borderTexture)
+
+	if (!_borderTexture) {
+		// Replace black pixel for transparent ones
+		uint32 black = _border->format.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+		uint32 transparent = _border->format.ARGBToColor(0x00, 0x00, 0x00, 0x00);
+
+		for (int i = 0; i < _border->w; i++) {
+			for (int j = 0; j < _border->h; j++) {
+				if (_border->getPixel(i, j) == black)
+					_border->setPixel(i, j, transparent);
+			}
+		}
 		_borderTexture = _gfx->createTexture(_border);
+	}
 	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _borderTexture);
 	_gfx->setViewport(_viewArea);
 }
@@ -235,12 +247,27 @@ void FreescapeEngine::drawSensorShoot(Sensor *sensor) {
 
 void FreescapeEngine::takeDamageFromSensor() {
 	_gameStateVars[k8bitVariableShield]--;
+	_currentArea->remapColor(_currentArea->_usualBackgroundColor, _currentArea->_underFireBackgroundColor);
+	_currentArea->remapColor(_currentArea->_skyColor, _currentArea->_underFireBackgroundColor);
+	drawFrame();
+	_gfx->flipBuffer();
+	g_system->updateScreen();
+	_currentArea->unremapColor(_currentArea->_usualBackgroundColor);
+	_currentArea->unremapColor(_currentArea->_skyColor);
+}
+
+void FreescapeEngine::drawBackground() {
+	_gfx->setViewport(_fullscreenViewArea);
+	_gfx->clear(_currentArea->_usualBackgroundColor);
+	_gfx->setViewport(_viewArea);
+	_gfx->clear(_currentArea->_skyColor);
 }
 
 
 void FreescapeEngine::drawFrame() {
 	_gfx->updateProjectionMatrix(70.0, _nearClipPlane, _farClipPlane);
 	_gfx->positionCamera(_position, _position + _cameraFront);
+	drawBackground();
 	_currentArea->draw(_gfx);
 	drawBorder();
 	drawUI();
@@ -479,7 +506,6 @@ Common::Error FreescapeEngine::run() {
 		return Common::kUserCanceled;
 
 	_gfx->init();
-	_gfx->clear();
 
 	// Load game data and init game state
 	loadDataBundle();
@@ -487,6 +513,7 @@ Common::Error FreescapeEngine::run() {
 	initGameState();
 	loadColorPalette();
 
+	_gfx->clear(0);
 
 	_gfx->convertImageFormatIfNecessary(_title);
 	_gfx->convertImageFormatIfNecessary(_border);

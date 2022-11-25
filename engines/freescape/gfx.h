@@ -66,7 +66,6 @@ public:
 	bool _isAccelerated;
 
 	virtual void init() = 0;
-	virtual void clear() = 0;
 	virtual void setViewport(const Common::Rect &rect) = 0;
 
 	/**
@@ -91,7 +90,7 @@ public:
 	virtual void renderFace(const Common::Array<Math::Vector3d> &vertices) = 0;
 
 	void setColorRemaps(ColorReMap *colorRemaps);
-	virtual void setSkyColor(uint8 color) = 0;
+	virtual void clear(uint8 color) = 0;
 	virtual void drawFloor(uint8 color) = 0;
 
 	Common::Rect viewport() const;

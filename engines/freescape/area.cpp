@@ -171,9 +171,12 @@ void Area::remapColor(int index, int color) {
 	_colorRemaps[index] = color;
 }
 
+void Area::unremapColor(int index) {
+	_colorRemaps.clear(index);
+}
 
 void Area::draw(Freescape::Renderer *gfx) {
-	gfx->clear();
+	gfx->clear(_skyColor);
 	assert(_drawableObjects.size() > 0);
 	for (auto &obj : _drawableObjects) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
