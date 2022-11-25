@@ -119,6 +119,10 @@ static const uint16 TILE_HEIGHTS[RESOURCE_TILES_COUNT] = {
 	128, 96, 64, 32, 128, 96, 64, 32, 96, 64, 32, 16
 };
 
+static byte TILE_COLORS[18] = {
+	0xe6, 0xe6, 0xe6, 0x72, 0x72, 0x72, 0x62, 0x62, 0x62,
+	0, 0, 0, 0, 0, 0, 0, 0, 0
+};
 
 Maps::Maps() {
 	g_maps = this;
@@ -368,9 +372,11 @@ void Maps::loadTile() {
 	tiles.resize(RESOURCE_TILES_COUNT);
 
 	Gfx::ScreenDecoder decoder;
+	byte colors = TILE_COLORS[entryIndex];
+	assert(colors);
 	decoder._indexes[0] = 0;
-	decoder._indexes[1] = 6;
-	decoder._indexes[2] = 14;
+	decoder._indexes[1] = colors & 0xf;
+	decoder._indexes[2] = (colors >> 4) & 0xf;
 	decoder._indexes[3] = 15;
 
 	for (int i = 0; i < RESOURCE_TILES_COUNT; ++i) {
