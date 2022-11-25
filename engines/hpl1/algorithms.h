@@ -57,6 +57,15 @@ RandomIt upperBound(RandomIt begin, RandomIt end, V const &val, Comp comp = {}) 
 	}
 }
 
+template<typename RandomIt, typename Pred>
+RandomIt removeIf(RandomIt begin, RandomIt end, Pred pred) {
+	for(auto i = begin; i != end; ++i) {
+		if (!pred(*i))
+			*begin++ = *i;
+	}
+	return begin;
+}
+
 } // namespace Hpl1
 
 #endif // HPL1_ALGORITHMS
