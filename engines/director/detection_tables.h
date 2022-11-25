@@ -1830,7 +1830,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("alankay", "Demo", "Alan Kay", "276bee761e48a6fd709df77d5c2f60dd", 6188133, Common::JA_JPN, 311),
 
 	MACGAME1_l("alexworld", "", "AlexWorld", "f5277c53bacd27936158dd3867e587e2", 391320, Common::JA_JPN, 300),
-	WINGAME1_l("alexworld", "", "ALEX.EXE", "65d06b5fef155a2473434571aff5bc29", 369996, Common::JA_JPN, 300),
+	WINGAME2t_l("alexworld", "", "ALEX.EXE", "309f70f00df28cec3fcf2141004fbca8", 369996,
+								 "DATA/START.MMM", "cea4ebd9a0ff68e56209aedb37b229bc", 1248940, Common::JA_JPN, 300),
 
 	MACGAME1("alice2ocean", "", "From Alice to Ocean", "1ae45c23586b41997ba52e2e7c771c4c", 375210, 310),
 
@@ -1866,9 +1867,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1t("bestservice", "", "BESTDEMO.EXE", "437d0bc26a89a5f8cda3bef31db23897", 370015, 310),
 
-	MACGAME1("beyondthewall", "", "Beyond The Wall Of Stars", "107c6a6d3cce957eaa26d427e672000c", 465267, 300),
-	MACGAME1("beyondthewall", "", "Desktop Folder/bstars", "107c6a6d3cce957eaa26d427e672000c", 465267, 300),
-	WINGAME1("beyondthewall", "", "WALL.EXE", "5c6862a40a48881913ee7c50d25cd984", 225253, 300),
+	MACGAME1("beyondthewall", "",  "Beyond The Wall Of Stars", "107c6a6d3cce957eaa26d427e672000c", 465267, 300),
+	MACGAME1("beyondthewall", "",  "Desktop Folder/bstars", "107c6a6d3cce957eaa26d427e672000c", 465267, 300),
+	WINGAME2t("beyondthewall", "", "WALL.EXE",	"36a8d553a58437752e12b250389a4629", 225253,
+								   "TITLE.MMM",	"1fa63036a9c55cdbec8830219315ee7a", 661220, 300),
 
 	MACDEMO1_l("bigtimemovie", "Demo", "BIG TIME MOVIE-Studios", "f5277c53bacd27936158dd3867e587e2", 392265, Common::JA_JPN, 311),
 
@@ -1913,9 +1915,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("calling", "Demo", "CallingPlayer", "276bee761e48a6fd709df77d5c2f60dd", 392420, Common::JA_JPN, 313),
 
 	// From Sanctuary Woods Multimedia. Projectors for English, French, Spanish are included on the disc.
-	WINGAME1("catcameback", "",   "TITLEE.EXE", "65d06b5fef155a2473434571aff5bc29", 369998, 310),
-	WINGAME1_l("catcameback", "", "TITLES.EXE", "65d06b5fef155a2473434571aff5bc29", 369998, Common::ES_ESP, 310),
-	WINGAME1_l("catcameback", "", "TITLEF.EXE", "65d06b5fef155a2473434571aff5bc29", 369998, Common::FR_FRA, 310),
+	WINGAME2t("catcameback", "",   "TITLEE.EXE", "1cddc9c455b7f8ef78987282777170b7", 369998,
+								   "TITLEE.MMM", "360492ae40b050acdb7117c713dddbcd", 3478, 310),
+	WINGAME2t_l("catcameback", "", "TITLES.EXE", "fb7139c446dc35fa9648de71b0de2227", 369998,
+								   "TITLES.MMM", "91e15ea5c292ae3d2934a82a9277c43a", 3478, Common::ES_ESP, 310),
+	WINGAME2t_l("catcameback", "", "TITLEF.EXE", "c0f0fd8ded15c9932c58e6b08dbb843a", 369998,
+								   "TITLEF.MMM", "0ada4096117f22b7cfe9395f6290b013", 3476, Common::FR_FRA, 310),
+
+
+//	WINGAME1_l("catcameback", "", "TITLES.EXE", "65d06b5fef155a2473434571aff5bc29", 369998, Common::ES_ESP, 310),
+//	WINGAME1_l("catcameback", "", "TITLEF.EXE", "65d06b5fef155a2473434571aff5bc29", 369998, Common::FR_FRA, 310),
 	// Found on CD-ROM Today, #4
 	MACDEMO1("catcameback", "Demo", "Cat Came Back", "2ce360c9ea2da80a2c6d1040b0ad92dd", 386674, 313),
 
