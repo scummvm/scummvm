@@ -99,7 +99,7 @@ public:
 	}
 
 private:
-	int displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);
+	int displayMessage(const char *altButton, MSVC_PRINTF const char *message, ...) GCC_PRINTF(3, 4);
 
 	bool convertSaveGame(uint8 slot, char *desc);
 	void showSavegameNames();
