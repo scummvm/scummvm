@@ -15,9 +15,13 @@
 // Usually where the variables are only used in debug mode.
 #define UNUSED_VAR(x) (void)(x)
 
-#include <map>
+struct StrComp {
+	bool operator()(const Common::String* a, const Common::String* b) {
+		return *a < *b;
+	}
+};
 
-using map_t = std::map<Common::String, int>;
+using map_t = Hpl1::std::map<const Common::String*, int, StrComp>;
 
 BEGIN_AS_NAMESPACE
 class CStdStringFactory : public asIStringFactory
@@ -37,7 +41,7 @@ public:
 		// threads, so it is necessary to use a mutex.
 		asAcquireExclusiveLock();
 
-		Common::String str(data, length);
+		Common::String* str = new Common::String(data, length); // deleted at line 74
 		map_t::iterator it = stringCache.find(str);
 		if (it != stringCache.end())
 			it->second++;
@@ -46,7 +50,7 @@ public:
 
 		asReleaseExclusiveLock();
 
-		return reinterpret_cast<const void*>(&it->first);
+		return reinterpret_cast<const void*>(str);
 	}
 
 	int  ReleaseStringConstant(const void *str)
@@ -60,14 +64,16 @@ public:
 		// threads, so it is necessary to use a mutex.
 		asAcquireExclusiveLock();
 
-		map_t::iterator it = stringCache.find(*reinterpret_cast<const Common::String*>(str));
+		map_t::iterator it = stringCache.find(reinterpret_cast<const Common::String*>(str));
 		if (it == stringCache.end())
 			ret = asERROR;
 		else
 		{
 			it->second--;
-			if (it->second == 0)
+			if (it->second == 0) {
+				delete it->first;
 				stringCache.erase(it);
+			}
 		}
 
 		asReleaseExclusiveLock();
