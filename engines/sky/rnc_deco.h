@@ -23,9 +23,6 @@
 #define SKY_RNC_DECO_H
 
 
-
-#define RNC_SIGNATURE   0x524E4301 // "RNC\001"
-
 namespace Sky {
 
 class RncDecoder {
@@ -47,6 +44,8 @@ public:
 	RncDecoder();
 	~RncDecoder();
 	int32 unpackM1(const void *input, void *output, uint16 key);
+
+	static const uint32 kRncSignature = 0x524E4301; // "RNC\001"
 
 protected:
 	void initCrc();

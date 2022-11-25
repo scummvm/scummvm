@@ -177,7 +177,7 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 	_bitCount = 0;
 
 	//Check for "RNC "
-	if (READ_BE_UINT32(inputptr) != RNC_SIGNATURE)
+	if (READ_BE_UINT32(inputptr) != kRncSignature)
 		return NOT_PACKED;
 
 	inputptr += 4;
