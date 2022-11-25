@@ -42,6 +42,7 @@
 #include "scumm/dialogs.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/thumbnail.h"
 
 namespace Scumm {
 
@@ -797,10 +798,10 @@ void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
 void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 	if (isUsingOriginalGUI()) {
 		if (lastKeyHit.keycode == Common::KEYCODE_F5) {
-			prepareSavegame();
 			if (_game.id == GID_MANIAC && _game.version == 0) {
 				runScript(2, 0, 0, nullptr);
 			}
+
 			if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformNES) {
 				runScript(163, 0, 0, nullptr);
 			}
@@ -835,16 +836,10 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 	// Fall back to default behavior
 	ScummEngine::processKeyboard(lastKeyHit);
 
-	// On Alt-F5 prepare savegame for the original save/load dialog.
-	if (!isUsingOriginalGUI()) {
-		if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
-			prepareSavegame();
-			if (_game.id == GID_MANIAC && _game.version == 0) {
-				runScript(2, 0, 0, nullptr);
-			}
-			if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformNES) {
-				runScript(163, 0, 0, nullptr);
-			}
+	// On Alt-F5 load the original save/load dialog for MANIAC NES
+	if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
+		if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformNES) {
+			runScript(163, 0, 0, nullptr);
 		}
 	}
 
@@ -859,21 +854,10 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 }
 
 void ScummEngine_v3::processKeyboard(Common::KeyState lastKeyHit) {
-	if (isUsingOriginalGUI()) {
-		if (lastKeyHit.keycode == Common::KEYCODE_F5) {
-			prepareSavegame();
-		}
-	}
-
 	// Fall back to default behavior
 	ScummEngine::processKeyboard(lastKeyHit);
 
 	if (!isUsingOriginalGUI()) {
-		// On Alt-F5 prepare savegame for the original save/load dialog.
-		if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
-			prepareSavegame();
-		}
-
 		// 'i' brings up an IQ dialog in Indy3 (disabled in save/load dialog for input)
 		if (lastKeyHit.ascii == 'i' && _game.id == GID_INDY3 && _currentRoom != 14) {
 			// SCUMM var 244 is the episode score
@@ -904,6 +888,12 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		restartKeyEnabled = true;
 
 	if (isUsingOriginalGUI()) {
+
+		if (lastKeyHit.keycode == Common::KEYCODE_F5 && _game.version <= 3) {
+			_savegameThumbnail.free();
+			Graphics::createThumbnail(_savegameThumbnail);
+		}
+
 		char sliderString[256];
 		PauseToken pt;
 
