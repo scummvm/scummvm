@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-24 03:54+0000\n"
+"POT-Creation-Date: 2022-11-25 04:01+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -656,11 +656,11 @@ msgstr "상호작용"
 #: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:453 engines/grim/grim.cpp:534
 #: engines/twine/metaengine.cpp:472 engines/twine/metaengine.cpp:539
-#: engines/wintermute/keymapper_tables.h:1262
-#: engines/wintermute/keymapper_tables.h:1345
-#: engines/wintermute/keymapper_tables.h:1421
-#: engines/wintermute/keymapper_tables.h:1892
-#: engines/wintermute/keymapper_tables.h:2126
+#: engines/wintermute/keymapper_tables.h:1290
+#: engines/wintermute/keymapper_tables.h:1373
+#: engines/wintermute/keymapper_tables.h:1449
+#: engines/wintermute/keymapper_tables.h:1920
+#: engines/wintermute/keymapper_tables.h:2154
 msgid "Up"
 msgstr "위"
 
@@ -668,11 +668,11 @@ msgstr "위"
 #: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:458 engines/grim/grim.cpp:539
 #: engines/twine/metaengine.cpp:479 engines/twine/metaengine.cpp:547
-#: engines/wintermute/keymapper_tables.h:1268
-#: engines/wintermute/keymapper_tables.h:1351
-#: engines/wintermute/keymapper_tables.h:1428
-#: engines/wintermute/keymapper_tables.h:1898
-#: engines/wintermute/keymapper_tables.h:2132
+#: engines/wintermute/keymapper_tables.h:1296
+#: engines/wintermute/keymapper_tables.h:1379
+#: engines/wintermute/keymapper_tables.h:1456
+#: engines/wintermute/keymapper_tables.h:1926
+#: engines/wintermute/keymapper_tables.h:2160
 msgid "Down"
 msgstr "아래"
 
@@ -681,11 +681,11 @@ msgstr "아래"
 #: engines/grim/grim.cpp:463 engines/grim/grim.cpp:544
 #: engines/twine/metaengine.cpp:494 engines/twine/metaengine.cpp:562
 #: engines/wintermute/keymapper_tables.h:320
-#: engines/wintermute/keymapper_tables.h:1274
-#: engines/wintermute/keymapper_tables.h:1357
-#: engines/wintermute/keymapper_tables.h:1880
-#: engines/wintermute/keymapper_tables.h:1990
-#: engines/wintermute/keymapper_tables.h:2114
+#: engines/wintermute/keymapper_tables.h:1302
+#: engines/wintermute/keymapper_tables.h:1385
+#: engines/wintermute/keymapper_tables.h:1908
+#: engines/wintermute/keymapper_tables.h:2018
+#: engines/wintermute/keymapper_tables.h:2142
 msgid "Left"
 msgstr "왼쪽"
 
@@ -694,11 +694,11 @@ msgstr "왼쪽"
 #: engines/grim/grim.cpp:468 engines/grim/grim.cpp:549
 #: engines/twine/metaengine.cpp:486 engines/twine/metaengine.cpp:555
 #: engines/wintermute/keymapper_tables.h:326
-#: engines/wintermute/keymapper_tables.h:1280
-#: engines/wintermute/keymapper_tables.h:1363
-#: engines/wintermute/keymapper_tables.h:1886
-#: engines/wintermute/keymapper_tables.h:1998
-#: engines/wintermute/keymapper_tables.h:2120
+#: engines/wintermute/keymapper_tables.h:1308
+#: engines/wintermute/keymapper_tables.h:1391
+#: engines/wintermute/keymapper_tables.h:1914
+#: engines/wintermute/keymapper_tables.h:2026
+#: engines/wintermute/keymapper_tables.h:2148
 msgid "Right"
 msgstr "오른쪽"
 
@@ -715,14 +715,15 @@ msgstr "오른쪽"
 #: engines/wintermute/keymapper_tables.h:986
 #: engines/wintermute/keymapper_tables.h:1194
 #: engines/wintermute/keymapper_tables.h:1241
-#: engines/wintermute/keymapper_tables.h:1369
-#: engines/wintermute/keymapper_tables.h:1375
-#: engines/wintermute/keymapper_tables.h:1546
-#: engines/wintermute/keymapper_tables.h:1756
-#: engines/wintermute/keymapper_tables.h:1810
-#: engines/wintermute/keymapper_tables.h:1861
-#: engines/wintermute/keymapper_tables.h:1916
-#: engines/wintermute/keymapper_tables.h:1974
+#: engines/wintermute/keymapper_tables.h:1270
+#: engines/wintermute/keymapper_tables.h:1397
+#: engines/wintermute/keymapper_tables.h:1403
+#: engines/wintermute/keymapper_tables.h:1574
+#: engines/wintermute/keymapper_tables.h:1784
+#: engines/wintermute/keymapper_tables.h:1838
+#: engines/wintermute/keymapper_tables.h:1889
+#: engines/wintermute/keymapper_tables.h:1944
+#: engines/wintermute/keymapper_tables.h:2002
 msgid "???"
 msgstr "???"
 
@@ -2750,7 +2751,7 @@ msgstr "왼쪽 클릭"
 #: engines/metaengine.cpp:66 backends/platform/maemo/maemo.cpp:165
 #: engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
-#: engines/wintermute/keymapper_tables.h:2138
+#: engines/wintermute/keymapper_tables.h:2166
 msgid "Middle Click"
 msgstr "중간 클릭"
 
@@ -2763,7 +2764,7 @@ msgstr "오른쪽 클릭"
 #: engines/metaengine.cpp:77 engines/grim/grim.cpp:521
 #: engines/hdb/metaengine.cpp:258 engines/mohawk/myst.cpp:596
 #: engines/mohawk/riven.cpp:860 engines/sky/metaengine.cpp:125
-#: engines/twine/metaengine.cpp:242 engines/wintermute/keymapper_tables.h:1580
+#: engines/twine/metaengine.cpp:242 engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
 msgstr "일시정지"
 
@@ -2775,10 +2776,10 @@ msgstr "게임 메뉴"
 #: engines/grim/grim.cpp:600 engines/mohawk/myst.cpp:567
 #: engines/mohawk/riven.cpp:831 engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
-#: engines/wintermute/keymapper_tables.h:1248
-#: engines/wintermute/keymapper_tables.h:1573
-#: engines/wintermute/keymapper_tables.h:1688
-#: engines/wintermute/keymapper_tables.h:2082
+#: engines/wintermute/keymapper_tables.h:1276
+#: engines/wintermute/keymapper_tables.h:1601
+#: engines/wintermute/keymapper_tables.h:1716
+#: engines/wintermute/keymapper_tables.h:2110
 msgid "Skip"
 msgstr "건너뛰기"
 
@@ -3177,12 +3178,12 @@ msgstr "마우스 캡처 전환"
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
-#: engines/wintermute/keymapper_tables.h:1312
-#: engines/wintermute/keymapper_tables.h:1451
-#: engines/wintermute/keymapper_tables.h:1611
-#: engines/wintermute/keymapper_tables.h:1816
-#: engines/wintermute/keymapper_tables.h:1834
-#: engines/wintermute/keymapper_tables.h:1867
+#: engines/wintermute/keymapper_tables.h:1340
+#: engines/wintermute/keymapper_tables.h:1479
+#: engines/wintermute/keymapper_tables.h:1639
+#: engines/wintermute/keymapper_tables.h:1844
+#: engines/wintermute/keymapper_tables.h:1862
+#: engines/wintermute/keymapper_tables.h:1895
 msgid "Save screenshot"
 msgstr "스크린샷 저장"
 
@@ -5356,7 +5357,7 @@ msgstr "오른쪽으로 이동"
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:211
 #: engines/scumm/help.cpp:222 engines/scumm/help.cpp:255
 #: engines/sky/metaengine.cpp:94 engines/wintermute/keymapper_tables.h:140
-#: engines/wintermute/keymapper_tables.h:1524
+#: engines/wintermute/keymapper_tables.h:1552
 msgid "Use"
 msgstr "사용하기"
 
@@ -5966,12 +5967,12 @@ msgstr "옵션 메뉴 보이기"
 msgid "Drop page"
 msgstr "페이지 되돌리기"
 
-#: engines/mohawk/myst.cpp:607 engines/wintermute/keymapper_tables.h:1498
-#: engines/wintermute/keymapper_tables.h:1645
-#: engines/wintermute/keymapper_tables.h:1694
-#: engines/wintermute/keymapper_tables.h:1717
-#: engines/wintermute/keymapper_tables.h:1736
-#: engines/wintermute/keymapper_tables.h:1769
+#: engines/mohawk/myst.cpp:607 engines/wintermute/keymapper_tables.h:1526
+#: engines/wintermute/keymapper_tables.h:1673
+#: engines/wintermute/keymapper_tables.h:1722
+#: engines/wintermute/keymapper_tables.h:1745
+#: engines/wintermute/keymapper_tables.h:1764
+#: engines/wintermute/keymapper_tables.h:1797
 msgid "Show map"
 msgstr "지도 보이기"
 
@@ -5986,6 +5987,7 @@ msgstr ""
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349
 #: engines/wintermute/keymapper_tables.h:925
+#: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
 msgstr "게임 불러오기"
 
@@ -6056,15 +6058,15 @@ msgstr "뒤로 이동"
 
 #: engines/mohawk/riven.cpp:885 engines/wintermute/keymapper_tables.h:161
 #: engines/wintermute/keymapper_tables.h:741
-#: engines/wintermute/keymapper_tables.h:2094
-#: engines/wintermute/keymapper_tables.h:2195
+#: engines/wintermute/keymapper_tables.h:2122
+#: engines/wintermute/keymapper_tables.h:2223
 msgid "Turn left"
 msgstr "왼쪽으로 회전"
 
 #: engines/mohawk/riven.cpp:891 engines/wintermute/keymapper_tables.h:167
 #: engines/wintermute/keymapper_tables.h:746
-#: engines/wintermute/keymapper_tables.h:2100
-#: engines/wintermute/keymapper_tables.h:2202
+#: engines/wintermute/keymapper_tables.h:2128
+#: engines/wintermute/keymapper_tables.h:2230
 msgid "Turn right"
 msgstr "오른쪽으로 회전"
 
@@ -7055,7 +7057,7 @@ msgstr "대사 한 줄을 건너뜀"
 msgid "Esc"
 msgstr "Esc"
 
-#: engines/scumm/help.cpp:76 engines/wintermute/keymapper_tables.h:2108
+#: engines/scumm/help.cpp:76 engines/wintermute/keymapper_tables.h:2136
 msgid "Space"
 msgstr "Space"
 
@@ -7097,7 +7099,7 @@ msgstr "문장 속도를 느리게 / 빠르게"
 msgid "Simulate left mouse button"
 msgstr "왼쪽 마우스 버튼을 시뮬레이트"
 
-#: engines/scumm/help.cpp:88 engines/wintermute/keymapper_tables.h:2163
+#: engines/scumm/help.cpp:88 engines/wintermute/keymapper_tables.h:2191
 msgid "Tab"
 msgstr "Tab"
 
@@ -7214,14 +7216,14 @@ msgid "Turn off"
 msgstr "끄기"
 
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
-#: engines/scumm/help.cpp:192 engines/wintermute/keymapper_tables.h:1512
+#: engines/scumm/help.cpp:192 engines/wintermute/keymapper_tables.h:1540
 msgid "Walk to"
 msgstr "걷기"
 
 #: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
 #: engines/scumm/help.cpp:193 engines/scumm/help.cpp:208
 #: engines/scumm/help.cpp:225 engines/wintermute/keymapper_tables.h:134
-#: engines/wintermute/keymapper_tables.h:1518
+#: engines/wintermute/keymapper_tables.h:1546
 msgid "Pick up"
 msgstr "줍기"
 
@@ -7308,13 +7310,13 @@ msgstr "당기기"
 
 #: engines/scumm/help.cpp:194 engines/scumm/help.cpp:210
 #: engines/scumm/help.cpp:253 engines/wintermute/keymapper_tables.h:128
-#: engines/wintermute/keymapper_tables.h:1530
+#: engines/wintermute/keymapper_tables.h:1558
 msgid "Talk to"
 msgstr "대화하기"
 
 #: engines/scumm/help.cpp:197 engines/scumm/help.cpp:209
 #: engines/wintermute/keymapper_tables.h:122
-#: engines/wintermute/keymapper_tables.h:1506
+#: engines/wintermute/keymapper_tables.h:1534
 msgid "Look at"
 msgstr "보기"
 
@@ -8490,21 +8492,21 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
-#: engines/wintermute/keymapper_tables.h:2088
-#: engines/wintermute/keymapper_tables.h:2188
+#: engines/wintermute/keymapper_tables.h:2116
+#: engines/wintermute/keymapper_tables.h:2216
 msgid "Walk forward"
 msgstr "앞으로 걷기"
 
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
-#: engines/wintermute/keymapper_tables.h:2210
+#: engines/wintermute/keymapper_tables.h:2238
 msgid "Walk backward"
 msgstr "뒤로 걷기"
 
 #. I18N: Debug feature to draw lines of scene geometry: walls, walking areas, etc
 #: engines/wintermute/keymapper_tables.h:174
 #: engines/wintermute/keymapper_tables.h:685
-#: engines/wintermute/keymapper_tables.h:1827
+#: engines/wintermute/keymapper_tables.h:1855
 msgid "Show scene geometry"
 msgstr "씬 지오메트리 표시"
 
@@ -8514,6 +8516,7 @@ msgstr "씬 지오메트리 표시"
 #: engines/wintermute/keymapper_tables.h:906
 #: engines/wintermute/keymapper_tables.h:1103
 #: engines/wintermute/keymapper_tables.h:1231
+#: engines/wintermute/keymapper_tables.h:1255
 msgid "Previous page"
 msgstr "이전 페이지"
 
@@ -8523,6 +8526,7 @@ msgstr "이전 페이지"
 #: engines/wintermute/keymapper_tables.h:913
 #: engines/wintermute/keymapper_tables.h:1110
 #: engines/wintermute/keymapper_tables.h:1236
+#: engines/wintermute/keymapper_tables.h:1260
 msgid "Next page"
 msgstr "다음 페이지"
 
@@ -8540,16 +8544,17 @@ msgstr "다음 페이지"
 #: engines/wintermute/keymapper_tables.h:858
 #: engines/wintermute/keymapper_tables.h:885
 #: engines/wintermute/keymapper_tables.h:1045
-#: engines/wintermute/keymapper_tables.h:1291
-#: engines/wintermute/keymapper_tables.h:1387
-#: engines/wintermute/keymapper_tables.h:1444
-#: engines/wintermute/keymapper_tables.h:1470
-#: engines/wintermute/keymapper_tables.h:1632
-#: engines/wintermute/keymapper_tables.h:1681
-#: engines/wintermute/keymapper_tables.h:1729
-#: engines/wintermute/keymapper_tables.h:1762
-#: engines/wintermute/keymapper_tables.h:1955
-#: engines/wintermute/keymapper_tables.h:2075
+#: engines/wintermute/keymapper_tables.h:1248
+#: engines/wintermute/keymapper_tables.h:1319
+#: engines/wintermute/keymapper_tables.h:1415
+#: engines/wintermute/keymapper_tables.h:1472
+#: engines/wintermute/keymapper_tables.h:1498
+#: engines/wintermute/keymapper_tables.h:1660
+#: engines/wintermute/keymapper_tables.h:1709
+#: engines/wintermute/keymapper_tables.h:1757
+#: engines/wintermute/keymapper_tables.h:1790
+#: engines/wintermute/keymapper_tables.h:1983
+#: engines/wintermute/keymapper_tables.h:2103
 msgid "Show hints"
 msgstr "힌트 표시"
 
@@ -8557,12 +8562,12 @@ msgstr "힌트 표시"
 #: engines/wintermute/keymapper_tables.h:396
 #: engines/wintermute/keymapper_tables.h:658
 #: engines/wintermute/keymapper_tables.h:864
-#: engines/wintermute/keymapper_tables.h:1414
-#: engines/wintermute/keymapper_tables.h:1491
-#: engines/wintermute/keymapper_tables.h:1639
-#: engines/wintermute/keymapper_tables.h:1651
-#: engines/wintermute/keymapper_tables.h:1660
-#: engines/wintermute/keymapper_tables.h:1922
+#: engines/wintermute/keymapper_tables.h:1442
+#: engines/wintermute/keymapper_tables.h:1519
+#: engines/wintermute/keymapper_tables.h:1667
+#: engines/wintermute/keymapper_tables.h:1679
+#: engines/wintermute/keymapper_tables.h:1688
+#: engines/wintermute/keymapper_tables.h:1950
 msgid "Show inventory"
 msgstr "인벤토리 보이기"
 
@@ -8572,8 +8577,8 @@ msgstr "인벤토리 보이기"
 #: engines/wintermute/keymapper_tables.h:402
 #: engines/wintermute/keymapper_tables.h:506
 #: engines/wintermute/keymapper_tables.h:533
-#: engines/wintermute/keymapper_tables.h:1904
-#: engines/wintermute/keymapper_tables.h:1962
+#: engines/wintermute/keymapper_tables.h:1932
+#: engines/wintermute/keymapper_tables.h:1990
 msgid "GUI variant A"
 msgstr "GUI 종류 A"
 
@@ -8583,8 +8588,8 @@ msgstr "GUI 종류 A"
 #: engines/wintermute/keymapper_tables.h:408
 #: engines/wintermute/keymapper_tables.h:513
 #: engines/wintermute/keymapper_tables.h:540
-#: engines/wintermute/keymapper_tables.h:1910
-#: engines/wintermute/keymapper_tables.h:1968
+#: engines/wintermute/keymapper_tables.h:1938
+#: engines/wintermute/keymapper_tables.h:1996
 msgid "GUI variant B"
 msgstr "GUI 종류 B"
 
@@ -8624,21 +8629,21 @@ msgstr "전화: 0 버튼"
 #: engines/wintermute/keymapper_tables.h:436
 #: engines/wintermute/keymapper_tables.h:569
 #: engines/wintermute/keymapper_tables.h:1139
-#: engines/wintermute/keymapper_tables.h:1789
+#: engines/wintermute/keymapper_tables.h:1817
 msgid "Phone 1 button"
 msgstr "전화: 1 버튼"
 
 #: engines/wintermute/keymapper_tables.h:441
 #: engines/wintermute/keymapper_tables.h:574
 #: engines/wintermute/keymapper_tables.h:1144
-#: engines/wintermute/keymapper_tables.h:1794
+#: engines/wintermute/keymapper_tables.h:1822
 msgid "Phone 2 button"
 msgstr "전화: 2 버튼"
 
 #: engines/wintermute/keymapper_tables.h:446
 #: engines/wintermute/keymapper_tables.h:579
 #: engines/wintermute/keymapper_tables.h:1149
-#: engines/wintermute/keymapper_tables.h:1799
+#: engines/wintermute/keymapper_tables.h:1827
 msgid "Phone 3 button"
 msgstr "전화: 3 버튼"
 
@@ -8691,36 +8696,36 @@ msgid "Phone # button"
 msgstr "전화: # 버튼"
 
 #: engines/wintermute/keymapper_tables.h:664
-#: engines/wintermute/keymapper_tables.h:1338
-#: engines/wintermute/keymapper_tables.h:1394
+#: engines/wintermute/keymapper_tables.h:1366
+#: engines/wintermute/keymapper_tables.h:1422
 msgid "Show help"
 msgstr "도움말 보기"
 
 #: engines/wintermute/keymapper_tables.h:670
 #: engines/wintermute/keymapper_tables.h:871
 #: engines/wintermute/keymapper_tables.h:892
-#: engines/wintermute/keymapper_tables.h:1298
-#: engines/wintermute/keymapper_tables.h:1324
-#: engines/wintermute/keymapper_tables.h:1400
-#: engines/wintermute/keymapper_tables.h:1456
-#: engines/wintermute/keymapper_tables.h:1477
-#: engines/wintermute/keymapper_tables.h:1667
-#: engines/wintermute/keymapper_tables.h:1941
-#: engines/wintermute/keymapper_tables.h:2143
+#: engines/wintermute/keymapper_tables.h:1326
+#: engines/wintermute/keymapper_tables.h:1352
+#: engines/wintermute/keymapper_tables.h:1428
+#: engines/wintermute/keymapper_tables.h:1484
+#: engines/wintermute/keymapper_tables.h:1505
+#: engines/wintermute/keymapper_tables.h:1695
+#: engines/wintermute/keymapper_tables.h:1969
+#: engines/wintermute/keymapper_tables.h:2171
 msgid "Scroll up"
 msgstr "위로 스크롤"
 
 #: engines/wintermute/keymapper_tables.h:677
 #: engines/wintermute/keymapper_tables.h:878
 #: engines/wintermute/keymapper_tables.h:899
-#: engines/wintermute/keymapper_tables.h:1305
-#: engines/wintermute/keymapper_tables.h:1331
-#: engines/wintermute/keymapper_tables.h:1407
-#: engines/wintermute/keymapper_tables.h:1463
-#: engines/wintermute/keymapper_tables.h:1484
-#: engines/wintermute/keymapper_tables.h:1674
-#: engines/wintermute/keymapper_tables.h:1948
-#: engines/wintermute/keymapper_tables.h:2148
+#: engines/wintermute/keymapper_tables.h:1333
+#: engines/wintermute/keymapper_tables.h:1359
+#: engines/wintermute/keymapper_tables.h:1435
+#: engines/wintermute/keymapper_tables.h:1491
+#: engines/wintermute/keymapper_tables.h:1512
+#: engines/wintermute/keymapper_tables.h:1702
+#: engines/wintermute/keymapper_tables.h:1976
+#: engines/wintermute/keymapper_tables.h:2176
 msgid "Scroll down"
 msgstr "아래로 스크롤"
 
@@ -8741,15 +8746,15 @@ msgstr "디버그 파서 표시"
 #. I18N: Displays a debug text message
 #: engines/wintermute/keymapper_tables.h:714
 #: engines/wintermute/keymapper_tables.h:853
-#: engines/wintermute/keymapper_tables.h:1553
-#: engines/wintermute/keymapper_tables.h:1805
-#: engines/wintermute/keymapper_tables.h:1850
+#: engines/wintermute/keymapper_tables.h:1581
+#: engines/wintermute/keymapper_tables.h:1833
+#: engines/wintermute/keymapper_tables.h:1878
 msgid "Debug print"
 msgstr "디버그 프린트"
 
 #. I18N: Exits the game
 #: engines/wintermute/keymapper_tables.h:720
-#: engines/wintermute/keymapper_tables.h:1821
+#: engines/wintermute/keymapper_tables.h:1849
 msgid "Exit"
 msgstr "종료"
 
@@ -8780,18 +8785,18 @@ msgid "Show blueprint"
 msgstr "청사진 표시"
 
 #: engines/wintermute/keymapper_tables.h:792
-#: engines/wintermute/keymapper_tables.h:1559
-#: engines/wintermute/keymapper_tables.h:1742
-#: engines/wintermute/keymapper_tables.h:1775
-#: engines/wintermute/keymapper_tables.h:2061
+#: engines/wintermute/keymapper_tables.h:1587
+#: engines/wintermute/keymapper_tables.h:1770
+#: engines/wintermute/keymapper_tables.h:1803
+#: engines/wintermute/keymapper_tables.h:2089
 msgid "Next action"
 msgstr "다음 행동"
 
 #: engines/wintermute/keymapper_tables.h:799
-#: engines/wintermute/keymapper_tables.h:1567
-#: engines/wintermute/keymapper_tables.h:1749
-#: engines/wintermute/keymapper_tables.h:1782
-#: engines/wintermute/keymapper_tables.h:2069
+#: engines/wintermute/keymapper_tables.h:1595
+#: engines/wintermute/keymapper_tables.h:1777
+#: engines/wintermute/keymapper_tables.h:1810
+#: engines/wintermute/keymapper_tables.h:2097
 msgid "Previous action"
 msgstr "이전 행동"
 
@@ -8820,8 +8825,8 @@ msgid "Walking speed: High"
 msgstr "걷기 속도: 빠르게"
 
 #: engines/wintermute/keymapper_tables.h:955
-#: engines/wintermute/keymapper_tables.h:1286
-#: engines/wintermute/keymapper_tables.h:1844
+#: engines/wintermute/keymapper_tables.h:1314
+#: engines/wintermute/keymapper_tables.h:1872
 msgid "Cancel waiting"
 msgstr "대기 최소"
 
@@ -8930,138 +8935,138 @@ msgstr "댄스 왼쪽으로 이동"
 msgid "Dance move right"
 msgstr "댄스 오른쪽으로 이동"
 
-#: engines/wintermute/keymapper_tables.h:1255
+#: engines/wintermute/keymapper_tables.h:1283
 msgid "Cancel input"
 msgstr "입력 취소"
 
-#: engines/wintermute/keymapper_tables.h:1317
+#: engines/wintermute/keymapper_tables.h:1345
 msgid "Toggle subtitles"
 msgstr "자막 표시 전환"
 
-#: engines/wintermute/keymapper_tables.h:1381
+#: engines/wintermute/keymapper_tables.h:1409
 #, fuzzy
 #| msgid "Hide Others"
 msgid "Hide hints"
 msgstr "기타 가리기"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
-#: engines/wintermute/keymapper_tables.h:1436
+#: engines/wintermute/keymapper_tables.h:1464
 msgid "Shift key"
 msgstr "시프트 키"
 
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
-#: engines/wintermute/keymapper_tables.h:1538
+#: engines/wintermute/keymapper_tables.h:1566
 msgid "Chapayev's action"
 msgstr "Chapayev의 행동"
 
-#: engines/wintermute/keymapper_tables.h:1586
-#: engines/wintermute/keymapper_tables.h:1839
-#: engines/wintermute/keymapper_tables.h:1935
+#: engines/wintermute/keymapper_tables.h:1614
+#: engines/wintermute/keymapper_tables.h:1867
+#: engines/wintermute/keymapper_tables.h:1963
 msgid "Settings"
 msgstr "설정"
 
-#: engines/wintermute/keymapper_tables.h:1591
+#: engines/wintermute/keymapper_tables.h:1619
 msgid "Dialogue answer 1"
 msgstr "다이얼로그 답변 1"
 
-#: engines/wintermute/keymapper_tables.h:1596
+#: engines/wintermute/keymapper_tables.h:1624
 msgid "Dialogue answer 2"
 msgstr "다이얼로그 답변 2"
 
-#: engines/wintermute/keymapper_tables.h:1601
+#: engines/wintermute/keymapper_tables.h:1629
 msgid "Dialogue answer 3"
 msgstr "다이얼로그 답변 3"
 
-#: engines/wintermute/keymapper_tables.h:1606
+#: engines/wintermute/keymapper_tables.h:1634
 msgid "Dialogue answer 4"
 msgstr "다이얼로그 답변 4"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
-#: engines/wintermute/keymapper_tables.h:1617
+#: engines/wintermute/keymapper_tables.h:1645
 msgid "Spin wheel slower"
 msgstr "돌림판을 천천히 돌림"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
-#: engines/wintermute/keymapper_tables.h:1625
+#: engines/wintermute/keymapper_tables.h:1653
 msgid "Spin wheel faster"
 msgstr "돌림판을 빠르게 돌림"
 
-#: engines/wintermute/keymapper_tables.h:1703
+#: engines/wintermute/keymapper_tables.h:1731
 msgid "Zoom out"
 msgstr "줌 아웃"
 
-#: engines/wintermute/keymapper_tables.h:1710
+#: engines/wintermute/keymapper_tables.h:1738
 msgid "Zoom in"
 msgstr "줌 인"
 
-#: engines/wintermute/keymapper_tables.h:1723
-#: engines/wintermute/keymapper_tables.h:1929
+#: engines/wintermute/keymapper_tables.h:1751
+#: engines/wintermute/keymapper_tables.h:1957
 msgid "Show journal"
 msgstr "일기 표시"
 
 #. I18N: Displays a debug interface with Bezier curves
-#: engines/wintermute/keymapper_tables.h:1856
+#: engines/wintermute/keymapper_tables.h:1884
 msgid "Bezier window"
 msgstr "베지어 디버그 창"
 
 #. I18N: Use droid to perform an action
-#: engines/wintermute/keymapper_tables.h:1873
+#: engines/wintermute/keymapper_tables.h:1901
 msgid "Droid's action"
 msgstr "드로이드의 행동"
 
 #. I18N: It's a Tetris game clone, this action rotates current tetris item
-#: engines/wintermute/keymapper_tables.h:1981
+#: engines/wintermute/keymapper_tables.h:2009
 msgid "Rotate"
 msgstr "회전"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
-#: engines/wintermute/keymapper_tables.h:2007
+#: engines/wintermute/keymapper_tables.h:2035
 msgid "Drop"
 msgstr "떨어뜨리기"
 
-#: engines/wintermute/keymapper_tables.h:2015
+#: engines/wintermute/keymapper_tables.h:2043
 msgid "Player 1: Up"
 msgstr "플레이어 1:위"
 
-#: engines/wintermute/keymapper_tables.h:2020
+#: engines/wintermute/keymapper_tables.h:2048
 msgid "Player 1: Left"
 msgstr "플레이어 1:왼쪽"
 
-#: engines/wintermute/keymapper_tables.h:2025
+#: engines/wintermute/keymapper_tables.h:2053
 msgid "Player 1: Down"
 msgstr "플레이어 1:아래"
 
-#: engines/wintermute/keymapper_tables.h:2030
+#: engines/wintermute/keymapper_tables.h:2058
 msgid "Player 1: Right"
 msgstr "플레이어 1:오른쪽"
 
-#: engines/wintermute/keymapper_tables.h:2035
+#: engines/wintermute/keymapper_tables.h:2063
 msgid "Player 2: Up"
 msgstr "플레이어 2: 위"
 
-#: engines/wintermute/keymapper_tables.h:2040
+#: engines/wintermute/keymapper_tables.h:2068
 msgid "Player 2: Left"
 msgstr "플레이어 2: 왼쪽"
 
-#: engines/wintermute/keymapper_tables.h:2045
+#: engines/wintermute/keymapper_tables.h:2073
 msgid "Player 2: Down"
 msgstr "플레이어 2: 아래쪽"
 
-#: engines/wintermute/keymapper_tables.h:2050
+#: engines/wintermute/keymapper_tables.h:2078
 msgid "Player 2: Right"
 msgstr "플레이어 2: 오른쪽"
 
 #. I18N: Displays a debug FPS counter
-#: engines/wintermute/keymapper_tables.h:2056
+#: engines/wintermute/keymapper_tables.h:2084
 msgid "Debug FPS"
 msgstr "디버그 FPS 표시"
 
-#: engines/wintermute/keymapper_tables.h:2153
+#: engines/wintermute/keymapper_tables.h:2181
 msgid "F1"
 msgstr "F1"
 
-#: engines/wintermute/keymapper_tables.h:2158
+#: engines/wintermute/keymapper_tables.h:2186
 msgid "Key i"
 msgstr "i 키"
 
