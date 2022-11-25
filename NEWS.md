@@ -86,6 +86,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Sherlock:
    - Added support for Chinese Rose Tattoo.
 
+ Sky:
+   - Added support for Chinese Beneath a steel sky
+
  Toon:
    - Made game menus behave like in the original.
 
