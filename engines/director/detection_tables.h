@@ -1921,10 +1921,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 								   "TITLES.MMM", "91e15ea5c292ae3d2934a82a9277c43a", 3478, Common::ES_ESP, 310),
 	WINGAME2t_l("catcameback", "", "TITLEF.EXE", "c0f0fd8ded15c9932c58e6b08dbb843a", 369998,
 								   "TITLEF.MMM", "0ada4096117f22b7cfe9395f6290b013", 3476, Common::FR_FRA, 310),
-
-
-//	WINGAME1_l("catcameback", "", "TITLES.EXE", "65d06b5fef155a2473434571aff5bc29", 369998, Common::ES_ESP, 310),
-//	WINGAME1_l("catcameback", "", "TITLEF.EXE", "65d06b5fef155a2473434571aff5bc29", 369998, Common::FR_FRA, 310),
 	// Found on CD-ROM Today, #4
 	MACDEMO1("catcameback", "Demo", "Cat Came Back", "2ce360c9ea2da80a2c6d1040b0ad92dd", 386674, 313),
 
