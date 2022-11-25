@@ -37,6 +37,13 @@ namespace Common {
 
 RncDecoder::RncDecoder() {
 	initCrc();
+
+	_bitBuffl = 0;
+	_bitBuffh = 0;
+	_bitCount = 0;
+	_srcPtr = nullptr;
+	_dstPtr = nullptr;
+	_inputByteLeft = 0;
 }
 
 RncDecoder::~RncDecoder() { }
@@ -94,7 +101,16 @@ uint16 RncDecoder::inputBits(uint8 amount) {
 		newBitBuffl >>= newBitCount;
 		newBitBuffl |= remBits;
 		_srcPtr += 2;
-		newBitBuffh = READ_LE_UINT16(_srcPtr);
+
+		// added some more check here to prevent reading in the buffer
+		// if there are no bytes anymore.
+		_inputByteLeft -= 2;
+		if (_inputByteLeft <= 0)
+			newBitBuffh = 0;
+		else if (_inputByteLeft == 1)
+			newBitBuffh = *_srcPtr;
+		else
+			newBitBuffh = READ_LE_UINT16(_srcPtr);
 		amount -= newBitCount;
 		newBitCount = 16 - amount;
 	}
@@ -161,7 +177,18 @@ uint16 RncDecoder::inputValue(uint16 *table) {
 	return value;
 }
 
-int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
+int RncDecoder::getbit() {
+	if (_bitCount == 0) {
+		_bitBuffl = *_srcPtr++;
+		_bitCount = 8;
+	}
+	byte temp = (_bitBuffl & 0x80) >> 7;
+	_bitBuffl <<= 1;
+	_bitCount--;
+	return temp;
+}
+
+int32 RncDecoder::unpackM1(const void *input, uint inputSize, void *output) {
 	uint8 *outputLow, *outputHigh;
 	const uint8 *inputHigh, *inputptr = (const uint8 *)input;
 
@@ -172,12 +199,13 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 	uint16 crcPacked = 0;
 
 
+	_inputByteLeft = inputSize;
 	_bitBuffl = 0;
 	_bitBuffh = 0;
 	_bitCount = 0;
 
 	//Check for "RNC "
-	if (READ_BE_UINT32(inputptr) != kRncSignature)
+	if (READ_BE_UINT32(inputptr) != kRnc1Signature)
 		return NOT_PACKED;
 
 	inputptr += 4;
@@ -210,6 +238,8 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 		_srcPtr = (_dstPtr-packLen);
 	}
 
+	_inputByteLeft -= HEADER_LEN;
+
 	_dstPtr = (uint8 *)output;
 	_bitCount = 0;
 
@@ -228,11 +258,28 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 			uint32 inputOffset;
 
 			if (inputLength) {
+				if (_inputByteLeft < (int32) inputLength || inputLength > 0xff000000) {
+					return NOT_PACKED;
+				}
 				memcpy(_dstPtr, _srcPtr, inputLength); //memcpy is allowed here
 				_dstPtr += inputLength;
 				_srcPtr += inputLength;
-				uint16 a = READ_LE_UINT16(_srcPtr);
-				uint16 b = READ_LE_UINT16(_srcPtr + 2);
+				_inputByteLeft -= inputLength;
+				uint16 a;
+				if (_inputByteLeft <= 0)
+					a = 0;
+				else if (_inputByteLeft == 1)
+					a = *_srcPtr;
+				else
+					a = READ_LE_UINT16(_srcPtr);
+
+				uint16 b;
+				if (_inputByteLeft <= 2)
+					b = 0;
+				else if (_inputByteLeft == 3)
+					b = *(_srcPtr + 2);
+				else
+					b = READ_LE_UINT16(_srcPtr + 2);
 
 				_bitBuffl &= ((1 << _bitCount) - 1);
 				_bitBuffl |= (a << _bitCount);
@@ -250,6 +297,126 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 			}
 		} while (--counts);
 	} while (--blocks);
+
+	if (crcBlock((uint8 *)output, unpackLen) != crcUnpacked)
+		return UNPACKED_CRC;
+
+	// all is done..return the amount of unpacked bytes
+	return unpackLen;
+}
+
+int32 RncDecoder::unpackM2(const void *input, void *output) {
+	const uint8 *inputptr = (const uint8 *)input;
+
+	uint32 unpackLen = 0;
+	uint32 packLen = 0;
+	uint16 crcUnpacked = 0;
+	uint16 crcPacked = 0;
+
+	_bitBuffl = 0;
+	_bitCount = 0;
+
+	// Check for "RNC "
+	if (READ_BE_UINT32(inputptr) != kRnc2Signature)
+		return NOT_PACKED;
+
+	inputptr += 4;
+
+	// Read unpacked/packed file length
+	unpackLen = READ_BE_UINT32(inputptr);
+	inputptr += 4;
+	packLen = READ_BE_UINT32(inputptr);
+	inputptr += 4;
+
+	// Read CRCs
+	crcUnpacked = READ_BE_UINT16(inputptr);
+	inputptr += 2;
+	crcPacked = READ_BE_UINT16(inputptr);
+	inputptr += 2;
+	inputptr = (inputptr + HEADER_LEN - 16);
+
+	if (crcBlock(inputptr, packLen) != crcPacked)
+		return PACKED_CRC;
+
+	inputptr = (((const uint8 *)input) + HEADER_LEN);
+	_srcPtr = inputptr;
+	_dstPtr = (uint8 *)output;
+
+	uint16 ofs, len;
+	byte ofs_hi, ofs_lo;
+
+	len = 0;
+	ofs_hi = 0;
+	ofs_lo = 0;
+
+	getbit();
+	getbit();
+
+	while (1) {
+
+		bool loadVal = false;
+
+		while (getbit() == 0)
+			*_dstPtr++ = *_srcPtr++;
+
+		len = 2;
+		ofs_hi = 0;
+		if (getbit() == 0) {
+			len = (len << 1) | getbit();
+			if (getbit() == 1) {
+				len--;
+				len = (len << 1) | getbit();
+				if (len == 9) {
+					len = 4;
+					while (len--)
+						ofs_hi = (ofs_hi << 1) | getbit();
+					len = (ofs_hi + 3) * 4;
+					while (len--)
+						*_dstPtr++ = *_srcPtr++;
+					continue;
+				}
+			}
+			loadVal = true;
+		} else {
+			if (getbit() == 1) {
+				len++;
+				if (getbit() == 1) {
+					len = *_srcPtr++;
+					if (len == 0) {
+						if (getbit() == 1)
+							continue;
+						else
+							break;
+					}
+					len += 8;
+				}
+				loadVal = true;
+			} else {
+				loadVal = false;
+			}
+		}
+
+		if (loadVal) {
+			if (getbit() == 1) {
+				ofs_hi = (ofs_hi << 1) | getbit();
+				if (getbit() == 1) {
+					ofs_hi = ((ofs_hi << 1) | getbit()) | 4;
+					if (getbit() == 0)
+						ofs_hi = (ofs_hi << 1) | getbit();
+				} else if (ofs_hi == 0) {
+					ofs_hi = 2 | getbit();
+				}
+			}
+		}
+
+		ofs_lo = *_srcPtr++;
+		ofs = (ofs_hi << 8) | ofs_lo;
+		while (len--) {
+			*_dstPtr = *(byte *)(_dstPtr - ofs - 1);
+			_dstPtr++;
+		}
+
+	}
 
 	if (crcBlock((uint8 *)output, unpackLen) != crcUnpacked)
 		return UNPACKED_CRC;
