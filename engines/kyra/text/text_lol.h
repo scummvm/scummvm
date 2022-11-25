@@ -44,7 +44,7 @@ public:
 	void expandField();
 
 	void printDialogueText2(int dim, const char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
-	void printMessage(uint16 type, const char *str, ...) GCC_PRINTF(3, 4);
+	void printMessage(uint16 type, MSVC_PRINTF const char *str, ...) GCC_PRINTF(3, 4);
 
 	int16 _scriptTextParameter;
 
