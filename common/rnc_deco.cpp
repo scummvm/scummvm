@@ -21,9 +21,9 @@
 
 
 #include "common/endian.h"
-#include "sky/rnc_deco.h"
+#include "common/rnc_deco.h"
 
-namespace Sky {
+namespace Common {
 
 //return codes
 #define NOT_PACKED	0
@@ -258,4 +258,4 @@ int32 RncDecoder::unpackM1(const void *input, void *output, uint16 key) {
 	return unpackLen;
 }
 
-} // End of namespace Sky
+} // End of namespace Common
