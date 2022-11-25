@@ -33,6 +33,8 @@ struct DreamWebGameDescription {
 #define GAMEOPTION_TTS_THINGS        GUIO_GAMEOPTIONS3
 #define GAMEOPTION_TTS_SPEECH        GUIO_GAMEOPTIONS4
 
+#define GF_INSTALLER 1
+
 } // End of namespace DreamWeb
 
 #endif // DREAMWEB_DETECTION_H

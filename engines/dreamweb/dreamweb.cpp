@@ -27,14 +27,17 @@
 #include "common/system.h"
 #include "common/timer.h"
 #include "common/util.h"
+#include "common/concatstream.h"
 
 #include "engines/advancedDetector.h"
 
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
+#include "dreamweb/detection.h"
 #include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
+#include "dreamweb/rnca_archive.h"
 
 #include "common/text-to-speech.h"
 
@@ -396,6 +399,20 @@ void DreamWebEngine::processEvents(bool processSoundEvents) {
 }
 
 Common::Error DreamWebEngine::run() {
+	if (_gameDescription->desc.flags & GF_INSTALLER) {
+		Common::Array<Common::SharedPtr<Common::SeekableReadStream>> volumes;
+		for (uint i = 0; _gameDescription->desc.filesDescriptions[i].fileName; i++) {
+			Common::File *dw = new Common::File();
+			const char *name = _gameDescription->desc.filesDescriptions[i].fileName;
+			if (!dw->open(name)) {
+				error("Can't open %s", name);
+			}
+			volumes.push_back(Common::SharedPtr<Common::SeekableReadStream>(dw));
+		}
+		Common::ConcatReadStream *concat = new Common::ConcatReadStream(volumes);
+		SearchMan.add("rnca", RNCAArchive::open(concat, DisposeAfterUse::YES));
+	}
+
 	if (_ttsMan != nullptr) {
 		Common::String languageString = Common::getLanguageCode(getLanguage());
 		_ttsMan->setLanguage(languageString);
