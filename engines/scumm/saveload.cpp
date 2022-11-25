@@ -101,6 +101,17 @@ bool ScummEngine::canLoadGameStateCurrently() {
 
 	bool isOriginalMenuActive = isUsingOriginalGUI() && _mainMenuIsActive;
 
+	if (_game.version <= 3) {
+		int saveRoom = 50;
+
+		if (_game.id == GID_INDY3)
+			saveRoom = 14;
+		else if (_game.id == GID_LOOM)
+			saveRoom = 70;
+
+		isOriginalMenuActive = _currentRoom == saveRoom;
+	}
+
 	return (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0) && !isOriginalMenuActive;
 }
 
@@ -147,6 +158,17 @@ bool ScummEngine::canSaveGameStateCurrently() {
 #endif
 
 	bool isOriginalMenuActive = isUsingOriginalGUI() && _mainMenuIsActive;
+
+	if (_game.version <= 3) {
+		int saveRoom = 50;
+
+		if (_game.id == GID_INDY3)
+			saveRoom = 14;
+		else if (_game.id == GID_LOOM)
+			saveRoom = 70;
+
+		isOriginalMenuActive = _currentRoom == saveRoom;
+	}
 
 	// SCUMM v4+ doesn't allow saving in room 0 or if
 	// VAR(VAR_MAINMENU_KEY) to set to zero.
@@ -539,91 +561,6 @@ bool ScummEngine::saveState(int slot, bool compat, Common::String &filename) {
 		debug(1, "State saved as '%s'", filename.c_str());
 
 	return !saveFailed;
-}
-
-
-void ScummEngine_v4::prepareSavegame() {
-	Common::MemoryWriteStreamDynamic *memStream;
-	Common::WriteStream *writeStream;
-
-	// free memory of the last prepared savegame
-	delete _savePreparedSavegame;
-	_savePreparedSavegame = nullptr;
-
-	// store headerless savegame in a compressed memory stream
-	memStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::NO);
-	writeStream = Common::wrapCompressedWriteStream(memStream);
-	if (saveState(writeStream, false)) {
-		// we have to finalize the compression-stream first, otherwise the internal
-		// memory-stream pointer will be zero (Important: flush() does not work here!).
-		writeStream->finalize();
-		if (!writeStream->err()) {
-			// wrap uncompressing MemoryReadStream around the savegame data
-			_savePreparedSavegame = Common::wrapCompressedReadStream(
-				new Common::MemoryReadStream(memStream->getData(), memStream->size(), DisposeAfterUse::YES));
-		}
-	}
-	// free the CompressedWriteStream and MemoryWriteStreamDynamic
-	// but not the memory stream's internal buffer
-	delete writeStream;
-}
-
-bool ScummEngine_v4::savePreparedSavegame(int slot, char *desc) {
-	bool success;
-	Common::String filename;
-	Common::OutSaveFile *out;
-	SaveGameHeader hdr;
-	uint32 nread, nwritten;
-
-	out = nullptr;
-	success = true;
-
-	// check if savegame was successfully stored in memory
-	if (!_savePreparedSavegame)
-		success = false;
-
-	// open savegame file
-	if (success) {
-		filename = makeSavegameName(slot, false);
-		if (!(out = _saveFileMan->openForSaving(filename))) {
-			success = false;
-		}
-	}
-
-	// write header to file
-	if (success) {
-		memset(hdr.name, 0, sizeof(hdr.name));
-		strncpy(hdr.name, desc, sizeof(hdr.name)-1);
-		success = saveSaveGameHeader(out, hdr);
-	}
-
-	// copy savegame from memory-stream to file
-	if (success) {
-		_savePreparedSavegame->seek(0, SEEK_SET);
-		byte buffer[1024];
-		while ((nread = _savePreparedSavegame->read(buffer, sizeof(buffer)))) {
-			nwritten = out->write(buffer, nread);
-			if (nwritten < nread) {
-				success = false;
-				break;
-			}
-		}
-	}
-
-	if (out) {
-		out->finalize();
-		if (out->err())
-			success = false;
-		delete out;
-	}
-
-	if (!success) {
-		debug(1, "State save as '%s' FAILED", filename.c_str());
-		return false;
-	} else {
-		debug(1, "State saved as '%s'", filename.c_str());
-		return true;
-	}
 }
 
 bool ScummEngine::loadState(int slot, bool compat) {

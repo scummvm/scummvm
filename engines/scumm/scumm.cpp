@@ -483,12 +483,6 @@ ScummEngine_v3::ScummEngine_v3(OSystem *syst, const DetectorResult &dr)
 	// All v3 and older games only used 16 colors with exception of the GF_OLD256 games.
 	if (!(_game.features & GF_OLD256))
 		_game.features |= GF_16COLOR;
-
-	_savePreparedSavegame = nullptr;
-}
-
-ScummEngine_v3::~ScummEngine_v3() {
-	delete _savePreparedSavegame;
 }
 
 ScummEngine_v3old::ScummEngine_v3old(OSystem *syst, const DetectorResult &dr)
@@ -1748,7 +1742,6 @@ void ScummEngine_v2::resetScumm() {
 void ScummEngine_v3::resetScumm() {
 	ScummEngine_v4::resetScumm();
 
-
 	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
 		// Load tile set and palette for the distaff
 		byte *roomptr = getResourceAddress(rtRoom, 90);
@@ -1760,9 +1753,6 @@ void ScummEngine_v3::resetScumm() {
 		_gdi->loadTiles(roomptr);
 		_gdi->_distaff = false;
 	}
-
-	delete _savePreparedSavegame;
-	_savePreparedSavegame = nullptr;
 }
 
 void ScummEngine_v4::resetScumm() {
@@ -2724,6 +2714,9 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 }
 
 void ScummEngine_v3::scummLoop_handleSaveLoad() {
+	if (isUsingOriginalGUI() && _saveLoadFlag == 0 && !_loadFromLauncher)
+		return;
+
 	bool processIQPoints = (_game.id == GID_INDY3 && (_saveLoadFlag == 2 || _loadFromLauncher));
 	_loadFromLauncher = false;
 
