@@ -247,8 +247,11 @@ void FreescapeEngine::drawSensorShoot(Sensor *sensor) {
 
 void FreescapeEngine::takeDamageFromSensor() {
 	_gameStateVars[k8bitVariableShield]--;
-	_currentArea->remapColor(_currentArea->_usualBackgroundColor, _currentArea->_underFireBackgroundColor);
-	_currentArea->remapColor(_currentArea->_skyColor, _currentArea->_underFireBackgroundColor);
+	int underFireColor = isDriller() && (_renderMode == Common::kRenderEGA) ? 1
+						: _currentArea->_underFireBackgroundColor;
+
+	_currentArea->remapColor(_currentArea->_usualBackgroundColor, underFireColor);
+	_currentArea->remapColor(_currentArea->_skyColor, underFireColor);
 	drawFrame();
 	_gfx->flipBuffer();
 	g_system->updateScreen();
