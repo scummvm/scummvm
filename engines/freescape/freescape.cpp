@@ -246,6 +246,8 @@ void FreescapeEngine::drawSensorShoot(Sensor *sensor) {
 }
 
 void FreescapeEngine::flashScreen(int backgroundColor) {
+	if (backgroundColor >= 16)
+		return;
 	_currentArea->remapColor(_currentArea->_usualBackgroundColor, backgroundColor);
 	_currentArea->remapColor(_currentArea->_skyColor, backgroundColor);
 	drawFrame();
