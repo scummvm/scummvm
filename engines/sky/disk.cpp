@@ -132,7 +132,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 		if ((fileFlags >> 22) & 0x1) { //do we include the header?
 			// don't return the file's header
 			output = uncompDest;
-			unpackLen = _rncDecoder.unpackM1(input, output, 0);
+			unpackLen = _rncDecoder.unpackM1(input, fileSize - sizeof(DataFileHeader), output);
 		} else {
 #ifdef SCUMM_BIG_ENDIAN
 			// Convert DataFileHeader to BE (it only consists of 16 bit words)
@@ -143,7 +143,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 
 			memcpy(uncompDest, fileDest, sizeof(DataFileHeader));
 			output = uncompDest + sizeof(DataFileHeader);
-			unpackLen = _rncDecoder.unpackM1(input, output, 0);
+			unpackLen = _rncDecoder.unpackM1(input, fileSize - sizeof(DataFileHeader), output);
 			if (unpackLen)
 				unpackLen += sizeof(DataFileHeader);
 		}

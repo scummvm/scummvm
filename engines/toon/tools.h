@@ -25,9 +25,6 @@
 #include "common/scummsys.h"
 #include "common/endian.h"
 
-#define RNC1_SIGNATURE   0x524E4301 // "RNC\001"
-#define RNC2_SIGNATURE   0x524E4302 // "RNC\002"
-
 namespace Toon {
 
 const uint32 kCompLZSS = 0x4C5A5353;
@@ -37,38 +34,6 @@ const uint32 kCompRNC2 = 0x524E4302;
 
 uint32 decompressSPCN(byte *src, byte *dst, uint32 dstsize);
 uint32 decompressLZSS(byte *src, byte *dst, int dstsize);
-
-class RncDecoder {
-
-protected:
-	uint16 _rawTable[64];
-	uint16 _posTable[64];
-	uint16 _lenTable[64];
-	uint16 _crcTable[256];
-
-	uint16 _bitBuffl;
-	uint16 _bitBuffh;
-	uint8 _bitCount;
-
-	const uint8 *_srcPtr;
-	uint8 *_dstPtr;
-
-	int16 _inputByteLeft;
-
-public:
-	RncDecoder();
-	~RncDecoder();
-	int32 unpackM1(const void *input, uint16 inputSize, void *output);
-	int32 unpackM2(const void *input, void *output);
-
-protected:
-	void initCrc();
-	uint16 crcBlock(const uint8 *block, uint32 size);
-	uint16 inputBits(uint8 amount);
-	void makeHufftable(uint16 *table);
-	uint16 inputValue(uint16 *table);
-	int getbit();
-};
 
 } // End of namespace Toon
 

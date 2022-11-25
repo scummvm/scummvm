@@ -41,12 +41,16 @@ protected:
 	const uint8 *_srcPtr;
 	uint8 *_dstPtr;
 
+	int32 _inputByteLeft;
+
 public:
 	RncDecoder();
 	~RncDecoder();
-	int32 unpackM1(const void *input, void *output, uint16 key);
+	int32 unpackM1(const void *input, uint inputSize, void *output);
+	int32 unpackM2(const void *input, void *output);
 
-	static const uint32 kRncSignature = 0x524E4301; // "RNC\001"
+	static const uint32 kRnc1Signature = 0x524E4301; // "RNC\001"
+	static const uint32 kRnc2Signature = 0x524E4302; // "RNC\002"
 
 protected:
 	void initCrc();
@@ -54,7 +58,7 @@ protected:
 	uint16 inputBits(uint8 amount);
 	void makeHufftable(uint16 *table);
 	uint16 inputValue(uint16 *table);
-
+	int getbit();
 };
 
 } // End of namespace Common
