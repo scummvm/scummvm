@@ -231,6 +231,7 @@ void Maps::select(uint16 id, byte section) {
 	_id = id;
 	_section = section;
 
+
 	uint mapId = getIndex(id, section);
 	load(mapId);
 }
@@ -238,7 +239,7 @@ void Maps::select(uint16 id, byte section) {
 void Maps::display(uint16 id, byte section) {
 	select(id, section);
 	loadTiles();
-	g_events->send("Game", GameMessage("DISPLAY"));
+	g_events->send("Game", GameMessage("UPDATE"));
 }
 
 void Maps::loadTown(TownId townId) {
