@@ -91,12 +91,10 @@ bool PodFile::openStore(const Common::String &name) {
 // It's tempting to use substream but substream is not thread safe
 Common::SeekableReadStream *memSubstream(Common::SharedPtr<Common::SeekableReadStream> file,
 					 uint32 offset, uint32 size) {
-	byte *contents = (byte *) malloc(size);
-	if (!contents)
-		return nullptr;
+	if (size == 0)
+		return new Common::MemoryReadStream(new byte[1], 0, DisposeAfterUse::YES);
 	file->seek(offset);
-	file->read(contents, size);
-	return new Common::MemoryReadStream(contents, size, DisposeAfterUse::YES);
+	return file->readStream(size);
 }
 
 Common::SeekableReadStream *PodFile::getFileStream(const Common::String &name) const {
