@@ -26,7 +26,6 @@
 #include "petka/petka.h"
 
 static const PlainGameDescriptor petkaGames[] = {
-	{"petka_demo", "Red Comrades Demo"},
 	{"petka1", "Red Comrades 1: Save the Galaxy"},
 	{"petka2", "Red Comrades 2: For the Great Justice"},
 	{nullptr, nullptr}
