@@ -27,6 +27,7 @@
 
 #include "hpl1/penumbra-overture/TriggerHandler.h"
 
+#include "hpl1/algorithms.h"
 #include "hpl1/penumbra-overture/GameEnemy.h"
 #include "hpl1/penumbra-overture/Init.h"
 #include "hpl1/penumbra-overture/MapHandler.h"
@@ -142,19 +143,15 @@ void cTriggerHandler::Update(float afTimeStep) {
 
 	//////////////////////////////////
 	// Go through triggers and remove when timer is out.
-	tGameTriggerMapIt TriggerIt = m_mapTriggers.begin();
-	for (; TriggerIt != m_mapTriggers.end();) {
-		cGameTrigger *pTrigger = TriggerIt->second;
-
-		pTrigger->mfTimeCount -= afTimeStep;
-
-		if (pTrigger->mfTimeCount <= 0) {
-			hplDelete(pTrigger);
-			m_mapTriggers.erase(TriggerIt++);
-		} else {
-			++TriggerIt;
+	auto const newEnd = Hpl1::removeIf(m_mapTriggers.begin(), m_mapTriggers.end(), [afTimeStep](tGameTriggerMap::value_type &pair) {
+		pair.second->mfTimeCount -= afTimeStep;
+		if (pair.second->mfTimeCount <= 0) {
+			hplDelete(pair.second);
+			return true;
 		}
-	}
+		return false;
+	});
+	m_mapTriggers.erase(newEnd, m_mapTriggers.end());
 }
 
 //-----------------------------------------------------------------------
