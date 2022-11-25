@@ -89,7 +89,7 @@ inline void GUIErrorMessageFormat(const Common::U32String &fmt, TParam... param)
 /**
  * Initialize graphics and show an error message.
  */
-void GUIErrorMessageFormat(const char *fmt, ...) GCC_PRINTF(1, 2);
+void GUIErrorMessageFormat(MSVC_PRINTF const char *fmt, ...) GCC_PRINTF(1, 2);
 
 
 class Engine;
