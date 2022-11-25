@@ -12,7 +12,6 @@ MODULE_OBJS := \
 	logic.o \
 	metaengine.o \
 	mouse.o \
-	rnc_deco.o \
 	screen.o \
 	sky.o \
 	sound.o \
