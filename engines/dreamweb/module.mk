@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	people.o \
 	print.o \
 	rain.o \
+	rnca_archive.o \
 	saveload.o \
 	sound.o \
 	sprite.o \
