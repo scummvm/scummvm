@@ -272,6 +272,7 @@ public:
 	Common::RenderMode _renderMode;
 	ColorMap _colorMap;
 	void drawFrame();
+	void flashScreen(int backgroundColor);
 	uint8 _colorNumber;
 	Math::Vector3d _scaleVector;
 	float _nearClipPlane;

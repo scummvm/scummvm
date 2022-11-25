@@ -212,10 +212,6 @@ void FreescapeEngine::executeSPFX(FCLInstruction &instruction) {
 
 	debugC(1, kFreescapeDebugCode, "Switching palette from position %d to %d", index, color);
 	_currentArea->remapColor(index, color);
-	drawFrame();
-	_gfx->flipBuffer();
-	g_system->updateScreen();
-	g_system->delayMillis(10);
 }
 
 
@@ -266,6 +262,9 @@ void FreescapeEngine::executeIncrementVariable(FCLInstruction &instruction) {
 			_gameStateVars[variable] = k8bitMaxShield;
 		else if (_gameStateVars[variable] < 0)
 			_gameStateVars[variable] = 0;
+
+		if (increment < 0)
+			flashScreen(_currentArea->_underFireBackgroundColor);
 
 		debugC(1, kFreescapeDebugCode, "Shield incremented by %d up to %d", increment, _gameStateVars[variable]);
 		break;
