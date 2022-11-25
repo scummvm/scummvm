@@ -61,7 +61,7 @@ public:
 		return *this;
 	}
 
-	static String format(const char *fmt, ...) GCC_PRINTF(1, 2);
+	static String format(MSVC_PRINTF const char *fmt, ...) GCC_PRINTF(1, 2);
 
 	static String vformat(const char *fmt, va_list args);
 
