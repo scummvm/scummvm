@@ -75,6 +75,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved support for Hebrew HE game localizations.
    - Fixed Roland MT-32 support in Sam & Max.
 
+ Sky:
+   - Added support for Chinese Beneath a steel sky
+
  Toon:
    - Made game menus behave like in the original.
 
