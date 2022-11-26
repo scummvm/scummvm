@@ -65,7 +65,7 @@ The meaning of these is masks is the following:
 
 template<>
 struct ColorMasks<565> {
-	enum {
+	enum : uint {
 		kHighBitsMask    = 0xF7DEF7DE,
 		kLowBitsMask     = 0x08210821,
 		qhighBits   = 0xE79CE79C,
