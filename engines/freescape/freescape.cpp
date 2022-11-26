@@ -226,7 +226,8 @@ void FreescapeEngine::centerCrossair() {
 	_currentDemoMousePosition = _crossairPosition;
 }
 
-void FreescapeEngine::checkSensors() {
+bool FreescapeEngine::checkSensors() {
+	bool frameRedrawed = false;
 	for (auto &it : _sensors) {
 		Sensor *sensor = (Sensor *)it;
 		if (sensor->isDestroyed() || sensor->isInvisible())
@@ -251,16 +252,21 @@ void FreescapeEngine::checkSensors() {
 		if (playerDetected) {
 			if ((ABS(diff.x() + ABS(diff.y())) + ABS(diff.z()) <= sensor->_firingRange) &&
 			    (_ticks % sensor->_firingInterval == 0)) {
-				drawSensorShoot(sensor);
+				frameRedrawed = true;
 				takeDamageFromSensor();
+				drawSensorShoot(sensor);
+				_gfx->flipBuffer();
+				g_system->updateScreen();
+				g_system->delayMillis(10);
 			}
 		}
 	}
+	return frameRedrawed;
 }
 
 void FreescapeEngine::drawSensorShoot(Sensor *sensor) {
 	assert(sensor);
-	_gfx->renderSensorShoot(1, sensor->getOrigin(), _viewArea);
+	_gfx->renderSensorShoot(1, sensor->getOrigin(), _position, _viewArea);
 }
 
 void FreescapeEngine::flashScreen(int backgroundColor) {
@@ -269,8 +275,6 @@ void FreescapeEngine::flashScreen(int backgroundColor) {
 	_currentArea->remapColor(_currentArea->_usualBackgroundColor, backgroundColor);
 	_currentArea->remapColor(_currentArea->_skyColor, backgroundColor);
 	drawFrame();
-	_gfx->flipBuffer();
-	g_system->updateScreen();
 	_currentArea->unremapColor(_currentArea->_usualBackgroundColor);
 	_currentArea->unremapColor(_currentArea->_skyColor);
 }
@@ -578,8 +582,11 @@ Common::Error FreescapeEngine::run() {
 	g_system->updateScreen();
 
 	while (!shouldQuit() && !endGame) {
-		checkSensors();
-		drawFrame();
+		bool frameRedrawed = checkSensors();
+
+		if (!frameRedrawed)
+			drawFrame();
+
 		if (_demoMode)
 			generateInput();
 

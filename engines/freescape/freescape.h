@@ -301,7 +301,7 @@ public:
 	StateBits _gameStateBits;
 	virtual bool checkIfGameEnded();
 	ObjectArray _sensors;
-	void checkSensors();
+	bool checkSensors();
 	void drawSensorShoot(Sensor *sensor);
 	void takeDamageFromSensor();
 
