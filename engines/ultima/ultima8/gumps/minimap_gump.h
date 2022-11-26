@@ -32,7 +32,7 @@ namespace Ultima8 {
 
 class MiniMapGump : public Gump {
 private:
-	Common::Array<Graphics::Surface> _minimaps;
+	Common::HashMap<uint32, Graphics::Surface> _minimaps;
 	Graphics::PixelFormat _format;
 	int32 _ax, _ay;
 
