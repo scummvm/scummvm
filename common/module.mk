@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	archive.o \
 	base-str.o \
 	clickteam.o \
+	concatstream.o \
 	config-manager.o \
 	coroutines.o \
 	dcl.o \
