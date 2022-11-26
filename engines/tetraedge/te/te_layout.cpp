@@ -64,7 +64,7 @@ TeLayout::~TeLayout() {
 void TeLayout::addChild(Te3DObject2 *child) {
 	Te3DObject2::addChild(child);
 	if (_onChildSizeChangedCallback) {
-		child->onSizeChanged().insert(_onChildSizeChangedCallback);
+		child->onSizeChanged().push_back(_onChildSizeChangedCallback);
 	}
 	_needZSizeUpdate = true;
 	_needZUpdate = true;
@@ -75,7 +75,7 @@ void TeLayout::addChild(Te3DObject2 *child) {
 void TeLayout::addChildBefore(Te3DObject2 *child, const Te3DObject2 *ref) {
 	Te3DObject2::addChildBefore(child, ref);
 	if (_onChildSizeChangedCallback) {
-		child->onSizeChanged().insert(_onChildSizeChangedCallback);
+		child->onSizeChanged().push_back(_onChildSizeChangedCallback);
 	}
 	_needZSizeUpdate = true;
 	_needZUpdate = true;
@@ -211,11 +211,11 @@ void TeLayout::setParent(Te3DObject2 *parent) {
 	Te3DObject2::setParent(parent);
 	if (parent) {
 		if (_onParentSizeChangedCallback)
-			parent->onSizeChanged().insert(_onParentSizeChangedCallback);
+			parent->onSizeChanged().push_back(_onParentSizeChangedCallback);
 		if (_onParentWorldTransformationMatrixChangedCallback)
-			parent->onWorldTransformationMatrixChanged().insert(_onParentWorldTransformationMatrixChangedCallback);
+			parent->onWorldTransformationMatrixChanged().push_back(_onParentWorldTransformationMatrixChangedCallback);
 		if (_onMainWindowChangedCallback)
-			mainWindowLayout.onSizeChanged().insert(_onMainWindowChangedCallback);
+			mainWindowLayout.onSizeChanged().push_back(_onMainWindowChangedCallback);
 	}
 	_needZUpdate = true;
 	_sizeChanged = true;

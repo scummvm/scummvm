@@ -88,9 +88,8 @@ void Inventory::load() {
 	btn->setVisible(true);
 	btn->onMouseClickValidated().add(this, &Inventory::onQuitButton);
 
-	// FIXME: This is capturing mouse clicks.. should be set visible per original.
 	btn = _gui.buttonLayoutChecked("quitBackground");
-	btn->setVisible(false);
+	btn->setVisible(true);
 	btn->onMouseClickValidated().add(this, &Inventory::onQuitButton);
 
 	btn = _gui.buttonLayoutChecked("mainMenuButton");

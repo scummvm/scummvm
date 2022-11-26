@@ -185,11 +185,11 @@ void Te3DObject2::setParent(Te3DObject2 *newparent) {
 	_parent = newparent;
 	if (newparent) {
 		if (_onWorldVisibleChangedParentCallback)
-			_parent->onWorldVisibleChanged().insert(_onWorldVisibleChangedParentCallback);
+			_parent->onWorldVisibleChanged().push_back(_onWorldVisibleChangedParentCallback);
 		if (_onWorldTransformationMatrixChangedParentCallback)
-			_parent->onWorldTransformationMatrixChanged().insert(_onWorldTransformationMatrixChangedParentCallback);
+			_parent->onWorldTransformationMatrixChanged().push_back(_onWorldTransformationMatrixChangedParentCallback);
 		if (_onWorldColorChangedParentCallback)
-			_parent->onWorldColorChanged().insert(_onWorldColorChangedParentCallback);
+			_parent->onWorldColorChanged().push_back(_onWorldColorChangedParentCallback);
 
 		_onWorldVisibleChangedSlotSignal.call();
 		_onParentWorldTransformationMatrixChangedSignal.call();
