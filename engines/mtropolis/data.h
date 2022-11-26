@@ -76,7 +76,7 @@ enum TextAlignmentCode {
 
 namespace DataObjectTypes {
 
-enum DataObjectType {
+enum DataObjectType : uint {
 	kUnknown								= 0,
 
 	kProjectLabelMap						= 0x22,
@@ -425,7 +425,7 @@ struct ProjectLabelMap : public DataObject {
 		LabelTree();
 		~LabelTree();
 
-		enum {
+		enum : uint {
 			kExpandedInEditor = 0x80000000,
 		};
 
@@ -719,7 +719,7 @@ protected:
 };
 
 struct SoundElement : public StructuralDef {
-	enum SoundFlags {
+	enum SoundFlags : uint {
 		kPaused = 0x40000000,
 		kLoop = 0x80000000,
 	};
@@ -1010,7 +1010,7 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
-enum MessageFlags {
+enum MessageFlags : uint {
 	kMessageFlagNoRelay = 0x20000000,
 	kMessageFlagNoCascade = 0x40000000,
 	kMessageFlagNoImmediate = 0x80000000,
@@ -1085,7 +1085,7 @@ protected:
 };
 
 struct ChangeSceneModifier : public DataObject {
-	enum ChangeSceneFlags {
+	enum ChangeSceneFlags : uint {
 		kChangeSceneFlagNextScene			= 0x80000000,
 		kChangeSceneFlagPrevScene			= 0x40000000,
 		kChangeSceneFlagSpecificScene		= 0x20000000,
