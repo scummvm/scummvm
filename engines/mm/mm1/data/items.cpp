@@ -25,6 +25,15 @@
 namespace MM {
 namespace MM1 {
 
+uint Item::getSellCost() const {
+	uint cost = _cost;
+	if (_maxCharges)
+		cost /= 2;
+	cost /= 2;
+
+	return cost;
+}
+
 bool ItemsArray::load() {
 	Common::File f;
 	if (!f.open("items.txt"))

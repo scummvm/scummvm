@@ -95,6 +95,11 @@ struct ItemData {
 
 struct Item : public ItemData {
 	Common::String _name;
+
+	/**
+	 * Get the sell value
+	 */
+	uint getSellCost() const;
 };
 
 struct ItemsArray : public Common::Array<Item>, public TextParser {

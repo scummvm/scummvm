@@ -43,37 +43,29 @@ void BlacksmithSellItem::draw() {
 }
 
 void BlacksmithSellItem::drawItems() {
-	// TODO: List items to sell
-	for (int idx = 0; idx < INVENTORY_COUNT; ++idx) {
+	const Inventory &inv = g_globals->_currCharacter->_backpack;
 
+	for (uint idx = 0; idx < INVENTORY_COUNT; ++idx) {
+		writeChar(17, 1 + idx, 'A' + idx);
+		writeString(") ");
+
+		if (idx < inv.size()) {
+			g_globals->_items.getItem(inv[idx]._id);
+			writeString(g_globals->_currItem._name);
+			_textPos.x = 35;
+			writeNumber(g_globals->_currItem.getSellCost());
+		}
 	}
 }
 
 void BlacksmithSellItem::selectItem(uint index) {
 	Character &c = *g_globals->_currCharacter;
-	int itemIndex = index;
+	Inventory &inv = c._backpack;
+	assert(index < inv.size());
+	g_globals->_items.getItem(inv[index]._id);
 
-	// Some slots may be empty, so we need to iterate
-	// until we found the index'ed filled in slot
-	for (index = 0; index < INVENTORY_COUNT ; ++index) {
-		if (c._backpack[index]) {
-			if (--itemIndex == 0)
-				break;
-		}
-	}
-	if (index == INVENTORY_COUNT)
-		return;
-
-	// Remove the item
-	int itemId = c._backpack[index]._id;
-	int v14 = c._backpack[index]._charges;
-	c._backpack.removeAt(index);
-
-	g_globals->_items.getItem(itemId);
-	if (!v14 && g_globals->_currItem._maxCharges)
-		g_globals->_currItem._cost /= 2;
-
-	c._gold += g_globals->_currItem._cost / 2;
+	c._gold += g_globals->_currItem.getSellCost();
+	inv.removeAt(index);
 }
 
 } // namespace Locations
