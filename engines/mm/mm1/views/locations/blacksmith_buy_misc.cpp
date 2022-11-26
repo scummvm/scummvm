@@ -47,7 +47,7 @@ bool BlacksmithBuyMisc::msgFocus(const FocusMessage &msg) {
 void BlacksmithBuyMisc::draw() {
 	Location::draw();
 
-	writeString(23, 1, STRING["dialogs.blacksmith.misc"]);
+	writeString(23, 0, STRING["dialogs.blacksmith.misc"]);
 	drawItems();
 }
 

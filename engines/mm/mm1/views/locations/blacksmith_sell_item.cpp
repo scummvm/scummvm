@@ -38,7 +38,7 @@ BlacksmithSellItem::BlacksmithSellItem() :
 void BlacksmithSellItem::draw() {
 	Location::draw();
 
-	writeString(22, 1, STRING["dialogs.blacksmith.backpack"]);
+	writeString(22, 0, STRING["dialogs.blacksmith.backpack"]);
 	drawItems();
 }
 
