@@ -1324,7 +1324,7 @@ int16 EfhEngine::chooseCharacterToReplace() {
 int16 EfhEngine::handleCharacterJoining() {
 	debug("handleCharacterJoining");
 
-	static char strReplaceWho[13] = "Replace Who?";
+	const char strReplaceWho[13] = "Replace Who?";
 	for (uint counter = 0; counter < 3; ++counter) {
 		if (_teamCharId[counter] == -1) {
 			return counter;
@@ -3572,10 +3572,10 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 		}
 	}
 	// sub1BE9A - last loop counter1_monsterId - End
-	}
+}
 
 int16 EfhEngine::getTeamMonsterAnimId() {
-		debug("getTeamMonsterAnimId");
+	debug("getTeamMonsterAnimId");
 
 	int16 retVal = 0xFF;
 	for (uint counter = 0; counter < 5; ++counter) {
@@ -3918,34 +3918,34 @@ void EfhEngine::generateSound5(int arg0) {
 
 void EfhEngine::generateSound(int16 soundType) {
 	switch (soundType) {
-		case 5:
-			generateSound3();
-			break;
-		case 9:
-			generateSound1(20, 888, 3000);
-			generateSound1(20, 888, 3000);
-			break;
-		case 10:
-			generateSound5(1);
-			break;
-		case 13:
-			generateSound2(256, 4096, 18);
-			break;
-		case 14:
-			generateSound2(20, 400, 100);
-			break;
-		case 15:
-			generateSound2(100, 888, 88);
-			break;
-		case 16:
-			generateSound1(2000, 6096, 1500);
-			break;
-		case 17:
-			generateSound4(1);
-			break;
-		default:
-			// Not implemented because not used by the engine
-			break;
+	case 5:
+		generateSound3();
+		break;
+	case 9:
+		generateSound1(20, 888, 3000);
+		generateSound1(20, 888, 3000);
+		break;
+	case 10:
+		generateSound5(1);
+		break;
+	case 13:
+		generateSound2(256, 4096, 18);
+		break;
+	case 14:
+		generateSound2(20, 400, 100);
+		break;
+	case 15:
+		generateSound2(100, 888, 88);
+		break;
+	case 16:
+		generateSound1(2000, 6096, 1500);
+		break;
+	case 17:
+		generateSound4(1);
+		break;
+	default:
+		// Not implemented because not used by the engine
+		break;
 	}
 }
 
@@ -5099,7 +5099,7 @@ void EfhEngine::displayMenuItemString(int16 menuBoxId, int16 thisBoxId, int16 mi
 		else
 			setTextColorGrey();
 
-		snprintf(buffer, 20,"> %s <", str);
+		snprintf(buffer, 20, "> %s <", str);
 		displayCenteredString(buffer, minX, maxX, minY);
 		setTextColorRed();
 	} else {
@@ -5914,7 +5914,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		}
 		break;
 	case 25: {
-			int16 teamCharId;
+		int16 teamCharId;
 		if (argA == 2) {
 			displayString_3("Who will use this item?", false, charId, windowId, menuId, curMenuLine);
 			teamCharId = selectOtherCharFromTeam();
@@ -6571,7 +6571,6 @@ bool EfhEngine::checkMonsterCollision() {
 				var68 = true;
 				break;
 			default:
-//				warning("STUB: checkMonsterCollision - Missing mapping ?");
 				break;
 			}
 		} while (!var68);
