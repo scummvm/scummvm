@@ -888,6 +888,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "henachoco11",		"スロプロウエスタン" }, // Slowpro Western
 	{ "henachococd",		"ギャラクレヤン'75 オレニモインゼイクレヤン" }, // Galakureyan'75 Inzeikureyan
 	{ "henachocoexpo",		"イタチョコの野望" }, // Itachoco's Ambition
+	{ "hidoiyo",			"ひどいよ / ひどいよくん" },
 	{ "himejijo",			"A.MAZING姫路城" },									// A.MAZING Himejijo (the HIMEJI Castle)
 	{ "horrortour2",		"Zeddas: Horror Tour 2" },
 	{ "horrortour3",		"ラビラーント" },									// Labyrinthe
@@ -1925,7 +1926,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("catcameback", "Demo", "Cat Came Back", "2ce360c9ea2da80a2c6d1040b0ad92dd", 386674, 313),
 
 	// Each movie has its own projector
-	WINGAME1("cdphysics", "", "CDINTRO.EXE", "65d06b5fef155a2473434571aff5bc29", 370004, 313),
+	WINGAME1("cdphysics", "", "CDPHYS/CDINTRO.EXE", "65d06b5fef155a2473434571aff5bc29", 370004, 313),
 
 	MACDEMO1_l("cellofania", "Demo", "Cellofania.Demo", "f5277c53bacd27936158dd3867e587e2", 389970, Common::JA_JPN, 311),
 
@@ -1933,7 +1934,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Japanese Mac demo filename is CHAOS デモ and another file is called CHAOS Demo
 	// English Mac demo from The Family Doctor, 3rd Edition
 	MACGAME1("chaos", "", "xn--The C.H.A.O.S. Continuum-3r4o", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384225, 300),
-	WINGAME1t("chaos", "", "CHAOS.EXE", "5d1d9e1ff9a43e4d5b28441ce6d642fd", 375294, 310),
+	WINGAME2t("chaos", "", "CHAOS.EXE",    "5d1d9e1ff9a43e4d5b28441ce6d642fd", 375294,
+						   "ANTEROOM.MMM", "6004a72285c7757e12ea214374e6fc5d", 15160, 310),
 	MACDEMO1_l("chaos", "Demo", "Start CHAOS Demo", "f5277c53bacd27936158dd3867e587e2", 394683, Common::JA_JPN, 311),
 	MACDEMO1("chaos", "Demo", "xn--CHAOS Continuum Demo-3h7l", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384212, 313),
 
@@ -2091,7 +2093,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 									  "DATA/GA00.MMM",		"72ffa3d703affdf146ba19cb80e6bdbd", 324390, Common::JA_JPN, 310),
 	// Warning text at the end is in both Japanese and English
 	MACDEMO1("gadget", "Demo", "GADGET",	 "f5277c53bacd27936158dd3867e587e2", 390109, 311),
-	WINDEMO1t("gadget", "Demo", "GADGET.EXE", "52a854cc16777395d05aa87859e6be5a", 684203, 311),
+	WINDEMO2t("gadget", "Demo", "GADGET.EXE",		 "52a854cc16777395d05aa87859e6be5a", 684203,
+								"DATA/01_HOTEL.DIR", "3287761cea8b676110a197e0c2ec7d31", 9403586, 311),
 
 	// Original filename is 我流競馬ｵｰﾄﾃﾞﾓ
 	MACDEMO1_l("garyukeiba", "Demo", "Garyu Keiba Auto Demo", "276bee761e48a6fd709df77d5c2f60dd", 392919, Common::JA_JPN, 313),
@@ -2104,7 +2107,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Mac also has an 8-bit color binary. Win is limited to 8-bit color in D3.
 	MACGAME1("golfcd", "", "Great Golf CD (24bit)", "7f443f2e63fd497a9ad85b10dc880a91", 3633301, 313),
-	WINGAME1("golfcd", "", "GOLF.EXE", "65d06b5fef155a2473434571aff5bc29", 370009, 313),
+	WINGAME2("golfcd", "", "GOLF.EXE", "65d06b5fef155a2473434571aff5bc29", 370009,
+						   "GOLF.MMM", "b50a8023091450f5d2699e326b49d240", 3594574, 313),
 
 	MACGAME1_l("gocoo", "", "GO-COO", "276bee761e48a6fd709df77d5c2f60dd", 394940, Common::JA_JPN, 313),
 
@@ -3656,9 +3660,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("hibino", "", "INTERACTIVE EXHIBITION ppc", "422270206b9bd6aff43bbe95047f6ce9", 59757, Common::JA_JPN, 404),
 	WINGAME1t_l("hibino", "", "HIBINO.EXE", "58bc10d8a9cf443e9451dd2c0325e23e", 747203, Common::JA_JPN, 404),
 
-	MACGAME1_l("hidoiyo", "Dai-ichi-wa", "xn--n8jwd0a9fz90pnw8c3lwa", "35707ed8fa1cb9a3cb643b51681cd0a9", 290398, Common::JA_JPN, 402),
-	MACGAME1_l("hidoiyo2", "Dai-ni-wa ", "xn--n8jwa0f9a2hxc9690agv6dhz2a", "35707ed8fa1cb9a3cb643b51681cd0a9", 290398, Common::JA_JPN, 402),
-	MACGAME1_l("hidoiyo3", "Dai-san-wa", "xn--n8jwa0f9a2hxcs640aeqxehz2a", "35707ed8fa1cb9a3cb643b51681cd0a9", 290398, Common::JA_JPN, 402),
+	MACGAME1_l("hidoiyo", "Dai-ichi-wa", "xn--n8jwd0a9fz90pnw8c3lwa", 	   "35707ed8fa1cb9a3cb643b51681cd0a9", 290398, Common::JA_JPN, 402),
+	MACGAME1_l("hidoiyo", "Dai-ni-wa ",  "xn--n8jwa0f9a2hxc9690agv6dhz2a", "35707ed8fa1cb9a3cb643b51681cd0a9", 290398, Common::JA_JPN, 402),
+	MACGAME1_l("hidoiyo", "Dai-san-wa",  "xn--n8jwa0f9a2hxcs640aeqxehz2a", "35707ed8fa1cb9a3cb643b51681cd0a9", 290398, Common::JA_JPN, 402),
 
 	// Found on Uki Uki 3 CD
 	// Original movie filename is デモ
