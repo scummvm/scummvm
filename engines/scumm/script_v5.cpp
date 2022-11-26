@@ -1026,6 +1026,15 @@ void ScummEngine_v5::o5_drawBox() {
 	y2 = getVarOrDirectWord(PARAM_2);
 	color = getVarOrDirectByte(PARAM_3);
 
+	// HACK! In the menu room scripts, LOOM Towns draws the save slots boxes one pixel smaller than expected (on both dimensions).
+	// The interpreter (somehow) manages to draw them correctly, though. Our drawBox implementation appears to be correct,
+	// and attempting to directly change it breaks some stuff (like the GUI banners), so it's really not clear what we're missing.
+	// So, for now, let's do this...
+	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformFMTowns && _currentRoom == 70) {
+		x2 += 1;
+		y2 += 1;
+	}
+
 	drawBox(x, y, x2, y2, color);
 }
 
