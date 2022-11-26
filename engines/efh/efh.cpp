@@ -84,7 +84,7 @@ void AnimInfo::init() {
 }
 
 void ItemStruct::init() {
-	for (int16 idx = 0; idx < 15; ++idx)
+	for (uint idx = 0; idx < 15; ++idx)
 		_name[idx] = 0;
 
 	_damage = 0;
@@ -465,7 +465,7 @@ Common::Error EfhEngine::run() {
 			}
 			break;
 		case Common::KEYCODE_F5: { // Original is using CTRL-S
-			for (int16 counter = 0; counter < 2; ++counter) {
+			for (uint counter = 0; counter < 2; ++counter) {
 				clearBottomTextZone(0);
 				displayCenteredString("Are You Sure You Want To Save?", 24, 296, 160);
 				if (counter == 0)
@@ -488,7 +488,7 @@ Common::Error EfhEngine::run() {
 			}
 			break;
 		case Common::KEYCODE_F7: { // Original is using CTRL-L
-			for (int16 counter = 0; counter < 2; ++counter) {
+			for (uint counter = 0; counter < 2; ++counter) {
 				clearBottomTextZone(0);
 				displayCenteredString("Are You Sure You Want To Load?", 24, 296, 160);
 				if (counter == 0)
@@ -878,13 +878,13 @@ uint16 EfhEngine::sub1C80A(int16 charId, int16 field18, bool flag) {
 void EfhEngine::drawGameScreenAndTempText(bool flag) {
 	debugC(2, kDebugEngine, "drawGameScreenAndTempText %s", flag ? "True" : "False");
 
-	#if 0
+#if 0
 	// This code is present in the original, but looks strictly useless.
 	uint8 mapTileInfo = getMapTileInfo(_mapPosX, _mapPosY);
 	int16 imageSetId = _currentTileBankImageSetId[mapTileInfo / 72];
 
 	int16 mapImageSetId = (imageSetId * 72) + (mapTileInfo % 72);
-	#endif
+#endif
 
 	for (int counter = 0; counter < 2; ++counter) {
 		if (counter == 0 || flag) {
@@ -961,7 +961,7 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 map
 	}
 
 	if (drawMonstersFl) {
-		for (int16 var16 = 0; var16 < 64; ++var16) {
+		for (uint var16 = 0; var16 < 64; ++var16) {
 			if ((_largeMapFlag && _mapMonsters[var16]._guess_fullPlaceId == 0xFE) || (!_largeMapFlag && _mapMonsters[var16]._guess_fullPlaceId == _fullPlaceId)){
 				bool var4 = false;
 				int16 posX = _mapMonsters[var16]._posX;
@@ -970,7 +970,7 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 map
 				if (posX < minX || posX > maxX || posY < minY || posY > maxY)
 					continue;
 
-				for (int16 counterY = 0; counterY < 9 && !var4; ++counterY) {
+				for (uint counterY = 0; counterY < 9 && !var4; ++counterY) {
 					if (_mapMonsters[var16]._pictureRef[counterY] > 0)
 						var4 = true;
 				}
@@ -1010,7 +1010,7 @@ void EfhEngine::displayLargeMap(int16 posX, int16 posY) {
 void EfhEngine::drawScreen() {
 	debugC(2, kDebugEngine, "drawScreen");
 
-	for (int16 counter = 0; counter < 2; ++counter) {
+	for (uint counter = 0; counter < 2; ++counter) {
 		_redrawNeededFl = false;
 		if (!_largeMapFlag) {
 			if (_fullPlaceId != 0xFF)
@@ -1035,12 +1035,12 @@ void EfhEngine::drawScreen() {
 void EfhEngine::displayLowStatusScreen(bool flag) {
 	debugC(6, kDebugEngine, "displayLowStatusScreen %s", flag ? "True" : "False");
 
-	static char strName[5] = "Name";
-	static char strDef[4] = "DEF";
-	static char strHp[3] = "HP";
-	static char strMaxHp[7] = "Max HP";
-	static char strWeapon[7] = "Weapon";
-	static char strDead[9] = "* DEAD *";
+	const char strName[5] = "Name";
+	const char strDef[4] = "DEF";
+	const char strHp[3] = "HP";
+	const char strMaxHp[7] = "Max HP";
+	const char strWeapon[7] = "Weapon";
+	const char strDead[9] = "* DEAD *";
 
 	for (int counter = 0; counter < 2; ++counter) {
 		if (counter == 0 || flag) {
@@ -1106,7 +1106,7 @@ uint8 *EfhEngine::script_readNumberArray(uint8 *srcBuffer, int16 destArraySize, 
 	debug("script_readNumberArray");
 
 	uint8 *buffer = srcBuffer;
-	for (int16 i = 0; i < destArraySize; ++i) {
+	for (int i = 0; i < destArraySize; ++i) {
 		buffer++;
 		buffer = script_getNumber(buffer, &destArray[i]);
 	}
@@ -1140,7 +1140,7 @@ void EfhEngine::removeObject(int16 charId, int16 objectId) {
 void EfhEngine::totalPartyKill() {
 	debug("totalPartyKill");
 
-	for (int16 counter = 0; counter < 3; ++counter) {
+	for (uint counter = 0; counter < 3; ++counter) {
 		if (_teamCharId[counter] != -1)
 			_npcBuf[counter]._hitPoints = 0;
 	}
@@ -1159,7 +1159,7 @@ void EfhEngine::removeCharacterFromTeam(int16 teamMemberId) {
 	_teamCharStatus[teamMemberId]._status = 0;
 	_teamCharStatus[teamMemberId]._duration = 0;
 
-	for (int16 var4 = teamMemberId; var4 < 2; ++var4) {
+	for (int var4 = teamMemberId; var4 < 2; ++var4) {
 		_teamCharId[var4] = _teamCharId[var4 + 1];
 		_teamCharId[var4 + 1] = -1;
 	}
@@ -1171,7 +1171,7 @@ void EfhEngine::refreshTeamSize() {
 	debug("refreshTeamSize");
 
 	_teamSize = 0;
-	for (int16 counter = 0; counter < 3; ++counter) {
+	for (uint counter = 0; counter < 3; ++counter) {
 		if (_teamCharId[counter] != -1)
 			++_teamSize;
 	}
@@ -1180,7 +1180,7 @@ void EfhEngine::refreshTeamSize() {
 bool EfhEngine::isCharacterATeamMember(int16 id) {
 	debug("isCharacterATeamMember %d", id);
 
-	for (int16 counter = 0; counter < _teamSize; ++counter) {
+	for (int counter = 0; counter < _teamSize; ++counter) {
 		if (_teamCharId[counter] == id)
 			return true;
 	}
@@ -1192,7 +1192,7 @@ bool EfhEngine::isTPK() {
 	debug("isTPK");
 
 	int16 zeroedChar = 0;
-	for (int16 counter = 0; counter < _teamSize; ++counter) {
+	for (int counter = 0; counter < _teamSize; ++counter) {
 		if (_npcBuf[_teamCharId[counter]]._hitPoints <= 0)
 			++zeroedChar;
 	}
@@ -1215,7 +1215,7 @@ void EfhEngine::handleWinSequence() {
 	loadImageSet(64, winSeqBuf3, winSeqSubFilesArray1, decompBuffer);
 	loadImageSet(65, winSeqBuf4, winSeqSubFilesArray2, decompBuffer);
 
-	for (int16 counter = 0; counter < 2; ++counter) {
+	for (uint counter = 0; counter < 2; ++counter) {
 		displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
 		displayRawDataAtPos(winSeqSubFilesArray2[0], 136, 48);
 		if (counter == 0)
@@ -1223,8 +1223,8 @@ void EfhEngine::handleWinSequence() {
 	}
 
 	getInput(12);
-	for (int16 animId = 1; animId < 8; ++animId) {
-		for (int16 counter = 0; counter < 2; ++counter) {
+	for (uint animId = 1; animId < 8; ++animId) {
+		for (uint counter = 0; counter < 2; ++counter) {
 			displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
 			displayRawDataAtPos(winSeqSubFilesArray2[animId], 136, 48);
 			if (counter == 0)
@@ -1284,7 +1284,7 @@ void EfhEngine::handleWinSequence() {
 bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int16 altCharId) {
 	debug("giveItemTo %d %d %d", charId, objectId, altCharId);
 
-	for (int16 newObjectId = 0; newObjectId < 10; ++newObjectId) {
+	for (uint newObjectId = 0; newObjectId < 10; ++newObjectId) {
 		if (_npcBuf[charId]._inventory[newObjectId]._ref != 0x7FFF)
 			continue;
 
@@ -1325,13 +1325,13 @@ int16 EfhEngine::handleCharacterJoining() {
 	debug("handleCharacterJoining");
 
 	static char strReplaceWho[13] = "Replace Who?";
-	for (int16 counter = 0; counter < 3; ++counter) {
+	for (uint counter = 0; counter < 3; ++counter) {
 		if (_teamCharId[counter] == -1) {
 			return counter;
 		}
 	}
 
-	for (int16 counter = 0; counter < 2; ++counter) {
+	for (uint counter = 0; counter < 2; ++counter) {
 		drawColoredRect(200, 112, 278, 132, 0);
 		displayCenteredString(strReplaceWho, 200, 278, 117);
 		if (counter == 0)
@@ -1339,7 +1339,7 @@ int16 EfhEngine::handleCharacterJoining() {
 	}
 
 	int16 charId = chooseCharacterToReplace();
-	for (int16 counter = 0; counter < 2; ++counter) {
+	for (uint counter = 0; counter < 2; ++counter) {
 		drawColoredRect(200, 112, 278, 132, 0);
 		if (counter == 0)
 			displayFctFullScreen();
@@ -1554,8 +1554,8 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 			if (flag) {
 				int16 var110 = scriptNumberArray[0];
 				bool found = false;
-				for (int16 counter = 0; counter < _teamSize && !found; ++counter) {
-					for (int16 objectId = 0; objectId < 10; ++objectId) {
+				for (int counter = 0; counter < _teamSize && !found; ++counter) {
+					for (uint objectId = 0; objectId < 10; ++objectId) {
 						if (_npcBuf[_teamCharId[counter]]._inventory[objectId]._ref == var110) {
 							removeObject(_teamCharId[counter], objectId);
 							found = true;
@@ -1570,7 +1570,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
 			if (flag) {
 				int16 var110 = scriptNumberArray[0];
-				for (int16 counter = 0; counter < _teamSize; ++counter) {
+				for (int counter = 0; counter < _teamSize; ++counter) {
 					if (giveItemTo(_teamCharId[counter], var110, 0xFF))
 						break;
 				}
@@ -1581,8 +1581,8 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 			if (flag) {
 				int16 var110 = scriptNumberArray[0];
 				bool found = false;
-				for (int16 counter = 0; counter < _teamSize && !found; ++counter) {
-					for (int16 objectId = 0; objectId < 10; ++objectId) {
+				for (int counter = 0; counter < _teamSize && !found; ++counter) {
+					for (uint objectId = 0; objectId < 10; ++objectId) {
 						if (_npcBuf[_teamCharId[counter]]._inventory[objectId]._ref == var110) {
 							found = true;
 							break;
@@ -1659,7 +1659,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 				int16 var110 = scriptNumberArray[0];
 				// TODO: This "if" is useless, it's doing just the same loop and if statement. Consider removing it.
 				if (isCharacterATeamMember(var110)) {
-					for (int16 counter = 0; counter < 3; ++counter) {
+					for (uint counter = 0; counter < 3; ++counter) {
 						if (_teamCharId[counter] == var110) {
 							removeCharacterFromTeam(counter);
 							break;
@@ -1853,8 +1853,8 @@ void EfhEngine::sub15A28(int16 arg0, int16 arg2) {
 	if (varC < 0)
 		varC = 0;
 
-	for (int16 counter = 0; counter <= 23; counter += 2) {
-		for (int16 var8 = 0; var8 <= 23; ++var8) {
+	for (uint counter = 0; counter <= 23; counter += 2) {
+		for (uint var8 = 0; var8 <= 23; ++var8) {
 			int16 var4 = counter + varE;
 			int16 var2 = var8 + varC;
 			_mapGameMap[var4][var2] = _curPlace[counter][var8];
@@ -1862,8 +1862,8 @@ void EfhEngine::sub15A28(int16 arg0, int16 arg2) {
 		drawScreen();
 	}
 
-	for (int16 counter = 1; counter <= 23; counter += 2) {
-		for (int16 var8 = 0; var8 <= 23; ++var8) {
+	for (uint counter = 1; counter <= 23; counter += 2) {
+		for (uint var8 = 0; var8 <= 23; ++var8) {
 			int16 var4 = counter + varE;
 			int16 var2 = var8 + varC;
 			_mapGameMap[var4][var2] = _curPlace[counter][var8];
@@ -1970,12 +1970,12 @@ int16 EfhEngine::sub151FD(int16 posX, int16 posY) {
 	debug("sub151FD %d %d", posX, posY);
 
 	if (_largeMapFlag) {
-		for (int16 counter = 0; counter < 100; ++counter) {
+		for (uint counter = 0; counter < 100; ++counter) {
 			if (_mapUnknown[counter]._posX == posX && _mapUnknown[counter]._posY == posY && _mapUnknown[counter]._placeId == 0xFE)
 				return counter;
 		}
 	} else {
-		for (int16 counter = 0; counter < 100; ++counter) {
+		for (uint counter = 0; counter < 100; ++counter) {
 			if (_mapUnknown[counter]._posX == posX && _mapUnknown[counter]._posY == posY && _mapUnknown[counter]._placeId == _fullPlaceId)
 				return counter;
 		}
@@ -2137,7 +2137,7 @@ void EfhEngine::handleNewRoundEffects() {
 	if (!_word2C8D7)
 		return;
 
-	for (int16 counter = 0; counter < _teamSize; ++counter) {
+	for (int counter = 0; counter < _teamSize; ++counter) {
 		if (_teamCharStatus[counter]._status == 0) // normal
 			continue;
 		if (--_teamCharStatus[counter]._duration <= 0) {
@@ -2149,7 +2149,7 @@ void EfhEngine::handleNewRoundEffects() {
 	if (++regenCounter <= 8)
 		return;
 
-	for (int16 counter = 0; counter < _teamSize; ++counter) {
+	for (int counter = 0; counter < _teamSize; ++counter) {
 		if (++_npcBuf[_teamCharId[counter]]._hitPoints > _npcBuf[_teamCharId[counter]]._maxHP)
 			_npcBuf[_teamCharId[counter]]._hitPoints = _npcBuf[_teamCharId[counter]]._maxHP;
 	}
@@ -2163,7 +2163,7 @@ bool EfhEngine::handleDeathMenu() {
 	_imageSetSubFilesIdx = 213;
 	drawScreen();
 
-	for (int16 counter = 0; counter < 2; ++counter) {
+	for (uint counter = 0; counter < 2; ++counter) {
 		clearBottomTextZone(0);
 		displayCenteredString("Darkness Prevails...Death Has Taken You!", 24, 296, 153);
 		setTextPos(100, 162);
@@ -2296,7 +2296,7 @@ int8 EfhEngine::sub16B08(int16 monsterId) {
 	if (_mapMonsters[monsterId]._posX == _mapPosX && _mapMonsters[monsterId]._posY == _mapPosY)
 		return 0;
 
-	for (int16 counter = 0; counter < 64; ++counter) {
+	for (int counter = 0; counter < 64; ++counter) {
 		if (counter == monsterId)
 			continue;
 
@@ -2481,7 +2481,7 @@ bool EfhEngine::checkTeamWeaponRange(int16 monsterId) {
 	if (!_ongoingFightFl)
 		return true;
 
-	for (int16 counter = 0; counter < 5; ++counter) {
+	for (uint counter = 0; counter < 5; ++counter) {
 		if (_teamMonsterIdArray[counter] == monsterId && unkFct_checkMonsterField8(monsterId, false) && checkWeaponRange(monsterId, _mapMonsters[monsterId]._itemId_Weapon))
 			return false;
 	}
@@ -2523,7 +2523,7 @@ void EfhEngine::sub174A0() {
 	int16 maxDisplayedMapX = CLIP<int16>(minDisplayedMapX + 20, 0, mapSize);
 	int16 maxDisplayedMapY = CLIP<int16>(minDisplayedMapY + 17, 0, mapSize);
 
-	for (int16 monsterId = 0; monsterId < 64; ++monsterId) {
+	for (uint monsterId = 0; monsterId < 64; ++monsterId) {
 		if (!checkPictureRefAvailability(monsterId))
 			continue;
 
@@ -2692,7 +2692,7 @@ bool EfhEngine::checkPictureRefAvailability(int16 monsterId) {
 	if (_mapMonsters[monsterId]._guess_fullPlaceId == 0xFF)
 		return false;
 
-	for (int16 counter = 0; counter < 9; ++counter) {
+	for (uint counter = 0; counter < 9; ++counter) {
 		if (_mapMonsters[monsterId]._pictureRef[counter] > 0)
 			return true;
 	}
@@ -2718,7 +2718,7 @@ int16 EfhEngine::countPictureRef(int16 id, bool teamMemberFl) {
 	else
 		monsterId = id;
 
-	for (int16 counter = 0; counter < 9; ++counter) {
+	for (uint counter = 0; counter < 9; ++counter) {
 		if (_mapMonsters[monsterId]._pictureRef[counter] > 0)
 			++count;
 	}
@@ -2802,8 +2802,8 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 		}
 		break;
 	case 4:
-		for (int16 counter = 0; counter < _teamSize; ++counter) {
-			for (int16 charId = 0; charId < 10; ++charId) {
+		for (int counter = 0; counter < _teamSize; ++counter) {
+			for (uint charId = 0; charId < 10; ++charId) {
 				if (_npcBuf[_teamCharId[counter]]._inventory[charId]._ref == _npcBuf[var58].field_11) {
 					removeObject(_teamCharId[counter], charId);
 					displayMonsterAnim(monsterId);
@@ -2823,8 +2823,8 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 		}
 		break;
 	case 6:
-		for (int16 counter = 0; counter < _teamSize; ++counter) {
-			for (int16 charId = 0; charId < 10; ++charId) {
+		for (int counter = 0; counter < _teamSize; ++counter) {
+			for (uint charId = 0; charId < 10; ++charId) {
 				if (_npcBuf[_teamCharId[counter]]._inventory[charId]._ref == _npcBuf[var58].field_11) {
 					displayMonsterAnim(monsterId);
 					sub22AA8(_npcBuf[var58].field_14);
@@ -2835,7 +2835,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 		}
 		break;
 	case 7:
-		for (int16 counter = 0; counter < _teamSize; ++counter) {
+		for (int counter = 0; counter < _teamSize; ++counter) {
 			if (_npcBuf[var58].field_11 == _teamCharId[counter]) {
 				removeCharacterFromTeam(counter);
 				displayMonsterAnim(monsterId);
@@ -2846,13 +2846,13 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 		}
 		break;
 	case 8:
-		for (int16 counter = 0; counter < _teamSize; ++counter) {
+		for (int counter = 0; counter < _teamSize; ++counter) {
 			if (_npcBuf[var58].field_11 == _teamCharId[counter]) {
 				displayMonsterAnim(monsterId);
 				_enemyNamePt2 = _npcBuf[var58]._name;
 				_characterNamePt2 = _npcBuf[_teamCharId[counter]]._name;
 				snprintf(buffer, 80, "%s asks that %s leave your party.", _enemyNamePt2.c_str(), _characterNamePt2.c_str());
-				for (int16 i = 0; i < 2; ++i) {
+				for (uint i = 0; i < 2; ++i) {
 					clearBottomTextZone(0);
 					_textColor = 0xE;
 					displayCenteredString(buffer, 24, 296, 161);
@@ -2873,7 +2873,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 		}
 		break;
 	case 9:
-		for (int16 counter = 0; counter < _teamSize; ++counter) {
+		for (int counter = 0; counter < _teamSize; ++counter) {
 			if (_npcBuf[var58].field_11 == _teamCharId[counter]) {
 				displayMonsterAnim(monsterId);
 				sub22AA8(_npcBuf[var58].field_14);
@@ -2984,7 +2984,7 @@ void EfhEngine::sub22AA8(int16 arg0) {
 							_word2C87A = false;
 						}
 					} else {
-						for (int16 counter = 0; counter < 2; ++counter) {
+						for (uint counter = 0; counter < 2; ++counter) {
 							drawMapWindow();
 							if (counter == 0)
 								displayFctFullScreen();
@@ -2995,7 +2995,7 @@ void EfhEngine::sub22AA8(int16 arg0) {
 							var4 = var2;
 
 						if (var4 != -1) {
-							for (int16 counter = 0; counter < 2; ++counter) {
+							for (uint counter = 0; counter < 2; ++counter) {
 								if (varA) {
 									displayCenteredString("[DONE]", 128, 303, 117);
 								} else {
@@ -3035,7 +3035,7 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 			sub22AA8(_mapUnknown[var8]._field5); // word!
 			return true;
 		} else if (_mapUnknown[var8]._field3 == 0xFE) {
-			for (int16 counter = 0; counter < _teamSize; ++counter) {
+			for (int counter = 0; counter < _teamSize; ++counter) {
 				if (_teamCharId[counter] == -1)
 					continue;
 				if (_teamCharId[counter] == _mapUnknown[var8]._field4) {
@@ -3044,11 +3044,11 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 				}
 			}
 		} else if (_mapUnknown[var8]._field3 == 0xFD) {
-			for (int16 counter = 0; counter < _teamSize; ++counter) {
+			for (int counter = 0; counter < _teamSize; ++counter) {
 				if (_teamCharId[counter] == -1)
 					continue;
 
-				for (int16 var2 = 0; var2 < 10; ++var2) {
+				for (uint var2 = 0; var2 < 10; ++var2) {
 					if (_npcBuf[_teamCharId[counter]]._inventory[var2]._ref == _mapUnknown[var8]._field4) {
 						sub22AA8(_mapUnknown[var8]._field5);
 						return true;
@@ -3062,7 +3062,7 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 				if (_teamCharId[counter] == -1)
 					continue;
 
-				for (int16 var2 = 0; var2 < 39; ++var2) {
+				for (uint var2 = 0; var2 < 39; ++var2) {
 					if (_npcBuf[_teamCharId[counter]]._activeScore[var2] >= _mapUnknown[var8]._field4) {
 						sub22AA8(_mapUnknown[var8]._field5);
 						return true;
@@ -3088,7 +3088,7 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 		}
 	}
 
-	for (int16 counter = 0; counter < 64; ++counter) {
+	for (uint counter = 0; counter < 64; ++counter) {
 		if (!sub21820(counter, arg8, itemId))
 			return true;
 	}
@@ -3140,7 +3140,7 @@ int8 EfhEngine::sub15581(int16 mapPosX, int16 mapPosY, int16 arg4) {
 bool EfhEngine::sub1BC74(int16 monsterId, int16 teamMonsterId) {
 	debug("sub1BC74 %d %d", monsterId, teamMonsterId);
 
-	for (int16 counter = 0; counter < teamMonsterId; ++counter) {
+	for (int counter = 0; counter < teamMonsterId; ++counter) {
 		if (_teamMonsterIdArray[counter] == monsterId)
 			return true;
 	}
@@ -3156,11 +3156,11 @@ void EfhEngine::sub1BCA7(int16 monsterTeamId) {
 		_teamMonsterIdArray[0] = monsterTeamId;
 	}
 
-	for (int16 counter2 = 1; counter2 <= 3; ++counter2) {
+	for (int counter2 = 1; counter2 <= 3; ++counter2) {
 		if (counter >= 5)
 			break;
 
-		for (int16 monsterId = 0; monsterId < 64; ++monsterId) {
+		for (uint monsterId = 0; monsterId < 64; ++monsterId) {
 			if (_mapMonsters[monsterId]._guess_fullPlaceId == 0xFF)
 				continue;
 
@@ -3171,7 +3171,7 @@ void EfhEngine::sub1BCA7(int16 monsterTeamId) {
 				continue;
 
 			bool var6 = false;
-			for (int16 counter3 = 0; counter3 < 9; ++counter3) {
+			for (uint counter3 = 0; counter3 < 9; ++counter3) {
 				if (_mapMonsters[monsterId]._pictureRef[counter3] > 0) {
 					var6 = true;
 					break;
@@ -3191,14 +3191,14 @@ void EfhEngine::sub1BCA7(int16 monsterTeamId) {
 	if (counter > 4)
 		return;
 
-	for (int16 id = counter; id < 5; ++id)
+	for (uint id = counter; id < 5; ++id)
 		_teamMonsterIdArray[id] = -1;
 }
 
 void EfhEngine::reset_stru32686() {
 	debug("reset_stru32686");
-	for (int16 counter1 = 0; counter1 < 5; ++counter1) {
-		for (int16 counter2 = 0; counter2 < 9; ++counter2) {
+	for (uint counter1 = 0; counter1 < 5; ++counter1) {
+		for (uint counter2 = 0; counter2 < 9; ++counter2) {
 			_stru32686[counter1]._field0[counter2] = 0;
 			_stru32686[counter1]._field2[counter2] = 0;
 		}
@@ -3231,7 +3231,7 @@ bool EfhEngine::isTeamMemberStatusNormal(int16 teamMemberId) {
 void EfhEngine::sub1CDFA() {
 	debug("sub1CDFA"); // Initiatives
 
-	for (int16 counter = 0; counter < 3; ++counter) {
+	for (int counter = 0; counter < 3; ++counter) {
 		if (_teamCharId[counter] != -1 && counter < _teamSize) {
 			_stru3244C[counter]._field0 = counter + 1000;
 			_stru3244C[counter]._field2 = _npcBuf[_teamCharId[counter]]._infoScore[3];
@@ -3241,7 +3241,7 @@ void EfhEngine::sub1CDFA() {
 		}
 	}
 
-	for (int16 counter = 0; counter < 5; ++counter) {
+	for (int counter = 0; counter < 5; ++counter) {
 		if (_teamMonsterIdArray[counter] == -1) {
 			_stru3244C[counter + 3]._field0 = -1;
 			_stru3244C[counter + 3]._field2 = -1;
@@ -3251,8 +3251,8 @@ void EfhEngine::sub1CDFA() {
 		}
 	}
 
-	for (int16 counter = 0; counter < 8; ++counter) {
-		for (int16 counter2 = 0; counter2 < 8; ++counter2) {
+	for (uint counter = 0; counter < 8; ++counter) {
+		for (uint counter2 = 0; counter2 < 8; ++counter2) {
 			if (_stru3244C[counter]._field2 >= _stru3244C[counter2]._field2)
 				continue;
 
@@ -3265,7 +3265,7 @@ void EfhEngine::sub1CDFA() {
 void EfhEngine::redrawScreenForced() {
 	debug("redrawScreenForced");
 
-	for (int16 counter = 0; counter < 2; ++counter) {
+	for (uint counter = 0; counter < 2; ++counter) {
 		drawScreen();
 		if (counter == 0)
 			displayFctFullScreen();
@@ -3326,7 +3326,7 @@ int16 EfhEngine::sub1C956(int16 charId, int16 unkFied18Val, bool arg4) {
 	}
 
 	do {
-		for (int16 counter = 0; counter < 2; ++counter) {
+		for (uint counter = 0; counter < 2; ++counter) {
 			drawCombatScreen(charId, true, false);
 			if (_teamMonsterIdArray[1] != -1)
 				sub1C219((uint8 *)"Select Monster Group:", 3, 0, false);
@@ -3360,7 +3360,7 @@ int16 EfhEngine::sub1C956(int16 charId, int16 unkFied18Val, bool arg4) {
 void EfhEngine::sub1CAB6(int16 charId) {
 	debug("sub1CAB6 %d", charId);
 
-	for (int16 counter = 0; counter < 2; ++counter) {
+	for (uint counter = 0; counter < 2; ++counter) {
 		drawGameScreenAndTempText(false);
 		displayLowStatusScreen(false);
 		drawCombatScreen(charId, false, false);
@@ -3373,7 +3373,7 @@ bool EfhEngine::sub1CB27() {
 	debug("sub1CB27");
 
 	bool var4 = false;
-	for (int16 counter1 = 0; counter1 < _teamSize; ++counter1) {
+	for (int counter1 = 0; counter1 < _teamSize; ++counter1) {
 		_teamLastAction[counter1] = 0;
 		if (!isTeamMemberStatusNormal(counter1))
 			continue;
@@ -3396,7 +3396,7 @@ bool EfhEngine::sub1CB27() {
 				_teamLastAction[counter1] = 'H';
 				break;
 			case Common::KEYCODE_r: // Run
-				for (int16 counter2 = 0; counter2 < _teamSize; ++counter2) {
+				for (int counter2 = 0; counter2 < _teamSize; ++counter2) {
 					_teamLastAction[counter2] = 'R';
 				}
 				return true;
@@ -3482,19 +3482,19 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 	int16 var4 = 1;
 
 	// sub1BE9A - 1rst loop counter1_monsterId - Start
-	for (int16 counter1 = 0; counter1 < 5; ++counter1) {
+	for (uint counter1 = 0; counter1 < 5; ++counter1) {
 		if (countMonsterGroupMembers(counter1))
 			continue;
 
-		for (int16 counter2 = 0; counter2 < 9; ++counter2) {
+		for (uint counter2 = 0; counter2 < 9; ++counter2) {
 			_mapMonsters[_teamMonsterIdArray[counter1]]._pictureRef[counter2] = 0;
 			_stru32686[counter1]._field0[counter2] = 0;
 			_stru32686[counter1]._field2[counter2] = 0;
 		}
 
 		_teamMonsterIdArray[counter1] = -1;
-		for (int16 counter2 = counter1 + 1; counter2 < 5; ++counter2) {
-			for (int16 var8 = 0; var8 < 9; ++var8) {
+		for (uint counter2 = counter1 + 1; counter2 < 5; ++counter2) {
+			for (uint var8 = 0; var8 < 9; ++var8) {
 				_stru32686[counter1]._field0[var8] = _stru32686[counter2]._field0[var8];
 				_stru32686[counter1]._field2[var8] = _stru32686[counter2]._field2[var8];
 			}
@@ -3505,7 +3505,7 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 	// sub1BE9A - 1rst loop counter1_monsterId - End
 
 	var4 = -1;
-	for (int16 counter1 = 0; counter1 < 5; ++counter1) {
+	for (uint counter1 = 0; counter1 < 5; ++counter1) {
 		if (_teamMonsterIdArray[counter1] == -1) {
 			var4 = counter1;
 			break;
@@ -3514,18 +3514,18 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 
 	if (var4 != -1) {
 		// sub1BE9A - loop var2 - Start
-		for (int16 var2 = 1; var2 < 3; ++var2) {
+		for (int var2 = 1; var2 < 3; ++var2) {
 			if (var4 >= 5)
 				break;
 
-			for (int16 counter1 = 0; counter1 < 64; ++counter1) {
+			for (uint counter1 = 0; counter1 < 64; ++counter1) {
 				if (_mapMonsters[counter1]._guess_fullPlaceId == 0xFF)
 					continue;
 
 				if (((_mapMonsters[counter1]._possessivePronounSHL6 & 0x3F) == 0x3F && !isCharacterATeamMember(_mapMonsters[counter1]._field_1)) || (_mapMonsters[counter1]._possessivePronounSHL6 & 0x3F) <= 0x3D) {
 					if (checkIfMonsterOnSameLargeMapPlace(counter1)) {
 						bool var6 = false;
-						for (int16 counter2 = 0; counter2 < 9; ++counter2) {
+						for (uint counter2 = 0; counter2 < 9; ++counter2) {
 							if (_mapMonsters[counter1]._pictureRef[counter2] > 0) {
 								var6 = true;
 								break;
@@ -3548,7 +3548,7 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 						// Furthermore, it was accessing _stru32686[counter1]._field0[counter1] which doesn't make
 						// sense...
 						// I therefore decided to use another counter as it looks like an original misbehavior/bug.
-						for (int16 counter2 = 0; counter2 < 9; ++counter2) {
+						for (uint counter2 = 0; counter2 < 9; ++counter2) {
 							_stru32686[counter1]._field0[counter2] = 0;
 						}
 
@@ -3567,7 +3567,7 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 	// sub1BE9A - last loop counter1_monsterId - Start
 	for (int16 counter1 = var4; counter1 < 5; ++counter1) {
 		_teamMonsterIdArray[counter1] = -1;
-		for (int16 counter2 = 0; counter2 < 9; ++counter2) {
+		for (uint counter2 = 0; counter2 < 9; ++counter2) {
 			_stru32686[counter1]._field0[counter2] = (int16)0x8000;
 		}
 	}
@@ -3578,7 +3578,7 @@ int16 EfhEngine::getTeamMonsterAnimId() {
 		debug("getTeamMonsterAnimId");
 
 	int16 retVal = 0xFF;
-	for (int16 counter = 0; counter < 5; ++counter) {
+	for (uint counter = 0; counter < 5; ++counter) {
 		int16 monsterId = _teamMonsterIdArray[counter];
 		if (monsterId == -1)
 			continue;
@@ -3600,7 +3600,7 @@ int16 EfhEngine::countMonsterGroupMembers(int16 monsterGroup) {
 	debugC(9, kDebugEngine, "countMonsterGroupMembers %d", monsterGroup);
 
 	int16 result = 0;
-	for (int16 counter = 0; counter < 9; ++counter) {
+	for (uint counter = 0; counter < 9; ++counter) {
 		if (isMonsterActive(monsterGroup, counter))
 			++result;
 	}
@@ -3612,7 +3612,7 @@ void EfhEngine::sub1C4CA(bool whiteFl) {
 	debug("sub1C4CA %s", whiteFl ? "True" : "False");
 
 	int16 textPosY = 20;
-	for (int16 counter = 0; counter < 5; ++counter) {
+	for (uint counter = 0; counter < 5; ++counter) {
 		if (_teamMonsterIdArray[counter] == -1)
 			continue;
 
@@ -3707,7 +3707,7 @@ void EfhEngine::displayCombatMenu(int16 charId) {
 void EfhEngine::drawCombatScreen(int16 charId, bool whiteFl, bool forceDrawFl) {
 	debug("drawCombatScreen %d %s %s", charId, whiteFl ? "True" : "False", forceDrawFl ? "True" : "False");
 
-	for (int16 counter = 0; counter < 2; ++counter) {
+	for (uint counter = 0; counter < 2; ++counter) {
 		if (counter == 0 || forceDrawFl) {
 			drawMapWindow();
 			displayCenteredString("Combat", 128, 303, 9);
@@ -3771,7 +3771,7 @@ int16 EfhEngine::sub1DEC8(int16 groupNumber) {
 	if (monsterId == -1)
 		return -1;
 
-	for (int16 counter = 0; counter < 9; ++counter) {
+	for (uint counter = 0; counter < 9; ++counter) {
 		if (isMonsterActive(groupNumber, counter)) {
 			var4 = counter;
 			break;
@@ -3980,7 +3980,7 @@ void EfhEngine::genericGenerateSound(int16 soundType, int16 repeatCount) {
 	case 11:
 	case 12:
 	case 13:
-		for (int16 counter = 0; counter < repeatCount; ++counter) {
+		for (int counter = 0; counter < repeatCount; ++counter) {
 			generateSound(17);
 		}
 		break;
@@ -4010,7 +4010,7 @@ bool EfhEngine::hasAdequateDefense_2(int16 charId, uint8 attackType) {
 	if (_items[itemId].field_16 == 0 && _items[itemId].field17_attackTypeDefense == attackType)
 		return true;
 
-	for (int16 counter = 0; counter < 10; ++counter) {
+	for (uint counter = 0; counter < 10; ++counter) {
 		if (_npcBuf[charId]._inventory[counter]._ref == 0x7FFF || _npcBuf[charId]._inventory[counter]._stat1 == 0x80)
 			continue;
 
@@ -4499,7 +4499,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 					int16 var64 = _items[unk_monsterField5_itemId]._attacks *_npcBuf[_teamCharId[teamCharId]]._speed;
 
 					// Action A - Loop var84 - Start
-					for (int16 var84 = 0; var84 < var64; ++var84) {
+					for (int var84 = 0; var84 < var64; ++var84) {
 						if (getRandom(100) < charScore) {
 							++var62;
 							if (!hasAdequateDefense(_teamMonsterIdArray[groupId], _items[unk_monsterField5_itemId]._attackType)) {
@@ -4743,7 +4743,7 @@ void EfhEngine::sub1D8C2(int16 charId, int16 damage) {
 	if (damage > 50)
 		damage = 50;
 
-	for (int16 objectId = 0; objectId < 10; ++objectId) {
+	for (uint objectId = 0; objectId < 10; ++objectId) {
 		if (_npcBuf[charId]._inventory[objectId]._ref == 0x7FFF || (_npcBuf[charId]._inventory[objectId]._stat1 & 0x80) == 0 && _items[_npcBuf[charId]._inventory[objectId]._ref]._defense == 0)
 			continue;
 
@@ -4812,7 +4812,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 
 		int16 varInt = getTeamMonsterAnimId();
 		displayAnimFrames(varInt, true);
-		for (int16 counter = 0; counter < _teamSize; ++counter) {
+		for (int counter = 0; counter < _teamSize; ++counter) {
 			_word32680[counter] = 100;
 			_word32482[counter] = 65;
 		}
@@ -4825,7 +4825,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 			return false;
 		}
 
-		for (int16 counter = 0; counter < _teamSize; ++counter) {
+		for (int counter = 0; counter < _teamSize; ++counter) {
 			if (_teamLastAction[counter] == 0x52) // 'R'
 				mainLoopCond = true;
 		}
@@ -4833,7 +4833,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 		sub1CDFA();
 		sub1C219(nullptr, 2, 1, false);
 
-		for (int16 counter = 0; counter < 8; ++counter) {
+		for (uint counter = 0; counter < 8; ++counter) {
 			int16 monsterGroupIdOrMonsterId = _stru3244C[counter]._field0;
 			if (monsterGroupIdOrMonsterId == -1)
 				continue;
@@ -4861,7 +4861,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 				}
 			} else if (unkFct_checkMonsterField8(monsterGroupIdOrMonsterId, true)) {
 				// handleFight - Loop on var86 - Start
-				for (int16 var86 = 0; var86 < 9; ++var86) {
+				for (uint var86 = 0; var86 < 9; ++var86) {
 					if (isMonsterActive(monsterGroupIdOrMonsterId, var86)) {
 						int16 unk_monsterField5_itemId = _mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._itemId_Weapon;
 						if (unk_monsterField5_itemId == 0xFF)
@@ -4869,7 +4869,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 						int16 teamMemberId = -1;
 						int16 var54;
 						if (_items[unk_monsterField5_itemId]._range < 3) {
-							for (int16 var84 = 0; var84 < 10; ++var84) {
+							for (uint var84 = 0; var84 < 10; ++var84) {
 								teamMemberId = getRandom(_teamSize) - 1;
 								if (checkWeaponRange(_teamMonsterIdArray[monsterGroupIdOrMonsterId], unk_monsterField5_itemId) && isTeamMemberStatusNormal(teamMemberId) && getRandom(100) < _word32680[teamMemberId]) {
 									break;
@@ -4898,7 +4898,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 								int16 originalDamage = 0;
 								int16 damagePointsAbsorbed = 0;
 								int16 var64 = _mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._field_1 * _items[unk_monsterField5_itemId]._attacks;
-								for (int16 var84 = 0; var84 < var64; ++var84) {
+								for (int var84 = 0; var84 < var64; ++var84) {
 									// handleFight - Loop var84 on var64 (objectId) - Start
 									if (getRandom(100) > _word32482[var7E])
 										continue;
@@ -5115,7 +5115,7 @@ void EfhEngine::displayMenuItemString(int16 menuBoxId, int16 thisBoxId, int16 mi
 void EfhEngine::displayStatusMenu(int16 windowId) {
 	debug("displayStatusMenu %d", windowId);
 
-	for (int16 counter = 0; counter < 9; ++counter) {
+	for (uint counter = 0; counter < 9; ++counter) {
 		drawColoredRect(80, 39 + 14 * counter, 134, 47 + 14 * counter, 0);
 	}
 
@@ -5170,7 +5170,7 @@ void EfhEngine::countRightWindowItems(int16 menuId, int16 charId) {
 	}
 
 	if (var4 == -1) {
-		for (int16 counter = 0; counter < 10; ++counter) {
+		for (uint counter = 0; counter < 10; ++counter) {
 			if (_npcBuf[charId]._inventory[counter]._ref != 0x7FFF) {
 				_word3273A[_menuItemCounter++] = counter;
 			}
@@ -5242,7 +5242,7 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 		return;
 	}
 
-	for (int16 counter = 0; counter < _menuItemCounter; ++counter) {
+	for (int counter = 0; counter < _menuItemCounter; ++counter) {
 		if (_menuDepth == 0)
 			setTextColorGrey();
 		else {
@@ -5316,7 +5316,7 @@ void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 cha
 		return;
 	}
 
-	for (int16 counter = 0; counter < _menuItemCounter; ++counter) {
+	for (int counter = 0; counter < _menuItemCounter; ++counter) {
 		if (counter == curMenuLine)
 			setTextColorWhite();
 		int16 textPosY = 38 + counter * 9;
@@ -5413,7 +5413,7 @@ int16 EfhEngine::displayString_3(const char *str, bool animFl, int16 charId, int
 
 	int16 retVal = 0;
 
-	for (int16 counter = 0; counter < 2; ++counter) {
+	for (uint counter = 0; counter < 2; ++counter) {
 		unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, false);
 		displayWindow(_windowWithBorderBuf, 19, 113, _hiResImageBuf);
 
@@ -5473,7 +5473,7 @@ void EfhEngine::sub191FF(int16 charId, int16 objectId, int16 windowId, int16 men
 	} else {
 		int16 var2 = _items[itemId].field_18;
 		if (var2 != 4) {
-			for (int16 counter = 0; counter < 10; ++counter) {
+			for (uint counter = 0; counter < 10; ++counter) {
 				if (var2 == _items[_npcBuf[charId]._inventory[counter]._ref].field_18)
 					equipCursedItem(charId, objectId, windowId, menuId, curMenuLine);
 			}
@@ -5554,7 +5554,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			int16 victims = 0;
 			strncat((char *)_messageToBePrinted, "  The item emits a low droning hum...", 400);
 			if (getRandom(100) < 50) {
-				for (int16 counter = 0; counter < 9; ++counter) {
+				for (uint counter = 0; counter < 9; ++counter) {
 					if (isMonsterActive(windowId, counter)) {
 						++victims;
 						_stru32686[windowId]._field0[counter] = 1;
@@ -5563,7 +5563,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				}
 			} else {
 				int16 NumberOfTargets = getRandom(9);
-				for (int16 counter = 0; counter < 9; ++counter) {
+				for (uint counter = 0; counter < 9; ++counter) {
 					if (NumberOfTargets == 0)
 						break;
 
@@ -5593,7 +5593,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			strncat((char *)_messageToBePrinted, "  The item emits a blue beam...", 400);
 			int16 victim = 0;
 			if (getRandom(100) < 50) {
-				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
+				for (uint varA8 = 0; varA8 < 9; ++varA8) {
 					if (isMonsterActive(windowId, varA8)) {
 						++victim;
 						_stru32686[windowId]._field0[varA8] = 2;
@@ -5602,7 +5602,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				}
 			} else {
 				int16 varAC = getRandom(9);
-				for (int16 varA8 = 0; varA8 < 9; ++varA8) {
+				for (uint varA8 = 0; varA8 < 9; ++varA8) {
 					if (varAC == 0)
 						break;
 
@@ -5643,13 +5643,13 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		} else {
 			strncat((char *)_messageToBePrinted, "  A dark gray fiery whirlwind surrounds the poor victim...the power fades and death abounds!", 400);
 			if (getRandom(100) < 50) {
-				for (int16 counter = 0; counter < 9; ++counter) {
+				for (uint counter = 0; counter < 9; ++counter) {
 					if (getRandom(100) < 50) {
 						_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
 					}
 				}
 			} else {
-				for (int16 counter = 0; counter < 9; ++counter) {
+				for (uint counter = 0; counter < 9; ++counter) {
 					if (isMonsterActive(windowId, counter)) {
 						if (getRandom(100) < 50) {
 							_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
@@ -5667,12 +5667,12 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		} else {
 			if (getRandom(100) < 50) {
 				strncat((char *)_messageToBePrinted, "  A dark fiery whirlwind surrounds the poor victim...the power fades and all targeted die!", 400);
-				for (int16 counter = 0; counter < 9; ++counter) {
+				for (uint counter = 0; counter < 9; ++counter) {
 					_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
 				}
 			} else {
 				strncat((char *)_messageToBePrinted, "  A dark fiery whirlwind surrounds the poor victim...the power fades and one victim dies!", 400);
-				for (int16 counter = 0; counter < 9; ++counter) {
+				for (uint counter = 0; counter < 9; ++counter) {
 					if (isMonsterActive(windowId, counter)) {
 						_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
 					}
@@ -6470,7 +6470,7 @@ bool EfhEngine::checkMonsterCollision() {
 
 	int16 var68 = 0;
 
-	for (int16 monsterId = 0; monsterId < 64; ++monsterId) {
+	for (uint monsterId = 0; monsterId < 64; ++monsterId) {
 		if (!checkPictureRefAvailability(monsterId))
 			continue;
 
@@ -6494,14 +6494,14 @@ bool EfhEngine::checkMonsterCollision() {
 		_redrawNeededFl = true;
 
 		int16 var6A = 0;
-		for (int16 var6C = 0; var6C < 9; ++var6C) {
+		for (uint var6C = 0; var6C < 9; ++var6C) {
 			if (_mapMonsters[monsterId]._pictureRef[var6C])
 				++var6A;
 		}
 
 		Common::String buffer = "";
 		do {
-			for (int16 var6C = 0; var6C < 2; ++var6C) {
+			for (uint var6C = 0; var6C < 2; ++var6C) {
 				int16 var1 = _mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F;
 				Common::String dest;
 				if (var1 <= 0x3D) {
@@ -6736,8 +6736,8 @@ void EfhEngine::copyCurrentPlaceToBuffer(int16 id) {
 	// Note that 576 = 24 * 24
 	uint8 *placesPtr = &_places[576 * id];
 
-	for (int16 i = 0; i < 24; ++i) {
-		for (int16 j = 0; j < 24; ++j) {
+	for (uint i = 0; i < 24; ++i) {
+		for (uint j = 0; j < 24; ++j) {
 			_curPlace[i][j] = placesPtr[i * 24 + j];
 		}
 	}

@@ -299,7 +299,7 @@ void EfhEngine::drawChar(uint8 curChar, int16 posX, int16 posY) {
 	int16 charId = curChar - 0x20;
 	uint8 width = _fontDescr._widthArray[charId];
 
-	for (int16 line = 0; line < 8; ++line) {
+	for (uint line = 0; line < 8; ++line) {
 		int16 x = 0;
 		for (int i = 7; i >= 7 - width; --i) {
 			if (_fontDescr._fontData[charId]._lines[line] & (1 << i))
