@@ -749,18 +749,18 @@ void EfhEngine::initEngine() {
 void EfhEngine::initMapMonsters() {
 	debug("initMapMonsters");
 
-	for (uint8 monsterId = 0; monsterId < 64; ++monsterId) {
+	for (uint monsterId = 0; monsterId < 64; ++monsterId) {
 		if (_mapMonsters[monsterId]._guess_fullPlaceId == 0xFF)
 			continue;
 
-		for (uint8 counter = 0; counter < 9; ++counter)
+		for (uint counter = 0; counter < 9; ++counter)
 			_mapMonsters[monsterId]._pictureRef[counter] = 0;
 
 		uint8 groupSize = _mapMonsters[monsterId]._groupSize;
 		if (groupSize == 0)
 			groupSize = getRandom(10);
 
-		for (uint8 counter = 0; counter < groupSize; ++counter) {
+		for (uint counter = 0; counter < groupSize; ++counter) {
 			uint rand100 = getRandom(100);
 			uint16 pictureRef = kEncounters[_mapMonsters[monsterId]._monsterRef]._pictureRef;
 
@@ -1826,7 +1826,7 @@ void EfhEngine::drawText(uint8 *srcPtr, int16 posX, int16 posY, int16 maxX, int1
 void EfhEngine::displayMiddleLeftTempText(uint8 *impArray, bool flag) {
 	debugC(3, kDebugEngine, "displayMiddleLeftTempText %s %s", (char *)impArray, flag ? "True" : "False");
 
-	for (uint8 counter = 0; counter < 2; ++counter) {
+	for (uint counter = 0; counter < 2; ++counter) {
 		if (counter == 0 || flag) {
 			// clear middle-left text area
 			drawColoredRect(16, 115, 111, 133, 0);
