@@ -68,6 +68,7 @@ bool BlacksmithSubview::msgKeypress(const KeypressMessage &msg) {
 	case Common::KEYCODE_e:
 	case Common::KEYCODE_f:
 		selectItem(msg.keycode - Common::KEYCODE_a);
+		draw();
 		break;
 	default:
 		break;
