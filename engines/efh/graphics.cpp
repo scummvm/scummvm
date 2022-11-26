@@ -211,7 +211,7 @@ void EfhEngine::drawString(const char *str, int16 startX, int16 startY, uint16 t
 		// int16 var6 = _fontDescr._extraLines[0] + startY - 1; // Used in case 0x8000
 	}
 
-	for (uint8 curChar = *curPtr++; curChar != 0; curChar = *curPtr++) {
+	for (uint curChar = *curPtr++; curChar != 0; curChar = *curPtr++) {
 		if (curChar == 0x0A) {
 			startX = minX;
 			startY += lineHeight;
