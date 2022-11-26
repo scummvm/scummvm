@@ -860,20 +860,20 @@ void ScummEngine::listSavegames(bool *marks, int num) {
 	Common::StringArray files;
 
 	Common::String prefix = makeSavegameName(99, false);
-	prefix.setChar('*', prefix.size()-2);
-	prefix.setChar(0, prefix.size()-1);
-	memset(marks, false, num * sizeof(bool));	//assume no savegames for this title
+	prefix.setChar('*', prefix.size() - 2);
+	prefix.setChar(0, prefix.size() - 1);
+	memset(marks, false, num * sizeof(bool));	// Assume no savegames for this title
 	files = _saveFileMan->listSavefiles(prefix);
 
 	for (Common::StringArray::const_iterator file = files.begin(); file != files.end(); ++file) {
-		//Obtain the last 2 digits of the filename, since they correspond to the save slot
-		slot[0] = file->c_str()[file->size()-2];
-		slot[1] = file->c_str()[file->size()-1];
+		// Obtain the last 2 digits of the filename, since they correspond to the save slot
+		slot[0] = file->c_str()[file->size() - 2];
+		slot[1] = file->c_str()[file->size() - 1];
 		slot[2] = 0;
 
 		slotNum = atoi(slot);
 		if (slotNum >= 0 && slotNum < num)
-			marks[slotNum] = true;	//mark this slot as valid
+			marks[slotNum] = true;	// Mark this slot as valid
 	}
 }
 

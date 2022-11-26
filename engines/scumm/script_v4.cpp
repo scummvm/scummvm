@@ -464,16 +464,21 @@ void ScummEngine_v4::o4_saveLoadGame() {
 		break;
 	case 0xC0: // Test if the save file exists
 		{
-		Common::InSaveFile *file;
-		bool avail_saves[100];
+		Common::InSaveFile *file = nullptr;
+		bool availableSaves[100];
 
-		listSavegames(avail_saves, ARRAYSIZE(avail_saves));
+		listSavegames(availableSaves, ARRAYSIZE(availableSaves));
 		Common::String filename = makeSavegameName(slot, false);
-		if (avail_saves[slot] && (file = _saveFileMan->openForLoading(filename))) {
+
+		// LOOM Towns explicitly sets the result to 6 if the selected slot is 0
+		if (availableSaves[slot] && (file = _saveFileMan->openForLoading(filename))) {
 			result = 6; // Save file exists
 			delete file;
+		} else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformFMTowns && slot == 0) {
+			// LOOM Towns explicitly sets the result to 6 if the selected slot is 0
+			result = 6;
 		} else
-			result = 7; // Save file does not exist
+			result = (_game.id == GID_LOOM && _game.platform == Common::kPlatformFMTowns) ? 8 : 7; // Save file does not exist
 		}
 		break;
 	default:
