@@ -31,8 +31,7 @@ void CharacterBase::printStats() {
 	Character &re = *g_globals->_currCharacter;
 	printSummary();
 
-	newLine();
-	writeString(STRING["stats.attributes.int"]);
+	writeString(0, 2, STRING["stats.attributes.int"]);
 	writeNumber(re._intelligence);
 	_textPos.x = 8;
 	writeString(STRING["stats.attributes.level"]);
