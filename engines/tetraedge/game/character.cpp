@@ -91,12 +91,15 @@ Character::~Character() {
 	}
 }
 
-void Character::addCallback(const Common::String &key, const Common::String &s2, float f1, float f2) {
+void Character::addCallback(const Common::String &animKey, const Common::String &fnName, float triggerFrame, float maxCalls) {
 	Callback *c = new Callback();
-	c->_s = s2;
-	c->_x = (int)f1;
-	c->_y = (int)f2;
-	c->_f = (f2 == -1.0 ? -NAN : 0.0f);
+	c->_luaFn = fnName;
+	c->_lastCheckFrame = 0;
+	c->_triggerFrame = (int)triggerFrame;
+	c->_maxCalls = (int)maxCalls;
+	// Slight difference here to orig (that sets -NAN) because of
+	// the way this gets used later, setting large negative is more correct.
+	c->_callsMade = (maxCalls == -1.0 ? -1e9 : 0.0f);
 
 	const Common::String animPath = _model->anim()->_loadedPath.toString();
 	if (_callbacks.contains(animPath)) {
@@ -104,7 +107,7 @@ void Character::addCallback(const Common::String &key, const Common::String &s2,
 	} else {
 		Common::Array<Callback *> callbacks;
 		callbacks.push_back(c);
-		_callbacks.setVal(key, callbacks);
+		_callbacks.setVal(animKey, callbacks);
 	}
 }
 
@@ -227,8 +230,31 @@ void Character::deleteAnim() {
 	_curModelAnim.release();
 }
 
-void Character::deleteCallback(const Common::String &str1, const Common::String &str2, float f) {
-	error("TODO: Implement Character::deleteCallback");
+void Character::deleteCallback(const Common::String &key, const Common::String &fnName, float f) {
+	_callbacksChanged = true;
+	assert(_model->anim());
+	Common::String animPath = _model->anim()->_loadedPath.toString();
+	if (!_callbacks.contains(animPath))
+		return;
+
+	Common::Array<Callback *> &cbs = _callbacks.getVal(animPath);
+	for (unsigned int i = 0; i < cbs.size(); i++) {
+		if (fnName.empty()) {
+			delete cbs[i];
+			// don't remove from array, clear at the end.
+		} else if (cbs[i]->_luaFn == fnName) {
+			if (f == -1 || cbs[i]->_triggerFrame == f) {
+				delete cbs[i];
+				cbs.remove_at(i);
+				i--;
+			}
+		}
+	}
+	if (fnName.empty())
+		cbs.clear();
+
+	if (cbs.empty())
+		_callbacks.erase(animPath);
 }
 
 //static bool deserialize(TiXmlElement *param_1, Walk *param_2);
@@ -480,7 +506,7 @@ bool Character::onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneM
 }
 
 bool Character::onModelAnimationFinished() {
-	const Common::Path &loadedPath = _model->anim()->_loadedPath;
+	const Common::Path loadedPath = _model->anim()->_loadedPath;
 	const Common::String animfile = loadedPath.getLastComponent().toString();
 
 	// TODO: Do something with _unrecalAnims here.
@@ -544,7 +570,42 @@ bool Character::onModelAnimationFinished() {
 }
 
 void Character::permanentUpdate() {
-	error("TODO: Implement Character::permanentUpdate.");
+	assert(_model->anim());
+	const Common::String animPath = _model->anim()->_loadedPath.toString();
+	int curFrame = _model->anim()->curFrame2();
+	Game *game = g_engine->getGame();
+	_callbacksChanged = false;
+	if (_callbacks.contains(animPath)) {
+		Common::Array<Callback *> &cbs = _callbacks.getVal(animPath);
+		for (Callback *cb : cbs) {
+			if (cb->_triggerFrame > cb->_lastCheckFrame && curFrame >= cb->_triggerFrame){
+				int callsMade = cb->_callsMade;
+				cb->_callsMade++;
+				if (callsMade >= cb->_maxCalls)
+					continue;
+				cb->_lastCheckFrame = curFrame;
+				game->luaScript().execute(cb->_luaFn);
+				if (_callbacksChanged)
+					break;
+			}
+			cb->_lastCheckFrame = curFrame;
+		}
+	}
+
+	if (animPath.contains("ka_esc_h")) {
+		if (_lastAnimFrame < 7 && _model->anim()->curFrame2() > 6) {
+			game->playSound("sounds/SFX/PAS_F_PAVE1.ogg", 1, 1.0f);
+		} else if (_lastAnimFrame < 22 && _model->anim()->curFrame2() > 21) {
+			game->playSound("sounds/SFX/PAS_F_PAVE2.ogg", 1, 1.0f);
+		}
+	} else if (animPath.contains("ka_esc_b")) {
+		if (_lastAnimFrame < 12 && _model->anim()->curFrame2() > 11) {
+			game->playSound("sounds/SFX/PAS_F_PAVE1.ogg", 1, 1.0f);
+		} else if (_lastAnimFrame < 27 && _model->anim()->curFrame2() > 26) {
+			game->playSound("sounds/SFX/PAS_F_PAVE2.ogg", 1, 1.0f);
+		}
+	}
+	updateAnimFrame();
 }
 
 void Character::placeOnCurve(TeIntrusivePtr<TeBezierCurve> &curve) {

@@ -117,6 +117,8 @@ bool TeTiledTexture::load(const TeImage &img) {
 	if (rows)
 		_somethingSize._y = _somethingSize._y / rows;
 	setAccessName(img.getAccessName().append(".tt"));
+	if (img.getAccessName().toString() == "menus/inGame/Inventory.png")
+		debug("loading inventory tiled texture");
 	return true;
 }
 
@@ -131,6 +133,8 @@ bool TeTiledTexture::load(const TeIntrusivePtr<Te3DTexture> &texture) {
 	tileData->_vec2 = TeVector3f32(1.0, 1.0, 0.0);
 	tileData->_vec1 = TeVector3f32(0.0, 0.0, 0.0);
 	setAccessName(texture->getAccessName().append(".tt"));
+	if (texture->getAccessName().toString() == "menus/inGame/Inventory.png")
+		debug("loading inventory tiled texture from texture");
 	return true;
 }
 

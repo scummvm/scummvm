@@ -57,6 +57,8 @@ bool TeTiledSurface::load(const Common::Path &path) {
 	_path = path;
 
 	TeIntrusivePtr<TeTiledTexture> texture;
+	if (path.toString() == "menus/inGame/Inventory.png")
+		debug("loading inventory from path");
 	if (resmgr->exists(path.append(".tt"))) {
 		texture = resmgr->getResourceNoSearch<TeTiledTexture>(path.append(".tt"));
 		// we don't own this one..
@@ -73,7 +75,7 @@ bool TeTiledSurface::load(const Common::Path &path) {
 		texture = new TeTiledTexture();
 
 		if (_codec->load(foundPath)) {
-			texture->setAccessName(path);
+			texture->setAccessName(path.append(".tt"));
 			resmgr->addResource(texture.get());
 			_imgFormat = _codec->imageFormat();
 
@@ -93,7 +95,7 @@ bool TeTiledSurface::load(const Common::Path &path) {
 			}
 
 			Common::SharedPtr<TePalette> nullpal;
-			img.create(_codec->width(), _codec->height(), nullpal, (TeImage::Format)_imgFormat, bufx, bufy);
+			img.create(_codec->width(), _codec->height(), nullpal, _imgFormat, bufx, bufy);
 
 			if (_codec->update(0, img)) {
 				texture->load(img);
@@ -118,6 +120,8 @@ bool TeTiledSurface::load(const TeIntrusivePtr<Te3DTexture> &texture) {
 	TeIntrusivePtr<TeTiledTexture> tiledTexture;
 
 	const Common::Path ttPath = texture->getAccessName().append(".tt");
+	if (ttPath.toString() == "menus/inGame/Inventory.png.tt")
+		debug("loading inventory from texture");
 
 	if (resmgr->exists(ttPath)) {
 		tiledTexture = resmgr->getResourceNoSearch<TeTiledTexture>(ttPath);
@@ -233,7 +237,7 @@ void TeTiledSurface::updateSurface() {
 			TeTiledTexture::Tile *tile = _tiledTexture->tile(TeVector2s32(col, row));
 			mesh.defaultMaterial(tile->_texture);
 
-			const TeColor meshcol = color();
+			TeColor meshcol = color();
 
 			float left, right, top, bottom;
 			getRangeIntersection(_leftCrop, 1.0 - _rightCrop, tile->_vec1.x(), tile->_vec2.x() + tile->_vec1.x(), &left, &right);

@@ -56,6 +56,7 @@ void TeTextBase2::build() {
 	font->wordWrapText(_text, _fontSize, _drawRect._x, _wrappedLines);
 
 	Common::Array<float> lineoffsets;
+	float lineHeight = font->getHeight(_fontSize);
 	float height = 0;
 	for (const Common::String &line : _wrappedLines) {
 		if (_alignStyle == TeFont3::AlignJustify) {
@@ -67,7 +68,7 @@ void TeTextBase2::build() {
 			_size._x = lineSize.right;
 
 		lineoffsets.push_back(height);
-		height += lineSize.bottom + _interLine;
+		height += lineHeight + _interLine;
 	}
 	_size._y = (int)ceilf(height);
 
@@ -92,7 +93,8 @@ void TeTextBase2::build() {
 
 	_mesh.setConf(4, 4, TeMesh::MeshMode_TriangleStrip, 0, 0);
 	_mesh.defaultMaterial(texture);
-
+	// FIXME: Original uses BLEND, but we need MODULATE to get right colors?
+	_mesh.setglTexEnv(GL_MODULATE);
 	_mesh.setShouldDraw(true);
 	_mesh.setColor(_globalColor);
 	_mesh.setVertex(0, TeVector3f32(_size._x * -0.5f, _size._y * -0.5f, 0.0f));
@@ -245,8 +247,6 @@ void TeTextBase2::setFont(unsigned int offset, const TeIntrusivePtr<TeFont3> &ne
 }
 
 void TeTextBase2::setFontSize(unsigned long newSize) {
-	// Bit of a hack here to get the right font size.
-	newSize *= 1.2;
 	if (_fontSize != newSize) {
 		_fontSize = newSize;
 		_valueWasSet = true;

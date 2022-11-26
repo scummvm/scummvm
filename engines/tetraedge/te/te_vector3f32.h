@@ -72,7 +72,7 @@ public:
 	bool parse(const Common::String &val);
 
 	Common::String dump() const {
-		return Common::String::format("TeVec3f32(%.02f %.02f %.02f)", x(), y(), z());
+		return Common::String::format("Vec3f(%.02f %.02f %.02f)", x(), y(), z());
 	}
 
 	void rotate(const TeQuaternion &rot);

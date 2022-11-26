@@ -28,6 +28,8 @@ namespace Tetraedge {
 
 TeSpriteLayout::TeSpriteLayout() : _tiledSurfacePtr(new TeTiledSurface()), _sizeSet(false) {
 	_tiledSurfacePtr->setColor(TeColor(255, 255, 255, 255));
+	//_tiledSurfacePtr->_shouldDraw = true // should already be true..
+	// TODO: set some other flag in _tiledSurfacePtr?
 	updateMesh();
 }
 
@@ -44,10 +46,11 @@ void TeSpriteLayout::draw() {
 	if (!worldVisible())
 		return;
 
-	/*debug("Draw SpriteLayout %p (%s, surf %s, size %.01fx%.01f, surf %.01fx%.01f, %s)", this,
-		  name().empty() ? "no name" : name().c_str(), _tiledSurfacePtr->getAccessName().toString().c_str(),
-		  size().x(), size().y(),
-		  _tiledSurfacePtr->size().x(), _tiledSurfacePtr->size().y(), color().dump().c_str());*/
+	/*if (parent() && parent()->name() == "inventoryButton")
+		debug("Draw SpriteLayout %p (%s, surf %s, size %.01fx%.01f, surf %.01fx%.01f, %s)", this,
+			  name().empty() ? "no name" : name().c_str(), _tiledSurfacePtr->getAccessName().toString().c_str(),
+			  size().x(), size().y(),
+			  _tiledSurfacePtr->size().x(), _tiledSurfacePtr->size().y(), color().dump().c_str());*/
 	TeMatrix4x4 matrix = worldTransformationMatrix();
 
 	if (sizeType() == ABSOLUTE) {
@@ -89,6 +92,8 @@ bool TeSpriteLayout::load(const Common::Path &path) {
 			setSize(TeVector3f32(texSize._x, texSize._y, 1.0));
 		}
 		updateMesh();
+	} else {
+		debug("Failed to load TeSpriteLayout %s", path.toString().c_str());
 	}
 	return true;
 }
@@ -101,7 +106,7 @@ bool TeSpriteLayout::load(TeIntrusivePtr<Te3DTexture> &texture) {
 		if (tiledTexSize._y <= 0) {
 			setRatio(1.0);
 		} else {
-			setRatio((float)tiledTexSize._y / tiledTexSize._x);
+			setRatio((float)tiledTexSize._x / tiledTexSize._y);
 		}
 
 		if (sizeType() == CoordinatesType::ABSOLUTE && !_sizeSet) {
@@ -109,6 +114,8 @@ bool TeSpriteLayout::load(TeIntrusivePtr<Te3DTexture> &texture) {
 		}
 		updateMesh();
 		return true;
+	} else {
+		debug("Failed to load TeSpriteLayout from texture %s", texture->getAccessName().toString().c_str());
 	}
 	return false;
 }
@@ -121,7 +128,7 @@ bool TeSpriteLayout::load(TeImage &img) {
 		if (tiledTexSize._y <= 0) {
 			setRatio(1.0);
 		} else {
-			setRatio((float)tiledTexSize._y / tiledTexSize._x);
+			setRatio((float)tiledTexSize._x / tiledTexSize._y);
 		}
 
 		if (sizeType() == CoordinatesType::ABSOLUTE && !_sizeSet) {
@@ -129,6 +136,8 @@ bool TeSpriteLayout::load(TeImage &img) {
 		}
 		updateMesh();
 		return true;
+	} else {
+		debug("Failed to load TeSpriteLayout from texture %s", img.getAccessName().toString().c_str());
 	}
 	return false;
 }

@@ -20,13 +20,12 @@
  */
 
 #include "tetraedge/te/te_model_vertex_animation.h"
+#include "common/math.h"
 
 namespace Tetraedge {
 
-TeModelVertexAnimation::TeModelVertexAnimation() : _rot(1.0f, 0.0f, 0.0f, 0.0f),
-_lastMillis(0.0f), _modelAnim(nullptr) {
-	// TODO: set some other things up here.
-	_rot.fromAxisAndAngle(TeVector3f32(0.0f, 1.0f, 0.0f), -1.570796);
+TeModelVertexAnimation::TeModelVertexAnimation() : _lastMillis(0.0f), _modelAnim(nullptr) {
+	_rot.fromAxisAndAngle(TeVector3f32(0.0f, 1.0f, 0.0f), -M_PI_2);
 }
 
 void TeModelVertexAnimation::bind(TeIntrusivePtr<TeModel> &model) {
@@ -100,7 +99,5 @@ void TeModelVertexAnimation::update(double millis) {
 	if (lastFrame > thisFrame)
 		_onFinishedSignal.call();
 }
-
-
 
 } // end namespace Tetraedge

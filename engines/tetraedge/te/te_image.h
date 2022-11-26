@@ -83,7 +83,7 @@ public:
 
 private:
 
-	// TODO add private members
+	// No private members?
 
 };
 

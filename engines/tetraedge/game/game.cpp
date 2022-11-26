@@ -56,6 +56,8 @@ _firstInventory(true), _loadName("save.xml"), _randomSource("SyberiaGameRandom")
 		_objectsTakenBits[i] = false;
 	}
 	_randomSound = new RandomSound();
+	_dialog2.onAnimationDownFinishedSignal().add(this, &Game::onDialogFinished);
+	_question2.onAnswerSignal().add(this, &Game::onAnswered);
 }
 
 Game::~Game() {
@@ -81,13 +83,13 @@ bool Game::addAnimToSet(const Common::String &anim) {
 		const Common::String layoutName = parts[1];
 		const Common::String path = Common::String("scenes/") + parts[0] + "/" + parts[1] + "/Set" + parts[1];
 
-		_gui2.load(path + ".lua");
+		_setAnimGui.load(path + ".lua");
 
 		// Note: game makes this here, but never uses it..
 		// it seems like a random memory leak??
 		// TeSpriteLayout *spritelayout = new TeSpriteLayout();
 
-		TeSpriteLayout *spritelayout = findSpriteLayoutByName(_gui2.layoutChecked("root"), layoutName);
+		TeSpriteLayout *spritelayout = findSpriteLayoutByName(_setAnimGui.layoutChecked("root"), layoutName);
 
 		_scene.bgGui().layoutChecked("root")->addChild(spritelayout);
 		return true;
@@ -237,7 +239,7 @@ bool Game::changeWarp2(const Common::String &zone, const Common::String &scene, 
 		_luaScript.unload();
 	}
 
-	_gui3.unload();
+	_forGui.unload();
 	_prevSceneName = _currentScene;
 	if (fadeFlag)
 		g_engine->getApplication()->fade();
@@ -260,8 +262,8 @@ void Game::deleteNoScale() {
 
 void Game::draw() {
 	if (_running) {
-	  _frameCounter++;
-	  _scene.draw();
+		_frameCounter++;
+		_scene.draw();
 	}
 }
 
@@ -493,8 +495,8 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		_luaScript.load(logicLuaPath);
 	}
 
-	if (_gui3.loaded())
-		_gui3.unload();
+	if (_forGui.loaded())
+		_forGui.unload();
 
 	_scene.reset();
 	_scene.bgGui().unload();
@@ -507,8 +509,8 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 
 	Application *app = g_engine->getApplication();
 	if (forLuaExists) {
-		_gui3.load(forLuaPath);
-		TeLayout *bg = _gui3.layout("background");
+		_forGui.load(forLuaPath);
+		TeLayout *bg = _forGui.layout("background");
 		bg->setRatioMode(TeILayout::RATIO_MODE_NONE);
 		app->_frontLayout.addChild(bg);
 		TeLayout *cellbg = _inventory.cellphone()->gui().buttonLayout("background");
@@ -595,7 +597,7 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	app->_backLayout.addChild(_scene.background());
 
 	if (markerLuaExists) {
-		TeLayout *bg = _gui2.layout("background");
+		TeLayout *bg = _scene.markerGui().layout("background");
 		app->_frontLayout.addChild(bg);
 	}
 
@@ -641,7 +643,7 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 }
 
 bool Game::isDocumentOpened() {
-	return _documentsBrowser.layoutChecked("zoomed")->visible();
+	return _documentsBrowser.gui1().layoutChecked("zoomed")->visible();
 }
 
 bool Game::isMoviePlaying() {
@@ -674,7 +676,7 @@ bool Game::launchDialog(const Common::String &dname, uint param_2, const Common:
 	}
 
 	const Common::String sndfile = dname + ".ogg";
-	_dialog2.pushDialog(*locdname, *locdname, sndfile, charname, animfile, param_5);
+	_dialog2.pushDialog(dname, *locdname, sndfile, charname, animfile, param_5);
 	return true;
 }
 
@@ -695,13 +697,14 @@ void Game::leave(bool flag) {
 	_inventoryMenu.unload();
 	_gui1.unload();
 	_scene.close();
-	_gui3.unload();
+	_forGui.unload();
 	if (_scene._character) {
 		_scene._character->deleteAllCallback();
 		_scene._character->stop();
 		_scene.unloadCharacter(_scene._character->_model->name());
 	}
-	warning("TODO: Game::leave: clear game sounds");
+
+	warning("TODO: Game::leave: clear game sounds and randomsounds");
 
 	for (auto *hitobj : _gameHitObjects) {
 		delete hitobj;
@@ -718,6 +721,7 @@ void Game::leave(bool flag) {
 	_inGameGui.buttonLayoutChecked("inventoryButton")->onMouseClickValidated().remove(this, &Game::onInventoryButtonValidated);
 	_inGameGui.unload();
 	_playedTimer.stop();
+	_enteredFlag2 = false;
 
 	Application *app = g_engine->getApplication();
 	app->_lockCursorButton.setVisible(false);
@@ -808,8 +812,9 @@ bool Game::onCharacterAnimationPlayerFinished(const Common::String &anim) {
 
 	Character *character = scene()._character;
 	assert(character);
-
-	const Common::String &curAnimName = character->curAnimName();
+	// Note: the above callbacks can change the anim,
+	// so we have to fetch this *after* them.
+	const Common::String curAnimName = character->curAnimName();
 	if (_currentScene == _someSceneName) {
 		if (curAnimName == character->walkAnim(Character::WalkPart_Start)
 			|| curAnimName == character->walkAnim(Character::WalkPart_Loop)
@@ -825,8 +830,10 @@ bool Game::onCharacterAnimationPlayerFinished(const Common::String &anim) {
 			|| curAnimName == character->walkAnim(Character::WalkPart_EndG)) {
 			character->updatePosition(1.0);
 			character->endMove();
-			// Note: original checks walkAnim again.. is there a reason to do that?
-			character->setAnimation(character->characterSettings()._idleAnimFileName, true);
+			// endMove can result in callbacks that change the animation. check again.
+			if (character->curAnimName() == character->walkAnim(Character::WalkPart_EndD)
+				|| character->curAnimName() == character->walkAnim(Character::WalkPart_EndG))
+				character->setAnimation(character->characterSettings()._idleAnimFileName, true);
 		}
 	}
 
@@ -1352,7 +1359,7 @@ void Game::setCurrentObjectSprite(const Common::String &spritePath) {
 }
 
 bool Game::showMarkers(bool val) {
-	TeLayout *bg = _gui3.layoutChecked("background");
+	TeLayout *bg = _forGui.layoutChecked("background");
 	for (unsigned int i = 0; i < bg->childCount(); i++) {
 		const InGameScene::TeMarker *marker = _scene.findMarker(bg->child(i)->name());
 		if (marker)
@@ -1446,7 +1453,7 @@ void Game::update() {
 		if (player) {
 			TeIntrusivePtr<TeModel> model = player->_model;
 			bool modelVisible = model->visible();
-			if (!model->anim().get())
+			if (model->anim())
 				player->permanentUpdate();
 			if (modelVisible) {
 				if (player->needsSomeUpdate()) {

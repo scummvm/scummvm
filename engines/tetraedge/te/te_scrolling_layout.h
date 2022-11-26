@@ -80,6 +80,9 @@ public:
 	}
 	void setContentLayout(TeLayout *layout);
 
+	void resetScrollPosition();
+	void playAutoScroll();
+
 private:
 	int _inertiaAnimationDuration;
 	Common::Array<float> _inertiaAnimationCurve;

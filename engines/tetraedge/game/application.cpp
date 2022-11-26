@@ -37,7 +37,8 @@
 #include "tetraedge/te/te_renderer.h"
 #include "tetraedge/te/te_font3.h"
 #include "tetraedge/te/te_input_mgr.h"
-//#include "tetraedge/te/te_textbase2.h"
+
+//#define DUMP_LAYOUTS 1
 
 namespace Tetraedge {
 
@@ -82,7 +83,7 @@ void Application::create() {
 	_mainWindowCamera->_orthNearVal = -2048.0f;
 	_mainWindowCamera->_orthFarVal = 2048.0f;
 
-	_mainWindow.setSize(TeVector3f32(winWidth, winHeight, 100.0));
+	_mainWindow.setSize(TeVector3f32(winWidth, winHeight, 0.0));
 	_mainWindow.setSizeType(TeILayout::ABSOLUTE);
 	_mainWindow.setPositionType(TeILayout::ABSOLUTE);
 
@@ -162,7 +163,7 @@ void Application::create() {
 
 	_helpGui.load(helpMenuFilePath);
 
-	debug("TODO: set TeCore flags here? Do they do anything?");
+	// TODO: set TeCore field 0x74 and 0x78 to true here? Do they do anything?");
 
 	// Game calls these here but does nothing with result?
 	//TeGetDeviceDPI();
@@ -385,6 +386,22 @@ void Application::drawFront() {
 	g_engine->getRenderer()->loadIdentityMatrix();
 }
 
+#if DUMP_LAYOUTS
+static int renderCount = 0;
+static void dumpLayout(Te3DObject2 *layout, Common::String indent = "++") {
+	assert(layout);
+	if (!layout->worldVisible())
+		return;
+	debug("%s %s  pos:%s  worldPos:%s  worldScale:%s size:%s col:%s", indent.c_str(), layout->name().c_str(),
+			layout->position().dump().c_str(), layout->worldPosition().dump().c_str(),
+			layout->worldScale().dump().c_str(), layout->size().dump().c_str(),
+			layout->color().dump().c_str());
+	for (auto & child: layout->childList()) {
+		dumpLayout(child, indent + "++");
+	}
+}
+#endif
+
 void Application::performRender() {
 	Game *game = g_engine->getGame();
 	TeRenderer *renderer = g_engine->getRenderer();
@@ -422,6 +439,17 @@ void Application::performRender() {
 	renderer->renderTransparentMeshes();
 	game->scene().drawPath();
 	g_system->updateScreen();
+
+#if DUMP_LAYOUTS
+	renderCount++;
+	if (renderCount % 100 == 0) {
+		debug("\n--------------------\nFrame %d back layout: ", renderCount);
+		dumpLayout(&_backLayout);
+		debug("\n--------------------\nFrame %d front orientation layout: ", renderCount);
+		dumpLayout(&_frontOrientationLayout);
+	}
+#endif
+
 }
 
 //void Application::preloadTextrue(); does nothing..

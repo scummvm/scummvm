@@ -69,7 +69,7 @@ private:
 	bool _createdTexture;
 	bool _loaded;
 	uint _glTexture;
-	uint _glPixelFormat;
+	//uint _glPixelFormat;
 	TeMatrix4x4 _matrix;
 
 	uint _texWidth;

@@ -59,6 +59,7 @@ public:
 	void unload();
 
 	TeLuaGUI &gui() { return _gui; }
+	TeSignal1Param<const Common::String &> &onAnimationDownFinishedSignal() { return _onAnimationDownFinishedSignal; }
 
 private:
 	Common::Array<DialogData> _dialogs;
@@ -67,7 +68,7 @@ private:
 
 	TeLuaGUI _gui;
 	TeMusic _music;
-	
+
 	DialogData _currentDialogData;
 
 	TeSignal1Param<const Common::String &> _onAnimationDownFinishedSignal;

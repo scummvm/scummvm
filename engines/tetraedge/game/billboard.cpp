@@ -53,17 +53,18 @@ void Billboard::calcVertex() {
 	const TeMatrix4x4 camProjMatrix = currentCam->projectionMatrix();
 	TeMatrix4x4 camWorldInverse = currentCam->worldTransformationMatrix();
 	camWorldInverse.inverse();
-	
+
 	const TeMatrix4x4 camTotalTransform = camProjMatrix * camWorldInverse;
 	TeMatrix4x4 camTotalInverse = camTotalTransform;
 	camTotalInverse.inverse();
+	camTotalInverse.scale(TeVector3f32(-1.0, -1.0, 1.0));
 
 	TeVector3f32 posvec(0.0f, 0.0f, _pos.z());
 	if (_hasPos2) {
 		posvec = _pos2;
 	}
 	posvec = camTotalTransform * posvec;
-	
+
 	TeVector3f32 meshVertex;
 	float fx, fy;
 
@@ -81,7 +82,7 @@ void Billboard::calcVertex() {
 	fy = _pos.y();
 	meshVertex = camTotalInverse * TeVector3f32(fx + fx - 1.0f, fy + fy - 1.0f, posvec.z());
 	_model->_meshes[0].setVertex(2, meshVertex);
-	
+
 	fx = _pos.x() + _size.getX();
 	fy = _pos.y() + _size.getY();
 	meshVertex = camTotalInverse * TeVector3f32(fx + fx - 1.0f, fy + fy - 1.0f, posvec.z());

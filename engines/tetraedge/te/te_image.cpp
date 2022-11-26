@@ -55,7 +55,7 @@ void TeImage::create(uint xsize, uint ysize, Common::SharedPtr<TePalette> &pal,
 									  Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0) : Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
 	Graphics::Surface::create(xsize, ysize, pxformat);
-	Graphics::Surface::fillRect(Common::Rect(0, 0, xsize, ysize), 0xff883311);
+	Graphics::Surface::fillRect(Common::Rect(0, 0, xsize, ysize), 0);
 }
 
 void TeImage::deserialize(Common::ReadStream &stream) {
@@ -77,7 +77,8 @@ void TeImage::fill(byte val) {
 
 void TeImage::fill(byte r, byte g, byte b, byte a) {
 	Common::Rect wholeSurf(0, 0, w, h);
-	uint32 col = (r << 24) | (g << 16) | (b << 8) | a;
+
+	uint32 col = ((uint32)r << format.rShift) | ((uint32)g << format.gShift) | ((uint32)b << format.bShift) | (uint32)a << format.aShift;
 	Graphics::Surface::fillRect(wholeSurf, col);
 }
 

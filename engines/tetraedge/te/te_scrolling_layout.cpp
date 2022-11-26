@@ -38,6 +38,15 @@ void TeScrollingLayout::setContentLayout(TeLayout *layout) {
 	}
 }
 
+void TeScrollingLayout::resetScrollPosition() {
+	if (!_contentLayout)
+		return;
+	warning("TODO: Implement TeScrollingLayout::resetScrollPosition");
+}
+
+void TeScrollingLayout::playAutoScroll() {
+	warning("TODO: Implement TeScrollingLayout::playAutoScroll");
+}
 
 // TODO: Add more functions here.
 

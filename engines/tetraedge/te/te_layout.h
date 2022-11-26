@@ -111,8 +111,8 @@ private:
 	bool _autoz;
 	bool _positionChanged;
 	bool _worldMatrixChanged;
-	bool _childChanged;
-	bool _childOrParentChanged;
+	bool _needZSizeUpdate;
+	bool _needZUpdate;
 	bool _updatingZ;
 	bool _updatingZSize;
 	bool _updatingSize;
@@ -125,6 +125,7 @@ private:
 	TeICallback0ParamPtr _onChildSizeChangedCallback;
 	TeICallback0ParamPtr _onParentSizeChangedCallback;
 	TeICallback0ParamPtr _onParentWorldTransformationMatrixChangedCallback;
+	TeICallback0ParamPtr _onMainWindowChangedCallback;
 };
 
 } // end namespace Tetraedge

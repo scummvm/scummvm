@@ -27,14 +27,13 @@
 
 namespace Tetraedge {
 
-TeLayout::TeLayout() : Te3DObject2(), _updatingZ(false), _updatingZSize(false),
-	_updatingPosition(false), _updatingWorldMatrix(false), _updatingSize(false),
-	_autoz(true), _childOrParentChanged(true), _childChanged(true),
-	_sizeChanged(true), _positionChanged(true), _worldMatrixChanged(true),
+TeLayout::TeLayout() : Te3DObject2(), _autoz(true), _needZUpdate(true), _updatingZ(false),
+	_needZSizeUpdate(true), _updatingZSize(false), _sizeChanged(true), _updatingSize(false),
+	_positionChanged(true), _updatingPosition(false), _worldMatrixChanged(true),
+	_updatingWorldMatrix(false), _drawMode(TeILayout::DrawMode0),
 	_sizeType(CoordinatesType::ABSOLUTE), _userSize(1.0f, 1.0f, 1.0f),
-	_anchor(0.5f, 0.5f, 0.5f), _ratio(1.0f), _drawMode(TeILayout::DrawMode0),
-	_safeAreaRatio(1.3333334f), _ratioMode(RATIO_MODE_NONE),
-	_positionType(CoordinatesType::RELATIVE_TO_PARENT)
+	_anchor(0.5f, 0.5f, 0.5f), _ratio(1.0f), _safeAreaRatio(1.3333334f),
+	_ratioMode(RATIO_MODE_NONE), _positionType(CoordinatesType::RELATIVE_TO_PARENT)
 {
 	_userPosition = _position = TeVector3f32(0.5f, 0.5f, 0.5f);
 	_size = TeVector3f32(1.0f, 1.0f, 1.0f);
@@ -67,8 +66,8 @@ void TeLayout::addChild(Te3DObject2 *child) {
 	if (_onChildSizeChangedCallback) {
 		child->onSizeChanged().insert(_onChildSizeChangedCallback);
 	}
-	_childChanged = true;
-	_childOrParentChanged = true;
+	_needZSizeUpdate = true;
+	_needZUpdate = true;
 	updateZSize();
 	updateZ();
 }
@@ -78,8 +77,8 @@ void TeLayout::addChildBefore(Te3DObject2 *child, const Te3DObject2 *ref) {
 	if (_onChildSizeChangedCallback) {
 		child->onSizeChanged().insert(_onChildSizeChangedCallback);
 	}
-	_childChanged = true;
-	_childOrParentChanged = true;
+	_needZSizeUpdate = true;
+	_needZUpdate = true;
 	updateZSize();
 	updateZ();
 }
@@ -89,8 +88,8 @@ void TeLayout::removeChild(Te3DObject2 *child) {
 		child->onSizeChanged().remove(_onChildSizeChangedCallback);
 	}
 	Te3DObject2::removeChild(child);
-	_childChanged = true;
-	_childOrParentChanged = true;
+	_needZSizeUpdate = true;
+	_needZUpdate = true;
 	updateZSize();
 	updateZ();
 }
@@ -138,8 +137,8 @@ TeILayout::DrawMode TeLayout::mode() {
 }
 
 bool TeLayout::onChildSizeChanged() {
-	_childChanged = true;
-	_childOrParentChanged = true;
+	_needZSizeUpdate = true;
+	_needZUpdate = true;
 
 	updateSize();
 	if (!_updatingZSize)
@@ -205,8 +204,9 @@ void TeLayout::setParent(Te3DObject2 *parent) {
 			oldParent->onWorldTransformationMatrixChanged().remove(_onParentWorldTransformationMatrixChangedCallback);
 	}
 
-	//warning("TODO: remove callback from main window");
-	//TeMainWindow *mainWindow = g_engine->getMainWindow();
+	//
+	TeLayout &mainWindowLayout = g_engine->getApplication()->getMainWindow();
+	mainWindowLayout.onSizeChanged().remove(_onMainWindowChangedCallback);
 
 	Te3DObject2::setParent(parent);
 	if (parent) {
@@ -214,10 +214,10 @@ void TeLayout::setParent(Te3DObject2 *parent) {
 			parent->onSizeChanged().insert(_onParentSizeChangedCallback);
 		if (_onParentWorldTransformationMatrixChangedCallback)
 			parent->onWorldTransformationMatrixChanged().insert(_onParentWorldTransformationMatrixChangedCallback);
-		// TODO: add a new callback to the MainWindow.
-		//warning("TODO: update signal on main window");
+		if (_onMainWindowChangedCallback)
+			mainWindowLayout.onSizeChanged().insert(_onMainWindowChangedCallback);
 	}
-	_childOrParentChanged = true;
+	_needZUpdate = true;
 	_sizeChanged = true;
 	_positionChanged = true;
 	_worldMatrixChanged = true;
@@ -373,10 +373,9 @@ void TeLayout::updateSize() {
 
 	if (_sizeType == ABSOLUTE) {
 		TeVector3f32 newSize = _userSize;
-		newSize.x() = abs(newSize.x());
-		newSize.y() = abs(newSize.y());
-		newSize.z() = abs(newSize.z());
-		_size = newSize;
+		_size.x() = abs(newSize.x());
+		_size.y() = abs(newSize.y());
+		// don't set Z val.
 	} else if (_sizeType == RELATIVE_TO_PARENT) {
 		Te3DObject2 *parentObj = parent();
 		if (parentObj) {
@@ -400,9 +399,11 @@ void TeLayout::updateSize() {
 			  }
 			}
 
-			_size = newSize;
+			_size.x() = newSize.x();
+			_size.y() = newSize.y();
 		} else {
-			_size = TeVector3f32(0.0f, 0.0f, 0.0f);
+			_size.x() = 0.0f;
+			_size.y() = 0.0f;
 		}
 	}
 
@@ -432,24 +433,25 @@ void TeLayout::updateWorldMatrix() {
 }
 
 void TeLayout::updateZ() {
-	if (!_childOrParentChanged || !_autoz)
+	if (!_needZUpdate || !_autoz)
 		return;
 
-	_childOrParentChanged = false;
+	_needZUpdate = false;
 	_updatingZ = true;
 
-	/*float ztotal = 0.1f;*/
+	float ztotal = 0.1f;
 	for (auto &child : childList()) {
-		/*ztotal += */child->zSize();
+		child->setZPosition(ztotal);
+		ztotal += child->zSize();
 	}
 	_updatingZ = false;
 }
 
 void TeLayout::updateZSize() {
-	if (!_childChanged)
+	if (!_needZSizeUpdate)
 		return;
 
-	_childChanged = false;
+	_needZSizeUpdate = false;
 	_updatingZSize = true;
 	const TeVector3f32 oldSize = _size;
 	_size.z() = 0.1f;
@@ -478,7 +480,7 @@ TeVector3f32 TeLayout::worldPosition() {
 	if (!parent()) {
 		return position();
 	} else {
-		return parent()->position() + position();
+		return parent()->worldPosition() + position();
 	}
 }
 
@@ -499,17 +501,17 @@ bool TeLayout::worldVisible() {
 
 float TeLayout::xSize() {
 	updateSize();
-	return size().x();
+	return _size.x();
 }
 
 float TeLayout::ySize() {
 	updateSize();
-	return size().y();
+	return _size.y();
 }
 
 float TeLayout::zSize() {
 	updateZSize();
-	return size().z();
+	return _size.z();
 }
 
 } // end namespace Tetraedge

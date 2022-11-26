@@ -24,6 +24,7 @@
 #include "tetraedge/te/te_variant.h"
 
 #include "common/str.h"
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/lua/lua.h"
 #include "common/lua/lauxlib.h"
@@ -75,7 +76,7 @@ void TeLuaThread::execute(const Common::String &fname) {
 		_resume(0);
 	} else {
 		if (!fname.contains("Update"))
-			warning("[TeLuaThread::Execute0] La fonction : \"%s\" n'existe pas.", fname.c_str());
+			debug("[TeLuaThread::Execute0] La fonction : \"%s\" n'existe pas.", fname.c_str());
 		lua_settop(_luaThread, -2);
 	}
 }
@@ -90,7 +91,7 @@ void TeLuaThread::execute(const Common::String &fname, const TeVariant &p1) {
 		_resume(1);
 	} else {
 		if (!fname.contains("Update"))
-			warning("[TeLuaThread::Execute1] La fonction : \"%s\" n'existe pas.", fname.c_str());
+			debug("[TeLuaThread::Execute1] La fonction : \"%s\" n'existe pas.", fname.c_str());
 		lua_settop(_luaThread, -2);
 	}
 }
@@ -106,7 +107,7 @@ void TeLuaThread::execute(const Common::String &fname, const TeVariant &p1, cons
 		_resume(2);
 	} else {
 		if (!fname.contains("Update"))
-			warning("[TeLuaThread::Execute2] La fonction : \"%s\" n'existe pas.", fname.c_str());
+			debug("[TeLuaThread::Execute2] La fonction : \"%s\" n'existe pas.", fname.c_str());
 		lua_settop(_luaThread, -2);
 	}
 }
@@ -123,7 +124,7 @@ void TeLuaThread::execute(const Common::String &fname, const TeVariant &p1, cons
 		_resume(3);
 	} else {
 		if (!fname.contains("Update"))
-			warning("[TeLuaThread::Execute3] La fonction : \"%s\" n'existe pas.", fname.c_str());
+			debug("[TeLuaThread::Execute3] La fonction : \"%s\" n'existe pas.", fname.c_str());
 		lua_settop(_luaThread, -4);
 	}
 }
