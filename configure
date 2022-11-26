@@ -256,6 +256,8 @@ _detection_features_full=yes
 # be modified otherwise. Consider them read-only.
 _posix=no
 _has_posix_spawn=no
+_has_fseeko_offt_64=no
+_has_fseeko64=no
 _endian=unknown
 _need_memalign=yes
 _have_x86=no
@@ -2983,11 +2985,6 @@ EOF
 		_ranlib=:
 		;;
 	linux* | uclinux*)
-		# When not cross-compiling, enable large file support, but don't
-		# care if getconf doesn't exist or doesn't recognize LFS_CFLAGS.
-		if test -z "$_host"; then
-			append_var CXXFLAGS "`getconf LFS_CFLAGS 2>/dev/null`"
-		fi
 		;;
 	mingw*)
 		append_var DEFINES "-DWIN32"
@@ -4060,6 +4057,84 @@ EOF
 		append_var DEFINES "-DHAS_POSIX_SPAWN"
 	fi
 fi
+
+#
+# Check for 64-bit file offset compatibility
+#
+# This is currently only used by StdioStream. If nothing is found,
+# you'll be limited to <2GB files, which still covers the vast majority
+# of supported games.
+#
+case $_host_os in
+	mingw*)
+		# StdioStream just uses _ftelli64
+		;;
+	*)
+		echo_n "Checking if fseeko with 64-bit off_t is supported... "
+		cat > $TMPC << EOF
+#include <stdio.h>
+#include <sys/types.h> /* off_t on legacy systems */
+int main() {
+	static int test_array[1 - 2 * !(sizeof(off_t) >= 8)];
+	fseeko(stdin, 0, SEEK_SET);
+	test_array[0] = 0;
+	return 0;
+}
+EOF
+		cc_check_no_clean && _has_fseeko_offt_64=yes
+		# Good, there's fseeko with a 64-bit off_t by default
+		if test "$_has_fseeko_offt_64" = yes ; then
+			echo yes
+			append_var DEFINES "-DHAS_FSEEKO_OFFT_64"
+		else
+			# Otherwise, when not cross-compiling, try with LFS_CFLAGS
+			if test -z "$_host"; then
+				TMPFLAGS=`getconf LFS_CFLAGS 2>/dev/null`
+				if ! test -z "$TMPFLAGS" ; then
+					cc_check_no_clean $TMPFLAGS && _has_fseeko_offt_64=yes
+					if test "$_has_fseeko_offt_64" = yes ; then
+						echo "yes (adding $TMPFLAGS)"
+						append_var DEFINES "-DHAS_FSEEKO_OFFT_64"
+						append_var CXXFLAGS "$TMPFLAGS"
+					fi
+				fi
+			fi
+
+			# Otherwise, try the usual magical suspects
+			if test "$_has_fseeko_offt_64" = no ; then
+				# note: -D__LARGE64_FILES is another option, but it may be broken on
+				# some platforms, so add it to your platform defines instead, if it
+				# requires it and you've checked that the result works.
+				for largeflag in "-D_FILE_OFFSET_BITS=64" "-D_LARGE_FILES" "-D_LARGEFILE_SOURCE" ; do
+					cc_check_no_clean $largeflag && _has_fseeko_offt_64=yes
+					if test "$_has_fseeko_offt_64" = yes ; then
+						echo "yes (adding $largeflag)"
+						append_var DEFINES "-DHAS_FSEEKO_OFFT_64"
+						append_var CXXFLAGS "$largeflag"
+						break
+					fi
+				done
+			fi
+
+			# Otherwise, fseeko64 is your last chance
+			if test "$_has_fseeko_offt_64" = no ; then
+				echo no
+				echo_n "Checking if fseeko64 is supported... "
+				cat > $TMPC << EOF
+#include <stdio.h>
+int main() { fseeko64(stdin, 0, SEEK_SET); return 0; }
+EOF
+				cc_check_no_clean -D_LARGEFILE64_SOURCE && _has_fseeko64=yes
+				echo $_has_fseeko64
+				if test "$_has_fseeko64" = yes ; then
+					append_var DEFINES "-DHAS_FSEEKO64"
+					append_var CXXFLAGS "-D_LARGEFILE64_SOURCE"
+				fi
+			fi
+		fi
+		cc_check_clean
+		;;
+esac
 
 #
 # Check whether to enable a verbose build
