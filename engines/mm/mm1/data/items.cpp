@@ -30,8 +30,8 @@ bool ItemsArray::load() {
 	if (!f.open("items.txt"))
 		return false;
 
-	resize(256);
-	for (int lineNum = 0; lineNum < 256; ++lineNum) {
+	resize(255);
+	for (int lineNum = 0; lineNum < 255; ++lineNum) {
 		Item &item = (*this)[lineNum];
 		Common::String line = f.readLine();
 		assert(line.size() > 20 && line[0] == '"' && line[15] == '"');
@@ -54,7 +54,8 @@ bool ItemsArray::load() {
 }
 
 Item *ItemsArray::getItem(byte index) const {
-	g_globals->_currItem = (*this)[index];
+	assert(index > 0);
+	g_globals->_currItem = (*this)[index - 1];
 	g_globals->_currItem._name = STRING[Common::String::format(
 		"stats.items.%d", (int)index)];
 
