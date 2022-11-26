@@ -176,11 +176,12 @@ TeTiledTexture::Tile *TeTiledTexture::tile(const TeVector2s32 &loc) {
 }
 
 void TeTiledTexture::update(const TeImage &image) {
-	//if (image.w == _totalSize._x && image.h == _totalSize._y) {
-	//	error("FIXME: Implement fast path of TeTiledTexture::update");
-	//} else {
+	if (image.w == _totalSize._x && image.h == _totalSize._y) {
+		// TODO: Implement fast path of TeTiledTexture::update
 		load(image);
-	//}
+	} else {
+		load(image);
+	}
 }
 
 } // end namespace Tetraedge

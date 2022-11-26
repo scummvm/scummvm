@@ -774,7 +774,7 @@ void InGameScene::loadBlockers() {
 		_blockers[i]._s = Te3DObject2::deserializeString(blockersfile);
 		TeVector2f32::deserialize(blockersfile, _blockers[i]._pts[0]);
 		TeVector2f32::deserialize(blockersfile, _blockers[i]._pts[1]);
-		_blockers[i]._x = 1;
+		_blockers[i]._enabled = true;
 	}
 
 	if (hasHeader) {
@@ -787,7 +787,7 @@ void InGameScene::loadBlockers() {
 			for (unsigned int j = 0; j < 4l; j++) {
 				TeVector2f32::deserialize(blockersfile, _rectBlockers[i]._pts[j]);
 			}
-			_rectBlockers[i]._x = 1;
+			_rectBlockers[i]._enabled = true;
 		}
 	}
 }
@@ -990,6 +990,13 @@ void InGameScene::unloadCharacter(const Common::String &name) {
 void InGameScene::unloadObject(const Common::String &name) {
 	for (unsigned int i = 0; i < _object3Ds.size(); i++) {
 		if (_object3Ds[i]->model()->name() == name) {
+			// Remove from the scene models.
+			for (unsigned int j = 0; j < models().size(); j++) {
+				if (models()[j] == _object3Ds[i]->model())	{
+					models().remove_at(j);
+					break;
+				}
+			}
 			_object3Ds[i]->deleteLater();
 			_object3Ds.remove_at(i);
 			break;

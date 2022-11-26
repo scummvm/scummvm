@@ -274,10 +274,11 @@ void Game::enter(bool newgame) {
 	_score = 0;
 	Application *app = g_engine->getApplication();
 	app->visualFade().init();
-	Common::SharedPtr<TeCallback1Param<Game, const Common::Point &>> callbackptr(new TeCallback1Param<Game, const Common::Point &>(this, &Game::onMouseClick, -1000.0f));
+	Common::SharedPtr<TeCallback1Param<Game, const Common::Point &>> callbackptr(new TeCallback1Param<Game, const Common::Point &>(this, &Game::onMouseClick, -10000.0f));
 	g_engine->getInputMgr()->_mouseLUpSignal.insert(callbackptr);
 	_movePlayerCharacterDisabled = false;
-	warning("TODO: Game::enter set some other field here");
+	// TODO? Set character mouse move event no to -1
+	_isCharacterIdle = true;
 	_sceneCharacterVisibleFromLoad = false;
 	Character::loadSettings("models/ModelsSettings.xml");
 	Object3D::loadSettings("objects/ObjectsSettings.xml");

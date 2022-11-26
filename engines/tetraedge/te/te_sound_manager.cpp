@@ -29,12 +29,12 @@
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_sound_manager.h"
+#include "tetraedge/te/te_music.h"
 
 namespace Tetraedge {
 
 TeSoundManager::TeSoundManager() {
 }
-
 
 void TeSoundManager::playFreeSound(const Common::Path &path, float vol, const Common::String &channel) {
 	TeCore *core = g_engine->getCore();
@@ -73,6 +73,11 @@ void TeSoundManager::stopFreeSound(const Common::String &name) {
 	Audio::Mixer *mixer = g_system->getMixer();
 	mixer->stopHandle(_handles.getVal(name));
 	_handles.erase(name);
+}
+
+void TeSoundManager::update() {
+	for (auto &m : _musics)
+		m->update();
 }
 
 

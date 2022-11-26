@@ -92,7 +92,7 @@ public:
 	TeSignal0Param &onButtonChangedToStateDownSignal() { return _onButtonChangedToStateDownSignal; };
 	TeSignal0Param &onButtonChangedToStateRolloverSignal() { return _onButtonChangedToStateRolloverSignal; };
 
-	bool _someClickFlag;
+	bool _ignoreMouseEvents;
 	TeLayout *_upLayout;
 	TeLayout *_downLayout;
 

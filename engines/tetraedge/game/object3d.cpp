@@ -28,7 +28,10 @@ namespace Tetraedge {
 /*static*/ Common::HashMap<Common::String, Object3D::ObjectSettings> *Object3D::_objectSettings = nullptr;
 
 
-Object3D::Object3D() : _translateTime(-1), _rotateTime(-1), _objScale(1.0f, 1.0f, 1.0f) {
+// start and end frames not initialized in original, but to guarantee we don't use
+// uninitialized values we set it here.
+Object3D::Object3D() : _translateTime(-1), _rotateTime(-1), _objScale(1.0f, 1.0f, 1.0f),
+_startFrame(-1), _endFrame(9999) {
 }
 
 bool Object3D::loadModel(const Common::String &name) {

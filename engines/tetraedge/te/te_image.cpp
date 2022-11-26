@@ -78,7 +78,7 @@ void TeImage::fill(byte val) {
 void TeImage::fill(byte r, byte g, byte b, byte a) {
 	Common::Rect wholeSurf(0, 0, w, h);
 
-	uint32 col = ((uint32)r << format.rShift) | ((uint32)g << format.gShift) | ((uint32)b << format.bShift) | (uint32)a << format.aShift;
+	uint32 col = ((uint32)r << format.rShift) | ((uint32)g << format.gShift) | ((uint32)b << format.bShift) | ((uint32)a << format.aShift);
 	Graphics::Surface::fillRect(wholeSurf, col);
 }
 

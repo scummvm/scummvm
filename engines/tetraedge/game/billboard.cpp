@@ -57,7 +57,6 @@ void Billboard::calcVertex() {
 	const TeMatrix4x4 camTotalTransform = camProjMatrix * camWorldInverse;
 	TeMatrix4x4 camTotalInverse = camTotalTransform;
 	camTotalInverse.inverse();
-	camTotalInverse.scale(TeVector3f32(-1.0, -1.0, 1.0));
 
 	TeVector3f32 posvec(0.0f, 0.0f, _pos.z());
 	if (_hasPos2) {

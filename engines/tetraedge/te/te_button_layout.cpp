@@ -41,7 +41,7 @@ namespace Tetraedge {
 
 TeButtonLayout::TeButtonLayout() :
 _currentState(BUTTON_STATE_UP), _clickPassThrough(false), _validationSoundVolume(1.0),
-_someClickFlag(false), _doubleValidationProtectionEnabled(true), _upLayout(nullptr),
+_ignoreMouseEvents(false), _doubleValidationProtectionEnabled(true), _upLayout(nullptr),
 _downLayout(nullptr), _rolloverLayout(nullptr), _disabledLayout(nullptr),
 _hitZoneLayout(nullptr)
 {
@@ -71,7 +71,6 @@ TeButtonLayout::~TeButtonLayout() {
 	inputmgr->_mouseLDownSignal.remove(_onMouseLeftDownCallback);
 	inputmgr->_mouseLUpSignal.remove(_onMouseLeftUpCallback);
 	inputmgr->_mouseLUpSignal.remove(_onMouseLeftUpMaxPriorityCallback);
-
 }
 
 bool TeButtonLayout::isMouseIn(const TeVector2s32 &mouseloc) {
@@ -83,7 +82,7 @@ bool TeButtonLayout::isMouseIn(const TeVector2s32 &mouseloc) {
 }
 
 bool TeButtonLayout::onMouseLeftDown(const Common::Point &pt) {
-	if (!worldVisible() || _currentState == BUTTON_STATE_DISABLED)
+	if (!worldVisible() || _currentState == BUTTON_STATE_DISABLED || _ignoreMouseEvents)
 		return false;
 
 	// Note: This doesn't exactly reproduce the original behavior, it's
@@ -95,9 +94,10 @@ bool TeButtonLayout::onMouseLeftDown(const Common::Point &pt) {
 
 	enum State newState = _currentState;
 	switch (_currentState) {
-		break;
 	case BUTTON_STATE_DOWN:
 		newState = BUTTON_STATE_UP;
+		/*
+		// TODO: should this be a click?
 		if (mouseIn) {
 			debug("mouse clicked button '%s' (from leftdown)", name().c_str());
 			if (!_validationSound.empty()) {
@@ -107,11 +107,12 @@ bool TeButtonLayout::onMouseLeftDown(const Common::Point &pt) {
 			setState(newState);
 			_onMouseClickValidatedSignal.call();
 			return !_clickPassThrough;
-		}
+		}*/
 		break;
 	case BUTTON_STATE_ROLLOVER:
 	case BUTTON_STATE_UP:
-		newState = BUTTON_STATE_DOWN;
+		if (mouseIn)
+			newState = BUTTON_STATE_DOWN;
 		break;
 	case BUTTON_STATE_DISABLED:
 		break;
@@ -137,7 +138,6 @@ bool TeButtonLayout::onMouseLeftUp(const Common::Point &pt) {
 
 	enum State newState = _currentState;
 	switch (_currentState) {
-		break;
 	case BUTTON_STATE_DOWN:
 		newState = BUTTON_STATE_UP;
 		if (mouseIn) {
@@ -165,7 +165,7 @@ bool TeButtonLayout::onMouseLeftUp(const Common::Point &pt) {
 }
 
 bool TeButtonLayout::onMousePositionChanged(const Common::Point &pt) {
-	if (!worldVisible() || _someClickFlag)
+	if (!worldVisible() || _ignoreMouseEvents)
 		return false;
 
 	// Note: This doesn't exactly reproduce the original behavior, it's
@@ -176,14 +176,12 @@ bool TeButtonLayout::onMousePositionChanged(const Common::Point &pt) {
 	switch (_currentState) {
 	case BUTTON_STATE_UP:
 		if (mouseIn) {
-			//debug("mouse entered button '%s'", name().c_str());
 			newState = BUTTON_STATE_ROLLOVER;
 		}
 		break;
 	case BUTTON_STATE_DOWN:
 	case BUTTON_STATE_ROLLOVER:
 		if (!mouseIn) {
-			//debug("mouse exit button '%s'", name().c_str());
 			newState = BUTTON_STATE_UP;
 		}
 		break;
@@ -324,7 +322,7 @@ void TeButtonLayout::setPosition(const TeVector3f32 &pos) {
 			// probably not needed as we reimplememted how this works.
 			error("TODO: Implement setPosition logic for up/down state");
 		}
-		if (_someClickFlag) {
+		if (!_ignoreMouseEvents) {
 			setState(somethingCount ? BUTTON_STATE_DOWN : BUTTON_STATE_UP);
 		}
 	}

@@ -140,7 +140,7 @@ void Question2::Answer::load(const Common::String &name, const Common::String &l
 	TeButtonLayout *answerButton = _gui.buttonLayout("answer");
 	if (answerButton) {
 		answerButton->onMouseClickValidated().add(this, &Question2::Answer::onButtonValidated);
-		answerButton->_someClickFlag = false;
+		answerButton->_ignoreMouseEvents = false;
 	}
 }
 

@@ -552,11 +552,11 @@ void TeModel::setQuad(const TeIntrusivePtr<Te3DTexture> &tex, const Common::Arra
 	mesh.defaultMaterial(tex);
 
 	for (int i = 0; i < 2; i++) {
-		float f = (i == 0 ? 1.0f : 0.0f);
+		float f = (i == 0 ? 0.0f : 1.0f);
 		for (int j = 0; j < 2; j++) {
 			int index = i * 2 + j;
 			mesh.setVertex(index, verts[i * 2 + j]);
-			mesh.setTextureUV(index, TeVector2f32(f, (j == 0 ? 1.0f : 0.0f)));
+			mesh.setTextureUV(index, TeVector2f32(f, (j == 0 ? 0.0f : 1.0f)));
 			mesh.setIndex(index, index);
 			if (col.a() != 0)
 				mesh.setColor(index, col);
