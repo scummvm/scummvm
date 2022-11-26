@@ -141,6 +141,11 @@ void Te3DObject2::removeChild(Te3DObject2 *child) {
 		_children[i]->setParent(nullptr);
 		_children.remove_at(i);
 		_childListChangedSignal.call();
+	} else {
+		Common::String cname("nullptr");
+		if (child)
+			cname = child->name();
+		warning("Request to remove child (%s) which is not a child of this (%s).", cname.c_str(), name().c_str());
 	}
 }
 
@@ -196,6 +201,7 @@ void Te3DObject2::setPosition(const TeVector3f32 &pos) {
 	if (_position == pos)
 		return;
 
+	// FIXME: remove this debugging code.
 	if ((_position - pos).length() > 2.0f && name() == "Kate" && _position != TeVector3f32()) {
 		debug("Large position move %s %s -> %s", name().c_str(),
 			_position.dump().c_str(), pos.dump().c_str());

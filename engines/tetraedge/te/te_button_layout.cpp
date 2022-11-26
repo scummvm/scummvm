@@ -220,7 +220,8 @@ void TeButtonLayout::setDisabledLayout(TeLayout *disabledLayout) {
 	_disabledLayout = disabledLayout;
 	if (_disabledLayout) {
 		addChild(_disabledLayout);
-		_disabledLayout->setColor(TeColor(0, 0, 0, 0));
+		//_disabledLayout->setColor(TeColor(0, 0, 0, 0));
+		//_disabledLayout->setName(name() + "_disabledLayout");
 	}
 
 	setState(_currentState);
@@ -233,7 +234,8 @@ void TeButtonLayout::setHitZone(TeLayout *hitZoneLayout) {
 	_hitZoneLayout = hitZoneLayout;
 	if (_hitZoneLayout) {
 		addChild(_hitZoneLayout);
-		_hitZoneLayout->setColor(TeColor(0, 0, 0xff, 0xff));
+		//_hitZoneLayout->setColor(TeColor(0, 0, 0xff, 0xff));
+		//_hitZoneLayout->setName(name() + "_hitZoneLayout");
 	}
 }
 
@@ -251,8 +253,10 @@ void TeButtonLayout::setDownLayout(TeLayout *downLayout) {
 		setSize(_downLayout->size());
 	}
 
-	if (_downLayout)
-		_downLayout->setColor(TeColor(0, 0, 0, 0));
+	//if (_downLayout) {
+	//	_downLayout->setColor(TeColor(0, 0, 0, 0));
+		//_downLayout->setName(name() + "_downLayout");
+	//}
 
 	setState(_currentState);
 }
@@ -264,8 +268,13 @@ void TeButtonLayout::setRollOverLayout(TeLayout *rollOverLayout) {
 	_rolloverLayout = rollOverLayout;
 	if (_rolloverLayout) {
 		addChild(_rolloverLayout);
-		_rolloverLayout->setColor(TeColor(0, 0, 0, 0));
+		//_rolloverLayout->setName(name() + "_rolloverLayout");
 	}
+
+	// This is not a copy paste error, or at least, not *my*
+	// copy paste error.. it's what the original game does.
+	//if (_disabledLayout)
+	//	_disabledLayout->setColor(TeColor(0, 0, 0, 0));
 
 	setState(_currentState);
 }
@@ -284,8 +293,10 @@ void TeButtonLayout::setUpLayout(TeLayout *upLayout) {
 		setSize(_upLayout->size());
 	}
 
-	if (_upLayout)
-		_upLayout->setColor(TeColor(0, 0, 0, 0));
+	if (_upLayout) {
+		//_upLayout->setColor(TeColor(0, 0, 0, 0));
+		//_upLayout->setName(name() + "_upLayout");
+	}
 
 	setState(_currentState);
 }
@@ -338,7 +349,10 @@ void TeButtonLayout::setState(State newState) {
 	}
 
 	if (_upLayout)
-		_upLayout->setVisible(_currentState == BUTTON_STATE_UP);
+		_upLayout->setVisible(_currentState == BUTTON_STATE_UP
+				|| (_currentState == BUTTON_STATE_ROLLOVER && _rolloverLayout == nullptr)
+				|| (_currentState == BUTTON_STATE_DOWN && _downLayout == nullptr)
+				|| (_currentState == BUTTON_STATE_DISABLED && _disabledLayout == nullptr));
 	if (_downLayout)
 		_downLayout->setVisible(_currentState == BUTTON_STATE_DOWN);
 	if (_disabledLayout)

@@ -28,7 +28,7 @@
 
 namespace Tetraedge {
 
-class DocumentsBrowser : public TeLuaGUI, public TeLayout {
+class DocumentsBrowser : public TeLayout {
 public:
 	DocumentsBrowser();
 
@@ -79,15 +79,23 @@ public:
 	bool onShowedDocumentButton18();
 	bool onShowedDocumentButton19();
 
-	void showDocument(const Common::String &str, long n);
+	void showDocument(const Common::String &str, long startPage);
 	void unload();
 
 	TeLayout &zoomedLayout() { return _zoomedLayout; }
+
+	TeLuaGUI &gui1() { return _gui1; }
 
 private:
 	TeTimer _timer;
 	TeLayout _zoomedLayout;
 	unsigned long _curPage;
+	unsigned long _startPage;
+	int _zoomCount;
+	Common::String _curDocName;
+
+	TeLuaGUI _gui1;
+	TeLuaGUI _gui2;
 	// TiXmlDocument _xmldoc;
 };
 

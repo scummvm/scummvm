@@ -96,13 +96,14 @@ void Dialog2::load() {
 	setSizeType(RELATIVE_TO_PARENT);
 	TeVector3f32 usersz = userSize();
 	setSize(TeVector3f32(1.0f, 1.0f, usersz.z()));
-	size(); // refresh size.. seems to do nothing with result?
+	size(); // refresh size? seems to do nothing with result
 	_music.repeat(false);
 	_gui.load("menus/dialog.lua");
 	TeButtonLayout *dialogLockBtn = _gui.buttonLayoutChecked("dialogLockButton");
 
 	dialogLockBtn->setVisible(false);
 	addChild(dialogLockBtn);
+	size(); // refresh size? seems to do nothing with result again.
 
 	TeButtonLayout *dialogBtn = _gui.buttonLayoutChecked("dialog");
 	dialogBtn->onMouseClickValidated().add(this, &Dialog2::onSkipButton);

@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/hash-str.h"
 #include "common/textconsole.h"
 #include "tetraedge/te/te_xml_gui.h"
@@ -47,7 +48,7 @@ void TeXmlGui::load(const Common::Path &path) {
 
 void TeXmlGui::clear() {
 	_map.clear();
-	// TODO: probably more here.
+	debug("TODO: Finish TeXmlGui.clear()");
 }
 
 } // end namespace Tetraedge

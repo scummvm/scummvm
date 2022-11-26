@@ -118,6 +118,11 @@ Common::Rect TeFont3::getBoundingBox(const Common::String &str, int fontSize) {
 	return font->getBoundingBox(str);
 }
 
+int TeFont3::getHeight(int fontSize) {
+	Graphics::Font *font = getAtSize(fontSize);
+	return font->getFontHeight();
+}
+
 void TeFont3::draw(TeImage &destImage, const Common::String &str, int fontSize, int yoff, const TeColor &col, TeFont3::AlignStyle align) {
 	Graphics::Font *font = getAtSize(fontSize);
 	Graphics::TextAlign talign;
@@ -135,7 +140,10 @@ void TeFont3::draw(TeImage &destImage, const Common::String &str, int fontSize, 
 			talign = Graphics::kTextAlignCenter;
 			break;
 	}
-	uint32 uintcol = (col.r() << 24) | (col.r() << 16) | (col.r() << 8) | col.r();
+	const Graphics::PixelFormat &fmt = destImage.format;
+
+	uint32 uintcol = ((uint32)col.a() << fmt.aShift) | ((uint32)(col.r()) << fmt.rShift)
+						| ((uint32)(col.g()) << fmt.gShift) | ((uint32)(col.b()) << fmt.bShift);
 	font->drawString(&destImage, str, 0, yoff, destImage.w, uintcol, talign);
 }
 

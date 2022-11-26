@@ -71,7 +71,7 @@ void TeCheckboxLayout::setUnactiveLayout(TeLayout *layout) {
 	warning("TODO: Add extra code in TeCheckboxLayout::setUnactiveLayout.");
 	if (layout) {
 		addChild(layout);
-		layout->setColor(TeColor(0, 0, 0, 0));
+		//layout->setColor(TeColor(0, 0, 0, 0));
 	}
 	setState(_state);
 }
@@ -82,7 +82,7 @@ void TeCheckboxLayout::setActiveDisabledLayout(TeLayout *layout) {
 	_activeDisabledLayout = layout;
 	if (layout) {
 		addChild(layout);
-		layout->setColor(TeColor(0, 0, 0, 0));
+		//layout->setColor(TeColor(0, 0, 0, 0));
 	}
 	setState(_state);
 }
@@ -93,7 +93,7 @@ void TeCheckboxLayout::setUnactiveDisabledLayout(TeLayout *layout) {
 	_unactiveDisabledLayout = layout;
 	if (layout) {
 		addChild(layout);
-		layout->setColor(TeColor(0, 0, 0, 0));
+		//layout->setColor(TeColor(0, 0, 0, 0));
 	}
 	setState(_state);
 }
@@ -104,7 +104,7 @@ void TeCheckboxLayout::setActiveRollOverLayout(TeLayout *layout) {
 	_activeRollOverLayout = layout;
 	if (layout) {
 		addChild(layout);
-		layout->setColor(TeColor(0, 0, 0, 0));
+		//layout->setColor(TeColor(0, 0, 0, 0));
 	}
 	setState(_state);
 }
@@ -115,7 +115,7 @@ void TeCheckboxLayout::setUnactiveRollOverLayout(TeLayout *layout) {
 	_unactiveRollOverLayout = layout;
 	if (layout) {
 		addChild(layout);
-		layout->setColor(TeColor(0, 0, 0, 0));
+		//layout->setColor(TeColor(0, 0, 0, 0));
 	}
 	setState(_state);
 }
@@ -126,7 +126,7 @@ void TeCheckboxLayout::setHitZone(TeLayout *layout) {
 	_hitZone = layout;
 	if (layout) {
 		addChild(layout);
-		layout->setColor(TeColor(0, 0, 0xff, 0xff));
+		//layout->setColor(TeColor(0, 0, 0xff, 0xff));
 	}
 }
 

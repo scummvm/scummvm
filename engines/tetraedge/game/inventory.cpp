@@ -88,8 +88,9 @@ void Inventory::load() {
 	btn->setVisible(true);
 	btn->onMouseClickValidated().add(this, &Inventory::onQuitButton);
 
+	// FIXME: This is capturing mouse clicks.. should be set visible per original.
 	btn = _gui.buttonLayoutChecked("quitBackground");
-	btn->setVisible(true);
+	btn->setVisible(false);
 	btn->onMouseClickValidated().add(this, &Inventory::onQuitButton);
 
 	btn = _gui.buttonLayoutChecked("mainMenuButton");
@@ -207,6 +208,7 @@ bool Inventory::addObject(InventoryObject *obj) {
 						c--;
 					}
 				}
+				slotno++;
 			}
 			pageno++;
 		}
@@ -234,7 +236,7 @@ bool Inventory::addObject(InventoryObject *obj) {
 				finished = true;
 				break;
 			}
-			
+
 			TeTextLayout *newText = new TeTextLayout();
 			newText->setSizeType(CoordinatesType::RELATIVE_TO_PARENT);
 			newText->setPosition(TeVector3f32(1.0,1.0,0.0));

@@ -79,23 +79,23 @@ void TeCamera::buildOrthoMatrix() {
 	}
 
 	_projectionMatrix.setValue(0, 0, widthNorm * 2.0f);
-	_projectionMatrix.setValue(0, 1, 0.0);
-	_projectionMatrix.setValue(0, 2, 0.0);
-	_projectionMatrix.setValue(0, 3, -((_orthogonalParamR + _orthogonalParamL) * widthNorm));
-
 	_projectionMatrix.setValue(1, 0, 0.0);
-	_projectionMatrix.setValue(1, 1, heightNorm * 2.0f);
-	_projectionMatrix.setValue(1, 2, 0.0);
-	_projectionMatrix.setValue(1, 3, -((_orthogonalParamB + _orthogonalParamT) * heightNorm));
-
 	_projectionMatrix.setValue(2, 0, 0.0);
-	_projectionMatrix.setValue(2, 1, 0.0);
-	_projectionMatrix.setValue(2, 2, depthNorm * -2.0f);
-	_projectionMatrix.setValue(2, 3, -((_orthFarVal + _orthNearVal) * depthNorm));
-
 	_projectionMatrix.setValue(3, 0, 0.0);
+
+	_projectionMatrix.setValue(0, 1, 0.0);
+	_projectionMatrix.setValue(1, 1, heightNorm * 2.0f);
+	_projectionMatrix.setValue(2, 1, 0.0);
 	_projectionMatrix.setValue(3, 1, 0.0);
+
+	_projectionMatrix.setValue(0, 2, 0.0);
+	_projectionMatrix.setValue(1, 2, 0.0);
+	_projectionMatrix.setValue(2, 2, depthNorm * -2.0f);
 	_projectionMatrix.setValue(3, 2, 0.0);
+
+	_projectionMatrix.setValue(0, 3, -((_orthogonalParamR + _orthogonalParamL) * widthNorm));
+	_projectionMatrix.setValue(1, 3, -((_orthogonalParamB + _orthogonalParamT) * heightNorm));
+	_projectionMatrix.setValue(2, 3, -((_orthFarVal + _orthNearVal) * depthNorm));
 	_projectionMatrix.setValue(3, 3, 1.0);
 }
 

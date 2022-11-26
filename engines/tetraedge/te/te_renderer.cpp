@@ -282,8 +282,8 @@ void TeRenderer::loadMatrix(const TeMatrix4x4 &matrix) {
 }
 
 void TeRenderer::loadMatrixToGL(const TeMatrix4x4 &matrix) {
-	int mmode;
-	glGetIntegerv(GL_MATRIX_MODE, &mmode);
+	//int mmode;
+	//glGetIntegerv(GL_MATRIX_MODE, &mmode);
 	//debug("loadMatrixToGL[0x%x]: %s", mmode, matrix.toString().c_str());
 	glLoadMatrixf(matrix.getData());
 }
@@ -308,22 +308,27 @@ void TeRenderer::multiplyMatrix(const TeMatrix4x4 &matrix) {
 }
 
 void TeRenderer::optimiseTransparentMeshProperties() {
-	if (_transparentMeshProps.size() > 1) {
-		for (unsigned int i = 0; i < _transparentMeshProps.size() - 1; i++) {
-			if (_transparentMeshProps[i]._camera == _transparentMeshProps[i + 1]._camera
-				&& _transparentMeshProps[i]._material == _transparentMeshProps[i + 1]._material
-				&& _transparentMeshProps[i]._glTexEnvMode == _transparentMeshProps[i + 1]._glTexEnvMode
-				&& _transparentMeshProps[i]._matrix == _transparentMeshProps[i + 1]._matrix
-				&& _transparentMeshProps[i]._hasColor == _transparentMeshProps[i + 1]._hasColor
-				&& _transparentMeshProps[i]._scissorEnabled == _transparentMeshProps[i + 1]._scissorEnabled
-				&& _transparentMeshProps[i]._scissorX == _transparentMeshProps[i + 1]._scissorX
-				&& _transparentMeshProps[i]._scissorY == _transparentMeshProps[i + 1]._scissorY
-				&& _transparentMeshProps[i]._scissorWidth == _transparentMeshProps[i + 1]._scissorWidth
-				&& _transparentMeshProps[i]._scissorHeight == _transparentMeshProps[i + 1]._scissorHeight) {
-				_transparentMeshProps[i]._vertexCount += _transparentMeshProps[i + 1]._vertexCount;
-				_transparentMeshProps[i + 1]._shouldDraw = false;
-			}
+	if (_transparentMeshProps.size() <= 1)
+		return;
+
+	unsigned int i = 0;
+	for (unsigned int other = 1; other < _transparentMeshProps.size(); other++) {
+		unsigned int nextI = other;
+		if (_transparentMeshProps[i]._camera == _transparentMeshProps[other]._camera
+			&& _transparentMeshProps[i]._material == _transparentMeshProps[other]._material
+			&& _transparentMeshProps[i]._glTexEnvMode == _transparentMeshProps[other]._glTexEnvMode
+			&& _transparentMeshProps[i]._matrix == _transparentMeshProps[other]._matrix
+			&& _transparentMeshProps[i]._hasColor == _transparentMeshProps[other]._hasColor
+			&& _transparentMeshProps[i]._scissorEnabled == _transparentMeshProps[other]._scissorEnabled
+			&& _transparentMeshProps[i]._scissorX == _transparentMeshProps[other]._scissorX
+			&& _transparentMeshProps[i]._scissorY == _transparentMeshProps[other]._scissorY
+			&& _transparentMeshProps[i]._scissorWidth == _transparentMeshProps[other]._scissorWidth
+			&& _transparentMeshProps[i]._scissorHeight == _transparentMeshProps[other]._scissorHeight) {
+			_transparentMeshProps[i]._vertexCount += _transparentMeshProps[other]._vertexCount;
+			_transparentMeshProps[other]._shouldDraw = false;
+			nextI = i;
 		}
+		i = nextI;
 	}
 }
 
@@ -340,18 +345,28 @@ Common::String TeRenderer::renderer() {
 }
 
 
-static int compareTransparentMeshProperties(const TeRenderer::TransparentMeshProperties &p1,
+static bool compareTransparentMeshProperties(const TeRenderer::TransparentMeshProperties &p1,
 											const TeRenderer::TransparentMeshProperties &p2) {
-	if (p1._zOrder > p2._zOrder)
-		return 1;
-	if (p1._zOrder == p2._zOrder)
-		return 0;
-	return -1;
+	return (p1._zOrder < p2._zOrder);
 }
 
-void TeRenderer::dumpTransparentMeshes() const {
+void TeRenderer::dumpTransparentMeshProps() const {
+	debug("** Transparent MeshProps: num:%ld pending:%d **", _numTransparentMeshes, _pendingTransparentMeshProperties);
+	debug("draw? / nverts / source / transl / zorder");
+	for (unsigned int i = 0; i < _transparentMeshProps.size(); i++) {
+		debug("%s %d %d %s %f",
+			  _transparentMeshProps[i]._shouldDraw ? "draw" : "nodr",
+			  _transparentMeshProps[i]._vertexCount,
+			  _transparentMeshProps[i]._sourceTransparentMesh,
+			  _transparentMeshProps[i]._matrix.translation().dump().c_str(),
+			  _transparentMeshProps[i]._zOrder
+			  );
+	}
+}
+
+void TeRenderer::dumpTransparentMeshData() const {
 	debug("** Transparent Meshes: num:%ld pending:%d **", _numTransparentMeshes, _pendingTransparentMeshProperties);
-	debug("vert / normal / coord / color / trianglenum");
+	debug("vert / normal / coord / color / vertNo");
 	for (unsigned int i = 0; i < _transparentMeshVertexes.size(); i++) {
 		debug("%s %s %s %s %d",
 			  _transparentMeshVertexes[i].dump().c_str(),
@@ -368,6 +383,8 @@ void TeRenderer::renderTransparentMeshes() {
 		return;
 
 	glDepthMask(GL_FALSE);
+	//dumpTransparentMeshProps();
+
 	Common::sort(_transparentMeshProps.begin(), _transparentMeshProps.end(),
 		 compareTransparentMeshProperties);
 
@@ -379,9 +396,11 @@ void TeRenderer::renderTransparentMeshes() {
 		vertsDrawn += vcount;
 	}
 
-	//dumpTransparentMeshes();
-
 	optimiseTransparentMeshProperties();
+
+	//dumpTransparentMeshProps();
+	//dumpTransparentMeshData();
+
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -402,7 +421,7 @@ void TeRenderer::renderTransparentMeshes() {
 			continue;
 
 		const TeMaterial &material = meshProperties._material;
-		
+
 		meshProperties._camera->applyProjection();
 		glMatrixMode(GL_MODELVIEW);
 		_matrixMode = MM_GL_MODELVIEW;

@@ -31,7 +31,7 @@ namespace Tetraedge {
 static const uint NO_TEXTURE = 0xffffffff;
 
 Te3DTexture::Te3DTexture() : _glTexture(NO_TEXTURE), _createdTexture(false),
-_numFrames(1), _frameRate(0), _format(TeImage::INVALID), _glPixelFormat(GL_INVALID_ENUM) {
+_numFrames(1), _frameRate(0), _format(TeImage::INVALID)/*, _glPixelFormat(GL_INVALID_ENUM)*/ {
 	create();
 }
 
@@ -49,18 +49,17 @@ void Te3DTexture::bind() const {
 }
 
 void Te3DTexture::copyCurrentRender(uint xoffset, uint yoffset, uint x, uint y) {
-	// TODO: Get some better variable names here.
 	_matrix.setToIdentity();
-	const TeVector3f32 local_40((float)_width / _texWidth, (float)_height / _texHeight, 1.0);
-	_matrix.scale(local_40);
-	const TeVector3f32 local_50((float)_leftBorder / _width, (float)_btmBorder / _height, 0.0);
-	_matrix.translate(local_50);
-	const TeVector3f32 local_60(
+	const TeVector3f32 texScale((float)_width / _texWidth, (float)_height / _texHeight, 1.0);
+	_matrix.scale(texScale);
+	const TeVector3f32 offset((float)_leftBorder / _width, (float)_btmBorder / _height, 0.0);
+	_matrix.translate(offset);
+	const TeVector3f32 borderScale(
 			   1.0 - (float)(_rightBorder + _leftBorder) /
 					 (float)_width,
 			   1.0 - (float)(_topBorder + _btmBorder) /
 					 (float)_height, 1.0);
-	_matrix.scale(local_60);
+	_matrix.scale(borderScale);
 	bind();
 	glCopyTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, x, y, _texWidth, _texHeight);
 }

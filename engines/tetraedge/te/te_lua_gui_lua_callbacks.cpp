@@ -389,7 +389,7 @@ int spriteLayoutBindings(lua_State *L) {
 
 	lua_pushnil(L);
 	while (lua_next(L, -2) != 0) {
-		if (lua_type(L, -2) == 3) {
+		if (lua_type(L, -2) == LUA_TNUMBER) {
 			Te3DObject2 *object = TeLuaTo<Te3DObject2*>(L, -1);
 			layout->addChild(object);
 		}
@@ -475,7 +475,7 @@ int buttonLayoutBindings(lua_State *L) {
 
 	lua_pushnil(L);
 	while (lua_next(L, -2) != 0) {
-		if (lua_type(L, -2) == 3) {
+		if (lua_type(L, -2) == LUA_TNUMBER) {
 			Te3DObject2 *object = TeLuaTo<Te3DObject2*>(L, -1);
 			layout->addChild(object);
 		}
@@ -545,7 +545,7 @@ int checkboxLayoutBindings(lua_State *L) {
 
 	lua_pushnil(L);
 	while (lua_next(L, -2) != 0) {
-		if (lua_type(L, -2) == 3) {
+		if (lua_type(L, -2) == LUA_TNUMBER) {
 			Te3DObject2 *object = TeLuaTo<Te3DObject2*>(L, -1);
 			layout->addChild(object);
 		}

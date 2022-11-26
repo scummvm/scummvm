@@ -42,7 +42,7 @@
 #include "tetraedge/te/te_lua_script.h"
 #include "tetraedge/te/te_lua_thread.h"
 
-#define DEBUG_PATHFINDING 1
+//#define DEBUG_PATHFINDING 1
 
 namespace Tetraedge {
 
@@ -124,7 +124,7 @@ bool InGameScene::addMarker(const Common::String &markerName, const Common::Stri
 		newMarker._name = markerName;
 		newMarker._val = markerVal;
 		_markers.push_back(newMarker);
-		TeLayout *bg = game->gui3().layout("background");
+		TeLayout *bg = game->forGui().layout("background");
 		if (bg)
 			bg->addChild(markerSprite);
 		_sprites.push_back(markerSprite);
@@ -259,7 +259,7 @@ void InGameScene::deleteMarker(const Common::String &markerName) {
 	}
 
 	Game *game = g_engine->getGame();
-	TeLayout *bg = game->gui3().layout("background");
+	TeLayout *bg = game->forGui().layout("background");
 	if (!bg)
 		return;
 	for (Te3DObject2 *child : bg->childList()) {
@@ -480,7 +480,7 @@ Common::String InGameScene::imagePathMarker(const Common::String &name) {
 	if (!isMarker(name))
 		return Common::String();
 	Game *game = g_engine->getGame();
-	TeLayout *bg = game->gui3().layoutChecked("background");
+	TeLayout *bg = game->forGui().layoutChecked("background");
 	for (Te3DObject2 *child : bg->childList()) {
 		TeSpriteLayout *spritelayout = dynamic_cast<TeSpriteLayout *>(child);
 		if (spritelayout && spritelayout->name() == name) {
@@ -907,7 +907,7 @@ void InGameScene::setImagePathMarker(const Common::String &markerName, const Com
 		return;
 
 	Game *game = g_engine->getGame();
-	TeLayout *bg = game->gui3().layoutChecked("background");
+	TeLayout *bg = game->forGui().layoutChecked("background");
 
 	for (Te3DObject2 *child : bg->childList()) {
 		if (child->name() == markerName) {

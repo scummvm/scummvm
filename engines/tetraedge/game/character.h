@@ -86,10 +86,11 @@ public:
 	};
 
 	struct Callback {
-		int _x;
-		Common::String _s;
-		int _y;
-		float _f;
+		Common::String _luaFn;
+		int _triggerFrame;
+		int _lastCheckFrame;
+		int _maxCalls;
+		float _callsMade;
 	};
 
 	void addCallback(const Common::String &s1, const Common::String &s2, float f1, float f2);

@@ -79,6 +79,7 @@ public:
 
 	int wordWrapText(const Common::String &str, int fontSize, int maxWidth, Common::Array<Common::String> &lines);
 	Common::Rect getBoundingBox(const Common::String &str, int fontSize);
+	int getHeight(int fontSize);
 
 	void draw(TeImage &destImage, const Common::String &str, int fontSize, int yoff, const TeColor &col, AlignStyle alignMode);
 

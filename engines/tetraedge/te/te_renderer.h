@@ -48,7 +48,7 @@ public:
 
 	class TransparentMeshProperties {
 	public:
-
+		TransparentMeshProperties() : _camera(nullptr), _vertexCount(0), _shouldDraw(false), _scissorEnabled(false), _hasColor(false) {}
 		TeCamera *_camera;
 		int _vertexCount;
 		TeMatrix4x4 _matrix;
@@ -117,7 +117,8 @@ public:
 	void translate(float x, float y, float z);
 	Common::String vendor();
 
-	void dumpTransparentMeshes() const;
+	void dumpTransparentMeshProps() const;
+	void dumpTransparentMeshData() const;
 	const TeColor &currentColor() const { return _currentColor; }
 
 private:

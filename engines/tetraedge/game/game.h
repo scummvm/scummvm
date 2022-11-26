@@ -75,8 +75,9 @@ public:
 	struct YieldedCallback {
 		TeLuaThread *_luaThread;
 		Common::String _luaParam;
+		Common::String _luaParam2;
 		Common::String _luaFnName;
-		// Note: original game has more String, long, and int fields.. seem unused.
+		// Note: original game long, and int fields.. unused?
 	};
 
 	//enum EGameScoreID {}; // Not needed?
@@ -183,7 +184,7 @@ public:
 	InGameScene &scene() { return _scene; }
 	Dialog2 &dialog2() { return _dialog2; }
 	Question2 &question2() { return _question2; }
-	TeLuaGUI &gui3() { return _gui3; }
+	TeLuaGUI &forGui() { return _forGui; }
 	Objectif &objectif() { return _objectif; }
 	Common::Array<YieldedCallback> &yieldedCallbacks() { return _yieldedCallbacks; }
 	void setSaveRequested() { _saveRequested = true; }
@@ -199,9 +200,9 @@ private:
 	bool _entered;
 	bool _enteredFlag2;
 
-	TeLuaGUI _gui1; // TODO: get better names for these.
-	TeLuaGUI _gui2;
-	TeLuaGUI _gui3;
+	TeLuaGUI _gui1; // TODO: Is this ever used?
+	TeLuaGUI _setAnimGui;
+	TeLuaGUI _forGui;
 	TeLuaGUI _inGameGui;
 
 	Inventory _inventory;

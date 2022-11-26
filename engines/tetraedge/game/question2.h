@@ -52,6 +52,7 @@ public:
 	void pushAnswer(const Common::String &name, const Common::String &unk, const Common::String &path);
 	void unload();
 	TeLuaGUI &gui() { return _gui; }
+	TeSignal1Param<const Common::String &> &onAnswerSignal() { return _onAnswerSignal; }
 
 private:
 	TeLuaGUI _gui;
