@@ -387,7 +387,7 @@ Common::Error EfhEngine::run() {
 		return Common::kNoError;
 
 	uint32 lastMs = _system->getMillis();
-	while(!_shouldQuit) {
+	while (!_shouldQuit) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
@@ -1235,7 +1235,7 @@ void EfhEngine::handleWinSequence() {
 
 	Common::KeyCode input = Common::KEYCODE_INVALID;
 
-	while(input != Common::KEYCODE_ESCAPE) {
+	while (input != Common::KEYCODE_ESCAPE) {
 		displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
 		displayFctFullScreen();
 		displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
