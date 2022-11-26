@@ -32,7 +32,7 @@ namespace Locations {
 
 void BlacksmithSubview::drawItems() {
 	for (int idx = 0; idx < INVENTORY_COUNT; ++idx) {
-		writeChar(17, 1, 'A' + idx);
+		writeChar(17, 1 + idx, 'A' + idx);
 		writeString(") ");
 
 		g_globals->_items.getItem(_items[idx]);
