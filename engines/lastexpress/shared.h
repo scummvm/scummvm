@@ -99,7 +99,7 @@ enum SoundTag {
     processes the sound as a payment for portability, so we can afford
     to just mix the silence without special processing of muted entries.
 */
-enum SoundFlag {
+enum SoundFlag : uint {
 	kSoundVolumeEntityDefault = 0xFFFFFFFF, // special value for SoundManager::playSound; choose volume based on distance to the entity
 
 	kVolumeNone               = 0x0,
@@ -172,7 +172,7 @@ enum AmbientSoundState {
 // Time is measured in ticks, with 15 ticks per second. One minute is 900
 // ticks, one hour is 54,000 ticks, and one day is 1,296,000 ticks.
 
-enum TimeValue {
+enum TimeValue : uint {
 	kTimeNone                 = 0,
 	kTime5933                 = 5933,
 
@@ -478,7 +478,7 @@ enum ChapterIndex {
 //////////////////////////////////////////////////////////////////////////
 // Index of scenes
 //////////////////////////////////////////////////////////////////////////
-enum SceneIndex {
+enum SceneIndex : uint {
 	kSceneNone                    = 0,
 	kSceneMenu                    = 1,
 
