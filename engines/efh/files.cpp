@@ -87,9 +87,11 @@ void EfhEngine::findMapFile(int16 mapId) {
 void EfhEngine::rImageFile(Common::String filename, uint8 *targetBuffer, uint8 **subFilesArray, uint8 *packedBuffer) {
 	debugC(1, kDebugUtils, "rImageFile %s", filename.c_str());
 	readFileToBuffer(filename, packedBuffer);
-	uint32 size = uncompressBuffer(packedBuffer, targetBuffer);
 
-#ifdef debug
+#ifndef debug
+	uncompressBuffer(packedBuffer, targetBuffer);
+#else
+	uint32 size = uncompressBuffer(packedBuffer, targetBuffer);
 	// dump a decompressed image file
 	Common::DumpFile dump;
 	dump.open(filename + ".dump");
@@ -136,7 +138,7 @@ void EfhEngine::readItems() {
 		error("Unable to find file %s", fileName.c_str());
 
 	for (int i = 0; i < 300; ++i) {
-		for (int16 idx = 0; idx < 15; ++idx)
+		for (uint idx = 0; idx < 15; ++idx)
 			_items[i]._name[idx] = f.readByte();
 
 		_items[i]._damage = f.readByte();
