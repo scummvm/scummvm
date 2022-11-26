@@ -89,7 +89,7 @@ struct ADGameFileDescription {
  *
  * Note that the lowest 16 bits are currently reserved for use by the client code.
  */
-enum ADGameFlags {
+enum ADGameFlags : uint {
 	ADGF_NO_FLAGS        =  0u,        ///< No flags.
 	ADGF_TAILMD5         = (1u << 16), ///< Calculate the MD5 for this entry from the end of the file.
 	ADGF_AUTOGENTARGET   = (1u << 17), ///< Automatically generate gameid from @ref ADGameDescription::extra.
