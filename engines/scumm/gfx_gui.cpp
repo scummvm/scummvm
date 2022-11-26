@@ -502,7 +502,7 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 		if (_bannerMem) {
 			memcpy(
 				_bannerMem,
-				&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[rowSize * startingPointY],
+				&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[rowSize * _bannerSaveYStart],
 				_bannerMemSize);
 		}
 	}
