@@ -28,23 +28,21 @@
 
 namespace Tetraedge {
 
-template<class C> int _teCallbackSorter(const C &c1, const C &c2) {
+template<class C> bool _teCallbackSorter(const C &c1, const C &c2) {
+	// sort in *descending* priority.
 	float p1 = c1->priority();
 	float p2 = c2->priority();
-	if (p1 < p2)
-		return 1;
-	else if (p1 == p2)
-		return 0;
-	return -1;
+	return p2 < p1;
 }
 
 typedef Common::SharedPtr<TeICallback0Param> TeICallback0ParamPtr;
 
-class TeSignal0Param : public Common::SortedArray<TeICallback0ParamPtr, const TeICallback0ParamPtr &> {
+class TeSignal0Param : public Common::Array<TeICallback0ParamPtr> {
 public:
-	TeSignal0Param() : Common::SortedArray<TeICallback0ParamPtr, const TeICallback0ParamPtr &>(_teCallbackSorter) {};
+	TeSignal0Param() : Common::Array<TeICallback0ParamPtr>() {};
 
 	bool call() {
+		Common::sort(this->begin(), this->end(), _teCallbackSorter<TeICallback0ParamPtr>);
 		typename Common::Array<TeICallback0ParamPtr>::iterator i = this->begin();
 		typename Common::Array<TeICallback0ParamPtr>::iterator end_ = this->end();
 		for (; i < end_; i++) {
@@ -66,7 +64,7 @@ public:
 	}
 
 	template<class T> void add(T *obj, typename TeCallback0Param<T>::TMethod method) {
-		this->insert(TeICallback0ParamPtr(new TeCallback0Param<T>(obj, method)));
+		this->push_back(TeICallback0ParamPtr(new TeCallback0Param<T>(obj, method)));
 	}
 
 	template<class T> void remove(T *obj, typename TeCallback0Param<T>::TMethod method) {
@@ -80,11 +78,12 @@ public:
 template<class T> using TeICallback1ParamPtr = Common::SharedPtr<TeICallback1Param<T>>;
 
 /* Array of callbacks with a single parameter of type T */
-template<class T> class TeSignal1Param : public Common::SortedArray<TeICallback1ParamPtr<T>, const TeICallback1ParamPtr<T> &> {
+template<class T> class TeSignal1Param : public Common::Array<TeICallback1ParamPtr<T>> {
 public:
-	TeSignal1Param() : Common::SortedArray<TeICallback1ParamPtr<T>, const TeICallback1ParamPtr<T> &>(_teCallbackSorter) {};
+	TeSignal1Param() : Common::Array<TeICallback1ParamPtr<T>>() {};
 
 	bool call(T t) {
+		Common::sort(this->begin(), this->end(), _teCallbackSorter<TeICallback1ParamPtr<T>>);
 		typename Common::Array<TeICallback1ParamPtr<T>>::iterator i = this->begin();
 		typename Common::Array<TeICallback1ParamPtr<T>>::iterator end_ = this->end();
 		for (; i < end_; i++) {
@@ -106,7 +105,7 @@ public:
 	}
 
 	template<class S> void add(S *obj, typename TeCallback1Param<S, T>::TMethod method) {
-		this->insert(TeICallback1ParamPtr<T>(new TeCallback1Param<S, T>(obj, method)));
+		this->push_back(TeICallback1ParamPtr<T>(new TeCallback1Param<S, T>(obj, method)));
 	}
 
 	template<class S> void remove(S *obj, typename TeCallback1Param<S, T>::TMethod method) {
@@ -119,11 +118,12 @@ public:
 template<class S, class T> using TeICallback2ParamPtr = Common::SharedPtr<TeICallback2Param<S, T>>;
 
 /* Array of callbacks with a two parameters of type T */
-template<class S, class T> class TeSignal2Param : public Common::SortedArray<TeICallback2ParamPtr<S, T>, const TeICallback2ParamPtr<S, T> &> {
+template<class S, class T> class TeSignal2Param : public Common::Array<TeICallback2ParamPtr<S, T>> {
 public:
-	TeSignal2Param() : Common::SortedArray<TeICallback2ParamPtr<S, T>, const TeICallback2ParamPtr<S, T> &>(_teCallbackSorter) {};
+	TeSignal2Param() : Common::Array<TeICallback2ParamPtr<S, T>>() {};
 
 	bool call(S s, T t) {
+		Common::sort(this->begin(), this->end(), _teCallbackSorter<TeICallback2ParamPtr<S, T>>);
 		typename Common::Array<TeICallback2ParamPtr<S, T>>::iterator i = this->begin();
 		typename Common::Array<TeICallback2ParamPtr<S, T>>::iterator end_ = this->end();
 		for (; i < end_; i++) {
@@ -145,7 +145,7 @@ public:
 	}
 
 	template<class C> void add(C *obj, typename TeCallback2Param<C, S, T>::TMethod method) {
-		this->insert(TeICallback2ParamPtr<S, T>(new TeCallback2Param<C, S, T>(obj, method)));
+		this->push_back(TeICallback2ParamPtr<S, T>(new TeCallback2Param<C, S, T>(obj, method)));
 	}
 
 	template<class C> void remove(C *obj, typename TeCallback2Param<C, S, T>::TMethod method) {

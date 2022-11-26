@@ -29,6 +29,16 @@
 
 namespace Tetraedge {
 
+class TeZPriorityMouseCallback : public TeCallback1Param<TeButtonLayout, const Common::Point &> {
+public:
+	TeZPriorityMouseCallback(TeButtonLayout *layout, TMethod method) : TeCallback1Param<TeButtonLayout, const Common::Point &>(layout, method), _pri(0.0) {}
+	virtual float &priority() override {
+		_pri =_object->position().z();
+		return _pri;
+	}
+	float _pri;
+};
+
 /*static*/ bool TeButtonLayout::_mousePositionChangedCatched = false;
 /*static*/ TeTimer *TeButtonLayout::_doubleValidationProtectionTimer = nullptr;
 
@@ -47,17 +57,17 @@ _hitZoneLayout(nullptr)
 {
 	_onMousePositionChangedMaxPriorityCallback.reset(new TeCallback1Param<TeButtonLayout, const Common::Point &>(this, &TeButtonLayout::onMousePositionChangedMaxPriority, FLT_MAX));
 
-	_onMousePositionChangedCallback.reset(new TeCallback1Param<TeButtonLayout, const Common::Point &>(this, &TeButtonLayout::onMousePositionChanged));
-	_onMouseLeftDownCallback.reset(new TeCallback1Param<TeButtonLayout, const Common::Point &>(this, &TeButtonLayout::onMouseLeftDown));
+	_onMousePositionChangedCallback.reset(new TeZPriorityMouseCallback(this, &TeButtonLayout::onMousePositionChanged));
+	_onMouseLeftDownCallback.reset(new TeZPriorityMouseCallback(this, &TeButtonLayout::onMouseLeftDown));
 	_onMouseLeftUpMaxPriorityCallback.reset(new TeCallback1Param<TeButtonLayout, const Common::Point &>(this, &TeButtonLayout::onMouseLeftUpMaxPriority, FLT_MAX));
-	_onMouseLeftUpCallback.reset(new TeCallback1Param<TeButtonLayout, const Common::Point &>(this, &TeButtonLayout::onMouseLeftUp));
+	_onMouseLeftUpCallback.reset(new TeZPriorityMouseCallback(this, &TeButtonLayout::onMouseLeftUp));
 
 	TeInputMgr *inputmgr = g_engine->getInputMgr();
-	inputmgr->_mouseMoveSignal.insert(_onMousePositionChangedCallback);
-	inputmgr->_mouseMoveSignal.insert(_onMousePositionChangedMaxPriorityCallback);
-	inputmgr->_mouseLDownSignal.insert(_onMouseLeftDownCallback);
-	inputmgr->_mouseLUpSignal.insert(_onMouseLeftUpCallback);
-	inputmgr->_mouseLUpSignal.insert(_onMouseLeftUpMaxPriorityCallback);
+	inputmgr->_mouseMoveSignal.push_back(_onMousePositionChangedCallback);
+	inputmgr->_mouseMoveSignal.push_back(_onMousePositionChangedMaxPriorityCallback);
+	inputmgr->_mouseLDownSignal.push_back(_onMouseLeftDownCallback);
+	inputmgr->_mouseLUpSignal.push_back(_onMouseLeftUpCallback);
+	inputmgr->_mouseLUpSignal.push_back(_onMouseLeftUpMaxPriorityCallback);
 
 	setEditionColor(TeColor(128, 128, 128, 255));
 	if (!getDoubleValidationProtectionTimer()->running())

@@ -39,10 +39,10 @@ _clickPassThrough(false), _state(CheckboxState6)
 	_onMousePositionChangedCallback.reset(new TeCallback1Param<TeCheckboxLayout, const Common::Point &>(this, &TeCheckboxLayout::onMousePositionChanged));
 
 	TeInputMgr *inputmgr = g_engine->getInputMgr();
-	inputmgr->_mouseMoveSignal.insert(_onMousePositionChangedCallback);
-	inputmgr->_mouseLDownSignal.insert(_onMouseLeftDownCallback);
-	inputmgr->_mouseLUpSignal.insert(_onMouseLeftUpCallback);
-	inputmgr->_mouseLUpSignal.insert(_onMouseLeftUpMaxPriorityCallback);
+	inputmgr->_mouseMoveSignal.push_back(_onMousePositionChangedCallback);
+	inputmgr->_mouseLDownSignal.push_back(_onMouseLeftDownCallback);
+	inputmgr->_mouseLUpSignal.push_back(_onMouseLeftUpCallback);
+	inputmgr->_mouseLUpSignal.push_back(_onMouseLeftUpMaxPriorityCallback);
 }
 
 TeCheckboxLayout::~TeCheckboxLayout() {
