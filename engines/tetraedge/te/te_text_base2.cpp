@@ -75,7 +75,7 @@ void TeTextBase2::build() {
 	TeImage img;
 	Common::SharedPtr<TePalette> nullpal;
 	img.create(_size._x, _size._y, nullpal, TeImage::RGBA8);
-	img.fill(0, 0, 0, 0);
+	img.fill(_globalColor.r(), _globalColor.g(), _globalColor.b(), 0);
 
 	for (unsigned int i = 0; i < _wrappedLines.size(); i++) {
 		drawLine(img, _wrappedLines[i], lineoffsets[i]);
@@ -94,7 +94,7 @@ void TeTextBase2::build() {
 	_mesh.setConf(4, 4, TeMesh::MeshMode_TriangleStrip, 0, 0);
 	_mesh.defaultMaterial(texture);
 	// FIXME: Original uses BLEND, but we need MODULATE to get right colors?
-	_mesh.setglTexEnv(GL_MODULATE);
+	//_mesh.setglTexEnv(GL_MODULATE);
 	_mesh.setShouldDraw(true);
 	_mesh.setColor(_globalColor);
 	_mesh.setVertex(0, TeVector3f32(_size._x * -0.5f, _size._y * -0.5f, 0.0f));
@@ -197,8 +197,10 @@ void TeTextBase2::drawEmptyChar(unsigned int offset) {
 void TeTextBase2::drawLine(TeImage &img, const Common::String &str, int yoffset) {
 	TeIntrusivePtr<TeFont3> font = _fonts[0];
 
-	// TODO: Add multi-color support if needed.
-	font->draw(img, str, _fontSize, yoffset, _globalColor, _alignStyle);
+	// TODO: Add multi-color support if needed?
+	// We set black here as the color is set on the mesh and we use
+	// MODULATE blend in build()
+	font->draw(img, str, _fontSize, yoffset, TeColor(0, 0, 0, 255), _alignStyle);
 }
 
 unsigned int TeTextBase2::endOfWord(unsigned int offset) const {

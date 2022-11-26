@@ -68,6 +68,7 @@ void* tolua_tousertype(lua_State *L, int narg, void *def);
 int tolua_toboolean(lua_State *L, int narg, int def);
 
 void tolua_pushboolean(lua_State *L, bool val);
+void tolua_pushnumber(lua_State *L, double val);
 
 } // end namespace ToLua
 

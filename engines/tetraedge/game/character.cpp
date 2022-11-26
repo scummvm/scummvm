@@ -489,16 +489,20 @@ bool Character::onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneM
 	// Move any objects attached to the bone
 	for (Object3D *obj : game->scene().object3Ds()) {
 		if (obj->_onCharName == _model->name() && boneName == obj->_onCharBone) {
-			obj->model()->setVisible(true);
-			TeMatrix4x4 objmatrix = boneMatrix;
-			objmatrix.scale(obj->_objScale);
-			objmatrix.rotate(obj->_objRotation);
-			objmatrix.scale(obj->_objScale);
-			objmatrix.translate(obj->_objTranslation);
-			obj->model()->forceMatrix(objmatrix);
-			obj->model()->setPosition(_model->position());
-			obj->model()->setRotation(_model->rotation());
-			obj->model()->setScale(_model->scale());
+			if (_model->anim()->curFrame2() >= obj->_startFrame
+					&& _model->anim()->curFrame2() <= obj->_endFrame) {
+				obj->model()->setVisible(true);
+				TeMatrix4x4 objmatrix = boneMatrix;
+				objmatrix.scale(obj->_objScale);
+				objmatrix.rotate(obj->_objRotation);
+				objmatrix.translate(obj->_objTranslation);
+				obj->model()->forceMatrix(objmatrix);
+				obj->model()->setRotation(_model->rotation());
+				obj->model()->setPosition(_model->position());
+				obj->model()->setScale(_model->scale());
+			} else {
+				obj->model()->setVisible(false);
+			}
 		}
 	}
 

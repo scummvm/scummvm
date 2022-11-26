@@ -28,6 +28,8 @@
 
 namespace Tetraedge {
 
+class TeMusic;
+
 class TeSoundManager {
 public:
 	TeSoundManager();
@@ -35,8 +37,14 @@ public:
 	void playFreeSound(const Common::Path &path, float vol, const Common::String &channel);
 	void stopFreeSound(const Common::String &channel);
 
+	void update();
+
+	Common::Array<TeMusic *> &musics() { return _musics; }
+
 private:
 	Common::HashMap<Common::String, Audio::SoundHandle> _handles;
+
+	Common::Array<TeMusic *> _musics;
 };
 
 } // end namespace Tetraedge

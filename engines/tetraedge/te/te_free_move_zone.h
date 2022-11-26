@@ -43,13 +43,13 @@ namespace micropather {
 struct TeBlocker {
 	Common::String _s;
 	TeVector2f32 _pts[2];
-	long _x;
+	bool _enabled;
 };
 
 struct TeRectBlocker {
 	Common::String _s;
 	TeVector2f32 _pts[4];
-	long _x;
+	bool _enabled;
 };
 
 class TeFreeMoveZoneGraph;

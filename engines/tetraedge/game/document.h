@@ -37,7 +37,8 @@ public:
 	~Document() {
 		unload();
 		if (parent()) {
-			// TODO: do something with parent here.
+			parent()->removeChild(this);
+			setParent(nullptr);
 		}
 	}
 

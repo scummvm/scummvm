@@ -37,6 +37,7 @@
 #include "tetraedge/te/te_renderer.h"
 #include "tetraedge/te/te_font3.h"
 #include "tetraedge/te/te_input_mgr.h"
+#include "tetraedge/te/te_sound_manager.h"
 
 //#define DUMP_LAYOUTS 1
 
@@ -312,7 +313,7 @@ bool Application::run() {
 
 		renderer->reset();
 		game->update();
-		//_soundManager->update(soundmgr);
+		g_engine->getSoundManager()->update();
 		performRender();
 		if (game->_returnToMainMenu) {
 			game->leave(true);

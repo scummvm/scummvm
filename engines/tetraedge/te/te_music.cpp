@@ -24,6 +24,7 @@
 #include "audio/mixer.h"
 #include "audio/decoders/vorbis.h"
 #include "tetraedge/tetraedge.h"
+#include "tetraedge/te/te_sound_manager.h"
 #include "tetraedge/te/te_music.h"
 #include "tetraedge/te/te_core.h"
 
@@ -31,6 +32,18 @@ namespace Tetraedge {
 
 TeMusic::TeMusic() : _repeat(true), _isPlaying(false), _currentData(0),
 _volume(1.0), _isPaused(true), _channelName("music"), _sndHandleValid(false) {
+	g_engine->getSoundManager()->musics().push_back(this);
+}
+
+TeMusic::~TeMusic() {
+	close();
+	Common::Array<TeMusic *> &m = g_engine->getSoundManager()->musics();
+	for (unsigned int i = 0; i < m.size(); i++) {
+		if (m[i] == this) {
+			m.remove_at(i);
+			break;
+		}
+	}
 }
 
 void TeMusic::pause() {
@@ -54,13 +67,14 @@ bool TeMusic::play() {
 		delete streamfile;
 		return false;
 	}
-
 	Audio::AudioStream *stream = Audio::makeVorbisStream(streamfile, DisposeAfterUse::YES);
 	byte vol = round(_volume * 255.0);
 	int channelId = _channelName.hash();
 	Audio::Mixer *mixer = g_system->getMixer();
 	mixer->playStream(Audio::Mixer::kMusicSoundType, &_sndHandle, stream, channelId, vol);
 	_sndHandleValid = true;
+	_isPaused = false;
+	_isPlaying = true;
 	if (_repeat)
 		mixer->loopChannel(_sndHandle);
 	return true;
@@ -98,7 +112,8 @@ void TeMusic::resume() {
 
 void TeMusic::stop() {
 	_mutex.lock();
-	_isStopped = true;
+	_isPlaying = false;
+	_isPaused = false;
 	_mutex.unlock();
 	/* original does this here.. probably not needed as mixer
 	 does it for us.
@@ -130,7 +145,7 @@ void TeMusic::entry() {
 
 bool TeMusic::isPlaying() {
 	_mutex.lock();
-	bool retval = _isPlaying;
+	bool retval = _isPlaying && !_isPaused;
 	_mutex.unlock();
 	return retval;
 }
@@ -170,8 +185,22 @@ void TeMusic::setFilePath(const Common::String &name) {
 }
 
 void TeMusic::update() {
-	/* Probably not needed in ScummVM? Handled by the mixer. */
-	error("TODO: Implement me");
+	/* Do callback and update flags when sounds stop */
+	bool hasStopped = false;
+	_mutex.lock();
+	if (_isPlaying && !_isPaused && _sndHandleValid && !g_system->getMixer()->isSoundHandleActive(_sndHandle))
+		hasStopped = true;
+
+	if (hasStopped) {
+		_isPaused = false;
+		_isPlaying = false;
+		_sndHandleValid = false;
+	}
+	_mutex.unlock();
+
+	if (hasStopped) {
+		_onStopSignal.call();
+	}
 }
 
 void TeMusic::volume(float vol) {

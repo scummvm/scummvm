@@ -173,6 +173,7 @@ public:
 	bool lookingAtTallThing() const { return _lookingAtTallThing; }
 	void setLookingAtTallThing(bool val) { _lookingAtTallThing = val; }
 	TeIntrusivePtr<TeBezierCurve> curve() { return _curve; }
+	void setRecallageY(bool val) { _recallageY = val; }
 
 private:
 	float _walkCurveStart;

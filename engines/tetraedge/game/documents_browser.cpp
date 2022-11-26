@@ -213,7 +213,29 @@ void DocumentsBrowser::showDocument(const Common::String &docName, long startPag
 
 void DocumentsBrowser::unload() {
 	hideDocument();
-	error("TODO: Implement DocumentsBrowser::unload");
+	int pageno = 0;
+	while (true) {
+		Common::String pageName = Common::String::format("page%d", pageno);
+		TeLayout *page = _gui1.layout(pageName);
+		if (!page)
+			break;
+		int slotno = 0;
+		while (true) {
+			Common::String pageSlotName = Common::String::format("page%dSlot%d", pageno, slotno);
+			TeLayout *slot = _gui1.layout(pageSlotName);
+			if (!slot)
+				break;
+			for (unsigned int i = 0; i < slot->childCount(); i++) {
+				Te3DObject2 *child = slot->child(i);
+				Document *doc = dynamic_cast<Document *>(child);
+				if (doc)
+					delete doc;
+			}
+			slotno++;
+		}
+		pageno++;
+	}
+	_gui1.unload();
 }
 
 } // end namespace Tetraedge

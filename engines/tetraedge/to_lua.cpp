@@ -438,6 +438,10 @@ void tolua_pushboolean(lua_State *L, bool val) {
 	lua_pushboolean(L, val);
 }
 
+void tolua_pushnumber(lua_State *L, double val) {
+	lua_pushnumber(L, val);
+}
+
 } // end namespace ToLua
 
 } // end namespace Tetraedge

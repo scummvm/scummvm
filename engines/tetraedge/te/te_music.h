@@ -35,6 +35,7 @@ namespace Tetraedge {
 class TeMusic : public TeResource {
 public:
 	TeMusic();
+	~TeMusic();
 
 	void close() {
 		stop();
@@ -72,9 +73,10 @@ private:
 
 	bool _repeat;
 	byte _currentData;
+
 	bool _isPlaying;
 	bool _isPaused;
-	bool _isStopped;
+
 	float _volume;
 
 	Audio::SoundHandle _sndHandle;

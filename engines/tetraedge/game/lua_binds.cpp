@@ -618,6 +618,35 @@ static int tolua_ExportedFunctions_SetCharacterAnimation00(lua_State *L) {
 	error("#ferror in function 'SetCharacterAnimation': %d %d %s", err.index, err.array, err.type);
 }
 
+static int tolua_ExportedFunctions_SetCharacterAnimationAndWaitForEnd00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err)
+		&& tolua_isboolean(L, 3, 1, &err) && tolua_isboolean(L, 4, 1, &err)
+		&& tolua_isnumber(L, 5, 1, &err) && tolua_isnumber(L, 6, 1, &err)
+		&& tolua_isnoobj(L, 7, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		Common::String s2(tolua_tostring(L, 2, nullptr));
+		bool b1 = tolua_toboolean(L, 3, 1);
+		bool b2 = tolua_toboolean(L, 4, 0);
+		double f3 = tolua_tonumber(L, 5, -1.0);
+		double f4 = tolua_tonumber(L, 6, 9999.0);
+		SetCharacterAnimation(s1, s2, b1, b2, (int)f3, (int)f4);
+		Game::YieldedCallback cb;
+		cb._luaFnName = "OnCharacterAnimationFinished";
+		cb._luaParam = s1;
+		cb._luaParam2 = s2;
+		cb._luaThread = TeLuaThread::threadFromState(L);
+		Game *game = g_engine->getGame();
+		for (const auto &gamecb : game->yieldedCallbacks()) {
+			if (gamecb._luaFnName == cb._luaFnName && gamecb._luaParam == s1 && gamecb._luaParam2 == s2)
+				error("SetCharacterAnimationAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
+		}
+		game->yieldedCallbacks().push_back(cb);
+		return cb._luaThread->yield();
+	}
+	error("#ferror in function 'SetCharacterAnimationAndWaitForEnd': %d %d %s", err.index, err.array, err.type);
+}
+
 static void BlendCharacterAnimation(const Common::String &charname, const Common::String &animname, float blendAmount, bool repeat, bool b2) {
 	Game *game = g_engine->getGame();
 	Character *c = game->scene().character(charname);
@@ -1048,7 +1077,7 @@ static void EnableRectBlocker(uint offset, bool enabled) {
 	if (game->scene().rectBlockers().size() < offset)
 		error("invalid rectblocker offset %d", offset);
 
-	game->scene().rectBlockers()[offset]._x = enabled;
+	game->scene().rectBlockers()[offset]._enabled = enabled;
 }
 
 static int tolua_ExportedFunctions_EnableRectBlocker00(lua_State *L) {
@@ -1061,6 +1090,26 @@ static int tolua_ExportedFunctions_EnableRectBlocker00(lua_State *L) {
 	}
 	error("#ferror in function 'EnableRectBlocker': %d %d %s", err.index, err.array, err.type);
 }
+
+static void EnableBlocker(uint offset, bool enabled) {
+	Game *game = g_engine->getGame();
+	if (game->scene().blockers().size() < offset)
+		error("invalid blocker offset %d", offset);
+
+	game->scene().blockers()[offset]._enabled = enabled;
+}
+
+static int tolua_ExportedFunctions_EnableBlocker00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isnumber(L, 1, 0, &err) && tolua_isboolean(L, 2, 0, &err) && tolua_isnoobj(L, 3, &err)) {
+		double d1 = tolua_tonumber(L, 1, 0.0f);
+		bool b1 = tolua_toboolean(L, 2, 0);
+		EnableBlocker((uint)d1, b1);
+		return 0;
+	}
+	error("#ferror in function 'EnableBlocker': %d %d %s", err.index, err.array, err.type);
+}
+
 
 static void AddAnchorZone(const Common::String &s1, const Common::String &s2, float f1) {
 	if (s1.empty())
@@ -1142,6 +1191,62 @@ static int tolua_ExportedFunctions_SetCharacterLookChar00(lua_State *L) {
 		return 0;
 	}
 	error("#ferror in function 'SetCharacterLookChar': %d %d %s", err.index, err.array, err.type);
+}
+
+static uint Random(uint max) {
+	return g_engine->getGame()->randomSource().getRandomNumber(max);
+}
+
+static int tolua_ExportedFunctions_Random00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isnumber(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		double d1 = tolua_tonumber(L, 1, 0.0);
+		unsigned int result = Random(d1);
+		tolua_pushnumber(L, result);
+		return 1;
+	}
+	error("#ferror in function 'Random': %d %d %s", err.index, err.array, err.type);
+}
+
+static void SetCharacterMeshVisible(const Common::String &charName, const Common::String &meshName, bool val) {
+	Character *character = g_engine->getGame()->scene().character(charName);
+	if (character) {
+		character->_model->setVisibleByName(meshName, val);
+	} else {
+		error("[SetCharacterMeshVisible] Character not found %s", charName.c_str());
+	}
+}
+
+static int tolua_ExportedFunctions_SetCharacterMeshVisible00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isboolean(L, 2, 1, &err) && tolua_isnoobj(L, 3, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		Common::String s2(tolua_tostring(L, 2, nullptr));
+		bool b = tolua_toboolean(L, 3, 0);
+		SetCharacterMeshVisible(s1, s2, b);
+		return 0;
+	}
+	error("#ferror in function 'SetRecallageY': %d %d %s", err.index, err.array, err.type);
+}
+
+static void SetRecallageY(const Common::String &charName, bool val) {
+	Character *character = g_engine->getGame()->scene().character(charName);
+	if (character) {
+		character->setRecallageY(val);
+	} else {
+		error("[SetRecallageY] Character not found %s", charName.c_str());
+	}
+}
+
+static int tolua_ExportedFunctions_SetRecallageY00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isboolean(L, 2, 1, &err) && tolua_isnoobj(L, 3, &err)) {
+		Common::String s(tolua_tostring(L, 1, nullptr));
+		bool b = tolua_toboolean(L, 2, 0);
+		SetRecallageY(s, b);
+		return 0;
+	}
+	error("#ferror in function 'SetRecallageY': %d %d %s", err.index, err.array, err.type);
 }
 
 static void DisabledZone(const Common::String &s1, bool b) {
@@ -1525,8 +1630,8 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "ShowObject", tolua_ExportedFunctions_ShowObject00);
 	// tolua_function(L, "ShowAllObjects", tolua_ExportedFunctions_ShowAllObjects00); // Never used
 	tolua_function(L, "SetBackground", tolua_ExportedFunctions_SetBackground00);
-	//tolua_function(L, "AddBlockingObject", tolua_ExportedFunctions_AddBlockingObject00); // Never used
-	//tolua_function(L, "RemoveBlockingObject", tolua_ExportedFunctions_RemoveBlockingObject00); // Never used
+	// tolua_function(L, "AddBlockingObject", tolua_ExportedFunctions_AddBlockingObject00); // Never used
+	// tolua_function(L, "RemoveBlockingObject", tolua_ExportedFunctions_RemoveBlockingObject00); // Never used
 	tolua_function(L, "ChangeWarp", tolua_ExportedFunctions_ChangeWarp00);
 	tolua_function(L, "PlayMovie", tolua_ExportedFunctions_PlayMovie00);
 	/*tolua_function(L, "PlayMovieAndWaitForEnd", tolua_ExportedFunctions_PlayMovieAndWaitForEnd00);
@@ -1590,8 +1695,8 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "SetCharacterRotation", tolua_ExportedFunctions_SetCharacterRotation00);
 	tolua_function(L, "SetCharacterOrientation", tolua_ExportedFunctions_SetCharacterOrientation00);
 	tolua_function(L, "SetCharacterAnimation", tolua_ExportedFunctions_SetCharacterAnimation00);
-	/*tolua_function(L, "SetCharacterAnimationAndWaitForEnd",
-				 tolua_ExportedFunctions_SetCharacterAnimationAndWaitForEnd00);*/
+	tolua_function(L, "SetCharacterAnimationAndWaitForEnd",
+				 tolua_ExportedFunctions_SetCharacterAnimationAndWaitForEnd00);
 	tolua_function(L, "BlendCharacterAnimation", tolua_ExportedFunctions_BlendCharacterAnimation00);
 	tolua_function(L, "BlendCharacterAnimationAndWaitForEnd",
 				 tolua_ExportedFunctions_BlendCharacterAnimationAndWaitForEnd00);
@@ -1637,25 +1742,25 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "Save", tolua_ExportedFunctions_Save00);
 	tolua_function(L, "Wait", tolua_ExportedFunctions_Wait00);
 	tolua_function(L, "WaitAndWaitForEnd", tolua_ExportedFunctions_WaitAndWaitForEnd00);
-	tolua_function(L, "OpenFinalURL", tolua_ExportedFunctions_OpenFinalURL00);
+	tolua_function(L, "OpenFinalURL", tolua_ExportedFunctions_OpenFinalURL00); // Unused
 	tolua_function(L, "FinishGame", tolua_ExportedFunctions_FinishGame00);
-	tolua_function(L, "RequestMainMenu", tolua_ExportedFunctions_RequestMainMenu00);
-	tolua_function(L, "BFGRateImmediately", tolua_ExportedFunctions_BFGRateImmediately00);
-	tolua_function(L, "BFGReportEvent", tolua_ExportedFunctions_BFGReportEvent00);
-	tolua_function(L, "BFGReportEventWithValue", tolua_ExportedFunctions_BFGReportEventWithValue00);
-	tolua_function(L, "BFGReachedFreemiumLimit", tolua_ExportedFunctions_BFGReachedFreemiumLimit00);*/
+	tolua_function(L, "RequestMainMenu", tolua_ExportedFunctions_RequestMainMenu00);*/
+	// tolua_function(L, "BFGRateImmediately", tolua_ExportedFunctions_BFGRateImmediately00); // Unused
+	// tolua_function(L, "BFGReportEvent", tolua_ExportedFunctions_BFGReportEvent00); // Unused
+	// tolua_function(L, "BFGReportEventWithValue", tolua_ExportedFunctions_BFGReportEventWithValue00); // Unused
+	// tolua_function(L, "BFGReachedFreemiumLimit", tolua_ExportedFunctions_BFGReachedFreemiumLimit00); // Unused
 	tolua_function(L, "TestFileFlagSystemFlag", tolua_ExportedFunctions_TestFileFlagSystemFlag00);
 	// tolua_function(L, "PrintDebugMessage", tolua_ExportedFunctions_PrintDebugMessage00); // Unused
 	tolua_function(L, "ExitZone", tolua_ExportedFunctions_ExitZone00);
 	tolua_function(L, "EnableRectBlocker", tolua_ExportedFunctions_EnableRectBlocker00);
-	/*tolua_function(L, "EnableBlocker", tolua_ExportedFunctions_EnableBlocker00);*/
+	tolua_function(L, "EnableBlocker", tolua_ExportedFunctions_EnableBlocker00);
 	tolua_function(L, "AddAnchorZone", tolua_ExportedFunctions_AddAnchorZone00);
 	tolua_function(L, "ActivateAnchorZone", tolua_ExportedFunctions_ActivateAnchorZone00);
 	//tolua_function(L, "SetCharacterAnchor", tolua_ExportedFunctions_SetCharacterAnchor00); // Unused
 	tolua_function(L, "SetCharacterLookChar", tolua_ExportedFunctions_SetCharacterLookChar00);
-	/*tolua_function(L, "Random", tolua_ExportedFunctions_Random00);
+	tolua_function(L, "Random", tolua_ExportedFunctions_Random00);
 	tolua_function(L, "SetCharacterMeshVisible", tolua_ExportedFunctions_SetCharacterMeshVisible00);
-	tolua_function(L, "SetRecallageY", tolua_ExportedFunctions_SetRecallageY00);*/
+	tolua_function(L, "SetRecallageY", tolua_ExportedFunctions_SetRecallageY00);
 	// tolua_function(L, "IsFreemiumUnlocked", tolua_ExportedFunctions_IsFreemiumUnlocked00); // Unused
 	// tolua_function(L, "ReachedFreemiumLimit", tolua_ExportedFunctions_ReachedFreemiumLimit00); // Unused
 	tolua_function(L, "AddUnrecalAnim", tolua_ExportedFunctions_AddUnrecalAnim00);

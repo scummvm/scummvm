@@ -193,6 +193,7 @@ public:
 	void setPosPlayer(const TeVector3f32 &pos) { _posPlayer = pos; }
 	TeTimer &walkTimer() { return _walkTimer; }
 	void setExitZone(const Common::String &zone) { _exitZone = zone; }
+	Common::RandomSource &randomSource() { return _randomSource; }
 
 private:
 	bool _luaShowOwnerError;
