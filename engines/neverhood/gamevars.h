@@ -28,7 +28,7 @@
 
 namespace Neverhood {
 
-enum {
+enum : uint {
 	// Misc
 	V_MODULE_NAME				= 0x91080831,			// Currently active module name hash
 	V_CURRENT_SCENE				= 0x108A4870,			// Current scene in the current module
