@@ -45,7 +45,7 @@ enum kReadSaveHeaderError {
 	kRSHEIoError = 3
 };
 
-enum Flags {
+enum Flags : uint {
 	ENGINE_FLAG_1 = 1,
 	ENGINE_FLAG_2 = 2,
 	ENGINE_FLAG_4 = 4,
