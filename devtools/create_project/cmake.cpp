@@ -341,6 +341,9 @@ void CMakeProvider::writeDefines(const BuildSetup &setup, std::ofstream &output)
 	output << "\tadd_definitions(-DWIN32)\n";
 	output << "else()\n";
 	output << "\tadd_definitions(-DPOSIX)\n";
+	output << "\t# Hope for the best regarding fseeko and 64-bit off_t\n";
+	output << "\tadd_definitions(-D_FILE_OFFSET_BITS=64)\n";
+	output << "\tadd_definitions(-DHAS_FSEEKO_OFFT_64)\n";
 	output << "endif()\n";
 
 	output << "add_definitions(-DSDL_BACKEND)\n";

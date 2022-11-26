@@ -1343,6 +1343,7 @@ void XcodeProvider::setupDefines(const BuildSetup &setup) {
 	REMOVE_DEFINE(_defines, "SDL_BACKEND");
 	ADD_DEFINE(_defines, "CONFIG_H");
 	ADD_DEFINE(_defines, "UNIX");
+	ADD_DEFINE(_defines, "HAS_FSEEKO_OFFT_64");
 	ADD_DEFINE(_defines, "SCUMMVM");
 }
 
