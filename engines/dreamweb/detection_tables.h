@@ -31,6 +31,27 @@ static const DreamWebGameDescription gameDescriptions[] = {
 	{
 		{
 			"dreamweb",
+			"Installer",
+			{
+				{"dreamw_1.rnc", 0, "4b8a92191219cc7e84d50837e1acca93", 1400000},
+				{"dreamw_2.rnc", 0, "603e053b763c54c13a1e5e28be2ea839", 1457664},
+				{"dreamw_3.rnc", 0, "1b273aa05a6afb8e7cd3c2defe2e334f", 1457664},
+				{"dreamw_4.rnc", 0, "f7bc7a8e1147d7379272c6dbfb5e7246", 1457664},
+				{"dreamw_5.rnc", 0, "0349950d94fee72b8fd57a22f7c465d1", 1457664},
+				{"dreamw_6.rnc", 0, "c99629c842967e5e41e1c298cb58274f", 662246},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			GF_INSTALLER,
+			GUIO0()
+		},
+	},
+
+	// International floppy release
+	{
+		{
+			"dreamweb",
 			"",
 			{
 				{"dreamweb.r00", 0, "3b5c87717fc40cc5a5ae19c155662ee3", 152918},
