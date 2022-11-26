@@ -55,7 +55,7 @@ enum ScriptOffsetEntryTypes {
 	SCI_SCR_OFFSET_TYPE_SAID
 };
 
-enum {
+enum : uint {
 	kNoRelocation = 0xFFFFFFFF
 };
 
