@@ -33,20 +33,20 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MiniMapGump)
 
-#define MAX_NUM_MAPS 256
 #define MINMAPGUMP_SCALE 8
 
 MiniMapGump::MiniMapGump(int x, int y) :
 	Gump(x, y, MAP_NUM_CHUNKS * 2 + 2, MAP_NUM_CHUNKS * 2 + 2, 0,
-	     FLAG_DRAGGABLE, LAYER_NORMAL), _minimaps(MAX_NUM_MAPS), _format(2, 5, 5, 5, 1, 11, 6, 1, 0), _ax(0), _ay(0) {
+	     FLAG_DRAGGABLE, LAYER_NORMAL), _minimaps(), _format(2, 5, 5, 5, 1, 11, 6, 1, 0), _ax(0), _ay(0) {
 }
 
-MiniMapGump::MiniMapGump() : Gump(), _minimaps(MAX_NUM_MAPS), _format(2, 5, 5, 5, 1, 11, 6, 1, 0), _ax(0), _ay(0) {
+MiniMapGump::MiniMapGump() : Gump(), _minimaps(), _format(2, 5, 5, 5, 1, 11, 6, 1, 0), _ax(0), _ay(0) {
 }
 
 MiniMapGump::~MiniMapGump(void) {
-	for (unsigned int i = 0; i < _minimaps.size(); ++i) {
-		_minimaps[i].free();
+	Common::HashMap<uint32, Graphics::Surface>::iterator iter;
+	for (iter = _minimaps.begin(); iter != _minimaps.end(); ++iter) {
+		iter->_value.free();
 	}
 }
 
@@ -119,8 +119,9 @@ void MiniMapGump::generate() {
 }
 
 void MiniMapGump::clear() {
-	for (unsigned int i = 0; i < _minimaps.size(); ++i) {
-		_minimaps[i].free();
+	Common::HashMap<uint32, Graphics::Surface>::iterator iter;
+	for (iter = _minimaps.begin(); iter != _minimaps.end(); ++iter) {
+		iter->_value.free();
 	}
 }
 
@@ -278,8 +279,10 @@ void MiniMapGump::saveData(Common::WriteStream *ws) {
 	ws->writeByte(_format.aShift);
 
 	ws->writeUint32LE(static_cast<uint32>(_minimaps.size()));
-	for (unsigned int i = 0; i < _minimaps.size(); ++i) {
-		const Graphics::Surface &minimap = _minimaps[i];
+	Common::HashMap<uint32, Graphics::Surface>::const_iterator iter;
+	for (iter = _minimaps.begin(); iter != _minimaps.end(); ++iter) {
+		const Graphics::Surface &minimap = iter->_value;
+		ws->writeUint32LE(iter->_key);
 		ws->writeUint16LE(minimap.w);
 		ws->writeUint16LE(minimap.h);
 		for (int y = 0; y < minimap.h; ++y) {
@@ -298,8 +301,9 @@ bool MiniMapGump::loadData(Common::ReadStream *rs, uint32 version) {
 	_ax = 0;
 	_ay = 0;
 
-	for (unsigned int i = 0; i < _minimaps.size(); ++i) {
-		_minimaps[i].free();
+	Common::HashMap<uint32, Graphics::Surface>::iterator iter;
+	for (iter = _minimaps.begin(); iter != _minimaps.end(); ++iter) {
+		iter->_value.free();
 	}
 	
 	if (version >= 6) {
@@ -313,16 +317,15 @@ bool MiniMapGump::loadData(Common::ReadStream *rs, uint32 version) {
 		_format.bShift = rs->readByte();
 		_format.aShift = rs->readByte();
 
-		uint32 mapcount = rs->readUint32LE();
-
-		// Integrity check
-		if (mapcount > _minimaps.size()) {
-			warning("Invalid minimap count in save: %d.  Corrupt save?", mapcount);
+		if (_format.bytesPerPixel == 2) {
+			error("unsupported minimap texture format %d bpp", _format.bytesPerPixel);
 			return false;
 		}
 
-		for (unsigned int i = 0; i < mapcount; ++i) {
-			Graphics::Surface &minimap = _minimaps[i];
+		uint32 mapcount = rs->readUint32LE();
+		for (uint32 i = 0; i < mapcount; ++i) {
+			uint32 key = rs->readUint32LE();
+			Graphics::Surface &minimap = _minimaps[key];
 
 			uint w = rs->readUint16LE();
 			uint h = rs->readUint16LE();
