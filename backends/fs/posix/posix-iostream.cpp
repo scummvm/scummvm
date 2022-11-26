@@ -32,7 +32,11 @@
 
 
 PosixIoStream *PosixIoStream::makeFromPath(const Common::String &path, bool writeMode) {
+#if defined(HAS_FSEEKO64)
+	FILE *handle = fopen64(path.c_str(), writeMode ? "wb" : "rb");
+#else
 	FILE *handle = fopen(path.c_str(), writeMode ? "wb" : "rb");
+#endif
 
 	if (handle)
 		return new PosixIoStream(handle);
