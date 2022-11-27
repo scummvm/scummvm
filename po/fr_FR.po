@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-27 13:04+0000\n"
+"POT-Creation-Date: 2022-11-27 13:37+0000\n"
 "PO-Revision-Date: 2022-11-22 18:23+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -4869,15 +4869,15 @@ msgstr ""
 "Utilise des boîtes de dialogues transparentes dans les scènes 16 couleurs "
 "même si le jeu original ne les supportait pas"
 
-#: engines/cine/metaengine.cpp:164
+#: engines/cine/metaengine.cpp:158
 msgid "Unnamed autosave"
 msgstr "Sauvegarde auto sans nom"
 
-#: engines/cine/metaengine.cpp:166 engines/cine/metaengine.cpp:238
+#: engines/cine/metaengine.cpp:160 engines/cine/metaengine.cpp:232
 msgid "Unnamed savegame"
 msgstr "Sauvegarde sans nom"
 
-#: engines/cine/metaengine.cpp:183 engines/cine/metaengine.cpp:246
+#: engines/cine/metaengine.cpp:177 engines/cine/metaengine.cpp:240
 msgid "Empty autosave"
 msgstr "Sauvegarde auto vide"
 
@@ -6273,11 +6273,11 @@ msgstr "Démarrer avec le débogueur"
 msgid "Starts with the debugger dashboard active."
 msgstr "Démarre avec le panneau de débogage activé."
 
-#: engines/mtropolis/metaengine.cpp:172
+#: engines/mtropolis/metaengine.cpp:160
 msgid "Toggle debug overlay"
 msgstr "Act./Désact. l'overlay de débogage"
 
-#: engines/mtropolis/metaengine.cpp:177
+#: engines/mtropolis/metaengine.cpp:165
 msgid "Force any playing movies to end"
 msgstr "Forcer l'arrêt des films en cours de lecture"
 

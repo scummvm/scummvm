@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-27 13:04+0000\n"
+"POT-Creation-Date: 2022-11-27 13:37+0000\n"
 "PO-Revision-Date: 2022-11-27 17:41+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -4869,15 +4869,15 @@ msgstr ""
 "Utilizza le finestre di dialogo trasparenti nelle schermate a 16 colori, che "
 "non erano supportate nel gioco originale"
 
-#: engines/cine/metaengine.cpp:164
+#: engines/cine/metaengine.cpp:158
 msgid "Unnamed autosave"
 msgstr "Autosalvataggio senza nome"
 
-#: engines/cine/metaengine.cpp:166 engines/cine/metaengine.cpp:238
+#: engines/cine/metaengine.cpp:160 engines/cine/metaengine.cpp:232
 msgid "Unnamed savegame"
 msgstr "Salvataggio senza nome"
 
-#: engines/cine/metaengine.cpp:183 engines/cine/metaengine.cpp:246
+#: engines/cine/metaengine.cpp:177 engines/cine/metaengine.cpp:240
 msgid "Empty autosave"
 msgstr "Autosalvataggio vuoto"
 
@@ -6257,11 +6257,11 @@ msgstr "Avvia con debugger"
 msgid "Starts with the debugger dashboard active."
 msgstr "Avvia il gioco con le funzionalità di debug abilitate."
 
-#: engines/mtropolis/metaengine.cpp:172
+#: engines/mtropolis/metaengine.cpp:160
 msgid "Toggle debug overlay"
 msgstr "Mostra/nascondi overlay di debug"
 
-#: engines/mtropolis/metaengine.cpp:177
+#: engines/mtropolis/metaengine.cpp:165
 msgid "Force any playing movies to end"
 msgstr "Interrompi filmato in riproduzione"
 

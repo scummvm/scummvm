@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-27 13:04+0000\n"
+"POT-Creation-Date: 2022-11-27 13:37+0000\n"
 "PO-Revision-Date: 2022-11-24 20:47+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -4858,15 +4858,15 @@ msgstr ""
 "Verwende transparente Dialogboxen in Szenen mit 16 Farben, auch wenn dies "
 "von dem Original-Spiel nicht unterstützt wird"
 
-#: engines/cine/metaengine.cpp:164
+#: engines/cine/metaengine.cpp:158
 msgid "Unnamed autosave"
 msgstr "Unbenannter Spielstand"
 
-#: engines/cine/metaengine.cpp:166 engines/cine/metaengine.cpp:238
+#: engines/cine/metaengine.cpp:160 engines/cine/metaengine.cpp:232
 msgid "Unnamed savegame"
 msgstr "Unbenannter Spielstand"
 
-#: engines/cine/metaengine.cpp:183 engines/cine/metaengine.cpp:246
+#: engines/cine/metaengine.cpp:177 engines/cine/metaengine.cpp:240
 msgid "Empty autosave"
 msgstr "Leerer Spielstand"
 
@@ -6251,11 +6251,11 @@ msgstr "Mit Debugger starten"
 msgid "Starts with the debugger dashboard active."
 msgstr "Startet das Spiel mit einem aktivierten Debugging-Dashboard."
 
-#: engines/mtropolis/metaengine.cpp:172
+#: engines/mtropolis/metaengine.cpp:160
 msgid "Toggle debug overlay"
 msgstr "Debug-Overlay umschalten"
 
-#: engines/mtropolis/metaengine.cpp:177
+#: engines/mtropolis/metaengine.cpp:165
 msgid "Force any playing movies to end"
 msgstr "Erzwinge, dass alle Videos bis zum Ende abgespielt werden"
 

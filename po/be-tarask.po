@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-27 13:04+0000\n"
+"POT-Creation-Date: 2022-11-27 13:37+0000\n"
 "PO-Revision-Date: 2022-08-02 15:16+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -4809,15 +4809,15 @@ msgstr ""
 "Выкарыстоўваць празрыстыя дыялёгавыя вокны ў 16-каляровых сцэнах, нават калі "
 "арыґінальная гульна не падтрымлівала гэтага"
 
-#: engines/cine/metaengine.cpp:164
+#: engines/cine/metaengine.cpp:158
 msgid "Unnamed autosave"
 msgstr "Неназваны аўтазахоў"
 
-#: engines/cine/metaengine.cpp:166 engines/cine/metaengine.cpp:238
+#: engines/cine/metaengine.cpp:160 engines/cine/metaengine.cpp:232
 msgid "Unnamed savegame"
 msgstr "Неназваны захоў"
 
-#: engines/cine/metaengine.cpp:183 engines/cine/metaengine.cpp:246
+#: engines/cine/metaengine.cpp:177 engines/cine/metaengine.cpp:240
 msgid "Empty autosave"
 msgstr "Пусты аўтазахоў"
 
@@ -6199,12 +6199,12 @@ msgstr "Запусьціць наладнік хібаў"
 msgid "Starts with the debugger dashboard active."
 msgstr "Запусьціць наладнік хібаў"
 
-#: engines/mtropolis/metaengine.cpp:172
+#: engines/mtropolis/metaengine.cpp:160
 #, fuzzy
 msgid "Toggle debug overlay"
 msgstr "Прыбраць гук"
 
-#: engines/mtropolis/metaengine.cpp:177
+#: engines/mtropolis/metaengine.cpp:165
 msgid "Force any playing movies to end"
 msgstr ""
 

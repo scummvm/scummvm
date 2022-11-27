@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-27 13:04+0000\n"
+"POT-Creation-Date: 2022-11-27 13:37+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -4774,15 +4774,15 @@ msgid ""
 "version did not support them"
 msgstr ""
 
-#: engines/cine/metaengine.cpp:164
+#: engines/cine/metaengine.cpp:158
 msgid "Unnamed autosave"
 msgstr "Auto-guardado sem nome"
 
-#: engines/cine/metaengine.cpp:166 engines/cine/metaengine.cpp:238
+#: engines/cine/metaengine.cpp:160 engines/cine/metaengine.cpp:232
 msgid "Unnamed savegame"
 msgstr "Jogo guardado sem nome"
 
-#: engines/cine/metaengine.cpp:183 engines/cine/metaengine.cpp:246
+#: engines/cine/metaengine.cpp:177 engines/cine/metaengine.cpp:240
 msgid "Empty autosave"
 msgstr "Auto-guardado vazio"
 
@@ -6051,12 +6051,12 @@ msgstr "Iniciar o depurador"
 msgid "Starts with the debugger dashboard active."
 msgstr "Iniciar o depurador"
 
-#: engines/mtropolis/metaengine.cpp:172
+#: engines/mtropolis/metaengine.cpp:160
 #, fuzzy
 msgid "Toggle debug overlay"
 msgstr "Ativar/desativar som"
 
-#: engines/mtropolis/metaengine.cpp:177
+#: engines/mtropolis/metaengine.cpp:165
 msgid "Force any playing movies to end"
 msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-27 13:04+0000\n"
+"POT-Creation-Date: 2022-11-27 13:37+0000\n"
 "PO-Revision-Date: 2022-10-23 18:43+0000\n"
 "Last-Translator: aquadran <aquadran@gmail.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -4868,17 +4868,17 @@ msgid ""
 "version did not support them"
 msgstr ""
 
-#: engines/cine/metaengine.cpp:164
+#: engines/cine/metaengine.cpp:158
 #, fuzzy
 msgid "Unnamed autosave"
 msgstr "Nienazwany stan gry"
 
-#: engines/cine/metaengine.cpp:166 engines/cine/metaengine.cpp:238
+#: engines/cine/metaengine.cpp:160 engines/cine/metaengine.cpp:232
 #, fuzzy
 msgid "Unnamed savegame"
 msgstr "Nienazwany stan gry"
 
-#: engines/cine/metaengine.cpp:183 engines/cine/metaengine.cpp:246
+#: engines/cine/metaengine.cpp:177 engines/cine/metaengine.cpp:240
 #, fuzzy
 msgid "Empty autosave"
 msgstr "Autozapis"
@@ -6173,12 +6173,12 @@ msgstr "Włącz debugger"
 msgid "Starts with the debugger dashboard active."
 msgstr "Uruchom z włączonym panelem debuggera."
 
-#: engines/mtropolis/metaengine.cpp:172
+#: engines/mtropolis/metaengine.cpp:160
 #, fuzzy
 msgid "Toggle debug overlay"
 msgstr "Wycisz dźwięk"
 
-#: engines/mtropolis/metaengine.cpp:177
+#: engines/mtropolis/metaengine.cpp:165
 msgid "Force any playing movies to end"
 msgstr ""
 

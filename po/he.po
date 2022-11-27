@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-27 13:04+0000\n"
+"POT-Creation-Date: 2022-11-27 13:37+0000\n"
 "PO-Revision-Date: 2022-10-27 02:33+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -4733,15 +4733,15 @@ msgid ""
 msgstr ""
 "שימוש בתיבות דו-שיח שקופות במסכים עם 16 צבעים אפילו אם המשחק אינו תומך בהן"
 
-#: engines/cine/metaengine.cpp:164
+#: engines/cine/metaengine.cpp:158
 msgid "Unnamed autosave"
 msgstr "שמירה אומטית ללא שם"
 
-#: engines/cine/metaengine.cpp:166 engines/cine/metaengine.cpp:238
+#: engines/cine/metaengine.cpp:160 engines/cine/metaengine.cpp:232
 msgid "Unnamed savegame"
 msgstr "משחק שמור ללא שם"
 
-#: engines/cine/metaengine.cpp:183 engines/cine/metaengine.cpp:246
+#: engines/cine/metaengine.cpp:177 engines/cine/metaengine.cpp:240
 msgid "Empty autosave"
 msgstr "שמירה אוטומטית ריקה"
 
@@ -6060,13 +6060,13 @@ msgstr "הפעלה עם ניפוי תקלים"
 msgid "Starts with the debugger dashboard active."
 msgstr "התחלה עם לוח ניפוי תקלים פעיל."
 
-#: engines/mtropolis/metaengine.cpp:172
+#: engines/mtropolis/metaengine.cpp:160
 #, fuzzy
 #| msgid "Toggle Clue Privacy"
 msgid "Toggle debug overlay"
 msgstr "מיתוג פרטיות רמזים"
 
-#: engines/mtropolis/metaengine.cpp:177
+#: engines/mtropolis/metaengine.cpp:165
 msgid "Force any playing movies to end"
 msgstr ""
 

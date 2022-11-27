@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-27 13:04+0000\n"
+"POT-Creation-Date: 2022-11-27 13:37+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -4923,17 +4923,17 @@ msgid ""
 "version did not support them"
 msgstr ""
 
-#: engines/cine/metaengine.cpp:164
+#: engines/cine/metaengine.cpp:158
 #, fuzzy
 msgid "Unnamed autosave"
 msgstr "Titulurik gabeko joko gordea"
 
-#: engines/cine/metaengine.cpp:166 engines/cine/metaengine.cpp:238
+#: engines/cine/metaengine.cpp:160 engines/cine/metaengine.cpp:232
 #, fuzzy
 msgid "Unnamed savegame"
 msgstr "Titulurik gabeko joko gordea"
 
-#: engines/cine/metaengine.cpp:183 engines/cine/metaengine.cpp:246
+#: engines/cine/metaengine.cpp:177 engines/cine/metaengine.cpp:240
 #, fuzzy
 msgid "Empty autosave"
 msgstr "Autogordetzea:"
@@ -6248,12 +6248,12 @@ msgstr "Araztailea abiarazi"
 msgid "Starts with the debugger dashboard active."
 msgstr "Araztailea abiarazi"
 
-#: engines/mtropolis/metaengine.cpp:172
+#: engines/mtropolis/metaengine.cpp:160
 #, fuzzy
 msgid "Toggle debug overlay"
 msgstr "Mututu/Ez-mututu"
 
-#: engines/mtropolis/metaengine.cpp:177
+#: engines/mtropolis/metaengine.cpp:165
 msgid "Force any playing movies to end"
 msgstr ""
 
