@@ -532,6 +532,12 @@ protected:
 	 * Returns a map containing all the extra game GUI options the engine supports.
 	 */
 	virtual const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const { return nullptr; }
+
+	/**
+	 * Returns the set of features that need to be enabled for the
+	 * extended save format to work
+	 */
+	bool checkExtendedSaves(MetaEngineFeature f) const;
 };
 
 /**

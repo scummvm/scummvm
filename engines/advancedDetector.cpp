@@ -966,3 +966,14 @@ void AdvancedMetaEngineDetection::detectClashes() const {
 			debug(0, "WARNING: Detection gameId for '%s' in engine '%s' has no games in the detection table", k._key.c_str(), getName());
 	}
 }
+
+bool AdvancedMetaEngine::checkExtendedSaves(MetaEngineFeature f) const {
+	return (f == kSavesUseExtendedFormat) ||
+		(f == kSimpleSavesNames) ||
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime);
+}
