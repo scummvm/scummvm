@@ -2182,7 +2182,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("intro", "", "xn--w8jm4fv92r", "f5277c53bacd27936158dd3867e587e2", 392314, Common::JA_JPN, 311),
 
-	WINGAME1t_l("intro1", "", "INTRO_01.EXE", "fe7c54b4af5508ef7378474c7e909a2b", 370007, Common::JA_JPN, 311),
+	WINGAME2t_l("intro1", "", "INTRO_01.EXE", "fe7c54b4af5508ef7378474c7e909a2b", 370007,
+							  "INTRO_01.MMM", "d1c6d74fab37ea4443116c70d5c3fbad", 9889324, Common::JA_JPN, 311),
 
 	// Original filename is 犬組デモ
 	MACDEMO1_l("inugumi", "Demo", "Inugumi Demo", "f5277c53bacd27936158dd3867e587e2", 2366437, Common::JA_JPN, 311),
@@ -2380,23 +2381,32 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("moderntimes", "Demo", "ModernTimes", "f5277c53bacd27936158dd3867e587e2", 391334, Common::JA_JPN, 311),
 
 	// Demos from The Computer Buyer Collection Volume 1 - Sep 1995
-	WINDEMO1t("msarcade",	   "Demo",		"ARCADE.EXE",   "a7f83e35541a2952cd4848becee98c1d", 1843614, 310),
+	WINDEMO2t("msarcade",	   "Demo",		"ARCADE.EXE",   "a7f83e35541a2952cd4848becee98c1d", 1843614,
+											"DEMO2.BMP",	"7a28df7b3c8e46ac03d2c093bf60da86", 17518, 310),
 	WINDEMO1("msartgallery",   "Demo",		"ARTGDEMO.EXE", "2b3543a9131a49f665982d26513a84f8", 370002, 310),
-	WINDEMO1("msbaseball",	   "1994 Demo",	"BASEBALL.EXE", "2b3543a9131a49f665982d26513a84f8", 370013, 310),
-	WINDEMO1("msbasketball",   "1994 Demo",	"BASKET.EXE",   "2b3543a9131a49f665982d26513a84f8", 370014, 310),
-	WINDEMO1("msbhumanbody",   "1994 Demo", "HUMAN.EXE",	"2b3543a9131a49f665982d26513a84f8", 918807, 310),
-	WINDEMO1("msbsolarsystem", "1994 Demo",	"SOLAR.EXE",	"2b3543a9131a49f665982d26513a84f8", 930151, 310),
+	WINDEMO2("msbaseball",	   "1994 Demo",	"BASEBALL.EXE", "2b3543a9131a49f665982d26513a84f8", 370013,
+											"BASEB1.MMM",	"12442f926d45ec25c6c2a9814229dc01", 1268842, 310),
+	WINDEMO2("msbasketball",   "1994 Demo",	"BASKET.EXE",   "2b3543a9131a49f665982d26513a84f8", 370014,
+											"BASKET1.MMM",	"5cecd4221e2b3b1d3cabc0d270631bfb", 799854, 310),
+	WINDEMO2("msbhumanbody",   "1994 Demo", "HUMAN.EXE",	"2b3543a9131a49f665982d26513a84f8", 918807,
+											"DEMO27.BMP",	"e2f2097bb3e44f98defeee9bbd4ed675", 17518, 310),
+	WINDEMO2("msbsolarsystem", "1994 Demo",	"SOLAR.EXE",	"2b3543a9131a49f665982d26513a84f8", 930151,
+											"DEMO28.BMP",	"80d9e50b6375124b7e13904982d2bfbd", 17518, 310),
 	WINDEMO1("mscomposers",	   "Demo",		"COMPDEMO.EXE", "2b3543a9131a49f665982d26513a84f8", 370005, 310),
-	WINDEMO1("msdinosaurs",	   "Demo",		"DINODEMO.EXE", "2b3543a9131a49f665982d26513a84f8", 370003, 310),
-	WINDEMO1("msflight",	   "Demo",		"FLIGHT.EXE",   "2b3543a9131a49f665982d26513a84f8", 3485236, 310),
+	WINDEMO2("msdinosaurs",	   "Demo",		"DINODEMO.EXE", "2b3543a9131a49f665982d26513a84f8", 370003,
+											"DINODEMO.MMM", "10e316126c6a7f8e61a7c2cac81141dc", 2914748, 310),
+	WINDEMO2("msflight",	   "Demo",		"FLIGHT.EXE",   "2b3543a9131a49f665982d26513a84f8", 3485236,
+											"DEMO19.BMP",	"af4ae36145d47e895e89ecd784f6835d", 17518, 310),
 	WINDEMO1("msfonts",		   "Demo",		"FNTS.EXE",		"2b3543a9131a49f665982d26513a84f8", 1419279, 310),
-	WINDEMO1("msgolf",	  "1994 Demo",		"GOLFDEMO.EXE", "febc8580c2d7d91b635f961c4f63da01", 4350031, 311),
-	WINDEMO1("msmoney",		   "Demo",		"MONEY.EXE",	"2b3543a9131a49f665982d26513a84f8", 2510607, 310),
-	WINDEMO1("msmouse",	  "1994 Demo",		"MOUSE2OH.EXE", "2b3543a9131a49f665982d26513a84f8", 370016, 310),
-	WINDEMO1("msmouseh",  "1994 Demo",		"HMOUSE.EXE",   "2b3543a9131a49f665982d26513a84f8", 370013, 310),
+	WINDEMO2("msgolf",	  	   "1994 Demo", "GOLFDEMO.EXE", "febc8580c2d7d91b635f961c4f63da01", 4350031,
+											"BMP1S1.AIF",	"baebf66575633107875c6cff78db0c1b", 77628, 311),
+	WINDEMO2("msmoney",		   "Demo",		"MONEY.EXE",	"2b3543a9131a49f665982d26513a84f8", 2510607,
+											"VMDEM.AIF",	"5aa4f6cb232fb6f2eb29e428c0249a3d", 200390, 310),
+	WINDEMO1("msmouse",		   "1994 Demo",	"MOUSE2OH.EXE", "2b3543a9131a49f665982d26513a84f8", 370016, 310),
+	WINDEMO1("msmouseh",	   "1994 Demo",	"HMOUSE.EXE",   "2b3543a9131a49f665982d26513a84f8", 370013, 310),
 	WINDEMO1("msmusint",	   "Demo",		"MUSIDEMO.EXE", "2b3543a9131a49f665982d26513a84f8", 370003, 310),
-	WINDEMO1("msnatkey",  "1994 Demo",		"QUIKLOOP.EXE", "2b3543a9131a49f665982d26513a84f8", 370016, 310),
-	WINDEMO1("mspublish", "v2.0 Demo",		"PUBDEMO.EXE",  "2b3543a9131a49f665982d26513a84f8", 3184344, 310),
+	WINDEMO1("msnatkey",	   "1994 Demo",	"QUIKLOOP.EXE", "2b3543a9131a49f665982d26513a84f8", 370016, 310),
+	WINDEMO1("mspublish",	   "v2.0 Demo",	"PUBDEMO.EXE",  "2b3543a9131a49f665982d26513a84f8", 3184344, 310),
 	WINDEMO1("mspublishd",	   "Demo",		"PUBLISH.EXE",  "2b3543a9131a49f665982d26513a84f8", 1644502, 310),
 	WINDEMO1("mssndbits",	   "Demo",		"SNDBITS.EXE",  "2b3543a9131a49f665982d26513a84f8", 1476769, 310),
 
@@ -2416,16 +2426,20 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("murderbrett", "", "The Environmental Surfer", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384213, 300),
 	WINGAME1("murderbrett", "", "BRETTP.EXE", "65d06b5fef155a2473434571aff5bc29", 370010, 300),
 
-	MACGAME1("murdermagic", "", "The Magic Death", "a8788e8b79dccc582b9818ec63734bed", 736498, 313),
-	WINGAME1t("murdermagic", "", "MAGIC.EXE", "86416853b3f18e841c091dd551f0fa53", 375298, 300),
+	MACGAME2("murdermagic", "", "The Magic Death", "a8788e8b79dccc582b9818ec63734bed", 736498,
+								"Support/Alibis",  "4d13f45b86ccffef28985a9ab2b04132", 370074, 313),
+	WINGAME2t("murdermagic", "", "MAGIC.EXE",  "86416853b3f18e841c091dd551f0fa53", 375298,
+								 "ALIBIS.MMM", "c77e7f0771aee22c5bf219a9073a9aeb", 543666, 310),
 
 	// Original Mac English filename is Who Killed Sam Rupert?
 	// Original Japanese demo filename is サム・ルパート殺人事件ﾃﾞﾓ
 	// English Mac demo from The Family Doctor, 3rd Edition
-	MACGAME1("murdersam", "",		"xn--Who Killed Sam Rupert-iba04l",  "243ed9ef948de907401784d0938a4ed5", 518740, 310),
-	WINGAME1("murdersam", "1993", "RUPERT.EXE", "5c6862a40a48881913ee7c50d25cd984", 225256, 300),
-	WINGAME1("murdersam", "1994", "SAM.EXE",	"65d06b5fef155a2473434571aff5bc29", 370016, 310),
-	MACDEMO1("murdersam", "Demo", "Sam Rupert Demo", "1ae45c23586b41997ba52e2e7c771c4c", 375280, 310),
+	MACGAME2("murdersam", "",		"xn--Who Killed Sam Rupert-iba04l",  "243ed9ef948de907401784d0938a4ed5", 518740,
+									"Sam Rupert/Alibis",				 "c496cb1502cd50af164a3ed7cf659762", 2608803, 310),
+	WINGAME1("murdersam", "1993", 	"RUPERT.EXE", "5c6862a40a48881913ee7c50d25cd984", 225256, 300),
+	WINGAME2("murdersam", "1994", 	"SAM.EXE",	"65d06b5fef155a2473434571aff5bc29", 370016,
+								  	"ALIBIS.MMM", "effe3e6f9b60da13ba7d39caa44632af", 2720784, 310),
+	MACDEMO1("murdersam", "Demo", 	"Sam Rupert Demo", "1ae45c23586b41997ba52e2e7c771c4c", 375280, 310),
 	MACDEMO1_l("murdersam", "Demo", "Sam Rupert Murder Demo", "2ce360c9ea2da80a2c6d1040b0ad92dd", 382269, Common::JA_JPN, 313),
 
 	// German and Korean versions are D4
@@ -2521,7 +2535,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("pyramidint", "", "Pyramid Interactive", "f5277c53bacd27936158dd3867e587e2", 396919, Common::JA_JPN, 311),
 	MACDEMO1_l("pyramidint", "Demo", "PyramidInteractive", "f5277c53bacd27936158dd3867e587e2", 1590926, Common::JA_JPN, 311),
 
-	WINGAME1t_l("rad1", "", "RAD.EXE", "664059c3a8f1acce4f469f4761264972", 375278, Common::JA_JPN, 310),
+	WINGAME2t_l("rad1", "", "WIN/RAD.EXE",   "664059c3a8f1acce4f469f4761264972", 375278,
+							"RADD/RAD1.MMM", "5f6af07fecaac4820c19d5e10c50d3a0", 1392154, Common::JA_JPN, 310),
 
 	MACDEMO1("ramdoubler", "", "RAM Doubler Tour", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 445441, 300),
 
