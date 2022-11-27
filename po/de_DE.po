@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-27 13:37+0000\n"
-"PO-Revision-Date: 2022-11-24 20:47+0000\n"
+"PO-Revision-Date: 2022-11-27 20:29+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -4994,11 +4994,11 @@ msgstr "Verwende aufgezeichnete Sound-Effekte anstatt der PC-Speaker-Emulation"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Extended timer"
-msgstr ""
+msgstr "Erweiterter Timer"
 
 #: engines/freescape/metaengine.cpp:43
 msgid "Start the game timer at 99:59:59"
-msgstr ""
+msgstr "Starte den Spiel-Timer bei 99:59:59"
 
 #: engines/freescape/metaengine.cpp:53
 msgid "Automatic drilling"
