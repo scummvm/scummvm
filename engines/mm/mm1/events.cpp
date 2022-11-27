@@ -324,6 +324,16 @@ void UIElement::delayFrames(uint frames) {
 	_timeoutCtr = frames;
 }
 
+bool UIElement::endDelay() {
+	if (_timeoutCtr) {
+		_timeoutCtr = 0;
+		timeout();
+		return true;
+	} else {
+		return false;
+	}
+}
+
 void UIElement::timeout() {
 	redraw();
 }

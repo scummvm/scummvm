@@ -43,11 +43,8 @@ bool Statue::msgValue(const ValueMessage &msg) {
 }
 
 bool Statue::msgKeypress(const KeypressMessage &msg) {
-	if (isDelayActive()) {
-		endDelay();
-	} else {
+	if (!endDelay())
 		leave();
-	}
 
 	return true;
 }

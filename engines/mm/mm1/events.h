@@ -108,10 +108,7 @@ protected:
 	/**
 	 * Ends an active delay and calls timeout
 	 */
-	void endDelay() {
-		_timeoutCtr = 0;
-		timeout();
-	}
+	bool endDelay();
 
 	/**
 	 * Called when an active timeout countdown expired

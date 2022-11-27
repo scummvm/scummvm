@@ -46,10 +46,8 @@ bool Tavern::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	// If timed message display, end the waiting
-	if (isDelayActive()) {
-		endDelay();
+	if (endDelay())
 		return true;
-	}
 
 	switch (msg.keycode) {
 	case Common::KEYCODE_a:
