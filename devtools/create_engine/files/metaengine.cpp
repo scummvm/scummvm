@@ -58,15 +58,7 @@ Common::Error XyzzyMetaEngine::createInstance(OSystem *syst, Engine **engine, co
 }
 
 bool XyzzyMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSavesUseExtendedFormat) ||
-		(f == kSimpleSavesNames) ||
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsDeleteSave) ||
-	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
+	return checkExtendedSaves(f) ||
 		(f == kSupportsLoadingDuringStartup);
 }
 
