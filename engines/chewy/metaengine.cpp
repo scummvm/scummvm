@@ -72,15 +72,8 @@ public:
 
 bool ChewyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSavesUseExtendedFormat) ||
-		(f == kSimpleSavesNames) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
+		checkExtendedSaves(f);
 }
 
 bool Chewy::ChewyEngine::hasFeature(EngineFeature f) const {
