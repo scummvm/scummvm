@@ -61,7 +61,13 @@ Common::Platform SagaEngine::getPlatform() const { return _gameDescription->desc
 int SagaEngine::getGameNumber() const { return _gameNumber; }
 int SagaEngine::getStartSceneNumber() const { return _gameDescription->startSceneNumber; }
 
-const ADGameFileDescription *SagaEngine::getFilesDescriptions() const { return _gameDescription->desc.filesDescriptions; }
+const ADGameFileDescription *SagaEngine::getFilesDescriptions() const {
+    return getFeatures() & GF_INSTALLER ? _gameDescription->filesInArchive : _gameDescription->desc.filesDescriptions;
+}
+
+const ADGameFileDescription *SagaEngine::getArchivesDescriptions() const {
+  return getFeatures() & GF_INSTALLER ? _gameDescription->desc.filesDescriptions : nullptr;
+}
 
 } // End of namespace Saga
 

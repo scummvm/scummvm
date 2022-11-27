@@ -63,6 +63,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE_DEMO,
 		PATCHLIST_NONE,
 		INTROLIST_ITE_DOS_DEMO,
+		{},
 	},
 
 	// Inherit the earth - MAC Demo version
@@ -87,6 +88,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE_WIN_DEMO,
 		PATCHLIST_ITE_MAC,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 
@@ -113,6 +115,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE_WIN_DEMO,
 		PATCHLIST_ITE_MAC,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 
@@ -139,6 +142,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE_WIN_DEMO,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 
@@ -165,6 +169,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE_WIN_DEMO,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 
@@ -198,6 +203,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE_WIN_DEMO,
 		PATCHLIST_NONE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - MAC CD First edition
@@ -225,6 +231,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE_WIN_DEMO,
 		PATCHLIST_NONE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - MAC CD Wyrmkeep version
@@ -249,6 +256,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE_WIN_DEMO,
 		PATCHLIST_ITE_MAC,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - MAC CD GOG version 1.1
@@ -273,6 +281,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_NONE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 
@@ -305,6 +314,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_NONE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - German Wyrmkeep combined Windows/Mac/Linux CD
@@ -332,6 +342,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_NONE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - Italian Wyrmkeep combined Windows/Mac/Linux CD (fan translation)
@@ -363,6 +374,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_NONE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - Wyrmkeep Windows CD version
@@ -389,6 +401,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - Wyrmkeep Linux CD version
@@ -415,6 +428,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - DOS CD version - 17-06-1994
@@ -440,6 +454,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - Wyrmkeep Italian Windows CD version (fan translation)
@@ -465,6 +480,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - Wyrmkeep Italian Linux CD version (fan translation)
@@ -490,6 +506,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - Italian DOS CD version (fan translation)
@@ -514,6 +531,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - Wyrmkeep French Windows CD version (fan translation)
@@ -539,6 +557,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - Wyrmkeep French Linux CD version (fan translation)
@@ -564,6 +583,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - French DOS CD version (fan translation)
@@ -588,6 +608,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - DOS CD version - 30-06-1994
@@ -612,6 +633,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - Hebrew fan translation
@@ -636,6 +658,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_NONE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - DOS CD German version
@@ -661,6 +684,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_NONE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - Windows Trial
@@ -688,6 +712,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_NONE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - macOS Trial
@@ -714,6 +739,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_NONE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - Pocket PC Trial
@@ -740,6 +766,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the Earth - Japanese PC-98 CD version
@@ -764,6 +791,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_NONE,
 		INTROLIST_ITE_DEFAULT,
+		{},
  	},
 
 	// Inherit the earth - Russian CD version (fan translation)
@@ -788,6 +816,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// ITE floppy versions ////////////////////////////////////////////////////////////////////////////////////
@@ -814,6 +843,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_NONE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - Disk version
@@ -838,6 +868,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - Italian Disk version (fan translation)
@@ -862,6 +893,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - Chinese Disk version
@@ -886,6 +918,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// Inherit the earth - Russian Disk version (fan translation)
@@ -910,6 +943,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
+		{},
 	},
 
 	// ITE Amiga versions /////////////////////////////////////////////////////////////////////////////////////
@@ -935,6 +969,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_AMIGA_GERMAN_AGA,
+		{},
 	},
 	// This is on the same disk as previous but it's for ECS systems
 	{
@@ -957,6 +992,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_AMIGA_GERMAN_ECS,
+		{},
 	},
 	// Amiga Future coverdisk/Wyrmkeep English edition
 	{
@@ -979,6 +1015,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_AMIGA_ENGLISH_AGA_CD,
+		{},
 	},
 	// This is on the same disk as previous but it's for ECS systems
 	{
@@ -1001,6 +1038,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
 		INTROLIST_ITE_AMIGA_ENGLISH_ECS_CD,
+		{},
 	},
 
 	// TODO: Add Amiga floppy versions
@@ -1031,6 +1069,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_IHNM_DEMO,
 		PATCHLIST_NONE,
 		INTROLIST_NONE,
+		{},
 	},
 
 	// I Have No Mouth And I Must Scream - English CD version
@@ -1063,6 +1102,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_IHNM_CD,
 		PATCHLIST_NONE,
 		INTROLIST_NONE,
+		{},
 	},
 
 	// I Have No Mouth And I Must Scream - De CD version
@@ -1093,6 +1133,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_IHNM_CD,
 		PATCHLIST_NONE,
 		INTROLIST_NONE,
+		{},
 	},
 
 	// I Have No Mouth And I Must Scream - German fan CD translation
@@ -1123,6 +1164,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_IHNM_CD,
 		PATCHLIST_NONE,
 		INTROLIST_NONE,
+		{},
 	},
 
 	// I Have No Mouth And I Must Scream - Hungarian fan CD translation
@@ -1153,6 +1195,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_IHNM_CD,
 		PATCHLIST_NONE,
 		INTROLIST_NONE,
+		{},
 	},
 
 	// I Have No Mouth And I Must Scream - Sp CD version
@@ -1181,6 +1224,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_IHNM_CD,
 		PATCHLIST_NONE,
 		INTROLIST_NONE,
+		{},
 	},
 
 	// I Have No Mouth And I Must Scream - Korean CD version
@@ -1210,6 +1254,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_IHNM_CD,
 		PATCHLIST_NONE,
 		INTROLIST_NONE,
+		{},
 	},
 
 	// I Have No Mouth And I Must Scream - Fr CD version
@@ -1239,6 +1284,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_IHNM_CD,
 		PATCHLIST_NONE,
 		INTROLIST_NONE,
+		{},
 	},
 
 	// I Have No Mouth And I Must Scream - Chinese CD
@@ -1268,6 +1314,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_IHNM_ZH,
 		PATCHLIST_NONE,
 		INTROLIST_NONE,
+		{},
 	},
 
 	// I Have No Mouth And I Must Scream - Italian fan CD translation
@@ -1296,6 +1343,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_IHNM_CD,
 		PATCHLIST_NONE,
 		INTROLIST_NONE,
+		{},
 	},
 
 	// I Have No Mouth And I Must Scream - Russian fan translaction v1.0 (by jack7277 et al)
@@ -1328,6 +1376,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_IHNM_CD,
 		PATCHLIST_NONE,
 		INTROLIST_NONE,
+		{},
 	},
 
 	// I Have No Mouth And I Must Scream - Mac English CD
@@ -1354,9 +1403,10 @@ static const SAGAGameDescription gameDescriptions[] = {
 		FONTLIST_IHNM_CD,
 		PATCHLIST_NONE,
 		INTROLIST_NONE,
+		{},
 	},
 
-	{ AD_TABLE_END_MARKER, 0, 0, 0, RESOURCELIST_NONE, FONTLIST_MAX, PATCHLIST_MAX, INTROLIST_NONE }
+	{ AD_TABLE_END_MARKER, 0, 0, 0, RESOURCELIST_NONE, FONTLIST_MAX, PATCHLIST_MAX, INTROLIST_NONE, {} }
 };
 
 } // End of namespace Saga

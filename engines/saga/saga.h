@@ -584,6 +584,7 @@ public:
 	int getStartSceneNumber() const;
 
 	const ADGameFileDescription *getFilesDescriptions() const;
+	const ADGameFileDescription *getArchivesDescriptions() const;
 
 	const Common::Rect &getDisplayClip() const { return _displayClip;}
 	Common::Error loadGameState(int slot) override;
