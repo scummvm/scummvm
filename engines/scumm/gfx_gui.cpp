@@ -131,6 +131,16 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 		bottomLineColor = 8;
 		leftLineColor = 15;
 		rightLineColor = 8;
+	} else if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD) {
+		// AFAIK, the original Sega CD interpreter doesn't have message banners, it just
+		// shows the main menu box (e.g. when pausing). In here, we can show the banner,
+		// but let's use the main menu box colors to avoid using unintended colors.
+		normalFillColor = getBannerColor(4);
+		normalTextColor = getBannerColor(2);
+		topLineColor = getBannerColor(13);
+		bottomLineColor = getBannerColor(14);
+		leftLineColor = getBannerColor(15);
+		rightLineColor = getBannerColor(16);
 	} else {
 		int palOffset = (_game.version == 8) ? 0 : 11;
 		normalFillColor = getBannerColor(6 * bannerId + 15 + palOffset);
