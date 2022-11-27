@@ -93,6 +93,7 @@ void Map02::special03() {
 }
 
 void Map02::special04() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map02.passage_outside"],
 		[]() {
@@ -149,6 +150,7 @@ void Map02::special14() {
 }
 
 void Map02::special15() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map02.portal"],
 		[]() {

@@ -174,6 +174,8 @@ void Map28::special00() {
 }
 
 void Map28::special01() {
+	visitedExit();
+
 	send(SoundMessage(
 		STRING["maps.map28.cave"],
 		[]() {

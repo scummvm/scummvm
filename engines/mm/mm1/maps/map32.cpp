@@ -57,6 +57,8 @@ void Map32::special() {
 }
 
 void Map32::special00() {
+	visitedExit();
+
 	if (!g_globals->_party.hasItem(DIAMOND_KEY_ID)) {
 		send(SoundMessage(STRING["maps.map32.door"]));
 	} else {
@@ -76,6 +78,8 @@ void Map32::special01() {
 }
 
 void Map32::special02() {
+	visitedExit();
+
 	if (_data[VAL2] & 0x80) {
 		g_maps->_mapPos = Common::Point(0, 7);
 		g_maps->changeMap(0xb07, 3);

@@ -45,6 +45,11 @@ enum StateFlag {
 	SFLAG_DISABLE_MONSTER_SPELLS = 2
 };
 
+enum Visited {
+	VISITED_NONE = 0, VISITED_NORMAL = 1, VISITED_SPECIAL = 2,
+	VISITED_EXIT = 3, VISITED_BUSINESS = 4	
+};
+
 /**
  * Container for all the game maps
  */

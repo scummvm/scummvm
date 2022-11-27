@@ -65,6 +65,7 @@ void Map10::special() {
 }
 
 void Map10::special00() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map10.passage_outside"],
 		[]() {

@@ -30,6 +30,8 @@ namespace MM1 {
 namespace Maps {
 
 void MapTown::blacksmith() {
+	visitedBusiness();
+
 	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.blacksmith_inside", _mapIndex)],
 		[]() {
@@ -39,6 +41,8 @@ void MapTown::blacksmith() {
 }
 
 void MapTown::inn() {
+	visitedBusiness();
+
 	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.inn_inside", _mapIndex)],
 		[]() {
@@ -48,6 +52,8 @@ void MapTown::inn() {
 }
 
 void MapTown::market() {
+	visitedBusiness();
+
 	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.market_inside", _mapIndex)],
 		[]() {
@@ -57,6 +63,8 @@ void MapTown::market() {
 }
 
 void MapTown::tavern() {
+	visitedBusiness();
+
 	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.tavern_inside", _mapIndex)],
 		[]() {
@@ -66,6 +74,8 @@ void MapTown::tavern() {
 }
 
 void MapTown::temple() {
+	visitedBusiness();
+
 	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.temple_inside", _mapIndex)],
 		[]() {
@@ -75,6 +85,8 @@ void MapTown::temple() {
 }
 
 void MapTown::training() {
+	visitedBusiness();
+
 	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.training_inside", _mapIndex)],
 		[]() {

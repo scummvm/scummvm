@@ -68,6 +68,8 @@ void Map43::special00() {
 void Map43::special01() {
 	_data[VAL1] = 0;
 	if (g_maps->_forwardMask == DIRMASK_E) {
+		visitedExit();
+
 		send(SoundMessage(
 			STRING["maps.map43.exit"],
 			[]() {

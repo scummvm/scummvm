@@ -59,6 +59,7 @@ void Map23::special() {
 }
 
 void Map23::special00() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map23.passage"],
 		[]() {
@@ -69,6 +70,7 @@ void Map23::special00() {
 }
 
 void Map23::special01() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map23.cave"],
 		[]() {

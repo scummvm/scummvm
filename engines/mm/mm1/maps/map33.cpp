@@ -146,6 +146,8 @@ void Map33::special00() {
 }
 
 void Map33::special01() {
+	visitedExit();
+
 	send(SoundMessage(
 		STRING["maps.map33.building"],
 		[]() {

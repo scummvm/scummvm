@@ -70,6 +70,7 @@ void Map20::special() {
 }
 
 void Map20::special00() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map20.stairs_down"],
 		[]() {
@@ -80,6 +81,7 @@ void Map20::special00() {
 }
 
 void Map20::special01() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map20.cave"],
 		[]() {
@@ -90,6 +92,7 @@ void Map20::special01() {
 }
 
 void Map20::special02() {
+	visitedExit();
 	if (_data[VAL1] & 0x80) {
 		g_maps->_mapPos = Common::Point(15, 8);
 		g_maps->changeMap(0xa11, 3);

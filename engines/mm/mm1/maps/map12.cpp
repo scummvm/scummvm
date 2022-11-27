@@ -54,6 +54,7 @@ void Map12::special() {
 }
 
 void Map12::special00() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.ladder_up"],
 		[]() {

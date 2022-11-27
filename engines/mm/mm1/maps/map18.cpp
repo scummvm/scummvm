@@ -53,6 +53,7 @@ void Map18::special() {
 }
 
 void Map18::special00() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map18.passage"],
 		[]() {
@@ -63,6 +64,7 @@ void Map18::special00() {
 }
 
 void Map18::special01() {
+	visitedExit();
 	if (_data[VAL1] & 0x80) {
 		g_maps->_mapPos = Common::Point(0, 7);
 		g_maps->changeMap(0x508, 3);
@@ -89,6 +91,7 @@ void Map18::special01() {
 }
 
 void Map18::special02() {
+	visitedExit();
 	if (_data[VAL2] & 0x80) {
 		g_maps->_mapPos = Common::Point(7, 15);
 		g_maps->changeMap(0xf08, 3);
@@ -115,6 +118,7 @@ void Map18::special02() {
 }
 
 void Map18::special03() {
+	visitedExit();
 	send(SoundMessage(STRING["maps.map18.ruins"],
 		[]() {
 			g_maps->_mapPos = Common::Point(2, 2);
@@ -152,6 +156,7 @@ void Map18::special07() {
 }
 
 void Map18::special08() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map18.cave"],
 		[]() {

@@ -83,6 +83,8 @@ void Map29::special() {
 }
 
 void Map29::special00() {
+	visitedExit();
+
 	send(SoundMessage(
 		STRING["maps.map29.algary"],
 		[]() {
