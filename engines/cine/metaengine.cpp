@@ -96,14 +96,8 @@ public:
 
 bool CineMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSavesUseExtendedFormat);
+		checkExtendedSaves(f);
 }
 
 bool Cine::CineEngine::hasFeature(EngineFeature f) const {
@@ -353,4 +347,3 @@ bool CineEngine::canSaveGameStateCurrently() {
 }
 
 } // End of namespace Cine
-
