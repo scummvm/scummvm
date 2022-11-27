@@ -110,6 +110,7 @@ void Map04::special03() {
 }
 
 void Map04::special04() {
+	visitedExit();
 	if (_data[MAP04_PASSAGE_OVERRIDE] || _data[MAP04_TREASURE_STOLEN] == 0) {
 		send(SoundMessage(
 			STRING["maps.map04.passage_outside"],
@@ -147,6 +148,7 @@ void Map04::special08() {
 }
 
 void Map04::special09() {
+	visitedExit();
 	if (_data[MAP04_STAIRS_OVERRIDE] || _data[MAP04_TREASURE_STOLEN] == 0) {
 		if (_data[MAP04_STAIRS_OVERRIDE] < 255)
 			_data[MAP04_STAIRS_OVERRIDE]++;

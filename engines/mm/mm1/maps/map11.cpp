@@ -67,6 +67,7 @@ void Map11::special() {
 }
 
 void Map11::special00() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map11.ladder"],
 		[]() {

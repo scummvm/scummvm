@@ -54,6 +54,7 @@ void Map09::special() {
 }
 
 void Map09::special00() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.stairs_up"],
 		[]() {
@@ -63,6 +64,7 @@ void Map09::special00() {
 }
 
 void Map09::special01() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map09.passage_outside"],
 		[]() {
@@ -211,6 +213,7 @@ void Map09::special27() {
 }
 
 void Map09::portal(int index) {
+	visitedExit();
 	_portalIndex = index;
 
 	send(SoundMessage(

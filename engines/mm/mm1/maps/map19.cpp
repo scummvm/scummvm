@@ -62,6 +62,7 @@ void Map19::special00() {
 }
 
 void Map19::special01() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map19.cave"],
 		[]() {
@@ -72,6 +73,7 @@ void Map19::special01() {
 }
 
 void Map19::special02() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map19.stairs_down"],
 		[]() {

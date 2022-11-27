@@ -92,6 +92,7 @@ void Map00::special03() {
 }
 
 void Map00::special04() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map00.passage_outside"],
 		[]() {
@@ -164,6 +165,7 @@ void Map00::special08() {
 }
 
 void Map00::special09() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.stairs_down"],
 		[]() {
@@ -255,6 +257,7 @@ void Map00::special22() {
 }
 
 void Map00::special23() {
+	visitedExit();
 	Common::String msg = STRING["maps.map00.trapdoor"];
 	if (g_globals->_activeSpells._s.levitate)
 		msg += STRING["maps.map00.levitate"];

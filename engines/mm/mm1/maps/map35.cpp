@@ -68,6 +68,8 @@ void Map35::special00() {
 }
 
 void Map35::special01() {
+	visitedExit();
+
 	send(SoundMessage(
 		STRING["maps.map35.exit"],
 		[]() {
@@ -78,6 +80,8 @@ void Map35::special01() {
 }
 
 void Map35::special02() {
+	visitedExit();
+
 	send(SoundMessage(STRING["maps.map35.slide"]));
 	g_maps->_mapPos = Common::Point(14, 9);
 	g_maps->changeMap(0xa00, 2);

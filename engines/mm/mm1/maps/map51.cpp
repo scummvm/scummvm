@@ -63,6 +63,8 @@ void Map51::special01() {
 }
 
 void Map51::special02() {
+	visitedExit();
+
 	send(SoundMessage(
 		STRING["maps.stairs_down"],
 		[]() {
@@ -72,6 +74,8 @@ void Map51::special02() {
 }
 
 void Map51::special03() {
+	visitedExit();
+
 	send(SoundMessage(
 		STRING["maps.stairs_up"],
 		[]() {

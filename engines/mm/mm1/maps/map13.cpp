@@ -75,6 +75,7 @@ void Map13::special() {
 }
 
 void Map13::special00() {
+	visitedExit();
 	_data[VAL1] = 0;
 	send(SoundMessage(
 		STRING["maps.map13.passage_outside"],

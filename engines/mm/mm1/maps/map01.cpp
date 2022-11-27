@@ -86,6 +86,7 @@ void Map01::special03() {
 }
 
 void Map01::special04() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map01.passage_outside"],
 		[]() {
@@ -138,6 +139,7 @@ void Map01::special08() {
 }
 
 void Map01::special09() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map01.passage_outside"],
 		[]() {

@@ -124,6 +124,7 @@ void Map03::special03() {
 }
 
 void Map03::special04() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map01.passage_outside"],
 		[]() {
@@ -153,6 +154,7 @@ void Map03::special08() {
 }
 
 void Map03::special09() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.stairs_down"],
 		[]() {

@@ -56,6 +56,8 @@ void Map34::special00() {
 }
 
 void Map34::special01() {
+	visitedExit();
+
 	send(SoundMessage(
 		STRING["maps.map34.passage"],
 		[]() {

@@ -59,9 +59,9 @@ void Map::draw() {
 			mazeY >= yStart; yp += TILE_H, --mazeY) {
 		for (int xp = BORDER_SIZE, mazeX = xStart;
 				mazeX < (xStart + totalX); xp += TILE_W, ++mazeX) {
-			bool isVisited = map._visited[mazeY * MAP_W + mazeX];
+			byte visited = map._visited[mazeY * MAP_W + mazeX];
 
-			if (!isVisited) {
+			if (!visited) {
 				g_globals->_tileSprites.draw(&s, 1,
 					Common::Point(xp, yp));
 			} else {
@@ -72,9 +72,17 @@ void Map::draw() {
 				int wallsE = (walls >> 4) & 3;
 				int wallsN = (walls >> 6) & 3;
 
-				// Color visited cells in black, and have a line
-				// on the edges representing walls vs doors
-				s.fillRect(r, 0);
+				// Color visited cells in a color depending on the cell type,
+				// and have a line on the edges representing walls vs doors
+				if (visited == Maps::VISITED_NORMAL)
+					s.fillRect(r, 0);
+				else if (visited == Maps::VISITED_SPECIAL)
+					s.fillRect(r, 0x10);
+				else if (visited == Maps::VISITED_EXIT)
+					s.fillRect(r, 0x20);
+				else if (visited == Maps::VISITED_BUSINESS)
+					s.fillRect(r, 0x30);
+
 				if (wallsN != Maps::WALL_NONE)
 					s.hLine(r.left, r.top, r.right - 1,
 						wallsN == Maps::WALL_DOOR ? 128 : 255);

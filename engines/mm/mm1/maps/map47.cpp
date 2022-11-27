@@ -88,6 +88,8 @@ void Map47::special02() {
 }
 
 void Map47::special03() {
+	visitedExit();
+
 	send(SoundMessage(
 		STRING["maps.stairs_up"],
 		[]() {

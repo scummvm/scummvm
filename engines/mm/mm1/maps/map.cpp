@@ -122,6 +122,19 @@ void Map::unlockDoor() {
 		g_maps->_forwardMask & 0x55;
 }
 
+void Map::visitedSpecial() {
+	if (!_visited[g_maps->_mapOffset])
+		_visited[g_maps->_mapOffset] = VISITED_SPECIAL;
+}
+
+void Map::visitedExit() {
+	_visited[g_maps->_mapOffset] = VISITED_EXIT;
+}
+
+void Map::visitedBusiness() {
+	_visited[g_maps->_mapOffset] = VISITED_BUSINESS;
+}
+
 } // namespace Maps
 } // namespace MM1
 } // namespace MM

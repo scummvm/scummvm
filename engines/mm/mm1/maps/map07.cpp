@@ -57,6 +57,7 @@ void Map07::special() {
 }
 
 void Map07::special00() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.stairs_up"],
 		[]() {
@@ -67,6 +68,7 @@ void Map07::special00() {
 }
 
 void Map07::special01() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map07.portal"],
 		[]() {

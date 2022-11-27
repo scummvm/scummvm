@@ -55,6 +55,8 @@ void Map39::special00() {
 }
 
 void Map39::special01() {
+	visitedExit();
+
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		g_globals->_party[i]._flags[7] |= CHARFLAG7_1;
 	}
@@ -69,6 +71,8 @@ void Map39::special01() {
 }
 
 void Map39::special02() {
+	visitedExit();
+
 	send(SoundMessage(
 		STRING["maps.stairs_down"],
 		[]() {

@@ -141,6 +141,7 @@ void Map25::special() {
 }
 
 void Map25::special00() {
+	visitedExit();
 	send(SoundMessage(
 		STRING["maps.map25.portal"],
 		[]() {
@@ -151,17 +152,16 @@ void Map25::special00() {
 }
 
 void Map25::special01() {
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		Character &c = g_globals->_party[i];
-		if (c.hasItem(CORAL_KEY_ID)) {
-			send(InfoMessage(
-				STRING["maps.map25.key"],
-				[]() {
-					g_maps->_mapPos = Common::Point(7, 5);
-					g_maps->changeMap(0x212, 1);
-				}
-			));
-		}
+	visitedExit();
+
+	if (g_globals->_party.hasItem(CORAL_KEY_ID)) {
+		send(InfoMessage(
+			STRING["maps.map25.key"],
+			[]() {
+				g_maps->_mapPos = Common::Point(7, 5);
+				g_maps->changeMap(0x212, 1);
+			}
+		));
 	}
 }
 

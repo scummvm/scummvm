@@ -70,6 +70,8 @@ void Map30::special() {
 }
 
 void Map30::special00() {
+	visitedExit();
+
 	send(SoundMessage(
 		STRING["maps.map30.passage"],
 		[]() {
@@ -80,6 +82,8 @@ void Map30::special00() {
 }
 
 void Map30::special01() {
+	visitedExit();
+
 	send(SoundMessage(
 		STRING["maps.map30.ruins"],
 		[]() {

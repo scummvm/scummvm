@@ -57,6 +57,8 @@ void Map49::special00() {
 }
 
 void Map49::special01() {
+	visitedExit();
+
 	send(SoundMessage(
 		STRING["maps.map49.passage"],
 		[]() {
@@ -67,6 +69,8 @@ void Map49::special01() {
 }
 
 void Map49::special02() {
+	visitedExit();
+
 	g_maps->_mapPos = Common::Point(15, 7);
 	g_maps->changeMap(0xb1a, 2);
 	send(SoundMessage(STRING["maps.map49.chute"]));
@@ -112,6 +116,8 @@ void Map49::special06() {
 }
 
 void Map49::special07() {
+	visitedExit();
+
 	reduceHP();
 	reduceHP();
 	g_maps->_mapPos = Common::Point(4, 7);

@@ -206,6 +206,21 @@ public:
 	 * Unlocks door
 	 */
 	void unlockDoor();
+
+	/**
+	 * Visited a special cell
+	 */
+	void visitedSpecial();
+
+	/**
+	 * Visited an exit cell
+	 */
+	void visitedExit();
+
+	/**
+	 * Visited a business cell
+	 */
+	void visitedBusiness();
 };
 
 } // namespace Maps

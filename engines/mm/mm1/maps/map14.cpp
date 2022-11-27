@@ -145,6 +145,7 @@ void Map14::special03() {
 }
 
 void Map14::special04() {
+	visitedExit();
 	if (_data[VAL2]) {
 		send(SoundMessage(
 			STRING["maps.map14.passage"],
