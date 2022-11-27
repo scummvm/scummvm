@@ -871,6 +871,40 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{},
 	},
 
+	// Same as above but installer
+	{
+		{
+			"ite",
+			"Floppy Packed",
+			{
+				{"inherit.arj", 0, "a7910371d6b43c00a318bc9c6f0062b4", 1413298},
+				{"inherit.a01", 0, "e5034686e3bc531ba1bbcb6c6efe90c1", 1456420},
+				{"inherit.a02", 0, "a8d3bf36dd7ece019fd2f819a0dfed70", 1456328},
+				{"inherit.a03", 0, "456a4ee942cdf653754fbec4e942db46", 1456284},
+				{"inherit.a04", 0, "748865cda20e1404b19f17b5aaab255d", 1456289},
+				{"inherit.105", 0, "c03f250b95dedf7f10bf188c49047140", 1117200},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_ITE,
+		GF_ITE_FLOPPY | GF_INSTALLER,
+		ITE_DEFAULT_SCENE,
+		RESOURCELIST_ITE,
+		FONTLIST_ITE,
+		PATCHLIST_ITE,
+		INTROLIST_ITE_DEFAULT,
+		{
+			{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54", 8903828},
+			{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", -1},
+			AD_LISTEND
+		},
+	},
+
+
 	// Inherit the earth - Italian Disk version (fan translation)
 	{
 		{
