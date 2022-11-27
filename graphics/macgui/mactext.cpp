@@ -2066,7 +2066,7 @@ int MacText::getAlignOffset(int row) {
 }
 
 void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
-	int nsx, nsy, nrow, ncol;
+	int nsx = 0, nsy = 0, nrow = 0, ncol = 0;
 
 	if (y > _textMaxHeight) {
 		x = _surface->w;
@@ -2089,30 +2089,28 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 
 	nsy = _textLines[nrow].y;
 
-	ncol = 0;
+	if (_textLines[nrow].chunks.size() > 0) {
+		int alignOffset = getAlignOffset(nrow);
 
-	int alignOffset = getAlignOffset(nrow);
+		int width = 0, pwidth = 0;
+		int mcol = 0, pmcol = 0;
 
-	int width = 0, pwidth = 0;
-	int mcol = 0, pmcol = 0;
-	uint chunk;
-	for (chunk = 0; chunk < _textLines[nrow].chunks.size(); chunk++) {
-		pwidth = width;
-		pmcol = mcol;
-		if (!_textLines[nrow].chunks[chunk].text.empty()) {
-			width += getStringWidth(_textLines[nrow].chunks[chunk], _textLines[nrow].chunks[chunk].text);
-			mcol += _textLines[nrow].chunks[chunk].text.size();
+		uint chunk;
+		for (chunk = 0; chunk < _textLines[nrow].chunks.size(); chunk++) {
+			pwidth = width;
+			pmcol = mcol;
+			if (!_textLines[nrow].chunks[chunk].text.empty()) {
+				width += getStringWidth(_textLines[nrow].chunks[chunk], _textLines[nrow].chunks[chunk].text);
+				mcol += _textLines[nrow].chunks[chunk].text.size();
+			}
+
+			if (width + alignOffset > x)
+				break;
 		}
 
-		if (width + alignOffset > x)
-			break;
-	}
+		if (chunk == _textLines[nrow].chunks.size())
+			chunk--;
 
-	if (chunk == _textLines[nrow].chunks.size())
-		chunk--;
-
-	// prevent out bounding error, because sometimes chunk.size() is 0, thus we don't have correct chunk number.
-	if (chunk < _textLines[nrow].chunks.size()) {
 		Common::U32String str = _textLines[nrow].chunks[chunk].text;
 
 		ncol = mcol;
