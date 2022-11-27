@@ -296,7 +296,7 @@ void FreescapeEngine::takeDamageFromSensor() {
 
 void FreescapeEngine::drawBackground() {
 	_gfx->setViewport(_fullscreenViewArea);
-	_gfx->clear(_currentArea->_usualBackgroundColor);
+	_gfx->clear(isAmiga() || isAtariST() ? 0 : _currentArea->_usualBackgroundColor);
 	_gfx->setViewport(_viewArea);
 	_gfx->clear(_currentArea->_skyColor);
 }
