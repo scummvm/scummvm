@@ -163,6 +163,9 @@ public:
 	 */
 	virtual DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags = 0, bool skipIncomplete = false) = 0;
 
+	/** Returns the number of bytes used for MD5-based detection, or 0 if not supported. */
+	virtual uint getMD5Bytes() const = 0;
+
 	/**
 	 * The default version of this method will just parse the options string from
 	 * the config manager. However it also allows the meta engine to post process

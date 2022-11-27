@@ -1822,22 +1822,17 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 
 		if (command == "md5" && settings.contains("md5-engine")) {
 			Common::String engineID = settings["md5-engine"];
-			if (engineID == "scumm") {
-				// Hardcoding value as scumm doesn't use AdvancedMetaEngineDetection
-				md5Length = 1024 * 1024;
-			} else {
-				const Plugin *plugin = EngineMan.findPlugin(engineID);
-				if (!plugin) {
-					warning("'%s' is an invalid engine ID. Use the --list-engines command to list supported engine IDs", engineID.c_str());
-					return true;
-				}
 
-				const AdvancedMetaEngineDetection* advEnginePtr = dynamic_cast<AdvancedMetaEngineDetection*>(&(plugin->get<MetaEngineDetection>()));
-				if (advEnginePtr == nullptr) {
-					warning("The requested engine (%s) doesn't support MD5-based detection", engineID.c_str());
-					return true;
-				}
-				md5Length = (int32)advEnginePtr->getMD5Bytes();
+			const Plugin *plugin = EngineMan.findPlugin(engineID);
+			if (!plugin) {
+				warning("'%s' is an invalid engine ID. Use the --list-engines command to list supported engine IDs", engineID.c_str());
+				return true;
+			}
+
+			md5Length = plugin->get<MetaEngineDetection>().getMD5Bytes();
+			if (!md5Length) {
+				warning("The requested engine (%s) doesn't support MD5-based detection", engineID.c_str());
+				return true;
 			}
 		}
 
