@@ -230,4 +230,9 @@ void GlkMetaEngineDetection::detectClashes() const {
 #endif
 }
 
+uint GlkMetaEngineDetection::getMD5Bytes() const {
+	// TODO: Implement this properly
+	return 0;
+}
+
 REGISTER_PLUGIN_STATIC(GLK_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, GlkMetaEngineDetection);

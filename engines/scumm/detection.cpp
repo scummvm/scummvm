@@ -84,6 +84,10 @@ public:
 	PlainGameDescriptor findGame(const char *gameid) const override;
 	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) override;
 
+	uint getMD5Bytes() const override {
+		 return 1024 * 1024;
+	}
+
 	Common::String parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const override;
 };
 

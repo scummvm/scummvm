@@ -67,6 +67,8 @@ public:
 	 * Calls each sub-engine in turn to ensure no game Id accidentally shares the same Id
 	 */
 	void detectClashes() const;
+
+	uint getMD5Bytes() const override;
 };
 
 namespace Glk {

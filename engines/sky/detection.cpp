@@ -66,6 +66,10 @@ public:
 	PlainGameList getSupportedGames() const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
 	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) override;
+
+	uint getMD5Bytes() const override {
+		return 0;
+	}
 };
 
 const char *SkyMetaEngineDetection::getEngineName() const {
