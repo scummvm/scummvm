@@ -235,7 +235,7 @@ T CRC<T>::crcFast(byte const message[], int nBytes) {
 	 * Divide the message by the polynomial, a byte at a time.
 	 */
 	for (int b = 0; b < nBytes; ++b) {
-		byte data = reflectData(message[b] ^ (remainder >> (_width - 8)));
+		byte data = reflectData(message[b]) ^ (remainder >> (_width - 8));
 		remainder = _crcTable[data] ^ (remainder << 8);
 	}
 
