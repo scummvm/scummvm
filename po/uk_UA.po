@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-27 23:20+0000\n"
+"POT-Creation-Date: 2022-11-27 23:25+0000\n"
 "PO-Revision-Date: 2022-11-22 19:32+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -6580,21 +6580,21 @@ msgid "Use an easier to read custom font"
 msgstr "Використовувати більш читабельний шрифт"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:673
+#: engines/saga/detection_tables.h:697
 msgid "Windows Trial version is not supported"
 msgstr "Пробна версія для Windows не підтримується"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:699
+#: engines/saga/detection_tables.h:724
 msgid "macOS Trial version is not supported"
 msgstr "Пробна версія для macOS не підтримується"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:724
+#: engines/saga/detection_tables.h:750
 msgid "Pocket PC Trial version is not supported"
 msgstr "Пробна версія для Pocket PC не підтримується"
 
-#: engines/saga/metaengine.cpp:108
+#: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
 msgstr "Підтримку для I Have no Mouth не скомпільовано"
 
@@ -6609,7 +6609,7 @@ msgstr ""
 "%s та %s. Без цих файлів музика\n"
 "не звучатиме так, як задумано в оригіналі."
 
-#: engines/saga/saga.cpp:375
+#: engines/saga/saga.cpp:387
 msgid "Error loading game resources."
 msgstr "Помилка читання файлу ресурсів гри."
 
