@@ -74,7 +74,7 @@ void Map23::special01() {
 	send(SoundMessage(
 		STRING["maps.map23.cave"],
 		[]() {
-			g_maps->_mapPos = Common::Point(2, 0);
+			g_maps->_mapPos = Common::Point(7, 0);
 			g_maps->changeMap(1, 1);
 		}
 	));
@@ -112,7 +112,7 @@ void Map23::special03() {
 
 void Map23::special08() {
 	send(SoundMessage(
-		STRING["maps.map19.column"],
+		STRING["maps.map23.column"],
 		[]() {
 			g_maps->_mapPos = Common::Point(
 				getRandomNumber(15), getRandomNumber(15));
@@ -123,7 +123,7 @@ void Map23::special08() {
 
 void Map23::special09() {
 	send(SoundMessage(
-		STRING["maps.map19.statues"],
+		STRING["maps.map23.statues"],
 		[]() {
 			Map23 &map = *static_cast<Map23 *>(g_maps->_currentMap);
 			Game::Encounter &enc = g_globals->_encounters;
@@ -169,7 +169,7 @@ void Map23::special11() {
 }
 
 void Map23::special12() {
-	send(SoundMessage(14, 22, STRING["maps.map23.avalanche"]));
+	send(SoundMessage(14, 2, STRING["maps.map23.avalanche"]));
 	g_maps->_currentState = 209;
 	_states[g_maps->_mapOffset] = 0xff;
 	_walls[g_maps->_mapOffset] = 162;
@@ -196,7 +196,6 @@ void Map23::fountain() {
 		[]() {
 			for (uint i = 0; i < g_globals->_party.size(); ++i) {
 				Character &c = g_globals->_party[i];
-				g_globals->_currCharacter = &c;
 				int attrNum = getRandomNumber(8) - 1;
 				c.getAttribute(attrNum)._current = 30;
 			}

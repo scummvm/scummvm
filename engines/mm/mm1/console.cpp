@@ -43,6 +43,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("encounter", WRAP_METHOD(Console, cmdEncounter));
 	registerCmd("encounters", WRAP_METHOD(Console, cmdEncounters));
 	registerCmd("specials", WRAP_METHOD(Console, cmdSpecials));
+	registerCmd("special", WRAP_METHOD(Console, cmdSpecial));
 }
 
 bool Console::cmdDumpMap(int argc, const char **argv) {
@@ -390,6 +391,39 @@ bool Console::cmdSpecials(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool Console::cmdSpecial(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("special <num> to execute special in the current map\n");
+		return true;
+	}
+
+	Maps::Maps &maps = *g_maps;
+	Maps::Map &map = *g_maps->_currentMap;
+	uint count = g_maps->_currentMap->dataByte(Maps::MAP_SPECIAL_COUNT);
+	uint specialNum = strToInt(argv[1]);
+
+	if (specialNum > count) {
+		debugPrintf("Invalid special number\n");
+		return true;
+	}
+
+	// Set new position
+	maps._mapOffset = map[51 + specialNum];
+	maps._mapPos.x = maps._mapOffset % 16;
+	maps._mapPos.y = maps._mapOffset / 16;
+
+	// Rotate to find a direction that will trigger the special
+	for (int i = 0; i < 4; ++i) {
+		if (maps._forwardMask & map[51 + count + specialNum])
+			break;
+		maps.turnLeft();
+	}
+
+	// Execute the specials handler for the map
+	map.special();
+	return false;
 }
 
 } // namespace MM1

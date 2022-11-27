@@ -85,6 +85,11 @@ protected:
 	 */
 	bool cmdSpecials(int argc, const char **argv);
 
+	/**
+	 * Trigger a special in the current map
+	 */
+	bool cmdSpecial(int argc, const char **argv);
+
 public:
 	Console();
 	~Console() override {}
