@@ -466,20 +466,30 @@ void ScummEngine_v4::o4_saveLoadGame() {
 		{
 		Common::InSaveFile *file = nullptr;
 		bool availableSaves[100];
+		bool atLeastOneSaveExists = false;
 
 		listSavegames(availableSaves, ARRAYSIZE(availableSaves));
 		Common::String filename = makeSavegameName(slot, false);
 
-		// LOOM Towns explicitly sets the result to 6 if the selected slot is 0
+		for (int i = 0; i < ARRAYSIZE(availableSaves); i++) {
+			if (availableSaves[i]) {
+				atLeastOneSaveExists = true;
+				break;
+			}
+		}
+
 		if (availableSaves[slot] && (file = _saveFileMan->openForLoading(filename))) {
 			result = 6; // Save file exists
 			delete file;
-		} else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformFMTowns && slot == 0) {
-			// LOOM Towns explicitly sets the result to 6 if the selected slot is 0
+		} else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformFMTowns && slot == 0 && atLeastOneSaveExists) {
+			// LOOM Towns explicitly sets the result to 6 if the selected slot is 0;
+			// also, it needs to have at least one savegame available, otherwise it would lead
+			// to the game reaching towards a non-existent string, and crashing as a consequence.
 			result = 6;
 		} else
 			result = (_game.id == GID_LOOM && _game.platform == Common::kPlatformFMTowns) ? 8 : 7; // Save file does not exist
 		}
+
 		break;
 	default:
 		error("o4_saveLoadGame: unknown subopcode %d", _opcode);
