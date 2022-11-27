@@ -70,13 +70,16 @@ void Gypsy::modeChanged(bool allowSelection) {
 void Gypsy::draw() {
 	clearSurface();
 	if (!_character) {
-		writeString(0, 1, STRING["maps.map24.gypsy"]);
+		writeString(0, 1, STRING["maps.map23.gypsy"]);
+
 	} else {
-		Common::String line = Common::String::format("%s %s",
-			STRING["maps.map24.your_sign_is"].c_str(),
-			STRING[Common::String::format("maps.map24.signs.%d",
+		Common::String line = Common::String::format(
+			STRING["maps.map23.your_sign_is"].c_str(),
+			STRING[Common::String::format("maps.map23.signs.%d",
 				_character->_flags[4] & CHARFLAG4_SIGN)].c_str()
 		);
+
+		writeString(0, 1, line);
 	}
 }
 
@@ -84,10 +87,8 @@ bool Gypsy::msgKeypress(const KeypressMessage &msg) {
 	if (_character) {
 		_character = nullptr;
 		modeChanged(true);
-	} else if (msg.keycode >= Common::KEYCODE_1 &&
-			msg.keycode <= Common::KEYCODE_6) {
-		uint idx = msg.keycode - Common::KEYCODE_1;
-		charSelected(idx);
+		draw();
+
 	} else {
 		close();
 	}
@@ -96,8 +97,8 @@ bool Gypsy::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool Gypsy::msgAction(const ActionMessage &msg) {
-	if (_character && msg._action >= KEYBIND_VIEW_PARTY1 &&
-		msg._action <= KEYBIND_VIEW_PARTY6) {
+	if (msg._action >= KEYBIND_VIEW_PARTY1 &&
+			msg._action <= KEYBIND_VIEW_PARTY6) {
 		uint idx = msg._action - KEYBIND_VIEW_PARTY1;
 		charSelected(idx);
 	}

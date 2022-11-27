@@ -66,7 +66,7 @@ bool StringsData::load(const Common::String &filename) {
 		if (value.hasPrefix("\"") && value.hasSuffix("\"")) {
 			value.deleteChar(0);
 			value.deleteLastChar();
-			value = searchAndReplace(value, "\"\"", "");
+			value = searchAndReplace(value, "\"\"", "\"");
 		}
 
 		// Replace any sequences
