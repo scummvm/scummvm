@@ -57,9 +57,7 @@ void Trap::draw() {
 }
 
 bool Trap::msgKeypress(const KeypressMessage &msg) {
-	cancelDelay();
-	timeout();
-
+	endDelay();
 	return true;
 }
 
