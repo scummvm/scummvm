@@ -1036,9 +1036,9 @@ void Actor::SetActorRGB(int ano, COLORREF color) {
 	assert(ano >= 0 && ano <= _numActors);
 
 	if (ano)
-		_actorInfo[ano - 1].textColor = TO_32(color);
+		_actorInfo[ano - 1].textColor = color;
 	else
-		_defaultColor = TO_32(color);
+		_defaultColor = color;
 }
 
 /**
