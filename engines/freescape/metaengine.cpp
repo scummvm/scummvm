@@ -37,6 +37,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 	{
+		GAMEOPTION_EXTENDED_TIMER,
+		{
+			_s("Extended timer"),
+			_s("Start the game timer at 99:59:59"),
+			"extended_timer",
+			false,
+			0,
+			0
+		}
+	},
+	{
 		GAMEOPTION_AUTOMATIC_DRILLING,
 		{
 			_s("Automatic drilling"),

@@ -320,6 +320,9 @@ public:
 	bool _timerStarted;
 	int _countdown;
 	int _ticks;
+
+	// Cheats
+	bool _useExtendedTimer;
 };
 
 enum DrillerReleaseFlags {
