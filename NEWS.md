@@ -43,6 +43,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Chinese Inherit the Earth.
    - Added support for Chinese I Have no Mouth and I Must Scream.
    - Added support for Korean I Have no Mouth and I Must Scream.
+   - Added Support playing directly from floppy installer for ITE.
 
  SCI:
    - Improved text rendering for Macintosh titles.
