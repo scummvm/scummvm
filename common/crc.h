@@ -49,8 +49,8 @@ public:
 	T processByte(byte byteVal, T remainder);
 	T finalize(T remainder);
 
-	T crcSlow(byte const message[], int nBytes);
-	T crcFast(byte const message[], int nBytes);
+	T crcSlow(byte const message[], int nBytes) const;
+	T crcFast(byte const message[], int nBytes) const;
 
 private:
 	T _poly;
@@ -65,10 +65,10 @@ private:
 
 	bool _inited;
 
-	uint32 reflect(uint32 data, byte nBits);
+	uint32 reflect(uint32 data, byte nBits) const;
 
-	byte reflectData(byte x) { return _reflect ? (byte)reflect(x, 8) : x; }
-	T reflectRemainder(T x) { return _reflect ? (T)reflect(x, _width) : x; }
+	byte reflectData(byte x) const { return _reflect ? (byte)reflect(x, 8) : x; }
+	T reflectRemainder(T x) const { return _reflect ? (T)reflect(x, _width) : x; }
 };
 
 /*********************************************************************
@@ -84,7 +84,7 @@ private:
  *
  *********************************************************************/
 template<typename T>
-uint32 CRC<T>::reflect(uint32 data, byte nBits) {
+uint32 CRC<T>::reflect(uint32 data, byte nBits) const {
 	uint32 reflection = 0x00000000;
 
 	/*
@@ -117,7 +117,7 @@ uint32 CRC<T>::reflect(uint32 data, byte nBits) {
  *
  *********************************************************************/
 template<typename T>
-T CRC<T>::crcSlow(byte const message[], int nBytes) {
+T CRC<T>::crcSlow(byte const message[], int nBytes) const {
 	T remainder = _init_remainder;
 
 	/*
@@ -225,7 +225,7 @@ T CRC<T>::init() {
  *
  *********************************************************************/
 template<typename T>
-T CRC<T>::crcFast(byte const message[], int nBytes) {
+T CRC<T>::crcFast(byte const message[], int nBytes) const {
 	T remainder = _init_remainder;
 
 	if (!_inited)
