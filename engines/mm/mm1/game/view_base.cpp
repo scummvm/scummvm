@@ -59,6 +59,8 @@ darkness:
 	g_globals->_encounters._encounterType = NORMAL_SURPRISED;
 	if (maps._currentState & Maps::CELL_SPECIAL) {
 		map.visitedSpecial();
+		draw();
+
 		map.special();
 
 	} else if (_stepRandom) {
