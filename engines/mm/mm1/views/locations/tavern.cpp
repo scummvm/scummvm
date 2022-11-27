@@ -40,10 +40,19 @@ bool Tavern::msgFocus(const FocusMessage &msg) {
 }
 
 bool Tavern::msgKeypress(const KeypressMessage &msg) {
-	switch (msg.keycode) {
-	case Common::KEYCODE_ESCAPE:
+	if (msg.keycode == Common::KEYCODE_ESCAPE) {
 		leave();
-		break;
+		return true;
+	}
+
+	// If timed message display, end the waiting
+	if (isDelayActive()) {
+		cancelDelay();
+		timeout();
+		return true;
+	}
+
+	switch (msg.keycode) {
 	case Common::KEYCODE_a:
 		haveADrink();
 		break;
@@ -106,7 +115,7 @@ void Tavern::tipBartender() {
 		if (g_globals->_currCharacter->_numDrinks == 0) {
 			displayMessage(STRING["dialogs.tavern.have_a_drink"]);
 		} else if (g_engine->getRandomNumber(3) != 3) {
-			displayMessage(STRING["dialogs.tavern.have_another_drink"]);
+			displayMessage(STRING["dialogs.tavern.have_another_round"]);
 		} else {
 			int townNum = g_maps->_currentMap->dataByte(Maps::MAP_ID);
 			displayMessage(STRING[Common::String::format(
