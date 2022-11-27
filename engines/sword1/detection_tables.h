@@ -345,6 +345,20 @@ static const SwordGameDescription gameDescriptions[] = {
 	{
 		{
 			"sword1",
+			"ND",
+			AD_ENTRY2s("compacts.clu", "7128bc4e99701d99c22e5841051671d3", 200852,
+			           "swordres.rif", "b5d9ddbe26d453415a43596f86452435", 59788),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		0
+	},
+
+	{
+		{
+			"sword1",
 			"",
 			AD_ENTRY3s("compacts.clm", "3a77d3cd0ca6c91a4f4e94459b1da773", 200852,
 			           "paris2.clm",   "6e096da5dc806b3b554fa371f6e0d749", 23981648,
