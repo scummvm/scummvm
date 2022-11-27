@@ -144,19 +144,7 @@ public:
 };
 
 bool MTropolisMetaEngine::hasFeature(MetaEngineFeature f) const {
-	switch (f) {
-	case kSupportsListSaves:
-	case kSupportsDeleteSave:
-	case kSavesSupportMetaInfo:
-	case kSavesSupportThumbnail:
-	case kSavesSupportCreationDate:
-	case kSavesSupportPlayTime:
-	case kSimpleSavesNames:
-	case kSavesUseExtendedFormat:
-		return true;
-	default:
-		return false;
-	}
+	return checkExtendedSaves(f);
 }
 
 Common::Error MTropolisMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
