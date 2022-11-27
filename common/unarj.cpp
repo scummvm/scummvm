@@ -690,14 +690,21 @@ void ArjDecoder::decode_f(int32 origsize) {
 
 #pragma mark ArjArchive implementation
 
-typedef HashMap<String, ArjHeader*, IgnoreCase_Hash, IgnoreCase_EqualTo> ArjHeadersMap;
+struct ArjFileChunk {
+	ArjHeader* _header;
+	uint _volume;
+
+	ArjFileChunk(ArjHeader* header, uint volume) : _header(header), _volume(volume) {}
+};
+
+typedef HashMap<String, Array<ArjFileChunk>, IgnoreCase_Hash, IgnoreCase_EqualTo> ArjHeadersMap;
 
 class ArjArchive : public Archive {
 	ArjHeadersMap _headers;
-	String _arjFilename;
+	Array<String> _arjFilenames;
 
 public:
-	ArjArchive(const String &name);
+	ArjArchive(const Array<String> &names);
 	virtual ~ArjArchive();
 
 	// Archive implementation
@@ -707,42 +714,45 @@ public:
 	SeekableReadStream *createReadStreamForMember(const Path &path) const override;
 };
 
-ArjArchive::ArjArchive(const String &filename) : _arjFilename(filename) {
-	File arjFile;
-
-	if (!arjFile.open(_arjFilename)) {
-		warning("ArjArchive::ArjArchive(): Could not find the archive file");
-		return;
-	}
-
-	int32 firstHeaderOffset = findHeader(arjFile);
-
-	if (firstHeaderOffset < 0) {
-		warning("ArjArchive::ArjArchive(): Could not find a valid header");
-		return;
-	}
-
-	ArjHeader *header = nullptr;
-
-	arjFile.seek(firstHeaderOffset, SEEK_SET);
-	if ((header = readHeader(arjFile)) == nullptr)
-		return;
-	delete header;
-
-	while ((header = readHeader(arjFile)) != nullptr) {
-		_headers[header->filename] = header;
-		arjFile.seek(header->compSize, SEEK_CUR);
-	}
-
-	debug(0, "ArjArchive::ArjArchive(%s): Located %d files", filename.c_str(), _headers.size());
+ArjArchive::~ArjArchive() {
+       debug(0, "ArjArchive Destructor Called");
+       ArjHeadersMap::iterator it = _headers.begin();
+       for ( ; it != _headers.end(); ++it) {
+	       for (uint i = 0; i < it->_value.size(); i++)
+		       delete it->_value[i]._header;
+       }
 }
 
-ArjArchive::~ArjArchive() {
-	debug(0, "ArjArchive Destructor Called");
-	ArjHeadersMap::iterator it = _headers.begin();
-	for ( ; it != _headers.end(); ++it) {
-		delete it->_value;
+ArjArchive::ArjArchive(const Array<String> &filenames) : _arjFilenames(filenames) {
+	for (uint i = 0; i < _arjFilenames.size(); i++) {
+		File arjFile;
+
+		if (!arjFile.open(_arjFilenames[i])) {
+			warning("ArjArchive::ArjArchive(): Could not find the archive file");
+			return;
+		}
+
+		int32 firstHeaderOffset = findHeader(arjFile);
+
+		if (firstHeaderOffset < 0) {
+			warning("ArjArchive::ArjArchive(): Could not find a valid header");
+			return;
+		}
+
+		ArjHeader *header = nullptr;
+
+		arjFile.seek(firstHeaderOffset, SEEK_SET);
+		if ((header = readHeader(arjFile)) == nullptr)
+			return;
+		delete header;
+
+		while ((header = readHeader(arjFile)) != nullptr) {
+			_headers[header->filename].push_back(ArjFileChunk(header, i));
+			arjFile.seek(header->compSize, SEEK_CUR);
+		}
 	}
+	
+	debug(0, "ArjArchive::ArjArchive(%d volume(s) starting with %s): Located %d files", filenames.size(), filenames.empty() ? "" : filenames[0].c_str(), _headers.size());
 }
 
 bool ArjArchive::hasFile(const Path &path) const {
@@ -755,7 +765,7 @@ int ArjArchive::listMembers(ArchiveMemberList &list) const {
 
 	ArjHeadersMap::const_iterator it = _headers.begin();
 	for ( ; it != _headers.end(); ++it) {
-		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(it->_value->filename, this)));
+		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(it->_value[0]._header->filename, this)));
 		matches++;
 	}
 
@@ -776,43 +786,66 @@ SeekableReadStream *ArjArchive::createReadStreamForMember(const Path &path) cons
 		return nullptr;
 	}
 
-	ArjHeader *hdr = _headers[name];
+	const Array <ArjFileChunk>& hdrs = _headers[name];
 
-	File archiveFile;
-	archiveFile.open(_arjFilename);
-	archiveFile.seek(hdr->pos, SEEK_SET);
+	uint64 uncompressedSize = 0;
+	uint totalChunks;
+	for (totalChunks = 0; totalChunks < hdrs.size(); totalChunks++) {
+		uncompressedSize += hdrs[totalChunks]._header->origSize;
+		if (!(hdrs[totalChunks]._header->flags & 0x4)) {
+			totalChunks++;
+			break;
+		}
+	}
+
+	// Prevent overflows
+	if (uncompressedSize > 0x70000000)
+		return nullptr;
 
 	// TODO: It would be good if ArjFile could decompress files in a streaming
 	// mode, so it would not need to pre-allocate the entire output.
-	byte *uncompressedData = (byte *)malloc(hdr->origSize);
+	byte *uncompressedData = (byte *)malloc(uncompressedSize);
+	uint32 uncompressedPtr = 0;
 	assert(uncompressedData);
 
-	if (hdr->method == 0) { // store
-		int32 len = archiveFile.read(uncompressedData, hdr->origSize);
-		assert(len == hdr->origSize);
-	} else {
-		ArjDecoder *decoder = new ArjDecoder(hdr);
+	for (uint chunk = 0; chunk < totalChunks; chunk++) {
+		File archiveFile;
+		ArjHeader *hdr = hdrs[chunk]._header;
+		archiveFile.open(_arjFilenames[hdrs[chunk]._volume]);
+		archiveFile.seek(hdr->pos, SEEK_SET);
 
-		// TODO: It might not be appropriate to use this wrapper inside ArjFile.
-		// If reading from archiveFile directly is too slow to be usable,
-		// maybe the filesystem code should instead wrap its files
-		// in a BufferedReadStream.
-		decoder->_compressed = wrapBufferedReadStream(&archiveFile, 4096, DisposeAfterUse::NO);
-		decoder->_outstream = new MemoryWriteStream(uncompressedData, hdr->origSize);
+		if (hdr->method == 0) { // store
+			int32 len = archiveFile.read(uncompressedData + uncompressedPtr, hdr->origSize);
+			assert(len == hdr->origSize);
+		} else {
+			ArjDecoder *decoder = new ArjDecoder(hdr);
 
-		if (hdr->method == 1 || hdr->method == 2 || hdr->method == 3)
-			decoder->decode(hdr->origSize);
-		else if (hdr->method == 4)
-			decoder->decode_f(hdr->origSize);
+			// TODO: It might not be appropriate to use this wrapper inside ArjFile.
+			// If reading from archiveFile directly is too slow to be usable,
+			// maybe the filesystem code should instead wrap its files
+			// in a BufferedReadStream.
+			decoder->_compressed = wrapBufferedReadStream(&archiveFile, 4096, DisposeAfterUse::NO);
+			decoder->_outstream = new MemoryWriteStream(uncompressedData + uncompressedPtr, hdr->origSize);
 
-		delete decoder;
+			if (hdr->method == 1 || hdr->method == 2 || hdr->method == 3)
+				decoder->decode(hdr->origSize);
+			else if (hdr->method == 4)
+				decoder->decode_f(hdr->origSize);
+
+			delete decoder;
+		}
+		uncompressedPtr += hdr->origSize;
 	}
 
-	return new MemoryReadStream(uncompressedData, hdr->origSize, DisposeAfterUse::YES);
+	return new MemoryReadStream(uncompressedData, uncompressedSize, DisposeAfterUse::YES);
 }
 
 Archive *makeArjArchive(const String &name) {
-	return new ArjArchive(name);
+	return new ArjArchive({name});
+}
+
+Archive *makeArjArchive(const Array<String> &names) {
+	return new ArjArchive(names);
 }
 
 } // End of namespace Common
