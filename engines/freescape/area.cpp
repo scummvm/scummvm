@@ -212,6 +212,33 @@ ObjectArray Area::checkCollisions(const Math::AABB &boundingBox) {
 	return collided;
 }
 
+bool Area::checkInSight(const Math::Ray &ray, float maxDistance) {
+	Math::Vector3d direction = ray.getDirection();
+	direction.normalize();
+	GeometricObject point(kCubeType,
+			0,
+			0,
+			Math::Vector3d(0, 0, 0),
+			Math::Vector3d(maxDistance / 30, maxDistance / 30, maxDistance / 30), // size
+			nullptr,
+			nullptr,
+			FCLInstructionVector(),
+			"");
+
+	for (int distanceMultiplier = 2; distanceMultiplier <= 10; distanceMultiplier++) {
+		Math::Vector3d origin = ray.getOrigin() + distanceMultiplier * (maxDistance / 10) * direction;
+		point.setOrigin(origin);
+
+		for (auto &obj : _drawableObjects) {
+			if (obj->getType() != kSensorType && !obj->isDestroyed() && !obj->isInvisible() && obj->_boundingBox.isValid() && point.collides(obj->_boundingBox)) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 void Area::addObject(Object *obj) {
 	assert(obj);
 	int id = obj->getObjectID();

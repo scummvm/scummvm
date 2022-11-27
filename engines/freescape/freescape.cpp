@@ -253,6 +253,11 @@ bool FreescapeEngine::checkSensors() {
 			playerDetected = true;
 
 		if (playerDetected) {
+			Math::Ray sight(sensor->getOrigin(), -diff);
+			playerDetected = _currentArea->checkInSight(sight, diff.length());
+		}
+
+		if (playerDetected) {
 			if ((ABS(diff.x() + ABS(diff.y())) + ABS(diff.z()) <= sensor->_firingRange) &&
 			    (_ticks % sensor->_firingInterval == 0)) {
 				frameRedrawed = true;

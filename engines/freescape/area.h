@@ -53,6 +53,7 @@ public:
 	void show();
 
 	Object *shootRay(const Math::Ray &ray);
+	bool checkInSight(const Math::Ray &ray, float maxDistance);
 	ObjectArray checkCollisions(const Math::AABB &boundingBox);
 	void addObjectFromArea(int16 id, Area *global);
 	void addObject(Object *obj);
