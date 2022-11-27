@@ -88,7 +88,6 @@ const char *directoryGlobs[] = {
 	"ojo2000",
 	"stuff",						// Abrapalabra
 	"tooned",						// Stay Tooned
-	"sam rupert",					// Who Killed Sam Rupert?
 	"content",
 	"pcinst",						// Gus and the CyberBuds series
 	"p2data",
