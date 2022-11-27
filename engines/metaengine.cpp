@@ -387,7 +387,7 @@ SaveStateList MetaEngine::listSaves(const char *target, bool saveMode) const {
 
 	// No autosave yet. We want to add a dummy one in so that it can be marked as
 	// write protected, and thus be prevented from being saved in
-	const Common::U32String &dummyAutosave = ConfMan.getInt("autosave_period”) ? _(“Autosave on”) : _(“Autosave off”);
+	const Common::U32String &dummyAutosave = (ConfMan.getInt("autosave_period") ? _("Autosave on") : _("Autosave off"));
 	SaveStateDescriptor desc(this, autosaveSlot, dummyAutosave);
 	desc.setWriteProtectedFlag(true);
 	desc.setDeletableFlag(false);
