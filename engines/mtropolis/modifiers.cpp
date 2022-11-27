@@ -2319,7 +2319,7 @@ bool CompoundVariableModifier::load(ModifierLoaderContext &context, const Data::
 }
 
 void CompoundVariableModifier::disable(Runtime *runtime) {
-	// Do nothing I guess, no variables can be disdabled
+	// Do nothing I guess, no variables can be disabled
 }
 
 Common::SharedPtr<ModifierSaveLoad> CompoundVariableModifier::getSaveLoad() {
@@ -2346,7 +2346,7 @@ void CompoundVariableModifier::visitInternalReferences(IStructuralReferenceVisit
 }
 
 bool CompoundVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
-	Modifier *var = findChildByName(attrib);
+	Modifier *var = findChildByName(thread->getRuntime(), attrib);
 	if (var) {
 		// Shouldn't dereference the value here, some scripts (e.g. "<go dest> on MUI" in Obsidian) depend on it not being dereferenced
 		result.setObject(var->getSelfReference());
@@ -2356,7 +2356,7 @@ bool CompoundVariableModifier::readAttribute(MiniscriptThread *thread, DynamicVa
 }
 
 bool CompoundVariableModifier::readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) {
-	Modifier *var = findChildByName(attrib);
+	Modifier *var = findChildByName(thread->getRuntime(), attrib);
 	if (!var || !var->isVariable())
 		return false;
 
@@ -2364,7 +2364,7 @@ bool CompoundVariableModifier::readAttributeIndexed(MiniscriptThread *thread, Dy
 }
 
 MiniscriptInstructionOutcome CompoundVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
-	Modifier *var = findChildByName(attrib);
+	Modifier *var = findChildByName(thread->getRuntime(), attrib);
 	if (!var)
 		return kMiniscriptInstructionOutcomeFailed;
 
@@ -2379,14 +2379,26 @@ MiniscriptInstructionOutcome CompoundVariableModifier::writeRefAttribute(Miniscr
 }
 
 MiniscriptInstructionOutcome CompoundVariableModifier::writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index) {
-	Modifier *var = findChildByName(attrib);
+	Modifier *var = findChildByName(thread->getRuntime(), attrib);
 	if (!var || !var->isModifier())
 		return kMiniscriptInstructionOutcomeFailed;
 
 	return var->writeRefAttributeIndexed(thread, writeProxy, "value", index);
 }
 
-Modifier *CompoundVariableModifier::findChildByName(const Common::String &name) const {
+Modifier *CompoundVariableModifier::findChildByName(Runtime *runtime, const Common::String &name) const {
+	if (runtime->getHacks().mtiVariableReferencesHack) {
+		const Common::String &myName = getName();
+
+		if (myName.size() == 1 && myName == "a" || myName == "b" || myName == "c" || myName == "d") {
+			Project *project = runtime->getProject();
+			Modifier *modifier = project->findGlobalVarWithName(MTropolis::toCaseInsensitive(name)).get();
+
+			if (modifier)
+				return modifier;
+		}
+	}
+
 	for (Common::Array<Common::SharedPtr<Modifier> >::const_iterator it = _children.begin(), itEnd = _children.end(); it != itEnd; ++it) {
 		Modifier *modifier = it->get();
 		if (caseInsensitiveEqual(name, modifier->getName()))
@@ -2446,20 +2458,16 @@ const char *CompoundVariableModifier::getDefaultName() const {
 	return "Compound Variable";
 }
 
-BooleanVariableModifier::BooleanVariableModifier() : _value(false) {
+BooleanVariableModifier::BooleanVariableModifier() : VariableModifier(Common::SharedPtr<VariableStorage>(new BooleanVariableStorage())) {
 }
 
 bool BooleanVariableModifier::load(ModifierLoaderContext &context, const Data::BooleanVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	_value = (data.value != 0);
+	static_cast<BooleanVariableStorage *>(_storage.get())->_value = (data.value != 0);
 
 	return true;
-}
-
-Common::SharedPtr<ModifierSaveLoad> BooleanVariableModifier::getSaveLoad() {
-	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
 bool BooleanVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
@@ -2467,20 +2475,20 @@ bool BooleanVariableModifier::varSetValue(MiniscriptThread *thread, const Dynami
 	if (!value.convertToType(DynamicValueTypes::kBoolean, boolValue))
 		return false;
 
-	_value = boolValue.getBool();
+	static_cast<BooleanVariableStorage *>(_storage.get())->_value = boolValue.getBool();
 
 	return true;
 }
 
 void BooleanVariableModifier::varGetValue(DynamicValue &dest) const {
-	dest.setBool(_value);
+	dest.setBool(static_cast<BooleanVariableStorage *>(_storage.get())->_value);
 }
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 void BooleanVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 	VariableModifier::debugInspect(report);
 
-	report->declareDynamic("value", _value ? "true" : "false");
+	report->declareDynamic("value", static_cast<BooleanVariableStorage *>(_storage.get())->_value ? "true" : "false");
 }
 #endif
 
@@ -2492,19 +2500,30 @@ const char *BooleanVariableModifier::getDefaultName() const {
 	return "Boolean Variable";
 }
 
-BooleanVariableModifier::SaveLoad::SaveLoad(BooleanVariableModifier *modifier) : _modifier(modifier) {
-	_value = _modifier->_value;
+BooleanVariableStorage::BooleanVariableStorage() : _value(false) {
 }
 
-void BooleanVariableModifier::SaveLoad::commitLoad() const {
-	_modifier->_value = _value;
+Common::SharedPtr<ModifierSaveLoad> BooleanVariableStorage::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
-void BooleanVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+Common::SharedPtr<VariableStorage> BooleanVariableStorage::clone() const {
+	return Common::SharedPtr<VariableStorage>(new BooleanVariableStorage(*this));
+}
+
+BooleanVariableStorage::SaveLoad::SaveLoad(BooleanVariableStorage *storage) : _storage(storage) {
+	_value = _storage->_value;
+}
+
+void BooleanVariableStorage::SaveLoad::commitLoad() const {
+	_storage->_value = _value;
+}
+
+void BooleanVariableStorage::SaveLoad::saveInternal(Common::WriteStream *stream) const {
 	stream->writeByte(_value ? 1 : 0);
 }
 
-bool BooleanVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
+bool BooleanVariableStorage::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
 	byte b = stream->readByte();
 	if (stream->err())
 		return false;
@@ -2513,20 +2532,27 @@ bool BooleanVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream,
 	return true;
 }
 
-IntegerVariableModifier::IntegerVariableModifier() : _value(0) {
+IntegerVariableModifier::IntegerVariableModifier() : VariableModifier(Common::SharedPtr<VariableStorage>(new IntegerVariableStorage())) {
 }
 
 bool IntegerVariableModifier::load(ModifierLoaderContext& context, const Data::IntegerVariableModifier& data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	_value = data.value;
+	static_cast<IntegerVariableStorage *>(_storage.get())->_value = data.value;
 
 	return true;
 }
 
-Common::SharedPtr<ModifierSaveLoad> IntegerVariableModifier::getSaveLoad() {
+IntegerVariableStorage::IntegerVariableStorage() : _value(0) {
+}
+
+Common::SharedPtr<ModifierSaveLoad> IntegerVariableStorage::getSaveLoad() {
 	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
+}
+
+Common::SharedPtr<VariableStorage> IntegerVariableStorage::clone() const {
+	return Common::SharedPtr<VariableStorage>(new IntegerVariableStorage(*this));
 }
 
 bool IntegerVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
@@ -2534,20 +2560,20 @@ bool IntegerVariableModifier::varSetValue(MiniscriptThread *thread, const Dynami
 	if (!value.convertToType(DynamicValueTypes::kInteger, intValue))
 		return false;
 
-	_value = intValue.getInt();
+	static_cast<IntegerVariableStorage *>(_storage.get())->_value = intValue.getInt();
 
 	return true;
 }
 
 void IntegerVariableModifier::varGetValue(DynamicValue &dest) const {
-	dest.setInt(_value);
+	dest.setInt(static_cast<IntegerVariableStorage *>(_storage.get())->_value);
 }
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 void IntegerVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 	VariableModifier::debugInspect(report);
 
-	report->declareDynamic("value", Common::String::format("%i", _value));
+	report->declareDynamic("value", Common::String::format("%i", static_cast<IntegerVariableStorage *>(_storage.get())->_value));
 }
 #endif
 
@@ -2559,19 +2585,19 @@ const char *IntegerVariableModifier::getDefaultName() const {
 	return "Integer Variable";
 }
 
-IntegerVariableModifier::SaveLoad::SaveLoad(IntegerVariableModifier *modifier) : _modifier(modifier) {
-	_value = _modifier->_value;
+IntegerVariableStorage::SaveLoad::SaveLoad(IntegerVariableStorage *storage) : _storage(storage) {
+	_value = _storage->_value;
 }
 
-void IntegerVariableModifier::SaveLoad::commitLoad() const {
-	_modifier->_value = _value;
+void IntegerVariableStorage::SaveLoad::commitLoad() const {
+	_storage->_value = _value;
 }
 
-void IntegerVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+void IntegerVariableStorage::SaveLoad::saveInternal(Common::WriteStream *stream) const {
 	stream->writeSint32BE(_value);
 }
 
-bool IntegerVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
+bool IntegerVariableStorage::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
 	_value = stream->readSint32BE();
 
 	if (stream->err())
@@ -2580,18 +2606,18 @@ bool IntegerVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream,
 	return true;
 }
 
+
+IntegerRangeVariableModifier::IntegerRangeVariableModifier() : VariableModifier(Common::SharedPtr<VariableStorage>(new IntegerRangeVariableStorage())) {
+}
+
 bool IntegerRangeVariableModifier::load(ModifierLoaderContext& context, const Data::IntegerRangeVariableModifier& data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	if (!_range.load(data.range))
+	if (!static_cast<IntegerRangeVariableStorage *>(_storage.get())->_range.load(data.range))
 		return false;
 
 	return true;
-}
-
-Common::SharedPtr<ModifierSaveLoad> IntegerRangeVariableModifier::getSaveLoad() {
-	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
 bool IntegerRangeVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
@@ -2599,34 +2625,38 @@ bool IntegerRangeVariableModifier::varSetValue(MiniscriptThread *thread, const D
 	if (!value.convertToType(DynamicValueTypes::kIntegerRange, intRangeValue))
 		return false;
 
-	_range = intRangeValue.getIntRange();
+	static_cast<IntegerRangeVariableStorage *>(_storage.get())->_range = intRangeValue.getIntRange();
 
 	return true;
 }
 
 void IntegerRangeVariableModifier::varGetValue(DynamicValue &dest) const {
-	dest.setIntRange(_range);
+	dest.setIntRange(static_cast<IntegerRangeVariableStorage *>(_storage.get())->_range);
 }
 
 bool IntegerRangeVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	IntegerRangeVariableStorage *storage = static_cast<IntegerRangeVariableStorage *>(_storage.get());
+
 	if (attrib == "start") {
-		result.setInt(_range.min);
+		result.setInt(storage->_range.min);
 		return true;
 	}
 	if (attrib == "end") {
-		result.setInt(_range.max);
+		result.setInt(storage->_range.max);
 		return true;
 	}
 	return Modifier::readAttribute(thread, result, attrib);
 }
 
 MiniscriptInstructionOutcome IntegerRangeVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	IntegerRangeVariableStorage *storage = static_cast<IntegerRangeVariableStorage *>(_storage.get());
+
 	if (attrib == "start") {
-		DynamicValueWriteIntegerHelper<int32>::create(&_range.min, result);
+		DynamicValueWriteIntegerHelper<int32>::create(&storage->_range.min, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "end") {
-		DynamicValueWriteIntegerHelper<int32>::create(&_range.max, result);
+		DynamicValueWriteIntegerHelper<int32>::create(&storage->_range.max, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	return Modifier::writeRefAttribute(thread, result, attrib);
@@ -2634,9 +2664,11 @@ MiniscriptInstructionOutcome IntegerRangeVariableModifier::writeRefAttribute(Min
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 void IntegerRangeVariableModifier::debugInspect(IDebugInspectionReport *report) const {
+	IntegerRangeVariableStorage *storage = static_cast<IntegerRangeVariableStorage *>(_storage.get());
+
 	VariableModifier::debugInspect(report);
 
-	report->declareDynamic("value", _range.toString());
+	report->declareDynamic("value", storage->_range.toString());
 }
 #endif
 
@@ -2648,22 +2680,33 @@ const char *IntegerRangeVariableModifier::getDefaultName() const {
 	return "Integer Range Variable";
 }
 
-IntegerRangeVariableModifier::SaveLoad::SaveLoad(IntegerRangeVariableModifier *modifier) : _modifier(modifier) {
-	_range = _modifier->_range;
+IntegerRangeVariableStorage::IntegerRangeVariableStorage() {
 }
 
-void IntegerRangeVariableModifier::SaveLoad::commitLoad() const {
-	_modifier->_range = _range;
+Common::SharedPtr<ModifierSaveLoad> IntegerRangeVariableStorage::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
-void IntegerRangeVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
-	stream->writeSint32BE(_range.min);
-	stream->writeSint32BE(_range.max);
+Common::SharedPtr<VariableStorage> IntegerRangeVariableStorage::clone() const {
+	return Common::SharedPtr<VariableStorage>(new IntegerRangeVariableStorage(*this));
 }
 
-bool IntegerRangeVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
-	_range.min = stream->readSint32BE();
-	_range.max = stream->readSint32BE();
+IntegerRangeVariableStorage::SaveLoad::SaveLoad(IntegerRangeVariableStorage *storage) : _storage(storage) {
+	_range = _storage->_range;
+}
+
+void IntegerRangeVariableStorage::SaveLoad::commitLoad() const {
+	_storage->_range = _range;
+}
+
+void IntegerRangeVariableStorage::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+	stream->writeSint32BE(_storage->_range.min);
+	stream->writeSint32BE(_storage->_range.max);
+}
+
+bool IntegerRangeVariableStorage::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
+	_storage->_range.min = stream->readSint32BE();
+	_storage->_range.max = stream->readSint32BE();
 
 	if (stream->err())
 		return false;
@@ -2671,18 +2714,19 @@ bool IntegerRangeVariableModifier::SaveLoad::loadInternal(Common::ReadStream *st
 	return true;
 }
 
+VectorVariableModifier::VectorVariableModifier() : VariableModifier(Common::SharedPtr<VariableStorage>(new VectorVariableStorage())) {
+}
+
 bool VectorVariableModifier::load(ModifierLoaderContext &context, const Data::VectorVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	_vector.angleDegrees = data.vector.angleRadians.toDouble() * (180 / M_PI);
-	_vector.magnitude = data.vector.magnitude.toDouble();
+	VectorVariableStorage *storage = static_cast<VectorVariableStorage *>(_storage.get());
+
+	storage->_vector.angleDegrees = data.vector.angleRadians.toDouble() * (180 / M_PI);
+	storage->_vector.magnitude = data.vector.magnitude.toDouble();
 
 	return true;
-}
-
-Common::SharedPtr<ModifierSaveLoad> VectorVariableModifier::getSaveLoad() {
-	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
 bool VectorVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
@@ -2690,21 +2734,27 @@ bool VectorVariableModifier::varSetValue(MiniscriptThread *thread, const Dynamic
 	if (!value.convertToType(DynamicValueTypes::kVector, vectorValue))
 		return false;
 
-	_vector = vectorValue.getVector();
+	VectorVariableStorage *storage = static_cast<VectorVariableStorage *>(_storage.get());
+
+	storage->_vector = vectorValue.getVector();
 
 	return true;
 }
 
 void VectorVariableModifier::varGetValue(DynamicValue &dest) const {
-	dest.setVector(_vector);
+	VectorVariableStorage *storage = static_cast<VectorVariableStorage *>(_storage.get());
+
+	dest.setVector(storage->_vector);
 }
 
 bool VectorVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	VectorVariableStorage *storage = static_cast<VectorVariableStorage *>(_storage.get());
+
 	if (attrib == "magnitude") {
-		result.setFloat(_vector.magnitude);
+		result.setFloat(storage->_vector.magnitude);
 		return true;
 	} else if (attrib == "angle") {
-		result.setFloat(_vector.angleDegrees);
+		result.setFloat(storage->_vector.angleDegrees);
 		return true;
 	}
 
@@ -2712,11 +2762,13 @@ bool VectorVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValu
 }
 
 MiniscriptInstructionOutcome VectorVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	VectorVariableStorage *storage = static_cast<VectorVariableStorage *>(_storage.get());
+
 	if (attrib == "magnitude") {
-		DynamicValueWriteFloatHelper<double>::create(&_vector.magnitude, result);
+		DynamicValueWriteFloatHelper<double>::create(&storage->_vector.magnitude, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "angle") {
-		DynamicValueWriteFloatHelper<double>::create(&_vector.angleDegrees, result);
+		DynamicValueWriteFloatHelper<double>::create(&storage->_vector.angleDegrees, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -2727,7 +2779,9 @@ MiniscriptInstructionOutcome VectorVariableModifier::writeRefAttribute(Miniscrip
 void VectorVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 	VariableModifier::debugInspect(report);
 
-	report->declareDynamic("value", _vector.toString());
+	VectorVariableStorage *storage = static_cast<VectorVariableStorage *>(_storage.get());
+
+	report->declareDynamic("value", storage->_vector.toString());
 }
 #endif
 
@@ -2739,20 +2793,31 @@ const char *VectorVariableModifier::getDefaultName() const {
 	return "Vector Variable";
 }
 
-VectorVariableModifier::SaveLoad::SaveLoad(VectorVariableModifier *modifier) : _modifier(modifier) {
-	_vector = _modifier->_vector;
+VectorVariableStorage::VectorVariableStorage() {
 }
 
-void VectorVariableModifier::SaveLoad::commitLoad() const {
-	_modifier->_vector = _vector;
+Common::SharedPtr<ModifierSaveLoad> VectorVariableStorage::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
-void VectorVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+Common::SharedPtr<VariableStorage> VectorVariableStorage::clone() const {
+	return Common::SharedPtr<VariableStorage>(new VectorVariableStorage(*this));
+}
+
+VectorVariableStorage::SaveLoad::SaveLoad(VectorVariableStorage *storage) : _storage(storage) {
+	_vector = _storage->_vector;
+}
+
+void VectorVariableStorage::SaveLoad::commitLoad() const {
+	_storage->_vector = _vector;
+}
+
+void VectorVariableStorage::SaveLoad::saveInternal(Common::WriteStream *stream) const {
 	stream->writeDoubleBE(_vector.angleDegrees);
 	stream->writeDoubleBE(_vector.magnitude);
 }
 
-bool VectorVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
+bool VectorVariableStorage::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
 	_vector.angleDegrees = stream->readDoubleBE();
 	_vector.magnitude = stream->readDoubleBE();
 
@@ -2762,18 +2827,19 @@ bool VectorVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream, 
 	return true;
 }
 
+PointVariableModifier::PointVariableModifier() : VariableModifier(Common::SharedPtr<VariableStorage>(new PointVariableStorage())) {
+}
+
 bool PointVariableModifier::load(ModifierLoaderContext &context, const Data::PointVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	_value.x = data.value.x;
-	_value.y = data.value.y;
+	PointVariableStorage *storage = static_cast<PointVariableStorage *>(_storage.get());
+
+	if (!data.value.toScummVMPoint(storage->_value))
+		return false;
 
 	return true;
-}
-
-Common::SharedPtr<ModifierSaveLoad> PointVariableModifier::getSaveLoad() {
-	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
 bool PointVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
@@ -2781,22 +2847,28 @@ bool PointVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicV
 	if (!value.convertToType(DynamicValueTypes::kPoint, pointValue))
 		return false;
 
-	_value = pointValue.getPoint();
+	PointVariableStorage *storage = static_cast<PointVariableStorage *>(_storage.get());
+
+	storage->_value = pointValue.getPoint();
 
 	return true;
 }
 
 void PointVariableModifier::varGetValue(DynamicValue &dest) const {
-	dest.setPoint(_value);
+	PointVariableStorage *storage = static_cast<PointVariableStorage *>(_storage.get());
+
+	dest.setPoint(storage->_value);
 }
 
 bool PointVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	PointVariableStorage *storage = static_cast<PointVariableStorage *>(_storage.get());
+
 	if (attrib == "x") {
-		result.setInt(_value.x);
+		result.setInt(storage->_value.x);
 		return true;
 	}
 	if (attrib == "y") {
-		result.setInt(_value.y);
+		result.setInt(storage->_value.y);
 		return true;
 	}
 
@@ -2804,12 +2876,14 @@ bool PointVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue
 }
 
 MiniscriptInstructionOutcome PointVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	PointVariableStorage *storage = static_cast<PointVariableStorage *>(_storage.get());
+
 	if (attrib == "x") {
-		DynamicValueWriteIntegerHelper<int16>::create(&_value.x, writeProxy);
+		DynamicValueWriteIntegerHelper<int16>::create(&storage->_value.x, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "y") {
-		DynamicValueWriteIntegerHelper<int16>::create(&_value.y, writeProxy);
+		DynamicValueWriteIntegerHelper<int16>::create(&storage->_value.y, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -2820,7 +2894,9 @@ MiniscriptInstructionOutcome PointVariableModifier::writeRefAttribute(Miniscript
 void PointVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 	VariableModifier::debugInspect(report);
 
-	report->declareDynamic("value", pointToString(_value));
+	PointVariableStorage *storage = static_cast<PointVariableStorage *>(_storage.get());
+
+	report->declareDynamic("value", pointToString(storage->_value));
 }
 #endif
 
@@ -2832,20 +2908,31 @@ const char *PointVariableModifier::getDefaultName() const {
 	return "Point Variable";
 }
 
-PointVariableModifier::SaveLoad::SaveLoad(PointVariableModifier *modifier) : _modifier(modifier) {
-	_value = _modifier->_value;
+PointVariableStorage::PointVariableStorage() {
 }
 
-void PointVariableModifier::SaveLoad::commitLoad() const {
-	_modifier->_value = _value;
+Common::SharedPtr<ModifierSaveLoad> PointVariableStorage::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
-void PointVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+Common::SharedPtr<VariableStorage> PointVariableStorage::clone() const {
+	return Common::SharedPtr<VariableStorage>(new PointVariableStorage(*this));
+}
+
+PointVariableStorage::SaveLoad::SaveLoad(PointVariableStorage *storage) : _storage(storage) {
+	_value = storage->_value;
+}
+
+void PointVariableStorage::SaveLoad::commitLoad() const {
+	_storage->_value = _value;
+}
+
+void PointVariableStorage::SaveLoad::saveInternal(Common::WriteStream *stream) const {
 	stream->writeSint16BE(_value.x);
 	stream->writeSint16BE(_value.y);
 }
 
-bool PointVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
+bool PointVariableStorage::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
 	_value.x = stream->readSint16BE();
 	_value.y = stream->readSint16BE();
 
@@ -2855,20 +2942,18 @@ bool PointVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream, u
 	return true;
 }
 
-FloatingPointVariableModifier::FloatingPointVariableModifier() : _value(0.0) {
+FloatingPointVariableModifier::FloatingPointVariableModifier() : VariableModifier(Common::SharedPtr<FloatingPointVariableStorage>(new FloatingPointVariableStorage())) {
 }
 
 bool FloatingPointVariableModifier::load(ModifierLoaderContext &context, const Data::FloatingPointVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	_value = data.value.toDouble();
+	FloatingPointVariableStorage *storage = static_cast<FloatingPointVariableStorage *>(_storage.get());
+
+	storage->_value = data.value.toDouble();
 
 	return true;
-}
-
-Common::SharedPtr<ModifierSaveLoad> FloatingPointVariableModifier::getSaveLoad() {
-	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
 bool FloatingPointVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
@@ -2876,20 +2961,26 @@ bool FloatingPointVariableModifier::varSetValue(MiniscriptThread *thread, const 
 	if (!value.convertToType(DynamicValueTypes::kFloat, floatValue))
 		return false;
 
-	_value = floatValue.getFloat();
+	FloatingPointVariableStorage *storage = static_cast<FloatingPointVariableStorage *>(_storage.get());
+
+	storage->_value = floatValue.getFloat();
 
 	return true;
 }
 
 void FloatingPointVariableModifier::varGetValue(DynamicValue &dest) const {
-	dest.setFloat(_value);
+	FloatingPointVariableStorage *storage = static_cast<FloatingPointVariableStorage *>(_storage.get());
+
+	dest.setFloat(storage->_value);
 }
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 void FloatingPointVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 	VariableModifier::debugInspect(report);
 
-	report->declareDynamic("value", Common::String::format("%g", _value));
+	FloatingPointVariableStorage *storage = static_cast<FloatingPointVariableStorage *>(_storage.get());
+
+	report->declareDynamic("value", Common::String::format("%g", storage->_value));
 }
 #endif
 
@@ -2901,20 +2992,31 @@ const char *FloatingPointVariableModifier::getDefaultName() const {
 	return "Floating Point Variable";
 }
 
-FloatingPointVariableModifier::SaveLoad::SaveLoad(FloatingPointVariableModifier *modifier) : _modifier(modifier) {
-	_value = _modifier->_value;
+FloatingPointVariableStorage::FloatingPointVariableStorage() : _value(0.0) {
 }
 
-void FloatingPointVariableModifier::SaveLoad::commitLoad() const {
-	_modifier->_value = _value;
+Common::SharedPtr<ModifierSaveLoad> FloatingPointVariableStorage::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
-void FloatingPointVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
-	stream->writeDoubleBE(_value);
+Common::SharedPtr<VariableStorage> FloatingPointVariableStorage::clone() const {
+	return Common::SharedPtr<VariableStorage>(new FloatingPointVariableStorage(*this));
 }
 
-bool FloatingPointVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
-	_value = stream->readDoubleBE();
+FloatingPointVariableStorage::SaveLoad::SaveLoad(FloatingPointVariableStorage *storage) : _storage(storage) {
+	_value = _storage->_value;
+}
+
+void FloatingPointVariableStorage::SaveLoad::commitLoad() const {
+	_storage->_value = _value;
+}
+
+void FloatingPointVariableStorage::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+	stream->writeDoubleBE(_storage->_value);
+}
+
+bool FloatingPointVariableStorage::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
+	_storage->_value = stream->readDoubleBE();
 
 	if (stream->err())
 		return false;
@@ -2922,17 +3024,18 @@ bool FloatingPointVariableModifier::SaveLoad::loadInternal(Common::ReadStream *s
 	return true;
 }
 
+StringVariableModifier::StringVariableModifier() : VariableModifier(Common::SharedPtr<VariableStorage>(new StringVariableStorage())) {
+}
+
 bool StringVariableModifier::load(ModifierLoaderContext &context, const Data::StringVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	_value = data.value;
+	StringVariableStorage *storage = static_cast<StringVariableStorage *>(_storage.get());
+
+	storage->_value = data.value;
 
 	return true;
-}
-
-Common::SharedPtr<ModifierSaveLoad> StringVariableModifier::getSaveLoad() {
-	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
 bool StringVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
@@ -2940,20 +3043,26 @@ bool StringVariableModifier::varSetValue(MiniscriptThread *thread, const Dynamic
 	if (!value.convertToType(DynamicValueTypes::kString, stringValue))
 		return false;
 
-	_value = stringValue.getString();
+	StringVariableStorage *storage = static_cast<StringVariableStorage *>(_storage.get());
+
+	storage->_value = stringValue.getString();
 
 	return true;
 }
 
 void StringVariableModifier::varGetValue(DynamicValue &dest) const {
-	dest.setString(_value);
+	StringVariableStorage *storage = static_cast<StringVariableStorage *>(_storage.get());
+
+	dest.setString(storage->_value);
 }
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 void StringVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 	VariableModifier::debugInspect(report);
 
-	report->declareDynamic("value", _value);
+	StringVariableStorage *storage = static_cast<StringVariableStorage *>(_storage.get());
+
+	report->declareDynamic("value", storage->_value);
 }
 #endif
 
@@ -2965,20 +3074,31 @@ const char *StringVariableModifier::getDefaultName() const {
 	return "String Variable";
 }
 
-StringVariableModifier::SaveLoad::SaveLoad(StringVariableModifier *modifier) : _modifier(modifier) {
-	_value = _modifier->_value;
+StringVariableStorage::StringVariableStorage() {
 }
 
-void StringVariableModifier::SaveLoad::commitLoad() const {
-	_modifier->_value = _value;
+Common::SharedPtr<ModifierSaveLoad> StringVariableStorage::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
-void StringVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+Common::SharedPtr<VariableStorage> StringVariableStorage::clone() const {
+	return Common::SharedPtr<VariableStorage>(new StringVariableStorage(*this));
+}
+
+StringVariableStorage::SaveLoad::SaveLoad(StringVariableStorage *storage) : _storage(storage) {
+	_value = _storage->_value;
+}
+
+void StringVariableStorage::SaveLoad::commitLoad() const {
+	_storage->_value = _value;
+}
+
+void StringVariableStorage::SaveLoad::saveInternal(Common::WriteStream *stream) const {
 	stream->writeUint32BE(_value.size());
 	stream->writeString(_value);
 }
 
-bool StringVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
+bool StringVariableStorage::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
 	uint32 size = stream->readUint32BE();
 
 	if (stream->err())
@@ -2999,7 +3119,8 @@ bool StringVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream, 
 	return true;
 }
 
-
+ObjectReferenceVariableModifierV1::ObjectReferenceVariableModifierV1() : VariableModifier(Common::SharedPtr<VariableStorage>(new ObjectReferenceVariableV1Storage())) {
+}
 
 bool ObjectReferenceVariableModifierV1::load(ModifierLoaderContext &context, const Data::ObjectReferenceVariableModifierV1 &data) {
 	if (!loadTypicalHeader(data.modHeader))
@@ -3022,17 +3143,15 @@ VThreadState ObjectReferenceVariableModifierV1::consumeMessage(Runtime *runtime,
 	return kVThreadError;
 }
 
-Common::SharedPtr<ModifierSaveLoad> ObjectReferenceVariableModifierV1::getSaveLoad() {
-	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
-}
-
 bool ObjectReferenceVariableModifierV1::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
+	ObjectReferenceVariableV1Storage *storage = static_cast<ObjectReferenceVariableV1Storage *>(_storage.get());
+
 	// Somewhat tricky aspect: If this is set to another object reference variable modifier, then this will reference
 	// the other object variable modifier, it will NOT copy it.
 	if (value.getType() == DynamicValueTypes::kNull)
-		_value.reset();
+		storage->_value.reset();
 	else if (value.getType() == DynamicValueTypes::kObject)
-		_value = value.getObject().object;
+		storage->_value = value.getObject().object;
 	else
 		return false;
 
@@ -3051,18 +3170,29 @@ const char *ObjectReferenceVariableModifierV1::getDefaultName() const {
 	return "Object Reference Variable";
 }
 
-ObjectReferenceVariableModifierV1::SaveLoad::SaveLoad(ObjectReferenceVariableModifierV1 *modifier) : _modifier(modifier) {
+ObjectReferenceVariableV1Storage::ObjectReferenceVariableV1Storage() {
 }
 
-void ObjectReferenceVariableModifierV1::SaveLoad::commitLoad() const {
-	_modifier->_value = _value;
+Common::SharedPtr<ModifierSaveLoad> ObjectReferenceVariableV1Storage::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
-void ObjectReferenceVariableModifierV1::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+Common::SharedPtr<VariableStorage> ObjectReferenceVariableV1Storage::clone() const {
+	return Common::SharedPtr<VariableStorage>(new ObjectReferenceVariableV1Storage(*this));
+}
+
+ObjectReferenceVariableV1Storage::SaveLoad::SaveLoad(ObjectReferenceVariableV1Storage *storage) : _storage(storage) {
+}
+
+void ObjectReferenceVariableV1Storage::SaveLoad::commitLoad() const {
+	_storage->_value = _value;
+}
+
+void ObjectReferenceVariableV1Storage::SaveLoad::saveInternal(Common::WriteStream *stream) const {
 	error("Saving version 1 object reference variables is not currently supported");
 }
 
-bool ObjectReferenceVariableModifierV1::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
+bool ObjectReferenceVariableV1Storage::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
 	return true;
 }
 

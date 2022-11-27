@@ -2677,6 +2677,9 @@ bool WorldManagerInterface::readAttribute(MiniscriptThread *thread, DynamicValue
 	} else if (attrib == "postponeredraws") {
 		result.setBool(_postponeRedraws);
 		return true;
+	} else if (attrib == "clickcount") {
+		result.setInt(thread->getRuntime()->getMultiClickCount());
+		return true;
 	}
 
 	return RuntimeObject::readAttribute(thread, result, attrib);
@@ -4169,7 +4172,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	  _cachedMousePosition(Common::Point(0, 0)), _realMousePosition(Common::Point(0, 0)), _trackedMouseOutside(false),
 	  _forceCursorRefreshOnce(true), _autoResetCursor(false), _haveModifierOverrideCursor(false), _sceneGraphChanged(false), _isQuitting(false),
 	  _collisionCheckTime(0), _defaultVolumeState(true), _activeSceneTransitionEffect(nullptr), _sceneTransitionStartTime(0), _sceneTransitionEndTime(0),
-	  _sharedSceneWasSetExplicitly(false), _modifierOverrideCursorID(0), _subtitleRenderer(subRenderer) {
+	  _sharedSceneWasSetExplicitly(false), _modifierOverrideCursorID(0), _subtitleRenderer(subRenderer), _multiClickStartTime(0), _multiClickInterval(500), _multiClickCount(0)
+{
 	_random.reset(new Common::RandomSource("mtropolis"));
 
 	_vthread.reset(new VThread());
@@ -4272,6 +4276,14 @@ bool Runtime::runFrame() {
 			case kOSEventTypeMouseUp:
 			case kOSEventTypeMouseMove: {
 					MouseInputEvent *mouseEvt = static_cast<MouseInputEvent *>(evt.get());
+
+					if (evtType == kOSEventTypeMouseDown) {
+						if (_multiClickStartTime + _multiClickInterval >= _playTime) {
+							_multiClickStartTime = _playTime;
+							_multiClickCount = 1;
+						} else
+							_multiClickCount++;
+					}
 
 					// Maybe shouldn't post the update mouse button task if non-left buttons are pressed?
 					if ((evtType == kOSEventTypeMouseDown || evtType == kOSEventTypeMouseUp) && mouseEvt->getButton() == Actions::kMouseButtonLeft) {
@@ -5688,18 +5700,22 @@ void Runtime::instantiateIfAlias(Common::SharedPtr<Modifier> &modifier, const Co
 			error("Failed to resolve alias");
 		}
 
-		if (!modifier->isVariable()) {
-			Common::SharedPtr<Modifier> clonedModifier = templateModifier->shallowClone();
-			clonedModifier->setSelfReference(clonedModifier);
-			clonedModifier->setRuntimeGUID(allocateRuntimeGUID());
+		Common::SharedPtr<Modifier> clonedModifier = templateModifier->shallowClone();
+		clonedModifier->setSelfReference(clonedModifier);
+		clonedModifier->setRuntimeGUID(allocateRuntimeGUID());
 
-			clonedModifier->setName(modifier->getName());
+		clonedModifier->setName(modifier->getName());
 
-			modifier = clonedModifier;
-			clonedModifier->setParent(relinkParent);
+		modifier = clonedModifier;
+		clonedModifier->setParent(relinkParent);
 
-			ModifierChildCloner cloner(this, clonedModifier);
-			clonedModifier->visitInternalReferences(&cloner);
+		ModifierChildCloner cloner(this, clonedModifier);
+		clonedModifier->visitInternalReferences(&cloner);
+
+		// Aliased variables use the same variable storage, but are treated as distinct objects.
+		if (clonedModifier->isVariable()) {
+ 			assert(templateModifier->isVariable());
+			static_cast<VariableModifier *>(clonedModifier.get())->setStorage(static_cast<const VariableModifier *>(templateModifier.get())->getStorage());
 		}
 	}
 }
@@ -5828,6 +5844,10 @@ void Runtime::forceCursorRefreshOnce() {
 
 void Runtime::setAutoResetCursor(bool enabled) {
 	_autoResetCursor = enabled;
+}
+
+uint Runtime::getMultiClickCount() const {
+	return _multiClickCount;
 }
 
 bool Runtime::isAwaitingSceneTransition() const {
@@ -6897,6 +6917,15 @@ Common::SharedPtr<Modifier> Project::resolveAlias(uint32 aliasID) const {
 		return Common::SharedPtr<Modifier>();
 
 	return _globalModifiers.getModifiers()[aliasID - 1];
+}
+
+Common::SharedPtr<Modifier> Project::findGlobalVarWithName(const Common::String &name) const {
+	for (const Common::SharedPtr<Modifier> &modifier : _globalModifiers.getModifiers()) {
+		if (modifier && modifier->isVariable() && MTropolis::caseInsensitiveEqual(name, modifier->getName()))
+			return modifier;
+	}
+
+	return nullptr;
 }
 
 void Project::materializeGlobalVariables(Runtime *runtime, ObjectLinkingScope *outerScope) {
@@ -8660,12 +8689,34 @@ void Modifier::debugInspect(IDebugInspectionReport *report) const {
 
 #endif /* MTROPOLIS_DEBUG_ENABLE */
 
+VariableStorage::~VariableStorage() {
+}
+
+VariableModifier::VariableModifier(const Common::SharedPtr<VariableStorage> &storage) : _storage(storage) {
+}
+
+VariableModifier::VariableModifier(const VariableModifier &other) : Modifier(other), _storage(other._storage->clone()) {
+}
+
 bool VariableModifier::isVariable() const {
 	return true;
 }
 
 bool VariableModifier::isListVariable() const {
 	return false;
+}
+
+
+Common::SharedPtr<ModifierSaveLoad> VariableModifier::getSaveLoad() {
+	return _storage->getSaveLoad();
+}
+
+const Common::SharedPtr<VariableStorage> &VariableModifier::getStorage() const {
+	return _storage;
+}
+
+void VariableModifier::setStorage(const Common::SharedPtr<VariableStorage> &storage) {
+	_storage = storage;
 }
 
 bool VariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {

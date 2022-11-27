@@ -1648,6 +1648,8 @@ public:
 	void forceCursorRefreshOnce();
 	void setAutoResetCursor(bool enabled);
 
+	uint getMultiClickCount() const;
+
 	bool isAwaitingSceneTransition() const;
 
 	Common::RandomSource *getRandom() const;
@@ -1921,6 +1923,10 @@ private:
 
 	uint32 _modifierOverrideCursorID;
 	bool _haveModifierOverrideCursor;
+
+	uint32 _multiClickStartTime;
+	uint32 _multiClickInterval;
+	uint _multiClickCount;
 
 	bool _defaultVolumeState;
 
@@ -2348,6 +2354,7 @@ public:
 	void loadSceneFromStream(const Common::SharedPtr<Structural> &structural, uint32 streamID, const Hacks &hacks);
 
 	Common::SharedPtr<Modifier> resolveAlias(uint32 aliasID) const;
+	Common::SharedPtr<Modifier> findGlobalVarWithName(const Common::String &name) const;
 	void materializeGlobalVariables(Runtime *runtime, ObjectLinkingScope *scope);
 
 	const ProjectPresentationSettings &getPresentationSettings() const;
@@ -2895,14 +2902,29 @@ protected:
 	Common::SharedPtr<ModifierHooks> _hooks;
 };
 
+class VariableStorage {
+public:
+	virtual ~VariableStorage();
+	virtual Common::SharedPtr<ModifierSaveLoad> getSaveLoad() = 0;
+
+	virtual Common::SharedPtr<VariableStorage> clone() const = 0;
+};
+
 class VariableModifier : public Modifier {
 public:
+	explicit VariableModifier(const Common::SharedPtr<VariableStorage> &storage);
+	VariableModifier(const VariableModifier &other);
+
 	virtual bool isVariable() const override;
 	virtual bool isListVariable() const;
 
+	virtual Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override final;
+
+	const Common::SharedPtr<VariableStorage> &getStorage() const;
+	void setStorage(const Common::SharedPtr<VariableStorage> &storage);
+
 	virtual bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) = 0;
 	virtual void varGetValue(DynamicValue &dest) const = 0;
-	virtual Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override = 0;
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 
@@ -2911,11 +2933,16 @@ public:
 	virtual DynamicValueWriteProxy createWriteProxy();
 
 private:
+	VariableModifier() = delete;
+
 	struct WriteProxyInterface {
 		static MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset);
 		static MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib);
 		static MiniscriptInstructionOutcome refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index);
 	};
+
+protected:
+	Common::SharedPtr<VariableStorage> _storage;
 };
 
 enum AssetType {

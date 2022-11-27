@@ -1028,6 +1028,21 @@ void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
 	// Anyway, there are two possible solutions to this: Lock the clock to 60Hz, or ignore the flag.
 	// Given that the flag should not be set, we ignore the flag.
 	hacks.ignoreMToonMaintainRateFlag = true;
+
+	// MTI initializes variables in a way that doesn't seem to match mTropolis behavior in any explicable way:
+	//
+	// For example, 0010cb0e "Scene Started => init Benbow" looks like this internally, decompiled:
+	// set local:a.billystate to 0
+	//
+	// In this case "a" is a compound variable and "billyState" is a NON-ALIASED integer variable contained in
+	// the compound.  Later, 0009fc9a "Scene Started => play intro" checks local 00007f83 00 'billyState'
+	// to determine if the Benbow intro needs to be played.  Since the GUID doesn't match (?) we check by name,
+	// which resolves to the GUID-less (?) alias in the Benbow subsection, which references 00097cf4, a different
+	// variable also named "billyState"
+	//
+	// Haven't figured out anything that would explain why it would reference the variables in the compound
+	// modifier.  Probably some quirk of early-version mTropolis.
+	hacks.mtiVariableReferencesHack = true;
 }
 
 } // End of namespace HackSuites
