@@ -60,7 +60,8 @@ void TextView::writeChar(int x, int y, unsigned char c) {
 
 void TextView::writeString(const Common::String &str) {
 	for (const unsigned char *s = (const unsigned char *)str.c_str(); *s; ++s) {
-		writeChar(*s);
+		if (*s != '|')
+			writeChar(*s);
 	}
 }
 
