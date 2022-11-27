@@ -2115,7 +2115,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("granmarmalade", "Demo", "GranMarmalade", "f5277c53bacd27936158dd3867e587e2", 1076950, Common::JA_JPN, 311),
 
 	MACGAME1("gustown", "", "GUS", "7f443f2e63fd497a9ad85b10dc880a91", 384206, 313),
-	WINGAME1("gustown", "", "GUS.EXE", "65d06b5fef155a2473434571aff5bc29", 369999, 310),
+	WINGAME2("gustown", "", "GUS.EXE", 	 "65d06b5fef155a2473434571aff5bc29", 369999,
+							"CYBER.MMM", "c3b0a84cd1a8ae966c38a3deceed6496", 237702, 310),
 
 	// Original filename is "   Hell Cab™"
 	MACGAME1("hellcab", "",      "xn--   Hell Cab-t35f", "8cbe0a140f28b2165a66d73f4f153572", 601701, 313),
@@ -2138,7 +2139,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Windows version is D4
 	MACGAME1("hhouse", "", "The Ultimate Haunted House", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384219, 313),
-	WINDEMO1("hhouse", "1994 Demo", "HAUNTED.EXE", "2b3543a9131a49f665982d26513a84f8", 914491, 310),
+	WINDEMO2("hhouse", "1994 Demo", "HAUNTED.EXE", "2b3543a9131a49f665982d26513a84f8", 914491,
+									"DEMO26.BMP",  "0b37032bbb63acf2d33e8d3b2e0a32aa", 17518, 310),
 
 	MACGAME1("hikaruhana", "", "Shining Flower", "a6e50f2b8f294640a1d0cbe91a73e81c", 392231, 311),
 	MACGAME1("hikaruhana", "Auto", "Shining Flower (Auto)", "a6e50f2b8f294640a1d0cbe91a73e81c", 392231, 311),
@@ -2272,9 +2274,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Portuguese version is D4
 	MACGAME1("leonardo", "", "Leonardo the Inventor", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384215, 313),
-	WINGAME1("leonardo", "", "LEO.EXE", "65d06b5fef155a2473434571aff5bc29", 370000, 310),
+	WINGAME2("leonardo", "", "LEO.EXE", 	 "65d06b5fef155a2473434571aff5bc29", 370000,
+							 "BEGINLEO.MMM", "aec1417e69dd85c5c00fae628b150a0d", 812, 310),
 
-	WINDEMO1("leopardspots", "Demo", "LEOPARD.EXE", "2b3543a9131a49f665982d26513a84f8", 1081371, 310),
+	WINDEMO2("leopardspots", "Demo", "LEOPARD.EXE", "2b3543a9131a49f665982d26513a84f8", 1081371,
+									 "DEMO37.BMP",	"6be5fb3f1aa30dfa6db320a2a8c484c8", 17518, 310),
 
 	MACGAME1("lingoexpo", "", "Navigator", "4dacf23c1bb75093a882c4fd89dededb", 38, 400),
 
@@ -2328,7 +2332,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Mac version on same disc is D4
 	// Developed by MetroLight Studios, Los Angeles
 	// Published by Cambrix, Woodland Hills, California (1996)
-	WINGAME1("mask", "", "MASK.EXE", "c7da3e208b35c77d39af787cf74a57ae", 2377627, 311),
+	WINGAME2("mask", "", "MASK.EXE", "c7da3e208b35c77d39af787cf74a57ae", 2377627,
+						 "MEDIA/GRAPHICS/G001_1.PIC", "4b8b3b5379cf7ceecf9ac444e0b241d5", 207148, 311),
 
 	// aka Bit-Bot's Math Voyage; A Viagem na Matemática do Bit Bot (PT-BR)
 	// Developed by Magic Quest, Inc.
@@ -3919,7 +3924,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1t("learningcoreldraw3", "", "PROGRAM/LRNDRAW3.EXE", "aa6fa44a1161fe91f3be54ded6b53cbf", 1152788, 404),
 
-	WINGAME1_l("leonardo", "", "LEO.EXE", "0be0b03b89bb4aba716a974c3ccc3950", 692347, Common::PT_BRA, 404),
+	WINGAME2_l("leonardo", "", "LEO.EXE", "0be0b03b89bb4aba716a974c3ccc3950", 692347,
+							   "LEOWINMV/INDEX.DIR", "f43523ae0244588c5a42656f54837b80", 201882, Common::PT_BRA, 404),
 
 	WINDEMO1("letters", "Demo", "LETTERS.EXE", "ed0636bab94b299d96552e4c71bc82a1", 3875399, 404),
 
@@ -4913,13 +4919,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Only the cutscenes are in Director.
 	// Also, only the original Chinese version uses Director; the
 	// English version doesn't.
-	WINGAME1_l("ypl2", "Cutscene 1", "PASS1.EXE", "dbde91e9fbe6dad229a76a7020a993e9", 1046143, Common::ZH_TWN, 403),
-	WINGAME1_l("ypl2", "Cutscene 2", "PASS2.EXE", "46c84f9fc725cc7e89e0c52e5aea552b", 1254663, Common::ZH_TWN, 403),
-	WINGAME1_l("ypl2", "Cutscene 3", "PASS3.EXE", "0ee12b196f0ac38705c8cde769136273", 1253461, Common::ZH_TWN, 403),
-	WINGAME1_l("ypl2", "Cutscene 4", "PASS4.EXE", "e69b54557917d38fbdb36e927f3fcfcb", 1101831, Common::ZH_TWN, 403),
-	WINGAME1_l("ypl2", "Cutscene 5", "PASS5.EXE", "27a4a7c4cf35d79614025fd8988e0df6", 989331, Common::ZH_TWN, 403),
-	WINGAME1_l("ypl2", "Cutscene 6", "PASS6.EXE", "eb49dec55e182667a0020eaf6537d4b3", 2258049, Common::ZH_TWN, 403),
-	WINGAME1_l("ypl2", "Ending", "END.EXE", "3e4f99800e0b401d31295726d71f601c", 4772023, Common::ZH_TWN, 403),
+	WINGAME1_l("ypl2", "Cutscene 1", "PASS/PASS1.EXE", "dbde91e9fbe6dad229a76a7020a993e9", 1046143, Common::ZH_TWN, 403),
+	WINGAME1_l("ypl2", "Cutscene 2", "PASS/PASS2.EXE", "46c84f9fc725cc7e89e0c52e5aea552b", 1254663, Common::ZH_TWN, 403),
+	WINGAME1_l("ypl2", "Cutscene 3", "PASS/PASS3.EXE", "0ee12b196f0ac38705c8cde769136273", 1253461, Common::ZH_TWN, 403),
+	WINGAME1_l("ypl2", "Cutscene 4", "PASS/PASS4.EXE", "e69b54557917d38fbdb36e927f3fcfcb", 1101831, Common::ZH_TWN, 403),
+	WINGAME1_l("ypl2", "Cutscene 5", "PASS/PASS5.EXE", "27a4a7c4cf35d79614025fd8988e0df6", 989331,  Common::ZH_TWN, 403),
+	WINGAME1_l("ypl2", "Cutscene 6", "PASS/PASS6.EXE", "eb49dec55e182667a0020eaf6537d4b3", 2258049, Common::ZH_TWN, 403),
+	WINGAME1_l("ypl2", "Ending",	 "PASS/END.EXE",   "3e4f99800e0b401d31295726d71f601c", 4772023, Common::ZH_TWN, 403),
 
 	// Full game is supported in ZVision engine
 	WINDEMO1("znemesis", "Demo", "ZORKDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400),
