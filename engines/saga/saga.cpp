@@ -25,6 +25,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/translation.h"
+#include "common/unarj.h"
 
 #include "audio/mixer.h"
 
@@ -342,6 +343,17 @@ SagaEngine::~SagaEngine() {
 
 Common::Error SagaEngine::run() {
 	setTotalPlayTime(0);
+
+	if (getFeatures() & GF_INSTALLER) {
+		Common::Array<Common::String> filenames;
+		for (const ADGameFileDescription *gameArchiveDescription = getArchivesDescriptions();
+		     gameArchiveDescription->fileName; gameArchiveDescription++)
+			filenames.push_back(gameArchiveDescription->fileName);
+		Common::Archive *arj = Common::makeArjArchive(filenames);
+		if (!arj)
+			error("Error opening ARJ archive");
+		SearchMan.add("arj", arj, DisposeAfterUse::YES);
+	}
 
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("talkspeed", "255");

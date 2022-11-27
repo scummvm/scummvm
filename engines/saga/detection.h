@@ -39,7 +39,8 @@ enum GameFeatures {
 	GF_IHNM_COLOR_FIX    = 1 << 4,
 	GF_SOME_MAC_RESOURCES= 1 << 5,
 	GF_AGA_GRAPHICS      = 1 << 6,
-	GF_ECS_GRAPHICS      = 1 << 7
+	GF_ECS_GRAPHICS      = 1 << 7,
+	GF_INSTALLER         = 1 << 8
 };
 
 enum GameFileTypes {
@@ -114,6 +115,8 @@ struct SAGAGameDescription {
 	GameFontList fontList;
 	GamePatchList patchList;
 	GameIntroList introList;
+	// Only used if GF_INSTALLER is set
+	ADGameFileDescription filesInArchive[5];
 };
 
 } // End of namespace Saga
