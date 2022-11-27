@@ -44,6 +44,9 @@ bool Market::msgFocus(const FocusMessage &msg) {
 }
 
 bool Market::msgKeypress(const KeypressMessage &msg) {
+	if (endDelay())
+		return true;
+
 	switch (msg.keycode) {
 	case Common::KEYCODE_ESCAPE:
 	case Common::KEYCODE_n:

@@ -56,27 +56,28 @@ void VolcanoGod::draw() {
 }
 
 bool VolcanoGod::msgKeypress(const KeypressMessage &msg) {
-	if (!isDelayActive()) {
-		switch (_mode) {
-		case CHOOSE_OPTION:
-			switch (msg.keycode) {
-			case Common::KEYCODE_a:
-				challenge();
-				break;
-			case Common::KEYCODE_b:
-				riddle();
-				break;
-			case Common::KEYCODE_c:
-				clue();
-				break;
-			default:
-				break;
-			}
-			break;
+	if (endDelay())
+		return true;
 
-		case ENTER_RESPONSE:
-			return AnswerEntry::msgKeypress(msg);
+	switch (_mode) {
+	case CHOOSE_OPTION:
+		switch (msg.keycode) {
+		case Common::KEYCODE_a:
+			challenge();
+			break;
+		case Common::KEYCODE_b:
+			riddle();
+			break;
+		case Common::KEYCODE_c:
+			clue();
+			break;
+		default:
+			break;
 		}
+		break;
+
+	case ENTER_RESPONSE:
+		return AnswerEntry::msgKeypress(msg);
 	}
 
 	return true;
