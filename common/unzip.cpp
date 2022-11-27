@@ -1000,7 +1000,6 @@ public:
 
 ZipArchive::ZipArchive(unzFile zipFile) : _zipFile(zipFile), _crc() {
 	assert(_zipFile);
-	_crc.init();
 }
 
 ZipArchive::~ZipArchive() {

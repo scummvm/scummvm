@@ -760,7 +760,6 @@ static bool getMacTypesForMacBinary(const char *fileName, uint32 &outType, uint3
 		return false;
 
 	Common::CRC_BINHEX crc;
-	crc.init();
 	uint16 checkSum = crc.crcFast(mbHeader, 124);
 
 	if (checkSum != READ_BE_UINT16(&mbHeader[124]))

@@ -411,7 +411,6 @@ bool MacResManager::isMacBinary(SeekableReadStream &stream) {
 		return false;
 
 	CRC_BINHEX crc;
-	crc.init();
 	uint16 checkSum = crc.crcFast(infoHeader, 124);
 
 	// Sanity check on the CRC. Some movies could look like MacBinary
