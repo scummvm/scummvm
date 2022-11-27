@@ -26,8 +26,9 @@
 #include "common/gui_options.h"
 #include "common/file.h"
 
+#include "queen/defs.h"
 #include "queen/detection.h"
-#include "queen/resource.h"
+#include "queen/version.h"
 
 static const PlainGameDescriptor queenGames[] = {
 	{"queen", "Flight of the Amazon Queen"},
@@ -495,7 +496,7 @@ ADDetectedGame QueenMetaEngineDetection::fallbackDetect(const FileMap &allFiles,
 				continue;
 			}
 			Queen::DetectedGameVersion version;
-			if (Queen::Resource::detectVersion(&version, &dataFile)) {
+			if (Queen::detectVersion(&version, &dataFile)) {
 				desc.gameId = "queen";
 				desc.language = version.language;
 				desc.platform = version.platform;
