@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-25 04:01+0000\n"
+"POT-Creation-Date: 2022-11-27 13:04+0000\n"
 "PO-Revision-Date: 2022-10-23 18:43+0000\n"
 "Last-Translator: aquadran <aquadran@gmail.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -4990,19 +4990,27 @@ msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:42
-msgid "Automatic drilling"
+msgid "Extended timer"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:43
-msgid "Allow to succefully drill in any part of the area in Driller"
+msgid "Start the game timer at 99:59:59"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:53
+msgid "Automatic drilling"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:54
+msgid "Allow to succefully drill in any part of the area in Driller"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:64
 #, fuzzy
 msgid "Disable demo mode"
 msgstr "Włącz tryb helowy"
 
-#: engines/freescape/metaengine.cpp:54
+#: engines/freescape/metaengine.cpp:65
 msgid "Never activate demo mode"
 msgstr ""
 

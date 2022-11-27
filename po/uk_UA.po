@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-25 04:01+0000\n"
+"POT-Creation-Date: 2022-11-27 13:04+0000\n"
 "PO-Revision-Date: 2022-11-22 19:32+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -4957,18 +4957,26 @@ msgstr ""
 "Використовувати записані звуки з високою якістю замість емуляції PC Speaker"
 
 #: engines/freescape/metaengine.cpp:42
+msgid "Extended timer"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:43
+msgid "Start the game timer at 99:59:59"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:53
 msgid "Automatic drilling"
 msgstr "Автоматичне свердління"
 
-#: engines/freescape/metaengine.cpp:43
+#: engines/freescape/metaengine.cpp:54
 msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr "Дозволяє успішне свердління будь-якої частини простору у грі Driller"
 
-#: engines/freescape/metaengine.cpp:53
+#: engines/freescape/metaengine.cpp:64
 msgid "Disable demo mode"
 msgstr "Вимкнути демо-режим"
 
-#: engines/freescape/metaengine.cpp:54
+#: engines/freescape/metaengine.cpp:65
 msgid "Never activate demo mode"
 msgstr "Ніколи не вмикати демо-режим"
 
