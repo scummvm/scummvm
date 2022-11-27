@@ -111,15 +111,8 @@ public:
 
 bool BuriedMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		f == kSupportsListSaves ||
-		f == kSupportsLoadingDuringStartup ||
-		f == kSupportsDeleteSave ||
-		f == kSavesSupportMetaInfo ||
-		f == kSavesSupportThumbnail ||
-		f == kSavesSupportCreationDate ||
-		f == kSavesSupportPlayTime ||
-		f == kSimpleSavesNames ||
-		f == kSavesUseExtendedFormat;
+		(f == kSupportsLoadingDuringStartup) ||
+		checkExtendedSaves(f);
 }
 
 Common::Error BuriedMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
