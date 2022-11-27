@@ -105,8 +105,7 @@ void Search::draw() {
 bool Search::msgKeypress(const KeypressMessage &msg) {
 	switch (_mode) {
 	case INITIAL:
-		cancelDelay();
-		timeout();
+		endDelay();
 		break;
 
 	case OPTIONS:
@@ -130,8 +129,7 @@ bool Search::msgKeypress(const KeypressMessage &msg) {
 
 	case RESPONSE:
 		if (isDelayActive()) {
-			cancelDelay();
-			timeout();
+			endDelay();
 		}
 		break;
 

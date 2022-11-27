@@ -106,6 +106,14 @@ protected:
 	}
 
 	/**
+	 * Ends an active delay and calls timeout
+	 */
+	void endDelay() {
+		_timeoutCtr = 0;
+		timeout();
+	}
+
+	/**
 	 * Called when an active timeout countdown expired
 	 */
 	virtual void timeout();

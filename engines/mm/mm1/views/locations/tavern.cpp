@@ -47,8 +47,7 @@ bool Tavern::msgKeypress(const KeypressMessage &msg) {
 
 	// If timed message display, end the waiting
 	if (isDelayActive()) {
-		cancelDelay();
-		timeout();
+		endDelay();
 		return true;
 	}
 

@@ -249,8 +249,7 @@ bool Combat::msgKeypress(const KeypressMessage &msg) {
 	} else if (isDelayActive()) {
 		// In all other modes, if a delay is active, any keypress
 		// will cause the delay to end immediately
-		cancelDelay();
-		timeout();
+		endDelay();
 	}
 
 	return true;
