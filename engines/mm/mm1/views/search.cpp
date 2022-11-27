@@ -128,9 +128,7 @@ bool Search::msgKeypress(const KeypressMessage &msg) {
 		break;
 
 	case RESPONSE:
-		if (isDelayActive()) {
-			endDelay();
-		}
+		endDelay();
 		break;
 
 	case WHO_WILL_TRY:

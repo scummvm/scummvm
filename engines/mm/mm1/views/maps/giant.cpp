@@ -49,12 +49,13 @@ void Giant::draw() {
 }
 
 bool Giant::msgKeypress(const KeypressMessage &msg) {
-	if (isDelayActive()) {
-		endDelay();
+	if (endDelay()) {
 		draw();
+
 	} else if (msg.keycode < Common::KEYCODE_1 ||
 		msg.keycode > Common::KEYCODE_6) {
 		close();
+
 	} else {
 		uint charIndex = msg.keycode - Common::KEYCODE_1;
 		charSelected(charIndex);
@@ -64,8 +65,8 @@ bool Giant::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool Giant::msgAction(const ActionMessage &msg) {
-	if (isDelayActive()) {
-		endDelay();
+	if (endDelay()) {
+		// Nothing further
 
 	} else if (msg._action >= KEYBIND_VIEW_PARTY1 &&
 			msg._action <= KEYBIND_VIEW_PARTY6) {
