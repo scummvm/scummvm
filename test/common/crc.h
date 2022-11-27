@@ -12,7 +12,6 @@ class CrcTestSuite : public CxxTest::TestSuite
 public:
 	void test_crc32() {
 		Common::CRC32 crc;
-		crc.init();
 		TS_ASSERT_EQUALS(crc.crcFast(testString, testLen), 0x414fa339U);
 		TS_ASSERT_EQUALS(crc.crcSlow(testString, testLen), 0x414fa339U);
 		uint32 running = crc.getInitRemainder();
@@ -23,7 +22,6 @@ public:
 
 	void test_crc16() {
 		Common::CRC16 crc;
-		crc.init();
 		TS_ASSERT_EQUALS(crc.crcFast(testString, testLen), 0xfcdfU);
 		TS_ASSERT_EQUALS(crc.crcSlow(testString, testLen), 0xfcdfU);
 		uint16 running = crc.getInitRemainder();
@@ -34,7 +32,6 @@ public:
 
 	void test_crc_ccitt() {
 		Common::CRC_CCITT crc; // aka ccitt-false
-		crc.init();
 		TS_ASSERT_EQUALS(crc.crcFast(testString, testLen), 0x8fddU);
 		TS_ASSERT_EQUALS(crc.crcSlow(testString, testLen), 0x8fddU);
 		uint16 running = crc.getInitRemainder();
@@ -45,7 +42,6 @@ public:
 
 	void test_crc_binhex() {
 		Common::CRC_BINHEX crc; // Aka xmodem
-		crc.init();
 		TS_ASSERT_EQUALS(crc.crcFast(testString, testLen), 0xf0c8U);
 		TS_ASSERT_EQUALS(crc.crcSlow(testString, testLen), 0xf0c8U);
 		uint16 running = crc.getInitRemainder();

@@ -45,7 +45,6 @@ template <typename T, bool need_reflect>
 class CRCCommon {
 public:
 	CRCCommon(T poly, T init_remainder, T final_xor);
-	T init(void);
 	T finalize(T remainder) const;
 	T crcSlow(byte const message[], int nBytes) const;
 	T getInitRemainder() const { return reflectRemainder(_init_remainder); }
@@ -58,10 +57,6 @@ protected:
 	const int _width;
 	const int _topbit;
 
-	T _crcTable[256];
-
-	bool _inited;
-
 	template<typename R>
 	static R reflect(R data);
 
@@ -72,19 +67,25 @@ protected:
 template <typename T>
 class CRCNormal : public CRCCommon<T, false> {
 public:
-	CRCNormal(T poly, T init_remainder, T final_xor) : CRCCommon<T, false>(poly, init_remainder, final_xor) {}
+	CRCNormal(T poly, T init_remainder, T final_xor);
 
 	T crcFast(byte const message[], int nBytes) const;
 	T processByte(byte byteVal, T remainder) const;
+
+private:
+  	T _crcTable[256];
 };
 
 template <typename T>
 class CRCReflected : public CRCCommon<T, true> {
 public:
-	CRCReflected(T poly, T init_remainder, T final_xor) : CRCCommon<T, true>(poly, init_remainder, final_xor) {}
+	CRCReflected(T poly, T init_remainder, T final_xor);
 
 	T crcFast(byte const message[], int nBytes) const;
 	T processByte(byte byteVal, T remainder) const;
+
+private:
+  	T _crcTable[256];
 };
 
 /*********************************************************************
@@ -169,29 +170,10 @@ T CRCCommon<T, need_reflect>::crcSlow(byte const message[], int nBytes) const {
 
 template<typename T, bool need_reflect>
 CRCCommon<T, need_reflect>::CRCCommon(T poly, T init_remainder, T final_xor) :
-	_poly(poly), _init_remainder(init_remainder), _final_xor(final_xor), _width(8 * sizeof(T)), _topbit(1 << (8 * sizeof(T) - 1)) {
+	_poly(poly), _init_remainder(init_remainder), _final_xor(final_xor), _width(8 * sizeof(T)), _topbit(1 << (8 * sizeof(T) - 1)) {}
 
-	for (int i = 0; i < 256; ++i)
-		_crcTable[i] = 0;
-
-	_inited = false;
-}
-
-/*********************************************************************
- *
- * Function:    crcInit()
- *
- * Description: Populate the partial CRC lookup table.
- *
- * Notes:       This function must be rerun any time the CRC standard
- *              is changed.  If desired, it can be run "offline" and
- *              the table results stored in an embedded system's ROM.
- *
- * Returns:     Initial remainder.
- *
- *********************************************************************/
-template<typename T, bool need_reflect>
-T CRCCommon<T, need_reflect>::init() {
+template <typename T>
+CRCNormal<T>::CRCNormal(T poly, T init_remainder, T final_xor) : CRCCommon<T, false>(poly, init_remainder, final_xor) {
 	/*
 	 * Compute the remainder of each possible dividend.
 	 */
@@ -199,7 +181,7 @@ T CRCCommon<T, need_reflect>::init() {
 		/*
 		 * Start with the dividend followed by zeros.
 		 */
-		T remainder = dividend << (_width - 8);
+		T remainder = dividend << (this->_width - 8);
 
 		/*
 		 * Perform modulo-2 division, a bit at a time.
@@ -208,8 +190,8 @@ T CRCCommon<T, need_reflect>::init() {
 			/*
 			 * Try to divide the current data bit.
 			 */
-			if (remainder & _topbit) {
-				remainder = (remainder << 1) ^ _poly;
+			if (remainder & this->_topbit) {
+				remainder = (remainder << 1) ^ this->_poly;
 			} else {
 				remainder = (remainder << 1);
 			}
@@ -218,14 +200,43 @@ T CRCCommon<T, need_reflect>::init() {
 		/*
 		 * Store the result into the table.
 		 */
-		_crcTable[reflectData(dividend)] = reflectRemainder(remainder);
-	}
-
-	_inited = true;
-
-	return _init_remainder;
+		this->_crcTable[dividend] = remainder;
+	}	
 }
 
+template <typename T>
+CRCReflected<T>::CRCReflected(T poly, T init_remainder, T final_xor) : CRCCommon<T, true>(poly, init_remainder, final_xor) {
+	T reflected_poly = this->reflectRemainder(poly);
+
+	/*
+	 * Compute the remainder of each possible dividend.
+	 */
+	for (int dividend = 0; dividend < 256; ++dividend) {
+		/*
+		 * Start with the dividend followed by zeros.
+		 */
+		T remainder = dividend;
+
+		/*
+		 * Perform modulo-2 division, a bit at a time.
+		 */
+		for (byte bit = 8; bit > 0; --bit) {
+			/*
+			 * Try to divide the current data bit.
+			 */
+			if (remainder & 1) {
+				remainder = (remainder >> 1) ^ reflected_poly;
+			} else {
+				remainder = (remainder >> 1);
+			}
+		}
+
+		/*
+		 * Store the result into the table.
+		 */
+		_crcTable[dividend] = remainder;
+	}	
+}
 
 /*********************************************************************
  *
@@ -241,9 +252,6 @@ T CRCCommon<T, need_reflect>::init() {
 template<typename T>
 T CRCNormal<T>::crcFast(byte const message[], int nBytes) const {
 	T remainder = this->_init_remainder;
-
-	if (!this->_inited)
-		error("CRC::crcFast(): init method must be called first");
 
 	/*
 	 * Divide the message by the polynomial, a byte at a time.
@@ -273,9 +281,6 @@ T CRCNormal<T>::crcFast(byte const message[], int nBytes) const {
 template<typename T>
 T CRCReflected<T>::crcFast(byte const message[], int nBytes) const {
 	T remainder = this->reflectRemainder(this->_init_remainder);
-
-	if (!this->_inited)
-		error("CRC::crcFast(): init method must be called first");
 
 	/*
 	 * Divide the message by the polynomial, a byte at a time.
