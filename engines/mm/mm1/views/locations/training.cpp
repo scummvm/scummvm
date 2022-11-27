@@ -117,10 +117,16 @@ void Training::draw() {
 }
 
 bool Training::msgKeypress(const KeypressMessage &msg) {
-	switch (msg.keycode) {
-	case Common::KEYCODE_ESCAPE:
+	if (msg.keycode == Common::KEYCODE_ESCAPE) {
 		leave();
-		break;
+		return true;
+	}
+
+	// If a delay is active, end it
+	if (endDelay())
+		return true;
+
+	switch (msg.keycode) {
 	case Common::KEYCODE_a:
 		if (_canTrain)
 			train();
