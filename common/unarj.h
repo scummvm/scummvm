@@ -51,6 +51,11 @@ class Archive;
  */
 Archive *makeArjArchive(const String &name);
 
+/**
+ * Similar to previous but for multi-volume archives
+ */
+Archive *makeArjArchive(const Array<String> &names);
+
 /** @} */
 
 } // End of namespace Common
