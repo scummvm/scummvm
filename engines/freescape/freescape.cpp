@@ -543,8 +543,6 @@ Common::Error FreescapeEngine::run() {
 	initGameState();
 	loadColorPalette();
 
-	_gfx->clear(0);
-
 	_gfx->convertImageFormatIfNecessary(_title);
 	_gfx->convertImageFormatIfNecessary(_border);
 
