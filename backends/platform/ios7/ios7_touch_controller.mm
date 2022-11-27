@@ -60,14 +60,24 @@
 	if (allTouches.count == 1) {
 		_firstTouch = [allTouches anyObject];
 		if (_firstTouch.type == UITouchTypeDirect) {
-			// Move the pointer to the new position
-			[self handlePointerMoveTo:[_firstTouch locationInView: [self view]]];
-			[self handleMouseButtonAction:kGameControllerMouseButtonLeft isPressed:YES at:[_firstTouch locationInView:[self view]]];
+			if (iOS7_touchpadModeEnabled()) {
+				// In touchpad mode the action should occur on the current pointer position
+				[self handleMouseButtonAction:kGameControllerMouseButtonLeft isPressed:YES at:[[self view] pointerPosition]];
+			} else {
+				// Only move the pointer to the new position if not in touchpadMode else it's very hard to click on items
+				[self handlePointerMoveTo:[_firstTouch locationInView: [self view]]];
+				[self handleMouseButtonAction:kGameControllerMouseButtonLeft isPressed:YES at:[_firstTouch locationInView:[self view]]];
+			}
 		}
 	} else if (allTouches.count == 2) {
 		_secondTouch = [self secondTouchOtherTouchThan:_firstTouch in:allTouches];
 		if (_secondTouch && _secondTouch.type == UITouchTypeDirect) {
-			[self handleMouseButtonAction:kGameControllerMouseButtonRight isPressed:YES at:[_firstTouch locationInView:[self view]]];
+			if (iOS7_touchpadModeEnabled()) {
+				// In touchpad mode the action should occur on the current pointer position
+				[self handleMouseButtonAction:kGameControllerMouseButtonRight isPressed:YES at:[[self view] pointerPosition]];
+			} else {
+				[self handleMouseButtonAction:kGameControllerMouseButtonRight isPressed:YES at:[_secondTouch locationInView:[self view]]];
+			}
 		}
 	}
 }
@@ -78,7 +88,17 @@
 		if (touch == _firstTouch ||
 			touch == _secondTouch) {
 			if (touch.type == UITouchTypeDirect) {
-				[self handlePointerMoveTo:[touch locationInView: [self view]]];
+				if (iOS7_touchpadModeEnabled()) {
+					// Calculate new position for the pointer based on delta of the current and previous location of the touch
+					CGPoint pointerLocation = [[self view] pointerPosition];
+					CGPoint touchLocation = [touch locationInView:[self view]];
+					CGPoint previousTouchLocation = [touch previousLocationInView:[self view]];
+					pointerLocation.y += touchLocation.y - previousTouchLocation.y;
+					pointerLocation.x += touchLocation.x - previousTouchLocation.x;
+					[self handlePointerMoveTo:pointerLocation];
+				} else {
+					[self handlePointerMoveTo:[touch locationInView: [self view]]];
+				}
 			}
 		}
 	}
