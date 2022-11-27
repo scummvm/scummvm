@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-27 13:04+0000\n"
-"PO-Revision-Date: 2022-11-22 18:42+0000\n"
+"PO-Revision-Date: 2022-11-27 17:41+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -5008,11 +5008,11 @@ msgstr ""
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Extended timer"
-msgstr ""
+msgstr "Tempo aggiuntivo"
 
 #: engines/freescape/metaengine.cpp:43
 msgid "Start the game timer at 99:59:59"
-msgstr ""
+msgstr "Imposta il timer a 99:59:59"
 
 #: engines/freescape/metaengine.cpp:53
 msgid "Automatic drilling"
