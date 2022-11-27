@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-27 13:37+0000\n"
-"PO-Revision-Date: 2022-10-17 00:33+0000\n"
+"PO-Revision-Date: 2022-11-27 20:29+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -4138,7 +4138,7 @@ msgstr "Poista NTSC-häiriövärien emulointi tekstille"
 
 #: engines/agi/detection_tables.h:310
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
-msgstr ""
+msgstr "Varhaiset AGI-pelit Tandy Color Computer:ille eivät vielä ole tuettuja."
 
 #: engines/agi/font.cpp:1096
 msgid ""
@@ -4582,12 +4582,12 @@ msgstr "Näytä käännösteksitys introssa oleville teksteille"
 
 #: engines/bladerunner/metaengine.cpp:111
 msgid "Fix credits for voice actors"
-msgstr ""
+msgstr "Korjaa ääninäyttelijöiden lopputekstit"
 
 #: engines/bladerunner/metaengine.cpp:112
 msgid ""
 "Updates the end credits with corrected credits for the Spanish voice actors"
-msgstr ""
+msgstr "Korjaa lopputekstit Espanjankielisten ääninäyttelijöiden osalta"
 
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 #: engines/bladerunner/metaengine.cpp:199
@@ -4734,10 +4734,8 @@ msgid "Skip support"
 msgstr "Ohita tuki"
 
 #: engines/buried/metaengine.cpp:41
-#, fuzzy
-#| msgid "Allow text and cutscenes to be skipped"
 msgid "Allow cutscenes to be skipped"
-msgstr "Salli tekstin ja videoiden ohittaminen"
+msgstr "Salli videoiden ohittaminen"
 
 #: engines/buried/saveload.cpp:66
 msgid ""
@@ -4781,11 +4779,8 @@ msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Käytä TTS:ää tekstin lukemiseen pelissä (jos TTS on saatavilla)"
 
 #: engines/cge2/metaengine.cpp:55
-#, fuzzy
-#| msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgid "Enable Text to Speech for Objects and Options"
-msgstr ""
-"Tekstistä puheeksi -toiminto esineille, asetuksille ja raamattulainaukselle"
+msgstr "Tekstistä puheeksi -toiminto esineille ja asetuksille"
 
 #: engines/cge2/metaengine.cpp:56 engines/dreamweb/metaengine.cpp:62
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:40
@@ -4941,37 +4936,35 @@ msgstr ""
 
 #: engines/freescape/metaengine.cpp:31
 msgid "Prerecorded sounds"
-msgstr ""
+msgstr "Esiäänitetyt äänet"
 
 #: engines/freescape/metaengine.cpp:32
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
-msgstr ""
+msgstr "Käytä korkealaatuisia esiäänitettyjä ääniä pc speaker-emulaation sijaan"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Extended timer"
-msgstr ""
+msgstr "Pidennetty ajastin"
 
 #: engines/freescape/metaengine.cpp:43
 msgid "Start the game timer at 99:59:59"
-msgstr ""
+msgstr "Aloita peliajastin ajasta 99:59:59"
 
 #: engines/freescape/metaengine.cpp:53
 msgid "Automatic drilling"
-msgstr ""
+msgstr "Automaattinen poraus"
 
 #: engines/freescape/metaengine.cpp:54
 msgid "Allow to succefully drill in any part of the area in Driller"
-msgstr ""
+msgstr "Salli onnistunut poraus missä tahansa alueella Driller:issä"
 
 #: engines/freescape/metaengine.cpp:64
-#, fuzzy
-#| msgid "Enable debug mode"
 msgid "Disable demo mode"
-msgstr "Käytä debugtilaa"
+msgstr "Ei demotilaa"
 
 #: engines/freescape/metaengine.cpp:65
 msgid "Never activate demo mode"
-msgstr ""
+msgstr "Älä koskaan aktivoi demotilaa"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -6174,14 +6167,12 @@ msgid "Starts with the debugger dashboard active."
 msgstr "Käynnistää debuggerikojelauta aktiivisena."
 
 #: engines/mtropolis/metaengine.cpp:160
-#, fuzzy
-#| msgid "Toggle Clue Privacy"
 msgid "Toggle debug overlay"
-msgstr "Vihjeen julkisuus päälle / pois"
+msgstr "Debug overlay päälle / pois"
 
 #: engines/mtropolis/metaengine.cpp:165
 msgid "Force any playing movies to end"
-msgstr ""
+msgstr "Lopeta kaikki käynnissä olevat videot"
 
 #: engines/mtropolis/saveload.cpp:142
 msgid "Failed to read version information from save file"
@@ -6195,14 +6186,12 @@ msgstr ""
 "versioinformaatiota."
 
 #: engines/mtropolis/saveload.cpp:166
-#, fuzzy
-#| msgid ""
-#| "Saved game was created with a newer version of ScummVM. Unable to load."
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
 msgstr ""
-"Tämä pelitallenne on luotu ScummVM:n uudemmalla versiolla. Lataus ei onnistu."
+"Tämä pelitallenne on luotu ScummVM:n aikaisemmalla, yhteensopimattomalla "
+"versiolla. Lataus ei onnistu."
 
 #: engines/mtropolis/saveload.cpp:174
 msgid "Failed to load save, an error occurred when reading the save game data."
@@ -7399,15 +7388,13 @@ msgstr "Potkaise"
 
 #. I18N: The name of the 'Shift' key on a PC keyboard
 #: engines/scumm/help.cpp:238
-#, fuzzy
-#| msgid "Shift key"
 msgid "Shift"
-msgstr "Shift-näppäin"
+msgstr "Shift"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/help.cpp:240
 msgid "Win the bike fight cheat"
-msgstr ""
+msgstr "Voita moottoripyörätaistelu-huijaus"
 
 #: engines/scumm/help.cpp:245
 msgid "Regular cursor"
@@ -8997,10 +8984,8 @@ msgid "Toggle subtitles"
 msgstr "Tekstitys päälle / pois"
 
 #: engines/wintermute/keymapper_tables.h:1409
-#, fuzzy
-#| msgid "Hide Others"
 msgid "Hide hints"
-msgstr "Piilota muut"
+msgstr "Piilota vihjeet"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1464
