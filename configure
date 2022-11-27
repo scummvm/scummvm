@@ -4090,7 +4090,7 @@ EOF
 			# Otherwise, when not cross-compiling, try with LFS_CFLAGS
 			if test -z "$_host"; then
 				TMPFLAGS=`getconf LFS_CFLAGS 2>/dev/null`
-				if ! test -z "$TMPFLAGS" ; then
+				if test $? -eq 0 && test ! -z "$TMPFLAGS" && test "$TMPFLAGS" != undefined ; then
 					cc_check_no_clean $TMPFLAGS && _has_fseeko_offt_64=yes
 					if test "$_has_fseeko_offt_64" = yes ; then
 						echo "yes (adding $TMPFLAGS)"
