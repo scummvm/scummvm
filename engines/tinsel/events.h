@@ -87,7 +87,8 @@ enum PLR_EVENT {
  *
  * Note: DW2 renames ENTER & LEAVE to WALKIN & WALKOUT, and has a new LEAVE event
  */
-enum TINSEL_EVENT {
+// ': int' because out-of-range values happen in DW2 and we do enum casts (PVS-Studio V1016)
+enum TINSEL_EVENT : int {
 	NOEVENT, STARTUP, CLOSEDOWN, POINTED, UNPOINT, WALKIN, WALKOUT,
 	PICKUP,	PUTDOWN, WALKTO, LOOK, ACTION, CONVERSE, SHOWEVENT,
 	HIDEEVENT, TALKING, ENDTALK, LEAVE_T2, RESTORE, PROV_WALKTO
