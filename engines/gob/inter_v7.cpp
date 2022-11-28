@@ -365,6 +365,7 @@ void Inter_v7::copyFile(const Common::String &sourceFile, const Common::String &
 				return;
 
 			int32 size = stream->size();
+			// TODO: avoid this allocation by implementing a Stream version of saveFromRaw (e.g. "saveFromStream")
 			byte *data = new byte[size];
 			stream->read(data, size);
 
@@ -597,6 +598,7 @@ void Inter_v7::o7_playVmdOrMusic() {
 			if (props.flags & 0x400) {
 				if (!_vm->_mult->_objects[props.startFrame].pAnimData->isStatic) {
 					if (_vm->_mult->_objects[props.startFrame].videoSlot > 0) {
+						// TODO: something more is needed here, but unclear what
 						//_vm->_vidPlayer->pauseVideo(_vm->_mult->_objects[props.startFrame].videoSlot - 1, true);
 					}
 				}
@@ -662,8 +664,10 @@ void Inter_v7::o7_playVmdOrMusic() {
 		return;
 	}
 
+	// TODO: conditions below for unblocking videos have been found partly from asm, partly by trial and errors.
+	// Reality may be more complex...
 	if (props.startFrame == -2 ||
-		(props.startFrame == props.lastFrame && // /!\ Found partly from asm, partly by trial and errors. Reality may be more complex...
+		(props.startFrame == props.lastFrame &&
 		 props.lastFrame != -1 &&
 		 !(props.flags & VideoPlayer::kFlagOtherSurface))) {
 		props.startFrame = 0;
