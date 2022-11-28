@@ -143,10 +143,10 @@ void TextView::timeout() {
 }
 
 bool TextView::msgDrawGraphic(const DrawGraphicMessage &msg) {
-	Graphics::ManagedSurface img =
+	const Graphics::ManagedSurface img =
 		g_globals->_monsters.getMonsterImage(msg._gfxNum);
 	getSurface().blitFrom(img, Common::Point(64, 16));
-	return true;
+	return true; 
 }
 
 } // namespace Views

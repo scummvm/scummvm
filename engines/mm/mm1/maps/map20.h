@@ -59,6 +59,11 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
+
+	/**
+	 * Go to the castle
+	 */
+	void goToCastle();
 };
 
 } // namespace Maps

@@ -29,7 +29,7 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
-#define VAL1 177
+#define CASTLE_STATE 177
 
 void Map20::special() {
 	Game::Encounter &enc = g_globals->_encounters;
@@ -93,24 +93,28 @@ void Map20::special01() {
 
 void Map20::special02() {
 	visitedExit();
-	if (_data[VAL1] & 0x80) {
-		g_maps->_mapPos = Common::Point(15, 8);
-		g_maps->changeMap(0xa11, 3);
+	if (_data[CASTLE_STATE] & 0x80) {
+		goToCastle();
 
-	} else if (_data[VAL1]) {
-		_data[VAL1] = 0;
+	} else if (_data[CASTLE_STATE]) {
+		_data[CASTLE_STATE] = 0;
 
 	} else {
+		send("View", DrawGraphicMessage(6 + 65));
+
 		send(SoundMessage(
-			STRING["maps.map20.cave"],
+			STRING["maps.map20.castle"],
 			[](const Common::KeyState &ks) {
 				Map20 &map = *static_cast<Map20 *>(g_maps->_currentMap);
 				if (ks.keycode == Common::KEYCODE_y) {
 					g_events->focusedView()->close();
-					map[VAL1] = 0xff;
+					map[CASTLE_STATE] = 0xff;
+					map.goToCastle();
+
 				} else if (ks.keycode == Common::KEYCODE_n) {
 					g_events->focusedView()->close();
-					map[VAL1]++;
+					map[CASTLE_STATE]++;
+					map.updateGame();
 				}
 			}
 		));
@@ -118,17 +122,19 @@ void Map20::special02() {
 }
 
 void Map20::special03() {
-	bool hasWhistle = false;
-	for (uint i = 0; i < g_globals->_party.size() && !hasWhistle; ++i)
-		hasWhistle = g_globals->_party[i].hasItem(RUBY_WHISTLE_ID);
+	bool hasWhistle = g_globals->_party.hasItem(RUBY_WHISTLE_ID);
 
 	if (!hasWhistle) {
-		send(SoundMessage(STRING["maps.map20.castle"]));
+		send(SoundMessage(STRING["maps.map20.temple"],
+			[](const Common::KeyState &) {
+				g_events->focusedView()->close();
+			}
+		));
 		return;
 	}
 
 	send(
-		SoundMessage(STRING["maps.map20.castle"],
+		SoundMessage(STRING["maps.map20.temple"],
 		[](const Common::KeyState &) {
 			g_events->focusedView()->close();
 			g_events->send(SoundMessage(
@@ -191,6 +197,11 @@ void Map20::special07() {
 void Map20::special08() {
 	g_maps->_mapPos.x = 9;
 	updateGame();
+}
+
+void Map20::goToCastle() {
+	g_maps->_mapPos = Common::Point(15, 8);
+	g_maps->changeMap(0xa11, 3);
 }
 
 } // namespace Maps
