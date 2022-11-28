@@ -81,6 +81,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      other languages).
    - Improved support for Hebrew HE game localizations.
    - Fixed Roland MT-32 support in Sam & Max.
+   - Implemented original GUI for Maniac Mansion, Zak McCracken, Indy3 and Loom (EGA)
+     (DOS, C64, Apple IIgs, Macintosh and FM-TOWNS versions).
 
  Toon:
    - Made game menus behave like in the original.
