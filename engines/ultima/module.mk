@@ -535,6 +535,7 @@ MODULE_OBJS := \
 	ultima8/world/item_sorter.o \
 	ultima8/world/map.o \
 	ultima8/world/map_glob.o \
+	ultima8/world/minimap.o \
 	ultima8/world/missile_tracker.o \
 	ultima8/world/monster_egg.o \
 	ultima8/world/snap_process.o \

@@ -19,39 +19,39 @@
  *
  */
 
-#ifndef ULTIMA8_GUMPS_MINIMAPGUMP_H
-#define ULTIMA8_GUMPS_MINIMAPGUMP_H
+#include "ultima/ultima8/misc/common_types.h"
+#include "graphics/surface.h"
 
-#include "ultima/ultima8/gumps/gump.h"
-#include "ultima/ultima8/misc/classtype.h"
+#ifndef ULTIMA8_WORLD_MAP_H
+#define ULTIMA8_WORLD_MAP_H
 
 namespace Ultima {
 namespace Ultima8 {
 
-class MiniMap;
+class CurrentMap;
+class Item;
 
-class MiniMapGump : public Gump {
+#define MINMAPGUMP_SCALE 8
+
+class MiniMap {
 private:
-	Common::HashMap<uint32, MiniMap *> _minimaps;
-	int32 _ax, _ay;
+	uint32 _mapNum;
+	Graphics::Surface _surface;
+
+	uint32 sampleAtPoint(CurrentMap *map, int x, int y);
+	uint32 sampleAtPoint(const Item *item, int x, int y);
 
 public:
-	ENABLE_RUNTIME_CLASSTYPE()
+	MiniMap(uint32 mapNum);
+	~MiniMap();
 
-	MiniMapGump();
-	MiniMapGump(int x, int y);
-	~MiniMapGump() override;
+	void update(CurrentMap *map);
 
-	void run() override;
+	uint32 getMapNum() const { return _mapNum; }
+	Graphics::Surface *getSurface() { return &_surface; }
 
-	void generate();
-	void clear();
-
-	void        PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
-	uint16      TraceObjId(int32 mx, int32 my) override;
-
-	bool loadData(Common::ReadStream *rs, uint32 version);
-	void saveData(Common::WriteStream *ws) override;
+	bool load(Common::ReadStream *rs, uint32 version);
+	void save(Common::WriteStream *ws) const;
 };
 
 } // End of namespace Ultima8
