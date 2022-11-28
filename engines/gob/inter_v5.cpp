@@ -103,7 +103,8 @@ void Inter_v5::o5_deleteFile() {
 	if (mode == SaveLoad::kSaveModeSave) {
 
 		if (!_vm->_saveLoad->deleteFile(file)) {
-			warning("Cannot delete file \"%s\"", file);
+			GUI::MessageDialog dialog(_("Failed to delete file."));
+			dialog.runModal();
 		}
 
 	} else if (mode == SaveLoad::kSaveModeNone)

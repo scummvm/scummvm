@@ -94,6 +94,8 @@ void Inter_v7::setupOpcodesFunc() {
 	OPCODEFUNC(0x03, o7_loadCursor);
 	OPCODEFUNC(0x11, o7_printText);
 	OPCODEFUNC(0x33, o7_fillRect);
+	OPCODEFUNC(0x34, o7_drawLine);
+	OPCODEFUNC(0x36, o7_invalidate);
 	OPCODEFUNC(0x3F, o7_checkData);
 	OPCODEFUNC(0x4D, o7_readData);
 	OPCODEFUNC(0x4E, o7_writeData);
@@ -1185,6 +1187,35 @@ Common::Array<uint32> Inter_v7::getAdibou2InstalledApplications() {
 	}
 
 	return applicationNumbers;
+}
+
+void Inter_v7::o7_drawLine(OpFuncParams &params) {
+	_vm->_draw->_destSurface = _vm->_game->_script->readInt16();
+
+	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
+	_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
+	_vm->_draw->_spriteRight = _vm->_game->_script->readValExpr();
+	_vm->_draw->_spriteBottom = _vm->_game->_script->readValExpr();
+
+	_vm->_game->_script->readExpr(99, 0);
+	//unk_var is always set to 0
+	_vm->_draw->_frontColor = _vm->_game->_script->getResultInt() & 0xFFFF; // + unk_var;
+	_vm->_draw->_pattern = _vm->_game->_script->getResultInt()>>16;
+	_vm->_draw->spriteOperation(DRAW_DRAWLINE);
+}
+
+void Inter_v7::o7_invalidate(OpFuncParams &params) {
+	_vm->_draw->_destSurface = _vm->_game->_script->readInt16();
+	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
+	_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
+	_vm->_draw->_spriteRight = _vm->_game->_script->readValExpr();
+
+	_vm->_game->_script->readExpr(99, 0);
+	//unk_var is always set to 0
+	_vm->_draw->_frontColor = _vm->_game->_script->getResultInt() & 0xFFFF; // + unk_var;
+	_vm->_draw->_pattern = _vm->_game->_script->getResultInt()>>16;
+
+	_vm->_draw->spriteOperation(DRAW_INVALIDATE);
 }
 
 void Inter_v7::o7_checkData(OpFuncParams &params) {
