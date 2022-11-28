@@ -3139,7 +3139,8 @@ bool ScummEngine::isUsingOriginalGUI() {
 
 	if (_game.platform == Common::kPlatformNES ||
 		_game.platform == Common::kPlatformPCEngine ||
-		(_game.platform == Common::kPlatformAtariST && _game.version == 2))
+		(_game.platform == Common::kPlatformAtariST && _game.version == 2) ||
+		(_game.platform == Common::kPlatformSegaCD && _language == Common::JA_JPN))
 		return false;
 
 	if (_game.heversion != 0)
