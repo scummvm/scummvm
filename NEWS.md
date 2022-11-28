@@ -18,6 +18,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for shader-based scalers.
    - Added option for mono sound output (via --output-channels=CHANNELS command
      line option)
+   - Improved cursor scaling in OpenGL mode.
 
  AGI:
    - Improved support for French translations.
