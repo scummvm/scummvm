@@ -1274,6 +1274,9 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 		break;
 
 	case -1:
+		if (_vm->getGameType() != kGameTypeAdibou2)
+			break;
+		// fall through
 	case 1:
 		if (_vm->getGameType() != kGameTypeFascination && _vm->getGameType() != kGameTypeAdibou2)
 			_vm->_util->forceMouseUp(true);

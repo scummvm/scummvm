@@ -651,8 +651,6 @@ protected:
 	void oPlaytoons_F_1B(OpFuncParams &params);
 	void oPlaytoons_putPixel(OpFuncParams &params);
 	void oPlaytoons_freeSprite(OpFuncParams &params);
-	void oPlaytoons_drawLine(OpFuncParams &params);
-	void oPlaytoons_invalidate(OpFuncParams &params);
 	void oPlaytoons_checkData(OpFuncParams &params);
 	void oPlaytoons_readData(OpFuncParams &params);
 
@@ -711,6 +709,8 @@ protected:
 	void o7_loadCursor(OpFuncParams &params);
 	void o7_printText(OpFuncParams &params);
 	void o7_fillRect(OpFuncParams &params);
+	void o7_drawLine(OpFuncParams &params);
+	void o7_invalidate(OpFuncParams &params);
 	void o7_checkData(OpFuncParams &params);
 	void o7_readData(OpFuncParams &params);
 	void o7_writeData(OpFuncParams &params);
