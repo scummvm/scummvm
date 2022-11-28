@@ -434,7 +434,7 @@ bool testPath(Common::String &path, bool directory) {
 		bool exists = false;
 		for (Common::FSList::iterator i = fslist.begin(); i != fslist.end(); ++i) {
 			// for each element in the path, choose the first FSNode
-			// with a case-insensitive matcing name
+			// with a case-insensitive matching name
 			if (i->getName().equalsIgnoreCase(token)) {
 				// If this the final path component, check if we're allowed to match with a directory
 				node = Common::FSNode(*i);
@@ -529,7 +529,7 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 		debug(9, "wrappedPathMakeRelative(): s3 try %s", convPath.c_str());
 
 		if (!testPath(convPath, directory)) {
-			// If we were supplied with parh with subdirectories,
+			// If we were supplied a path with subdirectories,
 			// attempt to combine it with the current movie path at every iteration
 			Common::String locPath = Common::normalizePath(g_director->getCurrentPath() + convPath, g_director->_dirSeparator);
 			debug(9, "wrappedPathMakeRelative(): s3.1 try %s", locPath.c_str());
