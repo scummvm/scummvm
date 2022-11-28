@@ -87,7 +87,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Chinese Rose Tattoo.
 
  Sky:
-   - Added support for Chinese Beneath a steel sky
+   - Added support for Chinese Beneath a Steel Sky.
 
  Toon:
    - Made game menus behave like in the original.
