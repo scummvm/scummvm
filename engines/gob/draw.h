@@ -22,8 +22,11 @@
 #ifndef GOB_DRAW_H
 #define GOB_DRAW_H
 
-#include "common/winexe.h"
 #include "gob/video.h"
+
+namespace Common {
+class WinResources;
+}
 
 namespace Gob {
 
