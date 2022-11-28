@@ -1200,6 +1200,7 @@ void LB::b_openXlib(int nargs) {
 				g_director->_allOpenResFiles.setVal(resPath, resFile);
 				uint32 XCOD = MKTAG('X', 'C', 'O', 'D');
 				uint32 XCMD = MKTAG('X', 'C', 'M', 'D');
+				uint32 XFCN = MKTAG('X', 'F', 'C', 'N');
 
 				Common::Array<uint16> rsrcList = resFile->getResourceIDList(XCOD);
 
@@ -1211,6 +1212,12 @@ void LB::b_openXlib(int nargs) {
 				rsrcList = resFile->getResourceIDList(XCMD);
 				for (uint i = 0; i < rsrcList.size(); i++) {
 					xlibName = resFile->getResourceDetail(XCMD, rsrcList[i]).name.c_str();
+					g_lingo->openXLib(xlibName, kXObj);
+				}
+
+				rsrcList = resFile->getResourceIDList(XFCN);
+				for (uint i = 0; i < rsrcList.size(); i++) {
+					xlibName = resFile->getResourceDetail(XFCN, rsrcList[i]).name.c_str();
 					g_lingo->openXLib(xlibName, kXObj);
 				}
 				return;
@@ -1432,8 +1439,8 @@ void LB::b_preLoad(int nargs) {
 
 	g_lingo->_theResult = g_lingo->pop();
 
-	if (nargs == 2)
-		g_lingo->pop();
+	if (nargs > 1)
+		g_lingo->dropStack(nargs - 1);
 }
 
 void LB::b_preLoadCast(int nargs) {
@@ -1715,7 +1722,7 @@ void LB::b_alert(int nargs) {
 
 	if (!debugChannelSet(-1, kDebugFewFramesOnly)) {
 		g_director->_wm->clearHandlingWidgets();
-		GUI::MessageDialog dialog(alert.c_str(), _("OK"));
+		GUI::MessageDialog dialog(g_director->getCurrentMovie()->getCast()->decodeString(alert), _("OK"));
 		dialog.runModal();
 	}
 }
