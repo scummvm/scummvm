@@ -58,6 +58,7 @@ void Map24::special01() {
 	send(SoundMessage(
 		STRING["maps.map24.kilburn"],
 		[]() {
+			g_events->focusedView()->close();
 			Map24 &map = *static_cast<Map24 *>(g_maps->_currentMap);
 			if (!map.addItem(MAP_OF_DESERT_ID))
 				none160();
