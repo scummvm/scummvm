@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-27 23:25+0000\n"
-"PO-Revision-Date: 2022-11-16 11:28+0000\n"
+"PO-Revision-Date: 2022-11-28 15:16+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -4147,7 +4147,7 @@ msgstr "Ikke bruk emulering av NTSC-artefakter på tekst"
 
 #: engines/agi/detection_tables.h:310
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
-msgstr ""
+msgstr "De eldste AGI-spillene til Tandy Color Computer støttes ikke ennå."
 
 #: engines/agi/font.cpp:1096
 msgid ""
@@ -4306,7 +4306,7 @@ msgstr ""
 #: engines/agos/animation.cpp:576
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr "Fant ikke cutscenefil '%s'!"
+msgstr "Fant ikke mellomsekvensfilen '%s'!"
 
 #: engines/agos/metaengine.cpp:42
 msgid "AdLib OPL3 mode"
@@ -4588,16 +4588,18 @@ msgstr "Vis undertekster når rulletekst vises"
 
 #: engines/bladerunner/metaengine.cpp:101
 msgid "During the intro cutscene, show subtitles during the text crawl"
-msgstr "Vis undertekster når rulleteksten for introscenen vises"
+msgstr "Vis undertekster når rulleteksten for åpningsscenen vises"
 
 #: engines/bladerunner/metaengine.cpp:111
 msgid "Fix credits for voice actors"
-msgstr ""
+msgstr "Korriger listen over stemmeskuespillere"
 
 #: engines/bladerunner/metaengine.cpp:112
 msgid ""
 "Updates the end credits with corrected credits for the Spanish voice actors"
 msgstr ""
+"Oppdater listen over medvirkende til å vise korrekt navn for de spanske "
+"stemmeskuespillerne"
 
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 #: engines/bladerunner/metaengine.cpp:199
@@ -4632,7 +4634,7 @@ msgstr "Skru kampmodus av/på"
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:75
 #: engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
-msgstr "Hopp over cutscene"
+msgstr "Hopp over mellomsekvens"
 
 #. I18N: This keymap allows skipping the current line of dialogue.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4744,10 +4746,8 @@ msgid "Skip support"
 msgstr "Hopp over-støtte"
 
 #: engines/buried/metaengine.cpp:41
-#, fuzzy
-#| msgid "Allow text and cutscenes to be skipped"
 msgid "Allow cutscenes to be skipped"
-msgstr "Tillat å hoppe over tekst og kutt-scener"
+msgstr "Tillat å hoppe over mellomsekvenser"
 
 #: engines/buried/saveload.cpp:66
 msgid ""
@@ -4795,10 +4795,8 @@ msgstr ""
 "tilgjengelig)"
 
 #: engines/cge2/metaengine.cpp:55
-#, fuzzy
-#| msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgid "Enable Text to Speech for Objects and Options"
-msgstr "Aktiver tekst til tale for gjenstander, innstillinger og bibelsitat"
+msgstr "Aktiver tekst til tale for gjenstander og alternativer"
 
 #: engines/cge2/metaengine.cpp:56 engines/dreamweb/metaengine.cpp:62
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:40
@@ -4974,29 +4972,27 @@ msgstr ""
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Extended timer"
-msgstr ""
+msgstr "Utvidet telleverk"
 
 #: engines/freescape/metaengine.cpp:43
 msgid "Start the game timer at 99:59:59"
-msgstr ""
+msgstr "Start spillets telleverk på 99.59.59"
 
 #: engines/freescape/metaengine.cpp:53
 msgid "Automatic drilling"
-msgstr ""
+msgstr "Automatisk drilling"
 
 #: engines/freescape/metaengine.cpp:54
 msgid "Allow to succefully drill in any part of the area in Driller"
-msgstr ""
+msgstr "Lar deg utføre vellykket drilling i hvilket som helst område i Driller"
 
 #: engines/freescape/metaengine.cpp:64
-#, fuzzy
-#| msgid "Enable debug mode"
 msgid "Disable demo mode"
-msgstr "Aktiver debug-modus"
+msgstr "Skru av demomodus"
 
 #: engines/freescape/metaengine.cpp:65
 msgid "Never activate demo mode"
-msgstr ""
+msgstr "Aldri aktiver demomodus"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -5488,7 +5484,7 @@ msgstr "Aktiver studiopublikum"
 
 #: engines/kyra/metaengine.cpp:62
 msgid "Allow text and cutscenes to be skipped"
-msgstr "Tillat å hoppe over tekst og kutt-scener"
+msgstr "Tillat å hoppe over tekst og mellomsekvenser"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/metaengine.cpp:74
@@ -6210,14 +6206,12 @@ msgid "Starts with the debugger dashboard active."
 msgstr "Start med debugger-kontrollpanlet aktivert."
 
 #: engines/mtropolis/metaengine.cpp:160
-#, fuzzy
-#| msgid "Toggle Clue Privacy"
 msgid "Toggle debug overlay"
-msgstr "Ledetråder privat/offentlig"
+msgstr "Skru på debug-overlegg"
 
 #: engines/mtropolis/metaengine.cpp:165
 msgid "Force any playing movies to end"
-msgstr ""
+msgstr "Tvungen avslutning av filmsekvenser"
 
 #: engines/mtropolis/saveload.cpp:142
 msgid "Failed to read version information from save file"
@@ -7449,7 +7443,7 @@ msgstr "Shift"
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/help.cpp:240
 msgid "Win the bike fight cheat"
-msgstr ""
+msgstr "Juksefunksjon for å vinne motorsykkelkamper"
 
 #: engines/scumm/help.cpp:245
 msgid "Regular cursor"
@@ -8029,17 +8023,17 @@ msgstr ""
 #: engines/sword1/animation.cpp:529
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr "PSX-strøm cutscene '%s' kan ikke spilles i pallettmodus"
+msgstr "PSX-mellomsekvensstrømmingen '%s' kan ikke spilles i pallettmodus"
 
 #: engines/sword1/animation.cpp:560 engines/sword2/animation.cpp:456
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
-msgstr "MPEG2-cutscener funnet men ScummVM er bygd uten MPEG2-støtte"
+msgstr "MPEG2-mellomsekvenser funnet, men ScummVM er bygd uten MPEG2-støtte"
 
 #: engines/sword1/animation.cpp:567 engines/sword2/animation.cpp:465
 #, c-format
 msgid "Cutscene '%s' not found"
-msgstr "Fant ikke cutscene '%s'"
+msgstr "Fant ikke mellomsekvenser '%s'"
 
 #: engines/sword1/control.cpp:886
 msgid ""
@@ -8090,7 +8084,8 @@ msgstr "Dette er slutten på Broken Sword 1-demoen"
 #: engines/sword2/animation.cpp:426
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr "PSX-cutscener funnet, men ScummVM har blitt bygd uten RGB-fargestøtte"
+msgstr ""
+"PSX-mellomsekvenser funnet, men ScummVM har blitt bygd uten RGB-fargestøtte"
 
 #: engines/sword2/metaengine.cpp:46
 msgid "Show object labels"
