@@ -113,7 +113,6 @@ MODULE_OBJS := \
 	engine/impl/OpenALSoundChannel.o \
 	engine/impl/OpenALSoundData.o \
 	engine/impl/OpenALSoundEnvironment.o \
-	engine/impl/PBuffer.o \
 	engine/impl/PhysicsBodyNewton.o \
 	engine/impl/PhysicsControllerNewton.o \
 	engine/impl/PhysicsJointBallNewton.o \
@@ -126,7 +125,6 @@ MODULE_OBJS := \
 	engine/impl/SqScript.o \
 	engine/impl/VertexBufferOGL.o \
 	engine/impl/VertexBufferVBO.o \
-	engine/impl/VideoStreamTheora.o \
 	engine/libraries/angelscript/add-ons/scriptstdstring.o \
 	engine/libraries/angelscript/add-ons/scripthelper.o \
 	engine/libraries/angelscript/add-ons/scriptarray.o \
