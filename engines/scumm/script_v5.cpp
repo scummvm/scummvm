@@ -1767,8 +1767,8 @@ void ScummEngine_v5::o5_loadRoom() {
 
 	// WORKAROUND: The first time you examine Rusty while he's sleeping,
 	// you will get a close-up of him. Which one should depend on whether
-	// or not you've used the Reflection draft on him. But in some, you
-	// will always get the close-up where he's wearing his own clothes.
+	// or not you've used the Reflection draft on him. But in some versions,
+	// you will always get the close-up where he's wearing his own clothes.
 
 	if (_game.id == GID_LOOM && _game.version == 3 && room == 29 &&
 		vm.slot[_currentScript].number == 112 && _enableEnhancements) {
