@@ -44,10 +44,13 @@ MODULE_OBJS = \
 	lingo/xlibs/askuser.o \
 	lingo/xlibs/barakeobj.o \
 	lingo/xlibs/cdromxobj.o \
+	lingo/xlibs/darkenscreen.o \
+	lingo/xlibs/ednox.o \
 	lingo/xlibs/fileio.o \
 	lingo/xlibs/flushxobj.o \
 	lingo/xlibs/fplayxobj.o \
 	lingo/xlibs/gpid.o \
+	lingo/xlibs/iscd.o \
 	lingo/xlibs/jitdraw3.o \
 	lingo/xlibs/jwxini.o \
 	lingo/xlibs/labeldrvxobj.o \
