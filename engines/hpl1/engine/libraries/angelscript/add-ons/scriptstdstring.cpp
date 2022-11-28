@@ -41,16 +41,17 @@ public:
 		// threads, so it is necessary to use a mutex.
 		asAcquireExclusiveLock();
 
-		Common::String* str = new Common::String(data, length); // deleted at line 74
-		map_t::iterator it = stringCache.find(str);
-		if (it != stringCache.end())
+		Common::String str(data, length);
+		map_t::iterator it = stringCache.find(&str);
+		if (it != stringCache.end()) {
 			it->second++;
-		else
-			it = stringCache.insert(map_t::value_type(str, 1)).first;
-
+		} else {
+			// deleted in ReleaseStringConstant
+			it = stringCache.insert(map_t::value_type(new Common::String(data, length), 1)).first;
+		}
 		asReleaseExclusiveLock();
 
-		return reinterpret_cast<const void*>(str);
+		return reinterpret_cast<const void*>(it->first);
 	}
 
 	int  ReleaseStringConstant(const void *str)
