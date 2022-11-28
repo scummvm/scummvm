@@ -30,7 +30,7 @@
 
 static const PlainGameDescriptor tinselGames[] = {
 	{"dw", "Discworld"},
-	{"dw2", "Discworld 2: Missing Presumed ...!?"},
+	{"dw2", "Discworld II: Missing Presumed ...!?"},
 	{"noir", "Discworld Noir"},
 	{0, 0}
 };
