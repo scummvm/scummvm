@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-27 23:25+0000\n"
-"PO-Revision-Date: 2022-11-22 10:30+0000\n"
+"PO-Revision-Date: 2022-11-28 09:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4898,11 +4898,11 @@ msgstr "スピーカーエミュレーションの代わりに高品質なサウ
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Extended timer"
-msgstr ""
+msgstr "タイマー延長"
 
 #: engines/freescape/metaengine.cpp:43
 msgid "Start the game timer at 99:59:59"
-msgstr ""
+msgstr "99:59:59でゲームを開始"
 
 #: engines/freescape/metaengine.cpp:53
 msgid "Automatic drilling"
