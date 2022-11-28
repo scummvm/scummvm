@@ -48,7 +48,10 @@ public:
 	virtual ~SaveLoad();
 
 	/** "foo\bar\quux.bla" => "quux.bla". */
-	static const char *stripPath(const char *fileName);
+	static const char *stripPath(const char *fileName, char separator = '\\');
+
+	/** Changes all file separator characters (/,:,\) in path to newSeparator */
+	static Common::String replacePathSeparators(const char *path, char newSeparator);
 
 	/** Returns how to handle that file. */
 	virtual SaveMode getSaveMode(const char *fileName) const;

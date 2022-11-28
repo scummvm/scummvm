@@ -33,12 +33,23 @@ SaveLoad::SaveLoad(GobEngine *vm) : _vm(vm) {
 SaveLoad::~SaveLoad() {
 }
 
-const char *SaveLoad::stripPath(const char *fileName) {
+const char *SaveLoad::stripPath(const char *fileName, char separator) {
 	const char *backSlash;
-	if ((backSlash = strrchr(fileName, '\\')))
+	if ((backSlash = strrchr(fileName, separator)))
 		return backSlash + 1;
 
 	return fileName;
+}
+
+
+Common::String SaveLoad::replacePathSeparators(const char *path, char newSeparator) {
+	Common::String result = path;
+	for (char &c : result) {
+		if (c != newSeparator && (c == '\\' || c == '/' || c == ':'))
+			c = newSeparator;
+	}
+
+	return result;
 }
 
 Common::List<Common::String> SaveLoad::getFilesMatchingPattern(const char *pattern) const {
