@@ -53,6 +53,7 @@ MODULE_OBJS = \
 	lingo/xlibs/fplayxobj.o \
 	lingo/xlibs/gpid.o \
 	lingo/xlibs/iscd.o \
+	lingo/xlibs/ispippin.o \
 	lingo/xlibs/jitdraw3.o \
 	lingo/xlibs/jwxini.o \
 	lingo/xlibs/labeldrvxobj.o \
@@ -64,6 +65,7 @@ MODULE_OBJS = \
 	lingo/xlibs/orthoplayxobj.o \
 	lingo/xlibs/palxobj.o \
 	lingo/xlibs/popupmenuxobj.o \
+	lingo/xlibs/qtmovie.o \
 	lingo/xlibs/registercomponent.o \
 	lingo/xlibs/serialportxobj.o \
 	lingo/xlibs/soundjam.o \
