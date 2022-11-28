@@ -155,6 +155,7 @@ void Window::probeMacBinary(MacArchive *archive) {
 				delete _currentMovie;
 				_currentMovie = nullptr;
 
+				probeProjector(moviePath);
 			} else {
 				warning("Couldn't find score with name: %s", sname.c_str());
 			}
@@ -177,6 +178,14 @@ void Window::probeMacBinary(MacArchive *archive) {
 		for (Common::Array<uint16>::iterator iterator = xcmd.begin(); iterator != xcmd.end(); ++iterator) {
 			Resource res = archive->getResourceDetail(MKTAG('X', 'C', 'M', 'D'), *iterator);
 			debug(0, "Detected XCMD '%s'", res.name.c_str());
+			g_lingo->openXLib(res.name, kXObj);
+		}
+	}
+	if (archive->hasResource(MKTAG('X', 'F', 'C', 'N'), -1)) {
+		Common::Array<uint16> xfcn = archive->getResourceIDList(MKTAG('X', 'F', 'C', 'N'));
+		for (Common::Array<uint16>::iterator iterator = xfcn.begin(); iterator != xfcn.end(); ++iterator) {
+			Resource res = archive->getResourceDetail(MKTAG('X', 'F', 'C', 'N'), *iterator);
+			debug(0, "Detected XFCN '%s'", res.name.c_str());
 			g_lingo->openXLib(res.name, kXObj);
 		}
 	}
