@@ -42,6 +42,7 @@
 #include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/usecode/bit_set.h"
+#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/camera_process.h"
 #include "ultima/ultima8/world/get_object.h"
