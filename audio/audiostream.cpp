@@ -92,19 +92,22 @@ SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &b
 #pragma mark --- LoopingAudioStream ---
 #pragma mark -
 
-LoopingAudioStream::LoopingAudioStream(RewindableAudioStream *stream, uint loops, DisposeAfterUse::Flag disposeAfterUse, bool rewind)
-	: _parent(stream, disposeAfterUse), _loops(loops), _completeIterations(0) {
-	assert(stream);
+LoopingAudioStream::LoopingAudioStream(Common::DisposablePtr<RewindableAudioStream>&& stream, uint loops, bool rewind)
+        : _parent(Common::move(stream)), _loops(loops), _completeIterations(0) {
+	assert(_parent);
 
-	if (rewind && !stream->rewind()) {
+	if (rewind && !_parent->rewind()) {
 		// TODO: Properly indicate error
 		_loops = _completeIterations = 1;
 	}
-	if (stream->endOfStream()) {
+	if (_parent->endOfStream()) {
 		// Apparently this is an empty stream
 		_loops = _completeIterations = 1;
 	}
 }
+
+LoopingAudioStream::LoopingAudioStream(RewindableAudioStream *stream, uint loops, DisposeAfterUse::Flag disposeAfterUse, bool rewind)
+	: LoopingAudioStream(Common::move(Common::DisposablePtr<RewindableAudioStream>(stream, disposeAfterUse)), loops, rewind) {}
 
 int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	if ((_loops && _completeIterations == _loops) || !numSamples)
