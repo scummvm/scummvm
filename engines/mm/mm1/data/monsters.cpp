@@ -68,6 +68,12 @@ Graphics::ManagedSurface Monsters::getMonsterImage(int monsterNum) {
 	// Decode the image
 	Graphics::ManagedSurface img;
 	Gfx::ScreenDecoder decoder;
+	// TODO: Figure out if the indexes are map-dependant
+	decoder._indexes[0] = 0;
+	decoder._indexes[1] = 2;
+	decoder._indexes[2] = 4;
+	decoder._indexes[3] = 15;
+
 	if (!decoder.loadStream(*entry, 104, 96))
 		error("Failed decoding monster image");
 

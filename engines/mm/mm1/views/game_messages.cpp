@@ -54,10 +54,6 @@ void GameMessages::draw() {
 bool GameMessages::msgInfo(const InfoMessage &msg) {
 	if (msg._ynCallback || msg._keyCallback ||
 			g_globals->_party.isPartyDead()) {
-		// Do a first draw to show 3d view at new position
-		g_events->redraw();
-		g_events->drawElements();
-
 		addView(this);
 	}
 

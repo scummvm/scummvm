@@ -62,6 +62,7 @@ darkness:
 		draw();
 
 		map.special();
+		return;
 
 	} else if (_stepRandom) {
 		g_globals->_encounters._encounterType = NORMAL_ENCOUNTER;
