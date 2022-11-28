@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-28 23:11+0000\n"
+"POT-Creation-Date: 2022-11-28 23:14+0000\n"
 "PO-Revision-Date: 2022-08-02 15:16+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -2910,7 +2910,7 @@ msgstr "Бяз музыкі"
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Эмулятар Apple II GS (НЯ ДЗЕЙСНЫ)"
 
-#: audio/softsynth/cms.cpp:354
+#: audio/softsynth/cms.cpp:355
 msgid "Creative Music System emulator"
 msgstr "Эмулятар Creative Music System"
 
