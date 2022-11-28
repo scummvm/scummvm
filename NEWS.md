@@ -63,7 +63,6 @@ For a more comprehensive changelog of the latest experimental code, see:
      Guybrush back to Scabb Island, at the end of Part II.
    - Fixed various original game bugs, oversights and continuity errors (only
      when using the "Enable game-specific enhancements" setting).
-   - Added support for original GUI dialogs to v4-v8 LucasArts games.
    - Improved the decoding of some Western European game strings when they're
      displayed through ScummVM's interface, such as when pausing a game.
    - Fixed the navigator head not pointing to some directions in Monkey
@@ -81,8 +80,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      other languages).
    - Improved support for Hebrew HE game localizations.
    - Fixed Roland MT-32 support in Sam & Max.
-   - Implemented original GUI for Maniac Mansion, Zak McCracken, Indy3 and Loom (EGA)
-     (DOS, C64, Apple IIgs, Macintosh and FM-TOWNS versions).
+   - Implemented original GUI and save menus for LucasArts games (DOS, Windows,
+     Amiga, Macintosh, FM-Towns, Atari ST and Commodore 64 versions)
 
  Sherlock:
    - Added support for Chinese Rose Tattoo.
