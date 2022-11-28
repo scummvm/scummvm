@@ -2390,7 +2390,7 @@ Modifier *CompoundVariableModifier::findChildByName(Runtime *runtime, const Comm
 	if (runtime->getHacks().mtiVariableReferencesHack) {
 		const Common::String &myName = getName();
 
-		if (myName.size() == 1 && myName == "a" || myName == "b" || myName == "c" || myName == "d") {
+		if (myName.size() == 1 && (myName == "a" || myName == "b" || myName == "c" || myName == "d")) {
 			Project *project = runtime->getProject();
 			Modifier *modifier = project->findGlobalVarWithName(MTropolis::toCaseInsensitive(name)).get();
 
