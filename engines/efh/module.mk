@@ -3,9 +3,11 @@ MODULE := engines/efh
 MODULE_OBJS = \
 	constants.o \
 	efh.o \
+	fight.o \
 	files.o \
 	graphics.o \
 	savegames.o \
+	script.o \
 	utils.o \
 	metaengine.o
 

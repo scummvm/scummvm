@@ -304,8 +304,6 @@ private:
 	void displaySmallMap(int16 posX, int16 posY);
 	void displayLargeMap(int16 posX, int16 posY);
 	void drawScreen();
-	uint8 *script_readNumberArray(uint8 *buffer, int16 destArraySize, int16 *destArray);
-	uint8 *script_getNumber(uint8 *srcBuffer, int16 *retval);
 	void removeObject(int16 charId, int16 objectId);
 	void totalPartyKill();
 	void removeCharacterFromTeam(int16 teamMemberId);
@@ -316,7 +314,6 @@ private:
 	bool giveItemTo(int16 charId, int16 objectId, int16 altCharId);
 	int16 chooseCharacterToReplace();
 	int16 handleCharacterJoining();
-	int16 script_parse(uint8 *str, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag);
 	void drawText(uint8 *impPtr, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag);
 	void displayMiddleLeftTempText(uint8 *impArray, bool flag);
 	void sub15A28(int16 arg0, int16 arg2);
@@ -375,7 +372,6 @@ private:
 	void sub1C4CA(bool WhiteFl);
 	void displayCombatMenu(int16 charId);
 	void drawCombatScreen(int16 charId, bool whiteFl, bool forceDrawFl);
-	void handleFight_checkEndEffect(int16 charId);
 	int16 sub1DEC8(int16 groupNumber);
 	int16 getCharacterScore(int16 charId, int16 itemId);
 	bool checkSpecialItemsOnCurrentPlace(int16 itemId);
@@ -392,13 +388,8 @@ private:
 	bool characterSearchesMonsterCorpse(int16 charId, int16 monsterId);
 	void getXPAndSearchCorpse(int16 charId, Common::String namePt1, Common::String namePt2, int16 monsterId);
 	void addReactionText(int16 id);
-	void handleFight_lastAction_A(int16 teamCharId);
-	void handleFight_lastAction_D(int16 teamCharId);
-	void handleFight_lastAction_H(int16 teamCharId);
-	void handleFight_lastAction_U(int16 teamCharId);
 	char getFightMessageLastCharacter(char *message);
 	void sub1D8C2(int16 charId, int16 damage);
-	bool handleFight(int16 monsterId);
 	void displayMenuItemString(int16 menuBoxId, int16 thisBoxId, int16 minX, int16 maxX, int16 minY, const char *str);
 	void displayStatusMenu(int16 windowId);
 	void countRightWindowItems(int16 menuId, int16 charId);
@@ -421,6 +412,14 @@ private:
 	int16 sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA);
 	int16 handleStatusMenu(int16 gameMode, int16 charId);
 	bool checkMonsterCollision();
+
+	// Fight
+	bool handleFight(int16 monsterId);
+	void handleFight_checkEndEffect(int16 charId);
+	void handleFight_lastAction_A(int16 teamCharId);
+	void handleFight_lastAction_D(int16 teamCharId);
+	void handleFight_lastAction_H(int16 teamCharId);
+	void handleFight_lastAction_U(int16 teamCharId);
 
 	// Files
 	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);
@@ -473,6 +472,11 @@ private:
 
 	// Savegames
 	void synchronize(Common::Serializer &s);
+
+	// Script
+	uint8 *script_readNumberArray(uint8 *buffer, int16 destArraySize, int16 *destArray);
+	uint8 *script_getNumber(uint8 *srcBuffer, int16 *retval);
+	int16 script_parse(uint8 *str, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag);
 
 	// Utils
 	void setDefaultNoteDuration();
