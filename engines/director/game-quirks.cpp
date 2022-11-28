@@ -71,6 +71,10 @@ struct CachedFile {
 		"WOLFGANG.dat",	// It needs an empty file
 			(const byte *)"", 0
 	},
+	{ "mcluhan", Common::kPlatformWindows,
+		"prefs/Markers/List.Txt",	// It needs an empty file
+			(const byte *)"", 0
+	},
 	{ nullptr, Common::kPlatformUnknown, nullptr, nullptr, 0 }
 };
 
@@ -93,7 +97,7 @@ static void quirkLzone() {
 
 static void quirkMcLuhan() {
 	// TODO. Read fonts from MCLUHAN/SYSTEM directory
-	g_director->_extraSearchPath.push_back("mcluhan\\");
+	g_director->_extraSearchPath.push_back("mcluhan");
 	Graphics::MacFontManager *fontMan = g_director->_wm->_fontMan;
 	fontMan->loadWindowsFont("MCLUHAN/SYSTEM/MCBOLD13.FON");
 	fontMan->loadWindowsFont("MCLUHAN/SYSTEM/MCLURG__.FON");
