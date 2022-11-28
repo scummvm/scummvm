@@ -62,6 +62,12 @@ void TextView::writeString(const Common::String &str) {
 	for (const unsigned char *s = (const unsigned char *)str.c_str(); *s; ++s) {
 		if (*s != '|')
 			writeChar(*s);
+
+		if (*s >= ' ' && _textPos.x == 0 && (*(s + 1) == '\r' || *(s + 1) == '\n'))
+			// Ignore carraige returns right after line wraps. The original didn't
+			// have them and just carried on immedaitely with the next word,
+			// but I wanted them to be present to cleanly identify line breaks
+			++s;
 	}
 }
 

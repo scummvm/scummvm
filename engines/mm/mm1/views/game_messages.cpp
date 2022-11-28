@@ -105,8 +105,11 @@ bool GameMessages::msgKeypress(const KeypressMessage &msg) {
 }
 
 void GameMessages::timeout() {
-	if (_ynCallback)
+	if (_ynCallback) {
+		// _ynCallback is also used for timeout callbacks
+		close();
 		_ynCallback();
+	}
 }
 
 } // namespace Views
