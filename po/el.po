@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-28 23:14+0000\n"
+"POT-Creation-Date: 2022-11-28 23:21+0000\n"
 "PO-Revision-Date: 2022-11-27 15:23+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -7950,7 +7950,7 @@ msgstr ""
 "απαραίτητα\n"
 "δεδομένα για την υποστήριξη του MT-32. Αντ' αυτού θα γίνει χρήση AdLib."
 
-#: engines/scumm/scumm.cpp:3236
+#: engines/scumm/scumm.cpp:3237
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "

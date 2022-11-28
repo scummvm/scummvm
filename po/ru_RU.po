@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-28 23:14+0000\n"
+"POT-Creation-Date: 2022-11-28 23:21+0000\n"
 "PO-Revision-Date: 2022-11-22 19:32+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -7770,7 +7770,7 @@ msgstr ""
 "Эта версия Monkey Island 1 известна тем, что в ней отсутствуют\n"
 "ресурсы, необходимые для MT-32. Переключаюсь на AdLib."
 
-#: engines/scumm/scumm.cpp:3236
+#: engines/scumm/scumm.cpp:3237
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "

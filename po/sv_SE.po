@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-28 23:14+0000\n"
+"POT-Creation-Date: 2022-11-28 23:21+0000\n"
 "PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -7749,7 +7749,7 @@ msgid ""
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:3236
+#: engines/scumm/scumm.cpp:3237
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
