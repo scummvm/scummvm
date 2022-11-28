@@ -42,6 +42,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  SAGA:
    - Unterstützung für die chinesische Version von Inherit the Earth hinzugefügt.
    - Unterstützung für die chinesische Version von I Have no Mouth and I Must Scream hinzugefügt.
+   - Unterstützung für die koreanische Version von I Have no Mouth and I Must Scream hinzugefügt.
+   - Inherit the Earth kann nun direkt mit den Dateien des Disketten-Installationsprogramms gespielt werden.
 
  SCUMM:
    - Unterstützung von CGA-, CGA Composite-, CGA schwarz/weiß- und Herkules-Grafikmodi
