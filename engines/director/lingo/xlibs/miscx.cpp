@@ -77,7 +77,7 @@ static MethodProto xlibMethods[] = {
 	{ "BootName",				MiscX::m_bootName,		0,	0,	400 },	// D4
 	{ "InsureFolder",			MiscX::m_insureFolder,	1,	1,	400 },	// D4
 	{ "PrefsFolder",			MiscX::m_prefsFolder,	0,	0,	400 },	// D4
-    { nullptr, nullptr, 0, 0, 0 }
+	{ nullptr, nullptr, 0, 0, 0 }
 };
 
 void MiscX::open(int type) {
