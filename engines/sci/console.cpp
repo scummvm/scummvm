@@ -2995,10 +2995,18 @@ bool Console::cmdStack(int argc, const char **argv) {
 	int nr = atoi(argv[1]);
 
 	for (int i = nr; i > 0; i--) {
-		if ((xs.sp - xs.fp - i) == 0)
+		bool isArgc = (xs.sp - xs.variables_argp - i == 0);
+		if (isArgc)
+			debugPrintf("-- parameters --\n");
+		if (xs.tempCount && ((xs.sp - xs.fp - i) == 0))
 			debugPrintf("-- temp variables --\n");
+		if (xs.sp - xs.fp - xs.tempCount - i == 0)
+			debugPrintf("-- local stack --\n");
 		if (xs.sp - i >= _engine->_gamestate->stack_base)
-			debugPrintf("ST:%04x = %04x:%04x\n", (unsigned)(xs.sp - i - _engine->_gamestate->stack_base), PRINT_REG(xs.sp[-i]));
+			debugPrintf("ST:%04x = %04x:%04x%s\n",
+				(unsigned)(xs.sp - i - _engine->_gamestate->stack_base),
+				PRINT_REG(xs.sp[-i]),
+				(isArgc ? "  argc" : ""));
 	}
 
 	return true;

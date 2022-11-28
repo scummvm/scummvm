@@ -596,7 +596,7 @@ void run_vm(EngineState *s) {
 				s->variablesSegment[VAR_LOCAL] = local_script->getLocalsSegment();
 				s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = local_script->getLocalsBegin();
 				s->variablesMax[VAR_LOCAL] = local_script->getLocalsCount();
-				s->variablesMax[VAR_TEMP] = s->xs->sp - s->xs->fp;
+				s->variablesMax[VAR_TEMP] = s->xs->tempCount;
 				s->variablesMax[VAR_PARAM] = s->xs->argc + 1;
 			}
 			s->variables[VAR_TEMP] = s->xs->fp;
@@ -620,8 +620,6 @@ void run_vm(EngineState *s) {
 		if (s->xs->sp < s->xs->fp)
 			error("run_vm(): stack underflow, sp: %04x:%04x, fp: %04x:%04x",
 			PRINT_REG(*s->xs->sp), PRINT_REG(*s->xs->fp));
-
-		s->variablesMax[VAR_TEMP] = s->xs->sp - s->xs->fp;
 
 		if (s->xs->addr.pc.getOffset() >= scr->getBufSize())
 			error("run_vm(): program counter gone astray, addr: %d, code buffer size: %d",
@@ -817,6 +815,8 @@ void run_vm(EngineState *s) {
 			break;
 
 		case op_link: // 0x1f (31)
+			s->variablesMax[VAR_TEMP] = s->xs->tempCount = opparams[0];
+
 			// We shouldn't initialize temp variables at all
 			//  We put special segment 0xFFFF in there, so that uninitialized reads can get detected
 			for (int i = 0; i < opparams[0]; i++)
@@ -919,8 +919,7 @@ void run_vm(EngineState *s) {
 		case op_ret: // 0x24 (36)
 			// Return from an execution loop started by call, calle, callb, send, self or super
 			do {
-				StackPtr old_sp2 = s->xs->sp;
-				StackPtr old_fp = s->xs->fp;
+				StackPtr old_sp = s->xs->sp;
 				ExecStack *old_xs = &(s->_executionStack.back());
 
 				if ((int)s->_executionStack.size() - 1 == s->executionStackBase) { // Have we reached the base?
@@ -952,8 +951,8 @@ void run_vm(EngineState *s) {
 
 				if (s->xs->sp == CALL_SP_CARRY // Used in sends to 'carry' the stack pointer
 				        || s->xs->type != EXEC_STACK_TYPE_CALL) {
-					s->xs->sp = old_sp2;
-					s->xs->fp = old_fp;
+					s->xs->sp = old_sp;
+					s->xs->fp = old_sp;
 				}
 
 			} while (s->xs->type == EXEC_STACK_TYPE_VARSELECTOR);
