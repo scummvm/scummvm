@@ -198,6 +198,24 @@ struct ScriptPatch {
 			9, "rHyperPACo \"blank\", 498, 350 gGenPathWay", "rHyperPACo \"blank\", 498, 350, gGenPathWay"},
 
 
+	{"smile", "v1.1", kPlatformMacintosh, "SMILE! The Splattering", kScoreScript, 24, 0,
+			1, "go to frame \"Info b\"If you have not paid   ", "go to frame \"Info b\""},
+
+
+	{"amandastories", "", kPlatformWindows, "Shared Cast", kMovieScript, 512, 0,
+			55, "    set mytest1 = FileIO(mnew, \"read\" mymovie)", "    set mytest1 = FileIO(mnew, \"read\", mymovie)"},
+	{"amandastories", "", kPlatformWindows, "Shared Cast", kMovieScript, 512, 0,
+			63, "      set mytest2 = FileIO(mnew, \"read\" mymovie)", "      set mytest2 = FileIO(mnew, \"read\", mymovie)"},
+	{"amandastories", "", kPlatformWindows, "Shared Cast", kMovieScript, 512, 0,
+			70, "          set mytest3 = FileIO(mnew, \"read\" mymovie)", "          set mytest3 = FileIO(mnew, \"read\", mymovie)"},
+	{"amandastories", "", kPlatformWindows, "ASstart", kMovieScript, 0, 0,
+			5, "  set mytest = FileIO(mnew, \"read\" mymovie)", "  set mytest = FileIO(mnew, \"read\", mymovie)"},
+	{"amandastories", "", kPlatformWindows, "ASstart", kMovieScript, 0, 0,
+			11, "    set mytest2 = FileIO(mnew, \"read\" mymovie)", "    set mytest2 = FileIO(mnew, \"read\", mymovie)"},
+	{"amandastories", "", kPlatformWindows, "ASstart", kMovieScript, 0, 0,
+			19, "      set mytest3 = FileIO(mnew, \"read\" mymovie)", "      set mytest3 = FileIO(mnew, \"read\", mymovie)"},
+
+
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, 0, nullptr, nullptr}
 };
 
