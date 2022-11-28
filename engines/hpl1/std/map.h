@@ -139,11 +139,15 @@ public:
 	}
 
 	std::pair<iterator, bool> insert(const value_type &val) {
+		if (_items.begin() == nullptr) {
+			_items.push_back(val);
+			return {_items.begin(), true};
+		}
 		iterator it = this->lower_bound(val.first);
 		if (it == this->end() || !compareEqual(it->first, val.first)) {
 			size_t idx = it - this->begin();
 			_items.insert_at(idx, val);
-			return {it, true};
+			return {this->begin() + idx, true};
 		}
 		return {it, false};
 	}
