@@ -304,6 +304,8 @@ void Inter_v6::o6_assign(OpFuncParams &params) {
 		&&
 		loopCount == 1
 		&&
+		_vm->_enableAdibou2FreeBananasWorkaround
+		&&
 		_vm->_game->_script->pos() == 18631 // same offset in all versions
 		&&
 		(dest == 40956 // bananas in v2.10, v2.11
