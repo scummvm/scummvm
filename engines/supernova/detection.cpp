@@ -32,8 +32,8 @@ static const DebugChannelDef debugFlagList[] = {
 };
 
 static const PlainGameDescriptor supernovaGames[] = {
-	{"msn1", "Mission Supernova 1"},
-	{"msn2", "Mission Supernova 2"},
+	{"msn1", "Mission Supernova - Part 1: The fate of Horst Hummel"},
+	{"msn2", "Mission Supernova - Part 2: The Doppelg\303\244nger"},
 	{nullptr, nullptr}
 };
 
