@@ -71,7 +71,6 @@ const char *directoryGlobs[] = {
 	"xn--Musejagd mit Ton-vnb",		// GGMD German
 	"music",
 	"solos",
-	"sounds",
 	"duthelp",
 	"dutvideo",
 	"endsound",
