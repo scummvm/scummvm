@@ -4178,10 +4178,6 @@ void ScummEngine::fadeOut(int effect) {
 		}
 	}
 
-	// Update the palette at the end (once we faded to black) to avoid
-	// some nasty effects when the palette is changed
-	updatePalette();
-
 	_screenEffectFlag = false;
 }
 
@@ -4623,7 +4619,7 @@ byte MajMinCodec::readBits(byte n) {
 	MAJMIN_FILL_BITS();
 	byte _value = _majMinData.bits & ((1 << n) - 1);
 	MAJMIN_EAT_BITS(n);
-	return _value;   
+	return _value;
 }
 
 void MajMinCodec::skipData(int32 numbytes) {

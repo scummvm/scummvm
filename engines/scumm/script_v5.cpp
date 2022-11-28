@@ -1790,7 +1790,9 @@ void ScummEngine_v5::o5_loadRoom() {
 	if (!(_game.features & GF_SMALL_HEADER) || room != _currentRoom)
 		startScene(room, nullptr, 0);
 
-	_fullRedraw = true;
+	// DIG and COMI don't flag a full redraw after starting the scene.
+	if (_game.version < 7 || _game.id == GID_FT)
+		_fullRedraw = true;
 }
 
 void ScummEngine_v5::o5_loadRoomWithEgo() {

@@ -162,6 +162,7 @@ protected:
 	void setDefaultCursor() override;
 	void updateCursor() override;
 	void setCursorTransparency(int a) override;
+	void setCursorFromImg(uint img, uint room, uint imgindex) override;
 
 	void drawVerb(int verb, int mode) override;
 

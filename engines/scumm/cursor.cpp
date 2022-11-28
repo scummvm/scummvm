@@ -515,15 +515,20 @@ void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
 		useBompCursor(bomp, w, h);
 	else
 		useIm01Cursor(dataptr, w, h);
+}
+
+#ifdef ENABLE_SCUMM_7_8
+void ScummEngine_v7::setCursorFromImg(uint img, uint room, uint imgindex) {
+	ScummEngine_v6::setCursorFromImg(img, room, imgindex);
 
 	// There are several occasions in which the screen is not updated
 	// between subsequent cursor changes, and as a result we would never
 	// be able to see some of those updates (i.e. the loading cursors in
 	// The Dig and The Curse of Monkey Island). This forced screen update
 	// addresses that.
-	if (_game.version > 6)
-		_system->updateScreen();
+	_system->updateScreen();
 }
+#endif
 
 void ScummEngine_v6::useIm01Cursor(const byte *im, int w, int h) {
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
