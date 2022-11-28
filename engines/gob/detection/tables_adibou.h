@@ -118,7 +118,7 @@
 		AD_ENTRY1s("intro.stk", "f2b797819aeedee557e904b0b5ccd82e", 8736454),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND,
 		GUIO0()
 	},
 	kGameTypeAdibou2,
@@ -132,7 +132,7 @@
 		AD_ENTRY1s("intro.stk", "7b1f1f6f6477f54401e95d913f75e333", 8736904),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND,
 		GUIO0()
 	},
 	kGameTypeAdibou2,
@@ -146,7 +146,7 @@
 		AD_ENTRY1s("intro.stk", "1e49c39a4a3ce6032a84b712539c2d63", 8738134),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND,
 		GUIO0()
 	},
 	kGameTypeAdibou2,
@@ -160,7 +160,7 @@
 		AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND,
 		GUIO0()
 	},
 	kGameTypeAdibou2,
