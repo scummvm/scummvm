@@ -30,7 +30,7 @@
 #include "parallaction/parallaction.h"
 
 static const PlainGameDescriptor parallactionGames[] = {
-	{"nippon", "Nippon Safes Inc."},
+	{"nippon", "Nippon Safes, Inc."},
 	{"bra", "The Big Red Adventure"},
 	{nullptr, nullptr}
 };
@@ -215,7 +215,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Nippon Safes Inc. (C) Dynabyte";
+		return "Nippon Safes, Inc. (C) Dynabyte";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {
