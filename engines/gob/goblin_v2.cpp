@@ -42,7 +42,7 @@ Goblin_v2::Goblin_v2(GobEngine *vm) : Goblin_v1(vm) {
 }
 
 void Goblin_v2::freeObjects() {
-	_vm->_map->_mapUnknownBool = false;
+	_vm->_map->_usesObliqueCoordinates = false;
 
 	if (_gobsCount < 0)
 		return;
