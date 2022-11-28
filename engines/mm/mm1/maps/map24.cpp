@@ -55,15 +55,19 @@ void Map24::special00() {
 }
 
 void Map24::special01() {
-	send(SoundMessage(
+	SoundMessage msg(
 		STRING["maps.map24.kilburn"],
 		[]() {
-			g_events->focusedView()->close();
 			Map24 &map = *static_cast<Map24 *>(g_maps->_currentMap);
-			if (!map.addItem(MAP_OF_DESERT_ID))
+			if (!map.addItem(MAP_OF_DESERT_ID)) {
+				g_maps->clearSpecial();
 				none160();
+			}
 		}
-	));
+	);
+	msg._largeMessage = true;
+
+	send(msg);
 }
 
 void Map24::special02() {
@@ -130,8 +134,6 @@ void Map24::special09() {
 		[]() {
 			for (uint i = 0; i < g_globals->_party.size(); ++i) {
 				Character &c = g_globals->_party[i];
-				g_globals->_currCharacter = &c;
-
 				c._backpack.clear();
 				for (int j = 0; j < INVENTORY_COUNT; ++j)
 					c._backpack.add(USELESS_ITEM_ID, 0);
