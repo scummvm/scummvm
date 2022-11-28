@@ -70,7 +70,7 @@ static MethodProto xlibMethods[] = {
 	{ "Fondler",				MoovXObj::m_fondler,	    	0,	0,	300 },	// D4
 	{ "PlayMovie",				MoovXObj::m_playMovie,		    3,	3,	300 },	// D4
 	{ "PauseMovie",				MoovXObj::m_pauseMovie,	    	0,	0,	300 },	// D4
-	{ "SoundMovie",				MoovXObj::m_soundMovie,	    	0,	0,	300 },	// D4
+	{ "SoundMovie",				MoovXObj::m_soundMovie,	    	1,	1,	300 },	// D4
 	{ "StopMovie",				MoovXObj::m_stopMovie,	    	0,	0,	300 },	// D4
 	{ "MovieDone",				MoovXObj::m_movieDone,		    0,	0,	300 },	// D4
 	{ nullptr, nullptr, 0, 0, 0 }
@@ -180,6 +180,7 @@ void MoovXObj::m_pauseMovie(int nargs) {
 void MoovXObj::m_soundMovie(int nargs) {
 	// unused in C.H.A.O.S.
 	g_lingo->printSTUBWithArglist("MoovXObj::m_soundMovie", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void MoovXObj::m_stopMovie(int nargs) {
