@@ -106,10 +106,10 @@ void Map20::special02() {
 			[](const Common::KeyState &ks) {
 				Map20 &map = *static_cast<Map20 *>(g_maps->_currentMap);
 				if (ks.keycode == Common::KEYCODE_y) {
-					g_events->close();
+					g_events->focusedView()->close();
 					map[VAL1] = 0xff;
 				} else if (ks.keycode == Common::KEYCODE_n) {
-					g_events->close();
+					g_events->focusedView()->close();
 					map[VAL1]++;
 				}
 			}
@@ -130,15 +130,15 @@ void Map20::special03() {
 	send(
 		SoundMessage(STRING["maps.map20.castle"],
 		[](const Common::KeyState &) {
-			g_events->close();
+			g_events->focusedView()->close();
 			g_events->send(SoundMessage(
 				STRING["maps.map20.whistle"],
 				[](const Common::KeyState &ks) {
 					if (ks.keycode == Common::KEYCODE_0) {
-						g_events->close();
+						g_events->focusedView()->close();
 						none160();
 					} else if (ks.keycode == Common::KEYCODE_2) {
-						g_events->close();
+						g_events->focusedView()->close();
 						g_events->send(SoundMessage(
 							STRING["maps.map20.stairs_down"],
 							[]() {
@@ -154,7 +154,7 @@ void Map20::special03() {
 
 					} else if (ks.keycode >= Common::KEYCODE_1 &&
 							ks.keycode <= Common::KEYCODE_9) {
-						g_events->close();
+						g_events->focusedView()->close();
 						g_maps->_mapPos = Common::Point(8, 5);
 						g_maps->changeMap(0x604, 1);
 					}
