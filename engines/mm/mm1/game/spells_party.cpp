@@ -425,9 +425,8 @@ SpellResult SpellsParty::cleric48_surface() {
 	} else {
 		maps._mapPos = Common::Point(map[Maps::MAP_SURFACE_X],
 			map[Maps::MAP_SURFACE_Y]);
-		maps.changeMap(map[Maps::MAP_SURFACE_DEST_ID1] &
-			(map[Maps::MAP_SURFACE_DEST_ID2] << 8),
-			map[Maps::MAP_SURFACE_DEST_SECTION]);
+		maps.changeMap(map.dataWord(Maps::MAP_SURFACE_ID),
+			map[Maps::MAP_SURFACE_SECTION]);
 		return SR_SUCCESS_SILENT;
 	}
 }

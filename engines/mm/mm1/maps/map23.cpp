@@ -129,7 +129,8 @@ void Map23::special09() {
 			Game::Encounter &enc = g_globals->_encounters;
 
 			g_maps->clearSpecial();
-			map._walls[32]--;
+			map._states[32]--;
+			g_maps->_currentState = map._states[32];
 
 			enc.clearMonsters();
 			for (int i = 0; i < 6; ++i)

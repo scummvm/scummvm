@@ -237,7 +237,6 @@ void ViewBase::obstructed(byte mask) {
 
 	_dialogMessage = STRING[Common::String::format(
 		"movement.obstructed.%d", map.dataByte(index))];
-
 }
 
 void ViewBase::barrier() {

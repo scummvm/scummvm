@@ -62,6 +62,9 @@ Common::Error MM1Engine::run() {
 
 	// Setup console
 	setDebugger(new Console());
+	if (gDebugLevel > 0)
+		// TODO: Remove flag once everything is tested
+		g_globals->_encountersOn = false;
 
 	// Load globals
 	if (!_globals.load(isEnhanced()))
