@@ -110,7 +110,7 @@ static MethodProto xlibMethods[] = {
 	{ "readFile",				FileIO::m_readFile,			 0, 0,	200 },	// D2
 	{ "readLine",				FileIO::m_readLine,			 0, 0,	200 },	// D2
 	{ "readToken",				FileIO::m_readToken,		 2, 2,	200 },	// D2
-	{ "readPict",				FileIO::m_readPict,			 0,	0,	300 },  // D3
+	{ "readPict",				FileIO::m_readPict,			 0, 0,	300 },	// D3
 	{ "readWord",				FileIO::m_readWord,			 0, 0,	200 },	// D2
 	{ "setFinderInfo",			FileIO::m_setFinderInfo,	 2, 2,	200 },	// D2
 	{ "setPosition",			FileIO::m_setPosition,		 1, 1,	200 },	// D2
