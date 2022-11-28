@@ -42,7 +42,7 @@ void Fonts::setVm(SherlockEngine *vm) {
 	_vm = vm;
 	_font = nullptr;
 	_charCount = 0;
-	_isModifiedEucCn = _vm->getLanguage() == Common::Language::ZH_ANY && _vm->getGameID() == GameType::GType_RoseTattoo;
+	_isModifiedEucCn = (_vm->getLanguage() == Common::Language::ZH_ANY && _vm->getGameID() == GameType::GType_RoseTattoo);
 }
 
 void Fonts::freeFont() {
@@ -351,7 +351,7 @@ int Fonts::stringHeight(const Common::String &str) {
 	for (const char *c = str.c_str(); *c; ++c) {
 		byte curChar = *c;
 		byte nextChar = c[1];
-		
+
 		if (_isModifiedEucCn && !isInEucEscape && curChar == '@' && nextChar == '$') {
 			height = MAX(height, charHeight(' '));
 			c++;
