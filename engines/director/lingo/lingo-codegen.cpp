@@ -443,7 +443,7 @@ bool LingoCompiler::visitHandlerNode(HandlerNode *node) {
 	COMPILE_LIST(node->stmts);
 	code1(LC::c_procret);
 
-	if (debugChannelSet(-1, kDebugFewFramesOnly) || debugChannelSet(1, kDebugCompile))
+	if (debugChannelSet(1, kDebugCompile))
 		debug("define handler \"%s\" (len: %d)", node->name->c_str(), _currentAssembly->size() - 1);
 
 	Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
