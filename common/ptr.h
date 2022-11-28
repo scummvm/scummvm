@@ -657,6 +657,10 @@ public:
 	typedef T &ReferenceType;
 
 	explicit DisposablePtr(PointerType o, DisposeAfterUse::Flag dispose) : _pointer(o), _dispose(dispose) {}
+	DisposablePtr(DisposablePtr<T>&& o) : _pointer(o._pointer), _dispose(o._dispose) {
+		o._pointer = nullptr;
+		o._dispose = DisposeAfterUse::NO;
+	}
 
 	~DisposablePtr() {
 		if (_dispose) DL()(_pointer);
