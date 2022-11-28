@@ -1027,7 +1027,6 @@ LoomEgaGameOptionsWidget::LoomEgaGameOptionsWidget(GuiObject *boss, const Common
 
 	_enableEnhancementsCheckbox = createEnhancementsCheckbox(widgetsBoss(), "LoomEgaGameOptionsDialog.EnableEnhancements");
 	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "LoomEgaGameOptionsDialog.EnableOriginalGUI");
-	_enableOriginalGUICheckbox->setVisible(false);  // TODO: remove when implemented
 }
 
 void LoomEgaGameOptionsWidget::load() {
