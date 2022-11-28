@@ -544,8 +544,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		// 22 - PowerBook 100			D3
 		// 23 - PowerBook 140			D3
 		// 24 - Macintosh Quadra 950	D4
-		// 25 - Macintosh LCIII			D4
-		// 27 - PowerBook Duo 210		D4
+		// 25 - PowerBook Duo 210		D4
+		// 27 - Macintosh LCIII			D4
 		// 28 - Macintosh Centris 650	D4
 		// 30 - PowerBook Duo 230		D4
 		// 31 - PowerBook 180			D4
