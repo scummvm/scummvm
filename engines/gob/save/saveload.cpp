@@ -141,7 +141,7 @@ bool SaveLoad::save(const char *fileName, int16 dataVar, int32 size, int32 offse
 	return true;
 }
 
-bool SaveLoad::saveFromRaw(const char *fileName, byte *ptr, int32 size, int32 offset){
+bool SaveLoad::saveFromRaw(const char *fileName, byte *ptr, int32 size, int32 offset) {
 	debugC(3, kDebugSaveLoad, "Requested saving of save file \"%s\" - raw %p, %d, %d",
 		   fileName, (void*) ptr, size, offset);
 
@@ -167,7 +167,7 @@ bool SaveLoad::saveFromRaw(const char *fileName, byte *ptr, int32 size, int32 of
 	return true;
 }
 
-bool SaveLoad::copySaveGame(const char *fileNameSrc, const char *fileNameDest){
+bool SaveLoad::copySaveGame(const char *fileNameSrc, const char *fileNameDest) {
 	SaveHandler *handlerSrc = getHandler(fileNameSrc);
 
 	if (!handlerSrc) {

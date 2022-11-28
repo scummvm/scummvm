@@ -308,7 +308,7 @@ public:
 };
 
 
-class Draw_v7: public Draw_Playtoons {
+class Draw_v7 : public Draw_Playtoons {
 public:
 	Draw_v7(GobEngine *vm);
 	~Draw_v7() override;

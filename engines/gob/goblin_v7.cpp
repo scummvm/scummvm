@@ -162,7 +162,7 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 	case 21:
 		Common::strlcat(str, "COG", 128);
 		break;
-	case 22:{
+	case 22: {
 		uint animIndex = _vm->_rnd.getRandomNumber(1);
 		switch (animIndex) {
 		case 0:
@@ -396,8 +396,7 @@ bool Goblin_v7::directionWalkable(int8 x, int8 y, int8 direction) {
 		nextY >= 0 &&
 		nextY < _vm->_map->getMapHeight()) {
 		return positionWalkable(_vm->_map, nextX, nextY);
-	}
-	else
+	} else
 		return false;
 }
 
@@ -456,8 +455,7 @@ int32 Goblin_v7::findPath(int8 x, int8 y, int8 destX, int8 destY) {
 	int8 firstDirection = 0;
 	int8 var_1C = 0;
 
-	while (true)
-	{
+	while (true) {
 		int8 currentDirection = bestWalkableDirectionFromOriginAndDest(currentX, currentY, destX, destY);
 		if (currentDirection == 0)
 			return 0;
@@ -469,8 +467,7 @@ int32 Goblin_v7::findPath(int8 x, int8 y, int8 destX, int8 destY) {
 				if (var_1C > 0)
 					firstDirection = var_1C;
 			}
-		}
-		else {
+		} else {
 			currentDirection = -currentDirection;
 			if (var_8 == 0)
 				var_8 = 1;
@@ -508,10 +505,9 @@ int32 Goblin_v7::findPath(int8 x, int8 y, int8 destX, int8 destY) {
 int32 Goblin_v7::computeObjNextDirection(Mult::Mult_Object &obj) {
 	Mult::Mult_AnimData animData = *obj.pAnimData;
 	if (animData.stateType == 1) {
-		warning("Adibou2 computeObjNextDirection animData.stateType == 1 stub");
+		warning("STUB: Goblin_v7::computeObjNextDirection animData.stateType == 1");
 		return 0;
-	}
-	else {
+	} else {
 		updateGobDest(_vm->_map, obj);
 		int32 direction = findPath(obj.goblinX, obj.goblinY, obj.gobDestX, obj.gobDestY);
 		if (direction == 0) {

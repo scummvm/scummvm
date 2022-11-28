@@ -494,8 +494,7 @@ Common::String Inter_Playtoons::getFile(const char *path, bool stripPath) {
 	else if (!strncmp(path, "<ALLCD>", 7))
 		path += 7;
 
-	if (stripPath)
-	{
+	if (stripPath) {
 		const char *backslash = strrchr(path, '\\');
 		if (backslash)
 			path = backslash + 1;

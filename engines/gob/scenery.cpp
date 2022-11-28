@@ -723,8 +723,7 @@ void Scenery::updateAnimObjectVideo(int16 layer, int16 frame, int16 animation, i
 								}
 							}
 						}
-					}
-					else {
+					} else {
 						if (frame != (int16) _vm->_vidPlayer->getFrameCount(obj.videoSlot - 1) - 1) {
 							//getFrameCoords
 						}

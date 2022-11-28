@@ -709,7 +709,7 @@ void Inter_v1::o1_callSub(OpFuncParams &params) {
 		return;
 	}
 
-	// Skipping the copy protection screen in Adibou2
+	// Skipping the copy protection screen in Adibou 1
 	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeAdibou1) && (offset == 1746) &&
 		_vm->isCurrentTot("base.tot")) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
@@ -1164,12 +1164,14 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 
 	case 55:
 		// TODO case 55 implementation
+		warning("STUB: o1_palLoad case 55 not implemented");
 		_vm->_game->_script->skip(2);
 		_vm->_draw->_applyPal = false;
 		return;
 
 	case 56:
 		// TODO case 56 implementation
+		warning("STUB: o1_palLoad case 56 not implemented");
 		_vm->_game->_script->skip(2);
 		break;
 
