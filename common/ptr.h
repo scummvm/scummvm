@@ -691,6 +691,23 @@ public:
 		reset(nullptr, DisposeAfterUse::NO);
 	}
 
+	template <class T2>
+	bool isDynamicallyCastable() {
+		return dynamic_cast<T2 *>(_pointer) != nullptr;
+	}
+
+	/* Destroys the smart pointer while returning a pointer to
+	   assign to a new object.
+ 	 */
+	template <class T2, class DL2 = DefaultDeleter<T2> >
+	DisposablePtr<T2, DL2> moveAndDynamicCast() {
+		DisposablePtr<T2, DL2> ret(
+			dynamic_cast<T2 *>(_pointer), _dispose);
+ 		_pointer = nullptr;
+ 		_dispose = DisposeAfterUse::NO;
+		return ret;
+ 	}
+
 	/**
 	 * Clears the pointer without destroying the old object.
 	 */
@@ -710,6 +727,9 @@ public:
 	 * Returns the pointer's dispose flag.
 	 */
 	DisposeAfterUse::Flag getDispose() const { return _dispose; }
+
+	template <class T2, class DL2>
+	friend class DisposablePtr;
 
 private:
 	PointerType           _pointer;
