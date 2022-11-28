@@ -29,7 +29,6 @@
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/opengl.h"
-#include <memory.h>
 
 #ifdef USE_OPENGL
 
