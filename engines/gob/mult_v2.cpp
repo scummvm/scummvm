@@ -832,7 +832,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 		break;
 
 	case 10:
-		if (_vm->_map->_mapUnknownBool) {
+		if (_vm->_map->_usesObliqueCoordinates) {
 			int8 deltaY = animObj.destY - animObj.goblinY;
 			if (deltaY == -1) {
 				*animObj.pPosX = *animObj.pPosX - _vm->_map->getTilesWidth();
@@ -841,7 +841,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 			}
 		}
 		else {
-			warning("Adibou2 newCycleAnim _mapUnknownBool == false stub");
+			warning("STUB: newCycleAnim: _map->_usesObliqueCoordinates == false");
 		}
 
 
@@ -894,7 +894,7 @@ void Mult_v2::animate() {
 		Mult_Object &animObj = _objects[i];
 		Mult_AnimData &animData = *(animObj.pAnimData);
 
-		if (_vm->_map->_mapUnknownBool && !animData.isStatic && animData.order < 100) {
+		if (_vm->_map->_usesObliqueCoordinates && !animData.isStatic && animData.order < 100) {
 			animData.order = currentOrder;
 			animData.field_22 = 0;
 			animData.field_21 = 0;

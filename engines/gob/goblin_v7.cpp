@@ -254,8 +254,8 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 
 	int32 newX = 0;
 	int32 newY = 0;
-	if (_vm->_map->_mapUnknownBool) {
-		// Weird coordinates mapping
+	if (_vm->_map->_usesObliqueCoordinates) {
+		// Oblique coordinates to screen coordinates mapping
 		newX = (_vm->_map->getTilesWidth() / 2) * obj->pAnimData->destX +
 				 (_vm->_map->getTilesWidth() / 2) * obj->pAnimData->destY -
 				 (_vm->_map->getTilesWidth() * 39) / 2;
@@ -315,16 +315,21 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 }
 
 /*
- * 0: (0, 0)
- * 1: (-1, -1)
- * 2: (0, -1)
- * 3: (1, -1)
- * 4: (1, 0)
- * 5: (1, 1)
- * 6: (0, 1)
- * 7: (-1, 1)
- * 8: (-1, 0)
- * 9: (0, 0)
+ * NOTE: conversion between direction index, coordinates in Map with _map->_usesObliqueCoordinates
+ * and screen coordinates
+ * -----------------------------------------------------
+ * | dir. index | Map obl.   | screen                  |
+ * | 0          | ( 0,  0)   | ( 0,  0)                |
+ * | 1          | (-1, -1)   | (-1,  0) -> left        |
+ * | 2          | ( 0, -1)   | (-1, -1) -> up-left     |
+ * | 3          | ( 1, -1)   | ( 0, -1) -> up          |
+ * | 4          | ( 1,  0)   | ( 1, -1) -> up-right    |
+ * | 5          | ( 1,  1)   | ( 1,  0) -> right       |
+ * | 6          | ( 0,  1)   | ( 1,  1) -> down-right  |
+ * | 7          | (-1,  1)   | ( 0,  1) -> down        |
+ * | 8          | (-1,  0)   | (-1,  1) -> down-left   |
+ * | 9          | ( 0,  0)   | ( 0,  0)                |
+ * -----------------------------------------------------
  */
 
 static int8 deltaXFromDirection[10] = {0, -1, 0, 1, 1, 1, 0, -1, -1, 0};

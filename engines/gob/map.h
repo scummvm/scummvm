@@ -76,7 +76,7 @@ public:
 	int16 _destX;
 	int16 _destY;
 
-	bool _mapUnknownBool;
+	bool _usesObliqueCoordinates;
 
 	ItemPos _itemPoses[40];
 	char _sourceFile[15];
