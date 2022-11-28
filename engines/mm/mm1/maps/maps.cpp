@@ -429,26 +429,27 @@ void Maps::turnAround() {
 void Maps::step(const Common::Point &delta) {
 	_mapPos += delta;
 	byte &visited = _currentMap->_visited[_mapPos.y * MAP_W + _mapPos.x];
-	if (!visited)
+	if (!visited) {
 		visited = VISITED_NORMAL;
+	}
 
 	int section = 0, id = 0;
 	if (_mapPos.x < 0) {
 		_mapPos.x = MAP_W - 1;
-		id = _currentMap->dataWord(MAP_16);
-		section = _currentMap->dataByte(MAP_14);
+		id = _currentMap->dataWord(MAP_WEST_EXIT_ID);
+		section = _currentMap->dataByte(MAP_WEST_EXIT_SECTION);
 	} else if (_mapPos.x >= MAP_W) {
 		_mapPos.x = 0;
-		id = _currentMap->dataWord(MAP_SURFACE_DEST_ID1);
-		section = _currentMap->dataByte(MAP_SURFACE_DEST_SECTION);
+		id = _currentMap->dataWord(MAP_EAST_EXIT_ID);
+		section = _currentMap->dataByte(MAP_EAST_EXIT_SECTION);
 	} else if (_mapPos.y < 0) {
 		_mapPos.y = MAP_H - 1;
-		id = _currentMap->dataWord(MAP_17);
-		section = _currentMap->dataByte(MAP_19);
+		id = _currentMap->dataWord(MAP_SOUTH_EXIT_ID);
+		section = _currentMap->dataByte(MAP_SOUTH_EXIT_SECTION);
 	} else if (_mapPos.y >= MAP_H) {
 		_mapPos.y = 0;
-		id = _currentMap->dataWord(MAP_8);
-		section = _currentMap->dataByte(MAP_10);
+		id = _currentMap->dataWord(MAP_NORTH_EXIT_ID);
+		section = _currentMap->dataByte(MAP_NORTH_EXIT_SECTION);
 	} else {
 		return;
 	}
