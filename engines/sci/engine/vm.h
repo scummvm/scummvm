@@ -91,6 +91,8 @@ struct ExecStack {
 	int argc;
 	StackPtr variables_argp; // Argument pointer
 
+	int tempCount;           // Number of temp variables allocated by link opcode
+
 	SegmentId local_segment; // local variables etc
 
 	Selector debugSelector;     // The selector which was used to call or -1 if not applicable
@@ -115,6 +117,7 @@ struct ExecStack {
 		fp = sp = sp_;
 		argc = argc_;
 		variables_argp = argp_;
+		tempCount = 0;
 		if (localsSegment_ != kUninitializedSegment)
 			local_segment = localsSegment_;
 		else
