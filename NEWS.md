@@ -84,6 +84,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Implemented original GUI for Maniac Mansion, Zak McCracken, Indy3 and Loom (EGA)
      (DOS, C64, Apple IIgs, Macintosh and FM-TOWNS versions).
 
+ Sherlock:
+   - Added support for Chinese Rose Tattoo.
+
  Toon:
    - Made game menus behave like in the original.
 
@@ -308,7 +311,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed slowdown in Serrated Scalpel intro when playing the game from a small
      installation.
    - Fixed UI glitches in Serrated Scalpel.
-   - Added support for Chinese Rose Tattoo.
 
  Titanic:
    - Fixed not being able to see House in Starfield puzzle.
