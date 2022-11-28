@@ -5490,57 +5490,6 @@ static const uint16 kq6PatchMacDrinkMePic[] = {
 	PATCH_END
 };
 
-// WORKAROUND
-//
-// The black widow's music doesn't play, and the game locks up after reading the
-//  parchment in her web. This is due to a discrepancy in the undefined values
-//  that SSCI and ScummVM produce when Sound:fade reads non-existent parameters.
-//  This bug also prevents catacombs music from resuming on the lower level.
-//
-// Sound:fade expects at least four parameters but KQ6 often passes only three.
-//  The fourth is passed to kDoSoundFade as its boolean parameter for stopping
-//  the sound after fading completes. In the original this happened to work, but
-//  ScummVM produces the value three in situations where SSCI produces zero.
-//  Several scripts accidentally rely on this. A non-zero value stops the sound
-//  unexpectedly and this locks up the black widow parchment script.
-//
-// When a `send` opcode calls other methods before Sound:fade, the discrepancy
-//  between undefined values occurs. The cause is currently unknown. There are
-//  only five of these problematic calls in KQ6 and they all look the same.
-//  First they set the volume to zero, then they call Sound:play which undoes
-//  this by setting the volume to 127, and finally they redundantly fade to 127.
-//
-// We work around this by patching out the five problematic fades. They have no
-//  effect other than breaking the game when their undefined parameter values
-//  happen to be non-zero. If the VM is changed to produce the same undefined
-//  values as SSCI then this patch can be removed.
-//
-// Applies to: All versions, although the floppy disk script does not lock up.
-// Responsible methods: rm460:init, lookAtParchment:changeState, blackWidowInset:init,
-//                      lightItUp:changeState, flyIn:changeState
-// Fixes bugs: #5625 #5653 #6120 #6210 #6252 #13944
-static const uint16 kq6SignatureBadFade[] = {
-	0x39, SIG_SELECTOR8(play),          // pushi play
-	0x76,                               // push0
-	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(fade),         // pushi fade
-	0x39, 0x03,                         // pushi 03
-	0x39, 0x7f,                         // pushi 7f
-	0x39, 0x0a,                         // pushi 0a
-	0x3c,                               // dup
-	SIG_ADDTOOFFSET(+2),
-	0x4a, 0x20,                         // send 20 [ ... play: fade: 127 10 10 ]
-	SIG_END
-};
-
-static const uint16 kq6PatchBadFade[] = {
-	PATCH_ADDTOOFFSET(+3),
-	0x32, PATCH_UINT16(0x0007),         // jmp 0007
-	PATCH_ADDTOOFFSET(+9),
-	0x4a, 0x16,                         // send 16 [ ... play: ]
-	PATCH_END
-};
-
 // Looking at the ribbon in inventory says that there's a hair even after it's
 //  been removed. This occurs after the hair has been put in the skull or is on
 //  a different inventory page than the ribbon.
@@ -6758,13 +6707,9 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   281, "fix pawnshop genie eye",                         1, kq6SignaturePawnshopGenieEye,             kq6PatchPawnshopGenieEye },
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffStepFloatFix,            kq6PatchCliffStepFloatFix },
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffItemFloatFix,            kq6PatchCliffItemFloatFix },
-	{  true,   301, "fix bad fade",                                   1, kq6SignatureBadFade,                      kq6PatchBadFade },
 	{  true,   405, "fix catacombs room message",                     1, kq6SignatureRoom405LookMessage,           kq6PatchRoom405LookMessage },
 	{  true,   406, "fix catacombs dark room inventory",              1, kq6SignatureDarkRoomInventory,            kq6PatchDarkRoomInventory },
-	{  true,   406, "fix bad fade",                                   1, kq6SignatureBadFade,                      kq6PatchBadFade },
 	{  true,   407, "fix catacombs room message",                     1, kq6SignatureRoom407LookMessage,           kq6PatchRoom407LookMessage },
-	{  true,   460, "fix bad fade",                                   2, kq6SignatureBadFade,                      kq6PatchBadFade },
-	{  true,   461, "fix bad fade",                                   1, kq6SignatureBadFade,                      kq6PatchBadFade },
 	{  true,   480, "CD: fix wallflower dance",                       1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
 	{  true,   480, "fix picking second lettuce",                     1, kq6SignatureSecondLettuceFix,             kq6PatchSecondLettuceFix },
 	{  true,   480, "fix getting baby tears",                         1, kq6SignatureGetBabyTears,                 kq6PatchGetBabyTears },
