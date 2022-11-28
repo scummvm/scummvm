@@ -733,28 +733,24 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 			if (animData.animTypeBak == 1) {
 				if (animData.framesLeft != 0) {
 					--animData.framesLeft;
-				}
-				else {
+				} else {
 					_vm->_goblin->setGoblinState(&animObj, animData.isBusy);
 					animData.isBusy = 0;
 					animData.animTypeBak = 0;
 					animData.animType = 10;
 				}
-
 			}
 		}
 		return;
 	}
 
-	if (animData.animType != 8)
-	{
+	if (animData.animType != 8) {
 		animData.frame++;
 		if (_vm->getGameType() == kGameTypeAdibou2
 			&&
 			animData.animation < 0
 			&&
-			animObj.videoSlot > 0)
-		{
+			animObj.videoSlot > 0) {
 			// Workaround to improve audio sync of video objects in Adibou 2
 			// They easily get out of sync when the timing is done by hotspots::evaluate, which sometimes does not call animate()
 			// as often as needed for good sync (mouse events processing, in particular, can delay the call).
@@ -839,8 +835,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 			} else if (deltaY == 1) {
 				*animObj.pPosX = *animObj.pPosX + _vm->_map->getTilesWidth();
 			}
-		}
-		else {
+		} else {
 			warning("STUB: newCycleAnim: _map->_usesObliqueCoordinates == false");
 		}
 

@@ -22,6 +22,7 @@
 #include "common/winexe_ne.h"
 #include "common/winexe_pe.h"
 #include "graphics/cursorman.h"
+#include "graphics/wincursor.h"
 
 #include "gob/dataio.h"
 #include "gob/draw.h"
@@ -32,7 +33,6 @@
 #include "gob/resources.h"
 #include "gob/scenery.h"
 #include "gob/script.h"
-#include "graphics/wincursor.h"
 
 namespace Gob {
 
@@ -51,8 +51,7 @@ bool Draw_v7::loadCursorFile() {
 		_cursors = new Common::PEResources();
 		if (_cursors->loadFromEXE("cursor32.dll"))
 			return true;
-	}
-	else if (_vm->_dataIO->hasFile("cursor.dll")) {
+	} else if (_vm->_dataIO->hasFile("cursor.dll")) {
 		_cursors = new Common::NEResources();
 		if (_cursors->loadFromEXE("cursor.dll"))
 			return true;
@@ -190,8 +189,7 @@ void Draw_v7::animateCursor(int16 cursor) {
 				_cursorY =  _vm->_global->_inter_mouseY;
 				_showCursor &= ~1;
 				return;
-			}
-			else {
+			} else {
 				if (!loadCursorFromFile(cursorIndex)) {
 					_cursorX =  _vm->_global->_inter_mouseX;
 					_cursorY =  _vm->_global->_inter_mouseY;
@@ -207,8 +205,8 @@ void Draw_v7::animateCursor(int16 cursor) {
 			hotspotY = 0;
 
 			if (_cursorHotspotXVar != -1) {
-				hotspotX = (uint16) VAR(_cursorIndex + _cursorHotspotXVar);
-				hotspotY = (uint16) VAR(_cursorIndex + _cursorHotspotYVar);
+				hotspotX = (uint16)VAR(_cursorIndex + _cursorHotspotXVar);
+				hotspotY = (uint16)VAR(_cursorIndex + _cursorHotspotYVar);
 			} else if (_cursorHotspotX != -1) {
 				hotspotX = _cursorHotspotX;
 				hotspotY = _cursorHotspotY;

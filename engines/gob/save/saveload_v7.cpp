@@ -62,11 +62,11 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"DATA\\enviro06.inf", kSaveModeSave, nullptr, "environment" }, // Child 06
 	{"DATA\\enviro07.inf", kSaveModeSave, nullptr, "environment" }, // Child 07
 	{"DATA\\enviro08.inf", kSaveModeSave, nullptr, "environment" }, // Child 08
-    {"DATA\\enviro09.inf", kSaveModeSave, nullptr, "environment" }, // Child 09
+	{"DATA\\enviro09.inf", kSaveModeSave, nullptr, "environment" }, // Child 09
 	{"DATA\\enviro10.inf", kSaveModeSave, nullptr, "environment" }, // Child 10
 	{"DATA\\enviro11.inf", kSaveModeSave, nullptr, "environment" }, // Child 11
 	{"DATA\\enviro12.inf", kSaveModeSave, nullptr, "environment" }, // Child 12
-    {"DATA\\enviro13.inf", kSaveModeSave, nullptr, "environment" }, // Child 13
+	{"DATA\\enviro13.inf", kSaveModeSave, nullptr, "environment" }, // Child 13
 	{"DATA\\enviro14.inf", kSaveModeSave, nullptr, "environment" }, // Child 14
 	{"DATA\\enviro15.inf", kSaveModeSave, nullptr, "environment" }, // Child 15
 	{"DATA\\enviro16.inf", kSaveModeSave, nullptr, "environment" }, // Child 16
@@ -162,11 +162,11 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"DATA\\aide16.inf"    , kSaveModeSave, nullptr, "construction game progress" },
 
 	// Adibou Applications 1-5
-    {"DATA\\Gsa01_01.inf", kSaveModeSave, nullptr, "app progress" }, // Child 01
-    {"DATA\\Gsa02_01.inf", kSaveModeSave, nullptr, "app progress" },
-    {"DATA\\Gsa03_01.inf", kSaveModeSave, nullptr, "app progress" },
-    {"DATA\\Gsa04_01.inf", kSaveModeSave, nullptr, "app progress" },
-    {"DATA\\Gsa05_01.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA\\Gsa01_01.inf", kSaveModeSave, nullptr, "app progress" }, // Child 01
+	{"DATA\\Gsa02_01.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA\\Gsa03_01.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA\\Gsa04_01.inf", kSaveModeSave, nullptr, "app progress" },
+	{"DATA\\Gsa05_01.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA\\Gsa01_02.inf", kSaveModeSave, nullptr, "app progress" }, // Child 02
 	{"DATA\\Gsa02_02.inf", kSaveModeSave, nullptr, "app progress" },
 	{"DATA\\Gsa03_02.inf", kSaveModeSave, nullptr, "app progress" },
@@ -868,8 +868,7 @@ int32 SaveLoad_v7::SpriteHandler::getSize() {
 	return header.getSize();
 }
 
-bool SaveLoad_v7::SpriteHandler::load(int16 dataVar, int32 size, int32 offset)
-{
+bool SaveLoad_v7::SpriteHandler::load(int16 dataVar, int32 size, int32 offset) {
 	if (!TempSpriteHandler::createFromSprite(dataVar, size, offset))
 		return false;
 
@@ -887,8 +886,7 @@ bool SaveLoad_v7::SpriteHandler::load(int16 dataVar, int32 size, int32 offset)
 	return TempSpriteHandler::load(dataVar, size, offset);
 }
 
-bool SaveLoad_v7::SpriteHandler::save(int16 dataVar, int32 size, int32 offset)
-{
+bool SaveLoad_v7::SpriteHandler::save(int16 dataVar, int32 size, int32 offset) {
 	if (!TempSpriteHandler::save(dataVar, size, offset))
 		return false;
 
@@ -971,8 +969,7 @@ int32 SaveLoad_v7::DrawingOnFloppyDiskHandler::getSize() {
 			return -1;
 
 		return header.getSize();
-	}
-	else {
+	} else {
 		// Following parts are the full picture chunks
 		int32 size = -1;
 		SaveHeader header;
@@ -986,8 +983,7 @@ int32 SaveLoad_v7::DrawingOnFloppyDiskHandler::getSize() {
 	}
 }
 
-bool SaveLoad_v7::DrawingOnFloppyDiskHandler::load(int16 dataVar, int32 size, int32 offset)
-{
+bool SaveLoad_v7::DrawingOnFloppyDiskHandler::load(int16 dataVar, int32 size, int32 offset) {
 	if (!TempSpriteHandler::createFromSprite(dataVar, size, offset))
 		return false;
 
@@ -1005,8 +1001,7 @@ bool SaveLoad_v7::DrawingOnFloppyDiskHandler::load(int16 dataVar, int32 size, in
 	return TempSpriteHandler::load(dataVar, size, offset);
 }
 
-bool SaveLoad_v7::DrawingOnFloppyDiskHandler::save(int16 dataVar, int32 size, int32 offset)
-{
+bool SaveLoad_v7::DrawingOnFloppyDiskHandler::save(int16 dataVar, int32 size, int32 offset) {
 	if (!TempSpriteHandler::save(dataVar, size, offset))
 		return false;
 
@@ -1216,36 +1211,30 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 
 	_saveFiles[index++].handler = _configHandler   = new GameFileHandler(_vm, targetName, "cfg");
 
-	for (uint32 i = 0; i < kChildrenCount; i++)
-	{
+	for (uint32 i = 0; i < kChildrenCount; i++) {
 		_saveFiles[index++].handler = _adibou2EnvHandler[i] = new GameFileHandler(_vm,
 																				  targetName,
 																				  Common::String::format("env%02d", i + 1));
 	}
 
-	for (uint32 i = 0; i < kChildrenCount; i++)
-	{
+	for (uint32 i = 0; i < kChildrenCount; i++) {
 		_saveFiles[index++].handler = _adibou2WeatherHandler[i] = new SpriteHandler(_vm,
 																					targetName,
 																					Common::String::format("weather_%02d", i + 1));
 	}
 
-	for (uint32 i = 0; i < kChildrenCount; i++)
-	{
+	for (uint32 i = 0; i < kChildrenCount; i++) {
 		_saveFiles[index++].handler = _adibou2BreakoutGameProgressHandler[i] = new GameFileHandler(_vm,
 																								   targetName,
 																								   Common::String::format("breakout_%02d", i + 1));
 	}
 
-	for (uint32 i = 0; i < kAdibou2NbrOfConstructionGameFiles; i++)
-	{
+	for (uint32 i = 0; i < kAdibou2NbrOfConstructionGameFiles; i++) {
 		_saveFiles[index++].handler = _adibou2ConstructionGameTempFileHandler[i] = new FakeFileHandler(_vm);
 	}
 
-	for (uint32 i = 0; i < kChildrenCount; i++)
-	{
-		for (uint32 j = 0; j < kAdibou2NbrOfConstructionGameFiles; j++)
-		{
+	for (uint32 i = 0; i < kChildrenCount; i++) {
+		for (uint32 j = 0; j < kAdibou2NbrOfConstructionGameFiles; j++) {
 			const char *fileName = (j == 0)?"construc":((j == 1)?"ptreco":"aide");
 			_saveFiles[index++].handler = _adibou2ConstructionGameProgressHandler[i][j] = new GameFileHandler(_vm,
 																											  targetName,
@@ -1253,10 +1242,8 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 		}
 	}
 
-	for (uint32 i = 0; i < kChildrenCount; i++)
-	{
-		for (uint32 j = 0; j < kAdibou2NbrOfApplications; j++)
-		{
+	for (uint32 i = 0; i < kChildrenCount; i++) {
+		for (uint32 j = 0; j < kAdibou2NbrOfApplications; j++) {
 			Common::String ext = Common::String::format("gsa%02d_%02d", j + 1, i + 1);
 			_saveFiles[index++].handler = _adibou2AppProgressHandler[i][j]  = new GameFileHandler(_vm,
 																								 targetName,
@@ -1264,8 +1251,7 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 		}
 	}
 
-	for (uint32 i = 0; i < kChildrenCount; i++)
-	{
+	for (uint32 i = 0; i < kChildrenCount; i++) {
 		_saveFiles[index++].handler = _adibou2MemoHandler[i] = new GameFileHandler(_vm, targetName, Common::String::format("memo%02d", i + 1));
 		_saveFiles[index++].handler = _adibou2DiploHandler[i] = new GameFileHandler(_vm, targetName, Common::String::format("diplo%02d", i + 1));
 	}
@@ -1364,8 +1350,7 @@ SaveLoad_v7::~SaveLoad_v7() {
 		delete _debilHandler[i];
 	delete _childrenHandler;
 
-	for (uint32 i = 0; i < kChildrenCount; i++)
-	{
+	for (uint32 i = 0; i < kChildrenCount; i++) {
 		delete _adibou2EnvHandler[i];
 		delete _adibou2WeatherHandler[i];
 		delete _adibou2BreakoutGameProgressHandler[i];
@@ -1380,8 +1365,7 @@ SaveLoad_v7::~SaveLoad_v7() {
 	for (uint32 i = 0; i < kAdibou2NbrOfConstructionGameFiles; i++)
 		delete _adibou2ConstructionGameTempFileHandler[i];
 
-	for (uint32 i = 0; i < kChildrenCount; i++)
-	{
+	for (uint32 i = 0; i < kChildrenCount; i++) {
 		delete _faceHandler[i];
 		delete _adibou2MemoHandler[i];
 		delete _adibou2DiploHandler[i];

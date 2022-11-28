@@ -580,7 +580,7 @@ void Inter_v2::o2_totSub() {
 
 	uint8 flags = _vm->_game->_script->readByte();
 
-	// Skipping the copy protection screen in Adibou2
+	// Skipping the copy protection screen in Adibou 1
 	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeAdibou1) && totFile == "p_eleph") {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		_varStack.pushInt(1);
@@ -1592,16 +1592,14 @@ void Inter_v2::o2_playInfogrames(OpGobParams &params) {
 	_vm->_sound->infogramesPlay();
 }
 
-void Inter_v2::o2_gob0x0B(OpGobParams &params)
-{
+void Inter_v2::o2_gob0x0B(OpGobParams &params) {
 	_vm->_game->_script->skip(4);
-	warning("Adibou1 stub: o2_gob0x0B");
+	warning("STUB: Adibou1 o2_gob0x0B");
 }
 
-void Inter_v2::o2_gob1001(OpGobParams &params)
-{
+void Inter_v2::o2_gob1001(OpGobParams &params) {
 	_vm->_game->_script->skip(2);
-	warning("Adibou1 stub: o2_gob1001");
+	warning("STUB: Adibou1 o2_gob1001");
 }
 
 void Inter_v2::o2_startInfogrames(OpGobParams &params) {

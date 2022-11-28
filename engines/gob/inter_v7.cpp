@@ -378,8 +378,7 @@ void Inter_v7::copyFile(const Common::String &sourceFile, const Common::String &
 					mode1,
 					sourceFile.c_str(),
 					destFile.c_str());
-	}
-	else
+	} else
 		warning("Attempted to write to file \"%s\" while copying from \"%s\"",
 				destFile.c_str(),
 				sourceFile.c_str());
@@ -414,8 +413,7 @@ void Inter_v7::o7_deleteFile() {
 		debugC(2, kDebugFileIO, "Delete file matching pattern \"%s\" (%d matching file(s))", file.c_str(), files.size());
 		for (const Common::String &matchingFile : files)
 			debugC(5, kDebugFileIO, "Matching file: %s", matchingFile.c_str());
-	}
-	else {
+	} else {
 		files.push_back(file);
 		debugC(2, kDebugFileIO, "Delete file \"%s\"", file.c_str());
 	}
@@ -725,13 +723,10 @@ void Inter_v7::o7_findFile() {
 
 	SearchMan.listMatchingMembers(files, file_pattern);
 	Common::ArchiveMemberList filesWithoutDuplicates;
-	for (Common::ArchiveMemberPtr file : files)
-	{
+	for (Common::ArchiveMemberPtr file : files) {
 		bool found = false;
-		for (Common::ArchiveMemberPtr fileWithoutDuplicates : filesWithoutDuplicates)
-		{
-			if (file->getName() == fileWithoutDuplicates->getName())
-			{
+		for (Common::ArchiveMemberPtr fileWithoutDuplicates : filesWithoutDuplicates) {
+			if (file->getName() == fileWithoutDuplicates->getName()) {
 				found = true;
 				break;
 			}
@@ -749,8 +744,7 @@ void Inter_v7::o7_findFile() {
 	if (filesWithoutDuplicates.empty()) {
 		storeString("");
 		storeValue(0);
-	}
-	else {
+	} else {
 		Common::String file = files.front()->getName();
 		filesWithoutDuplicates.pop_front();
 		debugC(5, kDebugFileIO, "o7_findFile(%s): first match = %s",
@@ -1264,8 +1258,7 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 		// WORKAROUND: in script BE_CD.TOT of Adibou 2, o7_checkData() can be called in the "leave" callback of a hotspot.
 		// This corrupts the "current hotspot" variable, which is also VAR(16) (!), and lead to an infinite loop.
 		// We skip writing the file size into VAR(16) here as a workarond (the value is not used anyway).
-	}
-	else
+	} else
 		WRITE_VAR(16, (uint32) size);
 }
 
