@@ -929,7 +929,8 @@ Common::SeekableReadStream *unzOpenCurrentFile (unzFile file, const Common::CRC3
 
 	uint32 crc32_wait = s->cur_file_info.crc;
 	
-	byte *compressedBuffer = new byte[s->cur_file_info.compressed_size];
+	byte *compressedBuffer = (byte*)malloc(s->cur_file_info.compressed_size);
+	assert(s->cur_file_info.compressed_size == 0 || compressedBuffer != nullptr);
 	s->_stream->seek(s->cur_file_info_internal.offset_curfile + SIZEZIPLOCALHEADER + iSizeVar);
 	s->_stream->read(compressedBuffer, s->cur_file_info.compressed_size);
 	byte *uncompressedBuffer = nullptr;
@@ -939,20 +940,21 @@ Common::SeekableReadStream *unzOpenCurrentFile (unzFile file, const Common::CRC3
 		uncompressedBuffer = compressedBuffer;
 		break;
 	case Z_DEFLATED:
-		uncompressedBuffer = new byte[s->cur_file_info.uncompressed_size];
+		uncompressedBuffer = (byte*)malloc(s->cur_file_info.uncompressed_size);
+		assert(s->cur_file_info.uncompressed_size == 0 || uncompressedBuffer != nullptr);
 		Common::GzioReadStream::deflateDecompress(uncompressedBuffer, s->cur_file_info.uncompressed_size, compressedBuffer, s->cur_file_info.compressed_size);
-		delete[] compressedBuffer;
+		free(compressedBuffer);
 		compressedBuffer = nullptr;
 		break;
 	default:
 		warning("Unknown compression algoritthm %d", (int) s->cur_file_info.compression_method);
-		delete[] compressedBuffer;
+		free(compressedBuffer);
 		return nullptr;
 	}
 
 	uint32 crc32_data = crc.crcFast(uncompressedBuffer, s->cur_file_info.uncompressed_size);
 	if (crc32_data != crc32_wait) {
-		delete[] uncompressedBuffer;
+		free(uncompressedBuffer);
 		warning("CRC32 mismatch: %08x, %08x", crc32_data, crc32_wait);
 		return nullptr;
 	}
