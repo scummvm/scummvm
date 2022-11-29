@@ -27,7 +27,6 @@
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "audio/softsynth/cms.h"
 
 namespace CMS {
 
@@ -167,26 +166,6 @@ private:
 	int _samplesPerTick;
 
 	Audio::SoundHandle *_handle;
-};
-
-/**
- * A CMS that represents the DOSBox CMS emulator.
- */
-class DOSBoxCMS : public EmulatedCMS {
-public:
-	DOSBoxCMS();
-	~DOSBoxCMS() override;
-
-	bool init() override;
-	void reset() override;
-	void write(int a, int v) override;
-	void writeReg(int r, int v) override;
-
-protected:
-	void generateSamples(int16 *buffer, int numSamples) override;
-
-private:
-	CMSEmulator *_cms;
 };
 
 } // End of namespace CMS
