@@ -45,6 +45,7 @@ public:
 
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+	void timeout() override;
 };
 
 class ChildPrisoner : public Prisoner {
