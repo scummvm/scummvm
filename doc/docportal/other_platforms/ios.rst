@@ -123,9 +123,22 @@ Next to **General**, click on **Signing & Capabilities**. Under **Signing**, tic
 
 If you have not added your developer account to Xcode, do this now. Click **Add an Account** in the dropdown menu.
 
-In the upper left-hand corner, press the play button to build ScummVM. When the build is finished, it launches on your connected device.
+In the upper left-hand corner, press the play button to build ScummVM.
 
-If ScummVM does not launch and you get an error message advising that the app failed to launch due to an invalid code signature, inadequate entitlements or because its profile has not been explicitly trusted by the user, you need to trust the apps that you have built. On your iOS device, go to **Settings > General > Device Management > Developer App > Trust "Apple Development:yourAppleIDhere" > Trust**.
+.. note::
+
+  Starting with iOS 16, you may get an error message here if you haven't `enabled Developer Mode <https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device>`_ on your iOS device. This can be done with the **Settings > Privacy & Security > Developer Mode** switch, which will restart your device and reduce its security level.
+
+  If you can't see this option, unplug and plug your device again, and make sure that it's visible to Xcode.
+
+When the build is finished, ScummVM launches on your connected device.
+
+.. note::
+
+  If ScummVM does not launch and you get an error message advising that the app failed to launch due to an invalid code signature, inadequate entitlements or because its profile has not been explicitly trusted by the user, you need to trust the apps that you have built. On your iOS device, go to:
+  
+  - **Settings > General > Device Management > Developer App > Trust "Apple Development:yourAppleIDhere" > Trust**
+  - or **Settings > General > VPN & Device Management** (iOS 15+)
 
 
 Devices with custom firmware
