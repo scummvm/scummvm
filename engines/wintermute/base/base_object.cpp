@@ -1118,6 +1118,9 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 		persistMgr->transferFloat(TMEMBER(_scale3D));
 		persistMgr->transferVector3d(TMEMBER(_shadowLightPos));
 		persistMgr->transferBool(TMEMBER(_drawBackfaces));
+	} else {
+		_xmodel = nullptr;
+		_shadowModel = nullptr;
 	}
 #endif
 
