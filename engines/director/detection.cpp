@@ -133,7 +133,7 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 	desc->desc.gameId = "director";
 	desc->desc.extra = "";
 	desc->desc.language = Common::UNK_LANG;
-	desc->desc.flags = ADGF_TAILMD5;
+	desc->desc.flags = ADGF_TAILMD5; // We calculate tail of the projector
 	desc->desc.platform = Common::kPlatformWindows;
 	desc->desc.guiOptions = GUIO0();
 	desc->desc.filesDescriptions[0].fileName = nullptr;
