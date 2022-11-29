@@ -152,10 +152,76 @@ uint32 MiniMap::sampleAtPoint(const Item *item, int x, int y) {
 	return 0;
 }
 
+const Common::Rect MiniMap::getCropBounds() const {
+	Common::Rect bounds;
+	uint32 mask = _surface.format.ARGBToColor(0x00, 0xFF, 0xFF, 0xFF);
+
+	// Get top & initial rect
+	bool found = false;
+	for (int y = 0; !found && y < _surface.h; y++) {
+		for (int x = 0; !found && x < _surface.w; x++) {
+			uint32 val = _surface.getPixel(x, y);
+			if ((val & mask) != 0) {
+				bounds.top = y;
+				bounds.bottom = y + 1;
+				bounds.left = x;
+				bounds.right = x + 1;
+				found = true;
+			}
+		}
+	}
+
+	// Get bottom & extend left / right
+	found = false;
+	for (int y = _surface.h - 1; !found && y > bounds.top; y--) {
+		for (int x = 0; !found && x < _surface.w; x++) {
+			uint32 val = _surface.getPixel(x, y);
+			if ((val & mask) != 0) {
+				bounds.bottom = y + 1;
+				if (x < bounds.left)
+					bounds.left = x;
+				if (x > bounds.right)
+					bounds.right = x + 1;
+				found = true;
+			}
+		}
+	}
+
+	// Get left
+	found = false;
+	for (int x = 0; !found && x < bounds.left; x++) {
+		for (int y = bounds.top; !found && y < bounds.bottom; y++) {
+			uint32 val = _surface.getPixel(x, y);
+			if ((val & mask) != 0) {
+				bounds.left = x;
+				found = true;
+			}
+		}
+	}
+
+	// Get right
+	found = false;
+	for (int x = _surface.w - 1; !found && x > bounds.right; x--) {
+		for (int y = bounds.top; !found && y < bounds.bottom; y++) {
+			uint32 val = _surface.getPixel(x, y);
+			if ((val & mask) != 0) {
+				bounds.right = x + 1;
+				found = true;
+			}
+		}
+	}
+
+	return bounds;
+}
+
 bool MiniMap::load(Common::ReadStream *rs, uint32 version) {
 	//_mapNum = rs->readUint32LE();
-	uint w = rs->readUint16LE();
-	uint h = rs->readUint16LE();
+
+	Common::Rect bounds;
+	bounds.left = rs->readUint16LE();
+	bounds.top = rs->readUint16LE();
+	bounds.right = rs->readUint16LE();
+	bounds.bottom = rs->readUint16LE();
 
 	Graphics::PixelFormat format;
 	format.bytesPerPixel = rs->readByte();
@@ -173,10 +239,12 @@ bool MiniMap::load(Common::ReadStream *rs, uint32 version) {
 		return false;
 	}
 
+	uint16 w = _surface.w;
+	uint16 h = _surface.h;
 	_surface.create(w, h, format);
-	for (int y = 0; y < _surface.h; ++y) {
-		uint16 *pixels = (uint16 *)_surface.getBasePtr(0, y);
-		for (int x = 0; x < _surface.w; ++x) {
+	for (int y = bounds.top; y < bounds.bottom; ++y) {
+		uint16 *pixels = (uint16 *)_surface.getBasePtr(bounds.left, y);
+		for (int x = bounds.left; x < bounds.right; ++x) {
 			*pixels++ = rs->readUint16LE();
 		}
 	}
@@ -185,8 +253,12 @@ bool MiniMap::load(Common::ReadStream *rs, uint32 version) {
 
 void MiniMap::save(Common::WriteStream *ws) const {
 	//ws->writeUint32LE(_mapNum);
-	ws->writeUint16LE(_surface.w);
-	ws->writeUint16LE(_surface.h);
+
+	Common::Rect bounds = getCropBounds();
+	ws->writeUint16LE(bounds.left);
+	ws->writeUint16LE(bounds.top);
+	ws->writeUint16LE(bounds.right);
+	ws->writeUint16LE(bounds.bottom);
 
 	// Serialize the PixelFormat
 	ws->writeByte(_surface.format.bytesPerPixel);
@@ -200,9 +272,9 @@ void MiniMap::save(Common::WriteStream *ws) const {
 	ws->writeByte(_surface.format.aShift);
 
 	// Serialize the pixel data
-	for (int y = 0; y < _surface.h; ++y) {
-		const uint16 *pixels = (const uint16 *)_surface.getBasePtr(0, y);
-		for (int x = 0; x < _surface.w; ++x) {
+	for (int y = bounds.top; y < bounds.bottom; ++y) {
+		const uint16 *pixels = (const uint16 *)_surface.getBasePtr(bounds.left, y);
+		for (int x = bounds.left; x < bounds.right; ++x) {
 			ws->writeUint16LE(*pixels++);
 		}
 	}

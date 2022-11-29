@@ -127,7 +127,14 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 
 	World *world = World::get_instance();
 	CurrentMap *currentmap = world->getCurrentMap();
-	MiniMap *minimap = _minimaps[currentmap->getNum()];
+	uint32 mapNum = currentmap->getNum();
+
+	MiniMap *minimap = _minimaps[mapNum];
+	if (!minimap) {
+		minimap = new MiniMap(mapNum);
+		_minimaps[mapNum] = minimap;
+	}
+
 	Graphics::ManagedSurface ms(minimap->getSurface(), DisposeAfterUse::NO);
 	Common::Rect r(sx, sy, sx + dims.width(), sy + dims.height());
 

@@ -41,6 +41,7 @@ private:
 	uint32 sampleAtPoint(CurrentMap *map, int x, int y);
 	uint32 sampleAtPoint(const Item *item, int x, int y);
 
+	const Common::Rect getCropBounds() const;
 public:
 	MiniMap(uint32 mapNum);
 	~MiniMap();
