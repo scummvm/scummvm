@@ -42,14 +42,28 @@ namespace Common {
  */
 class MemoryReadStream : virtual public SeekableReadStream {
 private:
-	const byte * const _ptrOrig;
+	struct CastFreeDeleter {
+		inline void operator()(const byte *object) {
+			free(const_cast<byte *>(object));
+		}
+	};
+
+	// Note when using SharedPtr, then deleting is handled
+	// by SharedPtr and not by CastFreeDeleter
+	Common::DisposablePtr<const byte, CastFreeDeleter> _ptrOrig;
 	const byte *_ptr;
-	const uint32 _size;
+	uint32 _size;
 	uint32 _pos;
-	DisposeAfterUse::Flag _disposeMemory;
 	bool _eos;
 
 public:
+	MemoryReadStream(MemoryReadStream &&other) : _ptrOrig(Common::move(other._ptrOrig)), _ptr(other._ptr), _size(other._size), _pos(other._pos), _eos(other._eos) {
+		// other must remaining in a valid state. Let's make it into zero-sized stream.
+		other._ptr = nullptr;
+		other._size = 0;
+		other._pos = 0;
+		other._eos = false;
+	}
 
 	/**
 	 * This constructor takes a pointer to a memory buffer and a length, and
@@ -57,17 +71,18 @@ public:
 	 * of the buffer and hence free's it when destructed.
 	 */
 	MemoryReadStream(const byte *dataPtr, uint32 dataSize, DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) :
-		_ptrOrig(dataPtr),
+		_ptrOrig(dataPtr, disposeMemory),
 		_ptr(dataPtr),
 		_size(dataSize),
 		_pos(0),
-		_disposeMemory(disposeMemory),
 		_eos(false) {}
 
-	~MemoryReadStream() {
-		if (_disposeMemory)
-			free(const_cast<byte *>(_ptrOrig));
-	}
+	MemoryReadStream(SharedPtr<byte> dataPtr, uint32 dataSize) :
+		_ptrOrig(dataPtr),
+		_ptr(dataPtr.get()),
+		_size(dataSize),
+		_pos(0),
+		_eos(false) {}
 
 	uint32 read(void *dataPtr, uint32 dataSize);
 
