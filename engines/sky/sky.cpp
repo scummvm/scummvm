@@ -360,7 +360,7 @@ bool SkyEngine::loadChineseTraditional() {
 			skyExe.seek(chineseExes[i].stringSectionIndexOffset);
 			for (uint j = 0; j < 8; j++)
 				_chineseTraditionalOffsets[j] = skyExe.readUint32LE() + chineseExes[i].virtualBase;
-			uint stringBlockOffset = _chineseTraditionalOffsets[0];
+			uint32 stringBlockOffset = _chineseTraditionalOffsets[0];
 			for (uint j = 1; j < 8; j++)
 				stringBlockOffset = MIN(_chineseTraditionalOffsets[j], stringBlockOffset);
 			for (uint j = 0; j < 8; j++)
