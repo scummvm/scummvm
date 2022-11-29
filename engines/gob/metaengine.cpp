@@ -80,7 +80,7 @@ void GobEngine::initGame(const GOBGameDescription *gd) {
 	_language = gd->desc.language;
 	_platform = gd->desc.platform;
 
-	_enableAdibou2FreeBananasWorkaround = gd->desc.flags & ADGF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND;
+	_enableAdibou2FreeBananasWorkaround = gd->desc.flags & GF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND;
 }
 
 } // End of namespace Gob

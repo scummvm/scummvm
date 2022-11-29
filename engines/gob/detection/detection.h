@@ -70,7 +70,7 @@ enum Features {
 };
 
 enum AdditionalGameFlags {
-	ADGF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND = 1 << 0
+	GF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND = 1 << 0
 };
 
 struct GOBGameDescription {
