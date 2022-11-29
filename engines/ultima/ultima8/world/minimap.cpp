@@ -153,60 +153,61 @@ uint32 MiniMap::sampleAtPoint(const Item *item, int x, int y) {
 }
 
 const Common::Rect MiniMap::getCropBounds() const {
-	Common::Rect bounds;
+	Common::Rect bounds(_surface.w, _surface.h);
 	uint32 mask = _surface.format.ARGBToColor(0x00, 0xFF, 0xFF, 0xFF);
 
-	// Get top & initial rect
-	bool found = false;
-	for (int y = 0; !found && y < _surface.h; y++) {
-		for (int x = 0; !found && x < _surface.w; x++) {
+	// Get left
+	for (int x = bounds.left; x < bounds.right; x++) {
+		for (int y = bounds.top; y < bounds.bottom; y++) {
+			uint32 val = _surface.getPixel(x, y);
+			if ((val & mask) != 0) {
+				bounds.left = x;
+
+				// end loops
+				x = bounds.right;
+				y = bounds.bottom;
+			}
+		}
+	}
+
+	// Get top
+	for (int y = bounds.top; y < bounds.bottom; y++) {
+		for (int x = bounds.left; x < bounds.right; x++) {
 			uint32 val = _surface.getPixel(x, y);
 			if ((val & mask) != 0) {
 				bounds.top = y;
-				bounds.bottom = y + 1;
-				bounds.left = x;
-				bounds.right = x + 1;
-				found = true;
-			}
-		}
-	}
 
-	// Get bottom & extend left / right
-	found = false;
-	for (int y = _surface.h - 1; !found && y > bounds.top; y--) {
-		for (int x = 0; !found && x < _surface.w; x++) {
-			uint32 val = _surface.getPixel(x, y);
-			if ((val & mask) != 0) {
-				bounds.bottom = y + 1;
-				if (x < bounds.left)
-					bounds.left = x;
-				if (x > bounds.right)
-					bounds.right = x + 1;
-				found = true;
-			}
-		}
-	}
-
-	// Get left
-	found = false;
-	for (int x = 0; !found && x < bounds.left; x++) {
-		for (int y = bounds.top; !found && y < bounds.bottom; y++) {
-			uint32 val = _surface.getPixel(x, y);
-			if ((val & mask) != 0) {
-				bounds.left = x;
-				found = true;
+				// end loops
+				x = bounds.right;
+				y = bounds.bottom;
 			}
 		}
 	}
 
 	// Get right
-	found = false;
-	for (int x = _surface.w - 1; !found && x > bounds.right; x--) {
-		for (int y = bounds.top; !found && y < bounds.bottom; y++) {
+	for (int x = bounds.right - 1; x > bounds.left; x--) {
+		for (int y = bounds.bottom - 1; y > bounds.top; y--) {
 			uint32 val = _surface.getPixel(x, y);
 			if ((val & mask) != 0) {
 				bounds.right = x + 1;
-				found = true;
+
+				// end loops
+				x = bounds.left;
+				y = bounds.top;
+			}
+		}
+	}
+
+	// Get bottom
+	for (int y = bounds.bottom - 1; y > bounds.top; y--) {
+		for (int x = bounds.right - 1; x > bounds.left; x--) {
+			uint32 val = _surface.getPixel(x, y);
+			if ((val & mask) != 0) {
+				bounds.bottom = y + 1;
+
+				// end loops
+				x = bounds.left;
+				y = bounds.top;
 			}
 		}
 	}
