@@ -119,7 +119,7 @@ bool MemoryReadStream::seek(int64 offs, int whence) {
 	case SEEK_SET:
 		// Fall through
 	default:
-		_ptr = _ptrOrig + offs;
+		_ptr = _ptrOrig.get() + offs;
 		_pos = offs;
 		break;
 
