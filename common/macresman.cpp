@@ -274,8 +274,10 @@ SeekableReadStream * MacResManager::openFileOrDataFork(const Path &fileName, Arc
 	}
 	// All formats other than Macbinary and AppleSingle (not supported) use
 	// basename-named file as data fork holder.
-	if (stream)
+	if (stream) {
+		stream->seek(0);
 		return stream;
+	}
 
 	// Check .bin for MacBinary next
 	stream = archive.createReadStreamForMember(fileName.append(".bin"));
