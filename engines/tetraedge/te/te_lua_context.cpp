@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/textconsole.h"
 #include "common/lua/lua.h"
 #include "common/lua/lualib.h"
@@ -75,7 +76,10 @@ TeVariant TeLuaContext::global(const Common::String &name) {
 		lua_settop(_luaState, -2);
 		return TeVariant(str);
 	}
-	warning("TeLuaContext::global: Unexpected type %d for global %s", type, name.c_str());
+	if (type != LUA_TNIL)
+		warning("TeLuaContext::global: Unexpected type %d for global %s", type, name.c_str());
+	else
+		debug("TeLuaContext::global: Request for nil global %s", name.c_str());
 	return TeVariant();
 }
 

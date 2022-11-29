@@ -31,7 +31,8 @@
 namespace Tetraedge {
 
 TeMusic::TeMusic() : _repeat(true), _isPlaying(false), _currentData(0),
-_volume(1.0), _isPaused(true), _channelName("music"), _sndHandleValid(false) {
+_volume(1.0), _isPaused(false), _channelName("music"), _sndHandleValid(false),
+_retain(false) {
 	g_engine->getSoundManager()->musics().push_back(this);
 }
 
@@ -70,8 +71,19 @@ bool TeMusic::play() {
 	Audio::AudioStream *stream = Audio::makeVorbisStream(streamfile, DisposeAfterUse::YES);
 	byte vol = round(_volume * 255.0);
 	int channelId = _channelName.hash();
+
 	Audio::Mixer *mixer = g_system->getMixer();
-	mixer->playStream(Audio::Mixer::kMusicSoundType, &_sndHandle, stream, channelId, vol);
+	Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType;
+	if (_channelName == "sfx") {
+		soundType = Audio::Mixer::kSFXSoundType;
+	} else if (_channelName == "dialog") {
+		soundType = Audio::Mixer::kSpeechSoundType;
+	} else if (_channelName == "music") {
+		soundType = Audio::Mixer::kMusicSoundType;
+	}
+
+	debug("playing %s on channel %s at vol %d", _actualPath.toString().c_str(), _channelName.c_str(), vol);
+	mixer->playStream(soundType, &_sndHandle, stream, -1, vol);
 	_sndHandleValid = true;
 	_isPaused = false;
 	_isPlaying = true;

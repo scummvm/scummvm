@@ -37,6 +37,7 @@ public:
 	void playFreeSound(const Common::Path &path, float vol, const Common::String &channel);
 	void stopFreeSound(const Common::String &channel);
 
+	void setChannelVolume(const Common::String &channel, float vol);
 	void update();
 
 	Common::Array<TeMusic *> &musics() { return _musics; }

@@ -593,7 +593,8 @@ static int tolua_ExportedFunctions_SetCharacterOrientation00(lua_State *L) {
 static void SetCharacterAnimation(const Common::String &charname, const Common::String &animname, bool repeat, bool b2, int i1, int i2) {
 	Game *game = g_engine->getGame();
 	Character *c = game->scene().character(charname);
-	bool result = c->setAnimation(animname, repeat, b2, true, i1, i2);
+	assert(c);
+	bool result = c->setAnimation(animname, repeat, b2, false, i1, i2);
 	if (!result) {
 		warning("[SetCharacterAnimation] Character's animation \"%s\" doesn't exist for the character\"%s\"  ",
 			animname.c_str(), charname.c_str());
@@ -1039,6 +1040,21 @@ static int tolua_ExportedFunctions_DeleteTask00(lua_State *L) {
 	error("#ferror in function 'DeleteTask': %d %d %s", err.index, err.array, err.type);
 }
 
+static void SetVisibleButtonHelp(bool val) {
+	Game *game = g_engine->getGame();
+	game->objectif().setVisibleButtonHelp(val);
+}
+
+static int tolua_ExportedFunctions_SetVisibleButtonHelp00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isboolean(L, 1, 0, &err) && tolua_isnoobj(L, 3, &err)) {
+		bool b1 = tolua_toboolean(L, 1, 0);
+		SetVisibleButtonHelp(b1);
+		return 0;
+	}
+	error("#ferror in function 'SetVisibleButtonHelp': %d %d %s", err.index, err.array, err.type);
+}
+
 static bool TestFileFlagSystemFlag(const Common::String &flagname, const Common::String &val) {
 	if (flagname == "platform" && val == "Android")
 		return true;
@@ -1322,6 +1338,28 @@ static int tolua_ExportedFunctions_PlaySound00(lua_State *L) {
 	error("#ferror in function 'PlaySound': %d %d %s", err.index, err.array, err.type);
 }
 
+static int tolua_ExportedFunctions_PlaySoundAndWaitForEnd00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnumber(L, 2, 1, &err) && tolua_isnumber(L, 3, 1, &err) && tolua_isnoobj(L, 4, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		double d1 = tolua_tonumber(L, 2, -1.0);
+		double d2 = tolua_tonumber(L, 3, 1.0);
+		PlaySound(s1, d1, d2);
+		Game::YieldedCallback cb;
+		cb._luaFnName = "OnFreeSoundFinished";
+		cb._luaParam = s1;
+		cb._luaThread = TeLuaThread::threadFromState(L);
+		Game *game = g_engine->getGame();
+		for (const auto &gamecb : game->yieldedCallbacks()) {
+			if (gamecb._luaFnName == cb._luaFnName && gamecb._luaParam == s1)
+				error("PlaySoundAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
+		}
+		game->yieldedCallbacks().push_back(cb);
+		return cb._luaThread->yield();
+	}
+	error("#ferror in function 'PlaySoundAndWaitForEnd': %d %d %s", err.index, err.array, err.type);
+}
+
 static void StopSound(const Common::String &name) {
 	Game *game = g_engine->getGame();
 	game->stopSound(name);
@@ -1559,6 +1597,30 @@ static int tolua_ExportedFunctions_MoveCharacterTo00(lua_State *L) {
 	error("#ferror in function 'MoveCharacterTo': %d %d %s", err.index, err.array, err.type);
 }
 
+static int tolua_ExportedFunctions_MoveCharacterToAndWaitForEnd00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err)
+		&& tolua_isstring(L, 3, 0, &err) && tolua_isstring(L, 4, 0, &err)
+		&& tolua_isnoobj(L, 5, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		Common::String s2(tolua_tostring(L, 2, nullptr));
+		float f1 = tolua_tonumber(L, 3, 0.0);
+		float f2 = tolua_tonumber(L, 4, 0.0);
+		MoveCharacterTo(s1, s2, f1, f2);
+		Game::YieldedCallback cb;
+		cb._luaFnName = "OnDisplacementFinished";
+		cb._luaThread = TeLuaThread::threadFromState(L);
+		Game *game = g_engine->getGame();
+		for (const auto &gamecb : game->yieldedCallbacks()) {
+			if (gamecb._luaFnName == cb._luaFnName)
+				error("MoveCharacterToAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
+		}
+		game->yieldedCallbacks().push_back(cb);
+		return cb._luaThread->yield();
+	}
+	error("#ferror in function 'MoveCharacterToAndWaitForEnd': %d %d %s", err.index, err.array, err.type);
+}
+
 static void MoveCharacterPlayerTo(float x, float y, float z, bool walkFlag) {
 	Game *game = g_engine->getGame();
 	if (game->_movePlayerCharacterDisabled)
@@ -1628,18 +1690,18 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "LoadObjectMaterials", tolua_ExportedFunctions_LoadObjectMaterials01);
 	tolua_function(L, "HideObject", tolua_ExportedFunctions_HideObject00);
 	tolua_function(L, "ShowObject", tolua_ExportedFunctions_ShowObject00);
-	// tolua_function(L, "ShowAllObjects", tolua_ExportedFunctions_ShowAllObjects00); // Never used
+	// tolua_function(L, "ShowAllObjects", tolua_ExportedFunctions_ShowAllObjects00); // Unused
 	tolua_function(L, "SetBackground", tolua_ExportedFunctions_SetBackground00);
-	// tolua_function(L, "AddBlockingObject", tolua_ExportedFunctions_AddBlockingObject00); // Never used
-	// tolua_function(L, "RemoveBlockingObject", tolua_ExportedFunctions_RemoveBlockingObject00); // Never used
+	// tolua_function(L, "AddBlockingObject", tolua_ExportedFunctions_AddBlockingObject00); // Unused
+	// tolua_function(L, "RemoveBlockingObject", tolua_ExportedFunctions_RemoveBlockingObject00); // Unused
 	tolua_function(L, "ChangeWarp", tolua_ExportedFunctions_ChangeWarp00);
 	tolua_function(L, "PlayMovie", tolua_ExportedFunctions_PlayMovie00);
-	/*tolua_function(L, "PlayMovieAndWaitForEnd", tolua_ExportedFunctions_PlayMovieAndWaitForEnd00);
-	tolua_function(L, "StartAnimationPart", tolua_ExportedFunctions_StartAnimationPart00);*/
+	/*tolua_function(L, "PlayMovieAndWaitForEnd", tolua_ExportedFunctions_PlayMovieAndWaitForEnd00);*/
+	// tolua_function(L, "StartAnimationPart", tolua_ExportedFunctions_StartAnimationPart00); // Unused
 	tolua_function(L, "StartAnimation", tolua_ExportedFunctions_StartAnimation00);
 	/*tolua_function(L, "StartAnimationAndWaitForEnd",
-				 tolua_ExportedFunctions_StartAnimationAndWaitForEnd00);
-	tolua_function(L, "AddAnimToSet", tolua_ExportedFunctions_AddAnimToSet00); */
+				 tolua_ExportedFunctions_StartAnimationAndWaitForEnd00); */
+	// tolua_function(L, "AddAnimToSet", tolua_ExportedFunctions_AddAnimToSet00); // Unused
 	tolua_function(L, "RequestAutoSave", tolua_ExportedFunctions_RequestAutoSave00);
 	/*tolua_function(L, "SetVisibleButtonZoomed", tolua_ExportedFunctions_SetVisibleButtonZoomed00);*/
 	tolua_function(L, "AddMarker", tolua_ExportedFunctions_AddMarker00);
@@ -1649,19 +1711,19 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "DisabledZone", tolua_ExportedFunctions_DisabledZone00);
 	tolua_function(L, "DisabledInt", tolua_ExportedFunctions_DisabledInt00);
 	tolua_function(L, "LockCursor", tolua_ExportedFunctions_LockCursor00);
-	/*tolua_function(L, "SetCondition", tolua_ExportedFunctions_SetCondition00);
-	tolua_function(L, "UnsetCondition", tolua_ExportedFunctions_UnsetCondition00);
-	tolua_function(L, "TutoActive", tolua_ExportedFunctions_TutoActive00);*/
+	// tolua_function(L, "SetCondition", tolua_ExportedFunctions_SetCondition00); // Unused
+	// tolua_function(L, "UnsetCondition", tolua_ExportedFunctions_UnsetCondition00); // Unused
+	// tolua_function(L, "TutoActive", tolua_ExportedFunctions_TutoActive00); // Unused
 	tolua_function(L, "LaunchDialog", tolua_ExportedFunctions_LaunchDialog00);
 	tolua_function(L, "LaunchDialogAndWaitForEnd", tolua_ExportedFunctions_LaunchDialogAndWaitForEnd00);
 	tolua_function(L, "PushAnswer", tolua_ExportedFunctions_PushAnswer00);
 	tolua_function(L, "HideAnswers", tolua_ExportedFunctions_HideAnswers00);
 	tolua_function(L, "PushTask", tolua_ExportedFunctions_PushTask00);
 	tolua_function(L, "DeleteTask", tolua_ExportedFunctions_DeleteTask00);
-	/*tolua_function(L, "SetVisibleButtonHelp", tolua_ExportedFunctions_SetVisibleButtonHelp00);*/
+	tolua_function(L, "SetVisibleButtonHelp", tolua_ExportedFunctions_SetVisibleButtonHelp00);
 	// tolua_function(L, "HideTasks", tolua_ExportedFunctions_HideTasks00); Not used.
 	tolua_function(L, "PlaySound", tolua_ExportedFunctions_PlaySound00);
-	/*tolua_function(L, "PlaySoundAndWaitForEnd", tolua_ExportedFunctions_PlaySoundAndWaitForEnd00);*/
+	tolua_function(L, "PlaySoundAndWaitForEnd", tolua_ExportedFunctions_PlaySoundAndWaitForEnd00);
 	tolua_function(L, "StopSound", tolua_ExportedFunctions_StopSound00);
 	tolua_function(L, "AddRandomSound", tolua_ExportedFunctions_AddRandomSound00);
 	tolua_function(L, "PlayRandomSound", tolua_ExportedFunctions_PlayRandomSound00);
@@ -1669,14 +1731,14 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "SetSoundStep", tolua_ExportedFunctions_SetSoundStep00);
 	tolua_function(L, "Selected", tolua_ExportedFunctions_Selected00);
 	tolua_function(L, "TakeObject", tolua_ExportedFunctions_TakeObject00);
-	/*tolua_function(L, "TakeObjectInHand", tolua_ExportedFunctions_TakeObjectInHand00);
-	tolua_function(L, "RemoveObject", tolua_ExportedFunctions_RemoveObject00);
+	// tolua_function(L, "TakeObjectInHand", tolua_ExportedFunctions_TakeObjectInHand00); // Unused
+	/*tolua_function(L, "RemoveObject", tolua_ExportedFunctions_RemoveObject00);
 	tolua_function(L, "RemoveObject", tolua_ExportedFunctions_RemoveObject01);*/
 	tolua_function(L, "AddNumber", tolua_ExportedFunctions_AddNumber00);
 	tolua_function(L, "ShowDocument", tolua_ExportedFunctions_ShowDocument00);
-	/*tolua_function(L, "ShowDocumentAndWaitForEnd", tolua_ExportedFunctions_ShowDocumentAndWaitForEnd00);
-	tolua_function(L, "HideDocument", tolua_ExportedFunctions_HideDocument00);
-	tolua_function(L, "AddDocument", tolua_ExportedFunctions_AddDocument00);*/
+	// tolua_function(L, "ShowDocumentAndWaitForEnd", tolua_ExportedFunctions_ShowDocumentAndWaitForEnd00); // Unused
+	// tolua_function(L, "HideDocument", tolua_ExportedFunctions_HideDocument00); // Unused
+	// tolua_function(L, "AddDocument", tolua_ExportedFunctions_AddDocument00); // Unused
 	tolua_function(L, "LoadCharacter", tolua_ExportedFunctions_LoadCharacter00);
 	tolua_function(L, "UnloadCharacter", tolua_ExportedFunctions_UnloadCharacter00);
 	// tolua_function(L, "GetRotationCharacter", tolua_ExportedFunctions_GetRotationCharacter00); // Unused
@@ -1684,12 +1746,12 @@ void LuaOpenBinds(lua_State *L) {
 	// tolua_function(L, "GetYPositionCharacter", tolua_ExportedFunctions_GetYPositionCharacter00); // Unused
 	// tolua_function(L, "GetZPositionCharacter", tolua_ExportedFunctions_GetZPositionCharacter00); // Unused
 	tolua_function(L, "MoveCharacterTo", tolua_ExportedFunctions_MoveCharacterTo00);
-	/*tolua_function(L, "MoveCharacterToAndWaitForEnd",
-				 tolua_ExportedFunctions_MoveCharacterToAndWaitForEnd00);*/
+	tolua_function(L, "MoveCharacterToAndWaitForEnd",
+				 tolua_ExportedFunctions_MoveCharacterToAndWaitForEnd00);
 	tolua_function(L, "MoveCharacterPlayerTo", tolua_ExportedFunctions_MoveCharacterPlayerTo00);
-	/*tolua_function(L, "MoveCharacterPlayerToAndWaitForEnd",
-				 tolua_ExportedFunctions_MoveCharacterPlayerToAndWaitForEnd00);
-	tolua_function(L, "MoveCharacterPlayerAtTo", tolua_ExportedFunctions_MoveCharacterPlayerAtTo00);*/
+	// tolua_function(L, "MoveCharacterPlayerToAndWaitForEnd",
+	// 			 tolua_ExportedFunctions_MoveCharacterPlayerToAndWaitForEnd00); // Unused
+	// tolua_function(L, "MoveCharacterPlayerAtTo", tolua_ExportedFunctions_MoveCharacterPlayerAtTo00); // Unused
 	tolua_function(L, "SetCharacterPosition", tolua_ExportedFunctions_SetCharacterPosition00);
 	tolua_function(L, "PlaceCharacterOnDummy", tolua_ExportedFunctions_PlaceCharacterOnDummy00);
 	tolua_function(L, "SetCharacterRotation", tolua_ExportedFunctions_SetCharacterRotation00);
@@ -1705,16 +1767,16 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "MoveCharacterPlayerDisabled",
 				 tolua_ExportedFunctions_MoveCharacterPlayerDisabled00);
 	/*tolua_function(L, "SetRunMode", tolua_ExportedFunctions_SetRunMode00);
-	tolua_function(L, "SetRunMode2", tolua_ExportedFunctions_SetRunMode200);
-	tolua_function(L, "SetCharacterColor", tolua_ExportedFunctions_SetCharacterColor00);
-	tolua_function(L, "SetCharacterSound", tolua_ExportedFunctions_SetCharacterSound00);
-	tolua_function(L, "SetCharacterShadow", tolua_ExportedFunctions_SetCharacterShadow00);*/
+	tolua_function(L, "SetRunMode2", tolua_ExportedFunctions_SetRunMode200); */
+	// tolua_function(L, "SetCharacterColor", tolua_ExportedFunctions_SetCharacterColor00); // Unused
+	// tolua_function(L, "SetCharacterSound", tolua_ExportedFunctions_SetCharacterSound00); // Unused
+	/*tolua_function(L, "SetCharacterShadow", tolua_ExportedFunctions_SetCharacterShadow00);*/
 	tolua_function(L, "AddCallback", tolua_ExportedFunctions_AddCallback00);
-	/*tolua_function(L, "AddCallbackPlayer", tolua_ExportedFunctions_AddCallbackPlayer00);
-	tolua_function(L, "AddCallbackAnimation2D", tolua_ExportedFunctions_AddCallbackAnimation2D00);
-	tolua_function(L, "DeleteCallback", tolua_ExportedFunctions_DeleteCallback00);
-	tolua_function(L, "DeleteCallbackPlayer", tolua_ExportedFunctions_DeleteCallbackPlayer00);
-	tolua_function(L, "DeleteCallbackAnimation2D", tolua_ExportedFunctions_DeleteCallbackAnimation2D00);*/
+	/*tolua_function(L, "AddCallbackPlayer", tolua_ExportedFunctions_AddCallbackPlayer00); */
+	// tolua_function(L, "AddCallbackAnimation2D", tolua_ExportedFunctions_AddCallbackAnimation2D00); // Unused
+	// tolua_function(L, "DeleteCallback", tolua_ExportedFunctions_DeleteCallback00); // Unused
+	// tolua_function(L, "DeleteCallbackPlayer", tolua_ExportedFunctions_DeleteCallbackPlayer00); // Unused
+	// tolua_function(L, "DeleteCallbackAnimation2D", tolua_ExportedFunctions_DeleteCallbackAnimation2D00); // Unused
 	tolua_function(L, "SetObjectOnCharacter", tolua_ExportedFunctions_SetObjectOnCharacter00);
 	tolua_function(L, "SetObjectRotation", tolua_ExportedFunctions_SetObjectRotation00);
 	tolua_function(L, "SetObjectTranslation", tolua_ExportedFunctions_SetObjectTranslation00);
@@ -1724,14 +1786,14 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "UnloadObject", tolua_ExportedFunctions_UnloadObject00);
 	tolua_function(L, "SetGroundObjectPosition", tolua_ExportedFunctions_SetGroundObjectPosition00);
 	tolua_function(L, "SetGroundObjectRotation", tolua_ExportedFunctions_SetGroundObjectRotation00);
-	/*tolua_function(L, "TranslateGroundObject", tolua_ExportedFunctions_TranslateGroundObject00);
-	tolua_function(L, "RotateGroundObject", tolua_ExportedFunctions_RotateGroundObject00);
-	tolua_function(L, "SetLightPlayerCharacter", tolua_ExportedFunctions_SetLightPlayerCharacter00);
-	tolua_function(L, "SetLightPos", tolua_ExportedFunctions_SetLightPos00);
-	tolua_function(L, "EnableLight", tolua_ExportedFunctions_EnableLight00);
-	tolua_function(L, "SetLightDiffuse", tolua_ExportedFunctions_SetLightDiffuse00);
-	tolua_function(L, "SetLightAmbient", tolua_ExportedFunctions_SetLightAmbient00);
-	tolua_function(L, "SetLightSpecular", tolua_ExportedFunctions_SetLightSpecular00);*/
+	/*tolua_function(L, "TranslateGroundObject", tolua_ExportedFunctions_TranslateGroundObject00); */
+	// tolua_function(L, "RotateGroundObject", tolua_ExportedFunctions_RotateGroundObject00); // Unused
+	// tolua_function(L, "SetLightPlayerCharacter", tolua_ExportedFunctions_SetLightPlayerCharacter00); // Unused
+	// tolua_function(L, "SetLightPos", tolua_ExportedFunctions_SetLightPos00); // Unused
+	/*tolua_function(L, "EnableLight", tolua_ExportedFunctions_EnableLight00); */
+	// tolua_function(L, "SetLightDiffuse", tolua_ExportedFunctions_SetLightDiffuse00); // Unused
+	// tolua_function(L, "SetLightAmbient", tolua_ExportedFunctions_SetLightAmbient00); // Unused
+	// tolua_function(L, "SetLightSpecular", tolua_ExportedFunctions_SetLightSpecular00); // Unused
 	tolua_function(L, "LoadBillBoard", tolua_ExportedFunctions_LoadBillBoard00);
 	tolua_function(L, "SetBillboardPosition", tolua_ExportedFunctions_SetBillboardPosition00);
 	tolua_function(L, "SetBillboardPosition2", tolua_ExportedFunctions_SetBillboardPosition200);
@@ -1741,9 +1803,9 @@ void LuaOpenBinds(lua_State *L) {
 	/*tolua_function(L, "UnlockAchievement", tolua_ExportedFunctions_UnlockAchievement00);
 	tolua_function(L, "Save", tolua_ExportedFunctions_Save00);
 	tolua_function(L, "Wait", tolua_ExportedFunctions_Wait00);
-	tolua_function(L, "WaitAndWaitForEnd", tolua_ExportedFunctions_WaitAndWaitForEnd00);
-	tolua_function(L, "OpenFinalURL", tolua_ExportedFunctions_OpenFinalURL00); // Unused
-	tolua_function(L, "FinishGame", tolua_ExportedFunctions_FinishGame00);
+	tolua_function(L, "WaitAndWaitForEnd", tolua_ExportedFunctions_WaitAndWaitForEnd00); */
+	// tolua_function(L, "OpenFinalURL", tolua_ExportedFunctions_OpenFinalURL00); // Unused
+	/*tolua_function(L, "FinishGame", tolua_ExportedFunctions_FinishGame00);
 	tolua_function(L, "RequestMainMenu", tolua_ExportedFunctions_RequestMainMenu00);*/
 	// tolua_function(L, "BFGRateImmediately", tolua_ExportedFunctions_BFGRateImmediately00); // Unused
 	// tolua_function(L, "BFGReportEvent", tolua_ExportedFunctions_BFGReportEvent00); // Unused
@@ -1756,7 +1818,7 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "EnableBlocker", tolua_ExportedFunctions_EnableBlocker00);
 	tolua_function(L, "AddAnchorZone", tolua_ExportedFunctions_AddAnchorZone00);
 	tolua_function(L, "ActivateAnchorZone", tolua_ExportedFunctions_ActivateAnchorZone00);
-	//tolua_function(L, "SetCharacterAnchor", tolua_ExportedFunctions_SetCharacterAnchor00); // Unused
+	// tolua_function(L, "SetCharacterAnchor", tolua_ExportedFunctions_SetCharacterAnchor00); // Unused
 	tolua_function(L, "SetCharacterLookChar", tolua_ExportedFunctions_SetCharacterLookChar00);
 	tolua_function(L, "Random", tolua_ExportedFunctions_Random00);
 	tolua_function(L, "SetCharacterMeshVisible", tolua_ExportedFunctions_SetCharacterMeshVisible00);

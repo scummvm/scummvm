@@ -485,8 +485,9 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		return false;
 	}
 
-	if (!_gameSounds.empty())
-		warning("TODO: Game::initWarp: stop game sounds");
+	for (auto &sound : _gameSounds) {
+		sound->setRetain(false);
+	}
 
 	if (logicLuaExists) {
 		_luaContext.addBindings(LuaBinds::LuaOpenBinds);
@@ -567,7 +568,7 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	}
 
 	TeCheckboxLayout *markersCheckbox = _inGameGui.checkboxLayout("markersVisibleButton");
-	markersCheckbox->setVisible(!_markersVisible);
+	markersCheckbox->setState(_markersVisible? TeCheckboxLayout::CheckboxStateActive : TeCheckboxLayout::CheckboxStateUnactive);
 	markersCheckbox->onStateChangedSignal().add(this, &Game::onMarkersVisible);
 
 	initNoScale();
@@ -625,9 +626,14 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		_luaScript.execute("OnSelectedObject", _inventory.selectedObject());
 	}
 
-	for (GameSound *sound : _gameSounds) {
-		sound->stop();
-		sound->deleteLater();
+	
+	for (unsigned int i = 0; i < _gameSounds.size(); i++) {
+		if (_gameSounds[i]->retain())
+			continue;
+		_gameSounds[i]->stop();
+		_gameSounds[i]->deleteLater();
+		_gameSounds.remove_at(i);
+		i--;
 	}
 	_gameSounds.clear();
 
@@ -785,7 +791,20 @@ bool Game::onCharacterAnimationFinished(const Common::String &val) {
 	if (!_scene._character)
 		return false;
 
-	error("TODO: Implemet Game::onCharacterAnimationFinished %s", val.c_str());
+	for (unsigned int i = 0; i < _yieldedCallbacks.size(); i++) {
+		YieldedCallback &cb = _yieldedCallbacks[i];
+		if (cb._luaFnName == "OnCharacterAnimationFinished" && cb._luaParam == val) {
+			TeLuaThread *lua = cb._luaThread;
+			_yieldedCallbacks.remove_at(i);
+			if (lua) {
+				lua->resume();
+				return false;
+			}
+			break;
+		}
+	}
+	_luaScript.execute("OnCharacterAnimationFinished", val);
+	return false;
 }
 
 bool Game::onCharacterAnimationPlayerFinished(const Common::String &anim) {
@@ -801,7 +820,6 @@ bool Game::onCharacterAnimationPlayerFinished(const Common::String &anim) {
 			if (lua) {
 				lua->resume();
 				callScripts = false;
-				return false;
 			}
 			break;
 		}
@@ -1266,13 +1284,13 @@ void Game::playSound(const Common::String &name, int repeats, float volume) {
 			// TODO: original seems to leak sound here??
 		} else {
 			sound->onStopSignal().add(sound, &GameSound::onSoundStopped);
-			// TODO: set snd->field_0x201
+			sound->setRetain(true);
 			_gameSounds.push_back(sound);
 		}
 	} else if (repeats == -1) {
 		for (GameSound *snd : _gameSounds) {
 			if (snd->getAccessName() == name) {
-				// TODO: set snd->field_0x201
+				snd->setRetain(true);
 				return;
 			}
 		}
@@ -1286,7 +1304,7 @@ void Game::playSound(const Common::String &name, int repeats, float volume) {
 			game->luaScript().execute("OnCellFreeSoundFinished", name);
 			delete sound;
 		} else {
-			// TODO: set snd->field_0x201
+			sound->setRetain(true);
 			_gameSounds.push_back(sound);
 		}
 	}

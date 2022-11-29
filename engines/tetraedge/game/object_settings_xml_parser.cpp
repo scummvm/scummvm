@@ -52,8 +52,12 @@ bool ObjectSettingsXmlParser::textCallback(const Common::String &val) {
 			_curObject._modelFileName = val;
 			break;
 		case TagDefaultScale:
-			_curObject._defaultScale.parse(val);
+		{
+			bool result = _curObject._defaultScale.parse(val);
+			if (!result)
+				warning("Failed to parse Object defaultScale from %s", val.c_str());
 			break;
+		}
 		default:
 			error("should only see text for model file name or scale");
 	}

@@ -30,6 +30,7 @@
 #include "tetraedge/game/game.h"
 #include "tetraedge/game/character_settings_xml_parser.h"
 #include "tetraedge/te/te_model_animation.h"
+#include "tetraedge/te/te_core.h"
 
 namespace Tetraedge {
 
@@ -130,8 +131,9 @@ void Character::addCallback(const Common::String &animKey, const Common::String 
 		return _cache.getVal(pathStr);
 
 	TeIntrusivePtr<TeModelAnimation> modelAnim = new TeModelAnimation();
-	if (!modelAnim->load(path)) {
-		warning("Failed to load anim %s", path.toString().c_str());
+	Common::Path foundPath = g_engine->getCore()->findFile(path);
+	if (!modelAnim->load(foundPath)) {
+		warning("Failed to load anim %s", foundPath.toString().c_str());
 	}
 
 	_cache.setVal(pathStr, modelAnim);
@@ -362,7 +364,8 @@ bool Character::loadModel(const Common::String &mname, bool unused) {
 	return true;
 }
 
-/*static*/ bool Character::loadSettings(const Common::String &path) {
+/*static*/
+bool Character::loadSettings(const Common::String &path) {
 	CharacterSettingsXmlParser parser;
 	parser.setAllowText();
 	if (_globalCharacterSettings)
@@ -405,7 +408,7 @@ bool Character::loadModel(const Common::String &mname, bool unused) {
 	if (!parser.parse())
 		error("Character::loadSettings: Can't parse %s", path.c_str());
 
-	return false;
+	return true;
 }
 
 bool Character::onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneMatrix) {

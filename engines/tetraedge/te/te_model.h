@@ -64,7 +64,7 @@ public:
 
 	struct bone {
 		Common::String _name;
-		short _x;
+		short _parentBone;
 		TeTRS _trs;
 	};
 

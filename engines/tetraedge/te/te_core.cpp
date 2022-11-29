@@ -50,7 +50,7 @@ void TeCore::create() {
 	language("en");
 	_coreNotReady = false;
 	_activityTrackingTimer.alarmSignal().add<TeCore>(this, &TeCore::onActivityTrackingAlarm);
-	warning("TeCore::create: Finish implementing me.");
+	warning("TODO: TeCore::create: Finish implementing me.");
 }
 
 TeICodec *TeCore::createVideoCodec(const Common::Path &path) {
@@ -133,6 +133,9 @@ Common::Path TeCore::findFile(const Common::Path &path) {
 		"PC-MacOSX-PS3-Xbox360",
 		"PC-MacOSX-Xbox360-PS3/PC-MacOSX",
 		"Full",
+		"Part1-Full",
+		"Part2-Full-Part1",
+		"Part3-Full-Part1",
 		"HD",
 		"HD/PC-MacOSX-Xbox360-PS3"
 	};
