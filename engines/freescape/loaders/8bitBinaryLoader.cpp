@@ -591,7 +591,7 @@ void FreescapeEngine::loadBundledImages() {
 void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {
 	file->seek(offset);
 	int charNumber = 60;
-	byte *font;
+	byte *font = nullptr;
 	if (isDOS()) {
 		font = (byte *)malloc(6 * charNumber);
 		file->read(font, 6 * charNumber);
@@ -605,6 +605,8 @@ void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {
 
 		_font.set_size(fontSize * 8);
 		_font.set_bits((byte *)font);
+	} else {
+		_fontLoaded = false;
 	}
 	_fontLoaded = true;
 	free(font);
