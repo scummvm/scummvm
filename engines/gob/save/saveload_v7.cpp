@@ -1148,7 +1148,7 @@ bool SaveLoad_v7::GameFileHandler::save(int16 dataVar, int32 size, int32 offset)
 }
 
 bool SaveLoad_v7::GameFileHandler::loadToRaw(byte *ptr, int32 size, int32 offset) {
-Common::String fileName = _file.build();
+	Common::String fileName = _file.build();
 	if (fileName.empty())
 		return false;
 
