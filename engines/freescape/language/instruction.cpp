@@ -183,7 +183,7 @@ void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 	drawFrame();
 	_gfx->flipBuffer();
 	g_system->updateScreen();
-	g_system->delayMillis(10);
+	g_system->delayMillis(20);
 }
 
 void FreescapeEngine::executeSound(FCLInstruction &instruction) {
@@ -207,11 +207,37 @@ void FreescapeEngine::executePrint(FCLInstruction &instruction) {
 }
 
 void FreescapeEngine::executeSPFX(FCLInstruction &instruction) {
-	uint16 index = instruction._source;
-	uint16 color = instruction._destination;
+	uint16 src = instruction._source;
+	uint16 dst = instruction._destination;
+	if (isAmiga() || isAtariST()) {
+		int color;
+		if (src == 0 && dst >= 2 && dst <= 5) {
+			_currentArea->remapColor(dst, 1);
+			return;
+		} if (src == 0) {
+			color = dst;
+		} else if (src > 0) {
 
-	debugC(1, kFreescapeDebugCode, "Switching palette from position %d to %d", index, color);
-	_currentArea->remapColor(index, color);
+			switch (src) {
+			case 1:
+				color = 15;
+			break;
+			case 2:
+				color = 14;
+			break;
+			default:
+				color = 0;
+			}
+		}
+
+		debugC(1, kFreescapeDebugCode, "Switching complete palette to color %d", dst);
+		for (int i = 1; i < 16; i++)
+			_currentArea->remapColor(i, color);
+	} else if (isDOS()) {
+		debugC(1, kFreescapeDebugCode, "Switching palette from position %d to %d", src, dst);
+		_currentArea->remapColor(src, dst);
+	}
+	executeRedraw(instruction);
 }
 
 
