@@ -27,7 +27,7 @@ static const MADSGameDescription gameDescriptions[] = {
 		{
 			"nebular",
 			0,
-			AD_ENTRY2s("mpslabs.001", "4df5c557b52abb5b661cf4befe5ae301", 1315354, "mpslabs.idx", "d74bed6513d0a5d514269750f574a23b", 5598),
+			AD_ENTRY2s("mpslabs.001", "4df5c557b52abb5b661cf4befe5ae301", 1315354, "mpslabs.idx", "598ede8e361a60a4e577bbe40f83295b", 5598),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			GF_INSTALLER,
