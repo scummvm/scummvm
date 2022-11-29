@@ -118,8 +118,9 @@ Common::SeekableReadStreamEndian *Archive::getResource(uint32 tag, uint16 id) {
 		error("Archive::getResource(): Archive does not contain '%s' %d", tag2str(tag), id);
 
 	const Resource &res = resMap[id];
+	auto stream = new Common::SeekableSubReadStream(_stream, res.offset, res.offset + res.size, DisposeAfterUse::NO);
 
-	return new Common::SeekableSubReadStreamEndian(_stream, res.offset, res.offset + res.size, _isBigEndian, DisposeAfterUse::NO);
+	return new Common::SeekableReadStreamEndianWrapper(stream, _isBigEndian, DisposeAfterUse::NO);
 }
 
 Resource Archive::getResourceDetail(uint32 tag, uint16 id) {
@@ -460,7 +461,9 @@ Common::SeekableReadStreamEndian *RIFFArchive::getResource(uint32 tag, uint16 id
 	}
 
 	debugC(4, kDebugLoading, "RIFFArchive::getResource() tag: %s id: %i offset: %i size: %i", tag2str(tag), id, res.offset, res.size);
-	return new Common::SeekableSubReadStreamEndian(_stream, _startOffset + offset, _startOffset + offset + size, true, DisposeAfterUse::NO);
+
+	auto stream = new Common::SeekableSubReadStream(_stream, _startOffset + offset, _startOffset + offset + size, DisposeAfterUse::NO);
+	return new Common::SeekableReadStreamEndianWrapper(stream, true, DisposeAfterUse::NO);
 }
 
 // RIFX Archive code
@@ -943,8 +946,9 @@ Common::SeekableReadStreamEndian *RIFXArchive::getResource(uint32 tag, uint16 id
 
 	uint32 offset = res.offset + 8;
 	uint32 size = res.size;
+	auto stream = new Common::SeekableSubReadStream(_stream, offset, offset + size, DisposeAfterUse::NO);
 
-	return new Common::SeekableSubReadStreamEndian(_stream, offset, offset + size, bigEndian, DisposeAfterUse::NO);
+	return new Common::SeekableReadStreamEndianWrapper(stream, bigEndian, DisposeAfterUse::NO);
 }
 
 Resource RIFXArchive::getResourceDetail(uint32 tag, uint16 id) {
