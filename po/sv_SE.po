@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-11-28 23:21+0000\n"
-"PO-Revision-Date: 2022-10-02 04:37+0000\n"
-"Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
+"PO-Revision-Date: 2022-11-29 23:05+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
 "Language: sv_SE\n"
@@ -23,9 +23,9 @@ msgstr ""
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
-#, fuzzy, c-format
+#, c-format
 msgid "(built on %s with %s)"
-msgstr "(byggt %s)"
+msgstr "(byggt %s av %s)"
 
 #: gui/about.cpp:110
 msgid "Features compiled in:"
@@ -216,9 +216,8 @@ msgid "ERROR %d: %s"
 msgstr "FEL %d: %s"
 
 #: gui/downloadiconsdialog.cpp:176 gui/downloadiconsdialog.cpp:231
-#, fuzzy
 msgid "Downloading icons list..."
-msgstr "Laddar ned sparade spel..."
+msgstr "Laddar ned ikon-lista..."
 
 #: gui/downloadiconsdialog.cpp:190
 #, fuzzy
@@ -226,25 +225,23 @@ msgid "Clear Cache"
 msgstr "Töm sökfältet"
 
 #: gui/downloadiconsdialog.cpp:241
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading icons list... %d entries"
-msgstr "Laddar ned sparade spel..."
+msgstr "Laddar ned ikon-lista... %d poster"
 
 #: gui/downloadiconsdialog.cpp:251
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr ""
+msgstr "Hittade %d nya paket, %s %S"
 
 #: gui/downloadiconsdialog.cpp:253
 msgid "Download"
 msgstr "Ladda ner"
 
 #: gui/downloadiconsdialog.cpp:277
-#, fuzzy, c-format
+#, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
-msgstr ""
-"Nedladdningen är färdig.\n"
-"Kunde inte ladda ner %u filer."
+msgstr "Nedladdning klar, laddade ner %d paket, %s %S"
 
 #: gui/downloadiconsdialog.cpp:283 gui/downloadiconsdialog.cpp:375
 #: gui/gui-manager.cpp:228 gui/unknown-game-dialog.cpp:53
@@ -373,15 +370,13 @@ msgid "Backend"
 msgstr "Backend"
 
 #: gui/editgamedialog.cpp:222
-#, fuzzy
 msgid "Override global backend settings"
-msgstr "Åsidosätt globala ljudinställningar"
+msgstr "Åsidosätt globala backend-inställningar"
 
 #: gui/editgamedialog.cpp:224
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr "Åsidosätt globala ljudinställningar"
+msgstr "Åsidosätt globala backend-inställningar"
 
 #: gui/editgamedialog.cpp:238 gui/options.cpp:2173 engines/dialogs.cpp:292
 msgid "Audio"
@@ -742,49 +737,42 @@ msgstr "???"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:99
-#, fuzzy
 msgctxt "group"
 msgid "None"
 msgstr "Ingen"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:101
-#, fuzzy
 msgctxt "group"
 msgid "First letter"
-msgstr "Kasta besvärjelse"
+msgstr "Första bokstav"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
-#, fuzzy
 msgctxt "group"
 msgid "Engine"
 msgstr "Motor"
 
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:105
-#, fuzzy
 msgctxt "group"
 msgid "Series"
 msgstr "Serie"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:107
-#, fuzzy
 msgctxt "group"
 msgid "Publisher"
 msgstr "Utgivare"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:109
-#, fuzzy
 msgctxt "group"
 msgid "Language"
 msgstr "Språk"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:111
-#, fuzzy
 msgctxt "group"
 msgid "Platform"
 msgstr "Plattform"
@@ -2621,9 +2609,9 @@ msgid "Could not switch to video mode '%s'."
 msgstr "Kunde inte byta till videoläget '%s'."
 
 #: engines/engine.cpp:363
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr "Kunde inte byta till skalningsläget: '"
+msgstr "Kunde inte byta till skalningsläget: '%s'."
 
 #: engines/engine.cpp:370
 msgid "Could not apply aspect ratio setting."
@@ -2695,9 +2683,8 @@ msgstr ""
 #: engines/engine.cpp:589 engines/metaengine.cpp:380 engines/savestate.cpp:94
 #: backends/platform/ios7/ios7_osys_main.cpp:255 engines/sky/metaengine.cpp:216
 #: engines/xeen/saves.cpp:289
-#, fuzzy
 msgid "Autosave"
-msgstr "Autospara:"
+msgstr "Autospara"
 
 #: engines/engine.cpp:597
 #, fuzzy
@@ -2718,9 +2705,8 @@ msgid "WARNING: "
 msgstr "Varning: "
 
 #: engines/engine.cpp:696
-#, fuzzy
 msgid " Shall we still run the game?"
-msgstr "Spelets fullständiga titel"
+msgstr " Vill du fortfarande köra spelet?"
 
 #: engines/engine.cpp:697
 msgid ""
@@ -2737,9 +2723,8 @@ msgid "Start anyway"
 msgstr "Starta ändå"
 
 #: engines/engine.cpp:718
-#, fuzzy
 msgid "This game is not supported."
-msgstr "Spel-ID stöds inte"
+msgstr "Detta spel stöds inte."
 
 #: engines/engine.cpp:718
 msgid ""
@@ -2950,7 +2935,7 @@ msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
 msgstr ""
-"FluidSynth kräver en soundfont.  Ange en på MIDI-fliken i inställningar. "
+"FluidSynth kräver en soundfont. Ange en på MIDI-fliken i inställningar. "
 "Musiken är avstängd."
 
 #: audio/softsynth/fluidsynth.cpp:367
