@@ -86,6 +86,7 @@ void TeMatrix4x4::scale(const TeVector3f32 &vec) {
 	scaleMatrix(0, 0) = vec.x();
 	scaleMatrix(1, 1) = vec.y();
 	scaleMatrix(2, 2) = vec.z();
+	//scaleMatrix(3, 3) = 1.0; // default.
 	*this = (*this * scaleMatrix);
 }
 

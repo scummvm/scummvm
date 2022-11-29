@@ -37,9 +37,8 @@ Question2::~Question2() {
 }
 
 void Question2::enter() {
-	TeButtonLayout *backgroundButton = _gui.buttonLayout("background");
-	if (backgroundButton)
-		backgroundButton->setVisible(true);
+	TeButtonLayout *backgroundButton = _gui.buttonLayoutChecked("background");
+	backgroundButton->setVisible(true);
 	g_engine->getGame()->showMarkers(true);
 }
 
@@ -120,7 +119,7 @@ void Question2::pushAnswer(const Common::String &name, const Common::String &loc
 
 	TeSpriteLayout *calepinLayout = _gui.spriteLayout("Calepin");
 	if (calepinLayout)
-		calepinLayout->setParent(alayout);
+		calepinLayout->addChild(alayout);
 
 	enter();
 }

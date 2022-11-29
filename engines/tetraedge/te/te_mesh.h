@@ -137,7 +137,7 @@ private:
 	unsigned int _glMeshMode;
 
 	bool _matrixForced;
-	TeMatrix4x4 _forceMatrix;
+	TeMatrix4x4 _forcedMatrix;
 	bool _hasAlpha;
 	uint _initialMaterialIndexCount;
 	bool _drawWires;

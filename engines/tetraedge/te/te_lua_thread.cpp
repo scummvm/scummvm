@@ -62,7 +62,7 @@ void TeLuaThread::_resume(int nargs) {
 		warning("TeLuaThread::_resume: %s", msg);
 	}
 	if (_lastResumeResult != 1 && _released) {
-		warning("TeLuaThread:: deleting this.");
+		debug("TeLuaThread:: deleting this?");
 		delete this;
 	}
 }
@@ -192,7 +192,7 @@ void TeLuaThread::pushValue(const TeVariant &val) {
 void TeLuaThread::release() {
 	_released = true;
 	if (_lastResumeResult != 1) {
-		//warning("TeLuaThread:: deleting this??");
+		//debug("TeLuaThread:: deleting this?");
 		delete this;
 	}
 }

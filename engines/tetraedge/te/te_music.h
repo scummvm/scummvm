@@ -65,6 +65,9 @@ public:
 	float volume();
 
 	TeSignal0Param &onStopSignal() { return _onStopSignal; }
+	
+	void setRetain(bool retain) { _retain = retain; }
+	bool retain() const { return _retain; }
 
 private:
 	Common::String _rawPath; // Plain name of file requested
@@ -76,6 +79,7 @@ private:
 
 	bool _isPlaying;
 	bool _isPaused;
+	bool _retain;
 
 	float _volume;
 

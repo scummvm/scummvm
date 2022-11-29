@@ -431,7 +431,7 @@ int spriteLayoutBindings(lua_State *L) {
 
 int buttonLayoutBindings(lua_State *L) {
 	if (lua_type(L, -1) != LUA_TTABLE) {
-		warning("buttonLayoutBindings:: the lua value is not a table\n");
+		warning("buttonLayoutBindings:: the lua value is not a table");
 		return 0;
 	}
 
@@ -467,7 +467,7 @@ int buttonLayoutBindings(lua_State *L) {
 					layout->setScale(TeVector3f32(0.7500001,1.0,1.0));
 				}
 			} else {
-				warning("[TeLuaGUI.buttonLayoutBindings] Unreconized attribute : %s\n", s);
+				warning("[TeLuaGUI.buttonLayoutBindings] Unreconized attribute : %s", s);
 			}
 		}
 		lua_settop(L, -2);
@@ -491,7 +491,7 @@ int buttonLayoutBindings(lua_State *L) {
 		lua_pushlightuserdata(L, static_cast<Te3DObject2*>(layout));
 		return true;
 	} else {
-		warning("buttonLayoutBindings:: multiple objects with name %s\n", layout->name().c_str());
+		warning("buttonLayoutBindings:: multiple objects with name %s", layout->name().c_str());
 		delete layout;
 		return false;
 	}
@@ -537,7 +537,7 @@ int checkboxLayoutBindings(lua_State *L) {
 					layout->setScale(TeVector3f32(0.7500001,1.0,1.0));
 				}
 			} else {
-				warning("[TeLuaGUI.buttonLayoutBindings] Unreconized attribute : %s\n", s);
+				warning("[TeLuaGUI.checkboxLayoutBindings] Unreconized attribute : %s", s);
 			}
 		}
 		lua_settop(L, -2);
@@ -561,7 +561,7 @@ int checkboxLayoutBindings(lua_State *L) {
 		lua_pushlightuserdata(L, static_cast<Te3DObject2*>(layout));
 		return true;
 	} else {
-		warning("buttonLayoutBindings:: multiple objects with name %s\n", layout->name().c_str());
+		warning("checkboxLayoutBindings:: multiple objects with name %s", layout->name().c_str());
 		delete layout;
 		return false;
 	}

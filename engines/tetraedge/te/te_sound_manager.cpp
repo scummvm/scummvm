@@ -75,6 +75,13 @@ void TeSoundManager::stopFreeSound(const Common::String &name) {
 	_handles.erase(name);
 }
 
+void TeSoundManager::setChannelVolume(const Common::String &channel, float vol) {
+	//int channelId = channel.hash();
+	//Audio::Mixer *mixer = g_system->getMixer();
+	//mixer->setChannelVolume(handle, vol * 255);
+	// TODO: store channel volume here.
+}
+
 void TeSoundManager::update() {
 	for (auto &m : _musics)
 		m->update();

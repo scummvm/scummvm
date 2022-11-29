@@ -73,7 +73,7 @@ void TeMesh::draw() {
 	TeRenderer *renderer = g_engine->getRenderer();
 	renderer->pushMatrix();
 	if (_matrixForced)
-		renderer->multiplyMatrix(_forceMatrix);
+		renderer->multiplyMatrix(_forcedMatrix);
 	else
 		renderer->multiplyMatrix(worldTransformationMatrix());
 

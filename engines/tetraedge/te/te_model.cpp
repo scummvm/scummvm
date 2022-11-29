@@ -175,10 +175,10 @@ void TeModel::update() {
 		for (unsigned int i = 0; i < _bones.size(); i++) {
 			const bone &b = _bones[i];
 			const TeMatrix4x4 matrix = TeMatrix4x4::fromTRS(b._trs);
-			if (b._x == -1 || _bones.size() < 2) {
+			if (b._parentBone == -1 || _bones.size() < 2) {
 				matricies[0] = matrix;
 			} else {
-				matricies[i] = matricies[b._x] * matrix;
+				matricies[i] = matricies[b._parentBone] * matrix;
 			}
 		}
 
@@ -202,18 +202,20 @@ void TeModel::update() {
 					trs = trs.lerp(endTRS, complete);
 				}
 			}
-			TeMatrix4x4 matrix;
+
+			TeMatrix4x4 newBoneMatrix;
 			if (!_matrixForced) {
-				matrix = TeMatrix4x4::fromTRS(trs);
+				newBoneMatrix = TeMatrix4x4::fromTRS(trs);
 			} else {
-				matrix = invertx * _forcedMatrix;
+				newBoneMatrix = invertx * _forcedMatrix;
 				_matrixForced = false;
 			}
-			if (_bones.size() < 2 || _bones[b]._x == -1) {
-				_boneMatricies[b] = matrix;
+
+			if (_bones.size() < 2 || _bones[b]._parentBone == -1) {
+				_boneMatricies[b] = newBoneMatrix;
 				_boneMatricies[b].rotate(_boneRotation);
 			} else {
-				_boneMatricies[b] = (invertx * _boneMatricies[_bones[b]._x]) * matrix;
+				_boneMatricies[b] = (invertx * _boneMatricies[_bones[b]._parentBone]) * newBoneMatrix;
 			}
 			_boneMatricies[b] = invertx * _boneMatricies[b];
 			_bonesUpdatedSignal.call(_bones[b]._name, _boneMatricies[b]);
@@ -284,6 +286,7 @@ void TeModel::update() {
 
 			for (MeshBlender *mb : _meshBlenders) {
 				if (mesh.name().contains(mb->_name)) {
+					error("TODO: Finish meshblend part of model::update");
 					// TODO: Finish TeModel::update. (disasm 585 ~ 644), LAB_doMeshBlends
 					//float blendamount = MIN(mb->_timer.getTimeFromStart() / 1000000.0f, 1.0f);
 
@@ -372,7 +375,7 @@ bool TeModel::load(Common::SeekableReadStream &stream) {
 	for (unsigned int i = 0; i < _bones.size(); i++) {
 		_bones[i]._name = Te3DObject2::deserializeString(stream);
 		loadAlign(stream);
-		_bones[i]._x = stream.readUint32LE();
+		_bones[i]._parentBone = stream.readUint32LE();
 		TeTRS::deserialize(stream, _bones[i]._trs);
 		if (!_skipSkinOffsets) {
 			_skinOffsets[i].deserialize(stream);

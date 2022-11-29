@@ -25,7 +25,8 @@
 
 namespace Tetraedge {
 
-/*static*/ Common::HashMap<Common::String, Object3D::ObjectSettings> *Object3D::_objectSettings = nullptr;
+/*static*/
+Common::HashMap<Common::String, Object3D::ObjectSettings> *Object3D::_objectSettings = nullptr;
 
 
 // start and end frames not initialized in original, but to guarantee we don't use
@@ -51,7 +52,8 @@ bool Object3D::loadModel(const Common::String &name) {
 	return false;
 }
 
-/*static*/ bool Object3D::loadSettings(const Common::String &path) {
+/*static*/
+bool Object3D::loadSettings(const Common::String &path) {
 	ObjectSettingsXmlParser parser;
 	parser.setAllowText();
 
@@ -65,7 +67,7 @@ bool Object3D::loadModel(const Common::String &name) {
 	if (!parser.parse())
 		error("Object3D::loadSettings: Can't parse %s", path.c_str());
 
-	return false;
+	return true;
 }
 
 void Object3D::ObjectSettings::clear() {

@@ -62,7 +62,11 @@ _drawShadows(true) {
 	_firstZone = tempGui.value("firstZone").toString();
 	_firstScene = tempGui.value("firstScene").toString();
 
-	// TODO: Configure sound manager here?
+	TeSoundManager *soundmgr = g_engine->getSoundManager();
+	soundmgr->setChannelVolume("sfx", 0.7);
+	soundmgr->setChannelVolume("music", 0.7);
+	soundmgr->setChannelVolume("dialog", 0.7);
+	soundmgr->setChannelVolume("video", 0.7);
 	// TODO: Configure freemium things here?
 
 	// Note: original has an app run timer, but it's never used?
