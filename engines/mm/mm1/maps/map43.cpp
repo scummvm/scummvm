@@ -87,7 +87,7 @@ void Map43::special02() {
 		STRING["maps.map43.button"],
 		[]() {
 			Map43 &map = *static_cast<Map43 *>(g_maps->_currentMap);
-			map._walls[101] = 17;
+			map._states[101] = 17;
 			map.none160();
 		}
 	));
@@ -99,9 +99,14 @@ void Map43::special03() {
 
 void Map43::special04() {
 	if (!g_globals->_party.hasItem(MERCHANTS_PASS_ID)) {
-		g_maps->_mapPos = Common::Point(9, 13);
-		g_maps->changeMap(0x101, 2);
-		send(SoundMessage(STRING["maps.map43.guards"]));
+		send(SoundMessage(
+			STRING["maps.map43.guards"],
+			[](const Common::KeyState &ks) {
+				g_events->focusedView()->close();
+				g_maps->_mapPos = Common::Point(9, 13);
+				g_maps->changeMap(0x101, 2);
+			}
+		));
 	}
 }
 
@@ -163,16 +168,20 @@ void Map43::acceptQuest() {
 	byte flags = leader._flags[10];
 
 	// Find quest that hasn't been done yet
-	int questNum;
-	for (questNum = 0; flags && questNum < 8; ++questNum, flags >>= 1) {
-		if (!(flags & 1))
-			break;
-	}
-	if (questNum == 8) {
-		for (uint i = 0; i < g_globals->_party.size(); ++i) {
-			Character &c = g_globals->_party[i];
-			c._flags[10] = CHARFLAG8_80;
-			c._flags[7] = CHARFLAG5_80;
+	int questNum = 1;
+	if (flags) {
+		for (questNum = 1; flags && questNum < 8; ++questNum, flags >>= 1) {
+			if (!(flags & 1))
+				break;
+		}
+		if (questNum == 8) {
+			for (uint i = 0; i < g_globals->_party.size(); ++i) {
+				Character &c = g_globals->_party[i];
+				c._flags[10] = CHARFLAG8_80;
+				c._flags[7] = CHARFLAG5_80;
+			}
+
+			questNum = 1;
 		}
 	}
 
@@ -184,12 +193,12 @@ void Map43::acceptQuest() {
 
 	// Draw the scene
 	g_maps->_mapPos.x++;
-	redrawGame();
+	updateGame();
 }
 
 Common::String Map43::checkQuestComplete() {
 	Character &leader = g_globals->_party[0];
-	int qIndex = leader._quest - 7;
+	int qIndex = leader._quest - 1;
 
 	if (leader._flags[7] & MATCH_FLAGS[qIndex] & 0x7f) {
 		// The quest was complete

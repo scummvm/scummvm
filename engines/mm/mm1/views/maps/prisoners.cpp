@@ -46,6 +46,9 @@ void Prisoner::draw() {
 }
 
 bool Prisoner::msgKeypress(const KeypressMessage &msg) {
+	if (endDelay())
+		return true;
+
 	if (msg.keycode < Common::KEYCODE_1 || msg.keycode > Common::KEYCODE_3)
 		return true;
 
@@ -55,6 +58,7 @@ bool Prisoner::msgKeypress(const KeypressMessage &msg) {
 	case Common::KEYCODE_1:
 		line = STRING["maps.prisoners.flees"];
 		align = _freeAlignment;
+		g_maps->clearSpecial();
 		flee();
 		break;
 
@@ -78,15 +82,21 @@ bool Prisoner::msgKeypress(const KeypressMessage &msg) {
 		}
 	}
 
-	findView("GameParty")->redraw();
 	if (align != NEUTRAL) {
 		clearSurface();
 		writeString(0, 1, line);
 		Sound::sound(SOUND_2);
+		delaySeconds(3);
+
+	} else {
+		close();
 	}
 
-	close();
 	return true;
+}
+
+void Prisoner::timeout() {
+	close();
 }
 
 /*------------------------------------------------------------------------*/
@@ -124,7 +134,6 @@ MaidenPrisoner::MaidenPrisoner() :
 void MaidenPrisoner::flee() {
 	MM1::Maps::Map &map = *g_maps->_currentMap;
 	map._walls[48] &= 0x7f;
-	g_maps->clearSpecial();
 }
 
 } // namespace Maps

@@ -46,10 +46,10 @@ void LordIronfist::draw() {
 	clearSurface();
 
 	if (_canAccept) {
-		send(SoundMessage(
-			0, 1, STRING["maps.map43.ironfist1"],
-			0, 2, STRING["maps.map43.ironfist2"]
-		));
+		Sound::sound2(SOUND_2);
+		writeString(0, 1, STRING["maps.map43.ironfist1"]);
+		writeString(0, 2, STRING["maps.map43.ironfist2"]);
+
 	} else {
 		int questNum = g_globals->_party[0]._quest;
 		Common::String line;
@@ -76,18 +76,18 @@ bool LordIronfist::msgKeypress(const KeypressMessage &msg) {
 
 	if (_canAccept) {
 		if (msg.keycode == Common::KEYCODE_y) {
+			close();
 			map.acceptQuest();
 
-			clearSurface();
-			writeString(0, 1, STRING["maps.map43.ironfist1"]);
-			writeString(0, 2, STRING[Common::String::format(
-				"maps.map43.quests.%d",
-				g_globals->_party[0]._quest)]);
-			close();
+			send(InfoMessage(
+				0, 1, STRING["maps.map43.ironfist1"],
+				0, 2, STRING[Common::String::format(
+					"maps.map43.quests.%d",
+					g_globals->_party[0]._quest)]
+			));
 
 		} else if (msg.keycode == Common::KEYCODE_n) {
 			close();
-			map.redrawGame();
 		}
 	}
 
