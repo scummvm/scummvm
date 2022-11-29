@@ -101,7 +101,6 @@ namespace Kingdom {
 		bool isDemo() const;
 
 	private:
-		Console *_console;
 		Logic *_logic;
 
 		KingArtEntry *_kingartEntries;

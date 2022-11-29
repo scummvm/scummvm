@@ -49,7 +49,6 @@
 namespace Kingdom {
 
 KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
-	_console = nullptr;
 	_rnd = new Common::RandomSource("kingdom");
 
 	_logic = nullptr;
@@ -145,7 +144,6 @@ void KingdomGame::initVariables() {
 }
 
 KingdomGame::~KingdomGame() {
-	delete _console;
 	delete _logic;
 	delete _rnd;
 }
@@ -161,7 +159,7 @@ Common::Error KingdomGame::run() {
 	} else
 		initGraphics(320, 200);
 
-	_console = new Console(this);
+	setDebugger(new Console(this));
 
 	_logic = new Logic(this);
 
@@ -204,9 +202,6 @@ void KingdomGame::refreshScreen() {
 
 	g_system->updateScreen();
 	checkTimers();
-
-	// Signal the ScummVM debugger
-	_console->onFrame();
 }
 
 void KingdomGame::checkTimers() {
@@ -254,8 +249,6 @@ void KingdomGame::checkTimers() {
 
 void KingdomGame::drawScreen() {
 	//TODO
-
-	_console->onFrame();
 }
 
 void KingdomGame::setupPics() {
@@ -1455,8 +1448,6 @@ int KingdomGame::getAKey() {
 
 			// TODO: Reenable ScummVM custom key commands
 
-			// else if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL))
-			// 	_console->attach();
 			// else if (event.kbd.keycode == Common::KEYCODE_c && event.kbd.hasFlags(Common::KBD_CTRL)) {
 			// 	_userInput = 0x12D;
 				// _QuitFlag = 2;
