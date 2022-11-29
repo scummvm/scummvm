@@ -27,6 +27,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added option to disable the fade-out effects on room transition for
      Simon1 and 2.
 
+ AGS:
+   - Added support for the original installer files for Maniac Mansion Deluxe and
+     The New Adventures of Zak McKracken.
+
  Kyra:
    - Added support for the Korean version of Legend of Kyrandia 1.
    - Added support for the Hebrew version of Legend of Kyrandia 3.
