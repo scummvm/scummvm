@@ -692,7 +692,7 @@ SeekableReadStream *MacResManager::getDataFork() {
 	if (_mode == kResForkMacBinary) {
 		_stream->seek(MBI_DFLEN);
 		uint32 dataSize = _stream->readUint32BE();
-		return new SeekableSubReadStream(_stream, MBI_INFOHDR, MBI_INFOHDR + dataSize);
+		return new SafeSeekableSubReadStream(_stream, MBI_INFOHDR, MBI_INFOHDR + dataSize);
 	}
 
 	File *file = new File();
