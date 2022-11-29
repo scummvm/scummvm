@@ -658,7 +658,7 @@ public:
 
 	explicit DisposablePtr(PointerType o, DisposeAfterUse::Flag dispose) : _pointer(o), _dispose(dispose), _shared() {}
 	explicit DisposablePtr(SharedPtr<T> o) : _pointer(o.get()), _dispose(DisposeAfterUse::NO), _shared(o) {}
-	DisposablePtr(DisposablePtr<T>&& o) : _pointer(o._pointer), _dispose(o._dispose), _shared(o._shared) {
+	DisposablePtr(DisposablePtr<T, DL>&& o) : _pointer(o._pointer), _dispose(o._dispose), _shared(o._shared) {
 		o._pointer = nullptr;
 		o._dispose = DisposeAfterUse::NO;
 		o._shared.reset();
