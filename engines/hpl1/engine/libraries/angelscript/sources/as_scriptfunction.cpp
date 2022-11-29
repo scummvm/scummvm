@@ -48,7 +48,7 @@
 #include "as_builder.h"
 #include "as_scriptcode.h"
 
-#include <cstdlib> // qsort
+#include "common/algorithm.h"
 
 BEGIN_AS_NAMESPACE
 
@@ -841,11 +841,7 @@ int asCScriptFunction::FindNextLineWithCode(int line) const
 		for( asUINT n = 1; n < scriptData->lineNumbers.GetLength(); n += 2 )
 			lineNbrs.PushLast(scriptData->lineNumbers[n]&0xFFFFF);
 
-		struct C
-		{
-			static int cmp(const void *a, const void *b) { return *(const int*)a - *(const int*)b; }
-		};
-		std::qsort(&lineNbrs[0], lineNbrs.GetLength(), sizeof(int), C::cmp);
+		Common::sort(&lineNbrs[0], &lineNbrs[0] + lineNbrs.GetLength());
 
 		if( line < lineNbrs[0] && line < (scriptData->declaredAt&0xFFFFF)) return -1;
 		if( line > lineNbrs[lineNbrs.GetLength()-1] ) return -1;
