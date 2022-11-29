@@ -453,7 +453,7 @@ void ScummEngine_v4::o4_saveLoadGame() {
 				Common::strlcpy(name, ptr, sizeof(name));
 			}
 
-			Common::strlcpy((char *)_saveLoadDescription.c_str(), name, sizeof(_saveLoadDescription));
+			_saveLoadDescription = name;
 			if (saveState(slot, false, dummyName))
 				result = 0;
 			else
