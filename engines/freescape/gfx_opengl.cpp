@@ -298,4 +298,18 @@ void OpenGLRenderer::drawFloor(uint8 color) {
 
 void OpenGLRenderer::flipBuffer() {}
 
+Graphics::Surface *OpenGLRenderer::getScreenshot() {
+	Common::Rect screen = viewport();
+
+	Graphics::Surface *s = new Graphics::Surface();
+	s->create(screen.width(), screen.height(), OpenGLTexture::getRGBAPixelFormat());
+
+	glReadPixels(screen.left, screen.top, screen.width(), screen.height(), GL_RGBA, GL_UNSIGNED_BYTE, s->getPixels());
+
+	flipVertical(s);
+
+	return s;
+}
+
+
 } // End of namespace Freescape

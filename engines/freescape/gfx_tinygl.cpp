@@ -255,4 +255,15 @@ void TinyGLRenderer::flipBuffer() {
 	}
 }
 
+Graphics::Surface *TinyGLRenderer::getScreenshot() {
+	Graphics::Surface glBuffer;
+	TinyGL::getSurfaceRef(glBuffer);
+
+	Graphics::Surface *s = new Graphics::Surface();
+	s->create(_screenW, _screenH, TinyGLTexture::getRGBAPixelFormat());
+	s->copyFrom(glBuffer);
+
+	return s;
+}
+
 } // End of namespace Freescape

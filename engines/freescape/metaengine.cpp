@@ -20,9 +20,13 @@
  */
 
 #include "common/translation.h"
+#include "graphics/thumbnail.h"
+#include "graphics/scaler.h"
+
 
 #include "freescape/freescape.h"
 #include "freescape/detection.h"
+
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
@@ -84,6 +88,7 @@ public:
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
 Common::Error FreescapeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
@@ -99,6 +104,21 @@ Common::Error FreescapeMetaEngine::createInstance(OSystem *syst, Engine **engine
 		*engine = new Freescape::FreescapeEngine(syst, gd);
 
 	return Common::kNoError;
+}
+
+void FreescapeMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	Freescape::FreescapeEngine *engine = (Freescape::FreescapeEngine *)g_engine;
+	Graphics::Surface *savedScreen = engine->_gfx->getScreenshot();
+	assert(savedScreen);
+	Graphics::Surface *scaledSavedScreen = scale(*savedScreen, kThumbnailWidth, kThumbnailHeight2);
+	assert(scaledSavedScreen);
+	thumb.copyFrom(*scaledSavedScreen);
+
+	scaledSavedScreen->free();
+	delete scaledSavedScreen;
+
+	savedScreen->free();
+	delete savedScreen;
 }
 
 namespace Freescape {

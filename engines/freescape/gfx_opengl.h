@@ -79,6 +79,8 @@ public:
 
 	virtual void flipBuffer() override;
 	virtual void drawFloor(uint8 color) override;
+
+	virtual Graphics::Surface *getScreenshot() override;
 };
 
 } // End of namespace Freescape

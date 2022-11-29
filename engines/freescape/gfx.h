@@ -113,7 +113,7 @@ public:
 	virtual void updateProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) = 0;
 
 	Math::Matrix4 getMvpMatrix() const { return _mvpMatrix; }
-
+	virtual Graphics::Surface *getScreenshot() = 0;
 	void flipVertical(Graphics::Surface *s);
 
 	int _screenW;
