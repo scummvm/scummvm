@@ -310,7 +310,7 @@ int VLC::allocTable(int size, int useStatic) {
 			return -2;
 		}
 
-		memset(vlc->_table + vlc->_tableAllocated - (1 << vlc->_bits), 0, sizeof(VLC_TYPE) * 2 << vlc->_bits);
+		memset(vlc->_table + vlc->_tableAllocated - (static_cast<ptrdiff_t>(1) << vlc->_bits), 0, sizeof(VLC_TYPE) * 2 << vlc->_bits);
 	}
 
 	return index;

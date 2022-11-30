@@ -431,7 +431,7 @@ void OptionsDialog::build() {
 		if (ConfMan.hasKey("antialiasing", _domain)) {
 			_antiAliasPopUp->setSelectedTag(ConfMan.getInt("antialiasing", _domain));
 		} else {
-			_antiAliasPopUp->setSelectedTag(-1);
+			_antiAliasPopUp->setSelectedTag(0xffffffffu);
 		}
 	}
 
@@ -1599,7 +1599,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	_antiAliasPopUpDesc = new StaticTextWidget(boss, prefix + "grAntiAliasPopupDesc", _("3D Anti-aliasing:"));
 	_antiAliasPopUp = new PopUpWidget(boss, prefix + "grAntiAliasPopup");
-	_antiAliasPopUp->appendEntry(_("<default>"), -1);
+	_antiAliasPopUp->appendEntry(_("<default>"), 0xffffffffu);
 	_antiAliasPopUp->appendEntry("");
 	_antiAliasPopUp->appendEntry(_("Disabled"), 0);
 	const Common::Array<uint> levels = g_system->getSupportedAntiAliasingLevels();

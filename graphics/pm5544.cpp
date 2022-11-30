@@ -128,9 +128,9 @@ ManagedSurface *renderPM5544(int xres, int yres) {
 	int squaresize = 8;
 	int gapsize = 2;
 
-	int width, height;
-	int rwidth, rheight;
-	int xsquares, ysquares;
+	int width = 0, height = 0;
+	int rwidth = 0, rheight = 0;
+	int xsquares = 0, ysquares = 0;
 
 	int xcenter = xres / 2 - xres % 2;
 
