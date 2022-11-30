@@ -65,15 +65,21 @@ class dgConstraintInfo
 	{
 		m_attachMatrix_0 = dgGetZeroMatrix();
 		m_attachMatrix_1 = dgGetZeroMatrix();
-		for (uint i = 0; i < ARRAYSIZE(m_minLinearDof); i++) m_minLinearDof[i] = dgFloat32(0.0);
-		for (uint i = 0; i < ARRAYSIZE(m_maxLinearDof); i++) m_maxLinearDof[i] = dgFloat32(0.0);
-		for (uint i = 0; i < ARRAYSIZE(m_minAngularDof); i++) m_minAngularDof[i] = dgFloat32(0.0);
-		for (uint i = 0; i < ARRAYSIZE(m_maxAngularDof); i++) m_maxAngularDof[i] = dgFloat32(0.0);
+		for (unsigned i = 0; i < ARRAYSIZE(m_minLinearDof); i++)
+			m_minLinearDof[i] = dgFloat32(0.0);
+		for (unsigned i = 0; i < ARRAYSIZE(m_maxLinearDof); i++)
+			m_maxLinearDof[i] = dgFloat32(0.0);
+		for (unsigned i = 0; i < ARRAYSIZE(m_minAngularDof); i++)
+			m_minAngularDof[i] = dgFloat32(0.0);
+		for (unsigned i = 0; i < ARRAYSIZE(m_maxAngularDof); i++)
+			m_maxAngularDof[i] = dgFloat32(0.0);
 		m_attachBody_0 = nullptr;
 		m_attachBody_1 = nullptr;
-		for (uint i = 0; i < ARRAYSIZE(m_extraParameters); i++) m_extraParameters[i] = dgFloat32(0.0);
+		for (unsigned i = 0; i < ARRAYSIZE(m_extraParameters); i++)
+			m_extraParameters[i] = dgFloat32(0.0);
 		m_collideCollisionOn = dgInt32(0);
-		for (uint i = 0; i < ARRAYSIZE(m_discriptionType); i++) m_discriptionType[i] = 0;
+		for (unsigned i = 0; i < ARRAYSIZE(m_discriptionType); i++)
+			m_discriptionType[i] = 0;
 	}
 };
 

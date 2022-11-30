@@ -176,7 +176,8 @@ typedef void(dgApi *OnDebugCollisionMeshCallback)(void *userData, int vertexCoun
 class dgCollisionBoundPlaneCache {
 public:
 	dgCollisionBoundPlaneCache() {
-		for (uint i = 0; i < sizeof(m_planes)/sizeof(m_planes[0]); i++) m_planes[i] = dgPlane(0.0, 0.0, 0.0, 0.0);
+		for (unsigned i = 0; i < sizeof(m_planes) / sizeof(m_planes[0]); i++)
+			m_planes[i] = dgPlane(0.0, 0.0, 0.0, 0.0);
 	}
 	dgPlane m_planes[2];
 };
