@@ -1113,7 +1113,8 @@ uint32 GzioReadStream::read(void *dataPtr, uint32 dataSize) {
 
 	int32 actualRead = readAtOffset(_streamPos, (byte *)dataPtr, dataSize);
 	if (actualRead < 0) {
-		return -1;
+		_err = true;
+		return 0;
 	}
 
 	_streamPos += actualRead;

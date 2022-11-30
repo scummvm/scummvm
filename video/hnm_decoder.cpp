@@ -226,7 +226,7 @@ void HNMDecoder::readNextPacket() {
 	}
 
 	// We use -1 here to discrimate a possibly empty sound frame
-	uint32 audioNumSamples = -1;
+	uint32 audioNumSamples = uint32(-1);
 
 	byte *data_p = _dataBuffer;
 	while (superchunkRemaining > 0) {
@@ -912,8 +912,8 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(byte *data, uint32 size) {
 	uint16 pitch = _surface.pitch;
 	bool eop = false;
 
-	byte height = -1;
-	byte currentMode = -1;
+	byte height = 0xff;
+	byte currentMode = 0xff;
 	uint32 currentPos = 0;
 
 	while (!eop) {
@@ -925,7 +925,7 @@ void HNMDecoder::HNM5VideoTrack::decodeFrame(byte *data, uint32 size) {
 		size -= 1;
 
 		if (opcode == 0x20) {
-			assert(height != byte(-1));
+			assert(height != 0xff);
 			if (size < 1) {
 				error("Not enough data for opcode 0x20");
 			}

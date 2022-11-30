@@ -24,14 +24,15 @@
 // Disable symbol overrides so that we can use FILE, fopen etc.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "backends/fs/stdiostream.h"
-
 // for Windows unicode fopen(): _wfopen()
 #if defined(WIN32) && defined(UNICODE)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include "backends/platform/sdl/win32/win32_wrapper.h"
 #endif
+
+// Include this after windows.h so we don't get a warning for redefining ARRAYSIZE
+#include "backends/fs/stdiostream.h"
 
 StdioStream::StdioStream(void *handle) : _handle(handle) {
 	assert(handle);
