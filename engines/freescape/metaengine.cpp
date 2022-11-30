@@ -108,17 +108,13 @@ Common::Error FreescapeMetaEngine::createInstance(OSystem *syst, Engine **engine
 
 void FreescapeMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	Freescape::FreescapeEngine *engine = (Freescape::FreescapeEngine *)g_engine;
-	Graphics::Surface *savedScreen = engine->_gfx->getScreenshot();
-	assert(savedScreen);
-	Graphics::Surface *scaledSavedScreen = scale(*savedScreen, kThumbnailWidth, kThumbnailHeight2);
+	assert(engine->_savedScreen);
+	Graphics::Surface *scaledSavedScreen = scale(*engine->_savedScreen, kThumbnailWidth, kThumbnailHeight2);
 	assert(scaledSavedScreen);
 	thumb.copyFrom(*scaledSavedScreen);
 
 	scaledSavedScreen->free();
 	delete scaledSavedScreen;
-
-	savedScreen->free();
-	delete savedScreen;
 }
 
 namespace Freescape {

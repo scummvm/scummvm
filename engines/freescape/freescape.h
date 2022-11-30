@@ -313,6 +313,7 @@ public:
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	virtual Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false);
 	virtual Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream);
+	Graphics::Surface *_savedScreen;
 
 	// Timers
 	bool startCountdown(uint32 delay);

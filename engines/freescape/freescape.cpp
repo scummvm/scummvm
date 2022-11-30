@@ -122,6 +122,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_viewArea = _fullscreenViewArea;
 	_rnd = new Common::RandomSource("freescape");
 	_gfx = nullptr;
+	_savedScreen = nullptr;
 
 	_timerStarted = false;
 	_initialCountdown = 0;
@@ -387,11 +388,14 @@ void FreescapeEngine::processInput() {
 				_flyMode = _noClipMode;
 				break;
 			case Common::KEYCODE_ESCAPE:
+				_savedScreen = _gfx->getScreenshot();
 				_gfx->setViewport(_fullscreenViewArea);
 				_system->lockMouse(false);
 				openMainMenuDialog();
 				_system->lockMouse(true);
 				_gfx->setViewport(_viewArea);
+				_savedScreen->free();
+				delete _savedScreen;
 				break;
 			case Common::KEYCODE_SPACE:
 				_shootMode = !_shootMode;
