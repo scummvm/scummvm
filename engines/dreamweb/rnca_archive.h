@@ -29,12 +29,12 @@
 #include "common/hash-str.h"
 
 namespace DreamWeb {
-class RNCAArchive : public Common::Archive {
+class RNCAArchive : public Common::MemcachingCaseInsensitiveArchive {
 public:
 	bool hasFile(const Common::Path &path) const override;
 	int listMembers(Common::ArchiveMemberList&) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
+	Common::SharedArchiveContents readContentsForPath(const Common::String& translated) const override;
 
 	static RNCAArchive* open(Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose = DisposeAfterUse::NO);
 	
@@ -53,25 +53,6 @@ private:
 		RNCAFileDescriptor() : _fileDataOffset(0) {}
 	};
 
-	struct CacheEntry {
-		byte *contents;
-		uint32 size;
-		bool is_error;
-
-		~CacheEntry() {
-			delete[] contents;
-		}
-
-		static Common::SharedPtr<CacheEntry> error() {
-			Common::SharedPtr<CacheEntry> ret(new CacheEntry());
-			ret->size = 0;
-			ret->is_error = true;
-			ret->contents = nullptr;
-
-			return ret;
-		}
-	};
-
 	typedef Common::HashMap<Common::String, RNCAFileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
 
 	RNCAArchive(FileMap files, Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose)
@@ -80,7 +61,6 @@ private:
 
 	FileMap _files;
 	Common::DisposablePtr<Common::SeekableReadStream> _stream;
-	mutable Common::HashMap<Common::String, Common::SharedPtr<CacheEntry>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _cache;
 };
 }
 #endif
