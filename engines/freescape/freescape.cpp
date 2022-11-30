@@ -124,6 +124,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_gfx = nullptr;
 
 	_timerStarted = false;
+	_initialCountdown = 0;
 	_countdown = 0;
 	_ticks = 0;
 	_frameLimiter = nullptr;
@@ -587,7 +588,13 @@ Common::Error FreescapeEngine::run() {
 	_gfx->flipBuffer();
 	g_system->updateScreen();
 
-	while (!shouldQuit() && !endGame) {
+	while (!shouldQuit()) {
+		if (endGame) {
+			initGameState();
+			gotoArea(_startArea, _startEntrance);
+			endGame = false;
+		}
+
 		bool frameRedrawed = checkSensors();
 
 		if (!frameRedrawed)
@@ -848,6 +855,7 @@ static void countdownCallback(void *refCon) {
 
 bool FreescapeEngine::startCountdown(uint32 delay) {
 	_countdown = delay;
+	_ticks = 0;
 	_timerStarted = true;
 	uint32 oneTick = 1000000 / 50;
 	return g_system->getTimerManager()->installTimerProc(&countdownCallback, oneTick, (void *)this, "countdown");

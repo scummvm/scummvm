@@ -513,24 +513,24 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		Common::String n;
 		n += char(readField(file, 8));
 		n += char(readField(file, 8));
-		_countdown = _countdown + 3600 * atoi(n.c_str());
+		_initialCountdown =_initialCountdown + 3600 * atoi(n.c_str());
 		n.clear();
 		n += char(readField(file, 8));
 		assert(n == ":");
 		n.clear();
 		n += char(readField(file, 8));
 		n += char(readField(file, 8));
-		_countdown = _countdown + 60 * atoi(n.c_str());
+		_initialCountdown = _initialCountdown + 60 * atoi(n.c_str());
 		n.clear();
 		n += char(readField(file, 8));
 		assert(n == ":");
 		n.clear();
 		n += char(readField(file, 8));
 		n += char(readField(file, 8));
-		_countdown = _countdown + atoi(n.c_str());
+		_initialCountdown = _initialCountdown + atoi(n.c_str());
 
 		if (_useExtendedTimer)
-			_countdown = 359999; // 99:59:59
+			_initialCountdown = 359999; // 99:59:59
 	}
 
 	if (isAmiga() || isAtariST())

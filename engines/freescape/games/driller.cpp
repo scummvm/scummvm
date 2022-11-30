@@ -782,11 +782,19 @@ void DrillerEngine::removeDrill(Area *area) {
 }
 
 void DrillerEngine::initGameState() {
+	_flyMode = false;
+	_lastMousePos = Common::Point(0, 0);
+	_yaw = 0;
+	_pitch = 0;
+
 	for (int i = 0; i < k8bitMaxVariable; i++) // TODO: check maximum variable
 		_gameStateVars[i] = 0;
 
 	for (auto &it : _areaMap) {
+		it._value->resetArea();
 		_gameStateBits[it._key] = 0;
+		if (_drilledAreas[it._key] != kDrillerNoRig)
+			removeDrill(it._value);
 		_drilledAreas[it._key] = kDrillerNoRig;
 	}
 
@@ -799,8 +807,8 @@ void DrillerEngine::initGameState() {
 	_gameStateVars[k8bitVariableEnergyDrillerJet] = _initialJetEnergy;
 	_gameStateVars[k8bitVariableShieldDrillerJet] = _initialJetShield;
 
-	if (_countdown > 0)
-		startCountdown(_countdown);
+	removeTimers();
+	startCountdown(_initialCountdown);
 }
 
 bool DrillerEngine::checkIfGameEnded() {

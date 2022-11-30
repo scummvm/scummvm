@@ -318,6 +318,7 @@ public:
 	bool startCountdown(uint32 delay);
 	void removeTimers();
 	bool _timerStarted;
+	int _initialCountdown;
 	int _countdown;
 	int _ticks;
 

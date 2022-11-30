@@ -59,6 +59,7 @@ public:
 	void addObject(Object *obj);
 	void addStructure(Area *global);
 	void removeObject(int16 id);
+	void resetArea();
 
 	Common::Array<Common::String> _conditionSources;
 	Common::Array<FCLInstructionVector> _conditions;

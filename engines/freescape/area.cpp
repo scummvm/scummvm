@@ -175,6 +175,36 @@ void Area::unremapColor(int index) {
 	_colorRemaps.clear(index);
 }
 
+void Area::resetArea() {
+	debugC(1, kFreescapeDebugMove, "Resetting area name: %s", _name.c_str());
+	_colorRemaps.clear();
+	if (_objectsByID) {
+		for (auto &it : *_objectsByID) {
+			Object *obj = it._value;
+			if (obj->isDestroyed())
+				obj->restore();
+
+			if (obj->isInitiallyInvisible())
+				obj->makeInvisible();
+			else
+				obj->makeVisible();
+		}
+	}
+	if (_entrancesByID) {
+		for (auto &it : *_entrancesByID) {
+			Object *obj = it._value;
+			if (obj->isDestroyed())
+				obj->restore();
+
+			if (obj->isInitiallyInvisible())
+				obj->makeInvisible();
+			else
+				obj->makeVisible();
+		}
+	}
+}
+
+
 void Area::draw(Freescape::Renderer *gfx) {
 	gfx->clear(_skyColor);
 	assert(_drawableObjects.size() > 0);
