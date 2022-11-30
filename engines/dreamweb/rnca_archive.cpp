@@ -67,12 +67,8 @@ RNCAArchive* RNCAArchive::open(Common::SeekableReadStream *stream, DisposeAfterU
 	return new RNCAArchive(files, stream, dispose);
 }
 
-static Common::String translateName(const Common::Path &path) {
-	return Common::normalizePath(path.toString('\\'), '\\');
-}
-
 bool RNCAArchive::hasFile(const Common::Path &path) const {
-	return _files.contains(translateName(path));
+	return _files.contains(translatePath(path));
 }
 
 int RNCAArchive::listMembers(Common::ArchiveMemberList &list) const {
@@ -84,32 +80,21 @@ int RNCAArchive::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr RNCAArchive::getMember(const Common::Path &path) const {
-	Common::String translated = translateName(path);
+	Common::String translated = translatePath(path);
 	if (!_files.contains(translated))
 		return nullptr;
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(_files.getVal(translated)._fileName, this));
 }
 
-// TODO: Make streams stay valid after destruction of archive
-Common::SeekableReadStream *RNCAArchive::createReadStreamForMember(const Common::Path &path) const {
-	Common::String translated = translateName(path);
+Common::SharedArchiveContents RNCAArchive::readContentsForPath(const Common::String& translated) const {
 	if (!_files.contains(translated))
-		return nullptr;
+		return Common::SharedArchiveContents();
 	const RNCAFileDescriptor& desc = _files.getVal(translated);
-	if (_cache.contains(desc._fileName)) {
-		const Common::SharedPtr<CacheEntry> &entry = _cache[desc._fileName];
-		if (entry->is_error) {
-			return nullptr;
-		}
-		return new Common::MemoryReadStream(entry->contents, entry->size, DisposeAfterUse::NO);
-	}
-
 	_stream->seek(desc._fileDataOffset);
 
 	if (_stream->readUint32BE() != Common::RncDecoder::kRnc1Signature) {
-		_cache[desc._fileName] = CacheEntry::error();
-		return nullptr;
+		return Common::SharedArchiveContents();
 	}
 
 	// Read unpacked/packed file length
@@ -117,9 +102,8 @@ Common::SeekableReadStream *RNCAArchive::createReadStreamForMember(const Common:
 	uint32 packLen = _stream->readUint32BE();
 
 	if (unpackLen > 0x7ffff000 || packLen > 0x7ffff000) {
-		_cache[desc._fileName] = CacheEntry::error();
 		debug("Header error for %s", desc._fileName.c_str());
-		return nullptr;
+		return Common::SharedArchiveContents();
 	}
 
 	// Rewind back the header
@@ -128,18 +112,16 @@ Common::SeekableReadStream *RNCAArchive::createReadStreamForMember(const Common:
 
 	byte *compressedBuffer = new byte[packLen];
 	if (_stream->read(compressedBuffer, packLen) != packLen) {
-		_cache[desc._fileName] = CacheEntry::error();
 		debug("Read error for %s", desc._fileName.c_str());
-		return nullptr;		
+		return Common::SharedArchiveContents();
 	}
 	byte *uncompressedBuffer = new byte[unpackLen];
 
 	Common::RncDecoder rnc;
 	
 	if (rnc.unpackM1(compressedBuffer, packLen, uncompressedBuffer) != (int32) unpackLen) {
-		_cache[desc._fileName] = CacheEntry::error();
 		debug("Unpacking error for %s", desc._fileName.c_str());
-		return nullptr;
+		return Common::SharedArchiveContents();
 	}
 
 	byte b = 0;
@@ -147,13 +129,8 @@ Common::SeekableReadStream *RNCAArchive::createReadStreamForMember(const Common:
 		b += *ptr;
 		*ptr = b;
 	}
-	
-	_cache[desc._fileName].reset(new CacheEntry);
-	_cache[desc._fileName]->size = unpackLen;
-	_cache[desc._fileName]->is_error = false;
-	_cache[desc._fileName]->contents = uncompressedBuffer;
 
-	return new Common::MemoryReadStream(uncompressedBuffer, unpackLen, DisposeAfterUse::NO);
+	return Common::SharedArchiveContents(uncompressedBuffer, unpackLen);
 }
 
 } // End of namespace DreamWeb
