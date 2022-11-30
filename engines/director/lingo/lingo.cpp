@@ -556,6 +556,7 @@ void Lingo::execute() {
 		// process events every so often
 		if (localCounter > 0 && localCounter % 100 == 0) {
 			_vm->processEvents();
+			g_system->updateScreen();
 			if (_vm->getCurrentMovie()->getScore()->_playState == kPlayStopped)
 				break;
 		}
