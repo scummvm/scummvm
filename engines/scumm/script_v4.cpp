@@ -219,9 +219,9 @@ void ScummEngine_v4::loadVars() {
 
 			int slot;
 			int slotSize;
-			byte* slotContent;
+			byte *slotContent;
 			int savegameId;
-			bool avail_saves[100];
+			bool availSaves[100];
 
 			if (a == STRINGID_IQ_SERIES && b == STRINGID_IQ_SERIES) {
 				// Zak256 loads the IQ script-slot but does not use it -> ignore it
@@ -235,7 +235,7 @@ void ScummEngine_v4::loadVars() {
 				break;
 			}
 
-			listSavegames(avail_saves, ARRAYSIZE(avail_saves));
+			listSavegames(availSaves, ARRAYSIZE(availSaves));
 			for (slot = a; slot <= b; ++slot) {
 				slotSize = getResourceSize(rtString, slot);
 				slotContent = getResourceAddress(rtString, slot);
@@ -243,7 +243,7 @@ void ScummEngine_v4::loadVars() {
 				// load savegame names
 				savegameId = slot - a + 1;
 				Common::String name;
-				if (avail_saves[savegameId] && getSavegameName(savegameId, name)) {
+				if (availSaves[savegameId] && getSavegameName(savegameId, name)) {
 					int pos;
 					const char *ptr = name.c_str();
 					// slotContent ends with {'\0','@'} -> max. length = slotSize-2
