@@ -23,6 +23,7 @@
 #include "common/fs.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/memstream.h"
 
 namespace Common {
 
@@ -60,6 +61,19 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const Path &pattern) c
 	return matches;
 }
 
+SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMember(const Path &path) const {
+	String translated = translatePath(path);
+	if (!_cache.contains(translated)) {
+		_cache[translated] = readContentsForPath(translated);
+	}
+
+	const SharedArchiveContents& entry = _cache[translated];
+
+	if (entry.isFileMissing())
+		return nullptr;
+
+	return new Common::MemoryReadStream(entry.getContents(), entry.getSize());
+}
 
 
 SearchSet::ArchiveNodeList::iterator SearchSet::find(const String &name) {
