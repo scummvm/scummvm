@@ -49,7 +49,7 @@ public:
 		uint32 _size;
 
 		~ClickteamTag() {
-			delete _contents;
+			delete[] _contents;
 		}
 	};
 
