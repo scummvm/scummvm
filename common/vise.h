@@ -29,9 +29,9 @@
 #include "common/str.h"
 #include "common/archive.h"
 
-namespace MTropolis {
+namespace Common {
 
 // Loads a Macintosh Installer VISE archive from a stream
 Common::Archive *createMacVISEArchive(Common::SeekableReadStream *stream);
 
-} // End of namespace MTropolis
+} // End of namespace Common

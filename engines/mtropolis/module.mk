@@ -28,7 +28,6 @@ MODULE_OBJS = \
 	runtime.o \
 	saveload.o \
 	subtitles.o \
-	vise.o \
 	vthread.o
 
 # This module can be built as a plugin

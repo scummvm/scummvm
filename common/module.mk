@@ -53,6 +53,7 @@ MODULE_OBJS := \
 	unzip.o \
 	ustr.o \
 	util.o \
+	vise.o \
 	winexe.o \
 	winexe_ne.o \
 	winexe_pe.o \
