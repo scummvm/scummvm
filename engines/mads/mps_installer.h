@@ -30,12 +30,12 @@
 
 namespace MADS {
 
-class MpsInstaller : public Common::Archive {
+class MpsInstaller : public Common::MemcachingCaseInsensitiveArchive {
 public:
 	bool hasFile(const Common::Path &path) const override;
 	int listMembers(Common::ArchiveMemberList&) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
+	Common::SharedArchiveContents readContentsForPath(const Common::String& translatedPath) const override;
 
 	static MpsInstaller* open(const Common::Path& baseName);
 
@@ -79,7 +79,6 @@ private:
 		     const Common::Path& baseName) : _files(files), _baseName(baseName) {}
 
 	FileMap _files;
-	mutable Common::HashMap<Common::String, Common::ScopedPtr<byte, Common::ArrayDeleter<byte>>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _cache;
 	Common::Path _baseName;
 };
 }
