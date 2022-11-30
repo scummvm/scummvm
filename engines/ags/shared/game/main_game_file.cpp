@@ -282,7 +282,7 @@ void ReadDialogs(std::vector<DialogTopic> &dialog,
 	old_dialog_src.resize(dlg_count);
 	for (int i = 0; i < dlg_count; ++i) {
 		// NOTE: originally this was read into dialog[i].optionscripts
-		old_dialog_scripts[i].reset(new unsigned char[dialog[i].codesize]);
+		old_dialog_scripts[i].reset(Common::SharedPtr<unsigned char>(new unsigned char[dialog[i].codesize], Common::ArrayDeleter<unsigned char>()));
 		in->Read(old_dialog_scripts[i].get(), dialog[i].codesize);
 
 		// Encrypted text script
