@@ -14192,76 +14192,41 @@ static const uint16 qfg3PatchImportDialog[] = {
 	PATCH_END
 };
 
-// Patch for the Woo dialog option in Uhura's conversation.
+// Asking Uhura about Woo in room 440 crashes. The Woo dialog option (-75) is
+//  handled by uhuraTell:doChild so that it can award 2 points, but the script
+//  is missing a necessary return statement. This causes the default handler to
+//  also run, but because the "query" value is negative, the default handler
+//  treats it as opening a submenu. There is no submenu for query -75, and this
+//  causes Teller:doChild to read uhuraTell:keys out of bounds.
 //
-// Problem: The Woo dialog option (0xffb5) is negative, and therefore
-//  treated as an option opening a submenu. This leads to uhuraTell::doChild
-//  being called, which calls hero::solvePuzzle and then proceeds with
-//  Teller::doChild to open the submenu. However, there is no actual submenu
-//  defined for option -75 since -75 does not show up in uhuraTell::keys.
-//  This will cause Teller::doChild to run out of bounds while scanning through
-//  uhuraTell::keys.
+// The Woo dialog handler isn't just broken, it's redundant. It never awards the
+//  points it attempts to. The points are tied to flag 268, but this same method
+//  already sets that flag when awarding points for asking Uhura about marriage.
+//  Asking about marriage is the precondition for asking about Woo.
 //
-// Strategy: there is another conversation option in uhuraTell::doChild calling
-//  hero::solvePuzzle (0xfffc) which does a ret afterwards without going to
-//  Teller::doChild. We jump to this call of hero::solvePuzzle to get that same
-//  behaviour.
+// We fix this by replacing the redundant hero:solvePuzzle call with the missing
+//  return statement. Alternatively, we could patch the heap to change the Woo
+//  dialog option from -75 to 75, but existing save games could still crash.
 //
-// Applies to at least: English, German, Italian, French, Spanish Floppy
-// Responsible method: uhuraTell::doChild
+// Applies to: All versions
+// Responsible method: uhuraTell:doChild
 // Fixes bug: #5172
 static const uint16 qfg3SignatureWooDialog[] = {
-	SIG_MAGICDWORD,
-	0x67, 0x12,                         // pTos 12 (query)
-	0x35, 0xb6,                         // ldi b6
-	0x1a,                               // eq?
-	0x2f, 0x05,                         // bt 05
-	0x67, 0x12,                         // pTos 12 (query)
-	0x35, 0x9b,                         // ldi 9b
-	0x1a,                               // eq?
-	0x31, 0x0c,                         // bnt 0c
-	0x38, SIG_SELECTOR16(solvePuzzle),  // pushi solvePuzzle (0297)
+	0x38, SIG_SELECTOR16(solvePuzzle),  // pushi solvePuzzle
 	0x7a,                               // push2
 	0x38, SIG_UINT16(0x010c),           // pushi 010c
 	0x7a,                               // push2
-	0x81, 0x00,                         // lag global[0]
-	0x4a, 0x08,                         // send 08
-	0x67, 0x12,                         // pTos 12 (query)
-	0x35, 0xb5,                         // ldi b5
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x08,                         // send 08 [ hero solvePuzzle: 268 2 ]
+	SIG_MAGICDWORD,
+	0x67, 0x12,                         // pTos query
+	0x35, 0xfc,                         // ldi fc
 	SIG_END
 };
 
 static const uint16 qfg3PatchWooDialog[] = {
-	PATCH_ADDTOOFFSET(+0x29),
-	0x33, 0x11,                         // jmp [to 0x6a2, the call to hero::solvePuzzle for 0xFFFC]
-	PATCH_END
-};
-
-// Alternative version, with uint16 offsets, for GOG release of QfG3.
-static const uint16 qfg3SignatureWooDialogAlt[] = {
-	SIG_MAGICDWORD,
-	0x67, 0x12,                         // pTos 12 (query)
-	0x35, 0xb6,                         // ldi b6
-	0x1a,                               // eq?
-	0x2e, SIG_UINT16(0x0005),           // bt 05
-	0x67, 0x12,                         // pTos 12 (query)
-	0x35, 0x9b,                         // ldi 9b
-	0x1a,                               // eq?
-	0x30, SIG_UINT16(0x000c),           // bnt 0c
-	0x38, SIG_SELECTOR16(solvePuzzle),  // pushi solvePuzzle (0297)
-	0x7a,                               // push2
-	0x38, SIG_UINT16(0x010c),           // pushi 010c
-	0x7a,                               // push2
-	0x81, 0x00,                         // lag global[0]
-	0x4a, 0x08,                         // send 08
-	0x67, 0x12,                         // pTos 12 (query)
-	0x35, 0xb5,                         // ldi b5
-	SIG_END
-};
-
-static const uint16 qfg3PatchWooDialogAlt[] = {
-	PATCH_ADDTOOFFSET(+44),
-	0x33, 0x12,                         // jmp [to 0x708, the call to hero::solvePuzzle for 0xFFFC]
+	0x35, 0x01,                         // ldi 01
+	0x48,                               // ret
 	PATCH_END
 };
 
@@ -15101,7 +15066,6 @@ static const uint16 qfg3PatchLaibonTeller[] = {
 static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   944, "import dialog continuous calls",                     1, qfg3SignatureImportDialog,           qfg3PatchImportDialog },
 	{  true,   440, "dialog crash when asking about Woo",                 1, qfg3SignatureWooDialog,              qfg3PatchWooDialog },
-	{  true,   440, "dialog crash when asking about Woo",                 1, qfg3SignatureWooDialogAlt,           qfg3PatchWooDialogAlt },
 	{  true,    47, "barter events",                                      1, qfg3SignatureBarterEvents,           qfg3PatchBarterEvents },
 	{  true,    52, "export character save bug",                          2, qfg3SignatureExportChar,             qfg3PatchExportChar },
 	{  true,    54, "import character from QfG1 bug",                     1, qfg3SignatureImportQfG1Char,         qfg3PatchImportQfG1Char },
