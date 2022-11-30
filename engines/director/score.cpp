@@ -1376,7 +1376,7 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 }
 
 Common::String Score::formatChannelInfo() {
-	Frame &frame = *_frames[_currentFrame]; 
+	Frame &frame = *_frames[_currentFrame];
 	Common::String result;
 	result += Common::String::format("TMPO:   tempo: %d, skipFrameFlag: %d, blend: %d\n",
 		frame._tempo, frame._skipFrameFlag, frame._blend);
