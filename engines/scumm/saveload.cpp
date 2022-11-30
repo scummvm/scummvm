@@ -1173,6 +1173,97 @@ static void sync2DArray(Common::Serializer &s, T (&array)[N][M], const size_t di
 	}
 }
 
+bool ScummEngine::changeSavegameName(int slot, char *newName) {
+	Common::String filename;
+	SaveGameHeader hdr;
+
+	// In order to do this, we're going to:
+	// - Open the savegame file;
+	// - Load its header and check if there's a necessity to change the name or not;
+	// - Construct a new header;
+	// - Build a buffer with the remaining data of the savestate and then close the input:
+	//   stream: this is done since we are not copying data from one file to another, but we
+	//   are performing an intervention on a single file;
+	// - Open the output stream for the same file;
+	// - Save the new header and then pour the data buffer in the stream;
+	// - Finalize the stream.
+
+	Common::SeekableReadStream *in = openSaveFileForReading(slot, false, filename);
+
+	if (!in) {
+		warning("ScummEngine::changeSavegameName(): Could not open savegame '%s', aborting...", filename.c_str());
+		return false;
+	}
+
+	if (!loadSaveGameHeader(in, hdr)) {
+		warning("ScummEngine::changeSavegameName(): Invalid savegame '%s', aborting...", filename.c_str());
+		delete in;
+		return false;
+	}
+
+	if (!scumm_strnicmp(newName, hdr.name, sizeof(hdr.name))) {
+		// No name to change, abort...
+		delete in;
+		return true;
+	}
+
+	Common::strlcpy(hdr.name, newName, sizeof(hdr.name));
+
+	size_t bufferSizeNoHdr = in->size() - sizeof(hdr);
+	byte *saveBuffer = (byte *)malloc(bufferSizeNoHdr * sizeof(byte));
+
+	if (!saveBuffer) {
+		warning("ScummEngine::changeSavegameName(): Couldn't create save buffer, aborting...");
+		delete in;
+		return false;
+	}
+
+	in->seek(sizeof(hdr), SEEK_SET);
+
+	for (int i = 0; i < bufferSizeNoHdr; i++) {
+		saveBuffer[i] = in->readByte();
+
+		if (in->err()) {
+			warning("ScummEngine::changeSavegameName(): Error in input file stream, aborting...");
+			delete in;
+			return false;
+		}
+	}
+
+	delete in;
+
+	Common::WriteStream *out = openSaveFileForWriting(slot, false, filename);
+	saveSaveGameHeader(out, hdr);
+
+	if (!out) {
+		warning("ScummEngine::changeSavegameName(): Couldn't open output file, aborting...");
+		return false;
+	}
+
+	for (int i = 0; i < bufferSizeNoHdr; i++) {
+		out->writeByte(saveBuffer[i]);
+
+		if (out->err()) {
+			warning("ScummEngine::changeSavegameName(): Error in output file stream, aborting...");
+			delete out;
+			return false;
+		}
+	}
+
+	out->finalize();
+
+	if (out->err()) {
+		warning("ScummEngine::changeSavegameName(): Error in output file stream after finalizing...");
+		delete out;
+		return false;
+	}
+
+	delete out;
+
+	return true;
+}
+
+
 void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	int i;
 	int var120Backup;

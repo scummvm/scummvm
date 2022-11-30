@@ -419,6 +419,20 @@ void ScummEngine_v4::o4_saveLoadGame() {
 		break;
 	case 0x40: // load
 		_lastLoadedRoom = -1;
+
+		// The original interpreter allowed you to change the name of the
+		// savegame before loading it. As weird as that is, let's allow it...
+		if (_game.version == 3) {
+			char *ptr;
+			int firstSlot = (_game.id == GID_LOOM) ? STRINGID_SAVENAME1_LOOM : STRINGID_SAVENAME1;
+			ptr = (char *)getStringAddress(slot + firstSlot - 1);
+			if (ptr) {
+				if (!changeSavegameName(slot, ptr)) {
+					warning("o4_saveLoadGame: Couldn't change savegame name");
+				}
+			}
+		}
+
 		if (loadState(slot, false))
 			result = 3; // Success
 		else

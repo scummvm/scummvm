@@ -854,6 +854,7 @@ protected:
 	void loadResourceOLD(Common::Serializer &ser, ResType type, ResId idx);	// "Obsolete"
 
 	void copyHeapSaveGameToFile(int slot, const char *saveName);
+	bool changeSavegameName(int slot, char *newName);
 	virtual Common::SeekableReadStream *openSaveFileForReading(int slot, bool compat, Common::String &fileName);
 	virtual Common::WriteStream *openSaveFileForWriting(int slot, bool compat, Common::String &fileName);
 
