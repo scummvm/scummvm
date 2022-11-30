@@ -30,6 +30,9 @@ namespace MM1 {
 namespace Views {
 
 class Trap : public TextView, public TrapData {
+private:
+	enum Mode { MODE_TRIGGER, MODE_TRAP };
+	Mode _mode = MODE_TRIGGER;
 protected:
 	void trap() override;
 
@@ -40,7 +43,6 @@ public:
 	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
-	void timeout() override;
 };
 
 } // namespace Views

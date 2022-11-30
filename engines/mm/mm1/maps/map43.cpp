@@ -29,7 +29,7 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
-#define VAL1 142
+#define TREASURE_STATE 142
 
 static const byte MATCH_ITEMS[7] = {
 	0, 0, MAP_OF_DESERT_ID, 0, 0, 0, 0
@@ -66,7 +66,7 @@ void Map43::special00() {
 }
 
 void Map43::special01() {
-	_data[VAL1] = 0;
+	_data[TREASURE_STATE] = 0;
 	if (g_maps->_forwardMask == DIRMASK_E) {
 		visitedExit();
 
@@ -117,13 +117,13 @@ void Map43::special05() {
 }
 
 void Map43::special06() {
-	if (_data[VAL1]) {
+	if (_data[TREASURE_STATE]) {
 		g_globals->_treasure.setGold(18000);
 		g_maps->clearSpecial();
 		g_events->addAction(KEYBIND_SEARCH);
 	} else {
 		Game::Encounter &enc = g_globals->_encounters;
-		_data[VAL1]++;
+		_data[TREASURE_STATE]++;
 
 		enc.clearMonsters();
 		for (int i = 0; i < 8; ++i)
