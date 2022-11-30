@@ -314,80 +314,6 @@ void FreescapeEngine::drawFrame() {
 
 void FreescapeEngine::pressedKey(const int keycode) {}
 
-void FreescapeEngine::generateInput() {
-	Common::Event event;
-	if (isDOS()) {
-
-		if (_currentDemoInputRepetition == 0) {
-			_currentDemoInputRepetition = 1;
-			_currentDemoInputCode = _demoData[_demoIndex++];
-			if (_currentDemoInputCode & 0x80) {
-				_currentDemoInputRepetition = (_currentDemoInputCode & 0x7F) /*+ 1*/;
-				//if (_currentDemoInputRepetition == 1)
-				//	_currentDemoInputRepetition = 255;
-				_currentDemoInputCode = _demoData[_demoIndex++];
-			}
-		}
-
-		if (_currentDemoInputCode >= 0x16 && _currentDemoInputCode <= 0x1a) {
-			event = decodeDOSMouseEvent(_currentDemoInputCode, _currentDemoInputRepetition);
-			_demoEvents.push_back(event);
-			g_system->delayMillis(10);
-			_currentDemoInputRepetition = 0;
-		} else if (_currentDemoInputCode == 0x7f) {
-			// NOP
-			_currentDemoInputRepetition--;
-		} else {
-			event = Common::Event();
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = (Common::KeyCode)decodeDOSKey(_currentDemoInputCode);
-			event.customType = 0xde00;
-			_demoEvents.push_back(event);
-			debugC(1, kFreescapeDebugMove, "Pushing key: %x with repetition %d", event.kbd.keycode, _currentDemoInputRepetition);
-			g_system->delayMillis(100);
-			_currentDemoInputRepetition--;
-		}
-
-		return;
-	}
-
-	int mouseX = _demoData[_demoIndex++] << 1;
-	int mouseY = _demoData[_demoIndex++];
-	debugC(1, kFreescapeDebugMove, "Mouse moved to: %d, %d", mouseX, mouseY);
-
-	event.type = Common::EVENT_MOUSEMOVE;
-	event.mouse = Common::Point(mouseX, mouseY);
-	event.customType = 0xde00;
-
-	byte nextKeyCode = _demoData[_demoIndex++];
-
-	if (nextKeyCode == 0x30) {
-		Common::Event spaceEvent;
-		spaceEvent.type = Common::EVENT_KEYDOWN;
-		spaceEvent.kbd.keycode = Common::KEYCODE_SPACE;
-		spaceEvent.customType = 0xde00;
-
-		_demoEvents.push_back(spaceEvent);
-		_demoEvents.push_back(event); // Mouse pointer is moved
-		event.type = Common::EVENT_LBUTTONDOWN; // Keep same event fields
-		_demoEvents.push_back(event); // Mouse is clicked
-		_demoEvents.push_back(spaceEvent);
-		nextKeyCode = _demoData[_demoIndex++];
-	}
-
-	while (nextKeyCode != 0) {
-		event = Common::Event();
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = (Common::KeyCode)decodeAmigaAtariKey(nextKeyCode);
-		debugC(1, kFreescapeDebugMove, "Pushing key: %x", event.kbd.keycode);
-		event.customType = 0xde00;
-		_demoEvents.push_back(event);
-		nextKeyCode = _demoData[_demoIndex++];
-	}
-	assert(!nextKeyCode);
-	g_system->delayMillis(100);
-}
-
 void FreescapeEngine::processInput() {
 	float currentFrame = g_system->getMillis();
 	float deltaTime = 20.0;
@@ -601,7 +527,7 @@ Common::Error FreescapeEngine::run() {
 			drawFrame();
 
 		if (_demoMode)
-			generateInput();
+			generateDemoInput();
 
 		processInput();
 		_gfx->flipBuffer();

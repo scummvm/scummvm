@@ -170,7 +170,7 @@ public:
 	bool _shootMode;
 	bool _noClipMode;
 	void processInput();
-	void generateInput();
+	void generateDemoInput();
 	virtual void pressedKey(const int keycode);
 	void move(CameraMovement direction, uint8 scale, float deltaTime);
 	void changePlayerHeight(int index);

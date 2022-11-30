@@ -2,6 +2,7 @@ MODULE := engines/freescape
 
 MODULE_OBJS := \
 	area.o \
+	demo.o \
 	freescape.o \
 	games/castle.o \
 	games/dark.o \
@@ -9,7 +10,6 @@ MODULE_OBJS := \
 	games/eclipse.o \
 	games/palettes.o \
 	gfx.o \
-	keyboard.o \
 	loaders/8bitBinaryLoader.o \
 	language/8bitDetokeniser.o \
 	language/instruction.o \
