@@ -798,37 +798,44 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppe
 		return nullptr;
 
 	Common::Path filePath = Common::Path(pathMakeRelative(_path), g_director->_dirSeparator);
-	Common::SeekableReadStream *file = nullptr;
+
+	Common::SeekableReadStream *dataFork = nullptr;
+	Common::SeekableReadStream *copiedStream = nullptr;
 
 	if (_macresman->open(filePath)) {
-		// Data has to be copied out instead of using the stream from
-		// getDataFork() directly because it's possible for this audio
-		// to outlive the owning MacResMan, which would otherwise free
-		// the stream while it's still being read from.
-		Common::SeekableReadStream *stream = _macresman->getDataFork();
-		file = stream->readStream(stream->size());
+
+		dataFork = _macresman->getDataFork();
 	}
 
-	if (file == nullptr) {
+	// Data has to be copied out instead of using the stream from
+	// getDataFork() directly because it's possible for this audio
+	// to outlive the owning MacResMan, which would otherwise free
+	// the stream while it's still being read from.
+	if (dataFork != nullptr)
+		copiedStream = dataFork->readStream(dataFork->size());
+	delete dataFork;
+
+	if (copiedStream == nullptr) {
 		warning("Failed to open %s", _path.c_str());
-		delete file;
+		delete copiedStream;
 		return nullptr;
 	}
-	uint32 magic1 = file->readUint32BE();
-	file->readUint32BE();
-	uint32 magic2 = file->readUint32BE();
-	file->seek(0);
+
+	uint32 magic1 = copiedStream->readUint32BE();
+	copiedStream->readUint32BE();
+	uint32 magic2 = copiedStream->readUint32BE();
+	copiedStream->seek(0);
 
 	Audio::RewindableAudioStream *stream = nullptr;
 	if (magic1 == MKTAG('R', 'I', 'F', 'F') &&
 		magic2 == MKTAG('W', 'A', 'V', 'E')) {
-		stream = Audio::makeWAVStream(file, disposeAfterUse);
+		stream = Audio::makeWAVStream(copiedStream, disposeAfterUse);
 	} else if (magic1 == MKTAG('F', 'O', 'R', 'M') &&
 				(magic2 == MKTAG('A', 'I', 'F', 'F') || magic2 == MKTAG('A', 'I', 'F', 'C'))) {
-		stream = Audio::makeAIFFStream(file, disposeAfterUse);
+		stream = Audio::makeAIFFStream(copiedStream, disposeAfterUse);
 	} else {
 		warning("Unknown file type for %s", _path.c_str());
-		delete file;
+		delete copiedStream;
 	}
 
 	if (stream) {
