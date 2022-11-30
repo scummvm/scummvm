@@ -318,6 +318,8 @@ bool MacVISEArchive::loadCatalog() {
 			fileDesc.fullPath = _directoryDescs[fileDesc.containingDirectory - 1].fullPath + ":" + fileDesc.name;
 		}
 	}
+
+	return true;
 }
 
 const MacVISEArchive::FileDesc *MacVISEArchive::getFileDesc(const Common::Path &path) const {
