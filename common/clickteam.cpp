@@ -216,12 +216,8 @@ ClickteamInstaller* ClickteamInstaller::open(Common::SeekableReadStream *stream,
 	return new ClickteamInstaller(files, tags, crc_xor, block3_offset, block3_len, stream, dispose);
 }
 
-static Common::String translateName(const Path &path) {
-	return Common::normalizePath(path.toString('\\'), '\\');
-}
-
 bool ClickteamInstaller::hasFile(const Path &path) const {
-	return _files.contains(translateName(path));
+	return _files.contains(translatePath(path));
 }
 
 int ClickteamInstaller::listMembers(ArchiveMemberList &list) const {
@@ -237,32 +233,27 @@ int ClickteamInstaller::listMembers(ArchiveMemberList &list) const {
 }
 
 const ArchiveMemberPtr ClickteamInstaller::getMember(const Path &path) const {
-	Common::String translated = translateName(path);
+	Common::String translated = translatePath(path);
 	if (!_files.contains(translated))
 		return nullptr;
 
 	return Common::SharedPtr<Common::ArchiveMember>(new GenericArchiveMember(_files.getVal(translated)._fileName, this));
 }
 
-// TODO: Make streams stay valid after destructing of archive
-SeekableReadStream *ClickteamInstaller::createReadStreamForMember(const Path &path) const {
-	Common::String translated = translateName(path);
+Common::SharedArchiveContents ClickteamInstaller::readContentsForPath(const Common::String& translated) const {
 	if (!_files.contains(translated))
-		return nullptr;
+		return Common::SharedArchiveContents();
 	ClickteamFileDescriptor desc = _files.getVal(translated);
-	if (_cache.contains(desc._fileName)) {
-		return new Common::MemoryReadStream(_cache[desc._fileName].get(), desc._uncompressedSize, DisposeAfterUse::NO);
-	}
 	Common::SeekableReadStream *subStream = new Common::SeekableSubReadStream(_stream.get(), _block3Offset + desc._fileDataOffset,
 										  _block3Offset + desc._fileDataOffset + desc._compressedSize);
 	if (!subStream) {
 		debug("Decompression error");
-		return nullptr;
+		return Common::SharedArchiveContents();
 	}
 	Common::ScopedPtr<Common::SeekableReadStream> uncStream(GzioReadStream::openClickteam(subStream, desc._uncompressedSize, DisposeAfterUse::YES));
 	if (!uncStream) {
 		debug("Decompression error");
-		return nullptr;
+		return Common::SharedArchiveContents();
 	}
 
 	byte *uncompressedBuffer = new byte[desc._uncompressedSize];
@@ -271,7 +262,7 @@ SeekableReadStream *ClickteamInstaller::createReadStreamForMember(const Path &pa
 	if (ret < 0 || ret < desc._uncompressedSize) {
 		debug ("Decompression error");
 		delete[] uncompressedBuffer;
-		return nullptr;
+		return Common::SharedArchiveContents();
 	}
 
 	if (desc._expectedCRC != 0 || !desc._fileName.equalsIgnoreCase("Uninstal.exe")) {
@@ -281,13 +272,12 @@ SeekableReadStream *ClickteamInstaller::createReadStreamForMember(const Path &pa
 		if (actualCrc != expectedCrc) {
 			debug("CRC mismatch for %s: expected=%08x (obfuscated %08x), actual=%08x", desc._fileName.c_str(), expectedCrc, desc._expectedCRC, actualCrc);
 			delete[] uncompressedBuffer;
-			return nullptr;
+			return Common::SharedArchiveContents();
 		}
 	}
 
-	_cache[desc._fileName].reset(uncompressedBuffer);
 	// TODO: Make it configurable to use a uncompressing substream instead
-	return new Common::MemoryReadStream(uncompressedBuffer, desc._uncompressedSize, DisposeAfterUse::NO);
+	return Common::SharedArchiveContents(uncompressedBuffer, desc._uncompressedSize);
 }
 
 }

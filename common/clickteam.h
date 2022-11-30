@@ -29,7 +29,7 @@
 #include "common/hash-str.h"
 
 namespace Common {
-class ClickteamInstaller : public Archive {
+class ClickteamInstaller : public MemcachingCaseInsensitiveArchive {
 public:
 	enum class ClickteamTagId : uint16 {
 		BANNER_IMAGE = 0x1235,
@@ -56,7 +56,7 @@ public:
 	bool hasFile(const Path &path) const override;
 	int listMembers(Common::ArchiveMemberList&) const override;
 	const ArchiveMemberPtr getMember(const Path &path) const override;
-	SeekableReadStream *createReadStreamForMember(const Path &path) const override;
+	Common::SharedArchiveContents readContentsForPath(const Common::String& translated) const override;
 
 	ClickteamTag* getTag(ClickteamTagId tagId) const;
 
@@ -91,7 +91,6 @@ private:
 	Common::HashMap<Common::String, ClickteamFileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _files;
 	Common::HashMap<uint16, Common::SharedPtr<ClickteamTag>> _tags;
 	Common::DisposablePtr<Common::SeekableReadStream> _stream;
-	mutable Common::HashMap<Common::String, Common::ScopedPtr<byte, Common::ArrayDeleter<byte>>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _cache;
 	uint32 _crcXor, _block3Offset/*, _block3Size*/;
 };
 }
