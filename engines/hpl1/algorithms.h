@@ -55,6 +55,7 @@ RandomIt upperBound(RandomIt begin, RandomIt end, V const &val, Comp comp = {}) 
 		else
 			end = mid;
 	}
+	return begin;
 }
 
 template<typename RandomIt, typename Pred>
