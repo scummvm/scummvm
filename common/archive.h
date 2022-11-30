@@ -26,6 +26,8 @@
 #include "common/list.h"
 #include "common/path.h"
 #include "common/ptr.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 #include "common/singleton.h"
 
 namespace Common {
@@ -139,6 +141,39 @@ public:
 	virtual SeekableReadStream *createReadStreamForMember(const Path &path) const = 0;
 };
 
+class SharedArchiveContents {
+public:
+	SharedArchiveContents(byte *contents, uint32 contentSize) : _contents(contents, ArrayDeleter<byte>()), _contentSize(contentSize), _missingFile(false) {}
+	SharedArchiveContents() : _contents(nullptr), _contentSize(0), _missingFile(true) {}
+
+	bool isFileMissing() const { return _missingFile; }
+	SharedPtr<byte> getContents() const { return _contents; }
+	uint32 getSize() const { return _contentSize; }
+
+private:
+	SharedPtr<byte> _contents;
+	uint32 _contentSize;
+	bool _missingFile;
+};
+
+/**
+ * An archive that caches the resulting contents.
+ */
+class MemcachingCaseInsensitiveArchive : public Archive {
+public:
+	SeekableReadStream *createReadStreamForMember(const Path &path) const;
+
+	virtual String translatePath(const Path &path) const {
+		// Most of users of this class implement DOS-like archives.
+		// Others override this method.
+		return normalizePath(path.toString('\\'), '\\');
+	}
+
+	virtual SharedArchiveContents readContentsForPath(const String& translatedPath) const = 0;
+
+private:
+	mutable HashMap<String, SharedArchiveContents, IgnoreCase_Hash, IgnoreCase_EqualTo> _cache;
+};
 
 /**
  * The SearchSet class enables access to a group of Archives through the Archive interface.
