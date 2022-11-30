@@ -807,6 +807,8 @@ void DrillerEngine::initGameState() {
 	_gameStateVars[k8bitVariableEnergyDrillerJet] = _initialJetEnergy;
 	_gameStateVars[k8bitVariableShieldDrillerJet] = _initialJetShield;
 
+	_playerHeightNumber = 1;
+	_playerHeight = _playerHeights[_playerHeightNumber];
 	removeTimers();
 	startCountdown(_initialCountdown);
 }
