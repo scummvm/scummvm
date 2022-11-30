@@ -24,6 +24,7 @@
 #include "common/macresman.h"
 #include "common/memstream.h"
 #include "common/stuffit.h"
+#include "common/vise.h"
 #include "common/winexe.h"
 #include "common/zlib.h"
 
@@ -40,8 +41,6 @@
 #include "mtropolis/plugin/spqr.h"
 #include "mtropolis/plugin/standard.h"
 #include "mtropolis/plugins.h"
-
-#include "mtropolis/vise.h"
 
 namespace MTropolis {
 
@@ -450,7 +449,7 @@ void SPQRGameDataHandler::unpackAdditionalFiles(Common::Array<Common::SharedPtr<
 
 		Common::SharedPtr<Common::SeekableReadStream> installerDataForkStream(installerResMan->getDataFork());
 
-		Common::ScopedPtr<Common::Archive> archive(createMacVISEArchive(installerDataForkStream.get()));
+		Common::ScopedPtr<Common::Archive> archive(Common::createMacVISEArchive(installerDataForkStream.get()));
 
 		debug(1, "Unpacking files...");
 

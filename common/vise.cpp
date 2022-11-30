@@ -19,13 +19,24 @@
  *
  */
 
+#include "common/vise.h"
+
 #include "common/macresman.h"
 #include "common/memstream.h"
 #include "common/zlib.h"
 
-#include "mtropolis/vise.h"
+// Installer VISE archive loader.
+//
+// Supported versions:
+//
+// Macintosh:
+//     Installer VISE 3.5 Lite
+//     Installer VISE 3.6 Lite
+//
+// Windows:
+//     None
 
-namespace MTropolis {
+namespace Common {
 
 class MacVISEArchive : public Common::Archive {
 private:
@@ -414,4 +425,4 @@ Common::Archive *createMacVISEArchive(Common::SeekableReadStream *stream) {
 	return archive;
 }
 
-} // End of namespace MTropolis
+} // End of namespace Common
