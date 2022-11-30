@@ -1548,14 +1548,16 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 	// Handler
 	funcSym = g_lingo->getHandler(name);
 
-	// Builtin
-	if (allowRetVal) {
-		if (g_lingo->_builtinFuncs.contains(name)) {
-			funcSym = g_lingo->_builtinFuncs[name];
-		}
-	} else {
-		if (g_lingo->_builtinCmds.contains(name)) {
-			funcSym = g_lingo->_builtinCmds[name];
+	if (funcSym.type == VOIDSYM) { // The built-ins could be overridden
+		// Builtin
+		if (allowRetVal) {
+			if (g_lingo->_builtinFuncs.contains(name)) {
+				funcSym = g_lingo->_builtinFuncs[name];
+			}
+		} else {
+			if (g_lingo->_builtinCmds.contains(name)) {
+				funcSym = g_lingo->_builtinCmds[name];
+			}
 		}
 	}
 
