@@ -42,6 +42,7 @@ bool Trap::msgGame(const GameMessage &msg) {
 		return true;
 
 	} else if (msg._name == "TRAP") {
+		open();
 		trap();
 		return true;
 	}
@@ -52,26 +53,29 @@ bool Trap::msgGame(const GameMessage &msg) {
 void Trap::draw() {
 	clearSurface();
 
-	writeString(9, 1, STRING["dialogs.trap.oops"]);
-	delaySeconds(3);
+	if (_mode == MODE_TRIGGER) {
+		writeString(9, 1, STRING["dialogs.trap.oops"]);
+	} else {
+		writeString(0, 1,
+			STRING[Common::String::format("dialogs.trap.%d", _trapType)]);
+	}
 }
 
 bool Trap::msgKeypress(const KeypressMessage &msg) {
-	endDelay();
-	return true;
-}
-
-void Trap::timeout() {
-	if (isFocused())
+	if (_mode == MODE_TRIGGER) {
+		trap();
+	} else {
 		close();
-	trap();
+	}
+
+	return true;
 }
 
 void Trap::trap() {
 	TrapData::trap();
 
-	send(InfoMessage(0, 1,
-		STRING[Common::String::format("dialogs.trap.%d", _trapType)]));
+	_mode = MODE_TRAP;
+	draw();
 }
 
 } // namespace Views

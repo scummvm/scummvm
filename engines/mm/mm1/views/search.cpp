@@ -97,6 +97,15 @@ void Search::draw() {
 		drawItem();
 		break;
 
+	case WHO_WILL_TRY: {
+		line = Common::String::format(
+			STRING["dialogs.search.who_will_try"].c_str(),
+			'0' + g_globals->_party.size()
+		);
+		writeString(10, 1, line);
+		break;
+	}
+
 	default:
 		break;
 	}
@@ -230,6 +239,7 @@ void Search::openContainer2() {
 
 		if (getRandomNumber(thresold + 5) < thresold) {
 			// Triggered a trap
+			_mode = FOCUS_GET_TREASURE;
 			g_events->send("Trap", GameMessage("TRAP"));
 			return;
 		}
@@ -308,11 +318,6 @@ void Search::getTreasure() {
 	int gfxNum = g_globals->_treasure._container < WOODEN_BOX ? 3 : 1;
 	send("View", DrawGraphicMessage(gfxNum + 65));
 
-	uint gems = g_globals->_treasure.getGems();
-	if (gems) {
-
-	}
-
 	draw();
 }
 
@@ -328,7 +333,7 @@ void Search::drawTreasure() {
 		Character &c = g_globals->_party[i];
 		uint32 newGold = c._gold + goldPerPerson;
 		if (newGold < c._gold)
-			// As unlikely as it to overflow 32-bits
+			// As unlikely as it is to overflow 32-bits
 			newGold = 0xffffffff;
 		c._gold = newGold;
 	}
