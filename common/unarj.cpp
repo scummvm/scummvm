@@ -699,7 +699,7 @@ struct ArjFileChunk {
 
 typedef HashMap<String, Array<ArjFileChunk>, IgnoreCase_Hash, IgnoreCase_EqualTo> ArjHeadersMap;
 
-class ArjArchive : public Archive {
+class ArjArchive : public MemcachingCaseInsensitiveArchive {
 	ArjHeadersMap _headers;
 	Array<String> _arjFilenames;
 
@@ -711,7 +711,10 @@ public:
 	bool hasFile(const Path &path) const override;
 	int listMembers(ArchiveMemberList &list) const override;
 	const ArchiveMemberPtr getMember(const Path &path) const override;
-	SeekableReadStream *createReadStreamForMember(const Path &path) const override;
+	Common::SharedArchiveContents readContentsForPath(const Common::String& translated) const override;
+	Common::String translatePath(const Common::Path &path) const override {
+		return path.toString();
+	}
 };
 
 ArjArchive::~ArjArchive() {
@@ -780,10 +783,9 @@ const ArchiveMemberPtr ArjArchive::getMember(const Path &path) const {
 	return ArchiveMemberPtr(new GenericArchiveMember(name, this));
 }
 
-SeekableReadStream *ArjArchive::createReadStreamForMember(const Path &path) const {
-	String name = path.toString();
+Common::SharedArchiveContents ArjArchive::readContentsForPath(const Common::String& name) const {
 	if (!_headers.contains(name)) {
-		return nullptr;
+		return Common::SharedArchiveContents();
 	}
 
 	const Array <ArjFileChunk>& hdrs = _headers[name];
@@ -800,13 +802,12 @@ SeekableReadStream *ArjArchive::createReadStreamForMember(const Path &path) cons
 
 	// Prevent overflows
 	if (uncompressedSize > 0x70000000)
-		return nullptr;
+		return Common::SharedArchiveContents();
 
 	// TODO: It would be good if ArjFile could decompress files in a streaming
 	// mode, so it would not need to pre-allocate the entire output.
-	byte *uncompressedData = (byte *)malloc(uncompressedSize);
+	byte *uncompressedData = new byte[uncompressedSize];
 	uint32 uncompressedPtr = 0;
-	assert(uncompressedData);
 
 	for (uint chunk = 0; chunk < totalChunks; chunk++) {
 		File archiveFile;
@@ -837,7 +838,7 @@ SeekableReadStream *ArjArchive::createReadStreamForMember(const Path &path) cons
 		uncompressedPtr += hdr->origSize;
 	}
 
-	return new MemoryReadStream(uncompressedData, uncompressedSize, DisposeAfterUse::YES);
+	return Common::SharedArchiveContents(uncompressedData, uncompressedSize);
 }
 
 Archive *makeArjArchive(const String &name) {
