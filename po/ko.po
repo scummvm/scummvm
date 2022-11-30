@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-28 23:21+0000\n"
+"POT-Creation-Date: 2022-11-30 11:36+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4927,37 +4927,37 @@ msgstr "게임 그래픽을 밝은 팔레트로 표시"
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr "물체, 옵션 및 성경 인용문에 대해 TTS를 활성화"
 
-#: engines/freescape/metaengine.cpp:31
+#: engines/freescape/metaengine.cpp:35
 msgid "Prerecorded sounds"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:32
+#: engines/freescape/metaengine.cpp:36
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:42
+#: engines/freescape/metaengine.cpp:46
 msgid "Extended timer"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:43
+#: engines/freescape/metaengine.cpp:47
 msgid "Start the game timer at 99:59:59"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:53
+#: engines/freescape/metaengine.cpp:57
 msgid "Automatic drilling"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:54
+#: engines/freescape/metaengine.cpp:58
 msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:64
+#: engines/freescape/metaengine.cpp:68
 #, fuzzy
 #| msgid "Enable debug mode"
 msgid "Disable demo mode"
 msgstr "디버그 모드 사용"
 
-#: engines/freescape/metaengine.cpp:65
+#: engines/freescape/metaengine.cpp:69
 msgid "Never activate demo mode"
 msgstr ""
 

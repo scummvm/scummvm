@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-28 23:21+0000\n"
+"POT-Creation-Date: 2022-11-30 11:36+0000\n"
 "PO-Revision-Date: 2022-11-29 06:11+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -4998,38 +4998,38 @@ msgstr ""
 "Activer la synthèse vocale pour les objets, les options et la citation de la "
 "Bible"
 
-#: engines/freescape/metaengine.cpp:31
+#: engines/freescape/metaengine.cpp:35
 msgid "Prerecorded sounds"
 msgstr "Sons préenregistrés"
 
-#: engines/freescape/metaengine.cpp:32
+#: engines/freescape/metaengine.cpp:36
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
 "Utilise des sons préenregistrés de haute qualité à la place de l'émulation "
 "du PC Speaker"
 
-#: engines/freescape/metaengine.cpp:42
+#: engines/freescape/metaengine.cpp:46
 msgid "Extended timer"
 msgstr "Minuteur rallongé"
 
-#: engines/freescape/metaengine.cpp:43
+#: engines/freescape/metaengine.cpp:47
 msgid "Start the game timer at 99:59:59"
 msgstr "Démarre le minuteur du jeu à 99:59:59"
 
-#: engines/freescape/metaengine.cpp:53
+#: engines/freescape/metaengine.cpp:57
 msgid "Automatic drilling"
 msgstr "Forage automatique"
 
-#: engines/freescape/metaengine.cpp:54
+#: engines/freescape/metaengine.cpp:58
 msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr ""
 "Dans Driller, permet de forer avec succès à n'importe quel endroit de la zone"
 
-#: engines/freescape/metaengine.cpp:64
+#: engines/freescape/metaengine.cpp:68
 msgid "Disable demo mode"
 msgstr "Désactiver le mode démo"
 
-#: engines/freescape/metaengine.cpp:65
+#: engines/freescape/metaengine.cpp:69
 msgid "Never activate demo mode"
 msgstr "N'active jamais le mode démo"
 

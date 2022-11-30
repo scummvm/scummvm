@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-28 23:21+0000\n"
+"POT-Creation-Date: 2022-11-30 11:36+0000\n"
 "PO-Revision-Date: 2022-11-27 20:29+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4934,36 +4934,36 @@ msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
 "Tekstistä puheeksi -toiminto esineille, asetuksille ja raamattulainaukselle"
 
-#: engines/freescape/metaengine.cpp:31
+#: engines/freescape/metaengine.cpp:35
 msgid "Prerecorded sounds"
 msgstr "Esiäänitetyt äänet"
 
-#: engines/freescape/metaengine.cpp:32
+#: engines/freescape/metaengine.cpp:36
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
 "Käytä korkealaatuisia esiäänitettyjä ääniä pc speaker-emulaation sijaan"
 
-#: engines/freescape/metaengine.cpp:42
+#: engines/freescape/metaengine.cpp:46
 msgid "Extended timer"
 msgstr "Pidennetty ajastin"
 
-#: engines/freescape/metaengine.cpp:43
+#: engines/freescape/metaengine.cpp:47
 msgid "Start the game timer at 99:59:59"
 msgstr "Aloita peliajastin ajasta 99:59:59"
 
-#: engines/freescape/metaengine.cpp:53
+#: engines/freescape/metaengine.cpp:57
 msgid "Automatic drilling"
 msgstr "Automaattinen poraus"
 
-#: engines/freescape/metaengine.cpp:54
+#: engines/freescape/metaengine.cpp:58
 msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr "Salli onnistunut poraus missä tahansa alueella Driller:issä"
 
-#: engines/freescape/metaengine.cpp:64
+#: engines/freescape/metaengine.cpp:68
 msgid "Disable demo mode"
 msgstr "Ei demotilaa"
 
-#: engines/freescape/metaengine.cpp:65
+#: engines/freescape/metaengine.cpp:69
 msgid "Never activate demo mode"
 msgstr "Älä koskaan aktivoi demotilaa"
 
