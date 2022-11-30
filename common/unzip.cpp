@@ -219,7 +219,7 @@ int unzGetCurrentFileInfo(unzFile file,
    from it, and close it (you can close it before reading all the file)
    */
 
-Common::SeekableReadStream *unzOpenCurrentFile(unzFile file, const Common::CRC32& crc);
+Common::SharedArchiveContents unzOpenCurrentFile(unzFile file, const Common::CRC32& crc);
 /*
   Open for reading data the current file in the zipfile.
   If there is no error, the return value is UNZ_OK.
@@ -902,31 +902,30 @@ static int unzlocal_CheckCurrentFileCoherencyHeader(unz_s *s, uInt *piSizeVar,
   Open for reading data the current file in the zipfile.
   If there is no error and the file is opened, the return value is UNZ_OK.
 */
-Common::SeekableReadStream *unzOpenCurrentFile (unzFile file, const Common::CRC32 &crc) {
+Common::SharedArchiveContents unzOpenCurrentFile (unzFile file, const Common::CRC32 &crc) {
 	uInt iSizeVar;
 	unz_s *s;
 	uLong offset_local_extrafield;  /* offset of the local extra field */
 	uInt  size_local_extrafield;    /* size of the local extra field */
 
 	if (file == nullptr)
-		return nullptr;
+		return Common::SharedArchiveContents();
 	s = (unz_s *)file;
 	if (!s->current_file_ok)
-		return nullptr;
+		return Common::SharedArchiveContents();
 
 	if (unzlocal_CheckCurrentFileCoherencyHeader(s, &iSizeVar,
 				&offset_local_extrafield, &size_local_extrafield) != UNZ_OK)
-		return nullptr;
+		return Common::SharedArchiveContents();
 
 	if (s->cur_file_info.compression_method != 0 && s->cur_file_info.compression_method != Z_DEFLATED) {
 		warning("Unknown compression algoritthm %d", (int)s->cur_file_info.compression_method);
-		return nullptr;
+		return Common::SharedArchiveContents();
 	}
 
 	uint32 crc32_wait = s->cur_file_info.crc;
 
-	byte *compressedBuffer = (byte *)malloc(s->cur_file_info.compressed_size);
-	assert(s->cur_file_info.compressed_size == 0 || compressedBuffer != nullptr);
+	byte *compressedBuffer = new byte[s->cur_file_info.compressed_size];
 	s->_stream->seek(s->cur_file_info_internal.offset_curfile + SIZEZIPLOCALHEADER + iSizeVar);
 	s->_stream->read(compressedBuffer, s->cur_file_info.compressed_size);
 	byte *uncompressedBuffer = nullptr;
@@ -936,33 +935,33 @@ Common::SeekableReadStream *unzOpenCurrentFile (unzFile file, const Common::CRC3
 		uncompressedBuffer = compressedBuffer;
 		break;
 	case Z_DEFLATED:
-		uncompressedBuffer = (byte *)malloc(s->cur_file_info.uncompressed_size);
+		uncompressedBuffer = new byte[s->cur_file_info.uncompressed_size];
 		assert(s->cur_file_info.uncompressed_size == 0 || uncompressedBuffer != nullptr);
 		Common::GzioReadStream::deflateDecompress(uncompressedBuffer, s->cur_file_info.uncompressed_size, compressedBuffer, s->cur_file_info.compressed_size);
-		free(compressedBuffer);
+		delete[] compressedBuffer;
 		compressedBuffer = nullptr;
 		break;
 	default:
 		warning("Unknown compression algoritthm %d", (int)s->cur_file_info.compression_method);
-		free(compressedBuffer);
-		return nullptr;
+		delete[] compressedBuffer;
+		return Common::SharedArchiveContents();
 	}
 
 	uint32 crc32_data = crc.crcFast(uncompressedBuffer, s->cur_file_info.uncompressed_size);
 	if (crc32_data != crc32_wait) {
-		free(uncompressedBuffer);
+		delete[] uncompressedBuffer;
 		warning("CRC32 mismatch: %08x, %08x", crc32_data, crc32_wait);
-		return nullptr;
+		return Common::SharedArchiveContents();
 	}
 
-	return new Common::MemoryReadStream(uncompressedBuffer, s->cur_file_info.uncompressed_size, DisposeAfterUse::YES);
+	return Common::SharedArchiveContents(uncompressedBuffer, s->cur_file_info.uncompressed_size);
 }
 
 
 namespace Common {
 
 
-class ZipArchive : public Archive {
+class ZipArchive : public MemcachingCaseInsensitiveArchive {
 	unzFile _zipFile;
 	Common::CRC32 _crc;
 
@@ -975,7 +974,10 @@ public:
 	bool hasFile(const Path &path) const override;
 	int listMembers(ArchiveMemberList &list) const override;
 	const ArchiveMemberPtr getMember(const Path &path) const override;
-	SeekableReadStream *createReadStreamForMember(const Path &path) const override;
+	Common::SharedArchiveContents readContentsForPath(const Common::String& translated) const override;
+	Common::String translatePath(const Common::Path &path) const override {
+		return path.toString();
+	}
 };
 
 /*
@@ -1030,10 +1032,9 @@ const ArchiveMemberPtr ZipArchive::getMember(const Path &path) const {
 	return ArchiveMemberPtr(new GenericArchiveMember(name, this));
 }
 
-SeekableReadStream *ZipArchive::createReadStreamForMember(const Path &path) const {
-	String name = path.toString();
+Common::SharedArchiveContents ZipArchive::readContentsForPath(const Common::String& name) const {
 	if (unzLocateFile(_zipFile, name.c_str(), 2) != UNZ_OK)
-		return nullptr;
+		return Common::SharedArchiveContents();
 
 	return unzOpenCurrentFile(_zipFile, _crc);
 }
