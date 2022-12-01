@@ -1044,7 +1044,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			setTalkSpeed(_defaultTextSpeed);
 			ConfMan.setInt("original_gui_text_speed", _defaultTextSpeed);
 
-			getSliderString(gsTextSpeedSlider, 9 - _defaultTextSpeed + 1, sliderString, sizeof(sliderString));
+			getSliderString(gsTextSpeedSlider, 9 - _defaultTextSpeed, sliderString, sizeof(sliderString));
 			printMessageAndPause(sliderString, textSpeedColor, 0, false);
 			return;
 		}
