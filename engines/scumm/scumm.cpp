@@ -3022,6 +3022,34 @@ void ScummEngine::scummLoop_handleEffects() {
 }
 
 void ScummEngine::scummLoop_handleSound() {
+	// The original interpreters for the earlier games (v0-v4) allowed the user
+	// to disable internal speaker sounds with a keyboard combination.
+	// Let's see if sound has to be played: if we're not using the original GUI,
+	// let's allow it unconditionally; if the sound device is not between the ones listed,
+	// we allow the sound, otherwise we let our keyboard combination flag decide.
+	if (_game.version < 5 && isUsingOriginalGUI()) {
+		bool soundIsEnabled = !((_sound->_musicType == MDT_PCSPK ||
+								_sound->_musicType == MDT_PCJR ||
+								_sound->_musicType == MDT_CMS ||
+								_sound->_musicType == MDT_APPLEIIGS ||
+								_sound->_musicType == MDT_C64) &&
+								(_internalSpeakerSoundsAreOn == 0));
+
+		// Furthermore, the original ones apparently did the trick at a lower level. In our case
+		// this a bit overkill for a feature which is not that known: we could just mute the
+		// mixer to obtain the same effect. Let's avoid muting/unmuting the mixer at every
+		// scummLoop_handleSound() call, though :-)
+		if (!soundIsEnabled && !_mixerMutedByGUI) {
+			_mixer->muteSoundType(Audio::Mixer::SoundType::kMusicSoundType, true);
+			_mixer->muteSoundType(Audio::Mixer::SoundType::kPlainSoundType, true);
+			_mixerMutedByGUI = true;
+		} else if (soundIsEnabled && _mixerMutedByGUI) {
+			_mixer->muteSoundType(Audio::Mixer::SoundType::kMusicSoundType, false);
+			_mixer->muteSoundType(Audio::Mixer::SoundType::kPlainSoundType, false);
+			_mixerMutedByGUI = false;
+		}
+	}
+
 	_sound->processSound();
 }
 

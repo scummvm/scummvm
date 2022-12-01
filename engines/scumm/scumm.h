@@ -659,6 +659,8 @@ protected:
 	int _guiMouseFlag = 1;
 	int _guiJoystickFlag = 1;
 
+	bool _mixerMutedByGUI = false;
+
 	Graphics::Surface _savegameThumbnail;
 	byte *_tempTextSurface = nullptr;
 	byte *_tempMainSurface = nullptr;
