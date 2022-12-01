@@ -93,7 +93,8 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"Demo",
-			AD_ENTRY1s("DEMO.DAT", "8ff8ae264f759ea4a79cc915757f17c4", 488921),
+			AD_ENTRY2s("DEMO.DAT",   "8ff8ae264f759ea4a79cc915757f17c4", 488921,
+					   "SLIDES.DAT", "d630fddfb50608f3cc7d297392f21d41", 9483618),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_NO_FLAGS,
@@ -111,7 +112,8 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"Demo",
-			AD_ENTRY1s("DEMO.DAT", "c39303dd53fb5c4e7f3c23231c606cd0", 488415),
+			AD_ENTRY2s("DEMO.DAT", 	 "c39303dd53fb5c4e7f3c23231c606cd0", 488415,
+					   "SLIDES.DAT", "d630fddfb50608f3cc7d297392f21d41", 9483618),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_NO_FLAGS,
