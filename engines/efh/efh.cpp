@@ -263,7 +263,7 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 		_teamCharStatus[i]._status = 0;
 		_teamCharStatus[i]._duration = 0;
 		_unkArray2C8AA[i] = 0;
-		_word32680[i] = 0;
+		_teamPctVisible[i] = 0;
 		_word32482[i] = 0;
 		_teamNextAttack[i] = -1;
 		_word31780[i] = 0;
@@ -2666,88 +2666,6 @@ int8 EfhEngine::sub15581(int16 mapPosX, int16 mapPosY, int16 arg4) {
 	return _tileFact[imageSetId]._field0;
 }
 
-bool EfhEngine::sub1BC74(int16 monsterId, int16 teamMonsterId) {
-	debug("sub1BC74 %d %d", monsterId, teamMonsterId);
-
-	for (int counter = 0; counter < teamMonsterId; ++counter) {
-		if (_teamMonsterIdArray[counter] == monsterId)
-			return true;
-	}
-	return false;
-}
-
-void EfhEngine::sub1BCA7(int16 monsterTeamId) {
-	debug("sub1BCA7 %d", monsterTeamId);
-
-	int16 counter = 0;
-	if (monsterTeamId != -1 && countPictureRef(monsterTeamId, false) > 0) {
-		counter = 1;
-		_teamMonsterIdArray[0] = monsterTeamId;
-	}
-
-	for (int counter2 = 1; counter2 <= 3; ++counter2) {
-		if (counter >= 5)
-			break;
-
-		for (uint monsterId = 0; monsterId < 64; ++monsterId) {
-			if (_mapMonsters[monsterId]._guess_fullPlaceId == 0xFF)
-				continue;
-
-			if (((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) != 0x3F || isCharacterATeamMember(_mapMonsters[monsterId]._field_1)) && (_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) > 0x3D)
-				continue;
-
-			if (!checkIfMonsterOnSameLargeMapPlace(monsterId))
-				continue;
-
-			bool var6 = false;
-			for (uint counter3 = 0; counter3 < 9; ++counter3) {
-				if (_mapMonsters[monsterId]._pictureRef[counter3] > 0) {
-					var6 = true;
-					break;
-				}
-			}
-
-			if (var6) {
-				if (computeMonsterGroupDistance(monsterId) <= counter2 && !sub1BC74(monsterId, counter)) {
-					_teamMonsterIdArray[counter] = monsterId;
-					if (++counter >= 5)
-						break;
-				}
-			}
-		}
-	}
-
-	if (counter > 4)
-		return;
-
-	for (uint id = counter; id < 5; ++id)
-		_teamMonsterIdArray[id] = -1;
-}
-
-void EfhEngine::reset_stru32686() {
-	debug("reset_stru32686");
-	for (uint counter1 = 0; counter1 < 5; ++counter1) {
-		for (uint counter2 = 0; counter2 < 9; ++counter2) {
-			_stru32686[counter1]._field0[counter2] = 0;
-			_stru32686[counter1]._field2[counter2] = 0;
-		}
-	}
-}
-
-void EfhEngine::sub1BE89(int16 monsterId) {
-	debug("sub1BE89 %d", monsterId);
-	sub1BCA7(monsterId);
-	reset_stru32686();
-}
-
-void EfhEngine::resetTeamMonsterIdArray() {
-	debug("resetTeamMonsterIdArray");
-
-	for (int i = 0; i < 5; ++i) {
-		_teamMonsterIdArray[i] = -1;
-	}
-}
-
 bool EfhEngine::isTeamMemberStatusNormal(int16 teamMemberId) {
 	debug("isTeamMemberStatusNormal %d", teamMemberId);
 
@@ -3382,103 +3300,6 @@ bool EfhEngine::checkSpecialItemsOnCurrentPlace(int16 itemId) {
 		return false;
 	default:
 		return true;
-	}
-}
-
-void EfhEngine::generateSound1(int arg0, int arg2, int duration) {
-	warning("STUB: generateSound1 %d %d %d", arg0, arg2, duration);
-}
-
-void EfhEngine::generateSound2(int startFreq, int endFreq, int arg4) {
-	warning("STUB: generateSound2 %d %d %d", startFreq, endFreq, arg4);
-
-	// Arg4 doesn't seem to be used.
-}
-
-void EfhEngine::generateSound3() {
-	warning("STUB: generateSound3");
-}
-
-void EfhEngine::generateSound4(int arg0) {
-	warning("STUB: generateSound4 %d", arg0);
-}
-
-void EfhEngine::generateSound5(int arg0) {
-	warning("STUB: generateSound5 %d", arg0);
-}
-
-void EfhEngine::generateSound(int16 soundType) {
-	switch (soundType) {
-	case 5:
-		generateSound3();
-		break;
-	case 9:
-		generateSound1(20, 888, 3000);
-		generateSound1(20, 888, 3000);
-		break;
-	case 10:
-		generateSound5(1);
-		break;
-	case 13:
-		generateSound2(256, 4096, 18);
-		break;
-	case 14:
-		generateSound2(20, 400, 100);
-		break;
-	case 15:
-		generateSound2(100, 888, 88);
-		break;
-	case 16:
-		generateSound1(2000, 6096, 1500);
-		break;
-	case 17:
-		generateSound4(1);
-		break;
-	default:
-		// Not implemented because not used by the engine
-		break;
-	}
-}
-
-void EfhEngine::genericGenerateSound(int16 soundType, int16 repeatCount) {
-	if (repeatCount <= 0)
-		return;
-
-	switch (soundType) {
-	case 0:
-	case 1:
-	case 2:
-		generateSound(5);
-		break;
-	case 3:
-	case 4:
-	case 6:
-		generateSound(9);
-		break;
-	case 5:
-	case 7:
-		generateSound(13);
-		break;
-	case 8:
-	case 9:
-	case 10:
-		generateSound(10);
-		generateSound(9);
-		break;
-	case 14:
-		generateSound(14);
-		break;
-	case 11:
-	case 12:
-	case 13:
-		for (int counter = 0; counter < repeatCount; ++counter) {
-			generateSound(17);
-		}
-		break;
-	case 15:
-		generateSound(16);
-	default:
-		break;
 	}
 }
 
@@ -4636,9 +4457,9 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
 			}
 
-			_word32680[teamCharId] -= 50;
-			if (_word32680[teamCharId] < 0)
-				_word32680[teamCharId] = 0;
+			_teamPctVisible[teamCharId] -= 50;
+			if (_teamPctVisible[teamCharId] < 0)
+				_teamPctVisible[teamCharId] = 0;
 		}
 
 		varA6 = true;

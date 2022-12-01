@@ -354,11 +354,6 @@ private:
 	void sub22AA8(int16 arg0);
 	bool sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId);
 	int8 sub15581(int16 mapPosX, int16 mapPosY, int16 arg4);
-	bool sub1BC74(int16 monsterId, int16 teamMonsterId);
-	void sub1BCA7(int16 monsterTeamId);
-	void reset_stru32686();
-	void sub1BE89(int16 monsterId);
-	void resetTeamMonsterIdArray();
 	bool isTeamMemberStatusNormal(int16 id);
 	void sub1CDFA();
 	void redrawScreenForced();
@@ -375,13 +370,6 @@ private:
 	int16 sub1DEC8(int16 groupNumber);
 	int16 getCharacterScore(int16 charId, int16 itemId);
 	bool checkSpecialItemsOnCurrentPlace(int16 itemId);
-	void generateSound1(int arg0, int arg2, int duration);
-	void generateSound2(int startFreq, int endFreq, int arg4);
-	void generateSound3();
-	void generateSound4(int arg0);
-	void generateSound5(int arg0);
-	void generateSound(int16 soundType);
-	void genericGenerateSound(int16 soundType, int16 repeatCount);
 	bool hasAdequateDefense(int16 monsterId, uint8 attackType);
 	bool hasAdequateDefense_2(int16 charId, uint8 attackType);
 	void getDeathTypeDescription(int16 attackerId, int16 victimId);
@@ -420,6 +408,11 @@ private:
 	void handleFight_lastAction_D(int16 teamCharId);
 	void handleFight_lastAction_H(int16 teamCharId);
 	void handleFight_lastAction_U(int16 teamCharId);
+	bool sub1BC74(int16 monsterId, int16 teamMonsterId);
+	void sub1BCA7(int16 monsterTeamId);
+	void reset_stru32686();
+	void sub1BE89(int16 monsterId);
+	void resetTeamMonsterIdArray();
 
 	// Files
 	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);
@@ -477,6 +470,15 @@ private:
 	uint8 *script_readNumberArray(uint8 *buffer, int16 destArraySize, int16 *destArray);
 	uint8 *script_getNumber(uint8 *srcBuffer, int16 *retval);
 	int16 script_parse(uint8 *str, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag);
+
+	// Sound
+	void generateSound1(int arg0, int arg2, int duration);
+	void generateSound2(int startFreq, int endFreq, int arg4);
+	void generateSound3();
+	void generateSound4(int arg0);
+	void generateSound5(int arg0);
+	void generateSound(int16 soundType);
+	void genericGenerateSound(int16 soundType, int16 repeatCount);
 
 	// Utils
 	void setDefaultNoteDuration();
@@ -593,7 +595,7 @@ private:
 	bool _statusMenuActive;
 	int16 _menuDepth;
 	int16 _menuItemCounter;
-	int16 _word32680[3];
+	int16 _teamPctVisible[3];
 	int16 _word32482[3];
 	int16 _teamNextAttack[3];
 	int16 _word31780[3];
