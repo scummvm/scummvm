@@ -96,6 +96,9 @@ bool Game::msgGame(const GameMessage &msg) {
 	if (msg._name == "DISPLAY") {
 		replaceView(this);
 		return true;
+	} else if (msg._name == "REDRAW") {
+		redraw();
+		g_events->drawElements();
 	}
 
 	return TextView::msgGame(msg);
