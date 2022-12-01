@@ -28,7 +28,7 @@
 #include "kyra/graphics/screen_lol.h"
 #endif // ENABLE_LOL
 
-#include "common/iff_container.h"
+#include "common/formats/iff_container.h"
 #include "common/system.h"
 
 namespace Kyra {

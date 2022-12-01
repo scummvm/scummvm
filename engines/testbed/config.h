@@ -24,7 +24,7 @@
 
 
 #include "common/array.h"
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 #include "common/str-array.h"
 #include "common/tokenizer.h"
 

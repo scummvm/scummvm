@@ -23,9 +23,9 @@
 #include "common/memstream.h"
 #include "common/str.h"
 #include "common/ustr.h"
-#include "common/winexe.h"
-#include "common/winexe_ne.h"
-#include "common/winexe_pe.h"
+#include "common/formats/winexe.h"
+#include "common/formats/winexe_ne.h"
+#include "common/formats/winexe_pe.h"
 
 namespace Common {
 

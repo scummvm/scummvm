@@ -22,7 +22,7 @@
 #include "audio/decoders/iff_sound.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
-#include "common/iff_container.h"
+#include "common/formats/iff_container.h"
 #include "common/func.h"
 
 namespace Audio {

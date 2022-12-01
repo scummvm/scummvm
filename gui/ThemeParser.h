@@ -23,7 +23,7 @@
 #define THEME_PARSER_H
 
 #include "common/scummsys.h"
-#include "common/xmlparser.h"
+#include "common/formats/xmlparser.h"
 
 namespace GUI {
 

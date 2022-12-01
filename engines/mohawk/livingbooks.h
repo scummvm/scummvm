@@ -28,7 +28,7 @@
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 #include "common/rect.h"
 #include "common/queue.h"
 #include "common/random.h"

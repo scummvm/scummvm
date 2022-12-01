@@ -24,7 +24,7 @@
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/substream.h"
-#include "common/winexe.h"
+#include "common/formats/winexe.h"
 #include "graphics/wincursor.h"
 
 #include "director/director.h"

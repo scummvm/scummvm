@@ -31,7 +31,7 @@
 #include "common/endian.h"
 #include "common/macresman.h"
 #include "common/memstream.h"
-#include "common/quicktime.h"
+#include "common/formats/quicktime.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "common/compression/zlib.h"

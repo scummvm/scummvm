@@ -19,8 +19,8 @@
 *
 */
 
-#include "common/winexe_ne.h"
-#include "common/winexe_pe.h"
+#include "common/formats/winexe_ne.h"
+#include "common/formats/winexe_pe.h"
 #include "graphics/cursorman.h"
 #include "graphics/wincursor.h"
 

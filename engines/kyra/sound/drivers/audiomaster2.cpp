@@ -26,7 +26,7 @@
 
 #include "audio/mods/paula.h"
 
-#include "common/iff_container.h"
+#include "common/formats/iff_container.h"
 
 namespace Kyra {
 
@@ -334,7 +334,7 @@ public:
 private:
 	void initResource();
 
-	// define only additional chunk types which aren't already defined in common/iff_container.h
+	// define only additional chunk types which aren't already defined in common/formats/iff_container.h
 	enum ChunkTypes {
 		ID_INST = MKTAG('I', 'N', 'S', 'T'),
 		ID_PTCH = MKTAG('P', 'T', 'C', 'H'),

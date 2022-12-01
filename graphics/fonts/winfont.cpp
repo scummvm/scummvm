@@ -23,8 +23,8 @@
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
-#include "common/winexe_ne.h"
-#include "common/winexe_pe.h"
+#include "common/formats/winexe_ne.h"
+#include "common/formats/winexe_pe.h"
 #include "graphics/surface.h"
 #include "graphics/fonts/winfont.h"
 

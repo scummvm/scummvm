@@ -23,7 +23,7 @@
 #define GOB_INICONFIG_H
 
 #include "common/str.h"
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 #include "common/hashmap.h"
 
 namespace Gob {

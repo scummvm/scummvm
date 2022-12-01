@@ -22,7 +22,7 @@
 #ifndef GUI_METADATA_PARSER_H
 #define GUI_METADATA_PARSER_H
 
-#include "common/xmlparser.h"
+#include "common/formats/xmlparser.h"
 
 namespace GUI {
 

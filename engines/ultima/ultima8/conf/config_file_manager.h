@@ -22,7 +22,7 @@
 #ifndef ULTIMA8_CONF_CONFIGFILEMANAGER_H
 #define ULTIMA8_CONF_CONFIGFILEMANAGER_H
 
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima8/misc/istring.h"
 #include "ultima/shared/std/containers.h"

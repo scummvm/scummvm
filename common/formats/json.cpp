@@ -43,7 +43,7 @@
  * THE SOFTWARE.
  */
 
-#include "common/json.h"
+#include "common/formats/json.h"
 
 #ifdef __MINGW32__
 #define wcsncasecmp wcsnicmp

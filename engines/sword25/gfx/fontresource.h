@@ -33,7 +33,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
-#include "common/xmlparser.h"
+#include "common/formats/xmlparser.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/resource.h"
 

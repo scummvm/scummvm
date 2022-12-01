@@ -23,7 +23,7 @@
 #include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/localwebserver.h"
 #include "common/config-manager.h"
-#include "common/json.h"
+#include "common/formats/json.h"
 #include "common/translation.h"
 
 namespace Networking {

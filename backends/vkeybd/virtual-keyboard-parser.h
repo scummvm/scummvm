@@ -26,7 +26,7 @@
 
 #ifdef ENABLE_VKEYBD
 
-#include "common/xmlparser.h"
+#include "common/formats/xmlparser.h"
 #include "backends/vkeybd/virtual-keyboard.h"
 
 /**

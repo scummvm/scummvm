@@ -22,7 +22,7 @@
 #include "common/system.h"
 #include "common/stream.h"
 #include "common/events.h"
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 
 #include "petka/flc.h"
 #include "petka/objects/object_case.h"

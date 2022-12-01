@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/winexe.h"
+#include "common/formats/winexe.h"
 #include "common/translation.h"
 #include "common/stream.h"
 

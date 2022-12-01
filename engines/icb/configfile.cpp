@@ -27,7 +27,7 @@
 #include "engines/icb/configfile.h"
 
 #include "common/textconsole.h"
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 
 namespace ICB {
 

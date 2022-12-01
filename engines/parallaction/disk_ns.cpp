@@ -21,7 +21,7 @@
 
 #include "common/config-manager.h"
 #include "common/fs.h"
-#include "common/iff_container.h"
+#include "common/formats/iff_container.h"
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/textconsole.h"

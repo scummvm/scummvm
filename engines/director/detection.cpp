@@ -24,7 +24,7 @@
 #include "engines/advancedDetector.h"
 
 #include "common/file.h"
-#include "common/winexe.h"
+#include "common/formats/winexe.h"
 
 #include "director/detection.h"
 #include "director/director.h"

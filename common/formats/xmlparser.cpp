@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/xmlparser.h"
+#include "common/formats/xmlparser.h"
 #include "common/archive.h"
 #include "common/fs.h"
 #include "common/memstream.h"

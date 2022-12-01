@@ -22,7 +22,7 @@
 #include "common/debug.h"
 #include "common/str.h"
 #include "common/stream.h"
-#include "common/winexe_ne.h"
+#include "common/formats/winexe_ne.h"
 
 namespace Common {
 

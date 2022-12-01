@@ -24,7 +24,7 @@
 #include "common/endian.h"
 #include "common/str.h"
 #include "common/stream.h"
-#include "common/winexe_pe.h"
+#include "common/formats/winexe_pe.h"
 
 namespace Common {
 

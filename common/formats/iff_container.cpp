@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/iff_container.h"
+#include "common/formats/iff_container.h"
 #include "common/substream.h"
 #include "common/util.h"
 

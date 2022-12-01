@@ -24,7 +24,7 @@
 #include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/events.h"
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/file.h"
@@ -48,7 +48,7 @@
 
 #include "graphics/palette.h"
 #include "common/memstream.h"
-#include "common/winexe_pe.h"
+#include "common/formats/winexe_pe.h"
 #include "common/substream.h"
 #include "common/md5.h"
 #include "graphics/wincursor.h"
