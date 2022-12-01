@@ -2596,14 +2596,17 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("satodesign", "Gift Disk", "Animation", "a03ae8a9bf211bcb26388b6b6da17c2b", 388853, 311),
 	MACGAME1("satohomosexual", "", "SATO&NAKAZAWA", "a03ae8a9bf211bcb26388b6b6da17c2b", 736276, 311),
 
-	MACGAME1_l("schoolworld", "Breed",	 "BREED",			 "f5277c53bacd27936158dd3867e587e2", 545024, Common::JA_JPN, 311),
-	WINGAME1t_l("schoolworld", "Breed",	  "BREED.EXE",		  "4dcee516cdda1661c2c62852d8c1350f", 375277, Common::JA_JPN, 310),
-	MACGAME1_l("schoolworld", "Capture", "CAPTURE",			 "f5277c53bacd27936158dd3867e587e2", 1652208, Common::JA_JPN, 311),
-	WINGAME1t_l("schoolworld", "Capture", "CAPTURE.EXE",	  "f0bfae0867a86735affd5d0e07e857e7", 375279, Common::JA_JPN, 310),
-	MACDEMO1_l("schoolworld", "Demo",	 "SchoolWorld-DEMO", "f5277c53bacd27936158dd3867e587e2", 4046527, Common::JA_JPN, 311),
+	MACGAME1_l("schoolworld", "Breed",	  "BREED",			  "f5277c53bacd27936158dd3867e587e2", 545024, Common::JA_JPN, 311),
+	WINGAME2t_l("schoolworld", "Breed",	  "BREED.EXE",		  "4dcee516cdda1661c2c62852d8c1350f", 375277,
+										  "BREED.MMM",		  "0bc20ce52a7672998e45b48ea5f28b42", 34576, Common::JA_JPN, 310),
+	MACGAME1_l("schoolworld", "Capture",  "CAPTURE",		  "f5277c53bacd27936158dd3867e587e2", 1652208, Common::JA_JPN, 311),
+	WINGAME2t_l("schoolworld", "Capture", "CAPTURE.EXE",	  "f0bfae0867a86735affd5d0e07e857e7", 375279,
+										  "CAPTURE.MMM",	  "856d2396bf2a8d82a1d5ee460dc080a0", 1448122, Common::JA_JPN, 310),
+	MACDEMO1_l("schoolworld", "Demo",	  "SchoolWorld-DEMO", "f5277c53bacd27936158dd3867e587e2", 4046527, Common::JA_JPN, 311),
 
 	// Manual only. Full game is made in VB3 and contains unsupported content
-	WINGAME1("scissorsnstones", "", "MANUAL.EXE", "7c8230a804abf9353b05627a675b5ffb", 2494292, 310),
+	WINGAME2t("scissorsnstones", "", "MANUAL.EXE", "ef9462b3aaa45bb50824b33b808c1639", 2494292,
+									 "SNS.ICO",	   "6545337dac69926f2776a9234c2015e6", 766, 310),
 
 	// Full game was never released
 	MACDEMO1("screamingmetal", "v1.0 Demo", "xn--Screaming Metal Demo-3h7l", "0a280df213c5bf3eca241f37151e1d56", 372934, 310),
@@ -2629,7 +2632,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("sialmanac94", "", "1994 Almanac", "c72a99a71c87ad34e416f7e7776450a8", 499898, 310),
 	WINGAME1("sialmanac94", "", "SPORTSI.EXE", "990caf82b2406e3342fb93ddb7222bf5", 461040, 310),
 
-	WINDEMO1("sk8board", "Demo", "RIDE.EXE", "65d06b5fef155a2473434571aff5bc29", 370013, 310),
+	WINDEMO2("sk8board", "Demo", "RIDE.EXE",  "65d06b5fef155a2473434571aff5bc29", 370013,
+								 "INTRO.MMM", "91195cec43e8a7bafe8b91d5e121b2e5", 273118, 310),
 
 	// Demo from Blender 1.5
 	// Version 1.2 onwards are D4
@@ -2637,7 +2641,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("smile", "v1.1", "Smile!", "1ae45c23586b41997ba52e2e7c771c4c", 1462136, 310),
 
 	MACGAME1("smithamerica", "", "Smithsonian's America", "b2df07bdfe2a843e8f355a77a1cca47e", 384223, 313),
-	WINGAME1t("smithamerica", "", "AMERICA.EXE", "762716cefb27adf3156d5978ce62c0d8", 370010, 310),
+	WINGAME2t("smithamerica", "", "AMERICA.EXE", "762716cefb27adf3156d5978ce62c0d8", 370010,
+								  "AMERG.MMM",	 "44c614d4bcc9c2dbc0b5372f40d73c9b", 1928814, 310),
 
 	// Original Mac version uses audio tracks, hybrid Mac/Win uses WAV files
 	// German version (Das Bi-Ba-Butze-Haus) published by Systhema, Munich (1995) and later by Rowohlt-Systhema (1999)
@@ -2660,7 +2665,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("stravinsky", "Sampler", "Stravinsky Sampler", "283b66579162e5654fbb0ece117c9885", 2039600, 311),
 
 	MACGAME1("supersonic", "", "Double-click me", "1ae45c23586b41997ba52e2e7c771c4c", 375190, 310),
-	WINGAME1("supersonic", "", "SUPERS.EXE", "7c8230a804abf9353b05627a675b5ffb", 375290, 310),
+	WINGAME2("supersonic", "", "SUPERS.EXE",   "7c8230a804abf9353b05627a675b5ffb", 375290,
+							   "MAINMENU.MMM", "8ea99e5a90c5193af63049c35331d6f2", 648142, 310),
 
 	// Win version requires installation, INSTALL.EXE
 	MACGAME1("take5", "", "Take Five", "1ae45c23586b41997ba52e2e7c771c4c", 1626989, 313),
@@ -2697,7 +2703,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1_l("tree", "Demo", "TREE Demo", "f54ac20d51c496911f9144ee595ade60", 1104691, Common::JA_JPN, 311),
 
-	WINDEMO1("trekfinalunity", "Demo", "PLAYDEMO.EXE", "65d06b5fef155a2473434571aff5bc29", 370018, 310),
+	WINDEMO2("trekfinalunity", "Demo", "PLAYDEMO.EXE", "65d06b5fef155a2473434571aff5bc29", 370018,
+									   "LOGO.MMM",	   "347503372c22dc494f1762f5c6e262c3", 4358472, 310),
 
 	MACDEMO1_l("ttw", "Demo", "T.T.W.Demo", "51e8b81db434a6dcae723f6b7724143d", 691076, Common::JA_JPN, 302),
 	MACGAME1_l("ttw", "", "whales", "e184bbb4cc78e49733829ea7e2dc728a", 67777, Common::JA_JPN, 302),
@@ -2714,7 +2721,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Isaac Asimov's The Ultimate Robot CD-ROM
 	MACGAME1("ultrobotkit", "", "Robotoid Assembly", "1ae45c23586b41997ba52e2e7c771c4c", 1639801, 311),
-	WINGAME1("ultrobotkit", "", "TOOLKIT.EXE", "65d06b5fef155a2473434571aff5bc29", 1858955, 310),
+	WINGAME2("ultrobotkit", "", "TOOLKIT.EXE", "65d06b5fef155a2473434571aff5bc29", 1858955,
+								"BLANK.MMM",   "0c47901562a50baa79beb6a5e4504f15", 656, 310),
 	MACGAME1("ultrobotss", "", "Screen Saver Viewer", "2ce360c9ea2da80a2c6d1040b0ad92dd", 381980, 313),
 	WINDEMO1("ultrobot", "Demo", "ROBODEMO.EXE", "2b3543a9131a49f665982d26513a84f8", 373521, 310),
 
