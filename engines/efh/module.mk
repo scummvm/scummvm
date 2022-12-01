@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	graphics.o \
 	savegames.o \
 	script.o \
+	sound.o \
 	utils.o \
 	metaengine.o
 

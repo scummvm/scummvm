@@ -58,7 +58,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 		int16 varInt = getTeamMonsterAnimId();
 		displayAnimFrames(varInt, true);
 		for (int counter = 0; counter < _teamSize; ++counter) {
-			_word32680[counter] = 100;
+			_teamPctVisible[counter] = 100;
 			_word32482[counter] = 65;
 		}
 
@@ -116,7 +116,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 						if (_items[unk_monsterField5_itemId]._range < 3) {
 							for (uint var84 = 0; var84 < 10; ++var84) {
 								teamMemberId = getRandom(_teamSize) - 1;
-								if (checkWeaponRange(_teamMonsterIdArray[monsterGroupIdOrMonsterId], unk_monsterField5_itemId) && isTeamMemberStatusNormal(teamMemberId) && getRandom(100) < _word32680[teamMemberId]) {
+								if (checkWeaponRange(_teamMonsterIdArray[monsterGroupIdOrMonsterId], unk_monsterField5_itemId) && isTeamMemberStatusNormal(teamMemberId) && getRandom(100) < _teamPctVisible[teamMemberId]) {
 									break;
 								}
 								teamMemberId = -1;
@@ -617,7 +617,7 @@ void EfhEngine::handleFight_lastAction_H(int16 teamCharId) {
 	// In the original, this function is part of handleFight.
 	// It has been split for readability purposes.
 
-	_word32680[teamCharId] -= 50;
+	_teamPctVisible[teamCharId] -= 50;
 	_enemyNamePt2 = _npcBuf[_teamCharId[teamCharId]]._name;
 	int16 var70 = _npcBuf[_teamCharId[teamCharId]]._possessivePronounSHL6 >> 6;
 
@@ -646,6 +646,88 @@ void EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
 
 	snprintf((char *)_messageToBePrinted, 400, "%s%s uses %s %s!  ", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPossessive[var70], _nameBuffer.c_str());
 	sub1C219(_messageToBePrinted, 1, 2, true);
+}
+
+bool EfhEngine::sub1BC74(int16 monsterId, int16 teamMonsterId) {
+	debug("sub1BC74 %d %d", monsterId, teamMonsterId);
+
+	for (int counter = 0; counter < teamMonsterId; ++counter) {
+		if (_teamMonsterIdArray[counter] == monsterId)
+			return true;
+	}
+	return false;
+}
+
+void EfhEngine::sub1BCA7(int16 monsterTeamId) {
+	debug("sub1BCA7 %d", monsterTeamId);
+
+	int16 counter = 0;
+	if (monsterTeamId != -1 && countPictureRef(monsterTeamId, false) > 0) {
+		counter = 1;
+		_teamMonsterIdArray[0] = monsterTeamId;
+	}
+
+	for (int counter2 = 1; counter2 <= 3; ++counter2) {
+		if (counter >= 5)
+			break;
+
+		for (uint monsterId = 0; monsterId < 64; ++monsterId) {
+			if (_mapMonsters[monsterId]._guess_fullPlaceId == 0xFF)
+				continue;
+
+			if (((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) != 0x3F || isCharacterATeamMember(_mapMonsters[monsterId]._field_1)) && (_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) > 0x3D)
+				continue;
+
+			if (!checkIfMonsterOnSameLargeMapPlace(monsterId))
+				continue;
+
+			bool var6 = false;
+			for (uint counter3 = 0; counter3 < 9; ++counter3) {
+				if (_mapMonsters[monsterId]._pictureRef[counter3] > 0) {
+					var6 = true;
+					break;
+				}
+			}
+
+			if (var6) {
+				if (computeMonsterGroupDistance(monsterId) <= counter2 && !sub1BC74(monsterId, counter)) {
+					_teamMonsterIdArray[counter] = monsterId;
+					if (++counter >= 5)
+						break;
+				}
+			}
+		}
+	}
+
+	if (counter > 4)
+		return;
+
+	for (uint id = counter; id < 5; ++id)
+		_teamMonsterIdArray[id] = -1;
+}
+
+void EfhEngine::reset_stru32686() {
+	debug("reset_stru32686");
+	for (uint counter1 = 0; counter1 < 5; ++counter1) {
+		for (uint counter2 = 0; counter2 < 9; ++counter2) {
+			_stru32686[counter1]._field0[counter2] = 0;
+			_stru32686[counter1]._field2[counter2] = 0;
+		}
+	}
+}
+
+void EfhEngine::sub1BE89(int16 monsterId) {
+	debug("sub1BE89 %d", monsterId);
+	sub1BCA7(monsterId);
+	reset_stru32686();
+}
+
+void EfhEngine::resetTeamMonsterIdArray() {
+	debug("resetTeamMonsterIdArray");
+
+	for (int i = 0; i < 5; ++i) {
+		_teamMonsterIdArray[i] = -1;
+	}
 }
 
 } // End of namespace Efh
