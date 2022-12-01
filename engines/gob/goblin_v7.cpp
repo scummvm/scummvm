@@ -344,8 +344,7 @@ static void updateGobDest(Map *map, Mult::Mult_Object &obj) {
 		int8 newGobDestX = 0;
 		int32 var_8 = 1000;
 		int8 newGobDestY = 0;
-		int32 direction = 2;
-		for (;direction <= 8; direction += 2) {
+		for (int32 direction = 2; direction <= 8; direction += 2) {
 			int32 nbrOfStepsDir = 0;
 			int8 tempGobDestX = obj.gobDestX;
 			int8 tempGobDestY = obj.gobDestY;
