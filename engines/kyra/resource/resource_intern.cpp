@@ -1217,13 +1217,11 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 	return new CachedArchive(fileList);
 }
 
-Common::Archive *StuffItLoader::load(Resource *owner, const Common::String &filename, Common::MacResManager *macResMan) {
-	if (macResMan->open(filename)) {
-		Common::SeekableReadStream *stream = macResMan->getDataFork();
-		if (stream) {
-			Common::Archive *archive = Common::createStuffItArchive(stream);
-			return archive;
-		}
+Common::Archive *StuffItLoader::load(Resource *owner, const Common::String &filename) {
+	Common::SeekableReadStream *stream = Common::MacResManager::openFileOrDataFork(filename);
+	if (stream) {
+		Common::Archive *archive = Common::createStuffItArchive(stream);
+		return archive;
 	}
 
 	error("StuffItLoader::load: Could not load %s", filename.c_str());

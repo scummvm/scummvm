@@ -28,11 +28,8 @@
 
 namespace Kyra {
 
-Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles(), _protectedFiles(), _macResMan(), _loaders(), _vm(vm), _bigEndianPlatForm(vm->gameFlags().platform == Common::kPlatformAmiga || vm->gameFlags().platform == Common::kPlatformSegaCD) {
+Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles(), _protectedFiles(), _loaders(), _vm(vm), _bigEndianPlatForm(vm->gameFlags().platform == Common::kPlatformAmiga || vm->gameFlags().platform == Common::kPlatformSegaCD) {
 	initializeLoaders();
-
-	if (_vm->gameFlags().useInstallerPackage)
-		_macResMan = new Common::MacResManager();
 
 	// Initialize directories for playing from CD or with original
 	// directory structure
@@ -55,7 +52,6 @@ Resource::~Resource() {
 	for (ArchiveMap::iterator i = _archiveCache.begin(); i != _archiveCache.end(); ++i)
 		delete i->_value;
 	_archiveCache.clear();
-	delete _macResMan;
 }
 
 bool Resource::reset() {
@@ -406,7 +402,7 @@ Common::Archive *Resource::loadStuffItArchive(const Common::String &file) {
 	if (cachedArchive != _archiveCache.end())
 		return cachedArchive->_value;
 
-	Common::Archive *archive = StuffItLoader::load(this, file, _macResMan);
+	Common::Archive *archive = StuffItLoader::load(this, file);
 	if (!archive)
 		return nullptr;
 
