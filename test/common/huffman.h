@@ -1,10 +1,10 @@
 #include <cxxtest/TestSuite.h>
-#include "common/compression/huffman.h"
+#include "common/huffman.h"
 #include "common/bitstream.h"
 #include "common/memstream.h"
 
 /**
-* A test suite for the Huffman decoder in common/compression/huffman.h
+* A test suite for the Huffman decoder in common/huffman.h
 * The encoding used comes from the example on the Wikipedia page
 * for Huffman.
 * TODO: It could be improved by generating one at runtime.

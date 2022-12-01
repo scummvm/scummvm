@@ -26,7 +26,7 @@
 #include "common/math.h"
 #include "common/error.h"
 #include "common/memstream.h"
-#include "common/compression/huffman.h"
+#include "common/huffman.h"
 
 #include "math/mdct.h"
 #include "math/sinewindows.h"
