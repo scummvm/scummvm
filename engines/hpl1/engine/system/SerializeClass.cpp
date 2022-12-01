@@ -1020,7 +1020,7 @@ cSerializeMemberField *cSerializeClass::GetMemberField(const tString &asName, cS
 	while (classIt.HasNext()) {
 		cSerializeMemberField *pField = classIt.GetNext();
 
-		if (asName == pField->msName)
+		if (asName == pField->msName.c_str())
 			return pField;
 	}
 
