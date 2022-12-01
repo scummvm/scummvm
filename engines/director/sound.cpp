@@ -786,11 +786,9 @@ bool SNDDecoder::hasLoopBounds() {
 AudioFileDecoder::AudioFileDecoder(Common::String &path)
 		: AudioDecoder() {
 	_path = path;
-	_macresman = new Common::MacResManager();
 }
 
 AudioFileDecoder::~AudioFileDecoder() {
-	delete _macresman;
 }
 
 Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppet, DisposeAfterUse::Flag disposeAfterUse) {
@@ -799,25 +797,10 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppe
 
 	Common::Path filePath = Common::Path(pathMakeRelative(_path), g_director->_dirSeparator);
 
-	Common::SeekableReadStream *dataFork = nullptr;
-	Common::SeekableReadStream *copiedStream = nullptr;
-
-	if (_macresman->open(filePath)) {
-
-		dataFork = _macresman->getDataFork();
-	}
-
-	// Data has to be copied out instead of using the stream from
-	// getDataFork() directly because it's possible for this audio
-	// to outlive the owning MacResMan, which would otherwise free
-	// the stream while it's still being read from.
-	if (dataFork != nullptr)
-		copiedStream = dataFork->readStream(dataFork->size());
-	delete dataFork;
+	Common::SeekableReadStream *copiedStream = Common::MacResManager::openFileOrDataFork(filePath);
 
 	if (copiedStream == nullptr) {
 		warning("Failed to open %s", _path.c_str());
-		delete copiedStream;
 		return nullptr;
 	}
 

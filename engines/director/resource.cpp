@@ -432,12 +432,9 @@ void Window::loadMac(const Common::String movie) {
 		openMainArchive(movie);
 	} else {
 		// The RIFX is located in the data fork of the executable
-		_macBinary = new Common::MacResManager();
-
-		if (!_macBinary->open(Common::Path(movie, g_director->_dirSeparator)) || !_macBinary->hasDataFork())
+		Common::SeekableReadStream *dataFork = Common::MacResManager::openFileOrDataFork(Common::Path(movie, g_director->_dirSeparator));
+		if (!dataFork)
 			error("Failed to open Mac binary '%s'", movie.c_str());
-
-		Common::SeekableReadStream *dataFork = _macBinary->getDataFork();
 		_mainArchive = new RIFXArchive();
 		_mainArchive->setPathName(movie);
 

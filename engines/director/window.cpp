@@ -51,7 +51,6 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 
 	_currentMovie = nullptr;
 	_mainArchive = nullptr;
-	_macBinary = nullptr;
 	_nextMovie.frameI = -1;
 	_newMovieStarted = true;
 
@@ -72,10 +71,6 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 Window::~Window() {
 	delete _soundManager;
 	delete _currentMovie;
-	if (_macBinary) {
-		delete _macBinary;
-		_macBinary = nullptr;
-	}
 	if (_puppetTransition)
 		delete _puppetTransition;
 }
