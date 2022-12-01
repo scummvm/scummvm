@@ -116,13 +116,12 @@ void Map01::special08() {
 			c._condition = PARALYZED;
 	}
 
-	// Redraw the party
-	g_events->send("GameParty", GameMessage("UPDATE"));
-
+	redrawGame();
+	
 	// Show the message and wait for a keypress
 	send(SoundMessage(
 		STRING["maps.map01.secret"],
-		[]() {
+		[](const Common::KeyState &) {
 			Game::Encounter &enc = g_globals->_encounters;
 			enc.clearMonsters();
 
@@ -141,7 +140,7 @@ void Map01::special08() {
 void Map01::special09() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.map01.passage_outside"],
+		STRING["maps.stairs_down"],
 		[]() {
 			g_maps->_mapPos = Common::Point(8, 0);
 			g_maps->changeMap(0xc01, 1);
@@ -167,7 +166,7 @@ void Map01::special13() {
 
 void Map01::special14() {
 	send(SoundMessage(
-		0, 1, STRING["maps.map00.zam0"]
+		0, 1, STRING["maps.map01.zam0"]
 	));
 }
 
