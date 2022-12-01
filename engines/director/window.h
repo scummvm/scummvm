@@ -207,7 +207,6 @@ private:
 	DirectorSound *_soundManager;
 	bool _isStage;
 	Archive *_mainArchive;
-	Common::MacResManager *_macBinary;
 	Movie *_currentMovie;
 	Common::String _currentPath;
 	Common::StringArray _movieQueue;
