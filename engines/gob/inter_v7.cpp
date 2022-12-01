@@ -982,9 +982,6 @@ void Inter_v7::o7_getDBString() {
 
 void Inter_v7::o7_printText(OpFuncParams &params) {
 	char buf[60];
-	int i;
-	int16 oldTransparency;
-
 	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
 	_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
 
@@ -1012,8 +1009,8 @@ void Inter_v7::o7_printText(OpFuncParams &params) {
 	//		_vm->_draw->_backColor += colMod;
 	//	_vm->_draw->_frontColor += colMod;
 
-	oldTransparency = _vm->_draw->_transparency;
-	i = 0;
+	int16 oldTransparency = _vm->_draw->_transparency;
+	int i = 0;
 	do {
 		for (; (_vm->_game->_script->peekChar() != '.') &&
 			   (_vm->_game->_script->peekByte() != 200); i++) {

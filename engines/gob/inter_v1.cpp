@@ -1220,7 +1220,7 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 				_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 			else
 				_vm->_util->clearPalette();
-			return ;
+			return;
 		}
 
 		_vm->_global->_pPaletteDesc->unused2 = _vm->_draw->_unusedPalette2;
