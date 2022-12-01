@@ -220,10 +220,7 @@ void TinyGLRenderer::clear(uint8 color) {
 		color = (*_colorRemaps)[color];
 	}
 
-	if (color == 255)
-		r = g = b = 0;
-	else
-		readFromPalette(color, r, g, b);
+	readFromPalette(color, r, g, b);
 	tglClearColor(r / 255., g / 255., b / 255., 1.0);
 	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
 }
