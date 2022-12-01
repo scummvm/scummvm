@@ -60,7 +60,7 @@ QuickTimeParser::~QuickTimeParser() {
 }
 
 bool QuickTimeParser::parseFile(const Path &filename) {
-	if (!_resFork->open(filename) || !_resFork->hasDataFork())
+	if (!_resFork->open(filename))
 		return false;
 
 	_foundMOOV = false;
@@ -84,7 +84,9 @@ bool QuickTimeParser::parseFile(const Path &filename) {
 		delete _fd;
 	}
 
-	_fd = _resFork->getDataFork();
+	_fd = Common::MacResManager::openFileOrDataFork(filename);
+	if (!_fd)
+		return false;
 	atom.size = _fd->size();
 
 	if (readDefault(atom) < 0 || !_foundMOOV)
