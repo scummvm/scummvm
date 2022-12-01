@@ -20,7 +20,7 @@
  */
 
 #include "common/config-manager.h"
-#include "common/winexe_pe.h"
+#include "common/formats/winexe_pe.h"
 
 #include "scumm/he/intern_he.h"
 #include "scumm/he/moonbase/moonbase.h"

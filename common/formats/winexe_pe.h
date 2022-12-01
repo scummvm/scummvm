@@ -19,20 +19,21 @@
  *
  */
 
-#ifndef COMMON_WINEXE_NE_H
-#define COMMON_WINEXE_NE_H
+#ifndef COMMON_WINEXE_PE_H
+#define COMMON_WINEXE_PE_H
 
-#include "common/list.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/str.h"
-#include "common/winexe.h"
+#include "common/formats/winexe.h"
 
 namespace Common {
 
 /**
- * @defgroup common_winexe_ne Windows New Executable resources
+ * @defgroup common_winexe_ne Windows Portable Executable resources
  * @ingroup common_winexe
  *
- * @brief API for managing Windows New Executable resources.
+ * @brief API for managing Windows Portable Executable resources.
  *
  * @{
  */
@@ -41,15 +42,13 @@ template<class T> class Array;
 class SeekableReadStream;
 
 /**
- * A class able to load resources from a Windows New Executable, such
+ * A class able to load resources from a Windows Portable Executable, such
  * as cursors, bitmaps, and sounds.
- *
- * See http://en.wikipedia.org/wiki/New_Executable for more info.
  */
-class NEResources : public WinResources {
+class PEResources : public WinResources {
 public:
-	NEResources();
-	~NEResources();
+	PEResources();
+	~PEResources();
 
 	/** Clear all information. */
 	void clear();
@@ -60,11 +59,20 @@ public:
 	/** Load from a stream. */
 	bool loadFromEXE(SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle = DisposeAfterUse::YES);
 
-	/** Return a list of resources for a given type. */
+	/** Return a list of resource types. */
+	const Array<WinResourceID> getTypeList() const;
+
+	/** Return a list of IDs for a given type. */
 	const Array<WinResourceID> getIDList(const WinResourceID &type) const;
 
-	/** Return a stream to the specified resource (or 0 if non-existent). */
+	/** Return a list of languages for a given type and ID. */
+	const Array<WinResourceID> getLangList(const WinResourceID &type, const WinResourceID &id) const;
+
+	/** Return a stream to the specified resource, taking the first language found (or 0 if non-existent). */
 	SeekableReadStream *getResource(const WinResourceID &type, const WinResourceID &id);
+
+	/** Return a stream to the specified resource (or 0 if non-existent). */
+	SeekableReadStream *getResource(const WinResourceID &type, const WinResourceID &id, const WinResourceID &lang);
 
 	/** Get a string from a string resource. */
 	String loadString(uint32 stringID);
@@ -73,43 +81,30 @@ protected:
 	VersionInfo *parseVersionInfo(SeekableReadStream *stream);
 
 private:
-	/** A resource. */
-	struct Resource {
-		WinResourceID id;
-
-		WinResourceID type; ///< Type of the resource.
-
-		uint32 offset; ///< Offset within the EXE.
-		uint32 size;   ///< Size of the data.
-
-		uint16 flags;
-		uint16 handle;
-		uint16 usage;
+	struct Section {
+		uint32 virtualAddress;
+		uint32 size;
+		uint32 offset;
 	};
 
-	SeekableReadStream *_exe;        ///< Current file.
+	HashMap<String, Section, IgnoreCase_Hash, IgnoreCase_EqualTo> _sections;
+
+	SeekableReadStream *_exe;
 	DisposeAfterUse::Flag _disposeFileHandle;
 
-	/** All resources. */
-	List<Resource> _resources;
+	void parseResourceLevel(Section &section, uint32 offset, int level);
+	WinResourceID _curType, _curID, _curLang;
 
-	typedef HashMap<WinResourceID, Common::String, WinResourceID_Hash, WinResourceID_EqualTo> IDMap;
-	typedef HashMap<WinResourceID, IDMap, WinResourceID_Hash, WinResourceID_EqualTo> TypeMap;
-	TypeMap _nameTable;
+	struct Resource {
+		uint32 offset;
+		uint32 size;
+	};
 
-	/** Read the offset to the resource table. */
-	uint32 getResourceTableOffset();
-	/** Read the resource table. */
-	bool readResourceTable(uint32 offset);
+	typedef HashMap<WinResourceID, Resource, WinResourceID_Hash, WinResourceID_EqualTo> LangMap;
+	typedef HashMap<WinResourceID,  LangMap, WinResourceID_Hash, WinResourceID_EqualTo> IDMap;
+	typedef HashMap<WinResourceID,    IDMap, WinResourceID_Hash, WinResourceID_EqualTo> TypeMap;
 
-	/** Read the name table. */
-	bool readNameTable(uint32 offset, uint32 size);
-
-	/** Find a specific resource. */
-	const Resource *findResource(const WinResourceID &type, const WinResourceID &id) const;
-
-	/** Read a resource string. */
-	static String getResourceString(SeekableReadStream &exe, uint32 offset);
+	TypeMap _resources;
 };
 
 /** @} */

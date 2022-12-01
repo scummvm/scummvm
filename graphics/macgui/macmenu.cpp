@@ -23,7 +23,7 @@
 #include "common/stack.h"
 #include "common/keyboard.h"
 #include "common/macresman.h"
-#include "common/winexe_pe.h"
+#include "common/formats/winexe_pe.h"
 #include "common/unicode-bidi.h"
 
 #include "graphics/primitives.h"

@@ -30,7 +30,7 @@
 
 #include "common/memstream.h"
 #include "common/stream.h"
-#include "common/winexe_pe.h"
+#include "common/formats/winexe_pe.h"
 
 #include "graphics/surface.h"
 

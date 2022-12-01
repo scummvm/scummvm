@@ -22,7 +22,7 @@
 #ifdef ENABLE_HE
 
 #include "common/archive.h"
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 #include "common/config-manager.h"
 #include "common/macresman.h"
 #include "common/savefile.h"

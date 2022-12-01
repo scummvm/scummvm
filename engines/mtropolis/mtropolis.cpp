@@ -27,7 +27,7 @@
 #include "common/ptr.h"
 #include "common/compression/stuffit.h"
 #include "common/system.h"
-#include "common/winexe.h"
+#include "common/formats/winexe.h"
 
 #include "engines/util.h"
 

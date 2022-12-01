@@ -13,9 +13,6 @@ MODULE_OBJS := \
 	fs.o \
 	gui_options.o \
 	hashmap.o \
-	iff_container.o \
-	ini-file.o \
-	json.o \
 	language.o \
 	localization.o \
 	macresman.o \
@@ -26,7 +23,6 @@ MODULE_OBJS := \
 	path.o \
 	platform.o \
 	punycode.o \
-	quicktime.o \
 	random.o \
 	rational.o \
 	rendermode.o \
@@ -43,10 +39,6 @@ MODULE_OBJS := \
 	unicode-bidi.o \
 	ustr.o \
 	util.o \
-	winexe.o \
-	winexe_ne.o \
-	winexe_pe.o \
-	xmlparser.o \
 	xpfloat.o \
 	compression/clickteam.o \
 	compression/dcl.o \
@@ -59,7 +51,15 @@ MODULE_OBJS := \
 	compression/unarj.o \
 	compression/unzip.o \
 	compression/vise.o \
-	compression/zlib.o
+	compression/zlib.o \
+	formats/iff_container.o \
+	formats/ini-file.o \
+	formats/json.o \
+	formats/quicktime.o \
+	formats/winexe.o \
+	formats/winexe_ne.o \
+	formats/winexe_pe.o \
+	formats/xmlparser.o
 
 ifdef ENABLE_EVENTRECORDER
 MODULE_OBJS += \

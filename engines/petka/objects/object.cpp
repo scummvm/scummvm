@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/events.h"

@@ -32,7 +32,7 @@
 #include "backends/networking/curl/networkreadstream.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
-#include "common/json.h"
+#include "common/formats/json.h"
 #include "common/debug.h"
 
 namespace Cloud {

@@ -25,7 +25,7 @@
 #include "common/stream.h"
 #include "common/array.h"
 #include "common/func.h"
-#include "common/iff_container.h"
+#include "common/formats/iff_container.h"
 
 namespace Kyra {
 

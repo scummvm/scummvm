@@ -22,7 +22,7 @@
 #ifndef COMPOSER_COMPOSER_H
 #define COMPOSER_COMPOSER_H
 
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 #include "common/random.h"
 #include "common/system.h"
 #include "common/debug.h"

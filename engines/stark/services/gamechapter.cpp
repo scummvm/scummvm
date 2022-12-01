@@ -24,7 +24,7 @@
 #include "engines/stark/services/global.h"
 
 #include "common/tokenizer.h"
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 
 namespace Stark {
 

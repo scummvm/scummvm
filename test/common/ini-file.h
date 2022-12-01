@@ -1,6 +1,6 @@
 #include <cxxtest/TestSuite.h>
 
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 #include "common/memstream.h"
 
 

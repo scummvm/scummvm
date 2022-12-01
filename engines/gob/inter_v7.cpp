@@ -23,8 +23,8 @@
 #include "common/endian.h"
 #include "common/archive.h"
 #include "common/translation.h"
-#include "common/winexe_pe.h"
-#include "common/winexe_ne.h"
+#include "common/formats/winexe_pe.h"
+#include "common/formats/winexe_ne.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/wincursor.h"

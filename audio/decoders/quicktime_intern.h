@@ -29,7 +29,7 @@
 #ifndef AUDIO_QUICKTIME_INTERN_H
 #define AUDIO_QUICKTIME_INTERN_H
 
-#include "common/quicktime.h"
+#include "common/formats/quicktime.h"
 #include "common/scummsys.h"
 #include "common/types.h"
 

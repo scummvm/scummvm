@@ -23,7 +23,7 @@
 #define COMMON_ACHIEVEMENTS_H
 
 #include "common/array.h"
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 #include "common/hashmap.h"
 #include "common/singleton.h"
 #include "common/str.h"

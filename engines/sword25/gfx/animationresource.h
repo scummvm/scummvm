@@ -31,7 +31,7 @@
 #ifndef SWORD25_ANIMATIONRESOURCE_H
 #define SWORD25_ANIMATIONRESOURCE_H
 
-#include "common/xmlparser.h"
+#include "common/formats/xmlparser.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/resource.h"
 #include "sword25/gfx/animationdescription.h"

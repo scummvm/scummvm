@@ -27,7 +27,7 @@
 #include "backends/networking/curl/sessionrequest.h"
 #include "common/debug.h"
 #include "common/file.h"
-#include "common/json.h"
+#include "common/formats/json.h"
 
 namespace Networking {
 

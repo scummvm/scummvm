@@ -24,7 +24,7 @@
 #include "common/fs.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 
 #include "agi/wagparser.h"
 

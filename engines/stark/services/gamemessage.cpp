@@ -22,7 +22,7 @@
 #include "engines/stark/services/gamemessage.h"
 
 #include "common/file.h"
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 
 #include "gui/message.h"
 

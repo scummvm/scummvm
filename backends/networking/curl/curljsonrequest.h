@@ -24,7 +24,7 @@
 
 #include "backends/networking/curl/curlrequest.h"
 #include "common/memstream.h"
-#include "common/json.h"
+#include "common/formats/json.h"
 
 namespace Networking {
 

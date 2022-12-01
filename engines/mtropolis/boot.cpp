@@ -25,7 +25,7 @@
 #include "common/memstream.h"
 #include "common/compression/stuffit.h"
 #include "common/compression/vise.h"
-#include "common/winexe.h"
+#include "common/formats/winexe.h"
 #include "common/compression/zlib.h"
 
 #include "graphics/maccursor.h"

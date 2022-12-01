@@ -26,7 +26,7 @@
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "backends/networking/curl/networkreadstream.h"
 #include "common/debug.h"
-#include "common/json.h"
+#include "common/formats/json.h"
 
 namespace Cloud {
 namespace Dropbox {
