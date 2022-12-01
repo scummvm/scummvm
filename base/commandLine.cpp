@@ -1444,7 +1444,8 @@ static void calcMD5Mac(Common::Path &filePath, int32 length) {
 	if (!macResMan.open(fileName, dir)) {
 		printf("Mac resource file '%s' not found or could not be open\n", filePath.toString(nativeSeparator).c_str());
 	} else {
-		if (!macResMan.hasResFork() && !macResMan.hasDataFork()) {
+		Common::ScopedPtr<Common::SeekableReadStream> dataFork(Common::MacResManager::openFileOrDataFork(fileName, dir));
+		if (!macResMan.hasResFork() && !dataFork) {
 			printf("'%s' has neither data not resource fork\n", macResMan.getBaseFileName().toString().c_str());
 		} else {
 			bool tail = false;
@@ -1460,14 +1461,13 @@ static void calcMD5Mac(Common::Path &filePath, int32 length) {
 					md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
 				printf("%s (resource): %s, %llu bytes\n", macResMan.getBaseFileName().toString().c_str(), md5.c_str(), (unsigned long long)macResMan.getResForkDataSize());
 			}
-			if (macResMan.hasDataFork()) {
-				Common::SeekableReadStream *stream = macResMan.getDataFork();
-				if (tail && stream->size() > length)
-					stream->seek(-length, SEEK_END);
-				Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
-				if (length != 0 && length < stream->size())
+			if (dataFork) {
+				if (tail && dataFork->size() > length)
+					dataFork->seek(-length, SEEK_END);
+				Common::String md5 = Common::computeStreamMD5AsString(*dataFork, length);
+				if (length != 0 && length < dataFork->size())
 					md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
-				printf("%s (data): %s, %llu bytes\n", macResMan.getBaseFileName().toString().c_str(), md5.c_str(), (unsigned long long)stream->size());
+				printf("%s (data): %s, %llu bytes\n", macResMan.getBaseFileName().toString().c_str(), md5.c_str(), (unsigned long long)dataFork->size());
 			}
 		}
 		macResMan.close();
