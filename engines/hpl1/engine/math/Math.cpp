@@ -25,11 +25,10 @@
  * This file is part of HPL1 Engine.
  */
 
+#include <limits.h>
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/low_level_system.h"
-#include <limits> // FIXME: Refactor to remove this system header
 #include "hpl1/hpl1.h"
-#include <limits>
 
 namespace hpl {
 
@@ -48,8 +47,8 @@ int cMath::RandRectl(int alMin, int alMax) {
 //-----------------------------------------------------------------------
 
 float cMath::RandRectf(float afMin, float afMax) {
-	float fRand =  static_cast<float>(Hpl1::g_engine->getRandomNumber(std::numeric_limits<uint32>::max()))
-		/ static_cast<float>(std::numeric_limits<uint32>::max());
+	float fRand =  static_cast<float>(Hpl1::g_engine->getRandomNumber(UINT_MAX))
+		/ static_cast<float>(UINT_MAX);
 
 	return afMin + fRand * (afMax - afMin);
 }
