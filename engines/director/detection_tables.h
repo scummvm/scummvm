@@ -1198,6 +1198,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "strata",				"Strata Studio Pro" },
 	{ "toeic",				"PowerTOEIC" },
 	{ "toonet11",			"TooNet11" },
+	{ "trans",				"Trans' ～僕とあたしの境界線～" }, // Trans': The Boundary Between Me and You
 	{ "transland",			"トランスランド" },
 	{ "wonderompm",			"アルダスページメーカー4.5J速習用CD-ROM" },		// CD-ROM for Quick Study of Aldus PageMaker 4.5J
 	{ "wonderomcw",			"WONDEROM クラリスワークス" },					// WONDEROM ClarisWorks ver.2
@@ -7848,6 +7849,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original Mac filename is ときメモタイピング
 	MACGAME1_l("tokimemotype1", "", "Tokimemo Typing", "80b8d1697b18f6f2d8a2813a594cead2", 255114, Common::JA_JPN, 851),
 	WINGAME1_l("tokimemotype1", "", "tkmktype.exe",	"d5069f2a24854aa78f8fbd01462ba37c", 2160344, Common::JA_JPN, 851),
+
+	MACGAME1_l("trans", "", "Trans", "2e860522900a5342e52e5ce51bcad9dd", 219919, Common::JA_JPN, 850),
+	WINGAME1t_l("trans", "", "Trans.exe", "de336a369a0fa4aab1b3d9dc07b1624d", 2117070, Common::JA_JPN, 850),
 
 	WINGAME1("tweeniesrtp", "", "BBC Tweenies Tour.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 5435024, 800),
 
