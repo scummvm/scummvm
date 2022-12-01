@@ -566,7 +566,7 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 		if (fileProps.size != 0)
 			return true;
 
-		Common::SeekableReadStream *dataFork = macResMan.getDataFork();
+		Common::SeekableReadStream *dataFork = Common::MacResManager::openFileOrDataFork(fname, fileMapArchive);
 		if (dataFork && dataFork->size()) {
 			fileProps.size = dataFork->size();
 			fileProps.md5 = Common::computeStreamMD5AsString(*dataFork, md5Bytes);
