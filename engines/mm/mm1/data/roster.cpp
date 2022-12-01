@@ -77,7 +77,7 @@ void Roster::update(const IntArray &charNums) {
 
 		} else {
 			for (destIndex = 0; destIndex < ROSTER_COUNT; ++destIndex) {
-				if (_items[destIndex]._name == c._name)
+				if (!strcmp(_items[destIndex]._name, c._name))
 					break;
 			}
 

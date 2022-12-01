@@ -28,6 +28,10 @@ namespace Views {
 namespace Locations {
 
 bool Inn::msgFocus(const FocusMessage &msg) {
+	if (g_maps->_currentMap)
+		// Update the starting town
+		g_globals->_startingTown = (Maps::TownId)g_maps->_currentMap->dataByte(Maps::MAP_ID);
+
 	// Save the roster
 	g_globals->_roster.update(_partyChars);
 	g_globals->_roster.save();

@@ -191,6 +191,13 @@ public:
 	}
 
 	/**
+	 * Returns the map's index
+	 */
+	uint getMapIndex() const {
+		return _mapIndex;
+	}
+
+	/**
 	 * Updates the game display
 	 */
 	static void updateGame();
