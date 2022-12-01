@@ -24,7 +24,7 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/system.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 #include "common/ustr.h"
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"

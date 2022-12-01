@@ -33,7 +33,7 @@
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/system.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 #include "sword25/sword25.h"	// for kDebugScript
 #include "sword25/kernel/filesystemutil.h"
 #include "sword25/package/packagemanager.h"

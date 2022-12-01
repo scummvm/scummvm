@@ -25,7 +25,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/translation.h"
-#include "common/unarj.h"
+#include "common/compression/unarj.h"
 
 #include "audio/mixer.h"
 

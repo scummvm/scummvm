@@ -25,7 +25,7 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/translation.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 
 namespace Common {
 
@@ -125,7 +125,7 @@ bool AchievementsManager::loadAchievementsData(const char *platform, const char 
 		warning("%s is not found in achievements.dat. Achievements messages are unavailable", cfgFileName.c_str());
 		return false;
 	}
-	
+
 	INIFile cfgFile;
 	if (!cfgFile.loadFromStream(*stream)) {
 		delete stream;
@@ -158,7 +158,7 @@ bool AchievementsManager::loadAchievementsData(const char *platform, const char 
 				_achievements[lang].push_back(desc);
 			}
 		}
-	} 
+	}
 
 	_stats.clear();
 	for (int i = 0; i < 256; i++) {

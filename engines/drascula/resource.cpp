@@ -20,7 +20,7 @@
  */
 
 #include "drascula/drascula.h"
-#include "common/unarj.h"
+#include "common/compression/unarj.h"
 
 namespace Drascula {
 

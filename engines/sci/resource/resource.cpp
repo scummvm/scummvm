@@ -28,7 +28,7 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #ifdef ENABLE_SCI32
-#include "common/installshield_cab.h"
+#include "common/compression/installshield_cab.h"
 #include "common/memstream.h"
 #endif
 

@@ -26,7 +26,7 @@
 #include "titanic/support/rect.h"
 #include "common/savefile.h"
 #include "common/stream.h"
-#include "common/zlib.h"
+#include "common/compression/zlib.h"
 #include "titanic/support/string.h"
 
 namespace Titanic {

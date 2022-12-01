@@ -33,7 +33,7 @@
 #include "macventure/macventure.h"
 #include "macventure/windows.h"
 
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 
 namespace MacVenture {
 

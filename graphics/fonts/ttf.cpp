@@ -39,7 +39,7 @@
 #include "common/memstream.h"
 #include "common/hashmap.h"
 #include "common/ptr.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H

@@ -23,10 +23,10 @@
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/memstream.h"
-#include "common/stuffit.h"
-#include "common/vise.h"
+#include "common/compression/stuffit.h"
+#include "common/compression/vise.h"
 #include "common/winexe.h"
-#include "common/zlib.h"
+#include "common/compression/zlib.h"
 
 #include "graphics/maccursor.h"
 #include "graphics/wincursor.h"

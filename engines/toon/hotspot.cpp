@@ -20,7 +20,7 @@
  */
 
 #include "common/debug.h"
-#include "common/rnc_deco.h"
+#include "common/compression/rnc_deco.h"
 
 #include "toon/hotspot.h"
 

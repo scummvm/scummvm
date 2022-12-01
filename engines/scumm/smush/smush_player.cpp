@@ -48,7 +48,7 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
 
-#include "common/zlib.h"
+#include "common/compression/zlib.h"
 
 namespace Scumm {
 

@@ -84,8 +84,8 @@ typedef Byte Bytef;
 
 #include "common/crc.h"
 #include "common/fs.h"
-#include "common/gzio.h"
-#include "common/unzip.h"
+#include "common/compression/gzio.h"
+#include "common/compression/unzip.h"
 #include "common/memstream.h"
 
 #include "common/hashmap.h"

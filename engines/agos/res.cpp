@@ -31,7 +31,7 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 
-#include "common/zlib.h"
+#include "common/compression/zlib.h"
 
 namespace AGOS {
 

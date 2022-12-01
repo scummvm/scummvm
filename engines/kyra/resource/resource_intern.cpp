@@ -26,7 +26,7 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/macresman.h"
-#include "common/stuffit.h"
+#include "common/compression/stuffit.h"
 
 namespace Kyra {
 

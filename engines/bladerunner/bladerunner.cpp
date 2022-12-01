@@ -87,7 +87,7 @@
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/translation.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 
 #include "gui/message.h"
 

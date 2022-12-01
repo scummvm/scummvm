@@ -39,7 +39,7 @@
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 
 namespace Ultima {
 namespace Nuvie {

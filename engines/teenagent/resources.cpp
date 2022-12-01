@@ -24,7 +24,7 @@
 #include "common/debug.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
-#include "common/zlib.h"
+#include "common/compression/zlib.h"
 
 namespace TeenAgent {
 

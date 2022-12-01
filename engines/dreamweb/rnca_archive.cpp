@@ -20,12 +20,12 @@
  */
 
 #include "common/array.h"
-#include "common/gzio.h"
+#include "common/compression/gzio.h"
 #include "common/debug.h"
 #include "common/ptr.h"
 #include "common/substream.h"
 #include "common/memstream.h"
-#include "common/rnc_deco.h"
+#include "common/compression/rnc_deco.h"
 #include "common/file.h"
 
 #include "dreamweb/rnca_archive.h"
@@ -118,7 +118,7 @@ Common::SharedArchiveContents RNCAArchive::readContentsForPath(const Common::Str
 	byte *uncompressedBuffer = new byte[unpackLen];
 
 	Common::RncDecoder rnc;
-	
+
 	if (rnc.unpackM1(compressedBuffer, packLen, uncompressedBuffer) != (int32) unpackLen) {
 		debug("Unpacking error for %s", desc._fileName.c_str());
 		return Common::SharedArchiveContents();

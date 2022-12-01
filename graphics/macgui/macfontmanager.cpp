@@ -20,7 +20,7 @@
 
 #include "common/archive.h"
 #include "common/stream.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 #include "common/macresman.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/fonts/macfont.h"

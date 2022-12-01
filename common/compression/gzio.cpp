@@ -38,7 +38,7 @@
 #include "common/stream.h"
 #include "common/ptr.h"
 #include "common/memstream.h"
-#include "gzio.h"
+#include "common/compression/gzio.h"
 
 
 /* Compression methods (see algorithm.doc) */
@@ -1025,7 +1025,7 @@ bool
 GzioReadStream::test_zlib_header ()
 {
   uint8 cmf, flg;
-  
+
   cmf = parentGetByte ();
   flg = parentGetByte ();
 

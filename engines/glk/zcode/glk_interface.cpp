@@ -25,7 +25,7 @@
 #include "glk/conf.h"
 #include "glk/screen.h"
 #include "common/config-manager.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 
 namespace Glk {
 namespace ZCode {

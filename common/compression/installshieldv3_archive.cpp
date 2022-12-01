@@ -19,9 +19,9 @@
  *
  */
 
-#include "common/installshieldv3_archive.h"
+#include "common/compression/installshieldv3_archive.h"
 
-#include "common/dcl.h"
+#include "common/compression/dcl.h"
 #include "common/debug.h"
 
 namespace Common {

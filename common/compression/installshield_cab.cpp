@@ -45,11 +45,11 @@
 #include "common/archive.h"
 #include "common/debug.h"
 #include "common/hash-str.h"
-#include "common/installshield_cab.h"
+#include "common/compression/installshield_cab.h"
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/ptr.h"
-#include "common/zlib.h"
+#include "common/compression/zlib.h"
 
 namespace Common {
 

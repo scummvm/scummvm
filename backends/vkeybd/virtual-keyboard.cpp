@@ -33,7 +33,7 @@
 #include "backends/vkeybd/keycode-descriptions.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 
 #define KEY_START_CHAR ('[')
 #define KEY_END_CHAR (']')

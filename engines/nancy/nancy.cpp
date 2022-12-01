@@ -24,7 +24,7 @@
 #include "common/debug-channels.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
-#include "common/installshield_cab.h"
+#include "common/compression/installshield_cab.h"
 #include "common/serializer.h"
 
 #include "engines/nancy/nancy.h"
@@ -460,7 +460,7 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 	if (ser.getVersion() == kGameTypeNancy3) {
 		readChunkList(boot, ser, "PLG"); // partner logos
 	}
-	
+
 	readChunkList(boot, ser, "OB"); // objects
 
 	ser.skip(0x28, kGameTypeVampire, kGameTypeVampire);

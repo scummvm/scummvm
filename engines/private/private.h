@@ -22,7 +22,7 @@
 #ifndef PRIVATE_H
 #define PRIVATE_H
 
-#include "common/installshieldv3_archive.h"
+#include "common/compression/installshieldv3_archive.h"
 #include "common/random.h"
 #include "common/serializer.h"
 #include "engines/engine.h"

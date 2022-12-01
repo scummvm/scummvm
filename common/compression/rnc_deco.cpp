@@ -21,7 +21,7 @@
 
 
 #include "common/endian.h"
-#include "common/rnc_deco.h"
+#include "common/compression/rnc_deco.h"
 
 namespace Common {
 

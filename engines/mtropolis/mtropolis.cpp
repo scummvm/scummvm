@@ -25,7 +25,7 @@
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/ptr.h"
-#include "common/stuffit.h"
+#include "common/compression/stuffit.h"
 #include "common/system.h"
 #include "common/winexe.h"
 

@@ -27,7 +27,7 @@
 #include "common/substream.h"
 #include "common/textconsole.h"
 #include "common/memstream.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 
 #include "draci/sound.h"
 #include "draci/draci.h"

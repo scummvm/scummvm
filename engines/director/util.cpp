@@ -26,7 +26,7 @@
 #include "common/memstream.h"
 #include "common/punycode.h"
 #include "common/tokenizer.h"
-#include "common/zlib.h"
+#include "common/compression/zlib.h"
 
 #include "director/types.h"
 #include "graphics/macgui/macwindowmanager.h"

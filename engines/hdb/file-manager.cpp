@@ -21,7 +21,7 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/memstream.h"
-#include "common/zlib.h"
+#include "common/compression/zlib.h"
 
 #include "hdb/hdb.h"
 #include "hdb/file-manager.h"

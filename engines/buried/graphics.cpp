@@ -26,7 +26,7 @@
 #include "common/fs.h"
 #include "common/str-array.h"
 #include "common/system.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
 #include "graphics/palette.h"

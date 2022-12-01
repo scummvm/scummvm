@@ -34,7 +34,7 @@
 #include "common/quicktime.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "common/zlib.h"
+#include "common/compression/zlib.h"
 
 namespace Common {
 

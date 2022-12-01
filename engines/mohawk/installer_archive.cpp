@@ -21,7 +21,7 @@
 
 #include "mohawk/installer_archive.h"
 
-#include "common/dcl.h"
+#include "common/compression/dcl.h"
 #include "common/debug.h"
 
 namespace Mohawk {

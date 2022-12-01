@@ -29,7 +29,7 @@
 
 #include "video/dxa_decoder.h"
 
-#include "common/gzio.h"
+#include "common/compression/gzio.h"
 
 namespace Video {
 

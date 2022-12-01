@@ -31,7 +31,7 @@
 #include "common/keyboard.h"
 #include "common/macresman.h"
 #include "common/util.h"
-#include "common/gzio.h"
+#include "common/compression/gzio.h"
 #include "common/config-manager.h"
 
 #include "engines/advancedDetector.h"

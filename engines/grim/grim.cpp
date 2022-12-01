@@ -31,7 +31,7 @@
 #include "common/foreach.h"
 #include "common/fs.h"
 #include "common/config-manager.h"
-#include "common/stuffit.h"
+#include "common/compression/stuffit.h"
 #include "common/translation.h"
 
 #include "backends/keymapper/action.h"

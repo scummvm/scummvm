@@ -25,8 +25,8 @@
 #include "common/file.h"
 #include "common/util.h"
 #include "common/memstream.h"
-#include "common/dcl.h"
-#include "mps_installer.h"
+#include "common/compression/dcl.h"
+#include "mads/mps_installer.h"
 
 namespace MADS {
 

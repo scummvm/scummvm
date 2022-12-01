@@ -23,7 +23,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 #include "common/tokenizer.h"
 #include "common/translation.h"
 #include "common/unicode-bidi.h"
@@ -1057,7 +1057,7 @@ void ThemeEngine::drawLineSeparator(const Common::Rect &r) {
 	drawDD(kDDSeparator, r);
 }
 
-void ThemeEngine::drawCheckbox(const Common::Rect &r, int spacing, const Common::U32String &str, bool checked, 
+void ThemeEngine::drawCheckbox(const Common::Rect &r, int spacing, const Common::U32String &str, bool checked,
 							   WidgetStateInfo state, bool overrideText, bool rtl) {
 	if (!ready())
 		return;
@@ -1088,7 +1088,7 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, int spacing, const Common:
 	}
 
 	if (r2.right > r2.left) {
-		TextColor color = overrideText ? GUI::TextColor::kTextColorOverride : getTextColor(dd); 
+		TextColor color = overrideText ? GUI::TextColor::kTextColorOverride : getTextColor(dd);
 		drawDDText(getTextData(dd), color, r2, str, true, false, convertTextAlignH(_widgets[dd]->_textAlignH, rtl),
 		           _widgets[dd]->_textAlignV);
 	}
@@ -1359,7 +1359,7 @@ void ThemeEngine::drawText(const Common::Rect &r, const Common::U32String &str, 
 	case kFontColorNormal:
 		if (inverted) {
 			colorId = kTextColorNormalInverted;
-			break; 
+			break;
 		}
 
 		switch (state) {
@@ -1383,7 +1383,7 @@ void ThemeEngine::drawText(const Common::Rect &r, const Common::U32String &str, 
 	case kFontColorAlternate:
 		if (inverted) {
 			colorId = kTextColorAlternativeInverted;
-			break; 
+			break;
 		}
 
 		switch (state) {
@@ -1404,12 +1404,12 @@ void ThemeEngine::drawText(const Common::Rect &r, const Common::U32String &str, 
 		}
 		break;
 
-	case kFontColorOverride: 
+	case kFontColorOverride:
 		if (inverted) {
-			colorId = kTextColorOverrideInverted; 
-			break; 
+			colorId = kTextColorOverrideInverted;
+			break;
 		}
-			
+
 		switch (state) {
 		case kStateDisabled:
 			colorId = kTextColorAlternativeDisabled;

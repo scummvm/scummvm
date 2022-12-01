@@ -23,7 +23,7 @@
 #define __FRAMFS_SAVE_MANAGER__
 
 #include <common/savefile.h>
-#include <common/zlib.h>
+#include <common/compression/zlib.h>
 
 #include <framfs.h> // N64 FramFS library
 

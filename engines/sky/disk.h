@@ -24,7 +24,7 @@
 
 
 #include "common/scummsys.h"
-#include "common/rnc_deco.h"
+#include "common/compression/rnc_deco.h"
 
 #define MAX_FILES_IN_LIST 60
 

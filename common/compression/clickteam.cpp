@@ -20,8 +20,8 @@
  */
 
 #include "common/array.h"
-#include "common/clickteam.h"
-#include "common/gzio.h"
+#include "common/compression/clickteam.h"
+#include "common/compression/gzio.h"
 #include "common/debug.h"
 #include "common/ptr.h"
 #include "common/substream.h"

@@ -38,7 +38,7 @@
 #include "backends/platform/psp/input.h"
 #include "common/keyboard.h"
 #include "common/fs.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging the stack */
 //#define __PSP_DEBUG_PRINT__

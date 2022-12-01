@@ -22,7 +22,7 @@
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "common/installshield_cab.h"
+#include "common/compression/installshield_cab.h"
 #include "common/translation.h"
 
 #include "engines/advancedDetector.h"

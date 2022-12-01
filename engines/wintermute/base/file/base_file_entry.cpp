@@ -29,7 +29,7 @@
 #include "engines/wintermute/base/file/base_package.h"
 #include "common/stream.h"
 #include "common/substream.h"
-#include "common/zlib.h"
+#include "common/compression/zlib.h"
 
 namespace Wintermute {
 

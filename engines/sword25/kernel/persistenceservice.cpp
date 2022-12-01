@@ -30,7 +30,7 @@
 
 #include "common/fs.h"
 #include "common/savefile.h"
-#include "common/zlib.h"
+#include "common/compression/zlib.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/persistenceservice.h"
 #include "sword25/kernel/inputpersistenceblock.h"

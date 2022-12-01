@@ -35,7 +35,7 @@
 #include "engines/stark/services/settings.h"
 
 #include "common/file.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 #include "image/png.h"
 
 namespace Stark {

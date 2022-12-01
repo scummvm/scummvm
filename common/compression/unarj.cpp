@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "common/archive.h"
 #include "common/debug.h"
-#include "common/unarj.h"
+#include "common/compression/unarj.h"
 #include "common/file.h"
 #include "common/hash-str.h"
 #include "common/memstream.h"
@@ -754,7 +754,7 @@ ArjArchive::ArjArchive(const Array<String> &filenames) : _arjFilenames(filenames
 			arjFile.seek(header->compSize, SEEK_CUR);
 		}
 	}
-	
+
 	debug(0, "ArjArchive::ArjArchive(%d volume(s) starting with %s): Located %d files", filenames.size(), filenames.empty() ? "" : filenames[0].c_str(), _headers.size());
 }
 

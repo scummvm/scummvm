@@ -28,7 +28,7 @@
 #include <common/savefile.h>
 #include <gui/gui-manager.h>
 #include <gui/message.h>
-#include <common/zlib.h>
+#include <common/compression/zlib.h>
 
 
 // Savegame can not be bigger than this

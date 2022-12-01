@@ -32,7 +32,7 @@
 #include "common/system.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
-#include "common/huffman.h"
+#include "common/compression/huffman.h"
 
 #include "graphics/yuv_to_rgb.h"
 

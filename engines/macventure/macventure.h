@@ -36,7 +36,7 @@
 #include "common/debug.h"
 #include "common/random.h"
 #include "common/macresman.h"
-#include "common/huffman.h"
+#include "common/compression/huffman.h"
 #include "common/savefile.h"
 
 #include "gui/debugger.h"

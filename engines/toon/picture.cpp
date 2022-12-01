@@ -24,7 +24,7 @@
 
 #include "common/debug.h"
 #include "common/rect.h"
-#include "common/rnc_deco.h"
+#include "common/compression/rnc_deco.h"
 #include "common/stack.h"
 
 namespace Toon {

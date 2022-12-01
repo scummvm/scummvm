@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/dcl.h"
+#include "common/compression/dcl.h"
 #include "common/file.h"
 #include "common/stream.h"
 #include "common/substream.h"

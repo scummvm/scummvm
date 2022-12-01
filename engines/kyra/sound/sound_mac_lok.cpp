@@ -27,7 +27,7 @@
 
 #include "common/config-manager.h"
 #include "common/macresman.h"
-#include "common/stuffit.h"
+#include "common/compression/stuffit.h"
 
 #include "audio/mixer.h"
 

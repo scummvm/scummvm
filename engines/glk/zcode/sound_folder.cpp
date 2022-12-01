@@ -21,7 +21,7 @@
 
 #include "glk/zcode/sound_folder.h"
 #include "common/file.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 
 namespace Glk {
 namespace ZCode {

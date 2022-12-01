@@ -22,7 +22,7 @@
 // Disable symbol overrides so that we can use zlib.h
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "common/zlib.h"
+#include "common/compression/zlib.h"
 #include "common/ptr.h"
 #include "common/util.h"
 #include "common/stream.h"

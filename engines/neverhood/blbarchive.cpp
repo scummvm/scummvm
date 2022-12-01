@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/dcl.h"
+#include "common/compression/dcl.h"
 #include "neverhood/blbarchive.h"
 
 namespace Neverhood {
