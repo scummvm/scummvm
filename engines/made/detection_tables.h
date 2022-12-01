@@ -312,7 +312,11 @@ static const MadeGameDescription gameDescriptions[] = {
 		{
 			"rtz",
 			"Demo",
-			AD_ENTRY1("demo.dat", "2a6a1354bd5346fad4aee08e5b56caaa"),
+			{
+				{ "demo.dat", 0, "2a6a1354bd5346fad4aee08e5b56caaa", 34304 },
+				{ "demo.prj", 0, "46891bd6e5180228fe4b3253d500997b", 1675348 },
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
