@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/achievements.h"
 #include "common/debug-channels.h"
 #include "common/scummsys.h"
 #include "common/archive.h"
@@ -29,6 +28,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 
+#include "engines/achievements.h"
 #include "engines/util.h"
 
 #include "testbed/events.h"

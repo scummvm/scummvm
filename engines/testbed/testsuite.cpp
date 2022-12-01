@@ -19,10 +19,11 @@
  *
  */
 
-#include "common/achievements.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/stream.h"
+
+#include "engines/achievements.h"
 
 #include "graphics/fontman.h"
 #include "graphics/surface.h"

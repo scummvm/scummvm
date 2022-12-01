@@ -22,7 +22,7 @@
 #ifndef AGS_METAENGINE_H
 #define AGS_METAENGINE_H
 
-#include "common/achievements.h"
+#include "engines/achievements.h"
 #include "engines/advancedDetector.h"
 
 class AGSMetaEngine : public AdvancedMetaEngine {
@@ -79,7 +79,7 @@ public:
 	 */
 	void removeSaveState(const char *target, int slot) const override;
 
-	const Common::AchievementDescriptionList* getAchievementDescriptionList() const override;
+	const Common::AchievementDescriptionList *getAchievementDescriptionList() const override;
 };
 
 #endif

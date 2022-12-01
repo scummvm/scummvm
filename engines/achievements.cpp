@@ -20,12 +20,13 @@
  */
 
 
-#include "common/achievements.h"
 #include "common/debug.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/translation.h"
 #include "common/compression/unzip.h"
+
+#include "engines/achievements.h"
 
 namespace Common {
 

@@ -1,7 +1,6 @@
 MODULE := common
 
 MODULE_OBJS := \
-	achievements.o \
 	archive.o \
 	base-str.o \
 	concatstream.o \

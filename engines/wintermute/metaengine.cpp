@@ -19,14 +19,15 @@
  *
  */
 
-#include "common/achievements.h"
 #include "common/translation.h"
 
-#include "engines/wintermute/wintermute.h"
-#include "engines/wintermute/base/base_persistence_manager.h"
+#include "engines/achievements.h"
 
-#include "engines/wintermute/keymapper_tables.h"
-#include "engines/wintermute/achievements_tables.h"
+#include "wintermute/wintermute.h"
+#include "wintermute/base/base_persistence_manager.h"
+
+#include "wintermute/keymapper_tables.h"
+#include "wintermute/achievements_tables.h"
 
 // Detection related files.
 #include "wintermute/detection.h"

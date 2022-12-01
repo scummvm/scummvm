@@ -22,7 +22,7 @@
 #ifndef WINTERMUTE_ACHIEVEMENTS_H
 #define WINTERMUTE_ACHIEVEMENTS_H
 
-#include "common/achievements.h"
+#include "engines/achievements.h"
 
 namespace Wintermute {
 

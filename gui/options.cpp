@@ -32,7 +32,6 @@
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/remap-widget.h"
 
-#include "common/achievements.h"
 #include "common/fs.h"
 #include "common/config-manager.h"
 #include "common/gui_options.h"
@@ -44,6 +43,8 @@
 #include "common/updates.h"
 #include "common/util.h"
 #include "common/text-to-speech.h"
+
+#include "engines/achievements.h"
 
 #include "audio/mididrv.h"
 #include "audio/musicplugin.h"
@@ -254,7 +255,7 @@ void OptionsDialog::init() {
 		const Plugin *plugin = nullptr;
 		EngineMan.findTarget(_domain, &plugin);
 		if (plugin) {
-			const MetaEngineDetection &metaEngineDetection = plugin->get<MetaEngineDetection>();		
+			const MetaEngineDetection &metaEngineDetection = plugin->get<MetaEngineDetection>();
 			_guioptions = metaEngineDetection.parseAndCustomizeGuiOptions(_guioptionsString, _domain);
 		} else {
 			_guioptions = parseGameGUIOptions(_guioptionsString);
@@ -271,7 +272,7 @@ void OptionsDialog::build() {
 		const Plugin *plugin = nullptr;
 		EngineMan.findTarget(_domain, &plugin);
 		if (plugin) {
-			const MetaEngineDetection &metaEngineDetection = plugin->get<MetaEngineDetection>();		
+			const MetaEngineDetection &metaEngineDetection = plugin->get<MetaEngineDetection>();
 			_guioptions = metaEngineDetection.parseAndCustomizeGuiOptions(_guioptionsString, _domain);
 		} else {
 			_guioptions = parseGameGUIOptions(_guioptionsString);

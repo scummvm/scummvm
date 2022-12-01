@@ -22,7 +22,7 @@
 #ifndef TWINE_ACHIEVEMENTS_H
 #define TWINE_ACHIEVEMENTS_H
 
-#include "common/achievements.h"
+#include "engines/achievements.h"
 
 namespace TwinE {
 

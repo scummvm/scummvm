@@ -29,8 +29,8 @@
 #include "ags/engine/game/savegame.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
-#include "common/achievements.h"
 #include "common/config-manager.h"
+#include "engines/achievements.h"
 #include "image/bmp.h"
 
 const char *AGSMetaEngine::getName() const {

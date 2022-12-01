@@ -21,11 +21,11 @@
 
 #include "backends/keymapper/keymapper.h"
 
-#include "common/achievements.h"
 #include "common/debug-channels.h"
 #include "common/rect.h"
 #include "common/translation.h"
 
+#include "engines/achievements.h"
 #include "engines/util.h"
 
 #include "gui/message.h"

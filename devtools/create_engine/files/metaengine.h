@@ -22,7 +22,6 @@
 #ifndef XYZZY_METAENGINE_H
 #define XYZZY_METAENGINE_H
 
-#include "common/achievements.h"
 #include "engines/advancedDetector.h"
 
 class XyzzyMetaEngine : public AdvancedMetaEngine {

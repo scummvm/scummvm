@@ -1,6 +1,7 @@
 MODULE := engines
 
 MODULE_OBJS := \
+	achievements.o \
 	advancedDetector.o \
 	dialogs.o \
 	engine.o \
