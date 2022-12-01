@@ -34,7 +34,7 @@
 #include "common/file.h"
 #include "common/str.h"
 #include "common/bitstream.h"
-#include "common/compression/huffman.h"
+#include "common/huffman.h"
 #include "common/system.h"
 
 #include "graphics/yuv_to_rgb.h"
