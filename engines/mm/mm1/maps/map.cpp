@@ -101,7 +101,7 @@ void Map::updateGame() {
 }
 
 void Map::redrawGame() {
-	g_events->findView("Game")->redraw();
+	g_events->send("Game", GameMessage("REDRAW"));
 }
 
 void Map::encounter(const byte *id1, const byte *id2) {

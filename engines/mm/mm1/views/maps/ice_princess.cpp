@@ -33,7 +33,7 @@ namespace Maps {
 #define ANSWER_OFFSET 167
 
 IcePrincess::IcePrincess() :
-		AnswerEntry("IcePrincess", Common::Point(9, 5), 10) {
+		AnswerEntry("IcePrincess", Common::Point(9, 7), 10) {
 	_bounds = getLineBounds(17, 24);
 }
 
@@ -50,7 +50,7 @@ void IcePrincess::answerEntered() {
 	close();
 
 	for (int i = 0; i < 4; ++i)
-		properAnswer += (map[ANSWER_OFFSET + i] & 0x7f) - 64;
+		properAnswer += (map[ANSWER_OFFSET + i] & 0x7f) + 64;
 
 	if (_answer == properAnswer) {
 		InfoMessage msg(
