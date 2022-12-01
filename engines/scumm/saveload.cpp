@@ -1220,7 +1220,7 @@ bool ScummEngine::changeSavegameName(int slot, char *newName) {
 
 	in->seek(sizeof(hdr), SEEK_SET);
 
-	for (int i = 0; i < bufferSizeNoHdr; i++) {
+	for (uint i = 0; i < (uint)bufferSizeNoHdr; i++) {
 		saveBuffer[i] = in->readByte();
 
 		if (in->err()) {
@@ -1240,7 +1240,7 @@ bool ScummEngine::changeSavegameName(int slot, char *newName) {
 		return false;
 	}
 
-	for (int i = 0; i < bufferSizeNoHdr; i++) {
+	for (uint i = 0; i < (uint)bufferSizeNoHdr; i++) {
 		out->writeByte(saveBuffer[i]);
 
 		if (out->err()) {
