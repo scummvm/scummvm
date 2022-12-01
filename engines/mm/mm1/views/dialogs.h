@@ -48,6 +48,7 @@
 #include "mm/mm1/views/locations/tavern.h"
 #include "mm/mm1/views/locations/temple.h"
 #include "mm/mm1/views/locations/training.h"
+#include "mm/mm1/views/maps/access_code.h"
 #include "mm/mm1/views/maps/alamar.h"
 #include "mm/mm1/views/maps/alien.h"
 #include "mm/mm1/views/maps/arrested.h"
@@ -109,6 +110,7 @@ private:
 	Views::Locations::Temple _temple;
 	Views::Locations::Training _training;
 
+	Views::Maps::AccessCode _accessCode;
 	Views::Maps::Alamar _alamar;
 	Views::Maps::Alien _alien;
 	Views::Maps::Arrested _arrested;
