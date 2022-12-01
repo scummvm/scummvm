@@ -474,6 +474,8 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 
 void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);
+	uint32 brownish = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x9E, 0x80, 0x20);
+	uint32 brown = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x7E, 0x60, 0x19);
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 
 	int score = _gameStateVars[k8bitVariableScore];
@@ -503,6 +505,21 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 			message = _messagesList[1];
 
 		drawStringInSurface(message, 188, 177, yellow, black, surface);
+	}
+
+	//int energy = _gameStateVars[k8bitVariableEnergy];
+	int shield = _gameStateVars[k8bitVariableShield];
+
+	if (shield >= 0) {
+		Common::Rect shieldBar;
+		shieldBar = Common::Rect(11, 178, 76 - (k8bitMaxShield - shield), 184);
+		surface->fillRect(shieldBar, brown);
+
+		shieldBar = Common::Rect(11, 179, 76 - (k8bitMaxShield - shield), 183);
+		surface->fillRect(shieldBar, brownish);
+
+		shieldBar = Common::Rect(11, 180, 76 - (k8bitMaxShield - shield), 182);
+		surface->fillRect(shieldBar, yellow);
 	}
 }
 
