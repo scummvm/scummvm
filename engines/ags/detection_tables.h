@@ -992,6 +992,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "donniedarko", "Donnie Darko - The Adventure Game" },
 	{ "donspillacyconspiracyquest", "Don Spillacy's Conspiracy Quest" },
 	{ "dontdrinkthepink", "Don't Drink the Pink" },
+	{ "dontgiveupcat", "Don't Give Up the Cat" },
 	{ "donthedweebdancedilemma", "Don the Dweeb: Dance Dilemma" },
 	{ "donticeyourcool", "Don't Ice Your Cool" },
 	{ "dontlook", "Don't Look!" },
@@ -1313,6 +1314,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "hiddenplains", "Hidden Plains" },
 	{ "hiddentreasureryansfortune", "Hidden Treasure: Ryan's Fortune" },
 	{ "hide", "Hide" },
+	{ "highlandspirit", "Highland Spirit" },
 	{ "him", "Him" },
 	{ "hitchhikersguidetothegalaxyremake", "The Hitchhiker's Guide to the Galaxy Remake" },
 	{ "hitthefreak", "Hit the Freak" },
@@ -2494,6 +2496,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "sockstoday", "Should Have Worn Socks Today" },
 	{ "solitude", "Solitude" },
 	{ "somethingnovel", "Something Novel" },
+	{ "somethingpipes", "There's Something in the Pipes" },
 	{ "somewhere", "Somewhere" },
 	{ "somnamulizer", "Somnamulizer: A Tale From Olympus U" },
 	{ "songanimals", "Song Animals" },
@@ -2883,6 +2886,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "trappedinabuilding", "Trapped in a building" },
 	{ "trashquest", "Trash Quest" },
 	{ "travelers", "TRAVELERS" },
+	{ "tresacordes", "Tres Acordes" },
 	{ "trevordaisoninouterspace", "Trevor Daison in outer space - Chapter One: Trouble on Percicron IV" },
 	{ "trexmusclesam1", "T-Rex and Muscle Sam: Big Trouble in Smashing Potatoes Federation" },
 	{ "trexmusclesam2", "T-Rex and Muscle Sam: A New Kickstart!" },
@@ -2907,6 +2911,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "twelvethirteenep2", "Twelve Thirteen - Episode 2" },
 	{ "twelvethirteenep3", "Twelve Thirteen - Episode 3" },
 	{ "twentiesflappersvsthemummy", "Twenties Flappers vs. The Mummy" },
+	{ "twoghosts", "Two ghosts of that house: the missing toy" },
 	{ "twoofakind", "Two of a Kind" },
 	{ "ugalembrace", "Ugal's Embrace" },
 	{ "uglyfiles", "The Ugly Files" },
@@ -5003,6 +5008,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("donniedarko", "Darko.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 1820048),
 	GAME_ENTRY_EN("donspillacyconspiracyquest", "DSAQ.exe", "f120690b506dd63cd7d1112ea6af2f77", 2066918),
 	GAME_ENTRY_EN("dontdrinkthepink", "pink.exe", "82da2565c456dcfb265ded6fe3189c0b", 5447689),
+	GAME_ENTRY_EN("dontgiveupcat", "dont-give-up-the-cat.exe", "194307a8f17bceb166bfdeb7cc1aa2ed", 17691275),  // Windows
+	GAME_ENTRY_EN("dontgiveupcat", "dont-give-up-the-cat.ags", "13c0cfd2fb3bb868d0db49e56b45daa5", 14517367),  // Linux
 	GAME_ENTRY_EN("donthedweebdancedilemma", "Don the Dweeb.exe", "f120690b506dd63cd7d1112ea6af2f77", 2278453),
 	GAME_ENTRY_EN("donticeyourcool", "Don't Ice Your Cool.exe", "2321081ba51d1869ebe11b9ba126911b", 5979469),
 	GAME_ENTRY_EN("dontlook", "Don't Look.exe", "25976a689b0f4d73eac69b1728377ecb", 4623669),
@@ -5379,6 +5386,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("hiddenplains", "eureka02.ags", "024d04d4d227cfb32b66a7fb8e4561f2", 381866349),  // Linux
 	GAME_ENTRY_EN("hiddentreasureryansfortune", "HiddenTRF.exe", "504df40bf50a0859e3dc15b000dab5f6", 7345149),
 	GAME_ENTRY_EN("hide", "Hide.exe", "6e861b1f476ff7cdf036082abb271329", 13701886),
+	GAME_ENTRY_EN("highlandspirit", "Highlandspirit.exe", "0564de07d3fd5c16e6947a647061913c", 20512793),
 	GAME_ENTRY_EN("him", "twin.exe", "6b4ceb9e327ac99479c08d825461f4cb", 23721672),
 	GAME_ENTRY_EN("hitchhikersguidetothegalaxyremake", "HHGTG.exe", "e003041f4332f136920e636e39d3e127", 34956191),
 	GAME_ENTRY("hitthefreak", "HTF.EXE", "f3a13b2d6c2e0fe04c6f466062920e23", 3103477),  // Eng-Esp
@@ -6725,6 +6733,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("sockstoday", "Should Have Worn Socks Today.ags", "60926de91f63495a0da6a028604aae90", 19457016),  // Linux
 	GAME_ENTRY_EN("solitude", "solitude.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 2397809),
 	GAME_ENTRY_EN("somethingnovel", "SN.exe", "d1bf56bc9ea61d84fdf10f135a4967ca", 10151965),
+	GAME_ENTRY_EN("somethingpipes", "Pipes.exe", "4d5d25446373d4df71c6bda77a15230a", 119506949),
 	GAME_ENTRY_EN("somewhere", "somewhere.ags", "03808527826e547ed7c86412f4df38f7", 16470512),
 	GAME_ENTRY_EN("somnamulizer", "Hypnos.exe", "618d7dce9631229b4579340b964c6810", 50943313),
 	GAME_ENTRY_EN("songanimals", "SongAnimals.exe", "f982756f0e2c2fbeca15d199b9851559", 120864978),   //v1.0.1
@@ -7205,6 +7214,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("trappedinabuilding", "T I A B.exe", "722c8bd17ace161f1bba2d9d92806eaf", 5370872),
 	GAME_ENTRY_EN("trappedinabuilding", "T I A B.exe", "722c8bd17ace161f1bba2d9d92806eaf", 5370873),
 	GAME_ENTRY("trashquest", "TQ.exe", "465f972675db2da6040518221af5b0ba", 2420457),  //Eng-Rus
+	GAME_ENTRY_LANG("tresacordes", "Tres Acordes.exe", "38375404171b2419c5cbefa69b2a6ac0", 33254762, Common::ES_ESP),
 	GAME_ENTRY_EN_PLATFORM("travelers", "Game.exe", "7971a7c02d414dc8cb33b6ec36080b91", 3349037, "Prototype"),
 	GAME_ENTRY("trevordaisoninouterspace", "TrevorDaison.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 22641402),
 	GAME_ENTRY("trexmusclesam1", "Trex and Muscle Sam.exe", "91696f9333f36bdba272220c644c72e7", 120822652),
@@ -7239,6 +7249,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_PLATFORM("twelvethirteenep3", "1213_ep3.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 3246117, "Special Edition"), // From SE
 	DETECTION_ENTRY_GUIO("twelvethirteense", "1213 SE.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 644458, Common::EN_ANY, nullptr, GUIO2(GUIO_NOLANG, GUIO_NOLAUNCHLOAD), nullptr, ADGF_NO_FLAGS),  // Menu
 	GAME_ENTRY_EN("twentiesflappersvsthemummy", "Twenties Flappers vs The Mummy.exe", "a524cbb1c51589903c4043b98917f1d9", 15042196),
+	GAME_ENTRY("twoghosts", "Ghosts.exe", "2f2bc0b9c539d20529c0e343315d5f65", 4525238),  // En-Fr
 	GAME_ENTRY_EN("twoofakind", "toak.exe", "465f972675db2da6040518221af5b0ba", 24644765),
 	GAME_ENTRY_EN("ugalembrace", "UgalsEmbrace.exe", "308026eea716ec1aeed39f7f8d8cfd18", 30046377),
 	GAME_ENTRY_EN("uglyfiles", "ugly.exe", "0394af1c29e1060fcdbacf2a3dd9b231", 4169486),
