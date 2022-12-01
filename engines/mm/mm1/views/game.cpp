@@ -67,7 +67,6 @@ bool Game::msgAction(const ActionMessage &msg) {
 		g_events->send(GameMessage("REST"));
 		return true;
 	case KEYBIND_SEARCH:
-		g_globals->_treasure._items[2] = 240; //***DEBUG***
 		send("Search", GameMessage("SHOW"));
 		break;
 	case KEYBIND_UNLOCK:
