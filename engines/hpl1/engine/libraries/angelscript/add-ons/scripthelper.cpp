@@ -1,6 +1,7 @@
 #include "scripthelper.h"
 
 #include "hpl1/std/set.h"
+#include "common/str.h"
 
 using namespace std;
 
