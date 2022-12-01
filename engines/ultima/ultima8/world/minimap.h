@@ -22,8 +22,8 @@
 #include "ultima/ultima8/misc/common_types.h"
 #include "graphics/surface.h"
 
-#ifndef ULTIMA8_WORLD_MAP_H
-#define ULTIMA8_WORLD_MAP_H
+#ifndef ULTIMA8_WORLD_MINIMAP_H
+#define ULTIMA8_WORLD_MINIMAP_H
 
 namespace Ultima {
 namespace Ultima8 {
