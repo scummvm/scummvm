@@ -543,6 +543,9 @@ void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, u
 
 		default:
 			warning("Window::playTransition(): Unhandled transition type %s %d %d", transProps[t.type].name, t.duration, t.chunkSize);
+			// fallthrough
+
+		case kTransNone:
 			stop = true;
 			break;
 		}
