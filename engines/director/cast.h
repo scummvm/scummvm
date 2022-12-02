@@ -106,7 +106,7 @@ public:
 	CastMember *setCastMember(CastMemberID castId, CastMember *cast);
 	bool eraseCastMember(CastMemberID castId);
 	CastMember *getCastMember(int castId);
-	CastMember *getCastMemberByName(const Common::String &name);
+	CastMember *getCastMemberByNameAndType(const Common::String &name, CastType type);
 	CastMember *getCastMemberByScriptId(int scriptId);
 	CastMemberInfo *getCastMemberInfo(int castId);
 	const Stxt *getStxt(int castId);

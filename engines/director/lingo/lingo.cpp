@@ -1114,11 +1114,11 @@ Common::String Datum::asString(bool printonly) const {
 	return s;
 }
 
-CastMemberID Datum::asMemberID() const {
+CastMemberID Datum::asMemberID(CastType castType) const {
 	if (type == CASTREF || type == FIELDREF)
 		return *u.cast;
 
-	return g_lingo->resolveCastMember(*this, 0);
+	return g_lingo->resolveCastMember(*this, 0, castType);
 }
 
 Common::Point Datum::asPoint() const {
@@ -1649,7 +1649,7 @@ Common::U32String Lingo::evalChunkRef(const Datum &var) {
 	return result;
 }
 
-CastMemberID Lingo::resolveCastMember(const Datum &memberID, const Datum &castLib) {
+CastMemberID Lingo::resolveCastMember(const Datum &memberID, const Datum &castLib, CastType type) {
 	Movie *movie = g_director->getCurrentMovie();
 	if (!movie) {
 		warning("Lingo::resolveCastMember: No movie");
@@ -1659,7 +1659,7 @@ CastMemberID Lingo::resolveCastMember(const Datum &memberID, const Datum &castLi
 	switch (memberID.type) {
 	case STRING:
 		{
-			CastMember *member = movie->getCastMemberByName(memberID.asString(), castLib.asInt());
+			CastMember *member = movie->getCastMemberByNameAndType(memberID.asString(), castLib.asInt(), type);
 			if (member)
 				return CastMemberID(member->getID(), castLib.asInt());
 

@@ -350,15 +350,15 @@ bool Movie::eraseCastMember(CastMemberID memberID) {
 	return false;
 }
 
-CastMember *Movie::getCastMemberByName(const Common::String &name, int castLib) {
+CastMember *Movie::getCastMemberByNameAndType(const Common::String &name, int castLib, CastType type) {
 	CastMember *result = nullptr;
 	if (_casts.contains(castLib)) {
-		result = _casts.getVal(castLib)->getCastMemberByName(name);
+		result = _casts.getVal(castLib)->getCastMemberByNameAndType(name, type);
 		if (result == nullptr && _sharedCast) {
-			result = _sharedCast->getCastMemberByName(name);
+			result = _sharedCast->getCastMemberByNameAndType(name, type);
 		}
 	} else {
-		warning("Movie::getCastMemberByName: Unknown castLib %d", castLib);
+		warning("Movie::getCastMemberByNameAndType: Unknown castLib %d", castLib);
 	}
 	return result;
 }

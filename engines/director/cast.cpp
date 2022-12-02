@@ -133,11 +133,18 @@ void Cast::releaseCastMemberWidget() {
 			it->_value->releaseWidget();
 }
 
-CastMember *Cast::getCastMemberByName(const Common::String &name) {
+CastMember *Cast::getCastMemberByNameAndType(const Common::String &name, CastType type) {
 	CastMember *result = nullptr;
 
-	if (_castsNames.contains(name)) {
-		result = _loadedCast->getVal(_castsNames[name]);
+	if (type == kCastTypeAny) {
+		if (_castsNames.contains(name)) {
+			result = _loadedCast->getVal(_castsNames[name]);
+		}
+	} else {
+		Common::String cname = Common::String::format("%s:%d", name.c_str(), type);
+
+		if (_castsNames.contains(cname))
+			result = _loadedCast->getVal(_castsNames[cname]);
 	}
 	return result;
 }

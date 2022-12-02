@@ -168,7 +168,7 @@ struct Datum {	/* interpreter stack type */
 	double asFloat() const;
 	int asInt() const;
 	Common::String asString(bool printonly = false) const;
-	CastMemberID asMemberID() const;
+	CastMemberID asMemberID(CastType castType = kCastTypeAny) const;
 	Common::Point asPoint() const;
 
 	bool isRef() const;
@@ -358,7 +358,7 @@ public:
 	Datum varFetch(const Datum &var, bool silent = false);
 	Common::U32String evalChunkRef(const Datum &var);
 	Datum findVarV4(int varType, const Datum &id);
-	CastMemberID resolveCastMember(const Datum &memberID, const Datum &castLib);
+	CastMemberID resolveCastMember(const Datum &memberID, const Datum &castLib, CastType type);
 	void exposeXObject(const char *name, Datum obj);
 
 	int getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly);

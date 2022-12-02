@@ -31,6 +31,7 @@ enum MovieFlag {
 };
 
 enum CastType {
+	kCastTypeAny = -1,
 	kCastTypeNull = 0,
 	kCastBitmap = 1,
 	kCastFilmLoop = 2,

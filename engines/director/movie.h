@@ -104,7 +104,7 @@ public:
 	CastMember *getCastMember(CastMemberID memberID);
 	CastMember *createOrReplaceCastMember(CastMemberID memberID, CastMember *cast);
 	bool eraseCastMember(CastMemberID memberID);
-	CastMember *getCastMemberByName(const Common::String &name, int castLib);
+	CastMember *getCastMemberByNameAndType(const Common::String &name, int castLib, CastType type);
 	CastMemberInfo *getCastMemberInfo(CastMemberID memberID);
 	const Stxt *getStxt(CastMemberID memberID);
 
