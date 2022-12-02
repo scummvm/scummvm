@@ -33,7 +33,7 @@
 //////////////////////////////////////////////////////////////////////
 
 dgContactMaterial::dgContactMaterial() {
-	//	_ASSERTE ((sizeof (dgContactMaterial) & 15) == 0);
+	//  _ASSERTE ((sizeof (dgContactMaterial) & 15) == 0);
 	_ASSERTE((((dgUnsigned64)this) & 15) == 0);
 	m_point.m_x = dgFloat32(0.0f);
 	m_point.m_y = dgFloat32(0.0f);
@@ -51,10 +51,10 @@ dgContactMaterial::dgContactMaterial() {
 	m_penetrationPadding = dgFloat32(0.0f);
 	// m_penetrationPadding = 0.5f;
 
-	//	m_collisionEnable = true;
-	//	m_friction0Enable = true;
-	//	m_friction1Enable = true;
-	//	m_collisionContinueCollisionEnable = true;
+	//  m_collisionEnable = true;
+	//  m_friction0Enable = true;
+	//  m_friction1Enable = true;
+	//  m_collisionContinueCollisionEnable = true;
 	m_flags = m_collisionEnable__ | m_friction0Enable__ | m_friction1Enable__ | m_collisionContinueCollisionEnable__;
 }
 
@@ -87,8 +87,8 @@ void dgContact::GetInfo(dgConstraintInfo *const info) const {
 }
 
 void dgContact::CalculatePointDerivative(dgInt32 index,
-										 dgContraintDescritor &desc, const dgVector &dir,
-										 const dgPointParam &param) const {
+        dgContraintDescritor &desc, const dgVector &dir,
+        const dgPointParam &param) const {
 	_ASSERTE(m_body0);
 	_ASSERTE(m_body1);
 
@@ -121,7 +121,7 @@ dgUnsigned32 dgContact::JacobianDerivative(dgContraintDescritor &params) {
 		dgInt32 i = 0;
 		frictionIndex = GetCount();
 		for (dgList<dgContactMaterial>::dgListNode *node = GetFirst(); node; node =
-																				 node->GetNext()) {
+		            node->GetNext()) {
 			const dgContactMaterial &contact = node->GetInfo();
 			JacobianContactDerivative(params, contact, i, frictionIndex);
 			i++;
@@ -132,8 +132,8 @@ dgUnsigned32 dgContact::JacobianDerivative(dgContraintDescritor &params) {
 }
 
 void dgContact::JacobianContactDerivative(dgContraintDescritor &params,
-										  const dgContactMaterial &contact, dgInt32 normalIndex,
-										  dgInt32 &frictionIndex) {
+        const dgContactMaterial &contact, dgInt32 normalIndex,
+        dgInt32 &frictionIndex) {
 	dgPointParam pointData;
 
 	InitPointParam(pointData, dgFloat32(1.0f), contact.m_point, contact.m_point);
@@ -148,7 +148,7 @@ void dgContact::JacobianContactDerivative(dgContraintDescritor &params,
 	dgFloat32 penetrationStiffness = dgFloat32(50.0f) * contact.m_softness;
 	dgFloat32 penetrationVeloc = penetration * penetrationStiffness;
 	_ASSERTE(
-		dgAbsf(penetrationVeloc - dgFloat32(50.0f) * contact.m_softness * GetMin(contact.m_penetration, dgFloat32(0.5f))) < dgFloat32(1.0e-6f));
+	    dgAbsf(penetrationVeloc - dgFloat32(50.0f) * contact.m_softness * GetMin(contact.m_penetration, dgFloat32(0.5f))) < dgFloat32(1.0e-6f));
 	if (relVelocErr > REST_RELATIVE_VELOCITY) {
 		relVelocErr *= (restitution + dgFloat32(1.0f));
 	}
@@ -159,14 +159,14 @@ void dgContact::JacobianContactDerivative(dgContraintDescritor &params,
 	params.m_forceBounds[normalIndex].m_low = dgFloat32(0.0f);
 	params.m_forceBounds[normalIndex].m_normalIndex = DG_NORMAL_CONSTRAINT;
 	params.m_forceBounds[normalIndex].m_jointForce =
-		(dgFloat32 *)&contact.m_normal_Force;
+	    (dgFloat32 *)&contact.m_normal_Force;
 	params.m_jointStiffness[normalIndex] = dgFloat32(1.0f);
 	params.m_isMotor[normalIndex] = 0;
 
 	params.m_jointAccel[normalIndex] = GetMax(dgFloat32(-4.0f),
-											  relVelocErr + penetrationVeloc) *
-									   params.m_invTimestep;
-	//	params.m_jointAccel[normalIndex] = (penetrationVeloc + relVelocErr) * params.m_invTimestep;
+	                                   relVelocErr + penetrationVeloc) *
+	                                   params.m_invTimestep;
+	//  params.m_jointAccel[normalIndex] = (penetrationVeloc + relVelocErr) * params.m_invTimestep;
 	if (contact.m_flags & dgContactMaterial::m_overrideNormalAccel__) {
 		params.m_jointAccel[normalIndex] += contact.m_normal_Force;
 	}
@@ -183,7 +183,7 @@ void dgContact::JacobianContactDerivative(dgContraintDescritor &params,
 		params.m_restitution[jacobIndex] = dgFloat32(0.0f);
 		params.m_penetration[jacobIndex] = dgFloat32(0.0f);
 		params.m_penetrationStiffness[jacobIndex] = dgFloat32(0.0f);
-		//		if (contact.m_override0Accel) {
+		//      if (contact.m_override0Accel) {
 		if (contact.m_flags & dgContactMaterial::m_override0Accel__) {
 			params.m_jointAccel[jacobIndex] = contact.m_dir0_Force;
 			params.m_isMotor[jacobIndex] = 1;
@@ -199,10 +199,10 @@ void dgContact::JacobianContactDerivative(dgContraintDescritor &params,
 			params.m_forceBounds[jacobIndex].m_upper = contact.m_staticFriction0;
 		}
 		params.m_forceBounds[jacobIndex].m_jointForce =
-			(dgFloat32 *)&contact.m_dir0_Force;
+		    (dgFloat32 *)&contact.m_dir0_Force;
 	}
 
-	//	if (contact.m_friction1Enable) {
+	//  if (contact.m_friction1Enable) {
 	if (contact.m_flags & dgContactMaterial::m_friction1Enable__) {
 		dgInt32 jacobIndex = frictionIndex;
 		frictionIndex += 1;
@@ -214,7 +214,7 @@ void dgContact::JacobianContactDerivative(dgContraintDescritor &params,
 		params.m_restitution[jacobIndex] = dgFloat32(0.0f);
 		params.m_penetration[jacobIndex] = dgFloat32(0.0f);
 		params.m_penetrationStiffness[jacobIndex] = dgFloat32(0.0f);
-		//		if (contact.m_override1Accel) {
+		//      if (contact.m_override1Accel) {
 		if (contact.m_flags & dgContactMaterial::m_override1Accel__) {
 			_ASSERTE(0);
 			params.m_jointAccel[jacobIndex] = contact.m_dir1_Force;
@@ -231,25 +231,25 @@ void dgContact::JacobianContactDerivative(dgContraintDescritor &params,
 			params.m_forceBounds[jacobIndex].m_upper = contact.m_staticFriction1;
 		}
 		params.m_forceBounds[jacobIndex].m_jointForce =
-			(dgFloat32 *)&contact.m_dir1_Force;
+		    (dgFloat32 *)&contact.m_dir1_Force;
 	}
 
 	// dgTrace (("p(%f %f %f)\n", params.m_jointAccel[normalIndex], params.m_jointAccel[normalIndex + 1], params.m_jointAccel[normalIndex + 2]));
 }
 
 void dgContact::JointAccelerationsSimd(
-	const dgJointAccelerationDecriptor &params) {
+    const dgJointAccelerationDecriptor &params) {
 #ifdef DG_BUILD_SIMD_CODE
-	//	simd_type bodyVeloc0;
-	//	simd_type bodyOmega0;
-	//	simd_type bodyVeloc1;
-	//	simd_type bodyOmega1;
-	//	simd_type zero;
-	//	simd_type four;
-	//	simd_type negOne;
-	//	simd_type tol002;
-	//	simd_type timeStep;
-	//	simd_type invTimeStep;
+	//  simd_type bodyVeloc0;
+	//  simd_type bodyOmega0;
+	//  simd_type bodyVeloc1;
+	//  simd_type bodyOmega1;
+	//  simd_type zero;
+	//  simd_type four;
+	//  simd_type negOne;
+	//  simd_type tol002;
+	//  simd_type timeStep;
+	//  simd_type invTimeStep;
 
 	const dgJacobianPair *const Jt = params.m_Jt;
 
@@ -272,59 +272,59 @@ void dgContact::JointAccelerationsSimd(
 			// relVeloc += Jt[k].m_jacobian_IM1.m_linear.CompProduct(bodyVeloc1);
 			// relVeloc += Jt[k].m_jacobian_IM1.m_angular.CompProduct(bodyOmega1);
 			simd_type relVeloc =
-				simd_mul_v((simd_type &)Jt[k].m_jacobian_IM0.m_linear, bodyVeloc0);
+			    simd_mul_v((simd_type &)Jt[k].m_jacobian_IM0.m_linear, bodyVeloc0);
 			relVeloc =
-				simd_mul_add_v(relVeloc, (simd_type &)Jt[k].m_jacobian_IM0.m_angular, bodyOmega0);
+			    simd_mul_add_v(relVeloc, (simd_type &)Jt[k].m_jacobian_IM0.m_angular, bodyOmega0);
 			relVeloc =
-				simd_mul_add_v(relVeloc, (simd_type &)Jt[k].m_jacobian_IM1.m_linear, bodyVeloc1);
+			    simd_mul_add_v(relVeloc, (simd_type &)Jt[k].m_jacobian_IM1.m_linear, bodyVeloc1);
 			relVeloc =
-				simd_mul_add_v(relVeloc, (simd_type &)Jt[k].m_jacobian_IM1.m_angular, bodyOmega1);
+			    simd_mul_add_v(relVeloc, (simd_type &)Jt[k].m_jacobian_IM1.m_angular, bodyOmega1);
 
-			//		vRel = relVeloc.m_x + relVeloc.m_y + relVeloc.m_z;
-			//		aRel = relAccel.m_x + relAccel.m_y + relAccel.m_z;
+			//      vRel = relVeloc.m_x + relVeloc.m_y + relVeloc.m_z;
+			//      aRel = relAccel.m_x + relAccel.m_y + relAccel.m_z;
 			relVeloc = simd_add_v(relVeloc, simd_move_hl_v(relVeloc, relVeloc));
 			relVeloc =
-				simd_add_s(relVeloc, simd_permut_v(relVeloc, relVeloc, PURMUT_MASK(3, 3, 3, 1)));
+			    simd_add_s(relVeloc, simd_permut_v(relVeloc, relVeloc, PURMUT_MASK(3, 3, 3, 1)));
 			simd_type relAccel = simd_load_s(params.m_externAccelaration[k]);
 			if (params.m_normalForceIndex[k] < 0) {
-				//			dgFloat32 restitution;
+				//          dgFloat32 restitution;
 				// simd_type penetration;
 				// simd_type restitution;
 				// simd_type velocMask;
 				// simd_type penetrationVeloc;
 				// simd_type penetrationMask;
 
-				//			restitution = dgFloat32 (1.0f);
-				//			if (vRel <= dgFloat32 (0.0f)) {
-				//				restitution += params.m_restitution[k];
-				//			}
+				//          restitution = dgFloat32 (1.0f);
+				//          if (vRel <= dgFloat32 (0.0f)) {
+				//              restitution += params.m_restitution[k];
+				//          }
 				simd_type restitution =
-					simd_sub_s(simd_and_v(simd_set1(params.m_restitution[k]), simd_cmplt_s(relVeloc, zero)), negOne);
+				    simd_sub_s(simd_and_v(simd_set1(params.m_restitution[k]), simd_cmplt_s(relVeloc, zero)), negOne);
 
 				simd_type penetration = simd_load_s(params.m_penetration[k]);
-				//			dgFloat32 penetrationVeloc;
-				//			penetrationVeloc = 0.0f;
-				//			if (params.m_penetration[k] > dgFloat32 (1.0e-2f)) {
-				//				if (vRel > dgFloat32 (0.0f)) {
-				//					_ASSERTE (penetrationCorrection >= dgFloat32 (0.0f));
-				//					params.m_penetration[k] = GetMax (dgFloat32 (0.0f), params.m_penetration[k] - vRel * params.m_timeStep);
-				//				}
-				//				penetrationVeloc = -(params.m_penetration[k] * params.m_penetrationStiffness[k]);
-				//			}
+				//          dgFloat32 penetrationVeloc;
+				//          penetrationVeloc = 0.0f;
+				//          if (params.m_penetration[k] > dgFloat32 (1.0e-2f)) {
+				//              if (vRel > dgFloat32 (0.0f)) {
+				//                  _ASSERTE (penetrationCorrection >= dgFloat32 (0.0f));
+				//                  params.m_penetration[k] = GetMax (dgFloat32 (0.0f), params.m_penetration[k] - vRel * params.m_timeStep);
+				//              }
+				//              penetrationVeloc = -(params.m_penetration[k] * params.m_penetrationStiffness[k]);
+				//          }
 				simd_type penetrationMask = simd_cmpgt_s(penetration, tol002);
 				simd_type velocMask =
-					simd_and_v(penetrationMask, simd_cmpgt_s(relVeloc, zero));
+				    simd_and_v(penetrationMask, simd_cmpgt_s(relVeloc, zero));
 				penetration =
-					simd_max_s(zero, simd_sub_s(penetration, simd_and_v(simd_mul_s(relVeloc, timeStep), velocMask)));
+				    simd_max_s(zero, simd_sub_s(penetration, simd_and_v(simd_mul_s(relVeloc, timeStep), velocMask)));
 				simd_type penetrationVeloc =
-					simd_and_v(simd_mul_s(penetration, simd_load_s(params.m_penetrationStiffness[k])), penetrationMask);
+				    simd_and_v(simd_mul_s(penetration, simd_load_s(params.m_penetrationStiffness[k])), penetrationMask);
 				simd_store_s(penetration, &params.m_penetration[k]);
 
-				//			vRel *= restitution;
-				//			vRel = GetMin (dgFloat32 (4.0f), vRel + penetrationVeloc);
-				//			relVeloc = simd_mul_s (relVeloc, restitution);
+				//          vRel *= restitution;
+				//          vRel = GetMin (dgFloat32 (4.0f), vRel + penetrationVeloc);
+				//          relVeloc = simd_mul_s (relVeloc, restitution);
 				relVeloc =
-					simd_min_s(four, simd_sub_s(simd_mul_s(relVeloc, restitution), penetrationVeloc));
+				    simd_min_s(four, simd_sub_s(simd_mul_s(relVeloc, restitution), penetrationVeloc));
 			}
 
 			// params.m_coordenateAccel[k] = -aRel;
@@ -333,7 +333,7 @@ void dgContact::JointAccelerationsSimd(
 
 			// params.m_coordenateAccel[k] = (aRel - vRel * params.m_invTimeStep);
 			simd_store_s(simd_mul_sub_s(relAccel, relVeloc, invTimeStep),
-						 &params.m_coordenateAccel[k]);
+			             &params.m_coordenateAccel[k]);
 		}
 	}
 #endif
@@ -374,7 +374,7 @@ void dgContact::JointAccelerations(const dgJointAccelerationDecriptor &params) {
 						penetrationCorrection = vRel * params.m_timeStep;
 						_ASSERTE(penetrationCorrection >= dgFloat32(0.0f));
 						params.m_penetration[k] = GetMax(dgFloat32(0.0f),
-														 params.m_penetration[k] - penetrationCorrection);
+						                                 params.m_penetration[k] - penetrationCorrection);
 					}
 					penetrationVeloc = -(params.m_penetration[k] * params.m_penetrationStiffness[k]);
 				}
@@ -388,14 +388,14 @@ void dgContact::JointAccelerations(const dgJointAccelerationDecriptor &params) {
 }
 
 void dgContact::JointVelocityCorrection(
-	const dgJointAccelerationDecriptor &params) {
+    const dgJointAccelerationDecriptor &params) {
 	_ASSERTE(0);
 }
 
 dgCollidingPairCollector::dgCollidingPairCollector() {
 	m_count = 0;
 	m_maxSize = 0;
-	//	m_world = NULL;
+	//  m_world = NULL;
 	m_pairs = NULL;
 	m_sentinel = NULL;
 }
@@ -404,7 +404,7 @@ dgCollidingPairCollector::~dgCollidingPairCollector() {
 }
 
 void dgCollidingPairCollector::Init() {
-	//	m_world = me;
+	//  m_world = me;
 	dgWorld *const world = (dgWorld *)this;
 	m_count = 0;
 	m_maxSize = dgInt32(world->m_pairMemoryBufferSizeInBytes / sizeof(dgPair));
@@ -423,7 +423,7 @@ void dgCollidingPairCollector::FlushChache(dgThreadPairCache *const pairChache) 
 	while ((m_count + pairChache->m_count) > m_maxSize) {
 		void *newBuffer;
 		newBuffer = world->m_allocator->Malloc(
-			2 * world->m_pairMemoryBufferSizeInBytes);
+		                2 * world->m_pairMemoryBufferSizeInBytes);
 
 		world->m_pairMemoryBufferSizeInBytes *= 2;
 		memcpy(newBuffer, world->m_pairMemoryBuffer, m_maxSize * sizeof(dgPair));
@@ -435,22 +435,22 @@ void dgCollidingPairCollector::FlushChache(dgThreadPairCache *const pairChache) 
 	}
 
 	memcpy(&m_pairs[m_count], pairChache->m_chacheBuffer,
-		   sizeof(dgPair) * pairChache->m_count);
+	       sizeof(dgPair) * pairChache->m_count);
 	m_count += pairChache->m_count;
 	pairChache->m_count = 0;
 }
 
 void dgCollidingPairCollector::AddPair(dgBody *const bodyPtr0,
-									   dgBody *const bodyPtr1, dgInt32 threadIndex) {
+                                       dgBody *const bodyPtr1, dgInt32 threadIndex) {
 	if ((bodyPtr0 != m_sentinel) && (bodyPtr1 != m_sentinel)) {
 		dgWorld *const world = (dgWorld *)this;
 		if (bodyPtr0->GetSleepState() & bodyPtr1->GetSleepState()) {
 			dgContact *contact = NULL;
 			if (bodyPtr0->m_invMass.m_w != dgFloat32(0.0f)) {
 				for (dgBodyMasterListRow::dgListNode *link = world->FindConstraintLink(
-						 bodyPtr0, bodyPtr1);
-					 link;
-					 link = world->FindConstraintLinkNext(link, bodyPtr1)) {
+				            bodyPtr0, bodyPtr1);
+				        link;
+				        link = world->FindConstraintLinkNext(link, bodyPtr1)) {
 					dgConstraint *const constraint = link->GetInfo().m_joint;
 					if (constraint->GetId() == dgContactConstraintId) {
 						contact = (dgContact *)constraint;
@@ -460,9 +460,9 @@ void dgCollidingPairCollector::AddPair(dgBody *const bodyPtr0,
 			} else if (bodyPtr1->m_invMass.m_w != dgFloat32(0.0f)) {
 				_ASSERTE(bodyPtr1->m_invMass.m_w != dgFloat32(0.0f));
 				for (dgBodyMasterListRow::dgListNode *link = world->FindConstraintLink(
-						 bodyPtr1, bodyPtr0);
-					 link;
-					 link = world->FindConstraintLinkNext(link, bodyPtr0)) {
+				            bodyPtr1, bodyPtr0);
+				        link;
+				        link = world->FindConstraintLinkNext(link, bodyPtr0)) {
 					dgConstraint *const constraint = link->GetInfo().m_joint;
 					if (constraint->GetId() == dgContactConstraintId) {
 						contact = (dgContact *)constraint;
@@ -495,9 +495,9 @@ void dgCollidingPairCollector::AddPair(dgBody *const bodyPtr0,
 			dgContact *contact = NULL;
 			if (body0->m_invMass.m_w != dgFloat32(0.0f)) {
 				for (dgBodyMasterListRow::dgListNode *link = world->FindConstraintLink(
-						 body0, body1);
-					 link;
-					 link = world->FindConstraintLinkNext(link, body1)) {
+				            body0, body1);
+				        link;
+				        link = world->FindConstraintLinkNext(link, body1)) {
 					dgConstraint *const constraint = link->GetInfo().m_joint;
 					if (constraint->GetId() == dgContactConstraintId) {
 						contact = (dgContact *)constraint;
@@ -510,9 +510,9 @@ void dgCollidingPairCollector::AddPair(dgBody *const bodyPtr0,
 			} else if (body1->m_invMass.m_w != dgFloat32(0.0f)) {
 				_ASSERTE(body1->m_invMass.m_w != dgFloat32(0.0f));
 				for (dgBodyMasterListRow::dgListNode *link = world->FindConstraintLink(
-						 body1, body0);
-					 link;
-					 link = world->FindConstraintLinkNext(link, body0)) {
+				            body1, body0);
+				        link;
+				        link = world->FindConstraintLinkNext(link, body0)) {
 					dgConstraint *const constraint = link->GetInfo().m_joint;
 					if (constraint->GetId() == dgContactConstraintId) {
 						contact = (dgContact *)constraint;
@@ -544,21 +544,21 @@ void dgCollidingPairCollector::AddPair(dgBody *const bodyPtr0,
 			const dgBodyMaterialList &materialList = *world;
 
 			const dgContactMaterial *const material =
-				&materialList.Find(key)->GetInfo();
-			//			if (material->m_collisionEnable) {
+			    &materialList.Find(key)->GetInfo();
+			//          if (material->m_collisionEnable) {
 			if (material->m_flags & dgContactMaterial::m_collisionEnable__) {
 				dgInt32 processContacts;
 
 				processContacts = 1;
 				if (material->m_aabbOverlap) {
 					processContacts = material->m_aabbOverlap(*material, *body0, *body1,
-															  threadIndex);
+					                  threadIndex);
 				}
 				if (processContacts) {
 					_ASSERTE(
-						!body0->m_collision->IsType(dgCollision::dgCollisionNull_RTTI));
+					    !body0->m_collision->IsType(dgCollision::dgCollisionNull_RTTI));
 					_ASSERTE(
-						!body1->m_collision->IsType(dgCollision::dgCollisionNull_RTTI));
+					    !body1->m_collision->IsType(dgCollision::dgCollisionNull_RTTI));
 
 					dgThreadPairCache &pairChache = *m_chacheBuffers[threadIndex];
 

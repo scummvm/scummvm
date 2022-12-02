@@ -40,8 +40,7 @@
 
 BEGIN_AS_NAMESPACE
 
-asCTypeInfo::asCTypeInfo()
-{
+asCTypeInfo::asCTypeInfo() {
 	externalRefCount.set(0);
 	internalRefCount.set(1); // start with one internal ref-count
 	engine = 0;
@@ -57,8 +56,7 @@ asCTypeInfo::asCTypeInfo()
 	nameSpace = 0;
 }
 
-asCTypeInfo::asCTypeInfo(asCScriptEngine *in_engine)
-{
+asCTypeInfo::asCTypeInfo(asCScriptEngine *in_engine) {
 	externalRefCount.set(0);
 	internalRefCount.set(1); // start with one internal ref count
 	engine = in_engine;
@@ -74,54 +72,45 @@ asCTypeInfo::asCTypeInfo(asCScriptEngine *in_engine)
 	nameSpace = engine->nameSpaces[0];
 }
 
-asCTypeInfo::~asCTypeInfo()
-{
+asCTypeInfo::~asCTypeInfo() {
 }
 
 // interface
-int asCTypeInfo::AddRef() const
-{
+int asCTypeInfo::AddRef() const {
 	return externalRefCount.atomicInc();
 }
 
 // interface
-int asCTypeInfo::Release() const
-{
+int asCTypeInfo::Release() const {
 	int r = externalRefCount.atomicDec();
 
-	if (r == 0)
-	{
+	if (r == 0) {
 		// There are no more external references, if there are also no
 		// internal references then it is time to delete the object type
-		if (internalRefCount.get() == 0)
-		{
+		if (internalRefCount.get() == 0) {
 			// If the engine is no longer set, then it has already been
 			// released and we must take care of the deletion ourselves
-			asDELETE(const_cast<asCTypeInfo*>(this), asCTypeInfo);
+			asDELETE(const_cast<asCTypeInfo *>(this), asCTypeInfo);
 		}
 	}
 
 	return r;
 }
 
-int asCTypeInfo::AddRefInternal()
-{
+int asCTypeInfo::AddRefInternal() {
 	return internalRefCount.atomicInc();
 }
 
-int asCTypeInfo::ReleaseInternal()
-{
+int asCTypeInfo::ReleaseInternal() {
 	int r = internalRefCount.atomicDec();
 
-	if (r == 0)
-	{
+	if (r == 0) {
 		// There are no more internal references, if there are also no
 		// external references then it is time to delete the object type
-		if (externalRefCount.get() == 0)
-		{
+		if (externalRefCount.get() == 0) {
 			// If the engine is no longer set, then it has already been
 			// released and we must take care of the deletion ourselves
-			asDELETE(const_cast<asCTypeInfo*>(this), asCTypeInfo);
+			asDELETE(const_cast<asCTypeInfo *>(this), asCTypeInfo);
 		}
 	}
 
@@ -129,13 +118,11 @@ int asCTypeInfo::ReleaseInternal()
 }
 
 // interface
-asIScriptModule *asCTypeInfo::GetModule() const
-{
+asIScriptModule *asCTypeInfo::GetModule() const {
 	return module;
 }
 
-void *asCTypeInfo::SetUserData(void *data, asPWORD type)
-{
+void *asCTypeInfo::SetUserData(void *data, asPWORD type) {
 	// As a thread might add a new new user data at the same time as another
 	// it is necessary to protect both read and write access to the userData member
 	ACQUIREEXCLUSIVE(engine->engineRWLock);
@@ -143,11 +130,9 @@ void *asCTypeInfo::SetUserData(void *data, asPWORD type)
 	// It is not intended to store a lot of different types of userdata,
 	// so a more complex structure like a associative map would just have
 	// more overhead than a simple array.
-	for (asUINT n = 0; n < userData.GetLength(); n += 2)
-	{
-		if (userData[n] == type)
-		{
-			void *oldData = reinterpret_cast<void*>(userData[n + 1]);
+	for (asUINT n = 0; n < userData.GetLength(); n += 2) {
+		if (userData[n] == type) {
+			void *oldData = reinterpret_cast<void *>(userData[n + 1]);
 			userData[n + 1] = reinterpret_cast<asPWORD>(data);
 
 			RELEASEEXCLUSIVE(engine->engineRWLock);
@@ -164,18 +149,15 @@ void *asCTypeInfo::SetUserData(void *data, asPWORD type)
 	return 0;
 }
 
-void *asCTypeInfo::GetUserData(asPWORD type) const
-{
+void *asCTypeInfo::GetUserData(asPWORD type) const {
 	// There may be multiple threads reading, but when
 	// setting the user data nobody must be reading.
 	ACQUIRESHARED(engine->engineRWLock);
 
-	for (asUINT n = 0; n < userData.GetLength(); n += 2)
-	{
-		if (userData[n] == type)
-		{
+	for (asUINT n = 0; n < userData.GetLength(); n += 2) {
+		if (userData[n] == type) {
 			RELEASESHARED(engine->engineRWLock);
-			return reinterpret_cast<void*>(userData[n + 1]);
+			return reinterpret_cast<void *>(userData[n + 1]);
 		}
 	}
 
@@ -185,41 +167,35 @@ void *asCTypeInfo::GetUserData(asPWORD type) const
 }
 
 // interface
-const char *asCTypeInfo::GetName() const
-{
+const char *asCTypeInfo::GetName() const {
 	return name.AddressOf();
 }
 
 // interface
-const char *asCTypeInfo::GetNamespace() const
-{
-	if( nameSpace )
+const char *asCTypeInfo::GetNamespace() const {
+	if (nameSpace)
 		return nameSpace->name.AddressOf();
 
 	return 0;
 }
 
 // interface
-asDWORD asCTypeInfo::GetFlags() const
-{
+asDWORD asCTypeInfo::GetFlags() const {
 	return flags;
 }
 
 // interface
-asUINT asCTypeInfo::GetSize() const
-{
+asUINT asCTypeInfo::GetSize() const {
 	return size;
 }
 
 // interface
-int asCTypeInfo::GetTypeId() const
-{
-	if (typeId == -1)
-	{
+int asCTypeInfo::GetTypeId() const {
+	if (typeId == -1) {
 		// We need a non const pointer to create the asCDataType object.
 		// We're not breaking anything here because this function is not
 		// modifying the object, so this const cast is safe.
-		asCTypeInfo *ot = const_cast<asCTypeInfo*>(this);
+		asCTypeInfo *ot = const_cast<asCTypeInfo *>(this);
 
 		// The engine will define the typeId for this object type
 		engine->GetTypeIdFromDataType(asCDataType::CreateType(ot, false));
@@ -229,14 +205,12 @@ int asCTypeInfo::GetTypeId() const
 }
 
 // interface
-asIScriptEngine *asCTypeInfo::GetEngine() const
-{
+asIScriptEngine *asCTypeInfo::GetEngine() const {
 	return engine;
 }
 
 // interface
-const char *asCTypeInfo::GetConfigGroup() const
-{
+const char *asCTypeInfo::GetConfigGroup() const {
 	asCConfigGroup *group = engine->FindConfigGroupForTypeInfo(this);
 	if (group == 0)
 		return 0;
@@ -245,14 +219,12 @@ const char *asCTypeInfo::GetConfigGroup() const
 }
 
 // interface
-asDWORD asCTypeInfo::GetAccessMask() const
-{
+asDWORD asCTypeInfo::GetAccessMask() const {
 	return accessMask;
 }
 
 // interface
-int asCTypeInfo::GetProperty(asUINT index, const char **out_name, int *out_typeId, bool *out_isPrivate, bool *out_isProtected, int *out_offset, bool *out_isReference, asDWORD *out_accessMask, int *out_compositeOffset, bool *out_isCompositeIndirect) const
-{
+int asCTypeInfo::GetProperty(asUINT index, const char **out_name, int *out_typeId, bool *out_isPrivate, bool *out_isProtected, int *out_offset, bool *out_isReference, asDWORD *out_accessMask, int *out_compositeOffset, bool *out_isCompositeIndirect) const {
 	UNUSED_VAR(index);
 	if (out_name) *out_name = 0;
 	if (out_typeId) *out_typeId = 0;
@@ -267,62 +239,55 @@ int asCTypeInfo::GetProperty(asUINT index, const char **out_name, int *out_typeI
 }
 
 // internal
-asCObjectType *CastToObjectType(asCTypeInfo *ti)
-{
+asCObjectType *CastToObjectType(asCTypeInfo *ti) {
 	// Allow call on null pointer
 	if (ti == 0) return 0;
 
 	// TODO: type: Should List pattern have its own type class?
 	if ((ti->flags & (asOBJ_VALUE | asOBJ_REF | asOBJ_LIST_PATTERN)) && !(ti->flags & asOBJ_FUNCDEF))
-		return reinterpret_cast<asCObjectType*>(ti);
+		return reinterpret_cast<asCObjectType *>(ti);
 
 	return 0;
 }
 
 // internal
-asCEnumType *CastToEnumType(asCTypeInfo *ti)
-{
+asCEnumType *CastToEnumType(asCTypeInfo *ti) {
 	// Allow call on null pointer
 	if (ti == 0) return 0;
 
 	if (ti->flags & (asOBJ_ENUM))
-		return reinterpret_cast<asCEnumType*>(ti);
+		return reinterpret_cast<asCEnumType *>(ti);
 
 	return 0;
 }
 
 // internal
-asCTypedefType *CastToTypedefType(asCTypeInfo *ti)
-{
+asCTypedefType *CastToTypedefType(asCTypeInfo *ti) {
 	// Allow call on null pointer
 	if (ti == 0) return 0;
 
 	if (ti->flags & (asOBJ_TYPEDEF))
-		return reinterpret_cast<asCTypedefType*>(ti);
+		return reinterpret_cast<asCTypedefType *>(ti);
 
 	return 0;
 }
 
 // internal
-asCFuncdefType *CastToFuncdefType(asCTypeInfo *ti)
-{
+asCFuncdefType *CastToFuncdefType(asCTypeInfo *ti) {
 	// Allow call on null pointer
 	if (ti == 0) return 0;
 
 	if (ti->flags & (asOBJ_FUNCDEF))
-		return reinterpret_cast<asCFuncdefType*>(ti);
+		return reinterpret_cast<asCFuncdefType *>(ti);
 
 	return 0;
 }
 
 // internal
-void asCTypeInfo::CleanUserData()
-{
+void asCTypeInfo::CleanUserData() {
 	asASSERT(engine);
-	for (asUINT n = 0; n < userData.GetLength(); n += 2)
-	{
-		if (userData[n + 1])
-		{
+	for (asUINT n = 0; n < userData.GetLength(); n += 2) {
+		if (userData[n + 1]) {
 			for (asUINT c = 0; c < engine->cleanTypeInfoFuncs.GetLength(); c++)
 				if (engine->cleanTypeInfoFuncs[c].type == userData[n])
 					engine->cleanTypeInfoFuncs[c].cleanFunc(this);
@@ -332,8 +297,7 @@ void asCTypeInfo::CleanUserData()
 }
 
 // internal
-bool asCTypeInfo::IsShared() const
-{
+bool asCTypeInfo::IsShared() const {
 	// Types that can be declared by scripts need to have the explicit flag asOBJ_SHARED
 	if (flags & (asOBJ_SCRIPT_OBJECT | asOBJ_ENUM)) return flags & asOBJ_SHARED ? true : false;
 
@@ -343,11 +307,9 @@ bool asCTypeInfo::IsShared() const
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-asCEnumType::~asCEnumType()
-{
+asCEnumType::~asCEnumType() {
 	asUINT n;
-	for (n = 0; n < enumValues.GetLength(); n++)
-	{
+	for (n = 0; n < enumValues.GetLength(); n++) {
 		if (enumValues[n])
 			asDELETE(enumValues[n], asSEnumValue);
 	}
@@ -355,14 +317,12 @@ asCEnumType::~asCEnumType()
 }
 
 // interface
-asUINT asCEnumType::GetEnumValueCount() const
-{
+asUINT asCEnumType::GetEnumValueCount() const {
 	return enumValues.GetLength();
 }
 
 // interface
-const char *asCEnumType::GetEnumValueByIndex(asUINT index, int *outValue) const
-{
+const char *asCEnumType::GetEnumValueByIndex(asUINT index, int *outValue) const {
 	if (outValue)
 		*outValue = 0;
 
@@ -377,18 +337,16 @@ const char *asCEnumType::GetEnumValueByIndex(asUINT index, int *outValue) const
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-asCTypedefType::~asCTypedefType()
-{
+asCTypedefType::~asCTypedefType() {
 	DestroyInternal();
 }
 
-void asCTypedefType::DestroyInternal()
-{
+void asCTypedefType::DestroyInternal() {
 	if (engine == 0) return;
 
 	// Release the object types held by the alias
 	if (aliasForType.GetTypeInfo())
-			aliasForType.GetTypeInfo()->ReleaseInternal();
+		aliasForType.GetTypeInfo()->ReleaseInternal();
 
 	aliasForType = asCDataType::CreatePrimitive(ttVoid, false);
 
@@ -403,15 +361,13 @@ void asCTypedefType::DestroyInternal()
 }
 
 // interface
-int asCTypedefType::GetTypedefTypeId() const
-{
+int asCTypedefType::GetTypedefTypeId() const {
 	return engine->GetTypeIdFromDataType(aliasForType);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-asCFuncdefType::asCFuncdefType(asCScriptEngine *en, asCScriptFunction *func) : asCTypeInfo(en)
-{
+asCFuncdefType::asCFuncdefType(asCScriptEngine *en, asCScriptFunction *func) : asCTypeInfo(en) {
 	asASSERT(func->funcType == asFUNC_FUNCDEF);
 	asASSERT(func->funcdefType == 0);
 
@@ -428,23 +384,20 @@ asCFuncdefType::asCFuncdefType(asCScriptEngine *en, asCScriptFunction *func) : a
 	func->funcdefType = this;
 }
 
-asCFuncdefType::~asCFuncdefType()
-{
+asCFuncdefType::~asCFuncdefType() {
 	DestroyInternal();
 }
 
-void asCFuncdefType::DestroyInternal()
-{
+void asCFuncdefType::DestroyInternal() {
 	if (engine == 0) return;
 
 	// Release the funcdef
-	if( funcdef )
+	if (funcdef)
 		funcdef->ReleaseInternal();
 	funcdef = 0;
 
 	// Detach from parent class
-	if (parentClass)
-	{
+	if (parentClass) {
 		parentClass->childFuncDefs.RemoveValue(this);
 		parentClass = 0;
 	}
@@ -460,14 +413,12 @@ void asCFuncdefType::DestroyInternal()
 }
 
 // interface
-asIScriptFunction *asCFuncdefType::GetFuncdefSignature() const
-{
+asIScriptFunction *asCFuncdefType::GetFuncdefSignature() const {
 	return funcdef;
 }
 
 // interface
-asITypeInfo *asCFuncdefType::GetParentType() const
-{
+asITypeInfo *asCFuncdefType::GetParentType() const {
 	return parentClass;
 }
 

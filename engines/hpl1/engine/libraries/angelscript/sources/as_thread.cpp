@@ -53,57 +53,45 @@ static asCThreadManager *threadManager = 0;
 extern "C"
 {
 
-AS_API int asThreadCleanup()
-{
-	return asCThreadManager::CleanupLocalData();
-}
-
-AS_API asIThreadManager *asGetThreadManager()
-{
-	return threadManager;
-}
-
-AS_API int asPrepareMultithread(asIThreadManager *externalThreadMgr)
-{
-	return asCThreadManager::Prepare(externalThreadMgr);
-}
-
-AS_API void asUnprepareMultithread()
-{
-	asCThreadManager::Unprepare();
-}
-
-AS_API void asAcquireExclusiveLock()
-{
-	if( threadManager )
-	{
-		ACQUIREEXCLUSIVE(threadManager->appRWLock);
+	AS_API int asThreadCleanup() {
+		return asCThreadManager::CleanupLocalData();
 	}
-}
 
-AS_API void asReleaseExclusiveLock()
-{
-	if( threadManager )
-	{
-		RELEASEEXCLUSIVE(threadManager->appRWLock);
+	AS_API asIThreadManager *asGetThreadManager() {
+		return threadManager;
 	}
-}
 
-AS_API void asAcquireSharedLock()
-{
-	if( threadManager )
-	{
-		ACQUIRESHARED(threadManager->appRWLock);
+	AS_API int asPrepareMultithread(asIThreadManager *externalThreadMgr) {
+		return asCThreadManager::Prepare(externalThreadMgr);
 	}
-}
 
-AS_API void asReleaseSharedLock()
-{
-	if( threadManager )
-	{
-		RELEASESHARED(threadManager->appRWLock);
+	AS_API void asUnprepareMultithread() {
+		asCThreadManager::Unprepare();
 	}
-}
+
+	AS_API void asAcquireExclusiveLock() {
+		if (threadManager) {
+			ACQUIREEXCLUSIVE(threadManager->appRWLock);
+		}
+	}
+
+	AS_API void asReleaseExclusiveLock() {
+		if (threadManager) {
+			RELEASEEXCLUSIVE(threadManager->appRWLock);
+		}
+	}
+
+	AS_API void asAcquireSharedLock() {
+		if (threadManager) {
+			ACQUIRESHARED(threadManager->appRWLock);
+		}
+	}
+
+	AS_API void asReleaseSharedLock() {
+		if (threadManager) {
+			RELEASESHARED(threadManager->appRWLock);
+		}
+	}
 
 }
 
@@ -113,34 +101,32 @@ AS_API void asReleaseSharedLock()
 __declspec(thread) asCThreadLocalData *asCThreadManager::tld = 0;
 #endif
 
-asCThreadManager::asCThreadManager()
-{
+asCThreadManager::asCThreadManager() {
 	// We're already in the critical section when this function is called
 
 #ifdef AS_NO_THREADS
 	tld = 0;
 #else
 	// Allocate the thread local storage
-	#if defined AS_POSIX_THREADS
-		pthread_key_t pKey;
-		pthread_key_create(&pKey, 0);
-		tlsKey = (asDWORD)pKey;
-	#elif defined AS_WINDOWS_THREADS
-		#if defined(_MSC_VER) && (WINAPI_FAMILY & WINAPI_FAMILY_PHONE_APP)
-			tld = 0;
-		#else
-			tlsKey = (asDWORD)TlsAlloc();
-		#endif
-	#endif
+#if defined AS_POSIX_THREADS
+	pthread_key_t pKey;
+	pthread_key_create(&pKey, 0);
+	tlsKey = (asDWORD)pKey;
+#elif defined AS_WINDOWS_THREADS
+#if defined(_MSC_VER) && (WINAPI_FAMILY & WINAPI_FAMILY_PHONE_APP)
+	tld = 0;
+#else
+	tlsKey = (asDWORD)TlsAlloc();
+#endif
+#endif
 #endif
 	refCount = 1;
 }
 
-int asCThreadManager::Prepare(asIThreadManager *externalThreadMgr)
-{
+int asCThreadManager::Prepare(asIThreadManager *externalThreadMgr) {
 	// Don't allow an external thread manager if there
 	// is already a thread manager defined
-	if( externalThreadMgr && threadManager )
+	if (externalThreadMgr && threadManager)
 		return asINVALID_ARG;
 
 	// The critical section cannot be declared globally, as there is no
@@ -153,16 +139,15 @@ int asCThreadManager::Prepare(asIThreadManager *externalThreadMgr)
 	// To avoid the race condition when the thread manager is first created,
 	// the application must make sure to call the global asPrepareForMultiThread()
 	// in the main thread before any other thread creates a script engine.
-	if( threadManager == 0 && externalThreadMgr == 0 )
+	if (threadManager == 0 && externalThreadMgr == 0)
 		threadManager = asNEW(asCThreadManager);
-	else
-	{
+	else {
 		// If an application uses different dlls each dll will get it's own memory
 		// space for global variables. If multiple dlls then uses AngelScript's
 		// global thread support functions it is then best to share the thread
 		// manager to make sure all dlls use the same critical section.
-		if( externalThreadMgr )
-			threadManager = reinterpret_cast<asCThreadManager*>(externalThreadMgr);
+		if (externalThreadMgr)
+			threadManager = reinterpret_cast<asCThreadManager *>(externalThreadMgr);
 
 		ENTERCRITICALSECTION(threadManager->criticalSection);
 		threadManager->refCount++;
@@ -173,19 +158,17 @@ int asCThreadManager::Prepare(asIThreadManager *externalThreadMgr)
 	return 0;
 }
 
-void asCThreadManager::Unprepare()
-{
+void asCThreadManager::Unprepare() {
 	asASSERT(threadManager);
 
-	if( threadManager == 0 )
+	if (threadManager == 0)
 		return;
 
 	// It's necessary to protect this section so no
 	// other thread attempts to call AddRef or Release
 	// while clean up is in progress.
 	ENTERCRITICALSECTION(threadManager->criticalSection);
-	if( --threadManager->refCount == 0 )
-	{
+	if (--threadManager->refCount == 0) {
 		// Make sure the local data is destroyed, at least for the current thread
 		CleanupLocalData();
 
@@ -198,113 +181,101 @@ void asCThreadManager::Unprepare()
 		// Leave the critical section before it is destroyed
 		LEAVECRITICALSECTION(mgr->criticalSection);
 
-		asDELETE(mgr,asCThreadManager);
-	}
-	else
+		asDELETE(mgr, asCThreadManager);
+	} else
 		LEAVECRITICALSECTION(threadManager->criticalSection);
 }
 
-asCThreadManager::~asCThreadManager()
-{
+asCThreadManager::~asCThreadManager() {
 #ifndef AS_NO_THREADS
 	// Deallocate the thread local storage
-	#if defined AS_POSIX_THREADS
-		pthread_key_delete((pthread_key_t)tlsKey);
-	#elif defined AS_WINDOWS_THREADS
-		#if defined(_MSC_VER) && (WINAPI_FAMILY & WINAPI_FAMILY_PHONE_APP)
-			tld = 0;
-		#else
-			TlsFree((DWORD)tlsKey);
-		#endif
-	#endif
+#if defined AS_POSIX_THREADS
+	pthread_key_delete((pthread_key_t)tlsKey);
+#elif defined AS_WINDOWS_THREADS
+#if defined(_MSC_VER) && (WINAPI_FAMILY & WINAPI_FAMILY_PHONE_APP)
+	tld = 0;
 #else
-	if( tld )
-	{
-		asDELETE(tld,asCThreadLocalData);
+	TlsFree((DWORD)tlsKey);
+#endif
+#endif
+#else
+	if (tld) {
+		asDELETE(tld, asCThreadLocalData);
 	}
 	tld = 0;
 #endif
 }
 
-int asCThreadManager::CleanupLocalData()
-{
-	if( threadManager == 0 )
+int asCThreadManager::CleanupLocalData() {
+	if (threadManager == 0)
 		return 0;
 
 #ifndef AS_NO_THREADS
 #if defined AS_POSIX_THREADS
-	asCThreadLocalData *tld = (asCThreadLocalData*)pthread_getspecific((pthread_key_t)threadManager->tlsKey);
+	asCThreadLocalData *tld = (asCThreadLocalData *)pthread_getspecific((pthread_key_t)threadManager->tlsKey);
 #elif defined AS_WINDOWS_THREADS
-	#if !defined(_MSC_VER) || !(WINAPI_FAMILY & WINAPI_FAMILY_PHONE_APP)
-		asCThreadLocalData *tld = (asCThreadLocalData*)TlsGetValue((DWORD)threadManager->tlsKey);
-	#endif
+#if !defined(_MSC_VER) || !(WINAPI_FAMILY & WINAPI_FAMILY_PHONE_APP)
+	asCThreadLocalData *tld = (asCThreadLocalData *)TlsGetValue((DWORD)threadManager->tlsKey);
+#endif
 #endif
 
-	if( tld == 0 )
+	if (tld == 0)
 		return 0;
 
-	if( tld->activeContexts.GetLength() == 0 )
-	{
-		asDELETE(tld,asCThreadLocalData);
-		#if defined AS_POSIX_THREADS
-			pthread_setspecific((pthread_key_t)threadManager->tlsKey, 0);
-		#elif defined AS_WINDOWS_THREADS
-			#if defined(_MSC_VER) && (WINAPI_FAMILY & WINAPI_FAMILY_PHONE_APP)
-				tld = 0;
-			#else
-				TlsSetValue((DWORD)threadManager->tlsKey, 0);
-			#endif
-		#endif
+	if (tld->activeContexts.GetLength() == 0) {
+		asDELETE(tld, asCThreadLocalData);
+#if defined AS_POSIX_THREADS
+		pthread_setspecific((pthread_key_t)threadManager->tlsKey, 0);
+#elif defined AS_WINDOWS_THREADS
+#if defined(_MSC_VER) && (WINAPI_FAMILY & WINAPI_FAMILY_PHONE_APP)
+		tld = 0;
+#else
+		TlsSetValue((DWORD)threadManager->tlsKey, 0);
+#endif
+#endif
 		return 0;
-	}
-	else
+	} else
 		return asCONTEXT_ACTIVE;
 
 #else
-	if( threadManager->tld )
-	{
-		if( threadManager->tld->activeContexts.GetLength() == 0 )
-		{
-			asDELETE(threadManager->tld,asCThreadLocalData);
+	if (threadManager->tld) {
+		if (threadManager->tld->activeContexts.GetLength() == 0) {
+			asDELETE(threadManager->tld, asCThreadLocalData);
 			threadManager->tld = 0;
-		}
-		else
+		} else
 			return asCONTEXT_ACTIVE;
 	}
 	return 0;
 #endif
 }
 
-asCThreadLocalData *asCThreadManager::GetLocalData()
-{
-	if( threadManager == 0 )
+asCThreadLocalData *asCThreadManager::GetLocalData() {
+	if (threadManager == 0)
 		return 0;
 
 #ifndef AS_NO_THREADS
 #if defined AS_POSIX_THREADS
-	asCThreadLocalData *tld = (asCThreadLocalData*)pthread_getspecific((pthread_key_t)threadManager->tlsKey);
-	if( tld == 0 )
-	{
+	asCThreadLocalData *tld = (asCThreadLocalData *)pthread_getspecific((pthread_key_t)threadManager->tlsKey);
+	if (tld == 0) {
 		tld = asNEW(asCThreadLocalData)();
 		pthread_setspecific((pthread_key_t)threadManager->tlsKey, tld);
 	}
 #elif defined AS_WINDOWS_THREADS
-	#if defined(_MSC_VER) && (WINAPI_FAMILY & WINAPI_FAMILY_PHONE_APP)
-		if( tld == 0 )
-			tld = asNEW(asCThreadLocalData)();
-	#else
-		asCThreadLocalData *tld = (asCThreadLocalData*)TlsGetValue((DWORD)threadManager->tlsKey);
-		if( tld == 0 )
-		{
- 			tld = asNEW(asCThreadLocalData)();
-			TlsSetValue((DWORD)threadManager->tlsKey, tld);
- 		}
-	#endif
+#if defined(_MSC_VER) && (WINAPI_FAMILY & WINAPI_FAMILY_PHONE_APP)
+	if (tld == 0)
+		tld = asNEW(asCThreadLocalData)();
+#else
+	asCThreadLocalData *tld = (asCThreadLocalData *)TlsGetValue((DWORD)threadManager->tlsKey);
+	if (tld == 0) {
+		tld = asNEW(asCThreadLocalData)();
+		TlsSetValue((DWORD)threadManager->tlsKey, tld);
+	}
+#endif
 #endif
 
 	return tld;
 #else
-	if( threadManager->tld == 0 )
+	if (threadManager->tld == 0)
 		threadManager->tld = asNEW(asCThreadLocalData)();
 
 	return threadManager->tld;
@@ -313,19 +284,16 @@ asCThreadLocalData *asCThreadManager::GetLocalData()
 
 //=========================================================================
 
-asCThreadLocalData::asCThreadLocalData()
-{
+asCThreadLocalData::asCThreadLocalData() {
 }
 
-asCThreadLocalData::~asCThreadLocalData()
-{
+asCThreadLocalData::~asCThreadLocalData() {
 }
 
 //=========================================================================
 
 #ifndef AS_NO_THREADS
-asCThreadCriticalSection::asCThreadCriticalSection()
-{
+asCThreadCriticalSection::asCThreadCriticalSection() {
 #if defined AS_POSIX_THREADS
 	pthread_mutex_init(&cs, 0);
 #elif defined AS_WINDOWS_THREADS
@@ -340,8 +308,7 @@ asCThreadCriticalSection::asCThreadCriticalSection()
 #endif
 }
 
-asCThreadCriticalSection::~asCThreadCriticalSection()
-{
+asCThreadCriticalSection::~asCThreadCriticalSection() {
 #if defined AS_POSIX_THREADS
 	pthread_mutex_destroy(&cs);
 #elif defined AS_WINDOWS_THREADS
@@ -349,8 +316,7 @@ asCThreadCriticalSection::~asCThreadCriticalSection()
 #endif
 }
 
-void asCThreadCriticalSection::Enter()
-{
+void asCThreadCriticalSection::Enter() {
 #if defined AS_POSIX_THREADS
 	pthread_mutex_lock(&cs);
 #elif defined AS_WINDOWS_THREADS
@@ -358,8 +324,7 @@ void asCThreadCriticalSection::Enter()
 #endif
 }
 
-void asCThreadCriticalSection::Leave()
-{
+void asCThreadCriticalSection::Leave() {
 #if defined AS_POSIX_THREADS
 	pthread_mutex_unlock(&cs);
 #elif defined AS_WINDOWS_THREADS
@@ -367,8 +332,7 @@ void asCThreadCriticalSection::Leave()
 #endif
 }
 
-bool asCThreadCriticalSection::TryEnter()
-{
+bool asCThreadCriticalSection::TryEnter() {
 #if defined AS_POSIX_THREADS
 	return !pthread_mutex_trylock(&cs);
 #elif defined AS_WINDOWS_THREADS
@@ -378,11 +342,10 @@ bool asCThreadCriticalSection::TryEnter()
 #endif
 }
 
-asCThreadReadWriteLock::asCThreadReadWriteLock()
-{
+asCThreadReadWriteLock::asCThreadReadWriteLock() {
 #if defined AS_POSIX_THREADS
 	int r = pthread_rwlock_init(&lock, 0);
-	asASSERT( r == 0 );
+	asASSERT(r == 0);
 	UNUSED_VAR(r);
 #elif defined AS_WINDOWS_THREADS
 #if defined(_MSC_VER) && (WINAPI_FAMILY & WINAPI_FAMILY_PHONE_APP)
@@ -399,8 +362,7 @@ asCThreadReadWriteLock::asCThreadReadWriteLock()
 #endif
 }
 
-asCThreadReadWriteLock::~asCThreadReadWriteLock()
-{
+asCThreadReadWriteLock::~asCThreadReadWriteLock() {
 #if defined AS_POSIX_THREADS
 	pthread_rwlock_destroy(&lock);
 #elif defined AS_WINDOWS_THREADS
@@ -409,8 +371,7 @@ asCThreadReadWriteLock::~asCThreadReadWriteLock()
 #endif
 }
 
-void asCThreadReadWriteLock::AcquireExclusive()
-{
+void asCThreadReadWriteLock::AcquireExclusive() {
 #if defined AS_POSIX_THREADS
 	pthread_rwlock_wrlock(&lock);
 #elif defined AS_WINDOWS_THREADS
@@ -421,7 +382,7 @@ void asCThreadReadWriteLock::AcquireExclusive()
 	// so the lock doesn't have to wait until there are no readers at all.
 	// If we try to lock all at once it is quite possible the writer will
 	// never succeed.
-	for( asUINT n = 0; n < maxReaders; n++ )
+	for (asUINT n = 0; n < maxReaders; n++)
 		WaitForSingleObjectEx(readLocks, INFINITE, FALSE);
 
 	// Allow another writer to lock. It will only be able to
@@ -430,8 +391,7 @@ void asCThreadReadWriteLock::AcquireExclusive()
 #endif
 }
 
-void asCThreadReadWriteLock::ReleaseExclusive()
-{
+void asCThreadReadWriteLock::ReleaseExclusive() {
 #if defined AS_POSIX_THREADS
 	pthread_rwlock_unlock(&lock);
 #elif defined AS_WINDOWS_THREADS
@@ -440,8 +400,7 @@ void asCThreadReadWriteLock::ReleaseExclusive()
 #endif
 }
 
-void asCThreadReadWriteLock::AcquireShared()
-{
+void asCThreadReadWriteLock::AcquireShared() {
 #if defined AS_POSIX_THREADS
 	pthread_rwlock_rdlock(&lock);
 #elif defined AS_WINDOWS_THREADS
@@ -450,8 +409,7 @@ void asCThreadReadWriteLock::AcquireShared()
 #endif
 }
 
-void asCThreadReadWriteLock::ReleaseShared()
-{
+void asCThreadReadWriteLock::ReleaseShared() {
 #if defined AS_POSIX_THREADS
 	pthread_rwlock_unlock(&lock);
 #elif defined AS_WINDOWS_THREADS

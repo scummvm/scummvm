@@ -47,8 +47,7 @@
 
 BEGIN_AS_NAMESPACE
 
-class asCParser
-{
+class asCParser {
 public:
 	asCParser(asCBuilder *builder);
 	~asCParser();

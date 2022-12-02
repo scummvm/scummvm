@@ -63,7 +63,7 @@ typedef void *(*asALLOCALIGNEDFUNCDEBUG_t)(size_t, size_t, const char *, unsigne
 const int MAX_TYPE_ALIGNMENT = 16;
 
 // Utility function used for assertions.
-bool isAligned(const void* const pointer, asUINT alignment);
+bool isAligned(const void *const pointer, asUINT alignment);
 
 #endif // WIP_16BYTE_ALIGN
 
@@ -71,31 +71,31 @@ bool isAligned(const void* const pointer, asUINT alignment);
 
 #ifndef AS_DEBUG
 
-	#define asNEW(x)        new(userAlloc(sizeof(x))) x
-	#define asDELETE(ptr,x) {void *tmp = ptr; (ptr)->~x(); userFree(tmp);}
+#define asNEW(x)        new(userAlloc(sizeof(x))) x
+#define asDELETE(ptr,x) {void *tmp = ptr; (ptr)->~x(); userFree(tmp);}
 
-	#define asNEWARRAY(x,cnt)  (x*)userAlloc(sizeof(x)*cnt)
-	#define asDELETEARRAY(ptr) userFree(ptr)
+#define asNEWARRAY(x,cnt)  (x*)userAlloc(sizeof(x)*cnt)
+#define asDELETEARRAY(ptr) userFree(ptr)
 
 #ifdef WIP_16BYTE_ALIGN
-	#define asNEWARRAYALIGNED(x,cnt, alignment)  (x*)userAllocAligned(sizeof(x)*cnt, alignment)
-	#define asDELETEARRAYALIGNED(ptr) userFreeAligned(ptr)
+#define asNEWARRAYALIGNED(x,cnt, alignment)  (x*)userAllocAligned(sizeof(x)*cnt, alignment)
+#define asDELETEARRAYALIGNED(ptr) userFreeAligned(ptr)
 #endif
 
 #else
 
-	typedef void *(*asALLOCFUNCDEBUG_t)(size_t, const char *, unsigned int);
+typedef void *(*asALLOCFUNCDEBUG_t)(size_t, const char *, unsigned int);
 
-	#define asNEW(x)        new(((asALLOCFUNCDEBUG_t)(userAlloc))(sizeof(x), __FILE__, __LINE__)) x
-	#define asDELETE(ptr,x) {void *tmp = ptr; (ptr)->~x(); userFree(tmp);}
+#define asNEW(x)        new(((asALLOCFUNCDEBUG_t)(userAlloc))(sizeof(x), __FILE__, __LINE__)) x
+#define asDELETE(ptr,x) {void *tmp = ptr; (ptr)->~x(); userFree(tmp);}
 
-	#define asNEWARRAY(x,cnt)  (x*)((asALLOCFUNCDEBUG_t)(userAlloc))(sizeof(x)*cnt, __FILE__, __LINE__)
-	#define asDELETEARRAY(ptr) userFree(ptr)
+#define asNEWARRAY(x,cnt)  (x*)((asALLOCFUNCDEBUG_t)(userAlloc))(sizeof(x)*cnt, __FILE__, __LINE__)
+#define asDELETEARRAY(ptr) userFree(ptr)
 
 #ifdef WIP_16BYTE_ALIGN
-	//TODO: Equivalent of debug allocation function with alignment?
-	#define asNEWARRAYALIGNED(x,cnt, alignment)  (x*)userAllocAligned(sizeof(x)*cnt, alignment)
-	#define asDELETEARRAYALIGNED(ptr) userFreeAligned(ptr)
+//TODO: Equivalent of debug allocation function with alignment?
+#define asNEWARRAYALIGNED(x,cnt, alignment)  (x*)userAllocAligned(sizeof(x)*cnt, alignment)
+#define asDELETEARRAYALIGNED(ptr) userFreeAligned(ptr)
 #endif
 
 #endif
@@ -108,8 +108,7 @@ END_AS_NAMESPACE
 
 BEGIN_AS_NAMESPACE
 
-class asCMemoryMgr
-{
+class asCMemoryMgr {
 public:
 	asCMemoryMgr();
 	~asCMemoryMgr();

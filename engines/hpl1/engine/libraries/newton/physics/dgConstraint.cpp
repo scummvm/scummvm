@@ -29,13 +29,13 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-//#define LINEAR_VEL_DAMP	dgFloat32 (100.0f)
-//#define LINEAR_POS_DAMP	dgFloat32 (1500.0f)
+//#define LINEAR_VEL_DAMP   dgFloat32 (100.0f)
+//#define LINEAR_POS_DAMP   dgFloat32 (1500.0f)
 //#define ANGULAR_VEL_DAMP dgFloat32 (100.0f)
 //#define ANGULAR_POS_DAMP dgFloat32 (1500.0f)
 
-//#define DG_VEL_DAMP				dgFloat32(100.0f)
-//#define DG_POS_DAMP				dgFloat32(1500.0f)
+//#define DG_VEL_DAMP               dgFloat32(100.0f)
+//#define DG_POS_DAMP               dgFloat32(1500.0f)
 
 void *dgConstraint::GetUserData() const {
 	return m_userData;
@@ -50,7 +50,7 @@ bool dgConstraint::IsBilateral() const {
 }
 
 void dgConstraint::InitPointParam(dgPointParam &param, dgFloat32 stiffness,
-								  const dgVector &p0Global, const dgVector &p1Global) const {
+                                  const dgVector &p0Global, const dgVector &p1Global) const {
 	_ASSERTE(m_body0);
 	_ASSERTE(m_body1);
 	param.m_stiffness = stiffness;

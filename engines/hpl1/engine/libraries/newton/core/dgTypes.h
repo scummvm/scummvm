@@ -199,13 +199,13 @@ class dgBigVector;
 
 /*
 #ifdef _WIN32
-	#ifdef _DEBUG
-		#define dgCheckFloat(x) _finite(x)
-	#else
-		#define dgCheckFloat(x) true
-	#endif
+    #ifdef _DEBUG
+        #define dgCheckFloat(x) _finite(x)
+    #else
+        #define dgCheckFloat(x) true
+    #endif
 #else
-	#define dgCheckFloat(x) true
+    #define dgCheckFloat(x) true
 #endif
 */
 
@@ -330,11 +330,11 @@ dgInt32 dgBinarySearch(T const *array, dgInt32 elements, dgInt32 entry) {
 
 template<class T>
 void dgRadixSort(T *const array,
-				 T *const tmpArray,
-				 dgInt32 elements,
-				 dgInt32 radixPass,
-				 dgInt32 (*getRadixKey)(const T *const A, void *const context),
-				 void *const context = NULL) {
+                 T *const tmpArray,
+                 dgInt32 elements,
+                 dgInt32 radixPass,
+                 dgInt32(*getRadixKey)(const T *const A, void *const context),
+                 void *const context = NULL) {
 	dgInt32 scanCount[256];
 	dgInt32 histogram[256][4];
 
@@ -397,9 +397,9 @@ void dgRadixSort(T *const array,
 
 template<class T>
 void dgSort(T *const array,
-			dgInt32 elements,
-			dgInt32 (*compare)(const T *const A, const T *const B, void *const context),
-			void *const context = NULL) {
+            dgInt32 elements,
+            dgInt32(*compare)(const T *const A, const T *const B, void *const context),
+            void *const context = NULL) {
 	dgInt32 stride = 8;
 	dgInt32 stack[1024][2];
 
@@ -483,9 +483,9 @@ void dgSort(T *const array,
 
 template<class T>
 void dgSortIndirect(T **const array,
-					dgInt32 elements,
-					dgInt32 (*compare)(const T *const A, const T *const B, void *const context),
-					void *const context = NULL) {
+                    dgInt32 elements,
+                    dgInt32(*compare)(const T *const A, const T *const B, void *const context),
+                    void *const context = NULL) {
 	dgInt32 stride = 8;
 	dgInt32 stack[1024][2];
 
@@ -569,8 +569,7 @@ void dgSortIndirect(T **const array,
 
 #ifdef __USE_DOUBLE_PRECISION__
 union dgFloatSign {
-	struct
-	{
+	struct {
 		dgInt32 m_dommy;
 		dgInt32 m_iVal;
 
@@ -595,36 +594,36 @@ union dgDoubleInt {
 };
 
 void GetMinMax(dgVector &Min,
-			   dgVector &Max,
-			   const dgFloat32 *const vArray,
-			   dgInt32 vCount,
-			   dgInt32 StrideInBytes);
+               dgVector &Max,
+               const dgFloat32 *const vArray,
+               dgInt32 vCount,
+               dgInt32 StrideInBytes);
 
 void GetMinMax(dgBigVector &Min,
-			   dgBigVector &Max,
-			   const dgFloat64 *const vArray,
-			   dgInt32 vCount,
-			   dgInt32 strideInBytes);
+               dgBigVector &Max,
+               const dgFloat64 *const vArray,
+               dgInt32 vCount,
+               dgInt32 strideInBytes);
 
 dgInt32 dgVertexListToIndexList(dgFloat32 *const vertexList,
-								dgInt32 strideInBytes,
-								dgInt32 floatSizeInBytes,
-								dgInt32 unsignedSizeInBytes,
-								dgInt32 vertexCount,
-								dgInt32 *const indexListOut,
-								dgFloat32 tolerance = dgEPSILON);
+                                dgInt32 strideInBytes,
+                                dgInt32 floatSizeInBytes,
+                                dgInt32 unsignedSizeInBytes,
+                                dgInt32 vertexCount,
+                                dgInt32 *const indexListOut,
+                                dgFloat32 tolerance = dgEPSILON);
 
 dgInt32 dgVertexListToIndexList(dgFloat64 *const vertexList,
-								dgInt32 strideInBytes,
-								dgInt32 compareCount,
-								dgInt32 vertexCount,
-								dgInt32 *const indexListOut,
-								dgFloat64 tolerance = dgEPSILON);
+                                dgInt32 strideInBytes,
+                                dgInt32 compareCount,
+                                dgInt32 vertexCount,
+                                dgInt32 *const indexListOut,
+                                dgFloat64 tolerance = dgEPSILON);
 
 enum dgCpuClass {
 	dgNoSimdPresent = 0,
 	dgSimdPresent
-	//	dgSimdPresent_3,
+	//  dgSimdPresent_3,
 };
 
 #define PointerToInt(x) ((size_t)x)
@@ -641,10 +640,10 @@ DG_INLINE dgFloat32 dgAbsf(dgFloat32 x) {
 #if 0
 	dgDoubleInt val;
 	val.m_float = x;
-	val.m_intH &= ~(dgUnsigned64(1)<<31);
+	val.m_intH &= ~(dgUnsigned64(1) << 31);
 	_ASSERTE(val.m_float == fabs(x));
 
-	return dgFloat32 (val.m_float);
+	return dgFloat32(val.m_float);
 #else
 	// according to Intel this is better because is doe not read after write
 	return (x >= dgFloat32(0.0f)) ? x : -x;
@@ -667,7 +666,7 @@ DG_INLINE dgInt32 dgFastInt(dgFloat32 x) {
 #if 0
 	volatile dgDoubleInt val;
 	volatile dgDoubleInt round;
-	const dgFloat64 conversionMagicConst = ((dgFloat64(dgInt64(1)<<52)) * dgFloat64(1.5f));
+	const dgFloat64 conversionMagicConst = ((dgFloat64(dgInt64(1) << 52)) * dgFloat64(1.5f));
 	val.m_float = dgFloat64(x) + conversionMagicConst;
 	round.m_float = x - dgFloat64(val.m_intL);
 	dgInt32 ret = val.m_intL + (round.m_intH >> 31);

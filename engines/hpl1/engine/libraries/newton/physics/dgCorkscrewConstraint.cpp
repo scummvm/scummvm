@@ -46,9 +46,9 @@ dgCorkscrewConstraint::~dgCorkscrewConstraint() {
 /*
  dgCorkscrewConstraint* dgCorkscrewConstraint::Create(dgWorld* world)
  {
- dgCorkscrewConstraint*	constraint;
+ dgCorkscrewConstraint* constraint;
 
- //	constraint = dgCorkscrewConstraintArray::GetPool().GetElement();
+ // constraint = dgCorkscrewConstraintArray::GetPool().GetElement();
  dgCorkscrewConstraintArray& array = * world;
  constraint = array.GetElement();
 
@@ -68,13 +68,13 @@ dgCorkscrewConstraint::~dgCorkscrewConstraint() {
  dgCorkscrewConstraintArray& array = * world;
 
  dgBilateralConstraint::Remove (world);
- //	dgCorkscrewConstraintArray::GetPool().RemoveElement (this);
+ // dgCorkscrewConstraintArray::GetPool().RemoveElement (this);
  array.RemoveElement (this);
  }
  */
 
 void dgCorkscrewConstraint::SetJointParameterCallBack(
-	dgCorkscrewJointAcceleration callback) {
+    dgCorkscrewJointAcceleration callback) {
 	m_jointAccelFnt = callback;
 }
 
@@ -93,10 +93,10 @@ dgFloat32 dgCorkscrewConstraint::GetJointOmega() const {
 	const dgVector &omega0 = m_body0->GetOmega();
 	const dgVector &omega1 = m_body1->GetOmega();
 
-	//	dgVector omega1 (dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f));
-	//	if (m_body1) {
-	//		omega1 = m_body1->GetOmega();
-	//	}
+	//  dgVector omega1 (dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f));
+	//  if (m_body1) {
+	//      omega1 = m_body1->GetOmega();
+	//  }
 	return (omega0 - omega1) % dir;
 }
 
@@ -107,15 +107,15 @@ dgFloat32 dgCorkscrewConstraint::GetJointVeloc() const {
 	const dgVector &veloc0 = m_body0->GetVelocity();
 	const dgVector &veloc1 = m_body1->GetVelocity();
 
-	//	dgVector veloc1 (dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f));
-	//	if (m_body1) {
-	//		veloc1 = m_body1->GetVelocity();
-	//	}
+	//  dgVector veloc1 (dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f));
+	//  if (m_body1) {
+	//      veloc1 = m_body1->GetVelocity();
+	//  }
 	return (veloc0 - veloc1) % dir;
 }
 
 dgFloat32 dgCorkscrewConstraint::CalculateStopAlpha(dgFloat32 angle,
-													const dgJointCallBackParam *param) const {
+        const dgJointCallBackParam *param) const {
 	dgFloat32 alpha;
 	dgFloat32 omega;
 	dgFloat32 penetrationErr;
@@ -142,7 +142,7 @@ dgFloat32 dgCorkscrewConstraint::CalculateStopAlpha(dgFloat32 angle,
 }
 
 dgFloat32 dgCorkscrewConstraint::CalculateStopAccel(dgFloat32 distance,
-													const dgJointCallBackParam *param) const {
+        const dgJointCallBackParam *param) const {
 	dgFloat32 accel;
 	dgFloat32 speed;
 	dgFloat32 penetrationErr;
@@ -175,11 +175,11 @@ dgVector dgCorkscrewConstraint::GetJointForce() const {
 	CalculateGlobalMatrixAndAngle(matrix0, matrix1);
 
 	return dgVector(
-		matrix0.m_up.Scale(m_jointForce[0]) + matrix0.m_right.Scale(m_jointForce[1]) + matrix0.m_up.Scale(m_jointForce[2]) + matrix0.m_right.Scale(m_jointForce[3]));
+	           matrix0.m_up.Scale(m_jointForce[0]) + matrix0.m_right.Scale(m_jointForce[1]) + matrix0.m_up.Scale(m_jointForce[2]) + matrix0.m_right.Scale(m_jointForce[3]));
 }
 
 dgUnsigned32 dgCorkscrewConstraint::JacobianDerivative(
-	dgContraintDescritor &params) {
+    dgContraintDescritor &params) {
 	dgMatrix matrix0;
 	dgMatrix matrix1;
 
@@ -190,20 +190,20 @@ dgUnsigned32 dgCorkscrewConstraint::JacobianDerivative(
 	matrix1.m_posit += matrix1.m_front.Scale(m_posit);
 
 	_ASSERTE(
-		dgAbsf(dgFloat32(1.0f) - (matrix0.m_front % matrix0.m_front)) < dgFloat32(1.0e-5f));
+	    dgAbsf(dgFloat32(1.0f) - (matrix0.m_front % matrix0.m_front)) < dgFloat32(1.0e-5f));
 	_ASSERTE(
-		dgAbsf(dgFloat32(1.0f) - (matrix0.m_up % matrix0.m_up)) < dgFloat32(1.0e-5f));
+	    dgAbsf(dgFloat32(1.0f) - (matrix0.m_up % matrix0.m_up)) < dgFloat32(1.0e-5f));
 	_ASSERTE(
-		dgAbsf(dgFloat32(1.0f) - (matrix0.m_right % matrix0.m_right)) < dgFloat32(1.0e-5f));
+	    dgAbsf(dgFloat32(1.0f) - (matrix0.m_right % matrix0.m_right)) < dgFloat32(1.0e-5f));
 
 	const dgVector &dir1 = matrix0.m_up;
 	const dgVector &dir2 = matrix0.m_right;
 
-	//	const dgVector& p0 = matrix0.m_posit;
-	//	const dgVector& p1 = matrix1.m_posit;
+	//  const dgVector& p0 = matrix0.m_posit;
+	//  const dgVector& p1 = matrix1.m_posit;
 	dgVector p0(matrix0.m_posit);
 	dgVector p1(
-		matrix1.m_posit + matrix1.m_front.Scale((p0 - matrix1.m_posit) % matrix1.m_front));
+	    matrix1.m_posit + matrix1.m_front.Scale((p0 - matrix1.m_posit) % matrix1.m_front));
 
 	dgVector q0(p0 + matrix0.m_front.Scale(MIN_JOINT_PIN_LENGTH));
 	dgVector q1(p1 + matrix1.m_front.Scale(MIN_JOINT_PIN_LENGTH));
@@ -241,11 +241,11 @@ dgUnsigned32 dgCorkscrewConstraint::JacobianDerivative(
 				params.m_forceBounds[ret].m_low = axisParam[0].m_minFriction;
 				params.m_forceBounds[ret].m_upper = axisParam[0].m_maxFriction;
 				params.m_forceBounds[ret].m_normalIndex =
-					DG_BILATERAL_FRICTION_CONSTRAINT;
+				    DG_BILATERAL_FRICTION_CONSTRAINT;
 			}
 
 			CalculatePointDerivative(ret, params, matrix0.m_front, pointDataP,
-									 &m_jointForce[ret]);
+			                         &m_jointForce[ret]);
 			// params.m_jointAccel[ret] = axisParam[0].m_accel;
 			SetMotorAcceleration(ret, axisParam[0].m_accel, params);
 			ret++;
@@ -256,15 +256,15 @@ dgUnsigned32 dgCorkscrewConstraint::JacobianDerivative(
 				params.m_forceBounds[ret].m_low = axisParam[1].m_minFriction;
 				params.m_forceBounds[ret].m_upper = axisParam[1].m_maxFriction;
 				params.m_forceBounds[ret].m_normalIndex =
-					DG_BILATERAL_FRICTION_CONSTRAINT;
+				    DG_BILATERAL_FRICTION_CONSTRAINT;
 			}
 
-			//			dgVector p (p0 +  dir1);
-			//			dgPointParam pointData;
-			//			InitPointParam (pointData, m_stiffness, p, p);
-			//			CalculatePointDerivative (ret, params, dir2, pointData, &m_jointForce[ret]);
+			//          dgVector p (p0 +  dir1);
+			//          dgPointParam pointData;
+			//          InitPointParam (pointData, m_stiffness, p, p);
+			//          CalculatePointDerivative (ret, params, dir2, pointData, &m_jointForce[ret]);
 			CalculateAngularDerivative(ret, params, matrix0.m_front, m_stiffness,
-									   dgFloat32(0.0f), &m_jointForce[ret]);
+			                           dgFloat32(0.0f), &m_jointForce[ret]);
 			// params.m_jointAccel[ret] = axisParam[1].m_accel;
 			SetMotorAcceleration(ret, axisParam[1].m_accel, params);
 			ret++;

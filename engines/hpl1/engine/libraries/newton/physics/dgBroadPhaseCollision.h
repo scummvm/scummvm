@@ -27,8 +27,8 @@
 #include "hpl1/engine/libraries/newton/core/dg.h"
 
 
-//#define DG_OCTREE_MAX_DEPTH		1
-//#define DG_OCTREE_MAX_DEPTH		6
+//#define DG_OCTREE_MAX_DEPTH       1
+//#define DG_OCTREE_MAX_DEPTH       6
 #define DG_OCTREE_MAX_DEPTH 7
 
 typedef void(dgApi *OnBodiesInAABB)(dgBody *body, void *const userData);
@@ -208,8 +208,8 @@ private:
 	dgBroadPhaseMaterialCallbackWorkerThread m_materialCallbackWorkerThreads[DG_MAXIMUN_THREADS];
 	dgBroadPhaseCalculateContactsWorkerThread m_calculateContactsWorkerThreads[DG_MAXIMUN_THREADS];
 
-	//	static void ForceAndtorque (void** const m_userParamArray, dgInt32 threadID);
-	//	dgWorld* m_me;
+	//  static void ForceAndtorque (void** const m_userParamArray, dgInt32 threadID);
+	//  dgWorld* m_me;
 	dgFloat32 m_worlSize;
 
 	friend class dgBody;

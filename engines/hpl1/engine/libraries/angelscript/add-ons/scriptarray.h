@@ -1,7 +1,7 @@
 #ifndef SCRIPTARRAY_H
 #define SCRIPTARRAY_H
 
-#ifndef ANGELSCRIPT_H 
+#ifndef ANGELSCRIPT_H
 // Avoid having to inform include path if header is already include before
 #include "hpl1/engine/libraries/angelscript/angelscript.h"
 #endif
@@ -27,8 +27,7 @@ BEGIN_AS_NAMESPACE
 struct SArrayBuffer;
 struct SArrayCache;
 
-class CScriptArray
-{
+class CScriptArray {
 public:
 	// Set the memory functions that should be used by all CScriptArrays
 	static void SetMemoryFunctions(asALLOCFUNC_t allocFunc, asFREEFUNC_t freeFunc);
@@ -64,14 +63,14 @@ public:
 	void       *At(asUINT index);
 	const void *At(asUINT index) const;
 
-	// Set value of an element. 
+	// Set value of an element.
 	// The value arg should be a pointer to the value that will be copied to the element.
-	// Remember, if the array holds handles the value parameter should be the 
+	// Remember, if the array holds handles the value parameter should be the
 	// address of the handle. The refCount of the object will also be incremented
 	void  SetValue(asUINT index, void *value);
 
 	// Copy the contents of one array to another (only if the types are the same)
-	CScriptArray &operator=(const CScriptArray&);
+	CScriptArray &operator=(const CScriptArray &);
 
 	// Compare two arrays
 	bool operator==(const CScriptArray &) const;

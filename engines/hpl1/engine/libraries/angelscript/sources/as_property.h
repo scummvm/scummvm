@@ -50,8 +50,7 @@ BEGIN_AS_NAMESPACE
 
 struct asSNameSpace;
 
-class asCObjectProperty
-{
+class asCObjectProperty {
 public:
 	asCObjectProperty() : byteOffset(0), accessMask(0xFFFFFFFF), compositeOffset(0), isCompositeIndirect(false), isPrivate(false), isProtected(false), isInherited(false) {}
 	asCObjectProperty(const asCObjectProperty &o) : name(o.name), type(o.type), byteOffset(o.byteOffset), accessMask(o.accessMask), compositeOffset(o.compositeOffset), isCompositeIndirect(o.isCompositeIndirect), isPrivate(o.isPrivate), isProtected(o.isProtected), isInherited(o.isInherited) {}
@@ -66,8 +65,7 @@ public:
 	bool        isInherited;
 };
 
-class asCGlobalProperty
-{
+class asCGlobalProperty {
 public:
 	asCGlobalProperty();
 	~asCGlobalProperty();
@@ -106,22 +104,22 @@ public:
 	asCAtomic refCount;
 };
 
-class asCCompGlobPropType : public asIFilter
-{
+class asCCompGlobPropType : public asIFilter {
 public:
 	const asCDataType &m_type;
 
 	asCCompGlobPropType(const asCDataType &type) : m_type(type) {}
 
-	bool operator()(const void *p) const
-	{
-		const asCGlobalProperty* prop = reinterpret_cast<const asCGlobalProperty*>(p);
+	bool operator()(const void *p) const {
+		const asCGlobalProperty *prop = reinterpret_cast<const asCGlobalProperty *>(p);
 		return prop->type == m_type;
 	}
 
 private:
 	// The assignment operator is required for MSVC9, otherwise it will complain that it is not possible to auto generate the operator
-	asCCompGlobPropType &operator=(const asCCompGlobPropType &) {return *this;}
+	asCCompGlobPropType &operator=(const asCCompGlobPropType &) {
+		return *this;
+	}
 };
 
 END_AS_NAMESPACE

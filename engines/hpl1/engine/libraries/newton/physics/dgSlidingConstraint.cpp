@@ -32,7 +32,7 @@
 dgSlidingConstraint::dgSlidingConstraint() : dgBilateralConstraint() {
 	_ASSERTE((((dgUnsigned64)&m_localMatrix0) & 15) == 0);
 
-	//	constraint->Init ();
+	//  constraint->Init ();
 	m_maxDOF = 6;
 	m_constId = dgSliderConstraintId;
 	m_posit = dgFloat32(0.0f);
@@ -48,7 +48,7 @@ dgSlidingConstraint::~dgSlidingConstraint() {
  dgSlidingConstraint* constraint;
 
  dgSlidingConstraintArray& array = *world;
- //	constraint = dgSlidingConstraintArray::GetPool().GetElement();
+ // constraint = dgSlidingConstraintArray::GetPool().GetElement();
  constraint = array.GetElement();
 
  _ASSERTE ((((dgUnsigned64) &constraint->m_localMatrix0) & 15) == 0);
@@ -65,13 +65,13 @@ dgSlidingConstraint::~dgSlidingConstraint() {
  {
  dgSlidingConstraintArray& array = *world;
  dgBilateralConstraint::Remove (world);
- //	dgSlidingConstraintArray::GetPool().RemoveElement (this);
+ // dgSlidingConstraintArray::GetPool().RemoveElement (this);
  array.RemoveElement (this);
  }
  */
 
 void dgSlidingConstraint::SetJointParameterCallBack(
-	dgSlidingJointAcceleration callback) {
+    dgSlidingJointAcceleration callback) {
 	m_jointAccelFnt = callback;
 }
 
@@ -85,15 +85,15 @@ dgFloat32 dgSlidingConstraint::GetJointVeloc() const {
 	dgVector dir(m_body0->GetMatrix().RotateVector(m_localMatrix0[0]));
 	const dgVector &veloc0 = m_body0->GetVelocity();
 	const dgVector &veloc1 = m_body1->GetVelocity();
-	//	dgVector veloc1 (dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f));
-	//	if (m_body1) {
-	//		veloc1 = m_body1->GetVelocity();
-	//	}
+	//  dgVector veloc1 (dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f));
+	//  if (m_body1) {
+	//      veloc1 = m_body1->GetVelocity();
+	//  }
 	return (veloc0 - veloc1) % dir;
 }
 
 dgFloat32 dgSlidingConstraint::CalculateStopAccel(dgFloat32 distance,
-												  const dgJointCallBackParam *param) const {
+        const dgJointCallBackParam *param) const {
 	dgFloat32 accel;
 	dgFloat32 speed;
 	dgFloat32 penetrationErr;
@@ -125,11 +125,11 @@ dgVector dgSlidingConstraint::GetJointForce() const {
 
 	CalculateGlobalMatrixAndAngle(matrix0, matrix1);
 	return dgVector(
-		matrix0.m_up.Scale(m_jointForce[0]) + matrix0.m_right.Scale(m_jointForce[1]) + matrix0.m_up.Scale(m_jointForce[2]) + matrix0.m_right.Scale(m_jointForce[3]) + matrix0.m_right.Scale(m_jointForce[4]));
+	           matrix0.m_up.Scale(m_jointForce[0]) + matrix0.m_right.Scale(m_jointForce[1]) + matrix0.m_up.Scale(m_jointForce[2]) + matrix0.m_right.Scale(m_jointForce[3]) + matrix0.m_right.Scale(m_jointForce[4]));
 }
 
 dgUnsigned32 dgSlidingConstraint::JacobianDerivative(
-	dgContraintDescritor &params) {
+    dgContraintDescritor &params) {
 	dgInt32 ret;
 	dgMatrix matrix0;
 	dgMatrix matrix1;
@@ -139,20 +139,20 @@ dgUnsigned32 dgSlidingConstraint::JacobianDerivative(
 	matrix1.m_posit += matrix1.m_front.Scale(m_posit);
 
 	_ASSERTE(
-		dgAbsf(dgFloat32(1.0f) - (matrix0.m_front % matrix0.m_front)) < dgFloat32(1.0e-5f));
+	    dgAbsf(dgFloat32(1.0f) - (matrix0.m_front % matrix0.m_front)) < dgFloat32(1.0e-5f));
 	_ASSERTE(
-		dgAbsf(dgFloat32(1.0f) - (matrix0.m_up % matrix0.m_up)) < dgFloat32(1.0e-5f));
+	    dgAbsf(dgFloat32(1.0f) - (matrix0.m_up % matrix0.m_up)) < dgFloat32(1.0e-5f));
 	_ASSERTE(
-		dgAbsf(dgFloat32(1.0f) - (matrix0.m_right % matrix0.m_right)) < dgFloat32(1.0e-5f));
+	    dgAbsf(dgFloat32(1.0f) - (matrix0.m_right % matrix0.m_right)) < dgFloat32(1.0e-5f));
 
 	const dgVector &dir1 = matrix0.m_up;
 	const dgVector &dir2 = matrix0.m_right;
 
-	//	const dgVector& p0 = matrix0.m_posit;
-	//	const dgVector& p1 = matrix1.m_posit;
+	//  const dgVector& p0 = matrix0.m_posit;
+	//  const dgVector& p1 = matrix1.m_posit;
 	dgVector p0(matrix0.m_posit);
 	dgVector p1(
-		matrix1.m_posit + matrix1.m_front.Scale((p0 - matrix1.m_posit) % matrix1.m_front));
+	    matrix1.m_posit + matrix1.m_front.Scale((p0 - matrix1.m_posit) % matrix1.m_front));
 
 	dgVector q0(p0 + matrix0.m_front.Scale(MIN_JOINT_PIN_LENGTH));
 	dgVector q1(p1 + matrix1.m_front.Scale(MIN_JOINT_PIN_LENGTH));
@@ -189,7 +189,7 @@ dgUnsigned32 dgSlidingConstraint::JacobianDerivative(
 			}
 
 			CalculatePointDerivative(5, params, matrix0.m_front, pointDataP,
-									 &m_jointForce[5]);
+			                         &m_jointForce[5]);
 			// params.m_jointAccel[5] = axisParam.m_accel;
 			SetMotorAcceleration(5, axisParam.m_accel, params);
 			ret = 6;

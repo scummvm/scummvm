@@ -94,7 +94,7 @@ public:
 	virtual ~dgCollisionCompound();
 
 	void AddCollision(dgCollisionConvex *part);
-	//	void RemoveCollision (dgCollisionConvex* part);
+	//  void RemoveCollision (dgCollisionConvex* part);
 	void RemoveCollision(dgNodeBase *node);
 
 protected:
@@ -136,9 +136,9 @@ protected:
 #endif
 
 protected:
-	//	dgInt32 GetAxis (dgNodeBase** const proxiArray, dgInt32 boxCount) const;
-	//	static dgInt32 CompareBox (const dgNodeBase* const boxA, const dgNodeBase* const boxB, void* const context);
-	//	dgNodeBase* BuildBottomUpTree(dgInt32 count, dgNodeBase** const proxiArray);
+	//  dgInt32 GetAxis (dgNodeBase** const proxiArray, dgInt32 boxCount) const;
+	//  static dgInt32 CompareBox (const dgNodeBase* const boxA, const dgNodeBase* const boxB, void* const context);
+	//  dgNodeBase* BuildBottomUpTree(dgInt32 count, dgNodeBase** const proxiArray);
 
 	void ImproveNodeFitness(dgNodeBase *const node) const;
 	dgNodeBase *BuildTopDownTree(dgInt32 count, dgNodeBase **const proxiArray, dgInt32 &id);

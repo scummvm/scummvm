@@ -34,13 +34,13 @@ dgVector dgCollisionChamferCylinder::m_shapesDirs[DG_MAX_CHAMFERCYLINDER_DIR_COU
 dgConvexSimplexEdge dgCollisionChamferCylinder::m_edgeArray[(4 * DG_CHAMFERCYLINDER_SLICES + 2) * DG_CHAMFERCYLINDER_BRAKES];
 
 dgCollisionChamferCylinder::dgCollisionChamferCylinder(
-	dgMemoryAllocator *allocator, dgUnsigned32 signature, dgFloat32 radius,
-	dgFloat32 height, const dgMatrix &matrix) : dgCollisionConvex(allocator, signature, matrix, m_chamferCylinderCollision) {
+    dgMemoryAllocator *allocator, dgUnsigned32 signature, dgFloat32 radius,
+    dgFloat32 height, const dgMatrix &matrix) : dgCollisionConvex(allocator, signature, matrix, m_chamferCylinderCollision) {
 	Init(radius, height);
 }
 
 dgCollisionChamferCylinder::dgCollisionChamferCylinder(dgWorld *const world,
-													   dgDeserialize deserialization, void *const userData) : dgCollisionConvex(world, deserialization, userData) {
+        dgDeserialize deserialization, void *const userData) : dgCollisionConvex(world, deserialization, userData) {
 	dgVector size;
 	deserialization(userData, &size, sizeof(dgVector));
 	Init(size.m_x, size.m_y);
@@ -55,15 +55,15 @@ dgCollisionChamferCylinder::~dgCollisionChamferCylinder() {
 }
 
 void dgCollisionChamferCylinder::Init(dgFloat32 radius, dgFloat32 height) {
-	//	dgInt32 i;
-	//	dgInt32 j;
-	//	dgInt32 index;
-	//	dgInt32 index0;
-	//	dgFloat32 sliceStep;
-	//	dgFloat32 sliceAngle;
-	//	dgFloat32 breakStep;
-	//	dgFloat32 breakAngle;
-	//	dgEdge *edge;
+	//  dgInt32 i;
+	//  dgInt32 j;
+	//  dgInt32 index;
+	//  dgInt32 index0;
+	//  dgFloat32 sliceStep;
+	//  dgFloat32 sliceAngle;
+	//  dgFloat32 breakStep;
+	//  dgFloat32 breakAngle;
+	//  dgEdge *edge;
 
 	m_rtti |= dgCollisionChamferCylinder_RTTI;
 	m_radius = dgAbsf(radius);
@@ -71,18 +71,18 @@ void dgCollisionChamferCylinder::Init(dgFloat32 radius, dgFloat32 height) {
 	m_radius = GetMax(dgFloat32(0.001f), m_radius - m_height);
 
 	m_silhuette[0] = dgVector(m_height, m_radius, dgFloat32(0.0f),
-							  dgFloat32(0.0f));
+	                          dgFloat32(0.0f));
 	m_silhuette[1] = dgVector(m_height, -m_radius, dgFloat32(0.0f),
-							  dgFloat32(0.0f));
+	                          dgFloat32(0.0f));
 	m_silhuette[2] = dgVector(-m_height, -m_radius, dgFloat32(0.0f),
-							  dgFloat32(0.0f));
+	                          dgFloat32(0.0f));
 	m_silhuette[3] = dgVector(-m_height, m_radius, dgFloat32(0.0f),
-							  dgFloat32(0.0f));
+	                          dgFloat32(0.0f));
 
-	//	m_tethaStep = GetDiscretedAngleStep (m_radius);
-	//	m_tethaStepInv = dgFloat32 (1.0f) / m_tethaStep;
-	//	m_delCosTetha = dgCos (m_tethaStep);
-	//	m_delSinTetha = dgSin (m_tethaStep);
+	//  m_tethaStep = GetDiscretedAngleStep (m_radius);
+	//  m_tethaStepInv = dgFloat32 (1.0f) / m_tethaStep;
+	//  m_delCosTetha = dgCos (m_tethaStep);
+	//  m_delSinTetha = dgSin (m_tethaStep);
 
 	dgFloat32 sliceAngle = dgFloat32(0.0f);
 	// dgFloat32 breakAngle = dgFloat32 (0.0f);
@@ -93,7 +93,7 @@ void dgCollisionChamferCylinder::Init(dgFloat32 radius, dgFloat32 height) {
 	dgInt32 k = 0;
 	for (dgInt32 j = 0; j <= DG_CHAMFERCYLINDER_SLICES; j++) {
 		dgVector p0(-m_height * dgCos(sliceAngle), dgFloat32(0.0f),
-					m_radius + m_height * dgSin(sliceAngle), dgFloat32(1.0f));
+		            m_radius + m_height * dgSin(sliceAngle), dgFloat32(1.0f));
 		sliceAngle += sliceStep;
 		for (dgInt32 i = 0; i < DG_CHAMFERCYLINDER_BRAKES; i++) {
 			m_vertex[k] = p0;
@@ -112,11 +112,11 @@ void dgCollisionChamferCylinder::Init(dgFloat32 radius, dgFloat32 height) {
 
 		for (dgInt32 i = 0; i < DG_MAX_CHAMFERCYLINDER_DIR_COUNT; i++) {
 			dgMatrix matrix(
-				dgPitchMatrix(
-					dgFloat32(dgPI2 * i) / DG_MAX_CHAMFERCYLINDER_DIR_COUNT));
+			    dgPitchMatrix(
+			        dgFloat32(dgPI2 * i) / DG_MAX_CHAMFERCYLINDER_DIR_COUNT));
 			m_shapesDirs[i] = matrix.RotateVector(
-				dgVector(dgFloat32(0.0f), dgFloat32(1.0f), dgFloat32(0.0f),
-						 dgFloat32(0.0f)));
+			                      dgVector(dgFloat32(0.0f), dgFloat32(1.0f), dgFloat32(0.0f),
+			                               dgFloat32(0.0f)));
 		}
 
 		dgInt32 index = 0;
@@ -170,11 +170,11 @@ void dgCollisionChamferCylinder::Init(dgFloat32 radius, dgFloat32 height) {
 	dgCollisionConvex::m_simplex = m_edgeArray;
 
 	SetVolumeAndCG();
-	//	CalculateDistanceTravel();
+	//  CalculateDistanceTravel();
 }
 
 void dgCollisionChamferCylinder::DebugCollision(const dgMatrix &matrixPtr,
-												OnDebugCollisionMeshCallback callback, void *const userData) const {
+        OnDebugCollisionMeshCallback callback, void *const userData) const {
 	dgInt32 i;
 	dgInt32 j;
 	dgInt32 index;
@@ -197,7 +197,7 @@ void dgCollisionChamferCylinder::DebugCollision(const dgMatrix &matrixPtr,
 	index = 0;
 	for (j = 0; j <= slices; j++) {
 		dgVector p0(-m_height * dgCos(sliceAngle), dgFloat32(0.0f),
-					m_radius + m_height * dgSin(sliceAngle), dgFloat32(0.0f));
+		            m_radius + m_height * dgSin(sliceAngle), dgFloat32(0.0f));
 		sliceAngle += sliceStep;
 		for (i = 0; i < brakes; i++) {
 			pool[index].m_x = p0.m_x;
@@ -208,10 +208,10 @@ void dgCollisionChamferCylinder::DebugCollision(const dgMatrix &matrixPtr,
 		}
 	}
 
-	//	const dgMatrix &matrix = myBody.GetCollisionMatrix();
+	//  const dgMatrix &matrix = myBody.GetCollisionMatrix();
 	dgMatrix matrix(GetOffsetMatrix() * matrixPtr);
 	matrix.TransformTriplex(&pool[0].m_x, sizeof(dgTriplex), &pool[0].m_x,
-							sizeof(dgTriplex), 24 * (12 + 1));
+	                        sizeof(dgTriplex), 24 * (12 + 1));
 
 	dgTriplex face[32];
 
@@ -252,7 +252,7 @@ dgInt32 dgCollisionChamferCylinder::CalculateSignature() const {
 }
 
 void dgCollisionChamferCylinder::SetCollisionBBox(const dgVector &p0__,
-												  const dgVector &p1__) {
+        const dgVector &p1__) {
 	_ASSERTE(0);
 }
 
@@ -277,7 +277,7 @@ void dgCollisionChamferCylinder::SetCollisionBBox(const dgVector &p0__,
  */
 
 dgVector dgCollisionChamferCylinder::SupportVertexSimd(
-	const dgVector &dir) const {
+    const dgVector &dir) const {
 	return SupportVertex(dir);
 }
 
@@ -294,24 +294,24 @@ dgVector dgCollisionChamferCylinder::SupportVertex(const dgVector &dir) const {
 
 	dgVector sideDir(dgFloat32(0.0f), dir.m_y, dir.m_z, dgFloat32(0.0f));
 	sideDir = sideDir.Scale(
-		m_radius * dgRsqrt(sideDir % sideDir + dgFloat32(1.0e-18f)));
+	              m_radius * dgRsqrt(sideDir % sideDir + dgFloat32(1.0e-18f)));
 	return sideDir + dir.Scale(m_height);
 }
 
 dgFloat32 dgCollisionChamferCylinder::RayCast(const dgVector &q0,
-											  const dgVector &q1, dgContactPoint &contactOut,
-											  OnRayPrecastAction preFilter, const dgBody *const body,
-											  void *const userData) const {
-	//	dgFloat32 t;
-	//	dgFloat32 y;
-	//	dgFloat32 z;
-	//	dgFloat32 t1;
+        const dgVector &q1, dgContactPoint &contactOut,
+        OnRayPrecastAction preFilter, const dgBody *const body,
+        void *const userData) const {
+	//  dgFloat32 t;
+	//  dgFloat32 y;
+	//  dgFloat32 z;
+	//  dgFloat32 t1;
 
 	if (PREFILTER_RAYCAST(preFilter, body, this, userData)) {
 		return dgFloat32(1.2f);
 	}
 
-	//	dgFloat32 t = dgFloat32 (1.2f);
+	//  dgFloat32 t = dgFloat32 (1.2f);
 	if (q0.m_x > m_height) {
 		if (q1.m_x < m_height) {
 			dgFloat32 t1 = (m_height - q0.m_x) / (q1.m_x - q0.m_x);
@@ -319,7 +319,7 @@ dgFloat32 dgCollisionChamferCylinder::RayCast(const dgVector &q0,
 			dgFloat32 z = q0.m_z + (q1.m_z - q0.m_z) * t1;
 			if ((y * y + z * z) < m_radius * m_radius) {
 				contactOut.m_normal = dgVector(dgFloat32(1.0f), dgFloat32(0.0f),
-											   dgFloat32(0.0f), dgFloat32(0.0f));
+				                               dgFloat32(0.0f), dgFloat32(0.0f));
 				contactOut.m_userId = SetUserDataID();
 				return t1;
 			}
@@ -333,7 +333,7 @@ dgFloat32 dgCollisionChamferCylinder::RayCast(const dgVector &q0,
 			dgFloat32 z = q0.m_z + (q1.m_z - q0.m_z) * t1;
 			if ((y * y + z * z) < m_radius * m_radius) {
 				contactOut.m_normal = dgVector(dgFloat32(-1.0f), dgFloat32(0.0f),
-											   dgFloat32(0.0f), dgFloat32(0.0f));
+				                               dgFloat32(0.0f), dgFloat32(0.0f));
 				contactOut.m_userId = SetUserDataID();
 				return t1;
 			}
@@ -344,14 +344,14 @@ dgFloat32 dgCollisionChamferCylinder::RayCast(const dgVector &q0,
 }
 
 dgFloat32 dgCollisionChamferCylinder::RayCastSimd(const dgVector &q0,
-												  const dgVector &q1, dgContactPoint &contactOut,
-												  OnRayPrecastAction preFilter, const dgBody *const body,
-												  void *const userData) const {
+        const dgVector &q1, dgContactPoint &contactOut,
+        OnRayPrecastAction preFilter, const dgBody *const body,
+        void *const userData) const {
 	if (PREFILTER_RAYCAST(preFilter, body, this, userData)) {
 		return dgFloat32(1.2f);
 	}
 
-	//	dgFloat32 t = dgFloat32 (1.2f);
+	//  dgFloat32 t = dgFloat32 (1.2f);
 	if (q0.m_x > m_height) {
 		if (q1.m_x < m_height) {
 			dgFloat32 t1 = (m_height - q0.m_x) / (q1.m_x - q0.m_x);
@@ -359,7 +359,7 @@ dgFloat32 dgCollisionChamferCylinder::RayCastSimd(const dgVector &q0,
 			dgFloat32 z = q0.m_z + (q1.m_z - q0.m_z) * t1;
 			if ((y * y + z * z) < m_radius * m_radius) {
 				contactOut.m_normal = dgVector(dgFloat32(1.0f), dgFloat32(0.0f),
-											   dgFloat32(0.0f), dgFloat32(0.0f));
+				                               dgFloat32(0.0f), dgFloat32(0.0f));
 				contactOut.m_userId = SetUserDataID();
 				return t1;
 			}
@@ -373,7 +373,7 @@ dgFloat32 dgCollisionChamferCylinder::RayCastSimd(const dgVector &q0,
 			dgFloat32 z = q0.m_z + (q1.m_z - q0.m_z) * t1;
 			if ((y * y + z * z) < m_radius * m_radius) {
 				contactOut.m_normal = dgVector(dgFloat32(-1.0f), dgFloat32(0.0f),
-											   dgFloat32(0.0f), dgFloat32(0.0f));
+				                               dgFloat32(0.0f), dgFloat32(0.0f));
 				contactOut.m_userId = SetUserDataID();
 				return t1;
 			}
@@ -383,33 +383,33 @@ dgFloat32 dgCollisionChamferCylinder::RayCastSimd(const dgVector &q0,
 }
 
 dgInt32 dgCollisionChamferCylinder::CalculatePlaneIntersectionSimd(
-	const dgVector &normal, const dgVector &origin,
-	dgVector *const contactsOut) const {
+    const dgVector &normal, const dgVector &origin,
+    dgVector *const contactsOut) const {
 	return dgCollisionChamferCylinder::CalculatePlaneIntersection(normal, origin,
-																  contactsOut);
+	        contactsOut);
 }
 
 dgInt32 dgCollisionChamferCylinder::CalculatePlaneIntersection(
-	const dgVector &normal, const dgVector &origin,
-	dgVector *const contactsOut) const {
+    const dgVector &normal, const dgVector &origin,
+    dgVector *const contactsOut) const {
 	dgInt32 count;
 	if (dgAbsf(normal.m_x) < dgFloat32(0.999f)) {
 		dgFloat32 magInv =
-			dgRsqrt(normal.m_y * normal.m_y + normal.m_z * normal.m_z);
+		    dgRsqrt(normal.m_y * normal.m_y + normal.m_z * normal.m_z);
 		dgFloat32 cosAng = normal.m_y * magInv;
 		dgFloat32 sinAng = normal.m_z * magInv;
 		_ASSERTE(
-			dgAbsf(normal.m_z * cosAng - normal.m_y * sinAng) < dgFloat32(1.0e-4f));
+		    dgAbsf(normal.m_z * cosAng - normal.m_y * sinAng) < dgFloat32(1.0e-4f));
 		dgVector normal1(normal.m_x, normal.m_y * cosAng + normal.m_z * sinAng,
-						 dgFloat32(0.0f), dgFloat32(0.0f));
+		                 dgFloat32(0.0f), dgFloat32(0.0f));
 		dgVector origin1(origin.m_x, origin.m_y * cosAng + origin.m_z * sinAng,
-						 origin.m_z * cosAng - origin.m_y * sinAng, dgFloat32(0.0f));
+		                 origin.m_z * cosAng - origin.m_y * sinAng, dgFloat32(0.0f));
 		dgPlane plane(normal1, -(normal1 % origin1));
 		count = 0;
 		dgVector maxDir(
-			(normal1.m_x > dgFloat32(0.0f)) ? m_silhuette[0].m_x : -m_silhuette[0].m_x,
-			(normal1.m_y > dgFloat32(0.0f)) ? m_silhuette[0].m_y : -m_silhuette[0].m_y, dgFloat32(0.0f),
-			dgFloat32(0.0f));
+		    (normal1.m_x > dgFloat32(0.0f)) ? m_silhuette[0].m_x : -m_silhuette[0].m_x,
+		    (normal1.m_y > dgFloat32(0.0f)) ? m_silhuette[0].m_y : -m_silhuette[0].m_y, dgFloat32(0.0f),
+		    dgFloat32(0.0f));
 
 		dgFloat32 test0 = plane.Evalue(maxDir);
 		dgFloat32 test1 = plane.Evalue(maxDir.Scale(dgFloat32(-1.0f)));
@@ -460,7 +460,7 @@ dgInt32 dgCollisionChamferCylinder::CalculatePlaneIntersection(
 						_ASSERTE(dgAbsf(plane.m_x) > dgFloat32(0.0f));
 						dgFloat32 x = -(plane.m_y * y0 + d) / plane.m_x;
 						contactsOut[count] = dgVector(x, y0 + r, dgFloat32(0.0f),
-													  dgFloat32(0.0f));
+						                              dgFloat32(0.0f));
 						count++;
 					}
 				}
@@ -501,7 +501,7 @@ dgInt32 dgCollisionChamferCylinder::CalculatePlaneIntersection(
 						_ASSERTE(dgAbsf(plane.m_x) > dgFloat32(0.0f));
 						dgFloat32 x = -(plane.m_y * y0 + d) / plane.m_x;
 						contactsOut[count] = dgVector(x, y0 + r, dgFloat32(0.0f),
-													  dgFloat32(0.0f));
+						                              dgFloat32(0.0f));
 						count++;
 					}
 				}
@@ -517,7 +517,7 @@ dgInt32 dgCollisionChamferCylinder::CalculatePlaneIntersection(
 
 	} else {
 		count = dgCollisionConvex::CalculatePlaneIntersection(normal, origin,
-															  contactsOut);
+		        contactsOut);
 	}
 	return count;
 }
@@ -528,14 +528,14 @@ void dgCollisionChamferCylinder::GetCollisionInfo(dgCollisionInfo *info) const {
 	info->m_chamferCylinder.m_r = m_radius + m_height;
 	info->m_chamferCylinder.m_height = m_height * dgFloat32(2.0f);
 	info->m_offsetMatrix = GetOffsetMatrix();
-	//	strcpy (info->m_collisionType, "chamferCylinder");
+	//  strcpy (info->m_collisionType, "chamferCylinder");
 	info->m_collisionType = m_collsionId;
 }
 
 void dgCollisionChamferCylinder::Serialize(dgSerialize callback,
-										   void *const userData) const {
+        void *const userData) const {
 	dgVector size(m_radius + m_height, m_height * dgFloat32(2.0f),
-				  dgFloat32(0.0f), dgFloat32(0.0f));
+	              dgFloat32(0.0f), dgFloat32(0.0f));
 
 	SerializeLow(callback, userData);
 	callback(userData, &size, sizeof(dgVector));

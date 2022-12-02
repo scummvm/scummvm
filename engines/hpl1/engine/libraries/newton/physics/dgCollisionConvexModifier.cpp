@@ -32,10 +32,10 @@
 //////////////////////////////////////////////////////////////////////
 
 dgCollisionConvexModifier::dgCollisionConvexModifier(
-	dgCollisionConvex *convexChild, dgWorld *world) : dgCollisionConvex(world->GetAllocator(), 0, dgGetIdentityMatrix(),
-																		m_convexCollisionModifier),
-													  m_modifierMatrix(dgGetIdentityMatrix()), m_modifierInvMatrix(
-																								   dgGetIdentityMatrix()) {
+    dgCollisionConvex *convexChild, dgWorld *world) : dgCollisionConvex(world->GetAllocator(), 0, dgGetIdentityMatrix(),
+	            m_convexCollisionModifier),
+	m_modifierMatrix(dgGetIdentityMatrix()), m_modifierInvMatrix(
+	    dgGetIdentityMatrix()) {
 	m_world = world;
 	m_det = dgFloat32(1.0f);
 	m_convexCollision = convexChild;
@@ -50,7 +50,7 @@ dgCollisionConvexModifier::dgCollisionConvexModifier(
 }
 
 dgCollisionConvexModifier::dgCollisionConvexModifier(dgWorld *const world,
-													 dgDeserialize deserialization, void *const userData) : dgCollisionConvex(world, deserialization, userData) {
+        dgDeserialize deserialization, void *const userData) : dgCollisionConvex(world, deserialization, userData) {
 	dgMatrix matrix;
 
 	m_rtti |= dgCollisionConvexModifier_RTTI;
@@ -58,7 +58,7 @@ dgCollisionConvexModifier::dgCollisionConvexModifier(dgWorld *const world,
 	m_world = world;
 	deserialization(userData, &matrix, sizeof(dgMatrix));
 	m_convexCollision = (dgCollisionConvex *)world->CreateFromSerialization(
-		deserialization, userData);
+	                        deserialization, userData);
 
 	m_det = dgFloat32(1.0f);
 	SetUserData(m_convexCollision->GetUserData());
@@ -161,23 +161,23 @@ dgInt32 dgCollisionConvexModifier::CalculateSignature() const {
 }
 
 void dgCollisionConvexModifier::SetCollisionBBox(const dgVector &p0__,
-												 const dgVector &p1__) {
+        const dgVector &p1__) {
 	_ASSERTE(0);
 }
 
 void dgCollisionConvexModifier::CalcAABB(const dgMatrix &matrix, dgVector &p0,
-										 dgVector &p1) const {
+        dgVector &p1) const {
 	dgMatrix trans(matrix.Transpose());
 
 	for (dgInt32 i = 0; i < 3; i++) {
 		p0[i] =
-			matrix.m_posit[i] + matrix.RotateVector(SupportVertex(trans[i].Scale(-dgFloat32(1.0f))))[i] - dgFloat32(5.0e-2f);
+		    matrix.m_posit[i] + matrix.RotateVector(SupportVertex(trans[i].Scale(-dgFloat32(1.0f))))[i] - dgFloat32(5.0e-2f);
 		p1[i] = matrix.m_posit[i] + matrix.RotateVector(SupportVertex(trans[i]))[i] + dgFloat32(5.0e-2f);
 	}
 }
 
 void dgCollisionConvexModifier::CalcAABBSimd(const dgMatrix &matrix,
-											 dgVector &p0, dgVector &p1) const {
+        dgVector &p0, dgVector &p1) const {
 #ifdef DG_BUILD_SIMD_CODE
 	dgInt32 i;
 	dgMatrix trans(matrix.Transpose());
@@ -196,7 +196,7 @@ dgVector dgCollisionConvexModifier::SupportVertex(const dgVector &dir) const {
 
 	_ASSERTE(dgAbsf(dir1 % dir1 - dgFloat32(1.0f)) < dgFloat32(1.0e-2f));
 	return m_modifierMatrix.TransformVector(
-		m_convexCollision->SupportVertex(dir1));
+	           m_convexCollision->SupportVertex(dir1));
 }
 
 dgVector dgCollisionConvexModifier::SupportVertexSimd(const dgVector &dir) const {
@@ -207,22 +207,22 @@ dgVector dgCollisionConvexModifier::SupportVertexSimd(const dgVector &dir) const
 	dgVector dir1(m_modifierMatrix.UnrotateVectorSimd(dir));
 
 	_ASSERTE(dgAbsf(dir % dir - dgFloat32(1.0f)) < dgFloat32(1.0e-2f));
-	//	dir1 = dir1.Scale (dgRsqrt (dir1 % dir1));
+	//  dir1 = dir1.Scale (dgRsqrt (dir1 % dir1));
 	tmp1 =
-		simd_mul_v((simd_type &)dir1, simd_and_v((simd_type &)dir1, (simd_type &)m_triplexMask));
+	    simd_mul_v((simd_type &)dir1, simd_and_v((simd_type &)dir1, (simd_type &)m_triplexMask));
 	tmp1 = simd_add_v(tmp1, simd_move_hl_v(tmp1, tmp1));
 	tmp1 = simd_add_s(tmp1, simd_permut_v(tmp1, tmp1, PURMUT_MASK(0, 0, 0, 1)));
 
 	tmp0 = simd_rsqrt_s(tmp1);
 	tmp0 =
-		simd_mul_s(simd_mul_s((simd_type &)m_nrh0p5, tmp0), simd_mul_sub_s((simd_type &)m_nrh3p0, simd_mul_s(tmp1, tmp0), tmp0));
+	    simd_mul_s(simd_mul_s((simd_type &)m_nrh0p5, tmp0), simd_mul_sub_s((simd_type &)m_nrh3p0, simd_mul_s(tmp1, tmp0), tmp0));
 	(simd_type &)localDir =
-		simd_mul_v((simd_type &)dir1, simd_permut_v(tmp0, tmp0, PURMUT_MASK(3, 0, 0, 0)));
+	    simd_mul_v((simd_type &)dir1, simd_permut_v(tmp0, tmp0, PURMUT_MASK(3, 0, 0, 0)));
 
 	_ASSERTE(
-		dgAbsf(localDir % localDir - dgFloat32(1.0f)) < dgFloat32(1.0e-2f));
+	    dgAbsf(localDir % localDir - dgFloat32(1.0f)) < dgFloat32(1.0e-2f));
 	return m_modifierMatrix.TransformVectorSimd(
-		m_convexCollision->SupportVertexSimd(localDir));
+	           m_convexCollision->SupportVertexSimd(localDir));
 
 #else
 	return dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
@@ -230,8 +230,8 @@ dgVector dgCollisionConvexModifier::SupportVertexSimd(const dgVector &dir) const
 }
 
 dgInt32 dgCollisionConvexModifier::CalculatePlaneIntersection(
-	const dgVector &normal, const dgVector &point,
-	dgVector *const contactsOut) const {
+    const dgVector &normal, const dgVector &point,
+    dgVector *const contactsOut) const {
 	dgInt32 i;
 	dgInt32 count;
 
@@ -248,22 +248,22 @@ dgInt32 dgCollisionConvexModifier::CalculatePlaneIntersection(
 }
 
 dgInt32 dgCollisionConvexModifier::CalculatePlaneIntersectionSimd(
-	const dgVector &normal, const dgVector &point,
-	dgVector *const contactsOut) const {
+    const dgVector &normal, const dgVector &point,
+    dgVector *const contactsOut) const {
 	return CalculatePlaneIntersection(normal, point, contactsOut);
 }
 
 void dgCollisionConvexModifier::DebugCollision(const dgMatrix &matrixPtr,
-											   OnDebugCollisionMeshCallback callback, void *const userData) const {
+        OnDebugCollisionMeshCallback callback, void *const userData) const {
 	dgMatrix matrixInv(m_offset.Inverse());
 	dgMatrix matrix(matrixInv * m_modifierMatrix * m_offset * matrixPtr);
 	m_convexCollision->DebugCollision(matrix, callback, userData);
 }
 
 dgFloat32 dgCollisionConvexModifier::RayCast(const dgVector &p0,
-											 const dgVector &p1, dgContactPoint &contactOut,
-											 OnRayPrecastAction preFilter, const dgBody *const body,
-											 void *const userData) const {
+        const dgVector &p1, dgContactPoint &contactOut,
+        OnRayPrecastAction preFilter, const dgBody *const body,
+        void *const userData) const {
 	dgFloat32 t;
 	if (PREFILTER_RAYCAST(preFilter, body, this, userData)) {
 		return dgFloat32(1.2f);
@@ -281,9 +281,9 @@ dgFloat32 dgCollisionConvexModifier::RayCast(const dgVector &p0,
 }
 
 dgFloat32 dgCollisionConvexModifier::RayCastSimd(const dgVector &p0,
-												 const dgVector &p1, dgContactPoint &contactOut,
-												 OnRayPrecastAction preFilter, const dgBody *const body,
-												 void *const userData) const {
+        const dgVector &p1, dgContactPoint &contactOut,
+        OnRayPrecastAction preFilter, const dgBody *const body,
+        void *const userData) const {
 	dgFloat32 t;
 	if (PREFILTER_RAYCAST(preFilter, body, this, userData)) {
 		return dgFloat32(1.2f);
@@ -305,12 +305,12 @@ dgFloat32 dgCollisionConvexModifier::GetVolume() const {
 }
 
 dgVector dgCollisionConvexModifier::CalculateVolumeIntegral(
-	const dgMatrix &globalMatrix, GetBuoyancyPlane bouyancyPlane,
-	void *const context) const {
+    const dgMatrix &globalMatrix, GetBuoyancyPlane bouyancyPlane,
+    void *const context) const {
 	dgFloat32 volume;
 
 	dgPlane plane(dgFloat32(0.0f), dgFloat32(1.0f), dgFloat32(0.0f),
-				  dgFloat32(-1.0e8f));
+	              dgFloat32(-1.0e8f));
 	if (bouyancyPlane) {
 		dgPlane globalPlane;
 		if (bouyancyPlane(GetUserData(), context, globalMatrix, globalPlane)) {
@@ -344,18 +344,18 @@ void dgCollisionConvexModifier::GetCollisionInfo(dgCollisionInfo *info) const {
 	dgCollisionConvex::GetCollisionInfo(info);
 	info->m_offsetMatrix = GetOffsetMatrix();
 	info->m_convexModifierData.m_child = m_convexCollision;
-	//	strcpy (info->m_collisionType, "modifier");
+	//  strcpy (info->m_collisionType, "modifier");
 	info->m_collisionType = m_collsionId;
 }
 
 void dgCollisionConvexModifier::Serialize(dgSerialize callback,
-										  void *const userData) const {
+        void *const userData) const {
 	SerializeLow(callback, userData);
 	callback(userData, &m_modifierMatrix, sizeof(dgMatrix));
 	m_world->Serialize(m_convexCollision, callback, userData);
 }
 
 bool dgCollisionConvexModifier::OOBBTest(const dgMatrix &matrix,
-										 const dgCollisionConvex *const shape, void *const cacheOrder) const {
+        const dgCollisionConvex *const shape, void *const cacheOrder) const {
 	return true;
 }

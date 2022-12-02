@@ -43,7 +43,7 @@
 
  dgPointToCurveConstraint* dgPointToCurveConstraint::Create(dgWorld* world)
  {
- dgPointToCurveConstraint*	constraint;
+ dgPointToCurveConstraint*  constraint;
 
  constraint = dgPointToCurveConstraintArray::GetPool().GetElement();
 
@@ -58,7 +58,7 @@
  {
  dgBallConstraintArray& array = *world;
  dgBilateralConstraint::Remove ();
- //	dgBallConstraintArray::GetPool().RemoveElement (this);
+ // dgBallConstraintArray::GetPool().RemoveElement (this);
  array.RemoveElement (this);
 
  }
@@ -71,8 +71,8 @@
 
  //dgUnsigned32 dgPointToCurveConstraint::CalcRestrictedDOF()
  //{
- //	_ASSERTE (0);
- //	return 0;
+ // _ASSERTE (0);
+ // return 0;
  //}
 
 
@@ -83,11 +83,11 @@
  {
  _ASSERTE (0);
 
- //	_ASSERTE (m_dynamic0);
+ // _ASSERTE (m_dynamic0);
 
- //	m_curve = curve;
- //	m_context = curveContext;
- //	m_pivot = m_dynamic0->GetBody()->GetMatrix().UntransformVector (pivot);
+ // m_curve = curve;
+ // m_context = curveContext;
+ // m_pivot = m_dynamic0->GetBody()->GetMatrix().UntransformVector (pivot);
 
  }
 
@@ -96,54 +96,54 @@
  {
  _ASSERTE (0);
  return 0;
- //	dgBody* body0;
- //	dgFloat32 kPosit;
+ // dgBody* body0;
+ // dgFloat32 kPosit;
  //
- //	_ASSERTE (m_dynamic0);
+ // _ASSERTE (m_dynamic0);
  //
- //	body0 = m_dynamic0->GetBody();
- //	_ASSERTE (body0);
+ // body0 = m_dynamic0->GetBody();
+ // _ASSERTE (body0);
  //
- //	_ASSERTE (body0->GetDynamic() == m_dynamic0);
+ // _ASSERTE (body0->GetDynamic() == m_dynamic0);
  //
- //	const dgMatrix& mat0 = body0->GetMatrix();
+ // const dgMatrix& mat0 = body0->GetMatrix();
  //
- //	dgVector front;
- //	dgVector up;
- //	dgVector right;
- //	dgVector tangent;
+ // dgVector front;
+ // dgVector up;
+ // dgVector right;
+ // dgVector tangent;
  //  dgVector pivet1;
- //	dgVector pivet0 (mat0.RotateVector (m_pivot));
+ // dgVector pivet0 (mat0.RotateVector (m_pivot));
  //
- //	dgVector	point (pivet0 + mat0.posit);
- //	m_curve (m_context, pivet0, pivet1, front);
+ // dgVector    point (pivet0 + mat0.posit);
+ // m_curve (m_context, pivet0, pivet1, front);
 
- //	front = front.Scale (dgRsqrt (front % front));
- //	Create__Basis(front, up, right);
+ // front = front.Scale (dgRsqrt (front % front));
+ // Create__Basis(front, up, right);
 
- //	dgVector pivetUp (pivet0 * up);
- //	dgVector pivetRight (pivet0 * right);
+ // dgVector pivetUp (pivet0 * up);
+ // dgVector pivetRight (pivet0 * right);
 
- //	dgJacobian* jacobian01 = params.m_jacobian_01;
+ // dgJacobian* jacobian01 = params.m_jacobian_01;
 
- //	jacobian01[0].derivative[0] = up.m_x;
- //	jacobian01[0].derivative[1] = up.m_y;
- //	jacobian01[0].derivative[2] = up.m_z;
- //	jacobian01[0].derivative[3] = pivetUp.m_x;
- //	jacobian01[0].derivative[4] = pivetUp.m_y;
- //	jacobian01[0].derivative[5] = pivetUp.m_z;
+ // jacobian01[0].derivative[0] = up.m_x;
+ // jacobian01[0].derivative[1] = up.m_y;
+ // jacobian01[0].derivative[2] = up.m_z;
+ // jacobian01[0].derivative[3] = pivetUp.m_x;
+ // jacobian01[0].derivative[4] = pivetUp.m_y;
+ // jacobian01[0].derivative[5] = pivetUp.m_z;
 
- //	jacobian01[1].derivative[0] = right.m_x;
- //	jacobian01[1].derivative[1] = right.m_y;
- //	jacobian01[1].derivative[2] = right.m_z;
- //	jacobian01[1].derivative[3] = pivetRight.m_x;
- //	jacobian01[1].derivative[4] = pivetRight.m_y;
- //	jacobian01[1].derivative[5] = pivetRight.m_z;
+ // jacobian01[1].derivative[0] = right.m_x;
+ // jacobian01[1].derivative[1] = right.m_y;
+ // jacobian01[1].derivative[2] = right.m_z;
+ // jacobian01[1].derivative[3] = pivetRight.m_x;
+ // jacobian01[1].derivative[4] = pivetRight.m_y;
+ // jacobian01[1].derivative[5] = pivetRight.m_z;
 
- //	kPosit = 0.7f * params.m_invTimestep * params.m_invTimestep;
- //	dgVector positError (pivet1 - point);
+ // kPosit = 0.7f * params.m_invTimestep * params.m_invTimestep;
+ // dgVector positError (pivet1 - point);
 
- //	params.m_jointAccel[0] = (positError % up) * kPosit;
- //	params.m_jointAccel[1] = (positError % right) * kPosit;
+ // params.m_jointAccel[0] = (positError % up) * kPosit;
+ // params.m_jointAccel[1] = (positError % right) * kPosit;
  }
  */

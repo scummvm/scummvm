@@ -2,23 +2,23 @@
    AngelCode Scripting Library
    Copyright (c) 2003-2021 Andreas Jonsson
 
-   This software is provided 'as-is', without any express or implied 
-   warranty. In no event will the authors be held liable for any 
+   This software is provided 'as-is', without any express or implied
+   warranty. In no event will the authors be held liable for any
    damages arising from the use of this software.
 
-   Permission is granted to anyone to use this software for any 
-   purpose, including commercial applications, and to alter it and 
+   Permission is granted to anyone to use this software for any
+   purpose, including commercial applications, and to alter it and
    redistribute it freely, subject to the following restrictions:
 
-   1. The origin of this software must not be misrepresented; you 
+   1. The origin of this software must not be misrepresented; you
       must not claim that you wrote the original software. If you use
-      this software in a product, an acknowledgment in the product 
+      this software in a product, an acknowledgment in the product
       documentation would be appreciated but is not required.
 
-   2. Altered source versions must be plainly marked as such, and 
+   2. Altered source versions must be plainly marked as such, and
       must not be misrepresented as being the original software.
 
-   3. This notice may not be removed or altered from any source 
+   3. This notice may not be removed or altered from any source
       distribution.
 
    The original version of this library can be located at:
@@ -45,8 +45,7 @@
 
 BEGIN_AS_NAMESPACE
 
-class asCReader
-{
+class asCReader {
 public:
 	asCReader(asCModule *module, asIBinaryStream *stream, asCScriptEngine *engine);
 
@@ -87,7 +86,7 @@ protected:
 	void ReadUsedStringConstants();
 	void ReadUsedObjectProps();
 
-	asCTypeInfo *      FindType(int idx);
+	asCTypeInfo       *FindType(int idx);
 	int                FindTypeId(int idx);
 	short              FindObjectPropOffset(asWORD index);
 	asCScriptFunction *FindFunction(int idx);
@@ -102,39 +101,36 @@ protected:
 
 	// Temporary storage for persisting variable data
 	asCArray<int>                usedTypeIds;
-	asCArray<asCTypeInfo*>       usedTypes;
-	asCArray<asCScriptFunction*> usedFunctions;
-	asCArray<void*>              usedGlobalProperties;
-	asCArray<void*>              usedStringConstants;
+	asCArray<asCTypeInfo *>       usedTypes;
+	asCArray<asCScriptFunction *> usedFunctions;
+	asCArray<void *>              usedGlobalProperties;
+	asCArray<void *>              usedStringConstants;
 
-	asCArray<asCScriptFunction*>  savedFunctions;
+	asCArray<asCScriptFunction *>  savedFunctions;
 	asCArray<asCDataType>         savedDataTypes;
 	asCArray<asCString>           savedStrings;
 
 	asCArray<int>                 adjustByPos;
 	asCArray<int>                 adjustNegativeStackByPos;
 
-	struct SObjProp
-	{
+	struct SObjProp {
 		asCObjectType     *objType;
 		asCObjectProperty *prop;
 	};
 	asCArray<SObjProp> usedObjectProperties;
 
-	asCMap<void*,bool>              existingShared;
-	asCMap<asCScriptFunction*,bool> dontTranslate;
+	asCMap<void *, bool>              existingShared;
+	asCMap<asCScriptFunction *, bool> dontTranslate;
 
 	// Helper class for adjusting offsets within initialization list buffers
-	struct SListAdjuster
-	{
+	struct SListAdjuster {
 		SListAdjuster(asCReader *rd, asDWORD *bc, asCObjectType *ot);
 		void AdjustAllocMem();
 		int  AdjustOffset(int offset);
 		void SetRepeatCount(asUINT rc);
 		void SetNextType(int typeId);
 
-		struct SInfo
-		{
+		struct SInfo {
 			asUINT              repeatCount;
 			asSListPatternNode *startNode;
 		};
@@ -151,13 +147,12 @@ protected:
 		asSListPatternNode *patternNode;
 		int                 nextTypeId;
 	};
-	asCArray<SListAdjuster*> listAdjusters;
+	asCArray<SListAdjuster *> listAdjusters;
 };
 
 #ifndef AS_NO_COMPILER
 
-class asCWriter
-{
+class asCWriter {
 public:
 	asCWriter(asCModule *module, asIBinaryStream *stream, asCScriptEngine *engine, bool stripDebugInfo);
 
@@ -208,13 +203,13 @@ protected:
 
 	// Temporary storage for persisting variable data
 	asCArray<int>                usedTypeIds;
-	asCArray<asCTypeInfo*>       usedTypes;
-	asCArray<asCScriptFunction*> usedFunctions;
-	asCArray<void*>              usedGlobalProperties;
-	asCArray<void*>              usedStringConstants;
-	asCMap<void*, int>           stringToIndexMap;
+	asCArray<asCTypeInfo *>       usedTypes;
+	asCArray<asCScriptFunction *> usedFunctions;
+	asCArray<void *>              usedGlobalProperties;
+	asCArray<void *>              usedStringConstants;
+	asCMap<void *, int>           stringToIndexMap;
 
-	asCArray<asCScriptFunction*>  savedFunctions;
+	asCArray<asCScriptFunction *>  savedFunctions;
 	asCArray<asCDataType>         savedDataTypes;
 	asCArray<asCString>           savedStrings;
 	asCMap<asCString, int>        stringToIdMap;
@@ -222,23 +217,20 @@ protected:
 	asCArray<int>                 adjustNegativeStackByPos;
 	asCArray<int>                 bytecodeNbrByPos;
 
-	struct SObjProp
-	{
+	struct SObjProp {
 		asCObjectType     *objType;
 		asCObjectProperty *prop;
 	};
 	asCArray<SObjProp>           usedObjectProperties;
 
 	// Helper class for adjusting offsets within initialization list buffers
-	struct SListAdjuster
-	{
+	struct SListAdjuster {
 		SListAdjuster(asCObjectType *ot);
 		int  AdjustOffset(int offset, asCObjectType *listPatternType);
 		void SetRepeatCount(asUINT rc);
 		void SetNextType(int typeId);
 
-		struct SInfo
-		{
+		struct SInfo {
 			asUINT              repeatCount;
 			asSListPatternNode *startNode;
 		};
@@ -252,7 +244,7 @@ protected:
 		int                 nextOffset;  // next expected offset to be adjusted
 		int                 nextTypeId;
 	};
-	asCArray<SListAdjuster*> listAdjusters;
+	asCArray<SListAdjuster *> listAdjusters;
 };
 
 #endif

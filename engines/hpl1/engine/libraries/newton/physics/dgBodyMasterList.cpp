@@ -35,7 +35,7 @@ dgBodyMasterListRow::~dgBodyMasterListRow() {
 }
 
 dgBodyMasterListRow::dgListNode *dgBodyMasterListRow::AddJoint(
-	dgConstraint *const joint, dgBody *const body) {
+    dgConstraint *const joint, dgBody *const body) {
 	dgListNode *const node = Addtop();
 	node->GetInfo().m_joint = joint;
 	node->GetInfo().m_bodyNode = body;
@@ -103,14 +103,14 @@ void dgBodyMasterList::RemoveBody(dgBody *const body) {
 }
 
 dgBodyMasterListRow::dgListNode *dgBodyMasterList::FindConstraintLink(
-	const dgBody *const body0, const dgBody *const body1) const {
+    const dgBody *const body0, const dgBody *const body1) const {
 	_ASSERTE(body0);
 	_ASSERTE(body1);
 	_ASSERTE(body0->m_masterNode);
 
 	for (dgBodyMasterListRow::dgListNode *node =
-			 body0->m_masterNode->GetInfo().GetFirst();
-		 node; node = node->GetNext()) {
+	            body0->m_masterNode->GetInfo().GetFirst();
+	        node; node = node->GetNext()) {
 		if (node->GetInfo().m_bodyNode == body1) {
 			return node;
 		}
@@ -120,12 +120,12 @@ dgBodyMasterListRow::dgListNode *dgBodyMasterList::FindConstraintLink(
 }
 
 dgBodyMasterListRow::dgListNode *dgBodyMasterList::FindConstraintLinkNext(
-	const dgBodyMasterListRow::dgListNode *const me,
-	const dgBody *const body) const {
+    const dgBodyMasterListRow::dgListNode *const me,
+    const dgBody *const body) const {
 	_ASSERTE(me);
 	_ASSERTE(body);
 	for (dgBodyMasterListRow::dgListNode *node = me->GetNext(); node;
-		 node = node->GetNext()) {
+	        node = node->GetNext()) {
 		if (node->GetInfo().m_bodyNode == body) {
 			return node;
 		}
@@ -135,7 +135,7 @@ dgBodyMasterListRow::dgListNode *dgBodyMasterList::FindConstraintLinkNext(
 }
 
 void dgBodyMasterList::AttachConstraint(dgConstraint *const constraint,
-										dgBody *const body0, dgBody *const srcbody1) {
+                                        dgBody *const body0, dgBody *const srcbody1) {
 	_ASSERTE(body0);
 	dgBody *body1 = srcbody1;
 	if (!body1) {
@@ -147,16 +147,16 @@ void dgBodyMasterList::AttachConstraint(dgConstraint *const constraint,
 	constraint->m_body0 = body0;
 	constraint->m_body1 = body1;
 	constraint->m_link0 = body0->m_masterNode->GetInfo().AddJoint(constraint,
-																  body1);
+	                      body1);
 	constraint->m_link1 = body1->m_masterNode->GetInfo().AddJoint(constraint,
-																  body0);
+	                      body0);
 
 	// note this is in observation (to prevent bodies from not going to sleep  inside triggers
 	body0->m_equilibrium = body0->m_invMass.m_w ? false : true;
 	body1->m_equilibrium = body1->m_invMass.m_w ? false : true;
 
-	//	body0->Unfreeze();
-	//	body1->Unfreeze();
+	//  body0->Unfreeze();
+	//  body1->Unfreeze();
 
 	m_constraintCount = m_constraintCount + 1;
 }
@@ -181,8 +181,8 @@ void dgBodyMasterList::RemoveConstraint(dgConstraint *const constraint) {
 	body0->m_equilibrium = body0->m_invMass.m_w ? false : true;
 	body1->m_equilibrium = body1->m_invMass.m_w ? false : true;
 
-	//	body0->Unfreeze();
-	//	body1->Unfreeze();
+	//  body0->Unfreeze();
+	//  body1->Unfreeze();
 }
 
 void dgBodyMasterList::SortMasterList() {

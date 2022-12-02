@@ -2,23 +2,23 @@
    AngelCode Scripting Library
    Copyright (c) 2003-2013 Andreas Jonsson
 
-   This software is provided 'as-is', without any express or implied 
-   warranty. In no event will the authors be held liable for any 
+   This software is provided 'as-is', without any express or implied
+   warranty. In no event will the authors be held liable for any
    damages arising from the use of this software.
 
-   Permission is granted to anyone to use this software for any 
-   purpose, including commercial applications, and to alter it and 
+   Permission is granted to anyone to use this software for any
+   purpose, including commercial applications, and to alter it and
    redistribute it freely, subject to the following restrictions:
 
-   1. The origin of this software must not be misrepresented; you 
+   1. The origin of this software must not be misrepresented; you
       must not claim that you wrote the original software. If you use
-      this software in a product, an acknowledgment in the product 
+      this software in a product, an acknowledgment in the product
       documentation would be appreciated but is not required.
 
-   2. Altered source versions must be plainly marked as such, and 
+   2. Altered source versions must be plainly marked as such, and
       must not be misrepresented as being the original software.
 
-   3. This notice may not be removed or altered from any source 
+   3. This notice may not be removed or altered from any source
       distribution.
 
    The original version of this library can be located at:
@@ -41,51 +41,52 @@
 
 template <class KEY, class VAL> struct asSMapNode;
 
-template <class KEY, class VAL> class asCMap
-{
+template <class KEY, class VAL> class asCMap {
 public:
 	asCMap();
 	~asCMap();
 
 	int   Insert(const KEY &key, const VAL &value);
-	int   Insert(asSMapNode<KEY,VAL> *node);
+	int   Insert(asSMapNode<KEY, VAL> *node);
 	int   GetCount() const;
-	
-	const KEY &GetKey(const asSMapNode<KEY,VAL> *cursor) const;
-	const VAL &GetValue(const asSMapNode<KEY,VAL> *cursor) const;
-	VAL       &GetValue(asSMapNode<KEY,VAL> *cursor);
 
-	void Erase(asSMapNode<KEY,VAL> *cursor);
-	asSMapNode<KEY,VAL> *Remove(asSMapNode<KEY,VAL> *cursor);
+	const KEY &GetKey(const asSMapNode<KEY, VAL> *cursor) const;
+	const VAL &GetValue(const asSMapNode<KEY, VAL> *cursor) const;
+	VAL       &GetValue(asSMapNode<KEY, VAL> *cursor);
+
+	void Erase(asSMapNode<KEY, VAL> *cursor);
+	asSMapNode<KEY, VAL> *Remove(asSMapNode<KEY, VAL> *cursor);
 	void EraseAll();
 
-	void SwapWith(asCMap<KEY,VAL> &other);
+	void SwapWith(asCMap<KEY, VAL> &other);
 
 	// Returns true as long as cursor is valid
 
-	bool MoveTo(asSMapNode<KEY,VAL> **out, const KEY &key) const;
-	bool MoveFirst(asSMapNode<KEY,VAL> **out) const;
-	bool MoveLast(asSMapNode<KEY,VAL> **out) const;
-	bool MoveNext(asSMapNode<KEY,VAL> **out, asSMapNode<KEY,VAL> *cursor) const;
-	bool MovePrev(asSMapNode<KEY,VAL> **out, asSMapNode<KEY,VAL> *cursor) const;
+	bool MoveTo(asSMapNode<KEY, VAL> **out, const KEY &key) const;
+	bool MoveFirst(asSMapNode<KEY, VAL> **out) const;
+	bool MoveLast(asSMapNode<KEY, VAL> **out) const;
+	bool MoveNext(asSMapNode<KEY, VAL> **out, asSMapNode<KEY, VAL> *cursor) const;
+	bool MovePrev(asSMapNode<KEY, VAL> **out, asSMapNode<KEY, VAL> *cursor) const;
 
 	// For debugging only
 
-	int CheckIntegrity(asSMapNode<KEY,VAL> *node) const;
+	int CheckIntegrity(asSMapNode<KEY, VAL> *node) const;
 
 protected:
 	// Don't allow value assignment
-	asCMap &operator=(const asCMap &) { return *this; }
+	asCMap &operator=(const asCMap &) {
+		return *this;
+	}
 
-	void BalanceInsert(asSMapNode<KEY,VAL> *node);
-	void BalanceErase(asSMapNode<KEY,VAL> *child, asSMapNode<KEY,VAL> *parent);
+	void BalanceInsert(asSMapNode<KEY, VAL> *node);
+	void BalanceErase(asSMapNode<KEY, VAL> *child, asSMapNode<KEY, VAL> *parent);
 
-	int EraseAll(asSMapNode<KEY,VAL> *node);
-	int RotateLeft(asSMapNode<KEY,VAL> *node);
-	int RotateRight(asSMapNode<KEY,VAL> *node);
+	int EraseAll(asSMapNode<KEY, VAL> *node);
+	int RotateLeft(asSMapNode<KEY, VAL> *node);
+	int RotateRight(asSMapNode<KEY, VAL> *node);
 
-	asSMapNode<KEY,VAL> *root;
-	asSMapNode<KEY,VAL> dummy;
+	asSMapNode<KEY, VAL> *root;
+	asSMapNode<KEY, VAL> dummy;
 
 	int count;
 };
@@ -103,10 +104,21 @@ protected:
 #define ISRED(x) ((x != 0) && (x)->isRed)
 #define ISBLACK(x) (!ISRED(x))
 
-template <class KEY, class VAL> struct asSMapNode
-{
-	asSMapNode() {parent = 0; left = 0; right = 0; isRed = true;}
-	void Init(KEY k, VAL v) {key = k; value = v; parent = 0; left = 0; right = 0; isRed = true;}
+template <class KEY, class VAL> struct asSMapNode {
+	asSMapNode() {
+		parent = 0;
+		left = 0;
+		right = 0;
+		isRed = true;
+	}
+	void Init(KEY k, VAL v) {
+		key = k;
+		value = v;
+		parent = 0;
+		left = 0;
+		right = 0;
+		isRed = true;
+	}
 
 	asSMapNode *parent;
 	asSMapNode *left;
@@ -118,22 +130,19 @@ template <class KEY, class VAL> struct asSMapNode
 };
 
 template <class KEY, class VAL>
-asCMap<KEY, VAL>::asCMap()
-{
+asCMap<KEY, VAL>::asCMap() {
 	root = 0;
 	count = 0;
 }
 
 template <class KEY, class VAL>
-asCMap<KEY, VAL>::~asCMap()
-{
+asCMap<KEY, VAL>::~asCMap() {
 	EraseAll();
 }
 
 template <class KEY, class VAL>
-void asCMap<KEY,VAL>::SwapWith(asCMap<KEY,VAL> &other)
-{
-	asSMapNode<KEY,VAL> *tmpRoot  = root;
+void asCMap<KEY, VAL>::SwapWith(asCMap<KEY, VAL> &other) {
+	asSMapNode<KEY, VAL> *tmpRoot  = root;
 	int                  tmpCount = count;
 
 	root  = other.root;
@@ -144,22 +153,20 @@ void asCMap<KEY,VAL>::SwapWith(asCMap<KEY,VAL> &other)
 }
 
 template <class KEY, class VAL>
-void asCMap<KEY, VAL>::EraseAll()
-{
+void asCMap<KEY, VAL>::EraseAll() {
 	EraseAll(root);
 	root = 0;
 }
 
 template <class KEY, class VAL>
-int asCMap<KEY, VAL>::EraseAll(asSMapNode<KEY, VAL> *p)
-{
-	if( p == 0 ) return -1;
+int asCMap<KEY, VAL>::EraseAll(asSMapNode<KEY, VAL> *p) {
+	if (p == 0) return -1;
 
-	EraseAll( p->left );
-	EraseAll( p->right );
+	EraseAll(p->left);
+	EraseAll(p->right);
 
-	typedef asSMapNode<KEY,VAL> node_t;
-	asDELETE(p,node_t);
+	typedef asSMapNode<KEY, VAL> node_t;
+	asDELETE(p, node_t);
 
 	count--;
 
@@ -167,18 +174,15 @@ int asCMap<KEY, VAL>::EraseAll(asSMapNode<KEY, VAL> *p)
 }
 
 template <class KEY, class VAL>
-int asCMap<KEY, VAL>::GetCount() const
-{
+int asCMap<KEY, VAL>::GetCount() const {
 	return count;
 }
 
 template <class KEY, class VAL>
-int asCMap<KEY, VAL>::Insert(const KEY &key, const VAL &value)
-{
-	typedef asSMapNode<KEY,VAL> node_t;
-	asSMapNode<KEY,VAL> *nnode = asNEW(node_t);
-	if( nnode == 0 )
-	{
+int asCMap<KEY, VAL>::Insert(const KEY &key, const VAL &value) {
+	typedef asSMapNode<KEY, VAL> node_t;
+	asSMapNode<KEY, VAL> *nnode = asNEW(node_t);
+	if (nnode == 0) {
 		// Out of memory
 		return -1;
 	}
@@ -190,36 +194,26 @@ int asCMap<KEY, VAL>::Insert(const KEY &key, const VAL &value)
 }
 
 template <class KEY, class VAL>
-int asCMap<KEY, VAL>::Insert(asSMapNode<KEY,VAL> *nnode)
-{
+int asCMap<KEY, VAL>::Insert(asSMapNode<KEY, VAL> *nnode) {
 	// Insert the node
-	if( root == 0 )
+	if (root == 0)
 		root = nnode;
-	else
-	{
-		asSMapNode<KEY,VAL> *p = root;
-		for(;;)
-		{
-			if( nnode->key < p->key )
-			{
-				if( p->left == 0 )
-				{
+	else {
+		asSMapNode<KEY, VAL> *p = root;
+		for (;;) {
+			if (nnode->key < p->key) {
+				if (p->left == 0) {
 					nnode->parent = p;
 					p->left = nnode;
 					break;
-				}
-				else
+				} else
 					p = p->left;
-			}
-			else
-			{
-				if( p->right == 0 )
-				{
+			} else {
+				if (p->right == 0) {
 					nnode->parent = p;
 					p->right = nnode;
 					break;
-				}
-				else
+				} else
 					p = p->right;
 			}
 		}
@@ -233,17 +227,13 @@ int asCMap<KEY, VAL>::Insert(asSMapNode<KEY,VAL> *nnode)
 }
 
 template <class KEY, class VAL>
-void asCMap<KEY, VAL>::BalanceInsert(asSMapNode<KEY, VAL> *node)
-{
+void asCMap<KEY, VAL>::BalanceInsert(asSMapNode<KEY, VAL> *node) {
 	// The node, that is red, can't have a red parent
-	while( node != root && node->parent->isRed )
-	{
-		// Check color of uncle 
-		if( node->parent == node->parent->parent->left )
-		{
-			asSMapNode<KEY,VAL> *uncle = node->parent->parent->right;
-			if( ISRED(uncle) )
-			{
+	while (node != root && node->parent->isRed) {
+		// Check color of uncle
+		if (node->parent == node->parent->parent->left) {
+			asSMapNode<KEY, VAL> *uncle = node->parent->parent->right;
+			if (ISRED(uncle)) {
 				//    B
 				//   R R
 				//  N
@@ -255,15 +245,12 @@ void asCMap<KEY, VAL>::BalanceInsert(asSMapNode<KEY, VAL> *node)
 
 				// Continue balancing from grand parent
 				node = node->parent->parent;
-			}
-			else
-			{
+			} else {
 				//    B
 				//   R B
 				//  N
 
-				if( node == node->parent->right ) 
-				{
+				if (node == node->parent->right) {
 					// Make the node a left child
 					node = node->parent;
 					RotateLeft(node);
@@ -275,12 +262,9 @@ void asCMap<KEY, VAL>::BalanceInsert(asSMapNode<KEY, VAL> *node)
 				node->parent->parent->isRed = true;
 				RotateRight(node->parent->parent);
 			}
-		}
-		else
-		{
-			asSMapNode<KEY,VAL> *uncle = node->parent->parent->left;
-			if( ISRED(uncle) )
-			{
+		} else {
+			asSMapNode<KEY, VAL> *uncle = node->parent->parent->left;
+			if (ISRED(uncle)) {
 				//   B
 				//  R R
 				//     N
@@ -291,20 +275,17 @@ void asCMap<KEY, VAL>::BalanceInsert(asSMapNode<KEY, VAL> *node)
 				uncle->isRed = false;
 				node = node->parent->parent;
 				node->isRed = true;
-			}
-			else
-			{
+			} else {
 				//   B
 				//  B R
 				//     N
 
-				if( node == node->parent->left ) 
-				{
+				if (node == node->parent->left) {
 					// Make the node a right child
 					node = node->parent;
 					RotateRight(node);
 				}
-				
+
 				// Change color on parent and grand parent
 				// Then rotate grand parent to the right
 				node->parent->isRed = false;
@@ -319,127 +300,113 @@ void asCMap<KEY, VAL>::BalanceInsert(asSMapNode<KEY, VAL> *node)
 
 // For debugging purposes only
 template <class KEY, class VAL>
-int asCMap<KEY, VAL>::CheckIntegrity(asSMapNode<KEY, VAL> *node) const
-{
-	if( node == 0 ) 
-	{
-		if( root == 0 ) 
+int asCMap<KEY, VAL>::CheckIntegrity(asSMapNode<KEY, VAL> *node) const {
+	if (node == 0) {
+		if (root == 0)
 			return 0;
-		else if( ISRED(root) )
+		else if (ISRED(root))
 			return -1;
 		else
 			node = root;
 	}
 
 	int left = 0, right = 0;
-	if( node->left )
+	if (node->left)
 		left = CheckIntegrity(node->left);
-	if( node->right )
+	if (node->right)
 		right = CheckIntegrity(node->right);
 
-	if( left != right || left == -1 ) 
+	if (left != right || left == -1)
 		return -1;
-	
-	if( ISBLACK(node) )
-		return left+1;
+
+	if (ISBLACK(node))
+		return left + 1;
 
 	return left;
 }
 
 // Returns true if successful
 template <class KEY, class VAL>
-bool asCMap<KEY, VAL>::MoveTo(asSMapNode<KEY,VAL> **out, const KEY &key) const
-{
-	asSMapNode<KEY,VAL> *p = root;
-	while( p )
-	{
-		if( key < p->key )
+bool asCMap<KEY, VAL>::MoveTo(asSMapNode<KEY, VAL> **out, const KEY &key) const {
+	asSMapNode<KEY, VAL> *p = root;
+	while (p) {
+		if (key < p->key)
 			p = p->left;
-		else if( key == p->key )
-		{
-			if( out ) *out = p;
+		else if (key == p->key) {
+			if (out) *out = p;
 			return true;
-		}
-		else 
+		} else
 			p = p->right;
 	}
 
-	if( out ) *out = 0;
+	if (out) *out = 0;
 	return false;
 }
 
 template <class KEY, class VAL>
-void asCMap<KEY, VAL>::Erase(asSMapNode<KEY,VAL> *cursor)
-{
-	asSMapNode<KEY,VAL> *node = Remove(cursor);
-	asASSERT( node == cursor );
+void asCMap<KEY, VAL>::Erase(asSMapNode<KEY, VAL> *cursor) {
+	asSMapNode<KEY, VAL> *node = Remove(cursor);
+	asASSERT(node == cursor);
 
-	typedef asSMapNode<KEY,VAL> node_t;
-	asDELETE(node,node_t);
+	typedef asSMapNode<KEY, VAL> node_t;
+	asDELETE(node, node_t);
 }
 
 template <class KEY, class VAL>
-asSMapNode<KEY,VAL> *asCMap<KEY, VAL>::Remove(asSMapNode<KEY,VAL> *cursor)
-{
-	if( cursor == 0 ) return 0;
+asSMapNode<KEY, VAL> *asCMap<KEY, VAL>::Remove(asSMapNode<KEY, VAL> *cursor) {
+	if (cursor == 0) return 0;
 
-	asSMapNode<KEY,VAL> *node = cursor;
+	asSMapNode<KEY, VAL> *node = cursor;
 
 	//---------------------------------------------------
 	// Choose the node that will replace the erased one
-	asSMapNode<KEY,VAL> *remove;
-	if( node->left == 0 || node->right == 0 )
+	asSMapNode<KEY, VAL> *remove;
+	if (node->left == 0 || node->right == 0)
 		remove = node;
-	else
-	{
+	else {
 		remove = node->right;
-		while( remove->left ) remove = remove->left;
+		while (remove->left) remove = remove->left;
 	}
 
 	//--------------------------------------------------
 	// Remove the node
-	asSMapNode<KEY,VAL> *child;
-	if( remove->left )
+	asSMapNode<KEY, VAL> *child;
+	if (remove->left)
 		child = remove->left;
 	else
 		child = remove->right;
 
-	if( child ) child->parent = remove->parent;
-	if( remove->parent )
-	{
-		if( remove == remove->parent->left )
+	if (child) child->parent = remove->parent;
+	if (remove->parent) {
+		if (remove == remove->parent->left)
 			remove->parent->left = child;
 		else
 			remove->parent->right = child;
-	}
-	else
+	} else
 		root = child;
 
 	// If we remove a black node we must make sure the tree is balanced
-	if( ISBLACK(remove) )
+	if (ISBLACK(remove))
 		BalanceErase(child, remove->parent);
 
 	//----------------------------------------
 	// Replace the erased node with the removed one
-	if( remove != node )
-	{
-		if( node->parent )
-		{
-			if( node->parent->left == node )
+	if (remove != node) {
+		if (node->parent) {
+			if (node->parent->left == node)
 				node->parent->left = remove;
 			else
 				node->parent->right = remove;
-		}
-		else
+		} else
 			root = remove;
 
 		remove->isRed  = node->isRed;
 		remove->parent = node->parent;
 
 		remove->left = node->left;
-		if( remove->left ) remove->left->parent = remove;
+		if (remove->left) remove->left->parent = remove;
 		remove->right = node->right;
-		if( remove->right ) remove->right->parent = remove;	
+		if (remove->right) remove->right->parent = remove;
 	}
 
 	count--;
@@ -450,17 +417,16 @@ asSMapNode<KEY,VAL> *asCMap<KEY, VAL>::Remove(asSMapNode<KEY,VAL> *cursor)
 // Call method only if removed node was black
 // child is the child of the removed node
 template <class KEY, class VAL>
-void asCMap<KEY, VAL>::BalanceErase(asSMapNode<KEY, VAL> *child, asSMapNode<KEY, VAL> *parent)
-{
+void asCMap<KEY, VAL>::BalanceErase(asSMapNode<KEY, VAL> *child, asSMapNode<KEY, VAL> *parent) {
 	// If child is red
-	//   Color child black 
+	//   Color child black
 	//   Terminate
 
 	// These tests assume brother is to the right.
 
 	// 1. Brother is red
 	//   Color parent red and brother black
-    //   Rotate parent left
+	//   Rotate parent left
 	//   Transforms to 2b
 	// 2a. Parent and brother is black, brother's children are black
 	//   Color brother red
@@ -479,15 +445,12 @@ void asCMap<KEY, VAL>::BalanceErase(asSMapNode<KEY, VAL> *child, asSMapNode<KEY,
 	//   Rotate parent left
 	//   Terminate
 
-	while( child != root && ISBLACK(child) )
-	{
-		if( child == parent->left )
-		{
-			asSMapNode<KEY,VAL> *brother = parent->right;
+	while (child != root && ISBLACK(child)) {
+		if (child == parent->left) {
+			asSMapNode<KEY, VAL> *brother = parent->right;
 
 			// Case 1
-			if( ISRED(brother) )
-			{
+			if (ISRED(brother)) {
 				brother->isRed = false;
 				parent->isRed = true;
 				RotateLeft(parent);
@@ -495,12 +458,10 @@ void asCMap<KEY, VAL>::BalanceErase(asSMapNode<KEY, VAL> *child, asSMapNode<KEY,
 			}
 
 			// Case 2
-			if( brother == 0 ) break;
-			if( ISBLACK(brother->left) && ISBLACK(brother->right) )
-			{
+			if (brother == 0) break;
+			if (ISBLACK(brother->left) && ISBLACK(brother->right)) {
 				// Case 2b
-				if( ISRED(parent) )
-				{
+				if (ISRED(parent)) {
 					parent->isRed = false;
 					brother->isRed = true;
 					break;
@@ -509,12 +470,9 @@ void asCMap<KEY, VAL>::BalanceErase(asSMapNode<KEY, VAL> *child, asSMapNode<KEY,
 				brother->isRed = true;
 				child = parent;
 				parent = child->parent;
-			}
-			else
-			{
+			} else {
 				// Case 3
-				if( ISBLACK(brother->right) )
-				{
+				if (ISBLACK(brother->right)) {
 					brother->left->isRed = false;
 					brother->isRed = true;
 					RotateRight(brother);
@@ -528,14 +486,11 @@ void asCMap<KEY, VAL>::BalanceErase(asSMapNode<KEY, VAL> *child, asSMapNode<KEY,
 				RotateLeft(parent);
 				break;
 			}
-		}
-		else
-		{
-			asSMapNode<KEY,VAL> *brother = parent->left;
-			
+		} else {
+			asSMapNode<KEY, VAL> *brother = parent->left;
+
 			// Case 1
-			if( ISRED(brother) )
-			{
+			if (ISRED(brother)) {
 				brother->isRed = false;
 				parent->isRed = true;
 				RotateRight(parent);
@@ -543,12 +498,10 @@ void asCMap<KEY, VAL>::BalanceErase(asSMapNode<KEY, VAL> *child, asSMapNode<KEY,
 			}
 
 			// Case 2
-			if( brother == 0 ) break;
-			if( ISBLACK(brother->left) && ISBLACK(brother->right) )
-			{
+			if (brother == 0) break;
+			if (ISBLACK(brother->left) && ISBLACK(brother->right)) {
 				// Case 2b
-				if( ISRED(parent) )
-				{
+				if (ISRED(parent)) {
 					parent->isRed = false;
 					brother->isRed = true;
 					break;
@@ -557,12 +510,9 @@ void asCMap<KEY, VAL>::BalanceErase(asSMapNode<KEY, VAL> *child, asSMapNode<KEY,
 				brother->isRed = true;
 				child = parent;
 				parent = child->parent;
-			}
-			else
-			{
+			} else {
 				// Case 3
-				if( ISBLACK(brother->left) )
-				{
+				if (ISBLACK(brother->left)) {
 					brother->right->isRed = false;
 					brother->isRed = true;
 					RotateLeft(brother);
@@ -579,43 +529,39 @@ void asCMap<KEY, VAL>::BalanceErase(asSMapNode<KEY, VAL> *child, asSMapNode<KEY,
 		}
 	}
 
-	if( child )
+	if (child)
 		child->isRed = false;
 }
 
 template <class KEY, class VAL>
-int asCMap<KEY, VAL>::RotateRight(asSMapNode<KEY, VAL> *node)
-{
+int asCMap<KEY, VAL>::RotateRight(asSMapNode<KEY, VAL> *node) {
 	//     P             L       //
 	//    / \           / \      //
 	//   L   R    =>   Ll  P     //
 	//  / \               / \    //
 	// Ll  Lr            Lr  R   //
 
-	if( node->left == 0 ) return -1;
+	if (node->left == 0) return -1;
 
-	asSMapNode<KEY,VAL> *left = node->left;
+	asSMapNode<KEY, VAL> *left = node->left;
 
 	// Update parent
-	if( node->parent )
-	{
-		asSMapNode<KEY,VAL> *parent = node->parent;
-		if( parent->left == node )
+	if (node->parent) {
+		asSMapNode<KEY, VAL> *parent = node->parent;
+		if (parent->left == node)
 			parent->left = left;
 		else
 			parent->right = left;
 
 		left->parent = parent;
-	}
-	else
-	{
+	} else {
 		root = left;
 		left->parent = 0;
 	}
 
 	// Move left's right child to node's left child
 	node->left = left->right;
-	if( node->left ) node->left->parent = node;
+	if (node->left) node->left->parent = node;
 
 	// Put node as left's right child
 	left->right = node;
@@ -625,38 +571,34 @@ int asCMap<KEY, VAL>::RotateRight(asSMapNode<KEY, VAL> *node)
 }
 
 template <class KEY, class VAL>
-int asCMap<KEY, VAL>::RotateLeft(asSMapNode<KEY, VAL> *node)
-{
+int asCMap<KEY, VAL>::RotateLeft(asSMapNode<KEY, VAL> *node) {
 	//     P             R      //
 	//    / \           / \     //
 	//   L   R    =>   P   Rr   //
 	//      / \       / \       //
 	//     Rl  Rr    L   Rl     //
 
-	if( node->right == 0 ) return -1;
+	if (node->right == 0) return -1;
 
-	asSMapNode<KEY,VAL> *right = node->right;
+	asSMapNode<KEY, VAL> *right = node->right;
 
 	// Update parent
-	if( node->parent )
-	{
-		asSMapNode<KEY,VAL> *parent = node->parent;
-		if( parent->right == node )
+	if (node->parent) {
+		asSMapNode<KEY, VAL> *parent = node->parent;
+		if (parent->right == node)
 			parent->right = right;
 		else
 			parent->left = right;
 
 		right->parent = parent;
-	}
-	else
-	{
+	} else {
 		root = right;
 		right->parent = 0;
 	}
 
 	// Move right's left child to node's right child
 	node->right = right->left;
-	if( node->right ) node->right->parent = node;
+	if (node->right) node->right->parent = node;
 
 	// Put node as right's left child
 	right->left = node;
@@ -666,81 +608,73 @@ int asCMap<KEY, VAL>::RotateLeft(asSMapNode<KEY, VAL> *node)
 }
 
 template <class KEY, class VAL>
-const VAL &asCMap<KEY, VAL>::GetValue(const asSMapNode<KEY,VAL> *cursor) const 
-{
-	if( cursor == 0 ) 
+const VAL &asCMap<KEY, VAL>::GetValue(const asSMapNode<KEY, VAL> *cursor) const {
+	if (cursor == 0)
 		return dummy.value;
 
 	return cursor->value;
 }
 
 template <class KEY, class VAL>
-VAL &asCMap<KEY, VAL>::GetValue(asSMapNode<KEY,VAL> *cursor) 
-{
-	if( cursor == 0 ) 
+VAL &asCMap<KEY, VAL>::GetValue(asSMapNode<KEY, VAL> *cursor) {
+	if (cursor == 0)
 		return dummy.value;
 
 	return cursor->value;
 }
 
 template <class KEY, class VAL>
-const KEY &asCMap<KEY, VAL>::GetKey(const asSMapNode<KEY,VAL> *cursor) const
-{
-	if( cursor == 0 )
+const KEY &asCMap<KEY, VAL>::GetKey(const asSMapNode<KEY, VAL> *cursor) const {
+	if (cursor == 0)
 		return dummy.key;
 
 	return cursor->key;
 }
 
 template <class KEY, class VAL>
-bool asCMap<KEY, VAL>::MoveFirst(asSMapNode<KEY,VAL> **out) const
-{
+bool asCMap<KEY, VAL>::MoveFirst(asSMapNode<KEY, VAL> **out) const {
 	*out = root;
-	if( root == 0 ) return false;
+	if (root == 0) return false;
 
-	while( (*out)->left ) 
+	while ((*out)->left)
 		*out = (*out)->left;
 
 	return true;
 }
 
 template <class KEY, class VAL>
-bool asCMap<KEY, VAL>::MoveLast(asSMapNode<KEY,VAL> **out) const
-{
+bool asCMap<KEY, VAL>::MoveLast(asSMapNode<KEY, VAL> **out) const {
 	*out = root;
-	if( root == 0 ) return false;
+	if (root == 0) return false;
 
-	while( (*out)->right ) 
+	while ((*out)->right)
 		*out = (*out)->right;
 
 	return true;
 }
 
 template <class KEY, class VAL>
-bool asCMap<KEY, VAL>::MoveNext(asSMapNode<KEY,VAL> **out, asSMapNode<KEY,VAL> *cursor) const
-{
-	if( cursor == 0 )
-	{
+bool asCMap<KEY, VAL>::MoveNext(asSMapNode<KEY, VAL> **out, asSMapNode<KEY, VAL> *cursor) const {
+	if (cursor == 0) {
 		*out = 0;
 		return false;
 	}
 
-	if( cursor->right == 0 ) 
-	{
+	if (cursor->right == 0) {
 		// Move upwards until we find a parent node to the right
-		while( cursor->parent && cursor->parent->right == cursor )
+		while (cursor->parent && cursor->parent->right == cursor)
 			cursor = cursor->parent;
 
 		cursor = cursor->parent;
 		*out = cursor;
-		if( cursor == 0 ) 
+		if (cursor == 0)
 			return false;
 
 		return true;
 	}
 
 	cursor = cursor->right;
-	while( cursor->left ) 
+	while (cursor->left)
 		cursor = cursor->left;
 
 	*out = cursor;
@@ -748,31 +682,28 @@ bool asCMap<KEY, VAL>::MoveNext(asSMapNode<KEY,VAL> **out, asSMapNode<KEY,VAL> *
 }
 
 template <class KEY, class VAL>
-bool asCMap<KEY, VAL>::MovePrev(asSMapNode<KEY,VAL> **out, asSMapNode<KEY,VAL> *cursor) const
-{
-	if( cursor == 0 ) 
-	{
+bool asCMap<KEY, VAL>::MovePrev(asSMapNode<KEY, VAL> **out, asSMapNode<KEY, VAL> *cursor) const {
+	if (cursor == 0) {
 		*out = 0;
 		return false;
 	}
 
-	if( cursor->left == 0 )
-	{
+	if (cursor->left == 0) {
 		// Move upwards until we find a parent node to the left
-		while( cursor->parent && cursor->parent->left == cursor )
+		while (cursor->parent && cursor->parent->left == cursor)
 			cursor = cursor->parent;
 
 		cursor = cursor->parent;
 
 		*out = cursor;
-		if( cursor == 0 )
+		if (cursor == 0)
 			return false;
 
 		return true;
 	}
 
 	cursor = cursor->left;
-	while( cursor->right )
+	while (cursor->right)
 		cursor = cursor->right;
 
 	*out = cursor;

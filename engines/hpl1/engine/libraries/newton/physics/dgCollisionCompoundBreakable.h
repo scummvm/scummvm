@@ -53,7 +53,7 @@ public:
 
 		void Serialize(dgSerialize callback, void *const userData) const;
 		void GetVertexStreams(dgInt32 vertexStrideInByte, dgFloat32 *vertex, dgInt32 normalStrideInByte, dgFloat32 *normal,
-							  dgInt32 uvStrideInByte, dgFloat32 *uv) const;
+		                      dgInt32 uvStrideInByte, dgFloat32 *uv) const;
 
 		dgInt32 m_vertexCount;
 		dgFloat32 *m_uv;
@@ -118,15 +118,15 @@ public:
 		dgDebriGraph(dgMemoryAllocator *const allocator, dgDeserialize deserialization, void *const userData);
 		~dgDebriGraph();
 
-		//		void AddToHeap (dgDownHeap<dgMeshEffect*, dgFloat32>& heap, dgMeshEffect* front);
+		//      void AddToHeap (dgDownHeap<dgMeshEffect*, dgFloat32>& heap, dgMeshEffect* front);
 		void AddNode(dgFlatVertexArray &vertexArray, dgMeshEffect *solid, dgInt32 clipperMaterial, dgInt32 id, dgFloat32 density, dgFloat32 padding);
-		//		void SplitAndAddNodes (dgFlatVertexArray& vertexArray, dgMeshEffect* solid, dgMeshEffect* const clipper,
-		//							   dgInt32 clipperMaterial, dgInt32 id, dgFloat32 density, dgCollisionCompoundBreakableCallback callback, void* buildUsedData);
+		//      void SplitAndAddNodes (dgFlatVertexArray& vertexArray, dgMeshEffect* solid, dgMeshEffect* const clipper,
+		//                             dgInt32 clipperMaterial, dgInt32 id, dgFloat32 density, dgCollisionCompoundBreakableCallback callback, void* buildUsedData);
 
-		//		void AddMeshes (dgFlatVertexArray& vertexArray, dgInt32 count, dgMeshEffect* const solidArray[], dgMeshEffect* const clipperArray[],
-		//						dgMatrix* const matrixArray, dgInt32* const idArray, dgFloat32* const densities, dgCollisionCompoundBreakableCallback callback, void* buildUsedData);
+		//      void AddMeshes (dgFlatVertexArray& vertexArray, dgInt32 count, dgMeshEffect* const solidArray[], dgMeshEffect* const clipperArray[],
+		//                      dgMatrix* const matrixArray, dgInt32* const idArray, dgFloat32* const densities, dgCollisionCompoundBreakableCallback callback, void* buildUsedData);
 		void AddMeshes(dgFlatVertexArray &vertexArray, dgInt32 count, const dgMeshEffect *const solidArray[],
-					   const dgInt32 *const idArray, const dgFloat32 *const densities, const dgInt32 *const internalFaceMaterial, dgFloat32 gaps);
+		               const dgInt32 *const idArray, const dgFloat32 *const densities, const dgInt32 *const internalFaceMaterial, dgFloat32 gaps);
 
 		void Serialize(dgSerialize callback, void *const userData) const;
 	};
@@ -188,21 +188,21 @@ public:
 		dgDebriGraph::dgListNode *m_node;
 	};
 
-	//	class dgSegmenList: public dgList<dgMeshEffect*>
-	//	{
-	//		public:
-	//		dgSegmenList(dgMeshEffect* const source);
-	//		~dgSegmenList();
-	//	};
+	//  class dgSegmenList: public dgList<dgMeshEffect*>
+	//  {
+	//      public:
+	//      dgSegmenList(dgMeshEffect* const source);
+	//      ~dgSegmenList();
+	//  };
 
 	dgCollisionCompoundBreakable(const dgCollisionCompoundBreakable &source);
-	//	dgCollisionCompoundBreakable (dgInt32 count, dgMeshEffect* const solidArray[], dgMeshEffect* const clipperArray[],
-	//								  dgMatrix* const matrixArray, dgInt32* const idArray, dgFloat32* const densities, dgInt32 debriiId,
-	//								  dgCollisionCompoundBreakableCallback callback, void* buildUsedData, dgWorld* world);
+	//  dgCollisionCompoundBreakable (dgInt32 count, dgMeshEffect* const solidArray[], dgMeshEffect* const clipperArray[],
+	//                                dgMatrix* const matrixArray, dgInt32* const idArray, dgFloat32* const densities, dgInt32 debriiId,
+	//                                dgCollisionCompoundBreakableCallback callback, void* buildUsedData, dgWorld* world);
 
 	dgCollisionCompoundBreakable(dgInt32 count, const dgMeshEffect *const solidArray[], const dgInt32 *const idArray,
-								 const dgFloat32 *const densities, const dgInt32 *const internalFaceMaterial,
-								 dgInt32 debriiId, dgFloat32 gaps, dgWorld *world);
+	                             const dgFloat32 *const densities, const dgInt32 *const internalFaceMaterial,
+	                             dgInt32 debriiId, dgFloat32 gaps, dgWorld *world);
 
 	dgCollisionCompoundBreakable(dgWorld *const world, dgDeserialize deserialization, void *const userData);
 	virtual ~dgCollisionCompoundBreakable(void);
@@ -212,23 +212,29 @@ public:
 	void DeleteComponent(dgDebriGraph::dgListNode *node);
 	void DeleteComponentEnd();
 
-	dgDebriGraph::dgListNode *GetMainMesh() const { return m_conectivity.GetLast(); }
-	dgDebriGraph::dgListNode *GetFirstComponentMesh() const { return (m_conectivity.GetCount() > 2) ? m_conectivity.GetFirst()->GetNext() : NULL; }
+	dgDebriGraph::dgListNode *GetMainMesh() const {
+		return m_conectivity.GetLast();
+	}
+	dgDebriGraph::dgListNode *GetFirstComponentMesh() const {
+		return (m_conectivity.GetCount() > 2) ? m_conectivity.GetFirst()->GetNext() : NULL;
+	}
 	dgInt32 GetSegmentsInRadius(const dgVector &origin, dgFloat32 radius, dgDebriGraph::dgListNode **segments, dgInt32 maxCount);
 
 	void ResetAnchor();
 	void SetAnchoredParts(dgInt32 count, const dgMatrix *const matrixArray, const dgCollision **collisionArray);
 	void EnumerateIslands();
-	//	dgInt32 GetSegmentsInRadius (const dgVector& origin, dgFloat32 radius, dgDebriGraph::dgListNode** segments, dgInt32 maxCount);
-	//	dgInt32 GetDetachedPieces (dgCollision** shapes, dgInt32 maxCount);
+	//  dgInt32 GetSegmentsInRadius (const dgVector& origin, dgFloat32 radius, dgDebriGraph::dgListNode** segments, dgInt32 maxCount);
+	//  dgInt32 GetDetachedPieces (dgCollision** shapes, dgInt32 maxCount);
 
 	dgInt32 GetSegmentIndexStream(dgDebriGraph::dgListNode *const node, dgMesh::dgListNode *segment, dgInt32 *const index) const;
 	dgInt32 GetSegmentIndexStreamShort(dgDebriGraph::dgListNode *const node, dgMesh::dgListNode *segment, dgInt16 *const index) const;
 
-	dgInt32 GetVertecCount() const { return m_vertexBuffer->m_vertexCount; }
+	dgInt32 GetVertecCount() const {
+		return m_vertexBuffer->m_vertexCount;
+	}
 	void GetVertexStreams(dgInt32 vertexStrideInByte, dgFloat32 *vertex,
-						  dgInt32 normalStrideInByte, dgFloat32 *normal,
-						  dgInt32 uvStrideInByte, dgFloat32 *uv) const {
+	                      dgInt32 normalStrideInByte, dgFloat32 *normal,
+	                      dgInt32 uvStrideInByte, dgFloat32 *uv) const {
 		m_vertexBuffer->GetVertexStreams(vertexStrideInByte, vertex, normalStrideInByte, normal, uvStrideInByte, uv);
 	}
 

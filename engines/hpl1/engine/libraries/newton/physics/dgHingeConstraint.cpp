@@ -31,7 +31,7 @@
 
 dgHingeConstraint::dgHingeConstraint() : dgBilateralConstraint() {
 	_ASSERTE((((dgUnsigned64)&m_localMatrix0) & 15) == 0);
-	//	constraint->Init ();
+	//  constraint->Init ();
 
 	m_maxDOF = 6;
 	m_jointAccelFnt = NULL;
@@ -45,7 +45,7 @@ dgHingeConstraint::~dgHingeConstraint() {
 /*
  dgHingeConstraint* dgHingeConstraint::Create(dgWorld* world)
  {
- dgHingeConstraint*	constraint;
+ dgHingeConstraint* constraint;
 
  //constraint = dgHingeConstraintArray::GetPool().GetElement();
  dgHingeConstraintArray& array = *world;
@@ -71,7 +71,7 @@ dgHingeConstraint::~dgHingeConstraint() {
  */
 
 void dgHingeConstraint::SetJointParameterCallBack(
-	dgHingeJointAcceleration callback) {
+    dgHingeJointAcceleration callback) {
 	m_jointAccelFnt = callback;
 }
 
@@ -89,7 +89,7 @@ dgFloat32 dgHingeConstraint::GetJointOmega() const {
 }
 
 dgFloat32 dgHingeConstraint::CalculateStopAlpha(dgFloat32 angle,
-												const dgJointCallBackParam *param) const {
+        const dgJointCallBackParam *param) const {
 	dgFloat32 alpha;
 	dgFloat32 omega;
 	dgFloat32 penetrationErr;
@@ -121,7 +121,7 @@ dgVector dgHingeConstraint::GetJointForce() const {
 
 	CalculateGlobalMatrixAndAngle(matrix0, matrix1);
 	return dgVector(
-		matrix0.m_front.Scale(m_jointForce[0]) + matrix0.m_up.Scale(m_jointForce[1]) + matrix0.m_right.Scale(m_jointForce[2]) + matrix0.m_up.Scale(m_jointForce[3]) + matrix0.m_right.Scale(m_jointForce[4]));
+	           matrix0.m_front.Scale(m_jointForce[0]) + matrix0.m_up.Scale(m_jointForce[1]) + matrix0.m_right.Scale(m_jointForce[2]) + matrix0.m_up.Scale(m_jointForce[3]) + matrix0.m_right.Scale(m_jointForce[4]));
 }
 
 dgUnsigned32 dgHingeConstraint::JacobianDerivative(dgContraintDescritor &params) {
@@ -132,10 +132,10 @@ dgUnsigned32 dgHingeConstraint::JacobianDerivative(dgContraintDescritor &params)
 	m_angle = -angle.m_x;
 
 	_ASSERTE(
-		dgAbsf(1.0f - (matrix0.m_front % matrix0.m_front)) < dgFloat32(1.0e-5f));
+	    dgAbsf(1.0f - (matrix0.m_front % matrix0.m_front)) < dgFloat32(1.0e-5f));
 	_ASSERTE(dgAbsf(1.0f - (matrix0.m_up % matrix0.m_up)) < dgFloat32(1.0e-5f));
 	_ASSERTE(
-		dgAbsf(1.0f - (matrix0.m_right % matrix0.m_right)) < dgFloat32(1.0e-5f));
+	    dgAbsf(1.0f - (matrix0.m_right % matrix0.m_right)) < dgFloat32(1.0e-5f));
 
 	const dgVector &dir0 = matrix0.m_front;
 	const dgVector &dir1 = matrix0.m_up;
@@ -146,7 +146,7 @@ dgUnsigned32 dgHingeConstraint::JacobianDerivative(dgContraintDescritor &params)
 	dgVector q0(p0 + matrix0.m_front.Scale(MIN_JOINT_PIN_LENGTH));
 	dgVector q1(p1 + matrix1.m_front.Scale(MIN_JOINT_PIN_LENGTH));
 
-	//	_ASSERTE (((p1 - p0) % (p1 - p0)) < 1.0e-2f);
+	//  _ASSERTE (((p1 - p0) % (p1 - p0)) < 1.0e-2f);
 
 	dgPointParam pointDataP;
 	dgPointParam pointDataQ;
@@ -175,8 +175,8 @@ dgUnsigned32 dgHingeConstraint::JacobianDerivative(dgContraintDescritor &params)
 			}
 
 			CalculateAngularDerivative(5, params, dir0, m_stiffness, dgFloat32(0.0f),
-									   &m_jointForce[5]);
-			//			params.m_jointAccel[5] = axisParam.m_accel;
+			                           &m_jointForce[5]);
+			//          params.m_jointAccel[5] = axisParam.m_accel;
 			SetMotorAcceleration(5, axisParam.m_accel, params);
 			ret = 6;
 		}

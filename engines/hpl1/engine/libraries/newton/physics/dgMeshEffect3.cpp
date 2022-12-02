@@ -193,7 +193,7 @@ public:
 	}
 
 	bool IsClusterCoplanar(const dgBigPlane &plane,
-						   const dgMeshEffect &mesh) const {
+	                       const dgMeshEffect &mesh) const {
 		const dgBigVector *const points = (dgBigVector *)mesh.GetVertexPool();
 		for (dgListNode *node = GetFirst(); node; node = node->GetNext()) {
 			dgClusterFace &info = node->GetInfo();
@@ -213,7 +213,7 @@ public:
 	}
 
 	bool IsEdgeConvex(const dgBigPlane &plane, const dgMeshEffect &mesh,
-					  dgEdge *const edge) const {
+	                  dgEdge *const edge) const {
 		const dgBigVector *const points = (dgBigVector *)mesh.GetVertexPool();
 		dgEdge *const edge0 = edge->m_next;
 		dgEdge *ptr = edge0->m_twin->m_next;
@@ -243,10 +243,10 @@ public:
 	// this matrix is used to place all possible combination of this cluster with any adjacent cluster into a priority heap and determine
 	// which pair of two adjacent cluster is the best selection for combining the into a larger cluster.
 	void CalculateNodeCost(dgMeshEffect &mesh, dgInt32 meshMask,
-						   dgBigVector *const vertexPool, dgInt32 *const vertexMarks,
-						   dgInt32 &vertexMark, dgClusterList *const clusters, dgFloat64 diagonalInv,
-						   dgFloat64 aspectRatioCoeficent, dgList<dgPairProxi> &proxyList,
-						   dgUpHeap<dgList<dgPairProxi>::dgListNode *, dgFloat64> &heap) {
+	                       dgBigVector *const vertexPool, dgInt32 *const vertexMarks,
+	                       dgInt32 &vertexMark, dgClusterList *const clusters, dgFloat64 diagonalInv,
+	                       dgFloat64 aspectRatioCoeficent, dgList<dgPairProxi> &proxyList,
+	                       dgUpHeap<dgList<dgPairProxi>::dgListNode *, dgFloat64> &heap) {
 		dgInt32 faceIndex = GetFirst()->GetInfo().m_edge->m_incidentFace;
 
 		const dgBigVector *const points = (dgBigVector *)mesh.GetVertexPool();
@@ -509,42 +509,42 @@ dgMeshEffect::dgMeshEffect(const dgMeshEffect &source, dgFloat32 absoluteconcavi
 	// I do this to the first partition and then connect disjoint face only on the perimeter
 	/*
 	maxCount = 1;
-		while (essencialClustersCount > maxCount) {
+	    while (essencialClustersCount > maxCount) {
 
-			heap.Flush();
-			meshMask = mesh.IncLRU();
+	        heap.Flush();
+	        meshMask = mesh.IncLRU();
 
-			// color code each face on each cluster with it cluster index
-			for (dgInt32 faceIndex = 0; faceIndex < faceCount; faceIndex++) {
-				dgClusterList& clusterList = clusters[faceIndex];
-				if (clusterList.GetCount()) {
-					for (dgClusterList::dgListNode* node = clusterList.GetFirst(); node; node = node->GetNext()) {
-						dgClusterFace& face = node->GetInfo();
-						dgEdge* ptr = face.m_edge;
-						do {
-							ptr->m_incidentFace = faceIndex;
-							ptr = ptr->m_next;
-						} while (ptr != face.m_edge);
-					}
-				}
-			}
+	        // color code each face on each cluster with it cluster index
+	        for (dgInt32 faceIndex = 0; faceIndex < faceCount; faceIndex++) {
+	            dgClusterList& clusterList = clusters[faceIndex];
+	            if (clusterList.GetCount()) {
+	                for (dgClusterList::dgListNode* node = clusterList.GetFirst(); node; node = node->GetNext()) {
+	                    dgClusterFace& face = node->GetInfo();
+	                    dgEdge* ptr = face.m_edge;
+	                    do {
+	                        ptr->m_incidentFace = faceIndex;
+	                        ptr = ptr->m_next;
+	                    } while (ptr != face.m_edge);
+	                }
+	            }
+	        }
 
-			for (dgInt32 faceIndex = 0; faceIndex < faceCount; faceIndex++) {
-				dgClusterList& clusterList = clusters[faceIndex];
+	        for (dgInt32 faceIndex = 0; faceIndex < faceCount; faceIndex++) {
+	            dgClusterList& clusterList = clusters[faceIndex];
 
-				// note: add the disjoint cluster criteria here, but for now just ignore
+	            // note: add the disjoint cluster criteria here, but for now just ignore
 
-				// calculate the cost again
-				if (clusterList.GetCount()) {
+	            // calculate the cost again
+	            if (clusterList.GetCount()) {
 
-					// note: something is wrong with my color coding that is not marking the perimeter corrently
+	                // note: something is wrong with my color coding that is not marking the perimeter corrently
 
-					vertexMark++;
-					clusterList.CalculateNodeCost(mesh, meshMask, &vertexPool[0], &vertexMarks[0], vertexMark, &clusters[0], diagonalInv, aspectRatioCoeficent, proxyList, heap);
-				}
+	                vertexMark++;
+	                clusterList.CalculateNodeCost(mesh, meshMask, &vertexPool[0], &vertexMarks[0], vertexMark, &clusters[0], diagonalInv, aspectRatioCoeficent, proxyList, heap);
+	            }
 
-			}
-		}
+	        }
+	    }
 	*/
 
 	BeginPolygon();

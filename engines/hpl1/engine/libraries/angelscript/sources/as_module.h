@@ -62,15 +62,13 @@ class asCTypedefType;
 class asCFuncdefType;
 struct asSNameSpace;
 
-struct sBindInfo
-{
+struct sBindInfo {
 	asCScriptFunction *importedFunctionSignature;
 	asCString          importFromModule;
 	int                boundFunctionId;
 };
 
-struct sObjectTypePair
-{
+struct sObjectTypePair {
 	asCObjectType *a;
 	asCObjectType *b;
 };
@@ -92,8 +90,7 @@ struct sObjectTypePair
 //       then it should simply replace the bytecode within the functions without
 //       changing the values of existing global properties, etc.
 
-class asCModule : public asIScriptModule
-{
+class asCModule : public asIScriptModule {
 //-------------------------------------------
 // Public interface
 //--------------------------------------------
@@ -199,15 +196,15 @@ public:
 	asCObjectType     *GetObjectType(const char *type, asSNameSpace *ns) const;
 	asCGlobalProperty *AllocateGlobalProperty(const char *name, const asCDataType &dt, asSNameSpace *ns);
 	void               UninitializeGlobalProp(asCGlobalProperty *prop);
-	
+
 	// Adds the class type to the module. The module assumes ownership of the reference without increasing it
-	void               AddClassType(asCObjectType*);
+	void               AddClassType(asCObjectType *);
 	// Adds the enum type to the module. The module assumes ownership of the reference without increasing it
-	void               AddEnumType(asCEnumType*);
+	void               AddEnumType(asCEnumType *);
 	// Adds the typedef to the module. The module assumes ownership of the reference without increasing it
-	void               AddTypeDef(asCTypedefType*);
+	void               AddTypeDef(asCTypedefType *);
 	// Adds the funcdef to the module. The module assumes ownership of the reference without increasing it
-	void               AddFuncDef(asCFuncdefType*);
+	void               AddFuncDef(asCFuncdefType *);
 	// Replaces an existing funcdef with another (used for shared funcdefs). Doesn't add or release refCounts
 	void               ReplaceFuncDef(asCFuncdefType *oldType, asCFuncdefType *newType);
 
@@ -227,29 +224,29 @@ public:
 	// This array holds imported functions in the module.
 	asCArray<sBindInfo *>             m_bindInformations; // increases ref count
 	// This array holds template instance types created for the module's object types
-	asCArray<asCObjectType*>          m_templateInstances; // increases ref count
+	asCArray<asCObjectType *>          m_templateInstances; // increases ref count
 
 	// This array holds the global variables declared in the script
 	asCSymbolTable<asCGlobalProperty> m_scriptGlobals; // increases ref count
 	bool                              m_isGlobalVarInitialized;
 
 	// This array holds class and interface types
-	asCArray<asCObjectType*>       m_classTypes; // increases ref count
+	asCArray<asCObjectType *>       m_classTypes; // increases ref count
 	// This array holds enum types
-	asCArray<asCEnumType*>         m_enumTypes; // increases ref count
+	asCArray<asCEnumType *>         m_enumTypes; // increases ref count
 	// This array holds typedefs
-	asCArray<asCTypedefType*>      m_typeDefs; // increases ref count
+	asCArray<asCTypedefType *>      m_typeDefs; // increases ref count
 	// This array holds the funcdefs declared in the module
-	asCArray<asCFuncdefType*>      m_funcDefs; // increases ref count
+	asCArray<asCFuncdefType *>      m_funcDefs; // increases ref count
 
 	// This map contains all the types (also contained in the arrays above) for quick lookup
 	// TODO: memory: Can we eliminate the arrays above?
-	asCMap<asSNameSpaceNamePair, asCTypeInfo*> m_typeLookup; // doesn't increase ref count
+	asCMap<asSNameSpaceNamePair, asCTypeInfo *> m_typeLookup; // doesn't increase ref count
 
 	// This array holds types that have been explicitly declared with 'external'
-	asCArray<asCTypeInfo*>       m_externalTypes; // doesn't increase ref count
+	asCArray<asCTypeInfo *>       m_externalTypes; // doesn't increase ref count
 	// This array holds functions that have been explicitly declared with 'external'
-	asCArray<asCScriptFunction*> m_externalFunctions; // doesn't increase ref count
+	asCArray<asCScriptFunction *> m_externalFunctions; // doesn't increase ref count
 };
 
 END_AS_NAMESPACE

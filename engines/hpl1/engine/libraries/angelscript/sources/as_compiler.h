@@ -2,23 +2,23 @@
    AngelCode Scripting Library
    Copyright (c) 2003-2020 Andreas Jonsson
 
-   This software is provided 'as-is', without any express or implied 
-   warranty. In no event will the authors be held liable for any 
+   This software is provided 'as-is', without any express or implied
+   warranty. In no event will the authors be held liable for any
    damages arising from the use of this software.
 
-   Permission is granted to anyone to use this software for any 
-   purpose, including commercial applications, and to alter it and 
+   Permission is granted to anyone to use this software for any
+   purpose, including commercial applications, and to alter it and
    redistribute it freely, subject to the following restrictions:
 
-   1. The origin of this software must not be misrepresented; you 
+   1. The origin of this software must not be misrepresented; you
       must not claim that you wrote the original software. If you use
-      this software in a product, an acknowledgment in the product 
+      this software in a product, an acknowledgment in the product
       documentation would be appreciated but is not required.
 
-   2. Altered source versions must be plainly marked as such, and 
+   2. Altered source versions must be plainly marked as such, and
       must not be misrepresented as being the original software.
 
-   3. This notice may not be removed or altered from any source 
+   3. This notice may not be removed or altered from any source
       distribution.
 
    The original version of this library can be located at:
@@ -54,10 +54,9 @@
 BEGIN_AS_NAMESPACE
 
 // This class represents the value of an expression as evaluated by the compiler.
-// It holds information such as the type of the value, stack offset for a local 
+// It holds information such as the type of the value, stack offset for a local
 // variable, value of constants, whether the value can be modified (i.e. lvalue), etc.
-struct asCExprValue
-{
+struct asCExprValue {
 	asCExprValue();
 	void Set(const asCDataType &dataType);
 
@@ -105,10 +104,9 @@ struct asCExprValue
 	short stackOffset;
 
 private:
-	// These values must not be accessed directly in order to avoid problems with endianess. 
+	// These values must not be accessed directly in order to avoid problems with endianess.
 	// Use the appropriate accessor methods instead
-	union
-	{
+	union {
 		asQWORD qwordValue;
 		double  doubleValue;
 		asDWORD dwordValue;
@@ -120,11 +118,13 @@ private:
 
 struct asCExprContext;
 
-// This class holds information for arguments that needs to be 
+// This class holds information for arguments that needs to be
 // cleaned up after the result of a function has been evaluated.
-struct asSDeferredParam
-{
-	asSDeferredParam() {argNode = 0; origExpr = 0;}
+struct asSDeferredParam {
+	asSDeferredParam() {
+		argNode = 0;
+		origExpr = 0;
+	}
 
 	asCScriptNode  *argNode;
 	asCExprValue    argType;
@@ -132,13 +132,12 @@ struct asSDeferredParam
 	asCExprContext *origExpr;
 };
 
-// TODO: refactor: asCExprContext should have indicators to inform where the value is, 
+// TODO: refactor: asCExprContext should have indicators to inform where the value is,
 //                 i.e. if the reference to an object is pushed on the stack or not, etc
 
 // This class holds information about an expression that is being evaluated, e.g.
 // the current bytecode, ambiguous symbol names, property accessors, etc.
-struct asCExprContext
-{
+struct asCExprContext {
 	asCExprContext(asCScriptEngine *engine);
 	~asCExprContext();
 	void Clear();
@@ -174,30 +173,26 @@ struct asCExprContext
 	bool isAnonymousInitList; // Set to true if the expression is an init list for which the type has not yet been determined
 };
 
-struct asSOverloadCandidate
-{
+struct asSOverloadCandidate {
 	asSOverloadCandidate() : funcId(0), cost(0) {}
 	asSOverloadCandidate(int _id, asUINT _cost) : funcId(_id), cost(_cost) {}
 	int funcId;
 	asUINT cost;
 };
 
-struct asSNamedArgument
-{
+struct asSNamedArgument {
 	asCString name;
 	asCExprContext *ctx;
 	asUINT match;
 };
 
-enum EImplicitConv
-{
+enum EImplicitConv {
 	asIC_IMPLICIT_CONV,
 	asIC_EXPLICIT_REF_CAST,
 	asIC_EXPLICIT_VAL_CAST
 };
 
-enum EConvCost
-{
+enum EConvCost {
 	asCC_NO_CONV               = 0,
 	asCC_CONST_CONV            = 1,
 	asCC_ENUM_SAME_SIZE_CONV   = 2,
@@ -211,8 +206,7 @@ enum EConvCost
 	asCC_VARIABLE_CONV         = 10
 };
 
-class asCCompiler
-{
+class asCCompiler {
 public:
 	asCCompiler(asCScriptEngine *engine);
 	~asCCompiler();
@@ -272,8 +266,8 @@ protected:
 	int  CallCopyConstructor(asCDataType &type, int offset, bool isObjectOnHeap, asCByteCode *bc, asCExprContext *arg, asCScriptNode *node, bool isGlobalVar = false, bool derefDestination = false);
 	void CallDestructor(asCDataType &type, int offset, bool isObjectOnHeap, asCByteCode *bc);
 	int  CompileArgumentList(asCScriptNode *node, asCArray<asCExprContext *> &args, asCArray<asSNamedArgument> &namedArgs);
-	int  CompileDefaultAndNamedArgs(asCScriptNode *node, asCArray<asCExprContext*> &args, int funcId, asCObjectType *type, asCArray<asSNamedArgument> *namedArgs = 0);
-	asUINT MatchFunctions(asCArray<int> &funcs, asCArray<asCExprContext*> &args, asCScriptNode *node, const char *name, asCArray<asSNamedArgument> *namedArgs = NULL, asCObjectType *objectType = NULL, bool isConstMethod = false, bool silent = false, bool allowObjectConstruct = true, const asCString &scope = "");
+	int  CompileDefaultAndNamedArgs(asCScriptNode *node, asCArray<asCExprContext *> &args, int funcId, asCObjectType *type, asCArray<asSNamedArgument> *namedArgs = 0);
+	asUINT MatchFunctions(asCArray<int> &funcs, asCArray<asCExprContext *> &args, asCScriptNode *node, const char *name, asCArray<asSNamedArgument> *namedArgs = NULL, asCObjectType *objectType = NULL, bool isConstMethod = false, bool silent = false, bool allowObjectConstruct = true, const asCString &scope = "");
 	int  CompileVariableAccess(const asCString &name, const asCString &scope, asCExprContext *ctx, asCScriptNode *errNode, bool isOptional = false, asCObjectType *objType = 0);
 	void CompileMemberInitialization(asCByteCode *bc, bool onlyDefaults);
 	bool CompileAutoType(asCDataType &autoType, asCExprContext &compiledCtx, asCScriptNode *exprNode, asCScriptNode *errNode);
@@ -296,11 +290,11 @@ protected:
 	bool CompileRefCast(asCExprContext *ctx, const asCDataType &to, bool isExplicit, asCScriptNode *node, bool generateCode = true);
 	asUINT MatchArgument(asCArray<int> &funcs, asCArray<asSOverloadCandidate> &matches, const asCExprContext *argExpr, int paramNum, bool allowObjectConstruct = true);
 	int  MatchArgument(asCScriptFunction *desc, const asCExprContext *argExpr, int paramNum, bool allowObjectConstruct = true);
-	void PerformFunctionCall(int funcId, asCExprContext *out, bool isConstructor = false, asCArray<asCExprContext*> *args = 0, asCObjectType *objTypeForConstruct = 0, bool useVariable = false, int varOffset = 0, int funcPtrVar = 0);
+	void PerformFunctionCall(int funcId, asCExprContext *out, bool isConstructor = false, asCArray<asCExprContext *> *args = 0, asCObjectType *objTypeForConstruct = 0, bool useVariable = false, int varOffset = 0, int funcPtrVar = 0);
 	void MoveArgsToStack(int funcId, asCByteCode *bc, asCArray<asCExprContext *> &args, bool addOneToOffset);
-	int  MakeFunctionCall(asCExprContext *ctx, int funcId, asCObjectType *objectType, asCArray<asCExprContext*> &args, asCScriptNode *node, bool useVariable = false, int stackOffset = 0, int funcPtrVar = 0);
+	int  MakeFunctionCall(asCExprContext *ctx, int funcId, asCObjectType *objectType, asCArray<asCExprContext *> &args, asCScriptNode *node, bool useVariable = false, int stackOffset = 0, int funcPtrVar = 0);
 	int  PrepareFunctionCall(int funcId, asCByteCode *bc, asCArray<asCExprContext *> &args);
-	void AfterFunctionCall(int funcId, asCArray<asCExprContext*> &args, asCExprContext *ctx, bool deferAll);
+	void AfterFunctionCall(int funcId, asCArray<asCExprContext *> &args, asCExprContext *ctx, bool deferAll);
 	void ProcessDeferredParams(asCExprContext *ctx);
 	int  PrepareArgument(asCDataType *paramType, asCExprContext *ctx, asCScriptNode *node, bool isFunction = false, int refType = 0, bool isMakingCopy = false);
 	int  PrepareArgument2(asCExprContext *ctx, asCExprContext *arg, asCDataType *paramType, bool isFunction = false, int refType = 0, bool isMakingCopy = false);
@@ -319,8 +313,7 @@ protected:
 	asSNameSpace *DetermineNameSpace(const asCString &scope);
 	int  SetupParametersAndReturnVariable(asCArray<asCString> &parameterNames, asCScriptNode *func);
 
-	enum SYMBOLTYPE
-	{
+	enum SYMBOLTYPE {
 		SL_NOMATCH,
 		SL_LOCALCONST,
 		SL_LOCALVAR,
@@ -415,17 +408,17 @@ protected:
 	asCArray<int>         freeVariables;
 
 	// This array holds the offsets of the currently allocated temporary variables
-	asCArray<int>         tempVariables; 
+	asCArray<int>         tempVariables;
 
 	// This array holds the indices of variables that must not be used in an allocation
 	asCArray<int>         reservedVariables;
 
-	// This array holds the string constants that were allocated during the compilation, 
+	// This array holds the string constants that were allocated during the compilation,
 	// so they can be released upon completion, whether the compilation was successful or not.
-	asCArray<void*>       usedStringConstants;
+	asCArray<void *>       usedStringConstants;
 
 	// This array holds the nodes that have been allocated temporarily
-	asCArray<asCScriptNode*> nodesToFreeUponComplete;
+	asCArray<asCScriptNode *> nodesToFreeUponComplete;
 
 	bool isCompilingDefaultArg;
 	bool isProcessingDeferredParams;

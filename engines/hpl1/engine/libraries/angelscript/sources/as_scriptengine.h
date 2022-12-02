@@ -61,8 +61,7 @@ class asCContext;
 // TODO: import: Remove this when import is removed
 struct sBindInfo;
 
-class asCScriptEngine : public asIScriptEngine
-{
+class asCScriptEngine : public asIScriptEngine {
 //=============================================================
 // From asIScriptEngine
 //=============================================================
@@ -306,7 +305,7 @@ public:
 	asCFuncdefType    *FindMatchingFuncdef(asCScriptFunction *func, asCModule *mod);
 
 	int                DetermineNameAndNamespace(const char *in_name, asSNameSpace *implicitNs, asCString &out_name, asSNameSpace *&out_ns) const;
-	
+
 	// Global property management
 	asCGlobalProperty *AllocateGlobalProperty();
 	void RemoveGlobalProperty(asCGlobalProperty *prop);
@@ -341,7 +340,7 @@ public:
 	bool configFailed;
 
 	// Stores all registered types
-	asCMap<asSNameSpaceNamePair, asCTypeInfo*> allRegisteredTypes; // increases ref count
+	asCMap<asSNameSpaceNamePair, asCTypeInfo *> allRegisteredTypes; // increases ref count
 
 	// Dummy types used to name the subtypes in the template objects
 	asCArray<asCTypeInfo *>        templateSubTypes;
@@ -361,7 +360,7 @@ public:
 
 	// This map is used to quickly find a property by its memory address
 	// It is used principally during building, cleanup, and garbage detection for script functions
-	asCMap<void*, asCGlobalProperty*> varAddressMap; // doesn't increase ref count
+	asCMap<void *, asCGlobalProperty *> varAddressMap; // doesn't increase ref count
 
 	// Stores all functions, i.e. registered functions, script functions, class methods, behaviours, etc.
 	asCArray<asCScriptFunction *> scriptFunctions;       // doesn't increase ref count
@@ -410,14 +409,14 @@ public:
 
 	// Type identifiers
 	mutable int                             typeIdSeqNbr;
-	mutable asCMap<int, asCTypeInfo*>       mapTypeIdToTypeInfo;
+	mutable asCMap<int, asCTypeInfo *>       mapTypeIdToTypeInfo;
 
 	// Garbage collector
 	asCGarbageCollector gc;
 
 	// Dynamic groups
 	asCConfigGroup             defaultGroup;
-	asCArray<asCConfigGroup*>  configGroups;
+	asCArray<asCConfigGroup *>  configGroups;
 	asCConfigGroup            *currentGroup;
 	asDWORD                    defaultAccessMask;
 	asSNameSpace              *defaultNamespace;
@@ -426,9 +425,10 @@ public:
 	bool                        msgCallback;
 	asSSystemFunctionInterface  msgCallbackFunc;
 	void                       *msgCallbackObj;
-	struct preMessage_t
-	{
-		preMessage_t() { isSet = false; }
+	struct preMessage_t {
+		preMessage_t() {
+			isSet = false;
+		}
 		bool      isSet;
 		asCString message;
 		asCString scriptname;
@@ -442,7 +442,7 @@ public:
 	// Namespaces
 	// These are shared between all entities and are
 	// only deleted once the engine is destroyed
-	asCArray<asSNameSpace*> nameSpaces;
+	asCArray<asSNameSpace *> nameSpaces;
 
 	// Callbacks for context pooling
 	asREQUESTCONTEXTFUNC_t  requestCtxFunc;
@@ -452,25 +452,42 @@ public:
 	// User data
 	asCArray<asPWORD>       userData;
 
-	struct SEngineClean    { asPWORD type; asCLEANENGINEFUNC_t       cleanFunc; };
+	struct SEngineClean    {
+		asPWORD type;
+		asCLEANENGINEFUNC_t       cleanFunc;
+	};
 	asCArray<SEngineClean>    cleanEngineFuncs;
-	struct SModuleClean    { asPWORD type; asCLEANMODULEFUNC_t       cleanFunc; };
+	struct SModuleClean    {
+		asPWORD type;
+		asCLEANMODULEFUNC_t       cleanFunc;
+	};
 	asCArray<SModuleClean>    cleanModuleFuncs;
-	struct SContextClean   { asPWORD type; asCLEANCONTEXTFUNC_t      cleanFunc; };
+	struct SContextClean   {
+		asPWORD type;
+		asCLEANCONTEXTFUNC_t      cleanFunc;
+	};
 	asCArray<SContextClean>   cleanContextFuncs;
-	struct SFunctionClean  { asPWORD type; asCLEANFUNCTIONFUNC_t     cleanFunc; };
+	struct SFunctionClean  {
+		asPWORD type;
+		asCLEANFUNCTIONFUNC_t     cleanFunc;
+	};
 	asCArray<SFunctionClean>  cleanFunctionFuncs;
-	struct STypeInfoClean  { asPWORD type; asCLEANTYPEINFOFUNC_t     cleanFunc; };
+	struct STypeInfoClean  {
+		asPWORD type;
+		asCLEANTYPEINFOFUNC_t     cleanFunc;
+	};
 	asCArray<STypeInfoClean>  cleanTypeInfoFuncs;
-	struct SScriptObjClean { asPWORD type; asCLEANSCRIPTOBJECTFUNC_t cleanFunc; };
+	struct SScriptObjClean {
+		asPWORD type;
+		asCLEANSCRIPTOBJECTFUNC_t cleanFunc;
+	};
 	asCArray<SScriptObjClean> cleanScriptObjectFuncs;
 
 	// Synchronization for threads
 	DECLAREREADWRITELOCK(mutable engineRWLock)
 
 	// Engine properties
-	struct
-	{
+	struct {
 		bool   allowUnsafeReferences;
 		bool   optimizeByteCode;
 		bool   copyScriptSections;
@@ -510,7 +527,7 @@ public:
 #ifndef AS_NO_EXCEPTIONS
 	bool                       translateExceptionCallback;
 	asSSystemFunctionInterface translateExceptionCallbackFunc;
-	void *                     translateExceptionCallbackObj;
+	void                      *translateExceptionCallbackObj;
 #endif
 
 	// This flag is to allow a quicker shutdown when releasing the engine

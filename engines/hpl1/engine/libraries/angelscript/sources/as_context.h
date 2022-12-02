@@ -51,8 +51,7 @@ BEGIN_AS_NAMESPACE
 class asCScriptFunction;
 class asCScriptEngine;
 
-class asCContext : public asIScriptContext
-{
+class asCContext : public asIScriptContext {
 public:
 	// Memory management
 	int  AddRef() const;
@@ -102,7 +101,7 @@ public:
 	int                SetException(const char *descr, bool allowCatch = true);
 	int                GetExceptionLineNumber(int *column, const char **sectionName);
 	asIScriptFunction *GetExceptionFunction();
-	const char *       GetExceptionString();
+	const char        *GetExceptionString();
 	bool               WillExceptionBeCaught();
 	int                SetExceptionCallback(asSFuncPtr callback, void *obj, int callConv);
 	void               ClearExceptionCallback();
@@ -120,7 +119,7 @@ public:
 	void              *GetAddressOfVar(asUINT varIndex, asUINT stackLevel);
 	bool               IsVarInScope(asUINT varIndex, asUINT stackLevel);
 	int                GetThisTypeId(asUINT stackLevel);
-    void              *GetThisPointer(asUINT stackLevel);
+	void              *GetThisPointer(asUINT stackLevel);
 	asIScriptFunction *GetSystemFunction();
 
 	// User data
@@ -204,11 +203,11 @@ public:
 	// callbacks
 	bool                       m_lineCallback;
 	asSSystemFunctionInterface m_lineCallbackFunc;
-	void *                     m_lineCallbackObj;
+	void                      *m_lineCallbackObj;
 
 	bool                       m_exceptionCallback;
 	asSSystemFunctionInterface m_exceptionCallbackFunc;
-	void *                     m_exceptionCallbackObj;
+	void                      *m_exceptionCallbackObj;
 
 	asCArray<asPWORD> m_userData;
 
@@ -217,25 +216,22 @@ public:
 };
 
 // TODO: Move these to as_utils.h
-int     as_powi(int base, int exponent, bool& isOverflow);
-asDWORD as_powu(asDWORD base, asDWORD exponent, bool& isOverflow);
-asINT64 as_powi64(asINT64 base, asINT64 exponent, bool& isOverflow);
-asQWORD as_powu64(asQWORD base, asQWORD exponent, bool& isOverflow);
+int     as_powi(int base, int exponent, bool &isOverflow);
+asDWORD as_powu(asDWORD base, asDWORD exponent, bool &isOverflow);
+asINT64 as_powi64(asINT64 base, asINT64 exponent, bool &isOverflow);
+asQWORD as_powu64(asQWORD base, asQWORD exponent, bool &isOverflow);
 
 // Optional template version of powi if overflow detection is not used.
 #if 0
 template <class T>
-T as_powi(T base, T exponent)
-{
+T as_powi(T base, T exponent) {
 	// Test for sign bit (huge number is OK)
-	if( exponent & (T(1)<<(sizeof(T)*8-1)) )
+	if (exponent & (T(1) << (sizeof(T) * 8 - 1)))
 		return 0;
-	else
-	{
+	else {
 		int result = 1;
-		while( exponent )
-		{
-			if( exponent & 1 )
+		while (exponent) {
+			if (exponent & 1)
 				result *= base;
 			exponent >>= 1;
 			base *= base;

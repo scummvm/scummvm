@@ -2,23 +2,23 @@
    AngelCode Scripting Library
    Copyright (c) 2003-2012 Andreas Jonsson
 
-   This software is provided 'as-is', without any express or implied 
-   warranty. In no event will the authors be held liable for any 
+   This software is provided 'as-is', without any express or implied
+   warranty. In no event will the authors be held liable for any
    damages arising from the use of this software.
 
-   Permission is granted to anyone to use this software for any 
-   purpose, including commercial applications, and to alter it and 
+   Permission is granted to anyone to use this software for any
+   purpose, including commercial applications, and to alter it and
    redistribute it freely, subject to the following restrictions:
 
-   1. The origin of this software must not be misrepresented; you 
+   1. The origin of this software must not be misrepresented; you
       must not claim that you wrote the original software. If you use
-      this software in a product, an acknowledgment in the product 
+      this software in a product, an acknowledgment in the product
       documentation would be appreciated but is not required.
 
-   2. Altered source versions must be plainly marked as such, and 
+   2. Altered source versions must be plainly marked as such, and
       must not be misrepresented as being the original software.
 
-   3. This notice may not be removed or altered from any source 
+   3. This notice may not be removed or altered from any source
       distribution.
 
    The original version of this library can be located at:
@@ -44,46 +44,38 @@
 
 BEGIN_AS_NAMESPACE
 
-asCVariableScope::asCVariableScope(asCVariableScope *_parent)
-{
+asCVariableScope::asCVariableScope(asCVariableScope *_parent) {
 	this->parent    = _parent;
 	Reset();
 }
 
-asCVariableScope::~asCVariableScope()
-{
+asCVariableScope::~asCVariableScope() {
 	Reset();
 }
 
-void asCVariableScope::Reset()
-{
+void asCVariableScope::Reset() {
 	isBreakScope = false;
 	isContinueScope = false;
 
-	for( asUINT n = 0; n < variables.GetLength(); n++ )
-		if( variables[n] ) 
-		{
-			asDELETE(variables[n],sVariable);
+	for (asUINT n = 0; n < variables.GetLength(); n++)
+		if (variables[n]) {
+			asDELETE(variables[n], sVariable);
 		}
 	variables.SetLength(0);
 }
 
-int asCVariableScope::DeclareVariable(const char *name, const asCDataType &type, int stackOffset, bool onHeap)
-{
+int asCVariableScope::DeclareVariable(const char *name, const asCDataType &type, int stackOffset, bool onHeap) {
 	// TODO: optimize: Improve linear search
 	// See if the variable is already declared
-	if( strcmp(name, "") != 0 )
-	{
-		for( asUINT n = 0; n < variables.GetLength(); n++ )
-		{
-			if( variables[n]->name == name )
+	if (strcmp(name, "") != 0) {
+		for (asUINT n = 0; n < variables.GetLength(); n++) {
+			if (variables[n]->name == name)
 				return -1;
 		}
 	}
 
 	sVariable *var = asNEW(sVariable);
-	if( var == 0 )
-	{
+	if (var == 0) {
 		// Out of memory. Return without allocating the var
 		return -2;
 	}
@@ -95,7 +87,7 @@ int asCVariableScope::DeclareVariable(const char *name, const asCDataType &type,
 	var->onHeap         = onHeap;
 
 	// Parameters are initialized
-	if( stackOffset <= 0 )
+	if (stackOffset <= 0)
 		var->isInitialized = true;
 
 	variables.PushLast(var);
@@ -103,33 +95,29 @@ int asCVariableScope::DeclareVariable(const char *name, const asCDataType &type,
 	return 0;
 }
 
-sVariable *asCVariableScope::GetVariable(const char *name)
-{
+sVariable *asCVariableScope::GetVariable(const char *name) {
 	// TODO: optimize: Improve linear search
 	// Find the variable
-	for( asUINT n = 0; n < variables.GetLength(); n++ )
-	{
-		if( variables[n]->name == name )
+	for (asUINT n = 0; n < variables.GetLength(); n++) {
+		if (variables[n]->name == name)
 			return variables[n];
 	}
 
-	if( parent )
+	if (parent)
 		return parent->GetVariable(name);
 
 	return 0;
 }
 
-sVariable *asCVariableScope::GetVariableByOffset(int offset)
-{
+sVariable *asCVariableScope::GetVariableByOffset(int offset) {
 	// TODO: optimize: Improve linear search
 	// Find the variable
-	for( asUINT n = 0; n < variables.GetLength(); n++ )
-	{
-		if( variables[n]->stackOffset == offset )
+	for (asUINT n = 0; n < variables.GetLength(); n++) {
+		if (variables[n]->stackOffset == offset)
 			return variables[n];
 	}
 
-	if( parent )
+	if (parent)
 		return parent->GetVariableByOffset(offset);
 
 	return 0;

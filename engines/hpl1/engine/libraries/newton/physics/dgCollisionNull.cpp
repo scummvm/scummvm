@@ -30,18 +30,18 @@
 //////////////////////////////////////////////////////////////////////
 
 dgCollisionNull::dgCollisionNull(dgMemoryAllocator *const allocator,
-								 dgUnsigned32 signature) : dgCollisionConvex(allocator, signature, dgGetIdentityMatrix(),
-																			 m_nullCollision) {
+                                 dgUnsigned32 signature) : dgCollisionConvex(allocator, signature, dgGetIdentityMatrix(),
+	                                         m_nullCollision) {
 	m_rtti |= dgCollisionNull_RTTI;
 }
 
 dgCollisionNull::dgCollisionNull(dgWorld *const world,
-								 dgDeserialize deserialization, void *const userData) : dgCollisionConvex(world, deserialization, userData) {
+                                 dgDeserialize deserialization, void *const userData) : dgCollisionConvex(world, deserialization, userData) {
 	m_rtti |= dgCollisionNull_RTTI;
 }
 
 void dgCollisionNull::Serialize(dgSerialize callback,
-								void *const userData) const {
+                                void *const userData) const {
 	SerializeLow(callback, userData);
 }
 
@@ -49,12 +49,12 @@ dgCollisionNull::~dgCollisionNull() {
 }
 
 void dgCollisionNull::SetCollisionBBox(const dgVector &p0__,
-									   const dgVector &p1__) {
+                                       const dgVector &p1__) {
 	_ASSERTE(0);
 }
 
 void dgCollisionNull::DebugCollision(const dgMatrix &matrixPtr,
-									 OnDebugCollisionMeshCallback callback, void *const userData) const {
+                                     OnDebugCollisionMeshCallback callback, void *const userData) const {
 }
 
 dgInt32 dgCollisionNull::CalculateSignature() const {
@@ -62,7 +62,7 @@ dgInt32 dgCollisionNull::CalculateSignature() const {
 }
 
 void dgCollisionNull::CalcAABB(const dgMatrix &matrix, dgVector &p0,
-							   dgVector &p1) const {
+                               dgVector &p1) const {
 	p0.m_x = matrix[3][0];
 	p1.m_x = matrix[3][0];
 
@@ -77,20 +77,20 @@ void dgCollisionNull::CalcAABB(const dgMatrix &matrix, dgVector &p0,
 }
 
 void dgCollisionNull::CalcAABBSimd(const dgMatrix &matrix, dgVector &p0,
-								   dgVector &p1) const {
+                                   dgVector &p1) const {
 	CalcAABB(matrix, p0, p1);
 }
 
 dgVector dgCollisionNull::SupportVertex(const dgVector &dir) const {
 	_ASSERTE(0);
 	return dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
-					dgFloat32(0.0f));
+	                dgFloat32(0.0f));
 }
 
 dgVector dgCollisionNull::SupportVertexSimd(const dgVector &dir) const {
 	_ASSERTE(0);
 	return dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
-					dgFloat32(0.0f));
+	                dgFloat32(0.0f));
 }
 
 dgFloat32 dgCollisionNull::GetVolume() const {
@@ -98,27 +98,27 @@ dgFloat32 dgCollisionNull::GetVolume() const {
 }
 
 dgFloat32 dgCollisionNull::RayCast(const dgVector &localP0,
-								   const dgVector &localP1, dgContactPoint &contactOut,
-								   OnRayPrecastAction preFilter, const dgBody *const body,
-								   void *const userData) const {
+                                   const dgVector &localP1, dgContactPoint &contactOut,
+                                   OnRayPrecastAction preFilter, const dgBody *const body,
+                                   void *const userData) const {
 	return dgFloat32(1.2f);
 }
 
 dgFloat32 dgCollisionNull::RayCastSimd(const dgVector &localP0,
-									   const dgVector &localP1, dgContactPoint &contactOut,
-									   OnRayPrecastAction preFilter, const dgBody *const body,
-									   void *const userData) const {
+                                       const dgVector &localP1, dgContactPoint &contactOut,
+                                       OnRayPrecastAction preFilter, const dgBody *const body,
+                                       void *const userData) const {
 	return dgFloat32(1.2f);
 }
 
 dgVector dgCollisionNull::CalculateVolumeIntegral(const dgMatrix &matrix__,
-												  GetBuoyancyPlane buoyancuPlane__, void *context__) const {
+        GetBuoyancyPlane buoyancuPlane__, void *context__) const {
 	_ASSERTE(0);
 	return dgVector(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void dgCollisionNull::CalculateInertia(dgVector &inertia,
-									   dgVector &origin) const {
+                                       dgVector &origin) const {
 	inertia.m_x = dgFloat32(0.0f);
 	inertia.m_y = dgFloat32(0.0f);
 	inertia.m_z = dgFloat32(0.0f);

@@ -135,7 +135,7 @@ public:
 	dgMeshEffectSolidTree *CreateSolidTree() const;
 	static void DestroySolidTree(dgMeshEffectSolidTree *const tree);
 	static bool CheckIntersection(const dgMeshEffect *const meshA, const dgMeshEffectSolidTree *const solidTreeA,
-								  const dgMeshEffect *const meshB, const dgMeshEffectSolidTree *const solidTreeB, dgFloat64 scale);
+	                              const dgMeshEffect *const meshB, const dgMeshEffectSolidTree *const solidTreeB, dgFloat64 scale);
 
 	dgMeshEffect *GetFirstLayer();
 	dgMeshEffect *GetNextLayer(dgMeshEffect *const layer);
@@ -155,10 +155,10 @@ public:
 	void PackVertexArrays();
 
 	void BuildFromVertexListIndexList(dgInt32 faceCount, const dgInt32 *const faceIndexCount, const dgInt32 *const faceMaterialIndex,
-									  const dgFloat32 *const vertex, dgInt32 vertexStrideInBytes, const dgInt32 *const vertexIndex,
-									  const dgFloat32 *const normal, dgInt32 normalStrideInBytes, const dgInt32 *const normalIndex,
-									  const dgFloat32 *const uv0, dgInt32 uv0StrideInBytes, const dgInt32 *const uv0Index,
-									  const dgFloat32 *const uv1, dgInt32 uv1StrideInBytes, const dgInt32 *const uv1Index);
+	                                  const dgFloat32 *const vertex, dgInt32 vertexStrideInBytes, const dgInt32 *const vertexIndex,
+	                                  const dgFloat32 *const normal, dgInt32 normalStrideInBytes, const dgInt32 *const normalIndex,
+	                                  const dgFloat32 *const uv0, dgInt32 uv0StrideInBytes, const dgInt32 *const uv0Index,
+	                                  const dgFloat32 *const uv1, dgInt32 uv1StrideInBytes, const dgInt32 *const uv1Index);
 
 	dgInt32 GetVertexCount() const;
 	dgInt32 GetVertexStrideInByte() const;
@@ -183,14 +183,14 @@ public:
 	dgFloat64 CalculateVolume() const;
 
 	void GetVertexStreams(dgInt32 vetexStrideInByte, dgFloat32 *const vertex,
-						  dgInt32 normalStrideInByte, dgFloat32 *const normal,
-						  dgInt32 uvStrideInByte0, dgFloat32 *const uv0,
-						  dgInt32 uvStrideInByte1, dgFloat32 *const uv1);
+	                      dgInt32 normalStrideInByte, dgFloat32 *const normal,
+	                      dgInt32 uvStrideInByte0, dgFloat32 *const uv0,
+	                      dgInt32 uvStrideInByte1, dgFloat32 *const uv1);
 
 	void GetIndirectVertexStreams(dgInt32 vetexStrideInByte, dgFloat64 *const vertex, dgInt32 *const vertexIndices, dgInt32 *const vertexCount,
-								  dgInt32 normalStrideInByte, dgFloat64 *const normal, dgInt32 *const normalIndices, dgInt32 *const normalCount,
-								  dgInt32 uvStrideInByte0, dgFloat64 *const uv0, dgInt32 *const uvIndices0, dgInt32 *const uvCount0,
-								  dgInt32 uvStrideInByte1, dgFloat64 *const uv1, dgInt32 *const uvIndices1, dgInt32 *const uvCount1);
+	                              dgInt32 normalStrideInByte, dgFloat64 *const normal, dgInt32 *const normalIndices, dgInt32 *const normalCount,
+	                              dgInt32 uvStrideInByte0, dgFloat64 *const uv0, dgInt32 *const uvIndices0, dgInt32 *const uvCount0,
+	                              dgInt32 uvStrideInByte1, dgFloat64 *const uv1, dgInt32 *const uvIndices1, dgInt32 *const uvCount1);
 
 	dgIndexArray *MaterialGeometryBegin();
 	void MaterialGeomteryEnd(dgIndexArray *const handle);
@@ -225,7 +225,7 @@ public:
 	void *GetFirstEdge();
 	void *GetNextEdge(const void *const edge);
 	void GetEdgeIndex(const void *const edge, dgInt32 &v0, dgInt32 &v1) const;
-	//	void GetEdgeAttributeIndex (const void* edge, dgInt32& v0, dgInt32& v1) const;
+	//  void GetEdgeAttributeIndex (const void* edge, dgInt32& v0, dgInt32& v1) const;
 
 	void *GetFirstFace();
 	void *GetNextFace(const void *const face);
