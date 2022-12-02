@@ -96,11 +96,12 @@ static const GamePatchDescription *PatchLists[PATCHLIST_MAX] = {
 	/* PATCHLIST_ITE_MAC */ ITEMacPatch_Files
 };
 
-bool ResourceContext::loadResIteAmiga(uint32 contextOffset, uint32 contextSize, int type) {
+bool ResourceContext::loadResIteAmiga(uint32 contextOffset, uint32 contextSize, int type, bool isFloppy) {
 	_file.seek(contextOffset);
 	uint16 resourceCount = _file.readUint16BE();
 	uint16 scriptCount = _file.readUint16BE();
 	uint32 count = (type &  GAME_SCRIPTFILE) ? scriptCount : resourceCount;
+	uint32 extraOffset = isFloppy ? 1024 : 0;
 
 	if (type &  GAME_SCRIPTFILE)
 		_file.seek(resourceCount * 10, SEEK_CUR);
@@ -109,7 +110,7 @@ bool ResourceContext::loadResIteAmiga(uint32 contextOffset, uint32 contextSize, 
 
 	for (uint32 i = 0; i < count; i++) {
 		ResourceData *resourceData = &_table[i];
-		resourceData->offset = _file.readUint32BE();
+		resourceData->offset = _file.readUint32BE() + extraOffset;
 		resourceData->size = _file.readUint32BE();
 		resourceData->diskNum = _file.readUint16BE();
 	}
@@ -412,7 +413,10 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, ByteArr
 			sz--;
 		if (sz > 0)
 			sz--;
-		fileName = Common::String::format("%s.%03d", fileName.substr(0, sz).c_str(), resourceData->diskNum);
+		if (_vm->getFeatures() & GF_ITE_FLOPPY)
+			fileName = Common::String::format("%s%02d.adf", fileName.substr(0, sz).c_str(), resourceData->diskNum + 1);
+		else
+			fileName = Common::String::format("%s.%03d", fileName.substr(0, sz).c_str(), resourceData->diskNum);
 		if (!file->open(fileName))
 			error("Resource::loadResource() failed to open %s", fileName.c_str());
 	}
