@@ -39,27 +39,7 @@ MODULE_OBJS := \
 	unicode-bidi.o \
 	ustr.o \
 	util.o \
-	xpfloat.o \
-	compression/clickteam.o \
-	compression/dcl.o \
-	compression/gzio.o \
-	compression/installshield_cab.o \
-	compression/installshieldv3_archive.o \
-	compression/powerpacker.o \
-	compression/rnc_deco.o \
-	compression/stuffit.o \
-	compression/unarj.o \
-	compression/unzip.o \
-	compression/vise.o \
-	compression/zlib.o \
-	formats/iff_container.o \
-	formats/ini-file.o \
-	formats/json.o \
-	formats/quicktime.o \
-	formats/winexe.o \
-	formats/winexe_ne.o \
-	formats/winexe_pe.o \
-	formats/xmlparser.o
+	xpfloat.o
 
 ifdef ENABLE_EVENTRECORDER
 MODULE_OBJS += \

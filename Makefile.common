@@ -36,6 +36,8 @@ MODULES += \
 	audio \
 	math \
 	common \
+	common/compression \
+	common/formats \
 	po \
 	doc
 
