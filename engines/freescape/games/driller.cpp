@@ -507,7 +507,7 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 		drawStringInSurface(message, 188, 177, yellow, black, surface);
 	}
 
-	//int energy = _gameStateVars[k8bitVariableEnergy];
+	int energy = _gameStateVars[k8bitVariableEnergy];
 	int shield = _gameStateVars[k8bitVariableShield];
 
 	if (shield >= 0) {
@@ -520,6 +520,18 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 
 		shieldBar = Common::Rect(11, 180, 76 - (k8bitMaxShield - shield), 182);
 		surface->fillRect(shieldBar, yellow);
+	}
+
+	if (energy >= 0) {
+		Common::Rect energyBar;
+		energyBar = Common::Rect(11, 186, 75 - (k8bitMaxEnergy - energy), 192);
+		surface->fillRect(energyBar, brown);
+
+		energyBar = Common::Rect(11, 187, 75 - (k8bitMaxEnergy - energy), 191);
+		surface->fillRect(energyBar, brownish);
+
+		energyBar = Common::Rect(11, 188, 75 - (k8bitMaxEnergy - energy), 190);
+		surface->fillRect(energyBar, yellow);
 	}
 }
 
