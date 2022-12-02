@@ -2741,22 +2741,30 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("videocasino", "", "xn--Video Casino Sys. 6-co0l", "96936d0dbef06314515f134ccbbc35e1", 1488811, 310),
 	MACDEMO1("videocasino", "Demo", "VC.Demo.14.Start", "1ae45c23586b41997ba52e2e7c771c4c", 877609, 310),
 
-	MACGAME2("vvcyber", "", "Start Game", "7f443f2e63fd497a9ad85b10dc880a91", 384846,
-							"START0",	  "6d6781e7183df66d8995285e4e3f1a50", 807, 300),
-	WINGAME1("vvcyber", "", "CYBER.EXE", "65d06b5fef155a2473434571aff5bc29", 371139, 300),
-	MACDEMO1("vvcyber", "Demo", "CyberPlasm", "2ce360c9ea2da80a2c6d1040b0ad92dd", 503901, 300),
-	WINDEMO1t("vvcyber", "Demo", "CYBER.EXE", "f6a00141499568e167ab0ed901fffa05", 639439, 300),
+	MACGAME2("vvcyber", "", "Start Game! (16Mb)", "7f443f2e63fd497a9ad85b10dc880a91", 384590,
+							"CH0MAC/START0",  "6d6781e7183df66d8995285e4e3f1a50", 551, 310),
+	WINGAME2t("vvcyber", "", "CYBER.EXE", "979fad26abe804c85c791d56d24d8935", 371139,
+							 "START0.MMM", "c6ad604fa2b61bf568bd4b00fa1a212a", 1126, 310),
+	MACDEMO1("vvcyber", "Demo", "CyberPlasm", "2ce360c9ea2da80a2c6d1040b0ad92dd", 503901, 310),
+	WINDEMO2t("vvcyber", "Demo", "CYBER.EXE", "f6a00141499568e167ab0ed901fffa05", 639439,
+								 "CYBER.MMM", "eaa81c1e5ee7229bca5f214f86337f3d", 270188, 310),
 
-	MACGAME1("vvdinosaur", "", "Start Game", "d41d8cd98f00b204e9800998ecf8427e", -1, 300),
-	WINGAME1("vvdinosaur", "", "DINOSAUR.EXE", "4e6303630f4dd588e730d09241cf7e76", -1, 300),
-	WINGAME1("vvdinosaur", "v1.1", "DINOSAUR.EXE", "88f4f7406f34ec36e751a64f7c76f2c4", 370049, 300),
+//	MACGAME1("vvdinosaur", "", "Start Game", "d41d8cd98f00b204e9800998ecf8427e", -1, 300),
+	MACGAME2("vvdinosaur", "", "Start Adventure (8Mb)", 	  "2ce360c9ea2da80a2c6d1040b0ad92dd", 384984,
+							   "Dinosaur/Chapter1/LDE Intro", "4ae7c14351bc9cfd812c410ba37aecd3", 407023, 310),
+//	WINGAME1("vvdinosaur", "", "DINOSAUR.EXE", "4e6303630f4dd588e730d09241cf7e76", -1, 300),
+	WINGAME2t("vvdinosaur", "v1.1", "DINOSAUR.EXE", "d9a7b8248c831b9af1a0f3c43269d9d6", 370049,
+								    "STARTLDE.MMM", "87da46f4deaa55032ed54b3d366c272d", 792, 310),
 
-	MACGAME1("vvharp", "", "Start Adventure! (8mb)", "7f443f2e63fd497a9ad85b10dc880a91", 383150, 300),
-	WINGAME1t("vvharp", "", "HYPNOTIC.EXE", "0cf51de2c038e003dd4046295e12a5d6", 370272, 300),
+	MACGAME2("vvharp", "",  "Start Adventure! (8mb)", "7f443f2e63fd497a9ad85b10dc880a91", 383150,
+						    "Hypnotic/Chapter1/1_01", "827500ffd04e12fca366acdd5e03d83b", 1168697, 310),
+	WINGAME2t("vvharp", "", "HYPNOTIC.EXE", "0cf51de2c038e003dd4046295e12a5d6", 370272,
+							"START.MMM",	"cab5ffd61f5f547d2b7be44fe6b67c76", 954, 310),
 
-	MACGAME1("vvvampire", "", "The Vampire's Coffin", "d41d8cd98f00b204e9800998ecf8427e", -1, 300),
+//	MACGAME1("vvvampire", "", "The Vampire's Coffin", "d41d8cd98f00b204e9800998ecf8427e", -1, 300),
 	MACGAME1("vvvampire", "", "The Vampire's Coffin", "7f443f2e63fd497a9ad85b10dc880a91", 384070, 313),
-	WINGAME1t("vvvampire", "", "VAMPIRE.EXE", "97019593c1c86ac3be60c3ba468c07b6", 370837, 300),
+	WINGAME2t("vvvampire", "", "VAMPIRE.EXE", "97019593c1c86ac3be60c3ba468c07b6", 370837,
+							   "START.MMM",	  "425df941db805b5599e37a1e7b1c4d59", 1584, 310),
 
 	MACGAME1_l("vvs", "", "VVS Theater-ExtraLarge", "f5277c53bacd27936158dd3867e587e2", 912651, Common::JA_JPN, 311),
 	MACDEMO1_l("vvs", "Demo", "VVS Theater", "f5277c53bacd27936158dd3867e587e2", 639512, Common::JA_JPN, 311),
@@ -2820,9 +2828,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is WONDEROMPM4.5J Ver.2 ｻﾝﾌﾟﾙ
 	MACDEMO1_l("wonderompm", "Sample Version", "WONDEROMPM4.5J Ver.2 sample", "f5277c53bacd27936158dd3867e587e2", 392318, Common::JA_JPN, 311),
 
-	WINGAME1("woodstock25", "",     "FESTIVAL.EXE", "65d06b5fef155a2473434571aff5bc29", 370006, 310),
-	WINDEMO1t("woodstock25", "Demo", "WDSTOCK.EXE",  "35aaa39965705c32d927a0c8fbed27af", 2099951, 310),
-	WINDEMO1t("woodstock25", "Demo", "WDSTOCK.EXE",  "dd8af0fd34231850dc0e0c88cb04aa66", 2474071, 310),
+	WINGAME2t("woodstock25", "",     "FESTIVAL.EXE", 		  "91505a118fd9384e3bdff6f4e518b1e5", 370006,
+									 "WDSTOCK/MAIN/INTROTIT", "5f667d6fb422c9100a6e45e189c84272", 279922, 310),
+	WINDEMO1t("woodstock25", "Demo", "WDSTOCK.EXE", 		  "35aaa39965705c32d927a0c8fbed27af", 2099951, 310),
+	WINDEMO1t("woodstock25", "Demo", "WDSTOCK.EXE",			  "dd8af0fd34231850dc0e0c88cb04aa66", 2474071, 310),
 
 	WINDEMO1("wpmainstreet", "", "WPMAINST.EXE", "65d06b5fef155a2473434571aff5bc29", 370000, 300),
 
@@ -2871,13 +2880,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// from Yearn2Learn: Master Snoopy's Math
 	// English Mac demos are simply quicktime files, no director
-	WINDEMO1t("y2lpeanuts", "QuickTime Preview", "PEANUTS.EXE", "a9f24851955b9e260274cd9380254f5b", 370017, 310),
-	WINDEMO1t("y2lsnoopy", "QuickTime Preview", "SNOOPY.EXE", "6a1c5ea0d9870bacd2017e1f2267a743", 370016, 310),
+	WINDEMO2t("y2lpeanuts", "QuickTime Preview", "PEANUTS.EXE",  "a9f24851955b9e260274cd9380254f5b", 370017,
+												 "PNTSDEMO.MMM", "0b2d12348cc93d2cad1338d102d0011a", 1070, 310),
+	WINDEMO2t("y2lsnoopy", "QuickTime Preview",  "SNOOPY.EXE",   "6a1c5ea0d9870bacd2017e1f2267a743", 370016,
+												 "SNPYDEMO.MMM", "5c183b406bd582849c2944762a7f446a", 1066, 310),
 
 	// Original filename is スヌーピー Demo
 	MACDEMO1_l("y2lsnoopy", "v1.2 Demo", "Snoopy Demo", "1ae45c23586b41997ba52e2e7c771c4c", 402007, Common::JA_JPN, 311),
 
-	WINGAME1("y2lsnoopy", "", "SNOOPY.EXE", "65d06b5fef155a2473434571aff5bc29", 418576, 310),
+	WINGAME2t("y2lsnoopy", "", "SNOOPY.EXE", 		   "39b10174e67241af11ccb4cf08b6c741", 418576,
+							   "Y2LDATA/INTROANI.MMM", "c725cff357223fbfc3d534e7892b0118", 542438, 310),
 
 	// Requires installation from floppy disks
 	WINGAME1("y2lspelling", "v1.0 Floppy", "SPELLACE.EXE", "65d06b5fef155a2473434571aff5bc29", 438552, 310),
