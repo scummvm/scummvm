@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-01 23:57+0000\n"
+"POT-Creation-Date: 2022-12-02 10:51+0000\n"
 "PO-Revision-Date: 2022-08-02 15:16+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -5082,13 +5082,13 @@ msgstr "Няпэўны rs файл."
 msgid "Save file created by different version."
 msgstr "Захаваная гульня зробленая іншай вэрсіяй."
 
-#: engines/gob/inter_playtoons.cpp:257 engines/gob/inter_v2.cpp:1479
+#: engines/gob/inter_playtoons.cpp:259 engines/gob/inter_v2.cpp:1488
 #: engines/gob/inter_geisha.cpp:231 engines/tinsel/saveload.cpp:554
 msgid "Failed to load saved game from file."
 msgstr "Ня выйшла заладаваць захаваную гульню з файлу."
 
-#: engines/gob/inter_v2.cpp:1549 engines/gob/inter_geisha.cpp:262
-#: engines/tinsel/saveload.cpp:567
+#: engines/gob/inter_v2.cpp:1558 engines/gob/inter_v7.cpp:1391
+#: engines/gob/inter_geisha.cpp:262 engines/tinsel/saveload.cpp:567
 msgid "Failed to save game to file."
 msgstr "Ня выйшла захаваць гульню ў файл."
 
