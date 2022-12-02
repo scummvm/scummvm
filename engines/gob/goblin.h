@@ -332,8 +332,8 @@ public:
 	Goblin_v7(GobEngine *vm);
 	~Goblin_v7() override {}
 
-	void initiateMove(Mult::Mult_Object *obj);
-	void setGoblinState(Mult::Mult_Object *obj, int16 animState);
+	void initiateMove(Mult::Mult_Object *obj) override;
+	void setGoblinState(Mult::Mult_Object *obj, int16 animState) override;
 
 private:
 	int32 computeObjNextDirection(Mult::Mult_Object &obj);
