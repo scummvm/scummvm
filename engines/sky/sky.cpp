@@ -433,7 +433,7 @@ Common::Error SkyEngine::init() {
 	_systemVars->gameSpeed = 80;
 
 	_skyCompact = new SkyCompact();
-	_skyText = new Text(_skyDisk, _skyCompact);
+	_skyText = new Text(this, _skyDisk, _skyCompact);
 	_skyMouse = new Mouse(_system, _skyDisk, _skyCompact);
 	_skyScreen = new Screen(_system, _skyDisk, _skyCompact);
 

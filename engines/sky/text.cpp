@@ -43,10 +43,7 @@ namespace Sky {
 #define CHAR_SET_HEADER	128
 #define	MAX_NO_LINES	10
 
-Text::Text(Disk *skyDisk, SkyCompact *skyCompact) {
-	_skyDisk = skyDisk;
-	_skyCompact = skyCompact;
-
+Text::Text(SkyEngine *vm, Disk *skyDisk, SkyCompact *skyCompact) : _skyDisk(skyDisk), _skyCompact(skyCompact), _vm(vm) {
 	initHuffTree();
 
 	_mainCharacterSet.addr = _skyDisk->loadFile(CHAR_SET_FILE);
