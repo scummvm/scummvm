@@ -33,6 +33,11 @@ GameMessages::GameMessages(UIElement *owner) :
 	_bounds = getLineBounds(21, 24);
 }
 
+bool GameMessages::msgUnfocus(const UnfocusMessage &msg) {
+	clearSurface();
+	return true;
+}
+
 void GameMessages::draw() {
 	clearSurface();
 
