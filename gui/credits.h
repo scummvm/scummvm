@@ -262,6 +262,7 @@ static const char *credits[] = {
 "C1""Gob",
 "C0""Torbj\303\266rn Andersson",
 "C0""Arnaud Boutonn\303\251",
+"C0""Simon Delamarre",
 "C0""Sven Hesse",
 "C0""Eugene Sandulenko",
 "",
