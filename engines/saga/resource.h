@@ -135,7 +135,7 @@ protected:
 
 	bool load(SagaEngine *_vm, Resource *resource);
 	bool loadResV1(uint32 contextOffset, uint32 contextSize);
-	bool loadResIteAmiga(uint32 contextOffset, uint32 contextSize, int type);
+	bool loadResIteAmiga(uint32 contextOffset, uint32 contextSize, int type, bool isFloppy);
 
 	virtual bool loadMacMIDI() { return false; }
 	virtual bool loadRes(uint32 contextOffset, uint32 contextSize, int type) = 0;
@@ -202,10 +202,15 @@ protected:
 };
 
 class ResourceContext_RSC_ITE_Amiga: public ResourceContext {
+public:
+	ResourceContext_RSC_ITE_Amiga(bool isFloppy) : _isFloppy(isFloppy) {}
+
 protected:
 	bool loadRes(uint32 contextOffset, uint32 contextSize, int type) override {
-		return loadResIteAmiga(contextOffset, contextSize, type);
+		return loadResIteAmiga(contextOffset, contextSize, type, _isFloppy);
 	}
+
+	bool _isFloppy;
 };
 
 class Resource_RSC : public Resource {
@@ -222,7 +227,7 @@ public:
 protected:
 	ResourceContext *createContext() override {
 		if (_vm->getPlatform() == Common::kPlatformAmiga && _vm->getGameId() == GID_ITE)
-			return new ResourceContext_RSC_ITE_Amiga();
+			return new ResourceContext_RSC_ITE_Amiga(_vm->getFeatures() & GF_ITE_FLOPPY);
 		return new ResourceContext_RSC();
 	}
 };
