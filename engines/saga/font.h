@@ -237,6 +237,7 @@ class DefaultFont : public Font {
 	 void draw(FontId fontId, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) override;
 	 void outFont(const FontStyle &drawFont, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags);
 	 void loadFont(FontData *font, uint32 fontResourceId);
+	 void loadFont(FontData *font, const ByteArray& fontResourceData, bool isBigEndian);
 	 void loadChineseFontIHNM(FontData *font, uint32 fontResourceId);
 	 void loadChineseFontITE(const Common::String& fileName);
 	 void loadKoreanFontIHNM(const Common::String& fileName);

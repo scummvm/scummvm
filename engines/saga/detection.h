@@ -40,7 +40,8 @@ enum GameFeatures {
 	GF_SOME_MAC_RESOURCES= 1 << 5,
 	GF_AGA_GRAPHICS      = 1 << 6,
 	GF_ECS_GRAPHICS      = 1 << 7,
-	GF_INSTALLER         = 1 << 8
+	GF_INSTALLER         = 1 << 8,
+	GF_EMBED_FONT        = 1 << 9,
 };
 
 enum GameFileTypes {
