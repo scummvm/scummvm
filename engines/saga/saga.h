@@ -403,6 +403,9 @@ public:
 			memcpy(&front(), &src.front(), size());
 		}
 	}
+
+	ByteArray() : Common::Array<byte>() {}
+	ByteArray(const byte *array, size_type n) : Common::Array<byte>(array, n) {}
 };
 
 class ByteArrayReadStreamEndian : public Common::MemoryReadStreamEndian {
