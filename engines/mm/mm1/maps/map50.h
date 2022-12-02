@@ -83,7 +83,7 @@ private:
 		&Map50::special23
 	};
 public:
-	Map50() : Map(50, "pp1", 0xF01) {}
+	Map50() : Map(50, "pp1", 0xf01, 3) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

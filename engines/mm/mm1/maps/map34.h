@@ -77,7 +77,7 @@ private:
 		&Map34::special01
 	};
 public:
-	Map34() : Map(34, "doom", 0x706) {}
+	Map34() : Map(34, "doom", 0x706, 3) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

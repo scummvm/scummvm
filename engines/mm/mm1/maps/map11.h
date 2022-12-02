@@ -62,7 +62,7 @@ private:
 		&Map11::special02
 	};
 public:
-	Map11() : Map(11, "cave7", 0x212) {}
+	Map11() : Map(11, "cave7", 0x212, 1) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

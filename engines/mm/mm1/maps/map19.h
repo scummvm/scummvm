@@ -48,7 +48,7 @@ private:
 		&Map19::special05
 	};
 public:
-	Map19() : Map(19, "areab2", 0x703) {}
+	Map19() : Map(19, "areab2", 0x703, 2) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

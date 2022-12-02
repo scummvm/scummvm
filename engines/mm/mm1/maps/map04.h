@@ -77,7 +77,7 @@ private:
 		&Map04::special21
 	};
 public:
-	Map04() : MapTown(4, "erliquin", 0x0B1A) {}
+	Map04() : MapTown(4, "erliquin", 0xb1a, 3) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

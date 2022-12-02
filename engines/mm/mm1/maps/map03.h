@@ -85,7 +85,7 @@ private:
 		&Map03::special28
 	};
 public:
-	Map03() : MapTown(3, "dusk", 0x802) {}
+	Map03() : MapTown(3, "dusk", 0x802, 1) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

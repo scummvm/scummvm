@@ -72,7 +72,7 @@ private:
 		&Map51::special19
 	};
 public:
-	Map51() : Map(51, "pp2", 0x701) {}
+	Map51() : Map(51, "pp2", 0x701, 3) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

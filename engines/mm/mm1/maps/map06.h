@@ -74,7 +74,7 @@ private:
 		&Map06::special26
 	};
 public:
-	Map06() : Map(6, "cave2", 0x1) {}
+	Map06() : Map(6, "cave2", 0x1, 1) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

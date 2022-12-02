@@ -82,7 +82,7 @@ private:
 		&Map10::special33
 	};
 public:
-	Map10() : Map(10, "cave6", 0x51B) {}
+	Map10() : Map(10, "cave6", 0x51b, 1) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

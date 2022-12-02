@@ -79,7 +79,7 @@ private:
 		&Map45::special21
 	};
 public:
-	Map45() : Map(45, "udrag1", 0xF05) {}
+	Map45() : Map(45, "udrag1", 0xf05, 3) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

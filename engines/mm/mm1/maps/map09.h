@@ -81,7 +81,7 @@ private:
 		&Map09::special27
 	};
 public:
-	Map09() : Map(9, "cave5", 0x5) {}
+	Map09() : Map(9, "cave5", 0x5, 1) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

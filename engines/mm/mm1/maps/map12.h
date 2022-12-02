@@ -75,7 +75,7 @@ private:
 		&Map12::special17
 	};
 public:
-	Map12() : Map(12, "cave8", 0x601) {}
+	Map12() : Map(12, "cave8", 0x601, 1) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

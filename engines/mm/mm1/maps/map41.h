@@ -84,7 +84,7 @@ private:
 		&Map41::special04
 	};
 public:
-	Map41() : Map(41, "enf1", 0xF04) {}
+	Map41() : Map(41, "enf1", 0xf04, 3) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

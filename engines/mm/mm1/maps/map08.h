@@ -68,7 +68,7 @@ private:
 		&Map08::special20
 	};
 public:
-	Map08() : Map(8, "cave4", 0x202) {}
+	Map08() : Map(8, "cave4", 0x202, 1) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

@@ -75,7 +75,7 @@ private:
 		&Map05::special08
 	};
 public:
-	Map05() : Map(5, "cave1", 0x0A11) {}
+	Map05() : Map(5, "cave1", 0xa11, 1) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

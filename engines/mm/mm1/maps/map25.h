@@ -42,7 +42,7 @@ private:
 		&Map25::special02
 	};
 public:
-	Map25() : Map(25, "areac4", 0xF04) {}
+	Map25() : Map(25, "areac4", 0xf04, 2) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

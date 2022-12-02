@@ -52,7 +52,7 @@ private:
 		&Map54::special07
 	};
 public:
-	Map54() : Map(54, "astral", 0xB1A) {}
+	Map54() : Map(54, "astral", 0xb1a, 3) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

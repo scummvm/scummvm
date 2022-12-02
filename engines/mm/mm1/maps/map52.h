@@ -47,7 +47,7 @@ private:
 		&Map52::special06
 	};
 public:
-	Map52() : Map(52, "pp3", 0xE00) {}
+	Map52() : Map(52, "pp3", 0xe00, 3) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

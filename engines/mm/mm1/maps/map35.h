@@ -56,7 +56,7 @@ private:
 		&Map35::special09
 	};
 public:
-	Map35() : Map(35, "blackrn", 0xF08) {}
+	Map35() : Map(35, "blackrn", 0xf08, 3) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

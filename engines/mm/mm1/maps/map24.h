@@ -51,7 +51,7 @@ private:
 		&Map24::special09
 	};
 public:
-	Map24() : Map(24, "areac3", 0x904) {}
+	Map24() : Map(24, "areac3", 0x904, 1) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

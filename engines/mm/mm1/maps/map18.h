@@ -55,7 +55,7 @@ private:
 		&Map18::special09
 	};
 public:
-	Map18() : Map(18, "areab1", 0xA00) {}
+	Map18() : Map(18, "areab1", 0xa00, 2) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

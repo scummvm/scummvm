@@ -76,7 +76,7 @@ private:
 		&Map02::special21
 	};
 public:
-	Map02() : MapTown(2, "algary", 0x203) {}
+	Map02() : MapTown(2, "algary", 0x203, 1) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

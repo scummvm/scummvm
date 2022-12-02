@@ -53,7 +53,7 @@ private:
 		&Map22::special08
 	};
 public:
-	Map22() : Map(22, "areac1", 0x304) {}
+	Map22() : Map(22, "areac1", 0x304, 1) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

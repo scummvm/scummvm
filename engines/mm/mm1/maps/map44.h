@@ -54,7 +54,7 @@ private:
 		&Map44::special07
 	};
 public:
-	Map44() : Map(44, "dragad", 0x107) {}
+	Map44() : Map(44, "dragad", 0x107, 3) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

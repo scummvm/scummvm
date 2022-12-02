@@ -53,7 +53,7 @@ private:
 		&Map15::special08
 	};
 public:
-	Map15() : Map(15, "areaa2", 0x502) {}
+	Map15() : Map(15, "areaa2", 0x502, 2) {}
 
 	/**
 	 * Handles all special stuff that happens on the map
