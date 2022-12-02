@@ -38,6 +38,7 @@ public:
 	GameMessages(UIElement *owner);
 	virtual ~GameMessages() {}
 
+	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
 	bool msgInfo(const InfoMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
