@@ -1517,6 +1517,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "timelapse",			"Timelapse" },
 	{ "trekfinalunity",		"Star Trek: The Next Generation - \"A Final Unity\"" },
 	{ "ultrobot",			"Isaac Asimov's The Ultimate Robot" },
+	{ "voyeur2",			"Voyeur 2" },
 	{ "wep",				"The Best of Microsoft Entertainment Pack" },
 	{ "windows31",			"Microsoft Windows 3.1" },
 	{ "wfw31",				"Microsoft Windows for Workgroups 3.1" },
@@ -7013,6 +7014,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("ukiukiitsudemo", "", "UMITURI.EXE", "732605d38e43561a547893ee6f857081", 1052363, Common::JA_JPN, 601),
 
 	WINGAME1("void", "", "VOID.exe", "1154a54e6fb77f82e9091a9adc37a4cb", 1701070, 602),
+
+	// Launcher included in european version of the game, contains instructions, lore and credits
+	WINGAME1("voyeur2", "Launcher", "voyeur2.exe", "e7bccfe54354d08a9d2d0e181f66406b", 2003432, 602),
 
 	// CD check projector uses Win95 GUI mockup to ask your drive speed then launch game
 	WINGAME1("wiggles1", "", "WIGGLES.EXE", "d62438566e44826960fc16c5c23dbe43", 1862279, 650),
