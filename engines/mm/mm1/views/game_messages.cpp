@@ -52,9 +52,6 @@ void GameMessages::draw() {
 }
 
 bool GameMessages::msgInfo(const InfoMessage &msg) {
-	// Refresh the underlying screen first
-	g_events->send("Game", GameMessage("REDRAW"));
-
 	if (msg._ynCallback || msg._keyCallback ||
 			g_globals->_party.isPartyDead()) {
 		addView(this);
