@@ -2371,7 +2371,7 @@ void LB::b_puppetSound(int nargs) {
 	// So we'll just queue it to be played later.
 
 	if (nargs == 1) {
-		CastMemberID castMember = g_lingo->pop().asMemberID();
+		CastMemberID castMember = g_lingo->pop().asMemberID(kCastSound);
 
 		// in D2 manual p206, puppetSound 0 will turn off the puppet status of sound
 		sound->setPuppetSound(castMember, 1);
