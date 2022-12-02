@@ -281,7 +281,7 @@ iMaterial *cMaterialManager::LoadFromFile(const tString &asName, const tString &
 	tTextureTypeList lstTexTypes = pMat->GetTextureTypes();
 	tTextureTypeListIt it = lstTexTypes.begin();
 	for (; it != lstTexTypes.end(); it++) {
-		iTexture *pTex;
+		iTexture *pTex = nullptr;
 
 		TiXmlElement *pTexChild = pTexRoot->FirstChildElement(GetTextureString(it->mType).c_str());
 		if (pTexChild == NULL) {

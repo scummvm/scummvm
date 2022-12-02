@@ -94,7 +94,7 @@ inline dgUnsigned32 dgPolygonSoupDatabase::GetTagId(const dgInt32 *face) const {
 
 inline void dgPolygonSoupDatabase::SetTagId(const dgInt32 *facePtr, dgUnsigned32 newID) const {
 	dgUnsigned32 *face;
-	face = (dgUnsigned32 *) facePtr;
+	face = Common::remove_const<dgUnsigned32 *>::type(facePtr);
 	face[-1] = newID;
 }
 

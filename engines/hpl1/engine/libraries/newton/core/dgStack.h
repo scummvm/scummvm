@@ -26,6 +26,8 @@
 #include "dgDebug.h"
 #include "dgMemory.h"
 
+#include "common/util.h"
+
 class dgStackBase {
 protected:
 	dgStackBase(dgInt32 size);
@@ -39,7 +41,7 @@ inline dgStackBase::dgStackBase(dgInt32 size) {
 }
 
 inline dgStackBase::~dgStackBase() {
-	dgFreeStack((void *)m_ptr);
+	dgFreeStack(Common::remove_const<void *>::type(m_ptr));
 }
 
 
@@ -100,10 +102,9 @@ const T &dgStack<T>::operator[](dgInt32 entry) const {
 	_ASSERTE(entry >= 0);
 	_ASSERTE((entry < m_size) || ((m_size == 0) && (entry == 0)));
 
-	mem = (T *) m_ptr;
+	mem = Common::remove_const<T *>::type(m_ptr);
 	return mem[entry];
 }
 
 
 #endif
-

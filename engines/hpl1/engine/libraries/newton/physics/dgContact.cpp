@@ -83,7 +83,7 @@ void dgContact::GetInfo(dgConstraintInfo *const info) const {
 	memset(info, 0, sizeof(dgConstraintInfo));
 	InitInfo(info);
 	info->m_collideCollisionOn = GetCount();
-	strcpy(info->m_discriptionType, "contact");
+	strncpy(info->m_discriptionType, "contact", 7);
 }
 
 void dgContact::CalculatePointDerivative(dgInt32 index,
