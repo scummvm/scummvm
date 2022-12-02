@@ -2263,6 +2263,35 @@ void LB::b_pasteClipBoardInto(int nargs) {
 	}
 }
 
+static const struct PaletteNames {
+	const char *name;
+	PaletteType type;
+} paletteNames[] = {
+	{ "System", kClutSystemMac },
+	{ "System - Mac", kClutSystemMac },
+	{ "Rainbow", kClutRainbow },
+	{ "Grayscale", kClutGrayscale },
+	{ "Pastels", kClutPastels },
+	{ "Vivid", kClutVivid },
+	{ "NTSC", kClutNTSC },
+	{ "Metallic", kClutMetallic },
+	//{ "Web 216", },
+	//{ "VGA", },
+	//{ "System - Win", },
+	{ "SYSTEM - WIN (DIR 4)", kClutSystemWin },
+
+	// Japanese palette names.
+	// TODO: Check encoding. Original is SJIS
+	{ "\x83V\x83X\x83""e\x83\x80 - Mac", kClutSystemMac },				// システム - Mac
+	{ "\x83\x8C>\x83""C\x83\x93\x83{\x81[", kClutRainbow },				// レインボー
+	{ "\x83O\x83>\x8C\x81[\x83X\x83P\x81[\x83\x8B", kClutGrayscale },	// グレースケール
+	{ "\x83p\x83>X\x83""e\x83\x8B", kClutPastels },						// パステル
+	{ "\x83r\x83>r\x83""b\x83h", kClutVivid },							// ビビッド
+	{ "\x83\x81\x83^\x83\x8A\x83""b\x83N", kClutMetallic },				// メタリック
+	// { "\x83V\x83X\x83""e\x83\x80 - Win", },							// システム - Win
+	{ "\x83V\x83X\x83""e\x83\x80 - Win (Dir 4)", kClutSystemWin },		// システム - Win (Dir 4)
+};
+
 void LB::b_puppetPalette(int nargs) {
 	g_lingo->convertVOIDtoString(0, nargs);
 	int numFrames = 0, speed = 0, palette = 0;
@@ -2282,18 +2311,10 @@ void LB::b_puppetPalette(int nargs) {
 		if (d.type == STRING) {
 			// TODO: It seems that there are not strings for Mac and Win system palette
 			Common::String palStr = d.asString();
-			if (palStr.equalsIgnoreCase("Rainbow")) {
-				palette = kClutRainbow;
-			} else if (palStr.equalsIgnoreCase("Grayscale")) {
-				palette = kClutGrayscale;
-			} else if (palStr.equalsIgnoreCase("Pastels")) {
-				palette = kClutPastels;
-			} else if (palStr.equalsIgnoreCase("Vivid")) {
-				palette = kClutVivid;
-			} else if (palStr.equalsIgnoreCase("NTSC")) {
-				palette = kClutNTSC;
-			} else if (palStr.equalsIgnoreCase("Metallic")) {
-				palette = kClutMetallic;
+
+			for (int i = 0; i < ARRAYSIZE(paletteNames); i++) {
+				if (palStr.equalsIgnoreCase(paletteNames[i].name))
+					palette = paletteNames[i].type;
 			}
 		}
 		if (!palette) {
