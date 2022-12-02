@@ -291,14 +291,10 @@ dgInt32 dgBinarySearch(T const *array, dgInt32 elements, dgInt32 entry) {
 	dgInt32 index0;
 	dgInt32 index1;
 	dgInt32 index2;
-	dgInt32 entry0;
 	dgInt32 entry1;
-	dgInt32 entry2;
 
 	index0 = 0;
 	index2 = elements - 1;
-	entry0 = array[index0].m_Key;
-	entry2 = array[index2].m_Key;
 
 	while ((index2 - index0) > 1) {
 		index1 = (index0 + index2) >> 1;
@@ -311,10 +307,8 @@ dgInt32 dgBinarySearch(T const *array, dgInt32 elements, dgInt32 entry) {
 			return index1;
 		} else if (entry < entry1) {
 			index2 = index1;
-			entry2 = entry1;
 		} else {
 			index0 = index1;
-			entry0 = entry1;
 		}
 	}
 

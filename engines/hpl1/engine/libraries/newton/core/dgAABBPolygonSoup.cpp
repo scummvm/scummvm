@@ -1678,4 +1678,3 @@ void dgAABBPolygonSoup::Create(const dgPolygonSoupDatabaseBuilder &builder,  boo
 	GetAABB(p0, p1);
 	ForAllSectors(p0, p1, CalculateAllFaceEdgeNormals, this);
 }
-

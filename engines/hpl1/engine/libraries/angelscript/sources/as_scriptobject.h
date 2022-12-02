@@ -118,7 +118,7 @@ public:
 	void *AllocateUninitializedObject(asCObjectType *objType, asCScriptEngine *engine);
 	void FreeObject(void *ptr, asCObjectType *objType, asCScriptEngine *engine);
 	void CopyObject(const void *src, void *dst, asCObjectType *objType, asCScriptEngine *engine);
-	void CopyHandle(asPWORD *src, asPWORD *dst, asCObjectType *objType, asCScriptEngine *engine);
+	void CopyHandle(const asPWORD *src, asPWORD *dst, asCObjectType *objType, asCScriptEngine *engine);
 	int  CopyFromAs(const asCScriptObject *other, asCObjectType *objType);
 
 	void CallDestructor();
