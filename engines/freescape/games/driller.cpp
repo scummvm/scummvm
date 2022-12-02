@@ -427,11 +427,11 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 46, 153, yellow, black, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 238, 129, yellow, black, surface);
 
-	int hours = _countdown / 3600;
+	int hours = _countdown <= 0 ? 0 : _countdown / 3600;
 	drawStringInSurface(Common::String::format("%02d", hours), 208, 8, yellow, black, surface);
-	int minutes = (_countdown - hours * 3600) / 60;
+	int minutes = _countdown <= 0 ? 0 : (_countdown - hours * 3600) / 60;
 	drawStringInSurface(Common::String::format("%02d", minutes), 230, 8, yellow, black, surface);
-	int seconds = _countdown - hours * 3600 - minutes * 60;
+	int seconds = _countdown <= 0 ? 0 : _countdown - hours * 3600 - minutes * 60;
 	drawStringInSurface(Common::String::format("%02d", seconds), 254, 8, yellow, black, surface);
 
 	Common::String message;
@@ -482,11 +482,11 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	drawStringInSurface(_currentArea->_name, 188, 185, yellow, black, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
 
-	int hours = _countdown / 3600;
+	int hours = _countdown <= 0 ? 0 : _countdown / 3600;
 	drawStringInSurface(Common::String::format("%02d:", hours), 208, 7, yellow, black, surface);
-	int minutes = (_countdown - hours * 3600) / 60;
+	int minutes = _countdown <= 0 ? 0 : (_countdown - hours * 3600) / 60;
 	drawStringInSurface(Common::String::format("%02d:", minutes), 230, 7, yellow, black, surface);
-	int seconds = _countdown - hours * 3600 - minutes * 60;
+	int seconds = _countdown <= 0 ? 0 : _countdown - hours * 3600 - minutes * 60;
 	drawStringInSurface(Common::String::format("%02d", seconds), 254, 7, yellow, black, surface);
 
 	Common::String message;
@@ -846,6 +846,11 @@ void DrillerEngine::initGameState() {
 }
 
 bool DrillerEngine::checkIfGameEnded() {
+	if (_countdown <= 0) {
+		insertTemporaryMessage(_messagesList[14], _countdown - 2);
+		gotoArea(127, 0);
+	}
+
 	if (_gameStateVars[k8bitVariableShield] == 0) {
 		insertTemporaryMessage(_messagesList[15], _countdown - 2);
 		gotoArea(127, 0);
