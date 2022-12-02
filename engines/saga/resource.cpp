@@ -32,6 +32,7 @@
 #include "saga/sndres.h"
 
 #include "engines/advancedDetector.h"
+#include "common/compression/powerpacker.h"
 
 namespace Saga {
 
@@ -435,6 +436,25 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, ByteArr
 	// 1 patch file, which is reused, so don't close it
 	if (resourceData->patchData != nullptr && _vm->getGameId() == GID_ITE)
 		file->close();
+
+	if (_vm->getPlatform() == Common::Platform::kPlatformAmiga &&
+	    resourceBuffer.size() >= 16 && READ_BE_UINT32(resourceBuffer.getBuffer()) == MKTAG('H', 'E', 'A', 'D')
+	    && READ_BE_UINT32(resourceBuffer.getBuffer() + 12) == MKTAG('P', 'A', 'C', 'K')) {
+		uint32 unpackedLen = READ_BE_UINT32(resourceBuffer.getBuffer() + 4);
+		uint32 packedLen = READ_BE_UINT32(resourceBuffer.getBuffer() + 8);
+		uint32 actualUncompressedLen = 0;
+		if (packedLen != resourceBuffer.size() - 20) {
+			warning("Compressed size mismatch in resource %d: %d vs %d", resourceId, packedLen, resourceBuffer.size() - 20);
+		}
+		byte *uncompressed = Common::PowerPackerStream::unpackBuffer(resourceBuffer.getBuffer() + 12, packedLen + 8, actualUncompressedLen);
+		if (uncompressed == nullptr || unpackedLen != actualUncompressedLen) {
+			warning("Uncompressed size mismatch in resource %d: %d vs %d", resourceId, unpackedLen, actualUncompressedLen);
+		}
+
+		// TODO: Use move semantics
+		resourceBuffer = ByteArray(uncompressed, actualUncompressedLen);
+		delete[] uncompressed;
+	}
 }
 
 ResourceContext *Resource::getContext(uint16 fileType, int serial) {
