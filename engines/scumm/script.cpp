@@ -635,12 +635,13 @@ void ScummEngine::writeVar(uint var, int value) {
 		}
 
 		if (var == VAR_CHARINC) {
-			// Did the user override the talkspeed manually? Then use that.
-			// Otherwise, use the value specified by the game script.
+			// Use the value specified by the game script, everywhere except
+			// at game boot-up: if there was a user override, then use that.
+			//
 			// Note: To determine whether there was a user override, we only
 			// look at the target specific settings, assuming that any global
 			// value is likely to be bogus. See also bug #4008.
-			if (ConfMan.hasKey("talkspeed", _targetName)) {
+			if (_currentRoom == 0 && ConfMan.hasKey("talkspeed", _targetName)) {
 				value = 9 - getTalkSpeed();
 			} else {
 				// Save the new talkspeed value to ConfMan
