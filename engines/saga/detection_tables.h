@@ -1075,8 +1075,33 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{},
 	},
 
-	// TODO: Add Amiga floppy versions
+	// Inherit the earth - German Floppy version
+	{
+		{
+			"ite",
+			"AGA Floppy",
+			{
+				{"ite.rtn",		GAME_RESOURCEFILE,	"38f6a3aca708ef3ab6059d94a268da29", 18564},
+				{"ite01.adf",		0,					"4f7913f82d7f8318d24f31b6226731eb", 901120},
+				{"ite02.adf",	0,					"9c959343c3e2e4a067426bf4cf28eba0", 901120},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_ITE,
+		GF_ITE_FLOPPY | GF_AGA_GRAPHICS | GF_EMBED_FONT | GF_POWERPACK_GFX,
+		ITE_DEFAULT_SCENE,
+		RESOURCELIST_ITE_GERMAN_AGA_CD,
+		FONTLIST_NONE,
+		PATCHLIST_NONE,
+		INTROLIST_ITE_AMIGA_GERMAN_AGA,
+		{},
+	},
 
+	// TODO: Add other Amiga floppy versions
 	// IHNM Section ///////////////////////////////////////////////////////////////////////////////////////////
 
 	// I Have No Mouth And I Must Scream - Demo version
