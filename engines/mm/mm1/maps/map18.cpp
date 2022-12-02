@@ -69,21 +69,23 @@ void Map18::special01() {
 		g_maps->_mapPos = Common::Point(0, 7);
 		g_maps->changeMap(0x508, 3);
 
-	} else if (_data[VAL1] == 0) {
+	} else if (_data[VAL1] != 0) {
 		_data[VAL1] = 0;
 
 	} else {
-		redrawGame();
+		send("View", DrawGraphicMessage(65 + 6));
 		send(SoundMessage(
-			STRING["maps.map18.blackridge_south"],
+			STRING["maps.map18.castle_south"],
 			[](const Common::KeyState &ks) {
 				Map18 &map = *static_cast<Map18 *>(g_maps->_currentMap);
 				if (ks.keycode == Common::KEYCODE_y) {
 					g_events->close();
 					map[VAL1] = 0xff;
+					map.updateGame();
 				} else if (ks.keycode == Common::KEYCODE_n) {
 					g_events->close();
 					map[VAL1]++;
+					map.updateGame();
 				}
 			}
 		));
@@ -96,21 +98,23 @@ void Map18::special02() {
 		g_maps->_mapPos = Common::Point(7, 15);
 		g_maps->changeMap(0xf08, 3);
 
-	} else if (_data[VAL1] == 0) {
+	} else if (_data[VAL2] != 0) {
 		_data[VAL2] = 0;
 
 	} else {
-		redrawGame();
+		send("View", DrawGraphicMessage(65 + 6));
 		send(SoundMessage(
-			STRING["maps.map18.blackridge_north"],
+			STRING["maps.map18.castle_north"],
 			[](const Common::KeyState &ks) {
 				Map18 &map = *static_cast<Map18 *>(g_maps->_currentMap);
 				if (ks.keycode == Common::KEYCODE_y) {
 					g_events->close();
 					map[VAL2] = 0xff;
+					map.updateGame();
 				} else if (ks.keycode == Common::KEYCODE_n) {
 					g_events->close();
 					map[VAL2]++;
+					map.updateGame();
 				}
 			}
 		));
@@ -168,7 +172,7 @@ void Map18::special08() {
 
 void Map18::special09() {
 	g_maps->clearSpecial();
-	g_globals->_treasure._items[2] = 238;
+	g_globals->_treasure._items[2] = SILVER_KEY_ID;
 	g_globals->_treasure._trapType = 4;
 	g_globals->_treasure._container = IRON_BOX;
 	g_globals->_treasure.setGold(2400);

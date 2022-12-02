@@ -149,7 +149,7 @@ public:
 	 * Closes the current view. The view must have been added
 	 * via addView, so there's a remaining view afterwards
 	 */
-	void close();
+	virtual void close();
 
 	/*
 	 * Returns true if the view is focused
@@ -360,6 +360,13 @@ public:
 
 	bool tick() override {
 		return !_views.empty() ? focusedView()->tick() : false;
+	}
+
+	/**
+	 * Calling the close method for g_events closes the active window
+	 */
+	void close() override {
+		focusedView()->close();
 	}
 };
 
