@@ -143,9 +143,14 @@ void TextView::timeout() {
 }
 
 bool TextView::msgDrawGraphic(const DrawGraphicMessage &msg) {
+	// Refresh the background
+	draw();
+
+	// Draw the new image
 	const Graphics::ManagedSurface img =
 		g_globals->_monsters.getMonsterImage(msg._gfxNum);
 	getSurface().blitFrom(img, Common::Point(64, 16));
+
 	return true; 
 }
 

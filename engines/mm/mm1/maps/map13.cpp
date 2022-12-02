@@ -89,7 +89,7 @@ void Map13::special00() {
 void Map13::special01() {
 	if (_data[VAL1]) {
 		g_maps->clearSpecial();
-		g_globals->_treasure._items[2] = 246;
+		g_globals->_treasure._items[2] = MEDUSA_HEAD_ID;
 		g_events->addAction(KEYBIND_SEARCH);
 	} else {
 		_data[VAL1]++;
@@ -115,7 +115,7 @@ void Map13::special02() {
 				c._condition = POISONED;
 		}
 
-		send(SoundMessage(STRING["maps.map13.pit"]));
+		send(SoundMessage(STRING["maps.map13.snake_pit"]));
 	}
 }
 
