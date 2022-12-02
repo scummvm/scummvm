@@ -856,6 +856,11 @@ bool DrillerEngine::checkIfGameEnded() {
 		gotoArea(127, 0);
 	}
 
+	if (_gameStateVars[k8bitVariableEnergy] == 0) {
+		insertTemporaryMessage(_messagesList[16], _countdown - 2);
+		gotoArea(127, 0);
+	}
+
 	if (_currentArea->getAreaID() == 127) {
 		if (_gameStateVars[32] == 18) { // All areas are complete
 			insertTemporaryMessage(_messagesList[19], _countdown - 2);
