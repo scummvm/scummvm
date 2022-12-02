@@ -138,4 +138,3 @@ inline void dgPolygonSoupDatabase::ForAllSectorsRayHitSimd(const dgFastRayTest &
 }
 
 #endif
-

@@ -35,6 +35,8 @@
 #include "as_scriptobject.h"
 #include "as_texts.h"
 
+#include "common/util.h"
+
 BEGIN_AS_NAMESPACE
 
 // This helper function will call the default factory, that is a script function
@@ -822,17 +824,17 @@ int asCScriptObject::CopyFromAs(const asCScriptObject *other, asCObjectType *in_
 				asCObjectProperty *prop = in_objType->properties[n];
 				if (prop->type.IsObject()) {
 					void **dst = (void **)(((char *)this) + prop->byteOffset);
-					void **src = (void **)(((char *)other) + prop->byteOffset);
+					const void * const *src = (const void * const *)(((const char *)other) + prop->byteOffset);
 					if (!prop->type.IsObjectHandle()) {
 						if (prop->type.IsReference() || (prop->type.GetTypeInfo()->flags & asOBJ_REF))
 							CopyObject(*src, *dst, CastToObjectType(prop->type.GetTypeInfo()), engine);
 						else
 							CopyObject(src, dst, CastToObjectType(prop->type.GetTypeInfo()), engine);
 					} else
-						CopyHandle((asPWORD *)src, (asPWORD *)dst, CastToObjectType(prop->type.GetTypeInfo()), engine);
+						CopyHandle((const asPWORD *)src, (asPWORD *)dst, CastToObjectType(prop->type.GetTypeInfo()), engine);
 				} else if (prop->type.IsFuncdef()) {
 					asCScriptFunction **dst = (asCScriptFunction **)(((char *)this) + prop->byteOffset);
-					asCScriptFunction **src = (asCScriptFunction **)(((char *)other) + prop->byteOffset);
+					asCScriptFunction * const *src = (asCScriptFunction * const *)(((const char *)other) + prop->byteOffset);
 					if (*dst)
 						(*dst)->Release();
 					*dst = *src;
@@ -840,7 +842,7 @@ int asCScriptObject::CopyFromAs(const asCScriptObject *other, asCObjectType *in_
 						(*dst)->AddRef();
 				} else {
 					void *dst = ((char *)this) + prop->byteOffset;
-					void *src = ((char *)other) + prop->byteOffset;
+					const void *src = ((const char *)other) + prop->byteOffset;
 					memcpy(dst, src, prop->type.GetSizeInMemoryBytes());
 				}
 			}
@@ -924,7 +926,7 @@ int asCScriptObject::CopyFrom(const asIScriptObject *other) {
 	if (GetTypeId() != other->GetTypeId())
 		return asINVALID_TYPE;
 
-	*this = *(asCScriptObject *)other;
+	*this = *(const asCScriptObject *)other;
 
 	return asSUCCESS;
 }
@@ -979,7 +981,7 @@ void asCScriptObject::CopyObject(const void *src, void *dst, asCObjectType *in_o
 		memcpy(dst, src, in_objType->size);
 }
 
-void asCScriptObject::CopyHandle(asPWORD *src, asPWORD *dst, asCObjectType *in_objType, asCScriptEngine *engine) {
+void asCScriptObject::CopyHandle(const asPWORD *src, asPWORD *dst, asCObjectType *in_objType, asCScriptEngine *engine) {
 	// asOBJ_NOCOUNT doesn't have addref or release behaviours
 	asASSERT((in_objType->flags & asOBJ_NOCOUNT) || (in_objType->beh.release && in_objType->beh.addref));
 
@@ -1034,4 +1036,3 @@ AS_API asILockableSharedBool *asCreateLockableSharedBool() {
 }
 
 END_AS_NAMESPACE
-
