@@ -530,7 +530,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	Common::SeekableReadStreamEndianWrapper endianStream(stream, _isBigEndian, DisposeAfterUse::NO);
 	endianStream.seek(startOffset + moreOffset + 4);
 
-	uint32 sz = endianStream.readUint32(); // size
+	uint32 sz = endianStream.readUint32() + 8; // size
 
 	// If it is an embedded file, dump it if requested.
 	// Start by copying the movie data to a new buffer.
@@ -564,6 +564,14 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		break;
 	default:
 		break;
+	}
+
+	// Add the padding data to match the file size
+	endianStream.seek(sz - 4);
+	uint32 _junk = endianStream.readUint32();
+	if (_junk != 0) {
+		dumpStream->seek(sz - 4);
+		dumpStream->writeUint32BE(0);
 	}
 
 	// Now that the dump data has been patched, actually dump it.
