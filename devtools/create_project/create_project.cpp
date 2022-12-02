@@ -1608,6 +1608,8 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/base", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/common", setup.defines, setup.testDirs, in, ex);
+		createModuleList(setup.srcDir + "/common/compression", setup.defines, setup.testDirs, in, ex);
+		createModuleList(setup.srcDir + "/common/formats", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/common/lua", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/engines", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/graphics", setup.defines, setup.testDirs, in, ex);

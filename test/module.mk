@@ -28,7 +28,7 @@ TEST_LIBS += test/null_osystem.o \
 	backends/platform/sdl/win32/win32_wrapper.o
 endif
 
-TEST_LIBS +=	audio/libaudio.a math/libmath.a common/libcommon.a image/libimage.a graphics/libgraphics.a
+TEST_LIBS +=	audio/libaudio.a math/libmath.a common/formats/libformats.a common/compression/libcompression.a common/libcommon.a image/libimage.a graphics/libgraphics.a
 
 ifeq ($(ENABLE_WINTERMUTE), STATIC_PLUGIN)
 	TESTS += $(srcdir)/test/engines/wintermute/*.h
