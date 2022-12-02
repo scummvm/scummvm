@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-02 10:51+0000\n"
+"POT-Creation-Date: 2022-12-02 20:58+0000\n"
 "PO-Revision-Date: 2022-07-13 06:51+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -2546,7 +2546,7 @@ msgstr "~T~erug naar Startmenu"
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:844
 #: engines/groovie/script.cpp:2217 engines/groovie/script.cpp:2258
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
-#: engines/kingdom/kingdom.cpp:736 engines/lab/savegame.cpp:242
+#: engines/kingdom/kingdom.cpp:729 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
 #: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:889
 #: engines/pegasus/pegasus.cpp:406 engines/prince/saveload.cpp:54
@@ -2567,7 +2567,7 @@ msgstr "Spel opslaan:"
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:839
 #: engines/groovie/script.cpp:844 engines/groovie/script.cpp:2217
 #: engines/groovie/script.cpp:2258 engines/hugo/file.cpp:297
-#: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:736
+#: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:729
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
 #: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:889
@@ -4265,7 +4265,7 @@ msgstr "Voeg spelsnelheid menu toe (net als PC versie)"
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:821
 #: engines/groovie/script.cpp:856 engines/groovie/script.cpp:2204
 #: engines/groovie/script.cpp:2274 engines/hugo/file.cpp:399
-#: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:746
+#: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:739
 #: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:902
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:745
@@ -4284,7 +4284,7 @@ msgstr "Laad opgeslagen spel:"
 #: engines/groovie/script.cpp:839 engines/groovie/script.cpp:856
 #: engines/groovie/script.cpp:2204 engines/groovie/script.cpp:2274
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
-#: engines/kingdom/kingdom.cpp:746 engines/lab/savegame.cpp:237
+#: engines/kingdom/kingdom.cpp:739 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:902
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:746
