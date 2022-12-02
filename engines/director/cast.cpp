@@ -1317,6 +1317,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 
 	CastMemberInfo *ci = new CastMemberInfo();
 	Common::MemoryReadStreamEndian *entryStream;
+	CastMember *member = _loadedCast->getVal(id);
 
 	// We have here variable number of strings. Thus, instead of
 	// adding tons of ifs, we use this switch()
@@ -1365,8 +1366,14 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 			// Multiple casts can have the same name. In director only the first one is used.
 			if (!_castsNames.contains(ci->name)) {
 				_castsNames[ci->name] = id;
+			}
+
+			// Store name with type
+			Common::String cname = Common::String::format("%s:%d", ci->name.c_str(), member->_type);
+			if (!_castsNames.contains(cname)) {
+				_castsNames[cname] = id;
 			} else {
-				debugC(4, kDebugLoading, "Cast::loadCastInfo(): duplicate cast name: %s for castIDs: %s %s", ci->name.c_str(), numToCastNum(id), numToCastNum(_castsNames[ci->name]));
+				debugC(4, kDebugLoading, "Cast::loadCastInfo(): duplicate cast name: %s for castIDs: %s %s", cname.c_str(), numToCastNum(id), numToCastNum(_castsNames[ci->name]));
 			}
 		}
 		// fallthrough
@@ -1377,7 +1384,6 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		break;
 	}
 
-	CastMember *member = _loadedCast->getVal(id);
 	// For D4+ we may force Lingo scripts
 	if (_version < kFileVer400 || debugChannelSet(-1, kDebugNoBytecode)) {
 		if (!ci->script.empty()) {
