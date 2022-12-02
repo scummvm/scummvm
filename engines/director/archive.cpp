@@ -542,6 +542,16 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		stream->seek(startOffset);
 		stream->read(dumpData, sz);
 		stream->seek(startOffset + 8);
+
+		// Add the padding data to match the file size
+		endianStream.seek(sz - 4);
+		uint32 _junk = endianStream.readUint32();
+		if (_junk != 0) {
+			dumpStream->seek(sz - 4);
+			dumpStream->writeUint32BE(0);
+		}
+
+		endianStream.seek(startOffset + moreOffset + 8);
 	}
 
 	_rifxType = endianStream.readUint32();
@@ -564,14 +574,6 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		break;
 	default:
 		break;
-	}
-
-	// Add the padding data to match the file size
-	endianStream.seek(sz - 4);
-	uint32 _junk = endianStream.readUint32();
-	if (_junk != 0) {
-		dumpStream->seek(sz - 4);
-		dumpStream->writeUint32BE(0);
 	}
 
 	// Now that the dump data has been patched, actually dump it.
