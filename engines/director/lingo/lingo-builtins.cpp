@@ -1974,7 +1974,7 @@ void LB::b_installMenu(int nargs) {
 	// installMenu castNum
 	Datum d = g_lingo->pop();
 
-	CastMemberID memberID = d.asMemberID();
+	CastMemberID memberID = d.asMemberID(kCastText);
 	if (memberID.member == 0) {
 		g_director->_wm->removeMenu();
 		return;
@@ -3030,7 +3030,7 @@ void LB::b_cast(int nargs) {
 
 void LB::b_script(int nargs) {
 	Datum d = g_lingo->pop();
-	CastMemberID memberID = d.asMemberID();
+	CastMemberID memberID = d.asMemberID(kCastText);
 	CastMember *cast = g_director->getCurrentMovie()->getCastMember(memberID);
 
 	if (cast) {
