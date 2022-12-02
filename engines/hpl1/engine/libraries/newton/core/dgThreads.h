@@ -81,9 +81,9 @@ private:
 	mutable dgInt32 m_globalSpinLock;
 
 	bool m_exit;
-	dgInt32 m_emptySlot;
-	dgInt32 m_workToDo;
-	dgInt32 m_criticalSection;
+	//dgInt32 m_emptySlot;
+	//dgInt32 m_workToDo;
+	//dgInt32 m_criticalSection;
 	dgInt32 m_workToDoSpinLock;
 	dgWorkerThread *m_queue[DG_MAXQUEUE];
 	//pthread_t m_threadhandles[DG_MAXIMUN_THREADS];
@@ -95,4 +95,3 @@ private:
 
 
 #endif
-

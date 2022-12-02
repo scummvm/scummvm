@@ -30,6 +30,8 @@
 #include "dgStdafx.h"
 #include "dgMemory.h"
 
+#include "common/util.h"
+
 
 //#define DG_HEAP_SANITY_CHECK
 
@@ -116,7 +118,7 @@ dgHeapBase<OBJECT, KEY>::dgHeapBase(const void *const buffer, dgInt32 sizeInByte
 //	_ASSERTE (0);
 //	m_allocated = false;
 	m_allocator = NULL;
-	m_pool = (RECORD *) buffer;
+	m_pool = (RECORD *)Common::remove_const<void * const>::type(buffer);
 	m_maxCount = dgInt32(sizeInBytes / sizeof(RECORD));
 	Flush();
 }
@@ -502,5 +504,3 @@ void dgUpHeap<OBJECT, KEY>::Pop() {
 
 
 #endif
-
-

@@ -464,7 +464,7 @@ float cMath::TurnAngleDeg(float afAngle, float afFinalAngle, float afSpeed) {
 float cMath::GetAngleFromPoints2D(const cVector2f &avStartPos, const cVector2f &avGoalPos) {
 	float fDx;
 	float fDy;
-	float fAns;
+	float fAns = 0.0;
 
 	fDx = avGoalPos.x - avStartPos.x;
 	fDy = avGoalPos.y - avStartPos.y;

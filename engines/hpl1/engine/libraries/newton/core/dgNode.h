@@ -27,6 +27,8 @@
 #include "dgRef.h"
 #include "dgRtti.h"
 
+#include "common/util.h"
+
 
 class dgFile;
 //enum dgSaveType;
@@ -162,7 +164,7 @@ dgNode<T>::~dgNode() {
 
 template<class T>
 dgRef *dgNode<T>::CreateClone() const {
-	return new T(*(T *)this);
+	return new T(*(T *)Common::remove_const<T *>::type(this));
 }
 
 template<class T>
@@ -233,4 +235,3 @@ T *dgNode<T>::Find(const char *name) const {
 
 
 #endif
-
