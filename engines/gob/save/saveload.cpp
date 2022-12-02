@@ -102,7 +102,7 @@ bool SaveLoad::load(const char *fileName, int16 dataVar, int32 size, int32 offse
 
 bool SaveLoad::loadToRaw(const char *fileName, byte *ptr, int32 size, int32 offset) {
 	debugC(3, kDebugSaveLoad, "Requested loading of save file \"%s\" - raw %p, %d, %d",
-		   fileName, ptr, size, offset);
+		   fileName, (void *)ptr, size, offset);
 
 	SaveHandler *handler = getHandler(fileName);
 
