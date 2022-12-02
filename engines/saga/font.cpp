@@ -31,6 +31,9 @@
 #include "graphics/sjis.h"
 #include "common/unicode-bidi.h"
 
+#include "saga/ite8.h"
+#include "saga/small8.h"
+
 namespace Saga {
 
 static const GameFontDescription ITEDEMO_GameFonts[]    = { {0}, {1} };
@@ -165,18 +168,18 @@ void Font::textDraw(FontId fontId, const char *text, const Common::Point &point,
 }
 
 DefaultFont::DefaultFont(SagaEngine *vm) : Font(vm), _fontMapping(0), _chineseFont(nullptr), _cjkFontWidth(0), _cjkFontHeight(0), _koreanFont(nullptr) {
-	uint i;
+	int i;
 
 	// Load font module resource context
 
 	GameFontList index = _vm->getFontList();
-	assert(index < FONTLIST_MAX && index > FONTLIST_NONE);
-	assert(FontLists[index].list);
-	assert(FontLists[index].count > 0);
+	assert(index < FONTLIST_MAX && index >= FONTLIST_NONE);
+	assert(FontLists[index].list || FontLists[index].count == 0);
+	assert(FontLists[index].count > 0 || (_vm->getFeatures() & GF_EMBED_FONT));
 
-	_fonts.resize(FontLists[index].count);
+	_fonts.resize(MAX<int>(FontLists[index].count, (_vm->getFeatures() & GF_EMBED_FONT) ? 2 : 0));
 
-	for (i = 0; i < _fonts.size(); i++) {
+	for (i = 0; i < FontLists[index].count; i++) {
 #ifdef __DS__
 		_fonts[i].outline.font = NULL;
 		_fonts[i].normal.font = NULL;
@@ -185,6 +188,11 @@ DefaultFont::DefaultFont(SagaEngine *vm) : Font(vm), _fontMapping(0), _chineseFo
 			loadChineseFontIHNM(&_fonts[i],	FontLists[index].list[i].fontResourceId);
 		else
 			loadFont(&_fonts[i], FontLists[index].list[i].fontResourceId);
+	}
+
+	if (_vm->getFeatures() & GF_EMBED_FONT) {
+		loadFont(&_fonts[kSmallFont], ByteArray(font_small8, sizeof(font_small8)), true);
+		loadFont(&_fonts[kMediumFont], ByteArray(font_ite8, sizeof(font_ite8)), true);
 	}
 
 	if (_vm->getGameId() == GID_ITE && _vm->getLanguage() == Common::ZH_TWN)
@@ -854,8 +862,6 @@ void DefaultFont::outFont(const FontStyle &drawFont, const char *text, size_t co
 
 void DefaultFont::loadFont(FontData *font, uint32 fontResourceId) {
 	ByteArray fontResourceData;
-	int numBits;
-	int c;
 	ResourceContext *fontContext;
 
 	debug(1, "Font::loadFont(): Reading fontResourceId %d...", fontResourceId);
@@ -868,11 +874,18 @@ void DefaultFont::loadFont(FontData *font, uint32 fontResourceId) {
 	// Load font resource
 	_vm->_resource->loadResource(fontContext, fontResourceId, fontResourceData);
 
+	loadFont(font, fontResourceData, fontContext->isBigEndian());
+}
+
+void DefaultFont::loadFont(FontData *font, const ByteArray& fontResourceData, bool isBigEndian) {
+	int numBits;
+	int c;
+
 	if (fontResourceData.size() < FONT_DESCSIZE) {
 		error("DefaultFont::loadFont() Invalid font length (%i < %i)", (int)fontResourceData.size(), FONT_DESCSIZE);
 	}
 
-	ByteArrayReadStreamEndian readS(fontResourceData, fontContext->isBigEndian());
+	ByteArrayReadStreamEndian readS(fontResourceData, isBigEndian);
 
 	// Read font header
 	font->normal.header.charHeight = readS.readUint16();
