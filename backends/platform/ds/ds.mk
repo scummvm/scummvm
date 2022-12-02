@@ -10,6 +10,7 @@ clean: dsclean
 
 dsclean:
 	$(RM) scummvm.nds
+	$(RM) map.txt
 	$(RM_REC) romfs
 	$(RM_REC) dsdist
 
