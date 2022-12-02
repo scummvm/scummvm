@@ -319,7 +319,7 @@ private:
 	Common::WinResources *_cursors;
 
 	bool loadCursorFile();
-	bool loadCursorFromFile(int32 cursorIndex);
+	bool loadCursorFromFile(int cursorIndex);
 };
 
 // Draw operations
