@@ -112,6 +112,9 @@ void Search::draw() {
 }
 
 bool Search::msgKeypress(const KeypressMessage &msg) {
+	if (endDelay())
+		return true;
+
 	switch (_mode) {
 	case INITIAL:
 		endDelay();
