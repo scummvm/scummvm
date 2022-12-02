@@ -34,7 +34,7 @@ dgCollisionScene::dgNode::dgNode() : m_parent(NULL), m_left(NULL), m_right(NULL)
 }
 
 dgCollisionScene::dgNode::dgNode(dgNode *const sibling, dgNode *const myNode) : m_parent(sibling->m_parent), m_left(sibling), m_right(myNode), m_fitnessNode(
-																																				   NULL) {
+	    NULL) {
 	if (m_parent) {
 		if (m_parent->m_left == sibling) {
 			m_parent->m_left = this;
@@ -51,11 +51,11 @@ dgCollisionScene::dgNode::dgNode(dgNode *const sibling, dgNode *const myNode) : 
 	dgNode *const right = m_right;
 
 	m_minBox = dgVector(GetMin(left->m_minBox.m_x, right->m_minBox.m_x),
-						GetMin(left->m_minBox.m_y, right->m_minBox.m_y),
-						GetMin(left->m_minBox.m_z, right->m_minBox.m_z), dgFloat32(0.0f));
+	                    GetMin(left->m_minBox.m_y, right->m_minBox.m_y),
+	                    GetMin(left->m_minBox.m_z, right->m_minBox.m_z), dgFloat32(0.0f));
 	m_maxBox = dgVector(GetMax(left->m_maxBox.m_x, right->m_maxBox.m_x),
-						GetMax(left->m_maxBox.m_y, right->m_maxBox.m_y),
-						GetMax(left->m_maxBox.m_z, right->m_maxBox.m_z), dgFloat32(0.0f));
+	                    GetMax(left->m_maxBox.m_y, right->m_maxBox.m_y),
+	                    GetMax(left->m_maxBox.m_z, right->m_maxBox.m_z), dgFloat32(0.0f));
 
 	dgVector side0(m_maxBox - m_minBox);
 	dgVector side1(side0.m_y, side0.m_z, side0.m_x, dgFloat32(0.0f));
@@ -72,19 +72,19 @@ dgCollisionScene::dgNode::~dgNode() {
 }
 
 dgCollisionScene::dgProxy::dgProxy(dgCollision *shape, const dgMatrix &matrix,
-								   dgCollisionScene *const owner) : dgNode(), m_matrix(shape->GetOffsetMatrix() * matrix), m_userData(NULL), m_shape(shape), m_owner(owner), m_myNode(NULL) {
+                                   dgCollisionScene *const owner) : dgNode(), m_matrix(shape->GetOffsetMatrix() * matrix), m_userData(NULL), m_shape(shape), m_owner(owner), m_myNode(NULL) {
 	dgVector boxP0;
 	dgVector boxP1;
 	shape->CalcAABB(m_matrix, boxP0, boxP1);
 
 	dgVector p0(
-		boxP0.CompProduct(
-			dgVector(DG_SCENE_AABB_SCALE, DG_SCENE_AABB_SCALE,
-					 DG_SCENE_AABB_SCALE, dgFloat32(0.0f))));
+	    boxP0.CompProduct(
+	        dgVector(DG_SCENE_AABB_SCALE, DG_SCENE_AABB_SCALE,
+	                 DG_SCENE_AABB_SCALE, dgFloat32(0.0f))));
 	dgVector p1(
-		boxP1.CompProduct(
-			dgVector(DG_SCENE_AABB_SCALE, DG_SCENE_AABB_SCALE,
-					 DG_SCENE_AABB_SCALE, dgFloat32(0.0f))));
+	    boxP1.CompProduct(
+	        dgVector(DG_SCENE_AABB_SCALE, DG_SCENE_AABB_SCALE,
+	                 DG_SCENE_AABB_SCALE, dgFloat32(0.0f))));
 
 	m_minBox.m_x = dgFloor(p0.m_x) * DG_SCENE_AABB_INV_SCALE;
 	m_minBox.m_y = dgFloor(p0.m_y) * DG_SCENE_AABB_INV_SCALE;
@@ -105,22 +105,22 @@ dgCollisionScene::dgProxy::~dgProxy() {
 }
 
 dgCollisionScene::dgCollisionScene(dgWorld *world) : dgCollision(world->GetAllocator(), 0, dgGetIdentityMatrix(),
-																 m_sceneCollision),
-													 m_lock(0), m_list(world->GetAllocator()), m_fitnessList(
-																								   world->GetAllocator()) {
+	        m_sceneCollision),
+	m_lock(0), m_list(world->GetAllocator()), m_fitnessList(
+	    world->GetAllocator()) {
 	m_world = world;
 	m_rootNode = NULL;
 
 	m_rtti |= dgCollisionScene_RTTI;
 	SetCollisionBBox(
-		dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
-				 dgFloat32(0.0f)),
-		dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
-				 dgFloat32(0.0f)));
+	    dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
+	             dgFloat32(0.0f)),
+	    dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
+	             dgFloat32(0.0f)));
 }
 
 dgCollisionScene::dgCollisionScene(dgWorld *const world,
-								   dgDeserialize deserialization, void *const userData) : dgCollision(world, deserialization, userData), m_lock(0), m_list(world->GetAllocator()), m_fitnessList(world->GetAllocator()) {
+                                   dgDeserialize deserialization, void *const userData) : dgCollision(world, deserialization, userData), m_lock(0), m_list(world->GetAllocator()), m_fitnessList(world->GetAllocator()) {
 	dgInt32 data[4];
 
 	m_world = world;
@@ -133,9 +133,9 @@ dgCollisionScene::dgCollisionScene(dgWorld *const world,
 		deserialization(userData, &matrix, sizeof(dgMatrix));
 		deserialization(userData, &dataNew, sizeof(void *));
 		dgCollision *const collision = m_world->CreateFromSerialization(
-			deserialization, userData);
+		                                   deserialization, userData);
 		dgList<dgProxy *>::dgListNode *const proxyNode =
-			(dgList<dgProxy *>::dgListNode *)AddProxy(collision, matrix);
+		    (dgList<dgProxy *>::dgListNode *)AddProxy(collision, matrix);
 		dgProxy *const proxy = proxyNode->GetInfo();
 		proxy->m_userData = dataNew;
 		collision->Release();
@@ -153,7 +153,7 @@ dgCollisionScene::~dgCollisionScene(void) {
 }
 
 void dgCollisionScene::Serialize(dgSerialize callback,
-								 void *const userData) const {
+                                 void *const userData) const {
 	dgInt32 data[4];
 
 	SerializeLow(callback, userData);
@@ -165,7 +165,7 @@ void dgCollisionScene::Serialize(dgSerialize callback,
 	callback(userData, &data, sizeof(data));
 
 	for (dgList<dgProxy *>::dgListNode *node = m_list.GetFirst(); node;
-		 node = node->GetNext()) {
+	        node = node->GetNext()) {
 		dgProxy *const proxy = node->GetInfo();
 		callback(userData, &proxy->m_matrix, sizeof(dgMatrix));
 		callback(userData, &proxy->m_userData, sizeof(void *));
@@ -183,13 +183,13 @@ void dgCollisionScene::SetProxyMatrix(void *proxy, const dgMatrix &matrix) {
 	entry->m_shape->CalcAABB(entry->m_matrix, boxP0, boxP1);
 
 	dgVector p0(
-		boxP0.CompProduct(
-			dgVector(DG_SCENE_AABB_SCALE, DG_SCENE_AABB_SCALE,
-					 DG_SCENE_AABB_SCALE, dgFloat32(0.0f))));
+	    boxP0.CompProduct(
+	        dgVector(DG_SCENE_AABB_SCALE, DG_SCENE_AABB_SCALE,
+	                 DG_SCENE_AABB_SCALE, dgFloat32(0.0f))));
 	dgVector p1(
-		boxP1.CompProduct(
-			dgVector(DG_SCENE_AABB_SCALE, DG_SCENE_AABB_SCALE,
-					 DG_SCENE_AABB_SCALE, dgFloat32(0.0f))));
+	    boxP1.CompProduct(
+	        dgVector(DG_SCENE_AABB_SCALE, DG_SCENE_AABB_SCALE,
+	                 DG_SCENE_AABB_SCALE, dgFloat32(0.0f))));
 
 	p0.m_x = dgFloor(p0.m_x) * DG_SCENE_AABB_INV_SCALE;
 	p0.m_y = dgFloor(p0.m_y) * DG_SCENE_AABB_INV_SCALE;
@@ -210,7 +210,7 @@ void dgCollisionScene::SetProxyMatrix(void *proxy, const dgMatrix &matrix) {
 		dgVector minBox;
 		dgVector maxBox;
 		dgFloat32 area = CalculateSurfaceArea(parent->m_left, parent->m_right,
-											  minBox, maxBox);
+		                                      minBox, maxBox);
 		if (!((parent->m_minBox.m_x < minBox.m_x) || (parent->m_minBox.m_y < minBox.m_y) || (parent->m_minBox.m_z < minBox.m_z) || (parent->m_maxBox.m_x > maxBox.m_x) || (parent->m_maxBox.m_y < maxBox.m_y) || (parent->m_maxBox.m_z < maxBox.m_z))) {
 			break;
 		}
@@ -239,7 +239,7 @@ void *dgCollisionScene::GetProxyUserData(void *const proxy) const {
 }
 
 void dgCollisionScene::SetCollisionCallback(
-	dgCollisionMeshCollisionCallback debugCallback) {
+    dgCollisionMeshCollisionCallback debugCallback) {
 	_ASSERTE(0);
 	/*
 	 for (dgList<dgProxy>::dgListNode* node = m_list.GetFirst(); node; node = node->GetNext()) {
@@ -254,13 +254,13 @@ void dgCollisionScene::SetCollisionCallback(
 }
 
 void dgCollisionScene::CalcAABB(const dgMatrix &matrix, dgVector &p0,
-								dgVector &p1) const {
+                                dgVector &p1) const {
 	dgVector origin(matrix.TransformVector(m_boxOrigin));
 	dgVector size(
-		m_boxSize.m_x * dgAbsf(matrix[0][0]) + m_boxSize.m_y * dgAbsf(matrix[1][0]) + m_boxSize.m_z * dgAbsf(matrix[2][0]) + DG_MAX_COLLISION_PADDING,
-		m_boxSize.m_x * dgAbsf(matrix[0][1]) + m_boxSize.m_y * dgAbsf(matrix[1][1]) + m_boxSize.m_z * dgAbsf(matrix[2][1]) + DG_MAX_COLLISION_PADDING,
-		m_boxSize.m_x * dgAbsf(matrix[0][2]) + m_boxSize.m_y * dgAbsf(matrix[1][2]) + m_boxSize.m_z * dgAbsf(matrix[2][2]) + DG_MAX_COLLISION_PADDING,
-		dgFloat32(0.0f));
+	    m_boxSize.m_x * dgAbsf(matrix[0][0]) + m_boxSize.m_y * dgAbsf(matrix[1][0]) + m_boxSize.m_z * dgAbsf(matrix[2][0]) + DG_MAX_COLLISION_PADDING,
+	    m_boxSize.m_x * dgAbsf(matrix[0][1]) + m_boxSize.m_y * dgAbsf(matrix[1][1]) + m_boxSize.m_z * dgAbsf(matrix[2][1]) + DG_MAX_COLLISION_PADDING,
+	    m_boxSize.m_x * dgAbsf(matrix[0][2]) + m_boxSize.m_y * dgAbsf(matrix[1][2]) + m_boxSize.m_z * dgAbsf(matrix[2][2]) + DG_MAX_COLLISION_PADDING,
+	    dgFloat32(0.0f));
 
 	p0 = origin - size;
 	p1 = origin + size;
@@ -285,18 +285,18 @@ void dgCollisionScene::CalcAABB(const dgMatrix &matrix, dgVector &p0,
 }
 
 void dgCollisionScene::CalcAABBSimd(const dgMatrix &matrix, dgVector &p0,
-									dgVector &p1) const {
+                                    dgVector &p1) const {
 	CalcAABB(matrix, p0, p1);
 }
 
 void dgCollisionScene::DebugCollision(const dgMatrix &matrix,
-									  OnDebugCollisionMeshCallback callback, void *const userData) const {
+                                      OnDebugCollisionMeshCallback callback, void *const userData) const {
 	for (dgList<dgProxy *>::dgListNode *node = m_list.GetFirst(); node;
-		 node = node->GetNext()) {
+	        node = node->GetNext()) {
 		const dgCollisionScene::dgProxy *entry = node->GetInfo();
 		dgMatrix proxyMatrix(entry->m_matrix * matrix);
 		entry->m_shape->DebugCollision(
-			entry->m_shape->GetOffsetMatrix() * proxyMatrix, callback, userData);
+		    entry->m_shape->GetOffsetMatrix() * proxyMatrix, callback, userData);
 	}
 }
 
@@ -328,7 +328,7 @@ void dgCollisionScene::SetCollisionBBox(const dgVector &p0, const dgVector &p1) 
 }
 
 void dgCollisionScene::CalculateInertia(dgVector &inertia,
-										dgVector &origin) const {
+                                        dgVector &origin) const {
 	inertia.m_x = dgFloat32(0.0f);
 	inertia.m_y = dgFloat32(0.0f);
 	inertia.m_z = dgFloat32(0.0f);
@@ -339,10 +339,10 @@ void dgCollisionScene::CalculateInertia(dgVector &inertia,
 }
 
 dgVector dgCollisionScene::CalculateVolumeIntegral(const dgMatrix &globalMatrix,
-												   GetBuoyancyPlane bouyancyPlane, void *const context) const {
+        GetBuoyancyPlane bouyancyPlane, void *const context) const {
 	_ASSERTE(0);
 	return dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
-					dgFloat32(0.0f));
+	                dgFloat32(0.0f));
 }
 
 void dgCollisionScene::GetCollisionInfo(dgCollisionInfo *info) const {
@@ -352,7 +352,7 @@ void dgCollisionScene::GetCollisionInfo(dgCollisionInfo *info) const {
 }
 
 bool dgCollisionScene::OOBBTest(const dgMatrix &matrix,
-								const dgCollisionConvex *const shape, void *const cacheOrder) const {
+                                const dgCollisionConvex *const shape, void *const cacheOrder) const {
 	_ASSERTE(0);
 	return true;
 }
@@ -363,9 +363,9 @@ dgVector dgCollisionScene::SupportVertex(const dgVector &dir) const {
 }
 
 dgFloat32 dgCollisionScene::RayCastSimd(const dgVector &localP0,
-										const dgVector &localP1, dgContactPoint &contactOut,
-										OnRayPrecastAction preFilter, const dgBody *const body,
-										void *const userData) const {
+                                        const dgVector &localP1, dgContactPoint &contactOut,
+                                        OnRayPrecastAction preFilter, const dgBody *const body,
+                                        void *const userData) const {
 	const dgNode *stackPool[DG_SCENE_MAX_STACK_DEPTH];
 	if (!m_rootNode) {
 		return dgFloat32(1.2f);
@@ -388,11 +388,11 @@ dgFloat32 dgCollisionScene::RayCastSimd(const dgVector &localP0,
 				dgVector l0(proxy->m_matrix.UntransformVector(localP0));
 				dgVector l1(proxy->m_matrix.UntransformVector(localP1));
 				dgFloat32 param = proxy->m_shape->RayCastSimd(l0, l1, tmpContactOut,
-															  preFilter, body, userData);
+				                  preFilter, body, userData);
 				_ASSERTE(param >= dgFloat32(0.0f));
 				if (param < maxParam) {
 					contactOut.m_normal = proxy->m_matrix.RotateVectorSimd(
-						tmpContactOut.m_normal);
+					                          tmpContactOut.m_normal);
 					maxParam = param;
 					ray.Reset(maxParam);
 				}
@@ -413,9 +413,9 @@ dgFloat32 dgCollisionScene::RayCastSimd(const dgVector &localP0,
 }
 
 dgFloat32 dgCollisionScene::RayCast(const dgVector &localP0,
-									const dgVector &localP1, dgContactPoint &contactOut,
-									OnRayPrecastAction preFilter, const dgBody *const body,
-									void *const userData) const {
+                                    const dgVector &localP1, dgContactPoint &contactOut,
+                                    OnRayPrecastAction preFilter, const dgBody *const body,
+                                    void *const userData) const {
 	const dgNode *stackPool[DG_SCENE_MAX_STACK_DEPTH];
 
 	if (!m_rootNode) {
@@ -441,11 +441,11 @@ dgFloat32 dgCollisionScene::RayCast(const dgVector &localP0,
 				dgVector l0(proxy->m_matrix.UntransformVector(localP0));
 				dgVector l1(proxy->m_matrix.UntransformVector(localP1));
 				dgFloat32 param = proxy->m_shape->RayCast(l0, l1, tmpContactOut,
-														  preFilter, body, userData);
+				                  preFilter, body, userData);
 				_ASSERTE(param >= dgFloat32(0.0f));
 				if (param < maxParam) {
 					contactOut.m_normal = proxy->m_matrix.RotateVector(
-						tmpContactOut.m_normal);
+					                          tmpContactOut.m_normal);
 					maxParam = param;
 					ray.Reset(maxParam);
 				}
@@ -466,13 +466,13 @@ dgFloat32 dgCollisionScene::RayCast(const dgVector &localP0,
 }
 
 void dgCollisionScene::CollidePairSimd(
-	dgCollidingPairCollector::dgPair *const pair,
-	dgCollisionParamProxy &proxy) const {
+    dgCollidingPairCollector::dgPair *const pair,
+    dgCollisionParamProxy &proxy) const {
 	const dgNode *stackPool[DG_SCENE_MAX_STACK_DEPTH];
 
 	_ASSERTE(pair->m_body1->GetCollision() == this);
 	_ASSERTE(
-		pair->m_body1->GetCollision()->IsType(dgCollision::dgCollisionScene_RTTI));
+	    pair->m_body1->GetCollision()->IsType(dgCollision::dgCollisionScene_RTTI));
 
 	dgVector p0;
 	dgVector p1;
@@ -508,12 +508,12 @@ void dgCollisionScene::CollidePairSimd(
 }
 
 void dgCollisionScene::CollidePair(dgCollidingPairCollector::dgPair *const pair,
-								   dgCollisionParamProxy &proxy) const {
+                                   dgCollisionParamProxy &proxy) const {
 	const dgNode *stackPool[DG_SCENE_MAX_STACK_DEPTH];
 
 	_ASSERTE(pair->m_body1->GetCollision() == this);
 	_ASSERTE(
-		pair->m_body1->GetCollision()->IsType(dgCollision::dgCollisionScene_RTTI));
+	    pair->m_body1->GetCollision()->IsType(dgCollision::dgCollisionScene_RTTI));
 
 	dgVector p0;
 	dgVector p1;
@@ -559,12 +559,12 @@ void dgCollisionScene::ImproveNodeFitness(dgNode *const node) {
 			dgVector cost1P0;
 			dgVector cost1P1;
 			dgFloat32 cost1 = CalculateSurfaceArea(node->m_right,
-												   node->m_parent->m_right, cost1P0, cost1P1);
+			                                       node->m_parent->m_right, cost1P0, cost1P1);
 
 			dgVector cost2P0;
 			dgVector cost2P1;
 			dgFloat32 cost2 = CalculateSurfaceArea(node->m_left,
-												   node->m_parent->m_right, cost2P0, cost2P1);
+			                                       node->m_parent->m_right, cost2P0, cost2P1);
 
 			if ((cost1 <= cost0) && (cost1 <= cost2)) {
 				dgNode *const parent = node->m_parent;
@@ -622,12 +622,12 @@ void dgCollisionScene::ImproveNodeFitness(dgNode *const node) {
 			dgVector cost1P0;
 			dgVector cost1P1;
 			dgFloat32 cost1 = CalculateSurfaceArea(node->m_left,
-												   node->m_parent->m_left, cost1P0, cost1P1);
+			                                       node->m_parent->m_left, cost1P0, cost1P1);
 
 			dgVector cost2P0;
 			dgVector cost2P1;
 			dgFloat32 cost2 = CalculateSurfaceArea(node->m_right,
-												   node->m_parent->m_left, cost2P0, cost2P1);
+			                                       node->m_parent->m_left, cost2P0, cost2P1);
 
 			if ((cost1 <= cost0) && (cost1 <= cost2)) {
 
@@ -694,13 +694,13 @@ void dgCollisionScene::ImproveTotalFitness() {
 	do {
 		prevCost = newCost;
 		for (dgList<dgNode *>::dgListNode *node = m_fitnessList.GetFirst(); node;
-			 node = node->GetNext()) {
+		        node = node->GetNext()) {
 			ImproveNodeFitness(node->GetInfo());
 		}
 
 		newCost = dgFloat32(0.0f);
 		for (dgList<dgNode *>::dgListNode *node = m_fitnessList.GetFirst(); node;
-			 node = node->GetNext()) {
+		        node = node->GetNext()) {
 			newCost += node->GetInfo()->m_surfaceArea;
 		}
 		maxPasses--;
@@ -710,13 +710,13 @@ void dgCollisionScene::ImproveTotalFitness() {
 }
 
 dgFloat32 dgCollisionScene::CalculateSurfaceArea(const dgNode *const node0,
-												 const dgNode *const node1, dgVector &minBox, dgVector &maxBox) const {
+        const dgNode *const node1, dgVector &minBox, dgVector &maxBox) const {
 	minBox = dgVector(GetMin(node0->m_minBox.m_x, node1->m_minBox.m_x),
-					  GetMin(node0->m_minBox.m_y, node1->m_minBox.m_y),
-					  GetMin(node0->m_minBox.m_z, node1->m_minBox.m_z), dgFloat32(0.0f));
+	                  GetMin(node0->m_minBox.m_y, node1->m_minBox.m_y),
+	                  GetMin(node0->m_minBox.m_z, node1->m_minBox.m_z), dgFloat32(0.0f));
 	maxBox = dgVector(GetMax(node0->m_maxBox.m_x, node1->m_maxBox.m_x),
-					  GetMax(node0->m_maxBox.m_y, node1->m_maxBox.m_y),
-					  GetMax(node0->m_maxBox.m_z, node1->m_maxBox.m_z), dgFloat32(0.0f));
+	                  GetMax(node0->m_maxBox.m_y, node1->m_maxBox.m_y),
+	                  GetMax(node0->m_maxBox.m_z, node1->m_maxBox.m_z), dgFloat32(0.0f));
 	dgVector side0(maxBox - minBox);
 	dgVector side1(side0.m_y, side0.m_z, side0.m_x, dgFloat32(0.0f));
 	return side0 % side1;
@@ -728,15 +728,15 @@ void *dgCollisionScene::GetFirstProxy() const {
 
 void *dgCollisionScene::GetNextProxy(void *const proxy) const {
 	dgList<dgProxy *>::dgListNode *const node =
-		(dgList<dgProxy *>::dgListNode *)proxy;
+	    (dgList<dgProxy *>::dgListNode *)proxy;
 	return node->GetNext();
 }
 
 void *dgCollisionScene::AddProxy(dgCollision *const shape,
-								 const dgMatrix &matrix) {
+                                 const dgMatrix &matrix) {
 	shape->AddRef();
 	dgProxy *const newNode = new (m_world->GetAllocator()) dgProxy(shape, matrix,
-																   this);
+	        this);
 	newNode->m_myNode = m_list.Append(newNode);
 
 	if (!m_rootNode) {
@@ -758,12 +758,12 @@ void *dgCollisionScene::AddProxy(dgCollision *const shape,
 			dgVector leftP0;
 			dgVector leftP1;
 			dgFloat32 leftSurfaceArea = CalculateSurfaceArea(newNode, sibling->m_left,
-															 leftP0, leftP1);
+			                            leftP0, leftP1);
 
 			dgVector rightP0;
 			dgVector rightP1;
 			dgFloat32 rightSurfaceArea = CalculateSurfaceArea(newNode,
-															  sibling->m_right, rightP0, rightP1);
+			                             sibling->m_right, rightP0, rightP1);
 
 			if (leftSurfaceArea < rightSurfaceArea) {
 				sibling = sibling->m_left;
@@ -779,7 +779,7 @@ void *dgCollisionScene::AddProxy(dgCollision *const shape,
 		}
 
 		dgNode *const parent = new (m_world->GetAllocator()) dgNode(sibling,
-																	newNode);
+		        newNode);
 		parent->m_fitnessNode = m_fitnessList.Append(parent);
 
 		if (!parent->m_parent) {
@@ -792,7 +792,7 @@ void *dgCollisionScene::AddProxy(dgCollision *const shape,
 
 void dgCollisionScene::RemoveProxy(void *const proxy) {
 	dgList<dgProxy *>::dgListNode *const node =
-		(dgList<dgProxy *>::dgListNode *)proxy;
+	    (dgList<dgProxy *>::dgListNode *)proxy;
 
 	dgProxy *const treeNode = node->GetInfo();
 	m_world->ReleaseCollision(treeNode->m_shape);

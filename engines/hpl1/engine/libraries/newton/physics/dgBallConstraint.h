@@ -27,7 +27,7 @@
 #pragma warning(disable : 4201) // nonstandard extension used : nameless struct/union
 #endif
 
-// template<class T>	class dgPool;
+// template<class T>    class dgPool;
 
 class dgBallConstraint;
 typedef dgUnsigned32(dgApi *dgBallJointFriction)(const dgBallConstraint &ball, dgFloat32 timestep);
@@ -49,16 +49,16 @@ public:
 	void SetLatealLimitState(bool state);
 
 	void SetLimits(const dgVector &coneDir, dgFloat32 minConeAngle, dgFloat32 maxConeAngle, dgFloat32 maxTwistAngle,
-				   const dgVector &bilateralDir, dgFloat32 negativeBilateralConeAngle, dgFloat32 positiveBilateralConeAngle);
+	               const dgVector &bilateralDir, dgFloat32 negativeBilateralConeAngle, dgFloat32 positiveBilateralConeAngle);
 
 private:
 	dgBallConstraint();
 	virtual ~dgBallConstraint();
-	//	virtual void Remove (dgWorld* world);
+	//  virtual void Remove (dgWorld* world);
 
 	void SetPivotPoint(const dgVector &pivot);
 	virtual dgUnsigned32 JacobianDerivative(dgContraintDescritor &params);
-	//	static dgBallConstraint* Create(dgWorld* world);
+	//  static dgBallConstraint* Create(dgWorld* world);
 
 	dgVector m_angles;
 	union limits {
@@ -74,10 +74,10 @@ private:
 	dgFloat32 m_coneAngleCos;
 	dgBallJointFriction m_jointUserCallback;
 
-	//	dgUnsigned32 m_reserve[3];
+	//  dgUnsigned32 m_reserve[3];
 
 	friend class dgWorld;
-	//	friend class dgPool<dgBallConstraint>;
+	//  friend class dgPool<dgBallConstraint>;
 };
 
 // class dgBallConstraintArray: public dgPoolContainer<dgBallConstraint>

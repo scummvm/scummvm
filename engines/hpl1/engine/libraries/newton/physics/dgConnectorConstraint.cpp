@@ -55,7 +55,7 @@
 
  dgConnectorConstraint* dgConnectorConstraint::Create()
  {
- dgConnectorConstraint*	constraint;
+ dgConnectorConstraint* constraint;
 
  constraint = dgConnectorConstraintArray::GetPool().GetElement();
 
@@ -93,7 +93,7 @@
  _ASSERTE (0);
  return 0;
 
- //	dgFloat32 k;
+ // dgFloat32 k;
  dgBody* body0;
  dgBallConstraint::JacobianDerivative (params);
 

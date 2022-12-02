@@ -57,18 +57,19 @@ int PrepareSystemFunction(asCScriptFunction *func, asSSystemFunctionInterface *i
 
 int CallSystemFunction(int id, asCContext *context);
 
-inline asPWORD FuncPtrToUInt(asFUNCTION_t func)
-{
+inline asPWORD FuncPtrToUInt(asFUNCTION_t func) {
 	// A little trickery as the C++ standard doesn't allow direct
 	// conversion between function pointer and data pointer
-	union { asFUNCTION_t func; asPWORD idx; } u;
+	union {
+		asFUNCTION_t func;
+		asPWORD idx;
+	} u;
 	u.func = func;
 
 	return u.idx;
 }
 
-enum internalCallConv
-{
+enum internalCallConv {
 	ICC_GENERIC_FUNC,
 	ICC_GENERIC_FUNC_RETURNINMEM, // never used
 	ICC_CDECL,
@@ -95,8 +96,7 @@ enum internalCallConv
 	ICC_VIRTUAL_THISCALL_OBJFIRST_RETURNINMEM
 };
 
-struct asSSystemFunctionInterface
-{
+struct asSSystemFunctionInterface {
 	asFUNCTION_t         func;
 	int                  baseOffset;
 	internalCallConv     callConv;
@@ -111,26 +111,22 @@ struct asSSystemFunctionInterface
 	bool                 isCompositeIndirect;
 	void                *auxiliary; // can be used for functors, e.g. by asCALL_THISCALL_ASGLOBAL or asCALL_THISCALL_OBJFIRST
 
-	struct SClean
-	{
+	struct SClean {
 		asCObjectType *ot; // argument type for clean up
 		short op;          // clean up operation: 0 = release, 1 = free, 2 = destruct then free
 		short off;         // argument offset on the stack
 	};
 	asCArray<SClean>     cleanArgs;
 
-	asSSystemFunctionInterface()
-	{ 
-		Clear(); 
+	asSSystemFunctionInterface() {
+		Clear();
 	}
 
-	asSSystemFunctionInterface(const asSSystemFunctionInterface &in)
-	{
+	asSSystemFunctionInterface(const asSSystemFunctionInterface &in) {
 		*this = in;
 	}
 
-	void Clear()
-	{
+	void Clear() {
 		func                = 0;
 		baseOffset          = 0;
 		callConv            = ICC_GENERIC_FUNC;
@@ -148,8 +144,7 @@ struct asSSystemFunctionInterface
 		cleanArgs.SetLength(0);
 	}
 
-	asSSystemFunctionInterface &operator=(const asSSystemFunctionInterface &in)
-	{
+	asSSystemFunctionInterface &operator=(const asSSystemFunctionInterface &in) {
 		func                = in.func;
 		baseOffset          = in.baseOffset;
 		callConv            = in.callConv;

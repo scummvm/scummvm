@@ -23,155 +23,128 @@
 #include "dgTypes.h"
 #include "dgThreads.h"
 
-inline void dgSpinUnlock(dgInt32 *spin)
-{
-  *spin = 0;
+inline void dgSpinUnlock(dgInt32 *spin) {
+	*spin = 0;
 }
 
-dgThreads::dgThreads()
-{
-  m_numberOfCPUCores = 0;
+dgThreads::dgThreads() {
+	m_numberOfCPUCores = 0;
 
-  m_numOfThreads = 0;
-  m_exit = false;
+	m_numOfThreads = 0;
+	m_exit = false;
 
-  m_topIndex = 0;
-  m_bottomIndex = 0;
-  m_workInProgress = 0;
-  m_globalSpinLock = 0;
-  m_workToDoSpinLock = 0;
+	m_topIndex = 0;
+	m_bottomIndex = 0;
+	m_workInProgress = 0;
+	m_globalSpinLock = 0;
+	m_workToDoSpinLock = 0;
 
-  m_getPerformanceCount = NULL;
-  for (dgInt32 i = 0; i < DG_MAXIMUN_THREADS; i++)
-  {
-    m_localData[i].m_ticks = 0;
-    m_localData[i].m_threadIndex = i;
-    m_localData[i].m_manager = this;
-  }
+	m_getPerformanceCount = NULL;
+	for (dgInt32 i = 0; i < DG_MAXIMUN_THREADS; i++) {
+		m_localData[i].m_ticks = 0;
+		m_localData[i].m_threadIndex = i;
+		m_localData[i].m_manager = this;
+	}
 }
 
-dgThreads::~dgThreads()
-{
+dgThreads::~dgThreads() {
 
 }
 
-dgInt32 dgThreads::GetThreadCount() const
-{
-  return (m_numOfThreads == 0) ? 1 : m_numOfThreads;
+dgInt32 dgThreads::GetThreadCount() const {
+	return (m_numOfThreads == 0) ? 1 : m_numOfThreads;
 }
 
-void dgThreads::ClearTimers()
-{
-
-}
-
-void dgThreads::SetPerfomanceCounter(OnGetPerformanceCountCallback callback)
-{
-  m_getPerformanceCount = callback;
-}
-
-dgUnsigned32 dgThreads::GetPerfomanceTicks(dgUnsigned32 threadIndex) const
-{
-
-  if (dgInt32(threadIndex) <= m_numOfThreads)
-  {
-    return dgUnsigned32(m_localData[threadIndex].m_ticks);
-  }
-  else
-  {
-    return 0;
-  }
-}
-
-void dgThreads::CreateThreaded(dgInt32 threads)
-{
+void dgThreads::ClearTimers() {
 
 }
 
-void dgThreads::DestroydgThreads()
-{
+void dgThreads::SetPerfomanceCounter(OnGetPerformanceCountCallback callback) {
+	m_getPerformanceCount = callback;
+}
+
+dgUnsigned32 dgThreads::GetPerfomanceTicks(dgUnsigned32 threadIndex) const {
+
+	if (dgInt32(threadIndex) <= m_numOfThreads) {
+		return dgUnsigned32(m_localData[threadIndex].m_ticks);
+	} else {
+		return 0;
+	}
+}
+
+void dgThreads::CreateThreaded(dgInt32 threads) {
+
+}
+
+void dgThreads::DestroydgThreads() {
 
 }
 
 //Queues up another to work
-dgInt32 dgThreads::SubmitJob(dgWorkerThread* const job)
-{
+dgInt32 dgThreads::SubmitJob(dgWorkerThread *const job) {
 	_ASSERTE(job->m_threadIndex != -1);
 	job->ThreadExecute();
 	return 1;
 }
 
-void* dgThreads::ThreadExecute(void *param)
-{
-  dgLocadData& data = *(dgLocadData*) param;
-  data.m_manager->DoWork(data.m_threadIndex);
-  return 0;
+void *dgThreads::ThreadExecute(void *param) {
+	dgLocadData &data = *(dgLocadData *) param;
+	data.m_manager->DoWork(data.m_threadIndex);
+	return 0;
 }
 
-dgInt32 dgThreads::GetWork(dgWorkerThread** job)
-{
-  dgWorkerThread* cWorker = m_queue[m_bottomIndex];
-  *job = cWorker;
-  return 1;
+dgInt32 dgThreads::GetWork(dgWorkerThread **job) {
+	dgWorkerThread *cWorker = m_queue[m_bottomIndex];
+	*job = cWorker;
+	return 1;
 }
 
-void dgThreads::DoWork(dgInt32 mythreadIndex)
-{
-  dgWorkerThread* job;
+void dgThreads::DoWork(dgInt32 mythreadIndex) {
+	dgWorkerThread *job;
 
-      job->ThreadExecute();
+	job->ThreadExecute();
 }
 
-void dgThreads::SynchronizationBarrier()
-{
+void dgThreads::SynchronizationBarrier() {
 
 }
 
 void dgThreads::CalculateChunkSizes(dgInt32 elements,
-    dgInt32* const chunkSizes) const
-{
-  dgInt32 step;
-  dgInt32 fraction;
+                                    dgInt32 *const chunkSizes) const {
+	dgInt32 step;
+	dgInt32 fraction;
 
-  if (m_numOfThreads)
-  {
-    step = elements / m_numOfThreads;
-    fraction = elements - step * m_numOfThreads;
-    for (dgInt32 i = 0; i < m_numOfThreads; i++)
-    {
-      chunkSizes[i] = step + (fraction > 0);
-      fraction--;
-    }
-  }
-  else
-  {
-    chunkSizes[0] = elements;
-  }
+	if (m_numOfThreads) {
+		step = elements / m_numOfThreads;
+		fraction = elements - step * m_numOfThreads;
+		for (dgInt32 i = 0; i < m_numOfThreads; i++) {
+			chunkSizes[i] = step + (fraction > 0);
+			fraction--;
+		}
+	} else {
+		chunkSizes[0] = elements;
+	}
 }
 
-void dgThreads::dgGetLock() const
-{
-  _ASSERTE(sizeof (dgInt32) == sizeof (long));
+void dgThreads::dgGetLock() const {
+	_ASSERTE(sizeof(dgInt32) == sizeof(long));
 
-  //spinLock( &m_globalSpinLock );
+	//spinLock( &m_globalSpinLock );
 // linux and mac may need to yeald time
 //	while(! __sync_bool_compare_and_swap(&m_globalSpinLock, 0, 1) ) {
 //		ThreadYield();
 //	}
 }
 
-void dgThreads::dgReleaseLock() const
-{
-  dgSpinUnlock(&m_globalSpinLock);
+void dgThreads::dgReleaseLock() const {
+	dgSpinUnlock(&m_globalSpinLock);
 }
 
-void dgThreads::dgGetIndirectLock(dgInt32* lockVar)
-{
-  _ASSERTE(sizeof (dgInt32) == sizeof (long));
+void dgThreads::dgGetIndirectLock(dgInt32 *lockVar) {
+	_ASSERTE(sizeof(dgInt32) == sizeof(long));
 }
 
-void dgThreads::dgReleaseIndirectLock(dgInt32* lockVar)
-{
-  _ASSERTE(sizeof (dgInt32) == sizeof (long));
-  dgSpinUnlock(lockVar);
+void dgThreads::dgReleaseIndirectLock(dgInt32 *lockVar) {
+	_ASSERTE(sizeof(dgInt32) == sizeof(long));
+	dgSpinUnlock(lockVar);
 }

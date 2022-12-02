@@ -33,13 +33,13 @@ dgInt32 dgCollisionCone::m_shapeRefCount = 0;
 dgConvexSimplexEdge dgCollisionCone::m_edgeArray[DG_CONE_SEGMENTS * 4];
 
 dgCollisionCone::dgCollisionCone(dgMemoryAllocator *allocator,
-								 dgUnsigned32 signature, dgFloat32 radius, dgFloat32 height,
-								 const dgMatrix &matrix) : dgCollisionConvex(allocator, signature, matrix, m_coneCollision) {
+                                 dgUnsigned32 signature, dgFloat32 radius, dgFloat32 height,
+                                 const dgMatrix &matrix) : dgCollisionConvex(allocator, signature, matrix, m_coneCollision) {
 	Init(radius, height);
 }
 
 dgCollisionCone::dgCollisionCone(dgWorld *const world,
-								 dgDeserialize deserialization, void *const userData) : dgCollisionConvex(world, deserialization, userData) {
+                                 dgDeserialize deserialization, void *const userData) : dgCollisionConvex(world, deserialization, userData) {
 	dgVector size;
 	deserialization(userData, &size, sizeof(dgVector));
 	Init(size.m_x, size.m_y);
@@ -69,7 +69,7 @@ void dgCollisionCone::Init(dgFloat32 radius, dgFloat32 height) {
 		angle += dgPI2 / DG_CONE_SEGMENTS;
 	}
 	m_vertex[DG_CONE_SEGMENTS] = dgVector(m_height, dgFloat32(0.0f),
-										  dgFloat32(0.0f), dgFloat32(1.0f));
+	                                      dgFloat32(0.0f), dgFloat32(1.0f));
 
 	m_edgeCount = DG_CONE_SEGMENTS * 4;
 	m_vertexCount = DG_CONE_SEGMENTS + 1;
@@ -135,7 +135,7 @@ dgInt32 dgCollisionCone::CalculateSignature() const {
 }
 
 void dgCollisionCone::DebugCollision(const dgMatrix &matrixPtr,
-									 OnDebugCollisionMeshCallback callback, void *const userData) const {
+                                     OnDebugCollisionMeshCallback callback, void *const userData) const {
 	dgInt32 i;
 	dgInt32 j;
 	dgFloat32 y;
@@ -160,10 +160,10 @@ void dgCollisionCone::DebugCollision(const dgMatrix &matrixPtr,
 	pool[i].m_y = dgFloat32(0.0f);
 	pool[i].m_z = dgFloat32(0.0f);
 
-	//	const dgMatrix &matrix = myBody.GetCollisionMatrix();
+	//  const dgMatrix &matrix = myBody.GetCollisionMatrix();
 	dgMatrix matrix(GetOffsetMatrix() * matrixPtr);
 	matrix.TransformTriplex(&pool[0].m_x, sizeof(dgTriplex), &pool[0].m_x,
-							sizeof(dgTriplex), NUMBER_OF_DEBUG_SEGMENTS + 1);
+	                        sizeof(dgTriplex), NUMBER_OF_DEBUG_SEGMENTS + 1);
 
 	j = NUMBER_OF_DEBUG_SEGMENTS - 1;
 	for (i = 0; i < NUMBER_OF_DEBUG_SEGMENTS; i++) {
@@ -181,7 +181,7 @@ void dgCollisionCone::DebugCollision(const dgMatrix &matrixPtr,
 }
 
 void dgCollisionCone::SetCollisionBBox(const dgVector &p0__,
-									   const dgVector &p1__) {
+                                       const dgVector &p1__) {
 	_ASSERTE(0);
 }
 
@@ -213,7 +213,7 @@ dgVector dgCollisionCone::SupportVertex(const dgVector &dir) const {
 // }
 
 dgFloat32 dgCollisionCone::CalculateMassProperties(dgVector &inertia,
-												   dgVector &crossInertia, dgVector &centerOfMass) const {
+        dgVector &crossInertia, dgVector &centerOfMass) const {
 	dgFloat32 volume;
 	dgFloat32 inertaxx;
 	dgFloat32 inertayyzz;
@@ -252,7 +252,7 @@ dgFloat32 dgCollisionCone::CalculateMassProperties(dgVector &inertia,
 }
 
 dgInt32 dgCollisionCone::CalculatePlaneIntersection(const dgVector &normal,
-													const dgVector &origin, dgVector *const contactsOut) const {
+        const dgVector &origin, dgVector *const contactsOut) const {
 	dgInt32 i;
 	dgInt32 count;
 	dgFloat32 y;
@@ -262,32 +262,32 @@ dgInt32 dgCollisionCone::CalculatePlaneIntersection(const dgVector &normal,
 	dgFloat32 magInv;
 
 	if (dgAbsf(normal.m_x) < dgFloat32(0.999f)) {
-		//		magInv = dgRsqrt (normal.m_y * normal.m_y + normal.m_z * normal.m_z);
-		//		cosAng = normal.m_y * magInv;
-		//		sinAng = normal.m_z * magInv;
-		//		dgMatrix matrix (dgGetIdentityMatrix ());
-		//		matrix[1][1] = cosAng;
-		//		matrix[1][2] = sinAng;
-		//		matrix[2][1] = -sinAng;
-		//		matrix[2][2] = cosAng;
-		//		dgVector normal2 (matrix.UnrotateVector (normal));
-		//		dgVector origin2 (matrix.UnrotateVector (origin));
-		//		count = dgCollisionConvex::CalculatePlaneIntersection (normal1, origin1, contactsOut);
-		//		matrix.TransformTriplex (contactsOut, sizeof (dgVector), contactsOut, sizeof (dgVector), count);
+		//      magInv = dgRsqrt (normal.m_y * normal.m_y + normal.m_z * normal.m_z);
+		//      cosAng = normal.m_y * magInv;
+		//      sinAng = normal.m_z * magInv;
+		//      dgMatrix matrix (dgGetIdentityMatrix ());
+		//      matrix[1][1] = cosAng;
+		//      matrix[1][2] = sinAng;
+		//      matrix[2][1] = -sinAng;
+		//      matrix[2][2] = cosAng;
+		//      dgVector normal2 (matrix.UnrotateVector (normal));
+		//      dgVector origin2 (matrix.UnrotateVector (origin));
+		//      count = dgCollisionConvex::CalculatePlaneIntersection (normal1, origin1, contactsOut);
+		//      matrix.TransformTriplex (contactsOut, sizeof (dgVector), contactsOut, sizeof (dgVector), count);
 
 		magInv = dgRsqrt(normal.m_y * normal.m_y + normal.m_z * normal.m_z);
 		cosAng = normal.m_y * magInv;
 		sinAng = normal.m_z * magInv;
 		_ASSERTE(
-			dgAbsf(normal.m_z * cosAng - normal.m_y * sinAng) < dgFloat32(1.0e-4f));
-		//		dgVector normal1 (normal.m_x, normal.m_y * cosAng + normal.m_z * sinAng,
-		//									  normal.m_z * cosAng - normal.m_y * sinAng, dgFloat32 (0.0f));
+		    dgAbsf(normal.m_z * cosAng - normal.m_y * sinAng) < dgFloat32(1.0e-4f));
+		//      dgVector normal1 (normal.m_x, normal.m_y * cosAng + normal.m_z * sinAng,
+		//                                    normal.m_z * cosAng - normal.m_y * sinAng, dgFloat32 (0.0f));
 		dgVector normal1(normal.m_x, normal.m_y * cosAng + normal.m_z * sinAng,
-						 dgFloat32(0.0f), dgFloat32(0.0f));
+		                 dgFloat32(0.0f), dgFloat32(0.0f));
 		dgVector origin1(origin.m_x, origin.m_y * cosAng + origin.m_z * sinAng,
-						 origin.m_z * cosAng - origin.m_y * sinAng, dgFloat32(0.0f));
+		                 origin.m_z * cosAng - origin.m_y * sinAng, dgFloat32(0.0f));
 		count = dgCollisionConvex::CalculatePlaneIntersection(normal1, origin1,
-															  contactsOut);
+		        contactsOut);
 		for (i = 0; i < count; i++) {
 			y = contactsOut[i].m_y;
 			z = contactsOut[i].m_z;
@@ -297,14 +297,14 @@ dgInt32 dgCollisionCone::CalculatePlaneIntersection(const dgVector &normal,
 
 	} else {
 		count = dgCollisionConvex::CalculatePlaneIntersection(normal, origin,
-															  contactsOut);
+		        contactsOut);
 	}
 
 	return count;
 }
 
 dgInt32 dgCollisionCone::CalculatePlaneIntersectionSimd(const dgVector &normal,
-														const dgVector &origin, dgVector *const contactsOut) const {
+        const dgVector &origin, dgVector *const contactsOut) const {
 #ifdef DG_BUILD_SIMD_CODE
 	dgInt32 i;
 	dgInt32 count;
@@ -317,39 +317,39 @@ dgInt32 dgCollisionCone::CalculatePlaneIntersectionSimd(const dgVector &normal,
 	simd_type mag2;
 
 	if (dgAbsf(normal.m_x) < dgFloat32(0.999f)) {
-		//		magInv = dgRsqrt (normal.m_y * normal.m_y + normal.m_z * normal.m_z);
-		//		cosAng = normal.m_y * magInv;
-		//		sinAng = normal.m_z * magInv;
-		//		dgMatrix matrix (dgGetIdentityMatrix ());
-		//		matrix[1][1] = cosAng;
-		//		matrix[1][2] = sinAng;
-		//		matrix[2][1] = -sinAng;
-		//		matrix[2][2] = cosAng;
-		//		dgVector normal2 (matrix.UnrotateVector (normal));
-		//		dgVector origin2 (matrix.UnrotateVector (origin));
-		//		count = dgCollisionConvex::CalculatePlaneIntersection (normal1, origin1, contactsOut);
-		//		matrix.TransformTriplex (contactsOut, sizeof (dgVector), contactsOut, sizeof (dgVector), count);
+		//      magInv = dgRsqrt (normal.m_y * normal.m_y + normal.m_z * normal.m_z);
+		//      cosAng = normal.m_y * magInv;
+		//      sinAng = normal.m_z * magInv;
+		//      dgMatrix matrix (dgGetIdentityMatrix ());
+		//      matrix[1][1] = cosAng;
+		//      matrix[1][2] = sinAng;
+		//      matrix[2][1] = -sinAng;
+		//      matrix[2][2] = cosAng;
+		//      dgVector normal2 (matrix.UnrotateVector (normal));
+		//      dgVector origin2 (matrix.UnrotateVector (origin));
+		//      count = dgCollisionConvex::CalculatePlaneIntersection (normal1, origin1, contactsOut);
+		//      matrix.TransformTriplex (contactsOut, sizeof (dgVector), contactsOut, sizeof (dgVector), count);
 
 		y = normal.m_y * normal.m_y + normal.m_z * normal.m_z;
 		mag2 = simd_load_s(y);
 		tmp0 = simd_rsqrt_s(mag2);
 		simd_store_s(
-			simd_mul_s(simd_mul_s(*(simd_type *)&m_nrh0p5, tmp0), simd_mul_sub_s(*(simd_type *)&m_nrh3p0, simd_mul_s(mag2, tmp0), tmp0)),
-			&magInv);
+		    simd_mul_s(simd_mul_s(*(simd_type *)&m_nrh0p5, tmp0), simd_mul_sub_s(*(simd_type *)&m_nrh3p0, simd_mul_s(mag2, tmp0), tmp0)),
+		    &magInv);
 
 		cosAng = normal.m_y * magInv;
 		sinAng = normal.m_z * magInv;
 		_ASSERTE(
-			dgAbsf(normal.m_z * cosAng - normal.m_y * sinAng) < dgFloat32(1.0e-4f));
-		//		dgVector normal1 (normal.m_x, normal.m_y * cosAng + normal.m_z * sinAng,
-		//									  normal.m_z * cosAng - normal.m_y * sinAng, dgFloat32 (0.0f));
+		    dgAbsf(normal.m_z * cosAng - normal.m_y * sinAng) < dgFloat32(1.0e-4f));
+		//      dgVector normal1 (normal.m_x, normal.m_y * cosAng + normal.m_z * sinAng,
+		//                                    normal.m_z * cosAng - normal.m_y * sinAng, dgFloat32 (0.0f));
 		dgVector normal1(normal.m_x, normal.m_y * cosAng + normal.m_z * sinAng,
-						 dgFloat32(0.0f), dgFloat32(0.0f));
+		                 dgFloat32(0.0f), dgFloat32(0.0f));
 		dgVector origin1(origin.m_x, origin.m_y * cosAng + origin.m_z * sinAng,
-						 origin.m_z * cosAng - origin.m_y * sinAng, dgFloat32(0.0f));
+		                 origin.m_z * cosAng - origin.m_y * sinAng, dgFloat32(0.0f));
 
 		count = dgCollisionConvex::CalculatePlaneIntersectionSimd(normal1, origin1,
-																  contactsOut);
+		        contactsOut);
 		for (i = 0; i < count; i++) {
 			y = contactsOut[i].m_y;
 			z = contactsOut[i].m_z;
@@ -359,7 +359,7 @@ dgInt32 dgCollisionCone::CalculatePlaneIntersectionSimd(const dgVector &normal,
 
 	} else {
 		count = dgCollisionConvex::CalculatePlaneIntersectionSimd(normal, origin,
-																  contactsOut);
+		        contactsOut);
 	}
 
 	return count;
@@ -375,14 +375,14 @@ void dgCollisionCone::GetCollisionInfo(dgCollisionInfo *info) const {
 	info->m_cone.m_r = m_radius;
 	info->m_cone.m_height = m_height * dgFloat32(2.0f);
 	info->m_offsetMatrix = GetOffsetMatrix();
-	//	strcpy (info->m_collisionType, "cone");
+	//  strcpy (info->m_collisionType, "cone");
 	info->m_collisionType = m_collsionId;
 }
 
 void dgCollisionCone::Serialize(dgSerialize callback,
-								void *const userData) const {
+                                void *const userData) const {
 	dgVector size(m_radius, m_height * dgFloat32(2.0f), dgFloat32(0.0f),
-				  dgFloat32(0.0f));
+	              dgFloat32(0.0f));
 	SerializeLow(callback, userData);
 	callback(userData, &size, sizeof(dgVector));
 }

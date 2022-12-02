@@ -33,13 +33,13 @@ dgInt32 dgCollisionCapsule::m_shapeRefCount = 0;
 dgConvexSimplexEdge dgCollisionCapsule::m_edgeArray[DG_CAPSULE_SEGMENTS * (6 + 8 * (DG_CAP_SEGMENTS - 1))];
 
 dgCollisionCapsule::dgCollisionCapsule(dgMemoryAllocator *allocator,
-									   dgUnsigned32 signature, dgFloat32 radius, dgFloat32 height,
-									   const dgMatrix &matrix) : dgCollisionConvex(allocator, signature, matrix, m_capsuleCollision) {
+                                       dgUnsigned32 signature, dgFloat32 radius, dgFloat32 height,
+                                       const dgMatrix &matrix) : dgCollisionConvex(allocator, signature, matrix, m_capsuleCollision) {
 	Init(radius, height);
 }
 
 dgCollisionCapsule::dgCollisionCapsule(dgWorld *const world,
-									   dgDeserialize deserialization, void *const userData) : dgCollisionConvex(world, deserialization, userData) {
+                                       dgDeserialize deserialization, void *const userData) : dgCollisionConvex(world, deserialization, userData) {
 	dgVector size;
 	deserialization(userData, &size, sizeof(dgVector));
 	Init(size.m_x, size.m_y);
@@ -54,16 +54,16 @@ dgCollisionCapsule::~dgCollisionCapsule() {
 }
 
 void dgCollisionCapsule::Init(dgFloat32 radius, dgFloat32 height) {
-	//	dgInt32 i;
-	//	dgInt32 j;
-	//	dgInt32 i0;
-	//	dgInt32 i1;
-	//	dgFloat32 x;
-	//	dgFloat32 y;
-	//	dgFloat32 z;
-	//	dgFloat32 r;
-	//	dgFloat32 angle;
-	//	dgEdge *edge;
+	//  dgInt32 i;
+	//  dgInt32 j;
+	//  dgInt32 i0;
+	//  dgInt32 i1;
+	//  dgFloat32 x;
+	//  dgFloat32 y;
+	//  dgFloat32 z;
+	//  dgFloat32 r;
+	//  dgFloat32 angle;
+	//  dgEdge *edge;
 
 	m_rtti |= dgCollisionCapsule_RTTI;
 
@@ -72,24 +72,24 @@ void dgCollisionCapsule::Init(dgFloat32 radius, dgFloat32 height) {
 
 	m_radius = dgAbsf(radius);
 	m_height[0] = GetMax(dgFloat32(0.01f),
-						 dgAbsf(height * dgFloat32(0.5f)) - m_radius);
+	                     dgAbsf(height * dgFloat32(0.5f)) - m_radius);
 	m_height[1] = -m_height[0];
 
 	m_silhuette[0] = dgVector(m_height[0], -m_radius, dgFloat32(0.0f),
-							  dgFloat32(0.0f));
+	                          dgFloat32(0.0f));
 	m_silhuette[1] = dgVector(-m_height[0], -m_radius, dgFloat32(0.0f),
-							  dgFloat32(0.0f));
+	                          dgFloat32(0.0f));
 	m_silhuette[2] = dgVector(-m_height[0], m_radius, dgFloat32(0.0f),
-							  dgFloat32(0.0f));
+	                          dgFloat32(0.0f));
 	m_silhuette[3] = dgVector(m_height[0], m_radius, dgFloat32(0.0f),
-							  dgFloat32(0.0f));
+	                          dgFloat32(0.0f));
 
 	m_tethaStep = GetDiscretedAngleStep(m_radius);
 	m_tethaStepInv = dgFloat32(1.0f) / m_tethaStep;
 	m_delCosTetha = dgCos(m_tethaStep);
 	m_delSinTetha = dgSin(m_tethaStep);
 
-	//	dgFloat32 x = dgFloat32 (0.5f) * m_radius / DG_CAP_SEGMENTS;
+	//  dgFloat32 x = dgFloat32 (0.5f) * m_radius / DG_CAP_SEGMENTS;
 	for (dgInt32 j = 0; j < DG_CAP_SEGMENTS; j++) {
 		dgFloat32 angle = dgFloat32(0.0f);
 		dgFloat32 x = (DG_CAP_SEGMENTS - j - 1) * m_radius / DG_CAP_SEGMENTS;
@@ -187,8 +187,8 @@ dgInt32 dgCollisionCapsule::CalculateSignature() const {
 }
 
 void dgCollisionCapsule::TesselateTriangle(dgInt32 level, dgFloat32 side,
-										   const dgVector &p0, const dgVector &p1, const dgVector &p2, dgInt32 &count,
-										   dgVector *ouput) const {
+        const dgVector &p0, const dgVector &p1, const dgVector &p2, dgInt32 &count,
+        dgVector *ouput) const {
 	if (level) {
 		_ASSERTE(dgAbsf(p0 % p0 - dgFloat32(1.0f)) < dgFloat32(1.0e-4f));
 		_ASSERTE(dgAbsf(p1 % p1 - dgFloat32(1.0f)) < dgFloat32(1.0e-4f));
@@ -222,7 +222,7 @@ void dgCollisionCapsule::TesselateTriangle(dgInt32 level, dgFloat32 side,
 }
 
 void dgCollisionCapsule::DebugCollision(const dgMatrix &matrixPtr,
-										OnDebugCollisionMeshCallback callback, void *const userData) const {
+                                        OnDebugCollisionMeshCallback callback, void *const userData) const {
 	dgInt32 i0;
 	dgInt32 i1;
 	dgInt32 j0;
@@ -253,17 +253,17 @@ void dgCollisionCapsule::DebugCollision(const dgMatrix &matrixPtr,
 	}
 
 	dgVector p0(dgFloat32(1.0f), dgFloat32(0.0f), dgFloat32(0.0f),
-				dgFloat32(0.0f));
+	            dgFloat32(0.0f));
 	dgVector p1(-dgFloat32(1.0f), dgFloat32(0.0f), dgFloat32(0.0f),
-				dgFloat32(0.0f));
+	            dgFloat32(0.0f));
 	dgVector p2(dgFloat32(0.0f), dgFloat32(1.0f), dgFloat32(0.0f),
-				dgFloat32(0.0f));
+	            dgFloat32(0.0f));
 	dgVector p3(dgFloat32(0.0f), -dgFloat32(1.0f), dgFloat32(0.0f),
-				dgFloat32(0.0f));
+	            dgFloat32(0.0f));
 	dgVector p4(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(1.0f),
-				dgFloat32(0.0f));
+	            dgFloat32(0.0f));
 	dgVector p5(dgFloat32(0.0f), dgFloat32(0.0f), -dgFloat32(1.0f),
-				dgFloat32(0.0f));
+	            dgFloat32(0.0f));
 
 	count = STEPS * 2;
 	TesselateTriangle(POWER, m_height[0], p0, p2, p4, count, tmpVectex);
@@ -278,7 +278,7 @@ void dgCollisionCapsule::DebugCollision(const dgMatrix &matrixPtr,
 
 	dgMatrix matrix(GetOffsetMatrix() * matrixPtr);
 	matrix.TransformTriplex(&pool[0].m_x, sizeof(dgTriplex), &tmpVectex[0].m_x,
-							sizeof(dgVector), count);
+	                        sizeof(dgVector), count);
 
 	i0 = STEPS - 1;
 	j1 = STEPS;
@@ -300,7 +300,7 @@ void dgCollisionCapsule::DebugCollision(const dgMatrix &matrixPtr,
 }
 
 void dgCollisionCapsule::SetCollisionBBox(const dgVector &p0__,
-										  const dgVector &p1__) {
+        const dgVector &p1__) {
 	_ASSERTE(0);
 }
 
@@ -463,14 +463,14 @@ dgFloat32 dgCollisionCapsule::RayCast(const dgVector &q0, const dgVector &q1, dg
 }
 
 dgFloat32 dgCollisionCapsule::RayCastSimd(const dgVector &q0,
-										  const dgVector &q1, dgContactPoint &contactOut,
-										  OnRayPrecastAction preFilter, const dgBody *const body,
-										  void *const userData) const {
+        const dgVector &q1, dgContactPoint &contactOut,
+        OnRayPrecastAction preFilter, const dgBody *const body,
+        void *const userData) const {
 	return RayCast(q0, q1, contactOut, preFilter, body, userData);
 }
 
 dgFloat32 dgCollisionCapsule::CalculateMassProperties(dgVector &inertia,
-													  dgVector &crossInertia, dgVector &centerOfMass) const {
+        dgVector &crossInertia, dgVector &centerOfMass) const {
 	dgFloat32 volume;
 	dgFloat32 inertiaxx;
 	dgFloat32 inertiayyzz;
@@ -517,18 +517,18 @@ dgFloat32 dgCollisionCapsule::CalculateMassProperties(dgVector &inertia,
 }
 
 dgInt32 dgCollisionCapsule::CalculatePlaneIntersectionSimd(
-	const dgVector &normal, const dgVector &origin,
-	dgVector *const contactsOut) const {
+    const dgVector &normal, const dgVector &origin,
+    dgVector *const contactsOut) const {
 #ifdef DG_BUILD_SIMD_CODE
 	return dgCollisionCapsule::CalculatePlaneIntersection(normal, origin,
-														  contactsOut);
+	        contactsOut);
 #else
 	return 0;
 #endif
 }
 
 dgInt32 dgCollisionCapsule::CalculatePlaneIntersection(const dgVector &normal,
-													   const dgVector &origin, dgVector *const contactsOut) const {
+        const dgVector &origin, dgVector *const contactsOut) const {
 	dgInt32 count = 0;
 	if (dgAbsf(normal.m_x) > dgFloat32(0.999f)) {
 		dgVector center1(-m_height[0], dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
@@ -553,10 +553,10 @@ dgInt32 dgCollisionCapsule::CalculatePlaneIntersection(const dgVector &normal,
 		_ASSERTE(dgAbsf(normal.m_z * cosAng - normal.m_y * sinAng) < dgFloat32(1.0e-4f));
 		dgVector normal1(normal.m_x, normal.m_y * cosAng + normal.m_z * sinAng, dgFloat32(0.0f), dgFloat32(0.0f));
 		dgVector origin1(origin.m_x, origin.m_y * cosAng + origin.m_z * sinAng,
-						 origin.m_z * cosAng - origin.m_y * sinAng, dgFloat32(0.0f));
+		                 origin.m_z * cosAng - origin.m_y * sinAng, dgFloat32(0.0f));
 		dgPlane plane(normal1, -(normal1 % origin1));
 		dgVector maxDir((normal1.m_x > dgFloat32(0.0f)) ? m_silhuette[3].m_x : -m_silhuette[3].m_x,
-						(normal1.m_y > dgFloat32(0.0f)) ? m_silhuette[3].m_y : -m_silhuette[3].m_y, dgFloat32(0.0f), dgFloat32(0.0f));
+		                (normal1.m_y > dgFloat32(0.0f)) ? m_silhuette[3].m_y : -m_silhuette[3].m_y, dgFloat32(0.0f), dgFloat32(0.0f));
 
 		dgFloat32 test0 = plane.Evalue(maxDir);
 		dgFloat32 test1 = plane.Evalue(maxDir.Scale(dgFloat32(-1.0f)));
@@ -611,7 +611,7 @@ dgInt32 dgCollisionCapsule::CalculatePlaneIntersection(const dgVector &normal,
 							_ASSERTE(dgAbsf(plane.m_y) > dgFloat32(0.0f));
 							dgFloat32 y = -(plane.m_x * x0 + d) / plane.m_y;
 							contactsOut[count] = dgVector(x0 + r, y, dgFloat32(0.0f),
-														  dgFloat32(0.0f));
+							                              dgFloat32(0.0f));
 							count++;
 						}
 					}
@@ -654,7 +654,7 @@ dgInt32 dgCollisionCapsule::CalculatePlaneIntersection(const dgVector &normal,
 							_ASSERTE(dgAbsf(plane.m_y) > dgFloat32(0.0f));
 							dgFloat32 y = -(plane.m_x * x0 + d) / plane.m_y;
 							contactsOut[count] = dgVector(x0 + r, y, dgFloat32(0.0f),
-														  dgFloat32(0.0f));
+							                              dgFloat32(0.0f));
 							count++;
 						}
 					}
@@ -679,14 +679,14 @@ void dgCollisionCapsule::GetCollisionInfo(dgCollisionInfo *info) const {
 	info->m_capsule.m_r1 = m_radius;
 	info->m_capsule.m_height = dgFloat32(2.0f) * (m_radius + m_height[0]);
 	info->m_offsetMatrix = GetOffsetMatrix();
-	//	strcpy (info->m_collisionType, "capsule");
+	//  strcpy (info->m_collisionType, "capsule");
 	info->m_collisionType = m_collsionId;
 }
 
 void dgCollisionCapsule::Serialize(dgSerialize callback,
-								   void *const userData) const {
+                                   void *const userData) const {
 	dgVector size(m_radius, dgFloat32(2.0f) * (m_radius + m_height[0]),
-				  dgFloat32(0.0f), dgFloat32(0.0f));
+	              dgFloat32(0.0f), dgFloat32(0.0f));
 
 	SerializeLow(callback, userData);
 	callback(userData, &size, sizeof(dgVector));

@@ -56,13 +56,12 @@ struct asSNameSpace;
 
 // TODO: type: asCPrimitiveType shall be implemented to represent primitives (void, int, double, etc)
 
-// TODO: type: asCTypeInfo should have an internal virtual method GetBehaviours. For asCObjectType it 
-//             should return the beh member. For asCFuncdefType it should return the beh member of 
-//             engine->functionBehaviours. This will allow the code that needs the behaviour to handle 
+// TODO: type: asCTypeInfo should have an internal virtual method GetBehaviours. For asCObjectType it
+//             should return the beh member. For asCFuncdefType it should return the beh member of
+//             engine->functionBehaviours. This will allow the code that needs the behaviour to handle
 //             both object types and funcdefs the same way
 
-class asCTypeInfo : public asITypeInfo
-{
+class asCTypeInfo : public asITypeInfo {
 public:
 	//=====================================
 	// From asITypeInfo
@@ -79,54 +78,126 @@ public:
 	// Type info
 	const char      *GetName() const;
 	const char      *GetNamespace() const;
-	asITypeInfo     *GetBaseType() const { return 0; }
-	bool             DerivesFrom(const asITypeInfo *objType) const { UNUSED_VAR(objType); return 0; }
+	asITypeInfo     *GetBaseType() const {
+		return 0;
+	}
+	bool             DerivesFrom(const asITypeInfo *objType) const {
+		UNUSED_VAR(objType);
+		return 0;
+	}
 	asDWORD          GetFlags() const;
 	asUINT           GetSize() const;
 	int              GetTypeId() const;
-	int              GetSubTypeId(asUINT subtypeIndex = 0) const { UNUSED_VAR(subtypeIndex); return -1; }
-	asITypeInfo     *GetSubType(asUINT subtypeIndex = 0) const { UNUSED_VAR(subtypeIndex); return 0; }
-	asUINT           GetSubTypeCount() const { return 0; }
+	int              GetSubTypeId(asUINT subtypeIndex = 0) const {
+		UNUSED_VAR(subtypeIndex);
+		return -1;
+	}
+	asITypeInfo     *GetSubType(asUINT subtypeIndex = 0) const {
+		UNUSED_VAR(subtypeIndex);
+		return 0;
+	}
+	asUINT           GetSubTypeCount() const {
+		return 0;
+	}
 
 	// Interfaces
-	asUINT           GetInterfaceCount() const { return 0; }
-	asITypeInfo     *GetInterface(asUINT index) const { UNUSED_VAR(index); return 0; }
-	bool             Implements(const asITypeInfo *objType) const { UNUSED_VAR(objType); return false; }
+	asUINT           GetInterfaceCount() const {
+		return 0;
+	}
+	asITypeInfo     *GetInterface(asUINT index) const {
+		UNUSED_VAR(index);
+		return 0;
+	}
+	bool             Implements(const asITypeInfo *objType) const {
+		UNUSED_VAR(objType);
+		return false;
+	}
 
 	// Factories
-	asUINT             GetFactoryCount() const { return 0; }
-	asIScriptFunction *GetFactoryByIndex(asUINT index) const { UNUSED_VAR(index); return 0; }
-	asIScriptFunction *GetFactoryByDecl(const char *decl) const { UNUSED_VAR(decl); return 0; }
+	asUINT             GetFactoryCount() const {
+		return 0;
+	}
+	asIScriptFunction *GetFactoryByIndex(asUINT index) const {
+		UNUSED_VAR(index);
+		return 0;
+	}
+	asIScriptFunction *GetFactoryByDecl(const char *decl) const {
+		UNUSED_VAR(decl);
+		return 0;
+	}
 
 	// Methods
-	asUINT             GetMethodCount() const { return 0; }
-	asIScriptFunction *GetMethodByIndex(asUINT index, bool getVirtual) const { UNUSED_VAR(index); UNUSED_VAR(getVirtual); return 0; }
-	asIScriptFunction *GetMethodByName(const char *in_name, bool getVirtual) const { UNUSED_VAR(in_name); UNUSED_VAR(getVirtual); return 0; }
-	asIScriptFunction *GetMethodByDecl(const char *decl, bool getVirtual) const { UNUSED_VAR(decl); UNUSED_VAR(getVirtual); return 0; }
+	asUINT             GetMethodCount() const {
+		return 0;
+	}
+	asIScriptFunction *GetMethodByIndex(asUINT index, bool getVirtual) const {
+		UNUSED_VAR(index);
+		UNUSED_VAR(getVirtual);
+		return 0;
+	}
+	asIScriptFunction *GetMethodByName(const char *in_name, bool getVirtual) const {
+		UNUSED_VAR(in_name);
+		UNUSED_VAR(getVirtual);
+		return 0;
+	}
+	asIScriptFunction *GetMethodByDecl(const char *decl, bool getVirtual) const {
+		UNUSED_VAR(decl);
+		UNUSED_VAR(getVirtual);
+		return 0;
+	}
 
 	// Properties
-	asUINT      GetPropertyCount() const { return 0; }
+	asUINT      GetPropertyCount() const {
+		return 0;
+	}
 	int         GetProperty(asUINT index, const char **name, int *typeId, bool *isPrivate, bool *isProtected, int *offset, bool *isReference, asDWORD *accessMask, int *compositeOffset, bool *isCompositeIndirect) const;
-	const char *GetPropertyDeclaration(asUINT index, bool includeNamespace = false) const { UNUSED_VAR(index); UNUSED_VAR(includeNamespace); return 0; }
+	const char *GetPropertyDeclaration(asUINT index, bool includeNamespace = false) const {
+		UNUSED_VAR(index);
+		UNUSED_VAR(includeNamespace);
+		return 0;
+	}
 
 	// Behaviours
-	asUINT             GetBehaviourCount() const { return 0; }
-	asIScriptFunction *GetBehaviourByIndex(asUINT index, asEBehaviours *outBehaviour) const { UNUSED_VAR(index); UNUSED_VAR(outBehaviour); return 0; }
+	asUINT             GetBehaviourCount() const {
+		return 0;
+	}
+	asIScriptFunction *GetBehaviourByIndex(asUINT index, asEBehaviours *outBehaviour) const {
+		UNUSED_VAR(index);
+		UNUSED_VAR(outBehaviour);
+		return 0;
+	}
 
 	// Child types
-	asUINT       GetChildFuncdefCount() const { return 0; }
-	asITypeInfo *GetChildFuncdef(asUINT index) const { UNUSED_VAR(index); return 0; }
-	asITypeInfo *GetParentType() const { return 0; }
+	asUINT       GetChildFuncdefCount() const {
+		return 0;
+	}
+	asITypeInfo *GetChildFuncdef(asUINT index) const {
+		UNUSED_VAR(index);
+		return 0;
+	}
+	asITypeInfo *GetParentType() const {
+		return 0;
+	}
 
 	// Enums
-	virtual asUINT      GetEnumValueCount() const { return 0; }
-	virtual const char *GetEnumValueByIndex(asUINT index, int *outValue) const { UNUSED_VAR(index); if (outValue) *outValue = 0; return 0; }
+	virtual asUINT      GetEnumValueCount() const {
+		return 0;
+	}
+	virtual const char *GetEnumValueByIndex(asUINT index, int *outValue) const {
+		UNUSED_VAR(index);
+		if (outValue) *outValue = 0;
+		return 0;
+	}
 
 	// Typedef
-	virtual int GetTypedefTypeId() const { return asERROR; }
+	virtual int GetTypedefTypeId() const {
+		return asERROR;
+	}
 
 	// Funcdef
-	virtual asIScriptFunction *GetFuncdefSignature() const { return 0; }
+	virtual asIScriptFunction *GetFuncdefSignature() const {
+		return 0;
+	}
 
 	// User data
 	void *SetUserData(void *data, asPWORD type);
@@ -139,7 +210,7 @@ public:
 	asCTypeInfo(asCScriptEngine *engine);
 	virtual ~asCTypeInfo();
 
-	// Keep an internal reference counter to separate references coming from 
+	// Keep an internal reference counter to separate references coming from
 	// application or script objects and references coming from the script code
 	virtual int AddRefInternal();
 	virtual int ReleaseInternal();
@@ -184,19 +255,17 @@ protected:
 	asCAtomic         internalRefCount;
 };
 
-struct asSEnumValue
-{
+struct asSEnumValue {
 	asCString name;
 	int       value;
 };
 
-class asCEnumType : public asCTypeInfo
-{
+class asCEnumType : public asCTypeInfo {
 public:
 	asCEnumType(asCScriptEngine *_engine) : asCTypeInfo(_engine) {}
 	~asCEnumType();
 
-	asCArray<asSEnumValue*> enumValues;
+	asCArray<asSEnumValue *> enumValues;
 
 	asUINT      GetEnumValueCount() const;
 	const char *GetEnumValueByIndex(asUINT index, int *outValue) const;
@@ -205,8 +274,7 @@ protected:
 	asCEnumType() : asCTypeInfo() {}
 };
 
-class asCTypedefType : public asCTypeInfo
-{
+class asCTypedefType : public asCTypeInfo {
 public:
 	asCTypedefType(asCScriptEngine *_engine) : asCTypeInfo(_engine) {}
 	~asCTypedefType();
@@ -221,8 +289,7 @@ protected:
 	asCTypedefType() : asCTypeInfo() {}
 };
 
-class asCFuncdefType : public asCTypeInfo
-{
+class asCFuncdefType : public asCTypeInfo {
 public:
 	asCFuncdefType(asCScriptEngine *engine, asCScriptFunction *func);
 	~asCFuncdefType();

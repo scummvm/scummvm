@@ -127,7 +127,7 @@
  dx1 = x1 - x0;
  dy1 = y1 - y0;
  penalty = 0.0f;
- if (dx1 * dy0 - dx0 * dy1)	{
+ if (dx1 * dy0 - dx0 * dy1) {
  penalty = dgFloat32(1.0f);
  }
 
@@ -158,10 +158,10 @@
  x = parent % 10;
  y = parent / 10;
 
- array[0]	= (y - 1) * 10 + x;
- array[1]	= (y - 0) * 10 + x - 1;
- array[2]	= (y + 1) * 10 + x;
- array[3]	= (y + 0) * 10 + x + 1;
+ array[0]   = (y - 1) * 10 + x;
+ array[1]   = (y - 0) * 10 + x - 1;
+ array[2]   = (y + 1) * 10 + x;
+ array[3]   = (y + 0) * 10 + x + 1;
  return 4;
  }
 
@@ -190,12 +190,12 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-dgWorld::dgWorld(dgMemoryAllocator *allocator) : //	dgThreadHive(),
-												 dgBodyMasterList(allocator), dgBroadPhaseCollision(allocator), dgBodyMaterialList(
-																													allocator),
-												 dgBodyCollisionList(allocator), dgActiveContacts(allocator), dgCollidingPairCollector(), m_perInstanceData(
-																																			  allocator),
-												 m_threadsManager(), m_dynamicSolver() {
+dgWorld::dgWorld(dgMemoryAllocator *allocator) : // dgThreadHive(),
+	dgBodyMasterList(allocator), dgBroadPhaseCollision(allocator), dgBodyMaterialList(
+	    allocator),
+	dgBodyCollisionList(allocator), dgActiveContacts(allocator), dgCollidingPairCollector(), m_perInstanceData(
+	    allocator),
+	m_threadsManager(), m_dynamicSolver() {
 	dgInt32 steps;
 	dgFloat32 freezeAccel2;
 	dgFloat32 freezeAlpha2;
@@ -212,7 +212,7 @@ dgWorld::dgWorld(dgMemoryAllocator *allocator) : //	dgThreadHive(),
 
 	m_inUpdate = 0;
 	m_bodyGroupID = 0;
-	//	m_activeBodiesCount = 0;
+	//  m_activeBodiesCount = 0;
 
 	m_defualtBodyGroupID = CreateBodyGroupID();
 	m_islandMemorySizeInBytes = DG_INITIAL_ISLAND_SIZE;
@@ -227,15 +227,15 @@ dgWorld::dgWorld(dgMemoryAllocator *allocator) : //	dgThreadHive(),
 	for (dgInt32 i = 0; i < DG_MAXIMUN_THREADS; i++) {
 		m_jacobiansMemorySizeInBytes[i] = DG_INITIAL_JACOBIAN_SIZE;
 		m_jacobiansMemory[i] = m_allocator->MallocLow(
-			m_jacobiansMemorySizeInBytes[i]);
+		                           m_jacobiansMemorySizeInBytes[i]);
 
 		m_internalForcesMemorySizeInBytes[i] = DG_INITIAL_BODIES_SIZE;
 		m_internalForcesMemory[i] = m_allocator->MallocLow(
-			m_internalForcesMemorySizeInBytes[i]);
+		                                m_internalForcesMemorySizeInBytes[i]);
 
 		m_contactBuffersSizeInBytes[i] = DG_INITIAL_CONTATCT_SIZE;
 		m_contactBuffers[i] = m_allocator->MallocLow(
-			m_contactBuffersSizeInBytes[i]);
+		                          m_contactBuffersSizeInBytes[i]);
 	}
 
 	m_genericLRUMark = 0;
@@ -247,7 +247,7 @@ dgWorld::dgWorld(dgMemoryAllocator *allocator) : //	dgThreadHive(),
 	m_broadPhaseLru = 0;
 
 	m_bodiesUniqueID = 0;
-	//	m_bodiesCount = 0;
+	//  m_bodiesCount = 0;
 	m_frictiomTheshold = dgFloat32(0.25f);
 
 	m_userData = NULL;
@@ -333,7 +333,7 @@ void dgWorld::AddSentinelBody() {
 	m_sentionelBody = CreateBody(collision, dgGetIdentityMatrix());
 	ReleaseCollision(collision);
 
-	//	dgBodyMasterList::m_sentinel = m_sentionelBody;
+	//  dgBodyMasterList::m_sentinel = m_sentionelBody;
 	dgCollidingPairCollector::m_sentinel = m_sentionelBody;
 }
 
@@ -359,8 +359,8 @@ void dgWorld::SetHardwareMode(dgInt32 mode) {
 dgInt32 dgWorld::GetHardwareMode(char *description) {
 	dgInt32 mode;
 
-	//	if (0) {
-	//	} else {
+	//  if (0) {
+	//  } else {
 	if (m_cpu == dgNoSimdPresent) {
 		mode = 0;
 		if (description) {
@@ -372,7 +372,7 @@ dgInt32 dgWorld::GetHardwareMode(char *description) {
 			snprintf(description, 5, "simd");
 		}
 	}
-	//	}
+	//  }
 	return mode;
 }
 
@@ -393,7 +393,7 @@ dgInt32 dgWorld::GetMaxThreadsCount() const {
 
 void dgWorld::EnableThreadOnSingleIsland(dgInt32 mode) {
 	// for now disable this option
-	//	m_singleIslandMultithreading = 1;
+	//  m_singleIslandMultithreading = 1;
 	m_singleIslandMultithreading = mode ? 1 : 0;
 }
 
@@ -418,11 +418,11 @@ void dgWorld::DestroyAllBodies() {
 	dgBodyMasterList::dgListNode *node;
 
 	dgBodyMasterList &me = *this;
-	//	dgBodyMasterList::Iterator iter(me);
-	//	for (iter.Begin(); iter; ) {
+	//  dgBodyMasterList::Iterator iter(me);
+	//  for (iter.Begin(); iter; ) {
 
 	_ASSERTE(
-		dgBodyMasterList::GetFirst()->GetInfo().GetBody() == m_sentionelBody);
+	    dgBodyMasterList::GetFirst()->GetInfo().GetBody() == m_sentionelBody);
 	for (node = me.GetFirst()->GetNext(); node;) {
 		body = node->GetInfo().GetBody();
 		node = node->GetNext();
@@ -434,7 +434,7 @@ void dgWorld::DestroyAllBodies() {
 }
 
 dgBody *dgWorld::CreateBody(dgCollision *const collision,
-							const dgMatrix &matrix) {
+                            const dgMatrix &matrix) {
 	dgBody *body;
 
 	_ASSERTE(collision);
@@ -445,7 +445,7 @@ dgBody *dgWorld::CreateBody(dgCollision *const collision,
 
 	memset(body, 0, sizeof(dgBody));
 
-	//	m_bodiesCount ++;
+	//  m_bodiesCount ++;
 	m_bodiesUniqueID++;
 
 	body->m_world = this;
@@ -463,27 +463,27 @@ dgBody *dgWorld::CreateBody(dgCollision *const collision,
 
 	dgBodyMasterList::AddBody(body);
 
-	//	dgBodyActiveList___::AddBody(body);
-	//	_ASSERTE (body->m_activeNode);
+	//  dgBodyActiveList___::AddBody(body);
+	//  _ASSERTE (body->m_activeNode);
 
-	//	body->m_freezeAccel2 = m_freezeAccel2;
-	//	body->m_freezeAlpha2 = m_freezeAlpha2;
-	//	body->m_freezeSpeed2 = m_freezeSpeed2;
-	//	body->m_freezeOmega2 = m_freezeOmega2;
+	//  body->m_freezeAccel2 = m_freezeAccel2;
+	//  body->m_freezeAlpha2 = m_freezeAlpha2;
+	//  body->m_freezeSpeed2 = m_freezeSpeed2;
+	//  body->m_freezeOmega2 = m_freezeOmega2;
 
 	body->SetCentreOfMass(
-		dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
-				 dgFloat32(1.0f)));
+	    dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
+	             dgFloat32(1.0f)));
 	body->SetLinearDamping(dgFloat32(0.1045f));
 	body->SetAngularDamping(
-		dgVector(dgFloat32(0.1045f), dgFloat32(0.1045f), dgFloat32(0.1045f),
-				 dgFloat32(0.0f)));
+	    dgVector(dgFloat32(0.1045f), dgFloat32(0.1045f), dgFloat32(0.1045f),
+	             dgFloat32(0.0f)));
 
 	body->AttachCollision(collision);
 	body->m_bodyGroupId = dgInt32(m_defualtBodyGroupID);
 
 	body->SetMassMatrix(DG_INFINITE_MASS * dgFloat32(2.0f), DG_INFINITE_MASS,
-						DG_INFINITE_MASS, DG_INFINITE_MASS);
+	                    DG_INFINITE_MASS, DG_INFINITE_MASS);
 	dgBroadPhaseCollision::Add(body);
 
 	// body->SetMatrix (dgGetIdentityMatrix());
@@ -499,10 +499,10 @@ void dgWorld::DestroyBody(dgBody *const body) {
 
 	dgBroadPhaseCollision::Remove(body);
 
-	//	m_bodiesCount --;
-	//	while (body->m_firstConstraintLink) {
-	//		DestroyConstraint (body->m_firstConstraintLink->m_constraint);
-	//	}
+	//  m_bodiesCount --;
+	//  while (body->m_firstConstraintLink) {
+	//      DestroyConstraint (body->m_firstConstraintLink->m_constraint);
+	//  }
 	dgBodyMasterList::RemoveBody(body);
 
 	_ASSERTE(body->m_collision);
@@ -654,7 +654,7 @@ void dgWorld::Update(dgFloat32 timestep) {
 	if (m_destroyBodyByExeciveForce) {
 		for (dgInt32 i = 0; i < m_destroyeddBodiesPool.m_count; i++) {
 			m_destroyBodyByExeciveForce(m_destroyeddBodiesPool.m_bodies[i],
-										m_destroyeddBodiesPool.m_joint[i]);
+			                            m_destroyeddBodiesPool.m_joint[i]);
 		}
 	}
 
@@ -678,7 +678,7 @@ void dgWorld::SetPerfomanceCounter(OnGetPerformanceCountCallback callback) {
 // dgUnsigned32 dgWorld::GetPerfomanceTicks (dgInt32 thread, dgUnsigned32 entry) const
 dgUnsigned32 dgWorld::GetPerfomanceTicks(dgUnsigned32 entry) const {
 	entry = ClampValue(dgUnsigned32(entry), dgUnsigned32(0),
-					   dgUnsigned32(m_counterSize - 1));
+	                   dgUnsigned32(m_counterSize - 1));
 	return m_perfomanceCounters[entry];
 }
 
@@ -707,17 +707,17 @@ void dgWorld::SetLeavingWorldCallback(OnLeavingWorldAction callback) {
 }
 
 void dgWorld::SetBodyDestructionByExeciveForce(
-	OnBodyDestructionByExeciveForce callback) {
+    OnBodyDestructionByExeciveForce callback) {
 	m_destroyBodyByExeciveForce = callback;
 }
 
 dgBallConstraint *dgWorld::CreateBallConstraint(const dgVector &pivot,
-												dgBody *const body0, dgBody *const body1) {
+        dgBody *const body0, dgBody *const body1) {
 	dgBallConstraint *constraint;
 
 	_ASSERTE(body0);
 	_ASSERTE(body0 != body1);
-	//	constraint = dgBallConstraint::Create(this);
+	//  constraint = dgBallConstraint::Create(this);
 	constraint = new (m_allocator) dgBallConstraint;
 
 	AttachConstraint(constraint, body0, body1);
@@ -726,12 +726,12 @@ dgBallConstraint *dgWorld::CreateBallConstraint(const dgVector &pivot,
 }
 
 dgHingeConstraint *dgWorld::CreateHingeConstraint(const dgVector &pivot,
-												  const dgVector &pinDir, dgBody *const body0, dgBody *const body1) {
+        const dgVector &pinDir, dgBody *const body0, dgBody *const body1) {
 	dgHingeConstraint *constraint;
 
 	_ASSERTE(body0);
 	_ASSERTE(body0 != body1);
-	//	constraint = dgHingeConstraint::Create(this);
+	//  constraint = dgHingeConstraint::Create(this);
 	constraint = new (m_allocator) dgHingeConstraint;
 
 	AttachConstraint(constraint, body0, body1);
@@ -740,11 +740,11 @@ dgHingeConstraint *dgWorld::CreateHingeConstraint(const dgVector &pivot,
 }
 
 dgUpVectorConstraint *dgWorld::CreateUpVectorConstraint(const dgVector &pin,
-														dgBody *body) {
+        dgBody *body) {
 	dgUpVectorConstraint *constraint;
 
 	_ASSERTE(body);
-	//	constraint = dgUpVectorConstraint::Create(this);
+	//  constraint = dgUpVectorConstraint::Create(this);
 	constraint = new (m_allocator) dgUpVectorConstraint;
 
 	AttachConstraint(constraint, body, NULL);
@@ -753,12 +753,12 @@ dgUpVectorConstraint *dgWorld::CreateUpVectorConstraint(const dgVector &pin,
 }
 
 dgSlidingConstraint *dgWorld::CreateSlidingConstraint(const dgVector &pivot,
-													  const dgVector &pinDir, dgBody *const body0, dgBody *const body1) {
+        const dgVector &pinDir, dgBody *const body0, dgBody *const body1) {
 	dgSlidingConstraint *constraint;
 
 	_ASSERTE(body0);
 	_ASSERTE(body0 != body1);
-	//	constraint = dgSlidingConstraint::Create(this);
+	//  constraint = dgSlidingConstraint::Create(this);
 	constraint = new (m_allocator) dgSlidingConstraint;
 
 	AttachConstraint(constraint, body0, body1);
@@ -767,12 +767,12 @@ dgSlidingConstraint *dgWorld::CreateSlidingConstraint(const dgVector &pivot,
 }
 
 dgCorkscrewConstraint *dgWorld::CreateCorkscrewConstraint(const dgVector &pivot,
-														  const dgVector &pinDir, dgBody *const body0, dgBody *const body1) {
+        const dgVector &pinDir, dgBody *const body0, dgBody *const body1) {
 	dgCorkscrewConstraint *constraint;
 
 	_ASSERTE(body0);
 	_ASSERTE(body0 != body1);
-	//	constraint = dgCorkscrewConstraint::Create(this);
+	//  constraint = dgCorkscrewConstraint::Create(this);
 	constraint = new (m_allocator) dgCorkscrewConstraint;
 
 	AttachConstraint(constraint, body0, body1);
@@ -781,13 +781,13 @@ dgCorkscrewConstraint *dgWorld::CreateCorkscrewConstraint(const dgVector &pivot,
 }
 
 dgUniversalConstraint *dgWorld::CreateUniversalConstraint(const dgVector &pivot,
-														  const dgVector &pin0, const dgVector &pin1, dgBody *const body0,
-														  dgBody *const body1) {
+        const dgVector &pin0, const dgVector &pin1, dgBody *const body0,
+        dgBody *const body1) {
 	dgUniversalConstraint *constraint;
 
 	_ASSERTE(body0);
 	_ASSERTE(body0 != body1);
-	//	constraint = dgUniversalConstraint::Create(this);
+	//  constraint = dgUniversalConstraint::Create(this);
 	constraint = new (m_allocator) dgUniversalConstraint;
 
 	AttachConstraint(constraint, body0, body1);
@@ -909,18 +909,18 @@ void dgWorld::BodySetMatrix(dgBody *body, const dgMatrix &matrix) {
 
 		dgMatrix matrixI(bodyI->GetMatrix() * relMatrix);
 		bodyI->SetVelocity(
-			dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
-					 dgFloat32(0.0f)));
+		    dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
+		             dgFloat32(0.0f)));
 		bodyI->SetOmega(
-			dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
-					 dgFloat32(0.0f)));
+		    dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
+		             dgFloat32(0.0f)));
 		bodyI->SetMatrix(matrixI);
 		bodyI->m_isInWorld = true;
 
 		for (dgBodyMasterListRow::dgListNode *jointNode =
-				 bodyI->m_masterNode->GetInfo().GetFirst();
-			 jointNode; jointNode =
-							jointNode->GetNext()) {
+		            bodyI->m_masterNode->GetInfo().GetFirst();
+		        jointNode; jointNode =
+		            jointNode->GetNext()) {
 			dgBodyMasterListCell &cell = jointNode->GetInfo();
 			bodyI = cell.m_bodyNode;
 			if (bodyI != m_sentionelBody) {
@@ -940,18 +940,18 @@ void dgWorld::BodySetMatrix(dgBody *body, const dgMatrix &matrix) {
 }
 
 void dgWorld::AddBodyImpulse(dgBody *body, const dgVector &pointVeloc,
-							 const dgVector &pointPosit) {
+                             const dgVector &pointPosit) {
 	if (body->m_invMass.m_w > dgFloat32(0.0f)) {
-		//		UnfreezeBody (body);
+		//      UnfreezeBody (body);
 		body->AddImpulse(pointVeloc, pointPosit);
 	}
 }
 
 void dgWorld::ApplyImpulseArray(dgBody *body, dgInt32 count,
-								dgInt32 strideInBytes, const dgFloat32 *const impulseArray,
-								const dgFloat32 *const pointArray) {
+                                dgInt32 strideInBytes, const dgFloat32 *const impulseArray,
+                                const dgFloat32 *const pointArray) {
 	if (body->m_invMass.m_w > dgFloat32(0.0f)) {
-		//		UnfreezeBody (body);
+		//      UnfreezeBody (body);
 		body->ApplyImpulseArray(count, strideInBytes, impulseArray, pointArray);
 	}
 }
@@ -988,7 +988,7 @@ void dgWorld::ApplyImpulseArray(dgBody *body, dgInt32 count,
  if (~body->m_lru & mask) {
  constraint = ptr->m_constraint;
  if (constraint->IsBilateral()) {
- if (count <	maxSize) {
+ if (count <    maxSize) {
  array[count] = body;
  count ++;
  }
@@ -1117,7 +1117,7 @@ void dgWorld::ApplyImpulseArray(dgBody *body, dgInt32 count,
  */
 
 bool dgWorld::AreBodyConnectedByJoints(dgBody *const originSrc,
-									   dgBody *const targetSrc) {
+                                       dgBody *const targetSrc) {
 #define DG_QEUEU_SIZE 1024
 	dgBody *queue[DG_QEUEU_SIZE];
 
@@ -1143,9 +1143,9 @@ bool dgWorld::AreBodyConnectedByJoints(dgBody *const originSrc,
 		start &= (DG_QEUEU_SIZE - 1);
 
 		for (dgBodyMasterListRow::dgListNode *jointNode =
-				 originI->m_masterNode->GetInfo().GetFirst();
-			 jointNode; jointNode =
-							jointNode->GetNext()) {
+		            originI->m_masterNode->GetInfo().GetFirst();
+		        jointNode; jointNode =
+		            jointNode->GetNext()) {
 			dgBodyMasterListCell &cell = jointNode->GetInfo();
 
 			dgBody *const body = cell.m_bodyNode;
@@ -1172,7 +1172,7 @@ void dgWorld::FlushCache() {
 	// delete all contacts
 	dgActiveContacts &contactList = *this;
 	for (dgActiveContacts::dgListNode *contactNode = contactList.GetFirst();
-		 contactNode;) {
+	        contactNode;) {
 		dgContact *contact;
 		contact = contactNode->GetInfo();
 		contactNode = contactNode->GetNext();

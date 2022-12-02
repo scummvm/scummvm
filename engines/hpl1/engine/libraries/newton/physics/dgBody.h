@@ -54,7 +54,7 @@ public:
 	dgFloat32 m_point[4];            // collision point in global space
 	dgFloat32 m_normal[4];           // surface normal at collision point in global space
 	dgFloat32 m_normalOnHitPoint[4]; // surface normal at the surface of the hit body,
-									 // is the same as the normal calculate by a raycast passing by the hit point in the direction of the cast
+	// is the same as the normal calculate by a raycast passing by the hit point in the direction of the cast
 	dgFloat32 m_penetration;         // contact penetration at collision point
 	dgInt32 m_contaID;               // collision ID at contact point
 	const dgBody *m_hitBody;         // body hit at contact point
@@ -101,15 +101,15 @@ public:
 	void SetCentreOfMass(const dgVector &com);
 	void SetAparentMassMatrix(const dgVector &massMatrix);
 	void SetMassMatrix(dgFloat32 mass, dgFloat32 Ix, dgFloat32 Iy, dgFloat32 Iz);
-	//	void SetGyroscopicTorqueMode (bool mode);
+	//  void SetGyroscopicTorqueMode (bool mode);
 	void SetCollisionWithLinkedBodies(bool state);
-	//	void SetFreezeTreshhold (dgFloat32 freezeAccel2, dgFloat32 freezeAlpha2, dgFloat32 freezeSpeed2, dgFloat32 freezeOmega2);
+	//  void SetFreezeTreshhold (dgFloat32 freezeAccel2, dgFloat32 freezeAlpha2, dgFloat32 freezeSpeed2, dgFloat32 freezeOmega2);
 
 	void SetContinuesCollisionMode(bool mode);
 	void SetDestructorCallback(OnBodyDestroy destructor);
 	void SetMatrixUpdateCallback(OnMatrixUpdateCallback callback);
 	OnMatrixUpdateCallback GetMatrixUpdateCallback();
-	//	void SetAutoactiveNotify (OnActivation activate);
+	//  void SetAutoactiveNotify (OnActivation activate);
 	void SetExtForceAndTorqueCallback(OnApplyExtForceAndTorque callback);
 	OnApplyExtForceAndTorque GetExtForceAndTorqueCallback() const;
 
@@ -161,15 +161,15 @@ public:
 	bool GetContinuesCollisionMode() const;
 
 	void AddBuoyancyForce(dgFloat32 fluidDensity, dgFloat32 fluidLinearViscousity, dgFloat32 fluidAngularViscousity,
-						  const dgVector &gravityVector, GetBuoyancyPlane buoyancyPlane, void *const context);
+	                      const dgVector &gravityVector, GetBuoyancyPlane buoyancyPlane, void *const context);
 
 	dgVector CalculateInverseDynamicForce(const dgVector &desiredVeloc, dgFloat32 timestep) const;
 
-	//	dgFloat32 RayCast (const dgVector& globalP0, const dgVector& globalP1,
+	//  dgFloat32 RayCast (const dgVector& globalP0, const dgVector& globalP1,
 	dgFloat32 RayCast(const dgLineBox &line,
-					  OnRayCastAction filter, OnRayPrecastAction preFilter, void *const userData, dgFloat32 minT) const;
-	//	dgFloat32 RayCastSimd (const dgVector& globalP0, const dgVector& globalP1,
-	//					   OnRayCastAction filter, OnRayPrecastAction preFilter, void* userData, dgFloat32 minT) const;
+	                  OnRayCastAction filter, OnRayPrecastAction preFilter, void *const userData, dgFloat32 minT) const;
+	//  dgFloat32 RayCastSimd (const dgVector& globalP0, const dgVector& globalP1,
+	//                     OnRayCastAction filter, OnRayPrecastAction preFilter, void* userData, dgFloat32 minT) const;
 
 	void CalcInvInertiaMatrix();
 	void CalcInvInertiaMatrixSimd();
@@ -196,7 +196,7 @@ private:
 
 	void ApplyImpulseArray(dgInt32 count, dgInt32 strideInBytes, const dgFloat32 *const impulseArray, const dgFloat32 *const pointArray);
 
-	//	void AddGyroscopicTorque();
+	//  void AddGyroscopicTorque();
 	void AddDamingAcceleration();
 
 	dgMatrix CalculateInertiaMatrix() const;
@@ -312,7 +312,7 @@ inline bool dgBody::GetSleepState() const {
 /*
 inline bool dgBody::GetActive () const
 {
-	return m_active;
+    return m_active;
 }
 */
 
@@ -359,10 +359,10 @@ inline OnApplyExtForceAndTorque dgBody::GetExtForceAndTorqueCallback() const {
 /*
 inline void dgBody::SetAutoactiveNotify (OnActivation activate)
 {
-	m_activation = activate;
-	if (m_activation) {
-		m_activation (*this, m_active ? 1 : 0);
-	}
+    m_activation = activate;
+    if (m_activation) {
+        m_activation (*this, m_active ? 1 : 0);
+    }
 }
 */
 
@@ -377,18 +377,18 @@ inline OnMatrixUpdateCallback dgBody::GetMatrixUpdateCallback() {
 /*
 inline void dgBody::SetFreezeTreshhold (dgFloat32 freezeAccel2, dgFloat32 freezeAlpha2, dgFloat32 freezeSpeed2, dgFloat32 freezeOmega2)
 {
-	m_freezeAccel2 = GetMax (freezeAccel2, dgFloat32(DG_FREEZE_MAG2));
-	m_freezeAlpha2 = GetMax (freezeAlpha2, dgFloat32(DG_FREEZE_MAG2));
-	m_freezeSpeed2 = GetMax (freezeSpeed2, dgFloat32(DG_FREEZE_MAG2));
-	m_freezeOmega2 = GetMax (freezeOmega2, dgFloat32(DG_FREEZE_MAG2));
+    m_freezeAccel2 = GetMax (freezeAccel2, dgFloat32(DG_FREEZE_MAG2));
+    m_freezeAlpha2 = GetMax (freezeAlpha2, dgFloat32(DG_FREEZE_MAG2));
+    m_freezeSpeed2 = GetMax (freezeSpeed2, dgFloat32(DG_FREEZE_MAG2));
+    m_freezeOmega2 = GetMax (freezeOmega2, dgFloat32(DG_FREEZE_MAG2));
 }
 
 inline void dgBody::GetFreezeTreshhold (dgFloat32& freezeAccel2, dgFloat32& freezeAlpha2, dgFloat32& freezeSpeed2, dgFloat32& freezeOmega2) const
 {
-	freezeAccel2 = m_freezeAccel2;
-	freezeAlpha2 = m_freezeAlpha2;
-	freezeSpeed2 = m_freezeSpeed2;
-	freezeOmega2 = m_freezeOmega2;
+    freezeAccel2 = m_freezeAccel2;
+    freezeAlpha2 = m_freezeAlpha2;
+    freezeSpeed2 = m_freezeSpeed2;
+    freezeOmega2 = m_freezeOmega2;
 }
 */
 
@@ -484,12 +484,12 @@ inline void dgBody::GetAABB(dgVector &p0, dgVector &p1) const {
 /*
 inline void dgBody::SetGyroscopicTorqueMode (bool mode)
 {
-	m_applyGyroscopic = mode;
+    m_applyGyroscopic = mode;
 }
 
 inline bool dgBody::GetGyroscopicTorqueMode () const
 {
-	return m_applyGyroscopic;
+    return m_applyGyroscopic;
 }
 */
 
@@ -514,14 +514,14 @@ inline void dgBody::ApplyExtenalForces(dgFloat32 timestep, dgInt32 threadIndex) 
 }
 
 inline dgFloat32 dgBody::GetLinearDamping() const {
-	//	return (m_linearDampCoef - DG_MIN_SPEED_ATT) / (DG_MAX_SPEED_ATT - DG_MIN_SPEED_ATT);
+	//  return (m_linearDampCoef - DG_MIN_SPEED_ATT) / (DG_MAX_SPEED_ATT - DG_MIN_SPEED_ATT);
 	return (m_dampCoef.m_w - DG_MIN_SPEED_ATT) / (DG_MAX_SPEED_ATT - DG_MIN_SPEED_ATT);
 }
 
 inline dgVector dgBody::GetAngularDamping() const {
 	return dgVector((m_dampCoef.m_x - DG_MIN_SPEED_ATT) / (DG_MAX_SPEED_ATT - DG_MIN_SPEED_ATT),
-					(m_dampCoef.m_y - DG_MIN_SPEED_ATT) / (DG_MAX_SPEED_ATT - DG_MIN_SPEED_ATT),
-					(m_dampCoef.m_z - DG_MIN_SPEED_ATT) / (DG_MAX_SPEED_ATT - DG_MIN_SPEED_ATT), dgFloat32(0.0f));
+	                (m_dampCoef.m_y - DG_MIN_SPEED_ATT) / (DG_MAX_SPEED_ATT - DG_MIN_SPEED_ATT),
+	                (m_dampCoef.m_z - DG_MIN_SPEED_ATT) / (DG_MAX_SPEED_ATT - DG_MIN_SPEED_ATT), dgFloat32(0.0f));
 }
 
 inline void dgBody::SetLinearDamping(dgFloat32 linearDamp) {
@@ -552,12 +552,12 @@ inline void dgBody::AddDamingAcceleration() {
 /*
 inline void dgBody::AddGyroscopicTorque()
 {
-	_ASSERTE (0);
-	if (m_applyGyroscopic) {
-		const dgVector inertia = m_mass;
-		dgVector omega (m_matrix.UnrotateVector (m_omega));
-		m_alpha -= m_matrix.RotateVector(omega.CompProduct(inertia) * omega);
-	}
+    _ASSERTE (0);
+    if (m_applyGyroscopic) {
+        const dgVector inertia = m_mass;
+        dgVector omega (m_matrix.UnrotateVector (m_omega));
+        m_alpha -= m_matrix.RotateVector(omega.CompProduct(inertia) * omega);
+    }
 }
 */
 
@@ -663,10 +663,10 @@ inline void dgBody::SetMatrixOriginAndRotation(const dgMatrix &matrix) {
 	m_rotation = dgQuaternion(m_matrix);
 	m_globalCentreOfMass = m_matrix.TransformVector(m_localCentreOfMass);
 
-	//	matrix.m_front = matrix.m_front.Scale (dgRsqrt (matrix.m_front % matrix.m_front));
-	//	matrix.m_right = matrix.m_front * matrix.m_up;
-	//	matrix.m_right = matrix.m_right.Scale (dgRsqrt (matrix.m_right % matrix.m_right));
-	//	matrix.m_up = matrix.m_right * matrix.m_front;
+	//  matrix.m_front = matrix.m_front.Scale (dgRsqrt (matrix.m_front % matrix.m_front));
+	//  matrix.m_right = matrix.m_front * matrix.m_up;
+	//  matrix.m_right = matrix.m_right.Scale (dgRsqrt (matrix.m_right % matrix.m_right));
+	//  matrix.m_up = matrix.m_right * matrix.m_front;
 }
 
 #endif // !defined(AFX_DGBODY_H__C16EDCD6_53C4_4C6F_A70A_591819F7187E__INCLUDED_)

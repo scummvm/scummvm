@@ -49,7 +49,9 @@ BEGIN_AS_NAMESPACE
 #define ENTERCRITICALSECTION(x)
 #define LEAVECRITICALSECTION(x)
 
-inline bool tryEnter() { return true; }
+inline bool tryEnter() {
+	return true;
+}
 #define TRYENTERCRITICALSECTION(x) tryEnter()
 
 #define DECLAREREADWRITELOCK(x)
@@ -77,8 +79,7 @@ END_AS_NAMESPACE
 #include <pthread.h>
 BEGIN_AS_NAMESPACE
 
-class asCThreadCriticalSection
-{
+class asCThreadCriticalSection {
 public:
 	asCThreadCriticalSection();
 	~asCThreadCriticalSection();
@@ -91,8 +92,7 @@ protected:
 	pthread_mutex_t cs;
 };
 
-class asCThreadReadWriteLock
-{
+class asCThreadReadWriteLock {
 public:
 	asCThreadReadWriteLock();
 	~asCThreadReadWriteLock();
@@ -116,10 +116,10 @@ END_AS_NAMESPACE
 #include <xtl.h>
 #else
 #ifndef WIN32_LEAN_AND_MEAN
-  #define WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
 #endif
 #ifndef _WIN32_WINNT
-  #define _WIN32_WINNT 0x0600 // We need this to get the declaration for Windows Phone compatible Ex functions
+#define _WIN32_WINNT 0x0600 // We need this to get the declaration for Windows Phone compatible Ex functions
 #endif
 #include <windows.h>
 #endif
@@ -129,8 +129,7 @@ BEGIN_AS_NAMESPACE
 #undef GetObject
 #undef RegisterClass
 
-class asCThreadCriticalSection
-{
+class asCThreadCriticalSection {
 public:
 	asCThreadCriticalSection();
 	~asCThreadCriticalSection();
@@ -143,8 +142,7 @@ protected:
 	CRITICAL_SECTION cs;
 };
 
-class asCThreadReadWriteLock
-{
+class asCThreadReadWriteLock {
 public:
 	asCThreadReadWriteLock();
 	~asCThreadReadWriteLock();
@@ -162,7 +160,7 @@ protected:
 
 	// Critical sections and semaphores are available on Windows XP and onwards.
 	// Windows XP is oldest version we support with multithreading.
-	
+
 	// The implementation is based on the following article, that shows
 	// how to implement a fair read/write lock that doesn't risk starving
 	// the writers:

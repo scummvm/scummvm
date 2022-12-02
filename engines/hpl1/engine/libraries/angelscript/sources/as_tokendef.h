@@ -43,8 +43,7 @@
 
 BEGIN_AS_NAMESPACE
 
-enum eTokenType
-{
+enum eTokenType {
 	ttUnrecognizedToken,
 
 	ttEnd,                 // End of file
@@ -179,8 +178,7 @@ enum eTokenType
 	ttCatch                // catch
 };
 
-struct sTokenWord
-{
+struct sTokenWord {
 	const char *word;
 	size_t      wordLength;
 	eTokenType  tokenType;
@@ -188,138 +186,137 @@ struct sTokenWord
 
 #define asTokenDef(str, tok) {str, sizeof(str)-1, tok}
 
-sTokenWord const tokenWords[] =
-{
-	asTokenDef("+"         , ttPlus),
-	asTokenDef("+="        , ttAddAssign),
-	asTokenDef("++"        , ttInc),
-	asTokenDef("-"         , ttMinus),
-	asTokenDef("-="        , ttSubAssign),
-	asTokenDef("--"        , ttDec),
-	asTokenDef("*"         , ttStar),
-	asTokenDef("*="        , ttMulAssign),
-	asTokenDef("/"         , ttSlash),
-	asTokenDef("/="        , ttDivAssign),
-	asTokenDef("%"         , ttPercent),
-	asTokenDef("%="        , ttModAssign),
-	asTokenDef("**"        , ttStarStar),
-	asTokenDef("**="       , ttPowAssign),
-	asTokenDef("="         , ttAssignment),
-	asTokenDef("=="        , ttEqual),
-	asTokenDef("."         , ttDot),
-	asTokenDef("|"         , ttBitOr),
-	asTokenDef("|="        , ttOrAssign),
-	asTokenDef("||"        , ttOr),
-	asTokenDef("&"         , ttAmp),
-	asTokenDef("&="        , ttAndAssign),
-	asTokenDef("&&"        , ttAnd),
-	asTokenDef("^"         , ttBitXor),
-	asTokenDef("^="        , ttXorAssign),
-	asTokenDef("^^"        , ttXor),
-	asTokenDef("<"         , ttLessThan),
-	asTokenDef("<="        , ttLessThanOrEqual),
-	asTokenDef("<<"        , ttBitShiftLeft),
-	asTokenDef("<<="       , ttShiftLeftAssign),
-	asTokenDef(">"         , ttGreaterThan),
-	asTokenDef(">="        , ttGreaterThanOrEqual),
-	asTokenDef(">>"        , ttBitShiftRight),
-	asTokenDef(">>="       , ttShiftRightLAssign),
-	asTokenDef(">>>"       , ttBitShiftRightArith),
-	asTokenDef(">>>="      , ttShiftRightAAssign),
-	asTokenDef("~"         , ttBitNot),
-	asTokenDef(";"         , ttEndStatement),
-	asTokenDef(","         , ttListSeparator),
-	asTokenDef("{"         , ttStartStatementBlock),
-	asTokenDef("}"         , ttEndStatementBlock),
-	asTokenDef("("         , ttOpenParanthesis),
-	asTokenDef(")"         , ttCloseParanthesis),
-	asTokenDef("["         , ttOpenBracket),
-	asTokenDef("]"         , ttCloseBracket),
-	asTokenDef("?"         , ttQuestion),
-	asTokenDef(":"         , ttColon),
-	asTokenDef("::"        , ttScope),
-	asTokenDef("!"         , ttNot),
-	asTokenDef("!="        , ttNotEqual),
-	asTokenDef("!is"       , ttNotIs),
-	asTokenDef("@"         , ttHandle),
-	asTokenDef("and"       , ttAnd),
-	asTokenDef("auto"      , ttAuto),
-	asTokenDef("bool"      , ttBool),
-	asTokenDef("break"     , ttBreak),
-	asTokenDef("case"      , ttCase),
-	asTokenDef("cast"      , ttCast),
-	asTokenDef("catch"     , ttCatch),
-	asTokenDef("class"     , ttClass),
-	asTokenDef("const"     , ttConst),
-	asTokenDef("continue"  , ttContinue),
-	asTokenDef("default"   , ttDefault),
-	asTokenDef("do"        , ttDo),
+sTokenWord const tokenWords[] = {
+	asTokenDef("+", ttPlus),
+	asTokenDef("+=", ttAddAssign),
+	asTokenDef("++", ttInc),
+	asTokenDef("-", ttMinus),
+	asTokenDef("-=", ttSubAssign),
+	asTokenDef("--", ttDec),
+	asTokenDef("*", ttStar),
+	asTokenDef("*=", ttMulAssign),
+	asTokenDef("/", ttSlash),
+	asTokenDef("/=", ttDivAssign),
+	asTokenDef("%", ttPercent),
+	asTokenDef("%=", ttModAssign),
+	asTokenDef("**", ttStarStar),
+	asTokenDef("**=", ttPowAssign),
+	asTokenDef("=", ttAssignment),
+	asTokenDef("==", ttEqual),
+	asTokenDef(".", ttDot),
+	asTokenDef("|", ttBitOr),
+	asTokenDef("|=", ttOrAssign),
+	asTokenDef("||", ttOr),
+	asTokenDef("&", ttAmp),
+	asTokenDef("&=", ttAndAssign),
+	asTokenDef("&&", ttAnd),
+	asTokenDef("^", ttBitXor),
+	asTokenDef("^=", ttXorAssign),
+	asTokenDef("^^", ttXor),
+	asTokenDef("<", ttLessThan),
+	asTokenDef("<=", ttLessThanOrEqual),
+	asTokenDef("<<", ttBitShiftLeft),
+	asTokenDef("<<=", ttShiftLeftAssign),
+	asTokenDef(">", ttGreaterThan),
+	asTokenDef(">=", ttGreaterThanOrEqual),
+	asTokenDef(">>", ttBitShiftRight),
+	asTokenDef(">>=", ttShiftRightLAssign),
+	asTokenDef(">>>", ttBitShiftRightArith),
+	asTokenDef(">>>=", ttShiftRightAAssign),
+	asTokenDef("~", ttBitNot),
+	asTokenDef(";", ttEndStatement),
+	asTokenDef(",", ttListSeparator),
+	asTokenDef("{", ttStartStatementBlock),
+	asTokenDef("}", ttEndStatementBlock),
+	asTokenDef("(", ttOpenParanthesis),
+	asTokenDef(")", ttCloseParanthesis),
+	asTokenDef("[", ttOpenBracket),
+	asTokenDef("]", ttCloseBracket),
+	asTokenDef("?", ttQuestion),
+	asTokenDef(":", ttColon),
+	asTokenDef("::", ttScope),
+	asTokenDef("!", ttNot),
+	asTokenDef("!=", ttNotEqual),
+	asTokenDef("!is", ttNotIs),
+	asTokenDef("@", ttHandle),
+	asTokenDef("and", ttAnd),
+	asTokenDef("auto", ttAuto),
+	asTokenDef("bool", ttBool),
+	asTokenDef("break", ttBreak),
+	asTokenDef("case", ttCase),
+	asTokenDef("cast", ttCast),
+	asTokenDef("catch", ttCatch),
+	asTokenDef("class", ttClass),
+	asTokenDef("const", ttConst),
+	asTokenDef("continue", ttContinue),
+	asTokenDef("default", ttDefault),
+	asTokenDef("do", ttDo),
 #ifdef  AS_USE_DOUBLE_AS_FLOAT
-	asTokenDef("double"    , ttFloat),
+	asTokenDef("double", ttFloat),
 #else
-	asTokenDef("double"    , ttDouble),
+	asTokenDef("double", ttDouble),
 #endif
-	asTokenDef("else"      , ttElse),
-	asTokenDef("enum"      , ttEnum),
-	asTokenDef("false"     , ttFalse),
-	asTokenDef("float"     , ttFloat),
-	asTokenDef("for"       , ttFor),
-	asTokenDef("funcdef"   , ttFuncDef),
-	asTokenDef("if"        , ttIf),
-	asTokenDef("import"    , ttImport),
-	asTokenDef("in"        , ttIn),
-	asTokenDef("inout"     , ttInOut),
-	asTokenDef("int"       , ttInt),
-	asTokenDef("int8"      , ttInt8),
-	asTokenDef("int16"     , ttInt16),
-	asTokenDef("int32"     , ttInt),
-	asTokenDef("int64"     , ttInt64),
-	asTokenDef("interface" , ttInterface),
-	asTokenDef("is"        , ttIs),
-	asTokenDef("mixin"     , ttMixin),
-	asTokenDef("namespace" , ttNamespace),
-	asTokenDef("not"       , ttNot),
-	asTokenDef("null"      , ttNull),
-	asTokenDef("or"        , ttOr),
-	asTokenDef("out"       , ttOut),
-	asTokenDef("private"   , ttPrivate),
-	asTokenDef("protected" , ttProtected),
-	asTokenDef("return"    , ttReturn),
-	asTokenDef("switch"    , ttSwitch),
-	asTokenDef("true"      , ttTrue),
-	asTokenDef("try"       , ttTry),
-	asTokenDef("typedef"   , ttTypedef),
-	asTokenDef("uint"      , ttUInt),
-	asTokenDef("uint8"     , ttUInt8),
-	asTokenDef("uint16"    , ttUInt16),
-	asTokenDef("uint32"    , ttUInt),
-	asTokenDef("uint64"    , ttUInt64),
-	asTokenDef("void"      , ttVoid),
-	asTokenDef("while"     , ttWhile),
-	asTokenDef("xor"       , ttXor),
+	asTokenDef("else", ttElse),
+	asTokenDef("enum", ttEnum),
+	asTokenDef("false", ttFalse),
+	asTokenDef("float", ttFloat),
+	asTokenDef("for", ttFor),
+	asTokenDef("funcdef", ttFuncDef),
+	asTokenDef("if", ttIf),
+	asTokenDef("import", ttImport),
+	asTokenDef("in", ttIn),
+	asTokenDef("inout", ttInOut),
+	asTokenDef("int", ttInt),
+	asTokenDef("int8", ttInt8),
+	asTokenDef("int16", ttInt16),
+	asTokenDef("int32", ttInt),
+	asTokenDef("int64", ttInt64),
+	asTokenDef("interface", ttInterface),
+	asTokenDef("is", ttIs),
+	asTokenDef("mixin", ttMixin),
+	asTokenDef("namespace", ttNamespace),
+	asTokenDef("not", ttNot),
+	asTokenDef("null", ttNull),
+	asTokenDef("or", ttOr),
+	asTokenDef("out", ttOut),
+	asTokenDef("private", ttPrivate),
+	asTokenDef("protected", ttProtected),
+	asTokenDef("return", ttReturn),
+	asTokenDef("switch", ttSwitch),
+	asTokenDef("true", ttTrue),
+	asTokenDef("try", ttTry),
+	asTokenDef("typedef", ttTypedef),
+	asTokenDef("uint", ttUInt),
+	asTokenDef("uint8", ttUInt8),
+	asTokenDef("uint16", ttUInt16),
+	asTokenDef("uint32", ttUInt),
+	asTokenDef("uint64", ttUInt64),
+	asTokenDef("void", ttVoid),
+	asTokenDef("while", ttWhile),
+	asTokenDef("xor", ttXor),
 };
 
-const unsigned int numTokenWords = sizeof(tokenWords)/sizeof(sTokenWord);
+const unsigned int numTokenWords = sizeof(tokenWords) / sizeof(sTokenWord);
 
-const char * const whiteSpace = " \t\r\n";
+const char *const whiteSpace = " \t\r\n";
 
 // Some keywords that are not considered tokens by the parser
 // These only have meaning in specific situations. Outside these
 // situations they are treated as normal identifiers.
-const char * const THIS_TOKEN      = "this";
-const char * const FROM_TOKEN      = "from";
-const char * const SUPER_TOKEN     = "super";
-const char * const SHARED_TOKEN    = "shared";
-const char * const FINAL_TOKEN     = "final";
-const char * const OVERRIDE_TOKEN  = "override";
-const char * const GET_TOKEN       = "get";
-const char * const SET_TOKEN       = "set";
-const char * const ABSTRACT_TOKEN  = "abstract";
-const char * const FUNCTION_TOKEN  = "function";
-const char * const IF_HANDLE_TOKEN = "if_handle_then_const";
-const char * const EXTERNAL_TOKEN  = "external";
-const char * const EXPLICIT_TOKEN  = "explicit";
-const char * const PROPERTY_TOKEN  = "property";
+const char *const THIS_TOKEN      = "this";
+const char *const FROM_TOKEN      = "from";
+const char *const SUPER_TOKEN     = "super";
+const char *const SHARED_TOKEN    = "shared";
+const char *const FINAL_TOKEN     = "final";
+const char *const OVERRIDE_TOKEN  = "override";
+const char *const GET_TOKEN       = "get";
+const char *const SET_TOKEN       = "set";
+const char *const ABSTRACT_TOKEN  = "abstract";
+const char *const FUNCTION_TOKEN  = "function";
+const char *const IF_HANDLE_TOKEN = "if_handle_then_const";
+const char *const EXTERNAL_TOKEN  = "external";
+const char *const EXPLICIT_TOKEN  = "explicit";
+const char *const PROPERTY_TOKEN  = "property";
 
 END_AS_NAMESPACE
 

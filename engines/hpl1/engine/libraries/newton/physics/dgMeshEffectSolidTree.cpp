@@ -27,7 +27,7 @@
 #define DG_CLIPPER_TOL dgFloat64(1.0e-12)
 
 dgMeshTreeCSGFace::dgMeshTreeCSGFace(const dgMeshEffect &mesh,
-									 dgEdge *const face) : dgList<dgHugeVector>(mesh.GetAllocator()), m_side(dgMeshEffectSolidTree::m_divider) {
+                                     dgEdge *const face) : dgList<dgHugeVector>(mesh.GetAllocator()), m_side(dgMeshEffectSolidTree::m_divider) {
 	const dgEdge *ptr = face;
 	const dgMeshEffect::dgVertexAtribute *const attib = mesh.m_attib;
 	do {
@@ -37,14 +37,14 @@ dgMeshTreeCSGFace::dgMeshTreeCSGFace(const dgMeshEffect &mesh,
 }
 
 dgMeshTreeCSGFace::dgMeshTreeCSGFace(dgMemoryAllocator *const allocator,
-									 dgInt32 count, const dgHugeVector *const points) : dgList<dgHugeVector>(allocator), m_side(dgMeshEffectSolidTree::m_divider) {
+                                     dgInt32 count, const dgHugeVector *const points) : dgList<dgHugeVector>(allocator), m_side(dgMeshEffectSolidTree::m_divider) {
 	for (dgInt32 i = 0; i < count; i++) {
 		Append(points[i]);
 	}
 }
 
 bool dgMeshTreeCSGFace::IsPointOnEdge(const dgHugeVector &p0,
-									  const dgHugeVector &p1, const dgHugeVector &q0) const {
+                                      const dgHugeVector &p1, const dgHugeVector &q0) const {
 	dgHugeVector p1p0(p1 - p0);
 	dgGoogol den(p1p0 % p1p0);
 
@@ -89,13 +89,13 @@ bool dgMeshTreeCSGFace::CheckConvex(const dgHugeVector &normal) const {
 
 void dgMeshTreeCSGFace::MergeMissingVertex(const dgMeshTreeCSGFace *const face) {
 	for (dgMeshTreeCSGFace::dgListNode *outNode = GetFirst();
-		 outNode != GetLast(); outNode = outNode->GetNext()) {
+	        outNode != GetLast(); outNode = outNode->GetNext()) {
 		dgHugeVector p0(outNode->GetInfo());
 		for (dgMeshTreeCSGFace::dgListNode *node = face->GetFirst(); node; node =
-																			   node->GetNext()) {
+		            node->GetNext()) {
 			if (IsPointOnEdge(p0, outNode->GetNext()->GetInfo(), node->GetInfo())) {
 				dgMeshTreeCSGFace::dgListNode *const insertNode = Append(
-					node->GetInfo());
+				            node->GetInfo());
 				InsertAfter(outNode, insertNode);
 			}
 		}
@@ -104,15 +104,15 @@ void dgMeshTreeCSGFace::MergeMissingVertex(const dgMeshTreeCSGFace *const face) 
 	RotateToBegin(GetLast());
 	dgListNode *const last = GetFirst()->GetNext();
 	for (dgMeshTreeCSGFace::dgListNode *outNode = GetFirst(); outNode != last;
-		 outNode = outNode->GetNext()) {
+	        outNode = outNode->GetNext()) {
 		dgHugeVector p0(outNode->GetInfo());
 		dgHugeVector p1(outNode->GetNext()->GetInfo());
 
 		for (dgMeshTreeCSGFace::dgListNode *node = face->GetFirst(); node; node =
-																			   node->GetNext()) {
+		            node->GetNext()) {
 			if (IsPointOnEdge(p0, outNode->GetNext()->GetInfo(), node->GetInfo())) {
 				dgMeshTreeCSGFace::dgListNode *const insertNode = Append(
-					node->GetInfo());
+				            node->GetInfo());
 				InsertAfter(outNode, insertNode);
 			}
 		}
@@ -120,7 +120,7 @@ void dgMeshTreeCSGFace::MergeMissingVertex(const dgMeshTreeCSGFace *const face) 
 }
 
 dgInt32 dgMeshTreeCSGFace::RemoveDuplicates(dgInt32 count,
-											dgHugeVector *const points) const {
+        dgHugeVector *const points) const {
 	dgInt32 index[256];
 	for (dgInt32 i = 0; i < count; i++) {
 		index[i] = i + 1;
@@ -168,16 +168,16 @@ dgMatrix dgMeshTreeCSGFace::DebugMatrix() const {
 	dgMatrix matrix(dgGetIdentityMatrix());
 	dgHugeVector e0(GetFirst()->GetNext()->GetInfo() - GetFirst()->GetInfo());
 	dgHugeVector e1(
-		GetFirst()->GetNext()->GetNext()->GetInfo() - GetFirst()->GetInfo());
+	    GetFirst()->GetNext()->GetNext()->GetInfo() - GetFirst()->GetInfo());
 	dgHugeVector aaa(e0 * e1);
 	dgVector aaaa(dgFloat32(aaa.m_x.GetAproximateValue()),
-				  dgFloat32(aaa.m_y.GetAproximateValue()),
-				  dgFloat32(aaa.m_z.GetAproximateValue()), 0.0f);
+	              dgFloat32(aaa.m_y.GetAproximateValue()),
+	              dgFloat32(aaa.m_z.GetAproximateValue()), 0.0f);
 	aaaa = aaaa.Scale(dgFloat32(1.0) / dgSqrt(aaaa % aaaa));
 
 	dgVector bbbb(dgFloat32(e0.m_x.GetAproximateValue()),
-				  dgFloat32(e0.m_y.GetAproximateValue()),
-				  dgFloat32(e0.m_z.GetAproximateValue()), 0.0f);
+	              dgFloat32(e0.m_y.GetAproximateValue()),
+	              dgFloat32(e0.m_z.GetAproximateValue()), 0.0f);
 	bbbb = bbbb.Scale(dgFloat32(1.0) / dgSqrt(bbbb % bbbb));
 
 	matrix.m_up = bbbb;
@@ -189,11 +189,11 @@ dgMatrix dgMeshTreeCSGFace::DebugMatrix() const {
 
 void dgMeshTreeCSGFace::Trace(const dgMatrix &matrix) const {
 	for (dgMeshTreeCSGFace::dgListNode *node = GetFirst(); node;
-		 node = node->GetNext()) {
+	        node = node->GetNext()) {
 		const dgHugeVector &bbb = node->GetInfo();
 		dgVector bbbb(dgFloat32(bbb.m_x.GetAproximateValue()),
-					  dgFloat32(bbb.m_y.GetAproximateValue()),
-					  dgFloat32(bbb.m_z.GetAproximateValue()), 0.0f);
+		              dgFloat32(bbb.m_y.GetAproximateValue()),
+		              dgFloat32(bbb.m_z.GetAproximateValue()), 0.0f);
 		bbbb = matrix.UnrotateVector(bbbb);
 		bbbb.Trace();
 	}
@@ -206,7 +206,7 @@ dgHugeVector dgMeshTreeCSGFace::FaceNormal() const {
 	dgHugeVector area(0.0f, 0.0f, 0.0f, 0.0f);
 	dgHugeVector e0(GetFirst()->GetNext()->GetInfo() - GetFirst()->GetInfo());
 	for (dgListNode *node = GetFirst()->GetNext()->GetNext(); node;
-		 node = node->GetNext()) {
+	        node = node->GetNext()) {
 		dgHugeVector e1(node->GetInfo() - GetFirst()->GetInfo());
 		area += e0 * e1;
 		e0 = e1;
@@ -215,9 +215,9 @@ dgHugeVector dgMeshTreeCSGFace::FaceNormal() const {
 }
 
 bool dgMeshTreeCSGFace::CheckFaceArea(dgInt32 count,
-									  const dgHugeVector *const points) const {
+                                      const dgHugeVector *const points) const {
 	dgHugeVector area(dgFloat64(0.0), dgFloat64(0.0), dgFloat64(0.0),
-					  dgFloat64(0.0));
+	                  dgFloat64(0.0));
 	dgHugeVector e0(points[1] - points[0]);
 	for (dgInt32 i = 2; i < count; i++) {
 		dgHugeVector e1(points[i] - points[0]);
@@ -259,16 +259,16 @@ bool dgMeshTreeCSGFace::CheckFaceArea(dgInt32 count,
  void xxxx()
  {
  char text[256];
- //	dgGoogol a (xxx1(100));
- //	dgGoogol a (1.05);
+ // dgGoogol a (xxx1(100));
+ // dgGoogol a (1.05);
  dgGoogol a (xxx2 (60));
  a.ToString(text);
- //	dgFloat64 xxxxx = a.GetAproximateValue();
+ // dgFloat64 xxxxx = a.GetAproximateValue();
  }
  */
 
 void dgMeshTreeCSGFace::Clip(const dgHugeVector &plane,
-							 dgMeshTreeCSGFace **leftOut, dgMeshTreeCSGFace **rightOut) {
+                             dgMeshTreeCSGFace **leftOut, dgMeshTreeCSGFace **rightOut) {
 	// xxxx ();
 
 	dgInt8 pointSide[256];
@@ -277,7 +277,7 @@ void dgMeshTreeCSGFace::Clip(const dgHugeVector &plane,
 	dgInt32 rightPCount = 0;
 	dgInt32 leftPCount = 0;
 	for (dgMeshTreeCSGFace::dgListNode *ptr = GetFirst(); ptr; ptr =
-																   ptr->GetNext()) {
+	            ptr->GetNext()) {
 		const dgHugeVector &p = ptr->GetInfo();
 
 		dgGoogol test = plane.EvaluePlane(p);
@@ -325,7 +325,7 @@ void dgMeshTreeCSGFace::Clip(const dgHugeVector &plane,
 		dgInt32 i0 = count - 1;
 		dgHugeVector p0(GetLast()->GetInfo());
 		for (dgMeshTreeCSGFace::dgListNode *ptr = GetFirst(); ptr;
-			 ptr = ptr->GetNext()) {
+		        ptr = ptr->GetNext()) {
 			const dgHugeVector &p1(ptr->GetInfo());
 
 			dgHugeVector inter;
@@ -378,12 +378,12 @@ void dgMeshTreeCSGFace::Clip(const dgHugeVector &plane,
 		rightCount = RemoveDuplicates(rightCount, rightFace);
 		if ((leftCount >= 3) && CheckFaceArea(leftCount, leftFace)) {
 			*leftOut = new (GetAllocator()) dgMeshTreeCSGFace(GetAllocator(),
-															  leftCount, leftFace);
+			        leftCount, leftFace);
 		}
 
 		if ((rightCount >= 3) && CheckFaceArea(rightCount, rightFace)) {
 			*rightOut = new (GetAllocator()) dgMeshTreeCSGFace(GetAllocator(),
-															   rightCount, rightFace);
+			        rightCount, rightFace);
 		}
 		_ASSERTE(*leftOut || *rightOut);
 	}
@@ -393,11 +393,11 @@ dgMeshEffectSolidTree::dgMeshEffectSolidTree(dgPlaneType type) : m_planeType(typ
 }
 
 dgMeshEffectSolidTree::dgMeshEffectSolidTree(const dgMeshEffect &mesh,
-											 dgEdge *const face) : m_planeType(m_divider), m_back(new (mesh.GetAllocator()) dgMeshEffectSolidTree(m_solid)), m_front(new (mesh.GetAllocator()) dgMeshEffectSolidTree(m_empty)), m_plane(BuildPlane(mesh, face)) {
+        dgEdge *const face) : m_planeType(m_divider), m_back(new (mesh.GetAllocator()) dgMeshEffectSolidTree(m_solid)), m_front(new (mesh.GetAllocator()) dgMeshEffectSolidTree(m_empty)), m_plane(BuildPlane(mesh, face)) {
 }
 
 dgMeshEffectSolidTree::dgMeshEffectSolidTree(const dgHugeVector &plane,
-											 dgMemoryAllocator *const allocator) : m_planeType(m_divider), m_back(new (allocator) dgMeshEffectSolidTree(m_solid)), m_front(new (allocator) dgMeshEffectSolidTree(m_empty)), m_plane(plane) {
+        dgMemoryAllocator *const allocator) : m_planeType(m_divider), m_back(new (allocator) dgMeshEffectSolidTree(m_solid)), m_front(new (allocator) dgMeshEffectSolidTree(m_empty)), m_plane(plane) {
 }
 
 dgMeshEffectSolidTree::~dgMeshEffectSolidTree() {
@@ -411,10 +411,10 @@ dgMeshEffectSolidTree::~dgMeshEffectSolidTree() {
 }
 
 dgHugeVector dgMeshEffectSolidTree::BuildPlane(const dgMeshEffect &mesh,
-											   dgEdge *const face) const {
+        dgEdge *const face) const {
 	dgEdge *edge = face;
 	dgHugeVector plane(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
-					   dgFloat32(0.0f));
+	                   dgFloat32(0.0f));
 
 	dgHugeVector p0(mesh.m_points[edge->m_incidentVertex]);
 
@@ -434,9 +434,9 @@ dgHugeVector dgMeshEffectSolidTree::BuildPlane(const dgMeshEffect &mesh,
 }
 
 void dgMeshEffectSolidTree::AddFace(const dgMeshEffect &mesh,
-									dgEdge *const face) {
+                                    dgEdge *const face) {
 	dgBigVector normal(
-		mesh.FaceNormal(face, &mesh.m_points[0][0], sizeof(dgBigVector)));
+	    mesh.FaceNormal(face, &mesh.m_points[0][0], sizeof(dgBigVector)));
 	dgFloat64 mag2 = normal % normal;
 
 	if (mag2 > dgFloat32(1.0e-14f)) {
@@ -489,7 +489,7 @@ void dgMeshEffectSolidTree::AddFace(const dgMeshEffect &mesh,
 						backOut->Release();
 						delete root->m_back;
 						root->m_back = new (mesh.GetAllocator()) dgMeshEffectSolidTree(
-							plane, mesh.GetAllocator());
+						    plane, mesh.GetAllocator());
 					} else {
 						faces[stack] = backOut;
 						pool[stack] = root->m_back;
@@ -503,7 +503,7 @@ void dgMeshEffectSolidTree::AddFace(const dgMeshEffect &mesh,
 						frontOut->Release();
 						delete root->m_front;
 						root->m_front = new (mesh.GetAllocator()) dgMeshEffectSolidTree(
-							plane, mesh.GetAllocator());
+						    plane, mesh.GetAllocator());
 					} else {
 						faces[stack] = frontOut;
 						pool[stack] = root->m_front;
@@ -519,7 +519,7 @@ void dgMeshEffectSolidTree::AddFace(const dgMeshEffect &mesh,
 }
 
 dgMeshEffectSolidTree::dgPlaneType dgMeshEffectSolidTree::GetPointSide(
-	const dgHugeVector &point) const {
+    const dgHugeVector &point) const {
 	const dgMeshEffectSolidTree *root = this;
 
 	_ASSERTE(root);
@@ -543,10 +543,10 @@ dgMeshEffectSolidTree::dgPlaneType dgMeshEffectSolidTree::GetPointSide(
 }
 
 dgMeshEffectSolidTree::dgPlaneType dgMeshEffectSolidTree::GetFaceSide(
-	const dgMeshTreeCSGFace *const face) const {
+    const dgMeshTreeCSGFace *const face) const {
 	dgHugeVector center(0.0, 0.0, 0.0, 0.0);
 	for (dgMeshTreeCSGFace::dgListNode *node = face->GetFirst(); node;
-		 node = node->GetNext()) {
+	        node = node->GetNext()) {
 		const dgHugeVector &point = node->GetInfo();
 		center += point;
 	}

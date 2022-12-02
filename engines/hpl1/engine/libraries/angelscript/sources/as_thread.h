@@ -49,8 +49,7 @@ BEGIN_AS_NAMESPACE
 
 class asCThreadLocalData;
 
-class asCThreadManager : public asIThreadManager
-{
+class asCThreadManager : public asIThreadManager {
 public:
 	static asCThreadLocalData *GetLocalData();
 	static int CleanupLocalData();
@@ -90,8 +89,7 @@ protected:
 
 class asIScriptContext;
 
-class asCThreadLocalData
-{
+class asCThreadLocalData {
 public:
 	asCArray<asIScriptContext *> activeContexts;
 	asCString string;

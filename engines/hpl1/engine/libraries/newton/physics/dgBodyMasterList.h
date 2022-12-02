@@ -38,7 +38,9 @@ public:
 	dgBodyMasterListRow();
 	~dgBodyMasterListRow();
 
-	dgBody *GetBody() const { return m_body; }
+	dgBody *GetBody() const {
+		return m_body;
+	}
 
 	void RemoveAllJoints();
 	dgListNode *AddJoint(dgConstraint *const joint, dgBody *const body);

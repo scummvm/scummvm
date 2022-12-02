@@ -2,23 +2,23 @@
    AngelCode Scripting Library
    Copyright (c) 2003-2017 Andreas Jonsson
 
-   This software is provided 'as-is', without any express or implied 
-   warranty. In no event will the authors be held liable for any 
+   This software is provided 'as-is', without any express or implied
+   warranty. In no event will the authors be held liable for any
    damages arising from the use of this software.
 
-   Permission is granted to anyone to use this software for any 
-   purpose, including commercial applications, and to alter it and 
+   Permission is granted to anyone to use this software for any
+   purpose, including commercial applications, and to alter it and
    redistribute it freely, subject to the following restrictions:
 
-   1. The origin of this software must not be misrepresented; you 
+   1. The origin of this software must not be misrepresented; you
       must not claim that you wrote the original software. If you use
-      this software in a product, an acknowledgment in the product 
+      this software in a product, an acknowledgment in the product
       documentation would be appreciated but is not required.
 
-   2. Altered source versions must be plainly marked as such, and 
+   2. Altered source versions must be plainly marked as such, and
       must not be misrepresented as being the original software.
 
-   3. This notice may not be removed or altered from any source 
+   3. This notice may not be removed or altered from any source
       distribution.
 
    The original version of this library can be located at:
@@ -49,23 +49,21 @@
 
 BEGIN_AS_NAMESPACE
 
-struct asSTypeBehaviour
-{
-	asSTypeBehaviour() 
-	{
+struct asSTypeBehaviour {
+	asSTypeBehaviour() {
 		factory = 0;
 		listFactory = 0;
 		copyfactory = 0;
-		construct = 0; 
+		construct = 0;
 		copyconstruct = 0;
-		destruct = 0; 
-		copy = 0; 
-		addref = 0; 
-		release = 0; 
-		gcGetRefCount = 0; 
-		gcSetFlag = 0; 
-		gcGetFlag = 0; 
-		gcEnumReferences = 0; 
+		destruct = 0;
+		copy = 0;
+		addref = 0;
+		release = 0;
+		gcGetRefCount = 0;
+		gcSetFlag = 0;
+		gcGetFlag = 0;
+		gcEnumReferences = 0;
 		gcReleaseAllReferences = 0;
 		templateCallback = 0;
 		getWeakRefFlag = 0;
@@ -99,8 +97,7 @@ struct asSTypeBehaviour
 class asCScriptEngine;
 struct asSNameSpace;
 
-class asCObjectType : public asCTypeInfo
-{
+class asCObjectType : public asCTypeInfo {
 public:
 	asITypeInfo       *GetBaseType() const;
 	bool               DerivesFrom(const asITypeInfo *objType) const;
@@ -140,18 +137,18 @@ public:
 #ifdef WIP_16BYTE_ALIGN
 	int                          alignment;
 #endif
-	asCArray<asCObjectProperty*> properties;
+	asCArray<asCObjectProperty *> properties;
 	asCArray<int>                methods;
 
 	// TODO: These are not used by template types. Should perhaps create a derived class to save memory on ordinary object types
-	asCArray<asCObjectType*>     interfaces;
+	asCArray<asCObjectType *>     interfaces;
 	asCArray<asUINT>             interfaceVFTOffsets;
-	asCObjectType *              derivedFrom;
-	asCArray<asCScriptFunction*> virtualFunctionTable;
+	asCObjectType               *derivedFrom;
+	asCArray<asCScriptFunction *> virtualFunctionTable;
 
 	// Used for funcdefs declared as members of class.
 	// TODO: child funcdef: Should be possible to enumerate these from application
-	asCArray<asCFuncdefType*> childFuncDefs;
+	asCArray<asCFuncdefType *> childFuncDefs;
 
 	asSTypeBehaviour beh;
 

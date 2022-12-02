@@ -26,8 +26,8 @@
 
 
 dgCollisionUserMesh::dgCollisionUserMesh(dgMemoryAllocator *allocator,
-										 const dgVector &boxP0, const dgVector &boxP1,
-										 const dgUserMeshCreation &data) : dgCollisionMesh(allocator, m_userMeshCollision) {
+        const dgVector &boxP0, const dgVector &boxP1,
+        const dgUserMeshCreation &data) : dgCollisionMesh(allocator, m_userMeshCollision) {
 	m_rtti |= dgCollisionUserMesh_RTTI;
 
 	m_userData = data.m_userData;
@@ -41,7 +41,7 @@ dgCollisionUserMesh::dgCollisionUserMesh(dgMemoryAllocator *allocator,
 }
 
 dgCollisionUserMesh::dgCollisionUserMesh(dgWorld *const world,
-										 dgDeserialize deserialization, void *const userData) : dgCollisionMesh(world, deserialization, userData) {
+        dgDeserialize deserialization, void *const userData) : dgCollisionMesh(world, deserialization, userData) {
 	_ASSERTE(0);
 	m_rtti |= dgCollisionUserMesh_RTTI;
 
@@ -62,7 +62,7 @@ dgCollisionUserMesh::~dgCollisionUserMesh(void) {
 }
 
 void dgCollisionUserMesh::Serialize(dgSerialize callback,
-									void *const userData) const {
+                                    void *const userData) const {
 	_ASSERTE(0);
 	/*
 	 SerializeLow(callback, userData);
@@ -71,12 +71,12 @@ void dgCollisionUserMesh::Serialize(dgSerialize callback,
 }
 
 void dgCollisionUserMesh::GetVertexListIndexList(const dgVector &p0,
-												 const dgVector &p1, dgGetVertexListIndexList &data) const {
+        const dgVector &p1, dgGetVertexListIndexList &data) const {
 	if (m_faceInAabb) {
 		return m_faceInAabb(m_userData, &p0[0], &p1[0],
-							(const dgFloat32 **)&data.m_veterxArray, &data.m_vertexCount,
-							&data.m_vertexStrideInBytes, data.m_indexList, data.m_maxIndexCount,
-							data.m_userDataList);
+		                    (const dgFloat32 **)&data.m_veterxArray, &data.m_vertexCount,
+		                    &data.m_vertexStrideInBytes, data.m_indexList, data.m_maxIndexCount,
+		                    data.m_userDataList);
 
 	} else {
 		data.m_triangleCount = 0;
@@ -92,16 +92,16 @@ void dgCollisionUserMesh::GetCollisionInfo(dgCollisionInfo *info) const {
 }
 
 dgFloat32 dgCollisionUserMesh::RayCastSimd(const dgVector &localP0,
-										   const dgVector &localP1, dgContactPoint &contactOut,
-										   OnRayPrecastAction preFilter, const dgBody *const body,
-										   void *const userData) const {
+        const dgVector &localP1, dgContactPoint &contactOut,
+        OnRayPrecastAction preFilter, const dgBody *const body,
+        void *const userData) const {
 	return RayCast(localP0, localP1, contactOut, preFilter, body, userData);
 }
 
 dgFloat32 dgCollisionUserMesh::RayCast(const dgVector &localP0,
-									   const dgVector &localP1, dgContactPoint &contactOut,
-									   OnRayPrecastAction preFilter, const dgBody *const body,
-									   void *const userData) const {
+                                       const dgVector &localP1, dgContactPoint &contactOut,
+                                       OnRayPrecastAction preFilter, const dgBody *const body,
+                                       void *const userData) const {
 	dgFloat32 t;
 	dgFloat32 param;
 	if (PREFILTER_RAYCAST(preFilter, body, this, userData)) {
@@ -130,7 +130,7 @@ dgFloat32 dgCollisionUserMesh::RayCast(const dgVector &localP0,
 }
 
 void dgCollisionUserMesh::GetCollidingFacesSimd(
-	dgPolygonMeshDesc *const data) const {
+    dgPolygonMeshDesc *const data) const {
 	GetCollidingFaces(data);
 }
 
@@ -145,7 +145,7 @@ void dgCollisionUserMesh::GetCollidingFaces(dgPolygonMeshDesc *const data) const
 }
 
 void dgCollisionUserMesh::DebugCollision(const dgMatrix &matrixPtr,
-										 OnDebugCollisionMeshCallback callback, void *const userData) const {
+        OnDebugCollisionMeshCallback callback, void *const userData) const {
 	/*
 	 dgCollisionUserMeshShowPolyContext context;
 

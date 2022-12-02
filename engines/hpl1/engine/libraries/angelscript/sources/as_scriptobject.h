@@ -51,8 +51,7 @@ class asCObjectType;
 // TODO: Add const overload for GetAddressOfProperty
 
 // TODO: weak: Should move to its own file
-class asCLockableSharedBool : public asILockableSharedBool
-{
+class asCLockableSharedBool : public asILockableSharedBool {
 public:
 	asCLockableSharedBool();
 	int AddRef() const;
@@ -70,8 +69,7 @@ protected:
 	DECLARECRITICALSECTION(mutable lock)
 };
 
-class asCScriptObject : public asIScriptObject
-{
+class asCScriptObject : public asIScriptObject {
 public:
 //===================================
 // From asIScriptObject
@@ -133,16 +131,15 @@ protected:
 	asCObjectType    *objType;
 
 	mutable asCAtomic refCount;
-	mutable asBYTE    gcFlag:1;
-	mutable asBYTE    hasRefCountReachedZero:1;
+	mutable asBYTE    gcFlag: 1;
+	mutable asBYTE    hasRefCountReachedZero: 1;
 	bool              isDestructCalled;
 
 	// Most script classes instances won't have neither the weakRefFlags nor
 	// userData so we only allocate this if requested. Even when used it is
 	// not something that will be accessed all the time so having the extra
 	// indirection will not affect the performance significantly.
-	struct SExtra
-	{
+	struct SExtra {
 		SExtra() : weakRefFlag(0) {};
 		asCLockableSharedBool *weakRefFlag;
 		asCArray<asPWORD>      userData;

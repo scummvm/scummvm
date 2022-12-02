@@ -71,10 +71,10 @@ dgCollision *dgWorld::CreateNull() {
 }
 
 dgCollision *dgWorld::CreateBox(dgFloat32 dx, dgFloat32 dy, dgFloat32 dz,
-								dgInt32 shapeID, const dgMatrix &offsetMatrix) {
-	//	dgUnsigned32 crc;
-	//	dgCollision* collision;
-	//	dgBodyCollisionList::dgTreeNode* node;
+                                dgInt32 shapeID, const dgMatrix &offsetMatrix) {
+	//  dgUnsigned32 crc;
+	//  dgCollision* collision;
+	//  dgBodyCollisionList::dgTreeNode* node;
 	dgUnsigned32 buffer[2 * sizeof(dgMatrix) / sizeof(dgInt32)];
 
 	dx = dgAbsf(dx);
@@ -93,7 +93,7 @@ dgCollision *dgWorld::CreateBox(dgFloat32 dx, dgFloat32 dy, dgFloat32 dz,
 	dgBodyCollisionList::dgTreeNode *node = dgBodyCollisionList::Find(crc);
 	if (!node) {
 		dgCollision *const collision = new (m_allocator) dgCollisionBox(m_allocator,
-																		crc, dx, dy, dz, offsetMatrix);
+		        crc, dx, dy, dz, offsetMatrix);
 		collision->SetUserDataID(dgUnsigned32(shapeID));
 		node = dgBodyCollisionList::Insert(collision, crc);
 	}
@@ -103,7 +103,7 @@ dgCollision *dgWorld::CreateBox(dgFloat32 dx, dgFloat32 dy, dgFloat32 dz,
 }
 
 dgCollision *dgWorld::CreateSphere(dgFloat32 radii, dgInt32 shapeID,
-								   const dgMatrix &offsetMatrix) {
+                                   const dgMatrix &offsetMatrix) {
 	dgUnsigned32 buffer[2 * sizeof(dgMatrix) / sizeof(dgInt32)];
 	radii = dgAbsf(radii);
 
@@ -117,7 +117,7 @@ dgCollision *dgWorld::CreateSphere(dgFloat32 radii, dgInt32 shapeID,
 	dgBodyCollisionList::dgTreeNode *node = dgBodyCollisionList::Find(crc);
 	if (!node) {
 		dgCollision *const collision = new (m_allocator) dgCollisionSphere(
-			m_allocator, crc, radii, offsetMatrix);
+		    m_allocator, crc, radii, offsetMatrix);
 		collision->SetUserDataID(dgUnsigned32(shapeID));
 		node = dgBodyCollisionList::Insert(collision, crc);
 	}
@@ -127,7 +127,7 @@ dgCollision *dgWorld::CreateSphere(dgFloat32 radii, dgInt32 shapeID,
 }
 
 dgCollision *dgWorld::CreateEllipse(dgFloat32 rx, dgFloat32 ry, dgFloat32 rz,
-									dgInt32 shapeID, const dgMatrix &offsetMatrix) {
+                                    dgInt32 shapeID, const dgMatrix &offsetMatrix) {
 	dgUnsigned32 buffer[2 * sizeof(dgMatrix) / sizeof(dgInt32)];
 
 	rx = dgAbsf(rx);
@@ -146,7 +146,7 @@ dgCollision *dgWorld::CreateEllipse(dgFloat32 rx, dgFloat32 ry, dgFloat32 rz,
 	dgBodyCollisionList::dgTreeNode *node = dgBodyCollisionList::Find(crc);
 	if (!node) {
 		dgCollision *const collision = new (m_allocator) dgCollisionEllipse(
-			m_allocator, crc, rx, ry, rz, offsetMatrix);
+		    m_allocator, crc, rx, ry, rz, offsetMatrix);
 		collision->SetUserDataID(dgUnsigned32(shapeID));
 		node = dgBodyCollisionList::Insert(collision, crc);
 	}
@@ -156,7 +156,7 @@ dgCollision *dgWorld::CreateEllipse(dgFloat32 rx, dgFloat32 ry, dgFloat32 rz,
 }
 
 dgCollision *dgWorld::CreateCapsule(dgFloat32 radius, dgFloat32 height,
-									dgInt32 shapeID, const dgMatrix &offsetMatrix) {
+                                    dgInt32 shapeID, const dgMatrix &offsetMatrix) {
 	dgUnsigned32 crc;
 	dgCollision *collision;
 	dgBodyCollisionList::dgTreeNode *node;
@@ -176,7 +176,7 @@ dgCollision *dgWorld::CreateCapsule(dgFloat32 radius, dgFloat32 height,
 	node = dgBodyCollisionList::Find(crc);
 	if (!node) {
 		collision = new (m_allocator) dgCollisionCapsule(m_allocator, crc, radius,
-														 height, offsetMatrix);
+		        height, offsetMatrix);
 		collision->SetUserDataID(dgUnsigned32(shapeID));
 		node = dgBodyCollisionList::Insert(collision, crc);
 	}
@@ -186,7 +186,7 @@ dgCollision *dgWorld::CreateCapsule(dgFloat32 radius, dgFloat32 height,
 }
 
 dgCollision *dgWorld::CreateCone(dgFloat32 radius, dgFloat32 height,
-								 dgInt32 shapeID, const dgMatrix &offsetMatrix) {
+                                 dgInt32 shapeID, const dgMatrix &offsetMatrix) {
 	dgUnsigned32 crc;
 	dgCollision *collision;
 	dgBodyCollisionList::dgTreeNode *node;
@@ -206,7 +206,7 @@ dgCollision *dgWorld::CreateCone(dgFloat32 radius, dgFloat32 height,
 	node = dgBodyCollisionList::Find(crc);
 	if (!node) {
 		collision = new (m_allocator) dgCollisionCone(m_allocator, crc, radius,
-													  height, offsetMatrix);
+		        height, offsetMatrix);
 		collision->SetUserDataID(dgUnsigned32(shapeID));
 		node = dgBodyCollisionList::Insert(collision, crc);
 	}
@@ -216,7 +216,7 @@ dgCollision *dgWorld::CreateCone(dgFloat32 radius, dgFloat32 height,
 }
 
 dgCollision *dgWorld::CreateCylinder(dgFloat32 radius, dgFloat32 height,
-									 dgInt32 shapeID, const dgMatrix &offsetMatrix) {
+                                     dgInt32 shapeID, const dgMatrix &offsetMatrix) {
 	dgUnsigned32 crc;
 	dgCollision *collision;
 	dgBodyCollisionList::dgTreeNode *node;
@@ -236,7 +236,7 @@ dgCollision *dgWorld::CreateCylinder(dgFloat32 radius, dgFloat32 height,
 	node = dgBodyCollisionList::Find(crc);
 	if (!node) {
 		collision = new (m_allocator) dgCollisionCylinder(m_allocator, crc, radius,
-														  height, offsetMatrix);
+		        height, offsetMatrix);
 		collision->SetUserDataID(dgUnsigned32(shapeID));
 		node = dgBodyCollisionList::Insert(collision, crc);
 	}
@@ -246,7 +246,7 @@ dgCollision *dgWorld::CreateCylinder(dgFloat32 radius, dgFloat32 height,
 }
 
 dgCollision *dgWorld::CreateChamferCylinder(dgFloat32 radius, dgFloat32 height,
-											dgInt32 shapeID, const dgMatrix &offsetMatrix) {
+        dgInt32 shapeID, const dgMatrix &offsetMatrix) {
 	dgUnsigned32 crc;
 	dgCollision *collision;
 	dgBodyCollisionList::dgTreeNode *node;
@@ -266,7 +266,7 @@ dgCollision *dgWorld::CreateChamferCylinder(dgFloat32 radius, dgFloat32 height,
 	node = dgBodyCollisionList::Find(crc);
 	if (!node) {
 		collision = new (m_allocator) dgCollisionChamferCylinder(m_allocator, crc,
-																 radius, height, offsetMatrix);
+		        radius, height, offsetMatrix);
 		collision->SetUserDataID(dgUnsigned32(shapeID));
 		node = dgBodyCollisionList::Insert(collision, crc);
 	}
@@ -276,10 +276,10 @@ dgCollision *dgWorld::CreateChamferCylinder(dgFloat32 radius, dgFloat32 height,
 }
 
 dgCollision *dgWorld::CreateConvexHull(dgInt32 count,
-									   const dgFloat32 *vertexArray, dgInt32 strideInBytes, dgFloat32 tolerance,
-									   dgInt32 shapeID, const dgMatrix &offsetMatrix) {
+                                       const dgFloat32 *vertexArray, dgInt32 strideInBytes, dgFloat32 tolerance,
+                                       dgInt32 shapeID, const dgMatrix &offsetMatrix) {
 	dgStack<dgUnsigned32> buffer(
-		2 + 3 * count + dgInt32(sizeof(dgMatrix) / sizeof(dgInt32)));
+	    2 + 3 * count + dgInt32(sizeof(dgMatrix) / sizeof(dgInt32)));
 
 	// create crc signature for cache lookup
 	memset(&buffer[0], 0, size_t(buffer.GetSizeInBytes()));
@@ -299,8 +299,8 @@ dgCollision *dgWorld::CreateConvexHull(dgInt32 count,
 	if (!node) {
 		// chape not found crate a new one and add to teh cache
 		dgCollisionConvexHull *const collision =
-			new (m_allocator) dgCollisionConvexHull(m_allocator, crc, count,
-													strideInBytes, tolerance, vertexArray, offsetMatrix);
+		    new (m_allocator) dgCollisionConvexHull(m_allocator, crc, count,
+		            strideInBytes, tolerance, vertexArray, offsetMatrix);
 		if (collision->GetVertexCount()) {
 			collision->SetUserDataID(dgUnsigned32(shapeID));
 			node = dgBodyCollisionList::Insert(collision, crc);
@@ -337,10 +337,10 @@ dgCollision *dgWorld::CreateConvexModifier(dgCollision *convexCollision) {
 
 	collision = NULL;
 	if (convexCollision->IsType(dgCollision::dgConvexCollision_RTTI)) {
-		//		if (!convexCollision->IsType (dgCollision::dgCollisionCompound_RTTI) && !convexCollision->IsType (m_nullType)) {
+		//      if (!convexCollision->IsType (dgCollision::dgCollisionCompound_RTTI) && !convexCollision->IsType (m_nullType)) {
 		if (!convexCollision->IsType(dgCollision::dgCollisionNull_RTTI)) {
 			collision = new (m_allocator) dgCollisionConvexModifier(
-				(dgCollisionConvex *)convexCollision, this);
+			    (dgCollisionConvex *)convexCollision, this);
 		}
 	}
 
@@ -348,10 +348,10 @@ dgCollision *dgWorld::CreateConvexModifier(dgCollision *convexCollision) {
 }
 
 dgCollision *dgWorld::CreateCollisionCompound(dgInt32 count,
-											  dgCollision *const array[]) {
+        dgCollision *const array[]) {
 	// compound collision are not cached
 	return new (m_allocator) dgCollisionCompound(count,
-												 (dgCollisionConvex **)array, this);
+	        (dgCollisionConvex **)array, this);
 }
 
 // dgCollision* dgWorld::CreateCollisionCompoundBreakable (
@@ -365,12 +365,12 @@ dgCollision *dgWorld::CreateCollisionCompound(dgInt32 count,
 //	dgCollisionCompoundBreakableCallback callback,
 //	void* buildUsedData)
 dgCollision *dgWorld::CreateCollisionCompoundBreakable(dgInt32 count,
-													   const dgMeshEffect *const solidArray[], const dgInt32 *const idArray,
-													   const dgFloat32 *const densities, const dgInt32 *const internalFaceMaterial,
-													   dgInt32 debriID, dgFloat32 gap) {
-	//	return new dgCollisionCompoundBreakable (count, solidArray, splitePlanes, matrixArray, idArray, densities, debriID, callback, buildUsedData, this);
+        const dgMeshEffect *const solidArray[], const dgInt32 *const idArray,
+        const dgFloat32 *const densities, const dgInt32 *const internalFaceMaterial,
+        dgInt32 debriID, dgFloat32 gap) {
+	//  return new dgCollisionCompoundBreakable (count, solidArray, splitePlanes, matrixArray, idArray, densities, debriID, callback, buildUsedData, this);
 	return new (m_allocator) dgCollisionCompoundBreakable(count, solidArray,
-														  idArray, densities, internalFaceMaterial, debriID, gap, this);
+	        idArray, densities, internalFaceMaterial, debriID, gap, this);
 }
 
 dgCollision *dgWorld::CreateBVH() {
@@ -379,16 +379,16 @@ dgCollision *dgWorld::CreateBVH() {
 }
 
 dgCollision *dgWorld::CreateStaticUserMesh(const dgVector &boxP0,
-										   const dgVector &boxP1, const dgUserMeshCreation &data) {
+        const dgVector &boxP1, const dgUserMeshCreation &data) {
 	return new (m_allocator) dgCollisionUserMesh(m_allocator, boxP0, boxP1, data);
 }
 
 dgCollision *dgWorld::CreateBVHFieldCollision(dgInt32 width, dgInt32 height,
-											  dgInt32 contructionMode, const dgUnsigned16 *const elevationMap,
-											  const dgInt8 *const atributeMap, dgFloat32 horizontalScale,
-											  dgFloat32 vertcalScale) {
+        dgInt32 contructionMode, const dgUnsigned16 *const elevationMap,
+        const dgInt8 *const atributeMap, dgFloat32 horizontalScale,
+        dgFloat32 vertcalScale) {
 	return new (m_allocator) dgCollisionHeightField(this, width, height,
-													contructionMode, elevationMap, atributeMap, horizontalScale, vertcalScale);
+	        contructionMode, elevationMap, atributeMap, horizontalScale, vertcalScale);
 }
 
 dgCollision *dgWorld::CreateScene() {
@@ -396,7 +396,7 @@ dgCollision *dgWorld::CreateScene() {
 }
 
 void dgWorld::Serialize(dgCollision *shape, dgSerialize serialization,
-						void *const userData) const {
+                        void *const userData) const {
 	dgInt32 signature[4];
 
 	signature[0] = shape->GetCollisionPrimityType();
@@ -413,13 +413,13 @@ void dgWorld::Serialize(dgCollision *shape, dgSerialize serialization,
 
 // dgCollision* dgWorld::CreateFromSerialization (dgInt32 signature, dgCollisionID type, dgDeserialize deserialization, void* const userData)
 dgCollision *dgWorld::CreateFromSerialization(dgDeserialize deserialization,
-											  void *const userData) {
+        void *const userData) {
 	dgInt32 signature[4];
 
 	deserialization(userData, signature, sizeof(signature));
 
 	dgBodyCollisionList::dgTreeNode *node = dgBodyCollisionList::Find(
-		dgUnsigned32(signature[1]));
+	        dgUnsigned32(signature[1]));
 	dgCollision *collision = NULL;
 	if (node) {
 		collision = node->GetInfo();
@@ -429,92 +429,92 @@ dgCollision *dgWorld::CreateFromSerialization(dgDeserialize deserialization,
 		switch (signature[0]) {
 		case m_sceneCollision: {
 			collision = new (m_allocator) dgCollisionScene(this, deserialization,
-														   userData);
+			        userData);
 			break;
 		}
 
 		case m_heightField: {
 			collision = new (m_allocator) dgCollisionHeightField(this,
-																 deserialization, userData);
+			        deserialization, userData);
 			break;
 		}
 		case m_boundingBoxHierachy: {
 			collision = new (m_allocator) dgCollisionBVH(this, deserialization,
-														 userData);
+			        userData);
 			break;
 		}
 
-			// if (!stricmp (type, "box"))
+		// if (!stricmp (type, "box"))
 		case m_boxCollision: {
 			collision = new (m_allocator) dgCollisionBox(this, deserialization,
-														 userData);
+			        userData);
 			node = dgBodyCollisionList::Insert(collision, collision->GetSignature());
 			collision->AddRef();
 			break;
 		}
 
-			//} else if (!stricmp (type, "cone")) {
+		//} else if (!stricmp (type, "cone")) {
 		case m_coneCollision: {
 			collision = new (m_allocator) dgCollisionCone(this, deserialization,
-														  userData);
+			        userData);
 			node = dgBodyCollisionList::Insert(collision, collision->GetSignature());
 			collision->AddRef();
 			break;
 		}
 
-			//} else if (!stricmp (type, "sphere_1")) {
+		//} else if (!stricmp (type, "sphere_1")) {
 		case m_ellipseCollision: {
 			collision = new (m_allocator) dgCollisionEllipse(this, deserialization,
-															 userData);
+			        userData);
 			node = dgBodyCollisionList::Insert(collision, collision->GetSignature());
 			collision->AddRef();
 			break;
 		}
 
-			//} else if (!stricmp (type, "sphere")) {
+		//} else if (!stricmp (type, "sphere")) {
 		case m_sphereCollision: {
 			collision = new (m_allocator) dgCollisionSphere(this, deserialization,
-															userData);
+			        userData);
 			node = dgBodyCollisionList::Insert(collision, collision->GetSignature());
 			collision->AddRef();
 			break;
 		}
 
-			//} else if (!stricmp (type, "cylinder")) {
+		//} else if (!stricmp (type, "cylinder")) {
 		case m_cylinderCollision: {
 			collision = new (m_allocator) dgCollisionCylinder(this, deserialization,
-															  userData);
+			        userData);
 			node = dgBodyCollisionList::Insert(collision, collision->GetSignature());
 			collision->AddRef();
 			break;
 		}
 
-			//} else if (!stricmp (type, "capsule")) {
+		//} else if (!stricmp (type, "capsule")) {
 		case m_capsuleCollision: {
 			collision = new (m_allocator) dgCollisionCapsule(this, deserialization,
-															 userData);
+			        userData);
 			node = dgBodyCollisionList::Insert(collision, collision->GetSignature());
 			collision->AddRef();
 			break;
 		}
 
-			//} else if (!stricmp (type, "compound")) {
+		//} else if (!stricmp (type, "compound")) {
 		case m_compoundCollision: {
 			collision = new (m_allocator) dgCollisionCompound(this, deserialization,
-															  userData);
+			        userData);
 			break;
 		}
 
 		case m_compoundBreakable: {
 			collision = new (m_allocator) dgCollisionCompoundBreakable(this,
-																	   deserialization, userData);
+			        deserialization, userData);
 			break;
 		}
 
-			//} else if (!stricmp (type, "convexHull")) {
+		//} else if (!stricmp (type, "convexHull")) {
 		case m_convexHullCollision: {
 			collision = new (m_allocator) dgCollisionConvexHull(this, deserialization,
-																userData);
+			        userData);
 			node = dgBodyCollisionList::Insert(collision, collision->GetSignature());
 			collision->AddRef();
 			break;
@@ -522,15 +522,15 @@ dgCollision *dgWorld::CreateFromSerialization(dgDeserialize deserialization,
 
 		case m_convexConvexIntance: {
 			collision =
-				new (m_allocator) dgCollisionCompoundBreakable::dgCollisionConvexIntance(
-					this, deserialization, userData);
+			    new (m_allocator) dgCollisionCompoundBreakable::dgCollisionConvexIntance(
+			    this, deserialization, userData);
 			break;
 		}
 
-			//} else if (!stricmp (type, "chamferCylinder")) {
+		//} else if (!stricmp (type, "chamferCylinder")) {
 		case m_chamferCylinderCollision: {
 			collision = new (m_allocator) dgCollisionChamferCylinder(this,
-																	 deserialization, userData);
+			        deserialization, userData);
 			node = dgBodyCollisionList::Insert(collision, collision->GetSignature());
 			collision->AddRef();
 			break;
@@ -538,7 +538,7 @@ dgCollision *dgWorld::CreateFromSerialization(dgDeserialize deserialization,
 
 		case m_nullCollision: {
 			collision = new (m_allocator) dgCollisionNull(this, deserialization,
-														  userData);
+			        userData);
 			node = dgBodyCollisionList::Insert(collision, collision->GetSignature());
 			collision->AddRef();
 			break;
@@ -546,7 +546,7 @@ dgCollision *dgWorld::CreateFromSerialization(dgDeserialize deserialization,
 
 		case m_convexCollisionModifier: {
 			collision = new (m_allocator) dgCollisionConvexModifier(this,
-																	deserialization, userData);
+			        deserialization, userData);
 			break;
 		}
 
@@ -563,7 +563,7 @@ dgCollision *dgWorld::CreateFromSerialization(dgDeserialize deserialization,
 }
 
 dgContactMaterial *dgWorld::GetMaterial(dgUnsigned32 bodyGroupId0,
-										dgUnsigned32 bodyGroupId1) const {
+                                        dgUnsigned32 bodyGroupId1) const {
 	if (bodyGroupId0 > bodyGroupId1) {
 		Swap(bodyGroupId0, bodyGroupId1);
 	}
@@ -582,10 +582,10 @@ dgContactMaterial *dgWorld::GetFirstMaterial() const {
 
 dgContactMaterial *dgWorld::GetNextMaterial(dgContactMaterial *material) const {
 	dgBodyMaterialList::dgTreeNode *const thisNode =
-		dgBodyMaterialList::GetNodeFromInfo(*material);
+	    dgBodyMaterialList::GetNodeFromInfo(*material);
 	_ASSERTE(thisNode);
 	dgBodyMaterialList::dgTreeNode *const node =
-		(dgBodyMaterialList::dgTreeNode *)thisNode->Next();
+	    (dgBodyMaterialList::dgTreeNode *)thisNode->Next();
 	if (node) {
 		return &node->GetInfo();
 	}
@@ -617,7 +617,7 @@ dgUnsigned32 dgWorld::CreateBodyGroupID() {
 
 void dgWorld::RemoveFromCache(dgCollision *const collision) {
 	dgBodyCollisionList::dgTreeNode *const node = dgBodyCollisionList::Find(
-		collision->m_signature);
+	            collision->m_signature);
 	if (node) {
 		collision->m_signature = 0xffffffff;
 		_ASSERTE(node->GetInfo() == collision);
@@ -636,7 +636,7 @@ void dgWorld::ReleaseCollision(dgCollision *const collision) {
 	dgInt32 ref = collision->Release();
 	if (ref == 1) {
 		dgBodyCollisionList::dgTreeNode *const node = dgBodyCollisionList::Find(
-			collision->m_signature);
+		            collision->m_signature);
 		if (node) {
 			_ASSERTE(node->GetInfo() == collision);
 			if (m_destroyCollision) {
@@ -654,8 +654,8 @@ void dgWorld::ReleaseCollision(dgCollision *const collision) {
 //
 // ********************************************************************************
 dgInt32 dgWorld::ClosestPoint(dgTriplex &point, dgCollision *const collision,
-							  const dgMatrix &matrix, dgTriplex &contact, dgTriplex &normal,
-							  dgInt32 threadIndex) const {
+                              const dgMatrix &matrix, dgTriplex &contact, dgTriplex &normal,
+                              dgInt32 threadIndex) const {
 	dgTriplex contactA;
 	dgMatrix pointMatrix(dgGetIdentityMatrix());
 
@@ -664,13 +664,13 @@ dgInt32 dgWorld::ClosestPoint(dgTriplex &point, dgCollision *const collision,
 	pointMatrix.m_posit.m_y = point.m_y;
 	pointMatrix.m_posit.m_z = point.m_z;
 	return ClosestPoint(collision, matrix, m_pointCollision, pointMatrix, contact,
-						contactA, normal, threadIndex);
+	                    contactA, normal, threadIndex);
 }
 
 dgInt32 dgWorld::ClosestPoint(dgCollision *const collisionA,
-							  const dgMatrix &matrixA, dgCollision *const collisionB,
-							  const dgMatrix &matrixB, dgTriplex &contactA, dgTriplex &contactB,
-							  dgTriplex &normalAB, dgInt32 threadIndex) const {
+                              const dgMatrix &matrixA, dgCollision *const collisionB,
+                              const dgMatrix &matrixB, dgTriplex &contactA, dgTriplex &contactB,
+                              dgTriplex &normalAB, dgInt32 threadIndex) const {
 	dgBody collideBodyA;
 	dgBody collideBodyB;
 
@@ -684,11 +684,11 @@ dgInt32 dgWorld::ClosestPoint(dgCollision *const collisionA,
 
 	if (collisionA->IsType(dgCollision::dgCollisionCompound_RTTI)) {
 		return ClosestCompoundPoint(&collideBodyA, &collideBodyB, contactA,
-									contactB, normalAB, threadIndex);
+		                            contactB, normalAB, threadIndex);
 	} else if (collisionB->IsType(dgCollision::dgCollisionCompound_RTTI)) {
 		dgInt32 flag;
 		flag = ClosestCompoundPoint(&collideBodyB, &collideBodyA, contactB,
-									contactA, normalAB, threadIndex);
+		                            contactA, normalAB, threadIndex);
 		normalAB.m_x *= dgFloat32(-1.0f);
 		normalAB.m_y *= dgFloat32(-1.0f);
 		normalAB.m_z *= dgFloat32(-1.0f);
@@ -735,13 +735,13 @@ dgInt32 dgWorld::ClosestPoint(dgCollision *const collisionA,
 }
 
 dgInt32 dgWorld::ClosestCompoundPoint(dgBody *const compoundConvexA,
-									  dgBody *const collisionB, dgTriplex &contactA, dgTriplex &contactB,
-									  dgTriplex &normalAB, dgInt32 threadIndex) const {
+                                      dgBody *const collisionB, dgTriplex &contactA, dgTriplex &contactB,
+                                      dgTriplex &normalAB, dgInt32 threadIndex) const {
 	dgCollisionCompound *const collision =
-		(dgCollisionCompound *)compoundConvexA->m_collision;
+	    (dgCollisionCompound *)compoundConvexA->m_collision;
 	_ASSERTE(collision->IsType(dgCollision::dgCollisionCompound_RTTI));
 	return collision->ClosestDitance(compoundConvexA, contactA, collisionB,
-									 contactB, normalAB);
+	                                 contactB, normalAB);
 
 	/*
 	 dgInt32 retFlag;
@@ -882,7 +882,7 @@ dgInt32 dgWorld::ClosestCompoundPoint(dgBody *const compoundConvexA,
 //
 // **********************************************************************************
 static inline dgInt32 CompareContact(const dgContactPoint *const contactA,
-									 const dgContactPoint *const contactB, void *dommy) {
+                                     const dgContactPoint *const contactB, void *dommy) {
 	if (contactA->m_point[0] < contactB->m_point[0]) {
 		return -1;
 	} else if (contactA->m_point[0] > contactB->m_point[0]) {
@@ -897,12 +897,12 @@ void dgWorld::SortContacts(dgContactPoint *const contact, dgInt32 count) const {
 }
 
 dgInt32 dgWorld::ReduceContacts(dgInt32 count, dgContactPoint *const contact,
-								dgInt32 maxCount, dgFloat32 tol, dgInt32 arrayIsSorted) const {
+                                dgInt32 maxCount, dgFloat32 tol, dgInt32 arrayIsSorted) const {
 	if ((count > maxCount) && (maxCount > 1)) {
-		//		dgInt32 index;
-		//		dgInt32 countOver;
-		//		dgFloat32 window;
-		//		dgFloat32 window2;
+		//      dgInt32 index;
+		//      dgInt32 countOver;
+		//      dgFloat32 window;
+		//      dgFloat32 window2;
 		dgUnsigned8 mask[DG_MAX_CONTATCS];
 
 		if (!arrayIsSorted) {
@@ -921,8 +921,8 @@ dgInt32 dgWorld::ReduceContacts(dgInt32 count, dgContactPoint *const contact,
 				if (!mask[i]) {
 					dgFloat32 val = contact[i].m_point[index] + window;
 					for (dgInt32 j = i + 1;
-						 (j < count) && countOver && (contact[j].m_point[index] < val);
-						 j++) {
+					        (j < count) && countOver && (contact[j].m_point[index] < val);
+					        j++) {
 						if (!mask[j]) {
 							dgVector dp(contact[j].m_point - contact[i].m_point);
 							dgFloat32 dist2 = dp % dp;
@@ -956,11 +956,11 @@ dgInt32 dgWorld::ReduceContacts(dgInt32 count, dgContactPoint *const contact,
 }
 
 dgInt32 dgWorld::PruneContacts(dgInt32 count, dgContactPoint *const contact,
-							   dgInt32 maxCount) const {
-	//	dgInt32 index;
-	//	dgInt32 packContacts;
-	//	dgFloat32 window;
-	//	dgFloat32 window2;
+                               dgInt32 maxCount) const {
+	//  dgInt32 index;
+	//  dgInt32 packContacts;
+	//  dgFloat32 window;
+	//  dgFloat32 window2;
 	dgUnsigned8 mask[DG_MAX_CONTATCS];
 
 	dgInt32 index = 0;
@@ -975,7 +975,7 @@ dgInt32 dgWorld::PruneContacts(dgInt32 count, dgContactPoint *const contact,
 		if (!mask[i]) {
 			dgFloat32 val = contact[i].m_point[index] + window;
 			for (dgInt32 j = i + 1; (j < count) && (contact[j].m_point[index] < val);
-				 j++) {
+			        j++) {
 				if (!mask[j]) {
 					dgVector dp(contact[j].m_point - contact[i].m_point);
 					dgFloat32 dist2 = dp % dp;
@@ -1001,14 +1001,14 @@ dgInt32 dgWorld::PruneContacts(dgInt32 count, dgContactPoint *const contact,
 
 	if (count > maxCount) {
 		count = ReduceContacts(count, contact, maxCount, window * dgFloat32(2.0f),
-							   1);
+		                       1);
 	}
 	return count;
 }
 
 void dgWorld::ProcessCachedContacts(dgContact *const contact,
-									const dgContactMaterial *const material, dgFloat32 timestep,
-									dgInt32 threadIndex) const {
+                                    const dgContactMaterial *const material, dgFloat32 timestep,
+                                    dgInt32 threadIndex) const {
 	_ASSERTE(contact);
 	_ASSERTE(contact->m_body0);
 	_ASSERTE(contact->m_body1);
@@ -1022,7 +1022,7 @@ void dgWorld::ProcessCachedContacts(dgContact *const contact,
 
 	dgList<dgContactMaterial>::dgListNode *nextContactNode;
 	for (dgList<dgContactMaterial>::dgListNode *contactNode = list.GetFirst();
-		 contactNode; contactNode = nextContactNode) {
+	        contactNode; contactNode = nextContactNode) {
 		nextContactNode = contactNode->GetNext();
 		dgContactMaterial &contactMaterial = contactNode->GetInfo();
 
@@ -1035,7 +1035,7 @@ void dgWorld::ProcessCachedContacts(dgContact *const contact,
 		_ASSERTE(contactMaterial.m_collision1);
 		_ASSERTE(contactMaterial.m_body0 == contact->m_body0);
 		_ASSERTE(contactMaterial.m_body1 == contact->m_body1);
-		//		_ASSERTE (contactMaterial.m_userId != 0xffffffff);
+		//      _ASSERTE (contactMaterial.m_userId != 0xffffffff);
 
 		contactMaterial.m_softness = material->m_softness;
 		contactMaterial.m_restitution = material->m_restitution;
@@ -1044,12 +1044,12 @@ void dgWorld::ProcessCachedContacts(dgContact *const contact,
 		contactMaterial.m_dynamicFriction0 = material->m_dynamicFriction0;
 		contactMaterial.m_dynamicFriction1 = material->m_dynamicFriction1;
 
-		//		contactMaterial.m_collisionEnable = true;
-		//		contactMaterial.m_friction0Enable = material->m_friction0Enable;
-		//		contactMaterial.m_friction1Enable = material->m_friction1Enable;
-		//		contactMaterial.m_override0Accel = false;
-		//		contactMaterial.m_override1Accel = false;
-		//		contactMaterial.m_overrideNormalAccel = false;
+		//      contactMaterial.m_collisionEnable = true;
+		//      contactMaterial.m_friction0Enable = material->m_friction0Enable;
+		//      contactMaterial.m_friction1Enable = material->m_friction1Enable;
+		//      contactMaterial.m_override0Accel = false;
+		//      contactMaterial.m_override1Accel = false;
+		//      contactMaterial.m_overrideNormalAccel = false;
 		contactMaterial.m_flags = dgContactMaterial::m_collisionEnable__ | (material->m_flags & (dgContactMaterial::m_friction0Enable__ | dgContactMaterial::m_friction1Enable__));
 		contactMaterial.m_userData = material->m_userData;
 	}
@@ -1062,7 +1062,7 @@ void dgWorld::ProcessCachedContacts(dgContact *const contact,
 }
 
 void dgWorld::ProcessTriggers(dgCollidingPairCollector::dgPair *const pair,
-							  dgFloat32 timestep, dgInt32 threadIndex) {
+                              dgFloat32 timestep, dgInt32 threadIndex) {
 	dgBody *const body0 = pair->m_body0;
 	dgBody *const body1 = pair->m_body1;
 	dgContact *contact1 = pair->m_contact;
@@ -1099,7 +1099,7 @@ void dgWorld::ProcessTriggers(dgCollidingPairCollector::dgPair *const pair,
 }
 
 void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
-							  dgFloat32 timestep, dgInt32 threadIndex) {
+                              dgFloat32 timestep, dgInt32 threadIndex) {
 	dgBody *const body0 = pair->m_body0;
 	dgBody *const body1 = pair->m_body1;
 	dgContact *contact1 = pair->m_contact;
@@ -1142,7 +1142,7 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 	dgVector cachePosition[DG_MAX_CONTATCS];
 	dgList<dgContactMaterial>::dgListNode *nodes[DG_MAX_CONTATCS];
 	for (dgList<dgContactMaterial>::dgListNode *contactNode = list.GetFirst();
-		 contactNode; contactNode = contactNode->GetNext()) {
+	        contactNode; contactNode = contactNode->GetNext()) {
 		nodes[count] = contactNode;
 		cachePosition[count] = contactNode->GetInfo().m_point;
 		count++;
@@ -1157,9 +1157,9 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 	const dgMatrix &matrix1 = body1->m_matrix;
 
 	dgVector controlDir0(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
-						 dgFloat32(0.0f));
+	                     dgFloat32(0.0f));
 	dgVector controlDir1(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
-						 dgFloat32(0.0f));
+	                     dgFloat32(0.0f));
 	dgVector controlNormal(contactArray[0].m_normal);
 	dgVector vel0(v0 + w0 * (contactArray[0].m_point - matrix0.m_posit));
 	dgVector vel1(v1 + w1 * (contactArray[0].m_point - matrix1.m_posit));
@@ -1168,24 +1168,24 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 	dgFloat32 diff = tangDir % tangDir;
 
 	dgInt32 staticMotion = 0;
-	//	if (diff > dgFloat32 (1.0e-2f)) {
-	//		staticMotion = 0;
-	//	} else {
+	//  if (diff > dgFloat32 (1.0e-2f)) {
+	//      staticMotion = 0;
+	//  } else {
 	if (diff <= dgFloat32(1.0e-2f)) {
 		staticMotion = 1;
 		if (dgAbsf(controlNormal.m_z) > dgFloat32(0.577f)) {
 			tangDir = dgVector(-controlNormal.m_y, controlNormal.m_z, dgFloat32(0.0f),
-							   dgFloat32(0.0f));
+			                   dgFloat32(0.0f));
 		} else {
 			tangDir = dgVector(-controlNormal.m_y, controlNormal.m_x, dgFloat32(0.0f),
-							   dgFloat32(0.0f));
+			                   dgFloat32(0.0f));
 		}
 		controlDir0 = controlNormal * tangDir;
 		_ASSERTE(controlDir0 % controlDir0 > dgFloat32(1.0e-8f));
 		controlDir0 = controlDir0.Scale(dgRsqrt(controlDir0 % controlDir0));
 		controlDir1 = controlNormal * controlDir0;
 		_ASSERTE(
-			dgAbsf((controlDir0 * controlDir1) % controlNormal - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
+		    dgAbsf((controlDir0 * controlDir1) % controlNormal - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
 	}
 
 	// dgTrace (("contact pair %d %d\n", body0->m_uniqueID, body1->m_uniqueID));
@@ -1230,7 +1230,7 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 		_ASSERTE(contactArray[i].m_collision1);
 		_ASSERTE(contactArray[i].m_body0 == body0);
 		_ASSERTE(contactArray[i].m_body1 == body1);
-		//		_ASSERTE (contactArray[i].m_userId != 0xffffffff);
+		//      _ASSERTE (contactArray[i].m_userId != 0xffffffff);
 
 		contactMaterial->m_point = contactArray[i].m_point;
 		contactMaterial->m_normal = contactArray[i].m_normal;
@@ -1248,18 +1248,18 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 		contactMaterial->m_dynamicFriction1 = material->m_dynamicFriction1;
 
 		_ASSERTE(
-			(dgAbsf(contactMaterial->m_normal % contactMaterial->m_normal) - dgFloat32(1.0f)) < dgFloat32(1.0e-5f));
+		    (dgAbsf(contactMaterial->m_normal % contactMaterial->m_normal) - dgFloat32(1.0f)) < dgFloat32(1.0e-5f));
 
 		// dgTrace (("%f\n", contactMaterial.m_penetration));
 		// dgTrace (("p(%f %f %f) n(%f %f %f)\n", contactMaterial.m_point.m_x, contactMaterial.m_point.m_y, contactMaterial.m_point.m_z,
-		//									   contactMaterial.m_normal.m_x, contactMaterial.m_normal.m_y, contactMaterial.m_normal.m_z));
+		//                                     contactMaterial.m_normal.m_x, contactMaterial.m_normal.m_y, contactMaterial.m_normal.m_z));
 
-		//		contactMaterial.m_collisionEnable = true;
-		//		contactMaterial.m_friction0Enable = material->m_friction0Enable;
-		//		contactMaterial.m_friction1Enable = material->m_friction1Enable;
-		//		contactMaterial.m_override0Accel = false;
-		//		contactMaterial.m_override1Accel = false;
-		//		contactMaterial.m_overrideNormalAccel = false;
+		//      contactMaterial.m_collisionEnable = true;
+		//      contactMaterial.m_friction0Enable = material->m_friction0Enable;
+		//      contactMaterial.m_friction1Enable = material->m_friction1Enable;
+		//      contactMaterial.m_override0Accel = false;
+		//      contactMaterial.m_override1Accel = false;
+		//      contactMaterial.m_overrideNormalAccel = false;
 		contactMaterial->m_flags = dgContactMaterial::m_collisionEnable__ | (material->m_flags & (dgContactMaterial::m_friction0Enable__ | dgContactMaterial::m_friction1Enable__));
 		contactMaterial->m_userData = material->m_userData;
 
@@ -1270,19 +1270,19 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 			} else {
 				if (dgAbsf(contactMaterial->m_normal.m_z) > dgFloat32(0.577f)) {
 					tangDir = dgVector(-contactMaterial->m_normal.m_y,
-									   contactMaterial->m_normal.m_z, dgFloat32(0.0f), dgFloat32(0.0f));
+					                   contactMaterial->m_normal.m_z, dgFloat32(0.0f), dgFloat32(0.0f));
 				} else {
 					tangDir = dgVector(-contactMaterial->m_normal.m_y,
-									   contactMaterial->m_normal.m_x, dgFloat32(0.0f), dgFloat32(0.0f));
+					                   contactMaterial->m_normal.m_x, dgFloat32(0.0f), dgFloat32(0.0f));
 				}
 				contactMaterial->m_dir0 = contactMaterial->m_normal * tangDir;
 				_ASSERTE(
-					contactMaterial->m_dir0 % contactMaterial->m_dir0 > dgFloat32(1.0e-8f));
+				    contactMaterial->m_dir0 % contactMaterial->m_dir0 > dgFloat32(1.0e-8f));
 				contactMaterial->m_dir0 = contactMaterial->m_dir0.Scale(
-					dgRsqrt(contactMaterial->m_dir0 % contactMaterial->m_dir0));
+				                              dgRsqrt(contactMaterial->m_dir0 % contactMaterial->m_dir0));
 				contactMaterial->m_dir1 = contactMaterial->m_normal * contactMaterial->m_dir0;
 				_ASSERTE(
-					dgAbsf((contactMaterial->m_dir0 * contactMaterial->m_dir1) % contactMaterial->m_normal - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
+				    dgAbsf((contactMaterial->m_dir0 * contactMaterial->m_dir1) % contactMaterial->m_normal - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
 			}
 
 		} else {
@@ -1305,20 +1305,20 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 			} else {
 				if (dgAbsf(contactMaterial->m_normal.m_z) > dgFloat32(0.577f)) {
 					tangDirection = dgVector(-contactMaterial->m_normal.m_y,
-									   contactMaterial->m_normal.m_z, dgFloat32(0.0f), dgFloat32(0.0f));
+					                         contactMaterial->m_normal.m_z, dgFloat32(0.0f), dgFloat32(0.0f));
 				} else {
 					tangDirection = dgVector(-contactMaterial->m_normal.m_y,
-									   contactMaterial->m_normal.m_x, dgFloat32(0.0f), dgFloat32(0.0f));
+					                         contactMaterial->m_normal.m_x, dgFloat32(0.0f), dgFloat32(0.0f));
 				}
 				contactMaterial->m_dir0 = contactMaterial->m_normal * tangDirection;
 				_ASSERTE(
-					contactMaterial->m_dir0 % contactMaterial->m_dir0 > dgFloat32(1.0e-8f));
+				    contactMaterial->m_dir0 % contactMaterial->m_dir0 > dgFloat32(1.0e-8f));
 				contactMaterial->m_dir0 = contactMaterial->m_dir0.Scale(
-					dgRsqrt(contactMaterial->m_dir0 % contactMaterial->m_dir0));
+				                              dgRsqrt(contactMaterial->m_dir0 % contactMaterial->m_dir0));
 			}
 			contactMaterial->m_dir1 = contactMaterial->m_normal * contactMaterial->m_dir0;
 			_ASSERTE(
-				dgAbsf((contactMaterial->m_dir0 * contactMaterial->m_dir1) % contactMaterial->m_normal - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
+			    dgAbsf((contactMaterial->m_dir0 * contactMaterial->m_dir1) % contactMaterial->m_normal - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
 		}
 		contactMaterial->m_normal.m_w = dgFloat32(0.0f);
 		contactMaterial->m_dir0.m_w = dgFloat32(0.0f);
@@ -1353,12 +1353,12 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 }
 
 dgInt32 dgWorld::ValidateContactCache(dgBody *const convexBody,
-									  dgBody *const otherBody, dgContact *const contact) const {
+                                      dgBody *const otherBody, dgContact *const contact) const {
 	_ASSERTE(contact && (contact->GetId() == dgContactConstraintId));
 	_ASSERTE(
-		(contact->GetBody0() == otherBody) || (contact->GetBody1() == otherBody));
+	    (contact->GetBody0() == otherBody) || (contact->GetBody1() == otherBody));
 	_ASSERTE(
-		(contact->GetBody0() == convexBody) || (contact->GetBody1() == convexBody));
+	    (contact->GetBody0() == convexBody) || (contact->GetBody1() == convexBody));
 
 	dgInt32 contactCount = 0;
 
@@ -1380,13 +1380,13 @@ dgInt32 dgWorld::ValidateContactCache(dgBody *const convexBody,
 				err2 = errorRot1.DotProduct(errorRot1);
 				if (err2 < (DG_CACHE_DIST_TOL * DG_CACHE_DIST_TOL)) {
 					dgMatrix matrix0(
-						dgMatrix(contact->m_prevRotation0, contact->m_prevPosit0).Inverse() * body0->m_matrix);
+					    dgMatrix(contact->m_prevRotation0, contact->m_prevPosit0).Inverse() * body0->m_matrix);
 					dgMatrix matrix1(
-						dgMatrix(contact->m_prevRotation1, contact->m_prevPosit1).Inverse() * body1->m_matrix);
+					    dgMatrix(contact->m_prevRotation1, contact->m_prevPosit1).Inverse() * body1->m_matrix);
 
 					dgList<dgContactMaterial> &list = *contact;
 					for (dgList<dgContactMaterial>::dgListNode *ptr = list.GetFirst();
-						 ptr; ptr = ptr->GetNext()) {
+					        ptr; ptr = ptr->GetNext()) {
 						dgContactMaterial &contactMaterial = ptr->GetInfo();
 						dgVector p0(matrix0.TransformVector(contactMaterial.m_point));
 						dgVector p1(matrix1.TransformVector(contactMaterial.m_point));
@@ -1409,7 +1409,7 @@ dgInt32 dgWorld::ValidateContactCache(dgBody *const convexBody,
 }
 
 void dgWorld::CompoundContactsSimd(dgCollidingPairCollector::dgPair *const pair,
-								   dgCollisionParamProxy &proxy) const {
+                                   dgCollisionParamProxy &proxy) const {
 	dgInt32 contactCount;
 	dgBody *otherBody;
 	dgBody *compoundBody;
@@ -1437,7 +1437,7 @@ void dgWorld::CompoundContactsSimd(dgCollidingPairCollector::dgPair *const pair,
 	}
 
 	contactCount =
-		((dgCollisionCompound *)compoundBody->m_collision)->CalculateContacts(pair, proxy, 1);
+	    ((dgCollisionCompound *)compoundBody->m_collision)->CalculateContacts(pair, proxy, 1);
 
 	if (contactCount) {
 		// prune close contacts
@@ -1446,7 +1446,7 @@ void dgWorld::CompoundContactsSimd(dgCollidingPairCollector::dgPair *const pair,
 }
 
 void dgWorld::CompoundContacts(dgCollidingPairCollector::dgPair *const pair,
-							   dgCollisionParamProxy &proxy) const {
+                               dgCollisionParamProxy &proxy) const {
 	dgInt32 contactCount;
 	dgBody *otherBody;
 	dgBody *compoundBody;
@@ -1474,7 +1474,7 @@ void dgWorld::CompoundContacts(dgCollidingPairCollector::dgPair *const pair,
 	}
 
 	contactCount =
-		((dgCollisionCompound *)compoundBody->m_collision)->CalculateContacts(pair, proxy, 0);
+	    ((dgCollisionCompound *)compoundBody->m_collision)->CalculateContacts(pair, proxy, 0);
 
 	if (contactCount) {
 		// prune close contacts
@@ -1483,7 +1483,7 @@ void dgWorld::CompoundContacts(dgCollidingPairCollector::dgPair *const pair,
 }
 
 void dgWorld::ConvexContactsSimd(dgCollidingPairCollector::dgPair *const pair,
-								 dgCollisionParamProxy &proxy) const {
+                                 dgCollisionParamProxy &proxy) const {
 	dgInt32 contactCount;
 	dgBody *otherBody;
 	dgBody *convexBody;
@@ -1504,7 +1504,7 @@ void dgWorld::ConvexContactsSimd(dgCollidingPairCollector::dgPair *const pair,
 		}
 	}
 
-	//	proxy.m_maxContacts = DG_MAX_CONTATCS;
+	//  proxy.m_maxContacts = DG_MAX_CONTATCS;
 	proxy.m_contacts = pair->m_contactBuffer;
 
 	if (otherBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI)) {
@@ -1515,13 +1515,13 @@ void dgWorld::ConvexContactsSimd(dgCollidingPairCollector::dgPair *const pair,
 		}
 
 		_ASSERTE(
-			convexBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
+		    convexBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
 		_ASSERTE(
-			otherBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
+		    otherBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
 		_ASSERTE(
-			pair->m_body0->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
+		    pair->m_body0->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
 		_ASSERTE(
-			pair->m_body1->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
+		    pair->m_body1->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
 
 		proxy.m_referenceBody = convexBody;
 		proxy.m_floatingBody = otherBody;
@@ -1535,9 +1535,9 @@ void dgWorld::ConvexContactsSimd(dgCollidingPairCollector::dgPair *const pair,
 
 	} else {
 		_ASSERTE(
-			pair->m_body0->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
+		    pair->m_body0->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
 		_ASSERTE(
-			convexBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
+		    convexBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
 
 		proxy.m_referenceBody = convexBody;
 		proxy.m_floatingBody = otherBody;
@@ -1547,13 +1547,13 @@ void dgWorld::ConvexContactsSimd(dgCollidingPairCollector::dgPair *const pair,
 		proxy.m_floatingMatrix = otherBody->m_collisionWorldMatrix;
 		// contactCount = CalculateConvexToNonConvexContacts (proxy);
 		pair->m_contactCount = dgInt16(
-			CalculateConvexToNonConvexContactsSimd(proxy));
+		                           CalculateConvexToNonConvexContactsSimd(proxy));
 		pair->m_isTrigger = proxy.m_inTriggerVolume;
 	}
 }
 
 void dgWorld::ConvexContacts(dgCollidingPairCollector::dgPair *const pair,
-							 dgCollisionParamProxy &proxy) const {
+                             dgCollisionParamProxy &proxy) const {
 	dgInt32 contactCount = 0;
 	dgContact *const constraint = pair->m_contact;
 
@@ -1569,7 +1569,7 @@ void dgWorld::ConvexContacts(dgCollidingPairCollector::dgPair *const pair,
 		}
 	}
 
-	//	proxy.m_maxContacts = DG_MAX_CONTATCS;
+	//  proxy.m_maxContacts = DG_MAX_CONTATCS;
 	proxy.m_contacts = pair->m_contactBuffer;
 
 	if (otherBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI)) {
@@ -1580,13 +1580,13 @@ void dgWorld::ConvexContacts(dgCollidingPairCollector::dgPair *const pair,
 		}
 
 		_ASSERTE(
-			convexBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
+		    convexBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
 		_ASSERTE(
-			otherBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
+		    otherBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
 		_ASSERTE(
-			pair->m_body0->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
+		    pair->m_body0->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
 		_ASSERTE(
-			pair->m_body1->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
+		    pair->m_body1->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
 
 		proxy.m_referenceBody = convexBody;
 		proxy.m_floatingBody = otherBody;
@@ -1599,9 +1599,9 @@ void dgWorld::ConvexContacts(dgCollidingPairCollector::dgPair *const pair,
 
 	} else {
 		_ASSERTE(
-			pair->m_body0->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
+		    pair->m_body0->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
 		_ASSERTE(
-			convexBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
+		    convexBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
 
 		proxy.m_referenceBody = convexBody;
 		proxy.m_floatingBody = otherBody;
@@ -1615,81 +1615,81 @@ void dgWorld::ConvexContacts(dgCollidingPairCollector::dgPair *const pair,
 }
 
 void dgWorld::SceneContactsSimd(const dgCollisionScene::dgProxy &sceneProxy,
-								dgCollidingPairCollector::dgPair *const pair,
-								dgCollisionParamProxy &proxy) const {
+                                dgCollidingPairCollector::dgPair *const pair,
+                                dgCollisionParamProxy &proxy) const {
 	_ASSERTE(
-		pair->m_body1->GetCollision()->IsType(dgCollision::dgCollisionScene_RTTI));
+	    pair->m_body1->GetCollision()->IsType(dgCollision::dgCollisionScene_RTTI));
 	if (sceneProxy.m_shape->IsType(dgCollision::dgConvexCollision_RTTI)) {
 		proxy.m_floatingCollision = sceneProxy.m_shape;
 		proxy.m_floatingMatrix = sceneProxy.m_matrix;
 		proxy.m_maxContacts =
-			((DG_MAX_CONTATCS - pair->m_contactCount) > 16) ? 16 : DG_MAX_CONTATCS - pair->m_contactCount;
+		    ((DG_MAX_CONTATCS - pair->m_contactCount) > 16) ? 16 : DG_MAX_CONTATCS - pair->m_contactCount;
 
 		proxy.m_contacts = &pair->m_contactBuffer[pair->m_contactCount];
 		pair->m_contactCount = pair->m_contactCount + dgInt16(CalculateConvexToConvexContactsSimd(proxy));
 		if (pair->m_contactCount > (DG_MAX_CONTATCS - 2 * (DG_CONSTRAINT_MAX_ROWS / 3))) {
 			pair->m_contactCount = dgInt16(
-				ReduceContacts(pair->m_contactCount, pair->m_contactBuffer,
-							   DG_CONSTRAINT_MAX_ROWS / 3, DG_REDUCE_CONTACT_TOLERANCE));
+			                           ReduceContacts(pair->m_contactCount, pair->m_contactBuffer,
+			                                   DG_CONSTRAINT_MAX_ROWS / 3, DG_REDUCE_CONTACT_TOLERANCE));
 		}
-		//		pair->m_isTrigger = proxy.m_inTriggerVolume;
+		//      pair->m_isTrigger = proxy.m_inTriggerVolume;
 
 	} else {
 		proxy.m_floatingCollision = sceneProxy.m_shape;
 		proxy.m_floatingMatrix = sceneProxy.m_matrix;
 		proxy.m_maxContacts =
-			((DG_MAX_CONTATCS - pair->m_contactCount) > 32) ? 32 : DG_MAX_CONTATCS - pair->m_contactCount;
+		    ((DG_MAX_CONTATCS - pair->m_contactCount) > 32) ? 32 : DG_MAX_CONTATCS - pair->m_contactCount;
 
 		proxy.m_contacts = &pair->m_contactBuffer[pair->m_contactCount];
 		pair->m_contactCount = pair->m_contactCount + dgInt16(CalculateConvexToNonConvexContactsSimd(proxy));
 		if (pair->m_contactCount > (DG_MAX_CONTATCS - 2 * (DG_CONSTRAINT_MAX_ROWS / 3))) {
 			pair->m_contactCount = dgInt16(
-				ReduceContacts(pair->m_contactCount, pair->m_contactBuffer,
-							   DG_CONSTRAINT_MAX_ROWS / 3, DG_REDUCE_CONTACT_TOLERANCE));
+			                           ReduceContacts(pair->m_contactCount, pair->m_contactBuffer,
+			                                   DG_CONSTRAINT_MAX_ROWS / 3, DG_REDUCE_CONTACT_TOLERANCE));
 		}
-		//		pair->m_isTrigger = proxy.m_inTriggerVolume;
+		//      pair->m_isTrigger = proxy.m_inTriggerVolume;
 	}
 }
 
 void dgWorld::SceneContacts(const dgCollisionScene::dgProxy &sceneProxy,
-							dgCollidingPairCollector::dgPair *const pair,
-							dgCollisionParamProxy &proxy) const {
+                            dgCollidingPairCollector::dgPair *const pair,
+                            dgCollisionParamProxy &proxy) const {
 	_ASSERTE(
-		pair->m_body1->GetCollision()->IsType(dgCollision::dgCollisionScene_RTTI));
+	    pair->m_body1->GetCollision()->IsType(dgCollision::dgCollisionScene_RTTI));
 	if (sceneProxy.m_shape->IsType(dgCollision::dgConvexCollision_RTTI)) {
 		proxy.m_floatingCollision = sceneProxy.m_shape;
 		proxy.m_floatingMatrix = sceneProxy.m_matrix;
 		proxy.m_maxContacts =
-			((DG_MAX_CONTATCS - pair->m_contactCount) > 16) ? 16 : DG_MAX_CONTATCS - pair->m_contactCount;
+		    ((DG_MAX_CONTATCS - pair->m_contactCount) > 16) ? 16 : DG_MAX_CONTATCS - pair->m_contactCount;
 
 		proxy.m_contacts = &pair->m_contactBuffer[pair->m_contactCount];
 		pair->m_contactCount = pair->m_contactCount + dgInt16(CalculateConvexToConvexContacts(proxy));
 		if (pair->m_contactCount > (DG_MAX_CONTATCS - 2 * (DG_CONSTRAINT_MAX_ROWS / 3))) {
 			pair->m_contactCount = dgInt16(
-				ReduceContacts(pair->m_contactCount, pair->m_contactBuffer,
-							   DG_CONSTRAINT_MAX_ROWS / 3, DG_REDUCE_CONTACT_TOLERANCE));
+			                           ReduceContacts(pair->m_contactCount, pair->m_contactBuffer,
+			                                   DG_CONSTRAINT_MAX_ROWS / 3, DG_REDUCE_CONTACT_TOLERANCE));
 		}
-		//		pair->m_isTrigger = proxy.m_inTriggerVolume;
+		//      pair->m_isTrigger = proxy.m_inTriggerVolume;
 
 	} else {
 		proxy.m_floatingCollision = sceneProxy.m_shape;
 		proxy.m_floatingMatrix = sceneProxy.m_matrix;
 		proxy.m_maxContacts =
-			((DG_MAX_CONTATCS - pair->m_contactCount) > 32) ? 32 : DG_MAX_CONTATCS - pair->m_contactCount;
+		    ((DG_MAX_CONTATCS - pair->m_contactCount) > 32) ? 32 : DG_MAX_CONTATCS - pair->m_contactCount;
 
 		proxy.m_contacts = &pair->m_contactBuffer[pair->m_contactCount];
 		pair->m_contactCount = pair->m_contactCount + dgInt16(CalculateConvexToNonConvexContacts(proxy));
 		if (pair->m_contactCount > (DG_MAX_CONTATCS - 2 * (DG_CONSTRAINT_MAX_ROWS / 3))) {
 			pair->m_contactCount = dgInt16(
-				ReduceContacts(pair->m_contactCount, pair->m_contactBuffer,
-							   DG_CONSTRAINT_MAX_ROWS / 3, DG_REDUCE_CONTACT_TOLERANCE));
+			                           ReduceContacts(pair->m_contactCount, pair->m_contactBuffer,
+			                                   DG_CONSTRAINT_MAX_ROWS / 3, DG_REDUCE_CONTACT_TOLERANCE));
 		}
-		//		pair->m_isTrigger = proxy.m_inTriggerVolume;
+		//      pair->m_isTrigger = proxy.m_inTriggerVolume;
 	}
 }
 
 void dgWorld::SceneContacts(dgCollidingPairCollector::dgPair *const pair,
-							dgCollisionParamProxy &proxy) const {
+                            dgCollisionParamProxy &proxy) const {
 	dgContact *const constraint = pair->m_contact;
 
 	pair->m_isTrigger = 0;
@@ -1697,13 +1697,13 @@ void dgWorld::SceneContacts(dgCollidingPairCollector::dgPair *const pair,
 
 	proxy.m_isTriggerVolume = 0;
 	proxy.m_inTriggerVolume = 0;
-	//	proxy.m_contacts = contacts;
+	//  proxy.m_contacts = contacts;
 
-	//	_ASSERTE (pair->m_body0->m_invMass.m_w != dgFloat32 (0.0f));
-	//	_ASSERTE (pair->m_body1->m_invMass.m_w == dgFloat32 (0.0f));
+	//  _ASSERTE (pair->m_body0->m_invMass.m_w != dgFloat32 (0.0f));
+	//  _ASSERTE (pair->m_body1->m_invMass.m_w == dgFloat32 (0.0f));
 	if (constraint) {
 		dgInt32 contactCount = ValidateContactCache(pair->m_body0, pair->m_body1,
-													constraint);
+		                       constraint);
 		if (contactCount) {
 			pair->m_contactCount = 0;
 			pair->m_contactBuffer = NULL;
@@ -1712,10 +1712,10 @@ void dgWorld::SceneContacts(dgCollidingPairCollector::dgPair *const pair,
 	}
 
 	dgCollisionScene *const scene =
-		(dgCollisionScene *)pair->m_body1->GetCollision();
+	    (dgCollisionScene *)pair->m_body1->GetCollision();
 	_ASSERTE(scene->IsType(dgCollision::dgCollisionScene_RTTI));
 	if (pair->m_body0->GetCollision()->IsType(
-			dgCollision::dgConvexCollision_RTTI)) {
+	            dgCollision::dgConvexCollision_RTTI)) {
 		proxy.m_referenceBody = pair->m_body0;
 		proxy.m_floatingBody = pair->m_body1;
 		proxy.m_referenceCollision = pair->m_body0->m_collision;
@@ -1726,7 +1726,7 @@ void dgWorld::SceneContacts(dgCollidingPairCollector::dgPair *const pair,
 		if (pair->m_contactCount) {
 			// prune close contacts
 			pair->m_contactCount = dgInt16(
-				PruneContacts(pair->m_contactCount, pair->m_contactBuffer));
+			                           PruneContacts(pair->m_contactCount, pair->m_contactBuffer));
 		}
 
 	} else {
@@ -1735,7 +1735,7 @@ void dgWorld::SceneContacts(dgCollidingPairCollector::dgPair *const pair,
 }
 
 void dgWorld::SceneContactsSimd(dgCollidingPairCollector::dgPair *const pair,
-								dgCollisionParamProxy &proxy) const {
+                                dgCollisionParamProxy &proxy) const {
 	dgContact *const constraint = pair->m_contact;
 
 	pair->m_isTrigger = 0;
@@ -1743,13 +1743,13 @@ void dgWorld::SceneContactsSimd(dgCollidingPairCollector::dgPair *const pair,
 
 	proxy.m_isTriggerVolume = 0;
 	proxy.m_inTriggerVolume = 0;
-	//	proxy.m_contacts = contacts;
+	//  proxy.m_contacts = contacts;
 
-	//	_ASSERTE (pair->m_body0->m_invMass.m_w != dgFloat32 (0.0f));
-	//	_ASSERTE (pair->m_body1->m_invMass.m_w == dgFloat32 (0.0f));
+	//  _ASSERTE (pair->m_body0->m_invMass.m_w != dgFloat32 (0.0f));
+	//  _ASSERTE (pair->m_body1->m_invMass.m_w == dgFloat32 (0.0f));
 	if (constraint) {
 		dgInt32 contactCount = ValidateContactCache(pair->m_body0, pair->m_body1,
-													constraint);
+		                       constraint);
 		if (contactCount) {
 			pair->m_contactCount = 0;
 			pair->m_contactBuffer = NULL;
@@ -1758,10 +1758,10 @@ void dgWorld::SceneContactsSimd(dgCollidingPairCollector::dgPair *const pair,
 	}
 
 	dgCollisionScene *const scene =
-		(dgCollisionScene *)pair->m_body1->GetCollision();
+	    (dgCollisionScene *)pair->m_body1->GetCollision();
 	_ASSERTE(scene->IsType(dgCollision::dgCollisionScene_RTTI));
 	if (pair->m_body0->GetCollision()->IsType(
-			dgCollision::dgConvexCollision_RTTI)) {
+	            dgCollision::dgConvexCollision_RTTI)) {
 		proxy.m_referenceBody = pair->m_body0;
 		proxy.m_floatingBody = pair->m_body1;
 		proxy.m_referenceCollision = pair->m_body0->m_collision;
@@ -1773,7 +1773,7 @@ void dgWorld::SceneContactsSimd(dgCollidingPairCollector::dgPair *const pair,
 		if (pair->m_contactCount) {
 			// prune close contacts
 			pair->m_contactCount = dgInt16(
-				PruneContacts(pair->m_contactCount, pair->m_contactBuffer));
+			                           PruneContacts(pair->m_contactCount, pair->m_contactBuffer));
 		}
 
 	} else {
@@ -1782,8 +1782,8 @@ void dgWorld::SceneContactsSimd(dgCollidingPairCollector::dgPair *const pair,
 }
 
 void dgWorld::CalculateContactsSimd(
-	dgCollidingPairCollector::dgPair *const pair, dgFloat32 timestep,
-	dgInt32 threadIndex) {
+    dgCollidingPairCollector::dgPair *const pair, dgFloat32 timestep,
+    dgInt32 threadIndex) {
 	dgBody *body0;
 	dgBody *body1;
 	const dgContactMaterial *material;
@@ -1798,9 +1798,9 @@ void dgWorld::CalculateContactsSimd(
 	proxy.m_unconditionalCast = 0;
 	proxy.m_maxContacts = DG_MAX_CONTATCS;
 	proxy.m_penetrationPadding = material->m_penetrationPadding;
-	//	proxy.m_continueCollision = material->m_collisionContinueCollisionEnable & (body0->m_continueCollisionMode | body1->m_continueCollisionMode);
+	//  proxy.m_continueCollision = material->m_collisionContinueCollisionEnable & (body0->m_continueCollisionMode | body1->m_continueCollisionMode);
 	proxy.m_continueCollision = dgInt32(
-		((material->m_flags & dgContactMaterial::m_collisionContinueCollisionEnable__) ? 1 : 0) & (body0->m_continueCollisionMode | body1->m_continueCollisionMode));
+	                                ((material->m_flags & dgContactMaterial::m_collisionContinueCollisionEnable__) ? 1 : 0) & (body0->m_continueCollisionMode | body1->m_continueCollisionMode));
 	proxy.m_isTriggerVolume = body0->m_collision->IsTriggerVolume() | body1->m_collision->IsTriggerVolume();
 
 	if (body0->m_collision->IsType(dgCollision::dgCollisionScene_RTTI)) {
@@ -1822,7 +1822,7 @@ void dgWorld::CalculateContactsSimd(
 }
 
 void dgWorld::CalculateContacts(dgCollidingPairCollector::dgPair *const pair,
-								dgFloat32 timestep, dgInt32 threadIndex) {
+                                dgFloat32 timestep, dgInt32 threadIndex) {
 	dgCollisionParamProxy proxy(threadIndex);
 
 	dgBody *const body0 = pair->m_body0;
@@ -1834,9 +1834,9 @@ void dgWorld::CalculateContacts(dgCollidingPairCollector::dgPair *const pair,
 	proxy.m_maxContacts = DG_MAX_CONTATCS;
 	proxy.m_penetrationPadding = material->m_penetrationPadding;
 	proxy.m_isTriggerVolume = body0->m_collision->IsTriggerVolume() | body1->m_collision->IsTriggerVolume();
-	//	proxy.m_continueCollision = material->m_collisionContinueCollisionEnable & (body0->m_continueCollisionMode | body1->m_continueCollisionMode);
+	//  proxy.m_continueCollision = material->m_collisionContinueCollisionEnable & (body0->m_continueCollisionMode | body1->m_continueCollisionMode);
 	proxy.m_continueCollision = dgInt32(
-		((material->m_flags & dgContactMaterial::m_collisionContinueCollisionEnable__) ? 1 : 0) & (body0->m_continueCollisionMode | body1->m_continueCollisionMode));
+	                                ((material->m_flags & dgContactMaterial::m_collisionContinueCollisionEnable__) ? 1 : 0) & (body0->m_continueCollisionMode | body1->m_continueCollisionMode));
 
 	if (body0->m_collision->IsType(dgCollision::dgCollisionScene_RTTI)) {
 		Swap(pair->m_body0, pair->m_body1);
@@ -1860,11 +1860,11 @@ void dgWorld::CalculateContacts(dgCollidingPairCollector::dgPair *const pair,
 //
 // ***************************************************************************
 dgInt32 dgWorld::CollideContinueSimd(dgCollision *const collisionA,
-									 const dgMatrix &matrixA, const dgVector &velocA, const dgVector &omegaA,
-									 dgCollision *const collisionB, const dgMatrix &matrixB,
-									 const dgVector &velocB, const dgVector &omegaB, dgFloat32 &retTimeStep,
-									 dgTriplex *const points, dgTriplex *const normals,
-									 dgFloat32 *const penetration, dgInt32 maxSize, dgInt32 threadIndex) {
+                                     const dgMatrix &matrixA, const dgVector &velocA, const dgVector &omegaA,
+                                     dgCollision *const collisionB, const dgMatrix &matrixB,
+                                     const dgVector &velocB, const dgVector &omegaB, dgFloat32 &retTimeStep,
+                                     dgTriplex *const points, dgTriplex *const normals,
+                                     dgFloat32 *const penetration, dgInt32 maxSize, dgInt32 threadIndex) {
 	dgBody collideBodyA;
 	dgBody collideBodyB;
 	dgContactPoint contacts[DG_MAX_CONTATCS];
@@ -1881,15 +1881,15 @@ dgInt32 dgWorld::CollideContinueSimd(dgCollision *const collisionA,
 	collideBodyA.m_collisionCell.m_cell = NULL;
 	collideBodyA.m_collisionWorldMatrix = collisionA->m_offset * matrixA;
 	collideBodyA.m_veloc = dgVector(velocA[0], velocA[1], velocA[2],
-									dgFloat32(0.0f));
+	                                dgFloat32(0.0f));
 	collideBodyA.m_omega = dgVector(omegaA[0], omegaA[1], omegaA[2],
-									dgFloat32(0.0f));
+	                                dgFloat32(0.0f));
 	collideBodyA.m_accel = dgVector(dgFloat32(0.0f), dgFloat32(0.0f),
-									dgFloat32(0.0f), dgFloat32(0.0f));
+	                                dgFloat32(0.0f), dgFloat32(0.0f));
 	collideBodyA.m_alpha = dgVector(dgFloat32(0.0f), dgFloat32(0.0f),
-									dgFloat32(0.0f), dgFloat32(0.0f));
+	                                dgFloat32(0.0f), dgFloat32(0.0f));
 	collideBodyA.m_invMass = dgVector(dgFloat32(1.0f), dgFloat32(1.0f),
-									  dgFloat32(1.0f), dgFloat32(1.0f));
+	                                  dgFloat32(1.0f), dgFloat32(1.0f));
 	collideBodyA.UpdateCollisionMatrixSimd(dgFloat32(1.0f), 0);
 
 	collideBodyB.m_world = this;
@@ -1900,15 +1900,15 @@ dgInt32 dgWorld::CollideContinueSimd(dgCollision *const collisionA,
 	collideBodyB.m_collisionCell.m_cell = NULL;
 	collideBodyB.m_collisionWorldMatrix = collisionB->m_offset * matrixB;
 	collideBodyB.m_veloc = dgVector(velocB[0], velocB[1], velocB[2],
-									dgFloat32(0.0f));
+	                                dgFloat32(0.0f));
 	collideBodyB.m_omega = dgVector(omegaB[0], omegaB[1], omegaB[2],
-									dgFloat32(0.0f));
+	                                dgFloat32(0.0f));
 	collideBodyB.m_accel = dgVector(dgFloat32(0.0f), dgFloat32(0.0f),
-									dgFloat32(0.0f), dgFloat32(0.0f));
+	                                dgFloat32(0.0f), dgFloat32(0.0f));
 	collideBodyB.m_alpha = dgVector(dgFloat32(0.0f), dgFloat32(0.0f),
-									dgFloat32(0.0f), dgFloat32(0.0f));
+	                                dgFloat32(0.0f), dgFloat32(0.0f));
 	collideBodyB.m_invMass = dgVector(dgFloat32(1.0f), dgFloat32(1.0f),
-									  dgFloat32(1.0f), dgFloat32(1.0f));
+	                                  dgFloat32(1.0f), dgFloat32(1.0f));
 	collideBodyB.UpdateCollisionMatrixSimd(dgFloat32(1.0f), 0);
 
 	dgCollisionParamProxy proxy(threadIndex);
@@ -1916,7 +1916,7 @@ dgInt32 dgWorld::CollideContinueSimd(dgCollision *const collisionA,
 	proxy.m_unconditionalCast = 1;
 	proxy.m_penetrationPadding = 0.0f;
 	proxy.m_continueCollision = 1;
-	//	proxy.m_maxContacts = DG_MAX_CONTATCS;
+	//  proxy.m_maxContacts = DG_MAX_CONTATCS;
 	proxy.m_maxContacts = maxSize;
 	proxy.m_isTriggerVolume = 0;
 
@@ -1937,19 +1937,19 @@ dgInt32 dgWorld::CollideContinueSimd(dgCollision *const collisionA,
 		SceneContactsSimd(&pair, proxy);
 
 	} else if (collideBodyA.m_collision->IsType(
-				   dgCollision::dgCollisionCompound_RTTI)) {
+	               dgCollision::dgCollisionCompound_RTTI)) {
 		CompoundContactsSimd(&pair, proxy);
 	} else if (collideBodyB.m_collision->IsType(
-				   dgCollision::dgCollisionCompound_RTTI)) {
+	               dgCollision::dgCollisionCompound_RTTI)) {
 		swapContactScale = dgFloat32(-1.0f);
 		Swap(pair.m_body0, pair.m_body1);
 		CompoundContactsSimd(&pair, proxy);
 
 	} else if (collideBodyA.m_collision->IsType(
-				   dgCollision::dgConvexCollision_RTTI)) {
+	               dgCollision::dgConvexCollision_RTTI)) {
 		ConvexContactsSimd(&pair, proxy);
 	} else if (collideBodyB.m_collision->IsType(
-				   dgCollision::dgConvexCollision_RTTI)) {
+	               dgCollision::dgConvexCollision_RTTI)) {
 		swapContactScale = dgFloat32(-1.0f);
 		Swap(pair.m_body0, pair.m_body1);
 		ConvexContactsSimd(&pair, proxy);
@@ -1980,11 +1980,11 @@ dgInt32 dgWorld::CollideContinueSimd(dgCollision *const collisionA,
 }
 
 dgInt32 dgWorld::CollideContinue(dgCollision *const collisionA,
-								 const dgMatrix &matrixA, const dgVector &velocA, const dgVector &omegaA,
-								 dgCollision *const collisionB, const dgMatrix &matrixB,
-								 const dgVector &velocB, const dgVector &omegaB, dgFloat32 &retTimeStep,
-								 dgTriplex *const points, dgTriplex *const normals,
-								 dgFloat32 *const penetration, dgInt32 maxSize, dgInt32 threadIndex) {
+                                 const dgMatrix &matrixA, const dgVector &velocA, const dgVector &omegaA,
+                                 dgCollision *const collisionB, const dgMatrix &matrixB,
+                                 const dgVector &velocB, const dgVector &omegaB, dgFloat32 &retTimeStep,
+                                 dgTriplex *const points, dgTriplex *const normals,
+                                 dgFloat32 *const penetration, dgInt32 maxSize, dgInt32 threadIndex) {
 	dgBody collideBodyA;
 	dgBody collideBodyB;
 	dgContactPoint contacts[DG_MAX_CONTATCS];
@@ -2003,15 +2003,15 @@ dgInt32 dgWorld::CollideContinue(dgCollision *const collisionA,
 	collideBodyA.m_collisionCell.m_cell = NULL;
 	collideBodyA.m_collisionWorldMatrix = collisionA->m_offset * matrixA;
 	collideBodyA.m_veloc = dgVector(velocA[0], velocA[1], velocA[2],
-									dgFloat32(0.0f));
+	                                dgFloat32(0.0f));
 	collideBodyA.m_omega = dgVector(omegaA[0], omegaA[1], omegaA[2],
-									dgFloat32(0.0f));
+	                                dgFloat32(0.0f));
 	collideBodyA.m_accel = dgVector(dgFloat32(0.0f), dgFloat32(0.0f),
-									dgFloat32(0.0f), dgFloat32(0.0f));
+	                                dgFloat32(0.0f), dgFloat32(0.0f));
 	collideBodyA.m_alpha = dgVector(dgFloat32(0.0f), dgFloat32(0.0f),
-									dgFloat32(0.0f), dgFloat32(0.0f));
+	                                dgFloat32(0.0f), dgFloat32(0.0f));
 	collideBodyA.m_invMass = dgVector(dgFloat32(1.0f), dgFloat32(1.0f),
-									  dgFloat32(1.0f), dgFloat32(1.0f));
+	                                  dgFloat32(1.0f), dgFloat32(1.0f));
 	collideBodyA.UpdateCollisionMatrix(dgFloat32(1.0f), 0);
 
 	collideBodyB.m_world = this;
@@ -2022,15 +2022,15 @@ dgInt32 dgWorld::CollideContinue(dgCollision *const collisionA,
 	collideBodyB.m_collisionCell.m_cell = NULL;
 	collideBodyB.m_collisionWorldMatrix = collisionB->m_offset * matrixB;
 	collideBodyB.m_veloc = dgVector(velocB[0], velocB[1], velocB[2],
-									dgFloat32(0.0f));
+	                                dgFloat32(0.0f));
 	collideBodyB.m_omega = dgVector(omegaB[0], omegaB[1], omegaB[2],
-									dgFloat32(0.0f));
+	                                dgFloat32(0.0f));
 	collideBodyB.m_accel = dgVector(dgFloat32(0.0f), dgFloat32(0.0f),
-									dgFloat32(0.0f), dgFloat32(0.0f));
+	                                dgFloat32(0.0f), dgFloat32(0.0f));
 	collideBodyB.m_alpha = dgVector(dgFloat32(0.0f), dgFloat32(0.0f),
-									dgFloat32(0.0f), dgFloat32(0.0f));
+	                                dgFloat32(0.0f), dgFloat32(0.0f));
 	collideBodyB.m_invMass = dgVector(dgFloat32(1.0f), dgFloat32(1.0f),
-									  dgFloat32(1.0f), dgFloat32(1.0f));
+	                                  dgFloat32(1.0f), dgFloat32(1.0f));
 	collideBodyB.UpdateCollisionMatrix(dgFloat32(1.0f), 0);
 
 	dgCollisionParamProxy proxy(threadIndex);
@@ -2038,7 +2038,7 @@ dgInt32 dgWorld::CollideContinue(dgCollision *const collisionA,
 	proxy.m_unconditionalCast = 1;
 	proxy.m_penetrationPadding = 0.0f;
 	proxy.m_continueCollision = 1;
-	//	proxy.m_maxContacts = DG_MAX_CONTATCS;
+	//  proxy.m_maxContacts = DG_MAX_CONTATCS;
 	proxy.m_maxContacts = maxSize;
 	proxy.m_isTriggerVolume = 0;
 
@@ -2059,19 +2059,19 @@ dgInt32 dgWorld::CollideContinue(dgCollision *const collisionA,
 		SceneContactsSimd(&pair, proxy);
 
 	} else if (collideBodyA.m_collision->IsType(
-				   dgCollision::dgCollisionCompound_RTTI)) {
+	               dgCollision::dgCollisionCompound_RTTI)) {
 		CompoundContacts(&pair, proxy);
 	} else if (collideBodyB.m_collision->IsType(
-				   dgCollision::dgCollisionCompound_RTTI)) {
+	               dgCollision::dgCollisionCompound_RTTI)) {
 		swapContactScale = dgFloat32(-1.0f);
 		Swap(pair.m_body0, pair.m_body1);
 		CompoundContacts(&pair, proxy);
 
 	} else if (collideBodyA.m_collision->IsType(
-				   dgCollision::dgConvexCollision_RTTI)) {
+	               dgCollision::dgConvexCollision_RTTI)) {
 		ConvexContacts(&pair, proxy);
 	} else if (collideBodyB.m_collision->IsType(
-				   dgCollision::dgConvexCollision_RTTI)) {
+	               dgCollision::dgConvexCollision_RTTI)) {
 		swapContactScale = dgFloat32(-1.0f);
 		Swap(pair.m_body0, pair.m_body1);
 		ConvexContacts(&pair, proxy);
@@ -2103,9 +2103,9 @@ dgInt32 dgWorld::CollideContinue(dgCollision *const collisionA,
 }
 
 dgInt32 dgWorld::Collide(dgCollision *const collisionA, const dgMatrix &matrixA,
-						 dgCollision *const collisionB, const dgMatrix &matrixB,
-						 dgTriplex *const points, dgTriplex *const normals,
-						 dgFloat32 *const penetration, dgInt32 maxSize, dgInt32 threadIndex) {
+                         dgCollision *const collisionB, const dgMatrix &matrixB,
+                         dgTriplex *const points, dgTriplex *const normals,
+                         dgFloat32 *const penetration, dgInt32 maxSize, dgInt32 threadIndex) {
 	dgBody collideBodyA;
 	dgBody collideBodyB;
 	dgContactPoint contacts[DG_MAX_CONTATCS];
@@ -2119,7 +2119,7 @@ dgInt32 dgWorld::Collide(dgCollision *const collisionA, const dgMatrix &matrixA,
 	collideBodyA.SetContinuesCollisionMode(false);
 	collideBodyA.m_matrix = matrixA;
 	collideBodyA.m_collision = collisionA;
-	//	collideBodyA.m_collisionWorldMatrix = collisionA->m_offset * matrixA;
+	//  collideBodyA.m_collisionWorldMatrix = collisionA->m_offset * matrixA;
 	collideBodyA.UpdateCollisionMatrix(dgFloat32(0.0f), 0);
 
 	collideBodyB.m_world = this;
@@ -2128,11 +2128,11 @@ dgInt32 dgWorld::Collide(dgCollision *const collisionA, const dgMatrix &matrixA,
 	collideBodyB.SetContinuesCollisionMode(false);
 	collideBodyB.m_matrix = matrixB;
 	collideBodyB.m_collision = collisionB;
-	//	collideBodyB.m_collisionWorldMatrix = collisionB->m_offset * matrixB;
+	//  collideBodyB.m_collisionWorldMatrix = collisionB->m_offset * matrixB;
 	collideBodyB.UpdateCollisionMatrix(dgFloat32(0.0f), 0);
 
-	//	isTriggerA = collisionA->IsTriggerVolume();
-	//	isTriggerB = collisionB->IsTriggerVolume();
+	//  isTriggerA = collisionA->IsTriggerVolume();
+	//  isTriggerB = collisionB->IsTriggerVolume();
 
 	dgCollisionParamProxy proxy(threadIndex);
 	proxy.m_timestep = dgFloat32(0.0f);
@@ -2159,19 +2159,19 @@ dgInt32 dgWorld::Collide(dgCollision *const collisionA, const dgMatrix &matrixA,
 		SceneContacts(&pair, proxy);
 
 	} else if (collideBodyA.m_collision->IsType(
-				   dgCollision::dgCollisionCompound_RTTI)) {
+	               dgCollision::dgCollisionCompound_RTTI)) {
 		CompoundContacts(&pair, proxy);
 	} else if (collideBodyB.m_collision->IsType(
-				   dgCollision::dgCollisionCompound_RTTI)) {
+	               dgCollision::dgCollisionCompound_RTTI)) {
 		swapContactScale = dgFloat32(-1.0f);
 		Swap(pair.m_body0, pair.m_body1);
 		CompoundContacts(&pair, proxy);
 
 	} else if (collideBodyA.m_collision->IsType(
-				   dgCollision::dgConvexCollision_RTTI)) {
+	               dgCollision::dgConvexCollision_RTTI)) {
 		ConvexContacts(&pair, proxy);
 	} else if (collideBodyB.m_collision->IsType(
-				   dgCollision::dgConvexCollision_RTTI)) {
+	               dgCollision::dgConvexCollision_RTTI)) {
 		swapContactScale = dgFloat32(-1.0f);
 		Swap(pair.m_body0, pair.m_body1);
 		ConvexContacts(&pair, proxy);
@@ -2180,7 +2180,7 @@ dgInt32 dgWorld::Collide(dgCollision *const collisionA, const dgMatrix &matrixA,
 	count = pair.m_contactCount;
 	if (count > maxSize) {
 		count = ReduceContacts(count, contacts, maxSize,
-							   DG_REDUCE_CONTACT_TOLERANCE);
+		                       DG_REDUCE_CONTACT_TOLERANCE);
 	}
 
 	for (dgInt32 i = 0; i < count; i++) {

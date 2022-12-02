@@ -58,8 +58,7 @@ struct sGlobalVariableDescription;
 
 #ifndef AS_NO_COMPILER
 
-struct sFunctionDescription
-{
+struct sFunctionDescription {
 	asCScriptCode       *script;
 	asCScriptNode       *node;
 	asCString            name;
@@ -69,8 +68,7 @@ struct sFunctionDescription
 	bool                 isExistingShared;
 };
 
-struct sGlobalVariableDescription
-{
+struct sGlobalVariableDescription {
 	asCScriptCode     *script;
 	asCScriptNode     *declaredAtNode;
 	asCScriptNode     *initializationNode;
@@ -85,11 +83,16 @@ struct sGlobalVariableDescription
 	asQWORD            constantValue;
 };
 
-struct sPropertyInitializer
-{
+struct sPropertyInitializer {
 	sPropertyInitializer() : declNode(0), initNode(0), file(0) {}
 	sPropertyInitializer(const asCString &nm, asCScriptNode *decl, asCScriptNode *init, asCScriptCode *f) : name(nm), declNode(decl), initNode(init), file(f) {}
-	sPropertyInitializer &operator=(const sPropertyInitializer &o) {name = o.name; declNode = o.declNode; initNode = o.initNode; file = o.file; return *this;}
+	sPropertyInitializer &operator=(const sPropertyInitializer &o) {
+		name = o.name;
+		declNode = o.declNode;
+		initNode = o.initNode;
+		file = o.file;
+		return *this;
+	}
 
 	asCString      name;
 	asCScriptNode *declNode;
@@ -97,9 +100,15 @@ struct sPropertyInitializer
 	asCScriptCode *file;
 };
 
-struct sClassDeclaration
-{
-	sClassDeclaration() {script = 0; node = 0; validState = 0; typeInfo = 0; isExistingShared = false; isFinal = false;}
+struct sClassDeclaration {
+	sClassDeclaration() {
+		script = 0;
+		node = 0;
+		validState = 0;
+		typeInfo = 0;
+		isExistingShared = false;
+		isFinal = false;
+	}
 
 	asCScriptCode *script;
 	asCScriptNode *node;
@@ -112,16 +121,14 @@ struct sClassDeclaration
 	asCArray<sPropertyInitializer> propInits;
 };
 
-struct sFuncDef
-{
+struct sFuncDef {
 	asCScriptCode *script;
 	asCScriptNode *node;
 	asCString      name;
 	int            idx;
 };
 
-struct sMixinClass
-{
+struct sMixinClass {
 	asCScriptCode *script;
 	asCScriptNode *node;
 	asCString      name;
@@ -130,8 +137,7 @@ struct sMixinClass
 
 #endif // AS_NO_COMPILER
 
-class asCBuilder
-{
+class asCBuilder {
 public:
 	asCBuilder(asCScriptEngine *engine, asCModule *module);
 	~asCBuilder();

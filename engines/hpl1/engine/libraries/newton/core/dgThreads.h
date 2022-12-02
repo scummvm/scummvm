@@ -22,57 +22,56 @@
 #if !defined(AFX_DG_THREADS_42YH_HY78GT_YHJ63Y__INCLUDED_)
 #define AFX_DG_THREADS_42YH_HY78GT_YHJ63Y__INCLUDED_
 
-#define DG_MAXQUEUE		16
+#define DG_MAXQUEUE     16
 
 
-class dgWorkerThread
-{
-	public:
-	dgWorkerThread() {m_threadIndex = -1;}
+class dgWorkerThread {
+public:
+	dgWorkerThread() {
+		m_threadIndex = -1;
+	}
 	virtual void ThreadExecute() = 0;
-	virtual ~dgWorkerThread () {}
+	virtual ~dgWorkerThread() {}
 
 	dgInt32 m_threadIndex;
 };
 
 
-class dgThreads
-{
+class dgThreads {
 public:
 	dgThreads();
 	~dgThreads();
 
-	void CreateThreaded (dgInt32 threadCount);
+	void CreateThreaded(dgInt32 threadCount);
 	void DestroydgThreads();
 
 	void ClearTimers();
 	void SetPerfomanceCounter(OnGetPerformanceCountCallback callback);
-	dgUnsigned32 GetPerfomanceTicks (dgUnsigned32 threadIndex) const;
+	dgUnsigned32 GetPerfomanceTicks(dgUnsigned32 threadIndex) const;
 
 	dgInt32 GetThreadCount() const ;
-	dgInt32 SubmitJob(dgWorkerThread* const job);
-	void SynchronizationBarrier ();
-	void CalculateChunkSizes (dgInt32 elements, dgInt32* const chunkSizes) const;
+	dgInt32 SubmitJob(dgWorkerThread *const job);
+	void SynchronizationBarrier();
+	void CalculateChunkSizes(dgInt32 elements, dgInt32 *const chunkSizes) const;
 
 	void dgGetLock() const;
 	void dgReleaseLock() const;
 
-	void dgGetIndirectLock(dgInt32* lockVar);
-	void dgReleaseIndirectLock(dgInt32* lockVar);
+	void dgGetIndirectLock(dgInt32 *lockVar);
+	void dgReleaseIndirectLock(dgInt32 *lockVar);
 
 private:
-	struct dgLocadData
-	{
+	struct dgLocadData {
 		dgInt32 m_ticks;
 		dgInt32 m_threadIndex;
-		dgThreads* m_manager;
+		dgThreads *m_manager;
 	};
 
 	void DoWork(dgInt32 threadIndex);
-	dgInt32 GetWork(dgWorkerThread** cWork);
+	dgInt32 GetWork(dgWorkerThread **cWork);
 
 
-	static void* ThreadExecute(void *Param);
+	static void *ThreadExecute(void *Param);
 
 	dgInt32 m_numOfThreads;
 	dgInt32 m_numberOfCPUCores;
@@ -86,7 +85,7 @@ private:
 	dgInt32 m_workToDo;
 	dgInt32 m_criticalSection;
 	dgInt32 m_workToDoSpinLock;
-	dgWorkerThread* m_queue[DG_MAXQUEUE];
+	dgWorkerThread *m_queue[DG_MAXQUEUE];
 	//pthread_t m_threadhandles[DG_MAXIMUN_THREADS];
 
 	OnGetPerformanceCountCallback m_getPerformanceCount;

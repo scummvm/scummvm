@@ -2,23 +2,23 @@
    AngelCode Scripting Library
    Copyright (c) 2003-2015 Andreas Jonsson
 
-   This software is provided 'as-is', without any express or implied 
-   warranty. In no event will the authors be held liable for any 
+   This software is provided 'as-is', without any express or implied
+   warranty. In no event will the authors be held liable for any
    damages arising from the use of this software.
 
-   Permission is granted to anyone to use this software for any 
-   purpose, including commercial applications, and to alter it and 
+   Permission is granted to anyone to use this software for any
+   purpose, including commercial applications, and to alter it and
    redistribute it freely, subject to the following restrictions:
 
-   1. The origin of this software must not be misrepresented; you 
+   1. The origin of this software must not be misrepresented; you
       must not claim that you wrote the original software. If you use
-      this software in a product, an acknowledgment in the product 
+      this software in a product, an acknowledgment in the product
       documentation would be appreciated but is not required.
 
-   2. Altered source versions must be plainly marked as such, and 
+   2. Altered source versions must be plainly marked as such, and
       must not be misrepresented as being the original software.
 
-   3. This notice may not be removed or altered from any source 
+   3. This notice may not be removed or altered from any source
       distribution.
 
    The original version of this library can be located at:
@@ -42,8 +42,7 @@
 
 BEGIN_AS_NAMESPACE
 
-asCScriptNode::asCScriptNode(eScriptNode type)
-{
+asCScriptNode::asCScriptNode(eScriptNode type) {
 	nodeType    = type;
 	tokenType   = ttUnrecognizedToken;
 	tokenPos    = 0;
@@ -56,14 +55,12 @@ asCScriptNode::asCScriptNode(eScriptNode type)
 	lastChild   = 0;
 }
 
-void asCScriptNode::Destroy(asCScriptEngine *engine)
-{
+void asCScriptNode::Destroy(asCScriptEngine *engine) {
 	// Destroy all children
 	asCScriptNode *node = firstChild;
 	asCScriptNode *nxt;
 
-	while( node )
-	{
+	while (node) {
 		nxt = node->next;
 		node->Destroy(engine);
 		node = nxt;
@@ -73,25 +70,22 @@ void asCScriptNode::Destroy(asCScriptEngine *engine)
 	engine->memoryMgr.FreeScriptNode(this);
 }
 
-asCScriptNode *asCScriptNode::CreateCopy(asCScriptEngine *engine)
-{
+asCScriptNode *asCScriptNode::CreateCopy(asCScriptEngine *engine) {
 	void *ptr = engine->memoryMgr.AllocScriptNode();
-	if( ptr == 0 )
-	{
+	if (ptr == 0) {
 		// Out of memory
 		return 0;
 	}
 
-	new(ptr) asCScriptNode(nodeType);
-	
-	asCScriptNode *node = reinterpret_cast<asCScriptNode*>(ptr);
+	new (ptr) asCScriptNode(nodeType);
+
+	asCScriptNode *node = reinterpret_cast<asCScriptNode *>(ptr);
 	node->tokenLength = tokenLength;
 	node->tokenPos    = tokenPos;
 	node->tokenType   = tokenType;
 
 	asCScriptNode *child = firstChild;
-	while( child )
-	{
+	while (child) {
 		node->AddChildLast(child->CreateCopy(engine));
 		child = child->next;
 	}
@@ -99,50 +93,39 @@ asCScriptNode *asCScriptNode::CreateCopy(asCScriptEngine *engine)
 	return node;
 }
 
-void asCScriptNode::SetToken(sToken *token)
-{
+void asCScriptNode::SetToken(sToken *token) {
 	tokenType   = token->type;
 }
 
-void asCScriptNode::UpdateSourcePos(size_t pos, size_t length)
-{
-	if( pos == 0 && length == 0 ) return;
+void asCScriptNode::UpdateSourcePos(size_t pos, size_t length) {
+	if (pos == 0 && length == 0) return;
 
-	if( tokenPos == 0 && tokenLength == 0 )
-	{
+	if (tokenPos == 0 && tokenLength == 0) {
 		tokenPos = pos;
 		tokenLength = length;
-	}
-	else
-	{
-		if( tokenPos > pos )
-		{
+	} else {
+		if (tokenPos > pos) {
 			tokenLength = tokenPos + tokenLength - pos;
 			tokenPos = pos;
 		}
 
-		if( pos + length > tokenPos + tokenLength )
-		{
+		if (pos + length > tokenPos + tokenLength) {
 			tokenLength = pos + length - tokenPos;
 		}
 	}
 }
 
-void asCScriptNode::AddChildLast(asCScriptNode *node)
-{
+void asCScriptNode::AddChildLast(asCScriptNode *node) {
 	// We might get a null pointer if the parser encounter an out-of-memory situation
-	if( node == 0 ) return;
+	if (node == 0) return;
 
-	if( lastChild )
-	{
+	if (lastChild) {
 		lastChild->next = node;
 		node->next      = 0;
 		node->prev      = lastChild;
 		node->parent    = this;
 		lastChild       = node;
-	}
-	else
-	{
+	} else {
 		firstChild   = node;
 		lastChild    = node;
 		node->next   = 0;
@@ -153,20 +136,18 @@ void asCScriptNode::AddChildLast(asCScriptNode *node)
 	UpdateSourcePos(node->tokenPos, node->tokenLength);
 }
 
-void asCScriptNode::DisconnectParent()
-{
-	if( parent )
-	{
-		if( parent->firstChild == this )
+void asCScriptNode::DisconnectParent() {
+	if (parent) {
+		if (parent->firstChild == this)
 			parent->firstChild = next;
-		if( parent->lastChild == this )
+		if (parent->lastChild == this)
 			parent->lastChild = prev;
 	}
 
-	if( next )
+	if (next)
 		next->prev = prev;
 
-	if( prev )
+	if (prev)
 		prev->next = next;
 
 	parent = 0;

@@ -56,16 +56,14 @@ class asCScriptNode;
 class asCFuncdefType;
 struct asSNameSpace;
 
-struct asSScriptVariable
-{
+struct asSScriptVariable {
 	asCString   name;
 	asCDataType type;
 	int         stackOffset;
 	asUINT      declaredAtProgramPos;
 };
 
-enum asEListPatternNodeType
-{
+enum asEListPatternNodeType {
 	asLPT_REPEAT,
 	asLPT_REPEAT_SAME,
 	asLPT_START,
@@ -73,33 +71,33 @@ enum asEListPatternNodeType
 	asLPT_TYPE
 };
 
-struct asSListPatternNode
-{
+struct asSListPatternNode {
 	asSListPatternNode(asEListPatternNodeType t) : type(t), next(0) {}
 	virtual ~asSListPatternNode() {};
-	virtual asSListPatternNode *Duplicate() { return asNEW(asSListPatternNode)(type); }
+	virtual asSListPatternNode *Duplicate() {
+		return asNEW(asSListPatternNode)(type);
+	}
 	asEListPatternNodeType  type;
 	asSListPatternNode     *next;
 };
 
-struct asSListPatternDataTypeNode : public asSListPatternNode
-{
+struct asSListPatternDataTypeNode : public asSListPatternNode {
 	asSListPatternDataTypeNode(const asCDataType &dt) : asSListPatternNode(asLPT_TYPE), dataType(dt) {}
-	asSListPatternNode *Duplicate() { return asNEW(asSListPatternDataTypeNode)(dataType); }
+	asSListPatternNode *Duplicate() {
+		return asNEW(asSListPatternDataTypeNode)(dataType);
+	}
 	asCDataType dataType;
 };
 
-enum asEObjVarInfoOption
-{
-	asOBJ_UNINIT,	// object is uninitialized/destroyed
-	asOBJ_INIT,		// object is initialized
-	asBLOCK_BEGIN,	// scope block begins
-	asBLOCK_END,	// scope block ends
-	asOBJ_VARDECL	// object variable is declared (but not necessarily initialized)
+enum asEObjVarInfoOption {
+	asOBJ_UNINIT,   // object is uninitialized/destroyed
+	asOBJ_INIT,     // object is initialized
+	asBLOCK_BEGIN,  // scope block begins
+	asBLOCK_END,    // scope block ends
+	asOBJ_VARDECL   // object variable is declared (but not necessarily initialized)
 };
 
-enum asEFuncTrait
-{
+enum asEFuncTrait {
 	asTRAIT_CONSTRUCTOR = 1,
 	asTRAIT_DESTRUCTOR  = 2,
 	asTRAIT_CONST       = 4,
@@ -113,24 +111,26 @@ enum asEFuncTrait
 	asTRAIT_PROPERTY    = 1024
 };
 
-struct asSFunctionTraits
-{
+struct asSFunctionTraits {
 	asSFunctionTraits() : traits(0) {}
-	void SetTrait(asEFuncTrait trait, bool set) { if (set) traits |= trait; else traits &= ~trait; }
-	bool GetTrait(asEFuncTrait trait) const { return (traits & trait) ? true : false; }
+	void SetTrait(asEFuncTrait trait, bool set) {
+		if (set) traits |= trait;
+		else traits &= ~trait;
+	}
+	bool GetTrait(asEFuncTrait trait) const {
+		return (traits & trait) ? true : false;
+	}
 protected:
 	asDWORD traits;
 };
 
-struct asSObjectVariableInfo
-{
+struct asSObjectVariableInfo {
 	asUINT              programPos;
 	int                 variableOffset;
 	asEObjVarInfoOption option;
 };
 
-struct asSTryCatchInfo
-{
+struct asSTryCatchInfo {
 	asUINT tryPos;
 	asUINT catchPos;
 };
@@ -143,8 +143,7 @@ struct asSSystemFunctionInterface;
 
 void RegisterScriptFunction(asCScriptEngine *engine);
 
-class asCScriptFunction : public asIScriptFunction
-{
+class asCScriptFunction : public asIScriptFunction {
 public:
 	// From asIScriptFunction
 	asIScriptEngine     *GetEngine() const;
@@ -193,7 +192,7 @@ public:
 	// Debug information
 	asUINT               GetVarCount() const;
 	int                  GetVar(asUINT index, const char **name, int *typeId = 0) const;
-	const char *         GetVarDecl(asUINT index, bool includeNamespace = false) const;
+	const char          *GetVarDecl(asUINT index, bool includeNamespace = false) const;
 	int                  FindNextLineWithCode(int line) const;
 
 	// For JIT compilation
@@ -207,14 +206,30 @@ public:
 	//-----------------------------------
 	// Internal methods
 
-	void SetShared(bool set) { traits.SetTrait(asTRAIT_SHARED, set); }
-	void SetReadOnly(bool set) { traits.SetTrait(asTRAIT_CONST, set); }
-	void SetFinal(bool set) { traits.SetTrait(asTRAIT_FINAL, set); }
-	void SetOverride(bool set) { traits.SetTrait(asTRAIT_OVERRIDE, set); }
-	void SetExplicit(bool set) { traits.SetTrait(asTRAIT_EXPLICIT, set); }
-	void SetProtected(bool set) { traits.SetTrait(asTRAIT_PROTECTED, set); }
-	void SetPrivate(bool set) { traits.SetTrait(asTRAIT_PRIVATE, set); }
-	void SetProperty(bool set) { traits.SetTrait(asTRAIT_PROPERTY, set); }
+	void SetShared(bool set) {
+		traits.SetTrait(asTRAIT_SHARED, set);
+	}
+	void SetReadOnly(bool set) {
+		traits.SetTrait(asTRAIT_CONST, set);
+	}
+	void SetFinal(bool set) {
+		traits.SetTrait(asTRAIT_FINAL, set);
+	}
+	void SetOverride(bool set) {
+		traits.SetTrait(asTRAIT_OVERRIDE, set);
+	}
+	void SetExplicit(bool set) {
+		traits.SetTrait(asTRAIT_EXPLICIT, set);
+	}
+	void SetProtected(bool set) {
+		traits.SetTrait(asTRAIT_PROTECTED, set);
+	}
+	void SetPrivate(bool set) {
+		traits.SetTrait(asTRAIT_PRIVATE, set);
+	}
+	void SetProperty(bool set) {
+		traits.SetTrait(asTRAIT_PROPERTY, set);
+	}
 	bool IsFactory() const;
 
 	asCScriptFunction(asCScriptEngine *engine, asCModule *mod, asEFuncType funcType);
@@ -282,7 +297,7 @@ public:
 	// Properties
 
 	mutable asCAtomic            externalRefCount; // Used for external referneces
-	        asCAtomic            internalRefCount; // Used for internal references
+	asCAtomic            internalRefCount; // Used for internal references
 	mutable bool                 gcFlag;
 	asCScriptEngine             *engine;
 	asCModule                   *module;
@@ -320,8 +335,7 @@ public:
 	asSListPatternNode *listPattern;
 
 	// Used by asFUNC_SCRIPT
-	struct ScriptFunctionData
-	{
+	struct ScriptFunctionData {
 		// Bytecode for the script function
 		asCArray<asDWORD>               byteCode;
 
@@ -330,7 +344,7 @@ public:
 
 		// These hold information on objects and function pointers, including temporary
 		// variables used by exception handler and when saving bytecode
-		asCArray<asCTypeInfo*>          objVariableTypes;
+		asCArray<asCTypeInfo *>          objVariableTypes;
 		asCArray<int>                   objVariablePos; // offset on stackframe
 
 		// The first variables in above array are allocated on the heap, the rest on the stack.
@@ -350,7 +364,7 @@ public:
 		asJITFunction                   jitFunction;
 
 		// Holds debug information on explicitly declared variables
-		asCArray<asSScriptVariable*>    variables;
+		asCArray<asSScriptVariable *>    variables;
 		// Store position, line number pairs for debug information
 		asCArray<int>                   lineNumbers;
 		// Store the script section where the code was declared
@@ -372,7 +386,7 @@ public:
 	asSSystemFunctionInterface  *sysFuncIntf;
 };
 
-const char * const DELEGATE_FACTORY = "$dlgte";
+const char *const DELEGATE_FACTORY = "$dlgte";
 asCScriptFunction *CreateDelegate(asCScriptFunction *func, void *obj);
 
 END_AS_NAMESPACE

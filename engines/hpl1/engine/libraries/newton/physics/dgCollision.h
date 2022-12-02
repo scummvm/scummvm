@@ -45,13 +45,13 @@ class dgPolygonSoupRayHitDesc;
 #define DG_MAX_COLLISION_PADDING dgFloat32(1.0f / 8.0f)
 //#define DG_MAX_COLLISION_PADDING dgFloat32 (1.0f)
 
-typedef dgInt32 (*dgCollisionCompoundBreakableCallback)(dgMeshEffect *const solid, void *userData, dgMatrix &planeMatrixOut);
+typedef dgInt32(*dgCollisionCompoundBreakableCallback)(dgMeshEffect *const solid, void *userData, dgMatrix &planeMatrixOut);
 
 #ifdef _DEBUG
 //	#define DG_DEBUG_AABB
 #endif
 
-//#define SERIALIZE_END	'dne '
+//#define SERIALIZE_END 'dne '
 #define SERIALIZE_END 0x646e6520
 #define PREFILTER_RAYCAST(filter, body, collision, userData) (filter && !filter(body, collision, userData))
 
@@ -183,8 +183,7 @@ public:
 };
 
 DG_MSC_VECTOR_ALIGMENT
-class dgCollision //: public dgRef
-{
+class dgCollision { //: public dgRef
 public:
 	enum RTTI {
 		dgCollisionNull_RTTI = 1 << 0,
@@ -287,7 +286,7 @@ protected:
 	dgCollisionID m_collsionId;
 
 private:
-	//	dgAddRtti(dgRef);
+	//  dgAddRtti(dgRef);
 
 	friend class dgBody;
 	friend class dgWorld;

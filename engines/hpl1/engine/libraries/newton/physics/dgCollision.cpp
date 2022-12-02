@@ -31,7 +31,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 dgCollision::dgCollision(dgMemoryAllocator *const allocator,
-						 dgUnsigned32 signature, const dgMatrix &matrix, dgCollisionID id)
+                         dgUnsigned32 signature, const dgMatrix &matrix, dgCollisionID id)
 //	:dgRef()
 {
 	m_rtti = 0;
@@ -40,13 +40,13 @@ dgCollision::dgCollision(dgMemoryAllocator *const allocator,
 	m_collsionId = id;
 	m_signature = signature;
 	m_allocator = allocator;
-	//	m_maxDistanceTravel = dgFloat32 (0.0f);
-	//	m_omegaDistanceBound = dgFloat32 (0.0f);
+	//  m_maxDistanceTravel = dgFloat32 (0.0f);
+	//  m_omegaDistanceBound = dgFloat32 (0.0f);
 	SetOffsetMatrix(matrix);
 }
 
 dgCollision::dgCollision(dgWorld *const world, dgDeserialize deserialization,
-						 void *const userData) {
+                         void *const userData) {
 	dgInt32 signature[4];
 	deserialization(userData, &signature, sizeof(signature));
 	deserialization(userData, &m_offset, sizeof(dgMatrix));
@@ -96,7 +96,7 @@ void dgCollision::SetUserData(void *const userData) {
 }
 
 void dgCollision::GetCollisionInfo(dgCollisionInfo *info) const {
-	//	memset (info, 0, sizeof (dgCollisionInfo));
+	//  memset (info, 0, sizeof (dgCollisionInfo));
 	info->m_offsetMatrix = dgGetIdentityMatrix();
 	info->m_collisionType = m_collsionId;
 	info->m_refCount = GetRefCount();
