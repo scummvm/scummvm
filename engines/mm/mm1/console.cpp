@@ -248,20 +248,23 @@ bool Console::cmdMapString(int argc, const char **argv) {
 }
 
 bool Console::cmdMap(int argc, const char **argv) {
-	if (argc < 2) {
+	if (argc != 2 && argc != 4) {
 		debugPrintf("map mapId [ xp, yp ]\n");
 		return true;
 	} else {
 		Maps::Maps &maps = g_globals->_maps;
-
 		int mapId = strToInt(argv[1]);
-		int x = argc < 3 ? 8 : strToInt(argv[2]);
-		int y = argc < 4 ? 8 : strToInt(argv[3]);
+		Maps::Map &map = *maps.getMap(mapId);
+		int x = g_maps->_mapPos.x, y = g_maps->_mapPos.y;
 
-		maps.select(maps.getMap(mapId)->getId(), 0);
+		if (argc == 4) {
+			x = strToInt(argv[2]);
+			y = strToInt(argv[3]);
+		}
+
 		maps._mapPos.x = x;
 		maps._mapPos.y = y;
-		g_events->send("Game", GameMessage("UPDATE"));
+		maps.changeMap(map.getId(), map.getDefaultSection());
 
 		return false;
 	}

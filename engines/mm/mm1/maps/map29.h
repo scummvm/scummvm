@@ -43,7 +43,7 @@ private:
 		&Map29::special03
 	};
 public:
-	Map29() : Map(29, "aread4", 0x801) {}
+	Map29() : Map(29, "aread4", 0x801, 2) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

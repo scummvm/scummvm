@@ -85,7 +85,7 @@ private:
 		&Map00::special23
 	};
 public:
-	Map00() : MapTown(0, "sorpigal", 0x604) {}
+	Map00() : MapTown(0, "sorpigal", 0x604, 1) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

@@ -65,8 +65,9 @@ protected:
 	 */
 	void showSign(const Common::String &msg);
 public:
-	MapTown(uint index, const Common::String &name, uint16 id) :
-		Map(index, name, id) {}
+	MapTown(uint index, const Common::String &name, uint16 id,
+		byte defaultSection) :
+		Map(index, name, id, defaultSection) {}
 	virtual ~MapTown() {}
 };
 

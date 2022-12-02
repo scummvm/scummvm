@@ -46,7 +46,7 @@ private:
 		&Map33::special04
 	};
 public:
-	Map33() : Map(33, "areae4", 0x11B) {}
+	Map33() : Map(33, "areae4", 0x11b, 2) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

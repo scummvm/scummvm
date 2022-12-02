@@ -60,7 +60,7 @@ private:
 		&Map23::special13
 	};
 public:
-	Map23() : Map(23, "areac2", 0xA11) {}
+	Map23() : Map(23, "areac2", 0xa11, 1) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

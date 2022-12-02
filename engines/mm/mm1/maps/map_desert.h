@@ -52,8 +52,9 @@ public:
 	 * Constructor
 	 */
 	MapDesert(uint index, const Common::String &name, uint16 id,
-		byte &deadCount, RandomMode rndMode) :
-		Map(index, name, id), _deadCount(deadCount), _randomMode(rndMode) {}
+		byte defaultSection, byte &deadCount, RandomMode rndMode) :
+		Map(index, name, id, defaultSection),
+		_deadCount(deadCount), _randomMode(rndMode) {}
 };
 
 } // namespace Maps

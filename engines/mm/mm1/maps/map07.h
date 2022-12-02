@@ -71,7 +71,7 @@ private:
 		&Map07::special17
 	};
 public:
-	Map07() : Map(7, "cave3", 0xC01) {}
+	Map07() : Map(7, "cave3", 0xC01, 1) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

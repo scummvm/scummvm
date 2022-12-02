@@ -53,7 +53,7 @@ private:
 		&Map20::special08
 	};
 public:
-	Map20() : Map(20, "areab3", 0x101) {}
+	Map20() : Map(20, "areab3", 0x101, 2) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

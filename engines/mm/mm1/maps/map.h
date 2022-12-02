@@ -99,6 +99,7 @@ protected:
 	Common::String _name;
 	uint16 _id;
 	uint _mapIndex;
+	byte _defaultSection;
 	Common::Array<byte> _data;
 private:
 	/**
@@ -134,7 +135,8 @@ public:
 	byte _states[MAP_SIZE];
 	uint8 _visited[MAP_SIZE];
 public:
-	Map(uint index, const Common::String &name, uint16 id);
+	Map(uint index, const Common::String &name, uint16 id,
+		byte defaultSection);
 	virtual ~Map() {}
 
 	/**
@@ -156,6 +158,13 @@ public:
 	 * Returns the map Id
 	 */
 	uint16 getId() const { return _id; }
+
+	/**
+	 * Returns the map default section
+	 */
+	byte getDefaultSection() const {
+		return _defaultSection;
+	}
 
 	/**
 	 * Accesses the map data

@@ -48,7 +48,7 @@ private:
 		&Map17::special03
 	};
 public:
-	Map17() : Map(17, "areaa4", 0x103) {}
+	Map17() : Map(17, "areaa4", 0x103, 2) {}
 
 	/**
 	 * Handles all special stuff that happens on the map
