@@ -325,6 +325,7 @@ public:
 
 	// Cheats
 	bool _useExtendedTimer;
+	bool _disableSensors;
 };
 
 enum DrillerReleaseFlags {

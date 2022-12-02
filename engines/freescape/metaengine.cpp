@@ -73,7 +73,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
-
+	{
+		GAMEOPTION_DISABLE_SENSORS,
+		{
+			_s("Disable sensors"),
+			_s("Sensors will not shoot the player"),
+			"disable_sensors",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
