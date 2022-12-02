@@ -110,8 +110,6 @@ public:
 	static void *_itemList[300];
 	static SystemVars *_systemVars;
 	static const char *shortcutsKeymapId;
-	static uint32 _chineseTraditionalOffsets[8];
-	static char *_chineseTraditionalBlock;
 	static const int kChineseTraditionalWidth = 16;
 	static const int kChineseTraditionalHeight = 15;
 	struct ChineseTraditionalGlyph {
@@ -120,8 +118,11 @@ public:
 
 		void makeOutline();
 	};
-	static Common::Array<ChineseTraditionalGlyph> _chineseTraditionalFont;
-	static Common::Array<int> _chineseTraditionalIndex;
+
+  	uint32 _chineseTraditionalOffsets[8];
+	char *_chineseTraditionalBlock;
+	Common::Array<ChineseTraditionalGlyph> _chineseTraditionalFont;
+	Common::Array<int> _chineseTraditionalIndex;
 
 protected:
 	// Engine APIs

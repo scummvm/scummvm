@@ -72,10 +72,6 @@ namespace Sky {
 void *SkyEngine::_itemList[300];
 SystemVars *SkyEngine::_systemVars = nullptr;
 const char *SkyEngine::shortcutsKeymapId = "sky-shortcuts";
-uint32 SkyEngine::_chineseTraditionalOffsets[8];
-char *SkyEngine::_chineseTraditionalBlock;
-Common::Array<SkyEngine::ChineseTraditionalGlyph> SkyEngine::_chineseTraditionalFont;
-Common::Array<int> SkyEngine::_chineseTraditionalIndex;
 
 SkyEngine::SkyEngine(OSystem *syst)
 	: Engine(syst), _fastMode(0), _debugger(0) {

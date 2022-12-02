@@ -119,8 +119,8 @@ void Text::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 	uint32 sectionNo = (textNr & 0x0F000) >> 12;
 
 	if (SkyEngine::_systemVars->language == SKY_CHINESE_TRADITIONAL) {
-		uint32 sectionOffset = SkyEngine::_chineseTraditionalOffsets[sectionNo];
-		const char *ptr = SkyEngine::_chineseTraditionalBlock + sectionOffset;
+		uint32 sectionOffset = _vm->_chineseTraditionalOffsets[sectionNo];
+		const char *ptr = _vm->_chineseTraditionalBlock + sectionOffset;
 		uint nrInBlock = textNr & 0xFFF;
 		if (sectionNo != 7)
 			nrInBlock--;
@@ -386,13 +386,13 @@ DisplayedText Text::displayText(char *textPtr, uint32 bufLen, uint8 *dest, bool 
 }
 
 void Text::makeChineseGameCharacter(uint16 textChar, uint8 *charSetPtr, uint8 *&dest, uint8 color, uint16 bufPitch) {
-	int glyphIdx = SkyEngine::_chineseTraditionalIndex[textChar & 0x7fff];
+	int glyphIdx = _vm->_chineseTraditionalIndex[textChar & 0x7fff];
 	if (glyphIdx < 0) {
 		makeGameCharacter('?' - 0x20, charSetPtr, dest, color, bufPitch);
 		return;
 	}
 
-	const SkyEngine::ChineseTraditionalGlyph& glyph = SkyEngine::_chineseTraditionalFont[glyphIdx];
+	const SkyEngine::ChineseTraditionalGlyph& glyph = _vm->_chineseTraditionalFont[glyphIdx];
 
 	for (int y = 0; y < SkyEngine::kChineseTraditionalHeight; y++) {
 		uint8 *cur = dest + y * bufPitch;
