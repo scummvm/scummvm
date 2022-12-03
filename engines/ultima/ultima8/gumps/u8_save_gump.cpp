@@ -290,27 +290,7 @@ void U8SaveGump::loadDescriptions() {
 			continue;
 
 		const SavegameReader *sg = new SavegameReader(saveFile, true);
-		SavegameReader::State state = sg->isValid();
-		_descriptions[i] = "";
-
-		// FIXME: move version checks elsewhere!!
-		switch (state) {
-		case SavegameReader::SAVE_CORRUPT:
-			_descriptions[i] = Common::convertFromU32String(_("[corrupt]"));
-			break;
-		case SavegameReader::SAVE_OUT_OF_DATE:
-			_descriptions[i] = Common::convertFromU32String(_("[outdated]"));
-			break;
-		case SavegameReader::SAVE_TOO_RECENT:
-			_descriptions[i] = Common::convertFromU32String(_("[too modern]"));
-			break;
-		default:
-			break;
-		}
-
-		if (state != SavegameReader::SAVE_VALID)
-			_descriptions[i] += " ";
-		_descriptions[i] += sg->getDescription();
+		_descriptions[i] = sg->getDescription();
 		delete sg;
 	}
 }
