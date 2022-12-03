@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-03 11:18+0000\n"
+"POT-Creation-Date: 2022-12-03 20:00+0000\n"
 "PO-Revision-Date: 2022-11-25 06:34+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -8177,18 +8177,6 @@ msgstr ""
 msgid "Ultima VIII Debug"
 msgstr ""
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
-msgid "[corrupt]"
-msgstr ""
-
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
-msgid "[outdated]"
-msgstr ""
-
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:305
-msgid "[too modern]"
-msgstr "[massa modern]"
-
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
 msgstr "Mostra el comptador d'FPS"
@@ -8922,6 +8910,9 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#~ msgid "[too modern]"
+#~ msgstr "[massa modern]"
 
 #~ msgid "DXA cutscenes found but ScummVM has been built without zlib"
 #~ msgstr ""

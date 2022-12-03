@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-03 11:18+0000\n"
+"POT-Creation-Date: 2022-12-03 20:00+0000\n"
 "PO-Revision-Date: 2022-11-28 09:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -8355,18 +8355,6 @@ msgstr "Ultima VIIIのチート"
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIIIのデバッグ"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
-msgid "[corrupt]"
-msgstr "[堕落した]"
-
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
-msgid "[outdated]"
-msgstr "[廃れた]"
-
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:305
-msgid "[too modern]"
-msgstr "[新しすぎる]"
-
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
 msgstr "FPSカウンターを表示"
@@ -9112,6 +9100,15 @@ msgstr ""
 "Arialが必要です。LiberationFontsを使用する場合、LiberationMono、"
 "LiberationSans、LiberationSerifが必要です。GNUFreeFontを使用する場合、"
 "FreeMono、FreeSans、FreeSerifが必要です。"
+
+#~ msgid "[corrupt]"
+#~ msgstr "[堕落した]"
+
+#~ msgid "[outdated]"
+#~ msgstr "[廃れた]"
+
+#~ msgid "[too modern]"
+#~ msgstr "[新しすぎる]"
 
 #~ msgid "DXA cutscenes found but ScummVM has been built without zlib"
 #~ msgstr ""

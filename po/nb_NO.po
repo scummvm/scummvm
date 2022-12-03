@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-03 11:18+0000\n"
+"POT-Creation-Date: 2022-12-03 20:00+0000\n"
 "PO-Revision-Date: 2022-11-28 15:16+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -8524,18 +8524,6 @@ msgstr "Ultima VIII - Juksefunksjoner"
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Debug-funksjoner"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
-msgid "[corrupt]"
-msgstr "[korrupt]"
-
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
-msgid "[outdated]"
-msgstr "[utdatert]"
-
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:305
-msgid "[too modern]"
-msgstr "[for moderne]"
-
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
 msgstr "Vis FPS-teller"
@@ -9289,6 +9277,15 @@ msgstr ""
 "Liberation Fonts-pakken eller GNU FreeFont-pakken. Du trenger alle fontene "
 "fra fontpakken du velger å bruke, dvs. enten LiberationMono, LiberationSans "
 "og LiberationSerif eller FreeMono, FreeSans og FreeSerif."
+
+#~ msgid "[corrupt]"
+#~ msgstr "[korrupt]"
+
+#~ msgid "[outdated]"
+#~ msgstr "[utdatert]"
+
+#~ msgid "[too modern]"
+#~ msgstr "[for moderne]"
 
 #~ msgid "DXA cutscenes found but ScummVM has been built without zlib"
 #~ msgstr "DXA-cutscener funnet men ScummVM er bygd uten zlib-støtte"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-03 11:18+0000\n"
+"POT-Creation-Date: 2022-12-03 20:00+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -8510,18 +8510,6 @@ msgstr "Чыты Ultima VIII"
 msgid "Ultima VIII Debug"
 msgstr "Адладка Ultima VIII"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
-msgid "[corrupt]"
-msgstr "[пашкоджанае]"
-
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
-msgid "[outdated]"
-msgstr "[састарэлае]"
-
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:305
-msgid "[too modern]"
-msgstr "[занадта новае]"
-
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
 msgstr "Паказаць лічыльнік FPS"
@@ -9273,6 +9261,15 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#~ msgid "[corrupt]"
+#~ msgstr "[пашкоджанае]"
+
+#~ msgid "[outdated]"
+#~ msgstr "[састарэлае]"
+
+#~ msgid "[too modern]"
+#~ msgstr "[занадта новае]"
 
 #~ msgid "DXA cutscenes found but ScummVM has been built without zlib"
 #~ msgstr ""

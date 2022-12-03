@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-03 11:18+0000\n"
+"POT-Creation-Date: 2022-12-03 20:00+0000\n"
 "PO-Revision-Date: 2022-10-27 02:33+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -8293,18 +8293,6 @@ msgstr "רמאויות עבור Ultima VIII"
 msgid "Ultima VIII Debug"
 msgstr "ניפוי תקלים עבור Ultima VIII"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
-msgid "[corrupt]"
-msgstr "[פגום]"
-
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
-msgid "[outdated]"
-msgstr "[פג תוקף]"
-
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:305
-msgid "[too modern]"
-msgstr "[חדשני מדי]"
-
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
 msgstr "הצג דלפק FPS"
@@ -9048,6 +9036,15 @@ msgstr ""
 "New ו-Arial. לחלופין,ניתן להוריד את חבילת GNU FreeFont או גופני Liberation. "
 "יש להעתיק את כל הגופנים מהחבילה שנבחרה, לדוגמה, FreeMono, FreeSans ו-"
 "FreeSerif או LiberationMono, LiberationSans ו-LiberationSerif בהתאמה."
+
+#~ msgid "[corrupt]"
+#~ msgstr "[פגום]"
+
+#~ msgid "[outdated]"
+#~ msgstr "[פג תוקף]"
+
+#~ msgid "[too modern]"
+#~ msgstr "[חדשני מדי]"
 
 #~ msgid "DXA cutscenes found but ScummVM has been built without zlib"
 #~ msgstr "נמצאו סרטוני DXA אך ScummVM נבנה ללא zlib"

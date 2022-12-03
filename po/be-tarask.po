@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-03 11:18+0000\n"
+"POT-Creation-Date: 2022-12-03 20:00+0000\n"
 "PO-Revision-Date: 2022-08-02 15:16+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -8487,18 +8487,6 @@ msgstr "Мяхлярства Ultima VIII"
 msgid "Ultima VIII Debug"
 msgstr "Наладжваньне Ultima VIII"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
-msgid "[corrupt]"
-msgstr "[сапсавана]"
-
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
-msgid "[outdated]"
-msgstr "[застарэла]"
-
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:305
-msgid "[too modern]"
-msgstr "[занова]"
-
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
 msgstr "Паказваць лічыльнік кадраў/с"
@@ -9244,6 +9232,15 @@ msgstr ""
 "ці пак GNU FreeFont. Вам спатрэбяцца ўсе шрыфты выбранага паку, а менавіта: "
 "LiberationMono, LiberationSans and LiberationSerif, or FreeMono, FreeSans і "
 "FreeSerif адпаведна."
+
+#~ msgid "[corrupt]"
+#~ msgstr "[сапсавана]"
+
+#~ msgid "[outdated]"
+#~ msgstr "[застарэла]"
+
+#~ msgid "[too modern]"
+#~ msgstr "[занова]"
 
 #~ msgid "DXA cutscenes found but ScummVM has been built without zlib"
 #~ msgstr "Знойдзены сцэнкі DXA, але ScummVM сабраны без падтрыманьня zlib"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-03 11:18+0000\n"
+"POT-Creation-Date: 2022-12-03 20:00+0000\n"
 "PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -8460,19 +8460,6 @@ msgstr ""
 msgid "Ultima VIII Debug"
 msgstr ""
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
-msgid "[corrupt]"
-msgstr ""
-
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
-msgid "[outdated]"
-msgstr ""
-
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:305
-#, fuzzy
-msgid "[too modern]"
-msgstr "Fargeblindmodus"
-
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
 msgstr "Syn FPS-teller"
@@ -9290,6 +9277,10 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#, fuzzy
+#~ msgid "[too modern]"
+#~ msgstr "Fargeblindmodus"
 
 #~ msgid "DXA cutscenes found but ScummVM has been built without zlib"
 #~ msgstr "DXA cutscenar funne, men ScummVM vart bygd utan zlib"

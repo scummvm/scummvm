@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-03 11:18+0000\n"
+"POT-Creation-Date: 2022-12-03 20:00+0000\n"
 "PO-Revision-Date: 2022-07-13 06:51+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -8586,18 +8586,6 @@ msgstr "Ultima VIII Cheats"
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Foutopsporen"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
-msgid "[corrupt]"
-msgstr "[corrupt]"
-
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
-msgid "[outdated]"
-msgstr "[verouderd]"
-
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:305
-msgid "[too modern]"
-msgstr "[te modern]"
-
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
 msgstr "Toon FPS-teller"
@@ -9351,6 +9339,15 @@ msgstr ""
 "alle lettertypes van de collectie nodig die u selecteert, dus "
 "LiberationMono, LiberationSans en LiberationSerif, of FreeMono, FreeSans en "
 "FreeSerif respectievelijk."
+
+#~ msgid "[corrupt]"
+#~ msgstr "[corrupt]"
+
+#~ msgid "[outdated]"
+#~ msgstr "[verouderd]"
+
+#~ msgid "[too modern]"
+#~ msgstr "[te modern]"
 
 #~ msgid "DXA cutscenes found but ScummVM has been built without zlib"
 #~ msgstr "DXA cutscenes gevonden maar ScummVM is gebouwd zonder zlib"
