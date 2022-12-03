@@ -318,7 +318,7 @@ private:
 	void displayMiddleLeftTempText(uint8 *impArray, bool flag);
 	void sub15A28(int16 arg0, int16 arg2);
 	void sub2455E(int16 arg0, int16 arg1, int16 arg2);
-	int16 sub1C219(uint8 *str, int16 menuType, int16 arg4, bool displayTeamWindowFl);
+	int16 sub1C219(Common::String str, int16 menuType, int16 arg4, bool displayTeamWindowFl);
 	int16 sub151FD(int16 posX, int16 posY);
 	bool isPosOutOfMap(int16 mapPosX, int16 mapPosY);
 	void goSouth();
@@ -376,7 +376,6 @@ private:
 	bool characterSearchesMonsterCorpse(int16 charId, int16 monsterId);
 	void getXPAndSearchCorpse(int16 charId, Common::String namePt1, Common::String namePt2, int16 monsterId);
 	void addReactionText(int16 id);
-	char getFightMessageLastCharacter(char *message);
 	void sub1D8C2(int16 charId, int16 damage);
 	void displayMenuItemString(int16 menuBoxId, int16 thisBoxId, int16 minX, int16 maxX, int16 minY, const char *str);
 	void displayStatusMenu(int16 windowId);
@@ -387,7 +386,7 @@ private:
 	void displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 npcId);
 	void unk_StatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool unusedFl, bool refreshFl);
 	void sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
-	int16 displayString_3(const char *str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
+	int16 displayString_3(Common::String str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
 	bool isItemCursed(int16 itemId);
 	bool hasObjectEquipped(int16 charId, int16 objectId);
 	void equipCursedItem(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
@@ -469,7 +468,7 @@ private:
 	// Script
 	uint8 *script_readNumberArray(uint8 *buffer, int16 destArraySize, int16 *destArray);
 	uint8 *script_getNumber(uint8 *srcBuffer, int16 *retval);
-	int16 script_parse(uint8 *str, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag);
+	int16 script_parse(Common::String str, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag);
 
 	// Sound
 	void generateSound1(int arg0, int arg2, int duration);
@@ -526,7 +525,7 @@ private:
 	Common::String _characterNamePt2;
 	Common::String _nameBuffer;
 	char _attackBuffer[20];
-	uint8 _messageToBePrinted[400];
+	Common::String _messageToBePrinted;
 
 	uint8 *_mapBitmapRefArr[19];
 	UnkMapStruct _mapUnknown[100];

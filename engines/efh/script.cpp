@@ -52,8 +52,8 @@ uint8 *EfhEngine::script_getNumber(uint8 *srcBuffer, int16 *retval) {
 	}
 }
 
-int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag) {
-	debug("script_parse %s %d-%d %d-%d %s", (char *)stringBuffer, posX, posY, maxX, maxY, flag ? "True" : "False");
+int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag) {
+	debug("script_parse %s %d-%d %d-%d %s", stringBuffer.c_str(), posX, posY, maxX, maxY, flag ? "True" : "False");
 
 	bool doneFlag = false;
 	int16 var_F2 = -1;
@@ -63,11 +63,10 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 	int16 numbLines = (1 + maxY - posY) / 9;
 	int16 width = maxX - posX;
 	int16 spaceWidth = getStringWidth(" ");
-	uint8 *buffer = stringBuffer;
+	uint8 *buffer = (uint8 *)stringBuffer.c_str();
 	char nextWord[80];
-	char curLine[150];
+	Common::String curLine = "";
 	memset(nextWord, 0, sizeof(nextWord));
-	memset(curLine, 0, sizeof(curLine));
 	int16 curWordPos = 0;
 	setTextPos(posX, curLineNb * 9 + posY);
 
@@ -88,7 +87,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 
 			nextWord[curWordPos] = 0;
 			int16 widthNextWord = getStringWidth(nextWord);
-			int16 widthCurrentLine = spaceWidth + getStringWidth(curLine);
+			int16 widthCurrentLine = spaceWidth + getStringWidth(curLine.c_str());
 
 			if (widthCurrentLine + widthNextWord > width || curChar == 0x7C) {
 				if (curLineNb >= numbLines) {
@@ -97,16 +96,13 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 					if (var_F2 == 0)
 						displayStringAtTextPos(curLine);
 
-					*curLine = 0;
-					strncpy(curLine, nextWord, 80);
-					strncat(curLine, " ", 2);
+					curLine = Common::String(nextWord) + " ";
 					++curLineNb;
 					setTextPos(posX, posY + curLineNb * 9);
 					curWordPos = 0;
 				}
 			} else {
-				strncat(curLine, nextWord, 80);
-				strncat(curLine, " ", 2);
+				curLine += Common::String(nextWord) + " ";
 				curWordPos = 0;
 			}
 			++buffer;
@@ -393,16 +389,16 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 					drawMapWindow();
 					displayFctFullScreen();
 					drawMapWindow();
-					var110 = sub1C219((uint8 *)"Nothing...", 1, 2, true);
+					var110 = sub1C219("Nothing...", 1, 2, true);
 					displayFctFullScreen();
 				} else {
 					_enemyNamePt2 = _npcBuf[_teamCharId[counter]]._name;
 					_nameBuffer = _items[var110]._name;
-					snprintf(curLine, 150, "%s finds a %s!", _enemyNamePt2.c_str(), _nameBuffer.c_str());
+					curLine = Common::String::format("%s finds a %s!", _enemyNamePt2.c_str(), _nameBuffer.c_str());
 					drawMapWindow();
 					displayFctFullScreen();
 					drawMapWindow();
-					var110 = sub1C219((uint8 *)curLine, 1, 2, true);
+					var110 = sub1C219(curLine, 1, 2, true);
 					displayFctFullScreen();
 				}
 
@@ -481,7 +477,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 		}
 	}
 
-	if (*curLine != 0 && curLineNb < numbLines && var_F2 == 0)
+	if (curLine.size() >= 0 && curLineNb < numbLines && var_F2 == 0)
 		displayStringAtTextPos(curLine);
 
 	if (var_EE != 0xFF) {

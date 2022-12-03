@@ -308,7 +308,7 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 		_word3273A[i] = 0;
 	}
 
-	memset(_messageToBePrinted, 0, 400);
+	_messageToBePrinted = "";
 	for (int i = 0; i < 8; ++i)
 		_stru3244C[i].init();
 
@@ -1330,7 +1330,7 @@ void EfhEngine::drawText(uint8 *srcPtr, int16 posX, int16 posY, int16 maxX, int1
 
 	uint16 stringIdx = 0;
 	uint8 *impPtr = srcPtr;
-	memset(_messageToBePrinted, 0, 200);
+	_messageToBePrinted = "";
 
 	for (;;) {
 		uint8 curChar = *impPtr;
@@ -1339,12 +1339,14 @@ void EfhEngine::drawText(uint8 *srcPtr, int16 posX, int16 posY, int16 maxX, int1
 			break;
 
 		if (curChar == 0x0D) {
-			_messageToBePrinted[stringIdx++] = ' ';
+			_messageToBePrinted += " ";
+			stringIdx++;
 			++impPtr;
 		} else if (curChar == 0x0A) {
 			++impPtr;
 		} else {
-			_messageToBePrinted[stringIdx++] = curChar;
+			_messageToBePrinted += curChar;
+			stringIdx++;
 			++impPtr;
 		}
 	}
@@ -1427,8 +1429,8 @@ void EfhEngine::sub2455E(int16 arg0, int16 arg2, int16 arg4) {
 	}
 }
 
-int16 EfhEngine::sub1C219(uint8 *str, int16 menuType, int16 arg4, bool displayTeamWindowFl) {
-	debug("sub1C219 %s %d %d %s", (char *)str, menuType, arg4, displayTeamWindowFl ? "True" : "False");
+int16 EfhEngine::sub1C219(Common::String str, int16 menuType, int16 arg4, bool displayTeamWindowFl) {
+	debug("sub1C219 %s %d %d %s", str.c_str(), menuType, arg4, displayTeamWindowFl ? "True" : "False");
 
 	int16 varA = 0xFF;
 	int16 minX, maxX, minY, maxY;
@@ -1466,7 +1468,7 @@ int16 EfhEngine::sub1C219(uint8 *str, int16 menuType, int16 arg4, bool displayTe
 	}
 
 	drawColoredRect(minX, minY, maxX, maxY, 0);
-	if (str)
+	if (str.size())
 		varA = script_parse(str, minX, minY, maxX, maxY, true);
 
 	if (displayTeamWindowFl)
@@ -1478,7 +1480,7 @@ int16 EfhEngine::sub1C219(uint8 *str, int16 menuType, int16 arg4, bool displayTe
 			_word2C87A = false;
 		else {
 			drawColoredRect(minX, minY, maxX, maxY, 0);
-			if (str)
+			if (str.size())
 				int16 varC = script_parse(str, minX, minY, maxX, maxY, false);
 		}
 
@@ -2442,8 +2444,8 @@ void EfhEngine::sub221D2(int16 monsterId) {
 void EfhEngine::sub22AA8(int16 arg0) {
 	debug("sub22AA8 %d", arg0);
 
-	int16 var8, varA, varC, varE;
-	var8 = varA = varC = varE = 0;
+	int16 var8, varA, varC, stringIdx;
+	var8 = varA = varC = stringIdx = 0;
 
 	if (arg0 <= 0xFE) {
 		if (_tempTextPtr) {
@@ -2465,8 +2467,8 @@ void EfhEngine::sub22AA8(int16 arg0) {
 			if (var12 == nullptr)
 				break;
 
-			if (varE == 0)
-				memset(_messageToBePrinted, 0, 400);
+			if (stringIdx == 0)
+				_messageToBePrinted = "";
 			do {
 				switch (*var12) {
 				case 0x00:
@@ -2474,9 +2476,9 @@ void EfhEngine::sub22AA8(int16 arg0) {
 					break;
 				case 0x0D:
 				case 0x20:
-					_messageToBePrinted[varE++] = 0x20;
+					_messageToBePrinted += " ";
+					stringIdx++;
 					if (++varC >= 350) {
-						_messageToBePrinted[varE] = 0;
 						var8 = -1;
 					}
 					break;
@@ -2485,10 +2487,10 @@ void EfhEngine::sub22AA8(int16 arg0) {
 					varA = -1;
 					break;
 				case 0x7C:
-					_messageToBePrinted[varE++] = 0x7C;
+					_messageToBePrinted += Common::String(0x7C);
+					stringIdx++;
 					varC += 20;
 					if (varC >= 350) {
-						_messageToBePrinted[varE] = 0;
 						var8 = -1;
 					}
 					break;
@@ -2496,7 +2498,8 @@ void EfhEngine::sub22AA8(int16 arg0) {
 					var8 = -1;
 					break;
 				default:
-					_messageToBePrinted[varE++] = *var12;
+					_messageToBePrinted += Common::String(*var12);
+					stringIdx++;
 					varC++;
 				break;
 				}
@@ -2504,11 +2507,11 @@ void EfhEngine::sub22AA8(int16 arg0) {
 				int16 var2 = 0xFF ;
 				if (var8 != 0 || varA != 0) {
 					var8 = 0;
-					_messageToBePrinted[varE] = 0;
-					varE = 0;
+					stringIdx = 0;
 					varC = 0;
-					if (*_messageToBePrinted == 0x5E || *_messageToBePrinted == 0) {
-						if (*_messageToBePrinted == 0x5E) {
+					uint8 firstChar = _messageToBePrinted.firstChar(); 
+					if (firstChar == 0x5E || firstChar == 0) {
+						if (firstChar == 0x5E) {
 							var2 = script_parse(_messageToBePrinted, 0, 0, 319, 199, true);
 							_word2C87A = false;
 						}
@@ -2776,7 +2779,7 @@ int16 EfhEngine::sub1C956(int16 charId, int16 unkFied18Val, bool arg4) {
 		for (uint counter = 0; counter < 2; ++counter) {
 			drawCombatScreen(charId, true, false);
 			if (_teamMonsterIdArray[1] != -1)
-				sub1C219((uint8 *)"Select Monster Group:", 3, 0, false);
+				sub1C219("Select Monster Group:", 3, 0, false);
 
 			if (counter == 0)
 				displayFctFullScreen();
@@ -2884,7 +2887,7 @@ bool EfhEngine::sub1CB27() {
 					case 28:
 					case 29:
 					case 30:
-						sub1C219((uint8 *)"Select Character:", 3, 1, false);
+						sub1C219("Select Character:", 3, 1, false);
 						_teamNextAttack[counter1] = selectOtherCharFromTeam();
 						break;
 
@@ -3160,7 +3163,7 @@ void EfhEngine::drawCombatScreen(int16 charId, bool whiteFl, bool forceDrawFl) {
 			displayCenteredString("Combat", 128, 303, 9);
 			drawColoredRect(200, 112, 278, 132, 0);
 			displayCenteredString("'T' for Terrain", 128, 303, 117);
-			sub1C219(nullptr, 1, 0, false);
+			sub1C219("", 1, 0, false);
 			sub1C4CA(whiteFl);
 			displayCombatMenu(charId);
 			displayLowStatusScreen(false);
@@ -3373,20 +3376,18 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	}
 
 	int16 rndDescrForDeathType = getRandom((3)) - 1;
-	char buffer[80];
-	memset(buffer, 0, 80);
-	snprintf(buffer, 80, "DUDE IS TOAST!");
+	Common::String tmpStr = "DUDE IS TOAST!";
 	switch (deathType) {
 	case 0:
 		switch (rndDescrForDeathType) {
 		case 0:
-			snprintf(buffer, 80, ", killing %s!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", killing %s!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			snprintf(buffer, 80, ", slaughtering %s!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", slaughtering %s!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			snprintf(buffer, 80, ", annihilating %s!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", annihilating %s!", kPersonal[possessivePronoun]);
 			break;
 		default:
 			break;
@@ -3395,13 +3396,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 1:
 		switch (rndDescrForDeathType) {
 		case 0:
-			snprintf(buffer, 80, ", cutting %s in two!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", cutting %s in two!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			snprintf(buffer, 80, ", dicing %s into small cubes!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", dicing %s into small cubes!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			snprintf(buffer, 80, ", butchering %s into lamb chops!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", butchering %s into lamb chops!", kPersonal[possessivePronoun]);
 			break;
 		default:
 			break;
@@ -3410,13 +3411,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 2:
 		switch (rndDescrForDeathType) {
 		case 0:
-			snprintf(buffer, 80, ", piercing %s heart!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", piercing %s heart!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			snprintf(buffer, 80, ", leaving %s a spouting mass of blood!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", leaving %s a spouting mass of blood!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			snprintf(buffer, 80, ", popping %s like a zit!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", popping %s like a zit!", kPersonal[possessivePronoun]);
 			break;
 		default:
 			break;
@@ -3425,13 +3426,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 3:
 		switch (rndDescrForDeathType) {
 		case 0:
-			snprintf(buffer, 80, ", pulping %s head over a wide area!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", pulping %s head over a wide area!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			snprintf(buffer, 80, ", smashing %s into a meat patty!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", smashing %s into a meat patty!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			snprintf(buffer, 80, ", squashing %s like a ripe tomato!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", squashing %s like a ripe tomato!", kPersonal[possessivePronoun]);
 			break;
 		default:
 			break;
@@ -3440,13 +3441,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 4:
 		switch (rndDescrForDeathType) {
 		case 0:
-			snprintf(buffer, 80, ", totally incinerating %s!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", totally incinerating %s!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			snprintf(buffer, 80, ", reducing %s to a pile of ash!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", reducing %s to a pile of ash!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			snprintf(buffer, 80, ", leaving a blistered mass of flesh behind!");
+			tmpStr = Common::String::format(", leaving a blistered mass of flesh behind!");
 			break;
 		default:
 			break;
@@ -3456,13 +3457,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 		switch (rndDescrForDeathType) {
 		case 0:
 			// The original has a typo: popscicle
-			snprintf(buffer, 80, ", turning %s into a popsicle!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", turning %s into a popsicle!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			snprintf(buffer, 80, ", encasing %s in a block of ice!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", encasing %s in a block of ice!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			snprintf(buffer, 80, ", shattering %s into shards!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", shattering %s into shards!", kPersonal[possessivePronoun]);
 			break;
 		default:
 			break;
@@ -3471,13 +3472,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 6:
 		switch (rndDescrForDeathType) {
 		case 0:
-			snprintf(buffer, 80, ", leaving pudding for brains");
+			tmpStr = Common::String::format(", leaving pudding for brains");
 			break;
 		case 1:
-			snprintf(buffer, 80, ", bursting %s head like a bubble!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", bursting %s head like a bubble!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			snprintf(buffer, 80, ", turning %s into a mindless vegetable", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", turning %s into a mindless vegetable", kPersonal[possessivePronoun]);
 			break;
 		default:
 			break;
@@ -3486,13 +3487,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 7:
 		switch (rndDescrForDeathType) {
 		case 0:
-			snprintf(buffer, 80, ", reducing %s to an oozing pile of flesh!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", reducing %s to an oozing pile of flesh!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			snprintf(buffer, 80, ", melting %s like an ice cube in hot coffee!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", melting %s like an ice cube in hot coffee!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			snprintf(buffer, 80, ", vaporizing %s into a steaming cloud!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", vaporizing %s into a steaming cloud!", kPersonal[possessivePronoun]);
 			break;
 		default:
 			break;
@@ -3501,13 +3502,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 8:
 		switch (rndDescrForDeathType) {
 		case 0:
-			snprintf(buffer, 80, ", engulfing %s in black smoke puffs!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", engulfing %s in black smoke puffs!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			snprintf(buffer, 80, ", sucking %s into eternity!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", sucking %s into eternity!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			snprintf(buffer, 80, ", turning %s into a mindless zombie!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", turning %s into a mindless zombie!", kPersonal[possessivePronoun]);
 			break;
 		default:
 			break;
@@ -3518,13 +3519,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 11:
 		switch (rndDescrForDeathType) {
 		case 0:
-			snprintf(buffer, 80, ", completely disintegrating %s!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", completely disintegrating %s!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			snprintf(buffer, 80, ", spreading %s into a fine mist!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", spreading %s into a fine mist!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			snprintf(buffer, 80, ", leaving a smoking crater in %s place!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", leaving a smoking crater in %s place!", kPersonal[possessivePronoun]);
 			break;
 		default:
 			break;
@@ -3535,13 +3536,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 14:
 		switch (rndDescrForDeathType) {
 		case 0:
-			snprintf(buffer, 80, ", tearing a chunk out of %s back!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", tearing a chunk out of %s back!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			snprintf(buffer, 80, ", blowing %s brains out!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", blowing %s brains out!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			snprintf(buffer, 80, ", exploding %s entire chest!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", exploding %s entire chest!", kPersonal[possessivePronoun]);
 			break;
 		default:
 			break;
@@ -3550,13 +3551,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 15:
 		switch (rndDescrForDeathType) {
 		case 0:
-			snprintf(buffer, 80, ", choking %s to death!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", choking %s to death!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			snprintf(buffer, 80, ", melting %s lungs!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", melting %s lungs!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			snprintf(buffer, 80, ", leaving %s gasping for air as %s collapses!", kPersonal[possessivePronoun], kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", leaving %s gasping for air as %s collapses!", kPersonal[possessivePronoun], kPersonal[possessivePronoun]);
 			break;
 		default:
 			break;
@@ -3565,13 +3566,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 16:
 		switch (rndDescrForDeathType) {
 		case 0:
-			snprintf(buffer, 80, ", tearing a chunk out of %s back!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", tearing a chunk out of %s back!", kPersonal[possessivePronoun]);
 			break;
 		case 1:
-			snprintf(buffer, 80, ", piercing %s heart!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", piercing %s heart!", kPersonal[possessivePronoun]);
 			break;
 		case 2:
-			snprintf(buffer, 80, ", impaling %s brain!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", impaling %s brain!", kPersonal[possessivePronoun]);
 			break;
 		default:
 			break;
@@ -3581,7 +3582,7 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 		break;
 	}
 
-	strncat((char *)_messageToBePrinted, buffer, 80);
+	_messageToBePrinted += tmpStr;
 }
 
 bool EfhEngine::characterSearchesMonsterCorpse(int16 charId, int16 monsterId) {
@@ -3599,8 +3600,7 @@ bool EfhEngine::characterSearchesMonsterCorpse(int16 charId, int16 monsterId) {
 	if (!giveItemTo(charId, itemId, 0xFF))
 		return false;
 
-	Common::String buffer = Common::String::format(" and finds a %s!", _items[itemId]._name);
-	strncat((char *)_messageToBePrinted, buffer.c_str(), buffer.size() + 1);
+	_messageToBePrinted += Common::String::format(" and finds a %s!", _items[itemId]._name);
 	return true;
 }
 
@@ -3609,8 +3609,7 @@ void EfhEngine::getXPAndSearchCorpse(int16 charId, Common::String namePt1, Commo
 
 	int16 xpLevel = getXPLevel(_npcBuf[charId]._xp);
 	_npcBuf[charId]._xp += kEncounters[_mapMonsters[monsterId]._monsterRef]._xpGiven;
-	char buffer[80];
-	snprintf(buffer, 80, "  %s%s gains %d experience", namePt1.c_str(), namePt2.c_str(), kEncounters[_mapMonsters[monsterId]._monsterRef]._xpGiven);
+
 	if (getXPLevel(_npcBuf[charId]._xp) > xpLevel) {
 		generateSound(15);
 		int16 var2 = getRandom(20) + getRandom(_npcBuf[charId]._infoScore[4]);
@@ -3622,9 +3621,10 @@ void EfhEngine::getXPAndSearchCorpse(int16 charId, Common::String namePt1, Commo
 		_npcBuf[charId]._infoScore[3] += getRandom(3) - 1;
 		_npcBuf[charId]._infoScore[4] += getRandom(3) - 1;
 	}
-	strncat((char *)_messageToBePrinted, buffer, 80);
+
+	_messageToBePrinted += Common::String::format("  %s%s gains %d experience", namePt1.c_str(), namePt2.c_str(), kEncounters[_mapMonsters[monsterId]._monsterRef]._xpGiven);
 	if (!characterSearchesMonsterCorpse(charId, monsterId))
-		strncat((char *)_messageToBePrinted, "!", 2);
+		_messageToBePrinted += "!";
 
 }
 
@@ -3632,20 +3632,18 @@ void EfhEngine::addReactionText(int16 id) {
 	debug("addReactionText %d", id);
 
 	int16 rand3 = getRandom(3);
-	char buffer[80];
-	memset(buffer, 0, 80);
 
 	switch (id) {
 	case 0:
 		switch (rand3) {
 		case 1:
-			snprintf(buffer, 80, "  %s%s reels from the blow!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s reels from the blow!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		case 2:
-			snprintf(buffer, 80, "  %s%s sways from the attack!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s sways from the attack!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		case 3:
-			snprintf(buffer, 80, "  %s%s looks dazed!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s looks dazed!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		default:
 			break;
@@ -3654,13 +3652,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 1:
 		switch (rand3) {
 		case 1:
-			snprintf(buffer, 80, "  %s%s cries out in agony!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s cries out in agony!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		case 2:
-			snprintf(buffer, 80, "  %s%s screams from the abuse!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s screams from the abuse!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		case 3:
-			snprintf(buffer, 80, "  %s%s wails terribly!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s wails terribly!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		default:
 			break;
@@ -3669,13 +3667,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 2:
 		switch (rand3) {
 		case 1:
-			snprintf(buffer, 80, "  %s%s is staggering!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s is staggering!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		case 2:
-			snprintf(buffer, 80, "  %s%s falters for a moment!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s falters for a moment!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		case 3:
-			snprintf(buffer, 80, "  %s%s is stumbling about!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s is stumbling about!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		default:
 			break;
@@ -3684,13 +3682,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 3:
 		switch (rand3) {
 		case 1:
-			snprintf(buffer, 80, "  %s%s winces from the pain!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s winces from the pain!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		case 2:
-			snprintf(buffer, 80, "  %s%s cringes from the damage!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s cringes from the damage!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		case 3:
-			snprintf(buffer, 80, "  %s%s shrinks from the wound!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s shrinks from the wound!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		default:
 			break;
@@ -3699,13 +3697,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 4:
 		switch (rand3) {
 		case 1:
-			snprintf(buffer, 80, "  %s%s screams!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s screams!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		case 2:
-			snprintf(buffer, 80, "  %s%s bellows!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s bellows!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		case 3:
-			snprintf(buffer, 80, "  %s%s shrills!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s shrills!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		default:
 			break;
@@ -3714,13 +3712,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 5:
 		switch (rand3) {
 		case 1:
-			snprintf(buffer, 80, "  %s%s chortles!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s chortles!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		case 2:
-			snprintf(buffer, 80, "  %s%s seems amused!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s seems amused!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		case 3:
-			snprintf(buffer, 80, "  %s%s looks concerned!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s looks concerned!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		default:
 			break;
@@ -3729,13 +3727,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 6:
 		switch (rand3) {
 		case 1:
-			snprintf(buffer, 80, "  %s%s laughs at the feeble attack!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s laughs at the feeble attack!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		case 2:
-			snprintf(buffer, 80, "  %s%s smiles at the pathetic attack!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s smiles at the pathetic attack!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		case 3:
-			snprintf(buffer, 80, "  %s%s laughs at the ineffective assault!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s laughs at the ineffective assault!", _characterNamePt1, _characterNamePt2.c_str());
 			break;
 		default:
 			break;
@@ -3745,29 +3743,12 @@ void EfhEngine::addReactionText(int16 id) {
 		break;
 	}
 
-	strncat((char *)_messageToBePrinted, buffer, 80);
-}
-
-char EfhEngine::getFightMessageLastCharacter(char *message) {
-	debug("getFightMessageLastCharacter %s", message);
-
-	char *ptr = message;
-
-	if (ptr == nullptr || *ptr == 0)
-		return 0;
-
-	char lastChar = *ptr;
-	while (*ptr != 0) {
-		lastChar = *ptr++;
-	}
-
-	return lastChar;
 }
 
 void EfhEngine::sub1D8C2(int16 charId, int16 damage) {
 	debug("sub1D8C2 %d %d", charId, damage);
 
-	int16 var42 = 0;
+	int16 destroyCounter = 0;
 	int16 var40 = _npcBuf[charId]._possessivePronounSHL6 / 64;
 
 	if (var40 > 2) {
@@ -3788,14 +3769,12 @@ void EfhEngine::sub1D8C2(int16 charId, int16 damage) {
 			Common::String buffer2 = _items[_npcBuf[charId]._inventory[objectId]._ref]._name;
 			removeObject(charId, objectId);
 
-			if (var42 == 0) {
-				var42 = 1;
-				Common::String buffer = Common::String::format(", but %s ", kPossessive[var40]) + buffer2;
-				strncat((char *)_messageToBePrinted, buffer.c_str(), 40);
+			if (destroyCounter == 0) {
+				destroyCounter = 1;
+				_messageToBePrinted += Common::String::format(", but %s ", kPossessive[var40]) + buffer2;
 			} else {
-				++var42;
-				Common::String buffer = Common::String(", ") + buffer2;
-				strncat((char *)_messageToBePrinted, buffer.c_str(), 40);
+				++destroyCounter;
+				_messageToBePrinted += Common::String(", ") + buffer2;
 			}
 		}
 
@@ -3803,12 +3782,12 @@ void EfhEngine::sub1D8C2(int16 charId, int16 damage) {
 			damage = var44;
 	}
 
-	if (var42 == 0) {
-		strncat((char *)_messageToBePrinted, "!", 2);
-	} else if (var42 > 1 || getFightMessageLastCharacter((char *)_messageToBePrinted) == 's' || getFightMessageLastCharacter((char *)_messageToBePrinted) == 'S') {
-		strncat((char *)_messageToBePrinted, " are destroyed!", 17);
+	if (destroyCounter == 0) {
+		_messageToBePrinted += "!";
+	} else if (destroyCounter > 1 || _messageToBePrinted.lastChar() == 's' || _messageToBePrinted.lastChar() == 'S') {
+		_messageToBePrinted += " are destroyed!";
 	} else {
-		strncat((char *)_messageToBePrinted, " is destroyed!", 16);
+		_messageToBePrinted += " is destroyed!";
 	}
 }
 
@@ -4133,8 +4112,8 @@ void EfhEngine::sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMe
 	}
 }
 
-int16 EfhEngine::displayString_3(const char *str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
-	debug("displayString_3 %s %s %d %d %d %d", str, animFl ? "True" : "False", charId, windowId, menuId, curMenuLine);
+int16 EfhEngine::displayString_3(Common::String str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
+	debug("displayString_3 %s %s %d %d %d %d", str.c_str(), animFl ? "True" : "False", charId, windowId, menuId, curMenuLine);
 
 	int16 retVal = 0;
 
@@ -4143,10 +4122,10 @@ int16 EfhEngine::displayString_3(const char *str, bool animFl, int16 charId, int
 		displayWindow(_windowWithBorderBuf, 19, 113, _hiResImageBuf);
 
 		if (counter == 0) {
-			script_parse((uint8 *)str, 28, 122, 105, 166, false);
+			script_parse(str, 28, 122, 105, 166, false);
 			displayFctFullScreen();
 		} else {
-			retVal = script_parse((uint8 *)str, 28, 122, 105, 166, true);
+			retVal = script_parse(str, 28, 122, 105, 166, true);
 		}
 	}
 
@@ -4277,7 +4256,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			displayString_3("The item emits a low droning hum...", false, charId, windowId, menuId, curMenuLine);
 		} else {
 			int16 victims = 0;
-			strncat((char *)_messageToBePrinted, "  The item emits a low droning hum...", 400);
+			_messageToBePrinted += "  The item emits a low droning hum...";
 			if (getRandom(100) < 50) {
 				for (uint counter = 0; counter < 9; ++counter) {
 					if (isMonsterActive(windowId, counter)) {
@@ -4306,7 +4285,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			} else {
 				buffer1 = Common::String::format("%d %s falls asleep!", victims, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._monsterRef]._name);
 			}
-			strncat((char *)_messageToBePrinted, buffer1.c_str(), 400);
+			_messageToBePrinted += buffer1;
 		}
 
 		varA6 = true;
@@ -4315,7 +4294,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if (argA == 2) {
 			displayString_3("The item grows very cold for a moment...", false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strncat((char *)_messageToBePrinted, "  The item emits a blue beam...", 400);
+			_messageToBePrinted += "  The item emits a blue beam...";
 			int16 victim = 0;
 			if (getRandom(100) < 50) {
 				for (uint varA8 = 0; varA8 < 9; ++varA8) {
@@ -4346,7 +4325,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			} else {
 				buffer1 = Common::String::format("%d %s is frozen in place!", victim, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._monsterRef]._name);
 			}
-			strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+			_messageToBePrinted += buffer1;
 			// </CHECKME>
 		}
 
@@ -4356,7 +4335,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if (argA == 2) {
 			displayString_3("A serene feeling passes through the air...", false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strncat((char *)_messageToBePrinted, "  The combat pauses...as there is a moment of forgiveness...", 400);
+			_messageToBePrinted += "  The combat pauses...as there is a moment of forgiveness...";
 			_unkArray2C8AA[0] = 0;
 		}
 
@@ -4366,7 +4345,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if (argA == 2) {
 			displayString_3("A dark sense fills your soul...then fades!", false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strncat((char *)_messageToBePrinted, "  A dark gray fiery whirlwind surrounds the poor victim...the power fades and death abounds!", 400);
+			_messageToBePrinted += "  A dark gray fiery whirlwind surrounds the poor victim...the power fades and death abounds!";
 			if (getRandom(100) < 50) {
 				for (uint counter = 0; counter < 9; ++counter) {
 					if (getRandom(100) < 50) {
@@ -4391,12 +4370,12 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			displayString_3("A dark sense fills your soul...then fades!", false, charId, windowId, menuId, curMenuLine);
 		} else {
 			if (getRandom(100) < 50) {
-				strncat((char *)_messageToBePrinted, "  A dark fiery whirlwind surrounds the poor victim...the power fades and all targeted die!", 400);
+				_messageToBePrinted += "  A dark fiery whirlwind surrounds the poor victim...the power fades and all targeted die!";
 				for (uint counter = 0; counter < 9; ++counter) {
 					_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
 				}
 			} else {
-				strncat((char *)_messageToBePrinted, "  A dark fiery whirlwind surrounds the poor victim...the power fades and one victim dies!", 400);
+				_messageToBePrinted += "  A dark fiery whirlwind surrounds the poor victim...the power fades and one victim dies!";
 				for (uint counter = 0; counter < 9; ++counter) {
 					if (isMonsterActive(windowId, counter)) {
 						_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
@@ -4411,7 +4390,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if (argA == 2) {
 			displayString_3("There is no apparent affect!", false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strncat((char *)_messageToBePrinted, "  The magic sparkles brilliant hues in the air!", 400);
+			_messageToBePrinted += "  The magic sparkles brilliant hues in the air!";
 			sub1E028(windowId, _items[itemId].field17_attackTypeDefense, true);
 		}
 		varA6 = true;
@@ -4430,7 +4409,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			if (argA == 2) {
 				displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
 			} else {
-				strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+				_messageToBePrinted += buffer1;
 			}
 			_word32482[varAA] -= 50;
 			if (_word32482[varAA] < 0)
@@ -4454,7 +4433,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			if (argA == 2) {
 				displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
 			} else {
-				strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+				_messageToBePrinted += buffer1;
 			}
 
 			_teamPctVisible[teamCharId] -= 50;
@@ -4478,7 +4457,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			if (argA == 2) {
 				displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
 			} else {
-				strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+				_messageToBePrinted += buffer1;
 				retVal = true;
 			}
 			// emptyFunction(2);
@@ -4488,7 +4467,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				if (argA == 2) {
 					displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
 				} else {
-					strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+					_messageToBePrinted += buffer1;
 					retVal = true;
 				}
 			} else {
@@ -4496,7 +4475,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				if (argA == 2) {
 					displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
 				} else {
-					strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+					_messageToBePrinted += buffer1;
 					retVal = true;
 				}
 			}
@@ -4515,7 +4494,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			if (argA == 2) {
 				displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
 			} else {
-				strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+				_messageToBePrinted += buffer1;
 				retVal = true;
 			}
 			// emptyFunction(2);
@@ -4525,7 +4504,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				if (argA == 2) {
 					displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
 				} else {
-					strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+					_messageToBePrinted += buffer1;
 					retVal = true;
 				}
 			} else {
@@ -4533,7 +4512,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				if (argA == 2) {
 					displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
 				} else {
-					strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+					_messageToBePrinted += buffer1;
 					retVal = true;
 				}
 			}
@@ -4549,11 +4528,11 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			int16 teamCharId = windowId;
 			if (teamCharId != 0x1B) {
 				if (_teamCharStatus[teamCharId]._status == 2) { // frozen
-					strncat((char *)_messageToBePrinted, "  The item makes a loud noise, awakening the character!", 80);
+					_messageToBePrinted += "  The item makes a loud noise, awakening the character!";
 					_teamCharStatus[teamCharId]._status = 0;
 					_teamCharStatus[teamCharId]._duration = 0;
 				} else {
-					strncat((char *)_messageToBePrinted, "  The item makes a loud noise, but has no effect!", 80);
+					_messageToBePrinted += "  The item makes a loud noise, but has no effect!";
 				}
 			}
 		}
@@ -4565,7 +4544,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if (argA == 2) {
 			displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+			_messageToBePrinted += buffer1;
 		}
 		setCharacterObjectToBroken(charId, objectId);
 		varA6 = true;
@@ -4601,7 +4580,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if (argA == 2) {
 			displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+			_messageToBePrinted += buffer1;
 			retVal = true;
 		}
 
@@ -4630,7 +4609,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			if (argA == 2) {
 				displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
 			} else {
-				strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+				_messageToBePrinted += buffer1;
 				retVal = true;
 			}
 		}
@@ -4661,7 +4640,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			if (argA == 2) {
 				displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
 			} else {
-				strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+				_messageToBePrinted += buffer1;
 				retVal = true;
 			}
 		}
@@ -4674,7 +4653,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if (argA == 2) {
 			displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+			_messageToBePrinted += buffer1;
 			retVal = true;
 		}
 		totalPartyKill();
@@ -4696,7 +4675,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			if (argA == 2) {
 				displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
 			} else {
-				strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+				_messageToBePrinted += buffer1;
 				retVal = true;
 			}
 			// emptyFunction(2);
@@ -4712,11 +4691,11 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			int16 teamCharId = windowId;
 			if (teamCharId != 0x1B) {
 				if (_teamCharStatus[teamCharId]._status == 0) {
-					strncat((char *)_messageToBePrinted, "  The item makes a loud noise, awakening the character!", 80);
+					_messageToBePrinted += "  The item makes a loud noise, awakening the character!";
 					_teamCharStatus[teamCharId]._status = 0;
 					_teamCharStatus[teamCharId]._duration = 0;
 				} else {
-					strncat((char *)_messageToBePrinted, "  The item makes a loud noise, but has no effect!", 80);
+					_messageToBePrinted += "  The item makes a loud noise, but has no effect!";
 				}
 			}
 		}
@@ -4747,7 +4726,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if (argA == 2) {
 			displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+			_messageToBePrinted += buffer1;
 			retVal = true;
 		}
 
@@ -4778,7 +4757,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if (argA == 2) {
 			displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
 		} else {
-			strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+			_messageToBePrinted += buffer1;
 			retVal = true;
 		}
 
@@ -4810,7 +4789,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 					Common::KeyCode varAE = getLastCharAfterAnimCount(_guessAnimationAmount);
 					displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
 				} else {
-					strncat((char *)_messageToBePrinted, buffer1.c_str(), 80);
+					_messageToBePrinted += buffer1;
 				}
 				setCharacterObjectToBroken(charId, objectId);
 			} else {
