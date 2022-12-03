@@ -33,7 +33,7 @@ class TeZPriorityMouseCallback : public TeCallback1Param<TeButtonLayout, const C
 public:
 	TeZPriorityMouseCallback(TeButtonLayout *layout, TMethod method) : TeCallback1Param<TeButtonLayout, const Common::Point &>(layout, method), _pri(0.0) {}
 	virtual float &priority() override {
-		_pri =_object->position().z();
+		_pri =_object->worldPosition().z();
 		return _pri;
 	}
 	float _pri;

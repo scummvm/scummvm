@@ -73,7 +73,7 @@ public:
 
 	InventoryObject *selectedInventoryObject();
 	void selectedObject(const Common::String &objname);
-	void selectedObject(InventoryObject &obj);
+	void selectedObject(InventoryObject *obj);
 	const Common::String &selectedObject();
 
 	bool updateLayout();

@@ -195,6 +195,8 @@ public:
 	Common::Array<TeRectBlocker> &rectBlockers() { return _rectBlockers; }
 	Common::Array<TeBlocker> &blockers() { return _blockers; }
 	Common::Array<Object3D *> object3Ds() { return _object3Ds; }
+	void setWaitTime(float usecs) { _waitTime = usecs; }
+	TeTimer &waitTimeTimer() { return _waitTimeTimer; }
 
 private:
 	TeColor _shadowColor;

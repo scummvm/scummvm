@@ -99,6 +99,7 @@ void Dialog2::load() {
 	size(); // refresh size? seems to do nothing with result
 	_music.repeat(false);
 	_gui.load("menus/dialog.lua");
+	size(); // refresh size? seems to do nothing with result
 	TeButtonLayout *dialogLockBtn = _gui.buttonLayoutChecked("dialogLockButton");
 
 	dialogLockBtn->setVisible(false);
@@ -149,7 +150,7 @@ bool Dialog2::onMinimumTimeTimer() {
 
 bool Dialog2::onSkipButton() {
 	const TeCurveAnim2<TeLayout,TeVector3f32> *dialogAnimUp = _gui.layoutAnchorLinearAnimation("dialogAnimationUp");
-	if (dialogAnimUp->_runTimer.running()) {
+	if (!dialogAnimUp->_runTimer.running()) {
 		const TeCurveAnim2<TeLayout,TeVector3f32> *dialogAnimDown = _gui.layoutAnchorLinearAnimation("dialogAnimationDown");
 		if (!dialogAnimDown->_runTimer.running()) {
 			startDownAnimation();

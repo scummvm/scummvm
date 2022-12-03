@@ -67,6 +67,7 @@ void Question2::leave() {
 }
 
 void Question2::load() {
+	// TODO: set field_0xd0 = 0
 	setName("dialog2");
 	setSizeType(RELATIVE_TO_PARENT);
 	const TeVector3f32 usersz = userSize();
@@ -78,6 +79,7 @@ void Question2::load() {
 		addChild(backgroundButton);
 		backgroundButton->setVisible(false);
 	}
+	size();
 }
 
 bool Question2::onAnswerValidated(Answer &answer) {
@@ -91,10 +93,7 @@ void Question2::pushAnswer(const Common::String &name, const Common::String &loc
 	Answer *answer = new Answer();
 	answer->load(name, locName, path);
 	answer->_onButtonValidatedSignal.add(this, &Question2::onAnswerValidated);
-	TeLayout *alayout = answer->layout();
-	if (!alayout)
-		error("No Answer layout after loading %s!", path.c_str());
-	TeButtonLayout *blayout = dynamic_cast<TeButtonLayout *>(alayout);
+	TeButtonLayout *blayout = dynamic_cast<TeButtonLayout *>(answer->layout());
 	if (!blayout)
 		error("No Answer button layout after loading %s!", path.c_str());
 
@@ -102,24 +101,24 @@ void Question2::pushAnswer(const Common::String &name, const Common::String &loc
 	_answers.push_back(answer);
 
 	float xpos;
+	blayout->setSizeType(RELATIVE_TO_PARENT);
 	blayout->setPositionType(RELATIVE_TO_PARENT);
 	if (!path.contains("Cal_FIN.lua")) {
-		setSize(TeVector3f32(0.45f, 0.065f, 1.0f));
+		blayout->setSize(TeVector3f32(0.45f, 0.065f, 1.0f));
 		xpos = 0.3f;
 	} else {
-		setSize(TeVector3f32(0.15f, 0.065f, 1.0f));
+		blayout->setSize(TeVector3f32(0.15f, 0.065f, 1.0f));
 		xpos = 0.15f;
 	}
-	setPosition(TeVector3f32(xpos, _answers.size() * 0.08f + 0.06f, 1.0f));
+	blayout->setPosition(TeVector3f32(xpos, _answers.size() * 0.08f + 0.06f, 1.0f));
 
 	blayout->_upLayout->setSizeType(RELATIVE_TO_PARENT);
 	blayout->_upLayout->setSize(TeVector3f32(1.0f, 1.0f, 1.0f));
 	blayout->_downLayout->setSizeType(RELATIVE_TO_PARENT);
 	blayout->_downLayout->setSize(TeVector3f32(1.0f, 1.0f, 1.0f));
 
-	TeSpriteLayout *calepinLayout = _gui.spriteLayout("Calepin");
-	if (calepinLayout)
-		calepinLayout->addChild(alayout);
+	TeSpriteLayout *calepinLayout = _gui.spriteLayoutChecked("Calepin");
+	calepinLayout->addChild(blayout);
 
 	enter();
 }

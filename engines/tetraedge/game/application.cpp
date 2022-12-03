@@ -393,16 +393,18 @@ void Application::drawFront() {
 
 #if DUMP_LAYOUTS
 static int renderCount = 0;
-static void dumpLayout(Te3DObject2 *layout, Common::String indent = "++") {
+static void dumpLayout(TeLayout *layout, Common::String indent = "++") {
 	assert(layout);
 	if (!layout->worldVisible())
 		return;
-	debug("%s %s  pos:%s  worldPos:%s  worldScale:%s size:%s col:%s", indent.c_str(), layout->name().c_str(),
-			layout->position().dump().c_str(), layout->worldPosition().dump().c_str(),
-			layout->worldScale().dump().c_str(), layout->size().dump().c_str(),
+	debug("%s %s  pos:%s  worldScale:%s  userSize:%s  size:%s  col:%s", indent.c_str(), layout->name().c_str(),
+			layout->position().dump().c_str(), layout->worldScale().dump().c_str(),
+			layout->userSize().dump().c_str(), layout->size().dump().c_str(),
 			layout->color().dump().c_str());
 	for (auto & child: layout->childList()) {
-		dumpLayout(child, indent + "++");
+		TeLayout *childLayout = dynamic_cast<TeLayout *>(child);
+		if (childLayout)
+			dumpLayout(childLayout, indent + "++");
 	}
 }
 #endif
@@ -523,11 +525,11 @@ void Application::lockCursorFromAction(bool lock) {
 void Application::loadOptions(const Common::String &fname) {
 	// TODO: Maybe load options here - original uses an
 	// xml file but we would want confman.
-	warning("TODO: Implement Application::loadOptions %s", fname.c_str());
+	debug("TODO: Implement Application::loadOptions %s", fname.c_str());
 }
 
 void Application::saveOptions(const Common::String &fname) {
-	warning("TODO: Implement Application::saveOptions %s", fname.c_str());
+	debug("TODO: Implement Application::saveOptions %s", fname.c_str());
 }
 
 Common::String Application::getHelpText(const Common::String &key) {

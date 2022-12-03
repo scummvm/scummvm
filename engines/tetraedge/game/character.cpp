@@ -59,7 +59,7 @@ void Character::WalkSettings::clear() {
 }
 
 Character::Character() : _walkCurveStart(0), _lastFrame(-1), _callbacksChanged(false),
-_notWalkAnim(false), _someRepeatFlag(false), _walkModeStr("Walk"),
+_notWalkAnim(false), _returnToIdleAnim(false), _walkModeStr("Walk"),
 _needsSomeUpdate(false), _positionFlag(false), _lookingAtTallThing(false),
 _stepSound1("sounds/SFX/PAS_H_BOIS1.ogg"), _stepSound2("sounds/SFX/PAS_H_BOIS2.ogg"),
 _freeMoveZone(nullptr), _animSoundOffset(0), _lastAnimFrame(0), _charLookingAt(nullptr),
@@ -173,7 +173,7 @@ float Character::animLengthFromFile(const Common::String &animname, uint *pframe
 	return animLen * _model->scale().z();
 }
 
-bool Character::blendAnimation(const Common::String &animname, float amount, bool repeat, bool param_4) {
+bool Character::blendAnimation(const Common::String &animname, float amount, bool repeat, bool returnToIdle) {
 	Common::Path animpath("models/Anims");
 	animpath.joinInPlace(animname);
 
@@ -197,7 +197,7 @@ bool Character::blendAnimation(const Common::String &animname, float amount, boo
 	_lastFrame = -1;
 	_curModelAnim->play();
 	_curAnimName = animname;
-	_someRepeatFlag = !(repeat | !param_4);
+	_returnToIdleAnim = !repeat && returnToIdle;
 	return true;
 }
 
@@ -567,9 +567,12 @@ bool Character::onModelAnimationFinished() {
 		_onCharacterAnimFinishedSignal.call(_model->name());
 	}
 
-	if (_someRepeatFlag && loadedPath.toString().contains(_setAnimName)) {
+	Common::Path setAnimNamePath = _setAnimName;
+	Common::String setAnimNameFile = setAnimNamePath.getLastComponent().toString();
+	Common::String loadedPathFile = loadedPath.getLastComponent().toString();
+	if (_returnToIdleAnim && loadedPathFile.contains(setAnimNameFile)) {
 		_notWalkAnim = false;
-		_someRepeatFlag = false;
+		_returnToIdleAnim = false;
 		setAnimation(_characterSettings._idleAnimFileName, true);
 	}
 
@@ -635,7 +638,7 @@ void Character::removeFromCurve() {
 	_curve.release();
 }
 
-bool Character::setAnimation(const Common::String &aname, bool repeat, bool param_3, bool unused, int startFrame, int endFrame) {
+bool Character::setAnimation(const Common::String &aname, bool repeat, bool returnToIdle, bool unused, int startFrame, int endFrame) {
 	if (aname.empty())
 		return false;
 
@@ -663,7 +666,7 @@ bool Character::setAnimation(const Common::String &aname, bool repeat, bool para
 	_curModelAnim->play();
 	_setAnimName = aname;
 	_curAnimName = aname;
-	_someRepeatFlag = !(repeat | !param_3);
+	_returnToIdleAnim = !repeat && returnToIdle;
 
 	return true;
 }

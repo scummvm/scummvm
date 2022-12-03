@@ -101,7 +101,7 @@ public:
 
 	float animLength(const TeModelAnimation &modelanim, long bone, long lastframe);
 	float animLengthFromFile(const Common::String &animname, uint *pframeCount, uint lastframe = 9999);
-	bool blendAnimation(const Common::String &animname, float amount, bool repeat, bool param_4);
+	bool blendAnimation(const Common::String &animname, float amount, bool repeat, bool returnToIdle);
 	TeVector3f32 correctPosition(const TeVector3f32 &pos);
 	float curveOffset();
 	void deleteAllCallback();
@@ -127,7 +127,7 @@ public:
 	void removeFromCurve();
 	static Common::String rootBone() { return "Pere"; }
 
-	bool setAnimation(const Common::String &name, bool repeat, bool param_3 = false, bool param_4 = false, int startFrame = -1, int endFrame = 9999);
+	bool setAnimation(const Common::String &name, bool repeat, bool returnToIdle = false, bool unused = false, int startFrame = -1, int endFrame = 9999);
 	void setAnimationSound(const Common::String &name, uint offset);
 	void setCurveOffset(float offset);
 	void setFreeMoveZone(TeFreeMoveZone *zone);
@@ -169,6 +169,7 @@ public:
 	const TeVector2f32 &headRotation() const { return _headRotation; }
 	void setHeadRotation(const TeVector2f32 &val) { _headRotation = val; }
 	void setLastHeadRotation(const TeVector2f32 &val) { _lastHeadRotation = val; }
+	const TeVector3f32 &lastHeadBoneTrans() const { return _lastHeadBoneTrans; }
 	Character *charLookingAt() { return _charLookingAt; }
 	bool lookingAtTallThing() const { return _lookingAtTallThing; }
 	void setLookingAtTallThing(bool val) { _lookingAtTallThing = val; }
@@ -215,7 +216,7 @@ private:
 	int _lastFrame;
 	int _lastAnimFrame;
 	bool _notWalkAnim;
-	bool _someRepeatFlag; // TODO: what is this?
+	bool _returnToIdleAnim;
 	bool _callbacksChanged;
 	bool _needsSomeUpdate;
 	bool _positionFlag;

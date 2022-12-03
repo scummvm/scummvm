@@ -82,7 +82,7 @@ bool TeMusic::play() {
 		soundType = Audio::Mixer::kMusicSoundType;
 	}
 
-	debug("playing %s on channel %s at vol %d", _actualPath.toString().c_str(), _channelName.c_str(), vol);
+	//debug("playing %s on channel %s at vol %d", _actualPath.toString().c_str(), _channelName.c_str(), vol);
 	mixer->playStream(soundType, &_sndHandle, stream, -1, vol);
 	_sndHandleValid = true;
 	_isPaused = false;

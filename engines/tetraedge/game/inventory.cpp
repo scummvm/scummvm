@@ -52,7 +52,7 @@ void Inventory::enter() {
 	}
 
 	if (_selectedObject)
-		selectedObject(*_selectedObject);
+		selectedObject(_selectedObject);
 }
 
 void Inventory::leave() {
@@ -149,19 +149,18 @@ void Inventory::unload() {
 			while (true) {
 				const Common::String slotStr = Common::String::format("page%dSlot%d", pageNo, slotNo);
 				TeLayout *slotLayout = _gui.layout(slotStr);
-				if (slotLayout) {
-					// Take a copy of the list as we may be deleting some
-					// and that removes them from the parent.
-					Common::Array<Te3DObject2 *> children = slotLayout->childList();
-					for (Te3DObject2 *child : children) {
-						InventoryObject *invObj = dynamic_cast<InventoryObject *>(child);
-						if (invObj)
-							delete invObj;
-					}
-					slotNo++;
-				} else {
+				if (!slotLayout)
 					break;
+
+				// Take a copy of the list as we may be deleting some
+				// and that removes them from the parent.
+				Common::Array<Te3DObject2 *> children = slotLayout->childList();
+				for (Te3DObject2 *child : children) {
+					InventoryObject *invObj = dynamic_cast<InventoryObject *>(child);
+					if (invObj)
+						delete invObj;
 				}
+				slotNo++;
 			}
 			pageNo++;
 		} else {
@@ -189,14 +188,14 @@ bool Inventory::addObject(InventoryObject *obj) {
 	_invObjects.push_front(obj);
 	obj->selectedSignal().add(this, &Inventory::onObjectSelected);
 	if (_invObjects.size() > 1) {
-		int pageno = 0;
+		int pageNo = 0;
 		while (true) {
-			TeLayout *page = _gui.layout(Common::String::format("page%d", pageno));
-			int slotno = 0;
+			TeLayout *page = _gui.layout(Common::String::format("page%d", pageNo));
+			int slotNo = 0;
 			if (!page)
 				break;
 			while (true) {
-				TeLayout *slot = _gui.layout(Common::String::format("page%dSlot%d", pageno, slotno));
+				TeLayout *slot = _gui.layout(Common::String::format("page%dSlot%d", pageNo, slotNo));
 				if (!slot)
 					break;
 				for (unsigned int c = 0; c < slot->childCount(); c++) {
@@ -207,9 +206,9 @@ bool Inventory::addObject(InventoryObject *obj) {
 						c--;
 					}
 				}
-				slotno++;
+				slotNo++;
 			}
-			pageno++;
+			pageNo++;
 		}
     }
 
@@ -242,7 +241,7 @@ bool Inventory::addObject(InventoryObject *obj) {
 			newText->setSize(TeVector3f32(1.0,1.0,0.0));
 			newText->setTextSizeType(1);
 			newText->setTextSizeProportionalToWidth(200);
-			newText->setText(_gui.value("textAttributs").toString() + (*invObjIter)->name());
+			newText->setText(_gui.value("textAttributs").toString() + objectName((*invObjIter)->name()));
 			newText->setName((*invObjIter)->name());
 			newText->setVisible(false);
 
@@ -294,7 +293,7 @@ bool Inventory::onMainMenuButton() {
 }
 
 bool Inventory::onObjectSelected(InventoryObject &obj) {
-	selectedObject(obj);
+	selectedObject(&obj);
 	if (_selectedTimer.running()) {
 		if (_selectedTimer.timeElapsed() < 300000)
 			g_engine->getGame()->inventoryMenu().leave();
@@ -350,11 +349,48 @@ void Inventory::unPauseAnims() {
 }
 
 void Inventory::removeObject(const Common::String &objname) {
-	error("TODO: implement Inventory::removeObject");
+	int pageNo = 0;
+	bool retval;
+	bool finished = false;
+	while (!finished) {
+		TeLayout *page = _gui.layout(Common::String::format("page%d", pageNo));
+		retval = false;
+		if (!page)
+			break;
+		int slotNo = 0;
+		while (true) {
+			const Common::String slotStr = Common::String::format("page%dSlot%d", pageNo, slotNo);
+			TeLayout *slotLayout = _gui.layout(slotStr);
+			if (!slotLayout)
+				break;
+
+			for (Te3DObject2 *child : slotLayout->childList()) {
+				InventoryObject *childObj = dynamic_cast<InventoryObject *>(child);
+				if (childObj && childObj->name() == objname) {
+					if (_selectedObject == childObj)
+						selectedObject(nullptr);
+					for (auto &invObj : _invObjects) {
+						if (invObj->name() == objname) {
+							_invObjects.remove(invObj);
+							break;
+						}
+					}
+					delete childObj;
+					updateLayout();
+					return;
+				}
+			}
+			slotNo++;
+		}
+		pageNo++;
+	}
 }
 
 void Inventory::removeSelectedObject() {
-	error("TODO: implement Inventory::removeSelectedObject");
+	if (_selectedObject) {
+		removeObject(_selectedObject->name());
+		selectedObject(nullptr);
+	}
 }
 
 InventoryObject *Inventory::selectedInventoryObject() {
@@ -362,11 +398,45 @@ InventoryObject *Inventory::selectedInventoryObject() {
 }
 
 void Inventory::selectedObject(const Common::String &objname) {
-	error("TODO: implement Inventory::selectedObject");
+	error("TODO: implement Inventory::selectedObject('%s')", objname.c_str());
 }
 
-void Inventory::selectedObject(InventoryObject &obj) {
-	error("TODO: implement Inventory::selectedObject");
+void Inventory::selectedObject(InventoryObject *obj) {
+	Game *game = g_engine->getGame();
+	game->setCurrentObjectSprite("");
+	_gui.layoutChecked("prendre")->setVisible(false);
+	_gui.layoutChecked("textObject")->setVisible(false);
+	_selectedObject = obj;
+	if (!obj) {
+		_gui.spriteLayoutChecked("selectionSprite")->setVisible(false);
+		_gui.textLayout("text")->setText("");
+		game->inGameGui().spriteLayoutChecked("selectedObject")->unload();
+	} else {
+		TeSpriteLayout *selection = _gui.spriteLayoutChecked("selectionSprite");
+		selection->setVisible(obj->worldVisible());
+		TeLayout *parentLayout = dynamic_cast<TeLayout *>(obj->parent());
+		TeVector3f32 pos = parentLayout->position();
+		pos.z() = selection->position().z();
+		selection->setPosition(pos);
+		const Common::String &objId = obj->name();
+		static const char *textStyle = "<section style=\"center\" /><color r=\"200\" g=\"200\" b=\"200\"/><font file=\"Common/Fonts/Colaborate-Regular.otf\" size=\"24\" />";
+		Common::String text = Common::String::format("%s%s<br/>%s", textStyle,
+					objectName(objId).c_str(),
+					objectDescription(objId).c_str());
+		_gui.textLayout("text")->setText(text);
+		_gui.buttonLayoutChecked("lire")->setEnable(isDocument(objId));
+		game->setCurrentObjectSprite(obj->spritePath());
+		TeLayout *textObj = _gui.layout("textObject");
+		for (unsigned int i = 0; i < textObj->childCount(); i++) {
+			if (textObj->child(i)->name() == obj->name()) {
+				textObj->setVisible(true);
+				textObj->child(i)->setVisible(true);
+			} else {
+				textObj->child(i)->setVisible(false);
+			}
+		}
+		game->inGameGui().spriteLayoutChecked("selectedObject")->load(obj->spritePath());
+	}
 }
 
 const Common::String &Inventory::selectedObject() {
@@ -378,7 +448,53 @@ const Common::String &Inventory::selectedObject() {
 }
 
 bool Inventory::updateLayout() {
-	error("TODO: implement Inventory::updateLayout");
+	int pageNo = 0;
+	bool finished = false;
+	while (!finished) {
+		TeLayout *page = _gui.layout(Common::String::format("page%d", pageNo));
+		if (!page)
+			break;
+		int slotNo = 0;
+		while (true) {
+			const Common::String slotStr = Common::String::format("page%dSlot%d", pageNo, slotNo);
+			TeLayout *slotLayout = _gui.layout(slotStr);
+			if (!slotLayout)
+				break;
+
+			// Take a copy of the list as we are deleting some
+			// and that removes them from the parent's list.
+			Common::Array<Te3DObject2 *> children = slotLayout->childList();
+			for (Te3DObject2 *child : children) {
+				InventoryObject *invObj = dynamic_cast<InventoryObject *>(child);
+				if (invObj)
+					slotLayout->removeChild(child);
+			}
+			slotNo++;
+		}
+		pageNo++;
+	}
+
+	pageNo = 0;
+	auto invObjIter = _invObjects.begin();
+	while (!finished) {
+		TeLayout *page = _gui.layout(Common::String::format("page%d", pageNo));
+		if (!page)
+			break;
+		int slotNo = 0;
+		while (true) {
+			const Common::String slotStr = Common::String::format("page%dSlot%d", pageNo, slotNo);
+			TeLayout *slotLayout = _gui.layout(slotStr);
+			if (!slotLayout)
+				break;
+			slotLayout->addChild(*invObjIter);
+			invObjIter++;
+			slotNo++;
+			if (invObjIter == _invObjects.end())
+				return true;
+		}
+		pageNo++;
+	}
+	return false;
 }
 
 

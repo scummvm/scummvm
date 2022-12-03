@@ -515,6 +515,8 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		TeLayout *bg = _forGui.layout("background");
 		bg->setRatioMode(TeILayout::RATIO_MODE_NONE);
 		app->_frontLayout.addChild(bg);
+		// Note: Game also adds cellphone to both frontLayout *and* noScaleLayout2,
+		// so we reproduce the broken behavior exactly.
 		TeLayout *cellbg = _inventory.cellphone()->gui().buttonLayout("background");
 		app->_frontLayout.removeChild(cellbg);
 		app->_frontLayout.addChild(cellbg);
@@ -587,7 +589,7 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	addNoScale2Children();
 	if (!fadeFlag) {
 		if (_inventory.selectedObject().size()) {
-			_inventory.selectedObject(*_inventory.selectedInventoryObject());
+			_inventory.selectedObject(_inventory.selectedInventoryObject());
 		}
 		_inventory.setVisible(false);
 		_objectif.setVisibleObjectif(false);
@@ -626,7 +628,6 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		_luaScript.execute("OnSelectedObject", _inventory.selectedObject());
 	}
 
-	
 	for (unsigned int i = 0; i < _gameSounds.size(); i++) {
 		if (_gameSounds[i]->retain())
 			continue;
@@ -1366,10 +1367,10 @@ bool Game::setBackground(const Common::String &name) {
 	return _scene.changeBackground(name);
 }
 
-void Game::setCurrentObjectSprite(const Common::String &spritePath) {
+void Game::setCurrentObjectSprite(const Common::Path &spritePath) {
 	TeSpriteLayout *currentSprite = _inGameGui.spriteLayout("currentObjectSprite");
 	if (currentSprite) {
-		if (!spritePath.empty()) {
+		if (spritePath.empty()) {
 			currentSprite->unload();
 		} else {
 			currentSprite->load(spritePath);
