@@ -1017,7 +1017,7 @@ void ResourceManager::init() {
 	_currentDiscNo = 1;
 #endif
 	if (g_sci) {
-		_patcher = new ResourcePatcher(g_sci->getGameId(), g_sci->getLanguage());
+		_patcher = new ResourcePatcher(g_sci->getGameId(), g_sci->isCD(), g_sci->getPlatform(), g_sci->getLanguage());
 		addSource(_patcher);
 	} else {
 		_patcher = nullptr;

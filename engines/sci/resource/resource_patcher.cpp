@@ -22,6 +22,7 @@
 #include "common/scummsys.h"
 #include "common/textconsole.h"
 #include "sci/sci.h"
+#include "sci/engine/workarounds.h" // for SciMedia
 #include "sci/resource/resource.h"
 #include "sci/resource/resource_patcher.h"
 
@@ -487,25 +488,29 @@ static const byte torinPassageRussianPic61101[] = {
 #pragma mark Patch table
 
 static const GameResourcePatch resourcePatches[] = {
-	{ GID_LSL1,           Common::RU_RUS,   kResourceTypeSound,     205, lsl1RussianSound205,        false },
-	{ GID_LSL2,           Common::PL_POL,   kResourceTypeFont,        1, lsl2Lsl3PolishFont,         false },
-	{ GID_LSL2,           Common::PL_POL,   kResourceTypeFont,        7, lsl2Lsl3PolishFont,         false },
-	{ GID_LSL3,           Common::PL_POL,   kResourceTypeFont,        1, lsl2Lsl3PolishFont,         false },
-	{ GID_LSL3,           Common::PL_POL,   kResourceTypeFont,        9, lsl2Lsl3PolishFont,         false },
-	{ GID_PHANTASMAGORIA, Common::UNK_LANG, kResourceTypeView,    64001, phant1View64001Palette,     false },
-	{ GID_PQ4,            Common::EN_ANY,   kResourceTypeView,    10988, pq4EnhancedAudioToggleView, true  },
-	{ GID_QFG1VGA,        Common::UNK_LANG, kResourceTypePalette,   904, qfg1vgaPalette904,          false },
-	{ GID_TORIN,          Common::RU_RUS,   kResourceTypePic,     61101, torinPassageRussianPic61101,false }
+	{ GID_LSL1,           SCI_MEDIA_ALL,    Common::RU_RUS,   kResourceTypeSound,     205, lsl1RussianSound205,        false },
+	{ GID_LSL2,           SCI_MEDIA_ALL,    Common::PL_POL,   kResourceTypeFont,        1, lsl2Lsl3PolishFont,         false },
+	{ GID_LSL2,           SCI_MEDIA_ALL,    Common::PL_POL,   kResourceTypeFont,        7, lsl2Lsl3PolishFont,         false },
+	{ GID_LSL3,           SCI_MEDIA_ALL,    Common::PL_POL,   kResourceTypeFont,        1, lsl2Lsl3PolishFont,         false },
+	{ GID_LSL3,           SCI_MEDIA_ALL,    Common::PL_POL,   kResourceTypeFont,        9, lsl2Lsl3PolishFont,         false },
+	{ GID_PHANTASMAGORIA, SCI_MEDIA_ALL,    Common::UNK_LANG, kResourceTypeView,    64001, phant1View64001Palette,     false },
+	{ GID_PQ4,            SCI_MEDIA_CD,     Common::EN_ANY,   kResourceTypeView,    10988, pq4EnhancedAudioToggleView, true  },
+	{ GID_QFG1VGA,        SCI_MEDIA_ALL,    Common::UNK_LANG, kResourceTypePalette,   904, qfg1vgaPalette904,          false },
+	{ GID_TORIN,          SCI_MEDIA_ALL,    Common::RU_RUS,   kResourceTypePic,     61101, torinPassageRussianPic61101,false }
 };
 
 #pragma mark -
 #pragma mark ResourcePatcher
 
-ResourcePatcher::ResourcePatcher(const SciGameId gameId, const Common::Language gameLanguage) :
+ResourcePatcher::ResourcePatcher(const SciGameId gameId, const bool isCD, const Common::Platform platform, const Common::Language gameLanguage) :
 	ResourceSource(kSourceScummVM, "-scummvm-") {
 	for (int i = 0; i < ARRAYSIZE(resourcePatches); ++i) {
 		const GameResourcePatch &patch = resourcePatches[i];
 		if (patch.gameId == gameId &&
+			(patch.media == SCI_MEDIA_ALL ||
+			(patch.media == SCI_MEDIA_FLOPPY && !isCD) ||
+			(patch.media == SCI_MEDIA_CD && isCD) ||
+			(patch.media == SCI_MEDIA_MAC && platform == Common::kPlatformMacintosh && !isCD)) &&
 			(patch.gameLanguage == Common::UNK_LANG || patch.gameLanguage == gameLanguage)) {
 			_patches.push_back(patch);
 		}
