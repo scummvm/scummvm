@@ -1480,94 +1480,86 @@ bool Debugger::cmdObjectInfo(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmdStartQuickMoveUp(int argc, const char **argv) {
-	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		QuickAvatarMoverProcess::startMover(-64, -64, 0, 0);
-		return false;
-	} else {
-		debugPrintf("Cheats aren't enabled\n");
+static bool _quickMoveKey(uint32 flag, const char *debugname) {
+	Ultima8Engine *engine = Ultima8Engine::get_instance();
+	if (engine->isAvatarInStasis()) {
+		debug("Can't %s: avatarInStasis\n", debugname);
 		return true;
 	}
+	if (!engine->areCheatsEnabled()) {
+		debug("Can't %s: Cheats aren't enabled\n", debugname);
+		return true;
+	}
+
+	QuickAvatarMoverProcess *proc = QuickAvatarMoverProcess::get_instance();
+	if (proc) {
+		proc->setMovementFlag(flag);
+	}
+	return false;
+}
+
+static bool _quickMoveKeyEnd(uint32 flag) {
+	Ultima8Engine *engine = Ultima8Engine::get_instance();
+	if (engine->isAvatarInStasis()) {
+		return false;
+	}
+	if (!engine->areCheatsEnabled()) {
+		return false;
+	}
+
+	QuickAvatarMoverProcess *proc = QuickAvatarMoverProcess::get_instance();
+	if (proc) {
+		proc->clearMovementFlag(flag);
+	}
+	return false;
+}
+
+bool Debugger::cmdStartQuickMoveUp(int argc, const char **argv) {
+	return _quickMoveKey(QuickAvatarMoverProcess::MOVE_UP, "move up");
 }
 
 bool Debugger::cmdStartQuickMoveDown(int argc, const char **argv) {
-	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		QuickAvatarMoverProcess::startMover(+64, +64, 0, 1);
-		return false;
-	} else {
-		debugPrintf("Cheats aren't enabled\n");
-		return true;
-	}
+	return _quickMoveKey(QuickAvatarMoverProcess::MOVE_DOWN, "move down");
 }
 
 bool Debugger::cmdStartQuickMoveLeft(int argc, const char **argv) {
-	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		QuickAvatarMoverProcess::startMover(-64, +64, 0, 2);
-		return false;
-	} else {
-		debugPrintf("Cheats aren't enabled\n");
-		return true;
-	}
+	return _quickMoveKey(QuickAvatarMoverProcess::MOVE_LEFT, "move left");
 }
 
 bool Debugger::cmdStartQuickMoveRight(int argc, const char **argv) {
-	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		QuickAvatarMoverProcess::startMover(+64, -64, 0, 3);
-		return false;
-	} else {
-		debugPrintf("Cheats aren't enabled\n");
-		return true;
-	}
+	return _quickMoveKey(QuickAvatarMoverProcess::MOVE_RIGHT, "move right");
 }
 
 bool Debugger::cmdStartQuickMoveAscend(int argc, const char **argv) {
-	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		QuickAvatarMoverProcess::startMover(0, 0, 8, 4);
-		return false;
-	} else {
-		debugPrintf("Cheats aren't enabled\n");
-		return true;
-	}
+	return _quickMoveKey(QuickAvatarMoverProcess::MOVE_ASCEND, "move ascend");
 }
 
 bool Debugger::cmdStartQuickMoveDescend(int argc, const char **argv) {
-	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		QuickAvatarMoverProcess::startMover(0, 0, -8, 5);
-		return false;
-	} else {
-		debugPrintf("Cheats aren't enabled\n");
-		return true;
-	}
+	return _quickMoveKey(QuickAvatarMoverProcess::MOVE_DESCEND, "move descend");
 }
 
 bool Debugger::cmdStopQuickMoveUp(int argc, const char **argv) {
-	QuickAvatarMoverProcess::terminateMover(0);
-	return false;
+	return _quickMoveKeyEnd(QuickAvatarMoverProcess::MOVE_UP);
 }
 
 bool Debugger::cmdStopQuickMoveDown(int argc, const char **argv) {
-	QuickAvatarMoverProcess::terminateMover(1);
-	return false;
+	return _quickMoveKeyEnd(QuickAvatarMoverProcess::MOVE_DOWN);
 }
 
 bool Debugger::cmdStopQuickMoveLeft(int argc, const char **argv) {
-	QuickAvatarMoverProcess::terminateMover(2);
-	return false;
+	return _quickMoveKeyEnd(QuickAvatarMoverProcess::MOVE_LEFT);
 }
 
 bool Debugger::cmdStopQuickMoveRight(int argc, const char **argv) {
-	QuickAvatarMoverProcess::terminateMover(3);
-	return false;
+	return _quickMoveKeyEnd(QuickAvatarMoverProcess::MOVE_RIGHT);
 }
 
 bool Debugger::cmdStopQuickMoveAscend(int argc, const char **argv) {
-	QuickAvatarMoverProcess::terminateMover(4);
-	return false;
+	return _quickMoveKeyEnd(QuickAvatarMoverProcess::MOVE_ASCEND);
 }
 
 bool Debugger::cmdStopQuickMoveDescend(int argc, const char **argv) {
-	QuickAvatarMoverProcess::terminateMover(5);
-	return false;
+	return _quickMoveKeyEnd(QuickAvatarMoverProcess::MOVE_DESCEND);
 }
 
 bool Debugger::cmdToggleQuarterSpeed(int argc, const char **argv) {

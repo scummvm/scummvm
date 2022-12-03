@@ -34,18 +34,12 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(QuickAvatarMoverProcess)
 
-ProcId QuickAvatarMoverProcess::_amp[6] = { 0, 0, 0, 0, 0, 0 };
+ProcId QuickAvatarMoverProcess::_amp = 0;
 bool QuickAvatarMoverProcess::_clipping = false;
 bool QuickAvatarMoverProcess::_quarter = false;
 
-QuickAvatarMoverProcess::QuickAvatarMoverProcess() : Process(1), _dx(0), _dy(0), _dz(0), _dir(0) {
-}
-
-QuickAvatarMoverProcess::QuickAvatarMoverProcess(int x, int y, int z, int dir) : Process(1),
-		_dx(x), _dy(y), _dz(z), _dir(dir) {
-	QuickAvatarMoverProcess::terminateMover(dir);
-	assert(_dir < 6);
-	_amp[_dir] = getPid();
+QuickAvatarMoverProcess::QuickAvatarMoverProcess() : Process(1), _movementFlags(0) {
+	_amp = getPid();
 }
 
 QuickAvatarMoverProcess::~QuickAvatarMoverProcess() {
@@ -57,6 +51,42 @@ void QuickAvatarMoverProcess::run() {
 		return;
 	}
 
+	int32 dx = 0;
+	int32 dy = 0;
+	int32 dz = 0;
+
+	if (hasMovementFlags(MOVE_UP)) {
+		dx -= 64;
+		dy -= 64;
+	}
+
+	if (hasMovementFlags(MOVE_DOWN)) {
+		dx += 64;
+		dy += 64;
+	}
+
+	if (hasMovementFlags(MOVE_LEFT)) {
+		dx -= 64;
+		dy += 64;
+	}
+
+	if (hasMovementFlags(MOVE_RIGHT)) {
+		dx += 64;
+		dy -= 64;
+	}
+
+	if (hasMovementFlags(MOVE_ASCEND)) {
+		dz += 8;
+	}
+
+	if (hasMovementFlags(MOVE_DESCEND)) {
+		dz -= 8;
+	}
+
+	if (!dx && !dy && !dz) {
+		return;
+	}
+
 	MainActor *avatar = getMainActor();
 	int32 x, y, z;
 	avatar->getLocation(x, y, z);
@@ -65,14 +95,14 @@ void QuickAvatarMoverProcess::run() {
 
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
 
-	int32 dxv = this->_dx;
-	int32 dyv = this->_dy;
-	int32 dzv = this->_dz;
+	int32 dxv = dx;
+	int32 dyv = dy;
+	int32 dzv = dz;
 
 	for (int j = 0; j < 3; j++) {
-		dxv = this->_dx;
-		dyv = this->_dy;
-		dzv = this->_dz;
+		dxv = dx;
+		dyv = dy;
+		dzv = dz;
 
 		if (j == 1) dxv = 0;
 		else if (j == 2) dyv = 0;
@@ -132,48 +162,35 @@ void QuickAvatarMoverProcess::run() {
 
 void QuickAvatarMoverProcess::terminate() {
 	Process::terminate();
-	_amp[_dir] = 0;
+	_amp = 0;
 }
 
-void QuickAvatarMoverProcess::terminateMover(int dir) {
-	assert(dir < 6);
-
+QuickAvatarMoverProcess *QuickAvatarMoverProcess::get_instance() {
 	Kernel *kernel = Kernel::get_instance();
-
-	QuickAvatarMoverProcess *p =
-	    dynamic_cast<QuickAvatarMoverProcess *>(kernel->getProcess(_amp[dir]));
-
-	if (p && !p->is_terminated())
-		p->terminate();
-}
-
-void QuickAvatarMoverProcess::startMover(int x, int y, int z, int dir) {
-	Ultima8Engine *g = Ultima8Engine::get_instance();
-	if (! g->isAvatarInStasis()) {
-		Process *p = new QuickAvatarMoverProcess(x, y, z, dir);
-		Kernel::get_instance()->addProcess(p);
-	} else {
-		pout << "Can't quickmove: avatarInStasis" << Std::endl;
+	QuickAvatarMoverProcess *p = nullptr;
+	if (_amp) {
+		p = dynamic_cast<QuickAvatarMoverProcess *>(kernel->getProcess(_amp));
 	}
+
+	if (!p) {
+		p = new QuickAvatarMoverProcess();
+		Kernel::get_instance()->addProcess(p);
+	}
+
+	return p;
 }
 
 void QuickAvatarMoverProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 
-	ws->writeUint32LE(_dir);
+	ws->writeUint32LE(_movementFlags);
 	// don't save more information. We plan to terminate upon load
 }
 
 bool QuickAvatarMoverProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	if (!Process::loadData(rs, version)) return false;
 
-	// small safety precaution
-	_dir = rs->readUint32LE();
-	if (_dir < 6)
-		_amp[_dir] = 0;
-	else
-		return false;
-
+	_movementFlags = rs->readUint32LE();
 	terminateDeferred(); // Don't allow this process to continue
 	return true;
 }
