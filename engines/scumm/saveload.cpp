@@ -102,14 +102,28 @@ bool ScummEngine::canLoadGameStateCurrently() {
 	bool isOriginalMenuActive = isUsingOriginalGUI() && _mainMenuIsActive;
 
 	if (_game.version <= 3) {
-		int saveRoom = 50;
-
-		if (_game.id == GID_INDY3)
+		int saveRoom = -1;
+		int saveMenuScript = -1;
+		if (_game.id == GID_MANIAC) {
+			saveRoom = 50;
+			if (_game.version == 0) {
+				saveMenuScript = 2;
+			} else {
+				saveMenuScript = _game.version == 1 ? 162 : 163;
+			}
+		} else if (_game.id == GID_ZAK) {
+			saveRoom = 50;
+			saveMenuScript = (_game.version == 3) ? 169 : 7;
+		} else if (_game.id == GID_INDY3) {
 			saveRoom = 14;
-		else if (_game.id == GID_LOOM)
+			saveMenuScript = 9;
+		} else if (_game.id == GID_LOOM) {
 			saveRoom = 70;
+			saveMenuScript = (_game.platform == Common::kPlatformFMTowns) ? 42 : 4;
+		}
 
-		isOriginalMenuActive = _currentRoom == saveRoom;
+		// Also deny persistence operations while the script opening the save menu is running...
+		isOriginalMenuActive = _currentRoom == saveRoom || vm.slot[_currentScript].number == saveMenuScript;
 	}
 
 	return (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0) && !isOriginalMenuActive;
@@ -160,14 +174,28 @@ bool ScummEngine::canSaveGameStateCurrently() {
 	bool isOriginalMenuActive = isUsingOriginalGUI() && _mainMenuIsActive;
 
 	if (_game.version <= 3) {
-		int saveRoom = 50;
-
-		if (_game.id == GID_INDY3)
+		int saveRoom = -1;
+		int saveMenuScript = -1;
+		if (_game.id == GID_MANIAC) {
+			saveRoom = 50;
+			if (_game.version == 0) {
+				saveMenuScript = 2;
+			} else {
+				saveMenuScript = _game.version == 1 ? 162 : 163;
+			}
+		} else if (_game.id == GID_ZAK) {
+			saveRoom = 50;
+			saveMenuScript = (_game.version == 3) ? 169 : 7;
+		} else if (_game.id == GID_INDY3) {
 			saveRoom = 14;
-		else if (_game.id == GID_LOOM)
+			saveMenuScript = 9;
+		} else if (_game.id == GID_LOOM) {
 			saveRoom = 70;
+			saveMenuScript = (_game.platform == Common::kPlatformFMTowns) ? 42 : 4;
+		}
 
-		isOriginalMenuActive = _currentRoom == saveRoom;
+		// Also deny persistence operations while the script opening the save menu is running...
+		isOriginalMenuActive = _currentRoom == saveRoom || vm.slot[_currentScript].number == saveMenuScript;
 	}
 
 	// SCUMM v4+ doesn't allow saving in room 0 or if
