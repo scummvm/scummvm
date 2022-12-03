@@ -53,6 +53,7 @@ MODULE_OBJS := \
 	compression/gzio.o \
 	compression/installshield_cab.o \
 	compression/installshieldv3_archive.o \
+	compression/powerpacker.o \
 	compression/rnc_deco.o \
 	compression/stuffit.o \
 	compression/unarj.o \
