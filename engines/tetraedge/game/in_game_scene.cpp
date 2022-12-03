@@ -467,13 +467,25 @@ void InGameScene::freeSceneObjects() {
 }
 
 float InGameScene::getHeadHorizontalRotation(Character *cter, const TeVector3f32 &vec) {
-	//TeVector3f32 pos = cter->_model->position() - vec;
-	error("TODO: Implement InGameScene::getHeadHorizontalRotation");
+	TeVector3f32 pos = vec - cter->_model->position();
+	TeVector3f32 zvec = TeVector3f32(0, 0, 1.0f);
+	zvec.rotate(cter->_model->rotation());
+	float angle = atan2f(-pos.x(), pos.z()) - atan2f(-zvec.x(), zvec.z());
+	if (angle < -M_PI)
+		angle += (M_PI * 2);
+	else if (angle > M_PI)
+		angle -= (M_PI * 2);
+	return angle;
 }
 
 float InGameScene::getHeadVerticalRotation(Character *cter, const TeVector3f32 &vec) {
-	//TeVector3f32 pos = cter->_model->position() - vec;
-	error("TODO: Implement InGameScene::getHeadVerticalRotation");
+	TeVector3f32 modelPos = cter->_model->position();
+	TeVector3f32 headWorldTrans = cter->_model->worldTransformationMatrix() * cter->lastHeadBoneTrans();
+	modelPos.y() = headWorldTrans.y();
+	TeVector3f32 offsetPos = vec - modelPos;
+	currentCamera()->apply();
+	float angle = atan2f(offsetPos.y(), TeVector2f32(offsetPos.x(), offsetPos.z()).length());
+	return angle;
 }
 
 Common::String InGameScene::imagePathMarker(const Common::String &name) {
@@ -948,7 +960,7 @@ void InGameScene::setPositionCharacter(const Common::String &charName, const Com
 		const TeVector3f32 corrected = zone->correctCharacterPosition(position, &correctFlag, true);
 		c->_model->setPosition(corrected);
 		if (!correctFlag)
-			error("[SetCharacterPosition] Warning : The character is not above the ground %s", charName.c_str());
+			warning("[SetCharacterPosition] Warning : The character is not above the ground %s", charName.c_str());
 	}
 }
 
@@ -1038,9 +1050,9 @@ void InGameScene::update() {
 			TeVector2f32 headRot(getHeadHorizontalRotation(_character, targetpos),
 					getHeadVerticalRotation(_character, targetpos));
 			float hangle = headRot.getX() * 180.0 / M_PI;
-			if (hangle > 90)
+			if (hangle > 90.0f)
 				headRot.setX(M_PI_2);
-			else if (hangle < -90)
+			else if (hangle < -90.0f)
 				headRot.setX(-M_PI_2);
 			_character->setHeadRotation(headRot);
 			_character->setHasAnchor(true);
@@ -1101,7 +1113,21 @@ void InGameScene::update() {
 
 
 bool InGameScene::AnimObject::onFinished() {
-	error("TODO: Implement InGameScene::AnimObject::onFinished");
+	Game *game = g_engine->getGame();
+	for (unsigned int i = 0; i < game->yieldedCallbacks().size(); i++) {
+		Game::YieldedCallback &yc = game->yieldedCallbacks()[i];
+		if (yc._luaFnName == "OnFinishedAnim" && yc._luaParam == _name) {
+			TeLuaThread *thread = yc._luaThread;
+			game->yieldedCallbacks().remove_at(i);
+			if (thread) {
+				thread->resume();
+				return false;
+			}
+			break;
+		}
+	}
+	game->luaScript().execute("OnFinishedAnim", _name);
+	return false;
 }
 
 } // end namespace Tetraedge

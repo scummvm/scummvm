@@ -65,7 +65,7 @@ public:
 	float volume();
 
 	TeSignal0Param &onStopSignal() { return _onStopSignal; }
-	
+
 	void setRetain(bool retain) { _retain = retain; }
 	bool retain() const { return _retain; }
 
