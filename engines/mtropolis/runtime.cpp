@@ -4281,7 +4281,7 @@ bool Runtime::runFrame() {
 					MouseInputEvent *mouseEvt = static_cast<MouseInputEvent *>(evt.get());
 
 					if (evtType == kOSEventTypeMouseDown) {
-						if (_multiClickStartTime + _multiClickInterval >= _playTime) {
+						if (_multiClickStartTime + _multiClickInterval <= _playTime) {
 							_multiClickStartTime = _playTime;
 							_multiClickCount = 1;
 						} else
