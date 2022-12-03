@@ -1349,7 +1349,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"seussabc",
 			"Demo",
-			AD_ENTRY1("ABC.LB", "aef2c88f4dcc2c3a47ed8093f6e27bc9"),
+			AD_ENTRY1s("ABC.LB", "aef2c88f4dcc2c3a47ed8093f6e27bc9", 567),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
