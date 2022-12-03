@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-02 20:58+0000\n"
+"POT-Creation-Date: 2022-12-03 11:18+0000\n"
 "PO-Revision-Date: 2022-11-29 06:11+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -5032,6 +5032,16 @@ msgstr "Désactiver le mode démo"
 #: engines/freescape/metaengine.cpp:69
 msgid "Never activate demo mode"
 msgstr "N'active jamais le mode démo"
+
+#: engines/freescape/metaengine.cpp:79
+#, fuzzy
+#| msgid "Disable save menu"
+msgid "Disable sensors"
+msgstr "Désactiver le menu sauvegarde"
+
+#: engines/freescape/metaengine.cpp:80
+msgid "Sensors will not shoot the player"
+msgstr ""
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"

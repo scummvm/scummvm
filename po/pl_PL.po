@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-02 20:58+0000\n"
+"POT-Creation-Date: 2022-12-03 11:18+0000\n"
 "PO-Revision-Date: 2022-10-23 18:43+0000\n"
 "Last-Translator: aquadran <aquadran@gmail.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -5011,6 +5011,15 @@ msgstr "Włącz tryb helowy"
 
 #: engines/freescape/metaengine.cpp:69
 msgid "Never activate demo mode"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:79
+#, fuzzy
+msgid "Disable sensors"
+msgstr "Nie udało się zapisać stanu gry"
+
+#: engines/freescape/metaengine.cpp:80
+msgid "Sensors will not shoot the player"
 msgstr ""
 
 #: engines/glk/glk_api.cpp:62

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-02 20:58+0000\n"
+"POT-Creation-Date: 2022-12-03 11:18+0000\n"
 "PO-Revision-Date: 2022-11-29 23:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -5009,6 +5009,15 @@ msgstr "Aktivera felsökningsläge"
 
 #: engines/freescape/metaengine.cpp:69
 msgid "Never activate demo mode"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:79
+#, fuzzy
+msgid "Disable sensors"
+msgstr "Kunde inte spara spelet"
+
+#: engines/freescape/metaengine.cpp:80
+msgid "Sensors will not shoot the player"
 msgstr ""
 
 #: engines/glk/glk_api.cpp:62

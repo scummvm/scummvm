@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-02 20:58+0000\n"
+"POT-Creation-Date: 2022-12-03 11:18+0000\n"
 "PO-Revision-Date: 2022-10-27 02:33+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -4882,6 +4882,16 @@ msgstr "הפעלת מצב ניפוי תקלים"
 
 #: engines/freescape/metaengine.cpp:69
 msgid "Never activate demo mode"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:79
+#, fuzzy
+#| msgid "Disable save menu"
+msgid "Disable sensors"
+msgstr "כיבוי תפריט שמירה"
+
+#: engines/freescape/metaengine.cpp:80
+msgid "Sensors will not shoot the player"
 msgstr ""
 
 #: engines/glk/glk_api.cpp:62

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-02 20:58+0000\n"
+"POT-Creation-Date: 2022-12-03 11:18+0000\n"
 "PO-Revision-Date: 2022-11-27 15:23+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -5072,6 +5072,16 @@ msgstr "Απενεργοποίηση λειτουργίας demo"
 #: engines/freescape/metaengine.cpp:69
 msgid "Never activate demo mode"
 msgstr "Να μην ενεργοποιηθεί ποτέ η λειτουργία demo"
+
+#: engines/freescape/metaengine.cpp:79
+#, fuzzy
+#| msgid "Disable save menu"
+msgid "Disable sensors"
+msgstr "Απενεργοποίηση μενού αποθήκευσης"
+
+#: engines/freescape/metaengine.cpp:80
+msgid "Sensors will not shoot the player"
+msgstr ""
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
