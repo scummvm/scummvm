@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-02 20:58+0000\n"
+"POT-Creation-Date: 2022-12-03 11:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4733,6 +4733,14 @@ msgstr ""
 
 #: engines/freescape/metaengine.cpp:69
 msgid "Never activate demo mode"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:79
+msgid "Disable sensors"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:80
+msgid "Sensors will not shoot the player"
 msgstr ""
 
 #: engines/glk/glk_api.cpp:62
