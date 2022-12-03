@@ -390,6 +390,25 @@
 	"intro2.stk", 0, 0
 },
 
+// -- Playtoons 5: The Stone of Wakan German --  "Der Stein von Wakan"
+// Bugreport #13099
+
+{
+	{
+		"playtoons5",
+		"",
+		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
+				   "wakan.stk",		"5518139580becd8c49bbfbdd4f49187a", 5523417),
+		DE_DEU,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
+	},
+	kGameTypePlaytoons,
+	kFeatures640x480,
+	"intro2.stk", 0, 0
+},
+
 // -- Playtoons Construction Kit 1: Monsters --
 
 {
