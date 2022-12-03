@@ -138,6 +138,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "fctexport",			"Felix's Cartoon Transformer" },
 	{ "fctplayer",			"Felix Cartoon Player" },
 	{ "fff",				"Four Footed Friends" },
+	{ "finegardening",		"Fine Gardening Propagation" },
 	{ "fishwish",			"The Fish Who Could Wish" },
 	{ "flipper",			"Flipper" },
 	{ "flipper1",           "The Three Worlds of Flipper & Lopaka" },
@@ -8078,6 +8079,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// See notes in D6 entry
 	MACGAME1("checkersvillage", "OS X", "village.osx", "f991fbe24bc002a215fda2c58fbb572f", 5880680, 1010),
+
+	// Fine Gardening Propagation
+	// Fine Gardening How-To-DVD-ROM series. Propagation Product#041036 FGDVDROM7-2'*
+	// Bugreport #13324
+	WINGAME1("finegardening", "", "FG_Propagation.exe",  "f9d19112c3af1093bd291a535b1c6883", 126422, 1010),
 
 	// German Win version is D9
 	// Installer & uninstaller also use Director
