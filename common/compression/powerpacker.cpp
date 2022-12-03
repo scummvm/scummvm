@@ -52,8 +52,9 @@ namespace Common {
 } while (0)
 
 
-int PowerPackerStream::ppDecrunchBuffer(byte *src, byte *dest, uint32 src_len, uint32 dest_len) {
-	byte *buf, *out, *dest_end, *off_lens, bits_left = 0, bit_cnt;
+int PowerPackerStream::ppDecrunchBuffer(const byte *src, byte *dest, uint32 src_len, uint32 dest_len) {
+	const byte *buf, *off_lens;
+	byte *out, *dest_end, bits_left = 0, bit_cnt;
 	uint32 bit_buffer = 0, x, todo, offbits, offset, written = 0;
 
 	if (!src || !dest) return 0;
@@ -151,6 +152,25 @@ PowerPackerStream::PowerPackerStream(Common::SeekableReadStream &stream) {
 	free(src);
 	_stream = new Common::MemoryReadStream(dest, decrlen, DisposeAfterUse::YES);
 	_dispose = true;
+}
+
+byte *PowerPackerStream::unpackBuffer(const byte *input, uint32 input_len, uint32 &output_len) {
+	if (input_len < 8) {
+		output_len = 0;
+		return nullptr;
+	}
+	uint32 signature = READ_BE_UINT32(input);
+	if (getCrunchType(signature) == 0) {
+		output_len = 0;
+		return nullptr;
+	}
+
+	output_len = READ_BE_UINT32(input + input_len - 4) >> 8;
+	byte *dest = new byte[output_len];
+
+	ppDecrunchBuffer(input + 4, dest, input_len - 12, output_len);
+
+	return dest;
 }
 
 }
