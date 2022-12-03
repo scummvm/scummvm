@@ -248,13 +248,20 @@ bool Console::cmdMapString(int argc, const char **argv) {
 }
 
 bool Console::cmdMap(int argc, const char **argv) {
-	if (argc != 2 && argc != 4) {
-		debugPrintf("map mapId [ xp, yp ]\n");
+	Maps::Maps &maps = g_globals->_maps;
+
+	if (argc < 2) {
+		debugPrintf("map <mapId section> | <mapNum [ xp, yp ]>\n");
 		return true;
-	} else {
-		Maps::Maps &maps = g_globals->_maps;
+
+	} else if (argc == 3) {
 		int mapId = strToInt(argv[1]);
-		Maps::Map &map = *maps.getMap(mapId);
+		int section = strToInt(argv[2]);
+		maps.changeMap(mapId, section);
+
+	} else {
+		int mapNum = strToInt(argv[1]);
+		Maps::Map &map = *maps.getMap(mapNum);
 		int x = g_maps->_mapPos.x, y = g_maps->_mapPos.y;
 
 		if (argc == 4) {
@@ -265,9 +272,9 @@ bool Console::cmdMap(int argc, const char **argv) {
 		maps._mapPos.x = x;
 		maps._mapPos.y = y;
 		maps.changeMap(map.getId(), map.getDefaultSection());
-
-		return false;
 	}
+
+	return false;
 }
 
 bool Console::cmdPos(int argc, const char **argv) {
