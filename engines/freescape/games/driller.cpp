@@ -473,12 +473,31 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 }
 
 void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
+	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);
 	uint32 brownish = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x9E, 0x80, 0x20);
 	uint32 brown = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x7E, 0x60, 0x19);
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+	uint32 transparent = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 
 	int score = _gameStateVars[k8bitVariableScore];
+	Common::String coords;
+
+	drawStringInSurface("x", 37, 18, white, transparent, surface, 82);
+	coords = Common::String::format("%04d", 2 * int(_position.x()));
+	for (int i = 0; i < 4; i++)
+		drawStringInSurface(Common::String(coords[i]), 47 + 6*i, 18, white, transparent, surface, 112);
+
+	drawStringInSurface("y", 37, 26, white, transparent, surface, 82);
+	coords = Common::String::format("%04d", 2 * int(_position.z())); // Coords y and z are swapped!
+	for (int i = 0; i < 4; i++)
+		drawStringInSurface(Common::String(coords[i]), 47 + 6*i, 26, white, transparent, surface, 112);
+
+	drawStringInSurface("z", 37, 34, white, transparent, surface, 82);
+	coords = Common::String::format("%04d", 2 * int(_position.y())); // Coords y and z are swapped!
+	for (int i = 0; i < 4; i++)
+		drawStringInSurface(Common::String(coords[i]), 47 + 6*i, 34, white, transparent, surface, 112);
+
 	drawStringInSurface(_currentArea->_name, 188, 185, yellow, black, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
 
