@@ -10310,6 +10310,41 @@ static const uint16 laurabow2PatchHandleArmorRoomEvents[] = {
 	PATCH_END
 };
 
+// During the act 5 chase, a script bug can cause infinite recursion and crash
+//  the armor hall with a stack overflow. Room 448 cues the global pursuitTimer
+//  to run the sHeKills script if the player returns without first hiding in the
+//  in the mummy coffin, but it doesn't stop the timer. If pursuitTimer expires
+//  during sHeKills then rm448:notify schedules sHeKills to run next, even if
+//  it's already the current room script. Setting a script's `next` property to
+//  itself causes Script:dispose to infinitely recurse when changing rooms, and
+//  sHeKills ends in room 99.
+//
+// We fix this by adding a test to rm448:notify to detect if sHeKills is already
+//  the current room script and ignore the notification.
+static const uint16 laurabow2SignatureAct5TimerCrash[] = {
+	0x31, 0x29,                         // bnt 29 [ ret ]
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi script
+	0x76,                               // push0
+	0x81, 0x02,                         // lag 02
+	0x4a, 0x04,                         // send 04 [ rm448 script? ]
+	SIG_MAGICDWORD,
+	0x31, 0x13,                         // bnt 13
+	0x39, 0x41,                         // pushi next
+	0x78,                               // pushi1
+	0x72,                               // lofsa sHeKills
+	SIG_END
+};
+
+static const uint16 laurabow2PatchAct5TimerCrash[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x63, 0x12,                         // pToa script
+	0x31, 0x19,                         // bnt 19
+	0x74, PATCH_GETORIGINALUINT16(16),  // lofss sHeKills
+	0x1a,                               // eq?   [ script == sHeKills]
+	0x2f, 0x1f,                         // bt 1f [ ret ]
+	PATCH_END
+};
+
 // The "bugs with meat" in the basement hallway (room 600) can lockup the game
 //  if they appear while ego is leaving the room through one of the doors.
 //
@@ -10705,6 +10740,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,    26, "Floppy: fix act 4 initialization",               1, laurabow2SignatureFixAct4Initialization,        laurabow2PatchFixAct4Initialization },
 	{  true,   440, "CD/Floppy: handle armor room events",            1, laurabow2SignatureHandleArmorRoomEvents,        laurabow2PatchHandleArmorRoomEvents },
 	{  true,   448, "CD/Floppy: handle armor hall room events",       1, laurabow2SignatureHandleArmorRoomEvents,        laurabow2PatchHandleArmorRoomEvents },
+	{  true,   448, "CD/Floppy: act 5 timer crash",                   1, laurabow2SignatureAct5TimerCrash,               laurabow2PatchAct5TimerCrash },
 	{  true,   600, "Floppy: fix bugs with meat",                     1, laurabow2FloppySignatureFixBugsWithMeat,        laurabow2FloppyPatchFixBugsWithMeat },
 	{  true,   600, "CD: fix bugs with meat",                         1, laurabow2CDSignatureFixBugsWithMeat,            laurabow2CDPatchFixBugsWithMeat },
 	{ false,   650, "CD: fix museum actor loops",                     1, laurabow2CDSignatureFixMuseumActorLoops2,       laurabow2CDPatchFixMuseumActorLoops2 },
