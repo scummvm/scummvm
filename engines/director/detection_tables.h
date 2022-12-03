@@ -2295,6 +2295,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("leonardo", "", "LEO.EXE", 	 "65d06b5fef155a2473434571aff5bc29", 370000,
 							 "BEGINLEO.MMM", "aec1417e69dd85c5c00fae628b150a0d", 812, 310),
 
+	// European multilanguage (En-Fr-De-Es-It)
+	WINGAME2t("leonardo", "", "LEO.EXE", 	  "f5767a0c04966f5b5a61ac20fc141a7d",  370013,
+							  "LANGUAGE.MMM", "adbd451a838fc412dd3d8a5d3eca2836 ", 546658, 310),
+
 	WINDEMO2("leopardspots", "Demo", "LEOPARD.EXE", "2b3543a9131a49f665982d26513a84f8", 1081371,
 									 "DEMO37.BMP",	"6be5fb3f1aa30dfa6db320a2a8c484c8", 17518, 310),
 
