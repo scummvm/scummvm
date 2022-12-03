@@ -72,8 +72,11 @@ public:
 	 */
 	explicit Array(size_type count) : _size(count) {
 		allocCapacity(count);
+
+		T *storage = _storage;
+
 		for (size_type i = 0; i < count; ++i)
-			new ((void *)&_storage[i]) T();
+			new ((void *)&storage[i]) T();
 	}
 
 	/**
@@ -367,10 +370,14 @@ public:
 	/** Change the size of the array. */
 	void resize(size_type newSize) {
 		reserve(newSize);
+
+		T *storage = _storage;
+
 		for (size_type i = newSize; i < _size; ++i)
-			_storage[i].~T();
+			storage[i].~T();
 		for (size_type i = _size; i < newSize; ++i)
-			new ((void *)&_storage[i]) T();
+			new ((void *)&storage[i]) T();
+
 		_size = newSize;
 	}
 
