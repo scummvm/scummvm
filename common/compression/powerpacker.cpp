@@ -106,6 +106,7 @@ uint16 PowerPackerStream::getCrunchType(uint32 signature) {
 
 	switch (signature) {
 	case 0x50503230: /* PP20 */
+	case 0x5041434b: /* PACK, non-standard header used in amiga floppy ITE.  */
 		eff = 4;
 		break;
 	case 0x50504C53: /* PPLS */
