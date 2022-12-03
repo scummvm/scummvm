@@ -455,6 +455,14 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 	}
 
 	if (plugin) {
+		if (_flags & kADFlagMatchFullPaths) {
+			Common::StringArray dirs = getPathsFromEntry(agdDesc.desc);
+			Common::FSNode gameDataDir = Common::FSNode(ConfMan.get("path"));
+
+			for (auto d = dirs.begin(); d != dirs.end(); ++d)
+				SearchMan.addSubDirectoryMatching(gameDataDir, *d);
+		}
+
 		// Call child class's createInstanceMethod.
 		return plugin->get<AdvancedMetaEngine>().createInstance(syst, engine, agdDesc.desc);
 	}
