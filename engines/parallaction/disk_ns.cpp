@@ -25,6 +25,7 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
+#include "common/compression/powerpacker.h"
 #include "image/iff.h"
 #include "parallaction/parser.h"
 #include "parallaction/parallaction.h"
@@ -547,170 +548,6 @@ Common::SeekableReadStream* DosDisk_ns::loadSound(const char* name) {
 #pragma mark -
 
 
-/* the decoder presented here is taken from pplib by Stuart Caie. The
- * following statement comes from the original source.
- *
- * pplib 1.0: a simple PowerPacker decompression and decryption library
- * placed in the Public Domain on 2003-09-18 by Stuart Caie.
- */
-
-#define PP_READ_BITS(nbits, var) do {				\
-	bit_cnt = (nbits); (var) = 0;				\
-	while (bits_left < bit_cnt) {				\
-		if (buf < src) return 0;			\
-		bit_buffer |= *--buf << bits_left;		\
-		bits_left += 8;					\
-	}							\
-	bits_left -= bit_cnt;					\
-	while (bit_cnt--) {					\
-		(var) = ((var) << 1) | (bit_buffer & 1);	\
-		bit_buffer >>= 1;				\
-	}							\
-} while (0)
-
-#define PP_BYTE_OUT(byte) do {					\
-	if (out <= dest) return 0;				\
-	*--out = (byte); written++;				\
-} while (0)
-
-
-class PowerPackerStream : public Common::SeekableReadStream {
-
-	SeekableReadStream *_stream;
-	bool				_dispose;
-
-private:
-	int ppDecrunchBuffer(byte *src, byte *dest, uint32 src_len, uint32 dest_len) {
-
-		byte *buf, *out, *dest_end, *off_lens, bits_left = 0, bit_cnt;
-		uint32 bit_buffer = 0, x, todo, offbits, offset, written = 0;
-
-		if (!src || !dest) return 0;
-
-		/* set up input and output pointers */
-		off_lens = src; src = &src[4];
-		buf = &src[src_len];
-
-		out = dest_end = &dest[dest_len];
-
-		/* skip the first few bits */
-		PP_READ_BITS(src[src_len + 3], x);
-
-		/* while there are input bits left */
-		while (written < dest_len) {
-			PP_READ_BITS(1, x);
-			if (x == 0) {
-				  /* bit==0: literal, then match. bit==1: just match */
-				  todo = 1; do { PP_READ_BITS(2, x); todo += x; } while (x == 3);
-				  while (todo--) { PP_READ_BITS(8, x); PP_BYTE_OUT(x); }
-
-				  /* should we end decoding on a literal, break out of the main loop */
-				  if (written == dest_len) break;
-			}
-
-			/* match: read 2 bits for initial offset bitlength / match length */
-			PP_READ_BITS(2, x);
-			offbits = off_lens[x];
-			todo = x+2;
-			if (x == 3) {
-				PP_READ_BITS(1, x);
-				if (x == 0) offbits = 7;
-				PP_READ_BITS(offbits, offset);
-				do { PP_READ_BITS(3, x); todo += x; } while (x == 7);
-			}
-			else {
-				PP_READ_BITS(offbits, offset);
-			}
-			if (&out[offset] > dest_end) return 0; /* match_overflow */
-			while (todo--) { x = out[offset]; PP_BYTE_OUT(x); }
-		}
-
-		/* all output bytes written without error */
-		return 1;
-	}
-
-	uint16 getCrunchType(uint32 signature) {
-
-		byte eff = 0;
-
-		switch (signature) {
-		case 0x50503230: /* PP20 */
-			eff = 4;
-			break;
-		case 0x50504C53: /* PPLS */
-			error("PPLS crunched files are not supported");
-#if 0
-			eff = 8;
-			break;
-#endif
-		case 0x50583230: /* PX20 */
-			error("PX20 crunched files are not supported");
-#if 0
-			eff = 6;
-			break;
-#endif
-		default:
-			eff = 0;
-
-		}
-
-		return eff;
-	}
-
-public:
-	PowerPackerStream(Common::SeekableReadStream &stream) {
-
-		_dispose = false;
-
-		uint32 signature = stream.readUint32BE();
-		if (getCrunchType(signature) == 0) {
-			stream.seek(0, SEEK_SET);
-			_stream = &stream;
-			return;
-		}
-
-		stream.seek(-4, SEEK_END);
-		uint32 decrlen = stream.readUint32BE() >> 8;
-		byte *dest = (byte *)malloc(decrlen);
-
-		uint32 crlen = stream.size() - 4;
-		byte *src = (byte *)malloc(crlen);
-		stream.seek(4, SEEK_SET);
-		stream.read(src, crlen);
-
-		ppDecrunchBuffer(src, dest, crlen-8, decrlen);
-
-		free(src);
-		_stream = new Common::MemoryReadStream(dest, decrlen, DisposeAfterUse::YES);
-		_dispose = true;
-	}
-
-	~PowerPackerStream() override {
-		if (_dispose) delete _stream;
-	}
-
-	int64 size() const override {
-		return _stream->size();
-	}
-
-	int64 pos() const override {
-		return _stream->pos();
-	}
-
-	bool eos() const override {
-		return _stream->eos();
-	}
-
-	bool seek(int64 offs, int whence = SEEK_SET) override {
-		return _stream->seek(offs, whence);
-	}
-
-	uint32 read(void *dataPtr, uint32 dataSize) override {
-		return _stream->read(dataPtr, dataSize);
-	}
-};
-
-
 
 
 AmigaDisk_ns::AmigaDisk_ns(Parallaction *vm) : Disk_ns(vm) {
@@ -862,7 +699,7 @@ GfxObj* AmigaDisk_ns::loadStatic(const char* name) {
 Common::SeekableReadStream *AmigaDisk_ns::tryOpenFile(const char* name) {
 	debugC(3, kDebugDisk, "AmigaDisk_ns::tryOpenFile(%s)", name);
 
-	PowerPackerStream *ret;
+	Common::PowerPackerStream *ret;
 	Common::SeekableReadStream *stream = _sset.createReadStreamForMember(name);
 	if (stream)
 		return stream;
@@ -871,7 +708,7 @@ Common::SeekableReadStream *AmigaDisk_ns::tryOpenFile(const char* name) {
 	Common::sprintf_s(path, "%s.pp", name);
 	stream = _sset.createReadStreamForMember(path);
 	if (stream) {
-		ret = new PowerPackerStream(*stream);
+		ret = new Common::PowerPackerStream(*stream);
 		delete stream;
 		return ret;
 	}
@@ -879,7 +716,7 @@ Common::SeekableReadStream *AmigaDisk_ns::tryOpenFile(const char* name) {
 	Common::sprintf_s(path, "%s.dd", name);
 	stream = _sset.createReadStreamForMember(path);
 	if (stream) {
-		ret = new PowerPackerStream(*stream);
+		ret = new Common::PowerPackerStream(*stream);
 		delete stream;
 		return ret;
 	}
