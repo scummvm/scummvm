@@ -9724,6 +9724,7 @@ static const uint16 laurabow2CDPatchFixYvetteTutResponse[] = {
 // We fix this by setting the correct loop in the CD version so that Wolf and
 //  O'Riley face the direction the scripts request like in the floppy versions.
 //  This patch is only enabled in the CD version since the scripts don't change.
+//  See also: resource patch lauraBow2CdView828
 //
 // Applies to: English CD
 // Responsible methods: sPartysOver:changeState, rm400:init, sHeimlichShoos:changeState

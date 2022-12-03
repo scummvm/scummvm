@@ -94,6 +94,28 @@ namespace Sci {
 #define END kEndOfPatch
 
 #pragma mark -
+#pragma mark Laura Bow 2
+
+// LB2CD removed diagonal walking loops from the views of actors in the museum,
+//  but Sierra forgot to do this to the transparent placeholder view used when
+//  actors are in a different room. It remains 9 loops instead of 5 like the
+//  rest. The standing loop at the end is in position 8 instead of 4.
+//  This causes StopWalk to query the loop count when an actor is off screen
+//  and set their loop to an invalid index for their real view, causing all
+//  standing actors to appear to face north west instead of their real heading.
+//  Patching out diagonal loops 4-7 and using loop 8 as loop 4 fixes this.
+//  See also: script patch laurabow2CDPatchFixMuseumActorLoops
+static const byte lauraBow2CdView828[] = {
+	SKIP(0x02),
+	REPLACE(1, 0x05), // view header: 5 loops instead of 9
+	SKIP(0x51),
+	REPLACE(1, 0x08), // loop 4: 8 cels instead of 1
+	SKIP(0x09),
+	REPLACE_NUMBER(uint32, 0x01c2), // loop 4: offset to loop 8 cel data
+	END
+};
+
+#pragma mark -
 #pragma mark Leisure Suit Larry 1
 
 // LSL1 Russian contains a bad sound that uses 0xFE as a track entry terminator
@@ -488,6 +510,7 @@ static const byte torinPassageRussianPic61101[] = {
 #pragma mark Patch table
 
 static const GameResourcePatch resourcePatches[] = {
+	{ GID_LAURABOW2,      SCI_MEDIA_CD,     Common::UNK_LANG, kResourceTypeView,      828, lauraBow2CdView828,         false },
 	{ GID_LSL1,           SCI_MEDIA_ALL,    Common::RU_RUS,   kResourceTypeSound,     205, lsl1RussianSound205,        false },
 	{ GID_LSL2,           SCI_MEDIA_ALL,    Common::PL_POL,   kResourceTypeFont,        1, lsl2Lsl3PolishFont,         false },
 	{ GID_LSL2,           SCI_MEDIA_ALL,    Common::PL_POL,   kResourceTypeFont,        7, lsl2Lsl3PolishFont,         false },
