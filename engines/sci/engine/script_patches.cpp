@@ -10025,6 +10025,42 @@ static const uint16 laurabow2PatchMummyCoffinLid2[] = {
 	PATCH_END
 };
 
+// When closing the lid of the empty mummy coffin in room 454, the animation
+//  glitches and shows the coffin closed before showing Laura re-close it.
+//  This only occurs in the CD version, but it's a script bug in all versions.
+//
+// sHandleTheCase attempts to run the coffin animation in reverse by setting
+//  ego:cel to the last cel of view 454 loop 3, but it calls ego:lastCel before
+//  setting the view, so instead it queries ego's normal view and sets the new
+//  cel to 7. In the floppy version the coffin loop has 11 cels and this mistake
+//  isn't noticeable, but the CD version changed the view to only have 3 cels,
+//  making 7 an invalid cel number. The Cycler script resets invalid cels to 0
+//  before jumping to the final cel and animating normally.
+//
+// We fix this by patching the CD version to use the correct last cel value.
+//
+// Applies to: English PC-CD
+// Responsible method: sHandleTheCase:changeState(0)
+static const uint16 laurabow2CDSignatureMummyCoffinClosingCel[] = {
+	0x63, 0x24,                         // pToa register
+	0x31, 0x04,                         // bnt 04
+	0x35, 0x00,                         // ldi 00
+	0x33, 0x08,                         // jmp 08
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x0100),           // pushi lastCel [ CD selector ]
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x04,                         // send 04 [ ego lastCel: ]
+	SIG_END
+};
+
+static const uint16 laurabow2CDPatchMummyCoffinClosingCel[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x35, 0x02,                         // ldi 02 [ last cel of view 454 loop 3 ]
+	0x33, 0x04,                         // jmp 04
+	PATCH_END
+};
+
 // The crate room (room 460) in act 5 locks up the game if you enter from the
 //  elevator (room 660), swing the hanging crate, and then attempt to leave
 //  back through the elevator door.
@@ -10660,6 +10696,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   450, "Floppy: fix dagger case error",                  2, laurabow2SignatureFixDaggerCaseError,           laurabow2PatchFixDaggerCaseError },
 	{  true,   454, "CD/Floppy: fix coffin lockup 1/2",               1, laurabow2SignatureMummyCoffinLid1,              laurabow2PatchMummyCoffinLid1 },
 	{  true,   454, "CD/Floppy: fix coffin lockup 2/2",               1, laurabow2SignatureMummyCoffinLid2,              laurabow2PatchMummyCoffinLid2 },
+	{  true,   454, "CD: fix coffin closing cel",                     1, laurabow2CDSignatureMummyCoffinClosingCel,      laurabow2CDPatchMummyCoffinClosingCel },
 	{  true,   460, "CD/Floppy: fix crate room east door lockup",     1, laurabow2SignatureFixCrateRoomEastDoorLockup,   laurabow2PatchFixCrateRoomEastDoorLockup },
 	{ false,   500, "CD: fix museum actor loops",                     3, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
 	{  true,  2660, "CD/Floppy: fix elevator lockup",                 1, laurabow2SignatureFixElevatorLockup,            laurabow2PatchFixElevatorLockup },
