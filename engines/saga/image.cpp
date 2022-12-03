@@ -22,6 +22,7 @@
 // SAGA Image resource management routines
 
 #include "saga/saga.h"
+#include "common/compression/powerpacker.h"
 
 namespace Saga {
 
@@ -42,6 +43,23 @@ static int granulate(int value, int granularity) {
 		return (granularity - remainder + value);
 	}
 }
+
+static bool unbankAmiga(ByteArray& outputBuffer, const byte *banked, uint len, uint16 height, uint16 width, uint bitnum) {
+	uint planePitch = (width + 15) & ~15;
+	uint linePitch = bitnum == 8 ? planePitch : (planePitch * 5 / 8);
+	if (len != linePitch * height)
+		return false;
+	outputBuffer.resize(height * width);
+	memset(outputBuffer.getBuffer(), 0, width * height);
+	for (uint y = 0; y < height; y++)
+		for (uint x = 0; x < width; x++)
+			for (unsigned bit = 0; bit < bitnum; bit++) {
+				int inXbit = x + bit * planePitch;
+				outputBuffer[y * width + x] |= ((banked[y * linePitch + inXbit / 8] >> (7 - inXbit % 8)) & 1) << bit;
+			}
+	return true;
+}
+
 
 bool SagaEngine::decodeBGImageMask(const ByteArray &imageData, ByteArray &outputBuffer, int *w, int *h, bool flip) {
 	if (isAGA() || isECS()) {
@@ -96,26 +114,49 @@ bool SagaEngine::decodeBGImage(const ByteArray &imageData, ByteArray &outputBuff
 	readS.readUint16();
 	readS.readUint16();
 
-	outputBuffer.resize(hdr.width * hdr.height);
-
 	if (isAGA() || isECS()) {
-		int planePitch = (hdr.width + 15) & ~15;
-		int linePitch = isAGA() ? planePitch : (planePitch * 5 / 8);
 		unsigned bitnum = isAGA() ? 8 : 5;
 		int headerSize = 8 + (3 << bitnum);
 		const byte *RLE_data_ptr = &imageData.front() + headerSize;
 		size_t RLE_data_len = imageData.size() - headerSize;
 
-		if (RLE_data_len != (size_t) linePitch * hdr.height)
-			return false;
-
-		memset(outputBuffer.getBuffer(), 0, hdr.width * hdr.height);
-		for (int y = 0; y < hdr.height; y++)
-			for (int x = 0; x < hdr.width; x++)
-				for (unsigned bit = 0; bit < bitnum; bit++) {
-					int inXbit = x + bit * planePitch;
-					outputBuffer[y * hdr.width + x] |= ((RLE_data_ptr[y * linePitch + inXbit / 8] >> (7 - inXbit % 8)) & 1) << bit;
-				}
+		if (getFeatures() & GF_POWERPACK_GFX) {
+			int aligned_width = (hdr.width + 15) & ~15;
+			int pitch = isAGA() ? aligned_width : (aligned_width * 5 / 8);
+			if (RLE_data_len < 12) {
+				warning("Compressed size too short");
+				return false;
+			}
+			if (READ_BE_UINT32 (RLE_data_ptr) != RLE_data_len - 4) {
+				warning("Compressed size mismatch: %d vs %d", READ_BE_UINT32 (RLE_data_ptr), (int)RLE_data_len - 4);
+				return false;
+			}
+			if (READ_BE_UINT32 (RLE_data_ptr + 4) != MKTAG('P', 'A', 'C', 'K')) {
+				warning("Compressed magic mismatch: 0x%08x vs %08x", READ_BE_UINT32 (RLE_data_ptr + 4), MKTAG('P', 'A', 'C', 'K'));
+				return false;
+			}
+			uint32 uncompressed_len = 0;
+			byte *uncompressed = Common::PowerPackerStream::unpackBuffer(RLE_data_ptr + 4, RLE_data_len - 4, uncompressed_len);
+			if (uncompressed == nullptr || (int) uncompressed_len != pitch * hdr.height) {
+				warning("Uncompressed size mismatch: %d vs %d", uncompressed_len, pitch * hdr.height);
+				return false;
+			}
+			if (isAGA() && pitch == hdr.width) {
+				// TODO: Use some kind of move semantics
+				outputBuffer = ByteArray(uncompressed, uncompressed_len);
+			} else if (isAGA()) {
+				outputBuffer.resize(hdr.height * hdr.width);
+				for (int y = 0; y < hdr.height; y++)
+					memcpy(outputBuffer.getBuffer() + y * hdr.width, uncompressed + y * pitch, hdr.width);
+			} else {
+				if (!unbankAmiga(outputBuffer, uncompressed, uncompressed_len, hdr.height, hdr.width, bitnum))
+					return false;
+			}
+			delete[] uncompressed;
+		} else {
+			if (!unbankAmiga(outputBuffer, RLE_data_ptr, RLE_data_len, hdr.height, hdr.width, bitnum))
+				return false;
+		}
 	} else {
 		int modex_height = granulate(hdr.height, 4);
 		const byte *RLE_data_ptr;
@@ -126,6 +167,7 @@ bool SagaEngine::decodeBGImage(const ByteArray &imageData, ByteArray &outputBuff
 		if (!decodeBGImageRLE(RLE_data_ptr, RLE_data_len, decodeBuffer)) {
 			return false;
 		}
+		outputBuffer.resize(hdr.width * hdr.height);
 		unbankBGImage(outputBuffer.getBuffer(), decodeBuffer.getBuffer(), hdr.width, hdr.height);
 	}
 
