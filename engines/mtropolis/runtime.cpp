@@ -8411,7 +8411,7 @@ VThreadState VisualElement::changeVisibilityTask(const ChangeFlagTaskData &taskD
 	if (_visible != taskData.desiredFlag) {
 		setVisible(taskData.runtime, taskData.desiredFlag);
 
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(_visible ? EventIDs::kElementHide : EventIDs::kElementShow, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(taskData.desiredFlag ? EventIDs::kElementShow : EventIDs::kElementHide, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 		taskData.runtime->sendMessageOnVThread(dispatch);
 	}
