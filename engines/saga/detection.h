@@ -42,6 +42,7 @@ enum GameFeatures {
 	GF_ECS_GRAPHICS      = 1 << 7,
 	GF_INSTALLER         = 1 << 8,
 	GF_EMBED_FONT        = 1 << 9,
+	GF_POWERPACK_GFX     = 1 << 10,
 };
 
 enum GameFileTypes {
