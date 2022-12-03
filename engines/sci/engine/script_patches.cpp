@@ -10276,6 +10276,45 @@ static const uint16 laurabow2PatchFixAct4Initialization[] = {
 	PATCH_END
 };
 
+// The act 5 trigger in Olympia's office is supposed to occur when exiting to
+//  room 510 but it can also occur just by looking at the Countess' body again.
+//  The close up of the Countess is also implemented as a room, but the trigger
+//  in rm520:newRoom only tests the act number and inventory. This prevents the
+//  game from being completed if the player picks up the grapes and looks at the
+//  Countess again to get the smelling salts.
+//
+// We fix this by adding a room 520 test to the act 5 trigger.
+//
+// Applies to: All versions
+// Responsible method: rm520:newRoom
+static const uint16 laurabow2SignatureAct5Trigger[] = {
+	0x31, 0x0c,                         // bnt 0c
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi newRoom
+	0x78,                               // push1
+	0x8f, 0x01,                         // lsp 01
+	0x57, SIG_ADDTOOFFSET(+1), 0x06,    // super 06 [ LBRoom newRoom: roomNumber ]
+	SIG_MAGICDWORD,
+	0x32, SIG_UINT16(0x0059),           // jmp 0059 [ end of cond ]
+	0x89, 0x7b,                         // lsg 7b   [ act ]
+	0x35, 0x04,                         // ldi 04
+	0x1a,                               // eq?
+	SIG_ADDTOOFFSET(+0x4B),
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi newRoom
+	0x78,                               // push1
+	0x8f, 0x01,                         // lsp 01
+	SIG_END
+};
+
+static const uint16 laurabow2PatchAct5Trigger[] = {
+	0x2f, 0x5c,                         // bt 0c [ LBRoom newRoom: roomNumber ]
+	0x8f, 0x01,                         // lsp 01
+	0x34, PATCH_UINT16(0x01fe),         // ldi 01fe
+	0x1a,                               // eq?      [ roomNumber == 510 ]
+	0x30, PATCH_UINT16(0x0008),         // bnt 0008 [ skip act 5 trigger ]
+	0x32, PATCH_UINT16(0x0000),         // jmp 0000 [ continue ]
+	PATCH_END
+};
+
 // The armor exhibit rooms (440 and 448) have event handlers that fail to handle
 //  all events, preventing messages from being displayed.
 //
@@ -10735,6 +10774,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   460, "CD/Floppy: fix crate room east door lockup",     1, laurabow2SignatureFixCrateRoomEastDoorLockup,   laurabow2PatchFixCrateRoomEastDoorLockup },
 	{ false,   500, "CD: fix museum actor loops",                     3, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
 	{  true,  2660, "CD/Floppy: fix elevator lockup",                 1, laurabow2SignatureFixElevatorLockup,            laurabow2PatchFixElevatorLockup },
+	{  true,   520, "CD/Floppy: act 5 trigger",                       1, laurabow2SignatureAct5Trigger,                  laurabow2PatchAct5Trigger },
 	{  true,   550, "CD/Floppy: fix back rub east entrance lockup",   1, laurabow2SignatureFixBackRubEastEntranceLockup, laurabow2PatchFixBackRubEastEntranceLockup },
 	{  true,   550, "CD/Floppy: fix disappearing desk items",         1, laurabow2SignatureFixDisappearingDeskItems,     laurabow2PatchFixDisappearingDeskItems },
 	{  true,    26, "Floppy: fix act 4 initialization",               1, laurabow2SignatureFixAct4Initialization,        laurabow2PatchFixAct4Initialization },
