@@ -762,6 +762,11 @@ void FreescapeEngine::getLatestMessages(Common::String &message, int &deadline) 
 	}
 }
 
+void FreescapeEngine::clearTemporalMessages() {
+	_temporaryMessages.clear();
+	_temporaryMessageDeadlines.clear();
+}
+
 byte *FreescapeEngine::getPaletteFromNeoImage(Common::SeekableReadStream *stream, int offset) {
 	stream->seek(offset);
 	NeoDecoder decoder;

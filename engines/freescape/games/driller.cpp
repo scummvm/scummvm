@@ -112,6 +112,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	}
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+	clearTemporalMessages();
 	playSound(5, false);
 	// Ignore sky/ground fields
 	_gfx->_keyColor = 0;
@@ -564,10 +565,13 @@ Math::Vector3d getProjectionToPlane(const Math::Vector3d &vect, const Math::Vect
 
 void DrillerEngine::pressedKey(const int keycode) {
 	if (keycode == Common::KEYCODE_d) {
+		clearTemporalMessages();
 		Common::Point gasPocket = _currentArea->_gasPocketPosition;
 		uint32 gasPocketRadius = _currentArea->_gasPocketRadius;
-		if (gasPocketRadius == 0)
+		if (gasPocketRadius == 0) {
+			insertTemporaryMessage(_messagesList[2], _countdown - 2);
 			return;
+		}
 
 		if (_flyMode) {
 			insertTemporaryMessage(_messagesList[8], _countdown - 2);
@@ -618,8 +622,11 @@ void DrillerEngine::pressedKey(const int keycode) {
 			_drilledAreas[_currentArea->getAreaID()] = kDrillerRigOutOfPlace;
 	} else if (keycode == Common::KEYCODE_c) {
 		uint32 gasPocketRadius = _currentArea->_gasPocketRadius;
-		if (gasPocketRadius == 0)
+		clearTemporalMessages();
+		if (gasPocketRadius == 0) {
+			insertTemporaryMessage(_messagesList[2], _countdown - 2);
 			return;
+		}
 
 		if (_flyMode) {
 			insertTemporaryMessage(_messagesList[8], _countdown - 2);
@@ -867,16 +874,28 @@ void DrillerEngine::initGameState() {
 bool DrillerEngine::checkIfGameEnded() {
 	if (_countdown <= 0) {
 		insertTemporaryMessage(_messagesList[14], _countdown - 2);
+		drawFrame();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(2000);
 		gotoArea(127, 0);
 	}
 
 	if (_gameStateVars[k8bitVariableShield] == 0) {
 		insertTemporaryMessage(_messagesList[15], _countdown - 2);
+		drawFrame();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(2000);
 		gotoArea(127, 0);
 	}
 
 	if (_gameStateVars[k8bitVariableEnergy] == 0) {
 		insertTemporaryMessage(_messagesList[16], _countdown - 2);
+		drawFrame();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(2000);
 		gotoArea(127, 0);
 	}
 

@@ -281,6 +281,7 @@ public:
 	// Text messages and Fonts
 	void insertTemporaryMessage(const Common::String message, int deadline);
 	void getLatestMessages(Common::String &message, int &deadline);
+	void clearTemporalMessages();
 	Common::StringArray _temporaryMessages;
 	Common::Array<int> _temporaryMessageDeadlines;
 	Common::StringArray _messagesList;
