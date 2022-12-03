@@ -9977,6 +9977,54 @@ static const uint16 laurabow2PatchFixDaggerCaseError[] = {
 	PATCH_END
 };
 
+// During the act 5 chase, the game locks up if the player clicks on the open
+//  lid of the mummy coffin in room 454. The coffin can be left open from an
+//  earlier act. Clicking on the coffin works, but the lid has a different
+//  handler that evaluates conditions in the wrong order. If the lid is open
+//  then lid2:doVerb runs the script for earlier acts, sHandleTheCase, and that
+//  script doesn't call LB2:handsOn to enable input in act 5.
+//
+// We fix this by patching lid2:doVerb to evaluate act 5 conditions first. If
+//  those don't apply, then sHandleTheCase is called with its register set to
+//  open or close the coffin based on the lid state in global 115. Clicking on
+//  the lid now behaves like the rest of the coffin in act 5. This patch is in
+//  two parts to handle different instruction sizes in different versions.
+//
+// Applies to: All versions
+// Responsible method: lid2:doVerb
+static const uint16 laurabow2SignatureMummyCoffinLid1[] = {
+	SIG_MAGICDWORD,
+	0x81, 0x73,                         // lag 73 [ 0 if lid is closed, 1 if open ]
+	0x31, 0x12,                         // bnt 12 [ skip closing the lid ]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchMummyCoffinLid1[] = {
+	0x35, 0x00,                         // ldi 00 [ disable the first lid condition ]
+	PATCH_END
+};
+
+static const uint16 laurabow2SignatureMummyCoffinLid2[] = {
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi setScript
+	0x39, 0x03,                         // pushi 03
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa sHandleTheCase
+	0x36,                               // push
+	SIG_MAGICDWORD,
+	0x76,                               // push0
+	0x78,                               // push1 [ register = true (lid is closed) ]
+	0x81, 0x02,                         // lag 02
+	0x4a, 0x0a,                         // send 0a [ rm454 setScript: sHandleTheCase 0 1 ]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchMummyCoffinLid2[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x74, PATCH_ADDTOOFFSET(+2),        // lofss sHandleTheCase
+	0x76,                               // push0
+	0xe9, 0x73,                         // -sg 73 [ register = false if open, true if closed ]
+	PATCH_END
+};
+
 // The crate room (room 460) in act 5 locks up the game if you enter from the
 //  elevator (room 660), swing the hanging crate, and then attempt to leave
 //  back through the elevator door.
@@ -10610,6 +10658,8 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{ false,   400, "CD: fix museum actor loops",                     4, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
 	{ false,   420, "CD: fix museum actor loops",                     1, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
 	{  true,   450, "Floppy: fix dagger case error",                  2, laurabow2SignatureFixDaggerCaseError,           laurabow2PatchFixDaggerCaseError },
+	{  true,   454, "CD/Floppy: fix coffin lockup 1/2",               1, laurabow2SignatureMummyCoffinLid1,              laurabow2PatchMummyCoffinLid1 },
+	{  true,   454, "CD/Floppy: fix coffin lockup 2/2",               1, laurabow2SignatureMummyCoffinLid2,              laurabow2PatchMummyCoffinLid2 },
 	{  true,   460, "CD/Floppy: fix crate room east door lockup",     1, laurabow2SignatureFixCrateRoomEastDoorLockup,   laurabow2PatchFixCrateRoomEastDoorLockup },
 	{ false,   500, "CD: fix museum actor loops",                     3, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
 	{  true,  2660, "CD/Floppy: fix elevator lockup",                 1, laurabow2SignatureFixElevatorLockup,            laurabow2PatchFixElevatorLockup },
