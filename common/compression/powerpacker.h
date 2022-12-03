@@ -31,11 +31,13 @@ class PowerPackerStream : public Common::SeekableReadStream {
 	bool				_dispose;
 
 private:
-	int ppDecrunchBuffer(byte *src, byte *dest, uint32 src_len, uint32 dest_len);
-	uint16 getCrunchType(uint32 signature);
+	static int ppDecrunchBuffer(const byte *src, byte *dest, uint32 src_len, uint32 dest_len);
+	static uint16 getCrunchType(uint32 signature);
 
 public:
 	PowerPackerStream(Common::SeekableReadStream &stream);
+
+	static byte *unpackBuffer(const byte *input, uint32 input_len, uint32 &output_len);
 
 	~PowerPackerStream() override {
 		if (_dispose) delete _stream;
