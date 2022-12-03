@@ -109,6 +109,7 @@ public:                                                           \
 	const static char *msSerialize_Name;                        \
 	const static char *msSerialize_ParentName;                  \
 	const static cSerializeMemberField *mpSerialize_MemberFields; \
+	const static cSerializeClass serializedClass_##aClass; \
 	virtual ~aClass() = default; \
 	virtual tString Serialize_GetTopClass() { return #aClass; }
 
@@ -117,6 +118,7 @@ public:                                                           \
         const static char *msSerialize_Name;                        \
         const static char *msSerialize_ParentName;                  \
         const static cSerializeMemberField *mpSerialize_MemberFields; \
+		const static cSerializeClass serializedClass_##aClass; \
 	virtual tString Serialize_GetTopClass() { return #aClass; }
 
 /**
@@ -127,7 +129,7 @@ public:                                                           \
 		extern cSerializeMemberField mvTempMemberFields[];                                                                                                  \
 	}                                                                                                                                                       \
 	static iSerializable *_Create_##aClass() { return hplNew(aClass, ()); }                                                                                 \
-	static cSerializeClass gSerializedClass_##aClass(#aClass, #aParent, SerializeNamespace_##aClass::mvTempMemberFields, sizeof(aClass), _Create_##aClass); \
+	const cSerializeClass aClass::serializedClass_##aClass(#aClass, #aParent, SerializeNamespace_##aClass::mvTempMemberFields, sizeof(aClass), _Create_##aClass); \
 	const char *aClass::msSerialize_Name = #aClass;                                                                                                       \
 	const char *aClass::msSerialize_ParentName = #aParent;                                                                                                \
 	const cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields;                                        \
@@ -140,7 +142,7 @@ public:                                                           \
 		extern cSerializeMemberField mvTempMemberFields[];                                                                                            \
 	}                                                                                                                                                 \
 	static iSerializable *_Create_##aClass() { return hplNew(aClass, ()); }                                                                           \
-	static cSerializeClass gSerializedClass_##aClass(#aClass, "", SerializeNamespace_##aClass::mvTempMemberFields, sizeof(aClass), _Create_##aClass); \
+	const cSerializeClass aClass::serializedClass_##aClass(#aClass, "", SerializeNamespace_##aClass::mvTempMemberFields, sizeof(aClass), _Create_##aClass); \
 	const char *aClass::msSerialize_Name = #aClass;                                                                                                 \
 	const char *aClass::msSerialize_ParentName = "";                                                                                                \
 	const cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields;                                  \
@@ -152,7 +154,7 @@ public:                                                           \
 	namespace SerializeNamespace_##aClass {                                                                                                     \
 		extern cSerializeMemberField mvTempMemberFields[];                                                                                      \
 	}                                                                                                                                           \
-	static cSerializeClass gSerializedClass_##aClass(#aClass, #aParent, SerializeNamespace_##aClass::mvTempMemberFields, sizeof(aClass), NULL); \
+	const cSerializeClass aClass::serializedClass_##aClass(#aClass, #aParent, SerializeNamespace_##aClass::mvTempMemberFields, sizeof(aClass), NULL); \
 	const char *aClass::msSerialize_Name = #aClass;                                                                                           \
 	const char *aClass::msSerialize_ParentName = #aParent;                                                                                    \
 	const cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields;                            \
@@ -164,7 +166,7 @@ public:                                                           \
 	namespace SerializeNamespace_##aClass {                                                                                               \
 		extern cSerializeMemberField mvTempMemberFields[];                                                                                \
 	}                                                                                                                                     \
-	static cSerializeClass gSerializedClass_##aClass(#aClass, "", SerializeNamespace_##aClass::mvTempMemberFields, sizeof(aClass), NULL); \
+	const cSerializeClass aClass::serializedClass_##aClass(#aClass, "", SerializeNamespace_##aClass::mvTempMemberFields, sizeof(aClass), NULL); \
 	const char *aClass::msSerialize_Name = #aClass;                                                                                     \
 	const char *aClass::msSerialize_ParentName = "";                                                                                    \
 	const cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields;                      \
