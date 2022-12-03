@@ -1739,6 +1739,8 @@ private:
 	};
 
 	struct DispatchActionTaskData {
+		DispatchActionTaskData();
+
 		Actions::Action action;
 	};
 

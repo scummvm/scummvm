@@ -1729,7 +1729,7 @@ DataReadErrorCode ImageEffectModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
-ReturnModifier::ReturnModifier()  {
+ReturnModifier::ReturnModifier() : unknown1(0) {
 }
 
 DataReadErrorCode ReturnModifier::load(DataReader &reader) {

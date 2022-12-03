@@ -4075,6 +4075,9 @@ Runtime::Teardown::Teardown() : onlyRemoveChildren(false) {
 Runtime::SceneReturnListEntry::SceneReturnListEntry() : isAddToDestinationSceneTransition(false) {
 }
 
+Runtime::DispatchActionTaskData::DispatchActionTaskData() : action(Actions::kNone) {
+}
+
 Runtime::ConsumeMessageTaskData::ConsumeMessageTaskData() : consumer(nullptr) {
 }
 

@@ -41,6 +41,7 @@ Hacks::Hacks() {
 	midiVolumeScale = 256;
 	minTransitionDuration = 0;
 	ignoreMToonMaintainRateFlag = false;
+	mtiVariableReferencesHack = false;
 }
 
 Hacks::~Hacks() {
