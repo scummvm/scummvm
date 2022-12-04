@@ -30,17 +30,6 @@ namespace Views {
 namespace Maps {
 
 class AccessCode : public AnswerEntry {
-private:
-	/**
-	 * Correct code entered
-	 */
-	void correctCode();
-
-	/**
-	 * Incorrect code entered
-	 */
-	void incorrectCode();
-
 protected:
 	/**
 	 * Called when the code has been entered

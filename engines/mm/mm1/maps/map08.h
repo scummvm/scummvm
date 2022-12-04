@@ -67,6 +67,17 @@ private:
 		&Map08::special20,
 		&Map08::special20
 	};
+
+	/**
+	 * Correct code entered
+	 */
+	void correctCode();
+
+	/**
+	 * Incorrect code entered
+	 */
+	void incorrectCode();
+
 public:
 	Map08() : Map(8, "cave4", 0x202, 1) {}
 
@@ -74,6 +85,11 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
+
+	/**
+	 * Access code entered
+	 */
+	void codeEntered(const Common::String &code);
 };
 
 } // namespace Maps
