@@ -141,9 +141,7 @@ void Map10::special23() {
 		reduceHP();
 
 		if (getRandomNumber(4) == 4) {
-			Sound::sound(SOUND_2);
-			Sound::sound(SOUND_3);
-			InfoMessage msg(
+			SoundMessage msg(
 				0, 1, STRING["maps.map10.pit"],
 				[]() {
 					g_globals->_encounters.execute();
@@ -151,9 +149,10 @@ void Map10::special23() {
 			);
 			msg._delaySeconds = 2;
 			send(msg);
+			Sound::sound(SOUND_3);
 
 		} else {
-			send(SoundMessage(0, 1, STRING["maps.map10.pit"]));
+			send(SoundMessage(STRING["maps.map10.pit"]));
 			Sound::sound(SOUND_3);
 		}
 	}
@@ -166,7 +165,7 @@ void Map10::special29() {
 void Map10::special30() {
 	Game::Encounter &enc = g_globals->_encounters;
 	int monsterCount = getRandomNumber(4) + 3;
-	g_globals->_treasure._items[2] = 252;
+	g_globals->_treasure._items[2] = THUNDRANIUM_ID;
 
 	enc.clearMonsters();
 	for (int i = 0; i < monsterCount; ++i)
@@ -184,7 +183,7 @@ void Map10::special31() {
 void Map10::special32() {
 	Game::Encounter &enc = g_globals->_encounters;
 	int monsterCount = getRandomNumber(4) + 3;
-	g_globals->_treasure._items[2] = 243;
+	g_globals->_treasure._items[2] = LASER_BLASTER_ID;
 
 	enc.clearMonsters();
 	for (int i = 0; i < monsterCount; ++i)

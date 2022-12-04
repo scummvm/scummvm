@@ -29,10 +29,6 @@ namespace MM1 {
 namespace Views {
 namespace Maps {
 
-#define MAX_ANSWER_LENGTH 8
-#define ANSWER_OFFSET 636
-#define VAL1 641
-
 VolcanoGod::VolcanoGod() :
 		AnswerEntry("VolcanoGod", Common::Point(9, 3), 8) {
 }
@@ -84,7 +80,8 @@ bool VolcanoGod::msgKeypress(const KeypressMessage &msg) {
 }
 
 void VolcanoGod::challenge() {
-	static_cast<MM1::Maps::Map11 *>(g_maps->_currentMap)->challenge();
+	MM1::Maps::Map11 &map = *static_cast<MM1::Maps::Map11 *>(g_maps->_currentMap);
+	map.challenge();
 }
 
 void VolcanoGod::riddle() {
@@ -94,24 +91,15 @@ void VolcanoGod::riddle() {
 }
 
 void VolcanoGod::clue() {
+	MM1::Maps::Map11 &map = *static_cast<MM1::Maps::Map11 *>(g_maps->_currentMap);
 	close();
-	g_maps->_mapPos = Common::Point(0, 5);
-	g_events->send("Game", GameMessage("UPDATE"));
+	map.clue();
 }
 
 void VolcanoGod::answerEntered() {
-	MM1::Maps::Map &map = *g_maps->_currentMap;
-	Common::String properAnswer;
-	for (int i = 0; i < 8 && map[ANSWER_OFFSET + i]; ++i)
-		properAnswer += map[ANSWER_OFFSET + i] + 30;
-
-	if (_answer.equalsIgnoreCase(properAnswer)) {
-		(*g_maps->_currentMap)[VAL1]++;
-		g_events->addAction(KEYBIND_SEARCH);
-	} else {
-		g_maps->_mapPos = Common::Point(7, 2);
-		g_maps->changeMap(0xf04, 2);
-	}
+	MM1::Maps::Map11 &map = *static_cast<MM1::Maps::Map11 *>(g_maps->_currentMap);
+	close();
+	map.riddleAnswer(_answer);
 }
 
 } // namespace Maps
