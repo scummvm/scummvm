@@ -48,7 +48,7 @@ void Ruby::answerEntered() {
 	for (int i = 0; i < 12 && map[ANSWER_OFFSET + i]; ++i)
 		properAnswer += map[ANSWER_OFFSET + i] - 64;
 
-	if (_answer == properAnswer) {
+	if (_answer.equalsIgnoreCase(properAnswer)) {
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			g_globals->_party[i]._flags[5] |= CHARFLAG5_20;
 		}

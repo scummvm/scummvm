@@ -105,7 +105,7 @@ void VolcanoGod::answerEntered() {
 	for (int i = 0; i < 8 && map[ANSWER_OFFSET + i]; ++i)
 		properAnswer += map[ANSWER_OFFSET + i] + 30;
 
-	if (_answer == properAnswer) {
+	if (_answer.equalsIgnoreCase(properAnswer)) {
 		(*g_maps->_currentMap)[VAL1]++;
 		g_events->addAction(KEYBIND_SEARCH);
 	} else {

@@ -50,7 +50,7 @@ void Orango::answerEntered() {
 	for (int i = 0; i < 15 && map[ANSWER_OFFSET + i]; ++i)
 		properAnswer += (map[ANSWER_OFFSET + i] & 0x7f) + 29;
 
-	if (_answer == properAnswer) {
+	if (_answer.equalsIgnoreCase(properAnswer)) {
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			Character &c = g_globals->_party[i];
 			c._flags[13] |= CHARFLAG13_ALAMAR;

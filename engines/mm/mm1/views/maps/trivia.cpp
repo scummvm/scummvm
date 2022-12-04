@@ -53,7 +53,7 @@ void Trivia::draw() {
 }
 
 void Trivia::answerEntered() {
-	if (_answer == _correctAnswer) {
+	if (_answer.equalsIgnoreCase(_correctAnswer)) {
 		send(InfoMessage(STRING["maps.map21.correct"]));
 		g_globals->_party[0]._gems += 50;
 		Sound::sound(SOUND_3);
