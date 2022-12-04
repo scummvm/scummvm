@@ -1094,7 +1094,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		RESOURCELIST_ITE,
 		FONTLIST_ITE,
 		PATCHLIST_ITE,
-		INTROLIST_ITE_AMIGA_ENGLISH_AGA_CD,
+		INTROLIST_ITE_DEFAULT,
 		{},
 	},
 	// This is on the same disk as previous but it's for ECS systems
