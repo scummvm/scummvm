@@ -152,7 +152,7 @@ IMuseDigital::~IMuseDigital() {
 }
 
 int IMuseDigital::roundRobinSetBufferCount() {
-	int minStreams = _nominalBufferCount - 3;
+	int minStreams = MAX<int>(_nominalBufferCount - 3, 0);
 	int maxStreams = _nominalBufferCount + 3;
 	_maxQueuedStreams++;
 
