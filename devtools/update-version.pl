@@ -39,6 +39,7 @@ my @subs_files = qw(
 	dists/macosx/dockplugin/Info.plist
 	dists/iphone/Info.plist
 	dists/ios7/Info.plist
+	dists/tvos/Info.plist
 	dists/irix/scummvm.spec
 	dists/wii/meta.xml
 	dists/openpandora/PXML.xml
