@@ -114,6 +114,7 @@ void Map06::special01() {
 
 void Map06::special02() {
 	if (_data[VAL1]) {
+		g_maps->_mapPos.x--;
 		slide();
 	} else {
 		checkPartyDead();
@@ -142,9 +143,6 @@ void Map06::special04() {
 					c._condition = UNCONSCIOUS;
 			}
 		}
-	} else {
-		// TODO: Space key - is it used in-game?
-		g_events->addKeypress(Common::KEYCODE_SPACE);
 	}
 }
 
@@ -152,7 +150,8 @@ void Map06::special06() {
 	send(SoundMessage(
 		STRING["maps.map06.button"],
 		[]() {
-			byte &val1 = (*static_cast<Map06 *>(g_maps->_currentMap))[VAL1];
+			Map06 &map = *static_cast<Map06 *>(g_maps->_currentMap);
+			byte &val1 = map[VAL1];
 			val1 = val1 ? 0 : 1;
 			g_events->addKeypress(Common::KEYCODE_SPACE);
 		}
@@ -205,10 +204,15 @@ void Map06::special26() {
 }
 
 void Map06::slide() {
-	send(SoundMessage(16, 1, STRING["maps.map06.slide"]));
 	_data[VAL2]++;
 
-	updateGame();
+	SoundMessage msg(16, 1, STRING["maps.map06.slide"]);
+	msg._delaySeconds = 2;
+	msg._timeoutCallback = []() {
+		g_maps->_currentMap->updateGame();
+	};
+
+	send(msg);
 }
 
 } // namespace Maps

@@ -136,7 +136,7 @@ void Map02::special12() {
 }
 
 void Map02::special13() {
-	send(SoundMessage(0, 1, STRING["maps.map01.zom0"]));
+	send(SoundMessage(0, 1, STRING["maps.map02.zom0"]));
 }
 
 void Map02::special14() {

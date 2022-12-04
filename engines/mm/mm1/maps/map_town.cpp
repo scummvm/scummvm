@@ -66,7 +66,7 @@ void MapTown::tavern() {
 	visitedBusiness();
 
 	send(SoundMessage(
-		STRING[Common::String::format("maps.map%.2u.tavern_inside", _mapIndex)],
+		STRING[Common::String::format("maps.tavern_inside", _mapIndex)],
 		[]() {
 			g_events->addView("Tavern");
 		}
