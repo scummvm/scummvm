@@ -67,6 +67,8 @@ Window::~Window() {
 	delete _lingoState;
 	delete _soundManager;
 	delete _currentMovie;
+	for (uint i = 0; i < _frozenLingoStates.size(); i++)
+		delete _frozenLingoStates[i];
 	if (_puppetTransition)
 		delete _puppetTransition;
 }

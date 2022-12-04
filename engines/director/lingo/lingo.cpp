@@ -149,6 +149,27 @@ MenuReference::MenuReference() {
 	menuItemIdStr = nullptr;
 }
 
+LingoState::~LingoState() {
+	for (uint i = 0; i < callstack.size(); i++) {
+		if (callstack[i]->retLocalVars)
+			delete callstack[i]->retLocalVars;
+		if (callstack[i]->retContext) {
+			*callstack[i]->retContext->_refCount -= 1;
+			if (*callstack[i]->retContext->_refCount == 0)
+				delete callstack[i]->retContext;
+		}
+		delete callstack[i];
+	}
+	if (localVars)
+		delete localVars;
+	if (context) {
+		*context->_refCount -= 1;
+		if (*context->_refCount == 0)
+			delete context;
+	}
+
+}
+
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
 

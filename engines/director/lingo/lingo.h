@@ -298,6 +298,8 @@ struct LingoState {
 	ScriptContext *context = nullptr;
 	DatumHash *localVars = nullptr;
 	Datum me;
+
+	~LingoState();
 };
 
 class Lingo {
