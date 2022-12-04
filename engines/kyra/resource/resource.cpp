@@ -64,6 +64,9 @@ Common::Archive *Resource::loadKyra1MacInstaller() {
 Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles(), _protectedFiles(), _loaders(), _vm(vm), _bigEndianPlatForm(vm->gameFlags().platform == Common::kPlatformAmiga || vm->gameFlags().platform == Common::kPlatformSegaCD) {
 	initializeLoaders();
 
+	if (_vm->game() == GI_KYRA1 && _vm->gameFlags().platform == Common::Platform::kPlatformMacintosh)
+		SearchMan.addSubDirectoryMatching(Common::FSNode(ConfMan.get("path")), "runtime");
+
 	// Initialize directories for playing from CD or with original
 	// directory structure
 	if (_vm->game() == GI_KYRA3)
@@ -129,9 +132,16 @@ bool Resource::reset() {
 			// when the user has an Android package file in the CWD.
 			Common::FSDirectory gameDir(dir);
 			Common::ArchiveMemberList files;
+			Common::ScopedPtr<Common::FSDirectory> gameDirRuntime;
 
 			gameDir.listMatchingMembers(files, "*.PAK");
 			gameDir.listMatchingMembers(files, "*.APK");
+
+			if (_vm->gameFlags().platform == Common::Platform::kPlatformMacintosh) {
+				gameDirRuntime.reset(gameDir.getSubDirectory("runtime"));
+				gameDirRuntime->listMatchingMembers(files, "*.PAK");
+				gameDirRuntime->listMatchingMembers(files, "*.APK");
+			}
 
 			for (Common::ArchiveMemberList::const_iterator i = files.begin(); i != files.end(); ++i) {
 				Common::String name = (*i)->getName();

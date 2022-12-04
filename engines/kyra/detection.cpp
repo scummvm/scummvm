@@ -47,6 +47,7 @@ static const DebugChannelDef debugFlagList[] = {
 const char *const directoryGlobs[] = {
 	"malcolm",
 	"data", // LOL GOG release
+	"runtime",
 	nullptr
 };
 
