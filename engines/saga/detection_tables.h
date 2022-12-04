@@ -173,7 +173,30 @@ static const SAGAGameDescription gameDescriptions[] = {
 	},
 
 
-	// TODO: Add Amiga demos here (not supported yet)
+	// TODO: Add Amiga floppy demos here (not supported yet)
+	{
+		{
+			"ite",
+			"AGA Demo CD",
+			{
+				{"ite.rtn",		GAME_RESOURCEFILE,	"634d36f78ac151b14dbeed274e169def", 18564},
+				{"ite.000",                             0,      "75a2c63fd67d3c87512a37af91537fba", 900096},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformAmiga,
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_ITE,
+		GF_EXTRA_ITE_CREDITS | GF_AGA_GRAPHICS | GF_EMBED_FONT | GF_POWERPACK_GFX,
+		ITE_DEFAULT_SCENE,
+		RESOURCELIST_ITE_GERMAN_AGA_CD,
+		FONTLIST_NONE,
+		PATCHLIST_ITE,
+		INTROLIST_ITE_AMIGA_GERMAN_AGA,
+		{},
+	},
 
 
 	// ITE Mac versions ///////////////////////////////////////////////////////////////////////////////////////
