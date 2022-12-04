@@ -221,16 +221,9 @@ void ObsidianGameDataHandler::unpackMacRetailInstaller(Common::Array<Common::Sha
 		{"RSGKit.rPP", MKTAG('M', 'F', 'c', 'o'), MKTAG('M', 'f', 'M', 'f')},
 	};
 
-	Common::SharedPtr<Common::MacResManager> installerResMan(new Common::MacResManager());
-	persistentResources.push_back(PersistentResource<Common::MacResManager>::wrap(installerResMan));
-
-	if (!installerResMan->open("Obsidian Installer"))
-		error("Failed to open Obsidian Installer");
-
-	if (!installerResMan->hasDataFork())
+	Common::SeekableReadStream *installerDataForkStream = Common::MacResManager::openFileOrDataFork("Obsidian Installer");
+	if (!installerDataForkStream)
 		error("Obsidian Installer has no data fork");
-
-	Common::SeekableReadStream *installerDataForkStream = installerResMan->getDataFork();
 
 	// Not counted/persisted because the StuffIt archive owns the stream.  It will also delete it if createStuffItArchive fails.
 	_installerArchive.reset(Common::createStuffItArchive(installerDataForkStream));
@@ -238,10 +231,8 @@ void ObsidianGameDataHandler::unpackMacRetailInstaller(Common::Array<Common::Sha
 
 	persistentResources.push_back(PersistentResource<Common::Archive>::wrap(_installerArchive));
 
-	if (!_installerArchive) {
-
+	if (!_installerArchive)
 		error("Failed to open Obsidian Installer archive");
-	}
 
 	debug(1, "Unpacking resource files...");
 
@@ -439,15 +430,9 @@ void SPQRGameDataHandler::unpackAdditionalFiles(Common::Array<Common::SharedPtr<
 			{"SPQR:Data File SPQR", true, false, MTFT_MAIN},
 		};
 
-		Common::SharedPtr<Common::MacResManager> installerResMan(new Common::MacResManager());
-
-		if (!installerResMan->open("Install.vct"))
+		Common::SharedPtr<Common::SeekableReadStream> installerDataForkStream(Common::MacResManager::openFileOrDataFork("Install.vct"));
+		if (!installerDataForkStream)
 			error("Failed to open SPQR installer");
-
-		if (!installerResMan->hasDataFork())
-			error("SPQR installer has no data fork");
-
-		Common::SharedPtr<Common::SeekableReadStream> installerDataForkStream(installerResMan->getDataFork());
 
 		Common::ScopedPtr<Common::Archive> archive(Common::createMacVISEArchive(installerDataForkStream.get()));
 
@@ -1218,12 +1203,9 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 			if (segmentFile->stream)
 				dataFork = segmentFile->stream;
 			else {
-				Boot::initResManForFile(*segmentFile);
-				dataFork.reset(segmentFile->resMan->getDataFork());
+				dataFork.reset(Common::MacResManager::openFileOrDataFork(segmentFile->fileName));
 				if (!dataFork)
 					error("Segment file '%s' has no data fork", segmentFile->fileName.c_str());
-
-				persistentResources.push_back(Boot::PersistentResource<Common::MacResManager>::wrap(segmentFile->resMan));
 			}
 
 			persistentResources.push_back(Boot::PersistentResource<Common::SeekableReadStream>::wrap(dataFork));
