@@ -93,7 +93,7 @@ void Map05::special05() {
 }
 
 void Map05::special06() {
-	if (!hasScroll()) {
+	if (!g_globals->_party.hasItem(VELLUM_SCROLL_ID)) {
 		send(SoundMessage(
 			0, 1, STRING[!hasFlag() ? "maps.map05.man1" : "maps.map05.man2"],
 			[]() {
@@ -129,21 +129,21 @@ void Map05::special09() {
 	send(SoundMessage(
 		0, 1, STRING["maps.map05.arena_inside"],
 		[](const Common::KeyState &keyState) {
+			Map05 &map = *static_cast<Map05 *>(g_maps->_currentMap);
 			if (keyState.keycode == Common::KEYCODE_y) {
-				(*g_maps->_currentMap)[MAP_47] = 2;
-				(*g_maps->_currentMap)[MAP_33] = 6;
-				(*g_maps->_currentMap)[MAP_MAX_MONSTERS] = 15;
+				g_events->close();
+				map[MAP_47] = 2;
+				map[MAP_33] = 6;
+				map[MAP_MAX_MONSTERS] = 15;
 				g_globals->_encounters._encounterType = Game::FORCE_SURPRISED;
 				g_globals->_encounters.execute();
 
 			} else if (keyState.keycode == Common::KEYCODE_n) {
-				(*g_maps->_currentMap)[MAP_47] = 1;
-				(*g_maps->_currentMap)[MAP_33] = 4;
-				(*g_maps->_currentMap)[MAP_MAX_MONSTERS] = 10;
+				g_events->close();
+				map[MAP_47] = 1;
+				map[MAP_33] = 4;
+				map[MAP_MAX_MONSTERS] = 10;
 				g_globals->_treasure.clear();
-
-				// TODO: Space key - is it used in-game?
-				g_events->addKeypress(Common::KEYCODE_SPACE);
 			}
 		}
 	));
@@ -188,16 +188,6 @@ void Map05::showMessage(const Common::String &msg) {
 		0, 1, STRING["maps.map05.message1"],
 		0, 2, msg
 	));
-}
-
-bool Map05::hasScroll() {
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		const Character &c = g_globals->_party[i];
-		if (c.hasItem(VELLUM_SCROLL_ID))
-			return true;
-	}
-
-	return false;
 }
 
 bool Map05::addScroll() {

@@ -70,7 +70,7 @@ struct BuyMiscData {
 #define MAX_FOOD 40
 
 struct MarketData {
-	const byte FOOD_COST[4] = { 5, 10, 20, 200 };
+	const byte FOOD_COST[5] = { 5, 10, 20, 200, 50 };
 };
 
 struct TempleData {

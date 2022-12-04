@@ -91,7 +91,6 @@ void Map03::special01() {
 			0, 1, STRING["maps.map03.telgoran2"],
 			[](const Common::KeyState &) {
 				InfoMessage info2(
-					0, 0, STRING["maps.map03.telgoran1"],
 					0, 1, STRING["maps.map03.telgoran3"],
 					[](const Common::KeyState &) {
 						g_events->close();

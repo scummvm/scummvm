@@ -45,6 +45,9 @@ void Arrested::draw() {
 }
 
 bool Arrested::msgKeypress(const KeypressMessage &msg) {
+	if (endDelay())
+		return true;
+
 	switch (msg.keycode) {
 	case Common::KEYCODE_a:
 		attack();
@@ -114,7 +117,7 @@ void Arrested::surrender(int numYears) {
 	clearSurface();
 	Sound::sound(SOUND_2);
 	writeString(0, 1, STRING["maps.map04.sentence"]);
-	writeNumber('0' + numYears);
+	writeNumber(numYears);
 
 	(*g_maps->_currentMap)[MAP04_TREASURE_STOLEN] = 0;
 	delaySeconds(3);

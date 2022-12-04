@@ -46,7 +46,6 @@ private:
 	void special14();
 	void encounter(int monsterId);
 	void showMessage(const Common::String &msg);
-	static bool hasScroll();
 	static bool addScroll();
 	static bool hasFlag();
 	static void addFlag();

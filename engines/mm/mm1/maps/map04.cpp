@@ -69,15 +69,13 @@ void Map04::special01() {
 		hasCourier = (g_globals->_party[i]._flags[0] & CHARFLAG0_COURIER1) != 0;
 	}
 
-	bool hasScroll = false;
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		Character &c = g_globals->_party[i];
-		if (c.hasItem(VELLUM_SCROLL_ID)) {
-			hasScroll = true;
-			c._gold += 1500;
-			break;
-		}
-	}
+	bool hasScroll = g_globals->_party.hasItem(VELLUM_SCROLL_ID);
+
+	auto callback = [](const Common::KeyState &) {
+		g_events->close();
+		g_maps->_mapPos.y = 6;
+		g_maps->_currentMap->updateGame();
+	};
 
 	if (hasCourier && hasScroll) {
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
@@ -90,13 +88,13 @@ void Map04::special01() {
 		send(InfoMessage(
 			0, 0, STRING["maps.map04.agar1"],
 			0, 1, STRING["maps.map04.agar2"],
-			[](const Common::KeyState &) {
-			}
+			callback	
 		));
 	} else {
 		send(InfoMessage(
-			0, 0, STRING["maps.map03.telgoran1"],
-			0, 1, STRING["maps.map03.agar3"]
+			0, 0, STRING["maps.map04.agar1"],
+			0, 1, STRING["maps.map04.agar3"],
+			callback
 		));
 	}
 }
@@ -122,6 +120,7 @@ void Map04::special04() {
 		));
 	} else {
 		// Sucks to be you
+		_data[MAP04_PASSAGE_OVERRIDE]++;
 		g_events->addView("Arrested");
 	}
 }
@@ -139,10 +138,9 @@ void Map04::special07() {
 }
 
 void Map04::special08() {
-	// Pick random run destination. This seems incredibly dangerous,
-	// since couldn't it end up with the party in a wall?
 	g_maps->_mapPos.x = getRandomNumber(15);
 	g_maps->_mapPos.y = getRandomNumber(15);
+	redrawGame();
 
 	send(InfoMessage(0, 1, STRING["maps.poof"]));
 }
@@ -150,19 +148,17 @@ void Map04::special08() {
 void Map04::special09() {
 	visitedExit();
 	if (_data[MAP04_STAIRS_OVERRIDE] || _data[MAP04_TREASURE_STOLEN] == 0) {
-		if (_data[MAP04_STAIRS_OVERRIDE] < 255)
-			_data[MAP04_STAIRS_OVERRIDE]++;
-
 		send(SoundMessage(
 			STRING["maps.stairs_down"],
 			[]() {
 				g_maps->_mapPos.x = 0;
 				g_maps->_mapPos.y = 7;
-				g_maps->changeMap(0x202, 2);
+				g_maps->changeMap(0x202, 1);
 			}
 		));
 	} else {
 		// Sucks to be you
+		_data[MAP04_STAIRS_OVERRIDE]++;
 		g_events->addView("Arrested");
 	}
 }
