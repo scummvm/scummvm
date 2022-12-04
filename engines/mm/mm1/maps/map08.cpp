@@ -29,7 +29,13 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
-#define VAL1 163
+#define MAX_CODE_LENGTH 10
+#define ANSWER_OFFSET 147
+#define CODE_ENTERED 163
+#define CODE_FAILURES 408
+
+static const byte OFFSETS1[8] = { 146, 98, 150, 102, 153, 105, 157, 109 };
+static const byte OFFSETS2[8] = { 130, 82, 134, 86, 137, 89, 141, 93 };
 
 void Map08::special() {
 	// Scan for special actions on the map cell
@@ -78,7 +84,7 @@ void Map08::special01() {
 }
 
 void Map08::special02() {
-	if (_data[VAL1]) {
+	if (_data[CODE_ENTERED]) {
 		g_events->addView("AccessCode");
 	} else {
 		checkPartyDead();
@@ -96,7 +102,7 @@ void Map08::special05() {
 }
 
 void Map08::special06() {
-	if (_data[VAL1]) {
+	if (_data[CODE_ENTERED]) {
 		reduceHP();
 
 		send(InfoMessage(18, 2, STRING["maps.map08.zap"]));
@@ -107,7 +113,7 @@ void Map08::special06() {
 }
 
 void Map08::special08() {
-	if (_data[VAL1]) {
+	if (_data[CODE_ENTERED]) {
 		send(InfoMessage(0, 1, STRING["maps.map08.dancing_lights"]));
 		Sound::sound(SOUND_3);
 	} else {
@@ -127,6 +133,64 @@ void Map08::addTreasure() {
 	g_globals->_treasure.setGold(getRandomNumber(150) + 100);
 	g_globals->_treasure.setGems(getRandomNumber(4));
 	g_events->addAction(KEYBIND_SEARCH);
+}
+
+void Map08::codeEntered(const Common::String &code) {
+	MM1::Maps::Map &map = *g_maps->_currentMap;
+	Common::String properCode;
+	for (int i = 0; i < 10 && map[ANSWER_OFFSET + i]; ++i)
+		properCode += map[ANSWER_OFFSET + i] + 0x1f;
+
+	if (code.equalsIgnoreCase(properCode))
+		correctCode();
+	else
+		incorrectCode();
+}
+
+void Map08::correctCode() {
+	_data[CODE_ENTERED] = 0;
+
+	for (int i = 0; i < 8; ++i)
+		_states[OFFSETS1[i]] ^= 4;
+	for (int i = 0; i < 8; ++i)
+		_states[OFFSETS2[i]] ^= 0x40;
+	_states[119] ^= 0x10;
+	_states[120] ^= 1;
+
+	send(SoundMessage(STRING["maps.map08.good_code"]));
+}
+
+void Map08::incorrectCode() {
+	SoundMessage msg(
+		STRING["maps.map08.bad_code"],
+		[]() {
+			MM1::Maps::Map &map = *g_maps->_currentMap;
+			map[CODE_FAILURES]++;
+
+			if (map[CODE_FAILURES] != 2 && map[CODE_FAILURES] < 20) {
+				g_maps->_mapPos.y--;
+				map.updateGame();
+				return;
+			} else if (map[CODE_FAILURES] != 2) {
+				map[MM1::Maps::MAP_31] = 10;
+			}
+
+			InfoMessage msg2(
+				0, 1, STRING["maps.map08.bad_code"],
+				17, 2, STRING["maps.map08.alarm"],
+				[]() {
+					g_globals->_encounters.execute();
+				}
+			);
+			msg2._delaySeconds = 2;
+
+			g_events->send(msg2);
+			Sound::sound(SOUND_3);
+		}
+	);
+
+	msg._delaySeconds = 2;
+	send(msg);
 }
 
 } // namespace Maps
