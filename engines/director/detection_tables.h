@@ -2988,8 +2988,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("alius", "8-bit Color",	"ALIUS_8.EXE",   "9db857a65199db5251a33b2121ec5984", 2426433, Common::JA_JPN, 404),
 	WINGAME1_l("alius", "16-bit Color",	"ALIUS_16.EXE",  "98ac4e872421263dbbde1636b1e9d0e1", 2635737, Common::JA_JPN, 404),
 
-	MACGAME1("alphabet", "", "Alpha.ppc", "71287376e445ab9c98f0d150bb0ed175", 59444, 404),
-	WINGAME1("alphabet", "", "ALPHA.EXE", "c89c8301db7ef0ebffedf435863b3ffc", 749092, 404),
+	MACGAME1("alphabet", "", "Alpha.ppc",  "71287376e445ab9c98f0d150bb0ed175", 59188, 404),
+	WINGAME2("alphabet", "", "ALPHA.EXE",  "c89c8301db7ef0ebffedf435863b3ffc", 749092,
+							 "SHARED.DXR", "4e0c4cda8a75154f568d75095ac1132f", 333196, 404),
 
 	// Windows version is D5
 	MACGAME1("amber", "", "xn--AMBER-Journeys Beyond-yb4m", "a6a7812d8b3de0da884197eb26a1b059", 60086, 404),
@@ -2998,10 +2999,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 							"Rights.Dir", "196e02dd14e685b599cfc6f8dcc7cd3b", 641230, 400),
 	WINGAME1t("amnesty", "", "AMNESTY.EXE", "3e647bd639f00391da11f015a241d9e7", 736902, 404),
 
-	WINGAME1_l("angelgate", "",		"ANGEL.EXE", "046f0458f64b9008bc4b0dca5b895390", 746991, Common::JA_JPN, 404),
+	WINGAME2_l("angelgate", "",		"ANGEL.EXE", "046f0458f64b9008bc4b0dca5b895390", 746991,
+									"FILE/START","9823012f8f3dc309edd7b3642de9070a", 59734, Common::JA_JPN, 404),
 	WINDEMO2_l("angelgate", "Demo", "DEMO.EXE",	 "32640d047e9e0d9498a6654de07e8248", 746865,
 									"START",	 "9261f9d13410517d9172975ea33695c2", 10354, Common::JA_JPN, 404),
-	MACDEMO2_l("angelgate", "Demo", "DEMO",		 "bcd3c718db258701496b3c5bcb827ef2", 483415,
+	MACDEMO2_l("angelgate", "Demo", "DEMO",		 "bcd3c718db258701496b3c5bcb827ef2", 483159,
 									"START",	 "66600069c64ac7938eba0531ea1c1537", 10482, Common::JA_JPN, 404),
 	// Original filename is 'デモ', e.g. 'demo'
 	MACDEMO2_l("angelgate", "Demo", "xn--edkuc", 	 "bcd3c718db258701496b3c5bcb827ef2", 483159,
@@ -3028,7 +3030,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("antsafire", "Pro 1.2.7 Demo", "Ants Afire! Pro Demo 1.2.7", "ea646eccc9a53f44ce082459d4809a06", 483490, 400),
 
 	MACDEMO1("aol", "v2.6 Demo", "America Online Easy", "67f572196550aedb1f9523d782022be0", 482582, 404),
-	WINDEMO1t("aol", "Demo", "AOL.EXE", "b91b98671625a60252dba2cc7d052e7d", 1426687, 404),
+	WINDEMO2t("aol", "Demo", "AOL.EXE",		"b91b98671625a60252dba2cc7d052e7d", 1426687,
+							 "AOLMOV.AVI",	"8a3ce7dd86e5674240aff51c9a82c193", 5795846, 404),
 
 	MACGAME1("applestore", "", "Apple Company Store", "19b7c96659c773e73b13986d06b28c5c", 774048, 404),
 
@@ -3041,7 +3044,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 							   "SRC/WINLOBBY.Dxr", "f53af0b58070d2450a3672847434b609", 5282042, Common::JA_JPN, 404),
 
 	MACGAME1("arcofdoom", "", "Arc Player (4mb)", "ea553e3f3fa123ad38fa5249621e8c8b", 295426, 400),
-	WINGAME1("arcofdoom", "", "ARC.EXE", "fd3e9ad004597b01656b28c348a2ae7f", 687973, 400),
+	WINGAME2("arcofdoom", "", "ARC.EXE", 		  "fd3e9ad004597b01656b28c348a2ae7f", 687973,
+							  "ARC/BEGINARC.DIR", "c144c827f33d77597992e149a4763ffa", 29674, 404),
 	MACDEMO1("arcofdoom", "Demo", "ArcDemo", "cdb27c916044ae4dceb4b7326063fa03", 301669, 400),
 
 	// English and German selectable from main menu
@@ -3053,7 +3057,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 								   "WINWORLD.DIR", "0cf86a011d48ef31790514f13f92484d", 19977904, 404),
 
 	MACGAME1("artrageous", "", "Artrageous!", "17efee018a660458fae80de4364021ac", 483746, 404),
-	WINGAME1("artrageous", "", "ART.EXE", "926ca15bcb7bdccc8f9b14b052d05f83", 696827, 404),
+	WINGAME2("artrageous", "", "ART.EXE", 		   "926ca15bcb7bdccc8f9b14b052d05f83", 696827,
+							   "DATA/ARTSTAR.DIR", "a70e3e1be70e2d2a4251c207c77e33cc", 89820, 404),
 
 	MACGAME1("aruba", "", "ARUBA POWER PC", "d8b8e42c2d9875b47ea762ca3fd45122", 57122, 404),
 	WINGAME1("aruba", "", "ARUBA.EXE", "adb2655694ddacd49513ae50f58977ea", 696671, 404),
@@ -3066,7 +3071,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1t("atbat", "", "ATBATDMO.EXE", "2000eefeb4bf68749dad55e101cbd318", 3266657, 400),
 
 	MACGAME1("athletics", "", "ATHLETICS", "17efee018a660458fae80de4364021ac", 482866, 404),
-	WINGAME1("athletics", "", "PROJECT.EXE", "b804f1e4bf84c31979502329ee0f8c28", 696839, 404),
+	WINGAME2("athletics", "", "PROJECT.EXE", "b804f1e4bf84c31979502329ee0f8c28", 696839,
+							  "FIRSTMOV",	 "f2d6cb666b17905bbccc332ddb60dc07", 16198, 404),
 
 	// Developed by Future Pirates
 	// L sets gextendmemoryflg to 1; S sets it to 0
@@ -6917,8 +6923,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("ssgbi", "", "GBI Screen Saver", "9c9907925c1bf80a71ae27f423925725", 1130762, 601),
 
+	// Part of "Lee Pipes Press Kit"
+	// Both versions require installation
 	MACGAME1("ssleepipes", "", "pipes",		"dc48a185cfddce0d48a199fd25e328ac", 94195, 650),
-	WINGAME1("ssleepipes", "", "pipes.exe", "a593079aecf5bd938ce75264cac24b2d", 1545446, 600),
+	WINGAME2("ssleepipes", "", "pipes.exe", 			  "a593079aecf5bd938ce75264cac24b2d", 1545446,
+							   "pipes_data/episode1.dxr", "45b6a2d7952903bd554c82c0a0d6044a", 2809574, 600),
 
 	// Screen savers found on Let's Play with "Sakura" activity CD
 	// Mac versions are D5
@@ -7402,7 +7411,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("webmaster", "", "Webmaster.exe", "7c18c9a6af2694156bf09ed195c1ab09", 1820594, 702),
 
 	MACGAME1_l("xtown2", "", "xn--CROSSTOWN NGELN-n5a/xn--ngeln-xla", "0944b962ebb00f4b5d5149d220f8449b", 116140, Common::SE_SWE, 702),
-	WINGAME1t_l("xtown2", "", "ANGEL.EXE", "ea43a06fe305ceaa2ca2ba16feaee320", 2212330, Common::SE_SWE, 700),
+	WINGAME2t_l("xtown2", "", "ANGEL.EXE", 		  "ea43a06fe305ceaa2ca2ba16feaee320", 2212330,
+							  "DATA_S/START.DXR", "9e83bf4d2b1606bd0d26ea8949f0e21e", 72799, Common::SE_SWE, 700),
 
 	// Found on アクティブマスコット・ハイジ (Heidi Desktop Mascot)
 	// Create cards using ZUIYO's new characters Popee and Beast
