@@ -56,10 +56,10 @@ void Map12::special() {
 void Map12::special00() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.ladder_up"],
+		STRING["maps.map12.ladder_up"],
 		[]() {
 			g_maps->_mapPos = Common::Point(7, 13);
-			g_maps->changeMap(0x105, 2);
+			g_maps->changeMap(0x106, 2);
 		}
 	));
 }
@@ -115,15 +115,15 @@ void Map12::special01() {
 }
 
 void Map12::special02() {
-	polyhedron('1', (unsigned char)182);
+	polyhedron('1', 0x80 + '6');
 }
 
 void Map12::special03() {
-	polyhedron('1', (unsigned char)179);
+	polyhedron('1', 0x80 + '3');
 }
 
 void Map12::special04() {
-	polyhedron('1', (unsigned char)176);
+	polyhedron('1', 0x80 + '0');
 }
 
 void Map12::special05() {
@@ -131,15 +131,15 @@ void Map12::special05() {
 }
 
 void Map12::special06() {
-	polyhedron('1', (unsigned char)178);
+	polyhedron('1', 0x80 + '2');
 }
 
 void Map12::special07() {
-	polyhedron('1', (unsigned char)181);
+	polyhedron('1', 0x80 + '5');
 }
 
 void Map12::special08() {
-	polyhedron('1', (unsigned char)180);
+	polyhedron('1', 0x80 + '4');
 }
 
 void Map12::special09() {

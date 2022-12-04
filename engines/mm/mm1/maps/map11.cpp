@@ -29,6 +29,8 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+#define MAX_ANSWER_LENGTH 8
+#define ANSWER_OFFSET 636
 #define VAL1 641
 #define VAL2 642
 #define VAL3 643
@@ -79,6 +81,7 @@ void Map11::special00() {
 
 void Map11::special01() {
 	if (_data[VAL1]) {
+		// Teleport to outside the Inn of Sorpigal
 		g_maps->_mapPos = Common::Point(8, 5);
 		g_maps->changeMap(0x604, 1);
 	} else {
@@ -96,6 +99,8 @@ void Map11::special03() {
 }
 
 void Map11::special04() {
+	g_maps->clearSpecial();
+
 	send(SoundMessage(STRING["maps.map11.virgin"],
 		[](const Common::KeyState &ks) {
 			switch (ks.keycode) {
@@ -183,6 +188,26 @@ void Map11::challenge() {
 
 void Map11::setDialChar(char c) {
 	_data[VAL2 + _dialIndex] = c;
+}
+
+void Map11::clue() {
+	g_maps->_mapPos = Common::Point(0, 5);
+	updateGame();
+}
+
+void Map11::riddleAnswer(const Common::String &answer) {
+	Common::String properAnswer;
+	for (int i = 0; i < 8 && _data[ANSWER_OFFSET + i]; ++i)
+		properAnswer += _data[ANSWER_OFFSET + i] + 30;
+
+	if (answer.equalsIgnoreCase(properAnswer)) {
+		_data[VAL1]++;
+		g_globals->_treasure._items[2] = KEY_CARD_ID;
+		g_events->addAction(KEYBIND_SEARCH);
+	} else {
+		g_maps->_mapPos = Common::Point(7, 2);
+		g_maps->changeMap(0xf04, 2);
+	}
 }
 
 } // namespace Maps

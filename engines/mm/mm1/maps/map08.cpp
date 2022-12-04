@@ -31,7 +31,7 @@ namespace Maps {
 
 #define MAX_CODE_LENGTH 10
 #define ANSWER_OFFSET 147
-#define CODE_ENTERED 163
+#define CODE_ARMED 163
 #define CODE_FAILURES 408
 
 static const byte OFFSETS1[8] = { 146, 98, 150, 102, 153, 105, 157, 109 };
@@ -84,7 +84,7 @@ void Map08::special01() {
 }
 
 void Map08::special02() {
-	if (_data[CODE_ENTERED]) {
+	if (_data[CODE_ARMED]) {
 		g_events->addView("AccessCode");
 	} else {
 		checkPartyDead();
@@ -102,7 +102,7 @@ void Map08::special05() {
 }
 
 void Map08::special06() {
-	if (_data[CODE_ENTERED]) {
+	if (_data[CODE_ARMED]) {
 		reduceHP();
 
 		send(InfoMessage(18, 2, STRING["maps.map08.zap"]));
@@ -113,7 +113,7 @@ void Map08::special06() {
 }
 
 void Map08::special08() {
-	if (_data[CODE_ENTERED]) {
+	if (_data[CODE_ARMED]) {
 		send(InfoMessage(0, 1, STRING["maps.map08.dancing_lights"]));
 		Sound::sound(SOUND_3);
 	} else {
@@ -148,7 +148,7 @@ void Map08::codeEntered(const Common::String &code) {
 }
 
 void Map08::correctCode() {
-	_data[CODE_ENTERED] = 0;
+	_data[CODE_ARMED] = 0;
 
 	for (int i = 0; i < 8; ++i)
 		_states[OFFSETS1[i]] ^= 4;

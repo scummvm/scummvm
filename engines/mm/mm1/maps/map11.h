@@ -78,6 +78,16 @@ public:
 	 * Set the alphabetic character for the current dial
 	 */
 	void setDialChar(char c);
+
+	/**
+	 * Volcano god's clue
+	 */
+	void clue();
+
+	/**
+	 * Volcano god's riddle answer
+	 */
+	void riddleAnswer(const Common::String &answer);
 };
 
 } // namespace Maps

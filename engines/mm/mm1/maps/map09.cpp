@@ -99,7 +99,7 @@ void Map09::special06() {
 		}
 	}
 
-	g_events->send(SoundMessage(0, 1, STRING["maps.map07.accuracy"]));
+	g_events->send(SoundMessage(0, 1, STRING["maps.map09.accuracy"]));
 }
 
 void Map09::special07() {
@@ -111,7 +111,7 @@ void Map09::special07() {
 		}
 	}
 
-	g_events->send(SoundMessage(0, 1, STRING["maps.map07.speed"]));
+	g_events->send(SoundMessage(0, 1, STRING["maps.map09.speed"]));
 }
 
 void Map09::special08() {
@@ -120,32 +120,41 @@ void Map09::special08() {
 		c._flags[5] |= CHARFLAG5_8;
 	}
 
-	const Character &leader = g_globals->_party[0];
+	send(SoundMessage(
+		0, 1, STRING["maps.map09.shrine1"],
+		[]() {
+			const Character &leader = g_globals->_party[0];
 
-	if (leader._alignment == leader._alignmentInitial) {
-		send(SoundMessage(
-			0, 1, STRING["maps.map09.shrine1"],
-			0, 2, STRING["maps.map09.shrine2"]
-		));
+			if (leader._alignment == leader._alignmentInitial) {
+				SoundMessage msg(
+					STRING["maps.map09.shrine2"],
+					[]() {
+						g_globals->_treasure._items[2] = getRandomNumber(26) + 120;
+						g_globals->_treasure.setGold(120);
+						g_events->addAction(KEYBIND_SEARCH);
+					}
+				);
+				msg._delaySeconds = 2;
+				g_events->send(msg);
 
-		g_globals->_treasure._items[2] = getRandomNumber(26) + 120;
-		g_globals->_treasure.setGold(120);
-		g_events->addAction(KEYBIND_SEARCH);
-
-	} else {
-		send(SoundMessage(
-			0, 1, STRING["maps.map09.shrine1"],
-			0, 2, STRING["maps.map09.shrine3"]
-		));
-
-		// TODO: Check this is right. Original set y twice
-		g_maps->_mapPos = Common::Point(5, 13);
-		g_maps->changeMap(0x201, 3);
-	}
+			} else {
+				SoundMessage msg(
+					STRING["maps.map09.shrine3"],
+					[]() {
+						// TODO: Check this is right. Original set y twice
+						g_maps->_mapPos = Common::Point(5, 13);
+						g_maps->changeMap(0x201, 3);
+					}
+				);
+				msg._delaySeconds = 2;
+				g_events->send(msg);
+			}
+		}
+	));
 }
 
 void Map09::special09() {
-	send(SoundMessage(0, 1, STRING["maps.map09.stalactities"]));
+	send(SoundMessage(0, 1, STRING["maps.map09.stalactites"]));
 	reduceHP();
 }
 
@@ -154,7 +163,7 @@ void Map09::special14() {
 
 	if (g_globals->_activeSpells._s.levitate) {
 		send(SoundMessage(
-			0, 1, STRING["maps.map09.map"],
+			0, 1, STRING["maps.map09.pit"],
 			0, 2, STRING["maps.map09.levitation"]
 		));
 	} else {
@@ -166,9 +175,14 @@ void Map09::special14() {
 			c._hpBase /= 2;
 		}
 
-		send(SoundMessage(
-			0, 1, STRING["maps.map09.map"]
-		));
+		SoundMessage msg(
+			STRING["maps.map09.pit"],
+			[]() {
+				g_globals->_encounters.execute();
+			}
+		);
+		msg._delaySeconds = 2;
+		send(msg);
 	}
 }
 
@@ -183,7 +197,6 @@ void Map09::special18() {
 			getRandomNumber(g_globals->_party.size()) - 1
 		];
 
-
 		if (!(g_globals->_currCharacter->_condition & BAD_CONDITION)) {
 			// Chosen character is okay, so blast them
 			g_globals->_currCharacter->_condition = BAD_CONDITION | DEAD;
@@ -191,8 +204,7 @@ void Map09::special18() {
 			// Chosen character is disabled, so instead
 			// remove the SP from all members of the party
 			for (uint i = 0; i < g_globals->_party.size(); ++i) {
-				g_globals->_currCharacter = &g_globals->_party[i];
-				g_globals->_currCharacter->_sp._current = 0;
+				g_globals->_party[i]._sp._current = 0;
 			}
 		}
 
