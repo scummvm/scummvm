@@ -30,7 +30,9 @@
 
 @interface TextInputHandler : UITextView {
 	SoftKeyboard *softKeyboard;
+#if TARGET_OS_IOS
 	UIToolbar *toolbar;
+#endif
 	UIScrollView *scrollView;
 }
 
@@ -51,7 +53,7 @@
 	[self setAutocorrectionType:UITextAutocorrectionTypeNo];
 	[self setAutocapitalizationType:UITextAutocapitalizationTypeNone];
 	[self setEnablesReturnKeyAutomatically:NO];
-
+#if TARGET_OS_IOS
 	// Hide the input assistent bar. The API is only available since IOS 9.0.
 	// The code only compils with the iOS 9.0+ SDK, and only works on iOS 9.0
 	// or above.
@@ -118,11 +120,14 @@
 	[scrollView addSubview:toolbar];
 	self.inputAccessoryView = scrollView;
 
+#endif
 	return self;
 }
 
 -(void)dealloc {
+#if TARGET_OS_IOS
 	[toolbar release];
+#endif
 	[scrollView release];
 	[super dealloc];
 }
@@ -133,9 +138,11 @@
 //	self.inputAccessoryView = scrollView;
 //	[self reloadInputViews];
 	// We need at least a width of 768 pt for the toolbar. If we add more buttons this may need to be increased.
+#if TARGET_OS_IOS
 	toolbar.frame = CGRectMake(0, 0, MAX(768, [[UIScreen mainScreen] bounds].size.width), toolbar.frame.size.height);
 	toolbar.bounds = toolbar.frame;
 	scrollView.contentSize = toolbar.frame.size;
+#endif
 }
 
 - (void)detachAccessoryView {
@@ -276,7 +283,9 @@
 	inputDelegate = nil;
 	inputView = [[TextInputHandler alloc] initWithKeyboard:self];
 	inputView.delegate = self;
+#if TARGET_OS_IOS
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(prepareKeyboard:) name:UIKeyboardWillShowNotification object:nil];
+#endif
 	return self;
 }
 
@@ -314,6 +323,7 @@
 }
 
 - (void)prepareKeyboard:(NSNotification *)notification {
+#if TARGET_OS_IOS
 	// Check if a hardware keyboard is connected, and only show the accessory view if there isn't one.
 	// If there is a hardware keyboard, the software one will only contains the text assistance bar
 	// and will be small (less than 100 pt, but use a bit more in case it changes with future iOS versions).
@@ -326,6 +336,7 @@
 		[inputView detachAccessoryView];
 	else
 		[inputView attachAccessoryView];
+#endif
 }
 
 - (void)showKeyboard {
