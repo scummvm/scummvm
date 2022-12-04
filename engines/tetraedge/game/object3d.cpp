@@ -66,6 +66,7 @@ bool Object3D::loadSettings(const Common::String &path) {
 		error("Object3D::loadSettings: Can't load %s", path.c_str());
 	if (!parser.parse())
 		error("Object3D::loadSettings: Can't parse %s", path.c_str());
+	parser.finalize();
 
 	return true;
 }

@@ -167,6 +167,7 @@ void Inventory::unload() {
 			break;
 		}
 	}
+	_gui.unload();
 }
 
 void Inventory::loadCellphone() {
@@ -369,9 +370,9 @@ void Inventory::removeObject(const Common::String &objname) {
 				if (childObj && childObj->name() == objname) {
 					if (_selectedObject == childObj)
 						selectedObject(nullptr);
-					for (auto &invObj : _invObjects) {
-						if (invObj->name() == objname) {
-							_invObjects.remove(invObj);
+					for (auto iter = _invObjects.begin(); iter != _invObjects.end(); iter++) {
+						if ((*iter)->name() == objname) {
+							_invObjects.erase(iter);
 							break;
 						}
 					}

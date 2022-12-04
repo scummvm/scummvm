@@ -34,7 +34,7 @@ class DocumentsBrowser;
 class Document : public TeLayout {
 public:
 	Document(DocumentsBrowser *browser);
-	~Document() {
+	virtual ~Document() {
 		unload();
 		if (parent()) {
 			parent()->removeChild(this);

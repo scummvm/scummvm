@@ -71,7 +71,7 @@ static int tolua_ExportedFunctions_LoadObjectMaterials01(lua_State *L) {
 		LoadObjectMaterials(s1, s2);
 		return 0;
 	}
-	error("#ferror in function 'LoadObjectMaterials': %d %d %s", err.index, err.array, err.type);
+	return tolua_ExportedFunctions_LoadObjectMaterials00(L);
 }
 
 
@@ -374,7 +374,29 @@ static int tolua_ExportedFunctions_AddCallback00(lua_State *L) {
 		AddCallback(s1, s2, s3, n1, n2);
 		return 0;
 	}
-	error("#ferror in function 'AddMarker': %d %d %s", err.index, err.array, err.type);
+	error("#ferror in function 'AddCallback': %d %d %s", err.index, err.array, err.type);
+}
+
+static void AddCallbackPlayer(const Common::String &animName, const Common::String &fnName, float triggerFrame, float maxCalls) {
+	Game *game = g_engine->getGame();
+	Character *c = game->scene()._character;
+	assert(c);
+	c->addCallback(animName, fnName, triggerFrame, maxCalls);
+}
+
+static int tolua_ExportedFunctions_AddCallbackPlayer00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err)
+			&& tolua_isnumber(L, 3, 0, &err) && tolua_isnumber(L, 4, 1, &err)
+			&& tolua_isnoobj(L, 5, &err)) {
+		Common::String s2(tolua_tostring(L, 1, nullptr));
+		Common::String s3(tolua_tostring(L, 2, nullptr));
+		double n1 = tolua_tonumber(L, 3, 0.0);
+		double n2 = tolua_tonumber(L, 4, -1.0);
+		AddCallbackPlayer(s2, s3, n1, n2);
+		return 0;
+	}
+	error("#ferror in function 'AddCallbackPlayer': %d %d %s", err.index, err.array, err.type);
 }
 
 static void AddMarker(const Common::String &markerName, const Common::String &imgPath, float x, float y,
@@ -722,18 +744,19 @@ static int tolua_ExportedFunctions_SetCharacterAnimationAndWaitForEnd00(lua_Stat
 		double f3 = tolua_tonumber(L, 5, -1.0);
 		double f4 = tolua_tonumber(L, 6, 9999.0);
 		SetCharacterAnimation(s1, s2, b1, b2, (int)f3, (int)f4);
-		Game::YieldedCallback cb;
-		cb._luaFnName = "OnCharacterAnimationFinished";
-		cb._luaParam = s1;
-		cb._luaParam2 = s2;
-		cb._luaThread = TeLuaThread::threadFromState(L);
+
+		Game::YieldedCallback callback;
+		callback._luaThread = TeLuaThread::threadFromState(L);
+		callback._luaFnName = "OnCharacterAnimationFinished";
+		callback._luaParam = s1;
+		callback._luaParam2 = s2;
 		Game *game = g_engine->getGame();
-		for (const auto &gamecb : game->yieldedCallbacks()) {
-			if (gamecb._luaFnName == cb._luaFnName && gamecb._luaParam == s1 && gamecb._luaParam2 == s2)
+		for (const auto &cb : game->yieldedCallbacks()) {
+			if (cb._luaFnName == callback._luaFnName && cb._luaParam == s1 && cb._luaParam2 == s2)
 				error("SetCharacterAnimationAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
 		}
-		game->yieldedCallbacks().push_back(cb);
-		return cb._luaThread->yield();
+		game->yieldedCallbacks().push_back(callback);
+		return callback._luaThread->yield();
 	}
 	error("#ferror in function 'SetCharacterAnimationAndWaitForEnd': %d %d %s", err.index, err.array, err.type);
 }
@@ -776,18 +799,18 @@ static int tolua_ExportedFunctions_BlendCharacterAnimationAndWaitForEnd00(lua_St
 		bool b2 = tolua_toboolean(L, 5, 0);
 		BlendCharacterAnimation(s1, s2, f1, b1, b2);
 
-		Game::YieldedCallback cb;
-		cb._luaFnName = "OnCharacterAnimationFinished";
-		cb._luaParam = s1;
-		cb._luaParam2 = s2;
-		cb._luaThread = TeLuaThread::threadFromState(L);
+		Game::YieldedCallback callback;
+		callback._luaThread = TeLuaThread::threadFromState(L);
+		callback._luaFnName = "OnCharacterAnimationFinished";
+		callback._luaParam = s1;
+		callback._luaParam2 = s2;
 		Game *game = g_engine->getGame();
-		for (const auto &gamecb : game->yieldedCallbacks()) {
-			if (gamecb._luaFnName == cb._luaFnName && gamecb._luaParam == s1 && gamecb._luaParam2 == s2)
+		for (const auto &cb : game->yieldedCallbacks()) {
+			if (cb._luaFnName == callback._luaFnName && cb._luaParam == s1 && cb._luaParam2 == s2)
 				error("BlendCharacterAnimationAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
 		}
-		game->yieldedCallbacks().push_back(cb);
-		return cb._luaThread->yield();
+		game->yieldedCallbacks().push_back(callback);
+		return callback._luaThread->yield();
 	}
 	error("#ferror in function 'BlendCharacterAnimationAndWaitForEnd': %d %d %s", err.index, err.array, err.type);
 }
@@ -1023,13 +1046,11 @@ static int tolua_ExportedFunctions_WaitAndWaitForEnd00(lua_State *L) {
 		Game::YieldedCallback callback;
 		callback._luaThread = TeLuaThread::threadFromState(L);
 		callback._luaFnName = "OnWaitFinished";
-
 		Game *game = g_engine->getGame();
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName)
 				error("WaitAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
 		}
-
 		game->yieldedCallbacks().push_back(callback);
 		return callback._luaThread->yield();
 	}
@@ -1053,10 +1074,10 @@ static int tolua_ExportedFunctions_SetBackground00(lua_State *L) {
 }
 
 static void LaunchDialog(const Common::String &name, uint param_2, const Common::String &charname,
-						const Common::String &animfile, float param_5) {
+						const Common::String &animfile, float animblend) {
 	Game *game = g_engine->getGame();
   
-	if (!game->launchDialog(name, param_2, charname, animfile, param_5))
+	if (!game->launchDialog(name, param_2, charname, animfile, animblend))
 		warning("[LaunchDialog] Dialog \"%s\" doesn't exist.", name.c_str());
 }
 
@@ -1092,13 +1113,11 @@ static int tolua_ExportedFunctions_LaunchDialogAndWaitForEnd00(lua_State *L) {
 		callback._luaThread = TeLuaThread::threadFromState(L);
 		callback._luaFnName = "OnDialogFinished";
 		callback._luaParam = s1;
-
 		Game *game = g_engine->getGame();
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName && cb._luaParam == callback._luaParam)
 				error("LaunchDialogAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
 		}
-
 		game->yieldedCallbacks().push_back(callback);
 		return callback._luaThread->yield();
 	}
@@ -1477,17 +1496,18 @@ static int tolua_ExportedFunctions_PlaySoundAndWaitForEnd00(lua_State *L) {
 		double d1 = tolua_tonumber(L, 2, -1.0);
 		double d2 = tolua_tonumber(L, 3, 1.0);
 		PlaySound(s1, d1, d2);
-		Game::YieldedCallback cb;
-		cb._luaFnName = "OnFreeSoundFinished";
-		cb._luaParam = s1;
-		cb._luaThread = TeLuaThread::threadFromState(L);
+
+		Game::YieldedCallback callback;
+		callback._luaThread = TeLuaThread::threadFromState(L);
+		callback._luaFnName = "OnFreeSoundFinished";
+		callback._luaParam = s1;
 		Game *game = g_engine->getGame();
-		for (const auto &gamecb : game->yieldedCallbacks()) {
-			if (gamecb._luaFnName == cb._luaFnName && gamecb._luaParam == s1)
+		for (const auto &cb : game->yieldedCallbacks()) {
+			if (cb._luaFnName == callback._luaFnName && cb._luaParam == s1)
 				error("PlaySoundAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
 		}
-		game->yieldedCallbacks().push_back(cb);
-		return cb._luaThread->yield();
+		game->yieldedCallbacks().push_back(callback);
+		return callback._luaThread->yield();
 	}
 	error("#ferror in function 'PlaySoundAndWaitForEnd': %d %d %s", err.index, err.array, err.type);
 }
@@ -1540,11 +1560,11 @@ static int tolua_ExportedFunctions_PlayMusic00(lua_State *L) {
 	error("#ferror in function 'PlayMusic': %d %d %s", err.index, err.array, err.type);
 }
 
-static void SetObjectOnCharacter(const Common::String &charName, const Common::String &obj, const Common::String &boneName) {
+static void SetObjectOnCharacter(const Common::String &charName, const Common::String &objName, const Common::String &boneName) {
 	Game *game = g_engine->getGame();
-	Object3D *obj3d = game->scene().object3D(obj);
+	Object3D *obj3d = game->scene().object3D(objName);
 	if (!obj3d) {
-		warning("[SetObjectOnCharacter] Object not found %s", obj.c_str());
+		warning("[SetObjectOnCharacter] Object not found %s", objName.c_str());
 		return;
 	}
 
@@ -1554,7 +1574,8 @@ static void SetObjectOnCharacter(const Common::String &charName, const Common::S
 
 static int tolua_ExportedFunctions_SetObjectOnCharacter00(lua_State *L) {
 	tolua_Error err;
-	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err) && tolua_isstring(L, 3, 0, &err) && tolua_isnoobj(L, 4, &err)) {
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err)
+			&& tolua_isstring(L, 3, 0, &err) && tolua_isnoobj(L, 4, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
 		Common::String s3(tolua_tostring(L, 3, nullptr));
@@ -1739,16 +1760,17 @@ static int tolua_ExportedFunctions_MoveCharacterToAndWaitForEnd00(lua_State *L) 
 		float f1 = tolua_tonumber(L, 3, 0.0);
 		float f2 = tolua_tonumber(L, 4, 0.0);
 		MoveCharacterTo(s1, s2, f1, f2);
-		Game::YieldedCallback cb;
-		cb._luaFnName = "OnDisplacementFinished";
-		cb._luaThread = TeLuaThread::threadFromState(L);
+
+		Game::YieldedCallback callback;
+		callback._luaThread = TeLuaThread::threadFromState(L);
+		callback._luaFnName = "OnDisplacementFinished";
 		Game *game = g_engine->getGame();
-		for (const auto &gamecb : game->yieldedCallbacks()) {
-			if (gamecb._luaFnName == cb._luaFnName)
+		for (const auto &cb : game->yieldedCallbacks()) {
+			if (cb._luaFnName == callback._luaFnName)
 				error("MoveCharacterToAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
 		}
-		game->yieldedCallbacks().push_back(cb);
-		return cb._luaThread->yield();
+		game->yieldedCallbacks().push_back(callback);
+		return callback._luaThread->yield();
 	}
 	error("#ferror in function 'MoveCharacterToAndWaitForEnd': %d %d %s", err.index, err.array, err.type);
 }
@@ -1904,7 +1926,7 @@ void LuaOpenBinds(lua_State *L) {
 	// tolua_function(L, "SetCharacterSound", tolua_ExportedFunctions_SetCharacterSound00); // Unused
 	/*tolua_function(L, "SetCharacterShadow", tolua_ExportedFunctions_SetCharacterShadow00);*/
 	tolua_function(L, "AddCallback", tolua_ExportedFunctions_AddCallback00);
-	/*tolua_function(L, "AddCallbackPlayer", tolua_ExportedFunctions_AddCallbackPlayer00); */
+	tolua_function(L, "AddCallbackPlayer", tolua_ExportedFunctions_AddCallbackPlayer00);
 	// tolua_function(L, "AddCallbackAnimation2D", tolua_ExportedFunctions_AddCallbackAnimation2D00); // Unused
 	// tolua_function(L, "DeleteCallback", tolua_ExportedFunctions_DeleteCallback00); // Unused
 	// tolua_function(L, "DeleteCallbackPlayer", tolua_ExportedFunctions_DeleteCallbackPlayer00); // Unused

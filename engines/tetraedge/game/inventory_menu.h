@@ -29,6 +29,7 @@ namespace Tetraedge {
 class InventoryMenu : public TeLayout {
 public:
 	InventoryMenu();
+	virtual ~InventoryMenu() {}
 
 	void enter();
 	void leave();

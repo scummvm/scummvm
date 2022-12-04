@@ -29,11 +29,16 @@ bool ObjectSettingsXmlParser::parserCallback_ObjectsSettings(ParserNode *node) {
 }
 
 bool ObjectSettingsXmlParser::parserCallback_Object(ParserNode *node) {
+	// Save the last object.
+	_objectSettings->setVal(_curObject._name, _curObject);
 	const Common::String &objname = node->values["name"];
-	_curObject._name = objname;
-	_objectSettings->setVal(objname, _curObject);
 	_curObject.clear();
+	_curObject._name = objname;
 	return true;
+}
+
+void ObjectSettingsXmlParser::finalize() {
+	_objectSettings->setVal(_curObject._name, _curObject);
 }
 
 bool ObjectSettingsXmlParser::parserCallback_modelFileName(ParserNode *node) {

@@ -34,6 +34,8 @@ public:
 		_objectSettings = settings;
 	}
 
+	void finalize();
+
 	// Parser
 	CUSTOM_XML_PARSER(ObjectSettingsXmlParser) {
 		XML_KEY(ObjectsSettings)
