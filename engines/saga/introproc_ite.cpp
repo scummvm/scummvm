@@ -409,31 +409,45 @@ int Scene::ITEIntroAnimProc(int param) {
 		debug(3, "Intro animation procedure started.");
 		debug(3, "Linking animation resources...");
 
-		_vm->_anim->setFrameTime(0, INTRO_FRAMETIME);
+		// Some demos lack animations
+		if (_vm->_anim->hasAnimation(0)) {
+			_vm->_anim->setFrameTime(0, INTRO_FRAMETIME);
 
-		// Link this scene's animation resources for continuous
-		// playback
-		int lastAnim;
+			// Link this scene's animation resources for continuous
+			// playback
+			int lastAnim;
 
-		if (hasWyrmkeepCredits || isMultiCD || isDemo)
-			lastAnim = isMac ? 3 : 2;
-		else
-			lastAnim = isMac ? 4 : 5;
+			if (hasWyrmkeepCredits || isMultiCD || isDemo)
+				lastAnim = isMac ? 3 : 2;
+			else
+				lastAnim = isMac ? 4 : 5;
 
-		for (int i = 0; i < lastAnim; i++)
-			_vm->_anim->link(i, i+1);
+			for (int i = 0; i < lastAnim; i++) {
+				if (!_vm->_anim->hasAnimation(i+1)) {
+					lastAnim = i;
+					break;
+				}
+				_vm->_anim->link(i, i+1);
+			}
 
-		_vm->_anim->setFlag(lastAnim, ANIM_FLAG_ENDSCENE);
+			_vm->_anim->setFlag(lastAnim, ANIM_FLAG_ENDSCENE);
 
-		debug(3, "Beginning animation playback.");
+			debug(3, "Beginning animation playback.");
 
-		// Begin the animation
-		event.type = kEvTOneshot;
-		event.code = kAnimEvent;
-		event.op = kEventPlay;
-		event.param = 0;
-		event.time = 0;
-		_vm->_events->chain(eventColumns, event);
+			// Begin the animation
+			event.type = kEvTOneshot;
+			event.code = kAnimEvent;
+			event.op = kEventPlay;
+			event.param = 0;
+			event.time = 0;
+			_vm->_events->chain(eventColumns, event);
+		} else {
+			event.type = kEvTOneshot;
+			event.code = kSceneEvent;
+			event.op = kEventEnd;
+			event.time = 1000;
+			_vm->_events->chain(eventColumns, event);
+		}
 
 		// Queue intro music playback
 		_vm->_events->chainMusic(eventColumns, MUSIC_INTRO, true);
