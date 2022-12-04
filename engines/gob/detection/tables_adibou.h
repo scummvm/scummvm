@@ -235,6 +235,20 @@
 {
 	{
 		"adibou2",
+		"ADIBOU 2 Demo",
+		AD_ENTRY1s("intro.stk", "0f197c6b8f1cef3fb4aa37438a52e031", 954276),
+		FR_FRA,
+		kPlatformDOS,
+		ADGF_DEMO,
+		GUIO0()
+	},
+	kGameTypeAdibou2,
+	kFeatures640x480,
+	0, 0, 0
+},
+{
+	{
+		"adibou2",
 		"Non-Interactive Demo",
 		AD_ENTRY2s("demogb.scn", "9291455a908ac0e6aaaca686e532609b", 105,
 				   "demogb.vmd", "bc9c1db97db7bec8f566332444fa0090", 14320840),
