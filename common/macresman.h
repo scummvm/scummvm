@@ -196,12 +196,6 @@ public:
 
 	/**
 	 * Query whether or not we have a data fork present.
-	 * @return True if the data fork is present
-	 */
-	bool hasDataFork() const;
-
-	/**
-	 * Query whether or not we have a data fork present.
 	 * @return True if the resource fork is present
 	 */
 	bool hasResFork() const;
@@ -229,12 +223,6 @@ public:
 	 * @return Pointer to a SeekableReadStream with loaded resource
 	 */
 	SeekableReadStream *getResource(uint32 typeID, const String &filename);
-
-	/**
-	 * Retrieve the data fork
-	 * @return The stream if present, 0 otherwise
-	 */
-	SeekableReadStream *getDataFork();
 
 	static int getDataForkOffset() { return MBI_INFOHDR; }
 

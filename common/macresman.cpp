@@ -135,10 +135,6 @@ void MacResManager::close() {
 	_resMap.numTypes = 0;
 }
 
-bool MacResManager::hasDataFork() const {
-	return !_baseFileName.empty();
-}
-
 bool MacResManager::hasResFork() const {
 	return !_baseFileName.empty() && _mode != kResForkNone && _resForkSize != 0;
 }
@@ -683,24 +679,6 @@ bool MacResManager::load(SeekableReadStream *stream) {
 
 	readMap();
 	return true;
-}
-
-SeekableReadStream *MacResManager::getDataFork() {
-	if (!_stream)
-		return nullptr;
-
-	if (_mode == kResForkMacBinary) {
-		_stream->seek(MBI_DFLEN);
-		uint32 dataSize = _stream->readUint32BE();
-		return new SafeSeekableSubReadStream(_stream, MBI_INFOHDR, MBI_INFOHDR + dataSize);
-	}
-
-	File *file = new File();
-	if (file->open(_baseFileName))
-		return file;
-	delete file;
-
-	return nullptr;
 }
 
 MacResIDArray MacResManager::getResIDArray(uint32 typeID) {
