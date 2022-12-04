@@ -131,7 +131,6 @@ static const LoadSceneParams ITE_DOS_Demo_IntroList[] = {
 static const LoadSceneParams *ITE_IntroLists[INTROLIST_MAX] = {
 	/* INTROLIST_ITE_NONE */                 nullptr,
 	/* INTROLIST_ITE_DEFAULT */              ITE_IntroListDefault,
-	/* INTROLIST_ITE_AMIGA_ENGLISH_AGA_CD */ ITE_IntroListDefault,
 	/* INTROLIST_ITE_AMIGA_ENGLISH_ECS_CD */ ITE_AmigaEnglishECSCD_IntroList,
 	/* INTROLIST_ITE_AMIGA_GERMAN_AGA */     ITE_AmigaGermanAGA_IntroList,
 	/* INTROLIST_ITE_AMIGA_GERMAN_ECS */     ITE_AmigaGermanECS_IntroList,
