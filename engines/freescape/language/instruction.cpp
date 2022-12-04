@@ -324,6 +324,7 @@ void FreescapeEngine::executeDestroy(FCLInstruction &instruction) {
 	debugC(1, kFreescapeDebugCode, "Destroying obj %d in area %d!", objectID, areaID);
 	assert(_areaMap.contains(areaID));
 	Object *obj = _areaMap[areaID]->objectWithID(objectID);
+	assert(obj); // We know that an object should be there
 	if (obj->isDestroyed())
 		debugC(1, kFreescapeDebugCode, "WARNING: Destroying obj %d in area %d already destroyed!", objectID, areaID);
 
@@ -343,6 +344,7 @@ void FreescapeEngine::executeMakeInvisible(FCLInstruction &instruction) {
 
 	debugC(1, kFreescapeDebugCode, "Making obj %d invisible in area %d!", objectID, areaID);
 	Object *obj = _areaMap[areaID]->objectWithID(objectID);
+	assert(obj); // We assume the object was there
 	obj->makeInvisible();
 }
 
@@ -359,6 +361,7 @@ void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
 
 	debugC(1, kFreescapeDebugCode, "Making obj %d visible in area %d!", objectID, areaID);
 	Object *obj = _areaMap[areaID]->objectWithID(objectID);
+	assert(obj); // We assume an object should be there
 	obj->makeVisible();
 }
 
@@ -387,6 +390,7 @@ void FreescapeEngine::executeToggleVisibility(FCLInstruction &instruction) {
 		// If an object is not in the area, it is considered to be invisible
 		_currentArea->addObjectFromArea(objectID, _areaMap[255]);
 		obj = _areaMap[areaID]->objectWithID(objectID);
+		assert(obj); // We know that an object should be there
 		obj->makeVisible();
 	}
 }
