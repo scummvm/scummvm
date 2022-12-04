@@ -129,9 +129,9 @@ void Map32::special05() {
 }
 
 void Map32::passwordEntered(const Common::String &password) {
-	if ((_data[PASSWORD_INDEX] & 0x80) || password !=
-		STRING[Common::String::format("maps.map32.passwords.%d",
-			_data[PASSWORD_INDEX])]) {
+	if ((_data[PASSWORD_INDEX] & 0x80) ||
+		!password.equalsIgnoreCase(STRING[Common::String::format("maps.map32.passwords.%d",
+			_data[PASSWORD_INDEX])])) {
 		g_maps->_mapPos.x--;
 		updateGame();
 

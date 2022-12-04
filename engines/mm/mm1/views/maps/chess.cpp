@@ -54,7 +54,7 @@ void Chess::answerEntered() {
 	for (int i = 0; i < 22; ++i)
 		properAnswer += map[ANSWER_OFFSET + i] + 48;
 
-	if (_answer == properAnswer) {
+	if (_answer.equalsIgnoreCase(properAnswer)) {
 		InfoMessage msg(
 			16, 2, STRING["maps.map19.correct"],
 			[]() {

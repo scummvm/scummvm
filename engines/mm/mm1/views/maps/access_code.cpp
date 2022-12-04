@@ -54,7 +54,7 @@ void AccessCode::answerEntered() {
 	for (int i = 0; i < 10 && map[ANSWER_OFFSET + i]; ++i)
 		properCode += map[ANSWER_OFFSET + i] + 0x1f;
 
-	if (_answer == properCode)
+	if (_answer.equalsIgnoreCase(properCode))
 		correctCode();
 	else
 		incorrectCode();
