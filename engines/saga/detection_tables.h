@@ -197,6 +197,29 @@ static const SAGAGameDescription gameDescriptions[] = {
 		INTROLIST_ITE_AMIGA_GERMAN_AGA,
 		{},
 	},
+	{
+		{
+			"ite",
+			"ECS Demo CD",
+			{
+				{"ite.rtn",		GAME_RESOURCEFILE,	"1e77154f045358ef3f09fbdb00ea92a4", 18624},
+				{"ite.000",                             0,      "7907e74ed9ce17bb9d6c10e21273d53e", 788221},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformAmiga,
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_ITE,
+		GF_EXTRA_ITE_CREDITS | GF_ECS_GRAPHICS | GF_EMBED_FONT | GF_POWERPACK_GFX,
+		ITE_DEFAULT_SCENE,
+		RESOURCELIST_ITE_GERMAN_ECS_CD,
+		FONTLIST_NONE,
+		PATCHLIST_ITE,
+		INTROLIST_ITE_AMIGA_GERMAN_ECS,
+		{},
+	},
 
 
 	// ITE Mac versions ///////////////////////////////////////////////////////////////////////////////////////
