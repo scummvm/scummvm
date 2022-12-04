@@ -37,7 +37,7 @@ Resource::Resource(Common::Platform platform, bool isDemo) : _platform(platform)
 		_macResFork = new Common::MacResManager();
 		if (!_macResFork->open("Star Trek Data"))
 			error("Could not load Star Trek Data");
-		assert(_macResFork->hasDataFork() && _macResFork->hasResFork());
+		assert(_macResFork->hasResFork());
 	}
 
 	readIndexFile();
@@ -233,7 +233,7 @@ Common::MemoryReadStreamEndian *Resource::loadFile(Common::String filename, int 
 	if (_platform == Common::kPlatformAmiga) {
 		dataFile = SearchMan.createReadStreamForMember("data.000");
 	} else if (_platform == Common::kPlatformMacintosh) {
-		dataFile = _macResFork->getDataFork();
+		dataFile = Common::MacResManager::openFileOrDataFork("Star Trek Data");
 	} else {
 		dataFile = SearchMan.createReadStreamForMember("data.001");
 	}
