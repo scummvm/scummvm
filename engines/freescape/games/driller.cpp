@@ -484,20 +484,22 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	int score = _gameStateVars[k8bitVariableScore];
 	Common::String coords;
 
-	drawStringInSurface("x", 37, 18, white, transparent, surface, 82);
-	coords = Common::String::format("%04d", 2 * int(_position.x()));
-	for (int i = 0; i < 4; i++)
-		drawStringInSurface(Common::String(coords[i]), 47 + 6*i, 18, white, transparent, surface, 112);
+	if (!isDemo()) { // It seems demos will not include the complete font?
+		drawStringInSurface("x", 37, 18, white, transparent, surface, 82);
+		coords = Common::String::format("%04d", 2 * int(_position.x()));
+		for (int i = 0; i < 4; i++)
+			drawStringInSurface(Common::String(coords[i]), 47 + 6*i, 18, white, transparent, surface, 112);
 
-	drawStringInSurface("y", 37, 26, white, transparent, surface, 82);
-	coords = Common::String::format("%04d", 2 * int(_position.z())); // Coords y and z are swapped!
-	for (int i = 0; i < 4; i++)
-		drawStringInSurface(Common::String(coords[i]), 47 + 6*i, 26, white, transparent, surface, 112);
+		drawStringInSurface("y", 37, 26, white, transparent, surface, 82);
+		coords = Common::String::format("%04d", 2 * int(_position.z())); // Coords y and z are swapped!
+		for (int i = 0; i < 4; i++)
+			drawStringInSurface(Common::String(coords[i]), 47 + 6*i, 26, white, transparent, surface, 112);
 
-	drawStringInSurface("z", 37, 34, white, transparent, surface, 82);
-	coords = Common::String::format("%04d", 2 * int(_position.y())); // Coords y and z are swapped!
-	for (int i = 0; i < 4; i++)
-		drawStringInSurface(Common::String(coords[i]), 47 + 6*i, 34, white, transparent, surface, 112);
+		drawStringInSurface("z", 37, 34, white, transparent, surface, 82);
+		coords = Common::String::format("%04d", 2 * int(_position.y())); // Coords y and z are swapped!
+		for (int i = 0; i < 4; i++)
+			drawStringInSurface(Common::String(coords[i]), 47 + 6*i, 34, white, transparent, surface, 112);
+	}
 
 	drawStringInSurface(_currentArea->_name, 188, 185, yellow, black, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
