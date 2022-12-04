@@ -249,10 +249,12 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 		*_state->context->_refCount += 1;
 	}
 
-	DatumHash *localvars = _state->localVars;
-	if (!funcSym.anonymous) {
+	DatumHash *localvars = new DatumHash;
+	if (funcSym.anonymous && _state->localVars) {
 		// Execute anonymous functions within the current var frame.
-		localvars = new DatumHash;
+		for (auto it = _state->localVars->begin(); it != _state->localVars->end(); ++it) {
+			localvars->setVal(it->_key, it->_value);
+		}
 	}
 
 	if (funcSym.argNames) {
@@ -346,11 +348,14 @@ void Lingo::popContext(bool aborting) {
 	_state->pc = fp->retPC;
 	_state->me = fp->retMe;
 
-	// Restore local variables
-	if (!fp->sp.anonymous) {
-		cleanLocalVars();
-		_state->localVars = fp->retLocalVars;
+	// For anonymous functions, copy the local var state back to the parent
+	if (fp->sp.anonymous && fp->retLocalVars) {
+		for (auto it = _state->localVars->begin(); it != _state->localVars->end(); ++it) {
+			fp->retLocalVars->setVal(it->_key, it->_value);
+		}
 	}
+	cleanLocalVars();
+	_state->localVars = fp->retLocalVars;
 
 	if (debugChannelSet(2, kDebugLingoExec)) {
 		printCallStack(_state->pc);
