@@ -871,9 +871,15 @@ void DrillerEngine::initGameState() {
 	_playerHeight = _playerHeights[_playerHeightNumber];
 	removeTimers();
 	startCountdown(_initialCountdown);
+
+	_demoIndex = 0;
+	_demoEvents.clear();
 }
 
 bool DrillerEngine::checkIfGameEnded() {
+	if (isDemo())
+		return (_demoData[_demoIndex + 1] == 0x5f);
+
 	if (_countdown <= 0) {
 		insertTemporaryMessage(_messagesList[14], _countdown - 2);
 		drawFrame();
