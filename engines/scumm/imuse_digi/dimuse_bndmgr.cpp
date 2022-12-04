@@ -30,36 +30,36 @@
 namespace Scumm {
 
 BundleDirCache::BundleDirCache() {
-	for (int fileId = 0; fileId < ARRAYSIZE(_budleDirCache); fileId++) {
-		_budleDirCache[fileId].bundleTable = nullptr;
-		_budleDirCache[fileId].fileName[0] = 0;
-		_budleDirCache[fileId].numFiles = 0;
-		_budleDirCache[fileId].isCompressed = false;
-		_budleDirCache[fileId].indexTable = nullptr;
+	for (int fileId = 0; fileId < ARRAYSIZE(_bundleDirCache); fileId++) {
+		_bundleDirCache[fileId].bundleTable = nullptr;
+		_bundleDirCache[fileId].fileName[0] = 0;
+		_bundleDirCache[fileId].numFiles = 0;
+		_bundleDirCache[fileId].isCompressed = false;
+		_bundleDirCache[fileId].indexTable = nullptr;
 	}
 }
 
 BundleDirCache::~BundleDirCache() {
-	for (int fileId = 0; fileId < ARRAYSIZE(_budleDirCache); fileId++) {
-		free(_budleDirCache[fileId].bundleTable);
-		free(_budleDirCache[fileId].indexTable);
+	for (int fileId = 0; fileId < ARRAYSIZE(_bundleDirCache); fileId++) {
+		free(_bundleDirCache[fileId].bundleTable);
+		free(_bundleDirCache[fileId].indexTable);
 	}
 }
 
 BundleDirCache::AudioTable *BundleDirCache::getTable(int slot) {
-	return _budleDirCache[slot].bundleTable;
+	return _bundleDirCache[slot].bundleTable;
 }
 
 int32 BundleDirCache::getNumFiles(int slot) {
-	return _budleDirCache[slot].numFiles;
+	return _bundleDirCache[slot].numFiles;
 }
 
 BundleDirCache::IndexNode *BundleDirCache::getIndexTable(int slot) {
-	return _budleDirCache[slot].indexTable;
+	return _bundleDirCache[slot].indexTable;
 }
 
 bool BundleDirCache::isSndDataExtComp(int slot) {
-	return _budleDirCache[slot].isCompressed;
+	return _bundleDirCache[slot].isCompressed;
 }
 
 int BundleDirCache::matchFile(const char *filename) {
@@ -68,11 +68,11 @@ int BundleDirCache::matchFile(const char *filename) {
 	int freeSlot = -1;
 	int fileId;
 
-	for (fileId = 0; fileId < ARRAYSIZE(_budleDirCache); fileId++) {
-		if ((_budleDirCache[fileId].bundleTable == nullptr) && (freeSlot == -1)) {
+	for (fileId = 0; fileId < ARRAYSIZE(_bundleDirCache); fileId++) {
+		if ((_bundleDirCache[fileId].bundleTable == nullptr) && (freeSlot == -1)) {
 			freeSlot = fileId;
 		}
-		if (scumm_stricmp(filename, _budleDirCache[fileId].fileName) == 0) {
+		if (scumm_stricmp(filename, _bundleDirCache[fileId].fileName) == 0) {
 			found = true;
 			break;
 		}
@@ -91,27 +91,27 @@ int BundleDirCache::matchFile(const char *filename) {
 
 		tag = file.readUint32BE();
 		if (tag == MKTAG('L','B','2','3'))
-			_budleDirCache[freeSlot].isCompressed = true;
+			_bundleDirCache[freeSlot].isCompressed = true;
 		offset = file.readUint32BE();
 
-		Common::strlcpy(_budleDirCache[freeSlot].fileName, filename, sizeof(_budleDirCache[freeSlot].fileName));
-		_budleDirCache[freeSlot].numFiles = file.readUint32BE();
-		_budleDirCache[freeSlot].bundleTable = (AudioTable *)malloc(_budleDirCache[freeSlot].numFiles * sizeof(AudioTable));
-		assert(_budleDirCache[freeSlot].bundleTable);
+		Common::strlcpy(_bundleDirCache[freeSlot].fileName, filename, sizeof(_bundleDirCache[freeSlot].fileName));
+		_bundleDirCache[freeSlot].numFiles = file.readUint32BE();
+		_bundleDirCache[freeSlot].bundleTable = (AudioTable *)malloc(_bundleDirCache[freeSlot].numFiles * sizeof(AudioTable));
+		assert(_bundleDirCache[freeSlot].bundleTable);
 
 		file.seek(offset, SEEK_SET);
 
-		_budleDirCache[freeSlot].indexTable =
-				(IndexNode *)calloc(_budleDirCache[freeSlot].numFiles, sizeof(IndexNode));
-		assert(_budleDirCache[freeSlot].indexTable);
+		_bundleDirCache[freeSlot].indexTable =
+				(IndexNode *)calloc(_bundleDirCache[freeSlot].numFiles, sizeof(IndexNode));
+		assert(_bundleDirCache[freeSlot].indexTable);
 
-		for (int32 i = 0; i < _budleDirCache[freeSlot].numFiles; i++) {
+		for (int32 i = 0; i < _bundleDirCache[freeSlot].numFiles; i++) {
 			char name[24], c;
 			int32 z = 0;
 			int32 z2;
 
 			if (tag == MKTAG('L','B','2','3')) {
-				file.read(_budleDirCache[freeSlot].bundleTable[i].filename, 24);
+				file.read(_bundleDirCache[freeSlot].bundleTable[i].filename, 24);
 			} else {
 				for (z2 = 0; z2 < 8; z2++)
 					if ((c = file.readByte()) != 0)
@@ -122,14 +122,14 @@ int BundleDirCache::matchFile(const char *filename) {
 						name[z++] = c;
 
 				name[z] = '\0';
-				Common::strlcpy(_budleDirCache[freeSlot].bundleTable[i].filename, name, sizeof(_budleDirCache[freeSlot].bundleTable[i].filename));
+				Common::strlcpy(_bundleDirCache[freeSlot].bundleTable[i].filename, name, sizeof(_bundleDirCache[freeSlot].bundleTable[i].filename));
 			}
-			_budleDirCache[freeSlot].bundleTable[i].offset = file.readUint32BE();
-			_budleDirCache[freeSlot].bundleTable[i].size = file.readUint32BE();
-			Common::strlcpy(_budleDirCache[freeSlot].indexTable[i].filename, _budleDirCache[freeSlot].bundleTable[i].filename, sizeof(_budleDirCache[freeSlot].indexTable[i].filename));
-			_budleDirCache[freeSlot].indexTable[i].index = i;
+			_bundleDirCache[freeSlot].bundleTable[i].offset = file.readUint32BE();
+			_bundleDirCache[freeSlot].bundleTable[i].size = file.readUint32BE();
+			Common::strlcpy(_bundleDirCache[freeSlot].indexTable[i].filename, _bundleDirCache[freeSlot].bundleTable[i].filename, sizeof(_bundleDirCache[freeSlot].indexTable[i].filename));
+			_bundleDirCache[freeSlot].indexTable[i].index = i;
 		}
-		qsort(_budleDirCache[freeSlot].indexTable, _budleDirCache[freeSlot].numFiles,
+		qsort(_bundleDirCache[freeSlot].indexTable, _bundleDirCache[freeSlot].numFiles,
 				sizeof(IndexNode), (int (*)(const void *, const void *))scumm_stricmp);
 		return freeSlot;
 	} else {
