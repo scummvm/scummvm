@@ -42,6 +42,7 @@ namespace CreateProjectTool {
 
 #define IOS_TARGET 0
 #define OSX_TARGET 1
+#define TVOS_TARGET 2
 
 #define ADD_DEFINE(defines, name) \
 	defines.push_back(name);
@@ -107,6 +108,10 @@ bool targetIsIOS(const std::string &targetName) {
 	return targetName.length() > 4 && targetName.substr(targetName.length() - 4) == "-iOS";
 }
 
+bool targetIsTVOS(const std::string &targetName) {
+	return targetName.length() > 5 && targetName.substr(targetName.length() - 5) == "-tvOS";
+}
+
 bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targetName, const std::string &fileName) {
 	// Rules:
 	// - if the parent directory is "backends/platform/ios7", the file belongs to the iOS target.
@@ -116,10 +121,19 @@ bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targe
 	std::string name, ext;
 	splitFilename(fileName, name, ext);
 
-	if (targetIsIOS(targetName)) {
-		// iOS target: we skip all files with the "_osx" suffix
+	if (targetIsIOS(targetName) || targetIsTVOS(targetName)) {
+		// iOS & tvOS target: we skip all files with the "_osx" suffix
 		if (name.length() > 4 && name.substr(name.length() - 4) == "_osx") {
 			return true;
+		}
+		if (targetIsIOS(targetName)) {
+			// skip tvos dist files
+			if (fileID.find("dists/tvos/") != std::string::npos)
+				return true;
+		} else {
+			// skip ios dist files
+			if (fileID.find("dists/ios7/") != std::string::npos)
+				return true;
 		}
 		// We don't need SDL for the iOS target
 		static const std::string sdl_directory = "/sdl/";
@@ -139,6 +153,10 @@ bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targe
 	else {
 		// macOS target: we skip all files with the "_ios" suffix
 		if (name.length() > 4 && name.substr(name.length() - 4) == "_ios") {
+			return true;
+		}
+		// macOS target: we skip all files with the "_tvos" suffix
+		if (name.length() > 5 && name.substr(name.length() - 5) == "_tvos") {
 			return true;
 		}
 		// macOS target: we skip all files with the "ios7_" prefix
@@ -278,6 +296,7 @@ XcodeProvider::XcodeProvider(StringList &global_warnings, std::map<std::string, 
 
 void XcodeProvider::addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) {
 	includeList.push_back(setup.srcDir + "/dists/ios7/Info.plist");
+	includeList.push_back(setup.srcDir + "/dists/tvos/Info.plist");
 
 	ValueList &resources = getResourceFiles(setup);
 	for (ValueList::iterator it = resources.begin(); it != resources.end(); ++it) {
@@ -299,6 +318,7 @@ void XcodeProvider::createWorkspace(const BuildSetup &setup) {
 	setupDefines(setup);
 	_targets.push_back(PROJECT_DESCRIPTION "-iOS");
 	_targets.push_back(PROJECT_DESCRIPTION "-macOS");
+	_targets.push_back(PROJECT_DESCRIPTION "-tvOS");
 	setupCopyFilesBuildPhase();
 	setupFrameworksBuildPhase(setup);
 	setupNativeTarget();
@@ -750,6 +770,107 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	framework_OSX->_properties["files"] = osx_files;
 
 	_frameworksBuildPhase.add(framework_OSX);
+
+	//////////////////////////////////////////////////////////////////////////
+	// ScummVM-tvOS
+	Object *framework_tvOS = new Object(this, "PBXFrameworksBuildPhase_" + _targets[TVOS_TARGET], "PBXFrameworksBuildPhase", "PBXFrameworksBuildPhase", "", "Frameworks");
+
+	framework_tvOS->addProperty("buildActionMask", "2147483647", "", kSettingsNoValue);
+	framework_tvOS->addProperty("runOnlyForDeploymentPostprocessing", "0", "", kSettingsNoValue);
+
+	// List of frameworks
+	Property tvOS_files;
+	tvOS_files._hasOrder = true;
+	tvOS_files._flags = kSettingsAsList;
+
+	ValueList frameworks_tvOS;
+	frameworks_tvOS.push_back("CoreAudio.framework");
+	frameworks_tvOS.push_back("CoreGraphics.framework");
+	frameworks_tvOS.push_back("CoreFoundation.framework");
+	frameworks_tvOS.push_back("Foundation.framework");
+	frameworks_tvOS.push_back("GameController.framework");
+	frameworks_tvOS.push_back("UIKit.framework");
+	frameworks_tvOS.push_back("SystemConfiguration.framework");
+	frameworks_tvOS.push_back("AudioToolbox.framework");
+	frameworks_tvOS.push_back("QuartzCore.framework");
+	frameworks_tvOS.push_back("OpenGLES.framework");
+
+	if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
+		frameworks_tvOS.push_back("libfaad.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) {
+		frameworks_tvOS.push_back("libFLAC.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_FREETYPE2")) {
+		frameworks_tvOS.push_back("libfreetype.a");
+		frameworks_tvOS.push_back("libbz2.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_JPEG")) {
+		frameworks_tvOS.push_back("libjpeg.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
+		frameworks_tvOS.push_back("libpng.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_GIF")) {
+		frameworks_tvOS.push_back("libgif.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_OGG")) {
+		frameworks_tvOS.push_back("libogg.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_VORBIS")) {
+		frameworks_tvOS.push_back("libvorbis.a");
+		frameworks_tvOS.push_back("libvorbisfile.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_TREMOR")) {
+		frameworks_tvOS.push_back("libvorbisidec.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_THEORADEC")) {
+		frameworks_tvOS.push_back("libtheoradec.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
+		frameworks_tvOS.push_back("libmad.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_MPEG2")) {
+		frameworks_tvOS.push_back("libmpeg2.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
+		frameworks_tvOS.push_back("libfribidi.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH") &&
+		!CONTAINS_DEFINE(setup.defines, "USE_FLUIDLITE")) {
+		frameworks_tvOS.push_back("libfluidsynth.a");
+		frameworks_tvOS.push_back("libglib-2.0.a");
+		frameworks_tvOS.push_back("libintl.a");
+		frameworks_tvOS.push_back("libffi.a");
+		frameworks_tvOS.push_back("CoreMIDI.framework");
+		frameworks_tvOS.push_back("libiconv.tbd");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_ZLIB")) {
+		frameworks_tvOS.push_back("libz.tbd");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_LIBCURL")) {
+		frameworks_tvOS.push_back("libcurl.a");
+		frameworks_tvOS.push_back("Security.framework");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
+		if (setup.useSDL2)
+			frameworks_tvOS.push_back("libSDL2_net.a");
+		else
+			frameworks_tvOS.push_back("libSDL_net.a");
+	}
+
+	for (ValueList::iterator framework = frameworks_tvOS.begin(); framework != frameworks_tvOS.end(); framework++) {
+		std::string id = "Frameworks_" + *framework + "_appletv";
+		std::string comment = *framework + " in Frameworks";
+
+		ADD_SETTING_ORDER_NOVALUE(tvOS_files, getHash(id), comment, order++);
+		ADD_BUILD_FILE(id, *framework, getHash(*framework), comment);
+		ADD_FILE_REFERENCE(*framework, *framework, properties[*framework]);
+	}
+
+	framework_tvOS->_properties["files"] = tvOS_files;
+
+	_frameworksBuildPhase.add(framework_tvOS);
 }
 
 void XcodeProvider::setupNativeTarget() {
@@ -818,6 +939,7 @@ void XcodeProvider::setupProject() {
 	targets._flags = kSettingsAsList;
 	targets._settings[getHash("PBXNativeTarget_" + _targets[IOS_TARGET])] = Setting("", _targets[IOS_TARGET], kSettingsNoValue, 0, 0);
 	targets._settings[getHash("PBXNativeTarget_" + _targets[OSX_TARGET])] = Setting("", _targets[OSX_TARGET], kSettingsNoValue, 0, 1);
+	targets._settings[getHash("PBXNativeTarget_" + _targets[TVOS_TARGET])] = Setting("", _targets[TVOS_TARGET], kSettingsNoValue, 0, 2);
 	project->_properties["targets"] = targets;
 
 	// Force list even when there is only a single target
@@ -866,6 +988,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 		files.push_back("dists/engine-data/wintermute.zip");
 		files.push_back("dists/engine-data/xeen.ccs");
 		files.push_back("dists/ios7/LaunchScreen_ios.storyboard");
+		files.push_back("dists/tvos/LaunchScreen_tvos.storyboard");
 		files.push_back("dists/pred.dic");
 		files.push_back("dists/networking/wwwroot.zip");
 		if (CONTAINS_DEFINE(setup.defines, "ENABLE_GRIME")) {
@@ -1291,6 +1414,85 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	_buildConfiguration.add(scummvmOSX_Debug_Object);
 	_buildConfiguration.add(scummvmOSX_Release_Object);
 
+	///****************************************
+	// * ScummVM - tvOS Target
+	// ****************************************/
+
+	// Debug
+	Object *tvOS_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-tvOS_Debug", _targets[TVOS_TARGET] /* ScummVM-tvOS */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
+	Property tvOS_Debug;
+	ADD_SETTING_QUOTE(tvOS_Debug, "CODE_SIGN_IDENTITY", "iPhone Developer");
+	ADD_SETTING_QUOTE_VAR(tvOS_Debug, "CODE_SIGN_IDENTITY[sdk=appletvos*]", "iPhone Developer");
+	ADD_SETTING(tvOS_Debug, "COPY_PHASE_STRIP", "NO");
+	ADD_SETTING_QUOTE(tvOS_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf");
+	ValueList tvOS_FrameworkSearchPaths;
+	tvOS_FrameworkSearchPaths.push_back("$(inherited)");
+	tvOS_FrameworkSearchPaths.push_back("\"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"");
+	ADD_SETTING_LIST(tvOS_Debug, "FRAMEWORK_SEARCH_PATHS", tvOS_FrameworkSearchPaths, kSettingsAsList, 5);
+	ADD_SETTING(tvOS_Debug, "GCC_DYNAMIC_NO_PIC", "NO");
+	ADD_SETTING(tvOS_Debug, "GCC_ENABLE_CPP_EXCEPTIONS", "NO");
+	ADD_SETTING(tvOS_Debug, "GCC_OPTIMIZATION_LEVEL", "0");
+	ADD_SETTING(tvOS_Debug, "GCC_PRECOMPILE_PREFIX_HEADER", "NO");
+	ADD_SETTING(tvOS_Debug, "GCC_WARN_64_TO_32_BIT_CONVERSION", "NO");
+	ADD_SETTING_QUOTE(tvOS_Debug, "GCC_PREFIX_HEADER", "");
+	ADD_SETTING(tvOS_Debug, "GCC_UNROLL_LOOPS", "YES");
+	ValueList tvOS_HeaderSearchPaths;
+	tvOS_HeaderSearchPaths.push_back("$(SRCROOT)/engines/");
+	tvOS_HeaderSearchPaths.push_back("$(SRCROOT)");
+	for (StringList::const_iterator i = setup.includeDirs.begin(); i != setup.includeDirs.end(); ++i)
+		tvOS_HeaderSearchPaths.push_back("\"" + *i + "\"");
+	tvOS_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "\"");
+	tvOS_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "/include\"");
+	if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
+		if (setup.useSDL2)
+			tvOS_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "/include/SDL2\"");
+		else
+			tvOS_HeaderSearchPaths.push_back("\"" + projectOutputDirectory + "include/SDL\"");
+	}
+	ADD_SETTING_LIST(tvOS_Debug, "HEADER_SEARCH_PATHS", tvOS_HeaderSearchPaths, kSettingsAsList | kSettingsQuoteVariable, 5);
+	ADD_SETTING_QUOTE(tvOS_Debug, "INFOPLIST_FILE", "$(SRCROOT)/dists/tvos/Info.plist");
+	ValueList tvOS_LibPaths;
+	for (StringList::const_iterator i = setup.libraryDirs.begin(); i != setup.libraryDirs.end(); ++i)
+		tvOS_LibPaths.push_back("\"" + *i + "\"");
+	tvOS_LibPaths.push_back("$(inherited)");
+	tvOS_LibPaths.push_back("\"" + projectOutputDirectory + "/lib\"");
+	ADD_SETTING_LIST(tvOS_Debug, "LIBRARY_SEARCH_PATHS", tvOS_LibPaths, kSettingsAsList, 5);
+	ADD_SETTING(tvOS_Debug, "ONLY_ACTIVE_ARCH", "YES");
+	ADD_SETTING(tvOS_Debug, "PRODUCT_NAME", PROJECT_NAME);
+	ADD_SETTING(tvOS_Debug, "PRODUCT_BUNDLE_IDENTIFIER", "\"org.scummvm.${PRODUCT_NAME}\"");
+	ADD_SETTING(tvOS_Debug, "TVOS_DEPLOYMENT_TARGET", "9.0");
+	ADD_SETTING_QUOTE_VAR(tvOS_Debug, "PROVISIONING_PROFILE[sdk=appletvos*]", "");
+	ADD_SETTING(tvOS_Debug, "SDKROOT", "appletvos");
+	ADD_SETTING_QUOTE(tvOS_Debug, "TARGETED_DEVICE_FAMILY", "3");
+	ValueList scummvmTVOS_defines;
+	ADD_DEFINE(scummvmTVOS_defines, "\"$(inherited)\"");
+	ADD_DEFINE(scummvmTVOS_defines, "IPHONE");
+	ADD_DEFINE(scummvmTVOS_defines, "IPHONE_IOS7");
+	ADD_DEFINE(scummvmTVOS_defines, "IPHONE_SANDBOXED");
+	if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
+		ADD_DEFINE(scummvmTVOS_defines, "WITHOUT_SDL");
+	ADD_SETTING_LIST(tvOS_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmTVOS_defines, kSettingsNoQuote | kSettingsAsList, 5);
+	ADD_SETTING(tvOS_Debug, "ASSETCATALOG_COMPILER_APPICON_NAME", "AppIcon");
+	ADD_SETTING(tvOS_Debug, "ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME", "LaunchImage");
+	tvOS_Debug_Object->addProperty("name", "Debug", "", kSettingsNoValue);
+	tvOS_Debug_Object->_properties["buildSettings"] = tvOS_Debug;
+
+	// Release
+	Object *tvOS_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-tvOS_Release", _targets[TVOS_TARGET] /* ScummVM-tvOS */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
+	Property tvOS_Release(tvOS_Debug);
+	ADD_SETTING(tvOS_Release, "GCC_OPTIMIZATION_LEVEL", "3");
+	ADD_SETTING(tvOS_Release, "COPY_PHASE_STRIP", "YES");
+	REMOVE_SETTING(tvOS_Release, "GCC_DYNAMIC_NO_PIC");
+	ADD_SETTING(tvOS_Release, "WRAPPER_EXTENSION", "app");
+	REMOVE_SETTING(tvOS_Release, "DEBUG_INFORMATION_FORMAT");
+	ADD_SETTING_QUOTE(tvOS_Release, "DEBUG_INFORMATION_FORMAT", "dwarf-with-dsym");
+
+	tvOS_Release_Object->addProperty("name", "Release", "", kSettingsNoValue);
+	tvOS_Release_Object->_properties["buildSettings"] = tvOS_Release;
+
+	_buildConfiguration.add(tvOS_Debug_Object);
+	_buildConfiguration.add(tvOS_Release_Object);
+
 	// Warning: This assumes we have all configurations with a Debug & Release pair
 	for (std::vector<Object *>::iterator config = _buildConfiguration._objects.begin(); config != _buildConfiguration._objects.end(); config++) {
 
@@ -1314,15 +1516,23 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 void XcodeProvider::setupImageAssetCatalog(const BuildSetup &setup) {
 	const std::string filename = "Images.xcassets";
 	const std::string absoluteCatalogPath = _projectRoot + "/dists/ios7/" + filename;
+	const std::string absoluteCatalogPathTVOS = _projectRoot + "/dists/tvos/" + filename;
 	const std::string id = "FileReference_" + absoluteCatalogPath;
+	const std::string idTVOS = "FileReference_" + absoluteCatalogPathTVOS;
 	Group *group = touchGroupsForPath(absoluteCatalogPath);
+	Group *groupTVOS = touchGroupsForPath(absoluteCatalogPathTVOS);
 	group->addChildFile(filename);
+	groupTVOS->addChildFile(filename);
 	addBuildFile(absoluteCatalogPath, filename, getHash(id), "Image Asset Catalog");
+	addBuildFile(absoluteCatalogPathTVOS, filename, getHash(idTVOS), "Image Asset Catalog");
 }
 
 void XcodeProvider::setupAdditionalSources(std::string targetName, Property &files, int &order) {
 	if (targetIsIOS(targetName)) {
 		const std::string absoluteCatalogPath = _projectRoot + "/dists/ios7/Images.xcassets";
+		ADD_SETTING_ORDER_NOVALUE(files, getHash(absoluteCatalogPath), "Image Asset Catalog", order++);
+	} else if (targetIsTVOS(targetName)) {
+		const std::string absoluteCatalogPath = _projectRoot + "/dists/tvos/Images.xcassets";
 		ADD_SETTING_ORDER_NOVALUE(files, getHash(absoluteCatalogPath), "Image Asset Catalog", order++);
 	}
 }
