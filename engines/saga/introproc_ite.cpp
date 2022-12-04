@@ -83,7 +83,7 @@ static LoadSceneParams ITE_IntroListDefault[] = {
 };
 
 static const LoadSceneParams ITE_AmigaEnglishECSCD_IntroList[] = {
-//	{1544, kLoadByResourceId, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE}, // Crashes, skip for now
+	{1544, kLoadByResourceId, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
 	{1548, kLoadByResourceId, Scene::SC_ITEIntroCave1Proc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
 	{1551, kLoadByResourceId, Scene::SC_ITEIntroCave2Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
 	{1554, kLoadByResourceId, Scene::SC_ITEIntroCave3Proc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
@@ -131,7 +131,7 @@ static const LoadSceneParams ITE_DOS_Demo_IntroList[] = {
 static const LoadSceneParams *ITE_IntroLists[INTROLIST_MAX] = {
 	/* INTROLIST_ITE_NONE */                 nullptr,
 	/* INTROLIST_ITE_DEFAULT */              ITE_IntroListDefault,
-	/* INTROLIST_ITE_AMIGA_ENGLISH_AGA_CD */ ITE_IntroListDefault + 1, // Skip first (logo) scene until we figure it out
+	/* INTROLIST_ITE_AMIGA_ENGLISH_AGA_CD */ ITE_IntroListDefault,
 	/* INTROLIST_ITE_AMIGA_ENGLISH_ECS_CD */ ITE_AmigaEnglishECSCD_IntroList,
 	/* INTROLIST_ITE_AMIGA_GERMAN_AGA */     ITE_AmigaGermanAGA_IntroList,
 	/* INTROLIST_ITE_AMIGA_GERMAN_ECS */     ITE_AmigaGermanECS_IntroList,
