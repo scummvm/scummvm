@@ -59,17 +59,21 @@
 	_controller = [[iOS7ScummVMViewController alloc] init];
 
 	_view = [[iPhoneView alloc] initWithFrame:rect];
+#if TARGET_OS_IOS
 	_view.multipleTouchEnabled = YES;
+#endif
 	_controller.view = _view;
 
 	[_window setRootViewController:_controller];
 	[_window makeKeyAndVisible];
 
+#if TARGET_OS_IOS
 	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 	[[NSNotificationCenter defaultCenter] addObserver:self
 	                                         selector:@selector(didRotate:)
 	                                             name:@"UIDeviceOrientationDidChangeNotification"
 	                                           object:nil];
+#endif
 
 	// Force creation of the shared instance on the main thread
 	iOS7_buildSharedOSystemInstance();
@@ -93,8 +97,10 @@
 
 	// Make sure we have the correct orientation in case the orientation was changed while
 	// the app was inactive.
+#if TARGET_OS_IOS
 	UIDeviceOrientation screenOrientation = [[UIDevice currentDevice] orientation];
 	[_view deviceOrientationChanged:screenOrientation];
+#endif
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
@@ -119,8 +125,10 @@
 }
 
 - (void)didRotate:(NSNotification *)notification {
+#if TARGET_OS_IOS
 	UIDeviceOrientation screenOrientation = [[UIDevice currentDevice] orientation];
 	[_view deviceOrientationChanged:screenOrientation];
+#endif
 }
 
 + (iOS7AppDelegate *)iOS7AppDelegate {
@@ -145,7 +153,12 @@
 @end
 
 const char *iOS7_getDocumentsDir() {
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSArray *paths;
+#if TARGET_OS_IOS
+	paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#else
+	paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#endif
 	NSString *documentsDirectory = [paths objectAtIndex:0];
 	return [documentsDirectory UTF8String];
 }

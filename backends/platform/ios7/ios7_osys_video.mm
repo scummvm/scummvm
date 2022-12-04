@@ -28,6 +28,7 @@
 #include "graphics/blit.h"
 #include "backends/platform/ios7/ios7_app_delegate.h"
 
+#if TARGET_OS_IOS
 @interface iOS7AlertHandler : NSObject<UIAlertViewDelegate>
 @end
 
@@ -49,8 +50,10 @@ static void displayAlert(void *ctx) {
 	[alert show];
 	[alert autorelease];
 }
+#endif
 
 void OSystem_iOS7::fatalError() {
+#if TARGET_OS_IOS
 	if (_lastErrorMessage.size()) {
 		dispatch_async_f(dispatch_get_main_queue(), (void *)_lastErrorMessage.c_str(), displayAlert);
 		for(;;);
@@ -58,6 +61,7 @@ void OSystem_iOS7::fatalError() {
 	else {
 		OSystem::fatalError();
 	}
+#endif
 }
 
 void OSystem_iOS7::logMessage(LogMessageType::Type type, const char *message) {

@@ -142,13 +142,18 @@ Common::String OSystem_iOS7::getSystemLanguage() const {
 }
 
 bool OSystem_iOS7::hasTextInClipboard() {
+#if TARGET_OS_IOS
 	return [[UIPasteboard generalPasteboard] containsPasteboardTypes:UIPasteboardTypeListString];
+#else
+	return false;
+#endif
 }
 
 Common::U32String OSystem_iOS7::getTextFromClipboard() {
 	if (!hasTextInClipboard())
 		return Common::U32String();
 
+#if TARGET_OS_IOS
 	UIPasteboard *pb = [UIPasteboard generalPasteboard];
 	NSString *str = pb.string;
 	if (str == nil)
@@ -174,9 +179,13 @@ Common::U32String OSystem_iOS7::getTextFromClipboard() {
 	delete[] text;
 
 	return u32String;
+#else
+	return Common::U32String();
+#endif
 }
 
 bool OSystem_iOS7::setTextInClipboard(const Common::U32String &text) {
+#if TARGET_OS_IOS
 #ifdef SCUMM_LITTLE_ENDIAN
 	NSStringEncoding stringEncoding = NSUTF32LittleEndianStringEncoding;
 #else
@@ -187,6 +196,9 @@ bool OSystem_iOS7::setTextInClipboard(const Common::U32String &text) {
 	[pb setString:nsstring];
 	[nsstring release];
 	return true;
+#else
+	return false;
+#endif
 }
 
 bool OSystem_iOS7::openUrl(const Common::String &url) {

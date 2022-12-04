@@ -168,7 +168,9 @@ bool OSystem_iOS7::hasFeature(Feature f) {
 	case kFeatureCursorPalette:
 	case kFeatureFilteringMode:
 	case kFeatureVirtualKeyboard:
+#if TARGET_OS_IOS
 	case kFeatureClipboardSupport:
+#endif
 	case kFeatureOpenUrl:
 	case kFeatureNoQuit:
 		return true;

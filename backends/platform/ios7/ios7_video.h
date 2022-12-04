@@ -116,7 +116,9 @@ uint getSizeNextPOT(uint size);
 - (void)updateMouseCursorScaling;
 - (void)updateMouseCursor;
 
+#if TARGET_OS_IOS
 - (void)deviceOrientationChanged:(UIDeviceOrientation)orientation;
+#endif
 
 - (void)showKeyboard;
 - (void)hideKeyboard;
