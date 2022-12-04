@@ -636,7 +636,6 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		_gameSounds.remove_at(i);
 		i--;
 	}
-	_gameSounds.clear();
 
 	for (auto &randsoundlist : _randomSounds) {
 		for (auto *randsound : randsoundlist._value) {
@@ -669,7 +668,7 @@ static const char *DIALOG_IDS[20] = {
 	"KFJ", "KM", "KN", "KFM"};
 
 bool Game::launchDialog(const Common::String &dname, uint param_2, const Common::String &charname,
-				  const Common::String &animfile, float param_5) {
+				  const Common::String &animfile, float animblend) {
 	Application *app = g_engine->getApplication();
 	const Common::String *locdname = app->_loc.value(dname);
 	if (!locdname)
@@ -684,7 +683,7 @@ bool Game::launchDialog(const Common::String &dname, uint param_2, const Common:
 	}
 
 	const Common::String sndfile = dname + ".ogg";
-	_dialog2.pushDialog(dname, *locdname, sndfile, charname, animfile, param_5);
+	_dialog2.pushDialog(dname, *locdname, sndfile, charname, animfile, animblend);
 	return true;
 }
 
@@ -698,7 +697,7 @@ void Game::leave(bool flag) {
 	_notifier.unload();
 	g_engine->getInputMgr()->_mouseLUpSignal.remove(this, &Game::onMouseClick);
 	_question2.unload();
-	_inventory.cellphone()->unload();
+	_inventory.cellphone()->leave();
 	_dialog2.unload();
 	_inventory.unload();
 	_documentsBrowser.unload();
@@ -779,12 +778,12 @@ bool Game::loadScene(const Common::String &name) {
 }
 
 bool Game::onAnswered(const Common::String &val) {
-	_luaScript.execute("OnAnswered", TeVariant(val));
+	_luaScript.execute("OnAnswered", val);
 	return false;
 }
 
 bool Game::onCallNumber(Common::String val) {
-	_luaScript.execute("OnCallNumber", TeVariant(val));
+	_luaScript.execute("OnCallNumber", val);
 	return false;
 }
 
@@ -1290,7 +1289,8 @@ void Game::playSound(const Common::String &name, int repeats, float volume) {
 		}
 	} else if (repeats == -1) {
 		for (GameSound *snd : _gameSounds) {
-			if (snd->getAccessName() == name) {
+			const Common::String accessName = snd->getAccessName().toString();
+			if (accessName == name) {
 				snd->setRetain(true);
 				return;
 			}
@@ -1401,11 +1401,12 @@ bool Game::startAnimation(const Common::String &animName, int loopcount, bool re
 void Game::stopSound(const Common::String &name) {
 	for (unsigned int i = 0; i < _gameSounds.size(); i++) {
 		GameSound *sound = _gameSounds[i];
-		if (sound->getAccessName() == name) {
+		if (sound->rawPath() == name) {
 			sound->stop();
 			sound->deleteLater();
+			_gameSounds.remove_at(i);
+			break;
 		}
-		_gameSounds.remove_at(i);
 	}
 	g_engine->getSoundManager()->stopFreeSound(name);
 }
@@ -1511,7 +1512,7 @@ void Game::update() {
 
 		Common::Array<Character *> characters = _scene._characters;
 		for (Character *c : characters) {
-			if (!c->_model->anim().get())
+			if (c->_model->anim())
 				c->permanentUpdate();
 		}
 
@@ -1529,7 +1530,12 @@ void Game::update() {
 		_objectif.update();
 		_scene.update();
 	} else {
-		warning("TODO: Game::update: Stop sounds before warping");
+		TeSoundManager *soundmgr = g_engine->getSoundManager();
+		for (auto &music : soundmgr->musics()) {
+			const Common::String &chanName = music->channelName();
+			if (chanName != "music" && chanName != "sfx" && chanName != "dialog")
+				music->stop();
+		}
 		changeWarp2(_warpZone, _warpScene, _warpFadeFlag);
 	}
 }

@@ -36,6 +36,7 @@ namespace Tetraedge {
 class Cellphone : public TeLayout {
 public:
 	Cellphone();
+	virtual ~Cellphone() {}
 
 	bool addNumber(const Common::String &num);
 	void currentPage(int offset);

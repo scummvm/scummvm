@@ -70,7 +70,7 @@ bool TeMusic::play() {
 	}
 	Audio::AudioStream *stream = Audio::makeVorbisStream(streamfile, DisposeAfterUse::YES);
 	byte vol = round(_volume * 255.0);
-	int channelId = _channelName.hash();
+	//int channelId = _channelName.hash();
 
 	Audio::Mixer *mixer = g_system->getMixer();
 	Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType;
@@ -204,6 +204,8 @@ void TeMusic::update() {
 		hasStopped = true;
 
 	if (hasStopped) {
+		g_system->getMixer()->stopHandle(_sndHandle);
+		_sndHandle = Audio::SoundHandle();
 		_isPaused = false;
 		_isPlaying = false;
 		_sndHandleValid = false;

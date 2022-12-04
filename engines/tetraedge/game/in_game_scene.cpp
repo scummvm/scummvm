@@ -702,6 +702,7 @@ bool InGameScene::loadObject(const Common::String &name) {
 	if (!obj) {
 		obj = new Object3D();
 		if (!obj->loadModel(name)) {
+			warning("InGameScene::loadObject: Loading %s failed", name.c_str());
 			delete obj;
 			return false;
 		}
@@ -713,11 +714,25 @@ bool InGameScene::loadObject(const Common::String &name) {
 }
 
 bool InGameScene::loadObjectMaterials(const Common::String &name) {
-	error("TODO: InGameScene::loadObjectMaterials");
+	TeImage img;
+	bool retval = false;
+	for (auto &obj : _objects) {
+		if (obj._name.empty())
+			continue;
+
+		Common::Path mpath = _loadedPath.getParent().join(name).join(obj._name + ".png");
+		if (img.load(mpath)) {
+			Te3DTexture *tex = new Te3DTexture();
+			tex->load(img);
+			obj._model->_meshes[0].defaultMaterial(tex);
+			retval = true;
+		}
+	}
+	return retval;
 }
 
 bool InGameScene::loadObjectMaterials(const Common::String &path, const Common::String &name) {
-	error("TODO: InGameScene::loadObjectMaterials");
+	error("TODO: InGameScene::loadObjectMaterials(%s, %s)", path.c_str(), name.c_str());
 }
 
 bool InGameScene::loadPlayerCharacter(const Common::String &name) {
@@ -1086,6 +1101,8 @@ void InGameScene::update() {
 
 	float waitTime = _waitTimeTimer.timeFromLastTimeElapsed();
 	if (_waitTime != -1.0 && waitTime > _waitTime) {
+		_waitTime = -1.0;
+		_waitTimeTimer.stop();
 		bool resumed = false;
 		for (unsigned int i = 0; i < game->yieldedCallbacks().size(); i++) {
 			Game::YieldedCallback &yc = game->yieldedCallbacks()[i];

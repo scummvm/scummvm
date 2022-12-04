@@ -59,6 +59,9 @@ public:
 	void setChannelName(const Common::String &name) {
 		_channelName = name;
 	}
+	const Common::String &channelName() const {
+		return _channelName;
+	}
 	void setFilePath(const Common::String &name);
 	void update();
 	void volume(float vol);
@@ -68,6 +71,8 @@ public:
 
 	void setRetain(bool retain) { _retain = retain; }
 	bool retain() const { return _retain; }
+
+	const Common::String &rawPath() { return _rawPath; }
 
 private:
 	Common::String _rawPath; // Plain name of file requested

@@ -94,7 +94,8 @@ bool TeImage::load(const Common::Path &path) {
 	TeCore *core = g_engine->getCore();
 	TeICodec *codec = core->createVideoCodec(path);
 	if (!codec->load(path)) {
-		error("TeImage::load: Failed to load %s.", path.toString().c_str());
+		warning("TeImage::load: Failed to load %s.", path.toString().c_str());
+		return false;
 	}
 
 	Common::SharedPtr<TePalette> nullpal;

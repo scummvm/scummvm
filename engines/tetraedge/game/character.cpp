@@ -27,6 +27,7 @@
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/character.h"
+#include "tetraedge/game/application.h"
 #include "tetraedge/game/game.h"
 #include "tetraedge/game/character_settings_xml_parser.h"
 #include "tetraedge/te/te_model_animation.h"
@@ -421,19 +422,20 @@ bool Character::onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneM
 		bool resetX = false;
 		if (game->scene()._character == this) {
 			for (const auto &walkSettings : _characterSettings._walkSettings) {
-				resetX |= (walkSettings._key.contains("Walk") || walkSettings._key.contains("Jog"));
-				resetX |= (walkSettings._value._walkParts[0]._file == animfile ||
-						walkSettings._value._walkParts[1]._file == animfile ||
-						walkSettings._value._walkParts[2]._file == animfile ||
-						walkSettings._value._walkParts[3]._file == animfile);
+				if (walkSettings._key.contains("Walk") || walkSettings._key.contains("Jog")) {
+					resetX |= (walkSettings._value._walkParts[0]._file.contains(animfile)
+								|| walkSettings._value._walkParts[1]._file.contains(animfile)
+								|| walkSettings._value._walkParts[2]._file.contains(animfile)
+								|| walkSettings._value._walkParts[3]._file.contains(animfile));
+				}
 			}
-			resetX |= animfile.contains(_characterSettings._idleAnimFileName);
+			resetX |= _characterSettings._idleAnimFileName.contains(animfile);
 		} else {
-			resetX = (animfile.contains(_characterSettings._idleAnimFileName) ||
-					  animfile.contains(walkAnim(WalkPart_Start)) ||
-					  animfile.contains(walkAnim(WalkPart_Loop)) ||
-					  animfile.contains(walkAnim(WalkPart_EndD)) ||
-					  animfile.contains(walkAnim(WalkPart_EndG)));
+			resetX = (_characterSettings._idleAnimFileName.contains(animfile) ||
+					  walkAnim(WalkPart_Start).contains(animfile) ||
+					  walkAnim(WalkPart_Loop).contains(animfile) ||
+					  walkAnim(WalkPart_EndD).contains(animfile) ||
+					  walkAnim(WalkPart_EndG).contains(animfile));
 		}
 		if (resetX) {
 			boneMatrix.setValue(0, 3, 0.0f);
@@ -516,7 +518,11 @@ bool Character::onModelAnimationFinished() {
 	const Common::Path loadedPath = _model->anim()->_loadedPath;
 	const Common::String animfile = loadedPath.getLastComponent().toString();
 
-	// TODO: Do something with _unrecalAnims here.
+	bool shouldAdjust = true;
+	for (const auto &unrecal : g_engine->getApplication()->unrecalAnims()) {
+		if (animfile.contains(unrecal))
+			shouldAdjust = false;
+	}
 
 	Game *game = g_engine->getGame();
 	bool isWalkAnim = false;
@@ -538,7 +544,7 @@ bool Character::onModelAnimationFinished() {
 				  animfile.contains(walkAnim(WalkPart_EndG)));
 	}
 
-	if (!isWalkAnim) {
+	if (!isWalkAnim && shouldAdjust) {
 		int pereBone = _curModelAnim->findBone("Pere");
 		const TeTRS endTRS = trsFromAnim(*_curModelAnim, pereBone, _curModelAnim->lastFrame());
 		TeVector3f32 trans = endTRS.getTranslation();
