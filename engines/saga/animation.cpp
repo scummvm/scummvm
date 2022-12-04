@@ -379,20 +379,21 @@ void Anim::returnFromVideo() {
 #endif
 
 void Anim::load(uint16 animId, const ByteArray &resourceData) {
-	AnimationData *anim;
+	AnimationData *anim = new AnimationData();
 	uint16 temp;
-
-	if (animId >= MAX_ANIMATIONS) {
-		if (animId >= MAX_ANIMATIONS + ARRAYSIZE(_cutawayAnimations))
-			error("Anim::load could not find unused animation slot");
-		anim = _cutawayAnimations[animId - MAX_ANIMATIONS] = new AnimationData();
-	} else
-		anim = _animations[animId] = new AnimationData();
 
 	ByteArrayReadStreamEndian headerReadS(resourceData, _vm->isBigEndian() && !_vm->isAGA() && !_vm->isECS());
 	anim->magic = headerReadS.readUint16LE(); // cause ALWAYS LE
+	if (anim->magic != 0x0044) {
+		warning ("Anim::load animId=%d animation magic mismatch (0x%x vs 0x%x), skipping", animId, anim->magic, 0x0044);
+		return;
+	}
 	anim->screenWidth = headerReadS.readUint16();
 	anim->screenHeight = headerReadS.readUint16();
+	if (anim->screenHeight > 2000 || anim->screenWidth > 2000) {
+		warning ("Anim::load animId=%d Excessive dimensions %dx%d, skipping", animId, anim->screenWidth, anim->screenHeight);
+		return;
+	}
 
 	anim->unknown06 = headerReadS.readByte();
 	anim->unknown07 = headerReadS.readByte();
@@ -437,6 +438,13 @@ void Anim::load(uint16 animId, const ByteArray &resourceData) {
 	anim->flags = ANIM_FLAG_NONE;
 	anim->linkId = -1;
 	anim->state = ANIM_PAUSE;
+
+	if (animId >= MAX_ANIMATIONS) {
+		if (animId >= MAX_ANIMATIONS + ARRAYSIZE(_cutawayAnimations))
+			error("Anim::load could not find unused animation slot");
+		_cutawayAnimations[animId - MAX_ANIMATIONS] = anim;
+	} else
+		_animations[animId] = anim;
 }
 
 void Anim::link(int16 animId1, int16 animId2) {
