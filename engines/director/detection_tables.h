@@ -2929,29 +2929,30 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("4sight", "", "four-sight", "0c7bbb4b24823e5ab871cb4c1d6f3710", 508091, Common::JA_JPN, 404),
 	WINGAME1_l("4sight", "", "4_SIGHT.EXE", "26c279f80434c0a641d28cec198c783f", 740581, Common::JA_JPN, 404),
 
-	MACGAME1("9worlds", "", "Nine Worlds", "3930940b5b4b2ae2563cc29b812855a6", 482838, 400),
-	WINGAME1("9worlds", "", "9WORLDS.EXE", "9da9df906149916b340a0a8fbee5ca52", 741994, 400),
-	MACGAME1_l("9worlds", "", "Neun Welten", "3930940b5b4b2ae2563cc29b812855a6", 483774, Common::DE_DEU, 400),
-	WINGAME1_l("9worlds", "", "9WORLDS.EXE", "054e5af279a05ab64627ef664631fe37", 742002, Common::DE_DEU, 400),
+	MACGAME1("9worlds", "", "Nine Worlds", "3930940b5b4b2ae2563cc29b812855a6", 482582, 404),
+	WINGAME1("9worlds", "", "9WORLDS.EXE", "9da9df906149916b340a0a8fbee5ca52", 741994, 404),
+	MACGAME1_l("9worlds", "", "Neun Welten", "3930940b5b4b2ae2563cc29b812855a6", 483518, Common::DE_DEU, 404),
+	WINGAME1_l("9worlds", "", "9WORLDS.EXE", "054e5af279a05ab64627ef664631fe37", 742002, Common::DE_DEU, 404),
 
-	WINGAME1("abcpalsafety", "", "EWOLSFTY.EXE", "a998d49776a611940e872a97a5fe3d1d", 4586417, 400),
+	MACGAME1("abcpalsafety", "", "SAFETY SCAVENGER HUNT", "4577dd3eadc467a986ab172d90871b22", 325733, 404),
+	WINGAME1("abcpalsafety", "", "EWOLSFTY.EXE", "a998d49776a611940e872a97a5fe3d1d", 4586417, 404),
 
-	MACGAME1_l("abrapalabra", "", "ABRAPALABRA", "bcd3c718db258701496b3c5bcb827ef2", 483774, Common::ES_ESP, 404),
+	MACGAME1_l("abrapalabra", "", "ABRAPALABRA", "bcd3c718db258701496b3c5bcb827ef2", 483518, Common::ES_ESP, 404),
 	WINGAME1_l("abrapalabra", "", "PALABRA.EXE", "a24a52bdb12d61eae64b9088b25ea03b", 862425, Common::ES_ESP, 404),
 
 	// Found on A.D.A.M. v1.1 for Mac
 	MACGAME1("adamcatalog", "", "A.D.A.M. Catalog", "99312ebd2a530b9e88f536f754c6b335", 302321, 400),
 
 	// Found on Nine Month Miracle for Mac
-	MACDEMO1("adamcmp", "Demo", "Comprehensive", "17efee018a660458fae80de4364021ac", 483746, 404),
+	MACDEMO1("adamcmp", "Demo", "Comprehensive", "17efee018a660458fae80de4364021ac", 483490, 404),
 
 	// Found on Nine Month Miracle for Mac
-	MACDEMO1("adamess", "Demo", "Essentials",	"17efee018a660458fae80de4364021ac", 483746, 404),
+	MACDEMO1("adamess", "Demo", "Essentials",	"17efee018a660458fae80de4364021ac", 483490, 404),
 	// Found on Life's Greatest Mysteries v1.01 (Win)
 	WINGAME1t("adamess", "Demo", "ESSDEMO.EXE", "81dbb88c9cce74bdbc05fb655c07d84e", 3440475, 400),
 
 	// Found on Nine Month Miracle for Mac
-	MACDEMO1("adamstd", "Demo", "Standard", "17efee018a660458fae80de4364021ac", 483746, 404),
+	MACDEMO1("adamstd", "Demo", "Standard", "17efee018a660458fae80de4364021ac", 483490, 404),
 
 	// Found on A.D.A.M. v1.11 for Mac
 	MACGAME1("adamscholar", "", "Run Demo!", "17efee018a660458fae80de4364021ac", 483746, 404),
@@ -3034,7 +3035,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2t("aol", "Demo", "AOL.EXE",		"b91b98671625a60252dba2cc7d052e7d", 1426687,
 							 "AOLMOV.AVI",	"8a3ce7dd86e5674240aff51c9a82c193", 5795846, 404),
 
-	MACGAME1("applestore", "", "Apple Company Store", "19b7c96659c773e73b13986d06b28c5c", 774048, 404),
+	MACGAME1("applestore", "", "Apple Company Store", "19b7c96659c773e73b13986d06b28c5c", 773792, 404),
 
 	MACDEMO1_l("aquazone", "Demo (Version 1.5)", "AZ demo", "97474208c44c78f26bef8b2011d341aa", 487303, Common::JA_JPN, 404),
 	WINDEMO1t_l("aquazone", "Demo", "AZDEMO.EXE", "4644e6e5015ed2c7e4a30619c5efc464", 4011337, Common::JA_JPN, 404),
@@ -3552,7 +3553,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	PIPGAME1_l("ffa", "", "FFA", "2618a85198d0180e3eae9162f81aafed", 60921, Common::JA_JPN, 404),
 
 	// Fred en de Flessenfiets (Demo)
-	WINDEMO1_l("flaschenfahrrad", "Demo", "FREDDEMO.EXE", "f5fa2d95970e8eb85761e95d755883d2", 812075, Common::NL_NLD, 400),
+	WINDEMO2t_l("flaschenfahrrad", "Demo", "FREDDEMO.EXE", 		"7a7f294d8c8fb9a956b7f098b29a2aed", 812075,
+										   "FuFF/INTROFR.DXR",	"cf2e3e4cc089a7effd80423c2c2a283b", 3895154, Common::NL_NLD, 404),
 
 	// Willy, der Zauberfisch : ein Meer voll Überraschungen!
 	// Originally published by Tivola, Hamburg (1997)
