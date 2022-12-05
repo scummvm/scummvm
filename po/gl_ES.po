@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-05 06:15+0000\n"
+"POT-Creation-Date: 2022-12-05 12:49+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -2253,7 +2253,7 @@ msgstr "Efectos desactivados"
 msgid "Standard renderer"
 msgstr "Procesamento estándar"
 
-#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:947
+#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:1008
 msgid "Standard"
 msgstr "Estándar"
 
@@ -7049,99 +7049,99 @@ msgstr "~A~nterior"
 msgid "~N~ext"
 msgstr "~S~eguinte"
 
-#: engines/scumm/dialogs.cpp:886
+#: engines/scumm/dialogs.cpp:947
 msgid "Speech Only"
 msgstr "Só voz"
 
-#: engines/scumm/dialogs.cpp:887
+#: engines/scumm/dialogs.cpp:948
 msgid "Speech and Subtitles"
 msgstr "Voz e subtítulos"
 
-#: engines/scumm/dialogs.cpp:888
+#: engines/scumm/dialogs.cpp:949
 msgid "Subtitles Only"
 msgstr "Só subtítulos"
 
-#: engines/scumm/dialogs.cpp:896
+#: engines/scumm/dialogs.cpp:957
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Voz e subs"
 
-#: engines/scumm/dialogs.cpp:942
+#: engines/scumm/dialogs.cpp:1003
 msgid "Select a Proficiency Level."
 msgstr "Selecciona un nivel de habilidade."
 
-#: engines/scumm/dialogs.cpp:944
+#: engines/scumm/dialogs.cpp:1005
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "Consulta o manual de Loom(TM) para obter axuda."
 
-#: engines/scumm/dialogs.cpp:948
+#: engines/scumm/dialogs.cpp:1009
 msgid "Practice"
 msgstr "Práctica"
 
-#: engines/scumm/dialogs.cpp:949
+#: engines/scumm/dialogs.cpp:1010
 msgid "Expert"
 msgstr "Experto"
 
-#: engines/scumm/dialogs.cpp:981 engines/scumm/metaengine.cpp:647
+#: engines/scumm/dialogs.cpp:1042 engines/scumm/metaengine.cpp:647
 #, fuzzy
 msgid "Enable game-specific enhancements"
 msgstr "Activar censura de contidos"
 
-#: engines/scumm/dialogs.cpp:981 engines/scumm/metaengine.cpp:648
+#: engines/scumm/dialogs.cpp:1042 engines/scumm/metaengine.cpp:648
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:985 engines/scumm/metaengine.cpp:665
+#: engines/scumm/dialogs.cpp:1046 engines/scumm/metaengine.cpp:665
 #, fuzzy
 #| msgid "Enable undithering in EGA games"
 msgid "Enable the original GUI and Menu"
 msgstr "Activar a non interpolación nos xogos en EGA"
 
-#: engines/scumm/dialogs.cpp:985 engines/scumm/metaengine.cpp:666
+#: engines/scumm/dialogs.cpp:1046 engines/scumm/metaengine.cpp:666
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1006
+#: engines/scumm/dialogs.cpp:1067
 msgid "Overture Timing:"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1010
+#: engines/scumm/dialogs.cpp:1071
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1093
+#: engines/scumm/dialogs.cpp:1154
 #, fuzzy
 msgid "Playback Adjust:"
 msgstr "Reproducir"
 
-#: engines/scumm/dialogs.cpp:1097
+#: engines/scumm/dialogs.cpp:1158
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1176
+#: engines/scumm/dialogs.cpp:1237
 msgid "Intro Adjust:"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1180
+#: engines/scumm/dialogs.cpp:1241
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
 "syncs up with the intro."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1189
+#: engines/scumm/dialogs.cpp:1250
 msgid "Outlook Adjust:"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1193
+#: engines/scumm/dialogs.cpp:1254
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
