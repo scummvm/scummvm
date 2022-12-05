@@ -293,7 +293,6 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	_tempTextPtr = nullptr;
 	_word2C880 = false;
 	_redrawNeededFl = false;
-	_word2C8D7 = true;
 	_drawHeroOnMapFl = true;
 	_drawMonstersOnMapFl = true;
 	_word2C87A = false;
@@ -739,6 +738,7 @@ void EfhEngine::initEngine() {
 	checkProtection();
 	if (_loadSaveSlot == -1) {
 		loadEfhGame();
+		resetGame();
 	} else {
 		loadGameState(_loadSaveSlot);
 		_loadSaveSlot = -1;
@@ -990,11 +990,6 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 map
 			}
 		}
 	}
-
-	if (_word2C8D7)
-		return;
-
-	warning("drawMap() - unexpected code reached, not implemented");
 }
 
 void EfhEngine::displaySmallMap(int16 posX, int16 posY) {
@@ -1481,14 +1476,14 @@ int16 EfhEngine::sub1C219(Common::String str, int16 menuType, int16 arg4, bool d
 		else {
 			drawColoredRect(minX, minY, maxX, maxY, 0);
 			if (str.size())
-				int16 varC = script_parse(str, minX, minY, maxX, maxY, false);
+				script_parse(str, minX, minY, maxX, maxY, false);
 		}
 
 		if (displayTeamWindowFl)
 			displayLowStatusScreen(false);
 
 		if (arg4 >= 2)
-			int16 varC = getLastCharAfterAnimCount(_guessAnimationAmount);
+			getLastCharAfterAnimCount(_guessAnimationAmount);
 
 		if (arg4 == 3)
 			drawColoredRect(minX, minY, maxX, maxY, 0);
@@ -1665,9 +1660,6 @@ void EfhEngine::handleNewRoundEffects() {
 
 	static int16 regenCounter = 0;
 
-	if (!_word2C8D7)
-		return;
-
 	for (int counter = 0; counter < _teamSize; ++counter) {
 		if (_teamCharStatus[counter]._status == 0) // normal
 			continue;
@@ -1685,6 +1677,15 @@ void EfhEngine::handleNewRoundEffects() {
 			_npcBuf[_teamCharId[counter]]._hitPoints = _npcBuf[_teamCharId[counter]]._maxHP;
 	}
 	regenCounter = 0;
+}
+
+void EfhEngine::resetGame() {
+	loadTechMapImp(0);
+	_largeMapFlag = true;
+	_oldMapPosX = _mapPosX = 31;
+	_oldMapPosY = _mapPosY = 31;
+	_unkRelatedToAnimImageSetId = 0;
+	_unkArray2C8AA[0] = 0;
 }
 
 bool EfhEngine::handleDeathMenu() {
@@ -1720,25 +1721,22 @@ bool EfhEngine::handleDeathMenu() {
 		Common::KeyCode input = waitForKey();
 		switch (input) {
 		case Common::KEYCODE_l:
-			loadEfhGame();
+			//loadEfhGame();
+			//TODO : saveEfhGame opens the GUI save/load screen. It shouldn't bepossible to save at this point
+			saveEfhGame();
 			found = true;
 			break;
 		case Common::KEYCODE_q:
+			_shouldQuit = true;
 			return true;
 			break;
 		case Common::KEYCODE_r:
 			loadEfhGame();
-			loadTechMapImp(0);
-			_largeMapFlag = true;
-			_oldMapPosX = _mapPosX = 31;
-			_oldMapPosY = _mapPosY = 31;
-			_unkRelatedToAnimImageSetId = 0;
-			_unkArray2C8AA[0] = 0;
+			resetGame();
 			found = true;
 			break;
 		case Common::KEYCODE_x:
-			if (!_word2C8D7)
-				found = true;
+			found = true;
 			break;
 		default:
 			break;
@@ -2044,8 +2042,6 @@ void EfhEngine::sub174A0() {
 	static int16 sub174A0_monsterPosX = -1;
 	static int16 sub174A0_monsterPosY = -1;
 
-	int16 var14 = 0;
-	int16 var6 = 0;
 	_redrawNeededFl = true;
 	int16 unkMonsterId = -1;
 	int16 mapSize = _largeMapFlag ? 63 : 23;
@@ -2071,7 +2067,7 @@ void EfhEngine::sub174A0() {
 			continue;
 
 		bool var1A = false;
-		var14 = 0;
+		int16 var14 = 0;
 
 		sub174A0_monsterPosX = _mapMonsters[monsterId]._posX;
 		sub174A0_monsterPosY = _mapMonsters[monsterId]._posY;
@@ -2566,7 +2562,9 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 		if (_mapUnknown[var8]._field3 == 0xFF) {
 			sub22AA8(_mapUnknown[var8]._field5); // word!
 			return true;
-		} else if (_mapUnknown[var8]._field3 == 0xFE) {
+		}
+
+		if (_mapUnknown[var8]._field3 == 0xFE) {
 			for (int counter = 0; counter < _teamSize; ++counter) {
 				if (_teamCharId[counter] == -1)
 					continue;
@@ -2595,7 +2593,9 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 					continue;
 
 				for (uint var2 = 0; var2 < 39; ++var2) {
-					if (_npcBuf[_teamCharId[counter]]._activeScore[var2] >= _mapUnknown[var8]._field4) {
+					// CHECKME : the whole look doesn't make much sense as it's using var6 instead of var2, plus _activeScore is an array of 15 bytes, not 0x77...
+					// Also, 39 correspond to the size of activeScore + passiveScore + infoScore + the 2 remaining bytes of the struct
+					if (_npcBuf[_teamCharId[counter]]._activeScore[var6] >= _mapUnknown[var8]._field4) {
 						sub22AA8(_mapUnknown[var8]._field5);
 						return true;
 					}
@@ -2643,8 +2643,8 @@ int8 EfhEngine::sub15581(int16 mapPosX, int16 mapPosY, int16 arg4) {
 	imageSetId *= 72;
 	imageSetId += curTileInfo % 72;
 
-	if (arg4 == 1 && _word2C8D7) {
-		int16 var2 = sub22293(mapPosX, mapPosY, -1, 0x7FFF, 0, imageSetId);
+	if (arg4 == 1) {
+		sub22293(mapPosX, mapPosY, -1, 0x7FFF, 0, imageSetId);
 	}
 
 	if (_word2C880) {
@@ -2652,7 +2652,7 @@ int8 EfhEngine::sub15581(int16 mapPosX, int16 mapPosY, int16 arg4) {
 		return -1;
 	}
 	if (_tileFact[imageSetId]._field1 != 0xFF && !_dbgForceMonsterBlock) {
-		if ((arg4 == 1 && _word2C8D7) || (arg4 == 0 && _word2C8D7 && imageSetId != 128 && imageSetId != 121)) {
+		if ((arg4 == 1) || (arg4 == 0 && imageSetId != 128 && imageSetId != 121)) {
 			if (_largeMapFlag) {
 				_mapGameMap[mapPosX][mapPosY] = _tileFact[imageSetId]._field1;
 			} else {
@@ -5187,9 +5187,6 @@ bool EfhEngine::checkMonsterCollision() {
 
 		if (_mapMonsters[monsterId]._posX != _mapPosX || _mapMonsters[monsterId]._posY != _mapPosY)
 			continue;
-
-		if (!_word2C8D7)
-			return false;
 
 		_mapPosX = _oldMapPosX;
 		_mapPosY = _oldMapPosY;
