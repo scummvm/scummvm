@@ -49,11 +49,12 @@ public:
 
 	void reset();
 
-	ProcId addProcess(Process *proc); // returns pid of new process
+	// returns pid of new process
+	ProcId addProcess(Process *proc, bool dispose = true);
 
 	//! add a process and run it immediately
 	//! \return pid of process
-	ProcId addProcessExec(Process *proc);
+	ProcId addProcessExec(Process *proc, bool dispose = true);
 
 	void runProcesses();
 	Process *getProcess(ProcId pid);

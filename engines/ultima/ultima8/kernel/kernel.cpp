@@ -63,7 +63,12 @@ void Kernel::reset() {
 	debugN(MM_INFO, "Resetting Kernel...\n");
 
 	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
-		delete(*it);
+		Process *p = *it;
+		if (p->_flags & Process::PROC_TERM_DISPOSE) {
+			delete p;
+		} else {
+			p->_flags |= Process::PROC_TERMINATED;
+		}
 	}
 	_processes.clear();
 	_currentProcess = _processes.begin();
@@ -87,7 +92,7 @@ ProcId Kernel::assignPID(Process *proc) {
 	return proc->_pid;
 }
 
-ProcId Kernel::addProcess(Process *proc) {
+ProcId Kernel::addProcess(Process *proc, bool dispose) {
 #if 0
 	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
 		if (*it == proc)
@@ -102,13 +107,14 @@ ProcId Kernel::addProcess(Process *proc) {
 	<< ", pid = " << proc->_pid << " type " << proc->GetClassType()._className << Std::endl;
 #endif
 
-//	processes.push_back(proc);
-//	proc->active = true;
+	if (dispose) {
+		proc->_flags |= Process::PROC_TERM_DISPOSE;
+	}
 	setNextProcess(proc);
 	return proc->_pid;
 }
 
-ProcId Kernel::addProcessExec(Process *proc) {
+ProcId Kernel::addProcessExec(Process *proc, bool dispose) {
 #if 0
 	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
 		if (*it == proc)
@@ -123,6 +129,9 @@ ProcId Kernel::addProcessExec(Process *proc) {
 	     << ", pid = " << proc->_pid << Std::endl;
 #endif
 
+	if (dispose) {
+		proc->_flags |= Process::PROC_TERM_DISPOSE;
+	}
 	_processes.push_back(proc);
 	proc->_flags |= Process::PROC_ACTIVE;
 
@@ -195,8 +204,9 @@ void Kernel::runProcesses() {
 			// Clear pid
 			_pIDs->clearID(p->_pid);
 
-			//! is this the right place to delete processes?
-			delete p;
+			if (p->_flags & Process::PROC_TERM_DISPOSE) {
+				delete p;
+			}
 		} else if (!_paused && (p->_flags & Process::PROC_TERM_DEFERRED) && GAME_IS_CRUSADER) {
 			//
 			// In Crusader, move term deferred processes to the end to clean up after
