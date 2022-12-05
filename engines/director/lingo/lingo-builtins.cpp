@@ -673,15 +673,15 @@ void LB::b_deleteAt(int nargs) {
 }
 
 void LB::b_deleteOne(int nargs) {
-	Datum indexD = g_lingo->pop();
+	Datum val = g_lingo->pop();
 	Datum list = g_lingo->pop();
-	TYPECHECK3(indexD, INT, FLOAT, SYMBOL);
+	TYPECHECK3(val, INT, FLOAT, SYMBOL);
 	TYPECHECK2(list, ARRAY, PARRAY);
 
 	switch (list.type) {
 	case ARRAY: {
 		g_lingo->push(list);
-		g_lingo->push(indexD);
+		g_lingo->push(val);
 		b_getPos(nargs);
 		int index = g_lingo->pop().asInt();
 		if (index > 0) {
@@ -691,7 +691,7 @@ void LB::b_deleteOne(int nargs) {
 	}
 	case PARRAY: {
 		Datum d;
-		int index = LC::compareArrays(LC::eqData, list, indexD, true, true).u.i;
+		int index = LC::compareArrays(LC::eqData, list, val, true, true).u.i;
 		if (index > 0) {
 			list.u.parr->arr.remove_at(index - 1);
 		}
