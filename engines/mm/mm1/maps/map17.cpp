@@ -30,8 +30,8 @@ namespace MM1 {
 namespace Maps {
 
 #define VAL1 509
-#define VAL2 510
-#define VAL3 511
+#define COLOR 510
+#define CORRECT_ANSWERS 511
 
 void Map17::special() {
 	Game::Encounter &enc = g_globals->_encounters;
@@ -70,28 +70,31 @@ void Map17::special() {
 		updateGame();
 
 	} else {
-		g_events->addAction(KEYBIND_SEARCH);
+		none160();
 	}
 }
 
 void Map17::special00() {
-	send(SoundMessage("maps.map17.islands"));
+	send(SoundMessage(STRING["maps.map17.islands"]));
 }
 
 void Map17::special01() {
-	send(SoundMessage(STRING["maps.map17.bridge"],
+	SoundMessage msg(STRING["maps.map17.bridge"],
 		[]() {
 			static_cast<Map17 *>(g_maps->_currentMap)->askQuestion();
 		}
-	));
+	);
+
+	msg._largeMessage = true;
+	send(msg);
 }
 
 void Map17::special02() {
-	if (_data[VAL3]) {
-		g_globals->_treasure._items[2] = 236;
+	if (_data[CORRECT_ANSWERS]) {
+		g_globals->_treasure._items[2] = CORAL_KEY_ID;
 		g_events->addAction(KEYBIND_SEARCH);
 	} else {
-		g_events->addKeypress((Common::KeyCode)211);
+		none160();
 	}
 }
 
@@ -102,7 +105,8 @@ void Map17::special03() {
 
 void Map17::askQuestion(uint partyIndex) {
 	if (partyIndex >= g_globals->_party.size()) {
-		if (_data[VAL3]) {
+		// Entire party has answered the question
+		if (_data[CORRECT_ANSWERS]) {
 			g_maps->_mapPos.y = 2;
 			updateGame();
 		} else {
@@ -122,16 +126,19 @@ void Map17::askQuestion(uint partyIndex) {
 				Map17 &map = *static_cast<Map17 *>(g_maps->_currentMap);
 				if (ks.keycode >= Common::KEYCODE_1 &&
 						ks.keycode <= Common::KEYCODE_9) {
-					map[VAL2] = ks.ascii - '1';
+					map[COLOR] = ks.ascii - '1';
 
 					Common::String line;
 					Character &c = *g_globals->_currCharacter;
-					int val = c._flags[2] & 0xf;
-					if (!val || (val & 7) != map[VAL2]) {
+					int color = c._flags[2] & 0xf;
+
+					// If a color hasn't been designated yet from talking to Gypsy,
+					// or it has but the wrong color is selected, eradicate them
+					if (!color || (color & 7) != map[COLOR]) {
 						c._condition = ERADICATED;
 						line = STRING["maps.map17.wrong"];
 					} else {
-						map[VAL3]++;
+						map[CORRECT_ANSWERS]++;
 						c._flags[4] |= CHARFLAG4_80;
 						line = STRING["maps.map17.correct"];
 					}
@@ -142,7 +149,7 @@ void Map17::askQuestion(uint partyIndex) {
 					msg2._delaySeconds = 1;
 					msg2._lines.push_back(Line(0, 0, STRING["maps.map17.color"]));
 					msg2._lines.push_back(Line(0, 2, STRING["maps.map17.options"]));
-					msg2._lines.push_back(Line(16, 5, line));
+					msg2._lines.push_back(Line(16, 6, line));
 					msg2._timeoutCallback = []() {
 						Map17 &map17 = *static_cast<Map17 *>(g_maps->_currentMap);
 						map17.askQuestion(map17[VAL1] + 1);
