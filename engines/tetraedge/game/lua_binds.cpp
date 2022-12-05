@@ -74,7 +74,6 @@ static int tolua_ExportedFunctions_LoadObjectMaterials01(lua_State *L) {
 	return tolua_ExportedFunctions_LoadObjectMaterials00(L);
 }
 
-
 static void PlayMovie(const Common::String &vidpath, const Common::String &musicpath) {
 	Application *app = g_engine->getApplication();
 	app->mouseCursorLayout().load("pictures/cursor.png");
@@ -91,6 +90,28 @@ static int tolua_ExportedFunctions_PlayMovie00(lua_State *L) {
 		return 0;
 	}
 	error("#ferror in function 'PlayMovie': %d %d %s", err.index, err.array, err.type);
+}
+
+static int tolua_ExportedFunctions_PlayMovieAndWaitForEnd00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err) && tolua_isnoobj(L, 3, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		Common::String s2(tolua_tostring(L, 2, nullptr));
+		PlayMovie(s1, s2);
+
+		Game::YieldedCallback callback;
+		callback._luaThread = TeLuaThread::threadFromState(L);
+		callback._luaFnName = "OnMovieFinished";
+		callback._luaParam = s1;
+		Game *game = g_engine->getGame();
+		for (const auto &cb : game->yieldedCallbacks()) {
+			if (cb._luaFnName == callback._luaFnName && cb._luaParam == s1)
+				error("PlayMovieAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
+		}
+		game->yieldedCallbacks().push_back(callback);
+		return callback._luaThread->yield();
+	}
+	error("#ferror in function 'PlayMovieAndWaitForEnd': %d %d %s", err.index, err.array, err.type);
 }
 
 static void AddRandomSound(const Common::String &s1, const Common::String &s2, float f1, float f2){
@@ -194,7 +215,6 @@ static int tolua_ExportedFunctions_RemoveObject01(lua_State *L) {
 	}
 	return 0;
 }
-
 
 static void AddNumber(const Common::String &number) {
 	Game *game = g_engine->getGame();
@@ -351,6 +371,24 @@ static int tolua_ExportedFunctions_SetRunMode200(lua_State *L) {
 	error("#ferror in function 'AddMarker': %d %d %s", err.index, err.array, err.type);
 }
 
+static void SetCharacterShadow(const Common::String &charName, bool val) {
+	//Game *game = g_engine->getGame();
+	//Character *character = game->scene().character(charName);
+	// Note: the game fetches the character then does nothing here??
+}
+
+static int tolua_ExportedFunctions_SetCharacterShadow00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isboolean(L, 2, 0, &err)
+			 && tolua_isnoobj(L, 3, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		bool b1 = tolua_toboolean(L, 2, 0);
+		SetCharacterShadow(s1, b1);
+		return 0;
+	}
+	error("#ferror in function 'SetCharacterShadow': %d %d %s", err.index, err.array, err.type);
+}
+
 static void AddCallback(const Common::String &charName, const Common::String &animName, const Common::String &fnName, float triggerFrame, float maxCalls) {
 	Game *game = g_engine->getGame();
 	Character *c = game->scene().character(charName);
@@ -490,6 +528,32 @@ int tolua_ExportedFunctions_StartAnimation00(lua_State *L) {
 		return 0;
 	}
 	error("#ferror in function 'StartAnimation': %d %d %s", err.index, err.array, err.type);
+
+}
+
+int tolua_ExportedFunctions_StartAnimationAndWaitForEnd00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnumber(L, 2, 1, &err)
+		&& tolua_isboolean(L, 3, 1, &err) && tolua_isnoobj(L, 4, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		double d1 = tolua_tonumber(L, 2, -1.0);
+		bool b1 = tolua_toboolean(L, 3, 0);
+		StartAnimation(s1, d1, b1);
+
+		Game::YieldedCallback callback;
+		callback._luaThread = TeLuaThread::threadFromState(L);
+		callback._luaFnName = "OnFinishedAnim";
+		callback._luaParam = s1;
+		Game *game = g_engine->getGame();
+		for (const auto &cb : game->yieldedCallbacks()) {
+			if (cb._luaFnName == callback._luaFnName && cb._luaParam == s1)
+				error("StartAnimationAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
+		}
+		game->yieldedCallbacks().push_back(callback);
+		return callback._luaThread->yield();
+
+	}
+	error("#ferror in function 'StartAnimationAndWaitForEnd': %d %d %s", err.index, err.array, err.type);
 
 }
 
@@ -890,6 +954,57 @@ static int tolua_ExportedFunctions_SetGroundObjectRotation00(lua_State *L) {
 	error("#ferror in function 'SetGroundObjectRotation': %d %d %s", err.index, err.array, err.type);
 }
 
+static void TranslateGroundObject(const Common::String &name, float x, float y, float z, float time) {
+	Game *game = g_engine->getGame();
+	Object3D *obj = game->scene().object3D(name);
+	if (!obj)
+		error("[TranslateGroundObject] Object not found %s", name.c_str());
+	TeVector3f32 pos = obj->model()->position();
+	obj->_translateStart = pos;
+	obj->_translateAmount = TeVector3f32(x, y, z);
+	obj->_translateTimer.start();
+	obj->_translateTime = time;
+}
+
+static int tolua_ExportedFunctions_TranslateGroundObject00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnumber(L, 2, 0, &err)
+		&& tolua_isnumber(L, 3, 0, &err) && tolua_isnumber(L, 4, 0, &err)
+		&& tolua_isnumber(L, 5, 0, &err) && tolua_isnoobj(L, 6, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		float f1 = tolua_tonumber(L, 2, 0.0);
+		float f2 = tolua_tonumber(L, 3, 0.0);
+		float f3 = tolua_tonumber(L, 4, 0.0);
+		float f4 = tolua_tonumber(L, 5, 0.0);
+		TranslateGroundObject(s1, f1, f2, f3, f4);
+		return 0;
+	}
+	error("#ferror in function 'TranslateGroundObject': %d %d %s", err.index, err.array, err.type);
+}
+
+static void EnableLight(uint lightno, bool enable) {
+	Game *game = g_engine->getGame();
+	if (lightno > game->scene().lights().size()) {
+		error("[EnableLight] Light not found %d", lightno);
+	}
+	TeLight &light = game->scene().lights()[lightno];
+	if (enable)
+		light.enable(lightno);
+	else
+		light.disable(lightno);
+}
+
+static int tolua_ExportedFunctions_EnableLight00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isnumber(L, 1, 0, &err) && tolua_isboolean(L, 2, 0, &err) && tolua_isnoobj(L, 3, &err)) {
+		float f1 = tolua_tonumber(L, 1, 0.0);
+		bool b1 = tolua_toboolean(L, 2, 0);
+		EnableLight(f1, b1);
+		return 0;
+	}
+	error("#ferror in function 'EnableLight': %d %d %s", err.index, err.array, err.type);
+}
+
 static void LoadBillBoard(const Common::String &name) {
 	Game *game = g_engine->getGame();
 	game->scene().loadBillboard(name);
@@ -1018,6 +1133,35 @@ static int tolua_ExportedFunctions_HideBillboard00(lua_State *L) {
 	error("#ferror in function 'HideBillboard': %d %d %s", err.index, err.array, err.type);
 }
 
+static void UnlockAchievement(int val) {
+	Game *game = g_engine->getGame();
+	game->addToScore(val);
+}
+
+static int tolua_ExportedFunctions_UnlockAchievement00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isnumber(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		double d = tolua_tonumber(L, 1, 0.0);
+		UnlockAchievement(d);
+		return 0;
+	}
+	error("#ferror in function 'UnlockAchievement': %d %d %s", err.index, err.array, err.type);
+}
+
+static void Save(const Common::String &name) {
+	Game *game = g_engine->getGame();
+	game->saveBackup(name);
+}
+
+static int tolua_ExportedFunctions_Save00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		Save(s1);
+		return 0;
+	}
+	error("#ferror in function 'Save': %d %d %s", err.index, err.array, err.type);
+}
 
 static void Wait(float seconds) {
 	Game *game = g_engine->getGame();
@@ -1055,6 +1199,34 @@ static int tolua_ExportedFunctions_WaitAndWaitForEnd00(lua_State *L) {
 		return callback._luaThread->yield();
 	}
 	error("#ferror in function 'WaitAndWaitForEnd': %d %d %s", err.index, err.array, err.type);
+}
+
+static void FinishGame() {
+	Game *game = g_engine->getGame();
+	game->finishGame();
+}
+
+static int tolua_ExportedFunctions_FinishGame00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isnoobj(L, 1, &err)) {
+		FinishGame();
+		return 0;
+	}
+	error("#ferror in function 'FinishGame': %d %d %s", err.index, err.array, err.type);
+}
+
+static void RequestMainMenu() {
+	Game *game = g_engine->getGame();
+	game->_returnToMainMenu = true;
+}
+
+static int tolua_ExportedFunctions_RequestMainMenu00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isnoobj(L, 1, &err)) {
+		RequestMainMenu();
+		return 0;
+	}
+	error("#ferror in function 'RequestMainMenu': %d %d %s", err.index, err.array, err.type);
 }
 
 static void SetBackground(const Common::String &name) {
@@ -1850,11 +2022,11 @@ void LuaOpenBinds(lua_State *L) {
 	// tolua_function(L, "RemoveBlockingObject", tolua_ExportedFunctions_RemoveBlockingObject00); // Unused
 	tolua_function(L, "ChangeWarp", tolua_ExportedFunctions_ChangeWarp00);
 	tolua_function(L, "PlayMovie", tolua_ExportedFunctions_PlayMovie00);
-	/*tolua_function(L, "PlayMovieAndWaitForEnd", tolua_ExportedFunctions_PlayMovieAndWaitForEnd00);*/
+	tolua_function(L, "PlayMovieAndWaitForEnd", tolua_ExportedFunctions_PlayMovieAndWaitForEnd00);
 	// tolua_function(L, "StartAnimationPart", tolua_ExportedFunctions_StartAnimationPart00); // Unused
 	tolua_function(L, "StartAnimation", tolua_ExportedFunctions_StartAnimation00);
-	/*tolua_function(L, "StartAnimationAndWaitForEnd",
-				 tolua_ExportedFunctions_StartAnimationAndWaitForEnd00); */
+	tolua_function(L, "StartAnimationAndWaitForEnd",
+				 tolua_ExportedFunctions_StartAnimationAndWaitForEnd00);
 	// tolua_function(L, "AddAnimToSet", tolua_ExportedFunctions_AddAnimToSet00); // Unused
 	tolua_function(L, "RequestAutoSave", tolua_ExportedFunctions_RequestAutoSave00);
 	tolua_function(L, "SetVisibleButtonZoomed", tolua_ExportedFunctions_SetVisibleButtonZoomed00);
@@ -1924,7 +2096,7 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "SetRunMode2", tolua_ExportedFunctions_SetRunMode200);
 	// tolua_function(L, "SetCharacterColor", tolua_ExportedFunctions_SetCharacterColor00); // Unused
 	// tolua_function(L, "SetCharacterSound", tolua_ExportedFunctions_SetCharacterSound00); // Unused
-	/*tolua_function(L, "SetCharacterShadow", tolua_ExportedFunctions_SetCharacterShadow00);*/
+	tolua_function(L, "SetCharacterShadow", tolua_ExportedFunctions_SetCharacterShadow00);
 	tolua_function(L, "AddCallback", tolua_ExportedFunctions_AddCallback00);
 	tolua_function(L, "AddCallbackPlayer", tolua_ExportedFunctions_AddCallbackPlayer00);
 	// tolua_function(L, "AddCallbackAnimation2D", tolua_ExportedFunctions_AddCallbackAnimation2D00); // Unused
@@ -1940,11 +2112,11 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "UnloadObject", tolua_ExportedFunctions_UnloadObject00);
 	tolua_function(L, "SetGroundObjectPosition", tolua_ExportedFunctions_SetGroundObjectPosition00);
 	tolua_function(L, "SetGroundObjectRotation", tolua_ExportedFunctions_SetGroundObjectRotation00);
-	/*tolua_function(L, "TranslateGroundObject", tolua_ExportedFunctions_TranslateGroundObject00); */
+	tolua_function(L, "TranslateGroundObject", tolua_ExportedFunctions_TranslateGroundObject00);
 	// tolua_function(L, "RotateGroundObject", tolua_ExportedFunctions_RotateGroundObject00); // Unused
 	// tolua_function(L, "SetLightPlayerCharacter", tolua_ExportedFunctions_SetLightPlayerCharacter00); // Unused
 	// tolua_function(L, "SetLightPos", tolua_ExportedFunctions_SetLightPos00); // Unused
-	/*tolua_function(L, "EnableLight", tolua_ExportedFunctions_EnableLight00); */
+	tolua_function(L, "EnableLight", tolua_ExportedFunctions_EnableLight00);
 	// tolua_function(L, "SetLightDiffuse", tolua_ExportedFunctions_SetLightDiffuse00); // Unused
 	// tolua_function(L, "SetLightAmbient", tolua_ExportedFunctions_SetLightAmbient00); // Unused
 	// tolua_function(L, "SetLightSpecular", tolua_ExportedFunctions_SetLightSpecular00); // Unused
@@ -1954,13 +2126,13 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "SetBillboardSize", tolua_ExportedFunctions_SetBillboardSize00);
 	tolua_function(L, "ShowBillboard", tolua_ExportedFunctions_ShowBillboard00);
 	tolua_function(L, "HideBillboard", tolua_ExportedFunctions_HideBillboard00);
-	/*tolua_function(L, "UnlockAchievement", tolua_ExportedFunctions_UnlockAchievement00);
-	tolua_function(L, "Save", tolua_ExportedFunctions_Save00);*/
+	tolua_function(L, "UnlockAchievement", tolua_ExportedFunctions_UnlockAchievement00);
+	tolua_function(L, "Save", tolua_ExportedFunctions_Save00);
 	tolua_function(L, "Wait", tolua_ExportedFunctions_Wait00);
 	tolua_function(L, "WaitAndWaitForEnd", tolua_ExportedFunctions_WaitAndWaitForEnd00);
 	// tolua_function(L, "OpenFinalURL", tolua_ExportedFunctions_OpenFinalURL00); // Unused
-	/*tolua_function(L, "FinishGame", tolua_ExportedFunctions_FinishGame00);
-	tolua_function(L, "RequestMainMenu", tolua_ExportedFunctions_RequestMainMenu00);*/
+	tolua_function(L, "FinishGame", tolua_ExportedFunctions_FinishGame00);
+	tolua_function(L, "RequestMainMenu", tolua_ExportedFunctions_RequestMainMenu00);
 	// tolua_function(L, "BFGRateImmediately", tolua_ExportedFunctions_BFGRateImmediately00); // Unused
 	// tolua_function(L, "BFGReportEvent", tolua_ExportedFunctions_BFGReportEvent00); // Unused
 	// tolua_function(L, "BFGReportEventWithValue", tolua_ExportedFunctions_BFGReportEventWithValue00); // Unused

@@ -48,6 +48,15 @@ class TeFreeMoveZoneGraph : micropather::Graph {
 
 	void deserialize(Common::ReadStream &stream);
 	void serialize(Common::WriteStream &stream) const;
+
+	float costForPoint(TeVector2s32 pt) {
+		int flg = flag(pt);
+		if (flg == 1)
+			return FLT_MAX;
+		if (flg == 2)
+			return _bordersDistance;
+		return 1.0;
+	}
 };
 
 
@@ -358,7 +367,10 @@ void TeFreeMoveZone::setNbTriangles(unsigned int len) {
 }
 
 void TeFreeMoveZone::setPathFindingOccluder(const TeOBP &occluder) {
-	error("TODO: Implement TeFreeMoveZone::setPathFindingOccluder");
+	_obp = occluder;
+	_projectedPointsDirty = true;
+	_bordersDirty = true;
+	_gridDirty = true;
 }
 
 void TeFreeMoveZone::setVertex(unsigned int offset, const TeVector3f32 &vertex) {
@@ -378,16 +390,20 @@ TeVector3f32 TeFreeMoveZone::transformAStarGridInWorldSpace(const TeVector2s32 &
 				_gridOffsetSomething.getX() * 0.5;
 	if (!_loadedFromBin) {
 		return TeVector3f32(offsetx, _gridWorldY, offsety);
+	} else {
+		TeVector3f32 result = _gridMatrix * TeVector3f32(offsetx, _gridWorldY, offsety);
+		return worldTransformationMatrix() * result;
 	}
-	error("TODO: Implement TeFreeMoveZone::transformAStarGridInWorldSpace");
 }
 
 float TeFreeMoveZone::transformHeightMin(float minval) {
-	error("TODO: Implement TeFreeMoveZone::transformHeightMin");
+	TeVector3f32 vec = worldTransformationMatrix() * TeVector3f32(_someGridVec1.getX(), minval, _someGridVec1.getY());
+	return vec.y();
 }
 
-TeVector3f32 TeFreeMoveZone::transformVectorInWorldSpace(float param_3,float param_4) {
-	error("TODO: Implement TeFreeMoveZone::transformVectorInWorldSpace");
+TeVector3f32 TeFreeMoveZone::transformVectorInWorldSpace(float x, float y) {
+	TeVector3f32 vec = _gridMatrix * TeVector3f32(x, _gridWorldY, y);
+	return worldTransformationMatrix() * vec;
 }
 
 void TeFreeMoveZone::updateBorders() {
@@ -449,37 +465,42 @@ void TeFreeMoveZoneGraph::AdjacentCost(void *state, Common::Array<micropather::S
 
 	pt = TeVector2s32(statept._x - 1, statept._y);
 	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
-	cost.cost = (flag(pt) == 1 ? FLT_MAX : _bordersDistance);
+	cost.cost = costForPoint(pt);
 	adjacent->push_back(cost);
 
 	pt = TeVector2s32(statept._x - 1, statept._y + 1);
 	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
-	cost.cost = (flag(pt) == 1 ? FLT_MAX : _bordersDistance);
+	cost.cost = costForPoint(pt);
+	adjacent->push_back(cost);
+
+	pt = TeVector2s32(statept._x, statept._y + 1);
+	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
+	cost.cost = costForPoint(pt);
 	adjacent->push_back(cost);
 
 	pt = TeVector2s32(statept._x + 1, statept._y + 1);
 	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
-	cost.cost = (flag(pt) == 1 ? FLT_MAX : _bordersDistance);
+	cost.cost = costForPoint(pt);
 	adjacent->push_back(cost);
 
 	pt = TeVector2s32(statept._x + 1, statept._y);
 	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
-	cost.cost = (flag(pt) == 1 ? FLT_MAX : _bordersDistance);
+	cost.cost = costForPoint(pt);
 	adjacent->push_back(cost);
 
 	pt = TeVector2s32(statept._x + 1, statept._y - 1);
 	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
-	cost.cost = (flag(pt) == 1 ? FLT_MAX : _bordersDistance);
+	cost.cost = costForPoint(pt);
 	adjacent->push_back(cost);
 
 	pt = TeVector2s32(statept._x, statept._y - 1);
 	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
-	cost.cost = (flag(pt) == 1 ? FLT_MAX : _bordersDistance);
+	cost.cost = costForPoint(pt);
 	adjacent->push_back(cost);
 
 	pt = TeVector2s32(statept._x - 1, statept._y - 1);
 	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
-	cost.cost = (flag(pt) == 1 ? FLT_MAX : _bordersDistance);
+	cost.cost = costForPoint(pt);
 	adjacent->push_back(cost);
 }
 
