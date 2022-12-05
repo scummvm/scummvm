@@ -172,7 +172,7 @@ static const ResString string_map_table_v6[] = {
 	{108, "Name your SAVE game"},
 	{109, "Select a game to LOAD"},
 	{117, "How may I serve you?"},
-	{80, "Text Speed"},
+	{80, "Text Speed"}, // see also fixedDottMenuStrings[]
 	{81, "Display Text"},
 	{113, "Music"},
 	{114, "Voice"},
@@ -448,7 +448,11 @@ const char *InfoDialog::getPlainEngineString(int stringno, bool forceHardcodedSt
 		result = (const char *)_vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
 
 		if (!result) {
-			result = string_map_table_v6[stringno - 1].string;
+			if (stringno >= 22 && stringno <= 27 && _vm->_game.id == GID_TENTACLE && _vm->_enableEnhancements && strcmp(_vm->_game.variant, "Floppy")) {
+				result = getStaticResString(_vm->_language, stringno - 1).string;
+			} else {
+				result = string_map_table_v6[stringno - 1].string;
+			}
 		}
 	} else if (_vm->_game.version >= 3) {
 		if (!forceHardcodedString)
@@ -687,7 +691,59 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 		{0, "\x96{\x93\x96\x82\xC9\x8FI\x97\xB9\x82\xB5\x82\xC4\x82\xE0\x82\xA2\x82\xA2\x82\xC5\x82\xB7\x82\xA9\x81H  (Y/N)Y"} // JA
 	};
 
+	// DOTT (CD) doesn't have translations for some menu options, but this was
+	// fixed in Sam & Max (CD) which uses the same menu, so we just borrow its
+	// official translations (from script 1-1) for better language accessibility.
+	static const ResString fixedDottMenuStrings[][6] = {
+		{
+			// English
+			{0, "Text Speed"},
+			{0, "Display Text"},
+			{0, "Music"},
+			{0, "Voice"},
+			{0, "Sfx"},
+			{0, "disabled"},
+		},
+		{
+			// French
+			{0, "Vitesse Txt"},
+			{0, "Affich. texte"},
+			{0, "Musique"},
+			{0, "Voix"},
+			{0, "Effets son."},
+			{0, "off"}
+		},
+		{
+			// German
+			{0, "Textflu\xE1"},
+			{0, "Textanzeige"},
+			{0, "Musik"},
+			{0, "Sprache"},
+			{0, "Sfx"},
+			{0, "ausgeschaltet"}
+		},
+		{
+			// Italian
+			{0, "Velocit\x85"},
+			{0, "MostraTesto"},
+			{0, "Musica"},
+			{0, "Voce"},
+			{0, "Sonoro"},
+			{0, "disabil."}
+		},
+		{
+			// Spanish
+			{0, "Veloc. Texto"},
+			{0, "Ver Texto"},
+			{0, "M\xA3sica"},
+			{0, "Voz"},
+			{0, "Sfx"},
+			{0, "inv\xA0lido"}
+		}
+	};
+
 	bool useHardcodedV3QuitPrompt = stringno == 5 && _vm->_game.version == 3 && _vm->_game.id != GID_LOOM;
+	bool useFixedDottMenuStrings = stringno >= 21 && stringno <= 26 && _vm->_game.id == GID_TENTACLE;
 
 	// I have added the langugages I found in scumm-md5.h for v1/2 games...
 	int langIndex = 0;
@@ -705,10 +761,10 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 		langIndex = 4;
 		break;
 	case Common::RU_RUS:
-		langIndex = 5;
+		langIndex = useFixedDottMenuStrings ? 0 : 5;
 		break;
 	case Common::SE_SWE:
-		langIndex = 6;
+		langIndex = useFixedDottMenuStrings ? 0 : 6;
 		break;
 	case Common::JA_JPN:
 		langIndex = useHardcodedV3QuitPrompt ? 7 : 0;
@@ -720,6 +776,11 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 
 	if (useHardcodedV3QuitPrompt) {
 		return hardcodedV3QuitPrompt[langIndex];
+	}
+
+	if (useFixedDottMenuStrings) {
+		stringno -= 21;
+		return fixedDottMenuStrings[langIndex][stringno];
 	}
 
 	if (stringno + 1 >= ARRAYSIZE(strMap1)) {
