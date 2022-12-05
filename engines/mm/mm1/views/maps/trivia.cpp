@@ -29,18 +29,16 @@ namespace MM1 {
 namespace Views {
 namespace Maps {
 
-#define VAL1 159
-#define VAL2 160
-
 Trivia::Trivia() :
-		AnswerEntry("Trivia", Common::Point(9, 5), 14) {
+		AnswerEntry("Trivia", Common::Point(9, 7), 14) {
+	_bounds = getLineBounds(17, 24);
 }
 
 bool Trivia::msgValue(const ValueMessage &msg) {
 	_question = STRING[Common::String::format(
 		"maps.map21.questions.%d", msg._value)];
 	_correctAnswer = STRING[Common::String::format(
-		"maps.map21.questions.%d", msg._value)];
+		"maps.map21.answers.%d", msg._value)];
 
 	open();
 	return true;
@@ -48,11 +46,14 @@ bool Trivia::msgValue(const ValueMessage &msg) {
 
 void Trivia::draw() {
 	clearSurface();
-	writeString(0, 1, STRING["maps.map19.ice_princess"]);
+	writeString(0, 1, _question);
+	writeString(0, 7, STRING["maps.map21.answer"]);
 	AnswerEntry::draw();
 }
 
 void Trivia::answerEntered() {
+	close();
+
 	if (_answer.equalsIgnoreCase(_correctAnswer)) {
 		send(InfoMessage(STRING["maps.map21.correct"]));
 		g_globals->_party[0]._gems += 50;
@@ -61,7 +62,7 @@ void Trivia::answerEntered() {
 	} else {
 		g_maps->_mapPos.x = 15;
 		g_events->send("Game", GameMessage("UPDATE"));
-		send(InfoMessage(STRING["maps.map19.incorrect"]));
+		send(InfoMessage(STRING["maps.map21.incorrect"]));
 	}
 }
 

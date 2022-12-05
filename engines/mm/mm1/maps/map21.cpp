@@ -29,8 +29,8 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
-#define VAL1 159
-#define VAL2 160
+#define QUESTION_NUM 159
+#define TRIVIA_ENABLED 160
 #define TRIVIA_COST 500
 
 void Map21::special() {
@@ -77,8 +77,8 @@ void Map21::special00() {
 	g_maps->clearSpecial();
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		g_globals->_currCharacter = &g_globals->_party[i];
-		g_globals->_currCharacter->_flags[7] |= CHARFLAG7_20;
+		Character &c = g_globals->_party[i];
+		c._flags[7] |= CHARFLAG7_20;
 	}
 
 	SoundMessage msg(
@@ -107,16 +107,20 @@ void Map21::special01() {
 		STRING["maps.map21.free_trivia"],
 		[]() {
 			Map21 &map = *static_cast<Map21 *>(g_maps->_currentMap);
-			map[VAL2]++;
+			map[TRIVIA_ENABLED]++;
 		}
 	));
 }
 
 void Map21::special02() {
+	if (_data[TRIVIA_ENABLED])
+		return;
+
 	send(SoundMessage(
 		STRING["maps.map21.trivia_island"],
 		[](const Common::KeyState &ks) {
 			if (ks.keycode == Common::KEYCODE_y) {
+				MM1::Maps::Map &map = *g_maps->_currentMap;
 				g_events->close();
 
 				for (uint i = 0; i < g_globals->_party.size(); ++i) {
@@ -125,6 +129,7 @@ void Map21::special02() {
 					if (g_globals->_currCharacter->_gold >= TRIVIA_COST) {
 						c._gold -= 500;
 						g_maps->clearSpecial();
+						map[TRIVIA_ENABLED]++;
 						return;
 					}
 				}
@@ -143,11 +148,20 @@ void Map21::special02() {
 }
 
 void Map21::special03() {
-	send("Trivia", 0);
+	askTrivia(0);
 }
 
 void Map21::special04() {
-	send("Trivia", 0);
+	askTrivia(g_maps->_mapPos.x - 5);
+}
+
+void Map21::askTrivia(int questionNum) {
+	_data[QUESTION_NUM] = questionNum;
+
+	if (_data[TRIVIA_ENABLED]) {
+		g_maps->clearSpecial();
+		send("Trivia", questionNum);
+	}
 }
 
 } // namespace Maps
