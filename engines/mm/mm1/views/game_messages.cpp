@@ -89,7 +89,10 @@ bool GameMessages::msgKeypress(const KeypressMessage &msg) {
 		g_events->clearViews();
 		addView("Dead");
 
-	} else if (g_events->focusedView() == this && !isDelayActive()) {
+	} else if (g_events->focusedView()) {
+		if (endDelay())
+			return true;
+
 		if (_keyCallback) {
 			_keyCallback(msg);
 		} else if (msg.keycode == Common::KEYCODE_n) {
