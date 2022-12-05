@@ -128,6 +128,7 @@ private:
 	TeVector2f32 _gridOffsetSomething;
 	TeVector2f32 _someGridVec1;
 	TeVector2f32 _someGridVec2;
+	TeMatrix4x4 _gridMatrix;
 
 	float _gridWorldY;
 
