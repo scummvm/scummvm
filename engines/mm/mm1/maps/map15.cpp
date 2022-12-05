@@ -31,7 +31,7 @@ namespace Maps {
 
 #define VAL1 350
 #define VAL2 118
-#define VAL3 361
+#define ITEM_ID 361
 #define GEMS 362
 
 void Map15::special() {
@@ -104,9 +104,15 @@ void Map15::special01() {
 	Game::Encounter &enc = g_globals->_encounters;
 
 	if (_data[VAL2]) {
-		send(SoundMessage(STRING["maps.map15.dragon"]));
-		g_globals->_treasure._items[2] = 244;
-		g_events->addAction(KEYBIND_SEARCH);
+		SoundMessage msg(
+			STRING["maps.map15.body"],
+			[]() {
+				g_globals->_treasure._items[2] = DRAGONS_TOOTH_ID;
+				g_events->addAction(KEYBIND_SEARCH);
+			}
+		);
+		msg._delaySeconds = 5;
+		send(msg);
 
 	} else {
 		_data[VAL2]++;
@@ -148,13 +154,13 @@ void Map15::special03() {
 }
 
 void Map15::special04() {
-	_data[VAL3] = 250;
+	_data[ITEM_ID] = PIRATES_MAP_A_ID;
 	_data[GEMS] = 100;
 	cove();
 }
 
 void Map15::special05() {
-	_data[VAL3] = 251;
+	_data[ITEM_ID] = PIRATES_MAP_B_ID;
 	_data[GEMS] = 200;
 	cove();
 }
@@ -165,12 +171,21 @@ void Map15::special06() {
 		[](const Common::KeyState &ks) {
 			if (ks.keycode == Common::KEYCODE_y) {
 				g_events->close();
-				g_globals->_treasure._items[2] = 233;
+				g_globals->_treasure._items[2] = KINGS_PASS_ID;
 				g_events->addAction(KEYBIND_SEARCH);
+
 			} else if (ks.keycode == Common::KEYCODE_n) {
-				g_events->send(SoundMessage(STRING["maps.map15.percella1"]));
-				g_maps->_mapPos = Common::Point(14, 2);
-				updateGame();
+				g_events->close();
+
+				SoundMessage msg(
+					STRING["maps.map15.percella2"],
+					[]() {
+						g_maps->_mapPos = Common::Point(14, 2);
+						updateGame();
+					}
+				);
+				msg._delaySeconds = 5;
+				g_events->send(msg);
 			}
 		}
 	));
@@ -189,7 +204,7 @@ void Map15::cove() {
 
 			for (uint i = 0; i < g_globals->_party.size(); ++i) {
 				Character &c = g_globals->_party[i];
-				int idx = c._backpack.indexOf(map[VAL3]);
+				int idx = c._backpack.indexOf(map[ITEM_ID]);
 				if (idx != -1) {
 					c._backpack.removeAt(idx);
 					g_globals->_treasure.setGold(2000);

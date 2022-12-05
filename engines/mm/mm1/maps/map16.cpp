@@ -94,8 +94,8 @@ void Map16::special00() {
 		}
 
 		_data[VAL1]++;
-		send(SoundMessage(STRING["maps.map16.water"],
-			[](const Common::KeyState &ks) {
+		SoundMessage msg(STRING["maps.map16.water"],
+			[]() {
 				Game::Encounter &enc = g_globals->_encounters;
 
 				enc.clearMonsters();
@@ -107,15 +107,17 @@ void Map16::special00() {
 				enc._flag = true;
 				enc.execute();
 			}
-		));
+		);
+		msg._delaySeconds = 5;
+		send(msg);
 	}
 }
 
 void Map16::special01() {
 	send(SoundMessage(STRING["maps.map16.wheel"],
 		[]() {
-			// Original called sound 1 20 times. This seems excessive
-			Sound::sound(SOUND_1);
+			for (int i = 0; i < 20; ++i)
+				Sound::sound(SOUND_1);
 
 			static_cast<Map16 *>(g_maps->_currentMap)->wheelSpin();
 		}
@@ -124,7 +126,7 @@ void Map16::special01() {
 
 void Map16::special02() {
 	_data[VAL1] = 0;
-	g_events->addAction(KEYBIND_SEARCH);
+	none160();
 }
 
 void Map16::special03() {
@@ -191,7 +193,7 @@ void Map16::wheelSpin() {
 			}
 		}
 
-		msg._lines.push_back(Line(0, i, line));
+		msg._lines.push_back(Line(0, 1 + i, line));
 	}
 
 	// Display the results

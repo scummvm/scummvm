@@ -88,7 +88,7 @@ void Map14::special00() {
 						ks.keycode == Common::KEYCODE_n) {
 					g_events->close();
 
-					// TODO: The original seems to be backwards
+					// Note: The original seems to be backwards
 					if (ks.keycode == Common::KEYCODE_n &&
 							getRandomNumber(3) == 3) {
 						g_maps->_mapPos = Common::Point(15, 10);
@@ -122,7 +122,7 @@ void Map14::special02() {
 	} else if (_data[VAL3]) {
 		_data[VAL3] = 0;
 	} else {
-		g_events->findView("View")->redraw();
+		send("View", DrawGraphicMessage(65 + 6));
 
 		send(SoundMessage(
 			STRING["maps.map14.castle"],
@@ -130,10 +130,12 @@ void Map14::special02() {
 				Map14 &map = *static_cast<Map14 *>(g_maps->_currentMap);
 				if (ks.keycode == Common::KEYCODE_y) {
 					g_events->close();
-					map[VAL3]++;
+					map[VAL3] = 0xff;
+					map.updateGame();
 				} else if (ks.keycode == Common::KEYCODE_n) {
 					g_events->close();
-					map[VAL3] = 0xff;
+					map[VAL3]++;
+					map.updateGame();
 				}
 			}
 		));
