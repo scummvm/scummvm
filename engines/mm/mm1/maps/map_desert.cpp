@@ -39,7 +39,8 @@ void MapDesert::desert() {
 		lost();
 	}
 
-	_deadCount = 0;
+	byte &deadCount = _data[_deadCountOffset];
+	deadCount = 0;
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
 
@@ -55,12 +56,12 @@ void MapDesert::desert() {
 			} else {
 				// When endurance reaches, character becomes living impaired
 				c._condition = DEAD | BAD_CONDITION;
-				_deadCount++;
+				deadCount++;
 			}
 		}
 	}
 
-	if (_deadCount)
+	if (deadCount)
 		g_events->findView("GameParty")->redraw();
 
 	switch (_randomMode) {

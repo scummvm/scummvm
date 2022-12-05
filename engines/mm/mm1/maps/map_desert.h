@@ -32,7 +32,7 @@ class MapDesert : public Map {
 protected:
 	enum RandomMode { RND_BASIC, RND_FULL };
 private:
-	byte &_deadCount;
+	int _deadCountOffset;
 	RandomMode _randomMode;
 
 	/**
@@ -52,9 +52,9 @@ public:
 	 * Constructor
 	 */
 	MapDesert(uint index, const Common::String &name, uint16 id,
-		byte defaultSection, byte &deadCount, RandomMode rndMode) :
+		byte defaultSection, int deadCountOffset, RandomMode rndMode) :
 		Map(index, name, id, defaultSection),
-		_deadCount(deadCount), _randomMode(rndMode) {}
+		_deadCountOffset(deadCountOffset), _randomMode(rndMode) {}
 };
 
 } // namespace Maps

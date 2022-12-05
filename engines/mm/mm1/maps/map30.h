@@ -43,8 +43,7 @@ private:
 		&Map30::special03
 	};
 public:
-	Map30() : MapDesert(30, "areae1", 0x112, 2,
-		_data[137], MapDesert::RND_FULL) {}
+	Map30() : MapDesert(30, "areae1", 0x112, 2, 137, MapDesert::RND_FULL) {}
 
 	/**
 	 * Handles all special stuff that happens on the map
