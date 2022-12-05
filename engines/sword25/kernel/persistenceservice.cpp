@@ -30,7 +30,7 @@
 
 #include "common/fs.h"
 #include "common/savefile.h"
-#include "common/compression/zlib.h"
+#include "common/compression/gzio.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/persistenceservice.h"
 #include "sword25/kernel/inputpersistenceblock.h"
@@ -391,8 +391,8 @@ bool PersistenceService::loadGame(uint slotID) {
 
 	if (uncompressedBufferSize > curSavegameInfo.gamedataLength) {
 		// Older saved game, where the game data was compressed again.
-		if (!Common::uncompress(reinterpret_cast<byte *>(&uncompressedDataBuffer[0]), &uncompressedBufferSize,
-					   reinterpret_cast<byte *>(&compressedDataBuffer[0]), curSavegameInfo.gamedataLength)) {
+		if (Common::GzioReadStream::zlibDecompress(reinterpret_cast<byte *>(&uncompressedDataBuffer[0]), uncompressedBufferSize,
+							   reinterpret_cast<byte *>(&compressedDataBuffer[0]), curSavegameInfo.gamedataLength) <= 0) {
 			error("Unable to decompress the gamedata from savegame file \"%s\".", filename.c_str());
 			delete[] uncompressedDataBuffer;
 			delete[] compressedDataBuffer;
