@@ -56,13 +56,16 @@ void Events::runGame() {
 	}
 
 	Common::Event e;
-	for (;;) {
+	bool quitFlag = false;
+	while (!quitFlag) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 			if (e.type == Common::EVENT_QUIT ||
-					e.type == Common::EVENT_RETURN_TO_LAUNCHER)
-				return;
-			else
+					e.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				quitFlag = true;
+				break;
+			} else {
 				processEvent(e);
+			}
 		}
 
 		g_system->delayMillis(10);
