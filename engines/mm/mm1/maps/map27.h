@@ -48,8 +48,7 @@ private:
 		&Map27::special05
 	};
 public:
-	Map27() : MapDesert(27, "aread2", 0xb05, 2,
-		_data[66], MapDesert::RND_BASIC) {}
+	Map27() : MapDesert(27, "aread2", 0xb05, 2, 66, MapDesert::RND_BASIC) {}
 
 	/**
 	 * Handles all special stuff that happens on the map
