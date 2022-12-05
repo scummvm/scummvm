@@ -5,7 +5,7 @@
 *.o
 *.o.tmp
 *.dwo
-scummvm.dwp
+*.dwp
 lib*.a
 .deps
 
