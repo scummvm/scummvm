@@ -292,12 +292,17 @@ struct LingoArchive {
 };
 
 struct LingoState {
-	Common::Array<CFrame *> callstack;
-	uint pc = 0;
-	ScriptData *script = nullptr;
-	ScriptContext *context = nullptr;
-	DatumHash *localVars = nullptr;
-	Datum me;
+	// Execution state for a Lingo process, created every time
+	// a top-level handler is called (e.g. on mouseDown).
+	// Can be swapped out when another script gets called with priority.
+	// Call frames are pushed and popped from the callstack with
+	// pushContext and popContext.
+	Common::Array<CFrame *> callstack;		// call stack
+	uint pc = 0;							// current program counter
+	ScriptData *script = nullptr;			// current Lingo script
+	ScriptContext *context = nullptr;		// current Lingo script context
+	DatumHash *localVars = nullptr;			// current local variables
+	Datum me;								// current me object
 
 	~LingoState();
 };
