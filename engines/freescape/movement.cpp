@@ -34,11 +34,10 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 	int scale = _currentArea->getScale();
 	assert(scale > 0);
 
-	Math::Vector3d diff = _lastPosition - _position;
 	Math::Vector3d rotation = entrance->getRotation();
 	_position = entrance->getOrigin();
 	_pitch = rotation.x();
-	if (ABS(diff.x()) > ABS(diff.z()))
+	if (ABS(_objExecutingCodeSize.x()) <= ABS(_objExecutingCodeSize.z()))
 		_yaw = rotation.y() - 90;
 	else
 		_yaw = rotation.y() + 90;
