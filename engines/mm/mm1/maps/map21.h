@@ -47,6 +47,8 @@ private:
 		&Map21::special04,
 		&Map21::special04
 	};
+
+	void askTrivia(int questionNum);
 public:
 	Map21() : Map(21, "areab4", 0xd03, 1) {}
 

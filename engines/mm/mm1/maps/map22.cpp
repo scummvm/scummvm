@@ -29,7 +29,7 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
-#define WHISTLE_COUNT 107
+#define WHISTLE_GIVEN 107
 
 static const byte MONSTER_ID1[5] = { 13, 12, 13, 12, 11 };
 static const byte MONSTER_ID2[5] = { 6, 6, 5, 5, 4 };
@@ -69,7 +69,9 @@ void Map22::special00() {
 	}
 
 	Sound::sound(SOUND_3);
-	send(InfoMessage(STRING["maps.map22.chest"]));
+	InfoMessage msg(STRING["maps.map22.chest"]);
+	msg._largeMessage = true;
+	send(msg);
 
 	for (uint i = 0; i < g_globals->_party.size() && !hasFlags; ++i) {
 		Character &c = g_globals->_party[i];
@@ -81,12 +83,13 @@ void Map22::special00() {
 
 		// Add amulet to player
 		if (!c._backpack.full()) {
-			_data[WHISTLE_COUNT]++;
+			_data[WHISTLE_GIVEN]++;
 			c._backpack.add(RUBY_WHISTLE_ID, 200);
+			break;
 		}
 	}
 
-	if (!_data[WHISTLE_COUNT]) {
+	if (!_data[WHISTLE_GIVEN]) {
 		// Entire party's inventory full. So screw it, replace
 		// the last item in the last character's backpack
 		g_globals->_currCharacter->_backpack.removeAt(INVENTORY_COUNT - 1);
@@ -106,7 +109,7 @@ void Map22::special02() {
 		[]() {
 			g_maps->clearSpecial();
 			if (g_maps->_mapPos.x == 5) {
-				g_globals->_treasure._items[2] = 234;
+				g_globals->_treasure._items[2] = MERCHANTS_PASS_ID;
 				g_events->addAction(KEYBIND_SEARCH);
 
 			} else {
