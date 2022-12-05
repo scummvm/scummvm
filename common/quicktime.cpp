@@ -34,7 +34,7 @@
 #include "common/quicktime.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "common/compression/zlib.h"
+#include "common/compression/gzio.h"
 
 namespace Common {
 
@@ -263,7 +263,6 @@ int QuickTimeParser::readMOOV(Atom atom) {
 }
 
 int QuickTimeParser::readCMOV(Atom atom) {
-#ifdef USE_ZLIB
 	// Read in the dcom atom
 	_fd->readUint32BE();
 	if (_fd->readUint32BE() != MKTAG('d', 'c', 'o', 'm'))
@@ -287,8 +286,7 @@ int QuickTimeParser::readCMOV(Atom atom) {
 	byte *uncompressedData = (byte *)malloc(uncompressedSize);
 
 	// Uncompress the data
-	unsigned long dstLen = uncompressedSize;
-	if (!uncompress(uncompressedData, &dstLen, compressedData, compressedSize)) {
+	if (GzioReadStream::zlibDecompress(uncompressedData, uncompressedSize, compressedData, compressedSize) <= 0) {
 		warning ("Could not uncompress cmov chunk");
 		free(compressedData);
 		free(uncompressedData);
@@ -309,10 +307,6 @@ int QuickTimeParser::readCMOV(Atom atom) {
 	_fd = oldStream;
 
 	return err;
-#else
-	warning ("zlib not found, cannot read QuickTime cmov atom");
-	return -1;
-#endif
 }
 
 int QuickTimeParser::readMVHD(Atom atom) {
