@@ -21,7 +21,7 @@
 
 #include "common/config-manager.h"
 #include "common/system.h"
-#include "common/compression/zlib.h"
+#include "common/compression/gzio.h"
 
 #include "common/memstream.h"
 #include "common/macresman.h"
@@ -300,7 +300,7 @@ const byte testMovie[] = {
 
 void Window::runTests() {
 	Common::MemoryReadStream *movie = new Common::MemoryReadStream(testMovie, ARRAYSIZE(testMovie));
-	Common::SeekableReadStream *stream = Common::wrapCompressedReadStream(movie);
+	Common::SeekableReadStream *stream = Common::GzioReadStream::wrapCompressedReadStream(movie);
 
 	initGraphics(640, 480);
 
