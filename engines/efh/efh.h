@@ -330,6 +330,7 @@ private:
 	void goNorthWest();
 	void goSouthWest();
 	void handleNewRoundEffects();
+	void resetGame();
 	bool handleDeathMenu();
 	void computeMapAnimation();
 	void unkFct_anim();
@@ -588,7 +589,6 @@ private:
 	// TODO: Remove those useless debug flags
 	bool _dbgForceDisplayUpperRightBorder; // Original debug flag? Always false.
 	bool _dbgForceMonsterBlock; // Original debug flag? Always false.
-	bool _word2C8D7; // Original debug flag? Always true.
 
 	bool _ongoingFightFl;
 	bool _statusMenuActive;

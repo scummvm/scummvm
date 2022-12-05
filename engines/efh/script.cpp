@@ -147,8 +147,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			// Change map. { map number, posX, posY }
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
 			if (flag) {
-				if (_word2C8D7)
-					writeTechAndMapFiles();
+				writeTechAndMapFiles();
 				_oldMapPosX = _mapPosX = scriptNumberArray[1];
 				_oldMapPosY = _mapPosY = scriptNumberArray[2];
 				loadTechMapImp(scriptNumberArray[0]);
