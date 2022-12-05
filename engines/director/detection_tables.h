@@ -871,6 +871,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "chinacrisis",		"China Crisis" },
 	{ "chisanaensoka",		"小さな演奏家" },									// Little Musician (Crickets)
 	{ "choroli",			"The Trip of Choroli" }, // title also provided in Japanese on the web - 「ちょろりの冒険」
+	{ "chuchutataki",		"チュウチュウたたき" }, // Chu-Chu Tataki, part of the Shock Price 500 series
 	{ "christmassmallhouse","Christmastime at Small House" },
 	{ "chuckletime",		"チャックルタイム" },
 	{ "chuteng",			"中天" },
@@ -5375,6 +5376,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("christmassmallhouse", "", "Small Xmas",    "552992fb31c736ca67ffd403096596d6", 719617, Common::JA_JPN, 500),
 	WINGAME1t_l("christmassmallhouse", "", "XMAS.EXE",    "f3e3c481eb26507c6ce59a487c005e8c", 1411646, Common::JA_JPN, 501),
+
+	// Original filename is 'チュウチュウたたき'
+	MACGAME1_l("chuchutataki", "", "xn--w8j9aa6za4nb00ac",    "c148f66ae3511fb88733102aa27efe7e", 106172, Common::JA_JPN, 501),
+	WINGAME1t_l("chuchutataki", "", "TYUUTYUU.EXE",    "bfb442750a6a264825fac3cc12a69d71", 1411220, Common::JA_JPN, 501),
 
 	// Series includes Schubert, Tchaikovsky, Mozart, Vivaldi and probably more
 	WINGAME1_l("clasplusbee2", "", "BEE2_95.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1694421, Common::ES_ESP, 501),
