@@ -36,6 +36,7 @@
 #include "common/fs.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
+#include "common/compression/gzio.h"
 #include "common/compression/zlib.h"
 
 #include <errno.h>	// for removeSavefile()
@@ -125,7 +126,7 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const Common::String 
 	} else {
 		// Open the file for loading.
 		Common::SeekableReadStream *sf = file->_value.createReadStream();
-		return Common::wrapCompressedReadStream(sf);
+		return Common::GzioReadStream::wrapCompressedReadStream(sf);
 	}
 }
 
