@@ -686,6 +686,7 @@ Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream
 	}
 
 	_flyMode = stream->readByte();
+	_noClipMode = false;
 	_playerHeightNumber = stream->readUint32LE();
 	_countdown = stream->readUint32LE();
 	_ticks = 0;
