@@ -34,6 +34,9 @@
    comments to that effect with your name and the date.  Thank you.
  */
 
+#ifndef COMMON_GZIO_H
+#define COMMON_GZIO_H 1
+
 #include "common/scummsys.h"
 #include "common/stream.h"
 #include "common/ptr.h"
@@ -199,3 +202,5 @@ private:
 };
 
 }
+
+#endif
