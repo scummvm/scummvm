@@ -1014,6 +1014,8 @@ GzioReadStream::initialize_tables()
   huft_free (_td);
   _tl = NULL;
   _td = NULL;
+
+  memcpy(_slide + sizeof(_slide) - _dict_size, _dict, _dict_size);
 }
 
 
@@ -1206,6 +1208,15 @@ GzioReadStream* GzioReadStream::openDeflate(Common::SeekableReadStream *parent, 
   return gzio;
 }
 
+GzioReadStream* GzioReadStream::openDeflateWithDict(Common::SeekableReadStream *parent, uint64 uncompressed_size, const byte *dict, uint32 dict_size, DisposeAfterUse::Flag disposeParent)
+{
+  GzioReadStream *gzio = new GzioReadStream(parent, disposeParent, uncompressed_size, GzioReadStream::Mode::ZLIB, dict, dict_size);
+
+  gzio->initialize_tables ();
+
+  return gzio;
+}
+
 GzioReadStream* GzioReadStream::openVise(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent)
 {
   GzioReadStream *gzio = new GzioReadStream(parent, disposeParent, uncompressed_size, GzioReadStream::Mode::VISE);
@@ -1252,6 +1263,16 @@ int32
 GzioReadStream::deflateDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off)
 {
   Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openDeflate(new Common::MemoryReadStream(inbuf, insize, DisposeAfterUse::NO), outsize + off, DisposeAfterUse::YES));
+  if (!gzio)
+    return -1;
+  return gzio->readAtOffset(off, outbuf, outsize);
+}
+
+int32
+GzioReadStream::deflateDecompressWithDict (byte *outbuf, uint32 outsize, const byte *inbuf, uint32 insize, const byte *dict, uint32 dict_size, int64 off)
+{
+  Common::ScopedPtr<Common::MemoryReadStream> memstream(new Common::MemoryReadStream(inbuf, insize));
+  Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openDeflateWithDict(memstream.get(), outsize + off, dict, dict_size));
   if (!gzio)
     return -1;
   return gzio->readAtOffset(off, outbuf, outsize);

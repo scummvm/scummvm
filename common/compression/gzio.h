@@ -46,10 +46,13 @@ class GzioReadStream : public Common::SeekableReadStream
 public:
 	static GzioReadStream* openClickteam(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent = DisposeAfterUse::NO);
 	static GzioReadStream* openDeflate(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent = DisposeAfterUse::NO);
+	static GzioReadStream* openDeflateWithDict(Common::SeekableReadStream *parent, uint64 uncompressed_size, const byte *dict, uint32 dict_size,
+						   DisposeAfterUse::Flag disposeParent = DisposeAfterUse::NO);
 	static GzioReadStream* openVise(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent = DisposeAfterUse::NO);
 	static GzioReadStream* openZlib(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent = DisposeAfterUse::NO);
 	static int32 clickteamDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off = 0);
 	static int32 deflateDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off = 0);
+	static int32 deflateDecompressWithDict (byte *outbuf, uint32 outsize, const byte *inbuf, uint32 insize, const byte *dict, uint32 dict_size, int64 off = 0);
 	static int32 viseDecompress (byte *outbuf, uint32 outsize, const byte *inbuf, uint32 insize, int64 off = 0);
 	static int32 zlibDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off = 0);
 
@@ -123,6 +126,9 @@ private:
 	int _bd;
 	/* The original offset value.  */
 	int64 _savedOffset;
+	/* The supplied dictionary.  */
+	uint8 _dict[WSIZE];
+	uint32 _dict_size;
 
 	bool _err;
 
@@ -136,13 +142,15 @@ private:
 
 	enum class Mode { ZLIB, CLICKTEAM, VISE } _mode;
 
-        GzioReadStream(Common::SeekableReadStream *parent, DisposeAfterUse::Flag disposeParent, uint64 uncompressedSize, Mode mode) :
-	  _dataOffset(0), _blockType(0), _blockLen(0),
+        GzioReadStream(Common::SeekableReadStream *parent, DisposeAfterUse::Flag disposeParent, uint64 uncompressedSize, Mode mode, const byte *dict = nullptr, uint32 dict_size = 0) :
+	  _dataOffset(0), _blockType(0), _blockLen(0), _dict_size(MIN<uint32>(dict_size, sizeof(_dict))),
 	  _lastBlock(0), _codeState (0), _inflateN(0),
 	  _inflateD(0), _bb(0), _bk(0), _wp(0), _tl(nullptr),
 	  _td(nullptr), _bl(0),
 	  _bd(0), _savedOffset(0), _err(false), _mode(mode), _input(parent, disposeParent),
-	  _inbufD(0), _inbufSize(0), _uncompressedSize(uncompressedSize), _streamPos(0), _eos(false) {}
+	  _inbufD(0), _inbufSize(0), _uncompressedSize(uncompressedSize), _streamPos(0), _eos(false) {
+		memcpy(_dict, dict + (_dict_size - dict_size), dict_size);
+	}
 
 	void inflate_window();
 	void initialize_tables();
