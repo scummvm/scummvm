@@ -35,31 +35,7 @@ namespace Common {
  * @{
  */
 
-class SeekableReadStream;
 class WriteStream;
-
-/**
- * Take an arbitrary SeekableReadStream and wrap it in a custom stream which
- * provides transparent on-the-fly decompression. Assumes the data it
- * retrieves from the wrapped stream to be either uncompressed or in gzip
- * format. In the former case, the original stream is returned unmodified
- * (and in particular, not wrapped). In the latter case the stream is
- * returned wrapped, unless there is no ZLIB support, then NULL is returned
- * and the old stream is destroyed.
- *
- * Certain GZip-formats don't supply an easily readable length, if you
- * still need the length carried along with the stream, and you know
- * the decompressed length at wrap-time, then it can be supplied as knownSize
- * here. knownSize will be ignored if the GZip-stream DOES include a length.
- * The created stream also becomes responsible for freeing the passed stream.
- *
- * It is safe to call this with a NULL parameter (in this case, NULL is
- * returned).
- *
- * @param toBeWrapped	the stream to be wrapped (if it is in gzip-format)
- * @param knownSize		a supplied length of the compressed data (if not available directly)
- */
-SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, uint32 knownSize = 0);
 
 /**
  * Take an arbitrary WriteStream and wrap it in a custom stream which provides
