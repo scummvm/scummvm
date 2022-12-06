@@ -38,34 +38,6 @@ namespace Common {
 class SeekableReadStream;
 class WriteStream;
 
-#if defined(USE_ZLIB)
-
-/**
- * Wrapper around zlib's inflate functions. This function will call the
- * necessary inflate functions to uncompress data compressed with deflate
- * but *not* with the standard zlib header.
- *
- * Decompresses the src buffer into the dst buffer.
- * srcLen is the byte length of the source buffer, dstLen is the byte
- * length of the output buffer.
- * It decompress as much data as possible, up to dstLen bytes.
- * If a dictionary is provided through the dict buffer, uses it to initializes
- * the internal decompression dictionary, before the decompression takes place.
- *
- * @param dst       the buffer to store into.
- * @param dstLen    the size of the destination buffer.
- * @param src       the data to be decompressed.
- * @param srcLen    the size of the compressed data.
- * @param dict      (optional) a decompress dictionary.
- * @param dictLen   (optional) the size of the dictionary.
- *                  Mandatory if dict is not 0.
- *
- * @return true on success (Z_OK or Z_STREAM_END), false otherwise.
- */
-bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen, const byte *dict = nullptr, uint dictLen = 0);
-
-#endif
-
 /**
  * Take an arbitrary SeekableReadStream and wrap it in a custom stream which
  * provides transparent on-the-fly decompression. Assumes the data it
