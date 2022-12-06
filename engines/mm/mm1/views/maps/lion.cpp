@@ -42,6 +42,7 @@ void Lion::draw() {
 
 void Lion::answerEntered() {
 	MM1::Maps::Map32 &map = *static_cast<MM1::Maps::Map32 *>(g_maps->_currentMap);
+	close();
 	map.passwordEntered(_answer);
 }
 

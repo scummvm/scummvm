@@ -81,40 +81,9 @@ void Giant::charSelected(uint charIndex) {
 	if (charIndex >= g_globals->_party.size())
 		return;
 
-	Character &c = g_globals->_party[charIndex];
-	g_globals->_currCharacter = &c;
-
-	if ((c._flags[1] & ~CHARFLAG1_WORTHY) == ~CHARFLAG1_WORTHY)
-		worthy();
-	else
-		unworthy();
-}
-
-void Giant::timeout() {
-	redraw();
-}
-
-void Giant::worthy() {
-	Character &c = *g_globals->_currCharacter;
-	int val = ((c._worthiness + 1) / 2) * 256;
-	c._exp += val;
-
-	Common::String line = Common::String::format(
-		STRING["maps.map30.worthy"].c_str(), '0' + (c._worthiness / 5));
-	line = Common::String::format("%s%d %s",
-		line.c_str(), val, STRING["maps.map30.experience"].c_str());
-
-	if (c._worthiness & 0x80) {
-		int attrNum = getRandomNumber(7) - 1;
-		line += Common::String::format(", +3 %s",
-			STRING[Common::String::format("maps.map30.attributes.%d", attrNum)].c_str());
-
-		AttributePair &attrib = c.getAttribute(attrNum);
-		if (attrib._base < 43)
-			attrib._current = attrib._base = attrib._base + 3;
-	}
-
-	c._worthiness = 0;
+	MM1::Maps::Map30 &map = *static_cast<MM1::Maps::Map30 *>(g_maps->_currentMap);
+	g_globals->_currCharacter = &g_globals->_party[charIndex];
+	Common::String line = map.worthiness();
 
 	clearSurface();
 	writeString(0, 1, line);
@@ -123,12 +92,8 @@ void Giant::worthy() {
 	delaySeconds(5);
 }
 
-void Giant::unworthy() {
-	clearSurface();
-	writeString(0, 1, STRING["maps.map30.unworthy"]);
-	Sound::sound(SOUND_2);
-
-	delaySeconds(5);
+void Giant::timeout() {
+	redraw();
 }
 
 } // namespace Maps

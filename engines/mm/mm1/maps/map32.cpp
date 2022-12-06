@@ -88,6 +88,7 @@ void Map32::special02() {
 		_data[VAL2] = 0;
 
 	} else {
+		send("View", DrawGraphicMessage(65 + 6));
 		send(SoundMessage(
 			STRING["maps.map32.castle"],
 			[](const Common::KeyState &ks) {
@@ -95,9 +96,11 @@ void Map32::special02() {
 				if (ks.keycode == Common::KEYCODE_y) {
 					g_events->close();
 					map[VAL2] = 0xff;
+					updateGame();
 				} else if (ks.keycode == Common::KEYCODE_n) {
 					g_events->close();
 					map[VAL2]++;
+					updateGame();
 				}
 			}
 		));

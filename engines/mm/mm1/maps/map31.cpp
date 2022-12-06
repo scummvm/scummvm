@@ -46,7 +46,6 @@ void Map31::special() {
 		}
 	}
 
-
 	if (_walls[g_maps->_mapOffset] != 0xff) {
 		if (getRandomNumber(100) < 25) {
 			g_maps->clearSpecial();
@@ -92,7 +91,7 @@ void Map31::special02() {
 
 void Map31::special06() {
 	if (_data[VAL1]) {
-		g_globals->_treasure._items[2] = 243;
+		g_globals->_treasure._items[2] = LASER_BLASTER_ID;
 		g_events->addAction(KEYBIND_SEARCH);
 	} else {
 		none160();

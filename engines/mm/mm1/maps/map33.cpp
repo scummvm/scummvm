@@ -170,12 +170,20 @@ void Map33::special03() {
 }
 
 void Map33::special04() {
+	g_maps->clearSpecial();
+
 	send(SoundMessage(
 		STRING["maps.map33.corpse"],
 		[]() {
-			g_events->send(SoundMessage(STRING["maps.map33.thanks"]));
-			g_globals->_treasure.setGems(50);
-			g_events->addAction(KEYBIND_SEARCH);
+			SoundMessage msg(
+				STRING["maps.map33.thanks"],
+				[](const Common::KeyState &) {
+					g_events->close();
+					g_globals->_treasure.setGems(50);
+					g_events->addAction(KEYBIND_SEARCH);
+				}
+			);
+			g_events->send(msg);
 		}
 	));
 }

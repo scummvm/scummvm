@@ -226,7 +226,6 @@ void Maps::select(uint16 id, byte section) {
 	_id = id;
 	_section = section;
 
-
 	uint mapId = getIndex(id, section);
 	load(mapId);
 }
