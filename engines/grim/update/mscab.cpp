@@ -24,7 +24,7 @@
 #include "common/file.h"
 #include "common/archive.h"
 #include "common/memstream.h"
-#include "common/compression/zlib.h"
+#include "common/compression/gzio.h"
 #include "common/str.h"
 
 namespace Grim {
@@ -210,7 +210,6 @@ MsCabinet::Decompressor::~Decompressor() {
 }
 
 bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &entry) {
-#ifdef USE_ZLIB
 	// Ref: http://blogs.kde.org/node/3181
 	uint16 uncompressedLen, compressedLen;
 	byte hdrS[4];
@@ -270,7 +269,7 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 
 		// Decompress the block. If it isn't the first, provide the previous block as dictonary
 		dict = (_curBlock >= 0) ? _decompressedBlock : nullptr;
-		decRes = Common::inflateZlibHeaderless(_decompressedBlock, uncompressedLen, _compressedBlock + 2, compressedLen - 2, dict, kCabBlockSize);
+		decRes = Common::GzioReadStream::deflateDecompressWithDict(_decompressedBlock, uncompressedLen, _compressedBlock + 2, compressedLen - 2, dict, kCabBlockSize) > 0;
 		if (!decRes)
 			return false;
 
@@ -283,10 +282,6 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 	fileBuf = _fileBuf;
 	_fileBuf = nullptr;
 	return true;
-#else
-	warning("zlib required to extract MSCAB");
-	return false;
-#endif
 }
 
 void MsCabinet::Decompressor::copyBlock(byte *&data_ptr) const {

@@ -22,7 +22,7 @@
 #include "common/substream.h"
 #include "common/md5.h"
 #include "common/file.h"
-#include "common/compression/zlib.h"
+#include "common/compression/gzio.h"
 #include "common/bufferedstream.h"
 
 #include "engines/grim/patchr.h"
@@ -159,7 +159,7 @@ bool PatchedFile::load(Common::SeekableReadStream *file, const Common::String &p
 	tmp->open(_patchName);
 	_ctrl = new Common::SeekableSubReadStream(tmp, _kHeaderSize, _kHeaderSize + zctrllen, DisposeAfterUse::YES);
 	if (_flags & FLAG_COMPRESS_CTRL)
-		_ctrl = Common::wrapCompressedReadStream(_ctrl);
+		_ctrl = Common::GzioReadStream::wrapCompressedReadStream(_ctrl);
 
 	//ctrl stream sanity checks
 	if (_ctrl->size() % (3 * sizeof(uint32)) != 0) {
@@ -172,7 +172,7 @@ bool PatchedFile::load(Common::SeekableReadStream *file, const Common::String &p
 	tmp = new Common::File;
 	tmp->open(_patchName);
 	_diff = new Common::SeekableSubReadStream(tmp, _kHeaderSize + zctrllen, _kHeaderSize + zctrllen + zdatalen, DisposeAfterUse::YES);
-	_diff = Common::wrapCompressedReadStream(_diff);
+	_diff = Common::GzioReadStream::wrapCompressedReadStream(_diff);
 
 	if (_flags & FLAG_MIX_DIFF_EXTRA)
 		_extra = _diff;
@@ -180,7 +180,7 @@ bool PatchedFile::load(Common::SeekableReadStream *file, const Common::String &p
 		tmp = new Common::File;
 		tmp->open(_patchName);
 		_extra = new Common::SeekableSubReadStream(tmp, _kHeaderSize + zctrllen + zdatalen, _kHeaderSize + zctrllen + zdatalen + zextralen, DisposeAfterUse::YES);
-		_extra = Common::wrapCompressedReadStream(_extra);
+		_extra = Common::GzioReadStream::wrapCompressedReadStream(_extra);
 	}
 
 	_file = file;

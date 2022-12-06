@@ -46,7 +46,7 @@
 #include "engines/grim/update/update.h"
 
 #include "common/algorithm.h"
-#include "common/compression/zlib.h"
+#include "common/compression/gzio.h"
 #include "common/memstream.h"
 #include "common/file.h"
 #include "common/config-manager.h"
@@ -301,7 +301,7 @@ Common::SeekableReadStream *ResourceLoader::openNewStreamFile(Common::String fna
 		s = loadFile(fname);
 	}
 	// This will only have an effect if the stream is actually compressed.
-	return Common::wrapCompressedReadStream(s);
+	return Common::GzioReadStream::wrapCompressedReadStream(s);
 }
 
 void ResourceLoader::putIntoCache(const Common::String &fname, byte *res, uint32 len) const {
