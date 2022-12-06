@@ -52,7 +52,21 @@ public:
 	static int32 deflateDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off = 0);
 	static int32 viseDecompress (byte *outbuf, uint32 outsize, const byte *inbuf, uint32 insize, int64 off = 0);
 	static int32 zlibDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off = 0);
+
+        /**
+	 * Wrapper around gzio's deflate functions. This function is used by Glk to
+	 * decompress TAF 4.0 files, which are headerless Zlib compressed streams with a
+	 * custom header
+	 *
+	 * @param dst       the destination stream to write decompressed data out to
+	 * @param src       the Source stream
+	 *
+	 * @return true on success, false otherwise.
+	 */
+	static bool inflateZlibHeaderless(Common::WriteStream *dst, Common::SeekableReadStream *src);
+
 	int32 readAtOffset(int64 offset, byte *buf, uint32 len);
+	bool readWhole (Common::WriteStream *dst);
 
 	uint32 read(void *dataPtr, uint32 dataSize) override;
 

@@ -1112,6 +1112,45 @@ GzioReadStream::readAtOffset (int64 offset, byte *buf, uint32 len)
   return ret;
 }
 
+bool
+GzioReadStream::readWhole (Common::WriteStream *dst)
+{
+  int64 offset = 0;
+
+  initialize_tables ();
+
+  /*
+   *  This loop operates upon uncompressed data only.  The only
+   *  special thing it does is to make sure the decompression
+   *  window is within the range of data it needs.
+   */
+
+  while (!_err)
+    {
+      uint32 size;
+      char *srcaddr;
+
+      while (offset >= _savedOffset)
+	{
+	  inflate_window ();
+	  if (_wp == 0)
+	    return !_err;
+	}
+
+      if (_wp == 0)
+	return !_err;
+
+      srcaddr = (char *) ((offset & (WSIZE - 1)) + _slide);
+      size = _savedOffset - offset;
+
+      dst->write(srcaddr, size);
+
+      offset += size;
+    }
+
+  return false;
+}
+
 uint32 GzioReadStream::read(void *dataPtr, uint32 dataSize) {
 	bool maybeEos = false;
 	// Read at most as many bytes as are still available...
@@ -1236,4 +1275,12 @@ GzioReadStream::zlibDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint3
   return gzio->readAtOffset(off, outbuf, outsize);
 }
 
+bool GzioReadStream::inflateZlibHeaderless(Common::WriteStream *dst, Common::SeekableReadStream *src)
+{
+  Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openDeflate(src, 0x7fffffffffffffffULL, DisposeAfterUse::NO));
+  if (!gzio)
+    return false;
+
+  return gzio->readWhole(dst);
+}
 }
