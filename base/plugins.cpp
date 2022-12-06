@@ -773,15 +773,7 @@ Common::String EngineManager::createTargetForGame(const DetectedGame &game) {
 	Common::String domain = game.preferredTarget;
 
 	assert(!domain.empty());
-	if (ConfMan.hasGameDomain(domain)) {
-		int suffixN = 1;
-		Common::String gameid(domain);
-
-		while (ConfMan.hasGameDomain(domain)) {
-			domain = gameid + Common::String::format("-%d", suffixN);
-			suffixN++;
-		}
-	}
+	domain = generateUniqueDomain(domain);
 
 	// Add the name domain
 	ConfMan.addGameDomain(domain);
