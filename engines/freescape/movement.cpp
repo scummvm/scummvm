@@ -128,7 +128,7 @@ void FreescapeEngine::rise() {
 		changePlayerHeight(_playerHeightNumber);
 	}
 
-	bool collided = checkCollisions(true);
+	bool collided = checkCollisions(true) || _position.y() >= 2016;
 	if (collided) {
 		if (_currentArea->getAreaID() == previousAreaID) {
 			if (_flyMode)
@@ -203,6 +203,8 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 		else if (_position.getValue(i) > 8128)
 			_position.setValue(i, 8128);
 	}
+	if (_position.y() >= 2016)
+		_position.y() = _lastPosition.z();
 
 	bool collided = checkCollisions(false);
 
