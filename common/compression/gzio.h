@@ -55,6 +55,8 @@ public:
 	static int32 deflateDecompressWithDict (byte *outbuf, uint32 outsize, const byte *inbuf, uint32 insize, const byte *dict, uint32 dict_size, int64 off = 0);
 	static int32 viseDecompress (byte *outbuf, uint32 outsize, const byte *inbuf, uint32 insize, int64 off = 0);
 	static int32 zlibDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off = 0);
+	static GzioReadStream* openGzip(Common::SeekableReadStream *parent, DisposeAfterUse::Flag disposeParent = DisposeAfterUse::NO);
+	static GzioReadStream* openZlibOrGzip(Common::SeekableReadStream *parent, uint64 uncompressed_size = kUnknownSize, DisposeAfterUse::Flag disposeParent = DisposeAfterUse::NO);
 
         /**
 	 * Wrapper around gzio's deflate functions. This function is used by Glk to
@@ -81,6 +83,8 @@ public:
 	int64 size() const override { return _uncompressedSize; }
 
 	bool seek(int64 offs, int whence = SEEK_SET) override;
+
+	static const uint64 kUnknownSize = 0x7fffffffffffffff;
 
 private:
   /*
@@ -129,6 +133,7 @@ private:
 	/* The supplied dictionary.  */
 	uint8 _dict[WSIZE];
 	uint32 _dict_size;
+	uint32 _orig_crc32;
 
 	bool _err;
 
@@ -156,14 +161,19 @@ private:
 	void initialize_tables();
 	static bool test_zlib_header(Common::SeekableReadStream *stream);
 	void init_zlib();
+	static bool test_gzip_header (Common::SeekableReadStream *stream);
+	void init_gzip();
 	void get_new_block();
 	byte parentGetByte();
+	uint16 parentGetLE16 ();
 	void parentSeek(int64 off);
 	uint64 parentTell();
 	void init_fixed_block();
 	int inflate_codes_in_window();
 	void init_dynamic_block ();
 	void init_stored_block ();
+	void eat_bytes (int len);
+	void eat_string ();
 };
 
 }

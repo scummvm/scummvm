@@ -40,6 +40,8 @@
 #include "common/memstream.h"
 #include "common/compression/gzio.h"
 
+#define GZIP_MAGIC      0x1F8B
+#define OLD_GZIP_MAGIC  0x1F9E
 
 /* Compression methods (see algorithm.doc) */
 #define GRUB_GZ_STORED      0
@@ -234,6 +236,7 @@ GzioReadStream::parentGetByte ()
 
   return _inbuf[_inbufD++];
 }
+
 
 void
 GzioReadStream::parentSeek(int64 off)
@@ -1037,6 +1040,7 @@ GzioReadStream::test_zlib_header (Common::SeekableReadStream *stream)
 {
   uint8 cmf, flg;
 
+  stream->seek(0);
   cmf = stream->readByte ();
   flg = stream->readByte ();
 
@@ -1065,6 +1069,68 @@ GzioReadStream::test_zlib_header (Common::SeekableReadStream *stream)
 
 void GzioReadStream::init_zlib() {
   _dataOffset = 2;
+}
+
+bool
+GzioReadStream::test_gzip_header (SeekableReadStream *stream)
+{
+  stream->seek(0);
+  uint16 magic = stream->readUint16BE();
+
+  if (magic != GZIP_MAGIC && magic != OLD_GZIP_MAGIC)
+    return false;
+
+  uint8 method = stream->readByte();
+  uint8 flags = stream->readByte();
+
+  /*
+   *  This does consistency checking on the header data.  If a
+   *  problem occurs from here on, then we have corrupt or otherwise
+   *  bad data, and the error should be reported to the user.
+   */
+  if (method != GRUB_GZ_DEFLATED
+      || (flags & GRUB_GZ_UNSUPPORTED_FLAGS))
+    return false;
+
+  return true;
+}
+
+void
+GzioReadStream::init_gzip ()
+{
+  _input->seek(0);
+
+  /* uint16 magic = */ _input->readUint16BE();
+  /* uint8 method = */ _input->readByte();
+  uint8 flags = _input->readByte();
+
+  // Timestamp
+  /* uint32 timestamp = */ _input->readUint32LE();
+  /* uint8 extra_flags = */ _input->readByte();
+  /* uint8 os_type = */ _input->readByte();
+
+  if (flags & GRUB_GZ_EXTRA_FIELD) {
+    uint16 extra_len = _input->readUint16LE();
+    _input->skip(extra_len);
+  }
+
+  if (flags & GRUB_GZ_ORIG_NAME)
+    _input->readString();
+
+  if (flags & GRUB_GZ_COMMENT)
+    _input->readString();
+
+  _dataOffset = _input->pos();
+
+  {
+    uint64 old_pos = _input->pos();
+    _input->seek(-8, SEEK_END);
+    _orig_crc32 = _input->readUint32LE();
+    /* FIXME: this does not handle files whose original size is over 4GB.
+       But how can we know the real original size?  */
+    _uncompressedSize = _input->readUint32LE();
+    _input->seek(old_pos);
+  }
 }
 
 int32
@@ -1240,9 +1306,7 @@ GzioReadStream* GzioReadStream::openClickteam(Common::SeekableReadStream *parent
 GzioReadStream* GzioReadStream::openZlib(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent)
 {
   if (!test_zlib_header(parent))
-    {
       return nullptr;
-    }
 
   GzioReadStream* gzio = new GzioReadStream(parent, disposeParent, uncompressed_size, GzioReadStream::Mode::ZLIB);
 
@@ -1252,6 +1316,39 @@ GzioReadStream* GzioReadStream::openZlib(Common::SeekableReadStream *parent, uin
 
   return gzio;
 }
+
+GzioReadStream* GzioReadStream::openGzip(Common::SeekableReadStream *parent, DisposeAfterUse::Flag disposeParent)
+{
+  if (!test_gzip_header(parent))
+      return nullptr;
+
+  GzioReadStream* gzio = new GzioReadStream(parent, disposeParent, kUnknownSize, GzioReadStream::Mode::ZLIB);
+
+  gzio->init_gzip();
+  gzio->initialize_tables();
+
+  return gzio;
+}
+
+GzioReadStream* GzioReadStream::openZlibOrGzip(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent)
+{
+  bool is_gzip = test_gzip_header(parent);
+  bool is_zlib = !is_gzip && test_zlib_header(parent);
+  if (!is_gzip && !is_zlib)
+      return nullptr;
+
+  GzioReadStream* gzio = new GzioReadStream(parent, disposeParent, uncompressed_size, GzioReadStream::Mode::ZLIB);
+
+  if (is_zlib)
+    gzio->init_zlib();
+  if (is_gzip)
+    gzio->init_gzip();
+
+  gzio->initialize_tables();
+
+  return gzio;
+}
+
 
 int32
 GzioReadStream::clickteamDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off)
@@ -1305,7 +1402,7 @@ GzioReadStream::zlibDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint3
 
 bool GzioReadStream::inflateZlibHeaderless(Common::WriteStream *dst, Common::SeekableReadStream *src)
 {
-  Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openDeflate(src, 0x7fffffffffffffffULL, DisposeAfterUse::NO));
+  Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openDeflate(src, kUnknownSize, DisposeAfterUse::NO));
   if (!gzio)
     return false;
 
