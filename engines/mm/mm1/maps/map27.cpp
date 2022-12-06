@@ -121,7 +121,6 @@ void Map27::special04() {
 	}
 
 	g_globals->_activeSpells._s.cursed = 0;
-
 }
 
 void Map27::special05() {

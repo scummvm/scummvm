@@ -29,10 +29,8 @@ namespace MM1 {
 namespace Views {
 namespace Maps {
 
-#define ANSWER_OFFSET 67
-
 Chess::Chess() :
-		AnswerEntry("Chess", Common::Point(10, 7), 23) {
+		AnswerEntry("Chess", Common::Point(10, 6), 23) {
 	_bounds = getLineBounds(17, 24);
 }
 
@@ -49,35 +47,9 @@ void Chess::draw() {
 
 void Chess::answerEntered() {
 	MM1::Maps::Map29 &map = *static_cast<MM1::Maps::Map29 *>(g_maps->_currentMap);
-	Common::String properAnswer;
-
-	for (int i = 0; i < 22; ++i)
-		properAnswer += map[ANSWER_OFFSET + i] + 48;
-
-	if (_answer.equalsIgnoreCase(properAnswer)) {
-		InfoMessage msg(
-			16, 2, STRING["maps.map19.correct"],
-			[]() {
-				MM1::Maps::Map29 &map29 = *static_cast<MM1::Maps::Map29 *>(g_maps->_currentMap);
-
-				for (uint i = 0; i < g_globals->_party.size(); ++i) {
-					Character &c = g_globals->_party[i];
-					c._exp += 25000;
-				}
-
-				g_maps->_mapPos.y = 7;
-				map29.updateGame();
-			}
-		);
-
-		msg._delaySeconds = 2;
-		send(msg);
-		Sound::sound(SOUND_3);
-		Sound::sound(SOUND_3);
-
-	} else {
-		map.begone();
-	}
+	clearSurface();
+	close();
+	map.chessAnswer(_answer);
 }
 
 } // namespace Maps
