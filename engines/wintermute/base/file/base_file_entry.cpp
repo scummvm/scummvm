@@ -29,7 +29,7 @@
 #include "engines/wintermute/base/file/base_package.h"
 #include "common/stream.h"
 #include "common/substream.h"
-#include "common/compression/zlib.h"
+#include "common/compression/gzio.h"
 
 namespace Wintermute {
 
@@ -42,7 +42,7 @@ Common::SeekableReadStream *BaseFileEntry::createReadStream() const {
 	bool compressed = (_compressedLength != 0);
 
 	if (compressed) {
-		file = Common::wrapCompressedReadStream(new Common::SeekableSubReadStream(file, _offset, _offset + _length, DisposeAfterUse::YES), _length); //
+		file = Common::GzioReadStream::wrapCompressedReadStream(new Common::SeekableSubReadStream(file, _offset, _offset + _length, DisposeAfterUse::YES), _length); //
 	} else {
 		file = new Common::SeekableSubReadStream(file, _offset, _offset + _length, DisposeAfterUse::YES);
 	}

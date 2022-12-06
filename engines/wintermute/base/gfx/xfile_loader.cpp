@@ -27,7 +27,7 @@
 #include "common/endian.h"
 #include "common/str.h"
 #include "common/util.h"
-#include "common/compression/zlib.h"
+#include "common/compression/gzio.h"
 
 #include "wintermute/base/gfx/xfile_loader.h"
 
@@ -759,7 +759,7 @@ bool XFileLoader::decompressMsZipData() {
 		}
 
 		const byte *dict = decompressedPos ? decompressedBlock : nullptr;
-		bool decRes = Common::inflateZlibHeaderless(decompressedBlock, uncompressedLen, compressedBlock + 2, compressedLen - 2, dict, kCabBlockSize);
+		bool decRes = Common::GzioReadStream::deflateDecompressWithDict(decompressedBlock, uncompressedLen, compressedBlock + 2, compressedLen - 2, dict, kCabBlockSize) > 0;
 		if (!decRes) {
 			error = true;
 			break;
