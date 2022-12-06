@@ -49,11 +49,56 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/ptr.h"
-#include "common/compression/zlib.h"
+#include "common/compression/gzio.h"
 
 namespace Common {
 
 namespace {
+
+/**
+ * Wrapper around gzio's inflate functions. This function will call the
+ * necessary inflate functions to uncompress data compressed for InstallShield
+ * cabinet files.
+ *
+ * Decompresses the src buffer into the dst buffer.
+ * srcLen is the byte length of the source buffer, dstLen is the byte
+ * length of the output buffer.
+ * It decompress as much data as possible, up to dstLen bytes.
+ *
+ * @param dst       the buffer to store into.
+ * @param dstLen    the size of the destination buffer.
+ * @param src       the data to be decompressed.
+ * @param srcLen    the size of the compressed data.
+ *
+ * @return true on success (Z_OK or Z_STREAM_END), false otherwise.
+ */
+bool inflateZlibInstallShield(byte *dst, uint dstLen, const byte *src, uint srcLen) {
+	if (!dst || !dstLen || !src || !srcLen)
+		return false;
+
+	// See if we have sync bytes. If so, just use our function for that.
+	if (srcLen >= 4 && READ_BE_UINT32(src + srcLen - 4) == 0xFFFF)
+		return Common::GzioReadStream::deflateDecompress(dst, dstLen, src, srcLen) > 0;
+
+	// Otherwise, we have some custom code we get to use here.
+	uint32 bytesRead = 0, bytesProcessed = 0;
+	while (bytesRead < srcLen) {
+		uint16 chunkSize = READ_LE_UINT16(src + bytesRead);
+		bytesRead += 2;
+
+		if (dstLen <= bytesProcessed)
+			return false;
+
+		long r = Common::GzioReadStream::deflateDecompress(dst + bytesProcessed, dstLen - bytesProcessed, src + bytesRead, chunkSize);
+		if (r < 0)
+			return false;
+
+		bytesProcessed += r;
+		bytesRead += chunkSize;
+	}
+
+	return true;
+}
 
 class InstallShieldCabinet : public Archive {
 public:
@@ -254,7 +299,6 @@ SeekableReadStream *InstallShieldCabinet::createReadStreamForMember(const Path &
 
 	stream->seek(entry.offset);
 
-#ifdef USE_ZLIB
 	byte *src = (byte *)malloc(entry.compressedSize);
 	byte *dst = (byte *)malloc(entry.uncompressedSize);
 
@@ -270,10 +314,6 @@ SeekableReadStream *InstallShieldCabinet::createReadStreamForMember(const Path &
 	}
 
 	return new MemoryReadStream(dst, entry.uncompressedSize, DisposeAfterUse::YES);
-#else
-	warning("zlib required to extract compressed CAB file '%s'", name.c_str());
-	return 0;
-#endif
 }
 
 String InstallShieldCabinet::getHeaderName() const {

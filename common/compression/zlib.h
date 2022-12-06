@@ -86,25 +86,6 @@ bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long
 bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen, const byte *dict = nullptr, uint dictLen = 0);
 
 /**
- * Wrapper around zlib's inflate functions. This function will call the
- * necessary inflate functions to uncompress data compressed for InstallShield
- * cabinet files.
- *
- * Decompresses the src buffer into the dst buffer.
- * srcLen is the byte length of the source buffer, dstLen is the byte
- * length of the output buffer.
- * It decompress as much data as possible, up to dstLen bytes.
- *
- * @param dst       the buffer to store into.
- * @param dstLen    the size of the destination buffer.
- * @param src       the data to be decompressed.
- * @param srcLen    the size of the compressed data.
- *
- * @return true on success (Z_OK or Z_STREAM_END), false otherwise.
- */
-bool inflateZlibInstallShield(byte *dst, uint dstLen, const byte *src, uint srcLen);
-
-/**
  * Wrapper around zlib's inflate functions. This function is used by Glk to
  * decompress TAF 4.0 files, which are headerless Zlib compressed streams with a
  * custom header
