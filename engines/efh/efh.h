@@ -444,7 +444,7 @@ private:
 	void clearScreen(int16 color);
 	void displayRawDataAtPos(uint8 *imagePtr, int16 posX, int16 posY);
 	void drawString(const char *str, int16 startX, int16 startY, uint16 textColor);
-	void displayCenteredString(const char *str, int16 minX, int16 maxX, int16 posY);
+	void displayCenteredString(Common::String str, int16 minX, int16 maxX, int16 posY);
 	void displayMenuAnswerString(const char *str, int16 minX, int16 maxX, int16 posY);
 	void drawMapWindow();
 	void displayGameScreen();
