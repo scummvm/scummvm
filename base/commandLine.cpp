@@ -436,7 +436,7 @@ static QualifiedGameDescriptor findGameMatchingName(const Common::String &name) 
 }
 
 static Common::String createTemporaryTarget(const Common::String &engineId, const Common::String &gameId) {
-	Common::String domainName = gameId;
+	Common::String domainName = EngineMan.generateUniqueDomain(gameId);
 
 	ConfMan.addGameDomain(domainName);
 	ConfMan.set("engineid", engineId, domainName);
