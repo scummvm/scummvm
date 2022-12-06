@@ -2467,6 +2467,40 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Arthur's Reading Games
+	// Rerelease of Arthur's Reading Race
+	// There is also ARG.LB ("82baf9c67d417bc3278c79018d1617d4", 3353)
+	// Only differences are the copyright is for "The Learning Company" and some lines are accidentally merged
+	{
+		{
+			"arthurreading",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("ARG32.LB", "51be80dff4be9fd07c32b3b207320677", 3355),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0,
+	},
+
+	{
+		{
+			"arthurreading",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("Bookoutline", "394e06287031512c8487b0940abe1049", 3166),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0,
+	},
+
 	// From zerep in bug #5647
 	{
 		{
@@ -3513,6 +3547,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0,
+	},
+
+	// Dr. Seuss Reading Games
+	// Contains "Dr. Seuss's ABC" and "The Cat in the Hat"
+	{
+		{
+			"drseussreading",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("Outline", "1f522d42174e8e98537db10bc715aa97", 5330),
+			Common::EN_ANY,
+			Common::kPlatformUnknown, // identical on both Win and Mac partitions of disc
+			ADGF_UNSUPPORTED,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_LIVINGBOOKSV3,
