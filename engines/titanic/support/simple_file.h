@@ -26,6 +26,7 @@
 #include "titanic/support/rect.h"
 #include "common/savefile.h"
 #include "common/stream.h"
+#include "common/compression/gzio.h"
 #include "common/compression/zlib.h"
 #include "titanic/support/string.h"
 
@@ -270,7 +271,7 @@ public:
 	 * Set up a stream for read access
 	 */
 	void open(Common::SeekableReadStream *stream) override {
-		SimpleFile::open(Common::wrapCompressedReadStream(stream));
+		SimpleFile::open(Common::GzioReadStream::wrapCompressedReadStream(stream));
 	}
 
 	/**

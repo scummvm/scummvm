@@ -21,7 +21,7 @@
 
 #include "common/file.h"
 #include "common/memstream.h"
-#include "common/compression/zlib.h"
+#include "common/compression/gzio.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/game_manager.h"
 #include "titanic/titanic.h"
@@ -147,7 +147,7 @@ Common::SeekableReadStream *CFilesManager::getResource(const CString &str) {
 		_datFile.readStream(resEntry._size) :
 		new Common::MemoryReadStream(nullptr, 0);
 	if (resEntry._flags & FLAG_COMPRESSED)
-		stream = Common::wrapCompressedReadStream(stream);
+		stream = Common::GzioReadStream::wrapCompressedReadStream(stream);
 
 	return stream;
 }
