@@ -55,15 +55,17 @@ void StartU8Process::run() {
 		}
 	}
 
-	// Try to load the save game, if succeeded this pointer will no longer be valid
+	// Try to load the save game, if succeeded this process will terminate
 	if (_saveSlot >= 0) {
 		Common::Error loadError = Ultima8Engine::get_instance()->loadGameState(_saveSlot);
 		if (loadError.getCode() != Common::kNoError) {
 			Ultima8Engine::get_instance()->setError(loadError);
+			fail();
 			return;
 		}
 
 		PaletteFaderProcess::I_fadeFromBlack(0, 0);
+		terminate();
 		return;
 	}
 

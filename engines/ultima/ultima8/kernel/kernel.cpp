@@ -64,14 +64,14 @@ void Kernel::reset() {
 
 	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
 		Process *p = *it;
-		if (p->_flags & Process::PROC_TERM_DISPOSE) {
+		if (p->_flags & Process::PROC_TERM_DISPOSE && p != _runningProcess) {
 			delete p;
 		} else {
 			p->_flags |= Process::PROC_TERMINATED;
 		}
 	}
 	_processes.clear();
-	_currentProcess = _processes.begin();
+	_currentProcess = _processes.end();
 
 	_pIDs->clearAll();
 
@@ -168,6 +168,7 @@ void Kernel::runProcesses() {
 				(_paused || _tickNum % p->getTicksPerRun() == 0)) {
 			_runningProcess = p;
 			p->run();
+			_runningProcess = nullptr;
 
 			num_run++;
 
@@ -192,10 +193,13 @@ void Kernel::runProcesses() {
 				p->fail();
 			}
 
-			if (!_runningProcess)
-				return; // If this happens then the list was reset so leave NOW!
-
-			_runningProcess = nullptr;
+			if (_currentProcess == _processes.end()) {
+				// If this happens then the list was reset so delete the process and return.
+				if (p->_flags & Process::PROC_TERM_DISPOSE) {
+					delete p;
+				}
+				return;
+			}
 		}
 		if (!_paused && (p->_flags & Process::PROC_TERMINATED)) {
 			// process is killed, so remove it from the list

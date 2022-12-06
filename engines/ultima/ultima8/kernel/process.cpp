@@ -38,8 +38,6 @@ Process::Process(ObjId it, uint16 ty)
 }
 
 void Process::fail() {
-	assert(!(_flags & PROC_TERMINATED));
-
 	_flags |= PROC_FAILED;
 	terminate();
 }
