@@ -1366,7 +1366,7 @@ GzioReadStream* GzioReadStream::openZlibOrGzip(Common::SeekableReadStream *paren
 
 
 int32
-GzioReadStream::clickteamDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off)
+GzioReadStream::clickteamDecompress (byte *outbuf, uint32 outsize, const byte *inbuf, uint32 insize, int64 off)
 {
   Common::ScopedPtr<Common::MemoryReadStream> memstream(new Common::MemoryReadStream(inbuf, insize));
   Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openClickteam(memstream.get(), outsize + off));
@@ -1376,7 +1376,7 @@ GzioReadStream::clickteamDecompress (byte *outbuf, uint32 outsize, byte *inbuf, 
 }
 
 int32
-GzioReadStream::deflateDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off)
+GzioReadStream::deflateDecompress (byte *outbuf, uint32 outsize, const byte *inbuf, uint32 insize, int64 off)
 {
   Common::ScopedPtr<Common::MemoryReadStream> memstream(new Common::MemoryReadStream(inbuf, insize));
   Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openDeflate(memstream.get(), outsize + off));
@@ -1406,7 +1406,7 @@ GzioReadStream::viseDecompress (byte *outbuf, uint32 outsize, const byte *inbuf,
 }
 
 int32
-GzioReadStream::zlibDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off)
+GzioReadStream::zlibDecompress (byte *outbuf, uint32 outsize, const byte *inbuf, uint32 insize, int64 off)
 {
   Common::ScopedPtr<Common::MemoryReadStream> memstream(new Common::MemoryReadStream(inbuf, insize));
   Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openZlib(memstream.get(), outsize + off));

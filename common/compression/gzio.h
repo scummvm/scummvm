@@ -53,11 +53,11 @@ public:
 						   DisposeAfterUse::Flag disposeParent = DisposeAfterUse::NO);
 	static GzioReadStream* openVise(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent = DisposeAfterUse::NO);
 	static GzioReadStream* openZlib(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent = DisposeAfterUse::NO);
-	static int32 clickteamDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off = 0);
-	static int32 deflateDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off = 0);
+	static int32 clickteamDecompress (byte *outbuf, uint32 outsize, const byte *inbuf, uint32 insize, int64 off = 0);
+	static int32 deflateDecompress (byte *outbuf, uint32 outsize, const byte *inbuf, uint32 insize, int64 off = 0);
 	static int32 deflateDecompressWithDict (byte *outbuf, uint32 outsize, const byte *inbuf, uint32 insize, const byte *dict, uint32 dict_size, int64 off = 0);
 	static int32 viseDecompress (byte *outbuf, uint32 outsize, const byte *inbuf, uint32 insize, int64 off = 0);
-	static int32 zlibDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off = 0);
+	static int32 zlibDecompress (byte *outbuf, uint32 outsize, const byte *inbuf, uint32 insize, int64 off = 0);
 	static GzioReadStream* openGzip(Common::SeekableReadStream *parent, DisposeAfterUse::Flag disposeParent = DisposeAfterUse::NO);
 	static GzioReadStream* openZlibOrGzip(Common::SeekableReadStream *parent, uint64 uncompressed_size = kUnknownSize, DisposeAfterUse::Flag disposeParent = DisposeAfterUse::NO);
 
@@ -94,7 +94,6 @@ public:
 	 * @param knownSize		a supplied length of the compressed data (if not available directly)
 	 */
 	static SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, uint64 knownSize = kUnknownSize);
-
 	int32 readAtOffset(int64 offset, byte *buf, uint32 len);
 	bool readWhole (Common::WriteStream *dst);
 
