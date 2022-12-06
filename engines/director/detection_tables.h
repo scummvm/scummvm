@@ -3202,7 +3202,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO1("bookshelf95", "Demo", "BS95DEMO.EXE", "9493e1f5e92c89de805f07e1529243d4", 2593543, 404),
 
-	WINGAME1("bowie", "", "JUMP.EXE", "1706ba3b999d724957198c134e508127", 684317, 400),
+	WINGAME2("bowie", "", "JUMP.EXE", 			"1706ba3b999d724957198c134e508127", 684317,
+						  "INTRO/INTROBIT.DIR",	"c47416d9dc69baa552a6be470cd558cd", 895164, 404),
 
 	MACGAME1("brer", "", "Brer Rabbit", "67f572196550aedb1f9523d782022be0", 483500, 404),
 	WINGAME1t("brer", "", "BRER.EXE", "80b9c1a56bfa3c37c233341dc6bbdcc7", 699943, 404),
@@ -3215,10 +3216,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Retail CD release from BeachWare, Inc.
 	// Windows version also has CASINO2.EXE (Casino! Basic) for low performance PCs
 	// Director-based AUTORUN.EXE launcher chooses between these options on Win9X
+	// Win demo from "Classic Arcade" BeachWare CD
 	MACGAME1("casino", "", "Casino! for PowerPC", "5bb6f4e7f9f026e2b5cf758796db3cd2", 57728, 400),
-	WINGAME1t("casino", "", "CASINO.EXE", "fdae6bb9b74fabe7e5eab6df294b02f5", 692873, 404),
+	WINGAME2t("casino", "", "CASINO.EXE", 	 "fdae6bb9b74fabe7e5eab6df294b02f5", 692873,
+							"DATA/KENO.DIR", "b33710f7a6e8b79b490a659aa75e0416", 377712, 404),
 	MACDEMO1("casino", "Sampler", "Casino! Sampler", "cbce20666bfe47a9533331c6be1e6039", 285255, 404),
-	WINDEMO1t("casino", "Sampler", "CASINO.EXE", "9957a5c3d67e857b5fd9cb084f7f8726", 1801785, 404),
+	//GOLDILKS.EXE is not related, just used to prevent misdetections
+	WINDEMO2t("casino", "Sampler", "CASINO.EXE", 	"9957a5c3d67e857b5fd9cb084f7f8726", 1801785,
+								   "GOLDILKS.EXE",	"a59533f9043f9e642fc17d39c843d55b", 1894363, 404),
 
 	// aka Cat'sEyeView
 	// by Eij Kato
@@ -3287,7 +3292,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("cinemac", "Sample Projector", "Sample Projector with BackDrop", "2c27791a84756be6201d281bad54f7bb", 286214, 404),
 
 	MACGAME1("circus", "v1.0.6", "Circus!", "dc5a87dda7a0daf46604515f7d2cca66", 319863, 400),
-	WINGAME1("circus", "", "CIRCUS.EXE", "50d81af709047f5d1310468a3cd5a248", 1503187, 400),
+	WINGAME2("circus", "", "CIRCUS.EXE", "50d81af709047f5d1310468a3cd5a248", 1503187,
+						   "MAIN.DIR",	 "9aadad95362ec5204151e14dc8bf7e6c", 4324948, 404),
 	PIPGAME1_l("circus", "", "Circus!", "0d69b9bb731fba3d861a5f18e1810aa5", 61483, Common::JA_JPN, 404),
 	MACDEMO2("circus", "Demo", "Demo",		  "dc5a87dda7a0daf46604515f7d2cca66", 308286,
 							   "PREVIEW.MOV", "7d33c9b1fa93092499e29305f9b3a414", 5698025, 403),
@@ -3317,10 +3323,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2t("connections", "", "CONNECT.EXE", "6fab237cd2349f6450fabe8739148904", 690019,
 								 "LAUNCHER.DXR", "19e29c3dc9f5c3ac45028e44fb28c435", 825370, 404),
 	MACGAME1("connections", "", "Connections", "8120c82507f7ec1e19bab566ca529cda", 494340, 404),
-	WINDEMO1("connections", "Demo", "CONNECT.EXE", "9ee064f5c862e75cf73ba567724dc8b9", 690023, 404),
+	WINDEMO2("connections", "Demo", "CONNECT.EXE", "9ee064f5c862e75cf73ba567724dc8b9", 690023,
+									"HOST2.DXR",   "42dc875a908e208af49fe3a0fa0c0a6d", 427760, 404),
 
 	MACGAME1_l("cookieginger", "", "COOKIE", "17efee018a660458fae80de4364021ac", 484181, Common::JA_JPN, 404),
-	WINGAME1t_l("cookieginger", "", "COOKIE.EXE", "03f2a878ff04b2e1ad7549fc6895da56", 766213, Common::JA_JPN, 404),
+	WINGAME2t_l("cookieginger", "", "COOKIE.EXE", "03f2a878ff04b2e1ad7549fc6895da56", 766213,
+									"MENU",		  "de44ab9002ee4f9a56805682a057fd47", 276800, Common::JA_JPN, 404),
 
 	// From Blender 1.5
 	// Original filename is 'the courtney filter™'
@@ -3363,8 +3371,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 									 "LAUNCH2.DIR", "f913a0c83847ccc9df461311a4475a77", 223086, 404),
 
 	// Mac executable is ダン
-	MACGAME1_l("dan", "", "Dan", "ea646eccc9a53f44ce082459d4809a06", 485143, Common::JA_JPN, 404),
-	WINGAME1_l("dan", "", "DAN.EXE", "1c0ff839ffc63cc21ce0017b5ad807ce", 740257, Common::JA_JPN, 404),
+	MACGAME1_l("dan", "", "xn--6ck8e", "ea646eccc9a53f44ce082459d4809a06", 484887, Common::JA_JPN, 404),
+	WINGAME2_l("dan", "", "DAN.EXE",  		 "1c0ff839ffc63cc21ce0017b5ad807ce", 740257,
+						  "WINMOV/OP01.DXR", "c654ab3dd5edbb0e9e4ac1a47d768e62", 1763612, Common::JA_JPN, 404),
 
 	// Both Mac and Win versions require installation to extract executable
 	// Mac version has 68k, PowerPC, and a fat binary (default) as options in the installer
@@ -3440,15 +3449,21 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("doshifunspecial", "", "DOSHIFUN.EXE", "7bf89e4d7175aef9f5ea532774cf2d4e", 4854695, Common::JA_JPN, 404),
 
 	MACGAME1_l("dothereggae", "", "DoTheReggae", "f808a9f231b77617fa559cf9d2da66c1", 303896, Common::JA_JPN, 404),
-	WINGAME1t_l("dothereggae", "", "REGGAE.EXE", "07c61f99800a1e8871387e1c2c03828e", 15392661, Common::JA_JPN, 404),
+	WINGAME2t_l("dothereggae", "", "REGGAE.EXE", 	   "07c61f99800a1e8871387e1c2c03828e", 15392661,
+								   "SOUNDFIL/ALL.003", "298d5757a5e8fd686fb8432285e4e32e", 244678, Common::JA_JPN, 404),
 
 	// Het Geheim Van Dracula localized by Transposia,
 	// Dracula : Le Mystère du chateau published by Hoffmann + associates
-	WINGAME1("draculassecret", "", "SECRET.EXE", "79cca0ac2870f070ea5228bff152b462", 808748, 404),
-	WINGAME1_l("draculassecret", "", "Dracula.exe", "033eed030a848f54a8f1671f50c616e9", 772925, Common::FR_FRA, 404),
-	WINGAME1_l("draculassecret", "", "secret.exe",	"b24fbaf90985cdb79132eda2ee5b73d2", 1132985, Common::NL_NLD, 404), // original release
-	MACGAME1_l("draculassecret", "", "Secret.PPC", "b147d31ed577b9bbd3af764f178bb71c", 57832, Common::NL_NLD, 404),
-	WINGAME1t_l("draculassecret", "", "secret.EXE",	"935dd6dc5bd2ea550396bdfd4f96d975", 763851, Common::NL_NLD, 404),
+	WINGAME2("draculassecret", "", "SECRET.EXE", "79cca0ac2870f070ea5228bff152b462", 808748,
+								   "Int_1.Dir",	 "6210e24521f440ebd600d869c473444e", 5951298, 404),
+	WINGAME2_l("draculassecret", "", "Dracula.exe", 	  "033eed030a848f54a8f1671f50c616e9", 772925,
+									 "Dracula/INT_1.DIR", "bac609d9496142c8393a68435c25660d", 9387886, Common::FR_FRA, 404),
+	WINGAME2_l("draculassecret", "", "secret.exe",		  "b24fbaf90985cdb79132eda2ee5b73d2", 1132985,
+									 "Dracula/Int_1.Dir", "f2357c8e4b94e87b9d53018ecb9f1ed6", 5699816, Common::NL_NLD, 404), // original release
+	MACGAME2_l("draculassecret", "", "Secret.PPC",  "b147d31ed577b9bbd3af764f178bb71c", 57832,
+									 "Int_1.Dir",	"f2357c8e4b94e87b9d53018ecb9f1ed6", 5699816, Common::NL_NLD, 404),
+	WINGAME2t_l("draculassecret", "", "secret.EXE",	"935dd6dc5bd2ea550396bdfd4f96d975", 763851,
+									  "Int_1.Dir",	"a849d2170b83ea07df7c6f45c2d049a7", 5699816, Common::NL_NLD, 404),  // subdir on original release
 
 	MACGAME1("dreidel", "", "dreidel", "77f4098988d5386794d1530065f514cd", 304189, 400),
 
@@ -7541,7 +7556,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("broadwayyb", "", "YEARBOOK.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2256212, 800),
 
 	// Mac OS 9 and OS X versions are D9
-	WINGAME1t("casino5p", "", "Casino.exe", "fb46241e501df6a96d5a3109f13d61b6", 3335762, 850), // Disc 1
+	WINGAME2t("casino5p", "", "Casino.exe", 			"fb46241e501df6a96d5a3109f13d61b6", 3335762,
+							  "data/casino/Casino.DIR", "414d899657b09f133f0146af2a2aae3c", 3062219, 850), // Disc 1
 	WINGAME1t("casino5p", "", "Slots200.exe", "0f04a70712597a6bd001232b0913d514", 3011024, 850), // Disc 2
 
 	MACGAME1("cmi", "CM38/10/01", "CMi_38_Mac", "f065c75691d28120e9f630448c3b1b71", 1225735, 800),
@@ -8084,7 +8100,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Found on AOL 9.0 promo CD
 	// Game description is based on desktop shortcut after installation
-	WINGAME1("aolstarwars", "", "STARWARS.EXE", "bcf64185ce848b7b70858d62945f48a8", 25472412, 1010),
+	WINGAME2("aolstarwars", "", "STARWARS.EXE", 		"bcf64185ce848b7b70858d62945f48a8", 25472412,
+								"VID/TEASER_LARGE.WMV", "11b13d01a656d34a19d01247747478a4", 16763648, 1010),
 
 	// Windows version is D8.5
 	// External movies in the 'ME' folder are aliased to ':Cassic OS:ME' (sic)
