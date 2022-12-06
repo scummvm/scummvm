@@ -177,15 +177,7 @@ Common::SeekableReadStream *MacVISEArchive::ArchiveMember::createReadStream() co
 		return nullptr;
 
 
-	// WARNING/TODO: Based on reverse engineering of the "Dcmp" resource from the installer, which contains the decompression code,
-	// the bitstream format is usually just deflate, however there is one difference: Stored blocks are flushed to a 2-byte boundary
-	// instead of 1-byte boundary, because the decompressor reads 2 bytes at a time.  This doesn't usually matter because stored
-	// blocks are very rare in practice on compressible data, and small files with only 1 compressible block are already 2-byte
-	// aligned on the first block.
-	//
-	// If this turns out to be significant, then this will need to be updated to pass information to the deflate decompressor to
-	// handle the non-standard behavior.
-	if (Common::GzioReadStream::deflateDecompress(decompressedData, uncompressedSize, &compressedData[0], compressedSize) <= 0) {
+	if (Common::GzioReadStream::viseDecompress(decompressedData, uncompressedSize, &compressedData[0], compressedSize) <= 0) {
 		free(decompressedData);
 		return nullptr;
 	}

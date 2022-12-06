@@ -46,9 +46,11 @@ class GzioReadStream : public Common::SeekableReadStream
 public:
 	static GzioReadStream* openClickteam(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent = DisposeAfterUse::NO);
 	static GzioReadStream* openDeflate(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent = DisposeAfterUse::NO);
+	static GzioReadStream* openVise(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent = DisposeAfterUse::NO);
 	static GzioReadStream* openZlib(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent = DisposeAfterUse::NO);
 	static int32 clickteamDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off = 0);
 	static int32 deflateDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off = 0);
+	static int32 viseDecompress (byte *outbuf, uint32 outsize, const byte *inbuf, uint32 insize, int64 off = 0);
 	static int32 zlibDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off = 0);
 	int32 readAtOffset(int64 offset, byte *buf, uint32 len);
 
@@ -118,7 +120,7 @@ private:
 	uint64 _streamPos;
 	bool _eos;
 
-	enum class Mode { ZLIB, CLICKTEAM } _mode;
+	enum class Mode { ZLIB, CLICKTEAM, VISE } _mode;
 
         GzioReadStream(Common::SeekableReadStream *parent, DisposeAfterUse::Flag disposeParent, uint64 uncompressedSize, Mode mode) :
 	  _dataOffset(0), _blockType(0), _blockLen(0),
@@ -134,6 +136,7 @@ private:
 	void get_new_block();
 	byte parentGetByte();
 	void parentSeek(int64 off);
+	uint64 parentTell();
 	void init_fixed_block();
 	int inflate_codes_in_window();
 	void init_dynamic_block ();

@@ -243,6 +243,10 @@ GzioReadStream::parentSeek(int64 off)
   _input->seek(off);
 }
 
+uint64
+GzioReadStream::parentTell () {
+  return _input->pos() - _inbufSize + _inbufD;
+}
 /* more function prototypes */
 static int huft_build (unsigned *, unsigned, unsigned, ush *, ush *,
 		       struct huft **, int *);
@@ -638,6 +642,11 @@ GzioReadStream::init_stored_block ()
 
   /* go to byte boundary */
   DUMPBITS (k & 7);
+
+  if (_mode == GzioReadStream::Mode::VISE && (parentTell() - _dataOffset - (k >> 3)) & 1) {
+    NEEDBITS (8);
+    DUMPBITS (8);
+  }
 
   /* get the length and its complement */
   NEEDBITS (16);
@@ -1158,6 +1167,15 @@ GzioReadStream* GzioReadStream::openDeflate(Common::SeekableReadStream *parent, 
   return gzio;
 }
 
+GzioReadStream* GzioReadStream::openVise(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent)
+{
+  GzioReadStream *gzio = new GzioReadStream(parent, disposeParent, uncompressed_size, GzioReadStream::Mode::VISE);
+
+  gzio->initialize_tables ();
+
+  return gzio;
+}
+
 GzioReadStream* GzioReadStream::openClickteam(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent)
 {
   GzioReadStream *gzio = new GzioReadStream(parent, disposeParent, uncompressed_size, GzioReadStream::Mode::CLICKTEAM);
@@ -1195,6 +1213,15 @@ int32
 GzioReadStream::deflateDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off)
 {
   Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openDeflate(new Common::MemoryReadStream(inbuf, insize, DisposeAfterUse::NO), outsize + off, DisposeAfterUse::YES));
+  if (!gzio)
+    return -1;
+  return gzio->readAtOffset(off, outbuf, outsize);
+}
+
+int32
+GzioReadStream::viseDecompress (byte *outbuf, uint32 outsize, const byte *inbuf, uint32 insize, int64 off)
+{
+  Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openVise(new Common::MemoryReadStream(inbuf, insize, DisposeAfterUse::NO), outsize + off, DisposeAfterUse::YES));
   if (!gzio)
     return -1;
   return gzio->readAtOffset(off, outbuf, outsize);
