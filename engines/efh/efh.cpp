@@ -1030,12 +1030,12 @@ void EfhEngine::drawScreen() {
 void EfhEngine::displayLowStatusScreen(bool flag) {
 	debugC(6, kDebugEngine, "displayLowStatusScreen %s", flag ? "True" : "False");
 
-	const char strName[5] = "Name";
-	const char strDef[4] = "DEF";
-	const char strHp[3] = "HP";
-	const char strMaxHp[7] = "Max HP";
-	const char strWeapon[7] = "Weapon";
-	const char strDead[9] = "* DEAD *";
+	Common::String strName = "Name";
+	Common::String strDef = "DEF";
+	Common::String strHp = "HP";
+	Common::String strMaxHp = "Max HP";
+	Common::String strWeapon = "Weapon";
+	Common::String strDead = "* DEAD *";
 
 	for (int counter = 0; counter < 2; ++counter) {
 		if (counter == 0 || flag) {
@@ -1057,11 +1057,11 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 				setTextPos(16, textPosY);
 				displayStringAtTextPos(buffer);
 				buffer = Common::String::format("%d", getEquipmentDefense(charId, false));
-				displayCenteredString(buffer.c_str(), 104, 128, textPosY);
+				displayCenteredString(buffer, 104, 128, textPosY);
 				buffer = Common::String::format("%d", _npcBuf[charId]._hitPoints);
-				displayCenteredString(buffer.c_str(), 144, 176, textPosY);
+				displayCenteredString(buffer, 144, 176, textPosY);
 				buffer = Common::String::format("%d", _npcBuf[charId]._maxHP);
-				displayCenteredString(buffer.c_str(), 192, 224, textPosY);
+				displayCenteredString(buffer, 192, 224, textPosY);
 
 				if (_npcBuf[charId]._hitPoints <= 0) {
 					displayCenteredString(strDead, 225, 302, textPosY);
@@ -1088,7 +1088,7 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 					break;
 				}
 
-				displayCenteredString(_nameBuffer.c_str(), 225, 302, textPosY);
+				displayCenteredString(_nameBuffer, 225, 302, textPosY);
 			}
 		}
 
@@ -2265,9 +2265,6 @@ bool EfhEngine::checkMonsterGroupDistance1OrLess(int16 monsterId) {
 bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 	debug("sub21820 %d %d %d", monsterId, arg2, itemId);
 
-	char buffer[80];
-	memset(buffer, 0, 80);
-
 	uint8 var51 = _mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F;
 	if (_mapMonsters[monsterId]._guess_fullPlaceId == 0xFF)
 		return false;
@@ -2378,7 +2375,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 				displayMonsterAnim(monsterId);
 				_enemyNamePt2 = _npcBuf[var58]._name;
 				_characterNamePt2 = _npcBuf[_teamCharId[counter]]._name;
-				snprintf(buffer, 80, "%s asks that %s leave your party.", _enemyNamePt2.c_str(), _characterNamePt2.c_str());
+				Common::String buffer = Common::String::format("%s asks that %s leave your party.", _enemyNamePt2.c_str(), _characterNamePt2.c_str());
 				for (uint i = 0; i < 2; ++i) {
 					clearBottomTextZone(0);
 					_textColor = 0xE;
@@ -3794,16 +3791,13 @@ void EfhEngine::sub1D8C2(int16 charId, int16 damage) {
 void EfhEngine::displayMenuItemString(int16 menuBoxId, int16 thisBoxId, int16 minX, int16 maxX, int16 minY, const char *str) {
 	debug("displayMenuItemString %d %d %d->%d %d %s", menuBoxId, thisBoxId, minX, maxX, minY, str);
 
-	char buffer[20];
-	memset(buffer, 0, 20);
-
 	if (menuBoxId == thisBoxId) {
 		if (_menuDepth == 0)
 			setTextColorWhite();
 		else
 			setTextColorGrey();
 
-		snprintf(buffer, 20, "> %s <", str);
+		Common::String buffer = Common::String::format("> %s <", str);
 		displayCenteredString(buffer, minX, maxX, minY);
 		setTextColorRed();
 	} else {
@@ -4407,7 +4401,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if (varAA != 0x1B) {
 			buffer1 = "  The magic makes the user as quick and agile as a bird!";
 			if (argA == 2) {
-				displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
 				_messageToBePrinted += buffer1;
 			}
@@ -4431,7 +4425,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		if (teamCharId != 0x1B) {
 			buffer1 = "  The magic makes the user invisible!";
 			if (argA == 2) {
-				displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
 				_messageToBePrinted += buffer1;
 			}
@@ -4445,8 +4439,6 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		}
 		break;
 	case 16: { // Fairy Dust
-		int16 varAC = _mapPosX;
-		int16 varAA = _mapPosY;
 		_mapPosX = getRandom(_largeMapFlag ? 63 : 23);
 		_mapPosY = getRandom(_largeMapFlag ? 63 : 23);
 		int16 varAE = sub15538(_mapPosX, _mapPosY);
@@ -4455,7 +4447,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			totalPartyKill();
 			buffer1 = "The entire party vanishes in a flash... only to appear in stone !";
 			if (argA == 2) {
-				displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
 				_messageToBePrinted += buffer1;
 				retVal = true;
@@ -4465,7 +4457,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			if (varAE == 0 || varAE == 0x48) {
 				buffer1 = "The entire party vanishes in a flash...but re-appears, as if nothing happened!";
 				if (argA == 2) {
-					displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
+					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 				} else {
 					_messageToBePrinted += buffer1;
 					retVal = true;
@@ -4473,7 +4465,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			} else {
 				buffer1 = "The entire party vanishes in a flash...only to appear elsewhere!";
 				if (argA == 2) {
-					displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
+					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 				} else {
 					_messageToBePrinted += buffer1;
 					retVal = true;
@@ -4492,7 +4484,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			totalPartyKill();
 			buffer1 = "The entire party vanishes in a flash... only to appear in stone !";
 			if (argA == 2) {
-				displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
 				_messageToBePrinted += buffer1;
 				retVal = true;
@@ -4502,7 +4494,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			if (varAE == 0 || varAE == 0x48) {
 				buffer1 = "The entire party vanishes in a flash...but re-appears, as if nothing happened!";
 				if (argA == 2) {
-					displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
+					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 				} else {
 					_messageToBePrinted += buffer1;
 					retVal = true;
@@ -4510,7 +4502,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			} else {
 				buffer1 = "The entire party vanishes in a flash...only to appear elsewhere!";
 				if (argA == 2) {
-					displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
+					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 				} else {
 					_messageToBePrinted += buffer1;
 					retVal = true;
@@ -4542,7 +4534,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 	case 19: // "Junk"
 		buffer1 = "  * The item breaks!";
 		if (argA == 2) {
-			displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
+			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += buffer1;
 		}
@@ -4578,7 +4570,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		}
 		buffer1 += "'";
 		if (argA == 2) {
-			displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
+			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += buffer1;
 			retVal = true;
@@ -4607,7 +4599,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				buffer1 = Common::String::format("%s increased 1 point!", kSkillArray[varAE]);
 
 			if (argA == 2) {
-				displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
 				_messageToBePrinted += buffer1;
 				retVal = true;
@@ -4638,7 +4630,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				buffer1 = Common::String::format("%s lowered 1 point!", kSkillArray[varAE]);
 
 			if (argA == 2) {
-				displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
 				_messageToBePrinted += buffer1;
 				retVal = true;
@@ -4651,7 +4643,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 	case 26: // "Black Sphere"
 		buffer1 = "The entire party collapses, dead!!!";
 		if (argA == 2) {
-			displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
+			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += buffer1;
 			retVal = true;
@@ -4673,7 +4665,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			_npcBuf[_teamCharId[teamCharId]]._hitPoints = 0;
 			buffer1 = Common::String::format("%s collapses, dead!!!", _npcBuf[_teamCharId[teamCharId]]._name);
 			if (argA == 2) {
-				displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 			} else {
 				_messageToBePrinted += buffer1;
 				retVal = true;
@@ -4724,7 +4716,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		}
 
 		if (argA == 2) {
-			displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
+			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += buffer1;
 			retVal = true;
@@ -4755,7 +4747,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		}
 
 		if (argA == 2) {
-			displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
+			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += buffer1;
 			retVal = true;
@@ -4786,8 +4778,8 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			if (varA1 <= 0) {
 				buffer1 = "  * The item breaks!";
 				if (argA == 2) {
-					Common::KeyCode varAE = getLastCharAfterAnimCount(_guessAnimationAmount);
-					displayString_3(buffer1.c_str(), false, charId, windowId, menuId, curMenuLine);
+					getLastCharAfterAnimCount(_guessAnimationAmount);
+					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
 				} else {
 					_messageToBePrinted += buffer1;
 				}
@@ -4799,7 +4791,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 		}
 
 		if (argA == 2) {
-			Common::KeyCode varAE = getLastCharAfterAnimCount(_guessAnimationAmount);
+			getLastCharAfterAnimCount(_guessAnimationAmount);
 			sub18E80(charId, windowId, menuId, curMenuLine);
 		}
 	}
@@ -5223,7 +5215,7 @@ bool EfhEngine::checkMonsterCollision() {
 				clearBottomTextZone(0);
 				_textColor = 0xE;
 				displayCenteredString("Interaction", 24, 296, 152);
-				displayCenteredString(buffer.c_str(), 24, 296, 161);
+				displayCenteredString(buffer, 24, 296, 161);
 				setTextPos(24, 169);
 				setTextColorWhite();
 				displayStringAtTextPos("T");

@@ -235,11 +235,11 @@ void EfhEngine::drawString(const char *str, int16 startX, int16 startY, uint16 t
 	}
 }
 
-void EfhEngine::displayCenteredString(const char *str, int16 minX, int16 maxX, int16 posY) {
-	debugC(1, kDebugGraphics, "displayCenteredString %s %d-%d %d", str, minX, maxX, posY);
-	uint16 length = getStringWidth(str);
+void EfhEngine::displayCenteredString(Common::String str, int16 minX, int16 maxX, int16 posY) {
+	debugC(1, kDebugGraphics, "displayCenteredString %s %d-%d %d", str.c_str(), minX, maxX, posY);
+	uint16 length = getStringWidth(str.c_str());
 	int16 startCenteredDisplayX = minX + (maxX - minX - length) / 2;
-	drawString(str, startCenteredDisplayX, posY, _textColor);
+	drawString(str.c_str(), startCenteredDisplayX, posY, _textColor);
 }
 
 void EfhEngine::displayMenuAnswerString(const char *str, int16 minX, int16 maxX, int16 posY) {
