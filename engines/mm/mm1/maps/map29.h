@@ -42,6 +42,9 @@ private:
 		&Map29::special02,
 		&Map29::special03
 	};
+
+	void begone();
+
 public:
 	Map29() : Map(29, "aread4", 0x801, 2) {}
 
@@ -50,7 +53,10 @@ public:
 	 */
 	void special() override;
 
-	void begone();
+	/**
+	 * Chess answer handler
+	 */
+	void chessAnswer(const Common::String &answer);
 };
 
 } // namespace Maps

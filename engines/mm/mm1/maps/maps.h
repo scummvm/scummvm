@@ -91,6 +91,11 @@ private:
 	 */
 	void town4setup();
 
+	/**
+	 * Updates masks/offsets based on _forwardMask
+	 */
+	void updateMasksOffsets();
+
 public:
 	Common::Array<Graphics::ManagedSurface> _tiles[3];
 	uint _mapId = (uint)-1;

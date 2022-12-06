@@ -215,16 +215,11 @@ void Maps::synchronizeCurrent(Common::Serializer &s) {
 	s.syncAsByte(_mapPos.x);
 	s.syncAsByte(_mapPos.y);
 	s.syncAsByte(_forwardMask);
-	s.syncAsByte(_backwardsMask);
-	s.syncAsByte(_leftMask);
-	s.syncAsByte(_rightMask);
-	s.syncAsSByte(_forwardOffset);
-	s.syncAsSByte(_backwardsOffset);
-	s.syncAsSByte(_leftOffset);
-	s.syncAsSByte(_rightOffset);
 
-	if (s.isLoading())
+	if (s.isLoading()) {
+		updateMasksOffsets();
 		changeMap(_id, _section);
+	}
 }
 
 void Maps::select(uint16 id, byte section) {
@@ -284,38 +279,17 @@ void Maps::loadTown(TownId townId) {
 
 void Maps::town15setup() {
 	_forwardMask = DIRMASK_N;
-	_leftMask = DIRMASK_W;
-	_rightMask = DIRMASK_E;
-	_backwardsMask = DIRMASK_S;
-
-	_forwardOffset = MAP_W;
-	_leftOffset = -1;
-	_rightOffset = 1;
-	_backwardsOffset = -MAP_W;
+	updateMasksOffsets();
 }
 
 void Maps::town23setup() {
 	_forwardMask = DIRMASK_W;
-	_leftMask = DIRMASK_S;
-	_rightMask = DIRMASK_N;
-	_backwardsMask = DIRMASK_E;
-
-	_forwardOffset = -1;
-	_leftOffset = -MAP_W;
-	_rightOffset = MAP_W;
-	_backwardsOffset = 1;
+	updateMasksOffsets();
 }
 
 void Maps::town4setup() {
 	_forwardMask = DIRMASK_E;
-	_leftMask = DIRMASK_N;
-	_rightMask = DIRMASK_S;
-	_backwardsMask = DIRMASK_W;
-
-	_forwardOffset = 1;
-	_leftOffset = MAP_W;
-	_rightOffset = -MAP_W;
-	_backwardsOffset = -1;
+	updateMasksOffsets();
 }
 
 uint Maps::getIndex(uint16 id, byte section) {
@@ -392,38 +366,18 @@ void Maps::loadTile() {
 }
 
 void Maps::turnLeft() {
-	DirMask tempMask = _rightMask;
-	_rightMask = _forwardMask;
 	_forwardMask = _leftMask;
-	_leftMask = _backwardsMask;
-	_backwardsMask = tempMask;
-
-	int8 tempOffset = _rightOffset;
-	_rightOffset = _forwardOffset;
-	_forwardOffset = _leftOffset;
-	_leftOffset = _backwardsOffset;
-	_backwardsOffset = tempOffset;
+	updateMasksOffsets();
 }
 
 void Maps::turnRight() {
-	DirMask tempMask = _leftMask;
-	_leftMask = _forwardMask;
 	_forwardMask = _rightMask;
-	_rightMask = _backwardsMask;
-	_backwardsMask = tempMask;
-
-	int8 tempOffset = _leftOffset;
-	_leftOffset = _forwardOffset;
-	_forwardOffset = _rightOffset;
-	_rightOffset = _backwardsOffset;
-	_backwardsOffset = tempOffset;
+	updateMasksOffsets();
 }
 
 void Maps::turnAround() {
-	SWAP(g_maps->_forwardMask, g_maps->_backwardsMask);
-	SWAP(g_maps->_leftMask, g_maps->_rightMask);
-	SWAP(g_maps->_forwardOffset, g_maps->_backwardsOffset);
-	SWAP(g_maps->_leftOffset, g_maps->_rightOffset);
+	_forwardMask = _backwardsMask;
+	updateMasksOffsets();
 }
 
 void Maps::step(const Common::Point &delta) {
@@ -480,6 +434,57 @@ Common::Point Maps::getMoveDelta(byte mask) {
 		return Common::Point(0, -1);
 	default:
 		return Common::Point(0, 1);
+	}
+}
+
+void Maps::updateMasksOffsets() {
+	switch (_forwardMask) {
+	case DIRMASK_N:
+		_leftMask = DIRMASK_W;
+		_rightMask = DIRMASK_E;
+		_backwardsMask = DIRMASK_S;
+
+		_forwardOffset = MAP_W;
+		_leftOffset = -1;
+		_rightOffset = 1;
+		_backwardsOffset = -MAP_W;
+		break;
+
+	case DIRMASK_E:
+		_leftMask = DIRMASK_N;
+		_rightMask = DIRMASK_S;
+		_backwardsMask = DIRMASK_W;
+
+		_forwardOffset = 1;
+		_leftOffset = MAP_W;
+		_rightOffset = -MAP_W;
+		_backwardsOffset = -1;
+		break;
+
+	case DIRMASK_S:
+		_leftMask = DIRMASK_E;
+		_rightMask = DIRMASK_W;
+		_backwardsMask = DIRMASK_N;
+
+		_forwardOffset = -MAP_W;
+		_leftOffset = 1;
+		_rightOffset = -1;
+		_backwardsOffset = MAP_W;
+		break;
+
+	case DIRMASK_W:
+		_leftMask = DIRMASK_S;
+		_rightMask = DIRMASK_N;
+		_backwardsMask = DIRMASK_E;
+
+		_forwardOffset = -1;
+		_leftOffset = -MAP_W;
+		_rightOffset = MAP_W;
+		_backwardsOffset = 1;
+		break;
+
+	default:
+		break;
 	}
 }
 

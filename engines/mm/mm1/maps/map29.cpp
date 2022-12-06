@@ -29,7 +29,8 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
-#define VAL1 110
+#define ANSWER_OFFSET 67
+#define BEAST_FLAG 110
 
 void Map29::special() {
 	Game::Encounter &enc = g_globals->_encounters;
@@ -95,7 +96,7 @@ void Map29::special00() {
 }
 
 void Map29::special01() {
-	if (_data[VAL1]) {
+	if (_data[BEAST_FLAG]) {
 		g_maps->clearSpecial();
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			Character &c = g_globals->_party[i];
@@ -119,7 +120,7 @@ void Map29::special01() {
 					Game::Encounter &enc = g_globals->_encounters;
 					Map29 &map = *static_cast<Map29 *>(g_maps->_currentMap);
 					g_events->close();
-					map[VAL1]++;
+					map[BEAST_FLAG]++;
 
 					enc.clearMonsters();
 					enc.addMonster(3, 12);
@@ -139,7 +140,7 @@ void Map29::special01() {
 void Map29::special02() {
 	if (!g_globals->_party.hasItem(B_QUEEN_IDOL_ID) ||
 			!g_globals->_party.hasItem(W_QUEEN_IDOL_ID)) {
-		send(SoundMessage(STRING["maps.map29.begone"]));
+		begone();
 	} else {
 		g_events->addView("Chess");
 	}
@@ -168,10 +169,50 @@ void Map29::special03() {
 	send(msg);
 }
 
+void Map29::chessAnswer(const Common::String &answer) {
+	Common::String properAnswer;
+
+	for (int i = 0; i < 22; ++i)
+		properAnswer += _data[ANSWER_OFFSET + i] - 48;
+
+	if (answer.equalsIgnoreCase(properAnswer)) {
+		redrawGame();
+
+		InfoMessage msg(
+			16, 2, STRING["maps.map19.correct"],
+			[]() {
+				MM1::Maps::Map29 &map29 = *static_cast<MM1::Maps::Map29 *>(g_maps->_currentMap);
+
+				for (uint i = 0; i < g_globals->_party.size(); ++i) {
+					Character &c = g_globals->_party[i];
+					c._exp += 25000;
+				}
+
+				g_maps->_mapPos.y = 7;
+				map29.updateGame();
+			}
+		);
+
+		msg._delaySeconds = 2;
+		send(msg);
+		Sound::sound(SOUND_3);
+		Sound::sound(SOUND_3);
+
+	} else {
+		begone();
+	}
+
+}
+
 void Map29::begone() {
-	send(SoundMessage(STRING["maps.map29.begone"]));
 	g_maps->_mapPos.y = 7;
-	updateGame();
+	SoundMessage msg(STRING["maps.map29.begone"],
+		[]() {
+			updateGame();
+		}
+	);
+	msg._delaySeconds = 2;
+	send(msg);
 }
 
 } // namespace Maps
