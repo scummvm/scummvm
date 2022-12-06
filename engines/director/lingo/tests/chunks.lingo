@@ -13,7 +13,7 @@ scummvmAssertEqual(char 2 of src, "b")
 scummvmAssertEqual(char 2 to 0 of src, "b")
 scummvmAssertEqual(char 2 to 4 of src, "bcd")
 scummvmAssertEqual(char 2 to 1000 of src, "bcdefghijklmnopqrstuvwxyz")
-scummvmAssertEqual(word 1000 of src, "")
+scummvmAssertEqual(char 1000 of src, "")
 
 set src = "    the quick brown fox    jumped over the lazy    dog"
 scummvmAssertEqual(word 2 of src, "quick")
@@ -38,7 +38,7 @@ scummvmAssertEqual(char 2 of field 1, "b")
 scummvmAssertEqual(char 2 to 0 of field 1, "b")
 scummvmAssertEqual(char 2 to 4 of field 1, "bcd")
 scummvmAssertEqual(char 2 to 1000 of field 1, "bcdefghijklmnopqrstuvwxyz")
-scummvmAssertEqual(word 1000 of field 1, "")
+scummvmAssertEqual(char 1000 of field 1, "")
 
 put "lorem ipsum dolor sit amet" into field 1
 set the foreColor of word 2 of field 1 to 10
