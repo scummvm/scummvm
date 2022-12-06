@@ -37,7 +37,7 @@ namespace Common {
 
 struct SIT14Data;
 
-class StuffItArchive : public Common::Archive {
+class StuffItArchive : public Common::MemcachingCaseInsensitiveArchive {
 public:
 	StuffItArchive();
 	~StuffItArchive() override;
@@ -51,7 +51,10 @@ public:
 	bool hasFile(const Common::Path &path) const override;
 	int listMembers(Common::ArchiveMemberList &list) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
+	Common::SharedArchiveContents readContentsForPath(const Common::String& name) const override;
+	Common::String translatePath(const Common::Path &path) const override {
+		return path.toString();
+	}
 
 private:
 	struct FileEntry {
@@ -70,14 +73,14 @@ private:
 	MetadataMap _metadataMap;
 
 	// Decompression Functions
-	Common::SeekableReadStream *decompress14(Common::SeekableReadStream *src, uint32 uncompressedSize) const;
+	void decompress14(Common::SeekableReadStream *src, byte *dst, uint32 uncompressedSize) const;
 
 	// Decompression Helpers
 	void update14(uint16 first, uint16 last, byte *code, uint16 *freq) const;
 	void readTree14(Common::BitStream8LSB *bits, SIT14Data *dat, uint16 codesize, uint16 *result) const;
 };
 
-StuffItArchive::StuffItArchive() : Common::Archive() {
+StuffItArchive::StuffItArchive() : Common::MemcachingCaseInsensitiveArchive() {
 	_stream = nullptr;
 }
 
@@ -230,15 +233,15 @@ const Common::ArchiveMemberPtr StuffItArchive::getMember(const Common::Path &pat
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *StuffItArchive::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-
+Common::SharedArchiveContents StuffItArchive::readContentsForPath(const Common::String& name) const {
 	if (!_stream || !_map.contains(name)) {
 		if (_metadataMap.contains(name)) {
 			const Common::MacFinderInfoData &metadata = _metadataMap[name];
-			return new Common::MemoryReadStream(reinterpret_cast<const byte *>(&metadata), sizeof(Common::MacFinderInfoData), DisposeAfterUse::NO);
+			byte *copy = new byte[sizeof(Common::MacFinderInfoData)];
+			memcpy(copy, reinterpret_cast<const byte *>(&metadata), sizeof(Common::MacFinderInfoData));
+			return Common::SharedArchiveContents(copy, sizeof(Common::MacFinderInfoData));
 		}
-		return nullptr;
+		return Common::SharedArchiveContents();
 	}
 
 	const FileEntry &entry = _map[name];
@@ -248,17 +251,22 @@ Common::SeekableReadStream *StuffItArchive::createReadStreamForMember(const Comm
 
 	Common::SeekableSubReadStream subStream(_stream, entry.offset, entry.offset + entry.compressedSize);
 
+	byte *uncompressedBlock = new byte[entry.uncompressedSize];
+
 	// We currently only support type 14 compression
 	switch (entry.compression) {
 	case 0: // Uncompressed
-		return subStream.readStream(subStream.size());
+		subStream.read(uncompressedBlock, entry.uncompressedSize);
+		break;
 	case 14: // Installer
-		return decompress14(&subStream, entry.uncompressedSize);
+		decompress14(&subStream, uncompressedBlock, entry.uncompressedSize);
+		break;
 	default:
 		error("Unhandled StuffIt compression %d", entry.compression);
+		return Common::SharedArchiveContents();
 	}
 
-	return nullptr;
+	return Common::SharedArchiveContents(uncompressedBlock, entry.uncompressedSize);
 }
 
 void StuffItArchive::update14(uint16 first, uint16 last, byte *code, uint16 *freq) const {
@@ -448,8 +456,7 @@ void StuffItArchive::readTree14(Common::BitStream8LSB *bits, SIT14Data *dat, uin
 	dat->window[j++] = x; \
 	j &= 0x3FFFF
 
-Common::SeekableReadStream *StuffItArchive::decompress14(Common::SeekableReadStream *src, uint32 uncompressedSize) const {
-	byte *dst = (byte *)malloc(uncompressedSize);
+void StuffItArchive::decompress14(Common::SeekableReadStream *src, byte *dst, uint32 uncompressedSize) const {
 	Common::MemoryWriteStream out(dst, uncompressedSize);
 
 	Common::BitStream8LSB *bits = new Common::BitStream8LSB(src);
@@ -539,8 +546,6 @@ Common::SeekableReadStream *StuffItArchive::decompress14(Common::SeekableReadStr
 
 	delete dat;
 	delete bits;
-
-	return new Common::MemoryReadStream(dst, uncompressedSize, DisposeAfterUse::YES);
 }
 
 #undef OUTPUT_VAL
