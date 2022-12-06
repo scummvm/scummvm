@@ -93,7 +93,7 @@ void Map35::special03() {
 
 void Map35::special04() {
 	if (!g_globals->_party.hasItem(MERCHANTS_PASS_ID)) {
-		send(SoundMessage(STRING["maps.map35.merchants"]));
+		send(SoundMessage(STRING["maps.map35.merchant_pass"]));
 		g_maps->_mapPos.y++;
 		updateGame();
 	}
