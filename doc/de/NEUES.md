@@ -11,12 +11,14 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Obsidian hinzugefügt.
    - Unterstützung für Added support for Pink Panther: Passport to Peril hinzugefügt.
    - Unterstützung für Pink Panther: Hokus Pokus Pink hinzugefügt.
+   - Unterstützung für Driller/Space Station Oblivion (DOS/EGA, Amiga und Atari ST-Versionen) hinzugefügt.
 
  Allgemein:
    - Anzahl an falsch-positiven Einträgen reduziert, wenn das Gerät nach Spielen durchsucht wird.
    - Code der Roland MT-32-Emulation auf Munt mt32emu 2.7.0 aktualisiert.
    - Unterstützung für shader-basierte Skalierungen hinzugefügt.
    - Unterstützung für Mono-Ausgabe hinzugefügt (über die Kommandozeilen-Option --output-channels=CHANNELS)
+   - Verbesserte Cursor-Skalierung im OpenGL-Modus.
 
  AGI:
    - Unterstützung der französischen Übersetzungen verbessert.
@@ -24,6 +26,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  AGOS:
    - Option hinzugefügt, mit der die Ausblende-Effekte bei einem Raum-Wechsel in Simon 1 und 2
      deaktiviert werden können.
+
+ AGS:
+   - Unterstützung für die originalen Installationsdateien von Maniac Mansion Deluxe und The New Adventures of Zak McKracken hinzugefügt..
 
  Kyra:
    - Unterstützung für die koreanische Version von Legend of Kyrandia 1 hinzugefügt.
@@ -61,7 +66,6 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      zurück zu Scabb Island bringt.
    - Einige Fehler in den Originalversionen der Spiele sowie Logik- und Continuity-Fehler
      korrigiert (nur, wenn die Option "Verwende spiel-spezifische Verbesserungen" aktiv ist).
-   - Unterstützung für die originale Benutzeroberfläche der LucasArts-Spiele in Version v4-v8 hinzugefügt.
    - Verbesserte Dekodierung einiger westeuropäischen Zeichenketten, wenn diese über
      die ScummVM-Oberfläche dargestellt werden - beispielsweise, wenn ein Spiel pausiert wird.
    - Der Kopf des Navigators zeigte in der ursprünglichen Version von Monkey Island 1 (ohne
@@ -79,6 +83,13 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      in den anderen Sprachen).
    - Verbesserte Unterstützung der hebräischen Versionen der Spiele von Humongous Entertainment.
    - Unterstützung für Roland MT-32 in Sam & Max korrigiert.
+   - Unterstützung für die originale Benutzeroberfläche und die Speicher-Menüs von LucasArts-Spielen hinzugefügt (DOS, Windows, Amiga, Macintosh, FM-Towns, Atari ST und Commodore 64-Versionen).
+
+ Sherlock:
+   - Unterstützung für die chinesische Version von Rose Tattoo hinzugefügt.
+
+ Sky:
+   - Unterstützung für die chinesische Version von Beneath a Steel Sky hinzugefügt.
 
  Toon:
    - Die Spiel-Menüs verhalten sich nun wie im Original.
