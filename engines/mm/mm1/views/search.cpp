@@ -321,7 +321,7 @@ void Search::getTreasure() {
 	int gfxNum = g_globals->_treasure._container < WOODEN_BOX ? 3 : 1;
 	send("View", DrawGraphicMessage(gfxNum + 65));
 
-	draw();
+	redraw();
 }
 
 void Search::drawTreasure() {
