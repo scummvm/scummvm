@@ -70,6 +70,28 @@ public:
 	 */
 	static bool inflateZlibHeaderless(Common::WriteStream *dst, Common::SeekableReadStream *src);
 
+	/**
+	 * Take an arbitrary SeekableReadStream and wrap it in a custom stream which
+	 * provides transparent on-the-fly decompression. Assumes the data it
+	 * retrieves from the wrapped stream to be either uncompressed or in gzip
+	 * format. In the former case, the original stream is returned unmodified
+	 * (and in particular, not wrapped). In the latter case the stream is
+	 * returned wrapped
+	 *
+	 * Certain GZip-formats don't supply an easily readable length, if you
+	 * still need the length carried along with the stream, and you know
+	 * the decompressed length at wrap-time, then it can be supplied as knownSize
+	 * here. knownSize will be ignored if the GZip-stream DOES include a length.
+	 * The created stream also becomes responsible for freeing the passed stream.
+	 *
+	 * It is safe to call this with a NULL parameter (in this case, NULL is
+	 * returned).
+	 *
+	 * @param toBeWrapped	the stream to be wrapped (if it is in gzip-format)
+	 * @param knownSize		a supplied length of the compressed data (if not available directly)
+	 */
+	static SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, uint64 knownSize = kUnknownSize);
+
 	int32 readAtOffset(int64 offset, byte *buf, uint32 len);
 	bool readWhole (Common::WriteStream *dst);
 

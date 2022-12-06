@@ -1423,4 +1423,28 @@ bool GzioReadStream::inflateZlibHeaderless(Common::WriteStream *dst, Common::See
 
   return gzio->readWhole(dst);
 }
+
+SeekableReadStream *GzioReadStream::wrapCompressedReadStream(SeekableReadStream *toBeWrapped, uint64 knownSize) {
+	if (toBeWrapped) {
+		if (toBeWrapped->eos() || toBeWrapped->err() || toBeWrapped->size() < 2) {
+			delete toBeWrapped;
+			return nullptr;
+		}
+		if (toBeWrapped->size() < 2) {
+			return toBeWrapped;
+		}
+
+		uint16 header = toBeWrapped->readUint16BE();
+		bool isCompressed = (header == GZIP_MAGIC ||
+				     ((header & 0x0F00) == (GRUB_GZ_DEFLATED << 8) &&
+				      mod_31(header) == 0));
+		toBeWrapped->seek(-2, SEEK_CUR);
+		if (isCompressed) {
+			SeekableReadStream *ret = openZlibOrGzip(toBeWrapped, knownSize, DisposeAfterUse::YES);
+			if (ret)
+				return ret;
+		}
+	}
+	return toBeWrapped;
+}
 }
