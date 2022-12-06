@@ -37,6 +37,7 @@
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/ptr.h"
+#include "common/debug.h"
 #include "common/memstream.h"
 #include "common/compression/gzio.h"
 
@@ -1133,14 +1134,28 @@ GzioReadStream::init_gzip ()
   }
 }
 
+#ifndef RELEASE_BUILD
+static bool _shownBackwardSeekingWarning = false;
+#endif
+
 int32
 GzioReadStream::readAtOffset (int64 offset, byte *buf, uint32 len)
 {
   int32 ret = 0;
 
   /* Do we reset decompression to the beginning of the file?  */
-  if (_savedOffset > offset + WSIZE)
+  if (_savedOffset > offset + WSIZE) {
+#ifndef RELEASE_BUILD
+    if (!_shownBackwardSeekingWarning) {
+      // We only throw this warning once per stream, to avoid
+      // getting the console swarmed with warnings when consecutive
+      // seeks are made.
+      debug(1, "Backward seeking in GZioReadStream detected");
+      _shownBackwardSeekingWarning = true;
+    }
+#endif
     initialize_tables ();
+  }
 
   /*
    *  This loop operates upon uncompressed data only.  The only
