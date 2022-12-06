@@ -116,11 +116,11 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	_gfx->_keyColor = 0;
 	_gfx->setColorRemaps(&_currentArea->_colorRemaps);
 
-	if (isAmiga() || isAtariST()) {
+	if (isAmiga() || isAtariST())
 		swapPalette(areaID);
-		_currentArea->_skyColor = 0;
-		_currentArea->_usualBackgroundColor = 0;
-	}
+
+	_currentArea->_skyColor = 0;
+	_currentArea->_usualBackgroundColor = 0;
 
 	if (areaID != _startArea || entranceID != _startEntrance) {
 		g_system->warpMouse(_crossairPosition.x, _crossairPosition.y);
