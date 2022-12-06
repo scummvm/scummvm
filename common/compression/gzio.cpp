@@ -1033,12 +1033,12 @@ mod_31 (uint16 v)
 }
 
 bool
-GzioReadStream::test_zlib_header ()
+GzioReadStream::test_zlib_header (Common::SeekableReadStream *stream)
 {
   uint8 cmf, flg;
 
-  cmf = parentGetByte ();
-  flg = parentGetByte ();
+  cmf = stream->readByte ();
+  flg = stream->readByte ();
 
   /* Check that compression method is DEFLATE.  */
   if ((cmf & 0xf) != GRUB_GZ_DEFLATED)
@@ -1060,9 +1060,11 @@ GzioReadStream::test_zlib_header ()
       return false;
     }
 
-  _dataOffset = 2;
-
   return true;
+}
+
+void GzioReadStream::init_zlib() {
+  _dataOffset = 2;
 }
 
 int32
@@ -1237,13 +1239,14 @@ GzioReadStream* GzioReadStream::openClickteam(Common::SeekableReadStream *parent
 
 GzioReadStream* GzioReadStream::openZlib(Common::SeekableReadStream *parent, uint64 uncompressed_size, DisposeAfterUse::Flag disposeParent)
 {
-  GzioReadStream* gzio = new GzioReadStream(parent, disposeParent, uncompressed_size, GzioReadStream::Mode::ZLIB);
-
-  if (!gzio->test_zlib_header())
+  if (!test_zlib_header(parent))
     {
-      delete gzio;
       return nullptr;
     }
+
+  GzioReadStream* gzio = new GzioReadStream(parent, disposeParent, uncompressed_size, GzioReadStream::Mode::ZLIB);
+
+  gzio->init_zlib();
 
   gzio->initialize_tables();
 
@@ -1253,7 +1256,8 @@ GzioReadStream* GzioReadStream::openZlib(Common::SeekableReadStream *parent, uin
 int32
 GzioReadStream::clickteamDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off)
 {
-  Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openClickteam(new Common::MemoryReadStream(inbuf, insize, DisposeAfterUse::NO), outsize + off, DisposeAfterUse::YES));
+  Common::ScopedPtr<Common::MemoryReadStream> memstream(new Common::MemoryReadStream(inbuf, insize));
+  Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openClickteam(memstream.get(), outsize + off));
   if (!gzio)
     return -1;
   return gzio->readAtOffset(off, outbuf, outsize);
@@ -1262,7 +1266,8 @@ GzioReadStream::clickteamDecompress (byte *outbuf, uint32 outsize, byte *inbuf, 
 int32
 GzioReadStream::deflateDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off)
 {
-  Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openDeflate(new Common::MemoryReadStream(inbuf, insize, DisposeAfterUse::NO), outsize + off, DisposeAfterUse::YES));
+  Common::ScopedPtr<Common::MemoryReadStream> memstream(new Common::MemoryReadStream(inbuf, insize));
+  Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openDeflate(memstream.get(), outsize + off));
   if (!gzio)
     return -1;
   return gzio->readAtOffset(off, outbuf, outsize);
@@ -1281,7 +1286,8 @@ GzioReadStream::deflateDecompressWithDict (byte *outbuf, uint32 outsize, const b
 int32
 GzioReadStream::viseDecompress (byte *outbuf, uint32 outsize, const byte *inbuf, uint32 insize, int64 off)
 {
-  Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openVise(new Common::MemoryReadStream(inbuf, insize, DisposeAfterUse::NO), outsize + off, DisposeAfterUse::YES));
+  Common::ScopedPtr<Common::MemoryReadStream> memstream(new Common::MemoryReadStream(inbuf, insize));
+  Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openVise(memstream.get(), outsize + off));
   if (!gzio)
     return -1;
   return gzio->readAtOffset(off, outbuf, outsize);
@@ -1290,7 +1296,8 @@ GzioReadStream::viseDecompress (byte *outbuf, uint32 outsize, const byte *inbuf,
 int32
 GzioReadStream::zlibDecompress (byte *outbuf, uint32 outsize, byte *inbuf, uint32 insize, int64 off)
 {
-  Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openZlib(new Common::MemoryReadStream(inbuf, insize, DisposeAfterUse::NO), outsize + off, DisposeAfterUse::YES));
+  Common::ScopedPtr<Common::MemoryReadStream> memstream(new Common::MemoryReadStream(inbuf, insize));
+  Common::ScopedPtr<GzioReadStream> gzio(GzioReadStream::openZlib(memstream.get(), outsize + off));
   if (!gzio)
     return -1;
   return gzio->readAtOffset(off, outbuf, outsize);

@@ -154,7 +154,8 @@ private:
 
 	void inflate_window();
 	void initialize_tables();
-	bool test_zlib_header();
+	static bool test_zlib_header(Common::SeekableReadStream *stream);
+	void init_zlib();
 	void get_new_block();
 	byte parentGetByte();
 	void parentSeek(int64 off);
