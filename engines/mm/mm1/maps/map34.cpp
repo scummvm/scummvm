@@ -33,7 +33,7 @@ namespace Maps {
 
 void Map34::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 23; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
@@ -80,8 +80,8 @@ void Map34::special02() {
 	Sound::sound2(SOUND_2);
 
 	InfoMessage msg(
-		0, 0, STRING["alamar1"],
-		0, 7, STRING["alamar2"]
+		0, 0, STRING["maps.map34.alamar1"],
+		0, 7, STRING["maps.map34.alamar2"]
 	);
 	msg._largeMessage = true;
 	send(msg);

@@ -36,7 +36,6 @@ void Map04::special() {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
 			if (g_maps->_forwardMask & _data[73 + i]) {
-				
 				(this->*SPECIAL_FN[i])();
 			} else {
 				checkPartyDead();

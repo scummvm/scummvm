@@ -39,7 +39,7 @@ static const byte OFFSETS2[8] = { 130, 82, 134, 86, 137, 89, 141, 93 };
 
 void Map08::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 24; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
