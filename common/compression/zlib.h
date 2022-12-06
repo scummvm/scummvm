@@ -41,27 +41,6 @@ class WriteStream;
 #if defined(USE_ZLIB)
 
 /**
- * Thin wrapper around zlib's uncompress() function. This wrapper makes
- * it possible to uncompress data in engines without being forced to link
- * them against zlib, thus simplifying the build system.
- *
- * Taken from the zlib manual:
- * Decompresses the src buffer into the dst buffer.
- * srcLen is the byte length of the source buffer. Upon entry, dstLen is the
- * total size of the destination buffer, which must be large enough to hold
- * the entire uncompressed data. Upon exit, dstLen is the actual size of the
- * compressed buffer.
- *
- * @param dst       the buffer to store into.
- * @param dstLen    a pointer to the size of the destination buffer.
- * @param src       the data to be decompressed.
- * @param srcLen    the size of the compressed data.
- *
- * @return true on success (i.e. Z_OK), false otherwise.
- */
-bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long srcLen);
-
-/**
  * Wrapper around zlib's inflate functions. This function will call the
  * necessary inflate functions to uncompress data compressed with deflate
  * but *not* with the standard zlib header.

@@ -48,10 +48,6 @@ namespace Common {
 
 #if defined(USE_ZLIB)
 
-bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long srcLen) {
-	return Z_OK == ::uncompress(dst, dstLen, src, srcLen);
-}
-
 bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen, const byte *dict, uint dictLen) {
 	if (!dst || !dstLen || !src || !srcLen)
 		return false;
