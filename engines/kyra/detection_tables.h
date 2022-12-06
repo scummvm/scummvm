@@ -315,6 +315,19 @@ const KYRAGameDescription adGameDescs[] = {
 	{
 		{
 			"kyra1",
+			"StuffIt multi-floppy",
+			AD_ENTRY1s("xn--Legend of Kyrandia Installer-o11r", "83d0f8e8c44a0aaa92b06081c40cd3c2", 69726),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO3(GUIO_NOSPEECH, GUIO_MIDIGM, GUIO_RENDERVGA)
+		},
+				KYRA1_FLOPPY_CMP_FLAGS
+	},
+
+	{
+		{
+			"kyra1",
 			"StuffIt",
 			AD_ENTRY1s("xn--Install Legend of Kyrandia-jf8p", "1d763e991c787431cac3786afbbdae72", 53899),
 			Common::EN_ANY,
