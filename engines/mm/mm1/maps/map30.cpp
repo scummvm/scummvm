@@ -115,6 +115,42 @@ void Map30::special03() {
 	));
 }
 
+Common::String Map30::worthiness() {
+	Character &c = *g_globals->_currCharacter;
+	if ((c._flags[1] & ~CHARFLAG1_WORTHY) == ~CHARFLAG1_WORTHY)
+		return worthy();
+	else
+		return unworthy();
+}
+
+Common::String Map30::worthy() {
+	Character &c = *g_globals->_currCharacter;
+	int val = ((c._worthiness + 1) / 2) * 256;
+	c._exp += val;
+
+	Common::String line = Common::String::format(
+		STRING["maps.map30.worthy"].c_str(), '0' + (c._worthiness / 5));
+	line = Common::String::format("%s%d %s",
+		line.c_str(), val, STRING["maps.map30.experience"].c_str());
+
+	if (c._worthiness & 0x80) {
+		int attrNum = getRandomNumber(7) - 1;
+		line += Common::String::format(", +3 %s",
+			STRING[Common::String::format("maps.map30.attributes.%d", attrNum)].c_str());
+
+		AttributePair &attrib = c.getAttribute(attrNum);
+		if (attrib._base < 43)
+			attrib._current = attrib._base = attrib._base + 3;
+	}
+
+	c._worthiness = 0;
+	return line;
+}
+
+Common::String Map30::unworthy() {
+	return STRING["maps.map30.unworthy"];
+}
+
 } // namespace Maps
 } // namespace MM1
 } // namespace MM

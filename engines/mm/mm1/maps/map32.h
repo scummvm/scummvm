@@ -46,7 +46,7 @@ private:
 		&Map32::special05
 	};
 public:
-	Map32() : Map(32, "areae3", 0xb1a, 3) {}
+	Map32() : Map(32, "areae3", 0xb1a, 2) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

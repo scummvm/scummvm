@@ -42,6 +42,9 @@ private:
 		&Map30::special02,
 		&Map30::special03
 	};
+
+	Common::String worthy();
+	Common::String unworthy();
 public:
 	Map30() : MapDesert(30, "areae1", 0x112, 2, 137, MapDesert::RND_FULL) {}
 
@@ -49,6 +52,11 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
+
+	/**
+	 * Handles worthiness, returning resulting message
+	 */
+	Common::String worthiness();
 };
 
 } // namespace Maps

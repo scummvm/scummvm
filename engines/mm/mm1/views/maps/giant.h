@@ -32,8 +32,7 @@ namespace Maps {
 class Giant : public TextView {
 private:
 	void charSelected(uint charIndex);
-	void worthy();
-	void unworthy();
+
 public:
 	Giant();
 	virtual ~Giant() {}
