@@ -23,7 +23,7 @@
 #include "glk/adrift/scprotos.h"
 #include "glk/adrift/detection.h"
 #include "common/algorithm.h"
-#include "common/compression/zlib.h"
+#include "common/compression/gzio.h"
 #include "common/memstream.h"
 
 namespace Glk {
@@ -390,13 +390,12 @@ static sc_bool taf_unobfuscate(sc_tafref_t taf, sc_read_callbackref_t callback,
  */
 static sc_bool taf_decompress(sc_tafref_t taf, sc_read_callbackref_t callback,
 		void *opaque, sc_bool is_gamefile) {
-#if defined(USE_ZLIB)
 	Common::SeekableReadStream *src = (Common::SeekableReadStream *)opaque;
 	assert(src);
 	Common::MemoryWriteStreamDynamic dest(DisposeAfterUse::YES);
 	size_t startingPos = src->pos();
 
-	if (!Common::inflateZlibHeaderless(&dest, src))
+	if (!Common::GzioReadStream::inflateZlibHeaderless(&dest, src))
 		return false;
 
 	// Iterate through pushing data out to the taf file
@@ -411,9 +410,6 @@ static sc_bool taf_decompress(sc_tafref_t taf, sc_read_callbackref_t callback,
 	taf->total_in_bytes = src->pos() - startingPos;
 
 	return true;
-#else
-	return false;
-#endif
 }
 
 /*
