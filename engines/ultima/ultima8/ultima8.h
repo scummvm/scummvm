@@ -83,8 +83,7 @@ private:
 
 	// full system
 	Game *_game;
-	Std::string _errorMessage;
-	Std::string _errorTitle;
+	Common::Error _lastError;
 
 	Kernel *_kernel;
 	ObjectManager *_objectManager;
@@ -189,11 +188,11 @@ public:
 
 	bool hasFeature(EngineFeature f) const override;
 
-	bool startup();
+	Common::Error startup();
 	void shutdown();
 
 	bool setupGame();
-	bool startupGame();
+	Common::Error startupGame();
 	void shutdownGame(bool reloading = true);
 
 	void changeVideoMode(int width, int height);
@@ -209,7 +208,7 @@ public:
 
 	Graphics::Screen *getScreen() const override;
 
-	bool runGame();
+	Common::Error runGame();
 	virtual void handleEvent(const Common::Event &event);
 
 	void paint();
@@ -351,9 +350,9 @@ public:
 	//! \return true if successful.
 	bool newGame(int saveSlot = -1);
 
-	//! Display an error message box
-	//! \param message The message to display on the box
-	void Error(Std::string message, Std::string title = Std::string());
+	//! Sets an error to end the engine run loop
+	//! \param error The error to return from the engine
+	void setError(Common::Error &error);
 public:
 	unsigned int getInversion() const {
 		return _inversion;

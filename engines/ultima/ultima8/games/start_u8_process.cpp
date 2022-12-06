@@ -56,7 +56,13 @@ void StartU8Process::run() {
 	}
 
 	// Try to load the save game, if succeeded this pointer will no longer be valid
-	if (_saveSlot >= 0 &&Ultima8Engine::get_instance()->loadGameState(_saveSlot).getCode() == Common::kNoError) {
+	if (_saveSlot >= 0) {
+		Common::Error loadError = Ultima8Engine::get_instance()->loadGameState(_saveSlot);
+		if (loadError.getCode() != Common::kNoError) {
+			Ultima8Engine::get_instance()->setError(loadError);
+			return;
+		}
+
 		PaletteFaderProcess::I_fadeFromBlack(0, 0);
 		return;
 	}

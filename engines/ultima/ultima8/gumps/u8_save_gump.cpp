@@ -34,6 +34,7 @@
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/translation.h"
+#include "gui/message.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -258,11 +259,16 @@ bool U8SaveGump::OnKeyDown(int key, int mod) {
 
 bool U8SaveGump::loadgame(int saveIndex) {
 	if (saveIndex == 1) {
-		Ultima8Engine::get_instance()->newGame();
-		return true;
-	} else {
-		return Ultima8Engine::get_instance()->loadGameState(saveIndex).getCode() == Common::kNoError;
+		return Ultima8Engine::get_instance()->newGame();
 	}
+
+	Common::Error loadError = Ultima8Engine::get_instance()->loadGameState(saveIndex);
+	if (loadError.getCode() != Common::kNoError) {
+		GUI::MessageDialog errorDialog(loadError.getDesc());
+		errorDialog.runModal();
+		return false;
+	}
+	return true;
 }
 
 bool U8SaveGump::savegame(int saveIndex, const Std::string &name) {
