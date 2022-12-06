@@ -23,10 +23,43 @@
 #include "kyra/resource/resource.h"
 #include "kyra/resource/resource_intern.h"
 
+#include "common/macresman.h"
+#include "common/compression/stuffit.h"
+#include "common/concatstream.h"
 #include "common/config-manager.h"
 #include "common/fs.h"
+#include "common/substream.h"
 
 namespace Kyra {
+
+Common::Archive *Resource::loadKyra1MacInstaller() {
+	Common::String kyraInstaller = Util::findMacResourceFile("Install Legend of Kyrandia");
+
+	if (!kyraInstaller.empty()) {
+		Common::Archive *archive = loadStuffItArchive(kyraInstaller, "Install Legend of Kyrandia");
+		if (!archive)
+			error("Failed to load Legend of Kyrandia installer file");
+		return archive;
+	}
+
+	kyraInstaller = Util::findMacResourceFile("Legend of Kyrandia", " Installer");
+
+	if (!kyraInstaller.empty()) {
+		Common::Array<Common::SharedPtr<Common::SeekableReadStream>> parts;
+		for (int i = 1; i <= 5; i++) {
+			Common::String partName = i == 1 ? kyraInstaller : Common::String::format("%s.%d", kyraInstaller.c_str(), i);
+			Common::SeekableReadStream *stream = Common::MacResManager::openFileOrDataFork(partName);
+			if (!stream)
+				error("Failed to load Legend of Kyrandia installer file part %s", partName.c_str());
+			if (stream->size() <= 100)
+				error("Legend of Kyrandia installer file part %s is too short", partName.c_str());
+			parts.push_back(Common::SharedPtr<Common::SeekableReadStream>(new Common::SeekableSubReadStream(stream, 100, stream->size(), DisposeAfterUse::YES)));
+		}
+		return loadStuffItArchive(new Common::ConcatReadStream(parts), "Install Legend of Kyrandia", "Legend of Kyrandia(TM) Installer.*");
+	}
+
+	return nullptr;
+}
 
 Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles(), _protectedFiles(), _loaders(), _vm(vm), _bigEndianPlatForm(vm->gameFlags().platform == Common::kPlatformAmiga || vm->gameFlags().platform == Common::kPlatformSegaCD) {
 	initializeLoaders();
@@ -63,15 +96,9 @@ bool Resource::reset() {
 		error("invalid game path '%s'", dir.getPath().c_str());
 
 	if (_vm->game() == GI_KYRA1 && _vm->gameFlags().platform == Common::kPlatformMacintosh && _vm->gameFlags().useInstallerPackage) {
-		Common::String kyraInstaller = Util::findMacResourceFile("Install Legend of Kyrandia");
-
-		if (kyraInstaller.empty()) {
-			error("Could not find Legend of Kyrandia installer file");
-		}
-
-		Common::Archive *archive = loadStuffItArchive(kyraInstaller, "Install Legend of Kyrandia");
+		Common::Archive *archive = loadKyra1MacInstaller();
 		if (!archive)
-			error("Failed to load Legend of Kyrandia installer file");
+			error("Could not find Legend of Kyrandia installer file");
 
 		_files.add("installer", archive, 0, false);
 

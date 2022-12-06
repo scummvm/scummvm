@@ -99,6 +99,7 @@ protected:
 	Common::Archive *loadInstallerArchive(const Common::String &file, const Common::String &ext, const uint8 offset);
 	Common::Archive *loadStuffItArchive(const Common::String &file, const Common::String& canonicalName);
 	Common::Archive *loadStuffItArchive(Common::SeekableReadStream *stream, const Common::String& canonicalName, const Common::String& debugName);
+	Common::Archive *loadKyra1MacInstaller();
 
 	bool loadProtectedFiles(const char *const * list);
 
