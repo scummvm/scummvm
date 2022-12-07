@@ -410,6 +410,21 @@ Common::Archive *Resource::loadStuffItArchive(const Common::String &file, const 
 	return archive;
 }
 
+Common::Archive *Resource::loadStuffItArchive(Common::SeekableReadStream *stream, const Common::String& canonicalName, const Common::String& debugName) {
+	ArchiveMap::iterator cachedArchive = _archiveCache.find(canonicalName);
+	if (cachedArchive != _archiveCache.end()) {
+		delete stream;
+		return cachedArchive->_value;
+	}
+
+	Common::Archive *archive = StuffItLoader::load(this, stream, debugName);
+	if (!archive)
+		return nullptr;
+
+	_archiveCache[canonicalName] = archive;
+	return archive;
+}
+
 #pragma mark -
 
 void Resource::initializeLoaders() {

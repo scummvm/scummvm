@@ -145,6 +145,7 @@ public:
 class StuffItLoader {
 public:
 	static Common::Archive *load(Resource *owner, const Common::String &filename);
+	static Common::Archive *load(Resource *owner, Common::SeekableReadStream *stream, const Common::String &debugName);
 };
 
 } // End of namespace Kyra

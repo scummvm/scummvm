@@ -1218,13 +1218,16 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 }
 
 Common::Archive *StuffItLoader::load(Resource *owner, const Common::String &filename) {
-	Common::SeekableReadStream *stream = Common::MacResManager::openFileOrDataFork(filename);
+	return load(owner, Common::MacResManager::openFileOrDataFork(filename), filename);
+}
+
+Common::Archive *StuffItLoader::load(Resource *owner, Common::SeekableReadStream *stream, const Common::String& debugName) {
 	if (stream) {
 		Common::Archive *archive = Common::createStuffItArchive(stream);
 		return archive;
 	}
 
-	error("StuffItLoader::load: Could not load %s", filename.c_str());
+	error("StuffItLoader::load: Could not load %s", debugName.c_str());
 }
 
 CmpVocDecoder::CmpVocDecoder() {
