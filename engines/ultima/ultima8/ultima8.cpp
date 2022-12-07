@@ -944,11 +944,10 @@ bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 		return false;
 	}
 
-
-	if (dynamic_cast<StartU8Process *>(_kernel->getRunningProcess())
-		|| dynamic_cast<StartCrusaderProcess *>(_kernel->getRunningProcess()))
-		// Don't save while starting up.
+	// Check for processes that prevent saving
+	if (!_kernel->canSave()) {
 		return false;
+	}
 
 	// Don't allow saving when avatar is dead.
 	MainActor *av = getMainActor();

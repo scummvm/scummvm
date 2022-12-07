@@ -41,6 +41,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(StartU8Process)
 
 StartU8Process::StartU8Process(int saveSlot) : Process(),
 		_init(false), _saveSlot(saveSlot), _skipStart(saveSlot >= 0) {
+	_flags |= PROC_PREVENT_SAVE;
 }
 
 

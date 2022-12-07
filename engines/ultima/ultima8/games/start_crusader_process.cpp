@@ -40,6 +40,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(StartCrusaderProcess)
 
 StartCrusaderProcess::StartCrusaderProcess(int saveSlot) : Process(),
 _initStage(PlayFirstMovie), _saveSlot(saveSlot) {
+	_flags |= PROC_PREVENT_SAVE;
 }
 
 

@@ -101,6 +101,7 @@ public:
 	void kernelStats();
 	void processTypes();
 
+	bool canSave();
 	void save(Common::WriteStream *ws);
 	bool load(Common::ReadStream *rs, uint32 version);
 

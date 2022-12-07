@@ -370,6 +370,17 @@ void Kernel::killAllProcessesNotOfTypeExcludeCurrent(uint16 processtype, bool fa
 	}
 }
 
+bool Kernel::canSave() {
+	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
+		Process *p = *it;
+
+		if (!p->is_terminated() && p->_flags & Process::PROC_PREVENT_SAVE) {
+			return false;
+		}
+	}
+
+	return true;
+}
 
 void Kernel::save(Common::WriteStream *ws) {
 	ws->writeUint32LE(_tickNum);
