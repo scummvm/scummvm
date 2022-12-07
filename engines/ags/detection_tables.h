@@ -4234,7 +4234,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 595787927),
 	DEMO_ENTRY_EN("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 59578792),
 	DEMO_ENTRY_EN("thatday", "ThatDay.exe", "b142b43c146c25443a1d155d441a6a81", 9534366),
-	DEMO_ENTRY_EN("theadventuresoffatman", "fatman.exe", "853cef07077feadd0f2ccd55c5bd747b", 56375090),
 	DEMO_ENTRY_EN("theartifact", "artifact-demo.exe", "465f972675db2da6040518221af5b0ba", 161590301),
 	DEMO_ENTRY_EN("thecatlady", "Cat Lady.exe", "92320e20e3d4c70a94d89e2f797e65c1", 752683721),  // v1.1 Screen7
 	DEMO_ENTRY("thedarktrial", "dark trial demo.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 36442694),  // Eng-Hun
@@ -6971,6 +6970,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("theadventureofthehero", "The Adventure of the Hero.exe", "5d20aab40290fc72ec84393464913df2", 4408710),
 	GAME_ENTRY_EN("theadventureofthehero", "The Adventure of the Hero.ags", "812ae2d9541db4c31fcd1b26b5ba0e32", 2133548),  // v1.1 Linux
 	GAME_ENTRY_EN("theadventureofthehero", "The Adventure of the Hero.exe", "246ca45f385aeb54ebaa1fa2790fc3c1", 4689468),
+	GAME_ENTRY_EN("theadventuresoffatman", "fatman.exe", "853cef07077feadd0f2ccd55c5bd747b", 56375090),  // 2003 release
 	GAME_ENTRY_EN("theadventuresofturquoise", "The Adventures Of Turquoise Mcdonald.exe", "06a03fe35791b0578068ab1873455463", 2883450),
 	GAME_ENTRY("theaspiroxcase", "L'Affaire Aspirox.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 139865345),  //En-Fr
 	GAME_ENTRY_EN("theassassin", "the-assassin.exe", "e3962995a70923a8d5a8f1cf8f932eee", 29043438),
