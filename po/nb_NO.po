@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-12-06 07:46+0000\n"
-"PO-Revision-Date: 2022-11-28 15:16+0000\n"
+"PO-Revision-Date: 2022-12-07 21:59+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -4998,14 +4998,12 @@ msgid "Never activate demo mode"
 msgstr "Aldri aktiver demomodus"
 
 #: engines/freescape/metaengine.cpp:79
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable sensors"
-msgstr "Skru av lagringsmeny"
+msgstr "Skru av sensorer"
 
 #: engines/freescape/metaengine.cpp:80
 msgid "Sensors will not shoot the player"
-msgstr ""
+msgstr "Sensorer skyter ikke spilleren"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
