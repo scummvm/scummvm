@@ -69,7 +69,7 @@ bool Resource::reset() {
 			error("Could not find Legend of Kyrandia installer file");
 		}
 
-		Common::Archive *archive = loadStuffItArchive(kyraInstaller);
+		Common::Archive *archive = loadStuffItArchive(kyraInstaller, "Install Legend of Kyrandia");
 		if (!archive)
 			error("Failed to load Legend of Kyrandia installer file");
 
@@ -397,8 +397,8 @@ Common::Archive *Resource::loadInstallerArchive(const Common::String &file, cons
 	return archive;
 }
 
-Common::Archive *Resource::loadStuffItArchive(const Common::String &file) {
-	ArchiveMap::iterator cachedArchive = _archiveCache.find(file);
+Common::Archive *Resource::loadStuffItArchive(const Common::String &file, const Common::String& canonicalName) {
+	ArchiveMap::iterator cachedArchive = _archiveCache.find(canonicalName);
 	if (cachedArchive != _archiveCache.end())
 		return cachedArchive->_value;
 
@@ -406,7 +406,7 @@ Common::Archive *Resource::loadStuffItArchive(const Common::String &file) {
 	if (!archive)
 		return nullptr;
 
-	_archiveCache[file] = archive;
+	_archiveCache[canonicalName] = archive;
 	return archive;
 }
 

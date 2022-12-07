@@ -97,7 +97,7 @@ protected:
 
 	Common::Archive *loadArchive(const Common::String &name, Common::ArchiveMemberPtr member);
 	Common::Archive *loadInstallerArchive(const Common::String &file, const Common::String &ext, const uint8 offset);
-	Common::Archive *loadStuffItArchive(const Common::String &file);
+	Common::Archive *loadStuffItArchive(const Common::String &file, const Common::String& canonicalName);
 
 	bool loadProtectedFiles(const char *const * list);
 
