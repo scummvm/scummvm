@@ -106,6 +106,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		} else
 			error("Invalid movement across areas");
 		assert(newPos != -1);
+		_sensors = _currentArea->getSensors();
 	}
 	_lastPosition = _position;
 
