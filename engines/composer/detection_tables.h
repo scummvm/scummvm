@@ -352,7 +352,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"magictales",
-			"Magic Tales Demo: Baby Yaga, Samurai, Imo",
+			"Magic Tales Demo: Baba Yaga, Samurai, Imo",
 			{
 				{"book.ini", GAME_CONFIGFILE, "dbc98c566f4ac61b544443524585dccb", -1},
 				AD_LISTEND
@@ -369,7 +369,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"magictales",
-			"Magic Tales Demo: Baby Yaga, Samurai, Imo",
+			"Magic Tales Demo: Baba Yaga, Samurai, Imo",
 			{
 				{"demo.ini", GAME_CONFIGFILE, "ea784af960375834d655eb7281cd4500", -1},
 				AD_LISTEND
@@ -386,7 +386,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"magictales",
-			"Magic Tales Demo: Baby Yaga, Samurai, Imo",
+			"Magic Tales Demo: Baba Yaga, Samurai, Imo",
 			{
 				{"demo.mac", GAME_CONFIGFILE, "240fc2fbbc2a1a915e0adabde98b4a12", 404},
 				AD_LISTEND
