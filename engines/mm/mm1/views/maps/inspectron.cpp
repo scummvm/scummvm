@@ -22,6 +22,7 @@
 #include "mm/mm1/views/maps/inspectron.h"
 #include "mm/mm1/maps/map35.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
@@ -35,26 +36,26 @@ Inspectron::Inspectron() : TextView("Inspectron") {
 	_bounds = getLineBounds(20, 24);
 }
 
-bool Inspectron::msgFocus(const FocusMessage &msg) {
+bool Inspectron::msgGame(const GameMessage &msg) {
+	if (msg._name != "DISPLAY")
+		return false;
+
 	g_globals->_currCharacter = &g_globals->_party[0];
 	_canAccept = !g_globals->_currCharacter->_quest;
-	return TextView::msgFocus(msg);
-}
-
-void Inspectron::draw() {
-	MM1::Maps::Map35 &map = *static_cast<MM1::Maps::Map35 *>(g_maps->_currentMap);
-	clearSurface();
 
 	if (_canAccept) {
-		send(SoundMessage(
-			0, 1, STRING["maps.map35.inspectron1"],
-			0, 2, STRING["maps.map35.inspectron2"]
-		));
+		// Open the view for display
+		Sound::sound(SOUND_2);
+		addView();
+
 	} else {
+		// There's an active quest, so any result will simply be
+		// displayed as a game message
+		MM1::Maps::Map35 &map = *static_cast<MM1::Maps::Map35 *>(g_maps->_currentMap);
 		int questNum = g_globals->_party[0]._quest;
 		Common::String line;
 
-		if (questNum >= 8 || questNum <= 14)
+		if (questNum >= 8 && questNum <= 14)
 			line = map.checkQuestComplete();
 		else
 			line = STRING["maps.map35.inspectron4"];
@@ -62,33 +63,39 @@ void Inspectron::draw() {
 		g_maps->_mapPos.y++;
 		map.redrawGame();
 
-		clearSurface();
 		send(SoundMessage(
 			0, 1, STRING["maps.map35.inspectron1"],
 			0, 2, line
 		));
-		close();
 	}
+
+	return true;
+}
+
+void Inspectron::draw() {
+	clearSurface();
+	writeString(0, 1, STRING["maps.map35.inspectron1"]);
+	writeString(0, 2, STRING["maps.map35.inspectron2"]);
 }
 
 bool Inspectron::msgKeypress(const KeypressMessage &msg) {
 	MM1::Maps::Map35 &map = *static_cast<MM1::Maps::Map35 *>(g_maps->_currentMap);
 
-	if (_canAccept) {
-		if (msg.keycode == Common::KEYCODE_y) {
-			map.acceptQuest();
+	if (msg.keycode == Common::KEYCODE_y) {
+		map.acceptQuest();
+		close();
 
-			clearSurface();
-			writeString(0, 1, STRING["maps.map35.inspectron1"]);
-			writeString(0, 2, STRING[Common::String::format(
+		send(InfoMessage(
+			0, 1, STRING["maps.map35.inspectron1"],
+			0, 2, STRING[Common::String::format(
 				"maps.map35.quests.%d",
-				g_globals->_party[0]._quest)]);
-			close();
+				g_globals->_party[0]._quest - 8
+			)]
+		));
 
-		} else if (msg.keycode == Common::KEYCODE_n) {
-			close();
-			map.redrawGame();
-		}
+	} else if (msg.keycode == Common::KEYCODE_n) {
+		close();
+		map.redrawGame();
 	}
 
 	return true;

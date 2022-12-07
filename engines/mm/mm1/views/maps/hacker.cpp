@@ -22,6 +22,7 @@
 #include "mm/mm1/views/maps/hacker.h"
 #include "mm/mm1/maps/map36.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
@@ -32,26 +33,24 @@ Hacker::Hacker() : TextView("Hacker") {
 	_bounds = getLineBounds(20, 24);
 }
 
-bool Hacker::msgFocus(const FocusMessage &msg) {
+bool Hacker::msgGame(const GameMessage &msg) {
+	if (msg._name != "DISPLAY")
+		return false;
+
 	g_globals->_currCharacter = &g_globals->_party[0];
 	_canAccept = !g_globals->_currCharacter->_quest;
-	return TextView::msgFocus(msg);
-}
-
-void Hacker::draw() {
-	MM1::Maps::Map36 &map = *static_cast<MM1::Maps::Map36 *>(g_maps->_currentMap);
-	clearSurface();
 
 	if (_canAccept) {
-		send(SoundMessage(
-			0, 1, STRING["maps.map36.hacker1"],
-			0, 2, STRING["maps.map36.hacker2"]
-		));
+		// Show the view
+		Sound::sound(SOUND_2);
+		addView();
+
 	} else {
+		MM1::Maps::Map36 &map = *static_cast<MM1::Maps::Map36 *>(g_maps->_currentMap);
 		int questNum = g_globals->_party[0]._quest;
 		Common::String line;
 
-		if (questNum >= 15 || questNum <= 21)
+		if (questNum >= 15 && questNum <= 21)
 			line = map.checkQuestComplete();
 		else
 			line = STRING["maps.map36.hacker4"];
@@ -59,33 +58,41 @@ void Hacker::draw() {
 		g_maps->_mapPos.x--;
 		map.redrawGame();
 
-		clearSurface();
 		send(SoundMessage(
 			0, 1, STRING["maps.map36.hacker1"],
 			0, 2, line
 		));
-		close();
 	}
+
+	return true;
+}
+
+void Hacker::draw() {
+	clearSurface();
+	writeString(0, 1, STRING["maps.map36.hacker1"]);
+	writeString(0, 2, STRING["maps.map36.hacker2"]);
 }
 
 bool Hacker::msgKeypress(const KeypressMessage &msg) {
 	MM1::Maps::Map36 &map = *static_cast<MM1::Maps::Map36 *>(g_maps->_currentMap);
 
-	if (_canAccept) {
-		if (msg.keycode == Common::KEYCODE_y) {
-			map.acceptQuest();
+	if (msg.keycode == Common::KEYCODE_y) {
+		close();
+		map.acceptQuest();
 
-			clearSurface();
-			writeString(0, 1, STRING["maps.map36.hacker1"]);
-			writeString(0, 2, STRING[Common::String::format(
-				"maps.map36.ingredients.%d",
-				g_globals->_party[0]._quest)]);
-			close();
-
-		} else if (msg.keycode == Common::KEYCODE_n) {
-			close();
-			map.redrawGame();
+		Character &c = g_globals->_party[0];
+		if (c._quest) {
+			send(InfoMessage(
+				0, 1, STRING["maps.map36.hacker1"],
+				0, 2, STRING[Common::String::format(
+					"maps.map36.ingredients.%d",
+					g_globals->_party[0]._quest - 15)]
+			));
 		}
+
+	} else if (msg.keycode == Common::KEYCODE_n) {
+		close();
+		map.redrawGame();
 	}
 
 	return true;

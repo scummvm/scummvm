@@ -102,7 +102,7 @@ void Map35::special04() {
 void Map35::special05() {
 	updateFlags();
 	send("View", DrawGraphicMessage(7 + 65));
-	g_events->addView("Inspectron");
+	send("Inspectron", GameMessage("DISPLAY"));
 }
 
 void Map35::special06() {
@@ -174,7 +174,7 @@ void Map35::acceptQuest() {
 
 Common::String Map35::checkQuestComplete() {
 	Character &leader = g_globals->_party[0];
-	int qIndex = leader._quest - 7;
+	int qIndex = leader._quest - 8;
 
 	if (leader._flags[5] & MATCH_FLAGS[qIndex] & 0x7f) {
 		// The quest was complete
