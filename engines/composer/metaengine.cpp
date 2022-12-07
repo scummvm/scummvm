@@ -54,12 +54,12 @@ bool ComposerEngine::loadDetectedConfigFile(Common::INIFile &configFile) const {
 	const ADGameFileDescription *res = _gameDescription->desc.filesDescriptions;
 	while (res->fileName != nullptr) {
 		if (res->fileType == GAME_CONFIGFILE) {
-			return configFile.loadFromFile(res->fileName);
+			return configFile.loadFromFileOrDataFork(res->fileName);
 		}
 		res++;
 	}
 	// default config file name
-	return configFile.loadFromFile("book.ini") || configFile.loadFromFile("book.mac");
+	return configFile.loadFromFileOrDataFork("book.ini") || configFile.loadFromFileOrDataFork("book.mac");
 }
 
 } // End of namespace Composer

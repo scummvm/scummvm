@@ -106,6 +106,7 @@ public:
 	void	clear();
 
 	bool	loadFromFile(const String &filename); /*!< Load configuration from a file. */
+	bool	loadFromFileOrDataFork(const String &filename); /*!< Load configuration from a file in MacBinary format. */
 	bool	loadFromSaveFile(const String &filename); /*!< Load configuration from a save file. */
 	bool	loadFromStream(SeekableReadStream &stream); /*!< Load configuration from a @ref SeekableReadStream. */
 	bool	saveToFile(const String &filename); /*!< Save the current configuration to a file. */

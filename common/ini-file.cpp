@@ -24,6 +24,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/macresman.h"
 
 namespace Common {
 
@@ -61,6 +62,14 @@ bool INIFile::loadFromFile(const String &filename) {
 	File file;
 	if (file.open(filename))
 		return loadFromStream(file);
+	else
+		return false;
+}
+
+bool INIFile::loadFromFileOrDataFork(const String &filename) {
+	SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(filename);
+	if (file)
+		return loadFromStream(*file);
 	else
 		return false;
 }
