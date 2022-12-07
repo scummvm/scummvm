@@ -68,6 +68,7 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 }
 
 void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
+	int prevAreaID = _currentArea ? _currentArea->getAreaID(): -1;
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
 	if (!_gameStateBits.contains(areaID))
 		_gameStateBits[areaID] = 0;
@@ -80,6 +81,16 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		traverseEntrance(entranceID);
 	} else if (entranceID == 0) {
 		int newPos = -1;
+		// FIX: The next check will abort changing the current another
+		// area if the player is too close to the corners
+		if ((_position.z() < 100 && _position.x() > 3900) ||
+			(_position.z() > 3900 && _position.x() < 100) ||
+			(_position.z() < 100 && _position.x()  < 100) ||
+			(_position.z() > 3900 && _position.x() > 3900)) {
+				assert(prevAreaID > 0);
+				_currentArea = _areaMap[prevAreaID];
+				return;
+		}
 		if (_position.z() < 200 || _position.z() >= 3800) {
 			if (_position.z() < 200)
 				newPos = 4000;
