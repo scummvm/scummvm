@@ -32,7 +32,6 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
-#include "hpl1/console.h"
 #include "hpl1/detection.h"
 #include "hpl1/debug.h"
 #include "audio/mixer.h"
