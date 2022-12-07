@@ -957,24 +957,6 @@ bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 	return true;
 }
 
-bool Ultima8Engine::saveGame(int slot, const Std::string &desc) {
-	// Check for gumps that prevent saving
-	if (_desktopGump->FindGump(&HasPreventSaveFlag, true)) {
-		pout << "Can't save: open gump preventing save." << Std::endl;
-		return false;
-	}
-
-	// Don't allow saving when avatar is dead.
-	// (Avatar is flagged dead by usecode when you finish the _game as well.)
-	MainActor *av = getMainActor();
-	if (!av || av->hasActorFlags(Actor::ACT_DEAD)) {
-		pout << "Can't save: game over." << Std::endl;
-		return false;
-	}
-
-	return saveGameState(slot, desc).getCode() == Common::kNoError;
-}
-
 Common::Error Ultima8Engine::loadGameState(int slot) {
 	Common::Error result = Shared::UltimaEngine::loadGameState(slot);
 	if (result.getCode() == Common::kNoError)

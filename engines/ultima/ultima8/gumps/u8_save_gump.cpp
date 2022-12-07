@@ -274,14 +274,17 @@ bool U8SaveGump::loadgame(int saveIndex) {
 bool U8SaveGump::savegame(int saveIndex, const Std::string &name) {
 	pout << "Save " << saveIndex << ": \"" << name << "\"" << Std::endl;
 
-	if (name.empty()) return false;
+	if (name.empty())
+		return false;
 
 	// We are saving, close parent (and ourselves) first so it doesn't
 	// block the save or appear in the screenshot
 	_parent->Close();
 
-	Ultima8Engine::get_instance()->saveGame(saveIndex, name);
-	return true;
+	if (!Ultima8Engine::get_instance()->canSaveGameStateCurrently())
+		return false;
+
+	return Ultima8Engine::get_instance()->saveGameState(saveIndex, name).getCode() == Common::kNoError;
 }
 
 void U8SaveGump::loadDescriptions() {

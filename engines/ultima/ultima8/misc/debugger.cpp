@@ -258,8 +258,17 @@ void Debugger::executeCommand(const Common::Array<Common::String> &argv) {
 
 bool Debugger::cmdSaveGame(int argc, const char **argv) {
 	if (argc == 2) {
+		if (!Ultima8Engine::get_instance()->canSaveGameStateCurrently()) {
+			debugPrintf("Saving game is currently unavailable\n");
+			return true;
+		}
+
 		// Save a _game with the given name into the quicksave slot
-		Ultima8Engine::get_instance()->saveGame(1, argv[1]);
+		Common::Error result = Ultima8Engine::get_instance()->saveGameState(1, argv[1]);
+		if (result.getCode() != Common::kNoError) {
+			debugPrintf("Saving game failed: %s\n", result.getDesc().c_str());
+			return true;
+		}
 	} else {
 		Ultima8Engine::get_instance()->saveGameDialog();
 	}
@@ -790,7 +799,8 @@ bool Debugger::cmdDumpMap(int argc, const char **argv) {
 	// Save because we're going to potentially break the game by enlarging
 	// the fast area and available object IDs.
 	int slot = Ultima8Engine::get_instance()->getAutosaveSlot();
-	if (!Ultima8Engine::get_instance()->saveGame(slot, "Pre-dumpMap save")) {
+	Common::Error result = Ultima8Engine::get_instance()->saveGameState(slot, "Pre-dumpMap save");
+	if (result.getCode() != Common::kNoError) {
 		debugPrintf("Could not dump map: pre-dumpMap save failed\n");
 		return false;
 	}
@@ -816,7 +826,8 @@ bool Debugger::cmdDumpAllMaps(int argc, const char **argv) {
 	// Save because we're going to potentially break the game by enlarging
 	// the fast area and available object IDs and changing maps
 	int slot = Ultima8Engine::get_instance()->getAutosaveSlot();
-	if (!Ultima8Engine::get_instance()->saveGame(slot, "Pre-dumpMap save")) {
+	Common::Error result = Ultima8Engine::get_instance()->saveGameState(slot, "Pre-dumpMap save");
+	if (result.getCode() != Common::kNoError) {
 		debugPrintf("Could not dump map: pre-dumpMap save failed\n");
 		return false;
 	}
