@@ -152,6 +152,15 @@ void Area::loadObjects(Common::SeekableReadStream *stream, Area *global) {
 		obj->setObjectFlags(flags);
 		obj->setOrigin(Math::Vector3d(x, y, z));
 	}
+
+	_colorRemaps.clear();
+	int colorRemapsSize = stream->readUint32LE();
+
+	for (int i = 0; i < colorRemapsSize; i++) {
+		int src = stream->readUint32LE();
+		int dst = stream->readUint32LE();
+		remapColor(src, dst);
+	}
 }
 
 void Area::saveObjects(Common::WriteStream *stream) {
@@ -164,6 +173,12 @@ void Area::saveObjects(Common::WriteStream *stream) {
 		stream->writeFloatLE(obj->getOrigin().x());
 		stream->writeFloatLE(obj->getOrigin().y());
 		stream->writeFloatLE(obj->getOrigin().z());
+	}
+
+	stream->writeUint32LE(_colorRemaps.size());
+	for (auto &it : _colorRemaps) {
+		stream->writeUint32LE(it._key);
+		stream->writeUint32LE(it._value);
 	}
 }
 
