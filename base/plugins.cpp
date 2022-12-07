@@ -757,6 +757,15 @@ void addStringToConf(const Common::String &key, const Common::String &value, con
 
 } // End of anonymous namespace
 
+Common::String EngineManager::generateUniqueDomain(const Common::String gameId) {
+	Common::String domainName(gameId);
+	int suffixN = 1;
+	while (ConfMan.hasGameDomain(domainName)) {
+		domainName = gameId + Common::String::format("-%d", suffixN++);
+	}
+	return domainName;
+}
+
 Common::String EngineManager::createTargetForGame(const DetectedGame &game) {
 	// The auto detector or the user made a choice.
 	// Pick a domain name which does not yet exist (after all, we
