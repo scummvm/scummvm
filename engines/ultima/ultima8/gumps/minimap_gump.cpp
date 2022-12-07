@@ -26,6 +26,7 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/kernel/mouse.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -166,6 +167,24 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	surf->Fill32(0xFFFFFF00, 1 + ax + 0, 1 + ay - 2, 1, 2);
 	surf->Fill32(0xFFFFFF00, 1 + ax + 1, 1 + ay + 0, 2, 1);
 	surf->Fill32(0xFFFFFF00, 1 + ax + 0, 1 + ay + 1, 1, 2);
+}
+
+Gump *MiniMapGump::onMouseDown(int button, int32 mx, int32 my) {
+	Gump *handled = Gump::onMouseDown(button, mx, my);
+	if (handled)
+		return handled;
+
+	// only interested in left clicks
+	if (button == Shared::BUTTON_LEFT)
+		return this;
+
+	return nullptr;
+}
+
+void MiniMapGump::onMouseDouble(int button, int32 mx, int32 my) {
+	if (button == Shared::BUTTON_LEFT) {
+		HideGump();
+	}
 }
 
 void MiniMapGump::saveData(Common::WriteStream *ws) {
