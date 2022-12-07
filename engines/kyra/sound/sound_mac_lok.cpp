@@ -40,10 +40,7 @@ SoundMacRes::SoundMacRes(KyraEngine_v1 *vm) : _resMan(0), _stuffItArchive(nullpt
 	_resMan = new Common::MacResManager[2];
 
 	if (vm->gameFlags().useInstallerPackage) {
-		Common::String str = Util::findMacResourceFile("Install Legend of Kyrandia");
-		if (str.empty())
-			error("SoundMacRes::SoundMacRes(): Could not find Legend of Kyrandia installer file");
-		_stuffItArchive = vm->resource()->getCachedArchive(str);
+		_stuffItArchive = vm->resource()->getCachedArchive("Install Legend of Kyrandia");
 		if (!_stuffItArchive)
 			error("SoundMacRes::SoundMacRes(): Failed to load Legend of Kyrandia installer file");
 	}
