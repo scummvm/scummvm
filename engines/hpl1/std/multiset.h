@@ -22,7 +22,7 @@
 #ifndef HPL1_STD_MULTISET_H
 #define HPL1_STD_MULTISET_H
 
-#include "set.h"
+#include "hpl1/std/set.h"
 
 namespace Hpl1 {
 namespace std {

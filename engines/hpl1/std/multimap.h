@@ -23,7 +23,7 @@
 #define HPL1_STD_MULTIMAP_H
 
 #include "common/array.h"
-#include "pair.h"
+#include "hpl1/std/pair.h"
 
 namespace Hpl1 {
 

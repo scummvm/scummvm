@@ -23,7 +23,7 @@
 #define HPL1_STD_MAP_H
 
 #include "hpl1/algorithms.h"
-#include "pair.h"
+#include "hpl1/std/pair.h"
 
 namespace Hpl1 {
 namespace std {
