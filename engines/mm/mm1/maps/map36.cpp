@@ -99,7 +99,7 @@ void Map36::special04() {
 void Map36::special05() {
 	updateFlags();
 	send("View", DrawGraphicMessage(7 + 65));
-	g_events->addView("Hacker");
+	send("Hacker", GameMessage("DISPLAY"));
 }
 
 void Map36::special06() {
@@ -145,36 +145,46 @@ void Map36::updateFlags() {
 
 void Map36::acceptQuest() {
 	Character &leader = g_globals->_party[0];
-	byte flags = leader._flags[8];
+	byte flags = leader._flags[9];
 
 	// Find quest that hasn't been done yet
 	int questNum;
-	for (questNum = 8; flags && questNum < 15; ++questNum, flags >>= 1) {
+	for (questNum = 15; flags && questNum < 22; ++questNum, flags >>= 1) {
 		if (!(flags & 1))
 			break;
 	}
-	if (questNum == 15) {
+	if (questNum == 22) {
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			Character &c = g_globals->_party[i];
-			c._flags[8] = CHARFLAG8_80;
-			c._flags[5] = CHARFLAG5_80;
+			c._flags[9] = CHARFLAG9_80;
+			c._flags[6] = CHARFLAG6_80;
+			c._backpack.empty();
 		}
-	}
 
-	// Assign the quest to all party characters
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		Character &c = g_globals->_party[i];
-		c._quest = questNum;
-	}
+		send(SoundMessage(
+			STRING["maps.map36.hacker7"],
+			[](const Common::KeyState &) {
+				g_maps->_mapPos = Common::Point(11, 15);
+				g_maps->_currentMap->updateGame();
+			}
+		));
 
-	// Draw the scene
-	g_maps->_mapPos.y++;
-	redrawGame();
+	} else {
+		// Assign the quest to all party characters
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			Character &c = g_globals->_party[i];
+			c._quest = questNum;
+		}
+
+		// Draw the scene
+		g_maps->_mapPos.y++;
+		redrawGame();
+	}
 }
 
 Common::String Map36::checkQuestComplete() {
 	Character &leader = g_globals->_party[0];
-	int qIndex = leader._quest - 14;
+	int qIndex = leader._quest - 15;
 
 	if (leader._flags[6] & MATCH_FLAGS[qIndex] & 0x7f) {
 		// The quest was complete

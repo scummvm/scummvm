@@ -36,7 +36,7 @@ public:
 	Inspectron();
 	virtual ~Inspectron() {}
 
-	bool msgFocus(const FocusMessage &msg) override;	
+	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 };

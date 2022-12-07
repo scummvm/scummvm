@@ -57,6 +57,7 @@
 #include "mm/mm1/views/maps/ghost.h"
 #include "mm/mm1/views/maps/giant.h"
 #include "mm/mm1/views/maps/gypsy.h"
+#include "mm/mm1/views/maps/hacker.h"
 #include "mm/mm1/views/maps/ice_princess.h"
 #include "mm/mm1/views/maps/inspectron.h"
 #include "mm/mm1/views/maps/keeper.h"
@@ -125,6 +126,7 @@ private:
 	Views::Maps::Ghost _ghost;
 	Views::Maps::Giant _giant;
 	Views::Maps::Gypsy _gypsy;
+	Views::Maps::Hacker _hacker;
 	Views::Maps::IcePrincess _icePrincess;
 	Views::Maps::Inspectron _inspectron;
 	Views::Maps::Keeper _keeper;
