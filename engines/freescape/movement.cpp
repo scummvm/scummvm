@@ -327,10 +327,20 @@ bool FreescapeEngine::checkCollisions(bool executeCode) {
 	Common::sort(objs.begin(), objs.end(), compareObjectsSizes);
 	uint16 areaID = _currentArea->getAreaID();
 
+	bool largeObjectWasBlocking = false;
 	for (auto &obj : objs) {
 		GeometricObject *gobj = (GeometricObject *)obj;
 		debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", gobj->getObjectID(), gobj->getSize().x(), gobj->getSize().y(), gobj->getSize().z());
+		// The following check stops the player from going through big solid objects such as walls
+		// FIXME: find a better workaround of this
+		if (gobj->getSize().length() > 3000) {
+			if (largeObjectWasBlocking)
+				break;
+			largeObjectWasBlocking = true;
+		}
+
 		executeObjectConditions(gobj, false, true);
+
 		if (areaID != _currentArea->getAreaID())
 			break;
 	}
