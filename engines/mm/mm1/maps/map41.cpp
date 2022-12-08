@@ -48,14 +48,14 @@ void Map41::special() {
 }
 
 void Map41::special00() {
-	send(SoundMessage(STRING["maps.map40.message3"]));
+	send(SoundMessage(STRING["maps.map41.message3"]));
 }
 
 void Map41::special01() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.maps40.stairs_up"],
+		STRING["maps.map41.stairs_up"],
 		[]() {
 			g_maps->_mapPos = Common::Point(14, 2);
 			g_maps->changeMap(0x101, 2);
@@ -79,7 +79,7 @@ void Map41::special03() {
 }
 
 void Map41::special04() {
-	send(SoundMessage(STRING["maps.map40.dung"]));
+	send(SoundMessage(STRING["maps.map41.dung"]));
 }
 
 void Map41::special05() {

@@ -73,7 +73,9 @@ private:
 		&Map37::special19
 	};
 public:
-	Map37() : Map(37, "qvl1", 0xf03, 3) {}
+	Map37() : Map(37, "qvl1", 0xf03, 3) {
+		_mappingAllowed = false;
+	}
 
 	/**
 	 * Handles all special stuff that happens on the map

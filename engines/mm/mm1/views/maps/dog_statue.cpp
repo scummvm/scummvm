@@ -70,7 +70,6 @@ bool DogStatue::msgKeypress(const KeypressMessage &msg) {
 		close();
 
 		if (msg.keycode == Common::KEYCODE_y) {
-			close();
 			map.dogDesecrate();
 		} else {
 			close();

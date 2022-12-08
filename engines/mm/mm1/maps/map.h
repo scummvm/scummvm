@@ -101,6 +101,7 @@ protected:
 	uint _mapIndex;
 	byte _defaultSection;
 	Common::Array<byte> _data;
+	bool _mappingAllowed = true;
 private:
 	/**
 	 * Loads the map's maze data
@@ -164,6 +165,15 @@ public:
 	 */
 	byte getDefaultSection() const {
 		return _defaultSection;
+	}
+
+	/**
+	 * Returns true if mapping is allowed in enhanced mode.
+	 * This is to prevent places like the desert where the
+	 * players shouldn't be able to see where they are
+	 */
+	bool mappingAllowed() const {
+		return _mappingAllowed;
 	}
 
 	/**

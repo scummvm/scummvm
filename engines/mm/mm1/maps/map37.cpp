@@ -46,12 +46,12 @@ void Map37::special() {
 		}
 	}
 
-	if (g_events->isKeypressPending()) {
-		send(InfoMessage());
-	} else {
-		send(SoundMessage(STRING["maps.map37.spins"]));
-		g_events->addAction(KEYBIND_TURN_LEFT);
-	}
+	// Randomly spin the party
+	int count = getRandomNumber(4) - 1;
+	for (int i = 0; i < count; ++i)
+		g_maps->turnLeft();
+
+	send(SoundMessage(STRING["maps.map37.spins"]));
 }
 
 void Map37::special00() {
@@ -96,6 +96,7 @@ void Map37::special03() {
 
 void Map37::special04() {
 	Game::Encounter &enc = g_globals->_encounters;
+	g_maps->clearSpecial();
 
 	if (_data[VAL1]) {
 		g_events->addView("Ghost");

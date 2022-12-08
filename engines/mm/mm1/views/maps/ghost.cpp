@@ -38,7 +38,7 @@ Ghost::Ghost() : TextView("Ghost") {
 
 void Ghost::draw() {
 	clearSurface();
-	writeString(0, 1, STRING["maps.map37.okram1"]);
+	writeString(0, 1, STRING["maps.map37.okrim1"]);
 }
 
 bool Ghost::msgKeypress(const KeypressMessage &msg) {
@@ -49,12 +49,14 @@ bool Ghost::msgKeypress(const KeypressMessage &msg) {
 			g_globals->_party[0]._condition = ERADICATED;
 		} else {
 			clearSurface();
-			writeString(0, 1, STRING["maps.map37.okram2"]);
+			writeString(0, 1, STRING["maps.map37.okrim2"]);
 
 			map[MM1::Maps::MAP_29] = 32;
 			map[MM1::Maps::MAP_47] = 8;
 		}
 
+		// Note: You get the ring whether or not you agree to it.
+		// This is indeed how the original's logic is implemented
 		close();
 		g_globals->_treasure._items[2] = RING_OF_OKRIM_ID;
 		g_events->addAction(KEYBIND_SEARCH);

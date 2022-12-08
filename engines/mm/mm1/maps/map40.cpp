@@ -185,10 +185,11 @@ void Map40::archerResist() {
 }
 
 void Map40::archerSubmit() {
+	// As long as even one character has gold, Archer will take
+	// all of the party's gold. However, if the party is penniless,
+	// then Archer will actually give each character 5000 gold
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		if (g_globals->_party[i]._gold) {
-			// As long as even one character has gold, Archer
-			// will take all of the party's gold
 			WRITE_LE_UINT16(&_data[GOLD], 0);
 			break;
 		}
