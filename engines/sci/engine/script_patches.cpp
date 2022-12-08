@@ -9849,6 +9849,44 @@ static const uint16 laurabow2PatchMuseumPartyFixEnteringSouth2[] = {
 	PATCH_END
 };
 
+// At the start of the act 5 chase, leaving the first screen within five seconds
+//  breaks all timers for the rest of the game. This breaks the wire puzzle,
+//  prevents the killer from appearing in many rooms, and would crash the floppy
+//  version in the original. Room 420 starts a local timer before the killer
+//  appears on screen, but Sierra forgot to dispose of the timer when leaving
+//  the room. If it's still active then it remains in the global timer list even
+//  though its owner script has been disposed. This causes kIsObject to return
+//  false and that causes Collect:eachElementDo to abort without processing any
+//  further timers.
+//
+// We fix this by adding a call to timers:dispose before setting pursuitTimer
+//  when leaving room 420.
+//
+// Applies to: All versions
+// Responsible method: rm420:newRoom
+static const uint16 laurabow2SignatureFixAct5BrokenTimers[] = {
+	SIG_MAGICDWORD,
+	0x43, 0x02, 0x04,                   // callk ScriptID 04 [ ScriptID 94 1 ]
+	0x36,                               // push [ pursuitTimer ]
+	0x8b, 0x00,                         // lsl 00
+	0x7a,                               // push2
+	0x39, 0x5e,                         // pushi 5e
+	0x78,                               // push1
+	0x43, 0x02, 0x04,                   // callk ScriptID 04 [ ScriptID 94 1 ]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchFixAct5BrokenTimers[] = {
+	0x39, 0x6f,                         // pushi dispose
+	0x76,                               // push0
+	0x81, 0x07,                         // lag 07
+	0x4a, 0x04,                         // send 04 [ timers dispose: ]
+	0x43, 0x02, 0x04,                   // callk ScriptID 04 [ ScriptID 94 1 ]
+	0x36,                               // push [ pursuitTimer ]
+	0x8b, 0x00,                         // lsl 00
+	PATCH_END
+};
+
 // Opening/Closing the east door in the pterodactyl room doesn't check, if it's
 //  locked and will open/close the door internally even when it is.
 //
@@ -10767,6 +10805,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   448, "CD/Floppy: fix armor hall door pathfinding",     1, laurabow2SignatureFixArmorHallDoorPathfinding,  laurabow2PatchFixArmorHallDoorPathfinding },
 	{ false,   400, "CD: fix museum actor loops",                     4, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
 	{ false,   420, "CD: fix museum actor loops",                     1, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
+	{  true,   420, "CD/Floppy: fix act 5 broken timers",             1, laurabow2SignatureFixAct5BrokenTimers,          laurabow2PatchFixAct5BrokenTimers },
 	{  true,   450, "Floppy: fix dagger case error",                  2, laurabow2SignatureFixDaggerCaseError,           laurabow2PatchFixDaggerCaseError },
 	{  true,   454, "CD/Floppy: fix coffin lockup 1/2",               1, laurabow2SignatureMummyCoffinLid1,              laurabow2PatchMummyCoffinLid1 },
 	{  true,   454, "CD/Floppy: fix coffin lockup 2/2",               1, laurabow2SignatureMummyCoffinLid2,              laurabow2PatchMummyCoffinLid2 },
