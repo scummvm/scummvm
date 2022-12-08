@@ -52,11 +52,11 @@ void Map42::special() {
 }
 
 void Map42::special00() {
-	g_events->addView("WhiteDog");
+	g_events->addView("DogStatue");
 }
 
 void Map42::special01() {
-	send(SoundMessage(STRING["maps.map42.message4"]));
+	send(SoundMessage(STRING["maps.map42.message9"]));
 }
 
 void Map42::special02() {
@@ -88,11 +88,9 @@ void Map42::special03() {
 
 void Map42::special04() {
 	Sound::sound(SOUND_2);
-	g_maps->_mapPos.x++;
-	if (g_maps->_mapPos.x >= 10)
-		g_maps->_mapPos.x = 6;
 
-	updateGame();
+	g_maps->_mapPos.x = getRandomNumber(5) + 5;
+	redrawGame();
 }
 
 void Map42::special05() {

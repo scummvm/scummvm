@@ -22,6 +22,7 @@
 #include "mm/mm1/views/maps/ruby.h"
 #include "mm/mm1/maps/map39.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
@@ -30,7 +31,7 @@ namespace Maps {
 
 #define ANSWER_OFFSET 477
 
-Ruby::Ruby() : AnswerEntry("Ruby", Common::Point(2, 9), 12) {
+Ruby::Ruby() : AnswerEntry("Ruby", Common::Point(14, 7), 12) {
 	_bounds = getLineBounds(17, 24);
 }
 
@@ -49,19 +50,22 @@ void Ruby::answerEntered() {
 		properAnswer += map[ANSWER_OFFSET + i] - 64;
 
 	if (_answer.equalsIgnoreCase(properAnswer)) {
+		g_maps->clearSpecial();
+		Sound::sound(SOUND_3);
+		map.redrawGame();
+
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			g_globals->_party[i]._flags[5] |= CHARFLAG5_20;
 		}
 
+		g_globals->_treasure._items[2] = CRYSTAL_KEY_ID;
 		g_events->addAction(KEYBIND_SEARCH);
 
 	} else {
 		g_maps->_mapPos.x = 9;
 		map.updateGame();
 
-		clearSurface();
-		writeString(0, 1, STRING["maps.map39.ruby2"]);
-		close();
+		send(InfoMessage(STRING["maps.map39.ruby2"]));
 	}
 }
 
