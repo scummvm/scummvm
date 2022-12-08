@@ -89,8 +89,11 @@ HRESULT SHGetFolderPathFunc(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, 
 namespace Win32 {
 
 bool getApplicationDataDirectory(TCHAR *applicationDataDirectory) {
-	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, applicationDataDirectory) != S_OK) {
-		warning("Unable to access application data directory");
+	HRESULT hr = SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, applicationDataDirectory);
+	if (hr != S_OK) {
+		if (hr != E_NOTIMPL) {
+			warning("Unable to locate application data directory");
+		}
 		return false;
 	}
 
