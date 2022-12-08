@@ -10422,6 +10422,78 @@ static const uint16 laurabow2PatchAct5TimerCrash[] = {
 	PATCH_END
 };
 
+// During act 5, the transom in room 448 behaves inconsistently depending on
+//  the speed setting and machine speed. When the player opens or closes the
+//  transom, the script animates ego at game speed and the transom at speed 6,
+//  but it terminates the transom's animation when ego's completes. The transom
+//  animation is often interrupted and may not even be able to start at all.
+//  Although there is a game flag for the transom state, some scripts use the
+//  current cel to infer if it is open or closed. When these states are out of
+//  sync the transom behaves unpredictably and may not be able to be closed.
+//
+// We fix this by synchronizing the transom speed with ego's when opening or
+//  closing so that the animation always completes. This does not change the
+//  duration of the scene.
+//
+// Applies to: All versions
+// Responsible method: transomWin:doVerb
+static const uint16 laurabow2SignatureFixTransomSpeed[] = {
+	0x39, 0x04,                         // pushi cel
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa transomWin
+	0x4a, SIG_MAGICDWORD, 0x04,         // send 04 [ transomWin cel? ]
+	0x36,                               // push
+	0x35, 0x00,                         // ldi 00
+	0x1a,                               // eq? [ transomWin:cel == 0 ]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchFixTransomSpeed[] = {
+	0x80, PATCH_UINT16(0x0171),         // lag 0171 [ ego speed ]
+	0x65, 0x5c,                         // aTop cycleSpeed [ transomWin:cycleSpeed = ego speed ]
+	0x39, 0x04,                         // pushi cel
+	0x76,                               // push0
+	0x54, 0x04,                         // self 04 [ self cel? ]
+	0x76,                               // push0
+	PATCH_END
+};
+
+// During act 5, room 448 does not re-initialize the transom correctly. There is
+//  a flag that is set when the player moves the chair, and a flag that is set
+//  or cleared when the player opens or closed the transom, but the transom is
+//  initialized to open if either flag is set. This can leave the graphics out
+//  of sync with the flag and break further toggling.
+//
+// We fix this by re-ordering the instructions so that the chair flag controls
+//  the chair and the transom flag controls the transom.
+//
+// Applies to: All versions
+// Responsible method: rm448:init
+static const uint16 laurabow2SignatureRememberTransom[] = {
+	SIG_MAGICDWORD,
+	0x78,                               // push1
+	0x39, 0x27,                         // pushi 27
+	0x45, 0x02, 0x02,                   // callb proc0_2 [ is flag 39 set? (transom open) ]
+	0x2f, 0x06,                         // bt 06 [ open transom and move chair ]
+	0x78,                               // push1
+	0x39, 0x74,                         // pushi 74
+	0x45, 0x02, 0x02,                   // callb proc0_2 [ is flag 116 set? (chair moved) ]
+	0x31, 0x1c,                         // bnt 1c [ skip open transom and move chair ]
+	0x39, 0x3f,                         // pushi setPri
+	SIG_ADDTOOFFSET(+14),
+	0x4a, 0x0e,                         // send 0e [ chair setPri: ... (move chair) ]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchRememberTransom[] = {
+	PATCH_GETORIGINALBYTES(8, 6),       // acc = is flag 116 set? (chair moved)
+	0x31, 0x12,                         // bnt 12 [ skip move chair ]
+	PATCH_GETORIGINALBYTES(16, 18),     // move chair
+	PATCH_GETORIGINALBYTES(0, 6),       // acc = is flag 39 set? (transom open)
+	0x31, 0x0a,                         // bnt 0a [ skip open transom ]
+	PATCH_END
+};
+
 // The "bugs with meat" in the basement hallway (room 600) can lockup the game
 //  if they appear while ego is leaving the room through one of the doors.
 //
@@ -10820,6 +10892,8 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   440, "CD/Floppy: handle armor room events",            1, laurabow2SignatureHandleArmorRoomEvents,        laurabow2PatchHandleArmorRoomEvents },
 	{  true,   448, "CD/Floppy: handle armor hall room events",       1, laurabow2SignatureHandleArmorRoomEvents,        laurabow2PatchHandleArmorRoomEvents },
 	{  true,   448, "CD/Floppy: act 5 timer crash",                   1, laurabow2SignatureAct5TimerCrash,               laurabow2PatchAct5TimerCrash },
+	{  true,   448, "CD/Floppy: fix transom speed",                   1, laurabow2SignatureFixTransomSpeed,              laurabow2PatchFixTransomSpeed },
+	{  true,   448, "CD/Floppy: remember transom",                    1, laurabow2SignatureRememberTransom,              laurabow2PatchRememberTransom },
 	{  true,   600, "Floppy: fix bugs with meat",                     1, laurabow2FloppySignatureFixBugsWithMeat,        laurabow2FloppyPatchFixBugsWithMeat },
 	{  true,   600, "CD: fix bugs with meat",                         1, laurabow2CDSignatureFixBugsWithMeat,            laurabow2CDPatchFixBugsWithMeat },
 	{ false,   650, "CD: fix museum actor loops",                     1, laurabow2CDSignatureFixMuseumActorLoops2,       laurabow2CDPatchFixMuseumActorLoops2 },
