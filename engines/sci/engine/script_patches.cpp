@@ -9887,81 +9887,73 @@ static const uint16 laurabow2PatchFixAct5BrokenTimers[] = {
 	PATCH_END
 };
 
-// Opening/Closing the east door in the pterodactyl room doesn't check, if it's
-//  locked and will open/close the door internally even when it is.
+// In act 5, the east door in the pterodactyl room has several problems once it
+//  is wired shut. Re-entering the room shows the door open with floating wire,
+//  or allows the door to be re-opened with floating wire.
 //
-// It will get wired shut later in the game by Laura Bow and will be "locked"
-//  because of this. We patch in a check for the locked state. We also add
-//  code, that will set the "locked" state in case our eastDoor-wired-global is
-//  set. This makes the locked state effectively persistent.
+// There are two flags and three problems:
+// - Flag 99 is set when the door is closed and cleared when opened.
+// - Flag 45 is set when the door is wired shut.
+// - Clicking the wire on the open door sets flag 45 but not 99.
+// - Clicking Do on the closed door clears flag 99 even when locked.
+// - eastDoor:locked is not re-initialized when re-entering the room.
 //
-// Applies to at least: English PC-CD, English PC-Floppy
-// Responsible method (CD): eastDoor::doVerb
-// Responsible method (Floppy): eastDoor::<noname300>
-// Fixes bug: #6458 (partly, see additional patch below)
+// We fix all of this by patching eastDoor:doVerb to handle Do (hand) and the
+//  wire correctly. Clicking the wire now sets flag 99 so that the door always
+//  remains closed when re-entering. Clicking Do now resets the locked property
+//  according to flag 45 so that the door can't be re-opened, and the code no
+//  longer clears flag 99 if the door is locked.
+//
+// Applies to: All versions
+// Responsible method: eastDoor:doVerb
+// Fixes bug: #6458
 static const uint16 laurabow2SignatureFixWiredEastDoor[] = {
-	0x30, SIG_UINT16(0x0022),           // bnt [skip hand action]
+	// eastDoor:doVerb(44) - wire
+	0x31, 0x0f,                         // bnt 0f [ skip sWireItShut if not act 5 ]
+	0x38, SIG_UINT16(0x0092),           // pushi setScript
+	0x78,                               // push1
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa sWireItShut
+	0x36,                               // push
+	0x81, 0x02,                         // lag 02
+	0x4a, 0x06,                         // send 06  [ rm430 setScript: sWireItShut ]
+	0x32, SIG_UINT16(0x0042),           // jmp 0042 [ toss / ret ]
+	SIG_ADDTOOFFSET(+11),               // [ super: doVerb param1 &rest ]
+	0x32, SIG_UINT16(0x0034),           // jmp 0034 [ toss / ret ]
+	// eastDoor:doVerb(4) - do (hand)
+	SIG_ADDTOOFFSET(+7),
 	0x67, SIG_ADDTOOFFSET(+1),          // pTos (CD: doorState, Floppy: state)
 	0x35, 0x00,                         // ldi 00
 	0x1a,                               // eq?
-	0x31, 0x08,                         // bnt [close door code]
+	0x31, 0x08,                         // bnt 08 [ skip clearing flag 99 ]
 	0x78,                               // push1
 	SIG_MAGICDWORD,
-	0x39, 0x63,                         // pushi 63h
-	0x45, 0x04, 0x02,                   // callb [export 4 of script 0], 02 (sets door-bitflag)
-	0x33, 0x06,                         // jmp [super-code]
+	0x39, 0x63,                         // pushi 63
+	0x45, 0x04, 0x02,                   // callb proc0_2 [ clear flag 99 (door is closed) ]
+	0x33, 0x06,                         // jmp 06 [ super: doVerb param1 &rest ]
 	0x78,                               // push1
-	0x39, 0x63,                         // pushi 63h
-	0x45, 0x03, 0x02,                   // callb [export 3 of script 0], 02 (resets door-bitflag)
-	0x38, SIG_ADDTOOFFSET(+2),          // pushi (CD: 011dh, Floppy: 012ch)
-	0x78,                               // push1
-	0x8f, 0x01,                         // lsp param[1]
-	0x59, 0x02,                         // rest 02
-	0x57, SIG_ADDTOOFFSET(+1), 0x06,    // super (CD: LbDoor, Floppy: Door), 06
-	0x33, 0x0b,                         // jmp [ret]
-	SIG_END
+	0x39, 0x63,                         // pushi 63
+	0x45, 0x03, 0x02,                   // callb proc0_3 [ set flag 99 (door is open) ]
+	SIG_ADDTOOFFSET(+11),               // [ super: doVerb param1 &rest ]
+	0x33, 0x0b,                         // jmp [ toss / ret ]
+	SIG_END                             // [ super: doVerb param1 &rest ]
 };
 
 static const uint16 laurabow2PatchFixWiredEastDoor[] = {
-	0x31, 0x23,                         // bnt [skip hand action] (saves 1 byte)
-	0x81, 0x61,                         // lag global[97d] (get our eastDoor-wired-global)
-	0x31, 0x04,                         // bnt [skip setting locked property]
-	0x35, 0x01,                         // ldi 01
-	0x65, 0x6a,                         // aTop locked (set eastDoor::locked to 1)
-	0x63, 0x6a,                         // pToa locked (get eastDoor::locked)
-	0x2f, 0x17,                         // bt [skip hand action]
-	0x63, PATCH_GETORIGINALBYTE(+4),    // pToa (CD: doorState, Floppy: state)
+	// eastDoor:doVerb(44) - wire
+	0x31, 0x46,                         // bnt 46 [ super:doVerb if not act 5 ]
+	PATCH_ADDTOOFFSET(+12),
 	0x78,                               // push1
-	0x39, 0x63,                         // pushi 63h
-	0x2f, 0x05,                         // bt [close door code]
-	0x45, 0x04, 0x02,                   // callb [export 4 of script 0], 02 (sets door-bitflag)
-	0x33, 0x0b,                         // jmp [super-code]
-	0x45, 0x03, 0x02,                   // callb [export 3 of script 0], 02 (resets door-bitflag)
-	0x33, 0x06,                         // jmp [super-code]
-	PATCH_END
-};
-
-// We patch in code, so that our eastDoor-wired-global will get set to 1.
-//  This way the wired-state won't get lost when exiting room 430.
-//
-// Applies to at least: English PC-CD, English PC-Floppy
-// Responsible method (CD): sWireItShut::changeState
-// Responsible method (Floppy): sWireItShut::<noname144>
-// Fixes bug: #6458 (partly, see additional patch above)
-static const uint16 laurabow2SignatureRememberWiredEastDoor[] = {
-	SIG_MAGICDWORD,
-	0x33, 0x27,                         // jmp [ret]
-	0x3c,                               // dup
-	0x35, 0x06,                         // ldi 06
-	0x1a,                               // eq?
-	0x31, 0x21,                         // bnt [skip step]
-	SIG_END
-};
-
-static const uint16 laurabow2PatchRememberWiredEastDoor[] = {
-	PATCH_ADDTOOFFSET(+2),              // skip jmp [ret]
-	0x34, PATCH_UINT16(0x0001),         // ldi 0001
-	0xa1, PATCH_UINT16(0x0061),         // sag global[97d] (set our eastDoor-wired-global)
+	0x39, 0x63,                         // pushi 63
+	0x45, 0x03, 0x02,                   // callb proc0_3 [ set flag 99 (door is open) ]
+	0x33, 0x3d,                         // jmp 3d [ toss / ret ]
+	PATCH_ADDTOOFFSET(+16),
+	// eastDoor:doVerb(4) - do (hand)
+	0x38, PATCH_UINT16(0x0001),         // pushi 0001
+	0x39, 0x2d,                         // pushi 2d
+	0x45, 0x02, 0x02,                   // callb proc0_2 [ is flag 45 set? (door wired) ]
+	0x65, 0x6a,                         // pToa locked   [ locked = is flag 45 set? ]
+	0x2e, PATCH_UINT16(0x0015),         // bt 0015 [ skip setting/clearing flag 99 if locked ]
+	PATCH_GETORIGINALBYTES(38, 21),     // [ set or clear flag 99, super: doVerb ... ]
 	PATCH_END
 };
 
@@ -10872,7 +10864,6 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   350, "CD/Floppy: museum party fix entering south 1/2", 1, laurabow2SignatureMuseumPartyFixEnteringSouth1, laurabow2PatchMuseumPartyFixEnteringSouth1 },
 	{  true,   350, "CD/Floppy: museum party fix entering south 2/2", 1, laurabow2SignatureMuseumPartyFixEnteringSouth2, laurabow2PatchMuseumPartyFixEnteringSouth2 },
 	{ false,   355, "CD: fix museum actor loops",                     2, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
-	{  true,   430, "CD/Floppy: make wired east door persistent",     1, laurabow2SignatureRememberWiredEastDoor,        laurabow2PatchRememberWiredEastDoor },
 	{  true,   430, "CD/Floppy: fix wired east door",                 1, laurabow2SignatureFixWiredEastDoor,             laurabow2PatchFixWiredEastDoor },
 	{  true,   448, "CD/Floppy: fix armor hall door pathfinding",     1, laurabow2SignatureFixArmorHallDoorPathfinding,  laurabow2PatchFixArmorHallDoorPathfinding },
 	{ false,   400, "CD: fix museum actor loops",                     4, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
