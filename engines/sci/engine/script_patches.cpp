@@ -23964,7 +23964,7 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, SciSpan<
 	const uint16 *patchData = patchEntry->patchData;
 	byte orgData[PATCH_VALUELIMIT];
 	int32 offset = signatureOffset;
-	uint16 patchWord = *patchEntry->patchData;
+	uint16 patchWord = *patchData;
 	uint16 patchSelector = 0;
 
 	// Copy over original bytes from script
@@ -23980,6 +23980,16 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, SciSpan<
 		case PATCH_CODE_ADDTOOFFSET: {
 			// add value to offset
 			offset += patchValue;
+			break;
+		}
+		case PATCH_CODE_GETORIGINALBYTES: {
+			// get range of original bytes from script
+			uint16 lengthValue;
+			patchData++; lengthValue = (uint16)(*patchData);
+			if ((uint32)patchValue + lengthValue >= orgDataSize)
+				error("Script-Patcher: can not get requested original byte from script");
+			memcpy(scriptData.getUnsafeDataAt(offset, lengthValue), &orgData[patchValue], lengthValue);
+			offset += lengthValue;
 			break;
 		}
 		case PATCH_CODE_GETORIGINALBYTE: {
