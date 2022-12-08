@@ -292,6 +292,12 @@ void DirectorSound::cancelFade(uint8 soundChannel) {
 bool DirectorSound::isChannelActive(uint8 soundChannel) {
 	if (!isChannelValid(soundChannel))
 		return false;
+
+	// Looped sounds are considered to be inactive after the first play
+	// WORKAROUND HACK
+	if (_channels[soundChannel - 1].loopPtr != nullptr)
+		return _channels[soundChannel - 1].loopPtr->getCompleteIterations() < 1;
+
 	return _mixer->isSoundHandleActive(_channels[soundChannel - 1].handle);
 }
 
