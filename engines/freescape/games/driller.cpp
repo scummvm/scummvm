@@ -356,29 +356,6 @@ void DrillerEngine::loadAssetsFullGame() {
 		loadGlobalObjects(&file, 0x3b42);
 		load8bitBinary(&file, 0x9b40, 16);
 
-		/*
-		We are going to inject a small script in the
-		last area to force the game to end:
-		IF COLLIDED? THEN
-		IF VAR!=? (v32, 18) THEN END ENDIF
-		GOTO (127, 0)
-		*/
-
-		FCLInstructionVector instructions;
-		Common::Array<uint8> conditionArray;
-
-		conditionArray.push_back(0xb);
-		conditionArray.push_back(0x20);
-		conditionArray.push_back(0x12);
-		conditionArray.push_back(0x12);
-		conditionArray.push_back(0x7f);
-		conditionArray.push_back(0x0);
-
-		Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions);
-		debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
-		_areaMap[18]->_conditions.push_back(instructions);
-		_areaMap[18]->_conditionSources.push_back(conditionSource);
-
 	} else if (_renderMode == Common::kRenderCGA) {
 		loadBundledImages();
 		_title = _border;
@@ -389,6 +366,29 @@ void DrillerEngine::loadAssetsFullGame() {
 		load8bitBinary(&file, 0x7bb0, 4);
 	} else
 		error("Invalid or unsupported render mode %s for Driller", Common::getRenderModeDescription(_renderMode));
+
+	/*
+	We are going to inject a small script in the
+	last area to force the game to end:
+	IF COLLIDED? THEN
+	IF VAR!=? (v32, 18) THEN END ENDIF
+	GOTO (127, 0)
+	*/
+
+	FCLInstructionVector instructions;
+	Common::Array<uint8> conditionArray;
+
+	conditionArray.push_back(0xb);
+	conditionArray.push_back(0x20);
+	conditionArray.push_back(0x12);
+	conditionArray.push_back(0x12);
+	conditionArray.push_back(0x7f);
+	conditionArray.push_back(0x0);
+
+	Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions);
+	debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
+	_areaMap[18]->_conditions.push_back(instructions);
+	_areaMap[18]->_conditionSources.push_back(conditionSource);
 }
 
 void DrillerEngine::drawUI() {
