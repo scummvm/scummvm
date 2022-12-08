@@ -34,8 +34,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(MiniMapGump)
 
 MiniMapGump::MiniMapGump(int x, int y) :
-	Gump(x, y, MAP_NUM_CHUNKS * 2 + 2, MAP_NUM_CHUNKS * 2 + 2, 0,
-	     FLAG_DRAGGABLE, LAYER_NORMAL), _minimaps(), _ax(0), _ay(0) {
+	Gump(x, y, 120, 120, 0, FLAG_DRAGGABLE, LAYER_NORMAL), _minimaps(), _ax(0), _ay(0) {
 }
 
 MiniMapGump::MiniMapGump() : Gump(), _minimaps(), _ax(0), _ay(0) {
