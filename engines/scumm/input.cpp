@@ -932,9 +932,12 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		restartKeyPressed |= ((_game.version < 3 || _game.version > 6) &&
 			lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.hasFlags(0));
 
-		// ...or if this is a v3 FM-Towns game, restart on F8 (the original accepted a key value of 0xFFFF8008)
+		// ...or if this is a v3 FM-Towns game, restart on F8 (the original accepted a key value of 0xFFFF8008)...
 		restartKeyPressed |= _game.platform == Common::kPlatformFMTowns && _game.version == 3 &&
 			lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.hasFlags(0);
+
+		// ...but do not allow the restart banner to appear at all, if this is MI1 SegaCD.
+		restartKeyPressed &= _game.platform != Common::kPlatformSegaCD;
 
 		if (restartKeyPressed) {
 			queryRestart();
