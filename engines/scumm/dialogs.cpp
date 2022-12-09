@@ -455,7 +455,9 @@ const char *InfoDialog::getPlainEngineString(int stringno, bool forceHardcodedSt
 			}
 		}
 	} else if (_vm->_game.version >= 3) {
-		if (!forceHardcodedString)
+		if (_vm->_game.platform == Common::kPlatformSegaCD)
+			result = (const char *)_vm->getStringAddress(stringno);
+		else if (!forceHardcodedString)
 			result = (const char *)_vm->getStringAddress(getStaticResString(_vm->_language, stringno - 1).num);
 
 		if (!result) {

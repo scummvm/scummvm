@@ -720,7 +720,7 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 
 		// Calculate the positioning for the text
 		int oldId = _charset->getCurID();
-		_charset->setCurID(1);
+		_charset->setCurID(_game.platform == Common::kPlatformSegaCD ? 6 : 1);
 
 		centerFlag = ctrl->centerText;
 
@@ -763,13 +763,28 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 
 		} else {
 			int tmpRight = _string[5].right;
+			bool nudgeJapYPos = _language == Common::JA_JPN;
+
+			if (_game.platform == Common::kPlatformSegaCD) {
+				nudgeJapYPos &= !(id >= GUI_CTRL_NUMPAD_1 && id <= GUI_CTRL_NUMPAD_0);
+				nudgeJapYPos &= (id != GUI_CTRL_NUMPAD_BACK);
+				nudgeJapYPos &= (id != GUI_CTRL_ARROW_LEFT_BUTTON);
+				nudgeJapYPos &= (id != GUI_CTRL_ARROW_RIGHT_BUTTON);
+				nudgeJapYPos &= (id != GUI_CTRL_TEXT_SPEED_SLIDER);
+
+				textYPos -= nudgeJapYPos ? 4 : 2;
+
+				textXPos += 1;
+			}
+
 			_string[5].right = _screenWidth - 1;
 
 			// The original CJK DIG interpreter limits the clipping to the save slots. Other elements
 			// seem to (theoretically) be allowed to draw text wherever they want...
-			bool isSaveSlot = (id >= GUI_CTRL_FIRST_SG && id <= GUI_CTRL_LAST_SG);
+			bool isSaveSlot = (id >= GUI_CTRL_FIRST_SG && id <= GUI_CTRL_LAST_SG) && _game.platform != Common::kPlatformSegaCD;
 			Common::Rect clipRect(relCentX, relCentY, x, y);
 			drawGUIText(buttonString, isSaveSlot ? &clipRect : nullptr, textXPos, textYPos, textColor, centerFlag);
+
 			_string[5].right = tmpRight;
 		}
 
@@ -1543,7 +1558,7 @@ void ScummEngine::queryRestart() {
 bool ScummEngine::shouldHighlightLabelAndWait(int clickedControl) {
 	return ((clickedControl >= GUI_CTRL_SAVE_BUTTON && clickedControl <= GUI_CTRL_PATH_BUTTON) ||
 			(clickedControl == GUI_CTRL_DISPLAY_TEXT_CHECKBOX ||
-			 clickedControl == GUI_CTRL_SPOOLED_MUSIC_CHECKBOX));
+			 clickedControl == GUI_CTRL_SPOOLED_MUSIC_CHECKBOX)) || _game.platform == Common::kPlatformSegaCD;
 }
 
 void ScummEngine::fillSavegameLabels() {
@@ -1863,7 +1878,8 @@ void ScummEngine::showMainMenu() {
 			rightMsClicked = false;
 
 			if (clickedControl != -1) {
-				if (clickedControl < GUI_CTRL_FIRST_SG || clickedControl > GUI_CTRL_LAST_SG) {
+				if (clickedControl < GUI_CTRL_FIRST_SG || clickedControl > GUI_CTRL_LAST_SG ||
+					_game.platform == Common::kPlatformSegaCD) {
 					// Avoid highlighting the main container boxes :-)
 					if (clickedControl != GUI_CTRL_OUTER_BOX && clickedControl != GUI_CTRL_INNER_BOX) {
 						// Highlight the control
@@ -1883,7 +1899,7 @@ void ScummEngine::showMainMenu() {
 						if (executeMainMenuOperation(clickedControl, curMouseX, curMouseY, hasLoadedState))
 							break;
 					}
-				} else {
+				} else if (_game.platform != Common::kPlatformSegaCD) {
 					int tmp = _mainMenuSavegameLabel;
 					_mainMenuSavegameLabel = clickedControl;
 
@@ -1908,8 +1924,9 @@ void ScummEngine::showMainMenu() {
 
 		if (shouldQuit() && !_quitByGUIPrompt) {
 			clearClickedStatus();
-			if (executeMainMenuOperation(GUI_CTRL_QUIT_BUTTON, 0, 0, hasLoadedState) || _quitByGUIPrompt)
-				break;
+			if (_game.platform != Common::kPlatformSegaCD)
+				if (executeMainMenuOperation(GUI_CTRL_QUIT_BUTTON, 0, 0, hasLoadedState) || _quitByGUIPrompt)
+					break;
 		}
 	}
 
@@ -1919,7 +1936,8 @@ void ScummEngine::showMainMenu() {
 		_completeScreenRedraw = true;
 
 	// Restore the old cursor state only if we're not loading a game...
-	if (_saveScriptParam != GAME_PROPER_LOAD && _saveLoadFlag != 2) {
+	if (_saveScriptParam != GAME_PROPER_LOAD && _saveLoadFlag != 2 &&
+		!(_game.platform == Common::kPlatformSegaCD && hasLoadedState)) {
 		restoreCursorPostMenu();
 	} else if (_saveLoadFlag == 2) {
 		_cursor.state = 0;
@@ -1964,7 +1982,149 @@ void ScummEngine::showMainMenu() {
 	clearClickedStatus();
 }
 
+bool ScummEngine::executeMainMenuOperationSegaCD(int op, int mouseX, int mouseY, bool &hasLoadedState) {
+	switch (op) {
+	case GUI_CTRL_PLAY_BUTTON:
+		return true;
+	case GUI_CTRL_LOAD_BUTTON:
+		_menuPage = GUI_PAGE_LOAD;
+		setUpMainMenuControls();
+		drawMainMenuControls();
+		updateMainMenuControls();
+		ScummEngine::drawDirtyScreenParts();
+		break;
+	case GUI_CTRL_RESTART_BUTTON:
+		_menuPage = GUI_PAGE_RESTART;
+		setUpMainMenuControls();
+		drawMainMenuControls();
+		ScummEngine::drawDirtyScreenParts();
+		break;
+	case GUI_CTRL_OK_BUTTON:
+		if (_menuPage == GUI_PAGE_RESTART) {
+			_cursor.state = 0;
+			CursorMan.showMouse(false);
+			hasLoadedState = true;
+			restart();
+			return true;
+		} else if (_menuPage == GUI_PAGE_CODE_CONFIRM) {
+			_bootParam = atoi(_mainMenuSegaCDPasscode);
+			int args[16];
+			memset(args, 0, sizeof(args));
+			args[0] = _bootParam;
+
+			runScript(61, 0, 0, args);
+			hasLoadedState = _scummVars[411] == _bootParam;
+			_bootParam = 0;
+			if (!hasLoadedState) {
+				_menuPage = GUI_PAGE_INVALID_CODE;
+				setUpMainMenuControls();
+				drawMainMenuControls();
+				updateMainMenuControls();
+				ScummEngine::drawDirtyScreenParts();
+
+				waitForTimer(420);
+
+				_menuPage = GUI_PAGE_MAIN;
+				setUpMainMenuControls();
+				drawMainMenuControls();
+				updateMainMenuControls();
+				ScummEngine::drawDirtyScreenParts();
+			} else {
+				return true;
+			}
+		}
+
+		break;
+	case GUI_CTRL_CANCEL_BUTTON:
+		_menuPage = GUI_PAGE_MAIN;
+		setUpMainMenuControls();
+		drawMainMenuControls();
+		updateMainMenuControls();
+		ScummEngine::drawDirtyScreenParts();
+		break;
+	case GUI_CTRL_ARROW_LEFT_BUTTON:
+	case GUI_CTRL_ARROW_RIGHT_BUTTON:
+		if (_menuPage == GUI_PAGE_MAIN) {
+			if (op == GUI_CTRL_ARROW_LEFT_BUTTON) {
+				_defaultTextSpeed = CLIP<int>(_defaultTextSpeed - 1, 0, 9);
+			} else {
+				_defaultTextSpeed = CLIP<int>(_defaultTextSpeed + 1, 0, 9);
+			}
+
+			ConfMan.setInt("original_gui_text_speed", _defaultTextSpeed);
+			setTalkSpeed(_defaultTextSpeed);
+			syncSoundSettings();
+			ConfMan.flushToDisk();
+			drawMainMenuControls();
+			updateMainMenuControls();
+			ScummEngine::drawDirtyScreenParts();
+		}
+		break;
+	case GUI_CTRL_TEXT_SPEED_SLIDER:
+		_defaultTextSpeed = CLIP<int>((mouseX - 150) / 9, 0, 9);
+
+		ConfMan.setInt("original_gui_text_speed", _defaultTextSpeed);
+		setTalkSpeed(_defaultTextSpeed);
+		syncSoundSettings();
+		ConfMan.flushToDisk();
+		updateMainMenuControls();
+		ScummEngine::drawDirtyScreenParts();
+		break;
+	case GUI_CTRL_NUMPAD_0:
+	case GUI_CTRL_NUMPAD_1:
+	case GUI_CTRL_NUMPAD_2:
+	case GUI_CTRL_NUMPAD_3:
+	case GUI_CTRL_NUMPAD_4:
+	case GUI_CTRL_NUMPAD_5:
+	case GUI_CTRL_NUMPAD_6:
+	case GUI_CTRL_NUMPAD_7:
+	case GUI_CTRL_NUMPAD_8:
+	case GUI_CTRL_NUMPAD_9:
+	case GUI_CTRL_NUMPAD_BACK:
+	{
+		int inputNum = op == GUI_CTRL_NUMPAD_0 ? 0 : op;
+		int curIdx;
+		for (curIdx = 0; curIdx < sizeof(_mainMenuSegaCDPasscode); curIdx++) {
+			if (_mainMenuSegaCDPasscode[curIdx] == '\0')
+				break;
+		}
+
+		if (op == GUI_CTRL_NUMPAD_BACK) {
+			if (curIdx > 0) {
+				_mainMenuSegaCDPasscode[curIdx - 1] = '\0';
+			}
+
+		} else {
+			_mainMenuSegaCDPasscode[curIdx] = '0' + inputNum;
+
+			if (curIdx >= 3) { // Last digit
+				updateMainMenuControls();
+				ScummEngine::drawDirtyScreenParts();
+
+				waitForTimer(120);
+
+				_menuPage = GUI_PAGE_CODE_CONFIRM;
+				setUpMainMenuControls();
+			}
+		}
+
+		drawMainMenuControls();
+		updateMainMenuControls();
+		ScummEngine::drawDirtyScreenParts();
+		break;
+	}
+	default:
+		break;
+	}
+
+	return false;
+}
+
 bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool &hasLoadedState) {
+	if (_game.platform == Common::kPlatformSegaCD) {
+		return executeMainMenuOperationSegaCD(op, mouseX, mouseY, hasLoadedState);
+	}
+
 	char saveScreenTitle[512];
 	Common::String formattedString;
 	int curSlot;
@@ -2180,6 +2340,7 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 		break;
 	case GUI_CTRL_TEXT_SPEED_SLIDER:
 		_defaultTextSpeed = CLIP<int>((mouseX - (_game.version == 7 ? 108 : 102)) / 9, 0, 9);
+
 		ConfMan.setInt("original_gui_text_speed", _defaultTextSpeed);
 		setTalkSpeed(_defaultTextSpeed);
 		syncSoundSettings();
@@ -2363,6 +2524,11 @@ void ScummEngine_v4::setUpMainMenuControls() {
 }
 
 void ScummEngine::setUpMainMenuControls() {
+	if (_game.platform == Common::kPlatformSegaCD) {
+		setUpMainMenuControlsSegaCD();
+		return;
+	}
+
 	int yConstant;
 	bool isLoomVGA = (_game.id == GID_LOOM && _game.version == 4);
 
@@ -2555,6 +2721,217 @@ void ScummEngine::setUpMainMenuControls() {
 				210 - (isLoomVGA ? 10 : 0),
 				-9,
 				_savegameNames[i - 1].c_str(), 0, 0);
+		}
+	}
+}
+
+void ScummEngine::setUpMainMenuControlsSegaCD() {
+	int yConstant;
+	bool isJap = _language == Common::JA_JPN;
+
+	yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
+
+	for (int i = 0; i < ARRAYSIZE(_internalGUIControls); i++) {
+		_internalGUIControls[i].relativeCenterX = -1;
+	}
+
+	// Outer box
+	setUpInternalGUIControl(GUI_CTRL_OUTER_BOX,
+							getBannerColor(4),
+							getBannerColor(2),
+							getBannerColor(13),
+							getBannerColor(14),
+							getBannerColor(15),
+							getBannerColor(16),
+							getBannerColor(6),
+							getBannerColor(4),
+							20,
+							yConstant - 60,
+							300,
+							((yConstant + 60) < 0 ? -120 : yConstant + 60),
+							_emptyMsg, 1, 1);
+
+	// Load button
+	setUpInternalGUIControl(GUI_CTRL_LOAD_BUTTON,
+							getBannerColor(4),
+							getBannerColor(5),
+							getBannerColor(17),
+							getBannerColor(18),
+							getBannerColor(19),
+							getBannerColor(20),
+							getBannerColor(6),
+							getBannerColor(7),
+							isJap ? 26 : 44,
+							yConstant - 31,
+							isJap ? 111 : 103,
+							yConstant - 31 + 22,
+							getGUIString(gsLoad), 1, 1);
+
+	// Play button
+	setUpInternalGUIControl(GUI_CTRL_PLAY_BUTTON,
+							getBannerColor(4),
+							getBannerColor(5),
+							getBannerColor(17),
+							getBannerColor(18),
+							getBannerColor(19),
+							getBannerColor(20),
+							getBannerColor(6),
+							getBannerColor(7),
+							isJap ? 26 : 44,
+							yConstant - 5,
+							isJap ? 111 : 103,
+							yConstant - 5 + 22,
+							getGUIString(gsPlay), 1, 1);
+
+	// Restart button
+	setUpInternalGUIControl(GUI_CTRL_RESTART_BUTTON,
+							getBannerColor(4),
+							getBannerColor(5),
+							getBannerColor(17),
+							getBannerColor(18),
+							getBannerColor(19),
+							getBannerColor(20),
+							getBannerColor(6),
+							getBannerColor(7),
+							isJap ? 26 : 44,
+							yConstant + 21,
+							isJap ? 111 : 103,
+							yConstant + 21 + 22,
+							getGUIString(gsRestart), 1, 1);
+
+	if (_menuPage == GUI_PAGE_MAIN) {
+		// Arrow left button
+		setUpInternalGUIControl(GUI_CTRL_ARROW_LEFT_BUTTON,
+								getBannerColor(4),
+								getBannerColor(5),
+								getBannerColor(17),
+								getBannerColor(18),
+								getBannerColor(19),
+								getBannerColor(20),
+								getBannerColor(6),
+								getBannerColor(7),
+								235,
+								yConstant + 18,
+								247,
+								yConstant + 34,
+								_arrowLeft, 1, 1);
+
+		// Arrow right button
+		setUpInternalGUIControl(GUI_CTRL_ARROW_RIGHT_BUTTON,
+								getBannerColor(4),
+								getBannerColor(5),
+								getBannerColor(17),
+								getBannerColor(18),
+								getBannerColor(19),
+								getBannerColor(20),
+								getBannerColor(6),
+								getBannerColor(7),
+								248,
+								yConstant + 18,
+								260,
+								yConstant + 34,
+								_arrowRight, 1, 1);
+
+		setUpInternalGUIControl(GUI_CTRL_TEXT_SPEED_SLIDER,
+								getBannerColor(9),
+								getBannerColor(10),
+								getBannerColor(18),
+								getBannerColor(17),
+								getBannerColor(20),
+								getBannerColor(19),
+								getBannerColor(10),
+								getBannerColor(12),
+								152,
+								yConstant + 18,
+								235,
+								yConstant + 34,
+								_uncheckedBox, 1, 1);
+	}
+
+	if (_menuPage == GUI_PAGE_RESTART || _menuPage == GUI_PAGE_CODE_CONFIRM) {
+		// OK button
+		setUpInternalGUIControl(GUI_CTRL_OK_BUTTON,
+								getBannerColor(4),
+								getBannerColor(5),
+								getBannerColor(17),
+								getBannerColor(18),
+								getBannerColor(19),
+								getBannerColor(20),
+								getBannerColor(6),
+								getBannerColor(7),
+								isJap ? 115 : 149,
+								yConstant + 21,
+								200,
+								yConstant + 43,
+								getGUIString(gsOK), 1, 1);
+
+		// Cancel button
+		setUpInternalGUIControl(GUI_CTRL_CANCEL_BUTTON,
+								getBannerColor(4),
+								getBannerColor(5),
+								getBannerColor(17),
+								getBannerColor(18),
+								getBannerColor(19),
+								getBannerColor(20),
+								getBannerColor(6),
+								getBannerColor(7),
+								206,
+								yConstant + 21,
+								isJap ? 291 : 257,
+								yConstant + 43,
+								getGUIString(gsCancel), 1, 1);
+	}
+
+	if (_menuPage == GUI_PAGE_LOAD) {
+		Common::String numbers[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+
+		setUpInternalGUIControl(GUI_CTRL_NUMPAD_0,
+								getBannerColor(4),
+								getBannerColor(5),
+								getBannerColor(17),
+								getBannerColor(18),
+								getBannerColor(19),
+								getBannerColor(20),
+								getBannerColor(6),
+								getBannerColor(7),
+								197,
+								yConstant + 43,
+								211,
+								yConstant + 57,
+								numbers[0].c_str(), 1, 1);
+
+		setUpInternalGUIControl(GUI_CTRL_NUMPAD_BACK,
+								getBannerColor(4),
+								getBannerColor(5),
+								getBannerColor(17),
+								getBannerColor(18),
+								getBannerColor(19),
+								getBannerColor(20),
+								getBannerColor(6),
+								getBannerColor(7),
+								211,
+								yConstant + 43,
+								239,
+								yConstant + 57,
+								_arrowLeft, 1, 1);
+
+		for (int row = 0; row < 3; row++) {
+			for (int col = 0; col < 3; col++) {
+				setUpInternalGUIControl(row * 3 + (col + 1),
+										getBannerColor(4),
+										getBannerColor(5),
+										getBannerColor(17),
+										getBannerColor(18),
+										getBannerColor(19),
+										getBannerColor(20),
+										getBannerColor(6),
+										getBannerColor(7),
+										197 + col * 14,
+										yConstant + 29 - row * 14,
+										211 + col * 14,
+										yConstant + 43 - row * 14,
+										numbers[row * 3 + (col + 1)].c_str(), 1, 1);
+			}
 		}
 	}
 }
@@ -2928,6 +3305,11 @@ void ScummEngine_v6::setUpMainMenuControls() {
 }
 
 void ScummEngine::drawMainMenuControls() {
+	if (_game.platform == Common::kPlatformSegaCD) {
+		drawMainMenuControlsSegaCD();
+		return;
+	}
+
 	char namePrompt[256];
 	char loadPrompt[256];
 	char insertDisk[256];
@@ -3000,7 +3382,85 @@ void ScummEngine::drawMainMenuControls() {
 	_system->updateScreen();
 }
 
+void ScummEngine::drawMainMenuControlsSegaCD() {
+	char buf[256];
+	char formattedBuf[256];
+	bool isJap = _language == Common::JA_JPN;
+
+	int yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
+	int stringColor = getBannerColor(2);
+
+	drawInternalGUIControl(GUI_CTRL_OUTER_BOX, 0);
+	drawInternalGUIControl(GUI_CTRL_LOAD_BUTTON, 0);
+	drawInternalGUIControl(GUI_CTRL_PLAY_BUTTON, 0);
+	drawInternalGUIControl(GUI_CTRL_RESTART_BUTTON, 0);
+
+	convertMessageToString((const byte *)getGUIString(gsPause), (byte *)buf, sizeof(buf));
+	drawGUIText(buf, nullptr, isJap ? 38 : 24, yConstant - 52, stringColor, false);
+
+	convertMessageToString((const byte *)getGUIString(gsCurrentPasscode), (byte *)buf, sizeof(buf));
+	drawGUIText(buf, nullptr, isJap ? 128 : 137, yConstant - 52, stringColor, false);
+
+	Common::sprintf_s(buf, sizeof(buf), "%04d", _scummVars[411]);
+	drawGUIText(buf, nullptr, 184, yConstant - 34, stringColor, false);
+
+	if (_menuPage != GUI_PAGE_CODE_CONFIRM && _menuPage != GUI_PAGE_LOAD) {
+		for (int i = 0; i < sizeof(_mainMenuSegaCDPasscode); i++) {
+			_mainMenuSegaCDPasscode[i] = '\0';
+		}
+	}
+
+	if (_menuPage == GUI_PAGE_MAIN) {
+		drawInternalGUIControl(GUI_CTRL_TEXT_SPEED_SLIDER, 0);
+		drawInternalGUIControl(GUI_CTRL_ARROW_LEFT_BUTTON, 0);
+		drawInternalGUIControl(GUI_CTRL_ARROW_RIGHT_BUTTON, 0);
+	} else if (_menuPage == GUI_PAGE_LOAD) {
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_0, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_1, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_2, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_3, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_4, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_5, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_6, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_7, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_8, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_9, 0);
+
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_BACK, 0);
+
+		drawInternalGUIControl(GUI_CTRL_OK_BUTTON, 0);
+		drawInternalGUIControl(GUI_CTRL_CANCEL_BUTTON, 0);
+
+		convertMessageToString((const byte *)getGUIString(gsEnterPasscode), (byte *)buf, sizeof(buf));
+		drawGUIText(buf, nullptr, isJap ? 166 : 146, yConstant - 18, stringColor, false);
+	} else if (_menuPage == GUI_PAGE_RESTART) {
+		drawInternalGUIControl(GUI_CTRL_OK_BUTTON, 0);
+		drawInternalGUIControl(GUI_CTRL_CANCEL_BUTTON, 0);
+
+		convertMessageToString((const byte *)getGUIString(gsRestartGame), (byte *)buf, sizeof(buf));
+		drawGUIText(buf, nullptr, isJap ? 163 : 151, yConstant + 4, stringColor, false);
+	} else if (_menuPage == GUI_PAGE_CODE_CONFIRM) {
+		drawInternalGUIControl(GUI_CTRL_OK_BUTTON, 0);
+		drawInternalGUIControl(GUI_CTRL_CANCEL_BUTTON, 0);
+
+		convertMessageToString((const byte *)getGUIString(gsConfirmPasscode), (byte *)buf, sizeof(buf));
+		Common::sprintf_s(formattedBuf, sizeof(formattedBuf), buf, atoi(_mainMenuSegaCDPasscode));
+		drawGUIText(formattedBuf, nullptr, isJap ? 129 : 135, yConstant + 4, stringColor, false);
+	} else if (_menuPage == GUI_PAGE_INVALID_CODE) {
+		convertMessageToString((const byte *)getGUIString(gsInvalidPasscode), (byte *)buf, sizeof(buf));
+		drawGUIText(buf, nullptr, isJap ? 152 : 141, yConstant + 28, stringColor, false);
+	}
+
+	ScummEngine::drawDirtyScreenParts();
+	_system->updateScreen();
+}
+
 void ScummEngine::updateMainMenuControls() {
+	if (_game.platform == Common::kPlatformSegaCD) {
+		updateMainMenuControlsSegaCD();
+		return;
+	}
+
 	if ((_game.variant && !strcmp(_game.variant, "Floppy")) || _game.version < 6)
 		return;
 
@@ -3130,7 +3590,43 @@ void ScummEngine::updateMainMenuControls() {
 	_system->updateScreen();
 }
 
+void ScummEngine::updateMainMenuControlsSegaCD() {
+	char msg[256];
+	int yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
+	bool isJap = _language == Common::JA_JPN;
+
+	if (_menuPage == GUI_PAGE_MAIN) {
+		strncpy(_mainMenuTextSpeedSlider, "\x3a\x3a\x3a\x3a\x3a\x3a\x3a\x3a\x3a\x3a", sizeof(_mainMenuTextSpeedSlider));
+
+		if (VAR_CHARINC != 0xFF)
+			_mainMenuTextSpeedSlider[9 - VAR(VAR_CHARINC)] = '\x3b';
+
+		_internalGUIControls[GUI_CTRL_TEXT_SPEED_SLIDER].label = _mainMenuTextSpeedSlider;
+
+		drawInternalGUIControl(GUI_CTRL_TEXT_SPEED_SLIDER, 0);
+
+		convertMessageToString((const byte *)getGUIString(gsTextSpeed), (byte *)msg, sizeof(msg));
+		drawGUIText(msg, nullptr, isJap ? 118 : 167, yConstant, getBannerColor(2), false);
+
+		convertMessageToString((const byte *)getGUIString(gsSlowFast), (byte *)msg, sizeof(msg));
+		drawGUIText(msg, nullptr, isJap ? 151 : 158, yConstant + 37, getBannerColor(2), false);
+	} else if (_menuPage == GUI_PAGE_LOAD) {
+		drawLine(155, yConstant + 15, 191, yConstant + 15, getBannerColor(17));
+		drawLine(155, yConstant + 28, 191, yConstant + 28, getBannerColor(17));
+		drawLine(155, yConstant + 15, 155, yConstant + 28, getBannerColor(17));
+		drawLine(191, yConstant + 15, 191, yConstant + 28, getBannerColor(17));
+
+		drawGUIText(_mainMenuSegaCDPasscode, nullptr, 157, yConstant + 16, getBannerColor(2), false);
+	}
+
+	ScummEngine::drawDirtyScreenParts();
+	_system->updateScreen();
+}
+
 void ScummEngine::drawMainMenuTitle(const char *title) {
+	if (_game.platform == Common::kPlatformSegaCD)
+		return;
+
 	int boxColor, stringColor;
 	int yConstantV6 = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
 
@@ -3203,7 +3699,11 @@ void ScummEngine::drawGUIText(const char *buttonString, Common::Rect *clipRect, 
 	_string[5].right = clipRect ? clipRect->right : _screenWidth - 1;
 	_string[5].center = centerFlag;
 	_string[5].color = textColor;
-	_string[5].charset = _game.version > 3 ? 1 : 0;
+
+	if (_game.platform == Common::kPlatformSegaCD)
+		_string[5].charset = 6;
+	else
+		_string[5].charset = _game.version > 3 ? 1 : 0;
 
 	drawString(5, (const byte *)buttonString);
 	_string[5].right = tmpRight;
@@ -3355,12 +3855,15 @@ const char *ScummEngine_v6::getGUIString(int stringId) {
 const char *ScummEngine::getGUIString(int stringId) {
 	InfoDialog d(this, 0);
 	int resStringId = -1;
-
+	bool isSegaCD = _game.platform == Common::kPlatformSegaCD;
 	switch (stringId) {
 	case gsPause:
-		resStringId = 4;
+		resStringId = isSegaCD ? 20 : 4;
 		break;
 	case gsRestart:
+		resStringId = isSegaCD ? 23 : 5;
+		break;
+	case gsRestartGame:
 		resStringId = 5;
 		break;
 	case gsQuitPrompt:
@@ -3498,6 +4001,24 @@ const char *ScummEngine::getGUIString(int stringId) {
 		break;
 	case gsTandyMode:
 		resStringId = 46;
+		break;
+	case gsSlowFast:
+		resStringId = 22;
+		break;
+	case gsCurrentPasscode:
+		resStringId = 24;
+		break;
+	case gsEnterPasscode:
+		resStringId = 25;
+		break;
+	case gsInvalidPasscode:
+		resStringId = 26;
+		break;
+	case gsConfirmPasscode:
+		resStringId = 27;
+		break;
+	case gsTextSpeed:
+		resStringId = 28;
 		break;
 	default:
 		break;

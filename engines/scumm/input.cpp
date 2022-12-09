@@ -251,7 +251,7 @@ void ScummEngine::parseEvent(Common::Event event) {
 		break;
 	case Common::EVENT_RETURN_TO_LAUNCHER:
 	case Common::EVENT_QUIT:
-		if (isUsingOriginalGUI()) {
+		if (isUsingOriginalGUI() && _game.platform != Common::kPlatformSegaCD) {
 			if (!_quitByGUIPrompt && !_mainMenuIsActive) {
 				bool exitType = (event.type == Common::EVENT_RETURN_TO_LAUNCHER);
 				// If another message banner is currently on the screen, close it
@@ -882,6 +882,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 	bool mainmenuKeyEnabled = (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
 	bool snapScrollKeyEnabled = (_game.version >= 2 && _game.version <= 4);
 	bool optionKeysEnabled = !isUsingOriginalGUI();
+	bool isSegaCD = _game.platform == Common::kPlatformSegaCD;
 
 	// In FM-TOWNS games F8 / restart is always enabled
 	if (_game.platform == Common::kPlatformFMTowns)
@@ -897,20 +898,26 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		char sliderString[256];
 		PauseToken pt;
 
-		if ((VAR_PAUSE_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_PAUSE_KEY))) ||
-			(lastKeyHit.keycode == Common::KEYCODE_SPACE && _game.features & GF_DEMO)) {
-			// Force the cursor OFF...
-			int8 oldCursorState = _cursor.state;
-			_cursor.state = 0;
-			CursorMan.showMouse(_cursor.state > 0);
-			// "Game Paused.  Press SPACE to Continue."
-			if (_game.version > 4)
-				showBannerAndPause(0, -1, getGUIString(gsPause));
-			else
-				showOldStyleBannerAndPause(getGUIString(gsPause), 12, -1);
+		if (((VAR_PAUSE_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_PAUSE_KEY))) ||
+			(lastKeyHit.keycode == Common::KEYCODE_SPACE && _game.features & GF_DEMO))) {
+			if (isSegaCD) {
+				if (VAR(VAR_MAINMENU_KEY) != 0)
+					showMainMenu();
+				return;
+			} else {
+				// Force the cursor OFF...
+				int8 oldCursorState = _cursor.state;
+				_cursor.state = 0;
+				CursorMan.showMouse(_cursor.state > 0);
+				// "Game Paused.  Press SPACE to Continue."
+				if (_game.version > 4)
+					showBannerAndPause(0, -1, getGUIString(gsPause));
+				else
+					showOldStyleBannerAndPause(getGUIString(gsPause), 12, -1);
 
-			_cursor.state = oldCursorState;
-			return;
+				_cursor.state = oldCursorState;
+				return;
+			}
 		} else if (_game.version <= 2 && lastKeyHit.keycode == Common::KEYCODE_SPACE) {
 			printMessageAndPause(getGUIString(gsPause), 0, -1, true);
 			return;
@@ -985,7 +992,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 		// "Text Speed  Slow  ==========  Fast"
 		if (((_game.version > 3 && _game.version < 8) || (_game.version == 8 && (_game.features & GF_DEMO)))
-			&& (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-')) {
+			&& (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-') && !isSegaCD) {
 			if (VAR_CHARINC == 0xFF)
 				return;
 
@@ -1026,7 +1033,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		}
 
 		if (_game.version <= 2 && (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-' ||
-			lastKeyHit.ascii == '>' || lastKeyHit.ascii == '<')) {
+			lastKeyHit.ascii == '>' || lastKeyHit.ascii == '<') && !isSegaCD) {
 			Common::KeyState ks = lastKeyHit;
 			byte textSpeedColor;
 
@@ -1050,7 +1057,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		}
 
 
-		if (_game.version > 4 && lastKeyHit.keycode == Common::KEYCODE_k && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+		if (_game.version > 4 && lastKeyHit.keycode == Common::KEYCODE_k && lastKeyHit.hasFlags(Common::KBD_CTRL) && !isSegaCD) {
 			showBannerAndPause(0, 120, getGUIString(gsHeap), _res->getHeapSize() / 1024);
 			return;
 		}
@@ -1066,7 +1073,12 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 		if (VAR_MAINMENU_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_MAINMENU_KEY) && lastKeyHit.hasFlags(0))
 			&& _game.version > 3) {
-			showMainMenu();
+			if (isSegaCD) {
+				// We map the GMM to F5, while SPACE (which acts as our pause button) calls the original menu...
+				openMainMenuDialog();
+			} else {
+				showMainMenu();
+			}
 			return;
 		} else if (lastKeyHit.keycode == Common::KEYCODE_F5 && _game.version == 3 && _game.platform == Common::kPlatformMacintosh) {
 			// We don't have original menus for Mac versions of LOOM and INDY3, so let's just open the GMM...
@@ -1104,7 +1116,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		// The following ones serve no purpose whatsoever, but just for the sake of completeness...
 		// Also, some of these were originally mapped with the CTRL flag, but they would clash with other
 		// internal ScummVM commands, so they are instead available with the SHIFT flag.
-		if (_game.version < 7) {
+		if (_game.version < 7 && !isSegaCD) {
 			if (_game.version >= 4 && lastKeyHit.keycode == Common::KEYCODE_j && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
 				if (_game.version == 4) {
 					showOldStyleBannerAndPause(getGUIString(gsRecalJoystick), 2, 90);
