@@ -364,9 +364,12 @@ class ResourceManager;
  * GUI defines and enums.
  */
 
-#define GUI_PAGE_MAIN 0
-#define GUI_PAGE_SAVE 1
-#define GUI_PAGE_LOAD 2
+#define GUI_PAGE_MAIN         0
+#define GUI_PAGE_SAVE         1
+#define GUI_PAGE_LOAD         2
+#define GUI_PAGE_RESTART      3 // Sega CD
+#define GUI_PAGE_CODE_CONFIRM 4 // Sega CD
+#define GUI_PAGE_INVALID_CODE 5 // Sega CD
 
 #define GUI_CTRL_FIRST_SG               1
 #define GUI_CTRL_LAST_SG                9
@@ -388,6 +391,21 @@ class ResourceManager;
 #define GUI_CTRL_OUTER_BOX              26
 #define GUI_CTRL_INNER_BOX              27
 
+// Sega CD
+#define GUI_CTRL_NUMPAD_1           1
+#define GUI_CTRL_NUMPAD_2           2
+#define GUI_CTRL_NUMPAD_3           3
+#define GUI_CTRL_NUMPAD_4           4
+#define GUI_CTRL_NUMPAD_5           5
+#define GUI_CTRL_NUMPAD_6           6
+#define GUI_CTRL_NUMPAD_7           7
+#define GUI_CTRL_NUMPAD_8           8
+#define GUI_CTRL_NUMPAD_9           9
+#define GUI_CTRL_NUMPAD_0           10
+#define GUI_CTRL_RESTART_BUTTON     13
+#define GUI_CTRL_ARROW_LEFT_BUTTON  16
+#define GUI_CTRL_ARROW_RIGHT_BUTTON 17
+#define GUI_CTRL_NUMPAD_BACK        23
 
 enum GUIString {
 	gsPause = 0,
@@ -444,7 +462,13 @@ enum GUIString {
 	gsEGAMode = 52,
 	gsCGAMode = 53,
 	gsHerculesMode = 54,
-	gsTandyMode = 55
+	gsTandyMode = 55,
+	gsCurrentPasscode = 56,
+	gsEnterPasscode = 57,
+	gsConfirmPasscode = 58,
+	gsInvalidPasscode = 59,
+	gsSlowFast = 60,
+	gsRestartGame = 61
 };
 
 struct InternalGUIControl {
@@ -637,6 +661,8 @@ protected:
 	const char _checkedBox[2] = {'x', '\0'};
 	const char _arrowUp[2] = {'\x18', '\0'};
 	const char _arrowDown[2] = {'\x19', '\0'};
+	const char _arrowLeft[2] = {'\x3c', '\0'};
+	const char _arrowRight[2] = {'\x3d', '\0'};
 
 	Common::StringArray _savegameNames;
 	int _menuPage = 0;
@@ -649,6 +675,7 @@ protected:
 	char _mainMenuSpeechSlider[17];
 	char _mainMenuSfxSlider[17];
 	char _mainMenuTextSpeedSlider[17];
+	char _mainMenuSegaCDPasscode[5];
 	int _spooledMusicIsToBeEnabled = 1;
 	int _saveScriptParam = 0;
 	int _guiCursorAnimCounter = 0;
@@ -715,10 +742,14 @@ protected:
 
 	void showMainMenu();
 	virtual void setUpMainMenuControls();
+	void setUpMainMenuControlsSegaCD();
 	void drawMainMenuControls();
+	void drawMainMenuControlsSegaCD();
 	void updateMainMenuControls();
+	void updateMainMenuControlsSegaCD();
 	void drawMainMenuTitle(const char *title);
 	bool executeMainMenuOperation(int op, int mouseX, int mouseY, bool &hasLoadedState);
+	bool executeMainMenuOperationSegaCD(int op, int mouseX, int mouseY, bool &hasLoadedState);
 	bool shouldHighlightLabelAndWait(int clickedControl);
 	void fillSavegameLabels();
 	bool canWriteGame(int slotId);

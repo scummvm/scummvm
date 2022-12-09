@@ -3167,8 +3167,7 @@ bool ScummEngine::isUsingOriginalGUI() {
 
 	if (_game.platform == Common::kPlatformNES ||
 		_game.platform == Common::kPlatformPCEngine ||
-		(_game.platform == Common::kPlatformAtariST && _game.version == 2) ||
-		(_game.platform == Common::kPlatformSegaCD && _language == Common::JA_JPN))
+		(_game.platform == Common::kPlatformAtariST && _game.version == 2))
 		return false;
 
 	if (_game.heversion != 0)
@@ -3198,10 +3197,14 @@ void ScummEngine::runBootscript() {
 	}
 
 	args[0] = _bootParam;
+
 	if (_game.id == GID_MANIAC && (_game.features & GF_DEMO) && (_game.platform != Common::kPlatformC64))
 		runScript(9, 0, 0, args);
 	else
 		runScript(1, 0, 0, args);
+
+	if (_game.platform == Common::kPlatformSegaCD)
+		_scummVars[411] = _bootParam;
 }
 
 #ifdef ENABLE_HE
