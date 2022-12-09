@@ -94,12 +94,6 @@ public:
 	Path(const String &str, char separator = '/');
 
 	/**
-	 * Returns the unmodified, internal representation of the path,
-	 * using '\x1f' as a directory separator.
-	 */
-	const String &rawString() const { return _str; }
-
-	/**
 	 * Converts a path to a string using the given directory separator.
 	 * 
 	 * @param separator The character used to separate directory names.

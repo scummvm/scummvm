@@ -29,7 +29,7 @@ const char DIR_SEPARATOR = '\x1f'; // unit separator
 namespace Common {
 
 Path::Path(const Path &path) {
-	_str = path.rawString();
+	_str = path._str;
 }
 
 Path::Path(const char *str, char separator) {
@@ -83,11 +83,11 @@ Path Path::appendComponent(const String &x) const {
 }
 
 bool Path::operator==(const Path &x) const {
-	return _str == x.rawString();
+	return _str == x._str;
 }
 
 bool Path::operator!=(const Path &x) const {
-	return _str != x.rawString();
+	return _str != x._str;
 }
 
 bool Path::empty() const {
@@ -95,7 +95,7 @@ bool Path::empty() const {
 }
 
 Path &Path::operator=(const Path &path) {
-	_str = path.rawString();
+	_str = path._str;
 	return *this;
 }
 
@@ -115,7 +115,7 @@ void Path::set(const char *str, char separator) {
 }
 
 Path &Path::appendInPlace(const Path &x) {
-	_str += x.rawString();
+	_str += x._str;
 	return *this;
 }
 
@@ -157,10 +157,10 @@ Path &Path::joinInPlace(const Path &x) {
 	if (x.empty())
 		return *this;
 
-	if (!_str.empty() && _str.lastChar() != DIR_SEPARATOR && x.rawString().firstChar() != DIR_SEPARATOR)
+	if (!_str.empty() && _str.lastChar() != DIR_SEPARATOR && x._str.firstChar() != DIR_SEPARATOR)
 		_str += DIR_SEPARATOR;
 
-	_str += x.rawString();
+	_str += x._str;
 
 	return *this;
 }
@@ -198,7 +198,7 @@ Path Path::join(const char *str, char separator) const {
 }
 
 Path Path::punycodeDecode() const {
-	StringTokenizer tok(rawString(), String(DIR_SEPARATOR));
+	StringTokenizer tok(_str, String(DIR_SEPARATOR));
 	String res;
 
 	while (!tok.empty()) {
@@ -211,7 +211,7 @@ Path Path::punycodeDecode() const {
 }
 
 String Path::getIdentifierString() const {
-	StringTokenizer tok(rawString(), String(DIR_SEPARATOR));
+	StringTokenizer tok(_str, String(DIR_SEPARATOR));
 	String res;
 
 	while (!tok.empty()) {
@@ -229,7 +229,7 @@ String Path::getIdentifierString() const {
 }
 
 Path Path::punycodeEncode() const {
-	StringTokenizer tok(rawString(), String(DIR_SEPARATOR));
+	StringTokenizer tok(_str, String(DIR_SEPARATOR));
 	String res;
 
 	while (!tok.empty()) {
