@@ -214,29 +214,16 @@ public:                                                           \
 
 class cSerializeMemberField {
 public:
-	cSerializeMemberField(Hpl1::StaticString asName, size_t alOffset, size_t alSize, eSerializeType alType,
-						  eSerializeMainType aMainType) : msName(asName), msClassName(""){
-		mlOffset = alOffset;
-		mlSize = alSize;
-		mType = alType;
-		mMainType = aMainType;
+	constexpr cSerializeMemberField(Hpl1::StaticString asName, size_t alOffset, size_t alSize, eSerializeType alType,
+						  eSerializeMainType aMainType) : msName(asName), msClassName(""), mlOffset(alOffset), mlSize(alSize), mType(alType), mMainType(aMainType), mlArraySize(0) {
 	}
 
-	cSerializeMemberField(Hpl1::StaticString asName, size_t alOffset, size_t alSize, eSerializeType alType,
-						  eSerializeMainType aMainType, size_t alArraySize) : msName(asName), msClassName("") {
-		mlOffset = alOffset;
-		mlSize = alSize;
-		mType = alType;
-		mMainType = aMainType;
-		mlArraySize = alArraySize;
+	constexpr cSerializeMemberField(Hpl1::StaticString asName, size_t alOffset, size_t alSize, eSerializeType alType,
+						  eSerializeMainType aMainType, size_t alArraySize) : msName(asName), msClassName(""), mlOffset(alOffset), mlSize(alSize), mType(alType), mMainType(aMainType), mlArraySize(alArraySize) {
 	}
 
-	cSerializeMemberField(Hpl1::StaticString asName, size_t alOffset, size_t alSize, eSerializeType alType,
-						  eSerializeMainType aMainType, Hpl1::StaticString asClassName) : msName(asName), msClassName(asClassName) {
-		mlOffset = alOffset;
-		mlSize = alSize;
-		mType = alType;
-		mMainType = aMainType;
+	constexpr cSerializeMemberField(Hpl1::StaticString asName, size_t alOffset, size_t alSize, eSerializeType alType,
+						  eSerializeMainType aMainType, Hpl1::StaticString asClassName) : msName(asName), msClassName(asClassName), mlOffset(alOffset), mlSize(alSize), mType(alType), mMainType(aMainType), mlArraySize(0) {
 	}
 
 	Hpl1::StaticString msName;
