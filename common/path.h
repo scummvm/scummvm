@@ -151,6 +151,11 @@ public:
 	/** @overload */
 	Path append(const char *str, char separator = '/') const;
 
+	/**
+	 * Appends exactly one component, without any separators
+	 * and prepends a separator if necessarry
+	 */
+	Path appendComponent(const String &x) const;
 
 	/**
 	 * Joins the given path to this path (in-place).
