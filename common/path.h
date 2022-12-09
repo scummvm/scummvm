@@ -52,6 +52,23 @@ private:
 	String _str;
 
 public:
+	/**
+	 * Hash and comparator for Path with following changes:
+	 * * case-insensitive
+	 * * decoding of punycode
+	 * * Matching ':' and '/' inside path components to
+	 * This allows a path "Sound Manager 3.1 / SoundLib<separator>Sound"
+	 * to match both "xn--Sound Manager 3.1  SoundLib-lba84k/Sound"
+	 * and "Sound Manager 3.1 : SoundLib/Sound"
+	 */
+	struct IgnoreCaseAndMac_EqualsTo {
+		bool operator()(const Path& x, const Path& y) const;
+	};
+
+	struct IgnoreCaseAndMac_Hash {
+		uint operator()(const Path& x) const;
+	};
+
 	/** Construct a new empty path. */
 	Path() {}
 
