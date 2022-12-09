@@ -184,6 +184,8 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 				// possible to gracefully stop the playback
 				if (looping)
 					_channels[soundChannel - 1].loopPtr = dynamic_cast<Audio::LoopableAudioStream *>(as);
+				else
+					_channels[soundChannel - 1].loopPtr = nullptr;
 				playStream(*as, soundChannel);
 				setLastPlayedSound(soundChannel, memberID, stopOnZero);
 			}
@@ -293,12 +295,15 @@ bool DirectorSound::isChannelActive(uint8 soundChannel) {
 	if (!isChannelValid(soundChannel))
 		return false;
 
+	if (!_mixer->isSoundHandleActive(_channels[soundChannel - 1].handle))
+		return false;
+
 	// Looped sounds are considered to be inactive after the first play
 	// WORKAROUND HACK
 	if (_channels[soundChannel - 1].loopPtr != nullptr)
 		return _channels[soundChannel - 1].loopPtr->getCompleteIterations() < 1;
 
-	return _mixer->isSoundHandleActive(_channels[soundChannel - 1].handle);
+	return true;
 }
 
 bool DirectorSound::isChannelValid(uint8 soundChannel) {
