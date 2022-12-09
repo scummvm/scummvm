@@ -129,7 +129,7 @@ void IsoMap::loadImages(const ByteArray &resourceData) {
 	ByteArrayReadStreamEndian readS(resourceData, _vm->isBigEndian());
 	readS.readUint16(); // skip
 	i = longOffset ? readS.readUint32() : readS.readUint16();
-	i = i / SAGA_ISOTILEDATA_LEN;
+	i = i / (longOffset ? 10 : 8);
 	_tilesTable.resize(i);
 	Common::Array<size_t> tempOffsets;
 	tempOffsets.resize(_tilesTable.size());

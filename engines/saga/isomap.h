@@ -30,7 +30,6 @@ namespace Saga {
 
 #define ITE_OBJ_MAP 14
 
-#define SAGA_ISOTILEDATA_LEN 8
 #define SAGA_ISOTILE_WIDTH 32
 #define SAGA_ISOTILE_BASEHEIGHT 15
 #define SAGA_TILE_NOMINAL_H 16
