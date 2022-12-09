@@ -51,6 +51,7 @@ class Path {
 private:
 	String _str;
 
+	String getIdentifierString() const;
 public:
 	/**
 	 * Hash and comparator for Path with following changes:

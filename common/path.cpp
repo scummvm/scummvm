@@ -208,6 +208,24 @@ Path Path::punycodeDecode() const {
 	return Path(res, DIR_SEPARATOR);
 }
 
+String Path::getIdentifierString() const {
+	StringTokenizer tok(rawString(), String(DIR_SEPARATOR));
+	String res;
+
+	while (!tok.empty()) {
+		String part = punycode_decodefilename(tok.nextToken());
+		for (uint i = 0; i < part.size(); i++)
+			if (part[i] == '/')
+				res += ':';
+			else
+				res += part[i];
+		if (!tok.empty())
+			res += DIR_SEPARATOR;
+	}
+
+	return res;
+}
+
 Path Path::punycodeEncode() const {
 	StringTokenizer tok(rawString(), String(DIR_SEPARATOR));
 	String res;
@@ -230,15 +248,15 @@ bool Path::matchPattern(const Path& pattern) const {
 	// Prevent wildcards from matching the directory separator.
 	const char wildcardExclusions[] = { DIR_SEPARATOR, '\0' };
 
-	return punycodeDecode()._str.matchString(pattern.punycodeDecode()._str, true, wildcardExclusions);
+	return getIdentifierString().matchString(pattern.getIdentifierString(), true, wildcardExclusions);
 }
 
 bool Path::IgnoreCaseAndMac_EqualsTo::operator()(const Path& x, const Path& y) const {
-	return x.punycodeDecode()._str.equalsIgnoreCase(y.punycodeDecode()._str);
+	return x.getIdentifierString().equalsIgnoreCase(y.getIdentifierString());
 }
 
 uint Path::IgnoreCaseAndMac_Hash::operator()(const Path& x) const {
-	return hashit_lower(x.punycodeDecode()._str.c_str());
+	return hashit_lower(x.getIdentifierString().c_str());
 }
 
 } // End of namespace Common
