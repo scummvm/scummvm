@@ -24,6 +24,8 @@
 #include "common/punycode.h"
 #include "common/hash-str.h"
 
+const char DIR_SEPARATOR = '\x1f'; // unit separator
+
 namespace Common {
 
 Path::Path(const Path &path) {

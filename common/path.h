@@ -36,8 +36,6 @@ namespace Common {
  * @{
  */
 
-const char DIR_SEPARATOR = '\x1f'; // unit separator
-
 /**
  * Simple path class. Allows simple conversion to/from path strings with
  * arbitrary directory separators, providing a common representation.
