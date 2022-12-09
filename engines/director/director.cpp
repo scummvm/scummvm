@@ -323,7 +323,7 @@ void DirectorEngine::parseOptions() {
 					_options.startMovie.startFrame = atoi(tail.c_str());
 			}
 
-			_options.startMovie.startMovie = Common::punycode_decodepath(_options.startMovie.startMovie).toString(_dirSeparator);
+			_options.startMovie.startMovie = Common::Path(_options.startMovie.startMovie).punycodeDecode().toString(_dirSeparator);
 
 			debug(2, "parseOptions(): Movie is: %s, frame is: %d", _options.startMovie.startMovie.c_str(), _options.startMovie.startFrame);
 		} else if (key == "startup") {

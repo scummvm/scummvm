@@ -20,6 +20,8 @@
  */
 
 #include "common/path.h"
+#include "common/tokenizer.h"
+#include "common/punycode.h"
 
 namespace Common {
 
@@ -53,7 +55,7 @@ Path Path::getParent() const {
 	if (_str.size() < 2)
 		return Path();
 	size_t separatorPos = _str.findLastOf(DIR_SEPARATOR, _str.size() - 2);
-	if (separatorPos == Common::String::npos)
+	if (separatorPos == String::npos)
 		return Path();
 	return Path(_str.substr(0, separatorPos + 1), DIR_SEPARATOR);
 }
@@ -62,7 +64,7 @@ Path Path::getLastComponent() const {
 	if (_str.size() < 2)
 		return *this;
 	size_t separatorPos = _str.findLastOf(DIR_SEPARATOR, _str.size() - 2);
-	if (separatorPos == Common::String::npos)
+	if (separatorPos == String::npos)
 		return *this;
 	return Path(_str.substr(separatorPos + 1), DIR_SEPARATOR);
 }
@@ -180,6 +182,37 @@ Path Path::join(const char *str, char separator) const {
 	Path temp(*this);
 	temp.joinInPlace(str, DIR_SEPARATOR);
 	return temp;
+}
+
+Path Path::punycodeDecode() const {
+	StringTokenizer tok(rawString(), String(DIR_SEPARATOR));
+	String res;
+
+	while (!tok.empty()) {
+		res += punycode_decodefilename(tok.nextToken());
+		if (!tok.empty())
+			res += DIR_SEPARATOR;
+	}
+
+	return Path(res, DIR_SEPARATOR);
+}
+
+Path Path::punycodeEncode() const {
+	StringTokenizer tok(rawString(), String(DIR_SEPARATOR));
+	String res;
+
+	while (!tok.empty()) {
+		String part = tok.nextToken();
+		if (punycode_needEncode(part))
+			res += punycode_encodefilename(part);
+		else
+			res += part;
+
+		if (!tok.empty())
+			res += DIR_SEPARATOR;
+	}
+
+	return Path(res, DIR_SEPARATOR);
 }
 
 } // End of namespace Common
