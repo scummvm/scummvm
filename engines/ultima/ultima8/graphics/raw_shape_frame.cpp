@@ -112,7 +112,7 @@ void RawShapeFrame::loadGenericFormat(const uint8 *data, uint32 size, const Conv
 		return;
 
 	// Fairly arbitrary sanity check
-	if (_height > 4096 || _width > 4096 || _xoff > 4096 || _yoff > 4096) {
+	if (_height < 0 || _height > 4096 || _width < 0 || _width > 4096 || _xoff > 4096 || _yoff > 4096) {
 		warning("got some invalid data loading shape");
 		_width = _height = _xoff = _yoff = 0;
 		return;
