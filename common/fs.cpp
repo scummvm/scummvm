@@ -309,7 +309,7 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const Path& pr
 						        Common::toPrintable(name).c_str());
 					}
 				}
-				cacheDirectoryRecursive(*it, depth - 1, _flat ? prefix : lowercaseName + DIR_SEPARATOR);
+				cacheDirectoryRecursive(*it, depth - 1, _flat ? prefix : Common::Path(lowercaseName + DIR_SEPARATOR, DIR_SEPARATOR));
 				_subDirCache[lowercaseName] = *it;
 			}
 		} else {
