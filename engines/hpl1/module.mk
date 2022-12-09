@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	string.o \
 	opengl.o \
 	graphics.o \
+	serialize.o \
 	engine/ai/AI.o \
 	engine/ai/AINodeContainer.o \
 	engine/ai/AINodeGenerator.o \
