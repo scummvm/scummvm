@@ -50,7 +50,7 @@ void Map51::special() {
 }
 
 void Map51::special00() {
-	send(SoundMessage(STRING["maps.map51.painted"]));
+	send(SoundMessage(STRING["maps.wall_painted"]));
 }
 
 void Map51::special01() {
@@ -129,7 +129,7 @@ void Map51::special17() {
 }
 
 void Map51::special18() {
-	// No implementation
+	special19();
 }
 
 void Map51::special19() {

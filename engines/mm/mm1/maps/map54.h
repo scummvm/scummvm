@@ -67,7 +67,7 @@ public:
 	/**
 	 * Changes the map
 	 */
-	void changeMap();
+	void sorpigalInn();
 };
 
 } // namespace Maps

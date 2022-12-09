@@ -29,8 +29,32 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+#define ANSWER_OFFSET 274
+
 void Map48::special() {
 	g_events->addView("Orango");
+}
+
+void Map48::orangoAnswer(const Common::String &answer) {
+	Common::String properAnswer;
+	for (int i = 0; i < 15 && _data[ANSWER_OFFSET + i]; ++i)
+		properAnswer += (_data[ANSWER_OFFSET + i] & 0x7f) + 29;
+
+	if (answer.equalsIgnoreCase(properAnswer)) {
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			Character &c = g_globals->_party[i];
+			c._flags[13] |= CHARFLAG13_ALAMAR;
+		}
+
+		g_maps->_mapPos = Common::Point(8, 5);
+		g_maps->changeMap(0x604, 1);
+		send(SoundMessage(STRING["maps.map48.orango3"]));
+
+	} else {
+		g_maps->_mapPos.x++;
+		updateGame();
+		send(SoundMessage(13, 2, STRING["maps.map48.orango2"]));
+	}
 }
 
 } // namespace Maps

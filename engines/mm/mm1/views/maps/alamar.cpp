@@ -57,19 +57,16 @@ bool Alamar::msgFocus(const FocusMessage &msg) {
 
 void Alamar::draw() {
 	MM1::Maps::Map49 &map = *static_cast<MM1::Maps::Map49 *>(g_maps->_currentMap);
+	clearSurface();
 
 	if (_succeeded) {
-		clearSurface();
 		writeString(0, 0, STRING["maps.map49.alamar1"]);
 		writeString(STRING["maps.map49.alamar3"]);
 
 	} else if (map[HAS_EYE]) {
-		close();
-		map.redrawGame();
-		send("View", DrawGraphicMessage(7));
-		send("View", DrawGraphicMessage(6));
+		send("View", DrawGraphicMessage(65 + 7));
+		send("View", DrawGraphicMessage(65 + 8));
 
-		clearSurface();
 		writeString(0, 0, STRING["maps.map49.alamar1"]);
 		writeString(STRING["maps.map49.alamar4"]);
 
@@ -77,7 +74,6 @@ void Alamar::draw() {
 			Sound::sound(SOUND_2);
 
 	} else {
-		clearSurface();
 		writeString(0, 0, STRING["maps.map49.alamar1"]);
 		writeString(STRING["maps.map49.alamar2"]);
 	}
@@ -85,10 +81,16 @@ void Alamar::draw() {
 
 bool Alamar::msgKeypress(const KeypressMessage &msg) {
 	MM1::Maps::Map49 &map = *static_cast<MM1::Maps::Map49 *>(g_maps->_currentMap);
-
 	close();
-	g_maps->_mapPos.x = 8;
-	map.redrawGame();
+
+	if (map[HAS_EYE]) {
+		map[VAL1]++;
+		map.updateGame();
+
+	} else {
+		g_maps->_mapPos.x = 8;
+		map.updateGame();
+	}
 
 	return true;
 }

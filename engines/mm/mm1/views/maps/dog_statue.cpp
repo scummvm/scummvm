@@ -65,14 +65,13 @@ void DogStatue::draw() {
 }
 
 bool DogStatue::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_y || msg.keycode == Common::KEYCODE_n) {
+	if (msg.keycode == Common::KEYCODE_y || msg.keycode == Common::KEYCODE_n ||
+			msg.keycode == Common::KEYCODE_ESCAPE) {
 		MM1::Maps::Map42 &map = *static_cast<MM1::Maps::Map42 *>(g_maps->_currentMap);
 		close();
 
 		if (msg.keycode == Common::KEYCODE_y) {
 			map.dogDesecrate();
-		} else {
-			close();
 		}
 	}
 

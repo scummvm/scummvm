@@ -60,8 +60,7 @@ void Keeper::draw() {
 		writeString(10, 0, STRING["maps.map54.keeper2"]);
 		writeString(0, 2, Common::String::format(
 			STRING["maps.map54.keeper3"].c_str(), perfTotal));
-		_textPos.y++;
-		writeString(STRING[isWorthy ? "maps.map54.keeper5" :
+		writeString(0, 3, STRING[isWorthy ? "maps.map54.keeper5" :
 			"maps.map54.keeper4"]);
 		break;
 
@@ -75,7 +74,9 @@ bool Keeper::msgKeypress(const KeypressMessage &msg) {
 
 	if (++_pageNum == 2) {
 		close();
-		map.changeMap();
+		map.sorpigalInn();
+	} else {
+		redraw();
 	}
 
 	return true;

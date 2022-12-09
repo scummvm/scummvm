@@ -101,7 +101,7 @@ void Map43::special04() {
 	if (!g_globals->_party.hasItem(MERCHANTS_PASS_ID)) {
 		send(SoundMessage(
 			STRING["maps.map43.guards"],
-			[](const Common::KeyState &ks) {
+			[](const Common::KeyState &) {
 				g_events->focusedView()->close();
 				g_maps->_mapPos = Common::Point(9, 13);
 				g_maps->changeMap(0x101, 2);

@@ -82,14 +82,17 @@ void Map49::special03() {
 
 void Map49::special04() {
 	if (!g_globals->_party.hasItem(MERCHANTS_PASS_ID)) {
-		g_maps->_mapPos = Common::Point(
-			_data[MAP_SURFACE_X], _data[MAP_SURFACE_Y]);
-		g_maps->changeMap(
-			READ_LE_UINT16(&_data[MAP_SURFACE_ID]),
-			_data[MAP_SURFACE_SECTION]
-		);
-
-		send(SoundMessage(STRING["maps.map49.guards2"]));
+		send(SoundMessage(
+			STRING["maps.map49.guards2"],
+			[](const Common::KeyState &) {
+				Map49 &map = *static_cast<Map49 *>(g_maps->_currentMap);
+				g_maps->_mapPos = Common::Point(
+					map[MAP_SURFACE_X], map[MAP_SURFACE_Y]);
+				g_maps->changeMap(
+					READ_LE_UINT16(&map[MAP_SURFACE_ID]),
+					map[MAP_SURFACE_SECTION]);
+			}
+		));
 	}
 }
 
@@ -127,7 +130,8 @@ void Map49::special07() {
 }
 
 void Map49::special08() {
-	if (!g_globals->_activeSpells._s.fire)
+	// WORKAROUND: Fixed acid trap to check for acid protection
+	if (!g_globals->_activeSpells._s.acid)
 		reduceHP();
 	reduceHP();
 
@@ -135,7 +139,8 @@ void Map49::special08() {
 }
 
 void Map49::special09() {
-	if (!g_globals->_activeSpells._s.acid)
+	// WORKAROUND: Fixed explosion trap to check for fire protection
+	if (!g_globals->_activeSpells._s.fire)
 		reduceHP();
 	reduceHP();
 

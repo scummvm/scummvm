@@ -59,7 +59,7 @@ void Map54::special00() {
 
 		send(SoundMessage(
 			0, 1, STRING["maps.map54.slot1"],
-			0, 1, STRING["maps.map54.slot2"]
+			0, 2, STRING["maps.map54.slot2"]
 		));
 		return;
 	}
@@ -74,7 +74,7 @@ void Map54::special00() {
 
 			send(SoundMessage(
 				0, 1, STRING["maps.map54.slot1"],
-				0, 1, STRING["maps.map54.slot3"]
+				0, 2, STRING["maps.map54.slot3"]
 			));
 			return;
 		}
@@ -120,7 +120,7 @@ void Map54::projector(int index) {
 		g_globals->_party[i]._flags[13] |= FLAGS[index];
 	}
 
-	changeMap();
+	sorpigalInn();
 
 	Common::String line = Common::String::format(
 		STRING["maps.map54.projector"].c_str(),
@@ -154,7 +154,7 @@ bool Map54::isWorthy(uint32 &perfTotal) {
 	return perfTotal >= 65536;
 }
 
-void Map54::changeMap() {
+void Map54::sorpigalInn() {
 	g_maps->_mapPos = Common::Point(8, 5);
 	g_maps->changeMap(0x604, 1);
 }

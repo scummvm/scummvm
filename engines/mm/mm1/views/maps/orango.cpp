@@ -29,10 +29,8 @@ namespace MM1 {
 namespace Views {
 namespace Maps {
 
-#define ANSWER_OFFSET 274
-
 Orango::Orango() :
-		AnswerEntry("Orango", Common::Point(9, 6), 15) {
+		AnswerEntry("Orango", Common::Point(9, 7), 15) {
 	_bounds = getLineBounds(17, 24);
 }
 
@@ -43,28 +41,9 @@ void Orango::draw() {
 }
 
 void Orango::answerEntered() {
-	MM1::Maps::Map &map = *g_maps->_currentMap;
-	Common::String properAnswer;
+	MM1::Maps::Map48 &map = *static_cast<MM1::Maps::Map48 *>(g_maps->_currentMap);
 	close();
-
-	for (int i = 0; i < 15 && map[ANSWER_OFFSET + i]; ++i)
-		properAnswer += (map[ANSWER_OFFSET + i] & 0x7f) + 29;
-
-	if (_answer.equalsIgnoreCase(properAnswer)) {
-		for (uint i = 0; i < g_globals->_party.size(); ++i) {
-			Character &c = g_globals->_party[i];
-			c._flags[13] |= CHARFLAG13_ALAMAR;
-		}
-
-		g_maps->_mapPos = Common::Point(8, 5);
-		g_maps->changeMap(0x604, 1);
-		g_events->send(SoundMessage(STRING["maps.map48.orango3"]));
-
-	} else {
-		g_maps->_mapPos.x++;
-		map.updateGame();
-		g_events->send(SoundMessage(13, 2, STRING["maps.map48.orango2"]));
-	}
+	map.orangoAnswer(_answer);
 }
 
 } // namespace Maps
