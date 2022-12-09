@@ -1699,7 +1699,7 @@ void dgMeshEffect::GetFaces(dgInt32 *const facesIndex, dgInt32 *const materials,
 	}
 }
 
-void *dgMeshEffect::GetFirstVertex() {
+void *dgMeshEffect::GetFirstVertex() const {
 	_ASSERTE(0);
 	return 0;
 	/*
@@ -1723,7 +1723,7 @@ void *dgMeshEffect::GetFirstVertex() {
 	 */
 }
 
-void *dgMeshEffect::GetNextVertex(const void *vertex) {
+void *dgMeshEffect::GetNextVertex(const void *vertex) const {
 	dgTreeNode *const node = (dgTreeNode *)vertex;
 	dgInt32 mark = node->GetInfo().m_mark;
 
@@ -1750,7 +1750,7 @@ dgInt32 dgMeshEffect::GetVertexIndex(const void *vertex) const {
 	return edge->m_incidentVertex;
 }
 
-void *dgMeshEffect::GetFirstPoint() {
+void *dgMeshEffect::GetFirstPoint() const {
 	Iterator iter(*this);
 	for (iter.Begin(); iter; iter++) {
 		dgTreeNode *const nodeI = iter.GetNode();
@@ -1762,7 +1762,7 @@ void *dgMeshEffect::GetFirstPoint() {
 	return NULL;
 }
 
-void *dgMeshEffect::GetNextPoint(const void *const point) {
+void *dgMeshEffect::GetNextPoint(const void *const point) const {
 	Iterator iter(*this);
 	iter.Set((dgTreeNode *)point);
 	for (iter++; iter; iter++) {
@@ -1822,7 +1822,7 @@ dgEdge *dgMeshEffect::ConectVertex(dgEdge *const e0, dgEdge *const e1) {
 //	return int (edge->m_userData);
 // }
 
-void *dgMeshEffect::GetFirstEdge() {
+void *dgMeshEffect::GetFirstEdge() const {
 	Iterator iter(*this);
 	iter.Begin();
 
@@ -1839,7 +1839,7 @@ void *dgMeshEffect::GetFirstEdge() {
 	return node;
 }
 
-void *dgMeshEffect::GetNextEdge(const void *edge) {
+void *dgMeshEffect::GetNextEdge(const void *edge) const {
 	dgTreeNode *const node = (dgTreeNode *)edge;
 	dgInt32 mark = node->GetInfo().m_mark;
 
@@ -1870,7 +1870,7 @@ void dgMeshEffect::GetEdgeIndex(const void *edge, dgInt32 &v0,
 //	v1 = int (node->GetInfo().m_twin->m_userData);
 // }
 
-void *dgMeshEffect::GetFirstFace() {
+void *dgMeshEffect::GetFirstFace() const {
 	Iterator iter(*this);
 	iter.Begin();
 
@@ -1890,7 +1890,7 @@ void *dgMeshEffect::GetFirstFace() {
 	return node;
 }
 
-void *dgMeshEffect::GetNextFace(const void *const face) {
+void *dgMeshEffect::GetNextFace(const void *const face) const {
 	dgTreeNode *const node = (dgTreeNode *)face;
 	dgInt32 mark = node->GetInfo().m_mark;
 
@@ -2020,7 +2020,7 @@ void dgMeshEffect::GetFaceAttributeIndex(const void *const face, int *const indi
 void dgMeshEffect::GetVertexStreams(dgInt32 vetexStrideInByte,
                                     dgFloat32 *const vertex, dgInt32 normalStrideInByte,
                                     dgFloat32 *const normal, dgInt32 uvStrideInByte0, dgFloat32 *const uv0,
-                                    dgInt32 uvStrideInByte1, dgFloat32 *const uv1) {
+                                    dgInt32 uvStrideInByte1, dgFloat32 *const uv1) const {
 	uvStrideInByte0 /= sizeof(dgFloat32);
 	uvStrideInByte1 /= sizeof(dgFloat32);
 	vetexStrideInByte /= sizeof(dgFloat32);
@@ -2091,7 +2091,7 @@ void dgMeshEffect::GetIndirectVertexStreams(dgInt32 vetexStrideInByte,
 	 */
 }
 
-dgMeshEffect::dgIndexArray *dgMeshEffect::MaterialGeometryBegin() {
+dgMeshEffect::dgIndexArray *dgMeshEffect::MaterialGeometryBegin() const {
 	dgInt32 materials[256];
 	dgInt32 streamIndexMap[256];
 
@@ -2154,15 +2154,15 @@ dgMeshEffect::dgIndexArray *dgMeshEffect::MaterialGeometryBegin() {
 	return array;
 }
 
-void dgMeshEffect::MaterialGeomteryEnd(dgIndexArray *handle) {
+void dgMeshEffect::MaterialGeomteryEnd(dgIndexArray *handle) const {
 	GetAllocator()->FreeLow(handle);
 }
 
-dgInt32 dgMeshEffect::GetFirstMaterial(dgIndexArray *handle) {
+dgInt32 dgMeshEffect::GetFirstMaterial(dgIndexArray *handle)const  {
 	return GetNextMaterial(handle, -1);
 }
 
-dgInt32 dgMeshEffect::GetNextMaterial(dgIndexArray *const handle, dgInt32 materialId) {
+dgInt32 dgMeshEffect::GetNextMaterial(dgIndexArray *const handle, dgInt32 materialId) const {
 	materialId++;
 	if (materialId >= handle->m_materialCount) {
 		materialId = -1;
@@ -2171,7 +2171,7 @@ dgInt32 dgMeshEffect::GetNextMaterial(dgIndexArray *const handle, dgInt32 materi
 }
 
 void dgMeshEffect::GetMaterialGetIndexStream(dgIndexArray *const handle,
-        dgInt32 materialHandle, dgInt32 *const indexArray) {
+        dgInt32 materialHandle, dgInt32 *const indexArray) const {
 	dgInt32 index;
 	dgInt32 textureID;
 
@@ -2189,7 +2189,7 @@ void dgMeshEffect::GetMaterialGetIndexStream(dgIndexArray *const handle,
 }
 
 void dgMeshEffect::GetMaterialGetIndexStreamShort(dgIndexArray *const handle,
-        dgInt32 materialHandle, dgInt16 *const indexArray) {
+        dgInt32 materialHandle, dgInt16 *const indexArray) const {
 	dgInt32 index;
 	dgInt32 textureID;
 
@@ -3764,7 +3764,7 @@ bool dgMeshEffect::SeparateDuplicateLoops(dgEdge *const face) {
 	return false;
 }
 
-dgMeshEffect *dgMeshEffect::GetNextLayer(dgInt32 mark) {
+dgMeshEffect *dgMeshEffect::GetNextLayer(dgInt32 mark) const {
 	Iterator iter(*this);
 	dgEdge *edge = NULL;
 	for (iter.Begin(); iter; iter++) {

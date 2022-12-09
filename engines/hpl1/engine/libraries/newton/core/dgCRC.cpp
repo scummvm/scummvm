@@ -332,7 +332,7 @@ dgUnsigned32 dgApi dgCRC(const char *const name) {
 dgUnsigned32 dgApi dgCRC(const void *const buffer, dgInt32 size,
                          dgUnsigned32 crcAcc) {
 	_ASSERTE(buffer);
-	unsigned char *const ptr = (unsigned char *) buffer;
+	const unsigned char *const ptr = (const unsigned char *) buffer;
 	for (dgInt32 i = 0; i < size; i++) {
 		dgUnsigned32 c = ptr[i];
 		dgUnsigned32 val = InternalCRC::randBits[((crcAcc >> 24) ^ c) & 0xff];
@@ -348,5 +348,5 @@ const char *dgApi dgInverseCRC(dgUnsigned32 crc) {
 }
 
 dgUnsigned32 dgApi dgHash(const void *const string, int size) {
-	return InternalCRC::DJBHash((char *) string, size);
+	return InternalCRC::DJBHash((const char *)string, size);
 }

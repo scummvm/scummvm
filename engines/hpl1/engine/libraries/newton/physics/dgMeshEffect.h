@@ -137,8 +137,8 @@ public:
 	static bool CheckIntersection(const dgMeshEffect *const meshA, const dgMeshEffectSolidTree *const solidTreeA,
 	                              const dgMeshEffect *const meshB, const dgMeshEffectSolidTree *const solidTreeB, dgFloat64 scale);
 
-	dgMeshEffect *GetFirstLayer();
-	dgMeshEffect *GetNextLayer(dgMeshEffect *const layer);
+	dgMeshEffect *GetFirstLayer() const;
+	dgMeshEffect *GetNextLayer(const dgMeshEffect *const layer) const;
 
 	void Triangulate();
 	void ConvertToPolygons();
@@ -185,21 +185,21 @@ public:
 	void GetVertexStreams(dgInt32 vetexStrideInByte, dgFloat32 *const vertex,
 	                      dgInt32 normalStrideInByte, dgFloat32 *const normal,
 	                      dgInt32 uvStrideInByte0, dgFloat32 *const uv0,
-	                      dgInt32 uvStrideInByte1, dgFloat32 *const uv1);
+	                      dgInt32 uvStrideInByte1, dgFloat32 *const uv1) const;
 
 	void GetIndirectVertexStreams(dgInt32 vetexStrideInByte, dgFloat64 *const vertex, dgInt32 *const vertexIndices, dgInt32 *const vertexCount,
 	                              dgInt32 normalStrideInByte, dgFloat64 *const normal, dgInt32 *const normalIndices, dgInt32 *const normalCount,
 	                              dgInt32 uvStrideInByte0, dgFloat64 *const uv0, dgInt32 *const uvIndices0, dgInt32 *const uvCount0,
 	                              dgInt32 uvStrideInByte1, dgFloat64 *const uv1, dgInt32 *const uvIndices1, dgInt32 *const uvCount1);
 
-	dgIndexArray *MaterialGeometryBegin();
-	void MaterialGeomteryEnd(dgIndexArray *const handle);
-	dgInt32 GetFirstMaterial(dgIndexArray *const handle);
-	dgInt32 GetNextMaterial(dgIndexArray *const handle, dgInt32 materialHandle);
-	dgInt32 GetMaterialID(dgIndexArray *const handle, dgInt32 materialHandle);
-	dgInt32 GetMaterialIndexCount(dgIndexArray *const handle, dgInt32 materialHandle);
-	void GetMaterialGetIndexStream(dgIndexArray *const handle, dgInt32 materialHandle, dgInt32 *const index);
-	void GetMaterialGetIndexStreamShort(dgIndexArray *const handle, dgInt32 materialHandle, dgInt16 *const index);
+	dgIndexArray *MaterialGeometryBegin() const;
+	void MaterialGeomteryEnd(dgIndexArray *const handle) const;
+	dgInt32 GetFirstMaterial(dgIndexArray *const handle) const;
+	dgInt32 GetNextMaterial(dgIndexArray *const handle, dgInt32 materialHandle) const;
+	dgInt32 GetMaterialID(dgIndexArray *const handle, dgInt32 materialHandle) const;
+	dgInt32 GetMaterialIndexCount(dgIndexArray *const handle, dgInt32 materialHandle) const;
+	void GetMaterialGetIndexStream(dgIndexArray *const handle, dgInt32 materialHandle, dgInt32 *const index) const;
+	void GetMaterialGetIndexStreamShort(dgIndexArray *const handle, dgInt32 materialHandle, dgInt16 *const index) const;
 
 	dgCollision *CreateCollisionTree(dgInt32 shapeID) const;
 	dgCollision *CreateConvexCollision(dgFloat64 tolerance, dgInt32 shapeID, const dgMatrix &matrix = dgGetIdentityMatrix()) const;
@@ -213,22 +213,22 @@ public:
 	dgVertexAtribute &GetAttribute(dgInt32 index) const;
 	void TransformMesh(const dgMatrix &matrix);
 
-	void *GetFirstVertex();
-	void *GetNextVertex(const void *const vertex);
+	void *GetFirstVertex() const;
+	void *GetNextVertex(const void *const vertex) const;
 	int GetVertexIndex(const void *const vertex) const;
 
-	void *GetFirstPoint();
-	void *GetNextPoint(const void *const point);
+	void *GetFirstPoint() const;
+	void *GetNextPoint(const void *const point) const;
 	int GetPointIndex(const void *const point) const;
 	int GetVertexIndexFromPoint(const void *const point) const;
 
-	void *GetFirstEdge();
-	void *GetNextEdge(const void *const edge);
+	void *GetFirstEdge() const;
+	void *GetNextEdge(const void *const edge) const;
 	void GetEdgeIndex(const void *const edge, dgInt32 &v0, dgInt32 &v1) const;
 	//  void GetEdgeAttributeIndex (const void* edge, dgInt32& v0, dgInt32& v1) const;
 
-	void *GetFirstFace();
-	void *GetNextFace(const void *const face);
+	void *GetFirstFace() const;
+	void *GetNextFace(const void *const face) const;
 	int IsFaceOpen(const void *const face) const;
 	int GetFaceMaterial(const void *const face) const;
 	int GetFaceIndexCount(const void *const face) const;
@@ -254,7 +254,7 @@ protected:
 	dgVertexAtribute InterpolateEdge(dgEdge *const edge, dgFloat64 param) const;
 	dgVertexAtribute InterpolateVertex(const dgBigVector &point, dgEdge *const face) const;
 
-	dgMeshEffect *GetNextLayer(dgInt32 mark);
+	dgMeshEffect *GetNextLayer(dgInt32 mark) const;
 
 	void FilterCoplanarFaces(const dgMeshEffect *const otherCap, dgFloat32 sign);
 	void ClipMesh(const dgMeshEffect *const clipMesh, dgMeshEffect **const back, dgMeshEffect **const front, dgMeshEffect **const coplanar) const;
@@ -290,11 +290,11 @@ inline dgInt32 dgMeshEffect::GetPropertiesCount() const {
 	return m_atribCount;
 }
 
-inline dgInt32 dgMeshEffect::GetMaterialID(dgIndexArray *const handle, dgInt32 materialHandle) {
+inline dgInt32 dgMeshEffect::GetMaterialID(dgIndexArray *const handle, dgInt32 materialHandle) const {
 	return handle->m_materials[materialHandle];
 }
 
-inline dgInt32 dgMeshEffect::GetMaterialIndexCount(dgIndexArray *const handle, dgInt32 materialHandle) {
+inline dgInt32 dgMeshEffect::GetMaterialIndexCount(dgIndexArray *const handle, dgInt32 materialHandle) const {
 	return handle->m_materialsIndexCount[materialHandle];
 }
 
@@ -334,11 +334,11 @@ inline dgFloat64 *dgMeshEffect::GetVertexPool() const {
 	return &m_points[0].m_x;
 }
 
-inline dgMeshEffect *dgMeshEffect::GetFirstLayer() {
+inline dgMeshEffect *dgMeshEffect::GetFirstLayer() const {
 	return GetNextLayer(IncLRU());
 }
 
-inline dgMeshEffect *dgMeshEffect::GetNextLayer(dgMeshEffect *const layerSegment) {
+inline dgMeshEffect *dgMeshEffect::GetNextLayer(const dgMeshEffect *const layerSegment) const {
 	if (!layerSegment) {
 		return NULL;
 	}

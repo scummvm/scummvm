@@ -177,7 +177,7 @@ NewtonWorld *NewtonCreate() {
 void NewtonDestroy(const NewtonWorld *const newtonWorld) {
 	TRACE_FUNTION(__FUNCTION__);
 
-	Newton *const world = (Newton *)newtonWorld;
+	const Newton *const world = (const Newton *)newtonWorld;
 	dgMemoryAllocator *const allocator = world->dgWorld::GetAllocator();
 
 	delete world;
@@ -7986,38 +7986,38 @@ NewtonMesh *NewtonMeshVoronoiDecomposition(const NewtonMesh *const mesh,
 	return (NewtonMesh *)((dgMeshEffect *)mesh)->CreateVoronoiPartition(pointCount, pointStrideInBytes, pointCloud, internalMaterial, tetMatrix);
 }
 
-NewtonMesh *NewtonMeshUnion(const NewtonMesh *const mesh,
+NewtonMesh *NewtonMeshUnion(NewtonMesh *const mesh,
                             const NewtonMesh *const clipper, const dFloat *const clipperMatrix) {
 	TRACE_FUNTION(__FUNCTION__);
 	dgMatrix &matrix = *((dgMatrix *)clipperMatrix);
 
-	return (NewtonMesh *)((dgMeshEffect *)mesh)->Union(matrix, (dgMeshEffect *)clipper);
+	return (NewtonMesh *)((dgMeshEffect *)mesh)->Union(matrix, (const dgMeshEffect *)clipper);
 }
 
-NewtonMesh *NewtonMeshDifference(const NewtonMesh *const mesh,
+NewtonMesh *NewtonMeshDifference(NewtonMesh *const mesh,
                                  const NewtonMesh *const clipper, const dFloat *const clipperMatrix) {
 	TRACE_FUNTION(__FUNCTION__);
-	dgMatrix &matrix = *((dgMatrix *)clipperMatrix);
+	const dgMatrix &matrix = *((const dgMatrix *)clipperMatrix);
 
-	return (NewtonMesh *)((dgMeshEffect *)mesh)->Difference(matrix, (dgMeshEffect *)clipper);
+	return (NewtonMesh *)((dgMeshEffect *)mesh)->Difference(matrix, (const dgMeshEffect *)clipper);
 }
 
-NewtonMesh *NewtonMeshIntersection(const NewtonMesh *const mesh,
+NewtonMesh *NewtonMeshIntersection(NewtonMesh *const mesh,
                                    const NewtonMesh *const clipper, const dFloat *const clipperMatrix) {
 	TRACE_FUNTION(__FUNCTION__);
-	dgMatrix &matrix = *((dgMatrix *)clipperMatrix);
+	const dgMatrix &matrix = *((const dgMatrix *)clipperMatrix);
 
-	return (NewtonMesh *)((dgMeshEffect *)mesh)->Intersection(matrix, (dgMeshEffect *)clipper);
+	return (NewtonMesh *)((dgMeshEffect *)mesh)->Intersection(matrix, (const dgMeshEffect *)clipper);
 }
 
-void NewtonRemoveUnusedVertices(const NewtonMesh *const mesh,
+void NewtonRemoveUnusedVertices(NewtonMesh *const mesh,
                                 int *const vertexRemapTable) {
 	TRACE_FUNTION(__FUNCTION__);
 
 	((dgMeshEffect *)mesh)->RemoveUnusedVertices(vertexRemapTable);
 }
 
-void NewtonMeshBeginFace(const NewtonMesh *const mesh) {
+void NewtonMeshBeginFace(NewtonMesh *const mesh) {
 
 	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
 
@@ -8025,7 +8025,7 @@ void NewtonMeshBeginFace(const NewtonMesh *const mesh) {
 	meshEffect->BeginPolygon();
 }
 
-void NewtonMeshAddFace(const NewtonMesh *const mesh, int vertexCount,
+void NewtonMeshAddFace(NewtonMesh *const mesh, int vertexCount,
                        const dFloat *const vertex, int strideInBytes, int materialIndex) {
 	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
 
@@ -8033,14 +8033,14 @@ void NewtonMeshAddFace(const NewtonMesh *const mesh, int vertexCount,
 	meshEffect->AddPolygon(vertexCount, vertex, strideInBytes, materialIndex);
 }
 
-void NewtonMeshEndFace(const NewtonMesh *const mesh) {
+void NewtonMeshEndFace(NewtonMesh *const mesh) {
 	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	meshEffect->EndPolygon(dgFloat64(1.0e-8f));
 }
 
-void NewtonMeshBuildFromVertexListIndexList(const NewtonMesh *const mesh,
+void NewtonMeshBuildFromVertexListIndexList(NewtonMesh *const mesh,
         int faceCount, const int *const faceIndexCount,
         const int *const faceMaterialIndex, const dFloat *const vertex,
         int vertexStrideInBytes, const int *const vertexIndex,
@@ -8059,7 +8059,7 @@ void NewtonMeshBuildFromVertexListIndexList(const NewtonMesh *const mesh,
 
 int NewtonMeshGetVertexCount(const NewtonMesh *const mesh) {
 
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	//  return meshEffect->GetPropertiesCount();
@@ -8067,21 +8067,21 @@ int NewtonMeshGetVertexCount(const NewtonMesh *const mesh) {
 }
 
 int NewtonMeshGetVertexStrideInByte(const NewtonMesh *const mesh) {
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return meshEffect->GetVertexStrideInByte();
 }
 
 dFloat64 *NewtonMeshGetVertexArray(const NewtonMesh *const mesh) {
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return meshEffect->GetVertexPool();
 }
 
 int NewtonMeshGetPointCount(const NewtonMesh *const mesh) {
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return meshEffect->GetPropertiesCount();
@@ -8089,35 +8089,35 @@ int NewtonMeshGetPointCount(const NewtonMesh *const mesh) {
 
 int NewtonMeshGetPointStrideInByte(const NewtonMesh *const mesh) {
 
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return meshEffect->GetPropertiesStrideInByte();
 }
 
 dFloat64 *NewtonMeshGetPointArray(const NewtonMesh *const mesh) {
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return meshEffect->GetAttributePool();
 }
 
 dFloat64 *NewtonMeshGetNormalArray(const NewtonMesh *const mesh) {
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return meshEffect->GetNormalPool();
 }
 
 dFloat64 *NewtonMeshGetUV0Array(const NewtonMesh *const mesh) {
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return meshEffect->GetUV0Pool();
 }
 
 dFloat64 *NewtonMeshGetUV1Array(const NewtonMesh *const mesh) {
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return meshEffect->GetUV1Pool();
@@ -8128,7 +8128,7 @@ void NewtonMeshGetVertexStreams(const NewtonMesh *const mesh,
                                 dFloat *const normal, dgInt32 uvStrideInByte0, dFloat *const uv0,
                                 dgInt32 uvStrideInByte1, dFloat *const uv1) {
 
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	meshEffect->GetVertexStreams(vetexStrideInByte, (dgFloat32 *)vertex,
@@ -8146,7 +8146,7 @@ void NewtonMeshGetIndirectVertexStreams(const NewtonMesh *const mesh,
 	_ASSERTE(0);
 	/*
 
-	 dgMeshEffect* const meshEffect = (dgMeshEffect*) mesh;
+	 const dgMeshEffect* const meshEffect = (const dgMeshEffect*) mesh;
 
 	 TRACE_FUNTION(__FUNCTION__);
 	 meshEffect->GetIndirectVertexStreams (vetexStrideInByte, (dgFloat32*) vertex, (dgInt32*) vertexIndices, (dgInt32*) vertexCount,
@@ -8158,7 +8158,7 @@ void NewtonMeshGetIndirectVertexStreams(const NewtonMesh *const mesh,
 
 void *NewtonMeshBeginHandle(const NewtonMesh *const mesh) {
 
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return meshEffect->MaterialGeometryBegin();
@@ -8166,7 +8166,7 @@ void *NewtonMeshBeginHandle(const NewtonMesh *const mesh) {
 
 void NewtonMeshEndHandle(const NewtonMesh *const mesh, void *const handle) {
 
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 
@@ -8175,7 +8175,7 @@ void NewtonMeshEndHandle(const NewtonMesh *const mesh, void *const handle) {
 
 int NewtonMeshFirstMaterial(const NewtonMesh *const mesh, void *const handle) {
 
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return meshEffect->GetFirstMaterial((dgMeshEffect::dgIndexArray *)handle);
@@ -8184,7 +8184,7 @@ int NewtonMeshFirstMaterial(const NewtonMesh *const mesh, void *const handle) {
 int NewtonMeshNextMaterial(const NewtonMesh *const mesh, void *const handle,
                            int materialId) {
 
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return meshEffect->GetNextMaterial((dgMeshEffect::dgIndexArray *)handle,
@@ -8194,7 +8194,7 @@ int NewtonMeshNextMaterial(const NewtonMesh *const mesh, void *const handle,
 int NewtonMeshMaterialGetMaterial(const NewtonMesh *const mesh,
                                   void *const handle, int materialId) {
 
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return meshEffect->GetMaterialID((dgMeshEffect::dgIndexArray *)handle,
@@ -8204,7 +8204,7 @@ int NewtonMeshMaterialGetMaterial(const NewtonMesh *const mesh,
 int NewtonMeshMaterialGetIndexCount(const NewtonMesh *const mesh,
                                     void *const handle, int materialId) {
 
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return meshEffect->GetMaterialIndexCount((dgMeshEffect::dgIndexArray *)handle,
@@ -8214,7 +8214,7 @@ int NewtonMeshMaterialGetIndexCount(const NewtonMesh *const mesh,
 void NewtonMeshMaterialGetIndexStream(const NewtonMesh *const mesh,
                                       void *const handle, int materialId, int *const index) {
 
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	meshEffect->GetMaterialGetIndexStream((dgMeshEffect::dgIndexArray *)handle,
@@ -8223,7 +8223,7 @@ void NewtonMeshMaterialGetIndexStream(const NewtonMesh *const mesh,
 
 void NewtonMeshMaterialGetIndexStreamShort(const NewtonMesh *const mesh,
         void *const handle, int materialId, short int *const index) {
-	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 	TRACE_FUNTION(__FUNCTION__);
 	meshEffect->GetMaterialGetIndexStreamShort(
 	    (dgMeshEffect::dgIndexArray *)handle, materialId, index);
@@ -8232,7 +8232,7 @@ void NewtonMeshMaterialGetIndexStreamShort(const NewtonMesh *const mesh,
 NewtonMesh *NewtonMeshCreateFirstSingleSegment(const NewtonMesh *const mesh) {
 	TRACE_FUNTION(__FUNCTION__);
 
-	dgMeshEffect *const effectMesh = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const effectMesh = (const dgMeshEffect *)mesh;
 
 	dgPolyhedra segment(effectMesh->GetAllocator());
 
@@ -8250,7 +8250,7 @@ NewtonMesh *NewtonMeshCreateNextSingleSegment(const NewtonMesh *const mesh,
         const NewtonMesh *const segment) {
 	TRACE_FUNTION(__FUNCTION__);
 
-	dgMeshEffect *const effectMesh = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const effectMesh = (const dgMeshEffect *)mesh;
 	dgPolyhedra nextSegment(effectMesh->GetAllocator());
 
 	_ASSERTE(segment);
@@ -8271,7 +8271,7 @@ NewtonMesh *NewtonMeshCreateNextSingleSegment(const NewtonMesh *const mesh,
 NewtonMesh *NewtonMeshCreateFirstLayer(const NewtonMesh *const mesh) {
 	TRACE_FUNTION(__FUNCTION__);
 
-	dgMeshEffect *const effectMesh = (dgMeshEffect *)mesh;
+	const dgMeshEffect *const effectMesh = (const dgMeshEffect *)mesh;
 	return (NewtonMesh *)effectMesh->GetFirstLayer();
 }
 
@@ -8279,79 +8279,79 @@ NewtonMesh *NewtonMeshCreateNextLayer(const NewtonMesh *const mesh,
                                       const NewtonMesh *const segment) {
 	TRACE_FUNTION(__FUNCTION__);
 
-	dgMeshEffect *const effectMesh = (dgMeshEffect *)mesh;
-	return (NewtonMesh *)effectMesh->GetNextLayer((dgMeshEffect *)segment);
+	const dgMeshEffect *const effectMesh = (const dgMeshEffect *)mesh;
+	return (NewtonMesh *)effectMesh->GetNextLayer((const dgMeshEffect *)segment);
 }
 
 int NewtonMeshGetTotalFaceCount(const NewtonMesh *const mesh) {
 	TRACE_FUNTION(__FUNCTION__);
-	return ((dgMeshEffect *)mesh)->GetTotalFaceCount();
+	return ((const dgMeshEffect *)mesh)->GetTotalFaceCount();
 }
 
 int NewtonMeshGetTotalIndexCount(const NewtonMesh *const mesh) {
 	TRACE_FUNTION(__FUNCTION__);
-	return ((dgMeshEffect *)mesh)->GetTotalIndexCount();
+	return ((const dgMeshEffect *)mesh)->GetTotalIndexCount();
 }
 
 void NewtonMeshGetFaces(const NewtonMesh *const mesh, int *const faceIndexCount,
                         int *const faceMaterial, void **const faceIndices) {
-	((dgMeshEffect *)mesh)->GetFaces(faceIndexCount, faceMaterial, faceIndices);
+	((const dgMeshEffect *)mesh)->GetFaces(faceIndexCount, faceMaterial, faceIndices);
 }
 
 void *NewtonMeshGetFirstVertex(const NewtonMesh *const mesh) {
 	TRACE_FUNTION(__FUNCTION__);
-	return ((dgMeshEffect *)mesh)->GetFirstVertex();
+	return ((const dgMeshEffect *)mesh)->GetFirstVertex();
 }
 
 void *NewtonMeshGetNextVertex(const NewtonMesh *const mesh,
                               const void *const vertex) {
 	TRACE_FUNTION(__FUNCTION__);
-	return ((dgMeshEffect *)mesh)->GetNextVertex(vertex);
+	return ((const dgMeshEffect *)mesh)->GetNextVertex(vertex);
 }
 
 int NewtonMeshGetVertexIndex(const NewtonMesh *const mesh,
                              const void *const vertex) {
 	TRACE_FUNTION(__FUNCTION__);
-	return ((dgMeshEffect *)mesh)->GetVertexIndex(vertex);
+	return ((const dgMeshEffect *)mesh)->GetVertexIndex(vertex);
 }
 
 void *NewtonMeshGetFirstPoint(const NewtonMesh *const mesh) {
 	TRACE_FUNTION(__FUNCTION__);
-	return ((dgMeshEffect *)mesh)->GetFirstPoint();
+	return ((const dgMeshEffect *)mesh)->GetFirstPoint();
 }
 void *NewtonMeshGetNextPoint(const NewtonMesh *const mesh,
                              const void *const point) {
 	TRACE_FUNTION(__FUNCTION__);
-	return ((dgMeshEffect *)mesh)->GetNextPoint(point);
+	return ((const dgMeshEffect *)mesh)->GetNextPoint(point);
 }
 
 int NewtonMeshGetPointIndex(const NewtonMesh *const mesh,
                             const void *const point) {
 	TRACE_FUNTION(__FUNCTION__);
-	return ((dgMeshEffect *)mesh)->GetPointIndex(point);
+	return ((const dgMeshEffect *)mesh)->GetPointIndex(point);
 }
 
 int NewtonMeshGetVertexIndexFromPoint(const NewtonMesh *const mesh,
                                       const void *const point) {
 	TRACE_FUNTION(__FUNCTION__);
-	return ((dgMeshEffect *)mesh)->GetVertexIndexFromPoint(point);
+	return ((const dgMeshEffect *)mesh)->GetVertexIndexFromPoint(point);
 }
 
 void *NewtonMeshGetFirstEdge(const NewtonMesh *const mesh) {
 	TRACE_FUNTION(__FUNCTION__);
-	return ((dgMeshEffect *)mesh)->GetFirstEdge();
+	return ((const dgMeshEffect *)mesh)->GetFirstEdge();
 }
 
 void *NewtonMeshGetNextEdge(const NewtonMesh *const mesh,
                             const void *const edge) {
 	TRACE_FUNTION(__FUNCTION__);
-	return ((dgMeshEffect *)mesh)->GetNextEdge(edge);
+	return ((const dgMeshEffect *)mesh)->GetNextEdge(edge);
 }
 
 void NewtonMeshGetEdgeIndices(const NewtonMesh *const mesh,
                               const void *const edge, int *const v0, int *const v1) {
 	TRACE_FUNTION(__FUNCTION__);
-	return ((dgMeshEffect *)mesh)->GetEdgeIndex(edge, *v0, *v1);
+	return ((const dgMeshEffect *)mesh)->GetEdgeIndex(edge, *v0, *v1);
 }
 
 // void NewtonMeshGetEdgePointIndices (const NewtonMesh* const mesh, const void* const edge, int* const v0, int* const v1)
@@ -8361,42 +8361,42 @@ void NewtonMeshGetEdgeIndices(const NewtonMesh *const mesh,
 
 void *NewtonMeshGetFirstFace(const NewtonMesh *const mesh) {
 	TRACE_FUNTION(__FUNCTION__);
-	return ((dgMeshEffect *)mesh)->GetFirstFace();
+	return ((const dgMeshEffect *)mesh)->GetFirstFace();
 }
 
 void *NewtonMeshGetNextFace(const NewtonMesh *const mesh,
                             const void *const face) {
 	TRACE_FUNTION(__FUNCTION__);
-	return ((dgMeshEffect *)mesh)->GetNextFace(face);
+	return ((const dgMeshEffect *)mesh)->GetNextFace(face);
 }
 
 int NewtonMeshIsFaceOpen(const NewtonMesh *const mesh, const void *const face) {
 	TRACE_FUNTION(__FUNCTION__);
-	return ((dgMeshEffect *)mesh)->IsFaceOpen(face);
+	return ((const dgMeshEffect *)mesh)->IsFaceOpen(face);
 }
 
 int NewtonMeshGetFaceIndexCount(const NewtonMesh *const mesh,
                                 const void *const face) {
 	TRACE_FUNTION(__FUNCTION__);
-	return ((dgMeshEffect *)mesh)->GetFaceIndexCount(face);
+	return ((const dgMeshEffect *)mesh)->GetFaceIndexCount(face);
 }
 
 int NewtonMeshGetFaceMaterial(const NewtonMesh *const mesh,
                               const void *const face) {
 	TRACE_FUNTION(__FUNCTION__);
-	return ((dgMeshEffect *)mesh)->GetFaceMaterial(face);
+	return ((const dgMeshEffect *)mesh)->GetFaceMaterial(face);
 }
 
 void NewtonMeshGetFaceIndices(const NewtonMesh *const mesh,
                               const void *const face, int *const indices) {
 	TRACE_FUNTION(__FUNCTION__);
-	((dgMeshEffect *)mesh)->GetFaceIndex(face, indices);
+	((const dgMeshEffect *)mesh)->GetFaceIndex(face, indices);
 }
 
 void NewtonMeshGetFacePointIndices(const NewtonMesh *const mesh,
                                    const void *const face, int *const indices) {
 	TRACE_FUNTION(__FUNCTION__);
-	((dgMeshEffect *)mesh)->GetFaceAttributeIndex(face, indices);
+	((const dgMeshEffect *)mesh)->GetFaceAttributeIndex(face, indices);
 }
 
 #if 0
