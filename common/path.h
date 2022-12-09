@@ -190,6 +190,11 @@ public:
 	 * Convert path to Punycode
 	 */
 	Path punycodeEncode() const;
+
+        /**
+	 * Check pattern match similar matchString
+	 */
+	bool matchPattern(const Path& pattern) const;
 };
 
 /** @} */
