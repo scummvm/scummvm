@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/str-array.h"
 
 namespace Common {
 
@@ -41,15 +42,15 @@ namespace Common {
  * arbitrary directory separators, providing a common representation.
  * 
  * Internally, this is just a simple wrapper around a String, using
- * '\x1f' (unit separator) as a directory separator. As this is not
- * a printable character, it should not appear in file names, unlike
- * '/', '\', or ':', which are allowed on certain platforms.
+ * "//" (unit separator) as a directory separator and "/+" as "/".
  */
 class Path {
 private:
 	String _str;
 
 	String getIdentifierString() const;
+	size_t findLastSeparator() const;
+
 public:
 	/**
 	 * Hash and comparator for Path with following changes:
@@ -205,6 +206,15 @@ public:
 	 * Check pattern match similar matchString
 	 */
 	bool matchPattern(const Path& pattern) const;
+
+	/**
+	 * Splits into path components. After every component except
+	 * last there is an implied separator. First component is empty
+	 * if path starts with a separator. Last component is empty if
+	 * the path ends with a separator. Other components may be empty if
+	 * 2 separots follow each other
+	 */
+	StringArray splitComponents() const;
 };
 
 /** @} */

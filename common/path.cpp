@@ -20,11 +20,14 @@
  */
 
 #include "common/path.h"
-#include "common/tokenizer.h"
 #include "common/punycode.h"
 #include "common/hash-str.h"
 
-const char DIR_SEPARATOR = '\x1f'; // unit separator
+const char ESCAPER = '/';
+const char ESCAPE_SLASH = '+';
+const char ESCAPE_SEPARATOR = '/';
+const char *DIR_SEPARATOR = "//";
+const char *SLASH_ESCAPED = "/+";
 
 namespace Common {
 
@@ -37,49 +40,86 @@ Path::Path(const char *str, char separator) {
 }
 
 Path::Path(const String &str, char separator) {
-	if (separator == DIR_SEPARATOR)
-		_str = str;
-	else
-		set(str.c_str(), separator);
+	set(str.c_str(), separator);
 }
 
 String Path::toString(char separator) const {
 	String res;
-	for (const char *ptr = _str.c_str(); *ptr; ptr++) {
-		if (*ptr == DIR_SEPARATOR)
-			res += separator;
-		else
-			res += *ptr;
+	for (uint i = 0; i < _str.size(); i++) {
+		if (_str[i] == ESCAPER) {
+			i++;
+			if (_str[i] == ESCAPE_SLASH)
+				res += '/';
+			else if (_str[i] == ESCAPE_SEPARATOR)
+				res += separator;
+			else
+				error("Path::toString(): Malformed Common::Path. '%c' unexpected after '/'", _str[i]);
+		} else {
+			res += _str[i];
+		}
 	}
+	return res;
+}
+
+size_t Path::findLastSeparator() const {
+	size_t res = String::npos;
+	for (uint i = 0; i + 2 < _str.size(); i++) {
+		if (_str[i] == ESCAPER) {
+			i++;
+			if (_str[i] == ESCAPE_SEPARATOR)
+				res = i - 1;
+		}
+	}
+
 	return res;
 }
 
 Path Path::getParent() const {
 	if (_str.size() < 2)
 		return Path();
-	size_t separatorPos = _str.findLastOf(DIR_SEPARATOR, _str.size() - 2);
+	size_t separatorPos = findLastSeparator();
 	if (separatorPos == String::npos)
 		return Path();
-	return Path(_str.substr(0, separatorPos + 1), DIR_SEPARATOR);
+	Path ret;
+	ret._str = _str.substr(0, separatorPos + 2);
+	return ret;
 }
 
 Path Path::getLastComponent() const {
 	if (_str.size() < 2)
 		return *this;
-	size_t separatorPos = _str.findLastOf(DIR_SEPARATOR, _str.size() - 2);
+	size_t separatorPos = findLastSeparator();
 	if (separatorPos == String::npos)
 		return *this;
-	return Path(_str.substr(separatorPos + 1), DIR_SEPARATOR);
+	Path ret;
+	ret._str = _str.substr(separatorPos + 2);
+	return ret;
+}
+
+static String escapePath(const String& in) {
+	String ret;
+	for (uint i = 0; i < in.size(); i++) {
+		if (in[i] == '/')
+			ret += SLASH_ESCAPED;
+		else
+			ret += in[i];
+	}
+	return ret;
 }
 
 Path Path::appendComponent(const String &x) const {
 	if (x.empty())
 		return *this;
 	String str = _str;
-	if (!str.empty() && str.lastChar() != DIR_SEPARATOR)
+	size_t lastSep = findLastSeparator();
+	if (!str.empty() && (lastSep == String::npos || lastSep != str.size() - 2))
 		str += DIR_SEPARATOR;
-	str += x;
-	return Path(str, DIR_SEPARATOR);
+
+	str += escapePath(x);
+
+	Path ret;
+	ret._str = str;
+	return ret;
 }
 
 bool Path::operator==(const Path &x) const {
@@ -120,10 +160,7 @@ Path &Path::appendInPlace(const Path &x) {
 }
 
 Path &Path::appendInPlace(const String &str, char separator) {
-	if (separator == DIR_SEPARATOR)
-		_str += str;
-	else
-		appendInPlace(str.c_str(), separator);
+	appendInPlace(str.c_str(), separator);
 	return *this;
 }
 
@@ -131,6 +168,8 @@ Path &Path::appendInPlace(const char *str, char separator) {
 	for (; *str; str++) {
 		if (*str == separator)
 			_str += DIR_SEPARATOR;
+		else if (*str == '/') // Order matters as / may be the separator and often is.
+			_str += SLASH_ESCAPED;
 		else
 			_str += *str;
 	}
@@ -157,7 +196,8 @@ Path &Path::joinInPlace(const Path &x) {
 	if (x.empty())
 		return *this;
 
-	if (!_str.empty() && _str.lastChar() != DIR_SEPARATOR && x._str.firstChar() != DIR_SEPARATOR)
+	size_t lastSep = findLastSeparator();
+	if (!_str.empty() && (lastSep == String::npos || lastSep != _str.size() - 2) && x._str.hasPrefix(DIR_SEPARATOR))
 		_str += DIR_SEPARATOR;
 
 	_str += x._str;
@@ -173,7 +213,8 @@ Path &Path::joinInPlace(const char *str, char separator) {
 	if (*str == '\0')
 		return *this;
 
-	if (!_str.empty() && _str.lastChar() != DIR_SEPARATOR && *str != separator)
+	size_t lastSep = findLastSeparator();
+	if (!_str.empty() && (lastSep == String::npos || lastSep != _str.size() - 2) && *str != separator)
 		_str += DIR_SEPARATOR;
 
 	appendInPlace(str, separator);
@@ -193,35 +234,78 @@ Path Path::join(const String &str, char separator) const {
 
 Path Path::join(const char *str, char separator) const {
 	Path temp(*this);
-	temp.joinInPlace(str, DIR_SEPARATOR);
+	temp.joinInPlace(str, separator);
 	return temp;
 }
 
+StringArray Path::splitComponents() const {
+	StringArray res;
+	String cur;
+	for (uint i = 0; i < _str.size(); i++) {
+		if (_str[i] == ESCAPER) {
+			i++;
+			if (_str[i] == ESCAPE_SLASH)
+				cur += '/';
+			else if (_str[i] == ESCAPE_SEPARATOR) {
+				res.push_back(cur);
+				cur = "";
+			} else {
+				error("Path::splitComponents(): Malformed Common::Path. '%c' unexpected after '/'", _str[i]);
+			}
+		} else
+			cur += _str[i];
+	}
+
+	res.push_back(cur);
+
+	return res;
+}
+
 Path Path::punycodeDecode() const {
-	StringTokenizer tok(_str, String(DIR_SEPARATOR));
+	StringArray c = splitComponents();
 	String res;
 
-	while (!tok.empty()) {
-		res += punycode_decodefilename(tok.nextToken());
-		if (!tok.empty())
+	for (uint i = 0; i < c.size(); i++) {
+		res += escapePath(punycode_decodefilename(c[i]));
+		if (i + 1 < c.size())
 			res += DIR_SEPARATOR;
 	}
 
-	return Path(res, DIR_SEPARATOR);
+	Path ret;
+	ret._str = res;
+	return ret;
 }
 
+// See getIdentifierString() for more details.
+// This does the same but for a single path component and is used by
+// getIdentifierString().
+static String getIdentifierComponent(const String& in) {
+	String part = punycode_decodefilename(in);
+	String res = "";
+	for (uint j = 0; j < part.size(); j++)
+		if (part[j] == '/')
+			res += ':';
+		else
+			res += part[j];
+	return res;
+}
+
+// For a path creates a string with following property:
+// if 2 files have the same case-insensitive
+// identifier string then and only then we treat them as
+// effectively the same file. For this there are 2
+// transformations we need to do:
+// * decode punycode
+// * Replace / with : in path components so a path from
+// HFS(+) image will end up with : independently of how
+// it was dumped or copied from
 String Path::getIdentifierString() const {
-	StringTokenizer tok(_str, String(DIR_SEPARATOR));
+	StringArray c = splitComponents();
 	String res;
 
-	while (!tok.empty()) {
-		String part = punycode_decodefilename(tok.nextToken());
-		for (uint i = 0; i < part.size(); i++)
-			if (part[i] == '/')
-				res += ':';
-			else
-				res += part[i];
-		if (!tok.empty())
+	for (uint i = 0; i < c.size(); i++) {
+		res += getIdentifierComponent(c[i]);
+		if (i + 1 < c.size())
 			res += DIR_SEPARATOR;
 	}
 
@@ -229,28 +313,34 @@ String Path::getIdentifierString() const {
 }
 
 Path Path::punycodeEncode() const {
-	StringTokenizer tok(_str, String(DIR_SEPARATOR));
+	StringArray c = splitComponents();
 	String res;
 
-	while (!tok.empty()) {
-		String part = tok.nextToken();
-		if (punycode_needEncode(part))
-			res += punycode_encodefilename(part);
-		else
-			res += part;
-
-		if (!tok.empty())
+	for (uint i = 0; i < c.size(); i++) {
+		res += escapePath(punycode_encodefilename(c[i]));
+		if (i + 1 < c.size())
 			res += DIR_SEPARATOR;
 	}
 
-	return Path(res, DIR_SEPARATOR);
+	Path ret;
+	ret._str = res;
+	return ret;
 }
 
 bool Path::matchPattern(const Path& pattern) const {
-	// Prevent wildcards from matching the directory separator.
-	const char wildcardExclusions[] = { DIR_SEPARATOR, '\0' };
+	StringArray c = splitComponents();
+	StringArray cpat = pattern.splitComponents();
 
-	return getIdentifierString().matchString(pattern.getIdentifierString(), true, wildcardExclusions);
+	// Prevent wildcards from matching the directory separator.
+	if (c.size() != cpat.size())
+		return false;
+
+	for (uint i = 0; i < c.size(); i++) {
+		if (!getIdentifierComponent(c[i]).matchString(getIdentifierComponent(cpat[i]), true))
+			return false;
+	}
+
+	return true;
 }
 
 bool Path::IgnoreCaseAndMac_EqualsTo::operator()(const Path& x, const Path& y) const {
