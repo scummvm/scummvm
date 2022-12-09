@@ -225,4 +225,11 @@ Path Path::punycodeEncode() const {
 	return Path(res, DIR_SEPARATOR);
 }
 
+bool Path::matchPattern(const Path& pattern) const {
+	// Prevent wildcards from matching the directory separator.
+	const char wildcardExclusions[] = { DIR_SEPARATOR, '\0' };
+
+	return punycodeDecode()._str.matchString(pattern.punycodeDecode()._str, true, wildcardExclusions);
+}
+
 } // End of namespace Common
