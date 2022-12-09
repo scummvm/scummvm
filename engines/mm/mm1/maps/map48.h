@@ -37,6 +37,11 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
+
+	/**
+	 * Handles Orango answer
+	 */
+	void orangoAnswer(const Common::String &answer);
 };
 
 } // namespace Maps

@@ -67,7 +67,7 @@ void Map53::special03() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.map53.ladder_up"],
+		STRING["maps.map53.ladder"],
 		[]() {
 			g_maps->changeMap(0xf01, 3);
 		}
