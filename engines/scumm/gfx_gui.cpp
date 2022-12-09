@@ -2025,7 +2025,6 @@ bool ScummEngine::executeMainMenuOperationSegaCD(int op, int mouseX, int mouseY,
 
 			// First time...
 			int args[16];
-			int32 prevCode = _scummVars[63];
 			memset(args, 0, sizeof(args));
 			args[0] = _bootParam;
 
@@ -2107,7 +2106,7 @@ bool ScummEngine::executeMainMenuOperationSegaCD(int op, int mouseX, int mouseY,
 	case GUI_CTRL_NUMPAD_BACK:
 	{
 		int inputNum = op == GUI_CTRL_NUMPAD_0 ? 0 : op;
-		int curIdx;
+		uint curIdx;
 		for (curIdx = 0; curIdx < sizeof(_mainMenuSegaCDPasscode); curIdx++) {
 			if (_mainMenuSegaCDPasscode[curIdx] == '\0')
 				break;
@@ -3429,7 +3428,7 @@ void ScummEngine::drawMainMenuControlsSegaCD() {
 	drawGUIText(buf, nullptr, 184, yConstant - 34, stringColor, false);
 
 	if (_menuPage != GUI_PAGE_CODE_CONFIRM && _menuPage != GUI_PAGE_LOAD) {
-		for (int i = 0; i < sizeof(_mainMenuSegaCDPasscode); i++) {
+		for (uint i = 0; i < sizeof(_mainMenuSegaCDPasscode); i++) {
 			_mainMenuSegaCDPasscode[i] = '\0';
 		}
 	}
