@@ -39,32 +39,9 @@
 #include "hpl1/hpl1.h"
 #include "hpl1/debug.h"
 #include "common/savefile.h"
+#include "hpl1/serialize.h"
 
 namespace hpl {
-
-//////////////////////////////////////////////////////////////////////////
-// SERIALIZEABLE
-//////////////////////////////////////////////////////////////////////////
-
-//-----------------------------------------------------------------------
-
-//////////////////////////////////////////////////////////////////////////
-// SERIALIZE SAVED CLASS
-//////////////////////////////////////////////////////////////////////////
-
-//-----------------------------------------------------------------------
-
-cSerializeSavedClass::cSerializeSavedClass(const char *asName, const char *asParent,
-										   cSerializeMemberField *apMemberFields, size_t alSize,
-										   iSerializable *(*apCreateFunc)()) {
-	msName = asName;
-	msParentName = asParent;
-	mpMemberFields = apMemberFields;
-	mlSize = alSize;
-	mpCreateFunc = apCreateFunc;
-}
-
-//-----------------------------------------------------------------------
 
 //////////////////////////////////////////////////////////////////////////
 // SERIALIZE MEMBER FIELD ITERATOR
@@ -126,9 +103,6 @@ cSerializeMemberField *cSerializeMemberFieldIterator::GetNext() {
 
 //-----------------------------------------------------------------------
 
-cSerializeSavedClass gvSerializeTempClasses[kMaxSerializeClasses];
-int glSerializeTempClassesNum = 0;
-
 // Define static variables
 tSerializeSavedClassMap cSerializeClass::m_mapSavedClasses;
 bool cSerializeClass::mbDataSetup = false;
@@ -147,16 +121,6 @@ static const char* gsTabString = "";
 const char *GetTabs() {
 	return gsTabString;
 }
-
-cSerializeClass::cSerializeClass(const char *asName, const char *asParent,
-								 cSerializeMemberField *apMemberFields, size_t alSize,
-								 iSerializable *(*apCreateFunc)()) {
-	gvSerializeTempClasses[glSerializeTempClassesNum] = cSerializeSavedClass(asName, asParent,
-																			 apMemberFields, alSize, apCreateFunc);
-
-	glSerializeTempClassesNum++;
-}
-
 //-----------------------------------------------------------------------
 
 void cSerializeClass::SetLog(bool abX) {
@@ -1073,9 +1037,9 @@ void cSerializeClass::SetUpData() {
 
 	mbDataSetup = true;
 
-	for (int i = 0; i < glSerializeTempClassesNum; i++) {
+	for (int i = 0; i < Hpl1::nSerializeTempClasses; i++) {
 		m_mapSavedClasses.insert(tSerializeSavedClassMap::value_type(
-			gvSerializeTempClasses[i].msName, gvSerializeTempClasses[i]));
+			Hpl1::serializeTempClasses[i].msName, Hpl1::serializeTempClasses[i]));
 	}
 }
 

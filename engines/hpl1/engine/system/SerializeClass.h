@@ -96,8 +96,6 @@ typedef unsigned int eSerializeMainType;
 //// HELPER DEFINES /////////////////////////////
 /////////////////////////////////////////////////
 
-#define kMaxSerializeClasses 1000
-
 #define ClassMemberOffset(aClass, aMember) (size_t(&(((aClass *)1)->aMember)) - 1)
 #define ClassMemberSize(aClass, aMember) (sizeof(((aClass *)1)->aMember))
 
@@ -108,8 +106,7 @@ typedef unsigned int eSerializeMainType;
 public:                                                           \
 	const static char *msSerialize_Name;                        \
 	const static char *msSerialize_ParentName;                  \
-	const static cSerializeMemberField *mpSerialize_MemberFields; \
-	const static cSerializeClass serializedClass_##aClass; \
+	static cSerializeMemberField *mpSerialize_MemberFields; \
 	virtual ~aClass() = default; \
 	virtual tString Serialize_GetTopClass() { return #aClass; }
 
@@ -117,8 +114,7 @@ public:                                                           \
 public:                                                           \
         const static char *msSerialize_Name;                        \
         const static char *msSerialize_ParentName;                  \
-        const static cSerializeMemberField *mpSerialize_MemberFields; \
-		const static cSerializeClass serializedClass_##aClass; \
+        static cSerializeMemberField *mpSerialize_MemberFields; \
 	virtual tString Serialize_GetTopClass() { return #aClass; }
 
 /**
@@ -128,11 +124,9 @@ public:                                                           \
 	namespace SerializeNamespace_##aClass {                                                                                                                 \
 		extern cSerializeMemberField mvTempMemberFields[];                                                                                                  \
 	}                                                                                                                                                       \
-	static iSerializable *_Create_##aClass() { return hplNew(aClass, ()); }                                                                                 \
-	const cSerializeClass aClass::serializedClass_##aClass(#aClass, #aParent, SerializeNamespace_##aClass::mvTempMemberFields, sizeof(aClass), _Create_##aClass); \
 	const char *aClass::msSerialize_Name = #aClass;                                                                                                       \
 	const char *aClass::msSerialize_ParentName = #aParent;                                                                                                \
-	const cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields;                                        \
+	cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields;                                        \
 	namespace SerializeNamespace_##aClass {                                                                                                                 \
 		typedef aClass tVarClass;                                                                                                                           \
 		cSerializeMemberField mvTempMemberFields[] = {
@@ -141,11 +135,9 @@ public:                                                           \
 	namespace SerializeNamespace_##aClass {                                                                                                           \
 		extern cSerializeMemberField mvTempMemberFields[];                                                                                            \
 	}                                                                                                                                                 \
-	static iSerializable *_Create_##aClass() { return hplNew(aClass, ()); }                                                                           \
-	const cSerializeClass aClass::serializedClass_##aClass(#aClass, "", SerializeNamespace_##aClass::mvTempMemberFields, sizeof(aClass), _Create_##aClass); \
 	const char *aClass::msSerialize_Name = #aClass;                                                                                                 \
 	const char *aClass::msSerialize_ParentName = "";                                                                                                \
-	const cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields;                                  \
+	cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields;                                  \
 	namespace SerializeNamespace_##aClass {                                                                                                           \
 		typedef aClass tVarClass;                                                                                                                     \
 		cSerializeMemberField mvTempMemberFields[] = {
@@ -154,10 +146,9 @@ public:                                                           \
 	namespace SerializeNamespace_##aClass {                                                                                                     \
 		extern cSerializeMemberField mvTempMemberFields[];                                                                                      \
 	}                                                                                                                                           \
-	const cSerializeClass aClass::serializedClass_##aClass(#aClass, #aParent, SerializeNamespace_##aClass::mvTempMemberFields, sizeof(aClass), NULL); \
 	const char *aClass::msSerialize_Name = #aClass;                                                                                           \
 	const char *aClass::msSerialize_ParentName = #aParent;                                                                                    \
-	const cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields;                            \
+	cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields;                            \
 	namespace SerializeNamespace_##aClass {                                                                                                     \
 		typedef aClass tVarClass;                                                                                                               \
 		cSerializeMemberField mvTempMemberFields[] = {
@@ -166,10 +157,9 @@ public:                                                           \
 	namespace SerializeNamespace_##aClass {                                                                                               \
 		extern cSerializeMemberField mvTempMemberFields[];                                                                                \
 	}                                                                                                                                     \
-	const cSerializeClass aClass::serializedClass_##aClass(#aClass, "", SerializeNamespace_##aClass::mvTempMemberFields, sizeof(aClass), NULL); \
 	const char *aClass::msSerialize_Name = #aClass;                                                                                     \
 	const char *aClass::msSerialize_ParentName = "";                                                                                    \
-	const cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields;                      \
+	cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields;                      \
 	namespace SerializeNamespace_##aClass {                                                                                               \
 		typedef aClass tVarClass;                                                                                                         \
 		cSerializeMemberField mvTempMemberFields[] = {
@@ -254,20 +244,22 @@ public:
 
 //-------------------------------------------------
 
-typedef struct cSerializeSavedClass {
+struct cSerializeSavedClass {
 public:
-	cSerializeSavedClass() {}
-	cSerializeSavedClass(const char *asName, const char *asParent,
+	constexpr cSerializeSavedClass() = default;
+	constexpr cSerializeSavedClass(const char *asName, const char *asParent,
 						 cSerializeMemberField *apMemberFields, size_t alSize,
-						 iSerializable *(*apCreateFunc)());
+						 iSerializable *(*apCreateFunc)()) : msName(asName), msParentName(asParent), mpMemberFields(apMemberFields),
+						 mlSize(alSize), mpCreateFunc(apCreateFunc)
+	{}
 
-	const char *msName;
-	const char *msParentName;
-	cSerializeMemberField *mpMemberFields;
-	size_t mlSize;
-	iSerializable *(*mpCreateFunc)();
+	const char *msName = "";
+	const char *msParentName = "";
+	cSerializeMemberField *mpMemberFields = nullptr;
+	size_t mlSize = 0;
+	iSerializable *(*mpCreateFunc)() = nullptr;
 
-} cSerializeSavedClass;
+};
 
 //-------------------------------------------------
 
@@ -293,9 +285,6 @@ typedef tSerializeSavedClassList::iterator tSerializeSavedClassListIt;
 
 class cSerializeClass {
 public:
-	cSerializeClass(const char *asName, const char *asParent, cSerializeMemberField *apMemberFields,
-					size_t alSize, iSerializable *(*apCreateFunc)());
-
 	static void SetLog(bool abX);
 	static bool GetLog();
 

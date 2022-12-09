@@ -73,6 +73,7 @@
 
 #include "common/config-manager.h"
 #include "hpl1/graphics.h"
+#include "hpl1/serialize.h"
 
 // Global init...
 cInit *gpInit;
@@ -246,6 +247,9 @@ static tString getStringConfig(const char *name, const tString &defaultVal) {
 }
 
 bool cInit::Init(tString saveToLoad) {
+	Hpl1::serializeInit();
+	Hpl1::engineSerializeInit();
+	Hpl1::penumbraOvertureSerializeInit();
 	SetWindowCaption("Penumbra Loading...");
 
 	// MAIN INIT /////////////////////
