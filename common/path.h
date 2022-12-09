@@ -175,6 +175,16 @@ public:
 
 	/** @overload */
 	Path join(const char *str, char separator = '/') const;
+
+	/**
+	 * Convert path from Punycode
+	 */
+	Path punycodeDecode() const;
+
+        /**
+	 * Convert path to Punycode
+	 */
+	Path punycodeEncode() const;
 };
 
 /** @} */

@@ -43,7 +43,6 @@
 
 #include "common/punycode.h"
 #include "common/debug.h"
-#include "common/tokenizer.h"
 #include "common/util.h"
 
 namespace Common {
@@ -410,37 +409,6 @@ U32String punycode_decodefilename(const String &src1) {
 	}
 
 	return dst;
-}
-
-Path punycode_decodepath(const Path &src) {
-	StringTokenizer tok(src.rawString(), Common::String(DIR_SEPARATOR));
-	String res;
-
-	while (!tok.empty()) {
-		res += punycode_decodefilename(tok.nextToken());
-		if (!tok.empty())
-			res += DIR_SEPARATOR;
-	}
-
-	return Path(res, DIR_SEPARATOR);
-}
-
-Path punycode_encodepath(const Path &src) {
-	StringTokenizer tok(src.rawString(), Common::String(DIR_SEPARATOR));
-	String res;
-
-	while (!tok.empty()) {
-		String part = tok.nextToken();
-		if (punycode_needEncode(part))
-			res += punycode_encodefilename(part);
-		else
-			res += part;
-
-		if (!tok.empty())
-			res += DIR_SEPARATOR;
-	}
-
-	return Path(res, DIR_SEPARATOR);
 }
 
 } // end of namespace Common

@@ -65,16 +65,6 @@ String punycode_encodefilename(const U32String &src1);
  */
 U32String punycode_decodefilename(const String &src1);
 
-/**
- * Convert path from Punycode
- */
-Path punycode_decodepath(const Path &src);
-
-/**
- * Convert path to Punycode
- */
-Path punycode_encodepath(const Path &src);
-
 bool punycode_hasprefix(const String &src);
 
 bool punycode_needEncode(const String &src);

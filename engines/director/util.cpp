@@ -1015,7 +1015,7 @@ Common::u32char_type_t numToChar(int num) {
 }
 
 Common::String encodePathForDump(const Common::String &path) {
-	return punycode_encodepath(Common::Path(path, g_director->_dirSeparator)).toString();
+	return Common::Path(path, g_director->_dirSeparator).punycodeEncode().toString();
 }
 
 Common::String utf8ToPrintable(const Common::String &str) {
