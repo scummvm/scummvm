@@ -1018,6 +1018,3 @@ NEWTON_API void NewtonMeshGetFacePointIndices(const NewtonMesh *const mesh, cons
 #endif
 
 #endif
-
-
-

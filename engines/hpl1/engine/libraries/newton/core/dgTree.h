@@ -780,5 +780,3 @@ void dgTree<OBJECT, KEY>::SwapInfo(dgTree<OBJECT, KEY> &tree) {
 
 
 #endif
-
-

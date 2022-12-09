@@ -1060,7 +1060,7 @@ bool CScriptArray::Equals(const void *a, const void *b, asIScriptContext *ctx, S
 
 		if (subTypeId & asTYPEID_OBJHANDLE) {
 			// Allow the find to work even if the array contains null handles
-			if (*(const void **)a == *(const void **)b) return true;
+			if (*(const void * const *)a == *(const void * const *)b) return true;
 		}
 
 		// Execute object opEquals if available
@@ -1070,9 +1070,9 @@ bool CScriptArray::Equals(const void *a, const void *b, asIScriptContext *ctx, S
 			assert(r >= 0);
 
 			if (subTypeId & asTYPEID_OBJHANDLE) {
-				r = ctx->SetObject(*((void **)a));
+				r = ctx->SetObject(*((void * const *)a));
 				assert(r >= 0);
-				r = ctx->SetArgObject(0, *((void **)b));
+				r = ctx->SetArgObject(0, *((void * const *)b));
 				assert(r >= 0);
 			} else {
 				r = ctx->SetObject((void *)a);
@@ -1096,9 +1096,9 @@ bool CScriptArray::Equals(const void *a, const void *b, asIScriptContext *ctx, S
 			assert(r >= 0);
 
 			if (subTypeId & asTYPEID_OBJHANDLE) {
-				r = ctx->SetObject(*((void **)a));
+				r = ctx->SetObject(*((void * const *)a));
 				assert(r >= 0);
-				r = ctx->SetArgObject(0, *((void **)b));
+				r = ctx->SetArgObject(0, *((void * const *)b));
 				assert(r >= 0);
 			} else {
 				r = ctx->SetObject((void *)a);
@@ -1130,7 +1130,7 @@ int CScriptArray::FindByRef(asUINT startAt, void *ref) const {
 		// Dereference the pointer
 		ref = *(void **)ref;
 		for (asUINT i = startAt; i < size; i++) {
-			if (*(void **)At(i) == ref)
+			if (*(void * const *)At(i) == ref)
 				return i;
 		}
 	} else {

@@ -890,7 +890,7 @@ public:
 			stack--;
 			const dgAABBTree *const me = stackPool[stack];
 
-			if (me->BoxIntersectSimd((dgTriplex *) vertexArray, min, max) >= 0) {
+			if (me->BoxIntersectSimd((const dgTriplex *)vertexArray, min, max) >= 0) {
 
 				if (me->m_back.IsLeaf()) {
 					dgInt32 index = dgInt32(me->m_back.GetIndex());
@@ -938,7 +938,7 @@ public:
 			stack--;
 			const dgAABBTree *const me = stackPool[stack];
 
-			if (me->BoxIntersect((dgTriplex *) vertexArray, min, max) >= 0) {
+			if (me->BoxIntersect((const dgTriplex *)vertexArray, min, max) >= 0) {
 
 				if (me->m_back.IsLeaf()) {
 					dgInt32 index = dgInt32(me->m_back.GetIndex());
@@ -983,7 +983,7 @@ public:
 			stack--;
 
 			const dgAABBTree *const me = stackPool[stack];
-			if (me->RayTestSimd(ray, (dgTriplex *) vertexArray)) {
+			if (me->RayTestSimd(ray, (const dgTriplex *)vertexArray)) {
 
 				if (me->m_back.IsLeaf()) {
 					dgInt32 vCount = dgInt32((me->m_back.GetCount() >> 1) - 1);
@@ -1046,7 +1046,7 @@ public:
 		while (stack) {
 			stack--;
 			const dgAABBTree *const me = stackPool[stack];
-			if (me->RayTest(ray, (dgTriplex *) vertexArray)) {
+			if (me->RayTest(ray, (const dgTriplex *)vertexArray)) {
 
 				if (me->m_back.IsLeaf()) {
 					dgInt32 vCount = dgInt32((me->m_back.GetCount() >> 1) - 1);
@@ -1103,7 +1103,7 @@ public:
 		dgInt32 stack = 1;
 		stackPool[0] = this;
 		aabbProjection[0] = dgFloat32(1.0e10f);
-		const dgTriplex *const boxArray = (dgTriplex *) vertexArray;
+		const dgTriplex *const boxArray = (const dgTriplex *)vertexArray;
 		dgVector supportVertex(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
 		                       dgFloat32(0.0f));
 
@@ -1329,18 +1329,18 @@ void *dgAABBPolygonSoup::GetRootNode() const {
 }
 
 void *dgAABBPolygonSoup::GetBackNode(const void *const root) const {
-	dgAABBTree *const node = (dgAABBTree *) root;
+	const dgAABBTree *const node = (const dgAABBTree *)root;
 	return node->m_back.IsLeaf() ? NULL : node->m_back.GetNode(m_aabb);
 }
 
 void *dgAABBPolygonSoup::GetFrontNode(const void *const root) const {
-	dgAABBTree *const node = (dgAABBTree *) root;
+	const dgAABBTree *const node = (const dgAABBTree *)root;
 	return node->m_front.IsLeaf() ? NULL : node->m_front.GetNode(m_aabb);
 }
 
 void dgAABBPolygonSoup::GetNodeAABB(const void *const root, dgVector &p0,
                                     dgVector &p1) const {
-	dgAABBTree *const node = (dgAABBTree *) root;
+	const dgAABBTree *const node = (const dgAABBTree *)root;
 	const dgTriplex *const vertex = (dgTriplex *) m_localVertex;
 
 	p0 = dgVector(vertex[node->m_minIndex].m_x, vertex[node->m_minIndex].m_y,
