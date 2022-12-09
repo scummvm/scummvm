@@ -1746,6 +1746,15 @@ void ScummEngine::showMainMenu() {
 
 	memset(args, 0, sizeof(args));
 
+	// Run the passcode script without args to fetch the current
+	// value of the passcode, which is then stored in var 63.
+	if (_game.platform == Common::kPlatformSegaCD) {
+		int dummyArgs[16];
+		memset(dummyArgs, 0, sizeof(dummyArgs));
+
+		runScript(61, 0, 0, args);
+	}
+
 	// Generate the thumbnail, in case the game is saved
 	Graphics::createThumbnail(_savegameThumbnail);
 
@@ -2008,13 +2017,28 @@ bool ScummEngine::executeMainMenuOperationSegaCD(int op, int mouseX, int mouseY,
 			return true;
 		} else if (_menuPage == GUI_PAGE_CODE_CONFIRM) {
 			_bootParam = atoi(_mainMenuSegaCDPasscode);
+
+			// We are running script 61 twice:
+			// - The first time we are providing it the passcode as an argument;
+			// - The second time we give no arguments, allowing var 63 to be updated.
+			// This will let us know whether we have successfully loaded a game or not.
+
+			// First time...
 			int args[16];
+			int32 prevCode = _scummVars[63];
 			memset(args, 0, sizeof(args));
 			args[0] = _bootParam;
 
 			runScript(61, 0, 0, args);
-			hasLoadedState = _scummVars[411] == _bootParam;
+
+			// Second time...
+			args[0] = 0;
+			runScript(61, 0, 0, args);
+
+			hasLoadedState = _scummVars[63] == _bootParam;
+
 			_bootParam = 0;
+
 			if (!hasLoadedState) {
 				_menuPage = GUI_PAGE_INVALID_CODE;
 				setUpMainMenuControls();
@@ -3401,7 +3425,7 @@ void ScummEngine::drawMainMenuControlsSegaCD() {
 	convertMessageToString((const byte *)getGUIString(gsCurrentPasscode), (byte *)buf, sizeof(buf));
 	drawGUIText(buf, nullptr, isJap ? 128 : 137, yConstant - 52, stringColor, false);
 
-	Common::sprintf_s(buf, sizeof(buf), "%04d", _scummVars[411]);
+	Common::sprintf_s(buf, sizeof(buf), "%04d", _scummVars[63]);
 	drawGUIText(buf, nullptr, 184, yConstant - 34, stringColor, false);
 
 	if (_menuPage != GUI_PAGE_CODE_CONFIRM && _menuPage != GUI_PAGE_LOAD) {

@@ -3202,9 +3202,6 @@ void ScummEngine::runBootscript() {
 		runScript(9, 0, 0, args);
 	else
 		runScript(1, 0, 0, args);
-
-	if (_game.platform == Common::kPlatformSegaCD)
-		_scummVars[411] = _bootParam;
 }
 
 #ifdef ENABLE_HE
