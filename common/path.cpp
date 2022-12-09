@@ -22,6 +22,7 @@
 #include "common/path.h"
 #include "common/tokenizer.h"
 #include "common/punycode.h"
+#include "common/hash-str.h"
 
 namespace Common {
 
@@ -230,6 +231,14 @@ bool Path::matchPattern(const Path& pattern) const {
 	const char wildcardExclusions[] = { DIR_SEPARATOR, '\0' };
 
 	return punycodeDecode()._str.matchString(pattern.punycodeDecode()._str, true, wildcardExclusions);
+}
+
+bool Path::IgnoreCaseAndMac_EqualsTo::operator()(const Path& x, const Path& y) const {
+	return x.punycodeDecode()._str.equalsIgnoreCase(y.punycodeDecode()._str);
+}
+
+uint Path::IgnoreCaseAndMac_Hash::operator()(const Path& x) const {
+	return hashit_lower(x.punycodeDecode()._str.c_str());
 }
 
 } // End of namespace Common
