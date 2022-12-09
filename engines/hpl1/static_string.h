@@ -27,7 +27,7 @@ namespace Hpl1 {
 class StaticString
 {
 public:
-	StaticString(const char *str) : _str(str)
+	constexpr StaticString(const char *str) : _str(str)
 	{
 	}
 
