@@ -23,7 +23,7 @@
 #define HPL1_SERIALIZE_H
 
 namespace hpl {
-class cSerializeSavedClass;
+struct cSerializeSavedClass;
 }
 
 namespace Hpl1 {
