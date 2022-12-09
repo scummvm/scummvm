@@ -875,19 +875,9 @@ void MacResManager::readMap() {
 
 Path MacResManager::constructAppleDoubleName(Path name) {
 	// Insert "._" before the last portion of a path name
-	String rawName = name.rawString();
-	for (int i = rawName.size() - 1; i >= 0; i--) {
-		if (i == 0) {
-			rawName.insertChar('_', 0);
-			rawName.insertChar('.', 0);
-		} else if (rawName[i] == DIR_SEPARATOR) {
-			rawName.insertChar('_', i + 1);
-			rawName.insertChar('.', i + 1);
-			break;
-		}
-	}
-
-	return Path(rawName, DIR_SEPARATOR);
+	Path parent = name.getParent();
+	Path lastComponent = name.getLastComponent();
+	return parent.append("._").append(lastComponent);
 }
 
 Path MacResManager::disassembleAppleDoubleName(Path name, bool *isAppleDouble) {
@@ -896,27 +886,12 @@ Path MacResManager::disassembleAppleDoubleName(Path name, bool *isAppleDouble) {
 	}
 
 	// Remove "._" before the last portion of a path name.
-	String rawName = name.rawString();
-	for (int i = rawName.size() - 1; i >= 0; --i) {
-		if (i == 0) {
-			if (rawName.size() > 2 && rawName[0] == '.' && rawName[1] == '_') {
-				rawName.erase(0, 2);
-				if (isAppleDouble) {
-					*isAppleDouble = true;
-				}
-			}
-		} else if (rawName[i] == DIR_SEPARATOR) {
-			if ((uint)(i + 2) < rawName.size() && rawName[i + 1] == '.' && rawName[i + 2] == '_') {
-				rawName.erase(i + 1, 2);
-				if (isAppleDouble) {
-					*isAppleDouble = true;
-				}
-			}
-			break;
-		}
-	}
-
-	return Path(rawName, DIR_SEPARATOR);
+	Path parent = name.getParent();
+	Path lastComponent = name.getLastComponent();
+	String lastComponentString = lastComponent.toString();
+	if (!lastComponentString.hasPrefix("._"))
+		return name;
+	return parent.appendComponent(lastComponentString.substr(2));
 }
 
 void MacResManager::dumpRaw() {
