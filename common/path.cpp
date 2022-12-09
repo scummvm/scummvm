@@ -69,6 +69,16 @@ Path Path::getLastComponent() const {
 	return Path(_str.substr(separatorPos + 1), DIR_SEPARATOR);
 }
 
+Path Path::appendComponent(const String &x) const {
+	if (x.empty())
+		return *this;
+	String str = _str;
+	if (!str.empty() && str.lastChar() != DIR_SEPARATOR)
+		str += DIR_SEPARATOR;
+	str += x;
+	return Path(str, DIR_SEPARATOR);
+}
+
 bool Path::operator==(const Path &x) const {
 	return _str == x.rawString();
 }
