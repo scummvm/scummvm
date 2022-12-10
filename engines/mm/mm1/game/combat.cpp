@@ -1450,7 +1450,7 @@ void Combat::monsterAttackInner() {
 
 	_destAC = c._ac._base;
 	int monsterIndex = getMonsterIndex();
-	_attackerLevel = _monsterList[monsterIndex]._combat1 * 2 + 4;
+	_attackerLevel = _monsterList[monsterIndex]._level * 2 + 4;
 
 	if (c._condition & (ASLEEP | BLINDED | PARALYZED))
 		_attackerLevel += 5;

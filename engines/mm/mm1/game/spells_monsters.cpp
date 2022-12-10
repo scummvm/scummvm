@@ -103,7 +103,7 @@ void SpellsMonsters::spell03_fire() {
 	++g_globals->_spellsState._mmVal2;
 	g_globals->_spellsState._resistanceType = RESISTANCE_FIRE;
 
-	int count = _monsterList[getMonsterIndex()]._combat1;
+	int count = _monsterList[getMonsterIndex()]._level;
 	g_globals->_spellsState._newCondition += count * 6;
 
 	damageRandomChar();
@@ -157,7 +157,7 @@ void SpellsMonsters::spell08_paralyze() {
 		g_globals->_spellsState._resistanceType = RESISTANCE_FEAR;
 		g_globals->_spellsState._newCondition = PARALYZED;
 
-		if (_monsterList[getMonsterIndex()]._combat1 >= 5) {
+		if (_monsterList[getMonsterIndex()]._level >= 5) {
 			handlePartyEffects();
 		} else {
 			chooseCharacter();
@@ -200,8 +200,8 @@ void SpellsMonsters::spell12_explode() {
 	++g_globals->_spellsState._mmVal2;
 	g_globals->_spellsState._resistanceType = RESISTANCE_POISON;
 	g_globals->_spellsState._newCondition = getRandomNumber(
-		_monsterList[getMonsterIndex()]._combat1);
-	_monsterList[getMonsterIndex()]._combat1 = 0;
+		_monsterList[getMonsterIndex()]._level);
+	_monsterList[getMonsterIndex()]._level = 0;
 	_monsterList[getMonsterIndex()]._status = MONFLAG_DEAD;
 	removeMonster();
 
@@ -218,7 +218,7 @@ void SpellsMonsters::spell13_fireball() {
 
 		// This whole condition choice makes no sense
 		g_globals->_spellsState._newCondition += 6 *
-			_monsterList[getMonsterIndex()]._combat1;
+			_monsterList[getMonsterIndex()]._level;
 		g_globals->_spellsState._newCondition = getRandomNumber(g_globals->_spellsState._newCondition) + 4;
 
 		add(':');
@@ -235,7 +235,7 @@ void SpellsMonsters::spell14_fireBreath() {
 
 	// This whole condition choice makes no sense
 	g_globals->_spellsState._newCondition += 8 *
-		_monsterList[getMonsterIndex()]._combat1;
+		_monsterList[getMonsterIndex()]._level;
 	g_globals->_spellsState._newCondition = getRandomNumber(g_globals->_spellsState._newCondition);
 
 	add(':');
