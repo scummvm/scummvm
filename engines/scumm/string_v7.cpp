@@ -40,7 +40,7 @@ TextRenderer_v7::TextRenderer_v7(ScummEngine *vm, GlyphRenderer_v7 *gr)	:
 	_direction(vm->_language == Common::HE_ISR ? -1 : 1),
 	_rtlCenteredOffset(vm->_language == Common::HE_ISR ? 1 : 0),
 	_spacing(vm->_language != Common::JA_JPN ? 1 : 0),
-	_lineBreakMarker(vm->_newLineCharacter),
+	_lineBreakMarker((char)vm->_newLineCharacter),
 	_newStyle (gr->newStyleWrapping()),
 	_gr(gr) {
 }
