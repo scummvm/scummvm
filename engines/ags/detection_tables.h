@@ -1595,6 +1595,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "loonyisland", "The Mystery of Loony Island" },
 	{ "lordoflight", "Lord of Light" },
 	{ "losjovenesdelaguerra", "Los Jovenes De La Guerra" },
+	{ "losno", "Ladies of Sorrow: Night One" },
 	{ "lostanswers", "Lost Answers" },
 	{ "lostdollar", "Max Griff in: The Lost Dollar" },
 	{ "lostinparadise", "Lost In Paradise" },
@@ -5721,6 +5722,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("lordoflight", "LordofLight.exe", "0564de07d3fd5c16e6947a647061913c", 98630583),
 	GAME_ENTRY_EN("lordoflight", "LordofLight.ags", "020597575b9a190f6d770c3d4b9bb180", 95597987),
 	GAME_ENTRY_EN("losjovenesdelaguerra", "guerra.exe", "97d700529f5cc826f230c27acf81adfd", 4286035),
+	GAME_ENTRY("losno", "Ladies of Sorrow Night One.ags", "f2b7c42a39683cbae37be67a562fe36a", 175792352), // Windows, Linux
 	GAME_ENTRY("lostanswers", "Lost Answers.exe", "c88de182eae58fdb43e5b4e587095ff5", 254684884),  // Windows  Eng-Tur
 	GAME_ENTRY("lostanswers", "Lost Answers.ags", "ee0ec2b06f61dd4cb5e57fe5d7898aa0", 252104900),  // Linux  Eng-Tur
 	GAME_ENTRY_EN("lostdollar", "Ron.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 4542929),
