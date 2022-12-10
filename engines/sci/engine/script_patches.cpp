@@ -9642,39 +9642,107 @@ static const uint16 laurabow2CDPatchPaintingClosing[] = {
 	PATCH_END
 };
 
-// In the CD version the system menu is disabled for certain rooms. LB2::handsOff is called,
-//  when leaving the room (and in other cases as well). This method remembers the disabled
-//  icons of the icon bar. In the new room LB2::handsOn will get called, which then enables
-//  all icons, but also disabled the ones, that were disabled before.
+// The CD version disables the control panel icon in many rooms. It's unclear
+//  why this was done; it may have been to conserve memory. Unfortunately, the
+//  CD script is quite buggy, and it also disables the icon in other rooms at
+//  seemingly random times, preventing saving and restoring in even more places.
+//  In ScummVM we allow arbitrary saving and restoring through the Global Main
+//  Menu so these restrictions are unnecessary.
 //
-// Because of this behaviour certain rooms, that should have the system menu enabled, have
-//  it disabled, when entering those rooms from rooms, where the menu is supposed to be
-//  disabled.
+// The CD version attempts to disable the control panel icon by:
+// - Adding code to LB2:handsOn to disable the icon when in a list of 14 rooms.
+// - Adding many calls to IconBar:disable(7) in these rooms.
+// - Removing the code from Inset:dispose that re-enables the icon. This has the
+//   side effect of disabling the icon after viewing an inset in any room.
 //
-// We patch this by injecting code into LB2::newRoom (which is called right after a room change)
-//  and reset the global variable there, that normally holds the disabled buttons.
+// These changes don't take into account that handsOff records IconBar state
+//  and handsOn restores it. This causes restricted rooms to contaminate others
+//  when traveling between them with handsOff scripts such as doors.
 //
-// This patch may cause side-effects and it's difficult to test, because it affects every room
-//  in the game. At least for the intro, the speakeasy and plenty of rooms in the beginning it
-//  seems to work correctly.
+// We remove these restrictions by patching out all of the new CD code and
+//  restoring the floppy code in Inset:dispose. We make room by overwriting
+//  unnecessary code in Inset:onMe that sets variables and doesn't use them.
+//  While we're at it, we also remove IconBar:disable(7) from the vat room (610)
+//  and the final passage (740) in all versions. As with the CD restrictions,
+//  they're unnecessary and inconsistently applied.
 //
-// Applies to at least: English PC-CD
-// Responsible method: LB2::newRoom, LB2::handsOff, LB2::handsOn
+// Applies to: English PC-CD for most patches, floppy versions for others
+// Responsible methods: LB2:handsOn, Inset:dispose, many others
 // Fixes bug: #6440
-static const uint16 laurabow2CDSignatureFixProblematicIconBar[] = {
+static const uint16 laurabow2CDSignatureEnableControlPanel[] = {
+	0x38, SIG_UINT16(0x00f1),           // pushi disable [ CD selector ]
 	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x00f1),           // pushi 00f1 (disable) - hardcoded, we only want to patch the CD version
-	0x76,                               // push0
-	0x81, 0x45,                         // lag global[45]
-	0x4a, 0x04,                         // send 04
+	0x78,                               // push1
+	0x39, 0x07,                         // pushi 07
+	0x81, 0x45,                         // lag 45
+	0x4a, 0x06,                         // send 06 [ IconBar disable: 7 ]
 	SIG_END
 };
 
-static const uint16 laurabow2CDPatchFixProblematicIconBar[] = {
-	0x35, 0x00,                      // ldi 00
-	0xa1, 0x74,                      // sag global[74]
-	0x35, 0x00,                      // ldi 00 (waste bytes)
-	0x35, 0x00,                      // ldi 00
+static const uint16 laurabow2FloppySignatureEnableControlPanel[] = {
+	0x38, SIG_UINT16(0x00e9),           // pushi disable [ Floppy selector ]
+	SIG_MAGICDWORD,
+	0x78,                               // push1
+	0x39, 0x07,                         // pushi 07
+	0x81, 0x45,                         // lag 45
+	0x4a, 0x06,                         // send 06 [ IconBar disable: 7 ]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchEnableControlPanel[] = {
+	0x32, PATCH_UINT16(0x0007),         // jmp 0007
+	PATCH_END
+};
+
+static const uint16 laurabow2CDSignatureInsetEnableControlPanel[] = {
+	// Inset:onMe
+	SIG_MAGICDWORD,
+	0x3f, 0x02,                         // link 02
+	0x78,                               // push1
+	0x8f, 0x01,                         // lsp 01
+	SIG_ADDTOOFFSET(+0x1f),
+	0x63, 0x18,                         // pToa view
+	SIG_ADDTOOFFSET(+0x1b5),
+	// Inset:dispose
+	0x31, 0x12,                         // bnt 12
+	SIG_ADDTOOFFSET(+2),
+	0x31, 0x0e,                         // bnt 0e
+	0xa5, 0x00,                         // sat 00
+	0x35, 0x00,                         // ldi 00
+	0x65, 0x28,                         // aTop caller [ caller = 0 ]
+	SIG_ADDTOOFFSET(+4),
+	0x85, 0x00,                         // lat 00
+	0x4a, 0x04,                         // send 04
+	0x48,                               // ret
+	SIG_END
+};
+
+static const uint16 laurabow2CDPatchInsetEnableControlPanel[] = {
+	// Inset:onMe
+	PATCH_ADDTOOFFSET(+2),
+	0xa5, 0x00,                         // sat 00 [ prevents uninitialized-parameter warning ]
+	0x33, 0x1e,                         // jmp 1e [ skip our new code ]
+	0x67, 0x2a,                         // pTos owner
+	0x81, 0x02,                         // lag 02
+	0x1a,                               // eq?
+	0x31, 0x0a,                         // bnt 0a
+	0x38, PATCH_SELECTOR16(enable),     // pushi enable
+	0x78,                               // pushi
+	0x39, 0x07,                         // pushi 07
+	0x81, 0x45,                         // lag 45
+	0x4a, 0x06,                         // send 06 [ IconBar enable: 7 ]
+	0x48,                               // ret
+	PATCH_ADDTOOFFSET(+0x1c3),
+	// Inset:dispose
+	0x31, 0x10,                         // bnt 10
+	PATCH_ADDTOOFFSET(+2),
+	0x31, 0x0c,                         // bnt 0c
+	PATCH_ADDTOOFFSET(+2),
+	0x39, 0x00,                         // pushi 00
+	0x69, 0x28,                         // sTop caller [ caller = 0, acc = temp0 ]
+	PATCH_ADDTOOFFSET(+4),
+	0x4a, 0x04,                         // send 04
+	0x32, PATCH_UINT16(0xfe16),         // jmp fe16 [ our new code, ret ]
 	PATCH_END
 };
 
@@ -10857,7 +10925,6 @@ static const uint16 laurabow2CDPatchAudioTextMenuSupport2[] = {
 static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   560, "CD: painting closing immediately",               1, laurabow2CDSignaturePaintingClosing,            laurabow2CDPatchPaintingClosing },
 	{  true,     0, "CD/Floppy: museum music volume",                 1, laurabow2SignatureMuseumMusicVolume,            laurabow2PatchMuseumMusicVolume },
-	{  true,     0, "CD: fix problematic icon bar",                   1, laurabow2CDSignatureFixProblematicIconBar,      laurabow2CDPatchFixProblematicIconBar },
 	{  true,    26, "CD: fix act 4 wrong music",                      1, laurabow2CDSignatureFixAct4WrongMusic,          laurabow2CDPatchFixAct4WrongMusic },
 	{  true,    90, "CD: fix yvette's tut response",                  1, laurabow2CDSignatureFixYvetteTutResponse,       laurabow2CDPatchFixYvetteTutResponse },
 	{  true,   110, "CD: fix intro music",                            1, laurabow2CDSignatureFixIntroMusic,              laurabow2CDPatchFixIntroMusic },
@@ -10892,6 +10959,21 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,    28, "disable speed test",                             1, sci11SpeedTestSignature,                        sci11SpeedTestPatch },
 	{  true,   120, "CD: disable intro volume change in text mode",   1, laurabow2CDSignatureIntroVolumeChange,          laurabow2CDPatchIntroVolumeChange },
 	{  true,   928, "Narrator lockup fix",                            1, sciNarratorLockupSignature,                     sciNarratorLockupPatch },
+	{ false,     0, "CD: enable control panel",                       1, laurabow2CDSignatureEnableControlPanel,         laurabow2PatchEnableControlPanel },
+	{ false,   310, "CD: enable control panel",                       1, laurabow2CDSignatureEnableControlPanel,         laurabow2PatchEnableControlPanel },
+	{ false,   441, "CD: enable control panel",                       2, laurabow2CDSignatureEnableControlPanel,         laurabow2PatchEnableControlPanel },
+	{ false,   454, "CD: enable control panel",                       7, laurabow2CDSignatureEnableControlPanel,         laurabow2PatchEnableControlPanel },
+	{ false,   520, "CD: enable control panel",                      13, laurabow2CDSignatureEnableControlPanel,         laurabow2PatchEnableControlPanel },
+	{ false,   550, "CD: enable control panel",                       8, laurabow2CDSignatureEnableControlPanel,         laurabow2PatchEnableControlPanel },
+	{ false,   610, "CD: enable control panel",                       3, laurabow2CDSignatureEnableControlPanel,         laurabow2PatchEnableControlPanel },
+	{ false,   700, "CD: enable control panel",                       6, laurabow2CDSignatureEnableControlPanel,         laurabow2PatchEnableControlPanel },
+	{ false,   710, "CD: enable control panel",                       1, laurabow2CDSignatureEnableControlPanel,         laurabow2PatchEnableControlPanel },
+	{ false,   730, "CD: enable control panel",                       5, laurabow2CDSignatureEnableControlPanel,         laurabow2PatchEnableControlPanel },
+	{ false,   740, "CD: enable control panel",                       4, laurabow2CDSignatureEnableControlPanel,         laurabow2PatchEnableControlPanel },
+	{ false,   923, "CD: enable control panel",                       1, laurabow2CDSignatureInsetEnableControlPanel,    laurabow2CDPatchInsetEnableControlPanel },
+	{ false,   610, "Floppy: enable control panel",                   3, laurabow2FloppySignatureEnableControlPanel,     laurabow2PatchEnableControlPanel },
+	{ false,   730, "Floppy: enable control panel",                   5, laurabow2FloppySignatureEnableControlPanel,     laurabow2PatchEnableControlPanel },
+	{ false,   740, "Floppy: enable control panel",                   3, laurabow2FloppySignatureEnableControlPanel,     laurabow2PatchEnableControlPanel },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	{ false,   924, "CD: audio + text support 1",                     1, kq6laurabow2CDSignatureAudioTextSupport1,       kq6laurabow2CDPatchAudioTextSupport1 },
 	{ false,   924, "CD: audio + text support 2",                     1, kq6laurabow2CDSignatureAudioTextSupport2,       kq6laurabow2CDPatchAudioTextSupport2 },
@@ -24727,6 +24809,10 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 
 					// Enables Dual mode patches (audio + subtitles at the same time) for Laura Bow 2
 					enablePatch(signatureTable, "CD: audio + text support");
+
+					enablePatch(signatureTable, "CD: enable control panel");
+				} else {
+					enablePatch(signatureTable, "Floppy: enable control panel");
 				}
 				break;
 			case GID_QFG4:
