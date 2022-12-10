@@ -73,14 +73,19 @@ private:
 		&Map37::special19
 	};
 public:
-	Map37() : Map(37, "qvl1", 0xf03, 3) {
-		_mappingAllowed = false;
-	}
+	Map37() : Map(37, "qvl1", 0xf03, 3) {}
 
 	/**
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
+
+	/**
+	 * This map has some random spinners, so we want to
+	 * disable mapping in enhanced mode to avoid spoiling
+	 * the surprise
+	 */
+	bool mappingAllowed() const override { return false; }
 };
 
 } // namespace Maps
