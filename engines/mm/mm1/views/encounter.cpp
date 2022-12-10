@@ -39,10 +39,11 @@ bool Encounter::msgFocus(const FocusMessage &msg) {
 
 void Encounter::draw() {
 	Game::Encounter &enc = g_globals->_encounters;
-
-	// Clear the commands area
 	Graphics::ManagedSurface s = getSurface();
-	s.fillRect(Common::Rect(31 * 8, 0, 320, 17 * 8), 0);
+
+	if (_mode != ALERT)
+		// Clear the commands area
+		s.fillRect(Common::Rect(241, 0, 320, 128), 0);
 
 	switch (_mode) {
 	case ALERT:
