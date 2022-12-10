@@ -147,6 +147,7 @@ static const char *const selectorNameTable[] = {
 	"loop",         // Laura Bow 1 Colonel's Bequest, QFG4
 	"setLoop",      // Laura Bow 1 Colonel's Bequest, QFG4
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
+	"saveCursor",   // Laura Bow 2 CD
 	"setVol",       // Laura Bow 2 CD
 	"at",           // Longbow, QFG4
 	"owner",        // Longbow, QFG4
@@ -287,6 +288,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_loop,
 	SELECTOR_setLoop,
 	SELECTOR_ignoreActors,
+	SELECTOR_saveCursor,
 	SELECTOR_setVol,
 	SELECTOR_at,
 	SELECTOR_owner,
@@ -9746,6 +9748,61 @@ static const uint16 laurabow2CDPatchInsetEnableControlPanel[] = {
 	PATCH_END
 };
 
+// The CD version frequently displays the hands-off cursor when the player has
+//  control. This occurs when speech is enabled. For example: climbing down a
+//  vat ladder or picking up items like the charcoal, wire cutters, or lasso.
+//
+// When re-enabling control and displaying a message at the same time, scripts
+//  are supposed to call handsOn before saying the message, otherwise the wrong
+//  cursor is shown while the message is displayed. In LB2, this also applies to
+//  ego:get, because it also says "You pick it up and place it in your purse."
+//  Many scripts call these in the wrong order. In the floppy version this had
+//  little effect, but the CD version added speech code to Narrator that records
+//  and restores the previous cursor. If handsOn is called after say then the
+//  Narrator restores the hands-off cursor when the speech eventually completes.
+//
+// We fix this by adding code to handsOn that detects if a Narrator is saying a
+//  message, and if so, updates its saveCursor to the correct previous cursor.
+//  We make room by overwriting the large list of rooms that handsOn attempts to
+//  disable the control panel icon in. This list is unused because we patch out
+//  that restriction. See also: laurabow2PatchEnableControlPanel
+//
+// Applies to: English PC-CD
+// Responsible method: LB2:handsOn
+static const uint16 laurabow2CDSignatureFixHandsOffCursor[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x0f,                         // pushi 0f [ OneOf parameter count ]
+	0x89, 0x0b,                         // lsg 0b   [ roomNumber ]
+	SIG_ADDTOOFFSET(+42),
+	0x46, SIG_UINT16(0x03e7),           // calle 999 0005 1e [ OneOf roomNumber ... ]
+	SIG_UINT16(0x0005), 0x1e,
+	0x31, 0x0a,                         // bnt 0a
+	SIG_END
+};
+
+static const uint16 laurabow2CDPatchFixHandsOffCursor[] = {
+	0x81, 0x54,                         // lag 54 [ fastCast ]
+	0x31, 0x3c,                         // bnt 3c [ skip if no message ]
+	0x39, PATCH_SELECTOR8(at),          // pushi at
+	0x78,                               // push1
+	0x76,                               // push0
+	0x4a, 0x06,                         // send 06 [ fastCast at: 0 ]
+	0x31, 0x34,                         // bnt 34  [ skip if no Narrator ]
+	0xa1, 0x61,                         // sag 61  [ store Narrator in unused global ]
+	0x81, 0x79,                         // lag 79  [ icon when handsOff was called ]
+	0x31, 0x2e,                         // bnt 2e  [ skip if no icon is set ]
+	0x39, PATCH_SELECTOR8(cursor),      // pushi cursor
+	0x76,                               // push0
+	0x4a, 0x04,                         // send 04 [ icon cursor? ]
+	0x38, PATCH_SELECTOR16(saveCursor), // pushi saveCursor
+	0x78,                               // push1
+	0x36,                               // push
+	0x81, 0x61,                         // lag 61
+	0x4a, 0x06,                         // send 06 [ Narrator saveCursor: previous icon cursor ]
+	0x33, 0x1e,                         // jmp 1e
+	PATCH_END
+};
+
 // LB2 CD responds with the wrong message when asking Yvette about Tut in acts 3+.
 //
 // aYvette:doVerb(6) tests flag 134, which is set when Pippin dies, to determine
@@ -10924,6 +10981,7 @@ static const uint16 laurabow2CDPatchAudioTextMenuSupport2[] = {
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   560, "CD: painting closing immediately",               1, laurabow2CDSignaturePaintingClosing,            laurabow2CDPatchPaintingClosing },
+	{  true,     0, "CD: fix hands-off cursor",                       1, laurabow2CDSignatureFixHandsOffCursor,          laurabow2CDPatchFixHandsOffCursor },
 	{  true,     0, "CD/Floppy: museum music volume",                 1, laurabow2SignatureMuseumMusicVolume,            laurabow2PatchMuseumMusicVolume },
 	{  true,    26, "CD: fix act 4 wrong music",                      1, laurabow2CDSignatureFixAct4WrongMusic,          laurabow2CDPatchFixAct4WrongMusic },
 	{  true,    90, "CD: fix yvette's tut response",                  1, laurabow2CDSignatureFixYvetteTutResponse,       laurabow2CDPatchFixYvetteTutResponse },
