@@ -328,11 +328,6 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		//  a change. The Narrator class also does this to detect
 		//  if speech was interrupted so that the game can continue.
 		return make_reg(0, g_sci->_audio->getPlayCounter());
-	case 17:
-		// Seems to be some sort of audio sync, used in SQ6. Silenced the
-		// warning due to the high level of spam it produces. (takes no params)
-		//warning("kDoAudio: Unhandled case 17, %d extra arguments passed", argc - 1);
-		break;
 	default:
 		warning("kDoAudio: Unhandled case %d, %d extra arguments passed", argv[0].toUint16(), argc - 1);
 	}
