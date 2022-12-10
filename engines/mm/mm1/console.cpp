@@ -326,15 +326,36 @@ bool Console::cmdCast(int argc, const char **argv) {
 }
 
 bool Console::cmdEncounter(int argc, const char **argv) {
-	if (argc > 1) {
-		int encType = strToInt(argv[1]);
-		if (encType == -1 || encType == 0 || encType == 1)
-			g_globals->_encounters._encounterType =
-				(Game::EncounterType)encType;
-	}
+	if (argc < 2) {
+		debugPrintf("encounter <monster-num> [<encounter type>]\n");
+		return true;
 
-	g_globals->_encounters.execute();
-	return false;
+	} else {
+		Game::Encounter &enc = g_globals->_encounters;
+		int monsterNum = strToInt(argv[1]);
+		if (monsterNum < 1 || monsterNum > MONSTERS_COUNT) {
+			debugPrintf("monster-num must be between 1 and %d\n", MONSTERS_COUNT);
+			return true;
+		}
+
+		int encType = (argc > 2) ? strToInt(argv[2]) :
+			Game::NORMAL_ENCOUNTER;
+		if (encType != -1 || encType == 0 || encType == 1)
+			enc._encounterType = (Game::EncounterType)encType;
+
+		enc.clearMonsters();
+		enc.addMonster(monsterNum, 1);
+
+		enc._flag = true;
+		enc._levelIndex = 80;
+
+		bool monstersOn = g_globals->_encountersOn;
+		g_globals->_encountersOn = true;
+		enc.execute();
+		g_globals->_encountersOn = monstersOn;
+
+		return false;
+	}
 }
 
 bool Console::cmdEncounters(int argc, const char **argv) {
