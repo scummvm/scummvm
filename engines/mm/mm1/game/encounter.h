@@ -81,7 +81,7 @@ public:
 	/**
 	 * Adds a monster to the monster list
 	 */
-	void addMonster(byte id, byte arr1);
+	void addMonster(byte id, byte level);
 };
 
 } // namespace Game

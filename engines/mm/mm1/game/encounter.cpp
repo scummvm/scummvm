@@ -40,8 +40,8 @@ void Encounter::execute() {
 	_bribeFleeCtr = _bribeAlignmentCtr = 0;
 	_alignmentsChanged = 0;
 
-	byte combat1[MAX_COMBAT_MONSTERS];
-	Common::fill(&combat1[0], &combat1[MAX_COMBAT_MONSTERS], 0);
+	byte monsterLevel[MAX_COMBAT_MONSTERS];
+	Common::fill(&monsterLevel[0], &monsterLevel[MAX_COMBAT_MONSTERS], 0);
 
 	if (!_flag) {
 		_monsterList.clear();
@@ -83,7 +83,7 @@ void Encounter::execute() {
 		}
 
 		assert(_monsterCount < MAX_COMBAT_MONSTERS);
-		combat1[_monsterCount] = comp;
+		monsterLevel[_monsterCount] = comp;
 		_monsterNum16 = comp;
 		_levelIndex += comp;
 
@@ -100,8 +100,8 @@ void Encounter::execute() {
 
 			for (int i = 0; i < maxVal; ++i) {
 				assert(_monsterCount > 0);
-				combat1[_monsterCount] = combat1[_monsterCount - 1];
-				_levelIndex += combat1[_monsterCount];
+				monsterLevel[_monsterCount] = monsterLevel[_monsterCount - 1];
+				_levelIndex += monsterLevel[_monsterCount];
 				_monsIndexes[_monsterCount] = _monsIndexes[_monsterCount - 1];
 
 				if (++_monsterCount >= MAX_COMBAT_MONSTERS)
@@ -119,18 +119,18 @@ exit_loop:
 	_monsterList.clear();
 
 	for (int i = 0; i < _monsterCount; ++i) {
-		maxVal = (combat1[i] - 1) * 16 + _monsIndexes[i];
-		if (combat1[i] < 1 || combat1[i] > 12 || maxVal >= 196) {
-			combat1[i] = 10;
+		maxVal = (monsterLevel[i] - 1) * 16 + _monsIndexes[i];
+		if (monsterLevel[i] < 1 || monsterLevel[i] > 12 || maxVal >= 196) {
+			monsterLevel[i] = 10;
 			_monsIndexes[i] = getRandomNumber(MAX_COMBAT_MONSTERS);
 		}
 
 		// Add monster details to list
-		_monsterNum16 = combat1[i];
+		_monsterNum16 = monsterLevel[i];
 		const Monster &srcMons = g_globals->_monsters[_monsIndexes[i]];
 		_monsterList.push_back(srcMons);
 		Monster &mons = _monsterList.back();
-		mons._combat1 = combat1[i];
+		mons._level = monsterLevel[i];
 
 		if (_monsterNum16 > _val9) {
 			_val9 = _monsterNum16;
@@ -177,10 +177,10 @@ void Encounter::clearMonsters() {
 	_monsterList.size();
 }
 
-void Encounter::addMonster(byte id, byte arr1) {
+void Encounter::addMonster(byte id, byte level) {
 	const Monster &mons = g_globals->_monsters[id];
 	_monsterList.push_back(mons);
-	_monsterList.back()._combat1 = arr1;
+	_monsterList.back()._level = level;
 }
 
 } // namespace Game
