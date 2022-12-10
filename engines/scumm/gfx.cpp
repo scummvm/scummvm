@@ -70,7 +70,8 @@ enum {
 	// the screen effect (like sound interrupts running,
 	// forcing the SCUMM timer to a lower frequency).
 	// I have added an extra quarter frame to emulate that.
-	kPictureDelay = 4
+	kPictureDelay = 4,
+	kC64Delay = 6
 };
 
 #define NUM_SHAKE_POSITIONS 8
@@ -4201,7 +4202,9 @@ void ScummEngine::transitionEffect(int a) {
 	const int height = MIN((int)_virtscr[kMainVirtScreen].h, _screenHeight);
 
 	if (VAR_FADE_DELAY == 0xFF) {
-		if (_game.version >= 2) {
+		if (_game.platform == Common::kPlatformC64) {
+			delay = kC64Delay;
+		} else if (_game.version >= 2) {
 			delay = kPictureDelay;
 		} else {
 			delay = kNoDelay;
