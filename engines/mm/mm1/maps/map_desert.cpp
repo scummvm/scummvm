@@ -116,6 +116,10 @@ void MapDesert::lost() {
 	}
 }
 
+bool MapDesert::mappingAllowed() const {
+	return g_globals->_party.hasItem(MAP_OF_DESERT_ID);
+}
+
 } // namespace Maps
 } // namespace MM1
 } // namespace MM

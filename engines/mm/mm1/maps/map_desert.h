@@ -55,6 +55,12 @@ public:
 		byte defaultSection, int deadCountOffset, RandomMode rndMode) :
 		Map(index, name, id, defaultSection),
 		_deadCountOffset(deadCountOffset), _randomMode(rndMode) {}
+
+	/**
+	 * Allow mapping of the desert maps in the enhanced version
+	 * if the party has the desert map item
+	 */
+	bool mappingAllowed() const override;
 };
 
 } // namespace Maps
