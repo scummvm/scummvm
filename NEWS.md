@@ -32,6 +32,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for the original installer files for Maniac Mansion Deluxe and
      The New Adventures of Zak McKracken.
 
+ GOB:
+   - Added support for "Adibou 2 Read/Count 4 & 5" and "Read/Count 6 & 7".
+
  Kyra:
    - Added support for the Korean version of Legend of Kyrandia 1.
    - Added support for the Hebrew version of Legend of Kyrandia 3.
