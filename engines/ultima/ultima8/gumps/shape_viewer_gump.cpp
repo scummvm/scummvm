@@ -36,6 +36,7 @@
 #include "ultima/ultima8/graphics/fonts/font_shape_archive.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
+#include "ultima/ultima8/graphics/mouse_shape_archive.h"
 
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/convert/u8/convert_shape_u8.h"
@@ -295,6 +296,9 @@ void ShapeViewerGump::U8ShapeViewer() {
 	archives.push_back(ShapeArchiveEntry("shapes", gamedata->getMainShapes()));
 	archives.push_back(ShapeArchiveEntry("gumps", gamedata->getGumps()));
 	archives.push_back(ShapeArchiveEntry("fonts", gamedata->getFonts()));
+
+	ShapeArchive *mouseShapes = new MouseShapeArchive(gamedata->getMouse(), GameData::OTHER);
+	archives.push_back(ShapeArchiveEntry("mouse", mouseShapes, DisposeAfterUse::YES));
 
 	FileSystem *filesys = FileSystem::get_instance();
 	Common::SeekableReadStream *eintro = filesys->ReadFile("static/eintro.skf");

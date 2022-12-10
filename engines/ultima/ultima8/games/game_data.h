@@ -76,7 +76,7 @@ public:
 	GumpShapeArchive *getGumps() const {
 		return _gumps;
 	}
-	const Shape *getMouse() const {
+	Shape *getMouse() const {
 		return _mouse;
 	}
 	MusicFlex *getMusic() const {
