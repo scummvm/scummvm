@@ -147,11 +147,14 @@ bool TextView::msgDrawGraphic(const DrawGraphicMessage &msg) {
 	draw();
 
 	// Draw the new image
-	const Graphics::ManagedSurface img =
-		g_globals->_monsters.getMonsterImage(msg._gfxNum);
-	getSurface().blitFrom(img, Common::Point(64, 16));
+	drawGraphic(msg._gfxNum);
+	return true;
+}
 
-	return true; 
+void TextView::drawGraphic(int gfxNum) {
+	const Graphics::ManagedSurface img =
+		g_globals->_monsters.getMonsterImage(gfxNum);
+	getSurface().blitFrom(img, Common::Point(64, 16));
 }
 
 } // namespace Views

@@ -122,7 +122,7 @@ void Encounter::draw() {
 
 	if (_mode != ALERT) {
 		// Display the monster
-		msgDrawGraphic(DrawGraphicMessage(enc._monsterImgNum));
+		drawGraphic(enc._monsterImgNum);
 
 		// Write the monster list
 		for (uint i = 0; i < enc._monsterList.size(); ++i) {
