@@ -103,7 +103,7 @@ void MessageBoxGump::InitGump(Gump *newparent, bool take_focus) {
 
 	Mouse *mouse = Mouse::get_instance();
 	mouse->pushMouseCursor();
-	mouse->setMouseCursor(Mouse::MOUSE_POINTER);
+	mouse->setMouseCursor(Mouse::MOUSE_HAND);
 }
 
 void MessageBoxGump::Close(bool no_del) {

@@ -995,7 +995,7 @@ Common::Error Ultima8Engine::saveGameStream(Common::WriteStream *stream, bool is
 		modalGump->HideGump();
 
 	_mouse->pushMouseCursor();
-	_mouse->setMouseCursor(Mouse::MOUSE_PENTAGRAM);
+	_mouse->setMouseCursor(Mouse::MOUSE_WAIT);
 
 	// Redraw to indicate busy and for save thumbnail
 	paint();
@@ -1247,7 +1247,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	}
 
 	_mouse->pushMouseCursor();
-	_mouse->setMouseCursor(Mouse::MOUSE_PENTAGRAM);
+	_mouse->setMouseCursor(Mouse::MOUSE_WAIT);
 	_screen->BeginPainting();
 	_mouse->paint();
 	_screen->EndPainting();

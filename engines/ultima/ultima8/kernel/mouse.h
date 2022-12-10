@@ -85,12 +85,11 @@ public:
 		MOUSE_NORMAL = 0,
 		MOUSE_NONE = 1,
 		MOUSE_TARGET = 2,
-		MOUSE_PENTAGRAM = 3,
+		MOUSE_WAIT = 3,
 		MOUSE_HAND = 4,
 		MOUSE_QUILL = 5,
 		MOUSE_MAGGLASS = 6,
-		MOUSE_CROSS = 7,
-		MOUSE_POINTER = 8  //!< Default pointer
+		MOUSE_CROSS = 7
 	};
 
 	enum DraggingState {

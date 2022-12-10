@@ -229,11 +229,9 @@ int Mouse::getMouseFrame() {
 					 //!! constants...
 	case MOUSE_NONE:
 		return -1;
-	case MOUSE_POINTER:
-		return -2;
 	case MOUSE_TARGET:
 		return 34;
-	case MOUSE_PENTAGRAM:
+	case MOUSE_WAIT:
 		return 35;
 	case MOUSE_HAND:
 		return 36;
