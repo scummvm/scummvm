@@ -40,11 +40,8 @@ void Encounter::execute() {
 	_bribeFleeCtr = _bribeAlignmentCtr = 0;
 	_alignmentsChanged = 0;
 
-	byte monsterLevel[MAX_COMBAT_MONSTERS];
-	Common::fill(&monsterLevel[0], &monsterLevel[MAX_COMBAT_MONSTERS], 0);
-
 	if (!_flag) {
-		_monsterList.clear();
+		_monsterSummaries.clear();
 		_levelIndex = 0;
 	}
 
@@ -82,32 +79,29 @@ void Encounter::execute() {
 			comp = MIN(maxVal, 10);
 		}
 
-		assert(_monsterCount < MAX_COMBAT_MONSTERS);
-		monsterLevel[_monsterCount] = comp;
-		_monsterNum16 = comp;
+		assert(_monsterSummaries.size() < MAX_COMBAT_MONSTERS);
+		_monsterNum = getRandomNumber(16);
+		_monsterSummaries.push_back(MonsterSummary(_monsterNum, comp));
+
+		_monsterLevel = comp;
 		_levelIndex += comp;
 
-		_monsterNum = getRandomNumber(16);
-		_monsIndexes[_monsterCount] = _monsterNum;
-		_monsterCount = (_monsterCount + 1) & 0xff;
-
-		if (_monsterCount < MAX_COMBAT_MONSTERS) {
-			if (_monsterCount >= map[Maps::MAP_MAX_MONSTERS])
+		if (_monsterSummaries.size() < MAX_COMBAT_MONSTERS) {
+			if (_monsterSummaries.size() >= map[Maps::MAP_MAX_MONSTERS])
 				goto exit_loop;
 
 			monsterP = getMonster();
 			maxVal = getRandomNumber(monsterP->_count);
 
 			for (int i = 0; i < maxVal; ++i) {
-				assert(_monsterCount > 0);
-				monsterLevel[_monsterCount] = monsterLevel[_monsterCount - 1];
-				_levelIndex += monsterLevel[_monsterCount];
-				_monsIndexes[_monsterCount] = _monsIndexes[_monsterCount - 1];
+				assert(!_monsterSummaries.empty());
+				_monsterSummaries.push_back(_monsterSummaries.back());
+				_levelIndex += _monsterSummaries.back()._level;
 
-				if (++_monsterCount >= MAX_COMBAT_MONSTERS)
+				if (_monsterSummaries.size() >= MAX_COMBAT_MONSTERS)
 					goto exit_loop;
 
-				if (_monsterCount >= map[Maps::MAP_MAX_MONSTERS])
+				if (_monsterSummaries.size() >= map[Maps::MAP_MAX_MONSTERS])
 					goto exit_loop;
 			}
 		} else {
@@ -118,22 +112,25 @@ void Encounter::execute() {
 exit_loop:
 	_monsterList.clear();
 
-	for (int i = 0; i < _monsterCount; ++i) {
-		maxVal = (monsterLevel[i] - 1) * 16 + _monsIndexes[i];
-		if (monsterLevel[i] < 1 || monsterLevel[i] > 12 || maxVal >= 196) {
-			monsterLevel[i] = 10;
-			_monsIndexes[i] = getRandomNumber(MAX_COMBAT_MONSTERS);
+	for (uint i = 0; i < _monsterSummaries.size(); ++i) {
+		maxVal = (_monsterSummaries[i]._level - 1) * 16 +
+			_monsterSummaries[i]._num;
+
+		if (_monsterSummaries[i]._level < 1 || _monsterSummaries[i]._level > 12
+				|| maxVal >= 196) {
+			_monsterSummaries[i]._level = 10;
+			_monsterSummaries[i]._num = getRandomNumber(MAX_COMBAT_MONSTERS);
 		}
 
 		// Add monster details to list
-		_monsterNum16 = monsterLevel[i];
-		const Monster &srcMons = g_globals->_monsters[_monsIndexes[i]];
+		_monsterLevel = _monsterSummaries[i]._level;
+		const Monster &srcMons = g_globals->_monsters[_monsterSummaries[i]._num];
 		_monsterList.push_back(srcMons);
 		Monster &mons = _monsterList.back();
-		mons._level = monsterLevel[i];
+		mons._level = _monsterSummaries[i]._level;
 
-		if (_monsterNum16 > _val9) {
-			_val9 = _monsterNum16;
+		if (_monsterLevel > _val9) {
+			_val9 = _monsterLevel;
 			_fleeThreshold = mons._field10;
 			_monsterImgNum = mons._field1f;
 		}
@@ -158,8 +155,8 @@ void Encounter::randomAdjust() {
 }
 
 const Monster *Encounter::getMonster() {
-	assert(_monsterNum > 0 && _monsterNum16 > 0);
-	return &g_globals->_monsters[_monsterNum + ((_monsterNum16 - 1) * 16)];
+	assert(_monsterNum > 0 && _monsterLevel > 0);
+	return &g_globals->_monsters[_monsterNum + ((_monsterLevel - 1) * 16)];
 }
 
 bool Encounter::checkSurroundParty() const {
@@ -174,13 +171,11 @@ void Encounter::changeCharAlignment(Alignment align) {
 }
 
 void Encounter::clearMonsters() {
-	_monsterList.size();
+	_monsterSummaries.clear();
 }
 
 void Encounter::addMonster(byte id, byte level) {
-	const Monster &mons = g_globals->_monsters[id];
-	_monsterList.push_back(mons);
-	_monsterList.back()._level = level;
+	_monsterSummaries.push_back(MonsterSummary(id, level));
 }
 
 } // namespace Game
