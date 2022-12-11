@@ -135,6 +135,7 @@ void Encounter::draw() {
 
 	if (_mode == NO_RESPONSE || _mode == SURROUNDED ||
 			_mode == NOT_ENOUGH || _mode == COMBAT ||
+			_mode == NOWHERE_TO_RUN || _mode == SURRENDER_FAILED ||
 			_mode == SURPRISED_BY_MONSTERS) {
 		if (enc._alignmentsChanged) {
 			writeString(8, 23, STRING["dialogs.encounter.alignment_slips"]);
