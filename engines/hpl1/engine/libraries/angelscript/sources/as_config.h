@@ -639,7 +639,7 @@
 // MSVC2015 can now use CLang too, but it shouldn't go in here
 #if (defined(__GNUC__) && !defined(__SNC__) && !defined(_MSC_VER)) || defined(EPPC) || defined(__CYGWIN__) // JWC -- use this instead for Wii
 #define GNU_STYLE_VIRTUAL_METHOD
-#define MULTI_BASE_OFFSET(x) (*((asPWORD*)(&x)+1))
+#define MULTI_BASE_OFFSET(x) (*((const asPWORD*)(&x)+1))
 #define asVSNPRINTF(a, b, c, d) vsnprintf(a, b, c, d)
 #define CALLEE_POPS_HIDDEN_RETURN_POINTER
 #define COMPLEX_OBJS_PASSED_BY_REF

@@ -351,7 +351,7 @@ dgCollision *dgWorld::CreateCollisionCompound(dgInt32 count,
         dgCollision *const array[]) {
 	// compound collision are not cached
 	return new (m_allocator) dgCollisionCompound(count,
-	        (dgCollisionConvex **)array, this);
+	        (dgCollisionConvex * const*)array, this);
 }
 
 // dgCollision* dgWorld::CreateCollisionCompoundBreakable (
