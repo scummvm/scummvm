@@ -38,8 +38,6 @@ Combat::~Combat() {
 }
 
 void Combat::clear() {
-	_monsterList.clear();
-
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
 		c._checked = false;
