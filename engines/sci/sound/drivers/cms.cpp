@@ -66,7 +66,7 @@ protected:
 
 	const uint8 _id;
 	const uint8 _regOffset;
-	const uint8 _chipOffset;
+	const uint16 _chipOffset;
 
 	static uint8 _octaveRegs[6];
 	static const int _frequencyTable[48];
