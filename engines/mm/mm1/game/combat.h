@@ -105,7 +105,7 @@ protected:
 	 */
 	void clear();
 
-	void loadArrays();
+	void loadMonsters();
 
 	/**
 	 * Sets the _monsterIndex to the index of

@@ -38,12 +38,14 @@ Combat::~Combat() {
 }
 
 void Combat::clear() {
+	// Reset party character combat flags
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
 		c._checked = false;
 		c._canAttack = false;
 	}
 
+	// Reset other fields
 	Common::fill(&_treasureFlags[0], &_treasureFlags[MAX_PARTY_SIZE], false);
 
 	_allowFight = _allowShoot = _allowCast = _allowAttack = false;
@@ -83,11 +85,13 @@ void Combat::clear() {
 		_party.push_back(&g_globals->_party[i]);
 }
 
-void Combat::loadArrays() {
+void Combat::loadMonsters() {
 	Game::Encounter &enc = g_globals->_encounters;
 
+	// Set up hp and ac for the encounter monsters
 	for (uint i = 0; i < enc._monsterList.size(); ++i) {
 		Monster &mon = enc._monsterList[i];
+		_monsterP = &mon;
 		int val = getRandomNumber(8);
 
 		mon._defaultHP += val;
@@ -96,6 +100,10 @@ void Combat::loadArrays() {
 
 		monsterIndexOf();
 	}
+
+	// Now copy it into the active combat. This is kept as a
+	// separate list since defeated monsters are removed from it
+	_monsterList = g_globals->_encounters._monsterList;
 }
 
 void Combat::monsterIndexOf() {
@@ -251,10 +259,10 @@ void Combat::dispelParty() {
 }
 
 void Combat::combatLoop() {
-	if (_monsterIndex != 0) {
-		selectParty();
-	} else {
+	if (_monsterList.empty()) {
 		defeatedMonsters();
+	} else {
+		selectParty();
 	}
 }
 
@@ -281,10 +289,9 @@ void Combat::defeatedMonsters() {
 	_totalExperience = 0;
 
 	// Count total experience from all defeated monsters
-	for (uint i = 0; i < _monsterList.size(); ++i) {
-		_monsterP = &_monsterList[i];
-		monsterIndexOf();
-
+	Common::Array<Monster> &monsters = g_globals->_encounters._monsterList;
+	for (uint i = 0; i < monsters.size(); ++i) {
+		_monsterP = &monsters[i];
 		_totalExperience += _monsterP->_experience;
 		setTreasure();
 	}
