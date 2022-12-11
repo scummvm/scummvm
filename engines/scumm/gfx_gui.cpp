@@ -2105,7 +2105,7 @@ bool ScummEngine::executeMainMenuOperationSegaCD(int op, int mouseX, int mouseY,
 	case GUI_CTRL_NUMPAD_9:
 	case GUI_CTRL_NUMPAD_BACK:
 	{
-		int inputNum = op == GUI_CTRL_NUMPAD_0 ? 0 : op;
+		int inputNum = (op == GUI_CTRL_NUMPAD_0) ? 0 : op;
 		uint curIdx;
 		for (curIdx = 0; curIdx < sizeof(_mainMenuSegaCDPasscode); curIdx++) {
 			if (_mainMenuSegaCDPasscode[curIdx] == '\0')
@@ -2122,7 +2122,7 @@ bool ScummEngine::executeMainMenuOperationSegaCD(int op, int mouseX, int mouseY,
 
 			if (curIdx >= 3) { // Last digit
 				updateMainMenuControls();
-				ScummEngine::drawDirtyScreenParts();
+				drawDirtyScreenParts();
 
 				waitForTimer(120);
 
@@ -2869,9 +2869,7 @@ void ScummEngine::setUpMainMenuControlsSegaCD() {
 								235,
 								yConstant + 34,
 								_uncheckedBox, 1, 1);
-	}
-
-	if (_menuPage == GUI_PAGE_RESTART || _menuPage == GUI_PAGE_CODE_CONFIRM) {
+	} else if (_menuPage == GUI_PAGE_RESTART || _menuPage == GUI_PAGE_CODE_CONFIRM) {
 		// OK button
 		setUpInternalGUIControl(GUI_CTRL_OK_BUTTON,
 								getBannerColor(4),
@@ -2903,9 +2901,7 @@ void ScummEngine::setUpMainMenuControlsSegaCD() {
 								isJap ? 291 : 257,
 								yConstant + 43,
 								getGUIString(gsCancel), 1, 1);
-	}
-
-	if (_menuPage == GUI_PAGE_LOAD) {
+	} else if (_menuPage == GUI_PAGE_LOAD) {
 		Common::String numbers[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
 		setUpInternalGUIControl(GUI_CTRL_NUMPAD_0,
@@ -3616,13 +3612,14 @@ void ScummEngine::updateMainMenuControls() {
 void ScummEngine::updateMainMenuControlsSegaCD() {
 	char msg[256];
 	int yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
-	bool isJap = _language == Common::JA_JPN;
+	bool isJap = (_language == Common::JA_JPN);
 
 	if (_menuPage == GUI_PAGE_MAIN) {
+		// Fill the slider string of symbols shaped like a "=" character
 		strncpy(_mainMenuTextSpeedSlider, "\x3a\x3a\x3a\x3a\x3a\x3a\x3a\x3a\x3a\x3a", sizeof(_mainMenuTextSpeedSlider));
 
 		if (VAR_CHARINC != 0xFF)
-			_mainMenuTextSpeedSlider[9 - VAR(VAR_CHARINC)] = '\x3b';
+			_mainMenuTextSpeedSlider[9 - VAR(VAR_CHARINC)] = '\x3b'; // The cursor of the slider
 
 		_internalGUIControls[GUI_CTRL_TEXT_SPEED_SLIDER].label = _mainMenuTextSpeedSlider;
 

@@ -898,7 +898,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		char sliderString[256];
 		PauseToken pt;
 
-		if (((VAR_PAUSE_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_PAUSE_KEY))) ||
+		if ((VAR_PAUSE_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_PAUSE_KEY)) ||
 			(lastKeyHit.keycode == Common::KEYCODE_SPACE && _game.features & GF_DEMO))) {
 			if (isSegaCD) {
 				if (VAR(VAR_MAINMENU_KEY) != 0)
