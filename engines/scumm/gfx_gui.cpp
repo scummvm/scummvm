@@ -2898,7 +2898,7 @@ void ScummEngine::setUpMainMenuControlsSegaCD() {
 								yConstant + 43,
 								getGUIString(gsCancel), 1, 1);
 	} else if (_menuPage == GUI_PAGE_LOAD) {
-		Common::String numbers[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+		const char numbers[10][2] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
 		setUpInternalGUIControl(GUI_CTRL_NUMPAD_0,
 								getBannerColor(4),
@@ -2913,7 +2913,7 @@ void ScummEngine::setUpMainMenuControlsSegaCD() {
 								yConstant + 43,
 								211,
 								yConstant + 57,
-								numbers[0].c_str(), 1, 1);
+								numbers[0], 1, 1);
 
 		setUpInternalGUIControl(GUI_CTRL_NUMPAD_BACK,
 								getBannerColor(4),
@@ -2945,7 +2945,7 @@ void ScummEngine::setUpMainMenuControlsSegaCD() {
 										yConstant + 29 - row * 14,
 										211 + col * 14,
 										yConstant + 43 - row * 14,
-										numbers[row * 3 + (col + 1)].c_str(), 1, 1);
+										numbers[row * 3 + (col + 1)], 1, 1);
 			}
 		}
 	}
