@@ -6796,10 +6796,10 @@ dFloat NewtonCorkscrewGetJointAngle(const NewtonJoint *const corkscrew) {
 //
 // See also: NewtonCorkscrewSetUserCallback
 dFloat NewtonCorkscrewGetJointOmega(const NewtonJoint *const corkscrew) {
-	dgCorkscrewConstraint *contraint;
+	const dgCorkscrewConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgCorkscrewConstraint *)corkscrew;
+	contraint = (const dgCorkscrewConstraint *)corkscrew;
 	return contraint->GetJointOmega();
 }
 
@@ -6818,11 +6818,11 @@ dFloat NewtonCorkscrewGetJointOmega(const NewtonJoint *const corkscrew) {
 // See also: NewtonCorkscrewSetUserCallback
 dFloat NewtonCorkscrewCalculateStopAlpha(const NewtonJoint *const corkscrew,
         const NewtonHingeSliderUpdateDesc *const desc, dFloat angle) {
-	dgCorkscrewConstraint *contraint;
+	const dgCorkscrewConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgCorkscrewConstraint *)corkscrew;
-	return contraint->CalculateStopAlpha(angle, (dgJointCallBackParam *)desc);
+	contraint = (const dgCorkscrewConstraint *)corkscrew;
+	return contraint->CalculateStopAlpha(angle, (const dgJointCallBackParam *)desc);
 }
 
 // Name: NewtonCorkscrewGetJointForce
@@ -6840,9 +6840,9 @@ dFloat NewtonCorkscrewCalculateStopAlpha(const NewtonJoint *const corkscrew,
 // See also: NewtonCorkscrewSetUserCallback
 dFloat NewtonCorkscrewCalculateStopAccel(const NewtonJoint *const corkscrew,
         const NewtonHingeSliderUpdateDesc *const desc, dFloat distance) {
-	dgCorkscrewConstraint *contraint;
-	contraint = (dgCorkscrewConstraint *)corkscrew;
-	return contraint->CalculateStopAccel(distance, (dgJointCallBackParam *)desc);
+	const dgCorkscrewConstraint *contraint;
+	contraint = (const dgCorkscrewConstraint *)corkscrew;
+	return contraint->CalculateStopAccel(distance, (const dgJointCallBackParam *)desc);
 }
 
 // Name: NewtonCorkscrewGetJointForce
@@ -6860,10 +6860,10 @@ dFloat NewtonCorkscrewCalculateStopAccel(const NewtonJoint *const corkscrew,
 // See also: NewtonCorkscrewSetUserCallback
 void NewtonCorkscrewGetJointForce(const NewtonJoint *const corkscrew,
                                   dFloat *const force) {
-	dgCorkscrewConstraint *contraint;
+	const dgCorkscrewConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgCorkscrewConstraint *)corkscrew;
+	contraint = (const dgCorkscrewConstraint *)corkscrew;
 	dgVector forceVector(contraint->GetJointForce());
 	force[0] = forceVector.m_x;
 	force[1] = forceVector.m_y;
@@ -6895,9 +6895,9 @@ void NewtonCorkscrewGetJointForce(const NewtonJoint *const corkscrew,
 // while and allowing one body to spin around a fix axis in is own frame, and the other body to spin around another axis fixes on
 // it own frame. Both axis must be mutually perpendicular.
 NewtonJoint *NewtonConstraintCreateUniversal(
-    const NewtonWorld *const newtonWorld, const dFloat *pivotPoint,
+    NewtonWorld *newtonWorld, const dFloat *pivotPoint,
     const dFloat *pinDir0, const dFloat *pinDir1,
-    const NewtonBody *const childBody, const NewtonBody *const parentBody) {
+    NewtonBody *childBody, NewtonBody *parentBody) {
 	dgBody *body0;
 	dgBody *body1;
 	Newton *world;
@@ -6933,7 +6933,7 @@ NewtonJoint *NewtonConstraintCreateUniversal(
 // if the application only wants to change the joint angular and linear acceleration the return code is 3
 //
 // See also: NewtonJointGetUserData, NewtonJointSetUserData
-void NewtonUniversalSetUserCallback(const NewtonJoint *const universal,
+void NewtonUniversalSetUserCallback(NewtonJoint *universal,
                                     NewtonUniversalCallBack callback) {
 	dgUniversalConstraint *contraint;
 
@@ -6955,10 +6955,10 @@ void NewtonUniversalSetUserCallback(const NewtonJoint *const universal,
 //
 // See also: NewtonUniversalSetUserCallback
 dFloat NewtonUniversalGetJointAngle0(const NewtonJoint *const universal) {
-	dgUniversalConstraint *contraint;
+	const dgUniversalConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgUniversalConstraint *)universal;
+	contraint = (const dgUniversalConstraint *)universal;
 	return contraint->GetJointAngle0();
 }
 
@@ -6975,10 +6975,10 @@ dFloat NewtonUniversalGetJointAngle0(const NewtonJoint *const universal) {
 //
 // See also: NewtonUniversalSetUserCallback
 dFloat NewtonUniversalGetJointAngle1(const NewtonJoint *const universal) {
-	dgUniversalConstraint *contraint;
+	const dgUniversalConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgUniversalConstraint *)universal;
+	contraint = (const dgUniversalConstraint *)universal;
 	return contraint->GetJointAngle1();
 }
 
@@ -6995,10 +6995,10 @@ dFloat NewtonUniversalGetJointAngle1(const NewtonJoint *const universal) {
 //
 // See also: NewtonUniversalSetUserCallback
 dFloat NewtonUniversalGetJointOmega0(const NewtonJoint *const universal) {
-	dgUniversalConstraint *contraint;
+	const dgUniversalConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgUniversalConstraint *)universal;
+	contraint = (const dgUniversalConstraint *)universal;
 	return contraint->GetJointOmega0();
 }
 
@@ -7015,10 +7015,10 @@ dFloat NewtonUniversalGetJointOmega0(const NewtonJoint *const universal) {
 //
 // See also: NewtonUniversalSetUserCallback
 dFloat NewtonUniversalGetJointOmega1(const NewtonJoint *const universal) {
-	dgUniversalConstraint *contraint;
+	const dgUniversalConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgUniversalConstraint *)universal;
+	contraint = (const dgUniversalConstraint *)universal;
 	return contraint->GetJointOmega1();
 }
 
@@ -7037,11 +7037,11 @@ dFloat NewtonUniversalGetJointOmega1(const NewtonJoint *const universal) {
 // See also: NewtonUniversalSetUserCallback
 dFloat NewtonUniversalCalculateStopAlpha0(const NewtonJoint *const universal,
         const NewtonHingeSliderUpdateDesc *const desc, dFloat angle) {
-	dgUniversalConstraint *contraint;
+	const dgUniversalConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgUniversalConstraint *)universal;
-	return contraint->CalculateStopAlpha0(angle, (dgJointCallBackParam *)desc);
+	contraint = (const dgUniversalConstraint *)universal;
+	return contraint->CalculateStopAlpha0(angle, (const dgJointCallBackParam *)desc);
 }
 
 // Name: NewtonUniversalCalculateStopAlpha1
@@ -7059,11 +7059,11 @@ dFloat NewtonUniversalCalculateStopAlpha0(const NewtonJoint *const universal,
 // See also: NewtonUniversalSetUserCallback
 dFloat NewtonUniversalCalculateStopAlpha1(const NewtonJoint *const universal,
         const NewtonHingeSliderUpdateDesc *const desc, dFloat angle) {
-	dgUniversalConstraint *contraint;
+	const dgUniversalConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgUniversalConstraint *)universal;
-	return contraint->CalculateStopAlpha1(angle, (dgJointCallBackParam *)desc);
+	contraint = (const dgUniversalConstraint *)universal;
+	return contraint->CalculateStopAlpha1(angle, (const dgJointCallBackParam *)desc);
 }
 
 // Name: NewtonUniversalGetJointForce
@@ -7081,10 +7081,10 @@ dFloat NewtonUniversalCalculateStopAlpha1(const NewtonJoint *const universal,
 // See also: NewtonUniversalSetUserCallback
 void NewtonUniversalGetJointForce(const NewtonJoint *const universal,
                                   dFloat *const force) {
-	dgUniversalConstraint *contraint;
+	const dgUniversalConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgUniversalConstraint *)universal;
+	contraint = (const dgUniversalConstraint *)universal;
 	dgVector forceVector(contraint->GetJointForce());
 	force[0] = forceVector.m_x;
 	force[1] = forceVector.m_y;
@@ -7114,8 +7114,8 @@ void NewtonUniversalGetJointForce(const NewtonJoint *const universal,
 // Remark: Since the UpVector joint is a unary constraint, there is not need to have user callback or user data assigned to it.
 // The application can simple hold to the joint handle and update the pin on the force callback function of the rigid body owning the joint.
 NewtonJoint *NewtonConstraintCreateUpVector(
-    const NewtonWorld *const newtonWorld, const dFloat *pinDir,
-    const NewtonBody *const body) {
+    NewtonWorld *newtonWorld, const dFloat *pinDir,
+    NewtonBody *body) {
 	dgBody *body0;
 	Newton *world;
 
@@ -7141,10 +7141,10 @@ NewtonJoint *NewtonConstraintCreateUpVector(
 //
 // See also: NewtonUpVectorSetUserCallback, NewtonUpVectorSetPin
 void NewtonUpVectorGetPin(const NewtonJoint *const upVector, dFloat *pin) {
-	dgUpVectorConstraint *contraint;
+	const dgUpVectorConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgUpVectorConstraint *)upVector;
+	contraint = (const dgUpVectorConstraint *)upVector;
 
 	dgVector pinVector(contraint->GetPinDir());
 	pin[0] = pinVector.m_x;
@@ -7166,7 +7166,7 @@ void NewtonUpVectorGetPin(const NewtonJoint *const upVector, dFloat *pin) {
 // too large rotation can cause vibration of the joint.
 //
 // See also: NewtonUpVectorSetUserCallback, NewtonUpVectorGetPin
-void NewtonUpVectorSetPin(const NewtonJoint *const upVector, const dFloat *pin) {
+void NewtonUpVectorSetPin(NewtonJoint *upVector, const dFloat *pin) {
 	dgUpVectorConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
@@ -7214,10 +7214,10 @@ void NewtonUpVectorSetPin(const NewtonJoint *const upVector, const dFloat *pin) 
 //
 // See also: NewtonUserJointSetFeedbackCollectorCallback
 NewtonJoint *NewtonConstraintCreateUserJoint(
-    const NewtonWorld *const newtonWorld, int maxDOF,
+    NewtonWorld *newtonWorld, int maxDOF,
     NewtonUserBilateralCallBack submitConstraints,
     NewtonUserBilateralGetInfoCallBack getInfo,
-    const NewtonBody *const childBody, const NewtonBody *const parentBody) {
+    NewtonBody *childBody, NewtonBody *parentBody) {
 	dgBody *body0;
 	dgBody *body1;
 	Newton *world;
@@ -7251,7 +7251,7 @@ NewtonJoint *NewtonConstraintCreateUserJoint(
 // Remark: This function call only be called from inside a *NewtonUserBilateralCallBack* callback.
 //
 // See also: NewtonUserJointAddAngularRow,
-void NewtonUserJointAddLinearRow(const NewtonJoint *const joint,
+void NewtonUserJointAddLinearRow(NewtonJoint *joint,
                                  const dFloat *const pivot0, const dFloat *const pivot1,
                                  const dFloat *const dir) {
 	NewtonUserJoint *userJoint;
@@ -7289,7 +7289,7 @@ void NewtonUserJointAddLinearRow(const NewtonJoint *const joint,
 // Remark: This function is of not practical to enforce hard constraints, but it is very useful for making angular motors.
 //
 // See also: NewtonUserJointAddLinearRow, NewtonUserJointAddIndependentAngularRow
-void NewtonUserJointAddAngularRow(const NewtonJoint *const joint,
+void NewtonUserJointAddAngularRow(NewtonJoint *joint,
                                   dFloat relativeAngleError, const dFloat *const pin) {
 	NewtonUserJoint *userJoint;
 
@@ -7320,7 +7320,7 @@ void NewtonUserJointAddAngularRow(const NewtonJoint *const joint,
 // application responsibility to set the relative acceleration after a call to this function
 //
 // See also: NewtonUserJointAddLinearRow, NewtonUserJointAddAngularRow
-void NewtonUserJointAddGeneralRow(const NewtonJoint *const joint,
+void NewtonUserJointAddGeneralRow(NewtonJoint *joint,
                                   const dFloat *const jacobian0, const dFloat *const jacobian1) {
 	NewtonUserJoint *userJoint;
 
@@ -7341,7 +7341,7 @@ void NewtonUserJointAddGeneralRow(const NewtonJoint *const joint,
 // max friction is a Max friction torque.
 //
 // See also: NewtonUserJointSetRowMinimumFriction, NewtonUserJointAddLinearRow, NewtonUserJointAddAngularRow
-void NewtonUserJointSetRowMaximumFriction(const NewtonJoint *const joint,
+void NewtonUserJointSetRowMaximumFriction(NewtonJoint *joint,
         dFloat friction) {
 	NewtonUserJoint *userJoint;
 	userJoint = (NewtonUserJoint *)joint;
@@ -7362,7 +7362,7 @@ void NewtonUserJointSetRowMaximumFriction(const NewtonJoint *const joint,
 // friction is a Min friction torque.
 //
 // See also: NewtonUserJointSetRowMaximumFriction, NewtonUserJointAddLinearRow, NewtonUserJointAddAngularRow
-void NewtonUserJointSetRowMinimumFriction(const NewtonJoint *const joint,
+void NewtonUserJointSetRowMinimumFriction(NewtonJoint *joint,
         dFloat friction) {
 	NewtonUserJoint *userJoint;
 	userJoint = (NewtonUserJoint *)joint;
@@ -7382,7 +7382,7 @@ void NewtonUserJointSetRowMinimumFriction(const NewtonJoint *const joint,
 // angular acceleration.
 //
 // See also: NewtonUserJointAddLinearRow, NewtonUserJointAddAngularRow
-void NewtonUserJointSetRowAcceleration(const NewtonJoint *const joint,
+void NewtonUserJointSetRowAcceleration(NewtonJoint *joint,
                                        dFloat acceleration) {
 	NewtonUserJoint *userJoint;
 	userJoint = (NewtonUserJoint *)joint;
@@ -7410,7 +7410,7 @@ void NewtonUserJointSetRowAcceleration(const NewtonJoint *const joint,
 //
 // See also: NewtonUserJointSetRowAcceleration, NewtonUserJointSetRowStiffness
 void NewtonUserJointSetRowSpringDamperAcceleration(
-    const NewtonJoint *const joint, dFloat springK, dFloat springD) {
+    NewtonJoint *joint, dFloat springK, dFloat springD) {
 	NewtonUserJoint *userJoint;
 	userJoint = (NewtonUserJoint *)joint;
 
@@ -7430,7 +7430,7 @@ void NewtonUserJointSetRowSpringDamperAcceleration(
 // 1.0 (100% stiff) but dues to numerical integration error this could be the joint a little unstable, and lower values are preferred.
 //
 // See also: NewtonUserJointAddLinearRow, NewtonUserJointAddAngularRow, NewtonUserJointSetRowSpringDamperAcceleration
-void NewtonUserJointSetRowStiffness(const NewtonJoint *const joint,
+void NewtonUserJointSetRowStiffness(NewtonJoint *joint,
                                     dFloat stiffness) {
 	NewtonUserJoint *userJoint;
 	userJoint = (NewtonUserJoint *)joint;
@@ -7451,8 +7451,8 @@ void NewtonUserJointSetRowStiffness(const NewtonJoint *const joint,
 // Remark: This function can be used to produce special effects like breakable or malleable joints, fro example a hinge can turn into ball and socket
 // after the force in some of the row exceed  certain high value.
 dFloat NewtonUserJointGetRowForce(const NewtonJoint *const joint, int row) {
-	NewtonUserJoint *userJoint;
-	userJoint = (NewtonUserJoint *)joint;
+	const NewtonUserJoint *userJoint;
+	userJoint = (const NewtonUserJoint *)joint;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return userJoint->GetRowForce(row);
@@ -7466,7 +7466,7 @@ dFloat NewtonUserJointGetRowForce(const NewtonJoint *const joint, int row) {
 // *NewtonUserBilateralCallBack* getFeedback - pointer to the joint constraint definition function call back.
 //
 // See also: NewtonUserJointGetRowForce
-void NewtonUserJointSetFeedbackCollectorCallback(const NewtonJoint *const joint,
+void NewtonUserJointSetFeedbackCollectorCallback(NewtonJoint *joint,
         NewtonUserBilateralCallBack getFeedback) {
 	NewtonUserJoint *userJoint;
 	userJoint = (NewtonUserJoint *)joint;
@@ -7517,9 +7517,9 @@ void NewtonJointSetUserData(const NewtonJoint *const joint,
 //
 // See also: NewtonJointSetUserData
 void *NewtonJointGetUserData(const NewtonJoint *const joint) {
-	dgConstraint *contraint;
+	const dgConstraint *contraint;
 
-	contraint = (dgConstraint *)joint;
+	contraint = (const dgConstraint *)joint;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return contraint->GetUserData();
@@ -7588,8 +7588,8 @@ void *NewtonJointGetUserData(const NewtonJoint *const joint) {
 // See also:
 void NewtonJointGetInfo(const NewtonJoint *const joint,
                         NewtonJointRecord *const jointInfo) {
-	dgConstraint *contraint;
-	contraint = (dgConstraint *)joint;
+	const dgConstraint *contraint;
+	contraint = (const dgConstraint *)joint;
 
 	TRACE_FUNTION(__FUNCTION__);
 	contraint->GetInfo((dgConstraintInfo *)jointInfo);
@@ -7605,8 +7605,8 @@ void NewtonJointGetInfo(const NewtonJoint *const joint,
 // See also:
 NewtonBody *NewtonJointGetBody0(const NewtonJoint *const joint) {
 
-	dgConstraint *contraint;
-	contraint = (dgConstraint *)joint;
+	const dgConstraint *contraint;
+	contraint = (const dgConstraint *)joint;
 
 	TRACE_FUNTION(__FUNCTION__);
 
@@ -7624,8 +7624,8 @@ NewtonBody *NewtonJointGetBody1(const NewtonJoint *const joint) {
 	dgBody *body;
 	dgWorld *world;
 
-	dgConstraint *contraint;
-	contraint = (dgConstraint *)joint;
+	const dgConstraint *contraint;
+	contraint = (const dgConstraint *)joint;
 
 	TRACE_FUNTION(__FUNCTION__);
 	body = contraint->GetBody1();
@@ -7736,9 +7736,9 @@ void NewtonJointSetStiffness(const NewtonJoint *const joint, dFloat stiffness) {
 //
 // See also: NewtonJointSetStiffness
 dFloat NewtonJointGetStiffness(const NewtonJoint *const joint) {
-	dgConstraint *contraint;
+	const dgConstraint *contraint;
 
-	contraint = (dgConstraint *)joint;
+	contraint = (const dgConstraint *)joint;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return contraint->GetStiffness();
@@ -7757,7 +7757,7 @@ dFloat NewtonJointGetStiffness(const NewtonJoint *const joint) {
 // joint is about to be destroyed. The application can register a destructor call back with the joint.
 //
 // See also: NewtonJointSetUserData
-void NewtonJointSetDestructor(const NewtonJoint *const joint,
+void NewtonJointSetDestructor(NewtonJoint *joint,
                               NewtonConstraintDestructor destructor) {
 	dgConstraint *contraint;
 
@@ -7796,7 +7796,7 @@ void NewtonDestroyJoint(const NewtonWorld *const newtonWorld,
 //
 // ***************************************************************************************************************
 
-NewtonMesh *NewtonMeshCreate(const NewtonWorld *const newtonWorld) {
+NewtonMesh *NewtonMeshCreate(NewtonWorld *newtonWorld) {
 	TRACE_FUNTION(__FUNCTION__);
 
 	Newton *world = (Newton *)newtonWorld;
@@ -7805,7 +7805,7 @@ NewtonMesh *NewtonMeshCreate(const NewtonWorld *const newtonWorld) {
 	return (NewtonMesh *)mesh;
 }
 
-NewtonMesh *NewtonMeshCreateFromMesh(const NewtonMesh *const mesh) {
+NewtonMesh *NewtonMeshCreateFromMesh(NewtonMesh *mesh) {
 	TRACE_FUNTION(__FUNCTION__);
 	dgMeshEffect *srcMesh = (dgMeshEffect *)mesh;
 
@@ -7813,8 +7813,7 @@ NewtonMesh *NewtonMeshCreateFromMesh(const NewtonMesh *const mesh) {
 	return (NewtonMesh *)clone;
 }
 
-NewtonMesh *NewtonMeshCreateFromCollision(
-    const NewtonCollision *const collision) {
+NewtonMesh *NewtonMeshCreateFromCollision(NewtonCollision *collision) {
 	TRACE_FUNTION(__FUNCTION__);
 
 	dgCollision *const shape = (dgCollision *)collision;
@@ -7822,7 +7821,7 @@ NewtonMesh *NewtonMeshCreateFromCollision(
 	return (NewtonMesh *)mesh;
 }
 
-NewtonMesh *NewtonMeshConvexHull(const NewtonWorld *const newtonWorld,
+NewtonMesh *NewtonMeshConvexHull(NewtonWorld *newtonWorld,
                                  int count, const dFloat *const vertexCloud, int strideInBytes,
                                  dFloat tolerance) {
 	TRACE_FUNTION(__FUNCTION__);
@@ -7861,7 +7860,7 @@ void NewtonMeshDestroy(const NewtonMesh *const mesh) {
 	delete meshEffect;
 }
 
-void NewtonMesApplyTransform(NewtonMesh *const mesh, const dFloat *const matrix) {
+void NewtonMesApplyTransform(NewtonMesh *const mesh, dFloat *matrix) {
 	TRACE_FUNTION(__FUNCTION__);
 	dgMeshEffect *const meshEffect = (dgMeshEffect * const)mesh;
 
@@ -7942,7 +7941,7 @@ void NewtonMeshFixTJoints(NewtonMesh *const mesh) {
 }
 
 void NewtonMeshClip(const NewtonMesh *const mesh,
-                    const NewtonMesh *const clipper, const dFloat *const clipperMatrix,
+                    const NewtonMesh *const clipper, dFloat *clipperMatrix,
                     NewtonMesh **const topMesh, NewtonMesh **const bottomMesh) {
 	TRACE_FUNTION(__FUNCTION__);
 
@@ -7965,31 +7964,31 @@ void NewtonMeshPlaneClip(const NewtonMesh *const mesh,
 	((const dgMeshEffect *)mesh)->PlaneClipMesh(matrix, texMatrix, planeMaterial, (dgMeshEffect **)topMesh, (dgMeshEffect **)bottomMesh);
 }
 
-NewtonMesh *NewtonMeshApproximateConvexDecomposition(const NewtonMesh *const mesh, dFloat maxConcavity, int maxCount) {
+NewtonMesh *NewtonMeshApproximateConvexDecomposition(NewtonMesh *mesh, dFloat maxConcavity, int maxCount) {
 	TRACE_FUNTION(__FUNCTION__);
 
 	return (NewtonMesh *)((dgMeshEffect *)mesh)->CreateConvexApproximation(maxConcavity, maxCount);
 }
 
-NewtonMesh *NewtonMeshTetrahedralization(const NewtonMesh *const mesh,
-        int internalMaterial, const dFloat *const textureMatrix) {
+NewtonMesh *NewtonMeshTetrahedralization(NewtonMesh *mesh,
+        int internalMaterial, dFloat *textureMatrix) {
 	TRACE_FUNTION(__FUNCTION__);
 	dgMatrix &tetMatrix = *((dgMatrix *)textureMatrix);
 	return (NewtonMesh *)((dgMeshEffect *)mesh)->CreateDelanayTretrahedralization(internalMaterial, tetMatrix);
 }
 
-NewtonMesh *NewtonMeshVoronoiDecomposition(const NewtonMesh *const mesh,
+NewtonMesh *NewtonMeshVoronoiDecomposition(NewtonMesh *mesh,
         int pointCount, int pointStrideInBytes, const dFloat *const pointCloud,
-        int internalMaterial, const dFloat *const textureMatrix) {
+        int internalMaterial, dFloat *const textureMatrix) {
 	TRACE_FUNTION(__FUNCTION__);
 	dgMatrix &tetMatrix = *((dgMatrix *)textureMatrix);
 	return (NewtonMesh *)((dgMeshEffect *)mesh)->CreateVoronoiPartition(pointCount, pointStrideInBytes, pointCloud, internalMaterial, tetMatrix);
 }
 
-NewtonMesh *NewtonMeshUnion(NewtonMesh *const mesh,
+NewtonMesh *NewtonMeshUnion(NewtonMesh *mesh,
                             const NewtonMesh *const clipper, const dFloat *const clipperMatrix) {
 	TRACE_FUNTION(__FUNCTION__);
-	dgMatrix &matrix = *((dgMatrix *)clipperMatrix);
+	const dgMatrix &matrix = *((const dgMatrix *)clipperMatrix);
 
 	return (NewtonMesh *)((dgMeshEffect *)mesh)->Union(matrix, (const dgMeshEffect *)clipper);
 }
