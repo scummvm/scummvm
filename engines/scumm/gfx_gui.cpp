@@ -2106,11 +2106,7 @@ bool ScummEngine::executeMainMenuOperationSegaCD(int op, int mouseX, int mouseY,
 	case GUI_CTRL_NUMPAD_BACK:
 	{
 		int inputNum = (op == GUI_CTRL_NUMPAD_0) ? 0 : op;
-		uint curIdx;
-		for (curIdx = 0; curIdx < sizeof(_mainMenuSegaCDPasscode); curIdx++) {
-			if (_mainMenuSegaCDPasscode[curIdx] == '\0')
-				break;
-		}
+		uint curIdx = strnlen(_mainMenuSegaCDPasscode, sizeof(_mainMenuSegaCDPasscode));
 
 		if (op == GUI_CTRL_NUMPAD_BACK) {
 			if (curIdx > 0) {
