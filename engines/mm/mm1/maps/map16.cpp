@@ -61,7 +61,7 @@ void Map16::special() {
 		for (int i = 0; i < monsterCount; ++i)
 			enc.addMonster(id1, 11);
 
-		enc._flag = true;
+		enc._manual = true;
 		enc._levelIndex = 80;
 		enc.execute();
 		
@@ -104,7 +104,7 @@ void Map16::special00() {
 					enc.addMonster(12, 11);
 
 				enc._levelIndex = 80;
-				enc._flag = true;
+				enc._manual = true;
 				enc.execute();
 			}
 		);

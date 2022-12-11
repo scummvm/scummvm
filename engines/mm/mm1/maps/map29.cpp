@@ -59,7 +59,7 @@ void Map29::special() {
 			for (int i = 0; i < monsterCount; ++i)
 				enc.addMonster(id1, 11);
 
-			enc._flag = true;
+			enc._manual = true;
 			enc._levelIndex = 80;
 			enc.execute();
 
@@ -127,7 +127,7 @@ void Map29::special01() {
 					for (int i = 1; i < 13; ++i)
 						enc.addMonster(3, 5);
 
-					enc._flag = true;
+					enc._manual = true;
 					enc._encounterType = Game::FORCE_SURPRISED;
 					enc._levelIndex = 80;
 					enc.execute();
@@ -159,7 +159,7 @@ void Map29::special03() {
 			for (int i = 1; i < monsterCount; ++i)
 				enc.addMonster(1, 7);
 
-			enc._flag = true;
+			enc._manual = true;
 			enc._encounterType = Game::FORCE_SURPRISED;
 			enc._levelIndex = 80;
 			enc.execute();

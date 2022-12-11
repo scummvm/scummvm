@@ -63,7 +63,7 @@ void Map15::special() {
 			for (uint i = 0; i < _data[VAL1]; ++i)
 				enc.addMonster(7, 8);
 
-			enc._flag = true;
+			enc._manual = true;
 			enc._levelIndex = 80;
 			enc.execute();
 
@@ -90,7 +90,7 @@ void Map15::special() {
 		for (int i = 0; i < monsterCount; ++i)
 			enc.addMonster(id1, 11);
 
-		enc._flag = true;
+		enc._manual = true;
 		enc._levelIndex = 80;
 		enc.execute();
 	}
@@ -120,7 +120,7 @@ void Map15::special01() {
 		enc.clearMonsters();
 		enc.addMonster(15, 9);
 		enc._levelIndex = 5;
-		enc._flag = true;
+		enc._manual = true;
 		enc.execute();
 	}
 }
@@ -136,7 +136,7 @@ void Map15::special02() {
 		enc.addMonster(15, 9);
 
 	enc._levelIndex = 48;
-	enc._flag = true;
+	enc._manual = true;
 	enc.execute();
 }
 
@@ -150,7 +150,7 @@ void Map15::special03() {
 		enc.addMonster(15, 9);
 
 	enc._levelIndex = 48;
-	enc._flag = true;
+	enc._manual = true;
 }
 
 void Map15::special04() {

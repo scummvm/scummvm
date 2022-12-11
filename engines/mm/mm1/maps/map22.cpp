@@ -127,7 +127,7 @@ void Map22::special02() {
 							enc.addMonster(id1, id2);
 
 						enc._levelIndex = 32;
-						enc._flag = true;
+						enc._manual = true;
 						enc._encounterType = Game::FORCE_SURPRISED;
 						enc.execute();
 					}

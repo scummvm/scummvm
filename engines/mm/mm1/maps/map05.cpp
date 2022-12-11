@@ -88,7 +88,7 @@ void Map05::special05() {
 		enc.addMonster(14, 1);
 
 	enc._levelIndex = 80;
-	enc._flag = true;
+	enc._manual = true;
 	enc.execute();
 }
 
@@ -179,7 +179,7 @@ void Map05::encounter(int monsterId) {
 		enc.addMonster(monsterId, 1);
 
 	enc._levelIndex = 80;
-	enc._flag = true;
+	enc._manual = true;
 	enc.execute();
 }
 

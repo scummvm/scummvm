@@ -94,7 +94,7 @@ void Map33::special() {
 						enc.addMonster(MONSTER_IDS21[idx], MONSTER_IDS22[idx]);
 					}
 
-					enc._flag = true;
+					enc._manual = true;
 					enc._levelIndex = 80;
 					enc.execute();
 					break;
@@ -118,7 +118,7 @@ void Map33::special() {
 			for (int i = 0; i < monsterCount; ++i)
 				enc.addMonster(id1, id2);
 
-			enc._flag = true;
+			enc._manual = true;
 			enc._levelIndex = 64;
 		}
 
@@ -138,7 +138,7 @@ void Map33::special00() {
 			for (int i = 0; i < 10; ++i)
 				enc.addMonster(MONSTER_IDS11[i], MONSTER_IDS12[i]);
 
-			enc._flag = true;
+			enc._manual = true;
 			enc._levelIndex = 80;
 			enc.execute();
 		}
@@ -202,7 +202,7 @@ void Map33::search(const Common::String &msg) {
 			for (int i = 1; i < monsterCount; ++i)
 				enc.addMonster(10, 7);
 
-			enc._flag = true;
+			enc._manual = true;
 			enc._levelIndex = 80;
 			enc.execute();
 		}

@@ -57,7 +57,7 @@ void Map25::special() {
 			for (int i = 0; i < monsterCount; ++i)
 				enc.addMonster(val, 11);
 
-			enc._flag = true;
+			enc._manual = true;
 			enc._levelIndex = 80;
 			enc.execute();
 
@@ -80,7 +80,7 @@ void Map25::special() {
 							enc.addMonster(12, 12);
 
 						enc._levelIndex = 64;
-						enc._flag = true;
+						enc._manual = true;
 						enc.execute();
 					}
 				);
@@ -181,7 +181,7 @@ void Map25::nativesAttack() {
 
 			g_maps->clearSpecial();
 			enc._levelIndex = 64;
-			enc._flag = true;
+			enc._manual = true;
 			enc.execute();
 		}
 	);

@@ -77,7 +77,7 @@ void Arrested::attack() {
 	for (int i = 0; i < monsterCount; ++i)
 		enc.addMonster(6, 10);
 
-	enc._flag = true;
+	enc._manual = true;
 	enc._levelIndex = 64;
 	enc._encounterType = Game::FORCE_SURPRISED;
 	enc.execute();

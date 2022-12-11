@@ -60,7 +60,7 @@ void Map30::special() {
 		for (int i = 0; i < monsterCount; ++i)
 			enc.addMonster(id1, id2);
 
-		enc._flag = true;
+		enc._manual = true;
 		enc._levelIndex = 96;
 		enc.execute();
 		return;

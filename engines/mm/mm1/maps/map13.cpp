@@ -69,7 +69,7 @@ void Map13::special() {
 		enc.addMonster(_data[MONSTER_ID1 + index + i],
 			_data[MONSTER_ID2 + index + i]);
 
-	enc._flag = true;
+	enc._manual = true;
 	enc._levelIndex = 48;
 	enc.execute();
 }
@@ -171,7 +171,7 @@ void Map13::encounter(size_t count, byte id1, byte id2) {
 	for (size_t i = 0; i < count; ++i)
 		enc.addMonster(id1, id2);
 
-	enc._flag = true;
+	enc._manual = true;
 	enc._levelIndex = 64;
 	enc.execute();
 }

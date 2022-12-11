@@ -67,7 +67,7 @@ void Map21::special() {
 		for (int i = 0; i < monsterCount; ++i)
 			enc.addMonster(id1, 11);
 
-		enc._flag = true;
+		enc._manual = true;
 		enc._levelIndex = 80;
 		enc.execute();
 	}
@@ -94,7 +94,7 @@ void Map21::special00() {
 
 			enc._levelIndex = 80;
 			enc._encounterType = Game::FORCE_SURPRISED;
-			enc._flag = true;
+			enc._manual = true;
 			enc.execute();
 		}
 	);
