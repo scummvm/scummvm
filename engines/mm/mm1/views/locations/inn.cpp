@@ -130,6 +130,7 @@ bool Inn::msgKeypress(const KeypressMessage &msg) {
 		for (uint i = 0; i < _partyChars.size(); ++i)
 			g_globals->_party.push_back(
 				g_globals->_roster[_partyChars[i]]);
+		g_globals->_currCharacter = &g_globals->_party.front();
 
 		// Load the given town
 		g_globals->_maps.loadTown(g_globals->_startingTown);
