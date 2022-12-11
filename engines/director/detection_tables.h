@@ -2243,7 +2243,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("jman", "",	 "Journeyman.16 MB", "1ae45c23586b41997ba52e2e7c771c4c", 437743, 300),
 	MACGAME1("jman", "v1.2", "Journeyman 16MB",  "2ce360c9ea2da80a2c6d1040b0ad92dd", 440902, 313),
 	WINGAME1("jman", "", "JMAN.EXE",		 "7c8230a804abf9353b05627a675b5ffb", 375282, 300),
-	WINGAME1_l("jman", "", "JOURNEY.EXE",	 "65d06b5fef155a2473434571aff5bc29", -1, Common::JA_JPN, 300),
+//	WINGAME1_l("jman", "", "JOURNEY.EXE",	 "65d06b5fef155a2473434571aff5bc29", -1, Common::JA_JPN, 300), FIXME: Needs additional file
 	MACDEMO1("jman", "Sneak Preview", "Journeyman Sneak Preview", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 6222633, 300),
 	MACDEMO1("jman", "CD Demo", "Journeyman Demo", "1ae45c23586b41997ba52e2e7c771c4c", 3077381, 311),
 	MACDEMO1("jman", "CD Demo", "Journeyman Demo", "424093b2bc04a1bfa4376c878f67a364", 3083188, 300),
@@ -3488,8 +3488,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("easternmind", "Transcript", "Transcript Player", "78138a77207907642744d0960c14d9e5", 483490, 404),
 	WINGAME1t("easternmind", "Transcript", "TRNSCRPT.EXE", "22b17cda5df54961327d8f89040d534f", 686807, 400),
 
-	MACGAME1("easyitalian", "", "Easy Cooking Italian", "a8e65a2268226bd59f12ebdc58a221f3", 483746, 404),
-	WINGAME1("easyitalian", "", "ITALIAN.EXE", "acec057095e38421040129da764e0e16", 698291, 404),
+	MACGAME2("easyitalian", "", "Easy Cooking Italian", "a8e65a2268226bd59f12ebdc58a221f3", 483490,
+								"CONTENTS.DIR", 		"39a45c2f7a24e78213cfdf1c65322b46", 274382, 404),
+	WINGAME2("easyitalian", "", "ITALIAN.EXE",  "acec057095e38421040129da764e0e16", 698291,
+								"CONTENTS.DIR", "39a45c2f7a24e78213cfdf1c65322b46", 274382, 404),
 
 	MACGAME1("ebntelebreakdown", "", "EBNTBeCD.MAC", "51f11d985a921c2cfcf2b763b7b9c2e3", 499512, 404),
 	WINGAME1t("ebntelebreakdown", "", "EBNTBCDW.EXE", "77399581d91215a1149dcf08411d2f63", 2631477, 404),
@@ -3497,7 +3499,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("edh", "", "Executive Diet Helper CD", "7e1e1bad51542c9a3b484b1dacdf47fc", 635872, 404),
 	WINGAME1("edh", "", "EDHCD.EXE", "fdeadce56c6654312bf280eb21f36692", 9841489, 404),
 
-	WINGAME1("einstein", "", "EINSTEIN.EXE", "5f2b54a1cbf0c62913d4f1fa07b5f3a9", 711759, 404),
+	MACGAME1("einstein", "Hybrid",  "The Ultimate Einstein", "01be45e7241194dad07938e7059b88e3", 483468, 404),
+	WINGAME2t("einstein", "Hybrid", "EINSTEIN.EXE",  "883dd5374ab39bd789fe984521c324a0", 711771,
+							  		"EINSPLSH.DIR",  "dc7c483b682d841d4b6b9ef9d6d4d300", 161738, 404),
+	WINGAME2("einstein", "", "EINSTEIN.EXE",  "5f2b54a1cbf0c62913d4f1fa07b5f3a9", 711759,
+							 "EINSPLSH.DIR", "a722aca2b068e3aa02fef514c4b53730", 161738, 404),
+
 
 	WINDEMO1t("elmopreschool", "Demo", "ELMO.EXE", "52a0a157d70d370f4091e86ecf7a9408", 5070639, 404),
 
@@ -3522,7 +3529,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("emme", "", "EMMPCENG.EXE", "b03fc5677dddb8fa85d24361a0e1e9b9", 4406907, 404),
 	WINGAME1_l("emme", "", "EMMPCFRA.EXE", "b3ab1dab136dd60fca422409d8876375", 5120157, Common::FR_FRA, 404),
 
-	WINDEMO1("encarta95", "1995 Demo", "ENCARTA.EXE", "54a60641ccd62a49891aaa8329c97f46", 12015231, 404),
+	WINDEMO2t("encarta95", "1995 Demo", "ENCARTA.EXE", 		 "f3ed0fec480c8b0396bfd3b22044fa6f", 12015231,
+									    "SOUNDS/HURDY2.AIF", "a649e6394bc3f8b7037fead811bf7226", 217286, 404),
 
 	// From CD Loisirs Nº6
 	MACDEMO1("ephemeralfilms", "Demo", "Ephemeral Films", "77f4098988d5386794d1530065f514cd", 301669, 400),
@@ -3542,7 +3550,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// From MacFormat #42
 	MACDEMO1("eyewitnessscience", "", "SCIENCE", "ec8ef0209ab8e43a803b5c283c3ce8fb", 310482, 403),
 
-	WINDEMO1t("famalbum", "Tour", "TOUR.EXE", "73b4edd8e627dc50d8107913d9386c9a", 1962659, 404),
+	WINDEMO2t("famalbum", "Tour", "TOUR.EXE",  "73b4edd8e627dc50d8107913d9386c9a", 1962659,
+								  "LINGO.INI", "4f75e838a13079b4fc75af0fd6f70f3c", 826, 404),
 
 	WINDEMO1("famdoc4", "1995 Demo", "BUBBA.EXE", "40e115073d00b7b763ff63b49e0ff798", 9322307, 404),
 	WINDEMO1("famdoc4", "1996 Demo", "FAMDOC4.EXE", "cd004ff93ca55c4a5f04e4ec20db5d80", 13804287, 404),
@@ -3556,10 +3565,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Mac version requires installation, Felix Cartoon Toolbox Installer, uses Smaller Installer by Cyclos
 	MACGAME1("fct",		  "", " Felix Cartoon Toolbox",	  "7446214d1f3b0309e51bc477b03096c9", 295690, 404),
-	WINGAME1("fct",		  "", "FELIX.EXE",				  "6475efb8f19537e6753ba898daaf8c8d", 694477, 400),
+	MACGAME1("fct",		  "", "Felix Cartoon Toolbox",	  "2acc993d795f2c196e5e5d82ea4f79ef", 68217, 404),
+	WINGAME2("fct",		  "", "FELIX.EXE",				  "6475efb8f19537e6753ba898daaf8c8d", 694477,
+							  "TOONDATA/1001",			  "79dbf7e5fbc80bbbcfdba5bd829b75f8", 5266, 404),
 	MACGAME1("fctplayer", "", "Mac Felix Cartoon Player", "7446214d1f3b0309e51bc477b03096c9", 295667, 404),
-	WINGAME1("fctplayer", "", "PLAYER.EXE",				  "194c9d45a603a1a131c39ac43b54d8aa", 834551, 404),
-	WINGAME1("fctexport", "", "TRANSFMR.EXE",			  "ca58379b982a714d975358421fe4be50", 1542693, 400),
+	WINGAME2t("fctplayer", "", "PLAYER.EXE",			  "957fca2c54a595615d777112d2f00997", 834551,
+							   "FILEIO.DLL",			  "dedd9461680203b848d85a8714bed814", 12832, 404),
+	WINGAME2("fctexport", "", "TRANSFMR.EXE",			  "ca58379b982a714d975358421fe4be50", 1542693,
+							  "TOONDATA/1001",			  "79dbf7e5fbc80bbbcfdba5bd829b75f8", 5266, 404),
 	MACDEMO1("fct",	  "Demo", "BIG TOP DEMO",			  "ea646eccc9a53f44ce082459d4809a06", 486703, 404),
 
 	WINGAME1("flw", "", "FLW.EXE", "7d02787f74f2adfc0c66f34646380c0e", 720683, 400),
@@ -3579,11 +3592,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("fishwish", "",	 "WENSVIS.EXE",	 "50004a80942bafec52bbde5c09674bf9", 696993, Common::NL_NLD, 404),
 	WINDEMO1("fishwish", "Demo", "FISHWISH.EXE", "04e5006ccbb86e4ba2d866ce9a5f69ae", 696845, 404),
 
-	MACGAME1("fprpbaxter", "", "bigplayer", "07710cabdfcf6d9fba4205dce062399c", 642443, 404),
+	MACGAME2("fprpbaxter", "", "bigplayer", "07710cabdfcf6d9fba4205dce062399c", 642187,
+							   "baxt0.Dir", "b475dcad8c26a234f825fe6f88c7ae0b", 5126656, 404),
 	WINGAME2("fprpbaxter", "", "START.EXE",  "560c84484a76412254325caa953deeae", 698957,
 							   "STARTW.DIR", "515c16244e84c2e2c2ef8a4e84c59e43", 29216, 404),
 
-	MACGAME1("fprpyolanda", "", "bigplayer", "07710cabdfcf6d9fba4205dce062399c", 642443, 404),
+	MACGAME2("fprpyolanda", "", "bigplayer", "07710cabdfcf6d9fba4205dce062399c", 642187,
+								"YP1.DIR",   "86dca2337cbbd2612fc92bd5d0805d85", 4509574, 404),
 	WINGAME2("fprpyolanda", "", "START.EXE", "560c84484a76412254325caa953deeae", 698957,
 								"YP1.DIR",   "86dca2337cbbd2612fc92bd5d0805d85", 4509574, 404),
 
@@ -3597,11 +3612,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 								  "START.DIR", "d66ca8450f52c8632e9c24e193c47bec", 9030, 404),
 
 	// Portuguese version is from cover disc of Revista Big Max #10
-	MACGAME1("frankenstein", "",	 "Frankenstein", "01be45e7241194dad07938e7059b88e3", 483771, 403),
-	WINGAME1("frankenstein", "",	 "FRANKIE.EXE",	 "a9a4e3a07f3ecda7e59215aabb844532", 2229509, 404),
-	WINGAME1_l("frankenstein", "",	 "FRANKIE.EXE",	 "98beeaa18c58708b0ce82de320e3bdf7", 2196911, Common::DE_DEU, 404),
-	WINGAME1_l("frankenstein", "",	 "FRANKIE.EXE",	 "1e4e424f5c6c78f68080e973fc4493a0", 2386679, Common::PT_BRA, 404),
-	MACDEMO1("frankenstein", "Demo", "Frankenstein (PowerMac)", "db9f5fce2025aa6c1f8755af849fd49b", 61234, 400),
+	MACGAME1("frankenstein", "",	 "Frankenstein", 	 "01be45e7241194dad07938e7059b88e3", 483515, 403),
+	WINGAME2("frankenstein", "",	 "FRANKIE.EXE",		 "a9a4e3a07f3ecda7e59215aabb844532", 2229509,
+									 "MUSIC/ANMMUS.AIF", "5410aa67e91e805319da71a6aea32657", 505424, 404),
+	WINGAME2_l("frankenstein", "",	 "FRANKIE.EXE",	 	 "98beeaa18c58708b0ce82de320e3bdf7", 2196911,
+									 "MUSIC/ANMMUS.AIF", "5410aa67e91e805319da71a6aea32657", 505424, Common::DE_DEU, 404),
+	WINGAME2_l("frankenstein", "",	 "FRANKIE.EXE",	 	 "1e4e424f5c6c78f68080e973fc4493a0", 2386679,
+									 "MUSIC/ANMMUS.AIF", "5410aa67e91e805319da71a6aea32657", 505424,  Common::PT_BRA, 404),
+	MACDEMO1("frankenstein", "Demo", "Frankenstein (PowerMac)", "db9f5fce2025aa6c1f8755af849fd49b", 60978, 404),
 	MACDEMO1("frankenstein", "Demo", "Frankenstein Demo", "01be45e7241194dad07938e7059b88e3", 483526, 403),
 	WINDEMO1("frankenstein", "Demo", "FRNKDEMO.EXE", "ed00aa67138b715a8bee6f41756852c5", 7365699, 400),
 
@@ -3632,8 +3650,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is ・ふたりの料理物語
 	MACDEMO1_l("futarinoryori", "Demo", "A Tale of Two Chefs", "22815cf659b911c4e07d0015cac5d98f", 301937, Common::JA_JPN, 400),
 
-	MACGAME1("futurepromotion", "", "FUTURE",  "2885d9aacbeaecf4a27a7978a6b55c9b", 290474, 400),
-	WINGAME1t("futurepromotion", "", "FUTURE.EXE",  "a8e1020f952480d98920b1c7cc08644d", 6099243, 400),
+	MACGAME1_l("futurepromotion", "", "FUTURE",  "2885d9aacbeaecf4a27a7978a6b55c9b", 290474, Common::JA_JPN, 400),
+	WINGAME2t_l("futurepromotion", "", "FUTURE.EXE",  "a8e1020f952480d98920b1c7cc08644d", 6099243,
+									   "FUTU.DXR",	  "e0a46377cd751a43d5a2912ddada370c", 1847366, Common::JA_JPN, 404),
 
 	// Developed by DeAgostini Multimedia, Novara, Piedmont, Italy (1995)
 	// Original Italian title is Fuzzy e Floppy: Il mistero dell'ape d'oro
