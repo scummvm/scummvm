@@ -468,7 +468,7 @@ enum GUIString {
 	gsConfirmPasscode = 58,
 	gsInvalidPasscode = 59,
 	gsSlowFast = 60,
-	gsRestartGame = 61
+	gsRestartGame = 61,
 };
 
 struct InternalGUIControl {
