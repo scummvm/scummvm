@@ -45,11 +45,11 @@ ifeq ($(DYNAMIC_MODULES),1)
 endif
 
 $(TARGET).smdh: $(APP_ICON)
-	@smdhtool --create "$(APP_TITLE)" "$(APP_DESCRIPTION)" "$(APP_AUTHOR)" $(APP_ICON) $@
+	@$(DEVKITPRO)/tools/bin/smdhtool --create "$(APP_TITLE)" "$(APP_DESCRIPTION)" "$(APP_AUTHOR)" $(APP_ICON) $@
 	@echo built ... $(notdir $@)
 
 $(TARGET).3dsx: $(EXECUTABLE) $(TARGET).smdh romfs
-	@3dsxtool $< $@ --smdh=$(TARGET).smdh --romfs=romfs
+	@$(DEVKITPRO)/tools/bin/3dsxtool $< $@ --smdh=$(TARGET).smdh --romfs=romfs
 	@echo built ... $(notdir $@)
 
 $(TARGET).bnr: $(APP_BANNER_IMAGE) $(APP_BANNER_AUDIO)
@@ -74,8 +74,8 @@ dist_3ds: $(TARGET).cia $(TARGET).3dsx $(DIST_FILES_DOCS)
 define shader-as
 	$(eval FILEPATH := $(patsubst %.shbin.o,%.shbin,$@))
 	$(eval FILE := $(patsubst %.shbin.o,%.shbin,$(notdir $@)))
-	picasso -o $(FILEPATH) $1
-	bin2s $(FILEPATH) | $(AS) -o $@
+	$(DEVKITPRO)/tools/bin/picasso -o $(FILEPATH) $1
+	$(DEVKITPRO)/tools/bin/bin2s $(FILEPATH) | $(AS) -o $@
 	echo "extern const u8" `(echo $(FILE) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_end[];" > `(echo $(FILEPATH) | tr . _)`.h
 	echo "extern const u8" `(echo $(FILE) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"[];" >> `(echo $(FILEPATH) | tr . _)`.h
 	echo "extern const u32" `(echo $(FILE) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`_size";" >> `(echo $(FILEPATH) | tr . _)`.h
