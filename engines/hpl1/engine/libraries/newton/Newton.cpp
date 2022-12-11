@@ -4010,9 +4010,9 @@ int NewtonCollisionCollideContinue(const NewtonWorld *const newtonWorld,
 
 	TRACE_FUNTION(__FUNCTION__);
 	return world->CollideContinue((dgCollision *)collisionA,
-	                              *((dgMatrix *)matrixA), *((dgVector *)velocA), *((dgVector *)omegaA),
-	                              (dgCollision *)collisionB, *((dgMatrix *)matrixB), *((dgVector *)velocB),
-	                              *((dgVector *)omegaB), *timeOfImpact, (dgTriplex *)contacts,
+	                              *((const dgMatrix *)matrixA), *((const dgVector *)velocA), *((const dgVector *)omegaA),
+	                              (dgCollision *)collisionB, *((const dgMatrix *)matrixB), *((const dgVector *)velocB),
+	                              *((const dgVector *)omegaB), *timeOfImpact, (dgTriplex *)contacts,
 	                              (dgTriplex *)normals, penetration, maxSize, threadIndex);
 }
 
@@ -4031,11 +4031,11 @@ int NewtonCollisionCollideContinue(const NewtonWorld *const newtonWorld,
 // See also: NewtonCollisionRayCast, NewtonCollisionClosestPoint, NewtonCollisionPointDistance
 void NewtonCollisionSupportVertex(const NewtonCollision *collisionPtr,
                                   const dFloat *const dir, dFloat *const vertex) {
-	dgCollisionConvex *collision;
+	const dgCollisionConvex *collision;
 
 	TRACE_FUNTION(__FUNCTION__);
 
-	collision = (dgCollisionConvex *)collisionPtr;
+	collision = (const dgCollisionConvex *)collisionPtr;
 	//  _ASSERTE (collision->IsType (dgCollision::dgConvexCollision_RTTI));
 
 	const dgMatrix &matrix = collision->GetOffsetMatrix();
@@ -4075,9 +4075,9 @@ dFloat NewtonCollisionRayCast(const NewtonCollision *collisionPtr,
                               const dFloat *const p0, const dFloat *const p1, dFloat *const normal,
                               int *const attribute) {
 	dFloat t;
-	dgCollision *collision;
+	const dgCollision *collision;
 
-	collision = (dgCollision *)collisionPtr;
+	collision = (const dgCollision *)collisionPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	const dgMatrix &matrix = collision->GetOffsetMatrix();
@@ -4114,8 +4114,8 @@ dFloat NewtonCollisionRayCast(const NewtonCollision *collisionPtr,
 // See also: NewtonCollisionClosestPoint, NewtonCollisionPointDistance, NewtonCollisionCollide, NewtonCollisionRayCast
 void NewtonCollisionCalculateAABB(const NewtonCollision *collisionPtr,
                                   const dFloat *const offsetMatrix, dFloat *const p0, dFloat *const p1) {
-	dgCollision *collision;
-	collision = (dgCollision *)collisionPtr;
+	const dgCollision *collision;
+	collision = (const dgCollision *)collisionPtr;
 	// const dgMatrix& matrix = *((dgMatrix*) offsetMatrix);
 	dgMatrix matrix(collision->GetOffsetMatrix() * (*((dgMatrix *)offsetMatrix)));
 
@@ -4349,8 +4349,8 @@ NewtonCollision *NewtonCreateCollisionFromSerialization(
 // See also: NewtonCollisionGetInfo, NewtonCollisionSerialize
 void NewtonCollisionGetInfo(const NewtonCollision *const collision,
                             NewtonCollisionInfoRecord *const collisionInfo) {
-	dgCollision *coll;
-	coll = (dgCollision *)collision;
+	const dgCollision *coll;
+	coll = (const dgCollision *)collision;
 
 	TRACE_FUNTION(__FUNCTION__);
 
@@ -4382,7 +4382,7 @@ void NewtonCollisionGetInfo(const NewtonCollision *const collision,
 //
 // See also: NewtonSetEulerAngle
 void NewtonGetEulerAngle(const dFloat *const matrix, dFloat *const angles) {
-	const dgMatrix &mat = *((dgMatrix *)matrix);
+	const dgMatrix &mat = *((const dgMatrix *)matrix);
 
 	TRACE_FUNTION(__FUNCTION__);
 	dgVector eulers(mat.CalcPitchYawRoll());
@@ -4563,8 +4563,8 @@ void NewtonBodySetUserData(const NewtonBody *const bodyPtr,
 //
 // See also: NewtonBodySetUserData
 void *NewtonBodyGetUserData(const NewtonBody *const bodyPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return body->GetUserData();
@@ -4583,8 +4583,8 @@ void *NewtonBodyGetUserData(const NewtonBody *const bodyPtr) {
 // that body.
 //
 NewtonWorld *NewtonBodyGetWorld(const NewtonBody *const bodyPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return (NewtonWorld *)body->GetWorld();
@@ -4632,7 +4632,7 @@ void NewtonBodySetTransformCallback(const NewtonBody *const bodyPtr,
 //
 // See also: NewtonBodyGetUserData, NewtonBodyGetUserData
 NewtonSetTransform NewtonBodyGetTransformCallback(
-    const NewtonBody *const bodyPtr) {
+			    const NewtonBody *const bodyPtr) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
 
@@ -4685,8 +4685,8 @@ void NewtonBodySetForceAndTorqueCallback(const NewtonBody *const bodyPtr,
 // See also: NewtonBodyGetUserData, NewtonBodyGetUserData, NewtonBodySetForceAndTorqueCallback
 NewtonApplyForceAndTorque NewtonBodyGetForceAndTorqueCallback(
     const NewtonBody *const bodyPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return (NewtonApplyForceAndTorque)body->GetExtForceAndTorqueCallback();
@@ -4779,8 +4779,8 @@ void NewtonBodySetMassMatrix(const NewtonBody *const bodyPtr, dFloat mass,
 // See also: NewtonBodySetMassMatrix, NewtonBodyGetInvMass
 void NewtonBodyGetMassMatrix(const NewtonBody *const bodyPtr,
                              dFloat *const mass, dFloat *const Ixx, dFloat *const Iyy, dFloat *const Izz) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 
@@ -4814,8 +4814,8 @@ void NewtonBodyGetMassMatrix(const NewtonBody *const bodyPtr,
 void NewtonBodyGetInvMass(const NewtonBody *const bodyPtr,
                           dFloat *const invMass, dFloat *const invIxx, dFloat *const invIyy,
                           dFloat *const invIzz) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	//  dgVector vector (body->GetInvMass ());
@@ -4921,8 +4921,8 @@ void NewtonBodySetMatrixRecursive(const NewtonBody *const bodyPtr,
 // See also: NewtonBodySetMatrix, NewtonBodyGetRotation
 void NewtonBodyGetMatrix(const NewtonBody *const bodyPtr,
                          dFloat *const matrixPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	dgMatrix &matrix = *((dgMatrix *)matrixPtr);
@@ -4949,8 +4949,8 @@ void NewtonBodyGetMatrix(const NewtonBody *const bodyPtr,
 //
 // See also: NewtonBodySetMatrix, NewtonBodyGetMatrix
 void NewtonBodyGetRotation(const NewtonBody *const bodyPtr, dFloat *rotPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	dgQuaternion &rot = *((dgQuaternion *)rotPtr);
@@ -5016,8 +5016,8 @@ void NewtonBodyAddForce(const NewtonBody *const bodyPtr,
 // See also: NewtonBodyAddForce, NewtonBodyGetForce, NewtonBodyGetForce
 void NewtonBodyGetForceAcc(const NewtonBody *const bodyPtr,
                            dFloat *const vectorPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	dgVector vector(body->GetForce());
@@ -5038,8 +5038,8 @@ void NewtonBodyGetForceAcc(const NewtonBody *const bodyPtr,
 // See also: NewtonBodyAddForce, NewtonBodyGetForce, NewtonBodyGetForceAcc
 void NewtonBodyGetForce(const NewtonBody *const bodyPtr,
                         dFloat *const vectorPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	dgVector vector(body->GetNetForce());
@@ -5069,8 +5069,8 @@ void NewtonBodyGetForce(const NewtonBody *const bodyPtr,
 // See also: NewtonBodySetForce, NewtonBodyAddForce, NewtonBodyGetForce, NewtonBodyGetForceAcc
 void NewtonBodyCalculateInverseDynamicsForce(const NewtonBody *const bodyPtr,
         dFloat timestep, const dFloat *const desiredVeloc, dFloat *const forceOut) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	dgVector veloc(desiredVeloc[0], desiredVeloc[1], desiredVeloc[2],
@@ -5094,7 +5094,7 @@ void NewtonBodyCalculateInverseDynamicsForce(const NewtonBody *const bodyPtr,
 // Remarks: This function is only effective when called from *NewtonApplyForceAndTorque callback*
 //
 // See also: NewtonBodyAddTorque, NewtonBodyGetTorque, NewtonBodyGetTorqueAcc
-void NewtonBodySetTorque(const NewtonBody *const bodyPtr,
+void NewtonBodySetTorque(NewtonBody *bodyPtr,
                          const dFloat *const vectorPtr) {
 	dgBody *body;
 
@@ -5138,8 +5138,8 @@ void NewtonBodyAddTorque(const NewtonBody *const bodyPtr,
 // See also: NewtonBodyAddTorque, NewtonBodyGetTorque, NewtonBodyGetTorqueAcc
 void NewtonBodyGetTorque(const NewtonBody *const bodyPtr,
                          dFloat *const vectorPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	dgVector vector(body->GetNetTorque());
@@ -5162,8 +5162,8 @@ void NewtonBodyGetTorque(const NewtonBody *const bodyPtr,
 // See also: NewtonBodyAddTorque, NewtonBodyGetTorque, NewtonBodyGetTorque
 void NewtonBodyGetTorqueAcc(const NewtonBody *const bodyPtr,
                             dFloat *const vectorPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	dgVector vector(body->GetTorque());
@@ -5210,7 +5210,7 @@ void NewtonBodyGetTorqueAcc(const NewtonBody *const bodyPtr,
 // Vector globalTroque (crossproduct ((globalPosition - globalCentre). globalForce);
 //
 // See also: NewtonConvexCollisionCalculateInertialMatrix, NewtonBodyGetCentreOfMass
-void NewtonBodySetCentreOfMass(const NewtonBody *const bodyPtr,
+void NewtonBodySetCentreOfMass(NewtonBody *bodyPtr,
                                const dFloat *const comPtr) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
@@ -5239,8 +5239,8 @@ void NewtonBodySetCentreOfMass(const NewtonBody *const bodyPtr,
 // See also: NewtonConvexCollisionCalculateInertialMatrix, NewtonBodySetCentreOfMass
 void NewtonBodyGetCentreOfMass(const NewtonBody *const bodyPtr,
                                dFloat *const comPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	dgVector vector(body->GetCentreOfMass());
@@ -5263,8 +5263,8 @@ void NewtonBodyGetCentreOfMass(const NewtonBody *const bodyPtr,
 //
 // See also: NewtonBodyGetNextJoint
 NewtonJoint *NewtonBodyGetFirstJoint(const NewtonBody *const bodyPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return (NewtonJoint *)body->GetFirstJoint();
@@ -5286,8 +5286,8 @@ NewtonJoint *NewtonBodyGetFirstJoint(const NewtonBody *const bodyPtr) {
 // See also: NewtonBodyGetFirstJoint
 NewtonJoint *NewtonBodyGetNextJoint(const NewtonBody *const bodyPtr,
                                     const NewtonJoint *const jointPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return (NewtonJoint *)body->GetNextJoint((dgConstraint *)jointPtr);
@@ -5303,8 +5303,8 @@ NewtonJoint *NewtonBodyGetNextJoint(const NewtonBody *const bodyPtr,
 //
 // See also: NewtonBodyGetNextContactJoint, NewtonContactJointGetFirstContact, NewtonContactJointGetNextContact, NewtonContactJointRemoveContact
 NewtonJoint *NewtonBodyGetFirstContactJoint(const NewtonBody *const bodyPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return (NewtonJoint *)body->GetFirstContact();
@@ -5322,8 +5322,8 @@ NewtonJoint *NewtonBodyGetFirstContactJoint(const NewtonBody *const bodyPtr) {
 // See also: NewtonBodyGetFirstContactJoint, NewtonContactJointGetFirstContact, NewtonContactJointGetNextContact, NewtonContactJointRemoveContact
 NewtonJoint *NewtonBodyGetNextContactJoint(const NewtonBody *const bodyPtr,
         const NewtonJoint *const contactPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return (NewtonJoint *)body->GetNextContact((dgConstraint *)contactPtr);
@@ -5339,8 +5339,8 @@ NewtonJoint *NewtonBodyGetNextContactJoint(const NewtonBody *const bodyPtr,
 //
 // See also: NewtonContactJointGetFirstContact, NewtonContactJointGetNextContact, NewtonContactJointRemoveContact
 int NewtonContactJointGetContactCount(const NewtonJoint *const contactJoint) {
-	dgContact *joint;
-	joint = (dgContact *)contactJoint;
+	const dgContact *joint;
+	joint = (const dgContact *)contactJoint;
 
 	TRACE_FUNTION(__FUNCTION__);
 
@@ -5361,8 +5361,8 @@ int NewtonContactJointGetContactCount(const NewtonJoint *const contactJoint) {
 //
 // See also: NewtonContactJointGetNextContact, NewtonContactGetMaterial, NewtonContactJointRemoveContact
 void *NewtonContactJointGetFirstContact(const NewtonJoint *const contactJoint) {
-	dgContact *joint;
-	joint = (dgContact *)contactJoint;
+	const dgContact *joint;
+	joint = (const dgContact *)contactJoint;
 
 	TRACE_FUNTION(__FUNCTION__);
 
@@ -5385,8 +5385,8 @@ void *NewtonContactJointGetFirstContact(const NewtonJoint *const contactJoint) {
 // See also: NewtonContactJointGetFirstContact, NewtonContactGetMaterial, NewtonContactJointRemoveContact
 void *NewtonContactJointGetNextContact(const NewtonJoint *const contactJoint,
                                        void *const contact) {
-	dgContact *joint;
-	joint = (dgContact *)contactJoint;
+	const dgContact *joint;
+	joint = (const dgContact *)contactJoint;
 
 	TRACE_FUNTION(__FUNCTION__);
 
@@ -5408,7 +5408,7 @@ void *NewtonContactJointGetNextContact(const NewtonJoint *const contactJoint,
 // Return: first contact contact array of the joint contact exist, NULL otherwise
 //
 // See also: NewtonBodyGetFirstContactJoint, NewtonBodyGetNextContactJoint, NewtonContactJointGetFirstContact, NewtonContactJointGetNextContact
-void NewtonContactJointRemoveContact(const NewtonJoint *const contactJoint,
+void NewtonContactJointRemoveContact(NewtonJoint *contactJoint,
                                      void *const contact) {
 	dgContact *joint;
 	joint = (dgContact *)contactJoint;
@@ -5431,7 +5431,7 @@ void NewtonContactJointRemoveContact(const NewtonJoint *const contactJoint,
 // Return: first contact contact array of the joint contact exist, NULL otherwise
 //
 // See also: NewtonContactJointGetFirstContact, NewtonContactJointGetNextContact
-NewtonMaterial *NewtonContactGetMaterial(const void *const contact) {
+NewtonMaterial *NewtonContactGetMaterial(void *const contact) {
 	dgList<dgContactMaterial>::dgListNode *node;
 
 	TRACE_FUNTION(__FUNCTION__);
@@ -5494,8 +5494,8 @@ void NewtonBodyAddBuoyancyForce(const NewtonBody *const bodyPtr,
 // This function can be used to swap the collision geometry of bodies at runtime.
 //
 // See also: NewtonCreateBody, NewtonBodyGetCollision
-void NewtonBodySetCollision(const NewtonBody *const bodyPtr,
-                            const NewtonCollision *const collisionPtr) {
+void NewtonBodySetCollision(NewtonBody *bodyPtr,
+                            NewtonCollision *collisionPtr) {
 	dgBody *body;
 	dgCollision *collision;
 
@@ -5560,8 +5560,8 @@ void NewtonBodySetCollision(const NewtonBody *const bodyPtr,
 //
 // See also: NewtonCreateBody, NewtonBodySetCollision
 NewtonCollision *NewtonBodyGetCollision(const NewtonBody *const bodyPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return (NewtonCollision *)body->GetCollision();
@@ -5579,7 +5579,7 @@ NewtonCollision *NewtonBodyGetCollision(const NewtonBody *const bodyPtr) {
 // Remarks: When the application creates a body, the default material group, *defaultGroupId*, is applied by default.
 //
 // See also: NewtonBodyGetMaterialGroupID, NewtonMaterialCreateGroupID, NewtonMaterialGetDefaultGroupID
-void NewtonBodySetMaterialGroupID(const NewtonBody *const bodyPtr, int id) {
+void NewtonBodySetMaterialGroupID(NewtonBody *bodyPtr, int id) {
 	dgBody *const body = (dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
@@ -5597,7 +5597,7 @@ void NewtonBodySetMaterialGroupID(const NewtonBody *const bodyPtr, int id) {
 //
 // See also: NewtonBodySetMaterialGroupID
 int NewtonBodyGetMaterialGroupID(const NewtonBody *const bodyPtr) {
-	dgBody *const body = (dgBody *)bodyPtr;
+	const dgBody *const body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return int(body->GetGroupID());
@@ -5633,7 +5633,7 @@ int NewtonBodyGetMaterialGroupID(const NewtonBody *const bodyPtr) {
 // and bodies that move a height speed.
 //
 // See also: NewtonBodyGetContinuousCollisionMode, NewtonBodySetContinuousCollisionMode
-void NewtonBodySetContinuousCollisionMode(const NewtonBody *const bodyPtr,
+void NewtonBodySetContinuousCollisionMode(NewtonBody *bodyPtr,
         unsigned state) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
@@ -5659,8 +5659,8 @@ void NewtonBodySetContinuousCollisionMode(const NewtonBody *const bodyPtr,
 //
 // See also: NewtonBodySetContinuousCollisionMode, NewtonBodySetContinuousCollisionMode
 int NewtonBodyGetContinuousCollisionMode(const NewtonBody *const bodyPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return body->GetContinuesCollisionMode() ? 1 : false;
@@ -5683,7 +5683,7 @@ int NewtonBodyGetContinuousCollisionMode(const NewtonBody *const bodyPtr) {
 // for jointed bodies.
 //
 // See also: NewtonBodySetMaterialGroupID
-void NewtonBodySetJointRecursiveCollision(const NewtonBody *const bodyPtr,
+void NewtonBodySetJointRecursiveCollision(NewtonBody *bodyPtr,
         unsigned state) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
@@ -5702,8 +5702,8 @@ void NewtonBodySetJointRecursiveCollision(const NewtonBody *const bodyPtr,
 //
 // See also: NewtonBodySetMaterialGroupID
 int NewtonBodyGetJointRecursiveCollision(const NewtonBody *const bodyPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return body->GetCollisionWithLinkedBodies() ? 1 : 0;
@@ -5726,8 +5726,8 @@ int NewtonBodyGetJointRecursiveCollision(const NewtonBody *const bodyPtr) {
 //
 // See also: NewtonBodySetAutoSleep, NewtonBodyGetAutoSleep
 int NewtonBodyGetFreezeState(const NewtonBody *const bodyPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return body->GetFreeze() ? 1 : 0;
@@ -5745,7 +5745,7 @@ int NewtonBodyGetFreezeState(const NewtonBody *const bodyPtr) {
 // Remarks: This function to no activate the body, is just lock or unlock the body for physics simulation.
 //
 // See also: NewtonBodyGetFreezeState, NewtonBodySetAutoSleep, NewtonBodyGetAutoSleep
-void NewtonBodySetFreezeState(const NewtonBody *const bodyPtr, int state) {
+void NewtonBodySetFreezeState(NewtonBody *bodyPtr, int state) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
 
@@ -5771,7 +5771,7 @@ void NewtonBodySetFreezeState(const NewtonBody *const bodyPtr, int state) {
 // NewtonBodySetFreezeState(body), this will make the body active forever.
 //
 // See also: NewtonBodyGetFreezeState, NewtonBodySetFreezeState, NewtonBodyGetAutoSleep, NewtonBodySetFreezeTreshold
-void NewtonBodySetAutoSleep(const NewtonBody *const bodyPtr, int state) {
+void NewtonBodySetAutoSleep(NewtonBody *bodyPtr, int state) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
 
@@ -5790,8 +5790,8 @@ void NewtonBodySetAutoSleep(const NewtonBody *const bodyPtr, int state) {
 //
 // See also: NewtonBodySetAutoSleep, NewtonBodyGetSleepState
 int NewtonBodyGetAutoSleep(const NewtonBody *const bodyPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return body->GetAutoSleep() ? 1 : 0;
@@ -5807,8 +5807,8 @@ int NewtonBodyGetAutoSleep(const NewtonBody *const bodyPtr) {
 //
 // See also: NewtonBodySetAutoSleep
 int NewtonBodyGetSleepState(const NewtonBody *const bodyPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 	return body->GetSleepState() ? 1 : 0;
 }
 
@@ -5885,13 +5885,13 @@ int NewtonBodyGetSleepState(const NewtonBody *const bodyPtr) {
 //
 void NewtonBodyGetAABB(const NewtonBody *const bodyPtr, dFloat *const p0,
                        dFloat *const p1) {
-	dgBody *body;
+	const dgBody *body;
 
 	dgVector vector0;
 	dgVector vector1;
 
 	TRACE_FUNTION(__FUNCTION__);
-	body = (dgBody *)bodyPtr;
+	body = (const dgBody *)bodyPtr;
 	body->GetAABB(vector0, vector1);
 
 	p0[0] = vector0.m_x;
@@ -5911,7 +5911,7 @@ void NewtonBodyGetAABB(const NewtonBody *const bodyPtr, dFloat *const p0,
 // *const dFloat* *velocity - pointer to an array of at least three floats containing the velocity vector.
 //
 // See also: NewtonBodyGetVelocity
-void NewtonBodySetVelocity(const NewtonBody *const bodyPtr,
+void NewtonBodySetVelocity(NewtonBody *bodyPtr,
                            const dFloat *const velocity) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
@@ -5931,8 +5931,8 @@ void NewtonBodySetVelocity(const NewtonBody *const bodyPtr,
 // See also: NewtonBodySetVelocity
 void NewtonBodyGetVelocity(const NewtonBody *const bodyPtr,
                            dFloat *const velocity) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	//  dgVector& vector = *((dgVector*) velocity);
@@ -5952,7 +5952,7 @@ void NewtonBodyGetVelocity(const NewtonBody *const bodyPtr,
 // *const dFloat* *omega - pointer to an array of at least three floats containing the angular velocity vector.
 //
 // See also: NewtonBodyGetOmega
-void NewtonBodySetOmega(const NewtonBody *const bodyPtr,
+void NewtonBodySetOmega(NewtonBody *bodyPtr,
                         const dFloat *const omega) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
@@ -5971,8 +5971,8 @@ void NewtonBodySetOmega(const NewtonBody *const bodyPtr,
 //
 // See also: NewtonBodySetOmega
 void NewtonBodyGetOmega(const NewtonBody *const bodyPtr, dFloat *const omega) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	//  dgVector& vector = *((dgVector*) omega);
@@ -6002,7 +6002,7 @@ void NewtonBodyGetOmega(const NewtonBody *const bodyPtr, dFloat *const omega) {
 // adding very large velocities to a body.
 //
 // See also: NewtonBodyGetLinearDamping
-void NewtonBodySetLinearDamping(const NewtonBody *const bodyPtr,
+void NewtonBodySetLinearDamping(NewtonBody *bodyPtr,
                                 dFloat linearDamp) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
@@ -6021,8 +6021,8 @@ void NewtonBodySetLinearDamping(const NewtonBody *const bodyPtr,
 //
 // See also: NewtonBodySetLinearDamping
 dFloat NewtonBodyGetLinearDamping(const NewtonBody *const bodyPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return body->GetLinearDamping();
@@ -6046,7 +6046,7 @@ dFloat NewtonBodyGetLinearDamping(const NewtonBody *const bodyPtr) {
 // adding very large velocities to a body.
 //
 // See also: NewtonBodyGetAngularDamping
-void NewtonBodySetAngularDamping(const NewtonBody *const bodyPtr,
+void NewtonBodySetAngularDamping(NewtonBody *bodyPtr,
                                  const dFloat *angularDamp) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
@@ -6067,8 +6067,8 @@ void NewtonBodySetAngularDamping(const NewtonBody *const bodyPtr,
 // See also: NewtonBodySetAngularDamping
 void NewtonBodyGetAngularDamping(const NewtonBody *const bodyPtr,
                                  dFloat *angularDamp) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	//  dgVector& vector = *((dgVector*) angularDamp);
@@ -6140,7 +6140,7 @@ void NewtonBodyGetAngularDamping(const NewtonBody *const bodyPtr,
 //
 // Remarks: Because *pointDeltaVeloc* represents a change in velocity, this function must be used with care. Repeated calls
 // to this function will result in an increase of the velocity of the body and may cause to integrator to lose stability.
-void NewtonBodyAddImpulse(const NewtonBody *const bodyPtr,
+void NewtonBodyAddImpulse(NewtonBody *bodyPtr,
                           const dFloat *const pointDeltaVeloc, const dFloat *const pointPosit) {
 	dgBody *body;
 	dgWorld *world;
@@ -6175,7 +6175,7 @@ void NewtonBodyAddImpulse(const NewtonBody *const bodyPtr,
 //
 // Remarks: this function apply at general impulse to a body a oppose to a desired change on velocity
 // this mean that the body mass, and Inertia will determine the gain on velocity.
-void NewtonBodyApplyImpulseArray(const NewtonBody *const bodyPtr,
+void NewtonBodyApplyImpulseArray(NewtonBody *bodyPtr,
                                  int impuleCount, int strideInByte, const dFloat *const impulseArray,
                                  const dFloat *const pointArray) {
 	dgBody *body;
@@ -6207,9 +6207,9 @@ void NewtonBodyApplyImpulseArray(const NewtonBody *const bodyPtr,
 // Return: Pointer to the ball and socket joint.
 //
 // Remarks: This function creates a ball and socket and add it to the world. By default joint disables collision with the linked bodies.
-NewtonJoint *NewtonConstraintCreateBall(const NewtonWorld *const newtonWorld,
-                                        const dFloat *pivotPoint, const NewtonBody *const childBody,
-                                        const NewtonBody *const parentBody) {
+NewtonJoint *NewtonConstraintCreateBall(NewtonWorld *newtonWorld,
+                                        const dFloat *pivotPoint, NewtonBody *childBody,
+                                        NewtonBody *parentBody) {
 	dgBody *body0;
 	dgBody *body1;
 	Newton *world;
@@ -6235,7 +6235,7 @@ NewtonJoint *NewtonConstraintCreateBall(const NewtonWorld *const newtonWorld,
 // all non-zero value for *maxConeAngle* are clamped between 5 degree and 175 degrees
 //
 // See also: NewtonConstraintCreateBall
-void NewtonBallSetConeLimits(const NewtonJoint *const ball, const dFloat *pin,
+void NewtonBallSetConeLimits(NewtonJoint *ball, const dFloat *pin,
                              dFloat maxConeAngle, dFloat maxTwistAngle) {
 	dgBallConstraint *joint;
 
@@ -6285,7 +6285,7 @@ void NewtonBallSetConeLimits(const NewtonJoint *const ball, const dFloat *pin,
 // effects like particles, sound or even to simulate breakable moving parts.
 //
 // See also: NewtonJointSetUserData
-void NewtonBallSetUserCallback(const NewtonJoint *const ball,
+void NewtonBallSetUserCallback(NewtonJoint *ball,
                                NewtonBallCallBack callback) {
 	dgBallConstraint *contraint;
 
@@ -6308,9 +6308,9 @@ void NewtonBallSetUserCallback(const NewtonJoint *const ball,
 //
 // See also: NewtonBallSetUserCallback
 void NewtonBallGetJointAngle(const NewtonJoint *const ball, dFloat *angle) {
-	dgBallConstraint *contraint;
+	const dgBallConstraint *contraint;
 
-	contraint = (dgBallConstraint *)ball;
+	contraint = (const dgBallConstraint *)ball;
 	dgVector angleVector(contraint->GetJointAngle());
 
 	TRACE_FUNTION(__FUNCTION__);
@@ -6333,10 +6333,10 @@ void NewtonBallGetJointAngle(const NewtonJoint *const ball, dFloat *angle) {
 //
 // See also: NewtonBallSetUserCallback
 void NewtonBallGetJointOmega(const NewtonJoint *const ball, dFloat *omega) {
-	dgBallConstraint *contraint;
+	const dgBallConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgBallConstraint *)ball;
+	contraint = (const dgBallConstraint *)ball;
 	dgVector omegaVector(contraint->GetJointOmega());
 	omega[0] = omegaVector.m_x;
 	omega[1] = omegaVector.m_y;
@@ -6357,10 +6357,10 @@ void NewtonBallGetJointOmega(const NewtonJoint *const ball, dFloat *omega) {
 //
 // See also: NewtonBallSetUserCallback
 void NewtonBallGetJointForce(const NewtonJoint *const ball, dFloat *const force) {
-	dgBallConstraint *contraint;
+	const dgBallConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgBallConstraint *)ball;
+	contraint = (const dgBallConstraint *)ball;
 	dgVector forceVector(contraint->GetJointForce());
 	force[0] = forceVector.m_x;
 	force[1] = forceVector.m_y;
@@ -6386,9 +6386,9 @@ void NewtonBallGetJointForce(const NewtonJoint *const ball, dFloat *const force)
 // Return: Pointer to the hinge joint.
 //
 // Remarks: This function creates a hinge and add it to the world. By default joint disables collision with the linked bodies.
-NewtonJoint *NewtonConstraintCreateHinge(const NewtonWorld *const newtonWorld,
+NewtonJoint *NewtonConstraintCreateHinge(NewtonWorld *newtonWorld,
         const dFloat *pivotPoint, const dFloat *pinDir,
-        const NewtonBody *const childBody, const NewtonBody *const parentBody) {
+        NewtonBody *childBody, NewtonBody *parentBody) {
 	dgBody *body0;
 	dgBody *body1;
 	Newton *world;
@@ -6416,7 +6416,7 @@ NewtonJoint *NewtonConstraintCreateHinge(const NewtonWorld *const newtonWorld,
 // effects like particles, sound or even to simulate breakable moving parts.
 //
 // See also: NewtonJointGetUserData, NewtonJointSetUserData
-void NewtonHingeSetUserCallback(const NewtonJoint *const hinge,
+void NewtonHingeSetUserCallback(NewtonJoint *hinge,
                                 NewtonHingeCallBack callback) {
 	dgHingeConstraint *contraint;
 
@@ -6438,10 +6438,10 @@ void NewtonHingeSetUserCallback(const NewtonJoint *const hinge,
 //
 // See also: NewtonHingeSetUserCallback
 dFloat NewtonHingeGetJointAngle(const NewtonJoint *const hinge) {
-	dgHingeConstraint *contraint;
+	const dgHingeConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgHingeConstraint *)hinge;
+	contraint = (const dgHingeConstraint *)hinge;
 	return contraint->GetJointAngle();
 }
 
@@ -6458,10 +6458,10 @@ dFloat NewtonHingeGetJointAngle(const NewtonJoint *const hinge) {
 //
 // See also: NewtonHingeSetUserCallback
 dFloat NewtonHingeGetJointOmega(const NewtonJoint *const hinge) {
-	dgHingeConstraint *contraint;
+	const dgHingeConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgHingeConstraint *)hinge;
+	contraint = (const dgHingeConstraint *)hinge;
 	return contraint->GetJointOmega();
 }
 
@@ -6480,11 +6480,11 @@ dFloat NewtonHingeGetJointOmega(const NewtonJoint *const hinge) {
 // See also: NewtonHingeSetUserCallback
 dFloat NewtonHingeCalculateStopAlpha(const NewtonJoint *const hinge,
                                      const NewtonHingeSliderUpdateDesc *const desc, dFloat angle) {
-	dgHingeConstraint *contraint;
+	const dgHingeConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgHingeConstraint *)hinge;
-	return contraint->CalculateStopAlpha(angle, (dgJointCallBackParam *)desc);
+	contraint = (const dgHingeConstraint *)hinge;
+	return contraint->CalculateStopAlpha(angle, (const dgJointCallBackParam *)desc);
 }
 
 // Name: NewtonHingeGetJointForce
@@ -6502,10 +6502,10 @@ dFloat NewtonHingeCalculateStopAlpha(const NewtonJoint *const hinge,
 // See also: NewtonHingeSetUserCallback
 void NewtonHingeGetJointForce(const NewtonJoint *const hinge,
                               dFloat *const force) {
-	dgHingeConstraint *contraint;
+	const dgHingeConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgHingeConstraint *)hinge;
+	contraint = (const dgHingeConstraint *)hinge;
 	dgVector forceVector(contraint->GetJointForce());
 	force[0] = forceVector.m_x;
 	force[1] = forceVector.m_y;
@@ -6531,9 +6531,9 @@ void NewtonHingeGetJointForce(const NewtonJoint *const hinge,
 // Return: Pointer to the slider joint.
 //
 // Remarks: This function creates a slider and add it to the world. By default joint disables collision with the linked bodies.
-NewtonJoint *NewtonConstraintCreateSlider(const NewtonWorld *const newtonWorld,
+NewtonJoint *NewtonConstraintCreateSlider(NewtonWorld *newtonWorld,
         const dFloat *pivotPoint, const dFloat *pinDir,
-        const NewtonBody *const childBody, const NewtonBody *const parentBody) {
+        NewtonBody *childBody, NewtonBody *parentBody) {
 	dgBody *body0;
 	dgBody *body1;
 	Newton *world;
@@ -6561,7 +6561,7 @@ NewtonJoint *NewtonConstraintCreateSlider(const NewtonWorld *const newtonWorld,
 // effects like particles, sound or even to simulate breakable moving parts.
 //
 // See also: NewtonJointGetUserData, NewtonJointSetUserData
-void NewtonSliderSetUserCallback(const NewtonJoint *const slider,
+void NewtonSliderSetUserCallback(NewtonJoint *slider,
                                  NewtonSliderCallBack callback) {
 	dgSlidingConstraint *contraint;
 
@@ -6583,10 +6583,10 @@ void NewtonSliderSetUserCallback(const NewtonJoint *const slider,
 //
 // See also: NewtonSliderSetUserCallback
 dFloat NewtonSliderGetJointPosit(const NewtonJoint *Slider) {
-	dgSlidingConstraint *contraint;
+	const dgSlidingConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgSlidingConstraint *)Slider;
+	contraint = (const dgSlidingConstraint *)Slider;
 	return contraint->GetJointPosit();
 }
 
@@ -6603,10 +6603,10 @@ dFloat NewtonSliderGetJointPosit(const NewtonJoint *Slider) {
 //
 // See also: NewtonSliderSetUserCallback
 dFloat NewtonSliderGetJointVeloc(const NewtonJoint *Slider) {
-	dgSlidingConstraint *contraint;
+	const dgSlidingConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgSlidingConstraint *)Slider;
+	contraint = (const dgSlidingConstraint *)Slider;
 	return contraint->GetJointVeloc();
 }
 
@@ -6625,11 +6625,11 @@ dFloat NewtonSliderGetJointVeloc(const NewtonJoint *Slider) {
 // See also: NewtonSliderSetUserCallback
 dFloat NewtonSliderCalculateStopAccel(const NewtonJoint *const slider,
                                       const NewtonHingeSliderUpdateDesc *const desc, dFloat distance) {
-	dgSlidingConstraint *contraint;
+	const dgSlidingConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgSlidingConstraint *)slider;
-	return contraint->CalculateStopAccel(distance, (dgJointCallBackParam *)desc);
+	contraint = (const dgSlidingConstraint *)slider;
+	return contraint->CalculateStopAccel(distance, (const dgJointCallBackParam *)desc);
 }
 
 // Name: NewtonSliderGetJointForce
@@ -6647,10 +6647,10 @@ dFloat NewtonSliderCalculateStopAccel(const NewtonJoint *const slider,
 // See also: NewtonSliderSetUserCallback
 void NewtonSliderGetJointForce(const NewtonJoint *const slider,
                                dFloat *const force) {
-	dgSlidingConstraint *contraint;
+	const dgSlidingConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgSlidingConstraint *)slider;
+	contraint = (const dgSlidingConstraint *)slider;
 	dgVector forceVector(contraint->GetJointForce());
 	force[0] = forceVector.m_x;
 	force[1] = forceVector.m_y;
@@ -6677,9 +6677,9 @@ void NewtonSliderGetJointForce(const NewtonJoint *const slider,
 //
 // Remarks: This function creates a corkscrew and add it to the world. By default joint disables collision with the linked bodies.
 NewtonJoint *NewtonConstraintCreateCorkscrew(
-    const NewtonWorld *const newtonWorld, const dFloat *pivotPoint,
-    const dFloat *pinDir, const NewtonBody *const childBody,
-    const NewtonBody *const parentBody) {
+    NewtonWorld *newtonWorld, const dFloat *pivotPoint,
+    const dFloat *pinDir, NewtonBody *childBody,
+    NewtonBody *parentBody) {
 	dgBody *body0;
 	dgBody *body1;
 	Newton *world;
@@ -6714,7 +6714,7 @@ NewtonJoint *NewtonConstraintCreateCorkscrew(
 // if the application only wants to change the joint angular and linear acceleration the return code is 3
 //
 // See also: NewtonJointGetUserData, NewtonJointSetUserData
-void NewtonCorkscrewSetUserCallback(const NewtonJoint *const corkscrew,
+void NewtonCorkscrewSetUserCallback(NewtonJoint *corkscrew,
                                     NewtonCorkscrewCallBack callback) {
 	dgCorkscrewConstraint *contraint;
 
@@ -6736,10 +6736,10 @@ void NewtonCorkscrewSetUserCallback(const NewtonJoint *const corkscrew,
 //
 // See also: NewtonCorkscrewSetUserCallback
 dFloat NewtonCorkscrewGetJointPosit(const NewtonJoint *const corkscrew) {
-	dgCorkscrewConstraint *contraint;
+	const dgCorkscrewConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgCorkscrewConstraint *)corkscrew;
+	contraint = (const dgCorkscrewConstraint *)corkscrew;
 	return contraint->GetJointPosit();
 }
 
@@ -6756,10 +6756,10 @@ dFloat NewtonCorkscrewGetJointPosit(const NewtonJoint *const corkscrew) {
 //
 // See also: NewtonCorkscrewSetUserCallback
 dFloat NewtonCorkscrewGetJointVeloc(const NewtonJoint *const corkscrew) {
-	dgCorkscrewConstraint *contraint;
+	const dgCorkscrewConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgCorkscrewConstraint *)corkscrew;
+	contraint = (const dgCorkscrewConstraint *)corkscrew;
 	return contraint->GetJointVeloc();
 }
 
@@ -6776,10 +6776,10 @@ dFloat NewtonCorkscrewGetJointVeloc(const NewtonJoint *const corkscrew) {
 //
 // See also: NewtonCorkscrewSetUserCallback
 dFloat NewtonCorkscrewGetJointAngle(const NewtonJoint *const corkscrew) {
-	dgCorkscrewConstraint *contraint;
+	const dgCorkscrewConstraint *contraint;
 
 	TRACE_FUNTION(__FUNCTION__);
-	contraint = (dgCorkscrewConstraint *)corkscrew;
+	contraint = (const dgCorkscrewConstraint *)corkscrew;
 	return contraint->GetJointAngle();
 }
 
@@ -7494,7 +7494,7 @@ void NewtonUserJointSetFeedbackCollectorCallback(NewtonJoint *joint,
 // if the application allocate some resource to store the user data, the application can register a joint destructor to get rid of the allocated resource when the Joint is destroyed
 //
 // See also: NewtonConstraintCreateJoint, NewtonJointSetDestructor
-void NewtonJointSetUserData(const NewtonJoint *const joint,
+void NewtonJointSetUserData(NewtonJoint *joint,
                             void *const userData) {
 	dgConstraint *contraint;
 
@@ -7651,7 +7651,7 @@ NewtonBody *NewtonJointGetBody1(const NewtonJoint *const joint) {
 // Remarks: if the joint is destroyed the collision state of the two bodies linked by this joint is determined by the material pair assigned to each body.
 //
 // See also: NewtonJointGetCollisionState, NewtonBodySetJointRecursiveCollision
-void NewtonJointSetCollisionState(const NewtonJoint *const joint, int state) {
+void NewtonJointSetCollisionState(NewtonJoint *joint, int state) {
 	dgConstraint *contraint;
 
 	contraint = (dgConstraint *)joint;
@@ -7675,8 +7675,8 @@ void NewtonJointSetCollisionState(const NewtonJoint *const joint, int state) {
 //
 // See also: NewtonJointSetCollisionState
 int NewtonJointGetCollisionState(const NewtonJoint *const joint) {
-	dgConstraint *contraint;
-	contraint = (dgConstraint *)joint;
+	const dgConstraint *contraint;
+	contraint = (const dgConstraint *)joint;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return contraint->IsCollidable() ? 1 : 0;
@@ -7704,7 +7704,7 @@ int NewtonJointGetCollisionState(const NewtonJoint *const joint) {
 // value will make the joint more stable but weaker.
 //
 // See also: NewtonJointGetStiffness
-void NewtonJointSetStiffness(const NewtonJoint *const joint, dFloat stiffness) {
+void NewtonJointSetStiffness(NewtonJoint *joint, dFloat stiffness) {
 	dgConstraint *contraint;
 
 	contraint = (dgConstraint *)joint;
@@ -7780,8 +7780,8 @@ void NewtonJointSetDestructor(NewtonJoint *joint,
 // breakable joints
 //
 // See also: NewtonConstraintCreateJoint,  NewtonConstraintCreateHinge, NewtonConstraintCreateSlider
-void NewtonDestroyJoint(const NewtonWorld *const newtonWorld,
-                        const NewtonJoint *const joint) {
+void NewtonDestroyJoint(NewtonWorld *newtonWorld,
+                        NewtonJoint *joint) {
 	Newton *world;
 
 	world = (Newton *)newtonWorld;
@@ -8238,7 +8238,7 @@ NewtonMesh *NewtonMeshCreateFirstSingleSegment(const NewtonMesh *const mesh) {
 	effectMesh->BeginConectedSurface();
 	if (effectMesh->GetConectedSurface(segment)) {
 		dgMeshEffect *const solid = new (effectMesh->GetAllocator()) dgMeshEffect(
-		    segment, *((dgMeshEffect *)mesh));
+		    segment, *((const dgMeshEffect *)mesh));
 		return (NewtonMesh *)solid;
 	} else {
 		return NULL;

@@ -271,4 +271,3 @@ void NewtonUserJoint::SetUpdateFeedbackFunction(
 	dgUserConstraint::SetUpdateFeedbackFunction(
 	    (ConstraintsForceFeeback) getFeedback);
 }
-
