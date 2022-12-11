@@ -41,10 +41,16 @@ class Encounter : public GameLogic {
 private:
 	int _levelOffset = 0;
 	int _val9 = 0;
-	int _monsterNum16 = 0;
+	int _monsterLevel = 0;
 	int _totalLevels = 0;
 	int _monsterNum = 0;
-	byte _monsIndexes[MAX_COMBAT_MONSTERS];
+	struct MonsterSummary {
+		byte _num;
+		byte _level;
+		MonsterSummary() : _num(0), _level(0) {}
+		MonsterSummary(byte num, byte level) : _num(num), _level(level) {}
+	};
+	Common::Array<MonsterSummary> _monsterSummaries;
 
 	void randomAdjust();
 	const Monster *getMonster();
@@ -53,7 +59,6 @@ public:
 	int _bribeAlignmentCtr = 0, _bribeFleeCtr = 0;
 	int _alignmentsChanged = 0;
 	int _monsterImgNum = 0;
-	int _monsterCount = 0;	// == _monsterList.size()
 	int _highestLevel = 0;
 	EncounterType _encounterType = NORMAL_SURPRISED;
 	byte _fleeThreshold = 0;
