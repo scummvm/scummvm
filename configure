@@ -136,6 +136,7 @@ done
 _sdl=no
 _ogg=auto
 _vorbis=auto
+_mikmod=auto
 _sdlnet=auto
 _libcurl=auto
 _tremor=auto
@@ -277,6 +278,7 @@ add_feature gif "GIF" "_gif"
 add_feature theoradec "libtheoradec" "_theoradec"
 add_feature tinygl "TinyGL" "_tinygl"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
+add_feature minkom "MOD file support" "_mikmod"
 add_feature zlib "zlib" "_zlib"
 add_feature lua "lua" "_lua"
 add_feature fribidi "FriBidi" "_fribidi"
@@ -1110,6 +1112,8 @@ for ac_option in $@; do
 	--disable-ogg)                _ogg=no                ;;
 	--enable-vorbis)              _vorbis=yes            ;;
 	--disable-vorbis)             _vorbis=no             ;;
+	--enable-mikmod)              _mikmod=yes            ;;
+	--disable-mikmod)             _mikmod=no             ;;
 	--enable-tremor)              _tremor=yes            ;;
 	--disable-tremor)             _tremor=no             ;;
 	--enable-opl2lpt)             _opl2lpt=yes           ;;
