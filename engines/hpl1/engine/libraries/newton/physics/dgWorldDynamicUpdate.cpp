@@ -95,7 +95,7 @@ static inline dgInt32 CompareIslands(const dgIsland *const islandA,
 }
 
 dgBody *dgWorld::GetIslandBody(const void *const islandPtr, dgInt32 index) const {
-	const dgIslandCallbackStruct &island = *(dgIslandCallbackStruct *)islandPtr;
+	const dgIslandCallbackStruct &island = *(const dgIslandCallbackStruct *)islandPtr;
 
 	char *ptr = &((char *)island.m_bodyArray)[island.m_strideInByte * index];
 	dgBody **bodyPtr = (dgBody **)ptr;
