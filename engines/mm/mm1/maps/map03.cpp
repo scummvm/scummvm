@@ -194,7 +194,7 @@ void Map03::special15() {
 
 	Game::Encounter &enc = g_globals->_encounters;
 	enc._levelIndex = 80;
-	enc._flag = true;
+	enc._manual = true;
 
 	enc.clearMonsters();
 	for (int i = 0; i < monsterCount; ++i)

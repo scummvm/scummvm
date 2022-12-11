@@ -93,7 +93,7 @@ void Map24::special02() {
 				for (int i = 1; i < monsterCount; ++i)
 					enc.addMonster(14, 7);
 
-				enc._flag = true;
+				enc._manual = true;
 				enc._encounterType = Game::FORCE_SURPRISED;
 				enc._levelIndex = 40;
 				enc.execute();
@@ -114,7 +114,7 @@ void Map24::special03() {
 			for (int i = 1; i < monsterCount; ++i)
 				enc.addMonster(14, 7);
 
-			enc._flag = true;
+			enc._manual = true;
 			enc._encounterType = Game::FORCE_SURPRISED;
 			enc._levelIndex = 40;
 			enc.execute();

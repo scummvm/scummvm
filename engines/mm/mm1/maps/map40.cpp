@@ -179,7 +179,7 @@ void Map40::archerResist() {
 		enc.addMonster(12, 10);
 	enc.addMonster(15, 12);
 
-	enc._flag = true;
+	enc._manual = true;
 	enc._levelIndex = 112;
 	enc.execute();
 }

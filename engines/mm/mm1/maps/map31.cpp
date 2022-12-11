@@ -106,7 +106,7 @@ void Map31::encounter() {
 	for (int i = 0; i < monsterCount; ++i)
 		enc.addMonster(8, 12);
 
-	enc._flag = true;
+	enc._manual = true;
 	enc._levelIndex = 80;
 	enc.execute();
 }

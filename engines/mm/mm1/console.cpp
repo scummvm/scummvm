@@ -346,7 +346,7 @@ bool Console::cmdEncounter(int argc, const char **argv) {
 		enc.clearMonsters();
 		enc.addMonster(monsterNum, 1);
 
-		enc._flag = true;
+		enc._manual = true;
 		enc._levelIndex = 80;
 
 		bool monstersOn = g_globals->_encountersOn;

@@ -120,7 +120,7 @@ void Map19::encounter() {
 		enc.addMonster(_data[VAL7], _data[VAL6]);
 	enc.addMonster(_data[VAL5], _data[VAL4]);
 
-	enc._flag = true;
+	enc._manual = true;
 	enc._levelIndex = 80;
 	enc.execute();
 }

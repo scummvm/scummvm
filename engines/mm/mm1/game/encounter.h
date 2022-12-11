@@ -62,7 +62,7 @@ public:
 	int _highestLevel = 0;
 	EncounterType _encounterType = NORMAL_SURPRISED;
 	byte _fleeThreshold = 0;
-	bool _flag = false;
+	bool _manual = false;
 	int _levelIndex = 0;
 
 public:

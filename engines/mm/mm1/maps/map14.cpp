@@ -59,7 +59,7 @@ void Map14::special() {
 		enc.addMonster(id1, 7);
 
 	enc._levelIndex = 5;
-	enc._flag = true;
+	enc._manual = true;
 	enc.execute();
 }
 
@@ -100,7 +100,7 @@ void Map14::special00() {
 							enc.addMonster(13, 8);
 
 						enc._levelIndex = 80;
-						enc._flag = true;
+						enc._manual = true;
 						enc.execute();
 					}
 				}

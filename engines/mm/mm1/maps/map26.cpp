@@ -75,7 +75,7 @@ void Map26::special00() {
 					enc.addMonster(5, 5);
 
 				enc._levelIndex = 80;
-				enc._flag = true;
+				enc._manual = true;
 				enc._encounterType = Game::FORCE_SURPRISED;
 				enc.execute();
 			}

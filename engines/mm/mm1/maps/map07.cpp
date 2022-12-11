@@ -205,7 +205,7 @@ void Map07::setMonsters(int id1, int id2) {
 	for (int i = 0; i < 6; ++i)
 		enc.addMonster(id1, id2);
 
-	enc._flag = true;
+	enc._manual = true;
 	enc._levelIndex = 48;
 }
 

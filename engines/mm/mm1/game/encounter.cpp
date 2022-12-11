@@ -40,7 +40,9 @@ void Encounter::execute() {
 	_bribeFleeCtr = _bribeAlignmentCtr = 0;
 	_alignmentsChanged = 0;
 
-	if (!_flag) {
+	// In manual mode, the scripts have already set up
+	// a list of monsters to use
+	if (!_manual) {
 		_monsterSummaries.clear();
 		_levelIndex = 0;
 	}
@@ -59,8 +61,8 @@ void Encounter::execute() {
 	_totalLevels /= 2;
 	_highestLevel /= 2;
 
-	bool firstLoop = !_flag;
-	_flag = false;
+	bool firstLoop = !_manual;
+	_manual = false;
 
 	while (firstLoop || _levelIndex < _totalLevels) {
 		randomAdjust();

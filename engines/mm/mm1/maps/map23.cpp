@@ -137,7 +137,7 @@ void Map23::special09() {
 				enc.addMonster(2, 4);
 
 			enc._levelIndex = 80;
-			enc._flag = true;
+			enc._manual = true;
 			enc.execute();
 		}
 	));

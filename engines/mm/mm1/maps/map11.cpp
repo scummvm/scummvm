@@ -182,7 +182,7 @@ void Map11::challenge() {
 		enc.addMonster(7, 8);
 
 	enc._levelIndex = 96;
-	enc._flag = true;
+	enc._manual = true;
 	enc.execute();
 }
 

@@ -112,7 +112,7 @@ void Map::encounter(const byte *id1, const byte *id2) {
 	for (int i = 0; i < 14 && *id1; ++i, ++id1, ++id2)
 		enc.addMonster(*id1, *id2);
 
-	enc._flag = true;
+	enc._manual = true;
 	enc._levelIndex = 64;
 	enc.execute();
 }

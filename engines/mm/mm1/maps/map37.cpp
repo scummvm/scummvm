@@ -110,7 +110,7 @@ void Map37::special04() {
 			enc.addMonster(14, 8);
 		enc.addMonster(16, 12);
 
-		enc._flag = true;
+		enc._manual = true;
 		enc._levelIndex = 80;
 		enc.execute();
 	}

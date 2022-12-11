@@ -76,7 +76,7 @@ void Map42::special02() {
 		for (int i = 1; i < 13; ++i)
 			enc.addMonster(8, 5);
 
-		enc._flag = true;
+		enc._manual = true;
 		enc._levelIndex = 64;
 		enc.execute();
 	}
@@ -175,7 +175,7 @@ void Map42::dogDesecrate() {
 	for (int i = 0; i < (int)count; ++i)
 		enc.addMonster(4, 10);
 
-	enc._flag = true;
+	enc._manual = true;
 	enc._levelIndex = 20;
 	enc.execute();
 }

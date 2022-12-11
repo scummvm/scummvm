@@ -130,7 +130,7 @@ void Map01::special08() {
 			for (uint i = 0; i < count; ++i)
 				enc.addMonster(4, 9);
 
-			enc._flag = true;
+			enc._manual = true;
 			enc._levelIndex = 80;
 			enc.execute();
 		}

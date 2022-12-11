@@ -171,7 +171,7 @@ void Map10::special30() {
 		enc.addMonster(9, 9);
 
 	enc._levelIndex = 64;
-	enc._flag = true;
+	enc._manual = true;
 	enc.execute();
 }
 
@@ -189,7 +189,7 @@ void Map10::special32() {
 		enc.addMonster(8, 12);
 
 	enc._levelIndex = 64;
-	enc._flag = true;
+	enc._manual = true;
 	enc.execute();
 }
 
