@@ -62,7 +62,7 @@ bool Combat::msgFocus(const FocusMessage &msg) {
 
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_COMBAT);
 
-	loadArrays();
+	loadMonsters();
 	setupCanAttacks();
 	setupHandicap();
 
