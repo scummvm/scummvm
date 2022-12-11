@@ -46,12 +46,42 @@ private:
 	 * Handles the end of the encounter
 	 */
 	void encounterEnded();
+
+	/**
+	 * Initiates the combat
+	 */
 	void attack();
+
+	/**
+	 * Try and bribe the enemies
+	 */
 	void bribe();
+
+	/**
+	 * Try and retreat
+	 */
 	void retreat();
+
+	/**
+	 * Try and surrender
+	 */
 	void surrender();
+
+	/**
+	 * Ends an encounter
+	 */
 	void flee();
+
+	/**
+	 * Decreases the alignment counter, gradually turning
+	 * EVIL to NEUTRAL to GOOD
+	 */
 	void decreaseAlignments();
+
+	/**
+	 * Increases the alignment counter, gradually turning
+	 * GOOD to NEUTRAL to EVIL
+	 */
 	void increaseAlignments();
 public:
 	Encounter();

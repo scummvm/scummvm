@@ -62,7 +62,7 @@ void Encounter::draw() {
 
 	case SURPRISED_MONSTERS:
 		writeString(2, 21, STRING["dialogs.encounter.surprise"]);
-		writeString(1, 22, STRING["dialogs.encounter.surprise"]);
+		writeString(1, 22, STRING["dialogs.encounter.approach"]);
 		break;
 
 	case ENCOUNTER_OPTIONS: {
@@ -152,7 +152,7 @@ void Encounter::timeout() {
 	switch (_mode) {
 	case ALERT:
 		// Finished displaying initial encounter alert
-		if (enc._encounterType < 0 /* FORCE_SURPRISED */) {
+		if (enc._encounterType == Game::FORCE_SURPRISED) {
 			_mode = SURPRISED_BY_MONSTERS;
 		} else if (enc._encounterType == Game::NORMAL_SURPRISED ||
 			/* ENCOUNTER_OPTIONS */
