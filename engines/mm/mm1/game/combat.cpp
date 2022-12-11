@@ -625,7 +625,7 @@ bool Combat::checkMonsterSpells() {
 	}
 
 	if (!_monsterP->_specialAbility || (_monsterP->_specialAbility & 0x80) ||
-		(getRandomNumber(100) >= _monsterP->_field1d) ||
+		(getRandomNumber(100) >= _monsterP->_specialThreshold) ||
 		!(_monsterP->_field1e & 0xf))
 		return false;
 

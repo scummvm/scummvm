@@ -41,7 +41,7 @@ bool Monsters::load() {
 		line = Common::String(line.c_str() + 17);
 
 		mon._count = getNextValue(line);
-		mon._field10 = getNextValue(line);
+		mon._fleeThreshold = getNextValue(line);
 		mon._defaultHP = getNextValue(line);
 		mon._defaultAC = getNextValue(line);
 		mon._maxDamage = getNextValue(line);
@@ -53,9 +53,9 @@ bool Monsters::load() {
 		mon._field1a = getNextValue(line);
 		mon._bonusOnTouch = getNextValue(line);
 		mon._specialAbility = getNextValue(line);
-		mon._field1d = getNextValue(line);
+		mon._specialThreshold = getNextValue(line);
 		mon._field1e = getNextValue(line);
-		mon._field1f = getNextValue(line);
+		mon._imgNum = getNextValue(line);
 	}
 
 	return true;
