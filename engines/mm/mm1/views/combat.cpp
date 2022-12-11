@@ -357,28 +357,9 @@ void Combat::writeAllOptions() {
 	writeString(0, 20, STRING["dialogs.combat.options_for"]);
 	writeString(0, 22, g_globals->_currCharacter->_name);
 
-	switch (_currentChar) {
-	case 0:
-		writeChar(3, 3, (unsigned char)'\xB1');
-		break;
-	case 1:
-		writeChar(7, 3, (unsigned char)'\xB2');
-		break;
-	case 2:
-		writeChar(3, 4, (unsigned char)'\xB3');
-		break;
-	case 3:
-		writeChar(7, 4, (unsigned char)'\xB4');
-		break;
-	case 4:
-		writeChar(3, 5, (unsigned char)'\xB5');
-		break;
-	case 5:
-		writeChar(7, 5, (unsigned char)'\xB6');
-		break;
-	default:
-		break;
-	}
+	// Highlight the currently active character
+	writeChar(3 + 4 * (_currentChar % 2), 3 + (_currentChar / 2),
+		(unsigned char)'1' + _currentChar + 0x80);
 
 	bool canAttack = _party[_currentChar]->_canAttack;
 	if (canAttack) {
