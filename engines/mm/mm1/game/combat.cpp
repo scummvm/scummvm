@@ -79,7 +79,7 @@ void Combat::clear() {
 	// TODO: clear everything
 
 	_roundNum = 1;
-	_monstersCount = _monsterList.size();
+	_monstersCount = _remainingMonsters.size();
 	_party.clear();
 	for (uint i = 0; i < g_globals->_party.size(); ++i)
 		_party.push_back(&g_globals->_party[i]);
@@ -103,7 +103,7 @@ void Combat::loadMonsters() {
 
 	// Now copy it into the active combat. This is kept as a
 	// separate list since defeated monsters are removed from it
-	_monsterList = g_globals->_encounters._monsterList;
+	_remainingMonsters = g_globals->_encounters._monsterList;
 }
 
 void Combat::monsterIndexOf() {
@@ -229,7 +229,7 @@ void Combat::setupHandicap() {
 
 bool Combat::canMonsterCast() const {
 	return !(g_maps->_currentState & Maps::SFLAG_DISABLE_MONSTER_SPELLS) &&
-		!(_monsterList[_monsterIndex]._status & (MONFLAG_BLIND | MONFLAG_SILENCED));
+		!(_remainingMonsters[_monsterIndex]._status & (MONFLAG_BLIND | MONFLAG_SILENCED));
 }
 
 void Combat::dispelParty() {
@@ -250,16 +250,16 @@ void Combat::dispelParty() {
 
 	g_globals->_currCharacter = tmpC;
 
-	for (uint i = 0; i < _monsterList.size(); ++i) {
+	for (uint i = 0; i < _remainingMonsters.size(); ++i) {
 		monsterSetPtr(i);
-		_monsterList[i]._status = 0;
+		_remainingMonsters[i]._status = 0;
 	}
 
 	_monsterP = tmpM;
 }
 
 void Combat::combatLoop() {
-	if (_monsterList.empty()) {
+	if (_remainingMonsters.empty()) {
 		defeatedMonsters();
 	} else {
 		selectParty();
@@ -316,15 +316,15 @@ void Combat::defeatedMonsters() {
 }
 
 void Combat::loop1() {
-	for (uint i = 0; i < _monsterList.size(); ++i) {
-		_monsterP = &_monsterList[i];
+	for (uint i = 0; i < _remainingMonsters.size(); ++i) {
+		_monsterP = &_remainingMonsters[i];
 		monsterIndexOf();
 
 		if (_monsterP->_speed && _monsterP->_speed >= _handicap3
-				&& !_monsterList[i]._checked) {
-			_monsterList[i]._checked = true;
+				&& !_remainingMonsters[i]._checked) {
+			_remainingMonsters[i]._checked = true;
 
-			if (_monsterList[i]._status & (MONFLAG_ASLEEP | MONFLAG_HELD |
+			if (_remainingMonsters[i]._status & (MONFLAG_ASLEEP | MONFLAG_HELD |
 					MONFLAG_WEBBED | MONFLAG_PARALYZED)) {
 				checkMonsterFlees();
 				return;
@@ -452,8 +452,8 @@ void Combat::clearArrays() {
 	for (uint i = 0; i < _party.size(); ++i)
 		_party[i]->_checked = false;
 
-	for (uint i = 0; i < _monsterList.size(); ++i)
-		_monsterList[i]._checked = false;
+	for (uint i = 0; i < _remainingMonsters.size(); ++i)
+		_remainingMonsters[i]._checked = false;
 }
 
 void Combat::updateHighestLevel() {
@@ -472,15 +472,15 @@ void Combat::updateHighestLevel() {
 }
 
 bool Combat::moveMonsters() {
-	if (_attackerVal >= (int)_monsterList.size())
+	if (_attackerVal >= (int)_remainingMonsters.size())
 		return false;
 
 	bool hasAdvance = false;
-	for (uint i = 0; i < _monsterList.size(); ++i) {
+	for (uint i = 0; i < _remainingMonsters.size(); ++i) {
 		_advanceIndex = i;
 
-		if (!(_monsterList[i]._status & ~MONFLAG_SILENCED) &&
-			_monsterList[i]._field1e & FIELD1E_80) {
+		if (!(_remainingMonsters[i]._status & ~MONFLAG_SILENCED) &&
+			_remainingMonsters[i]._field1e & FIELD1E_80) {
 			monsterAdvances();
 			hasAdvance = true;
 		}
@@ -493,9 +493,9 @@ void Combat::monsterAdvances() {
 	// TODO: I can't understand the advancement logic at all.
 	// So for now, I'm simply moving the monster forward one slot
 	assert(_advanceIndex > 0);
-	Monster mon = _monsterList.remove_at(_advanceIndex);
-	_monsterList.insert_at(_advanceIndex - 1, mon);
-	_monsterP = &_monsterList[_advanceIndex - 1];
+	Monster mon = _remainingMonsters.remove_at(_advanceIndex);
+	_remainingMonsters.insert_at(_advanceIndex - 1, mon);
+	_monsterP = &_remainingMonsters[_advanceIndex - 1];
 
 	setMode(MONSTER_ADVANCES);
 }
@@ -503,56 +503,56 @@ void Combat::monsterAdvances() {
 bool Combat::monsterChanges() {
 	_monstersRegenerate = _monstersResistSpells = false;
 
-	for (uint i = 0; i < _monsterList.size(); ++i) {
+	for (uint i = 0; i < _remainingMonsters.size(); ++i) {
 		monsterSetPtr(i);
 
 		if ((_monsterP->_field1e & FIELD1E_40) &&
-			(_monsterP->_defaultHP != _monsterList[i]._hp)) {
+			(_monsterP->_defaultHP != _remainingMonsters[i]._hp)) {
 			_monstersRegenerate = true;
-			int newVal = _monsterList[i]._hp + 5;
-			_monsterList[i]._hp = (byte)newVal;
+			int newVal = _remainingMonsters[i]._hp + 5;
+			_remainingMonsters[i]._hp = (byte)newVal;
 
 			if (newVal >= 256 || newVal >= _monsterP->_defaultHP) {
-				_monsterList[i]._hp = _monsterP->_defaultHP;
+				_remainingMonsters[i]._hp = _monsterP->_defaultHP;
 			}
 		}
 
-		if (_monsterList[i]._status) {
+		if (_remainingMonsters[i]._status) {
 			proc2();
 
 			if (_val9) {
 				_monstersResistSpells = true;
-				byte v = _monsterList[i]._status;
+				byte v = _remainingMonsters[i]._status;
 
 				v &= 0x7f;
-				if (v != _monsterList[i]._status) {
-					_monsterList[i]._status = v;
+				if (v != _remainingMonsters[i]._status) {
+					_remainingMonsters[i]._status = v;
 				} else {
 					v &= 0x3f;
-					if (v != _monsterList[i]._status) {
-						_monsterList[i]._status = v;
+					if (v != _remainingMonsters[i]._status) {
+						_remainingMonsters[i]._status = v;
 					} else {
 						v &= 0x1f;
-						if (v != _monsterList[i]._status) {
-							_monsterList[i]._status = v;
+						if (v != _remainingMonsters[i]._status) {
+							_remainingMonsters[i]._status = v;
 						} else {
 							v &= 0xf;
-							if (v != _monsterList[i]._status) {
-								_monsterList[i]._status = v;
+							if (v != _remainingMonsters[i]._status) {
+								_remainingMonsters[i]._status = v;
 							} else {
 								v &= 7;
-								if (v != _monsterList[i]._status) {
-									_monsterList[i]._status = v;
+								if (v != _remainingMonsters[i]._status) {
+									_remainingMonsters[i]._status = v;
 								} else {
 									v &= 3;
-									if (v != _monsterList[i]._status) {
-										_monsterList[i]._status = v;
+									if (v != _remainingMonsters[i]._status) {
+										_remainingMonsters[i]._status = v;
 									} else {
 										v &= 1;
-										if (v != _monsterList[i]._status)
-											_monsterList[i]._status = v;
+										if (v != _remainingMonsters[i]._status)
+											_remainingMonsters[i]._status = v;
 										else
-											_monsterList[i]._status = 0;
+											_remainingMonsters[i]._status = 0;
 									}
 								}
 							}
@@ -609,8 +609,8 @@ void Combat::checkMonsterFlees() {
 	if (getRandomNumber(100) >= threshold) {
 		_monsterP->_experience = 0;
 		_monsterP->_field18 = 0;
-		_monsterList[_monsterIndex]._hp = 0;
-		_monsterList[_monsterIndex]._status = MONFLAG_DEAD;
+		_remainingMonsters[_monsterIndex]._hp = 0;
+		_remainingMonsters[_monsterIndex]._status = MONFLAG_DEAD;
 		removeMonster();
 		setMode(MONSTER_FLEES);
 	} else {
@@ -619,12 +619,12 @@ void Combat::checkMonsterFlees() {
 }
 
 bool Combat::checkMonsterSpells() {
-	if (_monsterList.empty()) {
+	if (_remainingMonsters.empty()) {
 		setMode(DEFEATED_MONSTERS);
 		return true;
 	}
 
-	if (_monsterList[_monsterIndex]._status & MONFLAG_MINDLESS) {
+	if (_remainingMonsters[_monsterIndex]._status & MONFLAG_MINDLESS) {
 		setMode(MONSTER_WANDERS);
 		return true;
 	}
@@ -638,7 +638,7 @@ bool Combat::checkMonsterSpells() {
 	if (!_monsterP->_specialAbility || _monsterP->_specialAbility >= 33)
 		return false;
 
-	castMonsterSpell(_monsterList[_monsterIndex]._name,
+	castMonsterSpell(_remainingMonsters[_monsterIndex]._name,
 		_monsterP->_specialAbility);
 	setMode(MONSTER_SPELL);
 	return true;
@@ -690,10 +690,10 @@ void Combat::removeMonster() {
 	bool changed;
 	do {
 		changed = false;
-		for (uint i = 0; i < _monsterList.size(); ++i) {
-			_monsterP = &_monsterList[i];
-			if (_monsterList[i]._status == MONFLAG_DEAD) {
-				_monsterList.remove_at(i);
+		for (uint i = 0; i < _remainingMonsters.size(); ++i) {
+			_monsterP = &_remainingMonsters[i];
+			if (_remainingMonsters[i]._status == MONFLAG_DEAD) {
+				_remainingMonsters.remove_at(i);
 				changed = true;
 				break;
 			}
@@ -828,7 +828,7 @@ void Combat::attackMonster(int monsterNum) {
 		_attackAttr2._current += (c._level + 1) / 2;
 
 	if (_attackAttr1._current || !(_monsterP->_field1a & FIELD1A_80)) {
-		if (_monsterList[_monsterIndex]._status & (MONFLAG_ASLEEP |
+		if (_remainingMonsters[_monsterIndex]._status & (MONFLAG_ASLEEP |
 				MONFLAG_HELD | MONFLAG_WEBBED | MONFLAG_PARALYZED))
 			++_attackerLevel;
 
@@ -869,14 +869,14 @@ void Combat::addAttackDamage() {
 }
 
 void Combat::updateMonsterStatus() {
-	int val = _monsterList[_monsterIndex]._hp - _damage;
+	int val = _remainingMonsters[_monsterIndex]._hp - _damage;
 	if (val <= 0) {
-		_monsterList[_monsterIndex]._hp = 0;
-		_monsterList[_monsterIndex]._status = MONFLAG_DEAD;
+		_remainingMonsters[_monsterIndex]._hp = 0;
+		_remainingMonsters[_monsterIndex]._status = MONFLAG_DEAD;
 		warning("TODO: message that monster goes down");
 	} else {
-		_monsterList[_monsterIndex]._hp = val;
-		_monsterList[_monsterIndex]._status &= ~(MONFLAG_ASLEEP | MONFLAG_HELD);
+		_remainingMonsters[_monsterIndex]._hp = val;
+		_remainingMonsters[_monsterIndex]._status &= ~(MONFLAG_ASLEEP | MONFLAG_HELD);
 	}
 }
 
@@ -897,7 +897,7 @@ bool Combat::monsterTouch(Common::String &line) {
 }
 
 void Combat::iterateMonsters1() {
-	_spellMonsterCount = _monsterList.size();
+	_spellMonsterCount = _remainingMonsters.size();
 	iterateMonsters1Inner();
 }
 
@@ -931,7 +931,7 @@ void Combat::iterateMonsters1Inner() {
 		effect = STRING["monster_spells.not_affected"];
 
 	} else {
-		_monsterList[getMonsterIndex()]._status |=
+		_remainingMonsters[getMonsterIndex()]._status |=
 			g_globals->_spellsState._newCondition;
 
 		byte bits = g_globals->_spellsState._newCondition;
@@ -960,7 +960,7 @@ void Combat::iterateMonsters1Inner() {
 			isEnd = true;
 	}
 	if (!isEnd)
-		isEnd = ((int)_monsterList.size() + _destMonsterNum - _spellMonsterCount) < 0;
+		isEnd = ((int)_remainingMonsters.size() + _destMonsterNum - _spellMonsterCount) < 0;
 
 	if (!isEnd) {
 		// Move to next iteration after display timeout
@@ -973,7 +973,7 @@ void Combat::iterateMonsters1Inner() {
 }
 
 void Combat::iterateMonsters2() {
-	_spellMonsterCount = _monsterList.size();
+	_spellMonsterCount = _remainingMonsters.size();
 	iterateMonsters2Inner();
 }
 
@@ -1029,7 +1029,7 @@ void Combat::iterateMonsters2Inner() {
 
 		msg._lines.push_back(Line(0, 1, line2));
 
-		if (_damage >= _monsterList[getMonsterIndex()]._hp) {
+		if (_damage >= _remainingMonsters[getMonsterIndex()]._hp) {
 			msg._lines.push_back(Line(0, 2, STRING["monster_spells.and_goes_down"]));
 		}
 	}
@@ -1043,7 +1043,7 @@ void Combat::iterateMonsters2Inner() {
 			isEnd = true;
 	}
 	if (!isEnd)
-		isEnd = ((int)_monsterList.size() + _destMonsterNum - _spellMonsterCount) < 0;
+		isEnd = ((int)_remainingMonsters.size() + _destMonsterNum - _spellMonsterCount) < 0;
 
 	if (!isEnd) {
 		// Move to next iteration after display timeout
@@ -1066,7 +1066,7 @@ void Combat::characterDone() {
 
 void Combat::resetDestMonster() {
 	_destMonsterNum = 0;
-	_monsterP = &_monsterList[0];
+	_monsterP = &_remainingMonsters[0];
 	monsterIndexOf();
 	g_globals->_spellsState._resistanceType = RESISTANCE_15;
 }
@@ -1094,13 +1094,13 @@ void Combat::turnUndead() {
 	} else {
 		_turnUndeadUsed = true;
 
-		for (uint i = 0; i < _monsterList.size(); ++i) {
+		for (uint i = 0; i < _remainingMonsters.size(); ++i) {
 			monsterSetPtr(i);
 			Monster *monster = _monsterP;
 
 			if ((monster->_resistUndead & IS_UNDEAD) &&
 					(getRandomNumber(20) + g_globals->_currCharacter->_level) >=
-					(_monsterList[i]._hp * 2 + 10)) {
+					(_remainingMonsters[i]._hp * 2 + 10)) {
 				destroyMonster();
 				++_monstersDestroyedCtr;
 			}
@@ -1116,7 +1116,7 @@ void Combat::turnUndead() {
 }
 
 void Combat::destroyMonster() {
-	_monsterList[getMonsterIndex()]._status = MONFLAG_DEAD;
+	_remainingMonsters[getMonsterIndex()]._status = MONFLAG_DEAD;
 	Sound::sound2(SOUND_9);
 }
 
@@ -1212,7 +1212,7 @@ bool Combat::divineIntervention() {
 
 void Combat::holyWord() {
 	_monstersDestroyedCtr = 0;
-	for (uint i = 0; i < _monsterList.size(); ++i) {
+	for (uint i = 0; i < _remainingMonsters.size(); ++i) {
 		monsterSetPtr(i);
 		if (_monsterP->_resistUndead & IS_UNDEAD) {
 			destroyMonster();
@@ -1232,15 +1232,15 @@ void Combat::identifyMonster() {
 	InfoMessage msg;
 	Common::String line;
 
-	line = _monsterList[_destMonsterNum]._name;
+	line = _remainingMonsters[_destMonsterNum]._name;
 	line += ':';
 	while (line.size() < COL2)
 		line += ' ';
 	line += STRING["spells.info.hp"];
-	line += Common::String::format("%d", _monsterList[_destMonsterNum]._hp);
+	line += Common::String::format("%d", _remainingMonsters[_destMonsterNum]._hp);
 	line += "  ";
 	line += STRING["spells.info.ac"];
-	line += Common::String::format("%d", _monsterList[_destMonsterNum]._ac);
+	line += Common::String::format("%d", _remainingMonsters[_destMonsterNum]._ac);
 	msg._lines.push_back(Line(0, 0, line));
 
 	line = STRING["spells.info.speed"];
@@ -1317,7 +1317,7 @@ void Combat::makeRoom() {
 }
 
 void Combat::slow() {
-	for (uint i = 0; i < _monsterList.size(); ++i) {
+	for (uint i = 0; i < _remainingMonsters.size(); ++i) {
 		monsterSetPtr(i);
 		_monsterP->_speed = MAX(_monsterP->_speed / 2, 1);
 	}
@@ -1326,9 +1326,9 @@ void Combat::slow() {
 void Combat::weaken() {
 	SpellsState &ss = g_globals->_spellsState;
 
-	for (uint i = 0; i < _monsterList.size(); ++i) {
+	for (uint i = 0; i < _remainingMonsters.size(); ++i) {
 		monsterSetPtr(i);
-		_monsterList[i]._ac = MAX((int)_monsterList[i]._ac - 1, 1);
+		_remainingMonsters[i]._ac = MAX((int)_remainingMonsters[i]._ac - 1, 1);
 	}
 
 	resetDestMonster();
@@ -1353,7 +1353,7 @@ bool Combat::web() {
 
 bool Combat::acidRain() {
 	SpellsState &ss = g_globals->_spellsState;
-	if (_attackerVal >= (int)_monsterList.size())
+	if (_attackerVal >= (int)_remainingMonsters.size())
 		return false;
 
 	_destMonsterNum = _attackerVal;
@@ -1434,7 +1434,7 @@ void Combat::disintegration() {
 }
 
 void Combat::monsterAttackRandom() {
-	size_t monsterNameSize = _monsterList[getMonsterIndex()]._name.size() + 1;
+	size_t monsterNameSize = _remainingMonsters[getMonsterIndex()]._name.size() + 1;
 
 	_monsterAttackStyle = getRandomNumber((monsterNameSize < 13) ? 15 : 11);
 	_val10 = 0;
@@ -1455,7 +1455,7 @@ void Combat::monsterAttackInner() {
 
 	_destAC = c._ac._base;
 	int monsterIndex = getMonsterIndex();
-	_attackerLevel = _monsterList[monsterIndex]._level * 2 + 4;
+	_attackerLevel = _remainingMonsters[monsterIndex]._level * 2 + 4;
 
 	if (c._condition & (ASLEEP | BLINDED | PARALYZED))
 		_attackerLevel += 5;
