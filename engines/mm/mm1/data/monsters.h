@@ -62,7 +62,7 @@ enum Field1E {
 struct Monster {
 	Common::String _name; // char _name[15];
 	byte _count;
-	byte _field10;
+	byte _fleeThreshold;
 	byte _defaultHP;
 	byte _defaultAC;
 	byte _maxDamage;
@@ -70,13 +70,13 @@ struct Monster {
 	byte _speed;
 	uint16 _experience;
 	byte _field18;
-	byte _resistUndead;		// MonsterResistUndead
+	byte _resistUndead;
 	byte _field1a;
 	byte _bonusOnTouch;
 	byte _specialAbility;
-	byte _field1d;
+	byte _specialThreshold;
 	byte _field1e;
-	byte _field1f;
+	byte _imgNum;
 
 	// Runtime combat fields
 	byte _level = 0;

@@ -131,8 +131,8 @@ exit_loop:
 
 		if (_monsterLevel > _val9) {
 			_val9 = _monsterLevel;
-			_fleeThreshold = mons._field10;
-			_monsterImgNum = mons._field1f;
+			_fleeThreshold = mons._fleeThreshold;
+			_monsterImgNum = mons._imgNum;
 		}
 	}
 
