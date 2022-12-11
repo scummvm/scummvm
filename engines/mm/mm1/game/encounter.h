@@ -40,7 +40,7 @@ enum EncounterType {
 class Encounter : public GameLogic {
 private:
 	int _levelOffset = 0;
-	int _val9 = 0;
+	int _maxLevelForImg = 0;
 	int _monsterLevel = 0;
 	int _totalLevels = 0;
 	int _monsterNum = 0;

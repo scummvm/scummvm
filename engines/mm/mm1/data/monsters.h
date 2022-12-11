@@ -107,7 +107,7 @@ public:
 	 */
 	const Monster &operator[](uint i) {
 		assert(i >= 1 && i <= MONSTERS_COUNT);
-		return _monsters[i];
+		return _monsters[i - 1];
 	}
 
 	/**

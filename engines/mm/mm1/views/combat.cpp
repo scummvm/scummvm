@@ -353,6 +353,7 @@ void Combat::writeOptions() {
 }
 
 void Combat::writeAllOptions() {
+	assert(g_globals->_currCharacter);
 	writeString(0, 20, STRING["dialogs.combat.options_for"]);
 	writeString(0, 22, g_globals->_currCharacter->_name);
 

@@ -133,9 +133,10 @@ bool Console::cmdDumpMonsters(int argc, const char **argv) {
 					line += f.readByte();
 				line += '"';
 
-				for (int j = 0; j < 17; ++j) {
+				for (int j = 0; j < 16; ++j) {
 					line += ", ";
-					line += Common::String::format("%d", f.readByte());
+					int val = (j == 7) ? f.readUint16LE() : f.readByte();
+					line += Common::String::format("%d", val);
 				}
 
 				df.writeString(line);

@@ -48,7 +48,7 @@ void Encounter::execute() {
 	}
 
 	_totalLevels = _highestLevel = 0;
-	_levelOffset = _monsterImgNum = _val9 = _fleeThreshold = 0;
+	_levelOffset = _monsterImgNum = _maxLevelForImg = _fleeThreshold = 0;
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		const Character &c = g_globals->_party[i];
@@ -121,7 +121,7 @@ exit_loop:
 		if (_monsterSummaries[i]._level < 1 || _monsterSummaries[i]._level > 12
 				|| maxVal >= 196) {
 			_monsterSummaries[i]._level = 10;
-			_monsterSummaries[i]._num = getRandomNumber(MAX_COMBAT_MONSTERS);
+			_monsterSummaries[i]._num = getRandomNumber(15);
 		}
 
 		// Add monster details to list
@@ -131,8 +131,8 @@ exit_loop:
 		Monster &mons = _monsterList.back();
 		mons._level = _monsterSummaries[i]._level;
 
-		if (_monsterLevel > _val9) {
-			_val9 = _monsterLevel;
+		if (_monsterLevel > _maxLevelForImg) {
+			_maxLevelForImg = _monsterLevel;
 			_fleeThreshold = mons._fleeThreshold;
 			_monsterImgNum = mons._imgNum;
 		}
