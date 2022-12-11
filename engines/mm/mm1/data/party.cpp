@@ -146,6 +146,9 @@ void Party::synchronize(Common::Serializer &s) {
 
 	for (int i = 0; i < partySize; ++i)
 		(*this)[i].synchronize(s);
+
+	if (s.isLoading())
+		g_globals->_currCharacter = &front();
 }
 
 void Party::rearrange(const Common::Array<Character *> &party) {
