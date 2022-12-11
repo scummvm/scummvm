@@ -1413,7 +1413,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_IHNM,
-		0,
+		GF_IHNM_COLOR_FIX,
 		IHNM_DEFAULT_SCENE,
 		RESOURCELIST_IHNM,
 		FONTLIST_IHNM_ZH,
