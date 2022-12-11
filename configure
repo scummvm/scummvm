@@ -1794,7 +1794,27 @@ android)
  		exit 1
  	fi
 	;;
-3ds | ds | gamecube | switch | wii)
+3ds)
+	if test -z "$DEVKITPRO"; then
+		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
+		exit 1
+	fi
+    	_as="$DEVKITPRO/devkitARM/bin/arm-none-eabi-as"
+	_ar="$DEVKITPRO/devkitARM/bin/arm-none-eabi-ar cr"
+	_ranlib="$DEVKITPRO/devkitARM/bin/arm-none-eabi-ranlib"
+	_strip="$DEVKITPRO/devkitARM/bin/arm-none-eabi-strip"
+	if test -z "$CXX"; then
+		CXX="$DEVKITPRO/devkitARM/bin/arm-none-eabi-g++"
+	fi
+	if test -z "$PKG_CONFIG_LIBDIR"; then
+		PKG_CONFIG_LIBDIR="$DEVKITPRO/portlibs/3ds/lib/pkgconfig"
+	fi
+	if test -z "$PKG_CONFIG_PATH"; then
+		PKG_CONFIG_PATH="$DEVKITPRO/portlibs/3ds/lib/pkgconfig"
+	fi
+	;;
+
+ds | gamecube | switch | wii)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
 		exit 1
