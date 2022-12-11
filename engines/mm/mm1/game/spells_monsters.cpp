@@ -63,7 +63,7 @@ const SpellMonstersSpell SpellsMonsters::SPELLS[MONSTER_SPELLS_COUNT] = {
 	&SpellsMonsters::spell32_swarm
 };
 
-SpellsMonsters::SpellsMonsters() : _monsterList(g_globals->_encounters._monsterList) {
+SpellsMonsters::SpellsMonsters() : _remainingMonsters(g_globals->_encounters._monsterList) {
 }
 
 void SpellsMonsters::castMonsterSpell(const Common::String &monsterName, int spellNum) {
@@ -103,7 +103,7 @@ void SpellsMonsters::spell03_fire() {
 	++g_globals->_spellsState._mmVal2;
 	g_globals->_spellsState._resistanceType = RESISTANCE_FIRE;
 
-	int count = _monsterList[getMonsterIndex()]._level;
+	int count = _remainingMonsters[getMonsterIndex()]._level;
 	g_globals->_spellsState._newCondition += count * 6;
 
 	damageRandomChar();
@@ -157,7 +157,7 @@ void SpellsMonsters::spell08_paralyze() {
 		g_globals->_spellsState._resistanceType = RESISTANCE_FEAR;
 		g_globals->_spellsState._newCondition = PARALYZED;
 
-		if (_monsterList[getMonsterIndex()]._level >= 5) {
+		if (_remainingMonsters[getMonsterIndex()]._level >= 5) {
 			handlePartyEffects();
 		} else {
 			chooseCharacter();
@@ -200,9 +200,9 @@ void SpellsMonsters::spell12_explode() {
 	++g_globals->_spellsState._mmVal2;
 	g_globals->_spellsState._resistanceType = RESISTANCE_POISON;
 	g_globals->_spellsState._newCondition = getRandomNumber(
-		_monsterList[getMonsterIndex()]._level);
-	_monsterList[getMonsterIndex()]._level = 0;
-	_monsterList[getMonsterIndex()]._status = MONFLAG_DEAD;
+		_remainingMonsters[getMonsterIndex()]._level);
+	_remainingMonsters[getMonsterIndex()]._level = 0;
+	_remainingMonsters[getMonsterIndex()]._status = MONFLAG_DEAD;
 	removeMonster();
 
 	add(':');
@@ -218,7 +218,7 @@ void SpellsMonsters::spell13_fireball() {
 
 		// This whole condition choice makes no sense
 		g_globals->_spellsState._newCondition += 6 *
-			_monsterList[getMonsterIndex()]._level;
+			_remainingMonsters[getMonsterIndex()]._level;
 		g_globals->_spellsState._newCondition = getRandomNumber(g_globals->_spellsState._newCondition) + 4;
 
 		add(':');
@@ -235,7 +235,7 @@ void SpellsMonsters::spell14_fireBreath() {
 
 	// This whole condition choice makes no sense
 	g_globals->_spellsState._newCondition += 8 *
-		_monsterList[getMonsterIndex()]._level;
+		_remainingMonsters[getMonsterIndex()]._level;
 	g_globals->_spellsState._newCondition = getRandomNumber(g_globals->_spellsState._newCondition);
 
 	add(':');
@@ -350,7 +350,7 @@ void SpellsMonsters::spell25_poison() {
 		STRING["monster_spellsState.breathes"].c_str(),
 		STRING["monster_spellsState.poison"].c_str()));
 	g_globals->_spellsState._resistanceType = RESISTANCE_POISON;
-	g_globals->_spellsState._newCondition = _monsterList[getMonsterIndex()]._hp;
+	g_globals->_spellsState._newCondition = _remainingMonsters[getMonsterIndex()]._hp;
 	++g_globals->_spellsState._mmVal2;
 
 	add(':');
@@ -362,7 +362,7 @@ void SpellsMonsters::spell26_lightning() {
 		STRING["monster_spellsState.breathes"].c_str(),
 		STRING["monster_spellsState.lightning"].c_str()));
 	g_globals->_spellsState._resistanceType = RESISTANCE_ELECTRICITY;
-	g_globals->_spellsState._newCondition = _monsterList[getMonsterIndex()]._hp;
+	g_globals->_spellsState._newCondition = _remainingMonsters[getMonsterIndex()]._hp;
 	++g_globals->_spellsState._mmVal2;
 
 	add(':');
@@ -374,7 +374,7 @@ void SpellsMonsters::spell27_frost() {
 		STRING["monster_spellsState.breathes"].c_str(),
 		STRING["monster_spellsState.frost"].c_str()));
 	g_globals->_spellsState._resistanceType = RESISTANCE_COLD;
-	g_globals->_spellsState._newCondition = _monsterList[getMonsterIndex()]._hp;
+	g_globals->_spellsState._newCondition = _remainingMonsters[getMonsterIndex()]._hp;
 	++g_globals->_spellsState._mmVal2;
 
 	add(':');
@@ -386,7 +386,7 @@ void SpellsMonsters::spell28_spikes() {
 		STRING["monster_spellsState.breathes"].c_str(),
 		STRING["monster_spellsState.spikes"].c_str()));
 	g_globals->_spellsState._resistanceType = RESISTANCE_ELECTRICITY;
-	g_globals->_spellsState._newCondition = _monsterList[getMonsterIndex()]._hp;
+	g_globals->_spellsState._newCondition = _remainingMonsters[getMonsterIndex()]._hp;
 	++g_globals->_spellsState._mmVal2;
 
 	add(':');
@@ -398,7 +398,7 @@ void SpellsMonsters::spell29_acid() {
 		STRING["monster_spellsState.breathes"].c_str(),
 		STRING["monster_spellsState.acid"].c_str()));
 	g_globals->_spellsState._resistanceType = RESISTANCE_ACID;
-	g_globals->_spellsState._newCondition = _monsterList[getMonsterIndex()]._hp;
+	g_globals->_spellsState._newCondition = _remainingMonsters[getMonsterIndex()]._hp;
 	++g_globals->_spellsState._mmVal2;
 
 	add(':');
@@ -410,7 +410,7 @@ void SpellsMonsters::spell30_fire() {
 		STRING["monster_spellsState.breathes"].c_str(),
 		STRING["monster_spellsState.fire"].c_str()));
 	g_globals->_spellsState._resistanceType = RESISTANCE_FIRE;
-	g_globals->_spellsState._newCondition = _monsterList[getMonsterIndex()]._hp;
+	g_globals->_spellsState._newCondition = _remainingMonsters[getMonsterIndex()]._hp;
 	++g_globals->_spellsState._mmVal2;
 
 	add(':');
@@ -419,7 +419,7 @@ void SpellsMonsters::spell30_fire() {
 
 void SpellsMonsters::spell31_energy() {
 	add(STRING["monster_spellsState.energy"]);
-	g_globals->_spellsState._newCondition = _monsterList[getMonsterIndex()]._hp;
+	g_globals->_spellsState._newCondition = _remainingMonsters[getMonsterIndex()]._hp;
 	++g_globals->_spellsState._mmVal2;
 
 	add(':');

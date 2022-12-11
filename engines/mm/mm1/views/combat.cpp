@@ -402,7 +402,7 @@ void Combat::writeExchangeSelect() {
 }
 
 void Combat::writeFightSelect() {
-	_fightCount = MIN(_attackerVal, (int)_monsterList.size());
+	_fightCount = MIN(_attackerVal, (int)_remainingMonsters.size());
 
 	writeString(10, 0, Common::String::format(
 		STRING["dialogs.combat.fight_which"].c_str(), '@' + _fightCount));
@@ -410,7 +410,7 @@ void Combat::writeFightSelect() {
 }
 
 void Combat::writeShootSelect() {
-	_fightCount = MIN(_attackerVal, (int)_monsterList.size());
+	_fightCount = MIN(_attackerVal, (int)_remainingMonsters.size());
 
 	writeString(10, 0, Common::String::format(
 		STRING["dialogs.combat.shoot_which"].c_str(), '@' + _fightCount));
@@ -482,11 +482,11 @@ void Combat::writePartyNumbers() {
 }
 
 void Combat::writeMonsters() {
-	if (_monsterList.empty()) {
+	if (_remainingMonsters.empty()) {
 		_textPos = Common::Point(10, 0);
 		writeSpaces(30);
 	} else {
-		for (int i = 0; i < (int)_monsterList.size(); ++i) {
+		for (int i = 0; i < (int)_remainingMonsters.size(); ++i) {
 			_textPos = Common::Point(11, i);
 			writeChar(i < _attackerVal ? '+' : ' ');
 			unsigned char c = 'A' + i;
@@ -496,7 +496,7 @@ void Combat::writeMonsters() {
 
 			writeChar(c);
 			writeString(") ");
-			writeString(_monsterList[i]._name);
+			writeString(_remainingMonsters[i]._name);
 			writeMonsterStatus(i);
 		}
 	}
@@ -509,7 +509,7 @@ void Combat::writeMonsters() {
 
 void Combat::writeMonsterStatus(int monsterNum) {
 	monsterSetPtr(monsterNum);
-	byte statusBits = _monsterList[monsterNum]._status;
+	byte statusBits = _remainingMonsters[monsterNum]._status;
 
 	if (statusBits) {
 		writeDots();
@@ -525,7 +525,7 @@ void Combat::writeMonsterStatus(int monsterNum) {
 
 		writeString(STRING[Common::String::format("dialogs.combat.status.%d",
 			status)]);
-	} else if (_monsterList[monsterNum]._hp != _monsterP->_defaultHP) {
+	} else if (_remainingMonsters[monsterNum]._hp != _monsterP->_defaultHP) {
 		writeDots();
 		writeString(STRING["dialogs.combat.status.wounded"]);
 	} else {
@@ -715,7 +715,7 @@ void Combat::exchange() {
 
 void Combat::fight() {
 	if (_allowFight) {
-		if (_monsterList.size() < 2) {
+		if (_remainingMonsters.size() < 2) {
 			attackMonsterPhysical();
 		} else {
 			setOption(OPTION_FIGHT);
@@ -725,7 +725,7 @@ void Combat::fight() {
 
 void Combat::shoot() {
 	if (_allowShoot) {
-		if (_monsterList.size() < 2) {
+		if (_remainingMonsters.size() < 2) {
 			attackMonsterPhysical();
 		} else {
 			setOption(OPTION_SHOOT);
