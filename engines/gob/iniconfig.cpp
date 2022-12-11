@@ -79,6 +79,7 @@ bool INIConfig::getConfig(const Common::String &file, Config &config) {
 
 bool INIConfig::openConfig(const Common::String &file, Config &config) {
 	config.config  = new Common::INIFile();
+	config.config->allowNonEnglishCharacters();
 	config.created = false;
 
 	// GOB uses \ as a path separator but
@@ -97,6 +98,7 @@ bool INIConfig::openConfig(const Common::String &file, Config &config) {
 
 bool INIConfig::createConfig(const Common::String &file, Config &config) {
 	config.config  = new Common::INIFile();
+	config.config->allowNonEnglishCharacters();
 	config.created = true;
 
 	_configs.setVal(file, config);
