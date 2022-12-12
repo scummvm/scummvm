@@ -933,8 +933,10 @@ void Interface::drawPanelText(InterfacePanel *panel, PanelButton *panelButton) {
 	textPoint.x = rect.left;
 	textPoint.y = rect.top + (_vm->getPlatform() == Common::kPlatformPC98 ? 0 : 1);
 
-	if (_vm->getGameId() == GID_ITE && _vm->getLanguage() == Common::ZH_TWN)
+	if (_vm->getGameId() == GID_ITE && _vm->getLanguage() == Common::ZH_TWN) {
 		textPoint.y -= 4;
+		textPoint.x -= 1;
+	}
 
 	_vm->_font->textDraw(textFont, text, textPoint,
 						_vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(textShadowKnownColor), _vm->getPlatform() == Common::kPlatformPC98 ?  kFontOutline : kFontShadow);
@@ -2371,7 +2373,7 @@ void Interface::drawPanelButtonText(InterfacePanel *panel, PanelButton *panelBut
 
 	if (_vm->getGameId() == GID_ITE && _vm->getLanguage() == Common::ZH_TWN) {
 		point.y -= 3;
-		point.x += 2;
+		point.x += 1;
 	}
 
 	if (panelButton == panel->currentButton) {

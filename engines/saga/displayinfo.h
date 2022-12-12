@@ -217,7 +217,7 @@ static PanelButton ITE_OptionPanelButtons_ZH[] = {
 	{kPanelButtonOption,	241,98, 57,17,	kTextSave,'s',0,	0,0,0},	//save
 	{kPanelButtonOptionSaveFiles,	166,20, 112,74,	0,'-',0,	0,0,0},	//savefiles
 
-	{kPanelButtonOptionText,-1,4, 0,0,	kTextGameOptions,'-',0,	0,0,0},	// text: game options
+	{kPanelButtonOptionText,9,0, 165,17,	kTextGameOptions,'-',0,	0,0,0},	// text: game options
 	{kPanelButtonOptionText,2,18, 96,17,	kTextReadingSpeed,'-',0, 0,0,0},	// text: read speed
 	{kPanelButtonOptionText,2,18, 80,17,	kTextShowDialog,'-',0, 0,0,0},	// text: read speed
 	{kPanelButtonOptionText,2,37, 80,17,	kTextMusic,'-',0, 0,0,0},	// text: music
