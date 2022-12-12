@@ -84,7 +84,6 @@ void MiniMapGump::run() {
 void MiniMapGump::generate() {
 	World *world = World::get_instance();
 	CurrentMap *currentmap = world->getCurrentMap();
-	// TODO - do not leave whole map fast after generation
 	currentmap->setWholeMapFast();
 
 	uint32 mapNum = currentmap->getNum();
