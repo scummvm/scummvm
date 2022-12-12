@@ -80,6 +80,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x62, o7_moveFile);
 	OPCODEDRAW(0x80, o7_initScreen);
 	OPCODEDRAW(0x83, o7_playVmdOrMusic);
+	OPCODEDRAW(0x85, o7_openItk);
 	OPCODEDRAW(0x89, o7_setActiveCD);
 	OPCODEDRAW(0x8A, o7_findFile);
 	OPCODEDRAW(0x8B, o7_findNextFile);
@@ -742,6 +743,15 @@ void Inter_v7::o7_setActiveCD() {
 	}
 
 	storeValue(0);
+}
+
+void Inter_v7::o7_openItk() {
+	Common::String file = getFile(_vm->_game->_script->evalString());
+	if (!file.contains('.'))
+		file += ".ITK";
+
+	bool openSuccess = _vm->_dataIO->openArchive(file, false);
+	WRITE_VAR_OFFSET(108, openSuccess);
 }
 
 void Inter_v7::o7_findFile() {
