@@ -46,7 +46,7 @@
 
 #include "hpl1/penumbra-overture/GlobalInit.h"
 
-tString gvStateName[STATE_NUM] = {
+constexpr const char *gvStateName[STATE_NUM] = {
 	"IDLE",
 	"HUNT",
 	"ATTACK",
