@@ -717,6 +717,7 @@ protected:
 	void o7_copyFile();
 	void o7_deleteFile();
 	void o7_playVmdOrMusic();
+	void o7_openItk();
 	void o7_initScreen();
 	void o7_setActiveCD();
 	void o7_findFile();
