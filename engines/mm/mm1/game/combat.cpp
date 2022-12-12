@@ -275,7 +275,7 @@ void Combat::selectParty() {
 		if (speed && speed >= _handicap2) {
 			if (!(c._condition & (BLINDED | SILENCED | DISEASED | POISONED))) {
 				// Character is enabled
-				_mode = SELECT_OPTION;
+				setMode(SELECT_OPTION);
 				return;
 			}
 		}
@@ -347,6 +347,7 @@ void Combat::setTreasure() {
 	_val6 = MAX(_val6, _val7);
 
 	if (_val7 & 1)
+		// Add gems
 		g_globals->_treasure[8] += getRandomNumber(6);
 
 	if (_val7 & 6) {
@@ -373,22 +374,22 @@ void Combat::selectTreasure() {
 #undef SHIFT_BIT
 
 	auto &treasure = g_globals->_treasure;
-	treasure[1] = 0;
+	treasure._trapType = 0;
 
 	if (_treasureFlags[4]) {
-		treasure[2] = 10;
+		treasure._container = 10;
 	} else if (_treasureFlags[3]) {
-		treasure[2] = 5 + getRandomNumber(4);
+		treasure._container = 5 + getRandomNumber(4);
 	} else if (_treasureFlags[2]) {
-		treasure[2] = 4 + getRandomNumber(4);
+		treasure._container = 4 + getRandomNumber(4);
 	} else if (_treasureFlags[1]) {
-		treasure[2] = 3 + getRandomNumber(4);
+		treasure._container = 3 + getRandomNumber(4);
 	} else if (_treasureFlags[0] || treasure[8]) {
-		treasure[2] = 1 + getRandomNumber(4);
+		treasure._container = 1 + getRandomNumber(4);
 	} else if (treasure[7]) {
-		treasure[2] = getRandomNumber(4) - 1;
+		treasure._container = getRandomNumber(4) - 1;
 	} else {
-		treasure[2] = getRandomNumber(2) - 1;
+		treasure._container = getRandomNumber(2) - 1;
 	}
 }
 
