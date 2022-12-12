@@ -48,26 +48,21 @@ public:
 	void Setup(iGpuProgram *apProgram, cRenderSettings *apRenderSettings) {
 		apProgram->SetFloat("fogStart", apRenderSettings->mfFogStart);
 		apProgram->SetFloat("fogEnd", apRenderSettings->mfFogEnd);
-		// apProgram->SetFloat("timeCount",mfTime);
-		// Log("Setting %f\n",mfTime);
 	}
-	float mfTime;
 };
 
-static cFogWaterProgramSetup gFogWaterProgramSetup;
+
 
 //-----------------------------------------------------------------------
 
+static float globalTime = 0;
 class cWaterProgramSetup : public iMaterialProgramSetup {
 public:
 	void Setup(iGpuProgram *apProgram, cRenderSettings *apRenderSettings) {
-		apProgram->SetFloat("timeCount", mfTime);
+		apProgram->SetFloat("timeCount", globalTime);
 	}
-
-	float mfTime;
 };
 
-static cWaterProgramSetup gWaterProgramSetup;
 
 //////////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS
@@ -113,8 +108,7 @@ cMaterial_Water::~cMaterial_Water() {
 
 void cMaterial_Water::Update(float afTimeStep) {
 	mfTime += afTimeStep;
-	gWaterProgramSetup.mfTime = mfTime;
-	gFogWaterProgramSetup.mfTime = mfTime;
+	globalTime = mfTime;
 }
 
 //-----------------------------------------------------------------------
@@ -126,9 +120,11 @@ iGpuProgram *cMaterial_Water::getGpuProgram(eMaterialRenderType aType, int alPas
 }
 
 iMaterialProgramSetup *cMaterial_Water::getGpuProgramSetup(const eMaterialRenderType aType, const int alPass, iLight3D *apLight) {
+	static cFogWaterProgramSetup fogWaterProgramSetup;
+	static cWaterProgramSetup waterProgramSetup;
 	if (mpRenderSettings->mbFogActive)
-		return &gFogWaterProgramSetup;
-	return &gWaterProgramSetup;
+		return &fogWaterProgramSetup;
+	return &waterProgramSetup;
 }
 
 bool cMaterial_Water::VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight) {

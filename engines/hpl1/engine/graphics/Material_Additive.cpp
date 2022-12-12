@@ -52,8 +52,6 @@ public:
 	}
 };
 
-static cFogProgramSetup gFogProgramSetup;
-
 //-----------------------------------------------------------------------
 
 //////////////////////////////////////////////////////////////////////////
@@ -97,8 +95,9 @@ iGpuProgram *cMaterial_Additive::getGpuProgram(const eMaterialRenderType aType, 
 }
 
 iMaterialProgramSetup *cMaterial_Additive::getGpuProgramSetup(const eMaterialRenderType aType, const int alPass, iLight3D *apLight) {
+	static cFogProgramSetup fogProgramSetup;
 	if (mpRenderSettings->mbFogActive)
-		return &gFogProgramSetup;
+		return &fogProgramSetup;
 	else
 		return nullptr;
 }
