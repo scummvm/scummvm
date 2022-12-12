@@ -51,8 +51,6 @@ public:
 	}
 };
 
-static cFogProgramSetup gFogProgramSetup;
-
 //////////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS
 //////////////////////////////////////////////////////////////////////////
@@ -94,8 +92,9 @@ iGpuProgram *cMaterial_Alpha::getGpuProgram(eMaterialRenderType aType, int alPas
 }
 
 iMaterialProgramSetup *cMaterial_Alpha::getGpuProgramSetup(const eMaterialRenderType aType, const int alPass, iLight3D *apLight) {
+	static cFogProgramSetup fogProgramSetup;
 	if (mpRenderSettings->mbFogActive)
-		return &gFogProgramSetup;
+		return &fogProgramSetup;
 	return nullptr;
 }
 
