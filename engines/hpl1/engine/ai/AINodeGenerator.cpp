@@ -65,24 +65,16 @@ cAINodeGeneratorParams::cAINodeGeneratorParams() {
 
 //-----------------------------------------------------------------------
 
-class cCollideRayCallback : public iPhysicsRayCallback {
-public:
-	virtual ~cCollideRayCallback() {}
-	bool OnIntersect(iPhysicsBody *pBody, cPhysicsRayParams *apParams) {
-		if (pBody->GetMass() != 0)
-			return true;
+bool cCollideRayCallback::OnIntersect(iPhysicsBody *pBody, cPhysicsRayParams *apParams) {
+	if (pBody->GetMass() != 0)
+		return true;
 
-		mbIntersected = true;
-		mvPos = apParams->mvPoint;
-		mfDist = apParams->mfDist;
+	mbIntersected = true;
+	mvPos = apParams->mvPoint;
+	mfDist = apParams->mfDist;
 
-		return false;
-	}
-
-	bool mbIntersected;
-	cVector3f mvPos;
-	float mfDist;
-};
+	return false;
+}
 
 //-----------------------------------------------------------------------
 
@@ -92,7 +84,11 @@ public:
 
 //-----------------------------------------------------------------------
 
+// TODO: remove after the game is tested
+unsigned generatorInstances = 0;
+
 cAINodeGenerator::cAINodeGenerator() {
+	assert(++generatorInstances == 1);
 }
 
 cAINodeGenerator::~cAINodeGenerator() {
@@ -106,7 +102,7 @@ cAINodeGenerator::~cAINodeGenerator() {
 
 //-----------------------------------------------------------------------
 
-static cCollideRayCallback gCollideRayCallback;
+//static cCollideRayCallback gCollideRayCallback;
 
 //-----------------------------------------------------------------------
 
@@ -233,16 +229,16 @@ void cAINodeGenerator::Generate(cWorld3D *apWorld, cAINodeGeneratorParams *apPar
 
 		// Check if there are any walls close by.
 		for (int i = 0; i < 4; ++i) {
-			gCollideRayCallback.mbIntersected = false;
-			pPhysicsWorld->CastRay(&gCollideRayCallback, Node.mvPos, Node.mvPos + vEnds[i], true, false, true);
+			_rayCallback.mbIntersected = false;
+			pPhysicsWorld->CastRay(&_rayCallback, Node.mvPos, Node.mvPos + vEnds[i], true, false, true);
 
-			if (gCollideRayCallback.mbIntersected) {
+			if (_rayCallback.mbIntersected) {
 				// Log("Walldistance %f : Add: (%s) Push (%s) Min: %f\n",gCollideRayCallback.mfDist,
 				//											vEnds[i].ToString().c_str(),
 				//											vPushBackDirs[i].ToString().c_str(),
 				//											mpParams->mfMinWallDist);
-				if (gCollideRayCallback.mfDist < mpParams->mfMinWallDist) {
-					Node.mvPos += vPushBackDirs[i] * (mpParams->mfMinWallDist - gCollideRayCallback.mfDist);
+				if (_rayCallback.mfDist < mpParams->mfMinWallDist) {
+					Node.mvPos += vPushBackDirs[i] * (mpParams->mfMinWallDist - _rayCallback.mfDist);
 				}
 			}
 		}
