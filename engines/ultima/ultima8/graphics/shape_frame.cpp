@@ -31,7 +31,7 @@ ShapeFrame::ShapeFrame(const RawShapeFrame *rawframe) :
 		_xoff(rawframe->_xoff), _yoff(rawframe->_yoff),
 		_width(rawframe->_width), _height(rawframe->_height) {
 
-	_pixels = new uint8[_width * _height];
+	_pixels = new uint8[_width * _height]();
 	_mask = new uint8[_width * _height]();
 
 	for (int y = 0; y < _height; y++) {
