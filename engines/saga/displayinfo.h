@@ -206,6 +206,24 @@ static PanelButton ITE_OptionPanelButtons[] = {
 	{kPanelButtonOptionText,5,56, 109,17,	kTextSound,'-',0, 0,0,0},	// text: noise
 };
 
+static PanelButton ITE_OptionPanelButtons_ZH[] = {
+	{kPanelButtonOptionSlider,	284,19, 13,75,	0,'-',0,	0,0,0}, //slider-scroller
+	{kPanelButtonOption,	113,18, 45,17,	kTextReadingSpeed,'r',0,	0,0,0}, //read speed
+	{kPanelButtonOption,	113,37, 45,17,	kTextMusic,'m',0,	0,0,0}, //music
+	{kPanelButtonOption,	113,56, 45,17,	kTextSound,'n',0,	0,0,0}, //sound-noise
+	{kPanelButtonOption,	13,79, 135,17,	kTextQuitGame,'q',0,	0,0,0}, //quit
+	{kPanelButtonOption,	13,98, 135,17,	kTextContinuePlaying,'c',0,	0,0,0}, //continue
+	{kPanelButtonOption,	164,98, 57,17,	kTextLoad,'l',0,	0,0,0}, //load
+	{kPanelButtonOption,	241,98, 57,17,	kTextSave,'s',0,	0,0,0},	//save
+	{kPanelButtonOptionSaveFiles,	166,20, 112,74,	0,'-',0,	0,0,0},	//savefiles
+
+	{kPanelButtonOptionText,-1,4, 0,0,	kTextGameOptions,'-',0,	0,0,0},	// text: game options
+	{kPanelButtonOptionText,2,18, 96,17,	kTextReadingSpeed,'-',0, 0,0,0},	// text: read speed
+	{kPanelButtonOptionText,2,18, 80,17,	kTextShowDialog,'-',0, 0,0,0},	// text: read speed
+	{kPanelButtonOptionText,2,37, 80,17,	kTextMusic,'-',0, 0,0,0},	// text: music
+	{kPanelButtonOptionText,2,56, 80,17,	kTextSound,'-',0, 0,0,0},	// text: noise
+};
+
 static PanelButton ITE_QuitPanelButtons[] = {
 	{kPanelButtonQuit, 11,17, 60,16, kTextQuit,'q',0, 0,0,0},
 	{kPanelButtonQuit, 121,17, 60,16, kTextCancel,'c',0, 0,0,0},
@@ -338,8 +356,8 @@ static const GameDisplayInfo ITE_DisplayInfo_ZH = {
 	8, 0,			// save file index
 	8,				// optionSaveFileVisible
 	8, 8,			// option panel offsets
-	ARRAYSIZE(ITE_OptionPanelButtons),
-	ITE_OptionPanelButtons,
+	ARRAYSIZE(ITE_OptionPanelButtons_ZH),
+	ITE_OptionPanelButtons_ZH,
 
 	64,54,			// quit panel offsets
 	192,38,			// quit panel width & height
