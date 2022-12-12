@@ -48,22 +48,16 @@ public:
 	//////////////////////////////////////////
 	// Constructors
 	/////////////////////////////////////////
-	cVector2() {
-		x = 0;
-		y = 0;
-	}
-	cVector2(T aVal) {
-		x = aVal;
-		y = aVal;
-	}
-	cVector2(T aX, T aY) {
-		x = aX;
-		y = aY;
+	constexpr cVector2() : x(0), y(0) {
 	}
 
-	cVector2(cVector2<T> const &aVec) {
-		x = aVec.x;
-		y = aVec.y;
+	constexpr cVector2(T aVal) : x(aVal), y(aVal) {
+	}
+
+	constexpr cVector2(T aX, T aY) : x(aX), y(aY) {
+	}
+
+	constexpr cVector2(cVector2<T> const &aVec) : x(aVec.x), y(aVec.y) {
 	}
 
 	//////////////////////////////////////////
