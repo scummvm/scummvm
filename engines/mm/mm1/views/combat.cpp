@@ -496,7 +496,7 @@ void Combat::writeMonsters() {
 
 			writeChar(c);
 			writeString(") ");
-			writeString(_remainingMonsters[i]._name);
+			writeString(_remainingMonsters[i]->_name);
 			writeMonsterStatus(i);
 		}
 	}
@@ -509,7 +509,7 @@ void Combat::writeMonsters() {
 
 void Combat::writeMonsterStatus(int monsterNum) {
 	monsterSetPtr(monsterNum);
-	byte statusBits = _remainingMonsters[monsterNum]._status;
+	byte statusBits = _remainingMonsters[monsterNum]->_status;
 
 	if (statusBits) {
 		writeDots();
@@ -525,7 +525,7 @@ void Combat::writeMonsterStatus(int monsterNum) {
 
 		writeString(STRING[Common::String::format("dialogs.combat.status.%d",
 			status)]);
-	} else if (_remainingMonsters[monsterNum]._hp != _monsterP->_defaultHP) {
+	} else if (_remainingMonsters[monsterNum]->_hp != _monsterP->_defaultHP) {
 		writeDots();
 		writeString(STRING["dialogs.combat.status.wounded"]);
 	} else {

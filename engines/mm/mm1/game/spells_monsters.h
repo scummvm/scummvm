@@ -146,7 +146,7 @@ private:
 	void handlePartyEffects();
 
 protected:
-	Common::Array<Monster> _remainingMonsters;
+	Common::Array<Monster *> _remainingMonsters;
 	LineArray _lines;
 	int _damage = 0;
 
