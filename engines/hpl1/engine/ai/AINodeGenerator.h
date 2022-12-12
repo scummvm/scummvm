@@ -38,6 +38,16 @@ namespace hpl {
 
 class cWorld3D;
 
+class cCollideRayCallback : public iPhysicsRayCallback {
+public:
+	virtual ~cCollideRayCallback() {}
+	bool OnIntersect(iPhysicsBody *pBody, cPhysicsRayParams *apParams);
+
+	bool mbIntersected;
+	cVector3f mvPos;
+	float mfDist;
+};
+
 //-------------------------------
 
 class cAINodeGeneratorParams {
@@ -73,6 +83,7 @@ private:
 	cAINodeGeneratorParams *mpParams;
 	cWorld3D *mpWorld;
 	tTempAiNodeList *mpNodeList;
+	cCollideRayCallback _rayCallback;
 };
 
 }     // namespace hpl
