@@ -157,14 +157,14 @@ static PanelButton ITE_MainPanelButtons[] = {
 };
 
 static PanelButton ITE_MainPanelButtons_ZH[] = {
-	{kPanelButtonVerb,		52,0,	36,14,	kVerbITEWalkTo,'w',0,	0,1,0},
-	{kPanelButtonVerb,		52,14,	36,14,	kVerbITELookAt,'l',0,	2,3,0},
-	{kPanelButtonVerb,		52,28,	36,14,	kVerbITEPickUp,'p',0,	4,5,0},
-	{kPanelButtonVerb,		88,0,	36,14,	kVerbITETalkTo,'t',0,	0,1,0},
-	{kPanelButtonVerb,		88,14,	36,14,	kVerbITEOpen,'o',0,	6,7,0},
-	{kPanelButtonVerb,		88,28,	36,14,	kVerbITEClose,'c',0,	8,9,0},
-	{kPanelButtonVerb,		124,0,	36,14,	kVerbITEUse,'u',0,		10,11,0},
-	{kPanelButtonVerb,		124,14,	36,14,	kVerbITEGive,'g',0,	12,13,0},
+	{kPanelButtonVerb,		53,0,	34,16,	kVerbITEWalkTo,'w',0,	0,1,0},
+	{kPanelButtonVerb,		53,17,	34,16,	kVerbITELookAt,'l',0,	2,3,0},
+	{kPanelButtonVerb,		53,34,	34,16,	kVerbITEPickUp,'p',0,	4,5,0},
+	{kPanelButtonVerb,		92,0,	34,16,	kVerbITETalkTo,'t',0,	0,1,0},
+	{kPanelButtonVerb,		92,17,	34,16,	kVerbITEOpen,'o',0,	6,7,0},
+	{kPanelButtonVerb,		92,34,	34,16,	kVerbITEClose,'c',0,	8,9,0},
+	{kPanelButtonVerb,		132,0,	34,16,	kVerbITEUse,'u',0,		10,11,0},
+	{kPanelButtonVerb,		132,17,	34,16,	kVerbITEGive,'g',0,	12,13,0},
 	{kPanelButtonArrow,		306,6,	8,5,	-1,'U',0,			0,4,2},
 	{kPanelButtonArrow,		306,41,	8,5,	1,'D',0,			1,5,3},
 
@@ -326,7 +326,7 @@ static const GameDisplayInfo ITE_DisplayInfo_ZH = {
 	0,				// status x offset
 	137,			// status y offset
 	320,			// status width
-	15,				// status height
+	14,				// status height
 	0,				// status text y offset
 	186,			// status text color
 	15,				// status BG color
@@ -341,7 +341,7 @@ static const GameDisplayInfo ITE_DisplayInfo_ZH = {
 	8, 9,			// inventory Up & Down button indexes
 	2, 4,			// inventory rows, columns
 
-	0, 152,			// main panel offsets
+	0, 153,			// main panel offsets
 	ARRAYSIZE(ITE_MainPanelButtons_ZH),
 	ITE_MainPanelButtons_ZH,
 
