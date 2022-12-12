@@ -801,6 +801,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "lvi",				"La Vague Interactive" },
 	{ "madmac",				"Mad Mac Cartoons" },
 	{ "recfantome",			"Récréation fantôme" },
+	{ "reinedesneiges",		"La reine des neiges" },
 	{ "sethi2",				"Sethi et le sorcier inca" },
 	{ "sethi3",				"Sethi et la Tribu de Neandertal" },
 	{ "shadoks",			"Les Shadoks... Le jeu, la promenade" }, // Punctuation comes from lisezmoi.txt
@@ -2592,6 +2593,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("refixion1", "", "REFIXION", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 355989, Common::JA_JPN, 300),
 	MACGAME1_l("refixion2", "", "Museum or Hospital", "1ae45c23586b41997ba52e2e7c771c4c", 375585, Common::JA_JPN, 300),
 	MACGAME1_l("refixion3", "", "The Reindeer Story", "f5277c53bacd27936158dd3867e587e2", 392217, Common::JA_JPN, 300),
+
+	MACGAME1_l("reinedesneiges", "", "La Reine des Neiges", "a546ef2b921a9b48fd93928f1a505f22", 483490, Common::FR_FRA, 404),
+	WINGAME1t_l("reinedesneiges", "", "RDNMOF.EXE", "ab9aa09225b65ed997ad18a8ff3993bf", 741699, Common::FR_FRA, 404),
 
 	// Original Mac version is Director. Later DOS port uses MADE engine (also in ScummVM).
 	MACDEMO1("rodneyfs", "Demo", "Rodney's Funscreen demo", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 356610, 300),
