@@ -1005,8 +1005,8 @@ public:
 	}
 };
 
-tString gvDifficultyLevel[] = {"Easy", "Normal", "Hard"};
-int glDifficultyLevelNum = 3;
+constexpr const char *gvDifficultyLevel[] = {"Easy", "Normal", "Hard"};
+constexpr int glDifficultyLevelNum = 3;
 
 class cMainMenuWidget_Difficulty : public cMainMenuWidget_Button {
 public:
@@ -1163,7 +1163,7 @@ cMainMenuWidget_Text *gpGammaText2 = NULL;
 cMainMenuWidget_Text *gpFSAAText = NULL;
 cMainMenuWidget_Text *gpDoFText = NULL;
 
-cVector2l gvResolutions[] = {cVector2l(640, 480), cVector2l(800, 600), cVector2l(1024, 768),
+constexpr cVector2l gvResolutions[] = {cVector2l(640, 480), cVector2l(800, 600), cVector2l(1024, 768),
 							 cVector2l(1152, 864), cVector2l(1280, 720), cVector2l(1280, 768),
 							 cVector2l(1280, 800), cVector2l(1280, 960), cVector2l(1280, 1024),
 							 cVector2l(1360, 768), cVector2l(1360, 1024), cVector2l(1400, 1050),
@@ -1171,10 +1171,10 @@ cVector2l gvResolutions[] = {cVector2l(640, 480), cVector2l(800, 600), cVector2l
 							 cVector2l(1920, 1080), cVector2l(1920, 1200)};
 int glResolutionNum = 17;
 
-tString gvTextureQuality[] = {"High", "Medium", "Low"};
-int glTextureQualityNum = 3;
-tString gvShaderQuality[] = {"Very Low", "Low", "Medium", "High"};
-int glShaderQualityNum = 4;
+constexpr const char *gvTextureQuality[] = {"High", "Medium", "Low"};
+constexpr int glTextureQualityNum = 3;
+constexpr const char *gvShaderQuality[] = {"Very Low", "Low", "Medium", "High"};
+constexpr int glShaderQualityNum = 4;
 
 cMainMenuWidget_Text *gpNoiseFilterText = NULL;
 
@@ -1243,7 +1243,7 @@ public:
 
 //------------------------------------------------------------
 
-tString gvShadowTypes[] = {"On", "Only Static", "Off"};
+constexpr const char *gvShadowTypes[] = {"On", "Only Static", "Off"};
 
 class cMainMenuWidget_Shadows : public cMainMenuWidget_Button {
 public:
@@ -1273,7 +1273,7 @@ public:
 
 //------------------------------------------------------------
 
-tString gvTextureFilter[] = {"Bilinear", "Trilinear"};
+constexpr const char *gvTextureFilter[] = {"Bilinear", "Trilinear"};
 
 class cMainMenuWidget_TextureFilter : public cMainMenuWidget_Button {
 public:
