@@ -44,7 +44,6 @@
 	{
 		"adibou1",
 		"ADIBOU 1 Environnement 4-7 ans",
-
 		AD_ENTRY1s("intro.stk", "904a93f46687617bb34e672020fc17a4", 248724),
 		FR_FRA,
 		kPlatformDOS,
@@ -203,9 +202,25 @@
 {
 	{
 		"adibou2",
-		"ADIBù 2",
+		"ADIBÙ 2",
 		AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 		IT_ITA,
+		kPlatformDOS,
+		ADGF_TESTING,
+		GUIO0()
+	},
+	kGameTypeAdibou2,
+	kFeaturesNone,
+	0, 0, 0
+},
+
+// -- Spanish: Adibù --
+{
+	{
+		"adibou2",
+		"ADIBÙ 2",
+		AD_ENTRY1s("intro.stk", "0b996fcd8929245fecddc4d9169843d0", 956682),
+		ES_ESP,
 		kPlatformDOS,
 		ADGF_TESTING,
 		GUIO0()
@@ -241,6 +256,21 @@
 		kPlatformDOS,
 		ADGF_DEMO | ADGF_TESTING,
 		GUIO0()
+	},
+	kGameTypeAdibou2,
+	kFeatures640x480,
+	0, 0, 0
+},
+{
+	// Titlescreen says "ADIBOO: Limited version!", Sierra setup says "Adiboo 2 Demo"
+	{
+		"adibou2",
+		"ADIBOO 2 Demo",
+		AD_ENTRY1s("intro.stk", "ea6c2d25f33135db763c1175979d904a", 528108),
+		EN_GRB,
+		kPlatformDOS,
+		ADGF_DEMO | ADGF_TESTING,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeAdibou2,
 	kFeatures640x480,
