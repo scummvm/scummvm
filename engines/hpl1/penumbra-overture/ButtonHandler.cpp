@@ -44,14 +44,14 @@
 #include "hpl1/penumbra-overture/MainMenu.h"
 
 struct cButtonHandlerAction {
-	tString msName;
-	tString msType;
+	const char *msName;
+	const char *msType;
 	int mlVal;
 	bool mbConfig;
 };
 
 static const char* const gsLastPlayerAction = "GlowStick";
-static cButtonHandlerAction gvDefaultActions[] = {
+static constexpr cButtonHandlerAction gvDefaultActions[] = {
 	{"Forward", "Keyboard", eKey_w, true},
 	{"Backward", "Keyboard", eKey_s, true},
 	{"Left", "Keyboard", eKey_a, true},
@@ -139,8 +139,8 @@ cButtonHandler::cButtonHandler(cInit *apInit) : iUpdateable("ButtonHandler") {
 	mlNumOfActions = 0;
 
 	// INIT ALL ACTIONS USED
-	cButtonHandlerAction *pBHAction = &gvDefaultActions[0];
-	while (pBHAction->msName != "") {
+	const cButtonHandlerAction *pBHAction = &gvDefaultActions[0];
+	while (pBHAction->msName[0] != '\0') {
 		tString sName = pBHAction->msName;
 		tString sType = mpInit->mpConfig->GetString("Keys", sName + "_Type", pBHAction->msType);
 		tString sVal = mpInit->mpConfig->GetString("Keys", sName + "_Val", cString::ToString(pBHAction->mlVal));
@@ -149,7 +149,7 @@ cButtonHandler::cButtonHandler(cInit *apInit) : iUpdateable("ButtonHandler") {
 		if (pAction) {
 			mpInput->AddAction(pAction);
 		} else {
-			Warning("Couldn't create action from '%s' and %d\n", pBHAction->msType.c_str(),
+			Warning("Couldn't create action from '%s' and %d\n", pBHAction->msType,
 					pBHAction->mlVal);
 		}
 
@@ -687,16 +687,16 @@ void cButtonHandler::OnExit() {
 
 		// Log(" type %s val: %s\n",sType.c_str(),sVal.c_str());
 
-		mpInit->mpConfig->SetString("Keys", gvDefaultActions[i].msName + "_Type", sType);
-		mpInit->mpConfig->SetString("Keys", gvDefaultActions[i].msName + "_Val", sVal);
+		mpInit->mpConfig->SetString("Keys", gvDefaultActions[i].msName + Common::String("_Type"), sType);
+		mpInit->mpConfig->SetString("Keys", gvDefaultActions[i].msName + Common::String("_Val"), sVal);
 	}
 }
 
 //-----------------------------------------------------------------------
 
 void cButtonHandler::SetDefaultKeys() {
-	cButtonHandlerAction *pBHAction = &gvDefaultActions[0];
-	while (pBHAction->msName != "") {
+	const cButtonHandlerAction *pBHAction = &gvDefaultActions[0];
+	while (pBHAction->msName[0] != '\0') {
 		tString sName = pBHAction->msName;
 		tString sType = pBHAction->msType;
 		tString sVal = cString::ToString(pBHAction->mlVal);
@@ -707,7 +707,7 @@ void cButtonHandler::SetDefaultKeys() {
 			mpInput->DestroyAction(sName);
 			mpInput->AddAction(pAction);
 		} else {
-			Warning("Couldn't create action from '%s' and %d\n", pBHAction->msType.c_str(),
+			Warning("Couldn't create action from '%s' and %d\n", pBHAction->msType,
 					pBHAction->mlVal);
 		}
 
@@ -718,8 +718,8 @@ void cButtonHandler::SetDefaultKeys() {
 //-----------------------------------------------------------------------
 
 tString cButtonHandler::GetActionName(const tString &asInputName, const tString &asSkipAction) {
-	cButtonHandlerAction *pBHAction = &gvDefaultActions[0];
-	while (pBHAction->msName != "") {
+	const cButtonHandlerAction *pBHAction = &gvDefaultActions[0];
+	while (pBHAction->msName[0] != '\0') {
 		tString sName = pBHAction->msName;
 		tString sType = pBHAction->msType;
 		tString sVal = cString::ToString(pBHAction->mlVal);
