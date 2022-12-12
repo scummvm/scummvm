@@ -2980,13 +2980,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("alice", "", "Alice", "3b61149c922f0fd815ca29686e4f554a", 304458, 400),
 	WINGAME1t("alice", "", "ALICE_W/ALICE.EXE", "da6b3cb75f548d5c79ef831320b97035", 684733, 400),
 	// CD serial TORT-3001
-	MACGAME1_l("alice", "Hybrid", "Alice", "3b61149c922f0fd815ca29686e4f554a", 304486, Common::JA_JPN, 400),
-	WINGAME1t_l("alice", "Hybrid", "ALICE_W/ALICE.EXE", "da6b3cb75f548d5c79ef831320b97035", 684733, Common::JA_JPN, 400),
+	MACGAME1_l("alice", "Hybrid", "Alice", "3b61149c922f0fd815ca29686e4f554a", 304486, Common::JA_JPN, 404),
+	WINGAME1t_l("alice", "Hybrid", "ALICE_W/ALICE.EXE", "ea9c19490428c8ef13934d3c159e1950", 684733, Common::JA_JPN, 404),
 
 	// Developed by Collabo Software and NOVUM, distributed by XING Inc.
 	// Mac projector does indeed end in .EXE
 	// Win has projectors for 8-bit and 16-bit color
-	MACGAME1_l("alius", "",				"ALIUS_FAT.EXE", "df355a56c186f3d6a64d99e96600f48c", 499193, Common::JA_JPN, 404),
+	MACGAME1_l("alius", "",				"ALIUS_FAT.EXE", "df355a56c186f3d6a64d99e96600f48c", 498937, Common::JA_JPN, 404),
 	WINGAME1_l("alius", "8-bit Color",	"ALIUS_8.EXE",   "9db857a65199db5251a33b2121ec5984", 2426433, Common::JA_JPN, 404),
 	WINGAME1_l("alius", "16-bit Color",	"ALIUS_16.EXE",  "98ac4e872421263dbbde1636b1e9d0e1", 2635737, Common::JA_JPN, 404),
 
@@ -2998,7 +2998,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("amber", "", "xn--AMBER-Journeys Beyond-yb4m", "a6a7812d8b3de0da884197eb26a1b059", 60086, 404),
 
 	MACGAME2("amnesty", "", "Double-Click Me", "ef59432e7b24df951cb7096cfd45d168", 373184,
-							"Rights.Dir", "196e02dd14e685b599cfc6f8dcc7cd3b", 641230, 400),
+							"Media/Rights.Dir", "196e02dd14e685b599cfc6f8dcc7cd3b", 641230, 400),
 	WINGAME1t("amnesty", "", "AMNESTY.EXE", "3e647bd639f00391da11f015a241d9e7", 736902, 404),
 
 	WINGAME2_l("angelgate", "",		"ANGEL.EXE", "046f0458f64b9008bc4b0dca5b895390", 746991,
@@ -3018,6 +3018,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("angelolatrie", "Autodemo", "COCTEAU", "8b138db44d4421cc7294a9dc792ccf1b", 501681, Common::JA_JPN, 404),
 	WINDEMO1t_l("angelolatrie", "Autodemo", "C_WIN.EXE", "2ddf245ee6775e5b22413ae02fa539a9", 702249, Common::JA_JPN, 404),
 
+	MACGAME1_l("ankh1", "", "ANKH", "4577dd3eadc467a986ab172d90871b22", 500393, Common::JA_JPN, 404),
 	WINGAME1_l("ankh1", "", "ANKH.EXE", "ca3b036aed6f38beb3ee762e171b663e", 746959, Common::JA_JPN, 404),
 	MACDEMO1_l("ankh1", "Demo", "ANKH-demo", "4577dd3eadc467a986ab172d90871b22", 500393, Common::JA_JPN, 404),
 
@@ -3027,7 +3028,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original Pro demo filename is Ants Afire! Pro™ PM
 	// Demo is from Inside Mac Games #25 - Mar 25 1995
 	// 2nd demo from MacCubed³ #1
-	MACGAME1("antsafire", "v1.2", "xn--Ants Afire! 1.2-ke3i", "1682231de376e5465240f6e4a7952072", 291960, 403),
+	MACGAME1("antsafire", "v1.2", "xn--Ants Afire! 1.2-ke3i", "1682231de376e5465240f6e4a7952072", 291960, 404),
 	MACDEMO1("antsafire", "Pro 1.2.7 Demo", "xn--Ants Afire! Pro PM-qu3k", "71287376e445ab9c98f0d150bb0ed175", 60096, 404), // 1.2 on title screen
 	MACDEMO1("antsafire", "Pro 1.2.7 Demo", "Ants Afire! Pro Demo 1.2.7", "ea646eccc9a53f44ce082459d4809a06", 483490, 400),
 
@@ -3045,7 +3046,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2t_l("aramata", "", "START.EXE", "bb031b7d7a57557636530e80b4c061b3", 747081,
 							   "SRC/WINLOBBY.Dxr", "f53af0b58070d2450a3672847434b609", 5282042, Common::JA_JPN, 404),
 
-	MACGAME1("arcofdoom", "", "Arc Player (4mb)", "ea553e3f3fa123ad38fa5249621e8c8b", 295426, 400),
+	MACGAME1("arcofdoom", "", "Arc Player (4mb)", "ea553e3f3fa123ad38fa5249621e8c8b", 295170, 404),
 	WINGAME2("arcofdoom", "", "ARC.EXE", 		  "fd3e9ad004597b01656b28c348a2ae7f", 687973,
 							  "ARC/BEGINARC.DIR", "c144c827f33d77597992e149a4763ffa", 29674, 404),
 	MACDEMO1("arcofdoom", "Demo", "ArcDemo", "cdb27c916044ae4dceb4b7326063fa03", 301669, 400),
@@ -3058,7 +3059,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2("artofmagic", "Demo", "MAGIC.EXE", "57347ee90d930c1bb222c5652c4b3a50", 690969,
 								   "WINWORLD.DIR", "0cf86a011d48ef31790514f13f92484d", 19977904, 404),
 
-	MACGAME1("artrageous", "", "Artrageous!", "17efee018a660458fae80de4364021ac", 483746, 404),
+	MACGAME2("artrageous", "", "Artrageous!", "17efee018a660458fae80de4364021ac", 483490,
+							   "DATA/ArtStar.dir", "a70e3e1be70e2d2a4251c207c77e33cc", 89820, 404),
 	WINGAME2("artrageous", "", "ART.EXE", 		   "926ca15bcb7bdccc8f9b14b052d05f83", 696827,
 							   "DATA/ARTSTAR.DIR", "a70e3e1be70e2d2a4251c207c77e33cc", 89820, 404),
 
@@ -3066,13 +3068,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("aruba", "", "ARUBA.EXE", "adb2655694ddacd49513ae50f58977ea", 696671, 404),
 
 	// Full game is not Director
-	WINDEMO1("ataripack", "Demo", "ACTDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400),
+	WINDEMO1("ataripack", "Demo", "ACTDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 404),
 
 	MACGAME1("atbat", "2.0", "At Bat", "ea553e3f3fa123ad38fa5249621e8c8b", 292906, 403),
-	WINGAME1t("atbat", "2.0", "ATBAT.EXE", "de8a2b4f91c1e7a22e36f394a3a64af5", 842033, 400),
+	WINGAME1t("atbat", "2.0", "ATBAT.EXE", "de8a2b4f91c1e7a22e36f394a3a64af5", 842033, 404),
 	WINDEMO1t("atbat", "", "ATBATDMO.EXE", "2000eefeb4bf68749dad55e101cbd318", 3266657, 400),
 
-	MACGAME1("athletics", "", "ATHLETICS", "17efee018a660458fae80de4364021ac", 482866, 404),
+	MACGAME2("athletics", "", "ATHLETICS",   "17efee018a660458fae80de4364021ac", 482610,
+							  "FIRSTMOV",	 "f2d6cb666b17905bbccc332ddb60dc07", 16198, 404),
 	WINGAME2("athletics", "", "PROJECT.EXE", "b804f1e4bf84c31979502329ee0f8c28", 696839,
 							  "FIRSTMOV",	 "f2d6cb666b17905bbccc332ddb60dc07", 16198, 404),
 
@@ -3097,7 +3100,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Original filename is みんなであそぼ　デモ
 	// Kidsoft US packaging says A Bear Family Adventure featuring Playtime in the Park by Erica Dale
-	MACDEMO1_l("bearfamily", "Demo", "Playtime Demo", "77f4098988d5386794d1530065f514cd", 301953, Common::JA_JPN, 400),
+	MACDEMO1_l("bearfamily", "Demo", "Playtime Demo", "77f4098988d5386794d1530065f514cd", 301697, Common::JA_JPN, 400),
 
 	MACGAME2("beatexp", "", "The Beat Experience", "17efee018a660458fae80de4364021ac", 485790,
 							"MAIN.DIR",			   "8735a5265dcf7d6861992f63f8eb82bf", 5761636, 404),
@@ -3106,7 +3109,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 								"MAIN.DIR",			   "b4b6fa644f64555f9f7af51454c40909", 397994, 404),
 
 	// Original filename is BeBoxへの招待
-	MACDEMO1_l("bebox", "Demo", "Invitation to BeBox", "5e2eb92e059fd2aa880c537da1385aa1", 484323, Common::JA_JPN, 404),
+	MACDEMO1_l("bebox", "Demo", "Invitation to BeBox", "5e2eb92e059fd2aa880c537da1385aa1", 484067, Common::JA_JPN, 404),
 
 	WINGAME1_l("beestenboel", "", "ZOOLOGIC.EXE", "348bbc6d04f4ab2b9493c764cdbea8f4", 773051, Common::NL_NLD, 404),
 
@@ -3128,11 +3131,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Bilingual Japanese/English
 	MACGAME1("beyondthetime", "", "Beyond the time", "2c7d0c0d55cbe3f622c7d68cedb671e0", 500421, 404),
-	WINGAME1t("beyondthetime", "", "TIME.EXE", "ed9f213b3bddf7573d40367cf1068b5c", 748793, 404),
+	WINGAME2t("beyondthetime", "", "TIME.EXE",		"ed9f213b3bddf7573d40367cf1068b5c", 748793,
+								   "DATAFILE.DXR",	"9778090a1465580b644be34699245b3a", 17508, 404),
 
 	// Demo is from covermount of PC Guide (UK) Feb 1997
-	MACGAME1("bht", "",   "A Brief History Of Time 16megs", "8719de9c083aca942fc0e5c0a127b6dc", 486982, 404),
-	MACGAME1_l("bht", "", "Eine kurze Geschichte der Zeit", "8719de9c083aca942fc0e5c0a127b6dc", 486982, Common::DE_DEU, 404),
+	MACGAME1("bht", "",   "A Brief History Of Time 16megs", "8719de9c083aca942fc0e5c0a127b6dc", 486726, 404),
+	MACGAME1_l("bht", "", "Eine kurze Geschichte der Zeit", "8719de9c083aca942fc0e5c0a127b6dc", 486726, Common::DE_DEU, 404),
 	WINGAME2("bht", "",		"BHT.EXE",		"d2f280d5ec355b252ffdadbe19332893", 692381,
 							"PLAY_BHT.DIR", "663acc406405b6fcac7e2d89230c4cc2", 8398, 404),
 	WINDEMO2("bht", "Demo", "BHT.EXE",		"d2f280d5ec355b252ffdadbe19332893", 692381,
@@ -3147,7 +3151,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2t("baseballhits", "Demo", "BASEBALL.EXE", "008d1690b0b764f8a75e4f4c6542b739", 3569928,
 									  "WINDEMO.DIR", "6f9289021ac872ed504209b0b944c8fb", 2958900, 400),
 
-	MACGAME1("blam2", "", "   BLAM!2-powermac", "71287376e445ab9c98f0d150bb0ed175", 60096, 404),
+	MACGAME1("blam2", "", "BLAM!2-powermac", "71287376e445ab9c98f0d150bb0ed175", 60096, 404),
 
 	WINGAME1("blaster", "", "DEMO.EXE", "617725437da4d66c176a9e7011977097", 24300731, 400),
 
@@ -3173,8 +3177,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("blenderbest", "", "PPC LAUNCHER", "9d10bbbf1b8d527e203c6be2eac3518c", 58058, 404),
 	WINGAME1("blenderbest", "", "BLENDPC.EXE", "408fdb0f6806d93a9af0412f3704481e", 728849, 404),
 
-	WINGAME1t("blinddate", "", "BLINDATE.EXE", "200eb58f092b3714e66596d9c435c301", 685837, 400),
-	MACGAME1("blinddate", "", "Blind Date", "5323b298a375507307a2db7de1681a64", 310661, 403),
+	WINGAME1t("blinddate", "", "BLINDATE.EXE", "200eb58f092b3714e66596d9c435c301", 685837, 404),
+	MACGAME1("blinddate", "", "Blind Date", "5323b298a375507307a2db7de1681a64", 310661, 404),
 
 	// Original release is Win/Mac hybrid, Softkey release is Windows only
 	// aka La Caverna dei Fantasmi (IT); Blinky Bill 1 en het verhaal van de Griezel-Grot (NL); A Caverna do Fantasma de Blinky Bill (PT)
