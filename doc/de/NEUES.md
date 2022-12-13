@@ -87,6 +87,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Verbesserte Unterstützung der hebräischen Versionen der Spiele von Humongous Entertainment.
    - Unterstützung für Roland MT-32 in Sam & Max korrigiert.
    - Unterstützung für die originale Benutzeroberfläche und die Speicher-Menüs von LucasArts-Spielen hinzugefügt (DOS, Windows, Amiga, Macintosh, FM-Towns, Atari ST und Commodore 64-Versionen).
+   - Unterstützung für die originale Benutzeroberfläche für die SegaCD-Version von MI1 hinzugefügt.
 
  Sherlock:
    - Unterstützung für die chinesische Version von Rose Tattoo hinzugefügt.
