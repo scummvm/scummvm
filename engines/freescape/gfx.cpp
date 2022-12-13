@@ -464,11 +464,6 @@ Graphics::RendererType determinateRenderType() {
 #endif
 						0);
 
-	#if defined(USE_TINYGL) // Prefer TinyGL until OpenGL is good enough
-	if (desiredRendererType == Graphics::kRendererTypeDefault)
-		matchingRendererType = desiredRendererType = Graphics::kRendererTypeTinyGL;
-	#endif
-
 	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
 		// Display a warning if unable to use the desired renderer
 		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
