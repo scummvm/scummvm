@@ -59,23 +59,8 @@ public:
 };
 
 bool MMMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSavesUseExtendedFormat) ||
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSimpleSavesNames);
-}
-
-bool MM::Xeen::XeenEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsReturnToLauncher) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return checkExtendedSaves(f) ||
+		(f == kSupportsLoadingDuringStartup);
 }
 
 Common::Error MMMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
