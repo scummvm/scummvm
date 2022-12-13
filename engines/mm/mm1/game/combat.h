@@ -210,7 +210,7 @@ protected:
 
 	void defeatedMonsters();
 	void selectParty();
-	void loop1();
+	void selectMonster();
 	void setTreasure();
 	void clearArrays();
 	bool moveMonsters();
