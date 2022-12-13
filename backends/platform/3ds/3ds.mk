@@ -9,6 +9,9 @@ APP_RSF         := $(srcdir)/backends/platform/3ds/app/scummvm.rsf
 APP_BANNER_IMAGE:= $(srcdir)/backends/platform/3ds/app/banner.png
 APP_BANNER_AUDIO:= $(srcdir)/backends/platform/3ds/app/banner.wav
 
+BANNERTOOL       ?= bannertool
+MAKEROM          ?= makerom
+
 .PHONY: clean_3ds dist_3ds
 
 clean: clean_3ds
@@ -53,11 +56,11 @@ $(TARGET).3dsx: $(EXECUTABLE) $(TARGET).smdh romfs
 	@echo built ... $(notdir $@)
 
 $(TARGET).bnr: $(APP_BANNER_IMAGE) $(APP_BANNER_AUDIO)
-	@bannertool makebanner -o $@ -i $(APP_BANNER_IMAGE) -a $(APP_BANNER_AUDIO)
+	@$(BANNERTOOL) makebanner -o $@ -i $(APP_BANNER_IMAGE) -a $(APP_BANNER_AUDIO)
 	@echo built ... $(notdir $@)
 
 $(TARGET).cia: $(EXECUTABLE) $(APP_RSF) $(TARGET).smdh $(TARGET).bnr romfs
-	@makerom -f cia -target t -exefslogo -o $@ -elf $(EXECUTABLE) -rsf $(APP_RSF) -banner $(TARGET).bnr -icon $(TARGET).smdh -DAPP_ROMFS=romfs/
+	@$(MAKEROM) -f cia -target t -exefslogo -o $@ -elf $(EXECUTABLE) -rsf $(APP_RSF) -banner $(TARGET).bnr -icon $(TARGET).smdh -DAPP_ROMFS=romfs/
 	@echo built ... $(notdir $@)
 
 dist_3ds: $(TARGET).cia $(TARGET).3dsx $(DIST_FILES_DOCS)
