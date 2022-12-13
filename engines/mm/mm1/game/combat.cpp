@@ -285,7 +285,7 @@ void Combat::selectParty() {
 	}
 
 	// At this point, a monster has precedence to attack
-	loop1();
+	selectMonster();
 }
 
 void Combat::defeatedMonsters() {
@@ -319,7 +319,7 @@ void Combat::defeatedMonsters() {
 	combatDone();
 }
 
-void Combat::loop1() {
+void Combat::selectMonster() {
 	for (uint i = 0; i < _remainingMonsters.size(); ++i) {
 		_monsterP = _remainingMonsters[i];
 		monsterIndexOf();
@@ -719,7 +719,7 @@ void Combat::checkParty() {
 			_party[i]->_checked = true;
 	}
 
-	loop1();
+	selectMonster();
 }
 
 void Combat::fightMonster(int monsterNum) {
