@@ -458,6 +458,17 @@ DreamWeb
    * - Willem Jan Palenstijn
      -
 
+Freescape
+^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Chris Allen
+     - Sound engine programming
+   * - Gustavo Grieco
+     -
+
 Glk
 ^^^
 
