@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-09 00:11+0000\n"
+"POT-Creation-Date: 2022-12-13 17:40+0000\n"
 "PO-Revision-Date: 2022-07-13 06:51+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -2224,7 +2224,7 @@ msgstr "GFX uitgeschakeld"
 msgid "Standard renderer"
 msgstr "Standaard renderer"
 
-#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:1008
+#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:1010
 msgid "Standard"
 msgstr "Standaard"
 
@@ -7080,44 +7080,44 @@ msgstr "~V~orige"
 msgid "~N~ext"
 msgstr "~V~olgende"
 
-#: engines/scumm/dialogs.cpp:947
+#: engines/scumm/dialogs.cpp:949
 msgid "Speech Only"
 msgstr "Alleen Spraak"
 
-#: engines/scumm/dialogs.cpp:948
+#: engines/scumm/dialogs.cpp:950
 msgid "Speech and Subtitles"
 msgstr "Spraak and Ondertitels"
 
-#: engines/scumm/dialogs.cpp:949
+#: engines/scumm/dialogs.cpp:951
 msgid "Subtitles Only"
 msgstr "Alleen ondertitels"
 
-#: engines/scumm/dialogs.cpp:957
+#: engines/scumm/dialogs.cpp:959
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Tekst en Spraak"
 
-#: engines/scumm/dialogs.cpp:1003
+#: engines/scumm/dialogs.cpp:1005
 msgid "Select a Proficiency Level."
 msgstr "Selecteer een vakkundigheidsniveau."
 
-#: engines/scumm/dialogs.cpp:1005
+#: engines/scumm/dialogs.cpp:1007
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "Raadpleeg uw Loom(TM) handleiding voor hulp."
 
-#: engines/scumm/dialogs.cpp:1009
+#: engines/scumm/dialogs.cpp:1011
 msgid "Practice"
 msgstr "Oefenen"
 
-#: engines/scumm/dialogs.cpp:1010
+#: engines/scumm/dialogs.cpp:1012
 msgid "Expert"
 msgstr "Expert"
 
-#: engines/scumm/dialogs.cpp:1042 engines/scumm/metaengine.cpp:647
+#: engines/scumm/dialogs.cpp:1044 engines/scumm/metaengine.cpp:647
 msgid "Enable game-specific enhancements"
 msgstr "Gebruik spel-specifieke verbeteringen"
 
-#: engines/scumm/dialogs.cpp:1042 engines/scumm/metaengine.cpp:648
+#: engines/scumm/dialogs.cpp:1044 engines/scumm/metaengine.cpp:648
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
@@ -7125,23 +7125,23 @@ msgstr ""
 "Pas kleine verbeteringen in het spel toe, meestal gebaseerd op andere "
 "versies van hetzelfde spel."
 
-#: engines/scumm/dialogs.cpp:1046 engines/scumm/metaengine.cpp:665
+#: engines/scumm/dialogs.cpp:1048 engines/scumm/metaengine.cpp:665
 #, fuzzy
 #| msgid "Enable the original audio cd track"
 msgid "Enable the original GUI and Menu"
 msgstr "Gebruik de originele audio CD geluidsspoor"
 
-#: engines/scumm/dialogs.cpp:1046 engines/scumm/metaengine.cpp:666
+#: engines/scumm/dialogs.cpp:1048 engines/scumm/metaengine.cpp:666
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1067
+#: engines/scumm/dialogs.cpp:1069
 msgid "Overture Timing:"
 msgstr "Ouverture Timing:"
 
-#: engines/scumm/dialogs.cpp:1071
+#: engines/scumm/dialogs.cpp:1073
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
@@ -7149,11 +7149,11 @@ msgstr ""
 "Bij gebruik van vervangende muziek past dit het moment aan wanneer de "
 "Ouverture verandert naar de scene met de Lucasfilm en Loom logotypes."
 
-#: engines/scumm/dialogs.cpp:1154
+#: engines/scumm/dialogs.cpp:1156
 msgid "Playback Adjust:"
 msgstr "Opnieuw afspelen aanpassen:"
 
-#: engines/scumm/dialogs.cpp:1158
+#: engines/scumm/dialogs.cpp:1160
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
@@ -7162,11 +7162,11 @@ msgstr ""
 "met deze setting. Gebruik dit als je vaak stukjes van een verkeerd geluid "
 "hoort."
 
-#: engines/scumm/dialogs.cpp:1237
+#: engines/scumm/dialogs.cpp:1239
 msgid "Intro Adjust:"
 msgstr "Intro Aanpassing:"
 
-#: engines/scumm/dialogs.cpp:1241
+#: engines/scumm/dialogs.cpp:1243
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
@@ -7176,11 +7176,11 @@ msgstr ""
 "als de muziek te vroeg wordt afgekapt, of wanneer de muziek niet synchroon "
 "loopt met de intro."
 
-#: engines/scumm/dialogs.cpp:1250
+#: engines/scumm/dialogs.cpp:1252
 msgid "Outlook Adjust:"
 msgstr "Vooruitzicht Aanpassing:"
 
-#: engines/scumm/dialogs.cpp:1254
+#: engines/scumm/dialogs.cpp:1256
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
@@ -7711,19 +7711,19 @@ msgstr "Vlieg naar rechts"
 msgid "Fly to lower right"
 msgstr "Vlieg naar rechts omlaag"
 
-#: engines/scumm/input.cpp:1240
+#: engines/scumm/input.cpp:1255
 msgid "Snap scroll on"
 msgstr "Snap scrollen aan"
 
-#: engines/scumm/input.cpp:1242
+#: engines/scumm/input.cpp:1257
 msgid "Snap scroll off"
 msgstr "Snap scroll uit"
 
-#: engines/scumm/input.cpp:1255
+#: engines/scumm/input.cpp:1270
 msgid "Music volume: "
 msgstr "Muziek volume: "
 
-#: engines/scumm/input.cpp:1272
+#: engines/scumm/input.cpp:1287
 msgid "Subtitle speed: "
 msgstr "Snelheid ondertitels: "
 
