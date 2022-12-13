@@ -64,8 +64,7 @@ CruDemoGump::~CruDemoGump() {
 void CruDemoGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
-	Mouse::get_instance()->pushMouseCursor();
-	Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_NONE);
+	Mouse::get_instance()->pushMouseCursor(Mouse::MOUSE_NONE);
 
 	MusicProcess *musicproc = MusicProcess::get_instance();
 	if (musicproc) {

@@ -190,7 +190,7 @@ public:
 	void flashCrossCursor();
 
 	//! push the current mouse cursor to the stack
-	void pushMouseCursor();
+	void pushMouseCursor(MouseCursor cursor);
 
 	//! pop the last mouse cursor from the stack
 	void popMouseCursor();

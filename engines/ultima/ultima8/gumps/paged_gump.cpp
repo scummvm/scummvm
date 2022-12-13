@@ -74,8 +74,7 @@ void PagedGump::InitGump(Gump *newparent, bool take_focus) {
 	_prevButton->HideGump();
 
 	Mouse *mouse = Mouse::get_instance();
-	mouse->pushMouseCursor();
-	mouse->setMouseCursor(Mouse::MOUSE_HAND); // default cursor
+	mouse->pushMouseCursor(Mouse::MOUSE_HAND);
 }
 
 void PagedGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {

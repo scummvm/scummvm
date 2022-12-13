@@ -87,8 +87,7 @@ void CreditsGump::InitGump(Gump *newparent, bool take_focus) {
 	_currentSurface = 0;
 	_currentY = 0;
 
-	Mouse::get_instance()->pushMouseCursor();
-	Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_NONE);
+	Mouse::get_instance()->pushMouseCursor(Mouse::MOUSE_NONE);
 }
 
 void CreditsGump::Close(bool no_del) {

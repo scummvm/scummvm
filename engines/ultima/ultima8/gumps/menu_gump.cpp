@@ -51,11 +51,10 @@ MenuGump::MenuGump(bool nameEntryMode)
 	_nameEntryMode = nameEntryMode;
 
 	Mouse *mouse = Mouse::get_instance();
-	mouse->pushMouseCursor();
 	if (!_nameEntryMode)
-		mouse->setMouseCursor(Mouse::MOUSE_HAND);
+		mouse->pushMouseCursor(Mouse::MOUSE_HAND);
 	else
-		mouse->setMouseCursor(Mouse::MOUSE_NONE);
+		mouse->pushMouseCursor(Mouse::MOUSE_NONE);
 
 	// Save old music state
 	MusicProcess *musicprocess = MusicProcess::get_instance();

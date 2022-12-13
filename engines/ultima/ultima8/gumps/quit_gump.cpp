@@ -54,8 +54,7 @@ static const int regQuitSound = 0;  // TODO: Work out what sound id
 
 QuitGump::QuitGump(): ModalGump(0, 0, 5, 5), _yesWidget(0), _noWidget(0) {
 	Mouse *mouse = Mouse::get_instance();
-	mouse->pushMouseCursor();
-	mouse->setMouseCursor(Mouse::MOUSE_HAND);
+	mouse->pushMouseCursor(Mouse::MOUSE_HAND);
 	if (GAME_IS_U8) {
 		_gumpShape = u8GumpShape;
 		_askShape = u8AskShapeId;

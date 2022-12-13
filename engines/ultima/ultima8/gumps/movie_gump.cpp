@@ -134,8 +134,7 @@ void MovieGump::InitGump(Gump *newparent, bool take_focus) {
 
 	_player->start();
 
-	Mouse::get_instance()->pushMouseCursor();
-	Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_NONE);
+	Mouse::get_instance()->pushMouseCursor(Mouse::MOUSE_NONE);
 
 	CruStatusGump *statusgump = CruStatusGump::get_instance();
 	if (statusgump) {

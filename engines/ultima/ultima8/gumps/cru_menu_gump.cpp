@@ -53,8 +53,7 @@ CruMenuGump::CruMenuGump()
 	: ModalGump(0, 0, 640, 480, 0, FLAG_DONT_SAVE) {
 
 	Mouse *mouse = Mouse::get_instance();
-	mouse->pushMouseCursor();
-	mouse->setMouseCursor(Mouse::MOUSE_HAND);
+	mouse->pushMouseCursor(Mouse::MOUSE_HAND);
 
 	// Save old music state
 	MusicProcess *musicprocess = MusicProcess::get_instance();

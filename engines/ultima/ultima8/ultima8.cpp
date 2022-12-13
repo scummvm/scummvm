@@ -464,7 +464,7 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 
 	// reset mouse cursor
 	_mouse->popAllCursors();
-	_mouse->pushMouseCursor();
+	_mouse->pushMouseCursor(Mouse::MOUSE_NORMAL);
 
 	FORGET_OBJECT(_world);
 	_objectManager->reset();
@@ -994,8 +994,7 @@ Common::Error Ultima8Engine::saveGameStream(Common::WriteStream *stream, bool is
 	if (modalGump)
 		modalGump->HideGump();
 
-	_mouse->pushMouseCursor();
-	_mouse->setMouseCursor(Mouse::MOUSE_WAIT);
+	_mouse->pushMouseCursor(Mouse::MOUSE_WAIT);
 
 	// Redraw to indicate busy and for save thumbnail
 	paint();
@@ -1088,7 +1087,7 @@ void Ultima8Engine::resetEngine() {
 
 	// reset mouse cursor
 	_mouse->popAllCursors();
-	_mouse->pushMouseCursor();
+	_mouse->pushMouseCursor(Mouse::MOUSE_NORMAL);
 
 	_timeOffset = -(int32)Kernel::get_instance()->getFrameNum();
 	_inversion = 0;
@@ -1246,8 +1245,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 		return Common::Error(Common::kReadingFailed, "Unsupported savegame version");
 	}
 
-	_mouse->pushMouseCursor();
-	_mouse->setMouseCursor(Mouse::MOUSE_WAIT);
+	_mouse->pushMouseCursor(Mouse::MOUSE_WAIT);
 	_screen->BeginPainting();
 	_mouse->paint();
 	_screen->EndPainting();
@@ -1372,7 +1370,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 
 	// Reset mouse cursor
 	_mouse->popAllCursors();
-	_mouse->pushMouseCursor();
+	_mouse->pushMouseCursor(Mouse::MOUSE_NORMAL);
 
 	/*
 	// In case of bugs, ensure persistent processes are around?

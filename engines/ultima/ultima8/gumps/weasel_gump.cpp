@@ -104,8 +104,7 @@ WeaselGump::WeaselGump(uint16 level)
 	  _state(kWeaselStart), _curItem(0), _ammoMode(false), _curItemCost(1),
 	  _curItemShape(0), _ui(nullptr), _movie(nullptr), _weaselDat(nullptr) {
 	Mouse *mouse = Mouse::get_instance();
-	mouse->pushMouseCursor();
-	mouse->setMouseCursor(Mouse::MOUSE_HAND);
+	mouse->pushMouseCursor(Mouse::MOUSE_HAND);
 }
 
 WeaselGump::~WeaselGump() {

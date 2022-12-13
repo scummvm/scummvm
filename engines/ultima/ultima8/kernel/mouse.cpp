@@ -39,6 +39,8 @@ Mouse::Mouse() : _flashingCursorTime(0), _mouseOverGump(0),
 		_dragging(DRAG_NOT), _dragging_objId(0), _draggingItem_startGump(0),
 		_draggingItem_lastGump(0) {
 	_instance = this;
+
+	_cursors.push(MOUSE_NONE);
 }
 
 Mouse::~Mouse() {
@@ -46,7 +48,6 @@ Mouse::~Mouse() {
 }
 
 void Mouse::setup() {
-	pushMouseCursor();
 }
 
 bool Mouse::buttonDown(Shared::MouseButton button) {
@@ -119,7 +120,7 @@ bool Mouse::buttonUp(Shared::MouseButton button) {
 
 void Mouse::popAllCursors() {
 	_cursors.clear();
-	CursorMan.popAllCursors();
+	_cursors.push(MOUSE_NONE);
 }
 
 bool Mouse::isMouseDownEvent(Shared::MouseButton button) const {
@@ -344,8 +345,8 @@ void Mouse::flashCrossCursor() {
 	_flashingCursorTime = g_system->getMillis();
 }
 
-void Mouse::pushMouseCursor() {
-	_cursors.push(MOUSE_NORMAL);
+void Mouse::pushMouseCursor(MouseCursor cursor) {
+	_cursors.push(cursor);
 }
 
 void Mouse::popMouseCursor() {
@@ -402,8 +403,7 @@ void Mouse::startDragging(int startx, int starty) {
 	perr << "Dragging object " << _dragging_objId << " (class=" << (obj ? obj->GetClassType().class_name : "NULL") << ")" << Std::endl;
 #endif
 
-	pushMouseCursor();
-	setMouseCursor(MOUSE_NORMAL);
+	pushMouseCursor(MOUSE_NORMAL);
 
 	// pause the kernel
 	Kernel::get_instance()->pause();
