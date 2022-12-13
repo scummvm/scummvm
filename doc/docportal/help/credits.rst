@@ -995,7 +995,7 @@ SCUMM
    * - Torbjörn Andersson
      -
    * - Andrea Boscarino
-     - Digital iMUSE, various fixes
+     - Digital iMUSE, SMUSH audio, GUI
    * - James Brown
      - (retired)
    * - Jonathan Gray

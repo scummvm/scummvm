@@ -1,6 +1,6 @@
 begin_section("SCUMM");
 	add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-	add_person("Andrea Boscarino", "AndywinXp", "Digital iMUSE, various fixes");
+	add_person("Andrea Boscarino", "AndywinXp", "Digital iMUSE, SMUSH audio, GUI");
 	add_person("James Brown", "ender", "(retired)");
 	add_person("Jonathan Gray", "khalek", "(retired)");
 	add_person("Vincent Hamm", "yaz0r", "(retired)");
