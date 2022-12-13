@@ -75,6 +75,11 @@ bool ARMDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) 
 			}
 			break;
 
+		// Note: PREL31 often points to a different section, so if we ever load in several segments, this needs to be adjusted
+		case R_ARM_PREL31:
+//		        debug(8, "elfloader: R_ARM_PREL31: PC-relative reference, ld takes care of necessary relocation work for us.");
+			break;
+
 		case R_ARM_PC24:
 //			debug(8, "elfloader: R_ARM_PC24: PC-relative jump, ld takes care of necessary relocation work for us.");
 			break;

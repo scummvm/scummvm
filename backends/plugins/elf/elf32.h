@@ -234,6 +234,7 @@ typedef struct {
 #define R_ARM_JUMP24		29
 #define R_ARM_TARGET1		38
 #define R_ARM_V4BX 			40
+#define R_ARM_PREL31 			42
 
 // PPC relocation types
 #define R_PPC_NONE			0
