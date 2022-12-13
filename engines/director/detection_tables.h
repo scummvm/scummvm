@@ -482,6 +482,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "aruba",				"Aruba Interactive" },
 	{ "athletics",			"International Athletics" },
 	{ "babylon5int",		"Babylon 5 Interactive" },
+	{ "babylon5guide",		"The Official Guide to Babylon 5" },
 	{ "battles",			"Battles of the World" },
 	{ "beatexp",			"The Beat Experience" },
 	{ "bettypage",			"Betty Page: The World of a Pin-Up Queen" },
@@ -5310,6 +5311,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("atmos", "", "ATMOS/ATMOS.EXE", "b9ce0053d4bf2570adfed84903734efa", 1410461, Common::JA_JPN, 501),
 
 	WINGAME1("babesintoyland", "", "BABESIN.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411231, 501),
+
+	MACGAME1("babylon5guide", "", "Babylon 5 Guided Tour", "06ed90580400cd9e263525f84c8075fd", 705445, 500),
+	WINGAME2t("babylon5guide", "", "B5TOUR.EXE", "87f3188518ebf28da4db11334819cd63", 1410463,
+								   "INTRO.DXR",  "0b5efb79490763ddb50f018eacba9f11", 1663348, 501),
 
 	// At game start, choice of languages includes Finnish, Swedish, English, Danish
 	// Developed by TATI Mixedia, Gothenburg, Sweden (1999); published locally by IQ Media Nordic, Stockholm
