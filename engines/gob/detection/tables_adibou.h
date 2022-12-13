@@ -79,7 +79,7 @@
 		GUIO0()
 	},
 	kGameTypeAdibou2,
-	kFeaturesNone,
+	kFeatures640x480,
 	0, 0, 0
 },
 {
@@ -93,7 +93,7 @@
 		GUIO0()
 	},
 	kGameTypeAdibou2,
-	kFeaturesNone,
+	kFeatures640x480,
 	0, 0, 0
 },
 {
@@ -107,7 +107,7 @@
 		GUIO0()
 	},
 	kGameTypeAdibou2,
-	kFeaturesNone,
+	kFeatures640x480,
 	0, 0, 0
 },
 {
@@ -121,7 +121,7 @@
 		GUIO0()
 	},
 	kGameTypeAdibou2,
-	kFeaturesNone,
+	kFeatures640x480,
 	0, 0, 0
 },
 {
@@ -135,7 +135,7 @@
 		GUIO0()
 	},
 	kGameTypeAdibou2,
-	kFeaturesNone,
+	kFeatures640x480,
 	0, 0, 0
 },
 {
@@ -149,7 +149,7 @@
 		GUIO0()
 	},
 	kGameTypeAdibou2,
-	kFeaturesNone,
+	kFeatures640x480,
 	0, 0, 0
 },
 {
@@ -163,7 +163,7 @@
 		GUIO0()
 	},
 	kGameTypeAdibou2,
-	kFeaturesNone,
+	kFeatures640x480,
 	0, 0, 0
 },
 {
@@ -177,7 +177,7 @@
 		GUIO0()
 	},
 	kGameTypeAdibou2,
-	kFeaturesNone,
+	kFeatures640x480,
 	0, 0, 0
 },
 
@@ -194,7 +194,7 @@
 		GUIO0()
 	},
 	kGameTypeAdibou2,
-	kFeaturesNone,
+	kFeatures640x480,
 	0, 0, 0
 },
 
@@ -210,7 +210,7 @@
 		GUIO0()
 	},
 	kGameTypeAdibou2,
-	kFeaturesNone,
+	kFeatures640x480,
 	0, 0, 0
 },
 
@@ -226,7 +226,7 @@
 		GUIO0()
 	},
 	kGameTypeAdibou2,
-	kFeaturesNone,
+	kFeatures640x480,
 	0, 0, 0
 },
 
@@ -241,7 +241,7 @@
 		ADGF_TESTING,
 		GUIO0()},
 	kGameTypeAdibou2,
-	kFeaturesNone,
+	kFeatures640x480,
 	0, 0, 0
 },
 
