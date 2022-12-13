@@ -1835,7 +1835,7 @@ void Inter_v1::o1_manageDataFile(OpFuncParams &params) {
 	Common::String file = _vm->_game->_script->evalString();
 
 	if (!file.empty()) {
-		_vm->_dataIO->openArchive(Common::Path(file, '\\').rawString(), true);
+		_vm->_dataIO->openArchive(Common::Path(file, '\\').toString('/'), true);
 	} else {
 		_vm->_dataIO->closeArchive(true);
 
