@@ -3151,7 +3151,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2t("baseballhits", "Demo", "BASEBALL.EXE", "008d1690b0b764f8a75e4f4c6542b739", 3569928,
 									  "WINDEMO.DIR", "6f9289021ac872ed504209b0b944c8fb", 2958900, 400),
 
-	MACGAME1("blam2", "", "BLAM!2-powermac", "71287376e445ab9c98f0d150bb0ed175", 60096, 404),
+	MACGAME1("blam2", "", "   BLAM!2-powermac", "71287376e445ab9c98f0d150bb0ed175", 60096, 404),
 
 	WINGAME1("blaster", "", "DEMO.EXE", "617725437da4d66c176a9e7011977097", 24300731, 400),
 
