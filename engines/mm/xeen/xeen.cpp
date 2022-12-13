@@ -118,6 +118,13 @@ bool XeenEngine::initialize() {
 	return true;
 }
 
+bool XeenEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsReturnToLauncher) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
 void XeenEngine::loadSettings() {
 	_gameWon[0] = ConfMan.hasKey("game_won") && ConfMan.getBool("game_won");
 	_gameWon[1] = ConfMan.hasKey("game_won2") && ConfMan.getBool("game_won2");
