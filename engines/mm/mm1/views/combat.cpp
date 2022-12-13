@@ -190,7 +190,7 @@ void Combat::timeout() {
 		checkMonsterSpellDone();
 		break;
 	case WAITS_FOR_OPENING:
-		selectMonster();
+		combatLoop(true);
 		break;
 	case DEFEATED_MONSTERS: {
 		auto &spells = g_globals->_activeSpells;

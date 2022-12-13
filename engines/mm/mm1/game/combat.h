@@ -170,9 +170,10 @@ protected:
 	/*------- combat execution ------*/
 
 	/**
-	 * Start of the main combat loop
+	 * Main combat loop that selects the next party
+	 * member or monster to take their turn
 	 */
-	void combatLoop();
+	void combatLoop(bool checkMonstersFirst = true);
 
 	/**
 	 * Select treasure for a defeated monster
@@ -209,8 +210,6 @@ protected:
 	void checkMonsterActions();
 
 	void defeatedMonsters();
-	void selectParty();
-	void selectMonster();
 	void setTreasure();
 	void clearArrays();
 	bool moveMonsters();

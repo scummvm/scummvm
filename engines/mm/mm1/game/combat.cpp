@@ -261,31 +261,60 @@ void Combat::dispelParty() {
 	_monsterP = tmpM;
 }
 
-void Combat::combatLoop() {
-	if (_remainingMonsters.empty()) {
-		defeatedMonsters();
-	} else {
-		selectParty();
-	}
-}
+void Combat::combatLoop(bool checkMonstersFirst) {
+	for (;;) {
+		// Check if the monsters have all been defeated
+		if (_remainingMonsters.empty()) {
+			defeatedMonsters();
+			return;
+		}
 
-void Combat::selectParty() {
-	for (uint i = 0; i < _party.size(); ++i) {
-		Character &c = *_party[i];
-		g_globals->_currCharacter = &c;
+		// Check for initial loop where monsters can be checked first
+		if (!checkMonstersFirst) {
+			for (uint i = 0; i < _party.size(); ++i) {
+				Character &c = *_party[i];
+				g_globals->_currCharacter = &c;
 
-		int speed = c._speed._current;
-		if (speed && speed >= _handicap2) {
-			if (!(c._condition & (BLINDED | SILENCED | DISEASED | POISONED))) {
-				// Character is enabled
-				setMode(SELECT_OPTION);
-				return;
+				int speed = c._speed._current;
+				if (speed && speed >= _handicap2) {
+					if (!(c._condition & (BLINDED | SILENCED | DISEASED | POISONED))) {
+						// Character is enabled
+						setMode(SELECT_OPTION);
+						return;
+					}
+				}
 			}
 		}
-	}
 
-	// At this point, a monster has precedence to attack
-	selectMonster();
+		checkMonstersFirst = false;
+		for (uint i = 0; i < _remainingMonsters.size(); ++i) {
+			_monsterP = _remainingMonsters[i];
+			monsterIndexOf();
+
+			if (_monsterP->_speed && _monsterP->_speed >= _handicap3
+				&& !_remainingMonsters[i]->_checked) {
+				_remainingMonsters[i]->_checked = true;
+
+				if (_remainingMonsters[i]->_status & (MONFLAG_ASLEEP | MONFLAG_HELD |
+					MONFLAG_WEBBED | MONFLAG_PARALYZED)) {
+					checkMonsterFlees();
+					return;
+				}
+			}
+		}
+
+		// Decrease the handicap/speed threshold
+		if (_handicap2 == 1 && _handicap3 == 1) {
+			// End of the round
+			nextRound();
+			break;
+		} else {
+			if (_handicap2 != 1)
+				--_handicap2;
+			if (_handicap3 != 1)
+				--_handicap3;
+		}
+	}
 }
 
 void Combat::defeatedMonsters() {
@@ -317,33 +346,6 @@ void Combat::defeatedMonsters() {
 	g_globals->_party.combatDone();
 
 	combatDone();
-}
-
-void Combat::selectMonster() {
-	for (uint i = 0; i < _remainingMonsters.size(); ++i) {
-		_monsterP = _remainingMonsters[i];
-		monsterIndexOf();
-
-		if (_monsterP->_speed && _monsterP->_speed >= _handicap3
-				&& !_remainingMonsters[i]->_checked) {
-			_remainingMonsters[i]->_checked = true;
-
-			if (_remainingMonsters[i]->_status & (MONFLAG_ASLEEP | MONFLAG_HELD |
-					MONFLAG_WEBBED | MONFLAG_PARALYZED)) {
-				checkMonsterFlees();
-				return;
-			}
-		}
-	}
-
-	if (_handicap2 == 1 && _handicap3 == 1) {
-		nextRound();
-	} else {
-		if (_handicap2 != 1)
-			--_handicap2;
-		if (_handicap3 != 1)
-			--_handicap3;
-	}
 }
 
 void Combat::setTreasure() {
@@ -719,7 +721,7 @@ void Combat::checkParty() {
 			_party[i]->_checked = true;
 	}
 
-	selectMonster();
+	combatLoop(true);
 }
 
 void Combat::fightMonster(int monsterNum) {
