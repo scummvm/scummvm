@@ -171,7 +171,7 @@ GeometricObject::GeometricObject(
 void GeometricObject::setOrigin(Math::Vector3d origin_) {
 	_origin = origin_;
 	computeBoundingBox();
-};
+}
 
 void GeometricObject::scale(int factor) {
 	_origin = _origin / factor;
