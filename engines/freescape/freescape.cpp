@@ -81,8 +81,6 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_mouseSensitivity = 0.25f;
 	_demoMode = false;
 	_shootMode = false;
-	_crossairPosition.x = _screenW / 2;
-	_crossairPosition.y = _screenH / 2;
 	_demoIndex = 0;
 	_currentDemoInputCode = 0;
 	_currentDemoInputRepetition = 0;
@@ -473,7 +471,12 @@ void FreescapeEngine::processInput() {
 Common::Error FreescapeEngine::run() {
 	_frameLimiter = new Graphics::FrameLimiter(g_system, ConfMan.getInt("engine_speed"));
 	// Initialize graphics
+	_screenW = g_system->getWidth();
+	_screenH = g_system->getHeight();
 	_gfx = createRenderer(_screenW, _screenH, _renderMode);
+	_crossairPosition.x = _screenW / 2;
+	_crossairPosition.y = _screenH / 2;
+
 	// The following error code will force return to launcher
 	// but it will not force any other GUI message to be displayed
 	if (!_gfx)
@@ -492,7 +495,6 @@ Common::Error FreescapeEngine::run() {
 
 	// Simple main event loop
 	int saveSlot = ConfMan.getInt("save_slot");
-	_system->lockMouse(true);
 	centerCrossair();
 
 	if (_title) {
