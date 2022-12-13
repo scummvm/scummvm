@@ -33,7 +33,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      The New Adventures of Zak McKracken.
 
  GOB:
-   - Added support for "Adibou 2 Read/Count 4 & 5" and "Read/Count 6 & 7".
+   - Added support for Adibou 2 "Environment", "Read/Count 4 & 5" and "Read/Count 6 & 7".
 
  Kyra:
    - Added support for the Korean version of Legend of Kyrandia 1.
