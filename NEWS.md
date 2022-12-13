@@ -91,6 +91,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed Roland MT-32 support in Sam & Max.
    - Implemented original GUI and save menus for LucasArts games (DOS, Windows,
      Amiga, Macintosh, FM-Towns, Atari ST and Commodore 64 versions).
+   - Implemented original save/load menu for MI1 SegaCD.
 
  Sherlock:
    - Added support for Chinese Rose Tattoo.
