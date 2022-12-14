@@ -232,12 +232,12 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 		_portraitSubFilesArray[i] = nullptr;
 	}
 
-	memset(_characterNamePt1, 0, 5);
+	_characterNamePt1 = "";
 	_characterNamePt2 = "";
 	_enemyNamePt1 = "";
 	_enemyNamePt2 = "";
 	_nameBuffer = "";
-	memset(_attackBuffer, 0, 20);
+	_attackBuffer = "";
 
 	for (int i = 0; i < 100; ++i) {
 		_imp1PtrArray[i] = nullptr;
@@ -3634,13 +3634,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 0:
 		switch (rand3) {
 		case 1:
-			_messageToBePrinted += Common::String::format("  %s%s reels from the blow!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s reels from the blow!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		case 2:
-			_messageToBePrinted += Common::String::format("  %s%s sways from the attack!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s sways from the attack!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		case 3:
-			_messageToBePrinted += Common::String::format("  %s%s looks dazed!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s looks dazed!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		default:
 			break;
@@ -3649,13 +3649,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 1:
 		switch (rand3) {
 		case 1:
-			_messageToBePrinted += Common::String::format("  %s%s cries out in agony!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s cries out in agony!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		case 2:
-			_messageToBePrinted += Common::String::format("  %s%s screams from the abuse!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s screams from the abuse!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		case 3:
-			_messageToBePrinted += Common::String::format("  %s%s wails terribly!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s wails terribly!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		default:
 			break;
@@ -3664,13 +3664,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 2:
 		switch (rand3) {
 		case 1:
-			_messageToBePrinted += Common::String::format("  %s%s is staggering!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s is staggering!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		case 2:
-			_messageToBePrinted += Common::String::format("  %s%s falters for a moment!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s falters for a moment!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		case 3:
-			_messageToBePrinted += Common::String::format("  %s%s is stumbling about!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s is stumbling about!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		default:
 			break;
@@ -3679,13 +3679,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 3:
 		switch (rand3) {
 		case 1:
-			_messageToBePrinted += Common::String::format("  %s%s winces from the pain!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s winces from the pain!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		case 2:
-			_messageToBePrinted += Common::String::format("  %s%s cringes from the damage!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s cringes from the damage!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		case 3:
-			_messageToBePrinted += Common::String::format("  %s%s shrinks from the wound!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s shrinks from the wound!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		default:
 			break;
@@ -3694,13 +3694,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 4:
 		switch (rand3) {
 		case 1:
-			_messageToBePrinted += Common::String::format("  %s%s screams!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s screams!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		case 2:
-			_messageToBePrinted += Common::String::format("  %s%s bellows!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s bellows!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		case 3:
-			_messageToBePrinted += Common::String::format("  %s%s shrills!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s shrills!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		default:
 			break;
@@ -3709,13 +3709,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 5:
 		switch (rand3) {
 		case 1:
-			_messageToBePrinted += Common::String::format("  %s%s chortles!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s chortles!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		case 2:
-			_messageToBePrinted += Common::String::format("  %s%s seems amused!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s seems amused!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		case 3:
-			_messageToBePrinted += Common::String::format("  %s%s looks concerned!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s looks concerned!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		default:
 			break;
@@ -3724,13 +3724,13 @@ void EfhEngine::addReactionText(int16 id) {
 	case 6:
 		switch (rand3) {
 		case 1:
-			_messageToBePrinted += Common::String::format("  %s%s laughs at the feeble attack!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s laughs at the feeble attack!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		case 2:
-			_messageToBePrinted += Common::String::format("  %s%s smiles at the pathetic attack!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s smiles at the pathetic attack!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		case 3:
-			_messageToBePrinted += Common::String::format("  %s%s laughs at the ineffective assault!", _characterNamePt1, _characterNamePt2.c_str());
+			_messageToBePrinted += Common::String::format("  %s%s laughs at the ineffective assault!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 			break;
 		default:
 			break;

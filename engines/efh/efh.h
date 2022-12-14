@@ -522,10 +522,10 @@ private:
 	uint8 _techDataArr[19][4100];
 	Common::String _enemyNamePt1;
 	Common::String _enemyNamePt2;
-	char _characterNamePt1[5];
+	Common::String _characterNamePt1;
 	Common::String _characterNamePt2;
 	Common::String _nameBuffer;
-	char _attackBuffer[20];
+	Common::String _attackBuffer;
 	Common::String _messageToBePrinted;
 
 	uint8 *_mapBitmapRefArr[19];
