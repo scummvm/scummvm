@@ -327,25 +327,6 @@ struct StringsTable {
 
 typedef Common::Array<Point> PointList;
 
-enum ColorId {
-	kITEColorTransBlack = 0x00,
-	kITEColorBrightWhite = 0x01,
-	kITEColorWhite = 0x02,
-	kITEColorLightGrey = 0x04,
-	kITEColorGrey = 0x0a,
-	kITEColorDarkGrey = 0x0b,
-	kITEColorDarkGrey0C = 0x0C,
-	kITEColorBlack = 0x0f,
-	kITEColorRed = 0x65,
-	kITEColorDarkBlue8a = 0x8a,
-	kITEColorBlue89 = 0x89,
-	kITEColorLightBlue92 = 0x92,
-	kITEColorBlue = 0x93,
-	kITEColorLightBlue94 = 0x94,
-	kITEColorLightBlue96 = 0x96,
-	kITEColorGreen = 0xba
-};
-
 enum KnownColor {
 	kKnownColorTransparent,
 	kKnownColorBrightWhite,
@@ -414,6 +395,42 @@ public:
 		: Common::MemoryReadStreamEndian(byteArray.getBuffer(), byteArray.size(), bigEndian),
 		ReadStreamEndian(bigEndian) {
 	}
+};
+
+enum ColorId {
+	// DOS and AGA palettes
+	kITEDOSColorTransBlack = 0x00,
+	kITEDOSColorBrightWhite = 0x01,
+	kITEDOSColorWhite = 0x02,
+	kITEDOSColorLightGrey = 0x04,
+	kITEDOSColorGrey = 0x0a,
+	kITEDOSColorDarkGrey = 0x0b,
+	kITEDOSColorDarkGrey0C = 0x0C,
+	kITEDOSColorBlack = 0x0f,
+	kITEDOSColorRed = 0x65,
+	kITEDOSColorDarkBlue8a = 0x8a,
+	kITEDOSColorBlue89 = 0x89,
+	kITEDOSColorLightBlue92 = 0x92,
+	kITEDOSColorBlue = 0x93,
+	kITEDOSColorLightBlue94 = 0x94,
+	kITEDOSColorLightBlue96 = 0x96,
+	kITEDOSColorGreen = 0xba,
+
+        // ECS palette
+	kITEECSColorTransBlack = 0x00,
+	kITEECSColorBlack = 0x01,
+	kITEECSColorGreen = 0x05,
+	kITEECSColorBlue = 0x08,
+	kITEECSColorBlue89 = 0x08, // guess
+	kITEECSColorDarkBlue8a = 0x08, // guess
+	kITEECSColorLightBlue92 = 0x08, // guess
+	kITEECSColorLightBlue94 = 0x08, // guess
+	kITEECSColorLightBlue96 = 0x08, // guess
+	kITEECSColorDarkGrey = 0x09,
+	kITEECSColorDarkGrey0C = 0x09, // guess
+	kITEECSColorWhite = 0x0f,
+	kITEECSColorBrightWhite = 0x0f,
+	kITEECSColorGrey = 0x16,
 };
 
 class SagaEngine : public Engine {
@@ -606,7 +623,25 @@ public:
 	ColorId KnownColor2ColorId(KnownColor knownColor);
 	void setTalkspeed(int talkspeed);
 	int getTalkspeed() const;
+
+#define ITE_COLOR_DISPATCHER(NAME) \
+	ColorId iteColor ## NAME() const { return isECS() ? kITEECSColor ## NAME : kITEDOSColor ## NAME; }
+	ITE_COLOR_DISPATCHER(Black)
+	ITE_COLOR_DISPATCHER(DarkGrey)
+	ITE_COLOR_DISPATCHER(BrightWhite)
+	ITE_COLOR_DISPATCHER(Green)
+	ITE_COLOR_DISPATCHER(Blue)
+	ITE_COLOR_DISPATCHER(DarkBlue8a)
+	ITE_COLOR_DISPATCHER(LightBlue92)
+	ITE_COLOR_DISPATCHER(LightBlue94)
+	ITE_COLOR_DISPATCHER(LightBlue96)
+	ITE_COLOR_DISPATCHER(DarkGrey0C)
+	ITE_COLOR_DISPATCHER(Grey)
+	ITE_COLOR_DISPATCHER(White)
+	ITE_COLOR_DISPATCHER(TransBlack)
+#undef ITE_COLOR_DISPATCHER
 };
+
 
 } // End of namespace Saga
 
