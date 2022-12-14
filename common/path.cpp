@@ -276,6 +276,20 @@ Path Path::punycodeDecode() const {
 	return ret;
 }
 
+Path Path::joinComponents(const StringArray& c) {
+	String res;
+
+	for (uint i = 0; i < c.size(); i++) {
+		res += c[i];
+		if (i + 1 < c.size())
+			res += DIR_SEPARATOR;
+	}
+
+	Path ret;
+	ret._str = res;
+	return ret;
+}
+
 // See getIdentifierString() for more details.
 // This does the same but for a single path component and is used by
 // getIdentifierString().

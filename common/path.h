@@ -215,6 +215,12 @@ public:
 	 * 2 separots follow each other
 	 */
 	StringArray splitComponents() const;
+
+
+	/**
+	 * Opposite of splitComponents
+	 */
+	static Path joinComponents(const StringArray& c);
 };
 
 /** @} */
