@@ -384,7 +384,7 @@ dgFloat32 dgCollisionScene::RayCastSimd(const dgVector &localP0,
 			if (!me->m_left) {
 				_ASSERTE(!me->m_right);
 				dgContactPoint tmpContactOut;
-				const dgProxy *const proxy = (dgProxy *)me;
+				const dgProxy *const proxy = (const dgProxy *)me;
 				dgVector l0(proxy->m_matrix.UntransformVector(localP0));
 				dgVector l1(proxy->m_matrix.UntransformVector(localP1));
 				dgFloat32 param = proxy->m_shape->RayCastSimd(l0, l1, tmpContactOut,
@@ -437,7 +437,7 @@ dgFloat32 dgCollisionScene::RayCast(const dgVector &localP0,
 			if (!me->m_left) {
 				_ASSERTE(!me->m_right);
 				dgContactPoint tmpContactOut;
-				const dgProxy *const proxy = (dgProxy *)me;
+				const dgProxy *const proxy = (const dgProxy *)me;
 				dgVector l0(proxy->m_matrix.UntransformVector(localP0));
 				dgVector l1(proxy->m_matrix.UntransformVector(localP1));
 				dgFloat32 param = proxy->m_shape->RayCast(l0, l1, tmpContactOut,
@@ -490,7 +490,7 @@ void dgCollisionScene::CollidePairSimd(
 
 			if (!me->m_left) {
 				_ASSERTE(!me->m_right);
-				const dgProxy *const sceneProxy = (dgProxy *)me;
+				const dgProxy *const sceneProxy = (const dgProxy *)me;
 				m_world->SceneContactsSimd(*sceneProxy, pair, proxy);
 			} else {
 				_ASSERTE(me->m_left);
@@ -531,7 +531,7 @@ void dgCollisionScene::CollidePair(dgCollidingPairCollector::dgPair *const pair,
 
 			if (!me->m_left) {
 				_ASSERTE(!me->m_right);
-				const dgProxy *const sceneProxy = (dgProxy *)me;
+				const dgProxy *const sceneProxy = (const dgProxy *)me;
 				m_world->SceneContacts(*sceneProxy, pair, proxy);
 			} else {
 				_ASSERTE(me->m_left);

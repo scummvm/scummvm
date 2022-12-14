@@ -66,34 +66,8 @@ dgTriplex dgCollisionConvex::m_hullDirs[] = {
 dgVector dgCollisionConvex::m_multiResDir[8];
 dgVector dgCollisionConvex::m_multiResDir_sse[6];
 
-dgVector dgCollisionConvex::m_zero(dgFloat32(0.0f), dgFloat32(0.0f),
-                                   dgFloat32(0.0f), dgFloat32(0.0f));
-dgVector dgCollisionConvex::m_negOne(dgFloat32(-1.0f), dgFloat32(-1.0f),
-                                     dgFloat32(-1.0f), dgFloat32(-1.0f));
-dgVector dgCollisionConvex::m_nrh0p5(dgFloat32(0.5f), dgFloat32(0.5f),
-                                     dgFloat32(0.5f), dgFloat32(0.5f));
-dgVector dgCollisionConvex::m_nrh3p0(dgFloat32(3.0f), dgFloat32(3.0f),
-                                     dgFloat32(3.0f), dgFloat32(3.0f));
-dgVector dgCollisionConvex::m_indexStep(dgFloat32(4.0f), dgFloat32(4.0f),
-                                        dgFloat32(4.0f), dgFloat32(4.0f));
-dgVector dgCollisionConvex::m_index_0123(dgFloat32(0.0f), dgFloat32(1.0f),
-        dgFloat32(2.0f), dgFloat32(3.0f));
-dgVector dgCollisionConvex::m_index_4567(dgFloat32(4.0f), dgFloat32(5.0f),
-        dgFloat32(6.0f), dgFloat32(7.0f));
-dgVector dgCollisionConvex::m_huge(dgFloat32(1.0e20f), dgFloat32(1.0e20f),
-                                   dgFloat32(1.0e20f), dgFloat32(1.0e20f));
-dgVector dgCollisionConvex::m_negativeTiny(dgFloat32(-1.0e-24f),
-        dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
-dgVector dgCollisionConvex::m_aabb_padd(DG_MAX_COLLISION_PADDING,
-                                        DG_MAX_COLLISION_PADDING, DG_MAX_COLLISION_PADDING, dgFloat32(0.0f));
-
 // dgCollisionConvex::IntVector dgCollisionConvex::m_signMask = {0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff};
 // dgCollisionConvex::IntVector dgCollisionConvex::m_triplexMask = {0xffffffff, 0xffffffff, 0xffffffff, 0x0};
-
-dgVector dgCollisionConvex::m_signMask(dgFloat32(0.0f), dgFloat32(0.0f),
-                                       dgFloat32(0.0f), dgFloat32(0.0f));
-dgVector dgCollisionConvex::m_triplexMask(dgFloat32(0.0f), dgFloat32(0.0f),
-        dgFloat32(0.0f), dgFloat32(0.0f));
 
 dgInt32 dgCollisionConvex::m_iniliazised = 0;
 
@@ -1647,7 +1621,7 @@ dgFloat32 dgCollisionConvex::RayCast(const dgVector &localP0,
 
 	dgFloat32 interset = dgFloat32(1.2f);
 	if (RayHitBox(localP0, localP1)) {
-		if ((m_collsionId != m_convexHullCollision) || (((dgCollisionConvexHull *)this)->m_faceCount > 48)) {
+		if ((m_collsionId != m_convexHullCollision) || (((const dgCollisionConvexHull *)this)->m_faceCount > 48)) {
 			//          dgInt32 i;
 			//          dgInt32 i0;
 			//          dgInt32 i1;
@@ -1803,9 +1777,9 @@ dgFloat32 dgCollisionConvex::RayCast(const dgVector &localP0,
 			dgFloat32 tL = dgFloat32(1.0f); // for the minimum leaving segment parameter;
 			dgVector dS(localP1 - localP0); // is the segment direction vector;
 
-			dgInt32 faceCount = ((dgCollisionConvexHull *)this)->m_faceCount;
+			dgInt32 faceCount = ((const dgCollisionConvexHull *)this)->m_faceCount;
 			const dgConvexSimplexEdge *const *faceArray =
-			    ((dgCollisionConvexHull *)this)->m_faceArray;
+			    ((const dgCollisionConvexHull *)this)->m_faceArray;
 
 			dgInt32 hasHit = 0;
 			for (dgInt32 i = 0; i < faceCount; i++) {

@@ -1912,22 +1912,22 @@ void *dgMeshEffect::GetNextFace(const void *const face) const {
 }
 
 dgInt32 dgMeshEffect::IsFaceOpen(const void *const face) const {
-	dgTreeNode *const node = (dgTreeNode *)face;
-	dgEdge *const edge = &node->GetInfo();
+	const dgTreeNode *const node = (const dgTreeNode *)face;
+	const dgEdge *const edge = &node->GetInfo();
 	return (edge->m_incidentFace > 0) ? 0 : 1;
 }
 
 dgInt32 dgMeshEffect::GetFaceMaterial(const void *const face) const {
-	dgTreeNode *const node = (dgTreeNode *)face;
-	dgEdge *const edge = &node->GetInfo();
+	const dgTreeNode *const node = (const dgTreeNode *)face;
+	const dgEdge *const edge = &node->GetInfo();
 	return dgInt32(m_attib[edge->m_userData].m_material);
 }
 
 dgInt32 dgMeshEffect::GetFaceIndexCount(const void *const face) const {
 	int count = 0;
-	dgTreeNode *const node = (dgTreeNode *)face;
-	dgEdge *const edge = &node->GetInfo();
-	dgEdge *ptr = edge;
+	const dgTreeNode *const node = (const dgTreeNode *)face;
+	const dgEdge *const edge = &node->GetInfo();
+	const dgEdge *ptr = edge;
 	do {
 		count++;
 		ptr = ptr->m_next;
@@ -1937,9 +1937,9 @@ dgInt32 dgMeshEffect::GetFaceIndexCount(const void *const face) const {
 
 void dgMeshEffect::GetFaceIndex(const void *const face, int *const indices) const {
 	int count = 0;
-	dgTreeNode *const node = (dgTreeNode *)face;
-	dgEdge *const edge = &node->GetInfo();
-	dgEdge *ptr = edge;
+	const dgTreeNode *const node = (const dgTreeNode *)face;
+	const dgEdge *const edge = &node->GetInfo();
+	const dgEdge *ptr = edge;
 	do {
 		indices[count] = ptr->m_incidentVertex;
 		count++;
@@ -1949,9 +1949,9 @@ void dgMeshEffect::GetFaceIndex(const void *const face, int *const indices) cons
 
 void dgMeshEffect::GetFaceAttributeIndex(const void *const face, int *const indices) const {
 	int count = 0;
-	dgTreeNode *const node = (dgTreeNode *)face;
-	dgEdge *const edge = &node->GetInfo();
-	dgEdge *ptr = edge;
+	const dgTreeNode *const node = (const dgTreeNode *)face;
+	const dgEdge *const edge = &node->GetInfo();
+	const dgEdge *ptr = edge;
 	do {
 		indices[count] = int(ptr->m_userData);
 		count++;

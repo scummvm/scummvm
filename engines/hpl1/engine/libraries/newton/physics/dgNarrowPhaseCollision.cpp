@@ -1801,7 +1801,7 @@ void dgWorld::CalculateContactsSimd(
 	//  proxy.m_continueCollision = material->m_collisionContinueCollisionEnable & (body0->m_continueCollisionMode | body1->m_continueCollisionMode);
 	proxy.m_continueCollision = dgInt32(
 	                                ((material->m_flags & dgContactMaterial::m_collisionContinueCollisionEnable__) ? 1 : 0) & (body0->m_continueCollisionMode | body1->m_continueCollisionMode));
-	proxy.m_isTriggerVolume = body0->m_collision->IsTriggerVolume() | body1->m_collision->IsTriggerVolume();
+	proxy.m_isTriggerVolume = body0->m_collision->IsTriggerVolume() || body1->m_collision->IsTriggerVolume();
 
 	if (body0->m_collision->IsType(dgCollision::dgCollisionScene_RTTI)) {
 		Swap(pair->m_body0, pair->m_body1);
@@ -1833,7 +1833,7 @@ void dgWorld::CalculateContacts(dgCollidingPairCollector::dgPair *const pair,
 	proxy.m_unconditionalCast = 0;
 	proxy.m_maxContacts = DG_MAX_CONTATCS;
 	proxy.m_penetrationPadding = material->m_penetrationPadding;
-	proxy.m_isTriggerVolume = body0->m_collision->IsTriggerVolume() | body1->m_collision->IsTriggerVolume();
+	proxy.m_isTriggerVolume = body0->m_collision->IsTriggerVolume() || body1->m_collision->IsTriggerVolume();
 	//  proxy.m_continueCollision = material->m_collisionContinueCollisionEnable & (body0->m_continueCollisionMode | body1->m_continueCollisionMode);
 	proxy.m_continueCollision = dgInt32(
 	                                ((material->m_flags & dgContactMaterial::m_collisionContinueCollisionEnable__) ? 1 : 0) & (body0->m_continueCollisionMode | body1->m_continueCollisionMode));

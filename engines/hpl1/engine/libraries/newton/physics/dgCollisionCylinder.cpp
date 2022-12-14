@@ -238,7 +238,7 @@ dgVector dgCollisionCylinder::SupportVertex(const dgVector &dir) const {
 	dgFloat32 y0;
 	dgFloat32 z0;
 	dgFloat32 mag2;
-	dgFloatSign const *ptr = (dgFloatSign *)&dir;
+	dgFloatSign const *ptr = (const dgFloatSign *)&dir;
 
 	_ASSERTE(dgAbsf((dir % dir - dgFloat32(1.0f))) < dgFloat32(1.0e-3f));
 

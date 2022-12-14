@@ -444,7 +444,7 @@ void dgCollidingPairCollector::AddPair(dgBody *const bodyPtr0,
                                        dgBody *const bodyPtr1, dgInt32 threadIndex) {
 	if ((bodyPtr0 != m_sentinel) && (bodyPtr1 != m_sentinel)) {
 		dgWorld *const world = (dgWorld *)this;
-		if (bodyPtr0->GetSleepState() & bodyPtr1->GetSleepState()) {
+		if (bodyPtr0->GetSleepState() && bodyPtr1->GetSleepState()) {
 			dgContact *contact = NULL;
 			if (bodyPtr0->m_invMass.m_w != dgFloat32(0.0f)) {
 				for (dgBodyMasterListRow::dgListNode *link = world->FindConstraintLink(
