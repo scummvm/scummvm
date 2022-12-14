@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-13 17:40+0000\n"
+"POT-Creation-Date: 2022-12-14 12:50+0000\n"
 "PO-Revision-Date: 2022-12-03 14:54+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -177,7 +177,7 @@ msgstr ""
 #: engines/director/lingo/lingo-builtins.cpp:1756
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
 #: engines/groovie/script.cpp:650 engines/nancy/dialogs.cpp:101
-#: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:99
+#: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:102
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:926
 #: engines/scumm/scumm.cpp:1094 engines/scumm/scumm.cpp:1120
 #: engines/scumm/scumm.cpp:1142 engines/scumm/scumm.cpp:1440
@@ -6680,7 +6680,7 @@ msgstr "La versión de demostración para Pocket PC no es compatible."
 msgid "I Have No Mouth support not compiled in"
 msgstr "No se ha incluido el soporte para I Have No Mouth."
 
-#: engines/saga/music.cpp:95
+#: engines/saga/music.cpp:98
 #, c-format
 msgid ""
 "Could not find AdLib instrument definition files\n"
