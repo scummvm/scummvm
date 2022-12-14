@@ -216,7 +216,7 @@ void Combat::setupHandicap() {
 			return;
 		}
 	} else if (val > _handicap1) {
-		_handicap4 -= _handicap1;
+		_handicap4 = val - _handicap1;
 
 		if (_handicap4) {
 			_handicap = HANDICAP_PARTY;
