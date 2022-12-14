@@ -115,22 +115,9 @@ protected:
 	dgUnsigned16 m_vertexCount;
 	dgUnsigned32 m_isTriggerVolume : 1;
 
-	static dgVector m_zero;
-	static dgVector m_negOne;
-	static dgVector m_indexStep;
-	static dgVector m_aabb_padd;
-	static dgVector m_index_0123;
-	static dgVector m_index_4567;
 	static dgVector m_multiResDir[8];
 	static dgVector m_multiResDir_sse[6];
 
-	static dgVector m_nrh0p5;
-	static dgVector m_nrh3p0;
-	static dgVector m_huge;
-	static dgVector m_negativeTiny;
-
-	static dgVector m_signMask;
-	static dgVector m_triplexMask;
 	static dgTriplex m_hullDirs[14];
 
 	static dgInt32 m_iniliazised;

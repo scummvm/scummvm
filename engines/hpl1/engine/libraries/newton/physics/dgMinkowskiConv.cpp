@@ -961,7 +961,7 @@ class dgContactSolver {
 	        const dgVector &shapeNormal, dgUnsigned32 id, dgFloat32 penetration,
 	        dgInt32 shape1VertexCount, dgVector *const shape1,
 	        dgInt32 shape2VertexCount, dgVector *const shape2,
-	        dgContactPoint *const contactOut, dgInt32 maxContacts) const {
+	        dgContactPoint *const contactOut, dgInt32 maxContacts) {
 
 		dgInt32 count = 0;
 		if (shape2VertexCount <= 2) {
@@ -1436,7 +1436,7 @@ class dgContactSolver {
 				}
 
 				dgInt32 edgeContactFlag =
-				    (m_floatingcollision->IsEdgeIntersection() | m_referenceCollision->IsEdgeIntersection()) ? 1 : 0;
+				    (m_floatingcollision->IsEdgeIntersection() || m_referenceCollision->IsEdgeIntersection()) ? 1 : 0;
 				for (dgInt32 i = 0; i < count; i++) {
 					contactOut[i].m_isEdgeContact = edgeContactFlag;
 				}

@@ -834,7 +834,6 @@ dgFloat32 dgCollisionMesh::dgCollisionConvexPolygon::MovingPointToPolygonContact
 		return dgFloat32(-1.0f);
 	}
 
-	bool isEdge = true;
 	dgFloat32 timestep = dgFloat32(-1.0f);
 	dgVector closestPoint(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
 	dgFloat32 minDist = dgFloat32(1.0e20f);
@@ -842,7 +841,6 @@ dgFloat32 dgCollisionMesh::dgCollisionConvexPolygon::MovingPointToPolygonContact
 		bool tmpIsEdge;
 		m_localPoly[j] = dgVector(&m_vertex[m_index[j] * m_stride]);
 		const dgVector q(ClosestDistanceToTriangle(p, m_localPoly[0], m_localPoly[j - 1], m_localPoly[j], tmpIsEdge));
-		isEdge &= tmpIsEdge;
 		const dgVector error(q - p);
 		dgFloat32 dist = error % error;
 		if (dist < minDist) {
