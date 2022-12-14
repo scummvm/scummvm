@@ -50,6 +50,14 @@ const uint32 amigaSoundIndex[] = {
 	0x96b02, 0x99054, 0x9b628, 0x9c51c,
 };
 
+const uint32 amigaVoiceIndexGerman[] = {
+#include "voiceindex_de.h"
+};
+
+const uint32 amigaVoiceIndexEnglish[] = {
+#include "voiceindex_en.h"
+};
+
 // Patch files. Files not found will be ignored
 static const GamePatchDescription ITEPatch_Files[] = {
 	{       "cave.mid", GAME_RESOURCEFILE,    9},
@@ -388,6 +396,18 @@ bool Resource::createContexts() {
 		}
 		break;
 	}
+
+	if (_voicesFileName[0][0] == 0 && _vm->getPlatform() == Common::kPlatformAmiga && _vm->getGameId() == GID_ITE
+	    && Common::File::exists("ite.voices")) {
+		Common::strcpy_s(_voicesFileName[0], "ite.voices");
+		if (_vm->getLanguage() == Common::Language::DE_DEU)
+			addAmigaSoundContext(_voicesFileName[0], GAME_VOICEFILE, amigaVoiceIndexGerman, ARRAYSIZE(amigaVoiceIndexGerman));
+		else if (_vm->getLanguage() == Common::Language::EN_ANY)
+			addAmigaSoundContext(_voicesFileName[0], GAME_VOICEFILE, amigaVoiceIndexEnglish, ARRAYSIZE(amigaVoiceIndexEnglish));
+		else
+			error("Unexpected language");
+	}
+
 
 	if (_voicesFileName[0][0] == 0) {
 #ifdef ENABLE_IHNM

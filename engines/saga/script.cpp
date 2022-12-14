@@ -982,7 +982,7 @@ void Script::loadVoiceLUT(VoiceLUT &voiceLUT, const ByteArray &resourceData) {
 
 	voiceLUT.resize(resourceData.size() / 2);
 
-	ByteArrayReadStreamEndian scriptS(resourceData, _scriptContext->isBigEndian());
+	ByteArrayReadStreamEndian scriptS(resourceData, _scriptContext->isBigEndian() || _vm->getPlatform() == Common::Platform::kPlatformAmiga);
 
 	for (i = 0; i < voiceLUT.size(); i++) {
 		voiceLUT[i] = scriptS.readUint16();
