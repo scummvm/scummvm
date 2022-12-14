@@ -58,6 +58,7 @@ class MkvReader;
 class Cluster;
 class Track;
 class Tracks;
+class Block;
 class BlockEntry;
 class Segment;
 }
@@ -179,6 +180,14 @@ private:
 
 	int videoTrack = -1;
 	int audioTrack = -1;
+
+	const mkvparser::Block *pBlock;
+	long long trackNum;
+	unsigned long tn;
+	const mkvparser::Track *pTrack;
+	long long trackType;
+	int frameCount;
+	long long time_ns;
 
 	Graphics::Surface _displaySurface;
 };
