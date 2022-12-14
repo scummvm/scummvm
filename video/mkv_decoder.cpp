@@ -278,6 +278,7 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 	trackType = pTrack->GetType();
 	frameCount = pBlock->GetFrameCount();
 	time_ns = pBlock->GetTime(_cluster);
+	warning("trackNum: %d frameCounter: %d frameCount: %d, time_ns: %d", tn, frameCounter, frameCount, time_ns);
 
 	return true;
 }
@@ -289,64 +290,70 @@ void MKVDecoder::close() {
 }
 
 void MKVDecoder::readNextPacket() {
-	warning("MKVDecoder::readNextPacket()");
+	//warning("MKVDecoder::readNextPacket()");
 
 	// First, let's get our frame
-	while (_cluster != nullptr && !_cluster->EOS()) {
-		if (frameCounter >= frameCount) {
-			int res = _cluster->GetNext(pBlockEntry, pBlockEntry);
+	if (_cluster == nullptr || _cluster->EOS()) {
+		_videoTrack->setEndOfVideo();
+		return;
+	}
 
-			if  ((res != -1) || pBlockEntry->EOS()) {
-				_cluster = pSegment->GetNext(_cluster);
-				if ((_cluster == NULL) || _cluster->EOS()) {
-					_videoTrack->setEndOfVideo();
-					break;
-				}
-				int ret = _cluster->GetFirst(pBlockEntry);
+	if (frameCounter >= frameCount) {
+		int res = _cluster->GetNext(pBlockEntry, pBlockEntry);
 
-				if (ret == -1)
-					error("MKVDecoder::readNextPacket(): GetFirst() failed");
-			}
-			pBlock  = pBlockEntry->GetBlock();
-			trackNum = pBlock->GetTrackNumber();
-			tn = static_cast<unsigned long>(trackNum);
-			pTrack = pTracks->GetTrackByNumber(tn);
-			trackType = pTrack->GetType();
-			frameCount = pBlock->GetFrameCount();
-			time_ns = pBlock->GetTime(_cluster);
-
-			frameCounter = 0;
-		}
-
-		const mkvparser::Block::Frame &theFrame = pBlock->GetFrame(frameCounter);
-		const long size = theFrame.len;
-		//                const long long offset = theFrame.pos;
-
-		if (size > sizeof(frame)) {
-			if (frame)
-				delete[] frame;
-			frame = new unsigned char[size];
-			if (!frame)
+		if  ((res != -1) || pBlockEntry->EOS()) {
+			_cluster = pSegment->GetNext(_cluster);
+			if ((_cluster == NULL) || _cluster->EOS()) {
+				_videoTrack->setEndOfVideo();
 				return;
+			}
+			int ret = _cluster->GetFirst(pBlockEntry);
+
+			if (ret == -1)
+				error("MKVDecoder::readNextPacket(): GetFirst() failed");
 		}
+		pBlock  = pBlockEntry->GetBlock();
+		trackNum = pBlock->GetTrackNumber();
+		tn = static_cast<unsigned long>(trackNum);
+		pTrack = pTracks->GetTrackByNumber(tn);
+		trackType = pTrack->GetType();
+		frameCount = pBlock->GetFrameCount();
+		time_ns = pBlock->GetTime(_cluster);
+		warning("trackNum: %d frameCounter: %d frameCount: %d, time_ns: %d", tn, frameCounter, frameCount, time_ns);
 
-		if (trackNum == videoTrack) {
-			warning("MKVDecoder::readNextPacket(): video track");
+		frameCounter = 0;
+	}
 
+	const mkvparser::Block::Frame &theFrame = pBlock->GetFrame(frameCounter);
+	const long size = theFrame.len;
+	//                const long long offset = theFrame.pos;
+
+	if (size > sizeof(frame)) {
+		if (frame)
+			delete[] frame;
+		frame = new unsigned char[size];
+		if (!frame)
+			return;
+	}
+
+	if (trackNum == videoTrack) {
+		warning("MKVDecoder::readNextPacket(): video track");
+
+		theFrame.Read(_reader, frame);
+
+		_videoTrack->decodeFrame(frame, size);
+	} else if (trackNum == audioTrack) {
+		warning("MKVDecoder::readNextPacket(): audio track");
+
+		if (size > 0) {
 			theFrame.Read(_reader, frame);
 
-			_videoTrack->decodeFrame(frame, size);
-		} else if (trackNum == audioTrack) {
-			warning("MKVDecoder::readNextPacket(): audio track");
-
-			if (size > 0) {
-				theFrame.Read(_reader, frame);
-
-				_audioTrack->decodeSamples(frame, size);
-			}
+			//_audioTrack->decodeSamples(frame, size);
 		}
-		++frameCounter;
+	} else {
+		warning("Unprocessed track %d", trackNum);
 	}
+	++frameCounter;
 
 	// Then make sure we have enough audio buffered
 	ensureAudioBufferSize();
