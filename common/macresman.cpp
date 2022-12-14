@@ -168,6 +168,53 @@ bool MacResManager::open(const Path &fileName) {
 	return open(fileName, SearchMan);
 }
 
+SeekableReadStream *MacResManager::openAppleDoubleWithAppleOrOSXNaming(Archive& archive, const Path &fileName) {
+	SeekableReadStream *stream = archive.createReadStreamForMember(constructAppleDoubleName(fileName));
+	if (stream)
+		return stream;
+
+	const ArchiveMemberPtr archiveMember = archive.getMember(fileName);
+        const Common::FSNode *plainFsNode = dynamic_cast<const Common::FSNode *>(archiveMember.get());
+
+	// Try finding __MACOSX
+	Common::StringArray components = (plainFsNode ? Common::Path(plainFsNode->getPath(), '/') : fileName).splitComponents();
+	if (components.empty() || components[components.size() - 1].empty())
+		return nullptr;
+	for (int i = components.size() - 1; i >= 0; i--) {
+		Common::StringArray newComponents;
+		int j;
+		for (j = 0; j < i; j++)
+			newComponents.push_back(components[j]);
+		newComponents.push_back("__MACOSX");
+		for (; j < (int) components.size() - 1; j++)
+			newComponents.push_back(components[j]);
+		newComponents.push_back("._" + components[(int) components.size() - 1]);
+
+		Common::Path newPath = Common::Path::joinComponents(newComponents);
+		stream = archive.createReadStreamForMember(newPath);
+
+		if (!stream) {
+			Common::FSNode *fsn = new Common::FSNode(newPath);
+			if (fsn && fsn->exists())
+				stream = fsn->createReadStream();
+			else
+				delete fsn;
+		}
+
+		if (stream) {
+			bool appleDouble = (stream->readUint32BE() == 0x00051607);
+			stream->seek(0);
+
+			if (appleDouble) {
+				return stream;
+			}
+		}
+		delete stream;
+	}
+
+	return nullptr;
+}
+
 bool MacResManager::open(const Path &fileName, Archive &archive) {
 	close();
 
@@ -219,7 +266,7 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 	delete stream;
 
 	// Then try for AppleDouble using Apple's naming
-	stream = archive.createReadStreamForMember(constructAppleDoubleName(fileName));
+	stream = openAppleDoubleWithAppleOrOSXNaming(archive, fileName);
 	if (stream && loadFromAppleDouble(stream)) {
 		_baseFileName = fileName;
 		return true;
@@ -356,7 +403,7 @@ bool MacResManager::getFileFinderInfo(const Path &fileName, Archive &archive, Ma
 
 	// Try for AppleDouble using Apple's naming
 	stream.reset();
-	stream.reset(archive.createReadStreamForMember(constructAppleDoubleName(fileName)));
+	stream.reset(openAppleDoubleWithAppleOrOSXNaming(archive, fileName));
 	if (stream && getFinderInfoFromAppleDouble(stream.get(), outFinderInfo, outFinderExtendedInfo))
 		return true;
 
