@@ -159,7 +159,7 @@ public:
 
 	void prepareStart();
 
-	void playTot(int16 function);
+	void playTot(int32 function);
 
 	void capturePush(int16 left, int16 top, int16 width, int16 height);
 	void capturePop(char doDraw);

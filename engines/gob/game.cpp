@@ -518,7 +518,7 @@ void Game::prepareStart() {
 	_startTimeKey = _vm->_util->getTimeKey();
 }
 
-void Game::playTot(int16 function) {
+void Game::playTot(int32 function) {
 	int16 *oldNestLevel      = _vm->_inter->_nestLevel;
 	int16 *oldBreakFrom      = _vm->_inter->_breakFromLevel;
 	int16 *oldCaptureCounter = _vm->_scenery->_pCaptureCounter;
