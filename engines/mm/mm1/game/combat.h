@@ -173,7 +173,7 @@ protected:
 	 * Main combat loop that selects the next party
 	 * member or monster to take their turn
 	 */
-	void combatLoop(bool checkMonstersFirst = true);
+	void combatLoop(bool checkMonstersFirst = false);
 
 	/**
 	 * Select treasure for a defeated monster

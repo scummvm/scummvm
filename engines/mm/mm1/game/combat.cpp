@@ -273,10 +273,12 @@ void Combat::combatLoop(bool checkMonstersFirst) {
 		if (!checkMonstersFirst) {
 			for (uint i = 0; i < _party.size(); ++i) {
 				Character &c = *_party[i];
-				g_globals->_currCharacter = &c;
-
 				int speed = c._speed._current;
-				if (speed && speed >= _handicap2) {
+
+				if (speed && speed >= _handicap2 && !c._checked) {
+					_currentChar = i;
+					g_globals->_currCharacter = &c;
+
 					if (!(c._condition & (BLINDED | SILENCED | DISEASED | POISONED))) {
 						// Character is enabled
 						setMode(SELECT_OPTION);
@@ -314,6 +316,7 @@ void Combat::combatLoop(bool checkMonstersFirst) {
 			if (_handicap3 != 1)
 				--_handicap3;
 		}
+		assert(_handicap2 >= 1 && _handicap3 >= 1);
 	}
 }
 
