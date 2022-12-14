@@ -271,6 +271,14 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 			error("_cluster::GetFirst() failed");
 	}
 
+	pBlock = pBlockEntry->GetBlock();
+	trackNum = pBlock->GetTrackNumber();
+	tn = static_cast<unsigned long>(trackNum);
+	pTrack = pTracks->GetTrackByNumber(tn);
+	trackType = pTrack->GetType();
+	frameCount = pBlock->GetFrameCount();
+	time_ns = pBlock->GetTime(_cluster);
+
 	return true;
 }
 
@@ -282,14 +290,6 @@ void MKVDecoder::close() {
 
 void MKVDecoder::readNextPacket() {
 	warning("MKVDecoder::readNextPacket()");
-
-	const mkvparser::Block *pBlock = pBlockEntry->GetBlock();
-	long long trackNum = pBlock->GetTrackNumber();
-	unsigned long tn = static_cast<unsigned long>(trackNum);
-	const mkvparser::Track *pTrack = pTracks->GetTrackByNumber(tn);
-	long long trackType = pTrack->GetType();
-	int frameCount = pBlock->GetFrameCount();
-	long long time_ns = pBlock->GetTime(_cluster);
 
 	// First, let's get our frame
 	while (_cluster != nullptr && !_cluster->EOS()) {
