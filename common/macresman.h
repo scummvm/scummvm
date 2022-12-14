@@ -318,6 +318,8 @@ private:
 	static Path constructAppleDoubleName(Path name);
 	static Path disassembleAppleDoubleName(Path name, bool *isAppleDouble);
 
+	static SeekableReadStream *openAppleDoubleWithAppleOrOSXNaming(Archive& archive, const Path &fileName);
+
 	/**
 	 * Do a sanity check whether the given stream is a raw resource fork.
 	 *
