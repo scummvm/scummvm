@@ -8171,9 +8171,43 @@ static const uint16 longbowPatchHedgeMazeMusic[] = {
 	PATCH_END
 };
 
+// Map rooms palette animate their rivers at unthrottled speeds, except that
+//  scripts limit them to every X game cycles based on speed test results.
+//  On fast DOS machines this was still effectively unthrottled because there is
+//  no cast to animate in these rooms. In ScummVM we patch speed tests to pass
+//  and throttle game cycles to a reasonable rate. Under these conditions, the
+//  map animates slowly every 2.5 seconds.
+//
+// We fix this by setting the map palette animation speed to once every 15 game
+//  cycles instead of using speed test results. This is what DOSBox achieves at
+//  3,000 clock cycles per second.
+//
+// Applies to: All versions
+// Responsible methods: rm100:init, rm260:init
+// Fixes bug: #13966
+static const uint16 longbowSignatureMapPaletteSpeed[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x57,                     // lsg 57 [ speed test result ]
+	0x3c,                           // dup
+	0x35, 0x00,                     // ldi 00
+	0x1a,                           // eq?
+	0x30, SIG_UINT16(0x0005),       // bnt 0005
+	0x35, 0x28,                     // ldi 28 [ animate every 40 cycles ]
+	0x32,                           // jmp    [ toss ]
+	SIG_END
+};
+
+static const uint16 longbowPatchMapPaletteSpeed[] = {
+	0x35, 0x0f,                     // ldi 0f [ animate every 15 cycles ]
+	0x36,                           // push   [ for toss ]
+	0x33, 0x06,                     // jmp 06 [ toss ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                patch
 static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,    29, "amiga day 1 peasant woman",                   1, longbowSignatureAmigaPeasantWoman,       longbowPatchAmigaPeasantWoman},
+	{  true,   100, "map palette speed",                           1, longbowSignatureMapPaletteSpeed,         longbowPatchMapPaletteSpeed },
 	{  true,   140, "green man riddles and forest sweep fix",      1, longbowSignatureGreenManForestSweepFix,  longbowPatchGreenManForestSweepFix },
 	{  true,   150, "day 5/6 camp sunset fix",                     2, longbowSignatureCampSunsetFix,           longbowPatchCampSunsetFix },
 	{  true,   150, "day 7 tuck net fix",                          1, longbowSignatureTuckNetFix,              longbowPatchTuckNetFix },
@@ -8181,6 +8215,7 @@ static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   225, "arithmetic berry bush fix",                   1, longbowSignatureBerryBushFix,            longbowPatchBerryBushFix },
 	{  true,   250, "day 5/6 rescue flag fix",                     1, longbowSignatureRescueFlagFix,           longbowPatchRescueFlagFix },
 	{  true,   260, "day 5/6 town map sunset fix",                 1, longbowSignatureTownMapSunsetFix,        longbowPatchTownMapSunsetFix },
+	{  true,   260, "map palette speed",                           1, longbowSignatureMapPaletteSpeed,         longbowPatchMapPaletteSpeed },
 	{  true,   320, "day 8 archer pathfinding workaround",         1, longbowSignatureArcherPathfinding,       longbowPatchArcherPathfinding },
 	{  true,   350, "day 9 cobbler hut fix",                      10, longbowSignatureCobblerHut,              longbowPatchCobblerHut },
 	{  true,   422, "marian messages fix",                         1, longbowSignatureMarianMessagesFix,       longbowPatchMarianMessagesFix },
