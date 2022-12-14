@@ -3220,7 +3220,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1t("bugbook", "Demo", "BUGBOOK.EXE", "424749843e7c8e33d36e212f6c114a7c", 770291, 404),
 
 	// Full game is not Director
-	WINDEMO1("c64pack", "Demo", "C64DEMO.EXE", "0458e44d9ad4ae0d3a583ac4141d21ae", 1007517, 400),
+	WINDEMO1("c64pack", "Demo", "C64DEMO.EXE", "0458e44d9ad4ae0d3a583ac4141d21ae", 1007517, 404),
 
 	// Retail CD release from BeachWare, Inc.
 	// Windows version also has CASINO2.EXE (Casino! Basic) for low performance PCs
@@ -3243,11 +3243,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("catseyeview", "Vol. 3", "Cat'sEyeView vol.3", "2c94dee7ddad3e6b47c7d62565286007", 484095, 404),
 	WINGAME1("catseyeview", "Vol. 3", "CatsEyeView3.exe", "9ba8ac33552a3053cb1f23679422775e", 1900433, 404),
 
-	MACGAME1("cbible", "", "Children's Bible Stories", "17efee018a660458fae80de4364021ac", 483746, 404),
+	MACGAME1("cbible", "", "Children's Bible Stories", "17efee018a660458fae80de4364021ac", 483490, 404),
 	WINGAME1("cbible", "", "CBIBLE.EXE", "d408f781d32337f8a5a9b3655c7d7803", 1727225, 404),
 
 	// Both versions require installation
-	MACGAME1("cclown", "", "Color Clown", "bcea0da496deb8bf81c136a8538b9a01", 852148, 404),
+	MACGAME1("cclown", "", "Color Clown", "bcea0da496deb8bf81c136a8538b9a01", 851892, 404),
 	WINGAME1("cclown", "", "CCLOWN.EXE", "9bb66730af24e8a5d5cbbddfe98b33e6", 1050805, 404),
 	WINDEMO1("cclown", "Help", "HCLOWN.EXE", "ed58a56a9e9e003433854a041cfb12c0", 698845, 404),
 
@@ -3259,8 +3259,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("cdromfanmacworld96", "Maruchime Diary", "xn--h9jxck2b3563cwn3b2w5k3bai4cb4ep5nxe", "17efee018a660458fae80de4364021ac", 483159, Common::JA_JPN, 404),
 
 	// Original Mac filename is Paul Cézanne 8 Mb
-	MACGAME1_l("cezannetour", "", "Paul Cezanne 8 Mb", "2dca4bcd28ed470676af68563bf6a63e", 484331, Common::PT_BRA, 400),
-	WINGAME1_l("cezannetour", "", "CEZANNE.EXE", "1463f0b6aa7d3d20de66699c16de2f98", 688027, Common::PT_BRA, 400),
+	MACGAME1("cezannetour", "", "Paul Cezanne 8 Mb", "2dca4bcd28ed470676af68563bf6a63e", 484075, 404),
+	WINGAME1("cezannetour", "", "CEZANNE.EXE", "1463f0b6aa7d3d20de66699c16de2f98", 688027, 404),
 
 	// from Hypermind
 	WINDEMO2("chuniverse", "Demo", "UNIVERSE.EXE", "53f7608bfe324d1837fa03966a879470", 697235,
@@ -3271,17 +3271,17 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// French speech, English text
 	WINDEMO1_l("cinemania96", "Demo", "CINE_FR.EXE", "1411329e65c11a6b1ebb57fc28f79d2f", 697783, Common::FR_FRA, 404),
 
-	MACGAME1("chaquico1000", "ECD", "1000 Pictures", "01be45e7241194dad07938e7059b88e3", 486982, 404),
+	MACGAME1("chaquico1000", "ECD", "1000 Pictures", "01be45e7241194dad07938e7059b88e3", 486726, 404),
 	WINGAME1("chaquico1000", "ECD", "1000_PIC.EXE", "7f69b6805b6a70c75b98171370ab906f", 4110937, 404),
 
 	// Original filename is Chine Crisis /demo
-	MACDEMO1_l("chinacrisis", "Demo", "Chine Crisis -demo", "b06606b4d174b85d41b265bd366959d6", 288414, Common::JA_JPN, 402),
+	MACDEMO1_l("chinacrisis", "Demo", "Chine Crisis -demo", "b06606b4d174b85d41b265bd366959d6", 288158, Common::JA_JPN, 402),
 
-	WINGAME1("chopsuey", "", "CHOPSUEY.EXE", "785e26240153a028549e8a66c2e904bf", 772382, 400),
+	WINGAME1("chopsuey", "", "CHOPSUEY.EXE", "785e26240153a028549e8a66c2e904bf", 772382, 404),
 
 	MACGAME1_l("choroli", "", "The Trip Of Choroli", "953c7bda965b8ee1ddb01e9120186412", 484021, Common::JA_JPN, 404),
 
-	MACGAME1("chuckaduck", "", "Chuck A Duck", "77f4098988d5386794d1530065f514cd", 304189, 400),
+	MACGAME1("chuckaduck", "", "Chuck A Duck", "77f4098988d5386794d1530065f514cd", 303933, 400),
 
 	MACGAME1("chunchunworld", "", "CHUN-CHUN WORLD", "01be45e7241194dad07938e7059b88e3", 483518, 404),
 	MACGAME1("chunchunworld", "From Harz", "From Harz", "e6833f1ce3b022f0128e4c80a55bcd46", 285282, 404),
@@ -3298,9 +3298,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("chuteng", "", "Chu-Teng Start", "ea646eccc9a53f44ce082459d4809a06", 484351, Common::JA_JPN, 404),
 	WINGAME1_l("chuteng", "", "CHUTENG.EXE", "aaef7b33829ff7b0243412c89869e011", 746971, Common::JA_JPN, 404),
 
-	MACDEMO1("cinemac", "Sample Projector", "Sample Projector with BackDrop", "2c27791a84756be6201d281bad54f7bb", 286214, 404),
+	MACDEMO1("cinemac", "Sample Projector", "Sample Projector with BackDrop", "2c27791a84756be6201d281bad54f7bb", 285958, 404),
 
-	MACGAME1("circus", "v1.0.6", "Circus!", "dc5a87dda7a0daf46604515f7d2cca66", 319863, 400),
+	MACGAME2("circus", "v1.0.6", "Circus!",  "dc5a87dda7a0daf46604515f7d2cca66", 319863,
+								 "MAIN.DIR", "9aadad95362ec5204151e14dc8bf7e6c", 4324948, 404),
 	WINGAME2("circus", "", "CIRCUS.EXE", "50d81af709047f5d1310468a3cd5a248", 1503187,
 						   "MAIN.DIR",	 "9aadad95362ec5204151e14dc8bf7e6c", 4324948, 404),
 	PIPGAME1_l("circus", "", "Circus!", "0d69b9bb731fba3d861a5f18e1810aa5", 61483, Common::JA_JPN, 404),
@@ -3322,15 +3323,18 @@ static const DirectorGameDescription gameDescriptions[] = {
 						"CMC.ICO",	   "cecbfb6ffa9bd2b1fe27e2d571809c7f", 766, 404),
 
 	// Original filename is CityNetLine デモ版
-	MACDEMO1_l("cnl", "Demo", "CityNetLine Demo Version", "f5033f237ad1b1639fc46d01a82ac380", 286396, Common::JA_JPN, 404),
+	MACDEMO1_l("cnl", "Demo", "CityNetLine Demo Version", "f5033f237ad1b1639fc46d01a82ac380", 286140, Common::JA_JPN, 404),
 
-	WINDEMO1t("compton", "Guided Tour", "TOURDEMO.EXE", "cb88f94bc905aeb3ef8717196c4b0be9", 688039, 404),
+	WINDEMO2t("compton", "Guided Tour", "TOURDEMO.EXE", "cb88f94bc905aeb3ef8717196c4b0be9", 688039,
+										"DEMO.DXR",		"7d87e2099fc0d3de8869a00f4a084f97", 1730688, 404),
 
 	WINDEMO2t("comusic", "Sampler", "START.EXE", "53331f10b1eb1d9e45e713e80e2a7c1b", 731053,
 								    "INIT.DIR",  "5b7a286b8e36f97ae594c35f4f89db51", 57796, 404),
 
 	WINGAME2t("connections", "", "CONNECT.EXE", "6fab237cd2349f6450fabe8739148904", 690019,
-								 "LAUNCHER.DXR", "19e29c3dc9f5c3ac45028e44fb28c435", 825370, 404),
+								 "LAUNCHER.DXR", "5bc82c8782a446f5874873e3dfd5d96b", 825370, 404),
+	WINGAME2t("connections", "", "CONNECT.EXE", "6fab237cd2349f6450fabe8739148904", 690019,
+								 "LAUNCHER.DXR", "d69465f1d0d4ffe3cbf65900097254d0", 835456, 404),  // on HFS partition
 	MACGAME1("connections", "", "Connections", "8120c82507f7ec1e19bab566ca529cda", 494340, 404),
 	WINDEMO2("connections", "Demo", "CONNECT.EXE", "9ee064f5c862e75cf73ba567724dc8b9", 690023,
 									"HOST2.DXR",   "42dc875a908e208af49fe3a0fa0c0a6d", 427760, 404),
@@ -3358,7 +3362,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Curio City (キュリオ シティ) is a quarterly series of virtual mall and entertainment CD-ROMs
 	// issued by Mitsui & Co. to promote its Curio City shopping services.
-	MACGAME1_l("curiocity", "Vol.1", "CURIO CITY", "8719de9c083aca942fc0e5c0a127b6dc", 502845, Common::JA_JPN, 404),
+	MACGAME1_l("curiocity", "Vol.1", "CURIO CITY", "8719de9c083aca942fc0e5c0a127b6dc", 502589, Common::JA_JPN, 404),
 	WINGAME1_l("curiocity", "Vol.1", "CURIO.EXE", "15a14209211895887d80e650984b9e32", 747389, Common::JA_JPN, 404),
 
 	WINDEMO1t("d", "Demo", "DDEMO.EXE", "66359d2e80ba536e34cb4f70772a80e1", 697001, 404),
