@@ -744,8 +744,8 @@ RawDirEntry *findLargestFileEntry(DiskImage *di) {
 DiskImage *diCreateFromData(uint8_t *data, int length) {
 	DiskImage *di;
 
-    if (data == nullptr)
-        return nullptr;
+	if (data == nullptr)
+		return nullptr;
 
 	if ((di = new DiskImage) == nullptr) {
 		return nullptr;
