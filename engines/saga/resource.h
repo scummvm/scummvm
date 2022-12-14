@@ -188,6 +188,7 @@ protected:
 	char _soundFileName[256];
 
 	void addContext(const char *fileName, uint16 fileType, bool isCompressed = false, int serial = 0);
+	void addAmigaSoundContext(const char *fileName, uint16 fileType, const uint32 *idx, uint32 idxSize);
 	virtual ResourceContext *createContext() = 0;
 };
 
@@ -211,6 +212,17 @@ protected:
 	}
 
 	bool _isFloppy;
+};
+
+class ResourceContext_RSC_ITE_Amiga_Sound: public ResourceContext {
+public:
+	ResourceContext_RSC_ITE_Amiga_Sound(const uint32 *idx, uint32 idxSize) : _idx(idx), _idxSize(idxSize) {}
+
+protected:
+	bool loadRes(uint32 contextOffset, uint32 contextSize, int type) override;
+
+	const uint32 *_idx;
+	const uint32 _idxSize;
 };
 
 class Resource_RSC : public Resource {

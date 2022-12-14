@@ -144,6 +144,9 @@ void SndRes::playSound(uint32 resourceId, int volume, bool loop) {
 	if (_sfxContext == nullptr)
 		return;
 
+	if (!_sfxContext->validResourceId(resourceId))
+		return;
+
 	if (!load(_sfxContext, resourceId, buffer, false)) {
 		warning("Failed to load sound");
 		return;
@@ -306,7 +309,8 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		if ((soundResourceLength & 1) && (rawFlags & Audio::FLAG_16BITS))
 			soundResourceLength &= ~1;
 
-		Audio::SeekableAudioStream *audStream = Audio::makeRawStream(READ_STREAM(soundResourceLength), 22050, rawFlags);
+		Audio::SeekableAudioStream *audStream = Audio::makeRawStream(READ_STREAM(soundResourceLength),
+									     _vm->getPlatform() == Common::Platform::kPlatformAmiga ? 11025 : 22050, rawFlags);
 		buffer.stream = audStream;
 		buffer.streamLength = audStream->getLength();
 		result = true;

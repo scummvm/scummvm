@@ -36,6 +36,20 @@
 
 namespace Saga {
 
+const uint32 amigaSoundIndex[] = {
+	0x00000, 0x01040, 0x02018, 0x03fa8,
+	0x05088, 0x06578, 0x0698a, 0x07494,
+	0x0afa0, 0x0b974, 0x0c0bc, 0x0c900,
+	0x0d838, 0x0ea90, 0x16252, 0x1f64a,
+	0x25c1a, 0x2a760, 0x2b710, 0x2c530,
+	0x2cfca, 0x3d824, 0x40212, 0x50104,
+	0x583da, 0x5acf4, 0x65a76, 0x68a06,
+	0x6ee42, 0x731d0, 0x7996c, 0x7a860,
+	0x7cab0, 0x83db0, 0x85040, 0x86762,
+	0x878e8, 0x8c122, 0x90f78, 0x95f58,
+	0x96b02, 0x99054, 0x9b628, 0x9c51c,
+};
+
 // Patch files. Files not found will be ignored
 static const GamePatchDescription ITEPatch_Files[] = {
 	{       "cave.mid", GAME_RESOURCEFILE,    9},
@@ -114,6 +128,19 @@ bool ResourceContext::loadResIteAmiga(uint32 contextOffset, uint32 contextSize, 
 		resourceData->offset = _file.readUint32BE() + extraOffset;
 		resourceData->size = _file.readUint32BE();
 		resourceData->diskNum = _file.readUint16BE();
+	}
+
+	return true;
+}
+
+bool ResourceContext_RSC_ITE_Amiga_Sound::loadRes(uint32 contextOffset, uint32 contextSize, int type) {
+	_table.resize(_idxSize - 1);
+
+	for (uint32 i = 0; i < _idxSize - 1; i++) {
+		ResourceData *resourceData = &_table[i];
+		resourceData->offset = _idx[i];
+		resourceData->size = _idx[i+1] - _idx[i];
+		resourceData->diskNum = -1;
 	}
 
 	return true;
@@ -241,6 +268,16 @@ void Resource::addContext(const char *fileName, uint16 fileType, bool isCompress
 	_contexts.push_back(context);
 }
 
+void Resource::addAmigaSoundContext(const char *fileName, uint16 fileType, const uint32 *idx, uint32 idxSize) {
+	ResourceContext *context;
+	context = new ResourceContext_RSC_ITE_Amiga_Sound(idx, idxSize);
+	context->_fileName = fileName;
+	context->_fileType = fileType;
+	context->_isCompressed = false;
+	context->_serial = 0;
+	_contexts.push_back(context);
+}
+
 bool Resource::createContexts() {
 	bool soundFileInArray = false;
 
@@ -281,6 +318,7 @@ bool Resource::createContexts() {
 
 	_soundFileName[0] = 0;
 	if (!soundFileInArray) {
+		bool hasSfx = false;
 		for (SoundFileInfo *curSoundFile = sfxFiles; (curSoundFile->gameId != -1); curSoundFile++) {
 			if (curSoundFile->gameId != _vm->getGameId()) continue;
 			if (!Common::File::exists(curSoundFile->fileName)) continue;
@@ -290,7 +328,15 @@ bool Resource::createContexts() {
 			if (_vm->getFeatures() & GF_SOME_MAC_RESOURCES)
 				flags |= GAME_SWAPENDIAN;
 			addContext(_soundFileName, flags, curSoundFile->isCompressed);
+			hasSfx = true;
 			break;
+		}
+
+		if (_vm->getPlatform() == Common::kPlatformAmiga && !hasSfx && _vm->getGameId() == GID_ITE
+			&& Common::File::exists("ite.sounds")) {
+			Common::strcpy_s(_soundFileName, "ite.sounds");
+			addAmigaSoundContext(_soundFileName, GAME_SOUNDFILE, amigaSoundIndex, ARRAYSIZE(amigaSoundIndex));
+			hasSfx = true;
 		}
 	}
 
