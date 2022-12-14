@@ -24,6 +24,7 @@
 #ifndef SAGA_MUSIC_H
 #define SAGA_MUSIC_H
 
+#include "audio/audiostream.h"
 #include "audio/mididrv.h"
 #include "audio/mididrv_ms.h"
 #include "audio/mt32gm.h"
@@ -96,6 +97,7 @@ private:
 	void onTimer();
 	bool playDigital(uint32 resourceId, MusicFlags flags);
 	void playQuickTime(uint32 resourceId, MusicFlags flags);
+	void playAmigaMod(uint32 resourceId, MusicFlags flags);
 	void playMidi(uint32 resourceId, MusicFlags flags);
 	void musicVolumeGauge();
 	ByteArray *_currentMusicBuffer;

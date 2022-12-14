@@ -259,6 +259,8 @@ bool Resource::createContexts() {
 			addContext(gameFileDescription->fileName, gameFileDescription->fileType);
 		if ((gameFileDescription->fileType & GAME_RESOURCEFILE) && _vm->getPlatform() == Common::kPlatformAmiga && _vm->getGameId() == GID_ITE)
 			addContext(gameFileDescription->fileName, (gameFileDescription->fileType & ~GAME_RESOURCEFILE) | GAME_SCRIPTFILE | GAME_SWAPENDIAN);
+		if ((gameFileDescription->fileType & GAME_RESOURCEFILE) && _vm->getPlatform() == Common::kPlatformAmiga && _vm->getGameId() == GID_ITE)
+			addContext(gameFileDescription->fileName, (gameFileDescription->fileType & ~GAME_RESOURCEFILE) | GAME_MUSICFILE_FM);
 		if (gameFileDescription->fileType == GAME_SOUNDFILE) {
 			soundFileInArray = true;
 		}
@@ -449,6 +451,14 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, ByteArr
 		byte *uncompressed = Common::PowerPackerStream::unpackBuffer(resourceBuffer.getBuffer() + 12, packedLen + 8, actualUncompressedLen);
 		if (uncompressed == nullptr || unpackedLen != actualUncompressedLen) {
 			warning("Uncompressed size mismatch in resource %d: %d vs %d", resourceId, unpackedLen, actualUncompressedLen);
+		}
+
+		if (context->fileType() & GAME_MUSICFILE_FM) {
+			byte b = 0;
+			for (uint32 i = 0; i < unpackedLen; i++) {
+				b += uncompressed[i];
+				uncompressed[i] = b;
+			}
 		}
 
 		// TODO: Use move semantics
