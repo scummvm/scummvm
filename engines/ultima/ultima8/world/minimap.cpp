@@ -136,8 +136,10 @@ uint32 MiniMap::sampleAtPoint(const Item *item, int x, int y) {
 			if (!frame->hasPoint(i - sx, j - sy))
 				continue;
 
-			byte r2, g2, b2;
-			UNPACK_RGB8(pal->_native_untransformed[frame->getPixelAtPoint(i - sx, j - sy)], r2, g2, b2);
+			uint8 p = frame->getPixelAtPoint(i - sx, j - sy);
+			byte r2 = pal->_palette[p * 3 + 0];
+			byte g2 = pal->_palette[p * 3 + 1];
+			byte b2 = pal->_palette[p * 3 + 2];
 			r += RenderSurface::_gamma22toGamma10[r2];
 			g += RenderSurface::_gamma22toGamma10[g2];
 			b += RenderSurface::_gamma22toGamma10[b2];
