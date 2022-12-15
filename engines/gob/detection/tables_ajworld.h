@@ -19,7 +19,7 @@
  *
  */
 
-/* Detection tables for A.J.'s World of Discovery / ADI Jr. */
+/* Detection tables for A.J.'s World of Discovery / ADI Jnr. */
 
 #ifndef GOB_DETECTION_TABLES_AJWORLD_H
 #define GOB_DETECTION_TABLES_AJWORLD_H
@@ -38,6 +38,24 @@
 	},
 	kGameTypeAJWorld,
 	kFeaturesAdLib,
+	0, 0, 0
+},
+
+
+// -- Amiga Floppy --
+
+{
+	{
+		"ajworld",
+		"",
+		AD_ENTRY1s("intro.stk", "71e7db034890885ac96dd1be43a21c38", 556834),
+		EN_ANY,
+		kPlatformAmiga,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeAJWorld,
+	kFeaturesNone,
 	0, 0, 0
 },
 
