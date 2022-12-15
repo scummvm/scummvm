@@ -209,6 +209,12 @@ protected:
 	 * Sets a new display mode
 	 */
 	void setMode(Mode newMode) override;
+
+	/**
+	 * Does final cleanup when combat is done
+	 */
+	void combatDone() override;
+
 public:
 	Combat();
 	virtual ~Combat() {}

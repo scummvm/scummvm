@@ -101,6 +101,11 @@ protected:
 	virtual void setMode(Mode newMode) = 0;
 
 	/**
+	 * Does final cleanup when combat is done
+	 */
+	virtual void combatDone();
+
+	/**
 	 * Clear all the combat variables
 	 */
 	void clear();
@@ -288,11 +293,6 @@ protected:
 	 * Retreat option
 	 */
 	void retreat();
-
-	/**
-	 * Does final cleanup when combat is done
-	 */
-	void combatDone();
 
 private:
 	void spellFailed();

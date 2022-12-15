@@ -820,6 +820,11 @@ void Combat::displaySpellResult(const InfoMessage &msg) {
 	setMode(SPELL_RESULT);
 }
 
+void Combat::combatDone() {
+	Game::Combat::combatDone();
+	close();
+}
+
 } // namespace Views
 } // namespace MM1
 } // namespace MM
