@@ -221,7 +221,7 @@ public:
 	dgInt32 GetSegmentsInRadius(const dgVector &origin, dgFloat32 radius, dgDebriGraph::dgListNode **segments, dgInt32 maxCount) const;
 
 	void ResetAnchor();
-	void SetAnchoredParts(dgInt32 count, const dgMatrix *const matrixArray, const dgCollision **collisionArray);
+	void SetAnchoredParts(dgInt32 count, const dgMatrix *const matrixArray, const dgCollision * const *collisionArray);
 	void EnumerateIslands();
 	//  dgInt32 GetSegmentsInRadius (const dgVector& origin, dgFloat32 radius, dgDebriGraph::dgListNode** segments, dgInt32 maxCount);
 	//  dgInt32 GetDetachedPieces (dgCollision** shapes, dgInt32 maxCount);

@@ -1240,7 +1240,7 @@ void dgCollisionCompoundBreakable::ResetAnchor() {
 }
 
 void dgCollisionCompoundBreakable::SetAnchoredParts(dgInt32 count,
-        const dgMatrix *const matrixArray, const dgCollision **collisionArray) {
+        const dgMatrix *const matrixArray, const dgCollision * const *collisionArray) {
 	dgDebriGraph::dgListNode *fixNode;
 	dgMatrix matrix(dgGetIdentityMatrix());
 
