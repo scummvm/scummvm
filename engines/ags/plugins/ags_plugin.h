@@ -316,12 +316,12 @@ struct AGSGameInfo {
 	// Which version of the plugin interface the struct corresponds to;
 	// this field must be filled by a plugin before passing the struct into the engine!
 	int Version;
-	// Game name
+	// Game title (human-readable text)
 	char GameName[50];
-	// guid
-	char guid[40];
-	// Random key identifying the game
-	int uniqueid;
+	// Game's GUID
+	char Guid[40];
+	// Random key identifying the game (deprecated)
+	int UniqueId;
 };
 
 // The plugin-to-engine interface
@@ -582,7 +582,7 @@ public:
 	// please note that plugin MUST fill the struct's Version field before passing it into the function!
 	AGSIFUNC(void)  GetGameInfo(AGSGameInfo* ginfo);
 	// install a replacement renderer (extended interface) for the specified font number
-	AGSIFUNC(IAGSFontRenderer2*) ReplaceFontRenderer2(int fontNumber, IAGSFontRenderer2* newRenderer);
+	AGSIFUNC(IAGSFontRenderer*) ReplaceFontRenderer2(int fontNumber, IAGSFontRenderer2* newRenderer);
 	// notify the engine that certain custom font has been updated
 	AGSIFUNC(void)  NotifyFontUpdated(int fontNumber);
 };

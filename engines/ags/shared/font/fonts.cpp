@@ -144,10 +144,10 @@ IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *ren
 	return old_render;
 }
 
-IAGSFontRenderer2* font_replace_renderer(size_t fontNumber, IAGSFontRenderer2 *renderer) {
+IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer2 *renderer) {
 	if (fontNumber >= _GP(fonts).size())
 		return nullptr;
-	IAGSFontRenderer2* old_render = _GP(fonts)[fontNumber].Renderer2;
+	IAGSFontRenderer* old_render = _GP(fonts)[fontNumber].Renderer;
 	font_replace_renderer(fontNumber, renderer, renderer);
 	return old_render;
 }
