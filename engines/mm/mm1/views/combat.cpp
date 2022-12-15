@@ -544,7 +544,7 @@ void Combat::writeParty() {
 	for (uint i = 0; i < _party.size(); ++i) {
 		writeChar(1 + 21 * (i % 2), 16 + (i / 2), '1' + i);
 		writeString(") ");
-		writeString(g_globals->_party[i]._name);
+		writeString(_party[i]->_name);
 	}
 }
 
@@ -804,6 +804,7 @@ void Combat::setOption(SelectedOption option) {
 		KeybindingMode::KBMODE_PARTY_MENUS :
 		KeybindingMode::KBMODE_MENUS);
 	_option = option;
+	redraw();
 }
 
 void Combat::displaySpellResult(const InfoMessage &msg) {
