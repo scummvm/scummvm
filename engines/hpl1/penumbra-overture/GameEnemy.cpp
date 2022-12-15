@@ -1297,10 +1297,10 @@ void iGameEnemy::UpdateAnimations(float afTimeStep) {
 		}
 
 		if (mbAnimationIsSpeedDependant) {
-			if (std::abs(fSpeed) > 0.05f)
-				mpCurrentAnimation->SetSpeed(std::abs(fSpeed) * mfAnimationSpeedMul);
+			if (ABS(fSpeed) > 0.05f)
+				mpCurrentAnimation->SetSpeed(ABS(fSpeed) * mfAnimationSpeedMul);
 			else
-				mpCurrentAnimation->SetSpeed(std::abs(fTurnSpeed) * mfAnimationSpeedMul * 2);
+				mpCurrentAnimation->SetSpeed(ABS(fTurnSpeed) * mfAnimationSpeedMul * 2);
 		}
 	}
 	////////////////////////////////
@@ -1322,7 +1322,7 @@ void iGameEnemy::UpdateAnimations(float afTimeStep) {
 				mMoveState = eEnemyMoveState_Backward;
 			else if (fSpeed >= mfStoppedToWalkSpeed)
 				mMoveState = eEnemyMoveState_Walking;
-			else if (std::abs(fTurnSpeed) > 0.07f)
+			else if (ABS(fTurnSpeed) > 0.07f)
 				mMoveState = eEnemyMoveState_Walking;
 
 			break;
@@ -1332,7 +1332,7 @@ void iGameEnemy::UpdateAnimations(float afTimeStep) {
 			if (fSpeed >= mfWalkToRunSpeed)
 				mMoveState = eEnemyMoveState_Running;
 			else if (fSpeed <= mfWalkToStoppedSpeed) {
-				if (std::abs(fTurnSpeed) < 0.03f)
+				if (ABS(fTurnSpeed) < 0.03f)
 					mMoveState = eEnemyMoveState_Stopped;
 			}
 
@@ -1379,10 +1379,10 @@ void iGameEnemy::UpdateAnimations(float afTimeStep) {
 		/////////////////////////////////
 		// Update animation speed
 		if (mbAnimationIsSpeedDependant) {
-			if (std::abs(fSpeed) > 0.05f)
-				mpCurrentAnimation->SetSpeed(std::abs(fSpeed) * mfMoveAnimSpeedMul);
+			if (ABS(fSpeed) > 0.05f)
+				mpCurrentAnimation->SetSpeed(ABS(fSpeed) * mfMoveAnimSpeedMul);
 			else
-				mpCurrentAnimation->SetSpeed(std::abs(fTurnSpeed) * mfMoveAnimSpeedMul * 2);
+				mpCurrentAnimation->SetSpeed(ABS(fTurnSpeed) * mfMoveAnimSpeedMul * 2);
 		}
 	}
 }

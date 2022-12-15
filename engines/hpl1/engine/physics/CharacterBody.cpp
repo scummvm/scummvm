@@ -894,7 +894,7 @@ void iCharacterBody::Update(float afTimeStep) {
 		// if climbing there is no gravity working but we still want foot steps.
 		mbOnGround = true;
 	} else {
-		if (bCollide && vLastVelocity.y <= 0 && std::abs(mvVelolcity.y) < (std::abs(vLastVelocity.y) - 0.001f)) {
+		if (bCollide && vLastVelocity.y <= 0 && ABS(mvVelolcity.y) < (ABS(vLastVelocity.y) - 0.001f)) {
 			if (mbOnGround == false) {
 				if (mpCallback)
 					mpCallback->OnHitGround(this, vLastVelocity);

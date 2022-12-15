@@ -382,7 +382,7 @@ float cMath::Wrap(float afX, float afMin, float afMax) {
 	afMin = 0;
 	afX = afX - fOffSet;
 
-	float fNumOfMax = floor(std::abs(afX / afMax));
+	float fNumOfMax = floor(ABS(afX / afMax));
 
 	if (afX >= afMax)
 		afX = afX - fNumOfMax * afMax;
@@ -421,12 +421,12 @@ float cMath::GetAngleDistance(float afAngle1, float afAngle2, float afMaxAngle) 
 		return 0;
 	} else {
 		float fDist1 = afAngle2 - afAngle1;
-		float fDist2 = afMaxAngle - std::abs(fDist1);
+		float fDist2 = afMaxAngle - ABS(fDist1);
 
 		if (fDist1 > 0)
 			fDist2 = -fDist2;
 
-		if (std::abs(fDist1) < std::abs(fDist2))
+		if (ABS(fDist1) < ABS(fDist2))
 			return fDist1;
 		else
 			return fDist2;
@@ -635,7 +635,7 @@ cVector3f cMath::ProjectVector3D(const cVector3f &avSrcVec, const cVector3f &avD
 float cMath::Vector3Angle(const cVector3f &avVecA, const cVector3f &avVecB) {
 	float fCos = Vector3Dot(avVecA, avVecB);
 
-	if (std::abs(fCos - 1) <= kEpsilonf)
+	if (ABS(fCos - 1) <= kEpsilonf)
 		return 0;
 
 	return acos(fCos);
@@ -842,7 +842,7 @@ cQuaternion cMath::QuaternionSlerp(float afT, const cQuaternion &aqA, const cQua
 	float fCos = QuaternionDot(aqA, aqB);
 
 	// If the rotations are the same, just return the first.
-	if (std::abs(fCos - 1) <= kEpsilonf) {
+	if (ABS(fCos - 1) <= kEpsilonf) {
 		return aqA;
 	}
 

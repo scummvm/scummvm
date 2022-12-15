@@ -276,9 +276,9 @@ bool ContactProcessor::processNext() {
 	// Tangent speed
 	float fTanSpeed0 = NewtonMaterialGetContactTangentSpeed(_material, 0);
 	float fTanSpeed1 = NewtonMaterialGetContactTangentSpeed(_material, 1);
-	if (std::abs(_contactData.mfMaxContactTangentSpeed) < std::abs(fTanSpeed0))
+	if (ABS(_contactData.mfMaxContactTangentSpeed) < ABS(fTanSpeed0))
 		_contactData.mfMaxContactTangentSpeed = fTanSpeed0;
-	if (std::abs(_contactData.mfMaxContactTangentSpeed) < std::abs(fTanSpeed1))
+	if (ABS(_contactData.mfMaxContactTangentSpeed) < ABS(fTanSpeed1))
 		_contactData.mfMaxContactTangentSpeed = fTanSpeed1;
 
 	// Force
@@ -322,22 +322,22 @@ void ContactProcessor::endProcessing() {
 	int lPrio2 = pMaterial2->GetSurfaceData()->GetPriority();
 
 	if (lPrio1 >= lPrio2) {
-		if (std::abs(_contactData.mfMaxContactNormalSpeed) > 0)
+		if (ABS(_contactData.mfMaxContactNormalSpeed) > 0)
 			pMaterial1->GetSurfaceData()->OnImpact(_contactData.mfMaxContactNormalSpeed,
 												   _contactData.mvContactPosition,
 												   _contacts, _contactBody0);
-		if (std::abs(_contactData.mfMaxContactTangentSpeed) > 0)
+		if (ABS(_contactData.mfMaxContactTangentSpeed) > 0)
 			pMaterial1->GetSurfaceData()->OnSlide(_contactData.mfMaxContactTangentSpeed,
 												  _contactData.mvContactPosition,
 												  _contacts, _contactBody0, _contactBody1);
 	}
 
 	if (lPrio2 >= lPrio1 && pMaterial2 != pMaterial1) {
-		if (std::abs(_contactData.mfMaxContactNormalSpeed) > 0)
+		if (ABS(_contactData.mfMaxContactNormalSpeed) > 0)
 			pMaterial2->GetSurfaceData()->OnImpact(_contactData.mfMaxContactNormalSpeed,
 												   _contactData.mvContactPosition,
 												   _contacts, _contactBody1);
-		if (std::abs(_contactData.mfMaxContactTangentSpeed) > 0)
+		if (ABS(_contactData.mfMaxContactTangentSpeed) > 0)
 			pMaterial2->GetSurfaceData()->OnSlide(_contactData.mfMaxContactTangentSpeed,
 												  _contactData.mvContactPosition,
 												  _contacts, _contactBody1, _contactBody0);

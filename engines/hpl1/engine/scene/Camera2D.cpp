@@ -72,11 +72,11 @@ cVector3f cCamera2D::GetEyePosition() {
 void cCamera2D::GetClipRect(cRect2f &aRect) {
 	float fDiv = 1;
 	if (mvPosition.z < 0) {
-		fDiv = 1 - std::abs(mvPosition.z / mfZMin);
+		fDiv = 1 - ABS(mvPosition.z / mfZMin);
 		if (fDiv <= 0)
 			fDiv = 0.0001f;
 	} else
-		fDiv = 1 + std::abs(mvPosition.z / mfZMax);
+		fDiv = 1 + ABS(mvPosition.z / mfZMax);
 
 	// Transform these depending on z
 	float lW = ((float)mvClipArea.x) * fDiv;

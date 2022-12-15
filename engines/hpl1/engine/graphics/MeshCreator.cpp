@@ -91,7 +91,7 @@ iVertexBuffer *cMeshCreator::CreateSkyBoxVertexBuffer(float afSize) {
 			for (int z = -1; z <= 1; z++) {
 				if (x == 0 && y == 0 && z == 0)
 					continue;
-				if (std::abs(x) + std::abs(y) + std::abs(z) > 1)
+				if (ABS(x) + ABS(y) + ABS(z) > 1)
 					continue;
 
 				// Direction (could say inverse normal) of the quad.
@@ -99,7 +99,7 @@ iVertexBuffer *cMeshCreator::CreateSkyBoxVertexBuffer(float afSize) {
 				cVector3f vSide;
 
 				cVector3f vAdd[4];
-				if (std::abs(x)) {
+				if (ABS(x)) {
 					vDir.x = (float)x;
 
 					vAdd[0].y = 1;
@@ -110,7 +110,7 @@ iVertexBuffer *cMeshCreator::CreateSkyBoxVertexBuffer(float afSize) {
 					vAdd[2].z = -1;
 					vAdd[3].y = 1;
 					vAdd[3].z = -1;
-				} else if (std::abs(y)) {
+				} else if (ABS(y)) {
 					vDir.y = (float)y;
 
 					vAdd[0].z = 1;
@@ -121,7 +121,7 @@ iVertexBuffer *cMeshCreator::CreateSkyBoxVertexBuffer(float afSize) {
 					vAdd[2].x = -1;
 					vAdd[3].z = 1;
 					vAdd[3].x = -1;
-				} else if (std::abs(z)) {
+				} else if (ABS(z)) {
 					vAdd[0].y = 1;
 					vAdd[0].x = 1;
 					vAdd[1].y = 1;
@@ -177,7 +177,7 @@ iVertexBuffer *cMeshCreator::CreateBoxVertexBuffer(cVector3f avSize) {
 			for (int z = -1; z <= 1; z++) {
 				if (x == 0 && y == 0 && z == 0)
 					continue;
-				if (std::abs(x) + std::abs(y) + std::abs(z) > 1)
+				if (ABS(x) + ABS(y) + ABS(z) > 1)
 					continue;
 
 				// Direction (could say inverse normal) of the quad.
@@ -185,7 +185,7 @@ iVertexBuffer *cMeshCreator::CreateBoxVertexBuffer(cVector3f avSize) {
 				cVector3f vSide;
 
 				cVector3f vAdd[4];
-				if (std::abs(x)) {
+				if (ABS(x)) {
 					vDir.x = (float)x;
 
 					vAdd[0].y = 1;
@@ -196,7 +196,7 @@ iVertexBuffer *cMeshCreator::CreateBoxVertexBuffer(cVector3f avSize) {
 					vAdd[2].z = -1;
 					vAdd[3].y = 1;
 					vAdd[3].z = -1;
-				} else if (std::abs(y)) {
+				} else if (ABS(y)) {
 					vDir.y = (float)y;
 
 					vAdd[0].z = 1;
@@ -207,7 +207,7 @@ iVertexBuffer *cMeshCreator::CreateBoxVertexBuffer(cVector3f avSize) {
 					vAdd[2].x = -1;
 					vAdd[3].z = 1;
 					vAdd[3].x = -1;
-				} else if (std::abs(z)) {
+				} else if (ABS(z)) {
 					vAdd[0].y = 1;
 					vAdd[0].x = 1;
 					vAdd[1].y = 1;
@@ -259,13 +259,13 @@ iVertexBuffer *cMeshCreator::CreateBoxVertexBuffer(cVector3f avSize) {
 cVector3f cMeshCreator::GetBoxTex(int i, int x, int y, int z, cVector3f *vAdd) {
 	cVector3f vTex;
 
-	if (std::abs(x)) {
+	if (ABS(x)) {
 		vTex.x = vAdd[i].z;
 		vTex.y = vAdd[i].y;
-	} else if (std::abs(y)) {
+	} else if (ABS(y)) {
 		vTex.x = vAdd[i].x;
 		vTex.y = vAdd[i].z;
-	} else if (std::abs(z)) {
+	} else if (ABS(z)) {
 		vTex.x = vAdd[i].x;
 		vTex.y = vAdd[i].y;
 	}

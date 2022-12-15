@@ -133,7 +133,7 @@ void cSoundEntry::Update(float afTimeStep) {
 		}
 	}
 
-	if (std::abs(mfNormalVolumeFadeDest) < 0.001f && std::abs(mfNormalVolumeMul) < 0.001f && mfNormalVolumeFadeSpeed <= 0) {
+	if (ABS(mfNormalVolumeFadeDest) < 0.001f && ABS(mfNormalVolumeMul) < 0.001f && mfNormalVolumeFadeSpeed <= 0) {
 		mpSound->Stop();
 	}
 }

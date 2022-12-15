@@ -388,11 +388,11 @@ bool iPhysicsWorld::CheckShapeWorldCollision(cVector3f *apNewPos,
 
 				cVector3f vPush = point.mvNormal * point.mfDepth;
 
-				if (std::abs(vPushVec.x) < std::abs(vPush.x))
+				if (ABS(vPushVec.x) < ABS(vPush.x))
 					vPushVec.x = vPush.x;
-				if (std::abs(vPushVec.y) < std::abs(vPush.y))
+				if (ABS(vPushVec.y) < ABS(vPush.y))
 					vPushVec.y = vPush.y;
-				if (std::abs(vPushVec.z) < std::abs(vPush.z))
+				if (ABS(vPushVec.z) < ABS(vPush.z))
 					vPushVec.z = vPush.z;
 			}
 			bCollide = true;

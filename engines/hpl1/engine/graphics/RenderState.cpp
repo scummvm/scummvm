@@ -641,7 +641,7 @@ int iRenderState::CompareDepthTest(const iRenderState *apState) const {
 //-----------------------------------------------------------------------
 
 int iRenderState::CompareDepth(const iRenderState *apState) const {
-	if (std::abs(mfZ - apState->mfZ) < 0.00001f)
+	if (ABS(mfZ - apState->mfZ) < 0.00001f)
 		return 0;
 	else
 		return mfZ < apState->mfZ ? 1 : -1;

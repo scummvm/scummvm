@@ -109,13 +109,13 @@ tFlag cCollider2D::CollideBody(cBody2D *apBody, cCollideData2D *apData) {
 				// reverse the latest push, maybe pos here instead?
 				if (lCollision) {
 					// If the current X push is grater use it instead.
-					if (std::abs(vPushVector.x) > std::abs(vLastPushVector.x)) {
+					if (ABS(vPushVector.x) > ABS(vLastPushVector.x)) {
 						vPos.x -= vLastPushVector.x;
 					} else {
 						bAlterX = false;
 					}
 					// If the current Y push is grater use it instead.
-					if (std::abs(vPushVector.y) > std::abs(vLastPushVector.y)) {
+					if (ABS(vPushVector.y) > ABS(vLastPushVector.y)) {
 						vPos.y -= vLastPushVector.y;
 						bAlterY = true;
 					} else {
