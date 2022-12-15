@@ -447,6 +447,13 @@ public:
 	void flipVertical(const Common::Rect &r);
 
 	/**
+	 * Flip the specified rect horizontally.
+	 *
+	 * @param r  The rectangle to flip.
+	 */
+	void flipHorizontal(const Common::Rect &r);
+
+	/**
 	 * Scale the data to the given size.
 	 *
 	 * The client code must call @ref free on the returned surface and then delete
