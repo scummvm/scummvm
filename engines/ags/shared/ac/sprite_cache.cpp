@@ -144,6 +144,9 @@ void SpriteCache::SubstituteBitmap(sprkey_t index, Bitmap *sprite) {
 }
 
 void SpriteCache::RemoveSprite(sprkey_t index, bool freeMemory) {
+	if (index < 0 || (size_t)index >= _spriteData.size())
+		return;
+
 	if (freeMemory)
 		delete _spriteData[index].Image;
 	InitNullSpriteParams(index);
