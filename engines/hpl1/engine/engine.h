@@ -135,7 +135,6 @@
 #include "hpl1/engine/input/LowLevelInput.h"
 #include "hpl1/engine/input/Mouse.h"
 #include "hpl1/engine/math/BoundingVolume.h"
-#include "hpl1/engine/math/CRC.h"
 #include "hpl1/engine/math/Frustum.h"
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/math/MathTypes.h"
