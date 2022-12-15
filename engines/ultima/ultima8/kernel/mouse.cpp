@@ -29,6 +29,9 @@
 #include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/graphics/shape.h"
+#include "ultima/ultima8/graphics/shape_frame.h"
+#include "ultima/ultima8/graphics/palette.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -41,13 +44,11 @@ Mouse::Mouse() : _flashingCursorTime(0), _mouseOverGump(0),
 	_instance = this;
 
 	_cursors.push(MOUSE_NONE);
+	CursorMan.showMouse(false);
 }
 
 Mouse::~Mouse() {
 	_instance = nullptr;
-}
-
-void Mouse::setup() {
 }
 
 bool Mouse::buttonDown(Shared::MouseButton button) {
@@ -121,6 +122,7 @@ bool Mouse::buttonUp(Shared::MouseButton button) {
 void Mouse::popAllCursors() {
 	_cursors.clear();
 	_cursors.push(MOUSE_NONE);
+	update();
 }
 
 bool Mouse::isMouseDownEvent(Shared::MouseButton button) const {
@@ -339,6 +341,7 @@ void Mouse::setMouseCoords(int mx, int my) {
 void Mouse::setMouseCursor(MouseCursor cursor) {
 	_cursors.pop();
 	_cursors.push(cursor);
+	update();
 }
 
 void Mouse::flashCrossCursor() {
@@ -347,10 +350,12 @@ void Mouse::flashCrossCursor() {
 
 void Mouse::pushMouseCursor(MouseCursor cursor) {
 	_cursors.push(cursor);
+	update();
 }
 
 void Mouse::popMouseCursor() {
 	_cursors.pop();
+	update();
 }
 
 void Mouse::startDragging(int startx, int starty) {
@@ -531,18 +536,21 @@ Gump *Mouse::getMouseOverGump() const {
 	return getGump(_mouseOverGump);
 }
 
-void Mouse::paint() {
-	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
+void Mouse::update() {
 	GameData *gamedata = GameData::get_instance();
-
 	if (!gamedata)
 		return;
 
 	const Shape *mouse = gamedata->getMouse();
 	if (mouse) {
 		int frame = getMouseFrame();
-		if (frame >= 0) {
-			screen->Paint(mouse, frame, _mousePos.x, _mousePos.y, true);
+		if (frame >= 0 && (uint)frame < mouse->frameCount()) {
+			const ShapeFrame *f = mouse->getFrame(frame);
+			CursorMan.replaceCursor(f->_pixels, f->_width, f->_height, f->_xoff, f->_yoff, f->_keycolor);
+			CursorMan.replaceCursorPalette(mouse->getPalette()->_palette, 0, 256);
+			CursorMan.showMouse(true);
+		} else {
+			CursorMan.showMouse(false);
 		}
 	}
 }

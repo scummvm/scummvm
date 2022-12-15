@@ -131,11 +131,6 @@ public:
 	~Mouse();
 
 	/**
-	 * Setup the mouse cursors
-	 */
-	void setup();
-
-	/**
 	 * Called when a mouse button is pressed down
 	 */
 	bool buttonDown(Shared::MouseButton button);
@@ -214,7 +209,7 @@ public:
 	Gump *getMouseOverGump() const;
 	void resetMouseOverGump() { _mouseOverGump = 0; }
 
-	void paint();
+	void update();
 };
 
 } // End of namespace Ultima8

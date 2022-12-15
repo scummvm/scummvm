@@ -638,8 +638,8 @@ void Ultima8Engine::paint() {
 	}
 #endif
 
-	// Draw the mouse
-	_mouse->paint();
+	// Update the mouse
+	_mouse->update();
 
 	// End _painting
 	_screen->EndPainting();
@@ -695,10 +695,6 @@ void Ultima8Engine::GraphicSysInit() {
 		paint();
 		return;
 	}
-
-	// setup normal mouse cursor
-	debugN(MM_INFO, "Loading Default Mouse Cursor...\n");
-	_mouse->setup();
 
 	_desktopGump = new DesktopGump(0, 0, width, height);
 	_desktopGump->InitGump(0);
@@ -1246,9 +1242,9 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	}
 
 	_mouse->pushMouseCursor(Mouse::MOUSE_WAIT);
-	_screen->BeginPainting();
-	_mouse->paint();
-	_screen->EndPainting();
+
+	// Redraw to indicate busy
+	paint();
 
 	Common::SeekableReadStream *ds;
 	GameInfo saveinfo;
