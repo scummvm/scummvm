@@ -119,7 +119,77 @@ static const GamePatchDescription *PatchLists[PATCHLIST_MAX] = {
 	/* PATCHLIST_ITE_MAC */ ITEMacPatch_Files
 };
 
-bool ResourceContext::loadResIteAmiga(uint32 contextOffset, uint32 contextSize, int type, bool isFloppy) {
+struct ITEAmigaIndex {
+	uint32 fileOffset;
+	uint32 numEntries;
+};
+
+struct ITEAmigaEXEDescriptor {
+	ITEAmigaIndex voiceIndex;
+	ITEAmigaIndex soundIndex;
+};
+
+bool ResourceContext::loadResIteAmigaSound(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type) {
+	Common::String exeName;
+
+	for (const ADGameFileDescription *gameFileDescription = _vm->getFilesDescriptions();
+		gameFileDescription->fileName; gameFileDescription++) {
+		if (Common::String(gameFileDescription->fileName).hasSuffix(".exe"))
+			exeName = gameFileDescription->fileName;
+	}
+
+	if (exeName.empty())
+		return false;
+
+	// Right now German and English ECS version have same offsets to
+	// offset tables, no need to distinguish them
+	static const ITEAmigaEXEDescriptor ecsDesc = {
+		{ 0x56a8, 3730 },
+		{ 0x90f0,   44 },
+	};
+
+	// Right now German and English ECS version have same offsets to
+	// offset tables, no need to distinguish them
+	static const ITEAmigaEXEDescriptor agaDesc = {
+		{ 0x53a8, 3730 },
+		{ 0x8df0,   44 },
+	};
+ 
+	const ITEAmigaEXEDescriptor *exedesc = _vm->isECS() ? &ecsDesc : &agaDesc;
+	const ITEAmigaIndex& amigaIdx = _fileType & GAME_VOICEFILE ? exedesc->voiceIndex : exedesc->soundIndex;
+
+	if (amigaIdx.numEntries <= 1)
+		return false;
+
+	_table.resize(amigaIdx.numEntries - 1);
+
+	Common::File f;
+
+	if(!f.open(exeName.c_str()))
+		return false;
+
+	f.seek(amigaIdx.fileOffset);
+
+	for (uint32 i = 0; i < amigaIdx.numEntries - 1; i++) {
+		ResourceData *resourceData = &_table[i];
+		resourceData->offset = f.readUint32BE();
+		resourceData->diskNum = -1;
+	}
+
+	uint32 lastEntry = f.readUint32BE();
+
+	for (uint32 i = 0; i < amigaIdx.numEntries - 2; i++) {
+		_table[i].size = _table[i + 1].offset - _table[i].offset;
+	}
+
+	_table[amigaIdx.numEntries - 2].size = lastEntry - _table[amigaIdx.numEntries - 2].offset;
+
+	return true;
+}
+
+bool ResourceContext::loadResIteAmiga(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type, bool isFloppy) {
+	if (_fileType & (GAME_VOICEFILE | GAME_SOUNDFILE))
+		return loadResIteAmigaSound(_vm, contextOffset, contextSize, type);
 	_file.seek(contextOffset);
 	uint16 resourceCount = _file.readUint16BE();
 	uint16 scriptCount = _file.readUint16BE();
@@ -136,19 +206,6 @@ bool ResourceContext::loadResIteAmiga(uint32 contextOffset, uint32 contextSize, 
 		resourceData->offset = _file.readUint32BE() + extraOffset;
 		resourceData->size = _file.readUint32BE();
 		resourceData->diskNum = _file.readUint16BE();
-	}
-
-	return true;
-}
-
-bool ResourceContext_RSC_ITE_Amiga_Sound::loadRes(uint32 contextOffset, uint32 contextSize, int type) {
-	_table.resize(_idxSize - 1);
-
-	for (uint32 i = 0; i < _idxSize - 1; i++) {
-		ResourceData *resourceData = &_table[i];
-		resourceData->offset = _idx[i];
-		resourceData->size = _idx[i+1] - _idx[i];
-		resourceData->diskNum = -1;
 	}
 
 	return true;
@@ -235,7 +292,7 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 			_file.seek(83);
 			uint32 macDataSize = _file.readSint32BE();
 			// Skip the MacBinary headers, and read the resource data.
-			return loadRes(MAC_BINARY_HEADER_SIZE, macDataSize, _fileType);
+			return loadRes(vm, MAC_BINARY_HEADER_SIZE, macDataSize, _fileType);
 		} else {
 			// Unpack MacBinary packed MIDI files
 			return loadMacMIDI();
@@ -243,7 +300,7 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 	}
 
 
-	if (!loadRes(0, _fileSize, _fileType))
+	if (!loadRes(vm, 0, _fileSize, _fileType))
 		return false;
 
 	GamePatchList index = vm->getPatchList();
@@ -276,18 +333,9 @@ void Resource::addContext(const char *fileName, uint16 fileType, bool isCompress
 	_contexts.push_back(context);
 }
 
-void Resource::addAmigaSoundContext(const char *fileName, uint16 fileType, const uint32 *idx, uint32 idxSize) {
-	ResourceContext *context;
-	context = new ResourceContext_RSC_ITE_Amiga_Sound(idx, idxSize);
-	context->_fileName = fileName;
-	context->_fileType = fileType;
-	context->_isCompressed = false;
-	context->_serial = 0;
-	_contexts.push_back(context);
-}
-
 bool Resource::createContexts() {
 	bool soundFileInArray = false;
+	bool voiceFileInArray = false;
 
 	_vm->_voiceFilesExist = true;
 
@@ -309,6 +357,9 @@ bool Resource::createContexts() {
 		if (gameFileDescription->fileType == GAME_SOUNDFILE) {
 			soundFileInArray = true;
 		}
+		if (gameFileDescription->fileType == GAME_VOICEFILE) {
+			voiceFileInArray = true;
+		}
 	}
 
 	//// Detect and add SFX files ////////////////////////////////////////////////
@@ -326,7 +377,6 @@ bool Resource::createContexts() {
 
 	_soundFileName[0] = 0;
 	if (!soundFileInArray) {
-		bool hasSfx = false;
 		for (SoundFileInfo *curSoundFile = sfxFiles; (curSoundFile->gameId != -1); curSoundFile++) {
 			if (curSoundFile->gameId != _vm->getGameId()) continue;
 			if (!Common::File::exists(curSoundFile->fileName)) continue;
@@ -336,15 +386,7 @@ bool Resource::createContexts() {
 			if (_vm->getFeatures() & GF_SOME_MAC_RESOURCES)
 				flags |= GAME_SWAPENDIAN;
 			addContext(_soundFileName, flags, curSoundFile->isCompressed);
-			hasSfx = true;
 			break;
-		}
-
-		if (_vm->getPlatform() == Common::kPlatformAmiga && !hasSfx && _vm->getGameId() == GID_ITE
-			&& Common::File::exists("ite.sounds")) {
-			Common::strcpy_s(_soundFileName, "ite.sounds");
-			addAmigaSoundContext(_soundFileName, GAME_SOUNDFILE, amigaSoundIndex, ARRAYSIZE(amigaSoundIndex));
-			hasSfx = true;
 		}
 	}
 
@@ -371,16 +413,17 @@ bool Resource::createContexts() {
 
 	// Detect and add voice files
 	_voicesFileName[0][0] = 0;
-	for (SoundFileInfo *curSoundFile = voiceFiles; (curSoundFile->gameId != -1); curSoundFile++) {
-		if (curSoundFile->gameId != _vm->getGameId()) continue;
-		if (!Common::File::exists(curSoundFile->fileName)) continue;
+	if (!voiceFileInArray) {
+		for (SoundFileInfo *curSoundFile = voiceFiles; (curSoundFile->gameId != -1); curSoundFile++) {
+			if (curSoundFile->gameId != _vm->getGameId()) continue;
+			if (!Common::File::exists(curSoundFile->fileName)) continue;
 
-		Common::strcpy_s(_voicesFileName[0], curSoundFile->fileName);
-		addContext(_voicesFileName[0], GAME_VOICEFILE | curSoundFile->voiceFileAddType, curSoundFile->isCompressed);
+			Common::strcpy_s(_voicesFileName[0], curSoundFile->fileName);
+			addContext(_voicesFileName[0], GAME_VOICEFILE | curSoundFile->voiceFileAddType, curSoundFile->isCompressed);
 
-		// Special cases
-		if (!scumm_stricmp(curSoundFile->fileName, "voicess.res") ||
-			!scumm_stricmp(curSoundFile->fileName, "voicess.cmp")) {
+			// Special cases
+			if (!scumm_stricmp(curSoundFile->fileName, "voicess.res") ||
+			    !scumm_stricmp(curSoundFile->fileName, "voicess.cmp")) {
 				// IHNM has multiple voice files
 				for (size_t i = 1; i <= 6; i++) { // voices1-voices6
 					Common::sprintf_s(_voicesFileName[i], "voices%i.%s", (uint)i, curSoundFile->isCompressed ? "cmp" : "res");
@@ -393,23 +436,12 @@ bool Resource::createContexts() {
 					}
 					addContext(_voicesFileName[i], GAME_VOICEFILE, curSoundFile->isCompressed, i);
 				}
+			}
+			break;
 		}
-		break;
 	}
 
-	if (_voicesFileName[0][0] == 0 && _vm->getPlatform() == Common::kPlatformAmiga && _vm->getGameId() == GID_ITE
-	    && Common::File::exists("ite.voices")) {
-		Common::strcpy_s(_voicesFileName[0], "ite.voices");
-		if (_vm->getLanguage() == Common::Language::DE_DEU)
-			addAmigaSoundContext(_voicesFileName[0], GAME_VOICEFILE, amigaVoiceIndexGerman, ARRAYSIZE(amigaVoiceIndexGerman));
-		else if (_vm->getLanguage() == Common::Language::EN_ANY)
-			addAmigaSoundContext(_voicesFileName[0], GAME_VOICEFILE, amigaVoiceIndexEnglish, ARRAYSIZE(amigaVoiceIndexEnglish));
-		else
-			error("Unexpected language");
-	}
-
-
-	if (_voicesFileName[0][0] == 0) {
+	if (!voiceFileInArray && _voicesFileName[0][0] == 0) {
 #ifdef ENABLE_IHNM
 		if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
 			// The Macintosh version of IHNM has no voices.res, and it has all

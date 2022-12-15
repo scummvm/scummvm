@@ -1035,6 +1035,9 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"AGA CD",
 			{
 				{"ite.rtn",		GAME_RESOURCEFILE,	"9d97f645eb877d1c9eb9d906930c3257", 18564},
+				{"aga.exe",                             0,      "f18ff495b8346983400a8eb6175590e5", 203224},
+				{"ite.sounds",             GAME_SOUNDFILE,      "f09b29e3204192de7e8cc6b073cb34f5", 640284},
+				{"ite.voices",             GAME_VOICEFILE,      "f2efcf1c175c572f91cc4ec66dbb226f", 221124347},
 				AD_LISTEND
 			},
 			Common::DE_DEU,
@@ -1050,6 +1053,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		PATCHLIST_ITE,
 		INTROLIST_ITE_AMIGA_GERMAN_AGA,
 		{},
+
 	},
 	// This is on the same disk as previous but it's for ECS systems
 	{
@@ -1058,6 +1062,9 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ECS CD",
 			{
 				{"ecs.rtn",		GAME_RESOURCEFILE,	"62d738d3201c1624f0e4bfcc8fb587dd", 18624},
+				{"ecs.exe",                             0,      "b6a5ae7b07c620a8101e87bb0d2af136", 205064},
+				{"ite.sounds",             GAME_SOUNDFILE,      "f09b29e3204192de7e8cc6b073cb34f5", 640284},
+				{"ite.voices",             GAME_VOICEFILE,      "f2efcf1c175c572f91cc4ec66dbb226f", 221124347},
 				AD_LISTEND
 			},
 			Common::DE_DEU,
@@ -1081,6 +1088,9 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"AGA CD",
 			{
 				{"ite.rtn",		GAME_RESOURCEFILE,	"749885c0f7eaab4e977dc26a41d99ad8", 18524},
+				{"aga.exe",                             0,      "e6d93bbf0f89786eb930fbc81e02810d", 202328},
+				{"ite.sounds",             GAME_SOUNDFILE,      "f09b29e3204192de7e8cc6b073cb34f5", 640284},
+				{"ite.voices",             GAME_VOICEFILE,      "daf62750f5322da03fab395e548b0b8f", 217376825},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -1104,6 +1114,9 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ECS CD",
 			{
 				{"ecs.rtn",		GAME_RESOURCEFILE,	"c9d09514839d771efdc82ad761413349", 18584},
+				{"ecs.exe",                             0,      "29665b96c2758aec3906ebc891079234", 204228},
+				{"ite.sounds",             GAME_SOUNDFILE,      "f09b29e3204192de7e8cc6b073cb34f5", 640284},
+				{"ite.voices",             GAME_VOICEFILE,      "daf62750f5322da03fab395e548b0b8f", 217376825},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
