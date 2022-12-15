@@ -609,11 +609,11 @@ bool GlkAPI::glk_style_measure(winid_t win, uint style, uint hint, uint *result)
 		break;
 
 	case stylehint_TextColor:
-		*result = styles[style].fg;
+		*result = strtol(_conf->encodeColor(styles[style].fg).c_str(), nullptr, 16);
 		break;
 
 	case stylehint_BackColor:
-		*result = styles[style].bg;
+		*result = strtol(_conf->encodeColor(styles[style].bg).c_str(), nullptr, 16);
 		break;
 
 	case stylehint_ReverseColor:
