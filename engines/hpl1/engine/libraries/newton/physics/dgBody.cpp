@@ -710,7 +710,7 @@ dgConstraint *dgBody::GetFirstJoint() const {
 	return NULL;
 }
 
-dgConstraint *dgBody::GetNextJoint(dgConstraint *joint) const {
+dgConstraint *dgBody::GetNextJoint(const dgConstraint *joint) const {
 	dgBodyMasterListRow::dgListNode *node;
 
 	node = joint->GetLink0();
@@ -744,7 +744,7 @@ dgConstraint *dgBody::GetFirstContact() const {
 	return NULL;
 }
 
-dgConstraint *dgBody::GetNextContact(dgConstraint *joint) const {
+dgConstraint *dgBody::GetNextContact(const dgConstraint *joint) const {
 	dgBodyMasterListRow::dgListNode *node;
 
 	node = joint->GetLink0();

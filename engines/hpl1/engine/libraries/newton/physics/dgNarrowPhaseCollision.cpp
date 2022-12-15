@@ -395,7 +395,7 @@ dgCollision *dgWorld::CreateScene() {
 	return new (m_allocator) dgCollisionScene(this);
 }
 
-void dgWorld::Serialize(dgCollision *shape, dgSerialize serialization,
+void dgWorld::Serialize(const dgCollision *shape, dgSerialize serialization,
                         void *const userData) const {
 	dgInt32 signature[4];
 
@@ -653,7 +653,7 @@ void dgWorld::ReleaseCollision(dgCollision *const collision) {
 // separate collision system
 //
 // ********************************************************************************
-dgInt32 dgWorld::ClosestPoint(dgTriplex &point, dgCollision *const collision,
+dgInt32 dgWorld::ClosestPoint(const dgTriplex &point, dgCollision *const collision,
                               const dgMatrix &matrix, dgTriplex &contact, dgTriplex &normal,
                               dgInt32 threadIndex) const {
 	dgTriplex contactA;

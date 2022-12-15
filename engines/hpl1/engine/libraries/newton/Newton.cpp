@@ -2790,7 +2790,7 @@ NewtonCollision *NewtonCreateCompoundCollision(
 // Neglecting to release references to collision primitives is a common cause of memory leaks.
 //
 // See also: NewtonCreateCompoundCollision
-NEWTON_API NewtonCollision *NewtonCreateCompoundCollisionFromMesh(const NewtonWorld *const newtonWorld, const NewtonMesh *const convexAproximation, dFloat hullTolerance, int shapeID, int subShapeID) {
+NEWTON_API NewtonCollision *NewtonCreateCompoundCollisionFromMesh(NewtonWorld *const newtonWorld, const NewtonMesh *const convexAproximation, dFloat hullTolerance, int shapeID, int subShapeID) {
 	TRACE_FUNTION(__FUNCTION__);
 	Newton *const world = (Newton *)newtonWorld;
 	//  dgMeshEffect* const convexAproximation = (dgMeshEffect*) mesh;
@@ -3012,12 +3012,11 @@ void NewtonCompoundBreakableGetVertexStreams(
 }
 
 void *NewtonBreakableGetFirstSegment(
-    const NewtonbreakableComponentMesh *const breakableComponent) {
+    NewtonbreakableComponentMesh *const breakableComponent) {
 	dgCollisionCompoundBreakable::dgDebriGraph::dgListNode *node;
 	TRACE_FUNTION(__FUNCTION__);
 
-	node =
-	    (dgCollisionCompoundBreakable::dgDebriGraph::dgListNode *)breakableComponent;
+	node = (dgCollisionCompoundBreakable::dgDebriGraph::dgListNode *)breakableComponent;
 	return node->GetInfo().m_nodeData.m_mesh->GetFirst();
 }
 
@@ -3040,8 +3039,8 @@ int NewtonBreakableGetComponentsInRadius(
 	count = 0;
 	collision = (const dgCollision *)compoundBreakable;
 	if (collision->IsType(dgCollision::dgCollisionCompoundBreakable_RTTI)) {
-		dgCollisionCompoundBreakable *compound;
-		compound = (dgCollisionCompoundBreakable *)collision;
+		const dgCollisionCompoundBreakable *compound;
+		compound = (const dgCollisionCompoundBreakable *)collision;
 		dgVector origin(position[0], position[1], position[2], dgFloat32(0.0f));
 		count = compound->GetSegmentsInRadius(origin, radius,
 		                                      (dgCollisionCompoundBreakable::dgDebriGraph::dgListNode **)segments,
@@ -3051,7 +3050,7 @@ int NewtonBreakableGetComponentsInRadius(
 	return count;
 }
 
-int NewtonBreakableSegmentGetMaterial(const void *const segment) {
+int NewtonBreakableSegmentGetMaterial(void *const segment) {
 	dgCollisionCompoundBreakable::dgMesh::dgListNode *node;
 	TRACE_FUNTION(__FUNCTION__);
 
@@ -3059,7 +3058,7 @@ int NewtonBreakableSegmentGetMaterial(const void *const segment) {
 	return node->GetInfo().m_material;
 }
 
-int NewtonBreakableSegmentGetIndexCount(const void *const segment) {
+int NewtonBreakableSegmentGetIndexCount(void *const segment) {
 	dgCollisionCompoundBreakable::dgMesh::dgListNode *node;
 	TRACE_FUNTION(__FUNCTION__);
 
@@ -3069,8 +3068,8 @@ int NewtonBreakableSegmentGetIndexCount(const void *const segment) {
 
 int NewtonBreakableSegmentGetIndexStream(
     const NewtonCollision *const compoundBreakable,
-    const NewtonbreakableComponentMesh *const meshOwner,
-    const void *const segment, int *const index) {
+    NewtonbreakableComponentMesh *const meshOwner,
+    void *const segment, int *const index) {
 	int count;
 	const dgCollision *collision;
 
@@ -3091,7 +3090,7 @@ int NewtonBreakableSegmentGetIndexStream(
 int NewtonBreakableSegmentGetIndexStreamShort(
     const NewtonCollision *const compoundBreakable,
     const NewtonbreakableComponentMesh *const meshOwner,
-    const void *const segment, short int *const index) {
+    void *const segment, short int *const index) {
 	int count;
 	const dgCollision *collision;
 
@@ -3103,7 +3102,7 @@ int NewtonBreakableSegmentGetIndexStreamShort(
 		const dgCollisionCompoundBreakable *compound;
 		compound = (const dgCollisionCompoundBreakable *)collision;
 		count = compound->GetSegmentIndexStreamShort(
-		            (dgCollisionCompoundBreakable::dgDebriGraph::dgListNode *)meshOwner,
+		            (const dgCollisionCompoundBreakable::dgDebriGraph::dgListNode *)meshOwner,
 		            (dgCollisionCompoundBreakable::dgMesh::dgListNode *)segment, index);
 	}
 	return count;
@@ -3145,7 +3144,7 @@ int NewtonCollisionIsTriggerVolume(const NewtonCollision *const convexCollision)
 // this particular shape is a trigger volume and no contact calculation is desired.
 //
 // See also: NewtonCollisionIsTriggerVolume
-void NewtonCollisionSetAsTriggerVolume(const NewtonCollision *convexCollision,
+void NewtonCollisionSetAsTriggerVolume(NewtonCollision *convexCollision,
                                        int trigger) {
 	dgCollision *collision;
 	collision = (dgCollision *)convexCollision;
@@ -3156,7 +3155,7 @@ void NewtonCollisionSetAsTriggerVolume(const NewtonCollision *convexCollision,
 }
 
 void NewtonCollisionSetMaxBreakImpactImpulse(
-    const NewtonCollision *const convexHullCollision, dFloat maxImpactImpulse) {
+    NewtonCollision *const convexHullCollision, dFloat maxImpactImpulse) {
 	dgCollision *collision;
 	collision = (dgCollision *)convexHullCollision;
 
@@ -3185,7 +3184,7 @@ dFloat NewtonCollisionGetMaxBreakImpactImpulse(
 // Remarks: the application can store an id with any collision primitive. This id can be used to identify what type of collision primitive generated a contact.
 //
 // See also: NewtonMaterialGetBodyCollisionID, NewtonCollisionGetUserID, NewtonCreateBox, NewtonCreateSphere
-void NewtonCollisionSetUserID(const NewtonCollision *const collision,
+void NewtonCollisionSetUserID(NewtonCollision *const collision,
                               unsigned id) {
 
 	dgCollision *coll;
@@ -3206,7 +3205,7 @@ void NewtonCollisionSetUserID(const NewtonCollision *const collision,
 // Remarks: the application can store an id with any collision primitive. This id can be used to identify what type of collision primitive generated a contact.
 //
 // See also: NewtonMaterialGetBodyCollisionID, NewtonMaterialGetBodyCollisionID, NewtonCreateBox, NewtonCreateSphere
-unsigned NewtonCollisionGetUserID(const NewtonCollision *const collision) {
+unsigned NewtonCollisionGetUserID(NewtonCollision *const collision) {
 	dgCollision *coll;
 
 	TRACE_FUNTION(__FUNCTION__);
@@ -3238,7 +3237,7 @@ int NewtonConvexHullGetFaceIndices(
 	coll = (const dgCollision *)convexHullCollision;
 
 	if (coll->IsType(dgCollision::dgCollisionConvexHull_RTTI)) {
-		return ((dgCollisionConvexHull *)coll)->GetFaceIndices(face, faceIndices);
+		return ((const dgCollisionConvexHull *)coll)->GetFaceIndices(face, faceIndices);
 	} else {
 		return 0;
 	}
@@ -3280,8 +3279,8 @@ dFloat NewtonConvexCollisionCalculateVolume(
 void NewtonConvexCollisionCalculateInertialMatrix(
     const NewtonCollision *convexCollision, dFloat *const inertia,
     dFloat *const origin) {
-	dgCollision *collision;
-	collision = (dgCollision *)convexCollision;
+	const dgCollision *collision;
+	collision = (const dgCollision *)convexCollision;
 
 	dgVector tmpInertia;
 	dgVector tmpOringin;
@@ -3335,7 +3334,7 @@ void NewtonConvexCollisionCalculateInertialMatrix(
 //
 // See also: NewtonReleaseCollision
 NewtonCollision *NewtonCreateUserMeshCollision(
-    const NewtonWorld *const newtonWorld, const dFloat *const minBox,
+    NewtonWorld *const newtonWorld, const dFloat *const minBox,
     const dFloat *const maxBox, void *const userData,
     NewtonUserMeshCollisionCollideCallback collideCallback,
     NewtonUserMeshCollisionRayHitCallback rayHitCallBack,
@@ -3385,7 +3384,7 @@ NewtonCollision *NewtonCreateUserMeshCollision(
 // as speed up some calculations.
 //
 // See also: NewtonTreeCollisionBeginBuild, NewtonTreeCollisionAddFace, NewtonTreeCollisionEndBuild, NewtonStaticCollisionSetDebugCallback, NewtonTreeCollisionGetFaceAtribute, NewtonTreeCollisionSetFaceAtribute, NewtonReleaseCollision
-NewtonCollision *NewtonCreateTreeCollision(const NewtonWorld *const newtonWorld,
+NewtonCollision *NewtonCreateTreeCollision(NewtonWorld *const newtonWorld,
         int shapeID) {
 	Newton *world;
 	dgCollision *collision;
@@ -3421,7 +3420,7 @@ NewtonCollision *NewtonCreateTreeCollisionFromMesh(const NewtonWorld *const newt
 //
 // See also: NewtonTreeCollisionGetFaceAtribute, NewtonTreeCollisionSetFaceAtribute
 void NewtonStaticCollisionSetDebugCallback(
-    const NewtonCollision *const staticCollision,
+    NewtonCollision *const staticCollision,
     NewtonTreeCollisionCallback userCallback) {
 	/*
 	 dgCollision* collision;
@@ -3485,7 +3484,7 @@ void NewtonStaticCollisionSetDebugCallback(
 //
 // See also: NewtonTreeCollisionGetFaceAtribute, NewtonTreeCollisionSetFaceAtribute
 void NewtonTreeCollisionSetUserRayCastCallback(
-    const NewtonCollision *const treeCollision,
+    NewtonCollision *const treeCollision,
     NewtonCollisionTreeRayCastCallback rayHitCallback) {
 	TRACE_FUNTION(__FUNCTION__);
 	dgCollisionBVH *const collision = (dgCollisionBVH *)treeCollision;
@@ -3496,7 +3495,7 @@ void NewtonTreeCollisionSetUserRayCastCallback(
 }
 
 void NewtonHeightFieldSetUserRayCastCallback(
-    const NewtonCollision *treeCollision,
+    NewtonCollision *treeCollision,
     NewtonHeightFieldRayCastCallback rayHitCallback) {
 	TRACE_FUNTION(__FUNCTION__);
 	dgCollisionHeightField *const collision =
@@ -3516,7 +3515,7 @@ void NewtonHeightFieldSetUserRayCastCallback(
 // Return: Nothing.
 //
 // See also: NewtonTreeCollisionAddFace, NewtonTreeCollisionEndBuild
-void NewtonTreeCollisionBeginBuild(const NewtonCollision *treeCollision) {
+void NewtonTreeCollisionBeginBuild(NewtonCollision *treeCollision) {
 
 	TRACE_FUNTION(__FUNCTION__);
 	dgCollisionBVH *const collision = (dgCollisionBVH *)treeCollision;
@@ -3542,7 +3541,7 @@ void NewtonTreeCollisionBeginBuild(const NewtonCollision *treeCollision) {
 // The polygons must be flat and non-self intersecting.
 //
 // See also: NewtonTreeCollisionAddFace, NewtonTreeCollisionEndBuild
-void NewtonTreeCollisionAddFace(const NewtonCollision *const treeCollision,
+void NewtonTreeCollisionAddFace(NewtonCollision *const treeCollision,
                                 int vertexCount, const dFloat *const vertexPtr, int strideInBytes,
                                 int faceAttribute) {
 	TRACE_FUNTION(__FUNCTION__);
@@ -3569,7 +3568,7 @@ void NewtonTreeCollisionAddFace(const NewtonCollision *const treeCollision,
 // Calling this function with the parameter *optimize* set to zero, will leave the mesh geometry unaltered.
 //
 // See also: NewtonTreeCollisionAddFace, NewtonTreeCollisionEndBuild
-void NewtonTreeCollisionEndBuild(const NewtonCollision *const treeCollision,
+void NewtonTreeCollisionEndBuild(NewtonCollision *const treeCollision,
                                  int optimize) {
 	TRACE_FUNTION(__FUNCTION__);
 	dgCollisionBVH *const collision = (dgCollisionBVH *)treeCollision;
@@ -3617,7 +3616,7 @@ int NewtonTreeCollisionGetFaceAtribute(
 //
 // See also: NewtonTreeCollisionGetFaceAtribute, NewtonCreateTreeCollision, NewtonCreateTreeCollisionFromSerialization
 void NewtonTreeCollisionSetFaceAtribute(
-    const NewtonCollision *const treeCollision, const int *const faceIndexArray,
+    NewtonCollision *const treeCollision, const int *const faceIndexArray,
     int attribute) {
 	TRACE_FUNTION(__FUNCTION__);
 	dgCollisionBVH *const collision = (dgCollisionBVH *)treeCollision;
@@ -3654,8 +3653,8 @@ int NewtonTreeCollisionGetVertexListIndexListInAABB(
     const NewtonCollision *const treeCollision, const dFloat *const p0,
     const dFloat *const p1, const dFloat **const vertexArray,
     int *const vertexCount, int *const vertexStrideInBytes,
-    const int *const indexList, int maxIndexCount,
-    const int *const faceAttribute) {
+    int *const indexList, int maxIndexCount,
+    int *const faceAttribute) {
 	dgInt32 count;
 	const dgCollision *meshColl;
 
@@ -3710,7 +3709,7 @@ int NewtonTreeCollisionGetVertexListIndexListInAABB(
 //
 // See also: NewtonCreateTreeCollision, NewtonReleaseCollision
 NewtonCollision *NewtonCreateHeightFieldCollision(
-    const NewtonWorld *const newtonWorld, int width, int height,
+    NewtonWorld *const newtonWorld, int width, int height,
     int cellsDiagonals, const unsigned short *const elevationMap,
     const char *const atributeMap, dFloat horizontalScale, dFloat verticalScale,
     int shapeID) {
@@ -3739,8 +3738,7 @@ NewtonCollision *NewtonCreateHeightFieldCollision(
 // Remarks:
 //
 // See also: NewtonCreateTreeCollision, NewtonReleaseCollision
-NewtonCollision *NewtonCreateSceneCollision(
-    const NewtonWorld *const newtonWorld, int shapeID) {
+NewtonCollision *NewtonCreateSceneCollision(NewtonWorld *const newtonWorld, int shapeID) {
 	Newton *world;
 	dgCollision *collision;
 
@@ -3754,7 +3752,7 @@ NewtonCollision *NewtonCreateSceneCollision(
 }
 
 NewtonSceneProxy *NewtonSceneCollisionCreateProxy(NewtonCollision *const scene,
-        NewtonCollision *const collision, const dFloat *const matrixPtr) {
+        NewtonCollision *const collision, dFloat *const matrixPtr) {
 	dgMatrix matrix(*((dgMatrix *)matrixPtr));
 	matrix.m_front.m_w = dgFloat32(0.0f);
 	matrix.m_up.m_w = dgFloat32(0.0f);
@@ -3779,7 +3777,7 @@ void NewtonSceneProxySetMatrix(NewtonSceneProxy *const proxy,
 	dgList<dgCollisionScene::dgProxy *>::dgListNode *const node = (dgList <
 	        dgCollisionScene::dgProxy * >::dgListNode *)proxy;
 	dgCollisionScene *const newtonScene = node->GetInfo()->m_owner;
-	dgMatrix &offset = *((dgMatrix *)matrix);
+	const dgMatrix &offset = *((const dgMatrix *)matrix);
 	newtonScene->SetProxyMatrix(node, offset);
 }
 
@@ -3861,16 +3859,16 @@ void NewtonSceneCollisionOptimize(NewtonCollision *const scene) {
 // Remarks: the current implementation of this function do work on collision trees, or user define collision.
 //
 // See also: NewtonCollisionCollideContinue, NewtonCollisionClosestPoint, NewtonCollisionCollide, NewtonCollisionRayCast, NewtonCollisionCalculateAABB
-int NewtonCollisionPointDistance(const NewtonWorld *const newtonWorld,
-                                 const dFloat *const point, const NewtonCollision *const collision,
+int NewtonCollisionPointDistance(NewtonWorld *const newtonWorld,
+                                 const dFloat *const point, NewtonCollision *const collision,
                                  const dFloat *const matrix, dFloat *const contact, dFloat *const normal,
                                  int threadIndex) {
 	Newton *world;
 	world = (Newton *)newtonWorld;
 
 	TRACE_FUNTION(__FUNCTION__);
-	return world->ClosestPoint(*((dgTriplex *)point), (dgCollision *)collision,
-	                           *((dgMatrix *)matrix), *((dgTriplex *)contact), *((dgTriplex *)normal),
+	return world->ClosestPoint(*((const dgTriplex *)point), (dgCollision *)collision,
+	                           *((const dgMatrix *)matrix), *((dgTriplex *)contact), *((dgTriplex *)normal),
 	                           threadIndex);
 }
 
@@ -3902,17 +3900,17 @@ int NewtonCollisionPointDistance(const NewtonWorld *const newtonWorld,
 // Remarks: the current implementation of this function does not work on collision trees, or user define collision.
 //
 // See also: NewtonCollisionCollideContinue, NewtonCollisionPointDistance, NewtonCollisionCollide, NewtonCollisionRayCast, NewtonCollisionCalculateAABB
-int NewtonCollisionClosestPoint(const NewtonWorld *const newtonWorld,
-                                const NewtonCollision *const collisionA, const dFloat *const matrixA,
-                                const NewtonCollision *const collisionB, const dFloat *const matrixB,
+int NewtonCollisionClosestPoint(NewtonWorld *const newtonWorld,
+                                NewtonCollision *const collisionA, const dFloat *const matrixA,
+                                NewtonCollision *const collisionB, const dFloat *const matrixB,
                                 dFloat *const contactA, dFloat *const contactB, dFloat *const normalAB,
                                 int threadIndex) {
 	Newton *world;
 	world = (Newton *)newtonWorld;
 
 	TRACE_FUNTION(__FUNCTION__);
-	return world->ClosestPoint((dgCollision *)collisionA, *((dgMatrix *)matrixA),
-	                           (dgCollision *)collisionB, *((dgMatrix *)matrixB),
+	return world->ClosestPoint((dgCollision *)collisionA, *((const dgMatrix *)matrixA),
+	                           (dgCollision *)collisionB, *((const dgMatrix *)matrixB),
 	                           *((dgTriplex *)contactA), *((dgTriplex *)contactB),
 	                           *((dgTriplex *)normalAB), threadIndex);
 }
@@ -3943,17 +3941,17 @@ int NewtonCollisionClosestPoint(const NewtonWorld *const newtonWorld,
 // Also the application should implement their own trivial aabb test, before calling this function .
 //
 // See also: NewtonCollisionCollideContinue, NewtonCollisionClosestPoint, NewtonCollisionPointDistance, NewtonCollisionRayCast, NewtonCollisionCalculateAABB
-int NewtonCollisionCollide(const NewtonWorld *const newtonWorld, int maxSize,
-                           const NewtonCollision *const collisionA, const dFloat *const matrixA,
-                           const NewtonCollision *const collisionB, const dFloat *const matrixB,
+int NewtonCollisionCollide(NewtonWorld *const newtonWorld, int maxSize,
+                           NewtonCollision *const collisionA, const dFloat *const matrixA,
+                           NewtonCollision *const collisionB, const dFloat *const matrixB,
                            dFloat *const contacts, dFloat *const normals, dFloat *const penetration,
                            int threadIndex) {
 	Newton *world;
 	world = (Newton *)newtonWorld;
 
 	TRACE_FUNTION(__FUNCTION__);
-	return world->Collide((dgCollision *)collisionA, *((dgMatrix *)matrixA),
-	                      (dgCollision *)collisionB, *((dgMatrix *)matrixB), (dgTriplex *)contacts,
+	return world->Collide((dgCollision *)collisionA, *((const dgMatrix *)matrixA),
+	                      (dgCollision *)collisionB, *((const dgMatrix *)matrixB), (dgTriplex *)contacts,
 	                      (dgTriplex *)normals, penetration, maxSize, threadIndex);
 }
 
@@ -3995,10 +3993,10 @@ int NewtonCollisionCollide(const NewtonWorld *const newtonWorld, int maxSize,
 // Also the application should implement their own trivial aabb test, before calling this function .
 //
 // See also: NewtonCollisionCollide, NewtonCollisionClosestPoint, NewtonCollisionPointDistance, NewtonCollisionRayCast, NewtonCollisionCalculateAABB
-int NewtonCollisionCollideContinue(const NewtonWorld *const newtonWorld,
-                                   int maxSize, const dFloat timestep, const NewtonCollision *const collisionA,
+int NewtonCollisionCollideContinue(NewtonWorld *const newtonWorld,
+                                   int maxSize, const dFloat timestep, NewtonCollision *const collisionA,
                                    const dFloat *const matrixA, const dFloat *const velocA,
-                                   const dFloat *const omegaA, const NewtonCollision *const collisionB,
+                                   const dFloat *const omegaA, NewtonCollision *const collisionB,
                                    const dFloat *const matrixB, const dFloat *const velocB,
                                    const dFloat *const omegaB, dFloat *const timeOfImpact,
                                    dFloat *const contacts, dFloat *const normals, dFloat *const penetration,
@@ -4117,7 +4115,7 @@ void NewtonCollisionCalculateAABB(const NewtonCollision *collisionPtr,
 	const dgCollision *collision;
 	collision = (const dgCollision *)collisionPtr;
 	// const dgMatrix& matrix = *((dgMatrix*) offsetMatrix);
-	dgMatrix matrix(collision->GetOffsetMatrix() * (*((dgMatrix *)offsetMatrix)));
+	dgMatrix matrix(collision->GetOffsetMatrix() * (*((const dgMatrix *)offsetMatrix)));
 
 	dgVector q0;
 	dgVector q1;
@@ -4159,8 +4157,8 @@ void NewtonCollisionForEachPolygonDo(const NewtonCollision *collisionPtr,
                                      const dFloat *const matrixPtr, NewtonCollisionIterator callback,
                                      void *const userDataPtr) {
 	TRACE_FUNTION(__FUNCTION__);
-	dgCollision *const collision = (dgCollision *)(collisionPtr);
-	dgMatrix matrix = *((dgMatrix *)matrixPtr);
+	const dgCollision *const collision = (const dgCollision *)(collisionPtr);
+	const dgMatrix matrix = *((const dgMatrix *)matrixPtr);
 
 	collision->DebugCollision(matrix, (OnDebugCollisionMeshCallback)callback,
 	                          userDataPtr);
@@ -4182,8 +4180,8 @@ void NewtonCollisionForEachPolygonDo(const NewtonCollision *collisionPtr,
 // Remarks:
 // Collision objects are reference counted objects. The application should call *NewtonReleaseCollision* in order to release references to the object.
 // Neglecting to release references to collision primitives is a common cause of memory leaks.
-void NewtonCollisionMakeUnique(const NewtonWorld *const newtonWorld,
-                               const NewtonCollision *const collisionPtr) {
+void NewtonCollisionMakeUnique(NewtonWorld *const newtonWorld,
+                               NewtonCollision *const collisionPtr) {
 	TRACE_FUNTION(__FUNCTION__);
 	Newton *const world = (Newton *)newtonWorld;
 	dgCollision *const collision = (dgCollision *)collisionPtr;
@@ -4205,7 +4203,7 @@ void NewtonCollisionMakeUnique(const NewtonWorld *const newtonWorld,
 // Neglecting to release references to collision primitives is a common cause of memory leaks.
 //
 // See also: NewtonReleaseCollision , NewtonCollisionGetInfo, NewtonCollisionSerialize
-int NewtonAddCollisionReference(const NewtonCollision *collisionPtr) {
+int NewtonAddCollisionReference(NewtonCollision *collisionPtr) {
 	TRACE_FUNTION(__FUNCTION__);
 	dgCollision *const collision = (dgCollision *)collisionPtr;
 	collision->AddRef();
@@ -4228,8 +4226,8 @@ int NewtonAddCollisionReference(const NewtonCollision *collisionPtr) {
 // Neglecting to release references to collision primitives is a common cause of memory leaks.
 //
 // See also: NewtonAddCollisionReference, NewtonCollisionGetInfo, NewtonCollisionSerialize
-void NewtonReleaseCollision(const NewtonWorld *const newtonWorld,
-                            const NewtonCollision *const collisionPtr) {
+void NewtonReleaseCollision(NewtonWorld *const newtonWorld,
+                            NewtonCollision *const collisionPtr) {
 	TRACE_FUNTION(__FUNCTION__);
 	Newton *const world = (Newton *)newtonWorld;
 	dgCollision *const collision = (dgCollision *)collisionPtr;
@@ -4256,8 +4254,8 @@ void NewtonCollisionSerialize(const NewtonWorld *const newtonWorld,
                               const NewtonCollision *const collision, NewtonSerialize serializeFunction,
                               void *const serializeHandle) {
 	TRACE_FUNTION(__FUNCTION__);
-	Newton *const world = (Newton *)newtonWorld;
-	world->Serialize((dgCollision *)collision, (dgSerialize)serializeFunction,
+	const Newton *const world = (const Newton *)newtonWorld;
+	world->Serialize((const dgCollision *)collision, (dgSerialize)serializeFunction,
 	                 serializeHandle);
 }
 
@@ -4280,7 +4278,7 @@ void NewtonCollisionSerialize(const NewtonWorld *const newtonWorld,
 //
 // See also: NewtonAddCollisionReference, NewtonReleaseCollision, NewtonCollisionSerialize, NewtonCollisionGetInfo
 NewtonCollision *NewtonCreateCollisionFromSerialization(
-    const NewtonWorld *const newtonWorld, NewtonDeserialize deserializeFunction,
+    NewtonWorld *const newtonWorld, NewtonDeserialize deserializeFunction,
     void *const serializeHandle) {
 	TRACE_FUNTION(__FUNCTION__);
 	Newton *const world = (Newton *)newtonWorld;
@@ -4476,8 +4474,8 @@ dFloat NewtonCalculateSpringDamperAcceleration(dFloat dt, dFloat ks, dFloat x,
 // All event functions are set to NULL and the material gruopID of the body is set to the default GroupID.
 //
 // See also: NewtonDestroyBody
-NewtonBody *NewtonCreateBody(const NewtonWorld *const newtonWorld,
-                             const NewtonCollision *const collisionPtr, const dFloat *const matrixPtr) {
+NewtonBody *NewtonCreateBody(NewtonWorld *const newtonWorld,
+                             NewtonCollision *const collisionPtr, const dFloat *const matrixPtr) {
 
 	TRACE_FUNTION(__FUNCTION__);
 	Newton *const world = (Newton *)newtonWorld;
@@ -4487,7 +4485,7 @@ NewtonBody *NewtonCreateBody(const NewtonWorld *const newtonWorld,
 	SaveCollision(collisionPtr);
 #endif
 
-	dgMatrix matrix(*((dgMatrix *)matrixPtr));
+	dgMatrix matrix(*((const dgMatrix *)matrixPtr));
 #ifdef _DEBUG
 	//  matrix.m_front = matrix.m_front.Scale (dgRsqrt (matrix.m_front % matrix.m_front));
 	//  matrix.m_right = matrix.m_front * matrix.m_up;
@@ -4517,8 +4515,8 @@ NewtonBody *NewtonCreateBody(const NewtonWorld *const newtonWorld,
 // geometry will be destroyed. This function will destroy all joints associated with this body.
 //
 // See also: NewtonCreateBody
-void NewtonDestroyBody(const NewtonWorld *const newtonWorld,
-                       const NewtonBody *const bodyPtr) {
+void NewtonDestroyBody(NewtonWorld *const newtonWorld,
+                       NewtonBody *const bodyPtr) {
 	dgBody *body;
 	Newton *world;
 
@@ -4541,7 +4539,7 @@ void NewtonDestroyBody(const NewtonWorld *const newtonWorld,
 // if the application allocate some resource to store the user data, the application can register a joint destructor to get rid of the allocated resource when the body is destroyed
 //
 // See also: NewtonBodyGetUserData, NewtonBodySetDestructorCallback
-void NewtonBodySetUserData(const NewtonBody *const bodyPtr,
+void NewtonBodySetUserData(NewtonBody *const bodyPtr,
                            void *const userDataPtr) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
@@ -4606,7 +4604,7 @@ NewtonWorld *NewtonBodyGetWorld(const NewtonBody *const bodyPtr) {
 // Remarks: The matrix should be organized in row-major order (this is the way directX and OpenGL stores matrices).
 //
 // See also: NewtonBodyGetUserData, NewtonBodyGetUserData
-void NewtonBodySetTransformCallback(const NewtonBody *const bodyPtr,
+void NewtonBodySetTransformCallback(NewtonBody *const bodyPtr,
                                     NewtonSetTransform callback) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
@@ -4633,8 +4631,8 @@ void NewtonBodySetTransformCallback(const NewtonBody *const bodyPtr,
 // See also: NewtonBodyGetUserData, NewtonBodyGetUserData
 NewtonSetTransform NewtonBodyGetTransformCallback(
 			    const NewtonBody *const bodyPtr) {
-	dgBody *body;
-	body = (dgBody *)bodyPtr;
+	const dgBody *body;
+	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return (NewtonSetTransform)body->GetMatrixUpdateCallback();
@@ -4655,7 +4653,7 @@ NewtonSetTransform NewtonBodyGetTransformCallback(
 // The Newton Engine does not call the *NewtonApplyForceAndTorque callback* function for bodies that are inactive or have reached a state of stable equilibrium.
 //
 // See also: NewtonBodyGetUserData, NewtonBodyGetUserData, NewtonBodyGetForceAndTorqueCallback
-void NewtonBodySetForceAndTorqueCallback(const NewtonBody *const bodyPtr,
+void NewtonBodySetForceAndTorqueCallback(NewtonBody *const bodyPtr,
         NewtonApplyForceAndTorque callback) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
@@ -4711,7 +4709,7 @@ NewtonApplyForceAndTorque NewtonBodyGetForceAndTorqueCallback(
 // The destruction of a body will destroy all joints associated with the body.
 //
 // See also: NewtonBodyGetUserData, NewtonBodyGetUserData
-void NewtonBodySetDestructorCallback(const NewtonBody *const bodyPtr,
+void NewtonBodySetDestructorCallback(NewtonBody *const bodyPtr,
                                      NewtonBodyDestructor callback) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
@@ -4739,7 +4737,7 @@ void NewtonBodySetDestructorCallback(const NewtonBody *const bodyPtr,
 // realistic physics behavior.
 //
 // See also: NewtonConvexCollisionCalculateInertialMatrix, NewtonBodyGetMassMatrix, NewtonBodyGetInvMass
-void NewtonBodySetMassMatrix(const NewtonBody *const bodyPtr, dFloat mass,
+void NewtonBodySetMassMatrix(NewtonBody *const bodyPtr, dFloat mass,
                              dFloat Ixx, dFloat Iyy, dFloat Izz) {
 	dgBody *body;
 	dFloat Ixx1;
@@ -4847,8 +4845,8 @@ void NewtonBodyGetInvMass(const NewtonBody *const bodyPtr,
 // Remarks: That application should make sure the transformation matrix has not scale, otherwise unpredictable result will occur.
 //
 // See also: NewtonBodyGetMatrix
-void NewtonBodySetMatrix(const NewtonBody *const bodyPtr,
-                         const dFloat *const matrixPtr) {
+void NewtonBodySetMatrix(NewtonBody *const bodyPtr,
+                         dFloat *const matrixPtr) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
 	dgMatrix matrix(*((dgMatrix *)matrixPtr));
@@ -4893,14 +4891,14 @@ void NewtonBodySetMatrix(const NewtonBody *const bodyPtr,
 // passing them to Newton.
 //
 // See also: NewtonBodySetMatrix
-void NewtonBodySetMatrixRecursive(const NewtonBody *const bodyPtr,
+void NewtonBodySetMatrixRecursive(NewtonBody *const bodyPtr,
                                   const dFloat *const matrixPtr) {
 	dgBody *body;
 	Newton *world;
 
 	body = (dgBody *)bodyPtr;
 	world = (Newton *)body->GetWorld();
-	dgMatrix matrix(*((dgMatrix *)matrixPtr));
+	const dgMatrix matrix(*((const dgMatrix *)matrixPtr));
 
 	world->BodySetMatrix(body, matrix);
 }
@@ -4969,7 +4967,7 @@ void NewtonBodyGetRotation(const NewtonBody *const bodyPtr, dFloat *rotPtr) {
 // Remarks: This function is only effective when called from *NewtonApplyForceAndTorque callback*
 //
 // See also: NewtonBodyAddForce, NewtonBodyGetForce, NewtonBodyGetForceAcc
-void NewtonBodySetForce(const NewtonBody *const bodyPtr,
+void NewtonBodySetForce(NewtonBody *const bodyPtr,
                         const dFloat *vectorPtr) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
@@ -4991,7 +4989,7 @@ void NewtonBodySetForce(const NewtonBody *const bodyPtr,
 // Remarks: This function is only effective when called from *NewtonApplyForceAndTorque callback*
 //
 // See also: NewtonBodySetForce, NewtonBodyGetForce, NewtonBodyGetForceAcc
-void NewtonBodyAddForce(const NewtonBody *const bodyPtr,
+void NewtonBodyAddForce(NewtonBody *const bodyPtr,
                         const dFloat *const vectorPtr) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
@@ -5116,7 +5114,7 @@ void NewtonBodySetTorque(NewtonBody *bodyPtr,
 // Remarks: This function is only effective when called from *NewtonApplyForceAndTorque callback*
 //
 // See also: NewtonBodySetTorque, NewtonBodyGetTorque, NewtonBodyGetTorqueAcc
-void NewtonBodyAddTorque(const NewtonBody *const bodyPtr,
+void NewtonBodyAddTorque(NewtonBody *const bodyPtr,
                          const dFloat *const vectorPtr) {
 	dgBody *body;
 	body = (dgBody *)bodyPtr;
@@ -5290,7 +5288,7 @@ NewtonJoint *NewtonBodyGetNextJoint(const NewtonBody *const bodyPtr,
 	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
-	return (NewtonJoint *)body->GetNextJoint((dgConstraint *)jointPtr);
+	return (NewtonJoint *)body->GetNextJoint((const dgConstraint *)jointPtr);
 }
 
 // Name: NewtonBodyGetFirstContactJoint
@@ -5326,7 +5324,7 @@ NewtonJoint *NewtonBodyGetNextContactJoint(const NewtonBody *const bodyPtr,
 	body = (const dgBody *)bodyPtr;
 
 	TRACE_FUNTION(__FUNCTION__);
-	return (NewtonJoint *)body->GetNextContact((dgConstraint *)contactPtr);
+	return (NewtonJoint *)body->GetNextContact((const dgConstraint *)contactPtr);
 }
 
 // Name: NewtonContactJointGetContactCount
@@ -5464,7 +5462,7 @@ NewtonMaterial *NewtonContactGetMaterial(void *const contact) {
 // of compound collision geometry with different IDs.
 //
 // See also: NewtonConvexCollisionCalculateVolume
-void NewtonBodyAddBuoyancyForce(const NewtonBody *const bodyPtr,
+void NewtonBodyAddBuoyancyForce(NewtonBody *const bodyPtr,
                                 dFloat fluidDensity, dFloat fluidLinearViscosity,
                                 dFloat fluidAngularViscosity, const dFloat *const gravityVector,
                                 NewtonGetBuoyancyPlane buoyancyPlane, void *const context) {
