@@ -262,7 +262,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 			actor->_scriptEntrypointNumber = ITE_ActorTable[i].scriptEntrypointNumber;
 			actor->_spriteListResourceId = ITE_ActorTable[i].spriteListResourceId;
 			actor->_frameListResourceId = ITE_ActorTable[i].frameListResourceId;
-			actor->_speechColor = ITE_ActorTable[i].speechColor;
+			actor->_speechColor = _vm->isECS() ? ITE_ActorECSSpeechColor[i] : ITE_ActorTable[i].speechColor;
 			actor->_sceneNumber = ITE_ActorTable[i].sceneIndex;
 			actor->_flags = ITE_ActorTable[i].flags;
 			actor->_currentAction = ITE_ActorTable[i].currentAction;
