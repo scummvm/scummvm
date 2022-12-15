@@ -643,5 +643,3 @@ bool dgList<T>::SanityCheck() const {
 
 
 #endif
-
-

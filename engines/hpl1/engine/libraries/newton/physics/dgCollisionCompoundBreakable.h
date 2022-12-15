@@ -218,7 +218,7 @@ public:
 	dgDebriGraph::dgListNode *GetFirstComponentMesh() const {
 		return (m_conectivity.GetCount() > 2) ? m_conectivity.GetFirst()->GetNext() : NULL;
 	}
-	dgInt32 GetSegmentsInRadius(const dgVector &origin, dgFloat32 radius, dgDebriGraph::dgListNode **segments, dgInt32 maxCount);
+	dgInt32 GetSegmentsInRadius(const dgVector &origin, dgFloat32 radius, dgDebriGraph::dgListNode **segments, dgInt32 maxCount) const;
 
 	void ResetAnchor();
 	void SetAnchoredParts(dgInt32 count, const dgMatrix *const matrixArray, const dgCollision **collisionArray);
@@ -227,7 +227,7 @@ public:
 	//  dgInt32 GetDetachedPieces (dgCollision** shapes, dgInt32 maxCount);
 
 	dgInt32 GetSegmentIndexStream(dgDebriGraph::dgListNode *const node, dgMesh::dgListNode *segment, dgInt32 *const index) const;
-	dgInt32 GetSegmentIndexStreamShort(dgDebriGraph::dgListNode *const node, dgMesh::dgListNode *segment, dgInt16 *const index) const;
+	dgInt32 GetSegmentIndexStreamShort(const dgDebriGraph::dgListNode *const node, dgMesh::dgListNode *segment, dgInt16 *const index) const;
 
 	dgInt32 GetVertecCount() const {
 		return m_vertexBuffer->m_vertexCount;

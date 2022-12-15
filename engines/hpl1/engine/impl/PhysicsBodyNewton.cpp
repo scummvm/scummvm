@@ -447,7 +447,7 @@ static int BuoyancyPlaneCallback(const int alCollisionID, void *apContext,
 	return 1;
 }
 
-void cPhysicsBodyNewton::OnUpdateCallback(const NewtonBody *apBody, float, int) {
+void cPhysicsBodyNewton::OnUpdateCallback(NewtonBody *apBody, float, int) {
 	float fMass;
 	float fX, fY, fZ;
 

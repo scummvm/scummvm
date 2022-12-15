@@ -1035,7 +1035,7 @@ void dgCollisionCompoundBreakable::GetCollisionInfo(dgCollisionInfo *info) const
 }
 
 dgInt32 dgCollisionCompoundBreakable::GetSegmentIndexStreamShort(
-    dgDebriGraph::dgListNode *const node, dgMesh::dgListNode *subMeshNode,
+    const dgDebriGraph::dgListNode *const node, dgMesh::dgListNode *subMeshNode,
     dgInt16 *const index) const {
 	dgInt32 currentIndex;
 	dgSubMesh *const subMesh = &subMeshNode->GetInfo();
@@ -1109,7 +1109,7 @@ dgInt32 dgCollisionCompoundBreakable::GetSegmentIndexStream(
 
 dgInt32 dgCollisionCompoundBreakable::GetSegmentsInRadius(
     const dgVector &origin, dgFloat32 radius,
-    dgDebriGraph::dgListNode **segments, dgInt32 maxCount) {
+    dgDebriGraph::dgListNode **segments, dgInt32 maxCount) const {
 	dgInt32 count;
 	dgInt32 stack;
 	dgNodeBase *stackPool[DG_COMPOUND_STACK_DEPTH];

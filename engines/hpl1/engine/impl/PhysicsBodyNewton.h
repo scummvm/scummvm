@@ -102,7 +102,7 @@ public:
 
 private:
 	static void OnTransformCallback(const NewtonBody *apBody, const dFloat *apMatrix, int);
-	static void OnUpdateCallback(const NewtonBody *apBody, float, int);
+	static void OnUpdateCallback(NewtonBody *apBody, float, int);
 
 	NewtonBody *mpNewtonBody;
 	NewtonWorld *mpNewtonWorld;

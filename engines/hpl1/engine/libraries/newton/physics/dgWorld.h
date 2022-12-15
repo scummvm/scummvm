@@ -174,7 +174,7 @@ public:
 	                            dgFloat32 &timeStep, dgTriplex *const points, dgTriplex *const normals, dgFloat32 *const penetration, dgInt32 maxSize, dgInt32 threadIndex);
 
 
-	dgInt32 ClosestPoint(dgTriplex &point, dgCollision *const collision, const dgMatrix &matrix, dgTriplex &contact, dgTriplex &normal, dgInt32 threadIndex) const;
+	dgInt32 ClosestPoint(const dgTriplex &point, dgCollision *const collision, const dgMatrix &matrix, dgTriplex &contact, dgTriplex &normal, dgInt32 threadIndex) const;
 	dgInt32 ClosestPoint(dgCollision *const collisionA, const dgMatrix &matrixA, dgCollision *const collisionB, const dgMatrix &matrixB,
 	                     dgTriplex &contactA, dgTriplex &contactB, dgTriplex &normalAB, dgInt32 threadIndex) const;
 
@@ -256,7 +256,7 @@ public:
 
 	dgCollision *CreateScene();
 
-	void Serialize(dgCollision *shape, dgSerialize deserialization, void *const userData) const;
+	void Serialize(const dgCollision *shape, dgSerialize deserialization, void *const userData) const;
 	dgCollision *CreateFromSerialization(dgDeserialize deserialization, void *const userData);
 
 	void RemoveFromCache(dgCollision *const collision);
@@ -519,4 +519,3 @@ inline void dgWorld::AddToBreakQueue(const dgContact *const contactJoint, dgBody
 
 
 #endif // !defined(AFX_DGPHYSICSWORLD_H__EC18C699_D48D_448F_A510_A865B2CC0789__INCLUDED_)
-

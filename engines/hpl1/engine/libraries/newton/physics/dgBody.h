@@ -108,16 +108,16 @@ public:
 	void SetContinuesCollisionMode(bool mode);
 	void SetDestructorCallback(OnBodyDestroy destructor);
 	void SetMatrixUpdateCallback(OnMatrixUpdateCallback callback);
-	OnMatrixUpdateCallback GetMatrixUpdateCallback();
+	OnMatrixUpdateCallback GetMatrixUpdateCallback() const;
 	//  void SetAutoactiveNotify (OnActivation activate);
 	void SetExtForceAndTorqueCallback(OnApplyExtForceAndTorque callback);
 	OnApplyExtForceAndTorque GetExtForceAndTorqueCallback() const;
 
 	dgConstraint *GetFirstJoint() const;
-	dgConstraint *GetNextJoint(dgConstraint *joint) const;
+	dgConstraint *GetNextJoint(const dgConstraint *joint) const;
 
 	dgConstraint *GetFirstContact() const;
-	dgConstraint *GetNextContact(dgConstraint *joint) const;
+	dgConstraint *GetNextContact(const dgConstraint *joint) const;
 
 	void *GetUserData() const;
 	dgWorld *GetWorld() const;
@@ -370,7 +370,7 @@ inline void dgBody::SetMatrixUpdateCallback(OnMatrixUpdateCallback callback) {
 	m_matrixUpdate = callback;
 }
 
-inline OnMatrixUpdateCallback dgBody::GetMatrixUpdateCallback() {
+inline OnMatrixUpdateCallback dgBody::GetMatrixUpdateCallback() const {
 	return m_matrixUpdate;
 }
 
