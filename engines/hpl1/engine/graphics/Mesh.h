@@ -65,13 +65,13 @@ class cWorld3D;
 typedef Common::Array<cAnimation *> tAnimationVec;
 typedef tAnimationVec::iterator tAnimationVecIt;
 
-typedef Hpl1::std::map<tString, int> tAnimationIndexMap;
+typedef Hpl1::Std::map<tString, int> tAnimationIndexMap;
 typedef tAnimationIndexMap::iterator tAnimationIndexMapIt;
 
 typedef Common::Array<cSubMesh *> tSubMeshVec;
 typedef Common::Array<cSubMesh *>::iterator tSubMeshVecIt;
 
-typedef Hpl1::std::multimap<tString, cSubMesh *> tSubMeshMap;
+typedef Hpl1::Std::multimap<tString, cSubMesh *> tSubMeshMap;
 typedef tSubMeshMap::iterator tSubMeshMapIt;
 
 typedef Common::Array<cNode3D *> tNode3DVec;

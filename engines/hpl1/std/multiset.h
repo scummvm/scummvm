@@ -25,7 +25,7 @@
 #include "hpl1/std/set.h"
 
 namespace Hpl1 {
-namespace std {
+namespace Std {
 
 template<typename T, typename Comp>
 using multiset = set<T, Comp>;

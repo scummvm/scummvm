@@ -40,7 +40,7 @@ class LowLevelSystem;
 typedef Common::List<iUpdateable *> tUpdateableList;
 typedef tUpdateableList::iterator tUpdateableListIt;
 
-typedef Hpl1::std::map<tString, tUpdateableList> tUpdateContainerMap;
+typedef Hpl1::Std::map<tString, tUpdateableList> tUpdateContainerMap;
 typedef tUpdateContainerMap::iterator tUpdateContainerMapIt;
 
 class cUpdater {

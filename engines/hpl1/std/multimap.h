@@ -27,7 +27,7 @@
 
 namespace Hpl1 {
 
-namespace std {
+namespace Std {
 
 template<class Key, class Val, class CompFunc = Common::Less<Key> >
 class multimap {
@@ -165,7 +165,7 @@ private:
 	CompFunc _comp;
 };
 
-} // namespace std
+} // namespace Std
 } // namespace Hpl1
 
 #endif

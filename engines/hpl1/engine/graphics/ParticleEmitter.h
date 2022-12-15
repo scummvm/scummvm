@@ -233,7 +233,7 @@ protected:
 	float mfWarmUpStepsPerSec;
 };
 
-typedef Hpl1::std::map<tString, iParticleEmitterData *> tParticleEmitterDataMap;
+typedef Hpl1::Std::map<tString, iParticleEmitterData *> tParticleEmitterDataMap;
 typedef tParticleEmitterDataMap::iterator tParticleEmitterDataMapIt;
 
 }     // namespace hpl

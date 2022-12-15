@@ -37,7 +37,7 @@ namespace hpl {
 
 class LowLevelResources;
 
-typedef Hpl1::std::multimap<tString, tString> tFilePathMap;
+typedef Hpl1::Std::multimap<tString, tString> tFilePathMap;
 typedef tFilePathMap::iterator tFilePathMapIt;
 
 class cFileSearcher {

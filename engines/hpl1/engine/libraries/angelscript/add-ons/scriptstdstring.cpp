@@ -17,7 +17,7 @@ struct StrComp {
 	}
 };
 
-using map_t = Hpl1::std::map<const Common::String *, int, StrComp>;
+using map_t = Hpl1::Std::map<const Common::String *, int, StrComp>;
 
 BEGIN_AS_NAMESPACE
 class CStdStringFactory : public asIStringFactory {

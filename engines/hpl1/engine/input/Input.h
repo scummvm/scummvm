@@ -43,10 +43,10 @@ class iLowLevelInput;
 class iInputDevice;
 class iAction;
 
-typedef Hpl1::std::map<tString, iAction *> tActionMap;
+typedef Hpl1::Std::map<tString, iAction *> tActionMap;
 typedef tActionMap::iterator tActionMapIt;
 
-typedef Hpl1::std::multimap<tString, iAction *> tActionMultiMap;
+typedef Hpl1::Std::multimap<tString, iAction *> tActionMultiMap;
 typedef tActionMultiMap::iterator tActionMultiMapIt;
 
 typedef Common::List<iInputDevice *> tInputDeviceList;

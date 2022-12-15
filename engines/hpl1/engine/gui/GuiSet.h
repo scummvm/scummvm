@@ -85,7 +85,7 @@ public:
 	bool operator()(const cGuiRenderObject &aObjectA, const cGuiRenderObject &aObjectB) const;
 };
 
-typedef Hpl1::std::multiset<cGuiRenderObject, cGuiRenderObjectCompare> tGuiRenderObjectSet;
+typedef Hpl1::Std::multiset<cGuiRenderObject, cGuiRenderObjectCompare> tGuiRenderObjectSet;
 typedef tGuiRenderObjectSet::iterator tGuiRenderObjectSetIt;
 
 //-----------------------------------------------

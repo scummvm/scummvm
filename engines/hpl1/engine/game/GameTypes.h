@@ -41,7 +41,7 @@ class cScriptVar : public iSerializable {
 	int mlVal;
 };
 
-typedef Hpl1::std::map<tString, cScriptVar> tScriptVarMap;
+typedef Hpl1::Std::map<tString, cScriptVar> tScriptVarMap;
 typedef tScriptVarMap::iterator tScriptVarMapIt;
 
 } // namespace hpl

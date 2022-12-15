@@ -96,8 +96,8 @@ public:
 
 typedef Common::Array<cTempAnimData> tTempAnimDataVec;
 
-typedef Hpl1::std::set<float> tTempTimesSet;
-typedef Hpl1::std::set<float>::iterator tTempTimesSetIt;
+typedef Hpl1::Std::set<float> tTempTimesSet;
+typedef Hpl1::Std::set<float>::iterator tTempTimesSetIt;
 
 static cTempAnimData *GetTempAnimData(float afTime, tTempAnimDataVec &avTempData) {
 	for (size_t i = 0; i < avTempData.size(); ++i) {
@@ -1145,7 +1145,7 @@ public:
 
 ///////////////////////////////////////////
 
-typedef Hpl1::std::set<cColladaTestTri, cColladaTestTriCompare> tColladaTestTriMap;
+typedef Hpl1::Std::set<cColladaTestTri, cColladaTestTriCompare> tColladaTestTriMap;
 typedef tColladaTestTriMap::iterator tColladaTestTriMapIt;
 
 ///////////////////////////////////////////

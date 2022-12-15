@@ -47,7 +47,7 @@ public:
 
 //------------------------------------
 
-typedef Hpl1::std::map<void *, cAllocatedPointer> tAllocatedPointerMap;
+typedef Hpl1::Std::map<void *, cAllocatedPointer> tAllocatedPointerMap;
 typedef tAllocatedPointerMap::iterator tAllocatedPointerMapIt;
 
 //------------------------------------

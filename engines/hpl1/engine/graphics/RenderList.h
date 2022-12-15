@@ -64,7 +64,7 @@ public:
 	bool operator()(cRenderNode *apNodeA, cRenderNode *apNodeB) const;
 };
 
-typedef Hpl1::std::set<cRenderNode *, cRenderNodeCompare> tRenderNodeSet;
+typedef Hpl1::Std::set<cRenderNode *, cRenderNodeCompare> tRenderNodeSet;
 typedef tRenderNodeSet::iterator tRenderNodeSetIt;
 
 class cRenderNode {
@@ -86,7 +86,7 @@ public:
 	bool operator()(iRenderable *pObjectA, iRenderable *pObjectB) const;
 };
 
-typedef Hpl1::std::multiset<iRenderable *, cMotionBlurObject_Compare> tMotionBlurObjectSet;
+typedef Hpl1::Std::multiset<iRenderable *, cMotionBlurObject_Compare> tMotionBlurObjectSet;
 typedef tMotionBlurObjectSet::iterator tMotionBlurObjectSetIt;
 
 typedef cSTLIterator<iRenderable *, tMotionBlurObjectSet,
@@ -100,7 +100,7 @@ public:
 	bool operator()(iRenderable *pObjectA, iRenderable *pObjectB) const;
 };
 
-typedef Hpl1::std::multiset<iRenderable *, cTransperantObject_Compare> tTransperantObjectSet;
+typedef Hpl1::Std::multiset<iRenderable *, cTransperantObject_Compare> tTransperantObjectSet;
 typedef tTransperantObjectSet::iterator tTransperantObjectSetIt;
 
 typedef cSTLIterator<iRenderable *, tTransperantObjectSet, tTransperantObjectSetIt> cTransperantObjectIterator;
@@ -122,7 +122,7 @@ public:
 	bool operator()(const cOcclusionQueryObject *pObjectA, const cOcclusionQueryObject *pObjectB) const;
 };
 
-typedef Hpl1::std::set<cOcclusionQueryObject *, cOcclusionQueryObject_Compare> tOcclusionQueryObjectSet;
+typedef Hpl1::Std::set<cOcclusionQueryObject *, cOcclusionQueryObject_Compare> tOcclusionQueryObjectSet;
 typedef tOcclusionQueryObjectSet::iterator tOcclusionQueryObjectSetIt;
 
 typedef cSTLIterator<cOcclusionQueryObject *, tOcclusionQueryObjectSet,
@@ -131,10 +131,10 @@ typedef cSTLIterator<cOcclusionQueryObject *, tOcclusionQueryObjectSet,
 
 //-------------------------------------------------------------
 
-typedef Hpl1::std::set<iRenderable *> tRenderableSet;
+typedef Hpl1::Std::set<iRenderable *> tRenderableSet;
 typedef tRenderableSet::iterator tRenderableSetIt;
 
-typedef Hpl1::std::set<iLight3D *> tLight3DSet;
+typedef Hpl1::Std::set<iLight3D *> tLight3DSet;
 typedef tLight3DSet::iterator tLight3DSetIt;
 
 typedef cSTLIterator<iLight3D *, tLight3DSet, tLight3DSetIt> cLight3DIterator;

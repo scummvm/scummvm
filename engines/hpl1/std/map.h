@@ -26,7 +26,7 @@
 #include "hpl1/std/pair.h"
 
 namespace Hpl1 {
-namespace std {
+namespace Std {
 
 template<class Key, class Val, class CompFunc = Common::Less<Key> >
 class map {
@@ -138,7 +138,7 @@ public:
 		return it;
 	}
 
-	std::pair<iterator, bool> insert(const value_type &val) {
+	pair<iterator, bool> insert(const value_type &val) {
 		if (_items.begin() == nullptr) {
 			_items.push_back(val);
 			return {_items.begin(), true};
@@ -185,7 +185,7 @@ private:
 	CompFunc _comp;
 };
 
-} // namespace std
+} // namespace Std
 } // namespace Hpl1
 
 #endif

@@ -59,13 +59,13 @@ class cBoneState;
 typedef Common::Array<cAnimationState *> tAnimationStateVec;
 typedef tAnimationStateVec::iterator tAnimationStateVecIt;
 
-typedef Hpl1::std::map<tString, int> tAnimationStateIndexMap;
+typedef Hpl1::Std::map<tString, int> tAnimationStateIndexMap;
 typedef tAnimationStateIndexMap::iterator tAnimationStateIndexMapIt;
 
 typedef Common::Array<cBoneState *> tNodeStateVec;
 typedef tNodeStateVec::iterator tNodeStateVecIt;
 
-typedef Hpl1::std::map<tString, int> tNodeStateIndexMap;
+typedef Hpl1::Std::map<tString, int> tNodeStateIndexMap;
 typedef tNodeStateIndexMap::iterator tNodeStateIndexMapIt;
 
 //-----------------------------------------------------------------------
@@ -177,7 +177,7 @@ private:
 typedef Common::Array<cSubMeshEntity *> tSubMeshEntityVec;
 typedef Common::Array<cSubMeshEntity *>::iterator tSubMeshEntityVecIt;
 
-typedef Hpl1::std::multimap<tString, cSubMeshEntity *> tSubMeshEntityMap;
+typedef Hpl1::Std::multimap<tString, cSubMeshEntity *> tSubMeshEntityMap;
 typedef tSubMeshEntityMap::iterator tSubMeshEntityMapIt;
 
 }     // namespace hpl

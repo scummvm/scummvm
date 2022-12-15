@@ -440,7 +440,7 @@ cRenderNode *cRenderList::InsertNode(cRenderNode *apListNode, cRenderNode *apTem
 
 /*cRenderNode* cRenderList::InsertNode(cRenderNode* apListNode, cRenderNode* apTempNode)
 {
-	std::pair<tRenderNodeSetIt, bool> ret = apListNode->m_setNodes.insert(apTempNode);
+	Std::pair<tRenderNodeSetIt, bool> ret = apListNode->m_setNodes.insert(apTempNode);
 	if(ret.second == false)
 	{
 		m_poolRenderState->Release(apTempNode->mpState);

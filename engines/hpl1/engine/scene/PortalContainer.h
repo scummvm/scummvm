@@ -43,11 +43,11 @@ class cSectorVisibilityContainer;
 typedef Common::List<iRenderable *> tRenderableList;
 typedef Common::List<iRenderable *>::iterator tRenderableListIt;
 
-typedef Hpl1::std::set<iRenderable *> tRenderableSet;
-typedef Hpl1::std::set<iRenderable *>::iterator tRenderableSetIt;
+typedef Hpl1::Std::set<iRenderable *> tRenderableSet;
+typedef Hpl1::Std::set<iRenderable *>::iterator tRenderableSetIt;
 
-typedef Hpl1::std::set<iEntity3D *> tEntity3DSet;
-typedef Hpl1::std::set<iEntity3D *>::iterator tEntity3DSetIt;
+typedef Hpl1::Std::set<iEntity3D *> tEntity3DSet;
+typedef Hpl1::Std::set<iEntity3D *>::iterator tEntity3DSetIt;
 
 //----------------------------------------------------
 
@@ -56,8 +56,8 @@ class cSector;
 
 //----------------------------------------------------
 
-typedef Hpl1::std::map<tString, cSector *> tSectorMap;
-typedef Hpl1::std::map<tString, cSector *>::iterator tSectorMapIt;
+typedef Hpl1::Std::map<tString, cSector *> tSectorMap;
+typedef Hpl1::Std::map<tString, cSector *>::iterator tSectorMapIt;
 
 //----------------------------------------------------
 
@@ -116,8 +116,8 @@ private:
 class cSector;
 class cPortal;
 
-typedef Hpl1::std::map<int, cPortal *> tPortalMap;
-typedef Hpl1::std::map<int, cPortal *>::iterator tPortalMapIt;
+typedef Hpl1::Std::map<int, cPortal *> tPortalMap;
+typedef Hpl1::Std::map<int, cPortal *>::iterator tPortalMapIt;
 
 typedef Common::List<cPortal *> tPortalList;
 typedef Common::List<cPortal *>::iterator tPortalListIt;

@@ -72,7 +72,7 @@ typedef tPhysicsControllerList::iterator tPhysicsControllerListIt;
 typedef Common::List<iCharacterBody *> tCharacterBodyList;
 typedef tCharacterBodyList::iterator tCharacterBodyListIt;
 
-typedef Hpl1::std::map<tString, iPhysicsMaterial *> tPhysicsMaterialMap;
+typedef Hpl1::Std::map<tString, iPhysicsMaterial *> tPhysicsMaterialMap;
 typedef tPhysicsMaterialMap::iterator tPhysicsMaterialMapIt;
 
 typedef cSTLMapIterator<iPhysicsMaterial *, tPhysicsMaterialMap, tPhysicsMaterialMapIt> cPhysicsMaterialIterator;

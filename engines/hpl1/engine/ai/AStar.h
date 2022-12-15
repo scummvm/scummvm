@@ -40,7 +40,7 @@ class cAINode;
 
 //--------------------------------------
 
-typedef Hpl1::std::set<cAINode *> tAINodeSet;
+typedef Hpl1::Std::set<cAINode *> tAINodeSet;
 typedef tAINodeSet::iterator tAINodeSetIt;
 
 //--------------------------------------
@@ -66,7 +66,7 @@ public:
 	bool operator()(cAStarNode *apNodeA, cAStarNode *apNodeB) const;
 };
 
-typedef Hpl1::std::set<cAStarNode *, cAStarNodeCompare> tAStarNodeSet;
+typedef Hpl1::Std::set<cAStarNode *, cAStarNodeCompare> tAStarNodeSet;
 typedef tAStarNodeSet::iterator tAStarNodeSetIt;
 
 //--------------------------------------

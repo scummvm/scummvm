@@ -66,7 +66,7 @@ public:
 	bool operator()(const cGfxBufferObject &aObjectA, const cGfxBufferObject &aObjectB) const;
 };
 
-typedef Hpl1::std::multiset<cGfxBufferObject, cGfxBufferCompare> tGfxBufferSet;
+typedef Hpl1::Std::multiset<cGfxBufferObject, cGfxBufferCompare> tGfxBufferSet;
 typedef tGfxBufferSet::iterator tGfxBufferSetIt;
 
 class cResources;
