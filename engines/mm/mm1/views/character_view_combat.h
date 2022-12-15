@@ -19,10 +19,11 @@
  *
  */
 
-#ifndef MM1_VIEWS_CHARACTER_VIEW_H
-#define MM1_VIEWS_CHARACTER_VIEW_H
+#ifndef MM1_VIEWS_CHARACTER_VIEW_COMBAT_H
+#define MM1_VIEWS_CHARACTER_VIEW_COMBAT_H
 
 #include "common/array.h"
+#include "mm/mm1/data/character.h"
 #include "mm/mm1/views/character_base.h"
 
 namespace MM {
@@ -30,17 +31,22 @@ namespace MM1 {
 namespace Views {
 
 /**
- * Character view from the inn screen
+ * Character info view within combat, that allows
+ * switching between characters
  */
-class CharacterView : public CharacterBase {
+class CharacterViewCombat : public CharacterBase {
+private:
+	Common::Array<Character *> _party;
 public:
-	CharacterView() : CharacterBase("CharacterView") {}
-	virtual ~CharacterView() {}
+	CharacterViewCombat() : CharacterBase("CharacterViewCombat") {}
+	virtual ~CharacterViewCombat() {}
 
-	void draw() override {
-		CharacterBase::draw();
-		escToGoBack();
-	}
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
+	void draw() override;
+	bool msgAction(const ActionMessage &msg) override;
+
+	static void show(const Common::Array<Character *> &party);
 };
 
 } // namespace Views

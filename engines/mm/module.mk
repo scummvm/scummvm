@@ -89,6 +89,7 @@ MODULE_OBJS := \
 	mm1/views/character_base.o \
 	mm1/views/character_info.o \
 	mm1/views/character_manage.o \
+	mm1/views/character_view_combat.o \
 	mm1/views/characters.o \
 	mm1/views/combat.o \
 	mm1/views/create_characters.o \

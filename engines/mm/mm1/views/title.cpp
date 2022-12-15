@@ -145,7 +145,6 @@ bool Title::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
-
 } // namespace Views
 } // namespace MM1
 } // namespace MM

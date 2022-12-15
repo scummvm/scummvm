@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/combat.h"
+#include "mm/mm1/views/character_view_combat.h"
 #include "mm/mm1/game/encounter.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
@@ -57,16 +58,8 @@ void Combat::disableAttacks() {
 }
 
 bool Combat::msgFocus(const FocusMessage &msg) {
-	// Clear combat data
-	clear();
-
+	g_globals->_currCharacter = _party[_currentChar];
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_COMBAT);
-
-	loadMonsters();
-	setupCanAttacks();
-	setupHandicap();
-
-	combatLoop();
 
 	return true;
 }
@@ -77,7 +70,19 @@ bool Combat::msgUnfocus(const UnfocusMessage &msg) {
 }
 
 bool Combat::msgGame(const GameMessage &msg) {
-	if (msg._name == "SPELL_RESULT") {
+	if (msg._name == "COMBAT") {
+		// Clear combat data
+		clear();
+
+		loadMonsters();
+		setupCanAttacks();
+		setupHandicap();
+
+		addView();
+		combatLoop();
+		return true;
+
+	} else if (msg._name == "SPELL_RESULT") {
 		displaySpellResult(msg._stringValue);
 		return true;
 	}
@@ -274,7 +279,7 @@ bool Combat::msgAction(const ActionMessage &msg) {
 					exchangeWith(charNum);
 			} else {
 				g_globals->_currCharacter = _party[charNum];
-				addView("CharacterInfo");
+				CharacterViewCombat::show(_party);
 			}
 			return true;
 		}

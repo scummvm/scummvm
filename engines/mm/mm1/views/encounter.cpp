@@ -171,7 +171,7 @@ void Encounter::timeout() {
 
 	case BATTLE:
 		// Switch to combat view
-		replaceView("Combat");
+		send("Combat", GameMessage("COMBAT"));
 		break;
 
 	default:
