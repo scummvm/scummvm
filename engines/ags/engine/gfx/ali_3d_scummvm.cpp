@@ -79,9 +79,15 @@ int ScummVMRendererGraphicsDriver::GetDisplayDepthForNativeDepth(int native_colo
 	return native_color_depth;
 }
 
-IGfxModeList *ScummVMRendererGraphicsDriver::GetSupportedModeList(int /*color_depth*/) {
+IGfxModeList *ScummVMRendererGraphicsDriver::GetSupportedModeList(int color_depth) {
 	std::vector<DisplayMode> modes;
-	sys_get_desktop_modes(modes);
+	sys_get_desktop_modes(modes, color_depth);
+	if ((modes.size() == 0) && color_depth == 32) {
+		// Pretend that 24-bit are 32-bit
+		sys_get_desktop_modes(modes, 24);
+		for (auto &m : modes)
+			m.ColorDepth = 32;
+	}
 	return new ScummVMRendererGfxModeList(modes);
 }
 

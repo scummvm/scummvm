@@ -61,7 +61,7 @@ int sys_get_desktop_resolution(int &width, int &height) {
 	return 0;
 }
 
-void sys_get_desktop_modes(std::vector<AGS::Engine::DisplayMode> &dms) {
+void sys_get_desktop_modes(std::vector<AGS::Engine::DisplayMode> &dms, int color_depth) {
 #ifdef TODO
 	SDL_DisplayMode mode;
 	const int display_id = DEFAULT_DISPLAY_INDEX;
@@ -72,10 +72,14 @@ void sys_get_desktop_modes(std::vector<AGS::Engine::DisplayMode> &dms) {
 			SDL_Log("SDL_GetDisplayMode failed: %s", SDL_GetError());
 			continue;
 		}
+		const int bitsdepth = SDL_BITSPERPIXEL(mode.format);
+		if ((color_depth == 0) || (bitsdepth != color_depth)) {
+			continue;
+		}
 		AGS::Engine::DisplayMode dm;
 		dm.Width = mode.w;
 		dm.Height = mode.h;
-		dm.ColorDepth = SDL_BITSPERPIXEL(mode.format);
+		dm.ColorDepth = bitsdepth;
 		dm.RefreshRate = mode.refresh_rate;
 		dms.push_back(dm);
 	}
