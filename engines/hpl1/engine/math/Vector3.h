@@ -39,32 +39,17 @@ class cVector3 {
 public:
 	T x, y, z;
 
-	cVector3() {
-		x = 0;
-		y = 0;
-		z = 0;
+	constexpr cVector3() : x(0), y(0), z(0) {
 	}
-	cVector3(T aVal) {
-		x = aVal;
-		y = aVal;
-		z = aVal;
+	constexpr cVector3(T aVal) : x(aVal), y(aVal), z(aVal) {
 	}
-	cVector3(T aX, T aY, T aZ) {
-		x = aX;
-		y = aY;
-		z = aZ;
+	constexpr cVector3(T aX, T aY, T aZ) : x(aX), y(aY), z(aZ) {
 	}
 
-	cVector3(cVector3<T> const &aVec) {
-		x = aVec.x;
-		y = aVec.y;
-		z = aVec.z;
+	constexpr cVector3(cVector3<T> const &aVec) : x(aVec.x), y(aVec.y), z(aVec.z) {
 	}
 
-	cVector3(cVector2<T> const &aVec) {
-		x = aVec.x;
-		y = aVec.y;
-		z = 0;
+	constexpr cVector3(cVector2<T> const &aVec) : x(aVec.x), y(aVec.y), z(0) {
 	}
 
 	static cVector3 fromArray(const float vec[3]) {
