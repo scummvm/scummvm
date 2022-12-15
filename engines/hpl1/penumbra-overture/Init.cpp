@@ -188,8 +188,8 @@ bool CheckSupport(cInit *apInit) {
 // CONSTRUCTORS
 //////////////////////////////////////////////////////////////////////////
 
-tWString gsUserSettingsPath = _W("");
-tWString gsDefaultSettingsPath = _W("config/default_settings.cfg");
+#define gsUserSettingsPath _W("")
+#define gsDefaultSettingsPath _W("config/default_settings.cfg")
 bool gbUsingUserSettings = false;
 
 //-----------------------------------------------------------------------
