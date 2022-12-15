@@ -32,7 +32,7 @@
 
 namespace hpl {
 
-static const cTriEdge kvBVEdges[12] = {
+static constexpr cTriEdge kvBVEdges[12] = {
 	cTriEdge(1, 0, 0, 2),
 	cTriEdge(3, 1, 0, 5),
 	cTriEdge(2, 3, 0, 3),
@@ -48,7 +48,7 @@ static const cTriEdge kvBVEdges[12] = {
 	cTriEdge(1, 5, 2, 5),
 	cTriEdge(3, 7, 5, 3)};
 
-static cTriangleData gvFaces[6] = {
+static constexpr cVector3f globalNormals[6] = {
 	cVector3f(1, 0, 0),
 	cVector3f(-1, 0, 0),
 
@@ -57,6 +57,8 @@ static cTriangleData gvFaces[6] = {
 
 	cVector3f(0, 0, 1),
 	cVector3f(0, 0, -1)};
+
+static bool globalfacingLight[6] = {false, false, false, false, false, false};
 
 static const int kvFacePoints[6] = {0, 5, 5, 6, 4, 7};
 
@@ -289,13 +291,13 @@ cShadowVolumeBV *cBoundingVolume::GetShadowVolume(const cVector3f &avLightPos,
 	//int lNearPoint = -1;
 	mShadowVolume.mlPlaneCount = 0;
 	for (int face = 0; face < 6; face++) {
-		gvFaces[face].facingLight = cMath::Vector3Dot(gvFaces[face].normal,
+		globalfacingLight[face] = cMath::Vector3Dot(globalNormals[face],
 													  vCorners[kvFacePoints[face]] - avLightPos) < 0;
 
 		// Get a point for the near plane. (any edge point will do)
-		if (gvFaces[face].facingLight) {
+		if (globalfacingLight[face]) {
 			mShadowVolume.mvPlanes[mShadowVolume.mlPlaneCount] = cPlanef(
-				gvFaces[face].normal * -1.0f, vCorners[kvFacePoints[face]]);
+				globalNormals[face] * -1.0f, vCorners[kvFacePoints[face]]);
 			mShadowVolume.mlPlaneCount++;
 		}
 	}
@@ -313,11 +315,11 @@ cShadowVolumeBV *cBoundingVolume::GetShadowVolume(const cVector3f &avLightPos,
 	for (int edge = 0; edge < 12; edge++) {
 		const cTriEdge &Edge = kvBVEdges[edge];
 
-		cTriangleData &Face1 = gvFaces[Edge.tri1];
-		cTriangleData &Face2 = gvFaces[Edge.tri2];
+		const bool facingLight1 = globalfacingLight[Edge.tri1];
+		const bool facingLight2 = globalfacingLight[Edge.tri2];
 
-		if ((Face1.facingLight && !Face2.facingLight) || (Face2.facingLight && !Face1.facingLight)) {
-			if (Face1.facingLight) {
+		if ((facingLight1 && !facingLight2) || (facingLight2 && !facingLight1)) {
+			if (facingLight1) {
 				mShadowVolume.mvPoints.push_back(vCorners[Edge.point1]);
 				mShadowVolume.mvPoints.push_back(vCorners[Edge.point2]);
 

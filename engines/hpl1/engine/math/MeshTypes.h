@@ -57,12 +57,9 @@ public:
 	mutable int tri1, tri2;
 	bool invert_tri2;
 
-	cTriEdge() {}
-	cTriEdge(int alPoint1, int alPoint2, int alTri1, int alTri2) {
-		point1 = alPoint1;
-		point2 = alPoint2;
-		tri1 = alTri1;
-		tri2 = alTri2;
+	cTriEdge() = default;
+	constexpr cTriEdge(int alPoint1, int alPoint2, int alTri1, int alTri2) :
+		point1(alPoint1), point2(alPoint2), tri1(alTri1), tri2(alTri2), invert_tri2(false) {
 	}
 };
 
@@ -71,6 +68,6 @@ typedef tTriEdgeVec::iterator tTriEdgeVecIt;
 
 //----------------------------------------------
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MESH_TYPES_H
