@@ -110,6 +110,11 @@ void File_WriteRawChar(sc_File *fil, int towrite) {
 	FileWriteRawChar(fil->handle, towrite);
 }
 
+void File_WriteRawInt(sc_File *fil, int towrite) {
+	Stream *out = get_valid_file_stream_from_handle(fil->handle, "FileWriteRawInt");
+	out->WriteInt32(towrite);
+}
+
 void File_WriteRawLine(sc_File *fil, const char *towrite) {
 	FileWriteRawLine(fil->handle, towrite);
 }
@@ -650,6 +655,10 @@ RuntimeScriptValue Sc_File_WriteRawChar(void *self, const RuntimeScriptValue *pa
 	API_OBJCALL_VOID_PINT(sc_File, File_WriteRawChar);
 }
 
+RuntimeScriptValue Sc_File_WriteRawInt(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_PINT(sc_File, File_WriteRawInt);
+}
+
 // void (sc_File *fil, const char *towrite)
 RuntimeScriptValue Sc_File_WriteRawLine(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_POBJ(sc_File, File_WriteRawLine, const char);
@@ -693,6 +702,7 @@ void RegisterFileAPI() {
 	ccAddExternalObjectFunction("File::ReadStringBack^0", Sc_File_ReadStringBack);
 	ccAddExternalObjectFunction("File::WriteInt^1", Sc_File_WriteInt);
 	ccAddExternalObjectFunction("File::WriteRawChar^1", Sc_File_WriteRawChar);
+	ccAddExternalObjectFunction("File::WriteRawInt^1", Sc_File_WriteRawInt);
 	ccAddExternalObjectFunction("File::WriteRawLine^1", Sc_File_WriteRawLine);
 	ccAddExternalObjectFunction("File::WriteString^1", Sc_File_WriteString);
 	ccAddExternalObjectFunction("File::Seek^2", Sc_File_Seek);
