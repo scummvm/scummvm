@@ -108,14 +108,20 @@ void AGSSpriteFont::SetSpriteFont(ScriptMethodParams &params) {
 	PARAMS9(int, fontNum, int, sprite, int, rows, int, columns, int, charWidth, int, charHeight, int, charMin, int, charMax, bool, use32bit);
 	_engine->PrintDebugConsole("AGSSpriteFont: SetSpriteFont");
 	_fontRenderer->SetSpriteFont(fontNum, sprite, rows, columns, charWidth, charHeight, charMin, charMax, use32bit);
-	_engine->ReplaceFontRenderer2(fontNum, _fontRenderer);
+	if (_engine->version >= 26)
+		_engine->ReplaceFontRenderer2(fontNum, _fontRenderer);
+	else
+		_engine->ReplaceFontRenderer(fontNum, _fontRenderer);
 }
 
 void AGSSpriteFont::SetVariableSpriteFont(ScriptMethodParams &params) {
 	PARAMS2(int, fontNum, int, sprite);
 	_engine->PrintDebugConsole("AGSSpriteFont: SetVariableFont");
 	_vWidthRenderer->SetSprite(fontNum, sprite);
-	_engine->ReplaceFontRenderer2(fontNum, _vWidthRenderer);
+	if (_engine->version >= 26)
+		_engine->ReplaceFontRenderer2(fontNum, _vWidthRenderer);
+	else
+		_engine->ReplaceFontRenderer(fontNum, _vWidthRenderer);
 }
 
 void AGSSpriteFont::SetGlyph(ScriptMethodParams &params) {
