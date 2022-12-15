@@ -430,7 +430,6 @@ bool cParticleEmitterData3D_UserData::CheckCollision(const cVector3f &avStart,
 													 iPhysicsWorld *apPhysicsWorld,
 													 cVector3f *apNormalVec,
 													 cVector3f *apPosVec) {
-	cVector3f vNormal;
 	mfShortestDist = 99999.0f;
 	mbIntersected = false;
 
