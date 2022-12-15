@@ -118,7 +118,7 @@ void iPhysicsController::Update(float afTimeStep) {
 	////////////////////////////////////////
 	// Check if dest vale is reached
 	if (mEndType == ePhysicsControllerEnd_OnDest && mpJoint) {
-		if (std::abs(fValue - mfDestValue) < kEpsilonf) {
+		if (ABS(fValue - mfDestValue) < kEpsilonf) {
 			mbActive = false;
 			iPhysicsController *pNext = mpJoint->GetController(msNextController);
 			if (pNext)

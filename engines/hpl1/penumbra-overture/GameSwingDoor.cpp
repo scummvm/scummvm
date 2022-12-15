@@ -243,7 +243,7 @@ void cGameSwingDoor::SetLocked(bool abX) {
 		iPhysicsJointHinge *pHingeJoint = static_cast<iPhysicsJointHinge *>(pJoint);
 
 		if (mbLocked) {
-			if (std::abs(pHingeJoint->GetMinAngle()) > std::abs(pHingeJoint->GetMaxAngle()))
+			if (ABS(pHingeJoint->GetMinAngle()) > ABS(pHingeJoint->GetMaxAngle()))
 				pHingeJoint->SetMinAngle(cMath::ToRad(-1));
 			else
 				pHingeJoint->SetMaxAngle(cMath::ToRad(1));

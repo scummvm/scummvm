@@ -262,8 +262,8 @@ void cImageEntity::Render() {
 		for (int i = 0; i < (int)mvBaseVtx.size(); i++) {
 			// Slow as hell!! Change this perhaps?
 			// This also only works on square meshes...
-			mvBaseVtx[i].pos.x = std::abs(mvBaseVtx[i].pos.x) / mvBaseVtx[i].pos.x;
-			mvBaseVtx[i].pos.y = std::abs(mvBaseVtx[i].pos.y) / mvBaseVtx[i].pos.y;
+			mvBaseVtx[i].pos.x = ABS(mvBaseVtx[i].pos.x) / mvBaseVtx[i].pos.x;
+			mvBaseVtx[i].pos.y = ABS(mvBaseVtx[i].pos.y) / mvBaseVtx[i].pos.y;
 
 			mvBaseVtx[i].pos.x *= mvSize.x / 2;
 			mvBaseVtx[i].pos.y *= mvSize.y / 2;
@@ -406,7 +406,7 @@ void cImageEntity::SetAlpha(float afX) {
 
 void cImageEntity::Flash(float afAdd) {
 	mbFlashing = true;
-	mfFlashAdd = -std::abs(afAdd);
+	mfFlashAdd = -ABS(afAdd);
 }
 
 //-----------------------------------------------------------------------

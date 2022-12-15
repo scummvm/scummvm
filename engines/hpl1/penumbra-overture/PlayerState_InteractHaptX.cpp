@@ -202,7 +202,7 @@ void cPlayerState_GrabHaptX::OnUpdate(float afTimeStep) {
 	cVector3f vOmega = mpPushBody->GetAngularVelocity();
 
 	// Set speed to 0
-	if (std::abs(mfYRotation) < 0.001f || mbRotateWithPlayer == false) {
+	if (ABS(mfYRotation) < 0.001f || mbRotateWithPlayer == false) {
 		mRotatePid.p = 0.8f;
 		mRotatePid.i = 0.0f;
 		mRotatePid.d = 0.0f;
@@ -718,7 +718,7 @@ bool cPlayerState_MoveHaptX::OnMoveSideways(float afMul, float afTimeStep) {
 //-----------------------------------------------------------------------
 
 bool cPlayerState_MoveHaptX::OnAddYaw(float afVal) {
-	if (std::abs(afVal) > kEpsilonf) {
+	if (ABS(afVal) > kEpsilonf) {
 		cVector3f vForce = (mvRight * (afVal * 100.0f * mpPlayer->mfRightMul));
 		mpPushBody->AddForceAtPosition(vForce, mvPickPoint);
 		mlMoveCount = 20;
@@ -733,7 +733,7 @@ bool cPlayerState_MoveHaptX::OnAddYaw(float afVal) {
 //-----------------------------------------------------------------------
 
 bool cPlayerState_MoveHaptX::OnAddPitch(float afVal) {
-	if (std::abs(afVal) > kEpsilonf) {
+	if (ABS(afVal) > kEpsilonf) {
 		cVector3f vForce = (mvUp * (-afVal * 100.0f * mpPlayer->mfUpMul)) +
 						   (mvForward * (afVal * -80.0f * mpPlayer->mfForwardUpMul));
 		mpPushBody->AddForceAtPosition(vForce, mvPickPoint);

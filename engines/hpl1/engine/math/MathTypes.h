@@ -72,8 +72,8 @@ public:
 		max = afMax;
 		val = afVal;
 
-		up_speed = std::abs(afUpSpeed);
-		down_speed = -std::abs(afDownSpeed);
+		up_speed = ABS(afUpSpeed);
+		down_speed = -ABS(afDownSpeed);
 
 		add = up_speed;
 	}

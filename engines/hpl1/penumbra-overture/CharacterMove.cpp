@@ -276,12 +276,12 @@ void cCharacterMove::Update(float afTimeStep) {
 
 		/////////////////
 		// Rotate the body
-		if (std::abs(fAngleDist) < 0.001f) {
+		if (ABS(fAngleDist) < 0.001f) {
 			mbTurning = false;
 			mfTurnSpeed = 0;
 		}
 		if (mbTurning) {
-			mfTurnSpeed = cMath::Min(mfAngleDistTurnMul * std::abs(fAngleDist), mfMaxTurnSpeed);
+			mfTurnSpeed = cMath::Min(mfAngleDistTurnMul * ABS(fAngleDist), mfMaxTurnSpeed);
 
 			if (fAngleDist < 0)
 				mpCharBody->AddYaw(-mfTurnSpeed * afTimeStep);
@@ -290,8 +290,8 @@ void cCharacterMove::Update(float afTimeStep) {
 
 			//////////////////////
 			// Break when making short turns
-			if (std::abs(fAngleDist) >= mfMinBreakAngle && mpCharBody->GetMoveSpeed(eCharDir_Forward) > 0.15f) {
-				float fBreakAcc = -mfBreakAngleMul * std::abs(fAngleDist);
+			if (ABS(fAngleDist) >= mfMinBreakAngle && mpCharBody->GetMoveSpeed(eCharDir_Forward) > 0.15f) {
+				float fBreakAcc = -mfBreakAngleMul * ABS(fAngleDist);
 				mpCharBody->Move(eCharDir_Forward, fBreakAcc, afTimeStep);
 
 				mfCurrentBreak = fBreakAcc;
@@ -314,7 +314,7 @@ void cCharacterMove::Update(float afTimeStep) {
 	float fCos = cMath::Vector3Dot(vWantedDir, vRealDir);
 
 	if (fRealSpeed / fWantedSpeed < mfStuckLimit ||
-		(std::abs(fCos) < 0.3f && fWantedSpeed > 0.001f)) {
+		(ABS(fCos) < 0.3f && fWantedSpeed > 0.001f)) {
 		mfStuckCounter += afTimeStep;
 		// mpInit->mpEffectHandler->GetSubTitle()->Add(_W("ADD!\n"),1.0f/60.0f,false);
 	} else {

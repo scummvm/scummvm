@@ -165,7 +165,7 @@ void cPlayerState_Grab::OnUpdate(float afTimeStep) {
 	cVector3f vOmega = mpPushBody->GetAngularVelocity();
 
 	// Set speed to 0
-	if (std::abs(mfYRotation) < 0.001f || mbRotateWithPlayer == false) {
+	if (ABS(mfYRotation) < 0.001f || mbRotateWithPlayer == false) {
 		cVector3f vTorque = mRotatePid.Output(cVector3f(0, 0, 0) - vOmega, afTimeStep);
 		vTorque = vTorque / 5.0f;
 
@@ -623,7 +623,7 @@ bool cPlayerState_Move::OnMoveSideways(float afMul, float afTimeStep) {
 //-----------------------------------------------------------------------
 
 bool cPlayerState_Move::OnAddYaw(float afVal) {
-	if (std::abs(afVal) > kEpsilonf) {
+	if (ABS(afVal) > kEpsilonf) {
 		cVector3f vForce = (mvRight * (afVal * 100.0f * mpPlayer->mfRightMul));
 		mpPushBody->AddForceAtPosition(vForce, mvPickPoint);
 		mlMoveCount = 20;
@@ -638,7 +638,7 @@ bool cPlayerState_Move::OnAddYaw(float afVal) {
 //-----------------------------------------------------------------------
 
 bool cPlayerState_Move::OnAddPitch(float afVal) {
-	if (std::abs(afVal) > kEpsilonf) {
+	if (ABS(afVal) > kEpsilonf) {
 		cVector3f vForce = (mvUp * (-afVal * 100.0f * mpPlayer->mfUpMul)) +
 						   (mvForward * (afVal * -80.0f * mpPlayer->mfForwardUpMul));
 		mpPushBody->AddForceAtPosition(vForce, mvPickPoint);

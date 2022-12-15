@@ -121,11 +121,11 @@ bool cAnimationState::IsOver() {
 //-----------------------------------------------------------------------
 
 void cAnimationState::FadeIn(float afTime) {
-	mfFadeStep = 1.0f / std::abs(afTime);
+	mfFadeStep = 1.0f / ABS(afTime);
 }
 
 void cAnimationState::FadeOut(float afTime) {
-	mfFadeStep = -1.0f / std::abs(afTime);
+	mfFadeStep = -1.0f / ABS(afTime);
 }
 
 //-----------------------------------------------------------------------

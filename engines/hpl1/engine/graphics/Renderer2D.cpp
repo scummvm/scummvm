@@ -722,22 +722,22 @@ cVector2f cRenderer2D::CalcLineEnd(cVector3f avLight, cVector3f avPoint, float a
 	else
 		kX = dX / dY;
 
-	if (std::abs(dX) <= std::abs(dY) && dY > 0) {
+	if (ABS(dX) <= ABS(dY) && dY > 0) {
 		vEndPos.y = avClipPos.y + vSize.y;
 		float A = avPoint.y - kY * avPoint.x;
 		vEndPos.x = (vEndPos.y - A) / kY;
 		avSide.y = 1;
-	} else if (std::abs(dX) <= std::abs(dY) && dY <= 0) {
+	} else if (ABS(dX) <= ABS(dY) && dY <= 0) {
 		vEndPos.y = avClipPos.y - vSize.y;
 		float A = avPoint.y - kY * avPoint.x;
 		vEndPos.x = (vEndPos.y - A) / kY;
 		avSide.y = -1;
-	} else if (std::abs(dX) > std::abs(dY) && dX > 0) {
+	} else if (ABS(dX) > ABS(dY) && dX > 0) {
 		vEndPos.x = avClipPos.x + vSize.y;
 		float A = avPoint.x - kX * avPoint.y;
 		vEndPos.y = (vEndPos.x - A) / kX;
 		avSide.x = 1;
-	} else if (std::abs(dX) > std::abs(dY) && dX <= 0) {
+	} else if (ABS(dX) > ABS(dY) && dX <= 0) {
 		vEndPos.x = avClipPos.x - vSize.y;
 		float A = avPoint.x - kX * avPoint.y;
 		vEndPos.y = (vEndPos.x - A) / kX;

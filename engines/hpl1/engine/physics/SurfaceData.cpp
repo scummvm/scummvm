@@ -166,7 +166,7 @@ void cSurfaceData::OnSlide(float afSpeed, const cVector3f &avPos, int alContacts
 	if (apBody->GetScrapeSoundEntity() != NULL) {
 		// check if the sound should be stopped
 		float fMin = cMath::Max(mfMinScrapeSpeed - 0.7f, 0.02f);
-		if (std::abs(afSpeed) < fMin) {
+		if (ABS(afSpeed) < fMin) {
 			apBody->GetScrapeSoundEntity()->FadeOut(4.3f);
 			apBody->SetScrapeSoundEntity(NULL);
 			apBody->SetScrapeBody(NULL);
@@ -177,7 +177,7 @@ void cSurfaceData::OnSlide(float afSpeed, const cVector3f &avPos, int alContacts
 			apBody->SetHasSlide(true);
 
 			// Change frequency according to speed.
-			float fAbsSpeed = std::abs(afSpeed);
+			float fAbsSpeed = ABS(afSpeed);
 			float fFreq = 1;
 
 			// Higher than middle
@@ -213,7 +213,7 @@ void cSurfaceData::OnSlide(float afSpeed, const cVector3f &avPos, int alContacts
 			}
 		}
 	} else {
-		if (mfMinScrapeSpeed <= std::abs(afSpeed) && msScrapeSoundName != "") {
+		if (mfMinScrapeSpeed <= ABS(afSpeed) && msScrapeSoundName != "") {
 			apBody->SetHasSlide(true);
 
 			cSoundEntity *pEntity = pWorld->CreateSoundEntity("Scrape",
@@ -312,15 +312,15 @@ void cSurfaceData::UpdateRollEffect(iPhysicsBody *apBody) {
 	float fRollingSpeed = 0;
 	// X
 	if (mRollAxisFlags & eRollAxisFlag_X)
-		fRollingSpeed = std::abs(vAngularSpeed.x);
+		fRollingSpeed = ABS(vAngularSpeed.x);
 	// Y
 	if (mRollAxisFlags & eRollAxisFlag_Y)
-		if (fRollingSpeed < std::abs(vAngularSpeed.y))
-			fRollingSpeed = std::abs(vAngularSpeed.y);
+		if (fRollingSpeed < ABS(vAngularSpeed.y))
+			fRollingSpeed = ABS(vAngularSpeed.y);
 	// Z
 	if (mRollAxisFlags & eRollAxisFlag_Z)
-		if (fRollingSpeed < std::abs(vAngularSpeed.z))
-			fRollingSpeed = std::abs(vAngularSpeed.z);
+		if (fRollingSpeed < ABS(vAngularSpeed.z))
+			fRollingSpeed = ABS(vAngularSpeed.z);
 
 	// Log("Rollspeed: %f\n",fRollingSpeed);
 

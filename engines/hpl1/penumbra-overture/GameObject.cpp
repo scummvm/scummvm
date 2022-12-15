@@ -73,7 +73,7 @@ void cGameObjectBodyCallback::OnCollide(iPhysicsBody *apBody, iPhysicsBody *apCo
 			float fSpeed = apBody->GetLinearVelocity().Length();
 			float fImpulseSize = fSpeed * apBody->GetMass();
 
-			if (fSpeed > 4.5f && fImpulseSize > 25 && std::abs(apContactData->mfMaxContactNormalSpeed) >= 1.0f) {
+			if (fSpeed > 4.5f && fImpulseSize > 25 && ABS(apContactData->mfMaxContactNormalSpeed) >= 1.0f) {
 				pEnemy->Damage(fImpulseSize * 0.1f, 1);
 			}
 		}
@@ -86,7 +86,7 @@ void cGameObjectBodyCallback::OnCollide(iPhysicsBody *apBody, iPhysicsBody *apCo
 							 apCollideBody->GetLinearVelocity().Length() * apCollideBody->GetMass();
 
 		if (fImpulseSize >= mpObject->mBreakProps.mfMinImpulse &&
-			std::abs(apContactData->mfMaxContactNormalSpeed) >= mpObject->mBreakProps.mfMinNormalSpeed) {
+			ABS(apContactData->mfMaxContactNormalSpeed) >= mpObject->mBreakProps.mfMinNormalSpeed) {
 			if (mpInit->mbDebugInteraction) {
 				Log("------ Breakage ----------\n");
 				Log(" Body '%s' by Body '%s'\n", apBody->GetName().c_str(), apCollideBody->GetName().c_str());
@@ -580,8 +580,8 @@ void cGameObject::OnPlayerGravityCollide(iCharacterBody *apCharBody, cCollideDat
 		for (int i = 0; i < apCollideData->mlNumOfPoints; i++) {
 			cCollidePoint &point = apCollideData->mvContactPoints[i];
 			if (point.mvNormal.y > 0.001f &&
-				point.mvNormal.y > std::abs(point.mvNormal.x) &&
-				point.mvNormal.y > std::abs(point.mvNormal.z)) {
+				point.mvNormal.y > ABS(point.mvNormal.x) &&
+				point.mvNormal.y > ABS(point.mvNormal.z)) {
 				bPushDown = true;
 			}
 		}
@@ -589,14 +589,14 @@ void cGameObject::OnPlayerGravityCollide(iCharacterBody *apCharBody, cCollideDat
 		if (bPushDown) {
 			////////////////////////////////////
 			// Check the impulse created by the player
-			float fImpulse = apCharBody->GetMass() * std::abs(apCharBody->GetForceVelocity().y);
+			float fImpulse = apCharBody->GetMass() * ABS(apCharBody->GetForceVelocity().y);
 
 			if (mBreakProps.mfMinPlayerImpulse <= fImpulse) {
 				if (mpInit->mbDebugInteraction) {
 					Log("------ Breakage ----------\n");
 					Log(" Body '%s' by Player\n", mvBodies[0]->GetName().c_str());
 					Log(" Impulse: %f : %fm/s * %fkg (from Player)\n", fImpulse,
-						std::abs(apCharBody->GetForceVelocity().y), apCharBody->GetMass());
+						ABS(apCharBody->GetForceVelocity().y), apCharBody->GetMass());
 					Log("-------------------------\n");
 				}
 

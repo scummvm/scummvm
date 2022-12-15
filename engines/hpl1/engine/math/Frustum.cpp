@@ -165,7 +165,7 @@ eFrustumCollision cFrustum::CollideBVSphere(cBoundingVolume *aBV) {
 			return eFrustumCollision_Outside;
 		}
 
-		if (std::abs(fDist) < aBV->GetRadius()) {
+		if (ABS(fDist) < aBV->GetRadius()) {
 			return eFrustumCollision_Intersect;
 		}
 	}

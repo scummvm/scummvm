@@ -276,7 +276,7 @@ void iPhysicsJoint::OnMinLimit() {
 //-----------------------------------------------------------------------
 
 void iPhysicsJoint::CalcSoundFreq(float afSpeed, float *apFreq, float *apVol) {
-	float fAbsSpeed = std::abs(afSpeed);
+	float fAbsSpeed = ABS(afSpeed);
 	float fFreq = 1;
 	float fVolume = 1;
 
@@ -496,8 +496,8 @@ void iPhysicsJoint::CheckLimitAutoSleep(iPhysicsJoint *apJoint,
 										const float afMin, const float afMax,
 										const float afDist) {
 	if (apJoint->mbLimitAutoSleep) {
-		float fMinDiff = std::abs(afMin - afDist);
-		float fMaxDiff = std::abs(afMax - afDist);
+		float fMinDiff = ABS(afMin - afDist);
+		float fMaxDiff = ABS(afMax - afDist);
 
 		if (fMaxDiff < apJoint->mfLimitAutoSleepDist ||
 			fMinDiff < apJoint->mfLimitAutoSleepDist) {

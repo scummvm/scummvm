@@ -389,7 +389,7 @@ void iGameEntity::Damage(float afDamage, int alStrength) {
 			afDamage *= fDamageMul;
 		}
 
-		mfHealth -= std::abs(afDamage);
+		mfHealth -= ABS(afDamage);
 
 		if (mfHealth <= 0) {
 			OnDeath(afDamage);
