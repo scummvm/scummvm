@@ -164,7 +164,7 @@ void cGui::OnPostSceneDraw() {
 //-----------------------------------------------------------------------
 
 void cGui::OnPostGUIDraw() {
-	typedef Hpl1::std::multimap<int, cGuiSet *> tPrioMap;
+	typedef Hpl1::Std::multimap<int, cGuiSet *> tPrioMap;
 	tPrioMap mapSortedSets;
 
 	tGuiSetMapIt it = m_mapSets.begin();

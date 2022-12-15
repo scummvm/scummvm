@@ -88,7 +88,7 @@ typedef tHapticForceList::iterator tHapticForceListIt;
 typedef Common::List<iHapticSurface *> tHapticSurfaceList;
 typedef tHapticSurfaceList::iterator tHapticSurfaceListIt;
 
-typedef Hpl1::std::map<tString, iHapticSurface *> tHapticSurfaceMap;
+typedef Hpl1::Std::map<tString, iHapticSurface *> tHapticSurfaceMap;
 typedef tHapticSurfaceMap::iterator tHapticSurfaceMapIt;
 
 typedef cSTLIterator<iHapticShape *, tHapticShapeList, tHapticShapeListIt> cHapticShapeIterator;

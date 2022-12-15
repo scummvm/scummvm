@@ -80,7 +80,7 @@ private:
 
 /////////// GRID ////////////
 
-typedef Hpl1::std::map<int, cGrid2DObject *> tGrid2DObjectMap;
+typedef Hpl1::Std::map<int, cGrid2DObject *> tGrid2DObjectMap;
 typedef tGrid2DObjectMap::iterator tGrid2DObjectMapIt;
 
 class cGrid2D {

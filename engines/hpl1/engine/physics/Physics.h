@@ -50,7 +50,7 @@ class cHaptic;
 typedef Common::List<iPhysicsWorld *> tPhysicsWorldList;
 typedef tPhysicsWorldList::iterator tPhysicsWorldListIt;
 
-typedef Hpl1::std::map<tString, cSurfaceData *> tSurfaceDataMap;
+typedef Hpl1::Std::map<tString, cSurfaceData *> tSurfaceDataMap;
 typedef tSurfaceDataMap::iterator tSurfaceDataMapIt;
 
 //------------------------------------------------

@@ -40,7 +40,7 @@ class cBone;
 typedef Common::Array<cBone *> tBoneVec;
 typedef tBoneVec::iterator tBoneVecIt;
 
-typedef Hpl1::std::map<tString, int> tBoneIdxNameMap;
+typedef Hpl1::Std::map<tString, int> tBoneIdxNameMap;
 typedef tBoneIdxNameMap::iterator tBoneIdxNameMapIt;
 
 class cSkeleton {

@@ -64,7 +64,7 @@ class cFileSearcher;
 class cBillboard;
 class cSectorVisibilityContainer;
 
-typedef Hpl1::std::set<iRenderable *> tCasterCacheSet;
+typedef Hpl1::Std::set<iRenderable *> tCasterCacheSet;
 typedef tCasterCacheSet::iterator tCasterCacheSetIt;
 
 //------------------------------------------

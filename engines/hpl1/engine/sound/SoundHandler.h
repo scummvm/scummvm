@@ -110,7 +110,7 @@ typedef cSTLIterator<cSoundEntry, tSoundEntryList, tSoundEntryListIt> tSoundEntr
 
 //----------------------------------------
 
-typedef Hpl1::std::map<tString, int> tPlayedSoundNumMap;
+typedef Hpl1::Std::map<tString, int> tPlayedSoundNumMap;
 typedef tPlayedSoundNumMap::iterator tPlayedSoundNumMapIt;
 
 //----------------------------------------

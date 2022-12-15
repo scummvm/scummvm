@@ -277,7 +277,7 @@ private:
 
 //-------------------------------------------------
 
-typedef Hpl1::std::map<Hpl1::StaticString, cSerializeSavedClass> tSerializeSavedClassMap;
+typedef Hpl1::Std::map<Hpl1::StaticString, cSerializeSavedClass> tSerializeSavedClassMap;
 typedef tSerializeSavedClassMap::iterator tSerializeSavedClassMapIt;
 
 typedef Common::List<cSerializeSavedClass *> tSerializeSavedClassList;

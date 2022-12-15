@@ -1391,7 +1391,7 @@ public:
 	tUIntList mlstIndices;
 };
 
-typedef Hpl1::std::map<cVector3f, cVertexIndices> tVtxIdxMap;
+typedef Hpl1::Std::map<cVector3f, cVertexIndices> tVtxIdxMap;
 typedef tVtxIdxMap::iterator tVtxIdxMapIt;
 
 //////////////////////////////////////////////////////
@@ -1424,7 +1424,7 @@ public:
 	}
 };
 
-typedef Hpl1::std::set<cTriEdge, cEdgeCompare> tTriEdgeListMap;
+typedef Hpl1::Std::set<cTriEdge, cEdgeCompare> tTriEdgeListMap;
 typedef tTriEdgeListMap::iterator tTriEdgeListMapIt;
 
 //////////////////////////////////////////////////////

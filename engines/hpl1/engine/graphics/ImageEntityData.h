@@ -64,7 +64,7 @@ public:
 	tString msSound;
 };
 
-typedef Hpl1::std::map<tString, cImageAnimation> tImageAnimationMap;
+typedef Hpl1::Std::map<tString, cImageAnimation> tImageAnimationMap;
 typedef tImageAnimationMap::iterator tImageAnimationMapIt;
 
 class cImageEntityData : public iResourceBase {

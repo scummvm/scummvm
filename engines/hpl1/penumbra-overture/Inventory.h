@@ -184,7 +184,7 @@ private:
 	int mlCount;
 };
 
-typedef Hpl1::std::multimap<tString, cInventoryItem *> tInventoryItemMap;
+typedef Hpl1::Std::multimap<tString, cInventoryItem *> tInventoryItemMap;
 typedef tInventoryItemMap::iterator tInventoryItemMapIt;
 
 //-----------------------------------------

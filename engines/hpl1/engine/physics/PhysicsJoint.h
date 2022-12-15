@@ -44,7 +44,7 @@ class cSoundEntity;
 class iPhysicsJoint;
 class iPhysicsController;
 
-typedef Hpl1::std::map<tString, iPhysicsController *> tPhysicsControllerMap;
+typedef Hpl1::Std::map<tString, iPhysicsController *> tPhysicsControllerMap;
 typedef tPhysicsControllerMap::iterator tPhysicsControllerMapIt;
 
 typedef cSTLMapIterator<iPhysicsController *, tPhysicsControllerMap, tPhysicsControllerMapIt> cPhysicsControllerIterator;

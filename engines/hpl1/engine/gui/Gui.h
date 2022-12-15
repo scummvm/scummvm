@@ -49,23 +49,23 @@ class iGuiMaterial;
 
 //------------------------------------------------
 
-typedef Hpl1::std::map<tString, cGuiSet *> tGuiSetMap;
+typedef Hpl1::Std::map<tString, cGuiSet *> tGuiSetMap;
 typedef tGuiSetMap::iterator tGuiSetMapIt;
 
 //-------------------------------------
 
-typedef Hpl1::std::map<tString, cGuiSkin *> tGuiSkinMap;
+typedef Hpl1::Std::map<tString, cGuiSkin *> tGuiSkinMap;
 typedef tGuiSkinMap::iterator tGuiSkinMapIt;
 
 //-------------------------------------
 
-typedef Hpl1::std::map<tString, eGuiSkinGfx> tGuiSkinGfxMap;
+typedef Hpl1::Std::map<tString, eGuiSkinGfx> tGuiSkinGfxMap;
 typedef tGuiSkinGfxMap::iterator tGuiSkinGfxMapIt;
 
-typedef Hpl1::std::map<tString, eGuiSkinFont> tGuiSkinFontMap;
+typedef Hpl1::Std::map<tString, eGuiSkinFont> tGuiSkinFontMap;
 typedef tGuiSkinFontMap::iterator tGuiSkinFontMapIt;
 
-typedef Hpl1::std::map<tString, eGuiSkinAttribute> tGuiSkinAttributeMap;
+typedef Hpl1::Std::map<tString, eGuiSkinAttribute> tGuiSkinAttributeMap;
 typedef tGuiSkinAttributeMap::iterator tGuiSkinAttributeMapIt;
 
 //------------------------------------------------

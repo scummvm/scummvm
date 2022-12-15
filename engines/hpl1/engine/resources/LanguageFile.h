@@ -42,7 +42,7 @@ public:
 	tWString mwsText;
 };
 
-typedef Hpl1::std::map<tString, cLanguageEntry *> tLanguageEntryMap;
+typedef Hpl1::Std::map<tString, cLanguageEntry *> tLanguageEntryMap;
 typedef tLanguageEntryMap::iterator tLanguageEntryMapIt;
 
 //--------------------------------
@@ -56,7 +56,7 @@ public:
 	tLanguageEntryMap m_mapEntries;
 };
 
-typedef Hpl1::std::map<tString, cLanguageCategory *> tLanguageCategoryMap;
+typedef Hpl1::Std::map<tString, cLanguageCategory *> tLanguageCategoryMap;
 typedef tLanguageCategoryMap::iterator tLanguageCategoryMapIt;
 
 //--------------------------------

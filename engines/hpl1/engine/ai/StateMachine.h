@@ -69,7 +69,7 @@ private:
 	float mfTimeCount;
 };
 
-typedef Hpl1::std::map<int, iAIState *> tAIStateMap;
+typedef Hpl1::Std::map<int, iAIState *> tAIStateMap;
 typedef tAIStateMap::iterator tAIStateMapIt;
 
 //-----------------------------------------

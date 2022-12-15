@@ -174,7 +174,7 @@ private:
 
 //---------------------------------------------------------
 
-typedef Hpl1::std::multimap<int, iSaveObject *> tSaveObjectMap;
+typedef Hpl1::Std::multimap<int, iSaveObject *> tSaveObjectMap;
 typedef tSaveObjectMap::iterator tSaveObjectMapIt;
 
 typedef cSTLMapIterator<iSaveObject *, tSaveObjectMap, tSaveObjectMapIt> cSaveObjectIterator;
@@ -205,7 +205,7 @@ private:
 
 //---------------------------------------------------------
 
-typedef Hpl1::std::multimap<int, iSaveData *> tSaveDataMap;
+typedef Hpl1::Std::multimap<int, iSaveData *> tSaveDataMap;
 typedef tSaveDataMap::iterator tSaveDataMapIt;
 
 typedef cSTLMapIterator<iSaveData *, tSaveDataMap, tSaveDataMapIt> cSaveDataIterator;

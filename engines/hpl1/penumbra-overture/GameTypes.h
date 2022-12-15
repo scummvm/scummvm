@@ -243,7 +243,7 @@ class cInventoryUseCallback : public iSerializable {
 	tString msFunction;
 };
 
-typedef Hpl1::std::multimap<tString, cInventoryUseCallback *> tInventoryUseCallbackMap;
+typedef Hpl1::Std::multimap<tString, cInventoryUseCallback *> tInventoryUseCallbackMap;
 typedef tInventoryUseCallbackMap::iterator tInventoryUseCallbackMapIt;
 
 //-----------------------------------------
@@ -253,7 +253,7 @@ class cInventoryPickupCallback : public iSerializable {
 	tString msFunction;
 };
 
-typedef Hpl1::std::multimap<tString, cInventoryPickupCallback *> tInventoryPickupCallbackMap;
+typedef Hpl1::Std::multimap<tString, cInventoryPickupCallback *> tInventoryPickupCallbackMap;
 typedef tInventoryPickupCallbackMap::iterator tInventoryPickupCallbackMapIt;
 
 //-----------------------------------------
@@ -281,7 +281,7 @@ public:
 	bool mbDeleteMe;
 };
 
-typedef Hpl1::std::map<tString, cGameCollideScript *> tGameCollideScriptMap;
+typedef Hpl1::Std::map<tString, cGameCollideScript *> tGameCollideScriptMap;
 typedef tGameCollideScriptMap::iterator tGameCollideScriptMapIt;
 
 //---------------------------------

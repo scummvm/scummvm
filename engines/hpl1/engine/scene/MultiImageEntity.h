@@ -48,7 +48,7 @@ public:
 	bool mbSyncFrame;
 };
 
-typedef Hpl1::std::map<unsigned int, cMultiImagePart> tMultiImagePartMap;
+typedef Hpl1::Std::map<unsigned int, cMultiImagePart> tMultiImagePartMap;
 typedef tMultiImagePartMap::iterator tMultiImagePartMapIt;
 
 class cMultiImageEntity {

@@ -25,10 +25,10 @@
 #include "common/array.h"
 
 namespace Hpl1 {
-namespace std {
+namespace Std {
 
 /**
- * Derives the ScummVM SortedArray to match the std::set class
+ * Derives the ScummVM SortedArray to match the Std::set class
  */
 template<class T, class Comparitor = Common::Less<T> >
 class set : public Common::SortedArray<T, const T &> {
@@ -120,7 +120,7 @@ public:
 	}
 };
 
-} // namespace std
+} // namespace Std
 } // namespace Hpl1
 
 #endif

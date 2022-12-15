@@ -57,7 +57,7 @@ private:
 	cVector2f mvVel;
 };
 
-typedef Hpl1::std::map<float, cBackgroundImage *> tBackgroundImageMap;
+typedef Hpl1::Std::map<float, cBackgroundImage *> tBackgroundImageMap;
 typedef tBackgroundImageMap::iterator tBackgroundImageMapIt;
 
 }     // namespace hpl

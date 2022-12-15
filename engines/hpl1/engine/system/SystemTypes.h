@@ -82,7 +82,7 @@ typedef tStringList::iterator tStringListIt;
 typedef Common::Array<tString> tStringVec;
 typedef tStringVec::iterator tStringVecIt;
 
-typedef Hpl1::std::set<tString> tStringSet;
+typedef Hpl1::Std::set<tString> tStringSet;
 typedef tStringSet::iterator tStringSetIt;
 
 //--------------------------------------------------------
@@ -94,7 +94,7 @@ typedef tWStringList::iterator tWStringListIt;
 typedef Common::Array<tWString> tWStringVec;
 typedef tWStringVec::iterator tWStringVecIt;
 
-typedef Hpl1::std::set<tWString> tWStringSet;
+typedef Hpl1::Std::set<tWString> tWStringSet;
 typedef tWStringSet::iterator tWStringSetIt;
 
 //--------------------------------------------------------

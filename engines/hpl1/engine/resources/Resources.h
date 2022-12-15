@@ -88,7 +88,7 @@ protected:
 	tString msName;
 };
 
-typedef Hpl1::std::map<tString, iEntity2DLoader *> tEntity2DLoaderMap;
+typedef Hpl1::Std::map<tString, iEntity2DLoader *> tEntity2DLoaderMap;
 typedef tEntity2DLoaderMap::iterator tEntity2DLoaderMapIt;
 
 //-------------------------------------------------------
@@ -106,7 +106,7 @@ protected:
 	tString msName;
 };
 
-typedef Hpl1::std::map<tString, iArea2DLoader *> tArea2DLoaderMap;
+typedef Hpl1::Std::map<tString, iArea2DLoader *> tArea2DLoaderMap;
 typedef tArea2DLoaderMap::iterator tArea2DLoaderMapIt;
 
 //-------------------------------------------------------
@@ -125,7 +125,7 @@ protected:
 	tString msName;
 };
 
-typedef Hpl1::std::map<tString, iEntity3DLoader *> tEntity3DLoaderMap;
+typedef Hpl1::Std::map<tString, iEntity3DLoader *> tEntity3DLoaderMap;
 typedef tEntity3DLoaderMap::iterator tEntity3DLoaderMapIt;
 
 //-------------------------------------------------------
@@ -143,7 +143,7 @@ protected:
 	tString msName;
 };
 
-typedef Hpl1::std::map<tString, iArea3DLoader *> tArea3DLoaderMap;
+typedef Hpl1::Std::map<tString, iArea3DLoader *> tArea3DLoaderMap;
 typedef tArea3DLoaderMap::iterator tArea3DLoaderMapIt;
 
 //-------------------------------------------------------

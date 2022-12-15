@@ -64,10 +64,10 @@ public:
 	bool operator()(const cRenderObject2D &aObjectA, const cRenderObject2D &aObjectB) const;
 };
 
-typedef Hpl1::std::multiset<cRenderObject2D, cRenderObject2DCompare> tRenderObjectSet;
+typedef Hpl1::Std::multiset<cRenderObject2D, cRenderObject2DCompare> tRenderObjectSet;
 typedef tRenderObjectSet::iterator tRenderObjectSetIt;
 
-typedef Hpl1::std::multiset<cRenderObject2D, cRenderTransObjectCompare> tRenderTransObjectSet;
+typedef Hpl1::Std::multiset<cRenderObject2D, cRenderTransObjectCompare> tRenderTransObjectSet;
 typedef tRenderTransObjectSet::iterator tRenderTransObjectSetIt;
 
 typedef Common::List<cRenderObject2D> tRenderObjectList;

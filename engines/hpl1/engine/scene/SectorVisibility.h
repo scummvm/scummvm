@@ -117,7 +117,7 @@ private:
 	cSectorVisibilityContainer *mpContainer;
 };
 
-typedef Hpl1::std::map<cSector *, cSectorVisibility *> tSectorVisibilityMap;
+typedef Hpl1::Std::map<cSector *, cSectorVisibility *> tSectorVisibilityMap;
 typedef tSectorVisibilityMap::iterator tSectorVisibilityMapIt;
 
 //----------------------------------------------------
@@ -125,7 +125,7 @@ typedef tSectorVisibilityMap::iterator tSectorVisibilityMapIt;
 typedef Common::List<cPortalVisibilitySet *> tPortalVisibilitySetList;
 typedef tPortalVisibilitySetList::iterator tPortalVisibilitySetListIt;
 
-typedef Hpl1::std::set<cSector *> tSectorSet;
+typedef Hpl1::Std::set<cSector *> tSectorSet;
 typedef tSectorSet::iterator tSectorSetIt;
 
 typedef cSTLMapIterator<cSectorVisibility *, tSectorVisibilityMap, tSectorVisibilityMapIt> tSectorVisibilityIterator;

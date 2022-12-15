@@ -23,7 +23,7 @@
 #define HPL1_STD_PAIR_H
 
 namespace Hpl1 {
-namespace std {
+namespace Std {
 
 template<typename T1, typename T2>
 struct pair {
@@ -33,7 +33,7 @@ struct pair {
 	T2 second;
 };
 
-} // namespace std
+} // namespace Std
 
 } // namespace Hpl1
 

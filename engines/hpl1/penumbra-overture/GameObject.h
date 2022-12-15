@@ -212,7 +212,7 @@ private:
 	float GetPushDist();
 
 	void UpdateAttraction(float afTimeStep);
-	Hpl1::std::set<iGameEnemy *> m_setAttractedEnemies;
+	Hpl1::Std::set<iGameEnemy *> m_setAttractedEnemies;
 	iGameEnemy *mpCurrentAttraction;
 	float mfAttractCount;
 

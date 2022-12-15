@@ -38,10 +38,10 @@ class LowLevelSystem;
 class cFileSearcher;
 class iResourceBase;
 
-typedef Hpl1::std::map<unsigned long, iResourceBase *> tResourceHandleMap;
+typedef Hpl1::Std::map<unsigned long, iResourceBase *> tResourceHandleMap;
 typedef tResourceHandleMap::iterator tResourceHandleMapIt;
 
-typedef Hpl1::std::map<tString, iResourceBase *> tResourceNameMap;
+typedef Hpl1::Std::map<tString, iResourceBase *> tResourceNameMap;
 typedef tResourceNameMap::iterator tResourceNameMapIt;
 
 typedef Common::List<iResourceBase *> tResourceBaseList;
