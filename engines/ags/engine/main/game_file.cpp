@@ -171,24 +171,36 @@ HError load_game_file() {
 	MainGameSource src;
 	LoadedGameEntities ents(_GP(game));
 	HError err = (HError)OpenMainGameFileFromDefaultAsset(src, _GP(AssetMgr).get());
-	if (err) {
-		err = (HError)ReadGameData(ents, src.InputStream.get(), src.DataVersion);
-		src.InputStream.reset();
-		if (err) {
-			// Upscale mode -- for old games that supported it.
-			// NOTE: this must be done before UpdateGameData, or resolution-dependant
-			// adjustments won't be applied correctly.
-			if ((_G(loaded_game_file_version) < kGameVersion_310) && _GP(usetup).override_upscale) {
-				if (_GP(game).GetResolutionType() == kGameResolution_320x200)
-					_GP(game).SetGameResolution(kGameResolution_640x400);
-				else if (_GP(game).GetResolutionType() == kGameResolution_320x240)
-					_GP(game).SetGameResolution(kGameResolution_640x480);
-			}
+	if (!err)
+		return err;
 
-			err = (HError)UpdateGameData(ents, src.DataVersion);
-		}
+	err = (HError)ReadGameData(ents, src.InputStream.get(), src.DataVersion);
+	src.InputStream.reset();
+
+	//-------------------------------------------------------------------------
+	// Data overrides: for compatibility mode and custom engine support
+	// NOTE: this must be done before UpdateGameData, or certain adjustments
+	// won't be applied correctly.
+
+	// Custom engine detection (ugly hack, depends on the known game GUIDs)
+	if (strcmp(_GP(game).guid, "{d6795d1c-3cfe-49ec-90a1-85c313bfccaf}" /* Kathy Rain */ ) == 0 ||
+		strcmp(_GP(game).guid, "{5833654f-6f0d-40d9-99e2-65c101c8544a}" /* Whispers of a Machine */ ) == 0)
+	{
+		_GP(game).options[OPT_CUSTOMENGINETAG] = CUSTOMENG_CLIFFTOP;
+	}
+	// Upscale mode -- for old games that supported it.
+	if ((_G(loaded_game_file_version) < kGameVersion_310) && _GP(usetup).override_upscale) {
+		if (_GP(game).GetResolutionType() == kGameResolution_320x200)
+			_GP(game).SetGameResolution(kGameResolution_640x400);
+		else if (_GP(game).GetResolutionType() == kGameResolution_320x240)
+			_GP(game).SetGameResolution(kGameResolution_640x480);
+	}
+	if (_GP(game).options[OPT_CUSTOMENGINETAG] == CUSTOMENG_CLIFFTOP) {
+		if (_GP(game).GetResolutionType() == kGameResolution_640x400)
+			_GP(game).SetGameResolution(Size(640, 360));
 	}
 
+	err = (HError)UpdateGameData(ents, src.DataVersion);
 	if (!err)
 		return err;
 	err = LoadGameScripts(ents);

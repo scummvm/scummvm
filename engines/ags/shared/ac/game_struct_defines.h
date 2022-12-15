@@ -86,13 +86,22 @@ namespace AGS3 {
 #define OPT_CLIPGUICONTROLS 48 // clip drawn gui control contents to the control's rectangle
 #define OPT_GAMETEXTENCODING 49 // how the text in the game data should be interpreted
 #define OPT_KEYHANDLEAPI    50 // key handling mode (old/new)
-#define OPT_HIGHESTOPTION   OPT_KEYHANDLEAPI
-#define OPT_NOMODMUSIC      98
+#define OPT_CUSTOMENGINETAG 51 // custom engine tag (for overriding behavior)
+#define OPT_HIGHESTOPTION   OPT_CUSTOMENGINETAG
+#define OPT_NOMODMUSIC      98 // unused
 #define OPT_LIPSYNCTEXT     99
+
+#define CUSTOMENG_NONE      0
+#define CUSTOMENG_DRACONIAN 1 // Draconian Edition
+#define CUSTOMENG_CLIFFTOP  2 // Clifftop Games
+
+// Sierra-style portrait position style
 #define PORTRAIT_LEFT       0
 #define PORTRAIT_RIGHT      1
 #define PORTRAIT_ALTERNATE  2
 #define PORTRAIT_XPOSITION  3
+
+// Room transition style
 #define FADE_NORMAL         0
 #define FADE_INSTANT        1
 #define FADE_DISSOLVE       2
