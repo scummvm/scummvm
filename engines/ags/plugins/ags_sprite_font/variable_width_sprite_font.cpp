@@ -73,28 +73,36 @@ int VariableWidthSpriteFontRenderer::GetTextHeight(const char *text, int fontNum
 int VariableWidthSpriteFontRenderer::GetFontHeight(int fontNumber) {
 	VariableWidthFont *font = getFontFor(fontNumber);
 	if (font->characters.size() > 0) {
-		return font->characters.begin()->_value.Height + font->LineHeightAdjust;
+		return font->characters.begin()->_value.Height + font->LineSpacingAdjust;
 	}
 	return 0;
  }
 
 int VariableWidthSpriteFontRenderer::GetLineSpacing(int fontNumber) {
-	VariableWidthFont *font = getFontFor(fontNumber);
-	return font->LineSpacingOverride;
+	// CHECKME: it's not clear whether LineSpacingOverride was ever meant as an
+	// actual, normal line spacing. In Clifftop's custom engine this value has
+	// been used specifically to tell the spacing for *empty lines* when
+	// printing a wrapped text on a GUI Label. Official engine does not have
+	// such functionality.
+	return 0; // use default (font height)
 }
 
 void VariableWidthSpriteFontRenderer::SetSpacing(int fontNum, int spacing) {
 	VariableWidthFont *font = getFontFor(fontNum);
 	font->Spacing = spacing;
-
-
 }
 
-void VariableWidthSpriteFontRenderer::SetLineHeightAdjust(int fontNum, int LineHeight, int SpacingHeight, int SpacingOverride) {
+void VariableWidthSpriteFontRenderer::SetLineHeightAdjust(int fontNum, int lineHeight, int spacingHeight, int spacingOverride) {
 	VariableWidthFont *font = getFontFor(fontNum);
-	font->LineHeightAdjust = LineHeight;
-	font->LineSpacingAdjust = SpacingHeight;
-	font->LineSpacingOverride = SpacingOverride;
+	font->LineHeightAdjust = lineHeight;
+	font->LineSpacingAdjust = spacingHeight;
+	font->LineSpacingOverride = spacingOverride;
+
+	char buf[1024];
+	snprintf(buf, sizeof(buf),
+		"VariableWidth::SetLineHeightAdjust: font %d, lineHeight %d, spacingHeight %d, spacingOverride %d",
+		fontNum, lineHeight, spacingHeight, spacingOverride);
+	_engine->PrintDebugConsole(buf);
 
 	if (_engine->version >= 26)
 		_engine->NotifyFontUpdated(fontNum);

@@ -44,6 +44,7 @@ public:
 	void SetGlyph(int fontNum, int charNum, int x, int y, int width, int height);
 	void SetSprite(int fontNum, int spriteNum);
 	void SetSpacing(int fontNum, int spacing);
+	// Clifftop Games custom plugin support
 	void SetLineHeightAdjust(int fontNum, int LineHeight, int SpacingHeight, int SpacingOverride);
 
 	// IAGSFontRenderer implementation
