@@ -199,7 +199,7 @@ void Gfx::setPalette(const PalEntry *pal, bool full) {
 
 	if (_vm->getGameId() == GID_ITE || full) {
 		from = 0;
-		numcolors = PAL_ENTRIES;
+		numcolors = _vm->isECS() ? 32 : PAL_ENTRIES;
 	} else {
 		from = 0;
 		numcolors = 248;
