@@ -45,7 +45,7 @@
 
 namespace hpl {
 
-static const cMatrixf g_mtxTextureUnitFix(0.5f, 0, 0, 0.5f,
+static constexpr cMatrixf g_mtxTextureUnitFix(0.5f, 0, 0, 0.5f,
 										  0, -0.5f, 0, 0.5f,
 										  0, 0, 0.5f, 0.5f,
 										  0, 0, 0, 1.0f);
