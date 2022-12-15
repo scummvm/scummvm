@@ -47,13 +47,6 @@ cQuaternion::cQuaternion(float afAngle, const cVector3f &avAxis) {
 	FromAngleAxis(afAngle, avAxis);
 }
 
-cQuaternion::cQuaternion(float afW, float afX, float afY, float afZ) {
-	w = afW;
-	v.x = afX;
-	v.y = afY;
-	v.z = afZ;
-}
-
 //-----------------------------------------------------------------------
 
 //////////////////////////////////////////////////////////////////////////

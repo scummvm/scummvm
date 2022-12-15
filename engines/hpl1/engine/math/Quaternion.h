@@ -40,7 +40,8 @@ public:
 
 	cQuaternion();
 	cQuaternion(float afAngle, const cVector3<float> &avAxis);
-	cQuaternion(float afW, float afX, float afY, float afZ);
+	constexpr cQuaternion(float afW, float afX, float afY, float afZ) : v(afX, afY, afZ), w(afW) {
+	}
 
 	void Normalise();
 	void ToRotationMatrix(cMatrix<float> &a_mtxDest) const;
