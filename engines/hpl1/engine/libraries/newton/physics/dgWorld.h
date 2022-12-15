@@ -147,7 +147,7 @@ public:
 	void SetSolverMode(dgInt32 mode);
 	void SetFrictionMode(dgInt32 mode);
 	void SetHardwareMode(dgInt32 mode);
-	dgInt32 GetHardwareMode(char *description);
+	dgInt32 GetHardwareMode(char *description) const;
 
 	void SetThreadsCount(dgInt32 count);
 	dgInt32 GetThreadsCount() const;

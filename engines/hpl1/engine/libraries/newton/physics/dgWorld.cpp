@@ -356,7 +356,7 @@ void dgWorld::SetHardwareMode(dgInt32 mode) {
 	}
 }
 
-dgInt32 dgWorld::GetHardwareMode(char *description) {
+dgInt32 dgWorld::GetHardwareMode(char *description) const {
 	dgInt32 mode;
 
 	//  if (0) {
