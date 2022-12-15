@@ -174,7 +174,7 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 	if (!frame)
 		return;
 	const uint8		*srcpixels		= frame->_pixels;
-	const uint8		*srcmask		= frame->_mask;
+	const uint8		keycolor		= frame->_keycolor;
 	const uint32	*pal			= untformed_pal ?
 										s->getPalette()->_native_untransformed:
 										s->getPalette()->_native;
@@ -190,19 +190,18 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 	x -= XNEG(frame->_xoff);
 	y -= frame->_yoff;
 
-	assert(_pixels00 && _pixels && srcpixels && srcmask);
+	assert(_pixels00 && _pixels && srcpixels);
 
 	for (int i = 0; i < height_; i++)  {
 		const int line = y + i;
 
 		if (NOT_CLIPPED_Y) {
 			const uint8	*srcline = srcpixels + i * width_;
-			const uint8	*srcmaskline = srcmask + i * width_;
 			uintX *dst_line_start = reinterpret_cast<uintX *>(OFFSET_PIXELS + _pitch * line);
 			LINE_END_ASSIGN;
 
 			for (int xpos = 0; xpos < width_; xpos++) {
-				if (srcmaskline[xpos] == 0)
+				if (srcline[xpos] == keycolor)
 					continue;
 
 				uintX *dstpix = dst_line_start + x + XNEG(xpos);

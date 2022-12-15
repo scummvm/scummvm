@@ -38,11 +38,20 @@ public:
 	int32 _xoff, _yoff;
 
 	uint8 *_pixels;
-	uint8 *_mask;
+	uint8 _keycolor;
 
 	bool hasPoint(int32 x, int32 y) const;  // Check to see if a point is in the frame
 
 	uint8 getPixelAtPoint(int32 x, int32 y) const;  // Get the pixel at the point
+
+private:
+	/**
+	 * Load the pixel data from the raw shape rle data using key color for transparency
+	 * @param rawframe the raw shape to load rle data
+	 * @param keycolor the color representing transparency
+	 * @return false if the keycolor is found in the raw shape frame data
+	*/
+	bool load(const RawShapeFrame *rawframe, uint8 keycolor);
 };
 
 } // End of namespace Ultima8
