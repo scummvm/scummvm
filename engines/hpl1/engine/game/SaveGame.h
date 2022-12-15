@@ -28,8 +28,6 @@
 #ifndef HPL_SAVE_GAME_H
 #define HPL_SAVE_GAME_H
 
-#include <cassert>
-
 #include "hpl1/engine/system/SerializeClass.h"
 #include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/std/map.h"

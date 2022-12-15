@@ -25,7 +25,6 @@
  * This file is part of HPL1 Engine.
  */
 
-#include <limits.h>
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/hpl1.h"
@@ -363,9 +362,9 @@ float cMath::GetFraction(float afVal) {
 //-----------------------------------------------------------------------
 
 float cMath::Modulus(float afDividend, float afDivisor) {
-	float fNum = std::floor(std::abs(afDividend / afDivisor));
+	float fNum = floor(ABS(afDividend / afDivisor));
 
-	float fRemain = std::abs(afDividend) - std::abs(afDivisor) * fNum;
+	float fRemain = ABS(afDividend) - ABS(afDivisor) * fNum;
 
 	return fRemain;
 }
@@ -383,7 +382,7 @@ float cMath::Wrap(float afX, float afMin, float afMax) {
 	afMin = 0;
 	afX = afX - fOffSet;
 
-	float fNumOfMax = std::floor(std::abs(afX / afMax));
+	float fNumOfMax = floor(std::abs(afX / afMax));
 
 	if (afX >= afMax)
 		afX = afX - fNumOfMax * afMax;

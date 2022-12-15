@@ -32,7 +32,6 @@
 #include "hpl1/engine/math/Vector2.h"
 #include "hpl1/engine/math/Vector3.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include <cmath>
 #include "common/array.h"
 #include "common/list.h"
 
