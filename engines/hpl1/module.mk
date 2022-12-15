@@ -140,7 +140,6 @@ MODULE_OBJS := \
 	engine/input/Keyboard.o \
 	engine/input/Mouse.o \
 	engine/math/BoundingVolume.o \
-	engine/math/CRC.o \
 	engine/math/Frustum.o \
 	engine/math/Math.o \
 	engine/math/MathTypes.o \
