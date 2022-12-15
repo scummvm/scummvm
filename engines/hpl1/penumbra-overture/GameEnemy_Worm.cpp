@@ -694,8 +694,8 @@ void cGameEnemy_Worm::OnUpdate(float afTimeStep) {
 	// Calculate direction vectors
 	if (vMovement.SqrLength() > 0.00001f)
 		mvRootGoalForward = cMath::Vector3Normalize(vMovement);
-	else
-		mvRootGoalForward = mvRootGoalForward;
+	//else
+	//	mvRootGoalForward = mvRootGoalForward;
 
 	// Rotate vectors to get closer to goal
 	{
