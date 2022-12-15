@@ -337,7 +337,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	if (!digital) {
 		// Load MIDI/XMI resource data
 		if (_vm->getGameId() == GID_ITE && _vm->getPlatform() == Common::Platform::kPlatformAmiga) {
-			playAmigaMod(resourceId, flags);
+			playProtracker(resourceId, flags);
 		} else if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
 			// Load the external music file for Mac IHNM
 			playQuickTime(resourceId, flags);
@@ -470,7 +470,7 @@ void Music::playQuickTime(uint32 resourceId, MusicFlags flags) {
 	_parser->setTrack(0);
 }
 
-void Music::playAmigaMod(uint32 resourceId, MusicFlags flags) {
+void Music::playProtracker(uint32 resourceId, MusicFlags flags) {
 	ByteArray ba;
 
 	_vm->_resource->loadResource(_musicContext, resourceId, ba);

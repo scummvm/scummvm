@@ -96,8 +96,8 @@ private:
 	static void timerCallback(void *refCon);
 	void onTimer();
 	bool playDigital(uint32 resourceId, MusicFlags flags);
+	void playProtracker(uint32 resourceId, MusicFlags flags);
 	void playQuickTime(uint32 resourceId, MusicFlags flags);
-	void playAmigaMod(uint32 resourceId, MusicFlags flags);
 	void playMidi(uint32 resourceId, MusicFlags flags);
 	void musicVolumeGauge();
 	ByteArray *_currentMusicBuffer;
