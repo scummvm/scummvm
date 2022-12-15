@@ -413,7 +413,6 @@ MODULE_OBJS := \
 	ultima8/games/u8_game.o \
 	ultima8/graphics/anim_dat.o \
 	ultima8/graphics/avi_player.o \
-	ultima8/graphics/base_soft_render_surface.o \
 	ultima8/graphics/cycle_process.o \
 	ultima8/graphics/frame_id.o \
 	ultima8/graphics/fade_to_modal_process.o \

@@ -22,7 +22,7 @@
 #ifndef ULTIMA8_GRAPHICS_SOFTRENDERSURFACE_H
 #define ULTIMA8_GRAPHICS_SOFTRENDERSURFACE_H
 
-#include "ultima/ultima8/graphics/base_soft_render_surface.h"
+#include "ultima/ultima8/graphics/render_surface.h"
 #include "graphics/managed_surface.h"
 
 namespace Ultima {
@@ -33,7 +33,7 @@ namespace Ultima8 {
 //
 // Desc: The class for software rendering in Pentagram
 //
-template<class uintX> class SoftRenderSurface : public BaseSoftRenderSurface {
+template<class uintX> class SoftRenderSurface : public RenderSurface {
 public:
 
 	// Create from a managed surface

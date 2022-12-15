@@ -24,6 +24,7 @@
 
 #include "graphics/pixelformat.h"
 #include "graphics/managed_surface.h"
+#include "ultima/ultima8/misc/rect.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -62,6 +63,44 @@ struct U8PixelFormat : Graphics::PixelFormat {
 // Desc: The base abstact class for rendering in Pentagram
 //
 class RenderSurface {
+protected:
+	// Frame buffer
+	uint8 *_pixels;   // Pointer to logical pixel 0,0
+	uint8 *_pixels00; // Pointer to physical pixel 0,0
+
+	// Pixel Format (also see 'Colour shifting values' later)
+	int _bytesPerPixel; // 2 or 4
+	int _bitsPerPixel;  // 16 or 32
+	int _formatType;    // 16, 555, 565, 32 or 888
+
+	// Dimensions
+	int32 _ox, _oy;        // Physical Pixel for Logical Origin
+	int32 _width, _height; // Width and height
+	int32 _pitch;          // Frame buffer pitch (bytes) (could be negated)
+	bool _flipped;
+
+	// Clipping Rectangle
+	Rect _clipWindow;
+
+	// Locking count
+	uint32 _lockCount; // Number of locks on surface
+
+	Graphics::ManagedSurface *_surface;
+
+	// Create from a managed surface
+	RenderSurface(Graphics::ManagedSurface *);
+
+	// Update the Pixels Pointer
+	void SetPixelsPointer() {
+		uint8 *pix00 = _pixels00;
+
+		if (_flipped) {
+			pix00 += -_pitch * (_height - 1);
+		}
+
+		_pixels = pix00 + _ox * _bytesPerPixel + _oy * _pitch;
+	}
+
 public:
 	static U8PixelFormat *_format;
 
@@ -86,40 +125,42 @@ public:
 	//! Begin painting to the buffer. MUST BE CALLED BEFORE DOING ANYTHING TO THE SURFACE!
 	// \note Can be called multiple times
 	// \return true on success, false on failure
-	virtual bool BeginPainting() = 0;
+	virtual bool BeginPainting();
 
 	//! Finish paining to the buffer.
 	// \note MUST BE CALLED FOR EACH CALL TO BeginPainting()
 	// \return true on success, false on failure
-	virtual bool EndPainting() = 0;
+	virtual bool EndPainting();
 
 	//
 	// Surface Properties
 	//
 
 	//! Set the Origin of the Surface
-	virtual void SetOrigin(int32 x, int32 y) = 0;
+	virtual void SetOrigin(int32 x, int32 y);
 
 	//! Set the Origin of the Surface
-	virtual void GetOrigin(int32 &x, int32 &y) const = 0;
+	virtual void GetOrigin(int32 &x, int32 &y) const;
 
 	//! Get the Surface Dimensions
-	virtual void GetSurfaceDims(Rect &) const = 0;
+	virtual void GetSurfaceDims(Rect &) const;
 
 	//! Get Clipping Rectangle
-	virtual void GetClippingRect(Rect &) const = 0;
+	virtual void GetClippingRect(Rect &) const;
 
 	//! Set Clipping Rectangle
-	virtual void SetClippingRect(const Rect &) = 0;
+	virtual void SetClippingRect(const Rect &);
 
 	//! Flip the surface
-	virtual void SetFlipped(bool flipped) = 0;
+	virtual void SetFlipped(bool flipped);
 
 	//! Has the render surface been flipped?
-	virtual bool IsFlipped() const = 0;
+	virtual bool IsFlipped() const;
 
 	//! Get a reference to the underlying surface that's being encapsulated
-	virtual Graphics::ManagedSurface *getRawSurface() const = 0;
+	virtual Graphics::ManagedSurface *getRawSurface() const {
+		return _surface;
+	};
 
 	//
 	// Surface Palettes
@@ -136,7 +177,7 @@ public:
 	// Get The Surface Palette
 	// TODO: virtual void GetPalette(uint8 palette[768]) = 0;
 
-	virtual void CreateNativePalette(Palette *palette, int maxindex = 0) = 0;
+	virtual void CreateNativePalette(Palette *palette, int maxindex = 0);
 
 
 	//
