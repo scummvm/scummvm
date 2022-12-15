@@ -1151,10 +1151,10 @@ int NewtonWorldGetBodyCount(const NewtonWorld *const newtonWorld) {
 // Return: number of rigid bodies in this world.
 //
 int NewtonWorldGetConstraintCount(const NewtonWorld *const newtonWorld) {
-	Newton *world;
+	const Newton *world;
 
 	TRACE_FUNTION(__FUNCTION__);
-	world = (Newton *)newtonWorld;
+	world = (const Newton *)newtonWorld;
 	return world->GetConstraintsCount();
 }
 
@@ -1283,10 +1283,10 @@ int NewtonWorldConvexCast(const NewtonWorld *const newtonWorld,
 //
 // See also: NewtonSetIslandUpdateEvent
 NewtonBody *NewtonIslandGetBody(const void *const island, int bodyIndex) {
-	dgWorld *world;
+	const dgWorld *world;
 
 	TRACE_FUNTION(__FUNCTION__);
-	world = *(dgWorld **)island;
+	world = *(const dgWorld * const *)island;
 	return (NewtonBody *)world->GetIslandBody(island, bodyIndex);
 }
 
@@ -1312,7 +1312,7 @@ NewtonBody *NewtonIslandGetBody(const void *const island, int bodyIndex) {
 void NewtonIslandGetBodyAABB(const void *const island, int bodyIndex,
                              dFloat *const p0, dFloat *const p1) {
 	TRACE_FUNTION(__FUNCTION__);
-	dgBody *const body = (dgBody *)NewtonIslandGetBody(island, bodyIndex);
+	const dgBody *const body = (const dgBody *)NewtonIslandGetBody(island, bodyIndex);
 	if (body) {
 		body->GetAABB((dgVector &)*p0, (dgVector &)*p1);
 	}
@@ -1336,7 +1336,7 @@ void NewtonIslandGetBodyAABB(const void *const island, int bodyIndex,
 // When the Newton world is created, the default Group ID is created by the engine.
 // When bodies are created the application assigns a group ID to the body.
 int NewtonMaterialGetDefaultGroupID(const NewtonWorld *const newtonWorld) {
-	Newton *const world = (Newton *)newtonWorld;
+	const Newton *const world = (const Newton *)newtonWorld;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return int(world->GetDefualtBodyGroupID());
@@ -1503,7 +1503,7 @@ void NewtonMaterialSetSurfaceThickness(const NewtonWorld *const newtonWorld,
                                        int id0, int id1, dFloat thickness) {
 
 	TRACE_FUNTION(__FUNCTION__);
-	Newton *const world = (Newton *)newtonWorld;
+	const Newton *const world = (const Newton *)newtonWorld;
 	dgContactMaterial *const material = world->GetMaterial(dgUnsigned32(id0),
 	                                    dgUnsigned32(id1));
 
@@ -1713,10 +1713,10 @@ void NewtonMaterialSetCompondCollisionCallback(
 // Return: Nothing.
 void *NewtonMaterialGetUserData(const NewtonWorld *const newtonWorld, int id0,
                                 int id1) {
-	Newton *world;
+	const Newton *world;
 
 	TRACE_FUNTION(__FUNCTION__);
-	world = (Newton *)newtonWorld;
+	world = (const Newton *)newtonWorld;
 	dgContactMaterial *const material = world->GetMaterial(dgUnsigned32(id0),
 	                                    dgUnsigned32(id1));
 
@@ -1734,10 +1734,10 @@ void *NewtonMaterialGetUserData(const NewtonWorld *const newtonWorld, int id0,
 // See also: NewtonWorldGetNextMaterial
 NewtonMaterial *NewtonWorldGetFirstMaterial(
     const NewtonWorld *const newtonWorld) {
-	Newton *world;
+	const Newton *world;
 
 	TRACE_FUNTION(__FUNCTION__);
-	world = (Newton *)newtonWorld;
+	world = (const Newton *)newtonWorld;
 	return (NewtonMaterial *)world->GetFirstMaterial();
 }
 
@@ -1799,7 +1799,7 @@ NewtonMaterial *NewtonWorldGetNextMaterial(const NewtonWorld *const newtonWorld,
 void *NewtonMaterialGetMaterialPairUserData(
     const NewtonMaterial *const materialHandle) {
 	TRACE_FUNTION(__FUNCTION__);
-	dgContactMaterial *const material = (dgContactMaterial *)materialHandle;
+	const dgContactMaterial *const material = (const dgContactMaterial *)materialHandle;
 	return material->GetUserData();
 }
 
@@ -2698,8 +2698,8 @@ NewtonCollision *NewtonCreateConvexHullModifier(
 // See also: NewtonCreateConvexHullModifier, NewtonConvexHullModifierSetMatrix
 void NewtonConvexHullModifierGetMatrix(
     const NewtonCollision *convexHullModifier, dFloat *matrixPtr) {
-	dgCollision *collision;
-	collision = (dgCollision *)convexHullModifier;
+	const dgCollision *collision;
+	collision = (const dgCollision *)convexHullModifier;
 
 	TRACE_FUNTION(__FUNCTION__);
 	dgMatrix &matrix = (*((dgMatrix *)matrixPtr));
@@ -2872,11 +2872,11 @@ void NewtonCompoundBreakableSetAnchoredPieces(
 
 NewtonbreakableComponentMesh *NewtonBreakableGetMainMesh(
     const NewtonCollision *const compoundBreakable) {
-	dgCollision *collision;
+	const dgCollision *collision;
 	NewtonbreakableComponentMesh *mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
-	collision = (dgCollision *)compoundBreakable;
+	collision = (const dgCollision *)compoundBreakable;
 
 	mesh = NULL;
 	if (collision->IsType(dgCollision::dgCollisionCompoundBreakable_RTTI)) {
@@ -2951,11 +2951,11 @@ void NewtonBreakableEndDelete(const NewtonCollision *const compoundBreakable) {
 
 NewtonbreakableComponentMesh *NewtonBreakableGetFirstComponent(
     const NewtonCollision *const compoundBreakable) {
-	dgCollision *collision;
+	const dgCollision *collision;
 	NewtonbreakableComponentMesh *mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
-	collision = (dgCollision *)compoundBreakable;
+	collision = (const dgCollision *)compoundBreakable;
 
 	mesh = NULL;
 	if (collision->IsType(dgCollision::dgCollisionCompoundBreakable_RTTI)) {
@@ -2980,15 +2980,15 @@ NewtonbreakableComponentMesh *NewtonBreakableGetNextComponent(
 int NewtonCompoundBreakableGetVertexCount(
     const NewtonCollision *const compoundBreakable) {
 	dgInt32 count;
-	dgCollision *collision;
+	const dgCollision *collision;
 
 	TRACE_FUNTION(__FUNCTION__);
-	collision = (dgCollision *)compoundBreakable;
+	collision = (const dgCollision *)compoundBreakable;
 
 	count = 0;
 	if (collision->IsType(dgCollision::dgCollisionCompoundBreakable_RTTI)) {
-		dgCollisionCompoundBreakable *compound;
-		compound = (dgCollisionCompoundBreakable *)collision;
+		const dgCollisionCompoundBreakable *compound;
+		compound = (const dgCollisionCompoundBreakable *)collision;
 		count = compound->GetVertecCount();
 	}
 	return count;
@@ -2998,14 +2998,14 @@ void NewtonCompoundBreakableGetVertexStreams(
     const NewtonCollision *const compoundBreakable, int vertexStrideInByte,
     dFloat *const vertex, int normalStrideInByte, dFloat *const normal,
     int uvStrideInByte, dFloat *const uv) {
-	dgCollision *collision;
+	const dgCollision *collision;
 
 	TRACE_FUNTION(__FUNCTION__);
-	collision = (dgCollision *)compoundBreakable;
+	collision = (const dgCollision *)compoundBreakable;
 
 	if (collision->IsType(dgCollision::dgCollisionCompoundBreakable_RTTI)) {
-		dgCollisionCompoundBreakable *compound;
-		compound = (dgCollisionCompoundBreakable *)collision;
+		const dgCollisionCompoundBreakable *compound;
+		compound = (const dgCollisionCompoundBreakable *)collision;
 		compound->GetVertexStreams(vertexStrideInByte, vertex, normalStrideInByte,
 		                           normal, uvStrideInByte, uv);
 	}
@@ -3022,10 +3022,10 @@ void *NewtonBreakableGetFirstSegment(
 }
 
 void *NewtonBreakableGetNextSegment(const void *const segment) {
-	dgCollisionCompoundBreakable::dgMesh::dgListNode *node;
+	const dgCollisionCompoundBreakable::dgMesh::dgListNode *node;
 	TRACE_FUNTION(__FUNCTION__);
 
-	node = (dgCollisionCompoundBreakable::dgMesh::dgListNode *)segment;
+	node = (const dgCollisionCompoundBreakable::dgMesh::dgListNode *)segment;
 	return node->GetNext();
 }
 
@@ -3033,12 +3033,12 @@ int NewtonBreakableGetComponentsInRadius(
     const NewtonCollision *const compoundBreakable, const dFloat *position,
     dFloat radius, NewtonbreakableComponentMesh **const segments, int maxCount) {
 	dgInt32 count;
-	dgCollision *collision;
+	const dgCollision *collision;
 
 	TRACE_FUNTION(__FUNCTION__);
 
 	count = 0;
-	collision = (dgCollision *)compoundBreakable;
+	collision = (const dgCollision *)compoundBreakable;
 	if (collision->IsType(dgCollision::dgCollisionCompoundBreakable_RTTI)) {
 		dgCollisionCompoundBreakable *compound;
 		compound = (dgCollisionCompoundBreakable *)collision;
@@ -3072,15 +3072,15 @@ int NewtonBreakableSegmentGetIndexStream(
     const NewtonbreakableComponentMesh *const meshOwner,
     const void *const segment, int *const index) {
 	int count;
-	dgCollision *collision;
+	const dgCollision *collision;
 
 	TRACE_FUNTION(__FUNCTION__);
 
 	count = 0;
-	collision = (dgCollision *)compoundBreakable;
+	collision = (const dgCollision *)compoundBreakable;
 	if (collision->IsType(dgCollision::dgCollisionCompoundBreakable_RTTI)) {
-		dgCollisionCompoundBreakable *compound;
-		compound = (dgCollisionCompoundBreakable *)collision;
+		const dgCollisionCompoundBreakable *compound;
+		compound = (const dgCollisionCompoundBreakable *)collision;
 		count = compound->GetSegmentIndexStream(
 		            (dgCollisionCompoundBreakable::dgDebriGraph::dgListNode *)meshOwner,
 		            (dgCollisionCompoundBreakable::dgMesh::dgListNode *)segment, index);
@@ -3093,15 +3093,15 @@ int NewtonBreakableSegmentGetIndexStreamShort(
     const NewtonbreakableComponentMesh *const meshOwner,
     const void *const segment, short int *const index) {
 	int count;
-	dgCollision *collision;
+	const dgCollision *collision;
 
 	TRACE_FUNTION(__FUNCTION__);
 
 	count = 0;
-	collision = (dgCollision *)compoundBreakable;
+	collision = (const dgCollision *)compoundBreakable;
 	if (collision->IsType(dgCollision::dgCollisionCompoundBreakable_RTTI)) {
-		dgCollisionCompoundBreakable *compound;
-		compound = (dgCollisionCompoundBreakable *)collision;
+		const dgCollisionCompoundBreakable *compound;
+		compound = (const dgCollisionCompoundBreakable *)collision;
 		count = compound->GetSegmentIndexStreamShort(
 		            (dgCollisionCompoundBreakable::dgDebriGraph::dgListNode *)meshOwner,
 		            (dgCollisionCompoundBreakable::dgMesh::dgListNode *)segment, index);
@@ -3123,8 +3123,8 @@ int NewtonBreakableSegmentGetIndexStreamShort(
 //
 // See also: NewtonCollisionIsTriggerVolume
 int NewtonCollisionIsTriggerVolume(const NewtonCollision *const convexCollision) {
-	dgCollision *collision;
-	collision = (dgCollision *)convexCollision;
+	const dgCollision *collision;
+	collision = (const dgCollision *)convexCollision;
 
 	TRACE_FUNTION(__FUNCTION__);
 
@@ -3166,8 +3166,8 @@ void NewtonCollisionSetMaxBreakImpactImpulse(
 
 dFloat NewtonCollisionGetMaxBreakImpactImpulse(
     const NewtonCollision *const convexHullCollision) {
-	dgCollision *collision;
-	collision = (dgCollision *)convexHullCollision;
+	const dgCollision *collision;
+	collision = (const dgCollision *)convexHullCollision;
 
 	TRACE_FUNTION(__FUNCTION__);
 	return dgFloat32(collision->GetBreakImpulse());
@@ -3232,10 +3232,10 @@ unsigned NewtonCollisionGetUserID(const NewtonCollision *const collision) {
 int NewtonConvexHullGetFaceIndices(
     const NewtonCollision *const convexHullCollision, int face,
     int *const faceIndices) {
-	dgCollision *coll;
+	const dgCollision *coll;
 
 	TRACE_FUNTION(__FUNCTION__);
-	coll = (dgCollision *)convexHullCollision;
+	coll = (const dgCollision *)convexHullCollision;
 
 	if (coll->IsType(dgCollision::dgCollisionConvexHull_RTTI)) {
 		return ((dgCollisionConvexHull *)coll)->GetFaceIndices(face, faceIndices);
@@ -3259,10 +3259,10 @@ int NewtonConvexHullGetFaceIndices(
 // See also: NewtonBodyAddBuoyancyForce
 dFloat NewtonConvexCollisionCalculateVolume(
     const NewtonCollision *const convexCollision) {
-	dgCollision *collision;
+	const dgCollision *collision;
 
 	TRACE_FUNTION(__FUNCTION__);
-	collision = (dgCollision *)convexCollision;
+	collision = (const dgCollision *)convexCollision;
 	return collision->GetVolume();
 }
 
@@ -3593,7 +3593,7 @@ void NewtonTreeCollisionEndBuild(const NewtonCollision *const treeCollision,
 int NewtonTreeCollisionGetFaceAtribute(
     const NewtonCollision *const treeCollision, const int *const faceIndexArray) {
 	TRACE_FUNTION(__FUNCTION__);
-	dgCollisionBVH *const collision = (dgCollisionBVH *)treeCollision;
+	const dgCollisionBVH *const collision = (const dgCollisionBVH *)treeCollision;
 	_ASSERTE(collision->IsType(dgCollision::dgCollisionBVH_RTTI));
 
 	return int(collision->GetTagId(faceIndexArray));
@@ -3657,17 +3657,17 @@ int NewtonTreeCollisionGetVertexListIndexListInAABB(
     const int *const indexList, int maxIndexCount,
     const int *const faceAttribute) {
 	dgInt32 count;
-	dgCollision *meshColl;
+	const dgCollision *meshColl;
 
 	count = 0;
 
 	TRACE_FUNTION(__FUNCTION__);
 
-	meshColl = (dgCollision *)treeCollision;
+	meshColl = (const dgCollision *)treeCollision;
 
 	if (meshColl->IsType(dgCollision::dgCollisionMesh_RTTI)) {
-		dgCollisionMesh *collision;
-		collision = (dgCollisionMesh *)meshColl;
+		const dgCollisionMesh *collision;
+		collision = (const dgCollisionMesh *)meshColl;
 
 		// NewtonCollisionTree& tree = *((NewtonCollisionTree*) collisionTree->GetUserData());
 		dgVector pmin(p0[0], p0[1], p0[2], dgFloat32(0.0f));
