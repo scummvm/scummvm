@@ -135,10 +135,11 @@ protected:
 
 	bool load(SagaEngine *_vm, Resource *resource);
 	bool loadResV1(uint32 contextOffset, uint32 contextSize);
-	bool loadResIteAmiga(uint32 contextOffset, uint32 contextSize, int type, bool isFloppy);
+	bool loadResIteAmiga(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type, bool isFloppy);
+	bool loadResIteAmigaSound(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type);
 
 	virtual bool loadMacMIDI() { return false; }
-	virtual bool loadRes(uint32 contextOffset, uint32 contextSize, int type) = 0;
+	virtual bool loadRes(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type) = 0;
 	virtual void processPatches(Resource *resource, const GamePatchDescription *patchFiles) { }
 };
 
@@ -188,7 +189,6 @@ protected:
 	char _soundFileName[256];
 
 	void addContext(const char *fileName, uint16 fileType, bool isCompressed = false, int serial = 0);
-	void addAmigaSoundContext(const char *fileName, uint16 fileType, const uint32 *idx, uint32 idxSize);
 	virtual ResourceContext *createContext() = 0;
 };
 
@@ -196,7 +196,7 @@ protected:
 class ResourceContext_RSC: public ResourceContext {
 protected:
 	bool loadMacMIDI() override;
-	bool loadRes(uint32 contextOffset, uint32 contextSize, int type) override {
+	bool loadRes(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type) override {
 		return loadResV1(contextOffset, contextSize);
 	}
 	void processPatches(Resource *resource, const GamePatchDescription *patchFiles) override;
@@ -207,22 +207,11 @@ public:
 	ResourceContext_RSC_ITE_Amiga(bool isFloppy) : _isFloppy(isFloppy) {}
 
 protected:
-	bool loadRes(uint32 contextOffset, uint32 contextSize, int type) override {
-		return loadResIteAmiga(contextOffset, contextSize, type, _isFloppy);
+	bool loadRes(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type) override {
+		return loadResIteAmiga(_vm, contextOffset, contextSize, type, _isFloppy);
 	}
 
 	bool _isFloppy;
-};
-
-class ResourceContext_RSC_ITE_Amiga_Sound: public ResourceContext {
-public:
-	ResourceContext_RSC_ITE_Amiga_Sound(const uint32 *idx, uint32 idxSize) : _idx(idx), _idxSize(idxSize) {}
-
-protected:
-	bool loadRes(uint32 contextOffset, uint32 contextSize, int type) override;
-
-	const uint32 *_idx;
-	const uint32 _idxSize;
 };
 
 class Resource_RSC : public Resource {
@@ -238,8 +227,9 @@ public:
 	}
 protected:
 	ResourceContext *createContext() override {
-		if (_vm->getPlatform() == Common::kPlatformAmiga && _vm->getGameId() == GID_ITE)
+		if (_vm->getPlatform() == Common::kPlatformAmiga && _vm->getGameId() == GID_ITE) {
 			return new ResourceContext_RSC_ITE_Amiga(_vm->getFeatures() & GF_ITE_FLOPPY);
+		}
 		return new ResourceContext_RSC();
 	}
 };
@@ -248,7 +238,7 @@ protected:
 // IHNM
 class ResourceContext_RES: public ResourceContext {
 protected:
-	bool loadRes(uint32 contextOffset, uint32 contextSize, int type) override {
+	bool loadRes(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type) override {
 		return loadResV1(0, contextSize);
 	}
 
@@ -258,7 +248,7 @@ protected:
 // TODO: move load routines from sndres
 class VoiceResourceContext_RES: public ResourceContext {
 protected:
-	bool loadRes(uint32 contextOffset, uint32 contextSize, int type) override {
+	bool loadRes(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type) override {
 		return false;
 	}
 public:
