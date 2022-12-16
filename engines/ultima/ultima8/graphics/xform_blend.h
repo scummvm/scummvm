@@ -42,11 +42,12 @@ extern const uint8 U8XFormPal[1024];
 extern const uint8 CruXFormPal[1024];
 
 inline uint32 P_FASTCALL BlendPreModulated(uint32 src, uint32 dst) {
-	uint32 r, g, b;
-	UNPACK_RGB8(dst, r, g, b);
-	r *= 256 - TEX32_A(src);
-	g *= 256 - TEX32_A(src);
-	b *= 256 - TEX32_A(src);
+	uint8 sr, sg, sb;
+	RenderSurface::_format->colorToRGB(dst, sr, sg, sb);
+
+	uint32 r = sr * (256 - TEX32_A(src));
+	uint32 g = sg * (256 - TEX32_A(src));
+	uint32 b = sb * (256 - TEX32_A(src));
 	r += 256 * TEX32_R(src);
 	g += 256 * TEX32_G(src);
 	b += 256 * TEX32_B(src);
@@ -57,11 +58,12 @@ inline uint32 P_FASTCALL BlendPreModulated(uint32 src, uint32 dst) {
 }
 
 inline uint32 P_FASTCALL BlendPreModFast(uint32 src, uint32 dst) {
-	uint32 r, g, b;
-	UNPACK_RGB8(dst, r, g, b);
-	r *= 256 - TEX32_A(src);
-	g *= 256 - TEX32_A(src);
-	b *= 256 - TEX32_A(src);
+	uint8 sr, sg, sb;
+	RenderSurface::_format->colorToRGB(dst, sr, sg, sb);
+
+	uint32 r = sr * (256 - TEX32_A(src));
+	uint32 g = sg * (256 - TEX32_A(src));
+	uint32 b = sb * (256 - TEX32_A(src));
 	r += 256 * TEX32_R(src);
 	g += 256 * TEX32_G(src);
 	b += 256 * TEX32_B(src);
@@ -70,8 +72,8 @@ inline uint32 P_FASTCALL BlendPreModFast(uint32 src, uint32 dst) {
 
 // This does the red highlight blending.
 inline uint32 P_FASTCALL BlendHighlight(uint32 src, uint32 cr, uint32 cg, uint32 cb, uint32 ca, uint32 ica) {
-	uint32 sr, sg, sb;
-	UNPACK_RGB8(src, sr, sg, sb);
+	uint8 sr, sg, sb;
+	RenderSurface::_format->colorToRGB(src, sr, sg, sb);
 	return RenderSurface::_format->RGBToColor((sr * ica + cr * ca) >> 8,
 											  (sg * ica + cg * ca) >> 8,
 											  (sb * ica + cb * ca) >> 8);
@@ -79,10 +81,10 @@ inline uint32 P_FASTCALL BlendHighlight(uint32 src, uint32 cr, uint32 cg, uint32
 
 // This does the invisible blending. I've set it to about 40%
 inline uint32 P_FASTCALL BlendInvisible(uint32 src, uint32 dst) {
-	uint32 sr, sg, sb;
-	uint32 dr, dg, db;
-	UNPACK_RGB8(src, sr, sg, sb);
-	UNPACK_RGB8(dst, dr, dg, db);
+	uint8 sr, sg, sb;
+	uint8 dr, dg, db;
+	RenderSurface::_format->colorToRGB(src, sr, sg, sb);
+	RenderSurface::_format->colorToRGB(dst, dr, dg, db);
 	return RenderSurface::_format->RGBToColor((sr * 100 + dr * 156) >> 8,
 											  (sg * 100 + dg * 156) >> 8,
 											  (sb * 100 + db * 156) >> 8);
@@ -90,10 +92,10 @@ inline uint32 P_FASTCALL BlendInvisible(uint32 src, uint32 dst) {
 
 // This does the translucent highlight blending. (50%)
 inline uint32 P_FASTCALL BlendHighlightInvis(uint32 src, uint32 dst, uint32 cr, uint32 cg, uint32 cb, uint32 ca, uint32 ica) {
-	uint32 sr, sg, sb;
-	uint32 dr, dg, db;
-	UNPACK_RGB8(src, sr, sg, sb);
-	UNPACK_RGB8(dst, dr, dg, db);
+	uint8 sr, sg, sb;
+	uint8 dr, dg, db;
+	RenderSurface::_format->colorToRGB(src, sr, sg, sb);
+	RenderSurface::_format->colorToRGB(dst, dr, dg, db);
 	return RenderSurface::_format->RGBToColor((((sr * ica + cr * ca) >> 1) + (dr << 7)) >> 8,
 											  (((sg * ica + cg * ca) >> 1) + (dg << 7)) >> 8,
 											  (((sb * ica + cb * ca) >> 1) + (db << 7)) >> 8);

@@ -38,10 +38,6 @@ struct Palette;
 struct Rect;
 class Scaler;
 
-#define UNPACK_RGB8(pix,r,g,b) { r = (((pix)&RenderSurface::_format->rMask)>>RenderSurface::_format->rShift)<<RenderSurface::_format->rLoss; g = (((pix)&RenderSurface::_format->gMask)>>RenderSurface::_format->gShift)<<RenderSurface::_format->gLoss; b = (((pix)&RenderSurface::_format->bMask)>>RenderSurface::_format->bShift)<<RenderSurface::_format->bLoss; }
-
-#define UNPACK_RGBA8(pix,r,g,b,a) { r = (((pix)&RenderSurface::_format->rMask)>>RenderSurface::_format->rShift)<<RenderSurface::_format->rLoss; g = (((pix)&RenderSurface::_format->gMask)>>RenderSurface::_format->gShift)<<RenderSurface::_format->gLoss; b = (((pix)&RenderSurface::_format->bMask)>>RenderSurface::_format->bShift)<<RenderSurface::_format->bLoss; ; a = (((pix)&RenderSurface::_format->aMask)>>RenderSurface::_format->aShift)<<RenderSurface::_format->aLoss; }
-
 struct U8PixelFormat : Graphics::PixelFormat {
 	// Extend with some extra attributes
 	uint32  rMask, gMask, bMask, aMask;
