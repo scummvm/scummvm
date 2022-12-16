@@ -815,7 +815,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "bibifilm",			"Bibi Blocksberg: Mein verhextes Filmstudio" },
 	{ "braingames",			"Brain Games" },
 	{ "cklasse",			"Mercedes-Benz C-Class Information Booth" },
-	{ "dieveteranen",		"Die Veteranen" },
+	{ "dieveteranen",		"Die Veteranen: So nutzlos wie eine Fuge von Bach" },
 	{ "dudenmeyer",			"Duden/Meyer Multimedia sampler" },
 	{ "flaschenfahrrad",	"Das Verkehrs-Lernspiel: Fred und das Flaschenfahrrad" },
 	{ "girlspack",			"Girl's Pack!" },
@@ -3392,8 +3392,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Mac version has 68k, PowerPC, and a fat binary (default) as options in the installer
 	// Mac installer is a Stuffit installer
 	// Windows version in SETUP/DATA.Z
-	MACGAME1("darkeye", "", "The Dark Eye (Universal)", "67f572196550aedb1f9523d782022be0", 486334, 400),
-	WINGAME1t("darkeye", "", "DARKEYE.EXE", "67ba8428573dba0c8e12e7f02e4ef1bc", 742326, 400),
+	MACGAME1("darkeye", "", "The Dark Eye (Universal)", "67f572196550aedb1f9523d782022be0", 486078, 404),
+	WINGAME1t("darkeye", "", "DARKEYE.EXE", "67ba8428573dba0c8e12e7f02e4ef1bc", 742326, 404),
 
 	// From the Police Quest Collection
 	WINGAME1t("darylfgates", "", "INTERVEW.EXE", "8262bbad22daa2cdd9cf13ebba1b84ea", 1059729, 400),
@@ -3401,13 +3401,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("davidsonpp", "1995", "DPP.EXE", "36c28cd89054df395c17c024a6ad6197", 112839901, 404),
 
 	// Original Pippin filename is ダズロイド
-	MACGAME1("dazzeloids", "", "Dazzeloids", "c9c25d0d249d529680302a81c30852d0", 367064, 400),
+	MACGAME1("dazzeloids", "", "Dazzeloids", "c9c25d0d249d529680302a81c30852d0", 367064, 404),
 	MACDEMO1("dazzeloids", "Demo", "Dazzleoids", "77f4098988d5386794d1530065f514cd", 301697, 400),
-	PIPGAME1_l("dazzeloids", "", "xn--eck0br2b9l", "2324c2928417a696fca46535ded53e32", 68242, Common::JA_JPN, 400),
-	WINGAME1t("dazzeloids", "", "DAZZ.EXE", "4c968958368bed9ad4f5ec0e05d04b9f", 1034266, 400),
+	PIPGAME1_l("dazzeloids", "", "xn--eck0br2b9l", "2324c2928417a696fca46535ded53e32", 67986, Common::JA_JPN, 404),
+	WINGAME1t("dazzeloids", "", "DAZZ.EXE", "4c968958368bed9ad4f5ec0e05d04b9f", 1034266, 404),
 	PIPDEMO1_l("dazzeloids", "Non-interactive Demo", "xn--PippinDEMO-jx4ixivcug6w", "8b138db44d4421cc7294a9dc792ccf1b", 502657, Common::JA_JPN, 404),
 
-	MACGAME1_l("dcanyon", "", "Devils Canyon (16+Mb)", "97474208c44c78f26bef8b2011d341aa", 483774, Common::IT_ITA, 404),
+	MACGAME1_l("dcanyon", "", "Devils Canyon (16+Mb)", "97474208c44c78f26bef8b2011d341aa", 483518, Common::IT_ITA, 404),
 	WINGAME2("dcanyon", "",	  "DCANYON.EXE",		   "f5033a9fd54d41d348fa97bd13f8f088", 1050728,
 							  "00INTRO.DIR",		   "d0c7645593725340480e2425811d6d8f", 3644052, 404),
 	WINGAME2_l("dcanyon", "", "DCANYON.EXE",		   "f5033a9fd54d41d348fa97bd13f8f088", 1050728,
@@ -3420,12 +3420,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("defendinghuman", "Demo", "Donald A Norman", "77f4098988d5386794d1530065f514cd", 301669, 400),
 
 	// Mac executable is Derrat Sorcerum™ v1.0.3
-	MACGAME1("derratsorcerum", "", "Derrat Sorcerum v1.0.3", "a546ef2b921a9b48fd93928f1a505f22", 483762, 400),
-	MACDEMO1("derratsorcerum", "Demo", "Derrat Sorcerum Demo v1.0.3", "a546ef2b921a9b48fd93928f1a505f22", 483762, 400),
+	MACGAME1("derratsorcerum", "", "xn--Derrat Sorcerum v1.0.3-h40n", "a546ef2b921a9b48fd93928f1a505f22", 483506, 404),
+	MACDEMO1("derratsorcerum", "Demo", "Derrat Sorcerum Demo v1.0.3", "a546ef2b921a9b48fd93928f1a505f22", 483506, 404),
 
 	// Both Mac and Win versions require installation to extract executable
-	MACGAME1("devo", "", "Smart Patrol", "01be45e7241194dad07938e7059b88e3", 478506, 400),
-	WINGAME1("devo", "", "SMRTPTRL.EXE", "6030100dbff520b8763f6e98d15389d7", 741904, 400),
+	MACGAME1("devo", "", "Smart Patrol", "01be45e7241194dad07938e7059b88e3", 478250, 404),
+	WINGAME1("devo", "", "SMRTPTRL.EXE", "6030100dbff520b8763f6e98d15389d7", 741904, 404),
 
 	// From Blender 1.5
 	WINGAME1t("dewarswl", "", "dewars.exe", "b7e96f0dadee0f5a0f732e380bd7b5ea", 698341, 404),
@@ -3453,8 +3453,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("dirmacromedia", "v4.0.3J Demo", "Director 4.0 Demo", "e258089af01c8233db77039828cc83f8", 1488951, Common::JA_JPN, 403),
 	MACDEMO1_l("dirmacromedia", "v4.0.4J Demo", "Director 4.0 Demo", "ac3ee6f9e7854e3c1122a3f7cf5f9fd8", 1522370, Common::JA_JPN, 404),
 
-	MACGAME1("dkmm2", "", "DKSDMac", "8554afe42cffb4add44bf37e48e1d954", 322917, 400),
-	WINGAME1t("dkmm2", "", "DKSD2PC.EXE", "d43fd79cc7ec54a1b2b55562f4634b49", 862849, 400),
+	MACGAME1("dkmm2", "", "DKSDMac", "8554afe42cffb4add44bf37e48e1d954", 322661, 400),
+	WINGAME1t("dkmm2", "", "DKSD2PC.EXE", "d43fd79cc7ec54a1b2b55562f4634b49", 862849, 404),
 
 	MACGAME1("doorswindows", "", "doors and windows-start", "01be45e7241194dad07938e7059b88e3", 483490, 404),
 	WINGAME1t("doorswindows", "", "doorwin.EXE", "af8680b093a154b6ece67b16569260a7", 2400203, 404),
@@ -3478,7 +3478,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2t_l("draculassecret", "", "secret.EXE",	"935dd6dc5bd2ea550396bdfd4f96d975", 763851,
 									  "Int_1.Dir",	"a849d2170b83ea07df7c6f45c2d049a7", 5699816, Common::NL_NLD, 404),  // subdir on original release
 
-	MACGAME1("dreidel", "", "dreidel", "77f4098988d5386794d1530065f514cd", 304189, 400),
+	MACGAME1("dreidel", "", "dreidel", "77f4098988d5386794d1530065f514cd", 303933, 400),
 
 	MACGAME2_l("dropcity", "", "Mac_Hi",   "17efee018a660458fae80de4364021ac", 481803,
 							   "MAIN.Mov", "24a0bed30cef7fc9a83410f14cc51adc", 108648, Common::JA_JPN, 404),
