@@ -142,6 +142,7 @@ void OpenGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
+	glBindTexture(GL_TEXTURE_2D, 0); // Bind the default (empty) texture to avoid darker colors!
 	glFlush();
 }
 
