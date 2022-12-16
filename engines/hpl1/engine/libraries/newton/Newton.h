@@ -990,13 +990,13 @@ NEWTON_API dFloat64 *NewtonMeshGetVertexArray(const NewtonMesh *const mesh);
 
 
 NEWTON_API void *NewtonMeshGetFirstVertex(const NewtonMesh *const mesh);
-NEWTON_API void *NewtonMeshGetNextVertex(const NewtonMesh *const mesh, const void *const vertex);
-NEWTON_API int NewtonMeshGetVertexIndex(const NewtonMesh *const mesh, const void *const vertex);
+NEWTON_API void *NewtonMeshGetNextVertex(const NewtonMesh *const mesh, void *const vertex);
+NEWTON_API int NewtonMeshGetVertexIndex(const NewtonMesh *const mesh, void *const vertex);
 
 NEWTON_API void *NewtonMeshGetFirstPoint(const NewtonMesh *const mesh);
-NEWTON_API void *NewtonMeshGetNextPoint(const NewtonMesh *const mesh, const void *const point);
+NEWTON_API void *NewtonMeshGetNextPoint(const NewtonMesh *const mesh, void *const point);
 NEWTON_API int NewtonMeshGetPointIndex(const NewtonMesh *const mesh, const void *const point);
-NEWTON_API int NewtonMeshGetVertexIndexFromPoint(const NewtonMesh *const mesh, const void *const point);
+NEWTON_API int NewtonMeshGetVertexIndexFromPoint(const NewtonMesh *const mesh, void *const point);
 
 
 NEWTON_API void *NewtonMeshGetFirstEdge(const NewtonMesh *const mesh);

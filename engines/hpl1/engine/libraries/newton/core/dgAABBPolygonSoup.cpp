@@ -77,8 +77,8 @@ class dgAABBTree {
 			         | faceIndexStart;
 		}
 
-		inline dgAABBTree *GetNode(const void *root) const {
-			return ((dgAABBTree *) root) + m_node;
+		inline const dgAABBTree *GetNode(const void *root) const {
+			return ((const dgAABBTree *) root) + m_node;
 		}
 
 		union {
@@ -1328,12 +1328,12 @@ void *dgAABBPolygonSoup::GetRootNode() const {
 	return m_aabb;
 }
 
-void *dgAABBPolygonSoup::GetBackNode(const void *const root) const {
+const void *dgAABBPolygonSoup::GetBackNode(const void *const root) const {
 	const dgAABBTree *const node = (const dgAABBTree *)root;
 	return node->m_back.IsLeaf() ? NULL : node->m_back.GetNode(m_aabb);
 }
 
-void *dgAABBPolygonSoup::GetFrontNode(const void *const root) const {
+const void *dgAABBPolygonSoup::GetFrontNode(const void *const root) const {
 	const dgAABBTree *const node = (const dgAABBTree *)root;
 	return node->m_front.IsLeaf() ? NULL : node->m_front.GetNode(m_aabb);
 }

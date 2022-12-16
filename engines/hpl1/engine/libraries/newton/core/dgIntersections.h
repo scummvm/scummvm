@@ -174,4 +174,3 @@ DG_INLINE dgInt32 dgOverlapTestSimd(const dgVector &p0, const dgVector &p1, cons
 dgBigVector LineTriangleIntersection(const dgBigVector &l0, const dgBigVector &l1, const dgBigVector &A, const dgBigVector &B, const dgBigVector &C);
 
 #endif
-

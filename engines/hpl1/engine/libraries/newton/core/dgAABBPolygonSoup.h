@@ -53,8 +53,8 @@ protected:
 	~dgAABBPolygonSoup();
 
 	void *GetRootNode() const;
-	void *GetBackNode(const void *const root) const;
-	void *GetFrontNode(const void *const root) const;
+	const void *GetBackNode(const void *const root) const;
+	const void *GetFrontNode(const void *const root) const;
 	void GetNodeAABB(const void *const root, dgVector &p0, dgVector &p1) const;
 
 	void Create(const dgPolygonSoupDatabaseBuilder &builder, bool optimizedBuild);
@@ -81,5 +81,3 @@ private:
 
 
 #endif
-
-

@@ -1761,8 +1761,8 @@ dgInt32 dgCollisionCompound::CalculateContactsToCollisionTree(
 
 			} else if (me->m_type == m_leaf) {
 
-				void *const frontNode = treeCollision->GetFrontNode(other);
-				void *const backNode = treeCollision->GetBackNode(other);
+				const void *const frontNode = treeCollision->GetFrontNode(other);
+				const void *const backNode = treeCollision->GetBackNode(other);
 				if (backNode && frontNode) {
 					stackPool[stack].m_myNode = (dgNodeBase *)me;
 					stackPool[stack].m_treeNode = backNode;
@@ -1818,8 +1818,8 @@ dgInt32 dgCollisionCompound::CalculateContactsToCollisionTree(
 
 			} else if (nodeProxi.m_area > me->m_area) {
 				_ASSERTE(me->m_type == m_node);
-				void *const frontNode = treeCollision->GetFrontNode(other);
-				void *const backNode = treeCollision->GetBackNode(other);
+				const void *const frontNode = treeCollision->GetFrontNode(other);
+				const void *const backNode = treeCollision->GetBackNode(other);
 				if (backNode && frontNode) {
 					stackPool[stack].m_myNode = (dgNodeBase *)me;
 					stackPool[stack].m_treeNode = backNode;
