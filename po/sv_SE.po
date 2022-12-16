@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-14 13:01+0000\n"
+"POT-Creation-Date: 2022-12-16 21:27+0000\n"
 "PO-Revision-Date: 2022-11-29 23:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -5138,7 +5138,7 @@ msgstr ""
 msgid "Failed to load saved game from file."
 msgstr "Kunde inte läsa spardata från filen."
 
-#: engines/gob/inter_v2.cpp:1558 engines/gob/inter_v7.cpp:1391
+#: engines/gob/inter_v2.cpp:1558 engines/gob/inter_v7.cpp:1407
 #: engines/gob/inter_geisha.cpp:262 engines/tinsel/saveload.cpp:567
 msgid "Failed to save game to file."
 msgstr "Kunde inte skriva spardata till filen."

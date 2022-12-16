@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-14 13:01+0000\n"
+"POT-Creation-Date: 2022-12-16 21:27+0000\n"
 "PO-Revision-Date: 2022-07-13 06:51+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -5150,7 +5150,7 @@ msgstr "Opgeslagen spel gecreëerd door andere versie."
 msgid "Failed to load saved game from file."
 msgstr "Laden van opgeslagen spel mislukt."
 
-#: engines/gob/inter_v2.cpp:1558 engines/gob/inter_v7.cpp:1391
+#: engines/gob/inter_v2.cpp:1558 engines/gob/inter_v7.cpp:1407
 #: engines/gob/inter_geisha.cpp:262 engines/tinsel/saveload.cpp:567
 msgid "Failed to save game to file."
 msgstr "Opslaan van spel in bestand is mislukt."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-14 13:01+0000\n"
+"POT-Creation-Date: 2022-12-16 21:27+0000\n"
 "PO-Revision-Date: 2022-12-12 02:34+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -5084,7 +5084,7 @@ msgstr "Pelitallenne on luotu pelin toisella versiolla."
 msgid "Failed to load saved game from file."
 msgstr "Pelitallenteen lataaminen tiedostosta epäonnistui."
 
-#: engines/gob/inter_v2.cpp:1558 engines/gob/inter_v7.cpp:1391
+#: engines/gob/inter_v2.cpp:1558 engines/gob/inter_v7.cpp:1407
 #: engines/gob/inter_geisha.cpp:262 engines/tinsel/saveload.cpp:567
 msgid "Failed to save game to file."
 msgstr "Pelin tallentaminen tiedostoon epäonnistui."
