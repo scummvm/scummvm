@@ -183,7 +183,7 @@ static void trydecpoint (LexState *ls, SemInfo *seminfo) {
   char old = ls->decpoint;
   char buf[5];
   int i;
-  sprintf(buf, "%.1f", 1.0);
+  snprintf(buf, 5, "%.1f", 1.0);
   ls->decpoint = '.';
   for (i = 0; buf[i]; i++) {
     if (!Common::isSpace(buf[i]) && !Common::isDigit(buf[i])) {

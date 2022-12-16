@@ -441,8 +441,8 @@ static int g_write (lua_State *L, Lua::LuaFileProxy *f, int arg) {
     if (lua_type(L, arg) == LUA_TNUMBER) {
       // optimization: could be done exactly as for strings
 	  if (status) {
-        char buffer[22];
-		sprintf(buffer, LUA_NUMBER_FMT, lua_tonumber(L, arg));
+		char buffer[22];
+		snprintf(buffer, 22, LUA_NUMBER_FMT, lua_tonumber(L, arg));
 		status = f->write(buffer, strlen(buffer)) == strlen(buffer);
 	  }
 	}
