@@ -254,6 +254,12 @@ void Render::addDirtyRect(Common::Rect r) {
 		_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), _vm->_gfx->getBackBufferWidth(), x, y, w, h)
 
 void Render::restoreChangedRects() {
+	if (_vm->isECS()) {
+		uint8 *start = _vm->_gfx->getBackBufferPixels() + 137 * _vm->_gfx->getBackBufferWidth();
+		uint8 *end = _vm->_gfx->getBackBufferPixels() + _vm->_gfx->getBackBufferHeight() * _vm->_gfx->getBackBufferWidth();
+		for (uint8 *ptr = start; ptr < end; ptr++)
+			*ptr |= 0x20;
+	}
 	if (!_fullRefresh) {
 		for (Common::List<Common::Rect>::const_iterator it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
 			//_backGroundSurface.frameRect(*it, 1);		// DEBUG
@@ -266,6 +272,12 @@ void Render::restoreChangedRects() {
 }
 
 void Render::drawDirtyRects() {
+	if (_vm->isECS()) {
+		uint8 *start = _vm->_gfx->getBackBufferPixels() + 137 * _vm->_gfx->getBackBufferWidth();
+		uint8 *end = _vm->_gfx->getBackBufferPixels() + _vm->_gfx->getBackBufferHeight() * _vm->_gfx->getBackBufferWidth();
+		for (uint8 *ptr = start; ptr < end; ptr++)
+			*ptr |= 0x20;
+	}
 	if (!_fullRefresh) {
 		for (Common::List<Common::Rect>::const_iterator it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
 			//_backGroundSurface.frameRect(*it, 2);		// DEBUG
