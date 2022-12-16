@@ -594,6 +594,16 @@ void Inter_v7::o7_playVmdOrMusic() {
 	bool close = false;
 	if (props.lastFrame == -1) {
 		close = true;
+	} else if (props.lastFrame == -2) {
+		// TODO: when props.lastFrame == -2, the VMD seems to be loaded/played in two steps.
+		// First o7_playVmdOrMusic is called with props.firstFrame == -2, then later with
+		// props.firstFrame == -1.
+		// We simply ignore the first step for now, and play the whole video in the second step.
+		if (props.startFrame == -2)
+			return;
+
+		props.startFrame = 0;
+		props.lastFrame = -1;
 	} else if (props.lastFrame == -3) {
 
 		if (file.empty()) {
