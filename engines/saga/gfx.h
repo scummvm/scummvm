@@ -145,7 +145,7 @@ public:
 
 	void initPalette();
 	void setPalette(const PalEntry *pal, bool full = false);
-	void loadECSBottomPalette();
+	void loadECSExtraPalettes();
 	void setPaletteColor(int n, int r, int g, int b);
 	void getCurrentPal(PalEntry *src_pal);
 	void savePalette() { getCurrentPal(_savedPalette); }

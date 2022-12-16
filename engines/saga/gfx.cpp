@@ -192,7 +192,7 @@ void Gfx::initPalette() {
 	setPalette(_globalPalette, true);
 }
 
-void Gfx::loadECSBottomPalette() {
+void Gfx::loadECSExtraPalettes() {
 	if (!_vm->isECS())
 		return;
 
@@ -258,7 +258,7 @@ void Gfx::setPalette(const PalEntry *pal, bool full) {
 	}
 
 	if (_vm->isECS()) {
-		loadECSBottomPalette();
+		loadECSExtraPalettes();
 	}
 
 	// Color 0 should always be black in IHNM
