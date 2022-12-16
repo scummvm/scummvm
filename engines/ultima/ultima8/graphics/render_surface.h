@@ -39,10 +39,8 @@ struct Rect;
 class Scaler;
 
 #define UNPACK_RGB8(pix,r,g,b) { r = (((pix)&RenderSurface::_format->rMask)>>RenderSurface::_format->rShift)<<RenderSurface::_format->rLoss; g = (((pix)&RenderSurface::_format->gMask)>>RenderSurface::_format->gShift)<<RenderSurface::_format->gLoss; b = (((pix)&RenderSurface::_format->bMask)>>RenderSurface::_format->bShift)<<RenderSurface::_format->bLoss; }
-#define PACK_RGB8(r,g,b) ((((r)>>RenderSurface::_format->rLoss)<<RenderSurface::_format->rShift) | (((g)>>RenderSurface::_format->gLoss)<<RenderSurface::_format->gShift) | (((b)>>RenderSurface::_format->bLoss)<<RenderSurface::_format->bShift))
 
 #define UNPACK_RGBA8(pix,r,g,b,a) { r = (((pix)&RenderSurface::_format->rMask)>>RenderSurface::_format->rShift)<<RenderSurface::_format->rLoss; g = (((pix)&RenderSurface::_format->gMask)>>RenderSurface::_format->gShift)<<RenderSurface::_format->gLoss; b = (((pix)&RenderSurface::_format->bMask)>>RenderSurface::_format->bShift)<<RenderSurface::_format->bLoss; ; a = (((pix)&RenderSurface::_format->aMask)>>RenderSurface::_format->aShift)<<RenderSurface::_format->aLoss; }
-#define PACK_RGBA8(r,g,b,a) ((((r)>>RenderSurface::_format->rLoss)<<RenderSurface::_format->rShift) | (((g)>>RenderSurface::_format->gLoss)<<RenderSurface::_format->gShift) | (((b)>>RenderSurface::_format->bLoss)<<RenderSurface::_format->bShift) | (((a)>>RenderSurface::_format->aLoss)<<RenderSurface::_format->aShift))
 
 struct U8PixelFormat : Graphics::PixelFormat {
 	// Extend with some extra attributes

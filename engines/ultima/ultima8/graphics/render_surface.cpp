@@ -201,9 +201,9 @@ void RenderSurface::CreateNativePalette(Palette *palette, int maxindex) {
 		int32 r, g, b;
 
 		// Normal palette
-		palette->_native_untransformed[i] = PACK_RGB8(palette->_palette[i * 3 + 0],
-													  palette->_palette[i * 3 + 1],
-													  palette->_palette[i * 3 + 2]);
+		palette->_native_untransformed[i] = _format->RGBToColor(palette->_palette[i * 3 + 0],
+																palette->_palette[i * 3 + 1],
+																palette->_palette[i * 3 + 2]);
 
 		r = palette->_matrix[0] * palette->_palette[i * 3 + 0] +
 			palette->_matrix[1] * palette->_palette[i * 3 + 1] +
@@ -234,9 +234,9 @@ void RenderSurface::CreateNativePalette(Palette *palette, int maxindex) {
 
 		// Transformed normal palette
 		// FIXME - Wont work on non SDL SRS Implementations
-		palette->_native[i] = PACK_RGB8(static_cast<uint8>(r >> 11),
-										static_cast<uint8>(g >> 11),
-										static_cast<uint8>(b >> 11));
+		palette->_native[i] = _format->RGBToColor(static_cast<uint8>(r >> 11),
+												  static_cast<uint8>(g >> 11),
+												  static_cast<uint8>(b >> 11));
 
 		// Transformed XFORM palette (Uses the TEX32 format)
 		if (TEX32_A(palette->_xform_untransformed[i])) {
