@@ -312,6 +312,8 @@ class Draw_v7 : public Draw_Playtoons {
 public:
 	Draw_v7(GobEngine *vm);
 	~Draw_v7() override;
+
+	void initScreen() override;
 	void animateCursor(int16 cursor) override;
 
 

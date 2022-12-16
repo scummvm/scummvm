@@ -106,6 +106,32 @@ bool Draw_v7::loadCursorFromFile(int cursorIndex) {
 	return true;
 }
 
+void Draw_v7::initScreen()
+{
+	_vm->_game->_preventScroll = false;
+
+	_scrollOffsetX = 0;
+	_scrollOffsetY = 0;
+
+	if (!_spritesArray[kBackSurface] || _vm->_global->_videoMode != 0x18) {
+		initSpriteSurf(kBackSurface, _vm->_video->_surfWidth, _vm->_video->_surfHeight, 0);
+		_backSurface = _spritesArray[kBackSurface];
+		_backSurface->clear();
+	}
+
+	if (!_spritesArray[kCursorSurface]) {
+		initSpriteSurf(kCursorSurface, 32, 16, 2);
+		_cursorSpritesBack = _spritesArray[kCursorSurface];
+		_cursorSprites = _cursorSpritesBack;
+		_scummvmCursor = _vm->_video->initSurfDesc(16, 16, SCUMMVM_CURSOR);
+	}
+
+	_spritesArray[kFrontSurface] = _frontSurface;
+	_spritesArray[kBackSurface ] = _backSurface;
+
+	_vm->_video->dirtyRectsAll();
+}
+
 void Draw_v7::animateCursor(int16 cursor) {
 	if (!_cursorSprites)
 		return;
