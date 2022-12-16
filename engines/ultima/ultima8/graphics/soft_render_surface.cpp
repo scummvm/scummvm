@@ -336,7 +336,7 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(const Graphics::M
 						dg += TEX32_G(Tsrc) * ia + ((g * TEX32_A(Tsrc)) >> 8);
 						db += TEX32_B(Tsrc) * ia + ((b * TEX32_A(Tsrc)) >> 8);
 
-						*dest = PACK_RGB16(dr, dg, db);
+						*dest = PACK_RGB8(dr >> 8, dg >> 8, db >> 8);
 					}
 					pixel += sizeof(uintX);
 					texel++;
@@ -471,7 +471,7 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(const Graphics::
 							dg += TEX32_G(Tsrc) * ia + ((g * TEX32_A(Tsrc)) >> 8);
 							db += TEX32_B(Tsrc) * ia + ((b * TEX32_A(Tsrc)) >> 8);
 
-							*dest = PACK_RGB16(dr, dg, db);
+							*dest = PACK_RGB8(dr >> 8, dg >> 8, db >> 8);
 						}
 					}
 					pixel += sizeof(uintX);

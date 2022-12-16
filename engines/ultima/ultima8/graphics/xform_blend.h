@@ -50,7 +50,10 @@ inline uint32 P_FASTCALL BlendPreModulated(uint32 src, uint32 dst) {
 	r += 256 * TEX32_R(src);
 	g += 256 * TEX32_G(src);
 	b += 256 * TEX32_B(src);
-	return PACK_RGB16(r > 65535 ? 65535 : r, g > 65535 ? 65535 : g, b > 65535 ? 65535 : b);
+	r >>= 8;
+	g >>= 8;
+	b >>= 8;
+	return PACK_RGB8(r > 0xFF ? 0xFF : r, g > 0xFF ? 0xFF : g, b > 0xFF ? 0xFF : b);
 }
 
 inline uint32 P_FASTCALL BlendPreModFast(uint32 src, uint32 dst) {
@@ -62,14 +65,16 @@ inline uint32 P_FASTCALL BlendPreModFast(uint32 src, uint32 dst) {
 	r += 256 * TEX32_R(src);
 	g += 256 * TEX32_G(src);
 	b += 256 * TEX32_B(src);
-	return PACK_RGB16(r, g, b);
+	return PACK_RGB8(r >> 8, g >> 8, b >> 8);
 }
 
 // This does the red highlight blending.
 inline uint32 P_FASTCALL BlendHighlight(uint32 src, uint32 cr, uint32 cg, uint32 cb, uint32 ca, uint32 ica) {
 	uint32 sr, sg, sb;
 	UNPACK_RGB8(src, sr, sg, sb);
-	return PACK_RGB16(sr * ica + cr * ca, sg * ica + cg * ca, sb * ica + cb * ca);
+	return PACK_RGB8((sr * ica + cr * ca) >> 8,
+					 (sg * ica + cg * ca) >> 8,
+					 (sb * ica + cb * ca) >> 8);
 }
 
 // This does the invisible blending. I've set it to about 40%
@@ -78,9 +83,9 @@ inline uint32 P_FASTCALL BlendInvisible(uint32 src, uint32 dst) {
 	uint32 dr, dg, db;
 	UNPACK_RGB8(src, sr, sg, sb);
 	UNPACK_RGB8(dst, dr, dg, db);
-	return PACK_RGB16(sr * 100 + dr * 156,
-	                  sg * 100 + dg * 156,
-	                  sb * 100 + db * 156);
+	return PACK_RGB8((sr * 100 + dr * 156) >> 8,
+					 (sg * 100 + dg * 156) >> 8,
+					 (sb * 100 + db * 156) >> 8);
 }
 
 // This does the translucent highlight blending. (50%)
@@ -89,9 +94,9 @@ inline uint32 P_FASTCALL BlendHighlightInvis(uint32 src, uint32 dst, uint32 cr, 
 	uint32 dr, dg, db;
 	UNPACK_RGB8(src, sr, sg, sb);
 	UNPACK_RGB8(dst, dr, dg, db);
-	return PACK_RGB16(((sr * ica + cr * ca) >> 1) + (dr << 7),
-	                  ((sg * ica + cg * ca) >> 1) + (dg << 7),
-	                  ((sb * ica + cb * ca) >> 1) + (db << 7));
+	return PACK_RGB8((((sr * ica + cr * ca) >> 1) + (dr << 7)) >> 8,
+					 (((sg * ica + cg * ca) >> 1) + (dg << 7)) >> 8,
+					 (((sb * ica + cb * ca) >> 1) + (db << 7)) >> 8);
 }
 
 } // End of namespace Ultima8

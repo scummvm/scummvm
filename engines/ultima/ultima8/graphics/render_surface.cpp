@@ -51,10 +51,6 @@ RenderSurface::RenderSurface(Graphics::ManagedSurface *s) : _pixels(nullptr), _p
 		RenderSurface::_format->gLoss = _surface->format.gLoss;
 		RenderSurface::_format->bLoss = _surface->format.bLoss;
 		RenderSurface::_format->aLoss = _surface->format.aLoss;
-		RenderSurface::_format->rLoss16 = _format->rLoss + 8;
-		RenderSurface::_format->gLoss16 = _format->gLoss + 8;
-		RenderSurface::_format->bLoss16 = _format->bLoss + 8;
-		RenderSurface::_format->aLoss16 = _format->aLoss + 8;
 		RenderSurface::_format->rShift = _surface->format.rShift;
 		RenderSurface::_format->gShift = _surface->format.gShift;
 		RenderSurface::_format->bShift = _surface->format.bShift;
@@ -102,7 +98,6 @@ RenderSurface::RenderSurface(Graphics::ManagedSurface *s) : _pixels(nullptr), _p
 		// Set it
 		_format->aShift = first;
 		_format->aLoss = 8 - (last + 1 - first);
-		_format->aLoss16 = _format->aLoss + 8;
 		_format->aMask = mask;
 	}
 }
