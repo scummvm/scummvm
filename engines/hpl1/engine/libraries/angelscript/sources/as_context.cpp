@@ -5603,6 +5603,3 @@ asQWORD as_powu64(asQWORD base, asQWORD exponent, bool &isOverflow) {
 }
 
 END_AS_NAMESPACE
-
-
-

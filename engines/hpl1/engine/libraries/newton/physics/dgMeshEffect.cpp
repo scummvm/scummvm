@@ -1723,7 +1723,7 @@ void *dgMeshEffect::GetFirstVertex() const {
 	 */
 }
 
-void *dgMeshEffect::GetNextVertex(const void *vertex) const {
+void *dgMeshEffect::GetNextVertex(void *vertex) const {
 	dgTreeNode *const node = (dgTreeNode *)vertex;
 	dgInt32 mark = node->GetInfo().m_mark;
 
@@ -1744,7 +1744,7 @@ void *dgMeshEffect::GetNextVertex(const void *vertex) const {
 	return NULL;
 }
 
-dgInt32 dgMeshEffect::GetVertexIndex(const void *vertex) const {
+dgInt32 dgMeshEffect::GetVertexIndex(void *vertex) const {
 	dgTreeNode *const nodeT = (dgTreeNode *)vertex;
 	dgEdge *const edge = &nodeT->GetInfo();
 	return edge->m_incidentVertex;
@@ -1762,7 +1762,7 @@ void *dgMeshEffect::GetFirstPoint() const {
 	return NULL;
 }
 
-void *dgMeshEffect::GetNextPoint(const void *const point) const {
+void *dgMeshEffect::GetNextPoint(void *const point) const {
 	Iterator iter(*this);
 	iter.Set((dgTreeNode *)point);
 	for (iter++; iter; iter++) {
@@ -1776,12 +1776,12 @@ void *dgMeshEffect::GetNextPoint(const void *const point) const {
 }
 
 dgInt32 dgMeshEffect::GetPointIndex(const void *point) const {
-	dgTreeNode *const node = (dgTreeNode *)point;
-	dgEdge *const edge = &node->GetInfo();
+	const dgTreeNode *const node = (dgTreeNode *)point;
+	const dgEdge *const edge = &node->GetInfo();
 	return int(edge->m_userData);
 }
 
-dgInt32 dgMeshEffect::GetVertexIndexFromPoint(const void *point) const {
+dgInt32 dgMeshEffect::GetVertexIndexFromPoint(void *point) const {
 	return GetVertexIndex(point);
 }
 

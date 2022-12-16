@@ -8300,13 +8300,13 @@ void *NewtonMeshGetFirstVertex(const NewtonMesh *const mesh) {
 }
 
 void *NewtonMeshGetNextVertex(const NewtonMesh *const mesh,
-                              const void *const vertex) {
+                              void *const vertex) {
 	TRACE_FUNTION(__FUNCTION__);
 	return ((const dgMeshEffect *)mesh)->GetNextVertex(vertex);
 }
 
 int NewtonMeshGetVertexIndex(const NewtonMesh *const mesh,
-                             const void *const vertex) {
+                             void *const vertex) {
 	TRACE_FUNTION(__FUNCTION__);
 	return ((const dgMeshEffect *)mesh)->GetVertexIndex(vertex);
 }
@@ -8316,7 +8316,7 @@ void *NewtonMeshGetFirstPoint(const NewtonMesh *const mesh) {
 	return ((const dgMeshEffect *)mesh)->GetFirstPoint();
 }
 void *NewtonMeshGetNextPoint(const NewtonMesh *const mesh,
-                             const void *const point) {
+                             void *const point) {
 	TRACE_FUNTION(__FUNCTION__);
 	return ((const dgMeshEffect *)mesh)->GetNextPoint(point);
 }
@@ -8328,7 +8328,7 @@ int NewtonMeshGetPointIndex(const NewtonMesh *const mesh,
 }
 
 int NewtonMeshGetVertexIndexFromPoint(const NewtonMesh *const mesh,
-                                      const void *const point) {
+                                      void *const point) {
 	TRACE_FUNTION(__FUNCTION__);
 	return ((const dgMeshEffect *)mesh)->GetVertexIndexFromPoint(point);
 }

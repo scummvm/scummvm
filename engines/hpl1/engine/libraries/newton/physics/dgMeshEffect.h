@@ -214,13 +214,13 @@ public:
 	void TransformMesh(const dgMatrix &matrix);
 
 	void *GetFirstVertex() const;
-	void *GetNextVertex(const void *const vertex) const;
-	int GetVertexIndex(const void *const vertex) const;
+	void *GetNextVertex(void *const vertex) const;
+	int GetVertexIndex(void *const vertex) const;
 
 	void *GetFirstPoint() const;
-	void *GetNextPoint(const void *const point) const;
+	void *GetNextPoint(void *const point) const;
 	int GetPointIndex(const void *const point) const;
-	int GetVertexIndexFromPoint(const void *const point) const;
+	int GetVertexIndexFromPoint(void *const point) const;
 
 	void *GetFirstEdge() const;
 	void *GetNextEdge(const void *const edge) const;
