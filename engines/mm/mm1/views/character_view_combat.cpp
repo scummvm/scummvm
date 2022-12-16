@@ -27,13 +27,6 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
-void CharacterViewCombat::show(const Common::Array<Character *> &party) {
-	CharacterViewCombat *view = static_cast<CharacterViewCombat *>(
-		g_events->findView("CharacterViewCombat"));
-	view->_party = party;
-	view->addView();
-}
-
 bool CharacterViewCombat::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_PARTY_MENUS);
 	return CharacterBase::msgFocus(msg);
@@ -48,7 +41,7 @@ void CharacterViewCombat::draw() {
 	CharacterBase::draw();
 
 	writeString(12, 22, Common::String::format("'1'-'%c' %s",
-		'0' + _party.size(), STRING["dialogs.quick_ref.to_view"].c_str()));
+		'0' + g_globals->_combatParty.size(), STRING["dialogs.quick_ref.to_view"].c_str()));
 	escToGoBack();
 }
 
@@ -56,8 +49,8 @@ bool CharacterViewCombat::msgAction(const ActionMessage &msg) {
 	if (msg._action >= KEYBIND_VIEW_PARTY1 &&
 			msg._action <= KEYBIND_VIEW_PARTY6) {
 		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
-		if (charNum < _party.size()) {
-			g_globals->_currCharacter = _party[charNum];
+		if (charNum < g_globals->_combatParty.size()) {
+			g_globals->_currCharacter = g_globals->_combatParty[charNum];
 			redraw();
 		}
 

@@ -44,6 +44,7 @@ class Globals : public GameState {
 public:
 	StringsData _strings;
 	Roster _roster;
+	Common::Array<Character *> _combatParty;
 	Character *_currCharacter = nullptr;
 	Item _currItem;
 	ItemsArray _items;

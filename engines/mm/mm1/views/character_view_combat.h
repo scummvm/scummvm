@@ -35,8 +35,6 @@ namespace Views {
  * switching between characters
  */
 class CharacterViewCombat : public CharacterBase {
-private:
-	Common::Array<Character *> _party;
 public:
 	CharacterViewCombat() : CharacterBase("CharacterViewCombat") {}
 	virtual ~CharacterViewCombat() {}
@@ -45,8 +43,6 @@ public:
 	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
 	bool msgAction(const ActionMessage &msg) override;
-
-	static void show(const Common::Array<Character *> &party);
 };
 
 } // namespace Views
