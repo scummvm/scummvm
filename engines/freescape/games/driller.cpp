@@ -933,7 +933,9 @@ bool DrillerEngine::checkIfGameEnded() {
 }
 
 Common::Error DrillerEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
-	for (auto &it : _areaMap) {
+	for (auto &it : _areaMap) { // All but skip area 255
+		if (it._key == 255)
+			continue;
 		stream->writeUint16LE(it._key);
 		stream->writeUint32LE(_drilledAreas[it._key]);
 	}
@@ -942,10 +944,9 @@ Common::Error DrillerEngine::saveGameStreamExtended(Common::WriteStream *stream,
 }
 
 Common::Error DrillerEngine::loadGameStreamExtended(Common::SeekableReadStream *stream) {
-	for (uint i = 0; i < _areaMap.size(); i++) {
+	for (uint i = 0; i < _areaMap.size() - 1; i++) { // All except area 255
 		uint16 key = stream->readUint16LE();
-		if (key == 255)
-			continue;
+		assert(key != 255);
 		assert(_areaMap.contains(key));
 		_drilledAreas[key] = stream->readUint32LE();
 		if (_drilledAreas[key] == kDrillerNoRig)
