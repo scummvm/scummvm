@@ -89,6 +89,11 @@ public:
 		return _fullRefresh;
 	}
 
+	void setSplitScreen(bool flag) {
+		_splitScreen = flag;
+	}
+
+	void maskSplitScreen();
 	void drawDirtyRects();
 	void scale2xAndMergeOverlay(int x, int y, int w, int h);
 	void restoreChangedRects();
@@ -107,6 +112,7 @@ private:
 	Common::List<Common::Rect> _dirtyRects;
 	bool _fullRefresh;
 	bool _dualSurface;
+	bool _splitScreen;
 
 	// Module data
 	Surface _backGroundSurface;

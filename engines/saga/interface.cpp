@@ -784,8 +784,14 @@ void Interface::draw() {
 	Point rightPortraitPoint;
 	Rect rect;
 
-	if (_vm->_scene->isInIntro() || _fadeMode == kFadeOut)
+	if (_fadeMode == kFadeOut) {
 		return;
+	}
+	
+	_vm->_render->setSplitScreen(!_vm->_scene->isInIntro());
+	if (_vm->_scene->isInIntro()) {
+		return;
+	}
 
 	drawStatusBar();
 
