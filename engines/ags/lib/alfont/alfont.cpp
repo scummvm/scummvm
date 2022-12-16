@@ -836,7 +836,7 @@ void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int
 				memset(s_pointer, 0, nLen);
 				precedingchar_pointer = (char *)malloc(2 * sizeof(char));
 				memset(precedingchar_pointer, 0, 2);
-				sprintf(precedingchar_pointer, "%c", f->precedingchar);
+				snprintf(precedingchar_pointer, 2 * sizeof(char), "%c", f->precedingchar);
 				strcpy(s_pointer, precedingchar_pointer);
 				if (precedingchar_pointer) {
 					free(precedingchar_pointer);
@@ -1932,7 +1932,7 @@ void alfont_textout_ex(BITMAP * bmp, ALFONT_FONT * f, const char *s, int x, int 
 				memset(s_pointer, 0, nLen);
 				precedingchar_pointer = (char *)malloc(2 * sizeof(char));
 				memset(precedingchar_pointer, 0, 2);
-				sprintf(precedingchar_pointer, "%c", f->precedingchar);
+				snprintf(precedingchar_pointer, 2 * sizeof(char), "%c", f->precedingchar);
 				strcpy(s_pointer, precedingchar_pointer);
 				if (precedingchar_pointer) {
 					free(precedingchar_pointer);
@@ -2743,7 +2743,7 @@ int alfont_text_length(ALFONT_FONT * f, const char *str) {
 				memset(str_pointer, 0, nLen);
 				precedingchar_pointer = (char *)malloc(2 * sizeof(char));
 				memset(precedingchar_pointer, 0, 2);
-				sprintf(precedingchar_pointer, "%c", f->precedingchar);
+				snprintf(precedingchar_pointer, 2 * sizeof(char), "%c", f->precedingchar);
 				strcpy(str_pointer, precedingchar_pointer);
 				if (precedingchar_pointer) {
 					free(precedingchar_pointer);
@@ -3131,7 +3131,7 @@ int alfont_text_count(ALFONT_FONT * f, const char *str) {
 				memset(str_pointer, 0, nLen);
 				precedingchar_pointer = (char *)malloc(2 * sizeof(char));
 				memset(precedingchar_pointer, 0, 2);
-				sprintf(precedingchar_pointer, "%c", f->precedingchar);
+				snprintf(precedingchar_pointer, 2 * sizeof(char), "%c", f->precedingchar);
 				strcpy(str_pointer, precedingchar_pointer);
 				if (precedingchar_pointer) {
 					free(precedingchar_pointer);
@@ -3380,7 +3380,7 @@ int alfont_ugetc(ALFONT_FONT * f, const char *s) {
 				memset(s_pointer, 0, nLen);
 				precedingchar_pointer = (char *)malloc(2 * sizeof(char));
 				memset(precedingchar_pointer, 0, 2);
-				sprintf(precedingchar_pointer, "%c", f->precedingchar);
+				snprintf(precedingchar_pointer, 2 * sizeof(char), "%c", f->precedingchar);
 				strcpy(s_pointer, precedingchar_pointer);
 				if (precedingchar_pointer) {
 					free(precedingchar_pointer);
@@ -3628,7 +3628,7 @@ int alfont_ugetx(ALFONT_FONT * f, char **s) {
 				memset(s_pointer, 0, nLen);
 				precedingchar_pointer = (char *)malloc(2 * sizeof(char));
 				memset(precedingchar_pointer, 0, 2);
-				sprintf(precedingchar_pointer, "%c", f->precedingchar);
+				snprintf(precedingchar_pointer, 2 * sizeof(char), "%c", f->precedingchar);
 				strcpy(s_pointer, precedingchar_pointer);
 				if (precedingchar_pointer) {
 					free(precedingchar_pointer);
@@ -3935,7 +3935,7 @@ int alfont_ugetxc(ALFONT_FONT * f, const char **s) {
 				memset(s_pointer, 0, nLen);
 				precedingchar_pointer = (char *)malloc(2 * sizeof(char));
 				memset(precedingchar_pointer, 0, 2);
-				sprintf(precedingchar_pointer, "%c", f->precedingchar);
+				snprintf(precedingchar_pointer, 2 * sizeof(char), "%c", f->precedingchar);
 				strcpy(s_pointer, precedingchar_pointer);
 				if (precedingchar_pointer) {
 					free(precedingchar_pointer);
@@ -4482,7 +4482,7 @@ int alfont_need_uconvert(ALFONT_FONT * f, const char *str) {
 				memset(str_pointer, 0, nLen);
 				precedingchar_pointer = (char *)malloc(2 * sizeof(char));
 				memset(precedingchar_pointer, 0, 2);
-				sprintf(precedingchar_pointer, "%c", f->precedingchar);
+				snprintf(precedingchar_pointer, 2 * sizeof(char), "%c", f->precedingchar);
 				strcpy(str_pointer, precedingchar_pointer);
 				if (precedingchar_pointer) {
 					free(precedingchar_pointer);
