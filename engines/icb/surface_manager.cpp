@@ -79,6 +79,8 @@ void _surface_manager::PrintDebugLabel(const char *mess, uint32 c) {
 		        Release_surface_DC( working_buffer_id, dc);*/
 		y += 15;
 	}
+
+	(void)y;
 }
 
 void _surface_manager::PrintTimer(char label, uint32 time, uint32 limit) {
@@ -109,6 +111,7 @@ void _surface_manager::PrintTimer(char label, uint32 time, uint32 limit) {
 		        Release_surface_DC( working_buffer_id, dc);*/
 		x += 54;
 	}
+	(void)x;
 }
 
 _surface_manager::_surface_manager() {
@@ -210,7 +213,7 @@ void _surface_manager::Reset_Effects() {
 void _surface_manager::Flip() {
 	// Draw Frame rate monitor if it's switched on
 	static uint32 g_fpsCounter = 0;
-	static float g_fpsTotalTime = 0.0f;
+	//static float g_fpsTotalTime = 0.0f;
 	static float g_fpsEndTime = 0.0f;
 	static float g_fpsStartTime = 0.0f;
 
@@ -221,14 +224,14 @@ void _surface_manager::Flip() {
 	if ((nowTime > 1000.0f) || (nowTime < 1.0f))
 		nowTime = 83.0f;
 
-	g_fpsTotalTime += nowTime;
+	//g_fpsTotalTime += nowTime;
 	//float averageFps = (float)(g_fpsTotalTime / ((double)g_fpsCounter + 1.0f));
 
 	//float currentFPS = (float)(1000.0f / (double)nowTime);
 	//float averageFPS = (float)(1000.0f / (double)averageFps);
 
 	if ((++g_fpsCounter) > 0xffffff00) {
-		g_fpsTotalTime = 0.0f;
+		//g_fpsTotalTime = 0.0f;
 		g_fpsCounter = 0;
 	}
 
