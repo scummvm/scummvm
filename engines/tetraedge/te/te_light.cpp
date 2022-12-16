@@ -38,7 +38,7 @@ static inline uint _toGlLight(uint lightno) {
 TeColor TeLight::_globalAmbientColor;
 
 TeLight::TeLight() : _colAmbient(0, 0, 0, 0xff), _colDiffuse(0, 0, 0, 0xff), _colSpecular(0xff, 0xff, 0xff, 0xff),
-_constAtten(0.0f), _linearAtten(1.0f), _quadraticAtten(0.0f), _cutoff(0.0f), _exponent(0.0f), _type(LightTypePoint),
+_constAtten(1.0f), _linearAtten(0.0f), _quadraticAtten(0.0f), _cutoff(0.0f), _exponent(0.0f), _type(LightTypePoint),
 _displaySize(3.0)
 {
 }
@@ -122,9 +122,9 @@ void TeLight::update(uint lightno) {
 		pos[2] = _position3d.z();
 		pos[3] = 1.0f;
 		glLightfv(glLight, GL_POSITION, pos);
-		glLightfv(glLight, GL_CONSTANT_ATTENUATION, &_constAtten);
-		glLightfv(glLight, GL_LINEAR_ATTENUATION, &_linearAtten);
-		glLightfv(glLight, GL_QUADRATIC_ATTENUATION, &_quadraticAtten);
+		glLightf(glLight, GL_CONSTANT_ATTENUATION, _constAtten);
+		glLightf(glLight, GL_LINEAR_ATTENUATION, _linearAtten);
+		glLightf(glLight, GL_QUADRATIC_ATTENUATION, _quadraticAtten);
 	}
 
 	if (_type == LightTypeDirectional) {
@@ -140,8 +140,6 @@ void TeLight::update(uint lightno) {
 		glLightfv(glLight, GL_POSITION, pos);
 	}
 
-	float atten;
-	uint atype;
 	if (_type == LightTypeSpot) {
 		float pos[4];
 		float cosx = cosf(_positionRadial.getX());
@@ -154,13 +152,10 @@ void TeLight::update(uint lightno) {
 		pos[3] = 0.0;
 		glLightfv(glLight, GL_SPOT_DIRECTION, pos);
 		glLightf(glLight, GL_SPOT_CUTOFF, (_cutoff * 180.0) / M_PI);
-		atten = _exponent;
-		atype = GL_SPOT_EXPONENT;
+		glLightf(glLight, GL_SPOT_EXPONENT, _exponent);
 	} else {
-		atten = 180.0;
-		atype = GL_SPOT_CUTOFF;
+		glLightf(glLight, GL_SPOT_CUTOFF, 180.0);
 	}
-	glLightf(glLight, atype, atten);
 }
 
 /*static*/

@@ -52,10 +52,10 @@ public:
 	static void deserialize(Common::ReadStream &stream, TeBezierCurve &curve);
 
 	const Common::Array<TeVector3f32> &controlPoints() { return _controlPoints; }
-	unsigned int numIterations() const { return _numiterations; }
+	unsigned int numIterations() const { return _numIterations; }
 
 private:
-	unsigned int _numiterations;
+	unsigned int _numIterations;
 	float _length;
 	float _rawLength;
 	bool _lengthNeedsUpdate;

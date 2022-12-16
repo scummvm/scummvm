@@ -191,7 +191,7 @@ void TeModel::update() {
 			TeTRS trs = getBone(_modelAnim, b);
 			for (unsigned int i = 0; i < _boneBlenders.size(); i++) {
 				BonesBlender *blender = _boneBlenders[i];
-				float complete = MIN((blender->_timer.getTimeFromStart() / 1000000.0f) / blender->_seconds, 1.0f);
+				float complete = blender->coef();
 				TeTRS endTRS = getBone(blender->_anim, b);
 				if (complete == 1.0f) {
 					delete blender;

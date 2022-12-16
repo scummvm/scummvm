@@ -23,6 +23,7 @@
 #include "common/path.h"
 #include "common/str-array.h"
 #include "common/system.h"
+#include "common/savefile.h"
 #include "common/config-manager.h"
 
 #include "tetraedge/tetraedge.h"
@@ -388,7 +389,13 @@ void Game::initLoadedBackupData() {
 	bool warpFlag = true;
 	if (!_loadName.empty()) {
 		warpFlag = false;
-		error("TODO: Implemet Game::initLoadedBackupData loading part");
+		Common::InSaveFile *saveFile = g_engine->getSaveFileManager()->openForLoading(_loadName);
+		Common::Error result = g_engine->loadGameStream(saveFile);
+		if (result.getCode() == Common::kNoError) {
+			ExtendedSavegameHeader header;
+			if (MetaEngine::readSavegameHeader(saveFile, &header))
+				g_engine->setTotalPlayTime(header.playtime);
+		}
 	}
 	Application *app = g_engine->getApplication();
 	const Common::String firstWarpPath = app->_firstWarpPath;
@@ -737,8 +744,12 @@ void Game::leave(bool flag) {
 	Character::animCacheFreeAll();
 }
 
-bool Game::loadBackup(const Common::String &path) {
-	error("TODO: Implemet Game::loadBackup %s", path.c_str());
+void Game::loadBackup(const Common::String &path) {
+	if (_gameLoadState == 0) {
+		_gameLoadState = 1;
+		g_engine->getApplication()->showLoadingIcon(true);
+		onFinishedLoadingBackup(path);
+	}
 }
 
 bool Game::loadCharacter(const Common::String &name) {
@@ -748,9 +759,9 @@ bool Game::loadCharacter(const Common::String &name) {
 		result = _scene.loadCharacter(name);
 		if (result) {
 			character = _scene.character(name);
-			character->_onCharacterAnimFinishedSignal.remove<Game>(this, &Game::onCharacterAnimationFinished);
-			character->_onCharacterAnimFinishedSignal.add<Game>(this, &Game::onCharacterAnimationFinished);
-			character->onFinished().add<Game>(this, &Game::onDisplacementFinished);
+			character->_onCharacterAnimFinishedSignal.remove(this, &Game::onCharacterAnimationFinished);
+			character->_onCharacterAnimFinishedSignal.add(this, &Game::onCharacterAnimationFinished);
+			character->onFinished().add(this, &Game::onDisplacementFinished);
 		}
 	}
 	return result;
@@ -759,10 +770,10 @@ bool Game::loadCharacter(const Common::String &name) {
 bool Game::loadPlayerCharacter(const Common::String &name) {
 	bool result = _scene.loadPlayerCharacter(name);
 	if (result) {
-		_scene._character->_characterAnimPlayerFinishedSignal.remove<Game>(this, &Game::onCharacterAnimationPlayerFinished);
-		_scene._character->_characterAnimPlayerFinishedSignal.add<Game>(this, &Game::onCharacterAnimationPlayerFinished);
-		_scene._character->onFinished().remove<Game>(this, &Game::onDisplacementFinished);
-		_scene._character->onFinished().add<Game>(this, &Game::onDisplacementFinished);
+		_scene._character->_characterAnimPlayerFinishedSignal.remove(this, &Game::onCharacterAnimationPlayerFinished);
+		_scene._character->_characterAnimPlayerFinishedSignal.add(this, &Game::onCharacterAnimationPlayerFinished);
+		_scene._character->onFinished().remove(this, &Game::onDisplacementFinished);
+		_scene._character->onFinished().add(this, &Game::onDisplacementFinished);
 	}
 	return result;
 }
@@ -1360,7 +1371,10 @@ void Game::resumeMovie() {
 }
 
 void Game::saveBackup(const Common::String &saveName) {
-	warning("TODO: Implemet Game::saveBackup %s", saveName.c_str());
+	if (saveName == "save.xml")
+		g_engine->saveAutosaveIfEnabled();
+	else
+		warning("TODO: Implemet Game::saveBackup %s", saveName.c_str());
 }
 
 bool Game::setBackground(const Common::String &name) {
@@ -1409,6 +1423,36 @@ void Game::stopSound(const Common::String &name) {
 		}
 	}
 	g_engine->getSoundManager()->stopFreeSound(name);
+}
+
+Common::Error Game::syncGame(Common::Serializer &s) {
+	Application *app = g_engine->getApplication();
+	s.setVersion(1);
+	inventory().syncState(s);
+	inventory().cellphone()->syncState(s);
+	// dialog2().syncState(s); // game saves this here, but doesn't actually save anything
+	_luaContext.syncState(s);
+	s.syncString(_currentZone);
+	s.syncString(_currentScene);
+	s.syncAsUint32LE(app->difficulty());
+	long elapsed = _playedTimer.timeFromLastTimeElapsed(); // TODO: + _loadedPlayTime;
+	s.syncAsDoubleLE(elapsed);
+	_playedTimer.stop();
+	_playedTimer.start();
+	s.syncAsUint32LE(_objectsTakenVal);
+	for (unsigned int i = 0; i < ARRAYSIZE(_objectsTakenBits); i++)
+		s.syncAsByte(_objectsTakenBits[i]);
+	s.syncAsUint32LE(_dialogsTold);
+	s.syncString(_prevSceneName);
+	Common::String mpath = _music.rawPath();
+	s.syncString(mpath);
+	if (s.isLoading())
+		_music.load(mpath);
+	s.syncString(_scene._character->walkModeStr());
+	s.syncAsByte(_firstInventory);
+	s.syncAsByte(app->tutoActivated());
+	app->showLoadingIcon(false);
+	return Common::kNoError;
 }
 
 bool Game::unloadCharacter(const Common::String &charname) {
@@ -1554,6 +1598,7 @@ bool Game::HitObject::onDown() {
 }
 
 bool Game::HitObject::onUp() {
+	debug("Game::HitObject mouseup: %s", _name.c_str());
 	_game->luaScript().execute("OnButtonUp", _name);
 	_game->_isCharacterIdle = true;
 	return false;

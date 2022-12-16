@@ -686,6 +686,11 @@ bool InGameScene::loadLights(const Common::Path &path) {
 	_shadowNearPlane = parser.getShadowNearPlane();
 	_shadowFov = parser.getShadowFov();
 
+	TeLight::enableAll();
+	for (unsigned int i = 0; i < _lights.size(); i++) {
+		_lights[i].enable(i);
+	}
+
 	return true;
 }
 
@@ -833,7 +838,7 @@ void InGameScene::loadBackground(const Common::Path &path) {
 		AnimObject *animobj = new AnimObject();
 		animobj->_name = layoutEntry._key;
 		animobj->_layout = layoutEntry._value;
-		animobj->_layout->_tiledSurfacePtr->_frameAnim.onFinished().add<AnimObject>(animobj, &AnimObject::onFinished);
+		animobj->_layout->_tiledSurfacePtr->_frameAnim.onFinished().add(animobj, &AnimObject::onFinished);
 		if (animobj->_name != "root")
 			animobj->_layout->setVisible(false);
 		_animObjects.push_back(animobj);
@@ -874,6 +879,8 @@ void InGameScene::moveCharacterTo(const Common::String &charName, const Common::
 		if (!game->_movePlayerCharacterDisabled) {
 			c->setCurveStartLocation(c->characterSettings()._cutSceneCurveDemiPosition);
 			TeIntrusivePtr<TeBezierCurve> crve = curve(curveName);
+			if (!curveName.empty() && !crve)
+				warning("moveCharacterTo: curve %s not found", curveName.c_str());
 			c->placeOnCurve(crve);
 			c->setCurveOffset(curveOffset);
 			const Common::String walkStartAnim = c->walkAnim(Character::WalkPart_Start);
@@ -1123,6 +1130,7 @@ void InGameScene::update() {
 			error("TODO: handle _translateTime > 0 in InGameScene::update");
 		}
 		if (obj->_rotateTime >= 0) {
+			// Never actually used in the game.
 			error("TODO: handle _rotateTime > 0 in InGameScene::update");
 		}
 	}

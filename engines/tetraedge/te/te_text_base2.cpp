@@ -53,7 +53,10 @@ void TeTextBase2::build() {
 	_size = TeVector2s32(0, 0);
 	_wrappedLines.clear();
 
-	font->wordWrapText(_text, _fontSize, _drawRect._x, _wrappedLines);
+	if (_text.find(' ') != Common::String::npos)
+		font->wordWrapText(_text, _fontSize, _drawRect._x, _wrappedLines);
+	else
+		_wrappedLines.push_back(_text);
 
 	Common::Array<float> lineoffsets;
 	float lineHeight = font->getHeight(_fontSize);

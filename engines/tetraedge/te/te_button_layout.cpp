@@ -105,10 +105,12 @@ bool TeButtonLayout::onMouseLeftDown(const Common::Point &pt) {
 	enum State newState = _currentState;
 	switch (_currentState) {
 	case BUTTON_STATE_DOWN:
-		newState = BUTTON_STATE_UP;
+		if (!mouseIn)
+			newState = BUTTON_STATE_UP;
 		/*
 		// TODO: should this be a click?
 		if (mouseIn) {
+			newState = BUTTON_STATE_UP;
 			debug("mouse clicked button '%s' (from leftdown)", name().c_str());
 			if (!_validationSound.empty()) {
 				TeSoundManager *sndMgr = g_engine->getSoundManager();
@@ -128,10 +130,6 @@ bool TeButtonLayout::onMouseLeftDown(const Common::Point &pt) {
 		break;
 	}
 	setState(newState);
-	// FIXME: Why does this item block the mouse events.. should be below
-	// the "yes" button but seems it's not?
-	if (name() == "menu")
-		return false;
 	return mouseIn && !_clickPassThrough;
 }
 
@@ -140,7 +138,7 @@ bool TeButtonLayout::onMouseLeftUp(const Common::Point &pt) {
 		return false;
 
 	// Note: This doesn't exactly reproduce the original behavior, it's
-	// very simplified.
+	// somewhat simplified.
 	bool mouseIn = isMouseIn(pt);
 
 	if (mouseIn)
@@ -158,10 +156,6 @@ bool TeButtonLayout::onMouseLeftUp(const Common::Point &pt) {
 			}
 			setState(newState);
 			_onMouseClickValidatedSignal.call();
-			// FIXME: Why does this item block the mouse events.. should be below
-			// the "yes" button but seems it's not?
-			if (name() == "menu")
-				return false;
 			return !_clickPassThrough;
 		}
 		break;

@@ -25,6 +25,8 @@
 #include "common/substream.h"
 #include "common/zlib.h"
 
+#include "tetraedge/tetraedge.h"
+#include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_model_animation.h"
 
 namespace Tetraedge {
@@ -180,8 +182,9 @@ int TeModelAnimation::lastFrame() const {
 }
 
 bool TeModelAnimation::load(const Common::Path &path) {
+	Common::Path foundPath = g_engine->getCore()->findFile(path);
 	Common::File modelFile;
-	if (!modelFile.open(path)) {
+	if (!modelFile.open(foundPath)) {
 		warning("[TeModel::load] Can't open file : %s.", path.toString().c_str());
 		return false;
 	}

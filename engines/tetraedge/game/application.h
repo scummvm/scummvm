@@ -98,7 +98,8 @@ public:
 	void setTutoActivated(bool val) { _tutoActivated = val; }
 	TeCamera *mainWindowCamera() { return _mainWindowCamera.get(); }
 	Common::Array<Common::String> &unrecalAnims() { return _unrecalAnims; }
-	int difficulty() const { return _difficulty; }
+	int &difficulty() { return _difficulty; }
+	bool &tutoActivated() { return _tutoActivated; }
 
 	// TODO: Add accessors for these and make them private.
 	bool _finishedGame;

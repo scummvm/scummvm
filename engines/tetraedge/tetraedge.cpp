@@ -27,6 +27,7 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "common/savefile.h"
 #include "engines/util.h"
 #include "engines/dialogs.h"
 #include "graphics/palette.h"
@@ -125,6 +126,39 @@ Common::String TetraedgeEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+bool TetraedgeEngine::canSaveGameStateCurrently() {
+	return canSaveAutosaveCurrently() && !_application->isLockCursor();
+}
+
+bool TetraedgeEngine::canSaveAutosaveCurrently() {
+	return _game && _application && _game->running()
+		&& !_game->currentScene().empty() && !_game->currentZone().empty();
+}
+
+Common::Error TetraedgeEngine::loadGameState(int slot) {
+	// In case autosaves are on, do a save first before loading the new save
+	saveAutosaveIfEnabled();
+
+	Common::String saveStateName = getSaveStateName(slot);
+
+	Common::InSaveFile *saveFile = getSaveFileManager()->openForLoading(saveStateName);
+
+	if (!saveFile)
+		return Common::kReadingFailed;
+
+	// The game will reopen the file and do the loading, see Game::initLoadedBackupData
+	_game->setLoadName(saveStateName);
+
+	delete saveFile;
+	return Common::kNoError;
+}
+
+Common::Error TetraedgeEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	Common::Serializer s(stream, nullptr);
+	Common::Error retval = syncGame(s);
+	return retval;
+}
+
 void TetraedgeEngine::configureSearchPaths() {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Resources", 0, 5);
@@ -167,8 +201,6 @@ Common::Error TetraedgeEngine::run() {
 
 		_application->run();
 
-		// Delay for a bit. All events loops should have a delay
-		// to prevent the system being unduly loaded
 		g_system->delayMillis(10);
 	}
 
@@ -176,14 +208,7 @@ Common::Error TetraedgeEngine::run() {
 }
 
 Common::Error TetraedgeEngine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
-
-	return Common::kNoError;
+	return getGame()->syncGame(s);
 }
 
 void TetraedgeEngine::openConfigDialog() {

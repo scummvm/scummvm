@@ -70,6 +70,12 @@ bool SceneLightsXmlParser::parserCallback_Lights(ParserNode *node) {
 bool SceneLightsXmlParser::parserCallback_Light(ParserNode *node) {
 	_parent = Parent_Light;
 	_lights->push_back(TeLight());
+	TeLightType ltype = TeLightType::LightTypeDirectional;
+	if (node->values["Type"] == "Spot")
+		ltype = TeLightType::LightTypeSpot;
+	else if (node->values["Type"] == "Point")
+		ltype = TeLightType::LightTypePoint;
+	_lights->back().setType(ltype);
 	return true;
 }
 
@@ -82,8 +88,8 @@ bool SceneLightsXmlParser::parserCallback_Position(ParserNode *node) {
 }
 
 bool SceneLightsXmlParser::parserCallback_Direction(ParserNode *node) {
-	float h = (atof(node->values["h"].c_str()) * 3.141593) / 180.0;
-	float v = (atof(node->values["v"].c_str()) * 3.141593) / 180.0;
+	float h = (atof(node->values["h"].c_str()) * M_PI) / 180.0;
+	float v = (atof(node->values["v"].c_str()) * M_PI) / 180.0;
 	_lights->back().setPositionRadial(TeVector2f32(h, v));
 	return true;
 }
@@ -115,7 +121,7 @@ bool SceneLightsXmlParser::parserCallback_Attenuation(ParserNode *node) {
 
 bool SceneLightsXmlParser::parserCallback_Cutoff(ParserNode *node) {
 	float f = atof(node->values["value"].c_str());
-	_lights->back().setCutoff((f * 3.141593) / 180.0);
+	_lights->back().setCutoff((f * M_PI) / 180.0);
 	return true;
 }
 

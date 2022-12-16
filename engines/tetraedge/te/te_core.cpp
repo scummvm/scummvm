@@ -49,7 +49,7 @@ void TeCore::create() {
 	// TODO: Get language from the game definition.  For now just default to en.
 	language("en");
 	_coreNotReady = false;
-	_activityTrackingTimer.alarmSignal().add<TeCore>(this, &TeCore::onActivityTrackingAlarm);
+	_activityTrackingTimer.alarmSignal().add(this, &TeCore::onActivityTrackingAlarm);
 	warning("TODO: TeCore::create: Finish implementing me.");
 }
 

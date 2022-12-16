@@ -400,6 +400,12 @@ int spriteLayoutBindings(lua_State *L) {
 		layout->setName(Common::String::format("%p", (void *)layout));
 	}
 
+	// WORKAROUND: ValStreet scene 11070 has a misnamed animation in the script.
+	// All references to it in script refer to it with the "ab".
+	// This scene is broken in the original game too.
+	if (layout->name() == "11070-1")
+		layout->setName("ab11070-1");
+
 	if (playNow) {
 		layout->play();
 	} else {

@@ -25,7 +25,17 @@ namespace Tetraedge {
 
 // Parser callback methods
 bool TeNameValXmlParser::parserCallback_value(ParserNode *node) {
-	_map.setVal(node->values["name"], node->values["value"]);
+	Common::String valStr = node->values["value"];
+
+	// Replace "&quot;" with " character.  This is the only character
+	// entity used in the game files.
+	unsigned int qpos = valStr.find("&quot;");
+	while (qpos != Common::String::npos) {
+		valStr.replace(qpos, 6, "\"");
+		qpos = valStr.find("&quot;");
+	}
+
+	_map.setVal(node->values["name"], valStr);
 	return true;
 }
 

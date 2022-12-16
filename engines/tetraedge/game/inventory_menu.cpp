@@ -42,9 +42,8 @@ void InventoryMenu::leave() {
 	game->inventory().leave();
 	game->documentsBrowser().leave();
 	TeLayout *invMenu = _gui.layout("inventoryMenu");
-	if (invMenu) {
+	if (invMenu)
 		invMenu->setVisible(false);
-	}
 }
 
 void InventoryMenu::load() {
@@ -52,23 +51,22 @@ void InventoryMenu::load() {
 	setSizeType(RELATIVE_TO_PARENT);
 	TeVector3f32 usersz = userSize();
 	setSize(TeVector3f32(1.0f, 1.0f, usersz.z()));
-	_gui.load("InventoryMenu/InventoryMenu.lua");
-	TeLayout *menu = _gui.layoutChecked("inventoryMenu");
-	addChild(menu);
-	TeButtonLayout *btn;
-	btn = _gui.buttonLayoutChecked("quitButton");
-	btn->onMouseClickValidated().add(this, &InventoryMenu::onQuitButton);
-	btn = _gui.buttonLayoutChecked("quitBackground");
-	btn->onMouseClickValidated().add(this, &InventoryMenu::onQuitButton);
-	btn = _gui.buttonLayoutChecked("mainMenuButton");
-	btn->onMouseClickValidated().add(this, &InventoryMenu::onMainMenuButton);
-	btn = _gui.buttonLayoutChecked("documentsButton");
-	btn->onMouseClickValidated().add(this, &InventoryMenu::onDocumentsButton);
-	btn = _gui.buttonLayoutChecked("inventoryButton");
-	btn->onMouseClickValidated().add(this, &InventoryMenu::onInventoryButton);
 
-	TeLayout *invmenu = _gui.layoutChecked("inventoryMenu");
-	invmenu->setVisible(false);
+	_gui.load("InventoryMenu/InventoryMenu.lua");
+	addChild(_gui.layoutChecked("inventoryMenu"));
+	_gui.buttonLayoutChecked("quitButton")->onMouseClickValidated()
+				.add(this, &InventoryMenu::onQuitButton);
+	_gui.buttonLayoutChecked("quitBackground")->onMouseClickValidated()
+				.add(this, &InventoryMenu::onQuitButton);
+	_gui.buttonLayoutChecked("mainMenuButton")->onMouseClickValidated()
+				.add(this, &InventoryMenu::onMainMenuButton);
+	_gui.buttonLayoutChecked("documentsButton")->onMouseClickValidated()
+				.add(this, &InventoryMenu::onDocumentsButton);
+	_gui.buttonLayoutChecked("inventoryButton")->onMouseClickValidated()
+				.add(this, &InventoryMenu::onInventoryButton);
+
+	_gui.layoutChecked("inventoryMenu")->setVisible(false);
+
 	setVisible(false);
 }
 

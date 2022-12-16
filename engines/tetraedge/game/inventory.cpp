@@ -498,5 +498,27 @@ bool Inventory::updateLayout() {
 	return false;
 }
 
+Common::Error Inventory::syncState(Common::Serializer &s) {
+	unsigned int nitems = _invObjects.size();
+	s.syncAsUint32LE(nitems);
+	if (s.isLoading()) {
+		for (unsigned int i = 0; i < nitems; i++) {
+			Common::String objname;
+			s.syncString(objname);
+			addObject(objname);
+		}
+	} else if (nitems) {
+		// Add items in reverse order as the "addObject" on load will
+		// add to front of list.InventoryObject
+		auto iter = _invObjects.end();
+		while (iter != _invObjects.begin()) {
+			Common::String objname = (*iter)->name();
+			s.syncString(objname);
+			iter--;
+		}
+	}
+	return Common::kNoError;
+}
+
 
 } // end namespace Tetraedge
