@@ -727,13 +727,13 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 			colorId = (ColorId)210;
 			break;
 		case (kKnownColorVerbText):
-			colorId = isECS() ? (ColorId)0x14 : kITEDOSColorBlue;
+			colorId = isECS() ? kITEECSBottomColorBlue : kITEDOSColorBlue;
 			break;
 		case (kKnownColorVerbTextShadow):
 			colorId = isECS() ? kITEECSColorBlack : kITEDOSColorBlack;
 			break;
 		case (kKnownColorVerbTextActive):
-			colorId = isECS() ? (ColorId)0x0f : (ColorId)96;
+			colorId = isECS() ? kITEECSBottomColorYellow60 : kITEDOSColorYellow60;
 			break;
 
 		default:

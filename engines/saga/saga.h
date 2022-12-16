@@ -407,6 +407,7 @@ enum ColorId {
 	kITEDOSColorDarkGrey = 0x0b,
 	kITEDOSColorDarkGrey0C = 0x0C,
 	kITEDOSColorBlack = 0x0f,
+	kITEDOSColorYellow60 = 0x60,
 	kITEDOSColorRed = 0x65,
 	kITEDOSColorDarkBlue8a = 0x8a,
 	kITEDOSColorBlue89 = 0x89,
@@ -432,6 +433,7 @@ enum ColorId {
 	kITEECSBottomColorDarkGrey = 0x32,
 	kITEECSBottomColorGrey = 0x36,
 	kITEECSBottomColorBlue = 0x3b,
+	kITEECSBottomColorYellow60 = 0x3e,
 
 	// ECS palette for options
 	kITEECSOptionsColorLightBlue94 = 0x48,
