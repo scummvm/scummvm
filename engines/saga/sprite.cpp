@@ -93,6 +93,13 @@ bool blitAmigaSprite(byte *outBuf, int outPitch, const byte *inputBuffer, size_t
 				}
 			}
 		}
+	if (bitsPerPixel < 8) {
+		const byte mask = (1 << bitsPerPixel) - 1;
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++)
+				outBuf[y * outPitch + x] &= mask;
+	}
+
 	return true;
 }
 
