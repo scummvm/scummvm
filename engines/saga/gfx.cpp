@@ -245,7 +245,7 @@ void Gfx::setPalette(const PalEntry *pal, bool full) {
 
 	if (_vm->getGameId() == GID_ITE || full) {
 		from = 0;
-		numcolors = _vm->isECS() ? 32 : PAL_ENTRIES;
+		numcolors = _vm->getPalNumEntries();
 	} else {
 		from = 0;
 		numcolors = 248;
@@ -334,7 +334,7 @@ void Gfx::palToBlack(PalEntry *srcPal, double percent) {
 	fpercent = 1.0 - fpercent;
 
 	// Use the correct percentage change per frame for each palette entry
-	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 3) {
+	for (i = 0, ppal = _currentPal; i < (int) _vm->getPalNumEntries(); i++, ppal += 3) {
 		if (i < from || i >= from + numcolors)
 			palE = &_globalPalette[i];
 		else
@@ -400,7 +400,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 	fpercent = percent * percent;
 
 	// Use the correct percentage change per frame for each palette entry
-	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 3) {
+	for (i = 0, ppal = _currentPal; i < (int) _vm->getPalNumEntries(); i++, ppal += 3) {
 		if (i < from || i >= from + numcolors)
 			palE = &_globalPalette[i];
 		else
