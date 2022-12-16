@@ -125,17 +125,17 @@ static const char *to_string(lua_Object obj) {
 		return lua_getstring(obj);
 	case LUA_T_ARRAY:
 		{
-			sprintf(buff, "table: %p", (void *)o->value.a);
+			snprintf(buff, 30, "table: %p", (void *)o->value.a);
 			return buff;
 		}
 	case LUA_T_CLOSURE:
 		{
-			sprintf(buff, "function: %p", (void *)o->value.cl);
+			snprintf(buff, 30, "function: %p", (void *)o->value.cl);
 			return buff;
 		}
 	case LUA_T_PROTO:
 		{
-			sprintf(buff, "function: %p", (void *)o->value.tf);
+			snprintf(buff, 30, "function: %p", (void *)o->value.tf);
 			return buff;
 		}
 	case LUA_T_CPROTO:
@@ -149,17 +149,17 @@ static const char *to_string(lua_Object obj) {
 
 			ptrUnion.funcPtr = o->value.f;
 
-			sprintf(buff, "function: %p", ptrUnion.objPtr);
+			snprintf(buff, 30, "function: %p", ptrUnion.objPtr);
 			return buff;
 		}
 	case LUA_T_USERDATA:
 		{
-			sprintf(buff, "userdata: %08X", o->value.ud.id);
+			snprintf(buff, 30, "userdata: %08X", o->value.ud.id);
 			return buff;
 		}
 	case LUA_T_TASK:
 		{
-			sprintf(buff, "task: %d", (int)o->value.n);
+			snprintf(buff, 30, "task: %d", (int)o->value.n);
 			return buff;
 		}
 	case LUA_T_NIL:

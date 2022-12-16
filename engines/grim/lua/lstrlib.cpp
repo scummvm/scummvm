@@ -454,7 +454,7 @@ static void str_format() {
 				{
 					const char *s = luaL_check_string(arg);
 					buff = luaL_openspace(strlen(s));
-					sprintf(buff, form, s);
+					snprintf(buff, strlen(s), form, s);
 					break;
 				}
 			case 'c':
@@ -464,14 +464,14 @@ static void str_format() {
 			case 'u':
 			case 'x':
 			case 'X':
-				sprintf(buff, form, (int)luaL_check_number(arg));
+				snprintf(buff, 1000, form, (int)luaL_check_number(arg));
 				break;
 			case 'e':
 			case 'E':
 			case 'f':
 			case 'g':
 			case 'G':
-				sprintf(buff, form, luaL_check_number(arg));
+				snprintf(buff, 1000, form, luaL_check_number(arg));
 				break;
 			default:  // also treat cases 'pnLlh'
 				lua_error("invalid option in `format'");

@@ -338,7 +338,7 @@ static void io_date() {
 	char b[BUFSIZ];
 
 	g_system->getTimeAndDate(t);
-	sprintf(b, "%02d.%02d.%d %02d:%02d.%02d", t.tm_mday, t.tm_mon + 1, 1900 + t.tm_year, t.tm_hour, t.tm_min, t.tm_sec);
+	snprintf(b, BUFSIZ, "%02d.%02d.%d %02d:%02d.%02d", t.tm_mday, t.tm_mon + 1, 1900 + t.tm_year, t.tm_hour, t.tm_min, t.tm_sec);
 	lua_pushstring(b);
 }
 
@@ -357,44 +357,44 @@ static void lua_printstack() {
 		const char *filename;
 		int32 linedefined;
 		lua_funcinfo(func, &filename, &linedefined);
-		sprintf(buf, (level == 2) ? "Active Stack:\n\t" : "\t");
+		snprintf(buf, 256, (level == 2) ? "Active Stack:\n\t" : "\t");
 		g_stderr->write(buf, strlen(buf));
 		switch (*lua_getobjname(func, &name)) {
 		case 'g':
-			sprintf(buf, "function %s", name);
+			snprintf(buf, 256, "function %s", name);
 			break;
 		case 't':
-			sprintf(buf, "`%s' tag method", name);
+			snprintf(buf, 256, "`%s' tag method", name);
 			break;
 		default:
 			{
 				if (linedefined == 0)
-					sprintf(buf, "main of %s", filename);
+					snprintf(buf, 256, "main of %s", filename);
 				else if (linedefined < 0)
-					sprintf(buf, "%s", filename);
+					snprintf(buf, 256, "%s", filename);
 				else
-					sprintf(buf, "function (%s:%d)", filename, (int)linedefined);
+					snprintf(buf, 256, "function (%s:%d)", filename, (int)linedefined);
 				filename = nullptr;
 			}
 		}
 		g_stderr->write(buf, strlen(buf));
 
 		if ((currentline = lua_currentline(func)) > 0) {
-			sprintf(buf, " at line %d", (int)currentline);
+			snprintf(buf, 256, " at line %d", (int)currentline);
 			g_stderr->write(buf, strlen(buf));
 		}
 		if (filename) {
-			sprintf(buf, " [in file %s]", filename);
+			snprintf(buf, 256, " [in file %s]", filename);
 			g_stderr->write(buf, strlen(buf));
 		}
-		sprintf(buf, "\n");
+		snprintf(buf, 256, "\n");
 		g_stderr->write(buf, strlen(buf));
 	}
 }
 
 static void errorfb() {
 	char buf[256];
-	sprintf(buf, "lua: %s\n", lua_getstring(lua_getparam(1)));
+	snprintf(buf, 256, "lua: %s\n", lua_getstring(lua_getparam(1)));
 	g_stderr->write(buf, strlen(buf));
 	lua_printstack();
 }

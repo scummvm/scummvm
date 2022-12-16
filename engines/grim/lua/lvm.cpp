@@ -60,9 +60,9 @@ int32 luaV_tostring (TObject *obj) { // LUA_NUMBER
 		float f = nvalue(obj);
 		int32 i;
 		if ((float)(-MAX_INT) <= f && f <= (float)MAX_INT && (float)(i = (int32)f) == f)
-			sprintf (s, "%d", (int)i);
+			snprintf (s, 60, "%d", (int)i);
 		else
-			sprintf (s, "%g", (double)nvalue(obj));
+			snprintf (s, 60, "%g", (double)nvalue(obj));
 		tsvalue(obj) = luaS_new(s);
 		ttype(obj) = LUA_T_STRING;
 		return 0;

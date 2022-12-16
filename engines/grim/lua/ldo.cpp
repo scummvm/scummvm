@@ -416,12 +416,12 @@ void luaD_gcIM(TObject *o) {
 #define SIZE_PREF 20  // size of string prefix to appear in error messages
 #define SSIZE_PREF "20"
 
-static void build_name (const char *str, char *name) {
+static void build_name (const char *str, char *name, int size) {
 	if (str == nullptr || *str == ID_CHUNK)
 		strcpy(name, "(buffer)");
 	else {
 		char *temp;
-		sprintf(name, "(dostring) >> \"%." SSIZE_PREF "s\"", str);
+		snprintf(name, size, "(dostring) >> \"%." SSIZE_PREF "s\"", str);
 		temp = strchr(name, '\n');
 		if (temp) {  // end string after first line
 			*temp = '"';
@@ -439,7 +439,7 @@ int32 lua_dobuffer(const char *buff, int32 size, const char *name) {
 	ZIO z;
 
 	if (!name) {
-		build_name(buff, newname);
+		build_name(buff, newname, SIZE_PREF + 25);
 		name = newname;
 	}
 	luaZ_mopen(&z, buff, size, name);
