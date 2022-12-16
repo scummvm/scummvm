@@ -22,6 +22,8 @@
 #ifndef TETRAEDGE_GAME_DIALOG2_H
 #define TETRAEDGE_GAME_DIALOG2_H
 
+#include "common/serializer.h"
+
 #include "tetraedge/te/te_timer.h"
 #include "tetraedge/te/te_music.h"
 #include "tetraedge/te/te_lua_gui.h"

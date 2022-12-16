@@ -22,7 +22,9 @@
 #ifndef TETRAEDGE_TE_TE_LUA_CONTEXT_H
 #define TETRAEDGE_TE_TE_LUA_CONTEXT_H
 
+#include "common/error.h"
 #include "common/str.h"
+#include "common/serializer.h"
 
 #include "tetraedge/te/te_variant.h"
 
@@ -67,6 +69,9 @@ public:
 	void setGlobal(const Common::String &name, const Common::String &val);
 
 	void setInRegistry(const Common::String &name, TeLuaGUI *gui);
+
+	Common::Error syncState(Common::Serializer &s);
+
 private:
 	lua_State *_luaState;
 };

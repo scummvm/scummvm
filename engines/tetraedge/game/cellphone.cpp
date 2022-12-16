@@ -41,7 +41,8 @@ bool Cellphone::addNumber(const Common::String &num) {
 	layout->setName(namePrefix + num);
 	layout->setSizeType(RELATIVE_TO_PARENT);
 	layout->setAnchor(TeVector3f32(0.5f, 0.0f, 0.0f));
-	layout->setSize(TeVector3f32(1.0f, 1.0f, 0.0f));
+	// WORKAROUND: Original uses 1.0,1.0,1.0 here but then the text area is too high.
+	layout->setSize(TeVector3f32(1.0f, 0.6f, 0.0f));
 	layout->setPosition(TeVector3f32(0.5f, 0.08f, 0.0f));
 	layout->setTextSizeType(1);
 	layout->setTextSizeProportionalToWidth(46);
@@ -153,6 +154,23 @@ void Cellphone::setVisible(bool visible) {
 void Cellphone::unload() {
 	leave();
 	_gui.unload();
+}
+
+Common::Error Cellphone::syncState(Common::Serializer &s) {
+	Common::Array<Common::String> numbers = _addedNumbers;
+	unsigned int numElems = numbers.size();
+	s.syncAsUint32LE(numElems);
+	numbers.resize(numElems);
+	for (unsigned int i = 0; i < numElems; i++) {
+		s.syncString(numbers[i]);
+	}
+	if (s.isLoading()) {
+		if (!_addedNumbers.empty())
+			leave();
+		for (auto num : numbers)
+			addNumber(num);
+	}
+	return Common::kNoError;
 }
 
 } // end namespace Tetraedge

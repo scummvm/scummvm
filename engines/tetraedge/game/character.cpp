@@ -103,13 +103,21 @@ void Character::addCallback(const Common::String &animKey, const Common::String 
 	// the way this gets used later, setting large negative is more correct.
 	c->_callsMade = (maxCalls == -1.0 ? -1e9 : 0.0f);
 
-	const Common::String animPath = _model->anim()->_loadedPath.toString();
-	if (_callbacks.contains(animPath)) {
-		_callbacks[animPath].push_back(c);
+	const Common::Path animPath = _model->anim()->_loadedPath;
+
+	// Another difference.. the original messes with paths a bit - just
+	// use the file name, since it's already limited by character.
+	Common::String animName = animPath.getLastComponent().toString();
+	if (animName.empty())
+		animName = animPath.toString();
+
+	if (_callbacks.contains(animName)) {
+		_callbacks[animName].push_back(c);
 	} else {
+		Common::Path animKeyPath(animKey);
 		Common::Array<Callback *> callbacks;
 		callbacks.push_back(c);
-		_callbacks.setVal(animKey, callbacks);
+		_callbacks.setVal(animKeyPath.getLastComponent().toString(), callbacks);
 	}
 }
 
@@ -132,9 +140,8 @@ void Character::addCallback(const Common::String &animKey, const Common::String 
 		return _cache.getVal(pathStr);
 
 	TeIntrusivePtr<TeModelAnimation> modelAnim = new TeModelAnimation();
-	Common::Path foundPath = g_engine->getCore()->findFile(path);
-	if (!modelAnim->load(foundPath)) {
-		warning("Failed to load anim %s", foundPath.toString().c_str());
+	if (!modelAnim->load(path)) {
+		warning("Failed to load anim %s", path.toString().c_str());
 	}
 
 	_cache.setVal(pathStr, modelAnim);
@@ -191,6 +198,7 @@ bool Character::blendAnimation(const Common::String &animname, float amount, boo
 
 	_curModelAnim = animCacheLoad(animpath);
 	assert(_curModelAnim);
+	_curModelAnim->reset();
 	_curModelAnim->onFinished().add(this, &Character::onModelAnimationFinished);
 
 	_curModelAnim->bind(_model);
@@ -236,11 +244,11 @@ void Character::deleteAnim() {
 void Character::deleteCallback(const Common::String &key, const Common::String &fnName, float f) {
 	_callbacksChanged = true;
 	assert(_model->anim());
-	Common::String animPath = _model->anim()->_loadedPath.toString();
-	if (!_callbacks.contains(animPath))
+	Common::String animFile = _model->anim()->_loadedPath.getLastComponent().toString();
+	if (!_callbacks.contains(animFile))
 		return;
 
-	Common::Array<Callback *> &cbs = _callbacks.getVal(animPath);
+	Common::Array<Callback *> &cbs = _callbacks.getVal(animFile);
 	for (unsigned int i = 0; i < cbs.size(); i++) {
 		if (fnName.empty()) {
 			delete cbs[i];
@@ -257,7 +265,7 @@ void Character::deleteCallback(const Common::String &key, const Common::String &
 		cbs.clear();
 
 	if (cbs.empty())
-		_callbacks.erase(animPath);
+		_callbacks.erase(animFile);
 }
 
 //static bool deserialize(TiXmlElement *param_1, Walk *param_2);
@@ -530,18 +538,18 @@ bool Character::onModelAnimationFinished() {
 		// TODO: check if this logic matches..
 		for (const auto &walkSettings : _characterSettings._walkSettings) {
 			isWalkAnim |= (walkSettings._key.contains("Walk") || walkSettings._key.contains("Jog"));
-			isWalkAnim |= (walkSettings._value._walkParts[0]._file == animfile ||
-					walkSettings._value._walkParts[1]._file == animfile ||
-					walkSettings._value._walkParts[2]._file == animfile ||
-					walkSettings._value._walkParts[3]._file == animfile);
+			isWalkAnim |= (walkSettings._value._walkParts[0]._file == animfile
+						|| walkSettings._value._walkParts[1]._file == animfile
+						|| walkSettings._value._walkParts[2]._file == animfile
+						|| walkSettings._value._walkParts[3]._file == animfile);
 		}
 		isWalkAnim |= animfile.contains(_characterSettings._idleAnimFileName);
 	} else {
-		isWalkAnim = (animfile.contains(_characterSettings._idleAnimFileName) ||
-				  animfile.contains(walkAnim(WalkPart_Start)) ||
-				  animfile.contains(walkAnim(WalkPart_Loop)) ||
-				  animfile.contains(walkAnim(WalkPart_EndD)) ||
-				  animfile.contains(walkAnim(WalkPart_EndG)));
+		isWalkAnim = (_characterSettings._idleAnimFileName.contains(animfile)
+					|| walkAnim(WalkPart_Start).contains(animfile)
+					|| walkAnim(WalkPart_Loop).contains(animfile)
+					|| walkAnim(WalkPart_EndD).contains(animfile)
+					|| walkAnim(WalkPart_EndG).contains(animfile));
 	}
 
 	if (!isWalkAnim && shouldAdjust) {
@@ -587,12 +595,15 @@ bool Character::onModelAnimationFinished() {
 
 void Character::permanentUpdate() {
 	assert(_model->anim());
-	const Common::String animPath = _model->anim()->_loadedPath.toString();
+	const Common::Path animPath = _model->anim()->_loadedPath;
 	int curFrame = _model->anim()->curFrame2();
 	Game *game = g_engine->getGame();
 	_callbacksChanged = false;
-	if (_callbacks.contains(animPath)) {
-		Common::Array<Callback *> &cbs = _callbacks.getVal(animPath);
+	// Diverge from original - just use filename for anim callbacks as the
+	// original does werid things with paths.
+	const Common::String animFile = animPath.getLastComponent().toString();
+	if (_callbacks.contains(animFile)) {
+		Common::Array<Callback *> &cbs = _callbacks.getVal(animFile);
 		for (Callback *cb : cbs) {
 			if (cb->_triggerFrame > cb->_lastCheckFrame && curFrame >= cb->_triggerFrame){
 				int callsMade = cb->_callsMade;
@@ -608,13 +619,13 @@ void Character::permanentUpdate() {
 		}
 	}
 
-	if (animPath.contains("ka_esc_h")) {
+	if (animFile.contains("ka_esc_h")) {
 		if (_lastAnimFrame < 7 && _model->anim()->curFrame2() > 6) {
 			game->playSound("sounds/SFX/PAS_F_PAVE1.ogg", 1, 1.0f);
 		} else if (_lastAnimFrame < 22 && _model->anim()->curFrame2() > 21) {
 			game->playSound("sounds/SFX/PAS_F_PAVE2.ogg", 1, 1.0f);
 		}
-	} else if (animPath.contains("ka_esc_b")) {
+	} else if (animFile.contains("ka_esc_b")) {
 		if (_lastAnimFrame < 12 && _model->anim()->curFrame2() > 11) {
 			game->playSound("sounds/SFX/PAS_F_PAVE1.ogg", 1, 1.0f);
 		} else if (_lastAnimFrame < 27 && _model->anim()->curFrame2() > 26) {
@@ -836,7 +847,7 @@ void Character::update(double msFromStart) {
 	if (crossprod.y() >= 0.0f) {
 		angle = -angle;
 	}
-
+	//debug("update: curve offset %f - angle %f (base %f)", offset, angle, baseAngle);
 	TeQuaternion rot = TeQuaternion::fromAxisAndAngle(TeVector3f32(0.0, 1.0, 0.0), baseAngle + angle);
 	_model->setRotation(rot);
 
@@ -973,8 +984,9 @@ void Character::walkTo(float curveEnd, bool walkFlag) {
 				play();
 				return; // NOTE: early return here.
 			} else {
+				// NPC walk
 				double intpart;
-				double remainder = modf(walkEndLen, &intpart);
+				double remainder = modf(nloops, &intpart);
 				if (remainder >= 0.5) {
 					_walkEndAnimG = true;
 					intpart += 0.75;

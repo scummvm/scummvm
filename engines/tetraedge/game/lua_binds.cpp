@@ -766,11 +766,11 @@ static int tolua_ExportedFunctions_SetCharacterOrientation00(lua_State *L) {
 	error("#ferror in function 'SetCharacterOrientation': %d %d %s", err.index, err.array, err.type);
 }
 
-static void SetCharacterAnimation(const Common::String &charname, const Common::String &animname, bool repeat, bool b2, int startframe, int endframe) {
+static void SetCharacterAnimation(const Common::String &charname, const Common::String &animname, bool repeat, bool returnToIdle, int startframe, int endframe) {
 	Game *game = g_engine->getGame();
 	Character *c = game->scene().character(charname);
 	assert(c);
-	bool result = c->setAnimation(animname, repeat, b2, false, startframe, endframe);
+	bool result = c->setAnimation(animname, repeat, returnToIdle, false, startframe, endframe);
 	if (!result) {
 		warning("[SetCharacterAnimation] Character's animation \"%s\" doesn't exist for the character\"%s\"  ",
 			animname.c_str(), charname.c_str());
@@ -825,10 +825,10 @@ static int tolua_ExportedFunctions_SetCharacterAnimationAndWaitForEnd00(lua_Stat
 	error("#ferror in function 'SetCharacterAnimationAndWaitForEnd': %d %d %s", err.index, err.array, err.type);
 }
 
-static void BlendCharacterAnimation(const Common::String &charname, const Common::String &animname, float blendAmount, bool repeat, bool b2) {
+static void BlendCharacterAnimation(const Common::String &charname, const Common::String &animname, float blendAmount, bool repeat, bool returnToIdle) {
 	Game *game = g_engine->getGame();
 	Character *c = game->scene().character(charname);
-	bool result = c->blendAnimation(animname, blendAmount, repeat, b2);
+	bool result = c->blendAnimation(animname, blendAmount, repeat, returnToIdle);
 	if (!result) {
 		warning("[BlendCharacterAnimation] Character's animation \"%s\" doesn't exist for the character\"%s\"  ",
 			animname.c_str(), charname.c_str());
@@ -1902,9 +1902,9 @@ static int tolua_ExportedFunctions_UnloadCharacter00(lua_State *L) {
 	error("#ferror in function 'UnloadCharacter': %d %d %s", err.index, err.array, err.type);
 }
 
-static void MoveCharacterTo(const Common::String &charName, const Common::String &curveName, float f1,float f2) {
+static void MoveCharacterTo(const Common::String &charName, const Common::String &curveName, float curveStart, float curveEnd) {
 	Game *game = g_engine->getGame();
-	game->scene().moveCharacterTo(charName, curveName, f1, f2);
+	game->scene().moveCharacterTo(charName, curveName, curveStart, curveEnd);
 }
 
 static int tolua_ExportedFunctions_MoveCharacterTo00(lua_State *L) {

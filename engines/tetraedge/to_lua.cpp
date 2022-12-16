@@ -32,7 +32,7 @@ static char toluaname[128] = "tolua.";
 
 static void tolua_push_globals_table(lua_State *L) {
 	/*
-	lua_pushvalue(L, LUA_REGISTRYINDEX);
+	lua_pushvalue(L, LUA_GLOBALSINDEX);
 	lua_pushnumber(L, 2.0);
 	lua_rawget(L, -2);
 	lua_remove(L, -2);

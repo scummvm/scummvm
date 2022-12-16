@@ -23,6 +23,7 @@
 #define TETRAEDGE_GAME_GAME_H
 
 #include "common/types.h"
+#include "common/serializer.h"
 #include "common/str.h"
 #include "common/random.h"
 
@@ -117,7 +118,7 @@ public:
 	bool launchDialog(const Common::String &param_1, uint param_2, const Common::String &param_3,
 					  const Common::String &param_4, float param_5);
 	void leave(bool flag);
-	bool loadBackup(const Common::String &path);
+	void loadBackup(const Common::String &path);
 	bool loadCharacter(const Common::String &name);
 	bool loadPlayerCharacter(const Common::String &name);
 	bool loadScene(const Common::String &name);
@@ -157,6 +158,7 @@ public:
 	bool startAnimation(const Common::String &animName, int loopcount, bool reversed);
 	void startAnimationPart(const Common::String &param_1, int param_2, int param_3, int param_4, bool param_5) {};
 	void stopSound(const Common::String &name);
+	Common::Error syncGame(Common::Serializer &s); // Basically replaces saveBackup from original..
 	bool unloadCharacter(const Common::String &character);
 	bool unloadCharacters();
 	bool unloadPlayerCharacter(const Common::String &character);
@@ -195,6 +197,7 @@ public:
 	TeTimer &walkTimer() { return _walkTimer; }
 	void setExitZone(const Common::String &zone) { _exitZone = zone; }
 	Common::RandomSource &randomSource() { return _randomSource; }
+	void setLoadName(const Common::String &loadName) { _loadName = loadName; }
 
 private:
 	bool _luaShowOwnerError;

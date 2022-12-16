@@ -68,7 +68,7 @@ bool SplashScreens::onAlarm() {
 		load(scriptName);
 
 		TeButtonLayout *btnLayout = buttonLayout("splash");
-		btnLayout->onMouseClickValidated().add<SplashScreens>(this, &SplashScreens::onQuitSplash);
+		btnLayout->onMouseClickValidated().add(this, &SplashScreens::onQuitSplash);
 
 		TeLayout *splash = layout("splash");
 		app->_frontLayout.addChild(splash);

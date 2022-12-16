@@ -114,5 +114,92 @@ void TeLuaContext::setInRegistry(const Common::String &name, TeLuaGUI *gui) {
 	lua_settable(_luaState, LUA_REGISTRYINDEX);
 }
 
+// Types for save file.  Aligned with the Lua types at type of
+// writing, but don't save them just in case they could change.
+enum TeLuaSaveVarType {
+	None = 0,
+	Boolean = 1,
+	Number = 3,
+	String = 4
+};
+
+Common::Error TeLuaContext::syncState(Common::Serializer &s) {
+	// Save/Load globals.  The format of saving is:
+	// [type][name][val] [type][name][val]...
+	// The type of "None" (0) is the end of the list (and has no name/val).
+	if (s.isSaving()) {
+		lua_pushvalue(_luaState, LUA_GLOBALSINDEX);
+		lua_pushnil(_luaState);
+		int nextresult = lua_next(_luaState, -2);
+		while (true) {
+			if (nextresult == 0) {
+				TeLuaSaveVarType stype = None;
+				s.syncAsUint32LE(stype);
+				lua_settop(_luaState, -2);
+				break;
+			}
+			unsigned int vtype = lua_type(_luaState, -1);
+			if (vtype == LUA_TBOOLEAN) {
+				TeLuaSaveVarType stype = Boolean;
+				Common::String name = lua_tolstring(_luaState, -2, nullptr);
+				s.syncAsUint32LE(stype);
+				s.syncString(name);
+				bool val = lua_toboolean(_luaState, -1);
+				s.syncAsByte(val);
+			} else if (vtype == LUA_TNUMBER) {
+				TeLuaSaveVarType stype = Number;
+				Common::String name = lua_tolstring(_luaState, -2, nullptr);
+				s.syncAsUint32LE(stype);
+				s.syncString(name);
+				double val = lua_tonumber(_luaState, -1);
+				s.syncAsDoubleLE(val);
+			} else if (vtype == LUA_TSTRING) {
+				TeLuaSaveVarType stype = String;
+				Common::String name = lua_tolstring(_luaState, -2, nullptr);
+				s.syncAsUint32LE(stype);
+				s.syncString(name);
+				Common::String val = lua_tostring(_luaState, -1);
+				s.syncString(val);
+			}
+			lua_settop(_luaState, -2);
+			nextresult = lua_next(_luaState, -2);
+		}
+	} else {
+		warning("Confirm loading in TeLuaContext::syncState");
+		// loading
+		TeLuaSaveVarType vtype = None;
+		s.syncAsUint32LE(vtype);
+		while (vtype != None) {
+			switch (vtype) {
+				case Boolean: {
+					byte b;
+					s.syncAsByte(b);
+					lua_pushboolean(_luaState, b);
+					break;
+				}
+				case Number: {
+					float d;
+					s.syncAsDoubleLE(d);
+					lua_pushnumber(_luaState, d);
+					break;
+				}
+				case String: {
+					Common::String str;
+					s.syncString(str);
+					lua_pushstring(_luaState, str.c_str());
+					break;
+				}
+				default:
+					error("Unexpected lua type on load %d", (int)vtype);
+			}
+			Common::String name;
+			s.syncString(name);
+			lua_setglobal(_luaState, name.c_str());
+			s.syncAsUint32LE(vtype);
+		}
+	}
+
+	return Common::kNoError;
+}
 
 } // end namespace Tetraedge

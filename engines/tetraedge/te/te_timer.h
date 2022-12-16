@@ -23,6 +23,7 @@
 #define TETRAEDGE_TE_TE_TIMER_H
 
 #include "common/array.h"
+
 #include "tetraedge/te/te_signal.h"
 #include "tetraedge/te/te_real_timer.h"
 

@@ -151,27 +151,17 @@ const TeVector2s32 &TeTextLayout::textSize() const {
 	return _base.size();
 }
 
-static int _roundVal(int i) {
-	// this is a weird/broken rounding but seems to match
-	// the original?
-	i = ((i & 1) | (i >> 1));
-	return i + i;
-}
-
 void TeTextLayout::updateSize() {
 	if (!_sizeChanged)
 		return;
 
 	TeLayout::updateSize();
 
-	TeMatrix4x4 transform = transformationMatrix();
-	static const TeVector3f32 zeroVec(0, 0, 0);
-	static const TeVector3f32 xUnitVec(1, 0, 0);
-	static const TeVector3f32 yUnitVec(0, 1, 0);
+	TeMatrix4x4 transform = worldTransformationMatrix();
 
-	const TeVector3f32 v1 = transform * zeroVec;
-	const TeVector3f32 v2 = transform * xUnitVec;
-	const TeVector3f32 v3 = transform * yUnitVec;
+	const TeVector3f32 v1 = transform * TeVector3f32(0, 0, 0);
+	const TeVector3f32 v2 = transform * TeVector3f32(1, 0, 0);
+	const TeVector3f32 v3 = transform * TeVector3f32(0, 1, 0);
 
 	const TeVector3f32 newSize((v2 - v1).length(), (v3 - v1).length(), 1.0);
 	const TeVector3f32 thisSize = size();
@@ -181,25 +171,12 @@ void TeTextLayout::updateSize() {
 
 	float newFontSize = 0;
 	if (_textSizeType == 0 || (_textSizeType == 1 && _textSizeProportionalToWidth == 0)) {
-		if (_baseFontSize < 0)
-			newFontSize = _roundVal(_baseFontSize);
-		else
-			newFontSize = _baseFontSize;
-	} else if (_textSizeType == 1) {
 		newFontSize = _baseFontSize;
-		float sizeProportionalToWidth = _textSizeProportionalToWidth;
-		if (_textSizeProportionalToWidth < 0)
-			sizeProportionalToWidth = _roundVal(_textSizeProportionalToWidth);
-		else
-			sizeProportionalToWidth = _textSizeProportionalToWidth;
-		if (_baseFontSize < 0)
-			newFontSize = _roundVal(_baseFontSize);
-		else
-			newFontSize = _baseFontSize;
-		newFontSize = (thisSize.x() / sizeProportionalToWidth) * newFontSize;
+	} else if (_textSizeType == 1) {
+		newFontSize = (thisSize.x() / _textSizeProportionalToWidth) * _baseFontSize;
 	}
 
-	//newFontSize *= thisSize.y();
+	newFontSize *= newSize.y();
 
 	_base.setFontSize(newFontSize);
 	_base.build();

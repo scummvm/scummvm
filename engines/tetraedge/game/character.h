@@ -151,7 +151,7 @@ public:
 	TeSignal1Param<const Common::String &> _onCharacterAnimFinishedSignal;
 
 	const CharacterSettings &characterSettings() const { return _characterSettings; }
-	const Common::String &walkModeStr() const { return _walkModeStr; }
+	Common::String &walkModeStr() { return _walkModeStr; } // writable for loading games.
 	const Common::String &curAnimName() const { return _curAnimName; }
 	TeFreeMoveZone *freeMoveZone() { return _freeMoveZone; }
 	const Common::String &freeMoveZoneName() const { return _freeMoveZoneName; }

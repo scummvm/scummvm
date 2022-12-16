@@ -31,6 +31,8 @@ public:
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
+
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.
 	 *

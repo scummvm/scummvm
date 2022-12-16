@@ -28,7 +28,7 @@
 namespace Tetraedge {
 
 TeBezierCurve::TeBezierCurve() : _length(0.0), _rawLength(0.0), _lengthNeedsUpdate(true),
-_rawLengthNeedsUpdate(true), _numiterations(1000) {
+_rawLengthNeedsUpdate(true), _numIterations(1000) {
 }
 
 //long TeBezierCurve::bounds(int start);
@@ -81,8 +81,8 @@ float TeBezierCurve::length() {
 
 		TeVector3f32 lastpt = _controlPoints[0];
 		lastpt.y() = 0;
-		for (unsigned int i = 0; i < _numiterations; i++) {
-			float amount = (float)i / _numiterations;
+		for (unsigned int i = 0; i < _numIterations; i++) {
+			float amount = (float)i / _numIterations;
 			TeVector3f32 pt = retrievePoint(amount);
 			pt.y() = 0;
 			float len = (lastpt - pt).length();
@@ -95,10 +95,10 @@ float TeBezierCurve::length() {
 }
 
 void TeBezierCurve::pseudoTangent(float offset, TeVector3f32 &v1, TeVector3f32 &v2) {
-	const float step = 1.0f / _numiterations;
+	const float step = 1.0f / _numIterations;
 	if (step + offset <= 1.0f) {
 		v1 = retrievePoint(offset);
-		v2 = retrievePoint(step + offset);
+		v2 = retrievePoint(offset + step);
 	} else {
 		v1 = retrievePoint(offset - step);
 		v2 = retrievePoint(offset);
@@ -182,7 +182,7 @@ void TeBezierCurve::setControlPoints(const Common::Array<TeVector3f32> &points) 
 void TeBezierCurve::setNbIterations(unsigned long iterations) {
 	_lengthNeedsUpdate = true;
 	_rawLengthNeedsUpdate = true;
-	_numiterations = iterations;
+	_numIterations = iterations;
 }
 
 /*static*/

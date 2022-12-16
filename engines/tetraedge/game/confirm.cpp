@@ -43,11 +43,11 @@ void Confirm::enter(const Common::String &guiPath, const Common::String &y) {
 
 	TeButtonLayout *yesButtonLayout = _gui.buttonLayout("yes");
 	if (yesButtonLayout)
-		yesButtonLayout->onMouseClickValidated().add<Confirm>(this, &Confirm::onButtonYes);
+		yesButtonLayout->onMouseClickValidated().add(this, &Confirm::onButtonYes);
 
 	TeButtonLayout *noButtonLayout = _gui.buttonLayout("no");
 	if (noButtonLayout)
-		noButtonLayout->onMouseClickValidated().add<Confirm>(this, &Confirm::onButtonNo);
+		noButtonLayout->onMouseClickValidated().add(this, &Confirm::onButtonNo);
 
 	TeLayout *textLayout = _gui.layout("text");
 	if (textLayout) {

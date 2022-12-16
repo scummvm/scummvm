@@ -79,6 +79,8 @@ public:
 
 	bool updateLayout();
 
+	Common::Error syncState(Common::Serializer &s);
+
 	Cellphone *cellphone() { return _cellphone; }
 
 private:

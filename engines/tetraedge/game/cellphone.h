@@ -61,6 +61,8 @@ public:
 
 	void unload();
 
+	Common::Error syncState(Common::Serializer &s);
+
 	TeLuaGUI &gui() { return _gui; }
 
 private:

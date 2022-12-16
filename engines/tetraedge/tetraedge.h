@@ -92,9 +92,9 @@ public:
 	bool canLoadGameStateCurrently() override {
 		return true;
 	}
-	bool canSaveGameStateCurrently() override {
-		return true;
-	}
+
+	bool canSaveGameStateCurrently() override;
+	bool canSaveAutosaveCurrently() override;
 
 	/**
 	 * Uses a serializer to allow implementing savegame
@@ -106,11 +106,9 @@ public:
 		Common::Serializer s(nullptr, stream);
 		return syncGame(s);
 	}
-	Common::Error loadGameStream(Common::SeekableReadStream *stream) override {
-		Common::Serializer s(stream, nullptr);
-		return syncGame(s);
-	}
 
+	Common::Error loadGameState(int slot) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	int getDefaultScreenWidth() const;
 	int getDefaultScreenHeight() const;
 

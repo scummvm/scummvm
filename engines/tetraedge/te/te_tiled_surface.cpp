@@ -34,7 +34,7 @@ static void getRangeIntersection(float start1,float end1,float start2,float end2
 
 TeTiledSurface::TeTiledSurface() : _shouldDraw(true), _codec(nullptr), _colorKeyActive(false), _colorKeyTolerence(0),
 _bottomCrop(0), _topCrop(0), _leftCrop(0), _rightCrop(0), _imgFormat(TeImage::INVALID) {
-	_frameAnim.frameChangedSignal().add<TeTiledSurface>(this, &TeTiledSurface::onFrameAnimCurrentFrameChanged);
+	_frameAnim.frameChangedSignal().add(this, &TeTiledSurface::onFrameAnimCurrentFrameChanged);
 }
 
 void TeTiledSurface::cont() {
