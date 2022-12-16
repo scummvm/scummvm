@@ -31,7 +31,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-U8PixelFormat *RenderSurface::_format = nullptr;
+Graphics::PixelFormat *RenderSurface::_format = nullptr;
 
 uint8 RenderSurface::_gamma10toGamma22[256];
 uint8 RenderSurface::_gamma22toGamma10[256];
@@ -55,51 +55,9 @@ RenderSurface::RenderSurface(Graphics::ManagedSurface *s) : _pixels(nullptr), _p
 		RenderSurface::_format->gShift = _surface->format.gShift;
 		RenderSurface::_format->bShift = _surface->format.bShift;
 		RenderSurface::_format->aShift = _surface->format.aShift;
-		RenderSurface::_format->rMask = _surface->format.rMax() << _surface->format.rShift;
-		RenderSurface::_format->gMask = _surface->format.gMax() << _surface->format.gShift;
-		RenderSurface::_format->bMask = _surface->format.bMax() << _surface->format.bShift;
-		RenderSurface::_format->aMask = _surface->format.aMax() << _surface->format.aShift;
 	}
 
 	SetPixelsPointer();
-
-	// Trickery to get the alpha channel
-	if (_format->aMask == 0 && _surface->format.bytesPerPixel == 4) {
-		uint32 mask = ~(_format->rMask | _format->gMask | _format->bMask);
-
-		// Using all bits????
-		if (!mask)
-			return;
-
-		// Check the mask to make sure that it's 'sane'
-		int i;
-		int last = 0;
-		int first = 0;
-		int zero = 32;
-
-		for (i = 0; i < 32; i++) {
-			if ((1 << i) & mask) {
-				last = first = i;
-				break;
-			}
-		}
-
-		for (; i < 32; i++) {
-			if ((1 << i) & mask)
-				last = i;
-			else if (i < zero)
-				zero = i;
-		}
-
-		// something screwy going on
-		if (zero < last)
-			return;
-
-		// Set it
-		_format->aShift = first;
-		_format->aLoss = 8 - (last + 1 - first);
-		_format->aMask = mask;
-	}
 }
 
 //

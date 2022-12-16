@@ -38,15 +38,6 @@ struct Palette;
 struct Rect;
 class Scaler;
 
-struct U8PixelFormat : Graphics::PixelFormat {
-	// Extend with some extra attributes
-	uint32  rMask, gMask, bMask, aMask;
-
-	inline U8PixelFormat() : Graphics::PixelFormat(),
-		rMask(0), gMask(0), bMask(0), aMask(0) {
-	}
-};
-
 //
 // RenderSurface
 //
@@ -79,7 +70,7 @@ protected:
 	void SetPixelsPointer();
 
 public:
-	static U8PixelFormat *_format;
+	static Graphics::PixelFormat *_format;
 
 	static uint8 _gamma10toGamma22[256];
 	static uint8 _gamma22toGamma10[256];

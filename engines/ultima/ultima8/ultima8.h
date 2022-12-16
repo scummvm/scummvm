@@ -375,7 +375,7 @@ public:
 		return _interpolate;
 	}
 public:
-	U8PixelFormat _renderFormat;
+	Graphics::PixelFormat _renderFormat;
 };
 
 } // End of namespace Ultima8
