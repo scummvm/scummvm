@@ -36,19 +36,17 @@ U8PixelFormat *RenderSurface::_format = nullptr;
 uint8 RenderSurface::_gamma10toGamma22[256];
 uint8 RenderSurface::_gamma22toGamma10[256];
 
-RenderSurface::RenderSurface(Graphics::ManagedSurface *s) : _pixels(nullptr), _pixels00(nullptr), _bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
-																			_ox(0), _oy(0), _width(0), _height(0), _pitch(0),
-																			_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0),
-																			_surface(s) {
+RenderSurface::RenderSurface(Graphics::ManagedSurface *s) : _pixels(nullptr), _pixels00(nullptr),
+															_ox(0), _oy(0), _width(0), _height(0), _pitch(0),
+															_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0),
+															_surface(s) {
 	_clipWindow.setWidth(_width = _surface->w);
 	_clipWindow.setHeight(_height = _surface->h);
 	_pitch = _surface->pitch;
-	_bitsPerPixel = _surface->format.bpp();
-	_bytesPerPixel = _surface->format.bytesPerPixel;
 
 	// TODO: Slight hack - set the global surface format only once.
 	if (!RenderSurface::_format->bytesPerPixel) {
-		RenderSurface::_format->bytesPerPixel = _bytesPerPixel;
+		RenderSurface::_format->bytesPerPixel = _surface->format.bytesPerPixel;
 		RenderSurface::_format->rLoss = _surface->format.rLoss;
 		RenderSurface::_format->gLoss = _surface->format.gLoss;
 		RenderSurface::_format->bLoss = _surface->format.bLoss;
@@ -70,7 +68,7 @@ RenderSurface::RenderSurface(Graphics::ManagedSurface *s) : _pixels(nullptr), _p
 	SetPixelsPointer();
 
 	// Trickery to get the alpha channel
-	if (_format->aMask == 0 && _bytesPerPixel == 4) {
+	if (_format->aMask == 0 && _surface->format.bytesPerPixel == 4) {
 		uint32 mask = ~(_format->rMask | _format->gMask | _format->bMask);
 
 		// Using all bits????
@@ -115,6 +113,17 @@ RenderSurface::RenderSurface(Graphics::ManagedSurface *s) : _pixels(nullptr), _p
 // Desc: Destructor
 //
 RenderSurface::~RenderSurface() {
+}
+
+void RenderSurface::SetPixelsPointer()
+{
+	uint8 *pix00 = _pixels00;
+
+	if (_flipped) {
+		pix00 += -_pitch * (_height - 1);
+	}
+
+	_pixels = pix00 + _ox * _surface->format.bytesPerPixel + _oy * _pitch;
 }
 
 //

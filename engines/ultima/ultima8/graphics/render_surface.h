@@ -60,18 +60,13 @@ struct U8PixelFormat : Graphics::PixelFormat {
 //
 // RenderSurface
 //
-// Desc: The base abstact class for rendering in Pentagram
+// Desc: The base class for rendering in Pentagram
 //
 class RenderSurface {
 protected:
 	// Frame buffer
 	uint8 *_pixels;   // Pointer to logical pixel 0,0
 	uint8 *_pixels00; // Pointer to physical pixel 0,0
-
-	// Pixel Format (also see 'Colour shifting values' later)
-	int _bytesPerPixel; // 2 or 4
-	int _bitsPerPixel;  // 16 or 32
-	int _formatType;    // 16, 555, 565, 32 or 888
 
 	// Dimensions
 	int32 _ox, _oy;        // Physical Pixel for Logical Origin
@@ -91,15 +86,7 @@ protected:
 	RenderSurface(Graphics::ManagedSurface *);
 
 	// Update the Pixels Pointer
-	void SetPixelsPointer() {
-		uint8 *pix00 = _pixels00;
-
-		if (_flipped) {
-			pix00 += -_pitch * (_height - 1);
-		}
-
-		_pixels = pix00 + _ox * _bytesPerPixel + _oy * _pitch;
-	}
+	void SetPixelsPointer();
 
 public:
 	static U8PixelFormat *_format;
