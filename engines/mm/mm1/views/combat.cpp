@@ -58,7 +58,7 @@ void Combat::disableAttacks() {
 }
 
 bool Combat::msgFocus(const FocusMessage &msg) {
-	g_globals->_currCharacter = _party[_currentChar];
+	g_globals->_currCharacter = g_globals->_combatParty[_currentChar];
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_COMBAT);
 
 	return true;
@@ -273,13 +273,13 @@ bool Combat::msgAction(const ActionMessage &msg) {
 	case KEYBIND_VIEW_PARTY5:
 	case KEYBIND_VIEW_PARTY6: {
 		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
-		if (charNum < _party.size()) {
+		if (charNum < g_globals->_combatParty.size()) {
 			if (_option == OPTION_EXCHANGE) {
-				if (_party[charNum] != g_globals->_currCharacter)
+				if (g_globals->_combatParty[charNum] != g_globals->_currCharacter)
 					exchangeWith(charNum);
 			} else {
-				g_globals->_currCharacter = _party[charNum];
-				CharacterViewCombat::show(_party);
+				g_globals->_currCharacter = g_globals->_combatParty[charNum];
+				addView("CharacterViewCombat");
 			}
 			return true;
 		}
@@ -366,7 +366,7 @@ void Combat::writeAllOptions() {
 	writeChar(3 + 4 * (_currentChar % 2), 3 + (_currentChar / 2),
 		(unsigned char)'1' + _currentChar + 0x80);
 
-	bool canAttack = _party[_currentChar]->_canAttack;
+	bool canAttack = g_globals->_combatParty[_currentChar]->_canAttack;
 	if (canAttack) {
 		writeAttackOptions();
 		_allowAttack = true;
@@ -402,7 +402,7 @@ void Combat::writeExchangeSelect() {
 	resetBottom();
 	writeString(7, 20, Common::String::format(
 		STRING["dialogs.combat.exchange_places"].c_str(),
-		'0' + _party.size()));
+		'0' + g_globals->_combatParty.size()));
 	escToGoBack(12, 23);
 }
 
@@ -479,9 +479,9 @@ void Combat::writeRound() {
 }
 
 void Combat::writePartyNumbers() {
-	for (uint i = 0; i < _party.size(); ++i) {
+	for (uint i = 0; i < g_globals->_combatParty.size(); ++i) {
 		writeChar(2 + 4 * (i % 2), 3 + (i / 2),
-			_party[i]->_canAttack ? '+' : ' ');
+			g_globals->_combatParty[i]->_canAttack ? '+' : ' ');
 		writeChar('1' + i);
 	}
 }
@@ -546,10 +546,10 @@ void Combat::writeDots() {
 void Combat::writeParty() {
 	clearPartyArea();
 
-	for (uint i = 0; i < _party.size(); ++i) {
+	for (uint i = 0; i < g_globals->_combatParty.size(); ++i) {
 		writeChar(1 + 21 * (i % 2), 16 + (i / 2), '1' + i);
 		writeString(") ");
-		writeString(_party[i]->_name);
+		writeString(g_globals->_combatParty[i]->_name);
 	}
 }
 
@@ -714,7 +714,7 @@ void Combat::delay() {
 }
 
 void Combat::exchange() {
-	if (_party.size() > 1)
+	if (g_globals->_combatParty.size() > 1)
 		setOption(OPTION_EXCHANGE);
 }
 

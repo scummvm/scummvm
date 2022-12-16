@@ -37,7 +37,6 @@ class Combat : public MonsterTouch {
 protected:
 	Common::Array<Line> _message;
 	int _monstersCount = 0;
-	Common::Array<Character *> _party;
 	Monster *_monsterP;
 	bool _treasureFlags[MAX_PARTY_SIZE];
 	int _val1;

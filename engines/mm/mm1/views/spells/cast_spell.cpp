@@ -172,8 +172,11 @@ bool CastSpell::msgAction(const ActionMessage &msg) {
 		msg._action >= KEYBIND_VIEW_PARTY1 &&
 		msg._action <= KEYBIND_VIEW_PARTY6) {
 		uint charIndex = (int)(msg._action - KEYBIND_VIEW_PARTY1);
-		if (charIndex < g_globals->_party.size())
-			performSpell(&g_globals->_party[charIndex]);
+		if (charIndex < g_globals->_party.size()) {
+			Character *c = isInCombat() ? g_globals->_combatParty[charIndex] :
+				&g_globals->_party[charIndex];
+			performSpell(c);
+		}
 	}
 
 	return true;
