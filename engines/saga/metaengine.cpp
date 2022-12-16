@@ -261,7 +261,7 @@ const GameDisplayInfo &SagaEngine::getDisplayInfo() {
 				static GameDisplayInfo ITE_DisplayInfo_ECS;
 				if (!ITE_DisplayInfo_ECS.width) {
 					ITE_DisplayInfo_ECS = ITE_DisplayInfo;
-					ITE_DisplayInfo_ECS.statusTextColor = kITEECSColorGreen;
+					ITE_DisplayInfo_ECS.statusTextColor = kITEECSBottomColorGreen;
 					ITE_DisplayInfo_ECS.statusBGColor = kITEECSColorBlack;
 				}
 				return ITE_DisplayInfo_ECS;

@@ -259,12 +259,15 @@ void Render::maskSplitScreen() {
 		return;
 	uint8 *start = _vm->_gfx->getBackBufferPixels() + 137 * _vm->_gfx->getBackBufferWidth();
 	uint8 *end = _vm->_gfx->getBackBufferPixels() + _vm->_gfx->getBackBufferHeight() * _vm->_gfx->getBackBufferWidth();
-	if (_splitScreen)
+	if (_splitScreen) {
 		for (uint8 *ptr = start; ptr < end; ptr++)
-			*ptr |= 0x20;
-	else
+			if (!(*ptr & 0xc0))
+				*ptr |= 0x20;
+	} else {
 		for (uint8 *ptr = start; ptr < end; ptr++)
-			*ptr &= ~0x20;
+			if (!(*ptr & 0xc0))
+				*ptr &= ~0x20;
+	}
 }
 
 void Render::restoreChangedRects() {

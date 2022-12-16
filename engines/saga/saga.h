@@ -417,20 +417,32 @@ enum ColorId {
 	kITEDOSColorGreen = 0xba,
 
         // ECS palette
+
+	// Constant colors
 	kITEECSColorTransBlack = 0x00,
-	kITEECSColorBlack = 0x01,
-	kITEECSColorGreen = 0x05,
-	kITEECSColorBlue = 0x08,
-	kITEECSColorBlue89 = 0x08, // guess
-	kITEECSColorDarkBlue8a = 0x08, // guess
-	kITEECSColorLightBlue92 = 0x08, // guess
-	kITEECSColorLightBlue94 = 0x08, // guess
-	kITEECSColorLightBlue96 = 0x08, // guess
-	kITEECSColorDarkGrey = 0x09,
-	kITEECSColorDarkGrey0C = 0x09, // guess
-	kITEECSColorWhite = 0x0f,
-	kITEECSColorBrightWhite = 0x0f,
-	kITEECSColorGrey = 0x16,
+	kITEECSColorBrightWhite = 0x4f,
+	kITEECSColorWhite = kITEECSColorBrightWhite,
+	kITEECSColorBlack = 0x50,
+
+	// ECS palette after the palette switch
+	kITEECSBottomColorGreen = 0x25,
+	kITEECSBottomColorLightBlue96 = 0x28,
+	kITEECSBottomColorWhite = 0x2f,
+	kITEECSBottomColorBrightWhite = 0x2f,
+	kITEECSBottomColorDarkGrey = 0x32,
+	kITEECSBottomColorGrey = 0x36,
+	kITEECSBottomColorBlue = 0x3b,
+
+	// ECS palette for options
+	kITEECSOptionsColorLightBlue94 = 0x48,
+	kITEECSOptionsColorBlue = 0x48,
+	kITEECSOptionsColorDarkBlue8a = 0x48,
+	kITEECSOptionsColorLightBlue92 = 0x48,
+	kITEECSOptionsColorLightBlue96 = 0x48,
+	kITEECSOptionsColorDarkGrey0C = 0x49,
+	kITEECSOptionsColorBlack = kITEECSColorBlack,
+	kITEECSOptionsColorBrightWhite = kITEECSColorBrightWhite,
+	kITEECSOptionsColorDarkGrey = 0x52,
 };
 
 class SagaEngine : public Engine {
@@ -624,22 +636,36 @@ public:
 	void setTalkspeed(int talkspeed);
 	int getTalkspeed() const;
 
-#define ITE_COLOR_DISPATCHER(NAME) \
-	ColorId iteColor ## NAME() const { return isECS() ? kITEECSColor ## NAME : kITEDOSColor ## NAME; }
+#define ITE_COLOR_DISPATCHER_TYPE(NAME, TYPE)				\
+	ColorId iteColor ## TYPE ## NAME() const { return isECS() ? kITEECS ## TYPE ## Color ## NAME : kITEDOSColor ## NAME; }
+#define ITE_COLOR_DISPATCHER_BOTTOM(NAME) ITE_COLOR_DISPATCHER_TYPE(NAME, Bottom)
+#define ITE_COLOR_DISPATCHER_OPTIONS(NAME) ITE_COLOR_DISPATCHER_TYPE(NAME, Options)
+#define ITE_COLOR_DISPATCHER(NAME) ITE_COLOR_DISPATCHER_TYPE(NAME, )
+
 	ITE_COLOR_DISPATCHER(Black)
-	ITE_COLOR_DISPATCHER(DarkGrey)
-	ITE_COLOR_DISPATCHER(BrightWhite)
-	ITE_COLOR_DISPATCHER(Green)
-	ITE_COLOR_DISPATCHER(Blue)
-	ITE_COLOR_DISPATCHER(DarkBlue8a)
-	ITE_COLOR_DISPATCHER(LightBlue92)
-	ITE_COLOR_DISPATCHER(LightBlue94)
-	ITE_COLOR_DISPATCHER(LightBlue96)
-	ITE_COLOR_DISPATCHER(DarkGrey0C)
-	ITE_COLOR_DISPATCHER(Grey)
-	ITE_COLOR_DISPATCHER(White)
 	ITE_COLOR_DISPATCHER(TransBlack)
+	ITE_COLOR_DISPATCHER(BrightWhite)
+	ITE_COLOR_DISPATCHER(White)
+
+	ITE_COLOR_DISPATCHER_BOTTOM(DarkGrey)
+	ITE_COLOR_DISPATCHER_BOTTOM(Blue)
+	ITE_COLOR_DISPATCHER_BOTTOM(Grey)
+	ITE_COLOR_DISPATCHER_BOTTOM(White)
+	ITE_COLOR_DISPATCHER_BOTTOM(BrightWhite)
+	ITE_COLOR_DISPATCHER_BOTTOM(Green)
+
+	ITE_COLOR_DISPATCHER_OPTIONS(DarkGrey)
+	ITE_COLOR_DISPATCHER_OPTIONS(LightBlue92)
+	ITE_COLOR_DISPATCHER_OPTIONS(LightBlue94)
+	ITE_COLOR_DISPATCHER_OPTIONS(LightBlue96)
+	ITE_COLOR_DISPATCHER_OPTIONS(DarkBlue8a)
+	ITE_COLOR_DISPATCHER_OPTIONS(DarkGrey0C)
+	ITE_COLOR_DISPATCHER_OPTIONS(Blue)
+	ITE_COLOR_DISPATCHER_OPTIONS(BrightWhite)
 #undef ITE_COLOR_DISPATCHER
+#undef ITE_COLOR_DISPATCHER_BOTTOM
+#undef ITE_COLOR_DISPATCHER_OPTIONS
+#undef ITE_COLOR_DISPATCHER_TYPE
 };
 
 
