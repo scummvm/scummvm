@@ -331,10 +331,10 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
 		im->setPaletteFromImage(borderInfo->_image);
 
 		// update the color of "and" and "present"
-		(void)im->setPaletteIndex(15, im->setColor(226, 226, 255));
+		(void)im->setPaletteIndex(15, 226, 226, 255);
 
 		// update the color of "Origin Systems, Inc."
-		(void)im->setPaletteIndex(9, im->setColor(129, 129, 255));
+		(void)im->setPaletteIndex(9, 129, 129, 255);
 
 #ifdef TODO
 		borderInfo->_image->save("border.png");
