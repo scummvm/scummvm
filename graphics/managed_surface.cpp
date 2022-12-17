@@ -748,6 +748,18 @@ void ManagedSurface::clear(uint32 color) {
 		fillRect(getBounds(), color);
 }
 
+void ManagedSurface::grabPalette(byte *colors, uint start, uint num) const {
+	assert(start < 256 && (start + num) <= 256);
+	const uint32 *src = &_palette[start];
+
+	for (; num > 0; --num, colors += 3) {
+		uint32 p = *src++;
+		colors[0] =  p        & 0xff;
+		colors[1] = (p >> 8)  & 0xff;
+		colors[2] = (p >> 16) & 0xff;
+	}
+}
+
 void ManagedSurface::setPalette(const byte *colors, uint start, uint num) {
 	assert(start < 256 && (start + num) <= 256);
 	uint32 *dest = &_palette[start];
