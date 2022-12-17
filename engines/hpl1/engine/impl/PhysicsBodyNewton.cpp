@@ -376,34 +376,28 @@ bool cPhysicsBodyNewton::GetGravity() const {
 
 //-----------------------------------------------------------------------
 
-//static iLowLevelGraphics *gpLowLevelGraphics;
-static cColor gDebugColor;
+struct DrawParameters {
+	iLowLevelGraphics *lowLevelGraphics;
+	cColor drawColor;
+};
 
-////////////////////////////////////////////
-/*
-static void RenderDebugPolygon(const NewtonBody *apNewtonBody,
-							   int alVertexCount, const dFloat *apFaceVertex, int alId) {
-	int i;
-
-	i = alVertexCount - 1;
+///////////////////////////////////////////
+static void RenderDebugPolygon(void* params, int alVertexCount, const dFloat *apFaceVertex, int alId) {
+	int i = alVertexCount - 1;
+	const DrawParameters* drawParams = static_cast<DrawParameters*>(params);
 	cVector3f vP0(apFaceVertex[i * 3 + 0], apFaceVertex[i * 3 + 1], apFaceVertex[i * 3 + 2]);
 	for (i = 0; i < alVertexCount; ++i) {
 		cVector3f vP1(apFaceVertex[i * 3 + 0], apFaceVertex[i * 3 + 1], apFaceVertex[i * 3 + 2]);
-
-		gpLowLevelGraphics->DrawLine(vP0, vP1, gDebugColor);
-
+		drawParams->lowLevelGraphics->DrawLine(vP0, vP1, drawParams->drawColor);
 		vP0 = vP1;
 	}
 }
-*/
+
 ////////////////////////////////////////////
 
 void cPhysicsBodyNewton::RenderDebugGeometry(iLowLevelGraphics *apLowLevel, const cColor &aColor) {
-#if 0
-  		gpLowLevelGraphics = apLowLevel;
-		gDebugColor = aColor;
-		NewtonBodyForEachPolygonDo (mpNewtonBody, RenderDebugPolygon);
-#endif
+	DrawParameters params{apLowLevel, aColor};
+	NewtonCollisionForEachPolygonDo(NewtonBodyGetCollision(mpNewtonBody), GetLocalMatrix().GetTranspose().v, RenderDebugPolygon, static_cast<void*>(&params));
 }
 
 //-----------------------------------------------------------------------
