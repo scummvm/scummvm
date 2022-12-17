@@ -56,6 +56,7 @@ struct ActorTableData {
 #define ITE_ACTORCOUNT 181
 
 extern ActorTableData ITE_ActorTable[ITE_ACTORCOUNT];
+extern byte ITE_ActorECSSpeechColor[ITE_ACTORCOUNT];
 
 enum {
 	kObjUseWith = 0x01,
