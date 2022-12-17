@@ -363,7 +363,7 @@ void Gfx::palToBlack(PalEntry *srcPal, double percent) {
 
 	if (_vm->getGameId() == GID_ITE) {
 		from = 0;
-		numcolors = PAL_ENTRIES;
+		numcolors = _vm->getPalNumEntries();
 	} else {
 		from = 0;
 		numcolors = 248;
@@ -431,7 +431,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 
 	if (_vm->getGameId() == GID_ITE) {
 		from = 0;
-		numcolors = PAL_ENTRIES;
+		numcolors = _vm->getPalNumEntries();
 	} else {
 		from = 0;
 		numcolors = 248;
