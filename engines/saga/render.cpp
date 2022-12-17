@@ -46,6 +46,7 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 	_system = system;
 	_initialized = false;
 	_fullRefresh = true;
+	_splitScreen = false;
 	_dualSurface = (vm->getLanguage() == Common::JA_JPN);
 
 #ifdef SAGA_DEBUG
@@ -253,7 +254,24 @@ void Render::addDirtyRect(Common::Rect r) {
 	} else \
 		_system->copyRectToScreen(_vm->_gfx->getBackBufferPixels(), _vm->_gfx->getBackBufferWidth(), x, y, w, h)
 
+void Render::maskSplitScreen() {
+	if (!_vm->isECS())
+		return;
+	uint8 *start = _vm->_gfx->getBackBufferPixels() + 137 * _vm->_gfx->getBackBufferWidth();
+	uint8 *end = _vm->_gfx->getBackBufferPixels() + _vm->_gfx->getBackBufferHeight() * _vm->_gfx->getBackBufferWidth();
+	if (_splitScreen) {
+		for (uint8 *ptr = start; ptr < end; ptr++)
+			if (!(*ptr & 0xc0))
+				*ptr |= 0x20;
+	} else {
+		for (uint8 *ptr = start; ptr < end; ptr++)
+			if (!(*ptr & 0xc0))
+				*ptr &= ~0x20;
+	}
+}
+
 void Render::restoreChangedRects() {
+	maskSplitScreen();
 	if (!_fullRefresh) {
 		for (Common::List<Common::Rect>::const_iterator it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
 			//_backGroundSurface.frameRect(*it, 1);		// DEBUG
@@ -266,6 +284,7 @@ void Render::restoreChangedRects() {
 }
 
 void Render::drawDirtyRects() {
+	maskSplitScreen();
 	if (!_fullRefresh) {
 		for (Common::List<Common::Rect>::const_iterator it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
 			//_backGroundSurface.frameRect(*it, 2);		// DEBUG
