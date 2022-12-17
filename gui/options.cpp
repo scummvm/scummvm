@@ -3781,14 +3781,7 @@ bool OptionsDialog::testGraphicsSettings() {
 	Graphics::ManagedSurface *pm5544 = Graphics::renderPM5544(xres, yres);
 
 	byte palette[768];
-	const uint32 *p = pm5544->getPalette();
-
-	for (int i = 0; i < 256; i++) {
-		palette[i * 3 + 0] =  p[i]        & 0xff;
-		palette[i * 3 + 1] = (p[i] >> 8)  & 0xff;
-		palette[i * 3 + 2] = (p[i] >> 16) & 0xff;
-	}
-
+	pm5544->grabPalette(palette, 0, 256);
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
 	g_system->copyRectToScreen(pm5544->surfacePtr()->getPixels(), pm5544->surfacePtr()->pitch, 0, 0, xres, yres);
