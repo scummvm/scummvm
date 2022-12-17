@@ -22,26 +22,26 @@
 #include "dgStdafx.h"
 #include "dgTree.h"
 
-dgRedBackNode *dgRedBackNode::Minimum() const {
-	dgRedBackNode *ptr = (dgRedBackNode *) this;
+const dgRedBackNode *dgRedBackNode::Minimum() const {
+	const dgRedBackNode *ptr = this;
 	for (; ptr->m_left; ptr = ptr->m_left) {
 	}
 	return ptr;
 }
 
-dgRedBackNode *dgRedBackNode::Maximum() const {
-	dgRedBackNode *ptr = (dgRedBackNode *) this;
+const dgRedBackNode *dgRedBackNode::Maximum() const {
+	const dgRedBackNode *ptr = this;
 	for (; ptr->m_right; ptr = ptr->m_right) {
 	}
 	return ptr;
 }
 
-dgRedBackNode *dgRedBackNode::Prev() const {
+const dgRedBackNode *dgRedBackNode::Prev() const {
 	if (m_left) {
 		return m_left->Maximum();
 	}
 
-	dgRedBackNode *node = (dgRedBackNode *) this;
+	const dgRedBackNode *node = this;
 	dgRedBackNode *ptr = m_parent;
 	for (; ptr && node == ptr->m_left; ptr = ptr->m_parent) {
 		node = ptr;
@@ -50,13 +50,55 @@ dgRedBackNode *dgRedBackNode::Prev() const {
 
 }
 
-dgRedBackNode *dgRedBackNode::Next() const {
+const dgRedBackNode *dgRedBackNode::Next() const {
 
 	if (m_right) {
 		return m_right->Minimum();
 	}
 
-	dgRedBackNode *node = (dgRedBackNode *) this;
+	const dgRedBackNode *node = this;
+	dgRedBackNode *ptr = m_parent;
+	for (; ptr && node == ptr->m_right; ptr = ptr->m_parent) {
+		node = ptr;
+	}
+	return ptr;
+}
+
+dgRedBackNode *dgRedBackNode::Minimum() {
+	dgRedBackNode *ptr = this;
+	for (; ptr->m_left; ptr = ptr->m_left) {
+	}
+	return ptr;
+}
+
+dgRedBackNode *dgRedBackNode::Maximum() {
+	dgRedBackNode *ptr = this;
+	for (; ptr->m_right; ptr = ptr->m_right) {
+	}
+	return ptr;
+}
+
+dgRedBackNode *dgRedBackNode::Prev() {
+	if (m_left) {
+		return m_left->Maximum();
+	}
+
+	dgRedBackNode *node = this;
+	dgRedBackNode *ptr = m_parent;
+	for (; ptr && node == ptr->m_left; ptr = ptr->m_parent) {
+		node = ptr;
+	}
+	return ptr;
+
+}
+
+dgRedBackNode *dgRedBackNode::Next() {
+
+	if (m_right) {
+		return m_right->Minimum();
+	}
+
+	dgRedBackNode *node = this;
 	dgRedBackNode *ptr = m_parent;
 	for (; ptr && node == ptr->m_right; ptr = ptr->m_parent) {
 		node = ptr;

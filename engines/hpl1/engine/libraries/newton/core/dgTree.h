@@ -64,10 +64,14 @@ public:
 	inline void SetInTreeFlag(dgUnsigned32 flag);
 
 	void RemoveAll();
-	dgRedBackNode *Prev() const;
-	dgRedBackNode *Next() const;
-	dgRedBackNode *Minimum() const;
-	dgRedBackNode *Maximum() const;
+	const dgRedBackNode *Prev() const;
+	const dgRedBackNode *Next() const;
+	const dgRedBackNode *Minimum() const;
+	const dgRedBackNode *Maximum() const;
+	dgRedBackNode *Prev();
+	dgRedBackNode *Next();
+	dgRedBackNode *Minimum();
+	dgRedBackNode *Maximum();
 	void Remove(dgRedBackNode **const head);
 	void Unlink(dgRedBackNode **const head);
 	void InsertFixup(dgRedBackNode **const head);
