@@ -968,8 +968,6 @@ public:
 	}
 };
 
-cTempCheckProxy gTempCheckProxy;
-
 void cPlayer::Update(float afTimeStep) {
 	//cSystem *pSystem = mpInit->mpGame->GetSystem();
 	//unsigned int lTime = pSystem->GetLowLevel()->getTime();
