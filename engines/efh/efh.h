@@ -91,8 +91,8 @@ struct UnkMapStruct {
 	uint8 _posY;
 	uint8 _field3;
 	uint8 _field4;
-	uint16 _field5;
-	uint16 _field7;
+	uint16 _field5_textId;
+	uint16 _field7_textId;
 
 	void init();
 };
@@ -137,8 +137,8 @@ struct NPCStruct {
 	uint8 field_F;
 	uint8 field_10;
 	uint8 field_11;
-	uint16 field_12;
-	uint16 field_14;
+	uint16 field12_textId;
+	uint16 field14_textId;
 	uint32 _xp;
 	uint8 _activeScore[15];
 	uint8 _passiveScore[11];
@@ -210,7 +210,7 @@ struct MapMonster {
 	uint8 _field_6;
 	uint8 _monsterRef;
 	uint8 _field_8;
-	uint8 _field_9;
+	uint8 _field9_textId;
 	uint8 _groupSize;
 	int16 _pictureRef[9];
 };
@@ -318,7 +318,7 @@ private:
 	void displayMiddleLeftTempText(uint8 *impArray, bool flag);
 	void sub15A28(int16 arg0, int16 arg2);
 	void sub2455E(int16 arg0, int16 arg1, int16 arg2);
-	int16 sub1C219(Common::String str, int16 menuType, int16 arg4, bool displayTeamWindowFl);
+	int16 sub1C219(Common::String str, int16 menuType, int16 displayOption, bool displayTeamWindowFl);
 	int16 sub151FD(int16 posX, int16 posY);
 	bool isPosOutOfMap(int16 mapPosX, int16 mapPosY);
 	void goSouth();
@@ -352,7 +352,7 @@ private:
 	bool checkMonsterGroupDistance1OrLess(int16 monsterId);
 	bool sub21820(int16 monsterId, int16 arg2, int16 itemId);
 	void sub221D2(int16 monsterId);
-	void sub22AA8(int16 arg0);
+	void displayImp1Text(int16 textId);
 	bool sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId);
 	int8 sub15581(int16 mapPosX, int16 mapPosY, int16 arg4);
 	bool isTeamMemberStatusNormal(int16 id);

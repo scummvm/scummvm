@@ -174,8 +174,8 @@ void EfhEngine::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_npcBuf[i].field_F);
 		s.syncAsByte(_npcBuf[i].field_10);
 		s.syncAsByte(_npcBuf[i].field_11);
-		s.syncAsSint16LE(_npcBuf[i].field_12);
-		s.syncAsSint16LE(_npcBuf[i].field_14);
+		s.syncAsSint16LE(_npcBuf[i].field12_textId);
+		s.syncAsSint16LE(_npcBuf[i].field14_textId);
 		s.syncAsSint32LE(_npcBuf[i]._xp);
 		for (int idx = 0; idx < 15; ++idx)
 			s.syncAsByte(_npcBuf[i]._activeScore[idx]);
