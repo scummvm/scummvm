@@ -86,18 +86,6 @@ bool blitAmigaSprite(byte *outBuf, int outPitch, const byte *inputBuffer, size_t
 							(outPointer[y * outPitch + realX] & ~(1 << bitOut)) | (((val >> bitIn) & 1) << bitOut);
 					}
 				}
-				if (bitsPerEntry < 8) {
-					byte mask = (byte) ~(0xff << bitsPerEntry);
-					for (c = 0, y -= fg_runcount; c < fg_runcount; c++, y++) {
-						for (int z = 0; z < bitsPerEntry; z++) {
-							int realX = x + z;
-							if (realX >= width) {
-								continue;
-							}
-							outPointer[y * outPitch + realX] &= mask;
-						}
-					}
-				}
 				if (fg_runcount == 0 && bg_runcount == 0) {
 					warning("Sprite zero-sized run: coord=%d+%dx%d, size=%dx%d, pos=%d",
 						x, bitOut, y, width, height, (int)(ptr - inputBuffer));
