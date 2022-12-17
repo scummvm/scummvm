@@ -1086,7 +1086,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.type = kEvTOneshot;
 	event.code = kGraphicsEvent;
 	event.op = kEventFillRect;
-	event.param = 138;
+	event.param = kITEColorDarkBlue8a;
 	event.param2 = 0;
 	event.param3 = _vm->_scene->getHeight();
 	event.param4 = 0;

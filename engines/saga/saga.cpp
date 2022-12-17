@@ -736,7 +736,7 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 			colorId = kITEColorBlack;
 			break;
 		case (kKnownColorVerbTextActive):
-			colorId = (ColorId)96;
+			colorId = kITEColorYellow60;
 			break;
 
 		default:
