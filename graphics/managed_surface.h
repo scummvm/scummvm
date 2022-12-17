@@ -669,6 +669,18 @@ public:
 	}
 
 	/**
+	 * Return true if a palette has been set.
+	 */
+	bool hasPalette() const {
+		return _paletteSet;
+	}
+
+	/**
+	 * Grab the palette using RGB tuples.
+	 */
+	void grabPalette(byte *colors, uint start, uint num) const;
+
+	/**
 	 * Get the palette array.
 	 */
 	const uint32 *getPalette() const {
