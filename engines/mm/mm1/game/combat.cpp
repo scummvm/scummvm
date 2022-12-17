@@ -889,7 +889,7 @@ void Combat::updateMonsterStatus() {
 	if (val <= 0) {
 		enc._monsterList[_monsterIndex]._hp = 0;
 		enc._monsterList[_monsterIndex]._status = MONFLAG_DEAD;
-		warning("TODO: message that monster goes down");
+
 	} else {
 		enc._monsterList[_monsterIndex]._hp = val;
 		enc._monsterList[_monsterIndex]._status &= ~(MONFLAG_ASLEEP | MONFLAG_HELD);

@@ -365,6 +365,7 @@ dialogs:
 		party_plus: "PARTY +"
 		monster_plus: "MONSTER +"
 		and_goes_down: "AND GOES DOWN!!!"
+		goes_down: "GOES DOWN!!!"
 		dies: "DIES!"
 		defeating1: "! FOR DEFEATING THE MONSTERS !"
 		defeating2: "!   EACH SURVIVOR RECEIVES   !"
