@@ -1123,6 +1123,11 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.op = kEventBlackToPal;
 	event.time = 0;
 	event.duration = kNormalFadeDuration;
+	if (_vm->isECS()) {
+		pal[31].red = 0;
+		pal[31].green = 0x4b;
+		pal[31].blue = 0x97;
+	}
 	event.data = pal;
 	_vm->_events->chain(eventColumns, event);
 
