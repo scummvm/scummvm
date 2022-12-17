@@ -416,6 +416,18 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(array.size(), (unsigned int)2);
 		TS_ASSERT_EQUALS(array[0], -3);
 		TS_ASSERT_EQUALS(array[1], 163);
+
+		array.resize(4, 42);
+		TS_ASSERT_EQUALS(array.size(), (unsigned int)4);
+		TS_ASSERT_EQUALS(array[0], -3);
+		TS_ASSERT_EQUALS(array[1], 163);
+		TS_ASSERT_EQUALS(array[2], 42);
+		TS_ASSERT_EQUALS(array[3], 42);
+
+		array.resize(2, 42);
+		TS_ASSERT_EQUALS(array.size(), (unsigned int)2);
+		TS_ASSERT_EQUALS(array[0], -3);
+		TS_ASSERT_EQUALS(array[1], 163);
 	}
 
 };

@@ -381,6 +381,20 @@ public:
 		_size = newSize;
 	}
 
+	/** Change the size of the array. */
+	void resize(size_type newSize, const T value) {
+		reserve(newSize);
+
+		T *storage = _storage;
+
+		for (size_type i = newSize; i < _size; ++i)
+			storage[i].~T();
+		if (newSize > _size)
+			uninitialized_fill_n(storage + _size, newSize - _size, value);
+
+		_size = newSize;
+	}
+
 	/** Assign to this array the elements between the given iterators from another array,
 	 *  from @p first included to @p last excluded.
 	 */

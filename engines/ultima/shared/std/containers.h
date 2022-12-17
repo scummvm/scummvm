@@ -91,12 +91,8 @@ public:
 	typedef const T const_reference;
 
 	vector() : Common::Array<T>() {}
-	vector(size_t newSize) : Common::Array<T>() {
-		Common::Array<T>::resize(newSize);
-	}
-	vector(size_t newSize, const T elem) {
-		resize(newSize, elem);
-	}
+	vector(size_t newSize) : Common::Array<T>(newSize) {}
+	vector(size_t newSize, const T elem) : Common::Array<T>(newSize, elem) {}
 
 	void swap(vector &arr) {
 		SWAP(this->_capacity, arr._capacity);
@@ -119,16 +115,6 @@ public:
 
 	void pop_front() {
 		Common::Array<T>::remove_at(0);
-	}
-
-	void resize(size_t newSize) {
-		Common::Array<T>::resize(newSize);
-	}
-	void resize(size_t newSize, const T elem) {
-		size_t oldSize = Common::Array<T>::size();
-		resize(newSize);
-		for (size_t idx = oldSize; idx < newSize; ++idx)
-			this->operator[](idx) = elem;
 	}
 
 	T at(size_t index) const {
