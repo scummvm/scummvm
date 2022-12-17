@@ -1175,18 +1175,14 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		switch (arg1) {
 		// AMOTION_EVENT_ACTION_MOVE is 2 in NDK (https://developer.android.com/ndk/reference/group/input)
 		case AMOTION_EVENT_ACTION_MOVE:
-			// already multiplied by 100
-			_axisPosX = (int32)arg2 * Common::JOYAXIS_MAX / _eventScaleX;
-			_axisPosY = (int32)arg3 * Common::JOYAXIS_MAX / _eventScaleY;
-
 			e.type = Common::EVENT_JOYAXIS_MOTION;
 
 			e.joystick.axis = Common::JOYSTICK_AXIS_LEFT_STICK_X;
-			e.joystick.position = CLIP<int32>(_axisPosX, Common::JOYAXIS_MIN, Common::JOYAXIS_MAX);
+			e.joystick.position = CLIP<int32>(arg2, Common::JOYAXIS_MIN, Common::JOYAXIS_MAX);
 			pushEvent(e);
 
 			e.joystick.axis = Common::JOYSTICK_AXIS_LEFT_STICK_Y;
-			e.joystick.position = CLIP<int32>(_axisPosY, Common::JOYAXIS_MIN, Common::JOYAXIS_MAX);
+			e.joystick.position = CLIP<int32>(arg3, Common::JOYAXIS_MIN, Common::JOYAXIS_MAX);
 			pushEvent(e);
 
 			break;
