@@ -774,13 +774,4 @@ void ManagedSurface::setPalette(const byte *colors, uint start, uint num) {
 		_owner->setPalette(colors, start, num);
 }
 
-void ManagedSurface::setPalette(const uint32 *colors, uint start, uint num) {
-	assert(start < 256 && (start + num) <= 256);
-	Common::copy(colors, colors + num, &_palette[start]);
-	_paletteSet = true;
-
-	if (_owner)
-		_owner->setPalette(colors, start, num);
-}
-
 } // End of namespace Graphics
