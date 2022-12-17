@@ -271,8 +271,8 @@ void EfhEngine::loadNPCS() {
 		_npcBuf[i].field_F = f.readByte();
 		_npcBuf[i].field_10 = f.readByte();
 		_npcBuf[i].field_11 = f.readByte();
-		_npcBuf[i].field_12 = f.readUint16LE();
-		_npcBuf[i].field_14 = f.readUint16LE();
+		_npcBuf[i].field12_textId = f.readUint16LE();
+		_npcBuf[i].field14_textId = f.readUint16LE();
 		_npcBuf[i]._xp = f.readUint32LE();
 		for (int idx = 0; idx < 15; ++idx) {
 			_npcBuf[i]._activeScore[idx] = f.readByte();

@@ -66,7 +66,7 @@ void InvObject::init() {
 
 void UnkMapStruct::init() {
 	_placeId = _posX = _posY = _field3 = _field4 = 0;
-	_field5 = _field7 = 0;
+	_field5_textId = _field7_textId = 0;
 }
 
 void UnkAnimStruct::init() {
@@ -111,8 +111,8 @@ void NPCStruct::init() {
 	field_F = 0;
 	field_10 = 0;
 	field_11 = 0;
-	field_12 = 0;
-	field_14 = 0;
+	field12_textId = 0;
+	field14_textId = 0;
 	_xp = 0;
 
 	for (int i = 0; i < 15; ++i)
@@ -788,8 +788,8 @@ void EfhEngine::loadMapArrays(int idx) {
 		_mapUnknown[i]._posY = _mapUnknownPtr[9 * i + 2];
 		_mapUnknown[i]._field3 = _mapUnknownPtr[9 * i + 3];
 		_mapUnknown[i]._field4 = _mapUnknownPtr[9 * i + 4];
-		_mapUnknown[i]._field5 = READ_LE_UINT16(&_mapUnknownPtr[9 * i + 5]);
-		_mapUnknown[i]._field7 = READ_LE_UINT16(&_mapUnknownPtr[9 * i + 7]);
+		_mapUnknown[i]._field5_textId = READ_LE_UINT16(&_mapUnknownPtr[9 * i + 5]);
+		_mapUnknown[i]._field7_textId = READ_LE_UINT16(&_mapUnknownPtr[9 * i + 7]);
 	}
 
 	uint8 *mapMonstersPtr = &_mapArr[idx][902];
@@ -804,7 +804,7 @@ void EfhEngine::loadMapArrays(int idx) {
 		_mapMonsters[i]._field_6 = mapMonstersPtr[29 * i + 6];
 		_mapMonsters[i]._monsterRef = mapMonstersPtr[29 * i + 7];
 		_mapMonsters[i]._field_8 = mapMonstersPtr[29 * i + 8];
-		_mapMonsters[i]._field_9 = mapMonstersPtr[29 * i + 9];
+		_mapMonsters[i]._field9_textId = mapMonstersPtr[29 * i + 9];
 		_mapMonsters[i]._groupSize = mapMonstersPtr[29 * i + 10];
 		for (int j = 0; j < 9; ++j)
 			_mapMonsters[i]._pictureRef[j] = READ_LE_INT16(&mapMonstersPtr[29 * i + 11 + j * 2]);
@@ -1118,8 +1118,8 @@ void EfhEngine::removeCharacterFromTeam(int16 teamMemberId) {
 	debug("removeCharacterFromTeam %d", teamMemberId);
 
 	int16 charId = _teamCharId[teamMemberId];
-	_npcBuf[charId].field_12 = _npcBuf[charId].field_B;
-	_npcBuf[charId].field_14 = _npcBuf[charId].field_E;
+	_npcBuf[charId].field12_textId = _npcBuf[charId].field_B;
+	_npcBuf[charId].field14_textId = _npcBuf[charId].field_E;
 	_npcBuf[charId].field_10 = _npcBuf[charId].field_C;
 	_npcBuf[charId].field_11 = _npcBuf[charId].field_D;
 
@@ -1424,8 +1424,8 @@ void EfhEngine::sub2455E(int16 arg0, int16 arg2, int16 arg4) {
 	}
 }
 
-int16 EfhEngine::sub1C219(Common::String str, int16 menuType, int16 arg4, bool displayTeamWindowFl) {
-	debug("sub1C219 %s %d %d %s", str.c_str(), menuType, arg4, displayTeamWindowFl ? "True" : "False");
+int16 EfhEngine::sub1C219(Common::String str, int16 menuType, int16 displayOption, bool displayTeamWindowFl) {
+	debug("sub1C219 %s %d %d %s", str.c_str(), menuType, displayOption, displayTeamWindowFl ? "True" : "False");
 
 	int16 varA = 0xFF;
 	int16 minX, maxX, minY, maxY;
@@ -1469,7 +1469,7 @@ int16 EfhEngine::sub1C219(Common::String str, int16 menuType, int16 arg4, bool d
 	if (displayTeamWindowFl)
 		displayLowStatusScreen(false);
 
-	if (arg4 != 0) {
+	if (displayOption != 0) {
 		displayFctFullScreen();
 		if (_word2C87A)
 			_word2C87A = false;
@@ -1482,10 +1482,10 @@ int16 EfhEngine::sub1C219(Common::String str, int16 menuType, int16 arg4, bool d
 		if (displayTeamWindowFl)
 			displayLowStatusScreen(false);
 
-		if (arg4 >= 2)
+		if (displayOption >= 2)
 			getLastCharAfterAnimCount(_guessAnimationAmount);
 
-		if (arg4 == 3)
+		if (displayOption == 3)
 			drawColoredRect(minX, minY, maxX, maxY, 0);
 	}
 
@@ -2279,11 +2279,11 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 		return false;
 
 	if (var51 != 0x3F) {
-		if (_mapMonsters[monsterId]._field_9 == 0xFF || arg2 != 5) {
+		if (_mapMonsters[monsterId]._field9_textId == 0xFF || arg2 != 5) {
 			return false;
 		}
 		displayMonsterAnim(monsterId);
-		sub22AA8(_mapMonsters[monsterId]._field_9);
+		displayImp1Text(_mapMonsters[monsterId]._field9_textId);
 		displayAnimFrames(0xFE, true);
 		return true;
 	}
@@ -2296,7 +2296,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 	case 0:
 		if (arg2 == 4 && _npcBuf[var58].field_11 == itemId) {
 			displayMonsterAnim(monsterId);
-			sub22AA8(_npcBuf[var58].field_14);
+			displayImp1Text(_npcBuf[var58].field14_textId);
 			displayAnimFrames(0xFE, true);
 			return true;
 		}
@@ -2304,7 +2304,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 	case 1:
 		if (arg2 == 2 && _npcBuf[var58].field_11 == itemId) {
 			displayMonsterAnim(monsterId);
-			sub22AA8(_npcBuf[var58].field_14);
+			displayImp1Text(_npcBuf[var58].field14_textId);
 			displayAnimFrames(0xFE, true);
 			return true;
 		}
@@ -2312,7 +2312,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 	case 2:
 		if (arg2 == 1 && _npcBuf[var58].field_11 == itemId) {
 			displayMonsterAnim(monsterId);
-			sub22AA8(_npcBuf[var58].field_14);
+			displayImp1Text(_npcBuf[var58].field14_textId);
 			displayAnimFrames(0xFE, true);
 			return true;
 		}
@@ -2320,7 +2320,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 	case 3:
 		if (_history[_npcBuf[var58].field_11] != 0) {
 			displayMonsterAnim(monsterId);
-			sub22AA8(_npcBuf[var58].field_14);
+			displayImp1Text(_npcBuf[var58].field14_textId);
 			displayAnimFrames(0xFE, true);
 			return true;
 		}
@@ -2331,7 +2331,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 				if (_npcBuf[_teamCharId[counter]]._inventory[charId]._ref == _npcBuf[var58].field_11) {
 					removeObject(_teamCharId[counter], charId);
 					displayMonsterAnim(monsterId);
-					sub22AA8(_npcBuf[var58].field_14);
+					displayImp1Text(_npcBuf[var58].field14_textId);
 					displayAnimFrames(0xFE, true);
 					return true;
 				}
@@ -2341,7 +2341,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 	case 5:
 		if (arg2 == 2 && _npcBuf[var58].field_11 == itemId) {
 			displayMonsterAnim(monsterId);
-			sub22AA8(_npcBuf[var58].field_14);
+			displayImp1Text(_npcBuf[var58].field14_textId);
 			displayAnimFrames(0xFE, true);
 			return true;
 		}
@@ -2351,7 +2351,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 			for (uint charId = 0; charId < 10; ++charId) {
 				if (_npcBuf[_teamCharId[counter]]._inventory[charId]._ref == _npcBuf[var58].field_11) {
 					displayMonsterAnim(monsterId);
-					sub22AA8(_npcBuf[var58].field_14);
+					displayImp1Text(_npcBuf[var58].field14_textId);
 					displayAnimFrames(0xFE, true);
 					return true;
 				}
@@ -2363,7 +2363,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 			if (_npcBuf[var58].field_11 == _teamCharId[counter]) {
 				removeCharacterFromTeam(counter);
 				displayMonsterAnim(monsterId);
-				sub22AA8(_npcBuf[var58].field_14);
+				displayImp1Text(_npcBuf[var58].field14_textId);
 				displayAnimFrames(0xFE, true);
 				return true;
 			}
@@ -2389,7 +2389,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 				Common::KeyCode input = mapInputCode(waitForKey());
 				if (input == Common::KEYCODE_y) {
 					removeCharacterFromTeam(counter);
-					sub22AA8(_npcBuf[var58].field_14);
+					displayImp1Text(_npcBuf[var58].field14_textId);
 				}
 				displayAnimFrames(0xFE, true);
 				return true;
@@ -2400,7 +2400,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 		for (int counter = 0; counter < _teamSize; ++counter) {
 			if (_npcBuf[var58].field_11 == _teamCharId[counter]) {
 				displayMonsterAnim(monsterId);
-				sub22AA8(_npcBuf[var58].field_14);
+				displayImp1Text(_npcBuf[var58].field14_textId);
 				displayAnimFrames(0xFE, true);
 				return true;
 			}
@@ -2408,7 +2408,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 		break;
 	case 16:
 		displayMonsterAnim(monsterId);
-		sub22AA8(_npcBuf[var58].field_14);
+		displayImp1Text(_npcBuf[var58].field14_textId);
 		displayAnimFrames(0xFE, true);
 		return true;
 	default:
@@ -2416,11 +2416,11 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 		break;
 	}
 
-	if (_npcBuf[var58].field_12 == 0x7FFF || arg2 != 5)
+	if (_npcBuf[var58].field12_textId == 0x7FFF || arg2 != 5)
 		return false;
 
 	displayMonsterAnim(monsterId);
-	sub22AA8(_npcBuf[var58].field_12);
+	displayImp1Text(_npcBuf[var58].field12_textId);
 	displayAnimFrames(0xFE, true);
 	return true;
 }
@@ -2434,13 +2434,15 @@ void EfhEngine::sub221D2(int16 monsterId) {
 	}
 }
 
-void EfhEngine::sub22AA8(int16 arg0) {
-	debug("sub22AA8 %d", arg0);
+void EfhEngine::displayImp1Text(int16 textId) {
+	debug("displayImp1Text %d", textId);
 
-	int16 var8, varA, varC, stringIdx;
-	var8 = varA = varC = stringIdx = 0;
+	int16 charCounter = 0;
+	int16 stringIdx = 0;
+	bool textComplete = false;
+	bool maxReached = false;
 
-	if (arg0 <= 0xFE) {
+	if (textId <= 0xFE) {
 		if (_tempTextPtr) {
 			_tempTextPtr = nullptr;
 			displayMiddleLeftTempText(_tempTextPtr, true);
@@ -2448,22 +2450,23 @@ void EfhEngine::sub22AA8(int16 arg0) {
 		if (_statusMenuActive)
 			drawGameScreenAndTempText(true);
 
-		int16 var4 = arg0;
+		int16 curTextId = textId;
 
 		for (;;) {
-			uint8 *var12 = nullptr;
-			if (var4 >= 0 && var4 <= 0xFE) {
-				var12 = _imp1PtrArray[var4];
+			uint8 *curString = nullptr;
+			if (curTextId >= 0 && curTextId <= 0xFE) {
+				curString = _imp1PtrArray[curTextId];
 			}
 
-			var4 = 0xFF;
-			if (var12 == nullptr)
+			curTextId = 0xFF;
+			if (curString == nullptr)
 				break;
 
-			if (stringIdx == 0)
-				_messageToBePrinted = "";
 			do {
-				switch (*var12) {
+				if (stringIdx == 0)
+					_messageToBePrinted = "";
+
+				switch (*curString) {
 				case 0x00:
 				case 0x0A:
 					break;
@@ -2471,41 +2474,41 @@ void EfhEngine::sub22AA8(int16 arg0) {
 				case 0x20:
 					_messageToBePrinted += " ";
 					stringIdx++;
-					if (++varC >= 350) {
-						var8 = -1;
+					if (++charCounter >= 350) {
+						maxReached = true;
 					}
 					break;
 				case 0x40:
 				case 0x60:
-					varA = -1;
+					textComplete = true;
 					break;
 				case 0x7C:
 					_messageToBePrinted += Common::String(0x7C);
 					stringIdx++;
-					varC += 20;
-					if (varC >= 350) {
-						var8 = -1;
+					charCounter += 20;
+					if (charCounter >= 350) {
+						maxReached = true;
 					}
 					break;
 				case 0x7E:
-					var8 = -1;
+					maxReached = true;
 					break;
 				default:
-					_messageToBePrinted += Common::String(*var12);
+					_messageToBePrinted += Common::String(*curString);
 					stringIdx++;
-					varC++;
+					charCounter++;
 				break;
 				}
-				var12 += 1;
-				int16 var2 = 0xFF ;
-				if (var8 != 0 || varA != 0) {
-					var8 = 0;
+				curString += 1;
+				if (maxReached || textComplete) {
+					int16 nextTextId = 0xFF;
+					maxReached = false;
 					stringIdx = 0;
-					varC = 0;
+					charCounter = 0;
 					uint8 firstChar = _messageToBePrinted.firstChar(); 
 					if (firstChar == 0x5E || firstChar == 0) {
 						if (firstChar == 0x5E) {
-							var2 = script_parse(_messageToBePrinted, 0, 0, 319, 199, true);
+							nextTextId = script_parse(_messageToBePrinted, 0, 0, 319, 199, true);
 							_word2C87A = false;
 						}
 					} else {
@@ -2515,13 +2518,13 @@ void EfhEngine::sub22AA8(int16 arg0) {
 								displayFctFullScreen();
 						}
 
-						var2 = sub1C219(_messageToBePrinted, 1, 1, true);
-						if (var2 != 0xFF)
-							var4 = var2;
+						nextTextId = sub1C219(_messageToBePrinted, 1, 1, true);
+						if (nextTextId != 0xFF)
+							curTextId = nextTextId;
 
-						if (var4 != -1) {
+						if (curTextId != -1) {
 							for (uint counter = 0; counter < 2; ++counter) {
-								if (varA) {
+								if (textComplete) {
 									displayCenteredString("[DONE]", 128, 303, 117);
 								} else {
 									displayCenteredString("[MORE]", 128, 303, 117);
@@ -2532,14 +2535,14 @@ void EfhEngine::sub22AA8(int16 arg0) {
 							getInputBlocking();
 						}
 					}
-					if (var2 != 0xFF)
-						var4 = var2;
+					if (nextTextId != 0xFF)
+						curTextId = nextTextId;
 				}
 
-			} while (varA == 0 && var4 != -1);
+			} while (!textComplete && curTextId != -1);
 
-			varA = 0;
-			if (var4 == 0xFF || var4 == -1)
+			textComplete = false;
+			if (curTextId == 0xFF || curTextId == -1)
 				break;
 		}
 	}
@@ -2557,7 +2560,7 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 			displayMiddleLeftTempText(_imp2PtrArray[imageSetId], true);
 	} else if (arg8 == 0) {
 		if (_mapUnknown[var8]._field3 == 0xFF) {
-			sub22AA8(_mapUnknown[var8]._field5); // word!
+			displayImp1Text(_mapUnknown[var8]._field5_textId); // word!
 			return true;
 		}
 
@@ -2566,7 +2569,7 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 				if (_teamCharId[counter] == -1)
 					continue;
 				if (_teamCharId[counter] == _mapUnknown[var8]._field4) {
-					sub22AA8(_mapUnknown[var8]._field5);
+					displayImp1Text(_mapUnknown[var8]._field5_textId);
 					return true;
 				}
 			}
@@ -2577,7 +2580,7 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 
 				for (uint var2 = 0; var2 < 10; ++var2) {
 					if (_npcBuf[_teamCharId[counter]]._inventory[var2]._ref == _mapUnknown[var8]._field4) {
-						sub22AA8(_mapUnknown[var8]._field5);
+						displayImp1Text(_mapUnknown[var8]._field5_textId);
 						return true;
 					}
 				}
@@ -2593,7 +2596,7 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 					// CHECKME : the whole look doesn't make much sense as it's using var6 instead of var2, plus _activeScore is an array of 15 bytes, not 0x77...
 					// Also, 39 correspond to the size of activeScore + passiveScore + infoScore + the 2 remaining bytes of the struct
 					if (_npcBuf[_teamCharId[counter]]._activeScore[var6] >= _mapUnknown[var8]._field4) {
-						sub22AA8(_mapUnknown[var8]._field5);
+						displayImp1Text(_mapUnknown[var8]._field5_textId);
 						return true;
 					}
 				}
@@ -2602,7 +2605,7 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 	} else {
 		if ((_mapUnknown[var8]._field3 == 0xFA && arg8 == 1) || (_mapUnknown[var8]._field3 == 0xFC && arg8 == 2) || (_mapUnknown[var8]._field3 == 0xFB && arg8 == 3)) {
 			if (_mapUnknown[var8]._field4 == itemId) {
-				sub22AA8(_mapUnknown[var8]._field5);
+				displayImp1Text(_mapUnknown[var8]._field5_textId);
 				return true;
 			}
 		} else if (arg8 == 4) {
@@ -2610,7 +2613,7 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 			if (var6 >= 0x7B && var6 <= 0xEF) {
 				var6 -= 0x78;
 				if (var6 >= 0 && var6 <= 0x8B && var6 == itemId && _mapUnknown[var8]._field4 <= _npcBuf[charId]._activeScore[itemId]) {
-					sub22AA8(_mapUnknown[var8]._field5);
+					displayImp1Text(_mapUnknown[var8]._field5_textId);
 					return true;
 				}
 			}
@@ -2623,9 +2626,9 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 	}
 
 	if ((arg8 == 4 && _mapUnknown[var8]._field3 < 0xFA) || arg8 != 4) {
-		if (_mapUnknown[var8]._field7 > 0xFE)
+		if (_mapUnknown[var8]._field7_textId > 0xFE)
 			return false;
-		sub22AA8(_mapUnknown[var8]._field7);
+		displayImp1Text(_mapUnknown[var8]._field7_textId);
 		return true;
 	}
 
