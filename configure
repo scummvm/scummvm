@@ -220,6 +220,7 @@ _nuked_opl=yes
 _builtin_resources=yes
 _windows_console=yes
 _windows_unicode=yes
+_cygwin_build=no
 # Default commands
 _ranlib=ranlib
 _strip=strip
@@ -1196,6 +1197,7 @@ for ac_option in $@; do
 	--enable-discord)             _discord=yes           ;;
 	--disable-discord)            _discord=no            ;;
 	--enable-verbose-build)      _verbose_build=yes      ;;
+	--enable-cygwin-build)       _cygwin_build=yes       ;;
 	--enable-plugins)            _dynamic_modules=yes    ;;
 	--default-dynamic)           _plugins_default=dynamic;;
 	--enable-mt32emu)            _mt32emu=yes            ;;
@@ -2689,8 +2691,15 @@ case $_host_os in
 		_seq_midi=no
 		;;
 	cygwin*)
-		echo ERROR: Cygwin building is not supported by ScummVM anymore. Consider using MinGW.
-		exit 1
+		if test "$_cygwin_build" = no; then
+			echo ERROR: Cygwin building is not supported by ScummVM anymore. Consider using MinGW.
+			exit 1
+		else
+			echo WARNING: Cygwin building is not supported by ScummVM anymore.
+			echo Cygwin should be used only for development purposes and testing POSIX code on Windows.
+			echo Consider using MinGW instead.
+			append_var DEFINES "-D_GNU_SOURCE"
+		fi
 		;;
 	darwin*)
 		case $_host_cpu in
@@ -4039,10 +4048,10 @@ esac
 #
 echo_n "Checking if host is POSIX compliant... "
 case $_host_os in
-	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | morphos | n64 | ps3 | psp2 | psp | riscos | wii)
+	amigaos* | dreamcast | ds | gamecube | mingw* | morphos | n64 | ps3 | psp2 | psp | riscos | wii)
 		_posix=no
 		;;
-	3ds | android | beos* | bsd* | darwin* | dragonfly* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | serenity* | solaris* | sunos* | switch | uclinux*)
+	3ds | android | beos* | bsd* | cygwin* | darwin* | dragonfly* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | serenity* | solaris* | sunos* | switch | uclinux*)
 		_posix=yes
 		;;
 	os2-emx*)
