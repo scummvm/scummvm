@@ -347,13 +347,16 @@ bool InventoryScreen::Run() {
 	sys_evt_process_pending();
 
 	// Handle all the buffered key events
+	bool do_break = false;
 	while (ags_keyevent_ready()) {
 		KeyInput ki;
 		if (run_service_key_controls(ki) && !_GP(play).IsIgnoringInput()) {
 			ags_clear_input_buffer();
-			return false; // end inventory screen loop
+			do_break = true; // end inventory screen loop
 		}
 	}
+	if (do_break)
+		return false;
 
 	update_audio_system_on_game_loop();
 	refresh_gui_screen();
