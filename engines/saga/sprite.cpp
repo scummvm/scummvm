@@ -41,7 +41,6 @@ bool blitAmigaSprite(byte *outBuf, int outPitch, const byte *inputBuffer, size_t
 	int c;
 	int widthAligned = (width + 15) & ~15;
 
-	Common::MemoryReadStream readS(inputBuffer, inLength);
 	const byte *ptr = inputBuffer, *end = inputBuffer + inLength;
 
 	for (int bitOut = 0; bitOut < bitsPerPixel; bitOut++)
@@ -57,7 +56,7 @@ bool blitAmigaSprite(byte *outBuf, int outPitch, const byte *inputBuffer, size_t
 
 				if (y > height) {
 					warning("Sprite height overrun in transparent run: coord=%d+%dx%d, size=%dx%d, pos=%d",
-						x, bitOut, y, width, height, (int)readS.pos());
+						x, bitOut, y, width, height, (int)(ptr - inputBuffer));
 					return true;
 				}
 
@@ -75,7 +74,7 @@ bool blitAmigaSprite(byte *outBuf, int outPitch, const byte *inputBuffer, size_t
 					ptr += bitsPerEntry / 8;
 					if (y >= height) {
 						warning("Sprite height overrun in opaque run: coord=%d+%dx%d, size=%dx%d, pos=%d",
-							x, bitOut, y, width, height, (int)readS.pos());
+							x, bitOut, y, width, height, (int)(ptr - inputBuffer));
 						return false;
 					}
 					for (int bitIn = 0; bitIn < bitsPerEntry; bitIn++) {
@@ -101,7 +100,7 @@ bool blitAmigaSprite(byte *outBuf, int outPitch, const byte *inputBuffer, size_t
 				}
 				if (fg_runcount == 0 && bg_runcount == 0) {
 					warning("Sprite zero-sized run: coord=%d+%dx%d, size=%dx%d, pos=%d",
-						x, bitOut, y, width, height, (int)readS.pos());
+						x, bitOut, y, width, height, (int)(ptr - inputBuffer));
 					return false;
 				}
 			}
