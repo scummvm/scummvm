@@ -135,7 +135,6 @@ bool Screen::set_palette(uint8 *p) {
 	if (_renderSurface == NULL || p == NULL)
 		return false;
 
-//SDL_SetColors(scaled_surface,palette,0,256);
 	for (int i = 0; i < 256; ++i) {
 		uint32  r = p[i * 3];
 		uint32  g = p[i * 3 + 1];

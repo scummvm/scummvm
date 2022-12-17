@@ -107,11 +107,6 @@ int SDL_SetColorKey(Graphics::ManagedSurface *surface, int flag, uint32 key) {
 	return 0;
 }
 
-int SDL_SetColors(Graphics::ManagedSurface *surface, const SDL_Color *colors, int firstcolor, int ncolors) {
-	surface->setPalette(colors, firstcolor, ncolors);
-	return 0;
-}
-
 int SDL_WaitEvent(Common::Event *event) {
 	while (!Events::get()->pollEvent(*event))
 		g_system->delayMillis(5);
