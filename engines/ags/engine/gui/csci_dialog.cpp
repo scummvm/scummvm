@@ -84,7 +84,6 @@ int CSCIDrawWindow(int xx, int yy, int wid, int hit) {
 		quit("Too many windows created.");
 
 	_G(windowcount)++;
-	//  ags_domouse(DOMOUSE_DISABLE);
 	xx -= 2;
 	yy -= 2;
 	wid += 4;
@@ -93,7 +92,6 @@ int CSCIDrawWindow(int xx, int yy, int wid, int hit) {
 	_G(oswi)[drawit].x = xx;
 	_G(oswi)[drawit].y = yy;
 	__my_wbutt(ds, 0, 0, wid - 1, hit - 1);    // wbutt goes outside its area
-	//  ags_domouse(DOMOUSE_ENABLE);
 	_G(oswi)[drawit].oldtop = _G(topwindowhandle);
 	_G(topwindowhandle) = drawit;
 	_G(oswi)[drawit].handle = _G(topwindowhandle);
@@ -105,11 +103,9 @@ int CSCIDrawWindow(int xx, int yy, int wid, int hit) {
 }
 
 void CSCIEraseWindow(int handl) {
-	//  ags_domouse(DOMOUSE_DISABLE);
 	_G(ignore_bounds)--;
 	_G(topwindowhandle) = _G(oswi)[handl].oldtop;
 	_G(oswi)[handl].handle = -1;
-	//  ags_domouse(DOMOUSE_ENABLE);
 	_G(windowcount)--;
 	clear_gui_screen();
 }
@@ -117,9 +113,7 @@ void CSCIEraseWindow(int handl) {
 int CSCIWaitMessage(CSCIMessage *cscim) {
 	for (int uu = 0; uu < MAXCONTROLS; uu++) {
 		if (_G(vobjs)[uu] != nullptr) {
-			//      ags_domouse(DOMOUSE_DISABLE);
 			_G(vobjs)[uu]->drawifneeded();
-			//      ags_domouse(DOMOUSE_ENABLE);
 		}
 	}
 
@@ -134,6 +128,9 @@ int CSCIWaitMessage(CSCIMessage *cscim) {
 		cscim->id = -1;
 		cscim->code = 0;
 		_G(smcode) = 0;
+		// NOTE: CSCIWaitMessage is supposed to report only single message,
+		// therefore we cannot process all buffered key presses here
+		// (unless the whole dialog system is rewritten).
 		KeyInput ki;
 		if (run_service_key_controls(ki) && !_GP(play).IsIgnoringInput()) {
 			int keywas = ki.Key;
@@ -210,9 +207,7 @@ int CSCICreateControl(int typeandflags, int xx, int yy, int wii, int hii, const 
 
 	_G(vobjs)[usec]->typeandflags = typeandflags;
 	_G(vobjs)[usec]->wlevel = _G(topwindowhandle);
-	//  ags_domouse(DOMOUSE_DISABLE);
 	_G(vobjs)[usec]->draw(get_gui_screen());
-	//  ags_domouse(DOMOUSE_ENABLE);
 	return usec;
 }
 
