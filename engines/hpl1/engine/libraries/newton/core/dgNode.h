@@ -43,14 +43,21 @@ public:
 	void Detach();
 	void Attach(dgBaseNode *parent, bool addFirst = false);
 
-	dgBaseNode *GetRoot() const;
-	dgBaseNode *GetFirst() const;
-	dgBaseNode *GetLast() const;
-	dgBaseNode *GetNext() const;
-	dgBaseNode *GetPrev() const;
+	const dgBaseNode *GetRoot() const;
+	const dgBaseNode *GetFirst() const;
+	const dgBaseNode *GetLast() const;
+	const dgBaseNode *GetNext() const;
+	const dgBaseNode *GetPrev() const;
+	dgBaseNode *GetRoot();
+	dgBaseNode *GetFirst();
+	dgBaseNode *GetLast();
+	dgBaseNode *GetNext();
+	dgBaseNode *GetPrev();
 
-	dgBaseNode *Find(dgUnsigned32 nameCRC) const;
-	dgBaseNode *Find(const char *name) const;
+	const dgBaseNode *Find(dgUnsigned32 nameCRC) const;
+	dgBaseNode *Find(dgUnsigned32 nameCRC);
+	const dgBaseNode *Find(const char *name) const;
+	dgBaseNode *Find(const char *name);
 	void DebugPrint(const char *fileName);
 	bool SanityCheck();
 
@@ -86,6 +93,7 @@ public:
 	T *GetSibling() const;
 	T *GetParent() const;
 	T *GetRoot() const;
+	T *GetRoot();
 	T *GetFirst() const;
 	T *GetLast() const;
 	T *GetNext() const;
@@ -135,10 +143,13 @@ inline dgBaseNode *dgBaseNode::GetParent() const {
 }
 
 
-inline dgBaseNode *dgBaseNode::Find(const char *name) const {
+inline const dgBaseNode *dgBaseNode::Find(const char *name) const {
 	return Find(dgCRC(name));
 }
 
+inline dgBaseNode *dgBaseNode::Find(const char *name) {
+	return Find(dgCRC(name));
+}
 
 
 

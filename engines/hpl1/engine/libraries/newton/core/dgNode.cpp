@@ -127,7 +127,7 @@ void dgBaseNode::Detach() {
 	}
 }
 
-dgBaseNode *dgBaseNode::GetRoot() const {
+const dgBaseNode *dgBaseNode::GetRoot() const {
 	const dgBaseNode *root;
 	for (root = this; root->parent; root = root->parent) {
 
@@ -135,7 +135,7 @@ dgBaseNode *dgBaseNode::GetRoot() const {
 	return (dgBaseNode *) root;
 }
 
-dgBaseNode *dgBaseNode::GetFirst() const {
+const dgBaseNode *dgBaseNode::GetFirst() const {
 	dgBaseNode *ptr;
 
 	for (ptr = (dgBaseNode *) this; ptr->child; ptr = ptr->child) {
@@ -144,7 +144,7 @@ dgBaseNode *dgBaseNode::GetFirst() const {
 	return ptr;
 }
 
-dgBaseNode *dgBaseNode::GetNext() const {
+const dgBaseNode *dgBaseNode::GetNext() const {
 	dgBaseNode *x;
 	dgBaseNode *ptr;
 
@@ -159,7 +159,7 @@ dgBaseNode *dgBaseNode::GetNext() const {
 	return ptr;
 }
 
-dgBaseNode *dgBaseNode::GetLast() const {
+const dgBaseNode *dgBaseNode::GetLast() const {
 	dgBaseNode *ptr;
 
 	for (ptr = (dgBaseNode *) this; ptr->sibling; ptr = ptr->sibling) {
@@ -168,7 +168,7 @@ dgBaseNode *dgBaseNode::GetLast() const {
 	return ptr;
 }
 
-dgBaseNode *dgBaseNode::GetPrev() const {
+const dgBaseNode *dgBaseNode::GetPrev() const {
 	dgBaseNode *x;
 	dgBaseNode *ptr;
 
@@ -183,7 +183,74 @@ dgBaseNode *dgBaseNode::GetPrev() const {
 	return ptr;
 }
 
-dgBaseNode *dgBaseNode::Find(dgUnsigned32 nameCRC) const {
+dgBaseNode *dgBaseNode::GetRoot() {
+	dgBaseNode *root;
+	for (root = this; root->parent; root = root->parent) {
+
+	}
+	return root;
+}
+
+dgBaseNode *dgBaseNode::GetFirst() {
+	dgBaseNode *ptr;
+
+	for (ptr = this; ptr->child; ptr = ptr->child) {
+
+	}
+	return ptr;
+}
+
+dgBaseNode *dgBaseNode::GetNext() {
+	dgBaseNode *x;
+	dgBaseNode *ptr;
+
+	if (sibling) {
+		return sibling->GetFirst();
+	}
+
+	x = this;
+	for (ptr = parent; ptr && (x == ptr->sibling); ptr = ptr->parent) {
+		x = ptr;
+	}
+	return ptr;
+}
+
+dgBaseNode *dgBaseNode::GetLast() {
+	dgBaseNode *ptr;
+
+	for (ptr = this; ptr->sibling; ptr = ptr->sibling) {
+
+	}
+	return ptr;
+}
+
+dgBaseNode *dgBaseNode::GetPrev() {
+	dgBaseNode *x;
+	dgBaseNode *ptr;
+
+	if (child) {
+		return child->GetNext();
+	}
+
+	x = this;
+	for (ptr = parent; ptr && (x == ptr->child); ptr = ptr->child) {
+		x = ptr;
+	}
+	return ptr;
+}
+
+const dgBaseNode *dgBaseNode::Find(dgUnsigned32 nameCRC) const {
+	const dgBaseNode *ptr;
+
+	for (ptr = GetFirst(); ptr; ptr = ptr->GetNext()) {
+		if (nameCRC == ptr->GetNameID()) {
+			break;
+		}
+	}
+	return ptr;
+}
+
+dgBaseNode *dgBaseNode::Find(dgUnsigned32 nameCRC) {
 	dgBaseNode *ptr;
 
 	for (ptr = GetFirst(); ptr; ptr = ptr->GetNext()) {
