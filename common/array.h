@@ -391,6 +391,12 @@ public:
 			*dst++ = *first++;
 	}
 
+	void swap(Array &arr) {
+		SWAP(this->_capacity, arr._capacity);
+		SWAP(this->_size, arr._size);
+		SWAP(this->_storage, arr._storage);
+	}
+
 protected:
 	/** Round up capacity to the next power of 2.
 	  * A minimal capacity of 8 is used.

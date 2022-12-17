@@ -98,12 +98,6 @@ public:
 		resize(newSize, elem);
 	}
 
-	void swap(vector &arr) {
-		SWAP(this->_capacity, arr._capacity);
-		SWAP(this->_size, arr._size);
-		SWAP(this->_storage, arr._storage);
-	}
-
 	reverse_iterator rbegin() {
 		return reverse_iterator(this, (int)Common::Array<T>::size() - 1);
 	}
@@ -143,17 +137,8 @@ class set {
 			return a == b;
 		}
 	};
-
-	class Items : public Common::Array<T> {
-	public:
-		void swap(Items &arr) {
-			SWAP(this->_capacity, arr._capacity);
-			SWAP(this->_size, arr._size);
-			SWAP(this->_storage, arr._storage);
-		}
-	};
 private:
-	Items _items;
+	Common::Array<T> _items;
 	Comparitor _comparitor;
 public:
 	typedef T *iterator;

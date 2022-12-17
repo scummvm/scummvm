@@ -418,6 +418,34 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(array[1], 163);
 	}
 
+	void test_swap() {
+		Common::Array<int> array1, array2;
+
+		array1.push_back(-3);
+		array1.push_back(163);
+		array1.push_back(17);
+		array2.push_back(5);
+		array2.push_back(9);
+
+		TS_ASSERT_EQUALS(array1.size(), 3);
+		TS_ASSERT_EQUALS(array1[0], -3);
+		TS_ASSERT_EQUALS(array1[1], 163);
+		TS_ASSERT_EQUALS(array1[2], 17);
+		TS_ASSERT_EQUALS(array2.size(), 2);
+		TS_ASSERT_EQUALS(array2[0], 5);
+		TS_ASSERT_EQUALS(array2[1], 9);
+
+		array1.swap(array2);
+
+		TS_ASSERT_EQUALS(array1.size(), 2);
+		TS_ASSERT_EQUALS(array1[0], 5);
+		TS_ASSERT_EQUALS(array1[1], 9);
+		TS_ASSERT_EQUALS(array2.size(), 3);
+		TS_ASSERT_EQUALS(array2[0], -3);
+		TS_ASSERT_EQUALS(array2[1], 163);
+		TS_ASSERT_EQUALS(array2[2], 17);
+	}
+
 };
 
 struct ListElement {
