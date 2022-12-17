@@ -173,7 +173,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 	},
 
 
-	// TODO: Add Amiga floppy demos here (not supported yet)
 	{
 		{
 			"ite",
@@ -213,6 +212,30 @@ static const SAGAGameDescription gameDescriptions[] = {
 		},
 		GID_ITE,
 		GF_EXTRA_ITE_CREDITS | GF_ECS_GRAPHICS | GF_EMBED_FONT | GF_POWERPACK_GFX,
+		ITE_DEFAULT_SCENE,
+		RESOURCELIST_ITE_GERMAN_ECS,
+		FONTLIST_NONE,
+		PATCHLIST_ITE,
+		INTROLIST_ITE_AMIGA_GERMAN_ECS,
+		{},
+	},
+	{
+		{
+			"ite",
+			"ECS Demo Floppy",
+			{
+				{"ite.rtn",		GAME_RESOURCEFILE,	"1e77154f045358ef3f09fbdb00ea92a4", 18624},
+				{"ite01.adf",                           0,      "fc6ba8bae7d86038efa2fba30ebf5e77", 901120},
+				{"ite02.adf",                           0,      "8f8cc806fc19066480b868c43e12343a", 901120},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GID_ITE,
+		GF_ITE_FLOPPY | GF_EXTRA_ITE_CREDITS | GF_ECS_GRAPHICS | GF_EMBED_FONT | GF_POWERPACK_GFX,
 		ITE_DEFAULT_SCENE,
 		RESOURCELIST_ITE_GERMAN_ECS,
 		FONTLIST_NONE,
@@ -1159,8 +1182,55 @@ static const SAGAGameDescription gameDescriptions[] = {
 		INTROLIST_ITE_AMIGA_GERMAN_AGA,
 		{},
 	},
+	{
+		{
+			"ite",
+			"ECS Floppy",
+			{
+				{"ite.rtn",		GAME_RESOURCEFILE,	"733a15d1816b76ed10fbb02668ae1f93", 18624},
+				{"ite01.adf",		0,					"49352821102fc03d1653e0fda13fb15f", 901120},
+				{"ite02.adf",	0,					"160189cce6ecec4bfb4e045bf9be3218", 901120},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_ITE,
+		GF_ITE_FLOPPY | GF_ECS_GRAPHICS | GF_EMBED_FONT | GF_POWERPACK_GFX,
+		ITE_DEFAULT_SCENE,
+		RESOURCELIST_ITE_GERMAN_ECS,
+		FONTLIST_NONE,
+		PATCHLIST_NONE,
+		INTROLIST_ITE_AMIGA_GERMAN_ECS,
+		{},
+	},
+	{
+		{
+			"ite",
+			"ECS Floppy",
+			{
+				{"ite.rtn",		GAME_RESOURCEFILE,	"9d0c6b31ac86b4bd9237e304e4bfb73a", 18624},
+				{"ite01.adf",		0,					"532973f8422f46f73db5b8a161681d40", 901120},
+				{"ite02.adf",	0,					"794f525b9b81f765a5df18bfae8364ec", 901120},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_ITE,
+		GF_ITE_FLOPPY | GF_ECS_GRAPHICS | GF_EMBED_FONT | GF_POWERPACK_GFX,
+		ITE_DEFAULT_SCENE,
+		RESOURCELIST_ITE_GERMAN_ECS, // Uses German resource list for some reason
+		FONTLIST_NONE,
+		PATCHLIST_NONE,
+		INTROLIST_ITE_AMIGA_GERMAN_ECS, // Uses German intro list for some reason
+		{},
+	},
 
-	// TODO: Add other Amiga floppy versions
 	// IHNM Section ///////////////////////////////////////////////////////////////////////////////////////////
 
 	// I Have No Mouth And I Must Scream - Demo version
