@@ -268,10 +268,18 @@ void Gfx::loadECSExtraPalettes() {
 		// Here you can add more colors if it simplifies the code
 	};
 
-	for (int i = 0; i < ARRAYSIZE(ecsExtraPal); i++) {
+	int i;
+
+	for (i = 0; i < ARRAYSIZE(ecsExtraPal); i++) {
 		_currentPal[(i + 32) * 3] = _globalPalette[i + 32].red = ecsExtraPal[i].red;
 		_currentPal[(i + 32) * 3 + 1] = _globalPalette[i + 32].green = ecsExtraPal[i].green;
 		_currentPal[(i + 32) * 3 + 2] = _globalPalette[i + 32].blue = ecsExtraPal[i].blue;
+	}
+
+	for (i += 32; i < PAL_ENTRIES; i++) {
+		_currentPal[i * 3] = _globalPalette[i].red = 0;
+		_currentPal[i * 3 + 1] = _globalPalette[i].green = 0;
+		_currentPal[i * 3 + 2] = _globalPalette[i].blue = 0;
 	}
 }
 
