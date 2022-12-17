@@ -175,6 +175,11 @@ private:
 	void writeCharAttackDamage();
 
 	/**
+	 * Write message for character attack having no effect
+	 */
+	void writeCharAttackNoEffect();
+
+	/**
 	 * Get attack damage string
 	 */
 	Common::String getAttackString();

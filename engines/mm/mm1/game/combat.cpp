@@ -838,6 +838,10 @@ void Combat::attackMonster(int monsterNum) {
 	if (_isShooting && c._class == ARCHER)
 		_attackAttr2._current += (c._level + 1) / 2;
 
+	// Mark the character as having attacked this round
+	g_globals->_combatParty[_currentChar]->_checked = true;
+
+	// Can the attack succeed?
 	if (_attackAttr1._current || !(_monsterP->_field1a & FIELD1A_80)) {
 		if (enc._monsterList[_monsterIndex]._status & (MONFLAG_ASLEEP |
 				MONFLAG_HELD | MONFLAG_WEBBED | MONFLAG_PARALYZED))
@@ -856,12 +860,12 @@ void Combat::attackMonster(int monsterNum) {
 		addAttackDamage();
 		if (_damage)
 			updateMonsterStatus();
-	} else {
-		_message.push_back(Line(0, 1, STRING["dialogs.combat.weapon_no_effect"]));
-	}
 
-	g_globals->_combatParty[_currentChar]->_checked = true;
-	setMode(CHAR_ATTACKS);
+		setMode(CHAR_ATTACKS);
+
+	} else {
+		setMode(NO_EFFECT);
+	}
 }
 
 void Combat::addAttackDamage() {
