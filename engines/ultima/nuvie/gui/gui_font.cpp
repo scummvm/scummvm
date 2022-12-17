@@ -106,14 +106,20 @@ void GUI_Font::setTransparency(bool on) {
 
 /* determine foreground and background color values RGB*/
 void GUI_Font::setColoring(uint8 fr, uint8 fg, uint8 fb, uint8 br, uint8 bg, uint8 bb) {
-	const SDL_Color colors[2] = { MAKE_COLOR(br, bg, bb), MAKE_COLOR(fr, fg, fb) };
-	SDL_SetColors(_fontStore, colors, 0, 2);
+	const uint8 colors[2 * 3] = {
+		br, bg, bb,
+		fr, fg, fb
+	};
+	_fontStore->setPalette(colors, 0, 2);
 }
 
 void GUI_Font::setColoring(uint8 fr, uint8 fg, uint8 fb, uint8 fr1, uint8 fg1, uint8 fb1, uint8 br, uint8 bg, uint8 bb) {
-	const SDL_Color colors[3] = {
-		MAKE_COLOR(br, bg, bb), MAKE_COLOR(fr, fg, fb), MAKE_COLOR(fr1, fg1, fb1) };
-	SDL_SetColors(_fontStore, colors, 0, 3);
+	const uint8 colors[3 * 3] = {
+		br, bg, bb,
+		fr, fg, fb,
+		fr1, fg1, fb1
+	};
+	_fontStore->setPalette(colors, 0, 3);
 }
 
 /* put the text onto the given surface using the preset mode and colors */

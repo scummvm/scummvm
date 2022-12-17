@@ -33,9 +33,6 @@ namespace Nuvie {
 
 #define SDL_SWSURFACE 0
 
-typedef uint32 SDL_Color;
-#define MAKE_COLOR(r, g, b) (((uint32)r) | (((uint32)g) << 8) | (((uint32)b) << 16) | (((uint32)0xff) << 24))
-
 extern uint32 SDL_GetTicks();
 extern void SDL_FreeSurface(Graphics::ManagedSurface *&s);
 extern void SDL_ShowCursor(bool show);
@@ -47,7 +44,6 @@ extern void SDL_UpdateRect(Graphics::ManagedSurface *surf, int x, int y, int w, 
 extern void SDL_UpdateRects(Graphics::ManagedSurface *surf, int count, Common::Rect *rects);
 extern Graphics::ManagedSurface *SDL_LoadBMP(const char *filename);
 extern int SDL_SetColorKey(Graphics::ManagedSurface *surface, int flag, uint32 key);
-extern int SDL_SetColors(Graphics::ManagedSurface *surface, const SDL_Color *colors, int firstcolor, int ncolors);
 extern int SDL_WaitEvent(Common::Event *event);
 extern int SDL_PollEvent(Common::Event *event);
 extern int SDL_LockSurface(Graphics::ManagedSurface *surface);
