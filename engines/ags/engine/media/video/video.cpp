@@ -111,16 +111,20 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int flags
 			KeyInput key;
 			eAGSMouseButton mbut;
 			int mwheelz;
-			if (run_service_key_controls(key)) {
-				if (key.Key == 27 && skip >= VideoSkipEscape)
-					return true;
-				if (skip >= VideoSkipAnyKey)
-					return true;  // skip on any key
+			// Handle all the buffered key events
+			bool do_break = false;
+			while (ags_keyevent_ready()) {
+				if (run_service_key_controls(key)) {
+					if ((key.Key == eAGSKeyCodeEscape) && (skip == VideoSkipEscape))
+						do_break = true;
+					if (skip >= VideoSkipAnyKey)
+						do_break = true;  // skip on any key
+				}
 			}
-
-			if (run_service_mb_controls(mbut, mwheelz) && mbut >= kMouseNone && skip == VideoSkipKeyOrMouse) {
+			if (do_break)
+				return true; // skip on key press
+			if (run_service_mb_controls(mbut, mwheelz) && mbut >= kMouseNone && skip == VideoSkipKeyOrMouse)
 				return true; // skip on mouse click
-			}
 		}
 	}
 
