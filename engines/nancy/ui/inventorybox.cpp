@@ -232,7 +232,9 @@ void InventoryBox::Curtains::init() {
 	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
 
 	if (g_nancy->getGameType() == kGameTypeVampire) {
-		_drawSurface.setPalette(g_nancy->_graphicsManager->_object0.getPalette(), 0, 256);
+		uint8 palette[256 * 3];
+		g_nancy->_graphicsManager->_object0.grabPalette(palette, 0, 256);
+		_drawSurface.setPalette(palette, 0, 256);
 	}
 
 	_screenPosition = _parent->getScreenPosition();
