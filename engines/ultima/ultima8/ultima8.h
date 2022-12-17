@@ -374,8 +374,6 @@ public:
 	bool isInterpolationEnabled() const {
 		return _interpolate;
 	}
-public:
-	Graphics::PixelFormat _renderFormat;
 };
 
 } // End of namespace Ultima8

@@ -70,8 +70,6 @@ protected:
 	void SetPixelsPointer();
 
 public:
-	static Graphics::PixelFormat *_format;
-
 	static uint8 _gamma10toGamma22[256];
 	static uint8 _gamma22toGamma10[256];
 

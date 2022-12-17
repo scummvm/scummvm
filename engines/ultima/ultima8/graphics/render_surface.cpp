@@ -31,8 +31,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-Graphics::PixelFormat *RenderSurface::_format = nullptr;
-
 uint8 RenderSurface::_gamma10toGamma22[256];
 uint8 RenderSurface::_gamma22toGamma10[256];
 
@@ -43,19 +41,6 @@ RenderSurface::RenderSurface(Graphics::ManagedSurface *s) : _pixels(nullptr), _p
 	_clipWindow.setWidth(_width = _surface->w);
 	_clipWindow.setHeight(_height = _surface->h);
 	_pitch = _surface->pitch;
-
-	// TODO: Slight hack - set the global surface format only once.
-	if (!RenderSurface::_format->bytesPerPixel) {
-		RenderSurface::_format->bytesPerPixel = _surface->format.bytesPerPixel;
-		RenderSurface::_format->rLoss = _surface->format.rLoss;
-		RenderSurface::_format->gLoss = _surface->format.gLoss;
-		RenderSurface::_format->bLoss = _surface->format.bLoss;
-		RenderSurface::_format->aLoss = _surface->format.aLoss;
-		RenderSurface::_format->rShift = _surface->format.rShift;
-		RenderSurface::_format->gShift = _surface->format.gShift;
-		RenderSurface::_format->bShift = _surface->format.bShift;
-		RenderSurface::_format->aShift = _surface->format.aShift;
-	}
 
 	SetPixelsPointer();
 }
@@ -153,15 +138,16 @@ bool RenderSurface::EndPainting() {
 // Desc: Create a palette of colours native to the surface
 //
 void RenderSurface::CreateNativePalette(Palette *palette, int maxindex) {
+	const Graphics::PixelFormat &format = _surface->format;
 	if (maxindex == 0)
 		maxindex = 256;
 	for (int i = 0; i < maxindex; i++) {
 		int32 r, g, b;
 
 		// Normal palette
-		palette->_native_untransformed[i] = _format->RGBToColor(palette->_palette[i * 3 + 0],
-																palette->_palette[i * 3 + 1],
-																palette->_palette[i * 3 + 2]);
+		palette->_native_untransformed[i] = format.RGBToColor(palette->_palette[i * 3 + 0],
+															  palette->_palette[i * 3 + 1],
+															  palette->_palette[i * 3 + 2]);
 
 		r = palette->_matrix[0] * palette->_palette[i * 3 + 0] +
 			palette->_matrix[1] * palette->_palette[i * 3 + 1] +
@@ -192,9 +178,9 @@ void RenderSurface::CreateNativePalette(Palette *palette, int maxindex) {
 
 		// Transformed normal palette
 		// FIXME - Wont work on non SDL SRS Implementations
-		palette->_native[i] = _format->RGBToColor(static_cast<uint8>(r >> 11),
-												  static_cast<uint8>(g >> 11),
-												  static_cast<uint8>(b >> 11));
+		palette->_native[i] = format.RGBToColor(static_cast<uint8>(r >> 11),
+												static_cast<uint8>(g >> 11),
+												static_cast<uint8>(b >> 11));
 
 		// Transformed XFORM palette (Uses the TEX32 format)
 		if (TEX32_A(palette->_xform_untransformed[i])) {
@@ -340,8 +326,6 @@ bool RenderSurface::IsFlipped() const {
 //
 
 RenderSurface *RenderSurface::SetVideoMode(uint32 width, uint32 height, int bpp) {
-	_format = &Ultima8Engine::get_instance()->_renderFormat;
-
 	// Set up the pixel format to use
 	Graphics::PixelFormat pixelFormat;
 
@@ -376,13 +360,17 @@ RenderSurface *RenderSurface::SetVideoMode(uint32 width, uint32 height, int bpp)
 
 // Create a SecondaryRenderSurface with an associated Texture object
 RenderSurface *RenderSurface::CreateSecondaryRenderSurface(uint32 width, uint32 height) {
+	const Graphics::PixelFormat &format = Ultima8Engine::get_instance()->getScreen()->format;
+
 	// Now create the SoftRenderSurface
 	RenderSurface *surf;
 
 	// TODO: Change this
-	Graphics::ManagedSurface *managedSurface = new Graphics::ManagedSurface(width, height, *_format);
-	if (_format->bytesPerPixel == 4) surf = new SoftRenderSurface<uint32>(managedSurface);
-	else surf = new SoftRenderSurface<uint16>(managedSurface);
+	Graphics::ManagedSurface *managedSurface = new Graphics::ManagedSurface(width, height, format);
+	if (format.bytesPerPixel == 4)
+		surf = new SoftRenderSurface<uint32>(managedSurface);
+	else
+		surf = new SoftRenderSurface<uint16>(managedSurface);
 	return surf;
 }
 

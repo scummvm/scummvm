@@ -41,9 +41,9 @@ namespace Ultima8 {
 extern const uint8 U8XFormPal[1024];
 extern const uint8 CruXFormPal[1024];
 
-inline uint32 P_FASTCALL BlendPreModulated(uint32 src, uint32 dst) {
+inline uint32 P_FASTCALL BlendPreModulated(uint32 src, uint32 dst, const Graphics::PixelFormat &format) {
 	uint8 sr, sg, sb;
-	RenderSurface::_format->colorToRGB(dst, sr, sg, sb);
+	format.colorToRGB(dst, sr, sg, sb);
 
 	uint32 r = sr * (256 - TEX32_A(src));
 	uint32 g = sg * (256 - TEX32_A(src));
@@ -54,12 +54,12 @@ inline uint32 P_FASTCALL BlendPreModulated(uint32 src, uint32 dst) {
 	r >>= 8;
 	g >>= 8;
 	b >>= 8;
-	return RenderSurface::_format->RGBToColor(r > 0xFF ? 0xFF : r, g > 0xFF ? 0xFF : g, b > 0xFF ? 0xFF : b);
+	return format.RGBToColor(r > 0xFF ? 0xFF : r, g > 0xFF ? 0xFF : g, b > 0xFF ? 0xFF : b);
 }
 
-inline uint32 P_FASTCALL BlendPreModFast(uint32 src, uint32 dst) {
+inline uint32 P_FASTCALL BlendPreModFast(uint32 src, uint32 dst, const Graphics::PixelFormat &format) {
 	uint8 sr, sg, sb;
-	RenderSurface::_format->colorToRGB(dst, sr, sg, sb);
+	format.colorToRGB(dst, sr, sg, sb);
 
 	uint32 r = sr * (256 - TEX32_A(src));
 	uint32 g = sg * (256 - TEX32_A(src));
@@ -67,38 +67,38 @@ inline uint32 P_FASTCALL BlendPreModFast(uint32 src, uint32 dst) {
 	r += 256 * TEX32_R(src);
 	g += 256 * TEX32_G(src);
 	b += 256 * TEX32_B(src);
-	return RenderSurface::_format->RGBToColor(r >> 8, g >> 8, b >> 8);
+	return format.RGBToColor(r >> 8, g >> 8, b >> 8);
 }
 
 // This does the red highlight blending.
-inline uint32 P_FASTCALL BlendHighlight(uint32 src, uint32 cr, uint32 cg, uint32 cb, uint32 ca, uint32 ica) {
+inline uint32 P_FASTCALL BlendHighlight(uint32 src, uint32 cr, uint32 cg, uint32 cb, uint32 ca, uint32 ica, const Graphics::PixelFormat &format) {
 	uint8 sr, sg, sb;
-	RenderSurface::_format->colorToRGB(src, sr, sg, sb);
-	return RenderSurface::_format->RGBToColor((sr * ica + cr * ca) >> 8,
-											  (sg * ica + cg * ca) >> 8,
-											  (sb * ica + cb * ca) >> 8);
+	format.colorToRGB(src, sr, sg, sb);
+	return format.RGBToColor((sr * ica + cr * ca) >> 8,
+							 (sg * ica + cg * ca) >> 8,
+							 (sb * ica + cb * ca) >> 8);
 }
 
 // This does the invisible blending. I've set it to about 40%
-inline uint32 P_FASTCALL BlendInvisible(uint32 src, uint32 dst) {
+inline uint32 P_FASTCALL BlendInvisible(uint32 src, uint32 dst, const Graphics::PixelFormat &format) {
 	uint8 sr, sg, sb;
 	uint8 dr, dg, db;
-	RenderSurface::_format->colorToRGB(src, sr, sg, sb);
-	RenderSurface::_format->colorToRGB(dst, dr, dg, db);
-	return RenderSurface::_format->RGBToColor((sr * 100 + dr * 156) >> 8,
-											  (sg * 100 + dg * 156) >> 8,
-											  (sb * 100 + db * 156) >> 8);
+	format.colorToRGB(src, sr, sg, sb);
+	format.colorToRGB(dst, dr, dg, db);
+	return format.RGBToColor((sr * 100 + dr * 156) >> 8,
+							 (sg * 100 + dg * 156) >> 8,
+							 (sb * 100 + db * 156) >> 8);
 }
 
 // This does the translucent highlight blending. (50%)
-inline uint32 P_FASTCALL BlendHighlightInvis(uint32 src, uint32 dst, uint32 cr, uint32 cg, uint32 cb, uint32 ca, uint32 ica) {
+inline uint32 P_FASTCALL BlendHighlightInvis(uint32 src, uint32 dst, uint32 cr, uint32 cg, uint32 cb, uint32 ca, uint32 ica, const Graphics::PixelFormat &format) {
 	uint8 sr, sg, sb;
 	uint8 dr, dg, db;
-	RenderSurface::_format->colorToRGB(src, sr, sg, sb);
-	RenderSurface::_format->colorToRGB(dst, dr, dg, db);
-	return RenderSurface::_format->RGBToColor((((sr * ica + cr * ca) >> 1) + (dr << 7)) >> 8,
-											  (((sg * ica + cg * ca) >> 1) + (dg << 7)) >> 8,
-											  (((sb * ica + cb * ca) >> 1) + (db << 7)) >> 8);
+	format.colorToRGB(src, sr, sg, sb);
+	format.colorToRGB(dst, dr, dg, db);
+	return format.RGBToColor((((sr * ica + cr * ca) >> 1) + (dr << 7)) >> 8,
+							 (((sg * ica + cg * ca) >> 1) + (dg << 7)) >> 8,
+							 (((sb * ica + cb * ca) >> 1) + (db << 7)) >> 8);
 }
 
 } // End of namespace Ultima8

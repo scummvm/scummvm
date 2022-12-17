@@ -170,6 +170,7 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 	if (s->getPalette() == 0)
 		return;
 
+	const Graphics::PixelFormat &format = _surface->format;
 	const ShapeFrame *frame			= s->getFrame(framenum);
 	if (!frame)
 		return;
@@ -210,7 +211,7 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 					const uint8 *srcpix = srcline + xpos;
 					#ifdef XFORM_SHAPES
 					if (USE_XFORM_FUNC) {
-						*dstpix = CUSTOM_BLEND(BlendPreModulated(xform_pal[*srcpix], *dstpix));
+						*dstpix = CUSTOM_BLEND(BlendPreModulated(xform_pal[*srcpix], *dstpix, format));
 					}
 					else
 					#endif
