@@ -1716,9 +1716,13 @@ static int tolua_ExportedFunctions_PlayRandomSound00(lua_State *L) {
 
 static void PlayMusic(const Common::String &path) {
 	TeMusic &music = g_engine->getApplication()->music();
+	// Note: stop and set repeat before starting,
+	// very slightly different to original because we can't
+	// change repeat value after starting.
+	music.stop();
+	music.repeat(false);
 	music.load(path);
 	music.play();
-	music.repeat(false);
 	music.volume(1.0);
 }
 

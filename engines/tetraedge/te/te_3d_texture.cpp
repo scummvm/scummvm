@@ -202,7 +202,17 @@ bool Te3DTexture::load(const TeImage &img) {
 
 /*static*/
 TeVector2s32 Te3DTexture::optimisedSize(const TeVector2s32 &size) {
-	/* The maths here is a bit funky but it just picks the nearest power of 2 (up) */
+	//
+	// Note: When we enabled optimized sizes it leaves artifacts around movies
+	// etc unless the render size is exactly 800x600.
+	//
+	// This probably means there is a rounding error somewhere else, just leave
+	// off for now.
+	//
+	if (g_engine->getDefaultScreenWidth() != 800)
+		return size;
+
+	// The maths here is a bit funky but it just picks the nearest power of 2 (up)
 	int xsize = size._x - 1;
 	int ysize = size._y - 1;
 
@@ -224,6 +234,7 @@ TeVector2s32 Te3DTexture::optimisedSize(const TeVector2s32 &size) {
 		v2 = 8;
 	}
 	return TeVector2s32(v1, v2);
+	
 }
 
 /*static*/

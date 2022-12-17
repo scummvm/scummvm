@@ -115,6 +115,8 @@ public:
 			Common::Array<TePickMesh2*> &pickMeshes, TeVector3f32 *outloc, bool lastHitFirst);
 
 private:
+	TeVector2s32 aStarResolution() const;
+
 	Common::Array<TeActZone> *_actzones;
 	Common::Array<TeBlocker> *_blockers;
 	Common::Array<TeRectBlocker> *_rectBlockers;

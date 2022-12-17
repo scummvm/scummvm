@@ -24,6 +24,7 @@
 
 #include "common/rect.h"
 #include "common/stream.h"
+#include "math/vector2d.h"
 
 namespace Tetraedge {
 
@@ -32,6 +33,7 @@ public:
 	TeVector2s32();
 	TeVector2s32(int x_, int y_) : _x(x_), _y(y_) {};
 	TeVector2s32(const Common::Point &pt) : _x(pt.x), _y(pt.y) {};
+	explicit TeVector2s32(const Math::Vector2d &pt) : _x(pt.getX()), _y(pt.getY()) {};
 
 	bool operator!=(const TeVector2s32 &other) const {
 		return _x != other._x || _y != other._y;
@@ -61,6 +63,8 @@ public:
 	int _y;
 
 };
+
+TeVector2s32 operator+(const TeVector2s32 &left, const TeVector2s32 &right);
 
 } // end namespace Tetraedge
 

@@ -387,6 +387,8 @@ void Game::finishGame() {
 
 void Game::initLoadedBackupData() {
 	bool warpFlag = true;
+	Application *app = g_engine->getApplication();
+	Common::String firstWarpPath;
 	if (!_loadName.empty()) {
 		warpFlag = false;
 		Common::InSaveFile *saveFile = g_engine->getSaveFileManager()->openForLoading(_loadName);
@@ -396,19 +398,19 @@ void Game::initLoadedBackupData() {
 			if (MetaEngine::readSavegameHeader(saveFile, &header))
 				g_engine->setTotalPlayTime(header.playtime);
 		}
+	} else {
+		firstWarpPath = app->_firstWarpPath;
+		_currentScene = app->_firstScene;
+		_currentZone = app->_firstZone;
+		_playedTimer.start();
+		_objectsTakenVal = 0;
+		for (int i = 0; i < ARRAYSIZE(_objectsTakenBits); i++) {
+			_objectsTakenBits[i] = 0;
+		}
+		_dialogsTold = 0;
+		if (_loadName == "NO_OWNER")
+			_luaShowOwnerError = true;
 	}
-	Application *app = g_engine->getApplication();
-	const Common::String firstWarpPath = app->_firstWarpPath;
-	_currentScene = app->_firstScene;
-	_currentZone = app->_firstZone;
-	_playedTimer.start();
-	_objectsTakenVal = 0;
-	for (int i = 0; i < ARRAYSIZE(_objectsTakenBits); i++) {
-		_objectsTakenBits[i] = 0;
-	}
-	_dialogsTold = 0;
-	if (_loadName == "NO_OWNER")
-		_luaShowOwnerError = true;
 	_gameLoadState = 0;
 	app->showLoadingIcon(false);
 	_loadName.clear();
@@ -798,13 +800,13 @@ bool Game::onCallNumber(Common::String val) {
 	return false;
 }
 
-bool Game::onCharacterAnimationFinished(const Common::String &val) {
+bool Game::onCharacterAnimationFinished(const Common::String &charName) {
 	if (!_scene._character)
 		return false;
 
 	for (unsigned int i = 0; i < _yieldedCallbacks.size(); i++) {
 		YieldedCallback &cb = _yieldedCallbacks[i];
-		if (cb._luaFnName == "OnCharacterAnimationFinished" && cb._luaParam == val) {
+		if (cb._luaFnName == "OnCharacterAnimationFinished" && cb._luaParam == charName) {
 			TeLuaThread *lua = cb._luaThread;
 			_yieldedCallbacks.remove_at(i);
 			if (lua) {
@@ -814,7 +816,7 @@ bool Game::onCharacterAnimationFinished(const Common::String &val) {
 			break;
 		}
 	}
-	_luaScript.execute("OnCharacterAnimationFinished", val);
+	_luaScript.execute("OnCharacterAnimationFinished", charName);
 	return false;
 }
 

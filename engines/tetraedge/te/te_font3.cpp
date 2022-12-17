@@ -86,7 +86,7 @@ Graphics::Font *TeFont3::getAtSize(unsigned int size) {
 		error("TeFont3::: Couldn't open font file %s.", getAccessName().toString().c_str());
 
 	_fontFile.seek(0);
-	Graphics::Font *newFont = Graphics::loadTTFFont(_fontFile, size);
+	Graphics::Font *newFont = Graphics::loadTTFFont(_fontFile, size, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeNormal);
 	if (!newFont) {
 		error("TeFont3::: Couldn't load font %s at size %d.", _loadedPath.toString().c_str(), size);
 	}

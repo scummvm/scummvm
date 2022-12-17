@@ -123,11 +123,17 @@ enum TeLuaSaveVarType {
 	String = 4
 };
 
+#define DEBUG_SAVELOAD 1
+
 Common::Error TeLuaContext::syncState(Common::Serializer &s) {
 	// Save/Load globals.  The format of saving is:
 	// [type][name][val] [type][name][val]...
+	// Vals can be string, number (uint32), or boolean (byte)
 	// The type of "None" (0) is the end of the list (and has no name/val).
 	if (s.isSaving()) {
+#if DEBUG_SAVELOAD
+		debug("TeLuaContext::syncState: --- Saving globals: ---");
+#endif
 		lua_pushvalue(_luaState, LUA_GLOBALSINDEX);
 		lua_pushnil(_luaState);
 		int nextresult = lua_next(_luaState, -2);
@@ -139,65 +145,87 @@ Common::Error TeLuaContext::syncState(Common::Serializer &s) {
 				break;
 			}
 			unsigned int vtype = lua_type(_luaState, -1);
+			Common::String name = lua_tolstring(_luaState, -2, nullptr);
 			if (vtype == LUA_TBOOLEAN) {
 				TeLuaSaveVarType stype = Boolean;
-				Common::String name = lua_tolstring(_luaState, -2, nullptr);
 				s.syncAsUint32LE(stype);
 				s.syncString(name);
 				bool val = lua_toboolean(_luaState, -1);
 				s.syncAsByte(val);
+#if DEBUG_SAVELOAD
+				debug("TeLuaContext::syncState: bool %s = %s", name.c_str(), val ? "true" : "false");
+#endif
 			} else if (vtype == LUA_TNUMBER) {
 				TeLuaSaveVarType stype = Number;
-				Common::String name = lua_tolstring(_luaState, -2, nullptr);
 				s.syncAsUint32LE(stype);
 				s.syncString(name);
 				double val = lua_tonumber(_luaState, -1);
 				s.syncAsDoubleLE(val);
+#if DEBUG_SAVELOAD
+				debug("TeLuaContext::syncState: num %s = %f", name.c_str(), val);
+#endif
 			} else if (vtype == LUA_TSTRING) {
 				TeLuaSaveVarType stype = String;
-				Common::String name = lua_tolstring(_luaState, -2, nullptr);
 				s.syncAsUint32LE(stype);
 				s.syncString(name);
 				Common::String val = lua_tostring(_luaState, -1);
 				s.syncString(val);
+#if DEBUG_SAVELOAD
+				debug("TeLuaContext::syncState: str %s = '%s'", name.c_str(), val.c_str());
+#endif
 			}
 			lua_settop(_luaState, -2);
 			nextresult = lua_next(_luaState, -2);
 		}
 	} else {
-		warning("Confirm loading in TeLuaContext::syncState");
+#if DEBUG_SAVELOAD
+		debug("TeLuaContext::syncState: --- Loading globals: --- ");
+#endif
 		// loading
 		TeLuaSaveVarType vtype = None;
 		s.syncAsUint32LE(vtype);
 		while (vtype != None) {
+			Common::String name;
+			s.syncString(name);
 			switch (vtype) {
 				case Boolean: {
 					byte b;
 					s.syncAsByte(b);
 					lua_pushboolean(_luaState, b);
+#if DEBUG_SAVELOAD
+					debug("TeLuaContext::syncState: bool %s = %s", name.c_str(), b ? "true" : "false");
+#endif
 					break;
 				}
 				case Number: {
 					float d;
 					s.syncAsDoubleLE(d);
 					lua_pushnumber(_luaState, d);
+#if DEBUG_SAVELOAD
+					debug("TeLuaContext::syncState: num %s = %f", name.c_str(), d);
+#endif
 					break;
 				}
 				case String: {
 					Common::String str;
 					s.syncString(str);
 					lua_pushstring(_luaState, str.c_str());
+#if DEBUG_SAVELOAD
+					debug("TeLuaContext::syncState: str %s = '%s'", name.c_str(), str.c_str());
+#endif
 					break;
 				}
 				default:
 					error("Unexpected lua type on load %d", (int)vtype);
 			}
-			Common::String name;
-			s.syncString(name);
 			lua_setglobal(_luaState, name.c_str());
 			s.syncAsUint32LE(vtype);
 		}
 	}
+
+#if DEBUG_SAVELOAD
+	debug("TeLuaContext::syncState: -------- end --------");
+#endif
 
 	return Common::kNoError;
 }

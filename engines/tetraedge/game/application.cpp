@@ -91,6 +91,7 @@ void Application::create() {
 	_mainWindow.setSize(TeVector3f32(winWidth, winHeight, 0.0));
 	_mainWindow.setSizeType(TeILayout::ABSOLUTE);
 	_mainWindow.setPositionType(TeILayout::ABSOLUTE);
+	_mainWindow.setPosition(TeVector3f32(0.0f, 0.0f ,0.0f));
 
 	TeResourceManager *resmgr = g_engine->getResourceManager();
 	_fontComic = resmgr->getResourceNoSearch<TeFont3>("Common/Fonts/ComicRelief.ttf");
