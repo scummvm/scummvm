@@ -1296,7 +1296,7 @@ void Script::hitObject(bool leftButton) {
 
 				_leftButtonVerb = verb;
 				if (_pendingVerb > getVerbType(kVerbNone))
-					showVerb(kITEColorBrightWhite);
+					showVerb(_vm->iteColorBrightWhite());
 				else
 					showVerb();
 
@@ -1330,7 +1330,7 @@ void Script::hitObject(bool leftButton) {
 
 		_leftButtonVerb = verb;
 		if (_pendingVerb > getVerbType(kVerbNone))
-			showVerb(kITEColorBrightWhite);
+			showVerb(_vm->iteColorBrightWhite());
 		else
 			showVerb();
 	}

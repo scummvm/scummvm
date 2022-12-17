@@ -237,7 +237,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		memcpy(n.getBuffer(), _mainPanel.image.getBuffer() + kSkipLines * _mainPanel.imageWidth, _mainPanel.imageHeight * _mainPanel.imageWidth);
 		// Fill button panel with blue to remove western button outlies. No idea why it was done in the code rather than resource itself
 		for (unsigned y = 0; y < 43; y++)
-			memset(n.getBuffer() + y * _mainPanel.imageWidth + 53, kITEColorBlue89, 114);
+			memset(n.getBuffer() + y * _mainPanel.imageWidth + 53, _vm->isECS() ? kITEECSBottomColorBlue : kITEDOSColorBlue89, 114);
 		_mainPanel.image = n;
 	}
 
@@ -976,7 +976,7 @@ void Interface::drawOption() {
 
 	if (_optionSaveRectTop.height() > 0) {
 		if (_vm->getGameId() == GID_ITE)
-			_vm->_gfx->drawRect(_optionSaveRectTop, kITEColorDarkGrey);
+			_vm->_gfx->drawRect(_optionSaveRectTop, _vm->iteColorOptionsDarkGrey());
 	}
 
 	if (_vm->getGameId() == GID_ITE) {
@@ -990,7 +990,7 @@ void Interface::drawOption() {
 	}
 
 	if (_optionSaveRectBottom.height() > 0) {
-		_vm->_gfx->drawRect(_optionSaveRectBottom, kITEColorDarkGrey);
+		_vm->_gfx->drawRect(_optionSaveRectBottom, _vm->iteColorOptionsDarkGrey());
 	}
 
 	_optionPanel.calcPanelButtonRect(_optionSaveFilePanel, rect);
@@ -999,10 +999,10 @@ void Interface::drawOption() {
 	fontHeight = _vm->_font->getHeight(kKnownFontSmall);
 	for (uint j = 0; j < _vm->getDisplayInfo().optionSaveFileVisible; j++) {
 		if (_vm->getGameId() == GID_ITE)
-			bgColor = kITEColorDarkGrey0C;
+			bgColor = _vm->iteColorOptionsDarkGrey0C();
 		else
 			bgColor = _vm->KnownColor2ColorId(kKnownColorBlack);
-		fgColor = kITEColorBrightWhite;
+		fgColor = _vm->iteColorOptionsBrightWhite();
 
 		idx = j + _optionSaveFileTop;
 		if (idx == _optionSaveFileTitleNumber) {
@@ -2166,7 +2166,7 @@ void Interface::drawInventory() {
 		_mainPanel.calcPanelButtonRect(&_mainPanel.buttons[i], rect);
 
 		if (_vm->getGameId() == GID_ITE)
-			_vm->_gfx->drawRect(rect, kITEColorDarkGrey);
+			_vm->_gfx->drawRect(rect, _vm->isECS() ? kITEECSBottomColorDarkGrey : kITEDOSColorDarkGrey);
 		else
 			_vm->_gfx->drawRect(rect, _vm->KnownColor2ColorId(kKnownColorBlack));
 
@@ -2200,19 +2200,19 @@ void Interface::drawButtonBox(const Rect& rect, ButtonKind kind, bool down) {
 	case kSlider:
 		cornerColor = 0x8b;
 		frameColor = _vm->KnownColor2ColorId(kKnownColorBlack);
-		fillColor = kITEColorLightBlue96;
-		odl = kITEColorDarkBlue8a;
-		our = kITEColorLightBlue92;
+		fillColor = _vm->iteColorOptionsLightBlue96();
+		odl = _vm->iteColorOptionsDarkBlue8a();
+		our = _vm->iteColorOptionsLightBlue92();
 		idl = 0x89;
 		iur = 0x94;
-		solidColor = down ? kITEColorLightBlue94 : kITEColorLightBlue96;
+		solidColor = down ? _vm->iteColorOptionsLightBlue94() : _vm->iteColorOptionsLightBlue96();
 		break;
 	case kEdit:
 		if (_vm->getGameId() == GID_ITE) {
-			cornerColor = frameColor = fillColor = kITEColorLightBlue96;
-			our = kITEColorDarkBlue8a;
-			odl = kITEColorLightBlue94;
-			solidColor = down ? kITEColorBlue : kITEColorDarkGrey0C;
+			cornerColor = frameColor = fillColor = _vm->iteColorOptionsLightBlue96();
+			our = _vm->iteColorOptionsDarkBlue8a();
+			odl = _vm->iteColorOptionsLightBlue94();
+			solidColor = down ? _vm->iteColorOptionsBlue() : _vm->iteColorOptionsDarkGrey0C();
 		} else {
 			cornerColor = frameColor = fillColor = _vm->KnownColor2ColorId(kKnownColorBlack);
 			our = odl = solidColor = _vm->KnownColor2ColorId(kKnownColorBlack);
@@ -2223,9 +2223,9 @@ void Interface::drawButtonBox(const Rect& rect, ButtonKind kind, bool down) {
 	default:
 		cornerColor = 0x8b;
 		frameColor = _vm->KnownColor2ColorId(kKnownColorBlack);
-		solidColor = fillColor = kITEColorLightBlue96;
-		odl = kITEColorDarkBlue8a;
-		our = kITEColorLightBlue94;
+		solidColor = fillColor = _vm->iteColorOptionsLightBlue96();
+		odl = _vm->iteColorOptionsDarkBlue8a();
+		our = _vm->iteColorOptionsLightBlue94();
 		idl = 0x97;
 		iur = 0x95;
 		if (down) {
@@ -2590,15 +2590,15 @@ void Interface::converseDisplayTextLines() {
 	Point textPoint;
 
 	if (_vm->getGameId() == GID_ITE) {
-		bulletForegnd = kITEColorGreen;
-		bulletBackgnd = kITEColorBlack;
+		bulletForegnd = _vm->iteColorBottomGreen();
 	} else {
 		bulletForegnd = _vm->KnownColor2ColorId(kKnownColorBrightWhite);
-		bulletBackgnd = _vm->KnownColor2ColorId(kKnownColorBlack);
 	}
 
+	bulletBackgnd = _vm->KnownColor2ColorId(kKnownColorBlack);
+
 	if (_vm->getGameId() == GID_ITE)
-		_vm->_gfx->drawRect(rect, kITEColorDarkGrey);	// fill bullet place
+		_vm->_gfx->drawRect(rect, _vm->iteColorBottomDarkGrey());	// fill bullet place
 	else if (_vm->getGameId() == GID_IHNM)
 		// TODO: Add these to IHNM_DisplayInfo?
 		_vm->_gfx->drawRect(Common::Rect(118, 345, 603, 463), _vm->KnownColor2ColorId(kKnownColorBlack));	// fill converse rect
@@ -2612,16 +2612,16 @@ void Interface::converseDisplayTextLines() {
 
 		if (_conversePos >= 0 && _converseText[_conversePos].stringNum == _converseText[relPos].stringNum) {
 			if (_vm->getGameId() == GID_ITE) {
-				foregnd = kITEColorBrightWhite;
-				backgnd = (!_vm->leftMouseButtonPressed()) ? kITEColorDarkGrey : kITEColorGrey;
+				foregnd = _vm->iteColorBottomBrightWhite();
+				backgnd = (!_vm->leftMouseButtonPressed()) ? _vm->iteColorBottomDarkGrey() : _vm->iteColorBottomGrey();
 			} else {
 				foregnd = _vm->KnownColor2ColorId(kKnownColorVerbTextActive);
 				backgnd = _vm->KnownColor2ColorId(kKnownColorVerbTextActive);
 			}
 		} else {
 			if (_vm->getGameId() == GID_ITE) {
-				foregnd = kITEColorBlue;
-				backgnd = kITEColorDarkGrey;
+				foregnd = _vm->iteColorBottomBlue();
+				backgnd = _vm->iteColorBottomDarkGrey();
 			} else {
 				foregnd = _vm->KnownColor2ColorId(kKnownColorBrightWhite);
 				backgnd = _vm->KnownColor2ColorId(kKnownColorBlack);
@@ -2652,7 +2652,8 @@ void Interface::converseDisplayTextLines() {
 			textPoint.x = rect.right - _vm->_font->getStringWidth(kKnownFontSmall, str, strlen(str), kFontNormal) - 1;
 		textPoint.y = rect.top;
 		if (_vm->getGameId() == GID_ITE)
-			_vm->_font->textDraw(kKnownFontSmall, str, textPoint, foregnd, kITEColorBlack, _vm->getPlatform() == Common::kPlatformPC98 ?  kFontNormal : kFontShadow);
+			_vm->_font->textDraw(kKnownFontSmall, str, textPoint, foregnd, _vm->KnownColor2ColorId(kKnownColorBlack),
+					     _vm->getPlatform() == Common::kPlatformPC98 ?  kFontNormal : kFontShadow);
 		else
 			_vm->_font->textDraw(kKnownFontVerb, str, textPoint, foregnd, _vm->KnownColor2ColorId(kKnownColorBlack), kFontShadow);
 	}
