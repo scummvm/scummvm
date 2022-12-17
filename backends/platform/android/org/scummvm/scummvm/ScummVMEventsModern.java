@@ -105,8 +105,8 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 
 	private boolean repeatMove() {
 		_scummvm.pushEvent(JE_JOYSTICK, MotionEvent.ACTION_MOVE,
-			(int) (repeatingX * 100),
-			(int) (repeatingY * 100),
+			(int) (repeatingX * JOYSTICK_AXIS_MAX),
+			(int) (repeatingY * JOYSTICK_AXIS_MAX),
 			0, 0, 0);
 		return true;
 	}
@@ -125,7 +125,7 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 		if (x == 0) {
 			// reducing to 1/3 since hat axis is non-analog, and 100% of axis max
 			// is way too fast when used for cursor movement
-			x = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_HAT_X, historyPos) * 0.33f;
+			x = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_HAT_X, historyPos) * JOYSTICK_AXIS_HAT_SCALE;
 			//Log.d(ScummVM.LOG_TAG, "JOYSTICK - HAT: x= " +x);
 		}
 		if (x == 0) {
@@ -139,7 +139,7 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 		float y = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_Y, historyPos);
 		//Log.d(ScummVM.LOG_TAG, "JOYSTICK - LEFT: y= " +y);
 		if (y == 0) {
-			y = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_HAT_Y, historyPos) * 0.33f;
+			y = getCenteredAxis(event, inputDevice, MotionEvent.AXIS_HAT_Y, historyPos) * JOYSTICK_AXIS_HAT_SCALE;
 			//Log.d(ScummVM.LOG_TAG, "JOYSTICK - HAT: y= " +y);
 		}
 		if (y == 0) {
@@ -150,7 +150,7 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 		// extra filter to stop repetition in order to avoid cases when android does not send onGenericMotionEvent()
 		// for small x or y (while abs is still larger than range.getflat())
 		// In such case we would end up with a slow moving "mouse" cursor - so we need this extra filter
-		if (Math.abs(x * 100) < 20.0f && Math.abs(y * 100) < 20.0f) {
+		if (Math.abs(x) < 0.2f && Math.abs(y) < 0.2f) {
 			//Log.d(ScummVM.LOG_TAG, "JOYSTICK - pushEvent(): STOPPED: " + (int)(x * 100) + " y= " + (int)(y * 100));
 			removeMessages();
 			// do the move, then signal the joystick has returned to center pos
