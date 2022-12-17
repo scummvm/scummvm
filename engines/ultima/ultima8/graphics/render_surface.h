@@ -149,7 +149,7 @@ public:
 	//
 
 	//! Fill buffer (using a RGB colour)
-	virtual void Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) = 0;
+	virtual void Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h);
 
 	//! Fill alpha channel
 	virtual void FillAlpha(uint8 alpha, int32 sx, int32 sy, int32 w, int32 h) = 0;
@@ -195,7 +195,7 @@ public:
 	//
 
 	// Draw a RGB Line
-	virtual void DrawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey) = 0;
+	virtual void DrawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey);
 
 
 	//
@@ -203,7 +203,7 @@ public:
 	//
 
 	//! Blit a region from a Texture (Alpha == 0 -> skipped)
-	virtual void Blit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, bool alpha_blend = false) = 0;
+	virtual void Blit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, bool alpha_blend = false);
 
 	//! Blit a region from a Texture with a Colour blend (AlphaTex == 0 -> skipped. AlphaCol32 -> Blend Factors)
 	virtual void FadedBlit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) = 0;
