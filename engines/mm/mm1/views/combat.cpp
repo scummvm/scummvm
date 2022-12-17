@@ -135,6 +135,10 @@ void Combat::draw() {
 		writeCharAttackDamage();
 		delaySeconds(3);
 		return;
+	case NO_EFFECT:
+		writeCharAttackNoEffect();
+		delaySeconds(3);
+		return;
 	default:
 		break;
 	}
@@ -179,6 +183,7 @@ void Combat::timeout() {
 		break;
 	case MONSTERS_AFFECTED:
 	case CHAR_ATTACKS:
+	case NO_EFFECT:
 		combatLoop();
 		break;
 	case MONSTER_FLEES:
@@ -752,7 +757,9 @@ void Combat::writeMessage() {
 }
 
 void Combat::writeCharAttackDamage() {
-	writeString(0, 0, Common::String::format("%s %s %s",
+	resetBottom();
+
+	writeString(0, 20, Common::String::format("%s %s %s",
 		g_globals->_currCharacter->_name,
 		STRING[_isShooting ? "dialogs.combat.shoots" :
 		"dialogs.combat.attacks"].c_str(),
@@ -760,7 +767,21 @@ void Combat::writeCharAttackDamage() {
 	));
 	_isShooting = false;
 
-	writeString(0, 1, getAttackString());
+	writeString(0, 21, getAttackString());
+}
+
+void Combat::writeCharAttackNoEffect() {
+	resetBottom();
+
+	writeString(0, 20, Common::String::format("%s %s %s",
+		g_globals->_currCharacter->_name,
+		STRING[_isShooting ? "dialogs.combat.shoots" :
+		"dialogs.combat.attacks"].c_str(),
+		_monsterP->_name.c_str()
+	));
+	_isShooting = false;
+
+	writeString(0, 21, STRING["dialogs.combat.weapon_no_effect"]);
 }
 
 Common::String Combat::getAttackString() {
