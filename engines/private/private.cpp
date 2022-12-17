@@ -1404,14 +1404,8 @@ void PrivateEngine::drawScreen() {
 		// No use of _compositeSurface, we write the frame directly to the screen in the expected position
 		g_system->copyRectToScreen(frame->getPixels(), frame->pitch, center.x, center.y, frame->w, frame->h);	
 	} else {
-		const byte *cPalette = (const byte *) _compositeSurface->getPalette();
-
-		byte newPalette[768];
-		for (int c = 0; c < 256; c++) { // This avoids any endianness issues
-			uint32 y = READ_UINT32(&cPalette[c * 4]) & 0x00FFFFFF;
-			WRITE_LE_UINT24(&newPalette[c * 3], y);
-		}
-
+		byte newPalette[256 * 3];
+		_compositeSurface->grabPalette(newPalette, 0, 256);
 		g_system->getPaletteManager()->setPalette(newPalette, 0, 256);
 
 		if (_mode == 1) {
