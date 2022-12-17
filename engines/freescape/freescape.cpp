@@ -310,15 +310,15 @@ void FreescapeEngine::drawFrame() {
 		_underFireFrames--;
 	}
 
-	drawBorder();
-	drawUI();
-
 	if (_shootingFrames > 0) {
 		_gfx->setViewport(_fullscreenViewArea);
 		_gfx->renderPlayerShoot(0, _crossairPosition, _viewArea);
 		_gfx->setViewport(_viewArea);
 		_shootingFrames--;
 	}
+
+	drawBorder();
+	drawUI();
 
 	_currentArea->unremapColor(_currentArea->_usualBackgroundColor);
 	_currentArea->unremapColor(_currentArea->_skyColor);

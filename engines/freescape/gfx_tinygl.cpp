@@ -148,14 +148,14 @@ void TinyGLRenderer::renderPlayerShoot(byte color, const Common::Point position,
 	tglGetIntegerv(TGL_VIEWPORT, viewPort);
 
 	tglEnableClientState(TGL_VERTEX_ARRAY);
-	copyToVertexArray(0, Math::Vector3d(viewArea.left, viewArea.height() + viewArea.top - 1, 0));
+	copyToVertexArray(0, Math::Vector3d(viewArea.left, viewArea.height() + viewArea.top, 0));
 	copyToVertexArray(1, Math::Vector3d(position.x, position.y, 0));
-	copyToVertexArray(2, Math::Vector3d(viewArea.left, viewArea.height() + viewArea.top - 1, 0));
+	copyToVertexArray(2, Math::Vector3d(viewArea.left, viewArea.height() + viewArea.top + 3, 0));
 	copyToVertexArray(3, Math::Vector3d(position.x, position.y, 0));
 
-	copyToVertexArray(4, Math::Vector3d(viewArea.right, viewArea.width() - viewArea.bottom, 0));
+	copyToVertexArray(4, Math::Vector3d(viewArea.right, viewArea.height() + viewArea.top, 0));
 	copyToVertexArray(5, Math::Vector3d(position.x, position.y, 0));
-	copyToVertexArray(6, Math::Vector3d(viewArea.right, viewArea.width() - viewArea.bottom, 0));
+	copyToVertexArray(6, Math::Vector3d(viewArea.right, viewArea.height() + viewArea.top + 3, 0));
 	copyToVertexArray(7, Math::Vector3d(position.x, position.y, 0));
 
 	tglVertexPointer(3, TGL_FLOAT, 0, _verts);
