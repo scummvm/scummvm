@@ -47,6 +47,7 @@ Sensor::Sensor(
 	_flags = flags_;
 	_conditionSource = conditionSource_;
 	_condition = condition_;
+	_isShooting = false;
 }
 
 Object *Sensor::duplicate() { 

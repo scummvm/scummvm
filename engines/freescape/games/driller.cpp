@@ -854,6 +854,8 @@ void DrillerEngine::removeDrill(Area *area) {
 void DrillerEngine::initGameState() {
 	_flyMode = false;
 	_noClipMode = false;
+	_shootingFrames = 0;
+	_underFireFrames = 0;
 	_lastMousePos = Common::Point(0, 0);
 	_yaw = 0;
 	_pitch = 0;

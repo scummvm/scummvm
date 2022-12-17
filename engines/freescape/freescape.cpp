@@ -129,7 +129,11 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_initialCountdown = 0;
 	_countdown = 0;
 	_ticks = 0;
+	_lastTick = -1;
 	_frameLimiter = nullptr;
+
+	_underFireFrames = 0;
+	_shootingFrames = 0;
 }
 
 FreescapeEngine::~FreescapeEngine() {
@@ -232,25 +236,26 @@ void FreescapeEngine::centerCrossair() {
 	_currentDemoMousePosition = _crossairPosition;
 }
 
-bool FreescapeEngine::checkSensors() {
-	bool frameRedrawed = false;
+void FreescapeEngine::checkSensors() {
 	if (_disableSensors)
-		return frameRedrawed;
+		return;
+
+	if (_lastTick == _ticks)
+		return;
+
+	_lastTick = _ticks;
 	for (auto &it : _sensors) {
 		Sensor *sensor = (Sensor *)it;
 		bool playerDetected = sensor->playerDetected(_position, _currentArea);
 		if (playerDetected) {
 			if (_ticks % sensor->_firingInterval == 0) {
-				frameRedrawed = true;
+				if (_underFireFrames <= 0)
+					_underFireFrames = _gfx->_isAccelerated ? 60 : 4;
 				takeDamageFromSensor();
-				drawSensorShoot(sensor);
-				_gfx->flipBuffer();
-				g_system->updateScreen();
-				g_system->delayMillis(10);
 			}
 		}
+		sensor->shouldShoot(playerDetected);
 	}
-	return frameRedrawed;
 }
 
 void FreescapeEngine::drawSensorShoot(Sensor *sensor) {
@@ -270,9 +275,6 @@ void FreescapeEngine::flashScreen(int backgroundColor) {
 
 void FreescapeEngine::takeDamageFromSensor() {
 	_gameStateVars[k8bitVariableShield]--;
-	int underFireColor = isDriller() && (_renderMode == Common::kRenderEGA) ? 1
-						: _currentArea->_underFireBackgroundColor;
-	flashScreen(underFireColor);
 }
 
 void FreescapeEngine::drawBackground() {
@@ -286,10 +288,40 @@ void FreescapeEngine::drawBackground() {
 void FreescapeEngine::drawFrame() {
 	_gfx->updateProjectionMatrix(70.0, _nearClipPlane, _farClipPlane);
 	_gfx->positionCamera(_position, _position + _cameraFront);
+
+	if (_underFireFrames > 0) {
+		int underFireColor = isDriller() && (_renderMode == Common::kRenderEGA) ? 1
+							: _currentArea->_underFireBackgroundColor;
+		if (underFireColor < 16) {
+			_currentArea->remapColor(_currentArea->_usualBackgroundColor, underFireColor);
+			_currentArea->remapColor(_currentArea->_skyColor, underFireColor);
+		}
+	}
+
 	drawBackground();
 	_currentArea->draw(_gfx);
+
+	if (_underFireFrames > 0) {
+		for (auto &it : _sensors) {
+			Sensor *sensor = (Sensor *)it;
+			if (sensor->isShooting())
+				drawSensorShoot(sensor);
+		}
+		_underFireFrames--;
+	}
+
 	drawBorder();
 	drawUI();
+
+	if (_shootingFrames > 0) {
+		_gfx->setViewport(_fullscreenViewArea);
+		_gfx->renderPlayerShoot(0, _crossairPosition, _viewArea);
+		_gfx->setViewport(_viewArea);
+		_shootingFrames--;
+	}
+
+	_currentArea->unremapColor(_currentArea->_usualBackgroundColor);
+	_currentArea->unremapColor(_currentArea->_skyColor);
 }
 
 void FreescapeEngine::pressedKey(const int keycode) {}
@@ -506,10 +538,8 @@ Common::Error FreescapeEngine::run() {
 			endGame = false;
 		}
 
-		bool frameRedrawed = checkSensors();
-
-		if (!frameRedrawed)
-			drawFrame();
+		checkSensors();
+		drawFrame();
 
 		if (_demoMode)
 			generateDemoInput();

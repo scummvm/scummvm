@@ -48,6 +48,7 @@ public:
 	byte _firingInterval;
 	uint16 _firingRange;
 	uint16 _axis;
+	bool _isShooting;
 
 	Common::String _conditionSource;
 	FCLInstructionVector _condition;
@@ -55,11 +56,13 @@ public:
 	virtual ~Sensor() { delete _colours; }
 	bool isDrawable() override { return true; }
 	bool isPlanar() override { return true; }
+	bool isShooting() { return _isShooting; }
 	void scale(int factor) override { _origin = _origin / factor; };
 	Object *duplicate() override;
 
 	ObjectType getType() override { return kSensorType; };
 	Math::Vector3d getRotation() { return _rotation; }
+	void shouldShoot(bool shooting) { _isShooting = shooting; }
 
 	void draw(Freescape::Renderer *gfx) override;
 

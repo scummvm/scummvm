@@ -272,6 +272,8 @@ public:
 	Graphics::FrameLimiter *_frameLimiter;
 	Common::RenderMode _renderMode;
 	ColorMap _colorMap;
+	int _underFireFrames;
+	int _shootingFrames;
 	void drawFrame();
 	void flashScreen(int backgroundColor);
 	uint8 _colorNumber;
@@ -303,7 +305,7 @@ public:
 	StateBits _gameStateBits;
 	virtual bool checkIfGameEnded();
 	ObjectArray _sensors;
-	bool checkSensors();
+	void checkSensors();
 	void drawSensorShoot(Sensor *sensor);
 	void takeDamageFromSensor();
 
@@ -324,6 +326,7 @@ public:
 	int _initialCountdown;
 	int _countdown;
 	int _ticks;
+	int _lastTick;
 
 	// Cheats
 	bool _useExtendedTimer;

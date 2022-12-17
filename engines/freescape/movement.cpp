@@ -63,9 +63,7 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 void FreescapeEngine::shoot() {
 	//_mixer->stopHandle(_soundFxHandle);
 	playSound(1, true);
-	_gfx->setViewport(_fullscreenViewArea);
-	_gfx->renderPlayerShoot(0, _crossairPosition, _viewArea);
-	_gfx->setViewport(_viewArea);
+	_shootingFrames = _gfx->_isAccelerated ? 60 : 4;
 
 	Common::Point center(_viewArea.left + _viewArea.width() / 2, _viewArea.top + _viewArea.height() / 2);
 	float xoffset = _crossairPosition.x - center.x;
