@@ -170,7 +170,9 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 	if (s->getPalette() == 0)
 		return;
 
+#ifdef XFORM_SHAPES
 	const Graphics::PixelFormat &format = _surface->format;
+#endif
 	const ShapeFrame *frame			= s->getFrame(framenum);
 	if (!frame)
 		return;
