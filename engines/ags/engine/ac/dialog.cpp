@@ -425,6 +425,7 @@ struct DialogOptions {
 	int parserActivated;
 
 	int curyp;
+	bool needRedraw;
 	bool wantRefresh;
 	bool usingCustomRendering;
 	int orixp;
@@ -444,7 +445,15 @@ struct DialogOptions {
 	void Prepare(int _dlgnum, bool _runGameLoopsInBackground);
 	void Show();
 	void Redraw();
+	// Runs the dialog options update;
+	// returns whether should continue to run options loop, or stop
 	bool Run();
+	// Process all the buffered key events;
+	// returns whether should continue to run options loop, or stop
+	bool RunKeyControls();
+	// Process single key event
+	// returns whether should continue to run options loop, or stop
+	bool RunKey(const KeyInput &ki);
 	void Close();
 };
 
@@ -588,6 +597,7 @@ void DialogOptions::Show() {
 
 	orixp = dlgxp;
 	oriyp = dlgyp;
+	needRedraw = false;
 	wantRefresh = false;
 	mouseison = -10;
 
@@ -732,15 +742,9 @@ void DialogOptions::Redraw() {
 		if (dlgyp < dirtyy)
 			dirtyy = dlgyp;
 
-		//curyp = dlgyp + 1;
 		curyp = dlgyp;
 		curyp = write_dialog_options(ds, options_surface_has_alpha, dlgxp, curyp, numdisp, mouseison, areawid, bullet_wid, usingfont, dtop, disporder, dispyp, linespacing, forecol, padding);
 
-		/*if (curyp > _GP(play).viewport.GetHeight()) {
-		  dlgyp = _GP(play).viewport.GetHeight() - (curyp - dlgyp);
-		  ds->FillRect(Rect(0,dlgyp-1,_GP(play).viewport.GetWidth()-1,_GP(play).viewport.GetHeight()-1);
-		  goto redraw_options;
-		}*/
 		if (parserInput)
 			parserInput->X = dlgxp;
 	}
@@ -802,7 +806,6 @@ bool DialogOptions::Run() {
 	sys_evt_process_pending();
 
 	const bool new_custom_render = usingCustomRendering && _GP(game).options[OPT_DIALOGOPTIONSAPI] >= 0;
-	const bool old_keyhandle = _GP(game).options[OPT_KEYHANDLEAPI] == 0;
 
 	if (runGameLoopsInBackground) {
 		_GP(play).disabled_user_interface++;
@@ -818,62 +821,16 @@ bool DialogOptions::Run() {
 		run_function_on_non_blocking_thread(&_GP(runDialogOptionRepExecFunc));
 	}
 
-	KeyInput ki;
-	if (run_service_key_controls(ki) && !_GP(play).IsIgnoringInput()) {
-		const eAGSKeyCode agskey = ki.Key;
-		if (parserInput) {
-			wantRefresh = true;
-			// type into the parser 
-			// TODO: find out what are these key commands, and are these documented?
-			if ((agskey == eAGSKeyCodeF3) || ((agskey == eAGSKeyCodeSpace) && (parserInput->Text.GetLength() == 0))) {
-				// write previous contents into textbox (F3 or Space when box is empty)
-				size_t last_len = ustrlen(_GP(play).lastParserEntry);
-				size_t cur_len = ustrlen(parserInput->Text.GetCStr());
-				// [ikm] CHECKME: tbh I don't quite get the logic here (it was like this in original code);
-				// but what we do is copying only the last part of the previous string
-				if (cur_len < last_len) {
-					const char *entry = _GP(play).lastParserEntry;
-					// TODO: utility function for advancing N utf-8 chars
-					for (size_t i = 0; i < cur_len; ++i) ugetxc(&entry);
-					parserInput->Text.Append(entry);
-				}
+	needRedraw = false;
 
-				//ags_domouse(DOMOUSE_DISABLE);
-				Redraw();
-				return true; // continue running loop
-			} else if ((agskey >= eAGSKeyCodeSpace) || (agskey == eAGSKeyCodeReturn) || (agskey == eAGSKeyCodeBackspace)) {
-				parserInput->OnKeyPress(ki);
-				if (!parserInput->IsActivated) {
-					//ags_domouse(DOMOUSE_DISABLE);
-					Redraw();
-					return true; // continue running loop
-				}
-			}
-		} else if (new_custom_render) {
-			if (old_keyhandle || (ki.UChar == 0)) {
-				// "dialog_options_key_press"
-				_GP(runDialogOptionKeyPressHandlerFunc).params[0].SetDynamicObject(&_GP(ccDialogOptionsRendering), &_GP(ccDialogOptionsRendering));
-				_GP(runDialogOptionKeyPressHandlerFunc).params[1].SetInt32(AGSKeyToScriptKey(ki.Key));
-				_GP(runDialogOptionKeyPressHandlerFunc).params[2].SetInt32(ki.Mod);
-				run_function_on_non_blocking_thread(&_GP(runDialogOptionKeyPressHandlerFunc));
-			}
-			if (!old_keyhandle && (ki.UChar > 0)) {
-				// "dialog_options_text_input"
-				_GP(runDialogOptionTextInputHandlerFunc).params[0].SetDynamicObject(&_GP(ccDialogOptionsRendering), &_GP(ccDialogOptionsRendering));
-				_GP(runDialogOptionTextInputHandlerFunc).params[1].SetInt32(ki.UChar);
-				run_function_on_non_blocking_thread(&_GP(runDialogOptionKeyPressHandlerFunc));
-			}
-		}
-		// Allow selection of options by keyboard shortcuts
-		else if (_GP(game).options[OPT_DIALOGNUMBERED] >= kDlgOptKeysOnly &&
-			agskey >= '1' && agskey <= '9') {
-			int numkey = agskey - '1';
-			if (numkey < numdisp) {
-				chose = disporder[numkey];
-				return false; // end dialog options running loop
-			}
-		}
-	}
+	// Handle keyboard
+	if (!RunKeyControls())
+		return false; // end loop
+
+	if (needRedraw)
+		Redraw();
+
+	// Handle mouse
 	mousewason = mouseison;
 	mouseison = -1;
 	if (new_custom_render); // do not automatically detect option under mouse
@@ -973,7 +930,6 @@ bool DialogOptions::Run() {
 		}
 	}
 	if (mousewason != mouseison) {
-		//ags_domouse(DOMOUSE_DISABLE);
 		Redraw();
 		return true; // continue running loop
 	}
@@ -995,6 +951,78 @@ bool DialogOptions::Run() {
 		WaitForNextFrame();
 	}
 
+	return true; // continue running loop
+}
+
+bool DialogOptions::RunKeyControls() {
+	// Handle all the buffered key events
+	bool do_break = false; // continue the loop or end dialog options
+	while (ags_keyevent_ready()) {
+		KeyInput ki;
+		if (run_service_key_controls(ki) && !_GP(play).IsIgnoringInput()) {
+			if (!do_break && !RunKey(ki)) {
+				ags_clear_input_buffer();
+				do_break = true; // end dialog options
+			}
+		}
+	}
+	return !do_break;
+}
+
+bool DialogOptions::RunKey(const KeyInput &ki) {
+	const bool new_custom_render = usingCustomRendering && _GP(game).options[OPT_DIALOGOPTIONSAPI] >= 0;
+	const bool old_keyhandle = _GP(game).options[OPT_KEYHANDLEAPI] == 0;
+
+	const eAGSKeyCode agskey = ki.Key;
+	if (parserInput) {
+		wantRefresh = true;
+		// type into the parser
+		// TODO: find out what are these key commands, and are these documented?
+		if ((agskey == eAGSKeyCodeF3) || ((agskey == eAGSKeyCodeSpace) && (parserInput->Text.GetLength() == 0))) {
+			// write previous contents into textbox (F3 or Space when box is empty)
+			size_t last_len = ustrlen(_GP(play).lastParserEntry);
+			size_t cur_len = ustrlen(parserInput->Text.GetCStr());
+			// [ikm] CHECKME: tbh I don't quite get the logic here (it was like this in original code);
+			// but what we do is copying only the last part of the previous string
+			if (cur_len < last_len) {
+				const char *entry = _GP(play).lastParserEntry;
+				// TODO: utility function for advancing N utf-8 chars
+				for (size_t i = 0; i < cur_len; ++i) ugetxc(&entry);
+				parserInput->Text.Append(entry);
+			}
+			needRedraw = true;
+			return true; // continue running loop
+		} else if ((agskey >= eAGSKeyCodeSpace) || (agskey == eAGSKeyCodeReturn) || (agskey == eAGSKeyCodeBackspace)) {
+			parserInput->OnKeyPress(ki);
+			if (!parserInput->IsActivated) {
+				needRedraw = true;
+				return true; // continue running loop
+			}
+		}
+	} else if (new_custom_render) {
+		if (old_keyhandle || (ki.UChar == 0)) {
+			// "dialog_options_key_press"
+			_GP(runDialogOptionKeyPressHandlerFunc).params[0].SetDynamicObject(&_GP(ccDialogOptionsRendering), &_GP(ccDialogOptionsRendering));
+			_GP(runDialogOptionKeyPressHandlerFunc).params[1].SetInt32(AGSKeyToScriptKey(ki.Key));
+			_GP(runDialogOptionKeyPressHandlerFunc).params[2].SetInt32(ki.Mod);
+			run_function_on_non_blocking_thread(&_GP(runDialogOptionKeyPressHandlerFunc));
+		}
+		if (!old_keyhandle && (ki.UChar > 0)) {
+			// "dialog_options_text_input"
+			_GP(runDialogOptionTextInputHandlerFunc).params[0].SetDynamicObject(&_GP(ccDialogOptionsRendering), &_GP(ccDialogOptionsRendering));
+			_GP(runDialogOptionTextInputHandlerFunc).params[1].SetInt32(ki.UChar);
+			run_function_on_non_blocking_thread(&_GP(runDialogOptionKeyPressHandlerFunc));
+		}
+	}
+	// Allow selection of options by keyboard shortcuts
+	else if (_GP(game).options[OPT_DIALOGNUMBERED] >= kDlgOptKeysOnly &&
+		agskey >= '1' && agskey <= '9') {
+		int numkey = agskey - '1';
+		if (numkey < numdisp) {
+			chose = disporder[numkey];
+			return false; // end dialog options running loop
+		}
+	}
 	return true; // continue running loop
 }
 
