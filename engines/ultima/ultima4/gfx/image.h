@@ -146,12 +146,8 @@ public:
 	/**
 	 * Sets the specified palette index to the specified RGB color
 	 */
-	bool setPaletteIndex(uint index, RGBA color);
+	bool setPaletteIndex(uint index, uint8 r, uint8 g, uint8 b);
 
-	/**
-	 * Returns the palette index of the specified RGB color
-	 */
-	int getPaletteIndex(RGBA color);
 	RGBA setColor(uint8 r, uint8 g, uint8 b, uint8 a = IM_OPAQUE);
 
 
