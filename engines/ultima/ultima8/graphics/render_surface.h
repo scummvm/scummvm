@@ -82,8 +82,6 @@ public:
 	// Virtual Destructor
 	virtual ~RenderSurface();
 
-	static Graphics::PixelFormat getPixelFormat();
-
 	//
 	// Being/End Painting
 	//

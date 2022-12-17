@@ -374,9 +374,5 @@ RenderSurface *RenderSurface::CreateSecondaryRenderSurface(uint32 width, uint32 
 	return surf;
 }
 
-Graphics::PixelFormat RenderSurface::getPixelFormat() {
-	return g_system->getScreenFormat();
-}
-
 } // End of namespace Ultima8
 } // End of namespace Ultima
