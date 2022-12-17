@@ -38,8 +38,10 @@ bool Monsters::load() {
 		assert(line.size() > 20 && line[0] == '"' && line[16] == '"');
 
 		mon._name = Common::String(line.c_str() + 1, line.c_str() + 15);
-		line = Common::String(line.c_str() + 17);
+		while (mon._name.hasSuffix(" "))
+			mon._name.deleteLastChar();
 
+		line = Common::String(line.c_str() + 17);
 		mon._count = getNextValue(line);
 		mon._fleeThreshold = getNextValue(line);
 		mon._defaultHP = getNextValue(line);

@@ -768,6 +768,12 @@ void Combat::writeCharAttackDamage() {
 	_isShooting = false;
 
 	writeString(0, 21, getAttackString());
+
+	if (_monsterP->_status == MONFLAG_DEAD) {
+		writeString(0, 22, Common::String::format("%s %s",
+			_monsterP->_name.c_str(),
+			STRING["dialogs.combat.goes_down"].c_str()));
+	}
 }
 
 void Combat::writeCharAttackNoEffect() {
