@@ -201,7 +201,7 @@
 {
 	{
 		"adibou2",
-		"Adi Junior (Packard Bell OEM)",
+		"ADI Jr. (Packard Bell OEM)",
 		AD_ENTRY1s("intro.stk", "80588ad3b5510bb44d3f40d6b07b81e7", 956328),
 		DE_DEU,
 		kPlatformWindows,
