@@ -107,12 +107,9 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 				byte colorID = *(const byte *)_image.getBasePtr(srcRect.left + curX, srcRect.top +  curY);
 
 				if (colorID != _transColor) {
-					uint8 r, g, b;
-					uint curColor = _image.getPalette()[colorID];
-					r = curColor & 0xFF;
-					g = (curColor & 0xFF00) >> 8;
-					b = (curColor & 0xFF0000) >> 16;
-					*(uint16 *)dst->getBasePtr(x + curX, y + yOffset + curY) = dst->format.RGBToColor(r, g, b);
+					uint8 palette[1 * 3];
+					_image.grabPalette(palette, colorID, 1);
+					*(uint16 *)dst->getBasePtr(x + curX, y + yOffset + curY) = dst->format.RGBToColor(palette[0], palette[1], palette[2]);
 				}
 
 				break;

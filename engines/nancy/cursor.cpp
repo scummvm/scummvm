@@ -124,12 +124,9 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	// Convert the trans color from the original format to the screen format
 	uint transColor;
 	if (g_nancy->getGameType() == kGameTypeVampire) {
-		uint8 r, g, b;
-		uint32 input = surf->getPalette()[1];
-		r = input & 0xFF;
-		g = (input & 0xFF00) >> 8;
-		b = (input & 0xFF0000) >> 16;
-		transColor = temp.format.RGBToColor(r, g, b);
+		uint8 palette[1 * 3];
+		surf->grabPalette(palette, 1, 1);
+		transColor = temp.format.RGBToColor(palette[0], palette[1], palette[2]);
 	} else {
 		uint8 r, g, b;
 		surf->format.colorToRGB(g_nancy->_graphicsManager->getTransColor(), r, g, b);

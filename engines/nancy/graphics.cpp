@@ -141,13 +141,17 @@ void GraphicsManager::loadSurfacePalette(Graphics::ManagedSurface &inSurf, const
 
 void GraphicsManager::copyToManaged(const Graphics::Surface &src, Graphics::ManagedSurface &dst, bool verticalFlip, bool doubleSize) {
 	if (dst.w != (doubleSize ? src.w * 2 : src.w) || dst.h != (doubleSize ? src.h * 2 : src.h)) {
-		const uint32 *palette = dst.getPalette();
+		uint8 palette[256 * 3];
+		bool hasPalette = dst.hasPalette();
 		bool hasTransColor = dst.hasTransparentColor();
+
+		if (hasPalette && g_nancy->getGameType() == kGameTypeVampire) {
+			dst.grabPalette(palette, 0, 256);
+		}
+
 		dst.create(doubleSize ? src.w * 2 : src.w, doubleSize ? src.h * 2 : src.h, src.format);
 
-		if (palette && g_nancy->getGameType() == kGameTypeVampire) {
-			// free() clears the _hasPalette flag but doesn't clear the palette itself, so
-			// we just set it to itself; hopefully this doesn't cause any issues
+		if (hasPalette && g_nancy->getGameType() == kGameTypeVampire) {
 			dst.setPalette(palette, 0, 256);
 		}
 
