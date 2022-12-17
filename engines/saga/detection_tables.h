@@ -199,6 +199,30 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{
 		{
 			"ite",
+			"AGA Demo Floppy",
+			{
+				{"ite.rtn",		GAME_RESOURCEFILE,	"634d36f78ac151b14dbeed274e169def", 18564},
+				{"ite01.adf", 0, "82877f62357c39cb3a9f892dfce713e2", 901120},
+				{"ite02.adf", 0, "ed7bff9c17aacce17a9b5743d39149e7", 901120},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformAmiga,
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_ITE,
+		GF_ITE_FLOPPY|GF_EXTRA_ITE_CREDITS | GF_AGA_GRAPHICS | GF_EMBED_FONT | GF_POWERPACK_GFX,
+		ITE_DEFAULT_SCENE,
+		RESOURCELIST_ITE_GERMAN_AGA,
+		FONTLIST_NONE,
+		PATCHLIST_ITE,
+		INTROLIST_ITE_AMIGA_GERMAN_AGA,
+		{},
+	},
+	{
+		{
+			"ite",
 			"ECS Demo CD",
 			{
 				{"ite.rtn",		GAME_RESOURCEFILE,	"1e77154f045358ef3f09fbdb00ea92a4", 18624},
