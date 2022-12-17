@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+ 
+//#define DUMP_RENDERED_FONTS 1
 
 #ifdef DUMP_RENDERED_FONTS
 #include "image/png.h"
@@ -73,7 +75,11 @@ void TeTextBase2::build() {
 		lineoffsets.push_back(height);
 		height += lineHeight + _interLine;
 	}
-	_size._y = (int)ceilf(height);
+
+	// Round up to the nearest 2 pixels so it centres in the
+	// area without a half pixel offset.
+	_size._y = (((int)ceilf(height) + 1) / 2) * 2;
+	_size._x = ((_size._x + 1) / 2) * 2;
 
 	TeImage img;
 	Common::SharedPtr<TePalette> nullpal;
@@ -96,8 +102,7 @@ void TeTextBase2::build() {
 
 	_mesh.setConf(4, 4, TeMesh::MeshMode_TriangleStrip, 0, 0);
 	_mesh.defaultMaterial(texture);
-	// FIXME: Original uses BLEND, but we need MODULATE to get right colors?
-	//_mesh.setglTexEnv(GL_MODULATE);
+	_mesh.setglTexEnv(GL_BLEND);
 	_mesh.setShouldDraw(true);
 	_mesh.setColor(_globalColor);
 	_mesh.setVertex(0, TeVector3f32(_size._x * -0.5f, _size._y * -0.5f, 0.0f));
@@ -200,10 +205,7 @@ void TeTextBase2::drawEmptyChar(unsigned int offset) {
 void TeTextBase2::drawLine(TeImage &img, const Common::String &str, int yoffset) {
 	TeIntrusivePtr<TeFont3> font = _fonts[0];
 
-	// TODO: Add multi-color support if needed?
-	// We set black here as the color is set on the mesh and we use
-	// MODULATE blend in build()
-	font->draw(img, str, _fontSize, yoffset, TeColor(0, 0, 0, 255), _alignStyle);
+	font->draw(img, str, _fontSize, yoffset, _globalColor, _alignStyle);
 }
 
 unsigned int TeTextBase2::endOfWord(unsigned int offset) const {

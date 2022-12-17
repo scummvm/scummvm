@@ -34,4 +34,8 @@ void TeVector2s32::deserialize(Common::ReadStream &stream, TeVector2s32 &dest) {
 	dest._y = stream.readSint32LE();
 }
 
+TeVector2s32 operator+(const TeVector2s32 &left, const TeVector2s32 &right) {
+		return TeVector2s32(left._x + right._x, left._y + right._y);
+}
+
 } // end namespace Tetraedge

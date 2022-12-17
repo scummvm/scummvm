@@ -105,8 +105,8 @@ bool InGameScene::addMarker(const Common::String &markerName, const Common::Stri
 			newPos.x() = frontLayoutSize.x() * (x / 100.0);
 			newPos.y() = frontLayoutSize.y() * (y / 100.0);
 		} else {
-			newPos.x() = x / 800.0;
-			newPos.y() = y / 600.0;
+			newPos.x() = x / g_engine->getDefaultScreenWidth();
+			newPos.y() = y / g_engine->getDefaultScreenHeight();
 		}
 		markerSprite->setPosition(newPos);
 
@@ -865,9 +865,11 @@ void InGameScene::loadInteractions(const Common::Path &path) {
 	Game *game = g_engine->getGame();
 	TeSpriteLayout *root = game->findSpriteLayoutByName(bgbackground, "root");
 	TeLayout *background = _hitObjectGui.layoutChecked("background");
-	// TODO: For all TeButtonLayout childen of background, call
-	// setDoubleValidationProtectionEnabled(false)
-	// For now our button doesn't implement that.
+	for (auto *child : background->childList()) {
+		TeButtonLayout *btn = dynamic_cast<TeButtonLayout *>(child);
+		if (btn)
+			btn->setDoubleValidationProtectionEnabled(false);
+	}
 	background->setRatioMode(TeILayout::RATIO_MODE_NONE);
 	root->addChild(background);
 }

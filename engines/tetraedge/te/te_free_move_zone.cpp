@@ -81,8 +81,26 @@ float TeFreeMoveZone::bordersDistance() const {
 	return _graph->_bordersDistance;
 }
 
+TeVector2s32 TeFreeMoveZone::aStarResolution() const {
+	TeVector2f32 diff = (_someGridVec2 - _someGridVec1);
+	TeVector2s32 retval = TeVector2s32(diff / _gridOffsetSomething) + TeVector2s32(1, 1);
+	if (retval._x > 2000)
+		retval._x = 200;
+	if (retval._y > 2000)
+		retval._y = 200;
+	return retval;
+}
+
 void TeFreeMoveZone::buildAStar() {
-	error("TODO: Implement TeFreeMoveZone::buildAStar");
+	preUpdateGrid();
+	TeVector2s32 resolution = aStarResolution();
+	_graph->setSize(resolution);
+	if (!_loadedFromBin) {
+		error("TODO: Implement TeFreeMoveZone::buildAStar for *not* loaded from bin case");
+	} else {
+		// Loaded from bin..
+		error("TODO: Implement TeFreeMoveZone::buildAStar for loaded from bin case");
+	}
 }
 
 void TeFreeMoveZone::calcGridMatrix() {

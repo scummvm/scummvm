@@ -165,11 +165,11 @@ void TetraedgeEngine::configureSearchPaths() {
 }
 
 int TetraedgeEngine::getDefaultScreenWidth() const {
-	return 1024;
+	return 800;
 }
 
 int TetraedgeEngine::getDefaultScreenHeight() const {
-	return 768;
+	return 600;
 }
 
 Common::Error TetraedgeEngine::run() {

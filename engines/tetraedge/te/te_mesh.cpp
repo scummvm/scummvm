@@ -80,6 +80,8 @@ void TeMesh::draw() {
 	/*
 	debug("Draw mesh %p (%s, %d verts %d norms %d indexes %d materials %d updated)", this, name().empty() ? "no name" : name().c_str(), _verticies.size(), _normals.size(), _indexes.size(), _materials.size(), _updatedVerticies.size());
 	debug("   renderMatrix %s", renderer->currentMatrix().toString().c_str());
+	if (!_materials.empty())
+		debug("   material   %s", _materials[0].dump().c_str());
 	debug("   position   %s", position().dump().c_str());
 	debug("   worldPos   %s", worldPosition().dump().c_str());
 	debug("   scale      %s", scale().dump().c_str());

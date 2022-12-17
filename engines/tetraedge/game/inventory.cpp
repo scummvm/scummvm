@@ -498,25 +498,43 @@ bool Inventory::updateLayout() {
 	return false;
 }
 
+#define DEBUG_SAVELOAD 1
+
 Common::Error Inventory::syncState(Common::Serializer &s) {
 	unsigned int nitems = _invObjects.size();
 	s.syncAsUint32LE(nitems);
 	if (s.isLoading()) {
+#if DEBUG_SAVELOAD
+		debug("Inventory::syncState: --- Loading %d inventory items: ---", nitems);
+#endif
 		for (unsigned int i = 0; i < nitems; i++) {
 			Common::String objname;
 			s.syncString(objname);
 			addObject(objname);
+#if DEBUG_SAVELOAD
+			debug("Inventory::syncState: 	%s", objname.c_str());
+#endif
 		}
 	} else if (nitems) {
+#if DEBUG_SAVELOAD
+		debug("Inventory::syncState: --- Saving %d inventory items: --- ", _invObjects.size());
+#endif
 		// Add items in reverse order as the "addObject" on load will
 		// add to front of list.InventoryObject
 		auto iter = _invObjects.end();
 		while (iter != _invObjects.begin()) {
+			iter--;
 			Common::String objname = (*iter)->name();
 			s.syncString(objname);
-			iter--;
+#if DEBUG_SAVELOAD
+			debug("Inventory::syncState: 	%s", objname.c_str());
+#endif
 		}
 	}
+
+#if DEBUG_SAVELOAD
+	debug("Inventory::syncState: -------- end --------");
+#endif
 	return Common::kNoError;
 }
 

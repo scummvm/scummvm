@@ -103,7 +103,7 @@ void TeModel::draw() {
 		renderer->pushMatrix();
 		renderer->multiplyMatrix(transform);
 		/*
-		if (name().contains("Kate")) {
+		if (name().contains("DEPLIANT")) {
 			debug("Draw model %p (%s, %d meshes)", this, name().empty() ? "no name" : name().c_str(), _meshes.size());
 			debug("   renderMatrix %s", renderer->currentMatrix().toString().c_str());
 			//debug("   position   %s", position().dump().c_str());
@@ -194,6 +194,7 @@ void TeModel::update() {
 				float complete = blender->coef();
 				TeTRS endTRS = getBone(blender->_anim, b);
 				if (complete == 1.0f) {
+					_modelAnim = blender->_anim;
 					delete blender;
 					_boneBlenders.remove_at(i);
 					trs = endTRS;

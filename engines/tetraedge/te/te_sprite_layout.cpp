@@ -46,7 +46,8 @@ void TeSpriteLayout::draw() {
 	if (!worldVisible())
 		return;
 
-	/*if (parent() && parent()->name() == "inventoryButton")
+	/*
+	if (name() == "DEPLIANT")
 		debug("Draw SpriteLayout %p (%s, surf %s, size %.01fx%.01f, surf %.01fx%.01f, %s)", this,
 			  name().empty() ? "no name" : name().c_str(), _tiledSurfacePtr->getAccessName().toString().c_str(),
 			  size().x(), size().y(),
