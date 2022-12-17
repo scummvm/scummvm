@@ -328,23 +328,53 @@ struct StringsTable {
 typedef Common::Array<Point> PointList;
 
 enum ColorId {
-	kITEColorTransBlack = 0x00,
-	kITEColorBrightWhite = 0x01,
-	kITEColorWhite = 0x02,
-	kITEColorLightGrey = 0x04,
-	kITEColorGrey = 0x0a,
-	kITEColorDarkGrey = 0x0b,
-	kITEColorDarkGrey0C = 0x0C,
-	kITEColorBlack = 0x0f,
-	kITEColorYellow60 = 0x60,
-	kITEColorRed = 0x65,
-	kITEColorDarkBlue8a = 0x8a,
-	kITEColorBlue89 = 0x89,
-	kITEColorLightBlue92 = 0x92,
-	kITEColorBlue = 0x93,
-	kITEColorLightBlue94 = 0x94,
-	kITEColorLightBlue96 = 0x96,
-	kITEColorGreen = 0xba
+	// DOS and AGA palettes
+	kITEDOSColorTransBlack = 0x00,
+	kITEDOSColorBrightWhite = 0x01,
+	kITEDOSColorWhite = 0x02,
+	kITEDOSColorLightGrey = 0x04,
+	kITEDOSColorGrey = 0x0a,
+	kITEDOSColorDarkGrey = 0x0b,
+	kITEDOSColorDarkGrey0C = 0x0C,
+	kITEDOSColorBlack = 0x0f,
+	kITEDOSColorYellow60 = 0x60,
+	kITEDOSColorRed = 0x65,
+	kITEDOSColorDarkBlue8a = 0x8a,
+	kITEDOSColorBlue89 = 0x89,
+	kITEDOSColorLightBlue92 = 0x92,
+	kITEDOSColorBlue = 0x93,
+	kITEDOSColorLightBlue94 = 0x94,
+	kITEDOSColorLightBlue96 = 0x96,
+	kITEDOSColorGreen = 0xba,
+
+        // ECS palette
+
+	// Constant colors
+	kITEECSColorTransBlack = 0x00,
+	kITEECSColorBrightWhite = 0x4f,
+	kITEECSColorWhite = kITEECSColorBrightWhite,
+	kITEECSColorBlack = 0x50,
+
+	// ECS palette after the palette switch
+	kITEECSBottomColorGreen = 0x25,
+	kITEECSBottomColorLightBlue96 = 0x28,
+	kITEECSBottomColorWhite = 0x2f,
+	kITEECSBottomColorBrightWhite = 0x2f,
+	kITEECSBottomColorDarkGrey = 0x32,
+	kITEECSBottomColorGrey = 0x36,
+	kITEECSBottomColorBlue = 0x3b,
+	kITEECSBottomColorYellow60 = 0x3e,
+
+	// ECS palette for options
+	kITEECSOptionsColorLightBlue94 = 0x48,
+	kITEECSOptionsColorBlue = 0x48,
+	kITEECSOptionsColorDarkBlue8a = 0x48,
+	kITEECSOptionsColorLightBlue92 = 0x48,
+	kITEECSOptionsColorLightBlue96 = 0x48,
+	kITEECSOptionsColorDarkGrey0C = 0x49,
+	kITEECSOptionsColorBlack = kITEECSColorBlack,
+	kITEECSOptionsColorBrightWhite = kITEECSColorBrightWhite,
+	kITEECSOptionsColorDarkGrey = 0x52,
 };
 
 enum KnownColor {
@@ -607,7 +637,39 @@ public:
 	ColorId KnownColor2ColorId(KnownColor knownColor);
 	void setTalkspeed(int talkspeed);
 	int getTalkspeed() const;
+
+#define ITE_COLOR_DISPATCHER_TYPE(NAME, TYPE)				\
+	ColorId iteColor ## TYPE ## NAME() const { return isECS() ? kITEECS ## TYPE ## Color ## NAME : kITEDOSColor ## NAME; }
+#define ITE_COLOR_DISPATCHER_BOTTOM(NAME) ITE_COLOR_DISPATCHER_TYPE(NAME, Bottom)
+#define ITE_COLOR_DISPATCHER_OPTIONS(NAME) ITE_COLOR_DISPATCHER_TYPE(NAME, Options)
+#define ITE_COLOR_DISPATCHER(NAME) ITE_COLOR_DISPATCHER_TYPE(NAME, )
+
+	ITE_COLOR_DISPATCHER(Black)
+	ITE_COLOR_DISPATCHER(TransBlack)
+	ITE_COLOR_DISPATCHER(BrightWhite)
+	ITE_COLOR_DISPATCHER(White)
+
+	ITE_COLOR_DISPATCHER_BOTTOM(DarkGrey)
+	ITE_COLOR_DISPATCHER_BOTTOM(Blue)
+	ITE_COLOR_DISPATCHER_BOTTOM(Grey)
+	ITE_COLOR_DISPATCHER_BOTTOM(White)
+	ITE_COLOR_DISPATCHER_BOTTOM(BrightWhite)
+	ITE_COLOR_DISPATCHER_BOTTOM(Green)
+
+	ITE_COLOR_DISPATCHER_OPTIONS(DarkGrey)
+	ITE_COLOR_DISPATCHER_OPTIONS(LightBlue92)
+	ITE_COLOR_DISPATCHER_OPTIONS(LightBlue94)
+	ITE_COLOR_DISPATCHER_OPTIONS(LightBlue96)
+	ITE_COLOR_DISPATCHER_OPTIONS(DarkBlue8a)
+	ITE_COLOR_DISPATCHER_OPTIONS(DarkGrey0C)
+	ITE_COLOR_DISPATCHER_OPTIONS(Blue)
+	ITE_COLOR_DISPATCHER_OPTIONS(BrightWhite)
+#undef ITE_COLOR_DISPATCHER
+#undef ITE_COLOR_DISPATCHER_BOTTOM
+#undef ITE_COLOR_DISPATCHER_OPTIONS
+#undef ITE_COLOR_DISPATCHER_TYPE
 };
+
 
 } // End of namespace Saga
 

@@ -562,8 +562,8 @@ void Gfx::showCursor(bool state) {
 void Gfx::setCursor(CursorType cursorType) {
 	if (_vm->getGameId() == GID_ITE) {
 		// Set up the mouse cursor
-		const byte A = kITEColorLightGrey;
-		const byte B = kITEColorWhite;
+		const byte A = _vm->isECS() ? kITEECSColorWhite : kITEDOSColorLightGrey;
+		const byte B = _vm->isECS() ? kITEECSColorTransBlack : kITEDOSColorWhite;
 
 		const byte cursor_img_default[CURSOR_W * CURSOR_H] = {
 			0, 0, 0, A, 0, 0, 0,

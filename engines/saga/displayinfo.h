@@ -263,8 +263,8 @@ static const GameDisplayInfo ITE_DisplayInfo = {
 	320,			// status width
 	11,				// status height
 	2,				// status text y offset
-	kITEColorGreen,		// status text color
-	kITEColorBlack,		// status BG color
+	kITEDOSColorGreen,		// status text color
+	kITEDOSColorBlack,		// status BG color
 	308,137,		// save reminder pos
 	12,12,			// save reminder w & h
 	6,				// save reminder first sprite number
