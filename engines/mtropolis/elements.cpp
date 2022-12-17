@@ -1091,11 +1091,10 @@ void ImageElement::render(Window *window) {
 		if (optimized->format.bytesPerPixel == 1) {
 			// FIXME: Pass palette to blit functions instead
 			if (_cachedImage->getOriginalColorDepth() == kColorDepthMode1Bit) {
-				const Graphics::PixelFormat &fmt = window->getPixelFormat();
-				uint32 blackColor = fmt.RGBToColor(0, 0, 0);
-				uint32 whiteColor = fmt.RGBToColor(255, 255, 255);
-
-				const uint32 bwPalette[2] = {whiteColor, blackColor};
+				const uint8 bwPalette[2 * 3] = {
+					255, 255, 255,
+					0, 0, 0
+				};
 				optimized->setPalette(bwPalette, 0, 2);
 			} else {
 				const Palette *palette = getPalette().get();
@@ -1939,8 +1938,10 @@ void TextLabelElement::render(Window *window) {
 
 	// TODO: Need to handle more modes
 	const ColorRGB8 &color = _renderProps.getForeColor();
-	const uint32 opaqueColor = target->format.RGBToColor(color.r, color.g, color.b);
-	const uint32 drawPalette[2] = {0, opaqueColor};
+	const uint8 drawPalette[2 * 3] = {
+		0, 0, 0,
+		color.r, color.g, color.b
+	};
 
 	if (_renderedText) {
 		_renderedText->setPalette(drawPalette, 0, 2);
