@@ -89,12 +89,12 @@ enum ePhysicsAccuracy {
 
 //----------------------------------------------------
 
-class cPhysicsRayParams {
-public:
-	float mfT;
-	float mfDist;
-	cVector3f mvNormal;
-	cVector3f mvPoint;
+struct cPhysicsRayParams {
+	constexpr cPhysicsRayParams() {}
+	float mfT = 0;
+	float mfDist = 0;
+	cVector3f mvNormal = {0,0,0};
+	cVector3f mvPoint = {0,0,0};
 };
 
 class iPhysicsRayCallback {
