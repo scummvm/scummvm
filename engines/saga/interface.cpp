@@ -207,7 +207,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 #endif
 
 	// Main panel sprites
-	_vm->_sprite->loadList(_vm->getResourceDescription()->mainPanelSpritesResourceId, _mainPanel.sprites);
+	_vm->_sprite->loadList(_vm->getResourceDescription()->mainPanelSpritesResourceId, _mainPanel.sprites, _vm->isECS() ? 0x10 : 0);
 	if (!_vm->_script->isNonInteractiveDemo()) {
 		// Option panel sprites
 		_vm->_sprite->loadList(_vm->getResourceDescription()->optionPanelSpritesResourceId, _optionPanel.sprites);
