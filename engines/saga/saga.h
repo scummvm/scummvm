@@ -336,6 +336,7 @@ enum ColorId {
 	kITEColorDarkGrey = 0x0b,
 	kITEColorDarkGrey0C = 0x0C,
 	kITEColorBlack = 0x0f,
+	kITEColorYellow60 = 0x60,
 	kITEColorRed = 0x65,
 	kITEColorDarkBlue8a = 0x8a,
 	kITEColorBlue89 = 0x89,
