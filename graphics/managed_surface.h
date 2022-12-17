@@ -683,6 +683,7 @@ public:
 	/**
 	 * Get the palette array.
 	 */
+	WARN_DEPRECATED("Use grabPalette instead")
 	const uint32 *getPalette() const {
 		return _palette;
 	}
@@ -691,11 +692,6 @@ public:
 	 * Set the palette using RGB tuples.
 	 */
 	void setPalette(const byte *colors, uint start, uint num);
-
-	/**
-	 * Set the palette using RGBA values.
-	 */
-	void setPalette(const uint32 *colors, uint start, uint num);
 };
 /** @} */
 } // End of namespace Graphics
