@@ -1776,7 +1776,7 @@ void *dgMeshEffect::GetNextPoint(void *const point) const {
 }
 
 dgInt32 dgMeshEffect::GetPointIndex(const void *point) const {
-	const dgTreeNode *const node = (dgTreeNode *)point;
+	const dgTreeNode *const node = (const dgTreeNode *)point;
 	const dgEdge *const edge = &node->GetInfo();
 	return int(edge->m_userData);
 }
@@ -1839,7 +1839,7 @@ void *dgMeshEffect::GetFirstEdge() const {
 	return node;
 }
 
-void *dgMeshEffect::GetNextEdge(const void *edge) const {
+void *dgMeshEffect::GetNextEdge(void *edge) const {
 	dgTreeNode *const node = (dgTreeNode *)edge;
 	dgInt32 mark = node->GetInfo().m_mark;
 
@@ -1858,7 +1858,7 @@ void *dgMeshEffect::GetNextEdge(const void *edge) const {
 
 void dgMeshEffect::GetEdgeIndex(const void *edge, dgInt32 &v0,
                                 dgInt32 &v1) const {
-	dgTreeNode *const node = (dgTreeNode *)edge;
+	const dgTreeNode *const node = (const dgTreeNode *)edge;
 	v0 = node->GetInfo().m_incidentVertex;
 	v1 = node->GetInfo().m_twin->m_incidentVertex;
 }
@@ -1890,7 +1890,7 @@ void *dgMeshEffect::GetFirstFace() const {
 	return node;
 }
 
-void *dgMeshEffect::GetNextFace(const void *const face) const {
+void *dgMeshEffect::GetNextFace(void *const face) const {
 	dgTreeNode *const node = (dgTreeNode *)face;
 	dgInt32 mark = node->GetInfo().m_mark;
 
