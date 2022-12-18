@@ -112,7 +112,7 @@ protected:
 	void BuildHull(dgMemoryAllocator *const allocator, const dgBigVector *const vertexCloud, dgInt32 count, dgFloat64 distTol);
 
 	virtual dgInt32 AddVertex(const dgBigVector &vertex);
-	virtual dgInt32 InitVertexArray(dgHullVector *const points, const dgBigVector *const vertexCloud, dgInt32 count, void *const memoryPool, dgInt32 maxMemSize);
+	virtual dgInt32 InitVertexArray(dgHullVector *const points, const dgBigVector *const vertexCloud, dgInt32 count, void *memoryPool, dgInt32 maxMemSize);
 	virtual dgListNode *AddFace(dgInt32 i0, dgInt32 i1, dgInt32 i2, dgInt32 i3);
 	virtual void DeleteFace(dgListNode *const node) ;
 
