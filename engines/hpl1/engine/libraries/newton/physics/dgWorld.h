@@ -245,7 +245,7 @@ public:
 //													  dgMatrix* const matrixArray, dgInt32* const idArray, dgFloat32* const mass, dgInt32 debriID,
 //													  dgCollisionCompoundBreakableCallback callback, void* buildUsedData);
 
-	dgCollision *CreateCollisionCompoundBreakable(dgInt32 count, const dgMeshEffect *const solidArray[], const dgInt32 *const idArray,
+	dgCollision *CreateCollisionCompoundBreakable(dgInt32 count, dgMeshEffect *const solidArray[], const dgInt32 *const idArray,
 	        const dgFloat32 *const densities, const dgInt32 *const internalFaceMaterial, dgInt32 debriID, dgFloat32 gap);
 
 

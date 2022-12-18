@@ -365,7 +365,7 @@ dgCollision *dgWorld::CreateCollisionCompound(dgInt32 count,
 //	dgCollisionCompoundBreakableCallback callback,
 //	void* buildUsedData)
 dgCollision *dgWorld::CreateCollisionCompoundBreakable(dgInt32 count,
-        const dgMeshEffect *const solidArray[], const dgInt32 *const idArray,
+        dgMeshEffect *const solidArray[], const dgInt32 *const idArray,
         const dgFloat32 *const densities, const dgInt32 *const internalFaceMaterial,
         dgInt32 debriID, dgFloat32 gap) {
 	//  return new dgCollisionCompoundBreakable (count, solidArray, splitePlanes, matrixArray, idArray, densities, debriID, callback, buildUsedData, this);

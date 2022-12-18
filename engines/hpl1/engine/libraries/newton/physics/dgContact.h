@@ -216,7 +216,7 @@ class dgContact:
 
 	virtual void SetDestructorCallback(OnConstraintDestroy destructor);
 
-	void JacobianContactDerivative(dgContraintDescritor &params, const dgContactMaterial &contact, dgInt32 normalIndex, dgInt32 &frictionIndex);
+	void JacobianContactDerivative(dgContraintDescritor &params, dgContactMaterial &contact, dgInt32 normalIndex, dgInt32 &frictionIndex);
 	void CalculatePointDerivative(dgInt32 index, dgContraintDescritor &desc, const dgVector &dir, const dgPointParam &param) const;
 
 
@@ -261,4 +261,3 @@ inline void dgContact::SetDestructorCallback(OnConstraintDestroy destructor) {
 }
 
 #endif
-

@@ -171,8 +171,8 @@ class dgBroadPhaseCollision {
 public:
 	void GetWorldSize(dgVector &p0, dgVector &p1) const;
 	void SetWorldSize(const dgVector &min, const dgVector &max);
-	void RayCast(const dgVector &p0, const dgVector &p1, OnRayCastAction filter, OnRayPrecastAction prefilter, void *const userData) const;
-	dgInt32 ConvexCast(dgCollision *const shape, const dgMatrix &p0, const dgVector &p1, dgFloat32 &timetoImpact, OnRayPrecastAction prefilter, void *const userData, dgConvexCastReturnInfo *const info, dgInt32 maxContacts, dgInt32 threadIndex) const;
+	void RayCast(const dgVector &p0, const dgVector &p1, OnRayCastAction filter, OnRayPrecastAction prefilter, void *const userData);
+	dgInt32 ConvexCast(dgCollision *const shape, const dgMatrix &p0, const dgVector &p1, dgFloat32 &timetoImpact, OnRayPrecastAction prefilter, void *const userData, dgConvexCastReturnInfo *const info, dgInt32 maxContacts, dgInt32 threadIndex);
 	void ForEachBodyInAABB(const dgVector &q0, const dgVector &q1, OnBodiesInAABB callback, void *const userData) const;
 
 private:
@@ -192,8 +192,8 @@ private:
 
 	void UpdateBodyBroadphase(dgBody *const body, dgInt32 threadIndex);
 
-	void UpdatePairs(dgBroadPhaseCell &cellA, dgBroadPhaseCell &cellB, dgInt32 threadIndex) const;
-	void UpdatePairs(dgBody *const body0, dgSortArray::dgListNode *const listNode, dgInt32 axisX, dgInt32 threadIndex) const;
+	void UpdatePairs(dgBroadPhaseCell &cellA, dgBroadPhaseCell &cellB, dgInt32 threadIndex);
+	void UpdatePairs(dgBody *const body0, dgSortArray::dgListNode *const listNode, dgInt32 axisX, dgInt32 threadIndex);
 
 	dgVector m_min;
 	dgVector m_max;

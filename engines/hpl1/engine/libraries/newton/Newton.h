@@ -375,7 +375,7 @@ NEWTON_API void *NewtonWorldGetUserData(const NewtonWorld *const newtonWorld);
 NEWTON_API void NewtonWorldSetDestructorCallBack(NewtonWorld *const newtonWorld, NewtonDestroyWorld destructor);
 NEWTON_API NewtonDestroyWorld NewtonWorldGetDestructorCallBack(const NewtonWorld *const newtonWorld);
 
-NEWTON_API void NewtonWorldRayCast(const NewtonWorld *const newtonWorld, const dFloat *const p0, const dFloat *const p1, NewtonWorldRayFilterCallback filter, void *const userData,
+NEWTON_API void NewtonWorldRayCast(NewtonWorld *const newtonWorld, const dFloat *const p0, const dFloat *const p1, NewtonWorldRayFilterCallback filter, void *const userData,
                                    NewtonWorldRayPrefilterCallback prefilter);
 NEWTON_API int NewtonWorldConvexCast(NewtonWorld *const newtonWorld, const dFloat *const matrix, const dFloat *const target, NewtonCollision *shape, dFloat *const hitParam, void *const userData,
                                      NewtonWorldRayPrefilterCallback prefilter, NewtonWorldConvexCastReturnInfo *info, int maxContactsCount, int threadIndex);
@@ -527,7 +527,7 @@ NEWTON_API NewtonCollision *NewtonCreateCompoundCollisionFromMesh(NewtonWorld *c
 //															   int shapeID, int debriID, NewtonCollisionCompoundBreakableCallback callback, void* buildUsedData);
 
 NEWTON_API NewtonCollision *NewtonCreateCompoundBreakable(NewtonWorld *const newtonWorld, int meshCount,
-        const NewtonMesh **const solids, const int *const shapeIDArray,
+        NewtonMesh **const solids, const int *const shapeIDArray,
         const dFloat *const densities, const int *const internalFaceMaterial,
         int shapeID, int debriID, dFloat debriSeparationGap);
 

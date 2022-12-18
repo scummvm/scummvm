@@ -262,7 +262,7 @@ void NewtonUserJoint::GetInfo(dgConstraintInfo *const info) const {
 	info->clear();
 	if (m_getInfoCallback) {
 		InitInfo(info);
-		m_getInfoCallback((NewtonJoint *) this, (NewtonJointRecord *) info);
+		m_getInfoCallback((const NewtonJoint *)this, (NewtonJointRecord *) info);
 	}
 }
 

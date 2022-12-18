@@ -407,4 +407,3 @@ private:
 
 #define DG_CHECK_ACTIVE(body) _ASSERTE (((body->m_invMass.m_w == dgFloat32 (0.0f)) && !body->m_active) || (body->m_invMass.m_w > dgFloat32 (0.0f)))
 #endif
-

@@ -31,7 +31,7 @@ typedef void (dgApi *OnUserMeshCollideCallback)(dgPolygonMeshDesc &collideData);
 typedef dgFloat32(dgApi *OnUserMeshRayHitCallback)(dgCollisionMeshRayHitDesc &rayHitdata);
 typedef void (dgApi *UserMeshCollisionInfo)(void *userData, dgCollisionInfo *infoRecord);
 typedef void (dgApi *UserMeshFacesInAABB)(void *userData, const dgFloat32 *p0, const dgFloat32 *p1,
-        const dgFloat32 **vertexArray, dgInt32 *vertexCount, dgInt32 *vertexStrideInBytes,
+        const dgFloat32 * const *vertexArray, dgInt32 *vertexCount, dgInt32 *vertexStrideInBytes,
         const dgInt32 *indexList, dgInt32 maxIndexCount, const dgInt32 *faceAttribute);
 
 class dgUserMeshCreation {

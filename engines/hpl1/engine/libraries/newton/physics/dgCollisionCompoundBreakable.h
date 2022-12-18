@@ -125,7 +125,7 @@ public:
 
 		//      void AddMeshes (dgFlatVertexArray& vertexArray, dgInt32 count, dgMeshEffect* const solidArray[], dgMeshEffect* const clipperArray[],
 		//                      dgMatrix* const matrixArray, dgInt32* const idArray, dgFloat32* const densities, dgCollisionCompoundBreakableCallback callback, void* buildUsedData);
-		void AddMeshes(dgFlatVertexArray &vertexArray, dgInt32 count, const dgMeshEffect *const solidArray[],
+		void AddMeshes(dgFlatVertexArray &vertexArray, dgInt32 count, dgMeshEffect *const solidArray[],
 		               const dgInt32 *const idArray, const dgFloat32 *const densities, const dgInt32 *const internalFaceMaterial, dgFloat32 gaps);
 
 		void Serialize(dgSerialize callback, void *const userData) const;
@@ -200,7 +200,7 @@ public:
 	//                                dgMatrix* const matrixArray, dgInt32* const idArray, dgFloat32* const densities, dgInt32 debriiId,
 	//                                dgCollisionCompoundBreakableCallback callback, void* buildUsedData, dgWorld* world);
 
-	dgCollisionCompoundBreakable(dgInt32 count, const dgMeshEffect *const solidArray[], const dgInt32 *const idArray,
+	dgCollisionCompoundBreakable(dgInt32 count, dgMeshEffect *const solidArray[], const dgInt32 *const idArray,
 	                             const dgFloat32 *const densities, const dgInt32 *const internalFaceMaterial,
 	                             dgInt32 debriiId, dgFloat32 gaps, dgWorld *world);
 
@@ -221,7 +221,7 @@ public:
 	dgInt32 GetSegmentsInRadius(const dgVector &origin, dgFloat32 radius, dgDebriGraph::dgListNode **segments, dgInt32 maxCount) const;
 
 	void ResetAnchor();
-	void SetAnchoredParts(dgInt32 count, const dgMatrix *const matrixArray, const dgCollision * const *collisionArray);
+	void SetAnchoredParts(dgInt32 count, const dgMatrix *const matrixArray, dgCollision * const *collisionArray);
 	void EnumerateIslands();
 	//  dgInt32 GetSegmentsInRadius (const dgVector& origin, dgFloat32 radius, dgDebriGraph::dgListNode** segments, dgInt32 maxCount);
 	//  dgInt32 GetDetachedPieces (dgCollision** shapes, dgInt32 maxCount);
