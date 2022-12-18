@@ -480,11 +480,11 @@ void Combat::writeHandicap() {
 		break;
 	case HANDICAP_PARTY:
 		writeString(STRING["dialogs.combat.party_plus"]);
-		writeNumber(_handicap4);
+		writeNumber(_handicapDelta);
 		break;
 	case HANDICAP_MONSTER:
 		writeString(STRING["dialogs.combat.monster_plus"]);
-		writeNumber(_handicap4);
+		writeNumber(_handicapDelta);
 		break;
 	}
 }

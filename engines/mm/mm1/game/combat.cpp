@@ -28,6 +28,8 @@ namespace MM {
 namespace MM1 {
 namespace Game {
 
+#define STARTING_HANDICAP 40
+
 Combat::Combat() : MonsterTouch() {
 	g_globals->_combat = this;
 	clear();
@@ -58,8 +60,8 @@ void Combat::clear() {
 	_numberOfTimes = 0;
 	_attackerLevel = 0;
 	_advanceIndex = 0;
-	_handicap1 = _handicap2 = 0;
-	_handicap3 = _handicap4 = 0;
+	_handicapThreshold = _handicapParty = 0;
+	_handicapMonsters = _handicapDelta = 0;
 	_handicap = HANDICAP_EVEN;
 	_monsterP = nullptr;
 	_monsterIndex = _currentChar = 0;
@@ -202,31 +204,31 @@ void Combat::checkRightWall() {
 }
 
 void Combat::setupHandicap() {
-	_handicap2 = _handicap3 = 40;
-	_handicap1 = getRandomNumber(7);
+	_handicapParty = _handicapMonsters = STARTING_HANDICAP;
+	_handicapThreshold = getRandomNumber(7);
 
 	int val = getRandomNumber(7);
-	if (val < _handicap1) {
-		SWAP(val, _handicap1);
-		_handicap4 = val - _handicap1;
+	if (val < _handicapThreshold) {
+		SWAP(val, _handicapThreshold);
+		_handicapDelta = val - _handicapThreshold;
 
-		if (_handicap4) {
+		if (_handicapDelta) {
 			_handicap = HANDICAP_MONSTER;
-			_handicap2 += _handicap4;
+			_handicapParty += _handicapDelta;
 			return;
 		}
-	} else if (val > _handicap1) {
-		_handicap4 = val - _handicap1;
+	} else if (val > _handicapThreshold) {
+		_handicapDelta = val - _handicapThreshold;
 
-		if (_handicap4) {
+		if (_handicapDelta) {
 			_handicap = HANDICAP_PARTY;
-			_handicap3 += _handicap4;
+			_handicapMonsters += _handicapDelta;
 			return;
 		}
 	}
 
 	_handicap = HANDICAP_EVEN;
-	_handicap4 = 0;
+	_handicapDelta = 0;
 }
 
 bool Combat::canMonsterCast() const {
@@ -275,7 +277,7 @@ void Combat::combatLoop(bool checkMonstersFirst) {
 				Character &c = *g_globals->_combatParty[i];
 				int speed = c._speed._current;
 
-				if (speed && speed >= _handicap2 && !c._checked) {
+				if (speed && speed >= _handicapParty && !c._checked) {
 					_currentChar = i;
 					g_globals->_currCharacter = &c;
 
@@ -293,7 +295,7 @@ void Combat::combatLoop(bool checkMonstersFirst) {
 			_monsterP = _remainingMonsters[i];
 			monsterIndexOf();
 
-			if (_monsterP->_speed && _monsterP->_speed >= _handicap3 && !_monsterP->_checked) {
+			if (_monsterP->_speed && _monsterP->_speed >= _handicapMonsters && !_monsterP->_checked) {
 				_monsterP->_checked = true;
 
 				if (!(_monsterP->_status & (MONFLAG_ASLEEP | MONFLAG_HELD |
@@ -305,17 +307,17 @@ void Combat::combatLoop(bool checkMonstersFirst) {
 		}
 
 		// Decrease the handicap/speed threshold
-		if (_handicap2 == 1 && _handicap3 == 1) {
+		if (_handicapParty == 1 && _handicapMonsters == 1) {
 			// End of the round
 			nextRound();
 			break;
 		} else {
-			if (_handicap2 != 1)
-				--_handicap2;
-			if (_handicap3 != 1)
-				--_handicap3;
+			if (_handicapParty != 1)
+				--_handicapParty;
+			if (_handicapMonsters != 1)
+				--_handicapMonsters;
 		}
-		assert(_handicap2 >= 1 && _handicap3 >= 1);
+		assert(_handicapParty >= 1 && _handicapMonsters >= 1);
 	}
 }
 

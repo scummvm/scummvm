@@ -51,8 +51,8 @@ protected:
 	int _numberOfTimes;
 	int _attackerLevel;
 	int _advanceIndex;
-	int _handicap1, _handicap2;
-	int _handicap3, _handicap4;
+	int _handicapThreshold, _handicapParty;
+	int _handicapMonsters, _handicapDelta;
 	int _attackerVal;
 	int _totalExperience;
 	Common::String _monsterName;
