@@ -8339,7 +8339,7 @@ void *NewtonMeshGetFirstEdge(const NewtonMesh *const mesh) {
 }
 
 void *NewtonMeshGetNextEdge(const NewtonMesh *const mesh,
-                            const void *const edge) {
+                            void *const edge) {
 	TRACE_FUNTION(__FUNCTION__);
 	return ((const dgMeshEffect *)mesh)->GetNextEdge(edge);
 }
@@ -8361,7 +8361,7 @@ void *NewtonMeshGetFirstFace(const NewtonMesh *const mesh) {
 }
 
 void *NewtonMeshGetNextFace(const NewtonMesh *const mesh,
-                            const void *const face) {
+                            void *const face) {
 	TRACE_FUNTION(__FUNCTION__);
 	return ((const dgMeshEffect *)mesh)->GetNextFace(face);
 }

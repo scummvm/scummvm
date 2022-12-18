@@ -223,12 +223,12 @@ public:
 	int GetVertexIndexFromPoint(void *const point) const;
 
 	void *GetFirstEdge() const;
-	void *GetNextEdge(const void *const edge) const;
+	void *GetNextEdge(void *const edge) const;
 	void GetEdgeIndex(const void *const edge, dgInt32 &v0, dgInt32 &v1) const;
 	//  void GetEdgeAttributeIndex (const void* edge, dgInt32& v0, dgInt32& v1) const;
 
 	void *GetFirstFace() const;
-	void *GetNextFace(const void *const face) const;
+	void *GetNextFace(void *const face) const;
 	int IsFaceOpen(const void *const face) const;
 	int GetFaceMaterial(const void *const face) const;
 	int GetFaceIndexCount(const void *const face) const;

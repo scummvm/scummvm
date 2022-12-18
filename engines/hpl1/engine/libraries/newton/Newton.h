@@ -1000,12 +1000,12 @@ NEWTON_API int NewtonMeshGetVertexIndexFromPoint(const NewtonMesh *const mesh, v
 
 
 NEWTON_API void *NewtonMeshGetFirstEdge(const NewtonMesh *const mesh);
-NEWTON_API void *NewtonMeshGetNextEdge(const NewtonMesh *const mesh, const void *const edge);
+NEWTON_API void *NewtonMeshGetNextEdge(const NewtonMesh *const mesh, void *const edge);
 NEWTON_API void NewtonMeshGetEdgeIndices(const NewtonMesh *const mesh, const void *const edge, int *const v0, int *const v1);
 //NEWTON_API void NewtonMeshGetEdgePointIndices (const NewtonMesh* const mesh, const void* const edge, int* const v0, int* const v1);
 
 NEWTON_API void *NewtonMeshGetFirstFace(const NewtonMesh *const mesh);
-NEWTON_API void *NewtonMeshGetNextFace(const NewtonMesh *const mesh, const void *const face);
+NEWTON_API void *NewtonMeshGetNextFace(const NewtonMesh *const mesh, void *const face);
 NEWTON_API int NewtonMeshIsFaceOpen(const NewtonMesh *const mesh, const void *const face);
 NEWTON_API int NewtonMeshGetFaceMaterial(const NewtonMesh *const mesh, const void *const face);
 NEWTON_API int NewtonMeshGetFaceIndexCount(const NewtonMesh *const mesh, const void *const face);
