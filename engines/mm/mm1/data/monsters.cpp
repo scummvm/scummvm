@@ -56,7 +56,7 @@ bool Monsters::load() {
 		mon._bonusOnTouch = getNextValue(line);
 		mon._specialAbility = getNextValue(line);
 		mon._specialThreshold = getNextValue(line);
-		mon._field1e = getNextValue(line);
+		mon._counterFlags = getNextValue(line);
 		mon._imgNum = getNextValue(line);
 	}
 
