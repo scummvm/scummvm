@@ -758,6 +758,7 @@ void Combat::attackMonster(int monsterNum) {
 
 	Character &c = *g_globals->_currCharacter;
 	_attackerLevel = c._level._current;
+	_destAC = _monsterP->_ac;
 
 	if (c._class >= CLERIC) {
 		_attackerLevel >>= 1;
@@ -853,8 +854,10 @@ void Combat::attackMonster(int monsterNum) {
 		}
 
 		if (g_globals->_activeSpells._s.cursed) {
-			if (++_destAC > 255)
-				_destAC = 200;
+			int destAC = _destAC + (int)g_globals->_activeSpells._s.cursed;
+			if (destAC > 255)
+				destAC = 200;
+			_destAC = destAC;
 		}
 
 		addAttackDamage();
@@ -876,7 +879,7 @@ void Combat::addAttackDamage() {
 	for (int i = 0; i < _numberOfTimes; ++i) {
 		int val = getRandomNumber(20);
 		if (val == 20 || (val != 1 && (val + _attackerLevel) >= _destAC)) {
-			_damage = MAX(_damage + (int)_attackAttr2._current +
+			_damage = MIN(_damage + (int)_attackAttr2._current +
 				getRandomNumber(_attackAttr2._base), 255);
 			++_timesHit;
 		}
