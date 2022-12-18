@@ -221,7 +221,7 @@ void ResourceContext_RES::processPatches(Resource *resource, const GamePatchDesc
 			patchResourceId = readS2.readUint32();
 			subjectResourceData = subjectContext->getResourceData(subjectResourceId);
 			resourceData = getResourceData(patchResourceId);
-			subjectResourceData->patchData = new PatchData(&_file, _fileName);
+			subjectResourceData->patchData = new PatchData(_file.get(), _fileName);
 			subjectResourceData->offset = resourceData->offset;
 			subjectResourceData->size = resourceData->size;
 		}
