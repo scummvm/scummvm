@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-16 21:27+0000\n"
+"POT-Creation-Date: 2022-12-18 19:46+0000\n"
 "PO-Revision-Date: 2022-12-03 13:50+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -6614,7 +6614,7 @@ msgstr ""
 "%s és %s. Ezen fájlok nélkül,\n"
 "a zene nem ugyanaz, mint az eredeti játékban."
 
-#: engines/saga/saga.cpp:387
+#: engines/saga/saga.cpp:390
 msgid "Error loading game resources."
 msgstr "Hiba a játék erőforrások betöltésekor."
 

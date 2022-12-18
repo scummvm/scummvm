@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-16 21:27+0000\n"
+"POT-Creation-Date: 2022-12-18 19:46+0000\n"
 "PO-Revision-Date: 2022-12-11 07:34+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -6658,7 +6658,7 @@ msgstr ""
 "%s e %s. Sem esses arquivos,\n"
 "a música não soará igual ao jogo original."
 
-#: engines/saga/saga.cpp:387
+#: engines/saga/saga.cpp:390
 msgid "Error loading game resources."
 msgstr "Erro ao carregar recursos de jogo."
 
