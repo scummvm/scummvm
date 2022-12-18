@@ -46,6 +46,7 @@ public:
 	bool loadModel(const Common::String &name);
 
 	static bool loadSettings(const Common::String &path);
+	static void cleanup();
 
 	TeIntrusivePtr<TeModel> model() { return _modelPtr; }
 

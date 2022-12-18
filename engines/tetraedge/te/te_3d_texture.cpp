@@ -94,14 +94,14 @@ void Te3DTexture::destroy() {
 	_glTexture = NO_TEXTURE;
 }
 
-void Te3DTexture::forceTexData(uint gltextures, uint xsize, uint ysize) {
+void Te3DTexture::forceTexData(uint gltexture, uint xsize, uint ysize) {
 	if (_glTexture != 0xffffffff) {
 		if (_createdTexture)
 			glDeleteTextures(1, &_glTexture);
 		_createdTexture = false;
 		_loaded = false;
 	}
-	_glTexture = gltextures;
+	_glTexture = gltexture;
 	_width = xsize;
 	_height = ysize;
 	_texWidth = xsize;

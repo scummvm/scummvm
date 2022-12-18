@@ -27,7 +27,7 @@
 #include "common/types.h"
 #include "common/path.h"
 
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 
 #include "tetraedge/te/te_color.h"
 #include "tetraedge/te/te_palette.h"
@@ -36,12 +36,14 @@
 
 namespace Tetraedge {
 
-class TeImage : public TeResource, public Graphics::Surface {
+class TeImage : public TeResource, public Graphics::ManagedSurface {
 public:
 	TeImage();
 	TeImage(const TeImage &other);
 
-	virtual ~TeImage() {};
+	virtual ~TeImage() {
+		destroy();
+	};
 
 	enum Format {
 		RGB8 = 5,

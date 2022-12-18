@@ -176,6 +176,8 @@ public:
 	TeIntrusivePtr<TeBezierCurve> curve() { return _curve; }
 	void setRecallageY(bool val) { _recallageY = val; }
 
+	static void cleanup();
+
 private:
 	float _walkCurveStart;
 	float _walkCurveLast;
@@ -237,6 +239,7 @@ private:
 	Common::HashMap<Common::String, Common::Array<Callback *>> _callbacks;
 
 	static Common::Array<AnimCacheElement> _animCache;
+	static Common::HashMap<Common::String, TeIntrusivePtr<TeModelAnimation>> _animCacheMap;
 	static uint _animCacheSize;
 	static Common::HashMap<Common::String, CharacterSettings> *_globalCharacterSettings;
 

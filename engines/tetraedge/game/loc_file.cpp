@@ -33,7 +33,7 @@ LocFile::LocFile() {
 
 void LocFile::load(const Common::Path &path) {
 	TeNameValXmlParser parser;
-	static const Common::String xmlHeader("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+	const Common::String xmlHeader("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	Common::File locFile;
 	if (!locFile.open(path))
 		error("LocFile::load: failed to open %s.", path.toString().c_str());

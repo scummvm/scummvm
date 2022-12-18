@@ -50,7 +50,9 @@ namespace Tetraedge {
 class TeLuaGUI : public TeObject {
 public:
 	TeLuaGUI();
-	virtual ~TeLuaGUI() {};
+	virtual ~TeLuaGUI() {
+		unload();
+	};
 
 	virtual void enter() {};
 	virtual void leave() {};

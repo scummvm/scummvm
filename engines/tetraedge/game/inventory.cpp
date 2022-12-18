@@ -351,11 +351,9 @@ void Inventory::unPauseAnims() {
 
 void Inventory::removeObject(const Common::String &objname) {
 	int pageNo = 0;
-	bool retval;
 	bool finished = false;
 	while (!finished) {
 		TeLayout *page = _gui.layout(Common::String::format("page%d", pageNo));
-		retval = false;
 		if (!page)
 			break;
 		int slotNo = 0;
@@ -441,9 +439,8 @@ void Inventory::selectedObject(InventoryObject *obj) {
 }
 
 const Common::String &Inventory::selectedObject() {
-	static const Common::String blank;
 	if (_selectedObject == nullptr)
-		return blank;
+		return _blankStr;
 	else
 		return _selectedObject->name();
 }

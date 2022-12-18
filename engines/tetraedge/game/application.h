@@ -48,6 +48,7 @@ namespace Tetraedge {
 class Application {
 public:
 	Application();
+	~Application();
 
 	void create();
 	void destroy();

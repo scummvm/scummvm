@@ -62,6 +62,9 @@ _firstInventory(true), _loadName("save.xml"), _randomSource("SyberiaGameRandom")
 }
 
 Game::~Game() {
+	if (_entered) {
+		leave(true);
+	}
 	delete _randomSound;
 }
 
@@ -720,7 +723,18 @@ void Game::leave(bool flag) {
 		_scene.unloadCharacter(_scene._character->_model->name());
 	}
 
-	warning("TODO: Game::leave: clear game sounds and randomsounds");
+	for (auto &sound : _gameSounds) {
+		delete sound;
+	}
+	_gameSounds.clear();
+	
+	for (auto &randsoundlist : _randomSounds) {
+		for (auto *randsound : randsoundlist._value) {
+			delete randsound;
+		}
+		randsoundlist._value.clear();
+	}
+	_randomSounds.clear();
 
 	for (auto *hitobj : _gameHitObjects) {
 		delete hitobj;
@@ -1089,7 +1103,7 @@ bool Game::onMouseMove() {
 	if (!_entered)
 		return false;
 
-	static const Common::Path DEFAULT_CURSOR("pictures/cursor.png");
+	const Common::Path DEFAULT_CURSOR("pictures/cursor.png");
 
 	Application *app = g_engine->getApplication();
 

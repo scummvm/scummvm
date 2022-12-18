@@ -28,6 +28,13 @@ namespace Tetraedge {
 /*static*/
 Common::HashMap<Common::String, Object3D::ObjectSettings> *Object3D::_objectSettings = nullptr;
 
+/*static*/
+void Object3D::cleanup() {
+	if (_objectSettings)
+		delete _objectSettings;
+	_objectSettings = nullptr;
+}
+
 
 // start and end frames not initialized in original, but to guarantee we don't use
 // uninitialized values we set it here.

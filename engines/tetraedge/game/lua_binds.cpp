@@ -1764,8 +1764,10 @@ static int tolua_ExportedFunctions_SetObjectOnCharacter00(lua_State *L) {
 static void SetObjectRotation(const Common::String &obj, float xr, float yr, float zr) {
 	Game *game = g_engine->getGame();
 	Object3D *obj3d = game->scene().object3D(obj);
-	if (!obj3d)
+	if (!obj3d) {
 		warning("[SetObjectRotation] Object not found %s", obj.c_str());
+		return;
+	}
 	const TeVector3f32 rot(xr * M_PI / 180.0, yr * M_PI / 180.0, zr * M_PI / 180.0);
 	obj3d->_objRotation = TeQuaternion::fromEuler(rot);
 }
@@ -1788,8 +1790,10 @@ static int tolua_ExportedFunctions_SetObjectRotation00(lua_State *L) {
 static void SetObjectTranslation(const Common::String &obj, float x, float y, float z) {
 	Game *game = g_engine->getGame();
 	Object3D *obj3d = game->scene().object3D(obj);
-	if (!obj3d)
+	if (!obj3d) {
 		warning("[SetObjectTranslation] Object not found %s", obj.c_str());
+		return;
+	}
 	obj3d->_objTranslation = TeVector3f32(x, y, z);
 }
 
@@ -1811,8 +1815,10 @@ static int tolua_ExportedFunctions_SetObjectTranslation00(lua_State *L) {
 static void SetObjectScale(const Common::String &obj, float xs, float ys, float zs) {
 	Game *game = g_engine->getGame();
 	Object3D *obj3d = game->scene().object3D(obj);
-	if (!obj3d)
+	if (!obj3d) {
 		warning("[SetObjectScale] Object not found %s", obj.c_str());
+		return;
+	}
 	obj3d->_objScale = TeVector3f32(xs, ys, zs);
 }
 
@@ -1834,8 +1840,10 @@ static int tolua_ExportedFunctions_SetObjectScale00(lua_State *L) {
 static void SetObjectFrames(const Common::String &obj, int start, int end) {
 	Game *game = g_engine->getGame();
 	Object3D *obj3d = game->scene().object3D(obj);
-	if (!obj3d)
+	if (!obj3d) {
 		warning("[SetObjectFrames] Object not found %s", obj.c_str());
+		return;
+	}
 	obj3d->_startFrame = start;
 	obj3d->_endFrame = end;
 }

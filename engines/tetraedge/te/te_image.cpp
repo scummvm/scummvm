@@ -28,7 +28,7 @@
 
 namespace Tetraedge {
 
-TeImage::TeImage() : Surface(), _format(INVALID) {
+TeImage::TeImage() : ManagedSurface(), _format(INVALID) {
 }
 
 TeImage::TeImage(const TeImage &other) {
@@ -44,8 +44,8 @@ unsigned long TeImage::countPixelsOfColor(const TeColor &col) const {
 }
 
 void TeImage::create() {
-	_format = INVALID;
-	Graphics::Surface::free();
+	// Never used, but in original seems to do the same as destroy??
+	destroy();
 }
 
 void TeImage::create(uint xsize, uint ysize, Common::SharedPtr<TePalette> &pal,
@@ -54,8 +54,8 @@ void TeImage::create(uint xsize, uint ysize, Common::SharedPtr<TePalette> &pal,
 	Graphics::PixelFormat pxformat = ((teformat == TeImage::RGB8) ?
 									  Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0) : Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
-	Graphics::Surface::create(xsize, ysize, pxformat);
-	Graphics::Surface::fillRect(Common::Rect(0, 0, xsize, ysize), 0);
+	Graphics::ManagedSurface::create(xsize, ysize, pxformat);
+	Graphics::ManagedSurface::fillRect(Common::Rect(0, 0, xsize, ysize), 0);
 }
 
 void TeImage::deserialize(Common::ReadStream &stream) {
@@ -63,7 +63,7 @@ void TeImage::deserialize(Common::ReadStream &stream) {
 }
 
 void TeImage::destroy() {
-	Graphics::Surface::free();
+	Graphics::ManagedSurface::free();
 	_format = INVALID;
 }
 
@@ -79,7 +79,7 @@ void TeImage::fill(byte r, byte g, byte b, byte a) {
 	Common::Rect wholeSurf(0, 0, w, h);
 
 	uint32 col = ((uint32)r << format.rShift) | ((uint32)g << format.gShift) | ((uint32)b << format.bShift) | ((uint32)a << format.aShift);
-	Graphics::Surface::fillRect(wholeSurf, col);
+	Graphics::ManagedSurface::fillRect(wholeSurf, col);
 }
 
 void TeImage::getBuff(uint x, uint y, byte *pout, uint w_, uint h_) {

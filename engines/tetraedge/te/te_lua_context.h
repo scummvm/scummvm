@@ -42,6 +42,7 @@ class TeLuaGUI;
 class TeLuaContext {
 public:
 	TeLuaContext();
+	~TeLuaContext();
 
 	void addBindings(void(*fn)(lua_State *));
 	void create();
