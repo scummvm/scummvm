@@ -53,10 +53,10 @@ enum Fiedl1A {
 	FIELD1A_80 = 0x80
 };
 
-enum Field1E {
-	FIELD1E_F = 0xf,
-	FIELD1E_10 = 0x10, FIELD1E_20 = 0x20,
-	FIELD1E_40 = 0x40, FIELD1E_80 = 0x80
+enum MonsterCounter {
+	COUNTER_BITS = 0xf,
+	COUNTER_THRESHOLD1 = 0x10, COUNTER_THRESHOLD2 = 0x20,
+	COUNTER_REGENERATE = 0x40, COUNTER_ADVANCES = 0x80
 };
 
 struct Monster {
@@ -75,7 +75,7 @@ struct Monster {
 	byte _bonusOnTouch;
 	byte _specialAbility;
 	byte _specialThreshold;
-	byte _field1e;
+	byte _counterFlags;
 	byte _imgNum;
 
 	// Runtime combat fields

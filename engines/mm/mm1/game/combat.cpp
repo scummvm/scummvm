@@ -491,7 +491,7 @@ bool Combat::moveMonsters() {
 		_advanceIndex = i;
 
 		if (!(_remainingMonsters[i]->_status & ~MONFLAG_SILENCED) &&
-			_remainingMonsters[i]->_field1e & FIELD1E_80) {
+			_remainingMonsters[i]->_counterFlags & COUNTER_ADVANCES) {
 			monsterAdvances();
 			hasAdvance = true;
 		}
@@ -517,7 +517,7 @@ bool Combat::monsterChanges() {
 	for (uint i = 0; i < _remainingMonsters.size(); ++i) {
 		monsterSetPtr(i);
 
-		if ((_monsterP->_field1e & FIELD1E_40) &&
+		if ((_monsterP->_counterFlags & COUNTER_REGENERATE) &&
 			(_monsterP->_defaultHP != _remainingMonsters[i]->_hp)) {
 			_monstersRegenerate = true;
 			int newVal = _remainingMonsters[i]->_hp + 5;
@@ -586,14 +586,14 @@ void Combat::proc2() {
 
 void Combat::monsterAction() {
 	Encounter &enc = g_globals->_encounters;
-	byte bitset = _monsterP->_field1e;
+	byte bitset = _monsterP->_counterFlags;
 	int threshold = -1;
 
 	_activeMonsterNum = _monsterIndex;
 	_monsterName = _monsterP->_name;
 	monsterIndexOf();
 
-	if (!(bitset & (FIELD1E_10 | FIELD1E_20))) {
+	if (!(bitset & (COUNTER_THRESHOLD1 | COUNTER_THRESHOLD2))) {
 		if (enc._highestLevel < 4) {
 		} else if (enc._highestLevel < 9) {
 			threshold = 50;
@@ -602,14 +602,14 @@ void Combat::monsterAction() {
 		} else {
 			threshold = 0;
 		}
-	} else if (!(bitset & FIELD1E_10)) {
+	} else if (!(bitset & COUNTER_THRESHOLD1)) {
 		if (enc._highestLevel < 9) {
 		} else if (enc._highestLevel < 14) {
 			threshold = 50;
 		} else {
 			threshold = 75;
 		}
-	} else if (!(bitset & FIELD1E_20)) {
+	} else if (!(bitset & COUNTER_THRESHOLD2)) {
 		if (enc._highestLevel < 14) {
 		} else {
 			threshold = 50;
@@ -642,10 +642,10 @@ bool Combat::checkMonsterSpells() {
 
 	if (!_monsterP->_specialAbility || (_monsterP->_specialAbility & 0x80) ||
 		(getRandomNumber(100) >= _monsterP->_specialThreshold) ||
-		!(_monsterP->_field1e & 0xf))
+		!(_monsterP->_counterFlags & COUNTER_BITS))
 		return false;
 
-	_monsterP->_field1e--;
+	_monsterP->_counterFlags--;
 	if (!_monsterP->_specialAbility || _monsterP->_specialAbility >= 33)
 		return false;
 
@@ -657,7 +657,7 @@ bool Combat::checkMonsterSpells() {
 
 void Combat::checkMonsterActions() {
 	if (checkMonsterSpells())
-		// Monster wandered or cast spell, so things are taken care of. Exit
+		// Monster wandered or cast spell, so things are taken care of
 		return;
 
 	_destCharCtr = 0;
@@ -666,12 +666,12 @@ void Combat::checkMonsterActions() {
 		return;
 	}
 
-	if (!(_monsterP->_specialAbility & 0x80) || !(_monsterP->_field1e & FIELD1E_F)) {
+	if (!(_monsterP->_specialAbility & 0x80) || !(_monsterP->_counterFlags & COUNTER_BITS)) {
 		setMode(WAITS_FOR_OPENING);
 		return;
 	}
 
-	_monsterP->_field1e--;
+	_monsterP->_counterFlags--;
 
 	// Pick a random character to shoot at
 	int charNum = getRandomNumber(g_globals->_party.size()) - 1;
