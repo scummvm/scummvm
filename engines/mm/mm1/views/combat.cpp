@@ -222,6 +222,9 @@ void Combat::timeout() {
 }
 
 bool Combat::msgKeypress(const KeypressMessage &msg) {
+	if (endDelay())
+		return true;
+
 	if (_mode == SELECT_OPTION && _option != OPTION_NONE) {
 		if (msg.keycode == Common::KEYCODE_ESCAPE) {
 			combatLoop();
@@ -266,6 +269,9 @@ bool Combat::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool Combat::msgAction(const ActionMessage &msg) {
+	if (endDelay())
+		return true;
+
 	if (_mode != SELECT_OPTION || (_option != OPTION_NONE &&
 			_option != OPTION_EXCHANGE))
 		return false;
