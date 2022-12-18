@@ -60,7 +60,8 @@ static const uint8 kSavegameVersion = 1;
 enum AccessDebugChannels {
 	kDebugEngine = 1 << 0,
 	kDebugUtils = 1 << 1,
-	kDebugGraphics = 1 << 2
+	kDebugGraphics = 1 << 2,
+	kDebugScript = 1 << 3
 };
 
 class EfhGraphicsStruct {
@@ -295,7 +296,6 @@ private:
 	void saveEfhGame();
 	void copyCurrentPlaceToBuffer(int16 id);
 	uint8 getMapTileInfo(int16 mapPosX, int16 mapPosY);
-	void displayNextAnimFrame();
 	void writeTechAndMapFiles();
 	uint16 getStringWidth(const char *buffer);
 	void setTextPos(int16 textPosX, int16 textPosY);
@@ -309,7 +309,6 @@ private:
 	void removeCharacterFromTeam(int16 teamMemberId);
 	void refreshTeamSize();
 	bool isCharacterATeamMember(int16 id);
-	bool isTPK();
 	void handleWinSequence();
 	bool giveItemTo(int16 charId, int16 objectId, int16 altCharId);
 	int16 chooseCharacterToReplace();
@@ -333,7 +332,7 @@ private:
 	void resetGame();
 	bool handleDeathMenu();
 	void computeMapAnimation();
-	void unkFct_anim();
+	void handleAnimations();
 	int8 sub16B08(int16 monsterId);
 	bool moveMonsterAwayFromTeam(int16 monsterId);
 	bool moveMonsterTowardsTeam(int16 monsterId);
@@ -408,6 +407,7 @@ private:
 	void handleFight_lastAction_D(int16 teamCharId);
 	void handleFight_lastAction_H(int16 teamCharId);
 	void handleFight_lastAction_U(int16 teamCharId);
+	bool isTPK();
 	bool sub1BC74(int16 monsterId, int16 teamMonsterId);
 	void sub1BCA7(int16 monsterTeamId);
 	void reset_stru32686();
@@ -433,6 +433,7 @@ private:
 	// Graphics
 	void initPalette();
 	void drawLeftCenterBox();
+	void displayNextAnimFrame();
 	void displayAnimFrame();
 	void displayAnimFrames(int16 animId, bool displayMenuBoxFl);
 	void displayFctFullScreen();
@@ -468,7 +469,7 @@ private:
 
 	// Script
 	uint8 *script_readNumberArray(uint8 *buffer, int16 destArraySize, int16 *destArray);
-	uint8 *script_getNumber(uint8 *srcBuffer, int16 *retval);
+	uint8 *script_getNumber(uint8 *srcBuffer, int16 *retBuf);
 	int16 script_parse(Common::String str, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag);
 
 	// Sound

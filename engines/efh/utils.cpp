@@ -157,7 +157,7 @@ Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
 		if (newMs - lastMs >= 200) {
 			lastMs = newMs;
 			--delay;
-			unkFct_anim();
+			handleAnimations();
 		}
 
 		lastChar = handleAndMapInput(false);
@@ -182,7 +182,7 @@ Common::KeyCode EfhEngine::getInput(int16 delay) {
 		if (newMs - lastMs >= 200) {
 			lastMs = newMs;
 			--delay;
-			unkFct_anim();
+			handleAnimations();
 		}
 
 		lastChar = handleAndMapInput(false);
@@ -205,7 +205,7 @@ Common::KeyCode EfhEngine::waitForKey() {
 
 		if (newMs - lastMs >= 200) {
 			lastMs = newMs;
-			unkFct_anim();
+			handleAnimations();
 		}
 
 		_system->getEventManager()->pollEvent(event);
@@ -248,7 +248,7 @@ Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
 
 			if (newMs - lastMs >= 200) {
 				lastMs = newMs;
-				unkFct_anim();
+				handleAnimations();
 			}
 		} else
 			break;
@@ -276,7 +276,7 @@ Common::KeyCode EfhEngine::getInputBlocking() {
 
 		if (newMs - lastMs >= 220) {
 			lastMs = newMs;
-			unkFct_anim();
+			handleAnimations();
 		}
 	}
 	return retVal;

@@ -611,11 +611,12 @@ void EfhEngine::handleFight_lastAction_H(int16 teamCharId) {
 void EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
 	debug("handleFight_lastAction_U %d", teamCharId);
 
+	// Fight - Action 'U' - Use Item
 	// In the original, this function is part of handleFight.
 	// It has been split for readability purposes.
-	int16 unk_monsterField5_itemId = _npcBuf[_teamCharId[teamCharId]]._inventory[_word31780[teamCharId]]._ref;
+	int16 itemId = _npcBuf[_teamCharId[teamCharId]]._inventory[_word31780[teamCharId]]._ref;
 	_enemyNamePt2 = _npcBuf[_teamCharId[teamCharId]]._name;
-	_nameBuffer = _items[unk_monsterField5_itemId]._name;
+	_nameBuffer = _items[itemId]._name;
 	int16 var70 = _npcBuf[_teamCharId[teamCharId]]._possessivePronounSHL6 >> 6;
 	if (var70 == 2)
 		_enemyNamePt1 = "The ";
@@ -624,6 +625,18 @@ void EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
 
 	_messageToBePrinted = Common::String::format("%s%s uses %s %s!  ", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPossessive[var70], _nameBuffer.c_str());
 	sub1C219(_messageToBePrinted, 1, 2, true);
+}
+
+bool EfhEngine::isTPK() {
+	debugC(6, kDebugEngine,"isTPK");
+
+	int16 zeroedChar = 0;
+	for (int counter = 0; counter < _teamSize; ++counter) {
+		if (_npcBuf[_teamCharId[counter]]._hitPoints <= 0)
+			++zeroedChar;
+	}
+
+	return zeroedChar == _teamSize;
 }
 
 bool EfhEngine::sub1BC74(int16 monsterId, int16 teamMonsterId) {

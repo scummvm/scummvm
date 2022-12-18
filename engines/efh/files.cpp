@@ -117,7 +117,7 @@ void EfhEngine::rImageFile(Common::String filename, uint8 *targetBuffer, uint8 *
 }
 
 void EfhEngine::readImpFile(int16 id, bool techMapFl) {
-	debug("readImpFile %d %s", id, techMapFl ? "True" : "False");
+	debugC(6, kDebugEngine, "readImpFile %d %s", id, techMapFl ? "True" : "False");
 
 	Common::String fileName = Common::String::format("imp.%d", id);
 

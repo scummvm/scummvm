@@ -25,7 +25,7 @@
 namespace Efh {
 
 uint8 *EfhEngine::script_readNumberArray(uint8 *srcBuffer, int16 destArraySize, int16 *destArray) {
-	debug("script_readNumberArray");
+	debugC(6, kDebugScript, "script_readNumberArray");
 
 	uint8 *buffer = srcBuffer;
 	for (int i = 0; i < destArraySize; ++i) {
@@ -36,20 +36,22 @@ uint8 *EfhEngine::script_readNumberArray(uint8 *srcBuffer, int16 destArraySize, 
 	return buffer;
 }
 
-uint8 *EfhEngine::script_getNumber(uint8 *srcBuffer, int16 *retval) {
-	debug("script_getNumber");
+uint8 *EfhEngine::script_getNumber(uint8 *srcBuffer, int16 *retBuf) {
+	debugC(6, kDebugScript, "script_getNumber");
 
 	uint8 *buffer = srcBuffer;
-	int16 var2 = 0;
+	int16 retVal = 0;
 	for (;;) {
 		uint8 curChar = *buffer;
 		if (curChar < 0x30 || curChar > 0x39) {
-			*retval = var2;
-			return buffer;
+			break;
 		}
-		var2 = var2 * 10 + curChar - 0x30;
+		retVal = retVal * 10 + curChar - 0x30;
 		buffer++;
 	}
+
+	*retBuf = retVal;
+	return buffer;
 }
 
 int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag) {

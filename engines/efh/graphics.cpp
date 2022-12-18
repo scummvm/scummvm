@@ -56,6 +56,15 @@ void EfhEngine::drawLeftCenterBox() {
 	drawColoredRect(16, 8, 111, 135, 0);
 }
 
+void EfhEngine::displayNextAnimFrame() {
+	debugC(6, kDebugGraphics, "displayNextAnimFrame");
+
+	if (++_unkAnimRelatedIndex >= 15)
+		_unkAnimRelatedIndex = 0;
+
+	displayAnimFrame();
+}
+
 void EfhEngine::displayAnimFrame() {
 	debugC(1, kDebugGraphics, "displayAnimFrame");
 	// The original had a parameter. As it was always equal to zero, it was removed in ScummVM
