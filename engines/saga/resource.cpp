@@ -107,7 +107,7 @@ struct ITEAmigaEXEDescriptor {
 	ITEAmigaIndex soundIndex;
 };
 
-bool ResourceContext::loadResIteAmigaSound(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type) {
+bool ResourceContext::loadResIteAmigaSound(SagaEngine *_vm, int type) {
 	Common::String exeName;
 
 	for (const ADGameFileDescription *gameFileDescription = _vm->getFilesDescriptions();
@@ -165,10 +165,10 @@ bool ResourceContext::loadResIteAmigaSound(SagaEngine *_vm, uint32 contextOffset
 	return true;
 }
 
-bool ResourceContext::loadResIteAmiga(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type, bool isFloppy) {
+bool ResourceContext::loadResIteAmiga(SagaEngine *_vm, int type, bool isFloppy) {
 	if (_fileType & (GAME_VOICEFILE | GAME_SOUNDFILE))
-		return loadResIteAmigaSound(_vm, contextOffset, contextSize, type);
-	_file->seek(contextOffset);
+		return loadResIteAmigaSound(_vm, type);
+	_file->seek(0);
 	uint16 resourceCount = _file->readUint16BE();
 	uint16 scriptCount = _file->readUint16BE();
 	uint32 count = (type &  GAME_SCRIPTFILE) ? scriptCount : resourceCount;
@@ -189,7 +189,7 @@ bool ResourceContext::loadResIteAmiga(SagaEngine *_vm, uint32 contextOffset, uin
 	return true;
 }
 
-bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
+bool ResourceContext::loadResV1() {
 	size_t i;
 	bool result;
 	byte tableInfo[RSC_TABLEINFO_SIZE];
@@ -198,12 +198,12 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 	uint32 resourceTableOffset;
 	ResourceData *resourceData;
 
-	if (contextSize < RSC_MIN_FILESIZE) {
-		warning("ResourceContext::loadResV1(): Incorrect contextSize: %d < %d", contextSize, RSC_MIN_FILESIZE);
+	if (_fileSize < RSC_MIN_FILESIZE) {
+		warning("ResourceContext::loadResV1(): Incorrect contextSize: %d < %d", (int) _fileSize, RSC_MIN_FILESIZE);
 		return false;
 	}
 
-	_file->seek(contextOffset + contextSize - RSC_TABLEINFO_SIZE);
+	_file->seek(-RSC_TABLEINFO_SIZE, SEEK_END);
 
 	if (_file->read(tableInfo, RSC_TABLEINFO_SIZE) != RSC_TABLEINFO_SIZE) {
 		warning("ResourceContext::loadResV1(): Incorrect table size: %d for %s", RSC_TABLEINFO_SIZE, _fileName);
@@ -216,9 +216,9 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 	count = readS.readUint32();
 
 	// Check for sane table offset
-	if (resourceTableOffset != contextSize - RSC_TABLEINFO_SIZE - RSC_TABLEENTRY_SIZE * count) {
+	if (resourceTableOffset != _fileSize - RSC_TABLEINFO_SIZE - RSC_TABLEENTRY_SIZE * count) {
 		warning("ResourceContext::loadResV1(): Incorrect tables offset: %d != %d for %s, endian is %d",
-			resourceTableOffset, contextSize - RSC_TABLEINFO_SIZE - RSC_TABLEENTRY_SIZE * count,
+			resourceTableOffset, (int)_fileSize - RSC_TABLEINFO_SIZE - RSC_TABLEENTRY_SIZE * count,
 			_fileName, _isBigEndian);
 		return false;
 	}
@@ -226,7 +226,7 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 	// Load resource table
 	tableBuffer.resize(RSC_TABLEENTRY_SIZE * count);
 
-	_file->seek(resourceTableOffset + contextOffset, SEEK_SET);
+	_file->seek(resourceTableOffset, SEEK_SET);
 
 	result = (_file->read(tableBuffer.getBuffer(), tableBuffer.size()) == tableBuffer.size());
 	if (result) {
@@ -236,10 +236,10 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 
 		for (i = 0; i < count; i++) {
 			resourceData = &_table[i];
-			resourceData->offset = contextOffset + readS1.readUint32();
+			resourceData->offset = readS1.readUint32();
 			resourceData->size = readS1.readUint32();
 			// Sanity check
-			if ((resourceData->offset > (uint)_fileSize) || (resourceData->size > contextSize)) {
+			if ((resourceData->offset > (uint)_fileSize) || (resourceData->size > (uint)_fileSize)) {
 				result = false;
 				break;
 			}
@@ -272,7 +272,7 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 	}
 
 
-	if (!loadRes(vm, 0, _fileSize, _fileType))
+	if (!loadRes(vm, _fileType))
 		return false;
 
 	GamePatchList index = vm->getPatchList();

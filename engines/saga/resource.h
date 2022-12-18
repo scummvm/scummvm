@@ -150,11 +150,11 @@ protected:
 	int32 _fileSize;
 
 	bool load(SagaEngine *_vm, Resource *resource);
-	bool loadResV1(uint32 contextOffset, uint32 contextSize);
-	bool loadResIteAmiga(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type, bool isFloppy);
-	bool loadResIteAmigaSound(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type);
+	bool loadResV1();
+	bool loadResIteAmiga(SagaEngine *_vm, int type, bool isFloppy);
+	bool loadResIteAmigaSound(SagaEngine *_vm, int type);
 
-	virtual bool loadRes(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type) = 0;
+	virtual bool loadRes(SagaEngine *_vm, int type) = 0;
 	virtual void processPatches(Resource *resource, const GamePatchDescription *patchFiles) { }
 };
 
@@ -210,8 +210,8 @@ protected:
 // ITE
 class ResourceContext_RSC: public ResourceContext {
 protected:
-	bool loadRes(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type) override {
-		return loadResV1(contextOffset, contextSize);
+	bool loadRes(SagaEngine *_vm, int type) override {
+		return loadResV1();
 	}
 	void processPatches(Resource *resource, const GamePatchDescription *patchFiles) override;
 };
@@ -221,8 +221,8 @@ public:
 	ResourceContext_RSC_ITE_Amiga(bool isFloppy) : _isFloppy(isFloppy) {}
 
 protected:
-	bool loadRes(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type) override {
-		return loadResIteAmiga(_vm, contextOffset, contextSize, type, _isFloppy);
+	bool loadRes(SagaEngine *_vm, int type) override {
+		return loadResIteAmiga(_vm, type, _isFloppy);
 	}
 
 	bool _isFloppy;
@@ -252,8 +252,8 @@ protected:
 // IHNM
 class ResourceContext_RES: public ResourceContext {
 protected:
-	bool loadRes(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type) override {
-		return loadResV1(0, contextSize);
+	bool loadRes(SagaEngine *_vm, int type) override {
+		return loadResV1();
 	}
 
 	void processPatches(Resource *resource, const GamePatchDescription *patchFiles) override;
@@ -262,7 +262,7 @@ protected:
 // TODO: move load routines from sndres
 class VoiceResourceContext_RES: public ResourceContext {
 protected:
-	bool loadRes(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type) override {
+	bool loadRes(SagaEngine *_vm, int type) override {
 		return false;
 	}
 public:
