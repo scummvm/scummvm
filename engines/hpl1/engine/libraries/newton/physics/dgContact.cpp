@@ -122,7 +122,7 @@ dgUnsigned32 dgContact::JacobianDerivative(dgContraintDescritor &params) {
 		frictionIndex = GetCount();
 		for (dgList<dgContactMaterial>::dgListNode *node = GetFirst(); node; node =
 		            node->GetNext()) {
-			const dgContactMaterial &contact = node->GetInfo();
+			dgContactMaterial &contact = node->GetInfo();
 			JacobianContactDerivative(params, contact, i, frictionIndex);
 			i++;
 		}
@@ -132,7 +132,7 @@ dgUnsigned32 dgContact::JacobianDerivative(dgContraintDescritor &params) {
 }
 
 void dgContact::JacobianContactDerivative(dgContraintDescritor &params,
-        const dgContactMaterial &contact, dgInt32 normalIndex,
+        dgContactMaterial &contact, dgInt32 normalIndex,
         dgInt32 &frictionIndex) {
 	dgPointParam pointData;
 

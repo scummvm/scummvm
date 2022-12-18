@@ -446,7 +446,7 @@ void dgBroadPhaseCollision::Remove(dgBody *const body) {
 
 void dgBroadPhaseCollision::UpdatePairs(dgBody *const body0,
                                         dgSortArray::dgListNode *const srcnode, dgInt32 axisX,
-                                        dgInt32 threadIndex) const {
+                                        dgInt32 threadIndex) {
 	//  dgFloat32 val;
 	//  dgBody* body1;
 
@@ -467,7 +467,7 @@ void dgBroadPhaseCollision::UpdatePairs(dgBody *const body0,
 }
 
 void dgBroadPhaseCollision::UpdatePairs(dgBroadPhaseCell &cellA,
-                                        dgBroadPhaseCell &cellB, dgInt32 threadIndex) const {
+                                        dgBroadPhaseCell &cellB, dgInt32 threadIndex) {
 	dgInt32 axisX = cellA.m_lastSortArray->m_index;
 	dgSortArray *const listA = &cellA.m_sort[axisX];
 	dgSortArray *const listB = &cellB.m_sort[axisX];
@@ -488,7 +488,7 @@ void dgBroadPhaseCollision::UpdatePairs(dgBroadPhaseCell &cellA,
 void dgBroadPhaseCollision::ForEachBodyInAABB(const dgVector &p0,
         const dgVector &p1, OnBodiesInAABB callback, void *const userdata) const {
 	if (dgOverlapTest(p0, p1, m_appMinBox, m_appMaxBox)) {
-		dgBody *const sentinel = ((dgWorld *)this)->GetSentinelBody();
+		dgBody *const sentinel = ((const dgWorld *)this)->GetSentinelBody();
 		dgFloat32 x0 = GetMax(p0.m_x - m_min.m_x, dgFloat32(0.0f));
 		//      dgFloat32 y0 = GetMax (p0.m_y - m_min.m_y, dgFloat32 (0.0f));
 		dgFloat32 z0 = GetMax(p0.m_z - m_min.m_z, dgFloat32(0.0f));
@@ -529,7 +529,7 @@ dgInt32 dgBroadPhaseCollision::ConvexCast(dgCollision *const shape,
         const dgMatrix &matrixOrigin, const dgVector &target,
         dgFloat32 &timeToImpact, OnRayPrecastAction prefilter, void *const userData,
         dgConvexCastReturnInfo *const info, dgInt32 maxContacts,
-        dgInt32 threadIndex) const {
+        dgInt32 threadIndex) {
 	dgVector p0;
 	dgVector p1;
 	dgVector q0;
@@ -885,7 +885,7 @@ void dgBroadPhaseMaterialCallbackWorkerThread::ThreadExecute() {
 
 void dgBroadPhaseCollision::RayCast(const dgVector &l0, const dgVector &l1,
                                     OnRayCastAction filter, OnRayPrecastAction prefilter,
-                                    void *const userData) const {
+                                    void *const userData) {
 	dgVector ll0(l0);
 	dgVector ll1(l1);
 	dgVector segment(l1 - l0);

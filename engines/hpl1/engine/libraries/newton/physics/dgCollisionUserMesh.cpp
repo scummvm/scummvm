@@ -74,7 +74,7 @@ void dgCollisionUserMesh::GetVertexListIndexList(const dgVector &p0,
         const dgVector &p1, dgGetVertexListIndexList &data) const {
 	if (m_faceInAabb) {
 		return m_faceInAabb(m_userData, &p0[0], &p1[0],
-		                    (const dgFloat32 **)&data.m_veterxArray, &data.m_vertexCount,
+		                    (const dgFloat32 * const *)&data.m_veterxArray, &data.m_vertexCount,
 		                    &data.m_vertexStrideInBytes, data.m_indexList, data.m_maxIndexCount,
 		                    data.m_userDataList);
 

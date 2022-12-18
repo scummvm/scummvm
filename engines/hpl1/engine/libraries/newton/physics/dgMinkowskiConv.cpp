@@ -405,7 +405,7 @@ class dgContactSolver {
 	        const dgVector &shapeNormal, dgUnsigned32 id, dgFloat32 penetration,
 	        dgInt32 shape1VertexCount, dgVector *const shape1,
 	        dgInt32 shape2VertexCount, dgVector *const shape2,
-	        dgContactPoint *const contactOut) const {
+	        dgContactPoint *const contactOut) {
 		//      dgInt32 i0;
 		//      dgInt32 i1;
 		//      dgInt32 count;

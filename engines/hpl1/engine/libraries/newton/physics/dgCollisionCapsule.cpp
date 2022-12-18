@@ -325,11 +325,11 @@ dgVector dgCollisionCapsule::SupportVertexSimd(const dgVector &dir) const {
 
 dgVector dgCollisionCapsule::SupportVertex(const dgVector &dir) const {
 	dgInt32 index;
-	dgFloatSign *ptr;
+	const dgFloatSign *ptr;
 
 	_ASSERTE(dgAbsf(dir % dir - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
 
-	ptr = (dgFloatSign *)&dir;
+	ptr = (const dgFloatSign *)&dir;
 	index = -(ptr[0].m_integer.m_iVal >> 31);
 	dgVector p(dir.Scale(m_radius));
 	p.m_x += m_height[index];

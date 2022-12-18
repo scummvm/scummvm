@@ -605,7 +605,7 @@ void dgCollisionCompoundBreakable::dgDebriGraph::AddNode(
 
 void dgCollisionCompoundBreakable::dgDebriGraph::AddMeshes(
     dgFlatVertexArray &vertexArray, dgInt32 count,
-    const dgMeshEffect *const solidArray[], const dgInt32 *const idArray,
+    dgMeshEffect *const solidArray[], const dgInt32 *const idArray,
     const dgFloat32 *const densities, const dgInt32 *const internalFaceMaterial,
     dgFloat32 padding) {
 	// padding = 0.0f;
@@ -620,7 +620,7 @@ void dgCollisionCompoundBreakable::dgDebriGraph::AddMeshes(
 }
 
 dgCollisionCompoundBreakable::dgCollisionCompoundBreakable(dgInt32 count,
-        const dgMeshEffect *const solidArray[], const dgInt32 *const idArray,
+        dgMeshEffect *const solidArray[], const dgInt32 *const idArray,
         const dgFloat32 *const densities, const dgInt32 *const internalFaceMaterial,
         dgInt32 debriiId, dgFloat32 collisionPadding, dgWorld *world) : dgCollisionCompound(world), m_conectivity(world->GetAllocator()), m_detachedIslands(world->GetAllocator()) {
 	dgInt32 acc;
@@ -1114,7 +1114,7 @@ dgInt32 dgCollisionCompoundBreakable::GetSegmentsInRadius(
 	dgInt32 stack;
 	dgNodeBase *stackPool[DG_COMPOUND_STACK_DEPTH];
 
-	dgTriplex &p = *((dgTriplex *)&origin.m_x);
+	const dgTriplex &p = *((const dgTriplex *)&origin.m_x);
 	dgVector p0(origin - dgVector(radius, radius, radius, dgFloat32(0.0f)));
 	dgVector p1(origin + dgVector(radius, radius, radius, dgFloat32(0.0f)));
 
@@ -1240,7 +1240,7 @@ void dgCollisionCompoundBreakable::ResetAnchor() {
 }
 
 void dgCollisionCompoundBreakable::SetAnchoredParts(dgInt32 count,
-        const dgMatrix *const matrixArray, const dgCollision * const *collisionArray) {
+        const dgMatrix *const matrixArray, dgCollision * const *collisionArray) {
 	dgDebriGraph::dgListNode *fixNode;
 	dgMatrix matrix(dgGetIdentityMatrix());
 

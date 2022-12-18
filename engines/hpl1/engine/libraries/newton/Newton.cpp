@@ -1194,7 +1194,7 @@ int NewtonWorldGetConstraintCount(const NewtonWorld *const newtonWorld) {
 // as excessive use of it can degrade performance.
 //
 // See also: NewtonWorldConvexCast
-void NewtonWorldRayCast(const NewtonWorld *const newtonWorld,
+void NewtonWorldRayCast(NewtonWorld *const newtonWorld,
                         const dFloat *const p0, const dFloat *const p1,
                         NewtonWorldRayFilterCallback filter, void *const userData,
                         NewtonWorldRayPrefilterCallback prefilter) {
@@ -1203,7 +1203,7 @@ void NewtonWorldRayCast(const NewtonWorld *const newtonWorld,
 	if (filter) {
 		dgVector pp0(p0[0], p0[1], p0[2], dgFloat32(0.0f));
 		dgVector pp1(p1[0], p1[1], p1[2], dgFloat32(0.0f));
-		const Newton *const world = (const Newton *)newtonWorld;
+		Newton *const world = (Newton *)newtonWorld;
 		world->RayCast(pp0, pp1, (OnRayCastAction)filter,
 		               (OnRayPrecastAction)prefilter, userData);
 	}
@@ -2823,7 +2823,7 @@ NEWTON_API NewtonCollision *NewtonCreateCompoundCollisionFromMesh(NewtonWorld *c
 
 NEWTON_API NewtonCollision *NewtonCreateCompoundBreakable(
     NewtonWorld *const newtonWorld, int meshCount,
-    const NewtonMesh **const solids, const int *const shapeIDArray,
+    NewtonMesh **const solids, const int *const shapeIDArray,
     const dFloat *const densities, const int *const internalFaceMaterial,
     int shapeID, int debriID, dFloat debriSeparationGap) {
 	Newton *world;
@@ -2833,7 +2833,7 @@ NEWTON_API NewtonCollision *NewtonCreateCompoundBreakable(
 	TRACE_FUNTION(__FUNCTION__);
 
 	collision = world->CreateCollisionCompoundBreakable(meshCount,
-	            (const dgMeshEffect **)solids, shapeIDArray, densities, internalFaceMaterial,
+	            (dgMeshEffect **)solids, shapeIDArray, densities, internalFaceMaterial,
 	            debriID, debriSeparationGap);
 
 	collision->SetUserDataID(dgUnsigned32(shapeID));
@@ -2865,7 +2865,7 @@ void NewtonCompoundBreakableSetAnchoredPieces(
 		dgCollisionCompoundBreakable *compound;
 		compound = (dgCollisionCompoundBreakable *)collision;
 		compound->SetAnchoredParts(fixShapesCount, (dgMatrix *)matrixPallete,
-		                           (const dgCollision * const *)fixedShapesArray);
+		                           (dgCollision * const *)fixedShapesArray);
 	}
 }
 

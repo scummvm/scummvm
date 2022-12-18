@@ -309,4 +309,3 @@ inline dgInt32 dgConstraint::GetMaxDOF() const {
 }
 
 #endif // !defined(AFX_DGCONSTRAINT_H__F9EC24E0_6E0F_4CD5_909E_A5F5E1AC7C0B__INCLUDED_)
-
