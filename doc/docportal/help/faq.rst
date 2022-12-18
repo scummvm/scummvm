@@ -164,6 +164,12 @@ First, check the `Compatibility page <https://www.scummvm.org/compatibility/>`_ 
 
 These are not full games, they are re-encoded cutscene (video) packs. To run the games you still need the original disks. See the `Broken Sword wiki page <https://wiki.scummvm.org/index.php/Broken_Sword_1#Cutscenes>`_.
 
+2.2.6. What is the ScummVM policy on fanmade mods (unofficial subtitles & translations, upscaled graphics & audio, etc.)?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Some engines support fan mods, but ScummVM does not endorse any mods that infringe the copyright of the original rights holders. This includes graphic and audio "upscales" that redistribute modified game assets without permission.
+
+Several mods that exist with the permission of the original rights holders can be found `on our website <https://www.scummvm.org/links/>`_.
+
 2.3 Audio
 ***********
 
