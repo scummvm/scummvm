@@ -58,6 +58,11 @@ bool CastSpell::msgValue(const ValueMessage &msg) {
 	return true;
 }
 
+bool CastSpell::msgUnfocus(const UnfocusMessage &msg) {
+	_state = SELECT_SPELL;
+	return true;
+}
+
 void CastSpell::setState(State state) {
 	_state = state;
 
