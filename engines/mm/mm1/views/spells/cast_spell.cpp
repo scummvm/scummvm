@@ -121,8 +121,7 @@ void CastSpell::draw() {
 		break;
 
 	case PRESS_ENTER:
-		clearSurface();
-		writeString(24, 3, STRING["dialogs.misc.enter_to_cast"]);
+		writeString(24, 4, STRING["spells.enter_to_cast"]);
 		break;
 
 	default:
@@ -222,14 +221,7 @@ void CastSpell::performSpell(Character *chr) {
 void CastSpell::spellDone() {
 	Common::String msg = getSpellError();
 	int xp = 20 - (msg.size() / 2);
-/*
-	switch (getSpellState()) {
-	case Game::SS_NOT_ENOUGH_GEMS: xp = 9; break;
-	case Game::SS_COMBAT_ONLY: xp = 10; break;
-	case Game::SS_OUTDOORS_ONLY: xp = 10; break;
-	default: break;
-	}
-	*/
+
 	spellDone(msg, xp);
 }
 

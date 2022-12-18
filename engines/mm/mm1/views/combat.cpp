@@ -83,6 +83,10 @@ bool Combat::msgGame(const GameMessage &msg) {
 		return true;
 
 	} else if (msg._name == "SPELL_RESULT") {
+		InfoMessage infoMsg(20 - msg._stringValue.size() / 2, 21,
+			msg._stringValue);
+		infoMsg._delaySeconds = 3;
+
 		displaySpellResult(msg._stringValue);
 		return true;
 	}
