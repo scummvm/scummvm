@@ -293,13 +293,12 @@ void Combat::combatLoop(bool checkMonstersFirst) {
 			_monsterP = _remainingMonsters[i];
 			monsterIndexOf();
 
-			if (_monsterP->_speed && _monsterP->_speed >= _handicap3
-				&& !_remainingMonsters[i]->_checked) {
-				_remainingMonsters[i]->_checked = true;
+			if (_monsterP->_speed && _monsterP->_speed >= _handicap3 && !_monsterP->_checked) {
+				_monsterP->_checked = true;
 
-				if (_remainingMonsters[i]->_status & (MONFLAG_ASLEEP | MONFLAG_HELD |
-					MONFLAG_WEBBED | MONFLAG_PARALYZED)) {
-					checkMonsterFlees();
+				if (!(_monsterP->_status & (MONFLAG_ASLEEP | MONFLAG_HELD |
+					MONFLAG_WEBBED | MONFLAG_PARALYZED))) {
+					monsterAction();
 					return;
 				}
 			}
@@ -583,7 +582,7 @@ void Combat::proc2() {
 	_val9 = (val != 100 && val <= threshold) ? 1 : 0;
 }
 
-void Combat::checkMonsterFlees() {
+void Combat::monsterAction() {
 	Encounter &enc = g_globals->_encounters;
 	byte bitset = _monsterP->_field1e;
 	int threshold = -1;
