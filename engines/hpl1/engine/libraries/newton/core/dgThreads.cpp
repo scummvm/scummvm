@@ -100,9 +100,9 @@ dgInt32 dgThreads::GetWork(dgWorkerThread **job) {
 }
 
 void dgThreads::DoWork(dgInt32 mythreadIndex) {
-	dgWorkerThread *job;
+//	dgWorkerThread *job;
 
-	job->ThreadExecute();
+//	job->ThreadExecute();
 }
 
 void dgThreads::SynchronizationBarrier() {

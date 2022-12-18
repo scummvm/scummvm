@@ -74,7 +74,7 @@ protected:
 
 	virtual dgListNode *AddFace(dgInt32 i0, dgInt32 i1, dgInt32 i2);
 	virtual void DeleteFace(dgListNode *const node) ;
-	virtual dgInt32 InitVertexArray(dgHullVertex *const points, const dgFloat64 *const vertexCloud, dgInt32 strideInBytes, dgInt32 count, void *const memoryPool, dgInt32 maxMemSize);
+	virtual dgInt32 InitVertexArray(dgHullVertex *const points, const dgFloat64 *const vertexCloud, dgInt32 strideInBytes, dgInt32 count, void *memoryPool, dgInt32 maxMemSize);
 
 	void CalculateConvexHull(dgAABBPointTree3d *vertexTree, dgHullVertex *const points, dgInt32 count, dgFloat64 distTol, dgInt32 maxVertexCount);
 	dgInt32 BuildNormalList(dgBigVector *const normalArray) const;

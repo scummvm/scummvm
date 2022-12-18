@@ -395,7 +395,7 @@ dgInt32 dgConvexHull4d::SupportVertex(dgAABBPointTree4d **const treePointer,
 
 #define DG_STACK_DEPTH_4D   64
 	dgFloat64 aabbProjection[DG_STACK_DEPTH_4D];
-	const dgAABBPointTree4d *stackPool[DG_STACK_DEPTH_4D];
+	dgAABBPointTree4d *stackPool[DG_STACK_DEPTH_4D];
 
 	dgInt32 index = -1;
 	dgInt32 stack = 1;
@@ -410,7 +410,7 @@ dgInt32 dgConvexHull4d::SupportVertex(dgAABBPointTree4d **const treePointer,
 		stack--;
 		dgFloat64 boxSupportValue = aabbProjection[stack];
 		if (boxSupportValue > maxProj) {
-			const dgAABBPointTree4d *const me = stackPool[stack];
+			dgAABBPointTree4d *const me = stackPool[stack];
 
 			if (me->m_left && me->m_right) {
 				dgBigVector leftSupportPoint(me->m_left->m_box[ix].m_x,
@@ -638,7 +638,7 @@ dgAABBPointTree4d *dgConvexHull4d::BuildTree(dgAABBPointTree4d *const parent,
 }
 
 dgInt32 dgConvexHull4d::InitVertexArray(dgHullVector *const points,
-                                        const dgBigVector *const vertexCloud, dgInt32 count, void *const memoryPool,
+                                        const dgBigVector *const vertexCloud, dgInt32 count, void *memoryPool,
                                         dgInt32 maxMemSize) {
 	for (dgInt32 i = 0; i < count; i++) {
 		points[i] = vertexCloud[i];
@@ -664,7 +664,7 @@ dgInt32 dgConvexHull4d::InitVertexArray(dgHullVector *const points,
 	}
 
 	dgAABBPointTree4d *tree = BuildTree(NULL, points, count, 0,
-	                                    (dgInt8 **) &memoryPool, maxMemSize);
+	                                    (dgInt8 **)&memoryPool, maxMemSize);
 
 	dgBigVector boxSize(tree->m_box[1].Sub4(tree->m_box[0]));
 	m_diag = dgFloat32(sqrt(boxSize.DotProduct4(boxSize)));
@@ -1131,4 +1131,3 @@ dgInt32 dgConvexHull4d::AddVertex(const dgBigVector &vertex) {
 
 	return index;
 }
-

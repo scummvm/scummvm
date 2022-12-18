@@ -132,27 +132,27 @@ const dgBaseNode *dgBaseNode::GetRoot() const {
 	for (root = this; root->parent; root = root->parent) {
 
 	}
-	return (dgBaseNode *) root;
+	return (const dgBaseNode *) root;
 }
 
 const dgBaseNode *dgBaseNode::GetFirst() const {
-	dgBaseNode *ptr;
+	const dgBaseNode *ptr;
 
-	for (ptr = (dgBaseNode *) this; ptr->child; ptr = ptr->child) {
+	for (ptr = (const dgBaseNode *)this; ptr->child; ptr = ptr->child) {
 
 	}
 	return ptr;
 }
 
 const dgBaseNode *dgBaseNode::GetNext() const {
-	dgBaseNode *x;
+	const dgBaseNode *x;
 	dgBaseNode *ptr;
 
 	if (sibling) {
 		return sibling->GetFirst();
 	}
 
-	x = (dgBaseNode *) this;
+	x = (const dgBaseNode *)this;
 	for (ptr = parent; ptr && (x == ptr->sibling); ptr = ptr->parent) {
 		x = ptr;
 	}
@@ -160,23 +160,23 @@ const dgBaseNode *dgBaseNode::GetNext() const {
 }
 
 const dgBaseNode *dgBaseNode::GetLast() const {
-	dgBaseNode *ptr;
+	const dgBaseNode *ptr;
 
-	for (ptr = (dgBaseNode *) this; ptr->sibling; ptr = ptr->sibling) {
+	for (ptr = (const dgBaseNode *)this; ptr->sibling; ptr = ptr->sibling) {
 
 	}
 	return ptr;
 }
 
 const dgBaseNode *dgBaseNode::GetPrev() const {
-	dgBaseNode *x;
+	const dgBaseNode *x;
 	dgBaseNode *ptr;
 
 	if (child) {
 		return child->GetNext();
 	}
 
-	x = (dgBaseNode *) this;
+	x = (const dgBaseNode *)this;
 	for (ptr = parent; ptr && (x == ptr->child); ptr = ptr->child) {
 		x = ptr;
 	}
@@ -284,4 +284,3 @@ void dgBaseNode::DebugPrint(const char *fileName) {
 	 PrintHierarchy (file, indent);
 	 */
 }
-

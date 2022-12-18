@@ -276,7 +276,7 @@ dgAABBPointTree3d *dgConvexHull3d::BuildTree(dgAABBPointTree3d *const parent, dg
 
 
 
-dgInt32 dgConvexHull3d::InitVertexArray(dgHullVertex *const points, const dgFloat64 *const vertexCloud, dgInt32 strideInBytes, dgInt32 count, void *const memoryPool, dgInt32 maxMemSize) {
+dgInt32 dgConvexHull3d::InitVertexArray(dgHullVertex *const points, const dgFloat64 *const vertexCloud, dgInt32 strideInBytes, dgInt32 count, void *memoryPool, dgInt32 maxMemSize) {
 	dgInt32 stride = dgInt32(strideInBytes / sizeof(dgFloat64));
 	if (stride >= 4) {
 		for (dgInt32 i = 0; i < count; i ++) {
@@ -489,7 +489,7 @@ dgInt32 dgConvexHull3d::SupportVertex(dgAABBPointTree3d **const treePointer, con
 
 #define DG_STACK_DEPTH_3D 64
 	dgFloat64 aabbProjection[DG_STACK_DEPTH_3D];
-	const dgAABBPointTree3d *stackPool[DG_STACK_DEPTH_3D];
+	dgAABBPointTree3d *stackPool[DG_STACK_DEPTH_3D];
 
 	dgInt32 index = -1;
 	dgInt32 stack = 1;
@@ -503,7 +503,7 @@ dgInt32 dgConvexHull3d::SupportVertex(dgAABBPointTree3d **const treePointer, con
 		stack--;
 		dgFloat64 boxSupportValue = aabbProjection[stack];
 		if (boxSupportValue > maxProj) {
-			const dgAABBPointTree3d *const me = stackPool[stack];
+			dgAABBPointTree3d *const me = stackPool[stack];
 
 			if (me->m_left && me->m_right) {
 				dgBigVector leftSupportPoint(me->m_left->m_box[ix].m_x, me->m_left->m_box[iy].m_y, me->m_left->m_box[iz].m_z, dgFloat32(0.0));
@@ -1027,6 +1027,3 @@ dgFloat64 dgConvexHull3d::RayCast(const dgBigVector &localP0, const dgBigVector 
 #endif
 	return dgFloat64(1.2f);
 }
-
-
-
