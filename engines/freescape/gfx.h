@@ -97,6 +97,7 @@ public:
 
 	// palette
 	void readFromPalette(uint8 index, uint8 &r, uint8 &g, uint8 &b);
+	uint8 indexFromColor(uint8 r, uint8 g, uint8 b);
 	bool getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b);
 	byte *_palette;
 	ColorMap *_colorMap;

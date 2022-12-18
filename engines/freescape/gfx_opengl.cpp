@@ -184,14 +184,19 @@ void OpenGLRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, 
 }
 
 void OpenGLRenderer::renderPlayerShoot(byte color, const Common::Point position, const Common::Rect viewArea) {
-	uint8 r, g, b;
-	readFromPalette(color, r, g, b); // TODO: should use opposite color
+	uint8 a, r, g, b;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, _screenW, _screenH, 0, 0, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+	uint32 pixel = 0x0;
+	glReadPixels(g_system->getWidth() / 2, g_system->getHeight() / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel);
+	_texturePixelFormat.colorToARGB(pixel, a, r, g, b);
+	color = indexFromColor(r, g, b);
+	readFromPalette((color + 3) % 16, r, g, b);
 
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);

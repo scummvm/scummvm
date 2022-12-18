@@ -55,6 +55,15 @@ void Renderer::readFromPalette(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
 	b = _palette[3 * index + 2];
 }
 
+uint8 Renderer::indexFromColor(uint8 r, uint8 g, uint8 b) {
+	for (int i = 0; i < 16; i++) {
+		if (r == _palette[3 * i + 0] && g == _palette[3 * i + 1] && b == _palette[3 * i + 2])
+			return i;
+	}
+	warning("color %x %x %x not found", r, g, b);
+	return 0;
+}
+
 void Renderer::setColorRemaps(ColorReMap *colorRemaps) {
 	_colorRemaps = colorRemaps;
 }
