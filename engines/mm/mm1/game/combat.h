@@ -201,7 +201,7 @@ protected:
 	/**
 	 * Calculate a monster action
 	 */
-	void checkMonsterFlees();
+	void monsterAction();
 
 	/**
 	 * Check if monster is mindless and wandering
