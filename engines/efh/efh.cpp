@@ -392,7 +392,7 @@ Common::Error EfhEngine::run() {
 
 		if (newMs - lastMs >= 220) {
 			lastMs = newMs;
-			unkFct_anim();
+			handleAnimations();
 		}
 
 		Common::Event event;
@@ -1156,18 +1156,6 @@ bool EfhEngine::isCharacterATeamMember(int16 id) {
 	return false;
 }
 
-bool EfhEngine::isTPK() {
-	debug("isTPK");
-
-	int16 zeroedChar = 0;
-	for (int counter = 0; counter < _teamSize; ++counter) {
-		if (_npcBuf[_teamCharId[counter]]._hitPoints <= 0)
-			++zeroedChar;
-	}
-
-	return zeroedChar == _teamSize;
-}
-
 void EfhEngine::handleWinSequence() {
 	debugC(1, kDebugEngine, "handleWinSequence");
 
@@ -1748,7 +1736,7 @@ bool EfhEngine::handleDeathMenu() {
 }
 
 void EfhEngine::computeMapAnimation() {
-	debug("computeMapAnimation");
+	debugC(6, kDebugEngine, "computeMapAnimation");
 
 	const int16 maxMapBlocks = _largeMapFlag ? 63 : 23;
 
@@ -1797,13 +1785,13 @@ void EfhEngine::computeMapAnimation() {
 	}
 }
 
-void EfhEngine::unkFct_anim() {
+void EfhEngine::handleAnimations() {
 	setNumLock();
 
 	if (_engineInitPending)
 		return;
 
-	debug("unkFct_anim");
+	debugC(6, kDebugEngine, "handleAnimations");
 
 	if (_animImageSetId != 0xFF) {
 		displayNextAnimFrame();
@@ -2435,7 +2423,7 @@ void EfhEngine::sub221D2(int16 monsterId) {
 }
 
 void EfhEngine::displayImp1Text(int16 textId) {
-	debug("displayImp1Text %d", textId);
+	debugC(6, kDebugEngine,"displayImp1Text %d", textId);
 
 	int16 charCounter = 0;
 	int16 stringIdx = 0;
@@ -5381,17 +5369,10 @@ uint8 EfhEngine::getMapTileInfo(int16 mapPosX, int16 mapPosY) {
 	return _curPlace[mapPosX][mapPosY];
 }
 
-void EfhEngine::displayNextAnimFrame() {
-	debug("displayNextAnimFrame");
-
-	if (++_unkAnimRelatedIndex >= 15)
-		_unkAnimRelatedIndex = 0;
-
-	displayAnimFrame();
-}
-
 void EfhEngine::writeTechAndMapFiles() {
-	warning("STUB - writeTechAndMapFiles");
+	// The original game overwrite game data files when switching map, keeping track of modified data.
+	// In our implementation, we have everything in memory and save it in savegames only.
+	// This function is therefore not useful and is not implemented.
 }
 
 uint16 EfhEngine::getStringWidth(const char *buffer) {
