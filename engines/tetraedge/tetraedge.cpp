@@ -34,6 +34,7 @@
 
 #include "tetraedge/game/game.h"
 #include "tetraedge/game/application.h"
+#include "tetraedge/game/character.h"
 #include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_renderer.h"
 #include "tetraedge/te/te_resource_manager.h"
@@ -54,13 +55,15 @@ TetraedgeEngine::TetraedgeEngine(OSystem *syst, const ADGameDescription *gameDes
 }
 
 TetraedgeEngine::~TetraedgeEngine() {
-	delete _application;
-	delete _renderer;
 	delete _core;
 	delete _game;
-	//delete _soundManager;
+	delete _application;
+	delete _renderer;
+	delete _soundManager;
 	delete _resourceManager;
 	delete _inputMgr;
+	Object3D::cleanup();
+	Character::cleanup();
 }
 
 /*static*/

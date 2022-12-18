@@ -44,6 +44,10 @@ TeLuaContext::TeLuaContext() : _luaState(nullptr) {
 	lua_atpanic(_luaState, luaPanicFunction);
 }
 
+TeLuaContext::~TeLuaContext() {
+	destroy();
+}
+
 void TeLuaContext::addBindings(void(*fn)(lua_State *)) {
 	fn(_luaState);
 }
@@ -57,6 +61,7 @@ void TeLuaContext::create() {
 void TeLuaContext::destroy() {
 	if (_luaState)
 		lua_close(_luaState);
+	_luaState = nullptr;
 }
 
 TeVariant TeLuaContext::global(const Common::String &name) {
@@ -189,7 +194,7 @@ Common::Error TeLuaContext::syncState(Common::Serializer &s) {
 			s.syncString(name);
 			switch (vtype) {
 				case Boolean: {
-					byte b;
+					byte b = 0;
 					s.syncAsByte(b);
 					lua_pushboolean(_luaState, b);
 #if DEBUG_SAVELOAD
@@ -198,7 +203,7 @@ Common::Error TeLuaContext::syncState(Common::Serializer &s) {
 					break;
 				}
 				case Number: {
-					float d;
+					float d = 0;
 					s.syncAsDoubleLE(d);
 					lua_pushnumber(_luaState, d);
 #if DEBUG_SAVELOAD

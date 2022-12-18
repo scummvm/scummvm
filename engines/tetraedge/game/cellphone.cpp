@@ -37,7 +37,7 @@ bool Cellphone::addNumber(const Common::String &num) {
 	}
 
 	TeTextLayout *layout = new TeTextLayout();
-	static const Common::String namePrefix("numRepertoire");
+	const Common::String namePrefix("numRepertoire");
 	layout->setName(namePrefix + num);
 	layout->setSizeType(RELATIVE_TO_PARENT);
 	layout->setAnchor(TeVector3f32(0.5f, 0.0f, 0.0f));

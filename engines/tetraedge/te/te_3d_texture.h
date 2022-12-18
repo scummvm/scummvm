@@ -44,7 +44,7 @@ public:
 	void create();
 	void destroy();
 
-	void forceTexData(uint gltextures, uint xsize, uint ysize);
+	void forceTexData(uint gltexture, uint xsize, uint ysize);
 
 	TeImage::Format getFormat() const { return _format; }
 	bool hasAlpha() const;

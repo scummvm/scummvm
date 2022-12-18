@@ -37,7 +37,7 @@ void SplashScreens::enter()	{
 	if (!_entered) {
 		_entered = true;
 		_splashNo = 0;
-		static const Common::Path scriptPath("menus/splashes/splash0.lua");
+		const Common::Path scriptPath("menus/splashes/splash0.lua");
 		if (Common::File::exists(scriptPath)) {
 			TeLuaGUI::load(scriptPath.toString());
 			Application *app = g_engine->getApplication();

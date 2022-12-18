@@ -30,6 +30,7 @@
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/game.h"
 #include "tetraedge/game/application.h"
+#include "tetraedge/game/character.h"
 #include "tetraedge/game/characters_shadow.h"
 #include "tetraedge/game/in_game_scene.h"
 #include "tetraedge/te/te_core.h"
@@ -72,6 +73,10 @@ _drawShadows(true) {
 	// Note: original has an app run timer, but it's never used?
 
 	loadOptions("options.xml");
+}
+
+Application::~Application() {
+	destroy();
 }
 
 void Application::create() {
@@ -286,7 +291,7 @@ void Application::create() {
 }
 
 void Application::destroy() {
-	error("TODO: Implement Application::destroy");
+	Character::animCacheFreeAll();
 }
 
 void Application::startGame(bool newGame, int difficulty) {

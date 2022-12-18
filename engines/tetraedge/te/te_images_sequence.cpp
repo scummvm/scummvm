@@ -22,6 +22,7 @@
 #include "common/file.h"
 #include "image/png.h"
 #include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 
 #include "tetraedge/te/te_images_sequence.h"
 
@@ -31,6 +32,10 @@ TeImagesSequence::TeImagesSequence() : _width(0), _height(0), _curFrame(0) {
 }
 
 TeImagesSequence::~TeImagesSequence() {
+	for (auto surf : _cachedSurfaces) {
+		if (surf)
+			delete surf;
+	}
 }
 
 /*static*/
@@ -56,8 +61,8 @@ bool TeImagesSequence::load(const Common::Path &path) {
 	}
 
 	Common::sort(children.begin(), children.end(), compareNodes);
-
-	SearchMan.addDirectory(path.toString(), directory);
+	if (!SearchMan.hasArchive(path.toString()))
+		SearchMan.addDirectory(path.toString(), directory);
 
 	for (Common::FSNode &child : children) {
 		Common::String filePathStr = child.getPath();
@@ -82,7 +87,8 @@ bool TeImagesSequence::load(const Common::Path &path) {
 		}
 
 		// Only do the deep check for the first file to get dimensions.
-		if (!_width) {
+		// If the images are small then cache them to avoid reloading each frame each time.
+		if (!_width || (_width < 100 && _height < 100)) {
 			Image::PNGDecoder png;
 			if (!png.loadStream(*stream)) {
 				warning("Image sequence failed to load png %s", filePath.toString().c_str());
@@ -90,11 +96,20 @@ bool TeImagesSequence::load(const Common::Path &path) {
 				return false;
 			}
 
-			const Graphics::Surface *surf = png.getSurface();
-			assert(surf);
-			_width = surf->w;
-			_height = surf->h;
 			_frameRate = fps;
+			const Graphics::Surface *pngsurf = png.getSurface();
+			assert(pngsurf);
+			_width = pngsurf->w;
+			_height = pngsurf->h;
+			if (_width < 100 && _height < 100) {
+				Graphics::ManagedSurface *surf = new Graphics::ManagedSurface();
+				surf->copyFrom(pngsurf);
+				_cachedSurfaces.push_back(surf);
+			} else {
+				_cachedSurfaces.push_back(nullptr);
+			}
+		} else {
+			_cachedSurfaces.push_back(nullptr);
 		}
 
 		_files.push_back(child);
@@ -111,26 +126,35 @@ bool TeImagesSequence::update(unsigned long i, TeImage &imgout) {
 	if (i >= _files.size())
 		return false;
 
-	Common::SeekableReadStream *stream = _files[_curFrame].createReadStream();
-	if (!stream)
-		error("Open %s failed.. it was ok before?", _files[_curFrame].getName().c_str());
+	if (_cachedSurfaces[i] == nullptr) {
+		Common::SeekableReadStream *stream = _files[i].createReadStream();
+		if (!stream)
+			error("Open %s failed.. it was ok before?", _files[i].getName().c_str());
 
-	Image::PNGDecoder png;
-	if (!png.loadStream(*stream)) {
-		warning("Image sequence failed to load png %s", _files[_curFrame].getName().c_str());
-		delete stream;
-		return false;
-	}
+		Image::PNGDecoder png;
+		if (!png.loadStream(*stream)) {
+			warning("Image sequence failed to load png %s", _files[i].getName().c_str());
+			delete stream;
+			return false;
+		}
 
-	const Graphics::Surface *surf = png.getSurface();
-	assert(surf);
+		const Graphics::Surface *surf = png.getSurface();
+		assert(surf);
 
-	imgout.setAccessName(_files[_curFrame].getPath());
+		imgout.setAccessName(_files[i].getPath());
 
-	if (imgout.w == surf->w && imgout.h == surf->h && imgout.format == surf->format) {
-		imgout.copyFrom(*surf);
-		delete stream;
-		return true;
+		if (imgout.w == surf->w && imgout.h == surf->h && imgout.format == surf->format) {
+			imgout.copyFrom(*surf);
+			delete stream;
+			return true;
+		}
+	} else {
+		const Graphics::ManagedSurface *surf = _cachedSurfaces[i];
+		if (imgout.w == surf->w && imgout.h == surf->h && imgout.format == surf->format) {
+			imgout.setAccessName(_files[i].getPath());
+			imgout.copyFrom(*surf);
+			return true;
+		}
 	}
 
 	error("TODO: Implement TeImagesSequence::update for different sizes");

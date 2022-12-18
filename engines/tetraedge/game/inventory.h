@@ -92,6 +92,9 @@ private:
 	InventoryObject *_selectedObject;
 	Common::HashMap<Common::String, InventoryObjectData> _objectData;
 
+	// This is used when we need a reference to a blank str in selectedObject()
+	const Common::String _blankStr;
+
 	TeTimer _selectedTimer;
 };
 

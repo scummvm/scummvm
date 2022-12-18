@@ -38,6 +38,7 @@ namespace Tetraedge {
 /*static*/ Common::HashMap<Common::String, Character::CharacterSettings> *Character::_globalCharacterSettings = nullptr;
 
 /*static*/ Common::Array<Character::AnimCacheElement> Character::_animCache;
+/*static*/ Common::HashMap<Common::String, TeIntrusivePtr<TeModelAnimation>> Character::_animCacheMap;
 uint Character::_animCacheSize = 0;
 
 void Character::CharacterSettings::clear() {
@@ -93,6 +94,14 @@ Character::~Character() {
 	}
 }
 
+/*static*/
+void Character::cleanup() {
+	if (_globalCharacterSettings)
+		delete _globalCharacterSettings;
+	_globalCharacterSettings = nullptr;
+	animCacheFreeAll();
+}
+
 void Character::addCallback(const Common::String &animKey, const Common::String &fnName, float triggerFrame, float maxCalls) {
 	Callback *c = new Callback();
 	c->_luaFn = fnName;
@@ -125,26 +134,25 @@ void Character::addCallback(const Common::String &animKey, const Common::String 
 	for (const auto &entry : _animCache)
 		_animCacheSize -= entry._size;
 	_animCache.clear();
+	_animCacheMap.clear();
 }
 
 /*static*/ void Character::animCacheFreeOldest() {
-	_animCacheSize -= _animCache[_animCache.size() - 1]._size;
-	_animCache.pop_back();
+	//_animCacheSize -= _animCache[_animCache.size() - 1]._size;
+	//_animCache.pop_back();
 }
 
 /*static*/ TeIntrusivePtr<TeModelAnimation> Character::animCacheLoad(const Common::Path &path) {
-	static Common::HashMap<Common::String, TeIntrusivePtr<TeModelAnimation>> _cache;
-
 	const Common::String pathStr = path.toString();
-	if (_cache.contains(pathStr))
-		return _cache.getVal(pathStr);
+	if (_animCacheMap.contains(pathStr))
+		return _animCacheMap.getVal(pathStr);
 
 	TeIntrusivePtr<TeModelAnimation> modelAnim = new TeModelAnimation();
 	if (!modelAnim->load(path)) {
 		warning("Failed to load anim %s", path.toString().c_str());
 	}
 
-	_cache.setVal(pathStr, modelAnim);
+	_animCacheMap.setVal(pathStr, modelAnim);
 	return modelAnim;
 }
 

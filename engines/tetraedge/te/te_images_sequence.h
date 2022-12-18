@@ -27,6 +27,7 @@
 
 namespace Graphics {
 struct Surface;
+class ManagedSurface;
 }
 
 namespace Tetraedge {
@@ -63,6 +64,7 @@ private:
 	unsigned int _width;
 	unsigned int _height;
 	Common::Array<Common::FSNode> _files;
+	Common::Array<Graphics::ManagedSurface *> _cachedSurfaces;
 	unsigned int _curFrame;
 };
 

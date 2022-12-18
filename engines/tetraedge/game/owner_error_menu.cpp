@@ -34,7 +34,7 @@ OwnerErrorMenu::OwnerErrorMenu() : _entered(false) {
 
 void OwnerErrorMenu::enter() {
 	_entered = true;
-	static const Common::Path luaPath("menus/ownerError/ownerError.lua");
+	const Common::Path luaPath("menus/ownerError/ownerError.lua");
 	load(luaPath);
 	Application *app = g_engine->getApplication();
 	TeLayout *menuLayout = layoutChecked("menu");
