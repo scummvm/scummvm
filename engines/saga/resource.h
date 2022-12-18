@@ -27,10 +27,10 @@
 #include "common/array.h"
 #include "common/file.h"
 #include "common/list.h"
+#include "common/macresman.h"
 
 namespace Saga {
 
-#define MAC_BINARY_HEADER_SIZE 128
 #define RSC_TABLEINFO_SIZE 8
 #define RSC_TABLEENTRY_SIZE 8
 
@@ -39,15 +39,33 @@ namespace Saga {
 class SagaEngine;
 class ByteArray;
 
-struct PatchData {
-	Common::File *_patchFile;
+class PatchData {
+private:
+	Common::SeekableReadStream *_patchFile;
 	const char *_fileName;
 	bool _deletePatchFile;
 
-	PatchData(const char *fileName): _fileName(fileName), _deletePatchFile(true) {
-		_patchFile = new Common::File();
+public:
+	PatchData(const char *fileName): _fileName(fileName), _deletePatchFile(true), _patchFile(nullptr) {
 	}
-	PatchData(Common::File *patchFile, const char *fileName): _patchFile(patchFile), _fileName(fileName), _deletePatchFile(false) {
+	PatchData(Common::SeekableReadStream *patchFile, const char *fileName): _patchFile(patchFile), _fileName(fileName), _deletePatchFile(false) {
+	}
+
+	Common::SeekableReadStream *getStream() {
+		if (_patchFile)
+			return _patchFile;
+		
+		Common::File *file = new Common::File();
+		file->open(_fileName);
+		_patchFile = file;
+		return _patchFile;
+	}
+
+	void closeStream() {
+		if (_deletePatchFile) {
+			delete _patchFile;
+			_patchFile = nullptr;
+		}
 	}
 
 	~PatchData() {
@@ -60,7 +78,7 @@ struct PatchData {
 struct ResourceData {
 	size_t offset;
 	size_t size;
-	int diskNum;
+	int diskNum; // -1 = without disk id. -2 = mac res fork
 	PatchData *patchData;
 
 	ResourceData() :
@@ -96,19 +114,12 @@ public:
 	bool isBigEndian() const { return _isBigEndian; }
 	const char * fileName() const {	return _fileName; }
 
-	Common::File *getFile(ResourceData *resourceData) {
-		Common::File *file;
-		const char * fn;
+	Common::SeekableReadStream *getFile(ResourceData *resourceData) {
 		if (resourceData && resourceData->patchData != NULL) {
-			file = resourceData->patchData->_patchFile;
-			fn = resourceData->patchData->_fileName;
+			return resourceData->patchData->getStream();
 		} else {
-			file = &_file;
-			fn = _fileName;
+			return _file.get();
 		}
-		if (!file->isOpen())
-			file->open(fn);
-		return file;
 	}
 
 	bool validResourceId(uint32 resourceId) const {
@@ -122,6 +133,10 @@ public:
 		return &_table[resourceId];
 	}
 
+	void closeFile() {
+		_file.reset();
+	}
+
 protected:
 	const char *_fileName;
 	uint16 _fileType;
@@ -130,7 +145,8 @@ protected:
 
 	bool _isBigEndian;
 	ResourceDataArray _table;
-	Common::File _file;
+	Common::ScopedPtr<Common::SeekableReadStream> _file;
+	Common::ScopedPtr<Common::MacResManager> _macRes;
 	int32 _fileSize;
 
 	bool load(SagaEngine *_vm, Resource *resource);
@@ -138,7 +154,6 @@ protected:
 	bool loadResIteAmiga(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type, bool isFloppy);
 	bool loadResIteAmigaSound(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type);
 
-	virtual bool loadMacMIDI() { return false; }
 	virtual bool loadRes(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type) = 0;
 	virtual void processPatches(Resource *resource, const GamePatchDescription *patchFiles) { }
 };
@@ -195,7 +210,6 @@ protected:
 // ITE
 class ResourceContext_RSC: public ResourceContext {
 protected:
-	bool loadMacMIDI() override;
 	bool loadRes(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type) override {
 		return loadResV1(contextOffset, contextSize);
 	}

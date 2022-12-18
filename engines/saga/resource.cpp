@@ -168,22 +168,22 @@ bool ResourceContext::loadResIteAmigaSound(SagaEngine *_vm, uint32 contextOffset
 bool ResourceContext::loadResIteAmiga(SagaEngine *_vm, uint32 contextOffset, uint32 contextSize, int type, bool isFloppy) {
 	if (_fileType & (GAME_VOICEFILE | GAME_SOUNDFILE))
 		return loadResIteAmigaSound(_vm, contextOffset, contextSize, type);
-	_file.seek(contextOffset);
-	uint16 resourceCount = _file.readUint16BE();
-	uint16 scriptCount = _file.readUint16BE();
+	_file->seek(contextOffset);
+	uint16 resourceCount = _file->readUint16BE();
+	uint16 scriptCount = _file->readUint16BE();
 	uint32 count = (type &  GAME_SCRIPTFILE) ? scriptCount : resourceCount;
 	uint32 extraOffset = isFloppy ? 1024 : 0;
 
 	if (type &  GAME_SCRIPTFILE)
-		_file.seek(resourceCount * 10, SEEK_CUR);
+		_file->seek(resourceCount * 10, SEEK_CUR);
 
 	_table.resize(count);
 
 	for (uint32 i = 0; i < count; i++) {
 		ResourceData *resourceData = &_table[i];
-		resourceData->offset = _file.readUint32BE() + extraOffset;
-		resourceData->size = _file.readUint32BE();
-		resourceData->diskNum = _file.readUint16BE();
+		resourceData->offset = _file->readUint32BE() + extraOffset;
+		resourceData->size = _file->readUint32BE();
+		resourceData->diskNum = _file->readUint16BE();
 	}
 
 	return true;
@@ -203,9 +203,9 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 		return false;
 	}
 
-	_file.seek(contextOffset + contextSize - RSC_TABLEINFO_SIZE);
+	_file->seek(contextOffset + contextSize - RSC_TABLEINFO_SIZE);
 
-	if (_file.read(tableInfo, RSC_TABLEINFO_SIZE) != RSC_TABLEINFO_SIZE) {
+	if (_file->read(tableInfo, RSC_TABLEINFO_SIZE) != RSC_TABLEINFO_SIZE) {
 		warning("ResourceContext::loadResV1(): Incorrect table size: %d for %s", RSC_TABLEINFO_SIZE, _fileName);
 		return false;
 	}
@@ -226,9 +226,9 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 	// Load resource table
 	tableBuffer.resize(RSC_TABLEENTRY_SIZE * count);
 
-	_file.seek(resourceTableOffset + contextOffset, SEEK_SET);
+	_file->seek(resourceTableOffset + contextOffset, SEEK_SET);
 
-	result = (_file.read(tableBuffer.getBuffer(), tableBuffer.size()) == tableBuffer.size());
+	result = (_file->read(tableBuffer.getBuffer(), tableBuffer.size()) == tableBuffer.size());
 	if (result) {
 		_table.resize(count);
 
@@ -253,28 +253,22 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 	if (_fileName == nullptr) // IHNM special case
 		return true;
 
-	if (!_file.open(_fileName))
+	_file.reset(Common::MacResManager::openFileOrDataFork(_fileName));
+	if (!_file)
 		return false;
 
-	_fileSize = _file.size();
+	_fileSize = _file->size();
 	_isBigEndian = vm->isBigEndian();
 
 	if (_fileType & GAME_SWAPENDIAN)
 		_isBigEndian = !_isBigEndian;
 
-	if (_fileType & GAME_MACBINARY) {
-		// Special case for the MacBinary packed files in the old Mac ITE
-		// release. There are no patch files in this case.
-		if (!(_fileType & GAME_MUSICFILE_GM)) {
-			// Find the actual size, as there may be padded data in the end.
-			_file.seek(83);
-			uint32 macDataSize = _file.readSint32BE();
-			// Skip the MacBinary headers, and read the resource data.
-			return loadRes(vm, MAC_BINARY_HEADER_SIZE, macDataSize, _fileType);
-		} else {
-			// Unpack MacBinary packed MIDI files
-			return loadMacMIDI();
-		}
+	if ((_fileType & (GAME_MACBINARY | GAME_MUSICFILE_GM)) == (GAME_MACBINARY | GAME_MUSICFILE_GM)) {
+		_macRes.reset(new Common::MacResManager());
+		if (!_macRes->open(_fileName))
+			return false;
+		// Unpacking MacBinary packed MIDI files happens on-demand
+		return true;
 	}
 
 
@@ -289,7 +283,7 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 	// This prevents having all voice files open in IHNM for no reason, as each chapter uses
 	// a different voice file.
 	if (_serial > 0)
-		_file.close();
+		closeFile();
 
 	return true;
 }
@@ -379,7 +373,7 @@ bool Resource::createContexts() {
 		// as big endian
 		{	GID_ITE,	"inherit the earth voices",		false	,	(uint16)(_vm->isBigEndian() ? 0 : GAME_SWAPENDIAN)},
 		{	GID_ITE,	"inherit the earth voices.cmp",	true	,	(uint16)(_vm->isBigEndian() ? 0 : GAME_SWAPENDIAN)},
-		{	GID_ITE,	"ite voices.bin",				false	,	GAME_MACBINARY},
+		{	GID_ITE,	"ite voices",				false	,	GAME_MACBINARY},
 #ifdef ENABLE_IHNM
 		{	GID_IHNM,	"voicess.res",					false	,	0},
 		{	GID_IHNM,	"voicess.cmp",					true	,	0},
@@ -394,7 +388,8 @@ bool Resource::createContexts() {
 	if (!voiceFileInArray) {
 		for (SoundFileInfo *curSoundFile = voiceFiles; (curSoundFile->gameId != -1); curSoundFile++) {
 			if (curSoundFile->gameId != _vm->getGameId()) continue;
-			if (!Common::File::exists(curSoundFile->fileName)) continue;
+			bool exists = curSoundFile->voiceFileAddType & GAME_MACBINARY ? Common::MacResManager::exists(curSoundFile->fileName) : Common::File::exists(curSoundFile->fileName);
+			if (!exists) continue;
 
 			Common::strcpy_s(_voicesFileName[0], curSoundFile->fileName);
 			addContext(_voicesFileName[0], GAME_VOICEFILE | curSoundFile->voiceFileAddType, curSoundFile->isCompressed);
@@ -477,15 +472,29 @@ void Resource::clearContexts() {
 	}
 }
 
+#define ID_MIDI     MKTAG('M','i','d','i')
+
 void Resource::loadResource(ResourceContext *context, uint32 resourceId, ByteArray &resourceBuffer) {
+	if ((context->_fileType & (GAME_MACBINARY | GAME_MUSICFILE_GM)) == (GAME_MACBINARY | GAME_MUSICFILE_GM) && context->_macRes) {
+		Common::SeekableReadStream *s = context->_macRes->getResource(ID_MIDI, resourceId);
+		if (!s)
+			return;
+		resourceBuffer.resize(s->size());
+		s->read(resourceBuffer.getBuffer(), s->size());
+
+		delete s;
+		
+		return;
+	}
+
 	ResourceData *resourceData = context->getResourceData(resourceId);
-	Common::File *file = nullptr;
+	Common::SeekableReadStream *file = nullptr;
 	uint32 resourceOffset = resourceData->offset;
 
-	if (resourceData->diskNum < 0)
+	if (resourceData->diskNum == -1)
 		file = context->getFile(resourceData);
 	else {
-		file = new Common::File();
+		Common::File *actualFile = new Common::File();
 		Common::String fileName = context->_fileName;
 		int sz = fileName.size();
 		while(sz > 0 && fileName[sz - 1] != '.')
@@ -496,8 +505,9 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, ByteArr
 			fileName = Common::String::format("%s%02d.adf", fileName.substr(0, sz).c_str(), resourceData->diskNum + 1);
 		else
 			fileName = Common::String::format("%s.%03d", fileName.substr(0, sz).c_str(), resourceData->diskNum);
-		if (!file->open(fileName))
+		if (!actualFile->open(fileName))
 			error("Resource::loadResource() failed to open %s", fileName.c_str());
+		file = actualFile;
 	}
 
 	debug(8, "loadResource %d 0x%X:0x%X", resourceId, resourceOffset, uint(resourceData->size));
@@ -513,7 +523,7 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, ByteArr
 	// anymore (as they're in memory), so close them here. IHNM uses only
 	// 1 patch file, which is reused, so don't close it
 	if (resourceData->patchData != nullptr && _vm->getGameId() == GID_ITE)
-		file->close();
+		context->closeFile();
 
 	if (_vm->getPlatform() == Common::Platform::kPlatformAmiga &&
 	    resourceBuffer.size() >= 16 && READ_BE_UINT32(resourceBuffer.getBuffer()) == MKTAG('H', 'E', 'A', 'D')

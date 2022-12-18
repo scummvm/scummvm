@@ -104,7 +104,6 @@ SndRes::~SndRes() {
 }
 
 void SndRes::setVoiceBank(int serial) {
-	Common::File *file;
 	if (_voiceSerial == serial)
 		return;
 
@@ -125,10 +124,7 @@ void SndRes::setVoiceBank(int serial) {
 
 	// Close previous voice bank file
 	if (_voiceContext != nullptr) {
-		file = _voiceContext->getFile(nullptr);
-		if (file->isOpen()) {
-			file->close();
-		}
+		_voiceContext->closeFile();
 	}
 
 	_voiceSerial = serial;
@@ -199,7 +195,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	bool result = false;
 	GameSoundType resourceType = kSoundPCM;
 	int rate = 0, size = 0;
-	Common::File *file;
+	Common::SeekableReadStream *file;
 
 	if (context == nullptr)
 		return false;
@@ -224,10 +220,11 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			Common::sprintf_s(soundFileName, "SFX/SFX%d/SFX%03x", dirIndex, resourceId);
 		}
 
-		file = new Common::File();
+		Common::File *actualFile = new Common::File();
 
-		file->open(soundFileName);
-		soundResourceLength = file->size();
+		actualFile->open(soundFileName);
+		soundResourceLength = actualFile->size();
+		file = actualFile;
 	} else
 #endif
 	{

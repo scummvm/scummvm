@@ -26,60 +26,6 @@
 
 namespace Saga {
 
-#define ID_MIDI     MKTAG('M','i','d','i')
-
-bool ResourceContext_RSC::loadMacMIDI() {
-	// Sanity check
-	if (_fileSize < RSC_MIN_FILESIZE + MAC_BINARY_HEADER_SIZE)
-		return false;
-
-	_file.seek(83);
-	int macDataSize = _file.readSint32BE();
-	int macResOffset = MAC_BINARY_HEADER_SIZE + (((macDataSize + 127) >> 7) << 7);
-
-	_file.seek(macResOffset);
-	uint32 macDataOffset = _file.readUint32BE() + macResOffset;
-	uint32 macMapOffset = _file.readUint32BE() + macResOffset;
-
-	_file.seek(macMapOffset + 22);
-	_file.readUint16BE();	// resAttr
-	int16 typeOffset = _file.readUint16BE();
-	_file.readUint16BE();	// nameOffset
-	uint16 numTypes = _file.readUint16BE() + 1;
-
-	_file.seek(macMapOffset + typeOffset + 2);
-
-	// Find the MIDI files
-	for (uint16 i = 0; i < numTypes; i++) {
-		uint32 id = _file.readUint32BE();
-		uint16 items = _file.readUint16BE() + 1;
-		uint16 offset = _file.readUint16BE();
-
-		if (id == ID_MIDI) {
-			for (uint16 curMidi = 0; curMidi < items; curMidi++) {
-				// Jump to the header of the entry and read its fields
-				_file.seek(offset + macMapOffset + typeOffset + curMidi * 12);
-				uint16 midiID = _file.readUint16BE();
-				_file.readUint16BE();	// nameOffset
-				uint32 midiOffset = _file.readUint32BE() & 0xFFFFFF;
-				_file.readUint32BE();	// macResSize
-
-				// Jump to the actual data and read the file size
-				_file.seek(macDataOffset + midiOffset);
-				uint32 midiSize = _file.readUint32BE();
-
-				// Add the entry
-				if (_table.size() <= midiID)
-					_table.resize(midiID + 1);
-				_table[midiID].offset = macDataOffset + midiOffset + 4;
-				_table[midiID].size = midiSize;
-			}
-		}
-	}
-
-	return true;
-}
-
 void ResourceContext_RSC::processPatches(Resource *resource, const GamePatchDescription *patchFiles) {
 	const GamePatchDescription *patchDescription;
 	ResourceData *resourceData;
@@ -92,11 +38,12 @@ void ResourceContext_RSC::processPatches(Resource *resource, const GamePatchDesc
 				// Check if we've already found a patch for this resource. One is enough.
 				if (!resourceData->patchData) {
 					resourceData->patchData = new PatchData(patchDescription->fileName);
-					if (resourceData->patchData->_patchFile->open(patchDescription->fileName)) {
+					Common::SeekableReadStream *s = resourceData->patchData->getStream();
+					if (s) {
 						resourceData->offset = 0;
-						resourceData->size = resourceData->patchData->_patchFile->size();
+						resourceData->size = s->size();
 						// The patched ITE file is in memory, so close the patch file
-						resourceData->patchData->_patchFile->close();
+						resourceData->patchData->closeStream();
 					} else {
 						delete resourceData->patchData;
 						resourceData->patchData = nullptr;

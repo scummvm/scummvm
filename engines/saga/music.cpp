@@ -385,7 +385,7 @@ bool Music::playDigital(uint32 resourceId, MusicFlags flags) {
 
 				// Digital music
 				ResourceData *resData = _digitalMusicContext->getResourceData(resourceId - 9);
-				Common::File *musicFile = _digitalMusicContext->getFile(resData);
+				Common::SeekableReadStream *musicFile = _digitalMusicContext->getFile(resData);
 				int offs = (_digitalMusicContext->isCompressed()) ? 9 : 0;
 
 				Common::SeekableSubReadStream *musicStream = new Common::SeekableSubReadStream(musicFile,
