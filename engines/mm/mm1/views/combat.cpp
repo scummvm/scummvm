@@ -232,7 +232,7 @@ bool Combat::msgKeypress(const KeypressMessage &msg) {
 		case OPTION_FIGHT:
 		case OPTION_SHOOT:
 			if (msg.keycode >= Common::KEYCODE_a &&
-				msg.keycode < (int)(Common::KEYCODE_a + _fightCount)) {
+				msg.keycode < (int)(Common::KEYCODE_a + _remainingCount)) {
 				if (_option == OPTION_FIGHT)
 					fightMonster(msg.keycode - Common::KEYCODE_a);
 				else
@@ -363,29 +363,33 @@ void Combat::writeOptions() {
 }
 
 void Combat::writeAllOptions() {
-	assert(g_globals->_currCharacter);
+	assert(g_globals->_currCharacter &&
+		g_globals->_currCharacter == g_globals->_combatParty[_currentChar]);
+	const Character &c = *g_globals->_currCharacter;
 	writeString(0, 20, STRING["dialogs.combat.options_for"]);
-	writeString(0, 22, g_globals->_currCharacter->_name);
+	writeString(0, 22, c._name);
 
 	// Highlight the currently active character
 	writeChar(3 + 4 * (_currentChar % 2), 3 + (_currentChar / 2),
 		(unsigned char)'1' + _currentChar + 0x80);
 
-	bool canAttack = g_globals->_combatParty[_currentChar]->_canAttack;
-	if (canAttack) {
+	bool testShoot;
+	if (c._canAttack) {
 		writeAttackOptions();
 		_allowAttack = true;
 		_allowFight = true;
 
 		// Archers can always attack
-		canAttack = g_globals->_currCharacter->_class == ARCHER;
+		testShoot = c._class == ARCHER;
+	} else {
+		testShoot = true;
 	}
-	if (canAttack && g_globals->_currCharacter->_missileAttr) {
+	if (testShoot && c._missileAttr._base) {
 		_allowShoot = true;
 		writeShootOption();
 	}
 
-	if (g_globals->_currCharacter->_sp._current) {
+	if (c._sp._current) {
 		writeCastOption();
 		_allowCast = true;
 	}
@@ -396,11 +400,11 @@ void Combat::writeAllOptions() {
 
 void Combat::writeDelaySelect() {
 	resetBottom();
-	writeString(0, 0, STRING["dialogs.combat.set_delay"]);
-	writeString(0, 26, Common::String::format(
+	writeString(0, 20, STRING["dialogs.combat.set_delay"]);
+	writeString(0, 23, Common::String::format(
 		STRING["dialogs.combat.delay_currently"].c_str(),
 		g_globals->_delay));
-	escToGoBack(0, 3);
+	escToGoBack(0, 23);
 }
 
 void Combat::writeExchangeSelect() {
@@ -412,19 +416,19 @@ void Combat::writeExchangeSelect() {
 }
 
 void Combat::writeFightSelect() {
-	_fightCount = MIN(_attackerVal, (int)_remainingMonsters.size());
+	_remainingCount = MIN(_attackerVal, (int)_remainingMonsters.size());
 
-	writeString(10, 0, Common::String::format(
-		STRING["dialogs.combat.fight_which"].c_str(), '@' + _fightCount));
-	escToGoBack(12, 3);
+	writeString(10, 20, Common::String::format(
+		STRING["dialogs.combat.fight_which"].c_str(), 'A' + _remainingCount - 1));
+	escToGoBack(12, 23);
 }
 
 void Combat::writeShootSelect() {
-	_fightCount = MIN(_attackerVal, (int)_remainingMonsters.size());
+	_remainingCount = MIN(_attackerVal, (int)_remainingMonsters.size());
 
-	writeString(10, 0, Common::String::format(
-		STRING["dialogs.combat.shoot_which"].c_str(), '@' + _fightCount));
-	escToGoBack(12, 3);
+	writeString(10, 20, Common::String::format(
+		STRING["dialogs.combat.shoot_which"].c_str(), 'A' + _remainingCount - 1));
+	escToGoBack(12, 23);
 }
 
 void Combat::writeAttackOptions() {
@@ -805,9 +809,10 @@ Common::String Combat::getAttackString() {
 		line1 += STRING["dialogs.combat.misses"];
 	} else {
 		line1 += STRING["dialogs.combat.hit"];
-		line1 += ' ';
 
 		if (_numberOfTimes > 1) {
+			line1 += ' ';
+
 			if (_timesHit == 1) {
 				line1 += STRING["dialogs.combat.once"];
 			} else {

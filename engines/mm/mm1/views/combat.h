@@ -32,7 +32,7 @@ namespace Views {
 class Combat : public TextView, public Game::Combat {
 private:
 	LineArray _monsterSpellLines;
-	uint _fightCount = 0;
+	uint _remainingCount = 0;
 	InfoMessage _spellResult;
 	// Combat options that have sub-option selection
 	enum SelectedOption {
