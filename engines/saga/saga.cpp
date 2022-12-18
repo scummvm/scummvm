@@ -274,6 +274,9 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 	// Mac CD Wyrmkeep
 	SearchMan.addSubDirectoryMatching(gameDataDir, "patch");
 
+	if (getPlatform() == Common::Platform::kPlatformMacintosh)
+		SearchMan.addSubDirectoryMatching(gameDataDir, "ITE Data Files");
+
 	_displayClip.left = _displayClip.top = 0;
 }
 

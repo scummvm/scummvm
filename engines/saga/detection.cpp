@@ -37,7 +37,7 @@ static const PlainGameDescriptor sagaGames[] = {
 class SagaMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	SagaMetaEngineDetection() : AdvancedMetaEngineDetection(Saga::gameDescriptions, sizeof(Saga::SAGAGameDescription), sagaGames) {
-		static const char *const DIRECTORY_GLOBS[2] = { "music", nullptr };
+		static const char *const DIRECTORY_GLOBS[3] = { "music", "ITE Data Files", nullptr };
 		_maxScanDepth = 2;
 		_directoryGlobs = DIRECTORY_GLOBS;
 		_flags = kADFlagUseExtraAsHint;
