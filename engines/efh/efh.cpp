@@ -1099,14 +1099,14 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 
 
 void EfhEngine::removeObject(int16 charId, int16 objectId) {
-	debug("removeObject %d %d", charId, objectId);
+	debugC(6, kDebugEngine, "removeObject %d %d", charId, objectId);
 	_npcBuf[charId]._inventory[objectId]._ref = 0x7FFF;
 	_npcBuf[charId]._inventory[objectId]._stat1 = 0;
 	_npcBuf[charId]._inventory[objectId]._stat2 = 0;
 }
 
 void EfhEngine::totalPartyKill() {
-	debug("totalPartyKill");
+	debugC(6, kDebugEngine, "totalPartyKill");
 
 	for (uint counter = 0; counter < 3; ++counter) {
 		if (_teamCharId[counter] != -1)
@@ -1115,7 +1115,7 @@ void EfhEngine::totalPartyKill() {
 }
 
 void EfhEngine::removeCharacterFromTeam(int16 teamMemberId) {
-	debug("removeCharacterFromTeam %d", teamMemberId);
+	debugC(6, kDebugEngine, "removeCharacterFromTeam %d", teamMemberId);
 
 	int16 charId = _teamCharId[teamMemberId];
 	_npcBuf[charId].field12_textId = _npcBuf[charId].field_B;
@@ -1136,7 +1136,7 @@ void EfhEngine::removeCharacterFromTeam(int16 teamMemberId) {
 }
 
 void EfhEngine::refreshTeamSize() {
-	debug("refreshTeamSize");
+	debugC(6, kDebugEngine, "refreshTeamSize");
 
 	_teamSize = 0;
 	for (uint counter = 0; counter < 3; ++counter) {
@@ -1146,7 +1146,7 @@ void EfhEngine::refreshTeamSize() {
 }
 
 bool EfhEngine::isCharacterATeamMember(int16 id) {
-	debug("isCharacterATeamMember %d", id);
+	debugC(6, kDebugEngine,"isCharacterATeamMember %d", id);
 
 	for (int counter = 0; counter < _teamSize; ++counter) {
 		if (_teamCharId[counter] == id)
@@ -1803,9 +1803,8 @@ void EfhEngine::handleAnimations() {
 }
 
 int8 EfhEngine::sub16B08(int16 monsterId) {
-	debug("sub16B08 %d", monsterId);
+	debugC(3, kDebugEngine,"sub16B08 %d", monsterId);
 
-	// Simplified version compared to the original
 	int16 maxSize = _largeMapFlag ? 63 : 23;
 	if (_mapMonsters[monsterId]._posX < 0 || _mapMonsters[monsterId]._posY < 0 || _mapMonsters[monsterId]._posX > maxSize || _mapMonsters[monsterId]._posY > maxSize)
 		return 0;
@@ -2657,15 +2656,6 @@ int8 EfhEngine::sub15581(int16 mapPosX, int16 mapPosY, int16 arg4) {
 	return _tileFact[imageSetId]._field0;
 }
 
-bool EfhEngine::isTeamMemberStatusNormal(int16 teamMemberId) {
-	debug("isTeamMemberStatusNormal %d", teamMemberId);
-
-	if (_npcBuf[_teamCharId[teamMemberId]]._hitPoints > 0 && _teamCharStatus[teamMemberId]._status == 0)
-		return true;
-
-	return false;
-}
-
 void EfhEngine::sub1CDFA() {
 	debug("sub1CDFA"); // Initiatives
 
@@ -2738,63 +2728,6 @@ int16 EfhEngine::selectMonsterGroup() {
 	return retVal;
 }
 
-int16 EfhEngine::sub1C956(int16 charId, int16 unkFied18Val, bool arg4) {
-	debug("sub1C956 %d %d %d", charId, unkFied18Val, arg4);
-
-	int16 varE = -1;
-
-	int16 var6 = sub1C80A(charId, unkFied18Val, true);
-	int16 range = 0;
-	if (var6 != 0x7FFF)
-		range = _items[var6]._range;
-
-	switch (range) {
-	case 3:
-	case 2:
-		++range;
-	case 1:
-		++range;
-	case 0:
-		++range;
-		break;
-	case 4:
-		return 100;
-	default:
-		return varE;
-	}
-
-	do {
-		for (uint counter = 0; counter < 2; ++counter) {
-			drawCombatScreen(charId, true, false);
-			if (_teamMonsterIdArray[1] != -1)
-				sub1C219("Select Monster Group:", 3, 0, false);
-
-			if (counter == 0)
-				displayFctFullScreen();
-		}
-
-		if (_teamMonsterIdArray[1] == -1)
-			varE = 0;
-		else
-			varE = selectMonsterGroup();
-
-		if (!arg4) {
-			if (varE == 27) // Esc
-				varE = 0;
-		} else if (varE != 27) {
-			int16 monsterGroupDistance = computeMonsterGroupDistance(_teamMonsterIdArray[varE]);
-			if (monsterGroupDistance > range) {
-				varE = 27;
-			}
-		}
-	} while (varE == -1);
-
-	if (varE == 27)
-		varE = -1;
-
-	return varE;
-}
-
 void EfhEngine::sub1CAB6(int16 charId) {
 	debug("sub1CAB6 %d", charId);
 
@@ -2805,112 +2738,6 @@ void EfhEngine::sub1CAB6(int16 charId) {
 		if (counter == 0)
 			displayFctFullScreen();
 	}
-}
-
-bool EfhEngine::sub1CB27() {
-	debug("sub1CB27");
-
-	bool var4 = false;
-	for (int counter1 = 0; counter1 < _teamSize; ++counter1) {
-		_teamLastAction[counter1] = 0;
-		if (!isTeamMemberStatusNormal(counter1))
-			continue;
-
-		var4 = true;
-		do {
-			drawCombatScreen(_teamCharId[counter1], false, true);
-			Common::KeyCode var1 = handleAndMapInput(true);
-			switch (var1) {
-			case Common::KEYCODE_a: // Attack
-				_teamLastAction[counter1] = 'A';
-				_teamNextAttack[counter1] = sub1C956(_teamCharId[counter1], 9, true);
-				if (_teamNextAttack[counter1] == -1)
-					_teamLastAction[counter1] = 0;
-				break;
-			case Common::KEYCODE_d: // Defend
-				_teamLastAction[counter1] = 'D';
-				break;
-			case Common::KEYCODE_h: // Hide
-				_teamLastAction[counter1] = 'H';
-				break;
-			case Common::KEYCODE_r: // Run
-				for (int counter2 = 0; counter2 < _teamSize; ++counter2) {
-					_teamLastAction[counter2] = 'R';
-				}
-				return true;
-			case Common::KEYCODE_s: { // Status
-				int16 var8 = handleStatusMenu(2, _teamCharId[counter1]);
-				sub1CAB6(_teamCharId[counter1]);
-				if (var8 > 999) {
-					if (var8 == 0x7D00)
-						_teamLastAction[counter1] = 'S';
-				} else {
-					_teamLastAction[counter1] = 'U';
-					_word31780[counter1] = var8;
-					int16 var6 = _npcBuf[_teamCharId[counter1]]._inventory[var8]._ref;
-					switch (var6 - 1) {
-					case 0:
-					case 1:
-					case 2:
-					case 3:
-					case 4:
-					case 5:
-					case 6:
-					case 7:
-					case 8:
-					case 10:
-					case 12:
-					case 13:
-						_teamNextAttack[counter1] = sub1C956(_teamCharId[counter1], 9, false);
-						break;
-
-					case 9:
-					case 11:
-					case 14:
-					case 15:
-					case 18:
-					case 24:
-					case 25:
-					case 27:
-					case 28:
-					case 29:
-					case 30:
-						sub1C219("Select Character:", 3, 1, false);
-						_teamNextAttack[counter1] = selectOtherCharFromTeam();
-						break;
-
-					case 16:
-					case 17:
-					case 26:
-						_teamNextAttack[counter1] = 0xC8;
-						break;
-
-					case 19:
-					case 20:
-					case 21:
-					case 22:
-					case 23:
-					default:
-						break;
-					}
-
-				}
-
-				}
-				break;
-			case Common::KEYCODE_t: // Terrain
-				redrawScreenForced();
-				getInputBlocking();
-				drawCombatScreen(_teamCharId[counter1], false, true);
-				break;
-			default:
-				break;
-			}
-		} while (_teamLastAction[counter1] == 0);
-
-	}
-
-	return var4;
 }
 
 // The parameter isn't used in the original
@@ -3322,255 +3149,6 @@ bool EfhEngine::hasAdequateDefense_2(int16 charId, uint8 attackType) {
 			return true;
 	}
 	return false;
-}
-
-void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
-	debug("getDeathTypeDescription %d %d", attackerId, victimId);
-
-	int16 possessivePronoun;
-
-	if (attackerId > 999) {
-		int16 charId = _teamCharId[attackerId - 1000];
-		possessivePronoun = _npcBuf[charId]._possessivePronounSHL6 >> 6;
-	} else {
-		int16 charId = _teamMonsterIdArray[attackerId];
-		possessivePronoun = _mapMonsters[charId]._possessivePronounSHL6 >> 6;
-	}
-
-	if (possessivePronoun > 2)
-		possessivePronoun = 2;
-
-	int16 deathType;
-	if (getRandom(100) < 20) {
-		deathType = 0;
-	} else {
-		if (victimId >= 1000) {
-			int16 charId = _teamCharId[victimId - 1000];
-			if (charId == -1)
-				deathType = 0;
-			else {
-				int16 var6 = sub1C80A(charId, 9, true);
-				if (var6 == 0x7FFF)
-					deathType = 0;
-				else
-					deathType = _items[var6]._attackType + 1;
-			}
-		} else if (_teamMonsterIdArray[victimId] == -1)
-			deathType = 0;
-		else {
-			int16 itemId = _mapMonsters[_teamMonsterIdArray[victimId]]._itemId_Weapon;
-			deathType = _items[itemId]._attackType;
-		}
-	}
-
-	int16 rndDescrForDeathType = getRandom((3)) - 1;
-	Common::String tmpStr = "DUDE IS TOAST!";
-	switch (deathType) {
-	case 0:
-		switch (rndDescrForDeathType) {
-		case 0:
-			tmpStr = Common::String::format(", killing %s!", kPersonal[possessivePronoun]);
-			break;
-		case 1:
-			tmpStr = Common::String::format(", slaughtering %s!", kPersonal[possessivePronoun]);
-			break;
-		case 2:
-			tmpStr = Common::String::format(", annihilating %s!", kPersonal[possessivePronoun]);
-			break;
-		default:
-			break;
-		}
-		break;
-	case 1:
-		switch (rndDescrForDeathType) {
-		case 0:
-			tmpStr = Common::String::format(", cutting %s in two!", kPersonal[possessivePronoun]);
-			break;
-		case 1:
-			tmpStr = Common::String::format(", dicing %s into small cubes!", kPersonal[possessivePronoun]);
-			break;
-		case 2:
-			tmpStr = Common::String::format(", butchering %s into lamb chops!", kPersonal[possessivePronoun]);
-			break;
-		default:
-			break;
-		}
-		break;
-	case 2:
-		switch (rndDescrForDeathType) {
-		case 0:
-			tmpStr = Common::String::format(", piercing %s heart!", kPersonal[possessivePronoun]);
-			break;
-		case 1:
-			tmpStr = Common::String::format(", leaving %s a spouting mass of blood!", kPersonal[possessivePronoun]);
-			break;
-		case 2:
-			tmpStr = Common::String::format(", popping %s like a zit!", kPersonal[possessivePronoun]);
-			break;
-		default:
-			break;
-		}
-		break;
-	case 3:
-		switch (rndDescrForDeathType) {
-		case 0:
-			tmpStr = Common::String::format(", pulping %s head over a wide area!", kPersonal[possessivePronoun]);
-			break;
-		case 1:
-			tmpStr = Common::String::format(", smashing %s into a meat patty!", kPersonal[possessivePronoun]);
-			break;
-		case 2:
-			tmpStr = Common::String::format(", squashing %s like a ripe tomato!", kPersonal[possessivePronoun]);
-			break;
-		default:
-			break;
-		}
-		break;
-	case 4:
-		switch (rndDescrForDeathType) {
-		case 0:
-			tmpStr = Common::String::format(", totally incinerating %s!", kPersonal[possessivePronoun]);
-			break;
-		case 1:
-			tmpStr = Common::String::format(", reducing %s to a pile of ash!", kPersonal[possessivePronoun]);
-			break;
-		case 2:
-			tmpStr = Common::String::format(", leaving a blistered mass of flesh behind!");
-			break;
-		default:
-			break;
-		}
-		break;
-	case 5:
-		switch (rndDescrForDeathType) {
-		case 0:
-			// The original has a typo: popscicle
-			tmpStr = Common::String::format(", turning %s into a popsicle!", kPersonal[possessivePronoun]);
-			break;
-		case 1:
-			tmpStr = Common::String::format(", encasing %s in a block of ice!", kPersonal[possessivePronoun]);
-			break;
-		case 2:
-			tmpStr = Common::String::format(", shattering %s into shards!", kPersonal[possessivePronoun]);
-			break;
-		default:
-			break;
-		}
-		break;
-	case 6:
-		switch (rndDescrForDeathType) {
-		case 0:
-			tmpStr = Common::String::format(", leaving pudding for brains");
-			break;
-		case 1:
-			tmpStr = Common::String::format(", bursting %s head like a bubble!", kPersonal[possessivePronoun]);
-			break;
-		case 2:
-			tmpStr = Common::String::format(", turning %s into a mindless vegetable", kPersonal[possessivePronoun]);
-			break;
-		default:
-			break;
-		}
-		break;
-	case 7:
-		switch (rndDescrForDeathType) {
-		case 0:
-			tmpStr = Common::String::format(", reducing %s to an oozing pile of flesh!", kPersonal[possessivePronoun]);
-			break;
-		case 1:
-			tmpStr = Common::String::format(", melting %s like an ice cube in hot coffee!", kPersonal[possessivePronoun]);
-			break;
-		case 2:
-			tmpStr = Common::String::format(", vaporizing %s into a steaming cloud!", kPersonal[possessivePronoun]);
-			break;
-		default:
-			break;
-		}
-		break;
-	case 8:
-		switch (rndDescrForDeathType) {
-		case 0:
-			tmpStr = Common::String::format(", engulfing %s in black smoke puffs!", kPersonal[possessivePronoun]);
-			break;
-		case 1:
-			tmpStr = Common::String::format(", sucking %s into eternity!", kPersonal[possessivePronoun]);
-			break;
-		case 2:
-			tmpStr = Common::String::format(", turning %s into a mindless zombie!", kPersonal[possessivePronoun]);
-			break;
-		default:
-			break;
-		}
-		break;
-	case 9:
-	case 10:
-	case 11:
-		switch (rndDescrForDeathType) {
-		case 0:
-			tmpStr = Common::String::format(", completely disintegrating %s!", kPersonal[possessivePronoun]);
-			break;
-		case 1:
-			tmpStr = Common::String::format(", spreading %s into a fine mist!", kPersonal[possessivePronoun]);
-			break;
-		case 2:
-			tmpStr = Common::String::format(", leaving a smoking crater in %s place!", kPersonal[possessivePronoun]);
-			break;
-		default:
-			break;
-		}
-		break;
-	case 12:
-	case 13:
-	case 14:
-		switch (rndDescrForDeathType) {
-		case 0:
-			tmpStr = Common::String::format(", tearing a chunk out of %s back!", kPersonal[possessivePronoun]);
-			break;
-		case 1:
-			tmpStr = Common::String::format(", blowing %s brains out!", kPersonal[possessivePronoun]);
-			break;
-		case 2:
-			tmpStr = Common::String::format(", exploding %s entire chest!", kPersonal[possessivePronoun]);
-			break;
-		default:
-			break;
-		}
-		break;
-	case 15:
-		switch (rndDescrForDeathType) {
-		case 0:
-			tmpStr = Common::String::format(", choking %s to death!", kPersonal[possessivePronoun]);
-			break;
-		case 1:
-			tmpStr = Common::String::format(", melting %s lungs!", kPersonal[possessivePronoun]);
-			break;
-		case 2:
-			tmpStr = Common::String::format(", leaving %s gasping for air as %s collapses!", kPersonal[possessivePronoun], kPersonal[possessivePronoun]);
-			break;
-		default:
-			break;
-		}
-		break;
-	case 16:
-		switch (rndDescrForDeathType) {
-		case 0:
-			tmpStr = Common::String::format(", tearing a chunk out of %s back!", kPersonal[possessivePronoun]);
-			break;
-		case 1:
-			tmpStr = Common::String::format(", piercing %s heart!", kPersonal[possessivePronoun]);
-			break;
-		case 2:
-			tmpStr = Common::String::format(", impaling %s brain!", kPersonal[possessivePronoun]);
-			break;
-		default:
-			break;
-		}
-		break;
-	default:
-		break;
-	}
-
-	_messageToBePrinted += tmpStr;
 }
 
 bool EfhEngine::characterSearchesMonsterCorpse(int16 charId, int16 monsterId) {
