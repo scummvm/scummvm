@@ -91,6 +91,20 @@ static const ADGameDescription gameDescriptions[] = {
 		"driller",
 		"Rolling Demo",
 		{
+			{"drilldem.com", 0, "5188a7ae06f72263634a107685f52cbe", 889},
+			{"d1", 0, "edd57153197ef457f08eeea4d9339208", 16384},
+			{"d2", 0, "3690e6461bfc5434bab8969c6cdbb297", 41488},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_TESTING | ADGF_DEMO,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"driller",
+		"Rolling Demo",
+		{
 			{"driller", 0, "f0d0e9447830e329e110e384371955fd", 162880},
 			{"data", 0, "0b056286d2d91f302499c97aca235462", 24220},
 			{"demo.cmd", 0, "7b90427c5c3c4bbb42d14076af994d50", 4096},
