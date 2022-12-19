@@ -72,6 +72,8 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
 
 	if (_colorRemaps && _colorRemaps->contains(index)) {
 		index = (*_colorRemaps)[index];
+		readFromPalette(index, r, g, b);
+		return true;
 	}
 
 	if (index == _keyColor)

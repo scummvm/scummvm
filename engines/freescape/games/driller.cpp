@@ -422,34 +422,41 @@ void DrillerEngine::drawUI() {
 
 void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);
-	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+	uint8 color = _currentArea->_usualBackgroundColor;
+	if (_gfx->_colorRemaps && _gfx->_colorRemaps->contains(color)) {
+		color = (*_gfx->_colorRemaps)[color];
+	}
+
+	uint8 r, g, b;
+	_gfx->readFromPalette(color, r, g, b);
+	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	int score = _gameStateVars[k8bitVariableScore];
-	drawStringInSurface(_currentArea->_name, 196, 185, yellow, black, surface);
-	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 150, 145, yellow, black, surface);
-	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 150, 153, yellow, black, surface);
-	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 150, 161, yellow, black, surface);
+	drawStringInSurface(_currentArea->_name, 196, 185, yellow, back, surface);
+	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 150, 145, yellow, back, surface);
+	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 150, 153, yellow, back, surface);
+	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 150, 161, yellow, back, surface);
 	if (_playerHeightNumber >= 0)
-		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 57, 161, yellow, black, surface);
+		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 57, 161, yellow, back, surface);
 	else
-		drawStringInSurface(Common::String::format("%s", "J"), 57, 161, yellow, black, surface);
+		drawStringInSurface(Common::String::format("%s", "J"), 57, 161, yellow, back, surface);
 
-	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 46, 145, yellow, black, surface);
-	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 46, 153, yellow, black, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 238, 129, yellow, black, surface);
+	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 46, 145, yellow, back, surface);
+	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 46, 153, yellow, back, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 238, 129, yellow, back, surface);
 
 	int hours = _countdown <= 0 ? 0 : _countdown / 3600;
-	drawStringInSurface(Common::String::format("%02d", hours), 208, 8, yellow, black, surface);
+	drawStringInSurface(Common::String::format("%02d", hours), 208, 8, yellow, back, surface);
 	int minutes = _countdown <= 0 ? 0 : (_countdown - hours * 3600) / 60;
-	drawStringInSurface(Common::String::format("%02d", minutes), 230, 8, yellow, black, surface);
+	drawStringInSurface(Common::String::format("%02d", minutes), 230, 8, yellow, back, surface);
 	int seconds = _countdown <= 0 ? 0 : _countdown - hours * 3600 - minutes * 60;
-	drawStringInSurface(Common::String::format("%02d", seconds), 254, 8, yellow, black, surface);
+	drawStringInSurface(Common::String::format("%02d", seconds), 254, 8, yellow, back, surface);
 
 	Common::String message;
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 190, 177, black, yellow, surface);
+		drawStringInSurface(message, 190, 177, back, yellow, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else {
@@ -460,22 +467,22 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 		else
 			message = _messagesList[1];
 
-		drawStringInSurface(message, 191, 177, yellow, black, surface);
+		drawStringInSurface(message, 191, 177, yellow, back, surface);
 	}
 
 	int energy = _gameStateVars[k8bitVariableEnergy];
 	int shield = _gameStateVars[k8bitVariableShield];
 	if (_renderMode == Common::kRenderEGA) {
 		if (energy >= 0) {
-			Common::Rect back(20, 185, 88 - energy, 191);
-			surface->fillRect(back, black);
+			Common::Rect backBar(20, 185, 88 - energy, 191);
+			surface->fillRect(backBar, back);
 			Common::Rect energyBar(87 - energy, 185, 88, 191);
 			surface->fillRect(energyBar, yellow);
 		}
 
 		if (shield >= 0) {
-			Common::Rect back(20, 177, 88 - shield, 183);
-			surface->fillRect(back, black);
+			Common::Rect backBar(20, 177, 88 - shield, 183);
+			surface->fillRect(backBar, back);
 
 			Common::Rect shieldBar(87 - shield, 177, 88, 183);
 			surface->fillRect(shieldBar, yellow);

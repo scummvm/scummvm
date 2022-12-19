@@ -236,7 +236,12 @@ void FreescapeEngine::executeSPFX(FCLInstruction &instruction) {
 			_currentArea->remapColor(i, color);
 	} else if (isDOS()) {
 		debugC(1, kFreescapeDebugCode, "Switching palette from position %d to %d", src, dst);
-		_currentArea->remapColor(src, dst);
+		if (src == 0 && dst == 1)
+			_currentArea->remapColor(_currentArea->_usualBackgroundColor, _currentArea->_underFireBackgroundColor);
+		else if (src == 0 && dst == 0)
+			_currentArea->unremapColor(_currentArea->_usualBackgroundColor);
+		else
+			_currentArea->remapColor(src, dst);
 	}
 	executeRedraw(instruction);
 }
