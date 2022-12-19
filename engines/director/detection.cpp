@@ -287,7 +287,7 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 		ADDetectedGame game(&desc->desc);
 
 		FileProperties tmp;
-		if (getFileProperties(allFiles, desc->desc, file->getName(), tmp)) {
+		if (getFileProperties(allFiles, kMD5Tail, file->getName(), tmp)) {
 			game.hasUnknownFiles = true;
 			game.matchedFiles[file->getName()] = tmp;
 		}

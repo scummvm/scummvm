@@ -520,8 +520,7 @@ static MD5Properties gameFlagsToDefaultMD5Props(uint32 flags) {
 
 static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::FileMap &allFiles, MD5Properties md5prop, const Common::String &fname, FileProperties &fileProps);
 
-bool AdvancedMetaEngineDetection::getFileProperties(const FileMap &allFiles, const ADGameDescription &game, const Common::String &fname, FileProperties &fileProps) const {
-	MD5Properties md5prop = gameFlagsToDefaultMD5Props(game.flags);
+bool AdvancedMetaEngineDetection::getFileProperties(const FileMap &allFiles, MD5Properties md5prop, const Common::String &fname, FileProperties &fileProps) const {
 	Common::String hashname = Common::String::format("%c:%s:%d", md5PropToCacheChar(md5prop), fname.c_str(), _md5Bytes);
 
 	if (MD5Man.contains(hashname)) {
@@ -540,8 +539,7 @@ bool AdvancedMetaEngineDetection::getFileProperties(const FileMap &allFiles, con
 	return res;
 }
 
-bool AdvancedMetaEngine::getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, const ADGameDescription &game, const Common::String &fname, FileProperties &fileProps) const {
-	MD5Properties md5prop = gameFlagsToDefaultMD5Props(game.flags);
+bool AdvancedMetaEngine::getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, MD5Properties md5prop, const Common::String &fname, FileProperties &fileProps) const {
 	return getFilePropertiesIntern(md5Bytes, allFiles, md5prop, fname, fileProps);
 }
 
@@ -627,7 +625,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 				continue;
 
 			FileProperties tmp;
-			if (getFileProperties(allFiles, *g, fname, tmp)) {
+			if (getFileProperties(allFiles, md5prop, fname, tmp)) {
 				debugC(3, kDebugGlobalDetection, "> '%s': '%s' %ld", key.c_str(), tmp.md5.c_str(), long(tmp.size));
 			}
 
@@ -772,6 +770,7 @@ ADDetectedGame AdvancedMetaEngineDetection::detectGameFilebased(const FileMap &a
 			debugC(4, kDebugGlobalDetection, "Matched: %s", agdesc->gameId);
 
 			if (numMatchedFiles > maxNumMatchedFiles) {
+				MD5Properties md5prop = gameFlagsToDefaultMD5Props(agdesc->flags);
 				maxNumMatchedFiles = numMatchedFiles;
 
 				debugC(4, kDebugGlobalDetection, "and overridden");
@@ -782,7 +781,7 @@ ADDetectedGame AdvancedMetaEngineDetection::detectGameFilebased(const FileMap &a
 				for (filenames = ptr->filenames; *filenames; ++filenames) {
 					FileProperties tmp;
 
-					if (getFileProperties(allFiles, *agdesc, *filenames, tmp))
+					if (getFileProperties(allFiles, md5prop, *filenames, tmp))
 						game.matchedFiles[*filenames] = tmp;
 				}
 
