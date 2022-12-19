@@ -101,6 +101,8 @@ public:
 	static void SetUseCallback(bool abX) { mbUseCallback = abX; }
 
 private:
+	static int BuoyancyPlaneCallback(const int alCollisionID, void *apContext,
+								 const float *afGlobalSpaceMatrix, float *afGlobalSpacePlane);
 	static void OnTransformCallback(const NewtonBody *apBody, const dFloat *apMatrix, int);
 	static void OnUpdateCallback(NewtonBody *apBody, float, int);
 

@@ -430,14 +430,13 @@ void cPhysicsBodyNewton::OnTransformCallback(const NewtonBody *apBody, const dFl
 
 //-----------------------------------------------------------------------
 
-// callback for buoyancy
-static cPlanef gSurfacePlane;
-static int BuoyancyPlaneCallback(const int alCollisionID, void *apContext,
+int cPhysicsBodyNewton::BuoyancyPlaneCallback(const int alCollisionID, void *apContext,
 								 const float *afGlobalSpaceMatrix, float *afGlobalSpacePlane) {
-	afGlobalSpacePlane[0] = gSurfacePlane.a;
-	afGlobalSpacePlane[1] = gSurfacePlane.b;
-	afGlobalSpacePlane[2] = gSurfacePlane.c;
-	afGlobalSpacePlane[3] = gSurfacePlane.d;
+	cPlanef surfacePlane = static_cast<cPhysicsBodyNewton*>(apContext)->mBuoyancy.mSurface;
+	afGlobalSpacePlane[0] = surfacePlane.a;
+	afGlobalSpacePlane[1] = surfacePlane.b;
+	afGlobalSpacePlane[2] = surfacePlane.c;
+	afGlobalSpacePlane[3] = surfacePlane.d;
 	return 1;
 }
 
@@ -461,7 +460,6 @@ void cPhysicsBodyNewton::OnUpdateCallback(NewtonBody *apBody, float, int) {
 
 	// Create Buoyancy
 	if (pRigidBody->mBuoyancy.mbActive) {
-		gSurfacePlane = pRigidBody->mBuoyancy.mSurface;
 		VEC3_CONST_ARRAY(gravity, vGravity);
 		NewtonBodyAddBuoyancyForce(apBody,
 								   pRigidBody->mBuoyancy.mfDensity,
