@@ -83,11 +83,12 @@ bool Combat::msgGame(const GameMessage &msg) {
 		return true;
 
 	} else if (msg._name == "SPELL_RESULT") {
-		InfoMessage infoMsg(20 - msg._stringValue.size() / 2, 21,
-			msg._stringValue);
-		infoMsg._delaySeconds = 3;
+		assert(msg._value >= 0 && msg._value < 40);
+		_spellResult._lines.clear();
+		_spellResult._lines.push_back(Line(msg._value, 1, msg._stringValue));
+		_spellResult._delaySeconds = 3;
 
-		displaySpellResult(msg._stringValue);
+		setMode(SPELL_RESULT);
 		return true;
 	}
 
@@ -218,7 +219,11 @@ void Combat::timeout() {
 		break;
 	}
 	case SPELL_RESULT:
-		_spellResult._timeoutCallback();
+		if (_spellResult._timeoutCallback)
+			_spellResult._timeoutCallback();
+		else
+			// Character is done
+			block();
 		break;
 	default:
 		 break;

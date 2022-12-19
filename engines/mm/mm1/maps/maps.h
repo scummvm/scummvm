@@ -42,7 +42,7 @@ enum DirMask {
 };
 
 enum StateFlag {
-	SFLAG_DISABLE_MONSTER_SPELLS = 2
+	SFLAG_SPELLS_DISALLOWED = 2
 };
 
 enum Visited {

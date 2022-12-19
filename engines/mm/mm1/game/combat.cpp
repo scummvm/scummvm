@@ -232,7 +232,7 @@ void Combat::setupHandicap() {
 }
 
 bool Combat::canMonsterCast() const {
-	return !(g_maps->_currentState & Maps::SFLAG_DISABLE_MONSTER_SPELLS) &&
+	return !(g_maps->_currentState & Maps::SFLAG_SPELLS_DISALLOWED) &&
 		!(g_globals->_encounters._monsterList[_monsterIndex]._status
 			& (MONFLAG_BLIND | MONFLAG_SILENCED));
 }

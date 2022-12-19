@@ -131,7 +131,7 @@ bool SpellCasting::hasCharTarget() const {
 }
 
 bool SpellCasting::isMagicAllowed() const {
-	return !(g_maps->_currentState & 2);
+	return !(g_maps->_currentState & Maps::SFLAG_SPELLS_DISALLOWED);
 }
 
 Common::String SpellCasting::getSpellError() const {
