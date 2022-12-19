@@ -548,7 +548,7 @@ void Sound::playSound(int soundID) {
 		// offset 22-23: ? often identical to the rate divisior? (but not in sound 8, which loops)
 		// offset 24, byte (?): volume
 		// offset 25: ? same as volume -- maybe left vs. right channel?
-		// offset 26: ?  if != 0: stop current sound?
+		// offset 26: if == 0: stop current identical sound (see ptr[26] comment below)
 		// offset 27: ?  loopcount? 0xff == -1 for infinite?
 
 		size = READ_BE_UINT16(ptr + 12);
@@ -573,6 +573,18 @@ void Sound::playSound(int soundID) {
 		} else {
 			stream = plainStream;
 		}
+
+		// When unset, we assume that this byte is meant to interrupt any other
+		// instance of the current sound (as done by the Indy3 Amiga driver,
+		// which was checked against disassembly). A good test for the expected
+		// behavior is to ring the boxing bell in room 73; in the original
+		// interpreter it rings 3 times in a row, and if we don't do this the
+		// second bell sound is never heard. Another example is the thunder
+		// sound effect when Indy is outside the windows of Castle Brunwald
+		// (room 13): it's meant to have a couple of "false starts".
+		// TODO: do an actual disasm of Indy3 Macintosh (anyone? ;)
+		if (!ptr[26])
+			_mixer->stopID(soundID);
 
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, nullptr, stream, soundID, vol, 0);
 	}
