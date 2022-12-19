@@ -43,6 +43,7 @@ LowLevelSystem::LowLevelSystem() {
 
 LowLevelSystem::~LowLevelSystem() {
 	/*Release all runnings contexts */
+	cleanupRegisteredString();
 	_scriptOutput->Display();
 	_scriptEngine->Release();
 	hplDelete(_scriptOutput);

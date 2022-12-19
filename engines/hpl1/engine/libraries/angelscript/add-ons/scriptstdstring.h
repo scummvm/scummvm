@@ -39,6 +39,7 @@
 BEGIN_AS_NAMESPACE
 
 void RegisterStdString(asIScriptEngine *engine);
+void cleanupRegisteredString();
 
 END_AS_NAMESPACE
 
