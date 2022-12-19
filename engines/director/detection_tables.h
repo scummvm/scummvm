@@ -1071,6 +1071,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "fantasystudio",		"Fantasy Studio" }, // RPG Maker-style creation toolkit
 	{ "fototune",			"FotoTune Multimedia Show" },
 	{ "fukuda",				"Fukuda Shigeo Retrospective Collection" },
+	{ "fukuokagoround",		"Fukuoka Go-Round" },
 	{ "furbydentaku",		"ファービー電卓" },								// Furby Calculator
 	{ "futarinoryori",		"ふたりの料理物語" },								// A Tale of Two Chefs
 	{ "futurepromotion",	"Towa Tei: Future Promotion" },
@@ -3691,6 +3692,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Bilingual Japanese/English
 	MACGAME1("fukuda", "", "Mac/FUKUDA",  "0b55676d539ba5e29560e7c4da4fbad6", 483187, 404),
 	WINGAME1t("fukuda", "", "WIN/MAIN/FUKUDA.EXE",  "71eec68c19354b67badc7c82f159374b", 739951, 404),
+
+	MACGAME2_l("fukuokagoround", "", "Fukuoka Go-Round",  "0c7bbb4b24823e5ab871cb4c1d6f3710", 484167, "shared.dir", "b83bfaec3666b328ec743e074a94115f", 20900286, Common::JA_JPN, 404),
+	WINGAME2t_l("fukuokagoround", "", "FGR.EXE",  "dc2da038ba67c2bd2f5bb31b97261db9", 5293611, "SHARED.DIR", "6bf95a48f366bdf8af3a198c7b723c77", 16038266, Common::JA_JPN, 404),
 
 	// Original filename is ・ふたりの料理物語
 	MACDEMO1_l("futarinoryori", "Demo", "A Tale of Two Chefs", "22815cf659b911c4e07d0015cac5d98f", 301681, Common::JA_JPN, 400),

@@ -196,20 +196,45 @@ void Window::probeMacBinary(MacArchive *archive) {
 Archive *Window::openMainArchive(const Common::String movie) {
 	debug(1, "openMainArchive(\"%s\")", movie.c_str());
 
+	// If the archive is already open, don't reopen it;
+	// just init from the existing archive. This prevents errors that
+	// can happen when trying to load the same archive more than once.
+	if (g_director->_allOpenResFiles.contains(movie)) {
+		_mainArchive = g_director->_allOpenResFiles.getVal(movie);
+
+		if (g_director->getPlatform() == Common::kPlatformWindows) {
+			return loadEXE(movie);
+		} else {
+			probeProjector(movie);
+			return loadMac(movie);
+		}
+	}
+
 	_mainArchive = g_director->createArchive();
 
 	if (!_mainArchive->openFile(movie)) {
-		delete _mainArchive;
-		_mainArchive = nullptr;
+		if (!SearchMan.hasFile(movie)) {
+			delete _mainArchive;
+			_mainArchive = nullptr;
 
-		warning("openMainArchive(): Could not open '%s'", movie.c_str());
-		return nullptr;
+			warning("openMainArchive(): Could not open '%s'", movie.c_str());
+			return nullptr;
+		} else {
+			warning("openMainArchive(): Could not open '%s'; trying EXE", movie.c_str());
+
+			if (g_director->getPlatform() == Common::kPlatformWindows) {
+				return loadEXE(movie);
+			} else {
+				probeProjector(movie);
+				return loadMac(movie);
+			}
+		}
 	}
 
 	return _mainArchive;
 }
 
-void Window::loadEXE(const Common::String movie) {
+Archive *Window::loadEXE(const Common::String movie) {
 	Common::SeekableReadStream *iniStream = SearchMan.createReadStreamForMember("LINGO.INI");
 	if (iniStream) {
 		char *script = (char *)calloc(iniStream->size() + 1, 1);
@@ -229,7 +254,7 @@ void Window::loadEXE(const Common::String movie) {
 
 	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(Common::Path(movie, g_director->_dirSeparator));
 	if (!exeStream)
-		error("Failed to open EXE '%s'", g_director->getEXEName().c_str());
+		return nullptr;
 
 	uint32 initialTag = exeStream->readUint32LE();
 	if (initialTag == MKTAG('R', 'I', 'F', 'X') || initialTag == MKTAG('X', 'F', 'I', 'R')) {
@@ -239,11 +264,11 @@ void Window::loadEXE(const Common::String movie) {
 		_mainArchive = new RIFFArchive();
 
 		if (!_mainArchive->openStream(exeStream, 0))
-			error("Failed to load RIFF");
+			return nullptr;
 	} else {
 		Common::WinResources *exe = Common::WinResources::createFromEXE(movie);
 		if (!exe)
-			error("Failed to open EXE '%s'", g_director->getEXEName().c_str());
+			return nullptr;
 
 		const Common::Array<Common::WinResourceID> versions = exe->getIDList(Common::kWinVersion);
 		for (uint i = 0; i < versions.size(); i++) {
@@ -276,12 +301,17 @@ void Window::loadEXE(const Common::String movie) {
 		} else if (g_director->getVersion() >= 200) {
 			loadEXEv3(exeStream);
 		} else {
-			error("Unhandled Windows EXE version %d", g_director->getVersion());
+			warning("Unhandled Windows EXE version %d", g_director->getVersion());
+			return nullptr;
 		}
 	}
 
-	if (_mainArchive)
+	if (_mainArchive) {
 		_mainArchive->setPathName(movie);
+		return _mainArchive;
+	} else {
+		return nullptr;
+	}
 }
 
 void Window::loadEXEv3(Common::SeekableReadStream *stream) {
@@ -426,15 +456,17 @@ void Window::loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset) {
 		error("Failed to load RIFX from EXE");
 }
 
-void Window::loadMac(const Common::String movie) {
+Archive *Window::loadMac(const Common::String movie) {
 	if (g_director->getVersion() < 400) {
 		// The data is part of the resource fork of the executable
-		openMainArchive(movie);
+		return openMainArchive(movie);
 	} else {
 		// The RIFX is located in the data fork of the executable
 		Common::SeekableReadStream *dataFork = Common::MacResManager::openFileOrDataFork(Common::Path(movie, g_director->_dirSeparator));
-		if (!dataFork)
-			error("Failed to open Mac binary '%s'", movie.c_str());
+		if (!dataFork) {
+			warning("Failed to open Mac binary '%s'", movie.c_str());
+			return nullptr;
+		}
 		_mainArchive = new RIFXArchive();
 		_mainArchive->setPathName(movie);
 
@@ -456,6 +488,8 @@ void Window::loadMac(const Common::String movie) {
 			delete _currentMovie;
 			_currentMovie = nullptr;
 		}
+
+		return _mainArchive;
 	}
 }
 
