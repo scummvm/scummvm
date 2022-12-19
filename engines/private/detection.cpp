@@ -190,11 +190,11 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"private-eye", // MacOS release (US) uninstalled
-		_s("Compressed game detected. Please uncompress it as specified in the game description on our Wiki"),
-		AD_ENTRY1s("Private Eye Installer", "02533427ebdf26d5dd12cee8e9f4de4d", 1647309),
+		0,
+		AD_ENTRY1s("Private Eye Installer", "d:02533427ebdf26d5dd12cee8e9f4de4d", 1647309),
 		Common::EN_USA,
 		Common::kPlatformMacintosh,
-		ADGF_UNSUPPORTED,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
