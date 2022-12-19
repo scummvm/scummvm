@@ -147,6 +147,9 @@ bool StuffItArchive::open(Common::SeekableReadStream *stream) {
 		byte fileNameLength = _stream->readByte();
 		Common::String name;
 
+		if (fileNameLength > 63)
+			error("File name length too long in stuffit archive: %d at 0x%x", fileNameLength, (int) (_stream->pos() - 3));
+
 		for (byte i = 0; i < fileNameLength; i++)
 			name += (char)_stream->readByte();
 
