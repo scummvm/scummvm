@@ -103,9 +103,12 @@ enum GameSupportLevel {
  */
 
 enum MD5Properties {
-	kMD5Head		= 0 << 1,	// the MD5 is calculated from the head, default
-	kMD5Tail		= 1 << 1,	// the MD5 is calculated from the tail
-	kMD5MacResFork	= 1 << 2	// the MD5 is calculated from the Mac Resource fork (head or tail)
+	kMD5Head		 = 0 << 1,	// the MD5 is calculated from the head, default
+	kMD5Tail		 = 1 << 1,	// the MD5 is calculated from the tail
+	kMD5MacResFork           = 1 << 2,	// the MD5 is calculated from the Mac Resource fork (no fall back) (head or tail)
+	kMD5MacDataFork	         = 1 << 3,	// the MD5 is calculated from the Mac Data fork (head or tail)
+	kMD5MacResOrDataFork     = kMD5MacResFork | kMD5MacDataFork,	// the MD5 is calculated from the Mac Resource fork falling back to data fork (head or tail). Deprecated.
+	kMD5MacMask              = kMD5MacResFork | kMD5MacDataFork,    // Mask for mac type
 };
 
 char md5PropToCacheChar(MD5Properties val);

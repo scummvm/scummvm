@@ -166,15 +166,32 @@ Common::U32String DetectionResults::generateUnknownGameReport(bool translate, ui
 }
 
 char md5PropToCacheChar(MD5Properties flags) {
-	if (flags & kMD5MacResFork) {
+	switch (flags & kMD5MacMask) {
+	case kMD5MacDataFork: {
+		if (flags & kMD5Tail)
+			return 'd';
+		return 'z';
+	}
+
+	case kMD5MacResOrDataFork: {
 		if (flags & kMD5Tail)
 			return 'e';
 		return 'm';
 	}
-	if (flags & kMD5Tail)
-		return 't';
 
-	return 'f';
+	case kMD5MacResFork: {
+		if (flags & kMD5Tail)
+			return 'x';
+		return 'r';
+	}
+
+	default: {
+		if (flags & kMD5Tail)
+			return 't';
+
+		return 'f';
+	}
+	}
 }
 
 Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, bool translate, bool fullPath, uint32 wordwrapAt) {

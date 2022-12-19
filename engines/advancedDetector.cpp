@@ -190,16 +190,6 @@ DetectedGame AdvancedMetaEngineDetection::toDetectedGame(const ADDetectedGame &a
 	game.hasUnknownFiles = adGame.hasUnknownFiles;
 	game.matchedFiles = adGame.matchedFiles;
 
-	// Now specify the computation method for each file entry.
-	// TODO: This could be potentially overridden by use of upper part of adGame.fileType
-	// so, individual files could have their own computation method
-	for (FilePropertiesMap::iterator file = game.matchedFiles.begin(); file != game.matchedFiles.end(); ++file) {
-		if (desc->flags & ADGF_MACRESFORK)
-			file->_value.md5prop = (MD5Properties)(file->_value.md5prop | kMD5MacResFork);
-		if (desc->flags & ADGF_TAILMD5)
-			file->_value.md5prop = (MD5Properties)(file->_value.md5prop | kMD5Tail);
-	}
-
 	if (extraInfo && !extraInfo->targetID.empty()) {
 		game.preferredTarget = generatePreferredTarget(desc, _maxAutogenLength, extraInfo->targetID);
 	} else {
@@ -518,7 +508,7 @@ static MD5Properties gameFlagsToDefaultMD5Props(uint32 flags) {
 	MD5Properties ret = kMD5Head;
 
 	if (flags & ADGF_MACRESFORK) {
-		ret = (MD5Properties) (ret | kMD5MacResFork);
+		ret = (MD5Properties) (ret | kMD5MacResOrDataFork);
 	}
 
 	if (flags & ADGF_TAILMD5) {
@@ -556,28 +546,40 @@ bool AdvancedMetaEngine::getFilePropertiesExtern(uint md5Bytes, const FileMap &a
 }
 
 static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::FileMap &allFiles, MD5Properties md5prop, const Common::String &fname, FileProperties &fileProps) {
-	if (md5prop & kMD5MacResFork) {
+	if (md5prop & (kMD5MacResFork | kMD5MacDataFork)) {
 		FileMapArchive fileMapArchive(allFiles);
+		bool is_legacy = ((md5prop & kMD5MacMask) == kMD5MacResOrDataFork);
+		if (md5prop & kMD5MacResFork) {
+			Common::MacResManager macResMan;
 
-		Common::MacResManager macResMan;
+			if (!macResMan.open(fname, fileMapArchive))
+				return false;
 
-		if (!macResMan.open(fname, fileMapArchive))
-			return false;
+			fileProps.md5 = macResMan.computeResForkMD5AsString(md5Bytes, ((md5prop & kMD5Tail) != 0));
+			fileProps.size = macResMan.getResForkDataSize();
 
-		fileProps.md5 = macResMan.computeResForkMD5AsString(md5Bytes, ((md5prop & kMD5Tail) != 0));
-		fileProps.size = macResMan.getResForkDataSize();
-
-		if (fileProps.size != 0)
-			return true;
-
-		Common::SeekableReadStream *dataFork = Common::MacResManager::openFileOrDataFork(fname, fileMapArchive);
-		if (dataFork && dataFork->size()) {
-			fileProps.size = dataFork->size();
-			fileProps.md5 = Common::computeStreamMD5AsString(*dataFork, md5Bytes);
-			delete dataFork;
-			return true;
+			if (fileProps.size != 0) {
+				fileProps.md5prop = (MD5Properties)((md5prop & kMD5Tail) | kMD5MacResFork);
+				return true;
+			}
 		}
-		delete dataFork;
+
+		if (md5prop & kMD5MacDataFork) {
+			Common::SeekableReadStream *dataFork = Common::MacResManager::openFileOrDataFork(fname, fileMapArchive);
+			// Logically 0-sized data fork is valid but legacy code continues fallback
+			if (dataFork && (dataFork->size() || !is_legacy)) {
+				fileProps.size = dataFork->size();
+				fileProps.md5 = Common::computeStreamMD5AsString(*dataFork, md5Bytes);
+				fileProps.md5prop = (MD5Properties)((md5prop & kMD5Tail) | kMD5MacDataFork);
+				delete dataFork;
+				return true;
+			}
+			delete dataFork;
+		}
+
+		// In modern case stop here
+		if (!is_legacy)
+			return false;
 	}
 
 	if (!allFiles.contains(fname))
@@ -595,6 +597,7 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 
 	fileProps.size = testFile.size();
 	fileProps.md5 = Common::computeStreamMD5AsString(testFile, md5Bytes);
+	fileProps.md5prop = (MD5Properties) (md5prop & kMD5Tail);
 	return true;
 }
 
