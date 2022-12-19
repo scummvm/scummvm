@@ -258,6 +258,18 @@ void DrillerEngine::loadAssetsDemo() {
 			error("Failed to open 'soundfx' executable for AtariST demo");
 
 		loadSoundsFx(&file, 0, 25);
+	} else if (isDOS()) {
+		_renderMode = Common::kRenderCGA; // DOS demos is CGA only
+		loadBundledImages();
+		file.open("d2");
+		if (!file.isOpen())
+			error("Failed to open 'd2' file");
+
+		loadFonts(&file, 0x4eb0);
+		loadMessagesFixedSize(&file, 0x636, 14, 20);
+		load8bitBinary(&file, 0x55b0, 4);
+
+		file.close();
 	} else
 		error("Unsupported demo for Driller");
 
