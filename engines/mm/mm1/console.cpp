@@ -328,7 +328,7 @@ bool Console::cmdCast(int argc, const char **argv) {
 
 bool Console::cmdEncounter(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("encounter <monster-num> [<level>, <encounter type>]\n");
+		debugPrintf("encounter <monster-num> [<level>, <# monsters>, <encounter type>]\n");
 		return true;
 
 	} else {
@@ -342,13 +342,15 @@ bool Console::cmdEncounter(int argc, const char **argv) {
 		if (level < 1 || level >= 15)
 			level = 1;
 
-		int encType = (argc > 3) ? strToInt(argv[2]) :
+		int count = (argc > 3) ? strToInt(argv[3]) : 1;
+		int encType = (argc > 4) ? strToInt(argv[2]) :
 			Game::NORMAL_ENCOUNTER;
 		if (encType != -1 || encType == 0 || encType == 1)
 			enc._encounterType = (Game::EncounterType)encType;
 
 		enc.clearMonsters();
-		enc.addMonster(monsterNum, level);
+		for (int i = 0; i < count; ++i)
+			enc.addMonster(monsterNum, level);
 
 		enc._manual = true;
 		enc._levelIndex = 80;
