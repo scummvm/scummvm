@@ -382,7 +382,7 @@ public:
 	}
 
 	/** Change the size of the array and initialize new elements that exceed the
-	 * current array's size with copies of value. */
+	 *  current array's size with copies of value. */
 	void resize(size_type newSize, const T value) {
 		reserve(newSize);
 
