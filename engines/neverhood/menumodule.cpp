@@ -399,7 +399,7 @@ uint32 MainMenu::handleMessage(int messageNum, const MessageParam &param, Entity
 	return 0;
 }
 
-static const uint32 kCreditsSceneFileHashes[] = {
+static const uint32 kCreditsSceneFileHashesIntl[] = {
 	0x6081128C, 0x608112BC, 0x608112DC,
 	0x6081121C, 0x6081139C, 0x6081109C,
 	0x6081169C, 0x60811A9C, 0x6081029C,
@@ -407,10 +407,27 @@ static const uint32 kCreditsSceneFileHashes[] = {
 	0x008112DC, 0x0081121C, 0x0081139C,
 	0x0081109C, 0x0081169C, 0x00811A9C,
 	0x0081029C, 0x0081329C, 0xC08112BC,
-	0xC08112DC, 0xC081121C, 0xC081139C,
-	0
+	0xC08112DC, 0xC081121C
 };
 
+static const uint32 kCreditsSceneFileHashesJp[] = {
+	0xC183121C, 0xC283121C, 0xC483121C, 0xC883121C
+};
+
+static uint32 getCreditFileHash(NeverhoodEngine *vm, int num) {
+	if (num < ARRAYSIZE(kCreditsSceneFileHashesIntl))
+		return kCreditsSceneFileHashesIntl[num];
+	num -= ARRAYSIZE(kCreditsSceneFileHashesIntl);
+	if (vm->getLanguage() == Common::Language::JA_JPN) {
+		if (num < ARRAYSIZE(kCreditsSceneFileHashesJp))
+			return kCreditsSceneFileHashesJp[num];
+		num -= ARRAYSIZE(kCreditsSceneFileHashesJp);
+	}
+
+	if (num == 0)
+		return 0xC081139C;
+	return 0;
+}
 CreditsScene::CreditsScene(NeverhoodEngine *vm, Module *parentModule, bool canAbort)
 	: Scene(vm, parentModule), _canAbort(canAbort), _screenIndex(0), _ticksDuration(0),
 	_countdown(216) {
@@ -437,22 +454,25 @@ CreditsScene::~CreditsScene() {
 void CreditsScene::update() {
 	Scene::update();
 	if (_countdown != 0) {
-		if (_screenIndex == 23 && _vm->_system->getMillis() > _ticksTime)
+		int lastScreen = (_vm->getLanguage() == Common::Language::JA_JPN)
+			? ARRAYSIZE(kCreditsSceneFileHashesIntl) + ARRAYSIZE(kCreditsSceneFileHashesJp)
+			: ARRAYSIZE(kCreditsSceneFileHashesIntl);
+		if (_screenIndex == lastScreen && _vm->_system->getMillis() > _ticksTime)
 			leaveScene(0);
 		else if ((--_countdown) == 0) {
-			++_screenIndex;
-			if (kCreditsSceneFileHashes[_screenIndex] == 0)
+			uint32 fileHash = getCreditFileHash(_vm, ++_screenIndex);
+			if (fileHash == 0)
 				leaveScene(0);
 			else {
-				_background->load(kCreditsSceneFileHashes[_screenIndex]);
-				_palette->addPalette(kCreditsSceneFileHashes[_screenIndex], 0, 256, 0);
+				_background->load(fileHash);
+				_palette->addPalette(fileHash, 0, 256, 0);
 				if (_screenIndex < 5)
 					_countdown = 192;
 				else if (_screenIndex < 15)
 					_countdown = 144;
 				else if (_screenIndex < 16)
 					_countdown = 216;
-				else if (_screenIndex < 23)
+				else if (_screenIndex < lastScreen)
 					_countdown = 144;
 				else
 					_countdown = 1224;
