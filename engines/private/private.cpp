@@ -32,6 +32,8 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "common/timer.h"
+#include "common/macresman.h"
+#include "common/compression/stuffit.h"
 #include "engines/util.h"
 #include "image/bmp.h"
 
@@ -134,43 +136,53 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 	Common::SeekableReadStream *file = nullptr;
 
 	if (isDemo() && test->open("SUPPORT/ASSETS/DEMOGAME.WIN"))
-		file = test;
-	else if (isDemo() && test->open("SUPPORT/DEMOGAME.MAC"))
-		file = test;
-	else if (test->open("SUPPORT/ASSETS/GAME.WIN")) {
-		file = test;
-	} else if (test->open("SUPPORT/GAME.MAC")) {
-		file = test;
-	} else {
-		delete test;
-		if (!_installerArchive.open("SUPPORT/ASSETS.Z"))
-			error("Failed to open SUPPORT/ASSETS.Z");
-		// if the full game is used
-		if (!isDemo()) {
-			if (_installerArchive.hasFile("GAME.DAT"))
-				file = _installerArchive.createReadStreamForMember("GAME.DAT");
-			else if (_installerArchive.hasFile("GAME.WIN"))
-				file = _installerArchive.createReadStreamForMember("GAME.WIN");
-			else
-				error("Unknown version");
-		} else {
-			// if the demo from archive.org is used
-			if (_installerArchive.hasFile("GAME.TXT"))
-				file = _installerArchive.createReadStreamForMember("GAME.TXT");
+		return test;
 
-			// if the demo from the full retail CDROM is used
-			else if (_installerArchive.hasFile("DEMOGAME.DAT"))
-				file = _installerArchive.createReadStreamForMember("DEMOGAME.DAT");
-			else if (_installerArchive.hasFile("DEMOGAME.WIN"))
-				file = _installerArchive.createReadStreamForMember("DEMOGAME.WIN");
-			else {
-				error("Unknown version");
-			}
-		}
+	if (isDemo() && test->open("SUPPORT/DEMOGAME.MAC"))
+		return test;
+	if (test->open("SUPPORT/ASSETS/GAME.WIN"))
+		return test;
+	if (test->open("SUPPORT/GAME.MAC"))
+		return test;
+
+	delete test;
+
+	file = Common::MacResManager::openFileOrDataFork(isDemo() ? "Private Eye Demo Installer" : "Private Eye Installer");
+	if (file) {
+		Common::Archive *s = createStuffItArchive(file);
+		Common::SeekableReadStream *file2 = nullptr;
+		if (s)
+			file2 = s->createReadStreamForMember(isDemo() ? "demogame.mac" : "game.mac");
+		// file2 is enough to keep valid reference
+		delete file;
+		if (file2)
+			return file2;
 	}
-	if (file == nullptr)
+
+	if (!_installerArchive.open("SUPPORT/ASSETS.Z"))
+		error("Failed to open SUPPORT/ASSETS.Z");
+	// if the full game is used
+	if (!isDemo()) {
+		if (_installerArchive.hasFile("GAME.DAT"))
+			return _installerArchive.createReadStreamForMember("GAME.DAT");
+		if (_installerArchive.hasFile("GAME.WIN"))
+			return _installerArchive.createReadStreamForMember("GAME.WIN");
 		error("Unknown version");
-	return file;
+		return nullptr;
+	}
+
+	// if the demo from archive.org is used
+	if (_installerArchive.hasFile("GAME.TXT"))
+		return _installerArchive.createReadStreamForMember("GAME.TXT");
+
+	// if the demo from the full retail CDROM is used
+	if (_installerArchive.hasFile("DEMOGAME.DAT"))
+		return _installerArchive.createReadStreamForMember("DEMOGAME.DAT");
+	if (_installerArchive.hasFile("DEMOGAME.WIN"))
+		return _installerArchive.createReadStreamForMember("DEMOGAME.WIN");
+
+	error("Unknown version");
+	return nullptr;
 }
 
 Common::Error PrivateEngine::run() {
