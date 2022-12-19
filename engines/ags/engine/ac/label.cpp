@@ -54,8 +54,8 @@ void Label_SetText(GUILabel *labl, const char *newtx) {
 
 int Label_GetTextAlignment(GUILabel *labl) {
 	return (_G(loaded_game_file_version) >= kGameVersion_350) ?
-		labl->TextAlignment :
-		GetLegacyGUIAlignment(labl->TextAlignment);
+		(int)labl->TextAlignment :
+		(int)GetLegacyGUIAlignment(labl->TextAlignment);
 }
 
 void Label_SetTextAlignment(GUILabel *labl, int align) {
