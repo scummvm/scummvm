@@ -376,6 +376,9 @@ void DrillerEngine::loadAssetsFullGame() {
 
 		if (!file.isOpen())
 			error("Failed to open DRILLC.EXE");
+
+		loadFonts(&file, 0x07a4a);
+		loadMessagesFixedSize(&file, 0x2585, 14, 20);
 		load8bitBinary(&file, 0x7bb0, 4);
 	} else
 		error("Invalid or unsupported render mode %s for Driller", Common::getRenderModeDescription(_renderMode));

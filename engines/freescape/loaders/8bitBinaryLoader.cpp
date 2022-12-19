@@ -317,11 +317,6 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	// skyColor = file->readByte() & 15;
 	// debugC(1, kFreescapeDebugParser, "Colors: %d %d", skyColor, groundColor);
 
-	if (_renderMode == Common::kRenderCGA) {
-		skyColor = skyColor % 4;
-		groundColor = groundColor % 4;
-	}
-
 	// Graphics::PixelBuffer *palette = getPalette(areaNumber, ci1, ci2, skyColor, groundColor, ncolors);
 
 	debugC(1, kFreescapeDebugParser, "Area %d", areaNumber);
