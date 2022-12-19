@@ -61,7 +61,8 @@ enum AccessDebugChannels {
 	kDebugEngine = 1 << 0,
 	kDebugUtils = 1 << 1,
 	kDebugGraphics = 1 << 2,
-	kDebugScript = 1 << 3
+	kDebugScript = 1 << 3,
+	kDebugFight = 1 << 4
 };
 
 class EfhGraphicsStruct {
@@ -354,13 +355,10 @@ private:
 	void displayImp1Text(int16 textId);
 	bool sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId);
 	int8 sub15581(int16 mapPosX, int16 mapPosY, int16 arg4);
-	bool isTeamMemberStatusNormal(int16 id);
 	void sub1CDFA();
 	void redrawScreenForced();
 	int16 selectMonsterGroup();
-	int16 sub1C956(int16 charId, int16 unkFied18Val, bool arg4);
 	void sub1CAB6(int16 charId);
-	bool sub1CB27();
 	void sub1BE9A(int16 monsterId);
 	int16 getTeamMonsterAnimId();
 	int16 countMonsterGroupMembers(int16 monsterGroup);
@@ -372,7 +370,6 @@ private:
 	bool checkSpecialItemsOnCurrentPlace(int16 itemId);
 	bool hasAdequateDefense(int16 monsterId, uint8 attackType);
 	bool hasAdequateDefense_2(int16 charId, uint8 attackType);
-	void getDeathTypeDescription(int16 attackerId, int16 victimId);
 	bool characterSearchesMonsterCorpse(int16 charId, int16 monsterId);
 	void getXPAndSearchCorpse(int16 charId, Common::String namePt1, Common::String namePt2, int16 monsterId);
 	void addReactionText(int16 id);
@@ -413,6 +410,10 @@ private:
 	void reset_stru32686();
 	void sub1BE89(int16 monsterId);
 	void resetTeamMonsterIdArray();
+	bool isTeamMemberStatusNormal(int16 id);
+	void getDeathTypeDescription(int16 attackerId, int16 victimId);
+	int16 sub1C956(int16 charId, int16 unkFied18Val, bool arg4);
+	bool sub1CB27();
 
 	// Files
 	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);
