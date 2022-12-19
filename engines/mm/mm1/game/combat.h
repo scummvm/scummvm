@@ -53,7 +53,7 @@ protected:
 	int _advanceIndex;
 	int _handicapThreshold, _handicapParty;
 	int _handicapMonsters, _handicapDelta;
-	int _attackerVal;
+	int _attackersCount;
 	int _totalExperience;
 	Common::String _monsterName;
 	bool _monstersResistSpells;
