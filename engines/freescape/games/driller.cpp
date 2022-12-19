@@ -22,6 +22,7 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/random.h"
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
@@ -627,8 +628,9 @@ void DrillerEngine::pressedKey(const int keycode) {
 			insertTemporaryMessage(_messagesList[9], _countdown - 4);
 			return;
 		}
-
-		insertTemporaryMessage(_messagesList[5], _countdown - 4);
+		Common::String maxScoreMessage = _messagesList[5];
+		maxScoreMessage.replace(2, 6, Common::String::format("%d", _areaScores[_currentArea->getAreaID()]));
+		insertTemporaryMessage(maxScoreMessage, _countdown - 4);
 		Common::String successMessage = _messagesList[6];
 		successMessage.replace(0, 4, Common::String::format("%d", int(success)));
 		while (successMessage.size() < 14)
@@ -876,6 +878,9 @@ void DrillerEngine::initGameState() {
 		if (_drilledAreas[it._key] != kDrillerNoRig)
 			removeDrill(it._value);
 		_drilledAreas[it._key] = kDrillerNoRig;
+		if (it._key != 255) {
+			_areaScores[it._key] = (10 + _rnd->getRandomNumber(89)) * 1000;
+		}
 	}
 
 	_gameStateVars[k8bitVariableEnergy] = _initialTankEnergy;
@@ -947,6 +952,7 @@ Common::Error DrillerEngine::saveGameStreamExtended(Common::WriteStream *stream,
 			continue;
 		stream->writeUint16LE(it._key);
 		stream->writeUint32LE(_drilledAreas[it._key]);
+		stream->writeUint32LE(_areaScores[it._key]);
 	}
 
 	return Common::kNoError;
@@ -961,6 +967,8 @@ Common::Error DrillerEngine::loadGameStreamExtended(Common::SeekableReadStream *
 		if (_drilledAreas[key] == kDrillerNoRig)
 			if (drillDeployed(_areaMap[key]))
 				removeDrill(_areaMap[key]);
+
+		_areaScores[key] = stream->readUint32LE();
 	}
 
 	return Common::kNoError;

@@ -79,9 +79,6 @@ struct soundFx {
 };
 
 class FreescapeEngine : public Engine {
-private:
-	// We need random numbers
-	Common::RandomSource *_rnd;
 
 public:
 	FreescapeEngine(OSystem *syst, const ADGameDescription *gd);
@@ -331,6 +328,9 @@ public:
 	// Cheats
 	bool _useExtendedTimer;
 	bool _disableSensors;
+
+	// Random
+	Common::RandomSource *_rnd;
 };
 
 enum DrillerReleaseFlags {
@@ -349,6 +349,8 @@ public:
 	uint32 _initialTankShield;
 
 	bool _useAutomaticDrilling;
+
+	Common::HashMap<uint16, uint32> _areaScores;
 
 	void initGameState() override;
 	bool checkIfGameEnded() override;
