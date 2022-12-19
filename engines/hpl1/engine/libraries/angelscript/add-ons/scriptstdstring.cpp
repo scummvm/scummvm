@@ -104,27 +104,6 @@ CStdStringFactory *GetStdStringFactorySingleton() {
 	return stringFactory;
 }
 
-class CStdStringFactoryCleaner {
-public:
-	~CStdStringFactoryCleaner() {
-		if (stringFactory) {
-			// Only delete the string factory if the stringCache is empty
-			// If it is not empty, it means that someone might still attempt
-			// to release string constants, so if we delete the string factory
-			// the application might crash. Not deleting the cache would
-			// lead to a memory leak, but since this is only happens when the
-			// application is shutting down anyway, it is not important.
-			if (stringFactory->stringCache.empty()) {
-				delete stringFactory;
-				stringFactory = 0;
-			}
-		}
-	}
-};
-
-static CStdStringFactoryCleaner cleaner;
-
-
 static void ConstructString(Common::String *thisPointer) {
 	new (thisPointer) Common::String();
 }
@@ -1042,6 +1021,13 @@ void RegisterStdString(asIScriptEngine *engine) {
 		RegisterStdString_Generic(engine);
 	else
 		RegisterStdString_Native(engine);
+}
+
+void cleanupRegisteredString() {
+	if (stringFactory && stringFactory->stringCache.empty()) {
+		delete stringFactory;
+		stringFactory = nullptr;
+	}
 }
 
 END_AS_NAMESPACE
