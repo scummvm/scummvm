@@ -116,7 +116,7 @@ void Combat::draw() {
 		return;
 	case MONSTER_FLEES:
 	case MONSTER_WANDERS:
-		writeMonsterAction();
+		writeMonsterAction(_mode == MONSTER_FLEES);
 		delaySeconds(3);
 		return;
 	case MONSTER_SPELL:
@@ -622,11 +622,12 @@ void Combat::writeMonsterEffects() {
 	writeMonsters();
 }
 
-void Combat::writeMonsterAction() {
-	writeChar(12, _monsterIndex, 0xC1);
+void Combat::writeMonsterAction(bool flees) {
 	resetBottom();
 	writeString(0, 20, _monsterName);
-	writeString(STRING["dialogs.combat.monster_flees"]);
+	writeString(STRING[flees ?
+		"dialogs.combat.monster_flees" : "dialogs.combat.monster_wanders"
+	]);
 }
 
 void Combat::writeMonsterSpell() {

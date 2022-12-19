@@ -117,7 +117,7 @@ private:
 	/**
 	 * Handles a monster action
 	 */
-	void writeMonsterAction();
+	void writeMonsterAction(bool flees);
 
 	/**
 	 * Write out message from a monster casting a spell
