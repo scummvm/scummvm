@@ -2449,8 +2449,8 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit)) {
 		_guiReturnToLauncherAtExit = new CheckboxWidget(boss, prefix + "ReturnToLauncherAtExit",
-			_("Always return to the launcher when leaving a game"),
-			_("Always return to the launcher when leaving a game instead of closing ScummVM.")
+			_("Return to the launcher when leaving a game"),
+			_("Return to the launcher when leaving a game instead of closing ScummVM\n(this feature is not supported by all games).")
 		);
 
 		_guiReturnToLauncherAtExit->setState(ConfMan.getBool("gui_return_to_launcher_at_exit", _domain));
