@@ -91,7 +91,9 @@ Cast::~Cast() {
 		for (Common::HashMap<int, const Stxt *>::iterator it = _loadedStxts->begin(); it != _loadedStxts->end(); ++it)
 			delete it->_value;
 
-	if (_castArchive) {
+	// There may be another open reference to the same file, in which
+	// case attempting to free it now would be dangerous.
+	if (_castArchive && !g_director->_allOpenResFiles.contains(_castArchive->getPathName())) {
 		_castArchive->close();
 		delete _castArchive;
 		_castArchive = nullptr;

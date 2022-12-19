@@ -172,13 +172,13 @@ public:
 	void probeProjector(const Common::String &movie);
 	void probeMacBinary(MacArchive *archive);
 	Archive *openMainArchive(const Common::String movie);
-	void loadEXE(const Common::String movie);
+	Archive *loadEXE(const Common::String movie);
 	void loadEXEv3(Common::SeekableReadStream *stream);
 	void loadEXEv4(Common::SeekableReadStream *stream);
 	void loadEXEv5(Common::SeekableReadStream *stream);
 	void loadEXEv7(Common::SeekableReadStream *stream);
 	void loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
-	void loadMac(const Common::String movie);
+	Archive *loadMac(const Common::String movie);
 	void loadStartMovieXLibs();
 
 	// lingo/lingo-object.cpp
