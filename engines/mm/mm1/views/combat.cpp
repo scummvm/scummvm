@@ -244,7 +244,7 @@ bool Combat::msgKeypress(const KeypressMessage &msg) {
 		case OPTION_FIGHT:
 		case OPTION_SHOOT:
 			if (msg.keycode >= Common::KEYCODE_a &&
-				msg.keycode < (int)(Common::KEYCODE_a + _remainingCount)) {
+				msg.keycode < (int)(Common::KEYCODE_a + _attackableCount)) {
 				if (_option == OPTION_FIGHT)
 					fightMonster(msg.keycode - Common::KEYCODE_a);
 				else
@@ -431,18 +431,18 @@ void Combat::writeExchangeSelect() {
 }
 
 void Combat::writeFightSelect() {
-	_remainingCount = MIN(_attackerVal, (int)_remainingMonsters.size());
+	_attackableCount = MIN(_attackersCount, (int)_remainingMonsters.size());
 
 	writeString(10, 20, Common::String::format(
-		STRING["dialogs.combat.fight_which"].c_str(), 'A' + _remainingCount - 1));
+		STRING["dialogs.combat.fight_which"].c_str(), 'A' + _attackableCount - 1));
 	escToGoBack(12, 23);
 }
 
 void Combat::writeShootSelect() {
-	_remainingCount = MIN(_attackerVal, (int)_remainingMonsters.size());
+	_attackableCount = MIN(_attackersCount, (int)_remainingMonsters.size());
 
 	writeString(10, 20, Common::String::format(
-		STRING["dialogs.combat.shoot_which"].c_str(), 'A' + _remainingCount - 1));
+		STRING["dialogs.combat.shoot_which"].c_str(), 'A' + _attackableCount - 1));
 	escToGoBack(12, 23);
 }
 
@@ -517,7 +517,7 @@ void Combat::writeMonsters() {
 	} else {
 		for (int i = 0; i < (int)_remainingMonsters.size(); ++i) {
 			_textPos = Common::Point(11, i);
-			writeChar(i < _attackerVal ? '+' : ' ');
+			writeChar(i < _attackersCount ? '+' : ' ');
 			unsigned char c = 'A' + i;
 			if ((i == _activeMonsterNum) && (_mode == MONSTER_ADVANCES ||
 				_mode == MONSTER_ATTACK || _mode == MONSTER_SPELL))

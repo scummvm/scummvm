@@ -65,7 +65,7 @@ void Combat::clear() {
 	_handicap = HANDICAP_EVEN;
 	_monsterP = nullptr;
 	_monsterIndex = _currentChar = 0;
-	_attackerVal = 0;
+	_attackersCount = 0;
 	_totalExperience = 0;
 	_advanceIndex = 0;
 	_monstersResistSpells = _monstersRegenerate = false;
@@ -180,13 +180,13 @@ void Combat::setupCanAttacks() {
 }
 
 void Combat::setupAttackerVal() {
-	_attackerVal = 0;
+	_attackersCount = 0;
 	for (uint i = 0; i < g_globals->_combatParty.size(); ++i) {
 		if (g_globals->_combatParty[i]->_canAttack)
-			++_attackerVal;
+			++_attackersCount;
 	}
 
-	_attackerVal = getRandomNumber(_attackerVal + 1) - 1;
+	_attackersCount = getRandomNumber(_attackersCount + 1) - 1;
 }
 
 void Combat::checkLeftWall() {
@@ -483,7 +483,7 @@ void Combat::updateHighestLevel() {
 }
 
 bool Combat::moveMonsters() {
-	if (_attackerVal >= (int)_remainingMonsters.size())
+	if (_attackersCount >= (int)_remainingMonsters.size())
 		return false;
 
 	bool hasAdvance = false;
@@ -661,7 +661,7 @@ void Combat::checkMonsterActions() {
 		return;
 
 	_destCharCtr = 0;
-	if (_activeMonsterNum < _attackerVal) {
+	if (_activeMonsterNum < _attackersCount) {
 		selectMonsterTarget();
 		return;
 	}
@@ -1146,7 +1146,7 @@ void Combat::destroyMonster() {
 void Combat::summonLightning() {
 	SpellsState &ss = g_globals->_spellsState;
 
-	if (_destMonsterNum < _attackerVal) {
+	if (_destMonsterNum < _attackersCount) {
 		Common::String line1 = Common::String::format("|%s| %s",
 			g_globals->_currCharacter->_name,
 			STRING["spells.casts_spell"].c_str());
@@ -1202,7 +1202,7 @@ void Combat::paralyze() {
 
 	ss._mmVal1++;
 	ss._mmVal2 = 6;
-	ss._resistanceType = _attackerVal;
+	ss._resistanceType = _attackersCount;
 	ss._newCondition = BAD_CONDITION;
 
 	iterateMonsters1();
@@ -1304,7 +1304,7 @@ void Combat::identifyMonster() {
 void Combat::fireball() {
 	SpellsState &ss = g_globals->_spellsState;
 
-	if (_destMonsterNum < _attackerVal) {
+	if (_destMonsterNum < _attackersCount) {
 		Common::String line1 = Common::String::format("|%s| %s",
 			g_globals->_currCharacter->_name,
 			STRING["spells.casts_spell"].c_str());
@@ -1363,7 +1363,7 @@ void Combat::weaken() {
 
 bool Combat::web() {
 	SpellsState &ss = g_globals->_spellsState;
-	if (_destMonsterNum < _attackerVal)
+	if (_destMonsterNum < _attackersCount)
 		return false;
 
 	ss._mmVal1++;
@@ -1377,10 +1377,10 @@ bool Combat::web() {
 
 bool Combat::acidRain() {
 	SpellsState &ss = g_globals->_spellsState;
-	if (_attackerVal >= (int)_remainingMonsters.size())
+	if (_attackersCount >= (int)_remainingMonsters.size())
 		return false;
 
-	_destMonsterNum = _attackerVal;
+	_destMonsterNum = _attackersCount;
 	monsterSetPtr(_destMonsterNum);
 	monsterIndexOf();
 
@@ -1542,7 +1542,7 @@ void Combat::selectMonsterTarget() {
 	// means enabling the whole party to be able to attack directly
 	for (uint i = 0; i < g_globals->_combatParty.size(); ++i)
 		g_globals->_combatParty[i]->_canAttack = true;
-	_attackerVal = g_globals->_party.size() * 2;
+	_attackersCount = g_globals->_party.size() * 2;
 
 	setMode(INFILTRATION);
 }
