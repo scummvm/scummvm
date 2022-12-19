@@ -128,7 +128,7 @@ bool StuffItArchive::open(Common::SeekableReadStream *stream) {
 	}
 
 	/* uint16 fileCount = */ _stream->readUint16BE();
-	/* uint32 archiveSize = */ _stream->readUint32BE();
+	uint32 archiveSize = _stream->readUint32BE();
 
 	// Some sort of second magic number
 	if (_stream->readUint32BE() != MKTAG('r', 'L', 'a', 'u')) {
@@ -140,7 +140,7 @@ bool StuffItArchive::open(Common::SeekableReadStream *stream) {
 
 	_stream->skip(7); // unknown
 
-	while (_stream->pos() < _stream->size() && !_stream->eos()) {
+	while (_stream->pos() < _stream->size() && !_stream->eos() && _stream->pos() < archiveSize) {
 		byte resForkCompression = _stream->readByte();
 		byte dataForkCompression = _stream->readByte();
 
