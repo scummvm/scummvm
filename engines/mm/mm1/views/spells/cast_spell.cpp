@@ -148,14 +148,16 @@ void CastSpell::spellNumberEntered(uint num) {
 	}
 
 	setSpell(g_globals->_currCharacter, _spellLevel, num);
-	if (!canCast())
+	if (!canCast()) {
 		spellDone();
-	else if (hasCharTarget())
-		setState(SELECT_CHAR);
-	else
-		setState(PRESS_ENTER);
+	} else {
+		if (hasCharTarget())
+			setState(SELECT_CHAR);
+		else
+			setState(PRESS_ENTER);
 
-	draw();
+		draw();
+	}
 }
 
 bool CastSpell::msgKeypress(const KeypressMessage &msg) {
