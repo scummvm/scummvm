@@ -108,6 +108,8 @@ enum MD5Properties {
 	kMD5MacResFork	= 1 << 2	// the MD5 is calculated from the Mac Resource fork (head or tail)
 };
 
+char md5PropToCacheChar(MD5Properties val);
+
 /**
  * A record describing the properties of a file. Used on the existing
  * files while detecting a game.

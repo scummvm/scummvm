@@ -165,8 +165,7 @@ Common::U32String DetectionResults::generateUnknownGameReport(bool translate, ui
 	return ::generateUnknownGameReport(_detectedGames, translate, false, wordwrapAt);
 }
 
-// Sync with engines/advancedDetector.cpp
-static char flagsToMD5Prefix(uint32 flags) {
+char md5PropToCacheChar(MD5Properties flags) {
 	if (flags & kMD5MacResFork) {
 		if (flags & kMD5Tail)
 			return 'e';
@@ -224,7 +223,7 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 
 		// Consolidate matched files across all engines and detection entries
 		for (FilePropertiesMap::const_iterator it = game.matchedFiles.begin(); it != game.matchedFiles.end(); it++) {
-			Common::String key = Common::String::format("%c:%s", flagsToMD5Prefix(it->_value.md5prop), it->_key.c_str());
+			Common::String key = Common::String::format("%c:%s", md5PropToCacheChar(it->_value.md5prop), it->_key.c_str());
 			matchedFiles.setVal(key, it->_value);
 		}
 	}
