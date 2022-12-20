@@ -280,7 +280,7 @@ Path Path::joinComponents(const StringArray& c) {
 	String res;
 
 	for (uint i = 0; i < c.size(); i++) {
-		res += c[i];
+		res += escapePath(c[i]);
 		if (i + 1 < c.size())
 			res += DIR_SEPARATOR;
 	}
