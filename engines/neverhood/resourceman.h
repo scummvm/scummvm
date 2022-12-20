@@ -27,6 +27,7 @@
 #include "common/hashmap.h"
 #include "neverhood/neverhood.h"
 #include "neverhood/blbarchive.h"
+#include "neverhood/nhcarchive.h"
 
 namespace Neverhood {
 
@@ -39,11 +40,14 @@ private:
 	BlbArchive *archive;
 	BlbArchiveEntry *archiveEntry;
 
+	NhcArchive *nhcArchive;
+	NhcArchiveEntry *nhcArchiveEntry;
+
 	friend class ResourceHandle;
 	friend class ResourceMan;
 
 public:
-	ResourceFileEntry() : resourceHandle(-1), archive(nullptr), archiveEntry(nullptr) {}
+	ResourceFileEntry() : resourceHandle(-1), archive(nullptr), archiveEntry(nullptr), nhcArchive(nullptr), nhcArchiveEntry(nullptr) {}
 };
 
 struct Resource {
@@ -62,12 +66,38 @@ friend class ResourceMan;
 public:
 	ResourceHandle();
 	~ResourceHandle();
-	bool isValid() const { return _resourceFileEntry != NULL && _resourceFileEntry->archiveEntry != NULL; }
-	byte type() const { return isValid() ? _resourceFileEntry->archiveEntry->type : 0; };
+	bool isValid() const { return _resourceFileEntry != NULL
+			&& (_resourceFileEntry->archiveEntry != NULL
+			    || (_resourceFileEntry->nhcArchiveEntry != NULL && _resourceFileEntry->nhcArchiveEntry->isNormal())); }
+	byte type() const {
+		if (_resourceFileEntry == NULL)
+			return 0;
+		if (_resourceFileEntry->nhcArchiveEntry != NULL && _resourceFileEntry->nhcArchiveEntry->isNormal())
+			return _resourceFileEntry->nhcArchiveEntry->type;
+		if (_resourceFileEntry->archiveEntry != NULL)
+			return _resourceFileEntry->archiveEntry->type;
+		return 0;
+	}
 	const byte *data() const { return _data; }
-	uint32 size() const { return isValid() ? _resourceFileEntry->archiveEntry->size : 0; };
-	const byte *extData() const { return _extData; };
-	uint32 fileHash() const { return isValid() ? _resourceFileEntry->archiveEntry->fileHash : 0; };
+	uint32 size() const {
+		if (_resourceFileEntry == NULL)
+			return 0;
+		if (_resourceFileEntry->nhcArchiveEntry != NULL && _resourceFileEntry->nhcArchiveEntry->isNormal())
+			return _resourceFileEntry->nhcArchiveEntry->size;
+		if (_resourceFileEntry->archiveEntry != NULL)
+			return _resourceFileEntry->archiveEntry->size;
+		return 0;
+	}
+	const byte *extData() const { return _extData; }
+	uint32 fileHash() const {
+		if (_resourceFileEntry == NULL)
+			return 0;
+		if (_resourceFileEntry->nhcArchiveEntry != NULL && _resourceFileEntry->nhcArchiveEntry->isNormal())
+			return _resourceFileEntry->nhcArchiveEntry->fileHash;
+		if (_resourceFileEntry->archiveEntry != NULL)
+			return _resourceFileEntry->archiveEntry->fileHash;
+		return 0;
+	}
 protected:
 	ResourceFileEntry *_resourceFileEntry;
 	const byte *_extData;
@@ -79,9 +109,11 @@ public:
 	ResourceMan();
 	~ResourceMan();
 	void addArchive(const Common::String &filename, bool isOptional = false);
+	bool addNhcArchive(const Common::String &filename);
 	ResourceFileEntry *findEntrySimple(uint32 fileHash);
 	ResourceFileEntry *findEntry(uint32 fileHash, ResourceFileEntry **firstEntry = NULL);
 	Common::SeekableReadStream *createStream(uint32 fileHash);
+	Common::SeekableReadStream *createNhcStream(uint32 fileHash, uint32 type);
 	const ResourceFileEntry& getEntry(uint index) { return _entries[index]; }
 	uint getEntryCount() { return _entries.size(); }
 	void queryResource(uint32 fileHash, ResourceHandle &resourceHandle);
@@ -91,6 +123,7 @@ public:
 protected:
 	typedef Common::HashMap<uint32, ResourceFileEntry> EntriesMap;
 	Common::Array<BlbArchive*> _archives;
+	Common::Array<NhcArchive*> _nhcArchives;
 	EntriesMap _entries;
 	Common::HashMap<uint32, ResourceData*> _data;
 	Common::Array<Resource*> _resources;
