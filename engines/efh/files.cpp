@@ -264,10 +264,10 @@ void EfhEngine::loadNPCS() {
 	for (int i = 0; i < 99; ++i) {
 		for (int idx = 0; idx < 11; ++idx)
 			_npcBuf[i]._name[idx] = f.readByte();
-		_npcBuf[i].field_B = f.readByte();
+		_npcBuf[i].fieldB_textId = f.readByte();
 		_npcBuf[i].field_C = f.readByte();
 		_npcBuf[i].field_D = f.readByte();
-		_npcBuf[i].field_E = f.readByte();
+		_npcBuf[i].fieldE_textId = f.readByte();
 		_npcBuf[i].field_F = f.readByte();
 		_npcBuf[i].field_10 = f.readByte();
 		_npcBuf[i].field_11 = f.readByte();

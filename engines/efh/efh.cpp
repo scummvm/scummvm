@@ -104,10 +104,10 @@ void ItemStruct::init() {
 void NPCStruct::init() {
 	for (int i = 0; i < 11; ++i)
 		_name[i] =  0;
-	field_B = 0;
+	fieldB_textId = 0;
 	field_C = 0;
 	field_D = 0;
-	field_E = 0;
+	fieldE_textId = 0;
 	field_F = 0;
 	field_10 = 0;
 	field_11 = 0;
@@ -1118,8 +1118,8 @@ void EfhEngine::removeCharacterFromTeam(int16 teamMemberId) {
 	debugC(6, kDebugEngine, "removeCharacterFromTeam %d", teamMemberId);
 
 	int16 charId = _teamCharId[teamMemberId];
-	_npcBuf[charId].field12_textId = _npcBuf[charId].field_B;
-	_npcBuf[charId].field14_textId = _npcBuf[charId].field_E;
+	_npcBuf[charId].field12_textId = _npcBuf[charId].fieldB_textId;
+	_npcBuf[charId].field14_textId = _npcBuf[charId].fieldE_textId;
 	_npcBuf[charId].field_10 = _npcBuf[charId].field_C;
 	_npcBuf[charId].field_11 = _npcBuf[charId].field_D;
 
@@ -1280,7 +1280,6 @@ int16 EfhEngine::chooseCharacterToReplace() {
 int16 EfhEngine::handleCharacterJoining() {
 	debug("handleCharacterJoining");
 
-	const char strReplaceWho[13] = "Replace Who?";
 	for (uint counter = 0; counter < 3; ++counter) {
 		if (_teamCharId[counter] == -1) {
 			return counter;
@@ -1289,7 +1288,7 @@ int16 EfhEngine::handleCharacterJoining() {
 
 	for (uint counter = 0; counter < 2; ++counter) {
 		drawColoredRect(200, 112, 278, 132, 0);
-		displayCenteredString(strReplaceWho, 200, 278, 117);
+		displayCenteredString("Replace Who?", 200, 278, 117);
 		if (counter == 0)
 			displayFctFullScreen();
 	}
@@ -4742,8 +4741,8 @@ bool EfhEngine::checkMonsterCollision() {
 		if (!(_largeMapFlag && _mapMonsters[monsterId]._guess_fullPlaceId == 0xFE) && !(!_largeMapFlag && _mapMonsters[monsterId]._guess_fullPlaceId == _fullPlaceId))
 			continue;
 
-		if ((_mapMonsters[monsterId]._field_1 & 0x3F) > 0x3D
-		&& (((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) == 0x3F) || isCharacterATeamMember(_mapMonsters[monsterId]._field_1)))
+		if ((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) > 0x3D
+		&& !(((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) == 0x3F) && !isCharacterATeamMember(_mapMonsters[monsterId]._field_1)))
 			continue;
 
 		if (_mapMonsters[monsterId]._posX != _mapPosX || _mapMonsters[monsterId]._posY != _mapPosY)
