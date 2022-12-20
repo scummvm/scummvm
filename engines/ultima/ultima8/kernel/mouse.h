@@ -101,6 +101,7 @@ public:
 private:
 	static Mouse *_instance;
 	Common::Stack<MouseCursor> _cursors;
+	int _lastMouseFrame;
 
 	/**
 	 * Time mouse started flashing, or 0

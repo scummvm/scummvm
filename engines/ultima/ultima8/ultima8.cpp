@@ -581,6 +581,9 @@ Common::Error Ultima8Engine::runGame() {
 		}
 		handleDelayedEvents();
 
+		// Update the mouse
+		_mouse->update();
+
 		// Paint Screen
 		paint();
 
@@ -637,9 +640,6 @@ void Ultima8Engine::paint() {
 		debug("Ultima8Engine: Paint average %.03f millis", (float)tpaint / t);
 	}
 #endif
-
-	// Update the mouse
-	_mouse->update();
 
 	// End _painting
 	_screen->EndPainting();

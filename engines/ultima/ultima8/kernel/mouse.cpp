@@ -38,7 +38,7 @@ namespace Ultima8 {
 
 Mouse *Mouse::_instance = nullptr;
 
-Mouse::Mouse() : _flashingCursorTime(0), _mouseOverGump(0),
+Mouse::Mouse() : _lastMouseFrame(-1), _flashingCursorTime(0), _mouseOverGump(0),
 		_dragging(DRAG_NOT), _dragging_objId(0), _draggingItem_startGump(0),
 		_draggingItem_lastGump(0) {
 	_instance = this;
@@ -544,13 +544,17 @@ void Mouse::update() {
 	const Shape *mouse = gamedata->getMouse();
 	if (mouse) {
 		int frame = getMouseFrame();
-		if (frame >= 0 && (uint)frame < mouse->frameCount()) {
-			const ShapeFrame *f = mouse->getFrame(frame);
-			CursorMan.replaceCursor(f->_pixels, f->_width, f->_height, f->_xoff, f->_yoff, f->_keycolor);
-			CursorMan.replaceCursorPalette(mouse->getPalette()->_palette, 0, 256);
-			CursorMan.showMouse(true);
-		} else {
-			CursorMan.showMouse(false);
+		if (frame != _lastMouseFrame) {
+			_lastMouseFrame = frame;
+
+			if (frame >= 0 && (uint)frame < mouse->frameCount()) {
+				const ShapeFrame *f = mouse->getFrame(frame);
+				CursorMan.replaceCursor(f->_pixels, f->_width, f->_height, f->_xoff, f->_yoff, f->_keycolor);
+				CursorMan.replaceCursorPalette(mouse->getPalette()->_palette, 0, 256);
+				CursorMan.showMouse(true);
+			} else {
+				CursorMan.showMouse(false);
+			}
 		}
 	}
 }
