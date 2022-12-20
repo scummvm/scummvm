@@ -230,7 +230,6 @@ MODULE_OBJS := \
 	engine/system/Container.o \
 	engine/system/LogicTimer.o \
 	engine/system/low_level_system.o \
-	engine/system/MemoryManager.o \
 	engine/system/SerializeClass.o \
 	engine/system/String.o \
 	engine/system/System.o \
