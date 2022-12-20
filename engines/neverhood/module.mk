@@ -56,6 +56,7 @@ MODULE_OBJS = \
 	mouse.o \
 	navigationscene.o \
 	neverhood.o \
+	nhcarchive.o \
 	palette.o \
 	resource.o \
 	resourceman.o \

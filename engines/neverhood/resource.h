@@ -41,6 +41,13 @@ enum {
 	kResTypeVideo		= 10
 };
 
+enum {
+	kResNhcTypeSubFont	= 11,
+	kResNhcTypeMessages	= 12,
+	kResNhcTypeSubtitles	= 13
+};
+
+
 class SpriteResource {
 public:
 	SpriteResource(NeverhoodEngine *vm);
