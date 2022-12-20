@@ -41,7 +41,16 @@
 
 namespace hpl {
 
-tSoundEntityGlobalCallbackList cSoundEntity::mlstGobalCallbacks;
+tSoundEntityGlobalCallbackList *cSoundEntity::mlstGlobalCallbacks = nullptr;
+
+void cSoundEntity::initGlobalCallbackList()
+{
+	cSoundEntity::mlstGlobalCallbacks = new tSoundEntityGlobalCallbackList;
+}
+void cSoundEntity::finalizeGlobalCallbackList()
+{
+	delete cSoundEntity::mlstGlobalCallbacks;
+}
 
 //////////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS
@@ -380,8 +389,8 @@ void cSoundEntity::UpdateLogic(float afTimeStep) {
 				mbPrioRemove = false;
 
 				// Call the callbacks that the sound has started.
-				tSoundEntityGlobalCallbackListIt it = mlstGobalCallbacks.begin();
-				for (; it != mlstGobalCallbacks.end(); ++it) {
+				tSoundEntityGlobalCallbackListIt it = mlstGlobalCallbacks->begin();
+				for (; it != mlstGlobalCallbacks->end(); ++it) {
 					iSoundEntityGlobalCallback *pCallback = *it;
 					pCallback->OnStart(this);
 				}
@@ -437,16 +446,16 @@ void cSoundEntity::UpdateLogic(float afTimeStep) {
 //-----------------------------------------------------------------------
 
 void cSoundEntity::AddGlobalCallback(iSoundEntityGlobalCallback *apCallback) {
-	mlstGobalCallbacks.push_back(apCallback);
+	mlstGlobalCallbacks->push_back(apCallback);
 }
 
 //-----------------------------------------------------------------------
 
 void cSoundEntity::RemoveGlobalCallback(iSoundEntityGlobalCallback *apCallback) {
-	tSoundEntityGlobalCallbackListIt it = mlstGobalCallbacks.begin();
-	for (; it != mlstGobalCallbacks.end(); ++it) {
+	tSoundEntityGlobalCallbackListIt it = mlstGlobalCallbacks->begin();
+	for (; it != mlstGlobalCallbacks->end(); ++it) {
 		if (apCallback == *it) {
-			mlstGobalCallbacks.erase(it);
+			mlstGlobalCallbacks->erase(it);
 			return;
 		}
 	}
