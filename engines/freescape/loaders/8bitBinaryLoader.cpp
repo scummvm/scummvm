@@ -130,15 +130,15 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		for (uint8 colour = 0; colour < numberOfColours / 2; colour++) {
 			uint8 data = readField(file, 8);
 			entry = data & 0xf;
-			if (_renderMode == Common::kRenderCGA)
-				entry = entry % 4; // TODO: use dithering
+			//if (_renderMode == Common::kRenderCGA)
+			//	entry = entry % 4; // TODO: use dithering
 
 			colours->push_back(entry);
 			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2 * colour, entry);
 
 			entry = data >> 4;
-			if (_renderMode == Common::kRenderCGA)
-				entry = entry % 4; // TODO: use dithering
+			//if (_renderMode == Common::kRenderCGA)
+			//	entry = entry % 4; // TODO: use dithering
 
 			colours->push_back(entry);
 			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2 * colour + 1, entry);

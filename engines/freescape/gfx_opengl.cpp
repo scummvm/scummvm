@@ -196,7 +196,7 @@ void OpenGLRenderer::renderPlayerShoot(byte color, const Common::Point position,
 	glReadPixels(g_system->getWidth() / 2, g_system->getHeight() / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel);
 	_texturePixelFormat.colorToARGB(pixel, a, r, g, b);
 	color = indexFromColor(r, g, b);
-	readFromPalette((color + 3) % 16, r, g, b);
+	readFromPalette((color + 3) % (_renderMode == Common::kRenderCGA ? 4 : 16), r, g, b);
 
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
@@ -268,6 +268,19 @@ void OpenGLRenderer::polygonOffset(bool enabled) {
 	}
 }
 
+void OpenGLRenderer::useStipple(bool enabled) {
+	if (enabled) {
+		glEnable(GL_POLYGON_OFFSET_FILL);
+		glPolygonOffset(-5.0f, 1.0f);
+		glEnable(GL_POLYGON_STIPPLE);
+		glPolygonStipple(_stippleArray);
+	} else {
+		glPolygonOffset(0, 0);
+		glDisable(GL_POLYGON_OFFSET_FILL);
+		glDisable(GL_POLYGON_STIPPLE);
+	}
+}
+
 void OpenGLRenderer::useColor(uint8 r, uint8 g, uint8 b) {
 	glColor3ub(r, g, b);
 }
@@ -285,9 +298,9 @@ void OpenGLRenderer::clear(uint8 color) {
 }
 
 void OpenGLRenderer::drawFloor(uint8 color) {
-	uint8 r, g, b;
-	assert(getRGBAt(color, r, g, b)); // TODO: move check inside this function
-	glColor3ub(r, g, b);
+	uint8 r1, g1, b1, r2, g2, b2;
+	assert(getRGBAt(color, r1, g1, b1, r2, g2, b2)); // TODO: move check inside this function
+	glColor3ub(r1, g1, b1);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	copyToVertexArray(0, Math::Vector3d(-100000.0, 0.0, -100000.0));

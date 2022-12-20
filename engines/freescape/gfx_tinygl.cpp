@@ -226,9 +226,9 @@ void TinyGLRenderer::clear(uint8 color) {
 }
 
 void TinyGLRenderer::drawFloor(uint8 color) {
-	uint8 r, g, b;
-	assert(getRGBAt(color, r, g, b)); // TODO: move check inside this function
-	tglColor3ub(r, g, b);
+	uint8 r1, g1, b1, r2, g2, b2;
+	assert(getRGBAt(color, r1, g1, b1, r2, g2, b2)); // TODO: move check inside this function
+	tglColor3ub(r1, g1, b1);
 
 	tglEnableClientState(TGL_VERTEX_ARRAY);
 	copyToVertexArray(0, Math::Vector3d(-100000.0, 0.0, -100000.0));
