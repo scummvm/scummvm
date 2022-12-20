@@ -1075,9 +1075,9 @@ bool CScriptArray::Equals(const void *a, const void *b, asIScriptContext *ctx, S
 				r = ctx->SetArgObject(0, *((void * const *)b));
 				assert(r >= 0);
 			} else {
-				r = ctx->SetObject((void *)a);
+				r = ctx->SetObject(const_cast<void *>(a));
 				assert(r >= 0);
-				r = ctx->SetArgObject(0, (void *)b);
+				r = ctx->SetArgObject(0, const_cast<void *>(b));
 				assert(r >= 0);
 			}
 
@@ -1101,9 +1101,9 @@ bool CScriptArray::Equals(const void *a, const void *b, asIScriptContext *ctx, S
 				r = ctx->SetArgObject(0, *((void * const *)b));
 				assert(r >= 0);
 			} else {
-				r = ctx->SetObject((void *)a);
+				r = ctx->SetObject(const_cast<void *>(a));
 				assert(r >= 0);
-				r = ctx->SetArgObject(0, (void *)b);
+				r = ctx->SetArgObject(0, const_cast<void *>(b));
 				assert(r >= 0);
 			}
 
