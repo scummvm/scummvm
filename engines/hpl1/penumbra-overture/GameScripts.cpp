@@ -82,18 +82,18 @@
 
 //-----------------------------------------------------------------------
 
-tWString gsTempString = _W("");
+tWString *gsTempString = nullptr;
 
 //-----------------------------------------------------------------------
 
 static void AddToTempString(tString asString) {
-	gsTempString += cString::To16Char(asString);
+	*gsTempString += cString::To16Char(asString);
 }
 SCRIPT_DEFINE_FUNC_1(void, AddToTempString, string)
 
 static void AddToTempStringTrans(tString asCat, tString asEntry) {
 	cInit *mpInit = gpInit;
-	gsTempString += kTranslate(asCat, asEntry);
+	*gsTempString += kTranslate(asCat, asEntry);
 }
 SCRIPT_DEFINE_FUNC_2(void, AddToTempStringTrans, string, string)
 
@@ -103,11 +103,11 @@ static void AddToTempStringAction(tString asAction) {
 	if (pAction) {
 		tWString sString = kTranslate("ButtonNames", pAction->GetInputName());
 		if (sString != _W(""))
-			gsTempString += sString;
+			*gsTempString += sString;
 		else
-			gsTempString += cString::To16Char(pAction->GetInputName());
+			*gsTempString += cString::To16Char(pAction->GetInputName());
 	} else {
-		gsTempString += kTranslate("ButtonNames", "None");
+		*gsTempString += kTranslate("ButtonNames", "None");
 	}
 }
 SCRIPT_DEFINE_FUNC_1(void, AddToTempStringAction, string)
@@ -174,8 +174,8 @@ SCRIPT_DEFINE_FUNC_1(void, AddMessage, string)
 //-----------------------------------------------------------------------
 
 static void AddMessageTempString() {
-	gpInit->mpGameMessageHandler->Add(gsTempString);
-	gsTempString = _W("");
+	gpInit->mpGameMessageHandler->Add(*gsTempString);
+	*gsTempString = _W("");
 }
 SCRIPT_DEFINE_FUNC(void, AddMessageTempString)
 
@@ -198,8 +198,8 @@ SCRIPT_DEFINE_FUNC_2(void, AddSubTitle, string, float)
 //-----------------------------------------------------------------------
 
 static void AddSubTitleTempString(float afTime) {
-	gpInit->mpEffectHandler->GetSubTitle()->Add(gsTempString, afTime, false);
-	gsTempString = _W("");
+	gpInit->mpEffectHandler->GetSubTitle()->Add(*gsTempString, afTime, false);
+	*gsTempString = _W("");
 }
 SCRIPT_DEFINE_FUNC_1(void, AddSubTitleTempString, float)
 
@@ -1571,6 +1571,7 @@ SCRIPT_DEFINE_FUNC_4(void, CreateSoundEntityAt, string, string, string, string)
 
 void cGameScripts::Init() {
 	LowLevelSystem *pLowLevelSystem = gpInit->mpGame->GetSystem()->GetLowLevel();
+	gsTempString = new tWString;
 
 	// Game helper
 	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(AddToTempString));
@@ -1741,6 +1742,11 @@ void cGameScripts::Init() {
 
 	// Game sound
 	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(CreateSoundEntityAt));
+}
+
+void cGameScripts::finalize()
+{
+	delete gsTempString;
 }
 
 //-----------------------------------------------------------------------

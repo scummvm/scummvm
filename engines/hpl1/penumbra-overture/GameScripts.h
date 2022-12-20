@@ -38,6 +38,7 @@ using namespace hpl;
 class cGameScripts {
 public:
 	static void Init();
+	static void finalize();
 };
 
 #endif // GAME_SCRIPTS_H

@@ -712,6 +712,7 @@ void cInit::Exit() {
 
 	cSoundEntity::finalizeGlobalCallbackList();
 	cSerializeClass::finalizeSaveClassesMap();
+	cGameScripts::finalize();
 
 	Log(" Saving config\n");
 	// Save engine stuff.
