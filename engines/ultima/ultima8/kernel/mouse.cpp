@@ -209,9 +209,11 @@ int Mouse::getMouseFrame() {
 			return -1;
 
 		bool combat = false;
+		bool combatRun = false;
 		const MainActor *av = getMainActor();
 		if (av) {
 			combat = av->isInCombat();
+			combatRun = av->hasActorFlags(Actor::ACT_COMBATRUN);
 		}
 
 		// Calculate frame based on direction
@@ -224,12 +226,13 @@ int Mouse::getMouseFrame() {
 		 *    2             16
 		 *  combat          25
 		 **/
-		int offset = getMouseLength() * 8;
-		if (combat && offset != 16) //combat mouse is off if running
-			offset = 25;
+		int offset = 25;
+		if (!combat || combatRun) //combat mouse is off if running
+			offset = getMouseLength() * 8;
 		return frame + offset;
 	}
-					 //!! constants...
+
+	//!! constants...
 	case MOUSE_NONE:
 		return -1;
 	case MOUSE_TARGET:
