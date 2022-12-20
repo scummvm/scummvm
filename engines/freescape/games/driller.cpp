@@ -131,6 +131,26 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	if (isAmiga() || isAtariST())
 		swapPalette(areaID);
+	else if (isDOS() && _renderMode == Common::kRenderCGA) {
+		delete _borderTexture;
+		// Replace black pixel for transparent ones
+		uint32 color1 = _border->format.ARGBToColor(0xFF, 0xAA, 0x00, 0xAA);
+		uint32 color2 = _border->format.ARGBToColor(0xFF, 0xAA, 0x55, 0x00);
+
+		uint32 colorA = _border->format.ARGBToColor(0xFF, 0x00, 0xAA, 0xAA);
+		uint32 colorB = _border->format.ARGBToColor(0xFF, 0x00, 0xAA, 0x00);
+
+		for (int i = 0; i < _border->w; i++) {
+			for (int j = 0; j < _border->h; j++) {
+				if (_border->getPixel(i, j) == color1)
+					_border->setPixel(i, j, color2);
+				else if (_border->getPixel(i, j) == colorA)
+					_border->setPixel(i, j, colorB);
+
+			}
+		}
+		_borderTexture = _gfx->createTexture(_border);
+	}
 
 	_currentArea->_skyColor = 0;
 	_currentArea->_usualBackgroundColor = 0;
