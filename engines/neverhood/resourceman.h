@@ -30,10 +30,20 @@
 
 namespace Neverhood {
 
-struct ResourceFileEntry {
+class ResourceMan;
+struct ResourceHandle;
+
+class ResourceFileEntry {
+private:
 	int resourceHandle;
 	BlbArchive *archive;
 	BlbArchiveEntry *archiveEntry;
+
+	friend class ResourceHandle;
+	friend class ResourceMan;
+
+public:
+	ResourceFileEntry() : resourceHandle(-1), archive(nullptr), archiveEntry(nullptr) {}
 };
 
 struct Resource {
@@ -46,8 +56,6 @@ struct ResourceData {
 	int dataRefCount;
 	ResourceData() : data(NULL), dataRefCount() {}
 };
-
-class ResourceMan;
 
 struct ResourceHandle {
 friend class ResourceMan;
