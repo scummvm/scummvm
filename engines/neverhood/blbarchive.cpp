@@ -24,29 +24,6 @@
 
 namespace Neverhood {
 
-/**
- * A special variant of SafeSeekableSubReadStream which locks a mutex during each read.
- * This is necessary because the music is streamed from disk and it could happen
- * that a sound effect or another music track is played from the same read stream
- * while the first music track is updated/read.
- */
-
-class SafeMutexedSeekableSubReadStream : public Common::SafeSeekableSubReadStream {
-public:
-	SafeMutexedSeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, DisposeAfterUse::Flag disposeParentStream,
-		Common::Mutex &mutex)
-		: SafeSeekableSubReadStream(parentStream, begin, end, disposeParentStream), _mutex(mutex) {
-	}
-	uint32 read(void *dataPtr, uint32 dataSize) override;
-protected:
-	Common::Mutex &_mutex;
-};
-
-uint32 SafeMutexedSeekableSubReadStream::read(void *dataPtr, uint32 dataSize) {
-	Common::StackLock lock(_mutex);
-	return Common::SafeSeekableSubReadStream::read(dataPtr, dataSize);
-}
-
 BlbArchive::BlbArchive() : _extData(nullptr) {
 }
 
@@ -158,7 +135,7 @@ Common::SeekableReadStream *BlbArchive::createStream(uint index) {
 }
 
 Common::SeekableReadStream *BlbArchive::createStream(BlbArchiveEntry *entry) {
-	return new SafeMutexedSeekableSubReadStream(&_fd, entry->offset, entry->offset + entry->diskSize,
+	return new Common::SafeMutexedSeekableSubReadStream(&_fd, entry->offset, entry->offset + entry->diskSize,
 		DisposeAfterUse::NO, _mutex);
 }
 
