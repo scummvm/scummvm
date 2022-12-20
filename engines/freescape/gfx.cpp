@@ -282,6 +282,14 @@ void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d 
 		face.push_back(vertices[0]);
 
 		renderFace(face);
+
+		if (r1 != r2 || g1 != g2 || b1 != b2) {
+			useStipple(true);
+			useColor(r2, g2, b2);
+			renderFace(face);
+			useStipple(false);
+		}
+
 		face.clear();
 	}
 
@@ -294,6 +302,13 @@ void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d 
 		face.push_back(vertices[1]);
 
 		renderFace(face);
+		if (r1 != r2 || g1 != g2 || b1 != b2) {
+			useStipple(true);
+			useColor(r2, g2, b2);
+			renderFace(face);
+			useStipple(false);
+		}
+
 		face.clear();
 	}
 
@@ -305,6 +320,13 @@ void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d 
 		face.push_back(vertices[3]);
 		face.push_back(vertices[2]);
 		renderFace(face);
+		if (r1 != r2 || g1 != g2 || b1 != b2) {
+			useStipple(true);
+			useColor(r2, g2, b2);
+			renderFace(face);
+			useStipple(false);
+		}
+
 		face.clear();
 	}
 
@@ -317,6 +339,13 @@ void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d 
 		face.push_back(vertices[3]);
 
 		renderFace(face);
+		if (r1 != r2 || g1 != g2 || b1 != b2) {
+			useStipple(true);
+			useColor(r2, g2, b2);
+			renderFace(face);
+			useStipple(false);
+		}
+
 		face.clear();
 	}
 
@@ -328,6 +357,13 @@ void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d 
 		face.push_back(vertices[2]);
 		face.push_back(vertices[3]);
 		renderFace(face);
+		if (r1 != r2 || g1 != g2 || b1 != b2) {
+			useStipple(true);
+			useColor(r2, g2, b2);
+			renderFace(face);
+			useStipple(false);
+		}
+
 		face.clear();
 	}
 
@@ -339,6 +375,12 @@ void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d 
 		face.push_back(vertices[5]);
 		face.push_back(vertices[4]);
 		renderFace(face);
+		if (r1 != r2 || g1 != g2 || b1 != b2) {
+			useStipple(true);
+			useColor(r2, g2, b2);
+			renderFace(face);
+			useStipple(false);
+		}
 	}
 }
 
@@ -470,6 +512,12 @@ void Renderer::renderRectangle(const Math::Vector3d &origin, const Math::Vector3
 			vertices.push_back(Math::Vector3d(origin.x() + dx, origin.y() + dy, origin.z() + dz));
 			vertices.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z()));
 			renderFace(vertices);
+			if (r1 != r2 || g1 != g2 || b1 != b2) {
+				useStipple(true);
+				useColor(r2, g2, b2);
+				renderFace(vertices);
+				useStipple(false);
+			}
 
 			vertices.clear();
 			vertices.push_back(Math::Vector3d(origin.x(), origin.y(), origin.z()));
@@ -486,6 +534,12 @@ void Renderer::renderRectangle(const Math::Vector3d &origin, const Math::Vector3
 			vertices.push_back(Math::Vector3d(origin.x() + dx, origin.y() + dy, origin.z() + dz));
 			vertices.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z()));
 			renderFace(vertices);
+			if (r1 != r2 || g1 != g2 || b1 != b2) {
+				useStipple(true);
+				useColor(r2, g2, b2);
+				renderFace(vertices);
+				useStipple(false);
+			}
 		}
 	}
 	polygonOffset(false);
@@ -505,6 +559,12 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 		for (uint i = 0; i < ordinates->size(); i = i + 3)
 			vertices.push_back(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
 		renderFace(vertices);
+		if (r1 != r2 || g1 != g2 || b1 != b2) {
+			useStipple(true);
+			useColor(r2, g2, b2);
+			renderFace(vertices);
+			useStipple(false);
+		}
 
 		vertices.clear();
 		assert(getRGBAt((*colours)[1], r1, g1, b1, r2, g2, b2)); // It will never return false?
@@ -512,6 +572,12 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 		for (int i = ordinates->size(); i > 0; i = i - 3)
 			vertices.push_back(Math::Vector3d((*ordinates)[i - 3], (*ordinates)[i - 2], (*ordinates)[i - 1]));
 		renderFace(vertices);
+		if (r1 != r2 || g1 != g2 || b1 != b2) {
+			useStipple(true);
+			useColor(r2, g2, b2);
+			renderFace(vertices);
+			useStipple(false);
+		}
 
 	} else {
 		if (getRGBAt((*colours)[0], r1, g1, b1, r2, g2, b2)) {
@@ -520,6 +586,12 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 				vertices.push_back(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
 			}
 			renderFace(vertices);
+			if (r1 != r2 || g1 != g2 || b1 != b2) {
+				useStipple(true);
+				useColor(r2, g2, b2);
+				renderFace(vertices);
+				useStipple(false);
+			}
 		}
 		vertices.clear();
 		if (getRGBAt((*colours)[1], r1, g1, b1, r2, g2, b2)) {
@@ -528,6 +600,12 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 				vertices.push_back(Math::Vector3d((*ordinates)[i - 3], (*ordinates)[i - 2], (*ordinates)[i - 1]));
 			}
 			renderFace(vertices);
+			if (r1 != r2 || g1 != g2 || b1 != b2) {
+				useStipple(true);
+				useColor(r2, g2, b2);
+				renderFace(vertices);
+				useStipple(false);
+			}
 		}
 	}
 
