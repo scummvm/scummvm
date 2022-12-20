@@ -1120,12 +1120,20 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		// Also, some of these were originally mapped with the CTRL flag, but they would clash with other
 		// internal ScummVM commands, so they are instead available with the SHIFT flag.
 		if (_game.version < 7 && !isSegaCD) {
-			if (_game.version >= 4 && lastKeyHit.keycode == Common::KEYCODE_j && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+			if (_game.version == 6 && lastKeyHit.keycode == Common::KEYCODE_j && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+				showBannerAndPause(0, 90, getGUIString(gsRecalJoystick));
+				return;
+			} else if (_game.version >= 4 && lastKeyHit.keycode == Common::KEYCODE_j && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
 				if (_game.version == 4) {
 					showOldStyleBannerAndPause(getGUIString(gsRecalJoystick), 2, 90);
 				} else {
 					showBannerAndPause(0, 90, getGUIString(gsRecalJoystick));
 				}
+				return;
+			}
+
+			if (_game.version == 6 && lastKeyHit.keycode == Common::KEYCODE_n && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+				showBannerAndPause(0, 90, getGUIString(gsMouseMode));
 				return;
 			}
 

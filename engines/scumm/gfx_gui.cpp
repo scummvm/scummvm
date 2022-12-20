@@ -3858,6 +3858,16 @@ const char *ScummEngine_v6::getGUIString(int stringId) {
 	case gsHeap:
 		resStringId = 35;
 		break;
+	case gsRecalJoystick:
+		if (_game.id == GID_SAMNMAX && !strcmp(_game.variant, "Floppy")) {
+			resStringId = 37;
+		} else {
+			resStringId = 36;
+		}
+		break;
+	case gsMouseMode:
+		resStringId = 38;
+		break;
 	default:
 		break;
 	}

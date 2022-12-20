@@ -185,7 +185,10 @@ static const ResString string_map_table_v6[] = {
 	{0, "Music Volume    Low  =========  High"},
 	{0, "Voice Volume    Low  =========  High"},
 	{0, "SFX Volume    Low  =========  High"},
-	{0, "Heap %dK"}
+	{0, "Heap %dK"},
+	{0, "Recalibrating Joystick"},
+	{0, "Joystick Mode"}, // SAMNMAX Floppy
+	{0, "Mouse Mode"}
 };
 
 #pragma mark -
