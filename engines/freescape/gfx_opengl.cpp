@@ -191,12 +191,15 @@ void OpenGLRenderer::renderPlayerShoot(byte color, const Common::Point position,
 	glOrtho(0, _screenW, _screenH, 0, 0, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
-	uint32 pixel = 0x0;
-	glReadPixels(g_system->getWidth() / 2, g_system->getHeight() / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel);
-	_texturePixelFormat.colorToARGB(pixel, a, r, g, b);
-	color = indexFromColor(r, g, b);
-	readFromPalette((color + 3) % (_renderMode == Common::kRenderCGA ? 4 : 16), r, g, b);
+	if (_renderMode == Common::kRenderCGA) {
+		r = g = b = 255;
+	} else {
+		uint32 pixel = 0x0;
+		glReadPixels(g_system->getWidth() / 2, g_system->getHeight() / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel);
+		_texturePixelFormat.colorToARGB(pixel, a, r, g, b);
+		color = indexFromColor(r, g, b);
+		readFromPalette((color + 3) % (_renderMode == Common::kRenderCGA ? 4 : 16), r, g, b);
+	}
 
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
