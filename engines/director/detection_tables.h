@@ -2601,6 +2601,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original Mac version is Director. Later DOS port uses MADE engine (also in ScummVM).
 	MACDEMO1("rodneyfs", "Demo", "Rodney's Funscreen demo", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 356610, 300),
 	// MACDEMO1("rodneyfs", "Demo", "Sample Application",	"9f0bb7ec7720e4f680ee3aa3d22c1c9d", 356610, 300),
+	MACGAME1("rodneyfs", "", "Rodney's Funscreen", "aee832d8a6903b138f76b40bcee84637", 328535, 310),
 
 	MACGAME1("rodneyww", "", "xn--Wonder Window-8q9g", "1ae45c23586b41997ba52e2e7c771c4c", 375226, 310),
 	WINGAME1("rodneyww", "", "APP/RWW.EXE", "dac3b117db9be024ff6747b1b6c49d9c", 408259, 310),
