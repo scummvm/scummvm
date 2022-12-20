@@ -688,7 +688,7 @@ void cMainMenuWidget_Resume::OnMouseDown(eMButton aButton) {
 
 //-----------------------------------------------------------------------
 
-tWStringVec gvSaveGameFileVec[3];
+tWStringVec *gvSaveGameFileVec;
 
 class cMainMenuWidget_SaveGameList : public cMainMenuWidget_List {
 public:
@@ -1675,6 +1675,7 @@ private:
 //-----------------------------------------------------------------------
 
 cMainMenu::cMainMenu(cInit *apInit) : iUpdateable("MainMenu") {
+	gvSaveGameFileVec = new tWStringVec[3];
 	mState = eMainMenuState_Start;
 
 	mpLogo = NULL;
@@ -1727,11 +1728,7 @@ cMainMenu::cMainMenu(cInit *apInit) : iUpdateable("MainMenu") {
 
 cMainMenu::~cMainMenu(void) {
 	STLDeleteAll(mlstWidgets);
-	// prevents the strings from still staying
-	// around after the game is closed
-	gvSaveGameFileVec[0].clear();
-	gvSaveGameFileVec[1].clear();
-	gvSaveGameFileVec[2].clear();
+	delete[] gvSaveGameFileVec;
 
 	mpDrawer->DestroyGfxObject(mpGfxBlackQuad);
 	mpDrawer->DestroyGfxObject(mpGfxMouse);
