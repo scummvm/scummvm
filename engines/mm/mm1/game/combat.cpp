@@ -712,6 +712,13 @@ void Combat::removeMonster() {
 	} while (changed);
 }
 
+void Combat::removeDeadMonsters() {
+	for (int i = (int)_remainingMonsters.size() - 1; i >= 0; --i) {
+		if (_remainingMonsters[i]->_status == MONFLAG_DEAD)
+			_remainingMonsters.remove_at(i);
+	}
+}
+
 void Combat::checkParty() {
 	_val10 = 0;
 

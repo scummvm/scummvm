@@ -293,6 +293,11 @@ protected:
 	 */
 	void retreat();
 
+	/**
+	 * Called to remove any dead monsters
+	 */
+	void removeDeadMonsters();
+
 private:
 	void spellFailed();
 	void destroyMonster();
