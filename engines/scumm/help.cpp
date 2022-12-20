@@ -232,13 +232,6 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND("i", _("Inventory"));
 			ADD_BIND("p", _("Punch"));
 			ADD_BIND("k", _("Kick"));
-			ADD_LINE;
-			ADD_BIND(
-				// I18N: The name of the 'Shift' key on a PC keyboard
-				_("Shift") + U32String(" v"),
-				// I18N: Lets one skip the bike/car fight sequences in Full Throttle
-				_("Win the bike fight cheat")
-			);
 			break;
 		case GID_DIG:
 			ADD_BIND("e", _("Examine"));

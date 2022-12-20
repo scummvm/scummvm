@@ -489,6 +489,25 @@ struct InternalGUIControl {
 	bool doubleLinesFlag;
 };
 
+enum ScummAction {
+	kScummActionNone,
+	kScummActionInsaneDownLeft,
+	kScummActionInsaneDown,
+	kScummActionInsaneDownRight,
+	kScummActionInsaneLeft,
+	kScummActionInsaneRight,
+	kScummActionInsaneUpLeft,
+	kScummActionInsaneUp,
+	kScummActionInsaneUpRight,
+	kScummActionInsaneAttack,
+	kScummActionInsaneSwitch,
+	kScummActionInsaneCheat,
+
+	kScummActionCount
+};
+
+extern const char *const insaneKeymapId;
+
 /**
  * Base class for all SCUMM engines.
  */
@@ -527,6 +546,8 @@ public:
 	bool _enableEnhancements = false;
 	bool _useOriginalGUI = true;
 	bool _enableAudioOverride = false;
+
+	Common::Keymap *_insaneKeymap;
 
 protected:
 	VirtualMachineState vm;
@@ -844,6 +865,7 @@ public:
 protected:
 	Common::KeyState _keyPressed;
 	bool _keyDownMap[512]; // FIXME - 512 is a guess. it's max(kbd.ascii)
+	bool _actionMap[kScummActionCount];
 
 	Common::Point _mouse;
 	Common::Point _virtualMouse;
@@ -896,6 +918,7 @@ protected:
 	}
 
 	int getKeyState(int key);
+	int getActionState(ScummAction action);
 
 public:
 	static Common::String makeSavegameName(const Common::String &target, int slot, bool temporary);
