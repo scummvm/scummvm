@@ -132,10 +132,10 @@ struct ItemStruct {
 
 struct NPCStruct {
 	char _name[11];
-	uint8 field_B;
+	uint8 fieldB_textId;
 	uint8 field_C;
 	uint8 field_D;
-	uint8 field_E;
+	uint8 fieldE_textId;
 	uint8 field_F;
 	uint8 field_10;
 	uint8 field_11;
