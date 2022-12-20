@@ -100,6 +100,10 @@ Common::Error NeverhoodEngine::run() {
 		_res->addArchive("t.blb");
 	}
 
+	Common::String nhcFile = ConfMan.get("nhc_file");
+	if (!nhcFile.empty())
+		_res->addNhcArchive("language/" + nhcFile + ".nhc");
+
 	CursorMan.showMouse(false);
 
 	_soundMan = new SoundMan(this);
