@@ -20,6 +20,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added option for mono sound output (via --output-channels=CHANNELS command
      line option).
    - Improved cursor scaling in OpenGL mode.
+   - Fix crash when browsing folders containing files with \1 in the names.
+
+ 3DS:
+   - Update relocation parser to support PREL31 that are emitted by new compiler.
+   - Do more autoconfiguration in ./configure
 
  AGI:
    - Improved support for French translations.
@@ -32,11 +37,22 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for the original installer files for Maniac Mansion Deluxe and
      The New Adventures of Zak McKracken.
 
+ Director:
+   - Support for Pippin version of L-Zone.
+   - Fix a bug caused by use of slash in filename.
+
+ Dreamweb:
+   - Support playing from the original installer floppies
+
  GOB:
    - Added support for Adibou 2 "Environment", "Read/Count 4 & 5" and "Read/Count 6 & 7".
 
+ Hadesch:
+   - Added support for a 1997 release.
+
  Kyra:
    - Added support for the Korean version of Legend of Kyrandia 1.
+   - Support multi-floppy mac kyra1 both as installer floppies and as installed directory.
    - Added support for the Hebrew version of Legend of Kyrandia 3.
 
  MADS:
@@ -44,6 +60,12 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Neverhood:
    - Added support for Japanese version of Neverhood.
+
+ Plumbers:
+   - Fixed crash with windows version.
+
+ Private:
+   - Allow playing mac version directly from installer CD.
 
  Queen:
    - Added option for using a better font in Hebrew version.
@@ -53,6 +75,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Chinese I Have no Mouth and I Must Scream.
    - Added support for Korean I Have no Mouth and I Must Scream.
    - Added support for playing directly from floppy installer for ITE.
+   - Support for Amiga (AGA/ECS, Retail/Demo, English/German) Inherit the Earth
 
  SCI:
    - Improved text rendering for Macintosh titles.
@@ -94,6 +117,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Sherlock:
    - Added support for Chinese Rose Tattoo.
+
+ Sword1:
+   - Support ND Russian translation
 
  Sky:
    - Added support for Chinese Beneath a Steel Sky.
