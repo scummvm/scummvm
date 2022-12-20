@@ -88,6 +88,9 @@ class cSoundEntity : public iEntity3D {
 	friend class cSoundEntityChannelCallback;
 
 public:
+	static void initGlobalCallbackList();
+	static void finalizeGlobalCallbackList();
+
 	cSoundEntity(const tString &asName, cSoundEntityData *apData,
 				 cSoundEntityManager *apSoundEntityManager,
 				 cWorld3D *apWorld,
@@ -166,7 +169,7 @@ private:
 
 	float _fadeSpeed;
 
-	static tSoundEntityGlobalCallbackList mlstGobalCallbacks;
+	static tSoundEntityGlobalCallbackList* mlstGlobalCallbacks;
 };
 
 }     // namespace hpl
