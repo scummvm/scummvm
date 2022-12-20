@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-20 06:48+0000\n"
+"POT-Creation-Date: 2022-12-20 10:29+0000\n"
 "PO-Revision-Date: 2022-12-03 23:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -1585,12 +1585,19 @@ msgid "Autosave:"
 msgstr "Автозбереж.:"
 
 #: gui/options.cpp:2452
-msgid "Always return to the launcher when leaving a game"
+#, fuzzy
+#| msgid "Always return to the launcher when leaving a game"
+msgid "Return to the launcher when leaving a game"
 msgstr "Завжди повертатися до головного меню після виходу з гри"
 
 #: gui/options.cpp:2453
+#, fuzzy
+#| msgid ""
+#| "Always return to the launcher when leaving a game instead of closing "
+#| "ScummVM."
 msgid ""
-"Always return to the launcher when leaving a game instead of closing ScummVM."
+"Return to the launcher when leaving a game instead of closing ScummVM\n"
+"(this feature is not supported by all games)."
 msgstr ""
 "Завжди повертатися до головного меню після виходу з гри замість того, щоб "
 "закривати ScummVM."

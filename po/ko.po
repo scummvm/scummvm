@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-20 06:48+0000\n"
+"POT-Creation-Date: 2022-12-20 10:29+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -1584,12 +1584,19 @@ msgid "Autosave:"
 msgstr "자동 저장:"
 
 #: gui/options.cpp:2452
-msgid "Always return to the launcher when leaving a game"
+#, fuzzy
+#| msgid "Always return to the launcher when leaving a game"
+msgid "Return to the launcher when leaving a game"
 msgstr "게임 종료 시 항상 런처로 복귀"
 
 #: gui/options.cpp:2453
+#, fuzzy
+#| msgid ""
+#| "Always return to the launcher when leaving a game instead of closing "
+#| "ScummVM."
 msgid ""
-"Always return to the launcher when leaving a game instead of closing ScummVM."
+"Return to the launcher when leaving a game instead of closing ScummVM\n"
+"(this feature is not supported by all games)."
 msgstr "게임 종료 시 ScummVM을 종료하지 않고 항상 런처로 돌아옵니다."
 
 #: gui/options.cpp:2460
