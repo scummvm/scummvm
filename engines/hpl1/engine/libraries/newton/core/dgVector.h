@@ -35,7 +35,7 @@ class dgTemplateVector {
 public:
 	dgTemplateVector();
 	dgTemplateVector(const T *ptr);
-	dgTemplateVector(T m_x, T m_y, T m_z, T m_w);
+	constexpr dgTemplateVector(T m_x, T m_y, T m_z, T m_w);
 	dgTemplateVector Scale(T s) const;
 	dgTemplateVector Scale4(T s) const;
 
@@ -91,7 +91,7 @@ public:
 #endif
 	dgVector(const dgTemplateVector<dgFloat32> &v);
 	dgVector(const dgFloat32 *ptr);
-	dgVector(dgFloat32 x, dgFloat32 y, dgFloat32 z, dgFloat32 w);
+	constexpr dgVector(dgFloat32 x, dgFloat32 y, dgFloat32 z, dgFloat32 w);
 	dgVector(const dgBigVector &copy);
 
 	dgFloat32 DotProductSimd(const dgVector &A) const;
@@ -127,7 +127,7 @@ dgTemplateVector<T>::dgTemplateVector(const T *ptr)
 }
 
 template<class T>
-dgTemplateVector<T>::dgTemplateVector(T x, T y, T z, T w)
+constexpr dgTemplateVector<T>::dgTemplateVector(T x, T y, T z, T w)
 	: m_x(x), m_y(y), m_z(z), m_w(w) {
 }
 
@@ -295,7 +295,7 @@ DG_INLINE dgVector::dgVector(const simd_type &val) {
 }
 #endif
 
-DG_INLINE dgVector::dgVector(dgFloat32 x, dgFloat32 y, dgFloat32 z, dgFloat32 w)
+constexpr DG_INLINE dgVector::dgVector(dgFloat32 x, dgFloat32 y, dgFloat32 z, dgFloat32 w)
 	: dgTemplateVector<dgFloat32>(x, y, z, w) {
 	_ASSERTE(dgCheckVector((*this)));
 }

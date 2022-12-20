@@ -43,7 +43,7 @@ public:
 	DG_CLASS_ALLOCATOR(allocator)
 
 	dgMatrix();
-	dgMatrix(const dgVector &front, const dgVector &up, const dgVector &right, const dgVector &posit);
+	constexpr dgMatrix(const dgVector &front, const dgVector &up, const dgVector &right, const dgVector &posit);
 	dgMatrix(const dgQuaternion &rotation, const dgVector &position);
 
 	// create a orthonormal normal vector basis
@@ -112,7 +112,7 @@ public:
 DG_INLINE dgMatrix::dgMatrix() {
 }
 
-DG_INLINE dgMatrix::dgMatrix(const dgVector &front, const dgVector &up, const dgVector &right, const dgVector &posit)
+constexpr DG_INLINE dgMatrix::dgMatrix(const dgVector &front, const dgVector &up, const dgVector &right, const dgVector &posit)
 	: m_front(front), m_up(up), m_right(right), m_posit(posit) {
 }
 
