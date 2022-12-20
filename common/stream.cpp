@@ -581,4 +581,9 @@ WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize) 
 	return nullptr;
 }
 
+uint32 SafeMutexedSeekableSubReadStream::read(void *dataPtr, uint32 dataSize) {
+	Common::StackLock lock(_mutex);
+	return Common::SafeSeekableSubReadStream::read(dataPtr, dataSize);
+}
+
 } // End of namespace Common
