@@ -285,6 +285,9 @@ typedef tSerializeSavedClassList::iterator tSerializeSavedClassListIt;
 
 class cSerializeClass {
 public:
+	static void initSaveClassesMap();
+	static void finalizeSaveClassesMap();
+
 	static void SetLog(bool abX);
 	static bool GetLog();
 
@@ -327,7 +330,7 @@ private:
 	static char msTempCharArray[2048];
 
 	static bool mbDataSetup;
-	static tSerializeSavedClassMap m_mapSavedClasses;
+	static tSerializeSavedClassMap *m_mapSavedClasses;
 	static Common::Array<iSerializableType *> mvValueTypes;
 };
 

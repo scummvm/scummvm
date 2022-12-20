@@ -251,6 +251,7 @@ bool cInit::Init(tString saveToLoad) {
 	Hpl1::engineSerializeInit();
 	Hpl1::penumbraOvertureSerializeInit();
 	cSoundEntity::initGlobalCallbackList();
+	cSerializeClass::initSaveClassesMap();
 
 	SetWindowCaption("Penumbra Loading...");
 
@@ -710,6 +711,7 @@ void cInit::Exit() {
 	hplDelete(mpDemoEndText);
 
 	cSoundEntity::finalizeGlobalCallbackList();
+	cSerializeClass::finalizeSaveClassesMap();
 
 	Log(" Saving config\n");
 	// Save engine stuff.

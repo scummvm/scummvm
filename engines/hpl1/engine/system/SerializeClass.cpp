@@ -104,9 +104,18 @@ cSerializeMemberField *cSerializeMemberFieldIterator::GetNext() {
 //-----------------------------------------------------------------------
 
 // Define static variables
-tSerializeSavedClassMap cSerializeClass::m_mapSavedClasses;
+tSerializeSavedClassMap *cSerializeClass::m_mapSavedClasses;
 bool cSerializeClass::mbDataSetup = false;
 char cSerializeClass::msTempCharArray[2048];
+
+void cSerializeClass::initSaveClassesMap()
+{
+	cSerializeClass::m_mapSavedClasses = new tSerializeSavedClassMap;
+}
+void cSerializeClass::finalizeSaveClassesMap()
+{
+	delete cSerializeClass::m_mapSavedClasses;
+}
 
 //-----------------------------------------------------------------------
 
@@ -312,8 +321,8 @@ void cSerializeClass::LoadFromElement(iSerializable *apData, TiXmlElement *apEle
 cSerializeSavedClass *cSerializeClass::GetClass(const tString &asName) {
 	SetUpData();
 
-	tSerializeSavedClassMapIt it = m_mapSavedClasses.find(asName.c_str());
-	if (it == m_mapSavedClasses.end()) {
+	tSerializeSavedClassMapIt it = m_mapSavedClasses->find(asName.c_str());
+	if (it == m_mapSavedClasses->end()) {
 		Warning("Serialize class '%s' not found!\n", asName.c_str());
 		return NULL;
 	}
@@ -1038,7 +1047,7 @@ void cSerializeClass::SetUpData() {
 	mbDataSetup = true;
 
 	for (int i = 0; i < Hpl1::nSerializeTempClasses; i++) {
-		m_mapSavedClasses.insert(tSerializeSavedClassMap::value_type(
+		m_mapSavedClasses->insert(tSerializeSavedClassMap::value_type(
 			Hpl1::serializeTempClasses[i].msName, Hpl1::serializeTempClasses[i]));
 	}
 }
