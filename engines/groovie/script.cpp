@@ -177,6 +177,8 @@ bool Script::loadScript(Common::String filename) {
 
 	// Load the code
 	_codeSize = scriptfile->size();
+	if (_codeSize <= 0)
+		return false;
 	delete[] _code;
 	_code = new byte[_codeSize];
 	if (!_code)
@@ -292,7 +294,10 @@ void Script::directGameLoad(int slot) {
 		}
 	} else if (_version == kGroovieT11H) {
 		setVariable(0xF, slot);
-		_currentInstruction = 0xE78D;
+		if (_scriptFile == "suscript.grv")
+			_currentInstruction = 0x13;
+		else
+			_currentInstruction = 0xE78D;
 		return;
 	} else if (_version == kGroovieCDY) {
 		setVariable(0x1, slot);
@@ -2224,6 +2229,33 @@ void Script::o2_videofromref() {
 			}
 
 			_currentInstruction = 0xBF37; // main menu
+		}
+		// T11H Souped Up
+		else if (_currentInstruction == 0x10 && _scriptFile == "suscript.grv") {
+			// Load from the main menu
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			int slot = dialog->runModalWithCurrentTarget();
+			delete dialog;
+
+			if (slot >= 0) {
+				_currentInstruction = 0x16;
+				loadgame(slot);
+				return;
+			} else {
+				_currentInstruction = 0x8; // main menu
+			}
+		} else if (_currentInstruction == 0x1E && _scriptFile == "suscript.grv") {
+			// Save from the main menu
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+			int slot = dialog->runModalWithCurrentTarget();
+			Common::String saveName = dialog->getResultString();
+			delete dialog;
+
+			if (slot >= 0) {
+				directGameSave(slot, saveName);
+			}
+
+			_currentInstruction = 0x8; // main menu
 		}
 	}
 
