@@ -40,8 +40,14 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	if (!Common::parseBool(ConfMan.get("automatic_drilling"), _useAutomaticDrilling))
 		error("Failed to parse bool from automatic_drilling option");
 
-	if (isDOS())
-		_viewArea = Common::Rect(40, 16, 280, 117);
+	if (isDOS()) {
+		if (_renderMode == Common::kRenderEGA)
+			_viewArea = Common::Rect(40, 16, 280, 117);
+		else if (_renderMode == Common::kRenderCGA)
+			_viewArea = Common::Rect(36, 16, 284, 117);
+		else
+			error("Invalid or unknown render mode");
+	}
 	else if (isAmiga() || isAtariST())
 		_viewArea = Common::Rect(36, 16, 284, 118);
 
