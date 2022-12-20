@@ -23,7 +23,7 @@
 #include "dgMatrix.h"
 #include "dgQuaternion.h"
 
-static dgMatrix zeroMatrix(
+static constexpr dgMatrix zeroMatrix(
     dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
              dgFloat32(0.0f)),
     dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
@@ -33,7 +33,7 @@ static dgMatrix zeroMatrix(
     dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
              dgFloat32(0.0f)));
 
-static dgMatrix identityMatrix(
+static constexpr dgMatrix identityMatrix(
     dgVector(dgFloat32(1.0f), dgFloat32(0.0f), dgFloat32(0.0f),
              dgFloat32(0.0f)),
     dgVector(dgFloat32(0.0f), dgFloat32(1.0f), dgFloat32(0.0f),

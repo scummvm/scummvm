@@ -1464,8 +1464,6 @@ void dgWorldDynamicUpdate::BuildJacobianMatrixSimd(const dgIsland &island,
 
 void dgWorldDynamicUpdate::BuildJacobianMatrix(const dgIsland &island,
         dgInt32 threadIndex, dgFloat32 timestep) {
-	dgVector zeroVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
-	                    dgFloat32(0.0f));
 
 	_ASSERTE(island.m_bodyCount >= 2);
 	//_ASSERTE (island.m_jointCount >= 1);
@@ -6197,8 +6195,6 @@ dgInt32 dgWorldDynamicUpdate::GetJacobialDerivativesParallel(
 
 void dgWorldDynamicUpdate::BuildJacobianMatrixParallel(const dgIsland &island,
         dgFloat32 timestep, dgInt32 archModel) {
-	dgVector zeroVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
-	                    dgFloat32(0.0f));
 
 	_ASSERTE(island.m_bodyCount >= 2);
 	//_ASSERTE (island.m_jointCount >= 1);
