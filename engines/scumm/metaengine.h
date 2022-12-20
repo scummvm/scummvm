@@ -38,6 +38,8 @@ class ScummMetaEngine : public MetaEngine {
 
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 #endif // SCUMM_METAENGINE_H

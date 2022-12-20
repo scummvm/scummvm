@@ -105,6 +105,23 @@ void ScummEngine_v80he::parseEvent(Common::Event event) {
 
 void ScummEngine::parseEvent(Common::Event event) {
 	switch (event.type) {
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		if (event.customType >= kScummActionCount) {
+			debugC(DEBUG_GENERAL, "customType >= kScummActionCount (%d)", event.customType);
+		} else {
+			_actionMap[event.customType] = true;
+		}
+		break;
+
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+		if (event.customType >= kScummActionCount) {
+			debugC(DEBUG_GENERAL, "customType >= kScummActionCount (%d)", event.customType);
+		} else {
+			_actionMap[event.customType] = false;
+		}
+		break;
+
+
 	case Common::EVENT_KEYDOWN:
 		if (event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9 &&
 			((event.kbd.hasFlags(Common::KBD_ALT) && canSaveGameStateCurrently()) ||
@@ -150,11 +167,9 @@ void ScummEngine::parseEvent(Common::Event event) {
 		// FIXME: We are using ASCII values to index the _keyDownMap here,
 		// yet later one code which checks _keyDownMap will use KEYCODEs
 		// to do so. That is, we are mixing ascii and keycode values here,
-		// which is bad. We probably should be only using keycodes, but at
-		// least INSANE checks for "Shift-V" by looking for the 'V' key
-		// being pressed. It would be easy to solve that by also storing
-		// the modifier flags. However, since getKeyState() is also called
-		// by scripts, we have to be careful with semantic changes.
+		// which is bad. We probably should be only using keycodes, however,
+		// since getKeyState() is called by scripts, we have to be careful with
+		// semantic changes.
 		if (_keyPressed.ascii >= 512)
 			debugC(DEBUG_GENERAL, "_keyPressed > 512 (%d)", _keyPressed.ascii);
 		else
@@ -184,6 +199,8 @@ void ScummEngine::parseEvent(Common::Event event) {
 			// Fixes bug #3173: "FT: CAPSLOCK + V enables cheating for all fights"
 			//
 			// Fingolfin remarks: This wouldn't be a problem if we used keycodes.
+			//
+			// TODO: Is this still needed now that INSANE uses keymapper actions?
 			_keyDownMap[toupper(event.kbd.ascii)] = false;
 		}
 		break;
@@ -424,6 +441,8 @@ void ScummEngine::processInput() {
 			// source (i.e. the OS), I guess there is no harm in doing the same thing in our code,
 			// fetching the correct state for the mouse buttons right from the event manager, only when
 			// the INSANE/SMUSH system is active.
+			//
+			// TODO: Is this still needed now that INSANE uses keymapper actions?
 			if (_game.id == GID_FT && isInsaneActive()) {
 				VAR(VAR_LEFTBTN_HOLD) = (getEventManager()->getButtonState() & 0x1) != 0 ? 1 : 0;
 				VAR(VAR_RIGHTBTN_HOLD) = (getEventManager()->getButtonState() & 0x2) != 0 ? 1 : 0;

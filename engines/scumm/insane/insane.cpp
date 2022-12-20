@@ -536,6 +536,7 @@ int32 Insane::processMouse() {
 	_enemyState[EN_BEN][0] = _vm->_mouse.x;
 	_enemyState[EN_BEN][1] = _vm->_mouse.y;
 
+	/* TODO: Is this still needed? */
 	buttons = _vm->VAR(_vm->VAR_LEFTBTN_HOLD) ? 1 : 0;
 	buttons |= _vm->VAR(_vm->VAR_RIGHTBTN_HOLD) ? 2 : 0;
 
@@ -547,16 +548,24 @@ int32 Insane::processKeyboard() {
 	int dx = 0, dy = 0;
 	int tmpx, tmpy;
 
-	if (_vm->getKeyState(0x14f) || _vm->getKeyState(0x14b) || _vm->getKeyState(0x147))
+	if (_vm->getActionState(kScummActionInsaneLeft) ||
+	    _vm->getActionState(kScummActionInsaneUpLeft) ||
+	    _vm->getActionState(kScummActionInsaneDownLeft))
 		dx--;
 
-	if (_vm->getKeyState(0x151) || _vm->getKeyState(0x14d) || _vm->getKeyState(0x149))
+	if (_vm->getActionState(kScummActionInsaneRight) ||
+	    _vm->getActionState(kScummActionInsaneUpRight) ||
+	    _vm->getActionState(kScummActionInsaneDownRight))
 		dx++;
 
-	if (_vm->getKeyState(0x147) || _vm->getKeyState(0x148) || _vm->getKeyState(0x149))
+	if (_vm->getActionState(kScummActionInsaneUp) ||
+	    _vm->getActionState(kScummActionInsaneUpLeft) ||
+	    _vm->getActionState(kScummActionInsaneUpRight))
 		dy--;
 
-	if (_vm->getKeyState(0x14f) || _vm->getKeyState(0x150) || _vm->getKeyState(0x151))
+	if (_vm->getActionState(kScummActionInsaneDown) ||
+	    _vm->getActionState(kScummActionInsaneDownLeft) ||
+	    _vm->getActionState(kScummActionInsaneDownRight))
 		dy++;
 
 	if (dx == _keybOldDx)
@@ -592,10 +601,10 @@ int32 Insane::processKeyboard() {
 		_enemyState[EN_BEN][1] += tmpy;
 	}
 
-	if (_vm->getKeyState(Common::KEYCODE_RETURN))
+	if (_vm->getActionState(kScummActionInsaneAttack))
 		retval |= 1;
 
-	if (_vm->getKeyState(Common::KEYCODE_TAB))
+	if (_vm->getActionState(kScummActionInsaneSwitch))
 		retval |= 2;
 
 	return retval;

@@ -2953,6 +2953,10 @@ int ScummEngine::getKeyState(int key) {
 	}
 }
 
+int ScummEngine::getActionState(ScummAction action) {
+	return (_actionMap[action]) ? 1 : 0;
+}
+
 void ScummEngine_v6::o6_delayFrames() {
 	// WORKAROUND:  At startup, Moonbase Commander will pause for 20 frames before
 	// showing the Infogrames logo.  The purpose of this break is to give time for the

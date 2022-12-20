@@ -27,6 +27,9 @@
 #include "common/system.h"
 #include "common/translation.h"
 
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/keymapper.h"
+
 #include "engines/util.h"
 
 #include "gui/message.h"
@@ -100,6 +103,9 @@ struct dbgChannelDesc {
 	const char *channel, *desc;
 	uint32 flag;
 };
+
+
+const char *const insaneKeymapId = "scumm-insane";
 
 
 ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
@@ -1230,6 +1236,11 @@ Common::Error ScummEngine::init() {
 	// Create the debugger now that _numVariables has been set
 	setDebugger(new ScummDebugger(this));
 
+	Common::Keymapper *keymapper = _system->getEventManager()->getKeymapper();
+	_insaneKeymap = keymapper->getKeymap(insaneKeymapId);
+	if (_insaneKeymap)
+		_insaneKeymap->setEnabled(false);
+
 	resetScumm();
 	resetScummVars();
 
@@ -1753,6 +1764,8 @@ void ScummEngine::resetScumm() {
 	// all keys are released
 	for (i = 0; i < 512; i++)
 		_keyDownMap[i] = false;
+	for (i = 0; i < kScummActionCount; i++)
+		_actionMap[i] = false;
 
 	_lastSaveTime = _system->getMillis();
 }

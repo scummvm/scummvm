@@ -23,6 +23,9 @@
 
 #include "engines/engine.h"
 
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/keymapper.h"
+
 #include "common/config-manager.h"
 
 #include "scumm/scumm_v7.h"
@@ -49,6 +52,7 @@ void Insane::runScene(int arraynum) {
 	_currScenePropSubIdx = 0;
 	_currTrsMsg = 0;
 
+	_vm->_insaneKeymap->setEnabled(true);
 	smush_warpMouse(160, 100, -1);
 	putActors();
 	readState();
@@ -140,6 +144,7 @@ void Insane::runScene(int arraynum) {
 		error("Unknown FT_INSANE mode %d", readArray(0));
 	}
 
+	_vm->_insaneKeymap->setEnabled(false);
 	_player->resetAudioTracks();
 	putActors();
 	_enemy[EN_ROTT3].maxdamage = 120;
