@@ -161,7 +161,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 	// The 11th Hour: Souped Up
 	GROOVIEGAME("11hsu", "", "suscript.grv", NULL, -1,
 					"introd1.gjd", "9ec3e727182fbe40ee23e786721180eb", 6437077, EN_ANY, kPlatformWindows, BASE_FLAGS,
-					GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI, GAMEOPTION_SPEEDRUN), kGroovieT11H),
+					GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI_DEFAULT, GAMEOPTION_SPEEDRUN), kGroovieT11H),
 
 /*==== The 11th Hour Demos ====*/
 	// The 11th Hour DOS Interactive Demo English https://archive.org/details/11th_Hour_demo

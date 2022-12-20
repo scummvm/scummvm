@@ -68,6 +68,18 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	},
 
 	{
+		GAMEOPTION_EASIER_AI_DEFAULT,
+		{
+			_s("Easier AI"),
+			_s("Decrease the difficulty of AI puzzles"),
+			"easier_ai",
+			true,
+			0,
+			0
+		}
+	},
+
+	{
 		GAMEOPTION_FINAL_HOUR,
 		{
 			_s("Updated Credits Music"),
