@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-18 19:46+0000\n"
+"POT-Creation-Date: 2022-12-20 06:48+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -176,7 +176,7 @@ msgstr ""
 #: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1756
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
-#: engines/groovie/script.cpp:650 engines/nancy/dialogs.cpp:101
+#: engines/groovie/script.cpp:655 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:102
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:926
 #: engines/scumm/scumm.cpp:1094 engines/scumm/scumm.cpp:1120
@@ -2538,11 +2538,11 @@ msgstr "~R~etur til oversigt"
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
-#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:844
-#: engines/groovie/script.cpp:2217 engines/groovie/script.cpp:2258
-#: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
-#: engines/kingdom/kingdom.cpp:729 engines/lab/savegame.cpp:242
-#: engines/mads/nebular/dialogs_nebular.cpp:349
+#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:849
+#: engines/groovie/script.cpp:2222 engines/groovie/script.cpp:2249
+#: engines/groovie/script.cpp:2290 engines/hugo/file.cpp:297
+#: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:729
+#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
 #: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:889
 #: engines/pegasus/pegasus.cpp:406 engines/prince/saveload.cpp:54
 #: engines/sci/engine/guest_additions.cpp:742 engines/sci/engine/kfile.cpp:1079
@@ -2559,12 +2559,12 @@ msgstr "Gemt spil:"
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
-#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:839
-#: engines/groovie/script.cpp:844 engines/groovie/script.cpp:2217
-#: engines/groovie/script.cpp:2258 engines/hugo/file.cpp:297
-#: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:729
-#: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:242
-#: engines/mads/nebular/dialogs_nebular.cpp:349
+#: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:844
+#: engines/groovie/script.cpp:849 engines/groovie/script.cpp:2222
+#: engines/groovie/script.cpp:2249 engines/groovie/script.cpp:2290
+#: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
+#: engines/kingdom/kingdom.cpp:729 engines/lab/savegame.cpp:237
+#: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
 #: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:889
 #: engines/parallaction/metaengine.cpp:133
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:406
@@ -4293,11 +4293,12 @@ msgstr ""
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
-#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:821
-#: engines/groovie/script.cpp:856 engines/groovie/script.cpp:2204
-#: engines/groovie/script.cpp:2274 engines/hugo/file.cpp:399
-#: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:739
-#: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
+#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:826
+#: engines/groovie/script.cpp:861 engines/groovie/script.cpp:2209
+#: engines/groovie/script.cpp:2236 engines/groovie/script.cpp:2306
+#: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
+#: engines/kingdom/kingdom.cpp:739 engines/lab/savegame.cpp:257
+#: engines/mads/nebular/dialogs_nebular.cpp:376
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:902
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:745
 #: engines/sci/engine/kfile.cpp:1209 engines/sherlock/scalpel/scalpel.cpp:1262
@@ -4311,12 +4312,13 @@ msgstr "Gendan spil:"
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
-#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:821
-#: engines/groovie/script.cpp:839 engines/groovie/script.cpp:856
-#: engines/groovie/script.cpp:2204 engines/groovie/script.cpp:2274
-#: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
-#: engines/kingdom/kingdom.cpp:739 engines/lab/savegame.cpp:237
-#: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
+#: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:826
+#: engines/groovie/script.cpp:844 engines/groovie/script.cpp:861
+#: engines/groovie/script.cpp:2209 engines/groovie/script.cpp:2236
+#: engines/groovie/script.cpp:2306 engines/hugo/file.cpp:399
+#: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:739
+#: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:257
+#: engines/mads/nebular/dialogs_nebular.cpp:376
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:902
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:746
 #: engines/sci/engine/kfile.cpp:1209 engines/sherlock/scalpel/scalpel.cpp:1262
@@ -5344,43 +5346,43 @@ msgstr "Hurtig filmhastighed"
 msgid "Play movies at an increased speed"
 msgstr "Afspil film med forhøjet hastighed"
 
-#: engines/groovie/metaengine.cpp:61
+#: engines/groovie/metaengine.cpp:61 engines/groovie/metaengine.cpp:73
 msgid "Easier AI"
 msgstr ""
 
-#: engines/groovie/metaengine.cpp:62
+#: engines/groovie/metaengine.cpp:62 engines/groovie/metaengine.cpp:74
 msgid "Decrease the difficulty of AI puzzles"
 msgstr ""
 
-#: engines/groovie/metaengine.cpp:73
+#: engines/groovie/metaengine.cpp:85
 msgid "Updated Credits Music"
 msgstr ""
 
-#: engines/groovie/metaengine.cpp:74
+#: engines/groovie/metaengine.cpp:86
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
 
-#: engines/groovie/metaengine.cpp:85
+#: engines/groovie/metaengine.cpp:97
 #, fuzzy
 #| msgid "Hover Mode"
 msgid "Speedrun Mode"
 msgstr "Henover-tilstand"
 
-#: engines/groovie/metaengine.cpp:86
+#: engines/groovie/metaengine.cpp:98
 msgid "Affects the controls for fast forwarding the game"
 msgstr ""
 
-#: engines/groovie/metaengine.cpp:120
+#: engines/groovie/metaengine.cpp:132
 #, fuzzy
 msgid "GroovieV2 support is not compiled in"
 msgstr "Funktionaliteter som er kompileret ind:"
 
-#: engines/groovie/script.cpp:650
+#: engines/groovie/script.cpp:655
 msgid "Failed to save game"
 msgstr "Kunne ikke gemme spil"
 
-#: engines/groovie/script.cpp:839 engines/lab/savegame.cpp:237
+#: engines/groovie/script.cpp:844 engines/lab/savegame.cpp:237
 #, fuzzy
 msgid "Would you like to save or restore a game?"
 msgstr "Vil du indlæse eller gemme spillet?"
