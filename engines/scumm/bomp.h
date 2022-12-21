@@ -31,7 +31,7 @@ void bompApplyMask(byte *line_buffer, byte *mask, byte maskbit, int32 size, byte
 void bompApplyShadow(int shadowMode, const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency, bool HE7Check = false);
 
 void decompressBomp(byte *dst, const byte *src, int w, int h);
-void bompDecodeLine(byte *dst, const byte *src, int size);
+void bompDecodeLine(byte *dst, const byte *src, int size, bool setZero = true);
 void bompDecodeLineReverse(byte *dst, const byte *src, int size);
 
 
