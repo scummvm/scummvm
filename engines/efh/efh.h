@@ -601,7 +601,7 @@ private:
 	int16 _teamNextAttack[3];
 	int16 _word31780[3];
 
-	int16 _word3273A[15];
+	int16 _menuStatItemArr[15];
 	Stru32686 _stru32686[5];
 	Stru3244C _stru3244C[8];
 };
