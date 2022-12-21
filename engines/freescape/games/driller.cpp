@@ -29,14 +29,28 @@
 
 namespace Freescape {
 
-byte dos_CGA_palette[4][3] = {
+enum {
+	kDrillerCGAPalettePinkBlue = 0,
+	kDrillerCGAPaletteRedGreen = 1,
+};
+
+static const struct CGAPalettteEntry {
+	int areaId;
+	int palette;
+} rawCGAPaletteTable[] {
+	{1, kDrillerCGAPaletteRedGreen},
+	{2, kDrillerCGAPalettePinkBlue},
+	{0, 0}   // This marks the end
+};
+
+byte kDrillerCGAPalettePinkBlueData[4][3] = {
 	{0x00, 0x00, 0x00},
 	{0x00, 0xaa, 0xaa},
 	{0xaa, 0x00, 0xaa},
 	{0xaa, 0xaa, 0xaa},
 };
 
-byte dos_CGA_palette_alt[4][3] = {
+byte kDrillerCGAPaletteRedGreenData[4][3] = {
 	{0x00, 0x00, 0x00},
 	{0x00, 0xaa, 0x00},
 	{0xaa, 0x00, 0x00},
@@ -438,30 +452,36 @@ void DrillerEngine::prepareBorder() {
 		uint32 colorX = _border->format.ARGBToColor(0xFF, 0xAA, 0xAA, 0xAA);
 		uint32 colorY = _border->format.ARGBToColor(0xFF, 0xAA, 0x00, 0x00);
 
-		Graphics::Surface *borderCopy = new Graphics::Surface();
-		borderCopy->create(1, 1, _border->format);
-		borderCopy->copyFrom(*_border);
+		Graphics::Surface *borderRedGreen = new Graphics::Surface();
+		borderRedGreen->create(1, 1, _border->format);
+		borderRedGreen->copyFrom(*_border);
 
 		for (int i = 0; i < _border->w; i++) {
 			for (int j = 0; j < _border->h; j++) {
-				if (borderCopy->getPixel(i, j) == color1)
-					borderCopy->setPixel(i, j, color2);
-				else if (borderCopy->getPixel(i, j) == colorA)
-					borderCopy->setPixel(i, j, colorB);
-				else if (borderCopy->getPixel(i, j) == colorX)
-					borderCopy->setPixel(i, j, colorY);
+				if (borderRedGreen->getPixel(i, j) == color1)
+					borderRedGreen->setPixel(i, j, color2);
+				else if (borderRedGreen->getPixel(i, j) == colorA)
+					borderRedGreen->setPixel(i, j, colorB);
+				else if (borderRedGreen->getPixel(i, j) == colorX)
+					borderRedGreen->setPixel(i, j, colorY);
 
 			}
 		}
-		Texture *borderTextureAlterative = _gfx->createTexture(borderCopy);
-		_borderCGAByArea[1] = borderTextureAlterative; 
-		_paletteCGAByArea[1] = (byte *)dos_CGA_palette_alt;
+		Texture *borderTextureRedGreen = _gfx->createTexture(borderRedGreen);
 
-		_borderCGAByArea[2] = _borderTexture; 
-		_paletteCGAByArea[2] = (byte *)dos_CGA_palette;
+		const CGAPalettteEntry *entry = rawCGAPaletteTable;
+		while (entry->areaId) {
 
-		_borderCGAByArea[8] = _borderTexture; 
-		_borderCGAByArea[14] = _borderTexture; 
+			if (entry->palette == kDrillerCGAPaletteRedGreen) {
+				_borderCGAByArea[entry->areaId] = borderTextureRedGreen; 
+				_paletteCGAByArea[entry->areaId] = (byte *)kDrillerCGAPaletteRedGreenData;
+			} else if (entry->palette == kDrillerCGAPalettePinkBlue) {
+				_borderCGAByArea[entry->areaId] = _borderTexture; 
+				_paletteCGAByArea[entry->areaId] = (byte *)kDrillerCGAPalettePinkBlueData;
+			} else
+				error("Invalid CGA palette to use");
+			entry++;
+		}
 	}
 }
 
