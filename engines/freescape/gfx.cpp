@@ -273,7 +273,7 @@ void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d 
 
 	Common::Array<Math::Vector3d> face;
 	uint8 r1, g1, b1, r2, g2, b2;
-	if (getRGBAt((*colours)[0], r1, g1, b1, r1, g2, b2)) {
+	if (getRGBAt((*colours)[0], r1, g1, b1, r2, g2, b2)) {
 		useColor(r1, g1, b1);
 
 		face.push_back(vertices[4]);
