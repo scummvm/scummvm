@@ -14332,6 +14332,27 @@ static const uint16 qfg1vgaPatchDrinkWaterMessage[] = {
 	PATCH_END
 };
 
+// QFG1VGA throttles the Sierra logo palette animation to once every third
+//  game cycle. This runs very slow when combined with our own throttling.
+//  This appears to be the only game that does this, so we just disable it.
+//
+// Applies to: All versions
+// Responsible method: LogoRoom:doit
+static const uint16 qfg1vgaSignatureSierraLogoSpeed[] = {
+	SIG_MAGICDWORD,
+	0x0a,                                   // mod
+	0x36,                                   // push
+	0x35, 0x00,                             // ldi 00
+	0x1a,                                   // eq?
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchSierraLogoSpeed[] = {
+	PATCH_ADDTOOFFSET(+1),
+	0x76,                                   // push0
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,     0, "inventory weight warning",                    1, qfg1vgaSignatureInventoryWeightWarn, qfg1vgaPatchInventoryWeightWarn },
@@ -14357,6 +14378,7 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,   340, "dagnabit inventory fix",                      1, qfg1vgaSignatureDagnabitInventory,   qfg1vgaPatchDagnabitInventory },
 	{  true,   340, "mac: dagnabit icon bar fix",                  1, qfg1vgaSignatureMacDagnabitIconBar,  qfg1vgaPatchMacDagnabitIconBar },
 	{  true,   603, "mac: logo mouse-up fix",                      1, qfg1vgaSignatureMacLogoIntroSkip,    qfg1vgaPatchMacLogoIntroSkip },
+	{  true,   603, "sierra logo speed",                           1, qfg1vgaSignatureSierraLogoSpeed,     qfg1vgaPatchSierraLogoSpeed },
 	{  true,   814, "window text temp space",                      1, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
 	{  true,   814, "dialog header offset",                        3, qfg1vgaSignatureDialogHeader,        qfg1vgaPatchDialogHeader },
 	{  true,   928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,          sciNarratorLockupPatch },
