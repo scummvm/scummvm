@@ -3579,7 +3579,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("fantasystudio", "", "xn--2bkaw2bxdbn9bd8s8lyd", "da0da5d543b237051975ad70bec129f4", 484743, Common::JA_JPN, 404),
 
 	// Full game is D3
-	MACDEMO1_l("fantazion", "Demo", "Demo-16M", "77f4098988d5386794d1530065f514cd", 303309, Common::JA_JPN, 400),
+	MACDEMO1_l("fantazion", "Demo", "Demo-16M", "77f4098988d5386794d1530065f514cd", 303053, Common::JA_JPN, 400),
 
 	// Mac version requires installation, Felix Cartoon Toolbox Installer, uses Smaller Installer by Cyclos
 	MACGAME1("fct",		  "", " Felix Cartoon Toolbox",	  "7446214d1f3b0309e51bc477b03096c9", 295690, 404),
@@ -3593,9 +3593,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 							  "TOONDATA/1001",			  "79dbf7e5fbc80bbbcfdba5bd829b75f8", 5266, 404),
 	MACDEMO1("fct",	  "Demo", "BIG TOP DEMO",			  "ea646eccc9a53f44ce082459d4809a06", 486703, 404),
 
-	WINGAME1("flw", "", "FLW.EXE", "7d02787f74f2adfc0c66f34646380c0e", 720683, 400),
+	WINGAME2("flw", "", "FLW.EXE", 		 "7d02787f74f2adfc0c66f34646380c0e", 720683,
+						"FLW/FLWMM.DIR", "67be429651378de0de7ad0982b291824", 1230280, 400),
 
-	MACGAME1_l("ffa", "", "FFA-8M", "411051c134236a9ead0d0d1837aafb5e", 290682, Common::JA_JPN, 402),
+	MACGAME1_l("ffa", "", "FFA-8M", "411051c134236a9ead0d0d1837aafb5e", 290426, Common::JA_JPN, 402),
 	PIPGAME1_l("ffa", "", "FFA", "2618a85198d0180e3eae9162f81aafed", 60921, Common::JA_JPN, 404),
 
 	// Fred en de Flessenfiets (Demo)
@@ -3604,9 +3605,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Willy, der Zauberfisch : ein Meer voll Überraschungen!
 	// Originally published by Tivola, Hamburg (1997)
+	// Tivola edition is dual language De/En
 	// De vis die kon wensen localized by Bombilla, Amsterdam
 	// Published in English by Oxford University Press (1995)
-	MACGAME1_l("fishwish", "", "Willy, der Zauberfisch", "ab2bda961c62f9deb2c1ba297d0a1ea9", 501815, Common::DE_DEU, 404),
+	MACGAME1_l("fishwish", "", "Willy, der Zauberfisch", "ab2bda961c62f9deb2c1ba297d0a1ea9", 501559, Common::DE_DEU, 404),
+	WINGAME2t_l("fishwish", "",	 "WILLY.EXE",	 	 "8b96b5ebd1e11d431e08971a2e3b6053", 2503499,
+								 "EDATA/BUMPER.DIR", "8576a2bab07feb9f7055bfd5ceb3b2c4", 307048, Common::DE_DEU, 404),
 	WINGAME1_l("fishwish", "",	 "WENSVIS.EXE",	 "50004a80942bafec52bbde5c09674bf9", 696993, Common::NL_NLD, 404),
 	WINDEMO1("fishwish", "Demo", "FISHWISH.EXE", "04e5006ccbb86e4ba2d866ce9a5f69ae", 696845, 404),
 
@@ -3646,7 +3650,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 								"TITLE.DXR", "e2b2e3bdf7d87ecd98e9bb768b7ed555", 2371220, 404),
 
 	// Mac demo from CD Loisirs Nº6
-	MACGAME1("freakshow", "D4", "FreakShow Projector", "dc5a87dda7a0daf46604515f7d2cca66", 300644, 400),
+	MACGAME1("freakshow", "D4", "FreakShow Projector", "dc5a87dda7a0daf46604515f7d2cca66", 300388, 404),
 	WINGAME1t("freakshow", "", "INSTALL/FREAKS.EXE", "e36cf1ec95f220eb165f38b0e7b572a5", 695893, 400),
 	MACDEMO1("freakshow", "Demo", "Freak Show", "77f4098988d5386794d1530065f514cd", 301669, 400),
 
@@ -3659,14 +3663,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1t("frequency", "Interview", "INTERVU.EXE", "cf6f480f58715e48a3e18d0aee6b724e", 26083203, 404),
 	WINDEMO1t("frequency", "frEQout", "FREQOUT.EXE", "ff223654239ccacd0a2e2e158187789b", 31765595, 404),
 
-	MACDEMO1("fsky", "Demo", "A Field Trip to the Sky", "a1bb13f9e6b70ec5a5ed1ad350b5fecc", 498505, 400),
+	MACDEMO1("fsky", "Demo", "A Field Trip to the Sky", "a1bb13f9e6b70ec5a5ed1ad350b5fecc", 498249, 404),
 
 	// Bilingual Japanese/English
 	MACGAME1("fukuda", "", "Mac/FUKUDA",  "0b55676d539ba5e29560e7c4da4fbad6", 483187, 404),
 	WINGAME1t("fukuda", "", "WIN/MAIN/FUKUDA.EXE",  "71eec68c19354b67badc7c82f159374b", 739951, 404),
 
 	// Original filename is ・ふたりの料理物語
-	MACDEMO1_l("futarinoryori", "Demo", "A Tale of Two Chefs", "22815cf659b911c4e07d0015cac5d98f", 301937, Common::JA_JPN, 400),
+	MACDEMO1_l("futarinoryori", "Demo", "A Tale of Two Chefs", "22815cf659b911c4e07d0015cac5d98f", 301681, Common::JA_JPN, 400),
 
 	MACGAME1_l("futurepromotion", "", "FUTURE",  "2885d9aacbeaecf4a27a7978a6b55c9b", 290474, Common::JA_JPN, 400),
 	WINGAME2t_l("futurepromotion", "", "FUTURE.EXE",  "a8e1020f952480d98920b1c7cc08644d", 6099243,
