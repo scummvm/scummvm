@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-12-20 21:38+0000\n"
-"PO-Revision-Date: 2022-12-04 14:34+0000\n"
+"PO-Revision-Date: 2022-12-21 08:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1572,20 +1572,16 @@ msgid "Autosave:"
 msgstr "自動セーブ："
 
 #: gui/options.cpp:2452
-#, fuzzy
-#| msgid "Always return to the launcher when leaving a game"
 msgid "Return to the launcher when leaving a game"
-msgstr "ゲーム終了時にメインメニューへ戻る"
+msgstr "ゲーム終了時、ランチャーへ戻る"
 
 #: gui/options.cpp:2453
-#, fuzzy
-#| msgid ""
-#| "Always return to the launcher when leaving a game instead of closing "
-#| "ScummVM."
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
-msgstr "ゲーム終了時、メインメニューへ戻るようにします。"
+msgstr ""
+"ゲーム終了時、ScummVMを閉じずランチャーへ戻ります\n"
+"(全てのゲームでサポートしている機能ではありません)。"
 
 #: gui/options.cpp:2460
 msgid "Ask for confirmation on exit"
