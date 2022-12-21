@@ -846,6 +846,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_SPEECH	},
 
+	// Gabriel Knight - English DOS Demo
+	// SCI interpreter version 1.001.092
+	// Note: we are not using ADGF_DEMO here, to avoid a game ID like gk1demo-demo.
+	// Same resource volume as previous entry, but resource.map has one different
+	// byte within the junk padding between directory headers and directory entries.
+	{"gk1demo", "Demo", {
+		{"resource.map", 0, "1f6643045cab8546c9e6bddfbce4ea80", 2490},
+		{"resource.000", 0, "eb3ed7477ca4110813fe1fcf35928561", 1718450},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_SPEECH	},
+
 #define GUIO_GK1_FLOPPY GUIO3(GUIO_NOSPEECH, \
 							  GAMEOPTION_ORIGINAL_SAVELOAD, \
 							  GAMEOPTION_TTS)
