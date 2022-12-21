@@ -111,6 +111,11 @@ Games must be added to and started from :doc:`the ScummVM Launcher <../use_scumm
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 A list of default shortcuts can be found on the :doc:`../use_scummvm/keyboard_shortcuts` page. From version 2.2.0 you can also create custom shortcuts on the :doc:`../settings/keymaps` tab.
 
+1.3.11. What is the ScummVM policy on fanmade mods (unofficial subtitles & translations, upscaled graphics & audio, etc.)?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Some engines support fan mods, but ScummVM does not endorse any mods that infringe the copyright of the original rights holders. This includes graphic and audio "upscales" that redistribute modified game assets without permission.
+
+Several mods that exist with the permission of the original rights holders can be found `on our website <https://www.scummvm.org/links/>`_.
 
 2. Troubleshooting
 ===================
