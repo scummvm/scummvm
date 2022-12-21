@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-20 21:38+0000\n"
+"POT-Creation-Date: 2022-12-21 13:58+0000\n"
 "PO-Revision-Date: 2022-05-01 15:27+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -6638,19 +6638,19 @@ msgid "Use an easier to read custom font"
 msgstr ""
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:743
+#: engines/saga/detection_tables.h:790
 #, fuzzy
 msgid "Windows Trial version is not supported"
 msgstr "Id hry není podporováno"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:770
+#: engines/saga/detection_tables.h:817
 #, fuzzy
 msgid "macOS Trial version is not supported"
 msgstr "Id hry není podporováno"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:796
+#: engines/saga/detection_tables.h:843
 #, fuzzy
 msgid "Pocket PC Trial version is not supported"
 msgstr "Id hry není podporováno"
