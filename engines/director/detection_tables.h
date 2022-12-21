@@ -3486,21 +3486,21 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2t_l("dropcity", "", "WIN.EXE",  "9680a67c57977e5d4a679455f722c240", 1298847,
 								"MAIN.MOV", "69989b3693715e55366abdcb8cc77a2c", 90280972, Common::JA_JPN, 404),
 
-	MACGAME1_l("earthtia", "", "LATHUR'S LEGEND", "b267d7e5f42c170a4f5dbb50a0f4e064", 289818, Common::JA_JPN, 402),
+	MACGAME1_l("earthtia", "", "LATHUR'S LEGEND", "b267d7e5f42c170a4f5dbb50a0f4e064", 289562, Common::JA_JPN, 402),
 
 	// Full game is not Director
 	WINDEMO1("earthwormjim", "Demo", "EWJDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400),
 
 	WINGAME1t_l("easternmind", "", "TONG_NOU.EXE", "5d8fe6160e5cde5a9fd0cfa6a8ed7901", 741471, Common::JA_JPN, 404),
-	MACGAME1("easternmind", "", "Eastern Mind", "78138a77207907642744d0960c14d9e5", 483746, 400),
-	WINGAME1("easternmind", "", "ESTRNMND.EXE", "2597cfb5466d193b5a18fc7b0e3a3fa5", 685789, 400),
+	MACGAME1("easternmind", "", "Eastern Mind", "78138a77207907642744d0960c14d9e5", 483490, 404),
+	WINGAME1("easternmind", "", "ESTRNMND.EXE", "2597cfb5466d193b5a18fc7b0e3a3fa5", 685789, 404),
 	// Eastern Mind extras developed by
 	// N.IIZUKA - OSD
 	// Justin Case - OR Inc
-	MACGAME1("easternmind", "Tong-Nou Characters", "Tong-Nou Characters", "2b8834cfd8a53e61b7f957a81eb627f4", 303933, 400),
-	WINGAME1t("easternmind", "Tong-Nou Characters", "KARACTRS.EXE", "58dbf5a92fb2466356b474e449458df4", 2249267, 400),
+	MACGAME1("easternmind", "Tong-Nou Characters", "Tong-Nou Characters", "2b8834cfd8a53e61b7f957a81eb627f4", 303933, 404),
+	WINGAME1t("easternmind", "Tong-Nou Characters", "KARACTRS.EXE", "58dbf5a92fb2466356b474e449458df4", 2249267, 404),
 	MACGAME1("easternmind", "Transcript", "Transcript Player", "78138a77207907642744d0960c14d9e5", 483490, 404),
-	WINGAME1t("easternmind", "Transcript", "TRNSCRPT.EXE", "22b17cda5df54961327d8f89040d534f", 686807, 400),
+	WINGAME1t("easternmind", "Transcript", "TRNSCRPT.EXE", "22b17cda5df54961327d8f89040d534f", 686807, 404),
 
 	MACGAME2("easyitalian", "", "Easy Cooking Italian", "a8e65a2268226bd59f12ebdc58a221f3", 483490,
 								"CONTENTS.DIR", 		"39a45c2f7a24e78213cfdf1c65322b46", 274382, 404),
@@ -3510,7 +3510,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("ebntelebreakdown", "", "EBNTBeCD.MAC", "51f11d985a921c2cfcf2b763b7b9c2e3", 499512, 404),
 	WINGAME1t("ebntelebreakdown", "", "EBNTBCDW.EXE", "77399581d91215a1149dcf08411d2f63", 2631477, 404),
 
-	MACGAME1("edh", "", "Executive Diet Helper CD", "7e1e1bad51542c9a3b484b1dacdf47fc", 635872, 404),
+	MACGAME1("edh", "", "Executive Diet Helper CD", "7e1e1bad51542c9a3b484b1dacdf47fc", 635616, 404),
 	WINGAME1("edh", "", "EDHCD.EXE", "fdeadce56c6654312bf280eb21f36692", 9841489, 404),
 
 	MACGAME1("einstein", "Hybrid",  "The Ultimate Einstein", "01be45e7241194dad07938e7059b88e3", 483468, 404),
@@ -3520,26 +3520,27 @@ static const DirectorGameDescription gameDescriptions[] = {
 							 "EINSPLSH.DIR", "a722aca2b068e3aa02fef514c4b53730", 161738, 404),
 
 
-	WINDEMO1t("elmopreschool", "Demo", "ELMO.EXE", "52a0a157d70d370f4091e86ecf7a9408", 5070639, 404),
+	WINDEMO2t("elmopreschool", "Demo", "ELMO.EXE",			"52a0a157d70d370f4091e86ecf7a9408", 5070639,
+									   "SHARED/CWLOGO.DIR",	"1e0c7e14f5f945965a780b0f7d336659", 652996, 404),
 
 	// Demo is found on Pantsylvania CD
-	MACDEMO1("elroybug", "Demo", "Elroy Goes Bugzerk Demo", "bcd3c718db258701496b3c5bcb827ef2", 498650, 404),
+	MACDEMO1("elroybug", "Demo", "Elroy Goes Bugzerk Demo", "bcd3c718db258701496b3c5bcb827ef2", 498394, 404),
 	WINDEMO1("elroybug", "Demo", "ELRYDEMO.EXE", "cb2d86ea52d81d12d1fe8eadfb4a118c", 2438763, 404),
 
 	// Developed and published by Headbone Interactive, Seattle
 	// Demo contains Apparelizer 1.0 minigame; Found on Disc Inferno from APC magazine (Australia), Dec 1999
-	MACGAME1("elroycostume", "", "Elroy's Costume Closet", "0c7bbb4b24823e5ab871cb4c1d6f3710", 483746, 404),
+	MACGAME1("elroycostume", "", "Elroy's Costume Closet", "0c7bbb4b24823e5ab871cb4c1d6f3710", 483490, 404),
 	WINGAME1("elroycostume", "", "ECCLOSET.EXE", "f2fb9b1c60d3d1ee2b664165f4199391", 1327420, 404),
-	WINDEMO1("elroycostume", "Demo", "elroy.exe", "9d18c6a224dd0e5be4ad03a05c74254b", 854349, 400),
+	WINDEMO1("elroycostume", "Demo", "elroy.exe", "9d18c6a224dd0e5be4ad03a05c74254b", 854349, 404),
 
-	MACGAME1("elroypave", "", "Elroy Hits the Pavement", "17efee018a660458fae80de4364021ac", 525840, 404),
+	MACGAME1("elroypave", "", "Elroy Hits the Pavement", "17efee018a660458fae80de4364021ac", 525584, 404),
 	WINGAME1("elroypave", "", "PAVEMENT.EXE", "7937f42747788b558bc32cced3d8f66b", 758491, 404),
-	MACDEMO1("elroypave", "Demo", "Pavement Demo", "17efee018a660458fae80de4364021ac", 521136, 403),
+	MACDEMO1("elroypave", "Demo", "Pavement Demo", "17efee018a660458fae80de4364021ac", 520880, 404),
 	WINDEMO1("elroypave", "Demo", "PAVEDEMO.EXE", "073eb1dd818796efe9513b11a8a4bb2d", 802180, 404),
 
 	// Separate binaries for English or French, 68K or PowerPC
-	MACGAME1("emme", "", "The Keys to Knowledge PowerMac", "6d6772c4177764f6b556ba7c88f9b949", 60905, 404),
-	MACGAME1_l("emme", "", "Les Secrets de la conn..Pow_Mac", "6d6772c4177764f6b556ba7c88f9b949", 60905, Common::FR_FRA, 404),
+	MACGAME1("emme", "", "The Keys to Knowledge PowerMac", "6d6772c4177764f6b556ba7c88f9b949", 60649, 404),
+	MACGAME1_l("emme", "", "Les Secrets de la conn..Pow_Mac", "6d6772c4177764f6b556ba7c88f9b949", 60649, Common::FR_FRA, 404),
 	WINGAME1("emme", "", "EMMPCENG.EXE", "b03fc5677dddb8fa85d24361a0e1e9b9", 4406907, 404),
 	WINGAME1_l("emme", "", "EMMPCFRA.EXE", "b3ab1dab136dd60fca422409d8876375", 5120157, Common::FR_FRA, 404),
 
@@ -3555,7 +3556,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO1("explorapedia", "1995 Demo", "XPLDEMO.EXE", "11f73ebd2da334912e717c05c33b7340", 4731995, 404),
 
-	MACGAME1("explorers", "",	"Explorers",	"ea646eccc9a53f44ce082459d4809a06", 483774, 404),
+	MACGAME2("explorers", "",	"Explorers",	"ea646eccc9a53f44ce082459d4809a06", 483518,
+								"startExp.dir",	"9493238107c896d4b44b20088d3bc12e", 19114, 404),
+	MACGAME2_l("explorers", "",	"Exploradores",	"ea646eccc9a53f44ce082459d4809a06", 483518,
+								"STARTEXP.DIR", "3c3ab943769c548856d7cd84a8f808ec", 11198, Common::PT_BRA, 404),
 	WINGAME2("explorers", "",	"XPLRNW.EXE",	"907c28b272eb40fad1b5f42ec841b010", 696741,
 								"STARTEXP.DIR", "9493238107c896d4b44b20088d3bc12e", 19114, 404),
 	WINGAME2_l("explorers", "", "XPLRNW.EXE",	"907c28b272eb40fad1b5f42ec841b010", 696741,
