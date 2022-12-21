@@ -585,21 +585,20 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 
 	int energy = _gameStateVars[k8bitVariableEnergy];
 	int shield = _gameStateVars[k8bitVariableShield];
-	if (_renderMode == Common::kRenderEGA) {
-		if (energy >= 0) {
-			Common::Rect backBar(20, 185, 88 - energy, 191);
-			surface->fillRect(backBar, back);
-			Common::Rect energyBar(87 - energy, 185, 88, 191);
-			surface->fillRect(energyBar, front);
-		}
 
-		if (shield >= 0) {
-			Common::Rect backBar(20, 177, 88 - shield, 183);
-			surface->fillRect(backBar, back);
+	if (energy >= 0) {
+		Common::Rect backBar(20, 185, 88 - energy, 191);
+		surface->fillRect(backBar, back);
+		Common::Rect energyBar(87 - energy, 185, 88, 191);
+		surface->fillRect(energyBar, front);
+	}
 
-			Common::Rect shieldBar(87 - shield, 177, 88, 183);
-			surface->fillRect(shieldBar, front);
-		}
+	if (shield >= 0) {
+		Common::Rect backBar(20, 177, 88 - shield, 183);
+		surface->fillRect(backBar, back);
+
+		Common::Rect shieldBar(87 - shield, 177, 88, 183);
+		surface->fillRect(shieldBar, front);
 	}
 }
 
