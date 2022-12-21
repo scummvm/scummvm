@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-12-21 17:58+0000\n"
-"PO-Revision-Date: 2022-12-07 21:59+0000\n"
+"PO-Revision-Date: 2022-12-21 19:18+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -1581,22 +1581,17 @@ msgid "Autosave:"
 msgstr "Automatisk lagring:"
 
 #: gui/options.cpp:2452
-#, fuzzy
-#| msgid "Always return to the launcher when leaving a game"
 msgid "Return to the launcher when leaving a game"
-msgstr "Gå alltid tilbake til oppstarteren når du avslutter et spill"
+msgstr "Gå tilbake til oppstarteren når du avslutter et spill"
 
 #: gui/options.cpp:2453
-#, fuzzy
-#| msgid ""
-#| "Always return to the launcher when leaving a game instead of closing "
-#| "ScummVM."
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
 msgstr ""
-"Gå alltid tilbake til oppstarteren når du avslutter et spill fremfor å "
-"avslutte ScummVM."
+"Gå tilbake til oppstarteren når du avslutter et spill fremfor å avslutte "
+"ScummVM.\n"
+"(Denne funksjonen støttes ikke av alle spill.)"
 
 #: gui/options.cpp:2460
 msgid "Ask for confirmation on exit"
@@ -5341,11 +5336,13 @@ msgstr ""
 
 #: engines/groovie/metaengine.cpp:97
 msgid "Slim Left/Right Hotspots"
-msgstr ""
+msgstr "Små venstre-/høyrepunkter"
 
 #: engines/groovie/metaengine.cpp:98
 msgid "Shrinks the hotspots on the left and right sides for exiting puzzles"
 msgstr ""
+"Krymper berøringspunktene på venstre og høyre side for avslutting av gåter "
+"og puslespill."
 
 #: engines/groovie/metaengine.cpp:109
 msgid "Speedrun Mode"
