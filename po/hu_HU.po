@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-12-21 20:27+0000\n"
-"PO-Revision-Date: 2022-12-03 13:50+0000\n"
+"PO-Revision-Date: 2022-12-22 07:34+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -1577,22 +1577,16 @@ msgid "Autosave:"
 msgstr "Automentés:"
 
 #: gui/options.cpp:2452
-#, fuzzy
-#| msgid "Always return to the launcher when leaving a game"
 msgid "Return to the launcher when leaving a game"
-msgstr "Mindig térjen vissza az indítóhoz ha kilép a játékból"
+msgstr "Térjen vissza az indítóhoz ha kilép a játékból"
 
 #: gui/options.cpp:2453
-#, fuzzy
-#| msgid ""
-#| "Always return to the launcher when leaving a game instead of closing "
-#| "ScummVM."
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
 msgstr ""
-"Mindig térjen vissza az indítóhoz ha kilép a játékból a ScummVM bezárása "
-"helyett."
+"Térjen vissza az indítóhoz ha kilép a játékból a ScummVM bezárása helyett\n"
+"(ezt a funkciót nem minden játék támogatja)."
 
 #: gui/options.cpp:2460
 msgid "Ask for confirmation on exit"
@@ -5314,11 +5308,13 @@ msgstr ""
 
 #: engines/groovie/metaengine.cpp:97
 msgid "Slim Left/Right Hotspots"
-msgstr ""
+msgstr "Karcsú bal/jobb hotspotok"
 
 #: engines/groovie/metaengine.cpp:98
 msgid "Shrinks the hotspots on the left and right sides for exiting puzzles"
 msgstr ""
+"A bal és jobb oldalon lévő hotspotokat összezsugorítja a rejtvényekből való "
+"kilépéshez"
 
 #: engines/groovie/metaengine.cpp:109
 msgid "Speedrun Mode"
