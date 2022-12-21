@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-20 15:07+0000\n"
+"POT-Creation-Date: 2022-12-20 21:38+0000\n"
 "PO-Revision-Date: 2022-12-03 23:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -2219,7 +2219,7 @@ msgstr "Без графики"
 msgid "Standard renderer"
 msgstr "Стандартный растеризатор"
 
-#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:1010
+#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:1013
 msgid "Standard"
 msgstr "Стандартный"
 
@@ -3588,7 +3588,7 @@ msgstr "Файл не был передан!"
 msgid "Uploaded successfully!"
 msgstr "Загружен успешно!"
 
-#: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:277
+#: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:280
 msgid "~C~lose"
 msgstr "~З~акрыть"
 
@@ -6982,53 +6982,53 @@ msgstr ""
 "KryoFlux, которые также предоставляются Limited Run Games."
 
 #. I18N: Previous page button
-#: engines/scumm/dialogs.cpp:274
+#: engines/scumm/dialogs.cpp:277
 msgid "~P~revious"
 msgstr "~П~ред"
 
 #. I18N: Next page button
-#: engines/scumm/dialogs.cpp:276
+#: engines/scumm/dialogs.cpp:279
 msgid "~N~ext"
 msgstr "~С~лед"
 
-#: engines/scumm/dialogs.cpp:949
+#: engines/scumm/dialogs.cpp:952
 msgid "Speech Only"
 msgstr "Только озвучка"
 
-#: engines/scumm/dialogs.cpp:950
+#: engines/scumm/dialogs.cpp:953
 msgid "Speech and Subtitles"
 msgstr "Озвучка и субтитры"
 
-#: engines/scumm/dialogs.cpp:951
+#: engines/scumm/dialogs.cpp:954
 msgid "Subtitles Only"
 msgstr "Только субтитры"
 
-#: engines/scumm/dialogs.cpp:959
+#: engines/scumm/dialogs.cpp:962
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Озвучка и текст"
 
-#: engines/scumm/dialogs.cpp:1005
+#: engines/scumm/dialogs.cpp:1008
 msgid "Select a Proficiency Level."
 msgstr "Выберите уровень сложности."
 
-#: engines/scumm/dialogs.cpp:1007
+#: engines/scumm/dialogs.cpp:1010
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "За помощью обратитесь к инструкции Loom(TM)."
 
-#: engines/scumm/dialogs.cpp:1011
+#: engines/scumm/dialogs.cpp:1014
 msgid "Practice"
 msgstr "Практикант"
 
-#: engines/scumm/dialogs.cpp:1012
+#: engines/scumm/dialogs.cpp:1015
 msgid "Expert"
 msgstr "Эксперт"
 
-#: engines/scumm/dialogs.cpp:1044 engines/scumm/metaengine.cpp:647
+#: engines/scumm/dialogs.cpp:1047 engines/scumm/metaengine.cpp:647
 msgid "Enable game-specific enhancements"
 msgstr "Включить улучшения для некоторых игр"
 
-#: engines/scumm/dialogs.cpp:1044 engines/scumm/metaengine.cpp:648
+#: engines/scumm/dialogs.cpp:1047 engines/scumm/metaengine.cpp:648
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
@@ -7036,11 +7036,11 @@ msgstr ""
 "ScummVM включит небольшие улучшения для некоторых игр, обычно основанные на "
 "других версиях той же игры."
 
-#: engines/scumm/dialogs.cpp:1048 engines/scumm/metaengine.cpp:665
+#: engines/scumm/dialogs.cpp:1051 engines/scumm/metaengine.cpp:665
 msgid "Enable the original GUI and Menu"
 msgstr "Включить оригинальные GUI и меню"
 
-#: engines/scumm/dialogs.cpp:1048 engines/scumm/metaengine.cpp:666
+#: engines/scumm/dialogs.cpp:1051 engines/scumm/metaengine.cpp:666
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu."
@@ -7048,11 +7048,11 @@ msgstr ""
 "Игра будет использовать оригинальный графический интерфейс и меню сохранения/"
 "загрузки."
 
-#: engines/scumm/dialogs.cpp:1069
+#: engines/scumm/dialogs.cpp:1072
 msgid "Overture Timing:"
 msgstr "Время увертюры:"
 
-#: engines/scumm/dialogs.cpp:1073
+#: engines/scumm/dialogs.cpp:1076
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
@@ -7060,11 +7060,11 @@ msgstr ""
 "Если используется замена музыки, эта настройка указывает время, когда "
 "увертюра сменяется на сцену с логотипами Lucasfilm и Loom."
 
-#: engines/scumm/dialogs.cpp:1156
+#: engines/scumm/dialogs.cpp:1159
 msgid "Playback Adjust:"
 msgstr "Подстроить воспроизведение:"
 
-#: engines/scumm/dialogs.cpp:1160
+#: engines/scumm/dialogs.cpp:1163
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
@@ -7072,11 +7072,11 @@ msgstr ""
 "Во время проигрывания музыки из CD-трека, укажите начальную позицию звука. "
 "Используйте это если вы слышите неверные части звуков."
 
-#: engines/scumm/dialogs.cpp:1239
+#: engines/scumm/dialogs.cpp:1242
 msgid "Intro Adjust:"
 msgstr "Подстройка вступления:"
 
-#: engines/scumm/dialogs.cpp:1243
+#: engines/scumm/dialogs.cpp:1246
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
@@ -7086,11 +7086,11 @@ msgstr ""
 "Воспользуйтесь этой опцией если музыка прерывается раньше положенного, или "
 "же вам не нравится как музыка синхронизируется со вступлением."
 
-#: engines/scumm/dialogs.cpp:1252
+#: engines/scumm/dialogs.cpp:1255
 msgid "Outlook Adjust:"
 msgstr "Подстройка панорамы:"
 
-#: engines/scumm/dialogs.cpp:1256
+#: engines/scumm/dialogs.cpp:1259
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
@@ -7619,19 +7619,19 @@ msgstr "Лететь вправо"
 msgid "Fly to lower right"
 msgstr "Лететь вправо-вниз"
 
-#: engines/scumm/input.cpp:1255
+#: engines/scumm/input.cpp:1263
 msgid "Snap scroll on"
 msgstr "Прокрутка скачками включена"
 
-#: engines/scumm/input.cpp:1257
+#: engines/scumm/input.cpp:1265
 msgid "Snap scroll off"
 msgstr "Прокрутка скачками выключена"
 
-#: engines/scumm/input.cpp:1270
+#: engines/scumm/input.cpp:1278
 msgid "Music volume: "
 msgstr "Громк. музыки: "
 
-#: engines/scumm/input.cpp:1287
+#: engines/scumm/input.cpp:1295
 msgid "Subtitle speed: "
 msgstr "Скорость титров: "
 
