@@ -136,7 +136,7 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 		if (sv->dinnerTableEntries) {
 			Common::String extra = Common::String::format("v0.0%d %s", sv->version, sv->extraDesc);
 
-			DetectedGame game = DetectedGame(getName(), skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown, extra);
+			DetectedGame game = DetectedGame(getName(), skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformDOS, extra);
 			game.setGUIOptions(sv->guioptions);
 
 			detectedGames.push_back(game);
