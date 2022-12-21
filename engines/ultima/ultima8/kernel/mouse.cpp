@@ -134,10 +134,6 @@ int Mouse::getMouseLength(int mx, int my) const {
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	screen->GetSurfaceDims(dims);
 
-	// For now, reference point is (near) the center of the screen
-	int dx = abs(mx - dims.width() / 2);
-	int dy = abs((dims.height() / 2 + (dims.height() * 14 / 200)) - my); //! constant
-
 	//
 	// The original game switches cursors from small -> medium -> large on
 	// rectangles - in x, ~30px and ~130px away from the avatar (center) on
@@ -146,19 +142,25 @@ int Mouse::getMouseLength(int mx, int my) const {
 	// Modern players may be in a window so give them a little bit more
 	// space to make the large cursor without having to hit the edge.
 	//
-	int xshort = (dims.width() * 30 / 320);
-	int xmed = (dims.width() * 100 / 320);
-	int yshort = (dims.height() * 30 / 320);
-	int ymed = (dims.height() * 100 / 320);
 
-	// determine length of arrow
-	if (dx > xmed || dy > ymed) {
+	// Reference point is the center of the screen
+	int dx = abs(mx - dims.width() / 2);
+	int dy = abs((dims.height() / 2) - my);
+	int xmed = dims.width() * 100 / 320;
+	int ymed = dims.height() * 100 / 320;
+
+	if (dx > xmed || dy > ymed)
 		return 2;
-	} else if (dx > xshort || dy > yshort) {
+
+	// For short cursor, reference point is near the avatar's feet
+	dy = abs((dims.height() / 2 + (dims.height() * 14 / 200)) - my); //! constant
+	int xshort = dims.width() * 30 / 320;
+	int yshort = dims.height() * 30 / 320;
+
+	if (dx > xshort || dy > yshort)
 		return 1;
-	} else {
-		return 0;
-	}
+
+	return 0;
 }
 
 Direction Mouse::getMouseDirectionWorld(int mx, int my) const {
