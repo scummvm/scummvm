@@ -258,10 +258,14 @@ bool FreescapeEngine::executeEndIfVisibilityIsEqual(FCLInstruction &instruction)
 		assert(obj);
 		debugC(1, kFreescapeDebugCode, "End condition if visibility of obj with id %d is %d!", source, value);
 	} else {
-		assert(_areaMap.contains(source));
-		obj = _areaMap[source]->objectWithID(additional);
-		assert(obj);
 		debugC(1, kFreescapeDebugCode, "End condition if visibility of obj with id %d in area %d is %d!", additional, source, value);
+		if (_areaMap.contains(source)) {
+			obj = _areaMap[source]->objectWithID(additional);
+			assert(obj);
+		} else {
+			assert(isDOS() && isDemo()); // Should only happen in the DOS demo
+			return (value == false);
+		}
 	}
 
 	return (obj->isInvisible() == value);
@@ -349,9 +353,14 @@ void FreescapeEngine::executeMakeInvisible(FCLInstruction &instruction) {
 	}
 
 	debugC(1, kFreescapeDebugCode, "Making obj %d invisible in area %d!", objectID, areaID);
-	Object *obj = _areaMap[areaID]->objectWithID(objectID);
-	assert(obj); // We assume the object was there
-	obj->makeInvisible();
+	if (_areaMap.contains(areaID)) {
+		Object *obj = _areaMap[areaID]->objectWithID(objectID);
+		assert(obj); // We assume the object was there
+		obj->makeInvisible();
+	} else {
+		assert(isDOS() && isDemo()); // Should only happen in the DOS demo
+	}
+
 }
 
 void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
@@ -366,9 +375,13 @@ void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
 	}
 
 	debugC(1, kFreescapeDebugCode, "Making obj %d visible in area %d!", objectID, areaID);
-	Object *obj = _areaMap[areaID]->objectWithID(objectID);
-	assert(obj); // We assume an object should be there
-	obj->makeVisible();
+	if (_areaMap.contains(areaID)) {
+		Object *obj = _areaMap[areaID]->objectWithID(objectID);
+		assert(obj); // We assume an object should be there
+		obj->makeVisible();
+	} else {
+		assert(isDOS() && isDemo()); // Should only happen in the DOS demo
+	}
 }
 
 void FreescapeEngine::executeToggleVisibility(FCLInstruction &instruction) {

@@ -40,6 +40,9 @@ static const struct CGAPalettteEntry {
 } rawCGAPaletteTable[] {
 	{1, kDrillerCGAPaletteRedGreen},
 	{2, kDrillerCGAPalettePinkBlue},
+	{3, kDrillerCGAPaletteRedGreen},
+	{8, kDrillerCGAPalettePinkBlue},
+	{14, kDrillerCGAPalettePinkBlue},
 	{0, 0}   // This marks the end
 };
 
@@ -108,7 +111,11 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	if (!_gameStateBits.contains(areaID))
 		_gameStateBits[areaID] = 0;
 
-	assert(_areaMap.contains(areaID));
+	if (!_areaMap.contains(areaID)) {
+		assert(isDOS() && isDemo());
+		// Not included in the demo, abort area change
+		return;
+	}
 	_currentArea = _areaMap[areaID];
 	_currentArea->show();
 
@@ -302,6 +309,10 @@ void DrillerEngine::loadAssetsDemo() {
 		loadMessagesFixedSize(&file, 0x636, 14, 20);
 		load8bitBinary(&file, 0x55b0, 4);
 
+		// Fixed for a corrupted area names in the demo data
+		_areaMap[2]->_name = "LAPIS LAZULI";
+		_areaMap[3]->_name = "EMERALD";
+		_areaMap[8]->_name = "TOPAZ";
 		file.close();
 	} else
 		error("Unsupported demo for Driller");
