@@ -29,6 +29,20 @@
 
 namespace Freescape {
 
+byte dos_CGA_palette[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x00, 0xaa, 0xaa},
+	{0xaa, 0x00, 0x00},
+	{0xaa, 0xaa, 0xaa},
+};
+
+byte dos_CGA_palette_alt[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x00, 0xaa, 0x00},
+	{0xaa, 0x00, 0x00},
+	{0xaa, 0x55, 0x00},
+};
+
 enum {
 	kDrillerNoRig = 0,
 	kDrillerRigInPlace = 1,
@@ -135,29 +149,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	_gfx->_keyColor = 0;
 	_gfx->setColorRemaps(&_currentArea->_colorRemaps);
 
-	if (isAmiga() || isAtariST())
-		swapPalette(areaID);
-	else if (isDOS() && _renderMode == Common::kRenderCGA) {
-		delete _borderTexture;
-		// Replace black pixel for transparent ones
-		uint32 color1 = _border->format.ARGBToColor(0xFF, 0xAA, 0x00, 0xAA);
-		uint32 color2 = _border->format.ARGBToColor(0xFF, 0xAA, 0x55, 0x00);
-
-		uint32 colorA = _border->format.ARGBToColor(0xFF, 0x00, 0xAA, 0xAA);
-		uint32 colorB = _border->format.ARGBToColor(0xFF, 0x00, 0xAA, 0x00);
-
-		for (int i = 0; i < _border->w; i++) {
-			for (int j = 0; j < _border->h; j++) {
-				if (_border->getPixel(i, j) == color1)
-					_border->setPixel(i, j, color2);
-				else if (_border->getPixel(i, j) == colorA)
-					_border->setPixel(i, j, colorB);
-
-			}
-		}
-		_borderTexture = _gfx->createTexture(_border);
-	}
-
+	swapPalette(areaID);
 	_currentArea->_skyColor = 0;
 	_currentArea->_usualBackgroundColor = 0;
 
@@ -434,6 +426,45 @@ void DrillerEngine::loadAssetsFullGame() {
 	_areaMap[18]->_conditionSources.push_back(conditionSource);
 }
 
+void DrillerEngine::prepareBorder() {
+	FreescapeEngine::prepareBorder();
+	if (isDOS() && _renderMode == Common::kRenderCGA) { // Replace some colors for the CGA borders
+		uint32 color1 = _border->format.ARGBToColor(0xFF, 0xAA, 0x00, 0xAA);
+		uint32 color2 = _border->format.ARGBToColor(0xFF, 0xAA, 0x55, 0x00);
+
+		uint32 colorA = _border->format.ARGBToColor(0xFF, 0x00, 0xAA, 0xAA);
+		uint32 colorB = _border->format.ARGBToColor(0xFF, 0x00, 0xAA, 0x00);
+
+		uint32 colorX = _border->format.ARGBToColor(0xFF, 0xAA, 0xAA, 0xAA);
+		uint32 colorY = _border->format.ARGBToColor(0xFF, 0xAA, 0x00, 0x00);
+
+		Graphics::Surface *borderCopy = new Graphics::Surface();
+		borderCopy->create(1, 1, _border->format);
+		borderCopy->copyFrom(*_border);
+
+		for (int i = 0; i < _border->w; i++) {
+			for (int j = 0; j < _border->h; j++) {
+				if (borderCopy->getPixel(i, j) == color1)
+					borderCopy->setPixel(i, j, color2);
+				else if (borderCopy->getPixel(i, j) == colorA)
+					borderCopy->setPixel(i, j, colorB);
+				else if (borderCopy->getPixel(i, j) == colorX)
+					borderCopy->setPixel(i, j, colorY);
+
+			}
+		}
+		Texture *borderTextureAlterative = _gfx->createTexture(borderCopy);
+		_borderCGAByArea[1] = borderTextureAlterative; 
+		_paletteCGAByArea[1] = (byte *)dos_CGA_palette_alt;
+
+		_borderCGAByArea[2] = _borderTexture; 
+		_paletteCGAByArea[2] = (byte *)dos_CGA_palette;
+
+		_borderCGAByArea[8] = _borderTexture; 
+		_borderCGAByArea[14] = _borderTexture; 
+	}
+}
+
 void DrillerEngine::drawUI() {
 	Graphics::Surface *surface = nullptr;
 	if (_border) { // This can be removed when all the borders are loaded
@@ -464,42 +495,46 @@ void DrillerEngine::drawUI() {
 }
 
 void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
-	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);
-	uint8 color = _currentArea->_usualBackgroundColor;
+	uint32 color = _renderMode == Common::kRenderCGA ? 1 : 14;
+	uint8 r, g, b;
+
+	_gfx->readFromPalette(color, r, g, b);
+	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
+	color = _currentArea->_usualBackgroundColor;
 	if (_gfx->_colorRemaps && _gfx->_colorRemaps->contains(color)) {
 		color = (*_gfx->_colorRemaps)[color];
 	}
 
-	uint8 r, g, b;
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	int score = _gameStateVars[k8bitVariableScore];
-	drawStringInSurface(_currentArea->_name, 196, 185, yellow, back, surface);
-	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 150, 145, yellow, back, surface);
-	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 150, 153, yellow, back, surface);
-	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 150, 161, yellow, back, surface);
+	drawStringInSurface(_currentArea->_name, 196, 185, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 150, 145, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 150, 153, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 150, 161, front, back, surface);
 	if (_playerHeightNumber >= 0)
-		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 57, 161, yellow, back, surface);
+		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 57, 161, front, back, surface);
 	else
-		drawStringInSurface(Common::String::format("%s", "J"), 57, 161, yellow, back, surface);
+		drawStringInSurface(Common::String::format("%s", "J"), 57, 161, front, back, surface);
 
-	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 46, 145, yellow, back, surface);
-	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 46, 153, yellow, back, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 238, 129, yellow, back, surface);
+	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 46, 145, front, back, surface);
+	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 46, 153, front, back, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 238, 129, front, back, surface);
 
 	int hours = _countdown <= 0 ? 0 : _countdown / 3600;
-	drawStringInSurface(Common::String::format("%02d", hours), 208, 8, yellow, back, surface);
+	drawStringInSurface(Common::String::format("%02d", hours), 208, 8, front, back, surface);
 	int minutes = _countdown <= 0 ? 0 : (_countdown - hours * 3600) / 60;
-	drawStringInSurface(Common::String::format("%02d", minutes), 230, 8, yellow, back, surface);
+	drawStringInSurface(Common::String::format("%02d", minutes), 230, 8, front, back, surface);
 	int seconds = _countdown <= 0 ? 0 : _countdown - hours * 3600 - minutes * 60;
-	drawStringInSurface(Common::String::format("%02d", seconds), 254, 8, yellow, back, surface);
+	drawStringInSurface(Common::String::format("%02d", seconds), 254, 8, front, back, surface);
 
 	Common::String message;
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 190, 177, back, yellow, surface);
+		drawStringInSurface(message, 190, 177, back, front, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else {
@@ -510,7 +545,7 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 		else
 			message = _messagesList[1];
 
-		drawStringInSurface(message, 191, 177, yellow, back, surface);
+		drawStringInSurface(message, 191, 177, front, back, surface);
 	}
 
 	int energy = _gameStateVars[k8bitVariableEnergy];
@@ -520,7 +555,7 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 			Common::Rect backBar(20, 185, 88 - energy, 191);
 			surface->fillRect(backBar, back);
 			Common::Rect energyBar(87 - energy, 185, 88, 191);
-			surface->fillRect(energyBar, yellow);
+			surface->fillRect(energyBar, front);
 		}
 
 		if (shield >= 0) {
@@ -528,7 +563,7 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 			surface->fillRect(backBar, back);
 
 			Common::Rect shieldBar(87 - shield, 177, 88, 183);
-			surface->fillRect(shieldBar, yellow);
+			surface->fillRect(shieldBar, front);
 		}
 	}
 }

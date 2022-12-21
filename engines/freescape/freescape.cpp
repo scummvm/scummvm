@@ -512,11 +512,7 @@ Common::Error FreescapeEngine::run() {
 		}
 	}
 
-	if (_border) {
-		_borderTexture = nullptr;
-		uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
-		_border->fillRect(_viewArea, gray);
-	}
+	prepareBorder();
 	if (saveSlot >= 0) { // load the savegame
 		loadGameState(saveSlot);
 	} else
@@ -553,6 +549,14 @@ Common::Error FreescapeEngine::run() {
 	}
 
 	return Common::kNoError;
+}
+
+void FreescapeEngine::prepareBorder() {
+	if (_border) {
+		_borderTexture = nullptr;
+		uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
+		_border->fillRect(_viewArea, gray);
+	}
 }
 
 bool FreescapeEngine::checkIfGameEnded() {

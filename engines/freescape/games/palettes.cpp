@@ -41,18 +41,11 @@ byte dos_EGA_palette[16][3] = {
 	{0xff, 0xff, 0x55},
 	{0xff, 0xff, 0xff}};
 
-byte dos_CGA_palette[4][3] = {
-	{0x00, 0x00, 0x00},
-	{0x00, 0xaa, 0x00},
-	{0xaa, 0x00, 0x00},
-	{0xaa, 0x55, 0x00},
-};
-
 void FreescapeEngine::loadColorPalette() {
 	if (_renderMode == Common::kRenderEGA) {
 		_gfx->_palette = (byte *)&dos_EGA_palette;
 	} else if (_renderMode == Common::kRenderCGA) {
-		_gfx->_palette = (byte *)&dos_CGA_palette;
+		_gfx->_palette = nullptr; // palette depends on the area
 	} else if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST) {
 		_gfx->_palette = nullptr; // palette depends on the area
 	} else
@@ -90,7 +83,14 @@ void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset)
 }
 
 void FreescapeEngine::swapPalette(uint16 levelID) {
-	_gfx->_palette = _paletteByArea[levelID];
+	if (isAmiga() || isAtariST())
+		_gfx->_palette = _paletteByArea[levelID];
+	else if (isDOS() && _renderMode == Common::kRenderCGA) {
+		assert(_borderCGAByArea.contains(levelID));
+		assert(_paletteCGAByArea.contains(levelID));
+		_borderTexture = _borderCGAByArea.getVal(levelID);
+		_gfx->_palette = _paletteCGAByArea.getVal(levelID);
+	}
 }
 
 } // End of namespace Freescape

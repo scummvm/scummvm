@@ -104,7 +104,7 @@ public:
 	Common::Rect _fullscreenViewArea;
 	void centerCrossair();
 
-	void convertBorder();
+	virtual void prepareBorder();
 	void drawBorder();
 	void drawTitle();
 	void drawBackground();
@@ -115,6 +115,8 @@ public:
 	Texture *_borderTexture;
 	Texture *_titleTexture;
 	Texture *_uiTexture;
+	Common::HashMap<uint16, Texture *> _borderCGAByArea;
+	Common::HashMap<uint16, byte *> _paletteCGAByArea;
 
 	// Parsing assets
 	uint8 _binaryBits;
@@ -357,6 +359,7 @@ public:
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 
+	void prepareBorder() override;
 	void loadAssets() override;
 	void drawUI() override;
 
