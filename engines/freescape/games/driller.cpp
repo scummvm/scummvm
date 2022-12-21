@@ -186,6 +186,10 @@ void DrillerEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offs
 	ObjectMap *globalObjectsByID = new ObjectMap;
 	file->seek(offset);
 	for (int i = 0; i < 8; i++) {
+		if (isDOS() && isDemo()) // The DOS demo has a few missing objects
+			if (i == 5)
+				break;
+
 		Object *gobj = load8bitObject(file);
 		assert(gobj);
 		assert(!globalObjectsByID->contains(gobj->getObjectID()));
@@ -308,6 +312,7 @@ void DrillerEngine::loadAssetsDemo() {
 		loadFonts(&file, 0x4eb0);
 		loadMessagesFixedSize(&file, 0x636, 14, 20);
 		load8bitBinary(&file, 0x55b0, 4);
+		loadGlobalObjects(&file, 0x8c);
 
 		// Fixed for a corrupted area names in the demo data
 		_areaMap[2]->_name = "LAPIS LAZULI";
@@ -424,6 +429,7 @@ void DrillerEngine::loadAssetsFullGame() {
 		loadFonts(&file, 0x07a4a);
 		loadMessagesFixedSize(&file, 0x2585, 14, 20);
 		load8bitBinary(&file, 0x7bb0, 4);
+		loadGlobalObjects(&file, 0x1fa2);
 	} else
 		error("Invalid or unsupported render mode %s for Driller", Common::getRenderModeDescription(_renderMode));
 
@@ -693,6 +699,8 @@ Math::Vector3d getProjectionToPlane(const Math::Vector3d &vect, const Math::Vect
 
 void DrillerEngine::pressedKey(const int keycode) {
 	if (keycode == Common::KEYCODE_d) {
+		if (isDOS() && isDemo()) // No support for drilling here yet
+			return;
 		clearTemporalMessages();
 		Common::Point gasPocket = _currentArea->_gasPocketPosition;
 		uint32 gasPocketRadius = _currentArea->_gasPocketRadius;
@@ -750,6 +758,8 @@ void DrillerEngine::pressedKey(const int keycode) {
 		} else
 			_drilledAreas[_currentArea->getAreaID()] = kDrillerRigOutOfPlace;
 	} else if (keycode == Common::KEYCODE_c) {
+		if (isDOS() && isDemo()) // No support for drilling here yet
+			return;
 		uint32 gasPocketRadius = _currentArea->_gasPocketRadius;
 		clearTemporalMessages();
 		if (gasPocketRadius == 0) {
