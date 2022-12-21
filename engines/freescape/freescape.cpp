@@ -168,19 +168,7 @@ void FreescapeEngine::drawBorder() {
 
 	_gfx->setViewport(_fullscreenViewArea);
 
-	if (!_borderTexture) {
-		// Replace black pixel for transparent ones
-		uint32 black = _border->format.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
-		uint32 transparent = _border->format.ARGBToColor(0x00, 0x00, 0x00, 0x00);
-
-		for (int i = 0; i < _border->w; i++) {
-			for (int j = 0; j < _border->h; j++) {
-				if (_border->getPixel(i, j) == black)
-					_border->setPixel(i, j, transparent);
-			}
-		}
-		_borderTexture = _gfx->createTexture(_border);
-	}
+	assert(_borderTexture);
 	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _borderTexture);
 	_gfx->setViewport(_viewArea);
 }
@@ -556,6 +544,18 @@ void FreescapeEngine::prepareBorder() {
 		_borderTexture = nullptr;
 		uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
 		_border->fillRect(_viewArea, gray);
+
+		// Replace black pixel for transparent ones
+		uint32 black = _border->format.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+		uint32 transparent = _border->format.ARGBToColor(0x00, 0x00, 0x00, 0x00);
+
+		for (int i = 0; i < _border->w; i++) {
+			for (int j = 0; j < _border->h; j++) {
+				if (_border->getPixel(i, j) == black)
+					_border->setPixel(i, j, transparent);
+			}
+		}
+		_borderTexture = _gfx->createTexture(_border);
 	}
 }
 
