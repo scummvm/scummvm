@@ -500,7 +500,17 @@ Common::Error FreescapeEngine::run() {
 		}
 	}
 
-	prepareBorder();
+	loadBorder(); // Border is load unmodified
+	if (_border && isDOS()) {
+		if (saveSlot == -1) {
+			drawBorder();
+			_gfx->flipBuffer();
+			g_system->updateScreen();
+			g_system->delayMillis(3000);
+		}
+	}
+	processBorder(); // Border is processed to use during the game
+
 	if (saveSlot >= 0) { // load the savegame
 		loadGameState(saveSlot);
 	} else
@@ -539,9 +549,14 @@ Common::Error FreescapeEngine::run() {
 	return Common::kNoError;
 }
 
-void FreescapeEngine::prepareBorder() {
+void FreescapeEngine::loadBorder() {
+	_borderTexture = _gfx->createTexture(_border);
+}
+
+void FreescapeEngine::processBorder() {
 	if (_border) {
-		_borderTexture = nullptr;
+		if (_borderTexture)
+			delete _borderTexture;
 		uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
 		_border->fillRect(_viewArea, gray);
 

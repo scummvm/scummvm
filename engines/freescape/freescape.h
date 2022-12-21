@@ -104,7 +104,8 @@ public:
 	Common::Rect _fullscreenViewArea;
 	void centerCrossair();
 
-	virtual void prepareBorder();
+	virtual void loadBorder();
+	virtual void processBorder();
 	void drawBorder();
 	void drawTitle();
 	void drawBackground();
@@ -359,7 +360,7 @@ public:
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 
-	void prepareBorder() override;
+	void processBorder() override;
 	void loadAssets() override;
 	void drawUI() override;
 

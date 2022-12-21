@@ -585,6 +585,15 @@ void FreescapeEngine::loadBundledImages() {
 		decoder.destroy();
 	} else
 		error("Missing border file '%s' in data bundle", borderFilename.c_str());
+
+	Common::String titleFilename = targetName + "_" + Common::getRenderModeDescription(_renderMode) + "_title.bmp";
+	if (_dataBundle->hasFile(titleFilename)) {
+		Common::SeekableReadStream *titleFile = _dataBundle->createReadStreamForMember(titleFilename);
+		decoder.loadStream(*titleFile);
+		_title = new Graphics::Surface();
+		_title->copyFrom(*decoder.getSurface());
+		decoder.destroy();
+	}
 }
 
 void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {

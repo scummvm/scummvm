@@ -407,7 +407,6 @@ void DrillerEngine::loadAssetsFullGame() {
 		loadSoundsFx(&file, 0x30da6, 25);
 	} else if (_renderMode == Common::kRenderEGA) {
 		loadBundledImages();
-		_title = _border;
 		file.open("DRILLE.EXE");
 
 		if (!file.isOpen())
@@ -420,7 +419,6 @@ void DrillerEngine::loadAssetsFullGame() {
 
 	} else if (_renderMode == Common::kRenderCGA) {
 		loadBundledImages();
-		_title = _border;
 		file.open("DRILLC.EXE");
 
 		if (!file.isOpen())
@@ -457,8 +455,8 @@ void DrillerEngine::loadAssetsFullGame() {
 	_areaMap[18]->_conditionSources.push_back(conditionSource);
 }
 
-void DrillerEngine::prepareBorder() {
-	FreescapeEngine::prepareBorder();
+void DrillerEngine::processBorder() {
+	FreescapeEngine::processBorder();
 	if (isDOS() && _renderMode == Common::kRenderCGA) { // Replace some colors for the CGA borders
 		uint32 color1 = _border->format.ARGBToColor(0xFF, 0xAA, 0x00, 0xAA);
 		uint32 color2 = _border->format.ARGBToColor(0xFF, 0xAA, 0x55, 0x00);
