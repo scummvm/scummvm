@@ -237,7 +237,7 @@ void FreescapeEngine::executeSPFX(FCLInstruction &instruction) {
 	} else if (isDOS()) {
 		debugC(1, kFreescapeDebugCode, "Switching palette from position %d to %d", src, dst);
 		if (src == 0 && dst == 1)
-			_currentArea->remapColor(_currentArea->_usualBackgroundColor, _currentArea->_underFireBackgroundColor);
+			_currentArea->remapColor(_currentArea->_usualBackgroundColor, _renderMode == Common::kRenderCGA ? 1 : _currentArea->_underFireBackgroundColor);
 		else if (src == 0 && dst == 0)
 			_currentArea->unremapColor(_currentArea->_usualBackgroundColor);
 		else
@@ -300,7 +300,7 @@ void FreescapeEngine::executeIncrementVariable(FCLInstruction &instruction) {
 			_gameStateVars[variable] = 0;
 
 		if (increment < 0)
-			flashScreen(_currentArea->_underFireBackgroundColor);
+			flashScreen(_renderMode == Common::kRenderCGA ? 1 :_currentArea->_underFireBackgroundColor);
 
 		debugC(1, kFreescapeDebugCode, "Shield incremented by %d up to %d", increment, _gameStateVars[variable]);
 		break;

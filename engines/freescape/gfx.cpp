@@ -115,11 +115,14 @@ bool Renderer::getRGBAtEGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 
 bool Renderer::getRGBAt(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2) {
 
-	/*if (_colorRemaps && _colorRemaps->contains(index)) {
+	if (_colorRemaps && _colorRemaps->contains(index)) {
 		index = (*_colorRemaps)[index];
-		readFromPalette(index, r, g, b);
+		readFromPalette(index, r1, g1, b1);
+		r2 = r1;
+		g2 = g1;
+		b2 = b1;
 		return true;
-	}*/
+	}
 
 	if (index == _keyColor)
 		return false;
