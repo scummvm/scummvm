@@ -137,16 +137,20 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 			neededSleep = 60;
 		}
 		break;
-	case GID_LONGBOW:
-		// LONWBOW map rooms have no cast, so kAnimate doesn't trigger throttling
-		// because it thinks it's a speed test room. See: GfxAnimate::throttleSpeed.
-		// This causes the palette animation to run unthrottled. Sierra also attempts
-		// to throttle these screens in a conflicting way based on speed test results,
-		// and we patch that out.
-		if (s->currentRoomNumber() == 100 || s->currentRoomNumber() == 260) {
-			s->_throttleTrigger = true;
-		}
-		break;
+
+	// Don't throttle SCI1.1 speed test rooms. Prevents delays at startup.
+	// We generically patch these scripts to calculate a passing result,
+	// but each script performs a different test, so to speed them all up
+	// it's easier to just let them run unthrottled. See: sci11SpeedTestPatch
+	case GID_ECOQUEST2:     if (s->currentRoomNumber() ==  10) s->_throttleTrigger = false; break;
+	case GID_FREDDYPHARKAS: if (s->currentRoomNumber() ==  28) s->_throttleTrigger = false; break;
+	case GID_GK1DEMO:       if (s->currentRoomNumber() ==  17) s->_throttleTrigger = false; break;
+	case GID_KQ5:           if (s->currentRoomNumber() ==  99) s->_throttleTrigger = false; break;
+	case GID_KQ6:           if (s->currentRoomNumber() ==  99) s->_throttleTrigger = false; break;
+	case GID_LAURABOW2:     if (s->currentRoomNumber() ==  28) s->_throttleTrigger = false; break;
+	case GID_LSL6:          if (s->currentRoomNumber() ==  99) s->_throttleTrigger = false; break;
+	case GID_QFG1VGA:       if (s->currentRoomNumber() == 299) s->_throttleTrigger = false; break;
+
 	default:
 		break;
 	}

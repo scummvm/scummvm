@@ -555,9 +555,6 @@ static const uint16 torinLarry7NumSavesPatch[] = {
 // We disable speed tests by patching them to return fixed results so that all
 //  graphics are enabled and games behave consistently. This also fixes the bug
 //  where tests fail on fast CPUs because their scores overflow. (bug #13529)
-//  We still have a heuristic in GfxAnimate::throttleSpeed() that attempts to
-//  detect tests and unthrottle the engine so that they score well. That should
-//  reasonably handle any games or versions that haven't been patched yet.
 //
 // Note that these patches are only for SCI16 games; the test was rewritten for
 //  SCI32 and we have separate patches for those.
@@ -618,6 +615,9 @@ static const uint16 sci01SpeedTestLocalPatch[] = {
 
 // The second generation of speed tests measured how much time it takes to do a
 //  fixed amount of work. Patch the duration calculation to always be zero.
+//  We also disable speed throttling in these rooms in kGameIsRestarting, but
+//  that's just to prevent the delay these tests create. Each game's script does
+//  different work, so that part can't be generically patched.
 static const uint16 sci11SpeedTestSignature[] = {
 	0x76,                               // push0
 	0x43, 0x42, 0x00,                   // callk GetTime 00
