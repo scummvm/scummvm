@@ -1511,7 +1511,7 @@ bool EfhEngine::isPosOutOfMap(int16 mapPosX, int16 mapPosY) {
 }
 
 void EfhEngine::goSouth() {
-	debug("goSouth");
+	debugC(6,kDebugEngine, "goSouth");
 
 	if (_largeMapFlag) {
 		if (++_mapPosY > 63)
@@ -1528,7 +1528,7 @@ void EfhEngine::goSouth() {
 }
 
 void EfhEngine::goNorth() {
-	debug("goNorth");
+	debugC(6,kDebugEngine, "goNorth");
 
 	if (--_mapPosY < 0)
 		_mapPosY = 0;
@@ -1540,7 +1540,7 @@ void EfhEngine::goNorth() {
 }
 
 void EfhEngine::goEast() {
-	debug("goEast");
+	debugC(6, kDebugEngine, "goEast");
 
 	if (_largeMapFlag) {
 		if (++_mapPosX > 63)
@@ -1557,7 +1557,7 @@ void EfhEngine::goEast() {
 }
 
 void EfhEngine::goWest() {
-	debug("goWest");
+	debugC(6, kDebugEngine, "goWest");
 
 	if (--_mapPosX < 0)
 		_mapPosX = 0;
@@ -1569,7 +1569,7 @@ void EfhEngine::goWest() {
 }
 
 void EfhEngine::goNorthEast() {
-	debug("goNorthEast");
+	debugC(6, kDebugEngine, "goNorthEast");
 
 	if (--_mapPosY < 0)
 		_mapPosY = 0;
@@ -1589,7 +1589,7 @@ void EfhEngine::goNorthEast() {
 }
 
 void EfhEngine::goSouthEast() {
-	debug("goSouthEast");
+	debugC(6, kDebugEngine, "goSouthEast");
 
 	if (_largeMapFlag) {
 		if (++_mapPosX > 63)
@@ -1610,7 +1610,7 @@ void EfhEngine::goSouthEast() {
 }
 
 void EfhEngine::goNorthWest() {
-	debug("goNorthWest");
+	debugC(6, kDebugEngine,"goNorthWest");
 
 	if (--_mapPosY < 0)
 		_mapPosY = 0;
@@ -1625,7 +1625,7 @@ void EfhEngine::goNorthWest() {
 }
 
 void EfhEngine::goSouthWest() {
-	debug("goSouthWest");
+	debugC(6, kDebugEngine, "goSouthWest");
 
 	if (--_mapPosX < 0)
 		_mapPosX = 0;
@@ -1828,7 +1828,7 @@ int8 EfhEngine::sub16B08(int16 monsterId) {
 }
 
 bool EfhEngine::moveMonsterAwayFromTeam(int16 monsterId) {
-	debug("moveMonsterAwayFromTeam %d", monsterId);
+	debugC(6, kDebugEngine, "moveMonsterAwayFromTeam %d", monsterId);
 
 	if (_mapMonsters[monsterId]._posX < _mapPosX) {
 		--_mapMonsters[monsterId]._posX;
@@ -1847,7 +1847,7 @@ bool EfhEngine::moveMonsterAwayFromTeam(int16 monsterId) {
 		else if (_mapMonsters[monsterId]._posY > _mapPosY)
 			++_mapMonsters[monsterId]._posY;
 
-			return true;
+		return true;
 	}
 
 	// Original checks for posX equality, which is the only possible option at this point => skipped
@@ -1862,7 +1862,7 @@ bool EfhEngine::moveMonsterAwayFromTeam(int16 monsterId) {
 }
 
 bool EfhEngine::moveMonsterTowardsTeam(int16 monsterId) {
-	debug("moveMonsterTowardsTeam %d", monsterId);
+	debugC(6, kDebugEngine, "moveMonsterTowardsTeam %d", monsterId);
 
 	if (_mapMonsters[monsterId]._posX < _mapPosX) {
 		++_mapMonsters[monsterId]._posX;
@@ -1896,40 +1896,53 @@ bool EfhEngine::moveMonsterTowardsTeam(int16 monsterId) {
 }
 
 bool EfhEngine::moveMonsterGroupOther(int16 monsterId, int16 direction) {
-	debug("moveMonsterGroupOther %d %d", monsterId, direction);
+	debugC(6, kDebugEngine, "moveMonsterGroupOther %d %d", monsterId, direction);
+
+	bool retVal;
 
 	switch (direction - 1) {
 	case 0:
 		--_mapMonsters[monsterId]._posY;
-		return true;
+		retVal = true;
+		break;
 	case 1:
 		--_mapMonsters[monsterId]._posY;
 		++_mapMonsters[monsterId]._posX;
-		return true;
+		retVal = true;
+		break;
 	case 2:
 		++_mapMonsters[monsterId]._posX;
-		return true;
+		retVal = true;
+		break;
 	case 3:
 		++_mapMonsters[monsterId]._posX;
 		++_mapMonsters[monsterId]._posY;
-		return true;
+		retVal = true;
+		break;
 	case 4:
 		++_mapMonsters[monsterId]._posY;
-		return true;
+		retVal = true;
+		break;
 	case 5:
 		++_mapMonsters[monsterId]._posY;
 		--_mapMonsters[monsterId]._posX;
-		return true;
+		retVal = true;
+		break;
 	case 6:
 		--_mapMonsters[monsterId]._posX;
-		return true;
+		retVal = true;
+		break;
 	case 7:
 		--_mapMonsters[monsterId]._posX;
 		--_mapMonsters[monsterId]._posY;
-		return true;
+		retVal = true;
+		break;
 	default:
-		return false;
+		retVal = false;
+		break;
 	}
+
+	return retVal;
 }
 
 bool EfhEngine::moveMonsterGroup(int16 monsterId) {
@@ -2052,8 +2065,8 @@ void EfhEngine::sub174A0() {
 		if (var4 < minDisplayedMapX || var4 > maxDisplayedMapX || var2 < minDisplayedMapY || var2 > maxDisplayedMapY)
 			continue;
 
-		bool var1A = false;
-		int16 var14 = 0;
+		bool monsterMovedFl = false;
+		int16 lastRangeCheck = 0;
 
 		sub174A0_monsterPosX = _mapMonsters[monsterId]._posX;
 		sub174A0_monsterPosY = _mapMonsters[monsterId]._posY;
@@ -2070,106 +2083,106 @@ void EfhEngine::sub174A0() {
 			switch (var1C - 1) {
 			case 0:
 				if (getRandom(100) >= 0xE - var1E)
-					var1A = moveMonsterTowardsTeam(monsterId);
+					monsterMovedFl = moveMonsterTowardsTeam(monsterId);
 				else
-					var1A = moveMonsterGroup(monsterId);
+					monsterMovedFl = moveMonsterGroup(monsterId);
 				break;
 			case 1:
 				if (getRandom(100) >= 0xE - var1E)
-					var1A = moveMonsterAwayFromTeam(monsterId);
+					monsterMovedFl = moveMonsterAwayFromTeam(monsterId);
 				else
-					var1A = moveMonsterGroup(monsterId);
+					monsterMovedFl = moveMonsterGroup(monsterId);
 				break;
 			case 2:
-				var1A = moveMonsterGroupOther(monsterId, getRandom(8));
+				monsterMovedFl = moveMonsterGroupOther(monsterId, getRandom(8));
 				break;
 			case 3:
-				var1A = moveMonsterGroup(monsterId);
+				monsterMovedFl = moveMonsterGroup(monsterId);
 				break;
 			case 4:
 				if (getRandom(100) > 0x32 - var1E)
-					var1A = moveMonsterTowardsTeam(monsterId);
+					monsterMovedFl = moveMonsterTowardsTeam(monsterId);
 				else
-					var1A = moveMonsterGroup(monsterId);
+					monsterMovedFl = moveMonsterGroup(monsterId);
 				break;
 			case 5:
 				if (getRandom(100) > 0x32 - var1E)
-					var1A = moveMonsterAwayFromTeam(monsterId);
+					monsterMovedFl = moveMonsterAwayFromTeam(monsterId);
 				else
-					var1A = moveMonsterGroup(monsterId);
+					monsterMovedFl = moveMonsterGroup(monsterId);
 				break;
 			case 6:
 				if (getRandom(100) >= 0x32 - var1E)
-					var1A = moveMonsterGroup(monsterId);
+					monsterMovedFl = moveMonsterGroup(monsterId);
 				break;
 			case 7:
 				// var14 is not a typo.
-				var14 = checkMonsterWeaponRange(monsterId);
+				lastRangeCheck = checkMonsterWeaponRange(monsterId);
 				break;
 			case 8:
-				var14 = checkMonsterWeaponRange(monsterId);
-				if (var14 == 0) {
+				lastRangeCheck = checkMonsterWeaponRange(monsterId);
+				if (lastRangeCheck == 0) {
 					if (getRandom(100) >= 0xE - var1E)
-						var1A = moveMonsterTowardsTeam(monsterId);
+						monsterMovedFl = moveMonsterTowardsTeam(monsterId);
 					else
-						var1A = moveMonsterGroup(monsterId);
+						monsterMovedFl = moveMonsterGroup(monsterId);
 				}
 				break;
 			case 9:
-				var14 = checkMonsterWeaponRange(monsterId);
-				if (var14 == 0) {
+				lastRangeCheck = checkMonsterWeaponRange(monsterId);
+				if (lastRangeCheck == 0) {
 					if (getRandom(100) >= 0xE - var1E)
-						var1A = moveMonsterAwayFromTeam(monsterId);
+						monsterMovedFl = moveMonsterAwayFromTeam(monsterId);
 					else
-						var1A = moveMonsterGroup(monsterId);
+						monsterMovedFl = moveMonsterGroup(monsterId);
 				}
 				break;
 			case 10:
-				var14 = checkMonsterWeaponRange(monsterId);
-				if (var14 == 0) {
-					var1A = moveMonsterGroupOther(monsterId, getRandom(8));
+				lastRangeCheck = checkMonsterWeaponRange(monsterId);
+				if (lastRangeCheck == 0) {
+					monsterMovedFl = moveMonsterGroupOther(monsterId, getRandom(8));
 				}
 				break;
 			case 11:
-				var14 = checkMonsterWeaponRange(monsterId);
-				if (var14 == 0) {
-					var1A = moveMonsterGroup(monsterId);
+				lastRangeCheck = checkMonsterWeaponRange(monsterId);
+				if (lastRangeCheck == 0) {
+					monsterMovedFl = moveMonsterGroup(monsterId);
 				}
 				break;
 			case 12:
-				var14 = checkMonsterWeaponRange(monsterId);
-				if (var14 == 0) {
+				lastRangeCheck = checkMonsterWeaponRange(monsterId);
+				if (lastRangeCheck == 0) {
 					if (getRandom(100) >= 0x32 - var1E)
-						var1A = moveMonsterTowardsTeam(monsterId);
+						monsterMovedFl = moveMonsterTowardsTeam(monsterId);
 					else
-						var1A = moveMonsterGroup(monsterId);
+						monsterMovedFl = moveMonsterGroup(monsterId);
 				}
 				break;
 			case 13:
-				var14 = checkMonsterWeaponRange(monsterId);
-				if (var14 == 0) {
+				lastRangeCheck = checkMonsterWeaponRange(monsterId);
+				if (lastRangeCheck == 0) {
 					if (getRandom(100) >= 0x32 - var1E)
-						var1A = moveMonsterAwayFromTeam(monsterId);
+						monsterMovedFl = moveMonsterAwayFromTeam(monsterId);
 					else
-						var1A = moveMonsterGroup(monsterId);
+						monsterMovedFl = moveMonsterGroup(monsterId);
 				}
 				break;
 			case 14:
-				var14 = checkMonsterWeaponRange(monsterId);
-				if (var14 == 0 && getRandom(100) >= 0x32 - var1E)
-					var1A = moveMonsterGroup(monsterId);
+				lastRangeCheck = checkMonsterWeaponRange(monsterId);
+				if (lastRangeCheck == 0 && getRandom(100) >= 0x32 - var1E)
+					monsterMovedFl = moveMonsterGroup(monsterId);
 				break;
 			default:
 				break;
 			}
 
 			for (;;) {
-				if (!var1A) {
-					if (var14 == 0) {
-						var1A = true;
+				if (!monsterMovedFl) {
+					if (lastRangeCheck == 0) {
+						monsterMovedFl = true;
 					} else {
 						unkMonsterId = monsterId;
-						var1A = true;
+						monsterMovedFl = true;
 					}
 				} else {
 					int8 var18 = sub16B08(monsterId);
@@ -2177,7 +2190,7 @@ void EfhEngine::sub174A0() {
 					if (var18 == 0) {
 						_mapMonsters[monsterId]._posX = sub174A0_monsterPosX;
 						_mapMonsters[monsterId]._posY = sub174A0_monsterPosY;
-						var1A = false;
+						monsterMovedFl = false;
 						--var16;
 					} else if (var18 == 2) {
 						_mapMonsters[monsterId]._posX = sub174A0_monsterPosX;
@@ -2185,14 +2198,14 @@ void EfhEngine::sub174A0() {
 					}
 				}
 
-				if (!var1A && var16 == 1 && var1E > 1) {
-					var1A = moveMonsterGroupOther(monsterId, getRandom(8));
+				if (!monsterMovedFl && var16 == 1 && var1E > 1) {
+					monsterMovedFl = moveMonsterGroupOther(monsterId, getRandom(8));
 					continue;
 				}
 
 				break;
 			}
-		} while (!var1A && var16 > 0);
+		} while (!monsterMovedFl && var16 > 0);
 	}
 
 	if (unkMonsterId != -1)
@@ -3559,7 +3572,7 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 }
 
 void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 charId) {
-	debug("displayCharacterInformationOrSkills %d %d", curMenuLine, charId);
+	debugC(3, kDebugEngine, "displayCharacterInformationOrSkills %d %d", curMenuLine, charId);
 
 	setTextColorRed();
 	Common::String buffer = _npcBuf[charId]._name;
@@ -3638,6 +3651,8 @@ void EfhEngine::displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 
 	case 9:
 		displayCenteredString("Character Summary", 144, 310, 15);
 		displayCharacterSummary(curMenuLine, npcId);
+		break;
+	default:
 		break;
 	}
 }
