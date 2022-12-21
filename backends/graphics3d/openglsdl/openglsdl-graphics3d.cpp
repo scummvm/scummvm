@@ -36,7 +36,7 @@
 
 #include "engines/engine.h"
 
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 #include "graphics/opengl/context.h"
 #include "graphics/opengl/system_headers.h"
 

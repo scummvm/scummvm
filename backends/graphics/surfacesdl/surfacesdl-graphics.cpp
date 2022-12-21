@@ -34,7 +34,7 @@
 #ifdef USE_RGB_COLOR
 #include "common/list.h"
 #endif
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/scaler.h"

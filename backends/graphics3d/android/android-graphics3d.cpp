@@ -37,7 +37,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
 #include "common/tokenizer.h"
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 #include "graphics/opengl/shader.h"
 #include "graphics/opengl/context.h"
 

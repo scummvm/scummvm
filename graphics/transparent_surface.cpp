@@ -27,7 +27,7 @@
 #include "common/rect.h"
 #include "common/math.h"
 #include "common/textconsole.h"
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 #include "graphics/primitives.h"
 #include "graphics/transparent_surface.h"
 #include "graphics/transform_tools.h"

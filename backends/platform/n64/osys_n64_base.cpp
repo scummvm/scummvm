@@ -32,7 +32,7 @@
 #include "backends/mutex/null/null-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 
 typedef unsigned long long uint64;
 

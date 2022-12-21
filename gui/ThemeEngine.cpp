@@ -28,7 +28,7 @@
 #include "common/translation.h"
 #include "common/unicode-bidi.h"
 
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
 #include "graphics/surface.h"

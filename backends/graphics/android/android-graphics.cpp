@@ -36,7 +36,7 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 
 #include "backends/graphics/opengl/pipelines/pipeline.h"
 

@@ -25,7 +25,7 @@
 #include "cryo/eden.h"
 #include "cryo/eden_graphics.h"
 
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 #include "graphics/palette.h"
 #include "video/hnm_decoder.h"
 
