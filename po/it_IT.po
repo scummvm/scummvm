@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-21 13:58+0000\n"
+"POT-Creation-Date: 2022-12-21 17:57+0000\n"
 "PO-Revision-Date: 2022-12-20 16:11+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -2542,8 +2542,8 @@ msgstr "~V~ai a elenco giochi"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:849
-#: engines/groovie/script.cpp:2222 engines/groovie/script.cpp:2249
-#: engines/groovie/script.cpp:2290 engines/hugo/file.cpp:297
+#: engines/groovie/script.cpp:2238 engines/groovie/script.cpp:2265
+#: engines/groovie/script.cpp:2306 engines/hugo/file.cpp:297
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:729
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
 #: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:909
@@ -2563,8 +2563,8 @@ msgstr "Salva gioco:"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:844
-#: engines/groovie/script.cpp:849 engines/groovie/script.cpp:2222
-#: engines/groovie/script.cpp:2249 engines/groovie/script.cpp:2290
+#: engines/groovie/script.cpp:849 engines/groovie/script.cpp:2238
+#: engines/groovie/script.cpp:2265 engines/groovie/script.cpp:2306
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:729 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
@@ -4276,8 +4276,8 @@ msgstr ""
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:826
-#: engines/groovie/script.cpp:861 engines/groovie/script.cpp:2209
-#: engines/groovie/script.cpp:2236 engines/groovie/script.cpp:2306
+#: engines/groovie/script.cpp:861 engines/groovie/script.cpp:2225
+#: engines/groovie/script.cpp:2252 engines/groovie/script.cpp:2322
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:739 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
@@ -4296,8 +4296,8 @@ msgstr "Carica partita:"
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:826
 #: engines/groovie/script.cpp:844 engines/groovie/script.cpp:861
-#: engines/groovie/script.cpp:2209 engines/groovie/script.cpp:2236
-#: engines/groovie/script.cpp:2306 engines/hugo/file.cpp:399
+#: engines/groovie/script.cpp:2225 engines/groovie/script.cpp:2252
+#: engines/groovie/script.cpp:2322 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:739
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
@@ -5376,14 +5376,22 @@ msgstr ""
 "riutilizzare i brani MIDI"
 
 #: engines/groovie/metaengine.cpp:97
+msgid "Slim Left/Right Hotspots"
+msgstr ""
+
+#: engines/groovie/metaengine.cpp:98
+msgid "Shrinks the hotspots on the left and right sides for exiting puzzles"
+msgstr ""
+
+#: engines/groovie/metaengine.cpp:109
 msgid "Speedrun Mode"
 msgstr "Modalità Speedrun"
 
-#: engines/groovie/metaengine.cpp:98
+#: engines/groovie/metaengine.cpp:110
 msgid "Affects the controls for fast forwarding the game"
 msgstr "Modifica i controlli per eseguire il gioco in modalità accelerata"
 
-#: engines/groovie/metaengine.cpp:132
+#: engines/groovie/metaengine.cpp:144
 msgid "GroovieV2 support is not compiled in"
 msgstr "Il supporto per GroovieV2 non è stato incluso nella compilazione"
 
