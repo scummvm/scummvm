@@ -68,11 +68,18 @@ void bompDecodeLine(byte *dst, const byte *src, int len, bool setZero) {
 				memset(dst, color, num);
 			dst += num;
 		} else {
-			while (num--) {
-				color = *src++;
-				if (setZero || color)
-					*dst = color;
-				dst++;
+			if (setZero) {
+				// Copy optimization when transparency is not needed
+				memcpy(dst, src, num);
+				src += num;
+				dst += num;
+			} else {
+				while (num--) {
+					color = *src++;
+					if (color)
+						*dst = color;
+					dst++;
+				}
 			}
 		}
 	}
