@@ -41,6 +41,7 @@ OpenGLRenderer::OpenGLRenderer(int screenW, int screenH, Common::RenderMode rend
 	_verts = (Vertex *)malloc(sizeof(Vertex) * kVertexArraySize);
 	_coords = (Coord *)malloc(sizeof(Coord) * kCoordsArraySize);
 	_texturePixelFormat = OpenGLTexture::getRGBAPixelFormat();
+	_isAccelerated = true;
 }
 
 OpenGLRenderer::~OpenGLRenderer() {
