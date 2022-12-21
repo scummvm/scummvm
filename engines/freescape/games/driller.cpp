@@ -520,7 +520,7 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 		drawStringInSurface(Common::String::format("%s", "J"), 57, 161, front, back, surface);
 
 	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 46, 145, front, back, surface);
-	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 46, 153, front, back, surface);
+	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), _renderMode == Common::kRenderCGA ? 44 : 46, 153, front, back, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 238, 129, front, back, surface);
 
 	int hours = _countdown <= 0 ? 0 : _countdown / 3600;
