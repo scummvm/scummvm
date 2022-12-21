@@ -41,16 +41,16 @@ struct SkyVersion {
 
 // TODO: Would be nice if Disk::determineGameVersion() used this table, too.
 static const SkyVersion skyVersions[] = {
-	{  232, -1, "Floppy Demo", 272, GUIO1(GUIO_NOSPEECH) }, // German
-	{  243, -1, "PC Gamer Demo", 109, GUIO1(GUIO_NOSPEECH) },
-	{  247, -1, "Floppy Demo", 267, GUIO1(GUIO_NOSPEECH) }, // English
-	{ 1404, -1, "Floppy", 288, GUIO1(GUIO_NOSPEECH) },
-	{ 1413, -1, "Floppy", 303, GUIO1(GUIO_NOSPEECH) },
+	{  232, 734425, "Floppy Demo", 272, GUIO1(GUIO_NOSPEECH) }, // German
+	{  243, 1328979, "PC Gamer Demo", 109, GUIO1(GUIO_NOSPEECH) },
+	{  247, 814147, "Floppy Demo", 267, GUIO1(GUIO_NOSPEECH) }, // English
+	{ 1404, 8252443, "Floppy", 288, GUIO1(GUIO_NOSPEECH) },
+	{ 1413, 8387069, "Floppy", 303, GUIO1(GUIO_NOSPEECH) },
 	{ 1445, 8830435, "Floppy", 348, GUIO1(GUIO_NOSPEECH) },
-	{ 1445, -1, "Floppy", 331, GUIO1(GUIO_NOSPEECH) },
-	{ 1711, -1, "CD Demo", 365, GUIO0() },
-	{ 5099, -1, "CD", 368, GUIO0() },
-	{ 5097, -1, "CD", 372, GUIO0() },
+	{ 1445,	-1, "Floppy", 331, GUIO1(GUIO_NOSPEECH) },
+	{ 1711, 26623798, "CD Demo", 365, GUIO0() },
+	{ 5099, 72429382, "CD", 368, GUIO0() },
+	{ 5097, 72395713, "CD", 372, GUIO0() },
 	{ 0, 0, 0, 0, 0 }
 };
 
