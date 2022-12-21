@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-12-20 21:38+0000\n"
-"PO-Revision-Date: 2022-12-03 14:54+0000\n"
+"PO-Revision-Date: 2022-12-21 10:13+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1592,21 +1592,16 @@ msgid "Autosave:"
 msgstr "Autoguardado:"
 
 #: gui/options.cpp:2452
-#, fuzzy
-#| msgid "Always return to the launcher when leaving a game"
 msgid "Return to the launcher when leaving a game"
-msgstr "Volver siempre al iniciador tras salir de un juego"
+msgstr "Volver al iniciador tras salir de un juego"
 
 #: gui/options.cpp:2453
-#, fuzzy
-#| msgid ""
-#| "Always return to the launcher when leaving a game instead of closing "
-#| "ScummVM."
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
 msgstr ""
-"Cuando se abandone un juego, ScummVM regresará al iniciador y no se cerrará."
+"Cuando se abandone un juego, ScummVM regresará al iniciador y no se cerrará\n"
+"(esta función no está disponible en todos los juegos)."
 
 #: gui/options.cpp:2460
 msgid "Ask for confirmation on exit"
