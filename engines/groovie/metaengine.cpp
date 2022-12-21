@@ -92,6 +92,18 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	},
 
 	{
+		GAMEOPTION_SLIMHOTSPOTS,
+		{
+			_s("Slim Left/Right Hotspots"),
+			_s("Shrinks the hotspots on the left and right sides for exiting puzzles"),
+			"slim_hotspots",
+			true,
+			0,
+			0
+		}
+	},
+
+	{
 		GAMEOPTION_SPEEDRUN,
 		{
 			_s("Speedrun Mode"),

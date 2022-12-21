@@ -1144,8 +1144,13 @@ void Script::o_hotspot_left() {
 
 	debugC(5, kDebugScript, "Groovie::Script: HOTSPOT-LEFT @0x%04X", address);
 
-	// Mark the leftmost 100 pixels of the game area
-	Common::Rect rect(0, 80, 100, 400);
+	// Mark the leftmost 50 or 100 pixels of the game area
+	// slim_hotspots is only for puzzles
+	int width = 100;
+	if (_savedCode != nullptr && ConfMan.getBool("slim_hotspots"))
+		width = 50;
+
+	Common::Rect rect(0, 80, width, 400);
 	hotspot(rect, address, 1);
 }
 
@@ -1154,8 +1159,13 @@ void Script::o_hotspot_right() {
 
 	debugC(5, kDebugScript, "Groovie::Script: HOTSPOT-RIGHT @0x%04X", address);
 
-	// Mark the rightmost 100 pixels of the game area
-	Common::Rect rect(540, 80, 640, 400);
+	// Mark the rightmost 50 or 100 pixels of the game area
+	// slim_hotspots is only for puzzles
+	int width = 100;
+	if (_savedCode != nullptr && ConfMan.getBool("slim_hotspots"))
+		width = 50;
+
+	Common::Rect rect(640 - width, 80, 640, 400);
 	hotspot(rect, address, 2);
 }
 
@@ -1183,6 +1193,12 @@ void Script::o_hotspot_current() {
 void Script::o_inputloopend() {
 	debugC(5, kDebugScript, "Groovie::Script: Input loop end");
 
+	// width for left and right sides
+	// slim_hotspots is only for puzzles
+	int width = 80;
+	if (_savedCode != nullptr && ConfMan.getBool("slim_hotspots"))
+		width = 50;
+
 	// Handle the predefined hotspots
 	if (_hotspotTopAction) {
 		Common::Rect rect(0, 0, 640, 80);
@@ -1193,11 +1209,11 @@ void Script::o_inputloopend() {
 		hotspot(rect, _hotspotBottomAction, _hotspotBottomCursor);
 	}
 	if (_hotspotRightAction) {
-		Common::Rect rect(560, 0, 640, 480);
+		Common::Rect rect(640 - width, 0, 640, 480);
 		hotspot(rect, _hotspotRightAction, 2);
 	}
 	if (_hotspotLeftAction) {
-		Common::Rect rect(0, 0, 80, 480);
+		Common::Rect rect(0, 0, width, 480);
 		hotspot(rect, _hotspotLeftAction, 1);
 	}
 
