@@ -24,7 +24,7 @@
 
 namespace Scumm {
 
-void smush_decode_codec20(byte *dst, const byte *src, int left, int top, int width, int height, int pitch) {
+void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch) {
 	if (width == 0 || height == 0)
 		return;
 

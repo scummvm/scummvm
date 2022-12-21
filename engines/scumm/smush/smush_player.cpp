@@ -742,8 +742,8 @@ byte *SmushPlayer::getVideoPalette() {
 	return _pal;
 }
 
-void smush_decode_codec1(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
-void smush_decode_codec20(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
 void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height) {
 	if ((height == 242) && (width == 384)) {
@@ -767,25 +767,25 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	}
 
 	switch (codec) {
-	case 1:
-	case 3:
-		smush_decode_codec1(_dst, src, left, top, width, height, _vm->_screenWidth);
+	case SMUSH_CODEC_RLE:
+	case SMUSH_CODEC_RLE_ALT:
+		smushDecodeRLE(_dst, src, left, top, width, height, _vm->_screenWidth);
 		break;
-	case 37:
+	case SMUSH_CODEC_37:
 		if (!_codec37)
 			_codec37 = new Codec37Decoder(width, height);
 		if (_codec37)
 			_codec37->decode(_dst, src);
 		break;
-	case 47:
+	case SMUSH_CODEC_47:
 		if (!_codec47)
 			_codec47 = new Codec47Decoder(width, height);
 		if (_codec47)
 			_codec47->decode(_dst, src);
 		break;
-	case 20:
+	case SMUSH_CODEC_UNCOMPRESSED:
 		// Used by Full Throttle Classic (from Remastered)
-		smush_decode_codec20(_dst, src, left, top, width, height, _vm->_screenWidth);
+		smushDecodeUncompressed(_dst, src, left, top, width, height, _vm->_screenWidth);
 		break;
 	default:
 		error("Invalid codec for frame object : %d", codec);

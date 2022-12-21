@@ -54,6 +54,12 @@ namespace Scumm {
 
 #define TRK_TYPE_MASK 0xC0
 
+#define SMUSH_CODEC_RLE          1
+#define SMUSH_CODEC_RLE_ALT      3
+#define SMUSH_CODEC_UNCOMPRESSED 20
+#define SMUSH_CODEC_37           37 // TODO: Relabel!
+#define SMUSH_CODEC_47           47 // TODO: Relabel!
+
 class ScummEngine_v7;
 class SmushFont;
 class SmushMixer;
