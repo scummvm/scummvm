@@ -53,7 +53,6 @@
 
 #include "image/jpeg.h"
 
-#include "graphics/conversion.h"
 #include "graphics/renderer.h"
 #include "graphics/yuv_to_rgb.h"
 #include "graphics/framelimiter.h"

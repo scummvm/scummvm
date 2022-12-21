@@ -27,7 +27,7 @@
 #include "graphics/palette.h"
 #include "graphics/primitives.h"
 #include "graphics/surface.h"
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 #include "graphics/transform_tools.h"
 
 namespace Graphics {

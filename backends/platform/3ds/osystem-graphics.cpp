@@ -26,7 +26,7 @@
 #include "backends/platform/3ds/options-dialog.h"
 #include "backends/platform/3ds/config.h"
 #include "common/rect.h"
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 #include "graphics/fontman.h"
 #include "gui/gui-manager.h"
 

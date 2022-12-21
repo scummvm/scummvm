@@ -26,7 +26,7 @@
 
 #include "common/translation.h"
 
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 
 namespace DS {
 

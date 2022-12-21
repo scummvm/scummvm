@@ -25,7 +25,7 @@
 #include "backends/platform/iphone/osys_main.h"
 #include "backends/platform/iphone/iphone_video.h"
 
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 
 void OSystem_IPHONE::engineInit() {
 	EventsBaseBackend::engineInit();

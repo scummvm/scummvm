@@ -31,7 +31,7 @@
 #include "common/rect.h"
 #include "common/textconsole.h"
 
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 
 #ifdef USE_SCALERS
 #include "graphics/scalerplugin.h"

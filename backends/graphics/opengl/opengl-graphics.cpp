@@ -44,7 +44,7 @@
 #endif
 #endif
 
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 #ifdef USE_OSD
 #include "graphics/fontman.h"
 #include "graphics/font.h"
