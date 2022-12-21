@@ -213,6 +213,11 @@ bool Script::loadScript(Common::String filename) {
 		_code[0x0795] = 0x41;
 		_code[0x078A] = 0x40;
 		_code[0x079B] = 0x3F;
+	} else if (_version == kGroovieT7G && filename.equals("mu.grv") && _codeSize == 1354) {
+		// remove the right exit hotspot in the piano, set to nops
+		_code[0x1d2] = 1;
+		_code[0x1d3] = 1;
+		_code[0x1d4] = 1;
 	} else if (_version == kGroovieT11H && filename.equals("script.grv") && _codeSize == 62447) {
 		// don't sleep before showing the skulls
 		memset(_code + 0x17, 1, 0x1F - 0x17); // set nop
