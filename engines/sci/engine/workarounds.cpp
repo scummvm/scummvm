@@ -376,7 +376,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_CNICK_LAURABOW,100,   100,  0,              nullptr, "<noname144>",                  nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // while playing domino - bug #6429 (same as the dominoHand2 workaround for Hoyle 3)
 	{ GID_CNICK_LAURABOW,100,   110,  0,              nullptr, "doit",                         nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when changing the "Dominoes per hand" setting - bug #6430
 	{ GID_CNICK_LSL,     250,   250,  0,           "increase", "handleEvent",                  nullptr,     2,     2, { WORKAROUND_FAKE,   0 } }, // when increasing own bet for blackjack - bug #10184
-	{ GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "init",                         nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // when starting the game
+	{ GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "init",                         nullptr,     0,     1, { WORKAROUND_FAKE,   0 } }, // when starting the game
 	{ GID_ECOQUEST,       -1,    -1,  0,              nullptr, "doVerb",                       nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // almost clicking anywhere triggers this in almost all rooms
 	{ GID_ECOQUEST2,      -1,    50,  0,         "talkButton", "cue",                          nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // clicking Ecorder talk button before clicking power button
 	{ GID_FANMADE,       516,   979,  0,                   "", "export 0",                     nullptr,    20,    20, { WORKAROUND_FAKE,   0 } }, // Happens in Grotesteing after the logos
