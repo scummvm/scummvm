@@ -83,7 +83,6 @@ void OSystem_Win32::init() {
 #if defined(USE_JPEG)
 	initializeJpegLibraryForWin95();
 #endif
-
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
 }
@@ -503,6 +502,10 @@ void OSystem_Win32::addSysArchivesToSearchSet(Common::SearchSet &s, int priority
 
 AudioCDManager *OSystem_Win32::createAudioCDManager() {
 	return createWin32AudioCDManager();
+}
+
+uint32 OSystem_Win32::getOSDoubleClickTime() const {
+	return GetDoubleClickTime();
 }
 
 // libjpeg-turbo uses SSE instructions that error on at least some Win95 machines.

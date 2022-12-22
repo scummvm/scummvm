@@ -87,8 +87,6 @@ public:
 	void processGameDescription(const ADGameDescription *desc);
 	bool processAutosave();
 	Common::SeekableReadStream *processSaveStream(const Common::String & fileName);
-	void processHaveDoubleClickTime(bool &haveDoubleClickTime);
-	void processDoubleClickTime(uint32 &doubleClickTime);
 
 	/** Hooks for intercepting into GUI processing, so required events could be shoot
 	 *  or filtered out */
