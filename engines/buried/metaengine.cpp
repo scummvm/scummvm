@@ -23,12 +23,30 @@
 
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 
 #include "buried/buried.h"
+#include "buried/detection.h"
 
 namespace Buried {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ALLOW_SKIP,
+		{
+			// I18N: This option allows the user to skip cutscenes.
+			_s("Skip support"),
+			_s("Allow cutscenes to be skipped"),
+			"skip_support",
+			true,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 bool BuriedEngine::hasFeature(EngineFeature f) const {
 	return
@@ -78,6 +96,10 @@ public:
 		return "buried";
 	}
 
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Buried::optionsList;
+	}
+
 	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	int getMaximumSaveSlot() const override { return 999; }
@@ -89,15 +111,8 @@ public:
 
 bool BuriedMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		f == kSupportsListSaves ||
-		f == kSupportsLoadingDuringStartup ||
-		f == kSupportsDeleteSave ||
-		f == kSavesSupportMetaInfo ||
-		f == kSavesSupportThumbnail ||
-		f == kSavesSupportCreationDate ||
-		f == kSavesSupportPlayTime ||
-		f == kSimpleSavesNames ||
-		f == kSavesUseExtendedFormat;
+		(f == kSupportsLoadingDuringStartup) ||
+		checkExtendedSaves(f);
 }
 
 Common::Error BuriedMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

@@ -24,7 +24,9 @@
 
 #include "scumm/players/player_v2base.h"	// for channel_data
 
-class CMSEmulator;
+namespace CMS {
+class CMS;
+}
 
 namespace Scumm {
 
@@ -33,7 +35,7 @@ namespace Scumm {
  */
 class Player_V2CMS : public Player_V2Base {
 public:
-	Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer);
+	Player_V2CMS(ScummEngine *scumm);
 	~Player_V2CMS() override;
 
 	// MusicEngine API
@@ -44,9 +46,7 @@ public:
 	int  getMusicTimer() override;
 	int  getSoundStatus(int sound) const override;
 
-	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples) override;
-	bool isStereo() const override { return true; }
+	void onTimer();
 
 private:
 	struct Voice {
@@ -168,7 +168,9 @@ private:
 	static const byte _volumeTable[16];
 	static const byte _cmsInitData[26];
 
-	CMSEmulator *_cmsEmu;
+	CMS::CMS *_cmsEmu;
+
+	Common::Mutex _mutex;
 };
 
 } // End of namespace Scumm

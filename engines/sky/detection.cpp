@@ -27,19 +27,9 @@
 #include "common/system.h"
 #include "common/file.h"
 #include "common/textconsole.h"
-#include "common/translation.h"
 
 static const PlainGameDescriptor skySetting =
 	{"sky", "Beneath a Steel Sky" };
-
-static const ExtraGuiOption skyExtraGuiOption = {
-	_s("Floppy intro"),
-	_s("Use the floppy version's intro (CD version only)"),
-	"alt_intro",
-	false,
-	0,
-	0
-};
 
 struct SkyVersion {
 	int dinnerTableEntries;
@@ -51,16 +41,16 @@ struct SkyVersion {
 
 // TODO: Would be nice if Disk::determineGameVersion() used this table, too.
 static const SkyVersion skyVersions[] = {
-	{  232, -1, "floppy demo", 272, GUIO1(GUIO_NOSPEECH) }, // German
-	{  243, -1, "pc gamer demo", 109, GUIO1(GUIO_NOSPEECH) },
-	{  247, -1, "floppy demo", 267, GUIO1(GUIO_NOSPEECH) }, // English
-	{ 1404, -1, "floppy", 288, GUIO1(GUIO_NOSPEECH) },
-	{ 1413, -1, "floppy", 303, GUIO1(GUIO_NOSPEECH) },
-	{ 1445, 8830435, "floppy", 348, GUIO1(GUIO_NOSPEECH) },
-	{ 1445, -1, "floppy", 331, GUIO1(GUIO_NOSPEECH) },
-	{ 1711, -1, "cd demo", 365, GUIO0() },
-	{ 5099, -1, "cd", 368, GUIO0() },
-	{ 5097, -1, "cd", 372, GUIO0() },
+	{  232, 734425, "Floppy Demo", 272, GUIO1(GUIO_NOSPEECH) }, // German
+	{  243, 1328979, "PC Gamer Demo", 109, GUIO1(GUIO_NOSPEECH) },
+	{  247, 814147, "Floppy Demo", 267, GUIO1(GUIO_NOSPEECH) }, // English
+	{ 1404, 8252443, "Floppy", 288, GUIO1(GUIO_NOSPEECH) },
+	{ 1413, 8387069, "Floppy", 303, GUIO1(GUIO_NOSPEECH) },
+	{ 1445, 8830435, "Floppy", 348, GUIO1(GUIO_NOSPEECH) },
+	{ 1445,	-1, "Floppy", 331, GUIO1(GUIO_NOSPEECH) },
+	{ 1711, 26623798, "CD Demo", 365, GUIO0() },
+	{ 5099, 72429382, "CD", 368, GUIO0() },
+	{ 5097, 72395713, "CD", 372, GUIO0() },
 	{ 0, 0, 0, 0, 0 }
 };
 
@@ -74,9 +64,12 @@ public:
 	}
 
 	PlainGameList getSupportedGames() const override;
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
 	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) override;
+
+	uint getMD5Bytes() const override {
+		return 0;
+	}
 };
 
 const char *SkyMetaEngineDetection::getEngineName() const {
@@ -91,25 +84,6 @@ PlainGameList SkyMetaEngineDetection::getSupportedGames() const {
 	PlainGameList games;
 	games.push_back(skySetting);
 	return games;
-}
-
-const ExtraGuiOptions SkyMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
-	Common::String guiOptions;
-	ExtraGuiOptions options;
-
-	if (target.empty()) {
-		options.push_back(skyExtraGuiOption);
-		return options;
-	}
-
-	if (ConfMan.hasKey("guioptions", target)) {
-		guiOptions = ConfMan.get("guioptions", target);
-		guiOptions = parseGameGUIOptions(guiOptions);
-	}
-
-	if (!guiOptions.contains(GUIO_NOSPEECH))
-		options.push_back(skyExtraGuiOption);
-	return options;
 }
 
 PlainGameDescriptor SkyMetaEngineDetection::findGame(const char *gameid) const {
@@ -162,7 +136,7 @@ DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, 
 		if (sv->dinnerTableEntries) {
 			Common::String extra = Common::String::format("v0.0%d %s", sv->version, sv->extraDesc);
 
-			DetectedGame game = DetectedGame(getName(), skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown, extra);
+			DetectedGame game = DetectedGame(getName(), skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformDOS, extra);
 			game.setGUIOptions(sv->guioptions);
 
 			detectedGames.push_back(game);

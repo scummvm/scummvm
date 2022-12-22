@@ -155,7 +155,7 @@ void ShuttleHUD::unlockOnTarget() {
 }
 
 void ShuttleHUD::draw(const Common::Rect &) {
-	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getWorkArea();
+	Graphics::Surface *screen = g_vm->_gfx->getWorkArea();
 
 	for (int y = 0; y < 35; y++) {
 		Common::Rect r;

@@ -141,35 +141,35 @@ struct ResName {
 };
 
 enum uiBrotherName {
-	uiJulian = 0,
-	uiPhillip,
-	uiKevin,
-	uiIndiv
+	kUiJulian = 0,
+	kUiPhillip,
+	kUiKevin,
+	kUiIndiv
 };
 
 // compressed button resource indexes
-const   int16   aggressResNum       = 0;
-const   int16   jumpResNum          = 6;
-const   int16   centerResNum        = 4;
-const   int16   bandingResNum       = 2;
-const   int16   menConBtnResNum     = 18;
-const   int16   massBulkResNum      = 0;
-const   int16   pieIndResNum        = 0;
-const   int16   julBtnResNum        = 22;
-const   int16   phiBtnResNum        = 24;
-const   int16   kevBtnResNum        = 26;
-const   int16   optBtnResNum        = 20;
+const   int16   kAggressResNum       = 0;
+const   int16   kJumpResNum          = 6;
+const   int16   kCenterResNum        = 4;
+const   int16   kBandingResNum       = 2;
+const   int16   kMenConBtnResNum     = 18;
+const   int16   kMassBulkResNum      = 0;
+const   int16   kPieIndResNum        = 0;
+const   int16   kJulBtnResNum        = 22;
+const   int16   kPhiBtnResNum        = 24;
+const   int16   kKevBtnResNum        = 26;
+const   int16   kOptBtnResNum        = 20;
 
 
 
 // standard number of images for push-buttons
-const   int16   numBtnImages    = 2;
+const   int16   kNumBtnImages    = 2;
 
 // standard number of images for portraits
-const   uint16  numPortImages   = 8;
+const   uint16  kNumPortImages   = 8;
 
 // number for pie indicators
-const   uint16  numPieIndImages = 16;
+const   uint16  kNumPieIndImages = 16;
 
 // object pointers
 extern CPortrait *Portrait;
@@ -183,16 +183,16 @@ class CPlaqText : public gControl {
 protected:
 
 	enum {
-		bufSize = 128
+		kBufSize = 128
 	};
 
 
-	char            lineBuf[bufSize]; // text to render on button
-	textPallete     textFacePal;    // contains info about coloring for multi-depth text rendering
-	Rect16          textRect;       // rect for the text
-	int16           textPosition;
-	gFont           *buttonFont;    // pointer to font for this button
-	gFont           *oldFont;
+	char            _lineBuf[kBufSize]; // text to render on button
+	textPallete     _textFacePal;    // contains info about coloring for multi-depth text rendering
+	Rect16          _textRect;       // rect for the text
+	int16           _textPosition;
+	gFont           *_buttonFont;    // pointer to font for this button
+	gFont           *_oldFont;
 
 public:
 
@@ -220,17 +220,17 @@ public:
 class CStatusLine : public CPlaqText {
 private:
 
-	Alarm   waitAlarm,
-	        minWaitAlarm;
+	Alarm   _waitAlarm,
+	        _minWaitAlarm;
 
 	struct {
 		char    *text;
 		uint32  frameTime;
-	} lineQueue[12];
+	} _lineQueue[12];
 
-	uint8       queueHead,
-	            queueTail;
-	bool        lineDisplayed;
+	uint8       _queueHead,
+	            _queueTail;
+	bool        _lineDisplayed;
 
 	static uint8 bump(uint8 i) {
 		return (i + 1) % 12;
@@ -265,11 +265,11 @@ enum PortraitType {
 
 class CPortrait {
 private:
-	PortraitType    currentState[kNumViews + 1];
-	uint16          numButtons;
+	PortraitType    _currentState[kNumViews + 1];
+	uint16          _numButtons;
 	uint16          _numViews;
-	GfxMultCompButton **buttons;
-	GfxMultCompButton *indivButton;
+	GfxMultCompButton **_buttons;
+	GfxMultCompButton *_indivButton;
 
 	void setPortrait(uint16);
 
@@ -280,7 +280,7 @@ public:
 	void ORset(uint16, PortraitType type);
 	void set(uint16 brotherID, PortraitType type);
 	PortraitType getCurrentState(uint16 brotherID) {
-		return currentState[brotherID];
+		return _currentState[brotherID];
 	}
 	void getStateString(char buf[], int8 size, uint16 brotherID);
 };
@@ -292,70 +292,70 @@ public:
 
 class CMassWeightIndicator {
 private:
-	GameObject *containerObject;
+	GameObject *_containerObject;
 
 public:
-	static  bool bRedraw;
+	static  bool _bRedraw;
 
 private:
 	enum {
 		// background image coords
-		backImageXSize  = 88,
-		backImageYSize  = 43,
+		kBackImageXSize  = 88,
+		kBackImageYSize  = 43,
 
 		// pie image coords
-		massPieXOffset  = 8,
-		massPieYOffset  = 9,
-		bulkPieXOffset  = 53,
-		bulkPieYOffset  = 9,
-		pieXSize        = 28,
-		pieYSize        = 26
+		kMassPieXOffset  = 8,
+		kMassPieYOffset  = 9,
+		kBulkPieXOffset  = 53,
+		kBulkPieYOffset  = 9,
+		kPieXSize        = 28,
+		kPieYSize        = 26
 	};
 
 	// xy positions of this indicator
-	Point16 backImagePos;
-	Point16 massPiePos;
-	Point16 bulkPiePos;
+	Point16 _backImagePos;
+	Point16 _massPiePos;
+	Point16 _bulkPiePos;
 
 	// memory for update
-	uint16 currentMass;
-	uint16 currentBulk;
+	uint16 _currentMass;
+	uint16 _currentBulk;
 
 	// resource context pointer
-	hResContext *containerRes;
+	hResContext *_containerRes;
 
 	// indicator images
-	void *massBulkImag;
+	void *_massBulkImag;
 
 	// array of pointers to images
-	void **pieIndImag;
+	void **_pieIndImag;
 
 	// image control buttons
-	GfxCompImage          *pieMass;
-	GfxCompImage          *pieBulk;
+	GfxCompImage          *_pieMass;
+	GfxCompImage          *_pieBulk;
 
 
 public:
 	void invalidate(Rect16 *unused = nullptr) {
-		pieMass->invalidate();
-		pieBulk->invalidate();
+		_pieMass->invalidate();
+		_pieBulk->invalidate();
 	}
 
 	CMassWeightIndicator(gPanelList *, const Point16 &, uint16 type = 1, bool death = false);
 	~CMassWeightIndicator();
 
 	uint16 getMassPieDiv() {
-		return pieMass->getMax();
+		return _pieMass->getMax();
 	}
 	uint16 getBulkPieDiv() {
-		return pieBulk->getMax();
+		return _pieBulk->getMax();
 	}
 
 	void setMassPie(uint16 val) {
-		pieMass->setCurrent(val);
+		_pieMass->setCurrent(val);
 	}
 	void setBulkPie(uint16 val) {
-		pieBulk->setCurrent(val);
+		_pieBulk->setCurrent(val);
 	}
 	void recalculate();
 	static void update();
@@ -367,113 +367,113 @@ public:
 
 	// sizes of the mana star images
 	enum startSize {
-		star1XSize = 10,
-		star1YSize = 9,
-		star2XSize = 16,
-		star2YSize = 15,
-		star3XSize = 20,
-		star3YSize = 19,
-		star4XSize = 28,
-		star4YSize = 27,
-		star5XSize = 32,
-		star5YSize = 31,
-		star6XSize = 36,
-		star6YSize = 35,
-		star7XSize = 46,
-		star7YSize = 45
+		kStar1XSize = 10,
+		kStar1YSize = 9,
+		kStar2XSize = 16,
+		kStar2YSize = 15,
+		kStar3XSize = 20,
+		kStar3YSize = 19,
+		kStar4XSize = 28,
+		kStar4YSize = 27,
+		kStar5XSize = 32,
+		kStar5YSize = 31,
+		kStar6XSize = 36,
+		kStar6YSize = 35,
+		kStar7XSize = 46,
+		kStar7YSize = 45
 	};
 
 	// sizes of the rings
 	enum ringSize {
-		ring1XSize = 8,
-		ring1YSize = 7,
-		ring2XSize = 12,
-		ring2YSize = 11,
-		ring3XSize = 16,
-		ring3YSize = 15,
-		ring4XSize = 22,
-		ring4YSize = 21,
-		ring5XSize = 26,
-		ring5YSize = 25,
-		ring6XSize = 32,
-		ring6YSize = 31,
-		ring7XSize = 40,
-		ring7YSize = 39
+		kRing1XSize = 8,
+		kRing1YSize = 7,
+		kRing2XSize = 12,
+		kRing2YSize = 11,
+		kRing3XSize = 16,
+		kRing3YSize = 15,
+		kRing4XSize = 22,
+		kRing4YSize = 21,
+		kRing5XSize = 26,
+		kRing5YSize = 25,
+		kRing6XSize = 32,
+		kRing6YSize = 31,
+		kRing7XSize = 40,
+		kRing7YSize = 39
 	};
 
 	// area of control
 	enum area {
-		x       = 475,
-		y       = 315,
-		xSize   = 152,
-		ySize   = 135
+		kAreaX       = 475,
+		kAreaY       = 315,
+		kAreaXSize   = 152,
+		kAreaYSize   = 135
 	};
 
 	// coordinates
 	enum {
-		centerX     = x + xSize / 2,
-		centerY     = y + ySize / 2,
-		wellXSize   = 108,
-		wellYSize   = 123,
-		wellX       = (xSize / 2 - wellXSize / 2) + 1,
-		wellY       = ySize / 2 - wellYSize / 2
+		kCenterX     = kAreaX + kAreaXSize / 2,
+		kCenterY     = kAreaY + kAreaYSize / 2,
+		kWellXSize   = 108,
+		kWellYSize   = 123,
+		kWellX       = (kAreaXSize / 2 - kWellXSize / 2) + 1,
+		kWellY       = kAreaYSize / 2 - kWellYSize / 2
 	};
 
 	// manas end points
 
 	enum manaEndCoordsBase { // based on quadrants
-		xOffset = 9,
-		yOffset = -10,
+		kManaXOffset = 9,
+		kManaYOffset = -10,
 
-		upperLeftX  = 16    + xOffset,
-		upperLeftY  = 45    + yOffset,
-		upperMidX   = 70    + xOffset,
-		upperMidY   = 13    + yOffset,
-		upperRightX = 122   + xOffset,
-		upperRightY = 45    + yOffset,
-		lowerLeftX  = 16    + xOffset,
-		lowerLeftY  = 106   + yOffset,
-		lowerMidX   = 70    + xOffset,
-		lowerMidY   = 135   + yOffset,
-		lowerRightX = 122   + xOffset,
-		lowerRightY = 106   + yOffset
+		kManaUpperLeftX  = 16    + kManaXOffset,
+		kManaUpperLeftY  = 45    + kManaYOffset,
+		kManaUpperMidX   = 70    + kManaXOffset,
+		kManaUpperMidY   = 13    + kManaYOffset,
+		kManaUpperRightX = 122   + kManaXOffset,
+		kManaUpperRightY = 45    + kManaYOffset,
+		kManaLowerLeftX  = 16    + kManaXOffset,
+		kManaLowerLeftY  = 106   + kManaYOffset,
+		kManaLowerMidX   = 70    + kManaXOffset,
+		kManaLowerMidY   = 135   + kManaYOffset,
+		kManaLowerRightX = 122   + kManaXOffset,
+		kManaLowerRightY = 106   + kManaYOffset
 	};
 
 	enum manaEndCoords {
-		redEndX         = upperLeftX,   //a // these are just dup tags
-		redEndY         = upperLeftY,   //b
-		orangeEndX      = upperMidX,    //c
-		orangeEndY      = upperMidY,
-		yellowEndX      = upperRightX,  //d
-		yellowEndY      = upperRightY,  //b
-		greenEndX       = lowerLeftX,   //a
-		greenEndY       = lowerLeftY,   //e
-		blueEndX        = lowerMidX,    //c
-		blueEndY        = lowerMidY,
-		violetEndX      = lowerRightX,  //d
-		violetEndY      = lowerRightY,  //e
-		numXYCoords     = 12,
-		numManaTypes    = numXYCoords / 2
+		kManaRedEndX         = kManaUpperLeftX,   //a // these are just dup tags
+		kManaRedEndY         = kManaUpperLeftY,   //b
+		kManaOrangeEndX      = kManaUpperMidX,    //c
+		kManaOrangeEndY      = kManaUpperMidY,
+		kManaYellowEndX      = kManaUpperRightX,  //d
+		kManaYellowEndY      = kManaUpperRightY,  //b
+		kManaGreenEndX       = kManaLowerLeftX,   //a
+		kManaGreenEndY       = kManaLowerLeftY,   //e
+		kManaBlueEndX        = kManaLowerMidX,    //c
+		kManaBlueEndY        = kManaLowerMidY,
+		kManaVioletEndX      = kManaLowerRightX,  //d
+		kManaVioletEndY      = kManaLowerRightY,  //e
+		kManaNumXYCoords     = 12,
+		kManaNumManaTypes    = kManaNumXYCoords / 2
 	};
 
 	// mana star display offset from well center
 	enum startOffset {
-		startOffset = 12
+		kManaStartOffset = 12
 	};
 
 	// mana information
 	enum manainfo {
-		maxLevel = 200,
-		numManaRegions = numManaTypes
+		kManaMaxLevel = 200,
+		kManaNumManaRegions = kManaNumManaTypes
 	};
 
 	// resource data
 	enum resourceInfo {
-		numStars        = 7,
-		numRings        = 7,
-		starResNum      = 0,
-		ringResNum      = 0,
-		numManaColors   = 13
+		kResNumStars        = 7,
+		kResNumRings        = 7,
+		kResStarResNum      = 0,
+		kResRingResNum      = 0,
+		kResNumManaColors   = 13
 	};
 
 	// this describes a star
@@ -488,31 +488,31 @@ public:
 private:
 
 	// resource handle
-	hResContext     *resContext;
+	hResContext     *_resContext;
 
 	// array of image pointers
-	void            **starImages;
-	void            **ringImages;
+	void            **_starImages;
+	void            **_ringImages;
 
 	// background image pointer
-	void            *backImage;
-	void            *wellImage;
+	void            *_backImage;
+	void            *_wellImage;
 
 	// image maps
-	gPixelMap   savedMap;
+	gPixelMap   _savedMap;
 
 	// array of manaLine infos for blitting
-	manaLineInfo manaLines[numManaTypes];
+	manaLineInfo _manaLines[kManaNumManaTypes];
 
 	// array of ring and star end positions
 	// this is initialized via constructor
-	Point16 starRingEndPos[numManaTypes];
+	Point16 _starRingEndPos[kManaNumManaTypes];
 
-	Point16 starSizes[numStars];
-	Point16 ringSizes[numRings];
+	Point16 _starSizes[kResNumStars];
+	Point16 _ringSizes[kResNumRings];
 
 	// these are checks against redundent updates
-	int32   currentMana[numManaTypes], currentBaseMana[numManaTypes];
+	int32   _currentMana[kManaNumManaTypes], _currentBaseMana[kManaNumManaTypes];
 protected:
 
 	// these do line and position calculations
@@ -540,7 +540,7 @@ public:
 	//  -------
 	Rect16  getManaRegionRect(int8 region);
 	int     getNumManaRegions() {
-		return numManaRegions;
+		return kManaNumManaRegions;
 	}
 
 	// drawing routines
@@ -555,48 +555,48 @@ public:
 class CHealthIndicator {
 private:
 
-	static const char *hintText;
+	static const char *_hintText;
 
 	enum {
-		starFrameResNum     = 14,
-		starFrameNum        = 1,
-		starStart           = 0,
-		starNum             = 23,
-		starInitial         = 0,
-		starLevels          = 24,
-		numControls         = kNumViews
+		kHealthStarFrameResNum     = 14,
+		kHealthStarFrameNum        = 1,
+		kHealthStarStart           = 0,
+		kHealthStarNum             = 23,
+		kHealthStarInitial         = 0,
+		kHealthStarLevels          = 24,
+		kHealthNumControls         = kNumViews
 	};
 
 	enum {
-		starXPos    = 572,
-		starYPos    = 21,
-		starXSize   = 32,
-		starYSize   = 32,
-		starYOffset = 150,
-		frameXPos   = 571,
-		frameYPos   = 20,
-		frameXSize  = 32,
-		frameYSize  = 32
+		kHealthStarXPos    = 572,
+		kHealthStarYPos    = 21,
+		kHealthStarXSize   = 32,
+		kHealthStarYSize   = 32,
+		kHealthStarYOffset = 150,
+		kHealthFrameXPos   = 571,
+		kHealthFrameYPos   = 20,
+		kHealthFrameXSize  = 32,
+		kHealthFrameYSize  = 32
 	};
 
 	// resource handle
-	hResContext *healthRes;
+	hResContext *_healthRes;
 
 	// buttons
-	GfxCompImage          *starBtns[numControls];
-	GfxCompImage          *indivStarBtn;
+	GfxCompImage          *_starBtns[kHealthNumControls];
+	GfxCompImage          *_indivStarBtn;
 
 	// array of pointer to the star imagery
-	void **starImag;
+	void **_starImag;
 
 	// health star frame imagery
-	void *starFrameImag;
+	void *_starFrameImag;
 
 	void updateStar(GfxCompImage *starCtl, int32 bro, int32 baseVitality, int32 curVitality);
 
 public:
-	uint16  starIDs[3];
-	int16   imageIndexMemory[4];
+	uint16  _starIDs[3];
+	int16   _imageIndexMemory[4];
 
 public:
 

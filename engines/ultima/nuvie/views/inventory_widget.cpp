@@ -234,7 +234,7 @@ void InventoryWidget::display_qty_string(uint16 x, uint16 y, uint16 qty) {
 	uint8 len, i, offset;
 	char buf[6];
 
-	sprintf(buf, "%d", qty);
+	Common::sprintf_s(buf, "%d", qty);
 	len = strlen(buf);
 
 	offset = (16 - len * 4) / 2;

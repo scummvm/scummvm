@@ -73,7 +73,7 @@ bool JACLMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 		} else {
 			// Found a match
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
-			gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, filename));
+			gameList.push_back(GlkDetectedGame(p->_gameId, gameDesc.description, p->_extra, filename, p->_language));
 		}
 	}
 

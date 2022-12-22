@@ -27,7 +27,7 @@
 #define SAGA2_TIMERS_H
 
 #include "saga2/idtypes.h"
-#include "saga2/calender.h"
+#include "saga2/calendar.h"
 #include "saga2/objects.h"
 
 namespace Saga2 {

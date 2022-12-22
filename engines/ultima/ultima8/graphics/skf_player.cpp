@@ -25,7 +25,6 @@
 #include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/texture.h"
-#include "ultima/ultima8/graphics/soft_render_surface.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
@@ -78,11 +77,7 @@ SKFPlayer::SKFPlayer(Common::SeekableReadStream *rs, int width, int height, bool
 	parseEventList(eventlist);
 	delete eventlist;
 
-	// TODO: Slight hack.. clean me up.
-	if (RenderSurface::getPixelFormat().bpp() == 16)
-		_buffer = new SoftRenderSurface<uint16>(new Graphics::ManagedSurface(_width, _height, RenderSurface::getPixelFormat()));
-	else
-		_buffer = new SoftRenderSurface<uint32>(new Graphics::ManagedSurface(_width, _height, RenderSurface::getPixelFormat()));
+	_buffer = RenderSurface::CreateSecondaryRenderSurface(_width, _height);
 }
 
 SKFPlayer::~SKFPlayer() {
@@ -125,13 +120,15 @@ void SKFPlayer::paint(RenderSurface *surf, int /*lerp*/) {
 	if (!_buffer) return;
 
 	if (!_fadeLevel) {
-		surf->Blit(_buffer->getRawSurface(), 0, 0, _width, _height, 0, 0);
+		Common::Rect srcRect(_width, _height);
+		surf->Blit(*_buffer->getRawSurface(), srcRect, 0, 0);
 		if (_subs)
 			_subs->draw(surf, 60, _subtitleY);
 	} else {
 		uint32 fade = TEX32_PACK_RGBA(_fadeColour, _fadeColour, _fadeColour,
 		                              (_fadeLevel * 255) / FADESTEPS);
-		surf->FadedBlit(_buffer->getRawSurface(), 0, 0, _width, _height, 0, 0, fade);
+		Common::Rect srcRect(_width, _height);
+		surf->FadedBlit(*_buffer->getRawSurface(), srcRect, 0, 0, fade);
 		if (_subs)
 			_subs->drawBlended(surf, 60, _subtitleY, fade);
 	}

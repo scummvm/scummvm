@@ -293,6 +293,7 @@ void GLContext::deinit() {
 		gl_free(matrix_stack[i]);
 	endSharedState();
 	gl_free(vertex);
+	delete fb;
 }
 
 } // end of namespace TinyGL

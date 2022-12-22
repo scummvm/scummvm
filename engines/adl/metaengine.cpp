@@ -37,6 +37,70 @@
 
 namespace Adl {
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_NTSC,
+		{
+			_s("TV emulation"),
+			_s("Emulate composite output to an NTSC TV"),
+			"ntsc",
+			true,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_COLOR_DEFAULT_OFF,
+		{
+			_s("Color graphics"),
+			_s("Use color graphics instead of monochrome"),
+			"color",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_COLOR_DEFAULT_ON,
+		{
+			_s("Color graphics"),
+			_s("Use color graphics instead of monochrome"),
+			"color",
+			true,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_SCANLINES,
+		{
+			_s("Show scanlines"),
+			_s("Darken every other scanline to mimic the look of a CRT"),
+			"scanlines",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_MONO_TEXT,
+		{
+			_s("Always use sharp monochrome text"),
+			_s("Do not emulate NTSC artifacts for text"),
+			"monotext",
+			true,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 Common::String getDiskImageName(const AdlGameDescription &adlDesc, byte volume) {
 	const ADGameDescription &desc = adlDesc.desc;
 	for (uint i = 0; desc.filesDescriptions[i].fileName; ++i) {
@@ -79,6 +143,10 @@ class AdlMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "adl";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;

@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/events.h"
@@ -65,6 +65,11 @@ QMessageObject::QMessageObject() {
 	_loopedSound = false;
 	_startSound = false;
 	_reaction = nullptr;
+
+	_x = _y = _walkX = _walkY = 0;
+	_frame = 0;
+	_sound = nullptr;
+	_reactionId = 0;
 }
 
 void QMessageObject::processMessage(const QMessage &msg) {

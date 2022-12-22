@@ -25,15 +25,51 @@
 
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "cge/cge.h"
+#include "cge/detection.h"
 
 namespace CGE {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_COLOR_BLIND_DEFAULT_OFF,
+		{
+			_s("Color Blind Mode"),
+			_s("Enable Color Blind Mode by default"),
+			"enable_color_blind",
+			false,
+			0,
+			0
+		}
+	},
+
+#ifdef USE_TTS
+	{
+		GAMEOPTION_TTS,
+		{
+			_s("Enable Text to Speech"),
+			_s("Use TTS to read text in the game (if TTS is available)"),
+			"tts_enabled",
+			false,
+			0,
+			0
+		}
+	},
+#endif
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 class CGEMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "cge";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;

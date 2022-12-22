@@ -23,8 +23,10 @@
 #define MUTATIONOFJB_LOADPLAYERCOMMAND_H
 
 #include "mutationofjb/commands/seqcommand.h"
-#include "common/scummsys.h"
 #include "mutationofjb/tasks/task.h"
+
+#include "common/scummsys.h"
+#include "common/str.h"
 
 namespace MutationOfJB {
 

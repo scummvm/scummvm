@@ -302,7 +302,7 @@ void Imuse::callback() {
 					track->stream->queueBuffer(data, result, DisposeAfterUse::YES, makeMixerFlags(track->mixerFlags));
 					track->regionOffset += result;
 				} else
-					delete[] data;
+					free(data);
 
 				if (_sound->isEndOfRegion(track->soundDesc, track->curRegion)) {
 					switchToNextRegion(track);

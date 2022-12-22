@@ -33,6 +33,8 @@ namespace Shared {
 // BufferedStream
 //-----------------------------------------------------------------------------
 
+const size_t BufferedStream::BufferSize;
+
 BufferedStream::BufferedStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode, DataEndianess stream_endianess)
 	: FileStream(file_name, open_mode, work_mode, stream_endianess) {
 	if (IsValid()) {
@@ -56,8 +58,10 @@ BufferedStream::~BufferedStream() {
 
 void BufferedStream::FillBufferFromPosition(soff_t position) {
 	FileStream::Seek(position, kSeekBegin);
-	_buffer.resize(BufferSize);
-	auto sz = FileStream::Read(_buffer.data(), BufferSize);
+	// remember to restrict to the end position!
+	size_t fill_size = std::min(BufferSize, static_cast<size_t>(_end - position));
+	_buffer.resize(fill_size);
+	auto sz = FileStream::Read(_buffer.data(), fill_size);
 	_buffer.resize(sz);
 	_bufferPosition = position;
 }
@@ -101,7 +105,9 @@ size_t BufferedStream::Read(void *buffer, size_t size) {
 	// then read directly into the user buffer and bail out.
 	if (size >= BufferSize) {
 		FileStream::Seek(_position, kSeekBegin);
-		size_t sz = FileStream::Read(buffer, size);
+		// remember to restrict to the end position!
+		size_t fill_size = std::min(size, static_cast<size_t>(_end - _position));
+		size_t sz = FileStream::Read(buffer, fill_size);
 		_position += sz;
 		return sz;
 	}

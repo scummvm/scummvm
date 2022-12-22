@@ -436,7 +436,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		// this fact in the debug output. The string saved in "md5" will never match
 		// any valid MD5 sum, thus it is safe to do that here.
 		if (md5[0] == 0)
-			strcpy(md5, "fallback matched");
+			Common::strcpy_s(md5, "fallback matched");
 
 		debug(0, "Saved game MD5: \"%s\"", md5);
 

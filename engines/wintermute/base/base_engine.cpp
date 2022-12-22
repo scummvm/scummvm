@@ -82,7 +82,7 @@ void BaseEngine::LOG(bool res, const char *fmt, ...) {
 	va_list va;
 
 	va_start(va, fmt);
-	vsprintf(buff, fmt, va);
+	Common::vsprintf_s(buff, fmt, va);
 	va_end(va);
 
 	if (instance()._gameRef) {

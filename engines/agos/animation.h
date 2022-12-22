@@ -26,6 +26,7 @@
 
 #include "video/dxa_decoder.h"
 #include "video/smk_decoder.h"
+#include "video/subtitles.h"
 #include "audio/mixer.h"
 
 namespace AGOS {
@@ -66,6 +67,7 @@ protected:
 	virtual void handleNextFrame();
 	virtual bool processFrame() = 0;
 	virtual void startSound() {}
+	Video::Subtitles _subtitles;
 };
 
 class MoviePlayerDXA : public MoviePlayer, Video::DXADecoder {

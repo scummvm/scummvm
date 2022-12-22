@@ -36,10 +36,10 @@ RandomSource::RandomSource(const String &name) {
 #else
 	TimeDate time;
 	g_system->getTimeAndDate(time);
-	uint32 newSeed = time.tm_sec + time.tm_min * 60 + time.tm_hour * 3600;
-	newSeed += time.tm_mday * 86400 + time.tm_mon * 86400 * 31;
-	newSeed += time.tm_year * 86400 * 366;
-	newSeed = newSeed * 1000 + g_system->getMillis();
+	uint32 newSeed = time.tm_sec + time.tm_min * 60U + time.tm_hour * 3600U;
+	newSeed += time.tm_mday * 86400U + time.tm_mon * 86400U * 31U;
+	newSeed += time.tm_year * 86400U * 366U;
+	newSeed = newSeed * 1000U + g_system->getMillis();
 	setSeed(newSeed);
 #endif
 }

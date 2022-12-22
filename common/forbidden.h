@@ -527,6 +527,30 @@
 #define srandom(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
+// Use Common::strcat_s or Common::strlcat in common/str.h
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strcat
+#undef strcat
+#define strcat(a,b)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+// Use Common::strcpy_s or Common::strlcpy in common/str.h
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strcpy
+#undef strcpy
+#define strcpy(a,b)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+// Use Common::vsprintf_s in common/str.h or vsnprintf
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_vsprintf
+#undef vsprintf
+#define vsprintf(a,b,c)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+// Use Common::sprintf_s in common/str.h or snprintf
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_sprintf
+#undef sprintf
+#define sprintf(a,b,...)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
 // Use Common:scumm_stricmp in common/str.h
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_stricmp
 #undef stricmp

@@ -73,20 +73,8 @@ int ModularGraphicsBackend::getGraphicsMode() const {
 	return _graphicsManager->getGraphicsMode();
 }
 
-const OSystem::GraphicsMode *ModularGraphicsBackend::getSupportedShaders() const {
-	return _graphicsManager->getSupportedShaders();
-}
-
-int ModularGraphicsBackend::getDefaultShader() const {
-	return _graphicsManager->getDefaultShader();
-}
-
-bool ModularGraphicsBackend::setShader(int id) {
-	return _graphicsManager->setShader(id);
-}
-
-int ModularGraphicsBackend::getShader() const {
-	return _graphicsManager->getShader();
+bool ModularGraphicsBackend::setShader(const Common::String &fileName) {
+	return _graphicsManager->setShader(fileName);
 }
 
 const OSystem::GraphicsMode *ModularGraphicsBackend::getSupportedStretchModes() const {
@@ -210,8 +198,8 @@ void ModularGraphicsBackend::clearFocusRectangle() {
 	_graphicsManager->clearFocusRectangle();
 }
 
-void ModularGraphicsBackend::showOverlay() {
-	_graphicsManager->showOverlay();
+void ModularGraphicsBackend::showOverlay(bool inGUI) {
+	_graphicsManager->showOverlay(inGUI);
 }
 
 void ModularGraphicsBackend::hideOverlay() {

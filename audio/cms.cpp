@@ -20,6 +20,7 @@
  */
 
 #include "audio/cms.h"
+#include "audio/softsynth/cms.h"
 
 namespace CMS {
 
@@ -124,39 +125,6 @@ void EmulatedCMS::setCallbackFrequency(int timerFrequency) {
 	// but less prone to arithmetic overflow.
 
 	_samplesPerTick = (d << FIXP_SHIFT) + (r << FIXP_SHIFT) / _baseFreq;
-}
-
-DOSBoxCMS::DOSBoxCMS() : _cms(nullptr) { }
-
-DOSBoxCMS::~DOSBoxCMS() {
-	if (_cms)
-		delete _cms;
-}
-
-bool DOSBoxCMS::init() {
-	_cms = new CMSEmulator(getRate());
-	return _cms != nullptr;
-}
-
-void DOSBoxCMS::reset() {
-	_cms->reset();
-}
-
-void DOSBoxCMS::write(int a, int v) {
-	_cms->portWrite(a, v);
-}
-
-void DOSBoxCMS::writeReg(int r, int v) {
-	int address = 0x220;
-	if (r >= 0x100)
-		address += 0x002;
-
-	_cms->portWrite(address + 1, r & 0x1F);
-	_cms->portWrite(address, v);
-}
-
-void DOSBoxCMS::generateSamples(int16 *buffer, int numSamples) {
-	_cms->readBuffer(buffer, numSamples);
 }
 
 } // End of namespace CMS

@@ -73,7 +73,7 @@ void CreateCharacterDialog::execute() {
 	screen.loadBackground("create.raw");
 	events.setCursor(0);
 
-	while (!_vm->shouldExit()) {
+	do {
 		if (restartFlag) {
 			// Build up list of roster slot indexes that are free
 			freeCharList.clear();

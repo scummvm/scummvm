@@ -22,8 +22,11 @@
 #include "common/crc.h"
 #include "common/file.h"
 #include "common/macresman.h"
-#include "common/stuffit.h"
-#include "common/winexe.h"
+#include "common/memstream.h"
+#include "common/compression/stuffit.h"
+#include "common/compression/vise.h"
+#include "common/formats/winexe.h"
+#include "common/compression/zlib.h"
 
 #include "graphics/maccursor.h"
 #include "graphics/wincursor.h"
@@ -35,6 +38,7 @@
 
 #include "mtropolis/plugin/mti.h"
 #include "mtropolis/plugin/obsidian.h"
+#include "mtropolis/plugin/spqr.h"
 #include "mtropolis/plugin/standard.h"
 #include "mtropolis/plugins.h"
 
@@ -196,6 +200,13 @@ struct MacInstallerUnpackRequest {
 	uint32 creator;
 };
 
+struct MacVISE3InstallerUnpackRequest {
+	const char *fileName;
+	bool extractData;
+	bool extractResources;
+	ManifestFileType fileType;
+};
+
 void ObsidianGameDataHandler::unpackAdditionalFiles(Common::Array<Common::SharedPtr<ProjectPersistentResource> > &persistentResources, Common::Array<FileIdentification> &files) {
 	if (_isMac && _isRetail)
 		unpackMacRetailInstaller(persistentResources, files);
@@ -210,16 +221,9 @@ void ObsidianGameDataHandler::unpackMacRetailInstaller(Common::Array<Common::Sha
 		{"RSGKit.rPP", MKTAG('M', 'F', 'c', 'o'), MKTAG('M', 'f', 'M', 'f')},
 	};
 
-	Common::SharedPtr<Common::MacResManager> installerResMan(new Common::MacResManager());
-	persistentResources.push_back(PersistentResource<Common::MacResManager>::wrap(installerResMan));
-
-	if (!installerResMan->open("Obsidian Installer"))
-		error("Failed to open Obsidian Installer");
-
-	if (!installerResMan->hasDataFork())
+	Common::SeekableReadStream *installerDataForkStream = Common::MacResManager::openFileOrDataFork("Obsidian Installer");
+	if (!installerDataForkStream)
 		error("Obsidian Installer has no data fork");
-
-	Common::SeekableReadStream *installerDataForkStream = installerResMan->getDataFork();
 
 	// Not counted/persisted because the StuffIt archive owns the stream.  It will also delete it if createStuffItArchive fails.
 	_installerArchive.reset(Common::createStuffItArchive(installerDataForkStream));
@@ -227,10 +231,8 @@ void ObsidianGameDataHandler::unpackMacRetailInstaller(Common::Array<Common::Sha
 
 	persistentResources.push_back(PersistentResource<Common::Archive>::wrap(_installerArchive));
 
-	if (!_installerArchive) {
-
+	if (!_installerArchive)
 		error("Failed to open Obsidian Installer archive");
-	}
 
 	debug(1, "Unpacking resource files...");
 
@@ -388,7 +390,7 @@ MTIGameDataHandler::MTIGameDataHandler(const Game &game, const MTropolisGameDesc
 }
 
 void MTIGameDataHandler::addPlugIns(ProjectDescription &projectDesc, const Common::Array<FileIdentification> &files) {
-	Common::SharedPtr<MTropolis::PlugIn> mtiPlugIn(new MTI::MTIPlugIn());
+	Common::SharedPtr<MTropolis::PlugIn> mtiPlugIn(PlugIns::createMTI());
 	projectDesc.addPlugIn(mtiPlugIn);
 
 	Common::SharedPtr<MTropolis::PlugIn> standardPlugIn = PlugIns::createStandard();
@@ -407,9 +409,89 @@ AlbertGameDataHandler::AlbertGameDataHandler(const Game &game, const MTropolisGa
 }
 
 void AlbertGameDataHandler::addPlugIns(ProjectDescription &projectDesc, const Common::Array<FileIdentification> &files) {
-	Common::SharedPtr<MTropolis::PlugIn> mtiPlugIn(new MTI::MTIPlugIn());
-	projectDesc.addPlugIn(mtiPlugIn);
+	Common::SharedPtr<MTropolis::PlugIn> standardPlugIn = PlugIns::createStandard();
+	static_cast<Standard::StandardPlugIn *>(standardPlugIn.get())->getHacks().allowGarbledListModData = true;
+	projectDesc.addPlugIn(standardPlugIn);
+}
 
+class SPQRGameDataHandler : public GameDataHandler {
+public:
+	SPQRGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc);
+
+	void addPlugIns(ProjectDescription &projectDesc, const Common::Array<FileIdentification> &files) override;
+	void unpackAdditionalFiles(Common::Array<Common::SharedPtr<ProjectPersistentResource> > &persistentResources, Common::Array<FileIdentification> &files) override;
+
+private:
+	bool _isMac;
+};
+
+SPQRGameDataHandler::SPQRGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc) : GameDataHandler(game, gameDesc), _isMac(gameDesc.desc.platform == Common::kPlatformMacintosh) {
+}
+
+void SPQRGameDataHandler::addPlugIns(ProjectDescription &projectDesc, const Common::Array<FileIdentification> &files) {
+	Common::SharedPtr<MTropolis::PlugIn> standardPlugIn = PlugIns::createStandard();
+	projectDesc.addPlugIn(standardPlugIn);
+
+	Common::SharedPtr<MTropolis::PlugIn> spqrPlugIn = PlugIns::createSPQR();
+	projectDesc.addPlugIn(spqrPlugIn);
+}
+
+void SPQRGameDataHandler::unpackAdditionalFiles(Common::Array<Common::SharedPtr<ProjectPersistentResource> > &persistentResources, Common::Array<FileIdentification> &files) {
+	if (_isMac) {
+		const MacVISE3InstallerUnpackRequest unpackRequests[] = {
+			{"SPQR:Resource:Basic.rPP", false, true, MTFT_EXTENSION},
+			{"SPQR:Resource:Extras.rPP", false, true, MTFT_EXTENSION},
+			{"SPQR:Resource:mCursors.cPP", false, true, MTFT_EXTENSION},
+			{"SPQR:SPQR PPC Start", false, true, MTFT_PLAYER},
+			{"SPQR:Data File SPQR", true, false, MTFT_MAIN},
+		};
+
+		Common::SharedPtr<Common::SeekableReadStream> installerDataForkStream(Common::MacResManager::openFileOrDataFork("Install.vct"));
+		if (!installerDataForkStream)
+			error("Failed to open SPQR installer");
+
+		Common::ScopedPtr<Common::Archive> archive(Common::createMacVISEArchive(installerDataForkStream.get()));
+
+		debug(1, "Unpacking files...");
+
+		for (const MacVISE3InstallerUnpackRequest &request : unpackRequests) {
+			Common::MacFinderInfo finfo;
+			if (!Common::MacResManager::getFileFinderInfo(request.fileName, *archive, finfo))
+				error("Couldn't get Finder info for file '%s'", request.fileName);
+
+			FileIdentification ident;
+			ident.fileName = request.fileName;
+			ident.macCreator.value = MKTAG(finfo.creator[0], finfo.creator[1], finfo.creator[2], finfo.creator[3]);
+			ident.macType.value = MKTAG(finfo.type[0], finfo.type[1], finfo.type[2], finfo.type[3]);
+			ident.category = request.fileType;
+
+			if (request.extractResources) {
+				Common::SharedPtr<Common::MacResManager> resMan(new Common::MacResManager());
+				if (!resMan->open(request.fileName, *archive))
+					error("Failed to open Mac res manager for file '%s'", request.fileName);
+
+				ident.resMan = resMan;
+			}
+
+			if (request.extractData)
+				ident.stream.reset(archive->createReadStreamForMember(request.fileName));
+
+			files.push_back(ident);
+		}
+	}
+}
+
+class STTGSGameDataHandler : public GameDataHandler {
+public:
+	STTGSGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc);
+
+	void addPlugIns(ProjectDescription &projectDesc, const Common::Array<FileIdentification> &files) override;
+};
+
+STTGSGameDataHandler::STTGSGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc) : GameDataHandler(game, gameDesc) {
+}
+
+void STTGSGameDataHandler::addPlugIns(ProjectDescription &projectDesc, const Common::Array<FileIdentification> &files) {
 	Common::SharedPtr<MTropolis::PlugIn> standardPlugIn = PlugIns::createStandard();
 	static_cast<Standard::StandardPlugIn *>(standardPlugIn.get())->getHacks().allowGarbledListModData = true;
 	projectDesc.addPlugIn(standardPlugIn);
@@ -429,7 +511,6 @@ static bool getMacTypesForMacBinary(const char *fileName, uint32 &outType, uint3
 		return false;
 
 	Common::CRC_BINHEX crc;
-	crc.init();
 	uint16 checkSum = crc.crcFast(mbHeader, 124);
 
 	if (checkSum != READ_BE_UINT16(&mbHeader[124]))
@@ -477,37 +558,6 @@ static bool fileSortCompare(const FileIdentification &a, const FileIdentificatio
 	}
 
 	return aSize < b.fileName.size();
-}
-
-static int resolveFileSegmentID(const Common::String &fileName) {
-	size_t lengthWithoutExtension = fileName.size();
-
-	size_t dotPos = fileName.findLastOf('.');
-	if (dotPos != Common::String::npos)
-		lengthWithoutExtension = dotPos;
-
-	int numDigits = 0;
-	int segmentID = 0;
-	int multiplier = 1;
-
-	for (size_t i = 0; i < lengthWithoutExtension; i++) {
-		size_t charPos = lengthWithoutExtension - 1 - i;
-		char c = fileName[charPos];
-
-		if (c >= '0' && c <= '9') {
-			int digit = c - '0';
-			segmentID += digit * multiplier;
-			multiplier *= 10;
-			numDigits++;
-		} else {
-			break;
-		}
-	}
-
-	if (numDigits == 0)
-		error("Unusual segment naming scheme");
-
-	return segmentID;
 }
 
 static void loadCursorsMac(FileIdentification &f, CursorGraphicCollection &cursorGraphics) {
@@ -805,7 +855,7 @@ const ManifestFile albert1RetailWinDeFiles[] = {
 	{"BASIC.X95",    MTFT_SPECIAL},
 	{"BITMAP.R95",   MTFT_SPECIAL},
 	{"EXTRAS.R95",   MTFT_SPECIAL},
-    {"ROTATORK.R95", MTFT_SPECIAL},
+	{"ROTATORK.R95", MTFT_SPECIAL},
 	{nullptr, MTFT_AUTO},
 };
 
@@ -853,6 +903,36 @@ const char *albert3RetailWinDeDirectories[] = {
 	"DATA",
 	"DATA/RESOURCE",
 	nullptr
+};
+
+const ManifestFile spqrRetailWinEnFiles[] = {
+	{"SPQR32.EXE", MTFT_PLAYER},
+	{"MCURSORS.C95", MTFT_EXTENSION},
+	{"SPQR.MPL", MTFT_MAIN},
+	{"S_6842.MPX", MTFT_ADDITIONAL},
+	{nullptr, MTFT_AUTO}
+};
+
+const char *spqrRetailWinDirectories[] = {
+	"RESOURCE",
+	nullptr
+};
+
+const ManifestFile spqrRetailMacEnFiles[] = {
+	{"Install.vct", MTFT_SPECIAL},
+	{"S_6772", MTFT_ADDITIONAL},
+	{nullptr, MTFT_AUTO}
+};
+
+const char *spqrRetailMacDirectories[] = {
+	"GAME",
+	nullptr
+};
+
+const ManifestFile sttgsDemoWinFiles[] = {
+	{"MTPLAY95.EXE", MTFT_PLAYER},
+	{"Trektriv.mpl", MTFT_MAIN},
+	{nullptr, MTFT_AUTO}
 };
 
 const Game games[] = {
@@ -991,6 +1071,30 @@ const Game games[] = {
 		albert3RetailWinDeDirectories,
 		nullptr,
 		GameDataHandlerFactory<AlbertGameDataHandler>::create
+	},
+	// SPQR: The Empire's Darkest Hour - Retail - Windows - English
+	{
+		MTBOOT_SPQR_RETAIL_WIN,
+		spqrRetailWinEnFiles,
+		spqrRetailWinDirectories,
+		nullptr,
+		GameDataHandlerFactory<SPQRGameDataHandler>::create
+	},
+	// SPQR: The Empire's Darkest Hour - Retail - Macintosh - English
+	{
+		MTBOOT_SPQR_RETAIL_MAC,
+		spqrRetailMacEnFiles,
+		spqrRetailMacDirectories,
+		nullptr,
+		GameDataHandlerFactory<SPQRGameDataHandler>::create
+	},
+	// Star Trek: The Game Show - Demo - Windows
+	{
+		MTBOOT_STTGS_DEMO_WIN,
+		sttgsDemoWinFiles,
+		nullptr,
+		nullptr,
+		GameDataHandlerFactory<STTGSGameDataHandler>::create
 	},
 };
 
@@ -1134,6 +1238,8 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		Boot::FileIdentification *mainSegmentFile = nullptr;
 		Common::Array<Boot::FileIdentification *> segmentFiles;
 
+		int addlSegments = 0;
+
 		// Bin segments
 		for (Boot::FileIdentification &macFile : macFiles) {
 			switch (macFile.category) {
@@ -1147,9 +1253,8 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 				mainSegmentFile = &macFile;
 				break;
 			case Boot::MTFT_ADDITIONAL: {
-					int segmentID = Boot::resolveFileSegmentID(macFile.fileName);
-					if (segmentID < 2)
-						error("Unusual segment numbering scheme");
+					addlSegments++;
+					int segmentID = addlSegments + 1;
 
 					size_t segmentIndex = static_cast<size_t>(segmentID - 1);
 					while (segmentFiles.size() <= segmentIndex)
@@ -1195,12 +1300,9 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 			if (segmentFile->stream)
 				dataFork = segmentFile->stream;
 			else {
-				Boot::initResManForFile(*segmentFile);
-				dataFork.reset(segmentFile->resMan->getDataFork());
+				dataFork.reset(Common::MacResManager::openFileOrDataFork(segmentFile->fileName));
 				if (!dataFork)
 					error("Segment file '%s' has no data fork", segmentFile->fileName.c_str());
-
-				persistentResources.push_back(Boot::PersistentResource<Common::MacResManager>::wrap(segmentFile->resMan));
 			}
 
 			persistentResources.push_back(Boot::PersistentResource<Common::SeekableReadStream>::wrap(dataFork));
@@ -1312,9 +1414,11 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		Boot::FileIdentification *mainSegmentFile = nullptr;
 		Common::Array<Boot::FileIdentification *> segmentFiles;
 
+		int addlSegments = 0;
+
 		// Bin segments
-		for (Boot::FileIdentification &macFile : winFiles) {
-			switch (macFile.category) {
+		for (Boot::FileIdentification &winFile : winFiles) {
+			switch (winFile.category) {
 			case Boot::MTFT_PLAYER:
 				// Case handled below after cursor loading
 				break;
@@ -1322,17 +1426,16 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 				// Case handled below after cursor loading
 				break;
 			case Boot::MTFT_MAIN:
-				mainSegmentFile = &macFile;
+				mainSegmentFile = &winFile;
 				break;
 			case Boot::MTFT_ADDITIONAL: {
-				int segmentID = Boot::resolveFileSegmentID(macFile.fileName);
-				if (segmentID < 2)
-					error("Unusual segment numbering scheme");
+				addlSegments++;
+				int segmentID = addlSegments + 1;
 
 				size_t segmentIndex = static_cast<size_t>(segmentID - 1);
 				while (segmentFiles.size() <= segmentIndex)
 					segmentFiles.push_back(nullptr);
-				segmentFiles[segmentIndex] = &macFile;
+				segmentFiles[segmentIndex] = &winFile;
 			} break;
 			case Boot::MTFT_VIDEO:
 				break;

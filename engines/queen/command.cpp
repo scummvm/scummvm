@@ -54,7 +54,7 @@ void CmdText::display(InkColor color, const char *command, bool outlined) {
 
 void CmdText::displayTemp(InkColor color, Verb v) {
 	char temp[MAX_COMMAND_LEN];
-	strcpy(temp, _vm->logic()->verbName(v));
+	Common::strcpy_s(temp, _vm->logic()->verbName(v));
 	display(color, temp, false);
 }
 
@@ -65,17 +65,17 @@ void CmdText::displayTemp(InkColor color, const char *name, bool outlined) {
 }
 
 void CmdText::setVerb(Verb v) {
-	strcpy(_command, _vm->logic()->verbName(v));
+	Common::strcpy_s(_command, _vm->logic()->verbName(v));
 }
 
 void CmdText::addLinkWord(Verb v) {
-	strcat(_command, " ");
-	strcat(_command, _vm->logic()->verbName(v));
+	Common::strcat_s(_command, " ");
+	Common::strcat_s(_command, _vm->logic()->verbName(v));
 }
 
 void CmdText::addObject(const char *objName) {
-	strcat(_command, " ");
-	strcat(_command, objName);
+	Common::strcat_s(_command, " ");
+	Common::strcat_s(_command, objName);
 }
 
 class CmdTextHebrew : public CmdText {
@@ -93,19 +93,19 @@ public:
 	void addLinkWord(Verb v) override {
 		char temp[MAX_COMMAND_LEN];
 
-		strcpy(temp, _command);
-		strcpy(_command, _vm->logic()->verbName(v));
-		strcat(_command, " ");
-		strcat(_command, temp);
+		Common::strcpy_s(temp, _command);
+		Common::strcpy_s(_command, _vm->logic()->verbName(v));
+		Common::strcat_s(_command, " ");
+		Common::strcat_s(_command, temp);
 	}
 
 	void addObject(const char *objName) override {
 		char temp[MAX_COMMAND_LEN];
 
-		strcpy(temp, _command);
-		strcpy(_command, objName);
-		strcat(_command, " ");
-		strcat(_command, temp);
+		Common::strcpy_s(temp, _command);
+		Common::strcpy_s(_command, objName);
+		Common::strcat_s(_command, " ");
+		Common::strcat_s(_command, temp);
 	}
 };
 
@@ -127,8 +127,8 @@ public:
 	void addObject(const char *objName) override {
 		// don't show a space after the goto and give commands in the Greek version
 		if (_command[1] != (char)-34 && !(_command[1] == (char)-2 && strlen(_command) > 5))
-			strcat(_command, " ");
-		strcat(_command, objName);
+			Common::strcat_s(_command, " ");
+		Common::strcat_s(_command, objName);
 	}
 };
 
@@ -778,7 +778,7 @@ bool Command::executeIfDialog(const char *description) {
 
 		while (cutaway[0] != '\0') {
 			char currentCutaway[20];
-			strcpy(currentCutaway, cutaway);
+			Common::strcpy_s(currentCutaway, cutaway);
 			_vm->logic()->playCutaway(currentCutaway, cutaway);
 		}
 		return true;

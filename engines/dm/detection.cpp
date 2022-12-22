@@ -89,13 +89,9 @@ static const DMADGameDescription gameDescriptions[] = {
 	}
 };
 
-static const ADExtraGuiOptionsMap optionsList[] = {
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
 class DMMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	DMMetaEngineDetection() : AdvancedMetaEngineDetection(DM::gameDescriptions, sizeof(DMADGameDescription), DMGames, optionsList) {
+	DMMetaEngineDetection() : AdvancedMetaEngineDetection(DM::gameDescriptions, sizeof(DMADGameDescription), DMGames) {
 	}
 
 	const char *getName() const override {

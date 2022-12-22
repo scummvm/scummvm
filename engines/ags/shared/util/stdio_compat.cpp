@@ -50,7 +50,7 @@ file_off_t ags_ftell(Common::Stream *stream) {
 	return rs ? rs->pos() : ws->pos();
 }
 
-Common::FSNode getFSNode(const char *path) {
+static Common::FSNode getFSNode(const char *path) {
 	Common::FSNode node;
 	Common::String filePath(path);
 	if (filePath.empty() || filePath == "." || filePath == "./")
@@ -100,6 +100,16 @@ Common::FSNode getFSNode(const char *path) {
 	return dir->getFSNode().getChild(filePath);
 }
 
+Common::ArchiveMemberPtr getFile(const char *path) {
+	Common::ArchiveMemberPtr archMember = SearchMan.getMember(path);
+	if (archMember)
+		return archMember;
+	Common::FSNode node(getFSNode(path));
+	if (!node.exists())
+		return Common::ArchiveMemberPtr();
+	return Common::ArchiveMemberPtr(new Common::FSNode(node));
+}
+
 int  ags_file_exists(const char *path) {
 	Common::String sPath(path);
 
@@ -111,6 +121,8 @@ int  ags_file_exists(const char *path) {
 
 		return result ? 1 : 0;
 	} else {
+		if (SearchMan.hasFile(path))
+			return 1;
 		Common::FSNode node = getFSNode(path);
 		return node.exists() && !node.isDirectory() ? 1 : 0;
 	}
@@ -122,15 +134,17 @@ int ags_directory_exists(const char *path) {
 }
 
 int ags_path_exists(const char *path) {
+	if (SearchMan.hasFile(path))
+		return 1;
 	Common::FSNode node = getFSNode(path);
 	return node.exists() ? 1 : 0;
 }
 
 file_off_t ags_file_size(const char *path) {
-	Common::FSNode node = getFSNode(path);
-	Common::File f;
+	Common::ArchiveMemberPtr file(getFile(path));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(file->createReadStream());
 
-	return f.open(node) ? f.size() : (file_off_t)-1;
+	return stream ? stream->size() : (file_off_t)-1;
 }
 
 } // namespace AGS3

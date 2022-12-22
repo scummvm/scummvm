@@ -126,13 +126,14 @@ char *Vmenu::VMGather(Choice *list) {
 		len += strlen(cp->_text);
 		h++;
 	}
-	_vmgt = new char[len + h];
+	len += h;
+	_vmgt = new char[len];
 	if (_vmgt) {
 		*_vmgt = '\0';
 		for (cp = list; cp->_text; cp++) {
 			if (*_vmgt)
-				strcat(_vmgt, "|");
-			strcat(_vmgt, cp->_text);
+				Common::strcat_s(_vmgt, len, "|");
+			Common::strcat_s(_vmgt, len, cp->_text);
 			h++;
 		}
 	}

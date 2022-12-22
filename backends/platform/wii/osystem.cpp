@@ -39,6 +39,7 @@
 OSystem_Wii::OSystem_Wii() :
 	_startup_time(0),
 
+	_overlayInGUI(false),
 	_cursorDontScale(true),
 	_cursorPaletteDisabled(true),
 	_cursorPalette(NULL),
@@ -131,7 +132,7 @@ void OSystem_Wii::initBackend() {
 
 	char buf[MAXPATHLEN];
 	if (!getcwd(buf, MAXPATHLEN))
-		strcpy(buf, "/");
+		Common::strcpy_s(buf, "/");
 
 	_savefileManager = new DefaultSaveFileManager(buf);
 	_timerManager = new DefaultTimerManager();

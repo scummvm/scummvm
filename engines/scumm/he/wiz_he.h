@@ -203,7 +203,7 @@ enum WizCompositeFlags {
 	kWCFSubConditionBits = 0x20
 };
 
-enum WizSpcConditionTypes {
+enum WizSpcConditionTypes : uint {
 	kWSPCCTBits = 0xc0000000,
 	kWSPCCTOr   = 0x00000000,
 	kWSPCCTAnd  = 0x40000000,

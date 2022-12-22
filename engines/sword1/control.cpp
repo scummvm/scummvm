@@ -262,8 +262,8 @@ void Control::askForCd() {
 
 	char fName[10];
 	uint8 textA[50];
-	sprintf(fName, "cd%d.id", SwordEngine::_systemVars.currentCD);
-	sprintf((char *)textA, "%s%d", _lStrings[STR_INSERT_CD_A], SwordEngine::_systemVars.currentCD);
+	Common::sprintf_s(fName, "cd%d.id", SwordEngine::_systemVars.currentCD);
+	Common::sprintf_s(textA, "%s%d", _lStrings[STR_INSERT_CD_A], SwordEngine::_systemVars.currentCD);
 	bool notAccepted = true;
 	bool refreshText = true;
 	do {
@@ -1114,7 +1114,7 @@ void Control::renderVolumeBar(uint8 id, uint8 volL, uint8 volR) {
 void Control::saveGameToFile(uint8 slot) {
 	char fName[15];
 	uint16 cnt;
-	sprintf(fName, "sword1.%03d", slot);
+	Common::sprintf_s(fName, "sword1.%03d", slot);
 	uint16 liveBuf[TOTAL_SECTIONS];
 	Common::OutSaveFile *outf;
 	outf = _saveFileMan->openForSaving(fName);
@@ -1175,7 +1175,7 @@ void Control::saveGameToFile(uint8 slot) {
 bool Control::restoreGameFromFile(uint8 slot) {
 	char fName[15];
 	uint16 cnt;
-	sprintf(fName, "sword1.%03d", slot);
+	Common::sprintf_s(fName, "sword1.%03d", slot);
 	Common::InSaveFile *inf;
 	inf = _saveFileMan->openForLoading(fName);
 	if (!inf) {
@@ -1246,8 +1246,8 @@ bool Control::restoreGameFromFile(uint8 slot) {
 bool Control::convertSaveGame(uint8 slot, char *desc) {
 	char oldFileName[15];
 	char newFileName[40];
-	sprintf(oldFileName, "SAVEGAME.%03d", slot);
-	sprintf(newFileName, "sword1.%03d", slot);
+	Common::sprintf_s(oldFileName, "SAVEGAME.%03d", slot);
+	Common::sprintf_s(newFileName, "sword1.%03d", slot);
 	uint8 *saveData;
 	int dataSize;
 

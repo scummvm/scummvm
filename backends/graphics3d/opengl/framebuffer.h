@@ -46,7 +46,6 @@ private:
 	void init();
 	GLuint _renderBuffers[2];
 	GLuint _frameBuffer;
-	GLint _prevStateViewport[4];
 };
 
 #if !USE_FORCED_GLES2
@@ -64,7 +63,6 @@ private:
 	GLuint _msColorId;
 	GLuint _msDepthId;
 	GLuint _msSamples;
-	GLint _prevStateViewport[4];
 };
 #endif
 

@@ -37,13 +37,13 @@ class ProtoEffect;
 // Mana IDs as spells see them
 
 enum SpellManaID {
-	sManaIDRed      = 0,
-	sManaIDOrange   = 1,
-	sManaIDYellow   = 2,
-	sManaIDGreen    = 3,
-	sManaIDBlue     = 4,
-	sManaIDViolet   = 5,
-	sManaIDSkill    = 6         // skills are here for convenience
+	ksManaIDRed      = 0,
+	ksManaIDOrange   = 1,
+	ksManaIDYellow   = 2,
+	ksManaIDGreen    = 3,
+	ksManaIDBlue     = 4,
+	ksManaIDViolet   = 5,
+	ksManaIDSkill    = 6         // skills are here for convenience
 };
 
 //-------------------------------------------------------------------
@@ -56,25 +56,25 @@ enum SpellManaID {
 //-------------------------------------------------------------------
 // legal target selections
 enum SpellTargetingTypes {
-	spellTargNone       = 0,
-	spellTargWorld      = 1 << 0, // instant spell
-	spellTargLocation   = 1 << 1, // cast at any location on map
-	spellTargTAG        = 1 << 2, // cast at tileactivity inst.
-	spellTargObject     = 1 << 3, // cast at objects
-	spellTargActor      = 1 << 4,
-	spellTargCaster     = 1 << 5
+	kSpellTargNone       = 0,
+	kSpellTargWorld      = 1 << 0, // instant spell
+	kSpellTargLocation   = 1 << 1, // cast at any location on map
+	kSpellTargTAG        = 1 << 2, // cast at tileactivity inst.
+	kSpellTargObject     = 1 << 3, // cast at objects
+	kSpellTargActor      = 1 << 4,
+	kSpellTargCaster     = 1 << 5
 };
 
 //-------------------------------------------------------------------
 // target type the spell uses when implemented
 enum SpellApplicationTypes {
-	spellApplyNone      = spellTargNone,
-	spellApplyWorld     = spellTargWorld,
-	spellApplyLocation  = spellTargLocation,
-	spellApplyTAG       = spellTargTAG,
-	spellApplyObject    = spellTargObject,
-	spellApplyActor     = spellTargObject,
-	spellApplyTracking  = 1 << 6  // track object targets
+	kSpellApplyNone      = kSpellTargNone,
+	kSpellApplyWorld     = kSpellTargWorld,
+	kSpellApplyLocation  = kSpellTargLocation,
+	kSpellApplyTAG       = kSpellTargTAG,
+	kSpellApplyObject    = kSpellTargObject,
+	kSpellApplyActor     = kSpellTargObject,
+	kSpellApplyTracking  = 1 << 6  // track object targets
 };
 
 
@@ -83,20 +83,20 @@ enum SpellApplicationTypes {
 //   These are the shapes of the visible effects of spells
 
 enum effectAreas {
-	eAreaInvisible = 0,
-	eAreaAura,
-	eAreaProjectile,
-	eAreaExchange,
-	eAreaBolt,
-	eAreaCone,
-	eAreaBall,
-	eAreaSquare,
-	eAreaWave,
-	eAreaStorm,
-	eAreaMissle,
-	eAreaGlow,
-	eAreaBeam,
-	eAreaWall
+	keAreaInvisible = 0,
+	keAreaAura,
+	keAreaProjectile,
+	keAreaExchange,
+	keAreaBolt,
+	keAreaCone,
+	keAreaBall,
+	keAreaSquare,
+	keAreaWave,
+	keAreaStorm,
+	keAreaMissle,
+	keAreaGlow,
+	keAreaBeam,
+	keAreaWall
 };
 
 
@@ -109,19 +109,19 @@ enum effectAreas {
 //   parts of the code
 
 class SpellStuff {
-	SpellID             master;             // index in array
-	SkillProto          *prototype;         // ponts back to object prototype
-	SpellID             display;            // currently same as master
-	SpellTargetingTypes targetableTypes;    // valid targeting types
-	SpellApplicationTypes targetTypes;      // the targeting type to implement
-	ProtoEffect         *effects;           // the effects of this spell
-	SpellTarget         *targets;           // transient target list
-	SpellManaID         manaType;           // color mana used
-	int8                manaUse;            // mana points used
-	effectAreas         shape;
-	int32               size;
-	int32               range;
-	int16               sound;
+	SpellID             _master;             // index in array
+	SkillProto          *_prototype;         // ponts back to object prototype
+	SpellID             _display;            // currently same as master
+	SpellTargetingTypes _targetableTypes;    // valid targeting types
+	SpellApplicationTypes _targetTypes;      // the targeting type to implement
+	ProtoEffect         *_effects;           // the effects of this spell
+	SpellTarget         *_targets;           // transient target list
+	SpellManaID         _manaType;           // color mana used
+	int8                _manaUse;            // mana points used
+	effectAreas         _shape;
+	int32               _size;
+	int32               _range;
+	int16               _sound;
 
 	bool _debug;
 
@@ -129,11 +129,11 @@ public:
 
 	SpellStuff();
 
-	void setProto(SkillProto *p)           {
-		prototype = p;
+	void setProto(SkillProto *p) {
+		_prototype = p;
 	}
-	SkillProto *getProto()             {
-		return prototype;
+	SkillProto *getProto() {
+		return _prototype;
 	}
 
 	void setupFromResource(ResourceSpellItem *rsi);
@@ -142,42 +142,42 @@ public:
 	void addEffect(ResourceSpellEffect *rse);
 	void killEffects();
 
-	bool canTarget(SpellTargetingTypes t)  {
-		return targetableTypes & t;
+	bool canTarget(SpellTargetingTypes t) {
+		return _targetableTypes & t;
 	}
 	bool shouldTarget(SpellApplicationTypes t) {
-		return targetTypes & t;
+		return _targetTypes & t;
 	}
 
-	bool untargetable()    {
-		return (targetableTypes == spellTargNone);
+	bool untargetable() {
+		return (_targetableTypes == kSpellTargNone);
 	}
-	bool untargeted()      {
-		return false;    //(targetableTypes == spellTargWorld ) ||
+	bool untargeted() {
+		return false;    //(targetableTypes == kSpellTargWorld ) ||
 	}
-	//(targetableTypes == spellTargCaster ) ||
+	//(targetableTypes == kSpellTargCaster ) ||
 	//(targetableTypes == targetableTypes &
-	//                   (spellTargWorld | spellTargCaster)); }
+	//                   (kSpellTargWorld | kSpellTargCaster)); }
 
 	void implement(GameObject *enactor, SpellTarget *target);
 	void implement(GameObject *enactor, GameObject *target);
 	void implement(GameObject *enactor, ActiveItem *target);
 	void implement(GameObject *enactor, Location   target);
 
-	SpellID getDisplayID()            {
-		return display;
+	SpellID getDisplayID() {
+		return _display;
 	}
-	SpellManaID getManaType()           {
-		return manaType;
+	SpellManaID getManaType() {
+		return _manaType;
 	}
-	void setManaType(SpellManaID smid)    {
-		manaType = smid;
+	void setManaType(SpellManaID smid) {
+		_manaType = smid;
 	}
-	int8 getManaAmt()                   {
-		return manaUse;
+	int8 getManaAmt() {
+		return _manaUse;
 	}
-	int32 getRange()                   {
-		return range;
+	int32 getRange() {
+		return _range;
 	}
 
 	void buildTargetList(GameObject *, SpellTarget &);

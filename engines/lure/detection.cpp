@@ -33,28 +33,6 @@ static const PlainGameDescriptor lureGames[] = {
 	{nullptr, nullptr}
 };
 
-
-#ifdef USE_TTS
-#define GAMEOPTION_TTS_NARRATOR 	GUIO_GAMEOPTIONS1
-
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_TTS_NARRATOR,
-		{
-			_s("TTS Narrator"),
-			_s("Use TTS to read the descriptions (if TTS is available)"),
-			"tts_narrator",
-			false,
-			0,
-			0
-		}
-	},
-
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
-#endif
-
 static const DebugChannelDef debugFlagList[] = {
 	{Lure::kLureDebugScripts, "scripts", "Scripts debugging"},
 	{Lure::kLureDebugAnimations, "animations", "Animations debugging"},
@@ -266,11 +244,7 @@ static const LureGameDescription gameDescriptions[] = {
 
 class LureMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	LureMetaEngineDetection() : AdvancedMetaEngineDetection(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames
-#ifdef USE_TTS
-			, optionsList
-#endif
-			) {
+	LureMetaEngineDetection() : AdvancedMetaEngineDetection(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames) {
 		_md5Bytes = 1024;
 
 		// Use kADFlagUseExtraAsHint to distinguish between EGA and VGA versions

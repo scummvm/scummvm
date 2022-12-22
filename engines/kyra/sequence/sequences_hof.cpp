@@ -1696,6 +1696,7 @@ void SeqPlayer_HOF::displayHoFTalkieScrollText(uint8 *data, const ScreenDim *d, 
 			textData[1].text += strlen((char *)textData[1].text);
 			textData[1].text[0] = textData[1].unk1;
 			cnt--;
+			assert(cnt >= 0);
 			memmove(&textData[1], &textData[2], cnt * sizeof(ScrollTextData));
 		}
 

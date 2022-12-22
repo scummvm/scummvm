@@ -45,7 +45,7 @@ public:
 
 	int getCharsPerLine();
 
-	int debugPrintf(const char *format, ...) GCC_PRINTF(2, 3);
+	int debugPrintf(MSVC_PRINTF const char *format, ...) GCC_PRINTF(2, 3);
 
 	void debugPrintColumns(const Common::StringArray &list);
 

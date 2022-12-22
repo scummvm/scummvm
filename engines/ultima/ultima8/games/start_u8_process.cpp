@@ -41,6 +41,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(StartU8Process)
 
 StartU8Process::StartU8Process(int saveSlot) : Process(),
 		_init(false), _saveSlot(saveSlot), _skipStart(saveSlot >= 0) {
+	_flags |= PROC_PREVENT_SAVE;
 }
 
 
@@ -55,9 +56,17 @@ void StartU8Process::run() {
 		}
 	}
 
-	// Try to load the save game, if succeeded this pointer will no longer be valid
-	if (_saveSlot >= 0 &&Ultima8Engine::get_instance()->loadGameState(_saveSlot).getCode() == Common::kNoError) {
+	// Try to load the save game, if succeeded this process will terminate
+	if (_saveSlot >= 0) {
+		Common::Error loadError = Ultima8Engine::get_instance()->loadGameState(_saveSlot);
+		if (loadError.getCode() != Common::kNoError) {
+			Ultima8Engine::get_instance()->setError(loadError);
+			fail();
+			return;
+		}
+
 		PaletteFaderProcess::I_fadeFromBlack(0, 0);
+		terminate();
 		return;
 	}
 

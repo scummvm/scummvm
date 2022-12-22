@@ -1,2 +1,3 @@
 engines/neverhood/detection.cpp
 engines/neverhood/menumodule.cpp
+engines/neverhood/metaengine.cpp

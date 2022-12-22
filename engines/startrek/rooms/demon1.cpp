@@ -275,16 +275,16 @@ void Room::demon1Timer1Expired() {
 
 		switch (_roomVar.demon.attackIndex) {
 		case 0:
-			strcpy(_roomVar.demon.d6, "klg1fr");
+			Common::strcpy_s(_roomVar.demon.d6, "klg1fr");
 			break;
 		case 1:
-			strcpy(_roomVar.demon.d6, "klg1fm");
+			Common::strcpy_s(_roomVar.demon.d6, "klg1fm");
 			break;
 		case 2:
-			strcpy(_roomVar.demon.d6, "klg1fs");
+			Common::strcpy_s(_roomVar.demon.d6, "klg1fs");
 			break;
 		case 3:
-			strcpy(_roomVar.demon.d6, "klg1fk");
+			Common::strcpy_s(_roomVar.demon.d6, "klg1fk");
 			break;
 		default:
 			return;
@@ -294,16 +294,16 @@ void Room::demon1Timer1Expired() {
 		shooter = 9;
 		switch (_roomVar.demon.attackIndex) {
 		case 0:
-			strcpy(_roomVar.demon.d6, "klg2fr");
+			Common::strcpy_s(_roomVar.demon.d6, "klg2fr");
 			break;
 		case 1:
-			strcpy(_roomVar.demon.d6, "klg2fm");
+			Common::strcpy_s(_roomVar.demon.d6, "klg2fm");
 			break;
 		case 2:
-			strcpy(_roomVar.demon.d6, "klg2fs");
+			Common::strcpy_s(_roomVar.demon.d6, "klg2fs");
 			break;
 		case 3:
-			strcpy(_roomVar.demon.d6, "klg2fk");
+			Common::strcpy_s(_roomVar.demon.d6, "klg2fk");
 			break;
 		default:
 			return;
@@ -313,16 +313,16 @@ void Room::demon1Timer1Expired() {
 		shooter = 10;
 		switch (_roomVar.demon.attackIndex) {
 		case 0:
-			strcpy(_roomVar.demon.d6, "klg3fr");
+			Common::strcpy_s(_roomVar.demon.d6, "klg3fr");
 			break;
 		case 1:
-			strcpy(_roomVar.demon.d6, "klg3fm");
+			Common::strcpy_s(_roomVar.demon.d6, "klg3fm");
 			break;
 		case 2:
-			strcpy(_roomVar.demon.d6, "klg3fs");
+			Common::strcpy_s(_roomVar.demon.d6, "klg3fs");
 			break;
 		case 3:
-			strcpy(_roomVar.demon.d6, "klg3fk");
+			Common::strcpy_s(_roomVar.demon.d6, "klg3fk");
 			break;
 		default:
 			return;

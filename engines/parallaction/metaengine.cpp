@@ -103,7 +103,7 @@ Common::KeymapArray ParallactionMetaEngine::initKeymaps(const char *target) cons
 	Keymap *engineKeymap;
 
 	if (gameId == "nippon")
-		engineKeymap = new Keymap(Keymap::kKeymapTypeGame, "parallaction", "Nippon Safes Inc.");
+		engineKeymap = new Keymap(Keymap::kKeymapTypeGame, "parallaction", "Nippon Safes, Inc.");
 	else if (gameId == "bra")
 		engineKeymap = new Keymap(Keymap::kKeymapTypeGame, "parallaction", "The Big Red Adventure");
 	else

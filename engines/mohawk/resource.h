@@ -92,6 +92,10 @@ namespace Mohawk {
 #define ID_BMAP MKTAG('B','M','A','P') // Old Mohawk Bitmap
 #define ID_BCOD MKTAG('B','C','O','D') // Book Code
 
+// JamesMath Resource FourCC's
+#define ID_TANM MKTAG('t','A','N','M') // Animation?
+#define ID_TMFO MKTAG('t','M','F','O') // ???
+
 // CSTime Resource FourCC's
 #define ID_CINF MKTAG('C','I','N','F') // Case Info
 #define ID_CONV MKTAG('C','O','N','V') // Conversation
@@ -106,6 +110,10 @@ namespace Mohawk {
 #define ID_ADPC MKTAG('A','D','P','C') // Game Sound Chunk
 #define ID_DATA MKTAG('D','a','t','a') // Game Sound Chunk
 #define ID_CUE  MKTAG('C','u','e','#') // Game Sound Chunk
+
+// Mohawk MIDI Tags
+#define ID_MIDI MKTAG('M','I','D','I') // Game Sound (Third Tag), instead of WAVE
+#define ID_PRG  MKTAG('P','r','g','#') // MIDI Patch
 
 // Common Resource FourCC's
 #define ID_TBMP MKTAG('t','B','M','P') // Standard Mohawk Bitmap

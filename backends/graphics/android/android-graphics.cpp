@@ -36,7 +36,7 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 
 #include "backends/graphics/opengl/pipelines/pipeline.h"
 
@@ -154,23 +154,31 @@ void AndroidGraphicsManager::displayMessageOnOSD(const Common::U32String &msg) {
 	JNI::displayMessageOnOSD(msg);
 }
 
-void AndroidGraphicsManager::showOverlay() {
-	if (_overlayVisible)
+void AndroidGraphicsManager::showOverlay(bool inGUI) {
+	if (_overlayVisible && inGUI == _overlayInGUI)
 		return;
 
-	_old_touch_mode = JNI::getTouchMode();
-	// not in 3D, in overlay
-	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, true);
+	// Don't change touch mode when not changing mouse coordinates
+	if (inGUI) {
+		_old_touch_mode = JNI::getTouchMode();
+		// not in 3D, in overlay
+		dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, true);
+	} else if (_overlayInGUI) {
+		// Restore touch mode active before overlay was shown
+		JNI::setTouchMode(_old_touch_mode);
+	}
 
-	OpenGL::OpenGLGraphicsManager::showOverlay();
+	OpenGL::OpenGLGraphicsManager::showOverlay(inGUI);
 }
 
 void AndroidGraphicsManager::hideOverlay() {
 	if (!_overlayVisible)
 		return;
 
-	// Restore touch mode active before overlay was shown
-	JNI::setTouchMode(_old_touch_mode);
+	if (_overlayInGUI) {
+		// Restore touch mode active before overlay was shown
+		JNI::setTouchMode(_old_touch_mode);
+	}
 
 	OpenGL::OpenGLGraphicsManager::hideOverlay();
 }
@@ -206,8 +214,10 @@ void AndroidGraphicsManager::refreshScreen() {
 
 void AndroidGraphicsManager::touchControlDraw(int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) {
 	_backBuffer.enableBlend(OpenGL::Framebuffer::kBlendModeTraditionalTransparency);
-	OpenGL::Pipeline::getActivePipeline()->drawTexture(_touchcontrols->getGLTexture(),
-	                                                   x, y, w, h, clip);
+	OpenGL::Pipeline *pipeline = getPipeline();
+	pipeline->activate();
+	pipeline->drawTexture(_touchcontrols->getGLTexture(),
+	                      x, y, w, h, clip);
 }
 
 void AndroidGraphicsManager::touchControlNotifyChanged() {

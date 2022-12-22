@@ -38,7 +38,7 @@ enum TSpriteBlendMode {
 /**
  * Contains all the required information that define a transform.
  * Same source sprite + same TransformStruct = Same resulting sprite.
- * Has a number of overloaded constructors to accomodate various argument lists.
+ * Has a number of overloaded constructors to accommodate various argument lists.
  */
 
 const int32 kDefaultZoomX = 100;

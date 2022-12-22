@@ -28,8 +28,8 @@
 #ifndef WINTERMUTE_SXSTEAMAPI_H
 #define WINTERMUTE_SXSTEAMAPI_H
 
-#include "common/achievements.h"
-#include "engines/wintermute/base/base_scriptable.h"
+#include "engines/achievements.h"
+#include "wintermute/base/base_scriptable.h"
 
 namespace Wintermute {
 

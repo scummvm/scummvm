@@ -89,7 +89,7 @@ AiffXObject::AiffXObject(ObjectType ObjectType) :Object<AiffXObject>("AiffXObj")
 
 void AiffXObj::m_new(int nargs) {
 	g_lingo->printSTUBWithArglist("AiffXObj::new", nargs);
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void AiffXObj::m_duration(int nargs) {
@@ -99,9 +99,10 @@ void AiffXObj::m_duration(int nargs) {
 	// Mac-ify any mac-paths to make them at least consistent:
 	Common::replace(filePath, "\\", ":");
 
-	Common::MacResManager macresman;
-	macresman.open(Common::Path(pathMakeRelative(filePath), g_director->_dirSeparator));
-	auto aiffStream = macresman.getDataFork();
+	auto aiffStream = Common::MacResManager::openFileOrDataFork(Common::Path(pathMakeRelative(filePath), g_director->_dirSeparator));
+	if (!aiffStream) {
+		error("Failed to open %s", filePath.c_str());
+	}
 
 	auto aiffHeader = Audio::AIFFHeader::readAIFFHeader(aiffStream, DisposeAfterUse::YES);
 

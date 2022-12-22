@@ -134,11 +134,16 @@ const int LegacyRoomVolumeFactor = 30;
 #define EVENT_INPROGRESS 1
 #define EVENT_CLAIMED    2
 
-// Internal skip style flags, for speech/display, wait
+// Internal skip style flags, for speech/display, wait;
+ // theoretically correspond to InputType in script (with a 24-bit shift)
 #define SKIP_NONE       0x00
 #define SKIP_AUTOTIMER  0x01
 #define SKIP_KEYPRESS   0x02
 #define SKIP_MOUSECLICK 0x04
+// Bit shift for packing skip type into result
+#define SKIP_RESULT_TYPE_SHIFT 24
+// Bit mask for packing skip key/button data into result
+#define SKIP_RESULT_DATA_MASK  0x00FFFFFF
 
 #define MANOBJNUM 99
 

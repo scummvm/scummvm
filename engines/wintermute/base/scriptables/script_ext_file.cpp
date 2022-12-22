@@ -708,7 +708,7 @@ bool SXFile::scSetProperty(const char *name, ScValue *value) {
 	    char propName[20];
 	    if (_length < OrigLength) {
 	        for(int i=_length; i<OrigLength; i++) {
-	            sprintf(PropName, "%d", i);
+	            Common::sprintf_s(PropName, "%d", i);
 	            _values->DeleteProp(PropName);
 	        }
 	    }

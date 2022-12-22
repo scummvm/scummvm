@@ -1384,7 +1384,7 @@ void GfxMgr::setAGIPal(int p0) {
 		return;
 
 	char filename[15];
-	sprintf(filename, "pal.%d", p0);
+	Common::sprintf_s(filename, "pal.%d", p0);
 
 	Common::File agipal;
 	if (!agipal.open(filename)) {

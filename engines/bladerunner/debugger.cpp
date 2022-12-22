@@ -455,7 +455,7 @@ bool Debugger::cmdFlag(int argc, const char **argv) {
 
 	int flag = atoi(argv[1]);
 	int flagCount = _vm->_gameInfo->getFlagCount();
-	if (flag > 0 && flag < flagCount) {
+	if (flag >= 0 && flag < flagCount) {
 		if (argc == 3) {
 			int value = atoi(argv[2]);
 			if (value == 0) {

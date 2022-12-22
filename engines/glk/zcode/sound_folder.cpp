@@ -21,7 +21,7 @@
 
 #include "glk/zcode/sound_folder.h"
 #include "common/file.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 
 namespace Glk {
 namespace ZCode {
@@ -87,7 +87,7 @@ void SoundZip::check(const Common::FSNode &gameDir, Story story) {
 		return;
 	Common::String zipName = (story == LURKING_HORROR) ? "lhsound.zip" : "shsound.zip";
 
-	// Check for the existance of the zip
+	// Check for the existence of the zip
 	Common::FSNode zipNode = gameDir.getChild(zipName);
 	if (!zipNode.exists())
 		return;

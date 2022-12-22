@@ -55,7 +55,7 @@ void _floor_world::___init() {
 
 	// load the file for this session
 	// When clustered the session files have the base stripped
-	len = sprintf(temp_buf, "%s", PX_FILENAME_FLOOR_MAP);
+	len = Common::sprintf_s(temp_buf, "%s", PX_FILENAME_FLOOR_MAP);
 	if (len > ENGINE_STRING_LEN)
 		Fatal_error("_floor_world::___init string len error");
 

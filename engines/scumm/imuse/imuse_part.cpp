@@ -24,8 +24,8 @@
 #include "common/debug.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "scumm/imuse/imuse_internal.h"
 #include "scumm/scumm.h"
+#include "scumm/imuse/imuse_internal.h"
 
 namespace Scumm {
 
@@ -43,6 +43,7 @@ Part::Part() {
 	_player = nullptr;
 	_pitchbend = 0;
 	_pitchbend_factor = 0;
+	_volControlSensitivity = 127;
 	_transpose = 0;
 	_transpose_eff = 0;
 	_vol = 0;
@@ -51,6 +52,7 @@ Part::Part() {
 	_detune_eff = 0;
 	_pan = 0;
 	_pan_eff = 0;
+	_polyphony = 0;
 	_on = false;
 	_modwheel = 0;
 	_pedal = false;
@@ -108,20 +110,11 @@ void Part::set_detune(int8 detune) {
 	// Sam&Max does not have detune, so we just ignore this here. We still get
 	// this called, since Sam&Max uses the same controller for a different
 	// purpose.
-	if (_se->_game_id == GID_SAMNMAX) {
-#if 0
-		if (_mc) {
-			_mc->controlChange(17, detune + 0x40);
-		}
-#endif
-	} else {
-		_detune_eff = clamp((_detune = detune) + _player->getDetune(), -128, 127);
-		// Some drivers handle the transpose and the detune in pitchBend()...
-		if (_player->isAdLibOrFMTowns())
-			sendDetune();
-		else
-			sendPitchBend();
-	}
+	if (_se->_newSystem)
+		return;
+
+	_detune_eff = clamp((_detune = detune) + _player->getDetune(), -128, 127);
+	sendDetune();
 }
 
 void Part::pitchBend(int16 value) {
@@ -130,9 +123,8 @@ void Part::pitchBend(int16 value) {
 }
 
 void Part::volume(byte value) {
-	_vol_eff = ((_vol = value) + 1) * _player->getEffectiveVolume() >> 7;
-	if (_mc)
-		_mc->volume(_vol_eff);
+	_vol = value;
+	sendVolume(0);
 }
 
 void Part::set_pri(int8 pri) {
@@ -146,6 +138,14 @@ void Part::set_pan(int8 pan) {
 	sendPanPosition(_pan_eff + 0x40);
 }
 
+void Part::set_polyphony(byte val) {
+	if (!_se->_newSystem)
+		return;
+	_polyphony = val;
+	if (_mc)
+		_mc->controlChange(17, val);
+}
+
 void Part::set_transpose(int8 transpose, int8 clipRangeLow, int8 clipRangeHi)  {
 	if (_se->_game_id == GID_TENTACLE && (transpose > 24 || transpose < -24))
 		return;
@@ -155,10 +155,7 @@ void Part::set_transpose(int8 transpose, int8 clipRangeLow, int8 clipRangeHi)  {
 	// a value of 128 with a signed int8 (a signed int8 can never be 128). The playback depends on this being implemented exactly
 	// like in the original driver. I found this bug with the WinUAE debugger. The DOS versions do not have that bug.
 	_transpose_eff = (_se->_soundType != MDT_AMIGA && _transpose == -128) ? 0 : transpose_clamp(_transpose + _player->getTranspose(), clipRangeLow, clipRangeHi);
-	if (_player->isAdLibOrFMTowns() || _se->_soundType == MDT_AMIGA)
-		sendTranspose();
-	else
-		sendPitchBend();
+	sendTranspose();
 }
 
 void Part::sustain(bool value) {
@@ -199,7 +196,7 @@ void Part::pitchBendFactor(byte value) {
 		return;
 	pitchBend(0);
 	_pitchbend_factor = value;
-	if (_mc && !(_player->isGM()))
+	if (_mc)
 		_mc->pitchBendFactor(value);
 }
 
@@ -251,19 +248,20 @@ void Part::noteOn(byte note, byte velocity) {
 		if (!mc)
 			return;
 
-		// FIXME: The following is evil, EVIL!!! Either prev_vol_eff is
-		// actually meant to be a member of the Part class (i.e. each
-		// instance of Part keeps a separate copy of it); or it really
-		// is supposed to be shared by all Part instances -- but then it
-		// should be implemented as a class static var. As it is, using
-		// a function level static var in most cases is arcane and evil.
-		static byte prev_vol_eff = 128;
-		if (_vol_eff != prev_vol_eff) {
+		if (_vol_eff != _se->_rhyState.vol)
 			mc->volume(_vol_eff);
-			prev_vol_eff = _vol_eff;
-		}
-		if ((note < 35) && (!_player->_se->isNativeMT32()))
+
+		if (_se->_newSystem) {
+			if (_pri_eff != _se->_rhyState.prio)
+				mc->priority(_pri_eff);
+			if (_polyphony != _se->_rhyState.poly)
+				mc->controlChange(17, _polyphony);
+
+		} else if ((note < 35) && (!_player->_se->isNativeMT32())) {
 			note = Instrument::_gmRhythmMap[note];
+		}
+
+		_se->_rhyState = IMuseInternal::RhyState(_vol_eff, _polyphony, _pri_eff);
 
 		mc->noteOn(note, velocity);
 	}
@@ -306,6 +304,8 @@ void Part::setup(Player *player) {
 	_detune = 0;
 	_detune_eff = player->getDetune();
 	_pitchbend_factor = 2;
+	_volControlSensitivity = 127;
+	_polyphony = 1;
 	_pitchbend = 0;
 	_effect_level = player->_se->isNativeMT32() ? 127 : 64;
 	_instrument.clear();
@@ -345,8 +345,7 @@ void Part::sendAll() {
 	if (!clearToTransmit())
 		return;
 
-	if (!_player->isGM())
-		_mc->pitchBendFactor(_pitchbend_factor);
+	_mc->pitchBendFactor(_pitchbend_factor);
 	sendTranspose();
 	sendDetune();
 	sendPitchBend();
@@ -354,6 +353,7 @@ void Part::sendAll() {
 	_mc->sustain(_pedal);
 	_mc->modulationWheel(_modwheel);
 	sendPanPosition(_pan_eff + 0x40);
+	sendPolyphony();
 
 	if (_instrument.isValid())
 		_instrument.send(_mc);
@@ -370,51 +370,36 @@ void Part::sendPitchBend() {
 	if (!_mc)
 		return;
 
-	int16 bend = _pitchbend;
-	int8 transpose = _transpose_eff;
-	int8 detune = _detune_eff;
-
-	// For Amiga, AdLib and FM-Towns we send some values separately due to the way the drivers have
-	// been implemented (it must be avoided that the pitchbend factor gets applied on top). So we
-	// neutralize them here for the pitch bend calculation.
-	if (_se->_soundType == MDT_AMIGA) {
-		transpose = 0;
-	} else if (_player->isAdLibOrFMTowns()) {
-		transpose = detune = 0;
+	if (_se->_newSystem && !_pitchbend_factor) {
+		sendVolumeFade();
+		return;
 	}
 
-	bool oldPitchBendFormula = true;
+	_mc->pitchBend(_pitchbend);
+}
 
-	if (_player->isGM() || _player->_se->isNativeMT32()) {
-		if (_se->_game_id == GID_SAMNMAX) {
-			// SAMNMAX formula (same for Roland MT-32 and GM)
-			bend = _pitchbend_factor ? (bend * _pitchbend_factor) >> 5 : bend >> 6;
-			bend = (bend + detune + (transpose << 8)) << 1;
-			oldPitchBendFormula = false;
-		} else if (_se->_game_id == GID_TENTACLE || _se->_game_id == GID_INDY4 || _se->_game_id == GID_MONKEY2) {
-			// DOTT, INDY4 and MI2 formula (same for Roland MT-32 and GM)
-			bend = clamp(((bend * _pitchbend_factor) >> 6) + detune + (transpose << 7), -2048, 2047) << 2;
-			oldPitchBendFormula = false;
-		} else if (_se->isNativeMT32()) {
-			// RPN-based pitchbend range doesn't work for the MT32, so we'll do the scaling ourselves.
-			// athrxx: I haven't yet seen any evidence of this in any original driver. But I still
-			// haven't checked absolutely everything, so let's keep it around until we know better...
-			bend = bend * _pitchbend_factor / 12;
-		}
-	}
+void Part::sendVolume(int8 fadeModifier) {
+	if (!_mc)
+		return;
 
-	if (oldPitchBendFormula)
-		bend = clamp(bend + (detune * 64 / 12) + (transpose * 8192 / 12), -8192, 8191);
+	uint16 vol = (_vol + fadeModifier + 1) * _player->getEffectiveVolume();
 
-	_mc->pitchBend(bend);
+	if (_se->_newSystem)
+		vol = (vol * (_volControlSensitivity + 1)) >> 7;
+
+	_vol_eff = vol >> 7;
+
+	if (_mc)
+		_mc->volume(_vol_eff);
+}
+
+void Part::sendVolumeFade() {
+	int16 fadeModifier = ((((_pitchbend >= 0) ? 127 - _vol : _vol) + 1) * _pitchbend) >> 7;
+	sendVolume(fadeModifier);
 }
 
 void Part::sendTranspose() {
 	if (!_mc)
-		return;
-
-	// Some drivers handle the transpose and the detune in pitchBend()...
-	if (_se->_soundType != MDT_AMIGA && !_player->isAdLibOrFMTowns())
 		return;
 
 	_mc->transpose(_transpose_eff);
@@ -422,10 +407,6 @@ void Part::sendTranspose() {
 
 void Part::sendDetune() {
 	if (!_mc)
-		return;
-
-	// Some drivers handle the transpose and the detune in pitchBend()...
-	if (!_player->isAdLibOrFMTowns())
 		return;
 
 	_mc->detune(_detune_eff);
@@ -479,29 +460,13 @@ void Part::sendPanPosition(uint8 value) {
 void Part::sendEffectLevel(uint8 value) {
 	if (!_mc)
 		return;
+	_mc->effectLevel(value);
+}
 
-	// As described in bug report #1849 "MI2: Minor problems in native MT-32 mode"
-	// for the MT-32 one has to use a sysEx event to change the effect level (rather
-	// the reverb setting).
-	if (_player->_se->isNativeMT32()) {
-		if (value != 127 && value != 0) {
-			warning("Trying to use unsupported effect level value %d in native MT-32 mode.", value);
-
-			if (value >= 64)
-				value = 127;
-			else
-				value = 0;
-		}
-
-		byte message[9];
-		memcpy(message, "\x41\x00\x16\x12\x00\x00\x06\x00\x00", 9);
-		message[1] = _mc->getNumber();
-		message[7] = (value == 127) ? 1 : 0;
-		message[8] = 128 - (6 + message[7]);
-		_player->getMidiDriver()->sysEx(message, 9);
-	} else {
-		_mc->effectLevel(value);
-	}
+void Part::sendPolyphony() {
+	if (!_mc || !_se->_newSystem)
+		return;
+	_mc->controlChange(17, _polyphony);
 }
 
 } // End of namespace Scumm

@@ -457,7 +457,7 @@ void Tfmx::macroRun(ChannelContext &channel) {
 			continue;
 
 		// 0x22 - 0x29 are used by Gem`X
-		// 0x30 - 0x34 are used by Carribean Disaster
+		// 0x30 - 0x34 are used by Caribbean Disaster
 
 		default:
 			debug(3, "Tfmx: Macro %02X not supported", macroPtr[0]);
@@ -1132,7 +1132,7 @@ void displayMacroStep(const void * const vptr) {
 		"Go submacro xx/xxxx  macro-number/step ",
 		"--------Return to old macro------------",
 		"Setperiod   ..xxxx   DMA period        ",
-		"Sampleloop  ..xxxx   relative adress   ",
+		"Sampleloop  ..xxxx   relative address  ",
 		"-------Set one shot sample-------------",
 		"Wait on DMA ..xxxx   count (Wavecycles)",
 		"Random play xx/xx/xx macro/speed/mode  ",

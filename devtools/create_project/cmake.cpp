@@ -330,6 +330,9 @@ void CMakeProvider::writeWarnings(std::ofstream &output) const {
 		output << ' ' << warning;
 	}
 	output << "\")\n";
+	output << "\tif(CMAKE_CXX_COMPILER_ID STREQUAL \"GNU\" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 12.0)\n";
+	output << "\t\tset(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -Wno-address-of-packed-member\")\n";
+	output << "\tendif()\n";
 	output << "endif()\n";
 }
 
@@ -338,6 +341,9 @@ void CMakeProvider::writeDefines(const BuildSetup &setup, std::ofstream &output)
 	output << "\tadd_definitions(-DWIN32)\n";
 	output << "else()\n";
 	output << "\tadd_definitions(-DPOSIX)\n";
+	output << "\t# Hope for the best regarding fseeko and 64-bit off_t\n";
+	output << "\tadd_definitions(-D_FILE_OFFSET_BITS=64)\n";
+	output << "\tadd_definitions(-DHAS_FSEEKO_OFFT_64)\n";
 	output << "endif()\n";
 
 	output << "add_definitions(-DSDL_BACKEND)\n";

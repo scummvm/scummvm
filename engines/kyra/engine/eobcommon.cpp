@@ -446,7 +446,8 @@ Common::Error EoBCoreEngine::init() {
 	}
 
 	assert(_sound);
-	_sound->init();
+	if (!_sound->init())
+		error("Sound init failed");
 
 	if (_flags.platform == Common::kPlatformPC98)
 		_sound->loadSfxFile("EFECT.OBJ");

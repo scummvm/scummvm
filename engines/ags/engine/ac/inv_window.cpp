@@ -346,10 +346,17 @@ bool InventoryScreen::Run() {
 	// Run() can be called in a loop, so keep events going.
 	sys_evt_process_pending();
 
-	KeyInput kgn;
-	if (run_service_key_controls(kgn) && !_GP(play).IsIgnoringInput()) {
-		return false; // end inventory screen loop
+	// Handle all the buffered key events
+	bool do_break = false;
+	while (ags_keyevent_ready()) {
+		KeyInput ki;
+		if (run_service_key_controls(ki) && !_GP(play).IsIgnoringInput()) {
+			ags_clear_input_buffer();
+			do_break = true; // end inventory screen loop
+		}
 	}
+	if (do_break)
+		return false;
 
 	update_audio_system_on_game_loop();
 	refresh_gui_screen();
@@ -364,12 +371,13 @@ bool InventoryScreen::Run() {
 	if ((isonitem < 0) | (isonitem >= numitems) | (isonitem >= top_item + num_visible_items))
 		isonitem = -1;
 
-	int mclick, mwheelz;
-	if (!run_service_mb_controls(mclick, mwheelz) || _GP(play).IsIgnoringInput()) {
-		mclick = MouseNone;
+	eAGSMouseButton mbut;
+	int mwheelz;
+	if (!run_service_mb_controls(mbut, mwheelz) || _GP(play).IsIgnoringInput()) {
+		mbut = kMouseNone;
 	}
 
-	if (mclick == MouseLeft) {
+	if (mbut == kMouseLeft) {
 		if ((my < 0) | (my > windowhit) | (mx < 0) | (mx > windowwid))
 			return true; // continue inventory screen loop
 		if (my < buttonyp) {
@@ -455,7 +463,7 @@ bool InventoryScreen::Run() {
 			}
 			set_mouse_cursor(cmode);
 		}
-	} else if (mclick == MouseRight) {
+	} else if (mbut == kMouseRight) {
 		if (cmode == CURS_ARROW)
 			cmode = MODE_LOOK;
 		else

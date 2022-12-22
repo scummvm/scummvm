@@ -289,7 +289,7 @@ byte *readBundleSoundFileFW(const char *entryName, uint32 *size) {
 	char previousPartName[15] = "";
 
 	if (g_cine->getGameType() == Cine::GType_FW) {
-		strcpy(previousPartName, currentPartName);
+		Common::strcpy_s(previousPartName, currentPartName);
 		loadPart("BASESON.SND");
 	}
 	index = findFileInBundle((const char *)entryName);
@@ -354,7 +354,7 @@ void checkDataDisk(int16 diskNum) {
 void dumpBundle(const char *fileName) {
 	char tmpPart[15];
 
-	strcpy(tmpPart, currentPartName);
+	Common::strcpy_s(tmpPart, currentPartName);
 
 	loadPart(fileName);
 	for (uint i = 0; i < g_cine->_partBuffer.size(); i++) {

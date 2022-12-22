@@ -4766,7 +4766,7 @@ FILTER_EVENT(7, 20) {
 // Countdown
 
 void CryOmni3DEngine_Versailles::initCountdown() {
-	strcpy(_countdownValue, "05:00");
+	Common::strcpy_s(_countdownValue, "05:00");
 	if (_gameVariables[GameVariables::kSavedCountdown]) {
 		uint counter = _gameVariables[GameVariables::kSavedCountdown];
 		_countdownValue[4] = counter;

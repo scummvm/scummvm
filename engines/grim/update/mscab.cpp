@@ -24,7 +24,7 @@
 #include "common/file.h"
 #include "common/archive.h"
 #include "common/memstream.h"
-#include "common/zlib.h"
+#include "common/compression/zlib.h"
 #include "common/str.h"
 
 namespace Grim {

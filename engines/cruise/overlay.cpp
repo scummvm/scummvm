@@ -622,7 +622,7 @@ int loadOverlay(const char *scriptName) {
 		// TODO: Rewrite this to use Common::DumpFile
 		FILE *fHandle;
 		char nameBundle[100];
-		sprintf(nameBundle, "%s-objs.txt", scriptName);
+		Common::sprintf_s(nameBundle, "%s-objs.txt", scriptName);
 
 		fHandle = fopen(nameBundle, "w+");
 		assert(fHandle);

@@ -59,7 +59,7 @@ DECFile::DECFile(GobEngine *vm, const Common::String &fileName,
 
 	Common::SeekableReadStream *ani = _vm->_dataIO->getFile(endianFileName);
 	if (ani) {
-		Common::SeekableSubReadStreamEndian sub(ani, 0, ani->size(), bigEndian, DisposeAfterUse::YES);
+		Common::SeekableReadStreamEndianWrapper sub(ani, bigEndian, DisposeAfterUse::YES);
 
 		// The big endian version pads a few fields to even size
 		_hasPadding = bigEndian;
@@ -78,7 +78,7 @@ DECFile::~DECFile() {
 		delete *l;
 }
 
-void DECFile::load(Common::SeekableSubReadStreamEndian &dec, const Common::String &fileName) {
+void DECFile::load(Common::SeekableReadStreamEndian &dec, const Common::String &fileName) {
 	dec.skip(2); // Unused
 
 	int16 backdropCount = dec.readUint16();
@@ -110,7 +110,7 @@ void DECFile::load(Common::SeekableSubReadStreamEndian &dec, const Common::Strin
 		loadParts(dec);
 }
 
-void DECFile::loadBackdrop(Common::SeekableSubReadStreamEndian &dec) {
+void DECFile::loadBackdrop(Common::SeekableReadStreamEndian &dec) {
 	// Interestingly, DEC files reference "FOO.LBM" instead of "FOO.CMP"
 	Common::String file = Util::setExtension(Util::readString(dec, 13), "");
 	if (_hasPadding)
@@ -119,7 +119,7 @@ void DECFile::loadBackdrop(Common::SeekableSubReadStreamEndian &dec) {
 	_backdrop = new CMPFile(_vm, file, _width, _height, _bpp);
 }
 
-CMPFile *DECFile::loadLayer(Common::SeekableSubReadStreamEndian &dec) {
+CMPFile *DECFile::loadLayer(Common::SeekableReadStreamEndian &dec) {
 	Common::String file = Util::setExtension(Util::readString(dec, 13), "");
 	if (_hasPadding)
 		dec.skip(1);
@@ -127,7 +127,7 @@ CMPFile *DECFile::loadLayer(Common::SeekableSubReadStreamEndian &dec) {
 	return new CMPFile(_vm, file, _width, _height, _bpp);
 }
 
-void DECFile::loadParts(Common::SeekableSubReadStreamEndian &dec) {
+void DECFile::loadParts(Common::SeekableReadStreamEndian &dec) {
 	dec.skip(13); // Name
 	if (_hasPadding)
 		dec.skip(1);
@@ -143,7 +143,7 @@ void DECFile::loadParts(Common::SeekableSubReadStreamEndian &dec) {
 		loadPart(*p, dec);
 }
 
-void DECFile::loadPart(Part &part, Common::SeekableSubReadStreamEndian &dec) {
+void DECFile::loadPart(Part &part, Common::SeekableReadStreamEndian &dec) {
 	part.layer = dec.readByte() - 1;
 	part.part  = dec.readByte();
 

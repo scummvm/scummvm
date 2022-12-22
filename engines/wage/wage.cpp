@@ -124,7 +124,7 @@ Common::Error WageEngine::run() {
 
 	// Your main event loop should be (invoked from) here.
 	_resManager = new Common::MacResManager();
-	if (!_resManager->open(Common::punycode_decodepath(getGameFile()).toString('/')))
+	if (!_resManager->open(Common::Path(getGameFile()).punycodeDecode().toString('/')))
 		error("Could not open %s as a resource fork", getGameFile());
 
 	_world = new World(this);

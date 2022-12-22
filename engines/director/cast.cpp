@@ -133,11 +133,18 @@ void Cast::releaseCastMemberWidget() {
 			it->_value->releaseWidget();
 }
 
-CastMember *Cast::getCastMemberByName(const Common::String &name) {
+CastMember *Cast::getCastMemberByNameAndType(const Common::String &name, CastType type) {
 	CastMember *result = nullptr;
 
-	if (_castsNames.contains(name)) {
-		result = _loadedCast->getVal(_castsNames[name]);
+	if (type == kCastTypeAny) {
+		if (_castsNames.contains(name)) {
+			result = _loadedCast->getVal(_castsNames[name]);
+		}
+	} else {
+		Common::String cname = Common::String::format("%s:%d", name.c_str(), type);
+
+		if (_castsNames.contains(cname))
+			result = _loadedCast->getVal(_castsNames[cname]);
 	}
 	return result;
 }
@@ -229,14 +236,12 @@ void Cast::loadArchive() {
 }
 
 bool Cast::loadConfig() {
-	if (!_castArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), -1)) {
+	Common::SeekableReadStreamEndian *stream = nullptr;
+	stream = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'C', 'F'));
+	if (!stream) {
 		warning("Cast::loadConfig(): Wrong format. VWCF resource missing");
 		return false;
 	}
-
-	Common::SeekableReadStreamEndian *stream = nullptr;
-
-	stream = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'C', 'F'));
 
 	debugC(1, kDebugLoading, "****** Loading Config VWCF");
 
@@ -723,12 +728,12 @@ void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
 		break;
 	}
 
-	if (!img) {
+	if (!img || !img->loadStream(*pic)) {
+		warning("Cast::loadBitmapData(): Unable to load id: %d", imgId);
 		delete pic;
+		delete img;
 		return;
 	}
-
-	img->loadStream(*pic);
 
 	bitmapCast->_img = img;
 	const Graphics::Surface *surf = img->getSurface();
@@ -1064,6 +1069,12 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 
 	Common::MemoryReadStreamEndian castStream(data, castSizeToRead, stream.isBE());
 
+	if (_loadedCast->contains(id)) {
+		warning("Cast::loadCastData(): Multiple cast members with ID %d, overwriting", id);
+		delete _loadedCast->getVal(id);
+		_loadedCast->erase(id);
+	}
+
 	switch (castType) {
 	case kCastBitmap:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastBitmap (%d children)", res->children.size());
@@ -1306,6 +1317,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 
 	CastMemberInfo *ci = new CastMemberInfo();
 	Common::MemoryReadStreamEndian *entryStream;
+	CastMember *member = _loadedCast->getVal(id);
 
 	// We have here variable number of strings. Thus, instead of
 	// adding tons of ifs, we use this switch()
@@ -1354,8 +1366,14 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 			// Multiple casts can have the same name. In director only the first one is used.
 			if (!_castsNames.contains(ci->name)) {
 				_castsNames[ci->name] = id;
+			}
+
+			// Store name with type
+			Common::String cname = Common::String::format("%s:%d", ci->name.c_str(), member->_type);
+			if (!_castsNames.contains(cname)) {
+				_castsNames[cname] = id;
 			} else {
-				debugC(4, kDebugLoading, "Cast::loadCastInfo(): duplicate cast name: %s for castIDs: %s %s", ci->name.c_str(), numToCastNum(id), numToCastNum(_castsNames[ci->name]));
+				debugC(4, kDebugLoading, "Cast::loadCastInfo(): duplicate cast name: %s for castIDs: %s %s", cname.c_str(), numToCastNum(id), numToCastNum(_castsNames[ci->name]));
 			}
 		}
 		// fallthrough
@@ -1366,7 +1384,6 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		break;
 	}
 
-	CastMember *member = _loadedCast->getVal(id);
 	// For D4+ we may force Lingo scripts
 	if (_version < kFileVer400 || debugChannelSet(-1, kDebugNoBytecode)) {
 		if (!ci->script.empty()) {
@@ -1513,10 +1530,16 @@ Common::String Cast::formatCastSummary(int castId = -1) {
 			continue;
 		CastMember *castMember = getCastMember(*it);
 		CastMemberInfo *castMemberInfo = getCastMemberInfo(*it);
-		result += Common::String::format("%d: type=%s, name=\"%s\"\n",
+		Common::String info = castMember->formatInfo();
+		result += Common::String::format("%5d: type=%s, name=\"%s\"",
 			*it, castTypeToString(castMember->_type).c_str(),
 			castMemberInfo ? castMemberInfo->name.c_str() : ""
 		);
+		if (!info.empty()) {
+			result += ", ";
+			result += info;
+		}
+		result += "\n";
 	}
 	return result;
 }

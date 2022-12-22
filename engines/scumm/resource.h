@@ -44,7 +44,7 @@ public:
 	const byte *findNext(uint32 tag);
 };
 
-enum {
+enum : uint {
 	RES_INVALID_OFFSET = 0xFFFFFFFF
 };
 

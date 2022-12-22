@@ -1693,10 +1693,10 @@ bool STransCtModifier::readAttribute(MiniscriptThread *thread, DynamicValue &res
 
 MiniscriptInstructionOutcome STransCtModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
 	if (attrib == "rate") {
-		DynamicValueWriteFuncHelper<STransCtModifier, &STransCtModifier::scriptSetRate>::create(this, result);
+		DynamicValueWriteFuncHelper<STransCtModifier, &STransCtModifier::scriptSetRate, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "steps") {
-		DynamicValueWriteFuncHelper<STransCtModifier, &STransCtModifier::scriptSetSteps>::create(this, result);
+		DynamicValueWriteFuncHelper<STransCtModifier, &STransCtModifier::scriptSetSteps, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -1879,7 +1879,7 @@ VThreadState MediaCueMessengerModifier::consumeMessage(Runtime *runtime, const C
 					}
 
 					DynamicValue value;
-					static_cast<VariableModifier *>(modifier)->varGetValue(nullptr, value);
+					static_cast<VariableModifier *>(modifier)->varGetValue(value);
 
 					switch (value.getType()) {
 					case DynamicValueTypes::kInteger:
@@ -1924,6 +1924,14 @@ void MediaCueMessengerModifier::disable(Runtime *runtime) {
 	}
 }
 
+Modifier *MediaCueMessengerModifier::getMediaCueModifier() {
+	return this;
+}
+
+Common::WeakPtr<Modifier> MediaCueMessengerModifier::getMediaCueTriggerSource() const {
+	return _cueSourceModifier;
+}
+
 Common::SharedPtr<Modifier> MediaCueMessengerModifier::shallowClone() const {
 	Common::SharedPtr<MediaCueMessengerModifier> clone(new MediaCueMessengerModifier(*this));
 	clone->_isActive = false;
@@ -1952,7 +1960,7 @@ void MediaCueMessengerModifier::visitInternalReferences(IStructuralReferenceVisi
 	_mediaCue.send.visitInternalReferences(visitor);
 }
 
-ObjectReferenceVariableModifier::ObjectReferenceVariableModifier() {
+ObjectReferenceVariableModifier::ObjectReferenceVariableModifier() : VariableModifier(Common::SharedPtr<VariableStorage>(new ObjectReferenceVariableStorage())) {
 }
 
 bool ObjectReferenceVariableModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::ObjectReferenceVariableModifier &data) {
@@ -1962,36 +1970,36 @@ bool ObjectReferenceVariableModifier::load(const PlugInModifierLoaderContext &co
 	if (!_setToSourceParentWhen.load(data.setToSourceParentWhen.value.asEvent))
 		return false;
 
+	ObjectReferenceVariableStorage *storage = static_cast<ObjectReferenceVariableStorage *>(_storage.get());
+
 	if (data.objectPath.type == Data::PlugInTypeTaggedValue::kString)
-		_objectPath = data.objectPath.str;
+		storage->_objectPath = data.objectPath.value.asString;
 	else if (data.objectPath.type != Data::PlugInTypeTaggedValue::kNull)
 		return false;
 
-	_object.reset();
+	storage->_object.reset();
 
 	return true;
-}
-
-Common::SharedPtr<ModifierSaveLoad> ObjectReferenceVariableModifier::getSaveLoad() {
-	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
 // Object reference variables are somewhat unusual in that they don't store a simple value,
 // they instead have "object" and "path" attributes AND as a value, they resolve to the
 // modifier itself.
 bool ObjectReferenceVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	ObjectReferenceVariableStorage *storage = static_cast<ObjectReferenceVariableStorage *>(_storage.get());
+
 	if (attrib == "path") {
-		result.setString(_objectPath);
+		result.setString(storage->_objectPath);
 		return true;
 	}
 	if (attrib == "object") {
-		if (_object.object.expired())
+		if (storage->_object.object.expired())
 			resolve(thread->getRuntime());
 
-		if (_object.object.expired())
+		if (storage->_object.object.expired())
 			result.clear();
 		else
-			result.setObject(_object);
+			result.setObject(storage->_object);
 		return true;
 	}
 
@@ -2000,7 +2008,7 @@ bool ObjectReferenceVariableModifier::readAttribute(MiniscriptThread *thread, Dy
 
 MiniscriptInstructionOutcome ObjectReferenceVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
 	if (attrib == "path") {
-		DynamicValueWriteFuncHelper<ObjectReferenceVariableModifier, &ObjectReferenceVariableModifier::scriptSetPath>::create(this, result);
+		DynamicValueWriteFuncHelper<ObjectReferenceVariableModifier, &ObjectReferenceVariableModifier::scriptSetPath, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "object") {
@@ -2014,8 +2022,6 @@ MiniscriptInstructionOutcome ObjectReferenceVariableModifier::writeRefAttribute(
 }
 
 bool ObjectReferenceVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
-	// Somewhat strangely, setting an object reference variable to something sets the path or object,
-	// but getting the variable returns the modifier
 	switch (value.getType()) {
 	case DynamicValueTypes::kNull:
 	case DynamicValueTypes::kObject:
@@ -2027,16 +2033,18 @@ bool ObjectReferenceVariableModifier::varSetValue(MiniscriptThread *thread, cons
 	}
 }
 
-void ObjectReferenceVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
-	dest.setObject(this->getSelfReference());
+void ObjectReferenceVariableModifier::varGetValue(DynamicValue &dest) const {
+	dest.setObject(getSelfReference());
 }
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 void ObjectReferenceVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 	VariableModifier::debugInspect(report);
 
-	report->declareDynamic("path", _objectPath);
-	report->declareDynamic("fullPath", _fullPath);
+	ObjectReferenceVariableStorage *storage = static_cast<ObjectReferenceVariableStorage *>(_storage.get());
+
+	report->declareDynamic("path", storage->_objectPath);
+	report->declareDynamic("fullPath", storage->_fullPath);
 }
 #endif
 
@@ -2052,17 +2060,21 @@ MiniscriptInstructionOutcome ObjectReferenceVariableModifier::scriptSetPath(Mini
 	if (value.getType() != DynamicValueTypes::kString)
 		return kMiniscriptInstructionOutcomeFailed;
 
-	_objectPath = value.getString();
-	_object.reset();
+	ObjectReferenceVariableStorage *storage = static_cast<ObjectReferenceVariableStorage *>(_storage.get());
+
+	storage->_objectPath = value.getString();
+	storage->_object.reset();
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
 MiniscriptInstructionOutcome ObjectReferenceVariableModifier::scriptSetObject(MiniscriptThread *thread, const DynamicValue &value) {
+	ObjectReferenceVariableStorage *storage = static_cast<ObjectReferenceVariableStorage *>(_storage.get());
+
 	if (value.getType() == DynamicValueTypes::kNull) {
-		_object.reset();
-		_objectPath.clear();
-		_fullPath.clear();
+		storage->_object.reset();
+		storage->_objectPath.clear();
+		storage->_fullPath.clear();
 
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (value.getType() == DynamicValueTypes::kObject) {
@@ -2070,11 +2082,11 @@ MiniscriptInstructionOutcome ObjectReferenceVariableModifier::scriptSetObject(Mi
 		if (!obj)
 			return scriptSetObject(thread, DynamicValue());
 
-		if (!computeObjectPath(obj.get(), _fullPath))
+		if (!computeObjectPath(obj.get(), storage->_fullPath))
 			return scriptSetObject(thread, DynamicValue());
 
-		_objectPath = _fullPath;
-		_object.object = obj;
+		storage->_objectPath = storage->_fullPath;
+		storage->_object.object = obj;
 
 		return kMiniscriptInstructionOutcomeContinue;
 	} else
@@ -2082,52 +2094,60 @@ MiniscriptInstructionOutcome ObjectReferenceVariableModifier::scriptSetObject(Mi
 }
 
 MiniscriptInstructionOutcome ObjectReferenceVariableModifier::scriptObjectRefAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib) {
+	ObjectReferenceVariableStorage *storage = static_cast<ObjectReferenceVariableStorage *>(_storage.get());
+
 	resolve(thread->getRuntime());
 
-	if (_object.object.expired()) {
+	if (storage->_object.object.expired()) {
 		thread->error("Attempted to reference an attribute of an object variable object, but the reference is dead");
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	return _object.object.lock()->writeRefAttribute(thread, proxy, attrib);
+	return storage->_object.object.lock()->writeRefAttribute(thread, proxy, attrib);
 }
 
 MiniscriptInstructionOutcome ObjectReferenceVariableModifier::scriptObjectRefAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib, const DynamicValue &index) {
+	ObjectReferenceVariableStorage *storage = static_cast<ObjectReferenceVariableStorage *>(_storage.get());
+
 	resolve(thread->getRuntime());
 
-	if (_object.object.expired()) {
+	if (storage->_object.object.expired()) {
 		thread->error("Attempted to reference an attribute of an object variable object, but the reference is dead");
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	return _object.object.lock()->writeRefAttributeIndexed(thread, proxy, attrib, index);
+	return storage->_object.object.lock()->writeRefAttributeIndexed(thread, proxy, attrib, index);
 }
 
 void ObjectReferenceVariableModifier::resolve(Runtime *runtime) {
-	if (!_object.object.expired())
+	ObjectReferenceVariableStorage *storage = static_cast<ObjectReferenceVariableStorage *>(_storage.get());
+
+	if (!storage->_object.object.expired())
 		return;
 
-	_fullPath.clear();
-	_object.reset();
+	storage->_fullPath.clear();
+	storage->_object.reset();
 
-	if (_objectPath.size() == 0)
+	if (storage->_objectPath.size() == 0)
 		return;
 
-	if (_objectPath[0] == '/')
+	if (storage->_objectPath[0] == '/')
 		resolveAbsolutePath(runtime);
-	else if (_objectPath[0] == '.')
-		resolveRelativePath(this, _objectPath, 0);
+	else if (storage->_objectPath[0] == '.')
+		resolveRelativePath(this, storage->_objectPath, 0);
 	else
 		warning("Object reference variable had an unknown path format");
 
-	if (!_object.object.expired()) {
-		if (!computeObjectPath(_object.object.lock().get(), _fullPath)) {
-			_object.reset();
+	if (!storage->_object.object.expired()) {
+		if (!computeObjectPath(storage->_object.object.lock().get(), storage->_fullPath)) {
+			storage->_object.reset();
 		}
 	}
 }
 
 void ObjectReferenceVariableModifier::resolveRelativePath(RuntimeObject *obj, const Common::String &path, size_t startPos) {
+	ObjectReferenceVariableStorage *storage = static_cast<ObjectReferenceVariableStorage *>(_storage.get());
+
 	bool haveNextLevel = true;
 	size_t nextLevelPos = startPos;
 
@@ -2149,6 +2169,8 @@ void ObjectReferenceVariableModifier::resolveRelativePath(RuntimeObject *obj, co
 			obj = getObjectParent(obj);
 			if (obj == nullptr)
 				return;
+
+			continue;
 		}
 
 		const Common::Array<Common::SharedPtr<Modifier> > *modifierChildren = nullptr;
@@ -2189,11 +2211,13 @@ void ObjectReferenceVariableModifier::resolveRelativePath(RuntimeObject *obj, co
 			return;
 	}
 
-	_object.object = obj->getSelfReference();
+	storage->_object.object = obj->getSelfReference();
 }
 
 void ObjectReferenceVariableModifier::resolveAbsolutePath(Runtime *runtime) {
-	assert(_objectPath[0] == '/');
+	ObjectReferenceVariableStorage *storage = static_cast<ObjectReferenceVariableStorage *>(_storage.get());
+
+	assert(storage->_objectPath[0] == '/');
 
 	RuntimeObject *project = this;
 	for (;;) {
@@ -2211,7 +2235,7 @@ void ObjectReferenceVariableModifier::resolveAbsolutePath(Runtime *runtime) {
 	bool foundPrefix = false;
 
 	if (runtime->getHacks().ignoreMismatchedProjectNameInObjectLookups) {
-		size_t slashOffset = _objectPath.findFirstOf('/', 1);
+		size_t slashOffset = storage->_objectPath.findFirstOf('/', 1);
 		if (slashOffset != Common::String::npos) {
 			prefixEnd = slashOffset;
 			foundPrefix = true;
@@ -2222,7 +2246,7 @@ void ObjectReferenceVariableModifier::resolveAbsolutePath(Runtime *runtime) {
 			"/<project>"};
 
 		for (const Common::String &prefix : projectPrefixes) {
-			if (_objectPath.size() >= prefix.size() && caseInsensitiveEqual(_objectPath.substr(0, prefix.size()), prefix)) {
+			if (storage->_objectPath.size() >= prefix.size() && caseInsensitiveEqual(storage->_objectPath.substr(0, prefix.size()), prefix)) {
 				prefixEnd = prefix.size();
 				foundPrefix = true;
 				break;
@@ -2234,15 +2258,15 @@ void ObjectReferenceVariableModifier::resolveAbsolutePath(Runtime *runtime) {
 		return;
 
 	// If the object path is longer, then there must be a slash separator, otherwise this doesn't match the project
-	if (prefixEnd == _objectPath.size()) {
-		_object = ObjectReference(project->getSelfReference());
+	if (prefixEnd == storage->_objectPath.size()) {
+		storage->_object = ObjectReference(project->getSelfReference());
 		return;
 	}
 
-	if (_objectPath[prefixEnd] != '/')
+	if (storage->_objectPath[prefixEnd] != '/')
 		return;
 
-	return resolveRelativePath(project, _objectPath, prefixEnd + 1);
+	return resolveRelativePath(project, storage->_objectPath, prefixEnd + 1);
 }
 
 bool ObjectReferenceVariableModifier::computeObjectPath(RuntimeObject *obj, Common::String &outPath) {
@@ -2293,22 +2317,36 @@ MiniscriptInstructionOutcome ObjectReferenceVariableModifier::ObjectWriteInterfa
 	return static_cast<ObjectReferenceVariableModifier *>(objectRef)->scriptObjectRefAttribIndexed(thread, proxy, attrib, index);
 }
 
-ObjectReferenceVariableModifier::SaveLoad::SaveLoad(ObjectReferenceVariableModifier *modifier) : _modifier(modifier) {
-	_objectPath = _modifier->_objectPath;
+ObjectReferenceVariableStorage::SaveLoad::SaveLoad(ObjectReferenceVariableStorage *storage) : _storage(storage) {
+	_objectPath = _storage->_objectPath;
 }
 
-void ObjectReferenceVariableModifier::SaveLoad::commitLoad() const {
-	_modifier->_object.reset();
-	_modifier->_fullPath.clear();
-	_modifier->_objectPath = _objectPath;
+
+
+
+ObjectReferenceVariableStorage::ObjectReferenceVariableStorage() {
 }
 
-void ObjectReferenceVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+Common::SharedPtr<ModifierSaveLoad> ObjectReferenceVariableStorage::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
+}
+
+Common::SharedPtr<VariableStorage> ObjectReferenceVariableStorage::clone() const {
+	return Common::SharedPtr<VariableStorage>(new ObjectReferenceVariableStorage(*this));
+}
+
+void ObjectReferenceVariableStorage::SaveLoad::commitLoad() const {
+	_storage->_object.reset();
+	_storage->_fullPath.clear();
+	_storage->_objectPath = _objectPath;
+}
+
+void ObjectReferenceVariableStorage::SaveLoad::saveInternal(Common::WriteStream *stream) const {
 	stream->writeUint32BE(_objectPath.size());
 	stream->writeString(_objectPath);
 }
 
-bool ObjectReferenceVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
+bool ObjectReferenceVariableStorage::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
 	uint32 stringLen = stream->readUint32BE();
 	if (stream->err())
 		return false;
@@ -2463,28 +2501,28 @@ bool MidiModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result,
 
 MiniscriptInstructionOutcome MidiModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
 	if (attrib == "volume") {
-		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetVolume>::create(this, result);
+		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetVolume, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "notevelocity") {
-		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetNoteVelocity>::create(this, result);
+		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetNoteVelocity, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "noteduration") {
-		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetNoteDuration>::create(this, result);
+		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetNoteDuration, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "notenum") {
-		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetNoteNum>::create(this, result);
+		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetNoteNum, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "loop") {
-		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetLoop>::create(this, result);
+		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetLoop, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "playnote") {
-		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetPlayNote>::create(this, result);
+		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetPlayNote, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "tempo") {
-		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetTempo>::create(this, result);
+		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetTempo, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "mutetrack") {
-		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetMuteTrack>::create(this, result);
+		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetMuteTrack, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -2713,117 +2751,198 @@ MiniscriptInstructionOutcome MidiModifier::MuteTrackProxyInterface::refAttribInd
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
-ListVariableModifier::ListVariableModifier() : _list(new DynamicList()), _preferredContentType(DynamicValueTypes::kInteger) {
+ListVariableModifier::ListVariableModifier() : VariableModifier(Common::SharedPtr<VariableStorage>(new ListVariableStorage())) {
 }
 
 bool ListVariableModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::ListVariableModifier &data) {
-	if (!data.havePersistentData || data.numValues == 0)
-		return true;	// If the list is empty then we don't care, the actual value type is irrelevant because it can be reassigned
+	ListVariableStorage *storage = static_cast<ListVariableStorage *>(_storage.get());
 
-	DynamicValueTypes::DynamicValueType expectedType = DynamicValueTypes::kInvalid;
+	storage->_preferredContentType = DynamicValueTypes::kInvalid;
 	switch (data.contentsType) {
 	case Data::Standard::ListVariableModifier::kContentsTypeInteger:
-		expectedType = DynamicValueTypes::kInteger;
+		storage->_preferredContentType = DynamicValueTypes::kInteger;
 		break;
 	case Data::Standard::ListVariableModifier::kContentsTypePoint:
-		expectedType = DynamicValueTypes::kPoint;
+		storage->_preferredContentType = DynamicValueTypes::kPoint;
 		break;
 	case Data::Standard::ListVariableModifier::kContentsTypeRange:
-		expectedType = DynamicValueTypes::kIntegerRange;
+		storage->_preferredContentType = DynamicValueTypes::kIntegerRange;
 		break;
 	case Data::Standard::ListVariableModifier::kContentsTypeFloat:
-		expectedType = DynamicValueTypes::kFloat;
+		storage->_preferredContentType = DynamicValueTypes::kFloat;
 		break;
 	case Data::Standard::ListVariableModifier::kContentsTypeString:
-		expectedType = DynamicValueTypes::kString;
+		storage->_preferredContentType = DynamicValueTypes::kString;
 		break;
 	case Data::Standard::ListVariableModifier::kContentsTypeObject:
+		storage->_preferredContentType = DynamicValueTypes::kObject;
 		if (data.persistentValuesGarbled) {
 			// Ignore and let the game fix it
 			return true;
 		} else {
-			warning("Object reference lists are not implemented");
-			return false;
+			warning("Loading object reference lists from data is not implemented");
+			return true;
 		}
 		break;
 	case Data::Standard::ListVariableModifier::kContentsTypeVector:
-		expectedType = DynamicValueTypes::kVector;
+		storage->_preferredContentType = DynamicValueTypes::kVector;
 		break;
 	case Data::Standard::ListVariableModifier::kContentsTypeBoolean:
-		expectedType = DynamicValueTypes::kBoolean;
+		storage->_preferredContentType = DynamicValueTypes::kBoolean;
 		break;
 	default:
 		warning("Unknown list data type");
 		return false;
 	}
 
+	if (!data.havePersistentData || data.numValues == 0)
+		return true;
+
 	for (size_t i = 0; i < data.numValues; i++) {
 		DynamicValue dynValue;
-		if (!dynValue.load(data.values[i]))
+		if (!dynValue.loadConstant(data.values[i]))
 			return false;
 
-		if (dynValue.getType() != expectedType) {
+		if (dynValue.getType() != storage->_preferredContentType) {
 			warning("List mod initialization element had the wrong type");
 			return false;
 		}
 
-		if (!_list->setAtIndex(i, dynValue)) {
+		if (!storage->_list->setAtIndex(i, dynValue)) {
 			warning("Failed to initialize list modifier, value was rejected");
 			return false;
 		}
 	}
 
-	_preferredContentType = expectedType;
-
 	return true;
 }
 
-Common::SharedPtr<ModifierSaveLoad> ListVariableModifier::getSaveLoad() {
-	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
+bool ListVariableModifier::isListVariable() const {
+	return true;
 }
 
 bool ListVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
-	if (value.getType() == DynamicValueTypes::kList)
-		_list = value.getList()->clone();
-	else {
-		if (!_list)
-			_list.reset(new DynamicList());
-		return _list->setAtIndex(0, value);
+	ListVariableStorage *storage = static_cast<ListVariableStorage *>(_storage.get());
+
+	if (value.getType() == DynamicValueTypes::kList) {
+		// Source value is a list.  In this case, it must be convertible, or an error occurs.
+		Common::SharedPtr<DynamicList> sourceList = value.getList();
+		Common::SharedPtr<DynamicList> newList(new DynamicList());
+
+		for (size_t i = 0; i < sourceList->getSize(); i++) {
+			DynamicValue sourceElement;
+			sourceList->getAtIndex(i, sourceElement);
+
+			DynamicValue convertedElement;
+
+			if (!sourceElement.convertToType(storage->_preferredContentType, convertedElement)) {
+				thread->error("Failed to convert list when assigning to a list variable");
+				return false;
+			}
+
+			newList->setAtIndex(i, convertedElement);
+		}
+
+		storage->_list = newList;
+	} else if (value.getType() == DynamicValueTypes::kObject) {
+		// Source value is an object.  In this case, it must be another list, otherwise this fails without an error.
+		RuntimeObject *obj = value.getObject().object.lock().get();
+		if (obj && obj->isModifier() && static_cast<Modifier *>(obj)->isVariable() && static_cast<VariableModifier *>(obj)->isListVariable()) {
+			Common::SharedPtr<DynamicList> sourceList = static_cast<ListVariableStorage *>(static_cast<ListVariableModifier *>(obj)->_storage.get())->_list;
+			Common::SharedPtr<DynamicList> newList(new DynamicList());
+
+			bool failed = false;
+			for (size_t i = 0; i < sourceList->getSize(); i++) {
+				DynamicValue sourceElement;
+				sourceList->getAtIndex(i, sourceElement);
+
+				DynamicValue convertedElement;
+
+				if (!sourceElement.convertToType(storage->_preferredContentType, convertedElement)) {
+					warning("Failed to convert list when assigning to a list variable.  (Non-fatal since it was directly assigned.)");
+					failed = true;
+					break;
+				}
+
+				newList->setAtIndex(i, convertedElement);
+			}
+
+			if (!failed)
+				storage->_list = newList;
+		}
+	} else {
+		// Source value is a non-list.  In this case, it must be exactly the correct type, except for numbers.
+
+		DynamicValue convertedValue;
+		if (value.convertToType(storage->_preferredContentType, convertedValue)) {
+			Common::SharedPtr<DynamicList> newList(new DynamicList());
+			newList->setAtIndex(0, convertedValue);
+			storage->_list = newList;
+		} else {
+			thread->error("Can't assign incompatible value type to a list variable");
+			return false;
+		}
 	}
 
 	return true;
 }
 
-void ListVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
-	dest.setList(_list);
+void ListVariableModifier::varGetValue(DynamicValue &dest) const {
+	dest.setObject(this->getSelfReference());
 }
 
 bool ListVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	ListVariableStorage *storage = static_cast<ListVariableStorage *>(_storage.get());
+
 	if (attrib == "count") {
-		result.setInt(_list->getSize());
+		result.setInt(storage->_list->getSize());
 		return true;
 	} else if (attrib == "random") {
-		if (_list->getSize() == 0)
+		if (storage->_list->getSize() == 0)
 			return false;
 
-		size_t index = thread->getRuntime()->getRandom()->getRandomNumber(_list->getSize() - 1);
-		return _list->getAtIndex(index, result);
+		size_t index = thread->getRuntime()->getRandom()->getRandomNumber(storage->_list->getSize() - 1);
+		return storage->_list->getAtIndex(index, result);
+	} else if (attrib == "shuffle") {
+		storage->_list = storage->_list->clone();
+
+		Common::RandomSource *rng = thread->getRuntime()->getRandom();
+
+		size_t listSize = storage->_list->getSize();
+		for (size_t i = 1; i < listSize; i++) {
+			size_t sourceIndex = i;
+			size_t destIndex = sourceIndex + rng->getRandomNumber(static_cast<uint>(listSize - 1 - i));
+			if (sourceIndex != destIndex) {
+				DynamicValue srcValue;
+				DynamicValue destValue;
+				(void)storage->_list->getAtIndex(sourceIndex, srcValue);
+				(void)storage->_list->getAtIndex(destIndex, destValue);
+
+				(void)storage->_list->setAtIndex(destIndex, srcValue);
+				(void)storage->_list->setAtIndex(sourceIndex, destValue);
+			}
+		}
+
+		result.setInt(listSize);
+		return true;
 	}
 
 	return Modifier::readAttribute(thread, result, attrib);
 }
 
 bool ListVariableModifier::readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) {
+	ListVariableStorage *storage = static_cast<ListVariableStorage *>(_storage.get());
+
 	if (attrib == "value") {
 		size_t realIndex = 0;
-		return _list->dynamicValueToIndex(realIndex, index) && _list->getAtIndex(realIndex, result);
+		return storage->_list->dynamicValueToIndex(realIndex, index) && storage->_list->getAtIndex(realIndex, result);
 	}
 	return Modifier::readAttributeIndexed(thread, result, attrib, index);
 }
 
 MiniscriptInstructionOutcome ListVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
 	if (attrib == "count") {
-		DynamicValueWriteFuncHelper<ListVariableModifier, &ListVariableModifier::scriptSetCount>::create(this, writeProxy);
+		DynamicValueWriteFuncHelper<ListVariableModifier, &ListVariableModifier::scriptSetCount, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -2831,13 +2950,15 @@ MiniscriptInstructionOutcome ListVariableModifier::writeRefAttribute(MiniscriptT
 }
 
 MiniscriptInstructionOutcome ListVariableModifier::writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index) {
+	ListVariableStorage *storage = static_cast<ListVariableStorage *>(_storage.get());
+
 	if (attrib == "value") {
 		size_t realIndex = 0;
-		if (!_list->dynamicValueToIndex(realIndex, index))
+		if (!storage->_list->dynamicValueToIndex(realIndex, index))
 			return kMiniscriptInstructionOutcomeFailed;
 
-		_list->createWriteProxyForIndex(realIndex, writeProxy);
-		writeProxy.containerList = _list;
+		storage->_list->createWriteProxyForIndex(realIndex, writeProxy);
+		writeProxy.containerList = storage->_list;
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	return kMiniscriptInstructionOutcomeFailed;
@@ -2847,28 +2968,30 @@ MiniscriptInstructionOutcome ListVariableModifier::writeRefAttributeIndexed(Mini
 void ListVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 	VariableModifier::debugInspect(report);
 
-	size_t listSize = _list->getSize();
+	ListVariableStorage *storage = static_cast<ListVariableStorage *>(_storage.get());
+
+	size_t listSize = storage->_list->getSize();
 
 	for (size_t i = 0; i < listSize; i++) {
 		int cardinal = i + 1;
-		switch (_list->getType()) {
+		switch (storage->_list->getType()) {
 		case DynamicValueTypes::kInteger:
-			report->declareLoose(Common::String::format("[%i] = %i", cardinal, _list->getInt()[i]));
+			report->declareLoose(Common::String::format("[%i] = %i", cardinal, storage->_list->getInt()[i]));
 			break;
 		case DynamicValueTypes::kFloat:
-			report->declareLoose(Common::String::format("[%i] = %g", cardinal, _list->getFloat()[i]));
+			report->declareLoose(Common::String::format("[%i] = %g", cardinal, storage->_list->getFloat()[i]));
 			break;
 		case DynamicValueTypes::kPoint:
-			report->declareLoose(Common::String::format("[%i] = ", cardinal) + pointToString(_list->getPoint()[i]));
+			report->declareLoose(Common::String::format("[%i] = ", cardinal) + pointToString(storage->_list->getPoint()[i]));
 			break;
 		case DynamicValueTypes::kIntegerRange:
-			report->declareLoose(Common::String::format("[%i] = ", cardinal) + _list->getIntRange()[i].toString());
+			report->declareLoose(Common::String::format("[%i] = ", cardinal) + storage->_list->getIntRange()[i].toString());
 			break;
 		case DynamicValueTypes::kBoolean:
-			report->declareLoose(Common::String::format("[%i] = %s", cardinal, _list->getBool()[i] ? "true" : "false"));
+			report->declareLoose(Common::String::format("[%i] = %s", cardinal, storage->_list->getBool()[i] ? "true" : "false"));
 			break;
 		case DynamicValueTypes::kVector:
-			report->declareLoose(Common::String::format("[%i] = ", cardinal) + _list->getVector()[i].toString());
+			report->declareLoose(Common::String::format("[%i] = ", cardinal) + storage->_list->getVector()[i].toString());
 			break;
 		case DynamicValueTypes::kLabel:
 			report->declareLoose(Common::String::format("[%i] = Label?", cardinal));
@@ -2876,14 +2999,8 @@ void ListVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 		case DynamicValueTypes::kEvent:
 			report->declareLoose(Common::String::format("[%i] = Event?", cardinal));
 			break;
-		case DynamicValueTypes::kVariableReference:
-			report->declareLoose(Common::String::format("[%i] = VarRef?", cardinal));
-			break;
-		case DynamicValueTypes::kIncomingData:
-			report->declareLoose(Common::String::format("[%i] = IncomingData??", cardinal));
-			break;
 		case DynamicValueTypes::kString:
-			report->declareLoose(Common::String::format("[%i] = ", cardinal) + _list->getString()[i]);
+			report->declareLoose(Common::String::format("[%i] = ", cardinal) + storage->_list->getString()[i]);
 			break;
 		case DynamicValueTypes::kList:
 			report->declareLoose(Common::String::format("[%i] = List", cardinal));
@@ -2899,12 +3016,9 @@ void ListVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 }
 #endif
 
-ListVariableModifier::ListVariableModifier(const ListVariableModifier &other) : _preferredContentType(DynamicValueTypes::kNull) {
-	if (other._list)
-		_list = other._list->clone();
-}
-
 MiniscriptInstructionOutcome ListVariableModifier::scriptSetCount(MiniscriptThread *thread, const DynamicValue &value) {
+	ListVariableStorage *storage = static_cast<ListVariableStorage *>(_storage.get());
+
 	int32 asInteger = 0;
 	if (!value.roundToInt(asInteger)) {
 		thread->error("Tried to set a list variable count to something other than an integer");
@@ -2917,15 +3031,15 @@ MiniscriptInstructionOutcome ListVariableModifier::scriptSetCount(MiniscriptThre
 	}
 
 	size_t newSize = asInteger;
-	if (newSize > _list->getSize()) {
-		if (_list->getSize() == 0) {
+	if (newSize > storage->_list->getSize()) {
+		if (storage->_list->getSize() == 0) {
 			thread->error("Restoring an empty list by setting its count isn't implemented");
 			return kMiniscriptInstructionOutcomeFailed;
 		}
 
-		_list->expandToMinimumSize(newSize);
-	} else if (newSize < _list->getSize()) {
-		_list->truncateToSize(newSize);
+		storage->_list->expandToMinimumSize(newSize);
+	} else if (newSize < storage->_list->getSize()) {
+		storage->_list->truncateToSize(newSize);
 	}
 
 	return kMiniscriptInstructionOutcomeContinue;
@@ -2939,18 +3053,35 @@ const char *ListVariableModifier::getDefaultName() const {
 	return "List Variable";
 }
 
-ListVariableModifier::SaveLoad::SaveLoad(ListVariableModifier *modifier) : _modifier(modifier), _list(_modifier->_list) {
+ListVariableStorage::ListVariableStorage() : _preferredContentType(DynamicValueTypes::kInteger), _list(new DynamicList()) {
 }
 
-void ListVariableModifier::SaveLoad::commitLoad() const {
-	_modifier->_list = _list;
+Common::SharedPtr<ModifierSaveLoad> ListVariableStorage::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
-void ListVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+Common::SharedPtr<VariableStorage> ListVariableStorage::clone() const {
+	ListVariableStorage *newInstance = new ListVariableStorage();
+	newInstance->_list = Common::SharedPtr<DynamicList>(new DynamicList(*_list));
+	newInstance->_preferredContentType = _preferredContentType;
+	return Common::SharedPtr<VariableStorage>(newInstance);
+}
+
+ListVariableStorage::SaveLoad::SaveLoad(ListVariableStorage *storage) : _storage(storage), _list(storage->_list) {
+}
+
+void ListVariableStorage::SaveLoad::commitLoad() const {
+	// We don't support deserializing object references (yet?), so just leave the existing values.
+	// In Obsidian at least, this doesn't matter.
+	if (_list->getType() != DynamicValueTypes::kObject)
+		_storage->_list = _list;
+}
+
+void ListVariableStorage::SaveLoad::saveInternal(Common::WriteStream *stream) const {
 	recursiveWriteList(_list.get(), stream);
 }
 
-bool ListVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
+bool ListVariableStorage::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
 	Common::SharedPtr<DynamicList> list = recursiveReadList(stream);
 	if (list) {
 		_list = list;
@@ -2960,7 +3091,7 @@ bool ListVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream, ui
 	}
 }
 
-void ListVariableModifier::SaveLoad::recursiveWriteList(DynamicList *list, Common::WriteStream *stream) {
+void ListVariableStorage::SaveLoad::recursiveWriteList(DynamicList *list, Common::WriteStream *stream) {
 	stream->writeUint32BE(list->getType());
 	stream->writeUint32BE(list->getSize());
 
@@ -2997,8 +3128,7 @@ void ListVariableModifier::SaveLoad::recursiveWriteList(DynamicList *list, Commo
 		case DynamicValueTypes::kBoolean:
 			stream->writeByte(list->getBool()[i] ? 1 : 0);
 			break;
-		case DynamicValueTypes::kList:
-			recursiveWriteList(list->getList()[i].get(), stream);
+		case DynamicValueTypes::kObject:
 			break;
 		default:
 			error("Can't figure out how to write a saved variable");
@@ -3007,7 +3137,7 @@ void ListVariableModifier::SaveLoad::recursiveWriteList(DynamicList *list, Commo
 	}
 }
 
-Common::SharedPtr<DynamicList> ListVariableModifier::SaveLoad::recursiveReadList(Common::ReadStream *stream) {
+Common::SharedPtr<DynamicList> ListVariableStorage::SaveLoad::recursiveReadList(Common::ReadStream *stream) {
 	Common::SharedPtr<DynamicList> list;
 	list.reset(new DynamicList());
 
@@ -3066,11 +3196,8 @@ Common::SharedPtr<DynamicList> ListVariableModifier::SaveLoad::recursiveReadList
 				byte b = stream->readByte();
 				val.setBool(b != 0);
 			} break;
-		case DynamicValueTypes::kList: {
-				Common::SharedPtr<DynamicList> childList = recursiveReadList(stream);
-				if (!childList)
-					return nullptr;
-				val.setList(childList);
+		case DynamicValueTypes::kObject: {
+				val.setObject(Common::WeakPtr<RuntimeObject>());
 			} break;
 		default:
 			error("Can't figure out how to write a saved variable");
@@ -3144,6 +3271,41 @@ const char *SysInfoModifier::getDefaultName() const {
 	return "SysInfo Modifier";
 }
 
+PanningModifier::PanningModifier() {
+}
+
+PanningModifier::~PanningModifier() {
+}
+
+bool PanningModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::PanningModifier &data) {
+	return true;
+}
+
+bool PanningModifier::respondsToEvent(const Event &evt) const {
+	return false;
+}
+
+VThreadState PanningModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+void PanningModifier::disable(Runtime *runtime) {
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void PanningModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+}
+#endif
+
+Common::SharedPtr<Modifier> PanningModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new PanningModifier(*this));
+}
+
+const char *PanningModifier::getDefaultName() const {
+	return "Panning Modifier"; // ???
+}
+
 StandardPlugInHacks::StandardPlugInHacks() : allowGarbledListModData(false) {
 }
 
@@ -3154,7 +3316,8 @@ StandardPlugIn::StandardPlugIn(bool useDynamicMidi)
 	, _objRefVarModifierFactory(this)
 	, _midiModifierFactory(this)
 	, _listVarModifierFactory(this)
-	, _sysInfoModifierFactory(this) {
+	, _sysInfoModifierFactory(this)
+	, _panningModifierFactory(this) {
 	_midi.reset(new MultiMidiPlayer(useDynamicMidi));
 }
 
@@ -3169,6 +3332,8 @@ void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) cons
 	registrar->registerPlugInModifier("MIDIModf", &_midiModifierFactory);
 	registrar->registerPlugInModifier("ListMod", &_listVarModifierFactory);
 	registrar->registerPlugInModifier("SysInfo", &_sysInfoModifierFactory);
+
+	registrar->registerPlugInModifier("panning", &_panningModifierFactory);
 }
 
 const StandardPlugInHacks &StandardPlugIn::getHacks() const {

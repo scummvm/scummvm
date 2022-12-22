@@ -744,7 +744,7 @@ HSaveError ReadDynamicSprites(Stream *in, int32_t /*cmp_ver*/, const PreservedPa
 	HSaveError err;
 	const int spr_count = in->ReadInt32();
 	// ensure the sprite set is at least large enough
-	// to accomodate top dynamic sprite index
+	// to accommodate top dynamic sprite index
 	const int top_index = in->ReadInt32();
 	_GP(spriteset).EnlargeTo(top_index);
 	for (int i = 0; i < spr_count; ++i) {

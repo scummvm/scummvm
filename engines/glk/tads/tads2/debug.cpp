@@ -175,7 +175,7 @@ int dbgnam(dbgcxdef *ctx, char *outbuf, int typ, int val)
 		}
 		else
 		{
-			sprintf(outbuf, "<object#%u>", val);
+			Common::sprintf_s(outbuf, TOKNAMMAX + 1, "<object#%u>", val);
 			return strlen(outbuf);
 		}
 	}
@@ -198,7 +198,7 @@ static void dbgpbval(dbgcxdef *ctx, dattyp typ, const uchar *val,
 	switch(typ)
 	{
 	case DAT_NUMBER:
-		sprintf(buf, "%ld", (long)osrp4s(val));
+		Common::sprintf_s(buf, "%ld", (long)osrp4s(val));
 		len = strlen(buf);
 		break;
 
@@ -270,7 +270,7 @@ void dbgpval(dbgcxdef *ctx, runsdef *val,
 	switch(val->runstyp)
 	{
 	case DAT_NUMBER:
-		sprintf((char *)buf, "%ld", val->runsv.runsvnum);
+		Common::sprintf_s(buf, "%ld", val->runsv.runsvnum);
 		len = strlen((char *)buf);
 		typ = "number";
 		break;
@@ -393,7 +393,7 @@ void dbgstktr(dbgcxdef *ctx,
 		else if (include_markers)
 		{
 			c = (i == level + 1 ? '*' : ' ');
-			sprintf(buf, "%3d%c  ", j, c);
+			Common::sprintf_s(buf, "%3d%c  ", j, c);
 			p += 4;
 		}
 

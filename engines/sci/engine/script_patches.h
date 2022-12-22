@@ -49,6 +49,8 @@ namespace Sci {
 #define PATCH_BYTEMASK                                         SIG_BYTEMASK
 #define PATCH_CODE_ADDTOOFFSET                                 SIG_CODE_ADDTOOFFSET
 #define PATCH_ADDTOOFFSET(_offset_)                            SIG_CODE_ADDTOOFFSET | (_offset_)
+#define PATCH_CODE_GETORIGINALBYTES                            0xB000
+#define PATCH_GETORIGINALBYTES(_offset_, _length_)             PATCH_CODE_GETORIGINALBYTES | (_offset_), (uint16)(_length_)
 #define PATCH_CODE_GETORIGINALBYTE                             0xC000
 #define PATCH_GETORIGINALBYTE(_offset_)                        PATCH_CODE_GETORIGINALBYTE | (_offset_), 0
 #define PATCH_GETORIGINALBYTEADJUST(_offset_, _adjustValue_)   PATCH_CODE_GETORIGINALBYTE | (_offset_), (uint16)(_adjustValue_)

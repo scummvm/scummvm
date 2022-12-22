@@ -58,10 +58,10 @@ NutRenderer::~NutRenderer() {
 	delete[] _2byteColorTable;
 }
 
-void smush_decode_codec1(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
 void NutRenderer::codec1(byte *dst, const byte *src, int width, int height, int pitch) {
-	smush_decode_codec1(dst, src, 0, 0, width, height, pitch);
+	smushDecodeRLE(dst, src, 0, 0, width, height, pitch);
 	for (int i = 0; i < width * height; i++)
 		_paletteMap[dst[i]] = 1;
 }

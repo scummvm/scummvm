@@ -37,6 +37,8 @@ struct Myst3GameDescription {
 	uint32 localizationType;
 };
 
+#define GAMEOPTION_WIDESCREEN_MOD GUIO_GAMEOPTIONS1
+
 } // End of namespace Myst3
 
 #endif // MYST3_DETECTION_H

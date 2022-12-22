@@ -82,6 +82,7 @@ static BuiltinProto builtins[] = {
 	{ "append",			LB::b_append,		2, 2, 400, HBLTIN },	//			D4 h
 	{ "count",			LB::b_count,		1, 1, 400, FBLTIN },	//			D4 f
 	{ "deleteAt",		LB::b_deleteAt,		2, 2, 400, HBLTIN },	//			D4 h
+	{ "deleteOne",		LB::b_deleteOne,	2, 2, 400, HBLTIN },	//			D4 h, undocumented?
 	{ "deleteProp",		LB::b_deleteProp,	2, 2, 400, HBLTIN },	//			D4 h
 	{ "findPos",		LB::b_findPos,		2, 2, 400, FBLTIN },	//			D4 f
 	{ "findPosNear",	LB::b_findPosNear,	2, 2, 400, FBLTIN },	//			D4 f
@@ -473,7 +474,6 @@ void LB::b_chars(int nargs) {
 
 void LB::b_charToNum(int nargs) {
 	Datum d = g_lingo->pop();
-
 	TYPECHECK(d, STRING);
 
 	Common::U32String str = d.asString().decode(Common::kUtf8);
@@ -487,6 +487,10 @@ void LB::b_charToNum(int nargs) {
 
 void LB::b_length(int nargs) {
 	Datum d = g_lingo->pop();
+	if (d.type == INT || d.type == FLOAT) {
+		g_lingo->push(0);
+		return;
+	}
 	TYPECHECK(d, STRING);
 
 	Common::U32String src = d.asString().decode(Common::kUtf8);
@@ -495,7 +499,15 @@ void LB::b_length(int nargs) {
 }
 
 void LB::b_numToChar(int nargs) {
-	int num = g_lingo->pop().asInt();
+	Datum d = g_lingo->pop();
+	if (g_director->getVersion() < 400) {
+		TYPECHECK(d, INT);
+	} else if (d.type != INT) {
+		warning("BUILDBOT: b_numToChar: Unimplemented behaviour for arg of type %s", (d).type2str());
+		return;
+	}
+
+	int num = d.asInt();
 	g_lingo->push(Common::U32String(numToChar(num)).encode(Common::kUtf8));
 }
 
@@ -536,6 +548,11 @@ void LB::b_value(int nargs) {
 	Common::String code = "return " + expr;
 	// Compile the code to an anonymous function and call it
 	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code);
+	if (!sc) {
+		warning("b_value(): Failed to parse expression \"%s\", returning 0", expr.c_str());
+		g_lingo->push(Datum(0));
+		return;
+	}
 	Symbol sym = sc->_eventHandlers[kEventGeneric];
 	LC::call(sym, 0, true);
 }
@@ -574,7 +591,6 @@ void LB::b_addProp(int nargs) {
 	TYPECHECK(list, PARRAY);
 
 	PCell cell = PCell(prop, value);
-	list.u.parr->arr.push_back(cell);
 
 	if (list.u.parr->_sorted) {
 		if (list.u.parr->arr.empty())
@@ -655,6 +671,37 @@ void LB::b_deleteAt(int nargs) {
 		break;
 	}
 }
+
+void LB::b_deleteOne(int nargs) {
+	Datum val = g_lingo->pop();
+	Datum list = g_lingo->pop();
+	TYPECHECK3(val, INT, FLOAT, SYMBOL);
+	TYPECHECK2(list, ARRAY, PARRAY);
+
+	switch (list.type) {
+	case ARRAY: {
+		g_lingo->push(list);
+		g_lingo->push(val);
+		b_getPos(nargs);
+		int index = g_lingo->pop().asInt();
+		if (index > 0) {
+			list.u.farr->arr.remove_at(index - 1);
+		}
+		break;
+	}
+	case PARRAY: {
+		Datum d;
+		int index = LC::compareArrays(LC::eqData, list, val, true, true).u.i;
+		if (index > 0) {
+			list.u.parr->arr.remove_at(index - 1);
+		}
+		break;
+	}
+	default:
+		TYPECHECK2(list, ARRAY, PARRAY);
+	}
+}
+
 
 void LB::b_deleteProp(int nargs) {
 	Datum prop = g_lingo->pop();
@@ -1090,7 +1137,7 @@ void LB::b_closeXlib(int nargs) {
 	}
 
 	Datum d = g_lingo->pop();
-	Common::String xlibName = d.asString();
+	Common::String xlibName = getFileName(d.asString());
 	g_lingo->closeXLib(xlibName);
 }
 
@@ -1184,6 +1231,7 @@ void LB::b_openXlib(int nargs) {
 				g_director->_allOpenResFiles.setVal(resPath, resFile);
 				uint32 XCOD = MKTAG('X', 'C', 'O', 'D');
 				uint32 XCMD = MKTAG('X', 'C', 'M', 'D');
+				uint32 XFCN = MKTAG('X', 'F', 'C', 'N');
 
 				Common::Array<uint16> rsrcList = resFile->getResourceIDList(XCOD);
 
@@ -1197,6 +1245,12 @@ void LB::b_openXlib(int nargs) {
 					xlibName = resFile->getResourceDetail(XCMD, rsrcList[i]).name.c_str();
 					g_lingo->openXLib(xlibName, kXObj);
 				}
+
+				rsrcList = resFile->getResourceIDList(XFCN);
+				for (uint i = 0; i < rsrcList.size(); i++) {
+					xlibName = resFile->getResourceDetail(XFCN, rsrcList[i]).name.c_str();
+					g_lingo->openXLib(xlibName, kXObj);
+				}
 				return;
 			} else {
 				delete resFile;
@@ -1204,7 +1258,7 @@ void LB::b_openXlib(int nargs) {
 		}
 	}
 
-	xlibName = d.asString();
+	xlibName = getFileName(d.asString());
 	g_lingo->openXLib(xlibName, kXObj);
 }
 
@@ -1269,8 +1323,8 @@ void LB::b_nothing(int nargs) {
 
 void LB::b_delay(int nargs) {
 	Datum d = g_lingo->pop();
-
 	g_director->getCurrentMovie()->getScore()->_nextFrameTime = g_system->getMillis() + (float)d.asInt() / 60 * 1000;
+	debugC(5, kDebugLoading, "b_delay(): delaying %d ticks, next frame time at %d", d.asInt(), g_director->getCurrentMovie()->getScore()->_nextFrameTime);
 }
 
 void LB::b_do(int nargs) {
@@ -1317,10 +1371,16 @@ void LB::b_go(int nargs) {
 			Datum movie;
 			Datum frame;
 
-			if (nargs > 0) {
+			if (nargs > 0 && firstArg.type == STRING) {
 				movie = firstArg;
 				TYPECHECK(movie, STRING);
 
+				frame = g_lingo->pop();
+				nargs -= 1;
+			// Even if there's more than one argument, if the first
+			// arg is an int, Director discards the remainder and
+			// treats it as the frame.
+			} else if (nargs > 0 && firstArg.type == INT) {
 				frame = g_lingo->pop();
 				nargs -= 1;
 			} else {
@@ -1410,8 +1470,8 @@ void LB::b_preLoad(int nargs) {
 
 	g_lingo->_theResult = g_lingo->pop();
 
-	if (nargs == 2)
-		g_lingo->pop();
+	if (nargs > 1)
+		g_lingo->dropStack(nargs - 1);
 }
 
 void LB::b_preLoadCast(int nargs) {
@@ -1434,8 +1494,7 @@ void LB::b_framesToHMS(int nargs) {
 	int fps = g_lingo->pop().asInt();
 	int frames = g_lingo->pop().asInt();
 
-	if (fps <= 0)
-		fps = -fps;
+	fps = MAX(1, fps);
 
 	bool negative = frames < 0;
 	if (negative)
@@ -1563,14 +1622,15 @@ void LB::b_printFrom(int nargs) {
 }
 
 void LB::b_quit(int nargs) {
-	if (g_director->getCurrentMovie())
-		g_director->getCurrentMovie()->getScore()->_playState = kPlayStopped;
+	Movie *movie = g_director->getCurrentMovie();
+	if (movie)
+		movie->getScore()->_playState = kPlayStopped;
 
 	g_lingo->pushVoid();
 }
 
 void LB::b_return(int nargs) {
-	CFrame *fp = g_director->getCurrentWindow()->_callstack.back();
+	CFrame *fp = g_lingo->_state->callstack.back();
 
 	Datum retVal;
 	if (nargs > 0) {
@@ -1583,7 +1643,7 @@ void LB::b_return(int nargs) {
 		g_lingo->pop();
 
 	// Do not allow a factory's mNew method to return a value
-	if (nargs > 0 && !(g_lingo->_currentMe.type == OBJECT && g_lingo->_currentMe.u.obj->getObjType() == kFactoryObj
+	if (nargs > 0 && !(g_lingo->_state->me.type == OBJECT && g_lingo->_state->me.u.obj->getObjType() == kFactoryObj
 			&& fp->sp.name->equalsIgnoreCase("mNew"))) {
 		g_lingo->push(retVal);
 	}
@@ -1693,7 +1753,7 @@ void LB::b_alert(int nargs) {
 
 	if (!debugChannelSet(-1, kDebugFewFramesOnly)) {
 		g_director->_wm->clearHandlingWidgets();
-		GUI::MessageDialog dialog(alert.c_str(), _("OK"));
+		GUI::MessageDialog dialog(g_director->getCurrentMovie()->getCast()->decodeString(alert), _("OK"));
 		dialog.runModal();
 	}
 }
@@ -1744,8 +1804,8 @@ void LB::b_showGlobals(int nargs) {
 
 void LB::b_showLocals(int nargs) {
 	Common::String local_out = "-- Local Variables --\n";
-	if (g_lingo->_localvars) {
-		for (auto it = g_lingo->_localvars->begin(); it != g_lingo->_localvars->end(); it++) {
+	if (g_lingo->_state->localVars) {
+		for (auto it = g_lingo->_state->localVars->begin(); it != g_lingo->_state->localVars->end(); it++) {
 			local_out += it->_key + " = " + it->_value.asString() + "\n";
 		}
 	}
@@ -1800,27 +1860,11 @@ void LB::b_copyToClipBoard(int nargs) {
 }
 
 void LB::b_duplicate(int nargs) {
-	Datum to = g_lingo->pop();
-	Datum from = g_lingo->pop();
-
-	Frame *currentFrame = g_director->getCurrentMovie()->getScore()->_frames[g_director->getCurrentMovie()->getScore()->getCurrentFrame()];
-	CastMember *castMember = g_director->getCurrentMovie()->getCastMember(from.asMemberID());
-	auto channels = g_director->getCurrentMovie()->getScore()->_channels;
-
-	castMember->setModified(true);
-	g_director->getCurrentMovie()->createOrReplaceCastMember(to.asMemberID(), castMember);
-
-	for (uint16 i = 0; i < currentFrame->_sprites.size(); i++) {
-		if (currentFrame->_sprites[i]->_castId == to.asMemberID())
-			currentFrame->_sprites[i]->setCast(to.asMemberID());
-	}
-
-	for (uint i = 0; i < channels.size(); i++) {
-		if (channels[i]->_sprite->_castId == to.asMemberID()) {
-			channels[i]->_sprite->setCast(to.asMemberID());
-			channels[i]->_dirty = true;
-		}
-	}
+	// Removed previous implementation since it copied only the reference to the cast
+	// and didn't actually duplicate it.
+	// See commit: 76e56f5b1f51a51d073ecf3970134d87964a4ea4
+	g_lingo->printSTUBWithArglist("b_duplicate", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void LB::b_editableText(int nargs) {
@@ -1857,11 +1901,12 @@ void LB::b_editableText(int nargs) {
 
 void LB::b_erase(int nargs) {
 	Datum d = g_lingo->pop();
-	CastMember *eraseCast = g_director->getCurrentMovie()->getCastMember(d.asMemberID());
+	Movie *movie = g_director->getCurrentMovie();
+	CastMember *eraseCast = movie->getCastMember(d.asMemberID());
 
 	if (eraseCast) {
 		eraseCast->_erase = true;
-		Common::Array<Channel *> channels = g_director->getCurrentMovie()->getScore()->_channels;
+		Common::Array<Channel *> channels = movie->getScore()->_channels;
 
 		for (uint i = 0; i < channels.size(); i++) {
 			if (channels[i]->_sprite->_castId == d.asMemberID()) {
@@ -1942,7 +1987,7 @@ void LB::b_importFileInto(int nargs) {
 	bitmapCast->setModified(true);
 	const Graphics::Surface *surf = img->getSurface();
 	bitmapCast->_size = surf->pitch * surf->h + img->getPaletteColorCount() * 3;
-	auto channels = g_director->getCurrentMovie()->getScore()->_channels;
+	auto channels = movie->getScore()->_channels;
 
 	for (uint i = 0; i < channels.size(); i++) {
 		if (channels[i]->_sprite->_castId == dst.asMemberID()) {
@@ -1960,13 +2005,13 @@ void LB::b_installMenu(int nargs) {
 	// installMenu castNum
 	Datum d = g_lingo->pop();
 
-	CastMemberID memberID = d.asMemberID();
+	CastMemberID memberID = d.asMemberID(kCastText);
 	if (memberID.member == 0) {
 		g_director->_wm->removeMenu();
 		return;
 	}
-
-	CastMember *member = g_director->getCurrentMovie()->getCastMember(memberID);
+	Movie *movie = g_director->getCurrentMovie();
+	CastMember *member = movie->getCastMember(memberID);
 	if (!member) {
 		g_lingo->lingoError("installMenu: Unknown %s", memberID.asString().c_str());
 		return;
@@ -1990,7 +2035,7 @@ void LB::b_installMenu(int nargs) {
 
 	debugC(3, kDebugLingoExec, "installMenu: '%s'", Common::toPrintable(menuStxt).encode().c_str());
 
-	LingoArchive *mainArchive = g_director->getCurrentMovie()->getMainLingoArch();
+	LingoArchive *mainArchive = movie->getMainLingoArch();
 
 	// Since loading the STXT converts the text to Unicode based on the platform
 	// encoding, we need to fetch the correct Unicode character for the platform.
@@ -2126,10 +2171,10 @@ void LB::b_move(int nargs) {
 	Datum src, dest;
 
 	if (nargs == 1) {
-		Datum d;
-		d.type = CASTREF;
-		d.u.cast = new CastMemberID();
-		d.u.cast->member = (int) g_director->getCurrentMovie()->getCast()->_castArrayStart;
+		int id = (int) g_director->getCurrentMovie()->getCast()->_castArrayStart;
+		CastMemberID *castId = new CastMemberID(id, 0);
+		Datum d = Datum(*castId);
+		delete castId;
 		g_lingo->push(d);
 		b_findEmpty(1);
 		dest = g_lingo->pop();
@@ -2153,32 +2198,33 @@ void LB::b_move(int nargs) {
 		return;
 	}
 
-	if (!g_director->getCurrentMovie()->getCastMember(*src.u.cast)) {
-		warning("b_move: Source CastMember doesn't exist");
-		return;
-	}
-
 	if (src.u.cast->castLib != 0) {
 		warning("b_move: wrong castLib '%d' in src CastMemberID", src.u.cast->castLib);
 	}
 
-	g_lingo->push(dest);
-	b_erase(1);
-
 	Movie *movie = g_director->getCurrentMovie();
-	uint16 frame = movie->getScore()->getCurrentFrame();
-	Frame *currentFrame = movie->getScore()->_frames[frame];
-	auto channels = g_director->getCurrentMovie()->getScore()->_channels;
+	CastMember *toMove = movie->getCastMember(src.asMemberID());
 
+	if (!toMove) {
+		warning("b_move: Source CastMember doesn't exist");
+		return;
+	}
 
-	movie->getScore()->renderFrame(frame, kRenderForceUpdate);
+	g_lingo->push(dest);
+	// Room for improvement, b_erase already marks the sprites as dirty
+	b_erase(1);
+	Score *score = movie->getScore();
+	uint16 frame = score->getCurrentFrame();
+	Frame *currentFrame = score->_frames[frame];
+	auto channels = score->_channels;
 
-	g_director->getCurrentMovie()->eraseCastMember(dest.asMemberID());
-	
-	CastMember *toMove = g_director->getCurrentMovie()->getCastMember(src.asMemberID());
+	score->renderFrame(frame, kRenderForceUpdate);
+
+	movie->eraseCastMember(dest.asMemberID());
+
 	CastMember *toReplace = new CastMember(toMove->getCast(), src.asMemberID().member);
-	g_director->getCurrentMovie()->createOrReplaceCastMember(dest.asMemberID(), toMove);
-	g_director->getCurrentMovie()->createOrReplaceCastMember(src.asMemberID(), toReplace);
+	movie->createOrReplaceCastMember(dest.asMemberID(), toMove);
+	movie->createOrReplaceCastMember(src.asMemberID(), toReplace);
 
 	for (uint16 i = 0; i < currentFrame->_sprites.size(); i++) {
 		if (currentFrame->_sprites[i]->_castId == dest.asMemberID())
@@ -2192,12 +2238,13 @@ void LB::b_move(int nargs) {
 		}
 	}
 
-	movie->getScore()->renderFrame(frame, kRenderForceUpdate);
+	score->renderFrame(frame, kRenderForceUpdate);
 }
 
 void LB::b_moveableSprite(int nargs) {
-	Score *sc = g_director->getCurrentMovie()->getScore();
-	Frame *frame = sc->_frames[g_director->getCurrentMovie()->getScore()->getCurrentFrame()];
+	Movie *movie = g_director->getCurrentMovie();
+	Score *score = movie->getScore();
+	Frame *frame = score->_frames[score->getCurrentFrame()];
 
 	if (g_lingo->_currentChannelId == -1) {
 		warning("b_moveableSprite: channel Id is missing");
@@ -2206,8 +2253,8 @@ void LB::b_moveableSprite(int nargs) {
 	}
 
 	// since we are using value copying, in order to make it taking effect immediately. we modify the sprites in channel
-	if (sc->_channels[g_lingo->_currentChannelId])
-		sc->_channels[g_lingo->_currentChannelId]->_sprite->_moveable = true;
+	if (score->_channels[g_lingo->_currentChannelId])
+		score->_channels[g_lingo->_currentChannelId]->_sprite->_moveable = true;
 	frame->_sprites[g_lingo->_currentChannelId]->_moveable = true;
 }
 
@@ -2219,10 +2266,17 @@ void LB::b_pasteClipBoardInto(int nargs) {
 	}
 
 	Movie *movie = g_director->getCurrentMovie();
-	uint16 frame = movie->getScore()->getCurrentFrame();
-	Frame *currentFrame = movie->getScore()->_frames[frame];
+
 	CastMember *castMember = movie->getCastMember(*g_director->_clipBoard);
-	auto channels = movie->getScore()->_channels;
+	if (!castMember) {
+		warning("LB:B_pasteClipBoardInto(): castMember not found");
+		return;
+	}
+
+	Score *score = movie->getScore();
+	uint16 frame = score->getCurrentFrame();
+	Frame *currentFrame = score->_frames[frame];
+	auto channels = score->_channels;
 
 	castMember->setModified(true);
 	movie->createOrReplaceCastMember(*to.u.cast, castMember);
@@ -2240,10 +2294,40 @@ void LB::b_pasteClipBoardInto(int nargs) {
 	}
 }
 
+static const struct PaletteNames {
+	const char *name;
+	PaletteType type;
+} paletteNames[] = {
+	{ "System", kClutSystemMac },
+	{ "System - Mac", kClutSystemMac },
+	{ "Rainbow", kClutRainbow },
+	{ "Grayscale", kClutGrayscale },
+	{ "Pastels", kClutPastels },
+	{ "Vivid", kClutVivid },
+	{ "NTSC", kClutNTSC },
+	{ "Metallic", kClutMetallic },
+	//{ "Web 216", },
+	//{ "VGA", },
+	//{ "System - Win", },
+	{ "SYSTEM - WIN (DIR 4)", kClutSystemWin },
+
+	// Japanese palette names.
+	// TODO: Check encoding. Original is SJIS
+	{ "\x83V\x83X\x83""e\x83\x80 - Mac", kClutSystemMac },				// システム - Mac
+	{ "\x83\x8C>\x83""C\x83\x93\x83{\x81[", kClutRainbow },				// レインボー
+	{ "\x83O\x83>\x8C\x81[\x83X\x83P\x81[\x83\x8B", kClutGrayscale },	// グレースケール
+	{ "\x83p\x83>X\x83""e\x83\x8B", kClutPastels },						// パステル
+	{ "\x83r\x83>r\x83""b\x83h", kClutVivid },							// ビビッド
+	{ "\x83\x81\x83^\x83\x8A\x83""b\x83N", kClutMetallic },				// メタリック
+	// { "\x83V\x83X\x83""e\x83\x80 - Win", },							// システム - Win
+	{ "\x83V\x83X\x83""e\x83\x80 - Win (Dir 4)", kClutSystemWin },		// システム - Win (Dir 4)
+};
+
 void LB::b_puppetPalette(int nargs) {
 	g_lingo->convertVOIDtoString(0, nargs);
 	int numFrames = 0, speed = 0, palette = 0;
 	Datum d;
+	Movie *movie = g_director->getCurrentMovie();
 
 	switch (nargs) {
 	case 3:
@@ -2258,22 +2342,14 @@ void LB::b_puppetPalette(int nargs) {
 		if (d.type == STRING) {
 			// TODO: It seems that there are not strings for Mac and Win system palette
 			Common::String palStr = d.asString();
-			if (palStr.equalsIgnoreCase("Rainbow")) {
-				palette = kClutRainbow;
-			} else if (palStr.equalsIgnoreCase("Grayscale")) {
-				palette = kClutGrayscale;
-			} else if (palStr.equalsIgnoreCase("Pastels")) {
-				palette = kClutPastels;
-			} else if (palStr.equalsIgnoreCase("Vivid")) {
-				palette = kClutVivid;
-			} else if (palStr.equalsIgnoreCase("NTSC")) {
-				palette = kClutNTSC;
-			} else if (palStr.equalsIgnoreCase("Metallic")) {
-				palette = kClutMetallic;
+
+			for (int i = 0; i < ARRAYSIZE(paletteNames); i++) {
+				if (palStr.equalsIgnoreCase(paletteNames[i].name))
+					palette = paletteNames[i].type;
 			}
 		}
 		if (!palette) {
-			CastMember *member = g_director->getCurrentMovie()->getCastMember(d.asMemberID());
+			CastMember *member = movie->getCastMember(d.asMemberID());
 
 			if (member && member->_type == kCastPalette)
 				palette = ((PaletteCastMember *)member)->getPaletteId();
@@ -2284,20 +2360,21 @@ void LB::b_puppetPalette(int nargs) {
 		return;
 	}
 
+	Score *score = movie->getScore();
 	if (palette) {
 		g_director->setPalette(palette);
-		g_director->getCurrentMovie()->getScore()->_puppetPalette = true;
+		score->_puppetPalette = true;
 	} else {
 		// Setting puppetPalette to 0 disables it (Lingo Dictionary, 226)
-		Score *sc = g_director->getCurrentMovie()->getScore();
-		g_director->getCurrentMovie()->getScore()->_puppetPalette = false;
+
+		score->_puppetPalette = false;
 
 		// FIXME: set system palette decided by platform, should be fixed after windows palette is working.
 		// try to set mac system palette if lastPalette is 0.
-		if (sc->_lastPalette == 0)
+		if (score->_lastPalette == 0)
 			g_director->setPalette(-1);
 		else
-			g_director->setPalette(sc->resolvePaletteId(sc->_lastPalette));
+			g_director->setPalette(score->resolvePaletteId(score->_lastPalette));
 	}
 
 	// TODO: Implement advanced features that use these.
@@ -2325,7 +2402,7 @@ void LB::b_puppetSound(int nargs) {
 	// So we'll just queue it to be played later.
 
 	if (nargs == 1) {
-		CastMemberID castMember = g_lingo->pop().asMemberID();
+		CastMemberID castMember = g_lingo->pop().asMemberID(kCastSound);
 
 		// in D2 manual p206, puppetSound 0 will turn off the puppet status of sound
 		sound->setPuppetSound(castMember, 1);
@@ -2865,6 +2942,7 @@ void LB::b_sound(int nargs) {
 	}
 
 	DirectorSound *soundManager = g_director->getCurrentWindow()->getSoundManager();
+	Score *score = g_director->getCurrentMovie()->getScore();
 
 	if (verb.u.s->equalsIgnoreCase("close") || verb.u.s->equalsIgnoreCase("stop")) {
 		if (nargs != 2) {
@@ -2879,24 +2957,24 @@ void LB::b_sound(int nargs) {
 			TYPECHECK(secondArg, INT);
 			ticks = secondArg.u.i;
 		} else {
-			ticks = 15 * (60 / g_director->getCurrentMovie()->getScore()->_currentFrameRate);
+			ticks = 15 * (60 / score->_currentFrameRate);
 		}
 
 		TYPECHECK(firstArg, INT);
 		soundManager->registerFade(firstArg.u.i, true, ticks);
-		g_director->getCurrentMovie()->getScore()->_activeFade = firstArg.u.i;
+		score->_activeFade = firstArg.u.i;
 		return;
 	} else if (verb.u.s->equalsIgnoreCase("fadeOut")) {
 		if (nargs > 2) {
 			TYPECHECK(secondArg, INT);
 			ticks = secondArg.u.i;
 		} else {
-			ticks = 15 * (60 / g_director->getCurrentMovie()->getScore()->_currentFrameRate);
+			ticks = 15 * (60 / score->_currentFrameRate);
 		}
 
 		TYPECHECK(firstArg, INT);
 		soundManager->registerFade(firstArg.u.i, false, ticks);
-		g_director->getCurrentMovie()->getScore()->_activeFade = firstArg.u.i;
+		score->_activeFade = firstArg.u.i;
 		return;
 	} else if (verb.u.s->equalsIgnoreCase("playFile")) {
 		ARGNUMCHECK(3)
@@ -2983,7 +3061,7 @@ void LB::b_cast(int nargs) {
 
 void LB::b_script(int nargs) {
 	Datum d = g_lingo->pop();
-	CastMemberID memberID = d.asMemberID();
+	CastMemberID memberID = d.asMemberID(kCastText);
 	CastMember *cast = g_director->getCurrentMovie()->getCastMember(memberID);
 
 	if (cast) {

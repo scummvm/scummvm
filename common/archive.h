@@ -26,6 +26,8 @@
 #include "common/list.h"
 #include "common/path.h"
 #include "common/ptr.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 #include "common/singleton.h"
 
 namespace Common {
@@ -139,6 +141,70 @@ public:
 	virtual SeekableReadStream *createReadStreamForMember(const Path &path) const = 0;
 };
 
+class MemcachingCaseInsensitiveArchive;
+
+// This is a shareable reference to a file contents stored in memory.
+// It can be in 2 states: strong when it holds a strong reference in
+// the sense of SharedPtr. Another state is weak when it only helds
+// WeakPtr and thus may expire. Also strong reference is held by
+// Returned memory stream. Hence once no memory streams and no
+// strong referenceas are remaining, the block is freed.
+class SharedArchiveContents {
+public:
+	SharedArchiveContents(byte *contents, uint32 contentSize) :
+		_strongRef(contents, ArrayDeleter<byte>()), _weakRef(_strongRef),
+		_contentSize(contentSize), _missingFile(false) {}
+	SharedArchiveContents() : _strongRef(nullptr), _weakRef(nullptr), _contentSize(0), _missingFile(true) {}
+
+private:
+	bool isFileMissing() const { return _missingFile; }
+	SharedPtr<byte> getContents() const { return _strongRef; }
+	uint32 getSize() const { return _contentSize; }
+
+	bool makeStrong() {
+		if (_strongRef || _contentSize == 0 || _missingFile)
+			return true;
+		_strongRef = SharedPtr<byte>(_weakRef);
+		if (_strongRef)
+			return true;
+		return false;
+	}
+
+	void makeWeak() {
+		// No need to make weak if we have no contents
+		if (_contentSize == 0)
+			return;
+		_strongRef = nullptr;
+	}
+
+	SharedPtr<byte> _strongRef;
+	WeakPtr<byte> _weakRef;
+	uint32 _contentSize;
+	bool _missingFile;
+
+	friend class MemcachingCaseInsensitiveArchive;
+};
+
+/**
+ * An archive that caches the resulting contents.
+ */
+class MemcachingCaseInsensitiveArchive : public Archive {
+public:
+	MemcachingCaseInsensitiveArchive(uint32 maxStronglyCachedSize = 512) : _maxStronglyCachedSize(maxStronglyCachedSize) {}
+	SeekableReadStream *createReadStreamForMember(const Path &path) const;
+
+	virtual String translatePath(const Path &path) const {
+		// Most of users of this class implement DOS-like archives.
+		// Others override this method.
+		return normalizePath(path.toString('\\'), '\\');
+	}
+
+	virtual SharedArchiveContents readContentsForPath(const String& translatedPath) const = 0;
+
+private:
+	mutable HashMap<String, SharedArchiveContents, IgnoreCase_Hash, IgnoreCase_EqualTo> _cache;
+	uint32 _maxStronglyCachedSize;
+};
 
 /**
  * The SearchSet class enables access to a group of Archives through the Archive interface.

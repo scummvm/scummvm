@@ -35,11 +35,11 @@ namespace MADS {
 
 enum ConversationMode {
 	CONVMODE_NONE = -1,
-	CONVMODE_0 = 0,
-	CONVMODE_1 = 1,
-	CONVMODE_2 = 2,
-	CONVMODE_3 = 3,
-	CONVMODE_4 = 4,
+	CONVMODE_NEXT = 0,
+	CONVMODE_WAIT_AUTO = 1,
+	CONVMODE_WAIT_ENTRY = 2,
+	CONVMODE_EXECUTE = 3,
+	CONVMODE_REPLY = 4,
 	CONVMODE_5 = 5,
 	CONVMODE_6 = 6,
 	CONVMODE_7 = 7,
@@ -276,10 +276,10 @@ struct ConversationConditionals {
 	int _numImports;
 
 	int _currentNode;
-	Common::Array<int> _messageList1;
-	Common::Array<int> _messageList2;
-	Common::Array<int> _messageList3;
-	Common::Array<int> _messageList4;
+	Common::Array<int> _playerMessageList;
+	Common::Array<int> _actorMessageList;
+	Common::Array<int> _playerSpeechList;
+	Common::Array<int> _actorSpeechList;
 
 	/**
 	 * Constructor

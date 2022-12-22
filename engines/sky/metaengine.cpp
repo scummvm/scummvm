@@ -25,6 +25,7 @@
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/standard-actions.h"
 
+#include "common/gui_options.h"
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/translation.h"
@@ -44,6 +45,8 @@ class SkyMetaEngine : public MetaEngine {
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	Common::Error createInstance(OSystem *syst, Engine **engine) override;
+
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -147,6 +150,34 @@ Common::Error SkyMetaEngine::createInstance(OSystem *syst, Engine **engine) {
 	return Common::kNoError;
 }
 
+static const ExtraGuiOption skyExtraGuiOption = {
+	_s("Floppy intro"),
+	_s("Use the floppy version's intro (CD version only)"),
+	"alt_intro",
+	false,
+	0,
+	0
+};
+
+const ExtraGuiOptions SkyMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	Common::String guiOptions;
+	ExtraGuiOptions options;
+
+	if (target.empty()) {
+		options.push_back(skyExtraGuiOption);
+		return options;
+	}
+
+	if (ConfMan.hasKey("guioptions", target)) {
+		guiOptions = ConfMan.get("guioptions", target);
+		guiOptions = parseGameGUIOptions(guiOptions);
+	}
+
+	if (!guiOptions.contains(GUIO_NOSPEECH))
+		options.push_back(skyExtraGuiOption);
+	return options;
+}
+
 SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	SaveStateList saveList;
@@ -207,7 +238,7 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	char fName[20];
-	sprintf(fName,"SKY-VM.%03d", slot);
+	Common::sprintf_s(fName,"SKY-VM.%03d", slot);
 	saveFileMan->removeSavefile(fName);
 
 	// Load current save game descriptions
@@ -275,7 +306,7 @@ SaveStateDescriptor SkyMetaEngine::querySaveMetaInfos(const char *target, int sl
 		// Make sure the file exists
 		// Note: there can be valid saved file names with empty savename
 		char fName[20];
-		sprintf(fName,"SKY-VM.%03d", slot);
+		Common::sprintf_s(fName,"SKY-VM.%03d", slot);
 		Common::InSaveFile *in = saveFileMan->openForLoading(fName);
 		if (in) {
 			delete in;

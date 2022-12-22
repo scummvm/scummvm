@@ -487,7 +487,7 @@ void Scene::drawActorNumber(int16 x, int16 y, uint16 actorId) {
 	uint16 text[30];
 	char text8[15];
 
-	sprintf(text8, "%d", actorId);
+	Common::sprintf_s(text8, "%d", actorId);
 
 	for (uint i = 0; i < strlen(text8); i++) {
 		text[i] = text8[i];

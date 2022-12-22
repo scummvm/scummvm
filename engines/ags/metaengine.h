@@ -22,7 +22,7 @@
 #ifndef AGS_METAENGINE_H
 #define AGS_METAENGINE_H
 
-#include "common/achievements.h"
+#include "engines/achievements.h"
 #include "engines/advancedDetector.h"
 
 class AGSMetaEngine : public AdvancedMetaEngine {
@@ -51,7 +51,7 @@ public:
 	 */
 	Common::String getSavegameFile(int saveGameIdx, const char *target = nullptr) const override;
 
-	GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.
@@ -79,7 +79,7 @@ public:
 	 */
 	void removeSaveState(const char *target, int slot) const override;
 
-	const Common::AchievementDescriptionList* getAchievementDescriptionList() const override;
+	const Common::AchievementDescriptionList *getAchievementDescriptionList() const override;
 };
 
 #endif

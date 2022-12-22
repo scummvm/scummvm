@@ -21,10 +21,6 @@
 
 namespace Buried {
 
-#define GAMEOPTION_ALLOW_SKIP	GUIO_GAMEOPTIONS1
-#define GUIO_FULL_GAME			GUIO1(GAMEOPTION_ALLOW_SKIP)
-#define GUIO_GAME_DEMO			GUIO1(GUIO_NOLAUNCHLOAD)
-
 // NOTE: If variants with new languages are added, the Mayan death god
 // box puzzle will need to be updated. Check environ/mayan.cpp,
 // DeathGodPuzzleBox::isPuzzleSolved()

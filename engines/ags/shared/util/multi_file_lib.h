@@ -60,7 +60,7 @@ enum MFLVersion {
 	kMFLVersion_MultiV15 = 15, // unknown differences
 	kMFLVersion_MultiV20 = 20,
 	kMFLVersion_MultiV21 = 21,
-	kMFLVersion_MultiV30 = 30  // 64-bit file support, loose limits
+	kMFLVersion_MultiV30 = 30  // 64-bit file support, lose limits
 };
 
 // Maximal number of the data files in one library chain (1-byte index)

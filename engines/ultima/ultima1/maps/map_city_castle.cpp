@@ -136,7 +136,7 @@ Point MapCityCastle::getViewportPosition(const Point &viewportSize) {
 		topLeft.x = _playerWidget->_position.x - (viewportSize.x - 1) / 2;
 		topLeft.y = _playerWidget->_position.y - (viewportSize.y - 1) / 2;
 
-		// Fixed maps, so constrain top left corner so the map fills the viewport. This will accomodate
+		// Fixed maps, so constrain top left corner so the map fills the viewport. This will accommodate
 		// future renderings with more tiles, or greater tile size
 		topLeft.x = CLIP((int)topLeft.x, 0, (int)(width() - viewportSize.x));
 		topLeft.y = CLIP((int)topLeft.y, 0, (int)(height() - viewportSize.y));

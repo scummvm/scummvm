@@ -25,22 +25,26 @@
 
 namespace Scumm {
 
-PcSpkDriver::PcSpkDriver(Audio::Mixer *mixer)
-	: MidiDriver_Emulated(mixer), _pcSpk(mixer->getOutputRate()) {
+IMuseDriver_PCSpk::IMuseDriver_PCSpk(Audio::Mixer *mixer)
+	: MidiDriver_Emulated(mixer), _pcSpk(mixer->getOutputRate()) , _activeChannel(nullptr), _lastActiveChannel(nullptr), _lastActiveOut(0), _effectTimer(0), _randBase(1) {
+	memset(_channels, 0, sizeof(_channels));
 }
 
-PcSpkDriver::~PcSpkDriver() {
+IMuseDriver_PCSpk::~IMuseDriver_PCSpk() {
 	close();
 }
 
-int PcSpkDriver::open() {
+int IMuseDriver_PCSpk::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
 	MidiDriver_Emulated::open();
 
-	for (uint i = 0; i < 6; ++i)
-		_channels[i].init(this, i);
+	for (uint i = 0; i < 6; ++i) {
+		delete _channels[i];
+		_channels[i] = new MidiChannel_PcSpk(this, i);
+	}
+
 	_activeChannel = nullptr;
 	_effectTimer = 0;
 	_randBase = 1;
@@ -59,44 +63,41 @@ int PcSpkDriver::open() {
 	return 0;
 }
 
-void PcSpkDriver::close() {
+void IMuseDriver_PCSpk::close() {
 	if (!_isOpen)
 		return;
 	_isOpen = false;
 
 	_mixer->stopHandle(_mixerSoundHandle);
+
+	for (uint i = 0; i < 6; ++i)
+		delete _channels[i];
 }
 
-void PcSpkDriver::send(uint32 d) {
+void IMuseDriver_PCSpk::send(uint32 d) {
 	assert((d & 0x0F) < 6);
-	_channels[(d & 0x0F)].send(d);
+	_channels[(d & 0x0F)]->send(d);
 }
 
-void PcSpkDriver::sysEx_customInstrument(byte channel, uint32 type, const byte *instr) {
-	assert(channel < 6);
-	if (type == 'SPK ')
-		_channels[channel].sysEx_customInstrument(type, instr);
-}
-
-MidiChannel *PcSpkDriver::allocateChannel() {
+MidiChannel *IMuseDriver_PCSpk::allocateChannel() {
 	for (uint i = 0; i < 6; ++i) {
-		if (_channels[i].allocate())
-			return &_channels[i];
+		if (_channels[i]->allocate())
+			return _channels[i];
 	}
 
 	return nullptr;
 }
 
-void PcSpkDriver::generateSamples(int16 *buf, int len) {
+void IMuseDriver_PCSpk::generateSamples(int16 *buf, int len) {
 	_pcSpk.readBuffer(buf, len);
 }
 
-void PcSpkDriver::onTimer() {
+void IMuseDriver_PCSpk::onTimer() {
 	if (!_activeChannel)
 		return;
 
 	for (uint i = 0; i < 6; ++i) {
-		OutputChannel &out = _channels[i]._out;
+		OutputChannel &out = _channels[i]->_out;
 
 		if (!out.active)
 			continue;
@@ -113,9 +114,9 @@ void PcSpkDriver::onTimer() {
 				_effectTimer = 0;
 
 				if (out.effectEnvelopeA.state)
-					updateEffectGenerator(_channels[i], out.effectEnvelopeA, out.effectDefA);
+					updateEffectGenerator(*_channels[i], out.effectEnvelopeA, out.effectDefA);
 				if (out.effectEnvelopeB.state)
-					updateEffectGenerator(_channels[i], out.effectEnvelopeB, out.effectDefB);
+					updateEffectGenerator(*_channels[i], out.effectEnvelopeB, out.effectDefB);
 			}
 		} else {
 			out.active = 0;
@@ -133,13 +134,13 @@ void PcSpkDriver::onTimer() {
 	}
 }
 
-void PcSpkDriver::updateNote() {
+void IMuseDriver_PCSpk::updateNote() {
 	uint8 priority = 0;
 	_activeChannel = nullptr;
 	for (uint i = 0; i < 6; ++i) {
-		if (_channels[i]._allocated && _channels[i]._out.active && _channels[i]._priority >= priority) {
-			priority = _channels[i]._priority;
-			_activeChannel = &_channels[i];
+		if (_channels[i]->_allocated && _channels[i]->_out.active && _channels[i]->_priority >= priority) {
+			priority = _channels[i]->_priority;
+			_activeChannel = _channels[i];
 		}
 	}
 
@@ -152,7 +153,7 @@ void PcSpkDriver::updateNote() {
 	}
 }
 
-void PcSpkDriver::output(uint16 out) {
+void IMuseDriver_PCSpk::output(uint16 out) {
 	byte v1 = (out >> 7) & 0xFF;
 	byte v2 = (out >> 2) & 0x1E;
 
@@ -170,14 +171,13 @@ void PcSpkDriver::output(uint16 out) {
 	}
 }
 
-void PcSpkDriver::MidiChannel_PcSpk::init(PcSpkDriver *owner, byte channel) {
-	_owner = owner;
-	_channel = channel;
-	_allocated = false;
+IMuseDriver_PCSpk::MidiChannel_PcSpk::MidiChannel_PcSpk(IMuseDriver_PCSpk *owner, byte number) : MidiChannel(), _owner(owner), _number(number), _allocated(false),
+	_priority(0), _tl(0), _modWheel(0), _pitchBend(0), /*_programNr(0), */_sustain(0), _pitchBendFactor(2), _pitchBendTmp(0), _transpose(0), _detune(0) {
 	memset(&_out, 0, sizeof(_out));
+	memset(_instrument, 0, sizeof(_instrument));
 }
 
-bool PcSpkDriver::MidiChannel_PcSpk::allocate() {
+bool IMuseDriver_PCSpk::MidiChannel_PcSpk::allocate() {
 	if (_allocated)
 		return false;
 
@@ -190,21 +190,13 @@ bool PcSpkDriver::MidiChannel_PcSpk::allocate() {
 	return true;
 }
 
-MidiDriver *PcSpkDriver::MidiChannel_PcSpk::device() {
-	return _owner;
-}
-
-byte PcSpkDriver::MidiChannel_PcSpk::getNumber() {
-	return _channel;
-}
-
-void PcSpkDriver::MidiChannel_PcSpk::release() {
+void IMuseDriver_PCSpk::MidiChannel_PcSpk::release() {
 	_out.active = 0;
 	_allocated = false;
 	_owner->updateNote();
 }
 
-void PcSpkDriver::MidiChannel_PcSpk::send(uint32 b) {
+void IMuseDriver_PCSpk::MidiChannel_PcSpk::send(uint32 b) {
 	uint8 type = b & 0xF0;
 	uint8 p1 = (b >> 8) & 0xFF;
 	uint8 p2 = (b >> 16) & 0xFF;
@@ -234,7 +226,7 @@ void PcSpkDriver::MidiChannel_PcSpk::send(uint32 b) {
 	}
 }
 
-void PcSpkDriver::MidiChannel_PcSpk::noteOff(byte note) {
+void IMuseDriver_PCSpk::MidiChannel_PcSpk::noteOff(byte note) {
 	if (!_allocated)
 		return;
 
@@ -249,7 +241,7 @@ void PcSpkDriver::MidiChannel_PcSpk::noteOff(byte note) {
 	}
 }
 
-void PcSpkDriver::MidiChannel_PcSpk::noteOn(byte note, byte velocity) {
+void IMuseDriver_PCSpk::MidiChannel_PcSpk::noteOn(byte note, byte velocity) {
 	if (!_allocated)
 		return;
 
@@ -257,7 +249,7 @@ void PcSpkDriver::MidiChannel_PcSpk::noteOn(byte note, byte velocity) {
 	_out.sustainNoteOff = 0;
 	_out.length = _instrument[0];
 
-	if (_instrument[4] * 256 < ARRAYSIZE(PcSpkDriver::_outInstrumentData))
+	if (_instrument[4] * 256 < ARRAYSIZE(IMuseDriver_PCSpk::_outInstrumentData))
 		_out.instrument = _owner->_outInstrumentData + _instrument[4] * 256;
 	else
 		_out.instrument = nullptr;
@@ -278,7 +270,7 @@ void PcSpkDriver::MidiChannel_PcSpk::noteOn(byte note, byte velocity) {
 	}
 	_owner->updateNote();
 
-	_out.unkC += PcSpkDriver::getEffectModifier(_instrument[3] + ((velocity & 0xFE) << 4));
+	_out.unkC += IMuseDriver_PCSpk::getEffectModifier(_instrument[3] + ((velocity & 0xFE) << 4));
 	if (_out.unkC > 63)
 		_out.unkC = 63;
 
@@ -289,16 +281,17 @@ void PcSpkDriver::MidiChannel_PcSpk::noteOn(byte note, byte velocity) {
 		_owner->setupEffects(*this, _out.effectEnvelopeB, _out.effectDefB, _instrument[14], _instrument + 15);
 }
 
-void PcSpkDriver::MidiChannel_PcSpk::programChange(byte program) {
+void IMuseDriver_PCSpk::MidiChannel_PcSpk::programChange(byte program) {
 	// Nothing to implement here, the iMuse code takes care of passing us the
 	// instrument data.
 }
 
-void PcSpkDriver::MidiChannel_PcSpk::pitchBend(int16 bend) {
-	_pitchBend = (bend * _pitchBendFactor) >> 6;
+void IMuseDriver_PCSpk::MidiChannel_PcSpk::pitchBend(int16 bend) {
+	_pitchBendTmp = bend;
+	_pitchBend = (_transpose << 7) + ((_pitchBendTmp * _pitchBendFactor) >> 6) + _detune;
 }
 
-void PcSpkDriver::MidiChannel_PcSpk::controlChange(byte control, byte value) {
+void IMuseDriver_PCSpk::MidiChannel_PcSpk::controlChange(byte control, byte value) {
 	switch (control) {
 	case 1:
 		if (_out.effectEnvelopeA.state && _out.effectDefA.useModWheel)
@@ -338,19 +331,32 @@ void PcSpkDriver::MidiChannel_PcSpk::controlChange(byte control, byte value) {
 	}
 }
 
-void PcSpkDriver::MidiChannel_PcSpk::pitchBendFactor(byte value) {
+void IMuseDriver_PCSpk::MidiChannel_PcSpk::pitchBendFactor(byte value) {
 	_pitchBendFactor = value;
 }
 
-void PcSpkDriver::MidiChannel_PcSpk::priority(byte value) {
+void IMuseDriver_PCSpk::MidiChannel_PcSpk::transpose(int8 value) {
+	_transpose = value;
+	_pitchBend = (_transpose << 7) + ((_pitchBendTmp * _pitchBendFactor) >> 6) + _detune;
+}
+
+void IMuseDriver_PCSpk::MidiChannel_PcSpk::detune(byte value) {
+	_detune = (int8)value;
+	_pitchBend = (_transpose << 7) + ((_pitchBendTmp * _pitchBendFactor) >> 6) + _detune;
+}
+
+void IMuseDriver_PCSpk::MidiChannel_PcSpk::priority(byte value) {
 	_priority = value;
 }
 
-void PcSpkDriver::MidiChannel_PcSpk::sysEx_customInstrument(uint32 type, const byte *instr) {
-	memcpy(_instrument, instr, sizeof(_instrument));
+void IMuseDriver_PCSpk::MidiChannel_PcSpk::sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) {
+	if (type == 'SPK ' && instr && dataSize == sizeof(_instrument))
+		memcpy(_instrument, instr, sizeof(_instrument));
+	else if (type != 'SPK ')
+		warning("MidiChannel_PcSpk: Receiving '%c%c%c%c' instrument data. Probably loading a savegame with that sound setting", (type >> 24) & 0xFF, (type >> 16) & 0xFF, (type >> 8) & 0xFF, type & 0xFF);
 }
 
-uint8 PcSpkDriver::getEffectModifier(uint16 level) {
+uint8 IMuseDriver_PCSpk::getEffectModifier(uint16 level) {
 	uint8 base = level / 32;
 	uint8 index = level % 32;
 
@@ -360,7 +366,7 @@ uint8 PcSpkDriver::getEffectModifier(uint16 level) {
 	return (base * (index + 1)) >> 5;
 }
 
-int16 PcSpkDriver::getEffectModLevel(int16 level, int8 mod) {
+int16 IMuseDriver_PCSpk::getEffectModLevel(int16 level, int8 mod) {
 	if (!mod) {
 		return 0;
 	} else if (mod == 31) {
@@ -380,7 +386,7 @@ int16 PcSpkDriver::getEffectModLevel(int16 level, int8 mod) {
 	}
 }
 
-int16 PcSpkDriver::getRandScale(int16 input) {
+int16 IMuseDriver_PCSpk::getRandScale(int16 input) {
 	if (_randBase & 1)
 		_randBase = (_randBase >> 1) ^ 0xB8;
 	else
@@ -389,7 +395,7 @@ int16 PcSpkDriver::getRandScale(int16 input) {
 	return (_randBase * input) >> 8;
 }
 
-void PcSpkDriver::setupEffects(MidiChannel_PcSpk &chan, EffectEnvelope &env, EffectDefinition &def, byte flags, const byte *data) {
+void IMuseDriver_PCSpk::setupEffects(MidiChannel_PcSpk &chan, EffectEnvelope &env, EffectDefinition &def, byte flags, const byte *data) {
 	def.phase = 0;
 	def.useModWheel = flags & 0x40;
 	env.loop = flags & 0x20;
@@ -446,7 +452,7 @@ void PcSpkDriver::setupEffects(MidiChannel_PcSpk &chan, EffectEnvelope &env, Eff
 	startEffect(env, data);
 }
 
-void PcSpkDriver::startEffect(EffectEnvelope &env, const byte *data) {
+void IMuseDriver_PCSpk::startEffect(EffectEnvelope &env, const byte *data) {
 	env.state = 1;
 	env.currentLevel = 0;
 	env.modWheelLast = 31;
@@ -465,7 +471,7 @@ void PcSpkDriver::startEffect(EffectEnvelope &env, const byte *data) {
 	initNextEnvelopeState(env);
 }
 
-void PcSpkDriver::initNextEnvelopeState(EffectEnvelope &env) {
+void IMuseDriver_PCSpk::initNextEnvelopeState(EffectEnvelope &env) {
 	uint8 lastState = env.state - 1;
 
 	uint16 stepCount = _effectEnvStepTable[getEffectModifier(((env.stateTargetLevels[lastState] & 0x7F) << 5) + env.modWheelSensitivity)];
@@ -501,7 +507,7 @@ void PcSpkDriver::initNextEnvelopeState(EffectEnvelope &env) {
 	env.changeCountRem = 0;
 }
 
-void PcSpkDriver::updateEffectGenerator(MidiChannel_PcSpk &chan, EffectEnvelope &env, EffectDefinition &def) {
+void IMuseDriver_PCSpk::updateEffectGenerator(MidiChannel_PcSpk &chan, EffectEnvelope &env, EffectDefinition &def) {
 	if (advanceEffectEnvelope(env, def) & 1) {
 		switch (def.type) {
 		case 0: case 1:
@@ -537,7 +543,7 @@ void PcSpkDriver::updateEffectGenerator(MidiChannel_PcSpk &chan, EffectEnvelope 
 	}
 }
 
-uint8 PcSpkDriver::advanceEffectEnvelope(EffectEnvelope &env, EffectDefinition &def) {
+uint8 IMuseDriver_PCSpk::advanceEffectEnvelope(EffectEnvelope &env, EffectDefinition &def) {
 	if (env.duration != 0) {
 		env.duration -= 17;
 		if (env.duration <= 0) {
@@ -584,7 +590,7 @@ uint8 PcSpkDriver::advanceEffectEnvelope(EffectEnvelope &env, EffectDefinition &
 	return changedFlags;
 }
 
-const byte PcSpkDriver::_outInstrumentData[1024] = {
+const byte IMuseDriver_PCSpk::_outInstrumentData[1024] = {
 	0x00, 0x03, 0x06, 0x09, 0x0C, 0x0F, 0x12, 0x15,
 	0x18, 0x1B, 0x1E, 0x21, 0x24, 0x27, 0x2A, 0x2D,
 	0x30, 0x33, 0x36, 0x39, 0x3B, 0x3E, 0x41, 0x43,
@@ -715,7 +721,7 @@ const byte PcSpkDriver::_outInstrumentData[1024] = {
 	0xD4, 0xF7, 0x4A, 0x4A, 0xD0, 0x57, 0x68, 0x76
 };
 
-const byte PcSpkDriver::_outputTable1[] = {
+const byte IMuseDriver_PCSpk::_outputTable1[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0,
@@ -734,7 +740,7 @@ const byte PcSpkDriver::_outputTable1[] = {
 	7, 7, 7, 7, 7, 7, 7, 7
 };
 
-const byte PcSpkDriver::_outputTable2[] = {
+const byte IMuseDriver_PCSpk::_outputTable2[] = {
 	0,  1,  2,  3,
 	4,  5,  6,  7,
 	8,  9, 10, 11,
@@ -769,7 +775,7 @@ const byte PcSpkDriver::_outputTable2[] = {
 	4,  5,  6,  7
 };
 
-const uint16 PcSpkDriver::_effectEnvStepTable[] = {
+const uint16 IMuseDriver_PCSpk::_effectEnvStepTable[] = {
 	  1,    2,    4,    5,
 	  6,    7,    8,    9,
 	 10,   12,   14,   16,
@@ -780,7 +786,7 @@ const uint16 PcSpkDriver::_effectEnvStepTable[] = {
 	600,  860, 1200, 1600
 };
 
-const uint16 PcSpkDriver::_frequencyTable[] = {
+const uint16 IMuseDriver_PCSpk::_frequencyTable[] = {
 	0x8E84, 0x8E00, 0x8D7D, 0x8CFA,
 	0x8C78, 0x8BF7, 0x8B76, 0x8AF5,
 	0x8A75, 0x89F5, 0x8976, 0x88F7,

@@ -19,6 +19,9 @@
  *
  */
 
+// For _tcscat
+#define FORBIDDEN_SYMBOL_EXCEPTION_strcat
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <shellapi.h> // for CommandLineToArgvW()
@@ -86,8 +89,11 @@ HRESULT SHGetFolderPathFunc(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, 
 namespace Win32 {
 
 bool getApplicationDataDirectory(TCHAR *applicationDataDirectory) {
-	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, applicationDataDirectory) != S_OK) {
-		warning("Unable to access application data directory");
+	HRESULT hr = SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, applicationDataDirectory);
+	if (hr != S_OK) {
+		if (hr != E_NOTIMPL) {
+			warning("Unable to locate application data directory");
+		}
 		return false;
 	}
 
@@ -171,7 +177,7 @@ char *unicodeToAnsi(const wchar_t *s) {
 TCHAR *stringToTchar(const Common::String& s) {
 #ifndef UNICODE
 	char *t = (char *)malloc(s.size() + 1);
-	strcpy(t, s.c_str());
+	Common::strcpy_s(t, s.size() + 1, s.c_str());
 	return t;
 #else
 	return ansiToUnicode(s.c_str());

@@ -86,6 +86,10 @@ enum {
 	kPinkDebugActions = 1 << 4
 };
 
+enum {
+	GF_COMPRESSED = 1 << 0,
+};
+
 extern Graphics::PaletteLookup *g_paletteLookup;
 
 class PinkEngine : public Engine {

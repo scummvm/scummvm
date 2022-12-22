@@ -130,7 +130,7 @@ void Costume::load(Common::SeekableReadStream *data) {
 
 	ts.expectString("section components");
 	ts.scanString(" numcomponents %d", 1, &_numComponents);
-	_components = new Component *[_numComponents];
+	_components = new Component *[_numComponents]{};
 	for (int i = 0; i < _numComponents; i++) {
 		int id, tagID, hash, parentID, namePos;
 		const char *line = ts.getCurrentLine();

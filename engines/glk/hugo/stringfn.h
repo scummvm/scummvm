@@ -23,6 +23,7 @@
 #define GLK_HUGO_STRINGFN
 
 #include "common/algorithm.h"
+#include "common/str.h"
 
 namespace Glk {
 namespace Hugo {

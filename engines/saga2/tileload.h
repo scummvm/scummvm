@@ -28,7 +28,7 @@
 
 namespace Saga2 {
 
-const int           maxBanks = 64;          // 64 banks maximum
+const int           kMaxBanks = 64;          // 64 banks maximum
 
 /* ============================================================================ *
    TileBank request bits
@@ -40,7 +40,7 @@ const int           maxBanks = 64;          // 64 banks maximum
 
 class BankBits {
 public:
-	uint32 _b[maxBanks / 32];
+	uint32 _b[kMaxBanks / 32];
 
 	// constructors
 	BankBits() {}
@@ -132,7 +132,7 @@ public:
 template<int size> class FixedBitArray {
 private:
 	enum {
-		lWords = ((size + 31) / 32)
+		klWords = ((size + 31) / 32)
 	};
 
 	int16 WORDNUM(int n) {
@@ -145,7 +145,7 @@ private:
 		return (1 << (n & 31));
 	}
 
-	uint32  _b[lWords];
+	uint32  _b[klWords];
 
 	void clear() {
 		memset(&_b, 0, sizeof _b);
@@ -181,7 +181,7 @@ public:
 	friend FixedBitArray operator& (FixedBitArray c, FixedBitArray d) {
 		FixedBitArray   t;
 
-		for (uint16 i = 0; i < lWords; i++)
+		for (uint16 i = 0; i < klWords; i++)
 			t._b[i] = c._b[i] & d._b[i];
 		return t;
 	}
@@ -189,19 +189,19 @@ public:
 	friend FixedBitArray operator| (FixedBitArray c, FixedBitArray d) {
 		FixedBitArray t;
 
-		for (uint16 i = 0; i < lWords; i++)
+		for (uint16 i = 0; i < klWords; i++)
 			t._b[i] = c._b[i] | d._b[i];
 		return t;
 	}
 
 	friend FixedBitArray &operator|= (FixedBitArray c, FixedBitArray d) {
-		for (uint16 i = 0; i < lWords; i++)
+		for (uint16 i = 0; i < klWords; i++)
 			c._b[i] |= d._b[i];
 		return c;
 	}
 
 	friend bool operator!= (FixedBitArray c, FixedBitArray d) {
-		for (uint16 i = 0; i < lWords; i++)
+		for (uint16 i = 0; i < klWords; i++)
 			if (c._b[i] != d._b[i]) return true;
 		return false;
 	}
@@ -209,7 +209,7 @@ public:
 	friend FixedBitArray operator^ (FixedBitArray c, FixedBitArray d) {
 		FixedBitArray t;
 
-		for (uint16 i = 0; i < lWords; i++)
+		for (uint16 i = 0; i < klWords; i++)
 			t._b[i] = c._b[i] ^ d._b[i];
 		return t;
 	}

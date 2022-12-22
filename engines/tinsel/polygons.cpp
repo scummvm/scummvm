@@ -1470,7 +1470,7 @@ void CheckNPathIntegrity() {
 			hp = PolygonIndex(rp);
 			for (j = 0; j <= n; j++) {
 				if (!IsInPolygon(cp.getNodeX(j), cp.getNodeY(j), hp)) {
-					sprintf(_vm->_font->TextBufferAddr(), "Node (%d, %d) is not in its own path (starting (%d, %d))",
+					Common::sprintf_s(_vm->_font->TextBufferAddr(), "Node (%d, %d) is not in its own path (starting (%d, %d))",
 						 cp.getNodeX(j), cp.getNodeY(j), rp->cx[0], rp->cy[0]);
 					error(_vm->_font->TextBufferAddr());
 				}
@@ -1482,12 +1482,12 @@ void CheckNPathIntegrity() {
 					break;
 
 				if (IsInPolygon(cp.getNodeX(0), cp.getNodeY(0), PolygonIndex(rp->adjpaths[j]))) {
-					sprintf(_vm->_font->TextBufferAddr(), "Node (%d, %d) is in another path (starting (%d, %d))",
+					Common::sprintf_s(_vm->_font->TextBufferAddr(), "Node (%d, %d) is in another path (starting (%d, %d))",
 						 cp.getNodeX(0), cp.getNodeY(0), rp->adjpaths[j]->cx[0], rp->adjpaths[j]->cy[0]);
 					error(_vm->_font->TextBufferAddr());
 				}
 				if (IsInPolygon(cp.getNodeX(n), cp.getNodeY(n), PolygonIndex(rp->adjpaths[j]))) {
-					sprintf(_vm->_font->TextBufferAddr(), "Node (%d, %d) is in another path (starting (%d, %d))",
+					Common::sprintf_s(_vm->_font->TextBufferAddr(), "Node (%d, %d) is in another path (starting (%d, %d))",
 						 cp.getNodeX(n), cp.getNodeY(n), rp->adjpaths[j]->cx[0], rp->adjpaths[j]->cy[0]);
 					error(_vm->_font->TextBufferAddr());
 				}
@@ -1703,7 +1703,7 @@ static void PseudoCenter(POLYGON *p) {
 #ifdef DEBUG
 	//	assert(IsInPolygon(p->pcenterx, p->pcentery, PolygonIndex(p)));  // Pseudo-center is not in path
 	if (!IsInPolygon(p->pcenterx, p->pcentery, PolygonIndex(p))) {
-		sprintf(_vm->_font->TextBufferAddr(), "Pseudo-center is not in path (starting (%d, %d)) - polygon reversed?",
+		Common::sprintf_s(_vm->_font->TextBufferAddr(), "Pseudo-center is not in path (starting (%d, %d)) - polygon reversed?",
 			p->cx[0], p->cy[0]);
 		error(_vm->_font->TextBufferAddr());
 	}

@@ -27,55 +27,55 @@ namespace OpenGL {
 Pipeline *Pipeline::activePipeline = nullptr;
 
 Pipeline::Pipeline()
-	: _activeFramebuffer(nullptr), _isActive(false) {
+	: _activeFramebuffer(nullptr) {
 }
 
 void Pipeline::activate() {
-	_isActive = true;
-
-	if (_activeFramebuffer) {
-		_activeFramebuffer->activate();
+	if (activePipeline == this) {
+		return;
 	}
+
+	if (activePipeline) {
+		activePipeline->deactivate();
+	}
+
+	activePipeline = this;
 
 	activateInternal();
 }
 
+void Pipeline::activateInternal() {
+	if (_activeFramebuffer) {
+		_activeFramebuffer->activate(this);
+	}
+}
+
 void Pipeline::deactivate() {
+	assert(isActive());
+
 	deactivateInternal();
 
+	activePipeline = nullptr;
+}
+
+void Pipeline::deactivateInternal() {
 	if (_activeFramebuffer) {
 		_activeFramebuffer->deactivate();
 	}
-
-	_isActive = false;
 }
 
 Framebuffer *Pipeline::setFramebuffer(Framebuffer *framebuffer) {
 	Framebuffer *oldFramebuffer = _activeFramebuffer;
-	if (_isActive && oldFramebuffer) {
+	if (isActive() && oldFramebuffer) {
 		oldFramebuffer->deactivate();
 	}
 
 	_activeFramebuffer = framebuffer;
-	if (_isActive && _activeFramebuffer) {
-		_activeFramebuffer->activate();
+	if (isActive() && _activeFramebuffer) {
+		_activeFramebuffer->activate(this);
 	}
 
 	return oldFramebuffer;
-}
-
-Pipeline *Pipeline::setPipeline(Pipeline *pipeline) {
-	Pipeline *oldPipeline = activePipeline;
-	if (oldPipeline) {
-		oldPipeline->deactivate();
-	}
-
-	activePipeline = pipeline;
-	if (activePipeline) {
-		activePipeline->activate();
-	}
-
-	return oldPipeline;
 }
 
 } // End of namespace OpenGL

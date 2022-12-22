@@ -349,13 +349,13 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 			chr = string[num++];
 			switch (chr) {
 			case 'b':
-				//dst += sprintf((char *)dst, "%b", args[val++]);
+				//dst += Common::sprintf_s((char *)dst, "%b", args[val++]);
 				break;
 			case 'c':
 				*dst++ = args[val++];
 				break;
 			case 'd':
-				dst += sprintf((char *)dst, "%d", args[val++]);
+				dst += Common::sprintf_s((char *)dst, sizeof(string) - (dst - dst0), "%d", args[val++]);
 				break;
 			case 's':
 				src = getStringAddress(args[val++]);
@@ -365,7 +365,7 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 				}
 				break;
 			case 'x':
-				dst += sprintf((char *)dst, "%x", args[val++]);
+				dst += Common::sprintf_s((char *)dst, sizeof(string) - (dst - dst0), "%x", args[val++]);
 				break;
 			default:
 				*dst++ = '%';
@@ -1174,14 +1174,14 @@ void ScummEngine_v72he::o72_arrayOps() {
 
 		offs = (b >= c) ? 1 : -1;
 		tmp2 = c;
-		tmp3 = c - b + 1;
+		tmp3 = ABS(c - b) + 1;
 		while (dim2start <= dim2end) {
 			tmp = dim1start;
 			while (tmp <= dim1end) {
 				writeArray(array, dim2start, tmp, tmp2);
 				if (--tmp3 == 0) {
 					tmp2 = c;
-					tmp3 = c - b + 1;
+					tmp3 = ABS(c - b) + 1;
 				} else {
 					tmp2 += offs;
 				}

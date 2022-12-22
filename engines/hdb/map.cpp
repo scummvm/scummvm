@@ -639,6 +639,11 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	// Scan all icons and init all Entities
 	g_hdb->setupProgressBar(_iconNum);
 	for (int i = 0; i < _iconNum; i++) {
+		if (_iconList[i].icon == 65535) {
+			warning("Map::load(): Icon index at pos %d is too big: %d", i, _iconList[i].icon);
+			continue;
+		}
+
 		debug(5, "%s, %d,%d,%s,%s,%s,%d,%d,%d,%d", AIType2Str(aiInfo[_iconList[i].icon].type), _iconList[i].x, _iconList[i].y, _iconList[i].funcInit,
 				_iconList[i].funcAction, _iconList[i].funcUse, _iconList[i].dir, _iconList[i].level,
 				_iconList[i].value1, _iconList[i].value2);

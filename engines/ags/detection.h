@@ -35,7 +35,8 @@ enum AGSDebugChannels {
 };
 
 enum GameFlag {
-	GAMEFLAG_FORCE_AA = 1
+	GAMEFLAG_FORCE_AA = 1,
+	GAMEFLAG_INSTALLER = 2,
 };
 
 struct PluginVersion {
@@ -46,6 +47,7 @@ struct PluginVersion {
 struct AGSGameDescription {
 	ADGameDescription desc;
 	const PluginVersion *_plugins;
+	const char *_mainNameInsideInstaller;
 };
 
 extern const PlainGameDescriptor GAME_NAMES[];

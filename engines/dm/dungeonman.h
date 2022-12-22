@@ -641,7 +641,7 @@ public:
 		return Square(getRelSquare(dir, stepsForward, stepsRight, posX, posY)).getType();
 	} // @ F0153_DUNGEON_GetRelativeSquareType
 	void setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX, int16 mapY); // @ F0172_DUNGEON_SetSquareAspect
-	void decodeText(char *destString, Thing thing, TextType type); // F0168_DUNGEON_DecodeText
+	void decodeText(char *destString, size_t maxSize, Thing thing, TextType type); // F0168_DUNGEON_DecodeText
 	Thing getUnusedThing(uint16 thingType); // @ F0166_DUNGEON_GetUnusedThing
 
 	uint16 getObjectWeight(Thing thing); // @ F0140_DUNGEON_GetObjectWeight

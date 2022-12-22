@@ -310,7 +310,7 @@ void TextView::processText() {
 		// Delete the @ character and shift back the remainder of the string
 		char *p = centerP + 1;
 		if (*p == ' ') ++p;
-		strcpy(centerP, p);
+		Common::strcpy_s(centerP, 80 - (centerP - _currentLine), p);
 
 	} else {
 		int lineWidth = _font->getWidth(_currentLine);

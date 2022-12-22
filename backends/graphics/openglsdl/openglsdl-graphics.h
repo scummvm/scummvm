@@ -74,7 +74,6 @@ private:
 	uint _lastRequestedWidth;
 	uint _lastRequestedHeight;
 	uint _graphicsScale;
-	bool _ignoreLoadVideoMode;
 	bool _gotResize;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)

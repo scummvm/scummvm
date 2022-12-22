@@ -376,7 +376,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_CNICK_LAURABOW,100,   100,  0,              nullptr, "<noname144>",                  nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // while playing domino - bug #6429 (same as the dominoHand2 workaround for Hoyle 3)
 	{ GID_CNICK_LAURABOW,100,   110,  0,              nullptr, "doit",                         nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // when changing the "Dominoes per hand" setting - bug #6430
 	{ GID_CNICK_LSL,     250,   250,  0,           "increase", "handleEvent",                  nullptr,     2,     2, { WORKAROUND_FAKE,   0 } }, // when increasing own bet for blackjack - bug #10184
-	{ GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "init",                         nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // when starting the game
+	{ GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "init",                         nullptr,     0,     1, { WORKAROUND_FAKE,   0 } }, // when starting the game
 	{ GID_ECOQUEST,       -1,    -1,  0,              nullptr, "doVerb",                       nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // almost clicking anywhere triggers this in almost all rooms
 	{ GID_ECOQUEST2,      -1,    50,  0,         "talkButton", "cue",                          nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // clicking Ecorder talk button before clicking power button
 	{ GID_FANMADE,       516,   979,  0,                   "", "export 0",                     nullptr,    20,    20, { WORKAROUND_FAKE,   0 } }, // Happens in Grotesteing after the logos
@@ -1309,6 +1309,12 @@ static const SciMessageWorkaroundEntry messageWorkarounds[] = {
 	// Clicking the drink-me potion on ego in the castle basement hallways while guards are around
 	{ GID_KQ6,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  840,   3,  14,   1,  1, { MSG_WORKAROUND_REMAP,    899,   0,   0, 198,  1, 99,   0,   0, nullptr } },
 	{ GID_KQ6,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  899,   1,  14,   1,  1, { MSG_WORKAROUND_REMAP,    899,   0,   0, 198,  1, 99,   0,   0, nullptr } },
+	// "Tips for playing King's Quest VI" displays a message that's too long to display on the screen
+	// with Macintosh fonts and causes the graphics code to crash. In the original this "worked" because
+	// of a script bug that truncated all CD and Mac messages to 400 characters, even though KQ6 has
+	// several important messages that are much longer. We fix the truncation bug with a script patch,
+	// but this one message needs to remain shorter.
+	{ GID_KQ6,           SCI_MEDIA_MAC,    K_LANG_NONE,     -1,  908,   0,   0,  16, 27, { MSG_WORKAROUND_EXTRACT,  908,   0,   0,  16, 27, 99,   0, 466, nullptr } },
 	// Asking Yvette about Tut in act 2 party in floppy version - bug #10723
 	//  The last two sequences in this five part message reveal a murder that hasn't occurred yet.
 	//  We skip these as to not spoil the plot, but only in the act 2 rooms, as the message is used
@@ -1321,6 +1327,12 @@ static const SciMessageWorkaroundEntry messageWorkarounds[] = {
 	{ GID_LAURABOW2,     SCI_MEDIA_FLOPPY, K_LANG_NONE,     -1,  550,   5,  39,   6,  1, { MSG_WORKAROUND_REMAP,    550,  45,  39,   6,  1,  0,   0,   0, nullptr } },
 	// Looking at coal in room 720, message is prepended with carriage return and newline
 	{ GID_LAURABOW2,     SCI_MEDIA_CD,     K_LANG_ENGLISH,  -1,  720,  12,   1,   0,  1, { MSG_WORKAROUND_EXTRACT,  720,  12,   1,   0,  1, 99,   2, 255, nullptr } },
+	// Asking Olympia about Pippin Carter during Act 2 in German version - bug #5710
+	//  This message contains over seventy trailing newlines, causing the graphics code to
+	//  draw a window larger than the screen and crash. We trim the trailing newlines.
+	{ GID_LAURABOW2,     SCI_MEDIA_FLOPPY, K_LANG_GERMAN,   -1, 1892,   1,   6,   3,  1, { MSG_WORKAROUND_EXTRACT, 1892,   1,   6,   3,  1, 25,   0, 249, nullptr } },
+	// Asking Ramses about snake oil in German version. Same as above: excessive trailing newlines.
+	{ GID_LAURABOW2,     SCI_MEDIA_FLOPPY, K_LANG_GERMAN,   -1, 1891,   1,   6,  41,  1, { MSG_WORKAROUND_EXTRACT, 1891,   1,   6,  41,  1, 27,   0, 146, nullptr } },
 	// Using the hand icon on Keith in the Blue Room (missing message) - bug #6253
 	{ GID_PQ1,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,   38,  10,   4,   8,  1, { MSG_WORKAROUND_REMAP,     38,  10,   4,   9,  1,  0,   0,   0, nullptr } },
 	// Using the eye icon on Keith in the Blue Room (no message and wrong talker) - bug #6253
@@ -1418,7 +1430,8 @@ static SciMessageWorkaroundSolution findMessageWorkaround(int module, byte noun,
 		if (workaround->gameId == g_sci->getGameId() &&
 			(workaround->media == SCI_MEDIA_ALL ||
 			(workaround->media == SCI_MEDIA_FLOPPY && !g_sci->isCD()) ||
-			(workaround->media == SCI_MEDIA_CD && g_sci->isCD())) &&
+			(workaround->media == SCI_MEDIA_CD && g_sci->isCD()) ||
+			(workaround->media == SCI_MEDIA_MAC && g_sci->getPlatform() == Common::kPlatformMacintosh && !g_sci->isCD())) &&
 			(workaround->language == K_LANG_NONE ||
 			workaround->language == g_sci->getSciLanguage()) &&
 			(workaround->roomNumber == -1 ||

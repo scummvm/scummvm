@@ -181,7 +181,7 @@ ImuseSndMgr::SoundDesc *ImuseSndMgr::openSound(const char *soundName, int volGro
 		error("ImuseSndMgr::openSound() Can't alloc free sound slot");
 	}
 
-	strcpy(sound->name, soundName);
+	Common::strcpy_s(sound->name, soundName);
 	sound->volGroupId = volGroupId;
 	sound->inStream = nullptr;
 

@@ -48,7 +48,7 @@ ReactorGuess::ReactorGuess(const DisplayElementID id) : DisplayElement(id) {
 }
 
 void ReactorGuess::initReactorGuess() {
-	_colors.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kReactorChoicesPICTID);
+	_colors.getImageFromPICTResource(g_vm->_resFork, kReactorChoicesPICTID);
 	startDisplaying();
 	show();
 }
@@ -104,7 +104,7 @@ ReactorChoiceHighlight::ReactorChoiceHighlight(const DisplayElementID id) : Disp
 }
 
 void ReactorChoiceHighlight::initReactorChoiceHighlight() {
-	_colors.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kReactorChoiceHilitePICTID);
+	_colors.getImageFromPICTResource(g_vm->_resFork, kReactorChoiceHilitePICTID);
 	startDisplaying();
 	show();
 }
@@ -194,9 +194,9 @@ ReactorHistory::ReactorHistory(const DisplayElementID id) : DisplayElement(id) {
 }
 
 void ReactorHistory::initReactorHistory() {
-	_colors.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kReactorHistoryPICTID);
-	_digits.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kReactorDigitsPICTID);
-	_answerColors.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kReactorAnswerPICTID);
+	_colors.getImageFromPICTResource(g_vm->_resFork, kReactorHistoryPICTID);
+	_digits.getImageFromPICTResource(g_vm->_resFork, kReactorDigitsPICTID);
+	_answerColors.getImageFromPICTResource(g_vm->_resFork, kReactorAnswerPICTID);
 	startDisplaying();
 	show();
 }

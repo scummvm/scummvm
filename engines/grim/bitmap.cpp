@@ -88,6 +88,8 @@ void BitmapData::load() {
 		return;
 	}
 	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(_fname.c_str());
+	if (!data)
+		error("Couldn't open %s", _fname.c_str());
 
 	uint32 tag = data->readUint32BE();
 	switch(tag) {

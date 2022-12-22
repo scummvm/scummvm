@@ -44,6 +44,7 @@ namespace Common {
  */
 
 class FSNode;
+class FSDirectory;
 class SeekableReadStream;
 class WriteStream;
 class SeekableWriteStream;
@@ -68,6 +69,7 @@ class FSList : public Array<FSNode> {};
 class FSNode : public ArchiveMember {
 private:
 	friend class ::AbstractFSNode;
+	friend class FSDirectory;
 	SharedPtr<AbstractFSNode>	_realNode;
 	/**
 	 * Construct an FSNode from a backend's AbstractFSNode implementation.
@@ -77,6 +79,7 @@ private:
 	 */
 	FSNode(AbstractFSNode *realNode);
 
+	String getRealName() const;
 public:
 	/**
 	 * Flag to tell listDir() which kind of files to list.
@@ -301,17 +304,17 @@ class FSDirectory : public Archive {
 	bool _ignoreClashes;
 	bool _includeDirectories;
 
-	String	_prefix; // string that is prepended to each cache item key
-	void setPrefix(const String &prefix);
+	Path	_prefix; // string that is prepended to each cache item key
+	void setPrefix(const Path &prefix);
 
 	// Caches are case insensitive, clashes are dealt with when creating
 	// Key is stored in lowercase.
-	typedef HashMap<String, FSNode, IgnoreCase_Hash, IgnoreCase_EqualTo> NodeCache;
+	typedef HashMap<Path, FSNode, Path::IgnoreCaseAndMac_Hash, Path::IgnoreCaseAndMac_EqualsTo> NodeCache;
 	mutable NodeCache	_fileCache, _subDirCache;
 	mutable bool _cached;
 
 	// look for a match
-	FSNode *lookupCache(NodeCache &cache, const String &name) const;
+	FSNode *lookupCache(NodeCache &cache, const Path &name) const;
 
 	// cache management
 	void cacheDirectoryRecursive(FSNode node, int depth, const Path& prefix) const;

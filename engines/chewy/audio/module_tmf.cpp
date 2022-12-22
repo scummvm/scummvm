@@ -56,7 +56,7 @@ bool Chewy::Module_TMF::load(Common::SeekableReadStream& stream, int offs) {
 	// Copy instrument data.
 	uint8 fineTune, instVolume;
 	uint32 repeatPoint, repeatLength, sampleLength;
-	uint32 totalSampleLength = 0;
+	//uint32 totalSampleLength = 0;
 
 	for (int i = 0; i < NUM_SAMPLES; ++i) {
 		fineTune = stream.readByte();
@@ -70,7 +70,7 @@ bool Chewy::Module_TMF::load(Common::SeekableReadStream& stream, int offs) {
 		// Sample length is at the end instead of at the start.
 		sampleLength = stream.readUint32LE();
 		assert(sampleLength <= 0x1FFFF && sampleLength % 2 == 0);
-		totalSampleLength += sampleLength;
+		//totalSampleLength += sampleLength;
 
 		// Instrument name is not present in TMF data.
 		Common::copy(TMF_MOD_INSTRUMENT_NAME, TMF_MOD_INSTRUMENT_NAME + 23, sample[i].name);

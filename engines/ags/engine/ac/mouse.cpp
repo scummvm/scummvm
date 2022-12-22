@@ -245,8 +245,8 @@ void enable_cursor_mode(int modd) {
 		for (ww = 0; ww < _GP(guis)[uu].GetControlCount(); ww++) {
 			if (_GP(guis)[uu].GetControlType(ww) != kGUIButton) continue;
 			GUIButton *gbpt = (GUIButton *)_GP(guis)[uu].GetControl(ww);
-			if (gbpt->ClickAction[kMouseLeft] != kGUIAction_SetMode) continue;
-			if (gbpt->ClickData[kMouseLeft] != modd) continue;
+			if (gbpt->ClickAction[kGUIClickLeft] != kGUIAction_SetMode) continue;
+			if (gbpt->ClickData[kGUIClickLeft] != modd) continue;
 			gbpt->SetEnabled(true);
 		}
 	}
@@ -261,8 +261,8 @@ void disable_cursor_mode(int modd) {
 		for (ww = 0; ww < _GP(guis)[uu].GetControlCount(); ww++) {
 			if (_GP(guis)[uu].GetControlType(ww) != kGUIButton) continue;
 			GUIButton *gbpt = (GUIButton *)_GP(guis)[uu].GetControl(ww);
-			if (gbpt->ClickAction[kMouseLeft] != kGUIAction_SetMode) continue;
-			if (gbpt->ClickData[kMouseLeft] != modd) continue;
+			if (gbpt->ClickAction[kGUIClickLeft] != kGUIAction_SetMode) continue;
+			if (gbpt->ClickData[kGUIClickLeft] != modd) continue;
 			gbpt->SetEnabled(false);
 		}
 	}
@@ -297,11 +297,9 @@ int GetCursorMode() {
 }
 
 int IsButtonDown(int which) {
-	if ((which < 1) || (which > 3))
+	if ((which < kMouseLeft) || (which > kMouseMiddle))
 		quit("!IsButtonDown: only works with eMouseLeft, eMouseRight, eMouseMiddle");
-	if (ags_misbuttondown(which - 1))
-		return 1;
-	return 0;
+	return ags_misbuttondown(static_cast<eAGSMouseButton>(which)) ? 1 : 0;
 }
 
 int IsModeEnabled(int which) {

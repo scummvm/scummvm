@@ -219,9 +219,9 @@ void ScummEngine_v4::loadVars() {
 
 			int slot;
 			int slotSize;
-			byte* slotContent;
+			byte *slotContent;
 			int savegameId;
-			bool avail_saves[100];
+			bool availSaves[100];
 
 			if (a == STRINGID_IQ_SERIES && b == STRINGID_IQ_SERIES) {
 				// Zak256 loads the IQ script-slot but does not use it -> ignore it
@@ -235,7 +235,7 @@ void ScummEngine_v4::loadVars() {
 				break;
 			}
 
-			listSavegames(avail_saves, ARRAYSIZE(avail_saves));
+			listSavegames(availSaves, ARRAYSIZE(availSaves));
 			for (slot = a; slot <= b; ++slot) {
 				slotSize = getResourceSize(rtString, slot);
 				slotContent = getResourceAddress(rtString, slot);
@@ -243,7 +243,7 @@ void ScummEngine_v4::loadVars() {
 				// load savegame names
 				savegameId = slot - a + 1;
 				Common::String name;
-				if (avail_saves[savegameId] && getSavegameName(savegameId, name)) {
+				if (availSaves[savegameId] && getSavegameName(savegameId, name)) {
 					int pos;
 					const char *ptr = name.c_str();
 					// slotContent ends with {'\0','@'} -> max. length = slotSize-2
@@ -368,6 +368,16 @@ void ScummEngine_v4::o4_saveLoadGame() {
 	byte slot;
 	byte a = getVarOrDirectByte(PARAM_1);
 	byte result = 0;
+	Common::String dummyName;
+
+	int saveRoom = 50;
+
+	if (_game.id == GID_INDY3)
+		saveRoom = 14;
+	else if (_game.id == GID_LOOM)
+		saveRoom = 70;
+
+	_mainMenuIsActive = true;
 
 	if ((_game.id == GID_MANIAC && _game.version <= 1) || (_game.id == GID_ZAK && _game.platform == Common::kPlatformC64)) {
 		// Convert V0/V1 load/save screen (they support only one savegame per disk)
@@ -393,67 +403,120 @@ void ScummEngine_v4::o4_saveLoadGame() {
 	}
 
 	switch (_opcode) {
-	case 0x00: // num slots available
+	case 0x00: // Num slots available
 		result = 100;
 		break;
-	case 0x20: // drive
+	case 0x20: // Drive
 		if (_game.version <= 3) {
 			// 0 = ???
-			// [1,2] = disk drive [A:,B:]
-			// 3 = hard drive
+			// [1,2] = Disk drive [A:,B:]
+			// 3 = Hard drive
 			result = 3;
 		} else {
-			// set current drive
+			// Set current drive
 			result = 1;
 		}
 		break;
 	case 0x40: // load
+		_lastLoadedRoom = -1;
+
+		// The original interpreter allowed you to change the name of the
+		// savegame before loading it. As weird as that is, let's allow it...
+		if (_game.version == 3) {
+			char *ptr;
+			int firstSlot = (_game.id == GID_LOOM) ? STRINGID_SAVENAME1_LOOM : STRINGID_SAVENAME1;
+			ptr = (char *)getStringAddress(slot + firstSlot - 1);
+			if (ptr) {
+				if (!changeSavegameName(slot, ptr)) {
+					warning("o4_saveLoadGame: Couldn't change savegame name");
+				}
+			}
+		}
+
 		if (loadState(slot, false))
-			result = 3; // sucess
+			result = 3; // Success
 		else
-			result = 5; // failed to load
+			result = 5; // Failed to load
+
+		// If the loaded state loads a different room from the save menu room
+		// it means that we are loading a game saved from the GMM. To correctly
+		// handle this, we run the boot script, we reload the state, and then signal
+		// the ScummEngine_v3::scummLoop_handleSaveLoad() function that we need to
+		// perform the post load fixes.
+		if (result == 3 && _currentRoom != saveRoom) {
+			_loadFromLauncher = true;
+			runBootscript();
+			loadState(slot, false);
+			_mainMenuIsActive = false;
+			return;
+		}
+
 		break;
-	case 0x80: // save
+	case 0x80: // Save
+		_lastLoadedRoom = -1;
 		if (_game.version <= 3) {
 			char name[32];
 			if (_game.version <= 2) {
-				// use generic name
-				sprintf(name, "Game %c", 'A'+slot-1);
+				// V2 and below use a hardcoded name for savestates
+				Common::sprintf_s(name, "Game %c", 'A' + slot - 1);
 			} else {
-				// use name entered by the user
+				// Use the name entered by the user...
 				char* ptr;
 				int firstSlot = (_game.id == GID_LOOM) ? STRINGID_SAVENAME1_LOOM : STRINGID_SAVENAME1;
 				ptr = (char *)getStringAddress(slot + firstSlot - 1);
 				Common::strlcpy(name, ptr, sizeof(name));
 			}
 
-			if (savePreparedSavegame(slot, name))
+			_saveLoadDescription = name;
+			if (saveState(slot, false, dummyName))
 				result = 0;
 			else
 				result = 2;
 		} else {
-			result = 2; // failed to save
+			result = 2; // Failed to save
 		}
 		break;
-	case 0xC0: // test if save exists
+	case 0xC0: // Test if the save file exists
 		{
-		Common::InSaveFile *file;
-		bool avail_saves[100];
+		Common::InSaveFile *file = nullptr;
+		bool availableSaves[100];
+		bool atLeastOneSaveExists = false;
 
-		listSavegames(avail_saves, ARRAYSIZE(avail_saves));
+		listSavegames(availableSaves, ARRAYSIZE(availableSaves));
 		Common::String filename = makeSavegameName(slot, false);
-		if (avail_saves[slot] && (file = _saveFileMan->openForLoading(filename))) {
-			result = 6; // save file exists
-			delete file;
-		} else
-			result = 7; // save file does not exist
+
+		for (int i = 0; i < ARRAYSIZE(availableSaves); i++) {
+			if (availableSaves[i]) {
+				atLeastOneSaveExists = true;
+				break;
+			}
 		}
+
+		if (availableSaves[slot] && (file = _saveFileMan->openForLoading(filename))) {
+			result = 6; // Save file exists
+			delete file;
+		} else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformFMTowns && slot == 0 && atLeastOneSaveExists) {
+			// LOOM Towns explicitly sets the result to 6 if the selected slot is 0;
+			// also, it needs to have at least one savegame available, otherwise it would lead
+			// to the game reaching towards a non-existent string, and crashing as a consequence.
+			result = 6;
+		} else
+			result = (_game.id == GID_LOOM && _game.platform == Common::kPlatformFMTowns) ? 8 : 7; // Save file does not exist
+		}
+
 		break;
 	default:
 		error("o4_saveLoadGame: unknown subopcode %d", _opcode);
 	}
 
+	_mainMenuIsActive = false;
+
 	setResult(result);
+
+	// Did the script move? Update its state!
+	updateScriptPtr();
+	getScriptBaseAddress();
+	resetScriptPointer();
 }
 
 } // End of namespace Scumm

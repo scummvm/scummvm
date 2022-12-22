@@ -56,8 +56,9 @@ public:
 	};
 
 	enum {
-		kFlagNativeMT32 =	1 << 0,
-		kFlagRolandGS =		1 << 1
+		kFlagNewSystem	=	1 << 0,
+		kFlagNativeMT32 =	1 << 1,
+		kFlagRolandGS =		1 << 2
 	};
 
 public:

@@ -1938,7 +1938,7 @@ void DrawGouraudTriangle(uint32 x0, uint32 y0, uint32 x1, uint32 y1, uint32 x2, 
 					}
 #else
 					__asm {
-						lea  edi, newCol    ; // Get the adress of the colour table
+						lea  edi, newCol    ; // Get the address of the colour table
 						mov  esi, left      ; // Load the address of the pixel pointer
 						movq mm0, [edi]     ; // Load the colour
 						pxor mm4, mm4       ; // Clear mm4 for packing/unpacking
@@ -2038,7 +2038,7 @@ void DrawGouraudTriangle(uint32 x0, uint32 y0, uint32 x1, uint32 y1, uint32 x2, 
 				}
 #else
 				_asm {
-					lea  edi, newCol; // Get the adress of the colour table
+					lea  edi, newCol; // Get the address of the colour table
 					mov  ecx, xLim  ; // Load the counter
 					movq mm0, [edi] ; // Load the colour
 					mov  esi, left  ; // Load the address of the pixel pointer

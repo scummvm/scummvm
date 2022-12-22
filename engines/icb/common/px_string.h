@@ -95,7 +95,7 @@ inline pxString::~pxString() {
 		delete[] s;
 }
 
-const char *pxVString(const char *format, ...);
+const char *pxVString(MSVC_PRINTF const char *format, ...) GCC_PRINTF(1, 2);
 
 class pxFlexiCharBuffer {
 	char *m_buffer; // The buffer itself

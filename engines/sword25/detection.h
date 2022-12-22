@@ -28,6 +28,8 @@ enum GameFlags {
 	GF_EXTRACTED = 1 << 0
 };
 
+#define GAMEOPTION_ENGLISH_SPEECH GUIO_GAMEOPTIONS1
+
 } // End of namespace Sword25
 
 #endif // SWORD25_DETECTION_H

@@ -23,7 +23,7 @@
 #define BACKENDS_NETWORKING_SDL_NET_LISTAJAXHANDLER_H
 
 #include "backends/networking/sdl_net/handlers/filesbasehandler.h"
-#include "common/json.h"
+#include "common/formats/json.h"
 
 namespace Networking {
 

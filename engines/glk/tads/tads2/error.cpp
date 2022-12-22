@@ -76,7 +76,7 @@ int errfmt(char *outbuf, int outbufl, const char *fmt, int argc, const erradef *
 				break;
 
 			case 'd':
-				sprintf(buf, "%d", argv[argi].erraint);
+				Common::sprintf_s(buf, "%d", argv[argi].erraint);
 				len = strlen(buf);
 				p = buf;
 				break;

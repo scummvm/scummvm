@@ -29,6 +29,10 @@ namespace Alan2 {
 const PlainGameDescriptor ALAN2_GAME_LIST[] = {
 	{ "alan2", "Alan2 Game" },
 
+	// Unsupported 2.6 games
+	{ "hollywoodmurders", "The Hollywood Murders" },
+
+	// Supported 2.8.1 games
 	{ "bugged", "Bugged" },
 	{ "cc", "CC" },
 	{ "chasing", "The Chasing" },
@@ -52,6 +56,10 @@ const PlainGameDescriptor ALAN2_GAME_LIST[] = {
 };
 
 const GlkDetectionEntry ALAN2_GAMES[] = {
+	// Unsupported 2.6 games
+	DT_ENTRY0("hollywoodmurders", "e6da6dfa85dd471a251ce485af710730", 95232),
+
+	// Supported 2.8.1 games
 	DT_ENTRY0("bugged", "f4eed3db3771a456143744a0e36653db", 112640),
 	DT_ENTRY0("cc", "47f4a5436ce07d65bb828e2938f81952", 53248),
 	DT_ENTRY1("chasing", "1.0", "10ad37b6dd6d9f399578b28e644914ca", 144384),

@@ -29,7 +29,7 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/timer.h"
-#include "common/winexe_pe.h"
+#include "common/formats/winexe_pe.h"
 
 #include "graphics/wincursor.h"
 
@@ -451,7 +451,7 @@ void GnapEngine::updateCursorByHotspot() {
 		if (_debugger->_showHotspotNumber) {
 			// NOTE This causes some display glitches
 			char t[256];
-			sprintf(t, "hotspot = %2d", hotspotIndex);
+			Common::sprintf_s(t, "hotspot = %2d", hotspotIndex);
 			if (!_font)
 				_gameSys->fillSurface(nullptr, 10, 10, 80, 16, 0, 0, 0);
 			else

@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/translation.h"
-
 #include "engines/advancedDetector.h"
 #include "engines/grim/detection.h"
 #include "engines/grim/debug.h"
@@ -55,38 +53,6 @@ static const PlainGameDescriptor grimGames[] = {
 	{"grim", "Grim Fandango"},
 	{"monkey4", "Escape From Monkey Island"},
 	{nullptr, nullptr}
-};
-
-#define GAMEOPTION_LOAD_DATAUSR GUIO_GAMEOPTIONS1
-#define GAMEOPTION_SHOW_FPS GUIO_GAMEOPTIONS2
-
-#define GUI_OPTIONS_GRIME GUIO2(GAMEOPTION_LOAD_DATAUSR, GAMEOPTION_SHOW_FPS)
-
-static const ADExtraGuiOptionsMap gameGuiOptions[] = {
-	{
-		GAMEOPTION_LOAD_DATAUSR,
-		{
-			_s("Load user patch (unsupported)"),
-			_s("Load an user patch. Please note that the ScummVM team doesn't provide support for using such patches."),
-			"datausr_load",
-			false,
-			0,
-			0
-		}
-	},
-	{
-		GAMEOPTION_SHOW_FPS,
-		{
-			_s("Show FPS"),
-			_s("Show the current FPS-rate, while you play."),
-			"show_fps",
-			false,
-			0,
-			0
-		}
-	},
-
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
 static const GrimGameDescription gameDescriptions[] = {
@@ -633,7 +599,7 @@ static const GrimGameDescription gameDescriptions[] = {
 
 class GrimMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	GrimMetaEngineDetection() : AdvancedMetaEngineDetection(Grim::gameDescriptions, sizeof(Grim::GrimGameDescription), grimGames, gameGuiOptions) {
+	GrimMetaEngineDetection() : AdvancedMetaEngineDetection(Grim::gameDescriptions, sizeof(Grim::GrimGameDescription), grimGames) {
 		_guiOptions = GUIO_NOMIDI;
 	}
 

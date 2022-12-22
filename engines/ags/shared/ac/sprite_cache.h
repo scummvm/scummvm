@@ -134,7 +134,8 @@ public:
 	// Deletes all data and resets cache to the clear state
 	void        Reset();
 	// Assigns new sprite for the given index; this sprite won't be auto disposed
-	void        SetSprite(sprkey_t index, Shared::Bitmap *);
+	// flags are SPF_* constants that define sprite's behavior in game.
+	bool        SetSprite(sprkey_t index, Shared::Bitmap *, int flags = 0);
 	// Assigns new sprite for the given index, remapping it to sprite 0;
 	// optionally marks it as an asset placeholder
 	void        SetEmptySprite(sprkey_t index, bool as_asset);

@@ -483,7 +483,7 @@ Sound *SoundMan::getSound(uint32 soundEffectId) {
 }
 
 void SoundMan::updateMidi() {
-	if (_midiPlayer->isIdle() & !_midiMusicQueue.empty()) {
+	if (_midiPlayer->isIdle() && !_midiMusicQueue.empty()) {
 		uint32 musicId = _midiMusicQueue.front();
 		_midiMusicQueue.remove_at(0);
 		_midiPlayer->play(musicId);

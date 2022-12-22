@@ -237,7 +237,7 @@ void setAreaSound(const TilePoint &) {
 				for (i = 0; i < AUXTHEMES; i++) {
 					if (g_vm->_grandMasterFTA->_aats[i].active) {
 						Location loc = getCenterActor()->notGetWorldLocation();
-						if (g_vm->_grandMasterFTA->_aats[i].l.context == Nothing || loc.context == g_vm->_grandMasterFTA->_aats[i].l.context) {
+						if (g_vm->_grandMasterFTA->_aats[i].l._context == Nothing || loc._context == g_vm->_grandMasterFTA->_aats[i].l._context) {
 							TilePoint tp = (g_vm->_grandMasterFTA->_aats[i].l >> kTileUVShift) - baseCoords;
 							if (tp.magnitude() < dist.magnitude()) {
 								dist = tp;

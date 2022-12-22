@@ -438,6 +438,12 @@ bool WintermuteEngine::getGameInfo(const Common::FSList &fslist, Common::String 
 						}
 					}
 					caption = value;
+
+					for (uint i = 0; i< value.size(); i++) {
+						if ( int(value[i]) < 16 || int(value[i]) >= 127 ) {
+							caption = "(invalid)";
+						}
+					}
 				}
 			}
 		}

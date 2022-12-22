@@ -1171,7 +1171,7 @@ int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
 
 	while (itemIndex < NUM_OBJECTS) {
 		if (_itemList[itemIndex].have) {
-			strcpy(itemNames[numItems], _itemList[itemIndex].name);
+			Common::strcpy_s(itemNames[numItems], _itemList[itemIndex].name);
 
 			int16 itemX = (numItems % ITEMS_PER_ROW) * 32 + x;
 			int16 itemY = (numItems / ITEMS_PER_ROW) * 32 + y;

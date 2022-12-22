@@ -31,10 +31,10 @@ namespace Saga2 {
 struct SaveFileHeader;
 
 // constants
-const uint32    dialogGroupID   = MKTAG('D', 'I', 'A', 'L');
+const uint32    kDialogGroupID   = MKTAG('D', 'I', 'A', 'L');
 
 // this should eventually point to the script that contains the credits
-const uint16 creditsScriptNum          = 0;    // this has a scripts now
+const uint16 kCreditsScriptNum          = 0;    // this has a scripts now
 // >>> need to make resource for defining
 // script numbers
 
@@ -77,17 +77,17 @@ class CPlacardWindow : public ModalWindow {
 private:
 
 	enum {
-		maxLines    = 16,
-		maxText     = 512
+		kMaxLines    = 16,
+		kMaxText     = 512
 	};
 
-	int16   titleCount;
-	Point16 titlePos[maxLines];
-	char    *titleStrings[maxLines];
-	char    titleBuf[maxText];
+	int16   _titleCount;
+	Point16 _titlePos[kMaxLines];
+	char    *_titleStrings[kMaxLines];
+	char    _titleBuf[kMaxText];
 
-	textPallete textPal;
-	gFont       *textFont;
+	textPallete _textPal;
+	gFont       *_textFont;
 
 	void positionText(
 	    char *windowText,
@@ -118,14 +118,14 @@ public:
 
 class CPlacardPanel : public CPlaqText {
 	enum {
-		maxLines    = 16,
-		maxText     = 512
+		kMaxLines    = 16,
+		kMaxText     = 512
 	};
 
-	int16   titleCount;
-	Point16 titlePos[maxLines];
-	char    *titleStrings[maxLines];
-	char    titleBuf[maxText];
+	int16   _titleCount;
+	Point16 _titlePos[kMaxLines];
+	char    *_titleStrings[kMaxLines];
+	char    _titleBuf[kMaxText];
 
 	void positionText(const char *windowText, const Rect16 &textArea);
 
@@ -142,7 +142,7 @@ public:
 	                 const Point16 &,
 	                 const Rect16 &);
 
-}  ;
+};
 
 } // end of namespace Saga2
 

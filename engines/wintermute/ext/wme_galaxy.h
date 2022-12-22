@@ -28,8 +28,8 @@
 #ifndef WINTERMUTE_SXWMEGALAXYAPI_H
 #define WINTERMUTE_SXWMEGALAXYAPI_H
 
-#include "common/achievements.h"
-#include "engines/wintermute/base/base_scriptable.h"
+#include "engines/achievements.h"
+#include "wintermute/base/base_scriptable.h"
 
 namespace Wintermute {
 

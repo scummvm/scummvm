@@ -24,7 +24,7 @@
 
 #include "audio/audiostream.h"
 #include "common/ptr.h"
-#include "common/sinetables.h"
+#include "math/sinetables.h"
 
 #include "supernova/graphics.h"
 #include "supernova/sound.h"
@@ -69,7 +69,7 @@ private:
 	void loadSound1(AudioId id);
 	void loadSound2(AudioId id);
 	void initSiren();
-	byte *generateTone(byte *buffer, int frequency, int length, int audioRate, Common::SineTable &table);
+	byte *generateTone(byte *buffer, int frequency, int length, int audioRate, Math::SineTable &table);
 
 private:
 	Common::ScopedPtr<Audio::SeekableAudioStream> *_soundSamples;

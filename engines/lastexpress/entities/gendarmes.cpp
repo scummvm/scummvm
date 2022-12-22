@@ -159,20 +159,20 @@ IMPLEMENT_FUNCTION_IISS(9, Gendarmes, doCompartment, CarIndex, EntityPosition)
 			parameters2->param5 += 31; // Switch to next compartment car
 
 		if (parameters2->param6) {
-			strcpy((char *)&parameters1->seq1, "632A");
-			strcpy((char *)&parameters1->seq2, "632B");
-			strcpy((char *)&parameters1->seq3, "632C");
+			Common::strcpy_s(parameters1->seq1, "632A");
+			Common::strcpy_s(parameters1->seq2, "632B");
+			Common::strcpy_s(parameters1->seq3, "632C");
 		} else {
-			strcpy((char *)&parameters1->seq1, "632D");
-			strcpy((char *)&parameters1->seq2, "632E");
-			strcpy((char *)&parameters1->seq3, "632F");
+			Common::strcpy_s(parameters1->seq1, "632D");
+			Common::strcpy_s(parameters1->seq2, "632E");
+			Common::strcpy_s(parameters1->seq3, "632F");
 		}
 
 		// The sequence 3 string needs to be a maximum of 9 characters, leaving 5 characters after the initial setup
 		assert(Common::String(params->seq1).size() <= 5);
 
-		strcat((char *)&parameters1->seq1, (char *)&params->seq1);
-		strcat((char *)&parameters1->seq2, (char *)&params->seq1);
+		Common::strcat_s(parameters1->seq1, params->seq1);
+		Common::strcat_s(parameters1->seq2, params->seq1);
 		Common::strlcat((char *)&parameters1->seq3, (char *)&params->seq1, 9); // Beware, seq3 is smaller than seq1
 
 		if ((getEntities()->isInsideCompartment(kEntityPlayer, (CarIndex)params->param1, (EntityPosition)params->param2)
@@ -182,7 +182,7 @@ IMPLEMENT_FUNCTION_IISS(9, Gendarmes, doCompartment, CarIndex, EntityPosition)
 			setCallback(1);
 			setup_trappedCath((CarIndex)params->param1, (EntityPosition)params->param2, (ObjectIndex)parameters2->param5);
 		} else {
-			getEntities()->drawSequenceLeft(kEntityGendarmes, (char *)&parameters1->seq1);
+			getEntities()->drawSequenceLeft(kEntityGendarmes, parameters1->seq1);
 			getEntities()->enterCompartment(kEntityGendarmes, (ObjectIndex)CURRENT_PARAM(2, 5), true);
 
 			setCallback(parameters2->param6 ? 2 : 3);
@@ -201,14 +201,14 @@ IMPLEMENT_FUNCTION_IISS(9, Gendarmes, doCompartment, CarIndex, EntityPosition)
 
 		case 2:
 		case 3:
-			getEntities()->drawSequenceLeft(kEntityGendarmes, (char *)&parameters1->seq2);
+			getEntities()->drawSequenceLeft(kEntityGendarmes, parameters1->seq2);
 			if (getEntities()->isNobodyInCompartment((CarIndex)params->param1, (EntityPosition)params->param2) || !strcmp(params->seq2, "NODIALOG")) {
 				setCallback(4);
 				setup_doWait(150);
 			} else {
-				char *arrestSound = (char *)&parameters2->seq;
-				strcpy(arrestSound, "POL1045");
-				strcat(arrestSound, (char *)&params->seq2);
+				char *arrestSound = parameters2->seq;
+				Common::strcpy_s(arrestSound, sizeof(parameters2->seq), "POL1045");
+				Common::strcat_s(arrestSound, sizeof(parameters2->seq), params->seq2);
 
 				setCallback(5);
 				setup_doDialog(arrestSound);
@@ -218,9 +218,9 @@ IMPLEMENT_FUNCTION_IISS(9, Gendarmes, doCompartment, CarIndex, EntityPosition)
 		case 4:
 		case 5:
 			if (!getEntities()->isNobodyInCompartment((CarIndex)params->param1, (EntityPosition)params->param2) && strcmp(params->seq2, "NODIALOG")) {
-				char *arrestSound = (char *)&parameters2->seq;
-				strcpy(arrestSound, "POL1043");
-				strcat(arrestSound, (char *)&params->seq2);
+				char *arrestSound = parameters2->seq;
+				Common::strcpy_s(arrestSound, sizeof(parameters2->seq), "POL1043");
+				Common::strcat_s(arrestSound, sizeof(parameters2->seq), params->seq2);
 
 				getSound()->playSound(kEntityGendarmes, arrestSound, kSoundVolumeEntityDefault, 30);
 			}
@@ -228,7 +228,7 @@ IMPLEMENT_FUNCTION_IISS(9, Gendarmes, doCompartment, CarIndex, EntityPosition)
 			getData()->location = kLocationInsideCompartment;
 
 			setCallback(6);
-			setup_doDraw((char *)&parameters1->seq3);
+			setup_doDraw(parameters1->seq3);
 			break;
 
 		case 6:
@@ -603,9 +603,9 @@ void Gendarmes::handleAction(const SavePoint &savepoint, bool shouldPlaySound, S
 			EXPOSE_PARAMS(EntityData::EntityParametersSIIS);
 
 			if (!shouldPlaySound)
-				getEntities()->drawSequenceRight(kEntityGendarmes, (char *)&params->seq1);
+				getEntities()->drawSequenceRight(kEntityGendarmes, params->seq1);
 			else
-				getSound()->playSound(kEntityGendarmes, (char *)&params->seq1, flag);
+				getSound()->playSound(kEntityGendarmes, params->seq1, flag);
 		}
 
 		if (shouldUpdateEntity) {

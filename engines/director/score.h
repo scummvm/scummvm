@@ -120,6 +120,8 @@ public:
 
 	void playSoundChannel(uint16 frameId, bool puppetOnly);
 
+	Common::String formatChannelInfo();
+
 private:
 	void update();
 	void playQueuedSound();
@@ -145,7 +147,9 @@ public:
 
 	PlayState _playState;
 	uint32 _nextFrameTime;
+	int _lastTempo;
 	int _waitForChannel;
+	int _waitForVideoChannel;
 	bool _waitForClick;
 	bool _waitForClickCursor;
 	bool _cursorDirty;

@@ -125,7 +125,7 @@ void Sector::load(TextSplitter &ts) {
 		ts.scanString(" sector %256s", 1, buf);
 	else {
 		ts.nextLine();
-		strcpy(buf, "");
+		buf[0] = '\0';
 	}
 
 	ts.scanString(" id %d", 1, &ident);

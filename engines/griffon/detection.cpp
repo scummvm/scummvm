@@ -23,33 +23,13 @@
 #include "engines/advancedDetector.h"
 
 #include "common/text-to-speech.h"
-#include "common/translation.h"
+
+#include "griffon/detection.h"
 
 static const PlainGameDescriptor griffonGames[] = {
 	{"griffon", "The Griffon Legend"},
 	{nullptr, nullptr}
 };
-
-#ifdef USE_TTS
-
-#define GAMEOPTION_TTS_NARRATOR 	GUIO_GAMEOPTIONS1
-
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_TTS_NARRATOR,
-		{
-			_s("Enable Text to Speech"),
-			_s("Use TTS to read the descriptions (if TTS is available)"),
-			"tts_enabled",
-			false,
-			0,
-			0
-		}
-	},
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
-#endif
 
 namespace Griffon {
 
@@ -75,11 +55,7 @@ static const ADGameDescription gameDescriptions[] = {
 
 class GriffonMetaEngineDetection: public AdvancedMetaEngineDetection {
 public:
-	GriffonMetaEngineDetection() : AdvancedMetaEngineDetection(Griffon::gameDescriptions, sizeof(ADGameDescription), griffonGames
-#ifdef USE_TTS
-			, optionsList
-#endif
-			) {
+	GriffonMetaEngineDetection() : AdvancedMetaEngineDetection(Griffon::gameDescriptions, sizeof(ADGameDescription), griffonGames) {
 	}
 
 	const char *getName() const override {

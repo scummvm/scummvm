@@ -61,7 +61,7 @@ _remora::_remora() {
 	m_nCurrentZoom = REMORA_SCAN_START_ZOOM;
 
 	// Name of the cluster which holds remora graphics.
-	strcpy(m_pcRemoraCluster, REMORA_CLUSTER_PATH);
+	Common::strcpy_s(m_pcRemoraCluster, REMORA_CLUSTER_PATH);
 	m_nScanPan = 0;
 
 	// Make the hash name of the remora graphics cluster.

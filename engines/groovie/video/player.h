@@ -50,6 +50,7 @@ public:
 	void setOverrideSpeed(bool isOverride);
 
 	void loadSubtitles(const char *fname) { _subtitles.loadSRTFile(fname); }
+	void unloadSubtitles();
 
 protected:
 	// To be implemented by subclasses
@@ -73,6 +74,7 @@ private:
 	float _millisBetweenFrames;
 	uint32 _lastFrameTime;
 	float _frameTimeDrift;
+	uint32 _startTime;
 
 	Video::Subtitles _subtitles;
 

@@ -24,6 +24,10 @@
 
 #include "gob/video.h"
 
+namespace Common {
+class WinResources;
+}
+
 namespace Gob {
 
 #define RENDERFLAG_NOINVALIDATE      0x0001
@@ -143,6 +147,9 @@ public:
 	int8 _cursorAnimLow[40];
 	int8 _cursorAnimHigh[40];
 	int8 _cursorAnimDelays[40];
+	Common::String _cursorNames[40];
+	Common::String _cursorName;
+	bool _isCursorFromExe;
 
 	int32 _cursorCount;
 	bool *_doCursorPalettes;
@@ -191,6 +198,7 @@ public:
 	void adjustCoords(char adjust, uint16 *coord1, uint16 *coord2) {
 		adjustCoords(adjust, (int16 *)coord1, (int16 *)coord2);
 	}
+	void resizeCursors(int16 width, int16 height, int16 count, bool transparency);
 	int stringLength(const char *str, uint16 fontIndex);
 	void printTextCentered(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, const char *str, int16 fontIndex, int16 color);
@@ -208,6 +216,7 @@ public:
 	virtual void initScreen() = 0;
 	virtual void closeScreen() = 0;
 	virtual void blitCursor() = 0;
+
 	virtual void animateCursor(int16 cursor) = 0;
 	virtual void printTotText(int16 id) = 0;
 	virtual void spriteOperation(int16 operation) = 0;
@@ -296,6 +305,23 @@ public:
 	Draw_Playtoons(GobEngine *vm);
 	~Draw_Playtoons() override {}
 	void spriteOperation(int16 operation) override;
+};
+
+
+class Draw_v7 : public Draw_Playtoons {
+public:
+	Draw_v7(GobEngine *vm);
+	~Draw_v7() override;
+
+	void initScreen() override;
+	void animateCursor(int16 cursor) override;
+
+
+private:
+	Common::WinResources *_cursors;
+
+	bool loadCursorFile();
+	bool loadCursorFromFile(int cursorIndex);
 };
 
 // Draw operations

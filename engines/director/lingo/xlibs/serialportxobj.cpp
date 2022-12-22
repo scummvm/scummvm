@@ -79,7 +79,7 @@ SerialPortXObject::SerialPortXObject(ObjectType ObjectType) :Object<SerialPortXO
 void SerialPortXObj::m_new(int nargs) {
 	g_lingo->printSTUBWithArglist("SerialPortXObj::m_new", nargs);
 	g_lingo->dropStack(nargs);
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void SerialPortXObj::m_getPortNum(int nargs) {

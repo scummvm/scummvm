@@ -57,8 +57,7 @@ void DifficultyGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
 	Mouse *mouse = Mouse::get_instance();
-	mouse->pushMouseCursor();
-	mouse->setMouseCursor(Mouse::MOUSE_HAND);
+	mouse->pushMouseCursor(Mouse::MOUSE_HAND);
 
 	_dims.top = 0;
 	_dims.left = 0;

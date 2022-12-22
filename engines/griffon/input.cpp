@@ -94,7 +94,7 @@ void GriffonEngine::checkInputs() {
 					_player.hp = _player.hp + heal;
 
 					char text[256];
-					sprintf(text, "+%i", heal);
+					Common::sprintf_s(text, "+%i", heal);
 					addFloatText(text, _player.px + 16 - 4 * strlen(text), _player.py + 16, 5);
 
 					_player.inventory[kInvFlask]--;
@@ -120,7 +120,7 @@ void GriffonEngine::checkInputs() {
 					_player.hp += heal;
 
 					char text[256];
-					sprintf(text, "+%i", heal);
+					Common::sprintf_s(text, "+%i", heal);
 					addFloatText(text, _player.px + 16 - 4 * strlen(text), _player.py + 16, 5);
 
 					_player.inventory[kInvDoubleFlask]--;

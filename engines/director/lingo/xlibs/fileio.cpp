@@ -19,6 +19,67 @@
  *
  */
 
+/*
+  --FileIO, Tool, 1.5.0 , 31mar92
+  --© 1989-1992 MacroMind, Inc.
+  --by John Thompson and Al McNeil
+  ---------------------------------------------------------------------
+  ---------------------------------------------------------------------
+  --=METHODS=--
+  --
+  ISS mNew, mode, fileNameOrType  --Creates a new instance of the XObject.
+  --  Mode can be :
+  --    "read"  - Read "fileName"
+  --    "?read"   - Select and Read "fileType"
+  --    "write"   - Write "fileName"
+  --    "?write"  - Select and Write "fileName"
+  --    "append"  - Append "fileName"
+  --    "?append" - Select and Append "fileName"
+  --  FileType for ?read can be :
+  --    "TEXT" - standard file type
+  --    "trak" - cd track type
+  --    etc... - Any four character combination.
+  --
+  X mDispose  --Disposes of XObject instance.
+  S mName --Returns the name of the XObject.
+  /IXX  mWrite, countPtr, bufferPtr --Writes out a set of chars. Returns error code.
+  II  mWriteChar, charNum --Writes a single character. Returns error code.
+  IS  mWriteString, string  --Writes out a string of chars. Returns error code.
+  /IXX  mRead, countPtr, bufferPtr  --Reads into buffer. Returns error code.
+  I mReadChar   --Returns a single character.
+  S mReadWord   --Returns the next word of an input file.
+  S mReadLine --Returns the next line of an input file.
+  S mReadFile --Returns the remainder of the file.
+  --
+  SSS mReadToken, breakString, skipString
+  --      --breakstring designates character (or token) that signals to stop reading.
+  --      --skipstring designates what characters (or tokens) not to read.
+  I mGetPosition  --Returns the file position.
+  II  mSetPosition, newPos  --Sets the file position. Returns error code.
+  I mGetLength  --Returns the number of chars in the file.
+  ISS mSetFinderInfo, typeString, creatorString --Sets the finder info. Returns error code.
+  S mGetFinderInfo  --Gets the finder info.
+  S mFileName --Returns the name of the file.
+  S mNativeFileName --Returns the name of the file.
+  I mDelete   --Delete the file and dispose of me.
+  I     mStatus  --Returns result code of the last file io activity
+  --
+  SI  +mError, errorCode  --Returns error message string.
+  -- Possible error codes:
+  --  -33 :: File directory full
+  --  -34 :: Volume full
+  --  -35 :: Volume not found
+  --  -36 :: I/O Error
+  --  -37 :: Bad file name
+  --  -38 :: File not open
+  --  -42 :: Too many files open
+  --  -43 :: File not found
+  --  -56 :: No such drive
+  --  -65 :: No disk in drive
+  --  -120 :: Directory not found
+  V     mReadPICT
+*/
+
 #include "gui/filebrowser-dialog.h"
 
 #include "common/memstream.h"
@@ -49,7 +110,7 @@ static MethodProto xlibMethods[] = {
 	{ "readFile",				FileIO::m_readFile,			 0, 0,	200 },	// D2
 	{ "readLine",				FileIO::m_readLine,			 0, 0,	200 },	// D2
 	{ "readToken",				FileIO::m_readToken,		 2, 2,	200 },	// D2
-	{ "readPict",				FileIO::m_readPict,			 0,	0,	300 },  // D3
+	{ "readPict",				FileIO::m_readPict,			 0, 0,	300 },	// D3
 	{ "readWord",				FileIO::m_readWord,			 0, 0,	200 },	// D2
 	{ "setFinderInfo",			FileIO::m_setFinderInfo,	 2, 2,	200 },	// D2
 	{ "setPosition",			FileIO::m_setPosition,		 1, 1,	200 },	// D2
@@ -134,7 +195,7 @@ void FileIO::saveFileError() {
 }
 
 void FileIO::m_new(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
 
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
@@ -223,13 +284,13 @@ void FileIO::m_new(int nargs) {
 
 	me->_filename = new Common::String(filename);
 
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 // Read
 
 void FileIO::m_readChar(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
 
 	if (!me->_inStream || me->_inStream->eos() || me->_inStream->err()) {
 		g_lingo->push(Datum(kErrorEOF));
@@ -273,7 +334,7 @@ bool FileIO::charInMatchString(char ch, const Common::String &matchString) {
 }
 
 void FileIO::m_readToken(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
 
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
@@ -317,7 +378,7 @@ void FileIO::m_readToken(int nargs) {
 }
 
 void FileIO::m_readFile(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
 
 	if (!me->_inStream || me->_inStream->eos() || me->_inStream->err()) {
 		g_lingo->push(Datum(""));
@@ -337,7 +398,7 @@ void FileIO::m_readFile(int nargs) {
 // Write
 
 void FileIO::m_writeChar(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
 	Datum d = g_lingo->pop();
 
 	if (!me->_outStream) {
@@ -350,7 +411,7 @@ void FileIO::m_writeChar(int nargs) {
 }
 
 void FileIO::m_writeString(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
 	Datum d = g_lingo->pop();
 
 	if (!me->_outStream) {
@@ -377,7 +438,7 @@ void FileIO::m_setFinderInfo(int nargs) {
 }
 
 void FileIO::m_getPosition(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
 
 	if (me->_inStream) {
 		g_lingo->push(Datum((int)me->_inStream->pos()));
@@ -390,7 +451,7 @@ void FileIO::m_getPosition(int nargs) {
 }
 
 void FileIO::m_setPosition(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
 	Datum d = g_lingo->pop();
 	int pos = d.asInt();
 
@@ -417,7 +478,7 @@ void FileIO::m_setPosition(int nargs) {
 }
 
 void FileIO::m_getLength(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
 
 	if (me->_inStream) {
 		g_lingo->push(Datum((int)me->_inStream->size()));
@@ -430,7 +491,7 @@ void FileIO::m_getLength(int nargs) {
 }
 
 void FileIO::m_fileName(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
 
 	if (me->_filename) {
 		Common::String prefix = g_director->getTargetName() + '-';
@@ -461,7 +522,7 @@ void FileIO::m_status(int nargs) {
 // Other
 
 void FileIO::m_delete(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_state->me.u.obj);
 
 	if (me->_filename) {
 		Common::String filename = *me->_filename;

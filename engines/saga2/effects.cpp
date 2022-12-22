@@ -52,7 +52,7 @@ int16 ProtoDamage::getRelevantStat(effectDamageTypes dt, Actor *a) {
 	case kDamageImpact     :
 	case kDamageSlash      :
 	case kDamageProjectile :
-		return a->getStats()->getSkillLevel(skillIDBrawn);
+		return a->getStats()->getSkillLevel(kSkillIDBrawn);
 	case kDamageFire       :
 	case kDamageAcid       :
 	case kDamageHeat       :
@@ -61,7 +61,7 @@ int16 ProtoDamage::getRelevantStat(effectDamageTypes dt, Actor *a) {
 	case kDamagePoison     :
 	case kDamageMental     :
 	case kDamageToUndead   :
-		return a->getStats()->getSkillLevel(skillIDSpellcraft);
+		return a->getStats()->getSkillLevel(kSkillIDSpellcraft);
 	case kDamageDirMagic   :
 	case kDamageOther      :
 	case kDamageStarve     :
@@ -72,20 +72,20 @@ int16 ProtoDamage::getRelevantStat(effectDamageTypes dt, Actor *a) {
 }
 
 // ------------------------------------------------------------------
-// Cause damage to something based on a damage proto-effect
+// Cause damage to something _based on a damage proto-effect
 
 void ProtoDamage::implement(GameObject *cst, SpellTarget *trg, int8 deltaDamage) {
 	int8 totalDice;
 	int8 totalBase;
 	if (isActor(cst)) {
 		Actor *a = (Actor *) cst;
-		totalDice = dice + skillDice * getRelevantStat(type, a);
-		totalBase = base + skillBase * getRelevantStat(type, a);
+		totalDice = _dice + _skillDice * getRelevantStat(_type, a);
+		totalBase = _base + _skillBase * getRelevantStat(_type, a);
 		if (totalDice > 0 && trg->getObject() && isActor(trg->getObject()))
 			offensiveNotification(a, (Actor *) trg->getObject());
 	} else {
-		totalDice = dice;
-		totalBase = base;
+		totalDice = _dice;
+		totalBase = _base;
 		ObjectID pID = cst->possessor();
 		if (pID != Nothing) {
 			Actor *p = (Actor *) GameObject::objectAddress(pID);
@@ -97,29 +97,29 @@ void ProtoDamage::implement(GameObject *cst, SpellTarget *trg, int8 deltaDamage)
 
 	totalBase -= deltaDamage;
 
-	assert(trg->getType() == SpellTarget::spellTargetObject);
-	if (self)
-		cst->acceptDamage(cst->thisID(), totalBase, type, totalDice, sides);
+	assert(trg->getType() == SpellTarget::kSpellTargetObject);
+	if (_self)
+		cst->acceptDamage(cst->thisID(), totalBase, _type, totalDice, _sides);
 	else
-		trg->getObject()->acceptDamage(cst->thisID(), totalBase, type, totalDice, sides);
+		trg->getObject()->acceptDamage(cst->thisID(), totalBase, _type, totalDice, _sides);
 }
 
 // ------------------------------------------------------------------
-// drain something based on a drainage proto-effect
+// drain something _based on a drainage proto-effect
 
 int16 ProtoDrainage::currentLevel(Actor *a, effectDrainsTypes edt) {
 	switch (edt) {
-	case drainsManaRed:
-	case drainsManaOrange:
-	case drainsManaYellow:
-	case drainsManaGreen:
-	case drainsManaBlue:
-	case drainsManaViolet:
-		return (&a->_effectiveStats.redMana)[edt - drainsManaRed];
+	case kDrainsManaRed:
+	case kDrainsManaOrange:
+	case kDrainsManaYellow:
+	case kDrainsManaGreen:
+	case kDrainsManaBlue:
+	case kDrainsManaViolet:
+		return (&a->_effectiveStats.redMana)[edt - kDrainsManaRed];
 
-	case drainsLifeLevel:
+	case kDrainsLifeLevel:
 		return (a->getBaseStats())->vitality;
-	case drainsVitality:
+	case kDrainsVitality:
 		return a->_effectiveStats.vitality;
 	default:
 		return 0;
@@ -128,14 +128,14 @@ int16 ProtoDrainage::currentLevel(Actor *a, effectDrainsTypes edt) {
 
 void ProtoDrainage::drainLevel(GameObject *cst, Actor *a, effectDrainsTypes edt, int16 amt) {
 	switch (edt) {
-	case drainsManaRed:
-	case drainsManaOrange:
-	case drainsManaYellow:
-	case drainsManaGreen:
-	case drainsManaBlue:
-	case drainsManaViolet:
+	case kDrainsManaRed:
+	case kDrainsManaOrange:
+	case kDrainsManaYellow:
+	case kDrainsManaGreen:
+	case kDrainsManaBlue:
+	case kDrainsManaViolet:
 		{
-			ActorManaID aType = (ActorManaID)(edt + (manaIDRed - drainsManaRed));
+			ActorManaID aType = (ActorManaID)(edt + (kManaIDRed - kDrainsManaRed));
 			(&a->_effectiveStats.redMana)[aType] =
 				clamp(
 					0,
@@ -143,14 +143,14 @@ void ProtoDrainage::drainLevel(GameObject *cst, Actor *a, effectDrainsTypes edt,
 					(&(a->getBaseStats())->redMana)[aType]);
 		}
 		break;
-	case drainsLifeLevel:
+	case kDrainsLifeLevel:
 		{
 			int16 &maxVit = (a->getBaseStats())->vitality;
 			maxVit = clamp(0, maxVit - amt, absoluteMaximumVitality);
 			a->acceptDamage(cst->thisID(), amt > 0 ? 1 : -1, kDamageOther);
 		}
 		break;
-	case drainsVitality:
+	case kDrainsVitality:
 		a->acceptDamage(cst->thisID(), amt, kDamageOther);
 		break;
 	default:
@@ -165,12 +165,12 @@ void ProtoDrainage::implement(GameObject *cst, SpellTarget *trg, int8) {
 	Actor *ac;
 	if (isActor(cst)) {
 		ac = (Actor *) cst;
-		totalDice = dice + skillDice * ac->getStats()->spellcraft;
+		totalDice = _dice + _skillDice * ac->getStats()->spellcraft;
 		if (totalDice > 0 && trg->getObject() && isActor(trg->getObject()))
 			offensiveNotification(ac, (Actor *) trg->getObject());
 	} else {
 		ac = nullptr;
-		totalDice = dice + 6;
+		totalDice = _dice + 6;
 		ObjectID pID = cst->possessor();
 		if (pID != Nothing) {
 			Actor *p = (Actor *) GameObject::objectAddress(pID);
@@ -182,26 +182,26 @@ void ProtoDrainage::implement(GameObject *cst, SpellTarget *trg, int8) {
 	int8 totalDamage = diceRoll(totalDice, 6, 0, 0);
 
 
-	if (!(trg->getType() == SpellTarget::spellTargetObject))
+	if (!(trg->getType() == SpellTarget::kSpellTargetObject))
 		return;
-	GameObject *target = self ? cst : trg->getObject();
+	GameObject *target = _self ? cst : trg->getObject();
 	if (!isActor(target))
 		return;
 	a = (Actor *) target;
-	if (a->hasEffect(actorNoDrain))
+	if (a->hasEffect(kActorNoDrain))
 		return;
 
 	if (totalDamage > 0 && target->makeSavingThrow())
 		totalDamage /= 2;
-	totalDamage = clamp(0, totalDamage, currentLevel(a, type));
+	totalDamage = clamp(0, totalDamage, currentLevel(a, _type));
 
-	drainLevel(cst, a, type, totalDamage);
+	drainLevel(cst, a, _type, totalDamage);
 	if (ac != nullptr)
-		drainLevel(cst, ac, type, -totalDamage);
+		drainLevel(cst, ac, _type, -totalDamage);
 }
 
 // ------------------------------------------------------------------
-// enchant something based on an enchantment proto-effect
+// enchant something _based on an enchantment proto-effect
 
 bool ProtoEnchantment::realSavingThrow(Actor *a) {
 	uint32 power = (a->getBaseStats())->vitality;
@@ -215,30 +215,30 @@ bool ProtoEnchantment::realSavingThrow(Actor *a) {
 void ProtoEnchantment::implement(GameObject *cst, SpellTarget *trg, int8) {
 	if (isActor(trg->getObject())) {
 		// can someone be angry at a wand?
-		if (isHarmful(enchID)) {
+		if (isHarmful(_enchID)) {
 			if (isActor(cst)) {
-				offensiveNotification((Actor *) cst, (Actor *) trg->getObject());
+				offensiveNotification((Actor *)cst, (Actor *) trg->getObject());
 			} else {
 				ObjectID pID = cst->possessor();
 				if (pID != Nothing) {
 					Actor *p = (Actor *) GameObject::objectAddress(pID);
 					assert(isActor(p));
-					offensiveNotification(p, (Actor *) trg->getObject());
+					offensiveNotification(p, (Actor *)trg->getObject());
 				}
 			}
 		}
 
 
-		if (((Actor *)(trg->getObject()))->hasEffect(actorNoEnchant) &&
-		        isHarmful(enchID))
+		if (((Actor *)(trg->getObject()))->hasEffect(kActorNoEnchant) &&
+		        isHarmful(_enchID))
 			return;
 		if (canFail() && realSavingThrow((Actor *)(trg->getObject())))
 			return;
 	}
 
-	if (isHarmful(enchID) && trg->getObject()->makeSavingThrow())
+	if (isHarmful(_enchID) && trg->getObject()->makeSavingThrow())
 		return;
-	EnchantObject(trg->getObject()->thisID(), enchID, minEnch + dice.roll());
+	EnchantObject(trg->getObject()->thisID(), _enchID, _minEnch + _dice.roll());
 }
 
 // ------------------------------------------------------------------
@@ -247,12 +247,12 @@ void ProtoEnchantment::implement(GameObject *cst, SpellTarget *trg, int8) {
 void ProtoTAGEffect::implement(GameObject *cst, SpellTarget *trg, int8) {
 	ActiveItem *tag = trg->getTAG();
 	assert(tag);
-	if (affectBit == settagLocked) {
-		//if ( tag->builtInBehavior()==ActiveItem::builtInDoor )
-		if (tag->isLocked() != onOff)
+	if (_affectBit == kSettagLocked) {
+		//if ( tag->builtInBehavior()==ActiveItem::kBuiltInDoor )
+		if (tag->isLocked() != _onOff)
 			tag->acceptLockToggle(cst->thisID(), tag->lockType());
-	} else if (affectBit == settagOpen) {
-		tag->trigger(cst->thisID(), onOff);
+	} else if (_affectBit == kSettagOpen) {
+		tag->trigger(cst->thisID(), _onOff);
 	}
 }
 
@@ -263,7 +263,7 @@ void ProtoObjectEffect::implement(GameObject *, SpellTarget *trg, int8) {
 	GameObject *go = trg->getObject();
 	assert(go);
 	if (!isActor(go))
-		EnchantObject(go->thisID(), affectBit, dice.roll());
+		EnchantObject(go->thisID(), _affectBit, _dice.roll());
 }
 
 // ------------------------------------------------------------------
@@ -278,8 +278,8 @@ void ProtoLocationEffect::implement(GameObject *, SpellTarget *, int8) {
 // use a special spell on something
 
 void ProtoSpecialEffect::implement(GameObject *cst, SpellTarget *trg, int8) {
-	assert(handler);
-	(*handler)(cst, trg);
+	assert(_handler);
+	(*_handler)(cst, trg);
 }
 
 /* ===================================================================== *
@@ -287,30 +287,30 @@ void ProtoSpecialEffect::implement(GameObject *cst, SpellTarget *trg, int8) {
  * ===================================================================== */
 
 bool ProtoDamage::applicable(SpellTarget &trg) {
-	return trg.getType() == SpellTarget::spellTargetObject ||
-	       trg.getType() == SpellTarget::spellTargetObjectPoint;
+	return trg.getType() == SpellTarget::kSpellTargetObject ||
+	       trg.getType() == SpellTarget::kSpellTargetObjectPoint;
 }
 
 bool ProtoDrainage::applicable(SpellTarget &trg) {
-	return (trg.getType() == SpellTarget::spellTargetObject ||
-	        trg.getType() == SpellTarget::spellTargetObjectPoint) &&
+	return (trg.getType() == SpellTarget::kSpellTargetObject ||
+	        trg.getType() == SpellTarget::kSpellTargetObjectPoint) &&
 	       isActor(trg.getObject());
 }
 
 bool ProtoEnchantment::applicable(SpellTarget &trg) {
-	return (trg.getType() == SpellTarget::spellTargetObject ||
-	        trg.getType() == SpellTarget::spellTargetObjectPoint) &&
+	return (trg.getType() == SpellTarget::kSpellTargetObject ||
+	        trg.getType() == SpellTarget::kSpellTargetObjectPoint) &&
 	       (isActor(trg.getObject()) ||
-	        getEnchantmentSubType(enchID) == actorInvisible);
+	        getEnchantmentSubType(_enchID) == kActorInvisible);
 }
 
 bool ProtoTAGEffect::applicable(SpellTarget &trg) {
-	return (trg.getType() == SpellTarget::spellTargetTAG);
+	return (trg.getType() == SpellTarget::kSpellTargetTAG);
 }
 
 bool ProtoObjectEffect::applicable(SpellTarget &trg) {
-	return (trg.getType() == SpellTarget::spellTargetObject ||
-	        trg.getType() == SpellTarget::spellTargetObjectPoint) &&
+	return (trg.getType() == SpellTarget::kSpellTargetObject ||
+	        trg.getType() == SpellTarget::kSpellTargetObjectPoint) &&
 	       !isActor(trg.getObject());
 }
 
@@ -331,20 +331,20 @@ void createSpellCallFrame(GameObject *go, SpellTarget *trg, scriptCallFrame &scf
 	scf.coords        = Nowhere;
 
 	switch (trg->getType()) {
-	case SpellTarget::spellTargetPoint      :
-	case SpellTarget::spellTargetObjectPoint:
+	case SpellTarget::kSpellTargetPoint      :
+	case SpellTarget::kSpellTargetObjectPoint:
 		scf.value = 1;
 		scf.coords = trg->getPoint();
 		break;
-	case SpellTarget::spellTargetObject     :
+	case SpellTarget::kSpellTargetObject     :
 		scf.value = 2;
 		scf.directObject = trg->getObject()->thisID();
 		break;
-	case SpellTarget::spellTargetTAG        :
+	case SpellTarget::kSpellTargetTAG        :
 		scf.value = 3;
 		scf.directTAI = trg->getTAG()->thisID();
 		break;
-	case SpellTarget::spellTargetNone       :
+	case SpellTarget::kSpellTargetNone       :
 	default                                 :
 		scf.value = 0;
 		break;
@@ -458,7 +458,7 @@ SPECIALSPELL(Resurrect) {
 SPECIALSPELL(DispellPoison) {
 	if (isActor(trg->getObject())) {
 		Actor *a = (Actor *) trg->getObject();
-		DispelObjectEnchantment(a->thisID(), makeEnchantmentID(actorPoisoned, true));
+		DispelObjectEnchantment(a->thisID(), makeEnchantmentID(kActorPoisoned, true));
 
 	}
 }
@@ -488,7 +488,7 @@ SPECIALSPELL(DispellProtections) {
 		while (iter.next(&obj) != Nothing) {
 			ProtoObj *proto = obj->proto();
 
-			if (proto->containmentSet() & ProtoObj::isEnchantment) {
+			if (proto->containmentSet() & ProtoObj::kIsEnchantment) {
 				uint16 enchantmentID = obj->getExtra();
 				if (!isHarmful(enchantmentID)) {
 					DispelObjectEnchantment(a->thisID(), enchantmentID);
@@ -510,7 +510,7 @@ SPECIALSPELL(DispellCurses) {
 		while (iter.next(&obj) != Nothing) {
 			ProtoObj *proto = obj->proto();
 
-			if (proto->containmentSet() & ProtoObj::isEnchantment) {
+			if (proto->containmentSet() & ProtoObj::kIsEnchantment) {
 				uint16 enchantmentID = obj->getExtra();
 				if (isHarmful(enchantmentID)) {
 					if (ToBeDeleted) ToBeDeleted->deleteObject();

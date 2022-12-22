@@ -85,6 +85,11 @@ int SpriteFontRenderer::GetTextHeight(const char *text, int fontNumber) {
 	return font->CharHeight;
 }
 
+int SpriteFontRenderer::GetFontHeight(int fontNumber) {
+	SpriteFont *font = getFontFor(fontNumber);
+	return font->CharHeight;
+}
+
 SpriteFont *SpriteFontRenderer::getFontFor(int fontNum) {
 	SpriteFont *font;
 	for (int i = 0; i < (int)_fonts.size(); i ++) {

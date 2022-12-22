@@ -602,12 +602,12 @@ static void run_notify_score_change(sc_gameref_t game) {
 	/* Note any change in the score. */
 	if (game->score > undo->score) {
 		if_print_string("(Your score has increased by ");
-		sprintf(buffer, "%ld", game->score - undo->score);
+		Common::sprintf_s(buffer, "%ld", game->score - undo->score);
 		if_print_string(buffer);
 		if_print_string(")\n");
 	} else if (game->score < undo->score) {
 		if_print_string("(Your score has decreased by ");
-		sprintf(buffer, "%ld", undo->score - game->score);
+		Common::sprintf_s(buffer, "%ld", undo->score - game->score);
 		if_print_string(buffer);
 		if_print_string(")\n");
 	}
@@ -1054,7 +1054,7 @@ static sc_bool run_player_input(sc_gameref_t game) {
 		}
 
 		/* Make the last element the current input element. */
-		strcpy(line_element, prior_element);
+		Common::strcpy_s(line_element, prior_element);
 	} else {
 		sc_int length, extent;
 
@@ -1205,7 +1205,7 @@ static sc_bool run_player_input(sc_gameref_t game) {
 		 * up as do_again set in the game, where it wasn't when we entered here.
 		 */
 		if (!game->do_again && !is_rerunning)
-			strcpy(prior_element, line_element);
+			Common::strcpy_s(prior_element, line_element);
 
 		/*
 		 * If this was a request to run a command from the history, copy that
@@ -1218,7 +1218,7 @@ static sc_bool run_player_input(sc_gameref_t game) {
 
 			redo_command = memo_find_command(memento, game->redo_sequence);
 			if (redo_command)
-				strcpy(prior_element, redo_command);
+				Common::strcpy_s(prior_element, redo_command);
 			else {
 				sc_error("run_player_input: invalid redo sequence request\n");
 				game->do_again = FALSE;

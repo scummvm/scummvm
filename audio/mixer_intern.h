@@ -64,6 +64,7 @@ private:
 	Common::Mutex _mutex;
 
 	const uint _sampleRate;
+	const bool _stereo;
 	const uint _outBufSize;
 	bool _mixerReady;
 	uint32 _handleSeed;
@@ -81,7 +82,7 @@ private:
 
 public:
 
-	MixerImpl(uint sampleRate, uint outBufSize = 0);
+	MixerImpl(uint sampleRate, bool stereo = true, uint outBufSize = 0);
 	~MixerImpl();
 
 	virtual bool isReady() const { Common::StackLock lock(_mutex); return _mixerReady; }
@@ -129,6 +130,7 @@ public:
 	virtual int getVolumeForSoundType(SoundType type) const;
 
 	virtual uint getOutputRate() const;
+	virtual bool getOutputStereo() const;
 	virtual uint getOutputBufSize() const;
 
 protected:

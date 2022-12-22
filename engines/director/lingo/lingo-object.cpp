@@ -38,13 +38,20 @@
 
 #include "director/lingo/xlibs/aiff.h"
 #include "director/lingo/xlibs/applecdxobj.h"
+#include "director/lingo/xlibs/askuser.h"
 #include "director/lingo/xlibs/barakeobj.h"
 #include "director/lingo/xlibs/cdromxobj.h"
+#include "director/lingo/xlibs/darkenscreen.h"
+#include "director/lingo/xlibs/ednox.h"
+#include "director/lingo/xlibs/fileexists.h"
 #include "director/lingo/xlibs/fileio.h"
+#include "director/lingo/xlibs/findfolder.h"
 #include "director/lingo/xlibs/flushxobj.h"
 #include "director/lingo/xlibs/fplayxobj.h"
 #include "director/lingo/xlibs/gpid.h"
 #include "director/lingo/xlibs/jwxini.h"
+#include "director/lingo/xlibs/iscd.h"
+#include "director/lingo/xlibs/ispippin.h"
 #include "director/lingo/xlibs/jitdraw3.h"
 #include "director/lingo/xlibs/labeldrvxobj.h"
 #include "director/lingo/xlibs/memoryxobj.h"
@@ -55,12 +62,17 @@
 #include "director/lingo/xlibs/orthoplayxobj.h"
 #include "director/lingo/xlibs/palxobj.h"
 #include "director/lingo/xlibs/popupmenuxobj.h"
+#include "director/lingo/xlibs/qtmovie.h"
 #include "director/lingo/xlibs/registercomponent.h"
 #include "director/lingo/xlibs/serialportxobj.h"
 #include "director/lingo/xlibs/soundjam.h"
+#include "director/lingo/xlibs/spacemgr.h"
 #include "director/lingo/xlibs/videodiscxobj.h"
+#include "director/lingo/xlibs/volumelist.h"
+#include "director/lingo/xlibs/widgetxobj.h"
 #include "director/lingo/xlibs/winxobj.h"
 #include "director/lingo/xlibs/xplayanim.h"
+#include "director/lingo/xlibs/yasix.h"
 
 namespace Director {
 
@@ -133,12 +145,19 @@ static struct XLibProto {
 } xlibs[] = {
 	{ AiffXObj::fileNames,				AiffXObj::open,				AiffXObj::close,			kXObj,					400 },	// D4
 	{ AppleCDXObj::fileNames,			AppleCDXObj::open,			AppleCDXObj::close,			kXObj,					400 },	// D4
+	{ AskUser::fileNames,				AskUser::open,				AskUser::close,				kXObj,					400 },	// D4
 	{ BarakeObj::fileNames,				BarakeObj::open,			BarakeObj::close,			kXObj,					400 },	// D4
 	{ CDROMXObj::fileNames,				CDROMXObj::open,			CDROMXObj::close,			kXObj,					200 },	// D2
+	{ DarkenScreen::fileNames,			DarkenScreen::open,			DarkenScreen::close,		kXObj,					300 },	// D3
+	{ Ednox::fileNames,					Ednox::open,				Ednox::close,				kXObj,					300 },	// D3
+	{ FileExists::fileNames,			FileExists::open,			FileExists::close,			kXObj,					300 },	// D3
 	{ FileIO::fileNames,				FileIO::open,				FileIO::close,				kXObj | kXtraObj,		200 },	// D2
+	{ FindFolder::fileNames,			FindFolder::open,			FindFolder::close,			kXObj,					300 },	// D3
 	{ FlushXObj::fileNames,				FlushXObj::open,			FlushXObj::close,			kXObj,					300 },	// D3
 	{ FPlayXObj::fileNames,				FPlayXObj::open,			FPlayXObj::close,			kXObj,					200 },	// D2
 	{ GpidXObj::fileNames,				GpidXObj::open,				GpidXObj::close,			kXObj,					400 },	// D4
+	{ IsCD::fileNames,					IsCD::open,					IsCD::close,				kXObj,					300 },	// D3
+	{ IsPippin::fileNames,				IsPippin::open,				IsPippin::close,			kXObj,					400 },	// D4
 	{ JITDraw3XObj::fileNames,			JITDraw3XObj::open,			JITDraw3XObj::close,		kXObj,					400 },	// D4
 	{ JourneyWareXINIXObj::fileNames,	JourneyWareXINIXObj::open,	JourneyWareXINIXObj::close,	kXObj,					400 },	// D4
 	{ LabelDrvXObj::fileNames,			LabelDrvXObj::open,			LabelDrvXObj::close,		kXObj,					400 },	// D4
@@ -150,12 +169,17 @@ static struct XLibProto {
 	{ OrthoPlayXObj::fileNames,			OrthoPlayXObj::open,		OrthoPlayXObj::close,		kXObj,					400 },	// D4
 	{ PalXObj::fileNames,				PalXObj::open,				PalXObj::close,				kXObj,					400 },	// D4
 	{ PopUpMenuXObj::fileNames,			PopUpMenuXObj::open,		PopUpMenuXObj::close,		kXObj,					200 },	// D2
+	{ QTMovie::fileNames,				QTMovie::open,				QTMovie::close,				kXObj,					400 },	// D4
 	{ RearWindowXObj::fileNames,		RearWindowXObj::open,		RearWindowXObj::close,		kXObj,					400 },	// D4
 	{ RegisterComponent::fileNames,		RegisterComponent::open,	RegisterComponent::close,	kXObj,					400 },	// D4
 	{ SerialPortXObj::fileNames,		SerialPortXObj::open,		SerialPortXObj::close,		kXObj,					200 },	// D2
 	{ SoundJam::fileNames,				SoundJam::open,				SoundJam::close,			kXObj,					400 },	// D4
+	{ SpaceMgr::fileNames,				SpaceMgr::open,				SpaceMgr::close,			kXObj,					400 },	// D4
+	{ VolumeList::fileNames,			VolumeList::open,			VolumeList::close,			kXObj,					300 },	// D3
+	{ WidgetXObj::fileNames,			WidgetXObj::open,			WidgetXObj::close, 			kXObj,					400 },  // D4
 	{ VideodiscXObj::fileNames,			VideodiscXObj::open,		VideodiscXObj::close,		kXObj,					200 },	// D2
 	{ XPlayAnim::fileNames,				XPlayAnim::open,			XPlayAnim::close,			kXObj,					300 },	// D3
+	{ Yasix::fileNames,					Yasix::open,				Yasix::close,				kXObj,					300 },	// D3
 	{ nullptr, nullptr, nullptr, 0, 0 }
 };
 
@@ -245,11 +269,11 @@ void Lingo::reloadOpenXLibs() {
 void LM::m_new(int nargs) {
 	// This is usually overridden by a user-defined mNew
 	g_lingo->printSTUBWithArglist("m_new", nargs);
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void LM::m_dispose(int nargs) {
-	g_lingo->_currentMe.u.obj->dispose();
+	g_lingo->_state->me.u.obj->dispose();
 }
 
 /* ScriptContext */
@@ -279,7 +303,7 @@ ScriptContext::ScriptContext(const ScriptContext &sc) : Object<ScriptContext>(sc
 ScriptContext::~ScriptContext() {}
 
 Common::String ScriptContext::asString() {
-	return Common::String::format("script: #%s %d %p", _name.c_str(), _inheritanceLevel, (void *)this);
+	return Common::String::format("script: %d \"%s\" %d %p", _id, _name.c_str(), _inheritanceLevel, (void *)this);
 }
 
 Symbol ScriptContext::define(const Common::String &name, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames) {
@@ -394,7 +418,7 @@ Common::String ScriptContext::formatFunctionList(const char *prefix) {
 // Object array
 
 void LM::m_get(int nargs) {
-	ScriptContext *me = static_cast<ScriptContext *>(g_lingo->_currentMe.u.obj);
+	ScriptContext *me = static_cast<ScriptContext *>(g_lingo->_state->me.u.obj);
 	Datum indexD = g_lingo->pop();
 	uint index = MAX(0, indexD.asInt());
 	if (me->_objArray.contains(index)) {
@@ -405,7 +429,7 @@ void LM::m_get(int nargs) {
 }
 
 void LM::m_put(int nargs) {
-	ScriptContext *me = static_cast<ScriptContext *>(g_lingo->_currentMe.u.obj);
+	ScriptContext *me = static_cast<ScriptContext *>(g_lingo->_state->me.u.obj);
 	Datum value = g_lingo->pop();
 	Datum indexD = g_lingo->pop();
 	uint index = MAX(0, indexD.asInt());
@@ -417,7 +441,7 @@ void LM::m_put(int nargs) {
 void LM::m_perform(int nargs) {
 	// Lingo doesn't seem to bother cloning the object when
 	// mNew is called with mPerform
-	Datum d(g_lingo->_currentMe);
+	Datum d(g_lingo->_state->me);
 	AbstractObject *me = d.u.obj;
 	Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
 	Symbol funcSym = me->getMethod(*methodName.u.s);
@@ -433,7 +457,7 @@ void LM::m_describe(int nargs) {
 }
 
 void LM::m_instanceRespondsTo(int nargs) {
-	AbstractObject *me = g_lingo->_currentMe.u.obj;
+	AbstractObject *me = g_lingo->_state->me.u.obj;
 	Datum d = g_lingo->pop();
 	Common::String methodName = d.asString();
 
@@ -450,12 +474,12 @@ void LM::m_messageList(int nargs) {
 }
 
 void LM::m_name(int nargs) {
-	AbstractObject *me = g_lingo->_currentMe.u.obj;
+	AbstractObject *me = g_lingo->_state->me.u.obj;
 	g_lingo->push(me->getName());
 }
 
 void LM::m_respondsTo(int nargs) {
-	AbstractObject *me = g_lingo->_currentMe.u.obj;
+	AbstractObject *me = g_lingo->_state->me.u.obj;
 	Datum d = g_lingo->pop();
 	Common::String methodName = d.asString();
 
@@ -556,12 +580,12 @@ bool Window::setField(int field, const Datum &value) {
 }
 
 void LM::m_close(int nargs) {
-	Window *me = static_cast<Window *>(g_lingo->_currentMe.u.obj);
+	Window *me = static_cast<Window *>(g_lingo->_state->me.u.obj);
 	me->setVisible(false);
 }
 
 void LM::m_forget(int nargs) {
-	Window *me = static_cast<Window *>(g_lingo->_currentMe.u.obj);
+	Window *me = static_cast<Window *>(g_lingo->_state->me.u.obj);
 	FArray *windowList = g_lingo->_windowList.u.farr;
 
 	uint i;
@@ -589,7 +613,7 @@ void LM::m_forget(int nargs) {
 }
 
 void LM::m_open(int nargs) {
-	Window *me = static_cast<Window *>(g_lingo->_currentMe.u.obj);
+	Window *me = static_cast<Window *>(g_lingo->_state->me.u.obj);
 	me->setVisible(true);
 }
 

@@ -119,6 +119,9 @@ public:
 	/** Saves (parts of) the file. */
 	virtual bool save(int16 dataVar, int32 size, int32 offset) = 0;
 
+	virtual bool loadToRaw(byte *ptr, int32 size, int32 offset);
+	virtual bool saveFromRaw(const byte *ptr, int32 size, int32 offset);
+
 	/** Deletes the file. */
 	virtual bool deleteFile();
 
@@ -137,6 +140,9 @@ public:
 	int32 getSize() override;
 	bool load(int16 dataVar, int32 size, int32 offset) override;
 	bool save(int16 dataVar, int32 size, int32 offset) override;
+
+	bool loadToRaw(byte *ptr, int32 size, int32 offset) override;
+	bool saveFromRaw(const byte *ptr, int32 size, int32 offset) override;
 
 	bool create(uint32 width, uint32 height, bool trueColor);
 	bool createFromSprite(int16 dataVar, int32 size, int32 offset);
@@ -187,6 +193,8 @@ public:
 	int32 getSize() override;
 	bool load(int16 dataVar, int32 size, int32 offset) override;
 	bool save(int16 dataVar, int32 size, int32 offset) override;
+	bool loadToRaw(byte *ptr, int32 size, int32 offset) override;
+	bool saveFromRaw(const byte *ptr, int32 size, int32 offset) override;
 
 	bool deleteFile() override;
 

@@ -130,18 +130,18 @@ bool Cel3DODecoder::loadStream(Common::SeekableReadStream &stream) {
 					stopLine = true;
 					break;
 				case 1: // copy
-					for (uint i = 0; i <= (lead & 0x3f) && linerem > 0 && linecomprem > 0;
+					for (uint i = 0; i <= (lead & 0x3fu) && linerem > 0 && linecomprem > 0;
 					     i++, linerem--, linecomprem -= 2)
 						*dst++ = stream.readUint16BE();
 					break;
 				case 2: // black
-					for (uint i = 0; i <= (lead & 0x3f) && linerem > 0; i++, linerem--)
+					for (uint i = 0; i <= (lead & 0x3fu) && linerem > 0; i++, linerem--)
 						*dst++ = 0;
 					break;
 				case 3: { // RLE multiply
 					uint16 rleval = stream.readUint16BE();
 					linecomprem -= 2;
-					for (uint i = 0; i <= (lead & 0x3f) && linerem > 0; i++, linerem--)
+					for (uint i = 0; i <= (lead & 0x3fu) && linerem > 0; i++, linerem--)
 						*dst++ = rleval;
 					break;
 				}

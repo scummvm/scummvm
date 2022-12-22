@@ -189,6 +189,7 @@ size_t AlignedStream::WriteArrayOfInt64(const int64_t *buffer, size_t count) {
 
 bool AlignedStream::Seek(soff_t /*offset*/, StreamSeek /*origin*/) {
 	// TODO: split out Seekable Stream interface
+	warning("AlignedStream::Seek not supported");
 	return false;
 }
 

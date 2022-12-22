@@ -584,7 +584,7 @@ void IntroController::drawBeastie(int beast, int vertoffset, int frame) {
 
 	assertMsg(beast == 0 || beast == 1, "invalid beast: %d", beast);
 
-	sprintf(buffer, "beast%dframe%02d", beast, frame);
+	Common::sprintf_s(buffer, "beast%dframe%02d", beast, frame);
 
 	destx = beast ? (320 - 48) : 0;
 	_backgroundArea.draw(buffer, destx, vertoffset);

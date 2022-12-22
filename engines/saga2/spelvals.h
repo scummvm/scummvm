@@ -30,37 +30,37 @@ namespace Saga2 {
 
 // constants affecting all or most of the spells
 
-const uint32 SpellJumpiness = 10;
-const uint16 spellSpeed = 1;
+const uint32 kSpellJumpiness = 10;
+const uint16 kSpellSpeed = 1;
 
 // Bolt spell dimensions
-const int16 boltSpellLength = 192;
-const int16 boltSpellWidth = boltSpellLength / 6;
+const int16 kBoltSpellLength = 192;
+const int16 kBoltSpellWidth = kBoltSpellLength / 6;
 
 // Bolt spell dimensions
-const int16 beamSpellLength = 192;
-const int16 beamSpellWidth = beamSpellLength / 12;
+const int16 kBeamSpellLength = 192;
+const int16 kBeamSpellWidth = kBeamSpellLength / 12;
 
 // Cone spell dimensions
-const int16 coneSpellLength = 128;
-const int16 coneSpellWidth = coneSpellLength / 2;
+const int16 kConeSpellLength = 128;
+const int16 kConeSpellWidth = kConeSpellLength / 2;
 
 // Wide Cone spell dimensions
-const int16 waveSpellLength = 128;
-const int16 waveSpellWidth = waveSpellLength;
+const int16 kWaveSpellLength = 128;
+const int16 kWaveSpellWidth = kWaveSpellLength;
 
 // small ball spell dimensions
-const int16 ballSpellRadius = 48;
+const int16 kBallSpellRadius = 48;
 
 // small ball spell dimensions
-const int16 squareSpellSize = 48;
+const int16 kSquareSpellSize = 48;
 
 // large ball spell dimensions
-const int16 stormSpellRadius = 64;
+const int16 kStormSpellRadius = 64;
 
 // small ball spell dimensions
-const int16 wallSpellRadius = 32;
-const int16 wallInnerRadius = 16;
+const int16 kWallSpellRadius = 32;
+const int16 kWallInnerRadius = 16;
 
 /* ===================================================================== *
    Imports

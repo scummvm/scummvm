@@ -559,10 +559,9 @@ void UIEdit::setCursorChar(const char *character) {
 		return;
 	}
 	delete[] _cursorChar;
-	_cursorChar = new char [strlen(character) + 1];
-	if (_cursorChar) {
-		strcpy(_cursorChar, character);
-	}
+	size_t cursorCharSize = strlen(character) + 1;
+	_cursorChar = new char [cursorCharSize];
+	Common::strcpy_s(_cursorChar, cursorCharSize, character);
 }
 
 

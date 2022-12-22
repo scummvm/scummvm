@@ -26,7 +26,7 @@
 #include "engines/stark/gfx/driver.h"
 
 #include "common/archive.h"
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 
 #include "graphics/font.h"
 #include "graphics/fontman.h"

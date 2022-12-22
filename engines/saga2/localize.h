@@ -66,7 +66,9 @@ namespace Saga2 {
 #define PHILLIP_BROSTATE    "Phillip is: "
 #define KEVIN_BROSTATE      "Kevin is: "
 
+// FIXME: Spelling incorrect. Agression should be Aggression. Fixing changes game data and thus may cause issues
 #define ON_AGRESS           "Agression: On"
+// FIXME: Spelling incorrect. Agression should be Aggression. Fixing changes game data and thus may cause issues
 #define OFF_AGRESS          "Agression: Off"
 
 #define NO_ARMOR            "No Armor Worn"

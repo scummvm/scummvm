@@ -20,6 +20,7 @@
  */
 
 #include "scumm/scumm.h"
+#include "scumm/scumm_v2.h"
 #include "scumm/scumm_v4.h"
 #include "scumm/scumm_v6.h"
 #include "scumm/scumm_v8.h"
@@ -83,7 +84,6 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	char *ptrToBreak;
 	int bannerMsgWidth, bannerMsgHeight, roundedWidth;
 	int startingPointX, startingPointY;
-	int bannerSaveYStart;
 	int xPos, yPos;
 	int rightLineColor, leftLineColor, bottomLineColor, topLineColor;
 	int normalTextColor, normalFillColor;
@@ -131,14 +131,35 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 		bottomLineColor = 8;
 		leftLineColor = 15;
 		rightLineColor = 8;
+	} else if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD) {
+		// AFAIK, the original Sega CD interpreter doesn't have message banners, it just
+		// shows the main menu box (e.g. when pausing). In here, we can show the banner,
+		// but let's use the main menu box colors to avoid using unintended colors.
+		normalFillColor = getBannerColor(4);
+		normalTextColor = getBannerColor(2);
+		topLineColor = getBannerColor(13);
+		bottomLineColor = getBannerColor(14);
+		leftLineColor = getBannerColor(15);
+		rightLineColor = getBannerColor(16);
 	} else {
 		int palOffset = (_game.version == 8) ? 0 : 11;
 		normalFillColor = getBannerColor(6 * bannerId + 15 + palOffset);
 		normalTextColor = getBannerColor(6 * bannerId + 14 + palOffset);
-		topLineColor = getBannerColor(6 * bannerId + 16 + palOffset);
-		bottomLineColor = getBannerColor(6 * bannerId + 17 + palOffset);
-		leftLineColor = getBannerColor(6 * bannerId + 18 + palOffset);
-		rightLineColor = getBannerColor(6 * bannerId + 19 + palOffset);
+
+		if (_game.version == 5 && _game.platform == Common::kPlatformMacintosh) {
+			// Mac versions of MI1, MI2 and INDY4 invert the colors of the bottom
+			// and left lines, which means they have the brightest colors on the top
+			// and bottom lines, and the darker colors on the left and right lines.
+			topLineColor = getBannerColor(6 * bannerId + 16 + palOffset);
+			bottomLineColor = getBannerColor(6 * bannerId + 18 + palOffset);
+			leftLineColor = getBannerColor(6 * bannerId + 17 + palOffset);
+			rightLineColor = getBannerColor(6 * bannerId + 19 + palOffset);
+		} else {
+			topLineColor = getBannerColor(6 * bannerId + 16 + palOffset);
+			bottomLineColor = getBannerColor(6 * bannerId + 17 + palOffset);
+			leftLineColor = getBannerColor(6 * bannerId + 18 + palOffset);
+			rightLineColor = getBannerColor(6 * bannerId + 19 + palOffset);
+		}
 	}
 
 	// Backup the current charsetId, since we're going to switch
@@ -165,20 +186,20 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 		startingPointY = _screenHeight / 2 - 10;
 		xPos = _screenWidth / 2 + roundedWidth + 3;
 		yPos = 1 - bannerMsgHeight;
-		bannerSaveYStart = startingPointY;
+		_bannerSaveYStart = startingPointY;
 	} else if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformFMTowns) {
 		bannerMsgWidth = getGUIStringWidth(bannerMsg) / 2;
 		startingPointX = ((160 - bannerMsgWidth) - 8) & 0xFFF8;
 		startingPointY = (bannerMsgWidth + 168) | 0x7;
 		xPos = startingPointX + 1; // Bogus value, since it is unused
 		yPos = startingPointY + 1; // Bogus value, since it is unused
-		bannerSaveYStart = 78;
+		_bannerSaveYStart = 78;
 	} else {
 		startingPointX = 156 - roundedWidth;
 		startingPointY = ((_game.version < 7) ? 80 : _screenHeight / 2 - 10);
 		xPos = roundedWidth + 163 + ((_game.version < 7) ? 1 : 0);
 		yPos = 1 - bannerMsgHeight; // For the normal font this will end up as -12, for CJK modes it will be appropriately adjusted.
-		bannerSaveYStart = startingPointY - ((_game.version < 7) ? 2 : 0);
+		_bannerSaveYStart = startingPointY - ((_game.version < 7) ? 2 : 0);
 	}
 
 	// Save the pixels which will be overwritten by the banner,
@@ -192,38 +213,55 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_game.platform == Common::kPlatformFMTowns && !_textSurfBannerMem) {
 				rowSize *= _textSurfaceMultiplier;
-				bannerSaveYStart *= _textSurfaceMultiplier;
+				_bannerSaveYStart *= _textSurfaceMultiplier;
 				_textSurfBannerMemSize = bannerMsgHeight * rowSize * _textSurfaceMultiplier;
 				_textSurfBannerMem = (byte *)malloc(_textSurfBannerMemSize * sizeof(byte));
 				if (_textSurfBannerMem) {
 					memcpy(
 						_textSurfBannerMem,
-						&((byte *)_textSurface.getBasePtr(0, _screenTop * _textSurfaceMultiplier))[rowSize * bannerSaveYStart],
+						&((byte *)_textSurface.getBasePtr(0, _screenTop * _textSurfaceMultiplier))[rowSize * _bannerSaveYStart],
 						_textSurfBannerMemSize);
 				}
 
 				// We're going to use these same values for saving the
 				// virtual screen surface, so let's un-multiply them...
 				rowSize /= _textSurfaceMultiplier;
-				bannerSaveYStart /= _textSurfaceMultiplier;
+				_bannerSaveYStart /= _textSurfaceMultiplier;
 			}
 #endif
 
 			memcpy(
 				_bannerMem,
-				&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[rowSize * bannerSaveYStart],
+				&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[rowSize * _bannerSaveYStart],
 				_bannerMemSize);
 		}
 	}
 
-	// Set up the GUI control, specifying all the related colors, the message and the position...
-	setUpInternalGUIControl(0, normalFillColor, normalTextColor,
-							topLineColor, bottomLineColor, leftLineColor, rightLineColor, 0, 0,
-							startingPointX, startingPointY, xPos, yPos,
-							bannerMsg, true, true);
+	if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformFMTowns) {
+		// MI1 for FMTowns does its own thing with hardcoded values here...
+		drawBox(startingPointX + 1, 81, startingPointY - 1, 90, normalFillColor);
 
-	// Draw it!
-	drawInternalGUIControl(0, 0);
+		drawLine(startingPointX + 1, 80, startingPointY - 1, 80, topLineColor);
+		drawLine(startingPointX + 1, 91, startingPointY - 1, 91, bottomLineColor);
+		drawLine(startingPointX, 81, startingPointX, 90, leftLineColor);
+		drawLine(startingPointY, 81, startingPointY, 90, rightLineColor);
+
+		int tmpRight = _string[5].right;
+		_string[5].right = _screenWidth - 1;
+
+		drawGUIText(bannerMsg, nullptr, 160, 82, normalTextColor, true);
+		_string[5].right = tmpRight;
+	} else {
+		// Set up the GUI control, specifying all the related colors, the message and the position...
+		setUpInternalGUIControl(0, normalFillColor, normalTextColor,
+								topLineColor, bottomLineColor, leftLineColor, rightLineColor, 0, 0,
+								startingPointX, startingPointY, xPos, yPos,
+								bannerMsg, true, true);
+
+		// Draw it!
+		drawInternalGUIControl(0, 0);
+	}
+
 	ScummEngine::drawDirtyScreenParts();
 
 	// Wait until the engine receives a new Keyboard or Mouse input,
@@ -261,16 +299,128 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	return ks;
 }
 
+Common::KeyState ScummEngine::printMessageAndPause(const char *msg, int color, int32 waitTime, bool drawOnSentenceLine) {
+	Common::Rect sentenceline;
+
+	// Pause the engine
+	PauseToken pt = pauseEngine();
+
+	if (drawOnSentenceLine) {
+		setSnailCursor();
+
+		_string[2].charset = 1;
+		_string[2].ypos = _virtscr[kVerbVirtScreen].topline;
+		_string[2].xpos = 0;
+		_string[2].right = _virtscr[kVerbVirtScreen].w - 1;
+		if (_game.platform == Common::kPlatformNES) {
+			_string[2].xpos = 16;
+			_string[2].color = 0;
+		} else if (_game.platform == Common::kPlatformC64) {
+			_string[2].color = 16;
+		} else {
+			_string[2].color = 13;
+		}
+
+		byte string[80];
+		const char *ptr = msg;
+		int i = 0, len = 0;
+
+		// Maximum length of printable characters
+		int maxChars = (_game.platform == Common::kPlatformNES) ? 60 : 40;
+		while (*ptr) {
+			if (*ptr != '@')
+				len++;
+			if (len > maxChars) {
+				break;
+			}
+
+			string[i++] = *ptr++;
+
+			if (_game.platform == Common::kPlatformNES && len == 30) {
+				string[i++] = 0xFF;
+				string[i++] = 8;
+			}
+		}
+		string[i] = 0;
+
+		if (_game.platform == Common::kPlatformNES) {
+			sentenceline.top = _virtscr[kVerbVirtScreen].topline;
+			sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 16;
+			sentenceline.left = 16;
+			sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
+		} else {
+			sentenceline.top = _virtscr[kVerbVirtScreen].topline;
+			sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 8;
+			sentenceline.left = 0;
+			sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
+		}
+		restoreBackground(sentenceline);
+		drawString(2, (byte *)string);
+		drawDirtyScreenParts();
+	} else {
+		_string[0].xpos = 0;
+		_string[0].ypos = 0;
+		_string[0].right = _screenWidth - 1;
+		_string[0].center = false;
+		_string[0].overhead = false;
+
+		byte tmpColor = _string[0].color;
+		byte tmpAct = _actorToPrintStrFor;
+
+		_string[0].color = color;
+		_actorToPrintStrFor = 0xFF;
+
+		actorTalk((const byte *)msg);
+
+		_actorToPrintStrFor = tmpAct;
+		_string[0].color = tmpColor;
+	}
+
+	Common::KeyState ks = Common::KEYCODE_INVALID;
+	bool leftBtnPressed = false, rightBtnPressed = false;
+
+	// Wait until the engine receives a new Keyboard or Mouse input,
+	// unless we have specified a positive waitTime: in that case, the banner
+	// will stay on screen until an input has been received or until the time-out.
+	if (waitTime) {
+		ScummEngine::drawDirtyScreenParts();
+		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
+		stopTalk();
+	}
+
+	if (drawOnSentenceLine) {
+		setBuiltinCursor(0);
+		restoreBackground(sentenceline);
+
+		// Restore the sentence which was being displayed before
+		// (MANIAC v1 doesn't do this)
+		if (!(_game.id == GID_MANIAC && _game.version <= 1))
+			drawSentence();
+	}
+
+	// Finally, resume the engine, clear the input state, and restore the charset.
+	pt.clear();
+	clearClickedStatus();
+
+	return ks;
+}
+
 Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int color, int32 waitTime) {
 	// LOOM VGA uses the new style GUI
 	if (_game.version == 4 && _game.id == GID_LOOM) {
 		return showBannerAndPause(0, waitTime, msg);
 	}
 
+	if (_macScreen) {
+		return mac_showOldStyleBannerAndPause(msg, waitTime);
+	}
+
 	char bannerMsg[512];
 	int bannerMsgWidth, bannerMsgHeight;
 	int startingPointY;
-	int bannerSaveYStart;
+	int boxColor;
+	int textXPos, textYPos;
+	bool isV3Towns = (_game.platform == Common::kPlatformFMTowns && _game.version == 3);
 
 	_messageBannerActive = true;
 
@@ -280,8 +430,9 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	// Backup the text surface...
 	if (!_mainMenuIsActive) {
 		saveSurfacesPreGUI();
-		if (_charset->_textScreenID == kMainVirtScreen)
+		if (_charset->_textScreenID == kMainVirtScreen && _game.id != GID_LOOM) {
 			restoreCharsetBg();
+		}
 	}
 
 	// Pause shake effect
@@ -291,10 +442,9 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	// Pause the engine
 	PauseToken pt = pauseEngine();
 
-	// Backup the current charsetId, since we're going to switch
-	// to charsetId == 1...
+	// Backup the current charsetId...
 	int oldId = _charset->getCurID();
-	_charset->setCurID(1);
+	_charset->setCurID(_game.version > 3 ? 1 : 0);
 
 	// Take all the necessary measurements for the box which
 	// will contain the string...
@@ -304,28 +454,76 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 		bannerMsgWidth = 100;
 
 	startingPointY = 80;
-	bannerSaveYStart = startingPointY - 2;
 
+	boxColor = 0;
+	textXPos = _screenWidth / 2;
+	textYPos = startingPointY + 2;
+
+	if (isV3Towns) {
+		boxColor = 8;
+		textXPos = (320 - bannerMsgWidth) / 2;
+		textYPos = 2 + (_virtscr[kMainVirtScreen].h + _virtscr[kMainVirtScreen].topline - (bannerMsgHeight - 6)) / 2;
+
+		// Game specific corrections
+		if (_game.id == GID_INDY3)
+			textXPos += 8;
+		if (_game.id == GID_LOOM)
+			textYPos -= 8;
+
+		startingPointY = textYPos - 2;
+
+		if (_useCJKMode) {
+			textXPos -= _game.id == GID_INDY3 ? 34 : 8;
+		}
+
+		_bannerSaveYStart = startingPointY;
+	} else {
+		_bannerSaveYStart = startingPointY - (_game.version == 4 ? 2 : _virtscr[kMainVirtScreen].topline);
+	}
 
 	// Save the pixels which will be overwritten by the banner,
 	// so that we can restore them later...
 	if (!_bannerMem) {
-		int rowSize = _screenWidth + 8;
-		_bannerMemSize = (bannerMsgHeight + 2) * (_screenWidth + 8);
+		int rowSize = _screenWidth + (_game.version == 4 ? 8 : 0);
+
+		// FM-Towns games draw the banner on the text surface, so let's save that
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		if (_game.platform == Common::kPlatformFMTowns && !_textSurfBannerMem) {
+			rowSize *= _textSurfaceMultiplier;
+			startingPointY *= _textSurfaceMultiplier;
+			_textSurfBannerMemSize = (bannerMsgHeight + 2) * rowSize * _textSurfaceMultiplier;
+			_textSurfBannerMem = (byte *)malloc(_textSurfBannerMemSize * sizeof(byte));
+			if (_textSurfBannerMem) {
+				memcpy(
+					_textSurfBannerMem,
+					&((byte *)_textSurface.getBasePtr(0, _screenTop * _textSurfaceMultiplier))[rowSize * startingPointY],
+					_textSurfBannerMemSize);
+			}
+
+			// We're going to use these same values for saving the
+			// virtual screen surface, so let's un-multiply them...
+			rowSize /= _textSurfaceMultiplier;
+			startingPointY /= _textSurfaceMultiplier;
+		}
+#endif
+
+		_bannerMemSize = (bannerMsgHeight + 2) * (rowSize);
 		_bannerMem = (byte *)malloc(_bannerMemSize * sizeof(byte));
 		if (_bannerMem) {
 			memcpy(
 				_bannerMem,
-				&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[rowSize * bannerSaveYStart],
+				&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[rowSize * _bannerSaveYStart],
 				_bannerMemSize);
 		}
 	}
 
 	// Draw the GUI control
-	drawBox(0, startingPointY, _screenWidth - 1, startingPointY + bannerMsgHeight, 0);
+	drawBox(0, startingPointY, _screenWidth - 1, startingPointY + bannerMsgHeight, boxColor);
 	drawBox(0, startingPointY, _screenWidth - 1, startingPointY, color);
 	drawBox(0, startingPointY + bannerMsgHeight, _screenWidth - 1, startingPointY + bannerMsgHeight, color);
-	drawGUIText(bannerMsg, 0, _screenWidth / 2, startingPointY + 2, color, true);
+
+	drawGUIText(bannerMsg, nullptr, textXPos, textYPos, color, !isV3Towns);
+
 	ScummEngine::drawDirtyScreenParts();
 
 	// Wait until the engine receives a new Keyboard or Mouse input,
@@ -359,24 +557,17 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 }
 
 void ScummEngine::clearBanner() {
+	int startingPointY = _bannerSaveYStart;
+
 	// Restore the GFX content which was under the banner,
 	// and then mark that part of the screen as dirty.
 	if (_bannerMem) {
-		int rowSize = _screenWidth + 8;
+		int rowSize = _screenWidth + (_game.version >= 4 ? 8 : 0);
 		// Don't manually clear the banner if a SMUSH movie is playing,
 		// as that will cause some rare small glitches. The SMUSH player
 		// will take care of that for us automatically when updating the
 		// screen for next frame.
 		if (!isSmushActive()) {
-			int startingPointY;
-			if (_game.version == 8) {
-				startingPointY = _screenHeight / 2 - 10;
-			} else if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformFMTowns) {
-				startingPointY = 78;
-			} else {
-				startingPointY = ((_game.version < 7) ? 80 - 2 : _screenHeight / 2 - 10);
-			}
-
 			// FM-Towns games draw the banners on the text surface, so restore both surfaces...
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_game.platform == Common::kPlatformFMTowns && _textSurfBannerMem) {
@@ -393,6 +584,7 @@ void ScummEngine::clearBanner() {
 				startingPointY /= _textSurfaceMultiplier;
 			}
 #endif
+
 			memcpy(
 				&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[rowSize * startingPointY],
 				_bannerMem,
@@ -479,85 +671,70 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 
 		fillColor = highlightColor ? ctrl->highlightedFillColor : ctrl->normalFillColor;
 
-		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformFMTowns) {
-			// MI1 for FMTowns does its own thing with hardcoded values here...
-			drawBox(relCentX + 1, 81, relCentY - 1, 90, fillColor);
+		if (ctrl->doubleLinesFlag) {
+			// Draw the main box...
+			drawBox(relCentX + 1, relCentY + 1 + topComp, boxSizeX - offset, boxSizeY - offset + topComp, fillColor);
 
-			drawLine(relCentX + 1, 80, relCentY - 1, 80, ctrl->topLineColor);
-			drawLine(relCentX + 1, 91, relCentY - 1, 91, ctrl->bottomLineColor);
-			drawLine(relCentX, 81, relCentX, 90, ctrl->leftLineColor);
-			drawLine(relCentY, 81, relCentY, 90, ctrl->rightLineColor);
-		} else {
-			if (ctrl->doubleLinesFlag) {
-				// Draw the main box...
-				drawBox(relCentX + 1, relCentY + 1 + topComp, boxSizeX - offset, boxSizeY - offset + topComp, fillColor);
+			if (_game.version == 4 && _game.id != GID_LOOM) {
+				// This is for MI1 v4 (EGA and VGA floppy versions) and the Passport to Adventure demo;
+				// these games use a very early version of this GUI system, with only
+				// one line color; we will use the topLineColor to mimick that.
 
-				if (_game.version == 4 && _game.id != GID_LOOM) {
-					// This is for MI1 v4 (EGA and VGA floppy versions) and the Passport to Adventure demo;
-					// these games use a very early version of this GUI system, with only
-					// one line color; we will use the topLineColor to mimick that.
+				// Draw the contour lines...
+				drawBox(relCentX + 2, relCentY, x - 2, relCentY, ctrl->topLineColor);
+				drawBox(relCentX + 2, y, x - 2, y, ctrl->topLineColor);
+				drawBox(relCentX, relCentY + 2, relCentX, y - 2, ctrl->topLineColor);
+				drawBox(x, relCentY + 2, x, y - 2, ctrl->topLineColor);
 
-					// Draw the contour lines...
-					drawBox(relCentX + 2, relCentY, x - 2, relCentY, ctrl->topLineColor);
-					drawBox(relCentX + 2, y, x - 2, y, ctrl->topLineColor);
-					drawBox(relCentX, relCentY + 2, relCentX, y - 2, ctrl->topLineColor);
-					drawBox(x, relCentY + 2, x, y - 2, ctrl->topLineColor);
-
-					// Draw single pixels for the button roundness effect...
-					drawBox(relCentX + 1, relCentY + 1, relCentX + 1, relCentY + 1, ctrl->topLineColor);
-					drawBox(x - 1, relCentY + 1, x - 1, relCentY + 1, ctrl->topLineColor);
-					drawBox(relCentX + 1, y - 1, relCentX + 1, y - 1, ctrl->topLineColor);
-					drawBox(x - 1, y - 1, x - 1, y - 1, ctrl->topLineColor);
-				} else {
-					// Draw the contour lines for the box; each of the lines is doubled to give a 3D effect.
-					drawLine(relCentX + 1, relCentY, x - 1, relCentY, ctrl->topLineColor);
-					drawLine(relCentX + 1, y, x - 1, y, ctrl->bottomLineColor);
-					drawLine(relCentX, relCentY + 1, relCentX, y - 1, ctrl->leftLineColor);
-					drawLine(x, relCentY + 1, x, y - 1, ctrl->rightLineColor);
-
-					drawLine(relCentX + 1, relCentY + 1, x - 1, relCentY + 1, ctrl->topLineColor);
-					drawLine(relCentX + 1, y - 1, x - 1, y - 1, ctrl->bottomLineColor);
-					drawLine(relCentX + 1, relCentY + 1, relCentX + 1, y - 1, ctrl->leftLineColor);
-					drawLine(x - 1, relCentY + 1, x - 1, y - 1, ctrl->rightLineColor);
-				}
+				// Draw single pixels for the button roundness effect...
+				drawBox(relCentX + 1, relCentY + 1, relCentX + 1, relCentY + 1, ctrl->topLineColor);
+				drawBox(x - 1, relCentY + 1, x - 1, relCentY + 1, ctrl->topLineColor);
+				drawBox(relCentX + 1, y - 1, relCentX + 1, y - 1, ctrl->topLineColor);
+				drawBox(x - 1, y - 1, x - 1, y - 1, ctrl->topLineColor);
 			} else {
-				drawBox(relCentX, relCentY + topComp, x, y + topComp, (highlightColor ? ctrl->highlightedFillColor : ctrl->normalFillColor));
-				if (_game.version == 4 && _game.id != GID_LOOM) {
-					drawBox(relCentX, relCentY, x, relCentY, ctrl->topLineColor);
-					drawBox(relCentX, y, x, y, ctrl->bottomLineColor);
-					drawBox(relCentX, relCentY, relCentX, y, ctrl->leftLineColor);
-					drawBox(x, relCentY, x, y, ctrl->rightLineColor);
-				} else {
-					drawLine(relCentX, relCentY, x, relCentY, ctrl->topLineColor);
-					drawLine(relCentX, y, x, y, ctrl->bottomLineColor);
-					drawLine(relCentX, relCentY, relCentX, y, ctrl->leftLineColor);
-					drawLine(x, relCentY, x, y, ctrl->rightLineColor);
-				}
+				// Draw the contour lines for the box; each of the lines is doubled to give a 3D effect.
+				drawLine(relCentX + 1, relCentY, x - 1, relCentY, ctrl->topLineColor);
+				drawLine(relCentX + 1, y, x - 1, y, ctrl->bottomLineColor);
+				drawLine(relCentX, relCentY + 1, relCentX, y - 1, ctrl->leftLineColor);
+				drawLine(x, relCentY + 1, x, y - 1, ctrl->rightLineColor);
+
+				drawLine(relCentX + 1, relCentY + 1, x - 1, relCentY + 1, ctrl->topLineColor);
+				drawLine(relCentX + 1, y - 1, x - 1, y - 1, ctrl->bottomLineColor);
+				drawLine(relCentX + 1, relCentY + 1, relCentX + 1, y - 1, ctrl->leftLineColor);
+				drawLine(x - 1, relCentY + 1, x - 1, y - 1, ctrl->rightLineColor);
+			}
+		} else {
+			drawBox(relCentX, relCentY + topComp, x, y + topComp, (highlightColor ? ctrl->highlightedFillColor : ctrl->normalFillColor));
+			if (_game.version == 4 && _game.id != GID_LOOM) {
+				drawBox(relCentX, relCentY, x, relCentY, ctrl->topLineColor);
+				drawBox(relCentX, y, x, y, ctrl->bottomLineColor);
+				drawBox(relCentX, relCentY, relCentX, y, ctrl->leftLineColor);
+				drawBox(x, relCentY, x, y, ctrl->rightLineColor);
+			} else {
+				drawLine(relCentX, relCentY, x, relCentY, ctrl->topLineColor);
+				drawLine(relCentX, y, x, y, ctrl->bottomLineColor);
+				drawLine(relCentX, relCentY, relCentX, y, ctrl->leftLineColor);
+				drawLine(x, relCentY, x, y, ctrl->rightLineColor);
 			}
 		}
 
 		// Calculate the positioning for the text
 		int oldId = _charset->getCurID();
-		_charset->setCurID(1);
+		_charset->setCurID(_game.platform == Common::kPlatformSegaCD ? 6 : 1);
 
 		centerFlag = ctrl->centerText;
-		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformFMTowns) {
-			// Again, MI1 for FMTowns hardcodes the values...
-			textXPos = 160;
-			textYPos = 82;
-		} else {
-			textHeight = getGUIStringHeight(ctrl->label.c_str());
 
-			if (centerFlag)
-				textXPos = relCentX + (x - ctrl->relativeCenterX) / 2;
-			else
-				textXPos = relCentX + 2;
+		textHeight = getGUIStringHeight(ctrl->label.c_str());
 
-			if (_game.version == 8 || _game.id == GID_DIG)
-				textYPos = relCentY + (y - relCentY - textHeight) / 2 + 1;
-			else
-				textYPos = relCentY + (y - 8 - relCentY + 2) / 2;
-		}
+		if (centerFlag)
+			textXPos = relCentX + (x - ctrl->relativeCenterX) / 2;
+		else
+			textXPos = relCentX + 2;
+
+		if (_game.version == 8 || _game.id == GID_DIG)
+			textYPos = relCentY + (y - relCentY - textHeight) / 2 + 1;
+		else
+			textYPos = relCentY + (y - 8 - relCentY + 2) / 2;
 
 		// Finally, choose the color and draw the text message
 		if (highlightColor)
@@ -586,13 +763,28 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 
 		} else {
 			int tmpRight = _string[5].right;
+			bool nudgeJapYPos = _language == Common::JA_JPN;
+
+			if (_game.platform == Common::kPlatformSegaCD) {
+				nudgeJapYPos &= !(id >= GUI_CTRL_NUMPAD_1 && id <= GUI_CTRL_NUMPAD_0);
+				nudgeJapYPos &= (id != GUI_CTRL_NUMPAD_BACK);
+				nudgeJapYPos &= (id != GUI_CTRL_ARROW_LEFT_BUTTON);
+				nudgeJapYPos &= (id != GUI_CTRL_ARROW_RIGHT_BUTTON);
+				nudgeJapYPos &= (id != GUI_CTRL_TEXT_SPEED_SLIDER);
+
+				textYPos -= nudgeJapYPos ? 4 : 2;
+
+				textXPos += 1;
+			}
+
 			_string[5].right = _screenWidth - 1;
 
 			// The original CJK DIG interpreter limits the clipping to the save slots. Other elements
 			// seem to (theoretically) be allowed to draw text wherever they want...
-			bool isSaveSlot = (id >= GUI_CTRL_FIRST_SG && id <= GUI_CTRL_LAST_SG);
+			bool isSaveSlot = (id >= GUI_CTRL_FIRST_SG && id <= GUI_CTRL_LAST_SG) && _game.platform != Common::kPlatformSegaCD;
 			Common::Rect clipRect(relCentX, relCentY, x, y);
-			drawGUIText(buttonString, isSaveSlot ? &clipRect : 0, textXPos, textYPos, textColor, centerFlag);
+			drawGUIText(buttonString, isSaveSlot ? &clipRect : nullptr, textXPos, textYPos, textColor, centerFlag);
+
 			_string[5].right = tmpRight;
 		}
 
@@ -836,7 +1028,7 @@ const char *ScummEngine_v8::getGUIString(int stringId) {
 		resStringId = 4;
 		break;
 	case gsRestart:
-		resStringId = 5;
+		resStringId = (_game.features & GF_DEMO) ? 36 : 5;
 		break;
 	case gsQuitPrompt:
 		resStringId = (_game.features & GF_DEMO) ? 30 : 22;
@@ -1138,7 +1330,8 @@ void ScummEngine::saveSurfacesPreGUI() {
 	// so the last line is being drawn on the verb surface; to address this, we
 	// save and restore that too.
 
-	if (_game.version < 4 || _game.version > 6)
+	if (_game.version < 3 || _game.version > 6 ||
+		(_game.version == 3 && _game.platform == Common::kPlatformFMTowns))
 		return;
 
 	_tempTextSurface = (byte *)malloc(_textSurface.pitch * _textSurface.h * sizeof(byte));
@@ -1166,14 +1359,26 @@ void ScummEngine::saveSurfacesPreGUI() {
 		// and stamp it on top of the main screen: this is done to ensure that the GUI is drawn on top
 		// of possible subtitle texts instead of having the latters being deleted or being drawn on top
 		// of the GUI...
-		if (!(_game.version == 4 && _game.id == GID_LOOM)) {
+		if (!(_game.version == 4 && _game.id == GID_LOOM) &&
+			!(_game.version == 5 && _game.platform == Common::kPlatformFMTowns)) {
 			for (int y = 0; y < _screenHeight; y++) {
 				for (int x = 0; x < _screenWidth; x++) {
 					// Only draw non transparent pixels
 					if (_tempTextSurface[x + y * _screenWidth] != 0xFD) {
-						_virtscr[kMainVirtScreen].setPixel(_virtscr[kMainVirtScreen].xstart + x, y, _tempTextSurface[x + y * _screenWidth]);
+						if (x < _virtscr[kMainVirtScreen].pitch && y < _virtscr[kMainVirtScreen].h)
+							_virtscr[kMainVirtScreen].setPixel(_virtscr[kMainVirtScreen].xstart + x, y, _tempTextSurface[x + y * _screenWidth]);
 					}
 				}
+			}
+		}
+
+		// A bit of trickery to prevent in-game texts to be positioned on top of the GUI banners:
+		// draw transparent lines on the text surface, over the area of the main virtual screen.
+		if (_game.id == GID_LOOM && _game.version == 3 && _game.platform != Common::kPlatformFMTowns) {
+			int yBegin = _virtscr[kMainVirtScreen].topline;
+			int yEnd = _virtscr[kMainVirtScreen].topline + _virtscr[kMainVirtScreen].h;
+			for (int y = yBegin; y < yEnd; y++) {
+				memset(_textSurface.getBasePtr(0, y), 0xFD, _virtscr[kMainVirtScreen].w);
 			}
 		}
 	}
@@ -1181,7 +1386,8 @@ void ScummEngine::saveSurfacesPreGUI() {
 
 void ScummEngine::restoreSurfacesPostGUI() {
 
-	if (_game.version < 4 || _game.version > 6)
+	if (_game.version < 3 || _game.version > 6 ||
+		(_game.version == 3 && _game.platform == Common::kPlatformFMTowns))
 		return;
 
 	if (_tempTextSurface) {
@@ -1189,9 +1395,11 @@ void ScummEngine::restoreSurfacesPostGUI() {
 
 		// Signal the restoreCharsetBg() function that there's text
 		// on the text surface, so it gets deleted the next time another
-		// text is displayed...
-		if (_game.version != 4 || _game.id != GID_LOOM)
+		// text is displayed. Just don't do that for LOOM, or it might
+		// randomly cause the distaff to disappear on rare occasions. :-)
+		if (_game.id != GID_LOOM) {
 			_postGUICharMask = true;
+		}
 
 		free(_tempTextSurface);
 		_tempTextSurface = nullptr;
@@ -1275,17 +1483,20 @@ void ScummEngine::queryQuit(bool returnToLauncher) {
 
 	convertMessageToString((const byte *)getGUIString(gsQuitPrompt), (byte *)msgLabelPtr, sizeof(msgLabelPtr));
 	if (msgLabelPtr[0] != '\0') {
-		localizedYesKey = msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
-		msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
+		localizedYesKey = msgLabelPtr[Common::strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
+		msgLabelPtr[Common::strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
 
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
 		// "Are you sure you want to quit?  (Y/N)"
 		Common::KeyState ks;
-		if (_game.version > 4)
+		if (_game.version > 4) {
 			ks = showBannerAndPause(0, -1, msgLabelPtr);
-		else
+		} else if (_game.version < 3) {
+			ks = printMessageAndPause(msgLabelPtr, 0, -1, true);
+		} else {
 			ks = showOldStyleBannerAndPause(msgLabelPtr, 12, -1);
+		}
 
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
@@ -1310,17 +1521,20 @@ void ScummEngine::queryRestart() {
 
 	convertMessageToString((const byte *)getGUIString(gsRestart), (byte *)msgLabelPtr, sizeof(msgLabelPtr));
 	if (msgLabelPtr[0] != '\0') {
-		localizedYesKey = msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
-		msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
+		localizedYesKey = msgLabelPtr[Common::strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
+		msgLabelPtr[Common::strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
 
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
 		// "Are you sure you want to restart?  (Y/N)"
 		Common::KeyState ks;
-		if (_game.version > 4)
+		if (_game.version > 4) {
 			ks = showBannerAndPause(0, -1, msgLabelPtr);
-		else
+		} else if (_game.version < 3) {
+			ks = printMessageAndPause(msgLabelPtr, 4, -1, false);
+		} else {
 			ks = showOldStyleBannerAndPause(msgLabelPtr, 12, -1);
+		}
 
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
@@ -1329,6 +1543,9 @@ void ScummEngine::queryRestart() {
 
 			if (_game.version < 5)
 				restoreCharsetBg();
+
+			if (_game.id == GID_SAMNMAX)
+				fadeOut(134);
 
 			restart();
 		}
@@ -1341,7 +1558,7 @@ void ScummEngine::queryRestart() {
 bool ScummEngine::shouldHighlightLabelAndWait(int clickedControl) {
 	return ((clickedControl >= GUI_CTRL_SAVE_BUTTON && clickedControl <= GUI_CTRL_PATH_BUTTON) ||
 			(clickedControl == GUI_CTRL_DISPLAY_TEXT_CHECKBOX ||
-			 clickedControl == GUI_CTRL_SPOOLED_MUSIC_CHECKBOX));
+			 clickedControl == GUI_CTRL_SPOOLED_MUSIC_CHECKBOX)) || _game.platform == Common::kPlatformSegaCD;
 }
 
 void ScummEngine::fillSavegameLabels() {
@@ -1397,8 +1614,8 @@ bool ScummEngine::canWriteGame(int slotId) {
 			Common::strlcpy(msgLabelPtr, "Do you want to replace this saved game?  (Y/N)Y", sizeof(msgLabelPtr));
 		}
 
-		localizedYesKey = msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
-		msgLabelPtr[strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
+		localizedYesKey = msgLabelPtr[Common::strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
+		msgLabelPtr[Common::strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
 
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
@@ -1529,6 +1746,15 @@ void ScummEngine::showMainMenu() {
 
 	memset(args, 0, sizeof(args));
 
+	// Run the passcode script without args to fetch the current
+	// value of the passcode, which is then stored in var 63.
+	if (_game.platform == Common::kPlatformSegaCD) {
+		int dummyArgs[16];
+		memset(dummyArgs, 0, sizeof(dummyArgs));
+
+		runScript(61, 0, 0, args);
+	}
+
 	// Generate the thumbnail, in case the game is saved
 	Graphics::createThumbnail(_savegameThumbnail);
 
@@ -1553,7 +1779,8 @@ void ScummEngine::showMainMenu() {
 
 		// V6 games should call for stopTalk() instead, but that's a bit too drastic;
 		// this ensures that we can at least hear the speech after the menu is closed.
-		if (_charset->_textScreenID == kMainVirtScreen && !(_game.version == 4 && _game.id == GID_LOOM))
+		if (_charset->_textScreenID == kMainVirtScreen && !(_game.version == 4 && _game.id == GID_LOOM) &&
+			!(_game.version == 5 && _game.platform == Common::kPlatformFMTowns))
 			restoreCharsetBg();
 	}
 
@@ -1561,7 +1788,7 @@ void ScummEngine::showMainMenu() {
 	setUpMainMenuControls();
 	drawMainMenuControls();
 
-	if (_game.platform == Common::kPlatformAmiga) {
+	if (_game.platform == Common::kPlatformAmiga || _game.platform == Common::kPlatformFMTowns) {
 		convertMessageToString((const byte *)getGUIString(gsInsertSaveDisk), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
 		drawMainMenuTitle(saveScreenTitle);
 	} else if (_game.version > 4 && _game.id != GID_MONKEY2 && _game.id != GID_MONKEY) {
@@ -1660,7 +1887,8 @@ void ScummEngine::showMainMenu() {
 			rightMsClicked = false;
 
 			if (clickedControl != -1) {
-				if (clickedControl < GUI_CTRL_FIRST_SG || clickedControl > GUI_CTRL_LAST_SG) {
+				if (clickedControl < GUI_CTRL_FIRST_SG || clickedControl > GUI_CTRL_LAST_SG ||
+					_game.platform == Common::kPlatformSegaCD) {
 					// Avoid highlighting the main container boxes :-)
 					if (clickedControl != GUI_CTRL_OUTER_BOX && clickedControl != GUI_CTRL_INNER_BOX) {
 						// Highlight the control
@@ -1680,7 +1908,7 @@ void ScummEngine::showMainMenu() {
 						if (executeMainMenuOperation(clickedControl, curMouseX, curMouseY, hasLoadedState))
 							break;
 					}
-				} else {
+				} else if (_game.platform != Common::kPlatformSegaCD) {
 					int tmp = _mainMenuSavegameLabel;
 					_mainMenuSavegameLabel = clickedControl;
 
@@ -1705,8 +1933,9 @@ void ScummEngine::showMainMenu() {
 
 		if (shouldQuit() && !_quitByGUIPrompt) {
 			clearClickedStatus();
-			if (executeMainMenuOperation(GUI_CTRL_QUIT_BUTTON, 0, 0, hasLoadedState) || _quitByGUIPrompt)
-				break;
+			if (_game.platform != Common::kPlatformSegaCD)
+				if (executeMainMenuOperation(GUI_CTRL_QUIT_BUTTON, 0, 0, hasLoadedState) || _quitByGUIPrompt)
+					break;
 		}
 	}
 
@@ -1716,7 +1945,8 @@ void ScummEngine::showMainMenu() {
 		_completeScreenRedraw = true;
 
 	// Restore the old cursor state only if we're not loading a game...
-	if (_saveScriptParam != GAME_PROPER_LOAD && _saveLoadFlag != 2) {
+	if (_saveScriptParam != GAME_PROPER_LOAD && _saveLoadFlag != 2 &&
+		!(_game.platform == Common::kPlatformSegaCD && hasLoadedState)) {
 		restoreCursorPostMenu();
 	} else if (_saveLoadFlag == 2) {
 		_cursor.state = 0;
@@ -1761,7 +1991,159 @@ void ScummEngine::showMainMenu() {
 	clearClickedStatus();
 }
 
+bool ScummEngine::executeMainMenuOperationSegaCD(int op, int mouseX, int mouseY, bool &hasLoadedState) {
+	switch (op) {
+	case GUI_CTRL_PLAY_BUTTON:
+		return true;
+	case GUI_CTRL_LOAD_BUTTON:
+		_menuPage = GUI_PAGE_LOAD;
+		setUpMainMenuControls();
+		drawMainMenuControls();
+		updateMainMenuControls();
+		ScummEngine::drawDirtyScreenParts();
+		break;
+	case GUI_CTRL_RESTART_BUTTON:
+		_menuPage = GUI_PAGE_RESTART;
+		setUpMainMenuControls();
+		drawMainMenuControls();
+		ScummEngine::drawDirtyScreenParts();
+		break;
+	case GUI_CTRL_OK_BUTTON:
+		if (_menuPage == GUI_PAGE_RESTART) {
+			_cursor.state = 0;
+			CursorMan.showMouse(false);
+			hasLoadedState = true;
+			restart();
+			return true;
+		} else if (_menuPage == GUI_PAGE_CODE_CONFIRM) {
+			_bootParam = atoi(_mainMenuSegaCDPasscode);
+
+			// We are running script 61 twice:
+			// - The first time we are providing it the passcode as an argument;
+			// - The second time we give no arguments, allowing var 63 to be updated.
+			// This will let us know whether we have successfully loaded a game or not.
+
+			// First time...
+			int args[16];
+			memset(args, 0, sizeof(args));
+			args[0] = _bootParam;
+
+			runScript(61, 0, 0, args);
+
+			// Second time...
+			args[0] = 0;
+			runScript(61, 0, 0, args);
+
+			hasLoadedState = _scummVars[63] == _bootParam;
+
+			_bootParam = 0;
+
+			if (!hasLoadedState) {
+				_menuPage = GUI_PAGE_INVALID_CODE;
+				setUpMainMenuControls();
+				drawMainMenuControls();
+				updateMainMenuControls();
+				ScummEngine::drawDirtyScreenParts();
+
+				waitForTimer(420);
+
+				_menuPage = GUI_PAGE_MAIN;
+				setUpMainMenuControls();
+				drawMainMenuControls();
+				updateMainMenuControls();
+				ScummEngine::drawDirtyScreenParts();
+			} else {
+				return true;
+			}
+		}
+
+		break;
+	case GUI_CTRL_CANCEL_BUTTON:
+		_menuPage = GUI_PAGE_MAIN;
+		setUpMainMenuControls();
+		drawMainMenuControls();
+		updateMainMenuControls();
+		ScummEngine::drawDirtyScreenParts();
+		break;
+	case GUI_CTRL_ARROW_LEFT_BUTTON:
+	case GUI_CTRL_ARROW_RIGHT_BUTTON:
+		if (_menuPage == GUI_PAGE_MAIN) {
+			if (op == GUI_CTRL_ARROW_LEFT_BUTTON) {
+				_defaultTextSpeed = CLIP<int>(_defaultTextSpeed - 1, 0, 9);
+			} else {
+				_defaultTextSpeed = CLIP<int>(_defaultTextSpeed + 1, 0, 9);
+			}
+
+			ConfMan.setInt("original_gui_text_speed", _defaultTextSpeed);
+			setTalkSpeed(_defaultTextSpeed);
+			syncSoundSettings();
+			ConfMan.flushToDisk();
+			drawMainMenuControls();
+			updateMainMenuControls();
+			ScummEngine::drawDirtyScreenParts();
+		}
+		break;
+	case GUI_CTRL_TEXT_SPEED_SLIDER:
+		_defaultTextSpeed = CLIP<int>((mouseX - 150) / 9, 0, 9);
+
+		ConfMan.setInt("original_gui_text_speed", _defaultTextSpeed);
+		setTalkSpeed(_defaultTextSpeed);
+		syncSoundSettings();
+		ConfMan.flushToDisk();
+		updateMainMenuControls();
+		ScummEngine::drawDirtyScreenParts();
+		break;
+	case GUI_CTRL_NUMPAD_0:
+	case GUI_CTRL_NUMPAD_1:
+	case GUI_CTRL_NUMPAD_2:
+	case GUI_CTRL_NUMPAD_3:
+	case GUI_CTRL_NUMPAD_4:
+	case GUI_CTRL_NUMPAD_5:
+	case GUI_CTRL_NUMPAD_6:
+	case GUI_CTRL_NUMPAD_7:
+	case GUI_CTRL_NUMPAD_8:
+	case GUI_CTRL_NUMPAD_9:
+	case GUI_CTRL_NUMPAD_BACK:
+	{
+		int inputNum = (op == GUI_CTRL_NUMPAD_0) ? 0 : op;
+		uint curIdx = strnlen(_mainMenuSegaCDPasscode, sizeof(_mainMenuSegaCDPasscode));
+
+		if (op == GUI_CTRL_NUMPAD_BACK) {
+			if (curIdx > 0) {
+				_mainMenuSegaCDPasscode[curIdx - 1] = '\0';
+			}
+
+		} else {
+			_mainMenuSegaCDPasscode[curIdx] = '0' + inputNum;
+
+			if (curIdx >= 3) { // Last digit
+				updateMainMenuControls();
+				drawDirtyScreenParts();
+
+				waitForTimer(120);
+
+				_menuPage = GUI_PAGE_CODE_CONFIRM;
+				setUpMainMenuControls();
+			}
+		}
+
+		drawMainMenuControls();
+		updateMainMenuControls();
+		ScummEngine::drawDirtyScreenParts();
+		break;
+	}
+	default:
+		break;
+	}
+
+	return false;
+}
+
 bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool &hasLoadedState) {
+	if (_game.platform == Common::kPlatformSegaCD) {
+		return executeMainMenuOperationSegaCD(op, mouseX, mouseY, hasLoadedState);
+	}
+
 	char saveScreenTitle[512];
 	Common::String formattedString;
 	int curSlot;
@@ -1907,7 +2289,7 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 		setUpMainMenuControls();
 		drawMainMenuControls();
 
-		if (_game.platform == Common::kPlatformAmiga) {
+		if (_game.platform == Common::kPlatformAmiga || _game.platform == Common::kPlatformFMTowns) {
 			convertMessageToString((const byte *)getGUIString(gsInsertSaveDisk), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
 			drawMainMenuTitle(saveScreenTitle);
 		} else if (_game.version > 4 && _game.id != GID_MONKEY2 && _game.id != GID_MONKEY) {
@@ -1977,6 +2359,7 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 		break;
 	case GUI_CTRL_TEXT_SPEED_SLIDER:
 		_defaultTextSpeed = CLIP<int>((mouseX - (_game.version == 7 ? 108 : 102)) / 9, 0, 9);
+
 		ConfMan.setInt("original_gui_text_speed", _defaultTextSpeed);
 		setTalkSpeed(_defaultTextSpeed);
 		syncSoundSettings();
@@ -2160,6 +2543,11 @@ void ScummEngine_v4::setUpMainMenuControls() {
 }
 
 void ScummEngine::setUpMainMenuControls() {
+	if (_game.platform == Common::kPlatformSegaCD) {
+		setUpMainMenuControlsSegaCD();
+		return;
+	}
+
 	int yConstant;
 	bool isLoomVGA = (_game.id == GID_LOOM && _game.version == 4);
 
@@ -2352,6 +2740,213 @@ void ScummEngine::setUpMainMenuControls() {
 				210 - (isLoomVGA ? 10 : 0),
 				-9,
 				_savegameNames[i - 1].c_str(), 0, 0);
+		}
+	}
+}
+
+void ScummEngine::setUpMainMenuControlsSegaCD() {
+	int yConstant;
+	bool isJap = _language == Common::JA_JPN;
+
+	yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
+
+	for (int i = 0; i < ARRAYSIZE(_internalGUIControls); i++) {
+		_internalGUIControls[i].relativeCenterX = -1;
+	}
+
+	// Outer box
+	setUpInternalGUIControl(GUI_CTRL_OUTER_BOX,
+							getBannerColor(4),
+							getBannerColor(2),
+							getBannerColor(13),
+							getBannerColor(14),
+							getBannerColor(15),
+							getBannerColor(16),
+							getBannerColor(6),
+							getBannerColor(4),
+							20,
+							yConstant - 60,
+							300,
+							((yConstant + 60) < 0 ? -120 : yConstant + 60),
+							_emptyMsg, 1, 1);
+
+	// Load button
+	setUpInternalGUIControl(GUI_CTRL_LOAD_BUTTON,
+							getBannerColor(4),
+							getBannerColor(5),
+							getBannerColor(17),
+							getBannerColor(18),
+							getBannerColor(19),
+							getBannerColor(20),
+							getBannerColor(6),
+							getBannerColor(7),
+							isJap ? 26 : 44,
+							yConstant - 31,
+							isJap ? 111 : 103,
+							yConstant - 31 + 22,
+							getGUIString(gsLoad), 1, 1);
+
+	// Play button
+	setUpInternalGUIControl(GUI_CTRL_PLAY_BUTTON,
+							getBannerColor(4),
+							getBannerColor(5),
+							getBannerColor(17),
+							getBannerColor(18),
+							getBannerColor(19),
+							getBannerColor(20),
+							getBannerColor(6),
+							getBannerColor(7),
+							isJap ? 26 : 44,
+							yConstant - 5,
+							isJap ? 111 : 103,
+							yConstant - 5 + 22,
+							getGUIString(gsPlay), 1, 1);
+
+	// Restart button
+	setUpInternalGUIControl(GUI_CTRL_RESTART_BUTTON,
+							getBannerColor(4),
+							getBannerColor(5),
+							getBannerColor(17),
+							getBannerColor(18),
+							getBannerColor(19),
+							getBannerColor(20),
+							getBannerColor(6),
+							getBannerColor(7),
+							isJap ? 26 : 44,
+							yConstant + 21,
+							isJap ? 111 : 103,
+							yConstant + 21 + 22,
+							getGUIString(gsRestart), 1, 1);
+
+	if (_menuPage == GUI_PAGE_MAIN) {
+		// Arrow left button
+		setUpInternalGUIControl(GUI_CTRL_ARROW_LEFT_BUTTON,
+								getBannerColor(4),
+								getBannerColor(5),
+								getBannerColor(17),
+								getBannerColor(18),
+								getBannerColor(19),
+								getBannerColor(20),
+								getBannerColor(6),
+								getBannerColor(7),
+								235,
+								yConstant + 18,
+								247,
+								yConstant + 34,
+								_arrowLeft, 1, 1);
+
+		// Arrow right button
+		setUpInternalGUIControl(GUI_CTRL_ARROW_RIGHT_BUTTON,
+								getBannerColor(4),
+								getBannerColor(5),
+								getBannerColor(17),
+								getBannerColor(18),
+								getBannerColor(19),
+								getBannerColor(20),
+								getBannerColor(6),
+								getBannerColor(7),
+								248,
+								yConstant + 18,
+								260,
+								yConstant + 34,
+								_arrowRight, 1, 1);
+
+		setUpInternalGUIControl(GUI_CTRL_TEXT_SPEED_SLIDER,
+								getBannerColor(9),
+								getBannerColor(10),
+								getBannerColor(18),
+								getBannerColor(17),
+								getBannerColor(20),
+								getBannerColor(19),
+								getBannerColor(10),
+								getBannerColor(12),
+								152,
+								yConstant + 18,
+								235,
+								yConstant + 34,
+								_uncheckedBox, 1, 1);
+	} else if (_menuPage == GUI_PAGE_RESTART || _menuPage == GUI_PAGE_CODE_CONFIRM) {
+		// OK button
+		setUpInternalGUIControl(GUI_CTRL_OK_BUTTON,
+								getBannerColor(4),
+								getBannerColor(5),
+								getBannerColor(17),
+								getBannerColor(18),
+								getBannerColor(19),
+								getBannerColor(20),
+								getBannerColor(6),
+								getBannerColor(7),
+								isJap ? 115 : 149,
+								yConstant + 21,
+								200,
+								yConstant + 43,
+								getGUIString(gsOK), 1, 1);
+
+		// Cancel button
+		setUpInternalGUIControl(GUI_CTRL_CANCEL_BUTTON,
+								getBannerColor(4),
+								getBannerColor(5),
+								getBannerColor(17),
+								getBannerColor(18),
+								getBannerColor(19),
+								getBannerColor(20),
+								getBannerColor(6),
+								getBannerColor(7),
+								206,
+								yConstant + 21,
+								isJap ? 291 : 257,
+								yConstant + 43,
+								getGUIString(gsCancel), 1, 1);
+	} else if (_menuPage == GUI_PAGE_LOAD) {
+		const char numbers[10][2] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+
+		setUpInternalGUIControl(GUI_CTRL_NUMPAD_0,
+								getBannerColor(4),
+								getBannerColor(5),
+								getBannerColor(17),
+								getBannerColor(18),
+								getBannerColor(19),
+								getBannerColor(20),
+								getBannerColor(6),
+								getBannerColor(7),
+								197,
+								yConstant + 43,
+								211,
+								yConstant + 57,
+								numbers[0], 1, 1);
+
+		setUpInternalGUIControl(GUI_CTRL_NUMPAD_BACK,
+								getBannerColor(4),
+								getBannerColor(5),
+								getBannerColor(17),
+								getBannerColor(18),
+								getBannerColor(19),
+								getBannerColor(20),
+								getBannerColor(6),
+								getBannerColor(7),
+								211,
+								yConstant + 43,
+								239,
+								yConstant + 57,
+								_arrowLeft, 1, 1);
+
+		for (int row = 0; row < 3; row++) {
+			for (int col = 0; col < 3; col++) {
+				setUpInternalGUIControl(row * 3 + (col + 1),
+										getBannerColor(4),
+										getBannerColor(5),
+										getBannerColor(17),
+										getBannerColor(18),
+										getBannerColor(19),
+										getBannerColor(20),
+										getBannerColor(6),
+										getBannerColor(7),
+										197 + col * 14,
+										yConstant + 29 - row * 14,
+										211 + col * 14,
+										yConstant + 43 - row * 14,
+										numbers[row * 3 + (col + 1)], 1, 1);
+			}
 		}
 	}
 }
@@ -2725,6 +3320,11 @@ void ScummEngine_v6::setUpMainMenuControls() {
 }
 
 void ScummEngine::drawMainMenuControls() {
+	if (_game.platform == Common::kPlatformSegaCD) {
+		drawMainMenuControlsSegaCD();
+		return;
+	}
+
 	char namePrompt[256];
 	char loadPrompt[256];
 	char insertDisk[256];
@@ -2740,17 +3340,21 @@ void ScummEngine::drawMainMenuControls() {
 
 		if (_game.version > 4 &&
 			_game.id != GID_MONKEY2 && _game.id != GID_MONKEY &&
-			_game.platform != Common::kPlatformAmiga)
+			_game.platform != Common::kPlatformAmiga &&
+			_game.platform != Common::kPlatformFMTowns)
 			drawInternalGUIControl(GUI_CTRL_INNER_BOX, 0); // Inner box
 
 		if ((_game.version == 5 &&
-			(_game.id != GID_MONKEY2 && _game.id != GID_MONKEY && _game.platform != Common::kPlatformAmiga)) ||
+			(_game.id != GID_MONKEY2 && _game.id != GID_MONKEY &&
+			_game.platform != Common::kPlatformAmiga &&
+			_game.platform != Common::kPlatformFMTowns)) ||
 			_game.version == 6) {
 			drawInternalGUIControl(GUI_CTRL_ARROW_UP_BUTTON, 0);   // Arrow up button
 			drawInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON, 0); // Arrow down button
 		}
 
-		if ((VAR_FIXEDDISK != 0xFF && VAR(VAR_FIXEDDISK) == 0) || _game.platform == Common::kPlatformAmiga) {
+		if ((VAR_FIXEDDISK != 0xFF && VAR(VAR_FIXEDDISK) == 0) ||
+			_game.platform == Common::kPlatformAmiga || _game.platform == Common::kPlatformFMTowns) {
 			convertMessageToString((const byte *)getGUIString(gsInsertSaveDisk), (byte *)insertDisk, sizeof(insertDisk));
 			drawMainMenuTitle(insertDisk);
 		}
@@ -2793,7 +3397,85 @@ void ScummEngine::drawMainMenuControls() {
 	_system->updateScreen();
 }
 
+void ScummEngine::drawMainMenuControlsSegaCD() {
+	char buf[256];
+	char formattedBuf[256];
+	bool isJap = _language == Common::JA_JPN;
+
+	int yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
+	int stringColor = getBannerColor(2);
+
+	drawInternalGUIControl(GUI_CTRL_OUTER_BOX, 0);
+	drawInternalGUIControl(GUI_CTRL_LOAD_BUTTON, 0);
+	drawInternalGUIControl(GUI_CTRL_PLAY_BUTTON, 0);
+	drawInternalGUIControl(GUI_CTRL_RESTART_BUTTON, 0);
+
+	convertMessageToString((const byte *)getGUIString(gsPause), (byte *)buf, sizeof(buf));
+	drawGUIText(buf, nullptr, isJap ? 38 : 24, yConstant - 52, stringColor, false);
+
+	convertMessageToString((const byte *)getGUIString(gsCurrentPasscode), (byte *)buf, sizeof(buf));
+	drawGUIText(buf, nullptr, isJap ? 128 : 137, yConstant - 52, stringColor, false);
+
+	Common::sprintf_s(buf, sizeof(buf), "%04d", _scummVars[63]);
+	drawGUIText(buf, nullptr, 184, yConstant - 34, stringColor, false);
+
+	if (_menuPage != GUI_PAGE_CODE_CONFIRM && _menuPage != GUI_PAGE_LOAD) {
+		for (uint i = 0; i < sizeof(_mainMenuSegaCDPasscode); i++) {
+			_mainMenuSegaCDPasscode[i] = '\0';
+		}
+	}
+
+	if (_menuPage == GUI_PAGE_MAIN) {
+		drawInternalGUIControl(GUI_CTRL_TEXT_SPEED_SLIDER, 0);
+		drawInternalGUIControl(GUI_CTRL_ARROW_LEFT_BUTTON, 0);
+		drawInternalGUIControl(GUI_CTRL_ARROW_RIGHT_BUTTON, 0);
+	} else if (_menuPage == GUI_PAGE_LOAD) {
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_0, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_1, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_2, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_3, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_4, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_5, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_6, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_7, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_8, 0);
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_9, 0);
+
+		drawInternalGUIControl(GUI_CTRL_NUMPAD_BACK, 0);
+
+		drawInternalGUIControl(GUI_CTRL_OK_BUTTON, 0);
+		drawInternalGUIControl(GUI_CTRL_CANCEL_BUTTON, 0);
+
+		convertMessageToString((const byte *)getGUIString(gsEnterPasscode), (byte *)buf, sizeof(buf));
+		drawGUIText(buf, nullptr, isJap ? 166 : 146, yConstant - 18, stringColor, false);
+	} else if (_menuPage == GUI_PAGE_RESTART) {
+		drawInternalGUIControl(GUI_CTRL_OK_BUTTON, 0);
+		drawInternalGUIControl(GUI_CTRL_CANCEL_BUTTON, 0);
+
+		convertMessageToString((const byte *)getGUIString(gsRestartGame), (byte *)buf, sizeof(buf));
+		drawGUIText(buf, nullptr, isJap ? 163 : 151, yConstant + 4, stringColor, false);
+	} else if (_menuPage == GUI_PAGE_CODE_CONFIRM) {
+		drawInternalGUIControl(GUI_CTRL_OK_BUTTON, 0);
+		drawInternalGUIControl(GUI_CTRL_CANCEL_BUTTON, 0);
+
+		convertMessageToString((const byte *)getGUIString(gsConfirmPasscode), (byte *)buf, sizeof(buf));
+		Common::sprintf_s(formattedBuf, sizeof(formattedBuf), buf, atoi(_mainMenuSegaCDPasscode));
+		drawGUIText(formattedBuf, nullptr, isJap ? 129 : 135, yConstant + 4, stringColor, false);
+	} else if (_menuPage == GUI_PAGE_INVALID_CODE) {
+		convertMessageToString((const byte *)getGUIString(gsInvalidPasscode), (byte *)buf, sizeof(buf));
+		drawGUIText(buf, nullptr, isJap ? 152 : 141, yConstant + 28, stringColor, false);
+	}
+
+	ScummEngine::drawDirtyScreenParts();
+	_system->updateScreen();
+}
+
 void ScummEngine::updateMainMenuControls() {
+	if (_game.platform == Common::kPlatformSegaCD) {
+		updateMainMenuControlsSegaCD();
+		return;
+	}
+
 	if ((_game.variant && !strcmp(_game.variant, "Floppy")) || _game.version < 6)
 		return;
 
@@ -2864,29 +3546,29 @@ void ScummEngine::updateMainMenuControls() {
 		// not rendered in the other games, so adjust that...
 		if (_game.id == GID_FT) {
 			convertMessageToString((const byte *)getGUIString(gsSpooledMusic), (byte *)msg, sizeof(msg));
-			drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 19, textColor, false);
+			drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 19, textColor, false);
 
 			convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
-			drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 33, textColor, false);
+			drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 33, textColor, false);
 
 			convertMessageToString((const byte *)getGUIString(gsVoice), (byte *)msg, sizeof(msg));
-			drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 47, textColor, false);
+			drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 47, textColor, false);
 		} else {
 			convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
-			drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 25, textColor, false);
+			drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 25, textColor, false);
 
 			convertMessageToString((const byte *)getGUIString(gsVoice), (byte *)msg, sizeof(msg));
-			drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 43, textColor, false);
+			drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 43, textColor, false);
 		}
 
 		convertMessageToString((const byte *)getGUIString(gsSfx), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 61, textColor, false);
+		drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 61, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsDisplayText), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 88, textColor, false);
+		drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 88, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsTextSpeed), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 102, textColor, false);
+		drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 102, textColor, false);
 
 		drawLine(23, yCntr - calculatedHeight - yOffset + 77, 204, yCntr - calculatedHeight - yOffset + 77, getBannerColor(17));
 		drawLine(23, yCntr - calculatedHeight - yOffset + 78, 204, yCntr - calculatedHeight - yOffset + 78, getBannerColor(4));
@@ -2899,19 +3581,19 @@ void ScummEngine::updateMainMenuControls() {
 		// drawLine(24, yCntr - calculatedHeight + 81, 204, yCntr - calculatedHeight + 81, getBannerColor(4));
 	} else {
 		convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 33, yConstantV6 - 36, textColor, false);
+		drawGUIText(msg, nullptr, 33, yConstantV6 - 36, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsVoice), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 33, yConstantV6 - 22, textColor, false);
+		drawGUIText(msg, nullptr, 33, yConstantV6 - 22, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsSfx), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 33, yConstantV6 - 8, textColor, false);
+		drawGUIText(msg, nullptr, 33, yConstantV6 - 8, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsDisplayText), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 33, yConstantV6 + 19, textColor, false);
+		drawGUIText(msg, nullptr, 33, yConstantV6 + 19, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsTextSpeed), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 33, yConstantV6 + 34, textColor, false);
+		drawGUIText(msg, nullptr, 33, yConstantV6 + 34, textColor, false);
 
 		drawLine(27, yConstantV6 + 8,  201, yConstantV6 + 8,  getBannerColor(17));
 		drawLine(27, yConstantV6 + 9,  201, yConstantV6 + 9,  getBannerColor(4));
@@ -2923,7 +3605,44 @@ void ScummEngine::updateMainMenuControls() {
 	_system->updateScreen();
 }
 
+void ScummEngine::updateMainMenuControlsSegaCD() {
+	char msg[256];
+	int yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
+	bool isJap = (_language == Common::JA_JPN);
+
+	if (_menuPage == GUI_PAGE_MAIN) {
+		// Fill the slider string of symbols shaped like a "=" character
+		strncpy(_mainMenuTextSpeedSlider, "\x3a\x3a\x3a\x3a\x3a\x3a\x3a\x3a\x3a\x3a", sizeof(_mainMenuTextSpeedSlider));
+
+		if (VAR_CHARINC != 0xFF)
+			_mainMenuTextSpeedSlider[9 - VAR(VAR_CHARINC)] = '\x3b'; // The cursor of the slider
+
+		_internalGUIControls[GUI_CTRL_TEXT_SPEED_SLIDER].label = _mainMenuTextSpeedSlider;
+
+		drawInternalGUIControl(GUI_CTRL_TEXT_SPEED_SLIDER, 0);
+
+		convertMessageToString((const byte *)getGUIString(gsTextSpeed), (byte *)msg, sizeof(msg));
+		drawGUIText(msg, nullptr, isJap ? 118 : 167, yConstant, getBannerColor(2), false);
+
+		convertMessageToString((const byte *)getGUIString(gsSlowFast), (byte *)msg, sizeof(msg));
+		drawGUIText(msg, nullptr, isJap ? 151 : 158, yConstant + 37, getBannerColor(2), false);
+	} else if (_menuPage == GUI_PAGE_LOAD) {
+		drawLine(155, yConstant + 15, 191, yConstant + 15, getBannerColor(17));
+		drawLine(155, yConstant + 28, 191, yConstant + 28, getBannerColor(17));
+		drawLine(155, yConstant + 15, 155, yConstant + 28, getBannerColor(17));
+		drawLine(191, yConstant + 15, 191, yConstant + 28, getBannerColor(17));
+
+		drawGUIText(_mainMenuSegaCDPasscode, nullptr, 157, yConstant + 16, getBannerColor(2), false);
+	}
+
+	ScummEngine::drawDirtyScreenParts();
+	_system->updateScreen();
+}
+
 void ScummEngine::drawMainMenuTitle(const char *title) {
+	if (_game.platform == Common::kPlatformSegaCD)
+		return;
+
 	int boxColor, stringColor;
 	int yConstantV6 = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
 
@@ -2955,25 +3674,25 @@ void ScummEngine::drawMainMenuTitle(const char *title) {
 			yCntr - calculatedHeight + _screenTop - yOffset + 3 + lh,
 			boxColor);
 
-		drawGUIText(title, 0,
+		drawGUIText(title, nullptr,
 			159,
 			yCntr - calculatedHeight - yOffset + 4,
 			stringColor,
 			true);
 	} else if (_game.version == 7) {
 		drawBox(18, _screenTop + 44, 301, _screenTop + 52, boxColor);
-		drawGUIText(title, 0, 159, 44, stringColor, true);
+		drawGUIText(title, nullptr, 159, 44, stringColor, true);
 	} else if (_game.version == 4) {
 		if (_game.id == GID_LOOM) {
 			drawBox(22, yConstantV6 - 57, 298, yConstantV6 - 49, boxColor);
-			drawGUIText(title, 0, 160, yConstantV6 - 57, stringColor, true);
+			drawGUIText(title, nullptr, 160, yConstantV6 - 57, stringColor, true);
 		} else {
 			drawBox(21, yConstantV6 - 55, 299, yConstantV6 - 47, boxColor);
-			drawGUIText(title, 0, 160, yConstantV6 - 55, stringColor, true);
+			drawGUIText(title, nullptr, 160, yConstantV6 - 55, stringColor, true);
 		}
 	} else {
 		drawBox(22, yConstantV6 - 56, 298, yConstantV6 - 48, boxColor);
-		drawGUIText(title, 0, 160, yConstantV6 - 56, stringColor, true);
+		drawGUIText(title, nullptr, 160, yConstantV6 - 56, stringColor, true);
 	}
 
 	ScummEngine::drawDirtyScreenParts();
@@ -2996,7 +3715,11 @@ void ScummEngine::drawGUIText(const char *buttonString, Common::Rect *clipRect, 
 	_string[5].right = clipRect ? clipRect->right : _screenWidth - 1;
 	_string[5].center = centerFlag;
 	_string[5].color = textColor;
-	_string[5].charset = 1;
+
+	if (_game.platform == Common::kPlatformSegaCD)
+		_string[5].charset = 6;
+	else
+		_string[5].charset = _game.version > 3 ? 1 : 0;
 
 	drawString(5, (const byte *)buttonString);
 	_string[5].right = tmpRight;
@@ -3005,23 +3728,31 @@ void ScummEngine::drawGUIText(const char *buttonString, Common::Rect *clipRect, 
 void ScummEngine::getSliderString(int stringId, int value, char *sliderString, int size) {
 	char *ptrToChar;
 	char tempStr[256];
+	if (_game.version > 2) {
+		Common::strlcpy(tempStr, getGUIString(stringId), sizeof(tempStr));
+		convertMessageToString((const byte *)tempStr, (byte *)sliderString, size);
 
-	Common::strlcpy(tempStr, getGUIString(stringId), sizeof(tempStr));
-	convertMessageToString((const byte *)tempStr, (byte *)sliderString, size);
+		ptrToChar = strchr(sliderString, '=');
 
-	ptrToChar = strchr(sliderString, '=');
+		if (!ptrToChar) {
+			ptrToChar = strstr(sliderString, "xxx");
+		}
 
-	if (!ptrToChar) {
-		ptrToChar = strstr(sliderString, "xxx");
-	}
-
-	if (ptrToChar) {
+		if (ptrToChar) {
+			if (stringId == gsTextSpeedSlider) {
+				memset(ptrToChar, '\v', 10);
+				ptrToChar[9 - value] = '\f';
+			} else {
+				memset(ptrToChar, '\v', 9);
+				ptrToChar[value / 15] = '\f';
+			}
+		}
+	} else {
 		if (stringId == gsTextSpeedSlider) {
-			memset(ptrToChar, '\v', 10);
-			ptrToChar[9 - value] = '\f';
-		} else {
-			memset(ptrToChar, '\v', 9);
-			ptrToChar[value / 15] = '\f';
+			Common::strlcpy(tempStr, getGUIString(stringId), sizeof(tempStr));
+
+			// Format the string with the arguments...
+			Common::sprintf_s(sliderString, size, tempStr, value);
 		}
 	}
 }
@@ -3127,6 +3858,16 @@ const char *ScummEngine_v6::getGUIString(int stringId) {
 	case gsHeap:
 		resStringId = 35;
 		break;
+	case gsRecalJoystick:
+		if (_game.id == GID_SAMNMAX && !strcmp(_game.variant, "Floppy")) {
+			resStringId = 37;
+		} else {
+			resStringId = 36;
+		}
+		break;
+	case gsMouseMode:
+		resStringId = 38;
+		break;
 	default:
 		break;
 	}
@@ -3140,12 +3881,15 @@ const char *ScummEngine_v6::getGUIString(int stringId) {
 const char *ScummEngine::getGUIString(int stringId) {
 	InfoDialog d(this, 0);
 	int resStringId = -1;
-
+	bool isSegaCD = _game.platform == Common::kPlatformSegaCD;
 	switch (stringId) {
 	case gsPause:
-		resStringId = 4;
+		resStringId = isSegaCD ? 20 : 4;
 		break;
 	case gsRestart:
+		resStringId = isSegaCD ? 23 : 5;
+		break;
+	case gsRestartGame:
 		resStringId = 5;
 		break;
 	case gsQuitPrompt:
@@ -3206,12 +3950,100 @@ const char *ScummEngine::getGUIString(int stringId) {
 		resStringId = 24;
 		break;
 	case gsTextSpeedSlider:
-		resStringId = 25;
+		if (_game.version <= 2) {
+			return "TextRate %d";
+		} else {
+			resStringId = 25;
+		}
+
 		break;
 	case gsMusicVolumeSlider:
 		resStringId = 26;
 		break;
 	case gsHeap:
+		resStringId = 27;
+		break;
+	case gsSnapOn:
+		switch (_game.version) {
+		case 2:
+			resStringId = 28;
+			break;
+		case 3:
+			resStringId = 30;
+			break;
+		default:
+			resStringId = 32;
+		}
+
+		break;
+	case gsSnapOff:
+		switch (_game.version) {
+		case 2:
+			resStringId = 29;
+			break;
+		case 3:
+			resStringId = 31;
+			break;
+		default:
+			resStringId = 33;
+		}
+
+		break;
+	case gsRecalJoystick:
+		resStringId = 34;
+		break;
+	case gsMouseMode:
+		resStringId = 35;
+		break;
+	case gsMouseOn:
+		resStringId = 36;
+		break;
+	case gsMouseOff:
+		resStringId = 37;
+		break;
+	case gsJoystickOn:
+		resStringId = 38;
+		break;
+	case gsJoystickOff:
+		resStringId = 39;
+		break;
+	case gsSoundsOn:
+		resStringId = 40;
+		break;
+	case gsSoundsOff:
+		resStringId = 41;
+		break;
+	case gsVGAMode:
+		resStringId = 42;
+		break;
+	case gsEGAMode:
+		resStringId = 43;
+		break;
+	case gsCGAMode:
+		resStringId = 44;
+		break;
+	case gsHerculesMode:
+		resStringId = 45;
+		break;
+	case gsTandyMode:
+		resStringId = 46;
+		break;
+	case gsSlowFast:
+		resStringId = 22;
+		break;
+	case gsCurrentPasscode:
+		resStringId = 24;
+		break;
+	case gsEnterPasscode:
+		resStringId = 25;
+		break;
+	case gsInvalidPasscode:
+		resStringId = 26;
+		break;
+	case gsConfirmPasscode:
+		resStringId = 27;
+		break;
+	case gsTextSpeed:
 		resStringId = 28;
 		break;
 	default:
@@ -3219,7 +4051,7 @@ const char *ScummEngine::getGUIString(int stringId) {
 	}
 
 	if (resStringId > 0)
-		return d.getPlainEngineString(resStringId);
+		return d.getPlainEngineString(resStringId, (_game.id == GID_INDY3) && stringId == gsQuitPrompt);
 	else
 		return _emptyMsg;
 }

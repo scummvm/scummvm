@@ -30,10 +30,41 @@
 
 namespace Grim {
 
+static const ADExtraGuiOptionsMap gameGuiOptions[] = {
+	{
+		GAMEOPTION_LOAD_DATAUSR,
+		{
+			_s("Load user patch (unsupported)"),
+			_s("Load an user patch. Please note that the ScummVM team doesn't provide support for using such patches."),
+			"datausr_load",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_SHOW_FPS,
+		{
+			_s("Show FPS"),
+			_s("Show the current FPS-rate, while you play."),
+			"show_fps",
+			false,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 class GrimMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "grim";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return gameGuiOptions;
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine) override {

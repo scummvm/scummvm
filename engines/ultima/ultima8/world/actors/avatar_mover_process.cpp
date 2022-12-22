@@ -81,34 +81,38 @@ void AvatarMoverProcess::run() {
 bool AvatarMoverProcess::checkTurn(Direction direction, bool moving) {
 	Actor *avatar = getControlledActor();
 	Direction curdir = avatar->getDir();
-	bool combat = avatar->isInCombat() && !avatar->hasActorFlags(Actor::ACT_COMBATRUN);
+	if (direction == curdir)
+		return false;
 
-	// Note: don't need to turn if moving backward in combat stance
-	// CHECKME: currently, first turn in the right direction
-	if (direction != curdir && !(combat && Direction_Invert(direction) == curdir)) {
-		Animation::Sequence lastanim = avatar->getLastAnim();
-
-		if (moving &&
-				(lastanim == Animation::walk || lastanim == Animation::run ||
-				 lastanim == Animation::combatStand ||
-				 (GAME_IS_CRUSADER && (lastanim == Animation::startRunSmallWeapon ||
-				 lastanim == Animation::combatRunSmallWeapon))) &&
-				(ABS(direction - curdir) + 2) % 16 <= 4) {
-			// don't need to explicitly do a turn animation
-			return false;
-		}
-
-		if (moving && lastanim == Animation::run) {
-			// slow down to a walk first
-			waitFor(avatar->doAnim(Animation::walk, curdir));
-			return true;
-		}
-
+	if (!moving) {
 		turnToDirection(direction);
 		return true;
 	}
 
-	return false;
+	// Do not turn if moving backward in combat stance
+	bool combat = avatar->isInCombat() && !avatar->hasActorFlags(Actor::ACT_COMBATRUN);
+	if (combat && Direction_Invert(direction) == curdir)
+		return false;
+
+	Animation::Sequence lastanim = avatar->getLastAnim();
+
+	// Check if we don't need to explicitly do a turn animation
+	if ((lastanim == Animation::walk || lastanim == Animation::run ||
+		 lastanim == Animation::combatStand ||
+		 (GAME_IS_CRUSADER && (lastanim == Animation::startRunSmallWeapon ||
+							   lastanim == Animation::combatRunSmallWeapon))) &&
+		(ABS(direction - curdir) + 2) % 16 <= 4) {
+		return false;
+	}
+
+	if (lastanim == Animation::run) {
+		// slow down to a walk first
+		waitFor(avatar->doAnim(Animation::walk, curdir));
+		return true;
+	}
+
+	turnToDirection(direction);
+	return true;
 }
 
 void AvatarMoverProcess::turnToDirection(Direction direction) {

@@ -327,9 +327,10 @@ void schedule(Aword event, Aword where, Aword after) {
 Aptr concat(Aptr as1, Aptr as2) {
 	char *s1 = (char *)fromAptr(as1);
 	char *s2 = (char *)fromAptr(as2);
-	char *result = (char *)allocate(strlen((char *)s1) + strlen((char *)s2) + 1);
-	strcpy(result, s1);
-	strcat(result, s2);
+	size_t ln = strlen(s1) + strlen(s2) + 1;
+	char *result = (char *)allocate(ln);
+	Common::strcpy_s(result, ln, s1);
+	Common::strcat_s(result, ln, s2);
 	return toAptr(result);
 }
 
@@ -534,7 +535,7 @@ void use(CONTEXT, int actor, int script) {
 	StepEntry *step;
 
 	if (!isAActor(actor)) {
-		sprintf(str, "Instance is not an Actor (%d).", actor);
+		Common::sprintf_s(str, "Instance is not an Actor (%d).", actor);
 		syserr(str);
 	}
 
@@ -553,7 +554,7 @@ void stop(int act) {
 	char str[80];
 
 	if (!isAActor(act)) {
-		sprintf(str, "Instance is not an Actor (%d).", act);
+		Common::sprintf_s(str, "Instance is not an Actor (%d).", act);
 		syserr(str);
 	}
 

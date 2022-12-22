@@ -41,15 +41,12 @@
 
 namespace Saga {
 
-bool SagaEngine::isBigEndian() const { return isMacResources() && getGameId() == GID_ITE; }
+bool SagaEngine::isBigEndian() const { return (isMacResources() || (getPlatform() == Common::kPlatformAmiga)) && getGameId() == GID_ITE; }
 bool SagaEngine::isMacResources() const { return (getPlatform() == Common::kPlatformMacintosh); }
-const GameResourceDescription *SagaEngine::getResourceDescription() const { return _gameDescription->resourceDescription; }
 
-const GameFontDescription *SagaEngine::getFontDescription(int index) const {
-	assert(index < _gameDescription->fontsCount);
-	return &_gameDescription->fontDescriptions[index];
-}
-int SagaEngine::getFontsCount() const { return _gameDescription->fontsCount; }
+GameResourceList SagaEngine::getResourceList() const { return _gameDescription->resourceList; }
+GameFontList SagaEngine::getFontList() const { return _gameDescription->fontList; }
+GamePatchList SagaEngine::getPatchList() const { return _gameDescription->patchList; }
 
 int SagaEngine::getGameId() const { return _gameDescription->gameId; }
 
@@ -64,8 +61,13 @@ Common::Platform SagaEngine::getPlatform() const { return _gameDescription->desc
 int SagaEngine::getGameNumber() const { return _gameNumber; }
 int SagaEngine::getStartSceneNumber() const { return _gameDescription->startSceneNumber; }
 
-const GamePatchDescription *SagaEngine::getPatchDescriptions() const { return _gameDescription->patchDescriptions; }
-const ADGameFileDescription *SagaEngine::getFilesDescriptions() const { return _gameDescription->desc.filesDescriptions; }
+const ADGameFileDescription *SagaEngine::getFilesDescriptions() const {
+    return getFeatures() & GF_INSTALLER ? _gameDescription->filesInArchive : _gameDescription->desc.filesDescriptions;
+}
+
+const ADGameFileDescription *SagaEngine::getArchivesDescriptions() const {
+  return getFeatures() & GF_INSTALLER ? _gameDescription->desc.filesDescriptions : nullptr;
+}
 
 } // End of namespace Saga
 
@@ -163,7 +165,7 @@ void SagaMetaEngine::removeSaveState(const char *target, int slot) const {
 
 SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	static char fileName[MAX_FILE_NAME];
-	sprintf(fileName, "%s.s%02d", target, slot);
+	Common::sprintf_s(fileName, "%s.s%02d", target, slot);
 	char title[TITLESIZE];
 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
@@ -253,6 +255,17 @@ bool SagaEngine::initGame() {
 const GameDisplayInfo &SagaEngine::getDisplayInfo() {
 	switch (_gameDescription->gameId) {
 		case GID_ITE:
+			if (getLanguage() == Common::ZH_TWN)
+				return ITE_DisplayInfo_ZH;
+			if (isECS()) {
+				static GameDisplayInfo ITE_DisplayInfo_ECS;
+				if (!ITE_DisplayInfo_ECS.width) {
+					ITE_DisplayInfo_ECS = ITE_DisplayInfo;
+					ITE_DisplayInfo_ECS.statusTextColor = kITEECSBottomColorGreen;
+					ITE_DisplayInfo_ECS.statusBGColor = kITEECSColorBlack;
+				}
+				return ITE_DisplayInfo_ECS;
+			}
 			return ITE_DisplayInfo;
 #ifdef ENABLE_IHNM
 		case GID_IHNM:

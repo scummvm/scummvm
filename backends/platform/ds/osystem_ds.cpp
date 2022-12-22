@@ -44,9 +44,9 @@
 OSystem_DS *OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
-	: _eventSource(NULL), _disableCursorPalette(true),
+	: _eventSource(NULL), _engineRunning(false), _disableCursorPalette(true),
 	_graphicsMode(GFX_HWSCALE), _stretchMode(100),
-	_paletteDirty(false), _cursorDirty(false),
+	_paletteDirty(false), _cursorDirty(false), _overlayInGUI(false),
 	_pfCLUT8(Graphics::PixelFormat::createFormatCLUT8()),
 	_pfABGR1555(Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15)),
 	_callbackTimer(10), _currentTimeMillis(0), _subScreenActive(true)
@@ -208,4 +208,12 @@ Common::String OSystem_DS::getSystemLanguage() const {
 		case 6: return "zh_CN";
 		default: return "en_US";
 	}
+}
+
+void OSystem_DS::engineInit() {
+	_engineRunning = true;
+}
+
+void OSystem_DS::engineDone() {
+	_engineRunning = false;
 }

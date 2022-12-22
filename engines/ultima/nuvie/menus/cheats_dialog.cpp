@@ -92,7 +92,7 @@ bool CheatsDialog::init() {
 	} else {
 		num_of_brightness = 9;
 		brightness_selection = 8; // manually edited setting or old 128
-		sprintf(buff, "%d", min_brightness);
+		Common::sprintf_s(buff, "%d", min_brightness);
 	}
 	const char *const brightness_text[] = { "0", "20", "40", "60", "80", "100", "120", "255", buff };
 

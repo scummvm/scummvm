@@ -46,7 +46,7 @@
 #include "engines/grim/update/update.h"
 
 #include "common/algorithm.h"
-#include "common/zlib.h"
+#include "common/compression/zlib.h"
 #include "common/memstream.h"
 #include "common/file.h"
 #include "common/config-manager.h"
@@ -309,7 +309,7 @@ void ResourceLoader::putIntoCache(const Common::String &fname, byte *res, uint32
 	entry.resPtr = res;
 	entry.len = len;
 	entry.fname = new char[fname.size() + 1];
-	strcpy(entry.fname, fname.c_str());
+	Common::strcpy_s(entry.fname, fname.size() + 1, fname.c_str());
 	_cacheMemorySize += len;
 	_cache.push_back(entry);
 	_cacheDirty = true;
@@ -452,6 +452,12 @@ Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c, 
 			return loadMaterial(replacement, nullptr, clamp);
 		} else {
 			error("Could not find material %s", filename.c_str());
+		}
+	}
+	if (!stream) {
+		// Specialty materials are not loaded from files.
+		if (!filename.hasPrefix("specialty")) {
+			error("Couldn't open %s", fname.c_str());
 		}
 	}
 

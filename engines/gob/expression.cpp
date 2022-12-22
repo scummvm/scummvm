@@ -575,7 +575,7 @@ bool Expression::getVarBase(uint32 &varBase, bool mindStop,
 	return false;
 }
 
-int16 Expression::parseVarIndex(uint16 *size, uint16 *type) {
+uint16 Expression::parseVarIndex(uint16 *size, uint16 *type) {
 	int16 temp2;
 	byte *arrDesc;
 	int16 dim;

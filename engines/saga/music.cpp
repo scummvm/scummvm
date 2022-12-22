@@ -36,6 +36,7 @@
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
+#include "audio/mods/mod_xm_s3m.h"
 #include "audio/softsynth/fmtowns_pc98/towns_pc98_driver.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -51,7 +52,9 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _par
 	_currentVolume = 0;
 	_currentMusicBuffer = nullptr;
 
-	if (_vm->getPlatform() == Common::kPlatformPC98) {
+	if (_vm->getPlatform() == Common::kPlatformAmiga) {
+		_musicType = _driverType = MT_AMIGA;
+	} else if (_vm->getPlatform() == Common::kPlatformPC98) {
 		_musicType = _driverType = MT_PC98;
 
 		_driverPC98 = new TownsPC98_AudioDriver(mixer, PC98AudioPluginDriver::kType86);
@@ -333,7 +336,9 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	if (!digital) {
 		// Load MIDI/XMI resource data
-		if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
+		if (_vm->getGameId() == GID_ITE && _vm->getPlatform() == Common::Platform::kPlatformAmiga) {
+			playProtracker(resourceId, flags);
+		} else if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
 			// Load the external music file for Mac IHNM
 			playQuickTime(resourceId, flags);
 		} else {
@@ -357,8 +362,8 @@ bool Music::playDigital(uint32 resourceId, MusicFlags flags) {
 
 	// Try to open standalone digital track
 	char trackName[2][16];
-	sprintf(trackName[0], "track%d", realTrackNumber);
-	sprintf(trackName[1], "track%02d", realTrackNumber);
+	Common::sprintf_s(trackName[0], "track%d", realTrackNumber);
+	Common::sprintf_s(trackName[1], "track%02d", realTrackNumber);
 	Audio::SeekableAudioStream *stream = nullptr;
 	for (int i = 0; i < 2; ++i) {
 		stream = Audio::SeekableAudioStream::openStreamFile(trackName[i]);
@@ -380,7 +385,7 @@ bool Music::playDigital(uint32 resourceId, MusicFlags flags) {
 
 				// Digital music
 				ResourceData *resData = _digitalMusicContext->getResourceData(resourceId - 9);
-				Common::File *musicFile = _digitalMusicContext->getFile(resData);
+				Common::SeekableReadStream *musicFile = _digitalMusicContext->getFile(resData);
 				int offs = (_digitalMusicContext->isCompressed()) ? 9 : 0;
 
 				Common::SeekableSubReadStream *musicStream = new Common::SeekableSubReadStream(musicFile,
@@ -463,6 +468,21 @@ void Music::playQuickTime(uint32 resourceId, MusicFlags flags) {
 	if (!((MidiParser_QT *)_parser)->loadFromContainerFile(musicName))
 		error("Music::playQuickTime(): Failed to load file '%s'", musicName.c_str());
 	_parser->setTrack(0);
+}
+
+void Music::playProtracker(uint32 resourceId, MusicFlags flags) {
+	ByteArray ba;
+
+	_vm->_resource->loadResource(_musicContext, resourceId, ba);
+
+	Common::MemoryReadStream ms(ba.getBuffer(), ba.size());
+
+	/* No reference to the 'stream' object is kept, so you can safely delete it after
+	   invoking this factory. */
+	Audio::RewindableAudioStream *amigaModStream = Audio::makeModXmS3mStream(&ms, DisposeAfterUse::NO);
+
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle,
+			   Audio::makeLoopingAudioStream(amigaModStream, (flags == MUSIC_LOOP ? 0 : 1)));
 }
 
 void Music::playMidi(uint32 resourceId, MusicFlags flags) {

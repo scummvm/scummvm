@@ -20,11 +20,27 @@
  */
 
 #include "engines/advancedDetector.h"
+#include "common/translation.h"
 #include "made/made.h"
 #include "made/detection.h"
 
 
 namespace Made {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_INTRO_MUSIC_DIGITAL,
+		{
+			_s("Play a digital soundtrack during the opening movie"),
+			_s("If selected, the game will use a digital soundtrack during the introduction. Otherwise, it will play MIDI music."),
+			"intro_music_digital",
+			true,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 uint32 MadeEngine::getGameID() const {
 	return _gameDescription->gameID;
@@ -48,6 +64,10 @@ class MadeMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "made";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Made::optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;

@@ -59,8 +59,10 @@ public:
 	Common::Platform getPlatform() const;
 
 	bool promptSave(ISaveWriter *writer, const Graphics::Surface *screenshotOverride) override;
+	bool namedSave(ISaveWriter *writer, const Graphics::Surface *screenshotOverride, const Common::String &fileName) override;
 	bool autoSave(ISaveWriter *writer) override;
 	bool promptLoad(ISaveReader *reader) override;
+	bool namedLoad(ISaveReader *reader, const Common::String &fileName) override;
 
 	const Graphics::Surface *getSavegameScreenshot() const;
 
@@ -75,7 +77,13 @@ protected:
 	void pauseEngineIntern(bool pause) override;
 
 private:
-	static const uint kCurrentSaveFileVersion = 1;
+	bool save(ISaveWriter *writer, const Graphics::Surface *screenshotOverride, const Common::String &fileName, const Common::String &desc);
+	bool load(ISaveReader *reader, const Common::String &fileName);
+
+	Common::String getUnpromptedSaveFileName(const Common::String &fileName);
+
+	static const uint kCurrentSaveFileVersion = 2;
+	static const uint kEarliestSupportedSaveFileVersion = 2;
 	static const uint kSavegameSignature = 0x6d545356;	// mTSV
 
 	ISaveWriter *_saveWriter;

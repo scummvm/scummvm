@@ -92,6 +92,7 @@ protected:
 	void clearStateCommon(byte type);
 	void stopScriptCommon(int script);
 
+	void drawSentence() override;
 	void resetSentence() override;
 	void setUserState(byte state);
 
@@ -104,6 +105,7 @@ protected:
 	void initNESMouseOver();
 
 	void setBuiltinCursor(int index) override;
+	void setSnailCursor() override;
 
 	void drawPreposition(int index);
 

@@ -68,10 +68,7 @@ public:
 	 */
 	void detectClashes() const;
 
-	/**
-	 * Return a list of extra GUI options for the specified target.
-	 */
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
+	uint getMD5Bytes() const override;
 };
 
 namespace Glk {

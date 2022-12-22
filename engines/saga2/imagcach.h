@@ -34,11 +34,11 @@ namespace Saga2 {
 
 class CImageNode {
 private:
-	uint32      contextID;  // ID of context
-	uint32      resourceID;     // RES_ID of  image
+	uint32      _contextID;  // ID of context
+	uint32      _resourceID;     // RES_ID of  image
 
-	uint16  requested;  // the number of allocation requests made to node
-	void    *image;     // the image
+	uint16  _requested;  // the number of allocation requests made to node
+	void    *_image;     // the image
 
 public:
 	CImageNode(hResContext *con, uint32 resID);
@@ -48,7 +48,7 @@ public:
 	bool    isSameImage(hResContext *con, uint32 resID);
 	bool    isSameImage(void *imagePtr);
 	uint16  getNumRequested() {
-		return requested;
+		return _requested;
 	}
 	bool    releaseRequest();
 };

@@ -32,7 +32,7 @@
 #include "sci/graphics/helpers.h"        // for GuiResourceId
 #include "sci/graphics/screen_item32.h"  // for ScaleInfo, ScreenItem (ptr o...
 
-namespace Common { class SeekableSubReadStreamEndian; }
+namespace Common { class SeekableReadStreamEndian; }
 namespace Sci {
 class Plane;
 class SegManager;
@@ -644,7 +644,7 @@ private:
 	/**
 	 * The read stream containing raw robot data.
 	 */
-	Common::SeekableSubReadStreamEndian *_stream;
+	Common::SeekableReadStreamEndian *_stream;
 
 	/**
 	 * The current status of the player.

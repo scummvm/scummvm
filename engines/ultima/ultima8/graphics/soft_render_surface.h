@@ -22,7 +22,7 @@
 #ifndef ULTIMA8_GRAPHICS_SOFTRENDERSURFACE_H
 #define ULTIMA8_GRAPHICS_SOFTRENDERSURFACE_H
 
-#include "ultima/ultima8/graphics/base_soft_render_surface.h"
+#include "ultima/ultima8/graphics/render_surface.h"
 #include "graphics/managed_surface.h"
 
 namespace Ultima {
@@ -33,7 +33,7 @@ namespace Ultima8 {
 //
 // Desc: The class for software rendering in Pentagram
 //
-template<class uintX> class SoftRenderSurface : public BaseSoftRenderSurface {
+template<class uintX> class SoftRenderSurface : public RenderSurface {
 public:
 
 	// Create from a managed surface
@@ -42,9 +42,6 @@ public:
 	//
 	// Surface Filling
 	//
-
-	// Fill buffer (using a RGB colour)
-	void Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) override;
 
 	//! Fill alpha channel
 	void FillAlpha(uint8 alpha, int32 sx, int32 sy, int32 w, int32 h) override;
@@ -85,26 +82,11 @@ public:
 	// Paint a Invisible Highlighted Shape of using the 32 Bit Colour col32 (0xAARRGGBB Alpha is blend level)
 	void PaintHighlightInvis(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false) override;
 
-	//
-	// Basic Line Drawing
-	//
-
-	// Draw a RGB Line
-	void DrawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey) override;
-
-
-	//
-	// Basic Texture Blitting
-	//
-
-	// Blit a region from a Texture (Alpha == 0 -> skipped)
-	void Blit(const Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend = false) override;
-
 	// Blit a region from a Texture with a Colour blend (AlphaTex == 0 -> skipped. AlphaCol32 -> Blend Factors)
-	void FadedBlit(const Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) override;
+	void FadedBlit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) override;
 
 	// Blit a region from a Texture with a Colour blend masked based on DestAlpha (AlphaTex == 0 || AlphaDest == 0 -> skipped. AlphaCol32 -> Blend Factors)
-	void MaskedBlit(const Graphics::ManagedSurface *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) override;
+	void MaskedBlit(const Graphics::ManagedSurface &src, const Common::Rect &srcRect, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) override;
 };
 
 } // End of namespace Ultima8

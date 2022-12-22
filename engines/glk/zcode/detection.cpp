@@ -94,9 +94,9 @@ bool ZCodeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 				continue;
 			}
 			gameFile.seek(18);
-			strcpy(&serial[0], "\"");
+			Common::strcpy_s(&serial[0], sizeof(serial), "\"");
 			gameFile.read(&serial[1], 6);
-			strcpy(&serial[7], "\"");
+			Common::strcpy_s(&serial[7], sizeof(serial)-7, "\"");
 		} else {
 			Blorb b(*file, INTERPRETER_ZCODE);
 			Common::SeekableReadStream *f = b.createReadStreamForMember("game");
@@ -104,9 +104,9 @@ bool ZCodeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 
 			if (!emptyBlorb) {
 				f->seek(18);
-				strcpy(&serial[0], "\"");
+				Common::strcpy_s(&serial[0], sizeof(serial), "\"");
 				f->read(&serial[1], 6);
-				strcpy(&serial[7], "\"");
+				Common::strcpy_s(&serial[7], sizeof(serial) - 7, "\"");
 				delete f;
 			}
 		}

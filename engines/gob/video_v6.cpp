@@ -124,7 +124,7 @@ void Video_v6::drawYUV(Surface &destDesc, int16 x, int16 y,
 
 		int nextChromaLine = (i < ((height - 1) & ~3) ) ? dataWidth : 0;
 
-		for (int j = 0; j < width; j++, dstRow++) {
+		for (int j = 0; j < width; j++, ++dstRow) {
 
 			int nextChromaColumn = (j < ((width - 1) & ~3)) ? 1 : 0;
 

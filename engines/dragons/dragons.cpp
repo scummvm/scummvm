@@ -1668,7 +1668,7 @@ void DragonsEngine::mainMenu() {
 				loadingScreen();
 				startGame = true;
 			} else if (curMenuItem == 1) {
-				//TODO options menu
+				openMainMenuDialog();  //TODO original options menu
 			} else if (curMenuItem == 2) {
 				_strPlayer->playVideo("previews.str");
 			}

@@ -153,7 +153,9 @@ public:
 		PROC_TERMINATED  = 0x0004,
 		PROC_TERM_DEFERRED = 0x0008, //!< automatically call terminate next frame
 		PROC_FAILED      = 0x0010,
-		PROC_RUNPAUSED   = 0x0020    //!< run even if game is paused
+		PROC_RUNPAUSED   = 0x0020,    //!< run even if game is paused
+		PROC_TERM_DISPOSE = 0x0040,  //!< Dispose after termination
+		PROC_PREVENT_SAVE = 0x0080   //!< When set, prevent game from saving
 	};
 
 };

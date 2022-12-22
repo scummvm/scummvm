@@ -25,8 +25,6 @@
 #include "common/scummsys.h"
 #include "common/mutex.h"
 #include "scumm/music.h"
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
 
 namespace Scumm {
 
@@ -65,9 +63,9 @@ struct channel_data {
 /**
  * Common base class for Player_V2 and Player_V2CMS.
  */
-class Player_V2Base : public Audio::AudioStream, public MusicEngine {
+class Player_V2Base : public MusicEngine {
 public:
-	Player_V2Base(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr);
+	Player_V2Base(ScummEngine *scumm, bool pcjr);
 	~Player_V2Base() override;
 
 	// MusicEngine API
@@ -78,41 +76,18 @@ public:
  	int  getMusicTimer() override;
 // 	virtual int  getSoundStatus(int sound) const;
 
-	// AudioStream API
-/*
-	int readBuffer(int16 *buffer, const int numSamples) {
-		do_mix(buffer, numSamples / 2);
-		return numSamples;
-	}
-*/
-	bool isStereo() const override { return true; }
-	bool endOfData() const override { return false; }
-	int getRate() const override { return _sampleRate; }
-
 protected:
-	enum {
-		FIXP_SHIFT = 16
-	};
-
 	bool _isV3Game;
-	Audio::Mixer *_mixer;
-	Audio::SoundHandle _soundHandle;
 	ScummEngine *_vm;
 
 	bool _pcjr;
 	int _header_len;
-
-	const uint32 _sampleRate;
-	uint32 _next_tick;
-	uint32 _tick_len;
 
 	int   _current_nr;
 	byte *_current_data;
 	int   _next_nr;
 	byte *_next_data;
 	byte *_retaddr;
-
-	Common::Mutex _mutex;
 
 	union ChannelInfo {
 		channel_data d;

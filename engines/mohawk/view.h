@@ -32,7 +32,7 @@ class GraphicsManager;
 class Feature;
 class View;
 
-enum {
+enum : uint {
 	kFeatureObjectMask = 0xff, // both (sort of)
 	kFeatureOldSortForeground = 0x1000, // old
 	kFeatureOldDropSpot = 0x2000, // old

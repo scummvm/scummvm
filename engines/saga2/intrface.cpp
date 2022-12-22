@@ -62,7 +62,7 @@ extern uint8                fixedColors[16];
 
 class gArmorIndicator : public GfxCompImage {
 public:
-	ArmorAttributes  attr;
+	ArmorAttributes  _attr;
 	void drawClipped(gPort &,
 	                 const   Point16 &,
 	                 const   Rect16 &) override;
@@ -71,9 +71,9 @@ public:
 
 	gArmorIndicator(gPanelList &list, const Rect16 &box, void *img, uint16 ident, AppFunc *cmd = nullptr)
 		: GfxCompImage(list, box, img, ident, cmd) {
-		attr.damageAbsorbtion = 0;
-		attr.damageDivider = 1;
-		attr.defenseBonus = 0;
+		_attr.damageAbsorbtion = 0;
+		_attr.damageDivider = 1;
+		_attr.defenseBonus = 0;
 	}
 };
 
@@ -181,7 +181,7 @@ const char *enchantmentNames[] = {
 
 class gEnchantmentDisplay : public gControl {
 
-	uint8       iconFlags[iconCount];
+	uint8       _iconFlags[iconCount];
 
 	void drawClipped(gPort &, const Point16 &, const Rect16 &) override;
 	void pointerMove(gPanelMessage &msg) override;
@@ -190,7 +190,7 @@ public:
 
 	gEnchantmentDisplay(gPanelList &list, uint16 ident, AppFunc *cmd = nullptr)
 		: gControl(list, Rect16(0, 0, 630, 18), nullptr, ident, cmd) {
-		memset(iconFlags, 0, sizeof iconFlags);
+		memset(_iconFlags, 0, sizeof(_iconFlags));
 	}
 };
 
@@ -229,38 +229,38 @@ APPFUNC(cmdManaInd);
    User control metrics
  * ===================================================================== */
 
-// position arrays for all buttons on the individual panels
-static const StaticRect topBox[numButtons] = {
-	/* portrait          */ { 489, 22 + (yContOffset * 0), 65, 72 },
-	/* agress            */ { 559, 86 + (yContOffset * 0), 28, 27 },
-	/* jump              */ { 592, 86 + (yContOffset * 0), 28, 27 },
-	/* center            */ { 559, 56 + (yContOffset * 0), 28, 27 },
-	/* banding           */ { 592, 56 + (yContOffset * 0), 28, 27 },
-	/* namePlates        */ { 488, 94 + (yFaceOffset * 0), 65, 15 },
-	/* namePlateFrames   */ { 487, 20 + (yFaceOffset * 0), 69, 92 }
+// position arrays for all _buttons on the individual panels
+static const StaticRect topBox[kNumButtons] = {
+	/* portrait          */ { 489, 22 + (kYContOffset * 0), 65, 72 },
+	/* agress            */ { 559, 86 + (kYContOffset * 0), 28, 27 },
+	/* jump              */ { 592, 86 + (kYContOffset * 0), 28, 27 },
+	/* center            */ { 559, 56 + (kYContOffset * 0), 28, 27 },
+	/* banding           */ { 592, 56 + (kYContOffset * 0), 28, 27 },
+	/* namePlates        */ { 488, 94 + (kYFaceOffset * 0), 65, 15 },
+	/* namePlateFrames   */ { 487, 20 + (kYFaceOffset * 0), 69, 92 }
 };
 
 
-static const StaticRect midBox[numButtons] = {
-	{ 489, 22 + (yContOffset * 1), 65, 72 },
-	{ 559, 86 + (yContOffset * 1), 28, 27 },
-	{ 592, 86 + (yContOffset * 1), 28, 27 },
-	{ 559, 56 + (yContOffset * 1), 28, 27 },
-	{ 592, 56 + (yContOffset * 1), 28, 27 },
-	{ 488, 94 + (yFaceOffset * 1), 65, 15 },
-	{ 487, 20 + (yFaceOffset * 1), 69, 92 }
+static const StaticRect midBox[kNumButtons] = {
+	{ 489, 22 + (kYContOffset * 1), 65, 72 },
+	{ 559, 86 + (kYContOffset * 1), 28, 27 },
+	{ 592, 86 + (kYContOffset * 1), 28, 27 },
+	{ 559, 56 + (kYContOffset * 1), 28, 27 },
+	{ 592, 56 + (kYContOffset * 1), 28, 27 },
+	{ 488, 94 + (kYFaceOffset * 1), 65, 15 },
+	{ 487, 20 + (kYFaceOffset * 1), 69, 92 }
 };
 
 
 
-static const StaticRect botBox[numButtons] = {
-	{ 489, 22 + (yContOffset * 2), 65, 72 },
-	{ 559, 86 + (yContOffset * 2), 28, 27 },
-	{ 592, 86 + (yContOffset * 2), 28, 27 },
-	{ 559, 56 + (yContOffset * 2), 28, 27 },
-	{ 592, 56 + (yContOffset * 2), 28, 27 },
-	{ 488, 94 + (yFaceOffset * 2), 65, 15 },
-	{ 487, 20 + (yFaceOffset * 2), 69, 92 }
+static const StaticRect botBox[kNumButtons] = {
+	{ 489, 22 + (kYContOffset * 2), 65, 72 },
+	{ 559, 86 + (kYContOffset * 2), 28, 27 },
+	{ 592, 86 + (kYContOffset * 2), 28, 27 },
+	{ 559, 56 + (kYContOffset * 2), 28, 27 },
+	{ 592, 56 + (kYContOffset * 2), 28, 27 },
+	{ 488, 94 + (kYFaceOffset * 2), 65, 15 },
+	{ 487, 20 + (kYFaceOffset * 2), 69, 92 }
 };
 
 
@@ -269,7 +269,7 @@ static const StaticRect botBox[numButtons] = {
 GfxCompButton         *optBtn;
 gEnchantmentDisplay *enchDisp;
 
-// brother buttons
+// brother _buttons
 GfxOwnerSelCompButton *julBtn;
 GfxOwnerSelCompButton *phiBtn;
 GfxOwnerSelCompButton *kevBtn;
@@ -344,13 +344,13 @@ static const StaticRect *views[] = {
 	botBox
 };
 
-// individual indicators/buttons
+// individual indicators/_buttons
 static const StaticRect menConBtnRect = {485, 265, 44, 43};
 
 // options button
 static const StaticRect optBtnRect = {20, 445, 26, 15};
 
-// brother buttons and frame
+// brother _buttons and frame
 static const StaticRect broBtnRect = {481, 450, 144, 11};
 static const StaticRect julBtnRect = {482, 451, 44, 9};
 static const StaticRect phiBtnRect = {531, 451, 44, 9};
@@ -398,17 +398,17 @@ CPlaqText::CPlaqText(gPanelList     &list,
                      int16         ident,
                      AppFunc       *cmd)
 	: gControl(list, box, msg, ident, cmd) {
-	if (strlen(msg) <= bufSize) {
-		strcpy(lineBuf, msg);
+	if (strlen(msg) < kBufSize) {
+		Common::strcpy_s(_lineBuf, msg);
 	} else {
-		*lineBuf = '\0';
+		*_lineBuf = '\0';
 	}
 
-	textFacePal     = pal;
-	buttonFont      = font;
-	textRect        = box;
-	textPosition    = textPos;
-	oldFont         = nullptr;
+	_textFacePal     = pal;
+	_buttonFont      = font;
+	_textRect        = box;
+	_textPosition    = textPos;
+	_oldFont         = nullptr;
 }
 
 void CPlaqText::enable(bool abled) {
@@ -416,41 +416,41 @@ void CPlaqText::enable(bool abled) {
 }
 
 void CPlaqText::invalidate(Rect16 *) {
-	window.update(_extent);
+	_window.update(_extent);
 }
 
 void CPlaqText::draw() {
-	gPort           &port = window.windowPort;
-	Rect16          rect = window.getExtent();
+	gPort           &port = _window._windowPort;
+	Rect16          rect = _window.getExtent();
 
 
 	// save pen color, etc.
 	SAVE_GPORT_STATE(port);
-	oldFont = port.font;
+	_oldFont = port._font;
 
 	// setup the port
-	port.setMode(drawModeMatte);
-	port.setFont(buttonFont);
+	port.setMode(kDrawModeMatte);
+	port.setFont(_buttonFont);
 
 	g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
 	drawClipped(port, Point16(0, 0), Rect16(0, 0, rect.width, rect.height));
 	g_vm->_pointer->show(port, _extent);              // show mouse pointer
 
 	// reset the old font
-	port.setFont(oldFont);
+	port.setFont(_oldFont);
 }
 
 void CPlaqText::drawClipped(gPort &port,
                             const Point16 &offset,
                             const Rect16 &r) {
 	if (_extent.overlap(r)) {
-		if (*lineBuf) {
-			textRect = _extent;
-			textRect.x -= offset.x;
-			textRect.y -= offset.y;
+		if (*_lineBuf) {
+			_textRect = _extent;
+			_textRect.x -= offset.x;
+			_textRect.y -= offset.y;
 
 
-			writePlaqText(port, textRect, buttonFont, textPosition, textFacePal, selected,  lineBuf);
+			writePlaqText(port, _textRect, _buttonFont, _textPosition, _textFacePal, _selected, _lineBuf);
 		}
 	}
 }
@@ -471,14 +471,14 @@ CPortrait::CPortrait(GfxMultCompButton **portraits,
 		assert(portraits[i]);
 	};
 
-	buttons     = portraits;    // set the pointer for class
-	indivButton = indivPort;    // set the individual portrait
-	numButtons  = numPorts;     // number of buttons per pointer
+	_buttons     = portraits;    // set the pointer for class
+	_indivButton = indivPort;    // set the individual portrait
+	_numButtons  = numPorts;     // number of buttons per pointer
 	_numViews    = numBrothers;  // number of pointers for whole array
 
 	// start off in a normal facial state
 	for (uint16 i = 0; i < _numViews + 1; i++) {
-		currentState[i] = kPortraitNormal;
+		_currentState[i] = kPortraitNormal;
 	}
 }
 
@@ -486,19 +486,19 @@ void CPortrait::setPortrait(uint16 brotherID) {
 	assert(brotherID < _numViews + 1);
 
 	// tell button to select and display new image
-	if (brotherID == uiIndiv) {
+	if (brotherID == kUiIndiv) {
 		WriteStatusF(4, " Brother id %d", brotherID);
 
-		indivButton->setCurrent(currentState[brotherID]);
-		indivButton->invalidate();
+		_indivButton->setCurrent(_currentState[brotherID]);
+		_indivButton->invalidate();
 	} else {
-		buttons[brotherID]->setCurrent(currentState[brotherID]);
-		buttons[brotherID]->invalidate();
+		_buttons[brotherID]->setCurrent(_currentState[brotherID]);
+		_buttons[brotherID]->invalidate();
 	}
 }
 
 void CPortrait::set(uint16 brotherID, PortraitType type) {
-	currentState[brotherID] = type;
+	_currentState[brotherID] = type;
 
 	setPortrait(brotherID);
 }
@@ -506,10 +506,10 @@ void CPortrait::set(uint16 brotherID, PortraitType type) {
 void CPortrait::ORset(uint16 brotherID, PortraitType type) { // brotherID = post 0
 	assert(brotherID < _numViews + 1);
 
-	if (type == currentState[brotherID]) {
-		currentState[brotherID] = kPortraitNormal;
+	if (type == _currentState[brotherID]) {
+		_currentState[brotherID] = kPortraitNormal;
 	} else {
-		currentState[brotherID] = type;
+		_currentState[brotherID] = type;
 	}
 
 	// set this button to the new state
@@ -542,13 +542,13 @@ void CPortrait::getStateString(char buf[], int8 size, uint16 brotherID) {
 
 	buf[0] = '\0';
 
-	if (a->_enchantmentFlags & (1 << actorAsleep)) {
+	if (a->_enchantmentFlags & (1 << kActorAsleep)) {
 		Common::strlcat(buf, asleepStr, size);
-	} else if (a->_enchantmentFlags & (1 << actorParalyzed)) {
+	} else if (a->_enchantmentFlags & (1 << kActorParalyzed)) {
 		Common::strlcat(buf, paralysedStr, size);
-	} else if (a->_enchantmentFlags & (1 << actorBlind)) {
+	} else if (a->_enchantmentFlags & (1 << kActorBlind)) {
 		Common::strlcat(buf, blindStr, size);
-	} else if (a->_enchantmentFlags & (1 << actorFear)) {
+	} else if (a->_enchantmentFlags & (1 << kActorFear)) {
 		Common::strlcat(buf, afraidStr, size);
 	} else if (pa->isAggressive()) {
 		Common::strlcat(buf, angryStr, size);
@@ -566,12 +566,12 @@ void CPortrait::getStateString(char buf[], int8 size, uint16 brotherID) {
 		Common::strlcat(buf, hurtStr, size);
 	}
 
-	if (a->_enchantmentFlags & (1 << actorPoisoned)) {
+	if (a->_enchantmentFlags & (1 << kActorPoisoned)) {
 		if (buf[0] != '\0')	// strlen(buf) > 0
 			Common::strlcat(buf, commaStr, size);
 
 		Common::strlcat(buf, poisonedStr, size);
-	} else if (a->_enchantmentFlags & (1 << actorDiseased)) {
+	} else if (a->_enchantmentFlags & (1 << kActorDiseased)) {
 		if (buf[0] != '\0')	// strlen(buf) > 0
 			Common::strlcat(buf, commaStr, size);
 
@@ -598,158 +598,157 @@ CStatusLine::CStatusLine(gPanelList         &list,
                          AppFunc         *cmd) :
 	CPlaqText(list, box, msg, font, textPos, pal, ident, cmd) {
 
-	lineDisplayed = false;
-	queueHead = queueTail = 0;
+	_lineDisplayed = false;
+	_queueHead = _queueTail = 0;
 
-	for (int i = 0; i < ARRAYSIZE(lineQueue); i++) {
-		lineQueue[i].text = nullptr;
-		lineQueue[i].frameTime = 0;
+	for (int i = 0; i < ARRAYSIZE(_lineQueue); i++) {
+		_lineQueue[i].text = nullptr;
+		_lineQueue[i].frameTime = 0;
 	}
-	waitAlarm.basetime = waitAlarm.duration = 0;
-	minWaitAlarm.basetime = minWaitAlarm.duration = 0;
+	_waitAlarm._basetime = _waitAlarm._duration = 0;
+	_minWaitAlarm._basetime = _minWaitAlarm._duration = 0;
 }
 
 CStatusLine::~CStatusLine() {
-	while (queueTail != queueHead) {
-		assert(lineQueue[queueTail].text != nullptr);
+	while (_queueTail != _queueHead) {
+		assert(_lineQueue[_queueTail].text != nullptr);
 
-		delete[] lineQueue[queueTail].text;
-		queueTail = bump(queueTail);
+		delete[] _lineQueue[_queueTail].text;
+		_queueTail = bump(_queueTail);
 	}
 }
 
 void CStatusLine::setLine(char *msg, uint32 frameTime) { // frametime def
-	uint8       newHead = bump(queueHead);
+	uint8       newHead = bump(_queueHead);
 
-	if (newHead != queueTail) {
+	if (newHead != _queueTail) {
 		size_t      msgLen = strlen(msg);
 
-		if ((lineQueue[queueHead].text = new char[msgLen + 1]()) !=  nullptr) {
-			strcpy(lineQueue[queueHead].text, msg);
-			lineQueue[queueHead].frameTime = frameTime;
-			queueHead = newHead;
-		}
+		_lineQueue[_queueHead].text = new char[msgLen + 1];
+		Common::strcpy_s(_lineQueue[_queueHead].text, msgLen + 1, msg);
+		_lineQueue[_queueHead].frameTime = frameTime;
+		_queueHead = newHead;
 	}
 }
 
 void CStatusLine::experationCheck() {
-	if (lineDisplayed
-	        && (waitAlarm.check()
-	            || (queueTail != queueHead && minWaitAlarm.check()))) {
+	if (_lineDisplayed
+	        && (_waitAlarm.check()
+	            || (_queueTail != _queueHead && _minWaitAlarm.check()))) {
 		enable(false);
-		window.update(_extent);
+		_window.update(_extent);
 
-		lineDisplayed = false;
+		_lineDisplayed = false;
 	}
 
-	if (!lineDisplayed && queueTail != queueHead) {
+	if (!_lineDisplayed && _queueTail != _queueHead) {
 		// enable the control
 		enable(true);
 
 		// set up the time for this message
-		waitAlarm.set(lineQueue[queueTail].frameTime);
-		minWaitAlarm.set(lineQueue[queueTail].frameTime / 5);
+		_waitAlarm.set(_lineQueue[_queueTail].frameTime);
+		_minWaitAlarm.set(_lineQueue[_queueTail].frameTime / 5);
 
 		// copy upto the buffer's size in chars
-		Common::strlcpy(lineBuf, lineQueue[queueTail].text, bufSize);
-		lineBuf[bufSize - 1] = '\0';
+		Common::strlcpy(_lineBuf, _lineQueue[_queueTail].text,kBufSize);
+		_lineBuf[kBufSize - 1] = '\0';
 
 		//  free the queue text buffer
-		delete[] lineQueue[queueTail].text;
-		lineQueue[queueTail].text = nullptr;
+		delete[] _lineQueue[_queueTail].text;
+		_lineQueue[_queueTail].text = nullptr;
 
 		//  bump the queue tail
-		queueTail = bump(queueTail);
+		_queueTail = bump(_queueTail);
 
 		// draw the new textline
-		window.update(_extent);
+		_window.update(_extent);
 
-		lineDisplayed = true;
+		_lineDisplayed = true;
 	}
 }
 
 void CStatusLine::clear() {
 	enable(false);
-	window.update(_extent);
-	lineDisplayed = false;
+	_window.update(_extent);
+	_lineDisplayed = false;
 
-	queueHead = queueTail = 0;
+	_queueHead = _queueTail = 0;
 }
 
 /* ===================================================================== *
     CMassWeightInterface: mass and weight allowence indicators
  * ===================================================================== */
 
-bool CMassWeightIndicator::bRedraw;
+bool CMassWeightIndicator::_bRedraw;
 
 CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos, uint16 type, bool death) {
 
 	// set up the position of this indicator
-	backImagePos    = pos;
-	massPiePos      = backImagePos;
-	bulkPiePos      = backImagePos;
+	_backImagePos    = pos;
+	_massPiePos      = _backImagePos;
+	_bulkPiePos      = _backImagePos;
 
-	massPiePos.x    += massPieXOffset;
-	massPiePos.y    += massPieYOffset;
-	bulkPiePos.x    += bulkPieXOffset;
-	bulkPiePos.y    += bulkPieYOffset;
+	_massPiePos.x    += kMassPieXOffset;
+	_massPiePos.y    += kMassPieYOffset;
+	_bulkPiePos.x    += kBulkPieXOffset;
+	_bulkPiePos.y    += kBulkPieYOffset;
 
-	bRedraw         = true; // this MUST be true or the indicators will not draw the first time
+	_bRedraw         = true; // this MUST be true or the indicators will not draw the first time
 
 	// attach the resource context
-	containerRes = resFile->newContext(containerGroupID, "container context");
+	_containerRes = resFile->newContext(containerGroupID, "container context");
 
 	// setup mass/bulk indicator imagery
 	if (death) {
-		massBulkImag = g_vm->_imageCache->requestImage(containerRes, MKTAG('D', 'J', 'B', massBulkResNum));
+		_massBulkImag = g_vm->_imageCache->requestImage(_containerRes, MKTAG('D', 'J', 'B', kMassBulkResNum));
 
-		pieIndImag = loadImageRes(containerRes, pieIndResNum, numPieIndImages, 'D', 'A', 'J');
+		_pieIndImag = loadImageRes(_containerRes, kPieIndResNum, kNumPieIndImages, 'D', 'A', 'J');
 	} else {
 
-		massBulkImag = g_vm->_imageCache->requestImage(containerRes, MKTAG('G', 'J', 'B', massBulkResNum));
+		_massBulkImag = g_vm->_imageCache->requestImage(_containerRes, MKTAG('G', 'J', 'B', kMassBulkResNum));
 
-		pieIndImag = loadImageRes(containerRes, pieIndResNum, numPieIndImages, 'G', 'A', 'J');
+		_pieIndImag = loadImageRes(_containerRes, kPieIndResNum, kNumPieIndImages, 'G', 'A', 'J');
 	}
 
 	// attach controls to the indivControls panel
 	// these butttons will get deactivated along with the panel
-	pieMass = new GfxCompImage(*panel,
-	                                       Rect16(massPiePos.x, massPiePos.y, pieXSize, pieYSize),
-	                                       pieIndImag,
-	                                       numPieIndImages,
+	_pieMass = new GfxCompImage(*panel,
+	                                       Rect16(_massPiePos.x, _massPiePos.y, kPieXSize, kPieYSize),
+	                                       _pieIndImag,
+	                                       kNumPieIndImages,
 	                                       0,
 	                                       type,
 	                                       cmdMassInd);
 
-	pieBulk = new GfxCompImage(*panel,
-	                                       Rect16(bulkPiePos.x, bulkPiePos.y, pieXSize, pieYSize),
-	                                       pieIndImag,
-	                                       numPieIndImages,
+	_pieBulk = new GfxCompImage(*panel,
+	                                       Rect16(_bulkPiePos.x, _bulkPiePos.y, kPieXSize, kPieYSize),
+	                                       _pieIndImag,
+	                                       kNumPieIndImages,
 	                                       0,
 	                                       type,
 	                                       cmdBulkInd);
 
 	// mass/bulk back image
 	new GfxCompImage(*panel,
-	                             Rect16(backImagePos.x, backImagePos.y, backImageXSize, backImageYSize),
-	                             massBulkImag,
-	                             uiIndiv,
+	                             Rect16(_backImagePos.x, _backImagePos.y, kBackImageXSize, kBackImageYSize),
+	                             _massBulkImag,
+	                             kUiIndiv,
 	                             nullptr);
 
 	// release resource context
-	if (containerRes) {
-		resFile->disposeContext(containerRes);
-		containerRes = nullptr;
+	if (_containerRes) {
+		resFile->disposeContext(_containerRes);
+		_containerRes = nullptr;
 	}
 
-	currentMass = 0;
-	currentBulk = 0;
+	_currentMass = 0;
+	_currentBulk = 0;
 
 	// if this is something other then the ready containers
 	if (type > 1) {
-		containerObject = (GameObject *)panel->userData;
+		_containerObject = (GameObject *)panel->_userData;
 	} else {
-		containerObject = nullptr;
+		_containerObject = nullptr;
 	}
 
 	g_vm->_indList.push_back(this);
@@ -758,8 +757,8 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 CMassWeightIndicator::~CMassWeightIndicator() {
 	g_vm->_indList.remove(this);
 
-	unloadImageRes(pieIndImag, numPieIndImages);
-	g_vm->_imageCache->releaseImage(massBulkImag);
+	unloadImageRes(_pieIndImag, kNumPieIndImages);
+	g_vm->_imageCache->releaseImage(_massBulkImag);
 }
 
 /*****************************************************************************
@@ -768,17 +767,17 @@ CMassWeightIndicator::~CMassWeightIndicator() {
 **              mass and bulk of the current ( single mode ) player
 **/
 void CMassWeightIndicator::recalculate() {
-	assert(pieMass);
-	assert(pieBulk);
+	assert(_pieMass);
+	assert(_pieBulk);
 
 	uint16 mass = getMassPieDiv();
 	uint16 bulk = getBulkPieDiv();
 	uint16 retMass, retBulk;
 
 
-	if (containerObject) {
-		setMassPie(retMass = getWeightRatio(containerObject, mass, false));
-		setBulkPie(retBulk = getBulkRatio(containerObject, bulk, false));
+	if (_containerObject) {
+		setMassPie(retMass = getWeightRatio(_containerObject, mass, false));
+		setBulkPie(retBulk = getBulkRatio(_containerObject, bulk, false));
 	} else {
 		setMassPie(retMass = getWeightRatio(g_vm->_playerList[getCenterActorPlayerID()]->getActor(), mass, false));
 		setBulkPie(retBulk = getBulkRatio(g_vm->_playerList[getCenterActorPlayerID()]->getActor(), bulk, false));
@@ -791,13 +790,13 @@ void CMassWeightIndicator::recalculate() {
 **              weight/bulk control ( so it refreshes )
 **/
 void CMassWeightIndicator::update() {
-	if (bRedraw == true) {
+	if (_bRedraw == true) {
 		for (Common::List<CMassWeightIndicator *>::iterator it = g_vm->_indList.begin(); it != g_vm->_indList.end(); ++it) {
 			(*it)->recalculate();
 			(*it)->invalidate();
 		}
 
-		bRedraw = false;
+		_bRedraw = false;
 	}
 }
 
@@ -806,7 +805,7 @@ void CMassWeightIndicator::update() {
  * ===================================================================== */
 
 // setup the mana color tables
-static uint8 manaColorMap[CManaIndicator::numManaTypes][CManaIndicator::numManaColors + 9] = {
+static uint8 manaColorMap[CManaIndicator::kManaNumManaTypes][CManaIndicator::kResNumManaColors + 9] = {
 	// each row has 9 leading zero's to acount for windows colors
 	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x74, 0x73, 0x72, 0x80, 0x84, 0x83, 0x82, 0x82, 0x81, 0x81, 0xF4, 0xE9 }, // Red
 
@@ -823,77 +822,77 @@ static uint8 manaColorMap[CManaIndicator::numManaTypes][CManaIndicator::numManaC
 
 
 CManaIndicator::CManaIndicator(gPanelList &list) : GfxCompImage(list,
-	        Rect16(x, y, xSize, ySize),
+	        Rect16(kAreaX, kAreaY, kAreaXSize, kAreaYSize),
 	        nullptr,
 	        0,
 	        cmdManaInd) {
 	assert(resFile);
 
 	// init the resource handle with the mana resource group
-	resContext  = resFile->newContext(MKTAG('M', 'A', 'N', 'A'), "mana context");
+	_resContext  = resFile->newContext(MKTAG('M', 'A', 'N', 'A'), "mana context");
 
 	// load star images
-	starImages = loadImageRes(resContext, starResNum, numStars, 'S', 'T', 'A');
+	_starImages = loadImageRes(_resContext, kResStarResNum, kResNumStars, 'S', 'T', 'A');
 
 	// load in the ring images
-	ringImages = loadImageRes(resContext, ringResNum, numRings, 'R', 'N', 'G');
+	_ringImages = loadImageRes(_resContext, kResRingResNum, kResNumRings, 'R', 'N', 'G');
 
-	backImage = g_vm->_imageCache->requestImage(resContext, MKTAG('B', 'A', 'C', 'K'));
+	_backImage = g_vm->_imageCache->requestImage(_resContext, MKTAG('B', 'A', 'C', 'K'));
 
-	wellImage = g_vm->_imageCache->requestImage(resContext, MKTAG('W', 'E', 'L', 'L'));
+	_wellImage = g_vm->_imageCache->requestImage(_resContext, MKTAG('W', 'E', 'L', 'L'));
 
 	// hmm this could be cleaner...
-	starRingEndPos[0] = Point16(redEndX,    redEndY);
-	starRingEndPos[1] = Point16(orangeEndX, orangeEndY);
-	starRingEndPos[2] = Point16(yellowEndX, yellowEndY);
-	starRingEndPos[3] = Point16(greenEndX,  greenEndY);
-	starRingEndPos[4] = Point16(blueEndX,   blueEndY);
-	starRingEndPos[5] = Point16(violetEndX, violetEndY);
+	_starRingEndPos[0] = Point16(kManaRedEndX,    kManaRedEndY);
+	_starRingEndPos[1] = Point16(kManaOrangeEndX, kManaOrangeEndY);
+	_starRingEndPos[2] = Point16(kManaYellowEndX, kManaYellowEndY);
+	_starRingEndPos[3] = Point16(kManaGreenEndX,  kManaGreenEndY);
+	_starRingEndPos[4] = Point16(kManaBlueEndX,   kManaBlueEndY);
+	_starRingEndPos[5] = Point16(kManaVioletEndX, kManaVioletEndY);
 
-	starSizes[0] = Point16(star1XSize, star1YSize);
-	starSizes[1] = Point16(star2XSize, star2YSize);
-	starSizes[2] = Point16(star3XSize, star3YSize);
-	starSizes[3] = Point16(star4XSize, star4YSize);
-	starSizes[4] = Point16(star5XSize, star5YSize);
-	starSizes[5] = Point16(star6XSize, star6YSize);
-	starSizes[6] = Point16(star7XSize, star7YSize);
+	_starSizes[0] = Point16(kStar1XSize, kStar1YSize);
+	_starSizes[1] = Point16(kStar2XSize, kStar2YSize);
+	_starSizes[2] = Point16(kStar3XSize, kStar3YSize);
+	_starSizes[3] = Point16(kStar4XSize, kStar4YSize);
+	_starSizes[4] = Point16(kStar5XSize, kStar5YSize);
+	_starSizes[5] = Point16(kStar6XSize, kStar6YSize);
+	_starSizes[6] = Point16(kStar7XSize, kStar7YSize);
 
-	ringSizes[0] = Point16(ring1XSize, ring1YSize);
-	ringSizes[1] = Point16(ring2XSize, ring2YSize);
-	ringSizes[2] = Point16(ring3XSize, ring3YSize);
-	ringSizes[3] = Point16(ring4XSize, ring4YSize);
-	ringSizes[4] = Point16(ring5XSize, ring5YSize);
-	ringSizes[5] = Point16(ring6XSize, ring6YSize);
-	ringSizes[6] = Point16(ring7XSize, ring7YSize);
+	_ringSizes[0] = Point16(kRing1XSize, kRing1YSize);
+	_ringSizes[1] = Point16(kRing2XSize, kRing2YSize);
+	_ringSizes[2] = Point16(kRing3XSize, kRing3YSize);
+	_ringSizes[3] = Point16(kRing4XSize, kRing4YSize);
+	_ringSizes[4] = Point16(kRing5XSize, kRing5YSize);
+	_ringSizes[5] = Point16(kRing6XSize, kRing6YSize);
+	_ringSizes[6] = Point16(kRing7XSize, kRing7YSize);
 
 
 	// get rid of resource context
-	resFile->disposeContext(resContext);
-	resContext = nullptr;
+	resFile->disposeContext(_resContext);
+	_resContext = nullptr;
 
 	// set update checks to nominal values
-	for (uint16 i = 0; i < numManaTypes; i++) {
-		currentMana[i]        = -1;
-		currentBaseMana[i]    = -1;
+	for (uint16 i = 0; i < kManaNumManaTypes; i++) {
+		_currentMana[i]        = -1;
+		_currentBaseMana[i]    = -1;
 	}
 
 	// init the save map
-	savedMap.size = Extent16(xSize, ySize);
-	savedMap.data = new uint8[savedMap.bytes()];
+	_savedMap._size = Extent16(kAreaXSize, kAreaYSize);
+	_savedMap._data = new uint8[_savedMap.bytes()];
 }
 
 CManaIndicator::~CManaIndicator() {
 	// release images
-	unloadImageRes(starImages, numStars);
-	unloadImageRes(ringImages, numRings);
+	unloadImageRes(_starImages, kResNumStars);
+	unloadImageRes(_ringImages, kResNumRings);
 
 	// release back image
-	g_vm->_imageCache->releaseImage(backImage);
-	g_vm->_imageCache->releaseImage(wellImage);
+	g_vm->_imageCache->releaseImage(_backImage);
+	g_vm->_imageCache->releaseImage(_wellImage);
 
 	// release the saved map
-	if (savedMap.data)
-		delete[] savedMap.data;
+	if (_savedMap._data)
+		delete[] _savedMap._data;
 }
 
 // this method provides a rect for any of the six mana regions of the control
@@ -904,18 +903,18 @@ CManaIndicator::~CManaIndicator() {
 //  -------
 
 Rect16 CManaIndicator::getManaRegionRect(int8 nRegion) {
-	assert(nRegion >= 0 && nRegion < numManaRegions);
+	assert(nRegion >= 0 && nRegion < kManaNumManaRegions);
 
-	int boxSizeX = xSize / 3;
-	int boxSizeY = ySize / 2;
+	int boxSizeX = kAreaXSize / 3;
+	int boxSizeY = kAreaYSize / 2;
 
-	static Rect16 manaRegionRects[numManaRegions] = {
-		Rect16(x, y, boxSizeX, boxSizeY),
-		Rect16(x + boxSizeX, y, boxSizeX, boxSizeY),
-		Rect16(x + boxSizeX * 2, y, boxSizeX, boxSizeY),
-		Rect16(x, y + boxSizeY, boxSizeX, boxSizeY),
-		Rect16(x + boxSizeX, y + boxSizeY, boxSizeX, boxSizeY),
-		Rect16(x + boxSizeX * 2, y + boxSizeY, boxSizeX, boxSizeY)
+	static Rect16 manaRegionRects[kManaNumManaRegions] = {
+		Rect16(kAreaX, kAreaY, boxSizeX, boxSizeY),
+		Rect16(kAreaX + boxSizeX, kAreaY, boxSizeX, boxSizeY),
+		Rect16(kAreaX + boxSizeX * 2, kAreaY, boxSizeX, boxSizeY),
+		Rect16(kAreaX, kAreaY + boxSizeY, boxSizeX, boxSizeY),
+		Rect16(kAreaX + boxSizeX, kAreaY + boxSizeY, boxSizeX, boxSizeY),
+		Rect16(kAreaX + boxSizeX * 2, kAreaY + boxSizeY, boxSizeX, boxSizeY)
 	};
 
 	return manaRegionRects[nRegion];
@@ -923,17 +922,17 @@ Rect16 CManaIndicator::getManaRegionRect(int8 nRegion) {
 
 void CManaIndicator::draw() {
 
-	gPort           &port = window.windowPort;
+	gPort           &port = _window._windowPort;
 
 
 	// save pen color, etc.
 	SAVE_GPORT_STATE(port);
 
 	// setup the port
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 
 	g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
-	drawClipped(port, Point16(0, 0), Rect16(0, 0, xSize, ySize));
+	drawClipped(port, Point16(0, 0), Rect16(0, 0, kAreaXSize, kAreaYSize));
 	g_vm->_pointer->show(port, _extent);              // show mouse pointer
 
 
@@ -953,13 +952,13 @@ void CManaIndicator::drawClipped(gPort &port,
 		if (!_extent.overlap(clipRect)) return;
 
 		// draw the saved image to the port
-		port.setMode(drawModeMatte);
-		port.bltPixels(savedMap, 0, 0,
+		port.setMode(kDrawModeMatte);
+		port.bltPixels(_savedMap, 0, 0,
 		               _extent.x - offset.x, _extent.y - offset.y,
-		               xSize, ySize);
+		               kAreaXSize, kAreaYSize);
 
 		// draw the frame
-		drawCompressedImage(port, Point16(_extent.x - offset.x, _extent.y - offset.y), backImage);
+		drawCompressedImage(port, Point16(_extent.x - offset.x, _extent.y - offset.y), _backImage);
 
 		// and finish
 		return;
@@ -973,64 +972,64 @@ void CManaIndicator::drawClipped(gPort &port,
 	gPixelMap   ringMap, starMap, mixMap, tempMap;
 
 
-	if (!NewTempPort(tempPort, xSize, ySize))
+	if (!NewTempPort(tempPort, kAreaXSize, kAreaYSize))
 		return;
 
 	// set the blit surface to a flat black
-	memset(tempPort.map->data, 24, tempPort.map->bytes());
+	memset(tempPort._map->_data, 24, tempPort._map->bytes());
 
 	// draw the well
-	drawCompressedImage(tempPort, Point16(wellX, wellY), wellImage);
+	drawCompressedImage(tempPort, Point16(kWellX, kWellY), _wellImage);
 
 	// make a mixing plane and blank it
-	mixMap.size = Extent16(xSize, ySize);
-	mixMap.data = new uint8[mixMap.bytes()]();
+	mixMap._size = Extent16(kAreaXSize, kAreaYSize);
+	mixMap._data = new uint8[mixMap.bytes()]();
 	// make a temp plane and blank it
-	tempMap.size = Extent16(xSize, ySize);
-	tempMap.data = new uint8[tempMap.bytes()]();
+	tempMap._size = Extent16(kAreaXSize, kAreaYSize);
+	tempMap._data = new uint8[tempMap.bytes()]();
 
 	// clear out the blit surfaces
-	memset(mixMap.data, 0, mixMap.bytes());
-	memset(tempMap.data, 0, tempMap.bytes());
+	memset(mixMap._data, 0, mixMap.bytes());
+	memset(tempMap._data, 0, tempMap.bytes());
 
 	// draw as glyph
-	tempPort.setMode(drawModeMatte);
+	tempPort.setMode(kDrawModeMatte);
 
 	// draw each star and ring with color remap
-	for (uint16 i = 0; i < numManaTypes; i++) {
+	for (uint16 i = 0; i < kManaNumManaTypes; i++) {
 		// get the header for the image pointer passed
-		ImageHeader *starHdr = (ImageHeader *)starImages[manaLines[i].starImageIndex];
-		ImageHeader *ringHdr = (ImageHeader *)ringImages[manaLines[i].ringImageIndex];
+		ImageHeader *starHdr = (ImageHeader *)_starImages[_manaLines[i].starImageIndex];
+		ImageHeader *ringHdr = (ImageHeader *)_ringImages[_manaLines[i].ringImageIndex];
 
 		// set the buffer blit area to the image size
-		starMap.size = starHdr->size;
-		ringMap.size = ringHdr->size;
+		starMap._size = starHdr->size;
+		ringMap._size = ringHdr->size;
 
 		// see if it's compressed
 		if (starHdr->compress) {
 			// allocation of the temp buffer
-			starMap.data = new uint8[starMap.bytes()]();
+			starMap._data = new uint8[starMap.bytes()]();
 
 			// if it is then upack it to spec'ed coords.
-			unpackImage(&starMap, starMap.size.x, starMap.size.y, starHdr->data);
-		} else starMap.data = (uint8 *)starHdr->data;
+			unpackImage(&starMap, starMap._size.x, starMap._size.y, starHdr->data);
+		} else starMap._data = (uint8 *)starHdr->data;
 
 		// see if it's compressed
 		if (ringHdr->compress) {
 			// allocation of the temp buffer
-			ringMap.data = new uint8[ringMap.bytes()]();
+			ringMap._data = new uint8[ringMap.bytes()]();
 
 			// if it is then upack it to spec'ed coords.
-			unpackImage(&ringMap, ringMap.size.x, ringMap.size.y, ringHdr->data);
-		} else ringMap.data = (uint8 *)ringHdr->data;
+			unpackImage(&ringMap, ringMap._size.x, ringMap._size.y, ringHdr->data);
+		} else ringMap._data = (uint8 *)ringHdr->data;
 
 		// now blit the rings to the mixing surface
-		TBlit(&mixMap, &ringMap, manaLines[i].ringPos.x, manaLines[i].ringPos.y);
-		TBlit(&tempMap, &starMap, manaLines[i].starPos.x, manaLines[i].starPos.y);
+		TBlit(&mixMap, &ringMap, _manaLines[i].ringPos.x, _manaLines[i].ringPos.y);
+		TBlit(&tempMap, &starMap, _manaLines[i].starPos.x, _manaLines[i].starPos.y);
 
 		// now do a peusdo-log additive thing to the images
-		uint8   *dst    = (uint8 *)mixMap.data;
-		uint8   *src    = (uint8 *)tempMap.data;
+		uint8   *dst    = (uint8 *)mixMap._data;
+		uint8   *src    = (uint8 *)tempMap._data;
 
 		// get the least common dinominator for size ( should be equal )
 		uint16  bufferSize  = MIN(mixMap.bytes(), tempMap.bytes());
@@ -1050,41 +1049,41 @@ void CManaIndicator::drawClipped(gPort &port,
 		// for each color index possible, match correct color value
 		// at dest buffer
 		compositePixels(
-		    tempPort.map,
+		    tempPort._map,
 		    &mixMap,
 		    0,
 		    0,
 		    manaColorMap[i]);
 
 		// clear out the mixing surfaces
-		memset(mixMap.data, 0, mixMap.bytes());
-		memset(tempMap.data, 0, tempMap.bytes());
+		memset(mixMap._data, 0, mixMap.bytes());
+		memset(tempMap._data, 0, tempMap.bytes());
 
 		// dispose the temporary gPixelMap
 		if (starHdr->compress)
-			delete[] starMap.data;
+			delete[] starMap._data;
 		if (ringHdr->compress)
-			delete[] ringMap.data;
+			delete[] ringMap._data;
 	}
 
 	// save this frame
-	TBlit(&savedMap, tempPort.map, 0, 0);
+	TBlit(&_savedMap, tempPort._map, 0, 0);
 
 	//  Blit the pixelmap to the main screen
-	port.setMode(drawModeMatte);
-	port.bltPixels(*tempPort.map, 0, 0,
+	port.setMode(kDrawModeMatte);
+	port.bltPixels(*tempPort._map, 0, 0,
 	               _extent.x - offset.x, _extent.y - offset.y,
-	               xSize, ySize);
+	               kAreaXSize, kAreaYSize);
 
 	// now blit the frame on top of it all.
-	drawCompressedImage(port, Point16(_extent.x - offset.x, _extent.y - offset.y), backImage);
+	drawCompressedImage(port, Point16(_extent.x - offset.x, _extent.y - offset.y), _backImage);
 
 	// dispose of temporary pixelmap
 	DisposeTempPort(tempPort);
-	if (mixMap.data)
-		delete[] mixMap.data;
-	if (tempMap.data)
-		delete[] tempMap.data;
+	if (mixMap._data)
+		delete[] mixMap._data;
+	if (tempMap._data)
+		delete[] tempMap._data;
 
 	g_vm->_pointer->show();
 }
@@ -1101,12 +1100,12 @@ bool CManaIndicator::needUpdate(PlayerActor *player) {
 
 	// this could do more array checking, but
 	// the number of mana type should remain stable
-	for (i = 0; i < numManaTypes; i++) {
+	for (i = 0; i < kManaNumManaTypes; i++) {
 		manaAmount      = stats->mana(i);
 		baseManaAmount  = baseStatsRef.mana(i);
 
 		// check for new data
-		if (manaAmount != currentMana[i] || baseManaAmount != currentBaseMana[i]) {
+		if (manaAmount != _currentMana[i] || baseManaAmount != _currentBaseMana[i]) {
 			return true;
 		}
 	}
@@ -1128,23 +1127,23 @@ bool CManaIndicator::update(PlayerActor *player) {
 
 	// this could do more array checking, but
 	// the number of mana type should remain stable
-	for (i = 0; i < numManaTypes; i++) {
+	for (i = 0; i < kManaNumManaTypes; i++) {
 		manaAmount      = stats->mana(i);
 		baseManaAmount  = baseStatsRef.mana(i);
 
 		// check for new data
-		if (manaAmount != currentMana[i] || baseManaAmount != currentBaseMana[i]) {
+		if (manaAmount != _currentMana[i] || baseManaAmount != _currentBaseMana[i]) {
 			newData = true;
 
-			currentMana[i]        = manaAmount;
-			currentBaseMana[i]    = baseManaAmount;
+			_currentMana[i]        = manaAmount;
+			_currentBaseMana[i]    = baseManaAmount;
 		}
 
 		// get manaLine info ( which star/ring image, and position on screen )
 		// from getStarInfo which takes the mana type index ( i ),
 		// current mana total, and the player base mana
 		if (newData == true) {
-			getManaLineInfo(i, manaAmount, baseManaAmount, &manaLines[i]);
+			getManaLineInfo(i, manaAmount, baseManaAmount, &_manaLines[i]);
 		}
 	}
 
@@ -1165,7 +1164,7 @@ void CManaIndicator::getManaLineInfo(uint16 index,
                                      int16 manaAmount,
                                      int16 baseManaAmount,
                                      manaLineInfo *info) {
-	Point16 basePos = Point16(xSize / 2, ySize / 2);
+	Point16 basePos = Point16(kAreaXSize / 2, kAreaYSize / 2);
 
 	// div zero prevention
 	if (manaAmount == 0) manaAmount = 1;
@@ -1175,23 +1174,23 @@ void CManaIndicator::getManaLineInfo(uint16 index,
 
 	//  Calculate the positions of the mana stars, and which images to use.
 	manaInfo.starPos        = LERP(basePos,
-	                               starRingEndPos[index],
-	                               (int32)maxLevel,
+	                               _starRingEndPos[index],
+	                               (int32)kManaMaxLevel,
 	                               (int32)manaAmount);
 
 	manaInfo.ringPos        = LERP(basePos,
-	                               starRingEndPos[index],
-	                               (int32)maxLevel,
+	                               _starRingEndPos[index],
+	                               (int32)kManaMaxLevel,
 	                               (int32)baseManaAmount);
 
-	manaInfo.starImageIndex = clamp(0,     manaAmount * numStars / maxLevel, numStars - 1);
-	manaInfo.ringImageIndex = clamp(0, baseManaAmount * numStars / maxLevel, numRings - 1);
+	manaInfo.starImageIndex = clamp(0,     manaAmount * kResNumStars / kManaMaxLevel, kResNumStars - 1);
+	manaInfo.ringImageIndex = clamp(0, baseManaAmount * kResNumStars / kManaMaxLevel, kResNumRings - 1);
 
 	// now do centering correct for images
-	manaInfo.starPos.x -= starSizes[manaInfo.starImageIndex].x / 2;
-	manaInfo.starPos.y -= starSizes[manaInfo.starImageIndex].y / 2;
-	manaInfo.ringPos.x -= ringSizes[manaInfo.ringImageIndex].x / 2;
-	manaInfo.ringPos.y -= ringSizes[manaInfo.ringImageIndex].y / 2;
+	manaInfo.starPos.x -= _starSizes[manaInfo.starImageIndex].x / 2;
+	manaInfo.starPos.y -= _starSizes[manaInfo.starImageIndex].y / 2;
+	manaInfo.ringPos.x -= _ringSizes[manaInfo.ringImageIndex].x / 2;
+	manaInfo.ringPos.y -= _ringSizes[manaInfo.ringImageIndex].y / 2;
 
 	// return the manaLineInfo struct info about mana star ring
 	*info = manaInfo;
@@ -1205,47 +1204,47 @@ CHealthIndicator::CHealthIndicator(AppFunc *cmd) {
 	uint16 i;
 
 	// init the resource handle with the image group context
-	healthRes = resFile->newContext(imageGroupID, "health imagery context");
+	_healthRes = resFile->newContext(imageGroupID, "health imagery context");
 
 	// load in health star imagery
-	starImag = loadButtonRes(healthRes, starStart, starNum, 'S', 'T', 'A');
+	_starImag = loadButtonRes(_healthRes, kHealthStarStart, kHealthStarNum, 'S', 'T', 'A');
 
 	// load in the health star border
-	starFrameImag    = g_vm->_imageCache->requestImage(healthRes, MKTAG('B', 'T', 'N', starFrameResNum));
+	_starFrameImag    = g_vm->_imageCache->requestImage(_healthRes, MKTAG('B', 'T', 'N', kHealthStarFrameResNum));
 
 	// set the image indexes to nominal startup values
-	for (i = 0; i < numControls + 1; i++) {
-		imageIndexMemory[i] = -1;
+	for (i = 0; i < kHealthNumControls + 1; i++) {
+		_imageIndexMemory[i] = -1;
 	}
 
 	// setup the id's for each of the stars
-	starIDs[0] = uiJulian;
-	starIDs[1] = uiPhillip;
-	starIDs[2] = uiKevin;
+	_starIDs[0] = kUiJulian;
+	_starIDs[1] = kUiPhillip;
+	_starIDs[2] = kUiKevin;
 
 
 	// health controls for the trio view
 	// deallocated with panel
-	for (i = 0; i < numControls; i++) {
-		starBtns[i] = new GfxCompImage(*trioControls,
-		                           Rect16(starXPos,
-		                                  starYPos + starYOffset * i,
-		                                  starXSize,
-		                                  starYSize),
-		                           starImag,
-		                           starNum,
-		                           starInitial,
-		                           starIDs[i],
+	for (i = 0; i < kHealthNumControls; i++) {
+		_starBtns[i] = new GfxCompImage(*trioControls,
+		                           Rect16(kHealthStarXPos,
+		                                  kHealthStarYPos + kHealthStarYOffset * i,
+		                                  kHealthStarXSize,
+		                                  kHealthStarYSize),
+		                           _starImag,
+		                           kHealthStarNum,
+		                           kHealthStarInitial,
+		                           _starIDs[i],
 		                           cmd);
 
 
 		// image control for the star border/frame trio mode
 		new GfxCompImage(*trioControls,
-		                             Rect16(frameXPos,
-		                                    frameYPos + starYOffset * i,
-		                                    frameXSize,
-		                                    frameYSize),
-		                             starFrameImag,
+		                             Rect16(kHealthFrameXPos,
+		                                    kHealthFrameYPos + kHealthStarYOffset * i,
+		                                    kHealthFrameXSize,
+		                                    kHealthFrameYSize),
+		                             _starFrameImag,
 		                             0,
 		                             nullptr);
 
@@ -1253,41 +1252,41 @@ CHealthIndicator::CHealthIndicator(AppFunc *cmd) {
 	}
 	// health control for individual mode
 	// deallocated with panel
-	indivStarBtn = new GfxCompImage(*indivControls,
-	                          Rect16(starXPos,
-	                                 starYPos,
-	                                 starXSize,
-	                                 starYSize),
-	                          starImag,
-	                          starNum,
-	                          starInitial,
-	                          uiIndiv,
+	_indivStarBtn = new GfxCompImage(*indivControls,
+	                          Rect16(kHealthStarXPos,
+	                                 kHealthStarYPos,
+	                                 kHealthStarXSize,
+	                                 kHealthStarYSize),
+	                          _starImag,
+	                          kHealthStarNum,
+	                          kHealthStarInitial,
+	                          kUiIndiv,
 	                          cmd);
 
 	// image control for the star border/frame indiv mode
 	new GfxCompImage(*indivControls,
-	                             Rect16(frameXPos,
-	                                    frameYPos,
-	                                    frameXSize,
-	                                    frameYSize),
-	                             starFrameImag,
+	                             Rect16(kHealthFrameXPos,
+	                                    kHealthFrameYPos,
+	                                    kHealthFrameXSize,
+	                                    kHealthFrameYSize),
+	                             _starFrameImag,
 	                             0,
 	                             nullptr);
 
 	// release resource context
-	if (healthRes) {
-		resFile->disposeContext(healthRes);
-		healthRes = nullptr;
+	if (_healthRes) {
+		resFile->disposeContext(_healthRes);
+		_healthRes = nullptr;
 	}
 }
 
 
 CHealthIndicator::~CHealthIndicator() {
 	// release star imagery
-	unloadImageRes(starImag, starNum);
+	unloadImageRes(_starImag, kHealthStarNum);
 
 	// release star frame imagery
-	g_vm->_imageCache->releaseImage(starFrameImag);
+	g_vm->_imageCache->releaseImage(_starFrameImag);
 }
 
 //  Recalculate and update the health star for a particular brother
@@ -1300,34 +1299,34 @@ void CHealthIndicator::updateStar(GfxCompImage *starCtl, int32 bro, int32 baseVi
 	// prevent div zero
 	if (baseVitality == 0) baseVitality = 1;
 
-	maxStar = clamp(0, baseVitality / 10 + 14, starLevels - 1);
+	maxStar = clamp(0, baseVitality / 10 + 14, kHealthStarLevels - 1);
 //	imageIndex = (int16)( sqrt( sqrt( (double)curVitality ) ) * maxStar) / sqrt( sqrt( (double)baseVitality ) );
 	imageIndex = (int16)(sqrt((double)MAX((int32)0, curVitality)) * maxStar) / sqrt((double)baseVitality);
 
 	// prevent needless draws
-	if (imageIndexMemory[bro] != imageIndex) {
+	if (_imageIndexMemory[bro] != imageIndex) {
 		starCtl->setCurrent(imageIndex);
 		starCtl->invalidate();
 
-		imageIndexMemory[bro] = imageIndex;
+		_imageIndexMemory[bro] = imageIndex;
 	}
 }
 
 void CHealthIndicator::update() {
 	if (g_vm->_indivControlsFlag) {
 		// get the stats for the selected brother
-		int16 baseVitality  = g_vm->_playerList[translatePanID(uiIndiv)]->getBaseStats().vitality;
-		int16 currVitality  = g_vm->_playerList[translatePanID(uiIndiv)]->getEffStats()->vitality;
+		int16 baseVitality  = g_vm->_playerList[translatePanID(kUiIndiv)]->getBaseStats().vitality;
+		int16 currVitality  = g_vm->_playerList[translatePanID(kUiIndiv)]->getEffStats()->vitality;
 
-		updateStar(indivStarBtn, uiIndiv, baseVitality, currVitality);
+		updateStar(_indivStarBtn, kUiIndiv, baseVitality, currVitality);
 	} else {
 
-		for (uint16 i = 0; i < numControls; i++) {
+		for (uint16 i = 0; i < kHealthNumControls; i++) {
 			// get the stats for the selected brother
 			int16 baseVitality  = g_vm->_playerList[i]->getBaseStats().vitality;
 			int16 currVitality  = g_vm->_playerList[i]->getEffStats()->vitality;
 
-			updateStar(starBtns[i], i, baseVitality, currVitality);
+			updateStar(_starBtns[i], i, baseVitality, currVitality);
 		}
 	}
 }
@@ -1346,14 +1345,14 @@ void writePlaqText(gPort            &port,
 	va_list         argptr;
 	Rect16          workRect;
 	int16 cnt;
-	gFont           *oldFont = port.font;
+	gFont           *_oldFont = port._font;
 
 	va_start(argptr, msg);
-	cnt = vsprintf(lineBuf, msg, argptr);
+	cnt = Common::vsprintf_s(lineBuf, msg, argptr);
 	va_end(argptr);
 
 	SAVE_GPORT_STATE(port);
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 	port.setFont(font);
 
 	workRect = r;
@@ -1384,7 +1383,7 @@ void writePlaqText(gPort            &port,
 	workRect.y++;
 	port.drawTextInBox(lineBuf, cnt, workRect, textPos, Point16(0,  0));
 
-	port.setFont(oldFont);
+	port.setFont(_oldFont);
 }
 
 void writePlaqTextPos(gPort         &port,
@@ -1397,14 +1396,14 @@ void writePlaqTextPos(gPort         &port,
 	char            lineBuf[128];
 	va_list         argptr;
 	Point16         drawPos;
-	gFont           *oldFont = port.font;
+	gFont           *_oldFont = port._font;
 
 	va_start(argptr, msg);
-	vsprintf(lineBuf, msg, argptr);
+	Common::vsprintf_s(lineBuf, msg, argptr);
 	va_end(argptr);
 
 	SAVE_GPORT_STATE(port);
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 	port.setFont(font);
 
 	drawPos = pos;
@@ -1449,7 +1448,7 @@ void writePlaqTextPos(gPort         &port,
 
 	port.drawText(lineBuf, -1);
 
-	port.setFont(oldFont);
+	port.setFont(_oldFont);
 }
 
 
@@ -1524,7 +1523,7 @@ void SetupUserControls() {
 	hResContext *imageRes;
 
 	// brother panel id's
-	uint16  brotherIDs[kNumViews]   =  { uiJulian, uiPhillip, uiKevin };
+	uint16  brotherIDs[kNumViews]   =  { kUiJulian, kUiPhillip, kUiKevin };
 
 	// portrait resource indexes
 	int16   portResNum[]    = { 0, 0, 0 };
@@ -1537,19 +1536,19 @@ void SetupUserControls() {
 
 
 	// set up the control button images
-	aggressImag      = loadButtonRes(imageRes, aggressResNum, numBtnImages);
+	aggressImag      = loadButtonRes(imageRes, kAggressResNum, kNumBtnImages);
 
-	centerImag       = loadButtonRes(imageRes, centerResNum, numBtnImages);
-	bandingImag      = loadButtonRes(imageRes, bandingResNum, numBtnImages);
-	menConBtnImag    = loadButtonRes(imageRes, menConBtnResNum, numBtnImages);
+	centerImag       = loadButtonRes(imageRes, kCenterResNum, kNumBtnImages);
+	bandingImag      = loadButtonRes(imageRes, kBandingResNum, kNumBtnImages);
+	menConBtnImag    = loadButtonRes(imageRes, kMenConBtnResNum, kNumBtnImages);
 
 	// setup the options button imagery
-	optBtnImag       = loadButtonRes(imageRes, optBtnResNum, numBtnImages);
+	optBtnImag       = loadButtonRes(imageRes, kOptBtnResNum, kNumBtnImages);
 
 	// setup the brother selector button imagery and button frame
-	julBtnImag       = loadButtonRes(imageRes, julBtnResNum, numBtnImages);
-	phiBtnImag       = loadButtonRes(imageRes, phiBtnResNum, numBtnImages);
-	kevBtnImag       = loadButtonRes(imageRes, kevBtnResNum, numBtnImages);
+	julBtnImag       = loadButtonRes(imageRes, kJulBtnResNum, kNumBtnImages);
+	phiBtnImag       = loadButtonRes(imageRes, kPhiBtnResNum, kNumBtnImages);
+	kevBtnImag       = loadButtonRes(imageRes, kKevBtnResNum, kNumBtnImages);
 	broBtnFrameImag  = g_vm->_imageCache->requestImage(imageRes, MKTAG('F', 'R', 'A', 'M'));
 
 
@@ -1571,26 +1570,26 @@ void SetupUserControls() {
 
 	// set up the portrait button images
 	for (n = 0; n < kNumViews; n++) {
-		portImag[n]    = loadButtonRes(imageRes, portResNum[n], numPortImages, broNames[n].a, broNames[n].b, broNames[n].c);
+		portImag[n]    = loadButtonRes(imageRes, portResNum[n], kNumPortImages, broNames[n].a, broNames[n].b, broNames[n].c);
 	}
 
 	// setup stand alone controls
 
-	optBtn = new GfxCompButton(*playControls, optBtnRect, optBtnImag, numBtnImages, 0, cmdOptions);
+	optBtn = new GfxCompButton(*playControls, optBtnRect, optBtnImag, kNumBtnImages, 0, cmdOptions);
 
 	enchDisp = new gEnchantmentDisplay(*playControls, 0);
 
-	// setup the trio user cntl buttons
+	// setup the trio user cntl _buttons
 	for (n = 0; n < kNumViews; n++) {
 		// portrait button
 		portBtns[n]        = new GfxMultCompButton(*trioControls, views[n][index++],
-		                                  portImag[n], numPortImages, 0, false, brotherIDs[n], cmdPortrait);
+		                                  portImag[n], kNumPortImages, 0, false, brotherIDs[n], cmdPortrait);
 
 		portBtns[n]->setMousePoll(true);
 
 		// aggressive button
 		aggressBtns[n]     = new GfxOwnerSelCompButton(*trioControls, views[n][index++],
-		                                  aggressImag, numBtnImages, brotherIDs[n], cmdAggressive);
+		                                  aggressImag, kNumBtnImages, brotherIDs[n], cmdAggressive);
 
 		// name plates that go under the portraits
 		armorInd[n]        = new gArmorIndicator(*trioControls, views[n][index++],
@@ -1598,11 +1597,11 @@ void SetupUserControls() {
 
 		// center on brother
 		centerBtns[n]      = new GfxOwnerSelCompButton(*trioControls, views[n][index++],
-		                                  centerImag, numBtnImages, brotherIDs[n], cmdCenter);
+		                                  centerImag, kNumBtnImages, brotherIDs[n], cmdCenter);
 
 		// banding
 		bandingBtns[n] = new GfxOwnerSelCompButton(*trioControls, views[n][index++],
-		                              bandingImag, numBtnImages, brotherIDs[n], cmdBand);
+		                              bandingImag, kNumBtnImages, brotherIDs[n], cmdBand);
 
 		// name plates that go under the portraits
 		namePlates[n]  = new GfxCompImage(*trioControls, views[n][index++],
@@ -1615,26 +1614,26 @@ void SetupUserControls() {
 		index = 0;
 	}
 
-	// individual control buttons
+	// individual control _buttons
 
 	// portrait button
 	indivPortBtn = new GfxMultCompButton(*indivControls, views[0][index++],
-	                          portImag[0], numPortImages, 0, false, uiIndiv, cmdPortrait);
+	                          portImag[0], kNumPortImages, 0, false, kUiIndiv, cmdPortrait);
 	indivPortBtn->setMousePoll(true);
 
 	// aggressive button
 	indivAggressBtn  = new GfxOwnerSelCompButton(*indivControls, views[0][index++],
-	                              aggressImag, numBtnImages, uiIndiv, cmdAggressive);
+	                              aggressImag, kNumBtnImages, kUiIndiv, cmdAggressive);
 
 	indivArmorInd    = new gArmorIndicator(*indivControls, views[0][index++],
-	                              armorImag, uiIndiv, cmdArmor);
+	                              armorImag, kUiIndiv, cmdArmor);
 	// center on brother
 	indivCenterBtn   = new GfxOwnerSelCompButton(*indivControls, views[0][index++],
-	                              centerImag, numBtnImages, uiIndiv, cmdCenter);
+	                              centerImag, kNumBtnImages, kUiIndiv, cmdCenter);
 
 	// banding
 	indivBandingBtn  = new GfxOwnerSelCompButton(*indivControls, views[0][index++],
-	                              bandingImag, numBtnImages, uiIndiv, cmdBand);
+	                              bandingImag, kNumBtnImages, kUiIndiv, cmdBand);
 
 	// name plates that go under the portraits
 	indivNamePlate  = new GfxCompImage(*indivControls, views[0][index++],
@@ -1645,22 +1644,22 @@ void SetupUserControls() {
 	                                 namePlateFrameImag, 0, nullptr);
 
 	// setup the portrait object
-	Portrait = new CPortrait(portBtns,      // portrait buttons
+	Portrait = new CPortrait(portBtns,      // portrait _buttons
 	                                       indivPortBtn,
-	                                       numPortImages,// num of images per button
+	                                       kNumPortImages,// num of images per button
 	                                       kNumViews);   // number of brothers
 
 
 	// mental container button
-	menConBtn = new GfxCompButton(*indivControls, menConBtnRect, menConBtnImag, numBtnImages, uiIndiv, cmdBrain);
+	menConBtn = new GfxCompButton(*indivControls, menConBtnRect, menConBtnImag, kNumBtnImages, kUiIndiv, cmdBrain);
 
-	// brother selection buttons >>> need to replace these with sticky buttons
-	julBtn = new GfxOwnerSelCompButton(*indivControls, julBtnRect, julBtnImag, numBtnImages, uiJulian, cmdBroChange);
-	phiBtn = new GfxOwnerSelCompButton(*indivControls, phiBtnRect, phiBtnImag, numBtnImages, uiPhillip, cmdBroChange);
-	kevBtn = new GfxOwnerSelCompButton(*indivControls, kevBtnRect, kevBtnImag, numBtnImages, uiKevin, cmdBroChange);
+	// brother selection _buttons >>> need to replace these with sticky _buttons
+	julBtn = new GfxOwnerSelCompButton(*indivControls, julBtnRect, julBtnImag, kNumBtnImages, kUiJulian, cmdBroChange);
+	phiBtn = new GfxOwnerSelCompButton(*indivControls, phiBtnRect, phiBtnImag, kNumBtnImages, kUiPhillip, cmdBroChange);
+	kevBtn = new GfxOwnerSelCompButton(*indivControls, kevBtnRect, kevBtnImag, kNumBtnImages, kUiKevin, cmdBroChange);
 
-	// frame for brother buttons
-	broBtnFrame = new GfxCompImage(*indivControls, broBtnRect, broBtnFrameImag, uiIndiv, nullptr);
+	// frame for brother _buttons
+	broBtnFrame = new GfxCompImage(*indivControls, broBtnRect, broBtnFrameImag, kUiIndiv, nullptr);
 
 	// make the mana indicator
 	ManaIndicator = new CManaIndicator(*indivControls);
@@ -1697,25 +1696,25 @@ void CleanupButtonImages() {
 	int16 i;
 
 	// deallocates the images in the array and the arrays themselves
-	unloadImageRes(aggressImag, numBtnImages);
-//	unloadImageRes( jumpImag   , numBtnImages );
-	unloadImageRes(centerImag, numBtnImages);
-	unloadImageRes(bandingImag, numBtnImages);
-	unloadImageRes(menConBtnImag, numBtnImages);
+	unloadImageRes(aggressImag, kNumBtnImages);
+//	unloadImageRes( jumpImag   , kNumBtnImages );
+	unloadImageRes(centerImag, kNumBtnImages);
+	unloadImageRes(bandingImag, kNumBtnImages);
+	unloadImageRes(menConBtnImag, kNumBtnImages);
 
 
 	// dealloc the imag for the option button
-	unloadImageRes(optBtnImag, numBtnImages);
+	unloadImageRes(optBtnImag, kNumBtnImages);
 
-	// dealloc brother's indiv mode buttons
-	unloadImageRes(julBtnImag, numBtnImages);
-	unloadImageRes(phiBtnImag, numBtnImages);
-	unloadImageRes(kevBtnImag, numBtnImages);
+	// dealloc brother's indiv mode _buttons
+	unloadImageRes(julBtnImag, kNumBtnImages);
+	unloadImageRes(phiBtnImag, kNumBtnImages);
+	unloadImageRes(kevBtnImag, kNumBtnImages);
 
 
 	// portraits
 	for (i = 0; i < kNumViews; i++) {
-		unloadImageRes(portImag[i], numPortImages);
+		unloadImageRes(portImag[i], kNumPortImages);
 	}
 
 	// name plate frame
@@ -1831,20 +1830,20 @@ void setEnchantmentDisplay() {
 	if (enchDisp) enchDisp->setValue(getCenterActorPlayerID());
 }
 
-// sets the individual brother control state buttons
+// sets the individual brother control state _buttons
 void setIndivBtns(uint16 brotherID) {    // top = 0, mid = 1, bot = 2
 	g_vm->_indivControlsFlag = true;
 
 	// set the indiv bro
 	indivBrother = brotherID;
 
-	// set all the individual brother buttons to the correct states
+	// set all the individual brother _buttons to the correct states
 	indivCenterBtn->select(centerBtns[brotherID]->isSelected());
 	indivCenterBtn->ghost(centerBtns[brotherID]->isGhosted());
-	//indivStarBtn->setCurrent( ( uint16 )starBtns[brotherID]->getCurrent() );
+	//_indivStarBtn->setCurrent( ( uint16 )_starBtns[brotherID]->getCurrent() );
 	indivPortBtn->setImages(portImag[brotherID]);
 	indivNamePlate->setImage(namePlateImages[brotherID]);
-	Portrait->set(uiIndiv, Portrait->getCurrentState(brotherID));
+	Portrait->set(kUiIndiv, Portrait->getCurrentState(brotherID));
 	indivBandingBtn->select(bandingBtns[brotherID]->isSelected());
 	indivBandingBtn->ghost(bandingBtns[brotherID]->isGhosted());
 	indivAggressBtn->select(aggressBtns[brotherID]->isSelected());
@@ -1864,21 +1863,21 @@ void setIndivBtns(uint16 brotherID) {    // top = 0, mid = 1, bot = 2
 
 	// now set the indicators for mass and bulk
 	uint16 pieWeightRatio   = MassWeightIndicator->getMassPieDiv();
-	uint16 pieBulkRatio     = MassWeightIndicator->getBulkPieDiv();
+	uint16 _pieBulkRatio     = MassWeightIndicator->getBulkPieDiv();
 	PlayerActor *brother    = g_vm->_playerList[brotherID];
 
 	MassWeightIndicator->setMassPie(getWeightRatio(brother->getActor(), pieWeightRatio, false));
-	MassWeightIndicator->setBulkPie(getBulkRatio(brother->getActor(), pieBulkRatio, false));
+	MassWeightIndicator->setBulkPie(getBulkRatio(brother->getActor(), _pieBulkRatio, false));
 }
 
-// sets the trio brothers control state buttons
+// sets the trio brothers control state _buttons
 void setTrioBtns() {
 	g_vm->_indivControlsFlag = false;
 
 	// reset any value that might have changed in idividual mode
 	centerBtns[indivBrother]->select(indivCenterBtn->isSelected());
 	bandingBtns[indivBrother]->select(indivBandingBtn->isSelected());
-	Portrait->set(indivBrother, Portrait->getCurrentState(uiIndiv));
+	Portrait->set(indivBrother, Portrait->getCurrentState(kUiIndiv));
 	aggressBtns[indivBrother]->select(indivAggressBtn->isSelected());
 
 	armorInd[indivBrother]->setValue(indivBrother);
@@ -1886,7 +1885,7 @@ void setTrioBtns() {
 }
 
 void setControlPanelsToIndividualMode(uint16 brotherID) {
-	// copy the button/indicator states to the indiv buttons
+	// copy the button/indicator states to the indiv _buttons
 	setIndivBtns(brotherID);
 
 	// set the mode controls
@@ -1917,7 +1916,7 @@ void setCenterBrother(uint16 whichBrother) {
 
 uint16 translatePanID(uint16 panID) {
 	// individual mode brother id translation
-	if (panID == uiIndiv) {
+	if (panID == kUiIndiv) {
 		panID = indivBrother;
 	}
 
@@ -1929,7 +1928,7 @@ void updateBrotherPortrait(uint16 brotherID, int16 pType) {
 		Portrait->set(brotherID, (PortraitType)pType);
 
 		if (brotherID == indivBrother)
-			Portrait->set(uiIndiv, (PortraitType)pType);
+			Portrait->set(kUiIndiv, (PortraitType)pType);
 	}
 }
 
@@ -1962,27 +1961,27 @@ void updateBrotherBandingButton(uint16 brotherID, bool banded) {
 
 void updateBrotherRadioButtons(uint16 brotherID) {
 	if (g_vm->_userControlsSetup) {
-		bool    jul = (uiJulian == brotherID);
-		bool    phi = (uiPhillip == brotherID);
-		bool    kev = (uiKevin == brotherID);
+		bool    jul = (kUiJulian == brotherID);
+		bool    phi = (kUiPhillip == brotherID);
+		bool    kev = (kUiKevin == brotherID);
 
-		// set the selection buttons to the correct states
+		// set the selection _buttons to the correct states
 		julBtn->select(jul);
 		phiBtn->select(phi);
 		kevBtn->select(kev);
 
-		julBtn->ghost(isBrotherDead(uiJulian));
-		phiBtn->ghost(isBrotherDead(uiPhillip));
-		kevBtn->ghost(isBrotherDead(uiKevin));
+		julBtn->ghost(isBrotherDead(kUiJulian));
+		phiBtn->ghost(isBrotherDead(kUiPhillip));
+		kevBtn->ghost(isBrotherDead(kUiKevin));
 
-		// set the center brother buttons
-		centerBtns[uiJulian]->select(jul);
-		centerBtns[uiPhillip]->select(phi);
-		centerBtns[uiKevin]->select(kev);
+		// set the center brother _buttons
+		centerBtns[kUiJulian]->select(jul);
+		centerBtns[kUiPhillip]->select(phi);
+		centerBtns[kUiKevin]->select(kev);
 
-		centerBtns[uiJulian]->ghost(isBrotherDead(uiJulian));
-		centerBtns[uiPhillip]->ghost(isBrotherDead(uiPhillip));
-		centerBtns[uiKevin]->ghost(isBrotherDead(uiKevin));
+		centerBtns[kUiJulian]->ghost(isBrotherDead(kUiJulian));
+		centerBtns[kUiPhillip]->ghost(isBrotherDead(kUiPhillip));
+		centerBtns[kUiKevin]->ghost(isBrotherDead(kUiKevin));
 
 		if (brotherID == indivBrother) {
 			indivCenterBtn->select(true);
@@ -2067,12 +2066,12 @@ APPFUNC(cmdPortrait) {
 	const int bufSize = 80;
 	const int stateBufSize = 60;
 
-	uint16  panID = ev.panel->id;
+	uint16  panID = ev.panel->_id;
 	GameObject      *mouseObject = g_vm->_mouseInfo->getObject();   // object being dragged
 
 	switch (ev.eventType) {
 
-	case gEventNewValue:
+	case kEventNewValue:
 
 		if (mouseObject != nullptr) {
 			PlayerActor     *pa = getPlayerActorAddress(translatePanID(panID));
@@ -2083,11 +2082,11 @@ APPFUNC(cmdPortrait) {
 				int16   intent = g_vm->_mouseInfo->getIntent();
 
 				g_vm->_mouseInfo->replaceObject();
-				if (intent == GrabInfo::Use) {
+				if (intent == GrabInfo::kIntUse) {
 					//  If we are using an intangible object (spell) then consider
 					//  the owner of the spell to be the center actor for the rest
 					//  of this action.
-					if (mouseObject->proto()->containmentSet() & ProtoObj::isIntangible) {
+					if (mouseObject->proto()->containmentSet() & ProtoObj::kIsIntangible) {
 						ObjectID    possessor = mouseObject->possessor();
 
 						if (possessor != Nothing) {
@@ -2099,7 +2098,7 @@ APPFUNC(cmdPortrait) {
 					    *centerActorPtr,
 					    *mouseObject,
 					    *pa->getActor());
-				} else if (intent == GrabInfo::Drop) {
+				} else if (intent == GrabInfo::kIntDrop) {
 					MotionTask::dropObjectOnObject(
 					    *centerActorPtr,
 					    *mouseObject,
@@ -2109,23 +2108,23 @@ APPFUNC(cmdPortrait) {
 
 //				( ( gGenericControl * )ev.panel )->disableDblClick();
 				//  clickActionDone = true;
-			} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
+			} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntUse) {
 				g_vm->_mouseInfo->replaceObject();
 //				clickActionDone = true;
 			}
-		} else if (panID != uiIndiv) {
+		} else if (panID != kUiIndiv) {
 			if (!isBrotherDead(panID)) {
 				setCenterBrother(panID);
 				setControlPanelsToIndividualMode(panID);
 			}
-		} else if (panID == uiIndiv) {
+		} else if (panID == kUiIndiv) {
 			setControlPanelsToTrioMode();
 		}
 		break;
 
-	case gEventMouseMove:
+	case kEventMouseMove:
 
-		if (ev.value == GfxCompImage::leave) {
+		if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 			g_vm->_mouseInfo->setDoable(true);
 			break;
@@ -2155,14 +2154,14 @@ APPFUNC(cmdPortrait) {
 				Portrait->getStateString(state, stateBufSize, brotherID);
 
 				switch (brotherID) {
-				case uiJulian:
-					sprintf(buf, "%s %s", JULIAN_BROSTATE, state);
+				case kUiJulian:
+					Common::sprintf_s(buf, "%s %s", JULIAN_BROSTATE, state);
 					break;
-				case uiPhillip:
-					sprintf(buf, "%s %s", PHILLIP_BROSTATE, state);
+				case kUiPhillip:
+					Common::sprintf_s(buf, "%s %s", PHILLIP_BROSTATE, state);
 					break;
-				case uiKevin:
-					sprintf(buf, "%s %s", KEVIN_BROSTATE, state);
+				case kUiKevin:
+					Common::sprintf_s(buf, "%s %s", KEVIN_BROSTATE, state);
 					break;
 				}
 				// set the text in the cursor
@@ -2186,11 +2185,11 @@ void toggleAgression(PlayerActorID bro, bool all) {
 }
 
 APPFUNC(cmdAggressive) {
-	uint16 transBroID = translatePanID(ev.panel->id);
+	uint16 transBroID = translatePanID(ev.panel->_id);
 
 	// check for message update stuff
 	// and aggression update
-	if (ev.eventType == gEventNewValue) {
+	if (ev.eventType == kEventNewValue) {
 		toggleAgression(transBroID, rightButtonState());
 //		int16   wasAggressive = isAggressive( transBroID );
 
@@ -2200,13 +2199,13 @@ APPFUNC(cmdAggressive) {
 //				setAggression( i, !wasAggressive );
 //		}
 //		else setAggression( transBroID, !wasAggressive );
-	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+	} else if (ev.eventType == kEventMouseMove) {
+		if (ev.value == GfxCompImage::kEnter) {
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(isAggressive(transBroID)
 			                  ? ON_AGRESS
 			                  : OFF_AGRESS);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2215,7 +2214,7 @@ APPFUNC(cmdAggressive) {
 /*
 APPFUNC( cmdJump )
 {
-    if( ev.eventType == gEventNewValue )
+    if( ev.eventType == kEventNewValue )
     {
         jump = !jump;
 
@@ -2232,46 +2231,46 @@ APPFUNC( cmdJump )
 */
 
 APPFUNC(cmdArmor) {
-	if (ev.eventType == gEventMouseMove) {
+	if (ev.eventType == kEventMouseMove) {
 
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			gArmorIndicator *gai = (gArmorIndicator *)ev.panel;
 			char    buf[128];
 
-			if (gai->attr.damageAbsorbtion == 0
-			        &&  gai->attr.defenseBonus == 0) {
+			if (gai->_attr.damageAbsorbtion == 0
+			        &&  gai->_attr.defenseBonus == 0) {
 				g_vm->_mouseInfo->setText(NO_ARMOR);
 			} else {
-				sprintf(buf,
+				Common::sprintf_s(buf,
 				        DESC_ARMOR,
-				        gai->attr.damageAbsorbtion,
-				        gai->attr.damageDivider,
-				        gai->attr.defenseBonus);
+				        gai->_attr.damageAbsorbtion,
+				        gai->_attr.damageDivider,
+				        gai->_attr.defenseBonus);
 
 				// set the text in the cursor
 				g_vm->_mouseInfo->setText(buf);
 			}
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
 }
 
 APPFUNC(cmdCenter) {
-	uint16 transBroID = translatePanID(ev.panel->id);
+	uint16 transBroID = translatePanID(ev.panel->_id);
 
-	if (ev.eventType == gEventNewValue) {
+	if (ev.eventType == kEventNewValue) {
 		if (rightButtonState())
 			setCenterBrother((transBroID + 1) % kPlayerActors);
 		else setCenterBrother(transBroID);
 	}
-	if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+	if (ev.eventType == kEventMouseMove) {
+		if (ev.value == GfxCompImage::kEnter) {
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(getCenterActorPlayerID() == transBroID
 			                  ? ON_CENTER
 			                  : OFF_CENTER);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2287,9 +2286,9 @@ void toggleBanding(PlayerActorID bro, bool all) {
 }
 
 APPFUNC(cmdBand) {
-	uint16 transBroID = translatePanID(ev.panel->id);
+	uint16 transBroID = translatePanID(ev.panel->_id);
 
-	if (ev.eventType == gEventNewValue) {
+	if (ev.eventType == kEventNewValue) {
 		toggleBanding(transBroID, rightButtonState());
 //		int16   wasBanded = isBanded( transBroID );
 //
@@ -2299,44 +2298,44 @@ APPFUNC(cmdBand) {
 //				setBanded( i, !wasBanded );
 //		}
 //		else setBanded( transBroID, !wasBanded );
-	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+	} else if (ev.eventType == kEventMouseMove) {
+		if (ev.value == GfxCompImage::kEnter) {
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(isBanded(transBroID)
 			                  ? ON_BANDED
 			                  : OFF_BANDED);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
 }
 
 APPFUNC(cmdOptions) {
-	if (ev.eventType == gEventNewValue) {
+	if (ev.eventType == kEventNewValue) {
 		OptionsDialog();
 		//openOptionsPanel();
-	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter)        g_vm->_mouseInfo->setText(OPTIONS_PANEL);
-		else if (ev.value == GfxCompImage::leave) g_vm->_mouseInfo->setText(nullptr);
+	} else if (ev.eventType == kEventMouseMove) {
+		if (ev.value == GfxCompImage::kEnter)        g_vm->_mouseInfo->setText(OPTIONS_PANEL);
+		else if (ev.value == GfxCompImage::kLeave) g_vm->_mouseInfo->setText(nullptr);
 	}
 }
 
 APPFUNC(cmdBroChange) {
-	if (ev.eventType == gEventNewValue) {
-		if (!isBrotherDead(ev.panel->id)) {
-			setCenterBrother(ev.panel->id);
-			// this sets up the buttons in trio mode to the correct
+	if (ev.eventType == kEventNewValue) {
+		if (!isBrotherDead(ev.panel->_id)) {
+			setCenterBrother(ev.panel->_id);
+			// this sets up the _buttons in trio mode to the correct
 			// state ( must be called before indiv mode switchtes )
 			setTrioBtns();
-			setControlPanelsToIndividualMode(ev.panel->id);
+			setControlPanelsToIndividualMode(ev.panel->_id);
 		}
-	} else if (ev.eventType == gEventMouseMove) {
+	} else if (ev.eventType == kEventMouseMove) {
 		const int bufSize = 80;
 		const int stateBufSize = 60;
 
-		uint16  panID = ev.panel->id;
+		uint16  panID = ev.panel->_id;
 
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			// working buffer
 			char buf[bufSize];
 			char state[stateBufSize];
@@ -2345,34 +2344,34 @@ APPFUNC(cmdBroChange) {
 			Portrait->getStateString(state, stateBufSize, brotherID);
 
 			switch (brotherID) {
-			case uiJulian:
-				sprintf(buf, "%s %s", JULIAN_BROSTATE, state);
+			case kUiJulian:
+				Common::sprintf_s(buf, "%s %s", JULIAN_BROSTATE, state);
 				break;
-			case uiPhillip:
-				sprintf(buf, "%s %s", PHILLIP_BROSTATE, state);
+			case kUiPhillip:
+				Common::sprintf_s(buf, "%s %s", PHILLIP_BROSTATE, state);
 				break;
-			case uiKevin:
-				sprintf(buf, "%s %s", KEVIN_BROSTATE, state);
+			case kUiKevin:
+				Common::sprintf_s(buf, "%s %s", KEVIN_BROSTATE, state);
 				break;
 			}
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(buf);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
 }
 
 APPFUNC(cmdHealthStar) {
-	uint16 transBroID = translatePanID(ev.panel->id);
+	uint16 transBroID = translatePanID(ev.panel->_id);
 
-	if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::leave) {
+	if (ev.eventType == kEventMouseMove) {
+		if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 			return;
 		}
 
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			ev.panel->setMousePoll(true);
 		}
 
@@ -2382,17 +2381,17 @@ APPFUNC(cmdHealthStar) {
 
 		char buf[40];
 
-		sprintf(buf, "%s %d/%d", HEALTH_HINT, currVitality, baseVitality);
+		Common::sprintf_s(buf, "%s %d/%d", HEALTH_HINT, currVitality, baseVitality);
 		g_vm->_mouseInfo->setText(buf);
 	}
 }
 
 APPFUNC(cmdMassInd) {
 	gWindow         *win = nullptr;
-	GameObject      *containerObject = nullptr;
+	GameObject      *_containerObject = nullptr;
 
-	if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+	if (ev.eventType == kEventMouseMove) {
+		if (ev.value == GfxCompImage::kEnter) {
 			const   int bufSize     = 40;
 			int     curWeight;
 			uint16  baseWeight;
@@ -2403,22 +2402,22 @@ APPFUNC(cmdMassInd) {
 			assert(win);
 
 			// is it something other than the brother's indicators?
-			if (ev.panel->id > 1) {
-				containerObject = (GameObject *)win->userData;
+			if (ev.panel->_id > 1) {
+				_containerObject = (GameObject *)win->_userData;
 			} else {
-				containerObject = (GameObject *)g_vm->_playerList[getCenterActorPlayerID()]->getActor();
+				_containerObject = (GameObject *)g_vm->_playerList[getCenterActorPlayerID()]->getActor();
 			}
 
-			assert(containerObject);
+			assert(_containerObject);
 
-			curWeight = getWeightRatio(containerObject, baseWeight);
+			curWeight = getWeightRatio(_containerObject, baseWeight);
 
 			if (baseWeight != unlimitedCapacity) {
-				sprintf(buf, "%s %d/%d", WEIGHT_HINT, curWeight, baseWeight);
+				Common::sprintf_s(buf, "%s %d/%d", WEIGHT_HINT, curWeight, baseWeight);
 				g_vm->_mouseInfo->setText(buf);
 			} else
 				g_vm->_mouseInfo->setText(UNK_WEIGHT_HINT);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2426,11 +2425,11 @@ APPFUNC(cmdMassInd) {
 
 APPFUNC(cmdBulkInd) {
 	gWindow         *win = nullptr;
-	GameObject      *containerObject = nullptr;
+	GameObject      *_containerObject = nullptr;
 
 
-	if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+	if (ev.eventType == kEventMouseMove) {
+		if (ev.value == GfxCompImage::kEnter) {
 			const   int bufSize     = 40;
 			uint16  baseBulk    = 100;
 			char    buf[bufSize];
@@ -2441,30 +2440,30 @@ APPFUNC(cmdBulkInd) {
 			assert(win);
 
 			// is it something other than the brother's indicators?
-			if (ev.panel->id > 1) {
-				containerObject = (GameObject *)win->userData;
+			if (ev.panel->_id > 1) {
+				_containerObject = (GameObject *)win->_userData;
 			} else {
-				containerObject = (GameObject *)g_vm->_playerList[getCenterActorPlayerID()]->getActor();
+				_containerObject = (GameObject *)g_vm->_playerList[getCenterActorPlayerID()]->getActor();
 			}
 
-			assert(containerObject);
+			assert(_containerObject);
 
-			curBulk = getBulkRatio(containerObject, baseBulk);
+			curBulk = getBulkRatio(_containerObject, baseBulk);
 
 			if (baseBulk != unlimitedCapacity) {
-				sprintf(buf, "%s %d/%d", BULK_HINT, curBulk, baseBulk);
+				Common::sprintf_s(buf, "%s %d/%d", BULK_HINT, curBulk, baseBulk);
 				g_vm->_mouseInfo->setText(buf);
 			} else
 				g_vm->_mouseInfo->setText(UNK_BULK_HINT);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
 }
 
 APPFUNC(cmdManaInd) {
-	if (ev.eventType == gEventMouseMove) {
-		if (ev.value != GfxCompImage::leave) {
+	if (ev.eventType == kEventMouseMove) {
+		if (ev.value != GfxCompImage::kLeave) {
 			const   int BUF_SIZE = 64;
 			char    textBuffer[BUF_SIZE];
 			int     manaType = -1;
@@ -2495,27 +2494,27 @@ APPFUNC(cmdManaInd) {
 
 			switch (manaType) {
 			case 0:
-				sprintf(textBuffer, "%s %d/%d", "Red Mana:", curMana, baseMana);
+				Common::sprintf_s(textBuffer, "%s %d/%d", "Red Mana:", curMana, baseMana);
 				break;
 
 			case 1:
-				sprintf(textBuffer, "%s %d/%d", "Orange Mana:", curMana, baseMana);
+				Common::sprintf_s(textBuffer, "%s %d/%d", "Orange Mana:", curMana, baseMana);
 				break;
 
 			case 2:
-				sprintf(textBuffer, "%s %d/%d", "Yellow Mana:", curMana, baseMana);
+				Common::sprintf_s(textBuffer, "%s %d/%d", "Yellow Mana:", curMana, baseMana);
 				break;
 
 			case 3:
-				sprintf(textBuffer, "%s %d/%d", "Green Mana:", curMana, baseMana);
+				Common::sprintf_s(textBuffer, "%s %d/%d", "Green Mana:", curMana, baseMana);
 				break;
 
 			case 4:
-				sprintf(textBuffer, "%s %d/%d", "Blue Mana:", curMana, baseMana);
+				Common::sprintf_s(textBuffer, "%s %d/%d", "Blue Mana:", curMana, baseMana);
 				break;
 
 			case 5:
-				sprintf(textBuffer, "%s %d/%d", "Purple Mana:", curMana, baseMana);
+				Common::sprintf_s(textBuffer, "%s %d/%d", "Purple Mana:", curMana, baseMana);
 				break;
 
 			case -1:
@@ -2579,7 +2578,7 @@ void cleanupUIState() {
 
 void gArmorIndicator::setValue(PlayerActorID brotherID) {
 	Actor *bro = g_vm->_playerList[brotherID]->getActor();
-	bro->totalArmorAttributes(attr);
+	bro->totalArmorAttributes(_attr);
 	invalidate();
 }
 
@@ -2614,24 +2613,24 @@ void gArmorIndicator::drawClipped(gPort &port,
 			// draw the armor numebrs
 			port.setFont(&Helv11Font);
 			port.setColor(11);                   // set color to white
-			port.setStyle(textStyleThickOutline);
+			port.setStyle(kTextStyleThickOutline);
 			port.setOutlineColor(24);                // set outline color to black
-			port.setMode(drawModeMatte);
+			port.setMode(kDrawModeMatte);
 
-			if (attr.damageAbsorbtion == 0 && attr.defenseBonus == 0)
-				sprintf(buf, "-");
-			else if (attr.damageDivider > 1)
-				sprintf(buf, "%d/%d", attr.damageAbsorbtion, attr.damageDivider);
-			else sprintf(buf, "%d", attr.damageAbsorbtion);
+			if (_attr.damageAbsorbtion == 0 && _attr.defenseBonus == 0)
+				Common::sprintf_s(buf, "-");
+			else if (_attr.damageDivider > 1)
+				Common::sprintf_s(buf, "%d/%d", _attr.damageAbsorbtion, _attr.damageDivider);
+			else Common::sprintf_s(buf, "%d", _attr.damageAbsorbtion);
 
 			port.drawTextInBox(buf, -1, Rect16(pos.x, pos.y, _extent.width, _extent.height),
-			                   textPosRight | textPosHigh, Point16(0,  2));
+			                   kTextPosRight | kTextPosHigh, Point16(0,  2));
 
-			if (attr.damageAbsorbtion == 0 && attr.defenseBonus == 0)
-				sprintf(buf, "-");
-			else sprintf(buf, "%d", attr.defenseBonus);
+			if (_attr.damageAbsorbtion == 0 && _attr.defenseBonus == 0)
+				Common::sprintf_s(buf, "-");
+			else Common::sprintf_s(buf, "%d", _attr.defenseBonus);
 			port.drawTextInBox(buf, -1, Rect16(pos.x, pos.y, _extent.width, _extent.height),
-			                   textPosRight | textPosLow, Point16(0,  2));
+			                   kTextPosRight | kTextPosLow, Point16(0,  2));
 		}
 	}
 }
@@ -2644,7 +2643,7 @@ void gEnchantmentDisplay::drawClipped(gPort &port, const    Point16 &offset, con
 	if (!_extent.overlap(r)) return;
 
 	for (int i = 0; i < iconCount; i++) {
-		if (iconFlags[i]) {
+		if (_iconFlags[i]) {
 			Sprite      *sp = mentalSprites->sprite(i + 162);
 
 			pos.x -= sp->size.x + 2;
@@ -2654,7 +2653,7 @@ void gEnchantmentDisplay::drawClipped(gPort &port, const    Point16 &offset, con
 }
 
 void gEnchantmentDisplay::pointerMove(gPanelMessage &msg) {
-	if (msg.pointerLeave) {
+	if (msg._pointerLeave) {
 		g_vm->_mouseInfo->setText(nullptr);
 	} else {
 		int16       x = _extent.width - 10;
@@ -2663,17 +2662,17 @@ void gEnchantmentDisplay::pointerMove(gPanelMessage &msg) {
 		setValue(getCenterActorPlayerID());
 
 		for (int i = 0; i < iconCount; i++) {
-			if (iconFlags[i]) {
+			if (_iconFlags[i]) {
 				Sprite      *sp = mentalSprites->sprite(i + 162);
 
 				x -= sp->size.x + 2;
-				if (msg.pickPos.x >= x) {
+				if (msg._pickPos.x >= x) {
 					// set the text in the cursor
 					char    buf[128];
 
-					if (iconFlags[i] == 255)
-						sprintf(buf, "%s", enchantmentNames[i]);
-					else sprintf(buf, "%s : %d", enchantmentNames[i], iconFlags[i]);
+					if (_iconFlags[i] == 255)
+						Common::sprintf_s(buf, "%s", enchantmentNames[i]);
+					else Common::sprintf_s(buf, "%s : %d", enchantmentNames[i], _iconFlags[i]);
 					g_vm->_mouseInfo->setText(buf);
 					return;
 				}
@@ -2709,29 +2708,29 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 		uint8   duration = obj->getHitPoints();             // get hitpoints of enchant
 
 		switch (eType) {
-		case effectAttrib:
+		case kEffectAttrib:
 			switch (eSubType) {
-//			case skillIDArchery:
-//			case skillIDShieldcraft:
+//			case kSkillIDArchery:
+//			case kSkillIDShieldcraft:
 
-			case skillIDBludgeon:
-			case skillIDSwordcraft:
+			case kSkillIDBludgeon:
+			case kSkillIDSwordcraft:
 				if (eAmount > 0) newIconFlags[iconSurestrike] = duration;
 				else newIconFlags[iconClumsy] = duration;
 				break;
 
-			case skillIDAgility:
+			case kSkillIDAgility:
 				if (eAmount > 0) newIconFlags[iconInnerBalance] = duration;
 				else newIconFlags[iconClumsy] = duration;
 				break;
 
-			case skillIDBrawn:
+			case kSkillIDBrawn:
 				newIconFlags[iconBattleFever] = duration;
 				break;
 			}
 			break;
 
-		case effectResist:
+		case kEffectResist:
 
 			switch (eSubType) {
 			case kDamageImpact:
@@ -2770,7 +2769,7 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 			}
 			break;
 
-		case effectImmune:
+		case kEffectImmune:
 			switch (eSubType) {
 			case kDamageImpact:
 				newIconFlags[iconIronskin] = duration;
@@ -2802,47 +2801,47 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 			}
 			break;
 
-		case effectOthers:
+		case kEffectOthers:
 			switch (eSubType) {
-			case actorPoisoned:
-			case actorDiseased:
+			case kActorPoisoned:
+			case kActorDiseased:
 				newIconFlags[iconPoisoned] = duration;
 				break;
 
-			case actorFear:
+			case kActorFear:
 				newIconFlags[iconAfraid] = duration;
 				break;
-			case actorParalyzed:
+			case kActorParalyzed:
 				newIconFlags[iconParalysed] = duration;
 				break; // iconFrozen ??
-			case actorSlowFall:
+			case kActorSlowFall:
 				newIconFlags[iconCushionAir] = duration;
 				break;
-			case actorImmobile:
+			case kActorImmobile:
 				newIconFlags[iconConstrained] = duration;
 				break;
-			case actorSeeInvis:
+			case kActorSeeInvis:
 				newIconFlags[iconSoulSight] = duration;
 				break;
-			case actorInvisible:
+			case kActorInvisible:
 				newIconFlags[iconInvisible] = duration;
 				break;
-			case actorUndetectable:
+			case kActorUndetectable:
 				newIconFlags[iconNumbscent] = duration;
 				break;
-			case actorDetPoison:
+			case kActorDetPoison:
 				newIconFlags[iconDetectPoison] = duration;
 				break;
-			case actorNoDrain:
+			case kActorNoDrain:
 				newIconFlags[iconNetherWard] = duration;
 				break;
-			case actorWaterBreathe:
+			case kActorWaterBreathe:
 				newIconFlags[iconSeawalk] = duration;
 				break;
-			case actorRepelEvil:
+			case kActorRepelEvil:
 				newIconFlags[iconProtectEvil] = duration;
 				break;
-//			case actorRepelUndead: newIconFlags[iconProtectUndead] = duration; break;
+//			case kActorRepelUndead: newIconFlags[iconProtectUndead] = duration; break;
 //			case actorRepelGhosts: newIconFlags[iconProtectGhosts] = duration; break;
 			}
 		}
@@ -2852,40 +2851,40 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 		ProtoObj        *proto = obj->proto();
 		uint16          cSet = proto->containmentSet();
 
-		if ((cSet & (ProtoObj::isArmor | ProtoObj::isWeapon | ProtoObj::isWearable))
+		if ((cSet & (ProtoObj::kIsArmor | ProtoObj::kIsWeapon | ProtoObj::kIsWearable))
 		        &&  proto->isObjectBeingUsed(obj)) {
-			if (proto->immunity & (1 << resistImpact))            newIconFlags[iconResistImpact] = 255;
-			else if (proto->resistance & (1 << resistImpact)) newIconFlags[iconResistImpact] = 255;
+			if (proto->immunity & (1 << kResistImpact))            newIconFlags[iconResistImpact] = 255;
+			else if (proto->resistance & (1 << kResistImpact)) newIconFlags[iconResistImpact] = 255;
 
-			if (proto->immunity & (1 << resistSlash))         newIconFlags[iconResistSlash] = 255;
-			else if (proto->resistance & (1 << resistSlash))  newIconFlags[iconResistSlash] = 255;
+			if (proto->immunity & (1 << kResistSlash))         newIconFlags[iconResistSlash] = 255;
+			else if (proto->resistance & (1 << kResistSlash))  newIconFlags[iconResistSlash] = 255;
 
-			if (proto->immunity & (1 << resistProjectile))        newIconFlags[iconResistProjectile] = 255;
-			else if (proto->resistance & (1 << resistProjectile)) newIconFlags[iconResistProjectile] = 255;
+			if (proto->immunity & (1 << kResistProjectile))        newIconFlags[iconResistProjectile] = 255;
+			else if (proto->resistance & (1 << kResistProjectile)) newIconFlags[iconResistProjectile] = 255;
 
-			if (proto->immunity & (1 << immuneFire))          newIconFlags[iconImmuneFire] = 255;
-			else if (proto->resistance & (1 << resistFire))   newIconFlags[iconResistFire] = 255;
+			if (proto->immunity & (1 << kImmuneFire))          newIconFlags[iconImmuneFire] = 255;
+			else if (proto->resistance & (1 << kResistFire))   newIconFlags[iconResistFire] = 255;
 
-			if (proto->immunity & (1 << immuneAcid))          newIconFlags[iconImmuneAcid] = 255;
-			else if (proto->resistance & (1 << resistAcid))   newIconFlags[iconResistAcid] = 255;
+			if (proto->immunity & (1 << kImmuneAcid))          newIconFlags[iconImmuneAcid] = 255;
+			else if (proto->resistance & (1 << kResistAcid))   newIconFlags[iconResistAcid] = 255;
 
-			if (proto->immunity & (1 << immuneHeat))          newIconFlags[iconImmuneHeat] = 255;
-			else if (proto->resistance & (1 << resistHeat))   newIconFlags[iconResistHeat] = 255;
+			if (proto->immunity & (1 << kImmuneHeat))          newIconFlags[iconImmuneHeat] = 255;
+			else if (proto->resistance & (1 << kResistHeat))   newIconFlags[iconResistHeat] = 255;
 
-			if (proto->immunity & (1 << immuneCold))          newIconFlags[iconImmuneCold] = 255;
-			else if (proto->resistance & (1 << resistCold))   newIconFlags[iconResistCold] = 255;
+			if (proto->immunity & (1 << kImmuneCold))          newIconFlags[iconImmuneCold] = 255;
+			else if (proto->resistance & (1 << kResistCold))   newIconFlags[iconResistCold] = 255;
 
-			if (proto->immunity & (1 << immuneLightning))     newIconFlags[iconImmuneLightning] = 255;
-			else if (proto->resistance & (1 << resistLightning)) newIconFlags[iconResistLightning] = 255;
+			if (proto->immunity & (1 << kImmuneLightning))     newIconFlags[iconImmuneLightning] = 255;
+			else if (proto->resistance & (1 << kResistLightning)) newIconFlags[iconResistLightning] = 255;
 
-			if (proto->immunity & (1 << immunePoison))        newIconFlags[iconImmunePoison] = 255;
-			else if (proto->resistance & (1 << resistPoison)) newIconFlags[iconResistPoison] = 255;
+			if (proto->immunity & (1 << kImmunePoison))        newIconFlags[iconImmunePoison] = 255;
+			else if (proto->resistance & (1 << kResistPoison)) newIconFlags[iconResistPoison] = 255;
 
-			if (proto->immunity & (1 << immuneMental))        newIconFlags[iconImmunePsionic] = 255;
-			else if (proto->resistance & (1 << resistMental)) newIconFlags[iconResistPsionic] = 255;
+			if (proto->immunity & (1 << kImmuneMental))        newIconFlags[iconImmunePsionic] = 255;
+			else if (proto->resistance & (1 << kResistMental)) newIconFlags[iconResistPsionic] = 255;
 
-			if (proto->immunity & (1 << resistDirMagic))      newIconFlags[iconResistDirectMagic] = 255;
-			else if (proto->resistance & (1 << resistDirMagic))newIconFlags[iconResistDirectMagic] = 255;
+			if (proto->immunity & (1 << kResistDirMagic))      newIconFlags[iconResistDirectMagic] = 255;
+			else if (proto->resistance & (1 << kResistDirMagic))newIconFlags[iconResistDirectMagic] = 255;
 		}
 	}
 
@@ -2894,41 +2893,41 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 #if 0
 	enum effectOthersTypes {
 		// Movement flags
-		o   actorNoncorporeal   = 1,    // The creature can walk through things
-		x   actorWaterBreathe   = 2,    // death spell
-		x   actorSlowFall       = 3,    // the creature is not harmed by falling (but falls none the less)
-		-   actorLevitate       = 4,    // flying with no height control ?
-		-   actorFlying         = 5,    // the creature flys
+		o   kActorNoncorporeal   = 1,    // The creature can walk through things
+		x   kActorWaterBreathe   = 2,    // death spell
+		x   kActorSlowFall       = 3,    // the creature is not harmed by falling (but falls none the less)
+		-   kActorLevitate       = 4,    // flying with no height control ?
+		-   kActorFlying         = 5,    // the creature flys
 		// speed flags
-		-   actorFastMove       = 6,    //
-		-   actorFastAttack     = 7,    //
-		actorSlowAttack     = 8,    // come... back... here... lit... tle... bun... ny...
+		-   kActorFastMove       = 6,    //
+		-   kActorFastAttack     = 7,    //
+		kActorSlowAttack     = 8,    // come... back... here... lit... tle... bun... ny...
 		x   actorSlowMove       = 9,    // I thought I told you to leave the piano at home
 		// ill effects
-		-   actorAsleep         = 10,   // Zzzzzzzzzzz
-		x   actorParalyzed      = 11,   // the creature can't move an inch
-		x   actorFear           = 12,   // run away! run away
-		x   actorDiseased       = 13,   // cannot heal
-		x   actorPoisoned       = 14,   // death spell
+		-   kActorAsleep         = 10,   // Zzzzzzzzzzz
+		x   kActorParalyzed      = 11,   // the creature can't move an inch
+		x   kActorFear           = 12,   // run away! run away
+		x   kActorDiseased       = 13,   // cannot heal
+		x   kActorPoisoned       = 14,   // death spell
 		// perception & perceivability flags
-		x   actorBlind          = 15,   // can't see
-		x   actorSeeInvis       = 16,   // can see invisible
-		-   actorClairvoyant    = 17,  // unknown effects
-		x   actorInvisible      = 18,   // is invisible
-		x   actorUndetectable   = 19,   // can't be seen, smelled
-		x   actorDetPoison      = 20,   // poison things glow green
+		x   kActorBlind          = 15,   // can't see
+		x   kActorSeeInvis       = 16,   // can see invisible
+		-   kActorClairvoyant    = 17,  // unknown effects
+		x   kActorInvisible      = 18,   // is invisible
+		x   kActorUndetectable   = 19,   // can't be seen, smelled
+		x   kActorDetPoison      = 20,   // poison things glow green
 		// flags preventing changes to other flags
-		actorNoEnchant      = 21,   // no bad enchantments
-		x   actorNoDrain        = 22,   // no mana / food drains
+		kActorNoEnchant      = 21,   // no bad enchantments
+		x   kActorNoDrain        = 22,   // no mana / food drains
 		// flags that make things run away
-		x   actorRepelEvil      = 23,   // death spell
-		x   actorRepelGood      = 24,   // death spell
-		x   actorRepelUndead    = 25,   // death spell
+		x   kActorRepelEvil      = 23,   // death spell
+		x   kActorRepelGood      = 24,   // death spell
+		x   kActorRepelUndead    = 25,   // death spell
 		// dead or moved flags
 //		actorMapping        =15,    //
 //		actorLandWalk       =0 ,    // someone else had this I have no idea what it is
 //		actorFloat          =2 ,    // the creature can travel through malts shakes & sundaes
-		actorWaterWalk,          // can walk on water (same as float ?)
+		kActorWaterWalk,          // can walk on water (same as float ?)
 //		actorPanic          =13,    // creature takes off randomly
 //		actorSpotHidden     =17,    // can see hidden
 //		actorDetTraps       =22,    // traps glow green
@@ -2939,8 +2938,8 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 
 	//  If icon flags changed, then redraw the control.
 
-	if (memcmp(iconFlags, newIconFlags, sizeof iconFlags)) {
-		memcpy(iconFlags, newIconFlags, sizeof iconFlags);
+	if (memcmp(_iconFlags, newIconFlags, sizeof _iconFlags)) {
+		memcpy(_iconFlags, newIconFlags, sizeof _iconFlags);
 		invalidate();
 	}
 }
@@ -2955,7 +2954,7 @@ void StatusMsg(const char *msg, ...) { // frametime def
 
 	if (StatusLine) {
 		va_start(argptr, msg);
-		vsprintf(buffer, msg, argptr);
+		Common::vsprintf_s(buffer, msg, argptr);
 		va_end(argptr);
 
 		StatusLine->setLine(buffer, 500);

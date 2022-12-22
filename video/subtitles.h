@@ -64,25 +64,34 @@ public:
 	~Subtitles();
 
 	void loadSRTFile(const char *fname);
+	void close() { _loaded = false; _subtitle.clear(); _fname.clear(); _srtParser.cleanup(); }
 	void setFont(const char *fontname, int height = 18);
 	void setBBox(const Common::Rect bbox);
 	void setColor(byte r, byte g, byte b);
 	void setPadding(uint16 horizontal, uint16 vertical);
-	void drawSubtitle(uint32 timestamp, bool force = false);
+	bool drawSubtitle(uint32 timestamp, bool force = false);
+	bool isLoaded() const { return _loaded || _subtitleDev; }
 
 private:
+	void renderSubtitle();
+
 	SRTParser _srtParser;
 	bool _loaded;
+	bool _subtitleDev;
+	bool _overlayHasAlpha;
 
 	const Graphics::Font *_font;
 	int _fontHeight;
 
 	Graphics::Surface *_surface;
 
-	Common::Rect _bbox;
-	Common::Rect _dirtyRect;
+	Common::Rect _drawRect;
+	Common::Rect _requestedBBox;
+	Common::Rect _realBBox;
+	int16 _lastOverlayWidth, _lastOverlayHeight;
 
-	Common::String _prevSubtitle;
+	Common::String _fname;
+	Common::String _subtitle;
 	uint32 _color;
 	uint32 _blackColor;
 	uint32 _transparentColor;

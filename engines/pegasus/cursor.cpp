@@ -54,8 +54,7 @@ Cursor::~Cursor() {
 }
 
 void Cursor::addCursorFrames(uint16 id) {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
-	Common::SeekableReadStream *cursStream = vm->_resFork->getResource(MKTAG('C', 'u', 'r', 's'), id);
+	Common::SeekableReadStream *cursStream = g_vm->_resFork->getResource(MKTAG('C', 'u', 'r', 's'), id);
 	if (!cursStream)
 		error("Could not load cursor frames set %d", id);
 
@@ -135,11 +134,9 @@ void Cursor::loadCursorImage(CursorInfo &cursorInfo) {
 	if (cursorInfo.surface)
 		return;
 
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
-
-	if (vm->isDVD()) {
+	if (g_vm->isDVD()) {
 		// The DVD version has some higher color PICT images for its cursors
-		Common::SeekableReadStream *pictStream = vm->_resFork->getResource(MKTAG('P', 'I', 'C', 'T'), cursorInfo.tag + 1000);
+		Common::SeekableReadStream *pictStream = g_vm->_resFork->getResource(MKTAG('P', 'I', 'C', 'T'), cursorInfo.tag + 1000);
 
 		if (pictStream) {
 			Image::PICTDecoder pict;
@@ -155,7 +152,7 @@ void Cursor::loadCursorImage(CursorInfo &cursorInfo) {
 	cursorInfo.surface = new Graphics::Surface();
 
 	// The CD version uses (only) lower color cicn images for its cursors
-	Common::SeekableReadStream *cicnStream = vm->_resFork->getResource(MKTAG('c', 'i', 'c', 'n'), cursorInfo.tag);
+	Common::SeekableReadStream *cicnStream = g_vm->_resFork->getResource(MKTAG('c', 'i', 'c', 'n'), cursorInfo.tag);
 
 	if (!cicnStream)
 		error("Failed to find color icon %d", cursorInfo.tag);

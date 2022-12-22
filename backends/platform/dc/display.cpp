@@ -22,7 +22,7 @@
 #define RONIN_TIMER_ACCESS
 
 #include "common/scummsys.h"
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 #include "graphics/surface.h"
 #include "dc.h"
 
@@ -634,14 +634,16 @@ void OSystem_Dreamcast::mouseToSoftKbd(int x, int y, int &rx, int &ry) const
 }
 
 
-void OSystem_Dreamcast::showOverlay()
+void OSystem_Dreamcast::showOverlay(bool inGUI)
 {
+  _overlay_in_gui = inGUI;
   _overlay_visible = true;
   clearOverlay();
 }
 
 void OSystem_Dreamcast::hideOverlay()
 {
+  _overlay_in_gui = false;
   _overlay_visible = false;
 }
 

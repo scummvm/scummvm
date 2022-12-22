@@ -22,26 +22,45 @@
 namespace MADS {
 
 static const MADSGameDescription gameDescriptions[] = {
-#if 0
 	{
-		// Rex Nebular and the Cosmic Gender Bender DOS English (compressed)
-		// Removed for now, until the original floppy compression is supported
+		// Rex Nebular and the Cosmic Gender Bender DOS English (compressed, 3.5" floppy installer)
 		{
 			"nebular",
-			0,
-			AD_ENTRY1s("mpslabs.001", "4df5c557b52abb5b661cf4befe5ae301", 1315354),
+			"3.5 inch floppy installer",
+			AD_ENTRY2s("mpslabs.001", "4df5c557b52abb5b661cf4befe5ae301", 1315354, "mpslabs.idx", "598ede8e361a60a4e577bbe40f83295b", 5598),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			GF_INSTALLER,
+#ifdef USE_TTS
+			GUIO6(GUIO_NOSPEECH, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ANIMATED_INVENTORY, GAMEOPTION_ANIMATED_INTERFACE, GAMEOPTION_NAUGHTY_MODE, GAMEOPTION_TTS_NARRATOR)
+#else
 			GUIO5(GUIO_NOSPEECH, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ANIMATED_INVENTORY, GAMEOPTION_ANIMATED_INTERFACE, GAMEOPTION_NAUGHTY_MODE)
+#endif
 		},
 		GType_RexNebular,
 		0
 	},
+	{
+		// Rex Nebular and the Cosmic Gender Bender DOS English (compressed, 5.25" floppy installer)
+		{
+			"nebular",
+			"5.25 inch floppy installer",
+			AD_ENTRY2s("mpslabs.001", "4df5c557b52abb5b661cf4befe5ae301", 1071642, "mpslabs.idx", "d8fac57aac1c0c41ba3a1554ccc89d21", 5500),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			GF_INSTALLER,
+#ifdef USE_TTS
+			GUIO6(GUIO_NOSPEECH, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ANIMATED_INVENTORY, GAMEOPTION_ANIMATED_INTERFACE, GAMEOPTION_NAUGHTY_MODE, GAMEOPTION_TTS_NARRATOR)
+#else
+			GUIO5(GUIO_NOSPEECH, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ANIMATED_INVENTORY, GAMEOPTION_ANIMATED_INTERFACE, GAMEOPTION_NAUGHTY_MODE)
 #endif
+		},
+		GType_RexNebular,
+		0
+	},
 
 	{
-		// Rex Nebular and the Cosmic Gender Bender DOS English
+		// Rex Nebular and the Cosmic Gender Bender DOS English, same as 2 entries above but uncompressed
 		{
 			"nebular",
 			0,
@@ -82,7 +101,7 @@ static const MADSGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("section1.hag", "ead7ea63459173c32569feecac608c4f", 192065),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_DEMO,
+			ADGF_UNSTABLE | ADGF_DEMO,
 			GUIO5(GUIO_NOSPEECH, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ANIMATED_INVENTORY, GAMEOPTION_ANIMATED_INTERFACE, GAMEOPTION_NAUGHTY_MODE)
 		},
 		GType_RexNebular,
@@ -148,6 +167,21 @@ static const MADSGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_EASY_MOUSE)
 		},
 		GType_Dragonsphere,
+		0
+	},
+
+	{
+		// Once Upon a Forest DOS English
+		{
+			"forest",
+			"",
+			AD_ENTRY1s("section1.hag", "042518994daa7f96f9602e3b7e14a672", 816076),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GAMEOPTION_EASY_MOUSE)
+		},
+		GType_Forest,
 		0
 	},
 

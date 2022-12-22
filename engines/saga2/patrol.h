@@ -102,13 +102,13 @@ enum PatrolRouteIteratorFlags {
 
 	// These flags define the type of iterator, and are only initialized
 	// when the iterator is constructed.
-	patrolRouteReverse      = (1 << 0), // Iterate in reverse
-	patrolRouteAlternate    = (1 << 1), // Iterate back and forth
-	patrolRouteRepeat       = (1 << 2), // Iterate repeatedly
-	patrolRouteRandom       = (1 << 3), // Iterate randomly
+	kPatrolRouteReverse      = (1 << 0), // Iterate in reverse
+	kPatrolRouteAlternate    = (1 << 1), // Iterate back and forth
+	kPatrolRouteRepeat       = (1 << 2), // Iterate repeatedly
+	kPatrolRouteRandom       = (1 << 3), // Iterate randomly
 
 	// These flags define the current state of the iterator.
-	patrolRouteInAlternate  = (1 << 4) // Iterator is currently going in
+	kPatrolRouteInAlternate  = (1 << 4) // Iterator is currently going in
 	// the alternate direction
 };
 
@@ -135,7 +135,7 @@ private:
 public:
 	// Determine if the iterator will repeat infinitely
 	bool isRepeating() const {
-		return _flags & (patrolRouteRepeat | patrolRouteRandom);
+		return _flags & (kPatrolRouteRepeat | kPatrolRouteRandom);
 	}
 
 	// Return the current way point number

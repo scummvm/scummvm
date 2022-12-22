@@ -923,7 +923,7 @@ void ComputerManager::getScoreName() {
 	_score[scoreLine]._score = "         ";
 
 	char score[16];
-	sprintf(score, "%d", _breakoutScore);
+	Common::sprintf_s(score, "%d", _breakoutScore);
 	int scoreLen = 0;
 	do {
 		++scoreLen;

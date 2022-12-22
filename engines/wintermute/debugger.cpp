@@ -33,7 +33,6 @@ namespace Wintermute {
 Console::Console(WintermuteEngine *vm) : GUI::Debugger(), _engineRef(vm) {
 	registerCmd("show_fps", WRAP_METHOD(Console, Cmd_ShowFps));
 	registerCmd("dump_file", WRAP_METHOD(Console, Cmd_DumpFile));
-	registerCmd("show_fps", WRAP_METHOD(Console, Cmd_ShowFps));
 	registerCmd("dump_file", WRAP_METHOD(Console, Cmd_DumpFile));
 	registerCmd("help", WRAP_METHOD(Console, Cmd_Help));
 	// Actual (script) debugger commands

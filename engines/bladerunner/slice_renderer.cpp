@@ -612,10 +612,13 @@ void SliceRenderer::drawShadowInWorld(int transparency, Graphics::Surface &surfa
 		0.0f, 1.0f, 0.0f, _position.y,
 		0.0f, 0.0f, 1.0f, _position.z);
 
+	float s = sin(_facing);
+	float c = cos(_facing);
+
 	Matrix4x3 mRotation(
-		cos(_facing), -sin(_facing), 0.0f, 0.0f,
-		sin(_facing),  cos(_facing), 0.0f, 0.0f,
-		        0.0f,          0.0f, 1.0f, 0.0f);
+		   c,   -s, 0.0f, 0.0f,
+		   s,    c, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f);
 
 	Matrix4x3 mScale(
 		_frameScale.x,          0.0f,              0.0f, 0.0f,

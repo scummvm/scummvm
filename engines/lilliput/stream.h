@@ -30,6 +30,9 @@ class ScriptStream : public Common::MemoryReadStream {
 private:
 	byte *_orgPtr;
 public:
+	ScriptStream(ScriptStream &&other) : Common::MemoryReadStream(Common::move(other)), _orgPtr(other._orgPtr) {
+		other._orgPtr = nullptr;
+	}
 	ScriptStream(byte *buf, int bufSize);
 	~ScriptStream() override;
 

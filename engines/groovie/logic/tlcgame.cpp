@@ -959,125 +959,125 @@ void TlcGame::tatResultEpisode() {
 	case 0:
 		product = ratioA * 18.0;
 		if (product <= 3) {
-			sprintf(resultStrA, "%cP%02d", idxA + 'A', product);
+			Common::sprintf_s(resultStrA, "%cP%02d", idxA + 'A', product);
 		} else {
-			sprintf(resultStrA, "%cN%02d", idxA + 'A', product - 4);
+			Common::sprintf_s(resultStrA, "%cN%02d", idxA + 'A', product - 4);
 		}
 		break;
 
 	case 1:
 		product = ratioA * 13.0;
 		if (product <= 3) {
-			sprintf(resultStrA, "%cP%02d", idxA + 'A', product);
+			Common::sprintf_s(resultStrA, "%cP%02d", idxA + 'A', product);
 		} else {
-			sprintf(resultStrA, "%cN%02d", idxA + 'A', product - 4);
+			Common::sprintf_s(resultStrA, "%cN%02d", idxA + 'A', product - 4);
 		}
 		break;
 
 	case 2:
 		product = ratioA * 12.0;
 		if (product <= 3) {
-			sprintf(resultStrA, "%cP%02d", idxA + 'A', product);
+			Common::sprintf_s(resultStrA, "%cP%02d", idxA + 'A', product);
 		} else {
-			sprintf(resultStrA, "%cN%02d", idxA + 'A', product - 4);
+			Common::sprintf_s(resultStrA, "%cN%02d", idxA + 'A', product - 4);
 		}
 		break;
 
 	case 3:
 		product = ratioA * 13.0;
 		if (product <= 8) {
-			sprintf(resultStrA, "%cP%02d", idxA + 'A', product);
+			Common::sprintf_s(resultStrA, "%cP%02d", idxA + 'A', product);
 		} else {
-			sprintf(resultStrA, "%cN%02d", idxA + 'A', product - 9);
+			Common::sprintf_s(resultStrA, "%cN%02d", idxA + 'A', product - 9);
 		}
 		break;
 
 	case 4:
 		product = ratioA * 11.0;
 		if (product <= 3) {
-			sprintf(resultStrA, "%cP%02d", idxA + 'A', product);
+			Common::sprintf_s(resultStrA, "%cP%02d", idxA + 'A', product);
 		} else {
-			sprintf(resultStrA, "%cN%02d", idxA + 'A', product - 4);
+			Common::sprintf_s(resultStrA, "%cN%02d", idxA + 'A', product - 4);
 		}
 		break;
 
 	case 5:
 		product = ratioA * 11.0;
 		if (product >= 4) {
-			sprintf(resultStrA, "%cP%02d", idxA + 'A', product - 4);
+			Common::sprintf_s(resultStrA, "%cP%02d", idxA + 'A', product - 4);
 		} else {
-			sprintf(resultStrA, "%cN%02d", idxA + 'A', product);
+			Common::sprintf_s(resultStrA, "%cN%02d", idxA + 'A', product);
 		}
 		break;
 
 	case 6:
 		product = ratioA * 9.0;
 		if (product <= 4) {
-			sprintf(resultStrA, "%cP%02d", idxA + 'A', product);
+			Common::sprintf_s(resultStrA, "%cP%02d", idxA + 'A', product);
 		} else {
-			sprintf(resultStrA, "%cN%02d", idxA + 'A', product - 5);
+			Common::sprintf_s(resultStrA, "%cN%02d", idxA + 'A', product - 5);
 		}
 		break;
 
 	case 7:
 		product = ratioA * 10.0;
 		if (product <= 3) {
-			sprintf(resultStrA, "%cP%02d", idxA + 'A', product);
+			Common::sprintf_s(resultStrA, "%cP%02d", idxA + 'A', product);
 		} else {
-			sprintf(resultStrA, "%cN%02d", idxA + 'A', product - 4);
+			Common::sprintf_s(resultStrA, "%cN%02d", idxA + 'A', product - 4);
 		}
 		break;
 
 	case 8:
 		product = ratioA * 12.0;
 		if (product <= 4) {
-			sprintf(resultStrA, "%cP%02d", idxA + 'A', product);
+			Common::sprintf_s(resultStrA, "%cP%02d", idxA + 'A', product);
 		} else {
-			sprintf(resultStrA, "%cN%02d", idxA + 'A', product - 5);
+			Common::sprintf_s(resultStrA, "%cN%02d", idxA + 'A', product - 5);
 		}
 		break;
 
 	case 9:
 		product = ratioA * 10.0;
-		sprintf(resultStrA, "%cN%02d", idxA + 'A', product);
+		Common::sprintf_s(resultStrA, "%cN%02d", idxA + 'A', product);
 		break;
 
 	case 10:
 		product = ratioA * 7.0;
-		sprintf(resultStrA, "%cN%02d", idxA + 'A', product);
+		Common::sprintf_s(resultStrA, "%cN%02d", idxA + 'A', product);
 		break;
 
 	case 11:
 		product = ratioA * 10.0;
 		if (product >= 4) {
-			sprintf(resultStrA, "%cP%02d", idxA + 'A', product - 4);
+			Common::sprintf_s(resultStrA, "%cP%02d", idxA + 'A', product - 4);
 		} else {
-			sprintf(resultStrA, "%cN%02d", idxA + 'A', product);
+			Common::sprintf_s(resultStrA, "%cN%02d", idxA + 'A', product);
 		}
 		break;
 
 	case 12:
 		product = ratioA * 9.0;
 		if (product >= 4) {
-			sprintf(resultStrA, "%cP%02d", idxA + 'A', product - 4);
+			Common::sprintf_s(resultStrA, "%cP%02d", idxA + 'A', product - 4);
 		} else {
-			sprintf(resultStrA, "%cN%02d", idxA + 'A', product);
+			Common::sprintf_s(resultStrA, "%cN%02d", idxA + 'A', product);
 		}
 		break;
 
 	case 13:
 		product = ratioA * 6.0;
-		sprintf(resultStrA, "%cN%02d", idxA + 'A', product);
+		Common::sprintf_s(resultStrA, "%cN%02d", idxA + 'A', product);
 		break;
 
 	case 14:
 		product = ratioA * 7.0;
-		sprintf(resultStrA, "%cP%02d", idxA + 'A', product);
+		Common::sprintf_s(resultStrA, "%cP%02d", idxA + 'A', product);
 		break;
 
 	case 15:
 		product = ratioA * 8.0;
-		sprintf(resultStrA, "%cN%02d", idxA + 'A', product);
+		Common::sprintf_s(resultStrA, "%cN%02d", idxA + 'A', product);
 		break;
 	}
 
@@ -1087,125 +1087,125 @@ void TlcGame::tatResultEpisode() {
 	case 0:
 		product = ratioB * 18.0;
 		if (product <= 3) {
-			sprintf(resultStrB, "%cP%02d", idxB + 'A', product);
+			Common::sprintf_s(resultStrB, "%cP%02d", idxB + 'A', product);
 		} else {
-			sprintf(resultStrB, "%cN%02d", idxB + 'A', product - 4);
+			Common::sprintf_s(resultStrB, "%cN%02d", idxB + 'A', product - 4);
 		}
 		break;
 
 	case 1:
 		product = ratioB * 13.0;
 		if (product <= 3) {
-			sprintf(resultStrB, "%cP%02d", idxB + 'A', product);
+			Common::sprintf_s(resultStrB, "%cP%02d", idxB + 'A', product);
 		} else {
-			sprintf(resultStrB, "%cN%02d", idxB + 'A', product - 4);
+			Common::sprintf_s(resultStrB, "%cN%02d", idxB + 'A', product - 4);
 		}
 		break;
 
 	case 2:
 		product = ratioB * 12.0;
 		if (product <= 3) {
-			sprintf(resultStrB, "%cP%02d", idxB + 'A', product);
+			Common::sprintf_s(resultStrB, "%cP%02d", idxB + 'A', product);
 		} else {
-			sprintf(resultStrB, "%cN%02d", idxB + 'A', product - 4);
+			Common::sprintf_s(resultStrB, "%cN%02d", idxB + 'A', product - 4);
 		}
 		break;
 
 	case 3:
 		product = ratioB * 13.0;
 		if (product <= 8) {
-			sprintf(resultStrB, "%cP%02d", idxB + 'A', product);
+			Common::sprintf_s(resultStrB, "%cP%02d", idxB + 'A', product);
 		} else {
-			sprintf(resultStrB, "%cN%02d", idxB + 'A', product - 9);
+			Common::sprintf_s(resultStrB, "%cN%02d", idxB + 'A', product - 9);
 		}
 		break;
 
 	case 4:
 		product = ratioB * 11.0;
 		if (product <= 3) {
-			sprintf(resultStrB, "%cP%02d", idxB + 'A', product);
+			Common::sprintf_s(resultStrB, "%cP%02d", idxB + 'A', product);
 		} else {
-			sprintf(resultStrB, "%cN%02d", idxB + 'A', product - 4);
+			Common::sprintf_s(resultStrB, "%cN%02d", idxB + 'A', product - 4);
 		}
 		break;
 
 	case 5:
 		product = ratioB * 11.0;
 		if (product >= 4) {
-			sprintf(resultStrB, "%cP%02d", idxB + 'A', product - 4);
+			Common::sprintf_s(resultStrB, "%cP%02d", idxB + 'A', product - 4);
 		} else {
-			sprintf(resultStrB, "%cN%02d", idxB + 'A', product);
+			Common::sprintf_s(resultStrB, "%cN%02d", idxB + 'A', product);
 		}
 		break;
 
 	case 6:
 		product = ratioB * 9.0;
 		if (product <= 4) {
-			sprintf(resultStrB, "%cP%02d", idxB + 'A', product);
+			Common::sprintf_s(resultStrB, "%cP%02d", idxB + 'A', product);
 		} else {
-			sprintf(resultStrB, "%cN%02d", idxB + 'A', product - 5);
+			Common::sprintf_s(resultStrB, "%cN%02d", idxB + 'A', product - 5);
 		}
 		break;
 
 	case 7:
 		product = ratioB * 10.0;
 		if (product <= 3) {
-			sprintf(resultStrB, "%cP%02d", idxB + 'A', product);
+			Common::sprintf_s(resultStrB, "%cP%02d", idxB + 'A', product);
 		} else {
-			sprintf(resultStrB, "%cN%02d", idxB + 'A', product - 4);
+			Common::sprintf_s(resultStrB, "%cN%02d", idxB + 'A', product - 4);
 		}
 		break;
 
 	case 8:
 		product = ratioB * 12.0;
 		if (product <= 4) {
-			sprintf(resultStrB, "%cP%02d", idxB + 'A', product);
+			Common::sprintf_s(resultStrB, "%cP%02d", idxB + 'A', product);
 		} else {
-			sprintf(resultStrB, "%cN%02d", idxB + 'A', product - 5);
+			Common::sprintf_s(resultStrB, "%cN%02d", idxB + 'A', product - 5);
 		}
 		break;
 
 	case 9:
 		product = ratioB * 10.0;
-		sprintf(resultStrB, "%cN%02d", idxB + 'A', product);
+		Common::sprintf_s(resultStrB, "%cN%02d", idxB + 'A', product);
 		break;
 
 	case 10:
 		product = ratioB * 7.0;
-		sprintf(resultStrB, "%cN%02d", idxB + 'A', product);
+		Common::sprintf_s(resultStrB, "%cN%02d", idxB + 'A', product);
 		break;
 
 	case 11:
 		product = ratioB * 10.0;
 		if (product >= 4) {
-			sprintf(resultStrB, "%cP%02d", idxB + 'A', product - 4);
+			Common::sprintf_s(resultStrB, "%cP%02d", idxB + 'A', product - 4);
 		} else {
-			sprintf(resultStrB, "%cN%02d", idxB + 'A', product);
+			Common::sprintf_s(resultStrB, "%cN%02d", idxB + 'A', product);
 		}
 		break;
 
 	case 12:
 		product = ratioB * 9.0;
 		if (product >= 4) {
-			sprintf(resultStrB, "%cP%02d", idxB + 'A', product - 4);
+			Common::sprintf_s(resultStrB, "%cP%02d", idxB + 'A', product - 4);
 		} else {
-			sprintf(resultStrB, "%cN%02d", idxB + 'A', product);
+			Common::sprintf_s(resultStrB, "%cN%02d", idxB + 'A', product);
 		}
 		break;
 
 	case 13:
 		product = ratioB * 6.0;
-		sprintf(resultStrB, "%cN%02d", idxB + 'A', product);
+		Common::sprintf_s(resultStrB, "%cN%02d", idxB + 'A', product);
 		break;
 
 	case 14:
 		product = ratioB * 7.0;
-		sprintf(resultStrB, "%cP%02d", idxB + 'A', product);
+		Common::sprintf_s(resultStrB, "%cP%02d", idxB + 'A', product);
 		break;
 
 	case 15:
 		product = ratioB * 8.0;
-		sprintf(resultStrB, "%cN%02d", idxB + 'A', product);
+		Common::sprintf_s(resultStrB, "%cN%02d", idxB + 'A', product);
 		break;
 	}
 

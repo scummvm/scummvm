@@ -43,11 +43,18 @@ enum ResourcePatchOp {
 	kEndOfPatch
 };
 
+enum SciMedia : uint;
+
 struct GameResourcePatch {
 	/**
 	 * The game to patch.
 	 */
 	SciGameId gameId;
+
+	/**
+	 * The media to patch. Use SCI_MEDIA_ALL for all.
+	 */
+	SciMedia media;
 
 	/**
 	 * The language to patch. Use `Common::UNK_LANG` to apply the patch to all
@@ -82,7 +89,7 @@ struct GameResourcePatch {
  */
 class ResourcePatcher : public ResourceSource {
 public:
-	ResourcePatcher(const SciGameId gameId, const Common::Language gameLanguage);
+	ResourcePatcher(const SciGameId gameId, const bool isCD, const Common::Platform platform, const Common::Language gameLanguage);
 
 	~ResourcePatcher() override {}
 

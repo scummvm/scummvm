@@ -135,7 +135,7 @@ struct ModuleData {
 
 	ByteArray moduleBase;	// all base module
 	uint16 staticSize;				// size of static data
-	uint staticOffset;				// offset of static data begining in _commonBuffer
+	uint staticOffset;				// offset of static data beginning in _commonBuffer
 	Common::Array<EntryPoint> entryPoints;
 
 	StringsTable strings;

@@ -542,7 +542,7 @@ static bool deferredSaveFlag = false;
 static char deferredSaveName[64];
 
 inline bool isUserAction(gEvent ev) {
-	return (ev.eventType == gEventNewValue) || (ev.eventType == gEventKeyDown);
+	return (ev.eventType == kEventNewValue) || (ev.eventType == kEventKeyDown);
 }
 
 /* ===================================================================== *
@@ -554,20 +554,20 @@ char **initFileFields() {
 	uint16              i;
 	SaveFileHeader      header;                 //  The save file header.
 
-	char **strings = new (char *[numEditLines]);
+	char **strings = new (char *[kNumEditLines]);
 
-	for (i = 0; i < numEditLines; i++) {
-		strings[i] = new char[editLen + 1];
+	for (i = 0; i < kNumEditLines; i++) {
+		strings[i] = new char[kEditLen + 1];
 
 		if (getSaveName(i, header)) {
-			Common::strlcpy(strings[i], header.saveName.c_str(), editLen);
+			Common::strlcpy(strings[i], header.saveName.c_str(), kEditLen);
 		} else {
-			Common::strlcpy(strings[i], FILE_DIALOG_NONAME, editLen);
+			Common::strlcpy(strings[i], FILE_DIALOG_NONAME, kEditLen);
 			strings[i][0] |= 0x80;
 		}
 
 		// make sure this thing is caped
-		strings[i][editLen] = '\0';
+		strings[i][kEditLen] = '\0';
 	}
 
 	return strings;
@@ -575,7 +575,7 @@ char **initFileFields() {
 
 int numValid(char **names) {
 	int v = 0;
-	for (int i = 0; i < numEditLines; i++) {
+	for (int i = 0; i < kNumEditLines; i++) {
 		if ((names[i][0] & 0x80) == 0) v++;
 	}
 	return v;
@@ -584,7 +584,7 @@ int numValid(char **names) {
 void destroyFileFields(char **strings) {
 	uint16  i;
 
-	for (i = 0; i < numEditLines; i++) {
+	for (i = 0; i < kNumEditLines; i++) {
 		if (strings[i])
 			delete[] strings[i];
 		strings[i] = nullptr;
@@ -615,7 +615,7 @@ bool getSaveName(int8 saveNo, SaveFileHeader &header) {
  * ===================================================================== */
 
 int16 FileDialog(int16 fileProcess) {
-	//const   int strLen              = editLen;
+	//const   int strLen              = kEditLen;
 	char    **fieldStrings;
 	uint16  stringIndex;
 	bool    displayOnly;
@@ -678,31 +678,31 @@ int16 FileDialog(int16 fileProcess) {
 	}
 #endif
 	// init the resource context handle
-	decRes = resFile->newContext(dialogGroupID, "dialog resources");
+	decRes = resFile->newContext(kDialogGroupID, "dialog resources");
 
 
 	// get the graphics associated with the buttons
-	pushBtnIm = loadButtonRes(decRes, dialogPushResNum, numBtnImages);
-	arrowUpIm = loadButtonRes(decRes, upArrowResNum, numBtnImages);
-	arrowDnIm = loadButtonRes(decRes, dnArrowResNum, numBtnImages);
+	pushBtnIm = loadButtonRes(decRes, dialogPushResNum, kNumBtnImages);
+	arrowUpIm = loadButtonRes(decRes, upArrowResNum, kNumBtnImages);
+	arrowDnIm = loadButtonRes(decRes, dnArrowResNum, kNumBtnImages);
 
 
 	// create the window
 	win = new ModalWindow(saveLoadWindowRect, 0, nullptr);
 
 	// make the quit button
-	new GfxCompButton(*win, *saveLoadButtonRects[0], pushBtnIm, numBtnImages, btnStrings[stringIndex][0], pal, 0, cmdDialogQuit);
-	//t->accelKey=0x1B;
+	new GfxCompButton(*win, *saveLoadButtonRects[0], pushBtnIm, kNumBtnImages, btnStrings[stringIndex][0], pal, 0, cmdDialogQuit);
+	//t->_accelKey=0x1B;
 
 	// make the Save/Load button
-	new GfxCompButton(*win, *saveLoadButtonRects[1], pushBtnIm, numBtnImages, btnStrings[stringIndex][1], pal, fileProcess, fileCommands[fileProcess]);
-	//t->accelKey=0x0D;
+	new GfxCompButton(*win, *saveLoadButtonRects[1], pushBtnIm, kNumBtnImages, btnStrings[stringIndex][1], pal, fileProcess, fileCommands[fileProcess]);
+	//t->_accelKey=0x0D;
 	// make the up arrow
-	new GfxCompButton(*win, *saveLoadButtonRects[2], arrowUpIm, numBtnImages, 0, cmdSaveDialogUp);
-	//t->accelKey=33+0x80;
+	new GfxCompButton(*win, *saveLoadButtonRects[2], arrowUpIm, kNumBtnImages, 0, cmdSaveDialogUp);
+	//t->_accelKey=33+0x80;
 	// make the down arrow
-	new GfxCompButton(*win, *saveLoadButtonRects[3], arrowDnIm, numBtnImages, 0, cmdSaveDialogDown);
-	//t->accelKey=34+0x80;
+	new GfxCompButton(*win, *saveLoadButtonRects[3], arrowDnIm, kNumBtnImages, 0, cmdSaveDialogDown);
+	//t->_accelKey=34+0x80;
 	// attach the title
 	new CPlaqText(*win, *saveLoadTextRects[0], textStrings[stringIndex][0], &Plate18Font, 0, pal, 0, nullptr);
 
@@ -710,8 +710,8 @@ int16 FileDialog(int16 fileProcess) {
 
 	// attach the text box editing field object
 	textBox          = new gTextBox(*win, editBaseRect, &Onyx10Font,
-	        textHeight, textPen, textBackground, textHilite, textBackHilite, cursorColor,
-	        nullptr, "Error out", fieldStrings, editLen, 0, (uint16) - 1, displayOnly, nullptr,
+	        kTextHeight, kTextPen, kTextBackground, kTextHilite, kTextBackHilite, kCursorColor,
+	        nullptr, "Error out", fieldStrings, kEditLen, 0, (uint16) - 1, displayOnly, nullptr,
 	        fileCommands[fileProcess], cmdDialogQuit);
 
 
@@ -719,10 +719,10 @@ int16 FileDialog(int16 fileProcess) {
 	                    ARRAYSIZE(saveWindowDecorations),
 	                    decRes, 'S', 'L', 'D');
 
-	win->userData = &rInfo;
+	win->_userData = &rInfo;
 	win->open();
 
-	if (GameMode::newmodeFlag)
+	if (GameMode::_newmodeFlag)
 		GameMode::update();
 
 	win->invalidate();
@@ -735,9 +735,9 @@ int16 FileDialog(int16 fileProcess) {
 	win = nullptr;
 
 	// unload all image arrays
-	unloadImageRes(arrowUpIm, numBtnImages);
-	unloadImageRes(arrowDnIm, numBtnImages);
-	unloadImageRes(pushBtnIm, numBtnImages);
+	unloadImageRes(arrowUpIm, kNumBtnImages);
+	unloadImageRes(arrowDnIm, kNumBtnImages);
+	unloadImageRes(pushBtnIm, kNumBtnImages);
 
 
 	// remove the resource handle
@@ -823,11 +823,11 @@ int16 OptionsDialog(bool disableSaveResume) {
 	if (!fullInitialized) return -1;
 
 	// init the resource context handle
-	decRes = resFile->newContext(dialogGroupID, "dialog resources");
+	decRes = resFile->newContext(kDialogGroupID, "dialog resources");
 
 	// get the graphics associated with the buttons
-	dialogPushImag   = loadButtonRes(decRes, dialogPushResNum, numBtnImages);
-	checkImag        = loadButtonRes(decRes, checkResNum, numBtnImages);
+	dialogPushImag   = loadButtonRes(decRes, dialogPushResNum, kNumBtnImages);
+	checkImag        = loadButtonRes(decRes, checkResNum, kNumBtnImages);
 	slideFaceImag    = loadButtonRes(decRes, slideFaceResNum, numSlideFace);
 
 	// create the window
@@ -837,44 +837,44 @@ int16 OptionsDialog(bool disableSaveResume) {
 	// buttons
 	if (!disableSaveResume) {
 		t = new GfxCompButton(*win, *optionsButtonRects[0],
-		                               dialogPushImag, numBtnImages, btnStrings[0], pal, 0, cmdDialogQuit);
-		t->accelKey = 0x1B;
+		                               dialogPushImag, kNumBtnImages, btnStrings[0], pal, 0, cmdDialogQuit);
+		t->_accelKey = 0x1B;
 
 		t = new GfxCompButton(*win, *optionsButtonRects[1],
-		                               dialogPushImag, numBtnImages, btnStrings[1], pal, 0, cmdOptionsSaveGame);    // make the quit button
-		t->accelKey = 'S';
+		                               dialogPushImag, kNumBtnImages, btnStrings[1], pal, 0, cmdOptionsSaveGame);    // make the quit button
+		t->_accelKey = 'S';
 	} else {
 		t = new GfxCompButton(*win, *optionsButtonRects[1],
-		                               dialogPushImag, numBtnImages, OPTN_DIALOG_BUTTON6, pal, 0, cmdOptionsNewGame);
-		t->accelKey = 'N';
+		                               dialogPushImag, kNumBtnImages, OPTN_DIALOG_BUTTON6, pal, 0, cmdOptionsNewGame);
+		t->_accelKey = 'N';
 	}
 
 	t = new GfxCompButton(*win, *optionsButtonRects[2],
-	                               dialogPushImag, numBtnImages, btnStrings[2], pal, 0, cmdOptionsLoadGame);    // make the quit button
-	t->accelKey = 'L';
+	                               dialogPushImag, kNumBtnImages, btnStrings[2], pal, 0, cmdOptionsLoadGame);    // make the quit button
+	t->_accelKey = 'L';
 
 	t = new GfxCompButton(*win, *optionsButtonRects[3],
-	                               dialogPushImag, numBtnImages, btnStrings[3], pal, 0, cmdQuitGame);
-	t->accelKey = 'Q';
+	                               dialogPushImag, kNumBtnImages, btnStrings[3], pal, 0, cmdQuitGame);
+	t->_accelKey = 'Q';
 
 	t = new GfxCompButton(*win, *optionsButtonRects[4],
-	                               dialogPushImag, numBtnImages, btnStrings[4], pal, 0, cmdCredits);
-	t->accelKey = 'C';
+	                               dialogPushImag, kNumBtnImages, btnStrings[4], pal, 0, cmdCredits);
+	t->_accelKey = 'C';
 
 	autoAggressBtn = new GfxOwnerSelCompButton(*win, *optionsButtonRects[5],
-	        checkImag, numBtnImages, 0, cmdAutoAggression);
+	        checkImag, kNumBtnImages, 0, cmdAutoAggression);
 	autoAggressBtn->select(isAutoAggressionSet());
 
 	autoWeaponBtn = new GfxOwnerSelCompButton(*win, *optionsButtonRects[6],
-	        checkImag, numBtnImages, 0, cmdAutoWeapon);
+	        checkImag, kNumBtnImages, 0, cmdAutoWeapon);
 	autoWeaponBtn->select(isAutoWeaponSet());
 
 	speechTextBtn = new GfxOwnerSelCompButton(*win, *optionsButtonRects[7],
-	        checkImag, numBtnImages, 0, cmdSpeechText);
+	        checkImag, kNumBtnImages, 0, cmdSpeechText);
 	speechTextBtn->select(g_vm->_speechText);
 
 	nightBtn = new GfxOwnerSelCompButton(*win, *optionsButtonRects[8],
-	        checkImag, numBtnImages, 0, cmdNight);
+	        checkImag, kNumBtnImages, 0, cmdNight);
 	nightBtn->select(g_vm->_showNight);
 
 	new GfxSlider(*win, optTopSliderRect, optTopFaceRect, 0,
@@ -893,7 +893,7 @@ int16 OptionsDialog(bool disableSaveResume) {
 	                         textStrings[0], &Plate18Font, 0, pal, 0, nullptr);
 
 	for (int i = 1; i < kNumOptionsTexts; i++) {
-		new CPlaqText(*win, *optionsTextRects[i], textStrings[i], &SmallFont, textPosLeft, pal, 0, nullptr);
+		new CPlaqText(*win, *optionsTextRects[i], textStrings[i], &SmallFont, kTextPosLeft, pal, 0, nullptr);
 	}
 
 	win->setDecorations(optionsDecorations,
@@ -901,7 +901,7 @@ int16 OptionsDialog(bool disableSaveResume) {
 	                    decRes, 'O', 'P', 'T');
 
 
-	win->userData = &rInfo;
+	win->_userData = &rInfo;
 	win->open();
 
 	EventLoop(rInfo.running, true);
@@ -914,8 +914,8 @@ int16 OptionsDialog(bool disableSaveResume) {
 
 	// unload all image arrays
 	unloadImageRes(slideFaceImag,   numSlideFace);
-	unloadImageRes(checkImag,       numBtnImages);
-	unloadImageRes(dialogPushImag, numBtnImages);
+	unloadImageRes(checkImag,       kNumBtnImages);
+	unloadImageRes(dialogPushImag, kNumBtnImages);
 
 	// remove the resource handle
 	if (decRes) resFile->disposeContext(decRes);
@@ -936,7 +936,7 @@ int16 OptionsDialog(bool disableSaveResume) {
 		else {
 			loadSavedGameState(deferredLoadID);
 		}
-		if (GameMode::newmodeFlag)
+		if (GameMode::_newmodeFlag)
 			GameMode::update();
 		updateActiveRegions();
 		//displayUpdate();
@@ -967,16 +967,16 @@ int16 OptionsDialog(bool disableSaveResume) {
    message dialog box
  * ===================================================================== */
 
-char stripAccel(char *t, const char *s) {
+static char stripAccel(char (&t)[32], const char *s) {
 	char accel = '\0';
 	char    *underscore;
 
-	if (t == nullptr || s == nullptr) return accel;
-	strcpy(t, s);
+	if (s == nullptr) return accel;
+	Common::strcpy_s(t, s);
 
 	if ((underscore = strchr(t, '_')) != nullptr) {
 		accel = toupper(underscore[1]);
-		strcpy(underscore, s + (underscore - t) + 1);
+		Common::strcpy_s(underscore, sizeof(t) - (underscore - t), s + (underscore - t) + 1);
 	}
 	return accel;
 }
@@ -1003,11 +1003,11 @@ bool initUserDialog() {
 
 	const   int16   dialogPushResNum    = 4;
 	// init the resource context handle
-	udDecRes = resFile->newContext(dialogGroupID, "dialog resources");
+	udDecRes = resFile->newContext(kDialogGroupID, "dialog resources");
 
 
 	// get the graphics associated with the buttons
-	udDialogPushImag = loadButtonRes(udDecRes, dialogPushResNum, numBtnImages);
+	udDialogPushImag = loadButtonRes(udDecRes, dialogPushResNum, kNumBtnImages);
 
 	// create the window
 	udWin = new ModalWindow(messageWindowRect, 0 nullptr);
@@ -1016,7 +1016,7 @@ bool initUserDialog() {
 	                      ARRAYSIZE(messageDecorations),
 	                      udDecRes, 'M', 'E', 'S');
 
-	udWin->userData = &udrInfo;
+	udWin->_userData = &udrInfo;
 
 	if (udDecRes) resFile->disposeContext(udDecRes);
 	udDecRes = nullptr;
@@ -1037,7 +1037,7 @@ void cleanupUserDialog() {
 	udWin = nullptr;
 
 	// unload all image arrays
-	unloadImageRes(udDialogPushImag, numBtnImages);
+	unloadImageRes(udDialogPushImag, kNumBtnImages);
 
 }
 
@@ -1075,21 +1075,21 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	// button one
 	if (numBtns >= 1) {
 		t = new GfxCompButton(*udWin, messageButtonRects[0],
-		                               udDialogPushImag, numBtnImages, btnMsg1, pal, 10, cmdDialogQuit);
+		                               udDialogPushImag, kNumBtnImages, btnMsg1, pal, 10, cmdDialogQuit);
 		t->accel = k1;
 	}
 
 	// button two
 	if (numBtns >= 2) {
 		t = new GfxCompButton(*udWin, messageButtonRects[1],
-		                               udDialogPushImag, numBtnImages, btnMsg2, pal, 11, cmdDialogQuit);
+		                               udDialogPushImag, kNumBtnImages, btnMsg2, pal, 11, cmdDialogQuit);
 		t->accel = k2;
 	}
 
 	// button three
 	if (numBtns >= 3) {
 		t = new GfxCompButton(*udWin, messageButtonRects[2],
-		                               udDialogPushImag, numBtnImages, btnMsg3, pal, 12, cmdDialogQuit);
+		                               udDialogPushImag, kNumBtnImages, btnMsg3, pal, 12, cmdDialogQuit);
 		t->accel = k3;
 	}
 
@@ -1176,11 +1176,11 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 		return -1;
 
 	// init the resource context handle
-	decRes = resFile->newContext(dialogGroupID, "dialog resources");
+	decRes = resFile->newContext(kDialogGroupID, "dialog resources");
 
 
 	// get the graphics associated with the buttons
-	dialogPushImag   = loadButtonRes(decRes, dialogPushResNum, numBtnImages);
+	dialogPushImag   = loadButtonRes(decRes, dialogPushResNum, kNumBtnImages);
 
 	// create the window
 	win = new ModalWindow(messageWindowRect, 0, nullptr);
@@ -1190,22 +1190,22 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	// button one
 	if (numBtns >= 1) {
 		t = new GfxCompButton(*win, *messageButtonRects[0],
-		                               dialogPushImag, numBtnImages, btnMsg1, pal, 10, cmdDialogQuit);
-		t->accelKey = k1;
+		                               dialogPushImag, kNumBtnImages, btnMsg1, pal, 10, cmdDialogQuit);
+		t->_accelKey = k1;
 	}
 
 	// button two
 	if (numBtns >= 2) {
 		t = new GfxCompButton(*win, *messageButtonRects[1],
-		                               dialogPushImag, numBtnImages, btnMsg2, pal, 11, cmdDialogQuit);
-		t->accelKey = k2;
+		                               dialogPushImag, kNumBtnImages, btnMsg2, pal, 11, cmdDialogQuit);
+		t->_accelKey = k2;
 	}
 
 	// button three
 	if (numBtns >= 3) {
 		t = new GfxCompButton(*win, *messageButtonRects[2],
-		                               dialogPushImag, numBtnImages, btnMsg3, pal, 12, cmdDialogQuit);
-		t->accelKey = k3;
+		                               dialogPushImag, kNumBtnImages, btnMsg3, pal, 12, cmdDialogQuit);
+		t->_accelKey = k3;
 	}
 
 	// title for the box
@@ -1219,7 +1219,7 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	                    decRes, 'M', 'E', 'S');
 
 
-	win->userData = &rInfo;
+	win->_userData = &rInfo;
 	win->open();
 
 
@@ -1230,7 +1230,7 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	delete  win;
 
 	// unload all image arrays
-	unloadImageRes(dialogPushImag, numBtnImages);
+	unloadImageRes(dialogPushImag, kNumBtnImages);
 
 	// remove the resource handle
 	if (decRes) resFile->disposeContext(decRes);
@@ -1257,8 +1257,8 @@ CPlacardWindow::CPlacardWindow(
     textPallete &pal,
     gFont *font) :
 	ModalWindow(r, ident, cmd) {
-	textPal = pal;
-	textFont = font;
+	_textPal = pal;
+	_textFont = font;
 
 	positionText(windowText, Rect16(0, 0, r.width, r.height));
 }
@@ -1271,31 +1271,31 @@ void CPlacardWindow::positionText(
 		        yPos,
 		        maxY;
 
-		int16   fontHeight = textFont->height;
+		int16   fontHeight = _textFont->height;
 
 		// make a copy of the window text string
-		sprintf(titleBuf, "%s", windowText);
+		Common::sprintf_s(_titleBuf, "%s", windowText);
 
 		//  break up the title text string
-		titleCount = SplitString(titleBuf, titleStrings, maxLines, '\n');
+		_titleCount = SplitString(_titleBuf, _titleStrings, kMaxLines, '\n');
 
 		yPos = textArea.y +
-		       ((textArea.height - titleCount * fontHeight) >> 1);
+		       ((textArea.height - _titleCount * fontHeight) >> 1);
 		yPos = MAX(yPos, textArea.y);
 
 		maxY = textArea.y + textArea.height - fontHeight;
 
-		for (i = 0; i < titleCount; i++, yPos += fontHeight) {
+		for (i = 0; i < _titleCount; i++, yPos += fontHeight) {
 			if (yPos < maxY) {
-				titlePos[i].y = yPos;
-				titlePos[i].x =
+				_titlePos[i].y = yPos;
+				_titlePos[i].x =
 				    textArea.x +
 				    ((textArea.width -
-				      TextWidth(textFont, titleStrings[i], -1, 0))
+				      TextWidth(_textFont, _titleStrings[i], -1, 0))
 				     >> 1);
-			} else titleCount = i;
+			} else _titleCount = i;
 		}
-	} else titleCount = 0;
+	} else _titleCount = 0;
 }
 
 int16 CPlacardWindow:: SplitString(
@@ -1320,14 +1320,14 @@ bool CPlacardWindow::pointerHit(gPanelMessage &) {
 	requestInfo     *ri;
 
 	win = getWindow();      // get the window pointer
-	ri = win ? (requestInfo *)win->userData : nullptr;
+	ri = win ? (requestInfo *)win->_userData : nullptr;
 
 	if (ri) {
 		ri->running = 0;
-		ri->result  = id;
+		ri->result  = _id;
 	}
 
-	//activate( gEventMouseDown );
+	//activate( kEventMouseDown );
 	return true;
 }
 
@@ -1354,16 +1354,16 @@ void CPlacardWindow::drawClipped(
 	rect.width  = _extent.width;
 	rect.height = _extent.height;
 
-	for (i = 0; i < titleCount; i++) {
-		Point16 textPos     = origin + titlePos[i];
+	for (i = 0; i < _titleCount; i++) {
+		Point16 textPos     = origin + _titlePos[i];
 
 		writePlaqTextPos(port,
 		                 textPos,
-		                 textFont,
+		                 _textFont,
 		                 0,
-		                 textPal,
+		                 _textPal,
 		                 false,
-		                 titleStrings[i]);
+		                 _titleStrings[i]);
 	}
 }
 
@@ -1382,31 +1382,31 @@ void CPlacardPanel::positionText(const char *windowText, const Rect16 &textArea)
 		        yPos,
 		        maxY;
 
-		int16   fontHeight = buttonFont->height;
+		int16   fontHeight = _buttonFont->height;
 
 		// make a copy of the window text string
-		sprintf(titleBuf, "%s", windowText);
+		Common::sprintf_s(_titleBuf, "%s", windowText);
 
 		//  break up the title text string
-		titleCount = SplitString(titleBuf, titleStrings, maxLines, '\n');
+		_titleCount = SplitString(_titleBuf, _titleStrings, kMaxLines, '\n');
 
 		yPos = textArea.y +
-		       ((textArea.height - titleCount * fontHeight) >> 1);
+		       ((textArea.height - _titleCount * fontHeight) >> 1);
 		yPos = MAX(yPos, textArea.y);
 
 		maxY = textArea.y + textArea.height - fontHeight;
 
-		for (i = 0; i < titleCount; i++, yPos += fontHeight) {
+		for (i = 0; i < _titleCount; i++, yPos += fontHeight) {
 			if (yPos < maxY) {
-				titlePos[i].y = yPos;
-				titlePos[i].x =
+				_titlePos[i].y = yPos;
+				_titlePos[i].x =
 				    textArea.x +
 				    ((textArea.width -
-				      TextWidth(buttonFont, titleStrings[i], -1, 0))
+				      TextWidth(_buttonFont, _titleStrings[i], -1, 0))
 				     >> 1);
-			} else titleCount = i;
+			} else _titleCount = i;
 		}
-	} else titleCount = 0;
+	} else _titleCount = 0;
 }
 
 int16 CPlacardPanel:: SplitString(
@@ -1445,16 +1445,16 @@ void CPlacardPanel::drawClipped(
 	rect.width  = _extent.width;
 	rect.height = _extent.height;
 
-	for (i = 0; i < titleCount; i++) {
-		Point16 textPos     = origin + titlePos[i];
+	for (i = 0; i < _titleCount; i++) {
+		Point16 textPos     = origin + _titlePos[i];
 
 		writePlaqTextPos(port,
 		                 textPos,
-		                 buttonFont,
+		                 _buttonFont,
 		                 0,
-		                 textFacePal,
+		                 _textFacePal,
 		                 false,
-		                 titleStrings[i]);
+		                 _titleStrings[i]);
 	}
 }
 
@@ -1562,7 +1562,7 @@ void placardWindow(int8 type, char *text) {
 	}
 
 
-	win->userData = &rInfo;
+	win->_userData = &rInfo;
 	win->open();
 
 
@@ -1600,11 +1600,11 @@ APPFUNC(cmdDialogQuit) {
 
 	if (ev.panel && isUserAction(ev) && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : nullptr;
+		ri = win ? (requestInfo *)win->_userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
-			ri->result = ev.panel->id;
+			ri->result = ev.panel->_id;
 		}
 	}
 }
@@ -1616,7 +1616,7 @@ APPFUNC(cmdFileSave) {
 	if (ev.panel && isUserAction(ev) && ev.value) {
 		// now close the window
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : nullptr;
+		ri = win ? (requestInfo *)win->_userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
@@ -1634,7 +1634,7 @@ APPFUNC(cmdFileSave) {
 #else
 		deferredLoadID = saveIndex;
 		deferredSaveFlag = true;
-		strcpy(deferredSaveName, textBox->getLine(saveIndex));
+		Common::strcpy_s(deferredSaveName, textBox->getLine(saveIndex));
 #endif
 	}
 }
@@ -1653,7 +1653,7 @@ APPFUNC(cmdFileLoad) {
 
 			// close window
 			win = ev.panel->getWindow();        // get the window pointer
-			ri = win ? (requestInfo *)win->userData : nullptr;
+			ri = win ? (requestInfo *)win->_userData : nullptr;
 
 			if (ri) {
 				ri->running = 0;
@@ -1696,11 +1696,11 @@ APPFUNC(cmdOptionsNewGame) {
 		gWindow         *win;
 		requestInfo     *ri;
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : nullptr;
+		ri = win ? (requestInfo *)win->_userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
-			ri->result = ev.panel->id;
+			ri->result = ev.panel->_id;
 			deferredLoadID = 999;
 			deferredLoadFlag = true;
 		}
@@ -1716,11 +1716,11 @@ APPFUNC(cmdOptionsLoadGame) {
 		// if the fileDialog actually did loading
 		if (FileDialog(typeLoad) == typeLoad) {
 			win = ev.panel->getWindow();        // get the window pointer
-			ri = win ? (requestInfo *)win->userData : nullptr;
+			ri = win ? (requestInfo *)win->_userData : nullptr;
 
 			if (ri) {
 				ri->running = 0;
-				ri->result = ev.panel->id;
+				ri->result = ev.panel->_id;
 			}
 		}
 	}
@@ -1732,7 +1732,7 @@ APPFUNC(cmdQuitGame) {
 
 	if (ev.panel && isUserAction(ev) && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
-		ri  = win ? (requestInfo *)win->userData : nullptr;
+		ri  = win ? (requestInfo *)win->_userData : nullptr;
 
 		if (ri
 		        &&  userDialog(
@@ -1743,7 +1743,7 @@ APPFUNC(cmdQuitGame) {
 			endGame();
 
 			ri->running = false;
-			ri->result = ev.panel->id;
+			ri->result = ev.panel->_id;
 		}
 	}
 

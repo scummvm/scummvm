@@ -23,7 +23,7 @@
 #define GRAPHICS_WINCURSOR_H
 
 #include "common/array.h"
-#include "common/winexe.h"
+#include "common/formats/winexe.h"
 
 #include "graphics/cursor.h"
 

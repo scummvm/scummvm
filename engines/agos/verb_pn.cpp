@@ -241,12 +241,12 @@ void AGOSEngine_PN::hitBox8(HitArea *ha) {
 		return;
 
 	msgPtr = getMessage(_objectName1, ha->msg1);
-	sprintf(_inMessage, " in %s", msgPtr);
+	Common::sprintf_s(_inMessage, " in %s", msgPtr);
 	_mouseString1 = _inMessage;
 
 	msgPtr = getMessage(_objectName1, _dragStore->msg1);
 	*(tmpPtr = strchr(msgPtr, 13)) = 0;
-	sprintf(_placeMessage, "put %s", msgPtr);
+	Common::sprintf_s(_placeMessage, "put %s", msgPtr);
 	_mouseString = _placeMessage;
 }
 

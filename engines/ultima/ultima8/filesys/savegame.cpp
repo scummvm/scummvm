@@ -25,7 +25,8 @@ namespace Ultima {
 namespace Ultima8 {
 
 #define SAVEGAME_IDENT MKTAG('V', 'M', 'U', '8')
-#define SAVEGAME_VERSION 5
+#define SAVEGAME_VERSION 6
+#define SAVEGAME_MIN_VERSION 2
 
 SavegameReader::SavegameReader(Common::SeekableReadStream *rs, bool metadataOnly) : _file(rs), _version(0) {
 	if (!MetaEngine::readSavegameHeader(rs, &_header))
@@ -63,12 +64,12 @@ SavegameReader::~SavegameReader() {
 SavegameReader::State SavegameReader::isValid() const {
 	if (_version == 0)
 		return SAVE_CORRUPT;
-	else if (_version < SAVEGAME_VERSION)
+	else if (_version < SAVEGAME_MIN_VERSION)
 		return SAVE_OUT_OF_DATE;
 	else if (_version > SAVEGAME_VERSION)
 		return SAVE_TOO_RECENT;
-	else
-		return SAVE_VALID;
+
+	return SAVE_VALID;
 }
 
 Common::SeekableReadStream *SavegameReader::getDataSource(const Std::string &name) {

@@ -176,17 +176,17 @@ const char *text_of(const char *string) {
 	} else if ((resolved_integer = integer_resolve(string)) != nullptr) {
 		value_has_been_resolved = FALSE;
 		integer_buffer[0] = 0;
-		sprintf(integer_buffer, "%d", resolved_integer->value);
+		Common::sprintf_s(integer_buffer, "%d", resolved_integer->value);
 		return (integer_buffer);
 	} else if ((resolved_cinteger = cinteger_resolve(string)) != nullptr) {
 		value_has_been_resolved = FALSE;
 		integer_buffer[0] = 0;
-		sprintf(integer_buffer, "%d", resolved_cinteger->value);
+		Common::sprintf_s(integer_buffer, "%d", resolved_cinteger->value);
 		return (integer_buffer);
 	} else if (object_element_resolve(string)) {
 		value_has_been_resolved = FALSE;
 		integer_buffer[0] = 0;
-		sprintf(integer_buffer, "%d", oec);
+		Common::sprintf_s(integer_buffer, "%d", oec);
 		return (integer_buffer);
 	} else if ((index = object_resolve(string)) != -1) {
 		value_has_been_resolved = FALSE;
@@ -202,7 +202,7 @@ const char *text_of(const char *string) {
 		return (resolved_cstring->value);
 	} else if (function_resolve(string) != nullptr) {
 		value_has_been_resolved = FALSE;
-		sprintf(integer_buffer, "%d", execute(string));
+		Common::sprintf_s(integer_buffer, "%d", execute(string));
 		return (integer_buffer);
 #ifndef GLK
 #ifndef __NDS__
@@ -745,12 +745,12 @@ const char *expand_function(const char *name) {
 	        object_element_resolve(&expression[delimiter])) {
 		/* THE DELIMETER RESOLVES TO A CONSTANT, VARIABLE OR OBJECT
 		 * ELEMENT, SO TAKE NOTE OF THAT */
-		sprintf(function_name, "%ld", value_of(&expression[delimiter], TRUE));
+		Common::sprintf_s(function_name, 81, "%ld", value_of(&expression[delimiter], TRUE));
 	} else {
-		strcpy(function_name, &expression[delimiter]);
+		Common::strcpy_s(function_name, 81, &expression[delimiter]);
 	}
-	strcat(function_name, "_");
-	strcat(function_name, object[index]->label);
+	Common::strcat_s(function_name, 81, "_");
+	Common::strcat_s(function_name, 81, object[index]->label);
 
 	return ((const char *) function_name);
 }
@@ -872,9 +872,10 @@ char *macro_resolve(const char *testString) {
 			return (nullptr);
 		} else {
 			if (object[index]->attributes & PLURAL) {
-				strcpy(temp_buffer, "");
+				temp_buffer[0] = '\0';
 			} else {
-				strcpy(temp_buffer, "s");
+				temp_buffer[0] = 's';
+				temp_buffer[1] = '\0';
 			}
 			return (temp_buffer);
 		}
@@ -970,11 +971,11 @@ char *macro_resolve(const char *testString) {
 			return (sentence_output(index, TRUE));
 		}
 	} else {
-		strcpy(macro_function, "+macro_");
-		strcat(macro_function, &expression[delimiter]);
-		strcat(macro_function, "<");
-		sprintf(temp_buffer, "%d", index);
-		strcat(macro_function, temp_buffer);
+		Common::strcpy_s(macro_function, "+macro_");
+		Common::strcat_s(macro_function, &expression[delimiter]);
+		Common::strcat_s(macro_function, "<");
+		Common::sprintf_s(temp_buffer, 1024, "%d", index);
+		Common::strcat_s(macro_function, temp_buffer);
 
 		// BUILD THE FUNCTION NAME AND PASS THE OBJECT AS
 		// THE ONLY ARGUMENT
@@ -1147,7 +1148,7 @@ int object_element_resolve(const char *testString) {
 	counter = value_of(&expression[delimiter], TRUE);
 
 	if (counter < 0 || counter > 15) {
-		sprintf(error_buffer,
+		Common::sprintf_s(error_buffer, 1024,
 		        "ERROR: In function \"%s\", element \"%s\" out of range (%d).^",
 		        executing_function->name, &expression[delimiter], counter);
 		write_text(error_buffer);
@@ -1177,7 +1178,7 @@ int object_resolve(const char *object_string) {
 	else if (!strcmp(object_string, "self") ||
 	         !strcmp(object_string, "this")) {
 		if (executing_function != nullptr && executing_function->self == 0) {
-			sprintf(error_buffer,
+			Common::sprintf_s(error_buffer, 1024,
 			        "ERROR: Reference to 'self' from global function \"%s\".^",
 			        executing_function->name);
 			write_text(error_buffer);

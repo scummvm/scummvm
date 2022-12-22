@@ -168,6 +168,7 @@ public:
 	GobConsole *_console;
 
 	bool _resourceSizeWorkaround;
+	bool _enableAdibou2FreeBananasWorkaround;
 
 	Global *_global;
 	Util *_util;

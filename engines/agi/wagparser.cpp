@@ -24,7 +24,7 @@
 #include "common/fs.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 
 #include "agi/wagparser.h"
 
@@ -55,7 +55,7 @@ void WagProperty::deepCopy(const WagProperty &other) {
 	_propSize = other._propSize;
 
 	if (other._propData != nullptr) {
-		_propData = new char[other._propSize + 1UL]; // Allocate space for property's data plus trailing zero
+		_propData = (char *)calloc(other._propSize + 1UL, 1); // Allocate space for property's data plus trailing zero
 		memcpy(_propData, other._propData, other._propSize + 1UL); // Copy the whole thing
 	}
 }
@@ -73,7 +73,7 @@ bool WagProperty::read(Common::SeekableReadStream &stream) {
 	}
 
 	// Then read the property's data
-	_propData = new char[_propSize + 1UL]; // Allocate space for property's data plus trailing zero
+	_propData = (char *)calloc(_propSize + 1UL, 1); // Allocate space for property's data plus trailing zero
 	uint32 readBytes = stream.read(_propData, _propSize); // Read the data in
 	_propData[_propSize] = 0; // Set the trailing zero for easy C-style string access
 
@@ -97,7 +97,7 @@ void WagProperty::setDefaults() {
 
 void WagProperty::deleteData() {
 	if (_propData)
-		delete[] _propData;
+		free(_propData);
 	_propData = nullptr;
 }
 

@@ -40,6 +40,8 @@ Hacks::Hacks() {
 	removeQuickTimeEdits = false;
 	midiVolumeScale = 256;
 	minTransitionDuration = 0;
+	ignoreMToonMaintainRateFlag = false;
+	mtiVariableReferencesHack = false;
 }
 
 Hacks::~Hacks() {
@@ -84,10 +86,10 @@ void ObsidianCorruptedAirTowerTransitionFix::onLoaded(Asset *asset, const Common
 
 class ObsidianInventoryWindscreenHooks : public StructuralHooks {
 public:
-	void onSetPosition(Structural *structural, Common::Point &pt) override;
+	void onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt) override;
 };
 
-void ObsidianInventoryWindscreenHooks::onSetPosition(Structural *structural, Common::Point &pt) {
+void ObsidianInventoryWindscreenHooks::onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt) {
 	if (pt.y < 480) {
 		// Set direct to screen so it draws over cinematics
 		static_cast<VisualElement *>(structural)->setDirectToScreen(true);
@@ -99,13 +101,13 @@ void ObsidianInventoryWindscreenHooks::onSetPosition(Structural *structural, Com
 
 class ObsidianSecurityFormWidescreenHooks : public StructuralHooks {
 public:
-	void onSetPosition(Structural *structural, Common::Point &pt) override;
+	void onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt) override;
 
 private:
 	Common::Array<uint32> _hiddenCards;
 };
 
-void ObsidianSecurityFormWidescreenHooks::onSetPosition(Structural *structural, Common::Point &pt) {
+void ObsidianSecurityFormWidescreenHooks::onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt) {
 	bool cardVisibility = (pt.y > 480);
 
 	// Originally tried manipulating layer order but that's actually not a good solution because
@@ -138,11 +140,11 @@ void ObsidianSecurityFormWidescreenHooks::onSetPosition(Structural *structural, 
 
 			if (cardVisibility) {
 				if (Common::find(_hiddenCards.begin(), _hiddenCards.end(), card->getStaticGUID()) != _hiddenCards.end())
-					card->setVisible(true);
+					card->setVisible(runtime, true);
 			} else {
 				if (card->isVisible()) {
 					_hiddenCards.push_back(card->getStaticGUID());
-					card->setVisible(false);
+					card->setVisible(runtime, false);
 				}
 			}
 		}
@@ -156,20 +158,20 @@ class ObsidianRSGLogoAnamorphicFilter : public MovieResizeFilter {
 public:
 	ObsidianRSGLogoAnamorphicFilter();
 
-	Common::SharedPtr<Graphics::Surface> scaleFrame(const Graphics::Surface &surface, uint32 timestamp) const override;
+	Common::SharedPtr<Graphics::ManagedSurface> scaleFrame(const Graphics::Surface &surface, uint32 timestamp) const override;
 
 private:
 	template<class TPixel>
-	void anamorphicScaleFrameTyped(const Graphics::Surface &src, Graphics::Surface &dest) const;
+	void anamorphicScaleFrameTyped(const Graphics::Surface &src, Graphics::ManagedSurface &dest) const;
 
 	static double anamorphicCurve(double d);
 	static double inverseAnamorphicCurve(double d);
 
 	template<class TPixel>
-	void halveWidthTyped(const Graphics::Surface &src, Graphics::Surface &dest) const;
+	void halveWidthTyped(const Graphics::ManagedSurface &src, Graphics::ManagedSurface &dest) const;
 
 	template<class TPixel>
-	void halveHeightTyped(const Graphics::Surface &src, Graphics::Surface &dest) const;
+	void halveHeightTyped(const Graphics::ManagedSurface &src, Graphics::ManagedSurface &dest) const;
 
 	Common::Array<uint> _xCoordinates;
 	Common::Array<uint> _yCoordinates;
@@ -244,7 +246,7 @@ ObsidianRSGLogoAnamorphicFilter::ObsidianRSGLogoAnamorphicFilter() {
 }
 
 template<class TPixel>
-void ObsidianRSGLogoAnamorphicFilter::anamorphicScaleFrameTyped(const Graphics::Surface &src, Graphics::Surface &dest) const {
+void ObsidianRSGLogoAnamorphicFilter::anamorphicScaleFrameTyped(const Graphics::Surface &src, Graphics::ManagedSurface &dest) const {
 	const uint width = _xCoordinates.size();
 	const uint height = _yCoordinates.size();
 
@@ -272,7 +274,7 @@ double ObsidianRSGLogoAnamorphicFilter::inverseAnamorphicCurve(double d) {
 }
 
 template<class TPixel>
-void ObsidianRSGLogoAnamorphicFilter::halveWidthTyped(const Graphics::Surface &src, Graphics::Surface &dest) const {
+void ObsidianRSGLogoAnamorphicFilter::halveWidthTyped(const Graphics::ManagedSurface &src, Graphics::ManagedSurface &dest) const {
 	const uint widthHigh = src.w;
 	const uint widthLow = dest.w;
 	const uint height = src.h;
@@ -302,7 +304,7 @@ void ObsidianRSGLogoAnamorphicFilter::halveWidthTyped(const Graphics::Surface &s
 }
 
 template<class TPixel>
-void ObsidianRSGLogoAnamorphicFilter::halveHeightTyped(const Graphics::Surface &src, Graphics::Surface &dest) const {
+void ObsidianRSGLogoAnamorphicFilter::halveHeightTyped(const Graphics::ManagedSurface &src, Graphics::ManagedSurface &dest) const {
 	const uint heightHigh = src.h;
 	const uint heightLow = dest.h;
 	const uint width = src.w;
@@ -332,12 +334,12 @@ void ObsidianRSGLogoAnamorphicFilter::halveHeightTyped(const Graphics::Surface &
 	}
 }
 
-Common::SharedPtr<Graphics::Surface> ObsidianRSGLogoAnamorphicFilter::scaleFrame(const Graphics::Surface &surface, uint32 timestamp) const {
-	Common::SharedPtr<Graphics::Surface> result(new Graphics::Surface());
+Common::SharedPtr<Graphics::ManagedSurface> ObsidianRSGLogoAnamorphicFilter::scaleFrame(const Graphics::Surface &surface, uint32 timestamp) const {
+	Common::SharedPtr<Graphics::ManagedSurface> result(new Graphics::ManagedSurface());
 	result->create(_xCoordinates.size() / 2, _yCoordinates.size() / 2, surface.format);
 
-	Common::SharedPtr<Graphics::Surface> temp1(new Graphics::Surface());
-	Common::SharedPtr<Graphics::Surface> temp2(new Graphics::Surface());
+	Common::SharedPtr<Graphics::ManagedSurface> temp1(new Graphics::ManagedSurface());
+	Common::SharedPtr<Graphics::ManagedSurface> temp2(new Graphics::ManagedSurface());
 
 	temp1->create(_xCoordinates.size(), _yCoordinates.size(), surface.format);
 	temp2->create(_xCoordinates.size() / 2, _yCoordinates.size(), surface.format);
@@ -385,13 +387,13 @@ void ObsidianSaveScreenshotHooks::onSceneTransitionSetup(Runtime *runtime, const
 		Window *mainWindow = runtime->getMainWindow().lock().get();
 		if (mainWindow) {
 			Common::SharedPtr<Graphics::ManagedSurface> mainWindowSurface = mainWindow->getSurface();
-			Common::SharedPtr<Graphics::Surface> screenshot(new Graphics::Surface());
+			Common::SharedPtr<Graphics::ManagedSurface> screenshot(new Graphics::ManagedSurface());
 			screenshot->copyFrom(*mainWindowSurface);
 
 			runtime->setSaveScreenshotOverride(screenshot);
 		}
 	} else {
-		runtime->setSaveScreenshotOverride(Common::SharedPtr<Graphics::Surface>());
+		runtime->setSaveScreenshotOverride(Common::SharedPtr<Graphics::ManagedSurface>());
 	}
 }
 
@@ -790,7 +792,7 @@ void ObsidianAutoSaveVarsState::resyncAllVars(Runtime *runtime) {
 		const VariableModifier *var = findVar(runtime, it->_key);
 		if (var) {
 			DynamicValue varValue;
-			var->varGetValue(nullptr, varValue);
+			var->varGetValue(varValue);
 			assert(varValue.getType() == DynamicValueTypes::kBoolean);
 
 			it->_value = varValue.getBool();
@@ -852,7 +854,7 @@ void ObsidianAutoSaveSceneTransitionHooks::onSceneTransitionEnded(Runtime *runti
 			const VariableModifier *var = _varsState->findVar(runtime, varName);
 			if (var) {
 				DynamicValue varValue;
-				var->varGetValue(nullptr, varValue);
+				var->varGetValue(varValue);
 				assert(varValue.getType() == DynamicValueTypes::kBoolean);
 
 				passedLatchTest = varValue.getBool();
@@ -983,7 +985,7 @@ bool ObsidianSaveLoadMechanism::canSaveNow(Runtime *runtime) {
 		return false;
 
 	DynamicValue bEscValue;
-	static_cast<VariableModifier *>(bEscVar)->varGetValue(nullptr, bEscValue);
+	static_cast<VariableModifier *>(bEscVar)->varGetValue(bEscValue);
 
 	if (bEscValue.getType() != DynamicValueTypes::kBoolean || !bEscValue.getBool())
 		return false;
@@ -1016,6 +1018,32 @@ Common::SharedPtr<ISaveWriter> ObsidianSaveLoadMechanism::createSaveWriter(Runti
 void addObsidianSaveMechanism(const MTropolisGameDescription &desc, Hacks &hacks) {
 	Common::SharedPtr<ObsidianSaveLoadMechanism> mechanism(new ObsidianSaveLoadMechanism());
 	hacks.addSaveLoadMechanismHooks(mechanism);
+}
+
+void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
+	// MTI uses a lot of "maintain rate" mToons at 10Hz.  This means their frame timer resets on every frame advance, and
+	// is supposed to ensure that the mToon plays back at a smooth rate regardless of clock jitter.  Unfortunately, it
+	// does this with mToons that are synchronized to sounds, which is bad!  Presumably the reason this wasn't a problem
+	// is because MacOS runs with a 60Hz tick clock so it always divides evenly into the frame rate, and Windows... not sure.
+	//
+	// Anyway, there are two possible solutions to this: Lock the clock to 60Hz, or ignore the flag.
+	// Given that the flag should not be set, we ignore the flag.
+	hacks.ignoreMToonMaintainRateFlag = true;
+
+	// MTI initializes variables in a way that doesn't seem to match mTropolis behavior in any explicable way:
+	//
+	// For example, 0010cb0e "Scene Started => init Benbow" looks like this internally, decompiled:
+	// set local:a.billystate to 0
+	//
+	// In this case "a" is a compound variable and "billyState" is a NON-ALIASED integer variable contained in
+	// the compound.  Later, 0009fc9a "Scene Started => play intro" checks local 00007f83 00 'billyState'
+	// to determine if the Benbow intro needs to be played.  Since the GUID doesn't match (?) we check by name,
+	// which resolves to the GUID-less (?) alias in the Benbow subsection, which references 00097cf4, a different
+	// variable also named "billyState"
+	//
+	// Haven't figured out anything that would explain why it would reference the variables in the compound
+	// modifier.  Probably some quirk of early-version mTropolis.
+	hacks.mtiVariableReferencesHack = true;
 }
 
 } // End of namespace HackSuites

@@ -770,7 +770,8 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 			// In the Windows version of KQ6 CD, the empty kSetSynonyms
 			// function has been replaced with kPortrait. In KQ6 Mac,
 			// kPlayBack has been replaced by kShowMovie.
-			if ((g_sci->getPlatform() == Common::kPlatformWindows) || (g_sci->forceHiresGraphics()))
+			if ((g_sci->getPlatform() == Common::kPlatformWindows) || 
+				(g_sci->getPlatform() == Common::kPlatformDOS && g_sci->forceHiresGraphics()))
 				_kernelNames[0x26] = "Portrait";
 			else if (g_sci->getPlatform() == Common::kPlatformMacintosh)
 				_kernelNames[0x84] = "ShowMovie";

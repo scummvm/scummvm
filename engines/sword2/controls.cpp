@@ -1095,9 +1095,9 @@ public:
 	void setText(FontRendererGui *fr, int slot, byte *text) {
 		_fr = fr;
 		if (text)
-			sprintf((char *)_text, "%d.  %s", slot, text);
+			Common::sprintf_s(_text, "%d.  %s", slot, text);
 		else
-			sprintf((char *)_text, "%d.  ", slot);
+			Common::sprintf_s(_text, "%d.  ", slot);
 	}
 
 	byte *getText() {
@@ -1343,7 +1343,7 @@ void SaveRestoreDialog::onAction(Widget *widget, int result) {
 			else
 				_firstPos = 4;
 
-			strcpy((char *)_editBuffer, (char *)slot->getText());
+			Common::strcpy_s(_editBuffer, (char *)slot->getText());
 			_editPos = strlen((char *)_editBuffer);
 			_cursorTick = 0;
 			_editBuffer[_editPos] = '_';

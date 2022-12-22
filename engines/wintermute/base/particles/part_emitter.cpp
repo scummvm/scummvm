@@ -136,8 +136,9 @@ bool PartEmitter::addSprite(const char *filename) {
 		BaseFileManager::getEngineInstance()->closeFile(File);
 	}
 
-	char *str = new char[strlen(filename) + 1];
-	strcpy(str, filename);
+	size_t filenameSize = strlen(filename) + 1;
+	char *str = new char[filenameSize];
+	Common::strcpy_s(str, filenameSize, filename);
 	_sprites.add(str);
 
 	return STATUS_OK;

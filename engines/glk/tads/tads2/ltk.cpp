@@ -162,7 +162,7 @@ void ltk_dlg(const char *title, const char *msg, ...) {
 
 	/* get the printf args, build the message, and display it */
 	va_start(argp, msg);
-	vsprintf(outbuf, inbuf, argp);
+	Common::vsprintf_s(outbuf, inbuf, argp);
 
 	/* display the message */
 	error("%s", outbuf);

@@ -126,9 +126,9 @@ void OSystem_Dreamcast::DCPlugin::checkDisc(const DiscLabel &target)
 	return;
 
     char buf[32+24];
-    strcpy(buf, "Please insert disc '");
+    Common::strcpy_s(buf, "Please insert disc '");
     target.get(buf+strlen(buf));
-    strcat(buf, "'");
+    Common::strcat_s(buf, "'");
     DiscSwap(buf, 0xffffffff).run();
   }
 }

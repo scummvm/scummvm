@@ -321,16 +321,16 @@ bool Parser_v3d::isNear_v3(Object *obj, const char *verb, char *comment) const {
 	if (obj->_screenIndex != *_vm->_screenPtr) {
 		// Not in same screen
 		if (obj->_objValue)
-			strcpy(comment, _vm->_text->getTextParser(kCmtAny1));
+			Common::strcpy_s(comment, kCompLineSize * 5, _vm->_text->getTextParser(kCmtAny1));
 		else
-			strcpy(comment, _vm->_text->getTextParser(kCmtAny2));
+			Common::strcpy_s(comment, kCompLineSize * 5, _vm->_text->getTextParser(kCmtAny2));
 		return false;
 	}
 
 	if (obj->_cycling == kCycleInvisible) {
 		if (obj->_seqNumb) {
 			// There is an image
-			strcpy(comment, _vm->_text->getTextParser(kCmtAny3));
+			Common::strcpy_s(comment, kCompLineSize * 5, _vm->_text->getTextParser(kCmtAny3));
 			return false;
 		} else {
 			// No image, assume visible
@@ -341,9 +341,9 @@ bool Parser_v3d::isNear_v3(Object *obj, const char *verb, char *comment) const {
 			} else {
 				// User is not close enough
 				if (obj->_objValue && (verb != _vm->_text->getVerb(_vm->_take, 0)))
-					strcpy(comment, _vm->_text->getTextParser(kCmtAny1));
+					Common::strcpy_s(comment, kCompLineSize * 5, _vm->_text->getTextParser(kCmtAny1));
 				else
-					strcpy(comment, _vm->_text->getTextParser(kCmtClose));
+					Common::strcpy_s(comment, kCompLineSize * 5, _vm->_text->getTextParser(kCmtClose));
 				return false;
 			}
 		}
@@ -356,9 +356,9 @@ bool Parser_v3d::isNear_v3(Object *obj, const char *verb, char *comment) const {
 	} else {
 		// User is not close enough
 		if (obj->_objValue && (verb != _vm->_text->getVerb(_vm->_take, 0)))
-			strcpy(comment, _vm->_text->getTextParser(kCmtAny1));
+			Common::strcpy_s(comment, kCompLineSize * 5, _vm->_text->getTextParser(kCmtAny1));
 		else
-			strcpy(comment, _vm->_text->getTextParser(kCmtClose));
+			Common::strcpy_s(comment, kCompLineSize * 5, _vm->_text->getTextParser(kCmtClose));
 		return false;
 	}
 	return true;

@@ -87,7 +87,7 @@ void NORETURN_PRE error(const char *s, ...) {
 	buf_output[STRINGBUFLEN - 3] = '\0';
 	buf_output[STRINGBUFLEN - 2] = '\0';
 	buf_output[STRINGBUFLEN - 1] = '\0';
-	strcat(buf_output, "!\n");
+	Common::strcat_s(buf_output, "!\n");
 
 	if (g_system)
 		g_system->logMessage(LogMessageType::kError, buf_output);

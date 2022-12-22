@@ -100,7 +100,7 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 	_vm->_actor->_objectsStrings.clear();
 
 	_vm->_resource->loadResource(resourceContext, _metaResource.objectsStringsResourceID, resourceData);
-	_vm->loadStrings(_vm->_actor->_objectsStrings, resourceData);
+	_vm->loadStrings(_vm->_actor->_objectsStrings, resourceData, _vm->isBigEndian());
 
 	if (uint(chapter) >= _vm->_sndRes->_fxTableIDs.size()) {
 		error("Chapter ID exceeds fxTableIDs length");
@@ -131,7 +131,7 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 	_vm->_actor->_actorsStrings.clear();
 
 	_vm->_resource->loadResource(resourceContext, _metaResource.actorsStringsResourceID, resourceData);
-	_vm->loadStrings(_vm->_actor->_actorsStrings, resourceData);
+	_vm->loadStrings(_vm->_actor->_actorsStrings, resourceData, _vm->isBigEndian());
 
 	_vm->_sprite->_inventorySprites.clear();
 	_vm->_sprite->loadList(_metaResource.inventorySpritesID, _vm->_sprite->_inventorySprites);
@@ -221,7 +221,7 @@ void ResourceContext_RES::processPatches(Resource *resource, const GamePatchDesc
 			patchResourceId = readS2.readUint32();
 			subjectResourceData = subjectContext->getResourceData(subjectResourceId);
 			resourceData = getResourceData(patchResourceId);
-			subjectResourceData->patchData = new PatchData(&_file, _fileName);
+			subjectResourceData->patchData = new PatchData(_file.get(), _fileName);
 			subjectResourceData->offset = resourceData->offset;
 			subjectResourceData->size = resourceData->size;
 		}

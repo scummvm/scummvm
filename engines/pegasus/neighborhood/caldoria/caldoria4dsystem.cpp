@@ -382,7 +382,7 @@ void Caldoria4DSystem::playSound(const Common::String &baseFileName) {
 	Common::String fileName = "Sounds/Caldoria/" + baseFileName;
 
 	// Updated DVD files
-	if (((PegasusEngine *)g_engine)->isDVD())
+	if (g_vm->isDVD())
 		fileName += ".44K";
 
 	_owner->loadLoopSound1(fileName + ".aiff");

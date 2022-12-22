@@ -69,6 +69,10 @@ enum Features {
 	kFeaturesTrueColor = 1 << 7
 };
 
+enum AdditionalGameFlags {
+	GF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND = 1 << 0
+};
+
 struct GOBGameDescription {
 	ADGameDescription desc;
 

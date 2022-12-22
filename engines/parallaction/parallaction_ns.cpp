@@ -158,7 +158,7 @@ Common::Error Parallaction_ns::init() {
 		_disk = new DosDisk_ns(this);
 	} else {
 		if (getFeatures() & GF_DEMO) {
-			strcpy(_location._name, "fognedemo");
+			Common::strcpy_s(_location._name, "fognedemo");
 		}
 		_disk = new AmigaDisk_ns(this);
 	}
@@ -492,7 +492,7 @@ void Parallaction_ns::changeCharacter(const char *name) {
 			parseLocation("common");
 	}
 
-	strcpy(_characterName1, _char.getFullName());
+	Common::strcpy_s(_characterName1, _char.getFullName());
 
 	debugC(3, kDebugExec, "changeCharacter: switch completed");
 

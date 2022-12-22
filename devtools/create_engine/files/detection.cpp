@@ -38,8 +38,8 @@ const DebugChannelDef XyzzyMetaEngineDetection::debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-XyzzyMetaEngineDetection::XyzzyMetaEngineDetection() : AdvancedMetaEngineDetection(Xyzzy::GAME_DESCRIPTIONS,
-	sizeof(ADGameDescription), Xyzzy::GAME_NAMES) {
+XyzzyMetaEngineDetection::XyzzyMetaEngineDetection() : AdvancedMetaEngineDetection(Xyzzy::gameDescriptions,
+	sizeof(ADGameDescription), Xyzzy::xyzzyGames) {
 }
 
 REGISTER_PLUGIN_STATIC(XYZZY_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, XyzzyMetaEngineDetection);

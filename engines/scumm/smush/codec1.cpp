@@ -24,28 +24,28 @@
 
 namespace Scumm {
 
-void smush_decode_codec1(byte *dst, const byte *src, int left, int top, int width, int height, int pitch) {
+void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch) {
 	byte val, code;
 	int32 length;
-	int h = height, size_line;
+	int h = height, lineSize;
 
 	dst += top * pitch;
 	for (h = 0; h < height; h++) {
-		size_line = READ_LE_UINT16(src);
+		lineSize = READ_LE_UINT16(src);
 		src += 2;
 		dst += left;
-		while (size_line > 0) {
+		while (lineSize > 0) {
 			code = *src++;
-			size_line--;
+			lineSize--;
 			length = (code >> 1) + 1;
 			if (code & 1) {
 				val = *src++;
-				size_line--;
+				lineSize--;
 				if (val)
 					memset(dst, val, length);
 				dst += length;
 			} else {
-				size_line -= length;
+				lineSize -= length;
 				while (length--) {
 					val = *src++;
 					if (val)

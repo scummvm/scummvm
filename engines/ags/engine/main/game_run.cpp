@@ -192,16 +192,16 @@ static void check_mouse_controls() {
 		remove_popup_interface(_G(ifacepopped));
 
 	// check mouse clicks on GUIs
-	if ((_G(wasbutdown) > 0) && (ags_misbuttondown(_G(wasbutdown) - 1))) {
+	if ((_G(wasbutdown) > kMouseNone) && (ags_misbuttondown(_G(wasbutdown)))) {
 		gui_on_mouse_hold(_G(wasongui), _G(wasbutdown));
-	} else if ((_G(wasbutdown) > 0) && (!ags_misbuttondown(_G(wasbutdown) - 1))) {
+	} else if ((_G(wasbutdown) > kMouseNone) && (!ags_misbuttondown(_G(wasbutdown)))) {
 		gui_on_mouse_up(_G(wasongui), _G(wasbutdown));
-		_G(wasbutdown) = 0;
+		_G(wasbutdown) = kMouseNone;
 	}
 
-	int mbut = MouseNone;
-	int mwheelz = 0;
-	if (run_service_mb_controls(mbut, mwheelz) && mbut >= 0) {
+	eAGSMouseButton mbut;
+	int mwheelz;
+	if (run_service_mb_controls(mbut, mwheelz) && mbut > kMouseNone) {
 
 		check_skip_cutscene_mclick(mbut);
 
@@ -214,17 +214,17 @@ static void check_mouse_controls() {
 				_GP(play).SetWaitSkipResult(SKIP_MOUSECLICK, mbut);
 			}
 		} else if (!IsInterfaceEnabled());  // blocking cutscene, ignore mouse
-		else if (pl_run_plugin_hooks(AGSE_MOUSECLICK, mbut + 1)) {
+		else if (pl_run_plugin_hooks(AGSE_MOUSECLICK, mbut)) {
 			// plugin took the click
-			debug_script_log("Plugin handled mouse button %d", mbut + 1);
+			debug_script_log("Plugin handled mouse button %d", mbut);
 		} else if (mongu >= 0) {
-			if (_G(wasbutdown) == 0) {
-				gui_on_mouse_down(mongu, mbut + 1);
+			if (_G(wasbutdown) == kMouseNone) {
+				gui_on_mouse_down(mongu, mbut);
 			}
 			_G(wasongui) = mongu;
-			_G(wasbutdown) = mbut + 1;
+			_G(wasbutdown) = mbut;
 		} else
-			setevent(EV_TEXTSCRIPT, TS_MCLICK, mbut + 1);
+			setevent(EV_TEXTSCRIPT, TS_MCLICK, mbut);
 	}
 
 	if (mwheelz < 0)
@@ -256,6 +256,8 @@ bool run_service_key_controls(KeyInput &out_key) {
 	const bool is_only_mod_key = key_evt.type == Common::EVENT_KEYDOWN ?
 		is_mod_key(key_evt.kbd.keycode) : false;
 
+	out_key = KeyInput(); // reset to default
+
 	// Following section is for testing for pushed and released mod-keys.
 	// A bit of explanation: some service actions may require combination of
 	// mod-keys, for example [Ctrl + Alt] toggles mouse lock in window.
@@ -269,7 +271,7 @@ bool run_service_key_controls(KeyInput &out_key) {
 	// * if no other key was pressed meanwhile,
 	// * if at least one of those gathered mod-keys was released.
 	//
-	// TODO: maybe split this mod handling into sep procedure and make it easier to use (not that it's used alot)?
+	// TODO: maybe split this mod handling into sep procedure and make it easier to use (not that it's used a lot)?
 
 	// First, check mods
 	const int cur_mod = make_merged_mod(key_evt.kbd.flags);
@@ -312,7 +314,7 @@ bool run_service_key_controls(KeyInput &out_key) {
 	if (ki.Key == eAGSKeyCodeNone)
 		return false; // should skip this key event
 
-	// Use backward-compatible combined key for service checks
+	// Use backward-compatible combined key for special controls
 	eAGSKeyCode agskey = ki.CompatKey;
 	// LAlt or RAlt + Enter/Return
 	if ((cur_mod == Common::KBD_ALT) && agskey == eAGSKeyCodeReturn) {
@@ -321,7 +323,7 @@ bool run_service_key_controls(KeyInput &out_key) {
 	}
 
 	// Alt+X, abort (but only once game is loaded)
-	if ((_G(displayed_room) >= 0) && (_GP(play).abort_key > 0 && agskey == _GP(play).abort_key)) {
+	if ((_G(displayed_room) >= 0) && (agskey == _GP(play).abort_key)) {
 		Debug::Printf("Abort key pressed");
 		_G(check_dynamic_sprites_at_exit) = 0;
 		quit("!|");
@@ -342,7 +344,8 @@ bool run_service_key_controls(KeyInput &out_key) {
 	if ((agskey == eAGSKeyCodeCtrlD) && (_GP(play).debug_mode > 0)) {
 		// ctrl+D - show info
 		char infobuf[900];
-		sprintf(infobuf, "In room %d %s[Player at %d, %d (view %d, loop %d, frame %d)%s%s%s",
+		size_t ln = 0;
+		ln += Common::sprintf_s(infobuf, "In room %d %s[Player at %d, %d (view %d, loop %d, frame %d)%s%s%s",
 		        _G(displayed_room), (_G(noWalkBehindsAtAll) ? "(has no walk-behinds)" : ""), _G(playerchar)->x, _G(playerchar)->y,
 		        _G(playerchar)->view + 1, _G(playerchar)->loop, _G(playerchar)->frame,
 		        (IsGamePaused() == 0) ? "" : "[Game paused.",
@@ -350,7 +353,7 @@ bool run_service_key_controls(KeyInput &out_key) {
 		        (IsInterfaceEnabled() == 0) ? "[Game in Wait state" : "");
 		for (uint32_t ff = 0; ff < _G(croom)->numobj; ff++) {
 			if (ff >= 8) break; // buffer not big enough for more than 7
-			sprintf(&infobuf[strlen(infobuf)],
+			ln += Common::sprintf_s(&infobuf[ln], sizeof(infobuf) - ln,
 			        "[Object %d: (%d,%d) size (%d x %d) on:%d moving:%s animating:%d slot:%d trnsp:%d clkble:%d",
 			        ff, _G(objs)[ff].x, _G(objs)[ff].y,
 			        (_GP(spriteset)[_G(objs)[ff].num] != nullptr) ? _GP(game).SpriteInfos[_G(objs)[ff].num].Width : 0,
@@ -366,12 +369,13 @@ bool run_service_key_controls(KeyInput &out_key) {
 		for (int ff = 0; ff < _GP(game).numcharacters; ff++) {
 			if (_GP(game).chars[ff].room != _G(displayed_room)) continue;
 			if (strlen(bigbuffer) > 430) {
-				strcat(bigbuffer, "and more...");
+				Common::strcat_s(bigbuffer, "and more...");
 				Display(bigbuffer);
-				strcpy(bigbuffer, "CHARACTERS IN THIS ROOM (cont'd):[");
+				Common::strcpy_s(bigbuffer, "CHARACTERS IN THIS ROOM (cont'd):[");
 			}
 			chd = ff;
-			sprintf(&bigbuffer[strlen(bigbuffer)],
+			ln = strlen(bigbuffer);
+			Common::sprintf_s(&bigbuffer[ln], sizeof(bigbuffer) - ln,
 			        "%s (view/loop/frm:%d,%d,%d  x/y/z:%d,%d,%d  idleview:%d,time:%d,left:%d walk:%d anim:%d follow:%d flags:%X wait:%d zoom:%d)[",
 			        _GP(game).chars[chd].scrname, _GP(game).chars[chd].view + 1, _GP(game).chars[chd].loop, _GP(game).chars[chd].frame,
 			        _GP(game).chars[chd].x, _GP(game).chars[chd].y, _GP(game).chars[chd].z,
@@ -398,14 +402,12 @@ bool run_service_key_controls(KeyInput &out_key) {
 	return true;
 }
 
-bool run_service_mb_controls(int &mbut, int &mwheelz) {
-	int mb = ags_mgetbutton();
-	int mz = ags_check_mouse_wheel();
-	if (mb == MouseNone && mz == 0)
+bool run_service_mb_controls(eAGSMouseButton &mbut, int &mwheelz) {
+	mbut = ags_mgetbutton();
+	mwheelz = ags_check_mouse_wheel();
+	if (mbut == kMouseNone && mwheelz == 0)
 		return false;
-	lock_mouse_on_click(); // do not claim
-	mbut = mb;
-	mwheelz = mz;
+	lock_mouse_on_click();
 	return true;
 }
 
@@ -417,9 +419,10 @@ static void check_keyboard_controls() {
 	if (!run_service_key_controls(ki)) {
 		return;
 	}
-	eAGSKeyCode kgn = ki.Key;
+	// Use backward-compatible combined key for special controls
+	const eAGSKeyCode agskey = ki.CompatKey;
 	// Then, check cutscene skip
-	check_skip_cutscene_keypress(kgn);
+	check_skip_cutscene_keypress(agskey);
 	if (_GP(play).fast_forward) {
 		return;
 	}
@@ -427,9 +430,9 @@ static void check_keyboard_controls() {
 		return;
 	}
 	// Now check for in-game controls
-	if (pl_run_plugin_hooks(AGSE_KEYPRESS, kgn)) {
+	if (pl_run_plugin_hooks(AGSE_KEYPRESS, agskey)) {
 		// plugin took the keypress
-		debug_script_log("Keypress code %d taken by plugin", kgn);
+		debug_script_log("Keypress code %d taken by plugin", agskey);
 		return;
 	}
 
@@ -438,11 +441,10 @@ static void check_keyboard_controls() {
 		// only allow a key to remove the overlay if the icon bar isn't up
 		if (IsGamePaused() == 0) {
 			// check if it requires a specific keypress
-			if ((_GP(play).skip_speech_specific_key > 0) &&
-				(kgn != _GP(play).skip_speech_specific_key)) {
-			} else {
+			if ((_GP(play).skip_speech_specific_key == 0) ||
+				(agskey == _GP(play).skip_speech_specific_key)) {
 				remove_screen_overlay(_GP(play).text_overlay_on);
-				_GP(play).SetWaitSkipResult(SKIP_KEYPRESS, kgn);
+				_GP(play).SetWaitKeySkip(ki);
 			}
 		}
 
@@ -450,13 +452,13 @@ static void check_keyboard_controls() {
 	}
 
 	if ((_GP(play).wait_counter != 0) && (_GP(play).key_skip_wait & SKIP_KEYPRESS) != 0) {
-		_GP(play).SetWaitSkipResult(SKIP_KEYPRESS, kgn);
+		_GP(play).SetWaitKeySkip(ki);
 		return;
 	}
 
 	if (_G(inside_script)) {
 		// Don't queue up another keypress if it can't be run instantly
-		debug_script_log("Keypress %d ignored (game blocked)", kgn);
+		debug_script_log("Keypress %d ignored (game blocked)", agskey);
 		return;
 	}
 
@@ -466,8 +468,9 @@ static void check_keyboard_controls() {
 	// it should do if a displayable character (32-255) is
 	// pressed, but exclude control characters (<32) and
 	// extended keys (eg. up/down arrow; 256+)
-	if ((((kgn >= 32) && (kgn <= 255) && (kgn != '[')) || (kgn == eAGSKeyCodeReturn) || (kgn == eAGSKeyCodeBackspace))
-			&& (_G(all_buttons_disabled) < 0)) {
+	if ( (((agskey >= 32) && (agskey <= 255) && (agskey != '[')) ||
+			(agskey == eAGSKeyCodeReturn) || (agskey == eAGSKeyCodeBackspace))
+		&& (_G(all_buttons_disabled) < 0)) {
 		for (int guiIndex = 0; guiIndex < _GP(game).numgui; guiIndex++) {
 			auto &gui = _GP(guis)[guiIndex];
 
@@ -505,17 +508,17 @@ static void check_keyboard_controls() {
 	}
 
 	// Built-in key-presses
-	if (kgn == _GP(usetup).key_save_game) {
+	if (agskey == _GP(usetup).key_save_game) {
 		do_save_game_dialog();
 		return;
-	} else if (kgn == _GP(usetup).key_restore_game) {
+	} else if (agskey == _GP(usetup).key_restore_game) {
 		do_restore_game_dialog();
 		return;
 	}
 
 	if (!keywasprocessed) {
-		int sckey = AGSKeyToScriptKey(kgn);
-		int sckeymod = ki.Mod;
+		const int sckey = AGSKeyToScriptKey(ki.Key);
+		const int sckeymod = ki.Mod;
 		if (old_keyhandle || (ki.UChar == 0)) {
 			debug_script_log("Running on_key_press keycode %d, mod %d", sckey, sckeymod);
 			setevent(EV_TEXTSCRIPT, TS_KEYPRESS, sckey, sckeymod);

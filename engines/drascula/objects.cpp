@@ -102,7 +102,7 @@ void DrasculaEngine::checkObjects() {
 
 	for (l = 0; l < numRoomObjs; l++) {
 		if (_objectRect[l].contains(Common::Point(_mouseX, _mouseY)) && visible[l] == 1 && isDoor[l] == 0) {
-			strcpy(textName, objName[l]);
+			Common::strcpy_s(textName, objName[l]);
 			_hasName = true;
 		}
 	}
@@ -110,7 +110,7 @@ void DrasculaEngine::checkObjects() {
 	if (_mouseX > curX + 2 && _mouseY > curY + 2
 			&& _mouseX < curX + curWidth - 2 && _mouseY < curY + curHeight - 2) {
 		if (currentChapter == 2 || !_hasName) {
-			strcpy(textName, _textmisc[3]); // "hacker"
+			Common::strcpy_s(textName, _textmisc[3]); // "hacker"
 			_hasName = true;
 		}
 	}

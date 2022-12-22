@@ -84,6 +84,24 @@ BASESTRING::BaseString(const BASESTRING &str)
 	assert(_str != nullptr);
 }
 
+
+TEMPLATE
+BASESTRING::BaseString(BASESTRING &&str) : _size(str._size) {
+	if (str.isStorageIntern()) {
+		// String in internal storage: copy it
+		memcpy(_storage, str._storage, _builtinCapacity * sizeof(value_type));
+		_str = _storage;
+	} else {
+		// String in external storage: Take the reference
+		_extern = str._extern;
+		_str = str._str;
+	}
+
+	str._str = str._storage;
+	str._storage[0] = 0;
+	str._size = 0;
+}
+
 TEMPLATE BASESTRING::BaseString(const value_type *str) : _size(0), _str(_storage) {
 	if (str == nullptr) {
 		_storage[0] = 0;
@@ -515,6 +533,27 @@ TEMPLATE void BASESTRING::assign(const BaseString &str) {
 		_size = str._size;
 		_str = str._str;
 	}
+}
+
+TEMPLATE void BASESTRING::assign(BaseString &&str) {
+	if (&str == this)
+		return;
+
+	decRefCount(_extern._refCount);
+
+	if (str.isStorageIntern()) {
+		_str = _storage;
+		memcpy(_str, str._str, _builtinCapacity * sizeof(value_type));
+	} else {
+		_extern = str._extern;
+		_str = str._str;
+	}
+
+	_size = str._size;
+
+	str._storage[0] = 0;
+	str._size = 0;
+	str._str = str._storage;
 }
 
 TEMPLATE void BASESTRING::assign(value_type c) {

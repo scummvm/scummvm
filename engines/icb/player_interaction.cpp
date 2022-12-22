@@ -187,7 +187,7 @@ void _player::Find_current_player_interact_object() {
 								mega_id = j + 1;
 								dead_mega = TRUE8; // chosen a dead mega
 							}
-						} else if (!MS->logic_structs[j]->mega->dead) { // must belive if we're stood
+						} else if (!MS->logic_structs[j]->mega->dead) { // must believe if we're stood
 							evil_chosen = MS->logic_structs[j]->mega->is_evil;
 							nearest_mega = len;
 							mega_id = j + 1;

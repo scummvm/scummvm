@@ -356,6 +356,21 @@
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
+{ // Supplied by indy4fan in bug report #13100. Orig title: "Der Mandarin-Prinz"
+	{
+		"playtoons4",
+		"",
+		AD_ENTRY2s("playtoon.stk",	"f853153e9be33b9e0ec6970d05642e51", 30448480,
+				   "manda.stk",		"fb65d32f43ade3ff573a8534d5a1a91e", 6492732),
+		DE_DEU,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
+	},
+	kGameTypePlaytoons,
+	kFeatures640x480,
+	"intro2.stk", 0, 0
+},
 { //Supplied by goodoldgeorg in bug report #4390
 	{
 		"playtoons4",
@@ -381,6 +396,21 @@
 		AD_ENTRY2s("playtoon.stk",	"55f0293202963854192e39474e214f5f", 30448474,
 				   "wakan.stk",		"f493bf82851bc5ba74d57de6b7e88df8", 5520153),
 		FR_FRA,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
+	},
+	kGameTypePlaytoons,
+	kFeatures640x480,
+	"intro2.stk", 0, 0
+},
+{ // Supplied by indy4fan in bug report #13099. Orig title: "Der Stein von Wakan"
+	{
+		"playtoons5",
+		"",
+		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
+				   "wakan.stk",		"5518139580becd8c49bbfbdd4f49187a", 5523417),
+		DE_DEU,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)

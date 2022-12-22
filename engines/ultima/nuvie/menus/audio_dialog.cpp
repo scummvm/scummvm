@@ -96,7 +96,7 @@ bool AudioDialog::init() {
 	const char *const yes_no_text[] = { "no", "yes" };
 
 	uint8 music_percent = round(sm->get_music_volume() / 2.55); // round needed for 10%, 30%, etc.
-	sprintf(musicBuff, "%u%%", music_percent);
+	Common::sprintf_s(musicBuff, "%u%%", music_percent);
 	const char *const musicVol_text[] = { "0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%", musicBuff };
 
 	if (music_percent % 10 == 0) {
@@ -108,7 +108,7 @@ bool AudioDialog::init() {
 	}
 
 	uint8 sfx_percent = round(sm->get_sfx_volume() / 2.55); // round needed for 10%, 30%, etc.
-	sprintf(sfxBuff, "%u%%", sfx_percent);
+	Common::sprintf_s(sfxBuff, "%u%%", sfx_percent);
 	const char *const sfxVol_text[] = { "0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%", sfxBuff };
 
 	if (sfx_percent % 10 == 0) {

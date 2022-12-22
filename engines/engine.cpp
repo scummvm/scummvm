@@ -219,7 +219,7 @@ void initCommonGFX() {
 			g_system->setScaler(ConfMan.get("scaler").c_str(), ConfMan.getInt("scale_factor"));
 
 		if (gameDomain->contains("shader"))
-			g_system->setShader(ConfMan.get("shader").c_str());
+			g_system->setShader(ConfMan.get("shader"));
 	}
 }
 
@@ -464,12 +464,12 @@ void GUIErrorMessageFormat(const char *fmt, ...) {
 	GUIErrorMessage(msg);
 }
 
-void GUIErrorMessageFormat(Common::U32String fmt, ...) {
+void GUIErrorMessageFormatU32StringPtr(const Common::U32String *fmt, ...) {
 	Common::U32String msg("");
 
 	va_list va;
 	va_start(va, fmt);
-	Common::U32String::vformat(fmt.begin(), fmt.end(), msg, va);
+	Common::U32String::vformat(fmt->begin(), fmt->end(), msg, va);
 	va_end(va);
 
 	GUIErrorMessage(msg);

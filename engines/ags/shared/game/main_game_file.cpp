@@ -282,7 +282,7 @@ void ReadDialogs(std::vector<DialogTopic> &dialog,
 	old_dialog_src.resize(dlg_count);
 	for (int i = 0; i < dlg_count; ++i) {
 		// NOTE: originally this was read into dialog[i].optionscripts
-		old_dialog_scripts[i].reset(new unsigned char[dialog[i].codesize]);
+		old_dialog_scripts[i].reset(Common::SharedPtr<unsigned char>(new unsigned char[dialog[i].codesize], Common::ArrayDeleter<unsigned char>()));
 		in->Read(old_dialog_scripts[i].get(), dialog[i].codesize);
 
 		// Encrypted text script
@@ -290,7 +290,7 @@ void ReadDialogs(std::vector<DialogTopic> &dialog,
 		if (script_text_len > 1) {
 			// Originally in the Editor +20000 bytes more were allocated, with comment:
 			//   "add a large buffer because it will get added to if another option is added"
-			// which probably refered to this data used by old editor directly to edit dialogs
+			// which probably referred to this data used by old editor directly to edit dialogs
 			char *buffer = new char[script_text_len + 1];
 			in->Read(buffer, script_text_len);
 			if (data_ver > kGameVersion_260)

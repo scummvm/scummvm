@@ -66,7 +66,8 @@ void Object::load(byte *src) {
 	actorOrientation = *src++;
 	enabled = *src++;
 	name = (const char *)src;
-	description = parseDescription((const char *)src);
+	_nameSize = name.size() + 1;
+	description = parseDescription((const char *)src + _nameSize);
 }
 
 void Object::save() const {
@@ -80,7 +81,7 @@ void Object::save() const {
 
 void Object::setName(const Common::String &newName) {
 	assert(_base != 0);
-	strcpy((char *)(_base + 19), newName.c_str());
+	Common::strcpy_s((char *)(_base + 19), _nameSize, newName.c_str());
 	name = newName;
 }
 
@@ -92,8 +93,7 @@ void Object::dump(int level) const {
 	     );
 }
 
-Common::String Object::parseDescription(const char *name) {
-	const char *desc = name + strlen(name) + 1;
+Common::String Object::parseDescription(const char *desc) {
 	if (*desc == 0)
 		return Common::String();
 

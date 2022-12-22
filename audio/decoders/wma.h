@@ -33,6 +33,9 @@
 namespace Common {
 template <class BITSTREAM>
 class Huffman;
+}
+
+namespace Math {
 class MDCT;
 }
 
@@ -146,7 +149,7 @@ private:
 	float _lspPowMTable2[(1 << kLSPPowBits)];
 
 	// MDCT
-	Common::Array<Common::MDCT *> _mdct;       ///< MDCT contexts.
+	Common::Array<Math::MDCT *> _mdct;       ///< MDCT contexts.
 	Common::Array<const float *>  _mdctWindow; ///< MDCT window functions.
 
 	/** Overhang from the last superframe. */

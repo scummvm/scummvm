@@ -185,7 +185,20 @@ enum GameFeatures {
 	 * SCUMM v5-v7 Mac games stored in a container file
 	 * Used to differentiate between m68k and PPC versions of Indy4
 	 */
-	GF_MAC_CONTAINER = 1 << 16
+	GF_MAC_CONTAINER = 1 << 16,
+
+	/**
+	 * SCUMM HE Official Hebrew translations were audio only
+	 * but used reversed string for credits etc.
+	 * Used to disable BiDi in those games.
+	 */
+	GF_HE_NO_BIDI = 1 << 17,
+
+	/**
+	 * The "Ultimate Talkie" versions of Monkey Island, which have been
+	 * patched so that most workarounds/bugfixes no longer apply to them.
+	 */
+	GF_ULTIMATE_TALKIE = 1 << 18
 };
 
 enum ScummGameId {

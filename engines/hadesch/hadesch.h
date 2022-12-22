@@ -190,7 +190,7 @@ private:
 			  RoomId roomId);
 	Common::ErrorCode loadCursors();
 	bool handleGenericCheat(const Common::String &cheat);
-	Common::ErrorCode loadWindowsCursors(Common::PEResources *exe);
+	Common::ErrorCode loadWindowsCursors(const Common::ScopedPtr<Common::PEResources>& exe);
 
 	struct Timer {
 		int32 next_time;

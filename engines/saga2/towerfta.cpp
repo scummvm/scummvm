@@ -48,41 +48,41 @@ namespace Saga2 {
    FTA initialization & cleanup records
  * ===================================================================== */
 
-int maxInitState = fullyInitialized;
+int maxInitState = kFullyInitialized;
 
-TowerLayer tower[fullyInitialized] = {
-	{ nothingInitialized,        &initTowerBase,        &termTowerBase },
-	{ errHandlersInitialized,    &initErrorManagers,    &termErrorManagers },
-	{ delayedErrInitialized,     &initDelayedErrors,    &termDelayedErrors },
-	{ activeErrInitialized,      &initActiveErrors,     &termActiveErrors },
-	{ configTestInitialized,     &initSystemConfig,     &termTowerBase },
-	{ introInitialized,          &initPlayIntro,        &termPlayOutro },
-	{ timerInitialized,          &initSystemTimer,      &termSystemTimer },
-	{ audioInitialized,          &initAudio,            &termAudio},
-	{ resourcesInitialized,      &initResourceFiles,    &termResourceFiles },
-	{ serversInitialized,        &initResourceServers,  &termResourceServers },
-	{ pathFinderInitialized,     &initPathFinders,      &termPathFinders },
-	{ scriptsInitialized,        &initSAGAInterpreter,  &termSAGAInterpreter },
-	{ audStartInitialized,       &initAudioChannels,    &termAudioChannels },
-	{ tileResInitialized,        &initResourceHandles,  &termResourceHandles },
-	{ palettesInitialized,       &initPalettes,         &termPalettes },
-	{ mainWindowInitialized,     &initDisplayPort,      &termDisplayPort },
-	{ panelsInitialized,         &initPanelSystem,      &termPanelSystem },
-	{ mainWindowOpenInitialized, &initMainWindow,       &termMainWindow },
-	{ guiMessInitialized,        &initGUIMessagers,     &termGUIMessagers },
-	{ mouseImageInitialized,     &initMousePointer,     &termMousePointer },
-	{ displayInitialized,        &initDisplay,          &termDisplay },
-	{ mapsInitialized,           &initGameMaps,         &termGameMaps },
-	{ patrolsInitialized,        &initRouteData,        &termRouteData },
-	{ spritesInitialized,        &initActorSprites,     &termActorSprites },
-	{ weaponsInitialized,        &initWeaponData,       &termWeaponData },
-	{ magicInitialized,          &initSpellData,        &termSpellData },
-	{ objectSoundFXInitialized,  &initObjectSoundFX,    &termObjectSoundFX },
-	{ prototypesInitialized,     &initObjectPrototypes, &termObjectPrototypes },
-	{ gameStateInitialized,      &initDynamicGameData,  &termDynamicGameData },
-	{ gameModeInitialized,       &initGameMode,         &termGameMode },
-	{ gameDisplayEnabled,        &initTop,              &termTop },
-	{ procResEnabled,            &initProcessResources, &termProcessResources }
+TowerLayer tower[kFullyInitialized] = {
+	{ kNothingInitialized,        &initTowerBase,        &termTowerBase },
+	{ kErrHandlersInitialized,    &initErrorManagers,    &termErrorManagers },
+	{ kDelayedErrInitialized,     &initDelayedErrors,    &termDelayedErrors },
+	{ kActiveErrInitialized,      &initActiveErrors,     &termActiveErrors },
+	{ kConfigTestInitialized,     &initSystemConfig,     &termTowerBase },
+	{ kIntroInitialized,          &initPlayIntro,        &termPlayOutro },
+	{ kTimerInitialized,          &initSystemTimer,      &termSystemTimer },
+	{ kAudioInitialized,          &initAudio,            &termAudio},
+	{ kResourcesInitialized,      &initResourceFiles,    &termResourceFiles },
+	{ kServersInitialized,        &initResourceServers,  &termResourceServers },
+	{ kPathFinderInitialized,     &initPathFinders,      &termPathFinders },
+	{ kScriptsInitialized,        &initSAGAInterpreter,  &termSAGAInterpreter },
+	{ kAudStartInitialized,       &initAudioChannels,    &termAudioChannels },
+	{ kTileResInitialized,        &initResourceHandles,  &termResourceHandles },
+	{ kPalettesInitialized,       &initPalettes,         &termPalettes },
+	{ kMainWindowInitialized,     &initDisplayPort,      &termDisplayPort },
+	{ kPanelsInitialized,         &initPanelSystem,      &termPanelSystem },
+	{ kMainWindowOpenInitialized, &initMainWindow,       &termMainWindow },
+	{ kGuiMessInitialized,        &initGUIMessagers,     &termGUIMessagers },
+	{ kMouseImageInitialized,     &initMousePointer,     &termMousePointer },
+	{ kDisplayInitialized,        &initDisplay,          &termDisplay },
+	{ kMapsInitialized,           &initGameMaps,         &termGameMaps },
+	{ kPatrolsInitialized,        &initRouteData,        &termRouteData },
+	{ kSpritesInitialized,        &initActorSprites,     &termActorSprites },
+	{ kWeaponsInitialized,        &initWeaponData,       &termWeaponData },
+	{ kMagicInitialized,          &initSpellData,        &termSpellData },
+	{ kObjectSoundFXInitialized,  &initObjectSoundFX,    &termObjectSoundFX },
+	{ kPrototypesInitialized,     &initObjectPrototypes, &termObjectPrototypes },
+	{ kGameStateInitialized,      &initDynamicGameData,  &termDynamicGameData },
+	{ kGameModeInitialized,       &initGameMode,         &termGameMode },
+	{ kGameDisplayEnabled,        &initTop,              &termTop },
+	{ kProcResEnabled,            &initProcessResources, &termProcessResources }
 };
 
 /* ===================================================================== *
@@ -258,10 +258,10 @@ TERMINATOR(termDisplayPort) {
 
 INITIALIZER(initPanelSystem) {
 	initPanels(g_vm->_mainPort);
-	if (g_vm->_mainPort.map == nullptr) {
+	if (g_vm->_mainPort._map == nullptr) {
 		gPixelMap *tmap = new gPixelMap;
-		tmap->size = Point16(screenWidth, screenHeight);
-		tmap->data = new uint8[tmap->bytes()];
+		tmap->_size = Point16(kScreenWidth, kScreenHeight);
+		tmap->_data = new uint8[tmap->bytes()];
 		g_vm->_mainPort.setMap(tmap);
 	}
 	return true;
@@ -307,7 +307,7 @@ TERMINATOR(termMousePointer) {
 
 INITIALIZER(initDisplay) {
 	g_vm->_mainPort.setColor(0);            //  fill screen with color
-	drawPage = &g_vm->_mainPort.protoPage;
+	drawPage = &g_vm->_mainPort._protoPage;
 	//lightsOut();
 	//g_vm->_mainPort.fillRect( Rect16( 0, 0, screenWidth, screenHeight ) );
 
@@ -444,7 +444,7 @@ TERMINATOR(termDynamicGameData) {
 INITIALIZER(initGameMode) {
 	GameMode *gameModes[] = {&PlayMode, &TileMode};
 	GameMode::SetStack(gameModes, 2);
-	if (GameMode::newmodeFlag)
+	if (GameMode::_newmodeFlag)
 		GameMode::update();
 	return true;
 }

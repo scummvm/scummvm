@@ -106,16 +106,16 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	char h_mission_name[8];
 	HashFile(mission, h_mission_name);
 
-	sprintf(speech_font_one, FONT_PATH, "font.pcfont");
-	sprintf(remora_font, FONT_PATH, "futura.pcfont");
+	Common::sprintf_s(speech_font_one, FONT_PATH, "font.pcfont");
+	Common::sprintf_s(remora_font, FONT_PATH, "futura.pcfont");
 
-	if (sprintf(session_name, "%s\\%s\\", mission, new_session_name) > ENGINE_STRING_LEN)
+	if (Common::sprintf_s(session_name, "%s\\%s\\", mission, new_session_name) > ENGINE_STRING_LEN)
 		Fatal_error("_game_session::_game_session [%s] string overflow", session_name);
 
-	if (sprintf(h_session_name, "%s\\%s", h_mission_name, session_h_name) > ENGINE_STRING_LEN)
+	if (Common::sprintf_s(h_session_name, "%s\\%s", h_mission_name, session_h_name) > ENGINE_STRING_LEN)
 		Fatal_error("_game_session::_game_session [%s] string overflow", h_session_name);
 
-	if (sprintf(session_cluster, SESSION_CLUSTER_PATH, h_mission_name, session_h_name) > ENGINE_STRING_LEN)
+	if (Common::sprintf_s(session_cluster, SESSION_CLUSTER_PATH, h_mission_name, session_h_name) > ENGINE_STRING_LEN)
 		Fatal_error("_game_session::_game_session [%s] string overflow", session_cluster);
 
 	session_cluster_hash = HashString(session_cluster);
@@ -154,7 +154,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	// we can assume all of these in here will be of the game object class!
 
 	// When clustered the session files have the base stripped
-	strcpy(temp_buf, "objects");
+	Common::strcpy_s(temp_buf, "objects");
 
 	// so PSX can have nice session loading screen and details (for timing and to stop player getting bored)
 	LoadMsg("Session Objects");
@@ -181,7 +181,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	// inititialise the session scripts
 
 	// When clustered the session files have the base stripped
-	strcpy(temp_buf, "scripts");
+	Common::strcpy_s(temp_buf, "scripts");
 
 	// so PSX can have nice session loading screen and details (for timing and to stop player getting bored)
 	LoadMsg("Session Scripts");
@@ -195,7 +195,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	// initialise prop animation file
 
 	// When clustered the session files have the base stripped
-	strcpy(temp_buf, PX_FILENAME_PROPANIMS);
+	Common::strcpy_s(temp_buf, PX_FILENAME_PROPANIMS);
 
 	// so PSX can have nice session loading screen and details (for timing and to stop player getting bored)
 	LoadMsg("Session PropAnims");
@@ -210,7 +210,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	// we stick this in the private cache so it hangs around and later in-game references wont cause a main pool reload
 
 	// When clustered the session files have the base stripped
-	strcpy(temp_buf, "pxwgfeatures");
+	Common::strcpy_s(temp_buf, "pxwgfeatures");
 
 	// so PSX can have nice session loading screen and details (for timing and to stop player getting bored)
 	LoadMsg("Session Features");
@@ -237,7 +237,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	char textFileName[100];
 
 	// When clustered the session files have the base stripped
-	strcpy(temp_buf, "text");
+	Common::strcpy_s(temp_buf, "text");
 
 	buf_hash = HashString(temp_buf);
 	if (private_session_resman->Test_file(temp_buf, buf_hash, session_cluster, session_cluster_hash)) {
@@ -262,11 +262,11 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 
 	char global_cluster[ENGINE_STRING_LEN];
 
-	strcpy(global_cluster, GLOBAL_CLUSTER_PATH);
+	Common::strcpy_s(global_cluster, GLOBAL_CLUSTER_PATH);
 
 	uint32 global_cluster_hash = HashString(global_cluster);
 
-	sprintf(textFileName, GLOBAL_TEXT_FILE);
+	Common::sprintf_s(textFileName, GLOBAL_TEXT_FILE);
 
 	buf_hash = HashString(textFileName);
 
@@ -311,7 +311,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	total_was = 0;
 
 	// When clustered the session files have the base stripped
-	strcpy(temp_buf, "walkarea");
+	Common::strcpy_s(temp_buf, "walkarea");
 
 	buf_hash = HashString(temp_buf);
 
@@ -542,8 +542,8 @@ void _game_session::Init_objects() {
 		if (pc) {
 			RunScript(pc, object);
 
-			strcpy(buf, CGameObject::GetName(object));
-			strcat(buf, "::local_init");
+			Common::strcpy_s(buf, CGameObject::GetName(object));
+			Common::strcat_s(buf, "::local_init");
 
 			uint32 script_hash;
 

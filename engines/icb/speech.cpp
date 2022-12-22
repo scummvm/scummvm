@@ -162,7 +162,7 @@ mcodeFunctionReturnCodes _game_session::fn_request_speech(int32 &result, int32 *
 
 	// find the speech script
 	// form name of speech script
-	sprintf(temp_buf, "scenes::%s", scene_script_name);
+	Common::sprintf_s(temp_buf, "scenes::%s", scene_script_name);
 
 	S.script_pc = (char *)LinkedDataObject::Try_fetch_item_by_name(scripts, temp_buf); // run init script
 
@@ -1088,7 +1088,7 @@ mcodeFunctionReturnCodes _game_session::speak_new_menu(int32 &, int32 *) {
 
 	g_oIconListManager->ResetList(menu_name_list[menu_number]);
 
-	sprintf(menu_name_list[menu_number], "m%02d", menu_number); // create a unique name
+	Common::sprintf_s(menu_name_list[menu_number], "m%02d", menu_number); // create a unique name
 	choosing[menu_number] = FALSE8;
 	item_count[menu_number] = 0;
 

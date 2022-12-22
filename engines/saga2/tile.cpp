@@ -47,7 +47,6 @@
 
 namespace Saga2 {
 
-extern void writeLog(char *str);
 void PlayModeSetup();
 void initBackPanel();
 
@@ -79,7 +78,7 @@ const int           slowScrollSpeed = 6,
 const StaticTilePoint Nowhere = {(int16)minint16, (int16)minint16, (int16)minint16};
 
 const StaticMetaTileID NoMetaTile = {nullID, nullID};
-const StaticActiveItemID  NoActiveItem = {activeItemIndexNullID};
+const StaticActiveItemID  NoActiveItem = {kActiveItemIndexNullID};
 
 enum SurfaceType {
 	surfaceHoriz,               //  Level surface
@@ -95,7 +94,7 @@ void setAreaSound(const TilePoint &baseCoords);
    Bank switching interface
  * ===================================================================== */
 
-TileBankPtr tileBanks[maxBanks];
+TileBankPtr tileBanks[kMaxBanks];
 
 void updateHandleRefs(const TilePoint &pt);  //, StandingTileInfo *stiResult )
 void updateFrameCount();
@@ -164,7 +163,7 @@ extern ObjectID     viewCenterObject;       // ID of object that view tracks
    Tile structure management
  * ===================================================================== */
 
-int16                   cycleCount;
+int16                   _cycleCount;
 
 uint16                  rippedRoofID;
 
@@ -177,7 +176,7 @@ WorldMapData            *mapList;           //  master map data array
 byte                   **stateArray;        //  Array of active item instance
 //  state arrays
 
-CyclePtr                cycleList;          // list of tile cycling info
+CyclePtr                _cycleList;          // list of tile cycling info
 
 //  Platform caching management
 PlatformCacheEntry  *platformCache;
@@ -225,9 +224,9 @@ TileInfo *TileInfo::tileAddress(TileID id) {
 	ti = tbh->tile(tileNum);
 
 	if (ti->attrs.cycleRange > 0) {
-		TileCycleData   &tcd = cycleList[ti->attrs.cycleRange - 1];
+		TileCycleData   &tcd = _cycleList[ti->attrs.cycleRange - 1];
 
-		TileID2Bank(tcd.cycleList[tcd.currentState],
+		TileID2Bank(tcd._cycleList[tcd._currentState],
 		            tileBank,
 		            tileNum);
 
@@ -257,9 +256,9 @@ TileInfo *TileInfo::tileAddress(TileID id, uint8 **imageData) {
 	ti = tbh->tile(tileNum);
 
 	if (ti->attrs.cycleRange > 0) {
-		TileCycleData   &tcd = cycleList[ti->attrs.cycleRange - 1];
+		TileCycleData   &tcd = _cycleList[ti->attrs.cycleRange - 1];
 
-		TileID2Bank(tcd.cycleList[tcd.currentState],
+		TileID2Bank(tcd._cycleList[tcd._currentState],
 		            tileBank,
 		            tileNum);
 
@@ -286,19 +285,19 @@ TileInfo *TileInfo::tileAddress(TileID id, uint8 **imageData) {
 //	Return the map number of this active item
 
 int16 ActiveItem::getMapNum() {
-	int16   mapNum;
+	int16   _mapNum;
 
 	//  Use a brute force search of all of the maps' active item lists
 	//  to determine which map this active item is on.
-	for (mapNum = 0; mapNum < worldCount; mapNum++) {
-		WorldMapData    *mapData = &mapList[mapNum];
+	for (_mapNum = 0; _mapNum < worldCount; _mapNum++) {
+		WorldMapData    *mapData = &mapList[_mapNum];
 
 		//  Determine if the active item in on this map's list
 		if (_parent == mapData->activeItemList)
 			break;
 	}
 
-	return mapNum;
+	return _mapNum;
 }
 
 //-----------------------------------------------------------------------
@@ -328,7 +327,7 @@ Location ActiveItem::getInstanceLocation() {
 //	Return the address of an active item, given its ID
 
 ActiveItem *ActiveItem::activeItemAddress(ActiveItemID id) {
-	return  id.getIndexNum() != activeItemIndexNullID
+	return  id.getIndexNum() != kActiveItemIndexNullID
 	        ?   mapList[id.getMapNum()].activeItemList->_items[id.getIndexNum()]
 	        :   nullptr;
 }
@@ -337,16 +336,16 @@ ActiveItem *ActiveItem::activeItemAddress(ActiveItemID id) {
 //	Return this active item's ID
 
 ActiveItemID ActiveItem::thisID() {
-	int16   mapNum = getMapNum();
+	int16   _mapNum = getMapNum();
 
-	return  ActiveItemID(mapNum, _index);
+	return  ActiveItemID(_mapNum, _index);
 }
 
 //-----------------------------------------------------------------------
 //	Return this active item's ID
 
-ActiveItemID ActiveItem::thisID(int16 mapNum) {
-	return ActiveItemID(mapNum, _index);
+ActiveItemID ActiveItem::thisID(int16 _mapNum) {
+	return ActiveItemID(_mapNum, _index);
 }
 
 //-----------------------------------------------------------------------
@@ -428,8 +427,8 @@ void ActiveItem::playTAGNoise(ActiveItem *ai, int16 tagNoiseID) {
 //	use() function for ActiveItem group
 
 bool ActiveItem::use(ActiveItem *ins, ObjectID enactor) {
-	int16       mapNum = getMapNum();
-	uint16      state = ins->getInstanceState(mapNum);
+	int16       _mapNum = getMapNum();
+	uint16      state = ins->getInstanceState(_mapNum);
 	scriptCallFrame scf;
 
 	if (ins->_data.scriptClassID != 0) {
@@ -450,19 +449,19 @@ bool ActiveItem::use(ActiveItem *ins, ObjectID enactor) {
 		            scf.invokedTAI,
 		            Method_TileActivityInstance_onUse,
 		            scf)
-		        ==  scriptResultFinished) {
-			if (scf.returnVal != actionResultNotDone)
-				return scf.returnVal == actionResultSuccess;
+		        ==  kScriptResultFinished) {
+			if (scf.returnVal != kActionResultNotDone)
+				return scf.returnVal == kActionResultSuccess;
 		}
 	}
 
 	switch (ins->builtInBehavior()) {
 
-	case builtInLamp:
-		ins->setInstanceState(mapNum, !state);
+	case kBuiltInLamp:
+		ins->setInstanceState(_mapNum, !state);
 		break;
 
-	case builtInDoor:
+	case kBuiltInDoor:
 		if (state < 3) {
 			if (!ins->isLocked()) {
 				TileActivityTask::openDoor(*ins);
@@ -496,7 +495,7 @@ bool ActiveItem::trigger(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 	scriptCallFrame scf;
 
 	//  Trap transporters to only react to the center actor
-	if (ins->builtInBehavior() == builtInTransporter
+	if (ins->builtInBehavior() == kBuiltInTransporter
 	        && (!isActor(obj) || (Actor *)obj != getCenterActor()))
 		return true;
 
@@ -512,7 +511,7 @@ bool ActiveItem::trigger(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 		            scf.invokedTAI,
 		            Method_TileActivityInstance_onCanTrigger,
 		            scf)
-		        ==  scriptResultFinished) {
+		        ==  kScriptResultFinished) {
 			if (!scf.returnVal) return true;
 		}
 	}
@@ -562,15 +561,15 @@ bool ActiveItem::trigger(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 		            scf.invokedTAI,
 		            Method_TileActivityInstance_onTrigger,
 		            scf)
-		        ==  scriptResultFinished) {
-			if (scf.returnVal != actionResultNotDone)
-				return scf.returnVal == actionResultSuccess;
+		        ==  kScriptResultFinished) {
+			if (scf.returnVal != kActionResultNotDone)
+				return scf.returnVal == kActionResultSuccess;
 		}
 	}
 
 	switch (ins->builtInBehavior()) {
 
-	case builtInTransporter:
+	case kBuiltInTransporter:
 		//playTAGNoise(BEAM_ME_UP);
 	{
 		Actor       *a;
@@ -648,9 +647,9 @@ bool ActiveItem::release(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 		            scf.invokedTAI,
 		            Method_TileActivityInstance_onRelease,
 		            scf)
-		        ==  scriptResultFinished) {
-			if (scf.returnVal != actionResultNotDone)
-				return scf.returnVal == actionResultSuccess;
+		        ==  kScriptResultFinished) {
+			if (scf.returnVal != kActionResultNotDone)
+				return scf.returnVal == kActionResultSuccess;
 		}
 	}
 
@@ -678,15 +677,15 @@ bool ActiveItem::acceptLockToggle(ActiveItem *ins, ObjectID enactor, uint8 keyCo
 		            scf.invokedTAI,
 		            Method_TileActivityInstance_onAcceptLockToggle,
 		            scf)
-		        ==  scriptResultFinished) {
-			if (scf.returnVal != actionResultNotDone)
-				return scf.returnVal == actionResultSuccess;
+		        ==  kScriptResultFinished) {
+			if (scf.returnVal != kActionResultNotDone)
+				return scf.returnVal == kActionResultSuccess;
 		}
 	}
 
 	switch (ins->builtInBehavior()) {
 
-	case builtInDoor:
+	case kBuiltInDoor:
 		if (keyCode == ins->lockType()) {
 			playTAGNoise(ins, UNLOCK_RIGHT_KEY);
 			if (ins->isLocked())
@@ -710,14 +709,14 @@ bool ActiveItem::acceptLockToggle(ActiveItem *ins, ObjectID enactor, uint8 keyCo
 //-----------------------------------------------------------------------
 
 TilePoint getClosestPointOnTAI(ActiveItem *TAI, GameObject *obj) {
-	assert(TAI->_data.itemType == activeTypeInstance);
+	assert(TAI->_data.itemType == kActiveTypeInstance);
 
 	TilePoint       objLoc = obj->getLocation(),
 	                TAILoc;
 	TileRegion      TAIReg;
 	ActiveItem      *TAG = TAI->getGroup();
 
-	//  Compute in points the region of the TAI
+	//  Compute in points the _region of the TAI
 	TAIReg.min.u = TAI->_data.instance.u << kTileUVShift;
 	TAIReg.min.v = TAI->_data.instance.v << kTileUVShift;
 	TAIReg.max.u =      TAIReg.min.u
@@ -785,7 +784,7 @@ void saveActiveItemStates(Common::OutSaveFile *outS) {
 				ActiveItem *activeItem = activeItemList->_items[j];
 				uint8 *statePtr;
 
-				if (activeItem->_data.itemType != activeTypeInstance)
+				if (activeItem->_data.itemType != kActiveTypeInstance)
 					continue;
 
 				//  Get a pointer to the current active item's state
@@ -839,7 +838,7 @@ void loadActiveItemStates(Common::InSaveFile *in) {
 				ActiveItem      *activeItem = activeItemList->_items[j];
 				uint8           *statePtr;
 
-				if (activeItem->_data.itemType != activeTypeInstance)
+				if (activeItem->_data.itemType != kActiveTypeInstance)
 					continue;
 
 				//  Get a pointer to the current active item's state
@@ -916,7 +915,7 @@ void TileActivityTaskList::read(Common::InSaveFile *in) {
 
 			tat = newTask(tai);
 			if (tat != nullptr)
-				tat->activityType = activityType;
+				tat->_activityType = activityType;
 		}
 	}
 }
@@ -929,15 +928,15 @@ void TileActivityTaskList::write(Common::MemoryWriteStreamDynamic *out) {
 	debugC(3, kDebugSaveload, "... taskCount = %d", taskCount);
 
 	for (Common::List<TileActivityTask *>::iterator it = _list.begin(); it != _list.end(); ++it) {
-		ActiveItem  *ai = (*it)->tai;
+		ActiveItem  *ai = (*it)->_tai;
 
 		//  Store the activeItemID
 		out->writeSint16LE(ai->thisID().val);
 		debugC(4, kDebugSaveload, "...... activeItemID = %d", ai->thisID().val);
 
 		//  Store the task type
-		out->writeByte((*it)->activityType);
-		debugC(4, kDebugSaveload, "...... activityType = %d", (*it)->activityType);
+		out->writeByte((*it)->_activityType);
+		debugC(4, kDebugSaveload, "...... _activityType = %d", (*it)->_activityType);
 	}
 }
 
@@ -961,7 +960,7 @@ TileActivityTask *TileActivityTaskList::newTask(ActiveItem *activeInstance) {
 	//  Check see if there's already tile activity task associated with
 	//  this instance.
 	for (Common::List<TileActivityTask *>::iterator it = _list.begin(); it != _list.end(); ++it)
-		if ((*it)->tai == activeInstance) {
+		if ((*it)->_tai == activeInstance) {
 			tat = *it;
 			break;
 		}
@@ -974,20 +973,20 @@ TileActivityTask *TileActivityTaskList::newTask(ActiveItem *activeInstance) {
 
 		tat = new TileActivityTask;
 
-		tat->tai = activeInstance;
-		tat->activityType = TileActivityTask::activityTypeNone;
-		tat->script = NoThread;
-		tat->targetState = 0;
+		tat->_tai = activeInstance;
+		tat->_activityType = TileActivityTask::kActivityTypeNone;
+		tat->_script = NoThread;
+		tat->_targetState = 0;
 
 		_list.push_back(tat);
 	}
 
 	//  If we re-used an old task struct, then make sure script gets woken up.
-	if (tat->script != NoThread) {
+	if (tat->_script != NoThread) {
 		debugC(3, kDebugTasks, "Waking up thread TAT");
 
-		wakeUpThread(tat->script);
-		tat->script = NoThread;
+		wakeUpThread(tat->_script);
+		tat->_script = NoThread;
 	}
 
 	return tat;
@@ -1014,7 +1013,7 @@ void TileActivityTask::openDoor(ActiveItem &activeInstance) {
 
 	TileActivityTask *tat;
 	if ((tat = g_vm->_aTaskList->newTask(&activeInstance)) != nullptr)
-		tat->activityType = activityTypeOpen;
+		tat->_activityType = kActivityTypeOpen;
 }
 
 //-----------------------------------------------------------------------
@@ -1025,7 +1024,7 @@ void TileActivityTask::closeDoor(ActiveItem &activeInstance) {
 
 	TileActivityTask *tat;
 	if ((tat = g_vm->_aTaskList->newTask(&activeInstance)) != nullptr)
-		tat->activityType = activityTypeClose;
+		tat->_activityType = kActivityTypeClose;
 }
 
 //-----------------------------------------------------------------------
@@ -1039,9 +1038,9 @@ void TileActivityTask::doScript(ActiveItem &activeInstance, uint8 finalState, Th
 		if (scr)
 			debugC(3, kDebugTasks, "TAT Assign Script!");
 
-		tat->activityType = activityTypeScript;
-		tat->targetState = finalState;
-		tat->script = scr;
+		tat->_activityType = kActivityTypeScript;
+		tat->_targetState = finalState;
+		tat->_script = scr;
 	} else {
 		debugC(3, kDebugTasks, "Waking up thread 'cause newTask Failed");
 
@@ -1057,38 +1056,38 @@ void TileActivityTask::updateActiveItems() {
 
 	for (Common::List<TileActivityTask *>::iterator it = g_vm->_aTaskList->_list.begin(); it != g_vm->_aTaskList->_list.end();) {
 		TileActivityTask *tat = *it;
-		ActiveItem *activityInstance = tat->tai;
+		ActiveItem *activityInstance = tat->_tai;
 		bool activityTaskDone = false;
 
-		int16       mapNum = activityInstance->getMapNum();
-		uint16      state = activityInstance->getInstanceState(mapNum);
+		int16       _mapNum = activityInstance->getMapNum();
+		uint16      state = activityInstance->getInstanceState(_mapNum);
 
 		// collecting stats
 		count++;
-		if (tat->script != NoThread)
+		if (tat->_script != NoThread)
 			scriptCount++;
 
-		switch (tat->activityType) {
+		switch (tat->_activityType) {
 
-		case activityTypeOpen:
+		case kActivityTypeOpen:
 			if (state < 3)
-				activityInstance->setInstanceState(mapNum, state + 1);
+				activityInstance->setInstanceState(_mapNum, state + 1);
 			else
 				activityTaskDone = true;
 			break;
 
-		case activityTypeClose:
+		case kActivityTypeClose:
 			if (state > 0)
-				activityInstance->setInstanceState(mapNum, state - 1);
+				activityInstance->setInstanceState(_mapNum, state - 1);
 			else
 				activityTaskDone = true;
 			break;
 
-		case activityTypeScript:
-			if (state > tat->targetState)
-				activityInstance->setInstanceState(mapNum, state - 1);
-			else if (state < tat->targetState)
-				activityInstance->setInstanceState(mapNum, state + 1);
+		case kActivityTypeScript:
+			if (state > tat->_targetState)
+				activityInstance->setInstanceState(_mapNum, state - 1);
+			else if (state < tat->_targetState)
+				activityInstance->setInstanceState(_mapNum, state + 1);
 			else
 				activityTaskDone = true;
 			break;
@@ -1102,10 +1101,10 @@ void TileActivityTask::updateActiveItems() {
 
 		if (activityTaskDone) {
 			//  Wake up the script...
-			if (tat->script != NoThread) {
+			if (tat->_script != NoThread) {
 				debugC(3, kDebugTasks, "TAT Wake Up Thread");
 
-				wakeUpThread(tat->script);
+				wakeUpThread(tat->_script);
 			}
 			tat->remove();
 		}
@@ -1119,7 +1118,7 @@ void TileActivityTask::updateActiveItems() {
 
 TileActivityTask *TileActivityTask::find(ActiveItem *tai) {
 	for (Common::List<TileActivityTask *>::iterator it = g_vm->_aTaskList->_list.begin(); it != g_vm->_aTaskList->_list.end(); ++it) {
-		if (tai == (*it)->tai)
+		if (tai == (*it)->_tai)
 			return *it;
 	}
 
@@ -1135,12 +1134,12 @@ bool TileActivityTask::setWait(ActiveItem *tai, ThreadID script) {
 	debugC(3, kDebugTasks, "Set Wait TAT\n");
 
 	if (tat) {
-		if (tat->script != NoThread) {
+		if (tat->_script != NoThread) {
 			debugC(3, kDebugTasks, "TAT Waking Up Thread\n");
 
-			wakeUpThread(tat->script);
+			wakeUpThread(tat->_script);
 		}
-		tat->script = script;
+		tat->_script = script;
 
 		return true;
 	}
@@ -1246,7 +1245,7 @@ MetaTile::MetaTile(MetaTileList *parent, int ind, Common::SeekableReadStream *st
 	_banksNeeded._b[0] = stream->readUint32LE();
 	_banksNeeded._b[1] = stream->readUint32LE();
 
-	for (int i = 0; i < maxPlatforms; ++i)
+	for (int i = 0; i < kMaxPlatforms; ++i)
 		_stack[i] = stream->readUint16LE();
 
 	_properties = stream->readUint32LE();
@@ -1324,7 +1323,7 @@ void initMaps() {
 	const int activeItemSize = 28;
 
 	//  Load all of the tile terrain banks
-	for (i = 0; i < maxBanks; i++) {
+	for (i = 0; i < kMaxBanks; i++) {
 		stream = loadResourceToStream(tileRes, tileTerrainID + i, "tile terrain bank");
 		tileBanks[i] = new TileBank(stream);
 		delete stream;
@@ -1499,7 +1498,7 @@ void cleanupMaps() {
 	delete[] mapList;
 
 	//  Dump all of the tile terrain banks
-	for (i = 0; i < maxBanks; i++) {
+	for (i = 0; i < kMaxBanks; i++) {
 		if (tileBanks[i] != nullptr) {
 			delete tileBanks[i];
 			tileBanks[i] = nullptr;
@@ -1510,12 +1509,12 @@ void cleanupMaps() {
 //-----------------------------------------------------------------------
 //	Set a new current map
 
-void setCurrentMap(int mapNum) {
-	g_vm->_currentMapNum = mapNum;
+void setCurrentMap(int _mapNum) {
+	g_vm->_currentMapNum = _mapNum;
 	if (lastMapNum != g_vm->_currentMapNum) {
 		lastMapNum = g_vm->_currentMapNum;
 		freeAllTileBanks();
-		audioEnvironmentSetWorld(mapNum);
+		audioEnvironmentSetWorld(_mapNum);
 	}
 
 	lastUpdateTime = gameTime;
@@ -1543,7 +1542,7 @@ void initAutoMap() {
 
 		//  Clear the high bit for each map position
 		for (mapIndex = 0; mapIndex < mapSize; mapIndex++)
-			mapData[mapIndex] &= ~metaTileVisited;
+			mapData[mapIndex] &= ~kMetaTileVisited;
 	}
 
 }
@@ -1591,7 +1590,7 @@ void saveAutoMap(Common::OutSaveFile *outS) {
 		mapData = map->mapData;
 
 		for (mapIndex = 0; mapIndex < mapSize; mapIndex++) {
-			if (mapData[mapIndex] & metaTileVisited) {
+			if (mapData[mapIndex] & kMetaTileVisited) {
 				//  Set the bit in the archive buffer
 				archiveBuffer[totalMapIndex >> 3] |=
 				    (1 << (totalMapIndex & 7));
@@ -1644,9 +1643,9 @@ void loadAutoMap(Common::InSaveFile *in, int32 chunkSize) {
 			//  bit in the map data
 			if (archiveBuffer[totalMapIndex >> 3]
 			        & (1 << (totalMapIndex & 7)))
-				mapData[mapIndex] |= metaTileVisited;
+				mapData[mapIndex] |= kMetaTileVisited;
 			else
-				mapData[mapIndex] &= ~metaTileVisited;
+				mapData[mapIndex] &= ~kMetaTileVisited;
 
 			totalMapIndex++;
 		}
@@ -1725,11 +1724,11 @@ int16 TilePoint::quickDir() {
 	                v2 = v * 2;
 
 	if (u < v2) {
-		if (v > -u2) return (v > u2 ? dirUpLeft : dirUp);
-		return (u > -v2 ? dirLeft : dirDownLeft);
+		if (v > -u2) return (v > u2 ? kDirUpLeft : kDirUp);
+		return (u > -v2 ? kDirLeft : kDirDownLeft);
 	} else {
-		if (v > -u2) return (u > -v2 ? dirUpRight : dirRight);
-		return (v > u2 ? dirDown : dirDownRight);
+		if (v > -u2) return (u > -v2 ? kDirUpRight : kDirRight);
+		return (v > u2 ? kDirDown : kDirDownRight);
 	}
 }
 
@@ -1767,7 +1766,7 @@ int16 ptHeight(const TilePoint &tp, uint8 *cornerHeight) {
 //		REM: This is a likely candidate for downcoding...
 
 TileInfo *Platform::fetchTile(
-    int16           mapNum,
+    int16           _mapNum,
     const TilePoint &pt,
     const TilePoint &origin,
     int16           &height_,
@@ -1777,7 +1776,7 @@ TileInfo *Platform::fetchTile(
 
 	int16           h = tr->tileHeight * 8;
 
-	if (tr->flags & trTileTAG) {
+	if (tr->flags & kTrTileTAG) {
 		ActiveItem  *groupItem,
 		            *instanceItem;
 		int16       state = 0;
@@ -1785,7 +1784,7 @@ TileInfo *Platform::fetchTile(
 		            absPos;
 
 		groupItem = ActiveItem::activeItemAddress(
-		                ActiveItemID(mapNum, tr->tile));
+		                ActiveItemID(_mapNum, tr->tile));
 
 		//  Relpos is the relative position of the
 		//  tile within the group
@@ -1801,14 +1800,14 @@ TileInfo *Platform::fetchTile(
 		absPos.z = h;
 
 		//  Look up the group instance in the hash.
-		instanceItem =  mapList[mapNum].findHashedInstance(
+		instanceItem =  mapList[_mapNum].findHashedInstance(
 		                    absPos,
 		                    tr->tile);
 		if (instanceItem) {
-			state = instanceItem->getInstanceState(mapNum);
+			state = instanceItem->getInstanceState(_mapNum);
 
 			//  Get the tile to be drawn from the tile group
-			tr = &(mapList[mapNum].activeItemData)[
+			tr = &(mapList[_mapNum].activeItemData)[
 			         groupItem->_data.group.grDataOffset
 			         +   state * groupItem->_data.group.animArea
 			         +   relPos.u * groupItem->_data.group.vSize
@@ -1849,7 +1848,7 @@ TileInfo *Platform::fetchTile(
 //  REM: This is a likely candidate for downcoding...
 
 TileInfo *Platform::fetchTAGInstance(
-    int16               mapNum,
+    int16               _mapNum,
     const TilePoint     &pt,
     const TilePoint     &origin,
     StandingTileInfo    &sti) {
@@ -1858,7 +1857,7 @@ TileInfo *Platform::fetchTAGInstance(
 
 	int16           h = tr->tileHeight * 8;
 
-	if (tr->flags & trTileTAG) {
+	if (tr->flags & kTrTileTAG) {
 		ActiveItem  *groupItem,
 		            *instanceItem;
 		int16       state = 0;
@@ -1866,7 +1865,7 @@ TileInfo *Platform::fetchTAGInstance(
 		            absPos;
 
 		groupItem = ActiveItem::activeItemAddress(
-		                ActiveItemID(mapNum, tr->tile));
+		                ActiveItemID(_mapNum, tr->tile));
 
 		//  Relpos is the relative position of the
 		//  tile within the group
@@ -1882,15 +1881,15 @@ TileInfo *Platform::fetchTAGInstance(
 		absPos.z = h;
 
 		//  Look up the group instance in the hash.
-		instanceItem =  mapList[mapNum].findHashedInstance(
+		instanceItem =  mapList[_mapNum].findHashedInstance(
 		                    absPos,
 		                    tr->tile);
 		if (instanceItem) {
-			state = instanceItem->getInstanceState(mapNum);
+			state = instanceItem->getInstanceState(_mapNum);
 			sti.surfaceTAG = instanceItem;
 
 			//  Get the tile to be drawn from the tile group
-			tr = &(mapList[mapNum].activeItemData)[
+			tr = &(mapList[_mapNum].activeItemData)[
 			         groupItem->_data.group.grDataOffset
 			         +   state * groupItem->_data.group.animArea
 			         +   relPos.u * groupItem->_data.group.vSize
@@ -1923,7 +1922,7 @@ TileInfo *Platform::fetchTAGInstance(
 //		REM: This is a likely candidate for downcoding...
 
 TileInfo *Platform::fetchTile(
-    int16           mapNum,
+    int16           _mapNum,
     const TilePoint &pt,
     const TilePoint &origin,
     uint8           **imageData,
@@ -1934,7 +1933,7 @@ TileInfo *Platform::fetchTile(
 
 	int16           h = tr->tileHeight * 8;
 
-	if (tr->flags & trTileTAG) {
+	if (tr->flags & kTrTileTAG) {
 		ActiveItem  *groupItem,
 		            *instanceItem;
 		int16       state = 0;
@@ -1942,7 +1941,7 @@ TileInfo *Platform::fetchTile(
 		            absPos;
 
 		groupItem = ActiveItem::activeItemAddress(
-		                ActiveItemID(mapNum, tr->tile));
+		                ActiveItemID(_mapNum, tr->tile));
 
 		//  Relpos is the relative position of the
 		//  tile within the group
@@ -1958,14 +1957,14 @@ TileInfo *Platform::fetchTile(
 		absPos.z = h;
 
 		//  Look up the group instance in the hash.
-		instanceItem =  mapList[mapNum].findHashedInstance(
+		instanceItem =  mapList[_mapNum].findHashedInstance(
 		                    absPos,
 		                    tr->tile);
 		if (instanceItem) {
-			state = instanceItem->getInstanceState(mapNum);
+			state = instanceItem->getInstanceState(_mapNum);
 
 			//  Get the tile to be drawn from the tile group
-			tr = &(mapList[mapNum].activeItemData)[
+			tr = &(mapList[_mapNum].activeItemData)[
 			         groupItem->_data.group.grDataOffset
 			         +   state * groupItem->_data.group.animArea
 			         +   relPos.u * groupItem->_data.group.vSize
@@ -2006,7 +2005,7 @@ TileInfo *Platform::fetchTile(
 //  REM: This is a likely candidate for downcoding...
 
 TileInfo *Platform::fetchTAGInstance(
-    int16               mapNum,
+    int16               _mapNum,
     const TilePoint     &pt,
     const TilePoint     &origin,
     uint8               **imageData,
@@ -2016,7 +2015,7 @@ TileInfo *Platform::fetchTAGInstance(
 
 	int16           h = tr->tileHeight * 8;
 
-	if (tr->flags & trTileTAG) {
+	if (tr->flags & kTrTileTAG) {
 		ActiveItem  *groupItem,
 		            *instanceItem;
 		int16       state = 0;
@@ -2024,7 +2023,7 @@ TileInfo *Platform::fetchTAGInstance(
 		            absPos;
 
 		groupItem = ActiveItem::activeItemAddress(
-		                ActiveItemID(mapNum, tr->tile));
+		                ActiveItemID(_mapNum, tr->tile));
 
 		//  Relpos is the relative position of the
 		//  tile within the group
@@ -2040,15 +2039,15 @@ TileInfo *Platform::fetchTAGInstance(
 		absPos.z = h;
 
 		//  Look up the group instance in the hash.
-		instanceItem =  mapList[mapNum].findHashedInstance(
+		instanceItem =  mapList[_mapNum].findHashedInstance(
 		                    absPos,
 		                    tr->tile);
 		if (instanceItem) {
-			state = instanceItem->getInstanceState(mapNum);
+			state = instanceItem->getInstanceState(_mapNum);
 			sti.surfaceTAG = instanceItem;
 
 			//  Get the tile to be drawn from the tile group
-			tr = &(mapList[mapNum].activeItemData)[
+			tr = &(mapList[_mapNum].activeItemData)[
 			         groupItem->_data.group.grDataOffset
 			         +   state * groupItem->_data.group.animArea
 			         +   relPos.u * groupItem->_data.group.vSize
@@ -2109,8 +2108,8 @@ MetaTile *MetaTile::metaTileAddress(MetaTileID id) {
 //-----------------------------------------------------------------------
 //	Return this meta tile's ID
 
-MetaTileID MetaTile::thisID(int16 mapNum) {
-	return MetaTileID(mapNum, _index);
+MetaTileID MetaTile::thisID(int16 _mapNum) {
+	return MetaTileID(_mapNum, _index);
 }
 
 //-----------------------------------------------------------------------
@@ -2123,14 +2122,14 @@ metaTileNoise MetaTile::HeavyMetaMusic() {
 //-----------------------------------------------------------------------
 //	Return a pointer to the specified platform
 
-Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
+Platform *MetaTile::fetchPlatform(int16 _mapNum, int16 layer) {
 	const int			cacheFlag = 0x8000;
 	uint16              plIndex = _stack[layer];
 	PlatformCacheEntry  *pce;
 	Common::SeekableReadStream *stream;
 
 	assert(layer >= 0);
-	assert(_parent == mapList[mapNum].metaList);
+	assert(_parent == mapList[_mapNum].metaList);
 
 	if (plIndex == (uint16)nullID) {
 		return nullptr;
@@ -2143,7 +2142,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		pce = &platformCache[plIndex];
 
 		assert(pce->metaID != NoMetaTile);
-		assert(pce->metaID == thisID(mapNum));
+		assert(pce->metaID == thisID(_mapNum));
 
 			//	Move to the end of the LRU
 		g_vm->_platformLRU.remove(plIndex);
@@ -2152,7 +2151,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 			//	return the address of the platform
 		return &pce->pl;
 	} else {
-		debugC(2, kDebugLoading, "Fetching platform (%d,%d)", mapNum, layer);
+		debugC(2, kDebugLoading, "Fetching platform (%d,%d)", _mapNum, layer);
 
 		//  Since the platform is not in the cache, we need to
 		//  dump something from the cache. Dump the one that
@@ -2171,7 +2170,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		if (pce->metaID != NoMetaTile) {
 			MetaTile *oldMeta = metaTileAddress(pce->metaID);
 
-			assert(pce->layerNum < maxPlatforms);
+			assert(pce->layerNum < kMaxPlatforms);
 			assert(oldMeta->_stack[pce->layerNum] == (cacheFlag | cacheIndex));
 			oldMeta->_stack[pce->layerNum] = pce->platformNum;
 		}
@@ -2179,14 +2178,14 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		//  Initialize the cache entry to the new platform data.
 		pce->platformNum = plIndex;
 		pce->layerNum = layer;
-		pce->metaID = thisID(mapNum);
+		pce->metaID = thisID(_mapNum);
 		_stack[layer] = (cacheIndex | cacheFlag);
 
-		assert(plIndex * sizeof(Platform) < tileRes->size(platformID + mapNum));
+		assert(plIndex * sizeof(Platform) < tileRes->size(platformID + _mapNum));
 		debugC(3, kDebugLoading, "- plIndex: %d", plIndex);
 
 		// Now, load the actual metatile data...
-		if ((stream = loadResourceToStream(tileRes, platformID + mapNum, "platform"))) {
+		if ((stream = loadResourceToStream(tileRes, platformID + _mapNum, "platform"))) {
 			if (stream->skip(plIndex * sizeof(Platform))) {
 				pce->pl.load(stream);
 				delete stream;
@@ -2194,7 +2193,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 			}
 		}
 
-		error("Unable to read Platform %d of map %d", plIndex, mapNum);
+		error("Unable to read Platform %d of map %d", plIndex, _mapNum);
 		return nullptr;
 	}
 }
@@ -2203,8 +2202,8 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 //	Return a pointer to this metatile's current object ripping
 //	table
 
-RipTable *MetaTile::ripTable(int16 mapNum) {
-	WorldMapData    *mapData = &mapList[mapNum];
+RipTable *MetaTile::ripTable(int16 _mapNum) {
+	WorldMapData    *mapData = &mapList[_mapNum];
 
 	return RipTable::ripTableAddress((mapData->ripTableIDList)[_index]);
 }
@@ -2212,8 +2211,8 @@ RipTable *MetaTile::ripTable(int16 mapNum) {
 //-----------------------------------------------------------------------
 //	Return a reference to this meta tile's rip table ID
 
-RipTableID &MetaTile::ripTableID(int16 mapNum) {
-	WorldMapData    *mapData = &mapList[mapNum];
+RipTableID &MetaTile::ripTableID(int16 _mapNum) {
+	WorldMapData    *mapData = &mapList[_mapNum];
 
 	return (mapData->ripTableIDList)[_index];
 }
@@ -2243,22 +2242,22 @@ MetaTilePtr WorldMapData::lookupMeta(TilePoint coords) {
 
 	if (coords != clipCoords) {
 		switch (mapEdgeType) {
-		case edgeTypeBlack: // continue;
-		case edgeTypeFill0:
+		case kEdgeTypeBlack: // continue;
+		case kEdgeTypeFill0:
 			mtile = 0;
 			break;
 
-		case edgeTypeFill1:
+		case kEdgeTypeFill1:
 			mtile = 1;
 			break;
 
-		case edgeTypeRepeat:
+		case kEdgeTypeRepeat:
 			coords.u = clamp(0, coords.u, mapSizeMask);
 			coords.v = clamp(0, coords.v, mapSizeMask);
 			mtile = mapData[clipCoords.u * mapSize + clipCoords.v];
 			break;
 
-		case edgeTypeWrap:
+		case kEdgeTypeWrap:
 			mtile = mapData[clipCoords.u * mapSize + clipCoords.v];
 			break;
 		}
@@ -2277,7 +2276,7 @@ MetaTilePtr WorldMapData::lookupMeta(TilePoint coords) {
 	} else {
 		//  When getting the metatile number, make sure to mask off the
 		//  bit indicating that this map square has been visited.
-		mtile = mapData[coords.u * mapSize + coords.v] & ~metaTileVisited;
+		mtile = mapData[coords.u * mapSize + coords.v] & ~kMetaTileVisited;
 	}
 
 #endif
@@ -2301,7 +2300,7 @@ void WorldMapData::buildInstanceHash() {
 
 	for (i = 0, ail = activeItemList->_items; i < activeCount; i++, ail++) {
 		ActiveItem *ai = *ail;
-		if (ai->_data.itemType == activeTypeInstance) {
+		if (ai->_data.itemType == kActiveTypeInstance) {
 			hashVal = (((ai->_data.instance.u + ai->_data.instance.h) << 4)
 			           + ai->_data.instance.v + (ai->_data.instance.groupID << 2))
 			          % ARRAYSIZE(instHash);
@@ -2338,9 +2337,9 @@ ActiveItem *WorldMapData::findHashedInstance(
  * ====================================================================== */
 
 bool MetaTileIterator::iterate() {
-	if (++mCoords.v >= region.max.v) {
-		if (++mCoords.u >= region.max.u) return false;
-		mCoords.v = region.min.v;
+	if (++_mCoords.v >= _region.max.v) {
+		if (++_mCoords.u >= _region.max.u) return false;
+		_mCoords.v = _region.min.v;
 	}
 
 	return true;
@@ -2349,17 +2348,17 @@ bool MetaTileIterator::iterate() {
 MetaTile *MetaTileIterator::first(TilePoint *loc) {
 	MetaTile    *mtRes;
 
-	mCoords = region.min;
-	if (mCoords.u >= region.max.u || mCoords.v >= region.max.v)
+	_mCoords = _region.min;
+	if (_mCoords.u >= _region.max.u || _mCoords.v >= _region.max.v)
 		return nullptr;
 
-	mtRes = mapList[mapNum].lookupMeta(mCoords);
+	mtRes = mapList[_mapNum].lookupMeta(_mCoords);
 	while (mtRes == nullptr) {
 		if (!iterate()) return nullptr;
-		mtRes = mapList[mapNum].lookupMeta(mCoords);
+		mtRes = mapList[_mapNum].lookupMeta(_mCoords);
 	}
 
-	if (loc) *loc = mCoords << kPlatShift;
+	if (loc) *loc = _mCoords << kPlatShift;
 	return mtRes;
 }
 
@@ -2368,10 +2367,10 @@ MetaTile *MetaTileIterator::next(TilePoint *loc) {
 
 	do {
 		if (!iterate()) return nullptr;
-		mtRes = mapList[mapNum].lookupMeta(mCoords);
+		mtRes = mapList[_mapNum].lookupMeta(_mCoords);
 	} while (mtRes == nullptr);
 
-	if (loc) *loc = mCoords << kPlatShift;
+	if (loc) *loc = _mCoords << kPlatShift;
 	return mtRes;
 }
 
@@ -2380,36 +2379,36 @@ MetaTile *MetaTileIterator::next(TilePoint *loc) {
  * ====================================================================== */
 
 bool TileIterator::iterate() {
-	if (++tCoords.v >= tCoordsReg.max.v) {
-		if (++tCoords.u >= tCoordsReg.max.u) {
+	if (++_tCoords.v >= _tCoordsReg.max.v) {
+		if (++_tCoords.u >= _tCoordsReg.max.u) {
 			do {
-				platIndex++;
-				if (platIndex >= maxPlatforms) {
-					if ((mt = metaIter.next(&origin)) != nullptr) {
-						tCoordsReg.min.u = tCoordsReg.min.v = 0;
-						tCoordsReg.max.u = tCoordsReg.max.v = kPlatformWidth;
+				_platIndex++;
+				if (_platIndex >= kMaxPlatforms) {
+					if ((_mt = _metaIter.next(&_origin)) != nullptr) {
+						_tCoordsReg.min.u = _tCoordsReg.min.v = 0;
+						_tCoordsReg.max.u = _tCoordsReg.max.v = kPlatformWidth;
 
-						if (origin.u < region.min.u)
-							tCoordsReg.min.u = region.min.u & kPlatMask;
-						if (origin.u + kPlatformWidth > region.max.u)
-							tCoordsReg.max.u = region.max.u & kPlatMask;
-						if (origin.v < region.min.v)
-							tCoordsReg.min.v = region.min.v & kPlatMask;
-						if (origin.v + kPlatformWidth > region.max.v)
-							tCoordsReg.max.v = region.max.v & kPlatMask;
+						if (_origin.u < _region.min.u)
+							_tCoordsReg.min.u = _region.min.u & kPlatMask;
+						if (_origin.u + kPlatformWidth > _region.max.u)
+							_tCoordsReg.max.u = _region.max.u & kPlatMask;
+						if (_origin.v < _region.min.v)
+							_tCoordsReg.min.v = _region.min.v & kPlatMask;
+						if (_origin.v + kPlatformWidth > _region.max.v)
+							_tCoordsReg.max.v = _region.max.v & kPlatMask;
 					} else
 						return false;
 
-					platIndex = 0;
+					_platIndex = 0;
 				}
-				platform =  mt->fetchPlatform(
-				                metaIter.getMapNum(),
-				                platIndex);
-			} while (platform == nullptr);
+				_platform =  _mt->fetchPlatform(
+				                _metaIter.getMapNum(),
+				                _platIndex);
+			} while (_platform == nullptr);
 
-			tCoords.u = tCoordsReg.min.u;
+			_tCoords.u = _tCoordsReg.min.u;
 		}
-		tCoords.v = tCoordsReg.min.v;
+		_tCoords.v = _tCoordsReg.min.v;
 	}
 
 	return true;
@@ -2419,49 +2418,49 @@ TileInfo *TileIterator::first(TilePoint *loc, StandingTileInfo *stiResult) {
 	TileInfo            *tiRes;
 	StandingTileInfo    sti;
 
-	if (region.max.u <= region.min.u || region.max.v <= region.min.v)
+	if (_region.max.u <= _region.min.u || _region.max.v <= _region.min.v)
 		return nullptr;
 
-	if ((mt = metaIter.first(&origin)) == nullptr) return nullptr;
+	if ((_mt = _metaIter.first(&_origin)) == nullptr) return nullptr;
 
-	platform = mt->fetchPlatform(metaIter.getMapNum(), platIndex = 0);
-	while (platform == nullptr) {
-		platIndex++;
-		if (platIndex >= maxPlatforms) {
-			if ((mt = metaIter.next(&origin)) == nullptr) return nullptr;
-			platIndex = 0;
+	_platform = _mt->fetchPlatform(_metaIter.getMapNum(), _platIndex = 0);
+	while (_platform == nullptr) {
+		_platIndex++;
+		if (_platIndex >= kMaxPlatforms) {
+			if ((_mt = _metaIter.next(&_origin)) == nullptr) return nullptr;
+			_platIndex = 0;
 		}
-		platform = mt->fetchPlatform(metaIter.getMapNum(), platIndex);
+		_platform = _mt->fetchPlatform(_metaIter.getMapNum(), _platIndex);
 	}
 
-	tCoordsReg.min.u = tCoordsReg.min.v = 0;
-	tCoordsReg.max.u = tCoordsReg.max.v = kPlatformWidth;
+	_tCoordsReg.min.u = _tCoordsReg.min.v = 0;
+	_tCoordsReg.max.u = _tCoordsReg.max.v = kPlatformWidth;
 
-	if (origin.u < region.min.u)
-		tCoordsReg.min.u = region.min.u & kPlatMask;
-	if (origin.u + kPlatformWidth > region.max.u)
-		tCoordsReg.max.u = region.max.u & kPlatMask;
-	if (origin.v < region.min.v)
-		tCoordsReg.min.v = region.min.v & kPlatMask;
-	if (origin.v + kPlatformWidth > region.max.v)
-		tCoordsReg.max.v = region.max.v & kPlatMask;
+	if (_origin.u < _region.min.u)
+		_tCoordsReg.min.u = _region.min.u & kPlatMask;
+	if (_origin.u + kPlatformWidth > _region.max.u)
+		_tCoordsReg.max.u = _region.max.u & kPlatMask;
+	if (_origin.v < _region.min.v)
+		_tCoordsReg.min.v = _region.min.v & kPlatMask;
+	if (_origin.v + kPlatformWidth > _region.max.v)
+		_tCoordsReg.max.v = _region.max.v & kPlatMask;
 
-	tCoords = tCoordsReg.min;
-	tiRes = platform->fetchTAGInstance(
-	            metaIter.getMapNum(),
-	            tCoords,
-	            origin,
+	_tCoords = _tCoordsReg.min;
+	tiRes = _platform->fetchTAGInstance(
+	            _metaIter.getMapNum(),
+	            _tCoords,
+	            _origin,
 	            sti);
 	while (tiRes == nullptr) {
 		if (!iterate()) return nullptr;
-		tiRes = platform->fetchTAGInstance(
-		            metaIter.getMapNum(),
-		            tCoords,
-		            origin,
+		tiRes = _platform->fetchTAGInstance(
+		            _metaIter.getMapNum(),
+		            _tCoords,
+		            _origin,
 		            sti);
 	}
 
-	*loc = tCoords + origin;
+	*loc = _tCoords + _origin;
 	if (stiResult) *stiResult = sti;
 	return tiRes;
 }
@@ -2472,14 +2471,14 @@ TileInfo *TileIterator::next(TilePoint *loc, StandingTileInfo *stiResult) {
 
 	do {
 		if (!iterate()) return nullptr;
-		tiRes = platform->fetchTAGInstance(
-		            metaIter.getMapNum(),
-		            tCoords,
-		            origin,
+		tiRes = _platform->fetchTAGInstance(
+		            _metaIter.getMapNum(),
+		            _tCoords,
+		            _origin,
 		            sti);
 	} while (tiRes == nullptr);
 
-	*loc = tCoords + origin;
+	*loc = _tCoords + _origin;
 	if (stiResult) *stiResult = sti;
 	return tiRes;
 }
@@ -2498,7 +2497,7 @@ inline void drawMetaRow(gPixelMap &drawMap, TilePoint coords, Point16 pos) {
 	int16           uOrg = coords.u * kPlatformWidth,
 	                vOrg = coords.v * kPlatformWidth;
 
-	Platform        *drawList[maxPlatforms + 1],
+	Platform        *drawList[kMaxPlatforms + 1],
 	                **put = drawList;
 
 	int16           mapSizeMask = curMap->mapSize - 1,
@@ -2510,7 +2509,7 @@ inline void drawMetaRow(gPixelMap &drawMap, TilePoint coords, Point16 pos) {
 	int16           layerLimit;
 
 	for (;
-	        pos.x < drawMap.size.x + kMetaDX;
+	        pos.x < drawMap._size.x + kMetaDX;
 	        coords.u++,
 	        coords.v--,
 	        uOrg += kPlatformWidth,
@@ -2527,26 +2526,26 @@ inline void drawMetaRow(gPixelMap &drawMap, TilePoint coords, Point16 pos) {
 
 		if (coords != clipCoords) {
 			switch (mapEdgeType) {
-			case edgeTypeBlack: // continue;
-			case edgeTypeFill0:
+			case kEdgeTypeBlack: // continue;
+			case kEdgeTypeFill0:
 				mtile = 0;
 				break;
 
-			case edgeTypeFill1:
+			case kEdgeTypeFill1:
 				mtile = 1;
 				break;
 
-			case edgeTypeRepeat:
+			case kEdgeTypeRepeat:
 				coords.u = CLIP(coords.u, (int16)0, mapSizeMask);
 				coords.v = CLIP(coords.v, (int16)0, mapSizeMask);
-				mtile = mapData[clipCoords.u * curMap->mapSize + clipCoords.v] & ~metaTileVisited;
+				mtile = mapData[clipCoords.u * curMap->mapSize + clipCoords.v] & ~kMetaTileVisited;
 				break;
 
-			case edgeTypeWrap:
-				mtile = mapData[clipCoords.u * curMap->mapSize + clipCoords.v] & ~metaTileVisited;
+			case kEdgeTypeWrap:
+				mtile = mapData[clipCoords.u * curMap->mapSize + clipCoords.v] & ~kMetaTileVisited;
 				break;
 			}
-		} else mtile = mapData[clipCoords.u * curMap->mapSize + clipCoords.v] & ~metaTileVisited;
+		} else mtile = mapData[clipCoords.u * curMap->mapSize + clipCoords.v] & ~kMetaTileVisited;
 
 		if (mtile >= curMap->metaCount) mtile = curMap->metaCount - 1;
 
@@ -2558,7 +2557,7 @@ inline void drawMetaRow(gPixelMap &drawMap, TilePoint coords, Point16 pos) {
 		//  REM: Reject whole metatiles based on coords, based on
 		//  max height
 
-		layerLimit = maxPlatforms;
+		layerLimit = kMaxPlatforms;
 
 		for (int i = 0; i < layerLimit; i++) {
 			Platform    *p;
@@ -2570,14 +2569,14 @@ inline void drawMetaRow(gPixelMap &drawMap, TilePoint coords, Point16 pos) {
 
 			if (p->roofRipID() == rippedRoofID && rippedRoofID > 0) break;
 
-			if (p->flags & plVisible) {
+			if (p->flags & kPlVisible) {
 				//  REM: precompute this later, by scanning the platform
 				//  for individual altitudes
 
 				p->highestPixel = kTileHeight * (kPlatformWidth - 1) + kMaxTileHeight * 2 + 64;
 
 				if (pos.y <= 0
-				        || pos.y - p->highestPixel >= drawMap.size.y)
+				        || pos.y - p->highestPixel >= drawMap._size.y)
 					continue;
 
 				*put++ = p;
@@ -2620,14 +2619,14 @@ void buildRipTable(
 	//  calculate object ripping altitude
 	int16   tilesToGo = kPlatformWidth * kPlatformWidth;
 
-	for (uint i = 0; i < maxPlatforms; i++) {
+	for (uint i = 0; i < kMaxPlatforms; i++) {
 		Platform    *p;
 
 		if ((p = mt->fetchPlatform(g_vm->_currentMapNum, i)) == nullptr) continue;
 
 		if (p->roofRipID() != ripID) continue;
 
-		for (; i < maxPlatforms && tilesToGo > 0; i++) {
+		for (; i < kMaxPlatforms && tilesToGo > 0; i++) {
 			if ((p = mt->fetchPlatform(g_vm->_currentMapNum, i)) == nullptr)
 				continue;
 
@@ -2658,13 +2657,13 @@ void buildRipTable(
 //	the center view object
 
 void buildRipTables() {
-	const int16         regionRadius = kTileUVSize * kPlatformWidth * 2;
+	const int16         _regionRadius = kTileUVSize * kPlatformWidth * 2;
 
 	TilePoint           actorCoords;
 	MetaTile            *mt;
 	TileRegion          ripTableReg;
 
-	MetaTile            *mtTable[25]; // Largest region is 5x5
+	MetaTile            *mtTable[25]; // Largest _region is 5x5
 	int16               mtTableSize = 0;
 
 	getViewTrackPos(actorCoords);
@@ -2672,14 +2671,14 @@ void buildRipTables() {
 	ripTableCoords.v = actorCoords.v >> (kTileUVShift + kPlatShift);
 	ripTableCoords.z = 0;
 
-	//  Calculate the region of meta tile for which to build object
+	//  Calculate the _region of meta tile for which to build object
 	//  ripping table
-	ripTableReg.min.u = (actorCoords.u - regionRadius) >> kTileUVShift;
-	ripTableReg.min.v = (actorCoords.v - regionRadius) >> kTileUVShift;
+	ripTableReg.min.u = (actorCoords.u - _regionRadius) >> kTileUVShift;
+	ripTableReg.min.v = (actorCoords.v - _regionRadius) >> kTileUVShift;
 	ripTableReg.max.u =
-	    (actorCoords.u + regionRadius + kTileUVMask) >> kTileUVShift;
+	    (actorCoords.u + _regionRadius + kTileUVMask) >> kTileUVShift;
 	ripTableReg.max.v =
-	    (actorCoords.v + regionRadius + kTileUVMask) >> kTileUVShift;
+	    (actorCoords.v + _regionRadius + kTileUVMask) >> kTileUVShift;
 
 	MetaTileIterator    mIter(g_vm->_currentMapNum, ripTableReg);
 
@@ -2813,7 +2812,7 @@ void drawMetaTiles(gPixelMap &drawMap) {
 	//      (replace 256 constant with better value)
 
 	for (;
-	        metaPos.y < drawMap.size.y + kMetaTileHeight * 4 ;
+	        metaPos.y < drawMap._size.y + kMetaTileHeight * 4 ;
 	        baseCoords.u--,
 	        baseCoords.v--
 	    ) {
@@ -2954,8 +2953,8 @@ void maskPlatform(
     int16           vOrg) {                 // for TAG search
 	int16           u, v;
 
-	int16           right = sMap.size.x,
-	                bottom = sMap.size.y;
+	int16           right = sMap._size.x,
+	                bottom = sMap._size.y;
 
 	Point16         tilePos;
 
@@ -3075,7 +3074,7 @@ void maskMetaRow(
 	int16           uOrg = coords.u * kPlatformWidth,
 	                vOrg = coords.v * kPlatformWidth;
 
-	Platform        *drawList[maxPlatforms + 1],
+	Platform        *drawList[kMaxPlatforms + 1],
 	                **put = drawList;
 
 	int16           mapSizeMask = curMap->mapSize - 1,
@@ -3087,7 +3086,7 @@ void maskMetaRow(
 	int16           layerLimit;
 
 	for (;
-	        pos.x < sMap.size.x + kMetaDX;
+	        pos.x < sMap._size.x + kMetaDX;
 	        coords.u++,
 	        coords.v--,
 	        relLoc.u += kPlatUVSize,
@@ -3106,27 +3105,27 @@ void maskMetaRow(
 
 		if (coords != clipCoords) {
 			switch (mapEdgeType) {
-			case edgeTypeBlack: // continue;
-			case edgeTypeFill0:
+			case kEdgeTypeBlack: // continue;
+			case kEdgeTypeFill0:
 				mtile = 0;
 				break;
 
-			case edgeTypeFill1:
+			case kEdgeTypeFill1:
 				mtile = 1;
 				break;
 
-			case edgeTypeRepeat:
+			case kEdgeTypeRepeat:
 				coords.u = clamp(0, coords.u, mapSizeMask);
 				coords.v = clamp(0, coords.v, mapSizeMask);
-				mtile = mapData[clipCoords.u * curMap->mapSize + clipCoords.v] & ~metaTileVisited;
+				mtile = mapData[clipCoords.u * curMap->mapSize + clipCoords.v] & ~kMetaTileVisited;
 				break;
 
-			case edgeTypeWrap:
-				mtile = mapData[clipCoords.u * curMap->mapSize + clipCoords.v] & ~metaTileVisited;
+			case kEdgeTypeWrap:
+				mtile = mapData[clipCoords.u * curMap->mapSize + clipCoords.v] & ~kMetaTileVisited;
 				break;
 			}
 		} else
-			mtile = mapData[clipCoords.u * curMap->mapSize + clipCoords.v] & ~metaTileVisited;
+			mtile = mapData[clipCoords.u * curMap->mapSize + clipCoords.v] & ~kMetaTileVisited;
 
 		if (mtile >= curMap->metaCount)
 			mtile = curMap->metaCount - 1;
@@ -3139,7 +3138,7 @@ void maskMetaRow(
 		//  REM: Reject whole metatiles based on coords, based on
 		//  max height
 
-		layerLimit = maxPlatforms;
+		layerLimit = kMaxPlatforms;
 
 		for (int i = 0; i < layerLimit; i++) {
 			Platform    *p;
@@ -3149,14 +3148,14 @@ void maskMetaRow(
 
 			if (p->roofRipID() == roofID && roofID > 0) break;
 
-			if (p->flags & plVisible) {
+			if (p->flags & kPlVisible) {
 				//  REM: precompute this later, by scanning the platform
 				//  for individual altitudes
 
 				p->highestPixel = kTileHeight * (kPlatformWidth - 1) + kMaxTileHeight + 192;
 
 				if (pos.y <= 0
-				        || pos.y - p->highestPixel >= sMap.size.y)
+				        || pos.y - p->highestPixel >= sMap._size.y)
 					continue;
 
 				*put++ = p;
@@ -3221,7 +3220,7 @@ void drawTileMask(
 	//      (replace 256 constant with better value)
 
 	for (;
-	        metaPos.y < sMap.size.y + kMetaTileHeight * 4 ;
+	        metaPos.y < sMap._size.y + kMetaTileHeight * 4 ;
 	        baseCoords.u--,
 	        baseCoords.v--
 	    ) {
@@ -3311,15 +3310,15 @@ void showAbstractTile(const TilePoint &tp, TileInfo *ti) {
 	uint8       *chPtr;
 	uint8       raisedCornerHeight[4] = { 0, 0, 0, 0 };
 
-	if (ti->combinedTerrainMask() & terrainRaised) {
-		if ((1L << ti->attrs.bgdTerrain) & terrainRaised) {
+	if (ti->combinedTerrainMask() & kTerrainRaised) {
+		if ((1L << ti->attrs.bgdTerrain) & kTerrainRaised) {
 			workTp.z += ti->attrs.terrainHeight;
 			chPtr = raisedCornerHeight;
 		} else
 			chPtr = ti->attrs.cornerHeight;
 		drawSubTiles(workTp, ~ti->attrs.terrainMask, chPtr);
 		workTp.z = tp.z;
-		if ((1L << ti->attrs.fgdTerrain) & terrainRaised) {
+		if ((1L << ti->attrs.fgdTerrain) & kTerrainRaised) {
 			workTp.z += ti->attrs.terrainHeight;
 			chPtr = raisedCornerHeight;
 		} else
@@ -3427,7 +3426,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 	relPos.x = clamp(-kTileDX + 2, relPos.x, kTileDX - 1);
 
 	//  If the tile has no raised terrain
-	if (!(combinedMask & terrainRaised)) {
+	if (!(combinedMask & kTerrainRaised)) {
 		//  Calculate the position of the first point on tile to check.
 		if (relPos.x > 0) {
 			subUVPoint.u = relPos.x >> 1;
@@ -3503,7 +3502,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 		while (subTileRel.y >= 0
 		        && subTile.u < 4
 		        && subTile.v < 4) {
-			if (ti->attrs.testTerrain(sMask) & terrainRaised) {
+			if (ti->attrs.testTerrain(sMask) & kTerrainRaised) {
 				lastRaisedSubTile = subTile;
 
 				//  mouse is on side of raised section
@@ -3527,7 +3526,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 						                calcSubTileMask(
 						                    subTile.u - 1,
 						                    subTile.v))
-						            &   terrainRaised))
+						            &   kTerrainRaised))
 							subTileToLeft = true;
 
 						if (subTile.v > 0
@@ -3535,7 +3534,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 						                calcSubTileMask(
 						                    subTile.u,
 						                    subTile.v - 1))
-						            &   terrainRaised))
+						            &   kTerrainRaised))
 							subTileToRight = true;
 
 						if ((subTileToRight && subTileToLeft)
@@ -3700,7 +3699,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 							else
 								colMask = 0x8421 >> ((-rightSubTileCol) << 2);
 
-							if (ti->attrs.testTerrain(colMask) & terrainRaised) {
+							if (ti->attrs.testTerrain(colMask) & kTerrainRaised) {
 								raisedCol = rightSubTileCol;
 								subTileRel.x = -kSubTileDX + 2;
 								break;
@@ -3716,7 +3715,7 @@ testLeft:
 							else
 								colMask = 0x8421 >> ((-leftSubTileCol) << 2);
 
-							if (ti->attrs.testTerrain(colMask) & terrainRaised) {
+							if (ti->attrs.testTerrain(colMask) & kTerrainRaised) {
 								raisedCol = leftSubTileCol;
 								subTileRel.x = kSubTileDX - 1;
 								break;
@@ -3745,7 +3744,7 @@ testLeft:
 
 					//  test each subtile in column for first raised
 					//  subtile
-					while (subsInCol && !(ti->attrs.testTerrain(colMask) & terrainRaised)) {
+					while (subsInCol && !(ti->attrs.testTerrain(colMask) & kTerrainRaised)) {
 						subsInCol--;
 						subTile.u++;
 						subTile.v++;
@@ -3778,7 +3777,7 @@ bool pointOnHiddenSurface(
 	WorldMapData    *curMap = &mapList[g_vm->_currentMapNum];
 
 	TilePoint       testCoords,
-	                mCoords,
+	                _mCoords,
 	                tCoords,
 	                origin;
 	MetaTile        *mt;
@@ -3809,20 +3808,20 @@ bool pointOnHiddenSurface(
 		adjSubMask = 0x0008 << (testCoords.u & ~kSubTileMask);
 	}
 
-	mCoords = adjTCoords >> kPlatShift;
+	_mCoords = adjTCoords >> kPlatShift;
 
 	//  If metatile of adjacent tile does not exist, the pick point
 	//  is valid.
-	if ((mt = curMap->lookupMeta(mCoords)) == nullptr) return false;
+	if ((mt = curMap->lookupMeta(_mCoords)) == nullptr) return false;
 
 	tCoords.u = adjTCoords.u & kPlatMask;
 	tCoords.v = adjTCoords.v & kPlatMask;
 	tCoords.z = 0;
-	origin  = mCoords << kPlatShift;
+	origin  = _mCoords << kPlatShift;
 
 	int             i;
 
-	for (i = 0; i < maxPlatforms; i++) {
+	for (i = 0; i < kMaxPlatforms; i++) {
 		Platform    *p;
 		int16       h,
 		            trFlags;
@@ -3830,7 +3829,7 @@ bool pointOnHiddenSurface(
 		if ((p = mt->fetchPlatform(g_vm->_currentMapNum, i)) == nullptr)
 			continue;
 
-		if (!(p->flags & plVisible) || platformRipped(p)) continue;
+		if (!(p->flags & kPlVisible) || platformRipped(p)) continue;
 
 		//  Fetch the tile at this location
 		adjTile =   p->fetchTile(
@@ -3849,14 +3848,14 @@ bool pointOnHiddenSurface(
 			continue;
 
 		//  If adjacent subtile is not raised, skip this tile
-		if (!(adjTile->attrs.testTerrain(adjSubMask) & terrainRaised))
+		if (!(adjTile->attrs.testTerrain(adjSubMask) & kTerrainRaised))
 			continue;
 
 		break;
 	}
 
 	//  If all platforms have been checked, the pick point is valid
-	if (i >= maxPlatforms) return false;
+	if (i >= kMaxPlatforms) return false;
 
 	return true;
 }
@@ -3881,7 +3880,7 @@ StaticTilePoint pickTile(Point32 pos,
 	int16           zMax,
 	                zMin,
 	                mag;
-	TilePoint       mCoords,
+	TilePoint       _mCoords,
 	                tCoords,
 	                origin,
 	                testCoords,
@@ -3943,21 +3942,21 @@ StaticTilePoint pickTile(Point32 pos,
 
 	//  Compute which metatile the click occurred on, and the tile
 	//  within that metatile, and the origin coords of the metatile
-	mCoords = tileCoords >> kPlatShift;
+	_mCoords = tileCoords >> kPlatShift;
 	tCoords.u = tileCoords.u & kPlatMask;
 	tCoords.v = tileCoords.v & kPlatMask;
 	tCoords.z = 0;
-	origin  = mCoords << kPlatShift;
+	origin  = _mCoords << kPlatShift;
 
 	//  Lookup the metatile
-	mt = curMap->lookupMeta(mCoords);
+	mt = curMap->lookupMeta(_mCoords);
 
 	//  While we are less than the pick altitude
 	while (relPos.y < zMax + kTileDX + kMaxStepHeight - ABS(relPos.x >> 1)) {
 		//  If there is a metatile on this spot
 		if (mt != nullptr) {
 			//  Iterate through all platforms
-			for (i = 0; i < maxPlatforms; i++) {
+			for (i = 0; i < kMaxPlatforms; i++) {
 				Platform            *p;
 				StandingTileInfo    sti;
 
@@ -3965,7 +3964,7 @@ StaticTilePoint pickTile(Point32 pos,
 					continue;
 
 				if (platformRipped(p)) break;
-				if (!(p->flags & plVisible)) continue;
+				if (!(p->flags & kPlVisible)) continue;
 
 				//  Fetch the tile at this location
 
@@ -4033,9 +4032,9 @@ StaticTilePoint pickTile(Point32 pos,
 			coords.u -= kTileUVSize;
 			if (tCoords.u < 0) {
 				tCoords.u = kPlatformWidth - 1;
-				mCoords.u--;
-				origin = mCoords << kPlatShift;
-				mt = curMap->lookupMeta(mCoords);
+				_mCoords.u--;
+				origin = _mCoords << kPlatShift;
+				mt = curMap->lookupMeta(_mCoords);
 			}
 			relPos.x += kTileDX;
 		} else {
@@ -4043,9 +4042,9 @@ StaticTilePoint pickTile(Point32 pos,
 			coords.v -= kTileUVSize;
 			if (tCoords.v < 0) {
 				tCoords.v = kPlatformWidth - 1;
-				mCoords.v--;
-				origin = mCoords << kPlatShift;
-				mt = curMap->lookupMeta(mCoords);
+				_mCoords.v--;
+				origin = _mCoords << kPlatShift;
+				mt = curMap->lookupMeta(_mCoords);
 			}
 			relPos.x -= kTileDX;
 		}
@@ -4082,22 +4081,22 @@ StaticTilePoint pickTile(Point32 pos,
 void cycleTiles(int32 delta) {
 	if (delta <= 0) return;
 
-	for (int i = 0; i < cycleCount; i++) {
-		TileCycleData   &tcd = cycleList[i];
+	for (int i = 0; i < _cycleCount; i++) {
+		TileCycleData   &tcd = _cycleList[i];
 
-		tcd.counter += tcd.cycleSpeed * delta;
-		if (tcd.counter >= 400) {
-			tcd.counter = 0;
-			tcd.currentState++;
-			if (tcd.currentState >= tcd.numStates)
-				tcd.currentState = 0;
+		tcd._counter += tcd._cycleSpeed * delta;
+		if (tcd._counter >= 400) {
+			tcd._counter = 0;
+			tcd._currentState++;
+			if (tcd._currentState >= tcd._numStates)
+				tcd._currentState = 0;
 		}
 	}
 }
 
 struct TileCycleArchive {
 	int32       counter;
-	uint8       currentState;
+	uint8       _currentState;
 };
 
 //-----------------------------------------------------------------------
@@ -4107,17 +4106,17 @@ void initTileCyclingStates() {
 	Common::SeekableReadStream *stream;
 	const int tileCycleDataSize = 40;
 
-	cycleCount = tileRes->size(cycleID) / tileCycleDataSize;
-	cycleList = new TileCycleData[cycleCount];
+	_cycleCount = tileRes->size(cycleID) / tileCycleDataSize;
+	_cycleList = new TileCycleData[_cycleCount];
 
-	if (cycleList == nullptr)
+	if (_cycleList == nullptr)
 		error("Unable to load tile cycling data");
 
 	if ((stream = loadResourceToStream(tileRes, cycleID, "cycle list"))) {
-		for (int i = 0; i < cycleCount; ++i)
-			cycleList[i].load(stream);
+		for (int i = 0; i < _cycleCount; ++i)
+			_cycleList[i].load(stream);
 
-		debugC(2, kDebugLoading, "Loaded Cycles: cycleCount = %d", cycleCount);
+		debugC(2, kDebugLoading, "Loaded Cycles: _cycleCount = %d", _cycleCount);
 		delete stream;
 	}
 }
@@ -4126,14 +4125,14 @@ void saveTileCyclingStates(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving TileCyclingStates");
 	outS->write("CYCL", 4);
 	CHUNK_BEGIN;
-	for (int i = 0; i < cycleCount; i++) {
+	for (int i = 0; i < _cycleCount; i++) {
 		debugC(3, kDebugSaveload, "Saving TileCyclingState %d", i);
 
-		out->writeSint32LE(cycleList[i].counter);
-		out->writeByte(cycleList[i].currentState);
+		out->writeSint32LE(_cycleList[i]._counter);
+		out->writeByte(_cycleList[i]._currentState);
 
-		debugC(4, kDebugSaveload, "... counter = %d", cycleList[i].counter);
-		debugC(4, kDebugSaveload, "... currentState = %d", cycleList[i].currentState);
+		debugC(4, kDebugSaveload, "... counter = %d", _cycleList[i]._counter);
+		debugC(4, kDebugSaveload, "... currentState = %d", _cycleList[i]._currentState);
 	}
 	CHUNK_END;
 }
@@ -4143,13 +4142,13 @@ void loadTileCyclingStates(Common::InSaveFile *in) {
 
 	initTileCyclingStates();
 
-	for (int i = 0; i < cycleCount; i++) {
+	for (int i = 0; i < _cycleCount; i++) {
 		debugC(3, kDebugSaveload, "Loading TileCyclingState %d", i);
-		cycleList[i].counter = in->readSint32LE();
-		cycleList[i].currentState = in->readByte();
+		_cycleList[i]._counter = in->readSint32LE();
+		_cycleList[i]._currentState = in->readByte();
 
-		debugC(4, kDebugSaveload, "... counter = %d", cycleList[i].counter);
-		debugC(4, kDebugSaveload, "... currentState = %d", cycleList[i].currentState);
+		debugC(4, kDebugSaveload, "... counter = %d", _cycleList[i]._counter);
+		debugC(4, kDebugSaveload, "... currentState = %d", _cycleList[i]._currentState);
 	}
 }
 
@@ -4157,9 +4156,9 @@ void loadTileCyclingStates(Common::InSaveFile *in) {
 //	Cleanup the tile cycling state array
 
 void cleanupTileCyclingStates() {
-	if (cycleList != nullptr) {
-		delete[] cycleList;
-		cycleList = nullptr;
+	if (_cycleList != nullptr) {
+		delete[] _cycleList;
+		_cycleList = nullptr;
 	}
 }
 
@@ -4220,8 +4219,8 @@ uint16 objRoofID(GameObject *obj, int16 objMapNum, const TilePoint &objCoords) {
 			origin.u = metaU << kPlatShift;
 			origin.v = metaV << kPlatShift;
 
-			//  Compute the tile region relative to the origin of this
-			//  meta tile clipped to this meta tile region
+			//  Compute the tile _region relative to the origin of this
+			//  meta tile clipped to this meta tile _region
 			relTileReg.min.u = MAX(objTileReg.min.u - origin.u, 0);
 			relTileReg.min.v = MAX(objTileReg.min.v - origin.v, 0);
 			relTileReg.max.u = MIN(objTileReg.max.u - origin.u, (int)kPlatformWidth);
@@ -4237,7 +4236,7 @@ uint16 objRoofID(GameObject *obj, int16 objMapNum, const TilePoint &objCoords) {
 					int             i,
 					                tilePlatNum = -1;
 
-					for (i = 0; i < maxPlatforms; i++) {
+					for (i = 0; i < kMaxPlatforms; i++) {
 						Platform    *p;
 						TileInfo    *t;
 						int16       height;
@@ -4246,7 +4245,7 @@ uint16 objRoofID(GameObject *obj, int16 objMapNum, const TilePoint &objCoords) {
 						if ((p = meta->fetchPlatform(objMapNum, i)) == nullptr)
 							continue;
 
-						if (!(p->flags & plVisible) || p->roofRipID() <= 0)
+						if (!(p->flags & kPlVisible) || p->roofRipID() <= 0)
 							continue;
 
 						t = p->fetchTile(
@@ -4317,7 +4316,7 @@ void updateMainDisplay() {
 
 	if (viewWorld != currentWorld) {
 		currentWorld = viewWorld;
-		setCurrentMap(currentWorld->mapNum);
+		setCurrentMap(currentWorld->_mapNum);
 	}
 
 	WorldMapData    *curMap = &mapList[g_vm->_currentMapNum];
@@ -4328,7 +4327,7 @@ void updateMainDisplay() {
 	                scrollDistance;
 
 	TilePoint       trackPos,
-	                mCoords;
+	                _mCoords;
 
 	lastUpdateTime = gameTime;
 
@@ -4391,13 +4390,13 @@ void updateMainDisplay() {
 	//  encloses the view area, and convert to sector coords.
 	buildRoofTable();
 
-	mCoords.u = trackPos.u >> (kTileUVShift + kPlatShift);
-	mCoords.v = trackPos.v >> (kTileUVShift + kPlatShift);
-	mCoords.z = 0;
+	_mCoords.u = trackPos.u >> (kTileUVShift + kPlatShift);
+	_mCoords.v = trackPos.v >> (kTileUVShift + kPlatShift);
+	_mCoords.z = 0;
 
 	//  If trackPos has crossed a metatile boundry, rebuild object
 	//  ripping tables
-	if (mCoords != ripTableCoords) buildRipTables();
+	if (_mCoords != ripTableCoords) buildRipTables();
 
 	//  Build the list of all displayed objects
 	buildDisplayList();
@@ -4415,7 +4414,7 @@ void updateMainDisplay() {
 void drawMainDisplay() {
 
 
-	// draws tiles to g_vm->_tileDrawMap.data
+	// draws tiles to g_vm->_tileDrawMap._data
 	drawMetaTiles(g_vm->_tileDrawMap);
 
 	//  Draw sprites onto back buffer
@@ -4433,10 +4432,10 @@ void drawMainDisplay() {
 	//  Blit it all onto the screen
 	drawPage->writePixels(
 	    rect,
-	    g_vm->_tileDrawMap.data
+	    g_vm->_tileDrawMap._data
 	    + fineScroll.x
-	    + fineScroll.y * g_vm->_tileDrawMap.size.x,
-	    g_vm->_tileDrawMap.size.x);
+	    + fineScroll.y * g_vm->_tileDrawMap._size.x,
+	    g_vm->_tileDrawMap._size.x);
 
 	updateFrameCount();
 }
@@ -4488,7 +4487,7 @@ void markMetaAsVisited(const TilePoint &pt) {
 		for (u = minU; u <= maxU; u++) {
 			for (v = minV; v <= maxV; v++) {
 				if ((u == minU || u == maxU) && (v == minV || v == maxV)) continue;
-				mapData[u * curMap->mapSize + v] |= metaTileVisited;
+				mapData[u * curMap->mapSize + v] |= kMetaTileVisited;
 			}
 		}
 	}

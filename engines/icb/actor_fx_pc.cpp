@@ -219,7 +219,7 @@ void DrawBreathingPC(Breath *breath) {
 				if (y < minY)
 					minY = y;
 
-				if (y + w > maxX)
+				if (x + w > maxX)
 					maxX = (int16)(x + w);
 
 				if (y + h > maxY)

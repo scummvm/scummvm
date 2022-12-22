@@ -56,7 +56,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD | ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_ST25,
 		GF_CDROM,
@@ -70,7 +70,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD | ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_ST25,
 		GF_CDROM,
@@ -84,7 +84,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_CD | ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_ST25,
 		GF_CDROM,
@@ -98,7 +98,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_CD | ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_ST25,
 		GF_CDROM,
@@ -112,7 +112,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_ST25,
 		0,
@@ -126,7 +126,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_ST25,
 		0,
@@ -140,7 +140,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_ST25,
 		0,
@@ -154,7 +154,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_ST25,
 		0,
@@ -168,7 +168,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK | ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_ST25,
 		0,
@@ -182,7 +182,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_ST25,
 		GF_DEMO,
@@ -196,7 +196,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK | ADGF_DEMO | ADGF_CD | ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_ST25,
 		GF_DEMO,
@@ -210,7 +210,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK | ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_ST25,
 		GF_DEMO,
@@ -228,7 +228,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_ST25,
 		0,
@@ -242,7 +242,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_ST25,
 		0,
@@ -256,7 +256,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformAmiga,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_ST25,
 		0,
@@ -270,7 +270,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK | ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_ST25,
 		0,
@@ -284,7 +284,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_ST25,
 		GF_DEMO,
@@ -299,7 +299,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_STJR,
 		GF_CDROM,
@@ -313,7 +313,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_STJR,
 		GF_CDROM,
@@ -327,7 +327,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_STJR,
 		0
@@ -341,7 +341,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUIO2(GUIO_RENDERVGA, GUIO_RENDEREGA)
 		},
 		GType_STJR,
 		0

@@ -107,7 +107,12 @@ void GroupedListWidget::sortGroups() {
 	_list.clear();
 	_listIndex.clear();
 
-	Common::sort(_groupHeaders.begin(), _groupHeaders.end());
+	Common::sort(_groupHeaders.begin(), _groupHeaders.end(),
+		[](const Common::String &first, const Common::String &second) {
+			return first.empty() ? 0 : second.empty() ? 1 : first < second;
+		}
+
+	);
 
 	uint curListSize = 0;
 	for (uint i = 0; i != _groupHeaders.size(); ++i) {

@@ -161,11 +161,22 @@ char *ObjectMan::lockText(uint32 textId, uint8 lang) {
 	}
 	uint32 offset = _resMan->readUint32(addr + ((textId & ITM_ID) + 1) * 4);
 	if (offset == 0) {
+		switch(textId) {
 		// Workaround bug for missing sentence in some languages in Syria (see bug #3753).
 		// We use the hardcoded text in this case.
-		if (textId == 2950145)
+		case 2950145:
 			return const_cast<char *>(_translationId2950145[lang]);
 
+		// Workaround for some strings in spanish demo
+		case 6488080:
+			return const_cast<char *>(_translationId6488080[lang]);
+		case 6488081:
+			return const_cast<char *>(_translationId6488081[lang]);
+		case 6488082:
+			return const_cast<char *>(_translationId6488082[lang]);
+		case 6488083:
+			return const_cast<char *>(_translationId6488083[lang]);
+		}
 		warning("ObjectMan::lockText(%d): text number has no text lines", textId);
 		return NULL;
 	}
@@ -386,7 +397,7 @@ const char *const ObjectMan::_translationId6488080[7] = {
 	"Je ferais mieux d'enqu\351ter un peu par ici avant d'aller me promener ailleurs.",     // French
 	"Ich durchquere nicht ganz Paris, bevor ich etwas mehr herausgefunden habe.",           // German
 	"Non mi sarei incamminato per tutta Parigi prima di ulteriori indagini.",               // Italian
-	"No iba a ponerme a recorrer Par\355s sin haber investigado un poco m\341s.",           // Spanish
+	"No iba a empezar a recorrerme todo Par\355s hasta haber investigado algo m\341s.",     // Spanish
 	NULL,                                                                                   // Czech
 	NULL                                                                                    // Portuguese
 };
@@ -404,20 +415,20 @@ const char *const ObjectMan::_translationId6488081[7] = {
 	"Je ne savais pas ce que je ferais quand je rattraperais le clown...",               // French
 	"Ich wu\337te nicht, worauf ich mich einlie\337, als ich dem Clown nachjagte...",    // German
 	"Non sapevo cosa avrei fatto una volta raggiunto quel clown...",                     // Italian
-	"No sab\355a muy bien qu\351 es lo que har\355a cuando alcanzara al payaso...",      // Spanish
+	"No estaba seguro de qu\351 iba a hacer cuando alcanzara a ese payaso...",           // Spanish
 	NULL,                                                                                // Czech
 	NULL                                                                                 // Portuguese
 };
 
 // Missing translation for textId 6488082 (in the demo).
 const char *const ObjectMan::_translationId6488082[7] = {
-	NULL, // "...but before I knew it, I was drawn into a desperate race between two ruthless enemies.",                             // English (not needed)
-	"...mais avant de m'en rendre compte je me retrouvais happ\351 dans une course effr\351n\351e entre deux ennemis impitoyables.", // French
-	"... doch bevor ich mich versah, war ich inmitten eines Wettlaufs von zwei r\374cksichtslosen Feinden.",                         // German
-	"... ma prima che me ne rendessi conto, fui trascinato in una corsa disperata con due spietati nemici.",                         // Italian
-	"...pero sin darme cuenta, acab\351 en medio de una desesperada carrera entre dos despiadados enemigos.",                        // Spanish
-	NULL,                                                                                                                            // Czech
-	NULL                                                                                                                             // Portuguese
+	NULL, // "...but before I knew it, I was drawn into a desperate race between two ruthless enemies.",                                   // English (not needed)
+	"...mais avant de m'en rendre compte je me retrouvais happ\351 dans une course effr\351n\351e entre deux ennemis impitoyables.",       // French
+	"... doch bevor ich mich versah, war ich inmitten eines Wettlaufs von zwei r\374cksichtslosen Feinden.",                               // German
+	"... ma prima che me ne rendessi conto, fui trascinato in una corsa disperata con due spietati nemici.",                               // Italian
+	"... pero antes de que me diera tiempo a pensarlo, me encontr\351 metido en una carrera desesperada entre dos enemigos sin piedad.",   // Spanish
+	NULL,                                                                                                                                  // Czech
+	NULL                                                                                                                                   // Portuguese
 };
 
 // Missing translation for textId 6488083 (in the demo).

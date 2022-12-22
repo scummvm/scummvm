@@ -39,7 +39,9 @@
 #include <CoreFoundation/CFString.h>
 
 // NSDockTile was introduced with Mac OS X 10.5.
-// Try provide backward compatibility by avoiding NSDockTile symbols.
+// The following makes it possible to compile this feature with the 10.4
+// SDK (by avoiding any NSDockTile symbol), while letting the same build
+// use this feature at run-time on 10.5+.
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
 typedef id NSDockTilePtr;
 #else
@@ -67,8 +69,6 @@ MacOSXTaskbarManager::MacOSXTaskbarManager() : _progress(-1.0) {
 	_dockTile = nil;
 	_applicationIconView = nil;
 	_overlayIconView = nil;
-
-
 }
 
 MacOSXTaskbarManager::~MacOSXTaskbarManager() {
@@ -119,7 +119,7 @@ void MacOSXTaskbarManager::setOverlayIcon(const Common::String &name, const Comm
 	if (!hasDockTile())
 		return;
 
-    if (name.empty()) {
+	if (name.empty()) {
 		clearOverlayIconView();
 		[_dockTile performSelector:@selector(display)];
 		return;
@@ -149,7 +149,7 @@ void MacOSXTaskbarManager::setProgressValue(int completed, int total) {
 	else if (_progress < 0)
 		_progress = 0.0;
 
-	 NSImage *mainIcon = [[NSApp applicationIconImage] copy];
+	NSImage *mainIcon = [[NSApp applicationIconImage] copy];
 	double barSize = [mainIcon size].width;
 	double progressSize = barSize * _progress;
 	[mainIcon lockFocus];
@@ -209,7 +209,7 @@ void MacOSXTaskbarManager::clearError() {
 	if (!hasDockTile())
 		return;
 
-    clearOverlayIconView();
+	clearOverlayIconView();
 	[_dockTile performSelector:@selector(display)];
 	return;
 }

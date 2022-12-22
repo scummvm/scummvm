@@ -55,7 +55,7 @@ enum EvType {
 /**
  * Keycodes
  */
-enum Keycode {
+enum Keycode : uint {
 	keycode_Unknown  = 0xffffffffU,
 	keycode_Left     = 0xfffffffeU,
 	keycode_Right    = 0xfffffffdU,

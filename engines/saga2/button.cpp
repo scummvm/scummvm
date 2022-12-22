@@ -110,7 +110,7 @@ GfxCompImage::GfxCompImage(gPanelList &list, const Rect16 &box, void *image, con
 	_compImages[0] = image;
 	_max             = 0;
 	_numPtrAlloc     = 1;
-	title           = text;
+	_title           = text;
 	_textFont        = &Onyx10Font;  // >>> this should be dynamic
 	_textPal         = pal;
 }
@@ -143,7 +143,7 @@ GfxCompImage::GfxCompImage(gPanelList &list, const Rect16 &box, void **images,
 		_currentImage    = clamp(_min, initial, _max);
 	}
 
-	title       = text;
+	_title       = text;
 	_textFont    = &Onyx10Font;  // >>> this should be dynamic
 	_textPal     = pal;
 }
@@ -161,7 +161,7 @@ GfxCompImage::GfxCompImage(gPanelList &list, const StaticRect &box, void **image
 		_currentImage = clamp(_min, initial, _max);
 	}
 
-	title    = text;
+	_title    = text;
 	_textFont = &Onyx10Font;  // >>> this should be dynamic
 	_textPal  = pal;
 }
@@ -169,9 +169,9 @@ GfxCompImage::GfxCompImage(gPanelList &list, const StaticRect &box, void **image
 
 GfxCompImage::~GfxCompImage() {
 	// delete any allocated image pointers
-	// for JEFFL: I took out the winklude #ifdefs becuase I belive
+	// for JEFFL: I took out the winklude #ifdefs because I believe
 	// I fixed the problem that was causing the crash under win32
-	// 11-14-95, I should talk to you tommorow. This is note is
+	// 11-14-95, I should talk to you tomorrow. This note is
 	// a precaution
 
 	// if we LoadRes'ed image internally RDispose those
@@ -191,7 +191,7 @@ void GfxCompImage::pointerMove(gPanelMessage &msg) {
 	// call the superclass's pointerMove
 	gControl::pointerMove(msg);
 
-	notify(gEventMouseMove, (msg.pointerEnter ? enter : 0) | (msg.pointerLeave ? leave : 0));
+	notify(kEventMouseMove, (msg._pointerEnter ? kEnter : 0) | (msg._pointerLeave ? kLeave : 0));
 }
 
 void GfxCompImage::enable(bool abled) {
@@ -199,12 +199,12 @@ void GfxCompImage::enable(bool abled) {
 }
 
 void GfxCompImage::invalidate(Rect16 *) {
-	window.update(_extent);
+	_window.update(_extent);
 }
 
 void GfxCompImage::draw() {
-	gPort   &port = window.windowPort;
-	Rect16  rect = window.getExtent();
+	gPort   &port = _window._windowPort;
+	Rect16  rect = _window.getExtent();
 
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.
 	g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
@@ -241,7 +241,7 @@ void GfxCompImage::select(uint16 val) {
 	setCurrent(val);
 
 	if (getEnabled()) {
-		window.update(_extent);
+		_window.update(_extent);
 	}
 }
 
@@ -280,12 +280,12 @@ void GfxCompImage::drawClipped(gPort &port,
 			else drawCompressedImage(port, pos, dispImage);
 
 			// this could be modified to get the current text coloring
-			if (title) {
+			if (_title) {
 				Rect16 textRect = _extent;
 				textRect.x -= offset.x;
 				textRect.y -= offset.y;
 
-				writePlaqText(port, textRect, _textFont, 0, _textPal, selected, title);
+				writePlaqText(port, textRect, _textFont, 0, _textPal, _selected, _title);
 			}
 		}
 	}
@@ -304,7 +304,7 @@ GfxSpriteImage::GfxSpriteImage(gPanelList &list, const Rect16 &box, GameObject *
 	object->getColorTranslation(_objColors);
 
 	// assing the sprite pointer
-	_sprPtr = proto->getSprite(object, ProtoObj::objInContainerView).sp;
+	_sprPtr = proto->getSprite(object, ProtoObj::kObjInContainerView).sp;
 }
 
 // getCurrentCompImage() is virtual function that should return
@@ -319,23 +319,23 @@ void GfxSpriteImage::drawClipped(gPort &port,
 	// if there's a sprite present
 	gPixelMap       map;
 
-	//map.size = Point16( extent.height, extent.width );
-	map.size = _sprPtr->size;
+	//map._size = Point16( extent.height, extent.width );
+	map._size = _sprPtr->size;
 
-	map.data = (uint8 *)malloc(map.bytes() * sizeof(uint8));
-	if (map.data == nullptr) return;
+	map._data = (uint8 *)malloc(map.bytes() * sizeof(uint8));
+	if (map._data == nullptr) return;
 
-	memset(map.data, 0, map.bytes());
+	memset(map._data, 0, map.bytes());
 
 	//  Render the sprite into the bitmap image sequence
 	ExpandColorMappedSprite(map, _sprPtr, _objColors);
 
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 	port.bltPixels(map, 0, 0,
 	               _extent.x - offset.x, _extent.y - offset.y,
-	               map.size.x, map.size.y);
+	               map._size.x, map._size.y);
 
-	free(map.data);
+	free(map._data);
 }
 
 /* ===================================================================== *
@@ -520,23 +520,23 @@ void GfxCompButton::dim(bool enableFlag) {
 			_dimmed = false;
 	}
 
-	window.update(_extent);
+	_window.update(_extent);
 }
 
 
 void GfxCompButton::deactivate() {
-	selected = 0;
-	window.update(_extent);
+	_selected = 0;
+	_window.update(_extent);
 	gPanel::deactivate();
 }
 
 bool GfxCompButton::activate(gEventType why) {
-	selected = 1;
-	window.update(_extent);
+	_selected = 1;
+	_window.update(_extent);
 
-	if (why == gEventKeyDown) { // momentarily depress
+	if (why == kEventKeyDown) { // momentarily depress
 		deactivate();
-		notify(gEventNewValue, 1);       // notify App of successful hit
+		notify(kEventNewValue, 1);       // notify App of successful hit
 	}
 	playMemSound(2);
 	return false;
@@ -546,7 +546,7 @@ void GfxCompButton::pointerMove(gPanelMessage &msg) {
 	if (_dimmed)
 		return;
 
-	//notify( gEventMouseMove, (msg.pointerEnter ? enter : 0)|(msg.pointerLeave ? leave : 0));
+	//notify( kEventMouseMove, (msg.pointerEnter ? enter : 0)|(msg.pointerLeave ? leave : 0));
 	GfxCompImage::pointerMove(msg);
 }
 
@@ -554,23 +554,23 @@ bool GfxCompButton::pointerHit(gPanelMessage &) {
 	if (_dimmed)
 		return false;
 
-	activate(gEventMouseDown);
+	activate(kEventMouseDown);
 	return true;
 }
 
 void GfxCompButton::pointerRelease(gPanelMessage &) {
 	//  We have to test selected first because deactivate clears it.
 
-	if (selected) {
+	if (_selected) {
 		deactivate();                       // give back input focus
-		notify(gEventNewValue, 1);       // notify App of successful hit
+		notify(kEventNewValue, 1);       // notify App of successful hit
 	} else deactivate();
 }
 
 void GfxCompButton::pointerDrag(gPanelMessage &msg) {
-	if (selected != msg.inPanel) {
-		selected = msg.inPanel;
-		window.update(_extent);
+	if (_selected != msg._inPanel) {
+		_selected = msg._inPanel;
+		_window.update(_extent);
 	}
 }
 
@@ -579,13 +579,13 @@ void GfxCompButton::enable(bool abled) {
 }
 
 void GfxCompButton::invalidate(Rect16 *) {
-	window.update(_extent);
+	_window.update(_extent);
 }
 
 
 void GfxCompButton::draw() {
-	gPort   &port = window.windowPort;
-	Rect16  rect = window.getExtent();
+	gPort   &port = _window._windowPort;
+	Rect16  rect = _window.getExtent();
 
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.
 	g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
@@ -596,7 +596,7 @@ void GfxCompButton::draw() {
 void *GfxCompButton::getCurrentCompImage() {
 	if (_dimmed) {
 		return _dimImage;
-	} else if (selected) {
+	} else if (_selected) {
 		return _resImage;
 	} else {
 		return _forImage;
@@ -614,27 +614,27 @@ GfxOwnerSelCompButton::GfxOwnerSelCompButton(gPanelList &list, const Rect16 &box
 }
 
 bool GfxOwnerSelCompButton::activate(gEventType why) {
-	if (why == gEventKeyDown || why == gEventMouseDown) {
+	if (why == kEventKeyDown || why == kEventMouseDown) {
 //		selected = !selected;
 //		window.update( extent );
 		gPanel::deactivate();
-		notify(gEventNewValue, selected);    // notify App of successful hit
+		notify(kEventNewValue, _selected);    // notify App of successful hit
 		playMemSound(2);
 	}
 	return false;
 }
 
 bool GfxOwnerSelCompButton::pointerHit(gPanelMessage &) {
-	return activate(gEventMouseDown);
+	return activate(kEventMouseDown);
 }
 
 void GfxOwnerSelCompButton::select(uint16 val) {
-	selected = val;
+	_selected = val;
 
 	setCurrent(val);
 
 	if (getEnabled()) {
-		window.update(_extent);
+		_window.update(_extent);
 	}
 }
 
@@ -723,16 +723,16 @@ GfxMultCompButton::~GfxMultCompButton() {
 }
 
 bool GfxMultCompButton::activate(gEventType why) {
-	if (why == gEventKeyDown || why == gEventMouseDown) {
+	if (why == kEventKeyDown || why == kEventMouseDown) {
 		if (_response) {
 			if (++_current > _max) {
 				_current = 0;
 			}
-			window.update(_extent);
+			_window.update(_extent);
 		}
 
 		gPanel::deactivate();
-		notify(gEventNewValue, _current);     // notify App of successful hit
+		notify(kEventNewValue, _current);     // notify App of successful hit
 		playMemSound(1);
 //		playSound( MKTAG('C','B','T',5) );
 	}
@@ -740,7 +740,7 @@ bool GfxMultCompButton::activate(gEventType why) {
 }
 
 bool GfxMultCompButton::pointerHit(gPanelMessage &) {
-	return activate(gEventMouseDown);
+	return activate(kEventMouseDown);
 }
 
 void *GfxMultCompButton::getCurrentCompImage() {
@@ -805,7 +805,7 @@ int16 GfxSlider::getSliderLenVal() {
 }
 
 void GfxSlider::draw() {
-	gPort   &port   = window.windowPort;
+	gPort   &port   = _window._windowPort;
 	Point16 offset  = Point16(0, 0);
 
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.
@@ -837,59 +837,59 @@ void GfxSlider::drawClipped(gPort &port,
 }
 
 bool GfxSlider::activate(gEventType why) {
-	if (why == gEventKeyDown || why == gEventMouseDown) {
-		selected = 1;
-		window.update(_extent);
+	if (why == kEventKeyDown || why == kEventMouseDown) {
+		_selected = 1;
+		_window.update(_extent);
 		gPanel::deactivate();
-		notify(gEventNewValue, _slCurrent);   // notify App of successful hit
+		notify(kEventNewValue, _slCurrent);   // notify App of successful hit
 	}
 	return false;
 }
 
 void GfxSlider::deactivate() {
-	selected = 0;
-	window.update(_extent);
+	_selected = 0;
+	_window.update(_extent);
 	gPanel::deactivate();
 }
 
 bool GfxSlider::pointerHit(gPanelMessage &msg) {
 	// update the image index
-	updateSliderIndexes(msg.pickPos);
+	updateSliderIndexes(msg._pickPos);
 
 	// redraw the control should any visual change hath occurred
-	window.update(_extent);
+	_window.update(_extent);
 
-	activate(gEventMouseDown);
+	activate(kEventMouseDown);
 	return true;
 }
 
 void GfxSlider::pointerMove(gPanelMessage &msg) {
-	if (selected) {
+	if (_selected) {
 		// update the image index
-		updateSliderIndexes(msg.pickPos);
+		updateSliderIndexes(msg._pickPos);
 
 		// redraw the control should any visual change hath occurred
-		window.update(_extent);
+		_window.update(_extent);
 
-		notify(gEventMouseMove, _slCurrent);
+		notify(kEventMouseMove, _slCurrent);
 	}
 }
 
 void GfxSlider::pointerRelease(gPanelMessage &) {
 	//  We have to test selected first because deactivate clears it.
-	if (selected) {
+	if (_selected) {
 		deactivate();                       // give back input focus
-		notify(gEventNewValue, _slCurrent);       // notify App of successful hit
+		notify(kEventNewValue, _slCurrent);       // notify App of successful hit
 	} else deactivate();
 }
 
 void GfxSlider::pointerDrag(gPanelMessage &msg) {
 	// update the image index
-	updateSliderIndexes(msg.pickPos);
+	updateSliderIndexes(msg._pickPos);
 
-	notify(gEventNewValue, _slCurrent);       // notify App of successful hit
+	notify(kEventNewValue, _slCurrent);       // notify App of successful hit
 	// redraw the control should any visual change hath occurred
-	window.update(_extent);
+	_window.update(_extent);
 }
 
 void GfxSlider::updateSliderIndexes(Point16 &pos) {

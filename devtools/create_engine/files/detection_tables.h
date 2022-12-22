@@ -21,12 +21,12 @@
 
 namespace Xyzzy {
 
-const PlainGameDescriptor GAME_NAMES[] = {
+const PlainGameDescriptor xyzzyGames[] = {
 	{ "xyzzy", "Xyzzy" },
 	{ 0, 0 }
 };
 
-const ADGameDescription GAME_DESCRIPTIONS[] = {
+const ADGameDescription gameDescriptions[] = {
 	{
 		"xyzzy",
 		nullptr,
@@ -40,4 +40,4 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	AD_TABLE_END_MARKER
 };
 
-} // namespace Xyzzy
+} // End of namespace Xyzzy

@@ -116,7 +116,7 @@ void dumpGBASE(char *msg);
 void setLostroMode() {
 	abortFlag = false;
 	allPlayerActorsDead = false;
-	if (GameMode::newmodeFlag)
+	if (GameMode::_newmodeFlag)
 		GameMode::update();
 
 	if (!abortFlag) {
@@ -149,7 +149,7 @@ static void TroModeSetup() {
 	g_vm->_pointer->hide();
 	g_vm->_pal->quickSavePalette();
 	blackOut();
-	displayDisable(PlayingVideo);
+	displayDisable(kDisPlayingVideo);
 	pushVidState();
 	resetInputDevices();
 	abortFlag = false;
@@ -161,7 +161,7 @@ static void TroModeSetup() {
 static void TroModeCleanup() {
 	g_vm->endVideo();
 	popVidState();
-	displayEnable(PlayingVideo);
+	displayEnable(kDisPlayingVideo);
 	blackOut();
 	g_vm->_pal->quickRestorePalette();
 	resumeAudio();

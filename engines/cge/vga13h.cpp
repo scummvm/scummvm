@@ -171,9 +171,9 @@ void Sprite::setName(char *newName) {
 		_ext->_name = nullptr;
 	}
 	if (newName) {
-		_ext->_name = new char[strlen(newName) + 1];
-		assert(_ext->_name != nullptr);
-		strcpy(_ext->_name, newName);
+		size_t ln = strlen(newName) + 1;
+		_ext->_name = new char[ln];
+		Common::strcpy_s(_ext->_name, ln, newName);
 	}
 }
 

@@ -569,8 +569,8 @@ protected:
 };
 
 void PryDoorMessage::performAIAction(AIRule *rule) {
-	if (((PegasusEngine *)g_engine)->playerHasItemID(kShieldBiochip)
-			&& ((PegasusEngine *)g_engine)->getCurrentBiochip()->getObjectID() != kShieldBiochip)
+	if (g_vm->playerHasItemID(kShieldBiochip)
+			&& g_vm->getCurrentBiochip()->getObjectID() != kShieldBiochip)
 		AIPlayMessageAction::performAIAction(rule);
 }
 

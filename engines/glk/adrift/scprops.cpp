@@ -187,8 +187,9 @@ static const sc_char *prop_dictionary_lookup(sc_prop_setref_t bundle, const sc_c
 	}
 
 	/* Not found, so copy the string for dictionary insertion. */
-	dict_string = (sc_char *)sc_malloc(strlen(string) + 1);
-	strcpy(dict_string, string);
+	size_t ln = strlen(string) + 1;
+	dict_string = (sc_char *)sc_malloc(ln);
+	Common::strcpy_s(dict_string, ln, string);
 
 	/* Extend the dictionary if necessary. */
 	bundle->dictionary = (sc_char **)prop_ensure_capacity(bundle->dictionary,

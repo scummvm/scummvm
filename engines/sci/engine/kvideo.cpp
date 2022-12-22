@@ -136,10 +136,18 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 			// Mac QuickTime
 			// The only argument is the string for the video
 
-			// HACK: Switch to 16bpp graphics for Cinepak.
+			// Switch to 16bpp graphics for Cinepak
 			if (g_system->getScreenFormat().bytesPerPixel == 1) {
-				initGraphics(screenWidth, screenHeight, nullptr);
-				switchedGraphicsMode = true;
+				const Common::List<Graphics::PixelFormat> supportedFormats = g_system->getSupportedFormats();
+				Common::List<Graphics::PixelFormat>::const_iterator it;
+				for (it = supportedFormats.begin(); it != supportedFormats.end(); ++it) {
+					if (it->bytesPerPixel == 2) {
+						const Graphics::PixelFormat format = *it;
+						initGraphics(screenWidth, screenHeight, &format);
+						switchedGraphicsMode = true;
+						break;
+					}
+				}
 			}
 
 			if (g_system->getScreenFormat().bytesPerPixel == 1) {

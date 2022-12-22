@@ -144,29 +144,8 @@ public:
 
 class StuffItLoader {
 public:
-	static Common::Archive *load(Resource *owner, const Common::String &filename, Common::MacResManager *macResMan);
-};
-
-class EndianAwareStreamWrapper : public Common::SeekableReadStreamEndian {
-public:
-	EndianAwareStreamWrapper(Common::SeekableReadStream *stream, bool bigEndian, bool disposeAfterUse = true) : Common::SeekableReadStreamEndian(bigEndian), Common::ReadStreamEndian(bigEndian), _stream(stream), _dispose(disposeAfterUse) {}
-	~EndianAwareStreamWrapper() override { if (_dispose) delete _stream; }
-
-	// Common::Stream interface
-	bool err() const override { return _stream->err(); }
-
-	// Common::ReadStream interface
-	bool eos() const override { return _stream->eos(); }
-	uint32 read(void *dataPtr, uint32 dataSize) override { return _stream->read(dataPtr, dataSize); }
-
-	// Common::SeekableReadStream interface
-	int64 pos() const override { return _stream->pos(); }
-	int64 size() const override { return _stream->size(); }
-	bool seek(int64 offset, int whence = SEEK_SET) override { return _stream->seek(offset, whence); }
-
-private:
-	Common::SeekableReadStream *_stream;
-	bool _dispose;
+	static Common::Archive *load(Resource *owner, const Common::String &filename);
+	static Common::Archive *load(Resource *owner, Common::SeekableReadStream *stream, const Common::String &debugName);
 };
 
 } // End of namespace Kyra

@@ -122,13 +122,20 @@ void Mult::freeAll() {
 	}
 }
 
-void Mult::freeMult() {
+void Mult::freeMult(bool freeObjectSprites) {
 	clearObjectVideos();
 
 	if (_objects)
 		for (int i = 0; i < _objCount; i++) {
 			delete _objects[i].pPosX;
 			delete _objects[i].pPosY;
+			if (_objects[i].ownAnimVariables) {
+				delete _objects[i].animVariables;
+				_objects[i].animVariables = nullptr;
+			}
+
+			if (freeObjectSprites)
+				_vm->_draw->freeSprite(50 + i);
 		}
 
 	delete[] _objects;
@@ -440,6 +447,30 @@ void Mult::doSoundAnim(bool &stop, int16 frame) {
 			if (_vm->_sound->blasterPlayingSound())
 				_vm->_sound->blasterStop(sndKey->fadeLength);
 		}
+	}
+}
+
+int Mult::openObjVideo(const Common::String &file, VideoPlayer::Properties &properties, int animation) {
+	if (animation >= 0)
+		return -1;
+
+	Mult_Object &object = _objects[-animation - 1];
+	if (object.videoSlot > 0)
+		_vm->_vidPlayer->closeVideo(object.videoSlot - 1);
+
+	Common::strlcpy(object.animName, file.c_str(), 16);
+	int slot = _vm->_vidPlayer->openVideo(false, file, properties);
+	object.videoSlot = slot + 1;
+	return slot;
+}
+
+void Mult::closeObjVideo(Mult_Object &object) {
+	if (object.videoSlot > 0) {
+		_vm->_draw->freeSprite(50 - object.pAnimData->animation - 1);
+
+		_vm->_vidPlayer->closeVideo(object.videoSlot - 1);
+		object.videoSlot = 0;
+		object.animName[0] = 0;
 	}
 }
 

@@ -223,6 +223,16 @@ bool SaveHandler::deleteFile() {
 	return true;
 }
 
+bool SaveHandler::loadToRaw(byte *ptr, int32 size, int32 offset) {
+	warning("SaveHandler::loadToRaw() not implemented");
+	return false;
+}
+
+bool SaveHandler::saveFromRaw(const byte *ptr, int32 size, int32 offset) {
+	warning("SaveHandler::saveFromRaw() not implemented");
+	return false;
+}
+
 
 TempSpriteHandler::TempSpriteHandler(GobEngine *vm) : SaveHandler(vm) {
 	_sprite = nullptr;
@@ -311,6 +321,34 @@ bool TempSpriteHandler::create(uint32 width, uint32 height, bool trueColor) {
 
 	// Create a new temporary sprite
 	_sprite = new SavePartSprite(width, height, trueColor);
+
+	return true;
+}
+
+bool TempSpriteHandler::loadToRaw(byte *ptr, int32 size, int32 offset) {
+	// Sprite available?
+	if (!_sprite)
+		return false;
+
+	Surface destSprite(1, size, 1);
+
+	// Load the sprite
+	if (!_sprite->writeSprite(destSprite))
+		return false;
+
+	// Copy the sprite to the buffer
+	memcpy(ptr, destSprite.getData(), size);
+
+	return true;
+}
+
+bool TempSpriteHandler::saveFromRaw(const byte *ptr, int32 size, int32 offset) {
+	create(1, size, false);
+
+	if (!_sprite->readSpriteRaw(ptr, size))
+		return false;
+
+	// Assume no palette used
 
 	return true;
 }
@@ -505,7 +543,7 @@ bool FakeFileHandler::load(int16 dataVar, int32 size, int32 offset) {
 	if ((uint32)(offset + size) > _data.size())
 		return false;
 
-	_vm->_inter->_variables->copyFrom(dataVar, &_data[0] + offset, size);
+	_vm->_inter->_variables->copyFrom((uint16) dataVar, &_data[0] + offset, size);
 
 	return true;
 }
@@ -517,7 +555,31 @@ bool FakeFileHandler::save(int16 dataVar, int32 size, int32 offset) {
 	if ((uint32)(offset + size) > _data.size())
 		_data.resize(offset + size);
 
-	_vm->_inter->_variables->copyTo(dataVar, &_data[0] + offset, size);
+	_vm->_inter->_variables->copyTo((uint16) dataVar, &_data[0] + offset, size);
+
+	return true;
+}
+
+bool FakeFileHandler::loadToRaw(byte *ptr, int32 size, int32 offset) {
+	if (size <= 0)
+		return false;
+
+	if ((uint32)(offset + size) > _data.size())
+		return false;
+
+	memcpy(ptr, &_data[0] + offset, size);
+
+	return true;
+}
+
+bool FakeFileHandler::saveFromRaw(const byte *ptr, int32 size, int32 offset) {
+	if (size <= 0)
+		return false;
+
+	if ((uint32)(offset + size) > _data.size())
+		_data.resize(offset + size);
+
+	memcpy(&_data[0] + offset, ptr, size);
 
 	return true;
 }

@@ -23,6 +23,7 @@
 #define COMMON_USTR_H
 
 #include "common/scummsys.h"
+#include "common/util.h"
 #include "common/str-enc.h"
 #include "common/base-str.h"
 
@@ -76,6 +77,9 @@ public:
 	/** Construct a copy of the given string. */
 	U32String(const U32String &str) : BaseString<u32char_type_t>(str) {}
 
+	/** Construct a string by moving an existing string. */
+	U32String(U32String &&str) : BaseString<u32char_type_t>(static_cast<BaseString<u32char_type_t> &&>(str)) {}
+
 	/** Construct a new string from the given null-terminated C string that uses the given @p page encoding. */
 	explicit U32String(const char *str, CodePage page = kUtf8);
 
@@ -93,6 +97,9 @@ public:
 
 	/** Assign a given string to this string. */
 	U32String &operator=(const U32String &str);
+
+	/** Move a given string to this string. */
+	U32String &operator=(U32String &&str);
 
 	/** @overload */
 	U32String &operator=(const String &str);
@@ -149,12 +156,6 @@ public:
 	 */
 	static int vformat(const value_type *fmt, const value_type *fmtEnd, U32String &output, va_list args);
 
-	/**
-	 * Helper function for vformat. Convert an int to string.
-	 * Minimal implementation, only for base 10.
-	 */
-	static char* itoa(int num, char* str, int base);
-
 	using BaseString<value_type>::insertString;
 	void insertString(const char *s, uint32 p, CodePage page = kUtf8);   /*!< Insert string @p s into this string at position @p p. */
 	void insertString(const String &s, uint32 p, CodePage page = kUtf8); /*!< @overload */
@@ -187,6 +188,18 @@ public:
 private:
 	static U32String formatInternal(const U32String *fmt, ...);
 
+	/**
+	 * Helper function for vformat. Convert an int to a string.
+	 * Minimal implementation, only for base 10.
+	 */
+	static char* itoa(int num, char* str, uint base);
+
+	/**
+	 * Helper function for vformat. Convert an unsigned int to a string.
+	 * Minimal implementation, only for base 10.
+	 */
+	static char* uitoa(uint num, char* str, uint base);
+
 	void decodeInternal(const char *str, uint32 len, CodePage page);
 	void decodeOneByte(const char *str, uint32 len, CodePage page);
 	void decodeWindows932(const char *src, uint32 len);
@@ -200,7 +213,7 @@ private:
 
 template<class... TParam>
 inline U32String U32String::format(const U32String &fmt, TParam... param) {
-	return formatInternal(&fmt, param...);
+	return formatInternal(&fmt, Common::forward<TParam>(param)...);
 }
 
 /** Concatenate strings @p x and @p y. */

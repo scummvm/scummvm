@@ -39,6 +39,7 @@ int     AudioChannel_GetVolume(ScriptAudioChannel *channel);
 int     AudioChannel_SetVolume(ScriptAudioChannel *channel, int newVolume);
 void    AudioChannel_Stop(ScriptAudioChannel *channel);
 void    AudioChannel_Seek(ScriptAudioChannel *channel, int newPosition);
+void    AudioChannel_SeekMs(ScriptAudioChannel *channel, int newPosition);
 void    AudioChannel_SetRoomLocation(ScriptAudioChannel *channel, int xPos, int yPos);
 
 } // namespace AGS3

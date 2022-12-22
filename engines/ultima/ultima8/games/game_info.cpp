@@ -113,7 +113,7 @@ Std::string GameInfo::getGameTitle() const {
 
 Std::string GameInfo::getPrintableVersion() const {
 	char buf[32];
-	sprintf(buf, "%d.%02d", version / 100, version % 100);
+	Common::sprintf_s(buf, "%d.%02d", version / 100, version % 100);
 	return buf;
 }
 
@@ -148,7 +148,7 @@ Std::string GameInfo::getPrintableMD5() const {
 
 	char buf[33];
 	for (int i = 0; i < 16; ++i) {
-		sprintf(buf + 2 * i, "%02x", _md5[i]);
+		Common::sprintf_s(buf + 2 * i, 3, "%02x", _md5[i]);
 	}
 
 	ret = buf;
@@ -176,7 +176,7 @@ void GameInfo::save(Common::WriteStream *ws) {
 	Std::string lang = gamelangs[l].name;
 
 	char buf[16];
-	sprintf(buf, "%d", version);
+	Common::sprintf_s(buf, "%d", version);
 	Std::string ver = buf;
 	Std::string md5Str = getPrintableMD5();
 

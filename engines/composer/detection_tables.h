@@ -148,12 +148,12 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"imoking",
 			0,
 			{
-				{"book.mac", GAME_CONFIGFILE, "4896a22874bb660f5ba26a0af111f9c0", 1868},
+				{"book.mac", GAME_CONFIGFILE, "d09a628d147506be1dee854bc9f66664", 102},
 				AD_LISTEND
 			},
 			Common::HE_ISR,
 			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS,
+			ADGF_MACRESFORK,
 			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV1
@@ -199,12 +199,12 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"babayaga",
 			"Magic Tales: Baba Yaga and the Magic Geese Demo",
 			{
-				{"book.mac", GAME_CONFIGFILE, "ed4a902df3b26d58e9c013f814a30ee8", 134},
+				{"book.mac", GAME_CONFIGFILE, "a4a125f0d000ad4ea8f33a10b1dbab2a", 76},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
+			ADGF_USEEXTRAASTITLE | ADGF_MACRESFORK | ADGF_DEMO,
 			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV1
@@ -216,12 +216,12 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"littlesamurai",
 			"Magic Tales: The Little Samurai Demo",
 			{
-				{"book.mac", GAME_CONFIGFILE, "57a82d563800001ed88b2742c3650a2d", 136},
+				{"book.mac", GAME_CONFIGFILE, "1593836491edb4a5d68354c072bf729d", 76},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
+			ADGF_USEEXTRAASTITLE | ADGF_MACRESFORK | ADGF_DEMO,
 			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV1
@@ -337,12 +337,12 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"littlesamurai",
 			0,
 			{
-				{"book.mac", GAME_CONFIGFILE, "190158751630f69c2b6cf146aa2f1efc", 1874},
+				{"book.mac", GAME_CONFIGFILE, "542f47cac09a903d34ac7f3e62400a64", 76},
 				AD_LISTEND
 			},
 			Common::HE_ISR,
 			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS,
+			ADGF_MACRESFORK,
 			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV1
@@ -352,7 +352,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"magictales",
-			"Magic Tales Demo: Baby Yaga, Samurai, Imo",
+			"Magic Tales Demo: Baba Yaga, Samurai, Imo",
 			{
 				{"book.ini", GAME_CONFIGFILE, "dbc98c566f4ac61b544443524585dccb", -1},
 				AD_LISTEND
@@ -369,7 +369,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"magictales",
-			"Magic Tales Demo: Baby Yaga, Samurai, Imo",
+			"Magic Tales Demo: Baba Yaga, Samurai, Imo",
 			{
 				{"demo.ini", GAME_CONFIGFILE, "ea784af960375834d655eb7281cd4500", -1},
 				AD_LISTEND
@@ -386,14 +386,14 @@ static const ComposerGameDescription gameDescriptions[] = {
 	{
 		{
 			"magictales",
-			"Magic Tales Demo: Baby Yaga, Samurai, Imo",
+			"Magic Tales Demo: Baba Yaga, Samurai, Imo",
 			{
-				{"demo.mac", GAME_CONFIGFILE, "6e775cda6539102d1ddee852bebf32c1", 488},
+				{"demo.mac", GAME_CONFIGFILE, "240fc2fbbc2a1a915e0adabde98b4a12", 404},
 				AD_LISTEND
 			},
 			Common::HE_ISR,
 			Common::kPlatformMacintosh,
-			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
+			ADGF_USEEXTRAASTITLE | ADGF_MACRESFORK | ADGF_DEMO,
 			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 		},
 		GType_ComposerV1

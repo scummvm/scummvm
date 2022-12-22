@@ -220,7 +220,15 @@ bool SequenceList::loadSprites(int seqIndex) {
 	bool result = false;
 	int idx = -1;
 
-	scene._spriteSlots.deleteTimer(seqIndex);
+	int deleted = scene._spriteSlots.deleteTimer(seqIndex);
+
+	if (deleted >= 0) {
+		if (seqEntry._animType == ANIMTYPE_STAMP) {
+			scene._spriteSlots[deleted]._flags = IMG_STATIC;
+			return false;
+		}
+	}
+
 	if (seqEntry._doneFlag) {
 		remove(seqIndex);
 		return false;

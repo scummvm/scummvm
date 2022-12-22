@@ -46,7 +46,7 @@ PlanetMover::PlanetMover() {
 void PlanetMover::startMoving(Movie *planetMovie) {
 	_planetMovie = planetMovie;
 	_p4 = kPlanetStartTop;
-	_r4 = ((PegasusEngine *)g_engine)->getRandomNumber(kMaxVelocity - 1);
+	_r4 = g_vm->getRandomNumber(kMaxVelocity - 1);
 	if (_r4 + _p4 < kPlanetStopTop)
 		_r4 = kPlanetStopTop - _p4;
 	newDestination();
@@ -75,14 +75,14 @@ void PlanetMover::newDestination() {
 	_p1 = _p4;
 	_r1 = _r4;
 
-	_p4 = kPlanetStopTop + ((PegasusEngine *)g_engine)->getRandomNumber(kPlanetStartTop - kPlanetStopTop - 1);
-	_r4 = ((PegasusEngine *)g_engine)->getRandomNumber(kMaxVelocity - 1);
+	_p4 = kPlanetStopTop + g_vm->getRandomNumber(kPlanetStartTop - kPlanetStopTop - 1);
+	_r4 = g_vm->getRandomNumber(kMaxVelocity - 1);
 
 	if (_r4 + _p4 < kPlanetStopTop)
 		_r4 = kPlanetStopTop - _p4;
 
 	stop();
-	_duration = kRovingTime + ((PegasusEngine *)g_engine)->getRandomNumber(kRovingSlop - 1);
+	_duration = kRovingTime + g_vm->getRandomNumber(kRovingSlop - 1);
 	setSegment(0, _duration);
 	setTime(0);
 	start();

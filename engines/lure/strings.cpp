@@ -184,7 +184,7 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 		stringId, hotspotArticle, hotspotName, characterArticle, characterName);
 	StringList &stringList = Resources::getReference().stringList();
 	char ch;
-	strcpy(dest, "");
+	dest[0] = '\0';
 	char *destPos = dest;
 	stringId &= 0x1fff;      // Strip off any article identifier
 	if (stringId == 0) return;
@@ -204,10 +204,10 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 
 			if (p != nullptr) {
 				if (article > 0) {
-					strcpy(destPos, stringList.getString(S_ARTICLE_LIST + article - 1));
-					strcat(destPos, p);
+					Common::strcpy_s(destPos, MAX_DESC_SIZE - (destPos - dest), stringList.getString(S_ARTICLE_LIST + article - 1));
+					Common::strcat_s(destPos, MAX_DESC_SIZE - (destPos - dest), p);
 				} else {
-					strcpy(destPos, p);
+					Common::strcpy_s(destPos, MAX_DESC_SIZE - (destPos - dest), p);
 				}
 				destPos += strlen(destPos);
 
@@ -216,7 +216,7 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 			}
 		} else if ((uint8) ch >= 0xa0) {
 			const char *p = getName((uint8) ch - 0xa0);
-			strcpy(destPos, p);
+			Common::strcpy_s(destPos, MAX_DESC_SIZE - (destPos - dest), p);
 			destPos += strlen(p);
 			debugC(ERROR_DETAILED, kLureDebugStrings, "String data %xh/%.2xh val=%.2xh sequence='%s'",
 				charOffset, charBitMask, (uint8)ch, p);

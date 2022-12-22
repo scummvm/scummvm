@@ -85,7 +85,7 @@ void LBGraphics::setPalette(uint16 id) {
 	// Old Living Books games use the old CTBL-style palette format while newer
 	// games use the better tPAL format which can store partial palettes.
 	if (_vm->isPreMohawk()) {
-		Common::SeekableSubReadStreamEndian *ctblStream = _vm->wrapStreamEndian(ID_CTBL, id);
+		Common::SeekableReadStreamEndian *ctblStream = _vm->wrapStreamEndian(ID_CTBL, id);
 		uint16 colorCount = ctblStream->readUint16();
 		byte *palette = new byte[colorCount * 3];
 

@@ -113,9 +113,6 @@ bool find_nearest_supported_mode(const IGfxModeList &modes, const Size &wanted_s
 		if (!modes.GetMode(i, mode)) {
 			continue;
 		}
-		if (mode.ColorDepth != color_depth) {
-			continue;
-		}
 		if (wanted_ratio > 0) {
 			uint32_t mode_ratio = (mode.Height << kShift) / mode.Width;
 			if (mode_ratio != wanted_ratio) {
@@ -217,7 +214,7 @@ bool try_init_compatible_mode(const DisplayMode &dm) {
 		Debug::Printf("Maximal allowed window size: %d x %d", device_size.Width, device_size.Height);
 	DisplayMode dm_compat = dm;
 
-	std::unique_ptr<IGfxModeList> modes(_G(gfxDriver)->GetSupportedModeList(dm.ColorDepth));  // TODO: use unique_ptr when available
+	std::unique_ptr<IGfxModeList> modes(_G(gfxDriver)->GetSupportedModeList(dm.ColorDepth));
 
 	// Windowed mode
 	if (dm.IsWindowed()) {
@@ -282,8 +279,7 @@ void log_out_driver_modes(const int color_depth) {
 	DisplayMode mode;
 	String mode_str;
 	for (int i = 0, in_str = 0; i < mode_count; ++i) {
-		if (!modes->GetMode(i, mode) || mode.ColorDepth != color_depth)
-			continue;
+		modes->GetMode(i, mode);
 		mode_str.Append(String::FromFormat("%dx%d;", mode.Width, mode.Height));
 		if (++in_str % 8 == 0)
 			mode_str.Append("\n\t");

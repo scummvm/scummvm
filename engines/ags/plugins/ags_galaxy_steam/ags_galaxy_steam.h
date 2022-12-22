@@ -26,7 +26,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/str.h"
-#include "common/achievements.h"
+#include "engines/achievements.h"
 
 namespace AGS3 {
 namespace Plugins {

@@ -33,167 +33,167 @@ namespace Saga2 {
 // table to determine things like unary-op, binary-op, etc.
 
 enum op_types {
-	op_undefined = 0,
+	kOpUndefined = 0,
 
 	//  internal operations
 
-	op_nextblock,                           // continue execution at next block
-	op_dup,                                 // duplicate 16-bit value on stack
-	op_drop,                                // drop 16-bit value on stack
+	kOpNextblock,                           // continue execution at next block
+	kOpDup,                                 // duplicate 16-bit value on stack
+	kOpDrop,                                // drop 16-bit value on stack
 
 	//  primary values
 
-	op_zero,                                // push a zero on the stack
-	op_one,                                 // push a one on the stack
-	op_constint,                            // constant integer
-	op_constid,                             // constant id reference
-	op_strlit,                              // string literal
-	op_sym,                                 // symbol address
-	op_symref,                              // symbol contents
-	op_classref,                            // reference to "this"
-	op_deref,                               // dereference of an ID
+	kOpZero,                                // push a zero on the stack
+	kOpOne,                                 // push a one on the stack
+	kOpConstint,                            // constant integer
+	kOpConstid,                             // constant id reference
+	kOpStrlit,                              // string literal
+	kOpSym,                                 // symbol address
+	kOpSymref,                              // symbol contents
+	kOpClassref,                            // reference to "this"
+	kOpDeref,                               // dereference of an ID
 
 	//  references within this module
 
-	op_getflag,                             // read from flag bit (mode)
-	op_getbyte,                             // read from byte field (mode)
-	op_getint,                              // read from integer field (mode)
-	op_getstr,                              // read from string field (mode)
-	op_getid,                               // read from id field (mode)
+	kOpGetflag,                             // read from flag bit (mode)
+	kOpGetbyte,                             // read from byte field (mode)
+	kOpGetint,                              // read from integer field (mode)
+	kOpGetstr,                              // read from string field (mode)
+	kOpGetid,                               // read from id field (mode)
 
-	op_putflag,                             // put to flag bit (mode)
-	op_putbyte,                             // put to byte field (mode)
-	op_putint,                              // put to integer field (mode)
-	op_putstr,                              // put to string field (mode)
-	op_putid,                               // put to id field (mode)
+	kOpPutflag,                             // put to flag bit (mode)
+	kOpPutbyte,                             // put to byte field (mode)
+	kOpPutint,                              // put to integer field (mode)
+	kOpPutstr,                              // put to string field (mode)
+	kOpPutid,                               // put to id field (mode)
 
-	op_pea,                                 // push effective address onto stack
+	kOpPea,                                 // push effective address onto stack
 
 	//  'void' versions consume their arguments
 
-	op_putflag_v,                           // put to flag bit (mode)
-	op_putbyte_v,                           // put to byte field (mode)
-	op_putint_v,                            // put to integer field (mode)
-	op_putstr_v,                            // put to string field (mode)
-	op_putid_v,                             // put to id field (mode)
+	kOpPutflagV,                           // put to flag bit (mode)
+	kOpPutbyteV,                           // put to byte field (mode)
+	kOpPutintV,                            // put to integer field (mode)
+	kOpPutstrV,                            // put to string field (mode)
+	kOpPutidV,                             // put to id field (mode)
 
 	//  function call
 
-	op_call_near,                           // call function in same segment
-	op_call_far,                            // call function in other segment
-	op_ccall,                               // call C function
-	op_ccall_v,                             // call C function ()
-	op_call_member,                         // call member function
-	op_call_member_v,                       // call member function ()
+	kOpCallNear,                           // call function in same segment
+	kOpCallFar,                            // call function in other segment
+	kOpCcall,                               // call C function
+	kOpCcallV,                             // call C function ()
+	kOpCallMember,                         // call member function
+	kOpCallMemberV,                       // call member function ()
 
-	op_enter,                               // enter a function
-	op_return,                              // return from function
-	op_return_v,                            // return nothing from function
+	kOpEnter,                               // enter a function
+	kOpReturn,                              // return from function
+	kOpReturn_v,                            // return nothing from function
 
 	//  branches
 
-	op_jmp,
-	op_jmp_true_v,                          // test arg and consume
-	op_jmp_false_v,                         // test arg and consume
-	op_jmp_true,                            // test arg and don't consume
-	op_jmp_false,                           // test arg and don't consume
-	op_jmp_switch,                          // switch statement (integer)
-	op_jmp_strswitch,                       // switch statement (string)
-	op_jmp_random,                          // random jump
+	kOpJmp,
+	kOpJmpTrueV,                          // test arg and consume
+	kOpJmpFalseV,                         // test arg and consume
+	kOpJmpTrue,                            // test arg and don't consume
+	kOpJmpDalse,                           // test arg and don't consume
+	kOpJmpSwitch,                          // switch statement (integer)
+	kOpJmpStrswitch,                       // switch statement (string)
+	kOpJmpRandom,                          // random jump
 
 	//  unary operators
 
-	op_negate,
-	op_not,
-	op_compl,
+	kOpNegate,
+	kOpNot,
+	kOpCompl,
 
-	op_inc_v,                               // increment, don't push
-	op_dec_v,                               // decrement, don't push
-	op_postinc,
-	op_postdec,
+	kOpIncV,                               // increment, don't push
+	kOpDecV,                               // decrement, don't push
+	kOpPostinc,
+	kOpPostdec,
 
 	// arithmetic
 
-	op_add,
-	op_sub,
-	op_mul,
-	op_div,
-	op_mod,
+	kOpAdd,
+	kOpSub,
+	kOpMul,
+	kOpDiv,
+	kOpMod,
 
 	//  conditional
 
-	op_conditional,
-	op_comma,
+	kOpConditional,
+	kOpComma,
 
 	//  comparison
 
-	op_eq,
-	op_ne,
-	op_gt,
-	op_lt,
-	op_ge,
-	op_le,
+	kOpEq,
+	kOpNe,
+	kOpGt,
+	kOpLt,
+	kOpGe,
+	kOpLe,
 
 	//  string comparison
 
-	op_str_eq,
-	op_str_ne,
-	op_str_gt,
-	op_str_lt,
-	op_str_ge,
-	op_str_le,
+	kOpStrEq,
+	kOpStrNe,
+	kOpStrGt,
+	kOpStrLt,
+	kOpStrGe,
+	kOpStrLe,
 
 	//  shift
 
-	op_rsh,
-	op_lsh,
+	kOpRsh,
+	kOpLsh,
 
 	//  bitwise
 
-	op_and,
-	op_or,
-	op_xor,
+	kOpAnd,
+	kOpOr,
+	kOpXor,
 
 	//  logical
 
-	op_land,
-	op_lor,
-	op_lxor,
+	kOpLand,
+	kOpLor,
+	kOpLxor,
 
 	//  string functions
 
-	op_strcat,                  // string concatenation
-	op_strformat,               // string formatting
+	kOpStrcat,                  // string concatenation
+	kOpStrformat,               // string formatting
 
 	// assignment operators -- none of these are actually compiled into
 	// code (they become get/put type operations)
 
-	op_assign,
+	kOpAssign,
 	// none of these are even used currently...
-	op_asplus,
-	op_asminus,
-	op_astimes,
-	op_asdiv,
-	op_asmod,
-	op_asrshift,
-	op_aslshift,
-	op_asand,
-	op_asor,
+	kOpAsplus,
+	kOpAsminus,
+	kOpAstimes,
+	kOpAsdiv,
+	kOpAsmod,
+	kOpAsrshift,
+	kOpAslshift,
+	kOpAsand,
+	kOpAsor,
 
 	//  Special ops
 
-	op_speak,
-	op_dialog_begin,
-	op_dialog_end,
-	op_reply,
-	op_animate,
+	kOpSpeak,
+	kOpDialogBegin,
+	kOpDialogEnd,
+	kOpReply,
+	kOpAnimate,
 
 // New opcodes
 
-	op_jmp_seedrandom,                      // seeded random jump
-	op_symref_x,                            // get the export number of the symbol
+	kOpJmp_seedrandom,                      // seeded random jump
+	kOpSymrefX,                            // get the export number of the symbol
 
-	op_last         /* about 90 so far */
+	kOpLast         /* about 90 so far */
 };
 
 // addressing modes for get and put
@@ -202,37 +202,37 @@ enum addr_types {
 
 	//  Offset reference to the thread structure
 
-	addr_thread = 0,
+	skAddrThread = 0,
 
 	//  Offset reference to the stack
 
-	addr_stack,
+	skAddrStack,
 
 	//  Implicit reference to the currently executing segment
 
-	addr_near,
+	skAddrNear,
 
 	//  Implicit reference to data segment
 
-	addr_data,
+	skAddrData,
 
 	//  This addressing mode references any external segment
 	//  using a 16-bit segment number and a 16-bit segment offset
 	//  which immediately follow the instruction.
 
-	addr_far,
+	skAddrFar,
 
 	//  This addressing mode is used for segment-array addressing
 	//  it's a 16-bit segment followed by a 16-bit object number,
 	//  followed by a (byte or bit) offset within the object
 
-	addr_array,
+	skAddrArray,
 
 	//  This addressing mode uses a 16-bit segment number
 	//  and a 16-bit offset which have been put on the stack.
 
-//	addr_indirect,                           // use SEG:offset on stack
-//	addr_indirect_index,                 // use SEG:index:offset on stack
+//	skAddrIndirect,                      // use SEG:offset on stack
+//	skAddrIndirectIndex,                 // use SEG:index:offset on stack
 
 	//  This addressing mode is used for dereferencing objects.
 	//  It consists of an _embedded_ address for retrieving the
@@ -243,24 +243,24 @@ enum addr_types {
 	//  REM: We also need a "far deref" for computing the
 	//  dereferenced object's segment number.
 
-	addr_deref,
+	skAddrDeref,
 
 	//  Addressing mode used for class member functions. It
 	//  specified that the address is relative to whatever
 	//  object the 1st argument is referrring to.
 
-	addr_this                              // relative to arg 1
+	skAddrThis                              // relative to arg 1
 };
 
-#define IS_CONST(x)     ((x) >= op_constint && (x) <= op_conststr)
-#define IS_ADDRESS(x)   ((x) == op_sym)
-#define IS_UNOP(x)      ((x) >= op_negate && (x) <= op_postdec)
+#define IS_CONST(x)     ((x) >= kOpConstint && (x) <= kOpConststr)
+#define IS_ADDRESS(x)   ((x) == kOpSym)
+#define IS_UNOP(x)      ((x) >= kOpNegate && (x) <= kOpPostdec)
 
-#define IS_BINOP(x)     ((x) >= op_add && (x) <= op_strcat)
-#define IS_ASOP(x)      ((x) >= op_assign && (x) <= op_asor)
+#define IS_BINOP(x)     ((x) >= kOpAdd && (x) <= kOpStrcat)
+#define IS_ASOP(x)      ((x) >= kOpAssign && (x) <= kOpAsor)
 
-// #define IS_UNOP2(x)      ((x) == op_getarray || (x) == op_putarray)
-// #define CONST(op)        ((op) >= op_constflag && (op) <= op_conststr)
+// #define IS_UNOP2(x)      ((x) == kOpGetarray || (x) == kOpPutarray)
+// #define CONST(op)        ((op) >= kOpConstflag && (op) <= kOpConststr)
 
 //  Flags for special statements
 
@@ -311,13 +311,13 @@ typedef struct _BasicBlock {
 //  Jump types
 
 enum jump_types {
-	jump_never = 0,                         /* never jump                   */
-	jump_false,                             /* jump on expression if false  */
-	jump_true,                              /* jump on expression if true   */
-	jump_always,                            /* jump always                  */
-	jump_cjump,                             /* 'c' goto stm, jumpto is a label # */
-	jump_return,                            /* block ends with a 'return' statement */
-	jump_switch,                            /* jumps to lots of places      */
+	kJumpNever = 0,                         /* never jump                   */
+	kJumpFalse,                             /* jump on expression if false  */
+	kJumpTrue,                              /* jump on expression if true   */
+	kJumpAlways,                            /* jump always                  */
+	kJumpCjump,                             /* 'c' goto stm, jumpto is a label # */
+	kJumpReturn,                            /* block ends with a 'return' statement */
+	kJumpSwitch,                            /* jumps to lots of places      */
 };
 #endif
 /*

@@ -84,28 +84,28 @@ void cleanupTimer() {
  * ====================================================================== */
 
 void Alarm::write(Common::MemoryWriteStreamDynamic *out) {
-	out->writeUint32LE(basetime);
-	out->writeUint32LE(duration);
+	out->writeUint32LE(_basetime);
+	out->writeUint32LE(_duration);
 }
 
 void Alarm::read(Common::InSaveFile *in) {
-	basetime = in->readUint32LE();
-	duration = in->readUint32LE();
+	_basetime = in->readUint32LE();
+	_duration = in->readUint32LE();
 }
 
 void Alarm::set(uint32 dur) {
-	basetime = gameTime;
-	duration = dur;
+	_basetime = gameTime;
+	_duration = dur;
 }
 
 bool Alarm::check() {
-	return ((uint32)(gameTime - basetime) > duration);
+	return ((uint32)(gameTime - _basetime) > _duration);
 }
 
 // time elapsed since alarm set
 
 uint32 Alarm::elapsed() {
-	return (uint32)(gameTime - basetime);
+	return (uint32)(gameTime - _basetime);
 }
 
 /* ===================================================================== *
@@ -135,7 +135,7 @@ void checkTimers() {
 			continue;
 
 		if ((*it)->check()) {
-			debugC(2, kDebugTimers, "Timer tick for %p (%s): %p (duration %d)", (void *)(*it)->getObject(), (*it)->getObject()->objName(), (void *)(*it), (*it)->getInterval());
+			debugC(2, kDebugTimers, "Timer tick for %p (%s): %p (_duration %d)", (void *)(*it)->getObject(), (*it)->getObject()->objName(), (void *)(*it), (*it)->getInterval());
 			(*it)->reset();
 			(*it)->getObject()->timerTick((*it)->thisID());
 		}

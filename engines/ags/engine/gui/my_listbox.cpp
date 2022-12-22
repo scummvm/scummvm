@@ -126,8 +126,9 @@ int MyListBox::pressedon(int mousex, int mousey) {
 void MyListBox::additem(char *texx) {
 	if (items >= MAXLISTITEM)
 		quit("!CSCIUSER16: Too many items added to listbox");
-	itemnames[items] = (char *)malloc(strlen(texx) + 1);
-	strcpy(itemnames[items], texx);
+	size_t ln = strlen(texx) + 1;
+	itemnames[items] = (char *)malloc(ln);
+	Common::strcpy_s(itemnames[items], ln, texx);
 	items++;
 	needredraw = 1;
 }
@@ -148,14 +149,15 @@ int MyListBox::processmessage(int mcode, int wParam, NumberPtr lParam) {
 		if (topitem + numonscreen <= selected)
 			topitem = (selected + 1) - numonscreen;
 	} else if (mcode == CLB_GETTEXT)
-		strcpy((char *)lParam._ptr, itemnames[wParam]);
+		Common::strcpy_s((char *)lParam._ptr, 260, itemnames[wParam]);
 	else if (mcode == CLB_SETTEXT) {
 		if (wParam < items)
 			free(itemnames[wParam]);
 
 		char *newstri = (char *)lParam._ptr;
-		itemnames[wParam] = (char *)malloc(strlen(newstri) + 2);
-		strcpy(itemnames[wParam], newstri);
+		size_t ln = strlen(newstri) + 2;
+		itemnames[wParam] = (char *)malloc(ln);
+		Common::strcpy_s(itemnames[wParam], ln, newstri);
 
 	} else if (mcode == CTB_KEYPRESS) {
 		if ((wParam == eAGSKeyCodeDownArrow) && (selected < items - 1))

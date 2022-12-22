@@ -34,11 +34,12 @@
 #include "common/array.h"
 #include "common/debug.h"
 #include "common/math.h"
-#include "common/rdft.h"
 #include "common/stream.h"
 #include "common/memstream.h"
 #include "common/bitstream.h"
 #include "common/textconsole.h"
+
+#include "math/rdft.h"
 
 namespace Audio {
 
@@ -143,7 +144,7 @@ private:
 	int _fftCoefsMinIndex[5];
 	int _fftCoefsMaxIndex[5];
 	int _fftLevelExp[6];
-	Common::RDFT *_rdft;
+	Math::RDFT *_rdft;
 	QDM2FFT _fft;
 
 	// I/O data
@@ -1201,7 +1202,7 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::F
 	if (_fftOrder < 7 || _fftOrder > 9)
 		error("QDM2Stream::QDM2Stream() Unsupported fft_order: %d", _fftOrder);
 
-	_rdft = new Common::RDFT(_fftOrder, Common::RDFT::IDFT_C2R);
+	_rdft = new Math::RDFT(_fftOrder, Math::RDFT::IDFT_C2R);
 
 	initVlc();
 	ff_mpa_synth_init(ff_mpa_synth_window);

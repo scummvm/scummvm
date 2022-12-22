@@ -97,7 +97,7 @@ static tokdfdef *tok_find_define(tokcxdef *ctx, const char *sym, int len)
 					l = linlnum(ctx->tokcxlin);
 
 					/* convert it to a textual format for the expansion */
-					sprintf(df->expan, "%lu", l);
+					Common::sprintf_s(df->expan, "%lu", l);
 
 					/* set the expanded value's length */
 					df->explen = strlen(df->expan);
@@ -253,7 +253,7 @@ void tok_add_define_num_cvtcase(tokcxdef *ctx, char *sym, int len, int num)
 	char buf[20];
 
 	/* convert the value to a string */
-	sprintf(buf, "%d", num);
+	Common::sprintf_s(buf, "%d", num);
 
 	/* add the text value */
 	tok_add_define_cvtcase(ctx, sym, len, buf, strlen(buf));

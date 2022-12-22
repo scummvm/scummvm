@@ -42,7 +42,7 @@ public:
 
 	void run() override;
 
-	//! Select the next item.  If grab is true, pick up loose items now.
+	//! Select the next item. If grab is true, pick up loose items now.
 	bool selectNextItem(bool grab);
 
 	//! Clear the selector sprite

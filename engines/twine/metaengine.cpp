@@ -37,10 +37,153 @@
 
 namespace TwinE {
 
+static const ADExtraGuiOptionsMap twineOptionsList[] = {
+	{
+		GAMEOPTION_WALL_COLLISION,
+		{
+			_s("Enable wall collisions"),
+			_s("Enable the original wall collision damage"),
+			"wallcollision",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		// this only changes the menu and doesn't change the autosave behaviour - as scummvm is handling this now
+		GAMEOPTION_DISABLE_SAVE_MENU,
+		{
+			_s("Disable save menu"),
+			_s("The original only had autosaves. This allows you to save whenever you want."),
+			"useautosaving",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_DEBUG,
+		{
+			_s("Enable debug mode"),
+			_s("Enable the debug mode"),
+			"debug",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_AUDIO_CD,
+		{
+			_s("Enable audio CD"),
+			_s("Enable the original audio cd track"),
+			"usecd",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_SOUND,
+		{
+			_s("Enable sound"),
+			_s("Enable the sound for the game"),
+			"sound",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_VOICES,
+		{
+			_s("Enable voices"),
+			_s("Enable the voices for the game"),
+			"voice",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_TEXT,
+		{
+			_s("Enable text"),
+			_s("Enable the text for the game"),
+			"displaytext",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_MOVIES,
+		{
+			_s("Enable movies"),
+			_s("Enable the cutscenes for the game"),
+			"movie",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_MOUSE,
+		{
+			_s("Enable mouse"),
+			_s("Enable the mouse for the UI"),
+			"mouse",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_USA_VERSION,
+		{
+			_s("Use the USA version"),
+			_s("Enable the USA specific version flags"),
+			"version",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_HIGH_RESOLUTION,
+		{
+			_s("Enable high resolution"),
+			_s("Enable a higher resolution for the game"),
+			"usehighres",
+			false,
+			0,
+			0
+		}
+	},
+#ifdef USE_TTS
+	{
+		GAMEOPTION_TEXT_TO_SPEECH,
+		{
+			_s("TTS Narrator"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_narrator",
+			false,
+			0,
+			0
+		}
+	},
+#endif
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 class TwinEMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "twine";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return twineOptionsList;
 	}
 
 	int getMaximumSaveSlot() const override {

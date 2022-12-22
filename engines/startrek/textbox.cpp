@@ -728,7 +728,7 @@ Common::String StarTrekEngine::showComputerInputBox() {
 void StarTrekEngine::redrawTextInput() {
 	char buf[MAX_TEXT_INPUT_LEN * 2 + 2];
 	memset(buf, 0, MAX_TEXT_INPUT_LEN * 2);
-	strcpy(buf, _textInputBuffer);
+	Common::strcpy_s(buf, _textInputBuffer);
 
 	if (_textInputCursorChar != 0)
 		buf[_textInputCursorPos] = _textInputCursorChar;
@@ -790,7 +790,7 @@ Common::String StarTrekEngine::showTextInputBox(int16 x, int16 y, const Common::
 					_textInputCursorPos--;
 					Common::String str(_textInputBuffer);
 					str.deleteChar(_textInputCursorPos);
-					strcpy(_textInputBuffer, str.c_str());
+					Common::strcpy_s(_textInputBuffer, str.c_str());
 				}
 				redrawTextInput();
 				break;
@@ -799,7 +799,7 @@ Common::String StarTrekEngine::showTextInputBox(int16 x, int16 y, const Common::
 				Common::String str(_textInputBuffer);
 				if (_textInputCursorPos < (int)str.size()) {
 					str.deleteChar(_textInputCursorPos);
-					strcpy(_textInputBuffer, str.c_str());
+					Common::strcpy_s(_textInputBuffer, str.c_str());
 					redrawTextInput();
 				}
 				break;

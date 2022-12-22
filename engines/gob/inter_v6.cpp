@@ -297,6 +297,28 @@ void Inter_v6::o6_assign(OpFuncParams &params) {
 	} else
 		loopCount = 1;
 
+	// WORKAROUND for a bug in Adibou 2 scripts for cooking activity: bananas count is not updated correctly.
+	// The banana balance equation should be: "remaining bananas = previous remaining bananas - bananas used for cake"
+	// but scripts do instead "remaining bananas = previous remaining *cherries* - bananas used for cake" :p
+	if (_vm->getGameType() == kGameTypeAdibou2
+		&&
+		loopCount == 1
+		&&
+		_vm->_enableAdibou2FreeBananasWorkaround
+		&&
+		_vm->_game->_script->pos() == 18631 // same offset in all versions
+		&&
+		(dest == 40956 // bananas in v2.10, v2.11
+		 ||
+		 dest == 40916) // bananas in v2.12, v2.13
+		&&
+		_vm->isCurrentTot("cuisine.tot")) {
+		uint16 bananasInCakesVar = (dest == 40956) ? 22820 : 22828;
+		WRITE_VAR_OFFSET(dest, VAR_OFFSET(dest) - VAR_OFFSET(bananasInCakesVar) /* bananas used for cake */);
+		_vm->_game->_script->skipExpr(99);
+		return;
+	}
+
 	for (int i = 0; i < loopCount; i++) {
 		int16 result;
 		int16 srcType = _vm->_game->_script->evalExpr(&result);
@@ -332,6 +354,21 @@ void Inter_v6::o6_assign(OpFuncParams &params) {
 		default:
 			break;
 		}
+	}
+
+	// WORKAROUND for a bug in Adibou2 script of "pleasant/unpleasant" game
+	if (_vm->getGameType() == kGameTypeAdibou2
+		&&
+		loopCount == 1
+		&&
+		_vm->_game->_script->pos() == 6739
+		&&
+		dest == 508
+		&&
+		VAR_OFFSET(dest) == 0
+		&&
+		_vm->isCurrentTot("l6ex11.tot")) {
+		WRITE_VAR_OFFSET(dest, 1); // used as a loop index for an array initialized only from index 1, skip value 0
 	}
 }
 
@@ -381,9 +418,6 @@ void Inter_v6::o6_fillRect(OpFuncParams &params) {
 	_vm->_draw->_backColor = patternColor & 0xFFFF;
 	_vm->_draw->_pattern   = patternColor >> 16;
 
-	if (_vm->_draw->_pattern != 0)
-		warning("Urban Stub: o6_fillRect(), _pattern = %d", _vm->_draw->_pattern);
-
 	if (_vm->_draw->_spriteRight < 0) {
 		_vm->_draw->_destSpriteX += _vm->_draw->_spriteRight - 1;
 		_vm->_draw->_spriteRight = -_vm->_draw->_spriteRight + 2;
@@ -394,6 +428,7 @@ void Inter_v6::o6_fillRect(OpFuncParams &params) {
 	}
 
 	if (destSurf & 0x80) {
+		// Implemented in Inter_v7::o7_fillRect, consider merging if needed
 		warning("Urban Stub: o6_fillRect(), destSurf & 0x80");
 		return;
 	}

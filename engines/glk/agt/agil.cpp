@@ -124,7 +124,7 @@ static const char *ext_voc[] = {
 	"verb", "noun", "adjective", "prep", "object", "name", "step",
 	" any", "either", "both", "everyone", "everybody",
 	"he", "she", "it", "they", "him", "her", "them", "is", "are", "oops",
-	"was", "were",
+	"was", "were", "scream",
 	/* Everything between 'in' and 'about' should be a preposition */
 	"in", "out", "into", "at", "to", "across", "inside", "with", "near", "for",
 	"of", "behind", "beside", "on", "off", "under", "from", "through",
@@ -228,10 +228,10 @@ static void print_title(fc_type fc) {
 	agt_textcolor(-1);
 	s = (char *)rmalloc(80);
 	if (height <= screen_height - 5)
-		sprintf(s, "AGiliTy: "
+		Common::sprintf_s(s, 80, "AGiliTy: "
 		        "The (Mostly) Universal AGT Interpreter  %s", version_str);
 	else
-		sprintf(s, "Being run by AGiliTy  %s, "
+		Common::sprintf_s(s, 80, "Being run by AGiliTy  %s, "
 		        "Copyright (C) 1996-99,2001 Robert Masenten",
 		        version_str);
 	writeln(s);
@@ -300,6 +300,7 @@ void agil_option(int optnum, char *optstr[], rbool setflag, rbool lastpass) {
 	else if (opt("tone")) PURE_TONE = setflag;
 	else if (opt("input_bold")) PURE_INPUT = setflag;
 	else if (opt("force_load")) FORCE_VERSION = setflag;
+	else if (opt("stable_random")) stable_random = setflag;
 	else if (!agt_option(optnum, optstr, setflag)) /* Platform specific options */
 		rprintf("Invalid option %s\n", optstr[0]);
 }
@@ -330,7 +331,7 @@ static rbool check_dot(char *prevtext, int prevcnt, char *lookahead)
 	if (!PURE_DOT) return 1;  /* No words with periods in them, so it must
 				   be punctuation. */
 	/*  We just start scanning the dictionary to see if any of them
-	    are possible matches, looking ahead as neccessary. */
+	    are possible matches, looking ahead as necessary. */
 
 	/* Find the next unambiguous word end. This ignores possible
 	   word ends caused by periods. */
@@ -533,7 +534,7 @@ static void mainloop(void) {
 	doing_restore = 0;
 	while (!quitflag) {
 		if (DEBUG_MEM) {
-			sprintf(memstr,
+			Common::sprintf_s(memstr,
 			        "A:%ld F:%ld  Delta:%ld   Size:%ld+%ld=%ld (%ld left)\n",
 			        ralloc_cnt, rfree_cnt, ralloc_cnt - rfree_cnt,
 			        rm_start_size, rm_size - rm_start_size, rm_size,
@@ -681,7 +682,7 @@ static void fix_dummy(void) {
 
 	if (!PURE_SUBNAME)     /* Replace the 'e' by a space */
 		for (i = 0; i < MAX_SUB; i++)
-			sprintf(dict[sub_name[i]], "subroutin %d", i + 1);
+			Common::sprintf_s(dict[sub_name[i]], strlen(dict[sub_name[i]]) + 1, "subroutin %d", i + 1);
 	/* This must be no longer than 25 characters with the terminating null */
 
 	/* Now set PURE_DOT based on whether any dictionary word

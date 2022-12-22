@@ -46,6 +46,11 @@ QObjectPetka::QObjectPetka()
 	_surfH = 0;
 	_surfW = 0;
 	_k = 1.0;
+
+	_x_ = _y_ = 0;
+	_destX = _destY = 0;
+	_imageId = 0;
+	_fieldB4 = 0;
 }
 
 void QObjectPetka::processMessage(const QMessage &arg) {

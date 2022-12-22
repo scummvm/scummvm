@@ -100,7 +100,7 @@ void WidgetOptions::handleEvents() {
 		render(OP_CONTENTS);
 	_oldSelector = _selector;
 
-	// Adjust the Volume Sliders (if neccessary) here
+	// Adjust the Volume Sliders (if necessary) here
 	switch (_selector) {
 	case 3: {
 		// Set Music Volume

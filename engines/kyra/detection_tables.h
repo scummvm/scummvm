@@ -67,17 +67,6 @@ namespace {
 #define EOB2_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_EOB2)
 #define EOB2_FMTOWNS_FLAGS FLAGS(false, false, false, false, true, false, true, false, false, Kyra::GI_EOB2)
 
-#define GAMEOPTION_KYRA3_AUDIENCE GUIO_GAMEOPTIONS1
-#define GAMEOPTION_KYRA3_SKIP     GUIO_GAMEOPTIONS2
-#define GAMEOPTION_KYRA3_HELIUM   GUIO_GAMEOPTIONS3
-
-#define GAMEOPTION_LOL_SCROLLING  GUIO_GAMEOPTIONS4
-#define GAMEOPTION_LOL_CURSORS    GUIO_GAMEOPTIONS5
-#define GAMEOPTION_LOL_SAVENAMES  GUIO_GAMEOPTIONS8
-
-#define GAMEOPTION_EOB_HPGRAPHS   GUIO_GAMEOPTIONS6
-#define GAMEOPTION_EOB_MOUSESWAP  GUIO_GAMEOPTIONS7
-
 static const char msg_missingLangResources[]			= _s("Missing language specific game code and/or resources.");
 static const char msg_fanTrans_missingLangResources[]	= _s("Missing language specific game code and/or resources for this fan translation.");
 static const char msg_fanTrans_unsupportiveTranslator[]	= _s("The fan translator does not wish his translation to be incorporated into ScummVM.");
@@ -326,6 +315,19 @@ const KYRAGameDescription adGameDescs[] = {
 	{
 		{
 			"kyra1",
+			"StuffIt multi-floppy",
+			AD_ENTRY1s("xn--Legend of Kyrandia Installer-o11r", "83d0f8e8c44a0aaa92b06081c40cd3c2", 69726),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO3(GUIO_NOSPEECH, GUIO_MIDIGM, GUIO_RENDERVGA)
+		},
+				KYRA1_FLOPPY_CMP_FLAGS
+	},
+
+	{
+		{
+			"kyra1",
 			"StuffIt",
 			AD_ENTRY1s("xn--Install Legend of Kyrandia-jf8p", "1d763e991c787431cac3786afbbdae72", 53899),
 			Common::EN_ANY,
@@ -556,7 +558,9 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			"Demo/CD",
-			AD_ENTRY1("INTRO.VRM", "e3045fb69b8c29db84b8fda3ccbdac54"),
+			AD_ENTRY3s(	"INTRO.VRM",	"e3045fb69b8c29db84b8fda3ccbdac54", 3308968,
+						"TEXT_GER.CPS", "c0aa3396593b7265c41c0acb2251a28f", 9301,
+						"ALFX.DRV",		"478116a7e6698b5cd51982ab48777fe6", 6531),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO | ADGF_CD,

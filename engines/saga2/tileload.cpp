@@ -68,8 +68,8 @@ void drawPlatform(
     int16           uOrg,                   // for TAG search
     int16           vOrg) {                 // for TAG search
 
-	int16           right = drawMap.size.x,
-	                bottom = drawMap.size.y;
+	int16           right = drawMap._size.x,
+	                bottom = drawMap._size.y;
 
 	Point16         tilePos;
 

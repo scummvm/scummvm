@@ -155,9 +155,17 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 			bool screenSize = properties.flags & kFlagScreenSurface;
 
 			if (ownSurf) {
-				_vm->_draw->_spritesArray[properties.sprite] =
-					_vm->_video->initSurfDesc(screenSize ? _vm->_width  : video->decoder->getWidth(),
-					                          screenSize ? _vm->_height : video->decoder->getHeight(), 0);
+				uint16 height = screenSize ? _vm->_width  : video->decoder->getWidth();
+				uint16 width = screenSize ? _vm->_height : video->decoder->getHeight();
+
+				if (height > 0 && width > 0) {
+					_vm->_draw->_spritesArray[properties.sprite] =
+						_vm->_video->initSurfDesc(screenSize ? _vm->_width  : video->decoder->getWidth(),
+												  screenSize ? _vm->_height : video->decoder->getHeight(), 0);
+				} else {
+					warning("VideoPlayer::openVideo() file=%s:"
+							"Invalid surface dimensions (%dx%d)", file.c_str(), width, height);
+				}
 			}
 
 			if (!_vm->_draw->_spritesArray[properties.sprite] &&
@@ -275,7 +283,7 @@ void VideoPlayer::finishVideoSound(int slot) {
 
 void VideoPlayer::waitSoundEnd(int slot) {
 	Video *video = getVideoBySlot(slot);
-	if (!video || !video->decoder)
+	if (!video || !video->decoder || video->live)
 		return;
 
 	video->decoder->finishSound();
@@ -369,6 +377,15 @@ void VideoPlayer::waitEndFrame(int slot, bool onlySound) {
 	}
 }
 
+int32 VideoPlayer::getExpectedFrameFromCurrentTime(int slot) {
+	Video *video = getVideoBySlot(slot);
+	if (!video)
+		return -1;
+
+	return video->decoder->getExpectedFrameFromCurrentTime();
+}
+
+
 bool VideoPlayer::isPlayingLive() const {
 	const Video *video = getVideoBySlot(0);
 	return video && video->live;
@@ -384,11 +401,18 @@ void VideoPlayer::updateLive(int slot, bool force) {
 	if (!video || !video->live)
 		return;
 
+	int nbrOfLiveVideos = 0;
+	for (int i = 0; i < kVideoSlotCount; i++) {
+		Video *otherVideo = getVideoBySlot(i);
+		if (otherVideo && otherVideo->live)
+			++nbrOfLiveVideos;
+	}
+
 	if (video->properties.startFrame >= (int32)(video->decoder->getFrameCount() - 1)) {
 		// Video ended
 
 		if (!video->properties.loop) {
-			if (!(video->properties.flags & kFlagNoVideo))
+			if (!(video->properties.flags & kFlagNoVideo) || nbrOfLiveVideos == 1)
 				WRITE_VAR_OFFSET(212, (uint32)-1);
 			_vm->_vidPlayer->closeVideo(slot);
 			return;
@@ -405,7 +429,7 @@ void VideoPlayer::updateLive(int slot, bool force) {
 	if (!force && (video->decoder->getTimeToNextFrame() > 0))
 		return;
 
-	if (!(video->properties.flags & kFlagNoVideo))
+	if (!(video->properties.flags & kFlagNoVideo) || nbrOfLiveVideos == 1)
 		WRITE_VAR_OFFSET(212, video->properties.startFrame + 1);
 
 	bool backwards = video->properties.startFrame > video->properties.lastFrame;
@@ -655,6 +679,13 @@ uint16 VideoPlayer::getDefaultY(int slot) const {
 	return video->decoder->getDefaultY();
 }
 
+uint32 VideoPlayer::getFlags(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+	if (!video)
+		return 0;
+
+	return video->decoder->getFlags();
+}
 const Common::List<Common::Rect> *VideoPlayer::getDirtyRects(int slot) const {
 	const Video *video = getVideoBySlot(slot);
 	if (!video)
@@ -687,8 +718,8 @@ int32 VideoPlayer::getSubtitleIndex(int slot) const {
 	return video->decoder->getSubtitleIndex();
 }
 
-void VideoPlayer::writeVideoInfo(const Common::String &file, int16 varX, int16 varY,
-		int16 varFrames, int16 varWidth, int16 varHeight) {
+void VideoPlayer::writeVideoInfo(const Common::String &file, uint16 varX, uint16 varY,
+		uint16 varFrames, uint16 varWidth, uint16 varHeight) {
 
 	Properties properties;
 
@@ -725,7 +756,7 @@ void VideoPlayer::writeVideoInfo(const Common::String &file, int16 varX, int16 v
 
 bool VideoPlayer::copyFrame(int slot, Surface &dest,
 		uint16 left, uint16 top, uint16 width, uint16 height, uint16 x, uint16 y,
-		int32 transp) const {
+		int32 transp, bool yAxisReflection) const {
 
 	const Video *video = getVideoBySlot(slot);
 	if (!video)
@@ -741,7 +772,7 @@ bool VideoPlayer::copyFrame(int slot, Surface &dest,
 	// of the frame data which is undesirable.
 	Surface src(surface->w, surface->h, surface->format.bytesPerPixel, (byte *)const_cast<void *>(surface->getPixels()));
 
-	dest.blit(src, left, top, left + width - 1, top + height - 1, x, y, transp);
+	dest.blit(src, left, top, left + width - 1, top + height - 1, x, y, transp, yAxisReflection);
 	return true;
 }
 

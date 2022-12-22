@@ -164,7 +164,7 @@ void QTextDescription::draw() {
 	Graphics::Surface *s = resMgr->getSurface(-2);
 	FlicDecoder *flc = resMgr->getFlic(6008);
 
-	for (auto dirty : videoSys->rects()) {
+	for (auto &dirty : videoSys->rects()) {
 		videoSys->transBlitFrom(*s, dirty, dirty, flc->getTransColor(s->format));
 	}
 }

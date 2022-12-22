@@ -133,6 +133,12 @@ struct WMEGameDescription {
 	WMETargetExecutable targetExecutable;
 };
 
+#define GAMEOPTION_SHOW_FPS          GUIO_GAMEOPTIONS1
+#define GAMEOPTION_BILINEAR          GUIO_GAMEOPTIONS2
+#ifdef ENABLE_WME3D
+#define GAMEOPTION_FORCE_2D_RENDERER GUIO_GAMEOPTIONS3
+#endif
+
 } // End of namespace Wintermute
 
 #endif  /* WINTERMUTE_GAME_DESCRIPTION_H_ */

@@ -27,7 +27,7 @@
 #include <gxflux/gfx_con.h>
 
 #include "common/config-manager.h"
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 #include "backends/fs/wii/wii-fs-factory.h"
 
 #include "osystem.h"
@@ -113,7 +113,7 @@ void OSystem_Wii::deinitGfx() {
 }
 
 void OSystem_Wii::updateScreenResolution() {
-	if (_overlayVisible) {
+	if (_overlayInGUI) {
 		_currentWidth = _overlayWidth;
 		_currentHeight = _overlayHeight;
 	} else {
@@ -554,17 +554,23 @@ void OSystem_Wii::setShakePos(int shakeXOffset, int shakeYOffset) {
 	_coordsGame.y -= f32(shakeYOffset) * _currentYScale;
 }
 
-void OSystem_Wii::showOverlay() {
-	_mouseX = _overlayWidth / 2;
-	_mouseY = _overlayHeight / 2;
+void OSystem_Wii::showOverlay(bool inGUI) {
+	if (inGUI) {
+		_mouseX = _overlayWidth / 2;
+		_mouseY = _overlayHeight / 2;
+	}
+	_overlayInGUI = inGUI;
 	_overlayVisible = true;
 	updateScreenResolution();
 	gfx_tex_set_bilinear_filter(&_texMouse, true);
 }
 
 void OSystem_Wii::hideOverlay() {
-	_mouseX = _gameWidth / 2;
-	_mouseY = _gameHeight / 2;
+	if (_overlayInGUI) {
+		_mouseX = _gameWidth / 2;
+		_mouseY = _gameHeight / 2;
+	}
+	_overlayInGUI = false;
 	_overlayVisible = false;
 	updateScreenResolution();
 	gfx_tex_set_bilinear_filter(&_texMouse, _bilinearFilter);

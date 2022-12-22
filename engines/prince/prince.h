@@ -138,7 +138,7 @@ const int kStructSizeBASA = 8;
 // background and normal animation
 struct Anim {
 	BASA _basaData;
-	int32 _addr; //animation adress
+	int32 _addr; // animation address
 	int16 _usage;
 	int16 _state; // state of animation: 0 - turning on, 1 - turning off
 	int16 _flags;
@@ -569,7 +569,7 @@ public:
 	byte *_roomPathBitmapTemp; // PL - SSala
 	byte *_coordsBufEnd;
 	byte *_coordsBuf; // optimal path
-	byte *_coords; // last path point adress from coordsBuf
+	byte *_coords; // last path point address from coordsBuf
 	byte *_coordsBuf2;
 	byte *_coords2;
 	byte *_coordsBuf3;

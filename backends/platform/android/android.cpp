@@ -470,7 +470,7 @@ void OSystem_Android::initBackend() {
 	// The division by four happens because the Mixer stores the size in frame units
 	// instead of bytes; this means that, since we have audio in stereo (2 channels)
 	// with a word size of 16 bit (2 bytes), we have to divide the effective size by 4.
-	_mixer = new Audio::MixerImpl(_audio_sample_rate, _audio_buffer_size / 4);
+	_mixer = new Audio::MixerImpl(_audio_sample_rate, true, _audio_buffer_size / 4);
 	_mixer->setReady(true);
 
 	_timer_thread_exit = false;

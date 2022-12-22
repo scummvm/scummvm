@@ -372,7 +372,7 @@ void OSystem_SDL::detectOpenGLFeaturesSupport() {
 	_oglType = OpenGL::kContextGL;
 	OpenGLContext.initialize(_oglType);
 	_supportsFrameBuffer = OpenGLContext.framebufferObjectSupported;
-	_supportsShaders = OpenGLContext.shadersSupported;
+	_supportsShaders = OpenGLContext.enginesShadersSupported;
 	OpenGLContext.reset();
 #endif
 #endif

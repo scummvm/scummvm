@@ -1739,14 +1739,14 @@ void TownsAudio_PCMChannel::setNote(uint8 note, TownsAudio_WaveTable *w, bool st
 		diff /= 12;
 		s = (r >> diff);
 		if (bl)
-			s = (s * _pcmPhase2[bl]) >> 16;
+			s = (s * _pcmPhase2[bl - 1]) >> 16;
 
 	} else if (diff > 0) {
 		bl = diff % 12;
 		diff /= 12;
 		s = (r << diff);
 		if (bl)
-			s += ((s * _pcmPhase1[bl]) >> 16);
+			s += ((s * _pcmPhase1[bl - 1]) >> 16);
 
 	} else {
 		s = r;
@@ -1817,11 +1817,11 @@ void TownsAudio_PCMChannel::envRelease() {
 }
 
 const uint16 TownsAudio_PCMChannel::_pcmPhase1[] =  {
-	0x879B, 0x0F37, 0x1F58, 0x306E, 0x4288, 0x55B6, 0x6A08, 0x7F8F, 0x965E, 0xAE88, 0xC882, 0xE341
+	0x0F37, 0x1F58, 0x306E, 0x4288, 0x55B6, 0x6A08, 0x7F8F, 0x965E, 0xAE88, 0xC882, 0xE341
 };
 
 const uint16 TownsAudio_PCMChannel::_pcmPhase2[] =  {
-	0xFEFE, 0xF1A0, 0xE411, 0xD744, 0xCB2F, 0xBFC7, 0xB504, 0xAAE2, 0xA144, 0x9827, 0x8FAC
+	0xF1A0, 0xE411, 0xD744, 0xCB2F, 0xBFC7, 0xB504, 0xAAE2, 0xA144, 0x9827, 0x8FAC, 0x879B
 };
 
 TownsAudio_WaveTable::TownsAudio_WaveTable() {

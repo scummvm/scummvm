@@ -55,7 +55,7 @@ enum ScriptOffsetEntryTypes {
 	SCI_SCR_OFFSET_TYPE_SAID
 };
 
-enum {
+enum : uint {
 	kNoRelocation = 0xFFFFFFFF
 };
 
@@ -75,7 +75,7 @@ private:
 	SciSpan<byte> _script; /**< Script size includes alignment byte */
 	SciSpan<byte> _heap; /**< Start of heap if SCI1.1, NULL otherwise */
 
-	int _lockers; /**< Number of classes and objects that require this script */
+	uint _lockers; /**< Number of classes and objects that require this script */
 
 	SciSpan<const uint16> _exports; /**< Exports block or 0 if not present */
 	uint16 _numExports; /**< Number of export entries */
@@ -197,10 +197,10 @@ public:
 	 * Retrieves the number of locks held on this script.
 	 * @return the number of locks held on the previously identified script
 	 */
-	int getLockers() const;
+	uint getLockers() const;
 
 	/** Sets the number of locks held on this script. */
-	void setLockers(int lockers);
+	void setLockers(uint lockers);
 
 	/**
 	 * Retrieves the offset of the export table in the script

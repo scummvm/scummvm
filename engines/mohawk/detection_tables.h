@@ -93,7 +93,8 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"Demo",
-			AD_ENTRY1s("DEMO.DAT", "8ff8ae264f759ea4a79cc915757f17c4", 488921),
+			AD_ENTRY2s("DEMO.DAT",   "8ff8ae264f759ea4a79cc915757f17c4", 488921,
+					   "SLIDES.DAT", "d630fddfb50608f3cc7d297392f21d41", 9483618),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_NO_FLAGS,
@@ -111,7 +112,8 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"Demo",
-			AD_ENTRY1s("DEMO.DAT", "c39303dd53fb5c4e7f3c23231c606cd0", 488415),
+			AD_ENTRY2s("DEMO.DAT", 	 "c39303dd53fb5c4e7f3c23231c606cd0", 488415,
+					   "SLIDES.DAT", "d630fddfb50608f3cc7d297392f21d41", 9483618),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_NO_FLAGS,
@@ -559,6 +561,42 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Riven: The Sequel to Myst
+	// Version 1.0 (5CD) - Simplified Chinese
+	// from einstein95
+	{
+		{
+			"riven",
+			"",
+			AD_ENTRY1s("a_Data.MHK", "549dc58da95c1cca286d8a129868fd65", 10291378),
+			Common::ZH_CHN,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM,
+			GUI_OPTIONS_RIVEN
+		},
+		GType_RIVEN,
+		0,
+		0,
+	},
+
+	// Riven: The Sequel to Myst
+	// Version 1.0 (5CD) - Traditional Chinese
+	// from einstein95
+	{
+		{
+			"riven",
+			"",
+			AD_ENTRY1s("a_Data.MHK", "326da4a52a6dfe0c42f94dd4a9779cee", 10654256),
+			Common::ZH_TWN,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM,
+			GUI_OPTIONS_RIVEN
+		},
+		GType_RIVEN,
+		0,
+		0,
+	},
+
+	// Riven: The Sequel to Myst
 	// Version 1.? (DVD, From "Myst 10th Anniversary Edition")
 	// From Clone2727
 	{
@@ -719,6 +757,209 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_CSTIME,
 		GF_DEMO,
+		0
+	},
+
+	{
+		{
+			"zoombini",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1("ZOOMBINI.MHK", "98b758fec55104c096cfd129048be9a6"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ZOOMBINI,
+		0,
+		0
+	},
+
+	{
+		{
+			"zoombini",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1("ZOOMBINI.MHK", "0672f65c40dd065840c896e41c13f980"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ZOOMBINI,
+		0,
+		0
+	},
+
+	{
+		{
+			"zoombini",
+			_s("Missing game code"), // Reason for being unsupported // "v2.0",
+			AD_ENTRY1("ZOOMBINI.MHK", "506b1122ffa740e2566cf0b583d24478"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ZOOMBINI,
+		0,
+		0
+	},
+	{
+		{
+			"zoombini",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1("ZOOMBINI.MHK", "6ae0bdf791266b1fe3d4fabbf44c3faa"),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ZOOMBINI,
+		0,
+		0
+	},
+	{
+		{
+			"zoombini",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1("ZOOMBINI.MHK", "8231e58525143ccf6e8b747df34b139f"),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ZOOMBINI,
+		0,
+		0
+	},
+	{
+		{
+			"zoombini",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("ZOOMBINI.MHK", "6d95ef2148043b51ef31d3a35d3b7521", 23853146),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ZOOMBINI,
+		0,
+		0
+	},
+	{
+		{
+			"zoombini",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("ZOOMBINI.MHK", "8191a3568facff94cecc8d99f83a7772", 1964112),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ZOOMBINI,
+		0,
+		0
+	},
+	{
+		{
+			"zoombini",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("ZOOMBINI.MHK", "cfa2db71d571a40a4ae692606547e391", 1492603),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ZOOMBINI,
+		0,
+		0
+	},
+	{
+		{
+			"zoombini",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("ZOOMBINI.MHK", "3133e8d164958f8a3f740cb1f4e49f15", 24120142),
+			Common::JA_JPN,
+			Common::kPlatformMacintosh,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ZOOMBINI,
+		0,
+		0
+	},
+
+	{
+		{
+			"orly",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("DEMO_STO.MHK", "9ab19aa65e72ae34ce3ec2c54f4e6f8b", 6245780),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ORLY,
+		0,
+		0
+	},
+
+	{
+		{
+			"alientales",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("ATDEMO.DAT", "7ac30ba63080cd5ad6af9946707e01cc", 1656768),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED | ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ORLY,
+		0,
+		0
+	},
+
+	{
+		{
+			"csworld",
+			_s("Missing game code"), // Reason for being unsupported // "v3.0",
+			AD_ENTRY1("C2K.MHK", "605fe88380848031bbd0ff84ade6fe40"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_CSWORLD,
+		0,
+		0
+	},
+	{
+		{
+			"csworld",
+			_s("Missing game code"), // Reason for being unsupported // "v3.5",
+			AD_ENTRY1("C2K.MHK", "d4857aeb0f5e2e0c4ac556aa74f38c23"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_CSWORLD,
+		0,
+		0
+	},
+
+	{
+		{
+			"csamtrak",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1("AMTRAK.MHK", "2f95301f0bb950d555bb7b0e3b1b7eb1"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_CSAMTRAK,
+		0,
 		0
 	},
 
@@ -953,6 +1194,52 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"jamesmath",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1("BRODER.MHK", "007299da8b2c6e8ec1cde9598c243024"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_JAMESMATH,
+		0,
+		0
+	},
+
+	// This is in the NEWDATA folder, so I assume it's a newer version ;)
+	{
+		{
+			"jamesmath",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1("BRODER.MHK", "53c000938a50dca92860fd9b546dd276"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_JAMESMATH,
+		0,
+		0
+	},
+
+	{
+		{
+			"treehouse",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1("MAINROOM.MHK", "12f51894d7f838af639ea9bf1bc8f45b"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_TREEHOUSE,
+		0,
+		0
+	},
+
+	{
+		{
 			"greeneggs",
 			"",
 			AD_ENTRY1("GREEN.LB", "5df8438138186f89e71299d7b4f88d06"),
@@ -1062,7 +1349,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"seussabc",
 			"Demo",
-			AD_ENTRY1("ABC.LB", "aef2c88f4dcc2c3a47ed8093f6e27bc9"),
+			AD_ENTRY1s("ABC.LB", "aef2c88f4dcc2c3a47ed8093f6e27bc9", 567),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
@@ -1114,6 +1401,54 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_LIVINGBOOKSV2, // Most probably it is incorrect
+		0,
+		0
+	},
+
+	{
+		{
+			"1stdegree",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1("AL236_1.MHK", "3ba145492a7b8b4dee0ef4222c5639c3"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_1STDEGREE,
+		0,
+		0
+	},
+
+	// In The 1st Degree
+	// French Windows
+	// From Strangerke
+	{
+		{
+			"1stdegree",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1("AL236_1.MHK", "0e0c70b1b702b6ddca61a1192ada1282"),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_1STDEGREE,
+		0,
+		0
+	},
+
+	{
+		{
+			"csusa",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1("USAC2K.MHK", "b8c9d3a2586f62bce3a48b50d7a700e9"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_CSUSA,
 		0,
 		0
 	},
@@ -1353,6 +1688,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
 		"Living Books Player"
+	},
+
+	// From MacFormat June 1994 cover disc [Spanish, English]. Bug #12979
+	{
+		{
+			"tortoise",
+			"",
+			AD_ENTRY1s("BookOutline", "91245b8ac388a54378b94fce65c29d02", 582),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"The Tortoise & The Hare"
 	},
 
 	{
@@ -2116,6 +2467,40 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Arthur's Reading Games
+	// Rerelease of Arthur's Reading Race
+	// There is also ARG.LB ("82baf9c67d417bc3278c79018d1617d4", 3353)
+	// Only differences are the copyright is for "The Learning Company" and some lines are accidentally merged
+	{
+		{
+			"arthurreading",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("ARG32.LB", "51be80dff4be9fd07c32b3b207320677", 3355),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0,
+	},
+
+	{
+		{
+			"arthurreading",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("Bookoutline", "394e06287031512c8487b0940abe1049", 3166),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0,
+	},
+
 	// From zerep in bug #5647
 	{
 		{
@@ -2377,7 +2762,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"lilmonster",
 			"",
 			AD_ENTRY1("lmasf.lb", "8c22e79c97a86827d56b4c596066dcea"),
-			Common::EN_ANY,
+			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
@@ -3162,6 +3547,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0,
+	},
+
+	// Dr. Seuss Reading Games
+	// Contains "Dr. Seuss's ABC" and "The Cat in the Hat"
+	{
+		{
+			"drseussreading",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("Outline", "1f522d42174e8e98537db10bc715aa97", 5330),
+			Common::EN_ANY,
+			Common::kPlatformUnknown, // identical on both Win and Mac partitions of disc
+			ADGF_UNSUPPORTED,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_LIVINGBOOKSV3,

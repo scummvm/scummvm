@@ -109,7 +109,7 @@ public:
 	 * Calculate vector length
 	 * @return      The computed length
 	 */
-	float length() {
+	float length() const {
 		return sqrtf(x() * x() + y() * y() + z() * z());
 	}
 

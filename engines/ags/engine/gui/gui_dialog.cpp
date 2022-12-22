@@ -114,7 +114,7 @@ int loadgamedialog() {
 				else {
 					toret = _G(filenumbers)[cursel];
 					String path = get_save_game_path(toret);
-					strcpy(_G(bufTemp), path.GetCStr());
+					Common::strcpy_s(_G(bufTemp), path.GetCStr());
 					_G(lpTemp) = &_G(bufTemp)[0];
 				}
 			} else if (mes.id == ctrlcancel) {
@@ -135,9 +135,9 @@ int loadgamedialog() {
 
 int savegamedialog() {
 	char okbuttontext[50];
-	strcpy(okbuttontext, get_global_message(MSG_SAVEBUTTON));
+	Common::strcpy_s(okbuttontext, get_global_message(MSG_SAVEBUTTON));
 	char labeltext[200];
-	strcpy(labeltext, get_global_message(MSG_SAVEDIALOG));
+	Common::strcpy_s(labeltext, get_global_message(MSG_SAVEDIALOG));
 	const int wnd_width = 200;
 	const int wnd_height = 120;
 	const int boxleft = _G(myscrnwid) / 2 - wnd_width / 2;
@@ -155,8 +155,8 @@ int savegamedialog() {
 	CSCISendControlMessage(ctrllist, CLB_CLEAR, 0, 0);    // clear the list box
 	preparesavegamelist(ctrllist);
 	if (_G(toomanygames)) {
-		strcpy(okbuttontext, get_global_message(MSG_REPLACE));
-		strcpy(labeltext, get_global_message(MSG_MUSTREPLACE));
+		Common::strcpy_s(okbuttontext, get_global_message(MSG_REPLACE));
+		Common::strcpy_s(labeltext, get_global_message(MSG_MUSTREPLACE));
 		labeltop = 2;
 	} else
 		ctrltbox = CSCICreateControl(CNT_TEXTBOX, 10, 29, 120, 0, nullptr);
@@ -184,7 +184,7 @@ int savegamedialog() {
 				if (_G(numsaves) > 0)
 					CSCISendControlMessage(ctrllist, CLB_GETTEXT, cursell, &_G(bufTemp)[0]);
 				else
-					strcpy(_G(bufTemp), "_NOSAVEGAMENAME");
+					Common::strcpy_s(_G(bufTemp), "_NOSAVEGAMENAME");
 
 				if (_G(toomanygames)) {
 					int nwhand = CSCIDrawWindow(boxleft + 5, boxtop + 20, 190, 65);
@@ -234,7 +234,7 @@ int savegamedialog() {
 
 					toret = highestnum + 1;
 					String path = get_save_game_path(toret);
-					strcpy(_G(bufTemp), path.GetCStr());
+					Common::strcpy_s(_G(bufTemp), path.GetCStr());
 				} else {
 					toret = _G(filenumbers)[cursell];
 					_G(bufTemp)[0] = 0;
@@ -242,7 +242,7 @@ int savegamedialog() {
 
 				if (_G(bufTemp)[0] == 0) {
 					String path = get_save_game_path(toret);
-					strcpy(_G(bufTemp), path.GetCStr());
+					Common::strcpy_s(_G(bufTemp), path.GetCStr());
 				}
 
 				_G(lpTemp) = &_G(bufTemp)[0];
@@ -331,7 +331,12 @@ void enterstringwindow(const char *prompttext, char *stouse) {
 	if (wantCancel)
 		CSCIDeleteControl(ctrlcancel);
 	CSCIEraseWindow(handl);
-	strcpy(stouse, _G(buffer2));
+	/* FIXME: Function should take a length parameter
+	 * It is called with a 200 bytes buffer below
+	 * but also called with a STD_BUFFER_SIZE (3000) buffer
+	 * and undetermined size buffer in the API
+	 * Using STD_BUFFER_SIZE as we don't want to break too much stuff */
+	Common::strcpy_s(stouse, STD_BUFFER_SIZE, _G(buffer2));
 }
 
 int enternumberwindow(char *prompttext) {
@@ -345,7 +350,7 @@ int enternumberwindow(char *prompttext) {
 int roomSelectorWindow(int currentRoom, int numRooms,
 		const std::vector<int> &roomNumbers, const std::vector<String> &roomNames) {
 	char labeltext[200];
-	strcpy(labeltext, get_global_message(MSG_SAVEDIALOG));
+	Common::strcpy_s(labeltext, get_global_message(MSG_SAVEDIALOG));
 	const int wnd_width = 240;
 	const int wnd_height = 160;
 	const int boxleft = _G(myscrnwid) / 2 - wnd_width / 2;
@@ -451,8 +456,8 @@ int myscimessagebox(const char *lpprompt, char *btn1, char *btn2) {
 
 int quitdialog() {
 	char quitbut[50], playbut[50];
-	strcpy(quitbut, get_global_message(MSG_QUITBUTTON));
-	strcpy(playbut, get_global_message(MSG_PLAYBUTTON));
+	Common::strcpy_s(quitbut, get_global_message(MSG_QUITBUTTON));
+	Common::strcpy_s(playbut, get_global_message(MSG_PLAYBUTTON));
 	return myscimessagebox(get_global_message(MSG_QUITDIALOG), quitbut, playbut);
 }
 

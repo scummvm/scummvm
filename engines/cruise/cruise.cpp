@@ -214,7 +214,7 @@ bool CruiseEngine::canSaveGameStateCurrently() {
 
 const char *CruiseEngine::getSavegameFile(int saveGameIdx) {
 	static char buffer[20];
-	sprintf(buffer, "cruise.s%02d", saveGameIdx);
+	Common::sprintf_s(buffer, "cruise.s%02d", saveGameIdx);
 	return buffer;
 }
 

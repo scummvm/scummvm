@@ -58,7 +58,7 @@ bool Talk::loadText(uint32 textIndex, uint16 *textBuffer, uint16 bufferLength) {
 	uint32 fileNo = (textIndex >> 0xc) & 0xffff;
 	uint32 fileOffset = textIndex & 0xfff;
 
-	sprintf(filename, "drag%04d.txt", fileNo);
+	Common::sprintf_s(filename, "drag%04d.txt", fileNo);
 	uint32 size;
 	byte *data = _bigfileArchive->load(filename, size);
 	debug(1, "DIALOG: %s, %s, %d", filename, data, fileOffset);

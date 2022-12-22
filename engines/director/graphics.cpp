@@ -288,7 +288,13 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 
  	switch (p->ink) {
 	case kInkTypeBackgndTrans:
-		*dst = (src == (int)p->backColor) ? *dst : src;
+		if (p->oneBitImage) {
+			// One-bit images have a slightly different rendering algorithm for BackgndTrans.
+			// Foreground colour is used, and background colour is ignored.
+			*dst = (src == (int)p->colorBlack) ? p->foreColor : *dst;
+		} else {
+			*dst = (src == (int)p->backColor) ? *dst : src;
+		}
 		break;
 	case kInkTypeMatte:
 		// fall through
@@ -565,6 +571,9 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 	if (sprite == kTextSprite)
 		applyColor = false;
 
+	Common::Rect srfClip = srf->getBounds();
+	bool failedBoundsCheck = false;
+
 	srcPoint.y = abs(srcRect.top - destRect.top);
 	for (int i = 0; i < destRect.height(); i++, srcPoint.y++) {
 		if (d->_wm->_pixelformat.bytesPerPixel == 1) {
@@ -572,6 +581,11 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 			const byte *msk = mask ? (const byte *)mask->getBasePtr(srcPoint.x, srcPoint.y) : nullptr;
 
 			for (int j = 0; j < destRect.width(); j++, srcPoint.x++) {
+				if (!srfClip.contains(srcPoint)) {
+					failedBoundsCheck = true;
+					continue;
+				}
+
 				if (!mask || (msk && !(*msk++))) {
 					(d->getInkDrawPixel())(destRect.left + j, destRect.top + i,
 											preprocessColor(*((byte *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
@@ -582,6 +596,11 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 			const uint32 *msk = mask ? (const uint32 *)mask->getBasePtr(srcPoint.x, srcPoint.y) : nullptr;
 
 			for (int j = 0; j < destRect.width(); j++, srcPoint.x++) {
+				if (!srfClip.contains(srcPoint)) {
+					failedBoundsCheck = true;
+					continue;
+				}
+
 				if (!mask || (msk && !(*msk++))) {
 					(d->getInkDrawPixel())(destRect.left + j, destRect.top + i,
 											preprocessColor(*((uint32 *)srf->getBasePtr(srcPoint.x, srcPoint.y))), this);
@@ -589,6 +608,14 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 			}
 		}
 	}
+
+	if (failedBoundsCheck) {
+		warning("DirectorPlotData::inkBlitSurface: Out of bounds - srfClip: %d,%d,%d,%d, srcRect: %d,%d,%d,%d, dstRect: %d,%d,%d,%d",
+				srfClip.left, srfClip.top, srfClip.right, srfClip.bottom,
+				srcRect.left, srcRect.top, srcRect.right, srcRect.bottom,
+				destRect.left, destRect.top, destRect.right, destRect.bottom);
+	}
+
 }
 
 void DirectorPlotData::inkBlitStretchSurface(Common::Rect &srcRect, const Graphics::Surface *mask) {

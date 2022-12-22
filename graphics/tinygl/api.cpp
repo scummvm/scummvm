@@ -483,7 +483,7 @@ void tglOrtho(TGLdouble left, TGLdouble right, TGLdouble bottom, TGLdouble top, 
 	c->gl_add_op(p);
 }
 
-// lightening
+// lightning
 
 void tglMaterialfv(TGLenum mode, TGLenum type, const TGLfloat *v) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();

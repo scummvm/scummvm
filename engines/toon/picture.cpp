@@ -24,6 +24,7 @@
 
 #include "common/debug.h"
 #include "common/rect.h"
+#include "common/compression/rnc_deco.h"
 #include "common/stack.h"
 
 namespace Toon {
@@ -92,7 +93,7 @@ bool Picture::loadPicture(const Common::String &file) {
 		return true;
 	}
 	case kCompRNC1: {
-		Toon::RncDecoder rnc;
+		Common::RncDecoder rnc;
 
 		// allocate enough place
 		uint32 decSize = READ_BE_UINT32(fileData + 4);
@@ -111,7 +112,7 @@ bool Picture::loadPicture(const Common::String &file) {
 		return true;
 	}
 	case kCompRNC2: {
-		Toon::RncDecoder rnc;
+		Common::RncDecoder rnc;
 
 		// allocate enough place
 		uint32 decSize = READ_BE_UINT32(fileData + 4);

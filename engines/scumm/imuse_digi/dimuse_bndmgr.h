@@ -51,7 +51,7 @@ private:
 		int32 numFiles;
 		bool isCompressed;
 		IndexNode *indexTable;
-	} _budleDirCache[4];
+	} _bundleDirCache[4];
 
 public:
 	BundleDirCache();

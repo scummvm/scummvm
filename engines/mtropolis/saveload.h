@@ -53,10 +53,12 @@ struct ISaveReader : public IInterfaceBase {
 
 struct ISaveUIProvider : public IInterfaceBase {
 	virtual bool promptSave(ISaveWriter *writer, const Graphics::Surface *screenshotOverride) = 0;
+	virtual bool namedSave(ISaveWriter *writer, const Graphics::Surface *screenshotOverride, const Common::String &fileName) = 0;
 };
 
 struct ILoadUIProvider : public IInterfaceBase {
 	virtual bool promptLoad(ISaveReader *reader) = 0;
+	virtual bool namedLoad(ISaveReader *reader, const Common::String &fileName) = 0;
 };
 
 struct IAutoSaveProvider : public IInterfaceBase {

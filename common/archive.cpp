@@ -23,6 +23,7 @@
 #include "common/fs.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/memstream.h"
 
 namespace Common {
 
@@ -60,6 +61,45 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const Path &pattern) c
 	return matches;
 }
 
+SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMember(const Path &path) const {
+	String translated = translatePath(path);
+	bool isNew = false;
+	if (!_cache.contains(translated)) {
+		_cache[translated] = readContentsForPath(translated);
+		isNew = true;
+	}
+
+	SharedArchiveContents* entry = &_cache[translated];
+
+	// Errors and missing files. Just return nullptr,
+	// no need to create stream.
+	if (entry->isFileMissing())
+		return nullptr;
+
+	// Check whether the entry is still valid as WeakPtr might have expired.
+	if (!entry->makeStrong()) {
+		// If it's expired, recreate the entry.
+		_cache[translated] = readContentsForPath(translated);
+		entry = &_cache[translated];
+		isNew = true;
+	}
+
+	// It's possible that recreation failed in case of e.g. network
+	// share going offline.
+	if (entry->isFileMissing())
+		return nullptr;
+
+	// Now we have a valid contents reference. Make stream for it.
+	Common::MemoryReadStream *memStream = new Common::MemoryReadStream(entry->getContents(), entry->getSize());
+
+	// If the entry was just created and it's too big for strong caching,
+	// mark the copy in cache as weak
+	if (isNew && entry->getSize() > _maxStronglyCachedSize) {
+		entry->makeWeak();
+	}
+
+	return memStream;
+}
 
 
 SearchSet::ArchiveNodeList::iterator SearchSet::find(const String &name) {

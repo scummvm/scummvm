@@ -56,6 +56,7 @@ struct ActorTableData {
 #define ITE_ACTORCOUNT 181
 
 extern ActorTableData ITE_ActorTable[ITE_ACTORCOUNT];
+extern byte ITE_ActorECSSpeechColor[ITE_ACTORCOUNT];
 
 enum {
 	kObjUseWith = 0x01,
@@ -137,11 +138,11 @@ extern const IntroDialogue introDialogueCave2[][3];
 extern const IntroDialogue introDialogueCave3[][3];
 extern const IntroDialogue introDialogueCave4[][4];
 
-extern const IntroCredit creditsValley[43];
-extern const IntroCredit creditsTreeHouse1[36];
-extern const IntroCredit creditsTreeHouse2[51];
-extern const IntroCredit creditsFairePath1[45];
-extern const IntroCredit creditsFairePath2[21];
+extern const IntroCredit creditsValley[49];
+extern const IntroCredit creditsTreeHouse1[42];
+extern const IntroCredit creditsTreeHouse2[53];
+extern const IntroCredit creditsFairePath1[49];
+extern const IntroCredit creditsFairePath2[23];
 extern const IntroCredit creditsTent[6];
 
 } // End of namespace Saga

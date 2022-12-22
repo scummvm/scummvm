@@ -106,8 +106,7 @@ void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
 		return;
 
 	cancelFade(soundChannel);
-	if (_channels[soundChannel - 1].loopPtr)
-		_channels[soundChannel - 1].loopPtr = nullptr;
+
 	_mixer->stopHandle(_channels[soundChannel - 1].handle);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel - 1].handle, &stream, -1, getChannelVolume(soundChannel));
 }
@@ -185,6 +184,8 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 				// possible to gracefully stop the playback
 				if (looping)
 					_channels[soundChannel - 1].loopPtr = dynamic_cast<Audio::LoopableAudioStream *>(as);
+				else
+					_channels[soundChannel - 1].loopPtr = nullptr;
 				playStream(*as, soundChannel);
 				setLastPlayedSound(soundChannel, memberID, stopOnZero);
 			}
@@ -293,7 +294,16 @@ void DirectorSound::cancelFade(uint8 soundChannel) {
 bool DirectorSound::isChannelActive(uint8 soundChannel) {
 	if (!isChannelValid(soundChannel))
 		return false;
-	return _mixer->isSoundHandleActive(_channels[soundChannel - 1].handle);
+
+	if (!_mixer->isSoundHandleActive(_channels[soundChannel - 1].handle))
+		return false;
+
+	// Looped sounds are considered to be inactive after the first play
+	// WORKAROUND HACK
+	if (_channels[soundChannel - 1].loopPtr != nullptr)
+		return _channels[soundChannel - 1].loopPtr->getCompleteIterations() < 1;
+
+	return true;
 }
 
 bool DirectorSound::isChannelValid(uint8 soundChannel) {
@@ -576,7 +586,7 @@ void DirectorSound::playFPlaySound(const Common::Array<Common::String> &fplayLis
 	for (uint i = 0; i < fplayList.size(); i++)
 		_fplayQueue.push(fplayList[i]);
 
-	// stop the previous sound, because new one is comming
+	// stop the previous sound, because new one is coming
 	if (isChannelActive(1))
 		stopSound(1);
 
@@ -780,46 +790,45 @@ Audio::AudioStream *SNDDecoder::getAudioStream(bool looping, bool forPuppet, Dis
 }
 
 bool SNDDecoder::hasLoopBounds() {
-	return _loopStart != 0 || _loopEnd != 0;
+	return _loopStart != 0 && _loopEnd != 0;
 }
 
 AudioFileDecoder::AudioFileDecoder(Common::String &path)
 		: AudioDecoder() {
 	_path = path;
-	_macresman = new Common::MacResManager();
 }
 
 AudioFileDecoder::~AudioFileDecoder() {
-	delete _macresman;
 }
 
 Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppet, DisposeAfterUse::Flag disposeAfterUse) {
 	if (_path.empty())
 		return nullptr;
 
-	_macresman->open(Common::Path(pathMakeRelative(_path), g_director->_dirSeparator));
-	Common::SeekableReadStream *file = _macresman->getDataFork();
+	Common::Path filePath = Common::Path(pathMakeRelative(_path), g_director->_dirSeparator);
 
-	if (file == nullptr) {
+	Common::SeekableReadStream *copiedStream = Common::MacResManager::openFileOrDataFork(filePath);
+
+	if (copiedStream == nullptr) {
 		warning("Failed to open %s", _path.c_str());
-		delete file;
 		return nullptr;
 	}
-	uint32 magic1 = file->readUint32BE();
-	file->readUint32BE();
-	uint32 magic2 = file->readUint32BE();
-	file->seek(0);
+
+	uint32 magic1 = copiedStream->readUint32BE();
+	copiedStream->readUint32BE();
+	uint32 magic2 = copiedStream->readUint32BE();
+	copiedStream->seek(0);
 
 	Audio::RewindableAudioStream *stream = nullptr;
 	if (magic1 == MKTAG('R', 'I', 'F', 'F') &&
 		magic2 == MKTAG('W', 'A', 'V', 'E')) {
-		stream = Audio::makeWAVStream(file, disposeAfterUse);
+		stream = Audio::makeWAVStream(copiedStream, disposeAfterUse);
 	} else if (magic1 == MKTAG('F', 'O', 'R', 'M') &&
 				(magic2 == MKTAG('A', 'I', 'F', 'F') || magic2 == MKTAG('A', 'I', 'F', 'C'))) {
-		stream = Audio::makeAIFFStream(file, disposeAfterUse);
+		stream = Audio::makeAIFFStream(copiedStream, disposeAfterUse);
 	} else {
 		warning("Unknown file type for %s", _path.c_str());
-		delete file;
+		delete copiedStream;
 	}
 
 	if (stream) {

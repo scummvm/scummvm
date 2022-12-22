@@ -51,32 +51,31 @@ namespace Kingdom {
 	};
 
 	struct HotSpot {
-		int x1, y1, x2, y2;
+		uint16 x1, y1, x2, y2;
 		int16 _mouseValue;
 
-		bool contains(const Common::Point &p) {
+		bool contains(const Common::Point &p) const {
 			return (x1 <= p.x) && (p.x < x2) && (y1 <= p.y) && (p.y < y2);
 		}
 
-		bool dummy() {
+		bool dummy() const {
 			return !(x1 || x2 || y1 || y2);
 		}
 	};
 
-	extern byte _finalFrameTable[];
-	extern const char *_rezNames[];
-	extern const char *_movieNames[];
-	extern int _mapExit[];
-	extern int _emlTable[];
-	extern int _zoomTable[81][9][2];
-	extern int _iconActTable[82][7];
-	extern int _cursorTable[96];
-	extern int _teaSeq[6][2];
-	extern int _hgaSeq[4][2];
-	extern HotSpot _mouseMapMSFull[51];
-	extern HotSpot _mouseMapMSDemo[51];
-	extern HotSpot _mouseMapASFull[128][16];
-	extern HotSpot _mouseMapASDemo[128][16];
+	extern const byte _finalFrameTable[];
+	extern const char * const _rezNames[];
+	extern const uint16 _mapExit[];
+	extern const uint8 _emlTable[];
+	extern const uint8 _zoomTable[81][9][2];
+	extern const uint8 _iconActTable[82][7];
+	extern const uint8 _cursorTable[96];
+	extern const uint8 _teaSeq[6][2];
+	extern const uint8 _hgaSeq[4][2];
+	extern const HotSpot _mouseMapMSFull[51];
+	extern const HotSpot _mouseMapMSDemo[51];
+	extern const HotSpot _mouseMapASFull[128][16];
+	extern const HotSpot _mouseMapASDemo[128][16];
 
 	struct KingdomSavegameHeader {
 		uint32 _signature;
@@ -102,7 +101,6 @@ namespace Kingdom {
 		bool isDemo() const;
 
 	private:
-		Console *_console;
 		Logic *_logic;
 
 		KingArtEntry *_kingartEntries;

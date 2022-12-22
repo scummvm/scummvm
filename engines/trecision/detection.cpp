@@ -23,6 +23,8 @@
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
 
+#include "trecision/detection.h"
+
 static const PlainGameDescriptor trecisionGames[] = {
 	{"aot", "Ark of Time"},
 	{"nl", "Nightlong: Union City Conspiracy"},
@@ -209,24 +211,6 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
-
-static const ADExtraGuiOptionsMap optionsList[] = {
-
-	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"originalsaveload",
-			false,
-			0,
-			0
-		}
-	},
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
 } // End of namespace Trecision
 
 static const char *directoryGlobs[] = {
@@ -237,7 +221,7 @@ static const char *directoryGlobs[] = {
 
 class TrecisionMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	TrecisionMetaEngineDetection() : AdvancedMetaEngineDetection(Trecision::gameDescriptions, sizeof(ADGameDescription), trecisionGames, Trecision::optionsList) {
+	TrecisionMetaEngineDetection() : AdvancedMetaEngineDetection(Trecision::gameDescriptions, sizeof(ADGameDescription), trecisionGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD);

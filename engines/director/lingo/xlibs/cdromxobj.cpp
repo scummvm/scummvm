@@ -20,87 +20,138 @@
  */
 
 /*
- * mNew	 creates a new object instance for a single
- *     CD-ROM player. if the Apple Audio CD Player is not
- *     mounted the instance will not be created.
- *
- * mDispose  disposes of the current instance.
- *     This should always be called when you are finished
- *     using the XObject.
- *
- * mName  returns the name of the XObj.
- *
- * mPlay  plays the  current track from the beginning.
- *
- * mPlayTrack, trackNum  plays the specified track number
- *     from its beginning.
- *
- * mPlayName, trackName  plays the specified track name.
- *     (Note: volume name is ignored.)
- *
- * mPlayAbsTime, minute, second, frame  plays starting at
- *     the specified absolute time on current CD-ROM.
- *
- * mPlaySegment, startMin, startSec, startFrm, stopMin, stopSec, stopFrm  plays starting at the specified absolute
- *     time, and stops at the specified stopping point.
- *
- * mAskPlay, leftDialogPosition, topDialogPosition  opens
- *     a standard file dialog for the user to select a track.
- *
- * mStepFwd  steps forward one track and plays.
- *
- * mStepBwd  steps back one track and plays.
- *
- * mPause  pauses the player. When this method is called a
- *     second time, the player will continue the mode prior to
- *     first call; just like calling mContinue.
- *
- * mContinue  continues the mode prior to calling mPause.
- *
- * mStop  stops playing.
- *
- * mStopTrack, trackNum  stops when specified track
- *     finishes playing.
- *
- * mStopAbsTime, minute, second, frame  stops play at
- *     absolute time position.
- *
- * mRemoveStop  removes the conditions which are set
- *     with: mPlaySegment, mStopTrack and mStopAbsTime.
- *
- * mEject  ejects the CD from the drive.
- *
- * mStatus  returns the status of the CD player. See the
- *     mDescribe for a list of messages which are returned.
- *
- * mPlayMode  returns the play mode from an audio track.
- *     The play mode describes how to play the audio track.
- *     See the mDescribe for a list of messages.
- *
- * mCurrentFormat  returns the format of the current track
- *     See the mDescribe for a list of messages.
- *
- * mCurrentTrack  returns the current track.
- *
- * mCurrentTime  returns the current time (min:sec:frame).
- *
- * mFirstTrack  returns the first track number on current CD
- *
- * mLastTrack  returns the last track number on current CD
- *
- * mTotalTime  returns the total time on current CD in
- *     minutes:seconds:frames.
- *
- * mScanFwd min, sec, frm, monitorP  scans forward.
- * mScanBwd min, sec, frm, monitorP  scans backwards.
- *   min, sec, and frm are the absolute time to start scan.
- *   monitorP — if true, will stop scan when mouse is
- *   released, and continue playing at current position.
- *   However, this will inhibit all other events.
- *   Otherwise use the mStopScan method.
- *
- * mStopScan  stops scan and continues playing at current
- *     position.
+  --AppleAudioCD, CDAudio, 1.0, 4/3/90
+  --
+  --© 1989, 1990 MacroMind, Inc.
+  -- by Jeff Tanner
+  --
+  ------------------------------------------------------
+  ------------------------------------------------------
+  --  An Apple CD SC Player must be mounted
+  --      in order for this XObject to operate properly.
+  --      The easiest way to check for mounting is to
+  --      check the desktop for the CD icon.
+  ------------------------------------------------------
+  ------------------------------------------------------
+  -- This XObject recognizes only the first player in the SCSI chain .
+  ------------------------------------------------------
+  ------------------------------------------------------
+  --=METHODS=--
+  X   mNew --Creates a new instance of the XObject.
+  X   mDispose --Disposes of the instance.
+  S   mName --Returns name of the XObject.
+  ------------------------------------------------------
+  ------------------------------------------------------
+  -- PLAY CD METHODS:
+  S   mPlay --Plays current track from the beginning.
+  SI mPlayTrack, trackNum --Plays the specified track from the beginning.
+  SS   mPlayName, trackName --Plays by track name.
+  --      Note: The full pathname is unnecessary.
+  --      The track names for tracks 1 - 9 are
+  --          "TRACK<space><space>trackNum" and for tracks 10 to 99 are
+  --          "TRACK<space>trackNum".
+  SIII mPlayAbsTime, minute, second, frame --Starts play at absolute time position on current CD-ROM.
+  --
+  SIIIIII mPlaySegment, startMin, startSec, startFrm, stopMin, stopSec, stopFrm
+  --          < startMin, startSec, startFrm > - Start time
+  --          < stopMin, stopSec, stopFrm > - Stop time
+  SII  mAskPlay, leftDialog, topDialog        --With a file dialog box,
+  --                                  selects an Audio track to play.
+  --          < leftDialog, topDialog > - Where to place the file dialog box
+  ------------------------------------------------------
+  S   mStepFwd --Steps forward one track and Plays.
+  S   mStepBwd --Steps back one track and Plays.
+  --
+  S    mPause --Pauses the player.
+  --      When this method is called a second time,
+  --      the player will continue in normal play mode.
+  S    mContinue --Continues the mode prior to calling mPause.
+  --
+  S    mStop                              --Stops play.
+  SI   mStopTrack, trackNum               --Stops when the selected track finishes playing.
+  SIII mStopAbsTime, minute, second, frame --Stops play at a specified absolute time position.
+  S    mRemoveStop -- Removes stop conditions.
+  --          Stop conditions are set with these methods:
+  --                  mPlaySegment
+  --                  mStopTrack
+  --                  mStopAbsTime
+  --
+  S    mEject --Ejects CD-ROM from drive.
+  --
+  ------------------------------------------------------
+  ------------------------------------------------------
+  -- STATUS METHODS:
+  S    mStatus --Returns status of Audio CD player.
+  --      Returns message strings:
+  --          Audio play in progress
+  --          Audio pause in operation
+  --          Audio muting on
+  --          Audio play operation completed
+  --          Error occurred during audio play
+  --          Not currently playing
+  --
+  S    mPlayMode      --Returns a play mode from audio track.
+  --      The play mode describes how to play the audio track.
+  --      Returns message strings:
+  --          Muting on (no audio)
+  --          Right channel through right channel only
+  --          Left channel through right channel only
+  --          Left and right channels through right channel only
+  --          Right channel through left channel only
+  --          Right channel through left and right channel
+  --          Right channel through left channel,
+  --              Left channel through right channel
+  --          Right channel through left channel,
+  --              Left and right channels through right channel
+  --          Left channel through left channel only
+  --          Left channel through left channel,
+  --              Right channel through right channel (Stereo)
+  --          Left channel through left and right channel
+  --          Left channel through left channel,
+  --              Left and right channels through right channel
+  --          Left and right channels through left channel only
+  --          Left and right channels through left channel,
+  --              Right channel through right channel
+  --          Left and right channels through left channel,
+  --              Left channel through right channel
+  --          Left and right channels through
+  --              both left channel and right channel (Mono)
+  --
+  S    mCurrentFormat         --Returns the format of the current track.
+  --      Returns message strings:
+  --          2 audio channels without preemphasis
+  --          2 audio channels with preemphasis
+  --          4 audio channels without preemphasis
+  --          4 audio channels with preemphasis
+  --          Data track
+  --
+  ------------------------------------------------------
+  ------------------------------------------------------
+  --
+  I    mCurrentTrack --Returns number of the current track.
+  S    mCurrentTime  --Returns the current absolute time (min:sec:frm).
+  --
+  I    mFirstTrack  -- Returns first track number on current CD-ROM.
+  I    mLastTrack  -- Returns last track number on current CD-ROM.
+  S    mTotalTime -- Returns total time on current CD-ROM (min:sec:frm)
+  ------------------------------------------------------
+  ------------------------------------------------------
+  -- SCANNING METHODS:
+  -- Starting at a specific time:
+  --   min, sec, and frm parameters are to indicate
+  --      the absolute time to start scan.
+  --   monitorP - if true, it will stop scan moment mouse
+  --      is released, and continue playing at current position.
+  --      However, this will inhibit all other events.
+  --      Otherwise use mStopScan method.
+  SIIII mScanFwd min, sec, frm, monitorP -- Fast forward scan
+  SIIII mScanBwd min, sec, frm, monitorP -- Fast reverse scan
+  --
+  S   mStopScan --Stops scan and continues playing at current position.
+  --
+  --  End description of AppleAudioCD XObject methods.
+  ------------------------------------------------------
+  ------------------------------------------------------
  */
 
 #include "backends/audiocd/audiocd.h"
@@ -162,20 +213,28 @@ void CDROMXObj::close(int type) {
 	if (type == kXObj) {
 		CDROMXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-        g_director->_system->getAudioCDManager()->close();
+		g_director->_system->getAudioCDManager()->close();
 	}
 }
 
 
 CDROMXObject::CDROMXObject(ObjectType ObjectType) :Object<CDROMXObject>("AppleAudioCD") {
 	_objType = ObjectType;
+	// Initialize _cdda_status
+	_cdda_status.playing = false;
+	_cdda_status.track = 0;
+	_cdda_status.start = 0;
+	_cdda_status.duration = 0;
+	_cdda_status.numLoops = 0;
+	_cdda_status.volume = Audio::Mixer::kMaxChannelVolume;
+	_cdda_status.balance = 0;
 }
 
 void CDROMXObj::m_new(int nargs) {
-    g_director->_system->getAudioCDManager()->open();
+	g_director->_system->getAudioCDManager()->open();
 	g_lingo->printSTUBWithArglist("CDROMXObj::m_new", nargs);
 	g_lingo->dropStack(nargs);
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 // Returns the name of the XObj
@@ -184,61 +243,67 @@ void CDROMXObj::m_name(int nargs) {
 }
 
 void CDROMXObj::m_play(int nargs) {
-    // This is a request to play the current track from the start,
-    // which we can't do if there's no track information.
-    if (g_director->_cdda_status.track == 0)
-        return;
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
 
-    g_director->_system->getAudioCDManager()->play(g_director->_cdda_status.track, -1, 0, 0);
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	// This is a request to play the current track from the start,
+	// which we can't do if there's no track information.
+	if (me->_cdda_status.track == 0)
+		return;
+
+	g_director->_system->getAudioCDManager()->play(me->_cdda_status.track, -1, 0, 0);
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_playTrack(int nargs) {
-    int track = g_lingo->pop().asInt();
-    g_director->_system->getAudioCDManager()->play(track, -1, 0, 0);
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
+
+	int track = g_lingo->pop().asInt();
+	g_director->_system->getAudioCDManager()->play(track, -1, 0, 0);
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 // Name format is "TRACK NN", with one-digit tracks padded with a leading space
 void CDROMXObj::m_playName(int nargs) {
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
+
 	Common::String track = g_lingo->pop().asString();
-    if (track.size() < 8) {
-        warning("CDROMXObj::m_playName: specified name has an invalid format (provided string was %s)", track.c_str());
-        return;
-    }
-    Common::String trackNum = track.substr(6, 2);
-    // Remove the leading string as needed
-    if (trackNum.substr(0, 1) == " ")
-        trackNum = trackNum.substr(1, 1);
+	if (track.size() < 8) {
+		warning("CDROMXObj::m_playName: specified name has an invalid format (provided string was %s)", track.c_str());
+		return;
+	}
+	Common::String trackNum = track.substr(6, 2);
+	// Remove the leading string as needed
+	if (trackNum.substr(0, 1) == " ")
+		trackNum = trackNum.substr(1, 1);
 
-    int trackNumI = atoi(trackNum.c_str());
-    if (trackNumI < 1) {
-        warning("CDROMXObj::m_playName: track number failed to parse (provided string was %s)", track.c_str());
-    }
+	int trackNumI = atoi(trackNum.c_str());
+	if (trackNumI < 1) {
+		warning("CDROMXObj::m_playName: track number failed to parse (provided string was %s)", track.c_str());
+	}
 
-    g_director->_system->getAudioCDManager()->play(trackNumI, -1, 0, 0);
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	g_director->_system->getAudioCDManager()->play(trackNumI, -1, 0, 0);
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_playAbsTime(int nargs) {
 	Datum min = g_lingo->pop();
-    Datum sec = g_lingo->pop();
-    Datum frac = g_lingo->pop();
-    // Can't implement this without implementing a full CD TOC, since
-    // it doesn't interact with songs at the "track" level.
-    debug(5, "STUB: CDROMXObj::m_playAbsTime Request to play starting at %i:%i.%i", min.asInt(), sec.asInt(), frac.asInt());
+	Datum sec = g_lingo->pop();
+	Datum frac = g_lingo->pop();
+	// Can't implement this without implementing a full CD TOC, since
+	// it doesn't interact with songs at the "track" level.
+	debug(5, "STUB: CDROMXObj::m_playAbsTime Request to play starting at %i:%i.%i", min.asInt(), sec.asInt(), frac.asInt());
 	g_lingo->push(Datum());
 }
 
 void CDROMXObj::m_playSegment(int nargs) {
-    Datum startMin = g_lingo->pop();
-    Datum startSec = g_lingo->pop();
-    Datum startFrac = g_lingo->pop();
-    Datum endMin = g_lingo->pop();
-    Datum endSec = g_lingo->pop();
-    Datum endFrac = g_lingo->pop();
-    // Can't implement this without implementing a full CD TOC, since
-    // it doesn't interact with songs at the "track" level.
+	Datum startMin = g_lingo->pop();
+	Datum startSec = g_lingo->pop();
+	Datum startFrac = g_lingo->pop();
+	Datum endMin = g_lingo->pop();
+	Datum endSec = g_lingo->pop();
+	Datum endFrac = g_lingo->pop();
+	// Can't implement this without implementing a full CD TOC, since
+	// it doesn't interact with songs at the "track" level.
 	debug(5, "STUB: CDROMXObj::m_playSegment Request to play starting at %i:%i.%i and ending at %i:%i.%i", startMin.asInt(), startSec.asInt(), startFrac.asInt(), endMin.asInt(), endSec.asInt(), endFrac.asInt());
 	g_lingo->push(Datum());
 }
@@ -250,78 +315,92 @@ void CDROMXObj::m_askPlay(int nargs) {
 }
 
 void CDROMXObj::m_stepFwd(int nargs) {
-    g_director->_system->getAudioCDManager()->play(g_director->_cdda_status.track + 1, -1, 0, 0);
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
+
+	g_director->_system->getAudioCDManager()->play(me->_cdda_status.track + 1, -1, 0, 0);
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_stepBwd(int nargs) {
-    int track = g_director->_cdda_status.track - 1;
-    if (track < 1)
-        track = 1;
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
 
-    g_director->_system->getAudioCDManager()->play(track, -1, 0, 0);
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	int track = me->_cdda_status.track - 1;
+	if (track < 1)
+		track = 1;
+
+	g_director->_system->getAudioCDManager()->play(track, -1, 0, 0);
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_pause(int nargs) {
-    // Leaves a trace of the current position so we can resume from it
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
-    g_director->_cdda_status.playing = false;
-    g_director->_system->getAudioCDManager()->stop();
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
+
+	// Leaves a trace of the current position so we can resume from it
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	me->_cdda_status.playing = false;
+	g_director->_system->getAudioCDManager()->stop();
 }
 
 void CDROMXObj::m_continue(int nargs) {
-    // Can only resume if there's data to resume from
-    if (g_director->_cdda_status.track == 0)
-        return;
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
 
-    g_director->_system->getAudioCDManager()->play(g_director->_cdda_status.track, -1, g_director->_cdda_status.start, 0);
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	// Can only resume if there's data to resume from
+	if (me->_cdda_status.track == 0)
+		return;
+
+	g_director->_system->getAudioCDManager()->play(me->_cdda_status.track, -1, me->_cdda_status.start, 0);
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_stop(int nargs) {
-    g_director->_system->getAudioCDManager()->stop();
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
+
+	g_director->_system->getAudioCDManager()->stop();
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_stopTrack(int nargs) {
-    Datum track = g_lingo->pop();
-    AudioCDManager::Status status = g_director->_system->getAudioCDManager()->getStatus();
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
 
-    if (!status.playing)
-        return;
+	Datum track = g_lingo->pop();
+	AudioCDManager::Status status = g_director->_system->getAudioCDManager()->getStatus();
 
-    // stopTrack isn't "stop now", but "stop after this track".
-    // This play command ensures we continue from here and end with this
-    // track, regardless of previous commands.
-    g_director->_system->getAudioCDManager()->play(status.track, 1, status.start, status.start + status.duration);
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	if (!status.playing)
+		return;
+
+	// stopTrack isn't "stop now", but "stop after this track".
+	// This play command ensures we continue from here and end with this
+	// track, regardless of previous commands.
+	g_director->_system->getAudioCDManager()->play(status.track, 1, status.start, status.start + status.duration);
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_stopAbsTime(int nargs) {
-    Datum min = g_lingo->pop();
-    Datum sec = g_lingo->pop();
-    Datum frac = g_lingo->pop();
-    // Can't implement this without implementing a full CD TOC, since
-    // it doesn't interact with songs at the "track" level.
-    debug(5, "STUB: CDROMXObj::m_stopAbsTime Request to play starting at %i:%i.%i", min.asInt(), sec.asInt(), frac.asInt());
+	Datum min = g_lingo->pop();
+	Datum sec = g_lingo->pop();
+	Datum frac = g_lingo->pop();
+	// Can't implement this without implementing a full CD TOC, since
+	// it doesn't interact with songs at the "track" level.
+	debug(5, "STUB: CDROMXObj::m_stopAbsTime Request to play starting at %i:%i.%i", min.asInt(), sec.asInt(), frac.asInt());
 	g_lingo->dropStack(nargs);
 	g_lingo->push(Datum());
 }
 
 void CDROMXObj::m_removeStop(int nargs) {
-    Datum track = g_lingo->pop();
-    AudioCDManager::Status status = g_director->_system->getAudioCDManager()->getStatus();
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
 
-    if (!status.playing)
-        return;
+	Datum track = g_lingo->pop();
+	AudioCDManager::Status status = g_director->_system->getAudioCDManager()->getStatus();
 
-    g_director->_system->getAudioCDManager()->play(status.track, -1, status.start, status.start + status.duration);
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	if (!status.playing)
+		return;
+
+	g_director->_system->getAudioCDManager()->play(status.track, -1, status.start, status.start + status.duration);
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_eject(int nargs) {
-    warning("If you had had a CD drive, it would have ejected just now.");
+	warning("If you had had a CD drive, it would have ejected just now.");
 }
 
 // Valid strings are:
@@ -332,12 +411,12 @@ void CDROMXObj::m_eject(int nargs) {
 // "Error occurred during audio play"
 // "Not currently playing"
 void CDROMXObj::m_status(int nargs) {
-    // A fuller implementation could also track data to return the
-    // "pause" and "completed" states.
-    if (g_director->_system->getAudioCDManager()->isPlaying())
-        g_lingo->push(Datum("Audio play in progress"));
-    else
-        g_lingo->push(Datum("Not currently playing"));
+	// A fuller implementation could also track data to return the
+	// "pause" and "completed" states.
+	if (g_director->_system->getAudioCDManager()->isPlaying())
+		g_lingo->push(Datum("Audio play in progress"));
+	else
+		g_lingo->push(Datum("Not currently playing"));
 }
 
 // Valid strings are:
@@ -366,8 +445,8 @@ void CDROMXObj::m_status(int nargs) {
 // "Left and right channels through"
 // "both left channel and right channel (Mono)"
 void CDROMXObj::m_playMode(int nargs) {
-    // For now, nothing to change modes is implemented, so just return
-    // a default
+	// For now, nothing to change modes is implemented, so just return
+	// a default
 	g_lingo->push(Datum("Right channel through right channel (Stereo)"));
 }
 
@@ -375,12 +454,14 @@ void CDROMXObj::m_playMode(int nargs) {
 // "audio channels without preemphasis"
 // "audio channels with preemphasis"
 void CDROMXObj::m_currentFormat(int nargs) {
-    // Preemphasis not implemented, so just return this
+	// Preemphasis not implemented, so just return this
 	g_lingo->push(Datum("audio channels without preemphasis"));
 }
 
 void CDROMXObj::m_currentTrack(int nargs) {
-	g_lingo->push(Datum(g_director->_cdda_status.track));
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
+
+	g_lingo->push(Datum(me->_cdda_status.track));
 }
 
 void CDROMXObj::m_currentTime(int nargs) {

@@ -220,6 +220,7 @@ _nuked_opl=yes
 _builtin_resources=yes
 _windows_console=yes
 _windows_unicode=yes
+_cygwin_build=no
 # Default commands
 _ranlib=ranlib
 _strip=strip
@@ -256,6 +257,8 @@ _detection_features_full=yes
 # be modified otherwise. Consider them read-only.
 _posix=no
 _has_posix_spawn=no
+_has_fseeko_offt_64=no
+_has_fseeko64=no
 _endian=unknown
 _need_memalign=yes
 _have_x86=no
@@ -571,13 +574,7 @@ get_system_exe_extension() {
 
 # Show the configure help line for an option
 option_help() {
-	if test "${3}" != "" ; then
-		tmpopt_prefix="${3}"
-	else
-		tmpopt_prefix="--"
-	fi
-	tmpopt=`echo $1 | sed 's/_/-/g'`
-	option=`echo "${tmpopt_prefix}${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
+	option=$(echo "${3:---}${1}                       " | sed -e "s/\(.\{23\}\).*/\1/" -e "s/_/-/g")
 	echo "  ${option}  ${2}"
 }
 
@@ -628,12 +625,11 @@ get_engine_subengines() {
 }
 
 # Ask if this is a subengine
-get_engine_sub() {
-	sub=`get_var _engine_$1_sub`
-	if test -z "$sub" ; then
-		sub=no
+check_is_subengine() {
+	if test -z "$(get_var _engine_$1_sub)" ; then
+		return 1
 	fi
-	echo $sub
+	return 0
 }
 
 # Get a subengine's parent (undefined for non-subengines)
@@ -688,7 +684,7 @@ engine_enable() {
 	engine=`echo $eng | sed 's/-/_/g'`
 
 	# Filter the parameter for the subengines
-	if test "`get_engine_sub ${engine}`" != "no" ; then
+	if check_is_subengine ${engine} ; then
 		if test "$opt" != "yes" ; then
 			subengine_option_error ${engine}
 			return
@@ -699,15 +695,30 @@ engine_enable() {
 		fi
 	fi
 
-	if test "$opt" = "static" -o "$opt" = "dynamic" -o "$opt" = "yes" ; then
-		if test "`get_engine_name ${engine}`" != "" ; then
-			set_var _engine_${engine}_build "$opt"
-		else
-			engine_option_error ${engine}
-		fi
-	else
+	if test "$opt" != "static" -a "$opt" != "dynamic" -a "$opt" != "yes" ; then
 		option_error
+		return
 	fi
+
+	subengines=
+	if test "${engine%_all}" != "${engine}" ; then
+		engine="${engine%_all}"
+		subengines=$(get_engine_subengines ${engine})
+		if test "$subengines" = "" ; then
+			engine_option_error "${engine}*"
+			return
+		fi
+	fi
+
+	if test "`get_engine_name ${engine}`" = "" ; then
+		engine_option_error ${engine}
+		return
+	fi
+
+	set_var _engine_${engine}_build "$opt"
+	for subengine in $subengines ; do
+		set_var _engine_${subengine}_build "$opt"
+	done
 }
 
 # Disable the given engine
@@ -767,7 +778,7 @@ copy_if_changed() {
 for parm in "$@" ; do
 	if test "$parm" = "--help" || test "$parm" = "-help" || test "$parm" = "-h" ; then
 		for engine in $_engines; do
-			if test `get_engine_sub $engine` = no ; then
+			if ! check_is_subengine $engine ; then
 				engines_help="$engines_help`show_engine_help $engine`
 "
 			fi
@@ -1186,6 +1197,7 @@ for ac_option in $@; do
 	--enable-discord)             _discord=yes           ;;
 	--disable-discord)            _discord=no            ;;
 	--enable-verbose-build)      _verbose_build=yes      ;;
+	--enable-cygwin-build)       _cygwin_build=yes       ;;
 	--enable-plugins)            _dynamic_modules=yes    ;;
 	--default-dynamic)           _plugins_default=dynamic;;
 	--enable-mt32emu)            _mt32emu=yes            ;;
@@ -1784,7 +1796,27 @@ android)
  		exit 1
  	fi
 	;;
-3ds | ds | gamecube | switch | wii)
+3ds)
+	if test -z "$DEVKITPRO"; then
+		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
+		exit 1
+	fi
+    	_as="$DEVKITPRO/devkitARM/bin/arm-none-eabi-as"
+	_ar="$DEVKITPRO/devkitARM/bin/arm-none-eabi-ar cr"
+	_ranlib="$DEVKITPRO/devkitARM/bin/arm-none-eabi-ranlib"
+	_strip="$DEVKITPRO/devkitARM/bin/arm-none-eabi-strip"
+	if test -z "$CXX"; then
+		CXX="$DEVKITPRO/devkitARM/bin/arm-none-eabi-g++"
+	fi
+	if test -z "$PKG_CONFIG_LIBDIR"; then
+		PKG_CONFIG_LIBDIR="$DEVKITPRO/portlibs/3ds/lib/pkgconfig"
+	fi
+	if test -z "$PKG_CONFIG_PATH"; then
+		PKG_CONFIG_PATH="$DEVKITPRO/portlibs/3ds/lib/pkgconfig"
+	fi
+	;;
+
+ds | gamecube | switch | wii)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
 		exit 1
@@ -2278,7 +2310,7 @@ fi
 
 if test "$_release_build" = yes; then
 	# Add a define, which indicates we are doing
-	# an build for a release version.
+	# a build for a release version.
 	append_var DEFINES "-DRELEASE_BUILD"
 fi
 
@@ -2314,6 +2346,8 @@ set_flag_if_supported -Wno-undefined-var-template
 # clang and vanilla clang we cannot rely on the __clang_major__/clang_minor__
 # macros.
 set_flag_if_supported -Wno-pragma-pack
+
+set_flag_if_supported -Wno-address-of-packed-member
 
 if test -n "$STRINGS"; then
 	_strings=$STRINGS
@@ -2657,8 +2691,15 @@ case $_host_os in
 		_seq_midi=no
 		;;
 	cygwin*)
-		echo ERROR: Cygwin building is not supported by ScummVM anymore. Consider using MinGW.
-		exit 1
+		if test "$_cygwin_build" = no; then
+			echo ERROR: Cygwin building is not supported by ScummVM anymore. Consider using MinGW.
+			exit 1
+		else
+			echo WARNING: Cygwin building is not supported by ScummVM anymore.
+			echo Cygwin should be used only for development purposes and testing POSIX code on Windows.
+			echo Consider using MinGW instead.
+			append_var DEFINES "-D_GNU_SOURCE"
+		fi
 		;;
 	darwin*)
 		case $_host_cpu in
@@ -2809,6 +2850,10 @@ EOF
 			# When building for MacOS X 10.5 or below
 			if test "$_macos_min_version" -lt 1060 ; then
 				add_line_to_config_mk 'MACOSX_LEOPARD_OR_BELOW = 1'
+				if test "$_debug_build" != no ; then
+					# Newer compiler but ancient gdb
+					append_var CXXFLAGS "-gstabs+"
+				fi
 			fi
 
 			# When building with SDK 10.14 or above, we cannot compile the 32 bits dock plugin
@@ -2929,7 +2974,7 @@ EOF
 			append_var LDFLAGS "-s USE_ZLIB=1"
 		fi
 	;;
-	freebsd*)
+	freebsd* | dragonfly*)
 		append_var LDFLAGS "-L/usr/local/lib"
 		append_var CXXFLAGS "-I/usr/local/include"
 		;;
@@ -2969,11 +3014,6 @@ EOF
 		_ranlib=:
 		;;
 	linux* | uclinux*)
-		# When not cross-compiling, enable large file support, but don't
-		# care if getconf doesn't exist or doesn't recognize LFS_CFLAGS.
-		if test -z "$_host"; then
-			append_var CXXFLAGS "`getconf LFS_CFLAGS 2>/dev/null`"
-		fi
 		;;
 	mingw*)
 		append_var DEFINES "-DWIN32"
@@ -3168,7 +3208,6 @@ if test -n "$_host"; then
 		3ds)
 			append_var DEFINES "-DDISABLE_FANCY_THEMES"
 			append_var DEFINES "-DDISABLE_HELP_STRINGS"
-			append_var DEFINES "-DDISABLE_SID"
 			append_var DEFINES "-DDISABLE_NES_APU"
 			_backend="3ds"
 			_build_scalers=no
@@ -3336,7 +3375,6 @@ if test -n "$_host"; then
 			append_var DEFINES "-DDISABLE_HELP_STRINGS"
 			append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 			append_var DEFINES "-DDISABLE_FANCY_THEMES"
-			append_var DEFINES "-DDISABLE_SID"
 			append_var DEFINES "-DDISABLE_NES_APU"
 			append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 			append_var DEFINES "-DSTREAM_AUDIO_FROM_DISK"
@@ -3704,7 +3742,7 @@ case $_backend in
 		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
 		append_var LIBS "-framework AudioToolbox -framework CoreAudio -framework SystemConfiguration "
 		append_var LIBS "-framework GameController"
-		if [ $_host_cpu = 'aarch64' ]; then
+		if test "$_host_cpu" = 'aarch64' ; then
 			append_var LDFLAGS "-miphoneos-version-min=7.1 -arch arm64"
 			append_var CFLAGS "-miphoneos-version-min=7.1 -arch arm64"
 			append_var CXXFLAGS "-miphoneos-version-min=7.1 -arch arm64"
@@ -4008,10 +4046,10 @@ esac
 #
 echo_n "Checking if host is POSIX compliant... "
 case $_host_os in
-	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | morphos | n64 | ps3 | psp2 | psp | riscos | wii)
+	amigaos* | dreamcast | ds | gamecube | mingw* | morphos | n64 | ps3 | psp2 | psp | riscos | wii)
 		_posix=no
 		;;
-	3ds | android | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | serenity* | solaris* | sunos* | switch | uclinux*)
+	3ds | android | beos* | bsd* | cygwin* | darwin* | dragonfly* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | serenity* | solaris* | sunos* | switch | uclinux*)
 		_posix=yes
 		;;
 	os2-emx*)
@@ -4046,6 +4084,84 @@ EOF
 		append_var DEFINES "-DHAS_POSIX_SPAWN"
 	fi
 fi
+
+#
+# Check for 64-bit file offset compatibility
+#
+# This is currently only used by StdioStream. If nothing is found,
+# you'll be limited to <2GB files, which still covers the vast majority
+# of supported games.
+#
+case $_host_os in
+	mingw*)
+		# StdioStream just uses _ftelli64
+		;;
+	*)
+		echo_n "Checking if fseeko with 64-bit off_t is supported... "
+		cat > $TMPC << EOF
+#include <stdio.h>
+#include <sys/types.h> /* off_t on legacy systems */
+int main() {
+	static int test_array[1 - 2 * !(sizeof(off_t) >= 8)];
+	fseeko(stdin, 0, SEEK_SET);
+	test_array[0] = 0;
+	return 0;
+}
+EOF
+		cc_check_no_clean && _has_fseeko_offt_64=yes
+		# Good, there's fseeko with a 64-bit off_t by default
+		if test "$_has_fseeko_offt_64" = yes ; then
+			echo yes
+			append_var DEFINES "-DHAS_FSEEKO_OFFT_64"
+		else
+			# Otherwise, when not cross-compiling, try with LFS_CFLAGS
+			if test -z "$_host"; then
+				TMPFLAGS=`getconf LFS_CFLAGS 2>/dev/null`
+				if test $? -eq 0 && test ! -z "$TMPFLAGS" && test "$TMPFLAGS" != undefined ; then
+					cc_check_no_clean $TMPFLAGS && _has_fseeko_offt_64=yes
+					if test "$_has_fseeko_offt_64" = yes ; then
+						echo "yes (adding $TMPFLAGS)"
+						append_var DEFINES "-DHAS_FSEEKO_OFFT_64"
+						append_var CXXFLAGS "$TMPFLAGS"
+					fi
+				fi
+			fi
+
+			# Otherwise, try the usual magical suspects
+			if test "$_has_fseeko_offt_64" = no ; then
+				# note: -D__LARGE64_FILES is another option, but it may be broken on
+				# some platforms, so add it to your platform defines instead, if it
+				# requires it and you've checked that the result works.
+				for largeflag in "-D_FILE_OFFSET_BITS=64" "-D_LARGE_FILES" "-D_LARGEFILE_SOURCE" ; do
+					cc_check_no_clean $largeflag && _has_fseeko_offt_64=yes
+					if test "$_has_fseeko_offt_64" = yes ; then
+						echo "yes (adding $largeflag)"
+						append_var DEFINES "-DHAS_FSEEKO_OFFT_64"
+						append_var CXXFLAGS "$largeflag"
+						break
+					fi
+				done
+			fi
+
+			# Otherwise, fseeko64 is your last chance
+			if test "$_has_fseeko_offt_64" = no ; then
+				echo no
+				echo_n "Checking if fseeko64 is supported... "
+				cat > $TMPC << EOF
+#include <stdio.h>
+int main() { fseeko64(stdin, 0, SEEK_SET); return 0; }
+EOF
+				cc_check_no_clean -D_LARGEFILE64_SOURCE && _has_fseeko64=yes
+				echo $_has_fseeko64
+				if test "$_has_fseeko64" = yes ; then
+					append_var DEFINES "-DHAS_FSEEKO64"
+					append_var CXXFLAGS "-D_LARGEFILE64_SOURCE"
+				fi
+			fi
+		fi
+		cc_check_clean
+		;;
+esac
 
 #
 # Check whether to enable a verbose build

@@ -94,7 +94,7 @@ void VideoSystem::addDirtyRect(Common::Point pos, FlicDecoder &flc) {
 }
 
 void VideoSystem::addDirtyMskRects(Common::Point pos, FlicDecoder &flc) {
-	for (auto rect : flc.getMskRects()) {
+	for (auto &rect : flc.getMskRects()) {
 		addDirtyRect(pos, rect);
 	}
 }

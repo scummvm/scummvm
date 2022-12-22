@@ -538,7 +538,25 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 		return;
 	}
 
-	CursorMan.replaceCursor(macCursor);
+	if (_upscaledHires == GFX_SCREEN_UPSCALED_640x400) {
+		// Scale cursor by 2x
+		uint16 width = macCursor->getWidth() * 2;
+		uint16 height = macCursor->getHeight() * 2;
+		uint16 cursorHotspotX = macCursor->getHotspotX() * 2;
+		uint16 cursorHotspotY = macCursor->getHotspotY() * 2;
+		Common::SpanOwner<SciSpan<byte> > cursorBitmap;
+		cursorBitmap->allocate(width * height, "upscaled cursor bitmap");
+		SciSpan<const byte> sourceBitmap(macCursor->getSurface(), macCursor->getWidth() * macCursor->getHeight());
+		_screen->scale2x(sourceBitmap, *cursorBitmap, macCursor->getWidth(), macCursor->getHeight());
+		CursorMan.replaceCursor(cursorBitmap->getUnsafeDataAt(0, width * height), width, height, cursorHotspotX, cursorHotspotY, macCursor->getKeyColor());
+
+		// CursorMan.replaceCursor() does this when called with just a Graphics::Cursor
+		if (macCursor->getPalette()) {
+			CursorMan.replaceCursorPalette(macCursor->getPalette(), macCursor->getPaletteStartIndex(), macCursor->getPaletteCount());
+		}
+	} else {
+		CursorMan.replaceCursor(macCursor);
+	}
 
 	delete macCursor;
 	kernelShow();

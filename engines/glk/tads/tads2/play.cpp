@@ -189,7 +189,7 @@ startover:
 			{
 				char buf[60 + OSFNMAX];
 
-				sprintf(buf, "\n\nError: unable to restore file \"%s\"\n\n",
+				Common::sprintf_s(buf, "\n\nError: unable to restore file \"%s\"\n\n",
 						restore_fname);
 				os_printz(buf);
 			}
@@ -273,7 +273,7 @@ startover:
 		if (voc->voccxredo && voc->voccxredobuf[0] != '\0')
 		{
 			/* copy the redo buffer into our internal buffer */
-			strcpy(buf, voc->voccxredobuf);
+			Common::strcpy_s(buf, voc->voccxredobuf);
 
 			/* we've consumed it now, so clear it out */
 			voc->voccxredobuf[0] = '\0';

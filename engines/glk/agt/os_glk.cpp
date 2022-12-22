@@ -27,7 +27,7 @@ namespace Glk {
 namespace AGT {
 
 /*
- * Glk interface for AGiliTy 1.1.1.1
+ * Glk interface for AGiliTy 1.1.2
  * -------------------------------
  *
  * This module contains the Glk porting layer for AGiliTy.  It
@@ -784,7 +784,7 @@ static void gagt_status_update() {
 			 * We don't (yet) have a status line.  Perhaps we're at the
 			 * very start of a game.  Print a standard message.
 			 */
-			g_vm->glk_put_string("Glk AGiliTy version 1.1.1.1");
+			g_vm->glk_put_string("Glk AGiliTy version 1.1.2");
 		}
 
 		g_vm->glk_set_window(g_vm->gagt_main_window);
@@ -830,8 +830,9 @@ static void gagt_status_print() {
 
 	/* Save the details of the printed status buffer. */
 	free(gagt_status_buffer_printed);
-	gagt_status_buffer_printed = (char *)gagt_malloc(strlen(gagt_status_buffer) + 1);
-	strcpy(gagt_status_buffer_printed, gagt_status_buffer);
+	size_t ln = strlen(gagt_status_buffer) + 1;
+	gagt_status_buffer_printed = (char *)gagt_malloc(ln);
+	Common::strcpy_s(gagt_status_buffer_printed, ln, gagt_status_buffer);
 }
 
 
@@ -2584,12 +2585,12 @@ static gagt_special_t GAGT_SPECIALS[] = {
 		4,
 		{
 			"This game is being executed by",
-			"AGiliTy: The (Mostly) Universal AGT Interpreter  version 1.1.1.1",
+			"AGiliTy: The (Mostly) Universal AGT Interpreter  version 1.1.2",
 			"Copyright (C) 1996-99,2001 by Robert Masenten",
 			"Glk version"
 		},
 		"This game is being executed by:\n\n"
-		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
+		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.2|N\n"
 		"    |ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
 		"    |EGlk version|N\n"
 	},
@@ -2599,12 +2600,12 @@ static gagt_special_t GAGT_SPECIALS[] = {
 		5,
 		{
 			"AGiliTy",
-			"The (Mostly) Universal AGT Interpreter, version 1.1.1.1",
+			"The (Mostly) Universal AGT Interpreter, version 1.1.2",
 			"Copyright (C) 1996-1999,2001 by Robert Masenten",
 			"[Glk version]",
 			"-----------------------------------------------------------"
 		},
-		"|SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
+		"|SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.2|N\n"
 		"|ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
 		"|EGlk version|N\n"
 	},
@@ -2620,12 +2621,12 @@ static gagt_special_t GAGT_SPECIALS[] = {
 	{
 		2,
 		{
-			"Being run by AGiliTy  version 1.1.1.1, Copyright (C) 1996-99,2001"
+			"Being run by AGiliTy  version 1.1.2, Copyright (C) 1996-99,2001"
 			" Robert Masenten",
 			"Glk version"
 		},
 		"This game is being executed by:\n\n"
-		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
+		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.2|N\n"
 		"    |ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
 		"    |EGlk version|N\n"
 	},
@@ -2634,11 +2635,11 @@ static gagt_special_t GAGT_SPECIALS[] = {
 	{
 		1,
 		{
-			"Being run by AGiliTy  version 1.1.1.1, Copyright (C) 1996-99,2001"
+			"Being run by AGiliTy  version 1.1.2, Copyright (C) 1996-99,2001"
 			" Robert Masenten"
 		},
 		"This game is being executed by:\n\n"
-		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
+		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.2|N\n"
 		"    |ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
 		"    |EGlk version|N\n"
 	},
@@ -2658,12 +2659,12 @@ static gagt_special_t GAGT_SPECIALS[] = {
 	{
 		3,
 		{
-			"AGiliTy: The (Mostly) Universal AGT Interpreter  version 1.1.1.1",
+			"AGiliTy: The (Mostly) Universal AGT Interpreter  version 1.1.2",
 			"Copyright (C) 1996-99,2001 by Robert Masenten",
 			"Glk version"
 		},
 		"This game is being executed by:\n\n"
-		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
+		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.2|N\n"
 		"    |ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
 		"    |EGlk version|N\n"
 	},
@@ -3233,7 +3234,7 @@ static void gagt_display_debug() {
 		gagt_paragraphref_t paragraph;
 
 		paragraph = line->paragraph;
-		sprintf(buffer,
+		Common::sprintf_s(buffer,
 		        "%2d:%2d->%2ld A=%-3d L=%-2d I=%-2d O=%-2d R=%-2d %c%c| ",
 		        paragraph ? paragraph->id + 1 : 0,
 		        paragraph ? paragraph->line_count : 0,
@@ -3255,7 +3256,7 @@ static void gagt_display_debug() {
 	}
 
 	if (gagt_current_buffer.length > 0) {
-		sprintf(buffer,
+		Common::sprintf_s(buffer,
 		        "__,__->__ A=%-3d L=%-2d I=__ O=__ R=__ %s| ",
 		        gagt_current_buffer.allocation, gagt_current_buffer.length,
 		        gagt_help_requested ? "HR" : "__");
@@ -4096,7 +4097,7 @@ static void gagt_command_width(const char *argument) {
 	}
 
 	gagt_normal_string("Glk's current display width is approximately ");
-	sprintf(buffer, "%d", status_width);
+	Common::sprintf_s(buffer, "%d", status_width);
 	gagt_normal_string(buffer);
 	gagt_normal_string(status_width == 1 ? " character" : " characters");
 	gagt_normal_string(".\n");
@@ -4215,7 +4216,7 @@ static void gagt_command_statusline(const char *argument) {
 static void gagt_command_print_version_number(glui32 version) {
 	char buffer[64];
 
-	sprintf(buffer, "%u.%u.%u",
+	Common::sprintf_s(buffer, "%u.%u.%u",
 	        version >> 16, (version >> 8) & 0xff, version & 0xff);
 	gagt_normal_string(buffer);
 }
@@ -4523,8 +4524,9 @@ static int gagt_command_escape(const char *string) {
 		return FALSE;
 
 	/* Take a copy of the string, without any leading space or introducer. */
-	string_copy = (char *)gagt_malloc(strlen(string + posn) + 1 - strlen("glk"));
-	strcpy(string_copy, string + posn + strlen("glk"));
+	size_t ln = strlen(string + posn) + 1 - 3 /*strlen("glk")*/;
+	string_copy = (char *)gagt_malloc(ln);
+	Common::strcpy_s(string_copy, ln, string + posn + 3 /*strlen("glk")*/);
 
 	/*
 	 * Find the subcommand; the first word in the string copy.  Find its end,

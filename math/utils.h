@@ -26,6 +26,11 @@
 
 namespace Math {
 
+/** A complex number. */
+struct Complex {
+	float re, im;
+};
+
 /* Math::epsilon is a constant with a small value which is used for comparing
  * floating point numbers.
  *

@@ -127,7 +127,7 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 	set_bg_color_key(0, 0x70, 0xfc);
 
 	for (i = 0; i < count; i++) {
-		sprintf(filename, "spellbook_spell_%03d.bmp", cur_spells[i]);
+		Common::sprintf_s(filename, "spellbook_spell_%03d.bmp", cur_spells[i]);
 		build_path(datadir, filename, imagefile);
 		Graphics::ManagedSurface *spell_image = bmp.getSdlSurface32(imagefile);
 		if (spell_image == NULL) {
@@ -158,7 +158,7 @@ void SpellViewGump::loadCircleString(Std::string datadir) {
 	Std::string imagefile;
 	char filename[7]; // n.bmp\0
 
-	sprintf(filename, "%d.bmp", level);
+	Common::sprintf_s(filename, "%d.bmp", level);
 	build_path(datadir, filename, imagefile);
 
 	Graphics::ManagedSurface *s = bmp.getSdlSurface32(imagefile);

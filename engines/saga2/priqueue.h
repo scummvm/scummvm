@@ -30,8 +30,8 @@ namespace Saga2 {
 
 template <class ITEM, int size>
 class PriorityQueue {
-	int16           tail;                   // end index of queue
-	ITEM            queue[size + 1];
+	int16           _tail;                   // end index of queue
+	ITEM            _queue[size + 1];
 
 	static int16 parentIndex(int16 index) {
 		return index >> 1;
@@ -45,16 +45,16 @@ class PriorityQueue {
 
 public:
 	PriorityQueue() {                    // constructor
-		tail = 1;
+		_tail = 1;
 	}
 
 	bool insert(ITEM &newItem);              // insert an item
 	bool remove(ITEM &result);           // remove an item
 	void clear() {
-		tail = 1;    // clear the queue
+		_tail = 1;    // clear the queue
 	}
 	int16 getCount() {
-		return tail - 1;
+		return _tail - 1;
 	}
 };
 
@@ -68,19 +68,19 @@ bool PriorityQueue<ITEM, size>::insert(ITEM &newItem) {
 	ITEM            *qi,
 	                *parentItem;
 
-	if (tail >= size + 1) return false;
+	if (_tail >= size + 1) return false;
 
-	for (index = tail, qi = &queue[index];
+	for (index = _tail, qi = &_queue[index];
 	        index > 1;
 	        index = parentIndex, qi = parentItem) {
 		parentIndex = PriorityQueue::parentIndex(index);
-		parentItem = &queue[parentIndex];
+		parentItem = &_queue[parentIndex];
 
 		if ((int)*parentItem <= newVal) break;
 		*qi = *parentItem;
 	}
 	*qi = newItem;
-	tail++;
+	_tail++;
 
 	return true;
 }
@@ -89,26 +89,26 @@ bool PriorityQueue<ITEM, size>::insert(ITEM &newItem) {
 
 template <class ITEM, int size>
 bool PriorityQueue<ITEM, size>::remove(ITEM &result) {
-	ITEM            *item = &queue[1],
+	ITEM            *item = &_queue[1],
 	                 *child;
 	int16           itemNum = 1,
 	                childNum,
 	                tailVal;
 
-	if (tail <= 1) return false;
+	if (_tail <= 1) return false;
 
 	result = *item;
-	tail--;
-	tailVal = (int)queue[tail];
+	_tail--;
+	tailVal = (int)_queue[_tail];
 
 	for (;;) {
 		childNum = child1Index(itemNum);
-		if (childNum >= tail) break;
+		if (childNum >= _tail) break;
 
-		child = &queue[childNum];
+		child = &_queue[childNum];
 
 		//  Select the lowest of the two children
-		if (childNum + 1 < tail
+		if (childNum + 1 < _tail
 		        && (int)child[0] > (int)child[1]) {
 			childNum++;
 			child++;
@@ -120,8 +120,8 @@ bool PriorityQueue<ITEM, size>::remove(ITEM &result) {
 		itemNum = childNum;
 	}
 
-	if (itemNum != tail) {
-		*item = queue[tail];
+	if (itemNum != _tail) {
+		*item = _queue[_tail];
 	}
 	return true;
 }

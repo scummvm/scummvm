@@ -51,13 +51,13 @@ namespace Common {
  * for valueBits, isLE and isMSB2LSB, reads 32-bit little-endian values
  * from the data stream and hands out the bits in the order of LSB to MSB.
  */
-template<class STREAM, int valueBits, bool isLE, bool MSB2LSB>
+template<class STREAM, typename CONTAINER, int valueBits, bool isLE, bool MSB2LSB>
 class BitStreamImpl {
 private:
 	STREAM *_stream;			            //!< The input stream.
 	DisposeAfterUse::Flag _disposeAfterUse; //!< Whether to delete the stream on destruction.
 
-	uint64 _bitContainer;                   //!< The currently available bits.
+	CONTAINER _bitContainer;                //!< The currently available bits.
 	uint8  _bitsLeft;                       //!< Number of bits currently left in the bit container.
 	uint32 _size;                           //!< Total bit stream size (in bits).
 	uint32 _pos;                            //!< Current bit stream position (in bits).
@@ -88,7 +88,7 @@ private:
 	FORCEINLINE void fillContainer(size_t min) {
 		while (_bitsLeft < min) {
 
-			uint64 data;
+			CONTAINER data;
 			if (_pos + _bitsLeft + valueBits <= _size) {
 				data = readData();
 			} else {
@@ -102,7 +102,7 @@ private:
 
 			// Move the data value to the right position in the bit container
 			if (MSB2LSB)
-				_bitContainer |= data << (64 - valueBits - _bitsLeft);
+				_bitContainer |= data << ((sizeof(_bitContainer) * 8) - valueBits - _bitsLeft);
 			else
 				_bitContainer |= data << _bitsLeft;
 
@@ -111,11 +111,11 @@ private:
 }
 
 	/** Get @p n bits from the bit container. */
-	FORCEINLINE static uint32 getNBits(uint64 value, size_t n) {
+	FORCEINLINE static uint32 getNBits(CONTAINER value, size_t n) {
 		if (n == 0)
 			return 0;
 
-		const size_t toShift = 64 - n;
+		const size_t toShift = (sizeof(value) * 8) - n;
 
 		if (MSB2LSB)
 			return value >> toShift;
@@ -281,6 +281,11 @@ public:
 
 	/** Skip the specified number of bits. */
 	void skip(uint32 n) {
+		if (n >= _bitsLeft) {
+			n -= _bitsLeft;
+			skipBits(_bitsLeft);
+		}
+
 		while (n > 32) {
 			fillContainer(32);
 			skipBits(32);
@@ -300,12 +305,12 @@ public:
 	}
 
 	/** Return the stream position in bits. */
-	uint64 pos() const {
+	uint32 pos() const {
 		return _pos;
 	}
 
 	/** Return the stream size in bits. */
-	uint64 size() const {
+	uint32 size() const {
 		return _size;
 	}
 
@@ -360,11 +365,11 @@ public:
 		return false;
 	}
 
-	int64 pos() const {
+	uint32 pos() const {
 		return _pos;
 	}
 
-	int64 size() const {
+	uint32 size() const {
 		return _size;
 	}
 
@@ -469,52 +474,52 @@ public:
  */
 
 /** 8-bit data, MSB to LSB. */
-typedef BitStreamImpl<SeekableReadStream, 8, false, true > BitStream8MSB;
+typedef BitStreamImpl<SeekableReadStream, uint64, 8, false, true > BitStream8MSB;
 /** 8-bit data, LSB to MSB. */
-typedef BitStreamImpl<SeekableReadStream, 8, false, false> BitStream8LSB;
+typedef BitStreamImpl<SeekableReadStream, uint64, 8, false, false> BitStream8LSB;
 
 /** 16-bit little-endian data, MSB to LSB. */
-typedef BitStreamImpl<SeekableReadStream, 16, true , true > BitStream16LEMSB;
+typedef BitStreamImpl<SeekableReadStream, uint64, 16, true , true > BitStream16LEMSB;
 /** 16-bit little-endian data, LSB to MSB. */
-typedef BitStreamImpl<SeekableReadStream, 16, true , false> BitStream16LELSB;
+typedef BitStreamImpl<SeekableReadStream, uint64, 16, true , false> BitStream16LELSB;
 /** 16-bit big-endian data, MSB to LSB. */
-typedef BitStreamImpl<SeekableReadStream, 16, false, true > BitStream16BEMSB;
+typedef BitStreamImpl<SeekableReadStream, uint64, 16, false, true > BitStream16BEMSB;
 /** 16-bit big-endian data, LSB to MSB. */
-typedef BitStreamImpl<SeekableReadStream, 16, false, false> BitStream16BELSB;
+typedef BitStreamImpl<SeekableReadStream, uint64, 16, false, false> BitStream16BELSB;
 
 /** 32-bit little-endian data, MSB to LSB. */
-typedef BitStreamImpl<SeekableReadStream, 32, true , true > BitStream32LEMSB;
+typedef BitStreamImpl<SeekableReadStream, uint64, 32, true , true > BitStream32LEMSB;
 /** 32-bit little-endian data, LSB to MSB. */
-typedef BitStreamImpl<SeekableReadStream, 32, true , false> BitStream32LELSB;
+typedef BitStreamImpl<SeekableReadStream, uint64, 32, true , false> BitStream32LELSB;
 /** 32-bit big-endian data, MSB to LSB. */
-typedef BitStreamImpl<SeekableReadStream, 32, false, true > BitStream32BEMSB;
+typedef BitStreamImpl<SeekableReadStream, uint64, 32, false, true > BitStream32BEMSB;
 /** 32-bit big-endian data, LSB to MSB. */
-typedef BitStreamImpl<SeekableReadStream, 32, false, false> BitStream32BELSB;
+typedef BitStreamImpl<SeekableReadStream, uint64, 32, false, false> BitStream32BELSB;
 
 
 
 /** 8-bit data, MSB to LSB. */
-typedef BitStreamImpl<BitStreamMemoryStream, 8, false, true > BitStreamMemory8MSB;
+typedef BitStreamImpl<BitStreamMemoryStream, uint64, 8, false, true > BitStreamMemory8MSB;
 /** 8-bit data, LSB to MSB. */
-typedef BitStreamImpl<BitStreamMemoryStream, 8, false, false> BitStreamMemory8LSB;
+typedef BitStreamImpl<BitStreamMemoryStream, uint64, 8, false, false> BitStreamMemory8LSB;
 
 /** 16-bit little-endian data, MSB to LSB. */
-typedef BitStreamImpl<BitStreamMemoryStream, 16, true , true > BitStreamMemory16LEMSB;
+typedef BitStreamImpl<BitStreamMemoryStream, uint64, 16, true , true > BitStreamMemory16LEMSB;
 /** 16-bit little-endian data, LSB to MSB. */
-typedef BitStreamImpl<BitStreamMemoryStream, 16, true , false> BitStreamMemory16LELSB;
+typedef BitStreamImpl<BitStreamMemoryStream, uint64, 16, true , false> BitStreamMemory16LELSB;
 /** 16-bit big-endian data, MSB to LSB. */
-typedef BitStreamImpl<BitStreamMemoryStream, 16, false, true > BitStreamMemory16BEMSB;
+typedef BitStreamImpl<BitStreamMemoryStream, uint64, 16, false, true > BitStreamMemory16BEMSB;
 /** 16-bit big-endian data, LSB to MSB. */
-typedef BitStreamImpl<BitStreamMemoryStream, 16, false, false> BitStreamMemory16BELSB;
+typedef BitStreamImpl<BitStreamMemoryStream, uint64, 16, false, false> BitStreamMemory16BELSB;
 
 /** 32-bit little-endian data, MSB to LSB. */
-typedef BitStreamImpl<BitStreamMemoryStream, 32, true , true > BitStreamMemory32LEMSB;
+typedef BitStreamImpl<BitStreamMemoryStream, uint64, 32, true , true > BitStreamMemory32LEMSB;
 /** 32-bit little-endian data, LSB to MSB. */
-typedef BitStreamImpl<BitStreamMemoryStream, 32, true , false> BitStreamMemory32LELSB;
+typedef BitStreamImpl<BitStreamMemoryStream, uint64, 32, true , false> BitStreamMemory32LELSB;
 /** 32-bit big-endian data, MSB to LSB. */
-typedef BitStreamImpl<BitStreamMemoryStream, 32, false, true > BitStreamMemory32BEMSB;
+typedef BitStreamImpl<BitStreamMemoryStream, uint64, 32, false, true > BitStreamMemory32BEMSB;
 /** 32-bit big-endian data, LSB to MSB. */
-typedef BitStreamImpl<BitStreamMemoryStream, 32, false, false> BitStreamMemory32BELSB;
+typedef BitStreamImpl<BitStreamMemoryStream, uint64, 32, false, false> BitStreamMemory32BELSB;
 
 /** @} */
 

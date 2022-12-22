@@ -24,7 +24,7 @@
 
 #include "graphics/managed_surface.h"
 
-namespace Common {
+namespace Math {
 	class SineTable;
 	class CosineTable;
 }
@@ -227,8 +227,8 @@ private:
 
 	bool _systemInit;
 
-	Common::SineTable *_sines;
-	Common::CosineTable *_cosines;
+	Math::SineTable *_sines;
+	Math::CosineTable *_cosines;
 };
 
 class Picture {

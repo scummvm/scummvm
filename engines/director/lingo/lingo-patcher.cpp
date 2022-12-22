@@ -122,8 +122,7 @@ struct ScriptPatch {
 
 	// Non-existent menu cast reference
 	{"warlock", nullptr, kPlatformWindows, "STARBIRD:ABOUT", kScoreScript, 4, 0,
-			1, "installmenu A13",
-				""},
+			1, "installmenu A13", ""},
 
 
 	// Patching dead loop which was fixed in v2
@@ -145,9 +144,11 @@ struct ScriptPatch {
 			1, "GO \"SPACE\" OF MOVIE \"L-ZONE:DATA:R-G:ST-A2\",\"242,197\"",
 			   "GO \"SPACE\" OF MOVIE \"L-ZONE:DATA:R-G:ST-A2\""},
 
+
 	{"lingoexpo", "", kPlatformMacintosh, "Lingo Expo:Navigator", kMovieScript, 9, 0,
 			97, "  append(codeExampleList,\"6,301,302,303,304,305,306\")  - KIOSK SCRIPTS",
 				"  append(codeExampleList,\"6,301,302,303,304,305,306\")"},
+
 
 	{"jman", "", kPlatformWindows, "mmm:Mars Space Game 05", kMovieScript, 10, 0,
 			68, "set DamageParameter = (gProcessorSpeed/2) + 7)",
@@ -166,12 +167,14 @@ struct ScriptPatch {
 	{"jman", "", kPlatformWindows, "MMM:Shared Cast B&W", kMovieScript, 323, 0,
 			192, "updateStage", "set the trails of sprite 19 to 0"},
 
+
 	{"snh", "Hybrid release", kPlatformWindows, "SNHstart", kMovieScript, 0, 0,
 			3, "changedrive", ""}, // HACK: This macro inserts \x01 after the first character in myCD/myHD
 	{"snh", "Hybrid release", kPlatformWindows, "SNHstart", kMovieScript, 0, 0,
 			6, "set mytest2 = FileIO(mnew, \"read\" mymovie)", "set mytest2 = FileIO(mnew, \"read\", mymovie)"},
 	{"snh", "Hybrid release", kPlatformWindows, "SNHstart", kMovieScript, 0, 0,
 			14, "set mytest3 = FileIO(mnew, \"read\" mymovie)", "set mytest3 = FileIO(mnew, \"read\", mymovie)"},
+
 
 	// Ambiguous syntax that's parsed differently between D3 and later versions
 	{"henachoco03", "", kPlatformMacintosh, "xn--oj7cxalkre7cjz1d2agc0e8b1cm", kMovieScript, 0, 0,
@@ -188,10 +191,30 @@ struct ScriptPatch {
 			123, "locaobject(mLHizikaraHand (rhenka + 1),dotti)", "locaobject(mLHizikaraHand,(rhenka + 1),dotti)"},
 	{"henachoco03", "Demo", kPlatformMacintosh, "Muzukashiihon", kMovieScript, 0, 0,
 			136, "locaobject(mRHizikaraHand (rhenka + 1),dotti)", "locaobject(mRHizikaraHand,(rhenka + 1),dotti)"},
-	
+
+
 	// C.H.A.O.S
 	{"chaos", "", kPlatformWindows, "Intro", kCastScript, 10, 0,
 			9, "rHyperPACo \"blank\", 498, 350 gGenPathWay", "rHyperPACo \"blank\", 498, 350, gGenPathWay"},
+
+
+	{"smile", "v1.1", kPlatformMacintosh, "SMILE! The Splattering", kScoreScript, 24, 0,
+			1, "go to frame \"Info b\"If you have not paid   ", "go to frame \"Info b\""},
+
+
+	{"amandastories", "", kPlatformWindows, "Shared Cast", kMovieScript, 512, 0,
+			55, "    set mytest1 = FileIO(mnew, \"read\" mymovie)", "    set mytest1 = FileIO(mnew, \"read\", mymovie)"},
+	{"amandastories", "", kPlatformWindows, "Shared Cast", kMovieScript, 512, 0,
+			63, "      set mytest2 = FileIO(mnew, \"read\" mymovie)", "      set mytest2 = FileIO(mnew, \"read\", mymovie)"},
+	{"amandastories", "", kPlatformWindows, "Shared Cast", kMovieScript, 512, 0,
+			70, "          set mytest3 = FileIO(mnew, \"read\" mymovie)", "          set mytest3 = FileIO(mnew, \"read\", mymovie)"},
+	{"amandastories", "", kPlatformWindows, "ASstart", kMovieScript, 0, 0,
+			5, "  set mytest = FileIO(mnew, \"read\" mymovie)", "  set mytest = FileIO(mnew, \"read\", mymovie)"},
+	{"amandastories", "", kPlatformWindows, "ASstart", kMovieScript, 0, 0,
+			11, "    set mytest2 = FileIO(mnew, \"read\" mymovie)", "    set mytest2 = FileIO(mnew, \"read\", mymovie)"},
+	{"amandastories", "", kPlatformWindows, "ASstart", kMovieScript, 0, 0,
+			19, "      set mytest3 = FileIO(mnew, \"read\" mymovie)", "      set mytest3 = FileIO(mnew, \"read\", mymovie)"},
+
 
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, 0, nullptr, nullptr}
 };

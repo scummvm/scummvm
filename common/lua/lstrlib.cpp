@@ -4,6 +4,9 @@
 ** See Copyright Notice in lua.h
 */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
+#define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
+
 #include "common/util.h"
 
 #define lstrlib_c
@@ -768,22 +771,22 @@ static int str_format (lua_State *L) {
       strfrmt = scanformat(L, strfrmt, form);
       switch (*strfrmt++) {
         case 'c': {
-          sprintf(buff, form, (int)luaL_checknumber(L, arg));
+          snprintf(buff, MAX_ITEM, form, (int)luaL_checknumber(L, arg));
           break;
         }
         case 'd':  case 'i': {
           addintlen(form);
-          sprintf(buff, form, (LUA_INTFRM_T)luaL_checknumber(L, arg));
+          snprintf(buff, MAX_ITEM, form, (LUA_INTFRM_T)luaL_checknumber(L, arg));
           break;
         }
         case 'o':  case 'u':  case 'x':  case 'X': {
           addintlen(form);
-          sprintf(buff, form, (unsigned LUA_INTFRM_T)luaL_checknumber(L, arg));
+          snprintf(buff, MAX_ITEM, form, (unsigned LUA_INTFRM_T)luaL_checknumber(L, arg));
           break;
         }
         case 'e':  case 'E': case 'f':
         case 'g': case 'G': {
-          sprintf(buff, form, (double)luaL_checknumber(L, arg));
+          snprintf(buff, MAX_ITEM, form, (double)luaL_checknumber(L, arg));
           break;
         }
         case 'q': {
@@ -800,7 +803,7 @@ static int str_format (lua_State *L) {
             luaL_addvalue(&b);
             continue;  /* skip the `addsize' at the end */
           }
-          sprintf(buff, form, s);
+          snprintf(buff, MAX_ITEM, form, s);
           break;
         }
         default: {  /* also treat cases `pnLlh' */

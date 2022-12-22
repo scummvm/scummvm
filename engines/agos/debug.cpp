@@ -588,7 +588,7 @@ void AGOSEngine::dumpBitmap(const char *filename, const byte *offs, uint16 w, ui
 void AGOSEngine::dumpSingleBitmap(int file, int image, const byte *offs, int w, int h, byte base) {
 	char buf[40];
 
-	sprintf(buf, "dumps/File%d_Image%d.bmp", file, image);
+	Common::sprintf_s(buf, "dumps/File%d_Image%d.bmp", file, image);
 
 	if (Common::File::exists(buf))
 		return;
@@ -678,7 +678,7 @@ void AGOSEngine::dumpVgaBitmaps(uint16 zoneNum) {
 
 		/* dump bitmap */
 		char buf[40];
-		sprintf(buf, "dumps/Res%d_Image%d.bmp", zoneNum, i);
+		Common::sprintf_s(buf, "dumps/Res%d_Image%d.bmp", zoneNum, i);
 
 		dumpBitmap(buf, vga2 + offs, width, height, flags, pal, 0);
 	}

@@ -37,10 +37,15 @@
 #endif
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
+// https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Cocoa64BitGuide/64BitChangesCocoa/64BitChangesCocoa.html
+#if __LP64__ || NS_BUILD_32_LIKE_64
 typedef unsigned long NSUInteger;
+#else
+typedef unsigned int NSUInteger;
+#endif
 
 // Those are not defined in the 10.4 SDK, but they are defined when targeting
-// Mac OS X 10.4 or above in the 10.5 SDK. So hopefully that means it works with 10.4 as well.
+// Mac OS X 10.4 or above in the 10.5 SDK, and they do work with 10.4.
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
 enum {
 	NSUTF32StringEncoding = 0x8c000100,

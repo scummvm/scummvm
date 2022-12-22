@@ -21,7 +21,7 @@
 
 #include "glk/screen.h"
 #include "glk/conf.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 #include "image/bmp.h"
 #include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"

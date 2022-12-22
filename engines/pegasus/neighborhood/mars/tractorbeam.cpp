@@ -70,7 +70,7 @@ static const int kBVert = 3 * kMaxLevel * kHalfHeight;
 	WRITE_PIXEL(ptr)
 
 void TractorBeam::draw(const Common::Rect &) {
-	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getWorkArea();
+	Graphics::Surface *screen = g_vm->_gfx->getWorkArea();
 
 	// Set up vertical DDA.
 	int blendVert = 0;

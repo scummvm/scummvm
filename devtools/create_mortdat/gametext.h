@@ -356,6 +356,7 @@ const char *gameDataEn[] =  {
 	"With the cooking and the cleaning I do not have much time for you$",
 	"I do not know how he manages to do everything. That's wonderful!",
 	"He would do more if he showed less interest in gossip and alcohol$",
+	// FIXME: Spelling incorrect. independant should be independent. Fixing changes game data and thus may cause issues
 	"I am very independant. As long as nobody interferes in my business: No problem$",
 	"He is selfish. I wonder if he likes something other than his horses and grimoires$",
 	"I think he gets along well with everyone, except, perhaps, with Guy$",
@@ -376,6 +377,7 @@ const char *gameDataEn[] =  {
 	"Is it for an appointment?$",
 	"She is very lively! She does not burden herself with stupids prejudices$",
 	"In my line of work, one mostly encounters beautiful women and gangsters$",
+	// FIXME: Spelling incorrect. jewelery should be jewellery. Fixing changes game data and thus may cause issues
 	"The only sure thing he has going for him, it's his jewelery... And his wife, but he doesn't realize that$",
 	"It's an interesting character. Who is not always very easy to follow, but worth knowing$",
 	"I hate no one, but I like things and people when they stay where they should be$",

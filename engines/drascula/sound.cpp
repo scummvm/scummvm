@@ -166,7 +166,7 @@ void DrasculaEngine::volumeControls() {
 
 void DrasculaEngine::playSound(int soundNum) {
 	char file[20];
-	sprintf(file, "s%i.als", soundNum);
+	Common::sprintf_s(file, "s%i.als", soundNum);
 
 	playFile(file);
 }

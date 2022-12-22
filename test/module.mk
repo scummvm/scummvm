@@ -28,7 +28,7 @@ TEST_LIBS += test/null_osystem.o \
 	backends/platform/sdl/win32/win32_wrapper.o
 endif
 
-TEST_LIBS +=	audio/libaudio.a math/libmath.a common/libcommon.a image/libimage.a graphics/libgraphics.a
+TEST_LIBS +=	audio/libaudio.a math/libmath.a common/formats/libformats.a common/compression/libcompression.a common/libcommon.a image/libimage.a graphics/libgraphics.a
 
 ifeq ($(ENABLE_WINTERMUTE), STATIC_PLUGIN)
 	TESTS += $(srcdir)/test/engines/wintermute/*.h
@@ -44,7 +44,8 @@ endif
 TEST_FLAGS   := --runner=StdioPrinter --no-std --no-eh
 TEST_CFLAGS  := $(CFLAGS) -I$(srcdir)/test/cxxtest
 TEST_LDFLAGS := $(LDFLAGS) $(LIBS)
-TEST_CXXFLAGS := $(filter-out -Wglobal-constructors,$(CXXFLAGS))
+TEST_CXXFLAGS  := $(filter-out -Wglobal-constructors,$(CXXFLAGS))
+TEST_CXXFLAGS += -Wno-self-assign-overloaded
 
 ifdef WIN32
 TEST_LDFLAGS := $(filter-out -mwindows,$(TEST_LDFLAGS))
@@ -75,7 +76,7 @@ test/runner.cpp: $(TESTS) $(srcdir)/test/module.mk
 
 clean: clean-test
 clean-test:
-	-$(RM) test/runner.cpp test/runner test/engine-data/encoding.dat
+	-$(RM) test/runner.cpp test/runner test/engine-data/encoding.dat test/null_osystem.o
 	-rmdir test/engine-data
 
 test/engine-data/encoding.dat: $(srcdir)/dists/engine-data/encoding.dat

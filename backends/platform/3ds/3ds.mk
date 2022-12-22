@@ -9,6 +9,9 @@ APP_RSF         := $(srcdir)/backends/platform/3ds/app/scummvm.rsf
 APP_BANNER_IMAGE:= $(srcdir)/backends/platform/3ds/app/banner.png
 APP_BANNER_AUDIO:= $(srcdir)/backends/platform/3ds/app/banner.wav
 
+BANNERTOOL       ?= bannertool
+MAKEROM          ?= makerom
+
 .PHONY: clean_3ds dist_3ds
 
 clean: clean_3ds
@@ -45,19 +48,19 @@ ifeq ($(DYNAMIC_MODULES),1)
 endif
 
 $(TARGET).smdh: $(APP_ICON)
-	@smdhtool --create "$(APP_TITLE)" "$(APP_DESCRIPTION)" "$(APP_AUTHOR)" $(APP_ICON) $@
+	@$(DEVKITPRO)/tools/bin/smdhtool --create "$(APP_TITLE)" "$(APP_DESCRIPTION)" "$(APP_AUTHOR)" $(APP_ICON) $@
 	@echo built ... $(notdir $@)
 
 $(TARGET).3dsx: $(EXECUTABLE) $(TARGET).smdh romfs
-	@3dsxtool $< $@ --smdh=$(TARGET).smdh --romfs=romfs
+	@$(DEVKITPRO)/tools/bin/3dsxtool $< $@ --smdh=$(TARGET).smdh --romfs=romfs
 	@echo built ... $(notdir $@)
 
 $(TARGET).bnr: $(APP_BANNER_IMAGE) $(APP_BANNER_AUDIO)
-	@bannertool makebanner -o $@ -i $(APP_BANNER_IMAGE) -a $(APP_BANNER_AUDIO)
+	@$(BANNERTOOL) makebanner -o $@ -i $(APP_BANNER_IMAGE) -a $(APP_BANNER_AUDIO)
 	@echo built ... $(notdir $@)
 
 $(TARGET).cia: $(EXECUTABLE) $(APP_RSF) $(TARGET).smdh $(TARGET).bnr romfs
-	@makerom -f cia -target t -exefslogo -o $@ -elf $(EXECUTABLE) -rsf $(APP_RSF) -banner $(TARGET).bnr -icon $(TARGET).smdh -DAPP_ROMFS=romfs/
+	@$(MAKEROM) -f cia -target t -exefslogo -o $@ -elf $(EXECUTABLE) -rsf $(APP_RSF) -banner $(TARGET).bnr -icon $(TARGET).smdh -DAPP_ROMFS=romfs/
 	@echo built ... $(notdir $@)
 
 dist_3ds: $(TARGET).cia $(TARGET).3dsx $(DIST_FILES_DOCS)
@@ -74,8 +77,8 @@ dist_3ds: $(TARGET).cia $(TARGET).3dsx $(DIST_FILES_DOCS)
 define shader-as
 	$(eval FILEPATH := $(patsubst %.shbin.o,%.shbin,$@))
 	$(eval FILE := $(patsubst %.shbin.o,%.shbin,$(notdir $@)))
-	picasso -o $(FILEPATH) $1
-	bin2s $(FILEPATH) | $(AS) -o $@
+	$(DEVKITPRO)/tools/bin/picasso -o $(FILEPATH) $1
+	$(DEVKITPRO)/tools/bin/bin2s $(FILEPATH) | $(AS) -o $@
 	echo "extern const u8" `(echo $(FILE) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_end[];" > `(echo $(FILEPATH) | tr . _)`.h
 	echo "extern const u8" `(echo $(FILE) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"[];" >> `(echo $(FILEPATH) | tr . _)`.h
 	echo "extern const u32" `(echo $(FILE) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`_size";" >> `(echo $(FILEPATH) | tr . _)`.h

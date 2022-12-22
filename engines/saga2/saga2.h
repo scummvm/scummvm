@@ -30,7 +30,6 @@
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
-#include "saga2/console.h"
 #include "saga2/gfx.h"
 #include "saga2/idtypes.h"
 #include "saga2/weapons.h"
@@ -47,6 +46,7 @@ class MemoryWriteStreamDynamic;
 namespace Saga2 {
 
 class ContainerManager;
+class Console;
 class Timer;
 class TimerList;
 class BandList;
@@ -81,7 +81,7 @@ class CMapFeature;
 class AudioInterface;
 class PaletteManager;
 class ActorManager;
-class CalenderTime;
+class CalendarTime;
 class TileModeManager;
 struct SAGA2GameDescription;
 
@@ -144,7 +144,7 @@ public:
 	AudioInterface *_audio;
 	PaletteManager *_pal;
 	ActorManager *_act;
-	CalenderTime *_calender;
+	CalendarTime *_calendar;
 	TileModeManager *_tmm;
 	ContainerManager *_cnm;
 

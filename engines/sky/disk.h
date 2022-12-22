@@ -24,7 +24,7 @@
 
 
 #include "common/scummsys.h"
-#include "sky/rnc_deco.h"
+#include "common/compression/rnc_deco.h"
 
 #define MAX_FILES_IN_LIST 60
 
@@ -62,7 +62,7 @@ protected:
 	uint32 _dinnerTableEntries;
 	uint8 *_dinnerTableArea;
 	Common::File *_dataDiskHandle;
-	RncDecoder _rncDecoder;
+	Common::RncDecoder _rncDecoder;
 
 	uint16 _buildList[MAX_FILES_IN_LIST];
 	uint32 _loadedFilesList[MAX_FILES_IN_LIST];

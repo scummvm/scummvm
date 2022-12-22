@@ -70,7 +70,8 @@ static const Common::JoystickButton cheatJoy[] = {
 };
 
 PlumbersGame::PlumbersGame(OSystem *syst, const ADGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc), _console(nullptr), _image(nullptr) {
+		Engine(syst), _gameDescription(gameDesc), _console(nullptr), _image(nullptr),
+		_compositeSurface(nullptr), _videoDecoder(nullptr), _ctrlHelpImage(nullptr) {
 	_timerInstalled = false;
 	_showScoreFl = false;
 	_setDurationFl = false;

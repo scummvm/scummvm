@@ -144,7 +144,7 @@ public:
 
 typedef HotspotList::iterator HotspotIterator;
 
-#define g_allHotspots (((PegasusEngine *)g_engine)->getAllHotspots())
+#define g_allHotspots g_vm->getAllHotspots()
 
 } // End of namespace Pegasus
 

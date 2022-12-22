@@ -23,7 +23,7 @@
 #include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/events.h"
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/file.h"

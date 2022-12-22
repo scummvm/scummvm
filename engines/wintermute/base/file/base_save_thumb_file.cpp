@@ -55,8 +55,9 @@ bool BaseSaveThumbFile::open(const Common::String &filename) {
 		return STATUS_FAILED;
 	}
 
-	char *tempFilename = new char[strlen(filename.c_str()) - 8];
-	strcpy(tempFilename, filename.c_str() + 9);
+	size_t filenameSize = strlen(filename.c_str()) - 9 + 1;
+	char *tempFilename = new char[filenameSize];
+	Common::strcpy_s(tempFilename, filenameSize, filename.c_str() + 9);
 	for (uint32 i = 0; i < strlen(tempFilename); i++) {
 		if (tempFilename[i] < '0' || tempFilename[i] > '9') {
 			tempFilename[i] = '\0';

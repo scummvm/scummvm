@@ -22,7 +22,6 @@
 #ifndef STARTREK_H
 #define STARTREK_H
 
-#include "common/cosinetables.h"
 #include "common/events.h"
 #include "common/list.h"
 #include "common/ptr.h"
@@ -30,7 +29,6 @@
 #include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
-#include "common/sinetables.h"
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/system.h"
@@ -39,6 +37,9 @@
 #include "gui/saveload-dialog.h"
 
 #include "engines/engine.h"
+
+#include "math/cosinetables.h"
+#include "math/sinetables.h"
 
 #include "startrek/action.h"
 #include "startrek/awaymission.h"
@@ -803,8 +804,8 @@ private:
 	void bridgeLeftClick();
 
 	Common::RandomSource _randomSource;
-	Common::SineTable _sineTable;
-	Common::CosineTable _cosineTable;
+	Math::SineTable _sineTable;
+	Math::CosineTable _cosineTable;
 	Room *_room;
 	Common::List<ComputerTopic> _computerTopics;
 };

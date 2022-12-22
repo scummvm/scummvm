@@ -372,7 +372,7 @@ const SongData Sound::_song[] = {
 	/* 84 - Close Drawer/Push Ladder */
 	{ { 87, 0 }, 128, 0, 0, 0, 1 },
 
-	/* 85 - Agression Enhancer */
+	/* 85 - Aggression Enhancer */
 	{ { 88, 0 }, 128, 0, 0, 0, 1 },
 
 	/* 86 - Stone Door Grind 1 */
@@ -1117,7 +1117,7 @@ const TuneData Sound::_tune[] = {
 	/* 87 - Close Drawer/Push Ladder */
 	{ { 0, 0 }, { 33, 0 }, 2, 0 },
 
-	/* 88 - Agression Enhancer */
+	/* 88 - Aggression Enhancer */
 	{ { 0, 0 }, { 32, 0 }, 2, 0 },
 
 	/* 89 - Stone Door Grind 1 */
@@ -1588,7 +1588,7 @@ const char *const Sound::_sfxName[] = {
 	/* 31 - Fish Splash */
 	"18ssssss",
 
-	/* 32 - Agression Enhancer */
+	/* 32 - Aggression Enhancer */
 	"138Bssss",
 
 	/* 33 - Close Drawer/Push Ladder */

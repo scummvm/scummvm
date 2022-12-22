@@ -65,7 +65,9 @@ extern void create_cinteger(const char *name, int value);
 extern void scripting();
 extern void undoing();
 extern void walking_thru();
+#ifndef GLK
 extern void create_paths(char *full_path);
+#endif
 extern int get_key();
 extern char get_character(const char *message);
 extern int get_yes_or_no();

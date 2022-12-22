@@ -21,30 +21,28 @@
 
 /*************************************
  *
- * Xobject to play Quicktime Videos
- *
  * USED IN:
- * C.H.A.O.S. Continuum
+ * The C.H.A.O.S. Continuum (Windows)
  *
  *************************************/
 
 /*
---moovXobj 10.22.93 <<gzr>>
-moovXobj
-I		mNew							--Creates a new instance of the XObject.
-X		mDispose						--Disposes of XObject instance.
-S		mName							--Returns the XObject name (moovobj).
-I		mMovieInit						--Initialize QTW.
-I		mMovieKill						--Dispose of QTW.
-I		mFondler						--Movie idle task.
-ISII	mPlayMovie name,left,top		--Play movie at designated location.
-I		mPauseMovie						--Pause active movie.
-II		mSoundMovie						--Turn movie sound on or off.
-I		mStopMovie						--Stops active movie.
-I		mMovieDone						--Returns true if movie done.
+  moovXobj: Creative Multimedia, 1993 <<gzr>>
+  --moovXobj 10.22.93 <<gzr>>
+  moovXobj
+  I       mNew                            --Creates a new instance of the XObject.
+  X       mDispose                        --Disposes of XObject instance.
+  S       mName                           --Returns the XObject name (moovobj).
+  I       mMovieInit                      --Initialize QTW.
+  I       mMovieKill                      --Dispose of QTW.
+  I       mFondler                        --Movie idle task.
+  ISII    mPlayMovie name,left,top        --Play movie at designated location.
+  I       mPauseMovie                     --Pause active movie.
+  II      mSoundMovie                     --Turn movie sound on or off.
+  I       mStopMovie                      --Stops active movie.
+  I       mMovieDone                      --Returns true if movie done.
 
-ScummVM Note: mMovieDone returns true when the movie is _not_ done.
-
+  ScummVM Note: mMovieDone returns true when the movie is _not_ done.
  */
 
 #include "video/qt_decoder.h"
@@ -72,10 +70,9 @@ static MethodProto xlibMethods[] = {
 	{ "Fondler",				MoovXObj::m_fondler,	    	0,	0,	300 },	// D4
 	{ "PlayMovie",				MoovXObj::m_playMovie,		    3,	3,	300 },	// D4
 	{ "PauseMovie",				MoovXObj::m_pauseMovie,	    	0,	0,	300 },	// D4
-	{ "SoundMovie",				MoovXObj::m_soundMovie,	    	0,	0,	300 },	// D4
+	{ "SoundMovie",				MoovXObj::m_soundMovie,	    	1,	1,	300 },	// D4
 	{ "StopMovie",				MoovXObj::m_stopMovie,	    	0,	0,	300 },	// D4
 	{ "MovieDone",				MoovXObj::m_movieDone,		    0,	0,	300 },	// D4
-
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
@@ -109,12 +106,12 @@ MoovXObject::~MoovXObject() {
 }
 
 void MoovXObj::m_new(int nargs) {
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void MoovXObj::m_dispose(int nargs) {
 	debug(5, "MoovXObj::m_dispose");
-	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_currentMe.u.obj);
+	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_state->me.u.obj);
 	if (me->_video) {
 		delete me->_video;
 		me->_video = nullptr;
@@ -133,14 +130,14 @@ void MoovXObj::m_movieInit(int nargs) {
 
 void MoovXObj::m_movieKill(int nargs) {
 	debug(5, "MoovXObj::m_movieKill");
-	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_currentMe.u.obj);
+	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_state->me.u.obj);
 
 	if (me->_video)
 		me->_video->stop();
 }
 
 void MoovXObj::m_fondler(int nargs) {
-	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_currentMe.u.obj);
+	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_state->me.u.obj);
 
 	debug(10, "MoovXObj::m_fondler");
 	Graphics::Surface const *frame;
@@ -155,7 +152,7 @@ void MoovXObj::m_fondler(int nargs) {
 }
 
 void MoovXObj::m_playMovie(int nargs) {
-	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_currentMe.u.obj);
+	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_state->me.u.obj);
 
 	me->_y = g_lingo->pop().asInt();
 	me->_x = g_lingo->pop().asInt();
@@ -183,6 +180,7 @@ void MoovXObj::m_pauseMovie(int nargs) {
 void MoovXObj::m_soundMovie(int nargs) {
 	// unused in C.H.A.O.S.
 	g_lingo->printSTUBWithArglist("MoovXObj::m_soundMovie", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void MoovXObj::m_stopMovie(int nargs) {
@@ -191,11 +189,10 @@ void MoovXObj::m_stopMovie(int nargs) {
 }
 
 void MoovXObj::m_movieDone(int nargs) {
-	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_currentMe.u.obj);
+	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_state->me.u.obj);
 	debug(10, "MoovXObj::m_movieDone");
 	bool result = (me->_video && !me->_video->endOfVideo());
 	g_lingo->push(result);
 }
 
-}
-// End of namespace Director
+} // End of namespace Director

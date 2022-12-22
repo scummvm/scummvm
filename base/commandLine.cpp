@@ -160,6 +160,7 @@ static const char HELP_STRING4[] =
 	"  --dump-midi              Dumps MIDI events to 'dump.mid', until quitting from game\n"
 	"                           (if file already exists, it will be overwritten)\n"
 	"  --enable-gs              Enable Roland GS mode for MIDI playback\n"
+	"  --output-channels=CHANNELS Select output channel count (e.g. 2 for stereo)\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
 	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame"
 #ifndef DISABLE_NUKED_OPL
@@ -435,7 +436,7 @@ static QualifiedGameDescriptor findGameMatchingName(const Common::String &name) 
 }
 
 static Common::String createTemporaryTarget(const Common::String &engineId, const Common::String &gameId) {
-	Common::String domainName = gameId;
+	Common::String domainName = EngineMan.generateUniqueDomain(gameId);
 
 	ConfMan.addGameDomain(domainName);
 	ConfMan.set("engineid", engineId, domainName);
@@ -662,6 +663,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 			DO_LONG_COMMAND("list-audio-devices")
 			END_COMMAND
+
+			DO_LONG_OPTION_INT("output-channels")
+			END_OPTION
 
 			DO_LONG_OPTION_INT("output-rate")
 			END_OPTION
@@ -1440,7 +1444,8 @@ static void calcMD5Mac(Common::Path &filePath, int32 length) {
 	if (!macResMan.open(fileName, dir)) {
 		printf("Mac resource file '%s' not found or could not be open\n", filePath.toString(nativeSeparator).c_str());
 	} else {
-		if (!macResMan.hasResFork() && !macResMan.hasDataFork()) {
+		Common::ScopedPtr<Common::SeekableReadStream> dataFork(Common::MacResManager::openFileOrDataFork(fileName, dir));
+		if (!macResMan.hasResFork() && !dataFork) {
 			printf("'%s' has neither data not resource fork\n", macResMan.getBaseFileName().toString().c_str());
 		} else {
 			bool tail = false;
@@ -1456,14 +1461,13 @@ static void calcMD5Mac(Common::Path &filePath, int32 length) {
 					md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
 				printf("%s (resource): %s, %llu bytes\n", macResMan.getBaseFileName().toString().c_str(), md5.c_str(), (unsigned long long)macResMan.getResForkDataSize());
 			}
-			if (macResMan.hasDataFork()) {
-				Common::SeekableReadStream *stream = macResMan.getDataFork();
-				if (tail && stream->size() > length)
-					stream->seek(-length, SEEK_END);
-				Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
-				if (length != 0 && length < stream->size())
+			if (dataFork) {
+				if (tail && dataFork->size() > length)
+					dataFork->seek(-length, SEEK_END);
+				Common::String md5 = Common::computeStreamMD5AsString(*dataFork, length);
+				if (length != 0 && length < dataFork->size())
 					md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
-				printf("%s (data): %s, %llu bytes\n", macResMan.getBaseFileName().toString().c_str(), md5.c_str(), (unsigned long long)stream->size());
+				printf("%s (data): %s, %llu bytes\n", macResMan.getBaseFileName().toString().c_str(), md5.c_str(), (unsigned long long)dataFork->size());
 			}
 		}
 		macResMan.close();
@@ -1818,22 +1822,17 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 
 		if (command == "md5" && settings.contains("md5-engine")) {
 			Common::String engineID = settings["md5-engine"];
-			if (engineID == "scumm") {
-				// Hardcoding value as scumm doesn't use AdvancedMetaEngineDetection
-				md5Length = 1024 * 1024;
-			} else {
-				const Plugin *plugin = EngineMan.findPlugin(engineID);
-				if (!plugin) {
-					warning("'%s' is an invalid engine ID. Use the --list-engines command to list supported engine IDs", engineID.c_str());
-					return true;
-				}
 
-				const AdvancedMetaEngineDetection* advEnginePtr = dynamic_cast<AdvancedMetaEngineDetection*>(&(plugin->get<MetaEngineDetection>()));
-				if (advEnginePtr == nullptr) {
-					warning("The requested engine (%s) doesn't support MD5-based detection", engineID.c_str());
-					return true;
-				}
-				md5Length = (int32)advEnginePtr->getMD5Bytes();
+			const Plugin *plugin = EngineMan.findPlugin(engineID);
+			if (!plugin) {
+				warning("'%s' is an invalid engine ID. Use the --list-engines command to list supported engine IDs", engineID.c_str());
+				return true;
+			}
+
+			md5Length = plugin->get<MetaEngineDetection>().getMD5Bytes();
+			if (!md5Length) {
+				warning("The requested engine (%s) doesn't support MD5-based detection", engineID.c_str());
+				return true;
 			}
 		}
 

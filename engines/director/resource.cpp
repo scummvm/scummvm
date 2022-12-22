@@ -24,7 +24,7 @@
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/substream.h"
-#include "common/winexe.h"
+#include "common/formats/winexe.h"
 #include "graphics/wincursor.h"
 
 #include "director/director.h"
@@ -85,6 +85,7 @@ Common::Error Window::loadInitialMovie() {
 			_currentMovie->processEvent(kEventStartUp);
 
 			free(script);
+			delete stream;
 		} else {
 			warning("Window::LoadInitialMovie: failed to load startup scripts");
 		}
@@ -154,6 +155,7 @@ void Window::probeMacBinary(MacArchive *archive) {
 				delete _currentMovie;
 				_currentMovie = nullptr;
 
+				probeProjector(moviePath);
 			} else {
 				warning("Couldn't find score with name: %s", sname.c_str());
 			}
@@ -176,6 +178,14 @@ void Window::probeMacBinary(MacArchive *archive) {
 		for (Common::Array<uint16>::iterator iterator = xcmd.begin(); iterator != xcmd.end(); ++iterator) {
 			Resource res = archive->getResourceDetail(MKTAG('X', 'C', 'M', 'D'), *iterator);
 			debug(0, "Detected XCMD '%s'", res.name.c_str());
+			g_lingo->openXLib(res.name, kXObj);
+		}
+	}
+	if (archive->hasResource(MKTAG('X', 'F', 'C', 'N'), -1)) {
+		Common::Array<uint16> xfcn = archive->getResourceIDList(MKTAG('X', 'F', 'C', 'N'));
+		for (Common::Array<uint16>::iterator iterator = xfcn.begin(); iterator != xfcn.end(); ++iterator) {
+			Resource res = archive->getResourceDetail(MKTAG('X', 'F', 'C', 'N'), *iterator);
+			debug(0, "Detected XFCN '%s'", res.name.c_str());
 			g_lingo->openXLib(res.name, kXObj);
 		}
 	}
@@ -212,10 +222,10 @@ void Window::loadEXE(const Common::String movie) {
 		_currentMovie = nullptr;
 
 		free(script);
+		delete iniStream;
 	} else {
 		warning("No LINGO.INI");
 	}
-	delete iniStream;
 
 	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(Common::Path(movie, g_director->_dirSeparator));
 	if (!exeStream)
@@ -275,20 +285,41 @@ void Window::loadEXE(const Common::String movie) {
 }
 
 void Window::loadEXEv3(Common::SeekableReadStream *stream) {
+	uint32 mmmSize;
+	Common::String mmmFileName;
+	Common::String directoryName;
+
 	uint16 entryCount = stream->readUint16LE();
-	if (entryCount != 1)
-		error("Unhandled multiple entry v3 EXE");
 
 	stream->skip(5); // unknown
 
-	uint32 mmmSize = stream->readUint32LE(); // Main MMM size
+	for (int i = 0; i < entryCount; ++i) {
+		uint32 mmmSize_ = stream->readUint32LE(); // Main MMM size
 
-	Common::String mmmFileName = stream->readPascalString();
-	Common::String directoryName = stream->readPascalString();
+		Common::String mmmFileName_ = stream->readPascalString();
+		Common::String directoryName_ = stream->readPascalString();
 
-	debugC(1, kDebugLoading, "Main MMM: '%s'", mmmFileName.c_str());
-	debugC(1, kDebugLoading, "Directory Name: '%s'", directoryName.c_str());
-	debugC(1, kDebugLoading, "Main mmmSize: %d (0x%x)", mmmSize, mmmSize);
+		debugC(1, kDebugLoading, "MMM #%d: '%s'", i, mmmFileName_.c_str());
+		debugC(1, kDebugLoading, "Directory Name: '%s'", directoryName_.c_str());
+		debugC(1, kDebugLoading, "MMM size: %d (0x%x)", mmmSize_, mmmSize_);
+		if (i == 0) {
+			mmmSize = mmmSize_;
+			mmmFileName = mmmFileName_;
+			directoryName = directoryName_;
+		} else {
+			if (!SearchMan.hasFile(Common::Path(mmmFileName_, g_director->_dirSeparator)))
+				warning("Failed to find MMM '%s'", mmmFileName_.c_str());
+			else {
+				Common::SeekableReadStream *const mmmFile_ = SearchMan.createReadStreamForMember(Common::Path(mmmFileName_, g_director->_dirSeparator));
+				uint32 mmmFileSize_ = mmmFile_->size();
+				if (mmmSize_ != mmmFileSize_)
+					warning("File size for '%s' doesn't match. Got %d (0x%x), want %d (0x%x)", mmmFileName_.c_str(), mmmFileSize_, mmmFileSize_, mmmSize_, mmmSize_);
+				delete mmmFile_;
+			}
+		}
+		// Print a blank line to separate the entries, format a blank string to silence gcc warning
+		debugC(1, kDebugLoading, "%s", "");
+	}
 
 	if (mmmSize) {
 		uint32 riffOffset = stream->pos();
@@ -401,12 +432,9 @@ void Window::loadMac(const Common::String movie) {
 		openMainArchive(movie);
 	} else {
 		// The RIFX is located in the data fork of the executable
-		_macBinary = new Common::MacResManager();
-
-		if (!_macBinary->open(Common::Path(movie, g_director->_dirSeparator)) || !_macBinary->hasDataFork())
+		Common::SeekableReadStream *dataFork = Common::MacResManager::openFileOrDataFork(Common::Path(movie, g_director->_dirSeparator));
+		if (!dataFork)
 			error("Failed to open Mac binary '%s'", movie.c_str());
-
-		Common::SeekableReadStream *dataFork = _macBinary->getDataFork();
 		_mainArchive = new RIFXArchive();
 		_mainArchive->setPathName(movie);
 

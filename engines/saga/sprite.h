@@ -35,8 +35,9 @@ struct SpriteInfo {
 	int height;
 	int xAlign;
 	int yAlign;
+	byte keepMask;
 
-	SpriteInfo() : width(0), height(0), xAlign(0), yAlign(0) {
+	SpriteInfo() : width(0), height(0), xAlign(0), yAlign(0), keepMask(0) {
 	}
 };
 
@@ -59,11 +60,11 @@ public:
 	void draw(SpriteList &spriteList, uint spriteNumber, const Point &screenCoord, int scale, bool clipToScene = false);
 
 	// main function
-	void drawClip(const Point &spritePointer, int width, int height, const byte *spriteBuffer, bool clipToScene = false);
+	void drawClip(const Point &spritePointer, int width, int height, const byte *spriteBuffer, bool clipToScene = false, byte keepMask = 0);
 
 	void draw(SpriteList &spriteList, uint spriteNumber, const Rect &screenRect, int scale, bool clipToScene = false);
 
-	void loadList(int resourceId, SpriteList &spriteList); // load or append spriteList
+	void loadList(int resourceId, SpriteList &spriteList, byte keepMask = 0); // load or append spriteList
 	bool hitTest(SpriteList &spriteList, uint spriteNumber, const Point &screenCoord, int scale, const Point &testPoint);
 	void getScaledSpriteBuffer(SpriteList &spriteList, uint spriteNumber, int scale, int &width, int &height, int &xAlign, int &yAlign, const byte *&buffer);
 

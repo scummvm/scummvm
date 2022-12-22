@@ -20,7 +20,6 @@
  */
 
 #include "base/plugins.h"
-#include "common/translation.h"
 #include "engines/advancedDetector.h"
 
 #include "hdb/detection.h"
@@ -29,8 +28,6 @@ static const PlainGameDescriptor hdbGames[] = {
 	{"hdb", "Hyperspace Delivery Boy!"},
 	{nullptr, nullptr}
 };
-
-#define GAMEOPTION_CHEATMODE GUIO_GAMEOPTIONS1
 
 namespace HDB {
 
@@ -116,25 +113,9 @@ static const ADGameDescription gameDescriptions[] = {
 
 } // End of namespace HDB
 
-static const ADExtraGuiOptionsMap optionsList[] = {
-		{
-				GAMEOPTION_CHEATMODE,
-				{
-						_s("Enable cheat mode"),
-						_s("Debug info and level selection becomes available"),
-						"hypercheat",
-						false,
-						0,
-						0
-				}
-		},
-
-		AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
 class HDBMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	HDBMetaEngineDetection() : AdvancedMetaEngineDetection(HDB::gameDescriptions, sizeof(ADGameDescription), hdbGames, optionsList) {
+	HDBMetaEngineDetection() : AdvancedMetaEngineDetection(HDB::gameDescriptions, sizeof(ADGameDescription), hdbGames) {
 	}
 
 	const char *getName() const override {

@@ -85,12 +85,11 @@ public:
 		MOUSE_NORMAL = 0,
 		MOUSE_NONE = 1,
 		MOUSE_TARGET = 2,
-		MOUSE_PENTAGRAM = 3,
+		MOUSE_WAIT = 3,
 		MOUSE_HAND = 4,
 		MOUSE_QUILL = 5,
 		MOUSE_MAGGLASS = 6,
-		MOUSE_CROSS = 7,
-		MOUSE_POINTER = 8  //!< Default pointer
+		MOUSE_CROSS = 7
 	};
 
 	enum DraggingState {
@@ -102,6 +101,7 @@ public:
 private:
 	static Mouse *_instance;
 	Common::Stack<MouseCursor> _cursors;
+	int _lastMouseFrame;
 
 	/**
 	 * Time mouse started flashing, or 0
@@ -130,11 +130,6 @@ public:
 public:
 	Mouse();
 	~Mouse();
-
-	/**
-	 * Setup the mouse cursors
-	 */
-	void setup();
 
 	/**
 	 * Called when a mouse button is pressed down
@@ -191,7 +186,7 @@ public:
 	void flashCrossCursor();
 
 	//! push the current mouse cursor to the stack
-	void pushMouseCursor();
+	void pushMouseCursor(MouseCursor cursor);
 
 	//! pop the last mouse cursor from the stack
 	void popMouseCursor();
@@ -215,7 +210,7 @@ public:
 	Gump *getMouseOverGump() const;
 	void resetMouseOverGump() { _mouseOverGump = 0; }
 
-	void paint();
+	void update();
 };
 
 } // End of namespace Ultima8

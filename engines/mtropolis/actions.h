@@ -30,6 +30,7 @@ enum Action {
 	kNone = 0,
 
 	kDebugToggleOverlay,
+	kDebugSkipMovies,
 };
 
 enum MouseButton {

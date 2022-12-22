@@ -72,7 +72,7 @@ void MyPushButton::draw(Bitmap *ds) {
 
 int MyPushButton::pressedon(int mx, int my) {
 	int wasstat;
-	while (mbutrelease(MouseLeft) == 0) {
+	while (!ags_misbuttondown(kMouseLeft) == 0) {
 
 		wasstat = state;
 		state = mouseisinarea(mx, my);

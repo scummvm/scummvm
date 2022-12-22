@@ -122,14 +122,13 @@ bool BaseGameSettings::loadSettings(const char *filename) {
 	buffer = params;
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
-			case TOKEN_GAME:
+			case TOKEN_GAME: {
 				delete[] _gameFile;
-				_gameFile = new char[strlen(params) + 1];
-				if (_gameFile) {
-					strcpy(_gameFile, params);
-				}
+				size_t gameFileSize = strlen(params) + 1;
+				_gameFile = new char[gameFileSize];
+				Common::strcpy_s(_gameFile, gameFileSize, params);
 				break;
-
+			}
 			case TOKEN_STRING_TABLE:
 				if (DID_FAIL(_stringTable->loadFile(params))) {
 					cmd = PARSERR_GENERIC;

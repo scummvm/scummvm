@@ -72,12 +72,6 @@ public:
 };
 
 Common::Error DirectorMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	Common::StringArray dirs = AdvancedMetaEngineDetection::getPathsFromEntry(desc);
-	Common::FSNode gameDataDir = Common::FSNode(ConfMan.get("path"));
-
-	for (auto dir = dirs.begin(); dir != dirs.end(); ++dir)
-		SearchMan.addSubDirectoryMatching(gameDataDir, *dir);
-
 	*engine = new Director::DirectorEngine(syst, (const Director::DirectorGameDescription *)desc);
 	return Common::kNoError;
 }

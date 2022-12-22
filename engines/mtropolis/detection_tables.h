@@ -26,13 +26,6 @@
 
 #include "mtropolis/detection.h"
 
-#define GAMEOPTION_WIDESCREEN_MOD				GUIO_GAMEOPTIONS1
-#define GAMEOPTION_DYNAMIC_MIDI					GUIO_GAMEOPTIONS2
-#define GAMEOPTION_LAUNCH_DEBUG					GUIO_GAMEOPTIONS3
-#define GAMEOPTION_SOUND_EFFECT_SUBTITLES		GUIO_GAMEOPTIONS4
-#define GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS		GUIO_GAMEOPTIONS5
-#define GAMEOPTION_ENABLE_SHORT_TRANSITIONS		GUIO_GAMEOPTIONS6
-
 namespace MTropolis {
 
 static const MTropolisGameDescription gameDescriptions[] = {
@@ -528,6 +521,64 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		GID_ALBERT3,
 		0,
 		MTBOOT_ALBERT3_WIN_DE,
+	},
+
+	{ // SPQR: The Empire's Darkest Hour Windows CD-ROM
+		{
+			"spqr",
+			"",
+			{
+				{ "SPQR.MPL", 0, "da778ae00dd3e7596ba970a4dccd0a44", 3292503 },
+				{ "S_6842.MPX", 0, "506c04751bee9482f76333b0cf3c0e52", 577095784 },
+				{ "SPQR32.EXE", 0, "af2a7889779243c0d25392598e893137", 759296 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_SPQR,
+		0,
+		MTBOOT_SPQR_RETAIL_WIN,
+	},
+
+	{ // SPQR: The Empire's Darkest Hour Macintosh CD-ROM
+		{
+			"spqr",
+			"",
+			{
+				{ "Install.vct", 0, "df8b7e964bf2ce4d32a38091836bdd75", 3539712 },
+				{ "S_6772", 0, "8f8e503fd5b6d0f7651149ff8d92a7a2", 576188928 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_SPQR,
+		0,
+		MTBOOT_SPQR_RETAIL_MAC,
+	},
+
+	{ // Star Trek: The Game Show demo
+		{
+			"sttgs",
+			"Demo",
+			{
+				// { "MTPLAY95.EXE", 0, "3ce9559e8c8047243fb7393a90d8b8f5", 756736 },
+				{ "Trektriv.mpl", 0, "2dfab3665f9d7a24473f7cd17a0615ba", 43003276 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_STTGS,
+		0,
+		MTBOOT_STTGS_DEMO_WIN,
 	},
 
 	{ AD_TABLE_END_MARKER, 0, 0, MTBOOT_INVALID }

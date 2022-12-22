@@ -33,6 +33,8 @@ VideoPlayer::VideoPlayer(GroovieEngine *vm) :
 	_vm(vm), _syst(vm->_system), _file(nullptr), _audioStream(nullptr), _fps(0), _overrideSpeed(false), _flags(0),
 	_begunPlaying(false), _millisBetweenFrames(0), _lastFrameTime(0), _frameTimeDrift(0) {
 
+	_startTime = _syst->getMillis();
+
 	int16 h = g_system->getOverlayHeight();
 
 	_subtitles.setBBox(Common::Rect(20, h - 120, g_system->getOverlayWidth() - 20, h - 20));
@@ -44,6 +46,7 @@ bool VideoPlayer::load(Common::SeekableReadStream *file, uint16 flags) {
 	_file = file;
 	_flags = flags;
 	_overrideSpeed = false;
+	_startTime = _syst->getMillis();
 
 	stopAudioStream();
 	_fps = loadInternal();
@@ -84,10 +87,9 @@ bool VideoPlayer::playFrame() {
 	// Process the next frame while the file is open
 	if (_file) {
 		end = playFrameInternal();
-	}
 
-	uint32 currTime = _syst->getMillis();
-	_subtitles.drawSubtitle(currTime - _frameTimeDrift);
+		_subtitles.drawSubtitle(_lastFrameTime - _startTime);
+	}
 
 	// The file has been completely processed
 	if (end) {
@@ -105,10 +107,17 @@ bool VideoPlayer::playFrame() {
 			}
 		}
 
-		g_system->hideOverlay();
+		unloadSubtitles();
 	}
 
 	return end;
+}
+
+void VideoPlayer::unloadSubtitles() {
+	if (_subtitles.isLoaded()) {
+		_subtitles.close();
+		g_system->hideOverlay();
+	}
 }
 
 void VideoPlayer::waitFrame() {
@@ -121,8 +130,10 @@ void VideoPlayer::waitFrame() {
 		_lastFrameTime = currTime;
 		_frameTimeDrift = 0.0f;
 
-		g_system->showOverlay();
-		g_system->clearOverlay();
+		if (_subtitles.isLoaded()) {
+			g_system->showOverlay(false);
+			g_system->clearOverlay();
+		}
 	} else {
 		uint32 millisDiff = currTime - _lastFrameTime;
 		float fMillis = _millisBetweenFrames + _frameTimeDrift;

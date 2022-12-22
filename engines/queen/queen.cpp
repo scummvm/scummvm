@@ -282,7 +282,7 @@ Common::String QueenEngine::getSaveStateName(int slot) const {
 
 void QueenEngine::makeGameStateName(int slot, char *buf) const {
 	Common::String name = getSaveStateName(slot);
-	strcpy(buf, name.c_str());
+	Common::strcpy_s(buf, 20, name.c_str());
 }
 
 int QueenEngine::getGameStateSlot(const char *filename) const {
@@ -303,7 +303,7 @@ void QueenEngine::findGameStateDescriptions(char descriptions[100][32]) {
 		if (i >= 0 && i < SAVESTATE_MAX_NUM) {
 			GameStateHeader header;
 			Common::InSaveFile *f = readGameStateHeader(i, &header);
-			strcpy(descriptions[i], header.description);
+			Common::strcpy_s(descriptions[i], header.description);
 			delete f;
 		}
 	}

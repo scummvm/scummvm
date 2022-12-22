@@ -28,6 +28,8 @@
 
 #include "graphics/pixelformat.h"
 
+#include "actions.h"
+
 namespace Graphics {
 
 class ManagedSurface;
@@ -120,6 +122,7 @@ public:
 	virtual void onMouseMove(int32 x, int32 y);
 	virtual void onMouseUp(int32 x, int32 y, int mouseButton);
 	virtual void onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt);
+	virtual void onAction(Actions::Action action);
 
 protected:
 	int32 _x;
@@ -138,8 +141,8 @@ uint32 resolveRGB(uint8 r, uint8 g, uint8 b, const Graphics::PixelFormat &fmt);
 void renderProject(Runtime *runtime, Window *mainWindow, bool *outSkipped);
 void renderSceneTransition(Runtime *runtime, Window *mainWindow, const SceneTransitionEffect &effect, uint32 startTime, uint32 endTime, uint32 currentTime, const Graphics::ManagedSurface &oldFrame, const Graphics::ManagedSurface &newFrame);
 
-void convert32To16(Graphics::Surface &destSurface, const Graphics::Surface &srcSurface);
-void convert16To32(Graphics::Surface &destSurface, const Graphics::Surface &srcSurface);
+void convert32To16(Graphics::ManagedSurface &destSurface, const Graphics::ManagedSurface &srcSurface);
+void convert16To32(Graphics::ManagedSurface &destSurface, const Graphics::ManagedSurface &srcSurface);
 
 } // End of namespace Render
 

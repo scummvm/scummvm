@@ -30,7 +30,6 @@ namespace Saga {
 
 #define ITE_OBJ_MAP 14
 
-#define SAGA_ISOTILEDATA_LEN 8
 #define SAGA_ISOTILE_WIDTH 32
 #define SAGA_ISOTILE_BASEHEIGHT 15
 #define SAGA_TILE_NOMINAL_H 16
@@ -90,6 +89,7 @@ enum TileMapEdgeType {
 
 struct IsoTileData {
 	byte height;
+	size_t tileSize;
 	int8 attributes;
 	byte *tilePointer;
 	uint16 terrainMask;

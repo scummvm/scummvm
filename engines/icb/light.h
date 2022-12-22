@@ -33,7 +33,7 @@
 namespace ICB {
 
 // Used to pass the information from stage to actor draw
-// about which lights are in teh current camera view
+// about which lights are in the current camera view
 // also passes the state of each light
 
 #define MAX_NUMBER_LIGHTS 32

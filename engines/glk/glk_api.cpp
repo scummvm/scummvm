@@ -468,11 +468,11 @@ void GlkAPI::glk_stylehint_set(uint wintype, uint style, uint hint, int val) {
 
 	switch (hint) {
 	case stylehint_TextColor:
-		styles[style].fg = val;
+		styles[style].fg = _conf->parseColor(val);
 		break;
 
 	case stylehint_BackColor:
-		styles[style].bg = val;
+		styles[style].bg = _conf->parseColor(val);
 		break;
 
 	case stylehint_ReverseColor:
@@ -609,11 +609,11 @@ bool GlkAPI::glk_style_measure(winid_t win, uint style, uint hint, uint *result)
 		break;
 
 	case stylehint_TextColor:
-		*result = styles[style].fg;
+		*result = strtol(_conf->encodeColor(styles[style].fg).c_str(), nullptr, 16);
 		break;
 
 	case stylehint_BackColor:
-		*result = styles[style].bg;
+		*result = strtol(_conf->encodeColor(styles[style].bg).c_str(), nullptr, 16);
 		break;
 
 	case stylehint_ReverseColor:

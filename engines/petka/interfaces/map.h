@@ -28,6 +28,7 @@ namespace Petka {
 
 class InterfaceMap: public SubInterface {
 public:
+	InterfaceMap() : _roomResID(0) {}
 	void start(int id) override;
 	void stop() override;
 

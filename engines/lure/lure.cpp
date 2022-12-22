@@ -185,7 +185,7 @@ void LureEngine::pauseEngineIntern(bool pause) {
 const char *LureEngine::generateSaveName(int slotNumber) {
 	static char buffer[15];
 
-	sprintf(buffer, "lure.%.3d", slotNumber);
+	Common::sprintf_s(buffer, "lure.%.3d", slotNumber);
 	return buffer;
 }
 

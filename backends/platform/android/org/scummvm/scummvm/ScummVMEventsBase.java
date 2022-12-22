@@ -60,6 +60,9 @@ public class ScummVMEventsBase implements
 	public static final int TOUCH_MODE_GAMEPAD = 2;
 	public static final int TOUCH_MODE_MAX = 3;
 
+	public static final int JOYSTICK_AXIS_MAX = 32767;
+	public static final float JOYSTICK_AXIS_HAT_SCALE = 0.33f;
+
 	final protected Context _context;
 	final protected ScummVM _scummvm;
 	final protected GestureDetector _gd;

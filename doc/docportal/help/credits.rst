@@ -458,6 +458,17 @@ DreamWeb
    * - Willem Jan Palenstijn
      -
 
+Freescape
+^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Chris Allen
+     - Sound engine programming
+   * - Gustavo Grieco
+     -
+
 Glk
 ^^^
 
@@ -499,6 +510,8 @@ Gob
    * - Torbjörn Andersson
      -
    * - Arnaud Boutonné
+     -
+   * - Simon Delamarre
      -
    * - Sven Hesse
      -
@@ -982,7 +995,7 @@ SCUMM
    * - Torbjörn Andersson
      -
    * - Andrea Boscarino
-     - Digital iMUSE, various fixes
+     - Digital iMUSE, SMUSH audio, GUI
    * - James Brown
      - (retired)
    * - Jonathan Gray

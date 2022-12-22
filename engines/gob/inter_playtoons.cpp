@@ -80,6 +80,8 @@ void Inter_Playtoons::setupOpcodesDraw() {
 
 void Inter_Playtoons::setupOpcodesFunc() {
 	Inter_v6::setupOpcodesFunc();
+	// NOTE: consider backporting here changes done in Inter_v7
+	// in particular, o7_printText (0x0B), o7_drawLine (0x34) and o7_invalidate (0x36)
 
 	CLEAROPCODEFUNC(0x3D);
 	OPCODEFUNC(0x0B, oPlaytoons_printText);
@@ -132,26 +134,26 @@ void Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 			switch (_vm->_game->_script->peekByte()) {
 			case TYPE_VAR_INT8:
 			case TYPE_ARRAY_INT8:
-				sprintf(buf + i, "%d",
+				Common::sprintf_s(buf + i, sizeof(buf) - i, "%d",
 						(int8) READ_VARO_UINT8(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_INT16:
 			case TYPE_VAR_INT32_AS_INT16:
 			case TYPE_ARRAY_INT16:
-				sprintf(buf + i, "%d",
+				Common::sprintf_s(buf + i, sizeof(buf) - i, "%d",
 						(int16) READ_VARO_UINT16(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_INT32:
 			case TYPE_ARRAY_INT32:
-				sprintf(buf + i, "%d",
+				Common::sprintf_s(buf + i, sizeof(buf) - i, "%d",
 						(int32)VAR_OFFSET(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_STR:
 			case TYPE_ARRAY_STR:
-				sprintf(buf + i, "%s",
+				Common::sprintf_s(buf + i, sizeof(buf) - i, "%s",
 						GET_VARO_STR(_vm->_game->_script->readVarIndex()));
 				break;
 
@@ -449,7 +451,7 @@ void Inter_Playtoons::oPlaytoons_openItk() {
 	_vm->_dataIO->openArchive(file, false);
 }
 
-Common::String Inter_Playtoons::getFile(const char *path) {
+Common::String Inter_Playtoons::getFile(const char *path, bool stripPath) {
 	const char *orig = path;
 
 	if      (!strncmp(path, "@:\\", 3))
@@ -463,23 +465,30 @@ Common::String Inter_Playtoons::getFile(const char *path) {
 	else if (!strncmp(path, "<ALLCD>", 7))
 		path += 7;
 
-	const char *backslash = strrchr(path, '\\');
-	if (backslash)
-		path = backslash + 1;
+	if (stripPath) {
+		const char *backslash = strrchr(path, '\\');
+		if (backslash)
+			path = backslash + 1;
+	}
 
-	if (orig != path)
+	Common::String newPath = path;
+	// Comma in filenames tells this engine that the file handle may be reused for next read/write operations
+	// E.g. myfile,0 will keep the file handle for "myfile".
+	// If later we request file I/O for "myfile,1" the file handle will be reused.
+	// It seems that we can just ignore this, as the seek position of the handle is reset anyway.
+	uint32 commaPos = newPath.find(',');
+	if (commaPos != Common::String::npos)
+		newPath = newPath.substr(0, commaPos);
+
+	if (orig != newPath)
 		debugC(2, kDebugFileIO, "Inter_Playtoons::getFile(): Evaluating path"
 				"\"%s\" to \"%s\"", orig, path);
 
-	return path;
+	return newPath;
 }
 
 bool Inter_Playtoons::readSprite(Common::String file, int32 dataVar,
 		int32 size, int32 offset) {
-
-	// WORKAROUND: Adibou copies TEMP.CSA to TEMP01.CSA, which isn't yet implemented
-	if (file.equalsIgnoreCase("TEMP01.CSA"))
-		file = "TEMP.CSA";
 
 	bool palette = false;
 	if (size < -1000) {

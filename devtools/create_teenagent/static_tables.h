@@ -14670,7 +14670,7 @@ const static char* dialog_129[] = {
 	CHANGE_CHARACTER,
 	"You have seen when I?...",
 	CHANGE_CHARACTER,
-	"I don't want to embarass you.",
+	"I don't want to embarrass you.",
 	DISPLAY_MESSAGE,
 	"You did a good job for the RGB.",
 	CHANGE_CHARACTER,

@@ -118,11 +118,10 @@ void AdNodeState::setCaption(const char *caption, int caseVal) {
 	}
 
 	delete[] _caption[caseVal - 1];
-	_caption[caseVal - 1] = new char[strlen(caption) + 1];
-	if (_caption[caseVal - 1]) {
-		strcpy(_caption[caseVal - 1], caption);
-		_gameRef->expandStringByStringTable(&_caption[caseVal - 1]);
-	}
+	size_t captionSize = strlen(caption) + 1;
+	_caption[caseVal - 1] = new char[captionSize];
+	Common::strcpy_s(_caption[caseVal - 1], captionSize, caption);
+	_gameRef->expandStringByStringTable(&_caption[caseVal - 1]);
 }
 
 

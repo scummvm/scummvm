@@ -339,6 +339,11 @@ There are many recognized configuration keys. In the table below, each key is ei
 	- op3lpt
 	- rwopl3 "
 		":ref:`originalsaveload <osl>`",boolean,false,
+		":ref:`output_channels <outputchannels>`",integer,,"
+	Supported values are:
+
+	- 1
+	- 2"
 		":ref:`output_rate <outputrate>`",integer,,"
 	Sensible values are:
 

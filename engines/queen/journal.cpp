@@ -182,7 +182,7 @@ void Journal::drawSaveDescriptions() {
 	for (int i = 0; i < NUM_SAVES_PER_PAGE; ++i) {
 		int n = _currentSavePage * 10 + i;
 		char nb[4];
-		sprintf(nb, "%d", n + 1);
+		Common::sprintf_s(nb, "%d", n + 1);
 		int y = _textField.y + i * _textField.h;
 		_vm->display()->setText(_textField.x, y, _saveDescriptions[n], false);
 		_vm->display()->setText(_textField.x - 27, y + 1, nb, false);
@@ -537,7 +537,7 @@ void Journal::drawInfoPanel() {
 		break;
 	}
 	char versionId[13];
-	sprintf(versionId, "Version %c.%c%c", ver[2], ver[3], ver[4]);
+	Common::sprintf_s(versionId, "Version %c.%c%c", ver[2], ver[3], ver[4]);
 	_vm->display()->setTextCentered(156, versionId, false);
 }
 
@@ -547,7 +547,7 @@ void Journal::initTextField(const char *desc) {
 	_textField.posCursor = _vm->display()->textWidth(desc);
 	_textField.textCharsCount = strlen(desc);
 	memset(_textField.text, 0, sizeof(_textField.text));
-	strcpy(_textField.text, desc);
+	Common::strcpy_s(_textField.text, desc);
 }
 
 void Journal::updateTextField(uint16 ascii, int keycode) {

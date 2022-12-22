@@ -90,7 +90,7 @@ public:
 protected:
 	void setSystemMousePosition(const int x, const int y) override {}
 
-	void showOverlay() override;
+	void showOverlay(bool inGUI) override;
 	void hideOverlay() override;
 
 

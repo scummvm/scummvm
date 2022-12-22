@@ -286,7 +286,7 @@ bool EventManager::handleInput() {
 		default:
 			if (_input.keyPressed >= 256) {
 				char tmp[7] = "ABCDEF";
-				sprintf(tmp, "%i", _input.keyPressed);
+				Common::sprintf_s(tmp, "%i", _input.keyPressed);
 				tempString = tmp;
 				//}
 			} else {

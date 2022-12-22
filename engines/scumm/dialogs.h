@@ -96,7 +96,7 @@ public:
 	}
 
 	void reflowLayout() override;
-	const char *getPlainEngineString(int stringno);
+	const char *getPlainEngineString(int stringno, bool forceHardcodedString = false);
 
 protected:
 	// Query a string from the resources
@@ -226,6 +226,7 @@ public:
 	}
 
 	GUI::CheckboxWidget *createEnhancementsCheckbox(GuiObject *boss, const Common::String &name);
+	GUI::CheckboxWidget *createOriginalGUICheckbox(GuiObject *boss, const Common::String &name);
 	void updateAdjustmentSlider(GUI::SliderWidget *slider, GUI::StaticTextWidget *value);
 };
 
@@ -249,6 +250,8 @@ private:
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	GUI::CheckboxWidget *_enableEnhancementsCheckbox;
+	GUI::CheckboxWidget *_enableOriginalGUICheckbox;
+
 	GUI::SliderWidget *_overtureTicksSlider;
 	GUI::StaticTextWidget *_overtureTicksValue;
 
@@ -275,6 +278,8 @@ private:
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	GUI::CheckboxWidget *_enableEnhancementsCheckbox;
+	GUI::CheckboxWidget *_enableOriginalGUICheckbox;
+
 	GUI::SliderWidget *_playbackAdjustmentSlider;
 	GUI::StaticTextWidget *_playbackAdjustmentValue;
 
@@ -302,6 +307,8 @@ private:
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	GUI::CheckboxWidget *_enableEnhancementsCheckbox;
+	GUI::CheckboxWidget *_enableOriginalGUICheckbox;
+
 	GUI::SliderWidget *_introAdjustmentSlider;
 	GUI::StaticTextWidget *_introAdjustmentValue;
 	GUI::SliderWidget *_outlookAdjustmentSlider;

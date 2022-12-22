@@ -128,7 +128,7 @@ void InitActorView(const char *name, const char *outfit, const char *weapon, con
 	char h_outfit[8];
 	HashFile(outfit, h_outfit);
 	// Make the cluster name
-	sprintf(cluster_name, "\\C\\%s\\%s.OFT", h_character, h_outfit);
+	Common::sprintf_s(cluster_name, "\\C\\%s\\%s.OFT", h_character, h_outfit);
 	// Hash value for this cluster name
 	cluster_name_hash = NULL_HASH;
 
@@ -137,7 +137,7 @@ void InitActorView(const char *name, const char *outfit, const char *weapon, con
 
 	raj_name_hash = NULL_HASH;
 
-	sprintf(raj_name, "%s\\%s.raj", weapon, anim);
+	Common::sprintf_s(raj_name, "%s\\%s.raj", weapon, anim);
 
 	anim_name = const_cast<char *>(anim);
 	weapon_name = const_cast<char *>(weapon);
@@ -159,7 +159,7 @@ void InitActorView(const char *name, const char *outfit, const char *weapon, con
 	char texture_name[128];
 	uint32 texture_name_hash = NULL_HASH;
 
-	sprintf(texture_name, "material.revtex");
+	Common::sprintf_s(texture_name, "material.revtex");
 
 	TextureHandle *texHan = GetRegisteredTexture(texture_name, texture_name_hash, texture_name, texture_name_hash, cluster_name, cluster_name_hash);
 
@@ -183,7 +183,7 @@ void ChangeAnimPlaying(const char *pose, const char *anim, bool8 forwards, int32
 	// Remake raj filename
 	raj_name_hash = NULL_HASH;
 
-	sprintf(raj_name, "%s\\%s.raj", weapon_name, anim);
+	Common::sprintf_s(raj_name, "%s\\%s.raj", weapon_name, anim);
 
 	// Change animation to use
 	anim_name = const_cast<char *>(anim);
@@ -402,10 +402,10 @@ void DrawFrame(const int32 frame) {
 	g_av_actor->truePos.z = 0;
 	g_av_actor->trueRot = g_av_actor->rot;
 
-	sprintf(pose_name, "%s\\pose.rap", weapon_name);
-	sprintf(bone_name, "%s\\%s.rab", weapon_name, anim_name);
-	sprintf(mesh_name, "mesh.rap");
-	sprintf(smesh_name, "mesh_shadow.rap");
+	Common::sprintf_s(pose_name, "%s\\pose.rap", weapon_name);
+	Common::sprintf_s(bone_name, "%s\\%s.rab", weapon_name, anim_name);
+	Common::sprintf_s(mesh_name, "mesh.rap");
+	Common::sprintf_s(smesh_name, "mesh_shadow.rap");
 
 	uint32 mesh_hash = HashString(mesh_name);
 	RapAPI *mesh = (RapAPI *)rs_anims->Res_open(mesh_name, mesh_hash, cluster_name, cluster_name_hash);

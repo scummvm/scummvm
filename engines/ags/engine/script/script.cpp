@@ -404,7 +404,7 @@ int RunScriptFunctionInRoom(const char *tsname, size_t param_count, const Runtim
 	return toret;
 }
 
-// Run non-claimable event in all script modules, except room, break if certain events occured
+// Run non-claimable event in all script modules, except room, break if certain events occurred
 static int RunUnclaimableEvent(const char *tsname) {
 	const int room_changes_was = _GP(play).room_changes;
 	const int restore_game_count_was = _G(gameHasBeenRestored);

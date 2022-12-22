@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/rational.h"
 #include "common/translation.h"
 #include "gui/saveload.h"
 #include "image/png.h"
@@ -123,7 +124,7 @@ Ultima8Engine *Ultima8Engine::_instance = nullptr;
 Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Shared::UltimaEngine(syst, gameDesc),
 		_isRunning(false),  _gameInfo(nullptr), _fileSystem(nullptr),
-		_configFileMan(nullptr), _saveCount(0), _game(nullptr),
+		_configFileMan(nullptr), _saveCount(0), _game(nullptr), _lastError(Common::kNoError),
 		_kernel(nullptr), _objectManager(nullptr), _mouse(nullptr), _ucMachine(nullptr),
 		_screen(nullptr), _fontManager(nullptr), _paletteManager(nullptr), _gameData(nullptr),
 		_world(nullptr), _desktopGump(nullptr), _gameMapGump(nullptr), _avatarMoverProcess(nullptr),
@@ -157,20 +158,17 @@ Ultima8Engine::~Ultima8Engine() {
 }
 
 Common::Error Ultima8Engine::run() {
-	bool result = true;
+	Common::Error result;
 	if (initialize()) {
 		result = startup();
-		if (result)
+		if (result.getCode() == Common::kNoError)
 			result = runGame();
 
 		deinitialize();
 		shutdown();
 	}
 
-	if (result)
-		return Common::kNoError;
-	else
-		return Common::kNoGameDataFoundError;
+	return result;
 }
 
 
@@ -206,7 +204,7 @@ bool Ultima8Engine::hasFeature(EngineFeature f) const {
 		(f == kSupportsChangingOptionsDuringRuntime);
 }
 
-bool Ultima8Engine::startup() {
+Common::Error Ultima8Engine::startup() {
 	setDebugger(new Debugger());
 	pout << "-- Initializing Pentagram -- " << Std::endl;
 
@@ -334,14 +332,15 @@ bool Ultima8Engine::startup() {
 
 	if (setupGame()) {
 		GraphicSysInit();
-		if (!startupGame())
-			return false;
+		Common::Error result = startupGame();
+		if (result.getCode() != Common::kNoError)
+			return result;
 	} else {
 		// Couldn't setup the game, should never happen?
 		CANT_HAPPEN_MSG("game failed to initialize");
 	}
 	paint();
-	return true;
+	return Common::kNoError;
 }
 
 bool Ultima8Engine::setupGame() {
@@ -368,7 +367,7 @@ bool Ultima8Engine::setupGame() {
 	return true;
 }
 
-bool Ultima8Engine::startupGame() {
+Common::Error Ultima8Engine::startupGame() {
 	pout  << Std::endl << "-- Initializing Game: " << _gameInfo->_name << " --" << Std::endl;
 
 	GraphicSysInit();
@@ -436,7 +435,7 @@ bool Ultima8Engine::startupGame() {
 
 	bool loaded = _game->loadFiles();
 	if (!loaded)
-		return false;
+		return Common::kNoGameDataFoundError;
 
 	applyGameSettings();
 
@@ -451,7 +450,7 @@ bool Ultima8Engine::startupGame() {
 	newGame(saveSlot);
 
 	pout << "-- Game Initialized --" << Std::endl << Std::endl;
-	return true;
+	return Common::kNoError;
 }
 
 void Ultima8Engine::shutdown() {
@@ -465,7 +464,7 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 
 	// reset mouse cursor
 	_mouse->popAllCursors();
-	_mouse->pushMouseCursor();
+	_mouse->pushMouseCursor(Mouse::MOUSE_NORMAL);
 
 	FORGET_OBJECT(_world);
 	_objectManager->reset();
@@ -525,7 +524,7 @@ static uint32 _fastTicksNow() {
 	return g_system->getMillis() * 3;
 }
 
-bool Ultima8Engine::runGame() {
+Common::Error Ultima8Engine::runGame() {
 	_isRunning = true;
 
 	int32 next_ticks = _fastTicksNow();  // Next time is right now!
@@ -582,19 +581,20 @@ bool Ultima8Engine::runGame() {
 		}
 		handleDelayedEvents();
 
+		// Update the mouse
+		_mouse->update();
+
 		// Paint Screen
 		paint();
 
-		if (!_errorMessage.empty()) {
-			MessageBoxGump::Show(_errorTitle, _errorMessage, 0xFF8F3030);
-			_errorTitle.clear();
-			_errorMessage.clear();
+		if (_lastError.getCode() != Common::kNoError) {
+			return _lastError;
 		}
 
 		// Do a delay
 		g_system->delayMillis(5);
 	}
-	return true;
+	return Common::kNoError;
 }
 
 // Paint the _screen
@@ -641,9 +641,6 @@ void Ultima8Engine::paint() {
 	}
 #endif
 
-	// Draw the mouse
-	_mouse->paint();
-
 	// End _painting
 	_screen->EndPainting();
 }
@@ -671,7 +668,7 @@ void Ultima8Engine::GraphicSysInit() {
 		_screen->GetSurfaceDims(old_dims);
 		if (width == old_dims.width() && height == old_dims.height())
 			return;
-		bpp = RenderSurface::_format->bpp();
+		bpp = _screen->getRawSurface()->format.bpp();
 
 		delete _screen;
 	}
@@ -698,10 +695,6 @@ void Ultima8Engine::GraphicSysInit() {
 		paint();
 		return;
 	}
-
-	// setup normal mouse cursor
-	debugN(MM_INFO, "Loading Default Mouse Cursor...\n");
-	_mouse->setup();
 
 	_desktopGump = new DesktopGump(0, 0, width, height);
 	_desktopGump->InitGump(0);
@@ -947,11 +940,10 @@ bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 		return false;
 	}
 
-
-	if (dynamic_cast<StartU8Process *>(_kernel->getRunningProcess())
-		|| dynamic_cast<StartCrusaderProcess *>(_kernel->getRunningProcess()))
-		// Don't save while starting up.
+	// Check for processes that prevent saving
+	if (!_kernel->canSave()) {
 		return false;
+	}
 
 	// Don't allow saving when avatar is dead.
 	MainActor *av = getMainActor();
@@ -959,24 +951,6 @@ bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 		return false;
 
 	return true;
-}
-
-bool Ultima8Engine::saveGame(int slot, const Std::string &desc) {
-	// Check for gumps that prevent saving
-	if (_desktopGump->FindGump(&HasPreventSaveFlag, true)) {
-		pout << "Can't save: open gump preventing save." << Std::endl;
-		return false;
-	}
-
-	// Don't allow saving when avatar is dead.
-	// (Avatar is flagged dead by usecode when you finish the _game as well.)
-	MainActor *av = getMainActor();
-	if (!av || av->hasActorFlags(Actor::ACT_DEAD)) {
-		pout << "Can't save: game over." << Std::endl;
-		return false;
-	}
-
-	return saveGameState(slot, desc).getCode() == Common::kNoError;
 }
 
 Common::Error Ultima8Engine::loadGameState(int slot) {
@@ -1016,8 +990,7 @@ Common::Error Ultima8Engine::saveGameStream(Common::WriteStream *stream, bool is
 	if (modalGump)
 		modalGump->HideGump();
 
-	_mouse->pushMouseCursor();
-	_mouse->setMouseCursor(Mouse::MOUSE_PENTAGRAM);
+	_mouse->pushMouseCursor(Mouse::MOUSE_WAIT);
 
 	// Redraw to indicate busy and for save thumbnail
 	paint();
@@ -1110,7 +1083,7 @@ void Ultima8Engine::resetEngine() {
 
 	// reset mouse cursor
 	_mouse->popAllCursors();
-	_mouse->pushMouseCursor();
+	_mouse->pushMouseCursor(Mouse::MOUSE_NORMAL);
 
 	_timeOffset = -(int32)Kernel::get_instance()->getFrameNum();
 	_inversion = 0;
@@ -1259,22 +1232,19 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	SavegameReader *sg = new SavegameReader(stream);
 	SavegameReader::State state = sg->isValid();
 	if (state == SavegameReader::SAVE_CORRUPT) {
-		Error("Invalid or corrupt savegame", "Error Loading savegame");
 		delete sg;
-		return Common::kReadingFailed;
+		return Common::Error(Common::kReadingFailed, "Invalid or corrupt savegame");
 	}
 
 	if (state != SavegameReader::SAVE_VALID) {
-		Error("Unsupported savegame version", "Error Loading savegame");
 		delete sg;
-		return Common::kReadingFailed;
+		return Common::Error(Common::kReadingFailed, "Unsupported savegame version");
 	}
 
-	_mouse->pushMouseCursor();
-	_mouse->setMouseCursor(Mouse::MOUSE_PENTAGRAM);
-	_screen->BeginPainting();
-	_mouse->paint();
-	_screen->EndPainting();
+	_mouse->pushMouseCursor(Mouse::MOUSE_WAIT);
+
+	// Redraw to indicate busy
+	paint();
 
 	Common::SeekableReadStream *ds;
 	GameInfo saveinfo;
@@ -1283,9 +1253,8 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	bool ok = saveinfo.load(ds, version);
 
 	if (!ok) {
-		Error("Invalid or corrupt savegame: missing GameInfo", "Error Loading savegame");
 		delete sg;
-		return Common::kReadingFailed;
+		return Common::Error(Common::kReadingFailed, "Invalid or corrupt savegame: missing GameInfo");
 	}
 
 	if (!_gameInfo->match(saveinfo)) {
@@ -1302,9 +1271,8 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 		}
 		perr << message << Std::endl;
 #else
-		Error(message, "Error Loading savegame");
 		delete sg;
-		return Common::kReadingFailed;
+		return Common::Error(Common::kReadingFailed, message);
 #endif
 	}
 
@@ -1398,7 +1366,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 
 	// Reset mouse cursor
 	_mouse->popAllCursors();
-	_mouse->pushMouseCursor();
+	_mouse->pushMouseCursor(Mouse::MOUSE_NORMAL);
 
 	/*
 	// In case of bugs, ensure persistent processes are around?
@@ -1415,9 +1383,8 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	 */
 
 	if (!totalok) {
-		Error(message, "Error Loading savegame");
 		delete sg;
-		return Common::kReadingFailed;
+		return Common::Error(Common::kReadingFailed, message);
 	}
 
 	pout << "Done" << Std::endl;
@@ -1426,13 +1393,8 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	return Common::kNoError;
 }
 
-void Ultima8Engine::Error(Std::string message, Std::string title) {
-	if (title.empty()) title = "Error";
-
-	perr << title << ": " << message << Std::endl;
-
-	_errorMessage = message;
-	_errorTitle = title;
+void Ultima8Engine::setError(Common::Error &error) {
+	_lastError = error;
 }
 
 Gump *Ultima8Engine::getGump(uint16 gumpid) {
@@ -1681,8 +1643,24 @@ void Ultima8Engine::showSplashScreen() {
 	Graphics::Screen *scr = Ultima8Engine::get_instance()->getScreen();
 	const Graphics::Surface *srcSurface = png.getSurface();
 
-	scr->transBlitFrom(*srcSurface, Common::Rect(0, 0, srcSurface->w, srcSurface->h),
-		Common::Rect(0, 0, scr->w, scr->h));
+	Common::Rect dest(0, 0, scr->w, scr->h);
+
+	// Splash screen is expected to be 640x480.
+	// If the window has a different aspect ratio or corrected aspect ratio,
+	// then scale to appropriate size and center.
+	frac_t aspectRatio = Common::Rational(scr->w, scr->h).toFrac();
+	if (aspectRatio != Common::Rational(320, 240).toFrac() &&
+		aspectRatio != Common::Rational(320, 200).toFrac()) {
+		Common::Rational scaleFactorX(scr->w, srcSurface->w);
+		Common::Rational scaleFactorY(scr->h, srcSurface->h);
+		Common::Rational scale = scaleFactorX < scaleFactorY ? scaleFactorX : scaleFactorY;
+
+		dest.setWidth((srcSurface->w * scale).toInt());
+		dest.setHeight((srcSurface->h * scale).toInt());
+		dest.moveTo((scr->w - dest.width()) / 2, (scr->h - dest.height()) / 2);
+	}
+
+	scr->transBlitFrom(*srcSurface, Common::Rect(0, 0, srcSurface->w, srcSurface->h), dest);
 	scr->update();
 	// Handle a single event to get the splash screen shown
 	Common::Event event;

@@ -39,7 +39,7 @@ ActiveMission *ActiveMission::newMission(ObjectID genID, uint16 script) {
 	ActiveMission   *ms = nullptr;
 
 	for (i = 0; i < ARRAYSIZE(activeMissions); i++) {
-		if (!(activeMissions[i]._data.missionFlags & inUse)) {
+		if (!(activeMissions[i]._data.missionFlags & kInUse)) {
 			ms = &activeMissions[i];
 			break;
 		}
@@ -50,7 +50,7 @@ ActiveMission *ActiveMission::newMission(ObjectID genID, uint16 script) {
 	ms->_data.missionID   = i;
 	ms->_data.generatorID = genID;
 	ms->_data.missionScript = script;
-	ms->_data.missionFlags |= inUse;
+	ms->_data.missionFlags |= kInUse;
 
 	ms->_data.numKnowledgeIDs = ms->_data.numObjectIDs = 0;
 
@@ -68,7 +68,7 @@ int ActiveMission::findMission(ObjectID genID) {
 	int             i;
 
 	for (i = 0; i < ARRAYSIZE(activeMissions); i++) {
-		if (activeMissions[i]._data.missionFlags & inUse
+		if (activeMissions[i]._data.missionFlags & kInUse
 		        &&  activeMissions[i]._data.generatorID == genID) {
 			return i;
 		}
@@ -255,7 +255,7 @@ void ActiveMission::cleanup() {
 	}
 
 	_data.numKnowledgeIDs = _data.numObjectIDs = 0;
-	_data.missionFlags &= ~inUse;
+	_data.missionFlags &= ~kInUse;
 }
 
 //-----------------------------------------------------------------------
@@ -265,7 +265,7 @@ void initMissions() {
 	int     i;
 
 	for (i = 0; i < ARRAYSIZE(activeMissions); i++)
-		activeMissions[i]._data.missionFlags &= ~inUse;
+		activeMissions[i]._data.missionFlags &= ~kInUse;
 }
 
 void saveMissions(Common::OutSaveFile *outS) {

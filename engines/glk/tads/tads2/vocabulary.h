@@ -372,7 +372,7 @@ int voctok(voccxdef *ctx, char *cmd, char *outbuf,
 		   char **wrd, int lower, int cvt_ones, int show_errors);
 
 /* get types for a word list */
-int vocgtyp(voccxdef *ctx, char **cmd, int *types, char *orgbuf);
+int vocgtyp(voccxdef *ctx, char **cmd, int *types, char *orgbuf, size_t orgbuflen);
 
 /* execute a player command */
 int voccmd(voccxdef *ctx, char *cmd, uint cmdlen);
@@ -382,7 +382,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 				prpnum defprop, prpnum accprop, prpnum verprop,
 				char *cmd[], objnum otherobj, objnum cmdActor,
 				objnum cmdVerb, objnum cmdPrep, char *cmdbuf,
-				int silent);
+				size_t cmdlen, int silent);
 
 /* display a multiple-object prefix */
 void voc_multi_prefix(voccxdef *ctx, objnum objn,
@@ -392,8 +392,8 @@ void voc_multi_prefix(voccxdef *ctx, objnum objn,
 /* low-level executor */
 int execmd(voccxdef *ctx, objnum actor, objnum prep,
 		   char *vverb, char *vprep, vocoldef *dolist, vocoldef *iolist,
-		   char **cmd, int *typelist,
-		   char *cmdbuf, int wrdcnt, uchar **preparse_list, int *next_start);
+		   char **cmd, int *typelist, char *cmdbuf, size_t cmdlen,
+		   int wrdcnt, uchar **preparse_list, int *next_start);
 
 /* recursive command execution */
 int execmd_recurs(voccxdef *ctx, objnum actor, objnum verb,

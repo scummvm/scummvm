@@ -27,7 +27,7 @@
 #include "common/endian.h"
 #include "common/str.h"
 #include "common/util.h"
-#include "common/zlib.h"
+#include "common/compression/zlib.h"
 
 #include "wintermute/base/gfx/xfile_loader.h"
 

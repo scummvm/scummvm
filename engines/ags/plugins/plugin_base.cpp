@@ -110,11 +110,11 @@ Plugins::PluginBase *pluginOpen(const char *filename) {
 	if (fname.equalsIgnoreCase("AGSSock"))
 		return new AGSSock::AGSSock();
 
-	if ((fname.equalsIgnoreCase("AGSSpriteFont") && version == ::AGS::kClifftopGames))
-		return new AGSSpriteFont::AGSSpriteFontClifftopGames();
-
-	if (fname.equalsIgnoreCase("AGSSpriteFont") || fname.equalsIgnoreCase("agsplugin.spritefont"))
+	if (fname.equalsIgnoreCase("AGSSpriteFont") || fname.equalsIgnoreCase("agsplugin.spritefont")) {
+		if (version == ::AGS::kClifftopGames)
+			return new AGSSpriteFont::AGSSpriteFontClifftopGames();
 		return new AGSSpriteFont::AGSSpriteFont();
+	}
 
 	if (fname.equalsIgnoreCase("agsgalaxy") || fname.equalsIgnoreCase("agsgalaxy-unified") ||
 	        fname.equalsIgnoreCase("agsgalaxy-disjoint"))

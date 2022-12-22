@@ -89,7 +89,7 @@ struct ADGameFileDescription {
  *
  * Note that the lowest 16 bits are currently reserved for use by the client code.
  */
-enum ADGameFlags {
+enum ADGameFlags : uint {
 	ADGF_NO_FLAGS        =  0u,        ///< No flags.
 	ADGF_TAILMD5         = (1u << 16), ///< Calculate the MD5 for this entry from the end of the file.
 	ADGF_AUTOGENTARGET   = (1u << 17), ///< Automatically generate gameid from @ref ADGameDescription::extra.
@@ -284,11 +284,6 @@ protected:
 	const PlainGameDescriptor *_gameIds;
 
 	/**
-	 * A map containing all the extra game GUI options the engine supports.
-	 */
-	const ADExtraGuiOptionsMap * const _extraGuiOptions;
-
-	/**
 	 * The number of bytes to compute the MD5 checksum for.
 	 *
 	 * The Advanced Detector is primarily based on computing and matching
@@ -343,7 +338,7 @@ public:
 	/**
 	 * Initialize game detection using AdvancedMetaEngineDetection.
 	 */
-	AdvancedMetaEngineDetection(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions = 0);
+	AdvancedMetaEngineDetection(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds);
 
 	/**
 	 * Return a list of targets supported by the engine.
@@ -370,25 +365,9 @@ public:
 	 */
 	Common::Error createInstance(OSystem *syst, Engine **engine);
 
-	/**
-	 * Return a list of extra GUI options for the specified target.
-	 *
-	 * If no target is specified, all of the available custom GUI options are
-	 * returned for the plugin (used to set default values).
-	 *
-	 * Currently, this only supports options with checkboxes.
-	 *
-	 * The default implementation returns an empty list.
-	 *
-	 * @param target    Name of a config manager target.
-	 *
-	 * @return A list of extra GUI options for an engine plugin and target.
-	 */
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override final;
-
 	static Common::StringArray getPathsFromEntry(const ADGameDescription *g);
 
-	uint getMD5Bytes() const { return _md5Bytes; }
+	uint getMD5Bytes() const override final { return _md5Bytes; }
 
 protected:
 	/**
@@ -408,6 +387,7 @@ private:
 	void initSubSystems(const ADGameDescription *gameDesc) const;
 	void preprocessDescriptions();
 	bool isEntryGrayListed(const ADGameDescription *g) const;
+	void detectClashes() const;
 
 private:
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _grayListMap;
@@ -460,7 +440,7 @@ protected:
 	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::String &parentName = Common::String()) const;
 
 	/** Get the properties (size and MD5) of this file. */
-	bool getFileProperties(const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const;
+	bool getFileProperties(const FileMap &allFiles, const ADGameDescription &game, const Common::String &fname, FileProperties &fileProps) const;
 
 	/** Convert an AD game description into the shared game description format. */
 	virtual DetectedGame toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo = nullptr) const;
@@ -529,7 +509,35 @@ public:
 	 *
 	 * Based on @ref MetaEngine::getFileProperties.
 	 */
-	bool getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const;
+	bool getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, const ADGameDescription &game, const Common::String &fname, FileProperties &fileProps) const;
+
+protected:
+	/**
+	 * Return a list of extra GUI options for the specified target.
+	 *
+	 * If no target is specified, all of the available custom GUI options are
+	 * returned for the plugin (used to set default values).
+	 *
+	 * Currently, this only supports options with checkboxes.
+	 *
+	 * The default implementation returns an empty list.
+	 *
+	 * @param target    Name of a config manager target.
+	 *
+	 * @return A list of extra GUI options for an engine plugin and target.
+	 */
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override final;
+
+	/**
+	 * Returns a map containing all the extra game GUI options the engine supports.
+	 */
+	virtual const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const { return nullptr; }
+
+	/**
+	 * Returns the set of features that need to be enabled for the
+	 * extended save format to work
+	 */
+	bool checkExtendedSaves(MetaEngineFeature f) const;
 };
 
 /**

@@ -87,7 +87,7 @@
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/translation.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 
 #include "gui/message.h"
 
@@ -128,6 +128,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_noDelayMillisFramelimiter    = false;
 	_framesPerSecondMax           = false;
 	_disableStaminaDrain          = false;
+	_spanishCreditsCorrection     = false;
 	_cutContent                   = Common::String(desc->gameId).contains("bladerunner-final");
 	_enhancedEdition              = Common::String(desc->gameId).contains("bladerunner-ee");
 	_validBootParam               = false;
@@ -643,10 +644,14 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 		ConfMan.registerDefault("sitcom", "false");
 		ConfMan.registerDefault("shorty", "false");
 		ConfMan.registerDefault("disable_stamina_drain", "false");
+		ConfMan.registerDefault("correct_spanish_credits", "false");
 
 		_sitcomMode                = ConfMan.getBool("sitcom");
 		_shortyMode                = ConfMan.getBool("shorty");
 		_disableStaminaDrain       = ConfMan.getBool("disable_stamina_drain");
+		if (_language == Common::ES_ESP) {
+			_spanishCreditsCorrection  = ConfMan.getBool("correct_spanish_credits");
+		}
 
 		// These are static objects in original game
 		_screenEffects = new ScreenEffects(this, 0x8000);
@@ -697,8 +702,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 		// Seed rand
 
-		_cosTable1024 = new Common::CosineTable(1024); // 10-bits = 1024 points for 2*PI;
-		_sinTable1024 = new Common::SineTable(1024);
+		_cosTable1024 = new Math::CosineTable(1024); // 10-bits = 1024 points for 2*PI;
+		_sinTable1024 = new Math::SineTable(1024);
 
 		_view = new View();
 
@@ -1427,7 +1432,7 @@ bool BladeRunnerEngine::isAllowedRepeatedCustomEvent(const Common::Event &currev
 // F-keys are not repeated.
 bool BladeRunnerEngine::isAllowedRepeatedKey(const Common::KeyState &currKeyState) {
 	// Return and KP_Enter keys are repeatable in KIA.
-	// This is noticable when choosing an already saved game to overwrite
+	// This is noticeable when choosing an already saved game to overwrite
 	// and holding down Enter would cause the confirmation dialogue to pop up
 	// and it would subsequently confirm it as well.
 	return  currKeyState.keycode == Common::KEYCODE_BACKSPACE
@@ -1722,7 +1727,7 @@ void BladeRunnerEngine::setExtraCNotify(uint8 val) {
 	_extraCNotify = val;
 }
 
-// Check if an polled event belongs to a currently disabled keymap and, if so, drop it.
+// Check if a polled event belongs to a currently disabled keymap and, if so, drop it.
 bool BladeRunnerEngine::shouldDropRogueCustomEvent(const Common::Event &evt) {
 	if (getEventManager()->getKeymapper() != nullptr) {
 		Common::KeymapArray kmpsArr = getEventManager()->getKeymapper()->getKeymaps();

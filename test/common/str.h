@@ -370,6 +370,15 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS( Common::U32String::format("%s", "test").encode(), "test" );
 		TS_ASSERT_EQUALS( Common::U32String::format("%s%c%s", "Press ", 'X', " to win").encode(), "Press X to win" );
 		TS_ASSERT_EQUALS( Common::U32String::format("Some %s to make this string longer than the default built-in %s %d", "text", "capacity", 123456).encode(), "Some text to make this string longer than the default built-in capacity 123456" );
+
+		TS_ASSERT_EQUALS( Common::U32String::format("%u", 0).encode(), "0" );
+		TS_ASSERT_EQUALS( Common::U32String::format("%u", 1234).encode(), "1234" );
+
+		TS_ASSERT_EQUALS( Common::U32String::format("%d", 0).encode(), "0" );
+		TS_ASSERT_EQUALS( Common::U32String::format("%d", 1234).encode(), "1234" );
+		TS_ASSERT_EQUALS( Common::U32String::format("%d", -1234).encode(), "-1234" );
+
+		TS_ASSERT_EQUALS( Common::U32String::format("%u %%", 100).encode(), "100 %" );
 	}
 
 	void test_strlcpy() {
@@ -559,6 +568,22 @@ class StringTestSuite : public CxxTest::TestSuite
 		s3.replace(0, 32, "");
 		TS_ASSERT_EQUALS(s3, "TestTestTest");
 		TS_ASSERT_EQUALS(s4, "TestTestTestTestTestTestTestTestTestTestTest");
+	}
+
+	void test_find() {
+		Common::String a("0123012"), b;
+
+		TS_ASSERT_EQUALS(a.find('1'), 1u);
+		TS_ASSERT_EQUALS(a.find('3'), 3u);
+		TS_ASSERT_EQUALS(a.find('1', 3), 5u);
+		TS_ASSERT_EQUALS(b.find('*'), Common::String::npos);
+		TS_ASSERT_EQUALS(b.find('*', 1), Common::String::npos);
+
+		TS_ASSERT_EQUALS(a.rfind('1'), 5u);
+		TS_ASSERT_EQUALS(a.rfind('3'), 3u);
+		TS_ASSERT_EQUALS(a.rfind('1', 3), 1u);
+		TS_ASSERT_EQUALS(b.rfind('*'), Common::String::npos);
+		TS_ASSERT_EQUALS(b.rfind('*', 1), Common::String::npos);
 	}
 
 	void test_setChar() {

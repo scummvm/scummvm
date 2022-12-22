@@ -39,7 +39,7 @@ class GuiScreen;
 
 class Widget {
 public:
-	enum {
+	enum : uint {
 		DIRTY_NONE = 0,
 		DIRTY_ALL = 0xFFFFFFFF
 	};

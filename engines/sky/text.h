@@ -24,6 +24,7 @@
 
 
 #include "common/scummsys.h"
+#include "sky/sky.h"
 
 namespace Sky {
 
@@ -46,10 +47,10 @@ struct PatchMessage {
 
 class Text {
 public:
-	Text(Disk *skyDisk, SkyCompact *skyCompact);
+	Text(SkyEngine *vm, Disk *skyDisk, SkyCompact *skyCompact);
 	~Text();
 	struct DisplayedText displayText(uint32 textNum, uint8 *dest, bool center, uint16 pixelWidth, uint8 color);
-	struct DisplayedText displayText(char *textPtr, uint8 *dest, bool center, uint16 pixelWidth, uint8 color);
+	struct DisplayedText displayText(char *textPtr, uint32 bufLen, uint8 *dest, bool center, uint16 pixelWidth, uint8 color);
 	struct DisplayedText lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool center);
 	void fnSetFont(uint32 fontNr);
 	void fnTextModule(uint32 textInfoId, uint32 textNo);
@@ -66,11 +67,13 @@ private:
 	char getTextChar(uint8 **data, uint32 *bitPos);
 	bool getTextBit(uint8 **data, uint32 *bitPos);
 	void makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&data, uint8 color, uint16 bufPitch);
+	void makeChineseGameCharacter(uint16 textChar, uint8 *charSetPtr, uint8 *&dest, uint8 color, uint16 bufPitch);
 
 	bool patchMessage(uint32 textNum);
 
 	Disk *_skyDisk;
 	SkyCompact *_skyCompact;
+	SkyEngine *_vm;
 
 	const HuffTree *_huffTree;
 

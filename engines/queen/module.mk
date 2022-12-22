@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	sound.o \
 	state.o \
 	talk.o \
+	version.o \
 	walk.o
 
 # This module can be built as a plugin
@@ -39,6 +40,5 @@ DETECT_OBJS += $(MODULE)/detection.o
 # module is enabled, because it already has the contents.
 ifneq ($(ENABLE_QUEEN), STATIC_PLUGIN)
 # External dependencies for detection.
-DETECT_OBJS += $(MODULE)/resource.o
-DETECT_OBJS += $(MODULE)/restables.o
+DETECT_OBJS += $(MODULE)/version.o
 endif

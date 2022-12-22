@@ -84,7 +84,7 @@ void MusicTimerEvent::fire() {
 }
 
 CanyonChase::CanyonChase(Neighborhood *handler) : ChaseInteraction(kMarsCanyonChaseInteractionID, handler,
-							kMarsCanyonChaseNotificationID, (PegasusEngine *)g_engine), _canyonMovie1(kNoDisplayElement),
+							kMarsCanyonChaseNotificationID, g_vm), _canyonMovie1(kNoDisplayElement),
 							_canyonMovie2(kNoDisplayElement), _deathMovie(kNoDisplayElement), _genoMovie(kNoDisplayElement) {
 	_currentMovie = nullptr;
 	_currentCallBack = nullptr;
@@ -118,7 +118,7 @@ void CanyonChase::stopCanyonMusicLoop(const long ticks) {
 
 void CanyonChase::openInteraction() {
 	_canyonMovie1.initFromMovieFile("Images/Mars/Canyon_hq1.mov");
-	_canyonMovie1.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+	_canyonMovie1.setVolume(g_vm->getSoundFXLevel());
 	_canyonMovie1.moveElementTo(kShuttleWindowLeft, kShuttleWindowTop);
 	_canyonMovie1.setDisplayOrder(kShuttleMonitorOrder);
 
@@ -128,7 +128,7 @@ void CanyonChase::openInteraction() {
 	_canyon1CallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
 
 	_canyonMovie2.initFromMovieFile("Images/Mars/Canyon_hq2.mov");
-	_canyonMovie2.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+	_canyonMovie2.setVolume(g_vm->getSoundFXLevel());
 	_canyonMovie2.moveElementTo(kShuttleWindowLeft, kShuttleWindowTop);
 	_canyonMovie2.setDisplayOrder(kShuttleMonitorOrder);
 
@@ -138,7 +138,7 @@ void CanyonChase::openInteraction() {
 	_canyon2CallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
 
 	_deathMovie.initFromMovieFile("Images/Mars/Canyon_hqD.mov");
-	_deathMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+	_deathMovie.setVolume(g_vm->getSoundFXLevel());
 	_deathMovie.moveElementTo(kShuttleWindowLeft, kShuttleWindowTop);
 	_deathMovie.setDisplayOrder(kShuttleMonitorOrder);
 
@@ -149,7 +149,7 @@ void CanyonChase::openInteraction() {
 
 	_musicLoop.attachFader(&_musicFader);
 	_musicLoop.initFromAIFFFile("Sounds/Mars/Canyon Loop.44K.16.AIFF");
-	_musicFader.setMasterVolume(((PegasusEngine *)g_engine)->getAmbienceLevel());
+	_musicFader.setMasterVolume(g_vm->getAmbienceLevel());
 
 	ChaseInteraction::openInteraction();
 
@@ -518,7 +518,7 @@ void CanyonChase::musicTimerExpired(MusicTimerEvent &event) {
 
 void CanyonChase::doGenoChase() {
 	_genoMovie.initFromMovieFile("Images/Mars/Canyon_hqG.mov");
-	_genoMovie.setVolume(((PegasusEngine *)g_engine)->getAmbienceLevel());
+	_genoMovie.setVolume(g_vm->getAmbienceLevel());
 	_genoMovie.moveElementTo(kShuttleWindowLeft, kShuttleWindowTop);
 	_genoMovie.setDisplayOrder(kShuttleMonitorOrder);
 	_genoMovie.startDisplaying();

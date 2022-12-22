@@ -40,20 +40,20 @@ int16 openParchment(uint16);
 
 
 // constants
-const uint32    bookGroupID     = MKTAG('B', 'O', 'O', 'K');
+const uint32    kBookGroupID     = MKTAG('B', 'O', 'O', 'K');
 
-const int maxVisiblePages = 2;
+const int kMaxVisiblePages = 2;
 
 enum {
-	pageLeft = 0,
-	pageRight,
-	pageUp,
-	pageDown
+	kPageLeft = 0,
+	kPageRight,
+	kPageUp,
+	kPageDown
 };
 
 enum pageOrientation {
-	pageOrientVertical = 0,
-	pageOrientHorizontal
+	kPageOrientVertical = 0,
+	kPageOrientHorizontal
 };
 
 struct CDocumentAppearance {
@@ -61,7 +61,7 @@ struct CDocumentAppearance {
 	int16           numPages;                   //  Number of visible pages
 	int16           orientation;                //  Orientation of pages
 	uint8           *textColors;                //  Text color array
-	StaticRect      pageRect[maxVisiblePages];//  Array of visible page rects
+	StaticRect      pageRect[kMaxVisiblePages];//  Array of visible page rects
 	StaticRect      closeRect;                  //  Close-box rectangle
 	StaticWindow    *decoList;                 //  List of decorator panels
 	int16           numDecos;                   //  Number of decorator panels
@@ -78,10 +78,10 @@ class CDocument : public ModalWindow {
 
 private:
 	enum {
-		maxPages            = 32,
-		maxLines            = 32,
-		maxChars            = 32,
-		textPictureOffset   = 1
+		kMaxPages            = 32,
+		kMaxLines            = 32,
+		kMaxChars            = 32,
+		kTextPictureOffset   = 1
 	};
 
 	struct ImageHeader {
@@ -90,34 +90,34 @@ private:
 		int8        data[2];
 	};
 
-	CDocumentAppearance &app;
+	CDocumentAppearance &_app;
 
 	// image poiner array
-	void            *images[maxPages];
+	void            *_images[kMaxPages];
 
-	uint16          currentPage,
-	                lineWidth,
-	                pageHeight,
-	                totalLines,
-	                totalPages;
+	uint16          _currentPage,
+	                _lineWidth,
+	                _pageHeight,
+	                _totalLines,
+	                _totalPages;
 
-	gFont           *textFont;
-	uint16          textHeight;
-	uint16          pages;
-	uint16          numLines[maxPages];
-	uint16          lineLen[maxPages][maxLines];
-	uint16          lineOffset[maxPages];
-	Extent16        imageSizes[maxPages];
-	bool            pageBreakSet;
+	gFont           *_textFont;
+	uint16          _textHeight;
+	uint16          _pages;
+	uint16          _numLines[kMaxPages];
+	uint16          _lineLen[kMaxPages][kMaxLines];
+	uint16          _lineOffset[kMaxPages];
+	Extent16        _imageSizes[kMaxPages];
+	bool            _pageBreakSet;
 
-	char            *scan;                  // for parsing book text.
+	char            *_scan;                  // for parsing book text.
 
 	// string sizes
-	uint16  maxSize;
-	uint16  textSize;
+	uint16  _maxSize;
+	uint16  _textSize;
 
 	// image context
-	hResContext *illustrationCon;
+	hResContext *_illustrationCon;
 
 private:
 	bool activate(gEventType why);       // activate the control

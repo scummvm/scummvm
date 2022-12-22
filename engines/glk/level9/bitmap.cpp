@@ -328,7 +328,7 @@ void bitmap_st2_name(int num, char *dir, char *out) {
 	/* title picture is #30 */
 	if (num == 0)
 		num = 30;
-	sprintf(out, "%s%d.squ", dir, num);
+	Common::sprintf_s(out, MAX_PATH, "%s%d.squ", dir, num);
 }
 
 /*
@@ -346,7 +346,7 @@ void bitmap_pc_name(int num, char *dir, char *out) {
 	/* title picture is #30 */
 	if (num == 0)
 		num = 30;
-	sprintf(out, "%s%d.pic", dir, num);
+	Common::sprintf_s(out, MAX_PATH, "%s%d.pic", dir, num);
 }
 
 /*
@@ -737,14 +737,14 @@ BitmapType bitmap_pc_type(char *file) {
 
 void bitmap_noext_name(int num, char *dir, char *out) {
 	if (num == 0) {
-		sprintf(out, "%stitle", dir);
+		Common::sprintf_s(out, MAX_PATH, "%stitle", dir);
 		if (Common::File::exists(out))
 			return;
 
 		num = 30;
 	}
 
-	sprintf(out, "%s%d", dir, num);
+	Common::sprintf_s(out, MAX_PATH, "%s%d", dir, num);
 }
 
 int bitmap_amiga_intensity(int col) {
@@ -1002,34 +1002,34 @@ const Colour bitmap_bbc_colours[] = {
 
 void bitmap_c64_name(int num, char *dir, char *out) {
 	if (num == 0)
-		sprintf(out, "%stitle mpic", dir);
+		Common::sprintf_s(out, MAX_PATH, "%stitle mpic", dir);
 	else
-		sprintf(out, "%spic%d", dir, num);
+		Common::sprintf_s(out, MAX_PATH, "%spic%d", dir, num);
 }
 
 void bitmap_bbc_name(int num, char *dir, char *out) {
 	if (num == 0) {
-		sprintf(out, "%sP.Title", dir);
+		Common::sprintf_s(out, MAX_PATH, "%sP.Title", dir);
 		if (Common::File::exists(out))
 			return;
 
-		sprintf(out, "%stitle", dir);
+		Common::sprintf_s(out, MAX_PATH, "%stitle", dir);
 	} else {
-		sprintf(out, "%sP.Pic%d", dir, num);
+		Common::sprintf_s(out, MAX_PATH, "%sP.Pic%d", dir, num);
 		if (Common::File::exists(out))
 			return;
 
-		sprintf(out, "%spic%d", dir, num);
+		Common::sprintf_s(out, MAX_PATH, "%spic%d", dir, num);
 	}
 }
 
 void bitmap_cpc_name(int num, char *dir, char *out) {
 	if (num == 0)
-		sprintf(out, "%stitle.pic", dir);
+		Common::sprintf_s(out, MAX_PATH, "%stitle.pic", dir);
 	else if (num == 1)
-		sprintf(out, "%s1.pic", dir);
+		Common::sprintf_s(out, MAX_PATH, "%s1.pic", dir);
 	else
-		sprintf(out, "%sallpics.pic", dir);
+		Common::sprintf_s(out, MAX_PATH, "%sallpics.pic", dir);
 }
 
 BitmapType bitmap_c64_type(char *file) {

@@ -42,6 +42,7 @@ void    File_Close(sc_File *fil);
 void    File_WriteString(sc_File *fil, const char *towrite);
 void    File_WriteInt(sc_File *fil, int towrite);
 void    File_WriteRawChar(sc_File *fil, int towrite);
+void    File_WriteRawInt(sc_File *fil, int towrite);
 void    File_WriteRawLine(sc_File *fil, const char *towrite);
 void    File_ReadRawLine(sc_File *fil, char *buffer);
 const char *File_ReadRawLineBack(sc_File *fil);

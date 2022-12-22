@@ -56,7 +56,7 @@ POSIXSaveFileManager::POSIXSaveFileManager() {
 	const char *envVar;
 
 	// Previously we placed our default savepath in HOME. If the directory
-	// still exists, we will use it for backwards compatability.
+	// still exists, we will use it for backwards compatibility.
 	envVar = getenv("HOME");
 	if (envVar && *envVar) {
 		savePath = envVar;

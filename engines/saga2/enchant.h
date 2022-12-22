@@ -32,69 +32,69 @@ namespace Saga2 {
 enum actorEnchantments {
 
 	//  Object-enchantments
-	enchNone = 0,
-	enchInvisible,
+	kEnchNone = 0,
+	kEnchInvisible,
 
-	enchWarded,
+	kEnchWarded,
 
 	//  Actor skill boosters
-	enchAttackFast,
-	enchEnhanceBrawn,
-	enchEnhanceAgility,
-	enchEnhanceStealth,
-	enchEnhanceArmor,
-	enchEnhanceHitChance,
+	kEnchAttackFast,
+	kEnchEnhanceBrawn,
+	kEnchEnhanceAgility,
+	kEnchEnhanceStealth,
+	kEnchEnhanceArmor,
+	kEnchEnhanceHitChance,
 
 	//  Actor Immunities
-	enchImmunePhysical,
-	enchImmuneProjectile,
-	enchImmuneHandToHand,
-	enchImmuneMagicMissile,
-	enchImmuneFire,
-	enchImmuneFireMagic,
-	enchImmuneLava,
-	enchImmuneCold,
-	enchImmuneMental,
-	enchImmuneDirectMagic,
-	enchImmuneLifeDrain,
+	kEnchImmunePhysical,
+	kEnchImmuneProjectile,
+	kEnchImmuneHandToHand,
+	kEnchImmuneMagicMissile,
+	kEnchImmuneFire,
+	kEnchImmuneFireMagic,
+	kEnchImmuneLava,
+	kEnchImmuneCold,
+	kEnchImmuneMental,
+	kEnchImmuneDirectMagic,
+	kEnchImmuneLifeDrain,
 
 	//  Actor Movement enchantents
-	enchLandWalking,
-	enchDesolidified,
-	enchFloating,
-	enchFallSlowly,
-	enchLevitating,
-	enchWaterWalking,
-	enchFlying,
+	kEnchLandWalking,
+	kEnchDesolidified,
+	kEnchFloating,
+	kEnchFallSlowly,
+	kEnchLevitating,
+	kEnchWaterWalking,
+	kEnchFlying,
 
 	//  Curses
-	enchBlind,
-	enchPanic,
-	enchParalyzed,
-	enchMoveFast,
-	enchMoveSlow,
-	enchAttackSlow,
-	enchAsleep,
-	enchReduceHitCchance,
+	kEnchBlind,
+	kEnchPanic,
+	kEnchParalyzed,
+	kEnchMoveFast,
+	kEnchMoveSlow,
+	kEnchAttackSlow,
+	kEnchAsleep,
+	kEnchReduceHitCchance,
 
 	//  Changes display algorithms
-	enchSoulSight,
-	enchClairvoyant,
-	enchDetectPoison,
+	kEnchSoulSight,
+	kEnchClairvoyant,
+	kEnchDetectPoison,
 
 	//  Changes NPC behavior
-	enchHasNoSmell
+	kEnchHasNoSmell
 };
 
 //-----------------------------------------------------------------------
 //	Iterates through all active enchantments on an object or actor
 
 class EnchantmentIterator {
-	ObjectID        nextID;             //  Pointer to ID of next object.
+	ObjectID        _nextID;             //  Pointer to ID of next object.
 
 public:
-	GameObject      *baseObject,        //  Base obj we're searching for enchantments
-	                *wornObject;        //  An object 'worn' by the base object.
+	GameObject      *_baseObject,        //  Base obj we're searching for enchantments
+	                *_wornObject;        //  An object 'worn' by the base object.
 
 	//  Constructor
 	EnchantmentIterator(GameObject *container);
@@ -108,10 +108,8 @@ public:
 // Global Enchantments
 
 enum worldEnchantments {
-
-	weTimeStop = 0,
-
-	weCount
+	kWETimeStop = 0,
+	kWECount
 };
 
 } // end of namespace Saga2

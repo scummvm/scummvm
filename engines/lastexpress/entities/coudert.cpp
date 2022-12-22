@@ -122,7 +122,7 @@ IMPLEMENT_FUNCTION_S(2, Coudert, bloodJacket)
 		break;
 
 	case kActionDefault:
-		getEntities()->drawSequenceRight(kEntityCoudert, (char *)&params->seq1);
+		getEntities()->drawSequenceRight(kEntityCoudert, params->seq1);
 		break;
 
 	case kActionCallback:
@@ -219,7 +219,7 @@ IMPLEMENT_FUNCTION_S(6, Coudert, playSound)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityCoudert, (char *)&params->seq1);
+		getSound()->playSound(kEntityCoudert, params->seq1);
 		break;
 
 	case kActionCallback:
@@ -248,7 +248,7 @@ IMPLEMENT_FUNCTION_NOSETUP(7, Coudert, playSound16)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityCoudert, (char *)&params->seq1, kVolumeFull);
+		getSound()->playSound(kEntityCoudert, params->seq1, kVolumeFull);
 		break;
 
 	case kActionCallback:
@@ -1522,47 +1522,47 @@ IMPLEMENT_FUNCTION_I(30, Coudert, function30, ObjectIndex)
 		case kObjectCompartmentA:
 			parameters->param2 = kPosition_8200;
 			parameters->param3 = kPosition_7850;
-			strcpy((char *)&parameters->seq, "627Ma");
-			strcpy((char *)&parameters1->seq1, "627Na");
+			Common::strcpy_s(parameters->seq, "627Ma");
+			Common::strcpy_s(parameters1->seq1, "627Na");
 			break;
 
 		case kObjectCompartmentB:
 			parameters->param2 = kPosition_7500;
 			parameters->param3 = kPosition_7850;
 			parameters->param4 = true;
-			strcpy((char *)&parameters->seq, "627Vb");
-			strcpy((char *)&parameters1->seq1, "627Wb");
+			Common::strcpy_s(parameters->seq, "627Vb");
+			Common::strcpy_s(parameters1->seq1, "627Wb");
 			break;
 
 		case kObjectCompartmentC:
 			parameters->param2 = kPosition_6470;
 			parameters->param3 = kPosition_6130;
-			strcpy((char *)&parameters->seq, "627Mc");
-			strcpy((char *)&parameters1->seq1, "627Nc");
+			Common::strcpy_s(parameters->seq, "627Mc");
+			Common::strcpy_s(parameters1->seq1, "627Nc");
 			break;
 
 		case kObjectCompartmentD:
 			parameters->param2 = kPosition_5790;
 			parameters->param3 = kPosition_6130;
 			parameters->param4 = true;
-			strcpy((char *)&parameters->seq, "627Vd");
-			strcpy((char *)&parameters1->seq1, "627Wd");
+			Common::strcpy_s(parameters->seq, "627Vd");
+			Common::strcpy_s(parameters1->seq1, "627Wd");
 			break;
 
 		case kObjectCompartmentE:
 			parameters->param2 = kPosition_4840;
 			parameters->param3 = kPosition_4455;
 			parameters->param4 = true;
-			strcpy((char *)&parameters->seq, "627Me");
-			strcpy((char *)&parameters1->seq1, "627Ne");
+			Common::strcpy_s(parameters->seq, "627Me");
+			Common::strcpy_s(parameters1->seq1, "627Ne");
 			break;
 
 		case kObjectCompartmentF:
 			parameters->param2 = kPosition_4070;
 			parameters->param3 = kPosition_4455;
 			parameters->param4 = true;
-			strcpy((char *)&parameters->seq, "627Vf");
-			strcpy((char *)&parameters1->seq1, "627Wf");
+			Common::strcpy_s(parameters->seq, "627Vf");
+			Common::strcpy_s(parameters1->seq1, "627Wf");
 			break;
 		}
 
@@ -1588,11 +1588,11 @@ IMPLEMENT_FUNCTION_I(30, Coudert, function30, ObjectIndex)
 			}
 
 			setCallback(3);
-			setup_enterExitCompartment((char *)&parameters->seq, (ObjectIndex)parameters->param1);
+			setup_enterExitCompartment(parameters->seq, (ObjectIndex)parameters->param1);
 			break;
 
 		case 3:
-			getEntities()->drawSequenceLeft(kEntityCoudert, (char *)&parameters1->seq1);
+			getEntities()->drawSequenceLeft(kEntityCoudert, parameters1->seq1);
 			getEntities()->enterCompartment(kEntityCoudert, (ObjectIndex)parameters->param1, true);
 
 			setCallback(4);

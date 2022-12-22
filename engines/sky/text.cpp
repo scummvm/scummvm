@@ -43,10 +43,7 @@ namespace Sky {
 #define CHAR_SET_HEADER	128
 #define	MAX_NO_LINES	10
 
-Text::Text(Disk *skyDisk, SkyCompact *skyCompact) {
-	_skyDisk = skyDisk;
-	_skyCompact = skyCompact;
-
+Text::Text(SkyEngine *vm, Disk *skyDisk, SkyCompact *skyCompact) : _skyDisk(skyDisk), _skyCompact(skyCompact), _vm(vm) {
 	initHuffTree();
 
 	_mainCharacterSet.addr = _skyDisk->loadFile(CHAR_SET_FILE);
@@ -120,6 +117,24 @@ void Text::getText(uint32 textNr) { //load text #"textNr" into textBuffer
 		return;
 
 	uint32 sectionNo = (textNr & 0x0F000) >> 12;
+
+	if (SkyEngine::_systemVars->language == SKY_CHINESE_TRADITIONAL) {
+		uint32 sectionOffset = _vm->_chineseTraditionalOffsets[sectionNo];
+		const char *ptr = _vm->_chineseTraditionalBlock + sectionOffset;
+		uint nrInBlock = textNr & 0xFFF;
+		if (sectionNo != 7)
+			nrInBlock--;
+		for (uint32 i = 0; i < nrInBlock; i++) {
+			while (*ptr)
+				ptr++;
+			ptr++;
+		}
+		char *dest = (char *)_textBuffer;
+		while (*ptr)
+			*dest++ = *ptr++;
+		*dest = 0;
+		return;
+	}
 
 	if (SkyEngine::_itemList[FIRST_TEXT_SEC + sectionNo] == NULL) { //check if already loaded
 		debug(5, "Loading Text item(s) for Section %d", (sectionNo >> 2));
@@ -232,10 +247,11 @@ char Text::getTextChar(uint8 **data, uint32 *bitPos) {
 DisplayedText Text::displayText(uint32 textNum, uint8 *dest, bool center, uint16 pixelWidth, uint8 color) {
 	//Render text into buffer *dest
 	getText(textNum);
-	return displayText(_textBuffer, dest, center, pixelWidth, color);
+	return displayText(_textBuffer, sizeof(_textBuffer), dest, center, pixelWidth, color);
 }
 
-DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool center, uint16 pixelWidth, uint8 color) {
+// TODO: Don't use caller-supplied buffer for editing operations
+DisplayedText Text::displayText(char *textPtr, uint32 bufLen, uint8 *dest, bool center, uint16 pixelWidth, uint8 color) {
 	//Render text pointed to by *textPtr in buffer *dest
 	uint32 centerTable[10];
 	uint16 lineWidth = 0;
@@ -246,35 +262,58 @@ DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool center, uint16 
 	// work around bug #1080 (line width exceeded)
 	char *tmpPtr = strstr(textPtr, "MUND-BEATMUNG!");
 	if (tmpPtr)
-		strcpy(tmpPtr, "MUND BEATMUNG!");
+		// We are sure there is at least this space and we replace it by something of same length
+		Common::strcpy_s(tmpPtr, sizeof("MUND-BEATMUNG!"), "MUND BEATMUNG!");
 
 	// work around bug #1940 (line width exceeded when talking to gardener using spanish text)
 	// This text apparently only is broken in the floppy versions, the CD versions contain
 	// the correct string "MANIFESTACION - ARTISTICA.", which doesn't break the algorithm/game.
 	tmpPtr = strstr(textPtr, "MANIFESTACION-ARTISTICA.");
 	if (tmpPtr)
-		strcpy(tmpPtr, "MANIFESTACION ARTISTICA.");
+		// We are sure there is at least this space and we replace it by something of same length
+		Common::strcpy_s(tmpPtr, sizeof("MANIFESTACION-ARTISTICA."), "MANIFESTACION ARTISTICA.");
 
 	char *curPos = textPtr;
 	char *lastSpace = textPtr;
 	uint8 textChar = (uint8)*curPos++;
+	bool isBig5 = SkyEngine::_systemVars->language == SKY_CHINESE_TRADITIONAL;
 
 	while (textChar >= 0x20) {
-		if ((_curCharSet == 1) && (textChar >= 0x80))
-			textChar = 0x20;
+		bool isDoubleChar = false;
+		int oldLineWidth = lineWidth;
+		if (isBig5 && (textChar & 0x80)) {
+			isDoubleChar = true;
+			curPos++;
+			lineWidth += SkyEngine::kChineseTraditionalWidth;
+		} else {
+			if ((_curCharSet == 1) && (textChar >= 0x80))
+				textChar = 0x20;
 
-		textChar -= 0x20;
-		if (textChar == 0) {
-			lastSpace = curPos; //keep track of last space
-			centerTable[numLines] = lineWidth;
+			textChar -= 0x20;
+			if (textChar == 0) {
+				lastSpace = curPos; //keep track of last space
+				centerTable[numLines] = lineWidth;
+			}
+
+			lineWidth += _characterSet[textChar];	//add character width
+			lineWidth += (uint16)_dtCharSpacing;	//include character spacing
 		}
 
-		lineWidth += _characterSet[textChar];	//add character width
-		lineWidth += (uint16)_dtCharSpacing;	//include character spacing
-
 		if (pixelWidth <= lineWidth) {
-			if (*(lastSpace-1) == 10)
-				error("line width exceeded");
+			// If no space is found just break here. This is common in e.g. Chinese
+			// that doesn't use spaces.
+			if (lastSpace == textPtr || *(lastSpace-1) == 10) {
+				curPos -= isDoubleChar ? 2 : 1;
+				if (curPos < textPtr)
+					curPos = textPtr;
+				if (strlen(textPtr) + 2 >= bufLen)
+					error("Ran out of buffer size when word-wrapping");
+				// Add a place for linebreak
+				memmove(curPos + 1, curPos, textPtr + bufLen - curPos - 2);
+				textPtr[bufLen - 1] = 0;
+				lastSpace = curPos + 1;
+				centerTable[numLines] = oldLineWidth;
+			}
 
 			*(lastSpace-1) = 10;
 			lineWidth = 0;
@@ -293,7 +332,8 @@ DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool center, uint16 
 	if (numLines > MAX_NO_LINES)
 		error("Maximum no. of lines exceeded");
 
-	uint32 dtLineSize = pixelWidth * _charHeight;
+	int charHeight = isBig5 ? MAX<int>(_charHeight, SkyEngine::kChineseTraditionalHeight) : _charHeight;
+	uint32 dtLineSize = pixelWidth * charHeight;
 	uint32 numBytes = (dtLineSize * numLines) + sizeof(DataFileHeader) + 4;
 
 	if (!dest)
@@ -304,8 +344,8 @@ DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool center, uint16 
 
 	//make the header
 	((DataFileHeader *)dest)->s_width = pixelWidth;
-	((DataFileHeader *)dest)->s_height = (uint16)(_charHeight * numLines);
-	((DataFileHeader *)dest)->s_sp_size = (uint16)(pixelWidth * _charHeight * numLines);
+	((DataFileHeader *)dest)->s_height = (uint16)(charHeight * numLines);
+	((DataFileHeader *)dest)->s_sp_size = (uint16)(pixelWidth * charHeight * numLines);
 	((DataFileHeader *)dest)->s_offset_x = 0;
 	((DataFileHeader *)dest)->s_offset_y = 0;
 
@@ -325,7 +365,12 @@ DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool center, uint16 
 
 		textChar = (uint8)*curPos++;
 		while (textChar >= 0x20) {
-			makeGameCharacter(textChar - 0x20, _characterSet, curDest, color, pixelWidth);
+			if (isBig5 && (textChar & 0x80)) {
+				uint8 trail = *curPos++;
+				uint16 fullCh = (textChar << 8) | trail;
+				makeChineseGameCharacter(fullCh, _characterSet, curDest, color, pixelWidth);
+			} else
+				makeGameCharacter(textChar - 0x20, _characterSet, curDest, color, pixelWidth);
 			textChar = *curPos++;
 		}
 
@@ -338,6 +383,29 @@ DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool center, uint16 
 	ret.textData = dest;
 	ret.textWidth = dtLastWidth;
 	return ret;
+}
+
+void Text::makeChineseGameCharacter(uint16 textChar, uint8 *charSetPtr, uint8 *&dest, uint8 color, uint16 bufPitch) {
+	int glyphIdx = _vm->_chineseTraditionalIndex[textChar & 0x7fff];
+	if (glyphIdx < 0) {
+		makeGameCharacter('?' - 0x20, charSetPtr, dest, color, bufPitch);
+		return;
+	}
+
+	const SkyEngine::ChineseTraditionalGlyph& glyph = _vm->_chineseTraditionalFont[glyphIdx];
+
+	for (int y = 0; y < SkyEngine::kChineseTraditionalHeight; y++) {
+		uint8 *cur = dest + y * bufPitch;
+
+		for (int byte = 0; byte < 2; byte++)
+			for (int bit = 0; bit < 8; bit++, cur++)
+				if ((glyph.bitmap[y][byte] << bit) & 0x80)
+					*cur = color;
+				else if ((glyph.outline[y][byte] << bit) & 0x80)
+					*cur = 240;
+	}
+	//update position
+	dest += SkyEngine::kChineseTraditionalWidth;
 }
 
 void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, uint8 color, uint16 bufPitch) {
@@ -379,7 +447,7 @@ void Text::makeGameCharacter(uint8 textChar, uint8 *charSetPtr, uint8 *&dest, ui
 
 DisplayedText Text::lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool center) {
 	getText(textNum);
-	DisplayedText textInfo = displayText(_textBuffer, NULL, center, width, color);
+	DisplayedText textInfo = displayText(_textBuffer, sizeof(_textBuffer), NULL, center, width, color);
 
 	uint32 compactNum = FIRST_TEXT_COMPACT;
 	Compact *cpt = _skyCompact->fetchCpt(compactNum);
@@ -451,11 +519,13 @@ void Text::initHuffTree() {
 }
 
 bool Text::patchMessage(uint32 textNum) {
+	if (SkyEngine::_systemVars->language == SKY_CHINESE_TRADITIONAL)
+		return false;
 	uint16 patchIdx = _patchLangIdx[SkyEngine::_systemVars->language];
 	uint16 patchNum = _patchLangNum[SkyEngine::_systemVars->language];
 	for (uint16 cnt = 0; cnt < patchNum; cnt++) {
 		if (_patchedMessages[cnt + patchIdx].textNr == textNum) {
-			strcpy(_textBuffer, _patchedMessages[cnt + patchIdx].text);
+			Common::strcpy_s(_textBuffer, _patchedMessages[cnt + patchIdx].text);
 			return true;
 		}
 	}

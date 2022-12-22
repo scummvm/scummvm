@@ -2983,7 +2983,7 @@ void TuckerEngine::drawStringInteger(int num, int x, int y, int digits) {
 	const int xStart = x;
 	char numStr[4];
 	assert(num < 1000);
-	sprintf(numStr, "%03d", num);
+	Common::sprintf_s(numStr, "%03d", num);
 	int i = (digits > 2) ? 0 : 1;
 	for (; i < 3; ++i) {
 		Graphics::drawStringChar(_locationBackgroundGfxBuf, _scrollOffset + x, y, 640, numStr[i], 102, _charsetGfxBuf);

@@ -58,7 +58,7 @@ void GriffonEngine::addFloatText(const char *stri, float xloc, float yloc, int c
 			_floatText[i].x = xloc;
 			_floatText[i].y = yloc;
 			_floatText[i].col = col;
-			strcpy(_floatText[i].text, stri);
+			Common::strcpy_s(_floatText[i].text, 64, stri);
 			return;
 		}
 	}

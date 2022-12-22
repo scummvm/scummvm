@@ -36,8 +36,14 @@ MODULES += \
 	audio \
 	math \
 	common \
+	common/compression \
+	common/formats \
 	po \
 	doc
+
+ifdef USE_LUA
+MODULES += common/lua
+endif
 
 ifdef USE_MT32EMU
 MODULES += audio/softsynth/mt32
@@ -141,7 +147,7 @@ else
 manual:
 endif
 
-distclean: clean clean-devtools
+distclean: clean clean-devtools clean-test
 	$(RM) config.h config.mk config.log configure.stamp engines/engines.mk engines/detection_table.h engines/plugins_table.h "ScummVM Manual"*.pdf
 
 clean: clean-toplevel
@@ -460,6 +466,9 @@ DIST_FILES_ENGINEDATA+=wintermute.zip
 endif
 ifdef ENABLE_XEEN
 DIST_FILES_ENGINEDATA+=xeen.ccs
+endif
+ifdef ENABLE_FREESCAPE
+DIST_FILES_ENGINEDATA+=freescape.dat
 endif
 ifdef USE_FREETYPE2
 DIST_FILES_ENGINEDATA+=fonts.dat

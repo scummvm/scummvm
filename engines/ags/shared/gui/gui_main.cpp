@@ -705,21 +705,22 @@ void MarkForTranslationUpdate() {
 }
 
 void MarkForFontUpdate(int font) {
+	const bool update_all = (font < 0);
 	for (auto &btn : _GP(guibuts)) {
-		if (btn.Font == font)
-			btn.MarkChanged();
+		if (update_all || btn.Font == font)
+			btn.OnResized();
 	}
 	for (auto &lbl : _GP(guilabels)) {
-		if (lbl.Font == font)
-			lbl.MarkChanged();
+		if (update_all || lbl.Font == font)
+			lbl.OnResized();
 	}
 	for (auto &list : _GP(guilist)) {
-		if (list.Font == font)
-			list.MarkChanged();
+		if (update_all || list.Font == font)
+			list.OnResized();
 	}
 	for (auto &tb : _GP(guitext)) {
-		if (tb.Font == font)
-			tb.MarkChanged();
+		if (update_all || tb.Font == font)
+			tb.OnResized();
 	}
 }
 

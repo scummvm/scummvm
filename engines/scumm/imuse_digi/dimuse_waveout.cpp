@@ -27,7 +27,7 @@ int IMuseDigital::waveOutInit(int sampleRate, waveOutParamsStruct *waveOutSettin
 	_waveOutSampleRate = sampleRate;
 
 	_waveOutBytesPerSample = 2;
-	_waveOutNumChannels = 2;
+	_waveOutNumChannels = _mixer->getOutputStereo() ? 2 : 1;
 	_waveOutZeroLevel = 0;
 	_waveOutPreferredFeedSize = DIMUSE_FEEDSIZE;
 
@@ -87,12 +87,17 @@ int IMuseDigital::waveOutDeinit() {
 }
 
 void IMuseDigital::waveOutCallback() {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	tracksCallback();
 }
 
 byte IMuseDigital::waveOutGetStreamFlags() {
-	byte flags = Audio::FLAG_16BITS | Audio::FLAG_STEREO;
+	byte flags = Audio::FLAG_16BITS;
+
+	if (_mixer->getOutputStereo()) {
+		flags |= Audio::FLAG_STEREO;
+	}
+
 #ifdef SCUMM_LITTLE_ENDIAN
 	flags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif

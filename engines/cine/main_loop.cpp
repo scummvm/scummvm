@@ -454,12 +454,12 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 
 		renderer->setBlackPalette(true); // Sets _changePal = true
 
-		strcpy(newPrcName, "");
-		strcpy(newRelName, "");
-		strcpy(newObjectName, "");
-		strcpy(newMsgName, "");
-		strcpy(currentCtName, "");
-		strcpy(currentPartName, "");
+		newPrcName[0] = '\0';
+		newRelName[0] = '\0';
+		newObjectName[0] = '\0';
+		newMsgName[0] = '\0';
+		currentCtName[0] = '\0';
+		currentPartName[0] = '\0';
 
 		g_sound->stopMusic();
 	}

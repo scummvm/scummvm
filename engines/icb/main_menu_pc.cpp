@@ -61,7 +61,7 @@ void Credits() {
 	t = GetMicroTimer() - t;
 
 	// As the DoCredits() function takes a variable time this timing code
-	// forces an constant frame rate for smoother scrolling
+	// forces a constant frame rate for smoother scrolling
 	int32 r = 40000 - t;
 	if (t < 40000) {
 		g_system->delayMillis(r / 1000);

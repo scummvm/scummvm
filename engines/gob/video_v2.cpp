@@ -94,7 +94,7 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 				if ((temp != 0) || (transp == 0))
 					destPtr.set(temp);
 
-				destPtr++;
+				++destPtr;
 				curWidth++;
 
 				if (curWidth >= srcWidth) {
@@ -128,7 +128,7 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 					if ((temp != 0) || (transp == 0))
 						destPtr.set(temp);
 
-					destPtr++;
+					++destPtr;
 					curWidth++;
 
 					if (curWidth >= srcWidth) {

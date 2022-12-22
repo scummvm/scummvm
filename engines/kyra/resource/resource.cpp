@@ -23,16 +23,49 @@
 #include "kyra/resource/resource.h"
 #include "kyra/resource/resource_intern.h"
 
+#include "common/macresman.h"
+#include "common/compression/stuffit.h"
+#include "common/concatstream.h"
 #include "common/config-manager.h"
 #include "common/fs.h"
+#include "common/substream.h"
 
 namespace Kyra {
 
-Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles(), _protectedFiles(), _macResMan(), _loaders(), _vm(vm), _bigEndianPlatForm(vm->gameFlags().platform == Common::kPlatformAmiga || vm->gameFlags().platform == Common::kPlatformSegaCD) {
+Common::Archive *Resource::loadKyra1MacInstaller() {
+	Common::String kyraInstaller = Util::findMacResourceFile("Install Legend of Kyrandia");
+
+	if (!kyraInstaller.empty()) {
+		Common::Archive *archive = loadStuffItArchive(kyraInstaller, "Install Legend of Kyrandia");
+		if (!archive)
+			error("Failed to load Legend of Kyrandia installer file");
+		return archive;
+	}
+
+	kyraInstaller = Util::findMacResourceFile("Legend of Kyrandia", " Installer");
+
+	if (!kyraInstaller.empty()) {
+		Common::Array<Common::SharedPtr<Common::SeekableReadStream>> parts;
+		for (int i = 1; i <= 5; i++) {
+			Common::String partName = i == 1 ? kyraInstaller : Common::String::format("%s.%d", kyraInstaller.c_str(), i);
+			Common::SeekableReadStream *stream = Common::MacResManager::openFileOrDataFork(partName);
+			if (!stream)
+				error("Failed to load Legend of Kyrandia installer file part %s", partName.c_str());
+			if (stream->size() <= 100)
+				error("Legend of Kyrandia installer file part %s is too short", partName.c_str());
+			parts.push_back(Common::SharedPtr<Common::SeekableReadStream>(new Common::SeekableSubReadStream(stream, 100, stream->size(), DisposeAfterUse::YES)));
+		}
+		return loadStuffItArchive(new Common::ConcatReadStream(parts), "Install Legend of Kyrandia", "Legend of Kyrandia(TM) Installer.*");
+	}
+
+	return nullptr;
+}
+
+Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles(), _protectedFiles(), _loaders(), _vm(vm), _bigEndianPlatForm(vm->gameFlags().platform == Common::kPlatformAmiga || vm->gameFlags().platform == Common::kPlatformSegaCD) {
 	initializeLoaders();
 
-	if (_vm->gameFlags().useInstallerPackage)
-		_macResMan = new Common::MacResManager();
+	if (_vm->game() == GI_KYRA1 && _vm->gameFlags().platform == Common::Platform::kPlatformMacintosh)
+		SearchMan.addSubDirectoryMatching(Common::FSNode(ConfMan.get("path")), "runtime");
 
 	// Initialize directories for playing from CD or with original
 	// directory structure
@@ -55,7 +88,6 @@ Resource::~Resource() {
 	for (ArchiveMap::iterator i = _archiveCache.begin(); i != _archiveCache.end(); ++i)
 		delete i->_value;
 	_archiveCache.clear();
-	delete _macResMan;
 }
 
 bool Resource::reset() {
@@ -67,15 +99,9 @@ bool Resource::reset() {
 		error("invalid game path '%s'", dir.getPath().c_str());
 
 	if (_vm->game() == GI_KYRA1 && _vm->gameFlags().platform == Common::kPlatformMacintosh && _vm->gameFlags().useInstallerPackage) {
-		Common::String kyraInstaller = Util::findMacResourceFile("Install Legend of Kyrandia");
-
-		if (kyraInstaller.empty()) {
-			error("Could not find Legend of Kyrandia installer file");
-		}
-
-		Common::Archive *archive = loadStuffItArchive(kyraInstaller);
+		Common::Archive *archive = loadKyra1MacInstaller();
 		if (!archive)
-			error("Failed to load Legend of Kyrandia installer file");
+			error("Could not find Legend of Kyrandia installer file");
 
 		_files.add("installer", archive, 0, false);
 
@@ -106,9 +132,16 @@ bool Resource::reset() {
 			// when the user has an Android package file in the CWD.
 			Common::FSDirectory gameDir(dir);
 			Common::ArchiveMemberList files;
+			Common::ScopedPtr<Common::FSDirectory> gameDirRuntime;
 
 			gameDir.listMatchingMembers(files, "*.PAK");
 			gameDir.listMatchingMembers(files, "*.APK");
+
+			if (_vm->gameFlags().platform == Common::Platform::kPlatformMacintosh) {
+				gameDirRuntime.reset(gameDir.getSubDirectory("runtime"));
+				gameDirRuntime->listMatchingMembers(files, "*.PAK");
+				gameDirRuntime->listMatchingMembers(files, "*.APK");
+			}
 
 			for (Common::ArchiveMemberList::const_iterator i = files.begin(); i != files.end(); ++i) {
 				Common::String name = (*i)->getName();
@@ -353,7 +386,7 @@ Common::SeekableReadStream *Resource::createReadStream(const Common::String &fil
 
 Common::SeekableReadStreamEndian *Resource::createEndianAwareReadStream(const Common::String &file, int endianness) {
 	Common::SeekableReadStream *stream = _files.createReadStreamForMember(file);
-	return stream ? new EndianAwareStreamWrapper(stream, (endianness == kForceBE) ? true : (endianness == kForceLE ? false : _bigEndianPlatForm)) : nullptr;
+	return stream ? new Common::SeekableReadStreamEndianWrapper(stream, (endianness == kForceBE) ? true : (endianness == kForceLE ? false : _bigEndianPlatForm), DisposeAfterUse::YES) : nullptr;
 }
 
 Common::Archive *Resource::loadArchive(const Common::String &name, Common::ArchiveMemberPtr member) {
@@ -401,16 +434,31 @@ Common::Archive *Resource::loadInstallerArchive(const Common::String &file, cons
 	return archive;
 }
 
-Common::Archive *Resource::loadStuffItArchive(const Common::String &file) {
-	ArchiveMap::iterator cachedArchive = _archiveCache.find(file);
+Common::Archive *Resource::loadStuffItArchive(const Common::String &file, const Common::String& canonicalName) {
+	ArchiveMap::iterator cachedArchive = _archiveCache.find(canonicalName);
 	if (cachedArchive != _archiveCache.end())
 		return cachedArchive->_value;
 
-	Common::Archive *archive = StuffItLoader::load(this, file, _macResMan);
+	Common::Archive *archive = StuffItLoader::load(this, file);
 	if (!archive)
 		return nullptr;
 
-	_archiveCache[file] = archive;
+	_archiveCache[canonicalName] = archive;
+	return archive;
+}
+
+Common::Archive *Resource::loadStuffItArchive(Common::SeekableReadStream *stream, const Common::String& canonicalName, const Common::String& debugName) {
+	ArchiveMap::iterator cachedArchive = _archiveCache.find(canonicalName);
+	if (cachedArchive != _archiveCache.end()) {
+		delete stream;
+		return cachedArchive->_value;
+	}
+
+	Common::Archive *archive = StuffItLoader::load(this, stream, debugName);
+	if (!archive)
+		return nullptr;
+
+	_archiveCache[canonicalName] = archive;
 	return archive;
 }
 

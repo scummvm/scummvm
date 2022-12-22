@@ -19,7 +19,7 @@
  *
  */
 
-/* Based on Agility interpreter version 1.1.1 */
+/* Based on Agility interpreter version 1.1.2 */
 
 #ifndef GLK_AGT
 #define GLK_AGT

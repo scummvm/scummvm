@@ -19,6 +19,9 @@
  *
  */
 
+// For _tcscpy
+#define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
+
 // We cannot use common/scummsys.h directly as it will include
 // windows.h and we need to do it by hand to allow excluded functions
 #if defined(HAVE_CONFIG_H)

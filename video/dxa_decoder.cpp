@@ -29,9 +29,7 @@
 
 #include "video/dxa_decoder.h"
 
-#ifdef USE_ZLIB
-  #include "common/zlib.h"
-#endif
+#include "common/compression/gzio.h"
 
 namespace Video {
 
@@ -169,17 +167,13 @@ void DXADecoder::DXAVideoTrack::setFrameStartPos() {
 }
 
 void DXADecoder::DXAVideoTrack::decodeZlib(byte *data, int size, int totalSize) {
-#ifdef USE_ZLIB
-	unsigned long dstLen = totalSize;
-	Common::uncompress(data, &dstLen, _inBuffer, size);
-#endif
+	Common::GzioReadStream::zlibDecompress(data, totalSize, _inBuffer, size);
 }
 
 #define BLOCKW 4
 #define BLOCKH 4
 
 void DXADecoder::DXAVideoTrack::decode12(int size) {
-#ifdef USE_ZLIB
 	if (!_decompBuffer) {
 		_decompBuffer = new byte[_decompBufferSize]();
 	}
@@ -273,11 +267,9 @@ void DXADecoder::DXAVideoTrack::decode12(int size) {
 			}
 		}
 	}
-#endif
 }
 
 void DXADecoder::DXAVideoTrack::decode13(int size) {
-#ifdef USE_ZLIB
 	uint8 *codeBuf, *dataBuf, *motBuf, *maskBuf;
 
 	if (!_decompBuffer) {
@@ -459,7 +451,6 @@ void DXADecoder::DXAVideoTrack::decode13(int size) {
 			}
 		}
 	}
-#endif
 }
 
 const Graphics::Surface *DXADecoder::DXAVideoTrack::decodeNextFrame() {

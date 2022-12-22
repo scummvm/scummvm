@@ -82,7 +82,7 @@ protected:
 
 	void animateCursor() override;
 
-	virtual void setBuiltinCursor(int index);
+	void setBuiltinCursor(int index) override;
 	void redefineBuiltinCursorFromChar(int index, int chr);
 	void redefineBuiltinCursorHotspot(int index, int x, int y);
 

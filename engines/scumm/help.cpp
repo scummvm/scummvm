@@ -71,8 +71,7 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 	case 1:
 		title = _("Common keyboard commands:");
 		ADD_BIND("F5", _("Save / Load dialog"));
-		if (version >= 5)
-			ADD_BIND(".", _("Skip line of text"));
+		ADD_BIND(".", _("Skip line of text"));
 		ADD_BIND(_("Esc"), _("Skip cutscene"));
 		ADD_BIND(_("Space"), _("Pause game"));
 		ADD_BIND(_("Ctrl") + U32String(" 0-9"), _("Load saved game 1-10"));
@@ -233,6 +232,13 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND("i", _("Inventory"));
 			ADD_BIND("p", _("Punch"));
 			ADD_BIND("k", _("Kick"));
+			ADD_LINE;
+			ADD_BIND(
+				// I18N: The name of the 'Shift' key on a PC keyboard
+				_("Shift") + U32String(" v"),
+				// I18N: Lets one skip the bike/car fight sequences in Full Throttle
+				_("Win the bike fight cheat")
+			);
 			break;
 		case GID_DIG:
 			ADD_BIND("e", _("Examine"));

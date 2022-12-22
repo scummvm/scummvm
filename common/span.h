@@ -42,7 +42,7 @@ namespace Common {
 	typedef typename super_type::reference reference; \
 	typedef typename super_type::const_reference const_reference;
 
-enum {
+enum : uint {
 	kSpanMaxSize = 0xFFFFFFFF,
 	kSpanKeepOffset = 0xFFFFFFFF
 };

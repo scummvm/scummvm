@@ -54,12 +54,12 @@ void EntityData::EntityCallData::syncString(Common::Serializer &s, Common::Strin
 	assert(string.size() <= 13);
 
 	char seqName[13];
-	memset(&seqName, 0, length);
+	memset(seqName, 0, length);
 
 	if (s.isSaving())
-		strcpy((char *)&seqName, string.c_str());
+		Common::strcpy_s(seqName, string.c_str());
 
-	s.syncBytes((byte *)&seqName, length);
+	s.syncBytes((byte *)seqName, length);
 
 	if (s.isLoading())
 		string = seqName;

@@ -78,11 +78,18 @@ void GUIErrorMessageWithURL(const Common::String &msg, const char *url);
 /**
  * Initialize graphics and show an error message.
  */
-void GUIErrorMessageFormat(Common::U32String fmt, ...);
+void GUIErrorMessageFormatU32StringPtr(const Common::U32String *fmt, ...);
 /**
  * Initialize graphics and show an error message.
  */
-void GUIErrorMessageFormat(const char *fmt, ...) GCC_PRINTF(1, 2);
+template<class... TParam>
+inline void GUIErrorMessageFormat(const Common::U32String &fmt, TParam... param) {
+	GUIErrorMessageFormatU32StringPtr(&fmt, Common::forward<TParam>(param)...);
+}
+/**
+ * Initialize graphics and show an error message.
+ */
+void GUIErrorMessageFormat(MSVC_PRINTF const char *fmt, ...) GCC_PRINTF(1, 2);
 
 
 class Engine;
@@ -154,7 +161,7 @@ protected:
 	 */
 	Common::EventManager *_eventMan;
 	/**
-	 * The SaveFileMAnager used by the engine.
+	 * The SaveFileManager used by the engine.
 	 */
 	Common::SaveFileManager *_saveFileMan;
 

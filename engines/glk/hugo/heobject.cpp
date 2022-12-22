@@ -385,7 +385,7 @@ GetNextProp:
 							if (IsBreakpoint(orig_inprop))
 								complex_prop_breakpoint = true;
 
-							sprintf(debug_line, "Calling:  %s.%s", objectname[obj], propertyname[p]);
+							Common::sprintf_s(debug_line, "Calling:  %s.%s", objectname[obj], propertyname[p]);
 							trace_complex_prop_routine = true;
 
 							tempdbnest = dbnest;

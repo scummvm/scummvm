@@ -422,7 +422,7 @@ void SoundEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		char name[16] = {0};
 		s.syncBytes((byte *)name, 16);
 
-		strcpy((char *)name, _name.c_str());
+		Common::strcpy_s(name, _name.c_str());
 		s.syncBytes((byte *)name, 16);
 	}
 }

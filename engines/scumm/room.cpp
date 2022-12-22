@@ -55,9 +55,8 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	fadeOut(_switchRoomEffect2);
 	_newEffect = _switchRoomEffect;
 
-	ScriptSlot *ss = &vm.slot[_currentScript];
-
 	if (_currentScript != 0xFF) {
+		ScriptSlot *ss = &vm.slot[_currentScript];
 		if (ss->where == WIO_ROOM || ss->where == WIO_FLOBJECT) {
 			if (ss->cutsceneOverride && _game.version >= 5)
 				error("Object %d stopped with active cutscene/override in exit", ss->number);
@@ -243,7 +242,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 			hasCopyProtectionScreen = false;
 
 		// The unofficial talkie never shows any copy protection screen.
-		if (strcmp(_game.variant, "SE Talkie") == 0)
+		if (_game.features & GF_ULTIMATE_TALKIE)
 			hasCopyProtectionScreen = false;
 
 		if (hasCopyProtectionScreen) {
@@ -361,7 +360,7 @@ void ScummEngine::setupRoomSubBlocks() {
 
 			if (_dumpScripts) {
 				char buf[32];
-				sprintf(buf, "room-%d-", _roomResource);
+				Common::sprintf_s(buf, "room-%d-", _roomResource);
 				dumpResource(buf, id, ptr - _resourceHeaderSize);
 			}
 
@@ -381,7 +380,7 @@ void ScummEngine::setupRoomSubBlocks() {
 
 			if (_dumpScripts) {
 				char buf[32];
-				sprintf(buf, "room-%d-", _roomResource);
+				Common::sprintf_s(buf, "room-%d-", _roomResource);
 				dumpResource(buf, id, ptr - _resourceHeaderSize);
 			}
 		}
@@ -397,7 +396,7 @@ void ScummEngine::setupRoomSubBlocks() {
 
 			if (_dumpScripts) {
 				char buf[32];
-				sprintf(buf, "room-%d-", _roomResource);
+				Common::sprintf_s(buf, "room-%d-", _roomResource);
 				dumpResource(buf, id, ptr - _resourceHeaderSize);
 			}
 		}
@@ -424,7 +423,7 @@ void ScummEngine::setupRoomSubBlocks() {
 
 			if (_dumpScripts) {
 				char buf[32];
-				sprintf(buf, "room-%d-", _roomResource);
+				Common::sprintf_s(buf, "room-%d-", _roomResource);
 				dumpResource(buf, id, ptr - _resourceHeaderSize);
 			}
 		}
@@ -734,7 +733,7 @@ void ScummEngine_v3old::setupRoomSubBlocks() {
 
 			if (_dumpScripts) {
 				char buf[32];
-				sprintf(buf, "room-%d-", _roomResource);
+				Common::sprintf_s(buf, "room-%d-", _roomResource);
 
 				// HACK: to determine the sizes of the local scripts, we assume that
 				// a) their order in the data file is the same as in the index

@@ -121,10 +121,11 @@ enum SciMessageWorkaroundType {
 	MSG_WORKAROUND_EXTRACT      // use text from a different record, optionally a substring
 };
 
-enum SciMedia {
+enum SciMedia : uint {
 	SCI_MEDIA_ALL,
 	SCI_MEDIA_FLOPPY,
-	SCI_MEDIA_CD
+	SCI_MEDIA_CD,
+	SCI_MEDIA_MAC, // mac floppy
 };
 
 struct SciMessageWorkaroundSolution {

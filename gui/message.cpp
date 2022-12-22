@@ -42,8 +42,11 @@ void MessageDialog::init(const Common::U32String &message,
 						 const Common::U32String &defaultButton,
 						 const Common::U32StringArray &altButtons,
 						 Graphics::TextAlign alignment,
-						 const char *url) {
+						 const char *url,
+						 const Common::U32String &extraMessage) {
 	_url = url;
+
+	_extraMessage = nullptr;
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
@@ -102,18 +105,25 @@ void MessageDialog::init(const Common::U32String &message,
 		buttonHotKey = 0;
 		buttonPos += buttonWidth + buttonSpacing;
 	}
+
+	if (!extraMessage.empty()) {
+		_extraMessage = new StaticTextWidget(this, 10, _h, maxlineWidth, kLineHeight, extraMessage, Graphics::kTextAlignLeft);
+
+		_h += kLineHeight;
+	}
 }
 
 MessageDialog::MessageDialog(const Common::U32String &message,
 							 const Common::U32String &defaultButton,
 							 const Common::U32String &altButton,
 							 Graphics::TextAlign alignment,
-							 const char *url)
+							 const char *url,
+							 const Common::U32String &extraMessage)
 	: Dialog(30, 20, 260, 124) {
 
 	init(message, defaultButton,
 		 altButton.empty() ? Common::U32StringArray() : Common::U32StringArray(1, altButton),
-		 alignment, url);
+		 alignment, url, extraMessage);
 }
 
 MessageDialog::MessageDialog(const Common::String &message,
@@ -125,7 +135,7 @@ MessageDialog::MessageDialog(const Common::String &message,
 
 	init(Common::U32String(message), Common::U32String(defaultButton),
 		 altButton.empty() ? Common::U32StringArray() : Common::U32StringArray(1, Common::U32String(altButton)),
-		 alignment, url);
+		 alignment, url, Common::U32String());
 }
 
 MessageDialog::MessageDialog(const Common::U32String &message,
@@ -134,7 +144,7 @@ MessageDialog::MessageDialog(const Common::U32String &message,
 							 Graphics::TextAlign alignment)
 	: Dialog(30, 20, 260, 124) {
 
-	init(message, defaultButton, altButtons, alignment, nullptr);
+	init(message, defaultButton, altButtons, alignment, nullptr, Common::U32String());
 }
 
 void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -167,6 +177,41 @@ void TimedMessageDialog::handleTickle() {
 	MessageDialog::handleTickle();
 	if (g_system->getMillis() > _timer)
 		close();
+}
+
+CountdownMessageDialog::CountdownMessageDialog(const Common::U32String &message,
+				  uint32 duration,
+				  const Common::U32String &defaultButton,
+				  const Common::U32String &altButton,
+				  Graphics::TextAlign alignment,
+				  const Common::U32String &countdownMessage)
+	: MessageDialog(message, defaultButton, altButton, alignment, nullptr, countdownMessage) {
+	_startTime = g_system->getMillis();
+	_timer = _startTime + duration;
+
+	_countdownMessage = countdownMessage;
+
+	updateCountdown();
+}
+
+void CountdownMessageDialog::handleTickle() {
+	updateCountdown();
+
+	MessageDialog::handleTickle();
+	if (g_system->getMillis() > _timer) {
+		setResult(kMessageAlt);
+		close();
+	}
+}
+
+void CountdownMessageDialog::updateCountdown() {
+	uint32 secs = (_timer - g_system->getMillis()) / 1000;
+
+	Common::U32String msg = Common::U32String::format(_countdownMessage, secs);
+
+	if (msg != _extraMessage->getLabel()) {
+		_extraMessage->setLabel(msg);
+	}
 }
 
 MessageDialogWithURL::MessageDialogWithURL(const Common::U32String &message, const char *url, const Common::U32String &defaultButton, Graphics::TextAlign alignment)

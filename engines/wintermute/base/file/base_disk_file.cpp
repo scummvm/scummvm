@@ -32,7 +32,7 @@
 #include "common/stream.h"
 #include "common/memstream.h"
 #include "common/file.h"
-#include "common/zlib.h"
+#include "common/compression/zlib.h"
 #include "common/archive.h"
 #include "common/tokenizer.h"
 #include "common/config-manager.h"

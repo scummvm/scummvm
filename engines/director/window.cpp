@@ -48,10 +48,10 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_stageColor = _wm->_colorBlack;
 	_puppetTransition = nullptr;
 	_soundManager = new DirectorSound(this);
+	_lingoState = new LingoState;
 
 	_currentMovie = nullptr;
 	_mainArchive = nullptr;
-	_macBinary = nullptr;
 	_nextMovie.frameI = -1;
 	_newMovieStarted = true;
 
@@ -61,21 +61,14 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_windowType = -1;
 	_titleVisible = true;
 	updateBorderType();
-
-	_retPC = 0;
-	_retScript = nullptr;
-	_retContext = nullptr;
-	_retFreezeContext = false;
-	_retLocalVars = nullptr;
 }
 
 Window::~Window() {
+	delete _lingoState;
 	delete _soundManager;
 	delete _currentMovie;
-	if (_macBinary) {
-		delete _macBinary;
-		_macBinary = nullptr;
-	}
+	for (uint i = 0; i < _frozenLingoStates.size(); i++)
+		delete _frozenLingoStates[i];
 	if (_puppetTransition)
 		delete _puppetTransition;
 }
@@ -279,6 +272,64 @@ void Window::updateBorderType() {
 	}
 }
 
+void Window::loadNewSharedCast(Cast *previousSharedCast) {
+	Common::String previousSharedCastPath;
+	Common::String newSharedCastPath = getSharedCastPath();
+	if (previousSharedCast && previousSharedCast->getArchive()) {
+		previousSharedCastPath = previousSharedCast->getArchive()->getPathName();
+	}
+
+	// Check if previous and new sharedCasts are the same
+	if (!previousSharedCastPath.empty() && previousSharedCastPath.equalsIgnoreCase(newSharedCastPath)) {
+		// Clear those previous widget pointers
+		previousSharedCast->releaseCastMemberWidget();
+		_currentMovie->_sharedCast = previousSharedCast;
+		return;
+	}
+
+	// Clean up the previous sharedCast
+	if (!previousSharedCastPath.empty()) {
+		g_director->_allOpenResFiles.erase(previousSharedCastPath);
+		delete previousSharedCast;
+	}
+
+	// Load the new sharedCast
+	if (!newSharedCastPath.empty()) {
+		_currentMovie->loadSharedCastsFrom(newSharedCastPath);
+	}
+}
+
+bool Window::loadNextMovie() {
+	_soundManager->changingMovie();
+	_newMovieStarted = true;
+	_currentPath = getPath(_nextMovie.movie, _currentPath);
+
+	Cast *previousSharedCast = nullptr;
+	if (_currentMovie) {
+		previousSharedCast = _currentMovie->getSharedCast();
+		_currentMovie->_sharedCast = nullptr;
+	}
+
+	delete _currentMovie;
+	_currentMovie = nullptr;
+
+	Archive *mov = openMainArchive(_currentPath + Common::lastPathComponent(_nextMovie.movie, g_director->_dirSeparator));
+
+	if (!mov)
+		return false;
+
+	_currentMovie = new Movie(this);
+	_currentMovie->setArchive(mov);
+
+	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+	debug(0, "@@@@   Switching to movie '%s' in '%s'", utf8ToPrintable(_currentMovie->getMacName()).c_str(), _currentPath.c_str());
+	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+
+	g_lingo->resetLingo();
+	loadNewSharedCast(previousSharedCast);
+	return true;
+}
+
 bool Window::step() {
 	// finish last movie
 	if (_currentMovie && _currentMovie->getScore()->_playState == kPlayStopped) {
@@ -296,62 +347,8 @@ bool Window::step() {
 
 	// prepare next movie
 	if (!_nextMovie.movie.empty()) {
-		_soundManager->changingMovie();
-
-		_newMovieStarted = true;
-
-		_currentPath = getPath(_nextMovie.movie, _currentPath);
-
-		Cast *sharedCast = nullptr;
-		if (_currentMovie) {
-			sharedCast = _currentMovie->getSharedCast();
-			_currentMovie->_sharedCast = nullptr;
-		}
-
-		delete _currentMovie;
-		_currentMovie = nullptr;
-
-		Archive *mov = openMainArchive(_currentPath + Common::lastPathComponent(_nextMovie.movie, g_director->_dirSeparator));
-
-		if (!mov) {
-			warning("nextMovie: No movie is loaded");
-
-			if (_vm->getGameGID() == GID_TESTALL) {
-				return true;
-			}
-
-			return false;
-		}
-
-		_currentMovie = new Movie(this);
-		_currentMovie->setArchive(mov);
-
-		debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-		debug(0, "@@@@   Switching to movie '%s' in '%s'", utf8ToPrintable(_currentMovie->getMacName()).c_str(), _currentPath.c_str());
-		debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-
-		g_lingo->resetLingo();
-		Common::String sharedCastPath = getSharedCastPath();
-		if (!sharedCastPath.empty()) {
-			if (sharedCast && sharedCast->_castArchive
-					&& sharedCast->_castArchive->getPathName().equalsIgnoreCase(sharedCastPath)) {
-				// if we are not deleting shared cast, then we need to clear those previous widget pointer
-				sharedCast->releaseCastMemberWidget();
-				_currentMovie->_sharedCast = sharedCast;
-			} else {
-				// clear reference in openResFile before deleting shared cast
-				if (sharedCast)
-					g_director->_allOpenResFiles.erase(sharedCast->getArchive()->getPathName());
-				delete sharedCast;
-				_currentMovie->loadSharedCastsFrom(sharedCastPath);
-			}
-		} else {
-			// clear reference in openResFile before deleting shared cast
-			if (sharedCast)
-				g_director->_allOpenResFiles.erase(sharedCast->getArchive()->getPathName());
-			delete sharedCast;
-		}
-
+		if (!loadNextMovie())
+			return (_vm->getGameGID() == GID_TESTALL);
 		_nextMovie.movie.clear();
 	}
 
@@ -377,6 +374,7 @@ bool Window::step() {
 					_nextMovie.frameI = -1;
 				}
 
+
 				if (!debugChannelSet(-1, kDebugCompileOnly) && goodMovie) {
 					debugC(1, kDebugEvents, "Starting playback of movie '%s'", _currentMovie->getMacName().c_str());
 					_currentMovie->getScore()->startPlay();
@@ -384,6 +382,7 @@ bool Window::step() {
 						_currentMovie->getScore()->setCurrentFrame(_startFrame);
 						_startFrame = -1;
 					}
+					g_debugger->movieHook();
 				} else {
 					return false;
 				}
@@ -429,6 +428,27 @@ Common::String Window::getSharedCastPath() {
 	}
 
 	return Common::String();
+}
+
+void Window::freezeLingoState() {
+	_frozenLingoStates.push_back(_lingoState);
+	_lingoState = new LingoState;
+	debugC(kDebugLingoExec, 3, "Freezing Lingo state, depth %d", _frozenLingoStates.size());
+}
+
+void Window::thawLingoState() {
+	if (_frozenLingoStates.empty()) {
+		warning("Tried to thaw when there's no frozen state, ignoring");
+		return;
+	}
+	if (!_lingoState->callstack.empty()) {
+		warning("Can't thaw a Lingo state in mid-execution, ignoring");
+		return;
+	}
+	delete _lingoState;
+	debugC(kDebugLingoExec, 3, "Thawing Lingo state, depth %d", _frozenLingoStates.size());
+	_lingoState = _frozenLingoStates.back();
+	_frozenLingoStates.pop_back();
 }
 
 } // End of namespace Director

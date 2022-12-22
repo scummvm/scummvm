@@ -72,8 +72,11 @@ public:
 	 */
 	explicit Array(size_type count) : _size(count) {
 		allocCapacity(count);
+
+		T *storage = _storage;
+
 		for (size_type i = 0; i < count; ++i)
-			new ((void *)&_storage[i]) T();
+			new ((void *)&storage[i]) T();
 	}
 
 	/**
@@ -367,10 +370,29 @@ public:
 	/** Change the size of the array. */
 	void resize(size_type newSize) {
 		reserve(newSize);
+
+		T *storage = _storage;
+
 		for (size_type i = newSize; i < _size; ++i)
-			_storage[i].~T();
+			storage[i].~T();
 		for (size_type i = _size; i < newSize; ++i)
-			new ((void *)&_storage[i]) T();
+			new ((void *)&storage[i]) T();
+
+		_size = newSize;
+	}
+
+	/** Change the size of the array and initialize new elements that exceed the
+	 *  current array's size with copies of value. */
+	void resize(size_type newSize, const T value) {
+		reserve(newSize);
+
+		T *storage = _storage;
+
+		for (size_type i = newSize; i < _size; ++i)
+			storage[i].~T();
+		if (newSize > _size)
+			uninitialized_fill_n(storage + _size, newSize - _size, value);
+
 		_size = newSize;
 	}
 
@@ -382,6 +404,12 @@ public:
 		T *dst = _storage;
 		while (first != last)
 			*dst++ = *first++;
+	}
+
+	void swap(Array &arr) {
+		SWAP(this->_capacity, arr._capacity);
+		SWAP(this->_size, arr._size);
+		SWAP(this->_storage, arr._storage);
 	}
 
 protected:

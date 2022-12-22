@@ -204,7 +204,7 @@ public:
 	int runModal();
 	void selectLauncher();
 
-	Common::StringMap *getGameList() { return &_games; }
+	const Common::StringMap &getGameList() { return _games; }
 
 private:
 	void genGameList();

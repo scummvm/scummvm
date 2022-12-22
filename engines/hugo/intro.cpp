@@ -121,11 +121,11 @@ bool intro_v1d::introPlay() {
 
 			char buffer[80];
 			if (_vm->_boot._registered == kRegRegistered)
-				strcpy(buffer, "Registered Version");
+				Common::strcpy_s(buffer, "Registered Version");
 			else if (_vm->_boot._registered == kRegShareware)
-				strcpy(buffer, "Shareware Version");
+				Common::strcpy_s(buffer, "Shareware Version");
 			else if (_vm->_boot._registered == kRegFreeware)
-				strcpy(buffer, "Freeware Version");
+				Common::strcpy_s(buffer, "Freeware Version");
 			else
 				error("Unknown registration flag in hugo.bsf: %d", _vm->_boot._registered);
 
@@ -133,12 +133,12 @@ bool intro_v1d::introPlay() {
 			_font.drawString(&_surf, _vm->getCopyrightString(), 0, 176, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 
 			if ((*_vm->_boot._distrib != '\0') && (scumm_stricmp(_vm->_boot._distrib, "David P. Gray"))) {
-				sprintf(buffer, "Distributed by %s.", _vm->_boot._distrib);
+				Common::sprintf_s(buffer, "Distributed by %s.", _vm->_boot._distrib);
 				_font.drawString(&_surf, buffer, 0, 75, 320, _TMAGENTA, Graphics::kTextAlignCenter);
 			}
 
 			// SCRIPT, size 24-16
-			strcpy(buffer, "Hugo's");
+			Common::strcpy_s(buffer, "Hugo's");
 
 			if (_font.loadFromFON("SCRIPT.FON")) {
 				_font.drawString(&_surf, buffer, 0, 20, 320, _TMAGENTA, Graphics::kTextAlignCenter);
@@ -152,7 +152,7 @@ bool intro_v1d::introPlay() {
 			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 24)))
 				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 24");
 
-			strcpy(buffer, "House of Horrors !");
+			Common::strcpy_s(buffer, "House of Horrors !");
 			_font.drawString(&_surf, buffer, 0, 50, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 2:
@@ -162,7 +162,7 @@ bool intro_v1d::introPlay() {
 			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 14)))
 				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 14");
 
-			strcpy(buffer, "S t a r r i n g :");
+			Common::strcpy_s(buffer, "S t a r r i n g :");
 			_font.drawString(&_surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 3:
@@ -170,7 +170,7 @@ bool intro_v1d::introPlay() {
 			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 18)))
 				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 18");
 
-			strcpy(buffer, "Hugo !");
+			Common::strcpy_s(buffer, "Hugo !");
 			_font.drawString(&_surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 4:
@@ -180,36 +180,36 @@ bool intro_v1d::introPlay() {
 			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 14)))
 				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 14");
 
-			strcpy(buffer, "P r o d u c e d  b y :");
+			Common::strcpy_s(buffer, "P r o d u c e d  b y :");
 			_font.drawString(&_surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 5:
 			// TROMAN size 16-9
-			strcpy(buffer, "David P Gray !");
+			Common::strcpy_s(buffer, "David P Gray !");
 			_font.drawString(&_surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 6:
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
 
 			// TROMAN, size 16-9
-			strcpy(buffer, "D i r e c t e d   b y :");
+			Common::strcpy_s(buffer, "D i r e c t e d   b y :");
 			_font.drawString(&_surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 7:
 			// TROMAN, size 16-9
-			strcpy(buffer, "David P Gray !");
+			Common::strcpy_s(buffer, "David P Gray !");
 			_font.drawString(&_surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 8:
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
 
 			// TROMAN, size 16-9
-			strcpy(buffer, "M u s i c   b y :");
+			Common::strcpy_s(buffer, "M u s i c   b y :");
 			_font.drawString(&_surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 9:
 			// TROMAN, size 16-9
-			strcpy(buffer, "David P Gray !");
+			Common::strcpy_s(buffer, "David P Gray !");
 			_font.drawString(&_surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		case 10:
@@ -219,7 +219,7 @@ bool intro_v1d::introPlay() {
 			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 18)))
 				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 18");
 
-			strcpy(buffer, "E n j o y !");
+			Common::strcpy_s(buffer, "E n j o y !");
 			_font.drawString(&_surf, buffer, 0, 100, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 			break;
 		default:
@@ -255,15 +255,15 @@ void intro_v2d::introInit() {
 		error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
 
 	if (_vm->_boot._registered)
-		sprintf(buffer, "%s  Registered Version", _vm->getCopyrightString());
+		Common::sprintf_s(buffer, "%s  Registered Version", _vm->getCopyrightString());
 	else
-		sprintf(buffer, "%s  Shareware Version", _vm->getCopyrightString());
+		Common::sprintf_s(buffer, "%s  Shareware Version", _vm->getCopyrightString());
 
 	_font.drawString(&_surf, buffer, 0, 186, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
 
 	if ((*_vm->_boot._distrib != '\0') && (scumm_stricmp(_vm->_boot._distrib, "David P. Gray"))) {
 		// TROMAN, size 10-5
-		sprintf(buffer, "Distributed by %s.", _vm->_boot._distrib);
+		Common::sprintf_s(buffer, "Distributed by %s.", _vm->_boot._distrib);
 		_font.drawString(&_surf, buffer, 0, 1, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
 	}
 
@@ -292,9 +292,9 @@ void intro_v3d::introInit() {
 
 	char buffer[128];
 	if (_vm->_boot._registered)
-		sprintf(buffer, "%s  Registered Version", _vm->getCopyrightString());
+		Common::sprintf_s(buffer, "%s  Registered Version", _vm->getCopyrightString());
 	else
-		sprintf(buffer,"%s  Shareware Version", _vm->getCopyrightString());
+		Common::sprintf_s(buffer,"%s  Shareware Version", _vm->getCopyrightString());
 
 	// TROMAN, size 10-5
 	if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
@@ -303,7 +303,7 @@ void intro_v3d::introInit() {
 	_font.drawString(&_surf, buffer, 0, 190, 320, _TBROWN, Graphics::kTextAlignCenter);
 
 	if ((*_vm->_boot._distrib != '\0') && (scumm_stricmp(_vm->_boot._distrib, "David P. Gray"))) {
-		sprintf(buffer, "Distributed by %s.", _vm->_boot._distrib);
+		Common::sprintf_s(buffer, "Distributed by %s.", _vm->_boot._distrib);
 		_font.drawString(&_surf, buffer, 0, 0, 320, _TBROWN, Graphics::kTextAlignCenter);
 	}
 

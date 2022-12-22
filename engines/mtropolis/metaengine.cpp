@@ -26,6 +26,7 @@
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
 
+#include "graphics/managed_surface.h"
 #include "graphics/scaler.h"
 #include "graphics/surface.h"
 
@@ -44,6 +45,76 @@ struct Surface;
 
 namespace MTropolis {
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_WIDESCREEN_MOD,
+		{
+			_s("16:9 widescreen mod"),
+			_s("Removes letterboxing and moves some display elements, improving coverage on widescreen displays"),
+			"mtropolis_mod_obsidian_widescreen",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_DYNAMIC_MIDI,
+		{
+			_s("Improved music mixing"),
+			_s("Enables dynamic MIDI mixer, improving quality, but behaving less like mTropolis Player."),
+			"mtropolis_mod_dynamic_midi",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS,
+		{
+			_s("Autosave at progress points"),
+			_s("Automatically saves the game after completing puzzles and chapters."),
+			"mtropolis_mod_auto_save_at_checkpoints",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_ENABLE_SHORT_TRANSITIONS,
+		{
+			_s("Enable short transitions"),
+			_s("Enables transitions that are set to maximum rate instead of skipping them."),
+			"mtropolis_mod_minimum_transition_duration",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_SOUND_EFFECT_SUBTITLES,
+		{
+			_s("Enable subtitles for important sound effects"),
+			_s("Enables subtitles for important sound effects.  This may reduce the difficulty of sound recognition puzzles and minigames."),
+			"mtropolis_mod_sound_gameplay_subtitles",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_LAUNCH_DEBUG,
+		{
+			_s("Start with debugger"),
+			_s("Starts with the debugger dashboard active."),
+			"mtropolis_debug_at_start",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 uint32 MTropolisEngine::getGameID() const {
 	return _gameDescription->gameID;
 }
@@ -60,6 +131,10 @@ public:
 		return "mtropolis";
 	}
 
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return MTropolis::optionsList;
+	}
+
 	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
@@ -69,19 +144,7 @@ public:
 };
 
 bool MTropolisMetaEngine::hasFeature(MetaEngineFeature f) const {
-	switch (f) {
-	case kSupportsListSaves:
-	case kSupportsDeleteSave:
-	case kSavesSupportMetaInfo:
-	case kSavesSupportThumbnail:
-	case kSavesSupportCreationDate:
-	case kSavesSupportPlayTime:
-	case kSimpleSavesNames:
-	case kSavesUseExtendedFormat:
-		return true;
-	default:
-		return false;
-	}
+	return checkExtendedSaves(f);
 }
 
 Common::Error MTropolisMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -99,6 +162,10 @@ Common::Array<Common::Keymap *> MTropolisMetaEngine::initKeymaps(const char *tar
 	act->addDefaultInputMapping("F10");
 	keymap->addAction(act);
 
+	act = new Common::Action("DEBUG_SKIP_MOVIES", _("Force any playing movies to end"));
+	act->setCustomEngineActionEvent(MTropolis::Actions::kDebugSkipMovies);
+	keymap->addAction(act);
+
 	return Common::Keymap::arrayOf(keymap);
 }
 
@@ -113,7 +180,7 @@ void MTropolisMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 			thumbnailWidth = thumbnailHeight * savegameScreenshot->w / savegameScreenshot->h;
 		}
 
-		Common::SharedPtr<Graphics::Surface> outSurface(new Graphics::Surface());
+		Common::SharedPtr<Graphics::ManagedSurface> outSurface(new Graphics::ManagedSurface());
 		outSurface->create(savegameScreenshot->w, savegameScreenshot->h, Graphics::createPixelFormat<888>());
 
 		for (int y = 0; y < savegameScreenshot->h; y++) {
@@ -125,7 +192,7 @@ void MTropolisMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 		}
 
 		while (outSurface->w >= thumbnailWidth * 2) {
-			Common::SharedPtr<Graphics::Surface> temp(new Graphics::Surface());
+			Common::SharedPtr<Graphics::ManagedSurface> temp(new Graphics::ManagedSurface());
 			temp->create(outSurface->w / 2, outSurface->h, Graphics::createPixelFormat<888>());
 
 			for (int y = 0; y < temp->h; y++) {
@@ -147,7 +214,7 @@ void MTropolisMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 		}
 
 		while (outSurface->h >= thumbnailHeight * 2) {
-			Common::SharedPtr<Graphics::Surface> temp(new Graphics::Surface());
+			Common::SharedPtr<Graphics::ManagedSurface> temp(new Graphics::ManagedSurface());
 			temp->create(outSurface->w, outSurface->h / 2, Graphics::createPixelFormat<888>());
 
 			for (int y = 0; y < temp->h; y++) {
@@ -169,8 +236,8 @@ void MTropolisMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 		}
 
 		// TODO: Fix this for weird sizes
-		Common::SharedPtr<Graphics::Surface> changeTo16Temp = outSurface;
-		outSurface.reset(new Graphics::Surface());
+		Common::SharedPtr<Graphics::ManagedSurface> changeTo16Temp = outSurface;
+		outSurface.reset(new Graphics::ManagedSurface());
 		outSurface->create(changeTo16Temp->w, changeTo16Temp->h, Graphics::createPixelFormat<565>());
 
 		for (int y = 0; y < outSurface->h; y++) {

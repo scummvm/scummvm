@@ -19,12 +19,12 @@
  *
  */
 
-#include "common/cosinetables.h"
-#include "common/sinetables.h"
 #include "common/random.h"
 #include "common/memstream.h"
 #include "graphics/cursor.h"
 #include "graphics/cursorman.h"
+#include "math/cosinetables.h"
+#include "math/sinetables.h"
 
 #include "hdb/hdb.h"
 #include "hdb/ai.h"
@@ -42,8 +42,8 @@ Gfx::Gfx() {
 	_gfxCache = new Common::Array<GfxCache *>;
 	_globalSurface.create(g_hdb->_screenWidth, g_hdb->_screenHeight, g_hdb->_format);
 	_pointerDisplayable = 1;
-	_sines = new Common::SineTable(360);
-	_cosines = new Common::CosineTable(360);
+	_sines = new Math::SineTable(360);
+	_cosines = new Math::CosineTable(360);
 	_systemInit = false;
 
 	_numTiles = 0;
@@ -1300,7 +1300,7 @@ void Gfx::drawDebugInfo(Tile *_debugLogo, int fps) {
 	// Draw  FPS
 	setCursor(0, 0);
 	char buff[64];
-	sprintf(buff, "FPS: %d", fps);
+	Common::sprintf_s(buff, "FPS: %d", fps);
 	drawText(buff);
 
 	// Draw Player Info
@@ -1308,22 +1308,22 @@ void Gfx::drawDebugInfo(Tile *_debugLogo, int fps) {
 
 	int x, y;
 	g_hdb->_ai->getPlayerXY(&x, &y);
-	sprintf(buff, "Player X: %d, Y: %d", x / kTileWidth, y / kTileHeight);
+	Common::sprintf_s(buff, "Player X: %d, Y: %d", x / kTileWidth, y / kTileHeight);
 	drawText(buff);
 
 	setCursor(0, 32);
 	AIEntity *p = g_hdb->_ai->getPlayer();
 	if (p) {
-		sprintf(buff, "Player height level: %d", p->level);
+		Common::sprintf_s(buff, "Player height level: %d", p->level);
 		drawText(buff);
 	}
 
 	setCursor(0, 48);
-	sprintf(buff, "Map Name: %s", g_hdb->getInMapName());
+	Common::sprintf_s(buff, "Map Name: %s", g_hdb->getInMapName());
 	drawText(buff);
 
 	setCursor(0, 64);
-	g_hdb->getActionMode() ? sprintf(buff, "Action Mode") : sprintf(buff, "Puzzle Mode");
+	g_hdb->getActionMode() ? Common::sprintf_s(buff, "Action Mode") : Common::sprintf_s(buff, "Puzzle Mode");
 	drawText(buff);
 }
 

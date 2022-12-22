@@ -79,9 +79,15 @@ int ScummVMRendererGraphicsDriver::GetDisplayDepthForNativeDepth(int native_colo
 	return native_color_depth;
 }
 
-IGfxModeList *ScummVMRendererGraphicsDriver::GetSupportedModeList(int /*color_depth*/) {
+IGfxModeList *ScummVMRendererGraphicsDriver::GetSupportedModeList(int color_depth) {
 	std::vector<DisplayMode> modes;
-	sys_get_desktop_modes(modes);
+	sys_get_desktop_modes(modes, color_depth);
+	if ((modes.size() == 0) && color_depth == 32) {
+		// Pretend that 24-bit are 32-bit
+		sys_get_desktop_modes(modes, 24);
+		for (auto &m : modes)
+			m.ColorDepth = 32;
+	}
 	return new ScummVMRendererGfxModeList(modes);
 }
 
@@ -428,8 +434,30 @@ void ScummVMRendererGraphicsDriver::copySurface(const Graphics::Surface &src, bo
 		_screen->addDirtyRect(Common::Rect(x1, y1, x2 + 1, y2 + 1));
 }
 
-void ScummVMRendererGraphicsDriver::BlitToScreen() {
-	const Graphics::Surface &src =
+void ScummVMRendererGraphicsDriver::Present(int xoff, int yoff, Shared::GraphicFlip flip) {
+	Graphics::Surface *srcTransformed = nullptr;
+	if (xoff != 0 || yoff != 0 || flip != Shared::kFlip_None) {
+		srcTransformed = new Graphics::Surface();
+		srcTransformed->copyFrom(virtualScreen->GetAllegroBitmap()->getSurface());
+		switch(flip) {
+		case kFlip_Horizontal:
+			srcTransformed->flipHorizontal(Common::Rect(srcTransformed->w, srcTransformed->h));
+			break;
+		case kFlip_Vertical:
+			srcTransformed->flipVertical(Common::Rect(srcTransformed->w, srcTransformed->h));
+			break;
+		case kFlip_Both:
+			srcTransformed->flipHorizontal(Common::Rect(srcTransformed->w, srcTransformed->h));
+			srcTransformed->flipVertical(Common::Rect(srcTransformed->w, srcTransformed->h));
+			break;
+		default:
+			break;
+		}
+		srcTransformed->move(xoff, yoff, srcTransformed->h);
+	}
+
+	const Graphics::Surface &src = srcTransformed ?
+		*srcTransformed :
 		virtualScreen->GetAllegroBitmap()->getSurface();
 
 	enum {
@@ -485,34 +513,28 @@ void ScummVMRendererGraphicsDriver::BlitToScreen() {
 		g_system->copyRectToScreen(src.getPixels(), src.pitch,
 			0, 0, src.w, src.h);
 		g_system->updateScreen();
+		if (srcTransformed) {
+			srcTransformed->free();
+			delete srcTransformed;
+		}
 		return;
 
 	default:
 		break;
 	}
 
+	if (srcTransformed) {
+		srcTransformed->free();
+		delete srcTransformed;
+	}
+
 	if (_screen)
 		_screen->update();
 }
 
-void ScummVMRendererGraphicsDriver::Render(int /*xoff*/, int /*yoff*/, GraphicFlip flip) {
-	switch (flip) {
-	case kFlip_Both:
-		_renderFlip = (RendererFlip)(FLIP_HORIZONTAL | FLIP_VERTICAL);
-		break;
-	case kFlip_Horizontal:
-		_renderFlip = FLIP_HORIZONTAL;
-		break;
-	case kFlip_Vertical:
-		_renderFlip = FLIP_VERTICAL;
-		break;
-	default:
-		_renderFlip = FLIP_NONE;
-		break;
-	}
-
+void ScummVMRendererGraphicsDriver::Render(int xoff, int yoff, GraphicFlip flip) {
 	RenderToBackBuffer();
-	Present();
+	Present(xoff, yoff, flip);
 }
 
 void ScummVMRendererGraphicsDriver::Render() {
@@ -569,7 +591,7 @@ bool ScummVMRendererGraphicsDriver::GetCopyOfScreenIntoBitmap(Bitmap *destinatio
     Author: Matthew Leverton
 **/
 void ScummVMRendererGraphicsDriver::highcolor_fade_in(Bitmap *vs, void(*draw_callback)(),
-		int /*offx*/, int /*offy*/, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
+		int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
 	Bitmap *bmp_orig = vs;
 	const int col_depth = bmp_orig->GetColorDepth();
 	const int clearColor = makecol_depth(col_depth, targetColourRed, targetColourGreen, targetColourBlue);
@@ -603,7 +625,7 @@ void ScummVMRendererGraphicsDriver::highcolor_fade_in(Bitmap *vs, void(*draw_cal
 }
 
 void ScummVMRendererGraphicsDriver::highcolor_fade_out(Bitmap *vs, void(*draw_callback)(),
-		int /*offx*/, int /*offy*/, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
+		int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
 	Bitmap *bmp_orig = vs;
 	const int col_depth = vs->GetColorDepth();
 	const int clearColor = makecol_depth(col_depth, targetColourRed, targetColourGreen, targetColourBlue);
@@ -682,7 +704,7 @@ void ScummVMRendererGraphicsDriver::__fade_out_range(int speed, int from, int to
 
 void ScummVMRendererGraphicsDriver::FadeOut(int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
 	if (_srcColorDepth > 8) {
-		highcolor_fade_out(virtualScreen, _drawPostScreenCallback, 0, 0, speed * 4, targetColourRed, targetColourGreen, targetColourBlue);
+		highcolor_fade_out(virtualScreen, _drawPostScreenCallback, speed * 4, targetColourRed, targetColourGreen, targetColourBlue);
 	} else {
 		__fade_out_range(speed, 0, 255, targetColourRed, targetColourGreen, targetColourBlue);
 	}
@@ -694,7 +716,7 @@ void ScummVMRendererGraphicsDriver::FadeIn(int speed, PALETTE p, int targetColou
 		RenderToBackBuffer();
 	}
 	if (_srcColorDepth > 8) {
-		highcolor_fade_in(virtualScreen, _drawPostScreenCallback, 0, 0, speed * 4, targetColourRed, targetColourGreen, targetColourBlue);
+		highcolor_fade_in(virtualScreen, _drawPostScreenCallback, speed * 4, targetColourRed, targetColourGreen, targetColourBlue);
 	} else {
 		initialize_fade_256(targetColourRed, targetColourGreen, targetColourBlue);
 		__fade_from_range(faded_out_palette, p, speed, 0, 255);

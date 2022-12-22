@@ -96,7 +96,7 @@ void Hugo::AddPossibleObject(int obj, char type, unsigned int w) {
 #ifdef DEBUG_PARSER
 {
 	char buf[100];
-	sprintf(buf, "AddPossibleObject(%d:\"%s\")", obj, Name(obj));
+	Common::sprintf_s(buf, "AddPossibleObject(%d:\"%s\")", obj, Name(obj));
 	Printout(buf);
 }
 #endif
@@ -398,7 +398,7 @@ int Hugo::MatchCommand() {
 
 	if (!strcmp(word[1], "~oops"))
 	{
-		strcpy(parseerr, "");
+		parseerr[0] = '\0';
 
 		/* "oops" on its own */
 		if (words==1 || !strcmp(oops, ""))
@@ -423,18 +423,18 @@ int Hugo::MatchCommand() {
 
 		/* Rebuild the corrected buffer */
 		oopscount = 1;
-		strcpy(line, word[2]);
+		Common::strcpy_s(line, word[2]);
 		for (i=1; i<=(int)strlen(errbuf); i++)
 		{
 			if (!strcmp(Mid(errbuf, i, strlen(oops)), oops))
 				break;
 		}
 
-		strcpy(buffer, errbuf);
+		Common::strcpy_s(buffer, errbuf);
 		buffer[i-1] = '\0';
-		strcat(buffer, line);
+		Common::strcat_s(buffer, line);
 
-		strcat(buffer, Right(errbuf, strlen(errbuf) - i - strlen(oops) + 1));
+		Common::strcat_s(buffer, Right(errbuf, strlen(errbuf) - i - strlen(oops) + 1));
 
 		SeparateWords();
 		if (!Parse())
@@ -588,7 +588,7 @@ MatchVerb:
 		/* No match, ergo an invalid command */
 		if (flag==0 && nextverb==true)
 		{
-			strcpy(parseerr, "");
+			parseerr[0] = '\0';
 			ParseError(6, 0);        /* "...doesn't make any sense..." */
 			return 0;
 		}
@@ -596,7 +596,7 @@ MatchVerb:
 		/* No provision made for addressing objects (characters) */
 		if (flag==0 || speaktoaddr==0)
 		{
-			strcpy(parseerr, "");
+			parseerr[0] = '\0';
 			ParseError(2, 0);        /* "Better start with a verb..." */
 			return 0;
 		}
@@ -651,7 +651,7 @@ GotVerb:
 
 	obj_match_state = 0;
 	starts_with_verb = 1;
-	strcpy(parseerr, word[1]);
+	Common::strcpy_s(parseerr, word[1]);
 
 	if (Peek(grammaraddr)==XVERB_T) xverb = true;
 	grammaraddr += 2 + numverbs * 2;
@@ -750,7 +750,7 @@ NextStructure:
 			/* ...or if we reached the end without a sensible
 			   syntax matched:
 			*/
-			strcpy(parseerr, "");
+			parseerr[0] = '\0';
 
 			/* "...doesn't make any sense..." */
 			ParseError(6, 0);
@@ -822,7 +822,7 @@ bool Hugo::MatchObject(int *wordnum) {
 #ifdef DEBUG_PARSER
 	Printout("MatchObject(): Entering");
 #endif
-	strcpy(parseerr, "");
+	parseerr[0] = '\0';
 
 	do                                 /* starting at word #a */
 	{
@@ -831,8 +831,8 @@ bool Hugo::MatchObject(int *wordnum) {
 		*/
 		if (word[*wordnum][0]!='~' && word[*wordnum][0]!='\0')
 		{
-			if (parseerr[0]!='\0') strcat(parseerr, " ");
-			strcat(parseerr, word[*wordnum]);
+			if (parseerr[0]!='\0') Common::strcat_s(parseerr, " ");
+			Common::strcat_s(parseerr, word[*wordnum]);
 
 			flag = 0;
 			for (i=0; i<objects; i++)
@@ -903,7 +903,7 @@ bool Hugo::MatchObject(int *wordnum) {
 				/* If checking the xobject */
 				if (obj_match_state==1)
 				{
-					strcpy(parseerr, word[1]);
+					Common::strcpy_s(parseerr, word[1]);
 					/* "...can't use multiple objects..."
 					   (as indirect objects) */
 					ParseError(7, 0);
@@ -973,7 +973,7 @@ Clarify:
 		/* If checking the xobject or addressing a command */
 		if (obj_match_state==1 || speaking)
 		{
-			strcpy(parseerr, word[1]);
+			Common::strcpy_s(parseerr, word[1]);
 			/* "...can't use multiple objects..."
 			   (as indirect objects) */
 			ParseError(7, 0);
@@ -1017,7 +1017,7 @@ Clarify:
 		{
 			if (!objcount && !speaking)
 			{
-				strcpy(parseerr, word[1]);
+				Common::strcpy_s(parseerr, word[1]);
 				ParseError(9, 0);   /* "Nothing to (verb)..." */
 				return false;
 			}
@@ -1302,7 +1302,7 @@ Clarify:
 					if (strcmp(Name(i), ""))
 					{
 						pobj = i;
-						sprintf(line, "(%s)", Name(i));
+						Common::sprintf_s(line, "(%s)", Name(i));
 						AP(line);
 						goto RestoreTempArrays;
 					}
@@ -1425,11 +1425,11 @@ Clarify:
 
 RestoreTempArrays:
 		/* Rebuild <buffer> and word[] array */
-			strcpy(buffer, "");
+			buffer[0] = '\0';
 			for (i=1; i<=wtemp; i++)
 			{
-				strcat(buffer, GetWord(wdtemp[i]));
-				strcat(buffer, " ");
+				Common::strcat_s(buffer, GetWord(wdtemp[i]));
+				Common::strcat_s(buffer, " ");
 			}
 			SeparateWords();
 
@@ -1448,7 +1448,7 @@ RestoreTempArrays:
 			i = Peek(grammaraddr);
 			if (objcount>1 && i!=MULTI_T && i!=MULTIHELD_T && i!=MULTINOTHELD_T)
 			{
-				strcpy(parseerr, word[1]);
+				Common::strcpy_s(parseerr, word[1]);
 				/* "You can't...multiple objects." */
 				ParseError(3, 0);
 				return false;
@@ -1578,7 +1578,7 @@ RestoreTempArrays:
 			else
 			{
 				/* No objects found */
-				strcpy(parseerr, word[1]);
+				Common::strcpy_s(parseerr, word[1]);
 				ParseError(9, 0);   /* "Nothing to (verb)..." */
 				return false;
 			}
@@ -1588,7 +1588,7 @@ RestoreTempArrays:
 	/* Go back for the next object phrase */
 	pobjcount = 0;
 	mobjs = 0;
-	strcpy(parseerr, "");
+	parseerr[0] = '\0';
 
 	goto NextLoop;
 }
@@ -1656,7 +1656,7 @@ CheckWord:
 		/* a number */
 		case NUMBER_T:
 			if ((STARTS_AS_NUMBER(word[*wordnum])) &&
-				!strcmp(itoa(atoi(word[*wordnum]), num, 10), word[*wordnum]))
+				!strcmp(itoa(atoi(word[*wordnum]), num, 10, sizeof(num)), word[*wordnum]))
 			{
 				if (obj_match_state==1)
 					var[xobject] = atoi(word[*wordnum]);
@@ -1739,7 +1739,7 @@ CheckWordorString:
 
 					/* or a number */
 					else if ((p==NUMBER_T && STARTS_AS_NUMBER(word[*wordnum])) &&
-						!strcmp(word[*wordnum], itoa(atoi(word[*wordnum]), num, 10)))
+						!strcmp(word[*wordnum], itoa(atoi(word[*wordnum]), num, 10, sizeof(num))))
 					{
 						grammaraddr = nextsyntax;
 						if (*wordnum != objstart)
@@ -1771,7 +1771,7 @@ CheckWordorString:
 							multicheck != MULTIHELD_T &&
 							multicheck != MULTINOTHELD_T)
 						{
-							strcpy(parseerr, word[1]);
+							Common::strcpy_s(parseerr, word[1]);
 							/* "You can't...multiple objects." */
 							ParseError(3, 0);
 							return 2;
@@ -1852,7 +1852,7 @@ CheckXobjectFinish:
 							goto CheckXobjectFinish;
 						}
 						else if ((p==NUMBER_T && STARTS_AS_NUMBER(word[*wordnum])) &&
-							!strcmp(word[*wordnum], itoa(atoi(word[*wordnum]), num, 10)))
+							!strcmp(word[*wordnum], itoa(atoi(word[*wordnum]), num, 10, sizeof(num))))
 						{
 							objfinish = i;
 							break;
@@ -1968,14 +1968,14 @@ int Hugo::Parse() {
 	period = FindWord(".");
 	comma = FindWord(",");
 
-	strcpy(parsestr, "");           /* for storing any unknown string */
+	parsestr[0] = '\0';             /* for storing any unknown string */
 	parsed_number = 0;              /*  "     "     "  parsed number  */
 
 	for (i=1; i<=words; i++)        /* find dictionary addresses */
 	{
 		if (word[i][0]=='\"' && foundstring==0)
 		{
-			strcpy(parsestr, word[i]);
+			Common::strcpy_s(parsestr, word[i]);
 			foundstring = 1;
 			wd[i] = UNKNOWN_WORD;
 		}
@@ -1984,7 +1984,7 @@ int Hugo::Parse() {
 			wd[i] = FindWord(word[i]);
 
 			/* Numbers -32768 to 32767 are valid...*/
-			if (!strcmp(word[i], itoa(atoi(word[i]), num, 10)))
+			if (!strcmp(word[i], itoa(atoi(word[i]), num, 10, sizeof(num))))
 			{
 #if !defined (MATH_16BIT)
 				if (atoi(word[i]) > 32767 || atoi(word[i]) < -32768)
@@ -1992,7 +1992,7 @@ int Hugo::Parse() {
 #endif
 				parsed_number = atoi(word[i]);
 				if (parseerr[0]=='\0')
-					strcpy(parseerr, word[i]);
+					Common::strcpy_s(parseerr, word[i]);
 			}
 
 			/* Otherwise it must be a dictionary entry */
@@ -2004,8 +2004,8 @@ int Hugo::Parse() {
 NotinDictionary:
 					if (!notfound_word)
 					{
-						strcpy(parseerr, word[i]);
-						strcpy(oops, word[i]);
+						Common::strcpy_s(parseerr, word[i]);
+						Common::strcpy_s(oops, word[i]);
 
 						notfound_word = i;
 					}
@@ -2023,11 +2023,11 @@ NotinDictionary:
 
 		/* "...can't use the word..." */
 		ParseError(1, 0);
-		strcpy(errbuf, "");
+		errbuf[0] = '\0';
 		for (i=1; i<=words; i++)
 		{
-			strcat(errbuf, word[i]);
-			if (i != words) strcat(errbuf, " ");
+			Common::strcat_s(errbuf, word[i]);
+			if (i != words) Common::strcat_s(errbuf, " ");
 		}
 
 		return 0;
@@ -2058,19 +2058,19 @@ NotinDictionary:
 						if (m)
 						{
 							if (m + (int)strlen(buffer) > 81)
-								{strcpy(buffer, "");
+								{buffer[0] = '\0';
 								words = 0;
 								ParseError(0, 0);
 								return 0;}
 
 							for (k=words; k>i; k--)
 							{
-								strcpy(tempword, word[k]);
+								Common::strcpy_s(tempword, word[k]);
 								word[k] += m;
-								strcpy(word[k], tempword);
+								Common::strcpy_s(word[k], sizeof(buffer) - (word[k] - buffer), tempword);
 							}
 						}
-						strcpy(word[i], GetWord(wd[i]));
+						Common::strcpy_s(word[i], sizeof(buffer) - (word[i] - buffer), GetWord(wd[i]));
 						i--;
 						break;
 					}
@@ -2086,7 +2086,7 @@ NotinDictionary:
 					{
 						if (wd[i+1]==PeekWord(synptr+3))
 						{
-							strcat(word[i], word[i+1]);
+							Common::strcat_s(word[i], sizeof(buffer) - (word[i] - buffer), word[i+1]);
 							wd[i] = FindWord(word[i]);
 							KillWord(i+1);
 						}
@@ -2120,7 +2120,7 @@ NextSyn:
 
 	defseg = gameseg;
 
-	if (strcmp(word[1], "~oops")) strcpy(oops, "");
+	if (strcmp(word[1], "~oops")) oops[0] = '\0';
 
 	if (words==0)
 	{
@@ -2169,7 +2169,7 @@ void Hugo::ParseError(int e, int a) {
 			break;
 
 		case 1:
-			sprintf(line, "You can't use the word \"%s\".", parseerr);
+			Common::sprintf_s(line, "You can't use the word \"%s\".", parseerr);
 			AP(line);
 			break;
 
@@ -2178,7 +2178,7 @@ void Hugo::ParseError(int e, int a) {
 			break;
 
 		case 3:
-			sprintf(line, "You can't %s multiple objects.", parseerr);
+			Common::sprintf_s(line, "You can't %s multiple objects.", parseerr);
 			AP(line);
 			break;
 
@@ -2187,7 +2187,7 @@ void Hugo::ParseError(int e, int a) {
 			break;
 
 		case 5:
-			sprintf(line, "You haven't seen any \"%s\", nor are you likely to in the near future even if such a thing exists.", parseerr);
+			Common::sprintf_s(line, "You haven't seen any \"%s\", nor are you likely to in the near future even if such a thing exists.", parseerr);
 			AP(line);
 			break;
 
@@ -2201,7 +2201,7 @@ void Hugo::ParseError(int e, int a) {
 
 		case 8:
 		{
-			sprintf(line, "Which %s do you mean, ", !parse_called_twice?parseerr:"exactly");
+			Common::sprintf_s(line, "Which %s do you mean, ", !parse_called_twice?parseerr:"exactly");
 			count = 1;
 			for (k=0; k<pobjcount; k++)
 			{
@@ -2211,13 +2211,13 @@ void Hugo::ParseError(int e, int a) {
 				{
 					if (count==pobjcount)
 					{
-						if (count > 2) strcat(line, ",");
-						strcat(line, " or ");
+						if (count > 2) Common::strcat_s(line, ",");
+						Common::strcat_s(line, " or ");
 					}
 					else
 					{
 						if (count != 1)
-							strcat(line, ", ");
+							Common::strcat_s(line, ", ");
 					}
 					if (GetProp(i, article, 1, 0))
 					{
@@ -2225,24 +2225,24 @@ void Hugo::ParseError(int e, int a) {
 						/* Don't use "a" or "an" in listing */
 						/*
 						if (!strcmp(w, "a") || !strcmp(w, "an"))
-							strcat(line, "the ");
+							Common::strcat_s(line, "the ");
 						else
-							sprintf(line+strlen(line), "%s ", w);
+							Common::sprintf_s(line+strlen(line), "%s ", w);
 						*/
 						/* We'll just use "the" */
-						if (w) strcat(line, "the ");
+						if (w) Common::strcat_s(line, "the ");
 					}
-					strcat(line, Name(i));
+					Common::strcat_s(line, Name(i));
 					count++;
 				}
 			}
-			strcat(line, "?");
+			Common::strcat_s(line, "?");
 			AP(line);
 			break;
 		}
 
 		case 9:
-			sprintf(line, "Nothing to %s.", parseerr);
+			Common::sprintf_s(line, "Nothing to %s.", parseerr);
 			AP(line);
 			break;
 
@@ -2255,7 +2255,7 @@ void Hugo::ParseError(int e, int a) {
 			break;
 
 		case 12:
-			sprintf(line, "You can't do that with the %s.", Name(a));
+			Common::sprintf_s(line, "You can't do that with the %s.", Name(a));
 			AP(line);
 			break;
 
@@ -2338,8 +2338,8 @@ void Hugo::SeparateWords() {
 	}
 	word[1] = buffer;
 
-	strcpy(a, buffer);
-	strcpy(buffer, "");
+	Common::strcpy_s(a, buffer);
+	buffer[0] = '\0';
 
 	for (i=1; i<=(int)strlen(a); i++)
 	{
@@ -2350,7 +2350,7 @@ void Hugo::SeparateWords() {
 
 		if (b[0]=='\"' && inquote==1)
 		{
-			strcpy(buffer+bloc, b);
+			Common::strcpy_s(buffer+bloc, sizeof(buffer)-bloc, b);
 			bloc++;
 			inquote++;
 		}
@@ -2362,12 +2362,12 @@ void Hugo::SeparateWords() {
 				bloc++;
 				if (++words > MAXWORDS) words = MAXWORDS;
 				word[words] = buffer + bloc;
-				strcpy(word[words], "");
+				word[words][0] = '\0';
 			}
 
 			if (b[0]=='\"' && inquote==0)
 			{
-				strcpy(buffer+bloc, b);
+				Common::strcpy_s(buffer+bloc, sizeof(buffer)-bloc, b);
 				bloc++;
 				inquote = 1;
 			}
@@ -2382,15 +2382,15 @@ void Hugo::SeparateWords() {
 					if (++words > MAXWORDS) words = MAXWORDS;
 				}
 				word[words] = buffer + bloc;
-				strcpy(word[words], b);
+				Common::strcpy_s(word[words], sizeof(buffer)-bloc, b);
 				bloc += strlen(b) + 1;
 				if (++words > MAXWORDS) words = MAXWORDS;
 				word[words] = buffer + bloc;
-				strcpy(word[words], "");
+				word[words][0] = '\0';
 			}
 			else
 			{
-				strcpy(buffer+bloc, b);
+				Common::strcpy_s(buffer+bloc, sizeof(buffer)-bloc, b);
 				bloc++;
 			}
 		}
@@ -2403,22 +2403,24 @@ void Hugo::SeparateWords() {
 		/* Convert hours:minutes time to minutes only */
 		if (strcspn(word[i], ":")!=strlen(word[i]) && strlen(word[i])<=5)
 		{
-			strcpy(w1, Left(word[i], strcspn(word[i], ":")));
-			strcpy(w2, Right(word[i], strlen(word[i]) - strcspn(word[i], ":") - 1));
+			Common::strcpy_s(w1, Left(word[i], strcspn(word[i], ":")));
+			Common::strcpy_s(w2, Right(word[i], strlen(word[i]) - strcspn(word[i], ":") - 1));
 			n1 = (short)atoi(w1);
 			n2 = (short)atoi(w2);
 
 			if (!strcmp(Left(w2, 1), "0"))
-				strcpy(w2, Right(w2, strlen(w2) - 1));
+				Common::strcpy_s(w2, Right(w2, strlen(w2) - 1));
 
 			/* If this is indeed a hh:mm time, write it back
 			   as the modified word, storing the original hh:mm
 			   in parse$:
 			*/
-			if (!strcmp(w1, itoa((int)n1, temp, 10)) && !strcmp(w2, itoa((int)n2, temp, 10)) && (n1 > 0 && n1 < 25) && (n2 >= 0 && n2 < 60))
+			if (!strcmp(w1, itoa((int)n1, temp, 10, sizeof(temp))) &&
+				!strcmp(w2, itoa((int)n2, temp, 10, sizeof(temp))) &&
+				(n1 > 0 && n1 < 25) && (n2 >= 0 && n2 < 60))
 			{
-				strcpy(parseerr, word[i]);
-				itoa(n1 * 60 + n2, word[i], 10);
+				Common::strcpy_s(parseerr, word[i]);
+				itoa(n1 * 60 + n2, word[i], 10, strlen(word[i]) + 1);
 			}
 		}
 	}
@@ -2457,7 +2459,7 @@ void Hugo::SubtractPossibleObject(int obj) {
 #ifdef DEBUG_PARSER
 {
 	char buf[100];
-	sprintf(buf, "SubtractPossibleObject(%d:\"%s\")", obj, Name(obj));
+	Common::sprintf_s(buf, "SubtractPossibleObject(%d:\"%s\")", obj, Name(obj));
 	Printout(buf);
 }
 #endif
@@ -2538,10 +2540,10 @@ int Hugo::ValidObj(int obj) {
 			{
 				if (obj != (int)PeekWord(grammaraddr+2))
 				{
-					strcpy(parseerr, "");
+					parseerr[0] = '\0';
 					if (GetProp(obj, article, 1, 0))
-						strcpy(parseerr, "the ");
-					strcat(parseerr, Name(obj));
+						Common::strcpy_s(parseerr, "the ");
+					Common::strcat_s(parseerr, Name(obj));
 
 					/* "...can't do that with..." */
 					ParseError(12, obj);
@@ -2562,10 +2564,10 @@ int Hugo::ValidObj(int obj) {
 			*/
 			if (!TestAttribute(obj, attr, nattr))
 			{
-				strcpy(parseerr, "");
+				parseerr[0] = '\0';
 				if (GetProp(obj, article, 1, 0))
-					strcpy(parseerr, "the ");
-				strcat(parseerr, Name(obj));
+					Common::strcpy_s(parseerr, "the ");
+				Common::strcat_s(parseerr, Name(obj));
 
 				/* "...can't do that with..." */
 				ParseError(12, obj);

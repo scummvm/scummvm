@@ -169,7 +169,7 @@ mcodeFunctionReturnCodes _game_session::fn_stop_sfx(int32 &, int32 *params) {
 		strncpy(tempObj, const_cast<char *>(snd), sub - snd);
 		tempObj[sub - snd] = 0; // null terminate
 
-		strcpy(tempSnd, sub + strlen("::"));
+		Common::strcpy_s(tempSnd, sub + 2/*strlen("::")*/);
 
 		int32 obj = LinkedDataObject::Fetch_item_number_by_name(MS->objects, tempObj);
 

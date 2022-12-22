@@ -29,7 +29,7 @@ namespace Sword1 {
 
 SwordConsole::SwordConsole(SwordEngine *vm) : GUI::Debugger(), _vm(vm) {
 	assert(_vm);
-	if (scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1mac") == 0 || scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo") == 0)
+	if (_vm->isMac())
 		registerCmd("speechEndianness",    WRAP_METHOD(SwordConsole, Cmd_SpeechEndianness));
 }
 

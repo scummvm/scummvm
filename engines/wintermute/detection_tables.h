@@ -21,12 +21,6 @@
 
 namespace Wintermute {
 
-#define GAMEOPTION_SHOW_FPS          GUIO_GAMEOPTIONS1
-#define GAMEOPTION_BILINEAR          GUIO_GAMEOPTIONS2
-#ifdef ENABLE_WME3D
-#define GAMEOPTION_FORCE_2D_RENDERER GUIO_GAMEOPTIONS3
-#endif
-
 static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ld",             "Five Lethal Demons"},
 	{"5ma",             "Five Magical Amulets"},
@@ -101,6 +95,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"idiotstale",      "The Idiot's Tale"},
 	{"imustkill",       "I Must Kill...: Fresh Meat"},
 	{"jamesperis",      "James Peris: No License Nor Control"},
+	{"jamesperis2",     "James Peris 2: The Fountain of Eternal Drunkenness"},
 	{"klaymen1",        "Klaymen Episodes: Pilot"},
 	{"knossos",         "K'NOSSOS"},
 	{"kulivocko",       "Kulivocko"},
@@ -112,6 +107,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"juliastars",      "J.U.L.I.A.: Among the Stars"},
 	{"juliauntold",     "J.U.L.I.A.: Untold"},
 	{"lotl",            "Limbo of the Lost"},
+	{"lostbride",       "Tale of The Lost Bride and A Hidden Treasure"},
 	{"machumayu",       "Machu Mayu"},
 	{"mentalrepairs",   "Mental Repairs Inc"},
 	{"mirage",          "Mirage"},
@@ -327,6 +323,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("alphapolaris", "",
 		WME_ENTRY1s("data.dcp", "6d5d2264a3135dae3a9a74de50b4ea68", 706780438), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
 
+	// Alpha Polaris (English, UK CD release)
+	WME_WINENTRY("alphapolaris", "",
+		WME_ENTRY1s("data.dcp", "1df8eb749676752c3e0ab6e24d31971c", 748056178), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
+
 	// Alpha Polaris (Polish)
 	WME_WINENTRY("alphapolaris", "",
 		WME_ENTRY1s("data.dcp", "24ebca07b7cf0bd94ec994f26bdccf83", 710319064), Common::PL_POL, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
@@ -535,6 +535,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Carol Reed 5 - The Colour of Murder (English)
 	WME_WINENTRY("carolreed5", "",
 		WME_ENTRY1s("data.dcp", "3fcfca44209545d0e26774156427b494", 603660415), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
+
+	// Carol Reed 5 - The Colour of Murder (German) (Carol Reed collection DVD) - trac #13658
+	WME_WINENTRY("carolreed5", "",
+		WME_ENTRY1s("data.dcp", "3bc63ccbe18ef19f4af20231f8ce8c11", 617853131), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_6),
 
 	// Carol Reed 5 - The Colour of Murder (Spanish)
 	WME_WINENTRY("carolreed5", "",
@@ -1362,7 +1366,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Fred (English) (PreAlpha)
 	WME_WINENTRY("fred", "PreAlpha",
 		WME_ENTRY2s("string.tab", "76b48c26e611071810d8182fc27f7d0e", 12590,
-		            "data.dcp", "e18b1f9815b9e9cf1d1357bc48269b0b", 7632855), Common::EN_ANY, ADGF_UNSUPPORTED | ADGF_DEMO, WME_1_0_31),
+					"data.dcp", "e18b1f9815b9e9cf1d1357bc48269b0b", 7632855), Common::EN_ANY, ADGF_UNSUPPORTED | ADGF_DEMO, WME_1_0_31),
 
 	// Fred (French) (PreAlpha)
 	WME_WINENTRY("fred", "PreAlpha",
@@ -1377,6 +1381,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("ghostsheet", "",
 		WME_ENTRY2s("english.dcp", "e6d0aad2c89996bcabe416105a3d6d3a", 12221017,
 					"data.dcp", "b2f8b05328e4881e15e98e845b63f451", 168003), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_0),
+
+	// Ghost in the Sheet (Reflexive Arcade) (English)
+	WME_WINENTRY("ghostsheet", "",
+		WME_ENTRY2s("english.dcp", "e21c7278071cd2ee216ae72d5a39de29", 12008908,
+					"data.dcp", "43ba03f37a0f97249c1e0c3cf7d6f9a9", 167980), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_0),
 
 	// Ghost in the Sheet (Italian)
 	WME_WINENTRY("ghostsheet", "",
@@ -1571,6 +1580,16 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("jamesperis", "Demo",
 		WME_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507), Common::ES_ESP, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
+	// James Peris 2: The Fountain of Eternal Drunkenness (English)
+	WME_WINENTRY("jamesperis2", "Steam",
+		WME_ENTRY2s("data.dcp", "1d19fac76ab9267881214d7c7968acb6", 980791568,
+					"audio.dcp", "0a768e0266238772b698b5a26a9c2b50", 488048201), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// James Peris 2: The Fountain of Eternal Drunkenness (Spanish)
+	WME_WINENTRY("jamesperis2", "Steam",
+		WME_ENTRY2s("data.dcp", "1d19fac76ab9267881214d7c7968acb6", 980791568,
+					"audio.dcp", "0a768e0266238772b698b5a26a9c2b50", 488048201), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Lov Mamuta
 	WME_WINENTRY("lovmamuta", "",
 		WME_ENTRY1s("data.dcp", "ce2be4691fa0104cfdd63656cedaf810", 11198933), Common::CS_CZE, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
@@ -1718,6 +1737,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Limbo of the Lost (Russian)
 	WME_WINENTRY("lotl", "",
 		WME_ENTRY1s("data.dcp", "2042ea14f2d7c52a139d768e962040c1", 354370575), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_7_2),
+
+	// Tale of The Lost Bride and A Hidden Treasure (Russian)
+	WME_WINENTRY("lostbride", "",
+		WME_ENTRY1s("data.dcp", "cb45b579c6d5767341a9b07bc807df5f", 106683613), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Machu Mayu (Demo)
 	WME_WINENTRY("machumayu", "Demo",

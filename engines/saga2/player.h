@@ -46,64 +46,64 @@ class PlayerActor {
 	friend void initPlayerActors();
 	friend void cleanupPlayerActors();
 
-	ObjectID        actorID;            // ID of player's actor
+	ObjectID        _actorID;            // ID of player's actor
 
 public:
-	int16           portraitType;       // Integer representing portrait state
+	int16           _portraitType;       // Integer representing portrait state
 	// for this player actor
-	uint16          flags;              // various flags
+	uint16          _flags;              // various flags
 
-	ActorAttributes baseStats;          // Base stats for this actor
+	ActorAttributes _baseStats;          // Base stats for this actor
 	enum PlayerActorFlags {
-		playerAggressive        = (1 << 0), // Player is in aggressive mode
-		playerBanded            = (1 << 1), // Player is banded
-		playerHasCartography    = (1 << 2)  // Player has ability to map
+		kPlayerAggressive        = (1 << 0), // Player is in aggressive mode
+		kPlayerBanded            = (1 << 1), // Player is banded
+		kPlayerHasCartography    = (1 << 2)  // Player has ability to map
 	};
 
 	// recovery information
 	enum Recovery {
-		baseManaRec             = 1,
-		attribPointsPerUpdate   = 1,
-		attribPointsPerValue    = 10
+		kBaseManaRec             = 1,
+		kAttribPointsPerUpdate   = 1,
+		kAttribPointsPerValue    = 10
 	};
 
 	enum {
-		vitalityLevelBump       = 50
+		kVitalityLevelBump       = 50
 	};
 
 	//  Container node for ready containers
-	ContainerNode           *readyNode;
+	ContainerNode           *_readyNode;
 
 	// mana 'experience' pool
-	int16   manaMemory[numManas];
+	int16   _manaMemory[kNumManas];
 
 	// attrib recovery pools
-	uint8   attribRecPools[numSkills];
+	uint8   _attribRecPools[kNumSkills];
 
 	// skills 'expericene' pool
-	uint8   attribMemPools[numSkills];
+	uint8   _attribMemPools[kNumSkills];
 
 	// vitality pool
-	uint8 vitalityMemory;
+	uint8 _vitalityMemory;
 
-	//  Flag indicating wether the user has been notified that this player
+	//  Flag indicating whether the user has been notified that this player
 	//  actor has been attacked since the last combat
-	bool notifiedOfAttack;
+	bool _notifiedOfAttack;
 
 	//  Constructor
-	PlayerActor(ObjectID a) :  actorID(a), portraitType(0), flags(0), readyNode(NULL),
-			vitalityMemory(0), notifiedOfAttack(false) {
+	PlayerActor(ObjectID a) :  _actorID(a), _portraitType(0), _flags(0), _readyNode(NULL),
+			_vitalityMemory(0), _notifiedOfAttack(false) {
 
-		assert(ActorAttributes::skillFracPointsPerLevel > 0);    // this is used in a divide
+		assert(ActorAttributes::kSkillFracPointsPerLevel > 0);    // this is used in a divide
 
-		memset(&baseStats, 0, sizeof(baseStats));
+		memset(&_baseStats, 0, sizeof(_baseStats));
 
-		for (int i = 0; i < numManas; i++)
-			manaMemory[i] = 0;
+		for (int i = 0; i < kNumManas; i++)
+			_manaMemory[i] = 0;
 
-		for (int i = 0; i < numSkills; i++) {
-			attribRecPools[i] = 0;
-			attribMemPools[i] = 0;
+		for (int i = 0; i < kNumSkills; i++) {
+			_attribRecPools[i] = 0;
+			_attribMemPools[i] = 0;
 		}
 	}
 
@@ -134,42 +134,42 @@ public:
 
 	//  Return Actor structure pointer
 	Actor *getActor() {
-		return (Actor *)GameObject::objectAddress(actorID);
+		return (Actor *)GameObject::objectAddress(_actorID);
 	}
 
 	//  Return Actor's object ID
 	ObjectID getActorID() {
-		return actorID;
+		return _actorID;
 	}
 
 	//  Set player to be aggressive
 	void setAggression() {
-		flags |= playerAggressive;
+		_flags |= kPlayerAggressive;
 	}
 
 	//  Set player to not aggressive
 	void clearAggression() {
-		flags &= ~playerAggressive;
+		_flags &= ~kPlayerAggressive;
 	}
 
 	//  Determine if actor is in aggressive state
 	bool isAggressive() {
-		return (flags & playerAggressive) != 0;
+		return (_flags & kPlayerAggressive) != 0;
 	}
 
 	//  Set the player to be banded
 	void setBanded() {
-		flags |= playerBanded;
+		_flags |= kPlayerBanded;
 	}
 
 	//  Set the player to not be banded
 	void clearBanded() {
-		flags &= ~playerBanded;
+		_flags &= ~kPlayerBanded;
 	}
 
 	//  Determine if this player actor is banded
 	bool isBanded() {
-		return (flags & playerBanded) != 0;
+		return (_flags & kPlayerBanded) != 0;
 	}
 
 	//  Resolve the banding state of this actor
@@ -181,7 +181,7 @@ public:
 	//  Return the integer representing the portrait type for this
 	//  player actor
 	int16 getPortraitType() {
-		return portraitType;
+		return _portraitType;
 	}
 
 	// figures out what what ( if any ) changes are required to
@@ -193,7 +193,7 @@ public:
 
 	// get this player actor's base stats
 	ActorAttributes &getBaseStats() {
-		return baseStats;
+		return _baseStats;
 	}
 
 	//  Notify the user of attack if necessary
@@ -201,7 +201,7 @@ public:
 
 	//  Simply reset the attack notification flag
 	void resetAttackNotification() {
-		notifiedOfAttack = false;
+		_notifiedOfAttack = false;
 	}
 };
 
@@ -313,11 +313,11 @@ inline void cleanupCenterActor() {}
 
 class PlayerActorIterator {
 protected:
-	int16               index;
+	int16               _index;
 
 public:
 	PlayerActorIterator() {
-		index = 0;
+		_index = 0;
 	}
 
 	PlayerActor *first();

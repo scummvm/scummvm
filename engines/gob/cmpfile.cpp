@@ -150,7 +150,7 @@ void CMPFile::loadRXY(Common::SeekableReadStream &rxy) {
 	                 ((_vm->getEndiannessMethod() == kEndiannessMethodSystem) &&
 	                  (_vm->getEndianness() == kEndiannessBE));
 
-	Common::SeekableSubReadStreamEndian sub(&rxy, 0, rxy.size(), bigEndian, DisposeAfterUse::NO);
+	Common::SeekableReadStreamEndianWrapper sub(&rxy, bigEndian, DisposeAfterUse::NO);
 
 	_coordinates = new RXYFile(sub);
 

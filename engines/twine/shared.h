@@ -619,7 +619,7 @@ struct TwineImage {
 
 #define VIEW_X0 (-50)
 #define VIEW_Y0 (-30)
-#define VIEW_X1(engine) ((engine)->width() - 40)
+#define VIEW_X1(engine) ((engine)->width() + 40)
 #define VIEW_Y1(engine) ((engine)->height() + 100)
 
 inline int32 NormalizeAngle(int32 angle) {

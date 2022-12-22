@@ -38,8 +38,8 @@ struct StaticTilePoint;
 class Effectron;
 
 enum nodeType {
-	nodeTypeObject = 0,
-	nodeTypeEffect
+	kNodeTypeObject = 0,
+	kNodeTypeEffect
 };
 
 
@@ -50,20 +50,20 @@ class DisplayNode {
 	friend ObjectID pickObject(const StaticPoint32 &mouse, StaticTilePoint &objPos);
 
 private:
-	DisplayNode             *nextDisplayed;         // pointer to next in display list
-	int16                   sortDepth;              // for sorting by depth
-	GameObject              *object;                // the object to display
-	Point16                 screenCoords;           // screen coordinates
-	Rect16                  hitBox;                 // hitbox for clicking this item
-	uint8                   flags;                  // various flags
+	DisplayNode             *_nextDisplayed;         // pointer to next in display list
+	int16                   _sortDepth;              // for sorting by depth
+	GameObject              *_object;                // the object to display
+	Point16                 _screenCoords;           // screen coordinates
+	Rect16                  _hitBox;                 // hitbox for clicking this item
+	uint8                   _flags;                  // various flags
 
 	enum {
-		displayIndicator = (1 << 0)
+		kDisplayIndicator = (1 << 0)
 	};
 
 public:
-	nodeType                type;
-	Effectron               *efx;
+	nodeType                _type;
+	Effectron               *_efx;
 
 	DisplayNode();
 
@@ -81,33 +81,33 @@ public:
 //  This class is used to form a list of objects to display on
 //  the screen.
 
-const int           maxDisplayed = 100;
+const int           kMaxDisplayed = 100;
 
 class DisplayNodeList {
 	friend ObjectID pickObject(const StaticPoint32 &mouse, StaticTilePoint &objPos);
 
 public:
-	uint16              count;                  // number of entries in list
-	DisplayNode         *displayList;       // table of displayed objects
-	static DisplayNode  *head;              // head of list
+	uint16              _count;                  // number of entries in list
+	DisplayNode         *_displayList;       // table of displayed objects
+	static DisplayNode  *_head;              // head of list
 
 	DisplayNodeList(uint16 newSize) {
-		displayList = (DisplayNode *)malloc(sizeof(DisplayNode) * newSize);
+		_displayList = (DisplayNode *)malloc(sizeof(DisplayNode) * newSize);
 		init(newSize);
-		count = 0;
+		_count = 0;
 	}
 	DisplayNodeList() {
-		displayList = (DisplayNode *)malloc(sizeof(DisplayNode) * maxDisplayed);
-		init(maxDisplayed);
-		count = 0;
+		_displayList = (DisplayNode *)malloc(sizeof(DisplayNode) * kMaxDisplayed);
+		init(kMaxDisplayed);
+		_count = 0;
 	}
 	~DisplayNodeList() {
-		free(displayList);
+		free(_displayList);
 	}
 
 	void reset() {
-		count = 0;
-		head = NULL;
+		_count = 0;
+		_head = NULL;
 	}
 
 	void  init(uint16 s);

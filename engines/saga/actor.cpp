@@ -248,7 +248,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 
 		_vm->_resource->loadResource(_actorContext, _vm->getResourceDescription()->actorsStringsResourceId, stringsData);
 
-		_vm->loadStrings(_actorsStrings, stringsData);
+		_vm->loadStrings(_actorsStrings, stringsData, _vm->isBigEndian());
 	}
 
 	if (_vm->getGameId() == GID_ITE) {
@@ -262,7 +262,7 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 			actor->_scriptEntrypointNumber = ITE_ActorTable[i].scriptEntrypointNumber;
 			actor->_spriteListResourceId = ITE_ActorTable[i].spriteListResourceId;
 			actor->_frameListResourceId = ITE_ActorTable[i].frameListResourceId;
-			actor->_speechColor = ITE_ActorTable[i].speechColor;
+			actor->_speechColor = _vm->isECS() ? ITE_ActorECSSpeechColor[i] : ITE_ActorTable[i].speechColor;
 			actor->_sceneNumber = ITE_ActorTable[i].sceneIndex;
 			actor->_flags = ITE_ActorTable[i].flags;
 			actor->_currentAction = ITE_ActorTable[i].currentAction;
@@ -1107,9 +1107,9 @@ void Actor::drawSpeech() {
 	outputString.resize(stringLength + 1);
 
 	if (_activeSpeech.speechFlags & kSpeakSlow)
-		strncpy(&outputString.front(), _activeSpeech.strings[0], _activeSpeech.slowModeCharIndex + 1);
+		Common::strlcpy(&outputString.front(), _activeSpeech.strings[0], _activeSpeech.slowModeCharIndex + 2);
 	else
-		strncpy(&outputString.front(), _activeSpeech.strings[0], stringLength);
+		Common::strlcpy(&outputString.front(), _activeSpeech.strings[0], stringLength + 1);
 
 	if (_activeSpeech.actorsCount > 1) {
 		height = _vm->_font->getHeight(kKnownFontScript);

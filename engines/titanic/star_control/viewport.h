@@ -158,14 +158,14 @@ public:
 	/**
 	 * Sets the center vector y angle
 	 * The actual center y value doesn't
-	 * change untill reset is called
+	 * change until reset is called
 	 */
 	void setCenterYAngle(double angleDegrees);
 
 	/**
 	 * Sets the center vector z angle
 	 * The actual center z value doesn't
-	 * change untill reset is called
+	 * change until reset is called
 	 */
 	void setCenterZAngle(double angleDegrees);
 };

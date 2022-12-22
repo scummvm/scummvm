@@ -39,6 +39,7 @@ protected:
 	void createScene(int sceneNum, int which);
 	void updateScene();
 	void createHallOfRecordsScene(int which, uint32 hallOfRecordsInfoId);
+	bool shouldSkipHall();
 };
 
 class Scene2201 : public Scene {

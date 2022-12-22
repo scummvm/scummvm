@@ -228,6 +228,7 @@ public:
 	virtual void initiateMove(Mult::Mult_Object *obj) = 0;
 	virtual void moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 			int16 nextAct, int16 framesCount) = 0;
+	virtual void setGoblinState(Mult::Mult_Object *obj, int16 animState);
 
 	Goblin(GobEngine *vm);
 	virtual ~Goblin();
@@ -324,6 +325,21 @@ public:
 
 private:
 	int16 turnState(int16 state, uint16 dir);
+};
+
+class Goblin_v7 : public Goblin_v4 {
+public:
+	Goblin_v7(GobEngine *vm);
+	~Goblin_v7() override {}
+
+	void initiateMove(Mult::Mult_Object *obj) override;
+	void setGoblinState(Mult::Mult_Object *obj, int16 animState) override;
+
+private:
+	int32 computeObjNextDirection(Mult::Mult_Object &obj);
+	int32 findPath(int8 x, int8 y, int8 destX, int8 destY);
+	bool directionWalkable(int8 x, int8 y, int8 direction);
+	int32 bestWalkableDirectionFromOriginAndDest(int8 x, int8 y, int8 destX, int8 destY);
 };
 
 } // End of namespace Gob

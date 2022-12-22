@@ -161,7 +161,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 				uint16 colorCount = 1 << colorDepth;
 				int16 colorIndex = 255;
 				byte colorDec = 256 / (colorCount - 1);
-				for (byte j = 0; j < colorCount; j++) {
+				for (uint16 j = 0; j < colorCount; j++) {
 					entry->_palette[j * 3] = entry->_palette[j * 3 + 1] = entry->_palette[j * 3 + 2] = colorIndex;
 					colorIndex -= colorDec;
 					if (colorIndex < 0)

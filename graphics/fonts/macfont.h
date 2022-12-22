@@ -33,7 +33,7 @@ namespace Graphics {
 
 class MacFontFamily {
 public:
-	MacFontFamily();
+	MacFontFamily(const Common::String &name);
 	~MacFontFamily();
 
 	bool load(Common::SeekableReadStream &stream);
@@ -46,9 +46,13 @@ public:
 		uint16 _fontID;
 	};
 
+	const Common::String &getName() { return _name; }
+	uint16 getFontFamilyId() { return _ffFamID; }
 	Common::Array<AsscEntry> *getAssocTable() { return &_ffAssocEntries; }
 
 private:
+	Common::String _name;
+
 	// FOND
 	uint16 _ffFlags;
 	uint16 _ffFamID;
@@ -166,6 +170,8 @@ public:
 
 	virtual int getFontHeight() const { return _data._fRectHeight; }
 	virtual int getFontAscent() const { return _data._ascent; }
+	virtual int getFontDescent() const { return _data._descent; }
+	virtual int getFontLeading() const { return _data._leading; }
 	virtual int getMaxCharWidth() const { return _data._maxWidth; }
 	virtual int getCharWidth(uint32 chr) const;
 	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;

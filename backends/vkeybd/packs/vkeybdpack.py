@@ -17,7 +17,10 @@ def buildPack(packName):
 		print ("Invalid pack name: " + packName)
 		return
 
-	zf = zipfile.ZipFile(packName + ".zip", 'w')
+	try:
+		zf = zipfile.ZipFile(packName + ".zip", 'w', compresslevel=9)
+	except TypeError:
+		zf = zipfile.ZipFile(packName + ".zip", 'w')
 
 	zf.compress_type = zipfile.ZIP_DEFLATED
 

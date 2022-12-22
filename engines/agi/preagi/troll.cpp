@@ -401,7 +401,7 @@ void TrollEngine::gameOver() {
 
 	drawPic(46, true, true);
 
-	sprintf(szMoves, IDS_TRO_GAMEOVER_0, _moves);
+	Common::sprintf_s(szMoves, IDS_TRO_GAMEOVER_0, _moves);
 	drawStr(21, 1, kColorDefault, szMoves);
 	drawStr(22, 1, kColorDefault, IDS_TRO_GAMEOVER_1);
 	g_system->updateScreen();

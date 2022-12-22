@@ -254,10 +254,6 @@ GfxObj* DosDisk_br::loadObjects(const char *name, uint8 part) {
 	return obj;
 }
 
-void genSlidePath(char *path, const char* name) {
-	sprintf(path, "%s.bmp", name);
-}
-
 GfxObj* DosDisk_br::loadStatic(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadStatic");
 	Common::SeekableReadStream *stream = openFile("ras/" + Common::String(name), ".ras");

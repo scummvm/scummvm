@@ -19,6 +19,9 @@
  *
  */
 
+// For Op_BgName
+#define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
+
 #include "cruise/cruise.h"
 #include "cruise/cruise_main.h"
 #include "cruise/cell.h"
@@ -46,7 +49,7 @@ int16 Op_LoadOverlay() {
 	if (strlen(pOverlayName) == 0)
 		return 0;
 
-	strcpy(overlayName, pOverlayName);
+	Common::strcpy_s(overlayName, pOverlayName);
 	strToUpper(overlayName);
 
 	//gfxModuleData.field_84();
@@ -790,7 +793,7 @@ int16 Op_ClearScreen() {
 	if ((bgIdx >= 0) && (bgIdx < NBSCREENS) && (backgroundScreens[bgIdx])) {
 		memset(backgroundScreens[bgIdx], 0, 320 * 200);
 		backgroundChanged[bgIdx] = true;
-		strcpy(backgroundTable[0].name, "");
+		backgroundTable[0].name[0] = '\0';
 	}
 
 	return 0;
@@ -944,9 +947,9 @@ int16 Op_RemoveBackground() {
 			backgroundChanged[0] = true;
 		}
 
-		strcpy(backgroundTable[backgroundIdx].name, "");
+		backgroundTable[backgroundIdx].name[0] = '\0';
 	} else {
-		strcpy(backgroundTable[0].name, "");
+		backgroundTable[0].name[0] = '\0';
 	}
 
 	return (0);
@@ -1521,15 +1524,13 @@ int16 Op_Itoa() {
 	char* pDest = (char *)popPtr();
 
 	if (!nbp)
-		sprintf(txt, "%d", val);
+		Common::sprintf_s(txt, "%d", val);
 	else {
 		char format[30];
-		char nbf[20];
-		strcpy(format, "%");
-		sprintf(nbf, "%d", param[0]);
-		strcat(format, nbf);
-		strcat(format, "d");
-		sprintf(txt, format, val);
+		format[0] = '%';
+		Common::sprintf_s(&format[1], sizeof(format) - 1, "%d", param[0]);
+		Common::strcat_s(format, "d");
+		Common::sprintf_s(txt, format, val);
 	}
 
 	for (int i = 0; txt[i]; i++)

@@ -23,8 +23,9 @@
 #define CC_H
 
 #include "file.h"
-#include "str.h"
+
 #include "common/array.h"
+#include "common/str.h"
 
 /**
  * Details of a single entry in a CC file index

@@ -1068,8 +1068,16 @@ yydefault:
 	/* Do a reduction.  yyn is the number of a rule to reduce with.  */
 yyreduce:
 	yylen = yyr2[yyn];
-	if (yylen > 0)
-		yyval = yyvsp[1 - yylen]; /* implement default value of the action */
+
+	/* If YYLEN is nonzero, implement the default value of the action:
+	   `$$ = $1'.
+
+	   Otherwise, the following line sets YYVAL to the semantic value of
+	   the lookahead token.  This behavior is undocumented and Bison
+	   users should not rely upon it.  Assigning to YYVAL
+	   unconditionally makes the parser a bit smaller, and it avoids a
+	   GCC warning that YYVAL may be used uninitialized.  */
+	yyval = yyvsp[1-yylen];
 
 	switch (yyn) {
 

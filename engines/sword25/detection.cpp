@@ -20,7 +20,6 @@
  */
 
 #include "base/plugins.h"
-#include "common/translation.h"
 #include "engines/advancedDetector.h"
 
 #include "sword25/detection.h"
@@ -43,24 +42,9 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ENGLISH_SPEECH,
-		{
-			_s("Use English speech"),
-			_s("Use English speech instead of German for every language other than German"),
-			"english_speech",
-			false,
-			0,
-			0
-		}
-	},
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
 class Sword25MetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	Sword25MetaEngineDetection() : AdvancedMetaEngineDetection(Sword25::gameDescriptions, sizeof(ADGameDescription), sword25Game, optionsList) {
+	Sword25MetaEngineDetection() : AdvancedMetaEngineDetection(Sword25::gameDescriptions, sizeof(ADGameDescription), sword25Game) {
 		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_ENGLISH_SPEECH);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;

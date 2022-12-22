@@ -22,7 +22,7 @@
 #ifndef WINTERMUTE_ACHIEVEMENTS_H
 #define WINTERMUTE_ACHIEVEMENTS_H
 
-#include "common/achievements.h"
+#include "engines/achievements.h"
 
 namespace Wintermute {
 
@@ -35,6 +35,7 @@ static const Common::AchievementDescriptionList achievementDescriptionList[] = {
 	{"corrosion", Common::STEAM_ACHIEVEMENTS, "349140"},
 	{"drdoylemotch", Common::STEAM_ACHIEVEMENTS, "574420"},
 	{"erinmyers", Common::STEAM_ACHIEVEMENTS, "1064660"},
+	{"jamesperis2", Common::STEAM_ACHIEVEMENTS, "1642970"},
 	{"juliastars", Common::GALAXY_ACHIEVEMENTS, "1457085654"},
 	{"juliastars", Common::STEAM_ACHIEVEMENTS, "257690"},
 	{"juliauntold", Common::GALAXY_ACHIEVEMENTS, "1457085654"},

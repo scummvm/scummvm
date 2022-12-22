@@ -30,7 +30,7 @@
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "common/archive.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 
 namespace Graphics {
 

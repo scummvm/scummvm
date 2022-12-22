@@ -58,6 +58,7 @@ static const GameSpecificSettings simon2_settings = {
 	"SIMON2",                               // speech_filename
 };
 
+#ifdef ENABLE_AGOS2
 static const GameSpecificSettings dimp_settings = {
 	"Gdimp",                                // base_filename
 	"",                                     // restore_filename
@@ -90,7 +91,6 @@ static const GameSpecificSettings swampy_settings = {
 	"MUSIC",                                // speech_filename
 };
 
-#ifdef ENABLE_AGOS2
 AGOSEngine_DIMP::AGOSEngine_DIMP(OSystem *system, const AGOSGameDescription *gd)
 	: AGOSEngine_PuzzlePack(system, gd) {
 
@@ -571,6 +571,9 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	// Add default file directories for Acorn version of
 	// Simon the Sorcerer 1
 	SearchMan.addSubDirectoryMatching(gameDataDir, "execute");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "tables");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "text");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "tunes");
 
 	// Add default file directories for Amiga/Macintosh
 	// versions of Simon the Sorcerer 2

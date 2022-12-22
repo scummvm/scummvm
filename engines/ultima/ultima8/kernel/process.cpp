@@ -38,14 +38,13 @@ Process::Process(ObjId it, uint16 ty)
 }
 
 void Process::fail() {
-	assert(!(_flags & PROC_TERMINATED));
-
 	_flags |= PROC_FAILED;
 	terminate();
 }
 
 void Process::terminate() {
-	assert(!(_flags & PROC_TERMINATED));
+	if (_flags & PROC_TERMINATED)
+		return;
 
 	Kernel *kernel = Kernel::get_instance();
 
@@ -116,6 +115,8 @@ void Process::dumpInfo() const {
 	if (_flags & PROC_TERM_DEFERRED) info += "t";
 	if (_flags & PROC_FAILED) info += "F";
 	if (_flags & PROC_RUNPAUSED) info += "R";
+	if (_flags & PROC_TERM_DISPOSE) info += "D";
+
 	if (!_waiting.empty()) {
 		info += ", notify: ";
 		for (Std::vector<ProcId>::const_iterator i = _waiting.begin(); i != _waiting.end(); ++i) {

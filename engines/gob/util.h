@@ -136,7 +136,7 @@ public:
 	static void listDropFront(List *list);
 	static void deleteList(List *list);
 
-	static char *setExtension(char *str, const char *ext);
+	//static char *setExtension(char *str, const char *ext);
 	static Common::String setExtension(const Common::String &str, const Common::String &ext);
 
 	/** Read a constant-length string out of a stream. */

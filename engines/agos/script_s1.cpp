@@ -411,11 +411,11 @@ void AGOSEngine_Simon1::os1_screenTextPObj() {
 				k = (j % 10) * 10;
 				k += j / 10;
 				if (!(j % 10))
-					sprintf(buf,"0%d%s", k, stringPtr);
+					Common::sprintf_s(buf,"0%d%s", k, stringPtr);
 				else
-					sprintf(buf,"%d%s", k, stringPtr);
+					Common::sprintf_s(buf,"%d%s", k, stringPtr);
 			} else {
-				sprintf(buf,"%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], stringPtr);
+				Common::sprintf_s(buf,"%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], stringPtr);
 			}
 			stringPtr = buf;
 		}
@@ -540,9 +540,9 @@ void AGOSEngine_Simon1::os1_loadStrings() {
 	_soundFileId = getVarOrWord();
 	if (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_TALKIE)) {
 		char buf[13];
-		sprintf(buf, "%d%s", _soundFileId, "Effects");
+		Common::sprintf_s(buf, "%d%s", _soundFileId, "Effects");
 		_sound->readSfxFile(buf);
-		sprintf(buf, "%d%s", _soundFileId, "simon");
+		Common::sprintf_s(buf, "%d%s", _soundFileId, "simon");
 		_sound->readVoiceFile(buf);
 	}
 }

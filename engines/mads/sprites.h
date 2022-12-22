@@ -177,7 +177,7 @@ public:
 	/**
 	 * Delete a timer entry with the given Id
 	 */
-	void deleteTimer(int seqIndex);
+	int deleteTimer(int seqIndex);
 
 	/**
 	 * Add a new slot entry and return it's index

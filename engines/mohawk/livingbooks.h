@@ -28,7 +28,7 @@
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 #include "common/rect.h"
 #include "common/queue.h"
 #include "common/random.h"
@@ -36,7 +36,7 @@
 #include "livingbooks_code.h"
 
 namespace Common {
-	class SeekableSubReadStreamEndian;
+	class SeekableReadStreamEndian;
 	class MemoryReadStreamEndian;
 }
 
@@ -385,7 +385,7 @@ public:
 	LBItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect);
 	virtual ~LBItem();
 
-	void readFrom(Common::SeekableSubReadStreamEndian *stream);
+	void readFrom(Common::SeekableReadStreamEndian *stream);
 	void readData(uint16 type, uint16 size, byte *data);
 	virtual void readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *stream);
 
@@ -721,7 +721,7 @@ public:
 
 	void addNotifyEvent(NotifyEvent event);
 
-	Common::SeekableSubReadStreamEndian *wrapStreamEndian(uint32 tag, uint16 id);
+	Common::SeekableReadStreamEndian *wrapStreamEndian(uint32 tag, uint16 id);
 	Common::String readString(Common::ReadStream *stream);
 	Common::Rect readRect(Common::ReadStreamEndian *stream);
 

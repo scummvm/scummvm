@@ -22,8 +22,6 @@
 #ifndef DIRECTOR_DIRECTOR_H
 #define DIRECTOR_DIRECTOR_H
 
-#include "backends/audiocd/audiocd.h"
-
 #include "common/file.h"
 #include "common/hashmap.h"
 #include "common/hash-ptr.h"
@@ -90,6 +88,8 @@ enum {
 	kDebugEndVideo		= 1 << 17,
 	kDebugLingoStrict	= 1 << 18,
 	kDebugSound			= 1 << 19,
+	kDebugConsole		= 1 << 20,
+	kDebugXObj			= 1 << 21,
 };
 
 struct MovieReference {
@@ -176,6 +176,7 @@ public:
 	Movie *getCurrentMovie() const;
 	void setCurrentMovie(Movie *movie);
 	Common::String getCurrentPath() const;
+	Common::String getCurrentAbsolutePath();
 	Common::String getStartupPath() const;
 
 	// graphics.cpp
@@ -224,7 +225,6 @@ public:
 	RandomState _rnd;
 	Graphics::MacWindowManager *_wm;
 	Graphics::PixelFormat _pixelformat;
-	AudioCDManager::Status _cdda_status;
 
 public:
 	int _colorDepth;
@@ -285,24 +285,25 @@ public:
 // An extension of MacPlotData for interfacing with inks and patterns without
 // needing extra surfaces.
 struct DirectorPlotData {
-	DirectorEngine *d;
-	Graphics::ManagedSurface *dst;
+	DirectorEngine *d = nullptr;
+	Graphics::ManagedSurface *dst = nullptr;
 
 	Common::Rect destRect;
 	Common::Point srcPoint;
 
-	Graphics::ManagedSurface *srf;
-	MacShape *ms;
+	Graphics::ManagedSurface *srf = nullptr;
+	MacShape *ms = nullptr;
 
-	SpriteType sprite;
-	InkType ink;
+	SpriteType sprite = kInactiveSprite;
+	bool oneBitImage = false;
+	InkType ink = kInkTypeCopy;
 	uint32 colorWhite;
 	uint32 colorBlack;
-	int alpha;
+	int alpha = 0;
 
 	uint32 backColor;
 	uint32 foreColor;
-	bool applyColor;
+	bool applyColor = false;
 
 	// graphics.cpp
 	void setApplyColor();
@@ -312,12 +313,8 @@ struct DirectorPlotData {
 	void inkBlitStretchSurface(Common::Rect &srcRect, const Graphics::Surface *mask);
 
 	DirectorPlotData(DirectorEngine *d_, SpriteType s, InkType i, int a, uint32 b, uint32 f) : d(d_), sprite(s), ink(i), alpha(a), backColor(b), foreColor(f) {
-		srf = nullptr;
-		ms = nullptr;
-		dst = nullptr;
 		colorWhite = d->_wm->_colorWhite;
 		colorBlack = d->_wm->_colorBlack;
-		applyColor = false;
 	}
 
 	DirectorPlotData(const DirectorPlotData &old) : d(old.d), sprite(old.sprite),

@@ -60,10 +60,9 @@ void AdResponseContext::setContext(const char *context) {
 	delete[] _context;
 	_context = nullptr;
 	if (context) {
-		_context = new char [strlen(context) + 1];
-		if (_context) {
-			strcpy(_context, context);
-		}
+		size_t contextSize = strlen(context) + 1;
+		_context = new char [contextSize];
+		Common::strcpy_s(_context, contextSize, context);
 	}
 }
 

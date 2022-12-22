@@ -148,8 +148,8 @@ public:
 	virtual const char *getName() const = 0;
 	virtual const char *getDescription() const = 0;
 
-	static void logPrintf(const char *s, ...) GCC_PRINTF(1, 2);
-	static void logDetailedPrintf(const char *s, ...) GCC_PRINTF(1, 2);
+	static void logPrintf(MSVC_PRINTF const char *s, ...) GCC_PRINTF(1, 2);
+	static void logDetailedPrintf(MSVC_PRINTF const char *s, ...) GCC_PRINTF(1, 2);
 
 	// Progress bar (Information Display) related methods.
 	/**

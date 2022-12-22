@@ -19,6 +19,9 @@
  *
  */
 
+// For dangerous AGS API
+#define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
+
 #include "ags/lib/allegro.h"
 #include "ags/lib/std/vector.h"
 #include "ags/shared/core/platform.h"
@@ -80,13 +83,13 @@ using namespace AGS::Shared;
 using namespace AGS::Shared::Memory;
 using namespace AGS::Engine;
 
-const int PLUGIN_API_VERSION = 25;
+const int PLUGIN_API_VERSION = 26;
 
 // On save/restore, the Engine will provide the plugin with a handle. Because we only ever save to one file at a time,
 // we can reuse the same handle.
 
 void PluginSimulateMouseClick(int pluginButtonID) {
-	_G(pluginSimulatedClick) = pluginButtonID - 1;
+	_G(pluginSimulatedClick) = static_cast<eAGSMouseButton>(pluginButtonID);
 }
 
 void IAGSEngine::AbortGame(const char *reason) {
@@ -342,8 +345,9 @@ void IAGSEngine::BlitSpriteRotated(int32 x, int32 y, BITMAP *bmp, int32 angle) {
 void IAGSEngine::PollSystem() {
 	ags_domouse();
 	update_polled_stuff_if_runtime();
-	int mbut, mwheelz;
-	if (run_service_mb_controls(mbut, mwheelz) && mbut >= 0 && !_GP(play).IsIgnoringInput())
+	eAGSMouseButton mbut;
+	int mwheelz;
+	if (run_service_mb_controls(mbut, mwheelz) && mbut > kMouseNone && !_GP(play).IsIgnoringInput())
 		pl_run_plugin_hooks(AGSE_MOUSECLICK, mbut);
 	KeyInput kp;
 	if (run_service_key_controls(kp) && !_GP(play).IsIgnoringInput()) {
@@ -753,6 +757,24 @@ void IAGSEngine::GetRenderStageDesc(AGSRenderStageDesc *desc) {
 	}
 }
 
+void IAGSEngine::GetGameInfo(AGSGameInfo* ginfo) {
+	if (ginfo->Version >= 26) {
+		snprintf(ginfo->GameName, sizeof(ginfo->GameName), "%s", _GP(game).gamename);
+		snprintf(ginfo->Guid, sizeof(ginfo->Guid), "%s", _GP(game).guid);
+		ginfo->UniqueId = _GP(game).uniqueid;
+	}
+}
+
+IAGSFontRenderer* IAGSEngine::ReplaceFontRenderer2(int fontNumber, IAGSFontRenderer2 *newRenderer) {
+	auto *old_render = font_replace_renderer(fontNumber, newRenderer);
+	GUI::MarkForFontUpdate(fontNumber);
+	return old_render;
+}
+
+void IAGSEngine::NotifyFontUpdated(int fontNumber) {
+	font_recalc_metrics(fontNumber);
+	GUI::MarkForFontUpdate(fontNumber);
+}
 
 // *********** General plugin implementation **********
 

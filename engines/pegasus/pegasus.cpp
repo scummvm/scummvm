@@ -78,6 +78,8 @@
 
 namespace Pegasus {
 
+PegasusEngine *g_vm;
+
 PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamedesc) : Engine(syst), InputHandler(nullptr), _gameDescription(gamedesc),
 		_shellNotification(kJMPDCShellNotificationID, this), _returnHotspot(kInfoReturnSpotID), _itemDragger(this), _bigInfoMovie(kNoDisplayElement),
 		_smallInfoMovie(kNoDisplayElement) {
@@ -101,6 +103,8 @@ PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamede
 	_chattyArthur = true;
 	_aiSaveStream = nullptr;
 	_heardOverviewVoice = false;
+
+	g_vm = this;
 }
 
 PegasusEngine::~PegasusEngine() {

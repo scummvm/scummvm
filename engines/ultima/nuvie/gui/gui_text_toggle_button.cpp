@@ -40,9 +40,9 @@ GUI_TextToggleButton::GUI_TextToggleButton(void *data, int x, int y, int w, int 
 
 	texts = new char *[count];
 	for (int i = 0; i < count; ++i) {
-		int l = strlen(texts_[i]);
-		texts[i] = new char[l + 1];
-		strcpy(texts[i], texts_[i]);
+		int l = strlen(texts_[i]) + 1;
+		texts[i] = new char[l];
+		Common::strcpy_s(texts[i], l, texts_[i]);
 	}
 
 	ChangeTextButton(-1, -1, -1, -1, texts[selection], alignment);

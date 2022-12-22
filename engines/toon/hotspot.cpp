@@ -20,9 +20,9 @@
  */
 
 #include "common/debug.h"
+#include "common/compression/rnc_deco.h"
 
 #include "toon/hotspot.h"
-#include "toon/tools.h"
 
 namespace Toon {
 
@@ -123,10 +123,10 @@ bool Hotspots::loadRif(const Common::String &rifName, const Common::String &addi
 	_items = new HotspotData[_numItems];
 
 	// RIFs are compressed in RNC1
-	RncDecoder decoder;
+	Common::RncDecoder decoder;
 	decoder.unpackM1(rifData, size, _items);
 	if (rifsize2) {
-		RncDecoder decoder2;
+		Common::RncDecoder decoder2;
 		decoder2.unpackM1(rifData2 , size2, _items + (rifsize >> 9));
 		for (int32 i = 0; i < (rifsize2 >> 9); i++) {
 			HotspotData *hot = _items + (rifsize >> 9) + i;

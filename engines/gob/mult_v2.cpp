@@ -699,8 +699,18 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 		animLayer = _vm->_scenery->getAnimLayer(nAnim, nLayer);
 	} else {
 		if (animObj.videoSlot > 0) {
-			_vm->_video->retrace();
-			_vm->_vidPlayer->waitEndFrame(animObj.videoSlot - 1, true);
+			if (_vm->getGameType() == kGameTypeAdibou2) {
+				int expectedFrame = _vm->_vidPlayer->getExpectedFrameFromCurrentTime(animObj.videoSlot - 1);
+				if (expectedFrame >= 0 &&
+					expectedFrame < animData.frame) {
+					return; // We are in advance, do not further increment the frame
+				}
+
+				_vm->_vidPlayer->waitEndFrame(animObj.videoSlot - 1, true);
+			} else {
+				_vm->_video->retrace();
+				_vm->_vidPlayer->waitEndFrame(animObj.videoSlot - 1, true);
+			}
 		}
 	}
 
@@ -710,6 +720,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 		if ((animData.animation < 0) && (animObj.videoSlot > 0)) {
 			_vm->_vidPlayer->closeVideo(animObj.videoSlot - 1);
 			animObj.videoSlot = 0;
+			animObj.animName[0] = 0;
 		}
 		return;
 	}
@@ -718,13 +729,40 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 		animData.animType = 11;
 
 	if (animData.animType == 11) {
-		if (animData.isBusy != 0)
-			warning("Woodruff Stub: AnimType 11");
+		if (animData.isBusy != 0) {
+			if (animData.animTypeBak == 1) {
+				if (animData.framesLeft != 0) {
+					--animData.framesLeft;
+				} else {
+					_vm->_goblin->setGoblinState(&animObj, animData.isBusy);
+					animData.isBusy = 0;
+					animData.animTypeBak = 0;
+					animData.animType = 10;
+				}
+			}
+		}
 		return;
 	}
 
-	if (animData.animType != 8)
+	if (animData.animType != 8) {
 		animData.frame++;
+		if (_vm->getGameType() == kGameTypeAdibou2
+			&&
+			animData.animation < 0
+			&&
+			animObj.videoSlot > 0) {
+			// Workaround to improve audio sync of video objects in Adibou 2
+			// They easily get out of sync when the timing is done by hotspots::evaluate, which sometimes does not call animate()
+			// as often as needed for good sync (mouse events processing, in particular, can delay the call).
+			// The original game seems to use also some kind of frame skipping to address this problem.
+			int32 expectedFrame = _vm->_vidPlayer->getExpectedFrameFromCurrentTime(animObj.videoSlot - 1);
+			expectedFrame = CLIP<int32>(expectedFrame, -1, _vm->_vidPlayer->getFrameCount(animObj.videoSlot - 1) - 1);
+			if (expectedFrame > animData.frame + 5) {
+				// We are too far behind, skip frames
+				animData.frame = expectedFrame;
+			}
+		}
+	}
 
 	if (animData.animation < 0) {
 		if ((animObj.videoSlot > 0) &&
@@ -769,8 +807,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 		animData.isStatic = 1;
 		animData.frame = 0;
 		if ((animData.animation < 0) && (animObj.videoSlot > 0)) {
-			_vm->_vidPlayer->closeVideo(animObj.videoSlot - 1);
-			animObj.videoSlot = 0;
+			closeObjVideo(animObj);
 		}
 
 		break;
@@ -779,18 +816,44 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 	case 7:
 		animData.frame--;
 		animData.isPaused = 1;
-/*
+
 		if ((animData.animation < 0) && (animObj.videoSlot > 0)) {
 			if (_vm->_vidPlayer->getFlags(animObj.videoSlot - 1) & 0x1000) {
 				_vm->_vidPlayer->closeVideo(animObj.videoSlot - 1);
 				animObj.videoSlot = 0;
+				animObj.animName[0] = 0;
 			}
 		}
-*/
+
 		break;
 
 	case 10:
-		warning("Woodruff Stub: AnimType 10");
+		if (_vm->_map->_usesObliqueCoordinates) {
+			int8 deltaY = animObj.destY - animObj.goblinY;
+			if (deltaY == -1) {
+				*animObj.pPosX = *animObj.pPosX - _vm->_map->getTilesWidth();
+			} else if (deltaY == 1) {
+				*animObj.pPosX = *animObj.pPosX + _vm->_map->getTilesWidth();
+			}
+		} else {
+			warning("STUB: newCycleAnim: _map->_usesObliqueCoordinates == false");
+		}
+
+
+		animData.frame = 0;
+		animData.destXBak = animData.destX;
+		animData.destYBak = animData.destY;
+		animObj.goblinX = animObj.destX;
+		animData.destX = animObj.goblinX;
+		animObj.goblinY = animObj.destY;
+		animData.destY = animObj.goblinY;
+		if (animData.pathExistence) {
+			animObj.gobDestX = animObj.goblinX;
+			animObj.gobDestY = animObj.goblinY;
+		}
+
+		_vm->_goblin->initiateMove(&animObj);
+
 		break;
 
 	default:
@@ -821,12 +884,47 @@ void Mult_v2::animate() {
 	advanceAllObjects();
 
 	// Find relevant objects
+	int8 currentOrder = (int8) _objCount;
 	for (int i = 0; i < _objCount; i++) {
 		Mult_Object &animObj = _objects[i];
 		Mult_AnimData &animData = *(animObj.pAnimData);
 
-		if (_vm->_map->_mapUnknownBool) {
-			// TODO!
+		if (_vm->_map->_usesObliqueCoordinates && !animData.isStatic && animData.order < 100) {
+			animData.order = currentOrder;
+			animData.field_22 = 0;
+			animData.field_21 = 0;
+			if (animData.animType == 10 || animData.animType == 3) {
+				animData.field_21 = 1;
+				if (animData.curLookDir > 10 || animData.animType == 3) {
+					animData.field_22 = 1;
+				}
+			}
+
+			for (int j = 0; j < i; j++) {
+				Mult_Object &previousAnimObject = _objects[j];
+				Mult_AnimData &previousAnimData = *(previousAnimObject.pAnimData);
+
+				if (previousAnimData.isStatic || previousAnimData.order > 100)
+					continue;
+
+				int8 orderCorrection = 0;
+				if (previousAnimData.destY > animData.destY
+					&& previousAnimData.destX < animData.destX) {
+					orderCorrection = -1;
+				} else if (previousAnimData.destY < animData.destY
+						   && previousAnimData.destX > animData.destX) {
+					orderCorrection = 1;
+				} else if (animData.destX + animData.field_1F > previousAnimData.destX
+							&& animData.destY - animData.field_20 < previousAnimData.destY) {
+					orderCorrection = -1;
+				} else if (previousAnimData.destX + previousAnimData.field_1F > animData.destX
+						   && previousAnimData.destY - previousAnimData.field_20 < animData.destY) {
+					orderCorrection = 1;
+				}
+
+				animData.order += orderCorrection;
+				previousAnimData.order -= orderCorrection;
+			}
 		}
 
 		animData.intersected = 200;

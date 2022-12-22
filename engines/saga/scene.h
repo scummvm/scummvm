@@ -146,8 +146,10 @@ enum SceneTransitionType {
 };
 
 enum SceneLoadFlags {
-	kLoadByResourceId,
-	kLoadBySceneNumber
+	kLoadByResourceId = 0,
+	kLoadBySceneNumber = 1,
+	kLoadIdTypeMask = 1,
+	kLoadBgMaskIsImage = 1 << 16,
 };
 
 struct LoadSceneParams {
@@ -316,7 +318,7 @@ class Scene {
 	void loadSceneDescriptor(uint32 resourceId);
 	void loadSceneResourceList(uint32 resourceId, SceneResourceDataArray &resourceList);
 	void loadSceneEntryList(const ByteArray &resourceData);
-	void processSceneResources(SceneResourceDataArray &resourceList);
+	void processSceneResources(SceneResourceDataArray &resourceList, SceneLoadFlags flags);
 	void getResourceTypes(SAGAResourceTypes *&types, int &typesCount);
 
 
@@ -384,7 +386,6 @@ class Scene {
 	int ITEIntroTreeHouseProc(int param);
 	int ITEIntroFairePathProc(int param);
 	int ITEIntroFaireTentProc(int param);
-
 };
 
 } // End of namespace Saga

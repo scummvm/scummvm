@@ -31,6 +31,14 @@ int Font::getFontAscent() const {
 	return -1;
 }
 
+int Font::getFontDescent() const {
+	return -1;
+}
+
+int Font::getFontLeading() const {
+	return -1;
+}
+
 int Font::getKerningOffset(uint32 left, uint32 right) const {
 	return 0;
 }

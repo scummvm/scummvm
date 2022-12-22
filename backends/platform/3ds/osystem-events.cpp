@@ -277,7 +277,7 @@ void OSystem_3DS::destroyEvents() {
 }
 
 void OSystem_3DS::transformPoint(touchPosition &point) {
-	if (!_overlayVisible) {
+	if (!_overlayInGUI) {
 		point.px = static_cast<float>(point.px) / _gameBottomTexture.getScaleX() - _gameBottomTexture.getPosX();
 		point.py = static_cast<float>(point.py) / _gameBottomTexture.getScaleY() - _gameBottomTexture.getPosY();
 	}
@@ -286,7 +286,7 @@ void OSystem_3DS::transformPoint(touchPosition &point) {
 }
 
 void OSystem_3DS::clipPoint(touchPosition &point) {
-	if (_overlayVisible) {
+	if (_overlayInGUI) {
 		point.px = CLIP<uint16>(point.px, 0, getOverlayWidth()  - 1);
 		point.py = CLIP<uint16>(point.py, 0, getOverlayHeight() - 1);
 	} else {

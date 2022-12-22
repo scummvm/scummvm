@@ -71,10 +71,11 @@ void WidgetTooltipBase::erase() {
 WidgetTooltip::WidgetTooltip(SherlockEngine *vm) : WidgetTooltipBase (vm), _offsetY(0) {
 }
 
-void WidgetTooltip::setText(const Common::String &str) {
+void WidgetTooltip::setText(const Common::String &strIn) {
 	Events &events = *_vm->_events;
 	Common::Point mousePos = events.mousePos();
 	bool reset = false;
+	Common::String str = Fonts::unescape(strIn);
 
 	// Make sure that the description is present
 	if (!str.empty()) {

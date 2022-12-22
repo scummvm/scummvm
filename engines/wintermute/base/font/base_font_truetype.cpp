@@ -38,7 +38,7 @@
 #include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"
 #include "common/unicode-bidi.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 
 namespace Wintermute {
 

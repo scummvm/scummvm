@@ -99,13 +99,12 @@ void UIObject::setText(const char *text) {
 	if (_text) {
 		delete[] _text;
 	}
-	_text = new char [strlen(text) + 1];
-	if (_text) {
-		strcpy(_text, text);
-		for (uint32 i = 0; i < strlen(_text); i++) {
-			if (_text[i] == '|') {
-				_text[i] = '\n';
-			}
+	size_t textSize = strlen(text) + 1;
+	_text = new char [textSize];
+	Common::strcpy_s(_text, textSize, text);
+	for (uint32 i = 0; i < strlen(_text); i++) {
+		if (_text[i] == '|') {
+			_text[i] = '\n';
 		}
 	}
 }

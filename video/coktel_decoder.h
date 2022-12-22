@@ -176,6 +176,7 @@ public:
 
 	uint16 getWidth()  const;
 	uint16 getHeight() const;
+	virtual uint32 getFlags() const = 0;
 	virtual Graphics::PixelFormat getPixelFormat() const = 0;
 
 	uint32 getFrameCount() const;
@@ -185,6 +186,7 @@ public:
 
 	uint32 getTimeToNextFrame() const;
 	uint32 getStaticTimeToNextFrame() const;
+	int32 getExpectedFrameFromCurrentTime() const;
 
 	void pauseVideo(bool pause);
 
@@ -288,6 +290,8 @@ public:
 
 	const Graphics::Surface *decodeNextFrame();
 
+	uint32 getFlags() const;
+
 	Graphics::PixelFormat getPixelFormat() const;
 
 private:
@@ -319,6 +323,8 @@ public:
 	bool isVideoLoaded() const;
 
 	const Graphics::Surface *decodeNextFrame();
+
+	uint32 getFlags() const;
 
 	Graphics::PixelFormat getPixelFormat() const;
 
@@ -424,6 +430,8 @@ public:
 	bool isVideoLoaded() const;
 
 	const Graphics::Surface *decodeNextFrame();
+
+	uint32 getFlags() const;
 
 	Graphics::PixelFormat getPixelFormat() const;
 

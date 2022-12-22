@@ -27,8 +27,7 @@
 #include "common/platform.h"         // for Platform::kPlatformMacintosh
 #include "common/rational.h"         // for operator*, Rational
 #include "common/str.h"              // for String
-#include "common/stream.h"           // for SeekableReadStream
-#include "common/substream.h"        // for SeekableSubReadStreamEndian
+#include "common/stream.h"           // for SeekableReadStream, SeekableReadStreamEndianWrapper
 #include "common/textconsole.h"      // for error, warning
 #include "common/types.h"            // for Flag::NO, Flag::YES
 #include "sci/engine/seg_manager.h"  // for SegManager
@@ -385,7 +384,7 @@ void RobotDecoder::initStream(const GuiResourceId robotId) {
 	const uint16 version = stream->readUint16BE();
 	const bool bigEndian = (0 < version && version <= 0x00ff);
 
-	_stream = new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), bigEndian, DisposeAfterUse::YES);
+	_stream = new Common::SeekableReadStreamEndianWrapper(stream, bigEndian, DisposeAfterUse::YES);
 	_stream->seek(2, SEEK_SET);
 	if (_stream->readUint32BE() != MKTAG('S', 'O', 'L', 0)) {
 		error("Resource %s is not Robot type!", fileName.c_str());

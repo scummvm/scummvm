@@ -96,6 +96,9 @@ void Font::drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,
 
 	uint16 data;
 
+	if (c == '\r' || c == '\n')
+		return;
+
 	const byte *src = getCharData(c);
 	if (!src) {
 		warning("Font::drawLetter(): getCharData() == 0");
@@ -125,7 +128,7 @@ void Font::drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,
 						dst.set(color2);
 				}
 
-				dst++;
+				++dst;
 				data <<= 1;
 			}
 
@@ -224,7 +227,8 @@ SurfacePtr Video::initSurfDesc(int16 width, int16 height, int16 flags) {
 	} else {
 		assert(!(flags & DISABLE_SPR_ALLOC));
 
-		if (!(flags & SCUMMVM_CURSOR))
+
+		if (!(flags & SCUMMVM_CURSOR) && _vm->getGameType() != kGameTypeAdibou2)
 			width = (width + 7) & 0xFFF8;
 
 		descPtr = SurfacePtr(new Surface(width, height, _vm->getPixelFormat().bytesPerPixel));
@@ -326,7 +330,7 @@ void Video::drawPacked(byte *sprBuf, int16 width, int16 height,
 				if (!transp || val)
 					dst.set(val);
 
-			dst++;
+			++dst;
 			curx++;
 			if (curx == destRight) {
 				dst += dest.getWidth() + x - curx;

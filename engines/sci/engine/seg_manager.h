@@ -39,8 +39,8 @@ namespace Sci {
  */
 enum ScriptLoadType {
 	SCRIPT_GET_DONT_LOAD = 0, /**< Fail if not loaded */
-	SCRIPT_GET_LOAD = 1, /**< Load, if neccessary */
-	SCRIPT_GET_LOCK = 3 /**< Load, if neccessary, and lock */
+	SCRIPT_GET_LOAD = 1, /**< Load, if necessary */
+	SCRIPT_GET_LOCK = 3 /**< Load, if necessary, and lock */
 };
 
 class Script;
@@ -316,14 +316,14 @@ public:
 	 * src and dest can point to raw and non-raw segments.
 	 * Conversion is performed as required.
 	 */
-	void strcpy(reg_t dest, reg_t src);
+	void strcpy_(reg_t dest, reg_t src);
 
 	/**
 	 * Copies a string from src to dest.
 	 * dest can point to a raw or non-raw segment.
 	 * Conversion is performed as required.
 	 */
-	void strcpy(reg_t dest, const char *src);
+	void strcpy_(reg_t dest, const char *src);
 
 	/**
 	 * Copies a string from src to dest.

@@ -40,6 +40,7 @@ namespace Director {
 class Channel;
 class MacArchive;
 struct MacShape;
+struct LingoState;
 
 struct TransParams {
 	TransitionType type;
@@ -124,6 +125,7 @@ public:
 	void transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
 	void transZoom(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
 
+	// window.cpp
 	Common::Point getMousePos();
 
 	DirectorEngine *getVM() const { return _vm; }
@@ -144,8 +146,15 @@ public:
 	void updateBorderType();
 
 	bool step();
+	bool loadNextMovie();
+	void loadNewSharedCast(Cast *previousSharedCast);
 
 	Common::String getSharedCastPath();
+
+	LingoState *getLingoState() { return _lingoState; };
+	uint32 frozenLingoStateCount() { return _frozenLingoStates.size(); };
+	void freezeLingoState();
+	void thawLingoState();
 
 	// events.cpp
 	bool processEvent(Common::Event &event) override;
@@ -189,23 +198,15 @@ public:
 	Common::List<MovieReference> _movieStack;
 	bool _newMovieStarted;
 
-	// saved Lingo state
-	Common::Array<CFrame *> _callstack;
-	uint _retPC;
-	ScriptData *_retScript;
-	ScriptContext *_retContext;
-	bool _retFreezeContext;
-	DatumHash *_retLocalVars;
-	Datum _retMe;
-
 private:
 	uint32 _stageColor;
 
 	DirectorEngine *_vm;
 	DirectorSound *_soundManager;
+	LingoState *_lingoState;
+	Common::Array<LingoState *> _frozenLingoStates;
 	bool _isStage;
 	Archive *_mainArchive;
-	Common::MacResManager *_macBinary;
 	Movie *_currentMovie;
 	Common::String _currentPath;
 	Common::StringArray _movieQueue;

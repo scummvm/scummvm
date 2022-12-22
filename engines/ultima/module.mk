@@ -413,7 +413,6 @@ MODULE_OBJS := \
 	ultima8/games/u8_game.o \
 	ultima8/graphics/anim_dat.o \
 	ultima8/graphics/avi_player.o \
-	ultima8/graphics/base_soft_render_surface.o \
 	ultima8/graphics/cycle_process.o \
 	ultima8/graphics/frame_id.o \
 	ultima8/graphics/fade_to_modal_process.o \
@@ -535,6 +534,7 @@ MODULE_OBJS := \
 	ultima8/world/item_sorter.o \
 	ultima8/world/map.o \
 	ultima8/world/map_glob.o \
+	ultima8/world/minimap.o \
 	ultima8/world/missile_tracker.o \
 	ultima8/world/monster_egg.o \
 	ultima8/world/snap_process.o \

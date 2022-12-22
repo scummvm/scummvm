@@ -975,6 +975,7 @@ private:
 			room->disableMouse();
 			// Or should it be music? Unclear to me
 			room->playSFX("hades evil intro theme");
+			g_vm->cancelTimer(19900);
 			room->playVideo(kHadesBurstsIn, kHadesVideoZ, 19016);
 		}
 	}

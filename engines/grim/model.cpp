@@ -142,7 +142,7 @@ void Model::loadText(TextSplitter *ts) {
 		_materials[i] = nullptr;
 
 		ts->scanString("%d: %32s", 2, &num, materialName);
-		strcpy(_materialNames[num], materialName);
+		Common::strcpy_s(_materialNames[num], materialName);
 		loadMaterial(num, _cmap);
 	}
 

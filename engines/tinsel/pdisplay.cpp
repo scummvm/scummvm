@@ -139,7 +139,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 	int aniX, aniY;			// cursor/lead actor position
 	int Loffset, Toffset;		// Screen top left
 
-	char PositionString[64];	// sprintf() things into here
+	char PositionString[64];	// Common::sprintf_s() things into here
 
 	MOVER *pActor;		// Lead actor
 
@@ -164,15 +164,15 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 			}
 
 			// New text objects
-			sprintf(PositionString, "%d %d", aniX + Loffset, aniY + Toffset);
+			Common::sprintf_s(PositionString, "%d %d", aniX + Loffset, aniY + Toffset);
 			_ctx->cpText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), PositionString,
 						0, CPOSX, POSY, _vm->_font->GetTagFontHandle(), TXT_CENTER);
 			if (g_DispPath) {
 				HPOLYGON hp = InPolygon(aniX + Loffset, aniY + Toffset, PATH);
 				if (hp == NOPOLY)
-					sprintf(PositionString, "No path");
+					Common::sprintf_s(PositionString, "No path");
 				else
-					sprintf(PositionString, "%d,%d %d,%d %d,%d %d,%d",
+					Common::sprintf_s(PositionString, "%d,%d %d,%d %d,%d %d,%d",
 						PolyCornerX(hp, 0), PolyCornerY(hp, 0),
 						PolyCornerX(hp, 1), PolyCornerY(hp, 1),
 						PolyCornerX(hp, 2), PolyCornerY(hp, 2),
@@ -196,7 +196,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->opText);
 			}
 
-			sprintf(PositionString, "%d", Overrun);
+			Common::sprintf_s(PositionString, "%d", Overrun);
 			_ctx->opText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), PositionString,
 						0, OPOSX, POSY, GetTagFontHandle(), TXT_CENTER);
 
@@ -222,7 +222,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 				}
 
 				// create new text object list
-				sprintf(PositionString, "%d %d", aniX, aniY);
+				Common::sprintf_s(PositionString, "%d %d", aniX, aniY);
 				_ctx->rpText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), PositionString,
 								0, LPOSX, POSY,	_vm->_font->GetTagFontHandle(), TXT_CENTER);
 
@@ -241,7 +241,7 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->spText);
 			}
 
-			sprintf(PositionString, "String: %d", g_newestString);
+			Common::sprintf_s(PositionString, "String: %d", g_newestString);
 			_ctx->spText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), PositionString,
 						0, SPOSX, POSY+10, _vm->_font->GetTalkFontHandle(), TXT_CENTER);
 

@@ -42,7 +42,7 @@ namespace TADS2 {
 /* dummy setup function */
 void supgnam(char *buf, tokthdef *tab, objnum sc)
 {
-	strcpy(buf, "???");
+	Common::strcpy_s(buf, TOKNAMMAX + 1, "???");
 }
 
 /* dummy file read functions */
@@ -165,7 +165,7 @@ static void trdptf(const char *fmt, ...)
 
 	/* format the string */
 	va_start(va, fmt);
-	vsprintf(buf, fmt, va);
+	Common::vsprintf_s(buf, fmt, va);
 	va_end(va);
 
 	/* print the formatted buffer */
@@ -571,7 +571,7 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 		 */
 		if (osfacc(infile))
 		{
-			strcpy(inbuf, infile);
+			Common::strcpy_s(inbuf, infile);
 			os_defext(inbuf, "gam");
 			infile = inbuf;
 		}
@@ -793,7 +793,7 @@ static void trdlogerr(void *ctx0, const char *fac, int err, int argc, erradef *a
 	char      msg[256];
 
 	/* display the prefix message to the console and log file */
-	sprintf(buf, TRDLOGERR_PREFIX, fac, err);
+	Common::sprintf_s(buf, TRDLOGERR_PREFIX, fac, err);
 	trdptf("%s", buf);
 	out_logfile_print(buf, FALSE);
 

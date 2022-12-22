@@ -28,6 +28,9 @@ struct HopkinsGameDescription {
 	ADGameDescription desc;
 };
 
+#define GAMEOPTION_GORE_DEFAULT_ON  GUIO_GAMEOPTIONS1
+#define GAMEOPTION_GORE_DEFAULT_OFF GUIO_GAMEOPTIONS2
+
 } // End of namespace Hopkins
 
 #endif // HOPKINS_DETECTION_H

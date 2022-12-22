@@ -27,7 +27,7 @@
 #include "common/substream.h"
 #include "common/textconsole.h"
 #include "common/memstream.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 
 #include "draci/sound.h"
 #include "draci/draci.h"
@@ -203,6 +203,16 @@ void ZipSoundArchive::openArchive(const char *path, const char *extension, Sound
 		Common::ArchiveMemberList files;
 		_archive->listMembers(files);
 		_sampleCount = files.size();
+
+		// The sample files are in the form ####.mp3 but not all numbers are used so we need to
+		// iterate the archive and find the last file
+		for (Common::ArchiveMemberList::iterator iter = files.begin(); iter != files.end(); iter++) {
+			Common::String filename = (*iter)->getName();
+			filename.erase(filename.size() - 4);  // remove .mp3 extension
+			uint file_number = atoi(filename.c_str());
+			if(file_number > _sampleCount)		// finds the last file (numerically)
+				_sampleCount = file_number;
+		}
 		debugC(1, kDraciArchiverDebugLevel, "Capacity %d", _sampleCount);
 	} else {
 		debugC(1, kDraciArchiverDebugLevel, "Failed");

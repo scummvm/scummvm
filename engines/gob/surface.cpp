@@ -26,6 +26,7 @@
 #include "common/util.h"
 #include "common/frac.h"
 #include "common/textconsole.h"
+#include "common/stack.h"
 
 #include "graphics/primitives.h"
 #include "graphics/pixelformat.h"
@@ -318,7 +319,7 @@ bool Surface::clipBlitRect(int16 &left, int16 &top, int16 &right, int16 &bottom,
 }
 
 void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int16 bottom,
-		int16 x, int16 y, int32 transp) {
+		int16 x, int16 y, int32 transp, bool yAxisReflection) {
 
 	// Color depths have to fit
 	assert(_bpp == from._bpp);
@@ -335,7 +336,7 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 		// Nothing to do
 		return;
 
-	if ((left == 0) && (_width == from._width) && (_width == width) && (transp == -1)) {
+	if ((left == 0) && (_width == from._width) && (_width == width) && (transp == -1) && !yAxisReflection) {
 		// If these conditions are met, we can directly use memmove
 
 		// Pointers to the blit destination and source start points
@@ -346,7 +347,7 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 		return;
 	}
 
-	if (transp == -1) {
+	if (transp == -1 && !yAxisReflection) {
 		// We don't have to look for transparency => we can use memmove line-wise
 
 		// Pointers to the blit destination and source start points
@@ -373,9 +374,17 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 		     Pixel dstRow = dst;
 		ConstPixel srcRow = src;
 
-		for (uint16 i = 0; i < width; i++, dstRow++, srcRow++)
-			if (srcRow.get() != ((uint32) transp))
-				dstRow.set(srcRow.get());
+		if (yAxisReflection) {
+			srcRow += width - 1;
+			for (uint16 i = 0; i < width; i++, ++dstRow, --srcRow)
+				if (srcRow.get() != ((uint32) transp))
+					dstRow.set(srcRow.get());
+		}
+		else {
+			for (uint16 i = 0; i < width; i++, ++dstRow, ++srcRow)
+				if (srcRow.get() != ((uint32) transp))
+					dstRow.set(srcRow.get());
+		}
 
 		dst +=      _width;
 		src += from._width;
@@ -524,6 +533,79 @@ void Surface::fillRect(int16 left, int16 top, int16 right, int16 bottom, uint32 
 	}
 }
 
+// Fill rectangle with fillColor, except pixels with backgroundColor
+void Surface::fillArea(int16 left, int16 top, int16 right, int16 bottom, uint32 fillColor, uint32 backgroundColor) {
+	// Just in case those are swapped
+	if (left > right)
+		SWAP(left, right);
+	if (top  > bottom)
+		SWAP(top, bottom);
+
+	if ((left >= _width) || (top >= _height))
+		// Nothing to do
+		return;
+
+	left   = CLIP<int32>(left  , 0, _width  - 1);
+	top    = CLIP<int32>(top   , 0, _height - 1);
+	right  = CLIP<int32>(right , 0, _width  - 1);
+	bottom = CLIP<int32>(bottom, 0, _height - 1);
+
+	// Area to actually fill
+	uint16 width  = CLIP<int32>(right  - left + 1, 0, _width  - left);
+	uint16 height = CLIP<int32>(bottom - top  + 1, 0, _height - top);
+
+	if ((width == 0) || (height == 0))
+		// Nothing to do
+		return;
+
+	Pixel p = get(left, top);
+	while (height-- > 0) {
+		for (uint16 i = 0; i < width; i++, ++p)
+			if (p.get() != backgroundColor)
+				p.set(fillColor);
+
+		p += _width - width;
+	}
+}
+
+Common::Rect Surface::fillAreaAtPoint(int16 left, int16 top, uint32 fillColor) {
+	Common::Rect modifiedArea;
+	if (left < 0 || left >= _width || top < 0  || top >= _height)
+		// Nothing to do
+		return modifiedArea;
+
+	Pixel pixel = get(left, top);
+	uint32 initialColor = pixel.get();
+	if (initialColor == fillColor)
+		return modifiedArea;
+
+	pixel.set(fillColor);
+	modifiedArea.extend(Common::Rect(left, top, left + 1, top + 1));
+	Common::Stack<Common::Point> pointsToScan;
+	pointsToScan.push(Common::Point(left, top));
+	int16 directions[4] = {1, 0, -1, 0};
+
+	while (!pointsToScan.empty()) {
+		Common::Point point = pointsToScan.pop();
+		for (int i = 0; i < 4; i++) {
+			int16 x = point.x + directions[i];
+			int16 y = point.y + directions[(i + 1) % 4];
+			if (x < 0 || x >= _width || y < 0 || y >= _height)
+				continue;
+
+			Pixel p = get(x, y);
+			if (p.get() == initialColor) {
+				p.set(fillColor);
+				if (!modifiedArea.contains(x, y))
+					modifiedArea.extend(Common::Rect(x, y, x + 1, y + 1));
+				pointsToScan.push(Common::Point(x, y));
+			}
+		}
+	}
+
+	return modifiedArea;
+}
+
 void Surface::fill(uint32 color) {
 	if (_bpp == 1) {
 		// We can directly use memset
@@ -652,13 +734,21 @@ void Surface::drawCircle(uint16 x0, uint16 y0, uint16 radius, uint32 color, int1
 	int16 x = 0;
 	int16 y = radius;
 
-	if (pattern == 0) {
+	switch (pattern) {
+	case 0xFF:
+		fillRect(x0, y0 + radius, x0, y0 - radius, color);
+		fillRect(x0 + radius, y0, x0 - radius, y0, color);
+		break ;
+	case 0:
 		putPixel(x0, y0 + radius, color);
 		putPixel(x0, y0 - radius, color);
 		putPixel(x0 + radius, y0, color);
 		putPixel(x0 - radius, y0, color);
-	} else
-		warning("Surface::drawCircle - pattern %d", pattern);
+		break;
+	default:
+		break;
+	}
+
 
 	while (x < y) {
 		if (f >= 0) {
@@ -671,7 +761,8 @@ void Surface::drawCircle(uint16 x0, uint16 y0, uint16 radius, uint32 color, int1
 		f += ddFx + 1;
 
 		switch (pattern) {
-		case -1:
+		case 0xFF:
+			// Fill circle
 			fillRect(x0 - y, y0 + x, x0 + y, y0 + x, color);
 			fillRect(x0 - x, y0 + y, x0 + x, y0 + y, color);
 			fillRect(x0 - y, y0 - x, x0 + y, y0 - x, color);

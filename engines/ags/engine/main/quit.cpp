@@ -177,7 +177,7 @@ void quit(const char *quitmsg) {
 
 void quit_free() {
 	if (strlen(_G(quit_message)) == 0)
-		strcpy(_G(quit_message), "|bye!");
+		Common::strcpy_s(_G(quit_message), "|bye!");
 
 	const char *quitmsg = _G(quit_message);
 

@@ -25,6 +25,7 @@
 #include "ags/lib/std/memory.h"
 #include "ags/lib/std/vector.h"
 #include "ags/shared/ac/character_info.h"
+#include "ags/shared/ac/keycode.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/speech.h"
 #include "ags/engine/ac/timer.h"
@@ -65,7 +66,6 @@ enum GameStateSvgVersion {
 	kGSSvgVersion_350_9 = 2,
 	kGSSvgVersion_350_10 = 3,
 };
-
 
 
 // Adding to this might need to modify AGSDEFNS.SH and AGSPLUGIN.H
@@ -313,11 +313,12 @@ struct GameState {
 	int  RoomToScreenX(int roomx);
 	int  RoomToScreenY(int roomy);
 	// Converts game screen coordinates to the room coordinates through the room viewport
-	// This pair of functions tries to find if there is any viewport at the given coords and results
-	// in failure if there is none.
+	// This pair of functions tries to find if there is any viewport at the given coords.
+	// If "clip_viewport" parameter is true, then not finding a viewport results in failure,
+	// if it is false, proceeds converting through the primary viewport.
 	// TODO: find out if possible to refactor and get rid of "variadic" variants;
 	// usually this depends on how the arguments are created (whether they are in "variadic" or true coords)
-	VpPoint ScreenToRoom(int scrx, int scry);
+	VpPoint ScreenToRoom(int scrx, int scry, bool clip_viewport = true);
 	VpPoint ScreenToRoomDivDown(int scrx, int scry); // native "variadic" coords variant
 
 	// Makes sure primary viewport and camera are created and linked together
@@ -359,10 +360,13 @@ struct GameState {
 
 	// Set how the last blocking wait was skipped
 	void SetWaitSkipResult(int how, int data = 0);
-	// Returns the code of the latest blocking wait skip method.
-	// * positive value means a key code;
-	// * negative value means a -(mouse code + 1);
-	// * 0 means timeout.
+	void SetWaitKeySkip(const KeyInput &kp) {
+		SetWaitSkipResult(SKIP_KEYPRESS, AGSKeyToScriptKey(kp.Key) | kp.Mod);
+	}
+	// Returns the information about how the latest blocking wait was skipped.
+	// The information is packed into int32 value like this:
+	// | 0xFF       | 0xFF    | 0xF      | 0xFFF                     |
+	// | eInputType | eKeyMod | reserved | eKeyCode, MouseButton etc |
 	int GetWaitSkipResult() const;
 
 	//

@@ -162,35 +162,6 @@ static reg_t read_var(EngineState *s, int type, int index) {
 static void write_var(EngineState *s, int type, int index, reg_t value) {
 	if (validate_variable(s->variables[type], s->stack_base, type, s->variablesMax[type], index)) {
 
-		// WORKAROUND: This code is needed to work around a probable script bug, or a
-		// limitation of the original SCI engine, which can be observed in LSL5.
-		//
-		// In some games, ego walks via the "Grooper" object, in particular its "stopGroop"
-		// child. In LSL5, during the game, ego is swapped from Larry to Patti. When this
-		// happens in the original interpreter, the new actor is loaded in the same memory
-		// location as the old one, therefore the client variable in the stopGroop object
-		// points to the new actor. This is probably why the reference of the stopGroop
-		// object is never updated (which is why I mentioned that this is either a script
-		// bug or some kind of limitation).
-		//
-		// In our implementation, each new object is loaded in a different memory location,
-		// and we can't overwrite the old one. This means that in our implementation,
-		// whenever ego is changed, we need to update the "client" variable of the
-		// stopGroop object, which points to ego, to the new ego object. If this is not
-		// done, ego's movement will not be updated properly, so the result is
-		// unpredictable (for example in LSL5, Patti spins around instead of walking).
-		if (index == kGlobalVarEgo && type == VAR_GLOBAL && getSciVersion() > SCI_VERSION_0_EARLY) {
-			reg_t stopGroopPos = s->_segMan->findObjectByName("stopGroop");
-			if (!stopGroopPos.isNull()) {	// does the game have a stopGroop object?
-				// Find the "client" member variable of the stopGroop object, and update it
-				ObjVarRef varp;
-				if (lookupSelector(s->_segMan, stopGroopPos, SELECTOR(client), &varp, nullptr) == kSelectorVariable) {
-					reg_t *clientVar = varp.getPointer(s->_segMan);
-					*clientVar = value;
-				}
-			}
-		}
-
 		// If we are writing an uninitialized value into a temp, we remove the uninitialized segment
 		//  this happens at least in sq1/room 44 (slot-machine), because a send is missing parameters, then
 		//  those parameters are taken from uninitialized stack and afterwards they are copied back into temps
@@ -280,7 +251,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		argp++;
 		argc = argp->requireUint16();
 
-		if (argc > 0x800)	// More arguments than the stack could possibly accomodate for
+		if (argc > 0x800)	// More arguments than the stack could possibly accommodate for
 			error("send_selector(): More than 0x800 arguments to function call");
 
 #ifdef ENABLE_SCI32
@@ -625,7 +596,7 @@ void run_vm(EngineState *s) {
 				s->variablesSegment[VAR_LOCAL] = local_script->getLocalsSegment();
 				s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = local_script->getLocalsBegin();
 				s->variablesMax[VAR_LOCAL] = local_script->getLocalsCount();
-				s->variablesMax[VAR_TEMP] = s->xs->sp - s->xs->fp;
+				s->variablesMax[VAR_TEMP] = s->xs->tempCount;
 				s->variablesMax[VAR_PARAM] = s->xs->argc + 1;
 			}
 			s->variables[VAR_TEMP] = s->xs->fp;
@@ -649,8 +620,6 @@ void run_vm(EngineState *s) {
 		if (s->xs->sp < s->xs->fp)
 			error("run_vm(): stack underflow, sp: %04x:%04x, fp: %04x:%04x",
 			PRINT_REG(*s->xs->sp), PRINT_REG(*s->xs->fp));
-
-		s->variablesMax[VAR_TEMP] = s->xs->sp - s->xs->fp;
 
 		if (s->xs->addr.pc.getOffset() >= scr->getBufSize())
 			error("run_vm(): program counter gone astray, addr: %d, code buffer size: %d",
@@ -846,6 +815,8 @@ void run_vm(EngineState *s) {
 			break;
 
 		case op_link: // 0x1f (31)
+			s->variablesMax[VAR_TEMP] = s->xs->tempCount = opparams[0];
+
 			// We shouldn't initialize temp variables at all
 			//  We put special segment 0xFFFF in there, so that uninitialized reads can get detected
 			for (int i = 0; i < opparams[0]; i++)
@@ -948,8 +919,7 @@ void run_vm(EngineState *s) {
 		case op_ret: // 0x24 (36)
 			// Return from an execution loop started by call, calle, callb, send, self or super
 			do {
-				StackPtr old_sp2 = s->xs->sp;
-				StackPtr old_fp = s->xs->fp;
+				StackPtr old_sp = s->xs->sp;
 				ExecStack *old_xs = &(s->_executionStack.back());
 
 				if ((int)s->_executionStack.size() - 1 == s->executionStackBase) { // Have we reached the base?
@@ -981,8 +951,8 @@ void run_vm(EngineState *s) {
 
 				if (s->xs->sp == CALL_SP_CARRY // Used in sends to 'carry' the stack pointer
 				        || s->xs->type != EXEC_STACK_TYPE_CALL) {
-					s->xs->sp = old_sp2;
-					s->xs->fp = old_fp;
+					s->xs->sp = old_sp;
+					s->xs->fp = old_sp;
 				}
 
 			} while (s->xs->type == EXEC_STACK_TYPE_VARSELECTOR);

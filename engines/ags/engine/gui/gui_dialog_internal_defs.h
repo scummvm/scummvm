@@ -30,7 +30,6 @@
 #undef WINAPI
 #endif
 #define WINAPI
-#define mbutrelease(X) (!ags_misbuttondown(X))
 #define TEXT_HT _GP(usetup).textheight
 
 #endif

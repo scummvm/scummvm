@@ -846,10 +846,8 @@ bool GUI_v2::checkSavegameDescription(const char *buffer, int size) {
 	if (buffer[0] == 0)
 		return false;
 	for (int i = 0; i < size; ++i) {
-		if (buffer[i] != 0x20)
+		if (buffer[i] != ' ')
 			return true;
-		else if (buffer[i] == 0x00)
-			return false;
 	}
 	return false;
 }

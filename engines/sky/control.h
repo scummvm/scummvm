@@ -198,7 +198,7 @@ public:
 	void saveDescriptions(const Common::StringArray &list);
 
 private:
-	int displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);
+	int displayMessage(const char *altButton, MSVC_PRINTF const char *message, ...) GCC_PRINTF(3, 4);
 
 	void initPanel();
 	void removePanel();
@@ -213,7 +213,7 @@ private:
 	void delay(unsigned int amount);
 
 	void animClick(ConResource *pButton);
-	bool getYesNo(char *text);
+	bool getYesNo(char *text, uint bufSize);
 	void buttonControl(ConResource *pButton);
 	uint16 handleClick(ConResource *pButton);
 	uint16 doMusicSlide();

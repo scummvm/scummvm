@@ -21,7 +21,7 @@
 
 // Resource library
 
-#include "common/dcl.h"
+#include "common/compression/dcl.h"
 #include "common/util.h"
 #include "common/endian.h"
 #include "common/stream.h"

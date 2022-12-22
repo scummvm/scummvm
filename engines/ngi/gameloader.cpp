@@ -647,7 +647,7 @@ bool PreloadItems::load(MfcArchive &file) {
 
 const char *getSavegameFile(int saveGameIdx) {
 	static char buffer[20];
-	sprintf(buffer, "fullpipe.s%02d", saveGameIdx);
+	Common::sprintf_s(buffer, "fullpipe.s%02d", saveGameIdx);
 	return buffer;
 }
 

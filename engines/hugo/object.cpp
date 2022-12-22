@@ -139,17 +139,17 @@ void ObjectHandler::useObject(int16 objId) {
 		const char *verb;                                 // Background verb to use directly
 		// Get or use objid directly
 		if ((obj->_genericCmd & TAKE) || obj->_objValue)  // Get collectible item
-			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_take, 0), _vm->_text->getNoun(obj->_nounIndex, 0));
+			Common::sprintf_s(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_take, 0), _vm->_text->getNoun(obj->_nounIndex, 0));
 		else if (obj->_cmdIndex != 0)                     // Use non-collectible item if able
-			sprintf(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_parser->getCmdDefaultVerbIdx(obj->_cmdIndex), 0), _vm->_text->getNoun(obj->_nounIndex, 0));
+			Common::sprintf_s(_vm->_line, "%s %s", _vm->_text->getVerb(_vm->_parser->getCmdDefaultVerbIdx(obj->_cmdIndex), 0), _vm->_text->getNoun(obj->_nounIndex, 0));
 		else if ((verb = _vm->_parser->useBG(_vm->_text->getNoun(obj->_nounIndex, 0))) != nullptr)
-			sprintf(_vm->_line, "%s %s", verb, _vm->_text->getNoun(obj->_nounIndex, 0));
+			Common::sprintf_s(_vm->_line, "%s %s", verb, _vm->_text->getNoun(obj->_nounIndex, 0));
 		else
 			return;                                       // Can't use object directly
 	} else {
 		// Use status.objid on objid
 		// Default to first cmd verb
-		sprintf(_vm->_line, "%s %s %s", _vm->_text->getVerb(_vm->_parser->getCmdDefaultVerbIdx(_objects[inventObjId]._cmdIndex), 0),
+		Common::sprintf_s(_vm->_line, "%s %s %s", _vm->_text->getVerb(_vm->_parser->getCmdDefaultVerbIdx(_objects[inventObjId]._cmdIndex), 0),
 			                       _vm->_text->getNoun(_objects[inventObjId]._nounIndex, 0),
 			                       _vm->_text->getNoun(obj->_nounIndex, 0));
 
@@ -162,7 +162,7 @@ void ObjectHandler::useObject(int16 objId) {
 				for (Target *target = use->_targets; target->_nounIndex != 0; target++)
 					if (target->_nounIndex == obj->_nounIndex) {
 						foundFl = true;
-						sprintf(_vm->_line, "%s %s %s", _vm->_text->getVerb(target->_verbIndex, 0),
+						Common::sprintf_s(_vm->_line, "%s %s %s", _vm->_text->getVerb(target->_verbIndex, 0),
 							                       _vm->_text->getNoun(_objects[inventObjId]._nounIndex, 0),
 							                       _vm->_text->getNoun(obj->_nounIndex, 0));
 					}

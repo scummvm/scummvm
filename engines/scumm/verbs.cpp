@@ -827,7 +827,7 @@ void ScummEngine_v0::checkExecVerbs() {
 			_activeVerb = kVerbPush;
 		}
 
-		if (_mouseAndKeyboardStat > 0 && _mouseAndKeyboardStat < MBS_MAX_KEY) {
+		if (!zone || (_mouseAndKeyboardStat > 0 && _mouseAndKeyboardStat < MBS_MAX_KEY)) {
 			// keys already checked by input handler
 		} else if ((_mouseAndKeyboardStat & MBS_MOUSE_MASK) || _activeVerb == kVerbWhatIs) {
 			// click region: sentence line

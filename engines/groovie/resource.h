@@ -47,6 +47,7 @@ public:
 	void dumpResource(uint32 fileRef, const Common::String &fileName);
 	void dumpResource(Common::SeekableReadStream *inFile, const Common::String &fileName, bool dispose = true);
 
+	Common::String getGjdName(const ResInfo &resInfo);
 	virtual uint32 getRef(Common::String name) = 0;
 	virtual bool getResInfo(uint32 fileRef, ResInfo &resInfo) = 0;
 

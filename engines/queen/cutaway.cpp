@@ -69,7 +69,7 @@ void Cutaway::load(const char *filename) {
 	if (0 == scumm_stricmp(filename, "COMIC.CUT"))
 		_songBeforeComic = _vm->sound()->lastOverride();
 
-	strcpy(_basename, filename);
+	Common::strcpy_s(_basename, filename);
 	_basename[strlen(_basename)-4] = '\0';
 
 	_comPanel = READ_BE_UINT16(ptr);
@@ -711,7 +711,7 @@ const byte *Cutaway::handleAnimation(const byte *ptr, CutawayObject &object) {
 }
 
 static void findCdCut(const char *basename, int index, char *result) {
-	strcpy(result, basename);
+	Common::strcpy_s(result, Cutaway::MAX_STRING_SIZE, basename);
 	for (int i = strlen(basename); i < 5; i++)
 		result[i] = '_';
 	snprintf(result + 5, 3, "%02i", index);
@@ -1243,7 +1243,7 @@ void Cutaway::handleText(
 		if (_vm->sound()->speechOn()) {
 			char voiceFileName[MAX_STRING_SIZE];
 			findCdCut(_basename, index, voiceFileName);
-			strcat(voiceFileName, "1");
+			Common::strcat_s(voiceFileName, "1");
 			_vm->sound()->playSpeech(voiceFileName);
 		}
 

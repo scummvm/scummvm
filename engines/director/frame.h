@@ -91,7 +91,7 @@ public:
 
 	Score *getScore() const { return _score; }
 
-	void readChannels(Common::ReadStreamEndian *stream, uint16 version);
+	void readChannels(Common::SeekableReadStreamEndian *stream, uint16 version);
 	void readChannel(Common::SeekableReadStreamEndian &stream, uint16 offset, uint16 size);
 
 	void executeImmediateScripts();
@@ -117,6 +117,7 @@ public:
 	TransitionType _transType;
 	PaletteInfo _palette;
 	uint8 _tempo;
+	uint8 _scoreCachedTempo;
 
 	CastMemberID _sound1;
 	uint8 _soundType1;

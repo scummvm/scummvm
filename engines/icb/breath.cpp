@@ -150,7 +150,7 @@ void Breath::Update() {
 					breathColour[i] = SMOKE_IC;
 				}
 
-				// we have definately started now!
+				// we have definitely started now!
 				breathStarted[i] = 1;
 			}
 

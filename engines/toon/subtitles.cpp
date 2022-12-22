@@ -43,7 +43,7 @@ void SubtitleRenderer::render(const Graphics::Surface &frame, uint32 frameNumber
 
 	_subSurface->copyFrom(frame);
 	// char strf[384] = {0};
-	// sprintf(strf, "Time passed: %d", frameNumber);
+	// Common::sprintf_s(strf, "Time passed: %d", frameNumber);
 	// _vm->drawCostumeLine(0, 0, strf, _subSurface);
 	// _vm->_system->copyRectToScreen(_subSurface->getBasePtr(0, 0), _subSurface->pitch, 0, 0, _subSurface->w,  _subSurface->h);
 

@@ -92,8 +92,9 @@ char *BaseStringTable::getKey(const char *str) const {
 
 	StringsIter it = _strings.find(key);
 	if (it != _strings.end()) {
-		newStr = new char[it->_value.size() + 1];
-		strcpy(newStr, it->_value.c_str());
+		size_t newStrSize = it->_value.size() + 1;
+		newStr = new char[newStrSize];
+		Common::strcpy_s(newStr, newStrSize, it->_value.c_str());
 		if (strlen(newStr) > 0 && newStr[0] == '/' && strchr(newStr + 1, '/')) {
 			delete[] key;
 			char *ret = getKey(newStr);
@@ -130,11 +131,13 @@ void BaseStringTable::expand(char **str) const {
 
 	StringsIter it = _strings.find(key);
 	if (it != _strings.end()) {
-		newStr = new char[it->_value.size() + 1];
-		strcpy(newStr, it->_value.c_str());
+		size_t newStrSize = it->_value.size() + 1;
+		newStr = new char[newStrSize];
+		Common::strcpy_s(newStr, newStrSize, it->_value.c_str());
 	} else {
-		newStr = new char[strlen(value) + 1];
-		strcpy(newStr, value);
+		size_t newStrSize = strlen(value) + 1;
+		newStr = new char[newStrSize];
+		Common::strcpy_s(newStr, newStrSize, value);
 	}
 
 	delete[] key;
@@ -149,7 +152,7 @@ void BaseStringTable::expand(char **str) const {
 //////////////////////////////////////////////////////////////////////////
 void BaseStringTable::expand(Common::String &str) const {
 	char *tmp = new char[str.size() + 1];
-	strcpy(tmp, str.c_str());
+	Common::strcpy_s(tmp, str.size() + 1, str.c_str());
 	expand(&tmp);
 	str = tmp;
 	delete[] tmp;

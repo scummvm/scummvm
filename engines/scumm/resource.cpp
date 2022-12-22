@@ -221,9 +221,9 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 		_imuseDigital->stopAllSounds();
 
 #ifdef MACOSX
-		sprintf(buf, "Cannot find file: '%s'\nPlease insert disc %d.\nPress OK to retry, Quit to exit", filename, disknum);
+		Common::sprintf_s(buf, "Cannot find file: '%s'\nPlease insert disc %d.\nPress OK to retry, Quit to exit", filename, disknum);
 #else
-		sprintf(buf, "Cannot find file: '%s'\nInsert disc %d into drive %s\nPress OK to retry, Quit to exit", filename, disknum, ConfMan.get("path").c_str());
+		Common::sprintf_s(buf, "Cannot find file: '%s'\nInsert disc %d into drive %s\nPress OK to retry, Quit to exit", filename, disknum, ConfMan.get("path").c_str());
 #endif
 
 		result = displayMessage("Quit", "%s", buf);
@@ -232,7 +232,7 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 		}
 #endif
 	} else {
-		sprintf(buf, "Cannot find file: '%s'", filename);
+		Common::sprintf_s(buf, "Cannot find file: '%s'", filename);
 		InfoDialog dialog(this, Common::U32String(buf));
 		runDialog(dialog);
 		error("Cannot find file: '%s'", filename);
@@ -593,6 +593,8 @@ void ScummEngine::nukeCharset(int i) {
 }
 
 void ScummEngine::ensureResourceLoaded(ResType type, ResId idx) {
+	Common::StackLock lock(_resourceAccessMutex);
+
 	debugC(DEBUG_RESOURCE, "ensureResourceLoaded(%s,%d)", nameOfResType(type), idx);
 
 	if ((type == rtRoom) && idx > 0x7F && _game.version < 7 && _game.heversion <= 71) {
@@ -615,6 +617,22 @@ void ScummEngine::ensureResourceLoaded(ResType type, ResId idx) {
 
 	if (idx <= _res->_types[type].size() && _res->_types[type][idx]._address)
 		return;
+
+	#ifdef ENABLE_SCUMM_7_8
+	_resourceAccessMutex.unlock();
+
+	if (_imuseDigital) {
+		int32 bufSize, criticalSize, freeSpace;
+		int paused;
+		if (_imuseDigital->isFTSoundEngine() && _imuseDigital->queryNextSoundFile(bufSize, criticalSize, freeSpace, paused)) {
+			_imuseDigital->fillStreamsWhileMusicCritical(5);
+		} else {
+			_imuseDigital->fillStreamsWhileMusicCritical(_game.id == GID_DIG ? 30 : 20);
+		}
+	}
+
+	_resourceAccessMutex.lock();
+#endif
 
 	loadResource(type, idx);
 
@@ -1427,7 +1445,7 @@ void ScummEngine::dumpResource(const char *tag, int id, const byte *ptr, int len
 	else
 		size = READ_BE_UINT32(ptr + 4);
 
-	sprintf(buf, "dumps/%s%d.dmp", tag, id);
+	Common::sprintf_s(buf, "dumps/%s%d.dmp", tag, id);
 
 	out.open(buf);
 	if (out.isOpen() == false)
@@ -1644,7 +1662,7 @@ const char *nameOfResType(ResType type) {
 	case rtSpoolBuffer:
 		return "SpoolBuffer";
 	default:
-		sprintf(buf, "rt%d", type);
+		Common::sprintf_s(buf, "rt%d", type);
 		return buf;
 	}
 }
@@ -1896,6 +1914,10 @@ bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 		lang[1] = 'S';
 		lang[2] = 'P';
 		break;
+	// For some reason, those lines were already missing from the official
+	// French floppy EGA/VGA releases, and so there's no official content
+	// to restore for this language.
+	case Common::FR_FRA:
 	default:
 		return false;
 	}

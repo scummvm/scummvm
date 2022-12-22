@@ -25,8 +25,6 @@
 #include "engines/advancedDetector.h"
 #include "common/translation.h"
 
-#define GAMEOPTION_INTRO_MUSIC_DIGITAL GUIO_GAMEOPTIONS1
-
 namespace Made {
 
 static const MadeGameDescription gameDescriptions[] = {
@@ -314,7 +312,11 @@ static const MadeGameDescription gameDescriptions[] = {
 		{
 			"rtz",
 			"Demo",
-			AD_ENTRY1("demo.dat", "2a6a1354bd5346fad4aee08e5b56caaa"),
+			{
+				{ "demo.dat", 0, "2a6a1354bd5346fad4aee08e5b56caaa", 34304 },
+				{ "demo.prj", 0, "46891bd6e5180228fe4b3253d500997b", 1675348 },
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
@@ -502,6 +504,23 @@ static const MadeGameDescription gameDescriptions[] = {
 		0,
 		GF_FLOPPY,
 		1,
+	},
+
+	{
+		// The Manhole
+		{
+			"manhole",
+			"",
+			AD_ENTRY1s("manhole.dat", "2f14b5d87a862aad25701514dc282475", 119667),
+			Common::JA_JPN,
+			Common::kPlatformFMTowns,
+			ADGF_CD | ADGF_UNSTABLE,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_MANHOLE,
+		0,
+		GF_CD,
+		3,
 	},
 
 	{

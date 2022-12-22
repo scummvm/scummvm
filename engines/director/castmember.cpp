@@ -212,6 +212,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Image::ImageDecode
 	_regX = img->getSurface()->w / 2;
 	_flags1 = flags1;
 	_flags2 = 0;
+	_tag = 0;
 }
 
 BitmapCastMember::~BitmapCastMember() {
@@ -251,7 +252,7 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 #endif
 			) {
 
-			ditherFloydImage();
+			_ditheredImg = _img->getSurface()->convertTo(g_director->_wm->_pixelformat, _img->getPalette(), _img->getPaletteColorCount(), g_director->_wm->getPalette(), g_director->_wm->getPaletteSize());
 
 			pal = g_director->_wm->getPalette();
 		}
@@ -310,281 +311,6 @@ void BitmapCastMember::copyStretchImg(Graphics::Surface *surface, const Common::
 	} else {
 		surface->copyFrom(*srcSurf);
 	}
-}
-
-void BitmapCastMember::ditherImage() {
-	// If palette did not change, do not re-dither
-	if (!_paletteLookup.setPalette(g_director->_wm->getPalette(), g_director->_wm->getPaletteSize()))
-		return;
-
-	int bpp = _img->getSurface()->format.bytesPerPixel;
-	int w = _initialRect.width();
-	int h = _initialRect.height();
-
-	_ditheredImg = new Graphics::Surface;
-	_ditheredImg->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
-
-	for (int y = 0; y < h; y++) {
-		const byte *src = (const byte *)_img->getSurface()->getBasePtr(0, y);
-		byte *dst = (byte *)_ditheredImg->getBasePtr(0, y);
-
-		for (int x = 0; x < w; x++) {
-			uint32 color;
-
-			switch (bpp) {
-			case 1:
-				color = *((const byte *)src);
-				src += 1;
-				break;
-			case 2:
-				color = *((const uint16 *)src);
-				src += 2;
-				break;
-			case 4:
-				color = *((const uint32 *)src);
-				src += 4;
-				break;
-			default:
-				error("BitmapCastMember::ditherImage(): Unsupported bit depth: %d", bpp);
-			}
-
-			byte r, g, b;
-			_img->getSurface()->format.colorToRGB(color, r, g, b);
-
-			*dst = _paletteLookup.findBestColor(r, g, b);
-			dst++;
-		}
-	}
-}
-
-static void updatePixel(byte *surf, int x, int y, int w, int h, int qr, int qg, int qb, int qq, int qdiv) {
-	if (x >= w || y >= h)
-		return;
-
-	byte *ptr = &surf[x * 3 + y * w * 3];
-
-	ptr[0] = CLIP(ptr[0] + qr * qq / qdiv, 0, 255);
-	ptr[1] = CLIP(ptr[1] + qg * qq / qdiv, 0, 255);
-	ptr[2] = CLIP(ptr[2] + qb * qq / qdiv, 0, 255);
-}
-
-void BitmapCastMember::ditherFloydImage() {
-	// If palette did not change, do not re-dither
-	if (!_paletteLookup.setPalette(g_director->_wm->getPalette(), g_director->_wm->getPaletteSize()))
-		return;
-
-	int w = _initialRect.width();
-	int h = _initialRect.height();
-
-	byte *tmpSurf = (byte *)malloc(w * h * 3);
-
-	int bpp = _img->getSurface()->format.bytesPerPixel;
-	const byte *pal = _img->getPalette();
-
-	for (int y = 0; y < h; y++) {
-		const byte *src = (const byte *)_img->getSurface()->getBasePtr(0, y);
-		byte *dst = &tmpSurf[y * w * 3];
-
-		byte r, g, b;
-
-		for (int x = 0; x < w; x++) {
-			uint32 color;
-
-			switch (bpp) {
-			case 1:
-				color = *src * 3;
-				src += 1;
-				r = pal[color + 0]; g = pal[color + 1]; b = pal[color + 2];
-				break;
-			case 2:
-				color = *((const uint16 *)src);
-				src += 2;
-				_img->getSurface()->format.colorToRGB(color, r, g, b);
-				break;
-			case 4:
-				color = *((const uint32 *)src);
-				src += 4;
-				_img->getSurface()->format.colorToRGB(color, r, g, b);
-				break;
-			default:
-				error("BitmapCastMember::ditherFloydImage(): Unsupported bit depth: %d", bpp);
-			}
-
-			dst[0] = r; dst[1] = g; dst[2] = b;
-			dst += 3;
-		}
-	}
-
-	_ditheredImg = new Graphics::Surface;
-	_ditheredImg->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
-
-	pal = g_director->_wm->getPalette();
-
-	struct DitherParams {
-		int dy, dx, qq;
-	};
-
-	DitherParams paramsNaive[] = {
-		{ 0, 0, 0 }
-	};
-
-	DitherParams paramsFloyd[] = {
-		{ 0, +1, 7 },
-		{ 1, -1, 3 },
-		{ 1,  0, 5 },
-		{ 1, +1, 1 },
-		{ 0,  0, 0 }
-	};
-
-	DitherParams paramsAtkinson[] = {
-		{ 0, +1, 1 },
-		{ 0, +2, 1 },
-		{ 1, -1, 1 },
-		{ 1,  0, 1 },
-		{ 1, +1, 1 },
-		{ 2,  0, 1 },
-		{ 0,  0, 0 }
-	};
-
-	DitherParams paramsBurkes[] = {
-		{ 0, +1, 8 },
-		{ 0, +2, 4 },
-		{ 1, -2, 2 },
-		{ 1, -1, 4 },
-		{ 1,  0, 8 },
-		{ 1, +1, 4 },
-		{ 1, +2, 2 },
-		{ 0,  0, 0 }
-	};
-
-	DitherParams paramsFalseFloyd[] = {
-		{ 0, +1, 3 },
-		{ 1,  0, 3 },
-		{ 1, +1, 2 },
-		{ 0,  0, 0 }
-	};
-
-    DitherParams paramsSierra[] = {
-		{ 0,  1, 5 },
-		{ 0,  2, 3 },
-		{ 1, -2, 2 },
-		{ 1, -1, 4 },
-		{ 1,  0, 5 },
-		{ 1,  1, 4 },
-		{ 1,  2, 2 },
-		{ 2, -1, 2 },
-		{ 2,  0, 3 },
-		{ 2,  1, 2 },
-		{ 0,  0, 0 }
-    };
-
-    DitherParams paramsSierraTwoRow[] = {
-		{ 0,  1, 4 },
-		{ 0,  2, 3 },
-		{ 1, -2, 1 },
-		{ 1, -1, 2 },
-		{ 1,  0, 3 },
-		{ 1,  1, 2 },
-		{ 1,  2, 1 },
-		{ 0,  0, 0 }
-    };
-
-    DitherParams paramsSierraLite[] = {
-		{ 0,  1, 2 },
-		{ 1, -1, 1 },
-		{ 1,  0, 1 },
-		{ 0,  0, 0 }
-    };
-
-    DitherParams paramsStucki[] = {
-		{ 0,  1, 8 },
-		{ 0,  2, 4 },
-		{ 1, -2, 2 },
-		{ 1, -1, 4 },
-		{ 1,  0, 8 },
-		{ 1,  1, 4 },
-		{ 1,  2, 2 },
-		{ 2, -2, 1 },
-		{ 2, -1, 2 },
-		{ 2,  0, 4 },
-		{ 2,  1, 2 },
-		{ 2,  2, 1 },
-		{ 0,  0, 0 }
-    };
-
-    DitherParams paramsJarvis[] = {
-		{ 0,  1, 7 },
-		{ 0,  2, 5 },
-		{ 1, -2, 3 },
-		{ 1, -1, 5 },
-		{ 1,  0, 7 },
-		{ 1,  1, 5 },
-		{ 1,  2, 3 },
-		{ 2, -2, 1 },
-		{ 2, -1, 3 },
-		{ 2,  0, 5 },
-		{ 2,  1, 3 },
-		{ 2,  2, 1 },
-		{ 0,  0, 0 }
-    };
-
-	struct DitherAlgos {
-		const char *name;
-		DitherParams *params;
-		int qdiv;
-	} const algos[] = {
-		{ "Naive",                paramsNaive,         1 },
-		{ "Floyd-Steinberg",      paramsFloyd,        16 },
-		{ "Atkinson",             paramsAtkinson,      8 },
-		{ "Burkes",               paramsBurkes,       32 },
-		{ "False Floyd-Steinberg",paramsFalseFloyd,    8 },
-		{ "Sierra",               paramsSierra,       32 },
-		{ "Sierra 2",             paramsSierraTwoRow, 16 },
-		{ "Sierra Lite",          paramsSierraLite,    4 },
-		{ "Stucki",               paramsStucki,       42 },
-		{ "Jarvis-Judice-Ninke ", paramsJarvis,       48 },
-		{ nullptr, nullptr, 0 }
-	};
-
-	enum {
-		kDitherNaive,
-		kDitherFloyd,
-		kDitherAtkinson,
-		kDitherBurkes,
-		kDitherFalseFloyd,
-		kDitherSierra,
-		kDitherSierraTwoRow,
-		kDitherSierraLite,
-		kDitherStucki,
-		kDitherJarvis,
-	};
-
-	for (int y = 0; y < h; y++) {
-		const byte *src = &tmpSurf[y * w * 3];
-		byte *dst = (byte *)_ditheredImg->getBasePtr(0, y);
-
-		for (int x = 0; x < w; x++) {
-			byte r = src[0], g = src[1], b = src[2];
-			byte col = _paletteLookup.findBestColor(r, g, b);
-
-			*dst = col;
-
-			int qr = r - pal[col * 3 + 0];
-			int qg = g - pal[col * 3 + 1];
-			int qb = b - pal[col * 3 + 2];
-
-			int algo = kDitherFloyd;
-			DitherParams *params = algos[algo].params;
-
-			for (int i = 0; params[i].dx != 0 || params[i].dy != 0; i++)
-				updatePixel(tmpSurf, x + params[i].dx, y + params[i].dy, w, h, qr, qg, qb, params[i].qq, algos[algo].qdiv);
-
-			src += 3;
-			dst++;
-		}
-	}
-
-	free(tmpSurf);
 }
 
 void BitmapCastMember::createMatte(Common::Rect &bbox) {
@@ -659,6 +385,17 @@ Graphics::Surface *BitmapCastMember::getMatte(Common::Rect &bbox) {
 	return _matte ? _matte->getMask() : nullptr;
 }
 
+Common::String BitmapCastMember::formatInfo() {
+	return Common::String::format(
+		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, foreColor: %d, backColor: %d, regX: %d, regY: %d, pitch: %d, bitsPerPixel: %d",
+		_initialRect.width(), _initialRect.height(),
+		_initialRect.left, _initialRect.top,
+		_boundingRect.width(), _boundingRect.height(),
+		_boundingRect.left, _boundingRect.top,
+		getForeColor(), getBackColor(),
+		_regX, _regY, _pitch, _bitsPerPixel
+	);
+}
 
 /////////////////////////////////////
 // DigitalVideo
@@ -735,6 +472,11 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 		delete _video;
 		_video = new Video::AVIDecoder();
 		result = _video->loadFile(Common::Path(path1, g_director->_dirSeparator));
+		if (!result) {
+		    warning("DigitalVideoCastMember::loadVideo(): format not supported, skipping");
+		    delete _video;
+		    _video = nullptr;
+		}
 	}
 
 	if (result && g_director->_pixelformat.bytesPerPixel == 1) {
@@ -789,7 +531,7 @@ void DigitalVideoCastMember::startVideo(Channel *channel) {
 	_duration = getMovieTotalTime();
 }
 
-void DigitalVideoCastMember::stopVideo(Channel *channel) {
+void DigitalVideoCastMember::stopVideo() {
 	if (!_video || !_video->isVideoLoaded()) {
 		warning("DigitalVideoCastMember::stopVideo: No video decoder");
 		return;
@@ -798,6 +540,17 @@ void DigitalVideoCastMember::stopVideo(Channel *channel) {
 	_video->stop();
 
 	debugC(2, kDebugImages, "STOPPING VIDEO %s", _filename.c_str());
+}
+
+void DigitalVideoCastMember::rewindVideo() {
+	if (!_video || !_video->isVideoLoaded()) {
+		warning("DigitalVideoCastMember::rewindVideo: No video decoder");
+		return;
+	}
+
+	_video->rewind();
+
+	debugC(2, kDebugImages, "REWINDING VIDEO %s", _filename.c_str());
 }
 
 Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) {
@@ -819,10 +572,9 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 		return widget;
 	}
 
-	debugC(1, kDebugImages, "Video time: %d  rate: %f", _channel->_movieTime, _channel->_movieRate);
 	const Graphics::Surface *frame = _video->decodeNextFrame();
 
-	_channel->_movieTime = getMovieCurrentTime();
+	debugC(1, kDebugImages, "Video time: %d  rate: %f", _channel->_movieTime, _channel->_movieRate);
 
 	if (frame) {
 		if (_lastFrame) {
@@ -924,6 +676,20 @@ void DigitalVideoCastMember::setFrameRate(int rate) {
 	warning("STUB: DigitalVideoCastMember::setFrameRate(%d)", rate);
 }
 
+Common::String DigitalVideoCastMember::formatInfo() {
+	return Common::String::format(
+		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, filename: \"%s\", duration: %d, enableVideo: %d, enableSound: %d, looping: %d, crop: %d, center: %d, showControls: %d",
+		_initialRect.width(), _initialRect.height(),
+		_initialRect.left, _initialRect.top,
+		_boundingRect.width(), _boundingRect.height(),
+		_boundingRect.left, _boundingRect.top,
+		_filename.c_str(), _duration,
+		_enableVideo, _enableSound,
+		_looping, _crop, _center, _showControls
+	);
+}
+
+
 /////////////////////////////////////
 // MovieCasts
 /////////////////////////////////////
@@ -949,6 +715,17 @@ MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 
 }
 
+Common::String MovieCastMember::formatInfo() {
+	return Common::String::format(
+		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, enableScripts: %d, enableSound: %d, looping: %d, crop: %d, center: %d",
+		_initialRect.width(), _initialRect.height(),
+		_initialRect.left, _initialRect.top,
+		_boundingRect.width(), _boundingRect.height(),
+		_boundingRect.left, _boundingRect.top,
+		_enableScripts, _enableSound, _looping,
+		_crop, _center
+	);
+}
 
 /////////////////////////////////////
 // Film loops
@@ -1166,6 +943,17 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 
 }
 
+Common::String FilmLoopCastMember::formatInfo() {
+	return Common::String::format(
+		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, frameCount: %d, subchannelCount: %d, enableSound: %d, looping: %d, crop: %d, center: %d",
+		_initialRect.width(), _initialRect.height(),
+		_initialRect.left, _initialRect.top,
+		_boundingRect.width(), _boundingRect.height(),
+		_boundingRect.left, _boundingRect.top,
+		_frames.size(), _subchannels.size(), _enableSound, _looping,
+		_crop, _center
+	);
+}
 
 /////////////////////////////////////
 // Sound
@@ -1183,6 +971,11 @@ SoundCastMember::~SoundCastMember() {
 		delete _audio;
 }
 
+Common::String SoundCastMember::formatInfo() {
+	return Common::String::format(
+		"looping: %d", _looping
+	);
+}
 
 /////////////////////////////////////
 // Text
@@ -1502,6 +1295,19 @@ void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {
 	}
 }
 
+Common::String TextCastMember::formatInfo() {
+	return Common::String::format(
+		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, foreColor: %d, backColor: %d, editable: %d, text: \"%s\"",
+		_initialRect.width(), _initialRect.height(),
+		_initialRect.left, _initialRect.top,
+		_boundingRect.width(), _boundingRect.height(),
+		_boundingRect.left, _boundingRect.top,
+		getForeColor(), getBackColor(),
+		_editable, _ptext.encode().c_str()
+	);
+
+}
+
 
 /////////////////////////////////////
 // Shape
@@ -1571,6 +1377,18 @@ void ShapeCastMember::setForeColor(uint32 fgCol) {
 	_modified = true;
 }
 
+Common::String ShapeCastMember::formatInfo() {
+	return Common::String::format(
+		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, foreColor: %d, backColor: %d, shapeType: %d, pattern: %d, fillType: %d, lineThickness: %d, lineDirection: %d, ink: %d",
+		_initialRect.width(), _initialRect.height(),
+		_initialRect.left, _initialRect.top,
+		_boundingRect.width(), _boundingRect.height(),
+		_boundingRect.left, _boundingRect.top,
+		getForeColor(), getBackColor(),
+		_shapeType, _pattern, _fillType,
+		_lineThickness, _lineDirection, _ink
+	);
+}
 
 /////////////////////////////////////
 // Script

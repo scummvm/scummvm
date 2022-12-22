@@ -81,6 +81,7 @@
 #include "scumm/imuse/drivers/mac_m68k.h"
 #include "scumm/imuse/drivers/amiga.h"
 #include "scumm/imuse/drivers/fmtowns.h"
+#include "scumm/imuse/drivers/midi.h"
 #include "scumm/detection_steam.h"
 
 #include "backends/audiocd/audiocd.h"
@@ -359,8 +360,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	setV1ColorTable(_renderMode);
 
-	_isRTL = (_language == Common::HE_ISR && _game.heversion == 0)
-			&& (_game.id == GID_MANIAC || (_game.version >= 4 && _game.version < 7));
+	_isRTL = (_language == Common::HE_ISR && (_game.heversion == 0 || _game.heversion >= 72))
+			&& (_game.id == GID_MANIAC || (_game.version >= 4 && _game.version < 7)) && !(_game.features & GF_HE_NO_BIDI);
 #ifndef DISABLE_HELP
 	// Create custom GMM dialog providing a help subdialog
 	assert(!_mainMenuDialog);
@@ -482,12 +483,6 @@ ScummEngine_v3::ScummEngine_v3(OSystem *syst, const DetectorResult &dr)
 	// All v3 and older games only used 16 colors with exception of the GF_OLD256 games.
 	if (!(_game.features & GF_OLD256))
 		_game.features |= GF_16COLOR;
-
-	_savePreparedSavegame = nullptr;
-}
-
-ScummEngine_v3::~ScummEngine_v3() {
-	delete _savePreparedSavegame;
 }
 
 ScummEngine_v3old::ScummEngine_v3old(OSystem *syst, const DetectorResult &dr)
@@ -1435,7 +1430,7 @@ void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 		filesAreCompressed |= _sound->isSfxFileCompressed();
 	}
 
-	_musicEngine = _imuseDigital = new IMuseDigital(this, _mixer);
+	_musicEngine = _imuseDigital = new IMuseDigital(this, _mixer, &_resourceAccessMutex);
 
 	if (filesAreCompressed) {
 		GUI::MessageDialog dialog(_(
@@ -1589,7 +1584,7 @@ void ScummEngine::resetScumm() {
 	_cursor.animate = 1;
 
 	// Allocate and Initialize actors
-	Actor::kInvalidBox = ((_game.features & GF_SMALL_HEADER) ? kOldInvalidBox : kNewInavlidBox);
+	Actor::kInvalidBox = ((_game.features & GF_SMALL_HEADER) ? kOldInvalidBox : kNewInvalidBox);
 	_actors = new Actor * [_numActors];
 	_sortedActors = new Actor * [_numActors];
 	for (i = 0; i < _numActors; ++i) {
@@ -1747,7 +1742,6 @@ void ScummEngine_v2::resetScumm() {
 void ScummEngine_v3::resetScumm() {
 	ScummEngine_v4::resetScumm();
 
-
 	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
 		// Load tile set and palette for the distaff
 		byte *roomptr = getResourceAddress(rtRoom, 90);
@@ -1759,9 +1753,6 @@ void ScummEngine_v3::resetScumm() {
 		_gdi->loadTiles(roomptr);
 		_gdi->_distaff = false;
 	}
-
-	delete _savePreparedSavegame;
-	_savePreparedSavegame = nullptr;
 }
 
 void ScummEngine_v4::resetScumm() {
@@ -1921,6 +1912,21 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 		}
 	}
 
+	// WORKAROUND: MT-32 support is broken in the 8-disk French VGA floppy
+	// version of MI1 (the index references an invalid DISK00.LEC file, and the
+	// 'roland' room appears to be completely missing). We can't do much about
+	// this; revert to Adlib so that users don't get confused by the fatal
+	// error about DISK00.LEC.
+	if (_game.id == GID_MONKEY_VGA && _language == Common::FR_FRA && _sound->_musicType == MDT_MIDI &&
+		memcmp(_gameMD5, "\xa0\x1f\xab\x4a\x64\xd4\x7b\x96\xe2\xe5\x8e\x6b\x0f\x82\x5c\xc7", 16) == 0) {
+		GUI::MessageDialog dialog(
+			_("This particular version of Monkey Island 1 is known to miss some\n"
+			"required resources for MT-32. Using AdLib instead."),
+			_("OK"));
+		dialog.runModal();
+		_sound->_musicType = MDT_ADLIB;
+	}
+
 	if (_game.platform == Common::kPlatformMacintosh && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4)) {
 		// While the Mac versions do have ADL resources, the Mac player
 		// doesn't handle them. So if a song is missing a MAC resource,
@@ -1952,9 +1958,6 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 		// only as ADL and SPK.
 		_sound->_musicType = MDT_MIDI;
 	}
-
-	// DOTT + SAM use General MIDI, so they shouldn't use GS settings
-	bool enable_gs = (_game.id == GID_TENTACLE || _game.id == GID_SAMNMAX) ? false : ConfMan.getBool("enable_gs");
 
 	/* Bind the mixer to the system => mixer will be invoked
 	 * automatically when samples need to be generated */
@@ -2003,7 +2006,7 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 	} else if ((_sound->_musicType == MDT_PCSPK || _sound->_musicType == MDT_PCJR) && (_game.version > 2 && _game.version <= 4)) {
 		_musicEngine = new Player_V2(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
 	} else if (_sound->_musicType == MDT_CMS) {
-		_musicEngine = new Player_V2CMS(this, _mixer);
+		_musicEngine = new Player_V2CMS(this);
 	} else if (_game.platform == Common::kPlatform3DO && _game.heversion <= 62) {
 		// 3DO versions use digital music and sound samples.
 	} else if (_game.platform == Common::kPlatformFMTowns && (_game.version == 3 || _game.id == GID_MONKEY)) {
@@ -2019,20 +2022,22 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 		// support this with the Player_AD code at the moment. The reason here
 		// is that multi MIDI is supported internally by our iMuse output.
 		_musicEngine = new Player_AD(this, _mixer->mutex());
-#ifdef ENABLE_HE
 	} else if (_game.platform == Common::kPlatformDOS && _sound->_musicType == MDT_ADLIB && _game.heversion >= 60) {
 		_musicEngine = new Player_HE(this);
-#endif
 	} else if (_game.version >= 3 && _game.heversion <= 62) {
 		MidiDriver *nativeMidiDriver = nullptr;
 		MidiDriver *adlibMidiDriver = nullptr;
 		bool multi_midi = ConfMan.getBool("multi_midi") && _sound->_musicType != MDT_NONE && _sound->_musicType != MDT_PCSPK && (midi & MDT_ADLIB);
 		bool useOnlyNative = false;
 
+		// DOTT + SAM use General MIDI, so they shouldn't use GS settings
+		bool enable_gs = (_game.id == GID_TENTACLE || _game.id == GID_SAMNMAX) ? false : (ConfMan.getBool("enable_gs") && MidiDriver::getMusicType(dev) != MT_MT32);
+		bool newSystem = (_game.id == GID_SAMNMAX);
+
 		if (isMacM68kIMuse()) {
 			// We setup this driver as native MIDI driver to avoid playback
 			// of the Mac music via a selected MIDI device.
-			nativeMidiDriver = new MacM68kDriver(_mixer);
+			nativeMidiDriver = new IMuseDriver_MacM68k(_mixer);
 			// The Mac driver is never MT-32.
 			_native_mt32 = false;
 			// Ignore non-native drivers. This also ignores the multi MIDI setting.
@@ -2042,29 +2047,29 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 			_native_mt32 = enable_gs = false;
 			useOnlyNative = true;
 		} else if (_sound->_musicType != MDT_ADLIB && _sound->_musicType != MDT_TOWNS && _sound->_musicType != MDT_PCSPK) {
-			nativeMidiDriver = MidiDriver::createMidi(dev);
+			if (_native_mt32)
+				nativeMidiDriver = new IMuseDriver_MT32(dev, newSystem);
+			else
+				nativeMidiDriver = new IMuseDriver_GMidi(dev, enable_gs, newSystem);
 		}
 
-		if (nativeMidiDriver != nullptr && _native_mt32)
-			nativeMidiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-
 		if (!useOnlyNative) {
-			if (_sound->_musicType == MDT_TOWNS) {
-				adlibMidiDriver = new MidiDriver_TOWNS(_mixer);
-			} else if (_sound->_musicType == MDT_ADLIB || multi_midi) {
-				adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(_sound->_musicType == MDT_TOWNS ? MDT_TOWNS : MDT_ADLIB));
+			if (_sound->_musicType == MDT_ADLIB || multi_midi) {
+				adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(MDT_ADLIB));
 				adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
 				// Try to use OPL3 mode for Sam&Max when possible.
 				adlibMidiDriver->property(MidiDriver::PROP_SCUMM_OPL3, (_game.id == GID_SAMNMAX) ? 1 : 0);
+			} else if (_sound->_musicType == MDT_TOWNS) {
+				adlibMidiDriver = new IMuseDriver_FMTowns(_mixer);
 			} else if (_sound->_musicType == MDT_PCSPK) {
-				adlibMidiDriver = new PcSpkDriver(_mixer);
+				adlibMidiDriver = new IMuseDriver_PCSpk(_mixer);
 			}
 		}
 
-		uint32 imsFlags = 0;
+		uint32 imsFlags =  newSystem ? IMuse::kFlagNewSystem : 0;
 		if (_native_mt32)
 			imsFlags |= IMuse::kFlagNativeMT32;
-		if (enable_gs && MidiDriver::getMusicType(dev) != MT_MT32)
+		if (enable_gs)
 			imsFlags |= IMuse::kFlagRolandGS;
 
 		_imuse = IMuse::create(this, nativeMidiDriver, adlibMidiDriver, isMacM68kIMuse() ? MDT_MACINTOSH : _sound->_musicType, imsFlags);
@@ -2581,7 +2586,8 @@ load_game:
 
 	_res->increaseExpireCounter();
 
-	animateCursor();
+	if (!isUsingOriginalGUI() || ((_game.version >= 3) || !isPaused()))
+		animateCursor();
 
 	/* show or hide mouse */
 	CursorMan.showMouse(_cursor.state > 0);
@@ -2708,6 +2714,9 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 }
 
 void ScummEngine_v3::scummLoop_handleSaveLoad() {
+	if (isUsingOriginalGUI() && _saveLoadFlag == 0 && !_loadFromLauncher)
+		return;
+
 	bool processIQPoints = (_game.id == GID_INDY3 && (_saveLoadFlag == 2 || _loadFromLauncher));
 	_loadFromLauncher = false;
 
@@ -3013,6 +3022,34 @@ void ScummEngine::scummLoop_handleEffects() {
 }
 
 void ScummEngine::scummLoop_handleSound() {
+	// The original interpreters for the earlier games (v0-v4) allowed the user
+	// to disable internal speaker sounds with a keyboard combination.
+	// Let's see if sound has to be played: if we're not using the original GUI,
+	// let's allow it unconditionally; if the sound device is not between the ones listed,
+	// we allow the sound, otherwise we let our keyboard combination flag decide.
+	if (_game.version < 5 && isUsingOriginalGUI()) {
+		bool soundIsEnabled = !((_sound->_musicType == MDT_PCSPK ||
+								_sound->_musicType == MDT_PCJR ||
+								_sound->_musicType == MDT_CMS ||
+								_sound->_musicType == MDT_APPLEIIGS ||
+								_sound->_musicType == MDT_C64) &&
+								(_internalSpeakerSoundsAreOn == 0));
+
+		// Furthermore, the original ones apparently did the trick at a lower level. In our case
+		// this a bit overkill for a feature which is not that known: we could just mute the
+		// mixer to obtain the same effect. Let's avoid muting/unmuting the mixer at every
+		// scummLoop_handleSound() call, though :-)
+		if (!soundIsEnabled && !_mixerMutedByGUI) {
+			_mixer->muteSoundType(Audio::Mixer::SoundType::kMusicSoundType, true);
+			_mixer->muteSoundType(Audio::Mixer::SoundType::kPlainSoundType, true);
+			_mixerMutedByGUI = true;
+		} else if (soundIsEnabled && _mixerMutedByGUI) {
+			_mixer->muteSoundType(Audio::Mixer::SoundType::kMusicSoundType, false);
+			_mixer->muteSoundType(Audio::Mixer::SoundType::kPlainSoundType, false);
+			_mixerMutedByGUI = false;
+		}
+	}
+
 	_sound->processSound();
 }
 
@@ -3128,13 +3165,15 @@ bool ScummEngine::isUsingOriginalGUI() {
 	if (_game.id == GID_MONKEY2 && (_game.features & GF_DEMO))
 		return false;
 
+	if (_game.platform == Common::kPlatformNES ||
+		_game.platform == Common::kPlatformPCEngine ||
+		(_game.platform == Common::kPlatformAtariST && _game.version == 2))
+		return false;
+
 	if (_game.heversion != 0)
 		return false;
 
-	if (_game.version > 3)
-		return _useOriginalGUI;
-
-	return false;
+	return _useOriginalGUI;
 }
 
 void ScummEngine::runBootscript() {
@@ -3158,6 +3197,7 @@ void ScummEngine::runBootscript() {
 	}
 
 	args[0] = _bootParam;
+
 	if (_game.id == GID_MANIAC && (_game.features & GF_DEMO) && (_game.platform != Common::kPlatformC64))
 		runScript(9, 0, 0, args);
 	else

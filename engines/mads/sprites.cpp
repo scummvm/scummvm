@@ -211,14 +211,17 @@ void SpriteSlots::fullRefresh(bool clearAll) {
 	push_back(SpriteSlot(IMG_REFRESH, -1));
 }
 
-void SpriteSlots::deleteTimer(int seqIndex) {
+int SpriteSlots::deleteTimer(int seqIndex) {
+	int deleted = -1;
 	for (uint idx = 0; idx < size(); ++idx) {
 		SpriteSlot &slot = (*this)[idx];
 		if (slot._seqIndex == seqIndex) {
 			slot._flags = IMG_ERASE;
-			return;
+			deleted = idx;
 		}
 	}
+
+	return deleted;
 }
 
 int SpriteSlots::add() {

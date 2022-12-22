@@ -24,6 +24,9 @@
 #include "hadesch/video.h"
 #include "common/translation.h"
 
+#include "gui/message.h"
+
+
 namespace Hadesch {
 
 enum {
@@ -483,6 +486,15 @@ public:
 		}
 	}
 
+	void charonIdle() {
+		if (_charonIsBusy)
+			return;
+		hideCharon();
+		int vid = g_vm->getRnd().getRandomNumberRng(0, ARRAYSIZE(charonIdleVideos) - 1);
+		g_vm->getVideoRoom()->playVideo(charonIdleVideos[vid].name,
+						kCharonZ, 24811, charonIdleVideos[vid].getOffset());
+	}
+
 	void handleEvent(int eventId) override {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 		Persistent *persistent = g_vm->getPersistent();
@@ -597,12 +609,7 @@ public:
 			break;
 		case 24813: {
 			g_vm->addTimer(24813, g_vm->getRnd().getRandomNumberRng(12000, 18000));
-			if (_charonIsBusy)
-				break;
-			hideCharon();
-			int vid = g_vm->getRnd().getRandomNumberRng(0, ARRAYSIZE(charonIdleVideos) - 1);
-			room->playVideo(charonIdleVideos[vid].name,
-					kCharonZ, 24811, charonIdleVideos[vid].getOffset());
+			charonIdle();
 			break;
 		}
 		case k24801_arg1:
@@ -680,6 +687,31 @@ public:
 	bool handleCheat(const Common::String &cheat) override {
 		if (cheat == "done") {
 			win();
+			return true;
+		}
+
+		if (cheat == "identify") {
+			GUI::MessageDialog dialog(Common::String::format("l%ds%02d", _levelL, _levelS));
+			dialog.runModal();
+			return true;
+		}
+
+		if (cheat.matchString("l#s##")) {
+			int l = atoi(cheat.substr(1, 1).c_str());
+			int s = atoi(cheat.substr(3, 2).c_str());
+			if (l < 1 || l > 3 || s < 0 || s > 15)
+				return false;
+			levelClear();
+			_levelL = l;
+			_levelS = s;
+			loadLevel();
+			levelRender();
+			showCharon();
+			return true;
+		}
+
+		if (cheat == "idle") {
+			charonIdle();
 			return true;
 		}
 

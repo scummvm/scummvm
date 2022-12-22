@@ -134,8 +134,7 @@ void MovieGump::InitGump(Gump *newparent, bool take_focus) {
 
 	_player->start();
 
-	Mouse::get_instance()->pushMouseCursor();
-	Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_NONE);
+	Mouse::get_instance()->pushMouseCursor(Mouse::MOUSE_NONE);
 
 	CruStatusGump *statusgump = CruStatusGump::get_instance();
 	if (statusgump) {
@@ -204,7 +203,7 @@ void MovieGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 			subtitle->getLocation(x, y);
 			subtitle->GetDims(textdims);
 			surf->GetSurfaceDims(screendims);
-			surf->Fill32(surf->getPixelFormat().RGBToColor(0, 0, 0),
+			surf->Fill32(0x000000,
 						 screendims.width() / 2 - 300 - screendims.left,
 						 y - 3,
 						 600,

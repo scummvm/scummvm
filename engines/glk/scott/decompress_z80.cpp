@@ -657,7 +657,7 @@ static LibspectrumError readBlock(const uint8_t *buffer, LibspectrumSnap *snap, 
 
 		libspectrumSplitTo48kPages(snap, uncompressed);
 
-		delete uncompressed;
+		delete[] uncompressed;
 
 	} else {
 
@@ -671,20 +671,20 @@ static LibspectrumError readBlock(const uint8_t *buffer, LibspectrumSnap *snap, 
 		if (page <= 0 || page > 18) {
 			libspectrumPrintError(LIBSPECTRUM_ERROR_UNKNOWN);
 			warning("readBlock: unknown page %d", page);
-			delete uncompressed;
+			delete[] uncompressed;
 			return LIBSPECTRUM_ERROR_UNKNOWN;
 		}
 
 		/* If it's a ROM page, just throw it away */
 		if (page < 3) {
-			delete uncompressed;
+			delete[] uncompressed;
 			return LIBSPECTRUM_ERROR_NONE;
 		}
 
 		/* Page 11 is the Multiface ROM unless we're emulating something
 	   Scorpion-like */
 		if (page == 11 && !(capabilities & LIBSPECTRUM_MACHINE_CAPABILITY_SCORP_MEMORY)) {
-			delete uncompressed;
+			delete[] uncompressed;
 			return LIBSPECTRUM_ERROR_NONE;
 		}
 
@@ -693,7 +693,7 @@ static LibspectrumError readBlock(const uint8_t *buffer, LibspectrumSnap *snap, 
 		if (!(capabilities & LIBSPECTRUM_MACHINE_CAPABILITY_128_MEMORY)) {
 			switch (page) {
 			case 3:
-				delete uncompressed;
+				delete[] uncompressed;
 				return LIBSPECTRUM_ERROR_NONE;
 			case 4:
 				page = 5;
@@ -710,7 +710,7 @@ static LibspectrumError readBlock(const uint8_t *buffer, LibspectrumSnap *snap, 
 		if (libspectrumSnapPages(snap, page) == nullptr) {
 			libspectrumSnapSetPages(snap, page, uncompressed);
 		} else {
-			delete uncompressed;
+			delete[] uncompressed;
 			libspectrumPrintError(LIBSPECTRUM_ERROR_UNKNOWN);
 			warning("readBlock: page %d duplicated", page);
 			return LIBSPECTRUM_ERROR_CORRUPT;

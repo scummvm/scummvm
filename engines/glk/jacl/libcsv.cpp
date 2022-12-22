@@ -297,7 +297,7 @@ size_t csv_parse(struct csv_parser *p, const void *s, size_t len, void (*cb1)(vo
 	}
 
 	while (pos < len) {
-		/* Check memory usage, increase buffer if neccessary */
+		/* Check memory usage, increase buffer if necessary */
 		if (entry_pos == ((p->options & CSV_APPEND_NULL) ? p->entry_size - 1 : p->entry_size)) {
 			if (csv_increase_buffer(p) != 0) {
 				p->quoted = quoted, p->pstate = pstate, p->spaces = spaces, p->entry_pos = entry_pos;

@@ -216,7 +216,7 @@ fileTypeEnum getFileType(const char *name) {
 
 	fileTypeEnum newFileType = type_UNK;
 
-	getFileExtention(name, extentionBuffer);
+	getFileExtention(name, extentionBuffer, sizeof(extentionBuffer));
 
 	if (!strcmp(extentionBuffer, ".SPL")) {
 		newFileType = type_SPL;

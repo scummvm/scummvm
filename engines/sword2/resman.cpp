@@ -366,7 +366,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 				break;
 			}
 
-			sprintf(buf, "dumps/%s-%d.dmp", tag, res);
+			Common::sprintf_s(buf, "dumps/%s-%d.dmp", tag, res);
 
 			if (!Common::File::exists(buf)) {
 				Common::DumpFile out;

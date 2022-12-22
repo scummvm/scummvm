@@ -24,12 +24,34 @@
 #include "graphics/surface.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 
 #include "trecision/trecision.h"
+#include "trecision/detection.h"
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"originalsaveload",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 class TrecisionMetaEngine : public AdvancedMetaEngine {
 	const char *getName() const override {
 		return "trecision";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;

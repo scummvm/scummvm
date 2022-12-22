@@ -27,6 +27,7 @@
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/ultima8.h"
 
@@ -661,16 +662,23 @@ Gump *Gump::GetRootGump() {
 }
 
 
-bool Gump::StartDraggingChild(Gump *gump, int32 mx, int32 my) {
+bool Gump::onDragStart(int32 mx, int32 my) {
+	if (IsDraggable() && _parent) {
+		ParentToGump(mx, my);
+		Mouse::get_instance()->setDraggingOffset(mx, my);
+		_parent->MoveChildToFront(this);
+		return true;
+	}
 	return false;
 }
 
-void Gump::DraggingChild(Gump *gump, int mx, int my) {
-	CANT_HAPPEN();
+void Gump::onDragStop(int32 mx, int32 my) {
 }
 
-void Gump::StopDraggingChild(Gump *gump) {
-	CANT_HAPPEN();
+void Gump::onDrag(int32 mx, int32 my) {
+	int32 dx, dy;
+	Mouse::get_instance()->getDraggingOffset(dx, dy);
+	Move(mx - dx, my - dy);
 }
 
 //

@@ -22,7 +22,7 @@
 #ifndef ULTIMA8_CONF_CONFIGFILEMANAGER_H
 #define ULTIMA8_CONF_CONFIGFILEMANAGER_H
 
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima8/misc/istring.h"
 #include "ultima/shared/std/containers.h"
@@ -50,7 +50,7 @@ public:
 	//! \param fname The file to read
 	//! \param root The name of the root node in the file
 	//! \param readonly If true, don't write to this file's tree (or the file)
-	//! \return true if succesful
+	//! \return true if successful
 	bool readConfigFile(Std::string fname, const istring &category);
 
 	//! clear everything

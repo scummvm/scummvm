@@ -34,15 +34,8 @@ public:
 
 bool Saga2MetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames) ||
-		(f == kSavesUseExtendedFormat);
+		checkExtendedSaves(f);
 }
 
 Common::Error Saga2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

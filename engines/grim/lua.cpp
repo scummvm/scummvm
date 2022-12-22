@@ -78,6 +78,8 @@ void LuaObjects::add(const char *str) {
 void LuaObjects::addNil() {
 	Obj obj;
 	obj._type = Obj::Nil;
+	// Just set a value to avoid having uninitialized fields.
+	obj._value.object = nullptr;
 	_objects.push_back(obj);
 }
 
@@ -696,12 +698,12 @@ void LuaBase::concatFallback() {
 		strPtr = &result[pos];
 
 		if (lua_isnil(params[i]))
-			sprintf(strPtr, "(nil)");
+			Common::sprintf_s(strPtr, sizeof(result) - pos, "(nil)");
 		else if (lua_isstring(params[i]))
-			sprintf(strPtr, "%s", lua_getstring(params[i]));
+			Common::sprintf_s(strPtr, sizeof(result) - pos, "%s", lua_getstring(params[i]));
 		else if (lua_tag(params[i]) == MKTAG('A','C','T','R')) {
 			Actor *a = getactor(params[i]);
-			sprintf(strPtr, "(actor%p:%s)", (void *)a,
+			Common::sprintf_s(strPtr, sizeof(result) - pos, "(actor%p:%s)", (void *)a,
 					(a->getCurrentCostume() && a->getCurrentCostume()->getModelNodes()) ?
 					a->getCurrentCostume()->getModelNodes()->_name : "");
 		} else {

@@ -37,18 +37,26 @@ class ShapeArchive;
  */
 class ShapeViewerGump : public ModalGump {
 public:
+	struct ShapeArchiveEntry {
+		Common::String _name;
+		ShapeArchive *_archive;
+		DisposeAfterUse::Flag _disposeAfterUse;
+
+		ShapeArchiveEntry(const char *name, ShapeArchive *archive, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::NO)
+			: _name(name), _archive(archive), _disposeAfterUse(disposeAfterUse) {}
+	};
+
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	ShapeViewerGump();
 	ShapeViewerGump(int x, int y, int width, int height,
-	                Std::vector<Common::Pair<Std::string, ShapeArchive *> > &flexes,
-	                uint32 flags = FLAG_PREVENT_SAVE, int32 layer = LAYER_MODAL);
+					Common::Array<ShapeArchiveEntry> &archives,
+					uint32 flags = FLAG_PREVENT_SAVE, int32 layer = LAYER_MODAL);
 	~ShapeViewerGump() override;
 
 	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
 	bool OnKeyDown(int key, int mod) override;
-	bool OnTextInput(int unicode) override;
 
 	// Init the gump, call after construction
 	void InitGump(Gump *newparent, bool take_focus = true) override;
@@ -59,9 +67,8 @@ public:
 	void saveData(Common::WriteStream *ws) override;
 
 protected:
-	Std::vector<Common::Pair<Std::string, ShapeArchive *> > _flexes;
-	unsigned int _curFlex;
-	ShapeArchive *_flex;
+	Common::Array<ShapeArchiveEntry> _archives;
+	unsigned int _curArchive;
 	uint32 _curShape;
 	uint32 _curFrame;
 

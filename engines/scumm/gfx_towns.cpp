@@ -46,7 +46,8 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 	uint8 *dst2 = _townsScreen->getLayerPixels(1, dstX * m, dstY * m);
 
 	int lw1 = _townsScreen->getLayerWidth(0);
-	int dp2 = _townsScreen->getLayerPitch(1) - width * m * _townsScreen->getLayerBpp(1);
+	int lp1 = _townsScreen->getLayerPitch(1);
+	int dp2 = lp1 - width * m * _townsScreen->getLayerBpp(1);
 	int sp1 = vs->pitch - (width * vs->format.bytesPerPixel);
 	int sp2 = _textSurface.pitch - width * m;
 
@@ -84,32 +85,55 @@ void ScummEngine::towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, in
 		for (int h = 0; h < height * m; ++h) {
 			memcpy(dst2, src2, width * m);
 			src2 += _textSurface.pitch;
-			dst2 += _townsScreen->getLayerPitch(1);
+			dst2 += lp1;
 		}
 
 	} else {
 		dst1 = dst2;
+		uint8 t = 0;
+		uint8 s2 = 0;
+		uint8 s3 = 0;
+
 		for (int h = 0; h < height; ++h) {
-			for (int w = 0; w < width; ++w) {
-				uint8 t = (*src1++) & 0x0f;
-				memset(dst1, (t << 4) | t, m);
-				dst1 += m;
+			if (m == 2) {
+				uint16 *d = reinterpret_cast<uint16*>(dst1);
+				for (int w = 0; w < width; ++w) {
+					t = (*src1++) & 0x0f;
+					t |= (t << 4);
+					*d++ = (t << 8) | t;
+				}
+			} else if (m == 1) {
+				for (int w = 0; w < width; ++w) {
+					t = (*src1++) & 0x0f;
+					*dst1++ = (t << 4) | t;
+				}
+			} else {
+				error ("ScummEngine::towns_drawStripToScreen(): Unexpected text surface multiplier %d", m);
 			}
 
 			dst1 = dst2;
 			const uint8 *src3 = src2;
 
 			if (m == 2) {
-				dst2 += _townsScreen->getLayerPitch(1);
-				src3 += _townsScreen->getLayerPitch(1);
-			}
-
-			for (int w = 0; w < width * m; ++w) {
-				*dst2++ = (*src3 | (*dst1 & _townsLayer2Mask[*src3]));
-				*dst1 = (*src2 | (*dst1 & _townsLayer2Mask[*src2]));
-				src2++;
-				src3++;
-				dst1++;
+				dst2 += lp1;
+				src3 += lp1;
+				for (int w = 0; w < (width << 1); ++w) {
+					t = *dst1;
+					s2 = *src2++;
+					s3 = *src3++;
+					*dst2++ = (s3 | (t & _townsLayer2Mask[s3]));
+					*dst1++ = (s2 | (t & _townsLayer2Mask[s2]));
+				}
+			} else if (m== 1) {
+				dst2 += width;
+				src3 += width;
+				for (int w = 0; w < width; ++w) {
+					t = *dst1;
+					s2 = *src2++;
+					*dst1++ = (s2 | (t & _townsLayer2Mask[s2]));
+				}
+			} else {
+				error ("ScummEngine::towns_drawStripToScreen(): Unexpected text surface multiplier %d", m);
 			}
 
 			src1 += sp1;
@@ -177,7 +201,7 @@ void ScummEngine::requestScroll(int dir) {
 }
 
 void ScummEngine::towns_waitForScroll(int waitForDirection, int threshold) {
-	while (!shouldQuit() && _townsScreen && (_scrollRequest || _townsScreen->isScrolling(waitForDirection, threshold)))
+	while (!shouldQuit() && _townsScreen && (_scrollRequest || _townsScreen->isScrolling(0, waitForDirection, threshold)))
 		waitForTimer(0);
 }
 
@@ -199,12 +223,15 @@ void ScummEngine::towns_updateGfx() {
 	}
 
 	if (_enableSmoothScrolling) {
+		int scrlTop = _virtscr[kMainVirtScreen].topline * _textSurfaceMultiplier;
+		int scrlBottom = scrlTop + _virtscr[kMainVirtScreen].h * _textSurfaceMultiplier;
+
 		while (_scrollTimer <= cur) {
 			if (!_scrollTimer)
 				_scrollTimer = cur;
 			_scrollTimer += 1000 / 60;
-			_townsScreen->scrollLayers(1, _scrollRequest, VAR(VAR_TIMER_NEXT) == 0);
-			if (_scrollNeedDeltaAdjust && _townsScreen->isScrolling(0))
+			_townsScreen->scrollLayer(0, _scrollRequest, scrlTop, scrlBottom, VAR(VAR_TIMER_NEXT) == 0);
+			if (_scrollNeedDeltaAdjust && _townsScreen->isScrolling(0, 0))
 				_scrollDeltaAdjust++;
 			_scrollRequest = 0;
 			if (!_refreshNeedCatchUp)
@@ -246,12 +273,15 @@ void ScummEngine::towns_scriptScrollEffect(int dir) {
 	// Wait for opposite direction scroll to finish.
 	towns_waitForScroll(-dir);
 
+	int scrlTop = _virtscr[kMainVirtScreen].topline * _textSurfaceMultiplier;
+	int scrlBottom = scrlTop + _virtscr[kMainVirtScreen].h * _textSurfaceMultiplier;
+
 	for (int x = 0; !shouldQuit() && x < _gdi->_numStrips; ++x) {
 		_scrollDestOffset = (_scrollDestOffset - (dir << 3)) % layerW;
 		uint32 nextFrame = _system->getMillis() + 1000 / 60;
 		// Same as in requestScroll(): This prevents glitches from graphics layer wrapping.
 		towns_waitForScroll(dir, threshold);
-		_townsScreen->scrollLayers(0, dir << 3, false);
+		_townsScreen->scrollLayer(0, dir << 3, scrlTop, scrlBottom, false);
 		towns_drawStripToScreen(vs, destX << 3, vs->topline, (srcX + (-dir * x)) << 3, 0, stripWidth, vs->h);
 		waitForTimer(nextFrame - _system->getMillis());
 	}
@@ -331,10 +361,7 @@ const uint8 ScummEngine::_townsLayer2Mask[] = {
 	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-TownsScreen::TownsScreen(OSystem *system) :	_system(system), _width(0), _height(0), _pitch(0), _pixelFormat(system->getScreenFormat()), _scrollOffset(0), _scrollRemainder(0), _numDirtyRects(0) {
-	memset(&_layers[0], 0, sizeof(TownsScreenLayer));
-	memset(&_layers[1], 0, sizeof(TownsScreenLayer));
-
+TownsScreen::TownsScreen(OSystem *system) :	_system(system), _width(0), _height(0), _pitch(0), _pixelFormat(system->getScreenFormat()), _numDirtyRects(0) {
 	Graphics::Surface *s = _system->lockScreen();
 	_width = s->w;
 	_height = s->h;
@@ -355,7 +382,7 @@ TownsScreen::~TownsScreen() {
 }
 
 void TownsScreen::setupLayer(int layer, int width, int height, int scaleW, int scaleH, int numCol, void *pal) {
-	if (layer < 0 || layer > 1)
+	if (layer & ~1)
 		return;
 
 	TownsScreenLayer *l = &_layers[layer];
@@ -393,7 +420,7 @@ void TownsScreen::setupLayer(int layer, int width, int height, int scaleW, int s
 }
 
 void TownsScreen::clearLayer(int layer) {
-	if (layer < 0 || layer > 1)
+	if (layer & ~1)
 		return;
 
 	TownsScreenLayer *l = &_layers[layer];
@@ -407,7 +434,7 @@ void TownsScreen::clearLayer(int layer) {
 
 
 void TownsScreen::fillLayerRect(int layer, int x, int y, int w, int h, int col) {
-	if (layer < 0 || layer > 1 || w <= 0 || h <= 0)
+	if ((layer & ~1) || w <= 0 || h <= 0)
 		return;
 
 	TownsScreenLayer *l = &_layers[layer];
@@ -434,7 +461,7 @@ void TownsScreen::fillLayerRect(int layer, int x, int y, int w, int h, int col) 
 }
 
 uint8 *TownsScreen::getLayerPixels(int layer, int x, int y) const {
-	if (layer < 0 || layer > 1)
+	if (layer & ~1)
 		return nullptr;
 
 	const TownsScreenLayer *l = &_layers[layer];
@@ -505,7 +532,7 @@ void TownsScreen::addDirtyRect(int x, int y, int w, int h) {
 }
 
 void TownsScreen::toggleLayers(int flags) {
-	if (flags < 0 || flags > 3)
+	if (flags & ~3)
 		return;
 
 	_layers[0].enabled = (flags & 1) ? true : false;
@@ -526,13 +553,20 @@ void TownsScreen::toggleLayers(int flags) {
 	_system->updateScreen();
 }
 
-void TownsScreen::scrollLayers(int flags, int offset, bool fast) {
-	// This actually supports layer 0 only, since this is all we need.
-	_scrollRemainder += offset;
-	if (!_scrollRemainder)
+void TownsScreen::scrollLayer(int layer, int offset, int top, int bottom, bool fast) {
+	if (layer & ~1)
 		return;
 
-	int step = (_scrollRemainder > 0) ? -1 : 1;
+	// This actually supports layer 0 only, since this is all we need.
+	TownsScreenLayer *l = &_layers[layer];
+	if (!l->ready)
+		return;
+
+	l->scrollRemainder += offset;
+	if (!l->scrollRemainder)
+		return;
+
+	int step = (l->scrollRemainder > 0) ? -1 : 1;
 
 	// Smooth scrolling isn't fast enough to keep up with the fast camera
 	// movement in the Loom intro. Non-smooth scrolling is eight pixels at
@@ -541,20 +575,14 @@ void TownsScreen::scrollLayers(int flags, int offset, bool fast) {
 	if (fast && _semiSmoothScroll)
 		step *= 4;
 
-	_scrollRemainder += step;
-	_scrollOffset = (_scrollOffset + step) % _layers[0].width;
+	l->scrollRemainder += step;
+	l->hScroll += step;
+	l->hScroll %= l->width;
 
-	_dirtyRects.clear();
-	_dirtyRects.push_back(Common::Rect(_width - 1, _height - 1));
-	_numDirtyRects = kFullRedraw;
+	if (top == 0 && bottom == _height - 1)
+		_numDirtyRects = kDirtyRectsMax;
 
-	for (int i = 0; i < 2; ++i) {
-		if (!(flags & (1 << i)))
-			continue;
-		TownsScreenLayer *l = &_layers[i];
-		if (l->ready)
-			l->hScroll = _scrollOffset % l->width;
-	}
+	addDirtyRect(0, top, _width, bottom - top);	
 }
 
 void TownsScreen::update() {

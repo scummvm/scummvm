@@ -47,7 +47,9 @@ namespace Common {
 class SeekableReadStream;
 template <class BITSTREAM>
 class Huffman;
+}
 
+namespace Math {
 class RDFT;
 class DCT;
 }
@@ -123,8 +125,8 @@ private:
 
 		float *coeffsPtr[kAudioChannelsMax];
 
-		Common::RDFT *rdft;
-		Common::DCT  *dct;
+		Math::RDFT *rdft;
+		Math::DCT  *dct;
 
 		AudioInfo();
 		~AudioInfo();

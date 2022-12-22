@@ -639,6 +639,7 @@ inline uint32 GuRenderer::convertToGuPixelFormat(PSPPixelFormat::Type format) {
 		guFormat = GU_PSM_5650;
 		break;
 	case PSPPixelFormat::Type_8888:
+	case PSPPixelFormat::Type_8888_RGBA:
 		guFormat = GU_PSM_8888;
 		break;
 	case PSPPixelFormat::Type_Palette_8bit:

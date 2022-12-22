@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/str-array.h"
 
 namespace Common {
 
@@ -36,22 +37,38 @@ namespace Common {
  * @{
  */
 
-const char DIR_SEPARATOR = '\x1f'; // unit separator
-
 /**
  * Simple path class. Allows simple conversion to/from path strings with
  * arbitrary directory separators, providing a common representation.
  * 
  * Internally, this is just a simple wrapper around a String, using
- * '\x1f' (unit separator) as a directory separator. As this is not
- * a printable character, it should not appear in file names, unlike
- * '/', '\', or ':', which are allowed on certain platforms.
+ * "//" (unit separator) as a directory separator and "/+" as "/".
  */
 class Path {
 private:
 	String _str;
 
+	String getIdentifierString() const;
+	size_t findLastSeparator() const;
+
 public:
+	/**
+	 * Hash and comparator for Path with following changes:
+	 * * case-insensitive
+	 * * decoding of punycode
+	 * * Matching ':' and '/' inside path components to
+	 * This allows a path "Sound Manager 3.1 / SoundLib<separator>Sound"
+	 * to match both "xn--Sound Manager 3.1  SoundLib-lba84k/Sound"
+	 * and "Sound Manager 3.1 : SoundLib/Sound"
+	 */
+	struct IgnoreCaseAndMac_EqualsTo {
+		bool operator()(const Path& x, const Path& y) const;
+	};
+
+	struct IgnoreCaseAndMac_Hash {
+		uint operator()(const Path& x) const;
+	};
+
 	/** Construct a new empty path. */
 	Path() {}
 
@@ -76,12 +93,6 @@ public:
 	 *                  Defaults to '/'.
 	 */
 	Path(const String &str, char separator = '/');
-
-	/**
-	 * Returns the unmodified, internal representation of the path,
-	 * using '\x1f' as a directory separator.
-	 */
-	const String &rawString() const { return _str; }
 
 	/**
 	 * Converts a path to a string using the given directory separator.
@@ -151,6 +162,11 @@ public:
 	/** @overload */
 	Path append(const char *str, char separator = '/') const;
 
+	/**
+	 * Appends exactly one component, without any separators
+	 * and prepends a separator if necessarry
+	 */
+	Path appendComponent(const String &x) const;
 
 	/**
 	 * Joins the given path to this path (in-place).
@@ -175,6 +191,36 @@ public:
 
 	/** @overload */
 	Path join(const char *str, char separator = '/') const;
+
+	/**
+	 * Convert path from Punycode
+	 */
+	Path punycodeDecode() const;
+
+        /**
+	 * Convert path to Punycode
+	 */
+	Path punycodeEncode() const;
+
+        /**
+	 * Check pattern match similar matchString
+	 */
+	bool matchPattern(const Path& pattern) const;
+
+	/**
+	 * Splits into path components. After every component except
+	 * last there is an implied separator. First component is empty
+	 * if path starts with a separator. Last component is empty if
+	 * the path ends with a separator. Other components may be empty if
+	 * 2 separots follow each other
+	 */
+	StringArray splitComponents() const;
+
+
+	/**
+	 * Opposite of splitComponents
+	 */
+	static Path joinComponents(const StringArray& c);
 };
 
 /** @} */

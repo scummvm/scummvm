@@ -244,10 +244,10 @@ DECLARE_ANIM_PARSER(file)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(file) ");
 
 	char vC8[200];
-	strcpy(vC8, _tokens[1]);
+	Common::strcpy_s(vC8, _tokens[1]);
 	if (g_engineFlags & kEngineTransformedDonna) {
 		if (!scumm_stricmp(_tokens[1], "donnap") || !scumm_stricmp(_tokens[1], "donnapa")) {
-			strcat(vC8, "tras");
+			Common::strcat_s(vC8, "tras");
 		}
 	}
 	ctxt.a->gfxobj = _vm->_gfx->loadAnim(vC8);
@@ -915,7 +915,7 @@ DECLARE_LOCATION_PARSER(location)  {
 		mask++;
 	}
 
-	strcpy(_vm->_location._name, _tokens[1]);
+	Common::strcpy_s(_vm->_location._name, _tokens[1]);
 	_vm->changeBackground(_vm->_location._name, mask);
 
 	if (_tokens[2][0] != '\0') {
@@ -1020,7 +1020,7 @@ DECLARE_LOCATION_PARSER(sound)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(sound) ");
 
 	if (_vm->getPlatform() == Common::kPlatformAmiga) {
-		strcpy(_vm->_location._soundFile, _tokens[1]);
+		Common::strcpy_s(_vm->_location._soundFile, _tokens[1]);
 		_vm->_location._hasSound = true;
 	}
 }

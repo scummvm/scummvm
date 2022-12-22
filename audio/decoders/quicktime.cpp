@@ -39,29 +39,6 @@
 namespace Audio {
 
 /**
- * An AudioStream that just returns silent samples and runs infinitely.
- * Used to fill in the "empty edits" in the track queue which are just
- * supposed to be no sound playing.
- */
-class SilentAudioStream : public AudioStream {
-public:
-	SilentAudioStream(int rate, bool stereo) : _rate(rate), _isStereo(stereo) {}
-
-	int readBuffer(int16 *buffer, const int numSamples) override {
-		memset(buffer, 0, numSamples * 2);
-		return numSamples;
-	}
-
-	bool endOfData() const override { return false; } // it never ends!
-	bool isStereo() const override { return _isStereo; }
-	int getRate() const override { return _rate; }
-
-private:
-	int _rate;
-	bool _isStereo;
-};
-
-/**
  * An AudioStream wrapper that forces audio to be played in mono.
  * It currently just ignores the right channel if stereo.
  */
@@ -228,7 +205,7 @@ void QuickTimeAudioDecoder::QuickTimeAudioTrack::queueAudio(const Timestamp &len
 				_skipSamples = Timestamp();
 			}
 
-			queueStream(makeLimitingAudioStream(new SilentAudioStream(getRate(), isStereo()), editLength), editLength);
+			queueStream(makeLimitingAudioStream(makeSilentAudioStream(getRate(), isStereo()), editLength), editLength);
 			_curEdit++;
 			enterNewEdit(nextEditTime);
 		} else {

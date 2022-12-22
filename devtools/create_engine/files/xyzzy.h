@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef XYZZY_XYZZY_H
-#define XYZZY_XYZZY_H
+#ifndef XYZZY_H
+#define XYZZY_H
 
 #include "common/scummsys.h"
 #include "common/system.h"
@@ -100,6 +100,6 @@ public:
 extern XyzzyEngine *g_engine;
 #define SHOULD_QUIT ::Xyzzy::g_engine->shouldQuit()
 
-} // namespace Xyzzy
+} // End of namespace Xyzzy
 
-#endif
+#endif // XYZZY_H

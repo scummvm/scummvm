@@ -38,6 +38,24 @@ void Init_v7::initGame() {
 	// Add the environment directory
 	SearchMan.addSubDirectoryMatching(gameDataDir, "envir");
 
+	// Add the application list directory
+	SearchMan.addSubDirectoryMatching(gameDataDir, "applis");
+
+	// Add the "ADIBODEM" directory sometimes found in demos
+	SearchMan.addSubDirectoryMatching(gameDataDir, "adibodem");
+
+	// Add additional applications directories (e.g. "Read/Count 4-5 years").
+	// We rely on the presence of an "intro_ap.itk" to determinate whether a subdirectory contains an applcation.
+	Common::FSList subdirs;
+	gameDataDir.getChildren(subdirs, Common::FSNode::kListDirectoriesOnly);
+	for (const Common::FSNode &subdirNode : subdirs) {
+		Common::FSDirectory subdir(subdirNode);
+		if (subdir.hasFile("intro_ap.stk")) {
+			debugC(1, kDebugFileIO, "Found Adibou/Adi application subdirectory \"%s\", adding it to the search path", subdir.getFSNode().getName().c_str());
+			SearchMan.addSubDirectoryMatching(gameDataDir, subdir.getFSNode().getName(), 0, 4, true);
+		}
+	}
+
 	Init::initGame();
 }
 

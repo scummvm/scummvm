@@ -159,7 +159,7 @@ static void v_noun(int vc, parse_rec *nounrec) {
 		sysmsgd(tcreat(dobj_) ? 180 : 181, "Nothing happens.", nounrec);
 		return;
 	}
-	/* otherwise, print out relevent description. */
+	/* otherwise, print out relevant description. */
 	if (vc == 0) /* Push */
 		runptr(dobj_ - first_noun, push_ptr,
 		       "$You$ $verb$ $the_n$$noun$ for a while, but nothing happens.",
@@ -1131,7 +1131,7 @@ static void exec_verb_info(void) {
 	a = objname(dobj);
 	b = objname(iobj);
 	c = objname(actor);
-	sprintf(buff, "\t\t]]%s, %s %s(%ld) %s %s(%ld)", c, dict[ syntbl[auxsyn[vb]] ],
+	Common::sprintf_s(buff, "\t\t]]%s, %s %s(%ld) %s %s(%ld)", c, dict[ syntbl[auxsyn[vb]] ],
 	        a, dobj_rec->num, prep == 0 ? "->" : dict[prep], b, iobj_rec->num);
 	writeln(buff);
 	rfree(a);

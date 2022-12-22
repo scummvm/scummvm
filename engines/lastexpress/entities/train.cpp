@@ -482,7 +482,7 @@ label_process:
 	case kAction203863200:
 		if (strcmp(savepoint.param.charValue, "")) {
 			params->param8 = 1;
-			strcpy((char *)&params1->seq, savepoint.param.charValue);	// this is the sound file name
+			Common::strcpy_s(params1->seq, savepoint.param.charValue);	// this is the sound file name
 		}
 		break;
 

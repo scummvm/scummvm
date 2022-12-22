@@ -205,7 +205,7 @@ static void mainLoop(bool &cleanExit_, int argc, char *argv[]) {
 // Note: the bulk of the Initialization & cleanup routines have
 //   been moved to TOWERFTA.CPP. This file together with
 //   TOWER.CPP automate initialization & cleanup. This is needed
-//   to accomodate differences in system startup between
+//   to accommodate differences in system startup between
 //   the windows & DOS versions
 //
 //
@@ -214,7 +214,7 @@ static void mainLoop(bool &cleanExit_, int argc, char *argv[]) {
 // Game setup function
 
 bool setupGame() {
-	g_vm->_frate = new frameSmoother(frameRate, TICKSPERSECOND, gameTime);
+	g_vm->_frate = new frameSmoother(kFrameRate, TICKSPERSECOND, gameTime);
 	g_vm->_lrate = new frameCounter(TICKSPERSECOND, gameTime);
 
 	return programInit();
@@ -267,7 +267,7 @@ void processEventLoop(bool updateScreen) {
 	audioEventLoop();
 
 	debugC(1, kDebugEventLoop, "EventLoop: game mode update");
-	if (GameMode::newmodeFlag)
+	if (GameMode::_newmodeFlag)
 		GameMode::update();
 
 	Common::Event event;
@@ -315,7 +315,7 @@ void displayUpdate() {
 		//debugC(1, kDebugEventLoop, "EventLoop: daytime transition update loop");
 		dayNightUpdate();
 		//debugC(1, kDebugEventLoop, "EventLoop: Game mode handle task");
-		GameMode::modeStackPtr[GameMode::modeStackCtr - 1]->handleTask();
+		GameMode::_modeStackPtr[GameMode::_modeStackCtr - 1]->_handleTask();
 		g_vm->_lrate->updateFrameCount();
 		loops++;
 		elapsed += (gameTime - lastGameTime);
@@ -736,11 +736,11 @@ bool initGUIMessagers() {
 	initUserDialog();
 	for (int i = 0; i < 10; i++) {
 		char debItem[16];
-		sprintf(debItem, "Status%1.1d", i);
+		Common::sprintf_s(debItem, "Status%1.1d", i);
 		Status[i] = new StatusLineMessager(debItem, i, &g_vm->_mainPort);
 		if (Status[i] == nullptr)
 			return false;
-		sprintf(debItem, "Status%2.2d", i + 10);
+		Common::sprintf_s(debItem, "Status%2.2d", i + 10);
 		Status2[i] = new StatusLineMessager(debItem, i, &g_vm->_mainPort, 20, 21 + (11 * i));
 	}
 	for (int j = 0; j < 3; j++)
@@ -807,11 +807,11 @@ void WriteStatusF2(int16, const char *, ...) {}
 int32 currentGamePerformance() {
 	int32 framePer = 100;
 	int32 lval = int(g_vm->_lrate->frameStat());
-	int32 fval = int(g_vm->_lrate->frameStat(grFramesPerSecond));
-	if (fval >= frameRate && lval > fval) {
+	int32 fval = int(g_vm->_lrate->frameStat(kGRFramesPerSecond));
+	if (fval >= kFrameRate && lval > fval) {
 		framePer += (50 * ((lval - fval) / fval));
 	} else {
-		framePer = (100 * g_vm->_frate->frameStat(grFramesPerSecond)) / frameRate;
+		framePer = (100 * g_vm->_frate->frameStat(kGRFramesPerSecond)) / kFrameRate;
 	}
 	framePer = clamp(10, framePer, 240);
 	return framePer;
@@ -826,12 +826,12 @@ int32 eloopsPerSecond = 0;
 int32 framesPerSecond = 0;
 
 int32 gamePerformance() {
-	if (framesPerSecond < frameRate) {
-		return (100 * framesPerSecond) / frameRate;
+	if (framesPerSecond < kFrameRate) {
+		return (100 * framesPerSecond) / kFrameRate;
 	}
-	if (framesPerSecond == frameRate)
+	if (framesPerSecond == kFrameRate)
 		return 100;
-	return 100 + 50 * (eloopsPerSecond - frameRate) / frameRate;
+	return 100 + 50 * (eloopsPerSecond - kFrameRate) / kFrameRate;
 
 }
 
@@ -851,11 +851,11 @@ APPFUNC(cmdWindowFunc) {
 	int16           key, qual;
 
 	switch (ev.eventType) {
-	case gEventKeyDown:
+	case kEventKeyDown:
 		key = ev.value & 0xffff;
 		qual = ev.value >> 16;
 
-		GameMode::modeStackPtr[GameMode::modeStackCtr - 1]->handleKey(key, qual);
+		GameMode::_modeStackPtr[GameMode::_modeStackCtr - 1]->_handleKey(key, qual);
 		break;
 
 	default:

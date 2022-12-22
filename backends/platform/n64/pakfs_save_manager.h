@@ -23,7 +23,7 @@
 #define __PAKFS_SAVE_MANAGER__
 
 #include <common/savefile.h>
-#include <common/zlib.h>
+#include <common/compression/zlib.h>
 
 #include <pakfs.h> // N64 PakFS library
 

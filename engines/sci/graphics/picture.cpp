@@ -1140,25 +1140,31 @@ void GfxPicture::vectorPatternTexturedCircle(Common::Rect box, Common::Rect clip
 void GfxPicture::vectorPattern(int16 x, int16 y, byte color, byte priority, byte control, byte code, byte texture) {
 	byte size = code & SCI_PATTERN_CODE_PENSIZE;
 
-	// The vector box is centered on x,y and one pixel wider than high
+	// The pattern box is centered on x,y and one pixel wider than high
 	Common::Rect box(x - size, y - size, x + size + 2, y + size + 1);
+
+	// Move the pattern box if it goes off of the left or top of the picture
+	if (box.left < 0) {
+		box.moveTo(0, box.top);
+	}
+	if (box.top < 0) {
+		box.moveTo(box.left, 0);
+	}
+
+	// Adjust the pattern box to the current port
 	_ports->offsetRect(box);
 
-	// Adjust the vector box's position if it goes off the screen.
+	// Move the pattern box if it goes off of the right or bottom of the screen.
 	// Although, if it goes off the right edge, leave the last column
 	// beyond the screen edge even though it won't get drawn.
 	// We also can't just clip the box to the screen here, because the
 	// texture and circle data can only be properly consumed by evaluating
 	// every pixel during drawing, even the pixels that are then skipped
 	// for being out of bounds. (Example: SQ3 picture 2)
-	if (box.left < 0) {
-		box.moveTo(0, box.top);
-	} else if (box.right >= _screen->getScriptWidth()) {
+	if (box.right >= _screen->getScriptWidth()) {
 		box.moveTo(_screen->getScriptWidth() - box.width() + 1, box.top);
 	}
-	if (box.top < 0) {
-		box.moveTo(box.left, 0);
-	} else if (box.bottom >= _screen->getScriptHeight()) {
+	if (box.bottom >= _screen->getScriptHeight()) {
 		box.moveTo(box.left, _screen->getScriptHeight() - box.height());
 	}
 	_screen->vectorAdjustCoordinate(&box.left, &box.top);

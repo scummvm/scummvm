@@ -9,10 +9,16 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      hinzugefügt.
    - Unterstützung für die TI99/4A-Versionen der GLK Scott Adams-Spiele 1-12 hinzugefügt.
    - Unterstützung für Obsidian hinzugefügt.
+   - Unterstützung für Added support for Pink Panther: Passport to Peril hinzugefügt.
+   - Unterstützung für Pink Panther: Hokus Pokus Pink hinzugefügt.
+   - Unterstützung für Driller/Space Station Oblivion (DOS/EGA, Amiga und Atari ST-Versionen) hinzugefügt.
 
  Allgemein:
    - Anzahl an falsch-positiven Einträgen reduziert, wenn das Gerät nach Spielen durchsucht wird.
    - Code der Roland MT-32-Emulation auf Munt mt32emu 2.7.0 aktualisiert.
+   - Unterstützung für shader-basierte Skalierungen hinzugefügt.
+   - Unterstützung für Mono-Ausgabe hinzugefügt (über die Kommandozeilen-Option --output-channels=CHANNELS)
+   - Verbesserte Cursor-Skalierung im OpenGL-Modus.
 
  AGI:
    - Unterstützung der französischen Übersetzungen verbessert.
@@ -21,12 +27,31 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Option hinzugefügt, mit der die Ausblende-Effekte bei einem Raum-Wechsel in Simon 1 und 2
      deaktiviert werden können.
 
+ AGS:
+   - Unterstützung für die originalen Installationsdateien von Maniac Mansion Deluxe und The New Adventures of Zak McKracken hinzugefügt..
+
+ GOB:
+   - Unterstützung für Adibou 2 (Adi Junior) "Environment", "Read/Count 4 & 5" und "Read/Count 6 & 7" hinzugefügt.
+
  Kyra:
    - Unterstützung für die koreanische Version von Legend of Kyrandia 1 hinzugefügt.
    - Unterstützung für die hebräische Version von Legend of Kyrandia 3 hinzugefügt.
+   - Unterstützung für die chinesische Version von Legend of Kyrandia 3 hinzugefügt.
+
+ MADS:
+   - Unterstützung für das Datei-Layout des Installationsprogramms der Disketten-Version von Rex Nebular hinzugefügt.Added support for original floppy installer file layout for Rex Nebular.
+
+ Neverhood:
+   - Unterstützung für die japanische Version von Neverhood hinzugefügt.
 
  Queen:
    - Eine zusätzliche Option erlaubt die Verwendung einer verbesserten Schriftart für die hebräische Version.
+
+ SAGA:
+   - Unterstützung für die chinesische Version von Inherit the Earth hinzugefügt.
+   - Unterstützung für die chinesische Version von I Have no Mouth and I Must Scream hinzugefügt.
+   - Unterstützung für die koreanische Version von I Have no Mouth and I Must Scream hinzugefügt.
+   - Inherit the Earth kann nun direkt mit den Dateien des Disketten-Installationsprogramms gespielt werden.
 
  SCUMM:
    - Unterstützung von CGA-, CGA Composite-, CGA schwarz/weiß- und Herkules-Grafikmodi
@@ -44,13 +69,13 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      zurück zu Scabb Island bringt.
    - Einige Fehler in den Originalversionen der Spiele sowie Logik- und Continuity-Fehler
      korrigiert (nur, wenn die Option "Verwende spiel-spezifische Verbesserungen" aktiv ist).
-   - Unterstützung für die originale Benutzeroberfläche der LucasArts-Spiele in Version v4-v8 hinzugefügt.
    - Verbesserte Dekodierung einiger westeuropäischen Zeichenketten, wenn diese über
      die ScummVM-Oberfläche dargestellt werden - beispielsweise, wenn ein Spiel pausiert wird.
    - Der Kopf des Navigators zeigte in der ursprünglichen Version von Monkey Island 1 (ohne
      die verbesserte Verben-Oberfläche) nicht in alle möglichen Richtungen.
    - Leicht abweichende Text-Positionierung in den v4-Spielen sowie in Loom v3 korrigiert.
-   - Darstellung des Textes in den Spiele-Credits am Ende von Sam & Max korrigiert.
+   - Spiele-Credits am Ende von Sam & Max können jetzt - so wie im Original -
+     mit dem Fadenkreuz-Mauszeiger abgeschossen werden.
    - Probleme mit der Lippen-Synchronisation in der finalen Szene von Freddi Fish 4 korrigiert.
    - Die Lade-Animation des Mauszeigers in The Dig und COMI wurde nicht immer dargestellt.
    - Genauigkeit einiger Audio-Treiber verbessert. Die Fehler haben sich merklich auf die
@@ -59,9 +84,19 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      und der (von Fans erstellten) russischen Version des Spiels, was das Verhalten des
      originalen Interpreters widerspiegelt (vermutlich aufgrund der schlechten Resultate
      in den anderen Sprachen).
+   - Verbesserte Unterstützung der hebräischen Versionen der Spiele von Humongous Entertainment.
+   - Unterstützung für Roland MT-32 in Sam & Max korrigiert.
+   - Unterstützung für die originale Benutzeroberfläche und die Speicher-Menüs von LucasArts-Spielen hinzugefügt (DOS, Windows, Amiga, Macintosh, FM-Towns, Atari ST und Commodore 64-Versionen).
+   - Unterstützung für die originale Benutzeroberfläche für die SegaCD-Version von MI1 hinzugefügt.
+
+ Sherlock:
+   - Unterstützung für die chinesische Version von Rose Tattoo hinzugefügt.
+
+ Sky:
+   - Unterstützung für die chinesische Version von Beneath a Steel Sky hinzugefügt.
 
  Toon:
-   - Die Spiel-Menüs verhalten sich nun wie das Original.
+   - Die Spiel-Menüs verhalten sich nun wie im Original.
 
  TwinE:
    - Darstellungsfehler bei Türen behoben.
@@ -73,8 +108,58 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Der Bildschirm wird nun nicht mehr zentriert, wenn ein Inventar-Item aktiviert wird.
    - Wenn man W drückt, um mit Leuten zu sprechen, springt man nicht mehr automatisch.
 
+#### 2.6.1 "Incremental Escapism" (31.10.2022)
 
-#### 2.6.0 "Insane Escapism" (2022-08-01)
+ Allgemein:
+   - Verschiedene Verbesserungen für die icon-basierte Ansicht des Launchers vorgenommen.
+   - Mögliche Grafikfehler bei der Nutzung des OpenGL-Renderers behoben.
+
+ AGS:
+   - Absturz von AGDIs KQ1-Remake (und einigen anderen Spielen) auf Big-Endian-Systemen behoben.
+
+ AGOS:
+   - Mehrere Fehler korrigiert, die zu Abstürzen in den Demo-Versionen von The Feeble Files
+     und Personal Nightmare sowie in der Vollversion von Waxworks geführt haben.
+   - Absturz während des Dialogs mit den Piraten in Simon the Sorcerer 2 behoben.
+
+ Asylum:
+   - Menü zur Tastatur-Konfiguration repariert.
+   - Unterstützung für Tastenkürzel im Dialog-Bildschirm hinzugefügt.
+   - Das Spielmenü kann nun über ein Tastenkürzel aufgerufen werden.
+   - Fehler behoben, der dazu führt, dass die Steuerung zurückgesetzt wird, wenn das Hive-Puzzle verlassen wird.
+   - Animationsfehler bei der Darstellung der schwebenden Körper in Kapitel 4 korrigiert.
+
+ Ultima:
+   - Darstellungsfehler behoben, der auftritt, wenn die Minikarte vom Spiel-Bildschirm wegbewegt wird.
+   - Möglicher Absturz bei der Nutzung der Autosave-Funktion behoben.
+
+ SCI:
+   - Mehrere Fehler und Skript-Probleme in KQ4, KQ5, LB2, LONGBOW, PQ1, PQ3, QFG2, QFG3, QFG4 und SQ5 behoben.
+   - Zahlreiche Verbesserungen an verschiedenen Stellen des Engine-Codes.
+
+ SCUMM:
+   - Mögliche Abstürze in Spielen, die iMUSE verwenden, korrigiert.
+   - Fehlende .SOU- und .BUN-Dateien führen nun nicht mehr zu einem Absturz.
+   - Abstürze in v7- und v8-Spielen auf Systemen mit striktem Aligment behoben.
+   - Fehlerhafte Lippen-Synchronisation in COMI auf Big-Endian-Systemen (wie der PS3 oder Wii) korrigiert.
+ 
+ Tinsel:
+   - Fehler behoben, der dazu führt, dass in Discworld einige Gegenstände nicht im Inventar abgelegt werden konnten.
+
+ Toltecs:
+   - Abstürze auf einigen Systemen mit striktem Aligment behoben.
+
+ Toon:
+   - Fehler behoben, der dazu führt, dass Musik und Soundeffekte standardmäßig stummgeschaltet werden,
+     wenn das Spiel Toonstruck zu ScummVM hinzugefügt wird.
+
+ Android-Portierung:
+   - Die Maus-Koordinaten werden nun korrekt zwischen den Bildschirm-Koordinaten und den virtuellen Koordinaten konvertiert.
+
+ Windows-Portierung:
+  - Fehler korrigiert, der dazu führt, dass das Löschen des Icon-Caches einen zusätzlichen ScummVM-Ordner im APPDATA-Verzeichnis anlegt.
+
+#### 2.6.0 "Insane Escapism" (01.08.2022)
 
  Neue Spiele:
    - Unterstützung für Sanitarium hinzugefügt.

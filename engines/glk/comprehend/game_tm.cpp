@@ -137,7 +137,7 @@ void TalismanGame::afterPrompt() {
 		if (_redoLine == REDO_NONE && _flags[3])
 			_redoLine = REDO_PROMPT;
 	} else {
-		strcpy(_inputLine, _savedAction.c_str());
+		Common::strcpy_s(_inputLine, _savedAction.c_str());
 		_savedAction.clear();
 	}
 }

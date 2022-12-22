@@ -84,9 +84,9 @@ public:
 		int16 breakKey; ///< Keycode of the break/abort key.
 
 		uint16 palCmd;      ///< Palette command.
-		 int16 palStart;    ///< Palette entry to start with.
-		 int16 palEnd;      ///< Palette entry to end at.
-		 int32 palFrame;    ///< Frame to apply the palette command at.
+		int16 palStart;    ///< Palette entry to start with.
+		int16 palEnd;      ///< Palette entry to end at.
+		int32 palFrame;    ///< Frame to apply the palette command at.
 
 		bool noBlock; ///< Non-blocking "live" video?
 
@@ -123,6 +123,7 @@ public:
 
 	bool play(int slot, Properties &properties);
 	void waitEndFrame(int slot, bool onlySound = false);
+	int32 getExpectedFrameFromCurrentTime(int slot);
 
 	bool isPlayingLive() const;
 
@@ -138,6 +139,8 @@ public:
 	uint16 getHeight      (int slot = 0) const;
 	uint16 getDefaultX    (int slot = 0) const;
 	uint16 getDefaultY    (int slot = 0) const;
+	uint32 getFlags       (int slot = 0) const;
+
 
 	const Common::List<Common::Rect> *getDirtyRects(int slot = 0) const;
 
@@ -146,12 +149,12 @@ public:
 
 	int32 getSubtitleIndex(int slot = 0) const;
 
-	void writeVideoInfo(const Common::String &file, int16 varX, int16 varY,
-			int16 varFrames, int16 varWidth, int16 varHeight);
+	void writeVideoInfo(const Common::String &file, uint16 varX, uint16 varY,
+						uint16 varFrames, uint16 varWidth, uint16 varHeight);
 
 	bool copyFrame(int slot, Surface &dest,
 			uint16 left, uint16 top, uint16 width, uint16 height, uint16 x, uint16 y,
-			int32 transp = -1) const;
+			int32 transp = -1, bool yAxisReflexion = false) const;
 
 private:
 	struct Video {

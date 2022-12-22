@@ -37,7 +37,6 @@ public:
 	VariableWidthSpriteFontRendererClifftop(IAGSEngine *engine);
 	~VariableWidthSpriteFontRendererClifftop(void) override;
 
-	int GetTextHeight(const char *text, int fontNumber) override;
 	void RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) override;
 };
 

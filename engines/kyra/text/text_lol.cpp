@@ -181,11 +181,14 @@ void TextDisplayer_LoL::printMessage(uint16 type, const char *str, ...) {
 	const uint8 *textColors = _vm->gameFlags().use16ColorMode ? textColors16 : textColors256;
 
 	if (type & 4)
-		type ^= 4;
+		type &= ~4;
 	else
 		_vm->stopPortraitSpeechAnim();
 
-	uint16 col = textColors[type & 0x7FFF];
+	int index = type & 0x7FFF;
+	assert(index < 5);
+
+	uint16 col = textColors[index];
 
 	int od = _screen->curDimIndex();
 
@@ -216,11 +219,11 @@ void TextDisplayer_LoL::printMessage(uint16 type, const char *str, ...) {
 	_lineCount = 0;
 
 	if (!(type & 0x8000)) {
-		if (soundEffect[type])
-			_vm->sound()->playSoundEffect(soundEffect[type]);
+		if (soundEffect[index])
+			_vm->sound()->playSoundEffect(soundEffect[index]);
 	}
 
-	_vm->_textColorFlag = type & 0x7FFF;
+	_vm->_textColorFlag = index;
 	_vm->_fadeText = false;
 }
 

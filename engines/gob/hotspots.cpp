@@ -811,12 +811,13 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 							  ((delay <= 0) || (_vm->_game->_mouseButtons == kMouseButtonsNone)))
 							_vm->_draw->blitCursor();
 
-
-						if ((key != _currentKey) && (_vm->getGameType() != kGameTypeFascination) &&
-						                            (_vm->getGameType() != kGameTypeGeisha))
-						// If the hotspot changed, leave the old one
-						// Code not present in Fascination executables
-								leave(_currentIndex);
+						if ((_currentKey != 0) &&
+							(key != _currentKey) &&
+							(_vm->getGameType() != kGameTypeFascination) &&
+							(_vm->getGameType() != kGameTypeGeisha))
+							// If the hotspot changed, leave the old one
+							// Code not present in Fascination executables
+							leave(_currentIndex);
 
 						_currentKey = 0;
 						break;
@@ -917,7 +918,7 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 	while (1) {
 		// If we the edit field has enough space, add a space for the new character
 		Common::strlcpy(tempStr, str, 255);
-		strcat(tempStr, " ");
+		Common::strcat_s(tempStr, " ");
 		if ((editSize != 0) && strlen(tempStr) > editSize)
 			Common::strlcpy(tempStr, str, 256);
 
@@ -2022,7 +2023,7 @@ void Hotspots::setCurrentHotspot(const uint16 *ids, uint16 id) const {
 	}
 
 	if (Hotspot::getState(id) == kStateFilled)
-		WRITE_VAR(16, ids[id & 0xFFF]);
+		WRITE_VAR(16, (int16)ids[id & 0xFFF]);
 	else
 		WRITE_VAR(16, id & 0xFFF);
 }

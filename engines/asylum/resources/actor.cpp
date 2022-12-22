@@ -787,7 +787,7 @@ void Actor::updateReflectionData() {
 	if (_nextActionIndex != -1 && !getScene()->polygons()->get(getWorld()->actions[_nextActionIndex]->polygonIndex).contains(sum))
 		return;
 
-	ActorDirection direction = kDirectionN;
+	ActorDirection direction = _direction;
 	Common::Point position = sum;
 	ResourceId resourceId;
 	switch (_nextDirection) {
@@ -1125,7 +1125,7 @@ Common::String Actor::toString(bool shortString) {
 // Unknown methods
 //////////////////////////////////////////////////////////////////////////
 
-void Actor::clearFields() {
+void Actor::clearReflectionData() {
 	_processNewDirection = false;
 	_invertPriority = false;
 	_nextDirection = kDirectionN;
@@ -1455,13 +1455,12 @@ void Actor::setupReflectionData(ActorIndex nextActor, int32 actionAreaId, ActorD
 		if (nextPositionOffset.x) {
 			offset = nextPositionOffset;
 		} else {
-			Polygon polygon = getScene()->polygons()->get((uint32)_nextActionIndex);
+			Polygon polygon = getScene()->polygons()->get((uint32)_nextActionIndex + 1);
 
 			offset = polygon.points[0];
-
 			// Iterate through points
 			if (polygon.count() > 1) {
-				for (uint i = 1; i < polygon.count() - 1; i++) {
+				for (uint i = 1; i < polygon.count(); i++) {
 					Common::Point point = polygon.points[i];
 
 					switch (nextDirection) {

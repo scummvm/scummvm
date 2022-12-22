@@ -44,43 +44,42 @@ byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, int numStrips, const
 	_numStrips = numStrips;
 
 	if (_vm->_game.version <= 1) {
-		_xmove = 0;
-		_ymove = 0;
+		_xMove = 0;
+		_yMove = 0;
 	} else if (_vm->_game.features & GF_OLD_BUNDLE) {
-		_xmove = -72;
-		_ymove = -100;
+		_xMove = -72;
+		_yMove = -100;
 	} else {
-		_xmove = _ymove = 0;
+		_xMove = _yMove = 0;
 	}
 	for (i = 0; i < 16; i++)
 		result |= drawLimb(a, i);
 	return result;
 }
 
-void BaseCostumeRenderer::codec1_ignorePakCols(Codec1 &v1, int num) {
+void BaseCostumeRenderer::skipCelLines(ByleRLEData &compData, int num) {
 	num *= _height;
 
 	do {
-		v1.replen = *_srcptr++;
-		v1.repcolor = v1.replen >> v1.shr;
-		v1.replen &= v1.mask;
+		compData.repLen = *_srcPtr++;
+		compData.repColor = compData.repLen >> compData.shr;
+		compData.repLen &= compData.mask;
 
-		if (!v1.replen)
-			v1.replen = *_srcptr++;
+		if (!compData.repLen)
+			compData.repLen = *_srcPtr++;
 
 		do {
 			if (!--num)
 				return;
-		} while (--v1.replen);
-	} while (1);
+		} while (--compData.repLen);
+	} while (true);
 }
 
 bool ScummEngine::isCostumeInUse(int cost) const {
-	int i;
 	Actor *a;
 
 	if (_roomResource != 0)
-		for (i = 1; i < _numActors; i++) {
+		for (int i = 1; i < _numActors; i++) {
 			a = derefActor(i);
 			if (a->isInCurrentRoom() && a->_costume == cost)
 				return true;

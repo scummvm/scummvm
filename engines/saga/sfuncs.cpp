@@ -1086,7 +1086,7 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.type = kEvTOneshot;
 	event.code = kGraphicsEvent;
 	event.op = kEventFillRect;
-	event.param = 138;
+	event.param = _vm->isECS() ? 31 : kITEDOSColorDarkBlue8a;
 	event.param2 = 0;
 	event.param3 = _vm->_scene->getHeight();
 	event.param4 = 0;
@@ -1123,6 +1123,11 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.op = kEventBlackToPal;
 	event.time = 0;
 	event.duration = kNormalFadeDuration;
+	if (_vm->isECS()) {
+		pal[31].red = 0;
+		pal[31].green = 0x4b;
+		pal[31].blue = 0x97;
+	}
 	event.data = pal;
 	_vm->_events->chain(eventColumns, event);
 

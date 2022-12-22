@@ -344,6 +344,8 @@ private:
 	Movie _bigInfoMovie, _smallInfoMovie;
 };
 
+extern PegasusEngine *g_vm;
+
 } // End of namespace Pegasus
 
 #endif

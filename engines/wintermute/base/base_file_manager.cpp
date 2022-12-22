@@ -45,7 +45,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/fs.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 
 namespace Wintermute {
 

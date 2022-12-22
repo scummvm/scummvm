@@ -42,7 +42,7 @@ private:
 	void postHandleFrame() override;
 	void init() override;
 	bool _demo;
-	bool _currentVideoIsTheora;
+	bool _currentVideoIsTheora = false;
 	SmushDecoder *_smushDecoder;
 	Video::VideoDecoder *_theoraDecoder; // HACK for now, move to other class later?
 };

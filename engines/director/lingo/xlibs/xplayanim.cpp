@@ -55,7 +55,12 @@ void XPlayAnim::b_xplayanim(int nargs) {
 
 	debugN(5, "LB::b_xPlayAnim: x: %i y: %i", x, y);
 	Video::PacoDecoder *video = new Video::PacoDecoder();
-	video->loadFile(Common::Path(filename, g_director->_dirSeparator));
+	bool result = video->loadFile(Common::Path(filename, g_director->_dirSeparator));
+	if (!result) {
+		warning("b_xPlayAnim: PACo video not loaded: %s", filename.c_str());
+		delete video;
+		return;
+	}
 
 	// save the current palette
 	byte origPalette[256 * 3];

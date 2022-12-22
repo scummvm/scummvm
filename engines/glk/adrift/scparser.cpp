@@ -328,7 +328,7 @@ static sc_char *uip_new_word(const sc_char *word) {
 
 		/* Use the slot and update the pool cursor and free count. */
 		shortword = uip_word_pool + index_;
-		strcpy(shortword->word, word);
+		Common::strcpy_s(shortword->word, word);
 		shortword->is_in_use = TRUE;
 
 		uip_word_pool_cursor = index_;
@@ -341,7 +341,7 @@ static sc_char *uip_new_word(const sc_char *word) {
 
 		/* Fall back to less efficient allocations. */
 		word_copy = (sc_char *)sc_malloc(required);
-		strcpy(word_copy, word);
+		Common::strcpy_s(word_copy, required, word);
 		return word_copy;
 	}
 }
@@ -848,7 +848,7 @@ static sc_bool uip_match_variable(sc_ptnoderef_t node) {
 			sc_char value[32];
 
 			/* Compare numeric against the current string position. */
-			sprintf(value, "%ld", vt_rvalue.integer);
+			Common::sprintf_s(value, "%ld", vt_rvalue.integer);
 			length = strlen(value);
 			if (strncmp(uip_string + uip_posn, value, length) == 0) {
 				/* Integer match, advance position and return. */
@@ -1257,7 +1257,7 @@ static sc_int uip_compare_prefixed_name(const sc_char *prefix, const sc_char *na
 	/* Create a prefixed string, using the local buffer if possible. */
 	required = strlen(prefix) + strlen(name) + 2;
 	string = required > (sc_int) sizeof(buffer) ? (sc_char *)sc_malloc(required) : buffer;
-	sprintf(string, "%s %s", prefix, name);
+	Common::sprintf_s(string, required, "%s %s", prefix, name);
 
 	/* Check against the prefixed name first, free string if required. */
 	extent = uip_compare_reference(string);
@@ -1580,7 +1580,7 @@ static sc_char *uip_cleanse_string(const sc_char *original, sc_char *buffer, sc_
 	 */
 	required = strlen(original) + 1;
 	string = (required < length) ? buffer : (sc_char *)sc_malloc(required);
-	strcpy(string, original);
+	Common::strcpy_s(string, required, original);
 
 	/* Trim, and return the string. */
 	sc_trim_string(string);
@@ -1758,7 +1758,7 @@ sc_char *uip_replace_pronouns(sc_gameref_t game, const sc_char *string) {
 			if (!buffer) {
 				buffer_allocation = strlen(string) + 1;
 				buffer = (sc_char *)sc_malloc(buffer_allocation);
-				strcpy(buffer, string);
+				Common::strcpy_s(buffer, buffer_allocation, string);
 				current = buffer + (current - string);
 			}
 

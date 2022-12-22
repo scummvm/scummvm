@@ -23,13 +23,7 @@
 #define LISTING_H_
 
 #include "common/array.h"
-
-
-namespace Common {
-
-class String;
-
-}
+#include "common/str.h"
 
 namespace Wintermute {
 

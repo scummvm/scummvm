@@ -86,14 +86,13 @@ protected:
 	virtual void build();
 	virtual void clean();
 	void rebuild();
-
+	bool testGraphicsSettings();
 
 	void addControlControls(GuiObject *boss, const Common::String &prefix);
 	void addKeyMapperControls(GuiObject *boss, const Common::String &prefix, const Common::Array<Common::Keymap *> &keymaps, const Common::String &domain);
 	void addAchievementsControls(GuiObject *boss, const Common::String &prefix);
 	void addStatisticsControls(GuiObject *boss, const Common::String &prefix);
 	void addGraphicControls(GuiObject *boss, const Common::String &prefix);
-	void addShaderControls(GuiObject *boss, const Common::String &prefix);
 	void addAudioControls(GuiObject *boss, const Common::String &prefix);
 	void addMIDIControls(GuiObject *boss, const Common::String &prefix);
 	void addMT32Controls(GuiObject *boss, const Common::String &prefix);
@@ -103,7 +102,6 @@ protected:
 	void addSubtitleControls(GuiObject *boss, const Common::String &prefix, int maxSliderVal = 255);
 
 	void setGraphicSettingsState(bool enabled);
-	void setShaderSettingsState(bool enabled);
 	void setAudioSettingsState(bool enabled);
 	void setMIDISettingsState(bool enabled);
 	void setMT32SettingsState(bool enabled);
@@ -120,6 +118,9 @@ protected:
 	int _graphicsTabId;
 	int _midiTabId;
 	int _pathsTabId;
+
+	StaticTextWidget *_shader;
+	ButtonWidget *_shaderClearButton;
 
 private:
 
@@ -152,6 +153,7 @@ private:
 	PopUpWidget *_stretchPopUp;
 	StaticTextWidget *_scalerPopUpDesc;
 	PopUpWidget *_scalerPopUp, *_scaleFactorPopUp;
+	ButtonWidget *_shaderButton;
 	CheckboxWidget *_fullscreenCheckbox;
 	CheckboxWidget *_filteringCheckbox;
 	CheckboxWidget *_aspectCheckbox;
@@ -162,13 +164,6 @@ private:
 	PopUpWidget *_antiAliasPopUp;
 	StaticTextWidget *_renderModePopUpDesc;
 	PopUpWidget *_renderModePopUp;
-
-	//
-	// Shader controls
-	//
-	bool _enableShaderSettings;
-	StaticTextWidget *_shaderPopUpDesc;
-	PopUpWidget *_shaderPopUp;
 
 	//
 	// Audio controls

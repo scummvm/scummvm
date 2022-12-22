@@ -24,7 +24,6 @@
 
 #include "ags/lib/std/vector.h"
 
-#include "ags/shared/game/room_struct.h" // MAX_ROOM_OBJECTS
 #include "ags/engine/script/cc_instance.h"
 #include "ags/engine/script/executing_script.h"
 #include "ags/engine/script/non_blocking_script_function.h"

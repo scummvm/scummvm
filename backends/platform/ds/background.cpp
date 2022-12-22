@@ -24,15 +24,9 @@
 #include "backends/platform/ds/background.h"
 #include "backends/platform/ds/blitters.h"
 
-namespace DS {
+#include "graphics/surface.h"
 
-Background::Background() :
-	_bg(-1), _visible(true), _swScale(false),
-	_scaleX(1 << 8), _scaleY(1 << 8), _scrollX(0), _scrollY(0),
-	_realPitch(0), _realHeight(0),
-	_pfCLUT8(Graphics::PixelFormat::createFormatCLUT8()),
-	_pfABGR1555(Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15)) {
-}
+namespace DS {
 
 static BgSize getBgSize(uint16 width, uint16 height, bool isRGB, bool swScale, uint16 &realPitch, uint16 &realHeight) {
 	if (swScale) {
@@ -95,23 +89,17 @@ size_t Background::getRequiredVRAM(uint16 width, uint16 height, bool isRGB, bool
 	return realPitch * realHeight;
 }
 
-void Background::create(uint16 width, uint16 height, bool isRGB) {
-	const Graphics::PixelFormat f = isRGB ? _pfABGR1555 : _pfCLUT8;
-	Surface::create(width, height, f);
-	_bg = -1;
-	_swScale = false;
-	_scaleX = 1 << 8;
-	_scaleY = 1 << 8;
-	_scrollX = 0;
-	_scrollY = 0;
-}
+Background::Background(Graphics::Surface *surface, int layer, bool isSub, int mapBase, bool swScale) :
+	_bg(-1), _visible(true), _swScale(swScale),
+	_scaleX(1 << 8), _scaleY(1 << 8), _scrollX(0), _scrollY(0),
+	_surface(surface), _pitch(0) {
 
-void Background::create(uint16 width, uint16 height, bool isRGB, int layer, bool isSub, int mapBase, bool swScale) {
-	const Graphics::PixelFormat f = isRGB ? _pfABGR1555 : _pfCLUT8;
-	Surface::create(width, height, f);
+	assert(_surface);
 
+	uint16 realPitch, realHeight;
+	bool isRGB = (_surface->format != Graphics::PixelFormat::createFormatCLUT8());
 	BgType type = (isRGB || swScale) ? BgType_Bmp16 : BgType_Bmp8;
-	BgSize size = getBgSize(width, height, isRGB, swScale, _realPitch, _realHeight);
+	BgSize size = getBgSize(_surface->w, _surface->h, isRGB, swScale, realPitch, realHeight);
 
 	if (isSub) {
 		_bg = bgInitSub(layer, type, size, mapBase, 0);
@@ -119,41 +107,7 @@ void Background::create(uint16 width, uint16 height, bool isRGB, int layer, bool
 		_bg = bgInit(layer, type, size, mapBase, 0);
 	}
 
-	_swScale = swScale;
-	_scaleX = 1 << 8;
-	_scaleY = 1 << 8;
-	_scrollX = 0;
-	_scrollY = 0;
-}
-
-void Background::init(Background *surface) {
-	Surface::init(surface->w, surface->h, surface->pitch, surface->pixels, surface->format);
-	_bg = -1;
-	_swScale = false;
-	_scaleX = 1 << 8;
-	_scaleY = 1 << 8;
-	_scrollX = 0;
-	_scrollY = 0;
-}
-
-void Background::init(Background *surface, int layer, bool isSub, int mapBase, bool swScale) {
-	Surface::init(surface->w, surface->h, surface->pitch, surface->pixels, surface->format);
-
-	bool isRGB = (format != _pfCLUT8);
-	BgType type = (isRGB || swScale) ? BgType_Bmp16 : BgType_Bmp8;
-	BgSize size = getBgSize(w, h, isRGB, swScale, _realPitch, _realHeight);
-
-	if (isSub) {
-		_bg = bgInitSub(layer, type, size, mapBase, 0);
-	} else {
-		_bg = bgInit(layer, type, size, mapBase, 0);
-	}
-
-	_swScale = swScale;
-	_scaleX = 1 << 8;
-	_scaleY = 1 << 8;
-	_scrollX = 0;
-	_scrollY = 0;
+	_pitch = realPitch;
 }
 
 static void dmaBlit(uint16 *dst, const uint dstPitch, const uint16 *src, const uint srcPitch,
@@ -198,15 +152,15 @@ void Background::update() {
 
 	u16 *dst = bgGetGfxPtr(_bg);
 	if (_swScale) {
-		if (format == _pfCLUT8) {
+		if (_surface->format == Graphics::PixelFormat::createFormatCLUT8()) {
 			Rescale_320x256xPAL8_To_256x256x1555(
-				dst, (const u8 *)getPixels(), _realPitch / 2, pitch, BG_PALETTE, h);
+				dst, (const u8 *)_surface->getPixels(), _pitch / 2, _surface->pitch, BG_PALETTE, _surface->h);
 		} else {
 			Rescale_320x256x1555_To_256x256x1555(
-				dst, (const u16 *)getPixels(), _realPitch / 2, pitch / 2);
+				dst, (const u16 *)_surface->getPixels(), _pitch / 2, _surface->pitch / 2);
 		}
 	} else {
-		dmaBlit(dst, _realPitch, (const u16 *)getPixels(), pitch, w, h, format.bytesPerPixel);
+		dmaBlit(dst, _pitch, (const u16 *)_surface->getPixels(), _surface->pitch, _surface->w, _surface->h, _surface->format.bytesPerPixel);
 	}
 }
 
@@ -215,7 +169,7 @@ void Background::reset() {
 		return;
 
 	u16 *dst = bgGetGfxPtr(_bg);
-	dmaFillHalfWords(0, dst, _realPitch * h);
+	dmaFillHalfWords(0, dst, _pitch * _surface->h);
 }
 
 void Background::show() {
@@ -248,16 +202,55 @@ void Background::setScrollf(int32 x, int32 y) {
 	_scrollY = y;
 }
 
-Common::Point Background::realToScaled(int16 x, int16 y) {
-	x = CLIP<int16>(((x * _scaleX) + _scrollX) >> 8, 0, w  - 1);
-	y = CLIP<int16>(((y * _scaleY) + _scrollY) >> 8, 0, h - 1);
+Common::Point Background::realToScaled(int16 x, int16 y) const {
+	x = CLIP<int16>(((x * _scaleX) + _scrollX) >> 8, 0, _surface->w  - 1);
+	y = CLIP<int16>(((y * _scaleY) + _scrollY) >> 8, 0, _surface->h - 1);
 	return Common::Point(x, y);
 }
 
-Common::Point Background::scaledToReal(int16 x, int16 y) {
+Common::Point Background::scaledToReal(int16 x, int16 y) const {
 	x = ((x << 8) - _scrollX) / _scaleX;
 	y = ((y << 8) - _scrollY) / _scaleY;
 	return Common::Point(x, y);
+}
+
+TiledBackground::TiledBackground(const unsigned int *tiles, size_t tilesLen, const unsigned short *map, size_t mapLen, int layer, bool isSub, int mapBase, int tileBase) :
+	_tiles(tiles), _tilesLen(tilesLen), _map(map), _mapLen(mapLen),
+	_bg(-1), _visible(true) {
+
+	if (isSub) {
+		_bg = bgInitSub(layer, BgType_Text8bpp, BgSize_T_256x256, mapBase, tileBase);
+	} else {
+		_bg = bgInit(layer, BgType_Text8bpp, BgSize_T_256x256, mapBase, tileBase);
+	}
+}
+
+void TiledBackground::update() {
+	if (_bg < 0)
+		return;
+
+	dmaCopy(_tiles, bgGetGfxPtr(_bg), _tilesLen);
+	dmaCopy(_map, bgGetMapPtr(_bg), _mapLen);
+}
+
+void TiledBackground::reset() {
+	if (_bg < 0)
+		return;
+
+	dmaFillHalfWords(0, bgGetMapPtr(_bg), _mapLen);
+	dmaFillHalfWords(0, bgGetGfxPtr(_bg), _tilesLen);
+}
+
+void TiledBackground::show() {
+	if (_bg >= 0)
+		bgShow(_bg);
+	_visible = true;
+}
+
+void TiledBackground::hide() {
+	if (_bg >= 0)
+		bgHide(_bg);
+	_visible = false;
 }
 
 } // End of namespace DS

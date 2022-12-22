@@ -41,15 +41,15 @@ DisplayElement::DisplayElement(const DisplayElementID id) : IDObject(id) {
 
 DisplayElement::~DisplayElement() {
 	if (isDisplaying())
-		((PegasusEngine *)g_engine)->_gfx->removeDisplayElement(this);
+		g_vm->_gfx->removeDisplayElement(this);
 }
 
 void DisplayElement::setDisplayOrder(const DisplayOrder order) {
 	if (_elementOrder != order) {
 		_elementOrder = order;
 		if (isDisplaying()) {
-			((PegasusEngine *)g_engine)->_gfx->removeDisplayElement(this);
-			((PegasusEngine *)g_engine)->_gfx->addDisplayElement(this);
+			g_vm->_gfx->removeDisplayElement(this);
+			g_vm->_gfx->addDisplayElement(this);
 			triggerRedraw();
 		}
 	}
@@ -57,7 +57,7 @@ void DisplayElement::setDisplayOrder(const DisplayOrder order) {
 
 void DisplayElement::startDisplaying() {
 	if (!isDisplaying()) {
-		((PegasusEngine *)g_engine)->_gfx->addDisplayElement(this);
+		g_vm->_gfx->addDisplayElement(this);
 		triggerRedraw();
 	}
 }
@@ -65,7 +65,7 @@ void DisplayElement::startDisplaying() {
 void DisplayElement::stopDisplaying() {
 	if (isDisplaying()) {
 		triggerRedraw();
-		((PegasusEngine *)g_engine)->_gfx->removeDisplayElement(this);
+		g_vm->_gfx->removeDisplayElement(this);
 	}
 }
 
@@ -140,7 +140,7 @@ void DisplayElement::show() {
 // -- The element is visible.
 // -- The element is part of the active layer OR is one of the reserved items.
 void DisplayElement::triggerRedraw() {
-	GraphicsManager *gfx = ((PegasusEngine *)g_engine)->_gfx;
+	GraphicsManager *gfx = g_vm->_gfx;
 
 	if (_triggeredElement == this) {
 		if (validToDraw(gfx->getBackOfActiveLayer(), gfx->getFrontOfActiveLayer()))
@@ -171,7 +171,7 @@ DropHighlight::DropHighlight(const DisplayElementID id) : DisplayElement(id) {
 }
 
 void DropHighlight::draw(const Common::Rect &) {
-	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getWorkArea();
+	Graphics::Surface *screen = g_vm->_gfx->getWorkArea();
 
 	// Since this is only used in two different ways, I'm only
 	// going to implement it in those two ways. Deal with it.
@@ -340,7 +340,7 @@ void Sprite::discardFrames() {
 
 void Sprite::addPICTResourceFrame(const ResIDType pictID, bool transparent, const CoordType left, const CoordType top) {
 	SpriteFrame *frame = new SpriteFrame();
-	frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, pictID, transparent);
+	frame->initFromPICTResource(g_vm->_resFork, pictID, transparent);
 	addFrame(frame, left, top);
 }
 
@@ -496,7 +496,7 @@ void ScreenDimmer::draw(const Common::Rect &r) {
 	// The output is identical to the original
 
 	uint32 black = g_system->getScreenFormat().RGBToColor(0, 0, 0);
-	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getWorkArea();
+	Graphics::Surface *screen = g_vm->_gfx->getWorkArea();
 	byte bytesPerPixel = g_system->getScreenFormat().bytesPerPixel;
 
 	// We're currently doing it to the whole screen to simplify the code
@@ -559,7 +559,7 @@ void SoundLevel::draw(const Common::Rect &r) {
 	levelRect = r.findIntersectingRect(levelRect);
 
 	if (!levelRect.isEmpty()) {
-		Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getWorkArea();
+		Graphics::Surface *screen = g_vm->_gfx->getWorkArea();
 		screen->fillRect(levelRect, g_system->getScreenFormat().RGBToColor(0, 0, 0));
 	}
 }

@@ -71,7 +71,7 @@ WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, CruiseSavegam
 void writeSavegameHeader(Common::OutSaveFile *out, CruiseSavegameHeader &header) {
 	// Write out a savegame header
 	char saveIdentBuffer[6];
-	strcpy(saveIdentBuffer, "SVMCR");
+	Common::strcpy_s(saveIdentBuffer, "SVMCR");
 	out->write(saveIdentBuffer, 6);
 
 	out->writeByte(CRUISE_SAVEGAME_VERSION);
@@ -645,7 +645,7 @@ void resetPreload() {
 				MemFree(preloadData[i].ptr);
 				preloadData[i].ptr = nullptr;
 			}
-			strcpy(preloadData[i].name, "");
+			preloadData[i].name[0] = '\0';
 			preloadData[i].nofree = 0;
 		}
 	}
@@ -654,7 +654,7 @@ void resetPreload() {
 void unloadOverlay(const char*name, int overlayNumber) {
 	releaseOverlay(name);
 
-	strcpy(overlayTable[overlayNumber].overlayName, "");
+	overlayTable[overlayNumber].overlayName[0] = '\0';
 	overlayTable[overlayNumber].ovlData = nullptr;
 	overlayTable[overlayNumber].alreadyLoaded = 0;
 }

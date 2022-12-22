@@ -116,7 +116,7 @@ int MidiDriver_DMEDIA::open() {
 
 	_fd = mdGetFd(_midiPort);
 	if (!_fd) {
-		warning("Failed to aquire filehandle for MIDI port %s", _midiportName);
+		warning("Failed to acquire filehandle for MIDI port %s", _midiportName);
 		mdClosePort(_midiPort);
 		return -1;
 	}

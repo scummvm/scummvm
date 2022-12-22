@@ -150,7 +150,7 @@ void U8AvatarMoverProcess::handleCombatMode() {
 			// double left click = attack
 //			pout << "AvatarMover: combat attack" << Std::endl;
 
-			if (checkTurn(mousedir, true))
+			if (checkTurn(mousedir, false))
 				return;
 
 			waitFor(avatar->doAnim(Animation::attack, mousedir));

@@ -38,7 +38,7 @@ void Set_string_and_len(const char *from, char *to, uint32 *length) {
 	if (strlen(from) >= ENGINE_STRING_LEN)
 		Fatal_error("Set_string_and_len length violation [%s]", from);
 
-	strcpy(to, from);
+	Common::strcpy_s(to, ENGINE_STRING_LEN, from);
 
 	*length = strlen(to);
 }
@@ -49,7 +49,7 @@ void Set_string(const char *from, char *to) {
 	if (strlen(from) >= ENGINE_STRING_LEN)
 		Fatal_error("Set_string length violation [%s]", from);
 
-	strcpy(to, from);
+	Common::strcpy_s(to, ENGINE_STRING_LEN, from);
 }
 
 void Set_string(const char *from, char *to, uint32 length) {
@@ -58,7 +58,7 @@ void Set_string(const char *from, char *to, uint32 length) {
 	if (strlen(from) >= length)
 		Fatal_error("Set_string length violation [%s] - max length = %d", from, length);
 
-	strcpy(to, from);
+	Common::strcpy_s(to, length, from);
 }
 
 } // End of namespace ICB

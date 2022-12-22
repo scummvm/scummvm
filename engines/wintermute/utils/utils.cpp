@@ -92,10 +92,9 @@ void BaseUtils::debugMessage(const char *text) {
 //////////////////////////////////////////////////////////////////////////
 char *BaseUtils::setString(char **string, const char *value) {
 	delete[] *string;
-	*string = new char[strlen(value) + 1];
-	if (*string) {
-		strcpy(*string, value);
-	}
+	size_t stringSize = strlen(value) + 1;
+	*string = new char[stringSize];
+	Common::strcpy_s(*string, stringSize, value);
 	return *string;
 }
 

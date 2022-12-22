@@ -409,6 +409,9 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType animType, AnimationTy
 
 	if (animIndex == -1) {
 		animIndex = getBodyAnimIndex(AnimationTypes::kStanding, actorIdx);
+		if (animIndex == -1) {
+			error("Could not find anim index for 'standing' (actor %i)", actorIdx);
+		}
 	}
 
 	if (animType != AnimType::kAnimationSet && actor->_animType == AnimType::kAnimationAllThen) {

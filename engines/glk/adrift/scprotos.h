@@ -63,9 +63,9 @@ typedef void (*sc_write_callbackref_t)(void *, const sc_byte *, sc_int);
 /*
  * Small utility and wrapper functions.
  */
-extern void sc_trace(const sc_char *format, ...) GCC_PRINTF(1, 2);
-extern void sc_error(const sc_char *format, ...) GCC_PRINTF(1, 2);
-extern void sc_fatal(const sc_char *format, ...) GCC_PRINTF(1, 2);
+extern void sc_trace(MSVC_PRINTF const sc_char *format, ...) GCC_PRINTF(1, 2);
+extern void sc_error(MSVC_PRINTF const sc_char *format, ...) GCC_PRINTF(1, 2);
+extern void sc_fatal(MSVC_PRINTF const sc_char *format, ...) GCC_PRINTF(1, 2);
 extern void *sc_malloc(size_t size);
 extern void *sc_realloc(void *pointer, size_t size);
 extern void sc_free(void *pointer);

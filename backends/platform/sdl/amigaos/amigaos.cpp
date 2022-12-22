@@ -49,8 +49,10 @@ bool OSystem_AmigaOS::hasFeature(Feature f) {
 }
 
 void OSystem_AmigaOS::initBackend() {
-	// AmigaOS4 SDL provides two OpenGL implementations (OpenGL 1.3 with miniGL and OpenGL ES with OGLES2)
-	// This is chosen by setting the profile mask attribute before the first window creation but after init
+	// AmigaOS4 SDL provides two OpenGL implementations
+	// (OpenGL 1.3 with miniGL and OpenGL ES with OGLES2)
+	// This is chosen by setting the profile mask attribute
+	// before the first window creation but after init
 	int force = 0;
 	if (ConfMan.hasKey("opengl_implementation")) {
 		Common::String implem = ConfMan.get("opengl_implementation");
@@ -97,7 +99,48 @@ void OSystem_AmigaOS::initBackend() {
 			force = 1;
 		}
 	}
-
+	// First time user defaults
+	ConfMan.registerDefault("audio_buffer_size", "2048");
+	ConfMan.registerDefault("aspect_ratio", true);
+	ConfMan.registerDefault("fullscreen", true);
+	ConfMan.registerDefault("gfx_mode", "opengl");
+	ConfMan.registerDefault("stretch_mode", "stretch");
+	ConfMan.registerDefault("gui_mode", "antialias");
+	ConfMan.registerDefault("gui_theme", "scummremastered");
+	ConfMan.registerDefault("gui_scale", "125");
+	ConfMan.registerDefault("extrapath", "extras/");
+	ConfMan.registerDefault("themepath", "themes/");
+	// First time .ini defaults
+	if (!ConfMan.hasKey("audio_buffer_size")) {
+		ConfMan.set("audio_buffer_size", "2048");
+	}
+	if (!ConfMan.hasKey("aspect_ratio")) {
+		ConfMan.setBool("aspect_ratio", true);
+	}
+	if (!ConfMan.hasKey("fullscreen")) {
+		ConfMan.setBool("fullscreen", true);
+	}
+	if (!ConfMan.hasKey("gfx_mode")) {
+		ConfMan.set("gfx_mode", "opengl");
+	}
+	if (!ConfMan.hasKey("stretch_mode")) {
+		ConfMan.set("stretch_mode", "stretch");
+	}
+	if (!ConfMan.hasKey("gui_mode")) {
+		ConfMan.set("gui_mode", "antialias");
+	}
+	if (!ConfMan.hasKey("gui_theme")) {
+		ConfMan.set("gui_theme", "scummremastered");
+	}
+	if (!ConfMan.hasKey("gui_scale")) {
+		ConfMan.set("gui_scale", "125");
+	}
+	if (!ConfMan.hasKey("extrapath")) {
+		ConfMan.set("extrapath", "extras/");
+	}
+	if (!ConfMan.hasKey("themepath")) {
+		ConfMan.set("themepath", "themes/");
+	}
 	OSystem_SDL::initBackend();
 }
 

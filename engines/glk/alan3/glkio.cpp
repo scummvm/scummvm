@@ -144,9 +144,9 @@ void GlkIO::statusLine(CONTEXT) {
 
 		// TODO Add status message1  & 2 as author customizable messages
 		if (header->maximumScore > 0)
-			sprintf(line, "Score %d(%d)/%d moves", current.score, (int)header->maximumScore, current.tick);
+			Common::sprintf_s(line, "Score %d(%d)/%d moves", current.score, (int)header->maximumScore, current.tick);
 		else
-			sprintf(line, "%d moves", current.tick);
+			Common::sprintf_s(line, "%d moves", current.tick);
 	glk_window_move_cursor(glkStatusWin, glkWidth - strlen(line) - 1, 0);
 	glk_put_string(line);
 	needSpace = FALSE;
@@ -177,7 +177,7 @@ bool GlkIO::readLine(CONTEXT, char *buffer, size_t maxLen) {
 		// Return a "restore" command
 		forcePrint("> ");
 		forcePrint("restore\n");
-		strcpy(buffer, "restore");
+		Common::strcpy_s(buffer, maxLen, "restore");
 
 	} else if (readingCommands) {
 		if (glk_get_line_stream(commandFile, buffer, maxLen) == 0) {

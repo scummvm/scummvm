@@ -1380,7 +1380,7 @@ int FWScript::o1_loadBg() {
 
 	if (g_cine->getGameType() == GType_FW && (g_cine->getFeatures() & GF_CD)) {
 		char buffer[20];
-		removeExtention(buffer, param);
+		removeExtention(buffer, param, sizeof(buffer));
 		g_sound->setBgMusic(atoi(buffer + 1));
 	}
 
@@ -2187,7 +2187,7 @@ const char *getObjPramName(byte paramIdx) {
 	case 6:
 		return ".costume";
 	default:
-		sprintf(bufferDec, ".param%d", paramIdx);
+		Common::sprintf_s(bufferDec, ".param%d", paramIdx);
 		return bufferDec;
 	}
 }
@@ -2202,7 +2202,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 
 	exitScript = 0;
 
-	sprintf(decompileBuffer[decompileBufferPosition++], "--------- SCRIPT %d ---------\n", scriptIdx);
+	Common::sprintf_s(decompileBuffer[decompileBufferPosition++], "--------- SCRIPT %d ---------\n", scriptIdx);
 
 	do {
 		uint16 opcode = *(localScriptPtr + position);
@@ -2212,7 +2212,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			opcode = 0;
 		}
 
-		strcpy(lineBuffer, "");
+		Common::strcpy_s(lineBuffer, "");
 
 		switch (opcode - 1) {
 		case -1: {
@@ -2232,7 +2232,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param3 = READ_BE_UINT16(localScriptPtr + position);
 			position += 2;
 
-			sprintf(lineBuffer, "obj[%d]%s = %d\n", param1, getObjPramName(param2), param3);
+			Common::sprintf_s(lineBuffer, "obj[%d]%s = %d\n", param1, getObjPramName(param2), param3);
 
 			break;
 		}
@@ -2250,7 +2250,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param3 = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "var[%d]=obj[%d]%s\n", param3, param1, getObjPramName(param2));
+			Common::sprintf_s(lineBuffer, "var[%d]=obj[%d]%s\n", param3, param1, getObjPramName(param2));
 			break;
 		}
 		case 0x2:
@@ -2272,16 +2272,16 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			position += 2;
 
 			if (opcode - 1 == 0x2) {
-				sprintf(lineBuffer, "obj[%d]%s+=%d\n", param1, getObjPramName(param2), param3);
+				Common::sprintf_s(lineBuffer, "obj[%d]%s+=%d\n", param1, getObjPramName(param2), param3);
 			} else if (opcode - 1 == 0x3) {
-				sprintf(lineBuffer, "obj[%d]%s-=%d\n", param1, getObjPramName(param2), param3);
+				Common::sprintf_s(lineBuffer, "obj[%d]%s-=%d\n", param1, getObjPramName(param2), param3);
 			} else if (opcode - 1 == 0x4) {
-				sprintf(lineBuffer, "obj[%d]%s+=obj[%d]%s\n", param1, getObjPramName(param2), param3, getObjPramName(param2));
+				Common::sprintf_s(lineBuffer, "obj[%d]%s+=obj[%d]%s\n", param1, getObjPramName(param2), param3, getObjPramName(param2));
 			} else if (opcode - 1 == 0x5) {
-				sprintf(lineBuffer, "obj[%d]%s-=obj[%d]%s\n", param1, getObjPramName(param2), param3, getObjPramName(param2));
+				Common::sprintf_s(lineBuffer, "obj[%d]%s-=obj[%d]%s\n", param1, getObjPramName(param2), param3, getObjPramName(param2));
 			} else if (opcode - 1 == 0x6) {
-				sprintf(compareString1, "obj[%d]%s", param1, getObjPramName(param2));
-				sprintf(compareString2, "%d", param3);
+				Common::sprintf_s(compareString1, "obj[%d]%s", param1, getObjPramName(param2));
+				Common::sprintf_s(compareString2, "%d", param3);
 			}
 			break;
 		}
@@ -2309,9 +2309,9 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			position += 2;
 
 			if (opcode - 1 == 0x7) {
-				sprintf(lineBuffer, "setupObject(Idx:%d,X:%d,Y:%d,mask:%d,frame:%d)\n", param1, param2, param3, param4, param5);
+				Common::sprintf_s(lineBuffer, "setupObject(Idx:%d,X:%d,Y:%d,mask:%d,frame:%d)\n", param1, param2, param3, param4, param5);
 			} else if (opcode - 1 == 0x8) {
-				sprintf(lineBuffer, "checkCollision(%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5);
+				Common::sprintf_s(lineBuffer, "checkCollision(%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5);
 			}
 			break;
 		}
@@ -2332,19 +2332,19 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 				position++;
 
 				if (param2 == 1) {
-					sprintf(lineBuffer, "var[%d]=var[%d]\n", param1, param3);
+					Common::sprintf_s(lineBuffer, "var[%d]=var[%d]\n", param1, param3);
 				} else if (param2 == 2) {
-					sprintf(lineBuffer, "var[%d]=globalVar[%d]\n", param1, param3);
+					Common::sprintf_s(lineBuffer, "var[%d]=globalVar[%d]\n", param1, param3);
 				} else if (param2 == 3) {
-					sprintf(lineBuffer, "var[%d]=mouse.X\n", param1);
+					Common::sprintf_s(lineBuffer, "var[%d]=mouse.X\n", param1);
 				} else if (param2 == 4) {
-					sprintf(lineBuffer, "var[%d]=mouse.Y\n", param1);
+					Common::sprintf_s(lineBuffer, "var[%d]=mouse.Y\n", param1);
 				} else if (param2 == 5) {
-					sprintf(lineBuffer, "var[%d]=rand() mod %d\n", param1, param3);
+					Common::sprintf_s(lineBuffer, "var[%d]=rand() mod %d\n", param1, param3);
 				} else if (param2 == 8) {
-					sprintf(lineBuffer, "var[%d]=file[%d].packedSize\n", param1, param3);
+					Common::sprintf_s(lineBuffer, "var[%d]=file[%d].packedSize\n", param1, param3);
 				} else if (param2 == 9) {
-					sprintf(lineBuffer, "var[%d]=file[%d].unpackedSize\n", param1, param3);
+					Common::sprintf_s(lineBuffer, "var[%d]=file[%d].unpackedSize\n", param1, param3);
 				} else {
 					error("decompileScript: 0x09: param2 = %d", param2);
 				}
@@ -2354,7 +2354,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				sprintf(lineBuffer, "var[%d]=%d\n", param1, param3);
+				Common::sprintf_s(lineBuffer, "var[%d]=%d\n", param1, param3);
 			}
 
 			break;
@@ -2379,13 +2379,13 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 				position++;
 
 				if (opcode - 1 == 0xA) {
-					sprintf(lineBuffer, "var[%d]+=var[%d]\n", param1, param3);
+					Common::sprintf_s(lineBuffer, "var[%d]+=var[%d]\n", param1, param3);
 				} else if (opcode - 1 == 0xB) {
-					sprintf(lineBuffer, "var[%d]-=var[%d]\n", param1, param3);
+					Common::sprintf_s(lineBuffer, "var[%d]-=var[%d]\n", param1, param3);
 				} else if (opcode - 1 == 0xC) {
-					sprintf(lineBuffer, "var[%d]*=var[%d]\n", param1, param3);
+					Common::sprintf_s(lineBuffer, "var[%d]*=var[%d]\n", param1, param3);
 				} else if (opcode - 1 == 0xD) {
-					sprintf(lineBuffer, "var[%d]/=var[%d]\n", param1, param3);
+					Common::sprintf_s(lineBuffer, "var[%d]/=var[%d]\n", param1, param3);
 				}
 			} else {
 				int16 param3;
@@ -2394,13 +2394,13 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 				position += 2;
 
 				if (opcode - 1 == 0xA) {
-					sprintf(lineBuffer, "var[%d]+=%d\n", param1, param3);
+					Common::sprintf_s(lineBuffer, "var[%d]+=%d\n", param1, param3);
 				} else if (opcode - 1 == 0xB) {
-					sprintf(lineBuffer, "var[%d]-=%d\n", param1, param3);
+					Common::sprintf_s(lineBuffer, "var[%d]-=%d\n", param1, param3);
 				} else if (opcode - 1 == 0xC) {
-					sprintf(lineBuffer, "var[%d]*=%d\n", param1, param3);
+					Common::sprintf_s(lineBuffer, "var[%d]*=%d\n", param1, param3);
 				} else if (opcode - 1 == 0xD) {
-					sprintf(lineBuffer, "var[%d]/=%d\n", param1, param3);
+					Common::sprintf_s(lineBuffer, "var[%d]/=%d\n", param1, param3);
 				}
 			}
 			break;
@@ -2422,12 +2422,12 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 				position++;
 
 				if (param2 == 1) {
-					sprintf(compareString1, "var[%d]", param1);
-					sprintf(compareString2, "var[%d]", param3);
+					Common::sprintf_s(compareString1, "var[%d]", param1);
+					Common::sprintf_s(compareString2, "var[%d]", param3);
 
 				} else if (param2 == 2) {
-					sprintf(compareString1, "var[%d]", param1);
-					sprintf(compareString2, "globalVar[%d]", param3);
+					Common::sprintf_s(compareString1, "var[%d]", param1);
+					Common::sprintf_s(compareString2, "globalVar[%d]", param3);
 				} else {
 					error("decompileScript: 0x0E: param2 = %d", param2);
 				}
@@ -2437,8 +2437,8 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 				param3 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				sprintf(compareString1, "var[%d]", param1);
-				sprintf(compareString2, "%d", param3);
+				Common::sprintf_s(compareString1, "var[%d]", param1);
+				Common::sprintf_s(compareString2, "%d", param3);
 			}
 			break;
 		}
@@ -2456,7 +2456,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param3 = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "obj[%d]%s=var[%d]\n", param1, getObjPramName(param2), param3);
+			Common::sprintf_s(lineBuffer, "obj[%d]%s=var[%d]\n", param1, getObjPramName(param2), param3);
 
 			break;
 		}
@@ -2473,19 +2473,19 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			position++;
 
 			if (opcode - 1 == 0x13) {
-				sprintf(lineBuffer, "loadMask0(%d)\n", param);
+				Common::sprintf_s(lineBuffer, "loadMask0(%d)\n", param);
 			} else if (opcode - 1 == 0x14) {
-				sprintf(lineBuffer, "unloadMask0(%d)\n", param);
+				Common::sprintf_s(lineBuffer, "unloadMask0(%d)\n", param);
 			} else if (opcode - 1 == 0x15) {
-				sprintf(lineBuffer, "OP_15(%d)\n", param);
+				Common::sprintf_s(lineBuffer, "OP_15(%d)\n", param);
 			} else if (opcode - 1 == 0x16) {
-				sprintf(lineBuffer, "loadMask1(%d)\n", param);
+				Common::sprintf_s(lineBuffer, "loadMask1(%d)\n", param);
 			} else if (opcode - 1 == 0x17) {
-				sprintf(lineBuffer, "unloadMask0(%d)\n", param);
+				Common::sprintf_s(lineBuffer, "unloadMask0(%d)\n", param);
 			} else if (opcode - 1 == 0x18) {
-				sprintf(lineBuffer, "loadMask4(%d)\n", param);
+				Common::sprintf_s(lineBuffer, "loadMask4(%d)\n", param);
 			} else if (opcode - 1 == 0x19) {
-				sprintf(lineBuffer, "unloadMask4(%d)\n", param);
+				Common::sprintf_s(lineBuffer, "unloadMask4(%d)\n", param);
 			}
 			break;
 		}
@@ -2495,12 +2495,12 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "OP_1A(%d)\n", param);
+			Common::sprintf_s(lineBuffer, "OP_1A(%d)\n", param);
 
 			break;
 		}
 		case 0x1B: {
-			sprintf(lineBuffer, "bgIncrustList.clear()\n");
+			Common::sprintf_s(lineBuffer, "bgIncrustList.clear()\n");
 			break;
 		}
 		case 0x1D: {
@@ -2509,7 +2509,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "label(%d)\n", param);
+			Common::sprintf_s(lineBuffer, "label(%d)\n", param);
 
 			break;
 		}
@@ -2519,7 +2519,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "goto(%d)\n", param);
+			Common::sprintf_s(lineBuffer, "goto(%d)\n", param);
 
 			break;
 		}
@@ -2536,17 +2536,17 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			position++;
 
 			if (opcode - 1 == 0x1F) {
-				sprintf(lineBuffer, "if(%s>%s) goto(%d)\n", compareString1, compareString2, param);
+				Common::sprintf_s(lineBuffer, "if(%s>%s) goto(%d)\n", compareString1, compareString2, param);
 			} else if (opcode - 1 == 0x20) {
-				sprintf(lineBuffer, "if(%s>=%s) goto(%d)\n", compareString1, compareString2, param);
+				Common::sprintf_s(lineBuffer, "if(%s>=%s) goto(%d)\n", compareString1, compareString2, param);
 			} else if (opcode - 1 == 0x21) {
-				sprintf(lineBuffer, "if(%s<%s) goto(%d)\n", compareString1, compareString2, param);
+				Common::sprintf_s(lineBuffer, "if(%s<%s) goto(%d)\n", compareString1, compareString2, param);
 			} else if (opcode - 1 == 0x22) {
-				sprintf(lineBuffer, "if(%s<=%s) goto(%d)\n", compareString1, compareString2, param);
+				Common::sprintf_s(lineBuffer, "if(%s<=%s) goto(%d)\n", compareString1, compareString2, param);
 			} else if (opcode - 1 == 0x23) {
-				sprintf(lineBuffer, "if(%s==%s) goto(%d)\n", compareString1, compareString2, param);
+				Common::sprintf_s(lineBuffer, "if(%s==%s) goto(%d)\n", compareString1, compareString2, param);
 			} else if (opcode - 1 == 0x24) {
-				sprintf(lineBuffer, "if(%s!=%s) goto(%d)\n", compareString1, compareString2, param);
+				Common::sprintf_s(lineBuffer, "if(%s!=%s) goto(%d)\n", compareString1, compareString2, param);
 			}
 			break;
 		}
@@ -2556,7 +2556,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "removeLabel(%d)\n", param);
+			Common::sprintf_s(lineBuffer, "removeLabel(%d)\n", param);
 
 			break;
 		}
@@ -2569,7 +2569,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param2 = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "loop(--var[%d]) -> label(%d)\n", param1, param2);
+			Common::sprintf_s(lineBuffer, "loop(--var[%d]) -> label(%d)\n", param1, param2);
 
 			break;
 		}
@@ -2581,9 +2581,9 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			position++;
 
 			if (opcode - 1 == 0x31) {
-				sprintf(lineBuffer, "startGlobalScript(%d)\n", param);
+				Common::sprintf_s(lineBuffer, "startGlobalScript(%d)\n", param);
 			} else if (opcode - 1 == 0x32) {
-				sprintf(lineBuffer, "endGlobalScript(%d)\n", param);
+				Common::sprintf_s(lineBuffer, "endGlobalScript(%d)\n", param);
 			}
 			break;
 		}
@@ -2592,20 +2592,20 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 		case 0x3D:
 		case OP_loadPart: {
 			if (opcode - 1 == 0x3B) {
-				sprintf(lineBuffer, "loadResource(%s)\n", localScriptPtr + position);
+				Common::sprintf_s(lineBuffer, "loadResource(%s)\n", localScriptPtr + position);
 			} else if (opcode - 1 == 0x3C) {
-				sprintf(lineBuffer, "loadBg(%s)\n", localScriptPtr + position);
+				Common::sprintf_s(lineBuffer, "loadBg(%s)\n", localScriptPtr + position);
 			} else if (opcode - 1 == 0x3D) {
-				sprintf(lineBuffer, "loadCt(%s)\n", localScriptPtr + position);
+				Common::sprintf_s(lineBuffer, "loadCt(%s)\n", localScriptPtr + position);
 			} else if (opcode - 1 == OP_loadPart) {
-				sprintf(lineBuffer, "loadPart(%s)\n", localScriptPtr + position);
+				Common::sprintf_s(lineBuffer, "loadPart(%s)\n", localScriptPtr + position);
 			}
 
 			position += strlen((const char *)localScriptPtr + position) + 1;
 			break;
 		}
 		case 0x40: {
-			sprintf(lineBuffer, "closePart()\n");
+			Common::sprintf_s(lineBuffer, "closePart()\n");
 			break;
 		}
 		case OP_loadNewPrcName: {
@@ -2614,21 +2614,21 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "loadPrc(%d,%s)\n", param, localScriptPtr + position);
+			Common::sprintf_s(lineBuffer, "loadPrc(%d,%s)\n", param, localScriptPtr + position);
 
 			position += strlen((const char *)localScriptPtr + position) + 1;
 			break;
 		}
 		case OP_requestCheckPendingDataLoad: {  // nop
-			sprintf(lineBuffer, "requestCheckPendingDataLoad()\n");
+			Common::sprintf_s(lineBuffer, "requestCheckPendingDataLoad()\n");
 			break;
 		}
 		case 0x45: {
-			sprintf(lineBuffer, "blitAndFade()\n");
+			Common::sprintf_s(lineBuffer, "blitAndFade()\n");
 			break;
 		}
 		case 0x46: {
-			sprintf(lineBuffer, "fadeToBlack()\n");
+			Common::sprintf_s(lineBuffer, "fadeToBlack()\n");
 			break;
 		}
 		case 0x47: {
@@ -2653,7 +2653,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param5 = READ_BE_UINT16(localScriptPtr + position);
 			position += 2;
 
-			sprintf(lineBuffer, "transformPaletteRange(%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5);
+			Common::sprintf_s(lineBuffer, "transformPaletteRange(%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5);
 
 			break;
 		}
@@ -2663,7 +2663,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "setDefaultMenuBgColor(%d)\n", param);
+			Common::sprintf_s(lineBuffer, "setDefaultMenuBgColor(%d)\n", param);
 
 			break;
 		}
@@ -2680,17 +2680,17 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param3 = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "palRotate(%d,%d,%d)\n", param1, param2, param3);
+			Common::sprintf_s(lineBuffer, "palRotate(%d,%d,%d)\n", param1, param2, param3);
 			break;
 		}
 
 		case 0x4F: {
-			sprintf(lineBuffer, "break()\n");
+			Common::sprintf_s(lineBuffer, "break()\n");
 			exitScript = 1;
 			break;
 		}
 		case 0x50: {
-			sprintf(lineBuffer, "endScript()\n\n");
+			Common::sprintf_s(lineBuffer, "endScript()\n\n");
 			break;
 		}
 		case 0x51: {
@@ -2715,7 +2715,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param5 = READ_BE_UINT16(localScriptPtr + position);
 			position += 2;
 
-			sprintf(lineBuffer, "message(%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5);
+			Common::sprintf_s(lineBuffer, "message(%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5);
 
 			break;
 		}
@@ -2738,17 +2738,17 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 
 				if (param2 == 1) {
 					if (opcode - 1 == 0x52) {
-						sprintf(lineBuffer, "globalVar[%d] = var[%d]\n", param1, param3);
+						Common::sprintf_s(lineBuffer, "globalVar[%d] = var[%d]\n", param1, param3);
 					} else if (opcode - 1 == 0x53) {
-						sprintf(compareString1, "globalVar[%d]", param1);
-						sprintf(compareString2, "var[%d]", param3);
+						Common::sprintf_s(compareString1, "globalVar[%d]", param1);
+						Common::sprintf_s(compareString2, "var[%d]", param3);
 					}
 				} else if (param2 == 2) {
 					if (opcode - 1 == 0x52) {
-						sprintf(lineBuffer, "globalVar[%d] = globalVar[%d]\n", param1, param3);
+						Common::sprintf_s(lineBuffer, "globalVar[%d] = globalVar[%d]\n", param1, param3);
 					} else if (opcode - 1 == 0x53) {
-						sprintf(compareString1, "globalVar[%d]", param1);
-						sprintf(compareString2, "globalVar[%d]", param3);
+						Common::sprintf_s(compareString1, "globalVar[%d]", param1);
+						Common::sprintf_s(compareString2, "globalVar[%d]", param3);
 					}
 				} else {
 					if (opcode - 1 == 0x52) {
@@ -2764,16 +2764,16 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 				position += 2;
 
 				if (opcode - 1 == 0x52) {
-					sprintf(lineBuffer, "globalVar[%d] = %d\n", param1, param3);
+					Common::sprintf_s(lineBuffer, "globalVar[%d] = %d\n", param1, param3);
 				} else if (opcode - 1 == 0x53) {
-					sprintf(compareString1, "globalVar[%d]", param1);
-					sprintf(compareString2, "%d", param3);
+					Common::sprintf_s(compareString1, "globalVar[%d]", param1);
+					Common::sprintf_s(compareString2, "%d", param3);
 				}
 			}
 			break;
 		}
 		case 0x59: {
-			sprintf(lineBuffer, "comment: %s\n", localScriptPtr + position);
+			Common::sprintf_s(lineBuffer, "comment: %s\n", localScriptPtr + position);
 
 			position += strlen((const char *)localScriptPtr + position);
 			break;
@@ -2788,16 +2788,16 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param2 = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "freePartRang(%d,%d)\n", param1, param2);
+			Common::sprintf_s(lineBuffer, "freePartRang(%d,%d)\n", param1, param2);
 
 			break;
 		}
 		case 0x5B: {
-			sprintf(lineBuffer, "unloadAllMasks()\n");
+			Common::sprintf_s(lineBuffer, "unloadAllMasks()\n");
 			break;
 		}
 		case 0x65: {
-			sprintf(lineBuffer, "setupTableUnk1()\n");
+			Common::sprintf_s(lineBuffer, "setupTableUnk1()\n");
 			break;
 		}
 		case 0x66: {
@@ -2810,7 +2810,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param2 = READ_BE_UINT16(localScriptPtr + position);
 			position += 2;
 
-			sprintf(lineBuffer, "tableUnk1[%d] = %d\n", param1, param2);
+			Common::sprintf_s(lineBuffer, "tableUnk1[%d] = %d\n", param1, param2);
 
 			break;
 		}
@@ -2820,16 +2820,16 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "setPlayerCommandPosY(%d)\n", param);
+			Common::sprintf_s(lineBuffer, "setPlayerCommandPosY(%d)\n", param);
 
 			break;
 		}
 		case 0x69: {
-			sprintf(lineBuffer, "allowPlayerInput()\n");
+			Common::sprintf_s(lineBuffer, "allowPlayerInput()\n");
 			break;
 		}
 		case 0x6A: {
-			sprintf(lineBuffer, "disallowPlayerInput()\n");
+			Common::sprintf_s(lineBuffer, "disallowPlayerInput()\n");
 			break;
 		}
 		case 0x6B: {
@@ -2838,26 +2838,26 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			newDisk = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "changeDataDisk(%d)\n", newDisk);
+			Common::sprintf_s(lineBuffer, "changeDataDisk(%d)\n", newDisk);
 
 			break;
 		}
 		case 0x6D: {
-			sprintf(lineBuffer, "loadDat(%s)\n", localScriptPtr + position);
+			Common::sprintf_s(lineBuffer, "loadDat(%s)\n", localScriptPtr + position);
 
 			position += strlen((const char *)localScriptPtr + position) + 1;
 			break;
 		}
 		case 0x6E: { // nop
-			sprintf(lineBuffer, "updateDat()\n");
+			Common::sprintf_s(lineBuffer, "updateDat()\n");
 			break;
 		}
 		case 0x6F: {
-			sprintf(lineBuffer, "OP_6F() -> dat related\n");
+			Common::sprintf_s(lineBuffer, "OP_6F() -> dat related\n");
 			break;
 		}
 		case 0x70: {
-			sprintf(lineBuffer, "stopSample()\n");
+			Common::sprintf_s(lineBuffer, "stopSample()\n");
 			break;
 		}
 		case 0x79: {
@@ -2866,7 +2866,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "disableSystemMenu(%d)\n", param);
+			Common::sprintf_s(lineBuffer, "disableSystemMenu(%d)\n", param);
 
 			break;
 		}
@@ -2898,9 +2898,9 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			position += 2;
 
 			if (opcode - 1 == 0x77) {
-				sprintf(lineBuffer, "playSample(%d,%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5, param6);
+				Common::sprintf_s(lineBuffer, "playSample(%d,%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5, param6);
 			} else if (opcode - 1 == 0x78) {
-				sprintf(lineBuffer, "playSampleSwapped(%d,%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5, param6);
+				Common::sprintf_s(lineBuffer, "playSampleSwapped(%d,%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5, param6);
 			}
 
 			break;
@@ -2911,7 +2911,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "OP_7A(%d)\n", param);
+			Common::sprintf_s(lineBuffer, "OP_7A(%d)\n", param);
 
 			break;
 		}
@@ -2921,7 +2921,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "OP_7B(%d)\n", param);
+			Common::sprintf_s(lineBuffer, "OP_7B(%d)\n", param);
 
 			break;
 		}
@@ -2955,7 +2955,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param7 = READ_BE_UINT16(localScriptPtr + position);
 			position += 2;
 
-			sprintf(lineBuffer, "OP_7F(%d,%d,%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5, param6, param7);
+			Common::sprintf_s(lineBuffer, "OP_7F(%d,%d,%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5, param6, param7);
 
 			break;
 		}
@@ -2969,7 +2969,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param2 = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "OP_80(%d,%d)\n", param1, param2);
+			Common::sprintf_s(lineBuffer, "OP_80(%d,%d)\n", param1, param2);
 
 			break;
 		}
@@ -2995,7 +2995,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param5 = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "OP_82(%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5);
+			Common::sprintf_s(lineBuffer, "OP_82(%d,%d,%d,%d,%d)\n", param1, param2, param3, param4, param5);
 
 			break;
 		}
@@ -3009,7 +3009,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param2 = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "OP_83(%d,%d)\n", param1, param2);
+			Common::sprintf_s(lineBuffer, "OP_83(%d,%d)\n", param1, param2);
 
 			break;
 		}
@@ -3019,7 +3019,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "if(%s!=%s) goto next label(%d)\n", compareString1, compareString2, param);
+			Common::sprintf_s(lineBuffer, "if(%s!=%s) goto next label(%d)\n", compareString1, compareString2, param);
 
 			break;
 		}
@@ -3029,7 +3029,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "OP_8B(%d)\n", param);
+			Common::sprintf_s(lineBuffer, "OP_8B(%d)\n", param);
 
 			break;
 		}
@@ -3039,7 +3039,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "OP_8C(%d)\n", param);
+			Common::sprintf_s(lineBuffer, "OP_8C(%d)\n", param);
 
 			break;
 		}
@@ -3077,8 +3077,8 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param8 = READ_BE_UINT16(localScriptPtr + position);
 			position += 2;
 
-			sprintf(compareString1, "obj[%d]", param1);
-			sprintf(compareString2, "{%d,%d,%d,%d,%d,%d,%d}", param2, param3, param4, param5, param6, param7, param8);
+			Common::sprintf_s(compareString1, "obj[%d]", param1);
+			Common::sprintf_s(compareString2, "{%d,%d,%d,%d,%d,%d,%d}", param2, param3, param4, param5, param6, param7, param8);
 
 			break;
 		}
@@ -3088,7 +3088,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param1 = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "ADDBG(%d,%s)\n", param1, localScriptPtr + position);
+			Common::sprintf_s(lineBuffer, "ADDBG(%d,%s)\n", param1, localScriptPtr + position);
 
 			position += strlen((const char *)localScriptPtr + position);
 
@@ -3100,7 +3100,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "OP_8F(%d)\n", param);
+			Common::sprintf_s(lineBuffer, "OP_8F(%d)\n", param);
 
 			break;
 		}
@@ -3110,7 +3110,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param1 = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "loadABS(%d,%s)\n", param1, localScriptPtr + position);
+			Common::sprintf_s(lineBuffer, "loadABS(%d,%s)\n", param1, localScriptPtr + position);
 
 			position += strlen((const char *)localScriptPtr + position);
 
@@ -3122,7 +3122,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "OP_91(%d)\n", param);
+			Common::sprintf_s(lineBuffer, "OP_91(%d)\n", param);
 
 			break;
 		}
@@ -3132,7 +3132,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "OP_9D(%d) -> flip img idx\n", param);
+			Common::sprintf_s(lineBuffer, "OP_9D(%d) -> flip img idx\n", param);
 
 			break;
 		}
@@ -3148,14 +3148,14 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 				param2 = *(localScriptPtr + position);
 				position++;
 
-				sprintf(lineBuffer, "OP_9E(%d,%d)\n", param, param2);
+				Common::sprintf_s(lineBuffer, "OP_9E(%d,%d)\n", param, param2);
 			} else {
 				int16 param2;
 
 				param2 = READ_BE_UINT16(localScriptPtr + position);
 				position += 2;
 
-				sprintf(lineBuffer, "OP_9E(%d,%d)\n", param, param2);
+				Common::sprintf_s(lineBuffer, "OP_9E(%d,%d)\n", param, param2);
 			}
 
 			break;
@@ -3170,7 +3170,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param2 = READ_BE_UINT16(localScriptPtr + position);
 			position += 2;
 
-			sprintf(lineBuffer, "OP_A0(%d,%d)\n", param1, param2);
+			Common::sprintf_s(lineBuffer, "OP_A0(%d,%d)\n", param1, param2);
 
 			break;
 		}
@@ -3184,7 +3184,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param2 = READ_BE_UINT16(localScriptPtr + position);
 			position += 2;
 
-			sprintf(lineBuffer, "OP_A1(%d,%d)\n", param1, param2);
+			Common::sprintf_s(lineBuffer, "OP_A1(%d,%d)\n", param1, param2);
 
 			break;
 		}
@@ -3198,7 +3198,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param2 = READ_BE_UINT16(localScriptPtr + position);
 			position += 2;
 
-			sprintf(lineBuffer, "OP_A2(%d,%d)\n", param1, param2);
+			Common::sprintf_s(lineBuffer, "OP_A2(%d,%d)\n", param1, param2);
 
 			break;
 		}
@@ -3209,20 +3209,20 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			param1 = *(localScriptPtr + position);
 			position++;
 
-			sprintf(lineBuffer, "o2_wasZoneChecked(%d)\n", param1);
+			Common::sprintf_s(lineBuffer, "o2_wasZoneChecked(%d)\n", param1);
 
 			break;
 		}
 
 		default: {
-			sprintf(lineBuffer, "Unsupported opcode %X in decompileScript\n\n", opcode - 1);
+			Common::sprintf_s(lineBuffer, "Unsupported opcode %X in decompileScript\n\n", opcode - 1);
 			position = scriptSize;
 			break;
 		}
 		}
 
 		//printf(lineBuffer);
-		strcpy(decompileBuffer[decompileBufferPosition++], lineBuffer);
+		Common::strcpy_s(decompileBuffer[decompileBufferPosition++], lineBuffer);
 
 		exitScript = 0;
 		if (position >= scriptSize) {

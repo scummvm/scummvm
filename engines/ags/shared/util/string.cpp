@@ -461,7 +461,7 @@ void String::AppendFmtv(const char *fcstr, va_list argptr) {
 	va_copy(argptr_cpy, argptr);
 	size_t length = vsnprintf(nullptr, 0u, fcstr, argptr);
 	ReserveAndShift(false, length);
-	vsprintf(_cstr + _len, fcstr, argptr_cpy);
+	vsnprintf(_cstr + _len, length + 1, fcstr, argptr_cpy);
 	va_end(argptr_cpy);
 	_len += length;
 	_cstr[_len] = 0;
@@ -572,7 +572,7 @@ void String::FormatV(const char *fcstr, va_list argptr) {
 	va_copy(argptr_cpy, argptr);
 	size_t length = vsnprintf(nullptr, 0u, fcstr, argptr);
 	ReserveAndShift(false, Math::Surplus(length, _len));
-	vsprintf(_cstr, fcstr, argptr_cpy);
+	vsnprintf(_cstr, length + 1, fcstr, argptr_cpy);
 	va_end(argptr_cpy);
 	_len = length;
 	_cstr[_len] = 0;

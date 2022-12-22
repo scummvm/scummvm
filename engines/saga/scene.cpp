@@ -528,14 +528,19 @@ bool Scene::offscreenPath(Point &testPoint) {
 		return false;
 	}
 
+	int h = _bgMask.h;
+
+	if (h == 0)
+		h = _vm->getDisplayInfo().height;
+
 	point.x = CLIP<int>(testPoint.x, 0, _vm->getDisplayInfo().width - 1);
-	point.y = CLIP<int>(testPoint.y, 0, _bgMask.h - 1);
+	point.y = CLIP<int>(testPoint.y, 0, h - 1);
 	if (point == testPoint) {
 		return false;
 	}
 
-	if (point.y >= _bgMask.h - 1) {
-		point.y = _bgMask.h - 2;
+	if (point.y >= h - 1) {
+		point.y = h - 2;
 	}
 	testPoint = point;
 
@@ -576,7 +581,7 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 
 #ifdef ENABLE_IHNM
 	if ((_vm->getGameId() == GID_IHNM) && (loadSceneParams.chapter != NO_CHAPTER_CHANGE)) {
-		if (loadSceneParams.loadFlag != kLoadBySceneNumber) {
+		if ((loadSceneParams.loadFlag & kLoadIdTypeMask) != kLoadBySceneNumber) {
 			error("loadScene wrong usage");
 		}
 
@@ -621,13 +626,13 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 
 #ifdef ENABLE_IHNM
 	if (_vm->getGameId() == GID_IHNM) {
-		if (loadSceneParams.loadFlag == kLoadBySceneNumber) // When will we get rid of it?
+		if ((loadSceneParams.loadFlag & kLoadIdTypeMask) == kLoadBySceneNumber) // When will we get rid of it?
 			if (loadSceneParams.sceneDescriptor <= 0)
 				loadSceneParams.sceneDescriptor = _vm->_resource->getMetaResource()->sceneIndex;
 	}
 #endif
 
-	switch (loadSceneParams.loadFlag) {
+	switch (loadSceneParams.loadFlag & kLoadIdTypeMask) {
 	case kLoadByResourceId:
 		_sceneNumber = 0;		// original assign zero for loaded by resource id
 		_sceneResourceId = loadSceneParams.sceneDescriptor;
@@ -660,7 +665,7 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 	loadSceneResourceList(_sceneDescription.resourceListResourceId, resourceList);
 
 	// Process resources from scene resource list
-	processSceneResources(resourceList);
+	processSceneResources(resourceList, loadSceneParams.loadFlag);
 
 	if (_sceneDescription.flags & kSceneFlagISO) {
 		_outsetSceneNumber = _sceneNumber;
@@ -864,7 +869,7 @@ void Scene::loadSceneDescriptor(uint32 resourceId) {
 		if (sceneDescriptorData.size() == 16)
 			_sceneDescription.musicResourceId = readS.readSint16();
 	} else {
-		warning("Scene::loadSceneDescriptor: Unknown scene descriptor data size (%d)", sceneDescriptorData.size());
+		error("Scene::loadSceneDescriptor: Unknown scene descriptor data size (%d)", sceneDescriptorData.size());
 	}
 }
 
@@ -901,7 +906,7 @@ void Scene::loadSceneResourceList(uint32 resourceId, SceneResourceDataArray &res
 	}
 }
 
-void Scene::processSceneResources(SceneResourceDataArray &resourceList) {
+void Scene::processSceneResources(SceneResourceDataArray &resourceList, SceneLoadFlags flags) {
 	ByteArray resourceData;
 	const byte *palPointer;
 	SAGAResourceTypes *types = nullptr;
@@ -923,6 +928,12 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList) {
 				resource->invalid = true;
 				warning("DUMMY resource %i", resource->resourceId);
 			}
+		}
+
+		// Thos resources are bogus. Skip them
+		if (_vm->isITEAmiga() && resourceData.size() == 12 && memcmp(resourceData.getBuffer(), "ECHO is on\r\n", 12) == 0) {
+			resource->invalid = true;
+			warning("DUMMY resource %i", resource->resourceId);
 		}
 
 		if (resource->invalid) {
@@ -971,7 +982,10 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList) {
 				error("Scene::ProcessSceneResources(): Duplicate background mask resource encountered");
 
 			debug(3, "Loading BACKGROUND MASK resource.");
-			_vm->decodeBGImage(resourceData, _bgMask.buffer, &_bgMask.w, &_bgMask.h, true);
+			if (flags & kLoadBgMaskIsImage)
+				_vm->decodeBGImage(resourceData, _bgMask.buffer, &_bgMask.w, &_bgMask.h, true);
+			else
+				_vm->decodeBGImageMask(resourceData, _bgMask.buffer, &_bgMask.w, &_bgMask.h, true);
 			_bgMask.loaded = true;
 
 			// At least in ITE the mask needs to be clipped.
@@ -983,7 +997,7 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList) {
 			break;
 		case SAGA_STRINGS:
 			debug(3, "Loading scene strings resource...");
-			_vm->loadStrings(_sceneStrings, resourceData);
+			_vm->loadStrings(_sceneStrings, resourceData, _vm->isBigEndian());
 			break;
 		case SAGA_OBJECT_MAP:
 			debug(3, "Loading object map resource...");
@@ -1053,14 +1067,20 @@ void Scene::processSceneResources(SceneResourceDataArray &resourceList) {
 			{
 				PalEntry pal[PAL_ENTRIES];
 				byte *palPtr = resourceData.getBuffer();
+				uint16 c;
 
-				if (resourceData.size() < 3 * PAL_ENTRIES)
+				if (resourceData.size() < 3 * _vm->getPalNumEntries())
 					error("Too small scene palette %i", (int)resourceData.size());
 
-				for (uint16 c = 0; c < PAL_ENTRIES; c++) {
+				for (c = 0; c < _vm->getPalNumEntries(); c++) {
 					pal[c].red = *palPtr++;
 					pal[c].green = *palPtr++;
 					pal[c].blue = *palPtr++;
+				}
+				for (; c < PAL_ENTRIES; c++) {
+					pal[c].red = 0;
+					pal[c].green = 0;
+					pal[c].blue = 0;
 				}
 				_vm->_gfx->setPalette(pal);
 			}

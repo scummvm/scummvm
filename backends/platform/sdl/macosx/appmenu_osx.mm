@@ -40,10 +40,15 @@
 #endif
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
+// https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Cocoa64BitGuide/64BitChangesCocoa/64BitChangesCocoa.html
+#if __LP64__ || NS_BUILD_32_LIKE_64
 typedef unsigned long NSUInteger;
+#else
+typedef unsigned int NSUInteger;
+#endif
 
 // Those are not defined in the 10.4 SDK, but they are defined when targeting
-// Mac OS X 10.4 or above in the 10.5 SDK. So hopefully that means it works with 10.4 as well.
+// Mac OS X 10.4 or above in the 10.5 SDK, and they do work with 10.4.
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
 enum {
 	NSUTF32StringEncoding = 0x8c000100,
@@ -80,14 +85,27 @@ static void openFromBundle(NSString *file) {
 		}
 	}
 
+	// RTF and HTML files are widely recognized and we can rely on the default
+	// file association working for those. For the other ones this might not be
+	// the case so we explicitly indicate they should be open with TextEdit.
 	if (path) {
-		// RTF and HTML files are widely recognized and we can rely on the default
-		// file association working for those. For the other ones this might not be
-		// the case so we explicitly indicate they should be open with TextEdit.
+#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_15
 		if ([path hasSuffix:@".html"] || [path hasSuffix:@".rtf"])
 			[[NSWorkspace sharedWorkspace] openFile:path];
 		else
 			[[NSWorkspace sharedWorkspace] openFile:path withApplication:@"TextEdit"];
+#else
+		NSURL *pathUrl = [NSURL fileURLWithPath:path isDirectory:NO];
+		if ([path hasSuffix:@".html"] || [path hasSuffix:@".rtf"]) {
+			[[NSWorkspace sharedWorkspace] openURL:pathUrl];
+		} else {
+			[[NSWorkspace sharedWorkspace] openURLs:[NSArray arrayWithObjects:pathUrl, nil]
+				withApplicationAtURL:[[NSWorkspace sharedWorkspace] URLForApplicationWithBundleIdentifier:@"com.apple.TextEdit"]
+				configuration:[NSWorkspaceOpenConfiguration configuration]
+				completionHandler:nil
+			];
+		}
+#endif
 	}
 }
 
@@ -140,9 +158,14 @@ static void openFromBundle(NSString *file) {
 		NSArray *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:bundlePath error:nil];
 		NSEnumerator *dirEnum = [dirContents objectEnumerator];
 		NSString *file;
-		while (file = [dirEnum nextObject]) {
+		while ((file = [dirEnum nextObject])) {
 			if ([file hasPrefix:@"ScummVM Manual"] && [file hasSuffix:@".pdf"]) {
+#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_15
 				[[NSWorkspace sharedWorkspace] openFile:[bundlePath stringByAppendingPathComponent:file]];
+#else
+				NSURL *fileUrl = [NSURL fileURLWithPath:[bundlePath stringByAppendingPathComponent:file] isDirectory:NO];
+				[[NSWorkspace sharedWorkspace] openURL:fileUrl];
+#endif
 				return;
 			}
 		}
@@ -234,6 +257,8 @@ void replaceApplicationMenuItems() {
 		addMenuItem(_("Minimize"), nil, @selector(performMiniaturize:), @"m", windowMenu);
 	}
 
+	// Note: this part is expected not to work at run-time on 10.5 and earlier,
+	// because setHelpMenu is only available on 10.6+ (see Bug#11260).
 	NSMenu *helpMenu = addMenu(_("Help"), @"", @selector(setHelpMenu:));
 	if (helpMenu) {
 		if (!delegate) {

@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/ptr.h"
 #include "common/rational.h"
+#include "common/rect.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -111,7 +112,7 @@ public:
 	ConstPixel get(uint16 x = 0, uint16 y = 0) const;
 
 	void blit(const Surface &from, int16 left, int16 top, int16 right, int16 bottom,
-	          int16 x, int16 y, int32 transp = -1);
+	          int16 x, int16 y, int32 transp = -1, bool yAxisReflexion = false);
 	void blit(const Surface &from, int16 x, int16 y, int32 transp = -1);
 	void blit(const Surface &from, int32 transp = -1);
 
@@ -121,6 +122,8 @@ public:
 	void blitScaled(const Surface &from, Common::Rational scale, int32 transp = -1);
 
 	void fillRect(int16 left, int16 top, int16 right, int16 bottom, uint32 color);
+	void fillArea(int16 left, int16 top, int16 right, int16 bottom, uint32 fillColor, uint32 backgroundColor);
+	Common::Rect fillAreaAtPoint(int16 left, int16 top, uint32 fillColor);
 	void fill(uint32 color);
 	void clear();
 

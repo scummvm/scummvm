@@ -1292,7 +1292,7 @@ void SoundManager::sfUpdateVolume(Sound *sound) {
 }
 
 void SoundManager::sfDereferenceAll() {
-	// Orignal used handles for both the driver list and voiceTypeStructPtrs list. This method then refreshed
+	// Original used handles for both the driver list and voiceTypeStructPtrs list. This method then refreshed
 	// pointer lists based on the handles. Since in ScummVM we're just using pointers directly, this
 	// method doesn't need any implementation
 }

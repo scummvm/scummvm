@@ -412,6 +412,7 @@ Common::Error loadgame(Common::SeekableReadStream *loadfile) {
 
 void restart_game(void) {
 	putstate(restart_state);
+	reset_random();
 	agt_clrscr();
 	set_statline();
 	do_look = do_autoverb = 1;

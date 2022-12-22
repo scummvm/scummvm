@@ -95,22 +95,22 @@ int16 MsgBox(const char *msg, const char *btnMsg1, const char *btnMsg2) {
 	return res;
 }
 
-char ErrorWindow::mbChs1Text[8];
-char ErrorWindow::mbChs2Text[8];
-uint8 ErrorWindow::numBtns = 0;
-requestInfo ErrorWindow::rInfo;
+char ErrorWindow::_mbChs1Text[8];
+char ErrorWindow::_mbChs2Text[8];
+uint8 ErrorWindow::_numBtns = 0;
+requestInfo ErrorWindow::_rInfo;
 
 APPFUNC(ErrorWindow::cmdMessageWindow) {
 	gWindow         *win;
 	requestInfo     *ri;
 
-	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
+	if (ev.panel && ev.eventType == kEventNewValue && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : nullptr;
+		ri = win ? (requestInfo *)win->_userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
-			ri->result = ev.panel->id;
+			ri->result = ev.panel->_id;
 		}
 	}
 }
@@ -118,48 +118,48 @@ APPFUNC(ErrorWindow::cmdMessageWindow) {
 
 ErrorWindow::ErrorWindow(const char *msg, const char *btnMsg1, const char *btnMsg2)
 	: SimpleWindow(mbWindowRect, 0, msg, cmdMessageWindow) {
-	numBtns = 0;
+	_numBtns = 0;
 
-	if (btnMsg1) numBtns++;
-	if (btnMsg2) numBtns++;
+	if (btnMsg1) _numBtns++;
+	if (btnMsg2) _numBtns++;
 
 	// requester info struct
 
-	rInfo.result    = -1;
-	rInfo.running   = true;
+	_rInfo.result    = -1;
+	_rInfo.running   = true;
 
-	strcpy(mbChs1Text, "\x13");
-	strcpy(mbChs2Text, "\x1B");
+	Common::strcpy_s(_mbChs1Text, "\x13");
+	Common::strcpy_s(_mbChs2Text, "\x1B");
 	const char *eq;
 	// button one
 	if (btnMsg1) {
-		new SimpleButton(*this, butBox(numBtns, 0), btnMsg1, 0, cmdMessageWindow);
+		new SimpleButton(*this, butBox(_numBtns, 0), btnMsg1, 0, cmdMessageWindow);
 		if ((eq = strchr(btnMsg1, '_')) != nullptr) {
 			eq++;
 			if (eq)
-				mbChs1Text[strlen(mbChs1Text)] = *eq;
+				_mbChs1Text[strlen(_mbChs1Text)] = *eq;
 		}
 	}
 
 	// button two
 	if (btnMsg2) {
-		new SimpleButton(*this, butBox(numBtns, 1), btnMsg2, 1, cmdMessageWindow);
+		new SimpleButton(*this, butBox(_numBtns, 1), btnMsg2, 1, cmdMessageWindow);
 		if ((eq = strchr(btnMsg2, '_')) != nullptr) {
 			eq++;
 			if (eq)
-				mbChs2Text[strlen(mbChs2Text)] = *eq;
+				_mbChs2Text[strlen(_mbChs2Text)] = *eq;
 		}
 	}
 
-	userData = &rInfo;
+	_userData = &_rInfo;
 
 }
 
 int16 ErrorWindow::getResult() {
 	open();
 	draw();
-	EventLoop(rInfo.running, true);
-	return rInfo.result;
+	EventLoop(_rInfo.running, true);
+	return _rInfo.result;
 }
 
 ErrorWindow::~ErrorWindow() {
@@ -169,21 +169,21 @@ ErrorWindow::~ErrorWindow() {
 
 
 void ErrorWindow::ErrorModeHandleKey(short key, short) {
-	if (strchr(mbChs2Text, tolower(key)) ||
-	        strchr(mbChs2Text, toupper(key))) {
-		rInfo.result    = 2;
-		rInfo.running   = false;
+	if (strchr(_mbChs2Text, tolower(key)) ||
+	        strchr(_mbChs2Text, toupper(key))) {
+		_rInfo.result    = 2;
+		_rInfo.running   = false;
 		return;
 	}
-	if (strchr(mbChs1Text, tolower(key)) ||
-	        strchr(mbChs1Text, toupper(key))) {
-		rInfo.result    = 1;
-		rInfo.running   = false;
+	if (strchr(_mbChs1Text, tolower(key)) ||
+	        strchr(_mbChs1Text, toupper(key))) {
+		_rInfo.result    = 1;
+		_rInfo.running   = false;
 		return;
 	}
-	if (numBtns < 2) {
-		rInfo.result    = 1;
-		rInfo.running   = false;
+	if (_numBtns < 2) {
+		_rInfo.result    = 1;
+		_rInfo.running   = false;
 		return;
 	}
 }
@@ -208,15 +208,15 @@ SimpleWindow::SimpleWindow(const Rect16 &r,
                            const char *stitle,
                            AppFunc *cmd)
 	: gWindow(r, ident, "", cmd) {
-	prevModeStackCtr = GameMode::getStack(prevModeStackPtr);
+	_prevModeStackCtr = GameMode::getStack(_prevModeStackPtr);
 
 	GameMode *gameModes[] = {&PlayMode, &TileMode, &SimpleMode};
 	GameMode::SetStack(gameModes, 3);
-	title = stitle;
+	_title = stitle;
 }
 
 SimpleWindow::~SimpleWindow() {
-	GameMode::SetStack(prevModeStackPtr, prevModeStackCtr);
+	GameMode::SetStack(_prevModeStackPtr, _prevModeStackCtr);
 }
 
 bool SimpleWindow::isModal() {
@@ -238,7 +238,7 @@ void SimpleWindow::drawClipped(
     const Rect16  &r) {
 	Rect16          box = _extent;
 	//gFont             *buttonFont=&Onyx10Font;
-	int16           textPos = textPosHigh;
+	int16           textPos = kTextPosHigh;
 	//textPallete       pal( 33+9, 36+9, 41+9, 34+9, 40+9, 43+9 );
 	textPallete     pal(33 + 9, 33 + 9, 41 + 9, 33 + 9, 33 + 9, 41 + 9);
 
@@ -251,7 +251,7 @@ void SimpleWindow::drawClipped(
 	g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
 
 	DrawOutlineFrame(port,  _extent, windowColor);
-	writeWrappedPlaqText(port, box, mbButtonFont, textPos, pal, false, title);
+	writeWrappedPlaqText(port, box, mbButtonFont, textPos, pal, false, _title);
 
 	gWindow::drawClipped(port, p, r);
 
@@ -277,7 +277,7 @@ void SimpleWindow::writeWrappedPlaqText(gPort           &port,
 	Rect16          r2 = r;
 
 	va_start(argptr, msg);
-	int cnt = vsprintf(textBuf, msg, argptr);
+	int cnt = Common::vsprintf_s(textBuf, msg, argptr);
 	va_end(argptr);
 
 	char *text = &textBuf[0];
@@ -309,18 +309,18 @@ void SimpleWindow::DrawOutlineFrame(gPort &port, const Rect16 &r, int16 fillColo
 		int16       bottom = r.y + r.height - 2,
 		            right  = r.x + r.width - 2;
 
-		port.setIndirectColor(whitePen);
+		port.setIndirectColor(kWhitePen);
 		port.vLine(r.x + 1, r.y + 1, r.height - 3);
 		port.hLine(r.x + 2, r.y + 1, r.width  - 3);
 
-		port.setIndirectColor(blackPen);
+		port.setIndirectColor(kBlackPen);
 		port.frameRect(r, 1);
 
-		port.setIndirectColor(buttonDkPen);
+		port.setIndirectColor(kButtonDkPen);
 		port.hLine(r.x + 1,   bottom, r.width - 2);
 		port.vLine(right, r.y + 1,    r.height - 2);
 
-		port.setIndirectColor(buttonPen);
+		port.setIndirectColor(kButtonPen);
 		port.setPixel(r.x + 1, bottom);
 		port.setPixel(right,   r.y + 1);
 
@@ -340,23 +340,23 @@ void SimpleWindow::DrawOutlineFrame(gPort &port, const Rect16 &r, int16 fillColo
 
 SimpleButton::SimpleButton(gWindow &win, const Rect16 &box, const char *title_, uint16 ident, AppFunc *cmd_)
 	: gControl(win, box, title_, ident, cmd_) {
-	window = &win;
+	_window = &win;
 }
 
 void SimpleButton::deactivate() {
-	selected = 0;
+	_selected = 0;
 	draw();
 	gPanel::deactivate();
 }
 
 bool SimpleButton::activate(gEventType why) {
-	selected = 1;
+	_selected = 1;
 	draw();
 
-	if (why == gEventKeyDown) {             // momentarily depress
+	if (why == kEventKeyDown) {             // momentarily depress
 		//delay( 200 );
 		deactivate();
-		notify(gEventNewValue, 1);       // notify App of successful hit
+		notify(kEventNewValue, 1);       // notify App of successful hit
 	}
 	return false;
 }
@@ -364,29 +364,29 @@ bool SimpleButton::activate(gEventType why) {
 bool SimpleButton::pointerHit(gPanelMessage &) {
 	//if (ghosted) return false;
 
-	activate(gEventMouseDown);
+	activate(kEventMouseDown);
 	return true;
 }
 
 void SimpleButton::pointerRelease(gPanelMessage &) {
 	//  We have to test selected first because deactivate clears it.
 
-	if (selected) {
+	if (_selected) {
 		deactivate();                       // give back input focus
-		notify(gEventNewValue, 1);       // notify App of successful hit
+		notify(kEventNewValue, 1);       // notify App of successful hit
 	} else deactivate();
 }
 
 void SimpleButton::pointerDrag(gPanelMessage &msg) {
-	if (selected != msg.inPanel) {
-		selected = msg.inPanel;
+	if (_selected != msg._inPanel) {
+		_selected = msg._inPanel;
 		draw();
 	}
 }
 
 void SimpleButton::draw() {
-	gDisplayPort    &port = window->windowPort;
-	Rect16  rect = window->getExtent();
+	gDisplayPort    &port = _window->_windowPort;
+	Rect16  rect = _window->getExtent();
 
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.
 	g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
@@ -400,7 +400,7 @@ void SimpleButton::drawClipped(
     gPort         &port,
     const Point16 &,
     const Rect16 &) {
-	Rect16          base = window->getExtent();
+	Rect16          base = _window->getExtent();
 
 	Rect16          box = Rect16(_extent.x + 1,
 	                             _extent.y + 1,
@@ -416,7 +416,7 @@ void SimpleButton::drawClipped(
 	                               box,
 	                               buttonColor);
 
-	drawTitle((enum text_positions)0);
+	drawTitle((TextPositions)0);
 	g_vm->_pointer->show(port, _extent);              // show mouse pointer
 }
 

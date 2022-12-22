@@ -403,7 +403,7 @@ protected:
 	Common::Rect _focusRect;
 #endif
 
-	virtual void addDirtyRect(int x, int y, int w, int h, bool realCoordinates = false);
+	virtual void addDirtyRect(int x, int y, int w, int h, bool inOverlay, bool realCoordinates = false);
 
 	virtual void drawMouse();
 	virtual void undrawMouse();

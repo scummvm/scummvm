@@ -28,6 +28,26 @@
 
 namespace Scumm {
 
+void ScummEngine::mac_markScreenAsDirty(int x, int y, int w, int h) {
+	// Mark the virtual screen as dirty. The top and left coordinates are
+	// rounded down, while the bottom and right ones are rounded up.
+
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
+
+	int vsTop = y / 2 - vs->topline;
+	int vsBottom = (y + h) / 2 - vs->topline;
+	int vsLeft = x / 2;
+	int vsRight = (x + w) / 2;
+
+	if ((y + h) & 1)
+		vsBottom++;
+
+	if ((x + w) & 1)
+		vsRight++;
+
+	markRectAsDirty(kMainVirtScreen, vsLeft, vsRight, vsTop, vsBottom);
+}
+
 void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, int width, int height) {
 
 	const byte *pixels = vs->getPixels(x, top);
@@ -155,7 +175,7 @@ void ScummEngine::mac_createIndy3TextBox(Actor *a) {
 
 	if (a) {
 		int oldID = _charset->getCurID();
-		_charset->setCurID(2);
+		_charset->setCurID(2 | 0x80);
 
 		const char *name = (const char *)a->getActorName();
 		int charX = 25;
@@ -194,29 +214,13 @@ void ScummEngine::mac_drawIndy3TextBox() {
 	// had been one giant glyph. Note that it will be drawn on the main
 	// virtual screen, but we still pretend it's on the text one.
 
-	VirtScreen *vs = &_virtscr[kMainVirtScreen];
-
 	byte *ptr = (byte *)_macIndy3TextBox->getBasePtr(0, 2);
 	int pitch = _macIndy3TextBox->pitch;
 
 	_macScreen->copyRectToSurface(ptr, pitch, x, y, w, h);
 	_textSurface.fillRect(Common::Rect(x, y, x + w, y + h), 0);
 
-	// Mark the virtual screen as dirty. The top and left coordinates are
-	// rounded down, while the bottom and right ones are rounded up.
-
-	int vsTop = y / 2 - vs->topline;
-	int vsBottom = (y + h) / 2 - vs->topline;
-	int vsLeft = x / 2;
-	int vsRight = (x + w) / 2;
-
-	if ((y + h) & 1)
-		vsBottom++;
-
-	if ((x + w) & 1)
-		vsRight++;
-
-	markRectAsDirty(kMainVirtScreen, vsLeft, vsRight, vsTop, vsBottom);
+	mac_markScreenAsDirty(x, y, w, h);
 }
 
 void ScummEngine::mac_undrawIndy3TextBox() {
@@ -228,20 +232,7 @@ void ScummEngine::mac_undrawIndy3TextBox() {
 	_macScreen->fillRect(Common::Rect(x, y, x + w, y + h), 0);
 	_textSurface.fillRect(Common::Rect(x, y, x + w, y + h), CHARSET_MASK_TRANSPARENCY);
 
-	VirtScreen *vs = &_virtscr[kMainVirtScreen];
-
-	int vsTop = y / 2 - vs->topline;
-	int vsBottom = (y + h) / 2 - vs->topline;
-	int vsLeft = x / 2;
-	int vsRight = (x + w) / 2;
-
-	if ((y + h) & 1)
-		vsBottom++;
-
-	if ((x + w) & 1)
-		vsRight++;
-
-	markRectAsDirty(kMainVirtScreen, vsLeft, vsRight, vsTop, vsBottom);
+	mac_markScreenAsDirty(x, y, w, h);
 }
 
 void ScummEngine::mac_undrawIndy3CreditsText() {
@@ -263,6 +254,100 @@ void ScummEngine::mac_undrawIndy3CreditsText() {
 		if (_bgNeedsRedraw)
 			clearDrawObjectQueue();
 	}
+}
+
+void ScummEngine::mac_drawBorder(int x, int y, int w, int h, byte color) {
+	_macScreen->hLine(x + 2, y, x + w - 2, 0);
+	_macScreen->hLine(x + 2, y + h - 1, x + w - 2, 0);
+	_macScreen->vLine(x, y + 2, y + h - 3, 0);
+	_macScreen->vLine(x + w, y + 2, y + h - 3, 0);
+	_macScreen->setPixel(x + 1, y + 1, 0);
+	_macScreen->setPixel(x + w - 1, y + 1, 0);
+	_macScreen->setPixel(x + 1, y + h - 2, 0);
+	_macScreen->setPixel(x + w - 1, y + h - 2, 0);
+}
+
+Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, int32 waitTime) {
+	char bannerMsg[512];
+
+	_messageBannerActive = true;
+
+	// Fetch the translated string for the message...
+	convertMessageToString((const byte *)msg, (byte *)bannerMsg, sizeof(bannerMsg));
+
+	// Backup the surfaces...
+	int x = 70;
+	int y = 189;
+	int w = 499;
+	int h = 22;
+
+	Graphics::Surface backupTextSurface;
+	Graphics::Surface backupMacScreen;
+
+	backupTextSurface.create(w + 1, h, Graphics::PixelFormat::createFormatCLUT8());
+	backupMacScreen.create(w + 1, h, Graphics::PixelFormat::createFormatCLUT8());
+
+	backupTextSurface.copyRectToSurface(_textSurface, 0, 0, Common::Rect(x, y, x + w + 1, y + h));
+	backupMacScreen.copyRectToSurface(*_macScreen, 0, 0, Common::Rect(x, y, x + w + 1, y + h));
+
+	// Pause shake effect
+	_shakeTempSavedState = _shakeEnabled;
+	setShake(0);
+
+	// Pause the engine
+	PauseToken pt = pauseEngine();
+
+	// Backup the current charsetId...
+	int oldId = _charset->getCurID();
+	_charset->setCurID(1 | 0x80);
+	_charset->setColor(0);
+
+	_textSurface.fillRect(Common::Rect(x, y, x + w + 1, y + h), 0);
+	_macScreen->fillRect(Common::Rect(x + 1, y + 1, x + w, y + h - 1), 15);
+	mac_drawBorder(x, y, w, h, 0);
+	mac_drawBorder(x + 2, y + 2, w - 4, h - 4, 0);
+
+	int stringWidth = 0;
+
+	for (int i = 0; msg[i]; i++)
+		stringWidth += _charset->getCharWidth(msg[i]);
+
+	int stringX = 1 + x + (w - stringWidth) / 2;
+
+	for (int i = 0; msg[i]; i++) {
+		_charset->drawChar(msg[i], *_macScreen, stringX, y + 4);
+		stringX += _charset->getCharWidth(msg[i]);
+	}
+
+	mac_markScreenAsDirty(x, y, w, h);
+	ScummEngine::drawDirtyScreenParts();
+
+	Common::KeyState ks = Common::KEYCODE_INVALID;
+	bool leftBtnPressed = false, rightBtnPressed = false;
+	if (waitTime) {
+		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
+	}
+
+	// Restore the surfaces...
+	_textSurface.copyRectToSurface(backupTextSurface, x, y, Common::Rect(0, 0, w + 1, h));
+	_macScreen->copyRectToSurface(backupMacScreen, x, y, Common::Rect(0, 0, w + 1, h));
+
+	backupTextSurface.free();
+	backupMacScreen.free();
+
+	// Notify the gfx system that we restored the surfaces...
+	mac_markScreenAsDirty(x, y, w + 1, h);
+	ScummEngine::drawDirtyScreenParts();
+
+	// Finally, resume the engine, clear the input state, and restore the charset.
+	pt.clear();
+	clearClickedStatus();
+
+	_charset->setCurID(oldId);
+
+	_messageBannerActive = false;
+
+	return ks;
 }
 
 } // End of namespace Scumm

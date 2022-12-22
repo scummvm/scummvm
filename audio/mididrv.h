@@ -499,8 +499,6 @@ public:
 	 */
 	void sendGMReset();
 
-	virtual void sysEx_customInstrument(byte channel, uint32 type, const byte *instr) { }
-
 	// Timing functions - MidiDriver now operates timers
 	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) = 0;
 
@@ -549,7 +547,7 @@ public:
 	virtual void allNotesOff() { controlChange(MidiDriver::MIDI_CONTROLLER_ALL_NOTES_OFF, 0); }
 
 	// SysEx messages
-	virtual void sysEx_customInstrument(uint32 type, const byte *instr) = 0;
+	virtual void sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) = 0;
 };
 /** @} */
 #endif

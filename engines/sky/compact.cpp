@@ -288,7 +288,7 @@ Compact *SkyCompact::fetchCpt(uint16 cptId) {
 	return _compacts[cptId >> 12][cptId & 0xFFF];
 }
 
-Compact *SkyCompact::fetchCptInfo(uint16 cptId, uint16 *elems, uint16 *type, char *name) {
+Compact *SkyCompact::fetchCptInfo(uint16 cptId, uint16 *elems, uint16 *type, char *name, size_t nameSize) {
 	assert(((cptId >> 12) < _numDataLists) && ((cptId & 0xFFF) < _dataListLen[cptId >> 12]));
 	if (elems)
 		*elems = _cptSizes[cptId >> 12][cptId & 0xFFF];
@@ -296,9 +296,9 @@ Compact *SkyCompact::fetchCptInfo(uint16 cptId, uint16 *elems, uint16 *type, cha
 		*type  = _cptTypes[cptId >> 12][cptId & 0xFFF];
 	if (name) {
 		if (_cptNames[cptId >> 12][cptId & 0xFFF] != NULL)
-			strcpy(name, _cptNames[cptId >> 12][cptId & 0xFFF]);
+			Common::strcpy_s(name, nameSize, _cptNames[cptId >> 12][cptId & 0xFFF]);
 		else
-			strcpy(name, "(null)");
+			Common::strcpy_s(name, nameSize, "(null)");
 	}
 	return fetchCpt(cptId);
 }

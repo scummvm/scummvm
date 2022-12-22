@@ -1,0 +1,11 @@
+# 8 bit bitmap
+-gB8
+
+# tile format
+-gt
+
+# tile reduction by tiles, palette and hflip/vflip
+-mRtf
+
+# map layout standard bg format
+-mLs

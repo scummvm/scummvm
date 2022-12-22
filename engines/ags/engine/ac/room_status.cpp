@@ -82,12 +82,13 @@ void RoomStatus::ReadFromFile_v321(Stream *in) {
 
 	beenhere = in->ReadInt32();
 	numobj = in->ReadInt32();
-	obj.resize(numobj);
-	objProps.resize(numobj);
-	intrObject.resize(numobj);
+	obj.resize(MAX_ROOM_OBJECTS_v300);
+	objProps.resize(MAX_ROOM_OBJECTS_v300);
+	intrObject.resize(MAX_ROOM_OBJECTS_v300);
 	ReadRoomObjects_Aligned(in);
 
-	in->Seek(MAX_LEGACY_ROOM_FLAGS * sizeof(int16_t)); // flagstates (OBSOLETE)
+	int16_t dummy[MAX_LEGACY_ROOM_FLAGS]; // cannot seek with AlignedStream
+	in->ReadArrayOfInt16(dummy, MAX_LEGACY_ROOM_FLAGS); // flagstates (OBSOLETE)
 	tsdatasize = in->ReadInt32();
 	in->ReadInt32(); // tsdata
 	for (int i = 0; i < MAX_ROOM_HOTSPOTS; ++i) {

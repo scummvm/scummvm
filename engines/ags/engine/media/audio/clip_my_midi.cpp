@@ -47,7 +47,12 @@ void MYMIDI::poll() {
 }
 
 void MYMIDI::seek(int pos) {
+	// pos is the beat number
 	warning("TODO: MYMIDI::seek");
+}
+
+void MYMIDI::seek_ms(int pos_ms) {
+	warning("TODO: MYMIDI::seek_ms");
 }
 
 int MYMIDI::get_pos() {

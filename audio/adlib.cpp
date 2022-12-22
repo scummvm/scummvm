@@ -156,7 +156,7 @@ public:
 	void allNotesOff() override;
 
 	// SysEx messages
-	void sysEx_customInstrument(uint32 type, const byte *instr) override;
+	void sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) override;
 };
 
 // FYI (Jamieson630)
@@ -185,7 +185,7 @@ public:
 	void sustain(bool value) override { }
 
 	// SysEx messages
-	void sysEx_customInstrument(uint32 type, const byte *instr) override;
+	void sysEx_customInstrument(uint32 type, const byte *instr, uint32 datasize) override;
 
 private:
 	byte _notes[256];
@@ -942,7 +942,6 @@ public:
 	uint32 getBaseTempo() override { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
 	void setPitchBendRange(byte channel, uint range) override;
-	void sysEx_customInstrument(byte channel, uint32 type, const byte *instr) override;
 
 	MidiChannel *allocateChannel() override;
 	MidiChannel *getPercussionChannel() override { return &_percussion; } // Percussion partially supported
@@ -1264,7 +1263,7 @@ void AdLibPart::allNotesOff() {
 		_owner->mcOff(_voice);
 }
 
-void AdLibPart::sysEx_customInstrument(uint32 type, const byte *instr) {
+void AdLibPart::sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) {
 	// Sam&Max allows for instrument overwrites, but we will not support it
 	// until we can find any track actually using it.
 #ifdef ENABLE_OPL3
@@ -1274,8 +1273,10 @@ void AdLibPart::sysEx_customInstrument(uint32 type, const byte *instr) {
 	}
 #endif
 
-	if (type == 'ADL ') {
+	if (type == 'ADL ' && instr && dataSize == sizeof(AdLibInstrument))
 		memcpy(&_partInstr, instr, sizeof(AdLibInstrument));
+	else if (type != 'ADL '){
+		warning("AdLibPart: Receiving '%c%c%c%c' instrument data. Probably loading a savegame with that sound setting", (type >> 24) & 0xFF, (type >> 16) & 0xFF, (type >> 8) & 0xFF, type & 0xFF);
 	}
 }
 
@@ -1351,7 +1352,7 @@ void AdLibPercussionChannel::noteOn(byte note, byte velocity) {
 	_owner->partKeyOn(this, inst, note, velocity, sec, _pan);
 }
 
-void AdLibPercussionChannel::sysEx_customInstrument(uint32 type, const byte *instr) {
+void AdLibPercussionChannel::sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) {
 	// We do not allow custom instruments in OPL3 mode right now.
 #ifdef ENABLE_OPL3
 	if (_owner->_opl3Mode) {
@@ -1360,7 +1361,7 @@ void AdLibPercussionChannel::sysEx_customInstrument(uint32 type, const byte *ins
 	}
 #endif
 
-	if (type == 'ADLP') {
+	if (type == 'ADLP' && instr && dataSize) {
 		byte note = instr[0];
 		_notes[note] = instr[1];
 
@@ -1382,6 +1383,8 @@ void AdLibPercussionChannel::sysEx_customInstrument(uint32 type, const byte *ins
 		_customInstruments[note]->carSustainRelease     = instr[10];
 		_customInstruments[note]->carWaveformSelect     = instr[11];
 		_customInstruments[note]->feedback               = instr[12];
+	} else if (type != 'ADLP'){
+		warning("AdLibPercussionChannel: Receiving '%c%c%c%c' instrument data. Probably loading a savegame with that sound setting", (type >> 24) & 0xFF, (type >> 16) & 0xFF, (type >> 8) & 0xFF, type & 0xFF);
 	}
 }
 
@@ -1583,10 +1586,6 @@ void MidiDriver_ADLIB::setPitchBendRange(byte channel, uint range) {
 		}
 #endif
 	}
-}
-
-void MidiDriver_ADLIB::sysEx_customInstrument(byte channel, uint32 type, const byte *instr) {
-	_parts[channel].sysEx_customInstrument(type, instr);
 }
 
 MidiChannel *MidiDriver_ADLIB::allocateChannel() {
@@ -1897,8 +1896,8 @@ void MidiDriver_ADLIB::struct10Setup(Struct10 *s10) {
 
 void MidiDriver_ADLIB::adlibPlayNote(int channel, int note) {
 	byte old, oct, notex;
-	int note2;
-	int i;
+	uint8 note2;
+	int i; 
 
 	note2 = (note >> 7) - 4;
 	note2 = (note2 < 128) ? note2 : 0;
@@ -1927,6 +1926,7 @@ void MidiDriver_ADLIB::adlibPlayNote(int channel, int note) {
 	}
 
 	i = (notex << 3) + ((note >> 4) & 0x7);
+	assert(i < ARRAYSIZE(g_noteFrequencies));
 	adlibWrite(channel + 0xA0, g_noteFrequencies[i]);
 	adlibWrite(channel + 0xB0, oct | 0x20);
 }

@@ -20,12 +20,14 @@
  */
 
 
+#include "common/config-manager.h"
 #include "common/translation.h"
 #include "common/system.h"
 #include "common/debug.h"
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
+#include "engines/metaengine.h"
 
 #include "agi/detection.h"
 #include "agi/wagparser.h" // for fallback detection
@@ -53,21 +55,21 @@ static const PlainGameDescriptor agiGames[] = {
 	{"caitlyn", "Caitlyn's Destiny"},
 	{"ddp", "Donald Duck's Playground"},
 	{"goldrush", "Gold Rush!"},
-	{"kq1", "King's Quest I: Quest for the Crown"},
+	{"kq1", "King's Quest: Quest for the Crown"},
 	{"kq2", "King's Quest II: Romancing the Throne"},
 	{"kq3", "King's Quest III: To Heir Is Human"},
 	{"kq4", "King's Quest IV: The Perils of Rosella"},
 	{"lsl1", "Leisure Suit Larry in the Land of the Lounge Lizards"},
 	{"mickey", "Mickey\'s Space Adventure"},
 	{"mixedup", "Mixed-Up Mother Goose"},
-	{"mh1", "Manhunter 1: New York"},
+	{"mh1", "Manhunter: New York"},
 	{"mh2", "Manhunter 2: San Francisco"},
-	{"pq1", "Police Quest I: In Pursuit of the Death Angel"},
+	{"pq1", "Police Quest: In Pursuit of the Death Angel"},
 	{"serguei1", "Serguei's Destiny 1"},
 	{"serguei2", "Serguei's Destiny 2"},
 	{"sq0", "Space Quest 0: Replicated"},
-	{"sq1", "Space Quest I: The Sarien Encounter"},
-	{"sq2", "Space Quest II: Vohaul's Revenge"},
+	{"sq1", "Space Quest: Chapter I - The Sarien Encounter"},
+	{"sq2", "Space Quest II: Chapter II - Vohaul's Revenge"},
 	{"sqx", "Space Quest: The Lost Chapter"},
 	{"tetris", "AGI Tetris"},
 	{"troll", "Troll\'s Tale"},
@@ -79,82 +81,6 @@ static const PlainGameDescriptor agiGames[] = {
 
 #include "agi/detection_tables.h"
 
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"originalsaveload",
-			false,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE,
-		{
-			_s("Use an alternative palette"),
-			_s("Use an alternative palette, common for all Amiga games. This was the old behavior"),
-			"altamigapalette",
-			false,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_DISABLE_MOUSE,
-		{
-			_s("Mouse support"),
-			_s("Enables mouse support. Allows to use mouse for movement and in game menus."),
-			"mousesupport",
-			true,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_USE_HERCULES_FONT,
-		{
-			_s("Use Hercules hires font"),
-			_s("Uses Hercules hires font, when font file is available."),
-			"herculesfont",
-			false,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_COMMAND_PROMPT_WINDOW,
-		{
-			_s("Pause when entering commands"),
-			_s("Shows a command prompt window and pauses the game (like in SCI) instead of a real-time prompt."),
-			"commandpromptwindow",
-			false,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_APPLE2GS_ADD_SPEED_MENU,
-		{
-			_s("Add speed menu"),
-			_s("Add game speed menu (similar to PC version)"),
-			"apple2gs_speedmenu",
-			false,
-			0,
-			0
-		}
-	},
-
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
 using namespace Agi;
 
 class AgiMetaEngineDetection : public AdvancedMetaEngineDetection {
@@ -162,7 +88,7 @@ class AgiMetaEngineDetection : public AdvancedMetaEngineDetection {
 	mutable Common::String _extra;
 
 public:
-	AgiMetaEngineDetection() : AdvancedMetaEngineDetection(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames, optionsList) {
+	AgiMetaEngineDetection() : AdvancedMetaEngineDetection(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames) {
 		_guiOptions = GUIO1(GUIO_NOSPEECH);
 		_maxScanDepth = 2;
 		_flags = kADFlagMatchFullPaths;
@@ -185,6 +111,7 @@ public:
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
+	Common::String parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const override;
 };
 
 ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
@@ -238,7 +165,7 @@ ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX
 		bool agipal = false;
 		char agipalFile[] = "pal.xxx";
 		for (uint i = 100; i <= 109; i++) {
-			sprintf(agipalFile, "pal.%d", i);
+			Common::sprintf_s(agipalFile, "pal.%d", i);
 			if (allFiles.contains(agipalFile)) {
 				agipal = true; // We found a file "pal.x" where 100 <= x <= 109 so it's AGIPAL
 				break;
@@ -353,6 +280,44 @@ ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX
 	}
 
 	return ADDetectedGame();
+}
+
+Common::String AgiMetaEngineDetection::parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const {
+	Common::String result = MetaEngineDetection::parseAndCustomizeGuiOptions(optionsString, domain);
+	Common::String renderOptions;
+
+	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", domain));
+	const Common::String gid = ConfMan.get("gameid", domain);
+
+	switch (platform) {
+	case Common::kPlatformDOS:
+		renderOptions = GUIO_RENDEREGA GUIO_RENDERCGA GUIO_RENDERHERCAMBER GUIO_RENDERHERCGREEN;
+		if (gid.contains("AGI256") || gid.contains("256 Colors"))
+			renderOptions += GUIO_RENDERVGA;
+		break;
+	case Common::kPlatformAmiga:
+		renderOptions = GUIO_RENDERAMIGA;
+		break;
+	case Common::kPlatformApple2GS:
+		renderOptions = GUIO_RENDERAPPLE2GS;
+		break;
+	case Common::kPlatformAtariST:
+		renderOptions = GUIO_RENDERATARIST;
+		break;
+	case Common::kPlatformMacintosh:
+		renderOptions = GUIO_RENDERMACINTOSH;
+		break;
+	default:
+		break;
+	}
+
+	for (Common::String::const_iterator i = renderOptions.begin(); i != renderOptions.end(); ++i) {
+		// If the render option is already part of the string (specified in the detection tables) we don't add it again.
+		if (!result.contains(*i))
+			result += *i;
+	}
+
+	return result;
 }
 
 REGISTER_PLUGIN_STATIC(AGI_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, AgiMetaEngineDetection);

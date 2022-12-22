@@ -28,26 +28,26 @@
 
 namespace Saga2 {
 
-const int           iconWidth = 32,
-                    iconHeight = 32,
-                    iconSpacingX = 14,
-                    iconSpacingY = 14,
-                    iconOriginX = iconWidth / 2,
-                    iconOriginY = iconHeight / 2;
+const int           kIconWidth = 32,
+                    kIconHeight = 32,
+                    kIconSpacingX = 14,
+                    kIconSpacingY = 14,
+                    kIconOriginX = kIconWidth / 2,
+                    kIconOriginY = kIconHeight / 2;
 
-const int           backWidth = 42,
-                    backHeight = 42,
-                    backSpacingX = 12,
-                    backSpacingY = 12,
-                    backOriginX = backWidth / 4,
-                    backOriginY = backHeight / 4 - 8;
+const int           kBackWidth = 42,
+                    kBackHeight = 42,
+                    kBackSpacingX = 12,
+                    kBackSpacingY = 12,
+                    kBackOriginX = kBackWidth / 4,
+                    kBackOriginY = kBackHeight / 4 - 8;
 
 // control button position defines
-const   int16   numButtons      = 7;
-const   int16   yContOffset     = 150;
+const   int16   kNumButtons      = 7;
+const   int16   kYContOffset     = 150;
 
 // facial button position defines
-const  int16  yFaceOffset       = 150;
+const  int16  kYFaceOffset       = 150;
 
 extern Rect16 julFrameBox, phiFrameBox,
        kevFrameBox, julPlateBox,

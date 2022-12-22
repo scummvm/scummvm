@@ -325,7 +325,8 @@ void drawBomp(const BompDrawData &bd) {
 
 		// Advance to the next line
 		pos_y++;
-		mask += bd.numStrips;
+		if (bd.maskPtr)
+			mask += bd.numStrips;
 		dst += bd.dst.pitch;
 	}
 }

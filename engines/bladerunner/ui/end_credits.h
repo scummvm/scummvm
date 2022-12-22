@@ -29,6 +29,9 @@ class BladeRunnerEngine;
 class EndCredits {
 	BladeRunnerEngine *_vm;
 
+private:
+	void creditsCheckAndFix(int &textResourceId, Common::String &textStr);
+
 public:
 	EndCredits(BladeRunnerEngine *vm);
 	~EndCredits();

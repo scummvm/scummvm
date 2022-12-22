@@ -48,13 +48,7 @@ public:
 	virtual int getDefaultGraphicsMode() const { return 0; }
 	virtual bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) { return (mode == 0); }
 	virtual int getGraphicsMode() const { return 0; }
-	virtual const OSystem::GraphicsMode *getSupportedShaders() const {
-		static const OSystem::GraphicsMode no_shader[2] = {{"NONE", "Normal (no shader)", 0}, {0, 0, 0}};
-		return no_shader;
-	}
-	virtual int getDefaultShader() const { return 0; }
-	virtual bool setShader(int id) { return false; }
-	virtual int getShader() const { return 0; }
+	virtual bool setShader(const Common::String &fileName) { return false; }
 	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const {
 		static const OSystem::GraphicsMode noStretchModes[] = {{"NONE", "Normal", 0}, {nullptr, nullptr, 0 }};
 		return noStretchModes;
@@ -92,7 +86,7 @@ public:
 	virtual void setFocusRectangle(const Common::Rect& rect) = 0;
 	virtual void clearFocusRectangle() = 0;
 
-	virtual void showOverlay() = 0;
+	virtual void showOverlay(bool inGUI) = 0;
 	virtual void hideOverlay() = 0;
 	virtual bool isOverlayVisible() const = 0;
 	virtual Graphics::PixelFormat getOverlayFormat() const = 0;

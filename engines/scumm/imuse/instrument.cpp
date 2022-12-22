@@ -414,8 +414,8 @@ void Instrument_Program::send(MidiChannel *mc) {
 		return;
 
 	byte program = _program;
-	if (_nativeMT32Device != _soundTypeMT32)
-		program = _nativeMT32Device ? MidiDriver::_gmToMt32[program] : MidiDriver::_mt32ToGm[program];
+	if (!_nativeMT32Device && _soundTypeMT32)
+		program =  MidiDriver::_mt32ToGm[program];
 	if (program < 128)
 		mc->programChange(program);
 }
@@ -442,7 +442,7 @@ void Instrument_AdLib::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void Instrument_AdLib::send(MidiChannel *mc) {
-	mc->sysEx_customInstrument('ADL ', (byte *)&_instrument);
+	mc->sysEx_customInstrument('ADL ', (byte *)&_instrument, sizeof(_instrument));
 }
 
 ////////////////////////////////////////
@@ -483,25 +483,7 @@ void Instrument_Roland::saveLoadWithSerializer(Common::Serializer &s) {
 
 void Instrument_Roland::send(MidiChannel *mc) {
 	if (_nativeMT32Device) {
-		if (mc->getNumber() > 8)
-			return;
-		_instrument.device_id = mc->getNumber();
-
-		// Remap instrument to appropriate address space.
-		int address = 0x008000;
-		_instrument.address[0] = (address >> 14) & 0x7F;
-		_instrument.address[1] = (address >>  7) & 0x7F;
-		_instrument.address[2] = (address      ) & 0x7F;
-
-		// Recompute the checksum.
-		byte checksum = 0;
-		byte *ptr = (byte *)&_instrument + 4;
-		int i;
-		for (i = 4; i < (int)sizeof(_instrument) - 1; ++i)
-			checksum -= *ptr++;
-		_instrument.checksum = checksum & 0x7F;
-
-		mc->device()->sysEx((byte *)&_instrument, sizeof(_instrument));
+		mc->sysEx_customInstrument('ROL ', (byte *)&_instrument, sizeof(_instrument));
 	} else {
 		// Convert to a GM program change.
 		byte program = getEquivalentGM();
@@ -541,7 +523,7 @@ void Instrument_PcSpk::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void Instrument_PcSpk::send(MidiChannel *mc) {
-	mc->sysEx_customInstrument('SPK ', (byte *)&_instrument);
+	mc->sysEx_customInstrument('SPK ', (byte *)&_instrument, sizeof(_instrument));
 }
 
 ////////////////////////////////////////
@@ -572,6 +554,6 @@ void Instrument_MacSfx::send(MidiChannel *mc) {
 	if (_program > 127) {
 		return;
 	}
-	mc->sysEx_customInstrument('MAC ', &_program);
+	mc->sysEx_customInstrument('MAC ', &_program, sizeof(_program));
 }
 } // End of namespace Scumm

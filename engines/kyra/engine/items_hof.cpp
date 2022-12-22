@@ -175,11 +175,14 @@ bool KyraEngine_HoF::processItemDrop(uint16 sceneId, Item item, int x, int y, in
 	if (itemX == -1 || itemY == -1)
 		return false;
 
-	if (unk1 == 3) {
+	// Comment out dead code (verified in disasm that it is really like that in the
+	// original code: unk1 == 3 will automatically lead to freeItemSlot == -1, thus
+	// returning from this function early, never to arrive here.
+	/*if (unk1 == 3) {
 		_itemList[freeItemSlot].x = itemX;
 		_itemList[freeItemSlot].y = itemY;
 		return true;
-	} else if (unk1 == 2) {
+	} else */if (unk1 == 2) {
 		itemDropDown(x, y, itemX, itemY, freeItemSlot, item);
 	}
 

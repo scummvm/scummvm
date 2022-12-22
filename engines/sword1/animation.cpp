@@ -40,9 +40,7 @@
 #include "video/avi_decoder.h"
 #endif
 
-#ifdef USE_ZLIB
 #include "video/dxa_decoder.h"
-#endif
 
 #include "video/psx_decoder.h"
 #include "video/smk_decoder.h"
@@ -545,14 +543,8 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 	filename = Common::String::format("%s.dxa", sequenceList[id]);
 
 	if (Common::File::exists(filename)) {
-#ifdef USE_ZLIB
 		Video::VideoDecoder *dxaDecoder = new Video::DXADecoder();
 		return new MoviePlayer(vm, textMan, resMan, system, dxaDecoder, kVideoDecoderDXA);
-#else
-		GUI::MessageDialog dialog(_("DXA cutscenes found but ScummVM has been built without zlib"), _("OK"));
-		dialog.runModal();
-		return 0;
-#endif
 	}
 
 	// Old MPEG2 cutscenes

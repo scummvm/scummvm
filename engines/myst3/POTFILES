@@ -1,2 +1,3 @@
 engines/myst3/detection.cpp
+engines/myst3/metaengine.cpp
 engines/myst3/myst3.cpp

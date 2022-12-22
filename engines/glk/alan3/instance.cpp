@@ -130,7 +130,7 @@ void setInstanceAttribute(int instance, int attribute, Aptr value) {
 			   changed so describe next time */
 			admin[instance].visitsCount = 0;
 	} else {
-		sprintf(str, "Can't SET/MAKE instance (%d).", instance);
+		Common::sprintf_s(str, "Can't SET/MAKE instance (%d).", instance);
 		syserr(str);
 	}
 }
@@ -180,7 +180,7 @@ Aptr getInstanceAttribute(int instance, int attribute) {
 			else
 				return getAttribute(admin[instance].attributes, attribute);
 		} else {
-			sprintf(str, "Can't ATTRIBUTE item (%d).", instance);
+			Common::sprintf_s(str, "Can't ATTRIBUTE item (%d).", instance);
 			syserr(str);
 		}
 	}
@@ -205,10 +205,10 @@ static void verifyInstance(int instance, const char *action) {
 	char message[200];
 
 	if (instance == 0) {
-		sprintf(message, "Can't %s instance (%d).", action, instance);
+		Common::sprintf_s(message, "Can't %s instance (%d).", action, instance);
 		syserr(message);
 	} else if (instance > (int)header->instanceMax) {
-		sprintf(message, "Can't %s instance (%d > instanceMax).", action, instance);
+		Common::sprintf_s(message, "Can't %s instance (%d > instanceMax).", action, instance);
 		syserr(message);
 	}
 }
@@ -503,7 +503,7 @@ void sayInteger(int value) {
 	char buf[25];
 
 	if (isHere(HERO, /*FALSE*/ TRANSITIVE)) {
-		sprintf(buf, "%d", value);
+		Common::sprintf_s(buf, "%d", value);
 		output(buf);
 	}
 }
@@ -538,7 +538,7 @@ static char *wordWithCode(int classBit, int code) {
 	for (w = 0; w < dictionarySize; w++)
 		if (dictionary[w].code == (Aword)code && ((classBit & dictionary[w].classBits) != 0))
 			return (char *)pointerTo(dictionary[w].string);
-	sprintf(str, "Could not find word of class %d with code %d.", classBit, code);
+	Common::sprintf_s(str, "Could not find word of class %d with code %d.", classBit, code);
 	syserr(str);
 	return nullptr;
 }

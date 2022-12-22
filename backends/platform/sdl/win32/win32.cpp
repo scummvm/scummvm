@@ -286,8 +286,11 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 		_tcscat(picturesPath, TEXT("\\Screenshots\\"));
 	} else {
 		// Use the My Pictures folder
-		if (SHGetFolderPathFunc(nullptr, CSIDL_MYPICTURES, nullptr, SHGFP_TYPE_CURRENT, picturesPath) != S_OK) {
-			warning("Unable to access My Pictures directory");
+		HRESULT hr = SHGetFolderPathFunc(nullptr, CSIDL_MYPICTURES, nullptr, SHGFP_TYPE_CURRENT, picturesPath);
+		if (hr != S_OK) {
+			if (hr != E_NOTIMPL) {
+				warning("Unable to locate My Pictures directory");
+			}
 			return Common::String();
 		}
 		_tcscat(picturesPath, TEXT("\\ScummVM Screenshots\\"));

@@ -313,31 +313,32 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 		return -4;
 	}
 
+	// NOTE: passing more parameters than expected by the function is fine:
+	// the function args are pushed to the stack in REVERSE order, first
+	// parameters are always the last, so function code knows how to find them
+	// using negative offsets, and does not care about any preceding entries.
 	int32_t startat = -1;
-	int k;
 	char mangledName[200];
 	size_t mangled_len = snprintf(mangledName, sizeof(mangledName), "%s$", funcname);
-	int32_t export_args = 0;
+	int32_t export_args = numargs;
 
-	for (k = 0; k < instanceof->numexports; k++) {
+	for (int k = 0; k < instanceof->numexports; k++) {
 		char *thisExportName = instanceof->exports[k];
-		int match = 0;
+		bool match = false;
 
 		// check for a mangled name match
 		if (strncmp(thisExportName, mangledName, mangled_len) == 0) {
 			// found, compare the number of parameters
 			export_args = atoi(thisExportName + mangled_len);
 			if (export_args > numargs) {
-				cc_error("wrong number of parameters to exported function '%s' (expected %d, supplied %d)",
+				cc_error("Not enough parameters to exported function '%s' (expected %d, supplied %d)",
 					funcname, export_args, numargs);
 				return -1;
 			}
-			match = 1;
+			match = true;
 		}
-
-		// check for an exact match (if the script was compiled with
-		// an older version)
-		if ((match == 1) || (strcmp(thisExportName, funcname) == 0)) {
+		// check for an exact match (if the script was compiled with an older version)
+		if (match || (strcmp(thisExportName, funcname) == 0)) {
 			int32_t etype = (instanceof->export_addr[k] >> 24L) & 0x000ff;
 			if (etype != EXPORT_FUNCTION) {
 				cc_error("symbol is not a function");
@@ -798,9 +799,9 @@ int ccInstance::Run(int32_t curpc) {
 					cc_error("!Script appears to be hung (a while loop ran %d times). The problem may be in a calling function; check the call stack.", (int)loopIterations);
 					return -1;
 				} else if (test_dur > timeout) {
-					// minimal timeout occured
+					// minimal timeout occurred
 					if ((timeout_abort.count() > 0) && (test_dur.count() > timeout_abort.count())) {
-						// critical timeout occured
+						// critical timeout occurred
 						/* CHECKME: disabled, because not working well
 						if (loopIterationCheckDisabled == 0) {
 							cc_error("!Script appears to be hung (no game update for %lld ms). The problem may be in a calling function; check the call stack.", test_dur.count());

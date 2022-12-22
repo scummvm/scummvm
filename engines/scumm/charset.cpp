@@ -456,6 +456,7 @@ int CharsetRendererClassic::getCharWidth(uint16 chr) const {
 
 int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int pos = 0;
+	bool isV3Towns = _vm->_game.version == 3 && _vm->_game.platform == Common::kPlatformFMTowns;
 
 	// I have confirmed from disasm that neither LOOM EGA and FM-TOWNS (EN/JP) nor any other games withing the
 	// v0-v3 version range add 1 to the width. There isn't even a getStringWidth method. And the v0-2 games don't
@@ -468,6 +469,12 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int code = (_vm->_game.heversion >= 80) ? 127 : 64;
 
 	while ((chr = text[pos++]) != 0) {
+		// Given that the loop increments pos two times per loop in Towns games,
+		// we risk missing the termination character. Let's catch it and break the loop.
+		// This happens at least for the restart prompt message on INDY3 Towns JAP.
+		if (isV3Towns && pos > 1 && text[pos - 2] == 0)
+			break;
+
 		if (chr == '\n' || chr == '\r' || chr == _vm->_newLineCharacter)
 			break;
 
@@ -841,7 +848,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 	assertRange(0, _curId, _vm->_numCharsets - 1, "charset");
 
 	if ((vs = _vm->findVirtScreen(_top)) == nullptr) {
-		warning("findVirtScreen(%d) failed, therefore printChar cannot print '%c'", _top, chr);
+		warning("findVirtScreen(%d) failed, therefore printChar cannot print '\\x%X'", _top, chr);
 		return;
 	}
 
@@ -1514,7 +1521,7 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 	// (At the time of writing, there are still cases, at least in Loom,
 	// where text isn't correctly positioned.)
 
-	_correctFontSpacing = _vm->_game.id == GID_LOOM || _vm->_enableEnhancements;
+	_useCorrectFontSpacing = _vm->_game.id == GID_LOOM || _vm->_enableEnhancements;
 	_pad = false;
 	_glyphSurface = nullptr;
 
@@ -1523,13 +1530,10 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 	// headline. The rest of the Mac GUI seems to use a system font, but
 	// that is not implemented.
 
-	// As far as I can tell, Loom uses only font size 13 for in-game text.
-	// The font is also provided in sizes 9 and 12, and it's possible that
-	// 12 is used for system messages, e.g. the original pause dialog. We
-	// don't support that.
-	//
-	// I have no idea what size 9 is used for. Possibly the original About
-	// dialog?
+	// As far as I can tell, Loom uses only font size 13 for in-game text,
+	// but size 12 is used for system messages, e.g. the original pause
+	// dialog. I have no idea what size 9 is used for. Possibly the
+	// original About dialog?
 	//
 	// As far as I can tell, the game does not use anything fancy, like
 	// different styles, and the font does not appear to have a kerning
@@ -1551,7 +1555,7 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 	if (!fond)
 		return;
 
-	Graphics::MacFontFamily fontFamily;
+	Graphics::MacFontFamily fontFamily(fontFamilyName);
 	if (!fontFamily.load(*fond)) {
 		delete fond;
 		return;
@@ -1570,6 +1574,8 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 		} else {
 			if (fontSize == 13)
 				fontId = 0;
+			else if (fontSize == 12)
+				fontId = 1;
 		}
 		if (fontId != -1) {
 			Common::SeekableReadStream *font = resource.getResource(MKTAG('F', 'O', 'N', 'T'), (*assoc)[i]._fontID);
@@ -1606,6 +1612,9 @@ void CharsetRendererMac::setCurID(int32 id) {
 	if  (id == -1)
 		return;
 
+	_useRealCharWidth = (id & 0x80) != 0;
+	id = id & 0x7F;
+
 	// Indiana Jones and the Last Crusade uses font id 1 in a number of
 	// places. In the DOS version, this is a bolder font than font 0, but
 	// by the looks of it the Mac version uses the same font for both
@@ -1619,9 +1628,7 @@ void CharsetRendererMac::setCurID(int32 id) {
 		}
 	}
 
-	int maxId = (_vm->_game.id == GID_LOOM) ? 0 : 1;
-
-	if (id > maxId) {
+	if (id > 1) {
 		warning("CharsetRendererMac::setCurID(%d) - invalid charset", id);
 		id = 0;
 	}
@@ -1671,13 +1678,7 @@ int CharsetRendererMac::getFontHeight() const {
 
 int CharsetRendererMac::getCharWidth(uint16 chr) const {
 	int width = getDrawWidthIntern(chr);
-
-	// For font 1 in Last Crusade, we want the real width. It is used for
-	// text box titles, which are drawn outside the normal font rendering.
-	if (_curId == 0 || _vm->_game.id != GID_INDY3)
-		width /= 2;
-
-	return width;
+	return _useRealCharWidth ? width : width / 2;
 }
 
 void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
@@ -1695,7 +1696,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	VirtScreen *vs;
 
 	if ((vs = _vm->findVirtScreen(_top)) == nullptr) {
-		warning("findVirtScreen(%d) failed, therefore printChar cannot print '%c'", _top, chr);
+		warning("findVirtScreen(%d) failed, therefore printChar cannot print '\\x%X'", _top, chr);
 		return;
 	}
 
@@ -1785,7 +1786,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	// the width of a string (e.g. to center text on screen). It is,
 	// however, used for things like the Grail Diary.
 
-	if (!_correctFontSpacing && !drawToTextBox && (width & 1))
+	if (!_useCorrectFontSpacing && !drawToTextBox && (width & 1))
 		width++;
 
 	if (enableShadow) {
@@ -2006,7 +2007,7 @@ int CharsetRendererV7::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, i
 		x -= _width;
 
 	int width = MIN(_origWidth, clipRect.right - x);
-	int height = MIN(_origHeight, clipRect.bottom - y);
+	int height = MIN(_origHeight, clipRect.bottom - (y + _offsY));
 
 	_vm->_charsetColorMap[1] = col;
 	byte *cmap = _vm->_charsetColorMap;
@@ -2020,7 +2021,7 @@ int CharsetRendererV7::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, i
 	while (height--) {
 		for (int dx = x; dx < x + _origWidth; ++dx) {
 			byte color = (bits >> (8 - bpp)) & 0xFF;
-			if (color && dx >= 0 && dx < x + width && y >= 0)
+			if (color && dx >= 0 && dx < x + width && (y + _offsY) >= 0)
 				*dst = cmap[color];
 			dst++;
 			bits <<= bpp;
@@ -2072,7 +2073,7 @@ void CharsetRendererNut::setCurID(int32 id) {
 	_curId = id;
 	if (!_fr[id]) {
 		char fontname[11];
-		sprintf(fontname, "font%d.nut", id);
+		Common::sprintf_s(fontname, "font%d.nut", id);
 		_fr[id] = new NutRenderer(_vm, fontname);
 	}
 	_current = _fr[id];

@@ -212,6 +212,16 @@ DataReadErrorCode ListVariableModifier::load(PlugIn &plugIn, const PlugInModifie
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode PanningModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 3)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!unknown1Event.load(reader) || !unknown2Event.load(reader) || !unknown3Int.load(reader) || !unknown4Int.load(reader) || !unknown5Int.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode SysInfoModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
 	if (prefix.plugInRevision != 0)
 		return kDataReadErrorUnsupportedRevision;

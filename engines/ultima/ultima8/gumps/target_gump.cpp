@@ -56,8 +56,7 @@ void TargetGump::InitGump(Gump *newparent, bool take_focus) {
 	CreateNotifier();
 
 	Mouse *mouse = Mouse::get_instance();
-	mouse->pushMouseCursor();
-	mouse->setMouseCursor(Mouse::MOUSE_TARGET);
+	mouse->pushMouseCursor(Mouse::MOUSE_TARGET);
 }
 
 void TargetGump::Close(bool no_del) {

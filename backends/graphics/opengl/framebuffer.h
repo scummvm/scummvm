@@ -24,13 +24,16 @@
 
 #include "graphics/opengl/system_headers.h"
 
+#include "math/matrix4.h"
+
 namespace OpenGL {
+
+class Pipeline;
 
 /**
  * Object describing a framebuffer OpenGL can render to.
  */
 class Framebuffer {
-	friend class Pipeline;
 public:
 	Framebuffer();
 	virtual ~Framebuffer() {};
@@ -82,14 +85,30 @@ public:
 	/**
 	 * Obtain projection matrix of the framebuffer.
 	 */
-	const GLfloat *getProjectionMatrix() const { return _projectionMatrix; }
+	const Math::Matrix4 &getProjectionMatrix() const { return _projectionMatrix; }
+
+	enum CopyMask {
+		kCopyMaskClearColor   = (1 << 0),
+		kCopyMaskBlendState   = (1 << 1),
+		kCopyMaskScissorState = (1 << 2),
+		kCopyMaskScissorBox   = (1 << 4),
+
+		kCopyMaskAll          = kCopyMaskClearColor | kCopyMaskBlendState |
+		                        kCopyMaskScissorState | kCopyMaskScissorBox,
+	};
+
+	/**
+	 * Copy rendering state from another framebuffer
+	 */
+	void copyRenderStateFrom(const Framebuffer &other, uint copyMask);
+
 protected:
-	bool isActive() const { return _isActive; }
+	bool isActive() const { return _pipeline != nullptr; }
 
 	GLint _viewport[4];
 	void applyViewport();
 
-	GLfloat _projectionMatrix[4*4];
+	Math::Matrix4 _projectionMatrix;
 	void applyProjectionMatrix();
 
 	/**
@@ -107,11 +126,11 @@ protected:
 	 */
 	virtual void deactivateInternal() {}
 
-private:
+public:
 	/**
 	 * Accessor to activate framebuffer for pipeline.
 	 */
-	void activate();
+	void activate(Pipeline *pipeline);
 
 	/**
 	 * Accessor to deactivate framebuffer from pipeline.
@@ -119,7 +138,7 @@ private:
 	void deactivate();
 
 private:
-	bool _isActive;
+	Pipeline *_pipeline;
 
 	GLfloat _clearColor[4];
 	void applyClearColor();
@@ -145,7 +164,7 @@ public:
 	void setDimensions(uint width, uint height);
 
 protected:
-	virtual void activateInternal();
+	void activateInternal() override;
 };
 
 #if !USE_FORCED_GLES
@@ -160,7 +179,7 @@ class GLTexture;
 class TextureTarget : public Framebuffer {
 public:
 	TextureTarget();
-	virtual ~TextureTarget();
+	~TextureTarget() override;
 
 	/**
 	 * Notify that the GL context is about to be destroyed.
@@ -175,7 +194,7 @@ public:
 	/**
 	 * Set size of the texture target.
 	 */
-	void setSize(uint width, uint height);
+	bool setSize(uint width, uint height);
 
 	/**
 	 * Query pointer to underlying GL texture.
@@ -183,7 +202,7 @@ public:
 	GLTexture *getTexture() const { return _texture; }
 
 protected:
-	virtual void activateInternal();
+	void activateInternal() override;
 
 private:
 	GLTexture *_texture;

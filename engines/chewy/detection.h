@@ -28,6 +28,8 @@ struct ChewyGameDescription {
 	ADGameDescription desc;
 };
 
+#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
+
 } // End of namespace Chewy
 
 #endif

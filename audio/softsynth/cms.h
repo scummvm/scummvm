@@ -22,7 +22,7 @@
 #ifndef AUDIO_SOFTSYNTH_CMS_H
 #define AUDIO_SOFTSYNTH_CMS_H
 
-#include "common/scummsys.h"
+#include "audio/cms.h"
 
 /* this structure defines a channel */
 struct saa1099_channel {
@@ -34,16 +34,16 @@ struct saa1099_channel {
 	int envelope[2];			/* envelope (0x00..0x0f or 0x10 == off) */
 
 	/* vars to simulate the square wave */
-	double counter;
-	double freq;
+	int32 counter;
+	int32 freq;
 	int level;
 };
 
 /* this structure defines a noise channel */
 struct saa1099_noise {
 	/* vars to simulate the noise generator output */
-	double counter;
-	double freq;
+	int32 counter;
+	int32 freq;
 	int level;				/* noise polynomal shifter */
 };
 
@@ -64,23 +64,25 @@ struct SAA1099 {
 	struct saa1099_noise noise[2];		/* noise generators */
 };
 
-class CMSEmulator {
+class DOSBoxCMS : public ::CMS::EmulatedCMS {
 public:
-	CMSEmulator(uint32 sampleRate) {
-		// In PCs the chips run at 7.15909 MHz instead of 8 MHz.
-		// Adjust sampling rate upwards to bring pitch down.
-		_sampleRate = (sampleRate * 352) / 315;
+	DOSBoxCMS(uint32 basePort = 0x220) {
 		memset(_saa1099, 0, sizeof(SAA1099)*2);
+		_basePort = basePort;
 	}
 
-	~CMSEmulator() { }
+	~DOSBoxCMS() override { }
 
-	void portWrite(int port, int val);
-	void readBuffer(int16 *buffer, const int numSamples);
-	void reset();
+	bool init() override;
+	void reset() override;
+	void write(int a, int v) override;
+	void writeReg(int r, int v) override;
+
+protected:
+	void generateSamples(int16 *buffer, int numSamples) override;
 
 private:
-	uint32 _sampleRate;
+	uint32 _basePort;
 
 	SAA1099 _saa1099[2];
 

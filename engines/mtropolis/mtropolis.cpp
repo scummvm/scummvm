@@ -25,14 +25,15 @@
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/ptr.h"
-#include "common/stuffit.h"
+#include "common/compression/stuffit.h"
 #include "common/system.h"
-#include "common/winexe.h"
+#include "common/formats/winexe.h"
 
 #include "engines/util.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/maccursor.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 #include "graphics/wincursor.h"
@@ -91,6 +92,9 @@ void MTropolisEngine::handleEvents() {
 		case Common::EVENT_KEYUP:
 			_runtime->onKeyboardEvent(evt.type, evt.kbdRepeat, evt.kbd);
 			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			_runtime->onAction(static_cast<MTropolis::Actions::Action>(evt.customType));
+			break;
 
 		default:
 			break;
@@ -114,8 +118,6 @@ Common::Error MTropolisEngine::run() {
 
 	subRenderer.reset();
 
-	Common::SharedPtr<ProjectDescription> projectDesc = bootProject(*_gameDescription);
-
 	if (_gameDescription->gameID == GID_OBSIDIAN) {
 		preferredWidth = 640;
 		preferredHeight = 480;
@@ -137,10 +139,24 @@ Common::Error MTropolisEngine::run() {
 		}
 	}
 
+	if (_gameDescription->gameID == GID_MTI) {
+		preferredWidth = 640;
+		preferredHeight = 480;
+		preferredColorDepthMode = kColorDepthMode8Bit;
+		enhancedColorDepthMode = kColorDepthMode32Bit;
+
+		HackSuites::addMTIQuirks(*_gameDescription, _runtime->getHacks());
+	}
+
+	if (_gameDescription->gameID == GID_SPQR) {
+		preferredWidth = 640;
+		preferredHeight = 480;
+		preferredColorDepthMode = kColorDepthMode8Bit;
+		enhancedColorDepthMode = kColorDepthMode32Bit;
+	}
+
 	if (ConfMan.getBool("mtropolis_mod_minimum_transition_duration"))
 		_runtime->getHacks().minTransitionDuration = 75;
-
-	_runtime->queueProject(projectDesc);
 
 	// Figure out pixel formats
 	Graphics::PixelFormat modePixelFormats[kColorDepthModeCount];
@@ -237,6 +253,13 @@ Common::Error MTropolisEngine::run() {
 	_runtime->setDisplayResolution(preferredWidth, preferredHeight);
 
 	initGraphics(preferredWidth, preferredHeight, &modePixelFormats[selectedMode]);
+
+
+
+	// Start the project
+	Common::SharedPtr<ProjectDescription> projectDesc = bootProject(*_gameDescription);
+	_runtime->queueProject(projectDesc);
+
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	if (ConfMan.getBool("mtropolis_debug_at_start")) {

@@ -81,11 +81,11 @@ static MethodProto xlibMethods[] = {
 	{ "Dispose",			JITDraw3XObj::m_dispose,		  0, 0,	400 },	// D4
 	{ "CheckIfCDROM",		JITDraw3XObj::m_checkifcdrom,	  0, 0,	400 },	// D4
 	{ "MsgOkCancel",		JITDraw3XObj::m_msgokcancel,	  2, 2,	400 },	// D4
-	{ "MsgOk",				JITDraw3XObj::m_msgok,			  2, 2,  400 },	// D4
-	{ "MsgYesNo",			JITDraw3XObj::m_msgyesno,		  2, 2,  400 },	// D4
-	{ "GotoDraw",			JITDraw3XObj::m_gotodraw,		  0, 0,  400 },	// D4
-	{ "AddDrawButton",		JITDraw3XObj::m_adddrawbutton,	  0, 0,  400 },	// D4
-	{ "RemoveDrawButton",	JITDraw3XObj::m_removedrawbutton, 0, 0,  400 },	// D4
+	{ "MsgOk",				JITDraw3XObj::m_msgok,			  2, 2,	400 },	// D4
+	{ "MsgYesNo",			JITDraw3XObj::m_msgyesno,		  2, 2,	400 },	// D4
+	{ "GotoDraw",			JITDraw3XObj::m_gotodraw,		  0, 0,	400 },	// D4
+	{ "AddDrawButton",		JITDraw3XObj::m_adddrawbutton,	  0, 0,	400 },	// D4
+	{ "RemoveDrawButton",	JITDraw3XObj::m_removedrawbutton, 0, 0,	400 },	// D4
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
@@ -110,7 +110,7 @@ JITDraw3XObject::JITDraw3XObject(ObjectType ObjectType) :Object<JITDraw3XObject>
 }
 
 void JITDraw3XObj::m_new(int nargs) {
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void JITDraw3XObj::m_dispose(int nargs) {

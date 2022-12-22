@@ -56,7 +56,7 @@ reg_t kGetCWD(EngineState *s, int argc, reg_t *argv) {
 	// We do not let the scripts see the file system, instead pretending
 	// we are always in the same directory.
 	// TODO/FIXME: Is "/" a good value? Maybe "" or "." or "C:\" are better?
-	s->_segMan->strcpy(argv[0], "/");
+	s->_segMan->strcpy_(argv[0], "/");
 
 	debugC(kDebugLevelFile, "kGetCWD() -> %s", "/");
 
@@ -78,7 +78,7 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 		// WORKAROUND: The fan game script library calls kDeviceInfo with one parameter.
 		// According to the scripts, it wants to call CurDevice. However, it fails to
 		// provide the subop to the function.
-		s->_segMan->strcpy(argv[0], "/");
+		s->_segMan->strcpy_(argv[0], "/");
 		return s->r_acc;
 	}
 
@@ -88,12 +88,12 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 	case K_DEVICE_INFO_GET_DEVICE: {
 		Common::String input_str = s->_segMan->getString(argv[1]);
 
-		s->_segMan->strcpy(argv[2], "/");
+		s->_segMan->strcpy_(argv[2], "/");
 		debug(3, "K_DEVICE_INFO_GET_DEVICE(%s) -> %s", input_str.c_str(), "/");
 		break;
 	}
 	case K_DEVICE_INFO_GET_CURRENT_DEVICE:
-		s->_segMan->strcpy(argv[1], "/");
+		s->_segMan->strcpy_(argv[1], "/");
 		debug(3, "K_DEVICE_INFO_GET_CURRENT_DEVICE() -> %s", "/");
 		break;
 
@@ -122,7 +122,7 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 	*/
 	case K_DEVICE_INFO_GET_SAVECAT_NAME: {
 		Common::String game_prefix = s->_segMan->getString(argv[2]);
-		s->_segMan->strcpy(argv[1], "__throwaway");
+		s->_segMan->strcpy_(argv[1], "__throwaway");
 		debug(3, "K_DEVICE_INFO_GET_SAVECAT_NAME(%s) -> %s", game_prefix.c_str(), "__throwaway");
 		}
 
@@ -130,7 +130,7 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 	case K_DEVICE_INFO_GET_SAVEFILE_NAME: {
 		Common::String game_prefix = s->_segMan->getString(argv[2]);
 		uint virtualId = argv[3].toUint16();
-		s->_segMan->strcpy(argv[1], "__throwaway");
+		s->_segMan->strcpy_(argv[1], "__throwaway");
 		debug(3, "K_DEVICE_INFO_GET_SAVEFILE_NAME(%s,%d) -> %s", game_prefix.c_str(), virtualId, "__throwaway");
 		if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
 			error("kDeviceInfo(deleteSave): invalid savegame ID specified");
@@ -1201,8 +1201,11 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].isNull()) {
 		// Direct call, either from launcher or from a patched Game::restore
 		if (savegameId == -1) {
-			// we are supposed to show a dialog for the user and let him choose a saved game
-			g_sci->_soundCmd->pauseAll(true); // pause music
+			// We are supposed to show a dialog for the user and let him choose a saved game.
+			// Pause music if necessary. There are script situations where the pause does not
+			// get properly released. In that case we don't add another pause here.
+			if (!g_sci->_soundCmd->isGlobalPauseActive()) 
+				g_sci->_soundCmd->pauseAll(true); 
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 			savegameId = dialog->runModalWithCurrentTarget();
 			delete dialog;

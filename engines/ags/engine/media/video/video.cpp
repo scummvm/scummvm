@@ -75,10 +75,8 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int flags
 	bool enableVideo = (flags & kVideo_EnableVideo) != 0;
 	bool enableAudio = (flags & kVideo_EnableAudio) != 0;
 
-	// TODO: This seems back to front
-	if (enableAudio) {
-		stop_all_sound_and_music();
-	}
+	if (!enableAudio)
+		decoder->setVolume(0);
 
 	update_polled_stuff_if_runtime();
 	 
@@ -111,17 +109,22 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int flags
 		if (skip != VideoSkipNone) {
 			// Check for whether user aborted video
 			KeyInput key;
-			int mbut, mwheelz;
-			if (run_service_key_controls(key)) {
-				if (key.Key == 27 && skip >= VideoSkipEscape)
-					return true;
-				if (skip >= VideoSkipAnyKey)
-					return true;  // skip on any key
+			eAGSMouseButton mbut;
+			int mwheelz;
+			// Handle all the buffered key events
+			bool do_break = false;
+			while (ags_keyevent_ready()) {
+				if (run_service_key_controls(key)) {
+					if ((key.Key == eAGSKeyCodeEscape) && (skip == VideoSkipEscape))
+						do_break = true;
+					if (skip >= VideoSkipAnyKey)
+						do_break = true;  // skip on any key
+				}
 			}
-
-			if (run_service_mb_controls(mbut, mwheelz) && mbut >= 0 && skip == VideoSkipKeyOrMouse) {
+			if (do_break)
+				return true; // skip on key press
+			if (run_service_mb_controls(mbut, mwheelz) && mbut >= kMouseNone && skip == VideoSkipKeyOrMouse)
 				return true; // skip on mouse click
-			}
 		}
 	}
 

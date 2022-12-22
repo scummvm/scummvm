@@ -65,20 +65,20 @@ void FlicDecoder::load(Common::SeekableReadStream *stream, Common::SeekableReadS
 	delete mskStream;
 }
 
-const Common::Rect &FlicDecoder::getBounds() const {
+const Common::Rect FlicDecoder::getBounds() const {
 	const Track *track = getTrack(0);
 	if (track)
 		return ((const FlicVideoTrack *)track)->getBounds();
 
-	return *(new Common::Rect(0, 0));
+	return Common::Rect(0, 0);
 }
 
-const Common::Array<Common::Rect> &FlicDecoder::getMskRects() const {
+const Common::Array<Common::Rect> FlicDecoder::getMskRects() const {
 	const Track *track = getTrack(0);
 	if (track)
 		return ((const FlicVideoTrack *)track)->getMskRects();
 
-	return *(new Common::Array<Common::Rect>());
+	return Common::Array<Common::Rect>();
 }
 
 uint32 FlicDecoder::getTransColor(const Graphics::PixelFormat &fmt) const {
@@ -160,7 +160,7 @@ bool FlicDecoder::FlicVideoTrack::loadMsk(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-const Common::Rect &FlicDecoder::FlicVideoTrack::getBounds() const {
+const Common::Rect FlicDecoder::FlicVideoTrack::getBounds() const {
 	return _bounds;
 }
 
@@ -168,7 +168,7 @@ const Graphics::Surface *FlicDecoder::FlicVideoTrack::getSurface() const {
 	return _surface;
 }
 
-const Common::Array<Common::Rect> &FlicDecoder::FlicVideoTrack::getMskRects() const {
+const Common::Array<Common::Rect> FlicDecoder::FlicVideoTrack::getMskRects() const {
 	assert(_curFrame >= 0);
 	return _msk[_curFrame];
 }

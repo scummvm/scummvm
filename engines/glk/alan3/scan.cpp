@@ -166,7 +166,7 @@ static void getLine(CONTEXT) {
 			LONG_JUMP_LABEL("forfeit")
 		}
 
-		strcpy(isobuf, buf);
+		Common::strcpy_s(isobuf, buf);
 		token = gettoken(isobuf);
 		if (token != nullptr) {
 			if (strcmp("debug", token) == 0 && header->debug) {

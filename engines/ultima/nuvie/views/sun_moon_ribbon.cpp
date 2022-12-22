@@ -72,7 +72,7 @@ void SunMoonRibbon::loadBgImage(uint8 num) {
 	build_path(datadir, "celestial", path);
 	datadir = path;
 
-	sprintf(filename, "%d.bmp", num);
+	Common::sprintf_s(filename, "%d.bmp", num);
 	build_path(datadir, filename, imagefile);
 
 	if (bg_data)

@@ -71,6 +71,14 @@ struct AdlGameDescription {
 	GameVersion version;
 };
 
+// Mystery House was designed for monochrome display, so we default to
+// monochrome mode there. All the other games default to color mode.
+#define GAMEOPTION_COLOR_DEFAULT_OFF GUIO_GAMEOPTIONS1
+#define GAMEOPTION_SCANLINES         GUIO_GAMEOPTIONS2
+#define GAMEOPTION_COLOR_DEFAULT_ON  GUIO_GAMEOPTIONS3
+#define GAMEOPTION_NTSC              GUIO_GAMEOPTIONS4
+#define GAMEOPTION_MONO_TEXT         GUIO_GAMEOPTIONS5
+
 } // End of namespace Adl
 
 #endif // ADL_DETECTION_H

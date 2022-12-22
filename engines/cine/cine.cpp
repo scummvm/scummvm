@@ -263,7 +263,7 @@ void CineEngine::initialize() {
 	if (getGameType() == Cine::GType_OS && !(getFeatures() & GF_DEMO) &&
 		(getPlatform() == Common::kPlatformDOS || getPlatform() == Common::kPlatformAtariST)) {
 		loadPrc(BOOT_PRC_NAME);
-		strcpy(currentPrcName, BOOT_PRC_NAME);
+		Common::strcpy_s(currentPrcName, BOOT_PRC_NAME);
 		addScriptToGlobalScripts(BOOT_SCRIPT_INDEX);
 		runOnlyUntilFreePartRangeFirst200 = true;
 		executeGlobalScripts();
@@ -279,7 +279,7 @@ void CineEngine::initialize() {
 
 	if (!_preLoad) {
 		loadPrc(BOOT_PRC_NAME);
-		strcpy(currentPrcName, BOOT_PRC_NAME);
+		Common::strcpy_s(currentPrcName, BOOT_PRC_NAME);
 		setMouseCursor(MOUSE_CURSOR_NORMAL);
 	}
 }

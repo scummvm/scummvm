@@ -1528,7 +1528,7 @@ void MacText::drawSelection(int xoff, int yoff) {
 			if (y + _scrollPos >= lastLineStart)
 				x2 = s.endX;
 
-			// if we are selecting text reversely, and we are at the first line but not the select from begining, then we add offset to x1
+			// if we are selecting text reversely, and we are at the first line but not the select from beginning, then we add offset to x1
 			// the reason here is if we are not drawing the single line, then we draw selection from x1 to x2 + offset. i.e. we draw from begin
 			// otherwise, we draw selection from x1 + offset to x2 + offset
 			if (row == s.startRow && s.startCol != 0) {
@@ -1592,7 +1592,7 @@ uint MacText::getSelectionIndex(bool start) {
 }
 
 void MacText::setSelection(int pos, bool start) {
-	// -1 for start represent the begining of text, i.e. 0
+	// -1 for start represent the beginning of text, i.e. 0
 	if (pos == -1 && start)
 		pos = 0;
 	int row = 0, col = 0;
@@ -2066,7 +2066,7 @@ int MacText::getAlignOffset(int row) {
 }
 
 void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
-	int nsx, nsy, nrow, ncol;
+	int nsx = 0, nsy = 0, nrow = 0, ncol = 0;
 
 	if (y > _textMaxHeight) {
 		x = _surface->w;
@@ -2089,30 +2089,28 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 
 	nsy = _textLines[nrow].y;
 
-	ncol = 0;
+	if (_textLines[nrow].chunks.size() > 0) {
+		int alignOffset = getAlignOffset(nrow);
 
-	int alignOffset = getAlignOffset(nrow);
+		int width = 0, pwidth = 0;
+		int mcol = 0, pmcol = 0;
 
-	int width = 0, pwidth = 0;
-	int mcol = 0, pmcol = 0;
-	uint chunk;
-	for (chunk = 0; chunk < _textLines[nrow].chunks.size(); chunk++) {
-		pwidth = width;
-		pmcol = mcol;
-		if (!_textLines[nrow].chunks[chunk].text.empty()) {
-			width += getStringWidth(_textLines[nrow].chunks[chunk], _textLines[nrow].chunks[chunk].text);
-			mcol += _textLines[nrow].chunks[chunk].text.size();
+		uint chunk;
+		for (chunk = 0; chunk < _textLines[nrow].chunks.size(); chunk++) {
+			pwidth = width;
+			pmcol = mcol;
+			if (!_textLines[nrow].chunks[chunk].text.empty()) {
+				width += getStringWidth(_textLines[nrow].chunks[chunk], _textLines[nrow].chunks[chunk].text);
+				mcol += _textLines[nrow].chunks[chunk].text.size();
+			}
+
+			if (width + alignOffset > x)
+				break;
 		}
 
-		if (width + alignOffset > x)
-			break;
-	}
+		if (chunk == _textLines[nrow].chunks.size())
+			chunk--;
 
-	if (chunk == _textLines[nrow].chunks.size())
-		chunk--;
-
-	// prevent out bounding error, because sometimes chunk.size() is 0, thus we don't have correct chunk number.
-	if (chunk < _textLines[nrow].chunks.size()) {
 		Common::U32String str = _textLines[nrow].chunks[chunk].text;
 
 		ncol = mcol;

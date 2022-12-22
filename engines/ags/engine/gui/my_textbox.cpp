@@ -35,7 +35,7 @@ MyTextBox::MyTextBox(int xx, int yy, int wii, const char *tee) {
 	y = yy;
 	wid = wii;
 	if (tee != nullptr)
-		strcpy(text, tee);
+		Common::strcpy_s(text, tee);
 	else
 		text[0] = 0;
 
@@ -64,7 +64,7 @@ int MyTextBox::processmessage(int mcode, int wParam, NumberPtr lParam) {
 		snprintf(text, sizeof(text), "%s", (const char *)lParam._ptr);
 		needredraw = 1;
 	} else if (mcode == CTB_GETTEXT)
-		strcpy((char *)lParam._ptr, text); // FIXME! dangerous
+		Common::strcpy_s((char *)lParam._ptr, 260, text); // FIXME! dangerous
 	else if (mcode == CTB_KEYPRESS) {
 		// NOTE: this deprecated control does not support UTF-8
 		int key = wParam;

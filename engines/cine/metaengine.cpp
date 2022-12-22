@@ -35,6 +35,33 @@
 
 namespace Cine {
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"originalsaveload",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_TRANSPARENT_DIALOG_BOXES,
+		{
+			_s("Use transparent dialog boxes in 16 color scenes"),
+			_s("Use transparent dialog boxes in 16 color scenes even if the original game version did not support them"),
+			"transparentdialogboxes",
+			false,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 #define MAX_SAVEGAMES (ARRAYSIZE(Cine::currentSaveName))
 #define SAVEGAME_NAME_LEN (sizeof(Cine::currentSaveName[0]))
 #define SAVELIST_SIZE (MAX_SAVEGAMES * SAVEGAME_NAME_LEN)
@@ -53,6 +80,10 @@ public:
 		return "cine";
 	}
 
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Cine::optionsList;
+	}
+
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	bool hasFeature(MetaEngineFeature f) const override;
@@ -65,14 +96,8 @@ public:
 
 bool CineMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSavesUseExtendedFormat);
+		checkExtendedSaves(f);
 }
 
 bool Cine::CineEngine::hasFeature(EngineFeature f) const {
@@ -322,4 +347,3 @@ bool CineEngine::canSaveGameStateCurrently() {
 }
 
 } // End of namespace Cine
-

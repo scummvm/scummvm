@@ -130,7 +130,7 @@ void OpticalChip::playOpMemMovie(HotSpotID id) {
 		// when you destroyed the shuttle. For the DVD release, we have
 		// some new videos that can be played instead to workaround a plot
 		// loophole.
-		if (!((PegasusEngine *)g_engine)->isDVD() || _opticalFlags.getFlag(kOpticalAriesExposed))
+		if (!g_vm->isDVD() || _opticalFlags.getFlag(kOpticalAriesExposed))
 			movieName = "Images/AI/Globals/OMAI";
 		else if (_itemOwnerID == kPlayerID)
 			movieName = "Images/AI/Globals/OMN1";

@@ -217,6 +217,8 @@ class DefaultFont : public Font {
 		 return getFont(fontId)->normal.header.charHeight;
 	 }
 
+	 int getHeight(FontId fontId, const char *text);
+
 	 void validate(FontId fontId) {
 		 if (!valid(fontId)) {
 			 error("Font::validate: Invalid font id");
@@ -235,7 +237,13 @@ class DefaultFont : public Font {
 	 void draw(FontId fontId, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) override;
 	 void outFont(const FontStyle &drawFont, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags);
 	 void loadFont(FontData *font, uint32 fontResourceId);
+	 void loadFont(FontData *font, const ByteArray& fontResourceData, bool isBigEndian);
+	 void loadChineseFontIHNM(FontData *font, uint32 fontResourceId);
+	 void loadChineseFontITE(const Common::String& fileName);
+	 void loadKoreanFontIHNM(const Common::String& fileName);
+	 void saveBig5Index(byte head, byte tail, uint curIdx);
 	 void createOutline(FontData *font);
+	 void blitGlyph(const Common::Point &textPoint, const byte* bitmap, int charWidth, int charHeight, int rowLength, byte color);
 
 	 int getByteLen(int numBits) const {
 		 int byteLength = numBits / 8;
@@ -251,6 +259,25 @@ class DefaultFont : public Font {
 
 	Common::Array<FontData> _fonts;
 	int _fontMapping;
+
+	byte *_chineseFont;
+	Common::Array<int> _chineseFontIndex;
+	int _cjkFontWidth;
+	int _cjkFontHeight;
+
+	byte *_koreanFont;
+
+	static const int kIHNMKoreanGlyphBytes = 32;
+	static const int kIHNMKoreanInitials = 20;
+	static const int kIHNMKoreanInitialVariants = 8;
+	static const int kIHNMKoreanMidOffset = kIHNMKoreanInitialVariants * kIHNMKoreanInitials;
+	static const int kIHNMKoreanMids = 22;
+	static const int kIHNMKoreanMidVariants = 4;
+	static const int kIHNMKoreanFinalsOffset = kIHNMKoreanMidOffset + kIHNMKoreanMids * kIHNMKoreanMidVariants;
+	static const int kIHNMKoreanFinals = 28;
+	static const int kIHNMKoreanFinalVariants = 4;
+	static const int kIHNMKoreanNonJamoOffset = kIHNMKoreanFinalsOffset + kIHNMKoreanFinals * kIHNMKoreanFinalVariants;
+	static const int kIHNMKoreanNonJamo = 126;
 };
 
 class SJISFont : public Font {

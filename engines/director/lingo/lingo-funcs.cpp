@@ -197,9 +197,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 
 	// If there isn't already frozen Lingo (e.g. from a previous func_goto we haven't yet unfrozen),
 	// freeze this script context. We'll return to it after entering the next frame.
-	if (!g_lingo->hasFrozenContext()) {
-		g_lingo->_freezeContext = true;
-	}
+	g_lingo->_freezeState = true;
 
 	if (movie.type != VOID) {
 		Common::String movieFilenameRaw = movie.asString();
@@ -218,9 +216,13 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 		stage->_nextMovie.frameI = -1;
 
 		if (frame.type == STRING) {
+			debugC(3, kDebugLingoExec, "Lingo::func_goto(): going to movie \"%s\", frame \"%s\"", movieFilenameRaw.c_str(), frame.u.s->c_str());
 			stage->_nextMovie.frameS = *frame.u.s;
 		} else if (frame.type != VOID) {
+			debugC(3, kDebugLingoExec, "Lingo::func_goto(): going to movie \"%s\", frame %d", movieFilenameRaw.c_str(), frame.asInt());
 			stage->_nextMovie.frameI = frame.asInt();
+		} else {
+			debugC(3, kDebugLingoExec, "Lingo::func_goto(): going to start of movie \"%s\"", movieFilenameRaw.c_str());
 		}
 
 		// Set cursor to watch.
@@ -231,8 +233,10 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 	}
 
 	if (frame.type == STRING) {
+		debugC(3, kDebugLingoExec, "Lingo::func_goto(): going to frame \"%s\"", frame.u.s->c_str());
 		score->setStartToLabel(*frame.u.s);
 	} else {
+		debugC(3, kDebugLingoExec, "Lingo::func_goto(): going to frame %d", frame.asInt());
 		score->setCurrentFrame(frame.asInt());
 	}
 }
@@ -240,8 +244,10 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 void Lingo::func_gotoloop() {
 	if (!_vm->getCurrentMovie())
 		return;
+	Score *score = _vm->getCurrentMovie()->getScore();
+	debugC(3, kDebugLingoExec, "Lingo::func_gotoloop(): looping frame %d", score->getCurrentFrame());
 
-	_vm->getCurrentMovie()->getScore()->gotoLoop();
+	score->gotoLoop();
 
 	_vm->_skipFrameAdvance = true;
 }
@@ -250,7 +256,9 @@ void Lingo::func_gotonext() {
 	if (!_vm->getCurrentMovie())
 		return;
 
-	_vm->getCurrentMovie()->getScore()->gotoNext();
+	Score *score = _vm->getCurrentMovie()->getScore();
+	score->gotoNext();
+	debugC(3, kDebugLingoExec, "Lingo::func_gotonext(): going to next frame %d", score->getNextFrame());
 
 	_vm->_skipFrameAdvance = true;
 }
@@ -259,7 +267,9 @@ void Lingo::func_gotoprevious() {
 	if (!_vm->getCurrentMovie())
 		return;
 
-	_vm->getCurrentMovie()->getScore()->gotoPrevious();
+	Score *score = _vm->getCurrentMovie()->getScore();
+	score->gotoPrevious();
+	debugC(3, kDebugLingoExec, "Lingo::func_gotoprevious(): going to previous frame %d", score->getNextFrame());
 
 	_vm->_skipFrameAdvance = true;
 }

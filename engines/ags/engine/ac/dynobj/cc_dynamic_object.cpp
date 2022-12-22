@@ -33,6 +33,7 @@
 //
 //=============================================================================
 
+#include "ags/shared/core/platform.h"
 #include "ags/engine/ac/dynobj/cc_dynamic_object.h"
 #include "ags/engine/ac/dynobj/managed_object_pool.h"
 #include "ags/shared/debugging/out.h"

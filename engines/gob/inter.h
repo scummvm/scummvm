@@ -31,7 +31,7 @@
 #include "gob/databases.h"
 
 namespace Common {
-	class PEResources;
+	class WinResources;
 }
 
 namespace Gob {
@@ -448,6 +448,8 @@ protected:
 	void o2_writeData(OpFuncParams &params);
 	void o2_loadInfogramesIns(OpGobParams &params);
 	void o2_playInfogrames(OpGobParams &params);
+	void o2_gob0x0B(OpGobParams &params);
+	void o2_gob1001(OpGobParams &params);
 	void o2_startInfogrames(OpGobParams &params);
 	void o2_stopInfogrames(OpGobParams &params);
 	void o2_handleGoblins(OpGobParams &params);
@@ -659,16 +661,15 @@ protected:
 	void oPlaytoons_copyFile();
 	void oPlaytoons_openItk();
 
-	Common::String getFile(const char *path);
+	Common::String getFile(const char *path, bool stripPath = true);
 
-private:
 	bool readSprite(Common::String file, int32 dataVar, int32 size, int32 offset);
 };
 
 class Inter_v7 : public Inter_Playtoons {
 public:
 	Inter_v7(GobEngine *vm);
-	~Inter_v7() override;
+	~Inter_v7() override {};
 
 protected:
 	void setupOpcodesDraw() override;
@@ -676,16 +677,24 @@ protected:
 	void setupOpcodesGob() override;
 
 	void o7_draw0x0C();
-	void o7_loadCursor();
+	void o7_setCursorToLoadFromExec();
+	void o7_freeMult();
+	void o7_loadMultObject();
 	void o7_displayWarning();
 	void o7_logString();
+	void o7_moveGoblin();
+	void o7_setGoblinState();
 	void o7_intToString();
 	void o7_callFunction();
 	void o7_loadFunctions();
+	void o7_moveFile();
+	void o7_copyFile();
+	void o7_deleteFile();
 	void o7_playVmdOrMusic();
-	void o7_draw0x89();
+	void o7_initScreen();
+	void o7_setActiveCD();
 	void o7_findFile();
-	void o7_findCDFile();
+	void o7_findNextFile();
 	void o7_getSystemProperty();
 	void o7_loadImage();
 	void o7_setVolume();
@@ -697,6 +706,15 @@ protected:
 	void o7_closedBase();
 	void o7_getDBString();
 
+	void o7_loadCursor(OpFuncParams &params);
+	void o7_printText(OpFuncParams &params);
+	void o7_fillRect(OpFuncParams &params);
+	void o7_drawLine(OpFuncParams &params);
+	void o7_invalidate(OpFuncParams &params);
+	void o7_checkData(OpFuncParams &params);
+	void o7_readData(OpFuncParams &params);
+	void o7_writeData(OpFuncParams &params);
+
 	void o7_oemToANSI(OpGobParams &params);
 	void o7_gob0x201(OpGobParams &params);
 
@@ -704,12 +722,14 @@ private:
 	INIConfig _inis;
 	Databases _databases;
 
-	Common::PEResources *_cursors;
+	Common::ArchiveMemberList _remainingFilesFromPreviousSearch;
+	Common::String _currentCDPath;
 
-	Common::String findFile(const Common::String &mask);
+	Common::String findFile(const Common::String &mask, const Common::String &previousFile);
+	void copyFile(const Common::String &sourceFile, const Common::String &destFile);
 
-	bool loadCursorFile();
-	void resizeCursors(int16 width, int16 height, int16 count, bool transparency);
+	bool setCurrentCDPath(const Common::FSNode &dir);
+	Common::Array<uint32> getAdibou2InstalledApplications();
 };
 
 } // End of namespace Gob

@@ -1,2 +1,3 @@
 engines/stark/detection.cpp
+engines/stark/metaengine.cpp
 engines/stark/stark.cpp

@@ -21,6 +21,7 @@
 
 #include "sword1/sword1.h"
 
+#include "sword1/detection.h"
 #include "sword1/resman.h"
 #include "sword1/objectman.h"
 #include "sword1/mouse.h"
@@ -43,15 +44,11 @@ namespace Sword1 {
 
 SystemVars SwordEngine::_systemVars;
 
-SwordEngine::SwordEngine(OSystem *syst)
+SwordEngine::SwordEngine(OSystem *syst, const SwordGameDescription *gameDesc)
 	: Engine(syst) {
 
-	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1demo") ||
-	        !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psxdemo") ||
-	        !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo"))
-		_features = GF_DEMO;
-	else
-		_features = 0;
+	_features = gameDesc->features;
+	_systemVars.platform = gameDesc->desc.platform;
 
 	// Add default file directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -93,15 +90,6 @@ SwordEngine::~SwordEngine() {
 Common::Error SwordEngine::init() {
 
 	initGraphics(640, 480);
-
-	if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1mac") ||
-	        0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo"))
-		_systemVars.platform = Common::kPlatformMacintosh;
-	else if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psx") ||
-	         0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psxdemo"))
-		_systemVars.platform = Common::kPlatformPSX;
-	else
-		_systemVars.platform = Common::kPlatformWindows;
 
 	checkCdFiles();
 
@@ -381,16 +369,17 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 		warning("%d files missing", missCnt);
 		int msgId = (type == TYPE_IMMED) ? 0 : 2;
 		if (missCnt == 1) {
-			sprintf(msg, errorMsgs[msgId],
+			Common::sprintf_s(msg, errorMsgs[msgId],
 			        _macCdFileList[missNum].name, (_macCdFileList[missNum].flags & FLAG_CD2) ? 2 : 1);
 			warning("%s", msg);
 		} else {
-			char *pos = msg + sprintf(msg, errorMsgs[msgId + 1], missCnt);
+			char *pos = msg + Common::sprintf_s(msg, errorMsgs[msgId + 1], missCnt);
 			warning("%s", msg);
 			for (int i = 0; i < ARRAYSIZE(_macCdFileList); i++)
 				if (!fileExists[i]) {
 					warning("\"%s\" (CD %d)", _macCdFileList[i].name, (_macCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
-					pos += sprintf(pos, "\"%s\" (CD %d)\n", _macCdFileList[i].name, (_macCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
+					pos += Common::sprintf_s(pos, sizeof(msg) - (pos - msg),
+						"\"%s\" (CD %d)\n", _macCdFileList[i].name, (_macCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
 				}
 		}
 	} else if (SwordEngine::isPsx()) {
@@ -403,15 +392,16 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 		warning("%d files missing", missCnt);
 		int msgId = (type == TYPE_IMMED) ? 0 : 2;
 		if (missCnt == 1) {
-			sprintf(msg, errorMsgs[msgId], _psxCdFileList[missNum].name, 1);
+			Common::sprintf_s(msg, errorMsgs[msgId], _psxCdFileList[missNum].name, 1);
 			warning("%s", msg);
 		} else {
-			char *pos = msg + sprintf(msg, errorMsgs[msgId + 1], missCnt);
+			char *pos = msg + Common::sprintf_s(msg, errorMsgs[msgId + 1], missCnt);
 			warning("%s", msg);
 			for (int i = 0; i < ARRAYSIZE(_psxCdFileList); i++)
 				if (!fileExists[i]) {
 					warning("\"%s\"", _macCdFileList[i].name);
-					pos += sprintf(pos, "\"%s\"\n", _macCdFileList[i].name);
+					pos += Common::sprintf_s(pos, sizeof(msg) - (pos - msg),
+						"\"%s\"\n", _macCdFileList[i].name);
 				}
 		}
 	} else {
@@ -424,16 +414,17 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 		warning("%d files missing", missCnt);
 		int msgId = (type == TYPE_IMMED) ? 0 : 2;
 		if (missCnt == 1) {
-			sprintf(msg, errorMsgs[msgId],
+			Common::sprintf_s(msg, errorMsgs[msgId],
 			        _pcCdFileList[missNum].name, (_pcCdFileList[missNum].flags & FLAG_CD2) ? 2 : 1);
 			warning("%s", msg);
 		} else {
-			char *pos = msg + sprintf(msg, errorMsgs[msgId + 1], missCnt);
+			char *pos = msg + Common::sprintf_s(msg, errorMsgs[msgId + 1], missCnt);
 			warning("%s", msg);
 			for (int i = 0; i < ARRAYSIZE(_pcCdFileList); i++)
 				if (!fileExists[i]) {
 					warning("\"%s\" (CD %d)", _pcCdFileList[i].name, (_pcCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
-					pos += sprintf(pos, "\"%s\" (CD %d)\n", _pcCdFileList[i].name, (_pcCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
+					pos += Common::sprintf_s(pos, sizeof(msg) - (pos - msg),
+						"\"%s\" (CD %d)\n", _pcCdFileList[i].name, (_pcCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
 				}
 		}
 	}

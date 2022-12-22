@@ -76,7 +76,7 @@ void FireballProcess::run() {
 
 	// * accelerate a bit towards _target
 	// * try to move
-	// * if succesful:
+	// * if successful:
 	//   * move
 	//   * shift _tail, enlarging if smaller than 3 flames
 	// * if failed

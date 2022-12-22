@@ -801,7 +801,8 @@ void AGOSEngine::vc15_sync() {
 		}
 	}
 
-	_lastVgaWaitFor = id;
+	if (id != 200)
+		_lastVgaWaitFor = id;
 	/* clear a wait event */
 	if (id == _vgaWaitFor)
 		_vgaWaitFor = 0;

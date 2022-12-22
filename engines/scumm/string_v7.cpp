@@ -40,7 +40,7 @@ TextRenderer_v7::TextRenderer_v7(ScummEngine *vm, GlyphRenderer_v7 *gr)	:
 	_direction(vm->_language == Common::HE_ISR ? -1 : 1),
 	_rtlCenteredOffset(vm->_language == Common::HE_ISR ? 1 : 0),
 	_spacing(vm->_language != Common::JA_JPN ? 1 : 0),
-	_lineBreakMarker(vm->_newLineCharacter),
+	_lineBreakMarker((char)vm->_newLineCharacter),
 	_newStyle (gr->newStyleWrapping()),
 	_gr(gr) {
 }
@@ -229,8 +229,8 @@ void TextRenderer_v7::drawString(const char *str, byte *buffer, Common::Rect &cl
 
 	clipRect.left = MAX<int>(0, ((flags & kStyleAlignCenter) ? x - maxWidth / 2 : ((flags & kStyleAlignRight) ? x - maxWidth : x)) - xAdj);
 	clipRect.right = MIN<int>(clipRect.right, clipRect.left + xAdj + maxWidth);
-	clipRect.top = y2;
-	clipRect.bottom = y + (_newStyle ? 0 : 1);
+	clipRect.top = y2 - (_newStyle ? 0 : 2);
+	clipRect.bottom = y + (_newStyle ? 0 : 2);
 }
 
 void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags) {
@@ -384,8 +384,8 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 
 	clipRect.left = MAX<int>(0, ((flags & kStyleAlignCenter) ? x - maxWidth / 2 : ((flags & kStyleAlignRight) ? x - maxWidth : x)) - xAdj);
 	clipRect.right = MIN<int>(clipRect.right, clipRect.left + xAdj + maxWidth);
-	clipRect.top = y2;
-	clipRect.bottom = y + (_newStyle ? 0 : 1);
+	clipRect.top = y2 - (_newStyle ? 0 : 2);
+	clipRect.bottom = y + (_newStyle ? 0 : 2);
 }
 
 Common::Rect TextRenderer_v7::calcStringDimensions(const char *str, int x, int y, TextStyleFlags flags) {
@@ -511,6 +511,23 @@ void ScummEngine_v7::restoreBlastTextsRects() {
 		return;
 
 	for (int i = 0; i < _blastTextRectsQueue; i++) {
+		// Did the camera X coordinate change (i.e. because of an override)?
+		// If so, adjust the rects.
+		// Please note this wasn't done on the original, but we handle things
+		// a little bit differently on our end, so we need to account for this
+		// case manually.
+		if (camera._cur.x != camera._last.x) {
+			int rightDiff = _blastTextQueue[i].rect.right - (camera._cur.x - camera._last.x);
+			int leftDiff = _blastTextQueue[i].rect.left - (camera._cur.x - camera._last.x);
+
+			// The nominal calculations are meant to be used for camera movements
+			// inside the same room. If this is not true, we might end up with
+			// negative rect values, so in that case the worse that can happen
+			// it's just that the rect will be as large as the screen itself.
+			_blastTextQueue[i].rect.left = (leftDiff < 0) ? 0 : leftDiff;
+			_blastTextQueue[i].rect.right = (rightDiff < 0) ? _screenWidth : rightDiff;
+		}
+
 		restoreBackground(_blastTextQueue[i].rect);
 	}
 

@@ -92,7 +92,7 @@ enum ZoneFlags {
 };
 
 
-enum CommandFlags {
+enum CommandFlags : uint {
 	kFlagsAll			= 0xFFFFFFFFU,
 
 	kFlagsVisited		= 1,

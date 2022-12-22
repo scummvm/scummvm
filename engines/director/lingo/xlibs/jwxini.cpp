@@ -87,7 +87,7 @@ JourneyWareXINIXObject::JourneyWareXINIXObject(ObjectType ObjectType) :Object<Jo
 
 void JourneyWareXINIXObj::m_new(int nargs) {
    g_lingo->printSTUBWithArglist("JWXIni::new", nargs);
-   g_lingo->push(g_lingo->_currentMe);
+   g_lingo->push(g_lingo->_state->me);
 }
 
 void JourneyWareXINIXObj::m_GetPrivateProfileInt(int nargs) {

@@ -42,57 +42,57 @@ int IMuseDigital::cmdsHandleCmd(int cmd, uint8 *ptr, int a, int b, int c, int d,
 	}
 
 	switch (cmd) {
-	case 0:
+	case DIMUSE_C_INIT:
 		return cmdsInit();
-	case 3:
+	case DIMUSE_C_PAUSE:
 		return cmdsPause();
-	case 4:
+	case DIMUSE_C_RESUME:
 		return cmdsResume();
-	case 7:
+	case DIMUSE_C_SET_GRP_VOL:
 		return _groupsHandler->setGroupVol(a, b);
-	case 8:
+	case DIMUSE_C_START_SND:
 		cmdsStartSound(a, b);
 		break;
-	case 9:
+	case DIMUSE_C_STOP_SND:
 		cmdsStopSound(a);
 		break;
-	case 10:
+	case DIMUSE_C_STOP_ALL_SNDS:
 		cmdsStopAllSounds();
 		break;
-	case 11:
+	case DIMUSE_C_GET_NEXT_SND:
 		return cmdsGetNextSound(a);
-	case 12:
+	case DIMUSE_C_SET_PARAM:
 		cmdsSetParam(a, b, c);
 		break;
-	case 13:
+	case DIMUSE_C_GET_PARAM:
 		return cmdsGetParam(a, b);
-	case 14:
+	case DIMUSE_C_FADE_PARAM:
 		return _fadesHandler->fadeParam(a, b, c, d);
-	case 15:
+	case DIMUSE_C_SET_HOOK:
 		return cmdsSetHook(a, b);
-	case 16:
+	case DIMUSE_C_GET_HOOK:
 		return cmdsGetHook(a);
-	case 17:
+	case DIMUSE_C_SET_TRIGGER:
 		return _triggersHandler->setTrigger(a, marker, c, d, e, f, g, h, i, j, k, l, m, n);
-	case 18:
+	case DIMUSE_C_CHECK_TRIGGER:
 		return _triggersHandler->checkTrigger(a, marker, c);
-	case 19:
+	case DIMUSE_C_CLEAR_TRIGGER:
 		return _triggersHandler->clearTrigger(a, marker, c);
-	case 20:
+	case DIMUSE_C_DEFER_CMD:
 		return _triggersHandler->deferCommand(a, b, c, d, e, f, g, h, i, j, k, l, m, n);
-	case 21:
+	case DIMUSE_C_GET_MARKER_SYNCS:
 		_vm->_sound->extractSyncsFromDiMUSEMarker((char *)ptr);
 		break;
-	case 25:
+	case DIMUSE_C_START_STREAM:
 		return waveStartStream(a, b, c);
-	case 26:
+	case DIMUSE_C_SWITCH_STREAM:
 		if (_isEarlyDiMUSE)
 			return waveSwitchStream(a, b, ptr, d, e);
 		else
 			return waveSwitchStream(a, b, c, d, e);
-	case 27:
+	case DIMUSE_C_PROCESS_STREAMS:
 		return waveProcessStreams();
-	case 29:
+	case DIMUSE_C_FEED_STREAM:
 		return waveFeedStream(a, ptr, c, d);
 	default:
 		debug(5, "IMuseDigital::cmdsHandleCmd(): bogus/unused opcode ignored (%d).", cmd);

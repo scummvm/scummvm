@@ -22,6 +22,7 @@
 
 
 #include "common/config-manager.h"
+#include "common/unicode-bidi.h"
 #include "audio/mixer.h"
 
 #include "scumm/actor.h"
@@ -35,6 +36,7 @@
 #endif
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
+#include "scumm/scumm_v2.h"
 #include "scumm/scumm_v6.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/verbs.h"
@@ -547,7 +549,7 @@ bool ScummEngine::newLine() {
 			// the original code it seems that setting _nextLeft to 0 is the right thing to do here.
 			_nextLeft = /*_game.version >= 6 ? _string[0].xpos :*/ 0;
 	} else if (_isRTL) {
-		if (_game.id == GID_MANIAC || ((_game.id == GID_MONKEY || _game.id == GID_MONKEY2) && _charset->getCurID() == 4)) {
+		if (_game.id == GID_MANIAC || _game.heversion >= 72 || ((_game.id == GID_MONKEY || _game.id == GID_MONKEY2) && _charset->getCurID() == 4)) {
 			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
 		} else if (_game.id == GID_MONKEY2 && _charset->getCurID() == 5) {
 			_nextLeft += _screenWidth - 210 - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos);
@@ -572,7 +574,32 @@ bool ScummEngine::newLine() {
 	return true;
 }
 
-void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb) const {
+#ifdef ENABLE_HE
+void ScummEngine_v72he::fakeBidiString(byte *ltext, bool ignoreVerb, int ltextSize) const {
+	if (*ltext == 0x7F) {
+		ltext++;
+		while (*(ltext++) != 0x7F);
+	}
+	byte *loc = ltext;
+	byte tmp = 0;
+	while (1) {
+		while (*loc && *loc != 13) {
+			loc++;
+		}
+		tmp = *loc;
+		*loc = 0;
+		Common::strcpy_s(reinterpret_cast<char *>(ltext), ltextSize, Common::convertBiDiString((const char *)ltext, Common::kWindows1255).c_str());
+		*loc = tmp;
+		loc++;
+		ltext = loc;
+		if (!tmp) {
+			return;
+		}
+	}
+}
+#endif
+
+void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb, int ltextSize) const {
 	// Provides custom made BiDi mechanism.
 	// Reverses texts on each line marked by control characters (considering different control characters used in verbs panel)
 	// While preserving original order of numbers (also negative numbers and comma separated)
@@ -678,6 +705,102 @@ void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb) const {
 
 	free(buff);
 	free(stack);
+}
+
+void ScummEngine_v2::drawSentence() {
+	Common::Rect sentenceline;
+	const byte *temp;
+	int slot = getVerbSlot(VAR(VAR_SENTENCE_VERB), 0);
+
+	if (!((_userState & USERSTATE_IFACE_SENTENCE) ||
+		  (_game.platform == Common::kPlatformNES && (_userState & USERSTATE_IFACE_ALL))))
+		return;
+
+	if (getResourceAddress(rtVerb, slot))
+		_sentenceBuf = (char *)getResourceAddress(rtVerb, slot);
+	else
+		return;
+
+	if (VAR(VAR_SENTENCE_OBJECT1) > 0) {
+		temp = getObjOrActorName(VAR(VAR_SENTENCE_OBJECT1));
+		if (temp) {
+			_sentenceBuf += " ";
+			_sentenceBuf += (const char *)temp;
+		}
+
+		// For V1 games, the engine must compute the preposition.
+		// In all other Scumm versions, this is done by the sentence script.
+		if ((_game.id == GID_MANIAC && _game.version == 1 && !(_game.platform == Common::kPlatformNES)) && (VAR(VAR_SENTENCE_PREPOSITION) == 0)) {
+			if (_verbs[slot].prep == 0xFF) {
+				byte *ptr = getOBCDFromObject(VAR(VAR_SENTENCE_OBJECT1));
+				assert(ptr);
+				VAR(VAR_SENTENCE_PREPOSITION) = (*(ptr + 12) >> 5);
+			} else
+				VAR(VAR_SENTENCE_PREPOSITION) = _verbs[slot].prep;
+		}
+	}
+
+	if (0 < VAR(VAR_SENTENCE_PREPOSITION) && VAR(VAR_SENTENCE_PREPOSITION) <= 4) {
+		drawPreposition(VAR(VAR_SENTENCE_PREPOSITION));
+	}
+
+	if (VAR(VAR_SENTENCE_OBJECT2) > 0) {
+		temp = getObjOrActorName(VAR(VAR_SENTENCE_OBJECT2));
+		if (temp) {
+			_sentenceBuf += " ";
+			_sentenceBuf += (const char *)temp;
+		}
+	}
+
+	_string[2].charset = 1;
+	_string[2].ypos = _virtscr[kVerbVirtScreen].topline;
+	_string[2].xpos = 0;
+	_string[2].right = _virtscr[kVerbVirtScreen].w - 1;
+	if (_game.platform == Common::kPlatformNES) {
+		_string[2].xpos = 16;
+		_string[2].color = 0;
+	} else if (_game.platform == Common::kPlatformC64) {
+		_string[2].color = 16;
+	} else {
+		_string[2].color = 13;
+	}
+
+	byte string[80];
+	const char *ptr = _sentenceBuf.c_str();
+	int i = 0, len = 0;
+
+	// Maximum length of printable characters
+	int maxChars = (_game.platform == Common::kPlatformNES) ? 60 : 40;
+	while (*ptr) {
+		if (*ptr != '@')
+			len++;
+		if (len > maxChars) {
+			break;
+		}
+
+		string[i++] = *ptr++;
+
+		if (_game.platform == Common::kPlatformNES && len == 30) {
+			string[i++] = 0xFF;
+			string[i++] = 8;
+		}
+	}
+	string[i] = 0;
+
+	if (_game.platform == Common::kPlatformNES) {
+		sentenceline.top = _virtscr[kVerbVirtScreen].topline;
+		sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 16;
+		sentenceline.left = 16;
+		sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
+	} else {
+		sentenceline.top = _virtscr[kVerbVirtScreen].topline;
+		sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 8;
+		sentenceline.left = 0;
+		sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
+	}
+	restoreBackground(sentenceline);
+
+	drawString(2, (byte *)string);
 }
 
 void ScummEngine::CHARSET_1() {
@@ -812,7 +935,7 @@ void ScummEngine::CHARSET_1() {
 		if (_nextLeft < 0)
 			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
 	} else if (_isRTL) {
-		if (_game.id == GID_MANIAC || ((_game.id == GID_MONKEY || _game.id == GID_MONKEY2) && _charset->getCurID() == 4)) {
+		if (_game.id == GID_MANIAC || _game.heversion >= 72 || ((_game.id == GID_MONKEY || _game.id == GID_MONKEY2) && _charset->getCurID() == 4)) {
 			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
 		} else if (_game.id == GID_MONKEY2 && _charset->getCurID() == 5) {
 			_nextLeft += _screenWidth - 210 - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos);
@@ -824,7 +947,7 @@ void ScummEngine::CHARSET_1() {
 	int c = 0;
 
 	if (_isRTL)
-		fakeBidiString(_charsetBuffer + _charsetBufPos, true);
+		fakeBidiString(_charsetBuffer + _charsetBufPos, true, sizeof(_charsetBuffer) - _charsetBufPos);
 
 	bool createTextBox = (_macScreen && _game.id == GID_INDY3);
 	bool drawTextBox = false;
@@ -915,6 +1038,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	byte fontHeight = 0;
 	uint color;
 	int code = (_game.heversion >= 80) ? 127 : 64;
+	bool isV3Towns = _game.version == 3 && _game.platform == Common::kPlatformFMTowns;
 
 	// drawString is not used in SCUMM v7 and v8
 	assert(_game.version < 7);
@@ -922,7 +1046,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	convertMessageToString(msg, buf, sizeof(buf));
 
 	if (_isRTL)
-		fakeBidiString(buf, false);
+		fakeBidiString(buf, false, sizeof(buf));
 
 	_charset->_top = _string[a].ypos + _screenTop;
 	_charset->_startLeft = _charset->_left = _string[a].xpos;
@@ -1075,6 +1199,12 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				if (is2ByteCharacter(_language, c))
 					c += buf[i++] * 256;
 			}
+
+			// With the code above, we risk missing the termination character.
+			// This happens at least for the restart prompt message on INDY3 Towns JAP.
+			if (isV3Towns && i > 1 && buf[i - 1] == 0)
+				break;
+
 			_charset->printChar(c, true);
 			_charset->_blitAlso = false;
 		}
@@ -1630,7 +1760,7 @@ void ScummEngine_v7::loadLanguageBundle() {
 				}
 
 				// The tag is the basetag, followed by a dot and then the index
-				sprintf(_languageIndex[_languageIndexSize].tag, "%s.%03d", baseTag, idx);
+				Common::sprintf_s(_languageIndex[_languageIndexSize].tag, "%s.%03d", baseTag, idx);
 
 				// That was another index entry
 				_languageIndexSize++;
@@ -2010,7 +2140,7 @@ bool ScummEngine::reverseIfNeeded(const byte *text, byte *reverseBuf, int revers
 	if (_game.id != GID_LOOM && _game.id != GID_ZAK)
 		return false;
 	Common::strlcpy(reinterpret_cast<char *>(reverseBuf), reinterpret_cast<const char *>(text), reverseBufSize);
-	fakeBidiString(reverseBuf, true);
+	fakeBidiString(reverseBuf, true, reverseBufSize);
 	return true;
 }
 

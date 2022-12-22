@@ -28,7 +28,7 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
-#include "common/json.h"
+#include "common/formats/json.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "gui/saveload-dialog.h"

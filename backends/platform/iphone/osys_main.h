@@ -145,7 +145,7 @@ public:
 	virtual void unlockScreen();
 	virtual void setShakePos(int shakeXOffset, int shakeYOffset);
 
-	virtual void showOverlay();
+	virtual void showOverlay(bool inGUI);
 	virtual void hideOverlay();
 	virtual bool isOverlayVisible() const { return _videoContext->overlayVisible; }
 	virtual void clearOverlay();

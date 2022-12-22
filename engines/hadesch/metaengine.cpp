@@ -30,15 +30,8 @@ class HadeschMetaEngine : public AdvancedMetaEngine {
 public:
 	bool hasFeature(MetaEngineFeature f) const override {
 		return
-			(f == kSupportsListSaves) ||
 			(f == kSupportsLoadingDuringStartup) ||
-			(f == kSupportsDeleteSave) ||
-			(f == kSavesSupportMetaInfo) ||
-			(f == kSavesSupportThumbnail) ||
-			(f == kSavesSupportCreationDate) ||
-			(f == kSavesSupportPlayTime) ||
-			(f == kSimpleSavesNames) ||
-			(f == kSavesUseExtendedFormat);
+			checkExtendedSaves(f);
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {

@@ -50,8 +50,8 @@ _icon_menu::_icon_menu() {
 	m_nAddedSymbol = 0;
 	m_nAddedFlashCount = 0;
 
-	strcpy(m_pcGlobalClusterFile, GLOBAL_CLUSTER_PATH);
-	strcpy(m_pcIconCluster, ICON_CLUSTER_PATH);
+	Common::strcpy_s(m_pcGlobalClusterFile, GLOBAL_CLUSTER_PATH);
+	Common::strcpy_s(m_pcIconCluster, ICON_CLUSTER_PATH);
 
 	m_nGlobalClusterHash = NULL_HASH;
 	m_nIconClusterHash = NULL_HASH;
@@ -309,7 +309,7 @@ void _icon_menu::PreloadIcon(const char *pcIconPath, const char *pcIconName) {
 
 	// Make the full URL for the icon.
 	char pcFullIconName[MAXLEN_URL];
-	sprintf(pcFullIconName, "%s%s.%s", pcIconPath, pcIconName, PX_BITMAP_EXT);
+	Common::sprintf_s(pcFullIconName, "%s%s.%s", pcIconPath, pcIconName, PX_BITMAP_EXT);
 
 	// Open the icon resource.
 	nFullIconNameHash = NULL_HASH;

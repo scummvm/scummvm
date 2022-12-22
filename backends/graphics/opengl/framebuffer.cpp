@@ -20,19 +20,20 @@
  */
 
 #include "backends/graphics/opengl/framebuffer.h"
-#include "backends/graphics/opengl/texture.h"
 #include "backends/graphics/opengl/pipelines/pipeline.h"
+#include "backends/graphics/opengl/texture.h"
 #include "graphics/opengl/debug.h"
 
 namespace OpenGL {
 
 Framebuffer::Framebuffer()
-	: _viewport(), _projectionMatrix(), _isActive(false), _clearColor(),
+	: _viewport(), _projectionMatrix(), _pipeline(nullptr), _clearColor(),
 	  _blendState(kBlendModeDisabled), _scissorTestState(false), _scissorBox() {
 }
 
-void Framebuffer::activate() {
-	_isActive = true;
+void Framebuffer::activate(Pipeline *pipeline) {
+	assert(pipeline);
+	_pipeline = pipeline;
 
 	applyViewport();
 	applyProjectionMatrix();
@@ -45,9 +46,9 @@ void Framebuffer::activate() {
 }
 
 void Framebuffer::deactivate() {
-	_isActive = false;
-
 	deactivateInternal();
+
+	_pipeline = nullptr;
 }
 
 void Framebuffer::setClearColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
@@ -97,7 +98,8 @@ void Framebuffer::applyViewport() {
 }
 
 void Framebuffer::applyProjectionMatrix() {
-	Pipeline::getActivePipeline()->setProjectionMatrix(_projectionMatrix);
+	assert(_pipeline);
+	_pipeline->setProjectionMatrix(_projectionMatrix);
 }
 
 void Framebuffer::applyClearColor() {
@@ -134,6 +136,28 @@ void Framebuffer::applyScissorBox() {
 	GL_CALL(glScissor(_scissorBox[0], _scissorBox[1], _scissorBox[2], _scissorBox[3]));
 }
 
+void Framebuffer::copyRenderStateFrom(const Framebuffer &other, uint copyMask) {
+	if (copyMask & kCopyMaskClearColor) {
+		memcpy(_clearColor, other._clearColor, sizeof(_clearColor));
+	}
+	if (copyMask & kCopyMaskBlendState) {
+		_blendState = other._blendState;
+	}
+	if (copyMask & kCopyMaskScissorState) {
+		_scissorTestState = other._scissorTestState;
+	}
+	if (copyMask & kCopyMaskScissorBox) {
+		memcpy(_scissorBox, other._scissorBox, sizeof(_scissorBox));
+	}
+
+	if (isActive()) {
+		applyClearColor();
+		applyBlendState();
+		applyScissorTestState();
+		applyScissorBox();
+	}
+}
+
 //
 // Backbuffer implementation
 //
@@ -154,25 +178,25 @@ void Backbuffer::setDimensions(uint width, uint height) {
 	_viewport[3] = height;
 
 	// Setup orthogonal projection matrix.
-	_projectionMatrix[ 0] =  2.0f / width;
-	_projectionMatrix[ 1] =  0.0f;
-	_projectionMatrix[ 2] =  0.0f;
-	_projectionMatrix[ 3] =  0.0f;
+	_projectionMatrix(0, 0) =  2.0f / width;
+	_projectionMatrix(0, 1) =  0.0f;
+	_projectionMatrix(0, 2) =  0.0f;
+	_projectionMatrix(0, 3) =  0.0f;
 
-	_projectionMatrix[ 4] =  0.0f;
-	_projectionMatrix[ 5] = -2.0f / height;
-	_projectionMatrix[ 6] =  0.0f;
-	_projectionMatrix[ 7] =  0.0f;
+	_projectionMatrix(1, 0) =  0.0f;
+	_projectionMatrix(1, 1) = -2.0f / height;
+	_projectionMatrix(1, 2) =  0.0f;
+	_projectionMatrix(1, 3) =  0.0f;
 
-	_projectionMatrix[ 8] =  0.0f;
-	_projectionMatrix[ 9] =  0.0f;
-	_projectionMatrix[10] =  0.0f;
-	_projectionMatrix[11] =  0.0f;
+	_projectionMatrix(2, 0) =  0.0f;
+	_projectionMatrix(2, 1) =  0.0f;
+	_projectionMatrix(2, 2) =  0.0f;
+	_projectionMatrix(2, 3) =  0.0f;
 
-	_projectionMatrix[12] = -1.0f;
-	_projectionMatrix[13] =  1.0f;
-	_projectionMatrix[14] =  0.0f;
-	_projectionMatrix[15] =  1.0f;
+	_projectionMatrix(3, 0) = -1.0f;
+	_projectionMatrix(3, 1) =  1.0f;
+	_projectionMatrix(3, 2) =  0.0f;
+	_projectionMatrix(3, 3) =  1.0f;
 
 	// Directly apply changes when we are active.
 	if (isActive()) {
@@ -225,8 +249,10 @@ void TextureTarget::create() {
 	_needUpdate = true;
 }
 
-void TextureTarget::setSize(uint width, uint height) {
-	_texture->setSize(width, height);
+bool TextureTarget::setSize(uint width, uint height) {
+	if (!_texture->setSize(width, height)) {
+		return false;
+	}
 
 	const uint texWidth  = _texture->getWidth();
 	const uint texHeight = _texture->getHeight();
@@ -238,31 +264,32 @@ void TextureTarget::setSize(uint width, uint height) {
 	_viewport[3] = texHeight;
 
 	// Setup orthogonal projection matrix.
-	_projectionMatrix[ 0] =  2.0f / texWidth;
-	_projectionMatrix[ 1] =  0.0f;
-	_projectionMatrix[ 2] =  0.0f;
-	_projectionMatrix[ 3] =  0.0f;
+	_projectionMatrix(0, 0) =  2.0f / texWidth;
+	_projectionMatrix(0, 1) =  0.0f;
+	_projectionMatrix(0, 2) =  0.0f;
+	_projectionMatrix(0, 3) =  0.0f;
 
-	_projectionMatrix[ 4] =  0.0f;
-	_projectionMatrix[ 5] =  2.0f / texHeight;
-	_projectionMatrix[ 6] =  0.0f;
-	_projectionMatrix[ 7] =  0.0f;
+	_projectionMatrix(1, 0) =  0.0f;
+	_projectionMatrix(1, 1) =  2.0f / texHeight;
+	_projectionMatrix(1, 2) =  0.0f;
+	_projectionMatrix(1, 3) =  0.0f;
 
-	_projectionMatrix[ 8] =  0.0f;
-	_projectionMatrix[ 9] =  0.0f;
-	_projectionMatrix[10] =  0.0f;
-	_projectionMatrix[11] =  0.0f;
+	_projectionMatrix(2, 0) =  0.0f;
+	_projectionMatrix(2, 1) =  0.0f;
+	_projectionMatrix(2, 2) =  0.0f;
+	_projectionMatrix(2, 3) =  0.0f;
 
-	_projectionMatrix[12] = -1.0f;
-	_projectionMatrix[13] = -1.0f;
-	_projectionMatrix[14] =  0.0f;
-	_projectionMatrix[15] =  1.0f;
+	_projectionMatrix(3, 0) = -1.0f;
+	_projectionMatrix(3, 1) = -1.0f;
+	_projectionMatrix(3, 2) =  0.0f;
+	_projectionMatrix(3, 3) =  1.0f;
 
 	// Directly apply changes when we are active.
 	if (isActive()) {
 		applyViewport();
 		applyProjectionMatrix();
 	}
+	return true;
 }
 #endif // !USE_FORCED_GLES
 

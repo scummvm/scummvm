@@ -23,7 +23,7 @@
 #include "glk/adrift/scprotos.h"
 #include "glk/adrift/detection.h"
 #include "common/algorithm.h"
-#include "common/zlib.h"
+#include "common/compression/zlib.h"
 #include "common/memstream.h"
 
 namespace Glk {

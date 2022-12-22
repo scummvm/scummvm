@@ -115,8 +115,8 @@ protected:
 public:
 
 	enum controlValue {
-		enter = (1 << 0),
-		leave = (1 << 1)
+		kEnter = (1 << 0),
+		kLeave = (1 << 1)
 	};
 
 	GfxCompImage(gPanelList &, const Rect16 &, void *, uint16, AppFunc *cmd = NULL);

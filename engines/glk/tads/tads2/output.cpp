@@ -1895,7 +1895,7 @@ static int outformatlen_stream(out_stream_info *stream,
 				}
 
 				/* convert the entire string to lower case for searching */
-				strcpy(fmsbuf_srch, fmsbuf);
+				Common::strcpy_s(fmsbuf_srch, fmsbuf);
 				os_strlwr(fmsbuf_srch);
 
 				/* find the string in the format string table */
@@ -3124,7 +3124,7 @@ void outcaps(void)
 }
 
 /*
- *   outnocaps() - sets the next letter to a miniscule, whether it came in
+ *   outnocaps() - sets the next letter to a minuscule, whether it came in
  *   that way or not.
  */
 void outnocaps(void)
@@ -3144,7 +3144,7 @@ int tiologopn(tiocxdef *ctx, char *fn)
 		return 1;
 
 	/* save the filename for later */
-	strcpy(logfname, fn);
+	Common::strcpy_s(logfname, fn);
 
 	/* open the new file */
 	logfp = osfopwt(fn, OSFTLOG);

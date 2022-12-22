@@ -77,12 +77,15 @@ void EditableWidget::setEditString(const Common::U32String &str) {
 	markAsDirty();
 }
 
+bool EditableWidget::isCharAllowed(Common::u32char_type_t c) const {
+	return (c >= 32 && c <= 127) || c >= 160;
+}
+
 bool EditableWidget::tryInsertChar(Common::u32char_type_t c, int pos) {
-	if ((c >= 32 && c <= 127) || c >= 160) {
-		_editString.insertChar(c, pos);
-		return true;
-	}
-	return false;
+	if (!isCharAllowed(c))
+		return false;
+	_editString.insertChar(c, pos);
+	return true;
 }
 
 int EditableWidget::caretVisualPos(int logicalPos) {

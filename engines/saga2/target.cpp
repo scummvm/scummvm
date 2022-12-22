@@ -46,39 +46,39 @@ void readTarget(void *mem, Common::InSaveFile *in) {
 	int16 type = in->readSint16LE();
 
 	switch (type) {
-	case locationTarget:
+	case kLocationTarget:
 		new (mem) LocationTarget(in);
 		break;
 
-	case specificTileTarget:
+	case kSpecificTileTarget:
 		new (mem) SpecificTileTarget(in);
 		break;
 
-	case tilePropertyTarget:
+	case kTilePropertyTarget:
 		new (mem) TilePropertyTarget(in);
 		break;
 
-	case specificMetaTileTarget:
+	case kSpecificMetaTileTarget:
 		new (mem) SpecificMetaTileTarget(in);
 		break;
 
-	case metaTilePropertyTarget:
+	case kMetaTilePropertyTarget:
 		new (mem) MetaTilePropertyTarget(in);
 		break;
 
-	case specificObjectTarget:
+	case kSpecificObjectTarget:
 		new (mem)  SpecificObjectTarget(in);
 		break;
 
-	case objectPropertyTarget:
+	case kObjectPropertyTarget:
 		new (mem)  ObjectPropertyTarget(in);
 		break;
 
-	case specificActorTarget:
+	case kSpecificActorTarget:
 		new (mem) SpecificActorTarget(in);
 		break;
 
-	case actorPropertyTarget:
+	case kActorPropertyTarget:
 		new (mem) ActorPropertyTarget(in);
 		break;
 	}
@@ -152,7 +152,7 @@ LocationTarget::LocationTarget(Common::SeekableReadStream *stream) {
 	debugC(5, kDebugSaveload, "...... LocationTarget");
 
 	//  Restore the targe location
-	loc.load(stream);
+	_loc.load(stream);
 }
 
 //----------------------------------------------------------------------
@@ -160,19 +160,19 @@ LocationTarget::LocationTarget(Common::SeekableReadStream *stream) {
 //	a buffer
 
 inline int32 LocationTarget::archiveSize() const {
-	return sizeof(loc);
+	return sizeof(_loc);
 }
 
 void LocationTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Store the target location
-	loc.write(out);
+	_loc.write(out);
 }
 
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
 int16 LocationTarget::getType() const {
-	return locationTarget;
+	return kLocationTarget;
 }
 
 //----------------------------------------------------------------------
@@ -193,7 +193,7 @@ void LocationTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool LocationTarget::operator == (const Target &t) const {
-	if (t.getType() != locationTarget) return false;
+	if (t.getType() != kLocationTarget) return false;
 
 	const LocationTarget *targetPtr = (const LocationTarget *)&t;
 
@@ -201,7 +201,7 @@ bool LocationTarget::operator == (const Target &t) const {
 }
 
 TilePoint LocationTarget::where(GameWorld *, const TilePoint &) const {
-	return loc;
+	return _loc;
 }
 
 int16 LocationTarget::where(
@@ -210,8 +210,8 @@ int16 LocationTarget::where(
     TargetLocationArray &tla) const {
 	//  Place the target location in the first element of the
 	//  array
-	tla.locArray[0] = loc;
-	tla.distArray[0] = (tp - loc).quickHDistance();
+	tla.locArray[0] = _loc;
+	tla.distArray[0] = (tp - _loc).quickHDistance();
 	tla.locs = 1;
 	return 1;
 }
@@ -229,14 +229,14 @@ TilePoint TileTarget::where(GameWorld *world, const TilePoint &tp) const {
 	StandingTileInfo    sti;
 
 	//  Compute the tile region to search
-	tileReg.min.u = (tp.u - maxTileDist) >> kTileUVShift;
-	tileReg.max.u = (tp.u + maxTileDist - 1 + kTileUVMask)
+	tileReg.min.u = (tp.u - kMaxTileDist) >> kTileUVShift;
+	tileReg.max.u = (tp.u + kMaxTileDist - 1 + kTileUVMask)
 	                >>  kTileUVShift;
-	tileReg.min.v = (tp.v - maxTileDist) >> kTileUVShift;
-	tileReg.max.v = (tp.v + maxTileDist - 1 + kTileUVMask)
+	tileReg.min.v = (tp.v - kMaxTileDist) >> kTileUVShift;
+	tileReg.max.v = (tp.v + kMaxTileDist - 1 + kTileUVMask)
 	                >>  kTileUVShift;
 
-	TileIterator        tIter(world->mapNum, tileReg);
+	TileIterator        tIter(world->_mapNum, tileReg);
 
 	//  Get the first tile in tile region
 	ti = tIter.first(&tileCoords, &sti);
@@ -284,14 +284,14 @@ int16 TileTarget::where(
 	StandingTileInfo    sti;
 
 	//  Compute the tile region to search
-	tileReg.min.u = (tp.u - maxTileDist) >> kTileUVShift;
-	tileReg.max.u = (tp.u + maxTileDist - 1 + kTileUVMask)
+	tileReg.min.u = (tp.u - kMaxTileDist) >> kTileUVShift;
+	tileReg.max.u = (tp.u + kMaxTileDist - 1 + kTileUVMask)
 	                >>  kTileUVShift;
-	tileReg.min.v = (tp.v - maxTileDist) >> kTileUVShift;
-	tileReg.max.v = (tp.v + maxTileDist - 1 + kTileUVMask)
+	tileReg.min.v = (tp.v - kMaxTileDist) >> kTileUVShift;
+	tileReg.max.v = (tp.v + kMaxTileDist - 1 + kTileUVMask)
 	                >>  kTileUVShift;
 
-	TileIterator        tIter(world->mapNum, tileReg);
+	TileIterator        tIter(world->_mapNum, tileReg);
 
 	//  Get the first tile in tile region
 	ti = tIter.first(&tileCoords, &sti);
@@ -336,7 +336,7 @@ SpecificTileTarget::SpecificTileTarget(Common::SeekableReadStream *stream) {
 	debugC(5, kDebugSaveload, "...... SpecificTileTarget");
 
 	//  Restore the tile ID
-	tile = stream->readUint16LE();
+	_tile = stream->readUint16LE();
 }
 
 //----------------------------------------------------------------------
@@ -344,19 +344,19 @@ SpecificTileTarget::SpecificTileTarget(Common::SeekableReadStream *stream) {
 //	a buffer
 
 inline int32 SpecificTileTarget::archiveSize() const {
-	return sizeof(tile);
+	return sizeof(_tile);
 }
 
 void SpecificTileTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Store the tile ID
-	out->writeUint16LE(tile);
+	out->writeUint16LE(_tile);
 }
 
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
 int16 SpecificTileTarget::getType() const {
-	return specificTileTarget;
+	return kSpecificTileTarget;
 }
 
 //----------------------------------------------------------------------
@@ -377,15 +377,15 @@ void SpecificTileTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool SpecificTileTarget::operator == (const Target &t) const {
-	if (t.getType() != specificTileTarget) return false;
+	if (t.getType() != kSpecificTileTarget) return false;
 
 	const SpecificTileTarget *targetPtr = (const SpecificTileTarget *)&t;
 
-	return tile == targetPtr->tile;
+	return _tile == targetPtr->_tile;
 }
 
 bool SpecificTileTarget::isTarget(StandingTileInfo &sti) const {
-	return sti.surfaceRef.tile == tile;
+	return sti.surfaceRef.tile == _tile;
 }
 
 /* ===================================================================== *
@@ -396,7 +396,7 @@ TilePropertyTarget::TilePropertyTarget(Common::SeekableReadStream *stream) {
 	debugC(5, kDebugSaveload, "...... TilePropertyTarget");
 
 	//  Restore the TilePropertyID
-	tileProp = stream->readSint16LE();
+	_tileProp = stream->readSint16LE();
 }
 
 //----------------------------------------------------------------------
@@ -404,18 +404,18 @@ TilePropertyTarget::TilePropertyTarget(Common::SeekableReadStream *stream) {
 //	a buffer
 
 inline int32 TilePropertyTarget::archiveSize() const {
-	return sizeof(tileProp);
+	return sizeof(_tileProp);
 }
 
 void TilePropertyTarget::write(Common::MemoryWriteStreamDynamic *out) const {
-	out->writeSint16LE(tileProp);
+	out->writeSint16LE(_tileProp);
 }
 
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
 int16 TilePropertyTarget::getType() const {
-	return tilePropertyTarget;
+	return kTilePropertyTarget;
 }
 
 //----------------------------------------------------------------------
@@ -436,15 +436,15 @@ void TilePropertyTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool TilePropertyTarget::operator == (const Target &t) const {
-	if (t.getType() != tilePropertyTarget) return false;
+	if (t.getType() != kTilePropertyTarget) return false;
 
 	const TilePropertyTarget  *targetPtr = (const TilePropertyTarget *)&t;
 
-	return tileProp == targetPtr->tileProp;
+	return _tileProp == targetPtr->_tileProp;
 }
 
 bool TilePropertyTarget::isTarget(StandingTileInfo &sti) const {
-	return sti.surfaceTile->hasProperty(*g_vm->_properties->getTileProp(tileProp));
+	return sti.surfaceTile->hasProperty(*g_vm->_properties->getTileProp(_tileProp));
 }
 
 /* ===================================================================== *
@@ -461,19 +461,19 @@ TilePoint MetaTileTarget::where(
 	TileRegion          tileReg;
 
 	//  Determine the tile region to search
-	tileReg.min.u = (tp.u - maxMetaDist) >> kTileUVShift;
-	tileReg.max.u = (tp.u + maxMetaDist + kTileUVMask)
+	tileReg.min.u = (tp.u - kMaxMetaDist) >> kTileUVShift;
+	tileReg.max.u = (tp.u + kMaxMetaDist + kTileUVMask)
 	                >>  kTileUVShift;
-	tileReg.min.v = (tp.v - maxMetaDist) >> kTileUVShift;
-	tileReg.max.v = (tp.v + maxMetaDist + kTileUVMask)
+	tileReg.min.v = (tp.v - kMaxMetaDist) >> kTileUVShift;
+	tileReg.max.v = (tp.v + kMaxMetaDist + kTileUVMask)
 	                >>  kTileUVShift;
 
-	MetaTileIterator    mIter(world->mapNum, tileReg);
+	MetaTileIterator    mIter(world->_mapNum, tileReg);
 
 	//  get the first metatile in region
 	mt = mIter.first(&metaCoords);
 	while (mt != nullptr) {
-		if (isTarget(mt, world->mapNum, metaCoords)) {
+		if (isTarget(mt, world->_mapNum, metaCoords)) {
 			uint16  dist;
 
 			metaCoords.u <<= kTileUVShift;
@@ -515,19 +515,19 @@ int16 MetaTileTarget::where(
 	TileRegion          tileReg;
 
 	//  Compute the tile region to search
-	tileReg.min.u = (tp.u - maxMetaDist) >> kTileUVShift;
-	tileReg.max.u = (tp.u + maxMetaDist + kTileUVMask)
+	tileReg.min.u = (tp.u - kMaxMetaDist) >> kTileUVShift;
+	tileReg.max.u = (tp.u + kMaxMetaDist + kTileUVMask)
 	                >>  kTileUVShift;
-	tileReg.min.v = (tp.v - maxMetaDist) >> kTileUVShift;
-	tileReg.max.v = (tp.v + maxMetaDist + kTileUVMask)
+	tileReg.min.v = (tp.v - kMaxMetaDist) >> kTileUVShift;
+	tileReg.max.v = (tp.v + kMaxMetaDist + kTileUVMask)
 	                >>  kTileUVShift;
 
-	MetaTileIterator    mIter(world->mapNum, tileReg);
+	MetaTileIterator    mIter(world->_mapNum, tileReg);
 
 	//  Get the first metatile in tile region
 	mt = mIter.first(&metaCoords);
 	while (mt != nullptr) {
-		if (isTarget(mt, world->mapNum, metaCoords)) {
+		if (isTarget(mt, world->_mapNum, metaCoords)) {
 			uint16  dist;
 
 			metaCoords.u <<= kTileUVShift;
@@ -564,8 +564,8 @@ SpecificMetaTileTarget::SpecificMetaTileTarget(Common::SeekableReadStream *strea
 	debugC(5, kDebugSaveload, "...... SpecificMetaTileTarget");
 
 	//  Restore the MetaTileID
-	meta.map = stream->readSint16LE();
-	meta.index = stream->readSint16LE();
+	_meta.map = stream->readSint16LE();
+	_meta.index = stream->readSint16LE();
 }
 
 //----------------------------------------------------------------------
@@ -578,15 +578,15 @@ inline int32 SpecificMetaTileTarget::archiveSize() const {
 
 void SpecificMetaTileTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Store the MetaTileID
-	out->writeSint16LE(meta.map);
-	out->writeSint16LE(meta.index);
+	out->writeSint16LE(_meta.map);
+	out->writeSint16LE(_meta.index);
 }
 
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
 int16 SpecificMetaTileTarget::getType() const {
-	return specificMetaTileTarget;
+	return kSpecificMetaTileTarget;
 }
 
 //----------------------------------------------------------------------
@@ -607,18 +607,18 @@ void SpecificMetaTileTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool SpecificMetaTileTarget::operator == (const Target &t) const {
-	if (t.getType() != specificMetaTileTarget) return false;
+	if (t.getType() != kSpecificMetaTileTarget) return false;
 
 	const SpecificMetaTileTarget  *targetPtr = (const SpecificMetaTileTarget *)&t;
 
-	return meta == targetPtr->meta;
+	return _meta == targetPtr->_meta;
 }
 
 bool SpecificMetaTileTarget::isTarget(
     MetaTile *mt,
     int16 mapNum,
     const TilePoint &) const {
-	return mt->thisID(mapNum) == meta;
+	return mt->thisID(mapNum) == _meta;
 }
 
 /* ===================================================================== *
@@ -629,7 +629,7 @@ MetaTilePropertyTarget::MetaTilePropertyTarget(Common::SeekableReadStream *strea
 	debugC(5, kDebugSaveload, "...... MetaTilePropertyTarget");
 
 	//  Restore the MetaTilePropertyID
-	metaProp = stream->readSint16LE();
+	_metaProp = stream->readSint16LE();
 }
 
 //----------------------------------------------------------------------
@@ -637,19 +637,19 @@ MetaTilePropertyTarget::MetaTilePropertyTarget(Common::SeekableReadStream *strea
 //	a buffer
 
 inline int32 MetaTilePropertyTarget::archiveSize() const {
-	return sizeof(metaProp);
+	return sizeof(_metaProp);
 }
 
 void MetaTilePropertyTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Store the MetaTilePropertyID
-	out->writeSint16LE(metaProp);
+	out->writeSint16LE(_metaProp);
 }
 
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
 int16 MetaTilePropertyTarget::getType() const {
-	return metaTilePropertyTarget;
+	return kMetaTilePropertyTarget;
 }
 
 //----------------------------------------------------------------------
@@ -670,18 +670,18 @@ void MetaTilePropertyTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool MetaTilePropertyTarget::operator == (const Target &t) const {
-	if (t.getType() != metaTilePropertyTarget) return false;
+	if (t.getType() != kMetaTilePropertyTarget) return false;
 
 	const MetaTilePropertyTarget  *targetPtr = (const MetaTilePropertyTarget *)&t;
 
-	return metaProp == targetPtr->metaProp;
+	return _metaProp == targetPtr->_metaProp;
 }
 
 bool MetaTilePropertyTarget::isTarget(
     MetaTile *mt,
     int16 mapNum,
     const TilePoint &tp) const {
-	return mt->hasProperty(*g_vm->_properties->getMetaTileProp(metaProp), mapNum, tp);
+	return mt->hasProperty(*g_vm->_properties->getMetaTileProp(_metaProp), mapNum, tp);
 }
 
 /* ===================================================================== *
@@ -771,7 +771,7 @@ TilePoint ObjectTarget::where(GameWorld *world, const TilePoint &tp) const {
 	GameObject     *objPtr = nullptr;
 	TilePoint               objCoords,
 	                        bestOCoords = Nowhere;
-	CircularObjectIterator  iter(world, tp, maxObjDist);
+	CircularObjectIterator  iter(world, tp, kMaxObjDist);
 
 	//  Iterate through each object in the vicinity
 	for (iter.first(&objPtr, &dist);
@@ -813,7 +813,7 @@ int16 ObjectTarget::where(
     GameWorld *world,
     const TilePoint &tp,
     TargetLocationArray &tla) const {
-	CircularObjectIterator  objIter(world, tp, maxObjDist);
+	CircularObjectIterator  objIter(world, tp, kMaxObjDist);
 
 	GameObject     *objPtr;
 	ObjectID                id;
@@ -833,7 +833,7 @@ int16 ObjectTarget::where(
 GameObject *ObjectTarget::object(
     GameWorld *world,
     const TilePoint &tp) const {
-	CircularObjectIterator  objIter(world, tp, maxObjDist);
+	CircularObjectIterator  objIter(world, tp, kMaxObjDist);
 
 	GameObject     *objPtr,
 	               *bestObj = nullptr;
@@ -879,7 +879,7 @@ int16 ObjectTarget::object(
     GameWorld *world,
     const TilePoint &tp,
     TargetObjectArray &toa) const {
-	CircularObjectIterator  objIter(world, tp, maxObjDist);
+	CircularObjectIterator  objIter(world, tp, kMaxObjDist);
 
 	GameObject     *objPtr;
 	ObjectID                id;
@@ -904,7 +904,7 @@ SpecificObjectTarget::SpecificObjectTarget(Common::SeekableReadStream *stream) {
 	debugC(5, kDebugSaveload, "...... SpecificObjectTarget");
 
 	//  Restore the ObjectID
-	obj = stream->readUint16LE();
+	_obj = stream->readUint16LE();
 }
 
 //----------------------------------------------------------------------
@@ -912,19 +912,19 @@ SpecificObjectTarget::SpecificObjectTarget(Common::SeekableReadStream *stream) {
 //	a buffer
 
 inline int32 SpecificObjectTarget::archiveSize() const {
-	return sizeof(obj);
+	return sizeof(_obj);
 }
 
 void SpecificObjectTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Store the ObjectID
-	out->writeUint16LE(obj);
+	out->writeUint16LE(_obj);
 }
 
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
 int16 SpecificObjectTarget::getType() const {
-	return specificObjectTarget;
+	return kSpecificObjectTarget;
 }
 
 //----------------------------------------------------------------------
@@ -945,11 +945,11 @@ void SpecificObjectTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool SpecificObjectTarget::operator == (const Target &t) const {
-	if (t.getType() != specificObjectTarget) return false;
+	if (t.getType() != kSpecificObjectTarget) return false;
 
 	const SpecificObjectTarget    *targetPtr = (const SpecificObjectTarget *)&t;
 
-	return obj == targetPtr->obj;
+	return _obj == targetPtr->_obj;
 }
 
 //----------------------------------------------------------------------
@@ -957,7 +957,7 @@ bool SpecificObjectTarget::operator == (const Target &t) const {
 //	for
 
 bool SpecificObjectTarget::isTarget(GameObject *testObj) const {
-	return testObj->thisID() == obj;
+	return testObj->thisID() == _obj;
 }
 
 //----------------------------------------------------------------------
@@ -967,12 +967,12 @@ bool SpecificObjectTarget::isTarget(GameObject *testObj) const {
 TilePoint SpecificObjectTarget::where(
     GameWorld *world,
     const TilePoint &tp) const {
-	GameObject *o = GameObject::objectAddress(obj);
+	GameObject *o = GameObject::objectAddress(_obj);
 
 	if (o->world() == world) {
 		TilePoint   objLoc = o->getLocation();
 
-		if ((tp - objLoc).quickHDistance() < maxObjDist)
+		if ((tp - objLoc).quickHDistance() < kMaxObjDist)
 			return objLoc;
 	}
 
@@ -987,13 +987,13 @@ int16 SpecificObjectTarget::where(
     GameWorld *world,
     const TilePoint &tp,
     TargetLocationArray &tla) const {
-	GameObject *o = GameObject::objectAddress(obj);
+	GameObject *o = GameObject::objectAddress(_obj);
 
 	if (tla.size > 0 && o->world() == world) {
 		TilePoint   objLoc = o->getLocation();
 		int16       dist = (tp - objLoc).quickHDistance();
 
-		if (dist < maxObjDist) {
+		if (dist < kMaxObjDist) {
 			tla.locs = 1;
 			tla.locArray[0] = objLoc;
 			tla.distArray[0] = dist;
@@ -1012,10 +1012,10 @@ int16 SpecificObjectTarget::where(
 GameObject *SpecificObjectTarget::object(
     GameWorld *world,
     const TilePoint &tp) const {
-	GameObject *o = GameObject::objectAddress(obj);
+	GameObject *o = GameObject::objectAddress(_obj);
 
 	if (o->world() == world) {
-		if ((tp - o->getLocation()).quickHDistance() < maxObjDist)
+		if ((tp - o->getLocation()).quickHDistance() < kMaxObjDist)
 			return o;
 	}
 
@@ -1030,12 +1030,12 @@ int16 SpecificObjectTarget::object(
     GameWorld *world,
     const TilePoint &tp,
     TargetObjectArray &toa) const {
-	GameObject *o = GameObject::objectAddress(obj);
+	GameObject *o = GameObject::objectAddress(_obj);
 
 	if (toa.size > 0 && o->world() == world) {
 		int16       dist = (tp - o->getLocation()).quickHDistance();
 
-		if (dist < maxObjDist) {
+		if (dist < kMaxObjDist) {
 			toa.objs = 1;
 			toa.objArray[0] = o;
 			toa.distArray[0] = dist;
@@ -1055,7 +1055,7 @@ ObjectPropertyTarget::ObjectPropertyTarget(Common::SeekableReadStream *stream) {
 	debugC(5, kDebugSaveload, "...... ObjectPropertyTarget");
 
 	//  Restore the ObjectPropertyID
-	objProp = stream->readSint16LE();
+	_objProp = stream->readSint16LE();
 }
 
 //----------------------------------------------------------------------
@@ -1063,19 +1063,19 @@ ObjectPropertyTarget::ObjectPropertyTarget(Common::SeekableReadStream *stream) {
 //	a buffer
 
 inline int32 ObjectPropertyTarget::archiveSize() const {
-	return sizeof(objProp);
+	return sizeof(_objProp);
 }
 
 void ObjectPropertyTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Store the ObjectPropertyID
-	out->writeSint16LE(objProp);
+	out->writeSint16LE(_objProp);
 }
 
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
 int16 ObjectPropertyTarget::getType() const {
-	return objectPropertyTarget;
+	return kObjectPropertyTarget;
 }
 
 //----------------------------------------------------------------------
@@ -1096,15 +1096,15 @@ void ObjectPropertyTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool ObjectPropertyTarget::operator == (const Target &t) const {
-	if (t.getType() != objectPropertyTarget) return false;
+	if (t.getType() != kObjectPropertyTarget) return false;
 
 	const ObjectPropertyTarget *targetPtr = (const ObjectPropertyTarget *)&t;
 
-	return objProp == targetPtr->objProp;
+	return _objProp == targetPtr->_objProp;
 }
 
 bool ObjectPropertyTarget::isTarget(GameObject *testObj) const {
-	return testObj->hasProperty(*g_vm->_properties->getObjProp(objProp));
+	return testObj->hasProperty(*g_vm->_properties->getObjProp(_objProp));
 }
 
 /* ===================================================================== *
@@ -1152,7 +1152,7 @@ SpecificActorTarget::SpecificActorTarget(Common::SeekableReadStream *stream) {
 	actorID = stream->readUint16LE();
 
 	//  Convert the actor ID into an Actor pointer
-	a = actorID != Nothing
+	_a = actorID != Nothing
 	    ? (Actor *)GameObject::objectAddress(actorID)
 	    :   nullptr;
 }
@@ -1167,7 +1167,7 @@ inline int32 SpecificActorTarget::archiveSize() const {
 
 void SpecificActorTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Convert the actor pointer to an actor ID;
-	ObjectID actorID = a != nullptr ? a->thisID() : Nothing;
+	ObjectID actorID = _a != nullptr ? _a->thisID() : Nothing;
 
 	//  Store the actor ID
 	out->writeUint16LE(actorID);
@@ -1177,7 +1177,7 @@ void SpecificActorTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of target
 
 int16 SpecificActorTarget::getType() const {
-	return specificActorTarget;
+	return kSpecificActorTarget;
 }
 
 //----------------------------------------------------------------------
@@ -1198,11 +1198,11 @@ void SpecificActorTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool SpecificActorTarget::operator == (const Target &t) const {
-	if (t.getType() != specificActorTarget) return false;
+	if (t.getType() != kSpecificActorTarget) return false;
 
 	const SpecificActorTarget *targetPtr = (const SpecificActorTarget *)&t;
 
-	return a == targetPtr->a;
+	return _a == targetPtr->_a;
 }
 
 //----------------------------------------------------------------------
@@ -1210,20 +1210,18 @@ bool SpecificActorTarget::operator == (const Target &t) const {
 //	for
 
 bool SpecificActorTarget::isTarget(Actor *testActor) const {
-	return testActor == a;
+	return testActor == _a;
 }
 
 //----------------------------------------------------------------------
 //	Return the location of the specific actor if it is in the specified
 //	world and within the maximum distance of the specified point
 
-TilePoint SpecificActorTarget::where(
-    GameWorld *world,
-    const TilePoint &tp) const {
-	if (a->world() == world) {
-		TilePoint   actorLoc = a->getLocation();
+TilePoint SpecificActorTarget::where(GameWorld *world, const TilePoint &tp) const {
+	if (_a->world() == world) {
+		TilePoint   actorLoc = _a->getLocation();
 
-		if ((tp - actorLoc).quickHDistance() < maxObjDist)
+		if ((tp - actorLoc).quickHDistance() < kMaxObjDist)
 			return actorLoc;
 	}
 
@@ -1234,15 +1232,12 @@ TilePoint SpecificActorTarget::where(
 //	Return the location of the specific actor if it is in the specified
 //	world and within the maximum distance of the specified point
 
-int16 SpecificActorTarget::where(
-    GameWorld *world,
-    const TilePoint &tp,
-    TargetLocationArray &tla) const {
-	if (tla.size > 0 && a->world() == world) {
-		TilePoint   actorLoc = a->getLocation();
+int16 SpecificActorTarget::where(GameWorld *world, const TilePoint &tp, TargetLocationArray &tla) const {
+	if (tla.size > 0 && _a->world() == world) {
+		TilePoint   actorLoc = _a->getLocation();
 		int16       dist = (tp - actorLoc).quickHDistance();
 
-		if (dist < maxObjDist) {
+		if (dist < kMaxObjDist) {
 			tla.locs = 1;
 			tla.locArray[0] = actorLoc;
 			tla.distArray[0] = dist;
@@ -1258,12 +1253,10 @@ int16 SpecificActorTarget::where(
 //	Return an object pointer to the specific actor if it is in the specified
 //	world and within the maximum distance of the specified point
 
-GameObject *SpecificActorTarget::object(
-    GameWorld *world,
-    const TilePoint &tp) const {
-	if (a->world() == world) {
-		if ((tp - a->getLocation()).quickHDistance() < maxObjDist)
-			return a;
+GameObject *SpecificActorTarget::object(GameWorld *world, const TilePoint &tp) const {
+	if (_a->world() == world) {
+		if ((tp - _a->getLocation()).quickHDistance() < kMaxObjDist)
+			return _a;
 	}
 
 	return nullptr;
@@ -1273,16 +1266,13 @@ GameObject *SpecificActorTarget::object(
 //	Return an object pointer to the specific actor if it is in the specified
 //	world and within the maximum distance of the specified point
 
-int16 SpecificActorTarget::object(
-    GameWorld *world,
-    const TilePoint &tp,
-    TargetObjectArray &toa) const {
-	if (toa.size > 0 && a->world() == world) {
-		int16       dist = (tp - a->getLocation()).quickHDistance();
+int16 SpecificActorTarget::object(GameWorld *world, const TilePoint &tp, TargetObjectArray &toa) const {
+	if (toa.size > 0 && _a->world() == world) {
+		int16       dist = (tp - _a->getLocation()).quickHDistance();
 
-		if (dist < maxObjDist) {
+		if (dist < kMaxObjDist) {
 			toa.objs = 1;
-			toa.objArray[0] = a;
+			toa.objArray[0] = _a;
 			toa.distArray[0] = dist;
 
 			return 1;
@@ -1296,12 +1286,10 @@ int16 SpecificActorTarget::object(
 //	Return a pointer to the specific actor if it is in the specified
 //	world and within the maximum distance of the specified point
 
-Actor *SpecificActorTarget::actor(
-    GameWorld *world,
-    const TilePoint &tp) const {
-	if (a->world() == world) {
-		if ((tp - a->getLocation()).quickHDistance() < maxObjDist)
-			return a;
+Actor *SpecificActorTarget::actor(GameWorld *world, const TilePoint &tp) const {
+	if (_a->world() == world) {
+		if ((tp - _a->getLocation()).quickHDistance() < kMaxObjDist)
+			return _a;
 	}
 
 	return nullptr;
@@ -1311,16 +1299,13 @@ Actor *SpecificActorTarget::actor(
 //	Return a pointer to the specific actor if it is in the specified
 //	world and within the maximum distance of the specified point
 
-int16 SpecificActorTarget::actor(
-    GameWorld *world,
-    const TilePoint &tp,
-    TargetActorArray &taa) const {
-	if (taa.size > 0 && a->world() == world) {
-		int16       dist = (tp - a->getLocation()).quickHDistance();
+int16 SpecificActorTarget::actor(GameWorld *world, const TilePoint &tp, TargetActorArray &taa) const {
+	if (taa.size > 0 && _a->world() == world) {
+		int16       dist = (tp - _a->getLocation()).quickHDistance();
 
-		if (dist < maxObjDist) {
+		if (dist < kMaxObjDist) {
 			taa.actors = 1;
-			taa.actorArray[0] = a;
+			taa.actorArray[0] = _a;
 			taa.distArray[0] = dist;
 
 			return 1;
@@ -1338,7 +1323,7 @@ ActorPropertyTarget::ActorPropertyTarget(Common::SeekableReadStream *stream) {
 	debugC(5, kDebugSaveload, "...... ActorPropertyTarget");
 
 	//  Restore the ActorPropertyID
-	actorProp = stream->readSint16LE();
+	_actorProp = stream->readSint16LE();
 }
 
 //----------------------------------------------------------------------
@@ -1346,19 +1331,19 @@ ActorPropertyTarget::ActorPropertyTarget(Common::SeekableReadStream *stream) {
 //	a buffer
 
 inline int32 ActorPropertyTarget::archiveSize() const {
-	return sizeof(actorProp);
+	return sizeof(_actorProp);
 }
 
 void ActorPropertyTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Store the ActorPropertyID
-	out->writeSint16LE(actorProp);
+	out->writeSint16LE(_actorProp);
 }
 
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
 int16 ActorPropertyTarget::getType() const {
-	return actorPropertyTarget;
+	return kActorPropertyTarget;
 }
 
 //----------------------------------------------------------------------
@@ -1379,15 +1364,15 @@ void ActorPropertyTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool ActorPropertyTarget::operator == (const Target &t) const {
-	if (t.getType() != actorPropertyTarget) return false;
+	if (t.getType() != kActorPropertyTarget) return false;
 
 	const ActorPropertyTarget *targetPtr = (const ActorPropertyTarget *)&t;
 
-	return actorProp == targetPtr->actorProp;
+	return _actorProp == targetPtr->_actorProp;
 }
 
 bool ActorPropertyTarget::isTarget(Actor *testActor) const {
-	return testActor->hasProperty(*g_vm->_properties->getActorProp(actorProp));
+	return testActor->hasProperty(*g_vm->_properties->getActorProp(_actorProp));
 }
 
 } // end of namespace Saga2

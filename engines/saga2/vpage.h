@@ -32,7 +32,7 @@ class vDisplayPage {
 public:
 	virtual ~vDisplayPage() {}
 
-	Point16         size;               // size in pixels
+	Point16         _size;               // size in pixels
 
 #if     ! defined( USEWINDOWS )
 	//  inline function to set the bank if needed

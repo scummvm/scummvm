@@ -105,7 +105,7 @@ void GameConversations::run(int id) {
 	_heroTrigger = 0;
 	_interlocutorTrigger = 0;
 	_popupVisible = false;
-	_currentMode = CONVMODE_0;
+	_currentMode = CONVMODE_NEXT;
 	_verbId = -1;
 	_speakerVal = 1;
 	_personSpeaking = 1;
@@ -297,7 +297,7 @@ void GameConversations::update(bool flag) {
 	ConversationVar &var0 = _runningConv->_cnd._vars[0];
 
 	switch (_currentMode) {
-	case CONVMODE_0:
+	case CONVMODE_NEXT:
 		assert(var0.isNumeric());
 		if (var0._val < 0) {
 			if (_vm->_game->_scene._frameStartTime >= _startFrameNumber) {
@@ -320,19 +320,19 @@ void GameConversations::update(bool flag) {
 				_vm->_game->_scene._action._activeAction._verbId = _verbId;
 				_vm->_game->_scene._action._inProgress = true;
 				_vm->_game->_scene._action._savedFields._commandError = false;
-				_currentMode = CONVMODE_1;
+				_currentMode = CONVMODE_WAIT_AUTO;
 			} else {
 				_currentMode = generateMenu();
 			}
 		}
 		break;
 
-	case CONVMODE_1:
+	case CONVMODE_WAIT_AUTO:
 		if (flag)
-			_currentMode = CONVMODE_3;
+			_currentMode = CONVMODE_EXECUTE;
 		break;
 
-	case CONVMODE_2:
+	case CONVMODE_WAIT_ENTRY:
 		if (flag) {
 			_vm->_game->_player._stepEnabled = false;
 			_verbId = _vm->_game->_scene._action._activeAction._verbId;
@@ -348,12 +348,12 @@ void GameConversations::update(bool flag) {
 
 			ConvDialog &dialog = _runningConv->_data._dialogs[_verbId];
 			if (dialog._speechIndex) {
-				_runningConv->_cnd._messageList3.clear();
-				_runningConv->_cnd._messageList3.push_back(dialog._speechIndex);
+				_runningConv->_cnd._playerSpeechList.clear();
+				_runningConv->_cnd._playerSpeechList.push_back(dialog._speechIndex);
 			}
 
-			generateText(dialog._textLineIndex, _runningConv->_cnd._messageList3);
-			_currentMode = CONVMODE_0;
+			generateText(dialog._textLineIndex, _runningConv->_cnd._playerSpeechList);
+			_currentMode = CONVMODE_NEXT;
 
 			if (_heroTrigger) {
 				_vm->_game->_scene._action._activeAction._verbId = _verbId;
@@ -364,12 +364,12 @@ void GameConversations::update(bool flag) {
 		}
 		break;
 
-	case CONVMODE_3:
+	case CONVMODE_EXECUTE:
 		if (_vm->_game->_scene._frameStartTime >= _startFrameNumber) {
 			removeActiveWindow();
 			_personSpeaking = 0;
 			executeEntry(_verbId);
-			generateMessage(_runningConv->_cnd._messageList1, _runningConv->_cnd._messageList3);
+			generateMessage(_runningConv->_cnd._playerMessageList, _runningConv->_cnd._playerSpeechList);
 
 			if (_heroTrigger && _popupVisible) {
 				_vm->_game->_scene._action._activeAction._verbId = _verbId;
@@ -378,16 +378,18 @@ void GameConversations::update(bool flag) {
 				_heroTrigger = 0;
 			}
 
-			_currentMode = CONVMODE_4;
+			_currentMode = CONVMODE_REPLY;
 		}
 		break;
 
-	case CONVMODE_4:
+	case CONVMODE_REPLY:
 		if (_vm->_game->_scene._frameStartTime >= _startFrameNumber) {
 			removeActiveWindow();
 			_personSpeaking = _speakerVal;
 
-			generateMessage(_runningConv->_cnd._messageList2, _runningConv->_cnd._messageList4);
+			generateMessage(_runningConv->_cnd._actorMessageList, _runningConv->_cnd._actorSpeechList);
+
+			_currentMode = CONVMODE_NEXT;
 
 			if (_interlocutorTrigger && _popupVisible) {
 				_vm->_game->_scene._action._activeAction._verbId = _verbId;
@@ -452,15 +454,18 @@ void GameConversations::generateMessage(Common::Array<int> &messageList, Common:
 		}
 	}
 
-	// Show the dialog
-	_popupVisible = true;
-	_dialog->show();
-
 	// Play the speech if one was provided
 	if (voiceList.size() > 0) {
 		_vm->_audio->setSoundGroup(_runningConv->_data._speechFile);
 		_vm->_audio->playSound(voiceList[0] - 1);
 	}
+
+	// Show the dialog
+	_popupVisible = true;
+	_dialog->show();
+
+	if (voiceList.size() > 0)
+		_vm->_audio->stop();
 }
 
 bool GameConversations::nextNode() {
@@ -473,10 +478,10 @@ int GameConversations::executeEntry(int index) {
 	ConvDialog &dlg = _runningConv->_data._dialogs[index];
 	ConversationVar &var0 = _runningConv->_cnd._vars[0];
 
-	_runningConv->_cnd._messageList1.clear();
-	_runningConv->_cnd._messageList2.clear();
-	_runningConv->_cnd._messageList3.clear();
-	_runningConv->_cnd._messageList4.clear();
+	_runningConv->_cnd._playerMessageList.clear();
+	_runningConv->_cnd._actorMessageList.clear();
+	_runningConv->_cnd._playerSpeechList.clear();
+	_runningConv->_cnd._actorSpeechList.clear();
 	_nextStartNode->_val = var0._val;
 
 	bool flag = true;
@@ -561,23 +566,23 @@ void GameConversations::scriptMessage(ScriptEntry &scrEntry) {
 	int entryVal = scrEntry._entries2[randomIndex]._v2;
 
 	if (scrEntry._command == CMD_MESSAGE1) {
-		_runningConv->_cnd._messageList2.push_back(entryVal);
+		_runningConv->_cnd._actorMessageList.push_back(entryVal);
 
 		if (scrEntry._entries2.size() <= 1) {
 			for (uint idx = 0; idx < scrEntry._entries.size(); ++idx)
-				_runningConv->_cnd._messageList4.push_back(scrEntry._entries[idx]);
+				_runningConv->_cnd._actorSpeechList.push_back(scrEntry._entries[idx]);
 		}
 		else if (scrEntry._entries.size() > 0 && randomIndex < (int)scrEntry._entries.size()) {
-			_runningConv->_cnd._messageList4.push_back(entryVal);
+			_runningConv->_cnd._actorSpeechList.push_back(entryVal);
 		}
 	} else {
-		_runningConv->_cnd._messageList1.push_back(entryVal);
+		_runningConv->_cnd._playerMessageList.push_back(entryVal);
 
 		if (scrEntry._entries2.size() <= 1) {
 			for (uint idx = 0; idx < scrEntry._entries.size(); ++idx)
-				_runningConv->_cnd._messageList3.push_back(scrEntry._entries[idx]);
+				_runningConv->_cnd._playerSpeechList.push_back(scrEntry._entries[idx]);
 		} else if (scrEntry._entries.size() > 0 && randomIndex < (int)scrEntry._entries.size()) {
-			_runningConv->_cnd._messageList3.push_back(entryVal);
+			_runningConv->_cnd._playerSpeechList.push_back(entryVal);
 		}
 	}
 }
@@ -753,31 +758,31 @@ void ConversationConditionals::load(const Common::String &filename) {
 
 	convFile->skip(4);
 
-	_messageList1.resize(convFile->readUint16LE());
-	_messageList2.resize(convFile->readUint16LE());
-	_messageList3.resize(convFile->readUint16LE());
-	_messageList4.resize(convFile->readUint16LE());
+	_playerMessageList.resize(convFile->readUint16LE());
+	_actorMessageList.resize(convFile->readUint16LE());
+	_playerSpeechList.resize(convFile->readUint16LE());
+	_actorSpeechList.resize(convFile->readUint16LE());
 	convFile->skip(20);
 
 	for (uint idx = 0; idx < 10; ++idx) {
 		int v = convFile->readUint16LE();
-		if (idx < _messageList1.size())
-			_messageList1[idx] = v;
+		if (idx < _playerMessageList.size())
+			_playerMessageList[idx] = v;
 	}
 	for (uint idx = 0; idx < 10; ++idx) {
 		int v = convFile->readUint16LE();
-		if (idx < _messageList2.size())
-			_messageList2[idx] = v;
+		if (idx < _actorMessageList.size())
+			_actorMessageList[idx] = v;
 	}
 	for (uint idx = 0; idx < 10; ++idx) {
 		int v = convFile->readUint16LE();
-		if (idx < _messageList3.size())
-			_messageList3[idx] = v;
+		if (idx < _playerSpeechList.size())
+			_playerSpeechList[idx] = v;
 	}
 	for (uint idx = 0; idx < 10; ++idx) {
 		int v = convFile->readUint16LE();
-		if (idx < _messageList4.size())
-			_messageList4[idx] = v;
+		if (idx < _actorSpeechList.size())
+			_actorSpeechList[idx] = v;
 	}
 
 	delete convFile;

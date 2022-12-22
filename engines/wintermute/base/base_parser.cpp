@@ -43,8 +43,8 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////
 BaseParser::BaseParser() {
-	_whiteSpace = new char [strlen(WHITESPACE) + 1];
-	strcpy(_whiteSpace, WHITESPACE);
+	_whiteSpace = new char [sizeof(WHITESPACE)];
+	Common::strcpy_s(_whiteSpace, sizeof(WHITESPACE), WHITESPACE);
 }
 
 
@@ -93,7 +93,7 @@ int32 BaseParser::getObject(char **buf, const TokenDesc *tokens, char **name, ch
 		if (p && p > *buf) {
 			strncpy(_lastOffender, *buf, MIN((uint32)255, (uint32)(p - *buf))); // TODO, clean
 		} else {
-			strcpy(_lastOffender, "");
+			_lastOffender[0] = '\0';
 		}
 
 		return PARSERR_TOKENNOTFOUND;
@@ -388,7 +388,9 @@ int32 BaseParser::scanStr(const char *in, const char *format, ...) {
 						Common::strlcpy(a, in, (int)(in2 - in) + 1);
 						in = in2 + 1;
 					} else {
-						strcpy(a, in);
+						// FIXME: Use a sensible value here
+						// Happily this is not used
+						Common::strcpy_s(a, 4096, in);
 						in = strchr(in, 0);
 					}
 				} else {

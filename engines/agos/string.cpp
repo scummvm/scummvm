@@ -323,10 +323,6 @@ void AGOSEngine::loadTextIntoMem(uint16 stringId) {
 			filename += *p++;
 		p++;
 
-		if (getPlatform() == Common::kPlatformAcorn) {
-			filename += ".DAT";
-		}
-
 		baseMax = (p[0] * 256) | p[1];
 		p += 2;
 
@@ -764,7 +760,7 @@ void AGOSEngine_Feeble::printScreenText(uint vgaSpriteId, uint color, const char
 					*convertedString2++ = ' ';
 					spaces--;
 			}
-			strcpy(convertedString2, string);
+			Common::strcpy_s(convertedString2, sizeof(convertedString) - (convertedString2 - convertedString), string);
 			break;
 		}
 		while (*string2 != ' ') {
@@ -1034,7 +1030,7 @@ uint16 AGOSEngine_Waxworks::checkFit(char *ptr, int width, int lines) {
 }
 
 void AGOSEngine_Waxworks::boxTextMessage(const char *x) {
-	sprintf(_boxBufferPtr, "%s\n", x);
+	Common::sprintf_s(_boxBufferPtr, sizeof(_boxBuffer) - (_boxBufferPtr - _boxBuffer), "%s\n", x);
 	_lineCounts[_boxLineCount] += strlen(x);
 	_boxBufferPtr += strlen(x) + 1;
 	_boxLineCount++;
@@ -1043,7 +1039,7 @@ void AGOSEngine_Waxworks::boxTextMessage(const char *x) {
 }
 
 void AGOSEngine_Waxworks::boxTextMsg(const char *x) {
-	sprintf(_boxBufferPtr, "%s", x);
+	Common::sprintf_s(_boxBufferPtr, sizeof(_boxBuffer) - (_boxBufferPtr - _boxBuffer), "%s", x);
 	_lineCounts[_boxLineCount] += strlen(x);
 	_boxBufferPtr += strlen(x);
 	_boxCR = 0;

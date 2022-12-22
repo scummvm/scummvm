@@ -30,6 +30,7 @@
 #include "common/ptr.h"
 #include "common/rational.h"
 #include "graphics/pixelformat.h"
+#include "video/subtitles.h"
 
 namespace Video {
 class VideoDecoder;
@@ -218,6 +219,10 @@ public:
 	 */
 	void setVolume(int volume);
 
+	/**
+	 * Load the subtitles
+	 */
+	void loadSubtitles(const char *fname) { _subtitles.loadSRTFile(fname); }
 private:
 	// Non-changing variables
 	Video::VideoDecoder *_video;
@@ -230,6 +235,8 @@ private:
 	bool _loop;
 	bool _enabled;
 	Audio::Timestamp _start;
+
+	Video::Subtitles _subtitles;
 };
 
 typedef Common::SharedPtr<VideoEntry> VideoEntryPtr;

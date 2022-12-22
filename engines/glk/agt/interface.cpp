@@ -209,7 +209,7 @@ static char *get_log(void)
 	s = (char *)rmalloc(1000);
 	s[0] = ' ';
 	s[1] = 0;
-	(void)textgets(log_in, s, 1000);
+	(void)readln(log_in, s, 1000);
 	if (texteof(log_in)) {  /* Reached end of logfile */
 		close_pfile(log_in, 1);
 		log_in = BAD_TEXTFILE;
@@ -222,11 +222,12 @@ static char *get_log(void)
 		} else {
 			logflag &= ~2;
 			fast_replay = 0;
+			if (s[0] != 0) writestr(s);
 		}
 	} else { /* Need to delay or wait for keypress */
 		if (logdelay == -1) agt_waitkey();
 		else agt_delay(logdelay);
-		if (s[0] != 0) writeln(s);
+		if (s[0] != 0) writestr(s);
 	}
 	return s;
 }
@@ -245,9 +246,10 @@ char *agt_readline(int in_type) {
 	char *s;
 
 	if (PURE_INPUT) agt_textcolor(-1);
-	if (logflag & 2)
+	if (logflag & 2) {
 		s = get_log();
-	else
+		agt_newline();
+	} else
 		s = agt_input(in_type);
 
 	if (g_vm->shouldQuit())
@@ -601,7 +603,7 @@ int agt_menu(const char *header, int size, int width, menuentry *menu)
 	for (i = 0; i < colheight; i++) {
 		for (j = 0; j < numcol; j++) {
 			if (j * colheight + i >= size) break;
-			sprintf(sbuff, "%2d.", j * colheight + i + 1);
+			Common::sprintf_s(sbuff, "%2d.", j * colheight + i + 1);
 			writestr(sbuff);
 			writestr(menu[j * colheight + i]);
 			if (j < numcol - 1) padout(width - 3 - strlen(menu[j * colheight + i]));
@@ -613,7 +615,7 @@ int agt_menu(const char *header, int size, int width, menuentry *menu)
 		i = read_number() - 1;
 		if (i < 0 || i >= size)
 			writeln("Please choose an option from the menu.");
-	} while (i < 0 || i >= size);
+	} while (!quitflag && (i < 0 || i >= size));
 	return i;
 }
 
@@ -694,7 +696,7 @@ void set_test_mode(fc_type fc) {
 
 #ifndef REPLACE_GETFILE
 
-/* This opens the file refered to by fname and returns it */
+/* This opens the file referred to by fname and returns it */
 static genfile uf_open(fc_type fc, filetype ext, rbool rw) {
 	char *errstr;
 	genfile f;

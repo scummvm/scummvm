@@ -35,7 +35,7 @@
 
 namespace Gob {
 
-Inter::Inter(GobEngine *vm) : _vm(vm), _varStack(600) {
+Inter::Inter(GobEngine *vm) : _vm(vm), _varStack(1000) {
 	_terminate = 0;
 	_break = false;
 
@@ -404,7 +404,7 @@ void Inter::storeString(uint16 index, uint16 type, const char *value) {
 
 	case TYPE_IMM_INT8:
 	case TYPE_VAR_INT8:
-		strcpy(str, value);
+		Common::strcpy_s(str, maxLength, value);
 		break;
 
 	case TYPE_ARRAY_INT8:

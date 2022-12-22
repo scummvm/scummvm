@@ -99,7 +99,7 @@ bool loadPrc(const char *pPrcName) {
 
 		for (s = 0; s < numScripts; s++) {
 			if (g_cine->_scriptTable[s]->_size) {
-				sprintf(buffer, "%s_%03d.txt", pPrcName, s);
+				Common::sprintf_s(buffer, "%s_%03d.txt", pPrcName, s);
 
 				decompileScript((const byte *)g_cine->_scriptTable[s]->getString(0), g_cine->_scriptTable[s]->_size, s);
 				dumpScript(buffer);

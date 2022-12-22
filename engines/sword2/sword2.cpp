@@ -32,6 +32,7 @@
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
+#include "sword2/detection.h"
 #include "sword2/header.h"
 #include "sword2/console.h"
 #include "sword2/controls.h"
@@ -48,7 +49,7 @@ namespace Sword2 {
 
 Common::Platform Sword2Engine::_platform;
 
-Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst), _rnd("sword2") {
+Sword2Engine::Sword2Engine(OSystem *syst, const Sword2GameDescription *gameDesc) : Engine(syst), _rnd("sword2") {
 	// Add default file directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "clusters");
@@ -57,18 +58,8 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst), _rnd("sword2") {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "smacks");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "streams"); // PSX video
 
-	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2demo") || !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2psxdemo"))
-		_features = GF_DEMO;
-	else if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2demo-es"))
-		_features = GF_DEMO | GF_SPANISHDEMO;
-	else
-		_features = 0;
-
-	// Check if we are running PC or PSX version.
-	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2psx") || !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2psxdemo"))
-		Sword2Engine::_platform = Common::kPlatformPSX;
-	else
-		Sword2Engine::_platform = Common::kPlatformWindows;
+	_features = gameDesc->features;
+	Sword2Engine::_platform = gameDesc->desc.platform;
 
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");

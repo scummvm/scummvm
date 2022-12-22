@@ -349,7 +349,7 @@ void GriffonEngine::configMenu() {
 				int vol = (i ==18 ? config.musicVol : config.effectsVol) * 9 / 255;
 				vol = CLIP(vol, 0, 9);
 
-				strcpy(line, "[----------]");
+				Common::strcpy_s(line, "[----------]");
 				line[vol + 1] = 'X';
 				optionValues[i] = line;
 			} else if (i > 21)
@@ -568,20 +568,20 @@ void GriffonEngine::renderSaveStates() {
 			int s = (ase - m * 60);
 
 			char line[256];
-			sprintf(line, "Game Time: %02i:%02i:%02i", h, m, s);
+			Common::sprintf_s(line, "Game Time: %02i:%02i:%02i", h, m, s);
 			drawString(_videoBuffer2, line, 160 - strlen(line) * 4, sy, 0);
 
 			sx = 12;
 			sy += 11;
 			int cc = 0;
 
-			sprintf(line, "Health: %i/%i", _playera.hp, _playera.maxHp);
+			Common::sprintf_s(line, "Health: %i/%i", _playera.hp, _playera.maxHp);
 			drawString(_videoBuffer2, line, sx, sy, cc);
 
 			if (_playera.level == 22)
-				strcpy(line, "Level: MAX");
+				Common::strcpy_s(line, "Level: MAX");
 			else
-				sprintf(line, "Level: %i", _playera.level);
+				Common::sprintf_s(line, "Level: %i", _playera.level);
 
 			drawString(_videoBuffer2, line, sx, sy + 11, 0);
 

@@ -69,6 +69,8 @@ void Context::reset() {
 	unpackSubImageSupported = false;
 	OESDepth24 = false;
 	textureEdgeClampSupported = false;
+	textureBorderClampSupported = false;
+	textureMirrorRepeatSupported = false;
 }
 
 void Context::initialize(ContextType contextType) {
@@ -180,6 +182,10 @@ void Context::initialize(ContextType contextType) {
 			OESDepth24 = true;
 		} else if (token == "GL_SGIS_texture_edge_clamp") {
 			textureEdgeClampSupported = true;
+		} else if (token == "GL_SGIS_texture_border_clamp") {
+			textureBorderClampSupported = true;
+		} else if (token == "GL_ARB_texture_mirrored_repeat") {
+			textureMirrorRepeatSupported = true;
 		}
 	}
 
@@ -211,6 +217,8 @@ void Context::initialize(ContextType contextType) {
 
 		packedPixelsSupported = true;
 		textureEdgeClampSupported = true;
+		// No border clamping in GLES2
+		textureMirrorRepeatSupported = true;
 		debug(5, "OpenGL: GLES2 context initialized");
 	} else if (type == kContextGLES) {
 		// GLES doesn't support shaders natively
@@ -228,6 +236,8 @@ void Context::initialize(ContextType contextType) {
 
 		packedPixelsSupported = true;
 		textureEdgeClampSupported = true;
+		// No border clamping in GLES
+		// No mirror repeat in GLES
 		debug(5, "OpenGL: GLES context initialized");
 	} else if (type == kContextGL) {
 		shadersSupported = glslVersion >= 100;
@@ -258,6 +268,14 @@ void Context::initialize(ContextType contextType) {
 		if (isGLVersionOrHigher(1, 2)) {
 			packedPixelsSupported = true;
 			textureEdgeClampSupported = true;
+		}
+		// OpenGL 1.3 adds texture border clamp support
+		if (isGLVersionOrHigher(1, 3)) {
+			textureBorderClampSupported = true;
+		}
+		// OpenGL 1.4 adds texture mirror repeat support
+		if (isGLVersionOrHigher(1, 4)) {
+			textureMirrorRepeatSupported = true;
 		}
 		debug(5, "OpenGL: GL context initialized");
 	} else {

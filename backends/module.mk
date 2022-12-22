@@ -130,6 +130,8 @@ MODULE_OBJS += \
 	graphics/opengl/pipelines/clut8.o \
 	graphics/opengl/pipelines/fixed.o \
 	graphics/opengl/pipelines/pipeline.o \
+	graphics/opengl/pipelines/libretro.o \
+	graphics/opengl/pipelines/libretro/parser.o \
 	graphics/opengl/pipelines/shader.o
 endif
 

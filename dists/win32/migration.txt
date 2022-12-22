@@ -11,6 +11,7 @@ COPYING.GLAD
 COPYING.txt
 COPYRIGHT.txt
 drascula.dat
+freescape.dat
 hadesch_translations.dat
 hugo.dat
 kyra.dat

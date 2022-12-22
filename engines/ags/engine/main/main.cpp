@@ -96,6 +96,8 @@ void main_print_help() {
 	                          "Usage: ags [OPTIONS] [GAMEFILE or DIRECTORY]\n\n"
 	                          //--------------------------------------------------------------------------------|
 	                          "Options:\n"
+                              "  --background                 Keeps game running in background\n"
+                              "                               (this does not work in exclusive fullscreen)\n"
                               "  --clear-cache-on-room-change Clears sprite cache on every room change\n"
 	                          "  --conf FILEPATH              Specify explicit config file to read on startup\n"
 #if AGS_PLATFORM_OS_WINDOWS
@@ -261,6 +263,8 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 			cfg["language"]["translation"] = argv[++ee];
 		} else if (ags_stricmp(arg, "--no-translation") == 0) {
 			cfg["language"]["translation"] = "";
+		} else if (ags_stricmp(arg, "--background") == 0) {
+			cfg["override"]["multitasking"] = "1";
 		} else if (ags_stricmp(arg, "--fps") == 0)
 			cfg["misc"]["show_fps"] = "1";
 		else if (ags_stricmp(arg, "--test") == 0) _G(debug_flags) |= DBG_DEBUGMODE;

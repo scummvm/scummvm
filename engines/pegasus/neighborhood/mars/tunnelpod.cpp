@@ -64,7 +64,7 @@ enum {
 
 
 TunnelPod::TunnelPod(Neighborhood *handler) : ChaseInteraction(kMarsTunnelPodInteractionID, handler,
-						kMarsTunnelPodNotificationID, (PegasusEngine *)g_engine), _tunnelMainMovie(kNoDisplayElement),
+						kMarsTunnelPodNotificationID, g_vm), _tunnelMainMovie(kNoDisplayElement),
 						_tunnelAltMovie(kNoDisplayElement), _deathMovie(kNoDisplayElement) {
 	_currentMovie = nullptr;
 	_currentCallBack = nullptr;
@@ -85,7 +85,7 @@ void TunnelPod::openInteraction() {
 	_tunnelCallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
 
 	_tunnelMainMovie.initFromMovieFile("Images/Mars/Pod 2345M.mov");
-	_tunnelMainMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+	_tunnelMainMovie.setVolume(g_vm->getSoundFXLevel());
 	_tunnelMainMovie.moveElementTo(kNavAreaLeft, kNavAreaTop);
 	_tunnelMainMovie.setDisplayOrder(kNavMovieOrder);
 
@@ -95,7 +95,7 @@ void TunnelPod::openInteraction() {
 	_tunnelMainCallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
 
 	_tunnelAltMovie.initFromMovieFile("Images/Mars/Pod 345A.mov");
-	_tunnelAltMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+	_tunnelAltMovie.setVolume(g_vm->getSoundFXLevel());
 	_tunnelAltMovie.moveElementTo(kNavAreaLeft, kNavAreaTop);
 	_tunnelAltMovie.setDisplayOrder(kNavMovieOrder);
 
@@ -105,7 +105,7 @@ void TunnelPod::openInteraction() {
 	_tunnelAltCallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
 
 	_deathMovie.initFromMovieFile("Images/Mars/Pod 2D.mov");
-	_deathMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+	_deathMovie.setVolume(g_vm->getSoundFXLevel());
 	_deathMovie.moveElementTo(kNavAreaLeft, kNavAreaTop);
 	_deathMovie.setDisplayOrder(kNavMovieOrder);
 

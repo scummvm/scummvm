@@ -635,8 +635,8 @@ IMPLEMENT_FUNCTION_IIS(14, Francois, chaseBeetle, ObjectIndex, EntityPosition)
 		break;
 
 	case kActionDefault:
-		strcpy((char *)&parameters->seq2, "605H");
-		strcat((char *)&parameters->seq2, (char *)&parameters->seq1);
+		Common::strcpy_s(parameters->seq2, "605H");
+		Common::strcat_s(parameters->seq2, parameters->seq1);
 
 		setCallback(1);
 		setup_exitCompartment();
@@ -654,7 +654,7 @@ IMPLEMENT_FUNCTION_IIS(14, Francois, chaseBeetle, ObjectIndex, EntityPosition)
 
 		case 2:
 			if (getInventory()->get(kItemBeetle)->location == kObjectLocation3) {
-				getEntities()->drawSequenceLeft(kEntityFrancois, (char *)&parameters->seq2);
+				getEntities()->drawSequenceLeft(kEntityFrancois, parameters->seq2);
 				getEntities()->enterCompartment(kEntityFrancois, (ObjectIndex)parameters->param1, true);
 
 				setCallback(3);

@@ -66,7 +66,7 @@ private:
 	const int _rtlCenteredOffset;
 	const int _spacing;
 	const byte _2byteCharWidth;
-	const byte _lineBreakMarker;
+	const char _lineBreakMarker;
 	const bool _newStyle;
 	const uint16 _screenWidth;
 	GlyphRenderer_v7 *_gr;

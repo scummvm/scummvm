@@ -109,7 +109,7 @@ void CaldoriaMessages::play1Message(uint messageNumber) {
 		GameState.setCaldoriaSeenMessages(true);
 	}
 
-	_messageMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+	_messageMovie.setVolume(g_vm->getSoundFXLevel());
 	_messageMovie.moveElementTo(kCaldoriaMessageLeft, kCaldoriaMessageTop);
 	_messageMovie.setDisplayOrder(kCaldoriaMessagesOrder);
 	_messageMovie.startDisplaying();

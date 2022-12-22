@@ -29,7 +29,6 @@ gui/widgets/groupedlist.cpp
 
 base/main.cpp
 
-common/achievements.cpp
 common/error.cpp
 common/rendermode.cpp
 common/updates.cpp
@@ -37,6 +36,7 @@ common/util.cpp
 
 dists/scummvm.appdata.xml.cpp
 
+engines/achievements.cpp
 engines/advancedDetector.cpp
 engines/dialogs.cpp
 engines/engine.cpp

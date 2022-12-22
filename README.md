@@ -65,6 +65,10 @@ For everything you need to know about how to use ScummVM, see our [user document
 
 Our extensive change log is available [here](NEWS.md).
 
+## SAST Tools
+
+[PVS-Studio](https://pvs-studio.com/en/pvs-studio/?utm_source=github&utm_medium=organic&utm_campaign=open_source) - static analyzer for C, C++, C#, and Java code.
+
 ## Credits
 
 A massive thank you to the entire team for making the ScummVM project possible. See the credits [here](AUTHORS)!

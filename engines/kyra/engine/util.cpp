@@ -289,7 +289,7 @@ Common::String Util::decodeString2(const Common::String &src) {
 	return reslt;
 }
 
-Common::String Util::findMacResourceFile(const char *baseName) {
+Common::String Util::findMacResourceFile(const char *baseName, const char *suffix) {
 	// The original executable has a TM char as its last character (character
 	// 0xAA from Mac code page). Depending on the emulator or platform used to
 	// copy the file it might have been reencoded to something else. So I look
@@ -308,7 +308,7 @@ Common::String Util::findMacResourceFile(const char *baseName) {
 
 	for (int i = 0; i < 2; ++i) {
 		for (int ii = 0; ii < ARRAYSIZE(tryCodePages); ++ii) {
-			Common::U32String fn(tryName, tryCodePages[ii]);
+			Common::U32String fn(tryName + suffix, tryCodePages[ii]);
 			fileName = fn.encode(Common::kUtf8);
 			if (resource.exists(fileName))
 				return fileName;

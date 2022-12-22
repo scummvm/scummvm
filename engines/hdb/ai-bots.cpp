@@ -1453,17 +1453,17 @@ void aiLaserInit2(AIEntity *e, int mx, int my) {
 	if (!g_hdb->_ai->_gfxLaserbeamUD[0]) {
 		char name[64];
 		for (int i = 0; i < 4; i++) {
-			sprintf(name, FORCEFIELD_UD"0%d", i + 1);
+			Common::sprintf_s(name, FORCEFIELD_UD"0%d", i + 1);
 			g_hdb->_ai->_gfxLaserbeamUD[i] = g_hdb->_gfx->loadTile(name);
-			sprintf(name, FORCESPLASH_TOP"0%d", i + 1);
+			Common::sprintf_s(name, FORCESPLASH_TOP"0%d", i + 1);
 			g_hdb->_ai->_gfxLaserbeamUDTop[i] = g_hdb->_gfx->loadTile(name);
-			sprintf(name, FORCESPLASH_BTM"0%d", i + 1);
+			Common::sprintf_s(name, FORCESPLASH_BTM"0%d", i + 1);
 			g_hdb->_ai->_gfxLaserbeamUDBottom[i] = g_hdb->_gfx->loadTile(name);
-			sprintf(name, FORCEFIELD_LR"0%d", i + 1);
+			Common::sprintf_s(name, FORCEFIELD_LR"0%d", i + 1);
 			g_hdb->_ai->_gfxLaserbeamLR[i] = g_hdb->_gfx->loadTile(name);
-			sprintf(name, FORCESPLASH_LEFT"0%d", i + 1);
+			Common::sprintf_s(name, FORCESPLASH_LEFT"0%d", i + 1);
 			g_hdb->_ai->_gfxLaserbeamLRLeft[i] = g_hdb->_gfx->loadTile(name);
-			sprintf(name, FORCESPLASH_RIGHT"0%d", i + 1);
+			Common::sprintf_s(name, FORCESPLASH_RIGHT"0%d", i + 1);
 			g_hdb->_ai->_gfxLaserbeamLRRight[i] = g_hdb->_gfx->loadTile(name);
 		}
 	}
@@ -3215,22 +3215,22 @@ void aiDragonInit(AIEntity *e, int mx, int my) {
 	// need to save the dragon's coords and type in the blocking entity for gem-hit-blocking detection
 	AIEntity *block = spawnBlocking(e->tileX - 1, e->tileY, e->level);
 	block->value1 = (int)AI_DRAGON;
-	sprintf(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
+	Common::sprintf_s(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
 	block = spawnBlocking(e->tileX + 1, e->tileY, e->level);
 	block->value1 = (int)AI_DRAGON;
-	sprintf(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
+	Common::sprintf_s(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
 	block = spawnBlocking(e->tileX - 1, e->tileY - 1, e->level);
 	block->value1 = (int)AI_DRAGON;
-	sprintf(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
+	Common::sprintf_s(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
 	block = spawnBlocking(e->tileX + 1, e->tileY - 1, e->level);
 	block->value1 = (int)AI_DRAGON;
-	sprintf(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
+	Common::sprintf_s(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
 	block = spawnBlocking(e->tileX - 1, e->tileY - 2, e->level);
 	block->value1 = (int)AI_DRAGON;
-	sprintf(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
+	Common::sprintf_s(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
 	block = spawnBlocking(e->tileX + 1, e->tileY - 2, e->level);
 	block->value1 = (int)AI_DRAGON;
-	sprintf(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
+	Common::sprintf_s(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
 }
 
 void aiDragonInit2(AIEntity *e, int mx, int my) {

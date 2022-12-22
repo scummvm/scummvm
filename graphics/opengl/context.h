@@ -111,6 +111,12 @@ public:
 	/** Whether texture coordinate edge clamping is available or not. */
 	bool textureEdgeClampSupported;
 
+	/** Whether texture coordinate border clamping is available or not. */
+	bool textureBorderClampSupported;
+
+	/** Whether texture coordinate mirrored repeat is available or not. */
+	bool textureMirrorRepeatSupported;
+
 private:
 	/**
 	 * Returns the native GLSL version supported by the driver.

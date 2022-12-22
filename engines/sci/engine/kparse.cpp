@@ -145,7 +145,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 		writeSelectorValue(segMan, event, SELECTOR(claimed), 1);
 
 		if (error) {
-			s->_segMan->strcpy(s->_segMan->getParserPtr(), error);
+			s->_segMan->strcpy_(s->_segMan->getParserPtr(), error);
 			debugC(kDebugLevelParser, "Word unknown: %s", error);
 			/* Issue warning: */
 

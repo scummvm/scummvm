@@ -140,11 +140,13 @@ void Inter_v2::setupOpcodesGob() {
 	OPCODEGOB(  2, o2_stopInfogrames);
 
 	OPCODEGOB( 10, o2_playInfogrames);
+	OPCODEGOB( 11, o2_gob0x0B);
 
 	OPCODEGOB(100, o2_handleGoblins);
 
 	OPCODEGOB(500, o2_playProtracker);
 	OPCODEGOB(501, o2_stopProtracker);
+	OPCODEGOB(1001, o2_gob1001);
 }
 
 void Inter_v2::checkSwitchTable(uint32 &offset) {
@@ -578,6 +580,13 @@ void Inter_v2::o2_totSub() {
 
 	uint8 flags = _vm->_game->_script->readByte();
 
+	// Skipping the copy protection screen in Adibou 1
+	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeAdibou1) && totFile == "p_eleph") {
+		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
+		_varStack.pushInt(1);
+		return;
+	}
+
 	_vm->_game->totSub(flags, totFile);
 }
 
@@ -608,7 +617,7 @@ void Inter_v2::o2_pushVars() {
 			if (_vm->_game->_script->evalExpr(&value) != 20)
 				value = 0;
 
-			_varStack.pushInt((uint16)value);
+			_varStack.pushInt((uint32)value);
 		}
 	}
 }
@@ -616,7 +625,7 @@ void Inter_v2::o2_pushVars() {
 void Inter_v2::o2_popVars() {
 	uint8 count = _vm->_game->_script->readByte();
 	for (int i = 0; i < count; i++) {
-		int16 varOff = _vm->_game->_script->readVarIndex();
+		uint16 varOff = _vm->_game->_script->readVarIndex();
 
 		_varStack.pop(*_variables, varOff);
 	}
@@ -977,11 +986,11 @@ void Inter_v2::o2_playImd() {
 void Inter_v2::o2_getImdInfo() {
 	Common::String imd = _vm->_game->_script->evalString();
 
-	int16 varX      = _vm->_game->_script->readVarIndex();
-	int16 varY      = _vm->_game->_script->readVarIndex();
-	int16 varFrames = _vm->_game->_script->readVarIndex();
-	int16 varWidth  = _vm->_game->_script->readVarIndex();
-	int16 varHeight = _vm->_game->_script->readVarIndex();
+	uint16 varX      = _vm->_game->_script->readVarIndex();
+	uint16 varY      = _vm->_game->_script->readVarIndex();
+	uint16 varFrames = _vm->_game->_script->readVarIndex();
+	uint16 varWidth  = _vm->_game->_script->readVarIndex();
+	uint16 varHeight = _vm->_game->_script->readVarIndex();
 
 	// WORKAROUND: The nut rolling animation in the administration center
 	// in Woodruff is called "noixroul", but the scripts think it's "noixroule".
@@ -1565,7 +1574,7 @@ void Inter_v2::o2_loadInfogramesIns(OpGobParams &params) {
 	varName = _vm->_game->_script->readInt16();
 
 	Common::strlcpy(fileName, GET_VAR_STR(varName), 16);
-	strcat(fileName, ".INS");
+	Common::strcat_s(fileName, ".INS");
 
 	_vm->_sound->infogramesLoadInstruments(fileName);
 }
@@ -1577,10 +1586,20 @@ void Inter_v2::o2_playInfogrames(OpGobParams &params) {
 	varName = _vm->_game->_script->readInt16();
 
 	Common::strlcpy(fileName, GET_VAR_STR(varName), 16);
-	strcat(fileName, ".DUM");
+	Common::strcat_s(fileName, ".DUM");
 
 	_vm->_sound->infogramesLoadSong(fileName);
 	_vm->_sound->infogramesPlay();
+}
+
+void Inter_v2::o2_gob0x0B(OpGobParams &params) {
+	_vm->_game->_script->skip(4);
+	warning("STUB: Adibou1 o2_gob0x0B");
+}
+
+void Inter_v2::o2_gob1001(OpGobParams &params) {
+	_vm->_game->_script->skip(2);
+	warning("STUB: Adibou1 o2_gob1001");
 }
 
 void Inter_v2::o2_startInfogrames(OpGobParams &params) {
@@ -1662,9 +1681,9 @@ int16 Inter_v2::loadSound(int16 search) {
 		Common::strlcpy(sndfile, _vm->_game->_script->readString(9), 10);
 
 		if (type == SOUND_ADL)
-			strcat(sndfile, ".ADL");
+			Common::strcat_s(sndfile, ".ADL");
 		else
-			strcat(sndfile, ".SND");
+			Common::strcat_s(sndfile, ".SND");
 
 		int32 dataSize;
 		byte *dataPtr = _vm->_dataIO->getFile(sndfile, dataSize);

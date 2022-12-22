@@ -37,7 +37,7 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/macresman.h"
-#include "common/stuffit.h"
+#include "common/compression/stuffit.h"
 #include "common/textconsole.h"
 
 #include "backends/audiocd/audiocd.h"

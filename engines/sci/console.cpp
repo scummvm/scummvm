@@ -600,7 +600,7 @@ bool Console::cmdSelectors(int argc, const char **argv) {
 	uint seeker = 0;
 	while (seeker < totalSize) {
 		selName = "\"" + _engine->getKernel()->getSelectorName(seeker) + "\"";
-		sprintf(buf, "%15s, ", selName.c_str());
+		Common::sprintf_s(buf, "%15s, ", selName.c_str());
 		outFile->writeString(buf);
 
 		if (!((seeker + 1) % 5) && seeker)
@@ -793,7 +793,7 @@ void Console::cmdDiskDumpWorker(ResourceType resourceType, int resourceNumber, u
 	case kResourceTypeSync36: {
 		resourceId = ResourceId(resourceType, resourceNumber, resourceTuple);
 		resource = _engine->getResMan()->findResource(resourceId, 0);
-		sprintf(outFileName, "%s", resourceId.toPatchNameBase36().c_str());
+		Common::sprintf_s(outFileName, "%s", resourceId.toPatchNameBase36().c_str());
 		// patch filename is: [type:1 char] [map:3 chars] [noun:2 chars] [verb:2 chars] "." [cond: 2 chars] [seq:1 char]
 		//  e.g. "@5EG0000.014"
 		break;
@@ -801,7 +801,7 @@ void Console::cmdDiskDumpWorker(ResourceType resourceType, int resourceNumber, u
 	default:
 		resourceId = ResourceId(resourceType, resourceNumber);
 		resource = _engine->getResMan()->findResource(resourceId, 0);
-		sprintf(outFileName, "%s.%03d", resourceTypeName, resourceNumber);
+		Common::sprintf_s(outFileName, "%s.%03d", resourceTypeName, resourceNumber);
 		// patch filename is: [resourcetype].[resourcenumber]
 		//  e.g. "Script.0"
 		break;
@@ -2995,10 +2995,18 @@ bool Console::cmdStack(int argc, const char **argv) {
 	int nr = atoi(argv[1]);
 
 	for (int i = nr; i > 0; i--) {
-		if ((xs.sp - xs.fp - i) == 0)
+		bool isArgc = (xs.sp - xs.variables_argp - i == 0);
+		if (isArgc)
+			debugPrintf("-- parameters --\n");
+		if (xs.tempCount && ((xs.sp - xs.fp - i) == 0))
 			debugPrintf("-- temp variables --\n");
+		if (xs.sp - xs.fp - xs.tempCount - i == 0)
+			debugPrintf("-- local stack --\n");
 		if (xs.sp - i >= _engine->_gamestate->stack_base)
-			debugPrintf("ST:%04x = %04x:%04x\n", (unsigned)(xs.sp - i - _engine->_gamestate->stack_base), PRINT_REG(xs.sp[-i]));
+			debugPrintf("ST:%04x = %04x:%04x%s\n",
+				(unsigned)(xs.sp - i - _engine->_gamestate->stack_base),
+				PRINT_REG(xs.sp[-i]),
+				(isArgc ? "  argc" : ""));
 	}
 
 	return true;

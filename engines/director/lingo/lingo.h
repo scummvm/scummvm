@@ -168,7 +168,7 @@ struct Datum {	/* interpreter stack type */
 	double asFloat() const;
 	int asInt() const;
 	Common::String asString(bool printonly = false) const;
-	CastMemberID asMemberID() const;
+	CastMemberID asMemberID(CastType castType = kCastTypeAny) const;
 	Common::Point asPoint() const;
 
 	bool isRef() const;
@@ -241,12 +241,12 @@ struct CFrame {	/* proc/func call stack frame */
 	int				retPC;				/* where to resume after return */
 	ScriptData		*retScript;			/* which script to resume after return */
 	ScriptContext	*retContext;		/* which script context to use after return */
-	bool			retFreezeContext;	/* whether the context should be frozen after return */
 	DatumHash		*retLocalVars;
 	Datum			retMe;				/* which me obj to use after return */
 	uint			stackSizeBefore;
 	bool			allowRetVal;		/* whether to allow a return value */
 	Datum			defaultRetVal;		/* default return value */
+	int				paramCount;			/* original number of arguments submitted */
 };
 
 struct LingoEvent {
@@ -289,6 +289,22 @@ struct LingoArchive {
 	void replaceCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName = nullptr);
 	void addCodeV4(Common::SeekableReadStreamEndian &stream, uint16 lctxIndex, const Common::String &archName, uint16 version);
 	void addNamesV4(Common::SeekableReadStreamEndian &stream);
+};
+
+struct LingoState {
+	// Execution state for a Lingo process, created every time
+	// a top-level handler is called (e.g. on mouseDown).
+	// Can be swapped out when another script gets called with priority.
+	// Call frames are pushed and popped from the callstack with
+	// pushContext and popContext.
+	Common::Array<CFrame *> callstack;		// call stack
+	uint pc = 0;							// current program counter
+	ScriptData *script = nullptr;			// current Lingo script
+	ScriptContext *context = nullptr;		// current Lingo script context
+	DatumHash *localVars = nullptr;			// current local variables
+	Datum me;								// current me object
+
+	~LingoState();
 };
 
 class Lingo {
@@ -348,17 +364,16 @@ public:
 
 public:
 	void execute();
-	void loadStateFromWindow();
-	void saveStateToWindow();
-	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal);
+	void switchStateFromWindow();
+	void freezeState();
+	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal, int paramCount);
 	void popContext(bool aborting = false);
-	bool hasFrozenContext();
 	void cleanLocalVars();
 	void varAssign(const Datum &var, const Datum &value);
 	Datum varFetch(const Datum &var, bool silent = false);
 	Common::U32String evalChunkRef(const Datum &var);
 	Datum findVarV4(int varType, const Datum &id);
-	CastMemberID resolveCastMember(const Datum &memberID, const Datum &castLib);
+	CastMemberID resolveCastMember(const Datum &memberID, const Datum &castLib, CastType type);
 	void exposeXObject(const char *name, Datum obj);
 
 	int getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly);
@@ -366,14 +381,14 @@ public:
 	Common::String formatAllVars();
 	void printAllVars();
 
-	inst readInst() { return getInst(_pc++); }
-	inst getInst(uint pc) { return (*_currentScript)[pc]; }
-	int readInt() { return getInt(_pc++); }
+	inst readInst() { return getInst(_state->pc++); }
+	inst getInst(uint pc) { return (*_state->script)[pc]; }
+	int readInt() { return getInt(_state->pc++); }
 	int getInt(uint pc);
-	double readFloat() { double d = getFloat(_pc); _pc += calcCodeAlignment(sizeof(double)); return d; }
-	double getFloat(uint pc) { return *(double *)(&((*_currentScript)[pc])); }
-	char *readString() { char *s = getString(_pc); _pc += calcStringAlignment(s); return s; }
-	char *getString(uint pc) { return (char *)(&((*_currentScript)[pc])); }
+	double readFloat() { double d = getFloat(_state->pc); _state->pc += calcCodeAlignment(sizeof(double)); return d; }
+	double getFloat(uint pc) { return *(double *)(&((*_state->script)[_state->pc])); }
+	char *readString() { char *s = getString(_state->pc); _state->pc += calcStringAlignment(s); return s; }
+	char *getString(uint pc) { return (char *)(&((*_state->script)[_state->pc])); }
 
 	void pushVoid();
 
@@ -436,13 +451,11 @@ private:
 
 public:
 	LingoCompiler *_compiler;
+	LingoState *_state;
 
 	int _currentChannelId;
-	ScriptContext *_currentScriptContext;
-	ScriptData *_currentScript;
-	Datum _currentMe;
 
-	bool _freezeContext;
+	bool _freezeState;
 	bool _abort;
 	bool _expectError;
 	bool _caughtError;
@@ -474,7 +487,6 @@ public:
 	Common::HashMap<Common::String, Audio::AudioStream *> _audioAliases;
 
 	DatumHash _globalvars;
-	DatumHash *_localvars;
 
 	FuncHash _functions;
 
@@ -482,7 +494,6 @@ public:
 	Common::HashMap<int, LingoV4TheEntity *> _lingoV4TheEntity;
 
 	uint _globalCounter;
-	uint _pc;
 
 	StackData _stack;
 

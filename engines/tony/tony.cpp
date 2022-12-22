@@ -25,7 +25,7 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
-#include "common/installshield_cab.h"
+#include "common/compression/installshield_cab.h"
 #include "common/translation.h"
 #include "tony/tony.h"
 #include "tony/custom.h"

@@ -553,7 +553,7 @@ void Lua_V2::LocalizeString() {
 	if (lua_isstring(strObj)) {
 		const char *str = lua_getstring(strObj);
 		Common::String msg = parseMsgText(str, msgId);
-		sprintf(buf, "/%s/%s", msgId, msg.c_str());
+		Common::sprintf_s(buf, "/%s/%s", msgId, msg.c_str());
 
 		lua_pushstring(buf);
 	}

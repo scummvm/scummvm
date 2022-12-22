@@ -652,7 +652,7 @@ uint32 res_man::Check_file_size(const char *url, uint32 url_hash, const char *cl
 uint8 *res_man::Internal_open(RMParams *params, int32 *ret_len) {
 	// Loads if not in memory here already
 
-	// resoures cannot be locked in memory
+	// resources cannot be locked in memory
 
 	// if space cannot be found then ALL the resources loaded during a previous time-frame will be removed
 	// as graphic resources are to be loaded en-mass when scenes begin the trash process should make a sizeable single block

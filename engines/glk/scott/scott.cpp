@@ -375,7 +375,7 @@ const char *Scott::mapSynonym(int noun) {
 		if (*tp == '*')
 			tp++;
 		else
-			strcpy(lastword, tp);
+			Common::strcpy_s(lastword, tp);
 		if (n == noun)
 			return lastword;
 		n++;

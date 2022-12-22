@@ -1730,8 +1730,7 @@ void LoLEngine::generateBrightnessPalette(const Palette &src, Palette &dst, int 
 		modifier >>= 1;
 		if (modifier)
 			modifier--;
-		if (modifier > 3)
-			modifier = 3;
+
 		_blockBrightness = modifier << 4;
 		_sceneUpdateRequired = true;
 
@@ -3295,7 +3294,7 @@ void LoLEngine::playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFra
 			fin = true;
 	}
 
-	if (restoreScreen && (mov || callback)) {
+	if (restoreScreen && mov) {
 		_screen->copyPage(12, 2);
 		_screen->copyRegion(x, y, x, y, w2, h2, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
@@ -3572,14 +3571,7 @@ int LoLEngine::calcInflictableDamagePerItem(int16 attacker, int16 target, uint16
 	if (hitType == 2 || !dmg)
 		return (dmg == 1) ? 2 : dmg;
 
-
-	int p = (calculateProtection(target) << 7) / dmg;
-	if (p > 217)
-		p = 217;
-
-	d = 256 - p;
-	r = (dmg * ABS(d)) >> 8;
-	dmg = d < 0 ? -r : r;
+	dmg = (dmg * (256 - MIN<int>((calculateProtection(target) << 7) / dmg, 217))) >> 8;
 
 	return (dmg < 2) ? 2 : dmg;
 }

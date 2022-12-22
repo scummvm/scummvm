@@ -476,7 +476,7 @@ int decrunchC64(uint8_t **sf, size_t *extent, C64Rec record) {
 
 	if (record._switches != nullptr) {
 		char string[100];
-		strcpy(string, record._switches);
+		Common::strcpy_s(string, record._switches);
 		switches[numSwitches] = strtok(string, " ");
 
 		while (switches[numSwitches] != nullptr)

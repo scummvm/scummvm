@@ -57,12 +57,12 @@ public:
 
 	//! Remove an item from the container. This does NOT update item.
 	//! \param item The item to remove
-	//! \return true if succesful, false if item wasn't in container
+	//! \return true if successful, false if item wasn't in container
 	virtual bool removeItem(Item *item);
 
 	//! Move an item to the end of the contents list
 	//! \param item The item to move
-	//! \return true if succesful, false if item isn't in this container
+	//! \return true if successful, false if item isn't in this container
 	virtual bool moveItemToEnd(Item *item);
 
 	//! Remove all contents, moving them to this container's

@@ -63,6 +63,20 @@ static const ADGameDescription gameDescriptions[] = {
 		0,
 		{
 			{"hadesch.exe", 0, "660735787346ab1bfe0d219bea441486", 1007616},
+			{"WD.POD", 0, "be7030fc4229e69e719ee2c756eb6ba1", 7479768},
+			{"ol.pod", 0, "7cabba8d1d4f1239e312e045ef4e9735", 5621074},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"hadesch",
+		0,
+		{
+			{"hadesch.exe", 0, "660735787346ab1bfe0d219bea441486", 1007616},
 			{"WD.POD", 0, "5098edae755135814bb86f2676c41cc2", 8691909},
 			{"ol.pod", 0, "c82e105d9013edc2cc20f0a630e304d5", 5684953},
 			AD_LISTEND

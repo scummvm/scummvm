@@ -22,6 +22,8 @@
 #include "scumm/players/player_v2.h"
 #include "scumm/scumm.h"
 
+#define FREQ_HZ 236 // Don't change!
+
 namespace Scumm {
 
 #define SPK_DECAY   0xa000              /* Depends on sample rate */
@@ -33,9 +35,14 @@ namespace Scumm {
 
 
 Player_V2::Player_V2(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr)
-	: Player_V2Base(scumm, mixer, pcjr) {
+	: Player_V2Base(scumm, pcjr),
+	  _mixer(mixer),
+	  _sampleRate(_mixer->getOutputRate()) {
 
 	int i;
+
+	_next_tick = 0;
+	_tick_len = (_sampleRate << FIXP_SHIFT) / FREQ_HZ;
 
 	// Initialize square generator
 	_level = 0;

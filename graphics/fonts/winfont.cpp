@@ -23,8 +23,8 @@
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
-#include "common/winexe_ne.h"
-#include "common/winexe_pe.h"
+#include "common/formats/winexe_ne.h"
+#include "common/formats/winexe_pe.h"
 #include "graphics/surface.h"
 #include "graphics/fonts/winfont.h"
 
@@ -68,7 +68,7 @@ static WinFontDirEntry readDirEntry(Common::SeekableReadStream &stream) {
 
 	stream.skip(68); // Useless
 	entry.points = stream.readUint16LE();
-	stream.skip(38); // Useless (for now, maybe not in the future)
+	stream.skip(43); // Useless (for now, maybe not in the future)
 	readString(stream); // Skip Device Name
 	entry.faceName = readString(stream);
 

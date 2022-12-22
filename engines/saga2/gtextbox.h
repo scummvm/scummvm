@@ -29,29 +29,29 @@
 namespace Saga2 {
 
 enum textBoxFlags {
-	//  First 4 flags are the text_positions flags for label placement
-	textBoxAlignRight   = (1 << 4),
-	textBoxAlignCenter  = (1 << 5),
-	textBoxNoFilter     = (1 << 6),     // let non-edit keys come through
-	textBoxStayActive   = (1 << 7),
-	textBoxNoBevel      = (1 << 8)
+	//  First 4 flags are the TextPositions flags for label placement
+	kTextBoxAlignRight   = (1 << 4),
+	kTextBoxAlignCenter  = (1 << 5),
+	kTextBoxNoFilter     = (1 << 6),     // let non-edit keys come through
+	kTextBoxStayActive   = (1 << 7),
+	kTextBoxNoBevel      = (1 << 8)
 };
 
 // edit box defines
-const   int editLen         = 35;
-const   int numEditLines    = 50;
-const   int textPen         = 12;
-const   int textDisable     = 14;
-const   int textHilite      = 11;
-const   int textBackground  = 87;
-const   int textBackHilite  = 211;
-const   int cursorColor     = 174;
-const   int textHeight      = 10;
+const   int kEditLen         = 35;
+const   int kNumEditLines    = 50;
+const   int kTextPen         = 12;
+const   int kTextDisable     = 14;
+const   int kTextHilite      = 11;
+const   int kTextBackground  = 87;
+const   int kTextBackHilite  = 211;
+const   int kCursorColor     = 174;
+const   int kTextHeight      = 10;
 
-const int32 blinkTime   = 72 / 6;
-const int16 blinkColor0 = 137;
-const int16 blinkColor1 = 232;
-const int16 blinkWide   = 1;
+const int32 kBlinkTime   = 72 / 6;
+const int16 kBlinkColor0 = 137;
+const int16 kBlinkColor1 = 232;
+const int16 kBlinkWide   = 1;
 
 extern StaticRect editBaseRect;
 
@@ -64,55 +64,55 @@ extern StaticRect editBaseRect;
 class gTextBox : public gControl {
 private:
 
-	char    **fieldStrings;
-	char    *undoBuffer;                // undo buffer for editing
-	bool    internalBuffer;
+	char    **_fieldStrings;
+	char    *_undoBuffer;                // undo buffer for editing
+	bool    _internalBuffer;
 
 	// editor values
-	uint16  maxLen,
-	        currentLen[numEditLines],
-	        exists[numEditLines],
-	        undoLen,
-	        cursorPos,
-	        anchorPos,
-	        scrollPixels;
-	uint16  flags;
+	uint16  _maxLen,
+	        _currentLen[kNumEditLines],
+	        _exists[kNumEditLines],
+	        _undoLen,
+	        _cursorPos,
+	        _anchorPos,
+	        _scrollPixels;
+	uint16  _flags;
 
 	// text display values
-	int8    fontOffset;
-	int8    linesPerPage;
-	int8    index;
-	int8    endLine;
-	int8    oldMark;
+	int8    _fontOffset;
+	int8    _linesPerPage;
+	int8    _index;
+	int8    _endLine;
+	int8    _oldMark;
 
 	// font settings
-	gFont   *textFont;
-	gFont   *oldFont;
-	int8    fontHeight;
-	int8    fontColorFore;
-	int8    fontColorBack;
-	int8    fontColorHilite;
-	byte    fontColorBackHilite;
-	byte    cursorColor;
-	int32   blinkStart;
-	int16   blinkX;
-	int8    blinkState;
+	gFont   *_textFont;
+	gFont   *_oldFont;
+	int8    _fontHeight;
+	int8    _fontColorFore;
+	int8    _fontColorBack;
+	int8    _fontColorHilite;
+	byte    _fontColorBackHilite;
+	byte    _cursorColor;
+	int32   _blinkStart;
+	int16   _blinkX;
+	int8    _blinkState;
 
 
 	// editing switch values
-	bool    displayOnly;
-	bool    editing;
-	Rect16  editRect;
-	bool    hilit;
-	bool    noUndo;
-	bool    fullRedraw;
-	bool    inDrag;
-	bool    isActiveCtl;
+	bool    _displayOnly;
+	bool    _editing;
+	Rect16  _editRect;
+	bool    _hilit;
+	bool    _noUndo;
+	bool    _fullRedraw;
+	bool    _inDrag;
+	bool    _isActiveCtl;
 
-	AppFunc         *onEnter;
-	AppFunc         *onEscape;
+	AppFunc         *_onEnter;
+	AppFunc         *_onEscape;
 
-	gPanelList  *parent;            // window
+	gPanelList  *_parent;            // window
 
 protected:
 
@@ -197,7 +197,7 @@ public:
 
 	char *getLine(int8);
 	int8 getIndex() {
-		return index;
+		return _index;
 	}
 
 	void killChanges() {

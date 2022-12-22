@@ -27,6 +27,7 @@
 
 #include "cge/fileio.h"
 #include "cge/cge.h"
+#include "cge/detection.h"
 
 static const DebugChannelDef debugFlagList[] = {
 	{CGE::kCGEDebugBitmap, "bitmap", "CGE Bitmap debug channel"},
@@ -37,11 +38,8 @@ static const DebugChannelDef debugFlagList[] = {
 
 namespace CGE {
 
-#define GAMEOPTION_COLOR_BLIND_DEFAULT_OFF  GUIO_GAMEOPTIONS1
-#define GAMEOPTION_TTS  					GUIO_GAMEOPTIONS2
-
 static const PlainGameDescriptor CGEGames[] = {
-	{ "soltys", "Soltys" },
+	{ "soltys", "So\305\202tys" },
 	{ nullptr, nullptr }
 };
 
@@ -106,39 +104,9 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_COLOR_BLIND_DEFAULT_OFF,
-		{
-			_s("Color Blind Mode"),
-			_s("Enable Color Blind Mode by default"),
-			"enable_color_blind",
-			false,
-			0,
-			0
-		}
-	},
-
-#ifdef USE_TTS
-	{
-		GAMEOPTION_TTS,
-		{
-			_s("Enable Text to Speech"),
-			_s("Use TTS to read text in the game (if TTS is available)"),
-			"tts_enabled",
-			false,
-			0,
-			0
-		}
-	},
-#endif
-
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
 class CGEMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	CGEMetaEngineDetection() : AdvancedMetaEngineDetection(CGE::gameDescriptions, sizeof(ADGameDescription), CGEGames, optionsList) {
+	CGEMetaEngineDetection() : AdvancedMetaEngineDetection(CGE::gameDescriptions, sizeof(ADGameDescription), CGEGames) {
 	}
 
 	const char *getName() const override {
@@ -150,7 +118,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Soltys (C) 1994-1996 L.K. Avalon";
+		return "So\305\202tys (C) 1994-1996 L.K. Avalon";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {

@@ -162,6 +162,18 @@ bool MacCursor::readFromCRSR(Common::SeekableReadStream &stream, bool forceMonoc
 		_palette[c * 3 + 2] = stream.readUint16BE() >> 8;
 	}
 
+	// Find black so that Macintosh black (255) can be remapped.
+	// This is necessary because we use 255 for the color key.
+	byte black = 0;
+	for (byte c = 0; c < 255; c++) {
+		if (_palette[c * 3 + 0] == 0 &&
+			_palette[c * 3 + 1] == 0 &&
+			_palette[c * 3 + 2] == 0) {
+			black = c;
+			break;
+		}
+	}
+
 	int pixelsPerByte = (iconBounds[2] - iconBounds[0]) / iconRowBytes;
 	int bpp           = 8 / pixelsPerByte;
 
@@ -177,8 +189,13 @@ bool MacCursor::readFromCRSR(Common::SeekableReadStream &stream, bool forceMonoc
 		for (int b = 0; b < pixelsPerByte; b++) {
 			int idx = j * pixelsPerByte + (pixelsPerByte - 1 - b);
 
-			if (_surface[idx] != 0xff) // if mask is not there
+			if (_surface[idx] != 0xff) { // if mask is not there
 				_surface[idx] = (byte)((iconData[j] >> (b * bpp)) & bitmask);
+				// Remap Macintosh black
+				if (_surface[idx] == 255) {
+					_surface[idx] = black;
+				}
+			}
 		}
 	}
 

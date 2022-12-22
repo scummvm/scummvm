@@ -26,25 +26,30 @@
 
 #define OPENGL_DEBUG
 
-#ifdef OPENGL_DEBUG
-
 namespace OpenGL {
 void clearGLError();
-void checkGLError(const char *expr, const char *file, int line);
+bool checkGLError(const char *expr, const char *file, int line);
 } // End of namespace OpenGL
 
+#define GL_WRAP_CHECK(err, call, name) do { OpenGL::clearGLError(); (call); err = OpenGL::checkGLError(#name, __FILE__, __LINE__); } while (false)
+#ifdef OPENGL_DEBUG
 #define GL_WRAP_DEBUG(call, name) do { OpenGL::clearGLError(); (call); OpenGL::checkGLError(#name, __FILE__, __LINE__); } while (false)
 #else
 #define GL_WRAP_DEBUG(call, name) do { (call); } while (false)
 #endif
 
+// This macro will set boolean err to true if there was an error and display them in the console
+#define GL_CALL_CHECK(err, x)      GL_WRAP_CHECK(err, x, x)
+// This macro will check for errors and display them in the console only when OPENGL_DEBUG is enabled
 #define GL_CALL(x)                 GL_WRAP_DEBUG(x, x)
+// This macro will execute the call only when the context is valid and will check errors only when OPENGL_DEBUG is enabled
 #define GL_CALL_SAFE(func, params) \
 	do { \
 		if (OpenGLContext.type != kContextNone) { \
 			GL_CALL(func params); \
 		} \
 	} while (0)
+// This macro will assign result of x to var and check for errors when OPENGL_DEBUG is enabled
 #define GL_ASSIGN(var, x)          GL_WRAP_DEBUG(var = x, x)
 
 #endif

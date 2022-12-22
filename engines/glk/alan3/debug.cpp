@@ -62,7 +62,7 @@ static void showAttributes(AttributeEntry *attrib) {
 
 	i = 1;
 	for (at = attrib; !isEndOfArray(at); at++) {
-		sprintf(str, "$i$t%s[%d] = %d", (char *) pointerTo(at->id), at->code, (int)at->value);
+		Common::sprintf_s(str, "$i$t%s[%d] = %d", (char *) pointerTo(at->id), at->code, (int)at->value);
 
 		output(str);
 		i++;
@@ -83,7 +83,7 @@ static void showContents(CONTEXT, int cnt) {
 				found = TRUE;
 			output("$i$t");
 			say(context, i);
-			sprintf(str, "[%d] ", i);
+			Common::sprintf_s(str, "[%d] ", i);
 			output(str);
 		}
 	}
@@ -104,7 +104,7 @@ static char *idOfInstance(CONTEXT, int instance) {
 static void sayInstanceNumberAndName(CONTEXT, int ins) {
 	char buf[1000];
 
-	sprintf(buf, "[%d] %s (\"$$", ins, idOfInstance(context, ins));
+	Common::sprintf_s(buf, "[%d] %s (\"$$", ins, idOfInstance(context, ins));
 	output(buf);
 	say(context, ins);
 	output("$$\")");
@@ -167,7 +167,7 @@ static void showInstance(CONTEXT, int ins) {
 	char str[80];
 
 	if (ins > (int)header->instanceMax || ins < 1) {
-		sprintf(str, "Instance index %d is out of range.", ins);
+		Common::sprintf_s(str, "Instance index %d is out of range.", ins);
 		output(str);
 		return;
 	}
@@ -175,12 +175,12 @@ static void showInstance(CONTEXT, int ins) {
 	output("The");
 	CALL1(sayInstanceNumberAndName, ins)
 	if (instances[ins].parent) {
-		sprintf(str, "Isa %s[%d]", idOfClass(instances[ins].parent), instances[ins].parent);
+		Common::sprintf_s(str, "Isa %s[%d]", idOfClass(instances[ins].parent), instances[ins].parent);
 		output(str);
 	}
 
 	if (!isA(ins, header->locationClassId) || (isA(ins, header->locationClassId) && admin[ins].location != 0)) {
-		sprintf(str, "$iLocation:");
+		Common::sprintf_s(str, "$iLocation:");
 		output(str);
 		needSpace = TRUE;
 		CALL2(sayLocationOfInstance, ins, "")
@@ -196,7 +196,7 @@ static void showInstance(CONTEXT, int ins) {
 		if (admin[ins].script == 0)
 			output("$iIs idle");
 		else {
-			sprintf(str, "$iExecuting script: %d, Step: %d", admin[ins].script, admin[ins].step);
+			Common::sprintf_s(str, "$iExecuting script: %d, Step: %d", admin[ins].script, admin[ins].step);
 			output(str);
 		}
 	}
@@ -220,7 +220,7 @@ static void showObject(CONTEXT, int obj) {
 
 
 	if (!isAObject(obj)) {
-		sprintf(str, "Instance %d is not an object", obj);
+		Common::sprintf_s(str, "Instance %d is not an object", obj);
 		output(str);
 		return;
 	}
@@ -258,7 +258,7 @@ static void showClassInheritance(int c) {
 	if (classes[c].parent != 0) {
 		output(", Isa");
 		printClassName(classes[c].parent);
-		sprintf(str, "[%d]", classes[c].parent);
+		Common::sprintf_s(str, "[%d]", classes[c].parent);
 		output(str);
 	}
 }
@@ -269,14 +269,14 @@ static void showClass(int cla) {
 	char str[80];
 
 	if (cla < 1) {
-		sprintf(str, "Class index %d is out of range.", cla);
+		Common::sprintf_s(str, "Class index %d is out of range.", cla);
 		output(str);
 		return;
 	}
 
 	output("$t");
 	printClassName(cla);
-	sprintf(str, "[%d]", cla);
+	Common::sprintf_s(str, "[%d]", cla);
 	output(str);
 	showClassInheritance(cla);
 }
@@ -286,7 +286,7 @@ static void showClass(int cla) {
 static void listClass(int c) {
 	char str[80];
 
-	sprintf(str, "%3d: ", c);
+	Common::sprintf_s(str, "%3d: ", c);
 	output(str);
 	printClassName(c);
 	showClassInheritance(c);
@@ -328,14 +328,14 @@ static void showLocation(CONTEXT, int loc) {
 
 
 	if (!isALocation(loc)) {
-		sprintf(str, "Instance %d is not a location.", loc);
+		Common::sprintf_s(str, "Instance %d is not a location.", loc);
 		output(str);
 		return;
 	}
 
 	output("The ");
 	CALL1(say, loc)
-	sprintf(str, "(%d) Isa location :", loc);
+	Common::sprintf_s(str, "(%d) Isa location :", loc);
 	output(str);
 
 	output("$iAttributes =");
@@ -359,7 +359,7 @@ static void showActor(CONTEXT, int act) {
 	char str[80];
 
 	if (!isAActor(act)) {
-		sprintf(str, "Instance %d is not an actor.", act);
+		Common::sprintf_s(str, "Instance %d is not an actor.", act);
 		output(str);
 		return;
 	}
@@ -377,7 +377,7 @@ static void showEvents(CONTEXT) {
 
 	output("Events:");
 	for (event = 1; event <= header->eventMax; event++) {
-		sprintf(str, "$i%d [%s]:", event, (char *)pointerTo(events[event].id));
+		Common::sprintf_s(str, "$i%d [%s]:", event, (char *)pointerTo(events[event].id));
 
 		output(str);
 		scheduled = FALSE;
@@ -385,7 +385,7 @@ static void showEvents(CONTEXT) {
 			if ((scheduled = (eventQueue[i].event == (int)event)))
 				break;
 		if (scheduled) {
-			sprintf(str, "Scheduled for +%d, at ", eventQueue[i].after);
+			Common::sprintf_s(str, "Scheduled for +%d, at ", eventQueue[i].after);
 			output(str);
 			CALL1(say, eventQueue[i].where)
 		} else
@@ -541,7 +541,7 @@ static void setBreakpoint(int file, int line) {
 				printf("Line %d not available\n", line);
 			} else {
 				if (entry[lineIndex].line != line)
-					sprintf(leadingText, "Line %d not available, breakpoint instead", line);
+					Common::sprintf_s(leadingText, "Line %d not available, breakpoint instead", line);
 				breakpoint[i].file = entry[lineIndex].file;
 				breakpoint[i].line = entry[lineIndex].line;
 				printf("%s set at %s:%d\n", leadingText, sourceFileName(entry[lineIndex].file), entry[lineIndex].line);
@@ -698,7 +698,7 @@ static void handleHelpCommand() {
 	output("$nADBG Commands (can be abbreviated):");
 	for (entry = commandEntries; entry->command != nullptr; entry++) {
 		char buf[200];
-		sprintf(buf, "$i%s %s %s$n$t$t-- %s", entry->command, entry->parameter, padding(entry, maxLength), entry->helpText);
+		Common::sprintf_s(buf, "$i%s %s %s$n$t$t-- %s", entry->command, entry->parameter, padding(entry, maxLength), entry->helpText);
 		output(buf);
 	}
 }

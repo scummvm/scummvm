@@ -860,6 +860,19 @@ Common::U32String ListWidget::stripGUIformatting(const Common::U32String &str) {
 	return stripped;
 }
 
+Common::U32String ListWidget::escapeString(const Common::U32String &str) {
+	Common::U32String escaped;
+	const uint32 *s = str.u32_str();
+
+	while (*s) {
+		if (*s == '\001')
+			escaped += '\001';
+		escaped += *s++;
+	}
+
+	return escaped;
+}
+
 void ListWidget::drawFormattedText(const Common::Rect &r, const Common::U32String &str, ThemeEngine::WidgetStateInfo state,
 				Graphics::TextAlign align, ThemeEngine::TextInversionState inverted, int deltax, bool useEllipsis,
 				ThemeEngine::FontColor color) {

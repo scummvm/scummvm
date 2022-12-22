@@ -260,12 +260,12 @@ void Parser::charHandler() {
 	if (gameStatus._recallFl) {
 		// Copy previous line to current cmdline
 		gameStatus._recallFl = false;
-		strcpy(_cmdLine, _vm->_line);
+		Common::strcpy_s(_cmdLine, _vm->_line);
 		_cmdLineIndex = strlen(_cmdLine);
 	}
 
-	sprintf(_vm->_statusLine, ">%s%c", _cmdLine, _cmdLineCursor);
-	sprintf(_vm->_scoreLine, "F1-Help  %s  Score: %d of %d Sound %s", (_vm->_config._turboFl) ? "T" : " ", _vm->getScore(), _vm->getMaxScore(), (_vm->_config._soundFl) ? "On" : "Off");
+	Common::sprintf_s(_vm->_statusLine, ">%s%c", _cmdLine, _cmdLineCursor);
+	Common::sprintf_s(_vm->_scoreLine, "F1-Help  %s  Score: %d of %d Sound %s", (_vm->_config._turboFl) ? "T" : " ", _vm->getScore(), _vm->getMaxScore(), (_vm->_config._soundFl) ? "On" : "Off");
 
 	// See if "look" button pressed
 	if (gameStatus._lookFl) {
@@ -393,7 +393,7 @@ void Parser::command(const char *format, ...) {
 
 	va_list marker;
 	va_start(marker, format);
-	vsprintf(_vm->_line, format, marker);
+	Common::vsprintf_s(_vm->_line, format, marker);
 	va_end(marker);
 
 	lineHandler();

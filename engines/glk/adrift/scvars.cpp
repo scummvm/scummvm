@@ -305,12 +305,13 @@ void var_put(sc_var_setref_t vars, const sc_char *name, sc_int type, sc_vartype_
 		var->value.integer = vt_value.integer;
 		break;
 
-	case VAR_STRING:
+	case VAR_STRING: {
+		size_t ln = strlen(vt_value.string) + 1;
 		/* Use mutable string instead of const string. */
-		var->value.mutable_string = (sc_char *)sc_realloc(var->value.mutable_string,
-		                            strlen(vt_value.string) + 1);
-		strcpy(var->value.mutable_string, vt_value.string);
+		var->value.mutable_string = (sc_char *)sc_realloc(var->value.mutable_string, ln);
+		Common::strcpy_s(var->value.mutable_string, ln, vt_value.string);
 		break;
+	}
 
 	default:
 		sc_fatal("var_put: invalid variable type, %ld\n", var->type);
@@ -350,16 +351,16 @@ static void var_append_temp(sc_var_setref_t vars, const sc_char *string) {
 		/* Create a new temporary area and copy string. */
 		new_sentence = TRUE;
 		noted = 0;
-		vars->temporary = (sc_char *)sc_malloc(strlen(string) + 1);
-		strcpy(vars->temporary, string);
+		size_t ln = strlen(string) + 1;
+		vars->temporary = (sc_char *)sc_malloc(ln);
+		Common::strcpy_s(vars->temporary, ln, string);
 	} else {
 		/* Append string to existing temporary. */
 		new_sentence = (vars->temporary[0] == NUL);
 		noted = strlen(vars->temporary);
-		vars->temporary = (sc_char *)sc_realloc(vars->temporary,
-		                                        strlen(vars->temporary) +
-		                                        strlen(string) + 1);
-		strcat(vars->temporary, string);
+		size_t ln = strlen(vars->temporary) + strlen(string) + 1;
+		vars->temporary = (sc_char *)sc_realloc(vars->temporary, ln);
+		Common::strcat_s(vars->temporary, ln, string);
 	}
 
 	if (new_sentence)
@@ -780,7 +781,7 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
 
 		/* Clear any current temporary for appends. */
 		vars->temporary = (sc_char *)sc_realloc(vars->temporary, 1);
-		strcpy(vars->temporary, "");
+		vars->temporary[0] = '\0';
 
 		/* Write what's in the object into temporary. */
 		var_list_in_object(game, vars->referenced_object);
@@ -835,17 +836,17 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
 			vt_key[2].string = "Prefix";
 			prefix = prop_get_string(bundle, "S<-sis", vt_key);
 
-			vars->temporary = (sc_char *)sc_realloc(vars->temporary, strlen(prefix) + 1);
-			strcpy(vars->temporary, prefix);
+			size_t ln = strlen(prefix) + 1;
+			vars->temporary = (sc_char *)sc_realloc(vars->temporary, ln);
+			Common::strcpy_s(vars->temporary, ln, prefix);
 
 			vt_key[2].string = "Short";
 			objname = prop_get_string(bundle, "S<-sis", vt_key);
 
-			vars->temporary = (sc_char *)sc_realloc(vars->temporary,
-			                                        strlen(vars->temporary)
-			                                        + strlen(objname) + 2);
-			strcat(vars->temporary, " ");
-			strcat(vars->temporary, objname);
+			ln = strlen(vars->temporary) + strlen(objname) + 2;
+			vars->temporary = (sc_char *)sc_realloc(vars->temporary, ln);
+			Common::strcat_s(vars->temporary, ln, " ");
+			Common::strcat_s(vars->temporary, ln, objname);
 
 			return var_return_string(vars->temporary, type, vt_rvalue);
 		} else {
@@ -886,8 +887,9 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
 			sc_error("var_get_system: invalid state for obstate\n");
 			return var_return_string("[Obstate unknown]", type, vt_rvalue);
 		}
-		vars->temporary = (sc_char *)sc_realloc(vars->temporary, strlen(state) + 1);
-		strcpy(vars->temporary, state);
+		size_t ln = strlen(state) + 1;
+		vars->temporary = (sc_char *)sc_realloc(vars->temporary, ln);
+		Common::strcpy_s(vars->temporary, ln, state);
 		sc_free(state);
 
 		/* Return temporary. */
@@ -952,7 +954,7 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
 
 		/* Clear any current temporary for appends. */
 		vars->temporary = (sc_char *)sc_realloc(vars->temporary, 1);
-		strcpy(vars->temporary, "");
+		vars->temporary[0] = '\0';
 
 		/* Write what's on the object into temporary. */
 		var_list_on_object(game, vars->referenced_object);
@@ -977,7 +979,7 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
 
 		/* Clear any current temporary for appends. */
 		vars->temporary = (sc_char *)sc_realloc(vars->temporary, 1);
-		strcpy(vars->temporary, "");
+		vars->temporary[0] = '\0';
 
 		/* Write what's on/in the object into temporary. */
 		var_list_onin_object(game, vars->referenced_object);
@@ -1063,8 +1065,9 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
 			sc_error("var_get_system: invalid state for state_\n");
 			return var_return_string("[State_ unknown]", type, vt_rvalue);
 		}
-		vars->temporary = (sc_char *)sc_realloc(vars->temporary, strlen(state) + 1);
-		strcpy(vars->temporary, state);
+		size_t ln = strlen(state) + 1;
+		vars->temporary = (sc_char *)sc_realloc(vars->temporary, ln);
+		Common::strcpy_s(vars->temporary, ln, state);
 		sc_free(state);
 
 		/* Restore saved referenced object and return. */
@@ -1134,7 +1137,7 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
 				retval = VAR_NUMBERS[number];
 			else {
 				vars->temporary = (sc_char *)sc_realloc(vars->temporary, 32);
-				sprintf(vars->temporary, "%ld", number);
+				Common::sprintf_s(vars->temporary, 32, "%ld", number);
 				retval = vars->temporary;
 			}
 
@@ -1168,7 +1171,7 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
 				retval = VAR_NUMBERS[number];
 			else {
 				vars->temporary = (sc_char *)sc_realloc(vars->temporary, 32);
-				sprintf(vars->temporary, "%ld", number);
+				Common::sprintf_s(vars->temporary, 32, "%ld", number);
 				retval = vars->temporary;
 			}
 
@@ -1202,30 +1205,31 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
 			vt_key[2].string = "Prefix";
 			prefix = prop_get_string(bundle, "S<-sis", vt_key);
 
-			vars->temporary = (sc_char *)sc_realloc(vars->temporary, strlen(prefix) + 5);
-			strcpy(vars->temporary, "");
+			size_t temporary_ln = strlen(prefix) + 5;
+			vars->temporary = (sc_char *)sc_realloc(vars->temporary, temporary_ln);
+			vars->temporary[0] = '\0';
 
 			normalized = prefix;
 			if (sc_compare_word(prefix, "a", 1)) {
-				strcat(vars->temporary, "the");
+				Common::strcat_s(vars->temporary, temporary_ln, "the");
 				normalized = prefix + 1;
 			} else if (sc_compare_word(prefix, "an", 2)) {
-				strcat(vars->temporary, "the");
+				Common::strcat_s(vars->temporary, temporary_ln, "the");
 				normalized = prefix + 2;
 			} else if (sc_compare_word(prefix, "the", 3)) {
-				strcat(vars->temporary, "the");
+				Common::strcat_s(vars->temporary, temporary_ln, "the");
 				normalized = prefix + 3;
 			} else if (sc_compare_word(prefix, "some", 4)) {
-				strcat(vars->temporary, "the");
+				Common::strcat_s(vars->temporary, temporary_ln, "the");
 				normalized = prefix + 4;
 			} else if (sc_strempty(prefix))
-				strcat(vars->temporary, "the ");
+				Common::strcat_s(vars->temporary, temporary_ln, "the ");
 
 			if (!sc_strempty(normalized)) {
-				strcat(vars->temporary, normalized);
-				strcat(vars->temporary, " ");
+				Common::strcat_s(vars->temporary, temporary_ln, normalized);
+				Common::strcat_s(vars->temporary, temporary_ln, " ");
 			} else if (normalized > prefix)
-				strcat(vars->temporary, " ");
+				Common::strcat_s(vars->temporary, temporary_ln, " ");
 
 			vt_key[2].string = "Short";
 			objname = prop_get_string(bundle, "S<-sis", vt_key);
@@ -1238,10 +1242,9 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
 			else if (sc_compare_word(objname, "some", 4))
 				objname += 4;
 
-			vars->temporary = (sc_char *)sc_realloc(vars->temporary,
-			                                        strlen(vars->temporary)
-			                                        + strlen(objname) + 1);
-			strcat(vars->temporary, objname);
+			temporary_ln = strlen(vars->temporary) + strlen(objname) + 1;
+			vars->temporary = (sc_char *)sc_realloc(vars->temporary, temporary_ln);
+			Common::strcat_s(vars->temporary, temporary_ln, objname);
 
 			return var_return_string(vars->temporary, type, vt_rvalue);
 		} else {
@@ -1546,8 +1549,9 @@ void var_set_ref_text(sc_var_setref_t vars, const sc_char *text) {
 	assert(var_is_valid(vars));
 
 	/* Take a copy of the string, and retain it. */
-	vars->referenced_text = (sc_char *)sc_realloc(vars->referenced_text, strlen(text) + 1);
-	strcpy(vars->referenced_text, text);
+	size_t ln = strlen(text) + 1;
+	vars->referenced_text = (sc_char *)sc_realloc(vars->referenced_text, ln);
+	Common::strcpy_s(vars->referenced_text, ln, text);
 }
 
 

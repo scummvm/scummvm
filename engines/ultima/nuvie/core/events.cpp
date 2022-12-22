@@ -1837,7 +1837,7 @@ void Events::alt_code_infostring() {
 	hour = clock->get_hour();
 	minute = clock->get_minute();
 
-	sprintf(buf, "%02d%02d%02d%03X%03X%x", karma, hour, minute, x, y, z);
+	Common::sprintf_s(buf, "%02d%02d%02d%03X%03X%x", karma, hour, minute, x, y, z);
 
 	scroll->display_string(buf);
 	scroll->display_string("\n");

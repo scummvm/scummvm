@@ -117,7 +117,6 @@ private:
 
 	void addToPicSetPicNotValid();
 	void animateShowPic();
-	void throttleSpeed();
 	void adjustInvalidCels(GfxView *view, AnimateList::iterator it);
 	void processViewScaling(GfxView *view, AnimateList::iterator it);
 	void setNsRect(GfxView *view, AnimateList::iterator it);

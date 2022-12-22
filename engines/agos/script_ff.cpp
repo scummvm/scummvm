@@ -598,7 +598,7 @@ void AGOSEngine_Feeble::off_screenTextPObj() {
 
 	if (subObject != NULL && (subObject->objectFlags & kOFText) && _subtitles) {
 		if (subObject->objectFlags & kOFNumber) {
-			sprintf(buf, "%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], string_ptr);
+			Common::sprintf_s(buf, "%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], string_ptr);
 			string_ptr = buf;
 		}
 		if (string_ptr != NULL)

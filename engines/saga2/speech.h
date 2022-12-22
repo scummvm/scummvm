@@ -61,10 +61,10 @@ extern int16        speechButtonCount;      // count of speech buttons
 //  Actor speech enums -- move these to include file
 
 enum {
-	speakContinued  = (1 << 0),         // Append next speech
-	speakNoAnimate  = (1 << 1),         // Don't animate speaking
-	speakWait       = (1 << 2),         // wait until speech finished
-	speakLock       = (1 << 3)          // lock UI while speech in progress
+	kSpeakContinued  = (1 << 0),         // Append next speech
+	kSpeakNoAnimate  = (1 << 1),         // Don't animate speaking
+	kSpeakWait       = (1 << 2),         // wait until speech finished
+	kSpeakLock       = (1 << 3)          // lock UI while speech in progress
 };
 
 class Speech {
@@ -81,22 +81,22 @@ private:
 	    int                 flags
 	);
 
-	int16               sampleCount,        // number of sound samples
-	                    charCount;          // number of characters in buffer
+	int16               _sampleCount,        // number of sound samples
+	                    _charCount;          // number of characters in buffer
 
-	Rect16              bounds;             // bounds of speech.
-	uint16              penColor,           // penColor to draw in
-	                    outlineColor;       // pen color for outline
+	Rect16              _bounds;             // bounds of speech.
+	uint16              _penColor,           // penColor to draw in
+	                    _outlineColor;       // pen color for outline
 
-	ObjectID            objID;              // ID of speaking object
-	ThreadID            thread;             // SAGA thread to wake up when done
+	ObjectID            _objID;              // ID of speaking object
+	ThreadID            _thread;             // SAGA thread to wake up when done
 
-	int16               speechFlags;        // flags from speaking
-	uint32              sampleID[MAX_SAMPLES];// voice sound sample ID
-	char                speechBuffer[512];// longest possible speech
+	int16               _speechFlags;        // flags from speaking
+	uint32              _sampleID[MAX_SAMPLES];// voice sound sample ID
+	char                _speechBuffer[512];// longest possible speech
 
 public:
-	int16               selectedButton;     // which button was hit
+	int16               _selectedButton;     // which button was hit
 	gPixelMap           _speechImage;
 	gPort               _textPort;
 
@@ -122,11 +122,11 @@ private:
 public:
 
 	enum SpeechFlags {
-		spNoAnimate     = (1 << 0),         //  Don't animate actor
-		spHasVoice      = (1 << 1),         //  The audio interface is playing this voice
-		spQueued        = (1 << 2),         //  In active queue
-		spActive        = (1 << 3),         //  Is current active speech
-		spLock          = (1 << 4)          //  Lock UI while speaking
+		kSpNoAnimate     = (1 << 0),         //  Don't animate actor
+		kSpHasVoice      = (1 << 1),         //  The audio interface is playing this voice
+		kSpQueued        = (1 << 2),         //  In active queue
+		kSpActive        = (1 << 3),         //  Is current active speech
+		kSpLock          = (1 << 4)          //  Lock UI while speaking
 	};
 
 	// remove speech, dealloc resources
@@ -140,7 +140,7 @@ public:
 
 	//  Set speech to wake up thread when done
 	void setWakeUp(ThreadID th) {
-		thread = th;
+		_thread = th;
 	}
 
 	//  See if its time to kill it
@@ -166,7 +166,7 @@ class SpeechTaskList {
 	Common::List<Speech *> _list,
 	                       _inactiveList;
 
-	int8            lockFlag;
+	int8            _lockFlag;
 
 	void SetLock(int newState);
 

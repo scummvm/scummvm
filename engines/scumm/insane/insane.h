@@ -66,6 +66,8 @@ class Insane {
 	void procSKIP(int32 subSize, Common::SeekableReadStream &b);
 	void escapeKeyHandler();
 
+	bool isInsaneActive() { return _insaneIsRunning; }
+
  private:
 
 	ScummEngine_v7 *_vm;

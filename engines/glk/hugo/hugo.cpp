@@ -83,7 +83,7 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 #endif
 		{
 	g_vm = this;
-	strcpy(gamefile, "");
+	gamefile[0] = '\0';
 
 	// heexpr
 	Common::fill(&eval[0], &eval[MAX_EVAL_ELEMENTS], 0);
@@ -146,8 +146,8 @@ void Hugo::runGame() {
 
 	SetupDisplay();
 
-	strcpy(gamefile, getFilename().c_str());
-	strcpy(pbuffer, "");
+	Common::strcpy_s(gamefile, getFilename().c_str());
+	pbuffer[0] = '\0';
 
 	ResourceArchive *res = new ResourceArchive();
 	SearchMan.add("Resouces", res);

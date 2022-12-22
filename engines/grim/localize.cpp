@@ -124,7 +124,7 @@ Localizer::Localizer() {
 			continue;
 		}
 
-		// EMI has an garbage line which should be ignored
+		// EMI has a garbage line which should be ignored
 		if (g_grim->getGameType() == GType_MONKEY4 && *line == '\x1A')
 			continue;
 

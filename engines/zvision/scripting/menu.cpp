@@ -58,15 +58,15 @@ MenuZGI::MenuZGI(ZVision *engine) :
 
 	char buf[24];
 	for (int i = 1; i < 4; i++) {
-		sprintf(buf, "gmzau%2.2x1.tga", i);
+		Common::sprintf_s(buf, "gmzau%2.2x1.tga", i);
 		_engine->getRenderManager()->readImageToSurface(buf, menuBack[i - 1][0], false);
-		sprintf(buf, "gmzau%2.2x1.tga", i + 0x10);
+		Common::sprintf_s(buf, "gmzau%2.2x1.tga", i + 0x10);
 		_engine->getRenderManager()->readImageToSurface(buf, menuBack[i - 1][1], false);
 	}
 	for (int i = 0; i < 4; i++) {
-		sprintf(buf, "gmzmu%2.2x1.tga", i);
+		Common::sprintf_s(buf, "gmzmu%2.2x1.tga", i);
 		_engine->getRenderManager()->readImageToSurface(buf, menuBar[i][0], false);
-		sprintf(buf, "gmznu%2.2x1.tga", i);
+		Common::sprintf_s(buf, "gmznu%2.2x1.tga", i);
 		_engine->getRenderManager()->readImageToSurface(buf, menuBar[i][1], false);
 	}
 
@@ -392,9 +392,9 @@ void MenuZGI::process(uint32 deltatime) {
 				if (curItemId != 0) {
 					if (itemId[i] != curItemId) {
 						char buf[16];
-						sprintf(buf, "gmzwu%2.2x1.tga", curItemId);
+						Common::sprintf_s(buf, "gmzwu%2.2x1.tga", curItemId);
 						items[i][0] = _engine->getRenderManager()->loadImage(buf, false);
-						sprintf(buf, "gmzxu%2.2x1.tga", curItemId);
+						Common::sprintf_s(buf, "gmzxu%2.2x1.tga", curItemId);
 						items[i][1] = _engine->getRenderManager()->loadImage(buf, false);
 						itemId[i] = curItemId;
 					}
@@ -459,9 +459,9 @@ void MenuZGI::process(uint32 deltatime) {
 				if (curItemId != 0) {
 					if (itemId[i] != curItemId) {
 						char buf[16];
-						sprintf(buf, "gmzwu%2.2x1.tga", curItemId);
+						Common::sprintf_s(buf, "gmzwu%2.2x1.tga", curItemId);
 						magic[i][0] = _engine->getRenderManager()->loadImage(buf, false);
-						sprintf(buf, "gmzxu%2.2x1.tga", curItemId);
+						Common::sprintf_s(buf, "gmzxu%2.2x1.tga", curItemId);
 						magic[i][1] = _engine->getRenderManager()->loadImage(buf, false);
 						magicId[i] = curItemId;
 					}
@@ -563,7 +563,7 @@ MenuNemesis::MenuNemesis(ZVision *engine) :
 	char buf[24];
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 6; j++) {
-			sprintf(buf, "butfrm%d%d.tga", i + 1, j);
+			Common::sprintf_s(buf, "butfrm%d%d.tga", i + 1, j);
 			_engine->getRenderManager()->readImageToSurface(buf, but[i][j], false);
 		}
 

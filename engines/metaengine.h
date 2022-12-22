@@ -22,11 +22,12 @@
 #ifndef ENGINES_METAENGINE_H
 #define ENGINES_METAENGINE_H
 
-#include "common/achievements.h"
 #include "common/scummsys.h"
 #include "common/error.h"
 #include "common/array.h"
+#include "common/gui_options.h"
 
+#include "engines/achievements.h"
 #include "engines/game.h"
 #include "engines/savestate.h"
 
@@ -162,22 +163,22 @@ public:
 	 */
 	virtual DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags = 0, bool skipIncomplete = false) = 0;
 
+	/** Returns the number of bytes used for MD5-based detection, or 0 if not supported. */
+	virtual uint getMD5Bytes() const = 0;
+
 	/**
-	 * Return a list of extra GUI options for the specified target.
+	 * The default version of this method will just parse the options string from
+	 * the config manager. However it also allows the meta engine to post process
+	 * result and add/remove other options as needed.
 	 *
-	 * If no target is specified, all of the available custom GUI options are
-	 * returned for the plugin (used to set default values).
+	 * @param optionsString		Options string that from the config manager.
+	 * @param domain			Domain of the current target.
 	 *
-	 * Currently, this only supports options with checkboxes.
+	 * @return    The fully processed options string that is usable by the GUI.
 	 *
-	 * The default implementation returns an empty list.
-	 *
-	 * @param target  Name of a config manager target.
-	 *
-	 * @return A list of extra GUI options for an engine plugin and target.
 	 */
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
-		return ExtraGuiOptions();
+	virtual Common::String parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const {
+		return parseGameGUIOptions(optionsString);
 	}
 
 	/**
@@ -190,30 +191,6 @@ public:
 	virtual const DebugChannelDef *getDebugChannels() const {
 		return NULL;
 	}
-
-	/**
-	 * Register the default values for the settings that the engine uses into the
-	 * configuration manager.
-	 *
-	 * @param target  Name of a config manager target.
-	 */
-	void registerDefaultSettings(const Common::String &target) const;
-
-	/**
-	 * Return a GUI widget container for configuring the specified target options.
-	 *
-	 * The returned widget is shown in the Engine tab in the Edit Game dialog.
-	 * Engines can build custom option dialogs, but by default a simple widget
-	 * allowing to configure the extra GUI options is used.
-	 *
-	 * Engines that are not supposed to have an Engine tab in the Edit Game dialog
-	 * can return nullptr.
-	 *
-	 * @param boss     The widget or dialog that the returned widget is a child of.
-	 * @param name     The name that the returned widget must use.
-	 * @param target   Name of a config manager target.
-	 */
-	GUI::OptionsContainerWidget *buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const;
 };
 
 /**
@@ -244,6 +221,24 @@ protected:
 	 * @return The first empty save slot, or -1 if all are occupied.
 	 */
 	int findEmptySaveSlot(const char *target);
+
+	/**
+	 * Return a list of extra GUI options for the specified target.
+	 *
+	 * If no target is specified, all of the available custom GUI options are
+	 * returned for the plugin (used to set default values).
+	 *
+	 * Currently, this only supports options with checkboxes.
+	 *
+	 * The default implementation returns an empty list.
+	 *
+	 * @param target  Name of a config manager target.
+	 *
+	 * @return A list of extra GUI options for an engine plugin and target.
+	 */
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
+		return ExtraGuiOptions();
+	}
 
 public:
 	virtual ~MetaEngine() {}
@@ -388,7 +383,7 @@ public:
 	 *
 	 * @param target  Name of a config manager target.
 	 */
-	virtual void registerDefaultSettings(const Common::String &target) const {}
+	virtual void registerDefaultSettings(const Common::String &target) const;
 
 	/**
 	 * Return a GUI widget container for configuring the specified target options.
@@ -402,9 +397,7 @@ public:
 	 * @param name    The name that the returned widget must use.
 	 * @param target  Name of a config manager target.
 	 */
-	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
-		return nullptr;
-	}
+	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const;
 
 	/**
 	 * MetaEngine feature flags.
@@ -616,6 +609,9 @@ public:
 
 	/** Upgrade a target to the current configuration format. */
 	void upgradeTargetIfNecessary(const Common::String &target) const;
+
+	/** Generate valid, non-repeated domainName for game*/
+	Common::String generateUniqueDomain(const Common::String gameId);
 
 private:
 	/** Find a game across all loaded plugins. */

@@ -30,6 +30,9 @@ encoding.dat           FILE    "dists/engine-data/encoding.dat"
 
 // Engine or feature specific resources
 #ifdef BUILTIN_RESOURCES
+#if PLUGIN_ENABLED_STATIC(FREESCAPE)
+freescape.dat              FILE    "dists/engine-data/freescape.dat"
+#endif
 #if PLUGIN_ENABLED_STATIC(GRIM)
 grim-patch.lab         FILE    "dists/engine-data/grim-patch.lab"
 monkey4-patch.m4b      FILE    "dists/engine-data/monkey4-patch.m4b"

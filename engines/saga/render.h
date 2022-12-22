@@ -89,6 +89,16 @@ public:
 		return _fullRefresh;
 	}
 
+	/**
+	 * ECS has only 32-color palette. ITE switches palette
+	 * after line 137 on most screens but not on intro. Set
+	 * whether to change palette after line 137.
+	 */
+	void setSplitScreen(bool flag) {
+		_splitScreen = flag;
+	}
+
+	void maskSplitScreen();
 	void drawDirtyRects();
 	void scale2xAndMergeOverlay(int x, int y, int w, int h);
 	void restoreChangedRects();
@@ -107,6 +117,7 @@ private:
 	Common::List<Common::Rect> _dirtyRects;
 	bool _fullRefresh;
 	bool _dualSurface;
+	bool _splitScreen;
 
 	// Module data
 	Surface _backGroundSurface;

@@ -402,7 +402,7 @@ void Puzzle::solicitHint() {
 	// precautions to avoid race conditions.
 	int i;
 
-	_vm->_actor->setSpeechColor(1, kITEColorBlack);
+	_vm->_actor->setSpeechColor(1, _vm->iteColorBlack());
 
 	_vm->getTimerManager()->removeTimerProc(&hintTimerCallback);
 
@@ -534,7 +534,7 @@ void Puzzle::giveHint() {
 	if (_hintCount == 2 && total > 3)
 		_hintCount++;
 
-	_vm->_actor->setSpeechColor(1, kITEColorBlack);
+	_vm->_actor->setSpeechColor(1, _vm->iteColorBlack());
 
 	if (_hintCount < 3) {
 		_vm->_actor->nonActorSpeech(_hintBox, &hintStr[_lang][_hintCount], 1, PUZZLE_HINT_SOUNDS + _hintCount * 3 + _hintSpeaker, 0);
@@ -554,7 +554,7 @@ void Puzzle::giveHint() {
 		if (i >= 0) {
 			static char hintBuf[64];
 			static const char *hintPtr = hintBuf;
-			sprintf(hintBuf, optionsStr[_lang][kROHint], pieceNames[_lang][piece]);
+			Common::sprintf_s(hintBuf, optionsStr[_lang][kROHint], pieceNames[_lang][piece]);
 
 			_vm->_actor->nonActorSpeech(_hintBox, &hintPtr, 1, PUZZLE_TOOL_SOUNDS + _hintSpeaker + piece * 3, 0);
 		} else {

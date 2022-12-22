@@ -114,6 +114,10 @@ SIModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectTyp
 		return ModifierFactory<GraphicModifier, Data::GraphicModifier>::getInstance();
 	case Data::DataObjectTypes::kImageEffectModifier:
 		return ModifierFactory<ImageEffectModifier, Data::ImageEffectModifier>::getInstance();
+	case Data::DataObjectTypes::kReturnModifier:
+		return ModifierFactory<ReturnModifier, Data::ReturnModifier>::getInstance();
+	case Data::DataObjectTypes::kCursorModifierV1:
+		return ModifierFactory<CursorModifierV1, Data::CursorModifierV1>::getInstance();
 	case Data::DataObjectTypes::kMessengerModifier:
 		return ModifierFactory<MessengerModifier, Data::MessengerModifier>::getInstance();
 	case Data::DataObjectTypes::kSetModifier:
@@ -134,6 +138,8 @@ SIModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectTyp
 		return ModifierFactory<FloatingPointVariableModifier, Data::FloatingPointVariableModifier>::getInstance();
 	case Data::DataObjectTypes::kStringVariableModifier:
 		return ModifierFactory<StringVariableModifier, Data::StringVariableModifier>::getInstance();
+	case Data::DataObjectTypes::kObjectReferenceVariableModifierV1:
+		return ModifierFactory<ObjectReferenceVariableModifierV1, Data::ObjectReferenceVariableModifierV1>::getInstance();
 
 	default:
 		warning("No modifier factory for type %x", static_cast<int>(dataObjectType));

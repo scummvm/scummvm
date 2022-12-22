@@ -33,6 +33,9 @@ enum MTropolisGameID {
 	GID_ALBERT1				= 3,
 	GID_ALBERT2				= 4,
 	GID_ALBERT3				= 5,
+	GID_MTI					= 6,
+	GID_SPQR				= 7,
+	GID_STTGS				= 8,
 };
 
 // Boot IDs - These can be shared across different variants if the file list and other properties are identical.
@@ -60,6 +63,10 @@ enum MTropolisGameBootID {
 	MTBOOT_ALBERT1_WIN_DE,
 	MTBOOT_ALBERT2_WIN_DE,
 	MTBOOT_ALBERT3_WIN_DE,
+	MTBOOT_SPQR_RETAIL_WIN,
+	MTBOOT_SPQR_RETAIL_MAC,
+
+	MTBOOT_STTGS_DEMO_WIN,
 };
 
 struct MTropolisGameDescription {
@@ -69,6 +76,13 @@ struct MTropolisGameDescription {
 	int gameType;
 	MTropolisGameBootID bootID;
 };
+
+#define GAMEOPTION_WIDESCREEN_MOD				GUIO_GAMEOPTIONS1
+#define GAMEOPTION_DYNAMIC_MIDI					GUIO_GAMEOPTIONS2
+#define GAMEOPTION_LAUNCH_DEBUG					GUIO_GAMEOPTIONS3
+#define GAMEOPTION_SOUND_EFFECT_SUBTITLES		GUIO_GAMEOPTIONS4
+#define GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS		GUIO_GAMEOPTIONS5
+#define GAMEOPTION_ENABLE_SHORT_TRANSITIONS		GUIO_GAMEOPTIONS6
 
 } // End of namespace MTropolis
 

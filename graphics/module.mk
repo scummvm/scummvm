@@ -1,7 +1,8 @@
 MODULE := graphics
 
 MODULE_OBJS := \
-	conversion.o \
+	blit.o \
+	blit-scale.o \
 	cursorman.o \
 	font.o \
 	fontman.o \
@@ -36,6 +37,7 @@ MODULE_OBJS := \
 	opengl/shader.o \
 	palette.o \
 	pixelformat.o \
+	pm5544.o \
 	primitives.o \
 	renderer.o \
 	scalerplugin.o \

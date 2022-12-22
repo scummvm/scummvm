@@ -23,7 +23,7 @@
 #include "common/stack.h"
 #include "common/keyboard.h"
 #include "common/macresman.h"
-#include "common/winexe_pe.h"
+#include "common/formats/winexe_pe.h"
 #include "common/unicode-bidi.h"
 
 #include "graphics/primitives.h"
@@ -1089,7 +1089,7 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 		}
 	}
 
-	if ((_wm->_mode & kWMModalMenuMode) | !_wm->_screen)
+	if ((_wm->_mode & kWMModalMenuMode) || !_wm->_screen)
 		g_system->copyRectToScreen(_screen.getBasePtr(_bbox.left, _bbox.top), _screen.pitch, _bbox.left, _bbox.top, _bbox.width(), _bbox.height());
 
 

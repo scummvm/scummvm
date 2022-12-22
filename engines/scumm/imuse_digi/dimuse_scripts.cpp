@@ -30,7 +30,7 @@ namespace Scumm {
 int IMuseDigital::scriptParse(int cmd, int a, int b) {
 	if (_scriptInitializedFlag || !cmd) {
 		switch (cmd) {
-		case 0:
+		case DIMUSE_C_SCRIPT_INIT:
 			if (_scriptInitializedFlag) {
 				debug(5, "IMuseDigital::scriptParse(): script module already initialized");
 				return -1;
@@ -38,25 +38,25 @@ int IMuseDigital::scriptParse(int cmd, int a, int b) {
 				_scriptInitializedFlag = 1;
 				return scriptInit();
 			}
-		case 1:
+		case DIMUSE_C_SCRIPT_TERMINATE:
 			_scriptInitializedFlag = 0;
 			return scriptTerminate();
-		case 2: // script_save(a, b);
-		case 3: // script_restore(a);
+		case DIMUSE_C_SCRIPT_SAVE:
+		case DIMUSE_C_SCRIPT_RESTORE:
 			break;
-		case 4:
+		case DIMUSE_C_SCRIPT_REFRESH:
 			scriptRefresh();
 			return 0;
-		case 5:
+		case DIMUSE_C_SCRIPT_SET_STATE:
 			scriptSetState(a);
 			return 0;
-		case 6:
+		case DIMUSE_C_SCRIPT_SET_SEQUENCE:
 			scriptSetSequence(a);
 			return 0;
-		case 7:
+		case DIMUSE_C_SCRIPT_CUE_POINT:
 			scriptSetCuePoint(a);
 			return 0;
-		case 8:
+		case DIMUSE_C_SCRIPT_SET_ATTRIBUTE:
 			return scriptSetAttribute(a, b);
 		default:
 			debug(5, "IMuseDigital::scriptParse(): unrecognized opcode (%d)", cmd);

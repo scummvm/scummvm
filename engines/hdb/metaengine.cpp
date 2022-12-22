@@ -37,6 +37,22 @@
 
 namespace HDB {
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+		{
+				GAMEOPTION_CHEATMODE,
+				{
+						_s("Enable cheat mode"),
+						_s("Debug info and level selection becomes available"),
+						"hypercheat",
+						false,
+						0,
+						0
+				}
+		},
+
+		AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 const char *HDBGame::getGameId() const { return _gameDescription->gameId; }
 Common::Platform HDBGame::getPlatform() const { return _gameDescription->platform; }
 
@@ -66,6 +82,10 @@ class HDBMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "hdb";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return HDB::optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;

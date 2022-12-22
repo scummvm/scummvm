@@ -1917,4 +1917,8 @@ void Goblin::updateLayer2(Mult::Mult_AnimData *animData) {
 	}
 }
 
+void Goblin::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
+	warning("Goblin::setGoblinState not implemented");
+}
+
 } // End of namespace Gob

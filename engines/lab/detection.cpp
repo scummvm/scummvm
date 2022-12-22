@@ -31,7 +31,7 @@
 #include "lab/detection.h"
 
 static const PlainGameDescriptor lab_setting[] = {
-	{ "lab", "Labyrinth of Time" },
+	{ "lab", "The Labyrinth of Time" },
 	{ nullptr, nullptr }
 };
 
@@ -111,7 +111,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Labyrinth of Time (C) 2004 The Wyrmkeep Entertainment Co. and Terra Nova Development";
+		return "The Labyrinth of Time (C) 2004 The Wyrmkeep Entertainment Co. and Terra Nova Development";
 	}
 };
 

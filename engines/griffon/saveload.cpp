@@ -43,7 +43,7 @@ namespace Griffon {
 #define PRINT(A,B)                      \
 	do {                                \
 		char line[256];                 \
-		sprintf(line, A "\n", B);       \
+		Common::sprintf_s(line, A "\n", B);       \
 		file->write(line, strlen(line)); \
 	} while(0)
 

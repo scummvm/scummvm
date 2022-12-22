@@ -2296,7 +2296,7 @@ void Magnetic::gms_hint_display_text(const ms_hint hints_[],
 	for (index = 0; index < hints_[node].elcount; index++) {
 		char buf[16];
 
-		sprintf(buf, "%3d.  ", index + 1);
+		Common::sprintf_s(buf, "%3d.  ", index + 1);
 		gms_hint_text_print(buf);
 
 		gms_hint_text_print(index < cursor[node]
@@ -2839,11 +2839,11 @@ void Magnetic::gms_command_graphics(const char *argument) {
 				gms_normal_string(is_animated ? "an animated" : "a");
 				gms_normal_string(" picture loaded, ");
 
-				sprintf(buf, "%d", width);
+				Common::sprintf_s(buf, "%d", width);
 				gms_normal_string(buf);
 				gms_normal_string(" by ");
 
-				sprintf(buf, "%d", height);
+				Common::sprintf_s(buf, "%d", height);
 				gms_normal_string(buf);
 
 				gms_normal_string(" pixels.\n");
@@ -2864,7 +2864,7 @@ void Magnetic::gms_command_graphics(const char *argument) {
 				gms_normal_string("Graphics are ");
 				gms_normal_string(is_active ? "active, " : "displayed, ");
 
-				sprintf(buf, "%d", color_count);
+				Common::sprintf_s(buf, "%d", color_count);
 				gms_normal_string(buf);
 				gms_normal_string(" colours");
 
@@ -3329,8 +3329,9 @@ int Magnetic::gms_command_escape(const char *string_, int *undo_command) {
 		return false;
 
 	/* Take a copy of the string_, without any leading space or introducer. */
+	size_t ln = strlen(string_ + posn) + 1 - 3/*strlen("glk")*/;
 	string_copy = (char *)gms_malloc(strlen(string_ + posn) + 1 - strlen("glk"));
-	strcpy(string_copy, string_ + posn + strlen("glk"));
+	Common::strcpy_s(string_copy, ln, string_ + posn + 3/*strlen("glk")*/);
 
 	/*
 	 * Find the subcommand; the first word in the string copy.  Find its end,
@@ -3725,8 +3726,9 @@ void Magnetic::gms_establish_filenames(const char *name, char **text, char **gra
 	assert(name && text && graphics && hints_);
 
 	/* Take a destroyable copy of the input filename. */
-	base = (char *)gms_malloc(strlen(name) + 1);
-	strcpy(base, name);
+	size_t ln = strlen(name) + 1;
+	base = (char *)gms_malloc(ln);
+	Common::strcpy_s(base, ln, name);
 
 	/* If base has an extension .MAG, .GFX, or .HNT, remove it. */
 	if (strlen(base) > strlen(".XXX")) {
@@ -3737,16 +3739,17 @@ void Magnetic::gms_establish_filenames(const char *name, char **text, char **gra
 	}
 
 	/* Allocate space for the return text file. */
-	text_file = (char *)gms_malloc(strlen(base) + strlen(".MAG") + 1);
+	ln = strlen(base) + 4/*strlen(".MAG")*/ + 1;
+	text_file = (char *)gms_malloc(ln);
 
 	/* Form a candidate text file, by adding a .MAG extension. */
-	strcpy(text_file, base);
-	strcat(text_file, ".MAG");
+	Common::strcpy_s(text_file, ln, base);
+	Common::strcat_s(text_file, ln, ".MAG");
 
 	if (!stream.open(text_file)) {
 		/* Retry, using a .mag extension instead. */
-		strcpy(text_file, base);
-		strcat(text_file, ".mag");
+		Common::strcpy_s(text_file, ln, base);
+		Common::strcat_s(text_file, ln, ".mag");
 
 		if (!stream.open(text_file)) {
 			/*
@@ -3765,16 +3768,17 @@ void Magnetic::gms_establish_filenames(const char *name, char **text, char **gra
 	stream.close();
 
 	/* Now allocate space for the return graphics file. */
-	graphics_file = (char *)gms_malloc(strlen(base) + strlen(".GFX") + 1);
+	ln = strlen(base) + 4/*strlen(".GFX")*/ + 1;
+	graphics_file = (char *)gms_malloc(ln);
 
 	/* As above, form a candidate graphics file, using a .GFX extension. */
-	strcpy(graphics_file, base);
-	strcat(graphics_file, ".GFX");
+	Common::strcpy_s(graphics_file, ln, base);
+	Common::strcat_s(graphics_file, ln, ".GFX");
 
 	if (!stream.open(graphics_file)) {
 		/* Retry, using a .gfx extension instead. */
-		strcpy(graphics_file, base);
-		strcat(graphics_file, ".gfx");
+		Common::strcpy_s(graphics_file, ln, base);
+		Common::strcat_s(graphics_file, ln, ".gfx");
 
 		if (!stream.open(graphics_file)) {
 			/*
@@ -3788,16 +3792,17 @@ void Magnetic::gms_establish_filenames(const char *name, char **text, char **gra
 	stream.close();
 
 	/* Now allocate space for the return hints_ file. */
-	hints_file = (char *)gms_malloc(strlen(base) + strlen(".HNT") + 1);
+	ln = strlen(base) + 4/*strlen(".HNT")*/ + 1;
+	hints_file = (char *)gms_malloc(ln);
 
 	/* As above, form a candidate graphics file, using a .HNT extension. */
-	strcpy(hints_file, base);
-	strcat(hints_file, ".HNT");
+	Common::strcpy_s(hints_file, ln, base);
+	Common::strcat_s(hints_file, ln, ".HNT");
 
 	if (!stream.open(hints_file)) {
 		/* Retry, using a .hnt extension instead. */
-		strcpy(hints_file, base);
-		strcat(hints_file, ".hnt");
+		Common::strcpy_s(hints_file, ln, base);
+		Common::strcat_s(hints_file, ln, ".hnt");
 
 		if (!stream.open(hints_file)) {
 			/*

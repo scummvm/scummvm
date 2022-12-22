@@ -23,21 +23,18 @@
 #define ULTIMA8_GUMPS_MINIMAPGUMP_H
 
 #include "ultima/ultima8/gumps/gump.h"
-#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/misc/classtype.h"
-#include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
+class MiniMap;
+
 class MiniMapGump : public Gump {
 private:
-	Graphics::ManagedSurface _minimap;
-	unsigned int        _lastMapNum;
+	Common::HashMap<uint32, MiniMap *> _minimaps;
+	int32 _ax, _ay;
 
-	uint32 getPixelAt(int x, int y) const;
-	void setPixelAt(int x, int y, uint32 pixel);
-	uint32 sampleAtPoint(int x, int y, CurrentMap *map);
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
@@ -45,8 +42,16 @@ public:
 	MiniMapGump(int x, int y);
 	~MiniMapGump() override;
 
+	void run() override;
+
+	void generate();
+	void clear();
+
 	void        PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 	uint16      TraceObjId(int32 mx, int32 my) override;
+
+	Gump *onMouseDown(int button, int32 mx, int32 my) override;
+	void onMouseDouble(int button, int32 mx, int32 my) override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;

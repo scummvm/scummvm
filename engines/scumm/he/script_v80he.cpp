@@ -22,7 +22,7 @@
 #ifdef ENABLE_HE
 
 #include "common/archive.h"
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 #include "common/config-manager.h"
 #include "common/macresman.h"
 #include "common/savefile.h"
@@ -216,7 +216,7 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 	case 43: // HE 100
 	case 6: // number
 		value = pop();
-		sprintf((char *)string, "%d", value);
+		Common::sprintf_s(string, "%d", value);
 		copyScriptString(option, sizeof(option));
 		copyScriptString(section, sizeof(section));
 		copyScriptString(filename, sizeof(filename));

@@ -78,7 +78,7 @@ class MovieResizeFilter {
 public:
 	virtual ~MovieResizeFilter();
 
-	virtual Common::SharedPtr<Graphics::Surface> scaleFrame(const Graphics::Surface &surface, uint32 timestamp) const = 0;
+	virtual Common::SharedPtr<Graphics::ManagedSurface> scaleFrame(const Graphics::Surface &surface, uint32 timestamp) const = 0;
 };
 
 class MovieElement : public VisualElement, public ISegmentUnloadSignalReceiver, public IPlayMediaSignalReceiver {
@@ -107,6 +107,8 @@ public:
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Movie Element"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
+
+	void debugSkipMovies() override;
 #endif
 
 protected:
@@ -162,7 +164,7 @@ private:
 	IntRange _playRange;
 
 	const Graphics::Surface *_displayFrame;
-	Common::SharedPtr<Graphics::Surface> _scaledFrame;
+	Common::SharedPtr<Graphics::ManagedSurface> _scaledFrame;
 	Common::SharedPtr<MovieResizeFilter> _resizeFilter;
 
 	Common::SharedPtr<SegmentUnloadSignaller> _unloadSignaller;
@@ -193,6 +195,7 @@ public:
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Image Element"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
+	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:
@@ -234,6 +237,7 @@ public:
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "mToon Element"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
+	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:
@@ -268,6 +272,7 @@ private:
 
 	MiniscriptInstructionOutcome scriptRangeWriteRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
 	MiniscriptInstructionOutcome scriptSetRangeTyped(MiniscriptThread *thread, const IntRange &value);
+	MiniscriptInstructionOutcome scriptSetRangeTyped(MiniscriptThread *thread, const Common::Point &value);
 
 	void onPauseStateChanged() override;
 
@@ -283,7 +288,7 @@ private:
 	bool _isPlaying;	// Is actually rolling media, this is only set by playMedia because it needs to start after scene transition
 
 	Runtime *_runtime;
-	Common::SharedPtr<Graphics::Surface> _renderSurface;
+	Common::SharedPtr<Graphics::ManagedSurface> _renderSurface;
 	uint32 _renderedFrame;
 
 	Common::SharedPtr<MToonMetadata> _metadata;
@@ -378,6 +383,8 @@ public:
 	bool canAutoPlay() const override;
 
 	void playMedia(Runtime *runtime, Project *project) override;
+
+	bool resolveMediaMarkerLabel(const Label &label, int32 &outResolution) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Sound Element"; }

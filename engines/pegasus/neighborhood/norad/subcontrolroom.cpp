@@ -423,11 +423,11 @@ static const ResIDType kClawMonitorGreenBallBaseID = 600;
 
 // Constructor
 SubControlRoom::SubControlRoom(Neighborhood *handler) : GameInteraction(kNoradSubControlRoomInteractionID, handler),
-		_subControlMovie(kSubControlMonitorID), _subControlNotification(kSubControlNotificationID, (PegasusEngine *)g_engine),
+		_subControlMovie(kSubControlMonitorID), _subControlNotification(kSubControlNotificationID, g_vm),
 		_clawMonitorMovie(kClawMonitorID), _pinchButton(kSubControlPinchID), _downButton(kSubControlDownID),
 		_rightButton(kSubControlRightID), _leftButton(kSubControlLeftID), _upButton(kSubControlUpID),
 		_ccwButton(kSubControlCCWID), _cwButton(kSubControlCWID), _greenBall(kClawMonitorGreenBallID),
-		_greenBallNotification(kNoradGreenBallNotificationID, (PegasusEngine *)g_engine) {
+		_greenBallNotification(kNoradGreenBallNotificationID, g_vm) {
 	_neighborhoodNotification = handler->getNeighborhoodNotification();
 	_playingAgainstRobot = false;
 	_robotState = kNoRobot;
@@ -450,7 +450,7 @@ void SubControlRoom::openInteraction() {
 	_clawPosition = _clawStartPosition;
 	_clawNextPosition = _clawPosition;
 	_subControlMovie.initFromMovieFile("Images/Norad Alpha/N22 Left Monitor Movie");
-	_subControlMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+	_subControlMovie.setVolume(g_vm->getSoundFXLevel());
 	_subControlMovie.moveElementTo(kNoradSubControlLeft, kNoradSubControlTop);
 	_subControlScale = _subControlMovie.getScale();
 	_subControlMovie.setDisplayOrder(kSubControlOrder);
@@ -487,15 +487,15 @@ void SubControlRoom::openInteraction() {
 
 	for (int i = 0; i < kNumClawButtons; i++) {
 		SpriteFrame *frame = new SpriteFrame();
-		frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kSubControlButtonBaseID + i * 3, true);
+		frame->initFromPICTResource(g_vm->_resFork, kSubControlButtonBaseID + i * 3, true);
 		_buttons[i]->addFrame(frame, 0, 0);
 
 		frame = new SpriteFrame();
-		frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kSubControlButtonBaseID + i * 3 + 1, true);
+		frame->initFromPICTResource(g_vm->_resFork, kSubControlButtonBaseID + i * 3 + 1, true);
 		_buttons[i]->addFrame(frame, 0, 0);
 
 		frame = new SpriteFrame();
-		frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kSubControlButtonBaseID + i * 3 + 2, true);
+		frame->initFromPICTResource(g_vm->_resFork, kSubControlButtonBaseID + i * 3 + 2, true);
 		_buttons[i]->addFrame(frame, 0, 0);
 
 		_buttons[i]->setCurrentFrameIndex(0);
@@ -514,7 +514,7 @@ void SubControlRoom::openInteraction() {
 
 	for (int i = 0; i < kNumClawGreenBalls; i++) {
 		SpriteFrame *frame = new SpriteFrame();
-		frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kClawMonitorGreenBallBaseID + i);
+		frame->initFromPICTResource(g_vm->_resFork, kClawMonitorGreenBallBaseID + i);
 		_greenBall.addFrame(frame, 0, 0);
 	}
 
@@ -671,7 +671,7 @@ void SubControlRoom::receiveNotification(Notification *notification, const Notif
 				break;
 			case kRobotWon:
 				g_system->delayMillis(2 * 1000); // 120 ticks
-				((PegasusEngine *)g_engine)->die(kDeathRobotSubControlRoom);
+				g_vm->die(kDeathRobotSubControlRoom);
 				break;
 			default:
 				break;

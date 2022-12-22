@@ -138,7 +138,12 @@ public:
 	bool writeInto(uint32 var, uint32 offset, uint32 size) const;
 
 	/** Read size bytes of raw data into the part. */
-	bool readFromRaw(const byte *data, uint32 size);
+	bool readFromRaw(const byte *data, uint32 offset, uint32 size);
+
+	/** Write size bytes of the part at the specified offset into a raw buffer. */
+	bool writeIntoRaw(byte *data, uint32 offset, uint32 size) const;
+
+	const byte* data() const { return _data; }
 
 private:
 	GobEngine *_vm;
@@ -335,6 +340,7 @@ public:
 	bool writePart(uint32 partN, const SavePart *part);
 
 	bool save(Common::WriteStream &stream);
+	bool deleteFile();
 
 protected:
 	bool save();

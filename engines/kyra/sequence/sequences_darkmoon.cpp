@@ -1176,8 +1176,8 @@ void DarkmoonSequenceHelper::loadScene(int index, int pageNum, bool ignorePalett
 	}
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		// Tolerance for diffenrences up to 2 bytes is needed in some cases
-		if ((((int32)(chunkID & 0xFFFF) + 5) & ~3) != (((s->size()) + 3) & ~3))
+		// Tolerance for differences up to 2 bytes is needed in some cases.
+		if (s && ((((int32)(chunkID & 0xFFFF) + 5) & ~3) != (((s->size()) + 3) & ~3)))
 			isRawData = true;
 	} else if (file.firstChar() == 'X' && _vm->gameFlags().lang == Common::DE_DEU) {
 		isRawData = true;

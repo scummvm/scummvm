@@ -44,6 +44,9 @@ namespace OpenGL {
 
 class Surface;
 class Pipeline;
+#if !USE_FORCED_GLES
+class LibRetroPipeline;
+#endif
 
 enum {
 	GFX_OPENGL = 0
@@ -80,6 +83,10 @@ public:
 	bool setScaler(uint mode, int factor) override;
 	uint getScaler() const override;
 	uint getScaleFactor() const override;
+#endif
+
+#if !USE_FORCED_GLES
+	bool setShader(const Common::String &fileNode) override;
 #endif
 
 	void beginGFXTransaction() override;
@@ -172,7 +179,7 @@ protected:
 		    gameFormat(),
 #endif
 		    aspectRatioCorrection(false), graphicsMode(GFX_OPENGL), filtering(true),
-		    scalerIndex(0), scaleFactor(1) {
+		    scalerIndex(0), scaleFactor(1), shader() {
 		}
 
 		bool valid;
@@ -188,6 +195,8 @@ protected:
 		uint scalerIndex;
 		int scaleFactor;
 
+		Common::String shader;
+
 		bool operator==(const VideoState &right) {
 			return gameWidth == right.gameWidth && gameHeight == right.gameHeight
 #ifdef USE_RGB_COLOR
@@ -195,7 +204,8 @@ protected:
 #endif
 			    && aspectRatioCorrection == right.aspectRatioCorrection
 			    && graphicsMode == right.graphicsMode
-				&& filtering == right.filtering;
+				&& filtering == right.filtering
+			    && shader == right.shader;
 		}
 
 		bool operator!=(const VideoState &right) {
@@ -259,6 +269,8 @@ protected:
 	 */
 	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) = 0;
 
+	bool loadShader(const Common::String &fileName);
+
 	/**
 	 * Refresh the screen contents.
 	 */
@@ -290,6 +302,13 @@ private:
 	 */
 	Pipeline *_pipeline;
 
+#if !USE_FORCED_GLES
+	/**
+	 * OpenGL pipeline used for post-processing.
+	 */
+	LibRetroPipeline *_libretroPipeline;
+#endif
+
 protected:
 	/**
 	 * Try to determine the internal parameters for a given pixel format.
@@ -302,6 +321,10 @@ protected:
 	int getGameRenderScale() const override;
 	void recalculateDisplayAreas() override;
 	void handleResizeImpl(const int width, const int height) override;
+
+	void updateLinearFiltering();
+
+	Pipeline *getPipeline() const { return _pipeline; }
 
 	/**
 	 * The default pixel format of the backend.

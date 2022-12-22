@@ -23,6 +23,9 @@
 #define KYRA_PAK_H
 
 #include "util.h"
+
+#include "common/str.h"
+
 #include <string.h>
 
 class PAKFile {

@@ -217,7 +217,7 @@ protected:
 		va_list ap;
 
 		va_start(ap, fmt);
-		vsprintf(errbuf, fmt, ap);
+		Common::vsprintf_s(errbuf, fmt, ap);
 		va_end(ap);
 		error = errbuf;
 	}

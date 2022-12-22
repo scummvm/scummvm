@@ -39,9 +39,11 @@ enum {
 
 class OSystem_DS : public ModularMixerBackend, public PaletteManager {
 protected:
-	DS::Background _framebuffer, _overlay;
+	Graphics::Surface _framebuffer, _overlay;
+	DS::Background *_screen, *_overlayScreen;
 #ifdef DISABLE_TEXT_CONSOLE
-	DS::Background _subScreen;
+	DS::Background *_subScreen;
+	DS::TiledBackground *_banner;
 #endif
 	bool _subScreenActive;
 	Graphics::Surface _cursor;
@@ -59,6 +61,7 @@ protected:
 	int _cursorHotY;
 	uint32 _cursorKey;
 	bool _cursorVisible;
+	bool _overlayInGUI;
 
 	DSEventSource *_eventSource;
 	DS::Keyboard *_keyboard;
@@ -68,6 +71,8 @@ protected:
 	bool _disableCursorPalette;
 
 	const Graphics::PixelFormat _pfCLUT8, _pfABGR1555;
+
+	bool _engineRunning;
 
 public:
 	OSystem_DS();
@@ -107,7 +112,7 @@ public:
 	virtual void updateScreen();
 	virtual void setShakePos(int shakeXOffset, int shakeYOffset);
 
-	virtual void showOverlay();
+	virtual void showOverlay(bool inGUI);
 	virtual void hideOverlay();
 	virtual bool isOverlayVisible() const;
 	virtual void clearOverlay();
@@ -136,6 +141,8 @@ public:
 
 	virtual Common::String getSystemLanguage() const;
 
+	virtual void engineInit();
+	virtual void engineDone();
 	virtual void quit();
 
 	virtual void setFocusRectangle(const Common::Rect& rect);

@@ -27,11 +27,40 @@
 #include "common/savefile.h"
 #include "engines/advancedDetector.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "xeen/detection.h"
 
 #define MAX_SAVES 99
 
 namespace Xeen {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_SHOW_ITEM_COSTS,
+		{
+			_s("Show item costs in standard inventory mode"),
+			_s("Shows item costs in standard inventory mode, allowing the value of items to be compared"),
+			"ShowItemCosts",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_DURABLE_ARMOR,
+		{
+			_s("More durable armor"),
+			_s("Armor won't break until character is at -80HP, rather than merely -10HP"),
+			"DurableArmor",
+			false,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 uint32 XeenEngine::getGameID() const {
 	return _gameDescription->gameID;
@@ -71,6 +100,10 @@ class XeenMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "xeen";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Xeen::optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;

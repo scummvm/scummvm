@@ -45,7 +45,7 @@ bool GameMapGump::_highlightItems = false;
 GameMapGump::GameMapGump() :
 	Gump(), _displayDragging(false), _displayList(0), _draggingShape(0),
 		_draggingFrame(0), _draggingFlags(0) {
-	_displayList = new ItemSorter();
+	_displayList = new ItemSorter(2048);
 }
 
 GameMapGump::GameMapGump(int x, int y, int width, int height) :
@@ -55,8 +55,7 @@ GameMapGump::GameMapGump(int x, int y, int width, int height) :
 	// Offset the gump. We want 0,0 to be the centre
 	_dims.moveTo(-_dims.width() / 2, -_dims.height() / 2);
 
-	pout << "Create _displayList ItemSorter object" << Std::endl;
-	_displayList = new ItemSorter();
+	_displayList = new ItemSorter(2048);
 }
 
 GameMapGump::~GameMapGump() {
@@ -106,7 +105,9 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		zlimit = roof->getZ();
 	}
 
-	_displayList->BeginDisplayList(surf, lx, ly, lz);
+	Rect clipWindow;
+	surf->GetClippingRect(clipWindow);
+	_displayList->BeginDisplayList(clipWindow, lx, ly, lz);
 
 	uint32 gametick = Kernel::get_instance()->getFrameNum();
 
@@ -165,7 +166,7 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	}
 
 
-	_displayList->PaintDisplayList(_highlightItems);
+	_displayList->PaintDisplayList(surf, _highlightItems);
 }
 
 // Trace a click, and return ObjId

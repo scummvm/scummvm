@@ -192,6 +192,97 @@ void Gfx::initPalette() {
 	setPalette(_globalPalette, true);
 }
 
+void Gfx::loadECSExtraPalettes() {
+	if (!_vm->isECS())
+		return;
+
+	static const PalEntry ecsExtraPal[64] = {
+		// Bottom palette
+		{ 0x00, 0x00, 0x00 },
+		{ 0x00, 0x00, 0x00 },
+		{ 0x33, 0x11, 0x11 },
+		{ 0x00, 0x44, 0x33 },
+		{ 0x55, 0x33, 0x22 },
+		{ 0x33, 0xdd, 0x44 },
+		{ 0x44, 0x00, 0x66 },
+		{ 0x77, 0x22, 0x00 },
+		{ 0x22, 0x55, 0xaa },
+		{ 0x77, 0x55, 0x44 },
+		{ 0x66, 0x11, 0x88 },
+		{ 0xBB, 0x55, 0x22 },
+		{ 0x88, 0x88, 0x66 },
+		{ 0xEE, 0x77, 0x33 },
+		{ 0xCC, 0xBB, 0x66 },
+		{ 0xFF, 0xFF, 0xFF },
+		{ 0x00, 0x00, 0x00 },
+		{ 0x33, 0x00, 0x44 },
+		{ 0x33, 0x33, 0x55 },
+		{ 0x22, 0x00, 0x77 },
+		{ 0x00, 0x33, 0x77 },
+		{ 0x00, 0x44, 0x99 },
+		{ 0x66, 0x66, 0x88 },
+		{ 0x00, 0x55, 0xBB },
+		{ 0x44, 0x77, 0xBB },
+		{ 0x00, 0x77, 0xDD },
+		{ 0x55, 0x99, 0xCC },
+		{ 0x55, 0x99, 0xCC },
+		{ 0xDD, 0x99, 0x66 },
+		{ 0xCC, 0xBB, 0x99 },
+		{ 0xAA, 0xCC, 0xCC },
+		{ 0xBB, 0xCC, 0xCC },
+
+		// Options palette
+		{ 0x00, 0x00, 0x00 },
+		{ 0x00, 0x33, 0x77 },
+		{ 0x00, 0x55, 0xbb },
+		{ 0x00, 0x44, 0x33 },
+		{ 0x44, 0x77, 0xbb },
+		{ 0x00, 0x66, 0x44 },
+		{ 0x44, 0x00, 0x66 },
+		{ 0x77, 0x22, 0x00 },
+		{ 0x00, 0x33, 0x77 },
+		{ 0x55, 0x99, 0xcc },
+		{ 0x66, 0x11, 0x88 },
+		{ 0xbb, 0x55, 0x22 },
+		{ 0x55, 0x99, 0xcc },
+		{ 0xee, 0x77, 0x33 },
+		{ 0xcc, 0xbb, 0x66 },
+		{ 0xff, 0xff, 0xff },
+		{ 0x00, 0x00, 0x00 },
+		{ 0x22, 0x22, 0x44 },
+		{ 0x33, 0x33, 0x55 },
+		{ 0x22, 0x00, 0x77 },
+		{ 0x00, 0x33, 0x77 },
+		{ 0x00, 0x44, 0x99 },
+		{ 0x44, 0x11, 0x99 },
+		{ 0x00, 0x55, 0xbb },
+		{ 0x22, 0x66, 0xbb },
+		{ 0x44, 0x77, 0xbb },
+		{ 0x00, 0x77, 0xdd },
+		{ 0x55, 0x99, 0xcc },
+		{ 0x77, 0xaa, 0xdd },
+		{ 0x88, 0xbb, 0xdd },
+		{ 0xbb, 0xc3, 0xcf },
+		{ 0xcc, 0xee, 0xff },
+
+		// Here you can add more colors if it simplifies the code
+	};
+
+	int i;
+
+	for (i = 0; i < ARRAYSIZE(ecsExtraPal); i++) {
+		_currentPal[(i + 32) * 3] = _globalPalette[i + 32].red = ecsExtraPal[i].red;
+		_currentPal[(i + 32) * 3 + 1] = _globalPalette[i + 32].green = ecsExtraPal[i].green;
+		_currentPal[(i + 32) * 3 + 2] = _globalPalette[i + 32].blue = ecsExtraPal[i].blue;
+	}
+
+	for (i += 32; i < PAL_ENTRIES; i++) {
+		_currentPal[i * 3] = _globalPalette[i].red = 0;
+		_currentPal[i * 3 + 1] = _globalPalette[i].green = 0;
+		_currentPal[i * 3 + 2] = _globalPalette[i].blue = 0;
+	}
+}
+
 void Gfx::setPalette(const PalEntry *pal, bool full) {
 	int i;
 	byte *ppal;
@@ -199,7 +290,7 @@ void Gfx::setPalette(const PalEntry *pal, bool full) {
 
 	if (_vm->getGameId() == GID_ITE || full) {
 		from = 0;
-		numcolors = PAL_ENTRIES;
+		numcolors = _vm->getPalNumEntries();
 	} else {
 		from = 0;
 		numcolors = 248;
@@ -209,6 +300,10 @@ void Gfx::setPalette(const PalEntry *pal, bool full) {
 		ppal[0] = _globalPalette[i].red = pal[i].red;
 		ppal[1] = _globalPalette[i].green = pal[i].green;
 		ppal[2] = _globalPalette[i].blue = pal[i].blue;
+	}
+
+	if (_vm->isECS()) {
+		loadECSExtraPalettes();
 	}
 
 	// Color 0 should always be black in IHNM
@@ -268,7 +363,7 @@ void Gfx::palToBlack(PalEntry *srcPal, double percent) {
 
 	if (_vm->getGameId() == GID_ITE) {
 		from = 0;
-		numcolors = PAL_ENTRIES;
+		numcolors = _vm->getPalNumEntries();
 	} else {
 		from = 0;
 		numcolors = 248;
@@ -284,7 +379,7 @@ void Gfx::palToBlack(PalEntry *srcPal, double percent) {
 	fpercent = 1.0 - fpercent;
 
 	// Use the correct percentage change per frame for each palette entry
-	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 3) {
+	for (i = 0, ppal = _currentPal; i < (int) _vm->getPalNumEntries(); i++, ppal += 3) {
 		if (i < from || i >= from + numcolors)
 			palE = &_globalPalette[i];
 		else
@@ -336,7 +431,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 
 	if (_vm->getGameId() == GID_ITE) {
 		from = 0;
-		numcolors = PAL_ENTRIES;
+		numcolors = _vm->getPalNumEntries();
 	} else {
 		from = 0;
 		numcolors = 248;
@@ -350,7 +445,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 	fpercent = percent * percent;
 
 	// Use the correct percentage change per frame for each palette entry
-	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 3) {
+	for (i = 0, ppal = _currentPal; i < (int) _vm->getPalNumEntries(); i++, ppal += 3) {
 		if (i < from || i >= from + numcolors)
 			palE = &_globalPalette[i];
 		else
@@ -467,8 +562,8 @@ void Gfx::showCursor(bool state) {
 void Gfx::setCursor(CursorType cursorType) {
 	if (_vm->getGameId() == GID_ITE) {
 		// Set up the mouse cursor
-		const byte A = kITEColorLightGrey;
-		const byte B = kITEColorWhite;
+		const byte A = _vm->isECS() ? kITEECSColorWhite : kITEDOSColorLightGrey;
+		const byte B = _vm->isECS() ? kITEECSColorTransBlack : kITEDOSColorWhite;
 
 		const byte cursor_img_default[CURSOR_W * CURSOR_H] = {
 			0, 0, 0, A, 0, 0, 0,

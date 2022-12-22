@@ -138,7 +138,7 @@ OrthoPlayXObject::OrthoPlayXObject(ObjectType ObjectType) :Object<OrthoPlayXObje
 }
 
 void OrthoPlayXObj::m_new(int nargs) {
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void OrthoPlayXObj::m_setSerialPort(int nargs) {

@@ -84,7 +84,7 @@ public:
 	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) = 0;
 };
 
-RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stereo, bool reverseStereo = false);
+RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool instereo, bool outstereo, bool reverseStereo);
 /** @} */
 } // End of namespace Audio
 

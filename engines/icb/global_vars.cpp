@@ -67,8 +67,8 @@ void Init_globals() {
 	uint32 i;
 	uint32 nVars = 0;
 
-	sprintf(buf, GLOBAL_VAR_PATH);
-	sprintf(cluster, GLOBAL_CLUSTER_PATH);
+	Common::sprintf_s(buf, GLOBAL_VAR_PATH);
+	Common::sprintf_s(cluster, GLOBAL_CLUSTER_PATH);
 	uint32 fn_hash = HashString(buf);
 	uint32 cluster_hash = HashString(cluster);
 

@@ -196,7 +196,7 @@ void BaseDynamicBuffer::putTextIndent(int indent, const char *fmt, ...) {
 //////////////////////////////////////////////////////////////////////////
 void BaseDynamicBuffer::putTextForm(const char *format, va_list argptr) {
 	char buff[32768];
-	vsprintf(buff, format, argptr);
+	Common::vsprintf_s(buff, format, argptr);
 	putBytes((byte *)buff, strlen(buff));
 }
 

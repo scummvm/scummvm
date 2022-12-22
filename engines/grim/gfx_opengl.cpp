@@ -1401,7 +1401,7 @@ void GfxOpenGL::createTextObject(TextObject *text) {
 
 		int width = gf->getStringWidth(text->getLines()[i]);
 		int height = width;
-		surface.create(height, width, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+		surface.create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 		gf->drawString(&surface, text->getLines()[i], 0, 0, width, 0xFFFFFFFF);
 
 		byte *bitmap = (byte *)surface.getPixels();

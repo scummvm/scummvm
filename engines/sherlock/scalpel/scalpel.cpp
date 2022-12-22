@@ -941,7 +941,7 @@ bool ScalpelEngine::showOfficeCutscene3DO() {
 
 		for (int nr = 1; finished && nr <= 4; nr++) {
 			char filename[15];
-			sprintf(filename, "credits%d.cel", nr);
+			Common::sprintf_s(filename, "credits%d.cel", nr);
 			ImageFile3DO *creditsImage = new ImageFile3DO(filename, kImageFile3DOType_Cel);
 			ImageFrame *creditsFrame = &(*creditsImage)[0];
 			for (int i = 0; finished && i < 200 + creditsFrame->_height; i++) {

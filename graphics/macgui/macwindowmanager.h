@@ -331,7 +331,7 @@ public:
 	byte inverter(byte src);
 
 	const byte *getPalette() { return _palette; }
-	byte getPaletteSize() { return _paletteSize; }
+	uint getPaletteSize() { return _paletteSize; }
 
 	void renderZoomBox(bool redraw = false);
 	void addZoomBox(ZoomBox *box);

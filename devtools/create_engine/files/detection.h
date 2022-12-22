@@ -31,14 +31,16 @@ enum XyzzyDebugChannels {
 	kDebugPath     = 1 << 1,
 	kDebugScan     = 1 << 2,
 	kDebugFilePath = 1 << 3,
-	kDebugScript   = 1 << 4
+	kDebugScript   = 1 << 4,
 };
 
-extern const PlainGameDescriptor GAME_NAMES[];
+extern const PlainGameDescriptor xyzzyGames[];
 
-extern const ADGameDescription GAME_DESCRIPTIONS[];
+extern const ADGameDescription gameDescriptions[];
 
-} // namespace Xyzzy
+#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
+
+} // End of namespace Xyzzy
 
 class XyzzyMetaEngineDetection : public AdvancedMetaEngineDetection {
 	static const DebugChannelDef debugFlagList[];
@@ -64,4 +66,4 @@ public:
 	}
 };
 
-#endif
+#endif // XYZZY_DETECTION_H

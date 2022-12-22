@@ -87,8 +87,7 @@ void CreditsGump::InitGump(Gump *newparent, bool take_focus) {
 	_currentSurface = 0;
 	_currentY = 0;
 
-	Mouse::get_instance()->pushMouseCursor();
-	Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_NONE);
+	Mouse::get_instance()->pushMouseCursor(Mouse::MOUSE_NONE);
 }
 
 void CreditsGump::Close(bool no_del) {
@@ -356,7 +355,8 @@ void CreditsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	if (h > 156) h = 156;
 	if (h > 0) {
 		Graphics::ManagedSurface* ms = _scroll[_currentSurface]->getRawSurface();
-		surf->Blit(ms, 0, _currentY, ms->getBounds().width(), h, 32, 44);
+		Common::Rect srcRect(0, _currentY, ms->w, _currentY + h);
+		surf->Blit(*ms, srcRect, 32, 44);
 	}
 
 	int y = h;
@@ -368,7 +368,8 @@ void CreditsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		if (h > 156 - y) h = 156 - y;
 		if (h > 0) {
 			Graphics::ManagedSurface* ms = _scroll[s]->getRawSurface();
-			surf->Blit(ms, 0, 0, ms->getBounds().width(), h, 32, 44 + y);
+			Common::Rect srcRect(0, 0, ms->w, h);
+			surf->Blit(*ms, srcRect, 32, 44 + y);
 		}
 		y += h;
 	}

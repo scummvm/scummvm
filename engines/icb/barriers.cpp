@@ -444,7 +444,7 @@ __barrier_result _game_session::Check_this_barrier(RouteBarrier *bar, PXreal new
 				*ignoreThis = 0;
 
 				// we are going to hit this barrier
-				// but, if the angle is narrow we can aquire the barriers pan and continue unmolested
+				// but, if the angle is narrow we can acquire the barriers pan and continue unmolested
 				delta = remainder(L->pan - bar->m_pan, FULL_TURN, HALF_TURN);
 				delta2 = delta;
 
@@ -496,7 +496,7 @@ void _barrier_handler::___init() {
 
 	// load the raw barrier file for this session
 	// When clustered the session files have the base stripped
-	len = sprintf(temp_buf, "%s", PX_FILENAME_BARRIERLIST);
+	len = Common::sprintf_s(temp_buf, "%s", PX_FILENAME_BARRIERLIST);
 	if (len > ENGINE_STRING_LEN)
 		Fatal_error("_barrier_handler::___init string len error");
 
@@ -513,7 +513,7 @@ void _barrier_handler::___init() {
 
 	// load in the routing wrapper
 	// When clustered the session files have the base stripped
-	len = sprintf(temp_buf, "%s", PX_FILENAME_ROUTING);
+	len = Common::sprintf_s(temp_buf, "%s", PX_FILENAME_ROUTING);
 	if (len > ENGINE_STRING_LEN)
 		Fatal_error("_barrier_handler::___init string len error");
 

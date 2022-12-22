@@ -397,7 +397,7 @@ void dumpMusic() {
 		if (midiOffsets[i] == 0)
 			break;
 
-		sprintf(outName, "track%03d.xmi", i + 1);
+		Common::sprintf_s(outName, "track%03d.xmi", i + 1);
 		outFile.open(outName);
 
 		if (i < total - 1)

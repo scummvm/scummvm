@@ -200,6 +200,7 @@ char *stringUpper(char str[]) { /* INOUT - ISO string to convert */
 }
 
 
+#if 0
 /*----------------------------------------------------------------------
   toIso
 
@@ -304,6 +305,7 @@ void toNative(char copy[],  /* OUT - Mapped  string */
 	if (NATIVECHARSET != 0)
 		fromIso(copy, copy);
 }
+#endif
 
 } // End of namespace Alan2
 } // End of namespace Glk

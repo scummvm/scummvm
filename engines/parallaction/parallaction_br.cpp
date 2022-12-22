@@ -288,7 +288,7 @@ void Parallaction_br::changeLocation() {
 		// more cleanup needed for part changes (see also saveload)
 		g_globalFlags = 0;
 		cleanInventory(true);
-		strcpy(_characterName1, "null");
+		Common::strcpy_s(_characterName1, "null");
 
 		_part = _nextPart;
 

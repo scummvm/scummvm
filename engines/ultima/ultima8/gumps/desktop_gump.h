@@ -43,10 +43,6 @@ public:
 	void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 	void PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 
-	bool StartDraggingChild(Gump *gump, int32 mx, int32 my) override;
-	void DraggingChild(Gump *gump, int mx, int my) override;
-	void StopDraggingChild(Gump *gump) override;
-
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 

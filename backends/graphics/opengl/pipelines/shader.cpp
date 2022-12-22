@@ -50,6 +50,8 @@ ShaderPipeline::~ShaderPipeline() {
 }
 
 void ShaderPipeline::activateInternal() {
+	Pipeline::activateInternal();
+
 	if (OpenGLContext.multitextureSupported) {
 		GL_CALL(glActiveTexture(GL_TEXTURE0));
 	}
@@ -63,6 +65,8 @@ void ShaderPipeline::activateInternal() {
 
 void ShaderPipeline::deactivateInternal() {
 	_activeShader->unbind();
+
+	Pipeline::deactivateInternal();
 }
 
 void ShaderPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
@@ -75,7 +79,9 @@ void ShaderPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 	}
 }
 
-void ShaderPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
+void ShaderPipeline::drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
+	assert(isActive());
+
 	texture.bind();
 
 	GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _coordsVBO));
@@ -87,10 +93,10 @@ void ShaderPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordi
 	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 }
 
-void ShaderPipeline::setProjectionMatrix(const GLfloat *projectionMatrix) {
-	Math::Matrix4 m4;
-	m4.setData(projectionMatrix);
-	_activeShader->setUniform("projection", m4);
+void ShaderPipeline::setProjectionMatrix(const Math::Matrix4 &projectionMatrix) {
+	assert(isActive());
+
+	_activeShader->setUniform("projection", projectionMatrix);
 }
 #endif // !USE_FORCED_GLES
 

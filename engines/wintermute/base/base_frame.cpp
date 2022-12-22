@@ -280,8 +280,9 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 		break;
 
 		case TOKEN_APPLY_EVENT: {
-			char *event = new char[strlen(params) + 1];
-			strcpy(event, params);
+			size_t eventSize = strlen(params) + 1;
+			char *event = new char[eventSize];
+			Common::strcpy_s(event, eventSize, params);
 			_applyEvent.add(event);
 		}
 		break;

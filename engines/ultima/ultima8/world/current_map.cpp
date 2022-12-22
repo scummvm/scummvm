@@ -1318,6 +1318,11 @@ void CurrentMap::setWholeMapFast() {
 				setChunkFast(j, i);
 		}
 	}
+
+	_fastXMin = -1;
+	_fastYMin = -1;
+	_fastXMax = -1;
+	_fastYMax = -1;
 }
 
 void CurrentMap::save(Common::WriteStream *ws) {

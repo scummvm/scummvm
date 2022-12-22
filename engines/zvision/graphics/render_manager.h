@@ -305,8 +305,8 @@ public:
 	// xy - base color
 	// depth - +/- of base color
 	// rect - rectangle where select pixels
-	// minD - if not NULL will recieve real bottom border of depth
-	// maxD - if not NULL will recieve real top border of depth
+	// minD - if not NULL will receive real bottom border of depth
+	// maxD - if not NULL will receive real top border of depth
 	EffectMap *makeEffectMap(const Common::Point &xy, int16 depth, const Common::Rect &rect, int8 *minD, int8 *maxD);
 
 	// Create "mask" for effects by simple transparent color

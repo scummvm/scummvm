@@ -33,9 +33,7 @@ namespace Pegasus {
 InventoryItem::InventoryItem(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
 		Item(id, neighborhood, room, direction) {
 
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
-
-	Common::SeekableReadStream *leftInfo = vm->_resFork->getResource(MKTAG('L', 'e', 'f', 't'), kItemBaseResID + id);
+	Common::SeekableReadStream *leftInfo = g_vm->_resFork->getResource(MKTAG('L', 'e', 'f', 't'), kItemBaseResID + id);
 	if (leftInfo) {
 		_leftAreaInfo = readItemState(leftInfo);
 		delete leftInfo;
@@ -44,7 +42,7 @@ InventoryItem::InventoryItem(const ItemID id, const NeighborhoodID neighborhood,
 		_leftAreaInfo.entries = nullptr;
 	}
 
-	Common::SeekableReadStream *inventoryInfo = vm->_resFork->getResource(MKTAG('I', 'n', 'v', 'I'), kItemBaseResID + id);
+	Common::SeekableReadStream *inventoryInfo = g_vm->_resFork->getResource(MKTAG('I', 'n', 'v', 'I'), kItemBaseResID + id);
 	if (inventoryInfo) {
 		_inventoryInfo.panelStart = inventoryInfo->readUint32BE();
 		_inventoryInfo.panelStop = inventoryInfo->readUint32BE();

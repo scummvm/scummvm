@@ -44,105 +44,105 @@ namespace Saga2 {
 // null spell
 
 SPELLLOCATIONFUNCTION(invisibleSpellPos) {
-	return effectron->finish;
+	return effectron->_finish;
 }
 
 // ------------------------------------------------------------------
 // aura that tracks target
 
 SPELLLOCATIONFUNCTION(auraSpellPos) {
-	return effectron->finish;
+	return effectron->_finish;
 }
 
 // ------------------------------------------------------------------
 // aura that tracks target (in front)
 
 SPELLLOCATIONFUNCTION(glowSpellPos) {
-	return effectron->finish - TilePoint(8, 8, 0);
+	return effectron->_finish - TilePoint(8, 8, 0);
 }
 
 // ------------------------------------------------------------------
 // sprites that surround target
 
 SPELLLOCATIONFUNCTION(wallSpellPos) {
-	return effectron->parent->target->getPoint() + effectron->velocity;
+	return effectron->_parent->_target->getPoint() + effectron->_velocity;
 }
 
 // ------------------------------------------------------------------
 // projectile from caster to target
 
 SPELLLOCATIONFUNCTION(projectileSpellPos) {
-	return effectron->current + effectron->velocity;
+	return effectron->_current + effectron->_velocity;
 }
 
 // ------------------------------------------------------------------
 // bi-directional beams of energy
 
 SPELLLOCATIONFUNCTION(exchangeSpellPos) {
-	if (effectron->stepNo < effectron->partno / 2)
-		return effectron->current;
-	return effectron->current + effectron->velocity;
+	if (effectron->_stepNo < effectron->_partno / 2)
+		return effectron->_current;
+	return effectron->_current + effectron->_velocity;
 }
 
 // ------------------------------------------------------------------
 // lightning bolt shaped spell
 
 SPELLLOCATIONFUNCTION(boltSpellPos) {
-	if ((effectron->partno / 9) >= effectron->stepNo)
-		return effectron->current;
-	return effectron->current +
-	       effectron->velocity;
+	if ((effectron->_partno / 9) >= effectron->_stepNo)
+		return effectron->_current;
+	return effectron->_current +
+	       effectron->_velocity;
 }
 
 // ------------------------------------------------------------------
 // narrow bolt
 
 SPELLLOCATIONFUNCTION(beamSpellPos) {
-	return effectron->start + randomVector(-effectron->velocity, effectron->velocity);
+	return effectron->_start + randomVector(-effectron->_velocity, effectron->_velocity);
 }
 
 // ------------------------------------------------------------------
 // narrow cone shaped spell
 
 SPELLLOCATIONFUNCTION(coneSpellPos) {
-	if (effectron->partno / 9 >= effectron->stepNo)
-		return effectron->current;
-	return effectron->current +
-	       effectron->velocity;
+	if (effectron->_partno / 9 >= effectron->_stepNo)
+		return effectron->_current;
+	return effectron->_current +
+	       effectron->_velocity;
 }
 
 // ------------------------------------------------------------------
 // wide cone shaped spell
 
 SPELLLOCATIONFUNCTION(waveSpellPos) {
-	if (effectron->partno / 17 >= effectron->stepNo)
-		return effectron->current;
-	return effectron->current +
-	       effectron->velocity;
+	if (effectron->_partno / 17 >= effectron->_stepNo)
+		return effectron->_current;
+	return effectron->_current +
+	       effectron->_velocity;
 }
 
 // ------------------------------------------------------------------
 // small exploding ball
 
 SPELLLOCATIONFUNCTION(ballSpellPos) {
-	return effectron->current +
-	       effectron->velocity;
+	return effectron->_current +
+	       effectron->_velocity;
 }
 
 // ------------------------------------------------------------------
 // square exploding ball
 
 SPELLLOCATIONFUNCTION(squareSpellPos) {
-	return effectron->current +
-	       effectron->velocity;
+	return effectron->_current +
+	       effectron->_velocity;
 }
 
 // ------------------------------------------------------------------
 // large exploding ball
 
 SPELLLOCATIONFUNCTION(stormSpellPos) {
-	return effectron->current +
-	       effectron->velocity;
+	return effectron->_current +
+	       effectron->_velocity;
 }
 
 } // end of namespace Saga2

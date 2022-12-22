@@ -113,8 +113,9 @@ void Text::load() {
 			++s;
 
 		_cache[idx]._ref = r;
-		_cache[idx]._text = new char[strlen(s) + 1];
-		strcpy(_cache[idx]._text, s);
+		size_t ln = strlen(s) + 1;
+		_cache[idx]._text = new char[ln];
+		Common::strcpy_s(_cache[idx]._text, ln, s);
 		idx++;
 	}
 }
@@ -208,7 +209,7 @@ void Text::sayTime(Sprite *spr) {
 	_vm->_system->getTimeAndDate(curTime);
 
 	char t[6];
-	sprintf(t, "%d:%02d", curTime.tm_hour, curTime.tm_min);
+	Common::sprintf_s(t, "%d:%02d", curTime.tm_hour, curTime.tm_min);
 	say(t, spr);
 }
 

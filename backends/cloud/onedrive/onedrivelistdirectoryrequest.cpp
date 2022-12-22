@@ -25,7 +25,7 @@
 #include "backends/cloud/iso8601.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/networkreadstream.h"
-#include "common/json.h"
+#include "common/formats/json.h"
 
 namespace Cloud {
 namespace OneDrive {

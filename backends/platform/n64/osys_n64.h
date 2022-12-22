@@ -109,6 +109,7 @@ protected:
 
 	uint16	_overlayHeight, _overlayWidth;
 	bool	_overlayVisible;
+	bool	_overlayInGUI;
 
 	bool	_disableFpsLimit; // When this is enabled, the system doesn't limit screen updates
 
@@ -164,7 +165,7 @@ public:
 	virtual void unlockScreen();
 	virtual void setShakePos(int shakeXOffset, int shakeYOffset);
 
-	virtual void showOverlay();
+	virtual void showOverlay(bool inGUI);
 	virtual void hideOverlay();
 	virtual bool isOverlayVisible() const { return _overlayVisible; }
 	virtual void clearOverlay();

@@ -194,8 +194,9 @@ Sprite *Hero::expand() {
 	}
 
 	char *tempStr = _vm->_text->getText(_ref + 100);
-	char *text = new char[strlen(tempStr) + 1];
-	strcpy(text, tempStr);
+	size_t ln = strlen(tempStr) + 1;
+	char *text = new char[ln];
+	Common::strcpy_s(text, ln, tempStr);
 	_reachStart = atoi(_vm->token(text));
 	_reachCycle = atoi(_vm->token(nullptr));
 	_sayStart = atoi(_vm->token(nullptr));

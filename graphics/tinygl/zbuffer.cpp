@@ -90,6 +90,8 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelFormat &for
 	_zbuf = (uint *)gl_zalloc(_pbufWidth * _pbufHeight * sizeof(uint));
 	if (enableStencilBuffer)
 		_sbuf = (byte *)gl_zalloc(_pbufWidth * _pbufHeight * sizeof(byte));
+	else
+		_sbuf = nullptr;
 
 	_offscreenBuffer.pbuf = _pbuf.getRawBuffer();
 	_offscreenBuffer.zbuf = _zbuf;

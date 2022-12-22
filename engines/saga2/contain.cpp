@@ -65,19 +65,19 @@ void grabObject(ObjectID pickedObject);      // turn object into mouse ptr
 void releaseObject();                    // restore mouse pointer
 
 /* Reference Types
-ProtoObj::isTangible
-ProtoObj::isContainer
-ProtoObj::isBottle
-ProtoObj::isFood
-ProtoObj::isWearable
-ProtoObj::isWeapon
-ProtoObj::isDocument
-ProtoObj::isIntangible
-ProtoObj::isConcept
-ProtoObj::isMemory
-ProtoObj::isPsych
-ProtoObj::isSpell
-ProtoObj::isEnchantment
+ProtoObj::kIsTangible
+ProtoObj::kIsContainer
+ProtoObj::kIsBottle
+ProtoObj::kIsFood
+ProtoObj::kIsWearable
+ProtoObj::kIsWeapon
+ProtoObj::kIsDocument
+ProtoObj::kIsIntangible
+ProtoObj::kIsConcept
+ProtoObj::kIsMemory
+ProtoObj::kIsPsych
+ProtoObj::kIsSpell
+ProtoObj::kIsEnchantment
 */
 
 //-----------------------------------------------------------------------
@@ -157,8 +157,8 @@ static const ContainerAppearanceDef readyContainerAppearance = {
 	{0, 0, 0, 0},
 	{ 0, 0 },
 	{ 0, 0 },
-	{iconOriginX - 1, iconOriginY - 1 - 8},
-	{iconSpacingX, iconSpacingY},
+	{kIconOriginX - 1, kIconOriginY - 1 - 8},
+	{kIconSpacingX, kIconSpacingY},
 	1, 3,
 	3
 };
@@ -212,18 +212,18 @@ ContainerView::ContainerView(
     const ContainerAppearanceDef &app,
     AppFunc         *cmd)
 	: gControl(list, rect, nullptr, 0, cmd),
-	  iconOrigin(app.iconOrigin),
-	  iconSpacing(app.iconSpacing),
-	  visibleRows(app.rows),
-	  visibleCols(app.cols),
-	  node(nd) {
-	containerObject = GameObject::objectAddress(nd.object);
-	scrollPosition  = 0;
-	totalRows       = app.totRows;
+	  _iconOrigin(app.iconOrigin),
+	  _iconSpacing(app.iconSpacing),
+	  _visibleRows(app.rows),
+	  _visibleCols(app.cols),
+	  _node(nd) {
+	_containerObject = GameObject::objectAddress(nd._object);
+	_scrollPosition  = 0;
+	_totalRows       = app.totRows;
 	setMousePoll(true);
-	totalMass = 0;
-	totalBulk = 0;
-	numObjects = 0;
+	_totalMass = 0;
+	_totalBulk = 0;
+	_numObjects = 0;
 }
 
 //  Destructor
@@ -235,11 +235,11 @@ ContainerView::~ContainerView() {
 bool ContainerView::isVisible(GameObject *item) {
 	ProtoObj *proto = item->proto();
 
-	if (proto->containmentSet() & ProtoObj::isEnchantment)
+	if (proto->containmentSet() & ProtoObj::kIsEnchantment)
 		return false;
 
 	//  If Intangible Container then don't show it.
-	if ((proto->containmentSet() & (ProtoObj::isContainer | ProtoObj::isIntangible)) == (ProtoObj::isContainer | ProtoObj::isIntangible))
+	if ((proto->containmentSet() & (ProtoObj::kIsContainer | ProtoObj::kIsIntangible)) == (ProtoObj::kIsContainer | ProtoObj::kIsIntangible))
 		return true;
 
 	return true;
@@ -250,13 +250,13 @@ void ContainerView::totalObjects() {
 	ObjectID objID;
 	GameObject *item = nullptr;
 
-	totalMass   = 0;
-	totalBulk   = 0;
-	numObjects  = 0;
+	_totalMass   = 0;
+	_totalBulk   = 0;
+	_numObjects  = 0;
 
-	if (containerObject == nullptr) return;
+	if (_containerObject == nullptr) return;
 
-	RecursiveContainerIterator  iter(containerObject);
+	RecursiveContainerIterator  iter(_containerObject);
 
 	//  See if he has enough currency
 	for (objID = iter.first(&item); objID != Nothing; objID = iter.next(&item)) {
@@ -267,17 +267,17 @@ void ContainerView::totalObjects() {
 
 			ProtoObj *proto = item->proto();
 
-			numObjects++;
+			_numObjects++;
 
 			// if it's mergeable calc using the getExtra method of
 			// quantity calculation
 			// if not, then use the objLoc.z method
-			if (proto->flags & ResourceObjectPrototype::objPropMergeable)
+			if (proto->flags & ResourceObjectPrototype::kObjPropMergeable)
 				numItems = item->getExtra();
 			else numItems = 1;
 
-			totalMass += proto->mass * numItems;
-			totalBulk += proto->bulk * numItems;
+			_totalMass += proto->mass * numItems;
+			_totalBulk += proto->bulk * numItems;
 		}
 	}
 }
@@ -287,9 +287,9 @@ ObjectID ContainerView::getObject(int16 slotNum) {
 	ObjectID        objID;
 	GameObject      *item;
 
-	if (containerObject == nullptr) return Nothing;
+	if (_containerObject == nullptr) return Nothing;
 
-	ContainerIterator   iter(containerObject);
+	ContainerIterator   iter(_containerObject);
 
 	//  Iterate through all the objects in the container.
 	while ((objID = iter.next(&item)) != Nothing) {
@@ -315,14 +315,14 @@ void ContainerView::drawClipped(
 	                y;
 
 	//  Coordinates for slot 0,0.
-	int16           originX = _extent.x - offset.x + iconOrigin.x,
-	                originY = _extent.y - offset.y + iconOrigin.y;
+	int16           originX = _extent.x - offset.x + _iconOrigin.x,
+	                originY = _extent.y - offset.y + _iconOrigin.y;
 
 	ObjectID        objID;
 	GameObject      *item;
 
 	//  Iterator class for the container.
-	ContainerIterator   iter(containerObject);
+	ContainerIterator   iter(_containerObject);
 
 	//  Color set to draw the object.
 	ColorTable      objColors;
@@ -340,27 +340,27 @@ void ContainerView::drawClipped(
 		if (objLoc.z == 0) continue;
 
 		//  Draw object only if visible and in a visible row & col.
-		if (objLoc.u >= scrollPosition
-		        &&  objLoc.u < scrollPosition + visibleRows
-		        &&  objLoc.v < visibleCols
+		if (objLoc.u >= _scrollPosition
+		        &&  objLoc.u < _scrollPosition + _visibleRows
+		        &&  objLoc.v < _visibleCols
 		        &&  isVisible(item)) {
 			Sprite      *spr;
 			ProtoObj    *proto = item->proto();
 			Point16     sprPos;
 
 			y =     originY
-			        + (objLoc.u - scrollPosition)
-			        * (iconSpacing.y + iconHeight);
+			        + (objLoc.u - _scrollPosition)
+			        * (_iconSpacing.y + kIconHeight);
 			x =     originX
 			        +       objLoc.v
-			        * (iconSpacing.x + iconWidth);
+			        * (_iconSpacing.x + kIconWidth);
 
 			//  Get the address of the sprite.
-			spr = proto->getSprite(item, ProtoObj::objInContainerView).sp;
+			spr = proto->getSprite(item, ProtoObj::kObjInContainerView).sp;
 
-			sprPos.x = x + ((iconWidth - spr->size.x) >> 1)
+			sprPos.x = x + ((kIconWidth - spr->size.x) >> 1)
 			           - spr->offset.x;
-			sprPos.y = y + ((iconHeight - spr->size.y) >> 1)
+			sprPos.y = y + ((kIconHeight - spr->size.y) >> 1)
 			           - spr->offset.y;
 
 			//  Build the color table.
@@ -375,14 +375,14 @@ void ContainerView::drawClipped(
 
 			// check to see if selecting amount for this objec
 			if (g_vm->_cnm->_objToGet == item) {
-				Point16 selectorPos = Point16(x + ((iconWidth - selectorX) >> 1),
-				                              y + ((iconHeight - selectorY) >> 1));
+				Point16 selectorPos = Point16(x + ((kIconWidth - kSelectorX) >> 1),
+				                              y + ((kIconHeight - kSelectorY) >> 1));
 
 				// draw the selector thingy
 				drawSelector(port, selectorPos);
 
 				// set the position of the inc center
-				g_vm->_cnm->_amountIndY = y - (selectorY >> 1) - 12;
+				g_vm->_cnm->_amountIndY = y - (kSelectorY >> 1) - 12;
 			} else drawQuantity(port, item, objProto, x, y);
 		}
 	}
@@ -399,14 +399,14 @@ void ContainerView::drawSelector(gPort &port, Point16 &pos) {
 	drawCompressedImage(port, pos, g_vm->_cnm->_selImage);
 
 	// draw the number of items selected thus far
-	num = sprintf(buf, " %d ", g_vm->_cnm->_numPicked);
+	num = Common::sprintf_s(buf, " %d ", g_vm->_cnm->_numPicked);
 
 	port.moveTo(Point16(pos.x - ((3 * (num - 3)) + 1),  pos.y + 7));
 	port.setFont(&Helv11Font);
 	port.setColor(11);                   // set color to white
-	port.setStyle(textStyleThickOutline);
+	port.setStyle(kTextStyleThickOutline);
 	port.setOutlineColor(24);                // set outline color to black
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 
 	port.drawText(buf);
 }
@@ -419,7 +419,7 @@ void ContainerView::drawQuantity(
     int16           y) {
 	int16       quantity;
 
-	quantity = (objProto->flags & ResourceObjectPrototype::objPropMergeable)
+	quantity = (objProto->flags & ResourceObjectPrototype::kObjPropMergeable)
 	           ? item->getExtra()
 	           : item->getLocation().z;
 
@@ -428,21 +428,21 @@ void ContainerView::drawQuantity(
 		char buf[8];
 
 		// draw the number of items selected thus far
-		sprintf(buf, "%d", quantity);
+		Common::sprintf_s(buf, "%d", quantity);
 
 		port.moveTo(x - 1,  y + 22);
 		port.setFont(&Helv11Font);
 		port.setColor(11);                   // set color to white
-		port.setStyle(textStyleThickOutline);
+		port.setStyle(kTextStyleThickOutline);
 		port.setOutlineColor(24);                // set outline color to black
-		port.setMode(drawModeMatte);
+		port.setMode(kDrawModeMatte);
 
 		port.drawText(buf);
 	}
 }
 
 void ContainerView::setContainer(GameObject *containerObj) {
-	containerObject = containerObj;
+	_containerObject = containerObj;
 	totalObjects();
 }
 
@@ -453,9 +453,9 @@ TilePoint ContainerView::pickObjectSlot(const Point16 &pickPos) {
 	Point16     temp;
 
 	//  Compute the u/v of the slot that they clicked on.
-	temp   = pickPos + iconSpacing / 2 - iconOrigin;
-	slot.v = clamp(0, temp.x / (iconWidth  + iconSpacing.x), visibleCols - 1);
-	slot.u = clamp(0, temp.y / (iconHeight + iconSpacing.y), visibleRows - 1) + scrollPosition;
+	temp   = pickPos + _iconSpacing / 2 - _iconOrigin;
+	slot.v = clamp(0, temp.x / (kIconWidth  + _iconSpacing.x), _visibleCols - 1);
+	slot.u = clamp(0, temp.y / (kIconHeight + _iconSpacing.y), _visibleRows - 1) + _scrollPosition;
 	slot.z = 1;
 	return slot;
 }
@@ -465,7 +465,7 @@ GameObject *ContainerView::getObject(const TilePoint &slot) {
 	GameObject *item;
 	TilePoint   loc;
 
-	item = containerObject->child();
+	item = _containerObject->child();
 
 	while (item != nullptr) {
 		//  Skip objects that are stacked behind other objects
@@ -478,7 +478,7 @@ GameObject *ContainerView::getObject(const TilePoint &slot) {
 			    (loc.u == slot.u) &&
 			    (loc.v == slot.v) &&
 			    //Skip The Enchantments
-			    (!(proto->containmentSet() & ProtoObj::isEnchantment))
+			    (!(proto->containmentSet() & ProtoObj::kIsEnchantment))
 			) {
 				return item;
 			}
@@ -527,7 +527,7 @@ void ContainerView::deactivate() {
 }
 
 void ContainerView::pointerMove(gPanelMessage &msg) {
-	if (msg.pointerLeave) {
+	if (msg._pointerLeave) {
 		g_vm->_cnm->_lastPickedObjectID = Nothing;
 		g_vm->_cnm->_lastPickedObjectQuantity = -1;
 		g_vm->_mouseInfo->setText(nullptr);
@@ -547,17 +547,17 @@ void ContainerView::pointerMove(gPanelMessage &msg) {
 			GameObject *mouseObject;
 			mouseObject = g_vm->_mouseInfo->getObject();
 
-			if (!node.isAccessable(getCenterActorID())) {
+			if (!_node.isAccessable(getCenterActorID())) {
 				g_vm->_mouseInfo->setDoable(false);
 			} else if (mouseObject == nullptr) {
 				g_vm->_mouseInfo->setDoable(true);
 			} else {
-				g_vm->_mouseInfo->setDoable(containerObject->canContain(mouseObject->thisID()));
+				g_vm->_mouseInfo->setDoable(_containerObject->canContain(mouseObject->thisID()));
 			}
 		}
 
 		//  Determine if mouse is pointing at a new object
-		updateMouseText(msg.pickPos);
+		updateMouseText(msg._pickPos);
 	}
 }
 
@@ -566,38 +566,38 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 	GameObject  *slotObject;
 	uint16       mouseSet;
 
-	slotObject  = pickObject(msg.pickPos);
+	slotObject  = pickObject(msg._pickPos);
 	mouseObject = g_vm->_mouseInfo->getObject();
 	mouseSet    = mouseObject ? mouseObject->containmentSet() : 0;
 
 	if (!g_vm->_mouseInfo->getDoable()) return false;
 
-	if (msg.doubleClick && !g_vm->_cnm->_alreadyDone) {
+	if (msg._doubleClick && !g_vm->_cnm->_alreadyDone) {
 		dblClick(mouseObject, slotObject, msg);
 	} else { // single click
 		if (mouseObject != nullptr) {
 			g_vm->_cnm->_alreadyDone = true;    // if object then no doubleClick
 
-			if (g_vm->_mouseInfo->getIntent() == GrabInfo::Drop) {
-				if (mouseSet & ProtoObj::isTangible) {
+			if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntDrop) {
+				if (mouseSet & ProtoObj::kIsTangible) {
 					dropPhysical(msg, mouseObject, slotObject, g_vm->_mouseInfo->getMoveCount());
 				}
 
 				//  intangibles are used by dropping them
-				else if ((mouseSet & ProtoObj::isConcept) ||
-				         (mouseSet & ProtoObj::isPsych) ||
-				         (mouseSet & ProtoObj::isSpell) ||
-				         (mouseSet & ProtoObj::isSkill)) {
+				else if ((mouseSet & ProtoObj::kIsConcept) ||
+				         (mouseSet & ProtoObj::kIsPsych) ||
+				         (mouseSet & ProtoObj::kIsSpell) ||
+				         (mouseSet & ProtoObj::kIsSkill)) {
 					useConcept(msg, mouseObject, slotObject);
 				} else {
 					// !!!! bad state, reset cursor
 					g_vm->_mouseInfo->replaceObject();
 				}
-			} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
-				if (mouseSet & ProtoObj::isTangible) {
+			} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntUse) {
+				if (mouseSet & ProtoObj::kIsTangible) {
 					usePhysical(msg, mouseObject, slotObject);
-				} else if ((mouseSet & ProtoObj::isSpell) ||
-				           (mouseSet & ProtoObj::isSkill)) {
+				} else if ((mouseSet & ProtoObj::kIsSpell) ||
+				           (mouseSet & ProtoObj::kIsSkill)) {
 					g_vm->_mouseInfo->replaceObject();
 				} else {
 					useConcept(msg, mouseObject, slotObject);
@@ -615,9 +615,9 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 
 	// total the mass and bulk of all the objects in this container
 	totalObjects();
-	window.update(_extent);
+	_window.update(_extent);
 
-	return activate(gEventMouseDown);
+	return activate(kEventMouseDown);
 }
 
 void ContainerView::pointerRelease(gPanelMessage &) {
@@ -638,7 +638,7 @@ void ContainerView::timerTick(gPanelMessage &msg) {
 	// validate objToGet and make sure that the number selected for move
 	// is less then or equal to the number of items present in the merged object
 	if (g_vm->_cnm->_objToGet && g_vm->_cnm->_amountIndY != -1) {
-		int32   rate = (g_vm->_cnm->_amountIndY - msg.pickAbsPos.y);
+		int32   rate = (g_vm->_cnm->_amountIndY - msg._pickAbsPos.y);
 
 		rate = rate * ((rate > 0) ? rate : -rate);
 
@@ -670,7 +670,7 @@ void ContainerView::clickOn(
     GameObject *,
     GameObject *cObj) {
 	if (cObj != nullptr) {
-		if (cObj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
+		if (cObj->proto()->flags & ResourceObjectPrototype::kObjPropMergeable) {
 			if (!rightButtonState()) {
 				//  just get the object into the cursor
 				cObj->take(getCenterActorID(), cObj->getExtra());
@@ -724,16 +724,16 @@ void ContainerView::dropPhysical(
     GameObject      *cObj,
     int16           num) {
 	assert(g_vm->_mouseInfo->getObject() == mObj);
-	assert(mObj->containmentSet() & ProtoObj::isTangible);
+	assert(mObj->containmentSet() & ProtoObj::kIsTangible);
 
 	//  Place object back where it came from, temporarily
 	g_vm->_mouseInfo->replaceObject();
 
 	//  test to check if item is accepted by container
-	if (containerObject->canContain(mObj->thisID())) {
+	if (_containerObject->canContain(mObj->thisID())) {
 		Actor       *centerActor = getCenterActor();
-		Location    loc(pickObjectSlot(msg.pickPos),
-		                containerObject->thisID());
+		Location    loc(pickObjectSlot(msg._pickPos),
+		                _containerObject->thisID());
 
 		//  check if no object in the current slot
 		if (cObj == nullptr) {
@@ -755,7 +755,7 @@ void ContainerView::usePhysical(
     GameObject      *mObj,
     GameObject      *cObj) {
 	assert(g_vm->_mouseInfo->getObject() == mObj);
-	assert(mObj->containmentSet() & ProtoObj::isTangible);
+	assert(mObj->containmentSet() & ProtoObj::kIsTangible);
 
 	if (cObj == nullptr) {
 		dropPhysical(msg, mObj, cObj);
@@ -772,20 +772,20 @@ void ContainerView::useConcept(
     GameObject      *mObj,
     GameObject      *cObj) {
 	assert(g_vm->_mouseInfo->getObject() == mObj);
-	assert(mObj->containmentSet() & ProtoObj::isIntangible);
+	assert(mObj->containmentSet() & ProtoObj::kIsIntangible);
 
 	g_vm->_mouseInfo->replaceObject();
 
 	//  Determine if this object can go into this container
-	if (containerObject->canContain(mObj->thisID())) {
+	if (_containerObject->canContain(mObj->thisID())) {
 		ObjectID    centerActorID = getCenterActorID();
 
 		if (cObj == nullptr) {
 			//  If there is no object already in this slot drop the
 			//  mouse object here
 
-			Location    loc(pickObjectSlot(msg.pickPos),
-			                containerObject->thisID());
+			Location    loc(pickObjectSlot(msg._pickPos),
+			                _containerObject->thisID());
 
 			mObj->drop(centerActorID, loc);
 		} else
@@ -843,7 +843,7 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 		g_vm->_cnm->_objTextAlarm = false;
 
 		// set the hint alarm
-		containerObjTextAlarm.set(ticksPerSecond / 2);
+		containerObjTextAlarm.set(kTicksPerSecond / 2);
 
 		// put the normalized text into mouseText
 		slotObject->objCursorText(g_vm->_cnm->_mouseText, ContainerManager::kBufSize);
@@ -885,22 +885,22 @@ ReadyContainerView::ReadyContainerView(
     AppFunc         *cmd)
 	: ContainerView(list, box, nd, readyContainerAppearance, cmd) {
 	//  Over-ride row and column info in appearance record.
-	visibleRows = numRows;
-	visibleCols = numCols;
-	totalRows   = totRows;
+	_visibleRows = numRows;
+	_visibleCols = numCols;
+	_totalRows   = totRows;
 
 	if (backgrounds) {
-		backImages  = backgrounds;
-		numIm       = numRes;
+		_backImages  = backgrounds;
+		_numIm       = numRes;
 	} else {
-		backImages  = nullptr;
-		numIm       = 0;
+		_backImages  = nullptr;
+		_numIm       = 0;
 	}
 }
 
 void ReadyContainerView::setScrollOffset(int8 num) {
 	if (num > 0) {
-		scrollPosition = num;
+		_scrollPosition = num;
 	}
 }
 
@@ -924,8 +924,8 @@ void ReadyContainerView::drawClipped(
 	                y;
 
 	//  Coordinates for slot 0,0.
-	int16           originX = _extent.x - offset.x + iconOrigin.x,
-	                originY = _extent.y - offset.y + iconOrigin.y;
+	int16           originX = _extent.x - offset.x + _iconOrigin.x,
+	                originY = _extent.y - offset.y + _iconOrigin.y;
 
 	//  Row an column number of the inventory slot.
 	int16           col,
@@ -935,7 +935,7 @@ void ReadyContainerView::drawClipped(
 	GameObject      *item;
 
 	//  Iterator class for the container.
-	ContainerIterator   iter(containerObject);
+	ContainerIterator   iter(_containerObject);
 
 	//  Color set to draw the object.
 	ColorTable      objColors;
@@ -945,40 +945,40 @@ void ReadyContainerView::drawClipped(
 
 	//  Draw the boxes for visible rows and cols.
 
-	if (backImages) {
+	if (_backImages) {
 		int16   i;
-		Point16 drawOrg(_extent.x - offset.x + backOriginX,
-		                _extent.y - offset.y + backOriginY);
+		Point16 drawOrg(_extent.x - offset.x + kBackOriginX,
+		                _extent.y - offset.y + kBackOriginY);
 
 		for (y = drawOrg.y, row = 0;
-		        row < visibleRows;
-		        row++, y += iconSpacing.y + iconHeight) {
+		        row < _visibleRows;
+		        row++, y += _iconSpacing.y + kIconHeight) {
 			// reset y for background image stuff
 			//y = drawOrg.y;
 
 			for (i = 0, x = drawOrg.x, col = 0;
-			        col < visibleCols;
-			        i++, col++, x += iconSpacing.x + iconWidth) {
+			        col < _visibleCols;
+			        i++, col++, x += _iconSpacing.x + kIconWidth) {
 				Point16 pos(x, y);
 
-				if (isGhosted()) drawCompressedImageGhosted(port, pos, backImages[i % numIm]);
-				else drawCompressedImage(port, pos, backImages[i % numIm]);
+				if (isGhosted()) drawCompressedImageGhosted(port, pos, _backImages[i % _numIm]);
+				else drawCompressedImage(port, pos, _backImages[i % _numIm]);
 			}
 
 		}
 	} else {
 		for (y = originY, row = 0;
-		        row < visibleRows;
-		        row++, y += iconSpacing.y + iconHeight) {
+		        row < _visibleRows;
+		        row++, y += _iconSpacing.y + kIconHeight) {
 
 			for (x = originX, col = 0;
-			        col < visibleCols;
-			        col++, x += iconSpacing.x + iconWidth) {
+			        col < _visibleCols;
+			        col++, x += _iconSpacing.x + kIconWidth) {
 				//  REM: We need to come up with some way of
 				//  indicating how to render the pattern data which
 				//  is behind the object...
 				port.setColor(14);
-				port.fillRect(x, y, iconWidth, iconHeight);
+				port.fillRect(x, y, kIconWidth, kIconHeight);
 
 			}
 
@@ -993,7 +993,7 @@ void ReadyContainerView::drawClipped(
 		ProtoObj    *objProto = item->proto();
 
 		//  If Intangible Container then don't show it.
-		if ((objProto->containmentSet() & (ProtoObj::isContainer | ProtoObj::isIntangible)) == (ProtoObj::isContainer | ProtoObj::isIntangible))
+		if ((objProto->containmentSet() & (ProtoObj::kIsContainer | ProtoObj::kIsIntangible)) == (ProtoObj::kIsContainer | ProtoObj::kIsIntangible))
 			continue;
 
 		objLoc = item->getLocation();
@@ -1001,31 +1001,31 @@ void ReadyContainerView::drawClipped(
 		if (objLoc.z == 0) continue;
 
 		//  Draw object only if visible and in a visible row & col.
-		if (objLoc.u >= scrollPosition &&
-		        objLoc.u < scrollPosition + visibleRows &&
-		        objLoc.v < visibleCols &&
+		if (objLoc.u >= _scrollPosition &&
+		        objLoc.u < _scrollPosition + _visibleRows &&
+		        objLoc.v < _visibleCols &&
 		        isVisible(item)) {
 			Sprite      *spr;
 			ProtoObj    *proto = item->proto();
 			Point16     sprPos;
 
-			y = originY + (objLoc.u - scrollPosition) * (iconSpacing.y + iconHeight);
-			x = originX + objLoc.v * (iconSpacing.x + iconWidth);
+			y = originY + (objLoc.u - _scrollPosition) * (_iconSpacing.y + kIconHeight);
+			x = originX + objLoc.v * (_iconSpacing.x + kIconWidth);
 
 			//  Get the address of the sprite.
-			spr = proto->getSprite(item, ProtoObj::objInContainerView).sp;
+			spr = proto->getSprite(item, ProtoObj::kObjInContainerView).sp;
 
-			sprPos.x = x + ((iconWidth - spr->size.x) >> 1)
+			sprPos.x = x + ((kIconWidth - spr->size.x) >> 1)
 			           - spr->offset.x;
-			sprPos.y = y + ((iconHeight - spr->size.y) >> 1)
+			sprPos.y = y + ((kIconHeight - spr->size.y) >> 1)
 			           - spr->offset.y;
 
 			if (isGhosted()) return;
 
 			//  Draw the "in use" indicator.
-			if (backImages && proto->isObjectBeingUsed(item)) {
+			if (_backImages && proto->isObjectBeingUsed(item)) {
 				drawCompressedImage(port,
-				                    Point16(x - 4, y - 4), backImages[3]);
+				                    Point16(x - 4, y - 4), _backImages[3]);
 			}
 
 			//  Build the color table.
@@ -1040,14 +1040,14 @@ void ReadyContainerView::drawClipped(
 
 			// check to see if selecting amount for this objec
 			if (g_vm->_cnm->_objToGet == item) {
-				Point16 selectorPos = Point16(x + ((iconWidth - selectorX) >> 1),
-				                              y + ((iconHeight - selectorY) >> 1));
+				Point16 selectorPos = Point16(x + ((kIconWidth - kSelectorX) >> 1),
+				                              y + ((kIconHeight - kSelectorY) >> 1));
 
 				// draw the selector thingy
 				drawSelector(port, selectorPos);
 
 				// set the position of the inc center
-				g_vm->_cnm->_amountIndY = y - (selectorY >> 1) + 28;   // extent.y;
+				g_vm->_cnm->_amountIndY = y - (kSelectorY >> 1) + 28;   // extent.y;
 			} else drawQuantity(port, item, objProto, x, y);
 		}
 	}
@@ -1062,12 +1062,12 @@ void ReadyContainerView::drawClipped(
 ContainerWindow::ContainerWindow(ContainerNode &nd,
                                  const ContainerAppearanceDef &app,
                                  const char saveas[])
-	: FloatingWindow(nd.position, 0, saveas, cmdWindowFunc) {
+	: FloatingWindow(nd._position, 0, saveas, cmdWindowFunc) {
 	//  Initialize view to NULL.
-	view = nullptr;
+	_view = nullptr;
 
 	// create the close button for this window
-	closeCompButton = new GfxCompButton(
+	_closeCompButton = new GfxCompButton(
 	                      *this,
 	                      app.closeRect,              // rect for button
 	                      containerRes,               // resource context
@@ -1081,7 +1081,7 @@ ContainerWindow::ContainerWindow(ContainerNode &nd,
 ContainerWindow::~ContainerWindow() {}
 
 ContainerView &ContainerWindow::getView() {
-	return *view;
+	return *_view;
 }
 
 /* ===================================================================== *
@@ -1091,10 +1091,10 @@ ContainerView &ContainerWindow::getView() {
 ScrollableContainerWindow::ScrollableContainerWindow(
     ContainerNode &nd, const ContainerAppearanceDef &app, const char saveas[])
 	: ContainerWindow(nd, app, saveas) {
-	view = new ContainerView(*this, app.viewRect, nd, app);
+	_view = new ContainerView(*this, app.viewRect, nd, app);
 
 	// make the button conected to this window
-	scrollCompButton = new GfxCompButton(
+	_scrollCompButton = new GfxCompButton(
 	                       *this,
 	                       app.scrollRect,                 // rect for button
 	                       containerRes,                   // resource context
@@ -1103,8 +1103,8 @@ ScrollableContainerWindow::ScrollableContainerWindow(
 	                       0,
 	                       cmdScrollFunc);                 // mind app func
 
-	assert(view != nullptr);
-	assert(scrollCompButton != nullptr);
+	assert(_view != nullptr);
+	assert(_scrollCompButton != nullptr);
 }
 
 /* ===================================================================== *
@@ -1116,17 +1116,17 @@ TangibleContainerWindow::TangibleContainerWindow(
 	: ScrollableContainerWindow(nd, app, "ObjectWindow") {
 
 	const int weightIndicatorType = 2;
-	objRect = app.iconRect;
-	deathFlag = nd.getType() == ContainerNode::deadType;
-	containerSpriteImg = nullptr;
+	_objRect = app.iconRect;
+	_deathFlag = nd.getType() == ContainerNode::kDeadType;
+	_containerSpriteImg = nullptr;
 
 	// setup the mass and weight indicator
-	if (deathFlag) {
+	if (_deathFlag) {
 		// set the decorations for this window
 		setDecorations(deathDecorations,
 		               ARRAYSIZE(deathDecorations),
 		               containerRes, 'F', 'R', 'M');
-		massWeightIndicator = nullptr;
+		_massWeightIndicator = nullptr;
 	} else {
 		const StaticWindow *winDecs[] =  {
 			brassDecorations,
@@ -1134,7 +1134,7 @@ TangibleContainerWindow::TangibleContainerWindow(
 		    steelDecorations,
 		    woodDecorations
 		};
-		uint16      bgndType = view->containerObject->proto()->appearanceType;
+		uint16      bgndType = _view->_containerObject->proto()->appearanceType;
 
 		assert(bgndType < 4);
 
@@ -1147,51 +1147,51 @@ TangibleContainerWindow::TangibleContainerWindow(
 
 		// set the userdata such that we can extract the container object later
 		// through an appfunc.
-		this->userData = view->containerObject;
+		this->_userData = _view->_containerObject;
 
-		massWeightIndicator = new CMassWeightIndicator(
+		_massWeightIndicator = new CMassWeightIndicator(
 		                          this,
 		                          Point16(app.massRect.x, app.massRect.y),
 		                          weightIndicatorType,
-		                          deathFlag);
+		                          _deathFlag);
 	}
 }
 
 TangibleContainerWindow::~TangibleContainerWindow() {
-	if (massWeightIndicator)    delete massWeightIndicator;
-	if (containerSpriteImg)     delete containerSpriteImg;
+	if (_massWeightIndicator)    delete _massWeightIndicator;
+	if (_containerSpriteImg)     delete _containerSpriteImg;
 }
 
 void TangibleContainerWindow::setContainerSprite() {
 	// pointer to sprite data that will be drawn
 	Sprite              *spr;
-	ProtoObj            *proto = view->containerObject->proto();
+	ProtoObj            *proto = _view->_containerObject->proto();
 	Point16             sprPos;
 	char                dummy = '\0';
 
 	//  Get the address of the sprite.
-	spr = proto->getSprite(view->containerObject, ProtoObj::objInContainerView).sp;
+	spr = proto->getSprite(_view->_containerObject, ProtoObj::kObjInContainerView).sp;
 
-	sprPos.x = objRect.x - (spr->size.x >> 1);  //objRect.x + ( spr->size.x >> 1 );
-	sprPos.y = objRect.y - (spr->size.y >> 1);
+	sprPos.x = _objRect.x - (spr->size.x >> 1);  //_objRect.x + ( spr->size.x >> 1 );
+	sprPos.y = _objRect.y - (spr->size.y >> 1);
 
-	containerSpriteImg = new GfxSpriteImage(
+	_containerSpriteImg = new GfxSpriteImage(
 	                         *this,
 	                         Rect16(sprPos.x,
 	                                sprPos.y,
-	                                objRect.height,
-	                                objRect.width),
-	                         view->containerObject,
+	                                _objRect.height,
+	                                _objRect.width),
+	                         _view->_containerObject,
 	                         dummy,
 	                         0,
 	                         nullptr);
 }
 
 void TangibleContainerWindow::massBulkUpdate() {
-	if (massWeightIndicator) {      //  Death container doesn't have MW indicator
+	if (_massWeightIndicator) {      //  Death container doesn't have MW indicator
 		// set the indicators to the correct mass and bulk
-		massWeightIndicator->setMassPie(view->totalMass);
-		massWeightIndicator->setBulkPie(view->totalBulk);
+		_massWeightIndicator->setMassPie(_view->_totalMass);
+		_massWeightIndicator->setBulkPie(_view->_totalBulk);
 	}
 }
 
@@ -1213,7 +1213,7 @@ IntangibleContainerWindow::IntangibleContainerWindow(
     ContainerNode &nd, const ContainerAppearanceDef &app)
 	: ScrollableContainerWindow(nd, app, "MentalWindow") {
 	// make the button conected to this window
-	mindSelectorCompButton = new GfxMultCompButton(
+	_mindSelectorCompButton = new GfxMultCompButton(
 	                             *this,
 	                             Rect16(49, 15 - 13, 52, 67),
 	                             containerRes,
@@ -1221,16 +1221,16 @@ IntangibleContainerWindow::IntangibleContainerWindow(
 	                             0,
 	                             cmdMindContainerFunc);          // mind app func
 
-	assert(mindSelectorCompButton != nullptr);
+	assert(_mindSelectorCompButton != nullptr);
 
-	mindSelectorCompButton->setResponse(false);
+	_mindSelectorCompButton->setResponse(false);
 
 	// set the decorations for this window
 	setDecorations(mentalDecorations,
 	               ARRAYSIZE(mentalDecorations),
 	               containerRes, 'F', 'R', 'M');
 
-	setMindContainer(nd.mindType, *this);
+	setMindContainer(nd._mindType, *this);
 }
 
 /* ===================================================================== *
@@ -1240,10 +1240,10 @@ IntangibleContainerWindow::IntangibleContainerWindow(
 EnchantmentContainerWindow::EnchantmentContainerWindow(
     ContainerNode &nd, const ContainerAppearanceDef &app)
 	: ContainerWindow(nd, app, "EnchantmentWindow") {
-	view = new EnchantmentContainerView(*this, nd, app);
+	_view = new EnchantmentContainerView(*this, nd, app);
 
 	// make the button conected to this window
-	scrollCompButton = new GfxCompButton(
+	_scrollCompButton = new GfxCompButton(
 	                       *this,
 	                       app.scrollRect,                 // rect for button
 	                       containerRes,                   // resource context
@@ -1252,8 +1252,8 @@ EnchantmentContainerWindow::EnchantmentContainerWindow(
 	                       0,
 	                       cmdScrollFunc);                 // mind app func
 
-	assert(view != nullptr);
-	assert(scrollCompButton != nullptr);
+	assert(_view != nullptr);
+	assert(_scrollCompButton != nullptr);
 }
 
 /* ===================================================================== *
@@ -1268,44 +1268,44 @@ ContainerNode::ContainerNode(ContainerManager &cl, ObjectID id, int typ) {
 	//  if it is indeed a player actor; Else set to "nobody".
 	if (isActor(id)) {
 		if (actorIDToPlayerID(id, ownerID) == false)
-			ownerID = ContainerNode::nobody;
+			ownerID = ContainerNode::kNobody;
 	} else {
 		ObjectID        possessor = obj->possessor();
 
 		if (possessor == Nothing || actorIDToPlayerID(possessor, ownerID) == false)
-			ownerID = ContainerNode::nobody;
+			ownerID = ContainerNode::kNobody;
 	}
 
 	//  Compute the initial position of the container window
 	switch (typ) {
-	case readyType:
+	case kReadyType:
 		break;
 
-	case deadType:
-		position = deathContainerAppearance.defaultWindowPos;
+	case kDeadType:
+		_position = deathContainerAppearance.defaultWindowPos;
 		break;
 
-	case mentalType:
-		mindType = 0; //protoClassIdeaContainer;
-		position = mentalContainerAppearance.defaultWindowPos;
+	case kMentalType:
+		_mindType = 0; //protoClassIdeaContainer;
+		_position = mentalContainerAppearance.defaultWindowPos;
 		break;
 
-	case physicalType:
-		position = physicalContainerAppearance.defaultWindowPos;
+	case kPhysicalType:
+		_position = physicalContainerAppearance.defaultWindowPos;
 		break;
 
-	case enchantType:
-		position = enchantmentContainerAppearance.defaultWindowPos;
+	case kEnchantType:
+		_position = enchantmentContainerAppearance.defaultWindowPos;
 		break;
 	}
 
 	//  Fill in the initial values.
-	window      = nullptr;
-	type        = typ;
-	object      = id;
-	owner       = ownerID;
-	action      = 0;
-	mindType    = 0;
+	_window      = nullptr;
+	_type        = typ;
+	_object      = id;
+	_owner       = ownerID;
+	_action      = 0;
+	_mindType    = 0;
 
 	//  Add to container list.
 	cl.add(this);
@@ -1313,12 +1313,12 @@ ContainerNode::ContainerNode(ContainerManager &cl, ObjectID id, int typ) {
 
 //  Return the container window for a container node, if it is visible
 ContainerWindow *ContainerNode::getWindow() {
-	return window;
+	return _window;
 }
 
 //  Return the container view for a container node, if it is visible
 ContainerView   *ContainerNode::getView() {
-	return window ? &window->getView() : nullptr;
+	return _window ? &_window->getView() : nullptr;
 }
 
 //  Destructor
@@ -1332,13 +1332,13 @@ ContainerNode::~ContainerNode() {
 
 void ContainerNode::read(Common::InSaveFile *in) {
 	//  Restore fields
-	object = in->readUint16LE();
-	type = in->readByte();
-	owner = in->readByte();
-	position.read(in);
-	mindType = in->readByte();
-	window = nullptr;
-	action = 0;
+	_object = in->readUint16LE();
+	_type = in->readByte();
+	_owner = in->readByte();
+	_position.read(in);
+	_mindType = in->readByte();
+	_window = nullptr;
+	_action = 0;
 
 	bool shown = in->readUint16LE();
 
@@ -1346,104 +1346,104 @@ void ContainerNode::read(Common::InSaveFile *in) {
 	if (shown)
 		markForShow();
 
-	debugC(4, kDebugSaveload, "... object = %d", object);
-	debugC(4, kDebugSaveload, "... type = %d", type);
-	debugC(4, kDebugSaveload, "... owner = %d", owner);
-	debugC(4, kDebugSaveload, "... position = (%d, %d, %d, %d)", position.x, position.y, position.width, position.height);
-	debugC(4, kDebugSaveload, "... mindType = %d", mindType);
+	debugC(4, kDebugSaveload, "... object = %d", _object);
+	debugC(4, kDebugSaveload, "... type = %d", _type);
+	debugC(4, kDebugSaveload, "... owner = %d", _owner);
+	debugC(4, kDebugSaveload, "... position = (%d, %d, %d, %d)", _position.x, _position.y, _position.width, _position.height);
+	debugC(4, kDebugSaveload, "... _mindType = %d", _mindType);
 	debugC(4, kDebugSaveload, "... shown = %d", shown);
 }
 
 void ContainerNode::write(Common::MemoryWriteStreamDynamic *out) {
 	//  Store fields
-	out->writeUint16LE(object);
-	out->writeByte(type);
-	out->writeByte(owner);
-	position.write(out);
-	out->writeByte(mindType);
-	out->writeUint16LE(window != nullptr);
+	out->writeUint16LE(_object);
+	out->writeByte(_type);
+	out->writeByte(_owner);
+	_position.write(out);
+	out->writeByte(_mindType);
+	out->writeUint16LE(_window != nullptr);
 
-	debugC(4, kDebugSaveload, "... object = %d", object);
-	debugC(4, kDebugSaveload, "... type = %d", type);
-	debugC(4, kDebugSaveload, "... owner = %d", owner);
-	debugC(4, kDebugSaveload, "... position = (%d, %d, %d, %d)", position.x, position.y, position.width, position.height);
-	debugC(4, kDebugSaveload, "... mindType = %d", mindType);
-	debugC(4, kDebugSaveload, "... shown = %d", window != nullptr);
+	debugC(4, kDebugSaveload, "... object = %d", _object);
+	debugC(4, kDebugSaveload, "... type = %d", _type);
+	debugC(4, kDebugSaveload, "... owner = %d", _owner);
+	debugC(4, kDebugSaveload, "... position = (%d, %d, %d, %d)", _position.x, _position.y, _position.width, _position.height);
+	debugC(4, kDebugSaveload, "... _mindType = %d", _mindType);
+	debugC(4, kDebugSaveload, "... shown = %d", _window != nullptr);
 }
 
 //  Close the container window, but leave the node.
 void ContainerNode::hide() {
 	//  close the window, but don't close the object.
-	if (type != readyType && window != nullptr) {
-		position = window->getExtent();     //  Save old window position
-		window->close();
-		delete window;
-		window = nullptr;
+	if (_type != kReadyType && _window != nullptr) {
+		_position = _window->getExtent();     //  Save old window position
+		_window->close();
+		delete _window;
+		_window = nullptr;
 	}
 }
 
 //  Open the cotainer window, given the node info.
 void ContainerNode::show() {
-	ProtoObj        *proto = GameObject::protoAddress(object);
+	ProtoObj        *proto = GameObject::protoAddress(_object);
 
 	assert(proto);
 
 	//  open the window; Object should already be "open"
-	if (window == nullptr) {
-		switch (type) {
-		case physicalType:
+	if (_window == nullptr) {
+		switch (_type) {
+		case kPhysicalType:
 			physicalContainerAppearance.rows    = proto->getViewableRows();
 			physicalContainerAppearance.cols    = proto->getViewableCols();
 			physicalContainerAppearance.totRows = proto->getMaxRows();
-			window = new TangibleContainerWindow(*this, physicalContainerAppearance);
+			_window = new TangibleContainerWindow(*this, physicalContainerAppearance);
 			break;
 
-		case deadType:
+		case kDeadType:
 			deathContainerAppearance.rows       = proto->getViewableRows();
 			deathContainerAppearance.cols       = proto->getViewableCols();
 			deathContainerAppearance.totRows    = proto->getMaxRows();
-			window = new TangibleContainerWindow(*this, deathContainerAppearance);
+			_window = new TangibleContainerWindow(*this, deathContainerAppearance);
 			break;
 
-		case mentalType:
-			window = new IntangibleContainerWindow(*this, mentalContainerAppearance);
+		case kMentalType:
+			_window = new IntangibleContainerWindow(*this, mentalContainerAppearance);
 			break;
 
-		case enchantType:
-			window = new EnchantmentContainerWindow(*this, enchantmentContainerAppearance);
+		case kEnchantType:
+			_window = new EnchantmentContainerWindow(*this, enchantmentContainerAppearance);
 			break;
 
-		case readyType:
+		case kReadyType:
 		default:
 			return;
 		}
 	}
 
-	window->open();
+	_window->open();
 }
 
 void ContainerNode::update() {
-	if (type == readyType) {
+	if (_type == kReadyType) {
 		//  Update ready containers if they are enabled
-		if (TrioCviews[owner]->getEnabled())  TrioCviews[owner]->invalidate();
+		if (TrioCviews[_owner]->getEnabled())  TrioCviews[_owner]->invalidate();
 		if (indivCviewTop->getEnabled())        indivCviewTop->invalidate();
 		if (indivCviewBot->getEnabled())        indivCviewBot->invalidate();
 
 		//  If the container to update is the center brother's ready container.
-		if (isIndivMode() && owner == getCenterActorPlayerID()) {
+		if (isIndivMode() && _owner == getCenterActorPlayerID()) {
 			//  Update player's mass & weight indicator...
 			MassWeightIndicator->update();
 		}
-	} else if (window) {
+	} else if (_window) {
 		getView()->invalidate();
-		window->massBulkUpdate();
+		_window->massBulkUpdate();
 	}
 }
 
 //  Find a container node, given a specific object
 ContainerNode *ContainerManager::find(ObjectID id) {
 	for (Common::List<ContainerNode *>::iterator it = _list.begin(); it != _list.end(); ++it)
-		if ((*it)->object == id)
+		if ((*it)->_object == id)
 			return *it;
 
 	return nullptr;
@@ -1451,7 +1451,7 @@ ContainerNode *ContainerManager::find(ObjectID id) {
 
 ContainerNode *ContainerManager::find(ObjectID id, int16 type) {
 	for (Common::List<ContainerNode *>::iterator it = _list.begin(); it != _list.end(); ++it)
-		if ((*it)->object == id && (*it)->type == type)
+		if ((*it)->_object == id && (*it)->_type == type)
 			return *it;
 
 	return nullptr;
@@ -1462,7 +1462,7 @@ ContainerNode *ContainerManager::find(ObjectID id, int16 type) {
 bool ContainerNode::isAccessable(ObjectID enactor) {
 	Actor       *a = (Actor *)GameObject::objectAddress(enactor);
 	ObjectID    holder;
-	GameObject  *obj = GameObject::objectAddress(object);
+	GameObject  *obj = GameObject::objectAddress(_object);
 	int32       dist;
 
 	//  REM: We really ought to do a line-of-sight test here.
@@ -1473,7 +1473,7 @@ bool ContainerNode::isAccessable(ObjectID enactor) {
 	//  If the container object is too far away we can't access any containers.
 	//  Note: Actors are not considered to be in possession of themselves...
 	holder = obj->possessor();
-	if (holder != Nothing || isActor(object)) {
+	if (holder != Nothing || isActor(_object)) {
 		//  "Reach" for other players is further than for other objects
 		if (holder != a->thisID() && dist > 96)
 			return false;
@@ -1485,8 +1485,8 @@ bool ContainerNode::isAccessable(ObjectID enactor) {
 
 //  Change the owner of a ready container (for indiv mode)
 void ContainerNode::changeOwner(int16 newOwner) {
-	owner = newOwner;
-	object = getPlayerActorAddress(newOwner)->getActorID();
+	_owner = newOwner;
+	_object = getPlayerActorAddress(newOwner)->getActorID();
 }
 
 /* ===================================================================== *
@@ -1499,7 +1499,7 @@ void ContainerManager::setPlayerNum(PlayerActorID playerNum) {
 	for (Common::List<ContainerNode *>::iterator it = _list.begin(); it != _list.end(); ++it) {
 		ContainerNode *n = *it;
 
-		if (n->owner != ContainerNode::nobody && n->owner != playerNum)
+		if (n->_owner != ContainerNode::kNobody && n->_owner != playerNum)
 			n->hide();
 	}
 
@@ -1507,7 +1507,7 @@ void ContainerManager::setPlayerNum(PlayerActorID playerNum) {
 	for (Common::List<ContainerNode *>::iterator it = _list.begin(); it != _list.end(); ++it) {
 		ContainerNode *n = *it;
 
-		if (n->owner == playerNum)
+		if (n->_owner == playerNum)
 			n->markForShow();
 	}
 }
@@ -1526,32 +1526,32 @@ void ContainerManager::doDeferredActions() {
 		ContainerNode *n = *it;
 
 		//  If the object is not in a player inventory (i.e. on the ground)
-		if (n->owner == ContainerNode::nobody) {
+		if (n->_owner == ContainerNode::kNobody) {
 			//  If the object is in a different world, or too far away
 			//  from the protagonist, then quietly close the object.
-			GameObject  *obj = GameObject::objectAddress(n->object);
+			GameObject  *obj = GameObject::objectAddress(n->_object);
 			if (obj->world() != world
 			        || (obj->getWorldLocation() - tp).quickHDistance() > kMaxOpenDistance) {
 				//  Close object image and window (silently)
-				obj->setFlags(0, objectOpen);
+				obj->setFlags(0, kObjectOpen);
 				delete n;
 				continue;
 			}
 		}
 
-		if (n->action & ContainerNode::actionDelete) {
+		if (n->_action & ContainerNode::kActionDelete) {
 			delete n;
 			continue;
 		}
 
-		if (n->action & ContainerNode::actionHide) {
+		if (n->_action & ContainerNode::kActionHide) {
 			n->hide();
 		} else {
-			if (n->action & ContainerNode::actionShow) n->show();
-			if (n->action & ContainerNode::actionUpdate) n->update();
+			if (n->_action & ContainerNode::kActionShow) n->show();
+			if (n->_action & ContainerNode::kActionUpdate) n->update();
 		}
 
-		n->action = 0;
+		n->_action = 0;
 	}
 }
 
@@ -1561,10 +1561,10 @@ void ContainerManager::setUpdate(ObjectID id) {
 	for (Common::List<ContainerNode *>::iterator it = _list.begin(); it != _list.end(); ++it) {
 		ContainerNode *n = *it;
 
-		if (n->object == id)
+		if (n->_object == id)
 			n->update();
-		else if (n->type == ContainerNode::mentalType    //  Special case for mind containers
-		         &&  n->object == GameObject::objectAddress(id)->IDParent())
+		else if (n->_type == ContainerNode::kMentalType    //  Special case for mind containers
+		         &&  n->_object == GameObject::objectAddress(id)->IDParent())
 			n->update();
 	}
 }
@@ -1581,30 +1581,30 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 
 	if (isActor(id)) {
 		if (actorIDToPlayerID(id, owner) == false)
-			owner = ContainerNode::nobody;
+			owner = ContainerNode::kNobody;
 
 		if (((Actor *)obj)->isDead()) {
 			//  Open dead container for dead actor
-			if (!(cn = g_vm->_cnm->find(owner, ContainerNode::deadType)))
-				cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::deadType);
-		} else if (owner != ContainerNode::nobody) {
+			if (!(cn = g_vm->_cnm->find(owner, ContainerNode::kDeadType)))
+				cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::kDeadType);
+		} else if (owner != ContainerNode::kNobody) {
 			return OpenMindContainer(owner, open, /*mType*/ openMindType);
 		} else {
 			error("Attempt to open non-dead actor as a container");
 		}
 	} else {
 		if (actorIDToPlayerID(obj->possessor(), owner) == false)
-			owner = ContainerNode::nobody;
+			owner = ContainerNode::kNobody;
 
-		if (!(cn = g_vm->_cnm->find(id, ContainerNode::physicalType)))
-			cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::physicalType);
+		if (!(cn = g_vm->_cnm->find(id, ContainerNode::kPhysicalType)))
+			cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::kPhysicalType);
 	}
 
-	//  If node was successfull created, and we wanted it open, and the owner
+	//  If node was successfully created, and we wanted it open, and the owner
 	//  is the center actor or no-actor then make the container window visible.
 	if (cn != nullptr
 	        &&  open
-	        && (owner == getCenterActorID() || owner == ContainerNode::nobody)) {
+	        && (owner == getCenterActorID() || owner == ContainerNode::kNobody)) {
 		cn->show();
 	}
 
@@ -1614,18 +1614,18 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 ContainerNode *CreateReadyContainerNode(PlayerActorID player) {
 	return new ContainerNode(*g_vm->_cnm,
 	                            getPlayerActorAddress(player)->getActorID(),
-	                            ContainerNode::readyType);
+	                            ContainerNode::kReadyType);
 }
 
 ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type) {
 	ContainerNode   *cn;
 	ObjectID        id = getPlayerActorAddress(player)->getActorID();
 
-	if (!(cn = g_vm->_cnm->find(id, ContainerNode::mentalType))) {
-		cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::mentalType);
-		cn->mindType = type;
+	if (!(cn = g_vm->_cnm->find(id, ContainerNode::kMentalType))) {
+		cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::kMentalType);
+		cn->_mindType = type;
 
-		//  If node was successfull created, and we wanted it open, and the owner
+		//  If node was successfully created, and we wanted it open, and the owner
 		//  is the center actor or no-actor then make the container window visible.
 		if (open && id == getCenterActorID()) {
 			cn->show();
@@ -1633,9 +1633,9 @@ ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type) {
 	} else {
 		IntangibleContainerWindow   *cw = (IntangibleContainerWindow *)cn->getWindow();
 
-		if (cw && (type != cn->mindType)) {
-			cn->mindType = type;
-			setMindContainer(cn->mindType, *cw);
+		if (cw && (type != cn->_mindType)) {
+			cn->_mindType = type;
+			setMindContainer(cn->_mindType, *cw);
 			cw->update(cw->getView().getExtent());
 		}
 	}
@@ -1674,8 +1674,8 @@ void initContainerNodes() {
 	Common::List<ContainerNode *>::iterator it;
 
 	for (it = g_vm->_cnm->_list.begin(); it != g_vm->_cnm->_list.end(); ++it) {
-		if ((*it)->getType() != ContainerNode::readyType) {
-			error("initContainerNodes: ContainerNode type not readyType (%d != %d)", (*it)->getType(), ContainerNode::readyType);
+		if ((*it)->getType() != ContainerNode::kReadyType) {
+			error("initContainerNodes: ContainerNode type not readyType (%d != %d)", (*it)->getType(), ContainerNode::kReadyType);
 		}
 	}
 }
@@ -1693,7 +1693,7 @@ void saveContainerNodes(Common::OutSaveFile *outS) {
 	for (Common::List<ContainerNode *>::iterator it = g_vm->_cnm->_list.begin(); it != g_vm->_cnm->_list.end(); ++it) {
 		ContainerNode *n = *it;
 
-		if (n->getType() != ContainerNode::readyType)
+		if (n->getType() != ContainerNode::kReadyType)
 			numNodes++;
 	}
 
@@ -1708,7 +1708,7 @@ void saveContainerNodes(Common::OutSaveFile *outS) {
 	for (Common::List<ContainerNode *>::iterator it = g_vm->_cnm->_list.begin(); it != g_vm->_cnm->_list.end(); ++it) {
 		ContainerNode *n = *it;
 
-		if (n->getType() != ContainerNode::readyType) {
+		if (n->getType() != ContainerNode::kReadyType) {
 			debugC(3, kDebugSaveload, "Saving ContainerNode %d", i++);
 			n->write(out);
 		}
@@ -1751,7 +1751,7 @@ void cleanupContainerNodes() {
 	for (Common::List<ContainerNode *>::iterator it = g_vm->_cnm->_list.begin(); it != g_vm->_cnm->_list.end(); ++it) {
 		ContainerNode *n = *it;
 
-		if (n->getType() != ContainerNode::readyType)
+		if (n->getType() != ContainerNode::kReadyType)
 			deletionArray.push_back(*it);
 	}
 
@@ -1775,7 +1775,7 @@ void setMindContainer(int index, IntangibleContainerWindow &cw) {
 		protoClassPsychContainer    // Not used anymore
 	};
 
-	ObjectID        ownerID = cw.getView().node.getObject();
+	ObjectID        ownerID = cw.getView()._node.getObject();
 	GameObject      *object = GameObject::objectAddress(ownerID);
 	ContainerIterator iter(object);
 	GameObject      *item;
@@ -1786,22 +1786,22 @@ void setMindContainer(int index, IntangibleContainerWindow &cw) {
 
 	int             containerClass = classTable[index];
 
-	cw.mindSelectorCompButton->setCurrent(index);
-	cw.mindSelectorCompButton->invalidate();
+	cw._mindSelectorCompButton->setCurrent(index);
+	cw._mindSelectorCompButton->invalidate();
 
 	while ((id = iter.next(&item)) != Nothing) {
 		if (item->proto()->classType == containerClass) {
-			cw.view->setContainer(item);
+			cw._view->setContainer(item);
 			return;
 		}
 	}
 }
 
 APPFUNC(cmdMindContainerFunc) {
-	if (ev.panel && ev.eventType == gEventNewValue /* && ev.value */) {
+	if (ev.panel && ev.eventType == kEventNewValue /* && ev.value */) {
 		IntangibleContainerWindow   *cw = (IntangibleContainerWindow *)ev.window;
-		ContainerNode   &nd = cw->getView().node;
-		int             newMindType = nd.mindType;
+		ContainerNode   &nd = cw->getView()._node;
+		int             newMindType = nd._mindType;
 
 		const Rect16 idea(0, 0, 22, 67),      // idea button click area
 		             skill(22, 0, 11, 67),    // skill area
@@ -1813,12 +1813,12 @@ APPFUNC(cmdMindContainerFunc) {
 		if (memory.ptInside(ev.mouse))  newMindType = 2; //protoClassMemoryContainer;
 //		if (psych.ptInside(ev.mouse))   newMindType = protoClassPsychContainer;
 
-		if (newMindType != nd.mindType) {
-			nd.mindType = newMindType;
-			setMindContainer(nd.mindType, *cw);
+		if (newMindType != nd._mindType) {
+			nd._mindType = newMindType;
+			setMindContainer(nd._mindType, *cw);
 			cw->update(cw->getView().getExtent());
 		}
-	} else if (ev.eventType == gEventMouseMove) {
+	} else if (ev.eventType == kEventMouseMove) {
 		//if (ev.value == gCompImage::enter)
 		{
 			const Rect16 idea(0, 0, 22, 67),      // idea button click area
@@ -1828,24 +1828,24 @@ APPFUNC(cmdMindContainerFunc) {
 
 			const int BUF_SIZE = 64;
 			char    textBuffer[BUF_SIZE];
-			int     mindType = -1;
+			int     _mindType = -1;
 
 
-			if (idea.ptInside(ev.mouse))       mindType = 0;    //protoClassIdeaContainer;
-			if (skill.ptInside(ev.mouse))  mindType = 1;    //protoClassSkillContainer;
-			if (memory.ptInside(ev.mouse)) mindType = 2;    //protoClassMemoryContainer;
+			if (idea.ptInside(ev.mouse))       _mindType = 0;    //protoClassIdeaContainer;
+			if (skill.ptInside(ev.mouse))  _mindType = 1;    //protoClassSkillContainer;
+			if (memory.ptInside(ev.mouse)) _mindType = 2;    //protoClassMemoryContainer;
 
-			switch (mindType) {
+			switch (_mindType) {
 			case 0:
-				sprintf(textBuffer, IDEAS_MENTAL);
+				Common::sprintf_s(textBuffer, IDEAS_MENTAL);
 				break;
 
 			case 1:
-				sprintf(textBuffer, SPELL_MENTAL);
+				Common::sprintf_s(textBuffer, SPELL_MENTAL);
 				break;
 
 			case 2:
-				sprintf(textBuffer, SKILL_MENTAL);
+				Common::sprintf_s(textBuffer, SKILL_MENTAL);
 				break;
 
 			case -1:
@@ -1861,18 +1861,18 @@ APPFUNC(cmdMindContainerFunc) {
 			g_vm->_mouseInfo->setText(textBuffer);
 		}
 
-		if (ev.value == GfxCompImage::leave) {
+		if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
 }
 
 APPFUNC(cmdCloseButtonFunc) {
-	if (ev.eventType == gEventNewValue && ev.value == 1) {
+	if (ev.eventType == kEventNewValue && ev.value == 1) {
 		ContainerWindow     *win = (ContainerWindow *)ev.window;
 
-		if (win->getView().node.getType() == ContainerNode::mentalType) {
-			win->getView().node.markForDelete();
+		if (win->getView()._node.getType() == ContainerNode::kMentalType) {
+			win->getView()._node.markForDelete();
 		} else {
 			win->containerObject()->close(getCenterActorID());
 		}
@@ -1882,17 +1882,17 @@ APPFUNC(cmdCloseButtonFunc) {
 		if (g_vm->_mouseInfo->getObject() == nullptr) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
-	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+	} else if (ev.eventType == kEventMouseMove) {
+		if (ev.value == GfxCompImage::kEnter) {
 			g_vm->_mouseInfo->setText(CLOSE_MOUSE);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
 }
 
 APPFUNC(cmdScrollFunc) {
-	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
+	if (ev.panel && ev.eventType == kEventNewValue && ev.value) {
 		ScrollableContainerWindow *cw;
 		const Rect16 upArea(0, 0, 44, 22);
 
@@ -1902,10 +1902,10 @@ APPFUNC(cmdScrollFunc) {
 		else
 			cw->scrollDown();
 		ev.window->update(cw->getView().getExtent());
-	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+	} else if (ev.eventType == kEventMouseMove) {
+		if (ev.value == GfxCompImage::kEnter) {
 			g_vm->_mouseInfo->setText(SCROLL_MOUSE);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}

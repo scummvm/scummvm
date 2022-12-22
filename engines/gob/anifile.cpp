@@ -58,7 +58,7 @@ ANIFile::ANIFile(GobEngine *vm, const Common::String &fileName,
 
 	Common::SeekableReadStream *ani = _vm->_dataIO->getFile(endianFileName);
 	if (ani) {
-		Common::SeekableSubReadStreamEndian sub(ani, 0, ani->size(), bigEndian, DisposeAfterUse::YES);
+		Common::SeekableReadStreamEndianWrapper sub(ani, bigEndian, DisposeAfterUse::YES);
 
 		// The big endian version pads a few fields to even size
 		_hasPadding = bigEndian;
@@ -75,7 +75,7 @@ ANIFile::~ANIFile() {
 		delete *l;
 }
 
-void ANIFile::load(Common::SeekableSubReadStreamEndian &ani, const Common::String &fileName) {
+void ANIFile::load(Common::SeekableReadStreamEndian &ani, const Common::String &fileName) {
 	ani.skip(2); // Unused
 
 	uint16 animationCount = ani.readUint16();
@@ -112,7 +112,7 @@ void ANIFile::load(Common::SeekableSubReadStreamEndian &ani, const Common::Strin
 }
 
 void ANIFile::loadAnimation(Animation &animation, FrameArray &frames,
-							Common::SeekableSubReadStreamEndian &ani) {
+							Common::SeekableReadStreamEndian &ani) {
 
 	// Animation properties
 
@@ -185,7 +185,7 @@ void ANIFile::loadAnimation(Animation &animation, FrameArray &frames,
 	}
 }
 
-void ANIFile::loadFrames(FrameArray &frames, Common::SeekableSubReadStreamEndian &ani) {
+void ANIFile::loadFrames(FrameArray &frames, Common::SeekableReadStreamEndian &ani) {
 	uint32 curFrame = 0;
 
 	bool end = false;
@@ -233,7 +233,7 @@ void ANIFile::loadFrames(FrameArray &frames, Common::SeekableSubReadStreamEndian
 	}
 }
 
-CMPFile *ANIFile::loadLayer(Common::SeekableSubReadStreamEndian &ani) {
+CMPFile *ANIFile::loadLayer(Common::SeekableReadStreamEndian &ani) {
 	Common::String file = Util::setExtension(Util::readString(ani, 13), "");
 	if (_hasPadding)
 		ani.skip(1);

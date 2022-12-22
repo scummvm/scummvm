@@ -36,6 +36,7 @@ Overlay::Overlay(const Common::String &filename, Common::SeekableReadStream *dat
 }
 
 Overlay::~Overlay() {
+	delete _material;
 }
 
 void Overlay::draw() {

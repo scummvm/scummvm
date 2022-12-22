@@ -672,7 +672,7 @@ void Graphics::setupNewRoom(const char *room, uint16 roomNum, int16 *furniture, 
 
 	// load/setup objects associated to this room
 	char filename[20];
-	sprintf(filename, "%s.BBK", room);
+	Common::sprintf_s(filename, "%s.BBK", room);
 	_vm->bankMan()->load(filename, 15);
 
 	_numFrames = FRAMES_JOE + 1;

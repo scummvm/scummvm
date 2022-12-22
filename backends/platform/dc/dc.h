@@ -154,7 +154,7 @@ public:
   int16 getOverlayHeight();
   int16 getOverlayWidth();
   bool isOverlayVisible() const { return _overlay_visible; }
-  void showOverlay();
+  void showOverlay(bool inGUI);
   void hideOverlay();
   void clearOverlay();
   void grabOverlay(Graphics::Surface &surface);
@@ -193,6 +193,7 @@ public:
   bool _overlay_visible, _overlay_dirty, _screen_dirty;
   int _screen_buffer, _overlay_buffer, _mouse_buffer;
   bool _aspect_stretch, _softkbd_on, _enable_cursor_palette;
+  bool _overlay_in_gui;
   float _overlay_fade, _xscale, _yscale, _top_offset;
   int _softkbd_motion;
 

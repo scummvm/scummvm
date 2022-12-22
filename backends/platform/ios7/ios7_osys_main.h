@@ -164,7 +164,7 @@ public:
 	void unlockScreen() override;
 	void setShakePos(int shakeXOffset, int shakeYOffset) override;
 
-	void showOverlay() override;
+	void showOverlay(bool inGUI) override;
 	void hideOverlay() override;
 	bool isOverlayVisible() const override { return _videoContext->overlayVisible; }
 	void clearOverlay() override;

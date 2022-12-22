@@ -36,6 +36,11 @@ private:
 	static int ComparatorFn(const T &a, const T &b) {
 		return Comparitor().operator()(a, b) ? -1 : 0;
 	}
+
+	static bool CompareEq(const T &a, const T &b) {
+		return !ComparatorFn(a, b) && !ComparatorFn(b, a);
+	}
+
 public:
 	struct Entry {
 		const T &_value;
@@ -55,11 +60,18 @@ public:
 	 * Locate an item in the set
 	 */
 	iterator find(const T &item) {
-		iterator it;
-		for (it = this->begin(); it != this->end() && *it != item; ++it) {
+		iterator begin = this->begin();
+		iterator end = this->end();
+		while (begin < end) {
+			iterator mid = begin + (Common::distance(begin, end) / 2);
+			if (ComparatorFn(item, *mid))
+				end = mid;
+			else if (ComparatorFn(*mid, item))
+			 	begin = mid + 1;
+			else
+				return mid;
 		}
-
-		return it;
+		return this->end();
 	}
 
 	/**
@@ -71,12 +83,43 @@ public:
 	}
 
 	/**
+	 * Removes the element at the given iterator
+	 */
+	void erase(iterator item) {
+		Common::SortedArray<T, const T &>::erase(item);
+	}
+
+	/**
+	 * Removes the elements at the specified range
+	 */
+	void erase(iterator first, iterator last) {
+		Common::SortedArray<T, const T &>::erase(first, last);
+	}
+
+	/**
+	 * Removes the elements equal to the given item.
+	 * Returns the number of elements removed
+	 */
+	size_t erase(const T &item) {
+		iterator first = find(item);
+		if (first == this->end())
+			return 0;
+		iterator end = first + 1;
+		while (end != this->end() && CompareEq(*first, *end)) {
+			++end;
+		}
+		size_t erased = Common::distance(first, end);
+		this->erase(first, end);
+		return erased;
+	}
+
+	/**
 	 * Returns the number of keys that match the specified key
 	 */
 	size_t count(const T item) const {
 		size_t total = 0;
 		for (const_iterator it = this->begin(); it != this->end(); ++it) {
-			if (*it == item)
+			if (CompareEq(*it, item))
 				++total;
 			else if (!ComparatorFn(item, *it))
 				// Passed beyond possibility of matches

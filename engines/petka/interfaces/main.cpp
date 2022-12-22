@@ -22,7 +22,7 @@
 #include "common/system.h"
 #include "common/stream.h"
 #include "common/events.h"
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 
 #include "petka/flc.h"
 #include "petka/objects/object_case.h"
@@ -43,8 +43,12 @@ namespace Petka {
 
 InterfaceMain::InterfaceMain() {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(g_vm->openFile("backgrnd.bg", true));
+	_hasTextDesc = false;
+	_roomId = 0;
+
 	if (!stream)
 		return;
+
 	_bgs.resize(stream->readUint32LE());
 	for (uint i = 0; i < _bgs.size(); ++i) {
 		_bgs[i].objId = stream->readUint16LE();

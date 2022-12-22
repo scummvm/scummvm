@@ -153,7 +153,7 @@ public:
 	void setShakePos(int shakeXOffset, int shakeYOffset);
 	void setFocusRectangle(const Common::Rect &rect);
 	void clearFocusRectangle();
-	void showOverlay();
+	void showOverlay(bool inGUI);
 	void hideOverlay();
 	bool isOverlayVisible() const { return _overlayVisible; }
 	Graphics::PixelFormat getOverlayFormat() const;
@@ -241,6 +241,7 @@ private:
 	int _screenShakeXOffset;
 	int _screenShakeYOffset;
 	bool _overlayVisible;
+	bool _overlayInGUI;
 	int _screenChangeId;
 
 	DVLB_s *_dvlb;

@@ -28,7 +28,7 @@
 #include "common/rect.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
-#include "common/unzip.h"
+#include "common/compression/unzip.h"
 #include "gui/EventRecorder.h"
 
 #include "backends/keymapper/action.h"
@@ -77,6 +77,8 @@ GuiManager::GuiManager() : CommandSender(nullptr), _redrawStatus(kRedrawDisabled
 
 	_topDialogLeftPadding = 0;
 	_topDialogRightPadding = 0;
+
+	_displayTopDialogOnly = false;
 
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
@@ -343,6 +345,15 @@ void GuiManager::redrawFull() {
 	_system->updateScreen();
 }
 
+void GuiManager::displayTopDialogOnly(bool mode) {
+	if (mode == _displayTopDialogOnly)
+		return;
+
+	_displayTopDialogOnly = mode;
+
+	redrawFull();
+}
+
 void GuiManager::redraw() {
 	ThemeEngine::ShadingStyle shading;
 
@@ -369,9 +380,11 @@ void GuiManager::redraw() {
 			_theme->clearAll();
 			_theme->drawToBackbuffer();
 
-			for (DialogStack::size_type i = 0; i < _dialogStack.size() - 1; i++) {
-				_dialogStack[i]->drawDialog(kDrawLayerBackground);
-				_dialogStack[i]->drawDialog(kDrawLayerForeground);
+			if (!_displayTopDialogOnly) {
+				for (DialogStack::size_type i = 0; i < _dialogStack.size() - 1; i++) {
+					_dialogStack[i]->drawDialog(kDrawLayerBackground);
+					_dialogStack[i]->drawDialog(kDrawLayerForeground);
+				}
 			}
 
 			// fall through
@@ -380,14 +393,23 @@ void GuiManager::redraw() {
 			// This case is an optimization to avoid redrawing the whole dialog
 			// stack when opening a new dialog.
 
-			_theme->drawToBackbuffer();
+			if (_displayTopDialogOnly) {
+				// When displaying only the top dialog clear the screen
+				if (_redrawStatus == kRedrawOpenDialog) {
+					_theme->clearAll();
+					_theme->drawToBackbuffer();
+				}
+			} else {
+				_theme->drawToBackbuffer();
 
-			if (_redrawStatus == kRedrawOpenDialog && _dialogStack.size() > 1) {
-				Dialog *previousDialog = _dialogStack[_dialogStack.size() - 2];
-				previousDialog->drawDialog(kDrawLayerForeground);
+				if (_redrawStatus == kRedrawOpenDialog && _dialogStack.size() > 1) {
+					Dialog *previousDialog = _dialogStack[_dialogStack.size() - 2];
+					previousDialog->drawDialog(kDrawLayerForeground);
+				}
+
+				_theme->applyScreenShading(shading);
 			}
 
-			_theme->applyScreenShading(shading);
 			_dialogStack.top()->drawDialog(kDrawLayerBackground);
 
 			_theme->drawToScreen();

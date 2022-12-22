@@ -65,10 +65,9 @@ bool AdSceneState::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 void AdSceneState::setFilename(const char *filename) {
 	delete[] _filename;
-	_filename = new char [strlen(filename) + 1];
-	if (_filename) {
-		strcpy(_filename, filename);
-	}
+	size_t filenameSize = strlen(filename) + 1;
+	_filename = new char [filenameSize];
+	Common::strcpy_s(_filename, filenameSize, filename);
 }
 
 const char *AdSceneState::getFilename() const {

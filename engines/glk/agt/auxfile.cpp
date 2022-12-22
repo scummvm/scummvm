@@ -247,6 +247,11 @@ rbool parse_config_line(char *buff, rbool lastpass) {
 void read_config(genfile cfgfile, rbool lastpass) {
 	char buff[100];
 
+	if (lastpass) {
+		/* Default to smart disambiguation for 1.5 onwards */
+		if (aver >= AGT15) PURE_DISAMBIG = 0;
+	}
+
 	if (!filevalid(cfgfile, fCFG)) return;
 
 	while (readln(cfgfile, buff, 99)) {

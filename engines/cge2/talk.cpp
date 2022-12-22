@@ -61,7 +61,7 @@ Font::~Font() {
 
 void Font::load() {
 	char path[10];
-	strcpy(path, "CGE.CFT");
+	Common::strcpy_s(path, "CGE.CFT");
 	if (!_vm->_resman->exist(path))
 		error("Missing Font file! %s", path);
 
@@ -78,7 +78,7 @@ void Font::load() {
 	}
 	fontFile.read(_map, p);
 
-	strcpy(path, "CGE.TXC");
+	Common::strcpy_s(path, "CGE.TXC");
 	if (!_vm->_resman->exist(path))
 		error("Missing Color file! %s", path);
 

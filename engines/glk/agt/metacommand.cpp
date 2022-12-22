@@ -670,7 +670,7 @@ static int run_metacommand(int cnum, int *redir_offset)
 
 static integer expand_redirect(word w) {
 	assert(w != -1); /* <*NONE*> object shouldn't make it this far */
-	if (w == 0 || aver < AGTME10) return -w;
+	if (w == 0 || aver < AGT15) return -w;
 	if (w == ext_code[wdverb]) return -syntbl[auxsyn[vb]];
 	if (w == ext_code[wdnoun]) return dobj;
 	if (w == ext_code[wdobject]) return iobj;
@@ -757,7 +757,7 @@ static rbool fix_objrec(parse_rec **objrec, word match,
 }
 
 static void objcode_fix(cmd_rec *cmd)
-/* For $ strings. Fixes object redirection if neccessary */
+/* For $ strings. Fixes object redirection if necessary */
 {
 	int actorword;
 	word nounword, objword;
@@ -890,7 +890,7 @@ static void scan_dbg(int vcode) {
 	else w = syntbl[auxsyn[vcode]];
 
 	if (strlen(dict[w]) > 200) return; /* Just in case... */
-	sprintf(buff, "+++++Scanning %s\n", dict[w]);
+	Common::sprintf_s(buff, "+++++Scanning %s\n", dict[w]);
 	debugout(buff);
 }
 
@@ -978,7 +978,7 @@ static void scan_for_actor(integer m_actor, int *start, int *end) {
 }
 
 
-/* m_<word> are the matching criterion; they have no *neccessary*
+/* m_<word> are the matching criterion; they have no *necessary*
   connection to dobj, iobj, etc. */
 
 int scan_metacommand(integer m_actor, int vcode,
@@ -1081,7 +1081,7 @@ int scan_metacommand(integer m_actor, int vcode,
 
 				/* REDIRECT: Do the actual redirection, building the new command
 				   header and shuffling around nouns and verbs as
-				   neccessary */
+				   necessary */
 				redirect_exec(&command[i], &m_actor, &vcode,
 				              &m_dobj, &m_prep, &m_iobj);
 

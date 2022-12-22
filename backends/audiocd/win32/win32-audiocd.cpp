@@ -27,7 +27,7 @@
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -62,7 +62,7 @@
 #include <winioctl.h>
 #if _MSC_VER < 1900
 // WORKAROUND: Older versions of MSVC might not supply DDK headers by default.
-// Visual Studio 2015 contains the required headers. We use a compatability
+// Visual Studio 2015 contains the required headers. We use a compatibility
 // header from MinGW's w32api for all older versions.
 // TODO: Limit this to the Visual Studio versions which actually require this.
 #include "msvc/ntddcdrm.h"

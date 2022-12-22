@@ -97,7 +97,7 @@ void GUI_v1::initMenu(Menu &menu) {
 		printMenuText(getMenuTitle(menu), textX, textY, menu.textColor, 0, 0);
 	}
 
-	assert (menu.numberOfItems < ARRAYSIZE(menu.item));
+	assert (menu.numberOfItems <= ARRAYSIZE(menu.item));
 
 	int x1, y1, x2, y2;
 	for (int i = 0; i < menu.numberOfItems; ++i) {

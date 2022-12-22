@@ -77,7 +77,7 @@ void loadRel(char *pRelName) {
 
 		for (s = 0; s < numEntry; s++) {
 			if (g_cine->_relTable[s]->_size) {
-				sprintf(buffer, "%s_%03d.txt", pRelName, s);
+				Common::sprintf_s(buffer, "%s_%03d.txt", pRelName, s);
 
 				decompileScript((const byte *)g_cine->_relTable[s]->getString(0), g_cine->_relTable[s]->_size, s);
 				dumpScript(buffer);

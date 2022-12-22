@@ -38,6 +38,7 @@ namespace Image {
 PICTDecoder::PICTDecoder() {
 	_outputSurface = 0;
 	_paletteColorCount = 0;
+	_version = 2;
 }
 
 PICTDecoder::~PICTDecoder() {

@@ -4,6 +4,7 @@
 #include "common/func.h"
 #include "common/algorithm.h"
 #include "common/list.h"
+#include "common/str.h"
 
 class AlgorithmTestSuite : public CxxTest::TestSuite {
 	template<typename T, class StrictWeakOrdering>

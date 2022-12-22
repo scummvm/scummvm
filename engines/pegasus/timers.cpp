@@ -40,14 +40,14 @@ Idler::~Idler() {
 
 void Idler::startIdling() {
 	if (!isIdling()) {
-		((PegasusEngine *)g_engine)->addIdler(this);
+		g_vm->addIdler(this);
 		_isIdling = true;
 	}
 }
 
 void Idler::stopIdling() {
 	if (isIdling()) {
-		((PegasusEngine *)g_engine)->removeIdler(this);
+		g_vm->removeIdler(this);
 		_isIdling = false;
 	}
 }
@@ -72,7 +72,7 @@ TimeBase::TimeBase(const TimeScale preferredScale) {
 }
 
 TimeBase::~TimeBase() {
-	((PegasusEngine *)g_engine)->removeTimeBase(this);
+	g_vm->removeTimeBase(this);
 	disposeAllCallBacks();
 }
 
@@ -370,7 +370,7 @@ void NotificationCallBack::callBack() {
 
 static const NotificationFlags kFuseExpiredFlag = 1;
 
-Fuse::Fuse() : _fuseNotification(0, (NotificationManager *)((PegasusEngine *)g_engine)) {
+Fuse::Fuse() : _fuseNotification(0, (NotificationManager *)g_vm) {
 	_fuseNotification.notifyMe(this, kFuseExpiredFlag, kFuseExpiredFlag);
 	_fuseCallBack.setNotification(&_fuseNotification);
 	_fuseCallBack.initCallBack(&_fuseTimer, kCallBackAtExtremes);

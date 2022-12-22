@@ -736,7 +736,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 			if (curThingType == kDMThingTypeGroup)
 				squareContainsGroup = true;
 			else if ((curThingType == kDMstringTypeText) && (thingType == kDMThingTypeParty) && addThing && !partySquare) {
-				dungeon.decodeText(_vm->_stringBuildBuffer, curThing, kDMTextTypeMessage);
+				dungeon.decodeText(_vm->_stringBuildBuffer, sizeof(_vm->_stringBuildBuffer), curThing, kDMTextTypeMessage);
 				txtMan.printMessage(kDMColorWhite, _vm->_stringBuildBuffer);
 			} else if ((curThingType > kDMThingTypeGroup) && (curThingType < kDMThingTypeProjectile)) {
 				squareContainsObject = true;

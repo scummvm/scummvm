@@ -21,6 +21,7 @@
 
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 
@@ -28,6 +29,26 @@
 #include "lure/detection.h"
 
 namespace Lure {
+
+#ifdef USE_TTS
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_TTS_NARRATOR,
+		{
+			_s("TTS Narrator"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_narrator",
+			false,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+#endif
 
 uint32 LureEngine::getFeatures() const { return _gameDescription->features; }
 Common::Language LureEngine::getLanguage() const { return _gameDescription->desc.language; }
@@ -55,6 +76,12 @@ public:
 	const char *getName() const override {
 		return "lure";
 	}
+
+#ifdef USE_TTS
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Lure::optionsList;
+	}
+#endif
 
 	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;

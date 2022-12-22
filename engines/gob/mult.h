@@ -22,6 +22,7 @@
 #ifndef GOB_MULT_H
 #define GOB_MULT_H
 
+#include "gob/videoplayer.h"
 #include "gob/video.h"
 #include "gob/variables.h"
 
@@ -60,6 +61,14 @@ public:
 		int8 redrawAnimation;
 		uint8 redrawLayer;
 		uint8 redrawFrame;
+		uint8 destXBak;
+		uint8 destYBak;
+		int8 gobDestX_maybe;
+		uint8 gobDestY_maybe;
+		uint8 field_1F;
+		uint8 field_20;
+		uint8 field_21;
+		uint8 field_22;
 	} PACKED_STRUCT;
 
 	struct Mult_GobState {
@@ -91,17 +100,23 @@ public:
 		int8 gobDestY;
 		uint8 nearestWayPoint;
 		uint8 nearestDest;
-		int8 field_22;
 		int8 needRedraw;
-		int8 field_24;
-		int8 field_25;
-		int8 field_26;
-		int8 field_27;
 		int16 newLeft;
 		int16 newTop;
 		int16 newRight;
 		int16 newBottom;
+		int16 spriteDestLeft;
+		int16 spriteDestTop;
+		int16 spriteDestRight;
+		int16 spriteDestBottom;
 		uint32 videoSlot;
+		int16 lastFrameIndex;
+		int16 field_32[3];
+		byte* field_3C;
+		char animName[16];
+		int8 field_50;
+		int16* animVariables;
+		bool ownAnimVariables;
 	} PACKED_STRUCT;
 
 	struct Mult_StaticKey {
@@ -237,11 +252,13 @@ public:
 	void initAll();
 	void freeAll();
 	void checkFreeMult();
-	void freeMult();
+	void freeMult(bool freeObjectSprites = false);
 	void zeroMultData();
 	void playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			char handleMouse);
 
+	int openObjVideo(const Common::String &file, VideoPlayer::Properties &properties, int animation);
+	void closeObjVideo(Mult_Object &object);
 	void clearObjectVideos();
 
 	virtual void loadMult(int16 resId) = 0;

@@ -24,7 +24,7 @@
 
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/graphics/movie_player.h"
-#include "ultima/ultima8/graphics/base_soft_render_surface.h"
+#include "ultima/ultima8/graphics/render_surface.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -63,7 +63,7 @@ private:
 	unsigned int _timer;
 	unsigned int _frameRate;
 	uint8 _fadeColour, _fadeLevel;
-	BaseSoftRenderSurface *_buffer;
+	RenderSurface *_buffer;
 	RenderedText *_subs;
 	int _subtitleY;
 	bool _introMusicHack;

@@ -204,17 +204,20 @@ VpPoint GameState::ScreenToRoomImpl(int scrx, int scry, int view_index, bool cli
 	PViewport view;
 	if (view_index < 0) {
 		view = GetRoomViewportAt(scrx, scry);
-		if (!view)
-			return std::make_pair(Point(), -1);
+		if (!view) {
+			if (clip_viewport)
+				return std::make_pair(Point(), -1);
+			view = _roomViewports[0]; // use primary viewport
+		}
 	} else {
 		view = _roomViewports[view_index];
 	}
 	return view->ScreenToRoom(scrx, scry, clip_viewport, convert_cam_to_data);
 }
 
-VpPoint GameState::ScreenToRoom(int scrx, int scry) {
+VpPoint GameState::ScreenToRoom(int scrx, int scry, bool restrict) {
 	if (_GP(game).options[OPT_BASESCRIPTAPI] >= kScriptAPI_v3507)
-		return ScreenToRoomImpl(scrx, scry, -1, true, false);
+		return ScreenToRoomImpl(scrx, scry, -1, restrict, false);
 	return ScreenToRoomImpl(scrx, scry, 0, false, false);
 }
 
@@ -387,8 +390,8 @@ void GameState::SetWaitSkipResult(int how, int data) {
 
 int GameState::GetWaitSkipResult() const {
 	// NOTE: we remove timer flag to make timeout reason = 0
-	return ((wait_skipped_by & ~SKIP_AUTOTIMER) << 16)
-		| (wait_skipped_by_data & 0x0000FFFF);
+	return ((wait_skipped_by & ~SKIP_AUTOTIMER) << SKIP_RESULT_TYPE_SHIFT)
+		| (wait_skipped_by_data & SKIP_RESULT_DATA_MASK);
 }
 
 bool GameState::IsBlockingVoiceSpeech() const {

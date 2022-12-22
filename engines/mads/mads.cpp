@@ -32,6 +32,7 @@
 #include "mads/resources.h"
 #include "mads/sound.h"
 #include "mads/sprites.h"
+#include "mads/mps_installer.h"
 
 namespace MADS {
 
@@ -77,6 +78,13 @@ MADSEngine::~MADSEngine() {
 }
 
 void MADSEngine::initialize() {
+	if (_gameDescription->desc.flags & GF_INSTALLER) {
+		// Right now used only by Rex Nebular
+		Common::Archive* arch = MpsInstaller::open("MPSLABS");
+		if (arch)
+			SearchMan.add("mpslabs", arch);
+	}
+
 	// Initial sub-system engine references
 	MSurface::setVm(this);
 	MSprite::setVm(this);
@@ -186,7 +194,8 @@ bool MADSEngine::canLoadGameStateCurrently() {
 bool MADSEngine::canSaveGameStateCurrently() {
 	return !_game->_winStatus && !_game->globals()[5]
 		&& _dialogs->_pendingDialog == DIALOG_NONE
-		&& _events->_cursorId != CURSOR_WAIT;
+		&& _events->_cursorId != CURSOR_WAIT
+		&& _game->_scene._sceneLogic;
 }
 
 void MADSEngine::syncSoundSettings() {

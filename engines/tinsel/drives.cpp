@@ -193,7 +193,7 @@ bool TinselFile::open(const Common::String &filename) {
 	// Form a filename without the CD number character
 	char newFilename[50];
 	strncpy(newFilename, fname, p - fname);
-	strcpy(newFilename + (p - fname), p + 1);
+	Common::strcpy_s(newFilename + (p - fname), sizeof(newFilename) - (p - fname), p + 1);
 
 	return openInternal(newFilename);
 }

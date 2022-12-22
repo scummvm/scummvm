@@ -125,7 +125,7 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 
 	_vm->_resource->loadResource(resourceContext, _vm->getResourceDescription()->mainStringsResourceId, stringsData);
 
-	_vm->loadStrings(_mainStrings, stringsData);
+	_vm->loadStrings(_mainStrings, stringsData, _vm->isBigEndian());
 
 	setupScriptOpcodeList();
 
@@ -906,7 +906,7 @@ void Script::loadModule(uint scriptModuleNumber) {
 
 	_vm->_resource->loadResource(_scriptContext, _modules[scriptModuleNumber].stringsResourceId, resourceData);
 
-	_vm->loadStrings(_modules[scriptModuleNumber].strings, resourceData);
+	_vm->loadStrings(_modules[scriptModuleNumber].strings, resourceData, _vm->isBigEndian() && !_vm->isITEAmiga());
 
 	if (_modules[scriptModuleNumber].voicesResourceId > 0) {
 		_vm->_resource->loadResource(_scriptContext, _modules[scriptModuleNumber].voicesResourceId, resourceData);
@@ -982,7 +982,7 @@ void Script::loadVoiceLUT(VoiceLUT &voiceLUT, const ByteArray &resourceData) {
 
 	voiceLUT.resize(resourceData.size() / 2);
 
-	ByteArrayReadStreamEndian scriptS(resourceData, _scriptContext->isBigEndian());
+	ByteArrayReadStreamEndian scriptS(resourceData, _scriptContext->isBigEndian() || _vm->getPlatform() == Common::Platform::kPlatformAmiga);
 
 	for (i = 0; i < voiceLUT.size(); i++) {
 		voiceLUT[i] = scriptS.readUint16();
@@ -1129,7 +1129,7 @@ void Script::setVerb(int verb) {
 bool Script::isNonInteractiveDemo() {
 	// This detection only works in ITE. The early non-interactive demos had
 	// a very small script file
-	return _vm->getGameId() == GID_ITE && _scriptContext->fileSize() < 50000;
+	return _vm->getGameId() == GID_ITE && _scriptContext->fileSize() < 50000 && !_vm->isITEAmiga();
 }
 
 void Script::setLeftButtonVerb(int verb) {
@@ -1296,7 +1296,7 @@ void Script::hitObject(bool leftButton) {
 
 				_leftButtonVerb = verb;
 				if (_pendingVerb > getVerbType(kVerbNone))
-					showVerb(kITEColorBrightWhite);
+					showVerb(_vm->iteColorBrightWhite());
 				else
 					showVerb();
 
@@ -1330,7 +1330,7 @@ void Script::hitObject(bool leftButton) {
 
 		_leftButtonVerb = verb;
 		if (_pendingVerb > getVerbType(kVerbNone))
-			showVerb(kITEColorBrightWhite);
+			showVerb(_vm->iteColorBrightWhite());
 		else
 			showVerb();
 	}

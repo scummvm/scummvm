@@ -69,35 +69,35 @@ class ContainerView : public gControl {
 protected:
 
 	enum imageData {
-		selectorX = 10,
-		selectorY = 25
+		kSelectorX = 10,
+		kSelectorY = 25
 	};
 
 public:
 
-	ContainerNode   &node;
+	ContainerNode   &_node;
 
-	Point16         iconOrigin;     //  of the top left icon.
-	Point16         iconSpacing;    //  The spacing between icons (in both X and Y)
+	Point16         _iconOrigin;     //  of the top left icon.
+	Point16         _iconSpacing;    //  The spacing between icons (in both X and Y)
 
 	//  The number of rows and columns of icons that can be seen
-	int16           visibleRows,
-	                visibleCols;
+	int16           _visibleRows,
+	                _visibleCols;
 
 	//  The total number of rows, and the scroll position of the control
-	int16           totalRows,
-	                scrollPosition;
+	int16           _totalRows,
+	                _scrollPosition;
 
 	//  Pointer to the object that this control is showing the
 	//  contents of.
-	GameObject      *containerObject;
+	GameObject      *_containerObject;
 
 	//  Mass and bulk indicators
-	int16           totalMass,
-	                totalBulk;
+	int16           _totalMass,
+	                _totalBulk;
 
 	//  Number of visible objects currently in the container
-	int16           numObjects;
+	int16           _numObjects;
 
 	//  Constructor
 	ContainerView(
@@ -196,8 +196,8 @@ private:
 
 class ReadyContainerView : public ContainerView {
 private:
-	void            **backImages;       // pointers to background imagery
-	int16           numIm;
+	void            **_backImages;       // pointers to background imagery
+	int16           _numIm;
 
 public:
 
@@ -220,7 +220,7 @@ public:
 
 //  sub class for enchantment container panels
 
-class  EnchantmentContainerView : public ContainerView {
+class EnchantmentContainerView : public ContainerView {
 public:
 	EnchantmentContainerView(gPanelList &list,
 	                         ContainerNode &nd,
@@ -237,8 +237,8 @@ public:
 
 class ContainerWindow : public FloatingWindow {
 protected:
-	GfxCompButton     *closeCompButton;       //  the close button object
-	ContainerView   *view;          //  the container view object
+	GfxCompButton   *_closeCompButton;       //  the close button object
+	ContainerView   *_view;          //  the container view object
 
 public:
 	ContainerWindow(ContainerNode &nd,
@@ -249,7 +249,7 @@ public:
 
 	ContainerView &getView();
 	GameObject *containerObject() {
-		return getView().containerObject;
+		return getView()._containerObject;
 	}
 
 	virtual void massBulkUpdate() {}
@@ -258,7 +258,7 @@ public:
 //  Base class for all container windows with scroll control
 class ScrollableContainerWindow : public ContainerWindow {
 protected:
-	GfxCompButton     *scrollCompButton;
+	GfxCompButton     *_scrollCompButton;
 
 public:
 	ScrollableContainerWindow(ContainerNode &nd,
@@ -266,23 +266,23 @@ public:
 	                          const char saveas[]);
 
 	void scrollUp() {
-		if (view->scrollPosition > 0) view->scrollPosition--;
+		if (_view->_scrollPosition > 0) _view->_scrollPosition--;
 	}
 
 	void scrollDown() {
-		if (view->scrollPosition + view->visibleRows < view->totalRows)
-			view->scrollPosition++;
+		if (_view->_scrollPosition + _view->_visibleRows < _view->_totalRows)
+			_view->_scrollPosition++;
 	}
 };
 
 //  A container window for tangible containers
 class TangibleContainerWindow : public ScrollableContainerWindow {
 private:
-	GfxCompImage      *containerSpriteImg;
-	CMassWeightIndicator *massWeightIndicator;
+	GfxCompImage      *_containerSpriteImg;
+	CMassWeightIndicator *_massWeightIndicator;
 
-	Rect16          objRect;
-	bool            deathFlag;
+	Rect16          _objRect;
+	bool            _deathFlag;
 
 private:
 	void setContainerSprite();
@@ -303,7 +303,7 @@ class IntangibleContainerWindow : public ScrollableContainerWindow {
 protected:
 	friend  void setMindContainer(int index, IntangibleContainerWindow &cw);
 private:
-	GfxMultCompButton *mindSelectorCompButton;
+	GfxMultCompButton *_mindSelectorCompButton;
 
 public:
 
@@ -312,7 +312,7 @@ public:
 
 class EnchantmentContainerWindow : public ContainerWindow {
 protected:
-	GfxCompButton     *scrollCompButton;
+	GfxCompButton     *_scrollCompButton;
 
 public:
 	EnchantmentContainerWindow(ContainerNode &nd,
@@ -359,33 +359,33 @@ class ContainerNode {
 
 public:
 	enum ContainerNodeOwnerType {
-		readyType   = 0,                    //  This is a player ready container
-		deadType,                           //  The "dead" container
-		mentalType,                         //  A player's mental container
-		physicalType,                       //  Physical container
-		enchantType                         //  Enchantment container
+		kReadyType   = 0,                    //  This is a player ready container
+		kDeadType,                           //  The "dead" container
+		kMentalType,                         //  A player's mental container
+		kPhysicalType,                       //  Physical container
+		kEnchantType                         //  Enchantment container
 	};
 
 	enum ContainerNodeOwners {
-		nobody = 255                        //  owner = 255 means it's on the ground
+		kNobody = 255                        //  owner = 255 means it's on the ground
 	};
 
 	enum containerAction {
-		actionUpdate    = (1 << 0),         //  Refresh this window
-		actionDelete    = (1 << 1),         //  Delete this window
-		actionHide      = (1 << 2),         //  Refresh this window
-		actionShow      = (1 << 3)          //  Refresh this window
+		kActionUpdate    = (1 << 0),         //  Refresh this window
+		kActionDelete    = (1 << 1),         //  Delete this window
+		kActionHide      = (1 << 2),         //  Refresh this window
+		kActionShow      = (1 << 3)          //  Refresh this window
 	};
 
 private:
-	ObjectID        object;                 //  Object being viewed
-	uint8           type;                   //  type of container
-	uint8           owner;                  //  which brother owns this container
-	Rect16          position;               //  position of window
-	ContainerWindow *window;                //  window, which may be NULL if hidden.
-	uint8           action;                 //  What action to take on container
+	ObjectID        _object;                 //  Object being viewed
+	uint8           _type;                   //  type of container
+	uint8           _owner;                  //  which brother owns this container
+	Rect16          _position;               //  position of window
+	ContainerWindow *_window;                //  window, which may be NULL if hidden.
+	uint8           _action;                 //  What action to take on container
 public:
-	uint8           mindType;               //  mindContainer type
+	uint8           _mindType;               //  mindContainer type
 
 private:
 	//  Nested structure used to archive ContainerNodes
@@ -400,12 +400,12 @@ private:
 
 public:
 	ContainerNode() {
-		object = 0;
-		type = 0;
-		owner = 0;
-		window = nullptr;
-		action = 0;
-		mindType = 0;
+		_object = 0;
+		_type = 0;
+		_owner = 0;
+		_window = nullptr;
+		_action = 0;
+		_mindType = 0;
 	}
 	ContainerNode(ContainerManager &cl, ObjectID id, int type);
 	~ContainerNode();
@@ -424,18 +424,18 @@ public:
 
 	//  Set for lazy deletion
 	void markForDelete()   {
-		action |= actionDelete;
+		_action |= kActionDelete;
 	}
 	void markForShow() {
-		action |= actionShow;
-		action &= ~actionHide;
+		_action |= kActionShow;
+		_action &= ~kActionHide;
 	}
 	void markForHide() {
-		action |= actionHide;
-		action &= ~actionShow;
+		_action |= kActionHide;
+		_action &= ~kActionShow;
 	}
 	void markForUpdate()   {
-		action |= actionUpdate;
+		_action |= kActionUpdate;
 	}
 
 	//  Find the address of the window and/or view
@@ -444,19 +444,19 @@ public:
 
 	//  Access functions
 	uint8 getType() {
-		return type;
+		return _type;
 	}
 	uint8 getOwnerIndex() {
-		return owner;
+		return _owner;
 	}
 	ObjectID getObject() {
-		return object;
+		return _object;
 	}
 	Rect16 &getPosition() {
-		return position;
+		return _position;
 	}
 	void setObject(ObjectID id) {
-		object = id;
+		_object = id;
 	}
 
 	//  returns true if the object represented by the container can be

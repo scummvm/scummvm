@@ -318,7 +318,7 @@ void Configuration::load(GameId gameId, bool isEnhanced) {
 	else
 		setUnenhancedDefaults(gameId);
 
-	// nuvie.cfg in the game folder can supercede any ScummVM settings
+	// nuvie.cfg in the game folder can supersede any ScummVM settings
 	if (Common::File::exists("nuvie.cfg"))
 		(void)readConfigFile("nuvie.cfg", "config");
 

@@ -26,7 +26,7 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/macresman.h"
-#include "common/stuffit.h"
+#include "common/compression/stuffit.h"
 
 namespace Kyra {
 
@@ -962,7 +962,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 	Common::SeekableReadStream *tmpFile = nullptr;
 
 	for (int8 currentFile = 1; currentFile; currentFile++) {
-		sprintf(filenameExt, extension.c_str(), currentFile);
+		Common::sprintf_s(filenameExt, extension.c_str(), currentFile);
 		filenameTemp = filenameBase + Common::String(filenameExt);
 
 		if (!(tmpFile = owner->createReadStream(filenameTemp))) {
@@ -1040,7 +1040,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 	for (Common::List<InsArchive>::iterator a = archives.begin(); a != archives.end(); ++a) {
 		startFile = true;
 		for (uint32 i = a->firstFile; i != (a->lastFile + 1); i++) {
-			sprintf(filenameExt, extension.c_str(), i);
+			Common::sprintf_s(filenameExt, extension.c_str(), i);
 			filenameTemp = a->filename + Common::String(filenameExt);
 
 			if (!(tmpFile = owner->createReadStream(filenameTemp))) {
@@ -1115,7 +1115,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 						}
 					}
 
-					sprintf(filenameExt, extension.c_str(), i + 1);
+					Common::sprintf_s(filenameExt, extension.c_str(), i + 1);
 					filenameTemp = a->filename + Common::String(filenameExt);
 
 					Common::SeekableReadStream *tmpFile2 = owner->createReadStream(filenameTemp);
@@ -1217,16 +1217,17 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 	return new CachedArchive(fileList);
 }
 
-Common::Archive *StuffItLoader::load(Resource *owner, const Common::String &filename, Common::MacResManager *macResMan) {
-	if (macResMan->open(filename)) {
-		Common::SeekableReadStream *stream = macResMan->getDataFork();
-		if (stream) {
-			Common::Archive *archive = Common::createStuffItArchive(stream);
-			return archive;
-		}
+Common::Archive *StuffItLoader::load(Resource *owner, const Common::String &filename) {
+	return load(owner, Common::MacResManager::openFileOrDataFork(filename), filename);
+}
+
+Common::Archive *StuffItLoader::load(Resource *owner, Common::SeekableReadStream *stream, const Common::String& debugName) {
+	if (stream) {
+		Common::Archive *archive = Common::createStuffItArchive(stream);
+		return archive;
 	}
 
-	error("StuffItLoader::load: Could not load %s", filename.c_str());
+	error("StuffItLoader::load: Could not load %s", debugName.c_str());
 }
 
 CmpVocDecoder::CmpVocDecoder() {

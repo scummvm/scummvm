@@ -247,11 +247,11 @@ bool SavePartVars::readFrom(uint32 var, uint32 offset, uint32 size) {
 	return _vm->_inter->_variables->copyTo(var, _data + offset, size);
 }
 
-bool SavePartVars::readFromRaw(const byte *data, uint32 size) {
-	if (size != _size)
+bool SavePartVars::readFromRaw(const byte *data, uint32 offset, uint32 size) {
+	if (offset + size > _size)
 		return false;
 
-	memcpy(_data, data, size);
+	memcpy(_data + offset, data, size);
 	return true;
 }
 
@@ -266,6 +266,14 @@ bool SavePartVars::writeInto(uint32 var, uint32 offset, uint32 size) const {
 	if (!_vm->_inter->_variables->copyFrom(var, _data + offset, size))
 		return false;
 
+	return true;
+}
+
+bool SavePartVars::writeIntoRaw(byte *data, uint32 offset, uint32 size) const {
+	if ((offset + size) > _size)
+		return false;
+
+	memcpy(data, _data + offset, size);
 	return true;
 }
 
@@ -322,9 +330,10 @@ bool SavePartSprite::read(Common::ReadStream &stream) {
 	}
 
 	// The sprite's dimensions have to fit
-	if (stream.readUint32LE() != _width)
-		return false;
-	if (stream.readUint32LE() != _height)
+	uint32 width = stream.readUint32LE();
+	uint32 height = stream.readUint32LE();
+
+	if (width * height != _width * _height)
 		return false;
 
 	// If it's in the current format, the true color flag has to be the same too
@@ -371,9 +380,7 @@ bool SavePartSprite::readPalette(const byte *palette) {
 
 bool SavePartSprite::readSprite(const Surface &sprite) {
 	// The sprite's dimensions have to fit
-	if (((uint32)sprite.getWidth()) != _width)
-		return false;
-	if (((uint32)sprite.getHeight()) != _height)
+	if (((uint32)sprite.getWidth() * sprite.getHeight()) != _width * _height)
 		return false;
 
 	if (_trueColor) {
@@ -413,9 +420,7 @@ bool SavePartSprite::writePalette(byte *palette) const {
 
 bool SavePartSprite::writeSprite(Surface &sprite) const {
 	// The sprite's dimensions have to fit
-	if (((uint32)sprite.getWidth()) != _width)
-		return false;
-	if (((uint32)sprite.getHeight()) != _height)
+	if (((uint32) sprite.getWidth() * sprite.getHeight()) != _width * _height)
 		return false;
 
 	if (_trueColor) {
@@ -1002,6 +1007,14 @@ bool SaveWriter::writePart(uint32 partN, const SavePart *part) {
 
 bool SaveWriter::save(Common::WriteStream &stream) {
 	return SaveContainer::write(stream);
+}
+
+bool SaveWriter::deleteFile() {
+	if (_fileName.empty())
+		return false;
+
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	return saveMan->removeSavefile(_fileName);
 }
 
 bool SaveWriter::save() {

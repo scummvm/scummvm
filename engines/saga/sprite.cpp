@@ -33,6 +33,70 @@
 
 namespace Saga {
 
+namespace {
+
+template<int bitsPerPixel, int bitsPerEntry>
+bool blitAmigaSprite(byte *outBuf, int outPitch, const byte *inputBuffer, size_t inLength, int width, int height) {
+	byte *outPointer = outBuf;
+	int c;
+	int widthAligned = (width + 15) & ~15;
+
+	const byte *ptr = inputBuffer, *end = inputBuffer + inLength;
+
+	for (int bitOut = 0; bitOut < bitsPerPixel; bitOut++)
+		for (int x = 0; x < widthAligned; x += bitsPerEntry) {
+			for (int y = 0; y < height; ) {
+				int bg_runcount = bitsPerEntry == 16 ? READ_BE_UINT16(ptr) : *ptr;
+				ptr += bitsPerEntry / 8;
+				if (ptr >= end)
+					return true;
+
+				// Transparent
+				y += bg_runcount;
+
+				if (y > height) {
+					warning("Sprite height overrun in transparent run: coord=%d+%dx%d, size=%dx%d, pos=%d",
+						x, bitOut, y, width, height, (int)(ptr - inputBuffer));
+					return true;
+				}
+
+				if (y == height) {
+					continue;
+				}
+
+				int fg_runcount = bitsPerEntry == 16 ? READ_BE_UINT16(ptr) : *ptr;
+				ptr += bitsPerEntry / 8;
+				if (ptr >= end)
+					return true;
+
+				for (c = 0; c < fg_runcount && ptr < end; c++, y++) {
+					uint16 val = bitsPerEntry == 16 ? READ_BE_UINT16(ptr) : *ptr;
+					ptr += bitsPerEntry / 8;
+					if (y >= height) {
+						warning("Sprite height overrun in opaque run: coord=%d+%dx%d, size=%dx%d, pos=%d",
+							x, bitOut, y, width, height, (int)(ptr - inputBuffer));
+						return false;
+					}
+					for (int bitIn = 0; bitIn < bitsPerEntry; bitIn++) {
+						int realX = x + (bitsPerEntry - 1 - bitIn);
+						if (realX >= width) {
+							continue;
+						}
+						outPointer[y * outPitch + realX] =
+							(outPointer[y * outPitch + realX] & ~(1 << bitOut)) | (((val >> bitIn) & 1) << bitOut);
+					}
+				}
+				if (fg_runcount == 0 && bg_runcount == 0) {
+					warning("Sprite zero-sized run: coord=%d+%dx%d, size=%dx%d, pos=%d",
+						x, bitOut, y, width, height, (int)(ptr - inputBuffer));
+					return false;
+				}
+			}
+		}
+	return true;
+}
+
+}
 #define RID_IHNM_ARROW_SPRITES 13
 #define RID_IHNM_SAVEREMINDER_SPRITES 14
 #define RID_IHNMDEMO_ARROW_SPRITES 8
@@ -69,7 +133,7 @@ Sprite::~Sprite() {
 	debug(8, "Shutting down sprite subsystem...");
 }
 
-void Sprite::loadList(int resourceId, SpriteList &spriteList) {
+void Sprite::loadList(int resourceId, SpriteList &spriteList, byte keepMask) {
 	ByteArray spriteListData;
 	_vm->_resource->loadResource(_spriteContext, resourceId, spriteListData);
 
@@ -92,7 +156,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 
 	for (uint i = oldSpriteCount; i < spriteList.size(); i++) {
 		uint32 offset;
-		if (bigHeader)
+		if (bigHeader || _vm->isITEAmiga())
 			offset = readS.readUint32();
 		else
 			offset = readS.readUint16();
@@ -134,7 +198,16 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		int inputLength = spriteListData.size() - (spriteDataPointer - spriteListData.getBuffer());
 		spriteInfo->decodedBuffer.resize(outputLength);
 		if (outputLength > 0) {
-			decodeRLEBuffer(spriteDataPointer, inputLength, outputLength);
+			if (_vm->isAGA() || _vm->isECS()) {
+				_decodeBuf.resize(spriteInfo->width * spriteInfo->height);
+				memset(&_decodeBuf.front(), 0, _decodeBuf.size());
+				if (_vm->isAGA())
+					blitAmigaSprite<8, 16>(&_decodeBuf.front(), spriteInfo->width, spriteDataPointer, inputLength, spriteInfo->width, spriteInfo->height);
+				else
+					blitAmigaSprite<4, 8>(&_decodeBuf.front(), spriteInfo->width, spriteDataPointer, inputLength, spriteInfo->width, spriteInfo->height);
+			} else
+				decodeRLEBuffer(spriteDataPointer, inputLength, outputLength);
+			spriteInfo->keepMask = keepMask;
 			byte *dst = &spriteInfo->decodedBuffer.front();
 #ifdef ENABLE_IHNM
 			// IHNM sprites are upside-down, for reasons which i can only
@@ -188,7 +261,7 @@ void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, uint spriteNumber, in
 	}
 }
 
-void Sprite::drawClip(const Point &spritePointer, int width, int height, const byte *spriteBuffer, bool clipToScene) {
+void Sprite::drawClip(const Point &spritePointer, int width, int height, const byte *spriteBuffer, bool clipToScene, byte keepMask) {
 	Common::Rect clipRect = clipToScene ? _vm->_scene->getSceneClip() : _vm->getDisplayClip();
 
 	int xDstOffset, yDstOffset, xSrcOffset, ySrcOffset, xDiff, yDiff, cWidth, cHeight;
@@ -247,25 +320,48 @@ void Sprite::drawClip(const Point &spritePointer, int width, int height, const b
 	assert(((const byte *)spriteBuffer + (width * height)) >= (const byte *)(srcRowPointer + width * (cHeight - 1) + cWidth));
 
 	const byte *srcPointerFinish2 = srcRowPointer + width * cHeight;
-	for (;;) {
-		srcPointer = srcRowPointer;
-		bufPointer = bufRowPointer;
-		const byte *srcPointerFinish = srcRowPointer + cWidth;
+	if (keepMask) {
 		for (;;) {
-			if (*srcPointer != 0) {
-				*bufPointer = *srcPointer;
+			srcPointer = srcRowPointer;
+			bufPointer = bufRowPointer;
+			const byte *srcPointerFinish = srcRowPointer + cWidth;
+			for (;;) {
+				if (*srcPointer != 0) {
+					*bufPointer = *srcPointer | (*bufPointer & keepMask);
+				}
+				srcPointer++;
+				bufPointer++;
+				if (srcPointer == srcPointerFinish) {
+					break;
+				}
 			}
-			srcPointer++;
-			bufPointer++;
-			if (srcPointer == srcPointerFinish) {
+			srcRowPointer += width;
+			if (srcRowPointer == srcPointerFinish2) {
 				break;
 			}
+			bufRowPointer += backBufferPitch;
 		}
-		srcRowPointer += width;
-		if (srcRowPointer == srcPointerFinish2) {
-			break;
+	} else {
+		for (;;) {
+			srcPointer = srcRowPointer;
+			bufPointer = bufRowPointer;
+			const byte *srcPointerFinish = srcRowPointer + cWidth;
+			for (;;) {
+				if (*srcPointer != 0) {
+					*bufPointer = *srcPointer;
+				}
+				srcPointer++;
+				bufPointer++;
+				if (srcPointer == srcPointerFinish) {
+					break;
+				}
+			}
+			srcRowPointer += width;
+			if (srcRowPointer == srcPointerFinish2) {
+				break;
+			}
+			bufRowPointer += backBufferPitch;
 		}
-		bufRowPointer += backBufferPitch;
 	}
 
 	_vm->_render->addDirtyRect(Common::Rect(xDstOffset, yDstOffset, xDstOffset + cWidth, yDstOffset + cHeight));
@@ -284,7 +380,7 @@ void Sprite::draw(SpriteList &spriteList, uint spriteNumber, const Point &screen
 	spritePointer.x = screenCoord.x + xAlign;
 	spritePointer.y = screenCoord.y + yAlign;
 
-	drawClip(spritePointer, width, height, spriteBuffer, clipToScene);
+	drawClip(spritePointer, width, height, spriteBuffer, clipToScene, spriteList[spriteNumber].keepMask);
 }
 
 void Sprite::draw(SpriteList &spriteList, uint spriteNumber, const Rect &screenRect, int scale, bool clipToScene) {
@@ -308,7 +404,7 @@ void Sprite::draw(SpriteList &spriteList, uint spriteNumber, const Rect &screenR
 	}
 	spritePointer.x = screenRect.left + xAlign + spw;
 	spritePointer.y = screenRect.top + yAlign + sph;
-	drawClip(spritePointer, width, height, spriteBuffer, clipToScene);
+	drawClip(spritePointer, width, height, spriteBuffer, clipToScene, spriteList[spriteNumber].keepMask);
 }
 
 bool Sprite::hitTest(SpriteList &spriteList, uint spriteNumber, const Point &screenCoord, int scale, const Point &testPoint) {

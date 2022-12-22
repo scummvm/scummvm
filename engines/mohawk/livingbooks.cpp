@@ -804,7 +804,7 @@ uint16 LBPage::getResourceVersion() {
 }
 
 void LBPage::loadBITL(uint16 resourceId) {
-	Common::SeekableSubReadStreamEndian *bitlStream = _vm->wrapStreamEndian(ID_BITL, resourceId);
+	Common::SeekableReadStreamEndian *bitlStream = _vm->wrapStreamEndian(ID_BITL, resourceId);
 
 	while (true) {
 		Common::Rect rect = _vm->readRect(bitlStream);
@@ -857,9 +857,9 @@ void LBPage::loadBITL(uint16 resourceId) {
 	delete bitlStream;
 }
 
-Common::SeekableSubReadStreamEndian *MohawkEngine_LivingBooks::wrapStreamEndian(uint32 tag, uint16 id) {
+Common::SeekableReadStreamEndian *MohawkEngine_LivingBooks::wrapStreamEndian(uint32 tag, uint16 id) {
 	Common::SeekableReadStream *dataStream = getResource(tag, id);
-	return new Common::SeekableSubReadStreamEndian(dataStream, 0, dataStream->size(), isBigEndian(), DisposeAfterUse::YES);
+	return new Common::SeekableReadStreamEndianWrapper(dataStream, isBigEndian(), DisposeAfterUse::YES);
 }
 
 Common::String MohawkEngine_LivingBooks::getStringFromConfig(const Common::String &section, const Common::String &key) {
@@ -1470,7 +1470,7 @@ LBAnimationNode::~LBAnimationNode() {
 }
 
 void LBAnimationNode::loadScript(uint16 resourceId) {
-	Common::SeekableSubReadStreamEndian *scriptStream = _vm->wrapStreamEndian(ID_SCRP, resourceId);
+	Common::SeekableReadStreamEndian *scriptStream = _vm->wrapStreamEndian(ID_SCRP, resourceId);
 
 	reset();
 
@@ -1726,7 +1726,7 @@ bool LBAnimationNode::transparentAt(int x, int y) {
 }
 
 LBAnimation::LBAnimation(MohawkEngine_LivingBooks *vm, LBAnimationItem *parent, uint16 resourceId) : _vm(vm), _parent(parent) {
-	Common::SeekableSubReadStreamEndian *aniStream = _vm->wrapStreamEndian(ID_ANI, resourceId);
+	Common::SeekableReadStreamEndian *aniStream = _vm->wrapStreamEndian(ID_ANI, resourceId);
 
 	// ANI records in the Wanderful sampler are 32 bytes, extra bytes are just NULs
 	if (aniStream->size() != 30 && aniStream->size() != 32)
@@ -1759,7 +1759,7 @@ LBAnimation::LBAnimation(MohawkEngine_LivingBooks *vm, LBAnimationItem *parent, 
 	if (sprResourceOffset)
 		error("Cannot handle non-zero ANI offset yet");
 
-	Common::SeekableSubReadStreamEndian *sprStream = _vm->wrapStreamEndian(ID_SPR, sprResourceId);
+	Common::SeekableReadStreamEndian *sprStream = _vm->wrapStreamEndian(ID_SPR, sprResourceId);
 
 	uint16 numBackNodes = sprStream->readUint16();
 	uint16 numFrontNodes = sprStream->readUint16();
@@ -1818,7 +1818,7 @@ void LBAnimation::loadShape(uint16 resourceId) {
 	if (resourceId == 0)
 		return;
 
-	Common::SeekableSubReadStreamEndian *shapeStream = _vm->wrapStreamEndian(ID_SHP, resourceId);
+	Common::SeekableReadStreamEndian *shapeStream = _vm->wrapStreamEndian(ID_SHP, resourceId);
 
 	if (_vm->isPreMohawk()) {
 		if (shapeStream->size() < 6)
@@ -2071,7 +2071,7 @@ LBItem::~LBItem() {
 		delete _scriptEntries[i];
 }
 
-void LBItem::readFrom(Common::SeekableSubReadStreamEndian *stream) {
+void LBItem::readFrom(Common::SeekableReadStreamEndian *stream) {
 	_resourceId = stream->readUint16();
 	_itemId = stream->readUint16();
 	uint16 size = stream->readUint16();

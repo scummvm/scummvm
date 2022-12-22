@@ -1125,13 +1125,11 @@ void ScummEngine_v6::o6_walkActorToObj() {
 		getObjectXYPos(obj, x, y, dir);
 		a->startWalkActor(x, y, dir);
 	} else {
-		a2 = derefActorSafe(obj, "o6_walkActorToObj(2)");
-		if (_game.id == GID_SAMNMAX && a2 == nullptr) {
-			// WORKAROUND bug #801 SAM: Fish Farm. Note quite sure why it
-			// happens, whether it's normal or due to a bug in the ScummVM code.
-			debug(0, "o6_walkActorToObj: invalid actor %d", obj);
+		if (!isValidActor(obj))
 			return;
-		}
+
+		a2 = derefActor(obj, "o6_walkActorToObj(2)");
+
 		if (!a->isInCurrentRoom() || !a2->isInCurrentRoom())
 			return;
 		if (dist == 0) {
@@ -2377,6 +2375,24 @@ void ScummEngine_v6::o6_talkActor() {
 		return;
 	}
 
+	// WORKAROUND: If Sam tries to buy an object at Snuckey's without having
+	// any money, Max's comment on capitalism may be cut too early because the
+	// employee reacts immediately after Max without any prior waitForMessage().
+	// The magic values below come from scripts 11-67 and 11-205.
+	//
+	// This call can't just be inserted after Max's line; it needs to be done
+	// just before the employee's line, otherwise the timing with Sam's moves
+	// will feel off -- so we can't use the _forcedWaitForMessage trick.
+	if (_game.id == GID_SAMNMAX && _roomResource == 11 && vm.slot[_currentScript].number == 67
+		&& getOwner(70) != 2 && !readVar(0x8000 + 67) && !readVar(0x8000 + 39) && readVar(0x8000 + 12) == 1
+		&& !getClass(126, 6) && _enableEnhancements) {
+		if (VAR(VAR_HAVE_MSG)) {
+			_scriptPointer--;
+			o6_breakHere();
+			return;
+		}
+	}
+
 	_actorToPrintStrFor = pop();
 
 	// WORKAROUND for bug #3803: "DOTT: Bernard impersonating LaVerne"
@@ -2387,6 +2403,28 @@ void ScummEngine_v6::o6_talkActor() {
 			&& _enableEnhancements) {
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
 		return;
+	}
+
+	// WORKAROUND: In the French release of Full Throttle, a "piano-low-kick"
+	// string appears in the text when Ben looks at one of the small pictures
+	// above the piano in the bar. Probably an original placeholder which
+	// hasn't been properly replaced... Fixed in the 2017 remaster, though.
+	if (_game.id == GID_FT && _language == Common::FR_FRA
+		&& _roomResource == 7 && vm.slot[_currentScript].number == 77
+		&& _actorToPrintStrFor == 1 && _enableEnhancements) {
+		const int len = resStrLen(_scriptPointer) + 1;
+		if (len == 93 && memcmp(_scriptPointer + 16 + 18, "piano-low-kick", 14) == 0) {
+			byte *tmpBuf = new byte[len - 14 + 3];
+			memcpy(tmpBuf, _scriptPointer, 16 + 18);
+			memcpy(tmpBuf + 16 + 18, ", 1", 3);
+			memcpy(tmpBuf + 16 + 18 + 3, _scriptPointer + 16 + 18 + 14, len - (16 + 18 + 14));
+
+			_string[0].loadDefault();
+			actorTalk(tmpBuf);
+			delete[] tmpBuf;
+			_scriptPointer += len;
+			return;
+		}
 	}
 
 	_string[0].loadDefault();
@@ -2417,7 +2455,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// [0166] (73)   } else {
 	//
 	// Here we simulate that opcode.
-	if (_game.id == GID_DIG && vm.slot[_currentScript].number == 88) {
+	if (_game.id == GID_DIG && vm.slot[_currentScript].number == 88 && _enableEnhancements) {
 		if (offset == 0x158 || offset == 0x214 || offset == 0x231 || offset == 0x278) {
 			_forcedWaitForMessage = true;
 			_scriptPointer--;
@@ -2425,6 +2463,24 @@ void ScummEngine_v6::o6_talkActor() {
 			return;
 		}
 	}
+
+	// WORKAROUND bug #4410: Restore a missing subtitle when Low is inside the
+	// tomb and he finds the purpose of the crypt ("/TOMB.022/Now that I know
+	// what I'm looking for"...). Also happens in the original interpreters.
+	// We used to do this in actorTalk(), but then Low's proper walking
+	// animation was lost and he would just glide over the floor. Having him
+	// wait before he moves is less disturbing, since that's something he
+	// already does in the game.
+	if (_game.id == GID_DIG && _roomResource == 58 && vm.slot[_currentScript].number == 402
+		&& _actorToPrintStrFor == 3 && vm.localvar[_currentScript][0] == 0
+		&& readVar(0x8000 + 94) && readVar(0x8000 + 78) && !readVar(0x8000 + 97)
+		&& _scummVars[269] == 3 && getState(388) == 2 && _enableEnhancements) {
+		_forcedWaitForMessage = true;
+		_scriptPointer--;
+
+		return;
+	}
+
 	_scriptPointer += resStrLen(_scriptPointer) + 1;
 }
 

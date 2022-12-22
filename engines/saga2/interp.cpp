@@ -39,8 +39,8 @@ namespace Saga2 {
 
 #define IMMED_WORD(w)   ((w = *pc++),(w |= (*pc++)<<8)); \
 	debugC(3, kDebugScripts, "IMMED_WORD(%d 0x%04x)", w, w)
-#define BRANCH(w)       pc = codeSeg + (w); \
-	debugC(3, kDebugScripts, "BRANCH(%ld 0x%04lx)", long(pc - codeSeg), long(pc - codeSeg))
+#define BRANCH(w)       pc = _codeSeg + (w); \
+	debugC(3, kDebugScripts, "BRANCH(%ld 0x%04lx)", long(pc - _codeSeg), long(pc - _codeSeg))
 
 const uint32        sagaID      = MKTAG('S', 'A', 'G', 'A'),
                     dataSegID   = MKTAG('_', '_', 'D', 'A'),
@@ -74,22 +74,22 @@ extern hResource    *scriptResFile;         // script resources
 hResContext         *scriptRes;             // script resource handle
 
 void script_error(const char *msg) {
-	thisThread->flags |= Thread::aborted;
+	thisThread->_flags |= Thread::kTFAborted;
 	WriteStatusF(0, msg);
 }
 
 static Common::String seg2str(int16 segment) {
 	switch (segment) {
-	case builtinTypeObject:
+	case kBuiltinTypeObject:
 		return "GameObject";
 
-	case builtinTypeTAG:
+	case kBuiltinTypeTAG:
 		return "TAG";
 
-	case builtinAbstract:
+	case kBuiltinAbstract:
 		return Common::String::format("Abstract%d", segment);
 
-	case builtinTypeMission:
+	case kBuiltinTypeMission:
 		return "Mission";
 
 	default:
@@ -104,20 +104,20 @@ uint8 *builtinObjectAddress(int16 segment, uint16 index) {
 	uint16          segNum, segOff;
 
 	switch (segment) {
-	case builtinTypeObject:
+	case kBuiltinTypeObject:
 		return (uint8 *)(&GameObject::objectAddress(index)->_data);
 
-	case builtinTypeTAG:
+	case kBuiltinTypeTAG:
 		return (uint8 *)(&ActiveItem::activeItemAddress(index)->_data);
 
-	case builtinAbstract:
+	case kBuiltinAbstract:
 		assert(index > 0);
 		if (lookupExport(index, segNum, segOff) == false)
 			error("SAGA: Cannot take address of abtract class");
 
 		return segmentAddress(segNum, segOff);
 
-	case builtinTypeMission:
+	case kBuiltinTypeMission:
 		return (uint8 *)(&ActiveMission::missionAddress(index)->_data);
 
 	default:
@@ -126,7 +126,7 @@ uint8 *builtinObjectAddress(int16 segment, uint16 index) {
 }
 
 //-----------------------------------------------------------------------
-//	Given the builtin object type (SAGA segment number), and the adress
+//	Given the builtin object type (SAGA segment number), and the address
 //	from builtinObjectAddress(), return the address of the virtual
 //	function table for the class associated with this object. Also
 //	return the address of the C function call table for this builtin
@@ -140,7 +140,7 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 	                vtOffset;
 
 	switch (btype) {
-	case builtinTypeObject:
+	case kBuiltinTypeObject:
 
 		//  Get the address of a game object using the ID
 		obj = ((ObjectData *)addr)->obj;
@@ -152,7 +152,7 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 
 		break;
 
-	case builtinTypeTAG:
+	case kBuiltinTypeTAG:
 		aItem = ((ActiveItemData *)addr)->aItem;
 		script = aItem->_data.scriptClassID;
 		*callTab = &tagCFuncs;
@@ -162,7 +162,7 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 
 		break;
 
-	case builtinTypeMission:
+	case kBuiltinTypeMission:
 		aMission = ((ActiveMissionData *)addr)->aMission;
 		script = aMission->getScript();
 		*callTab = &missionCFuncs;
@@ -172,7 +172,7 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 
 		break;
 
-	case builtinAbstract:
+	case kBuiltinAbstract:
 		*callTab = nullptr;
 
 		return (uint16 *)addr;
@@ -227,19 +227,19 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 	                *arg;
 
 	switch (*pc++) {
-	case addr_data:
+	case skAddrData:
 		IMMED_WORD(offset);
 		debugC(3, kDebugScripts, "byteAddress: data[%d] = %d", offset, dataSegment[offset]);
 		*pcPtr = pc;
 		return &dataSegment[offset];
 
-	case addr_near:
+	case skAddrNear:
 		IMMED_WORD(offset);
-		debugC(3, kDebugScripts, "byteAddress: near[%d] = %d", offset, th->codeSeg[offset]);
+		debugC(3, kDebugScripts, "byteAddress: near[%d] = %d", offset, th->_codeSeg[offset]);
 		*pcPtr = pc;
-		return th->codeSeg + offset;
+		return th->_codeSeg + offset;
 
-	case addr_far:
+	case skAddrFar:
 		IMMED_WORD(seg);
 		IMMED_WORD(offset);
 		debugC(3, kDebugScripts, "byteAddress: far[%s:%d] = %d", seg2str(seg).c_str(), offset, *segmentAddress(seg, offset));
@@ -255,7 +255,7 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 
 		return segmentAddress(seg, offset);
 
-	case addr_array:
+	case skAddrArray:
 		IMMED_WORD(seg);
 		IMMED_WORD(offset);
 		addr = segmentArrayAddress(seg, offset);
@@ -264,21 +264,21 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 		*pcPtr = pc;
 		return addr + offset2;
 
-	case addr_stack:
+	case skAddrStack:
 		IMMED_WORD(offset);
-		debugC(3, kDebugScripts, "byteAddress: stack[%d] = %d", offset, *(th->stackBase + th->framePtr + (int16)offset));
+		debugC(3, kDebugScripts, "byteAddress: stack[%d] = %d", offset, *(th->_stackBase + th->_framePtr + (int16)offset));
 		*pcPtr = pc;
-		return th->stackBase + th->framePtr + (int16)offset;
+		return th->_stackBase + th->_framePtr + (int16)offset;
 
-	case addr_thread:
+	case skAddrThread:
 		IMMED_WORD(offset);
-		debugC(3, kDebugScripts, "byteAddress: thread[%d] = %d", offset, *((uint8 *)&th->threadArgs + offset));
+		debugC(3, kDebugScripts, "byteAddress: thread[%d] = %d", offset, *((uint8 *)&th->_threadArgs + offset));
 		*pcPtr = pc;
-		return (uint8 *)&th->threadArgs + offset;
+		return (uint8 *)&th->_threadArgs + offset;
 
-	case addr_this:
+	case skAddrThis:
 		IMMED_WORD(offset);
-		arg = (uint16 *)(th->stackBase + th->framePtr + 8);
+		arg = (uint16 *)(th->_stackBase + th->_framePtr + 8);
 		*pcPtr = pc;
 		if (arg[0] == dataSegIndex) {
 			debugC(3, kDebugScripts, "byteAddress: thisD[%d:%d] = %d", arg[1], offset, dataSegment[arg[1] + offset]);
@@ -287,7 +287,7 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 		debugC(3, kDebugScripts, "byteAddress: thisS[%s:%d:%d] = %d", seg2str(arg[0]).c_str(), arg[1], offset, *(segmentArrayAddress(arg[0], arg[1]) + offset));
 		return segmentArrayAddress(arg[0], arg[1]) + offset;
 
-	case addr_deref:
+	case skAddrDeref:
 
 		//  First, get the address of the reference.
 		*pcPtr = pc;
@@ -326,21 +326,21 @@ uint8 *objectAddress(
 	                *arg;
 
 	switch (*pc++) {
-	case addr_data:
+	case skAddrData:
 		IMMED_WORD(index);
 		seg = dataSegIndex;
 		addr = &dataSegment[index];
 		debugC(3, kDebugScripts, "objectAddress: data[%s:%d] = %d", seg2str(seg).c_str(), index, *addr);
 		break;
 
-	case addr_far:
+	case skAddrFar:
 		IMMED_WORD(seg);
 		IMMED_WORD(index);
 		addr = segmentAddress(seg, index);
 		debugC(3, kDebugScripts, "objectAddress: far[%s:%d] = %d", seg2str(seg).c_str(), index, *addr);
 		break;
 
-	case addr_array:
+	case skAddrArray:
 		IMMED_WORD(seg);
 		IMMED_WORD(index);
 		IMMED_WORD(offset);
@@ -348,9 +348,9 @@ uint8 *objectAddress(
 		debugC(3, kDebugScripts, "objectAddress: array[%s:%d:%d] = %d", seg2str(seg).c_str(), index, offset, *addr);
 		break;
 
-	case addr_this:
+	case skAddrThis:
 		IMMED_WORD(offset);
-		arg = (uint16 *)(th->stackBase + th->framePtr + 8);
+		arg = (uint16 *)(th->_stackBase + th->_framePtr + 8);
 		seg = arg[0];
 		index = arg[1];
 		if (seg == dataSegIndex) {
@@ -361,7 +361,7 @@ uint8 *objectAddress(
 			debugC(3, kDebugScripts, "objectAddress: thisS[%s:%d:%d] = %d", seg2str(seg).c_str(), index, offset, *addr);
 		break;
 
-	case addr_deref:
+	case skAddrDeref:
 
 		//  First, get the address of the reference.
 		*pcPtr = pc;
@@ -399,21 +399,21 @@ uint8 *bitAddress(Thread *th, uint8 **pcPtr, int16 *mask) {
 	                offset;
 
 	switch (*pc++) {
-	case addr_data:
+	case skAddrData:
 		IMMED_WORD(offset);
 		*pcPtr = pc;
 		*mask = (1 << (offset & 7));
 		debugC(3, kDebugScripts, "bitAddress: data[%d] = %d", offset, (dataSegment[offset >> 3] & *mask) != 0);
 		return &dataSegment[(offset >> 3)];
 
-	case addr_near:
+	case skAddrNear:
 		IMMED_WORD(offset);
 		*pcPtr = pc;
 		*mask = (1 << (offset & 7));
-		debugC(3, kDebugScripts, "bitAddress: near[%d] = %d", offset, (*(th->codeSeg + (offset >> 3)) & *mask) != 0);
-		return th->codeSeg + (offset >> 3);
+		debugC(3, kDebugScripts, "bitAddress: near[%d] = %d", offset, (*(th->_codeSeg + (offset >> 3)) & *mask) != 0);
+		return th->_codeSeg + (offset >> 3);
 
-	case addr_far:
+	case skAddrFar:
 		IMMED_WORD(seg);
 		IMMED_WORD(offset);
 		*pcPtr = pc;
@@ -421,7 +421,7 @@ uint8 *bitAddress(Thread *th, uint8 **pcPtr, int16 *mask) {
 		debugC(3, kDebugScripts, "bitAddress: far[%s:%d] = %d", seg2str(seg).c_str(), offset, (*segmentAddress(seg, offset >> 3) & *mask) != 0);
 		return segmentAddress(seg, (offset >> 3));
 
-	case addr_array:
+	case skAddrArray:
 		IMMED_WORD(seg);
 		IMMED_WORD(offset);
 		addr = segmentArrayAddress(seg, offset);
@@ -431,21 +431,21 @@ uint8 *bitAddress(Thread *th, uint8 **pcPtr, int16 *mask) {
 		debugC(3, kDebugScripts, "bitAddress: array[%s:%d:%d] = %d", seg2str(seg).c_str(), offset, offset, (addr[offset >> 3] & *mask) != 0);
 		return addr + (offset >> 3);
 
-	case addr_stack:
+	case skAddrStack:
 		IMMED_WORD(offset);
 		*pcPtr = pc;
 		*mask = (1 << (offset & 7));
-		debugC(3, kDebugScripts, "bitAddress: stack[%d] = %d", offset, (*(th->stackBase + th->framePtr + (offset >>3)) & *mask) != 0);
-		return th->stackBase + th->framePtr + (offset >> 3);
+		debugC(3, kDebugScripts, "bitAddress: stack[%d] = %d", offset, (*(th->_stackBase + th->_framePtr + (offset >>3)) & *mask) != 0);
+		return th->_stackBase + th->_framePtr + (offset >> 3);
 
-	case addr_thread:
+	case skAddrThread:
 		IMMED_WORD(offset);
 		*pcPtr = pc;
 		*mask = (1 << (offset & 7));
-		debugC(3, kDebugScripts, "bitAddress: thread[%d] = %d", offset, (*((uint8 *)&th->threadArgs + (offset >> 3)) & *mask) != 0);
-		return (uint8 *)&th->threadArgs + (offset >> 3);
+		debugC(3, kDebugScripts, "bitAddress: thread[%d] = %d", offset, (*((uint8 *)&th->_threadArgs + (offset >> 3)) & *mask) != 0);
+		return (uint8 *)&th->_threadArgs + (offset >> 3);
 
-	case addr_this:
+	case skAddrThis:
 		error("Addressing relative to 'this' not supported just yet.\n");
 
 	}
@@ -455,12 +455,12 @@ uint8 *bitAddress(Thread *th, uint8 **pcPtr, int16 *mask) {
 //  Returns the address of a string
 
 uint8 *Thread::strAddress(int strNum) {
-	uint16 seg    = READ_LE_INT16(codeSeg + 2);
-	uint16 offset = READ_LE_INT16(codeSeg + 4);
+	uint16 seg    = READ_LE_INT16(_codeSeg + 2);
+	uint16 offset = READ_LE_INT16(_codeSeg + 4);
 	uint8 *strSeg = segmentAddress(seg, offset);
 
 	assert(strNum >= 0);
-	assert(codeSeg);
+	assert(_codeSeg);
 	assert(strSeg);
 
 	return strSeg + (uint16)READ_LE_INT16(strSeg + 2 * strNum);
@@ -470,27 +470,27 @@ uint8 *Thread::strAddress(int strNum) {
 //	RandomGenerator class - a random number generator class for function
 //	objects which each maintain a local seed.
 class RandomGenerator {
-	uint32  a;                      //  seed
-	static const uint32 b;          //  arbitrary constant
+	uint32  _a;                      //  seed
+	static const uint32 _b;          //  arbitrary constant
 
 public:
-	RandomGenerator() : a(1) {
+	RandomGenerator() : _a(1) {
 	}
 	RandomGenerator(uint16 seed) {
-		a = (uint32)seed << 16;
+		_a = (uint32)seed << 16;
 	}
 
 	void seed(uint16 seed) {
-		a = (uint32)seed << 16;
+		_a = (uint32)seed << 16;
 	}
 
 	uint16 operator()() {
-		a = (a * b) + 1;
-		return a >> 16;
+		_a = (_a * _b) + 1;
+		return _a >> 16;
 	}
 };
 
-const uint32 RandomGenerator::b = 31415821;
+const uint32 RandomGenerator::_b = 31415821;
 
 //-----------------------------------------------------------------------
 //	A restricted random function
@@ -515,9 +515,9 @@ void print_script_name(uint8 *codePtr, const char *descr = nullptr) {
 	scriptName[length] = '\0';
 
 	if (descr)
-		debugC(1, kDebugScripts, "Scripts: %d op_enter: [%s].%s ", lastExport, descr, scriptName);
+		debugC(1, kDebugScripts, "Scripts: %d kOpEnter: [%s].%s ", lastExport, descr, scriptName);
 	else
-		debugC(1, kDebugScripts, "Scripts: %d op_enter: ::%s ", lastExport, scriptName);
+		debugC(1, kDebugScripts, "Scripts: %d kOpEnter: ::%s ", lastExport, scriptName);
 }
 
 const char *objectName(int16 segNum, uint16 segOff) {
@@ -527,16 +527,16 @@ const char *objectName(int16 segNum, uint16 segOff) {
 		return "SagaObject";
 
 	switch (segNum) {
-	case builtinTypeObject:
+	case kBuiltinTypeObject:
 		return GameObject::objectAddress(segOff)->objName();
 
-	case builtinTypeTAG:
+	case kBuiltinTypeTAG:
 		return "Tag";
 
-	case builtinAbstract:
+	case kBuiltinAbstract:
 		return "@";
 
-	case builtinTypeMission:
+	case kBuiltinTypeMission:
 		return "Mission";
 	}
 	return "???";
@@ -544,8 +544,8 @@ const char *objectName(int16 segNum, uint16 segOff) {
 
 #define STACK_PRINT_DEPTH 30
 
-static void print_stack(int16 *stackBase, int16 *stack) {
-	int16 *end = (int16 *)((byte *)stackBase + kStackSize - initialStackFrameSize);
+static void print_stack(int16 *_stackBase, int16 *stack) {
+	int16 *end = (int16 *)((byte *)_stackBase + kStackSize - initialStackFrameSize);
 	int size = end - stack;
 
 	if (size > STACK_PRINT_DEPTH)
@@ -560,211 +560,211 @@ static void print_stack(int16 *stackBase, int16 *stack) {
 	debugC(3, kDebugScripts, "]");
 }
 
-#define D_OP(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s", (pc - codeSeg - 1), (pc - codeSeg - 1), #x)
-#define D_OP1(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s = %d", long(pc - codeSeg - 1), long(pc - codeSeg - 1), #x, *stack)
-#define D_OP2(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] = %d", long(pc - codeSeg - 1), long(pc - codeSeg - 1), #x, (void *)addr, *stack)
-#define D_OP3(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] %d", long(pc - codeSeg - 1), long(pc - codeSeg - 1), #x, (void *)addr, *addr)
+#define D_OP(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s", (pc - _codeSeg - 1), (pc - _codeSeg - 1), #x)
+#define D_OP1(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s = %d", long(pc - _codeSeg - 1), long(pc - _codeSeg - 1), #x, *stack)
+#define D_OP2(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] = %d", long(pc - _codeSeg - 1), long(pc - _codeSeg - 1), #x, (void *)addr, *stack)
+#define D_OP3(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] %d", long(pc - _codeSeg - 1), long(pc - _codeSeg - 1), #x, (void *)addr, *addr)
 
 bool Thread::interpret() {
 	uint8               *pc,
 	                    *addr;
-	int16               *stack = (int16 *)stackPtr;
+	int16               *stack = (int16 *)_stackPtr;
 	int16               instruction_count;
 	uint8               op;
 	int16               w,
 	                    n;
 	C_Call              *cfunc;
 
-	pc = (codeSeg) + programCounter.offset;
+	pc = (_codeSeg) + _programCounter.offset;
 
 	thisThread = this;                          // set current thread address
 
 	for (instruction_count = 0; instruction_count < maxTimeSlice; instruction_count++) {
-		print_stack((int16 *)stackBase, stack);
+		print_stack((int16 *)_stackBase, stack);
 
 		switch (op = *pc++) {
-		case op_dup:
+		case kOpDup:
 			--stack;
 			*stack = stack[1];              // duplicate value on stack
-			D_OP1(op_dup);
+			D_OP1(kOpDup);
 			break;
 
-		case op_drop:                           // drop word on stack
-			D_OP(op_drop);
+		case kOpDrop:                           // drop word on stack
+			D_OP(kOpDrop);
 			stack++;
 			break;
 
-		case op_zero:                           // constant integer of zero
-			D_OP(op_zero);
+		case kOpZero:                           // constant integer of zero
+			D_OP(kOpZero);
 			*--stack = 0;                       // push integer on stack
 			break;
 
-		case op_one:                            // constant integer of one
-			D_OP(op_one);
+		case kOpOne:                            // constant integer of one
+			D_OP(kOpOne);
 			*--stack = 1;                       // push integer on stack
 			break;
 
-		case op_strlit:                         // string literal (also pushes word)
-		case op_constint:                       // constant integer
+		case kOpStrlit:                         // string literal (also pushes word)
+		case kOpConstint:                       // constant integer
 			IMMED_WORD(w);                      // pick up word after opcode
 			*--stack = w;                       // push integer on stack
 
-			if (op == op_strlit)
-				D_OP1(op_strlit);
+			if (op == kOpStrlit)
+				D_OP1(kOpStrlit);
 			else
-				D_OP1(op_constint);
+				D_OP1(kOpConstint);
 			break;
 
-		case op_getflag:                        // get a flag
+		case kOpGetflag:                        // get a flag
 			addr = bitAddress(this, &pc, &w);    // get address of bit
 			*--stack = ((*addr) & w) ? 1 : 0;     // true or false if bit set
-			D_OP2(op_getflag);
+			D_OP2(kOpGetflag);
 			break;
 
-		case op_getint:                         // read from integer field (mode)
+		case kOpGetint:                         // read from integer field (mode)
 			addr = byteAddress(this, &pc);   // get address of integer
 			*--stack = *(uint16 *)addr;         // get integer from address
-			D_OP2(op_getint);
+			D_OP2(kOpGetint);
 			break;
 
-		case op_getbyte:                        // read from integer field (mode)
+		case kOpGetbyte:                        // read from integer field (mode)
 			addr = byteAddress(this, &pc);       // get address of integer
 			*--stack = *addr;                   // get byte from address
-			D_OP2(op_getbyte);
+			D_OP2(kOpGetbyte);
 			break;
 
 		//  Note that in the current implementation, "put" ops leave
 		//  the value that was stored on the stack. We mat also do a
 		//  'vput' which consumes the variable.
 
-		case op_putflag:                    // put to flag bit (mode)
+		case kOpPutflag:                    // put to flag bit (mode)
 			addr = bitAddress(this, &pc, &w);  // get address of bit
 			if (*stack) *addr |= w;         // set bit if stack non-zero
 			else *addr &= ~w;               // else clear it
-			D_OP3(op_putflag);
+			D_OP3(kOpPutflag);
 			break;
 
-		case op_putflag_v:                  // put to flag bit (mode)
+		case kOpPutflagV:                  // put to flag bit (mode)
 			addr = bitAddress(this, &pc, &w);  // get address of bit
 			if (*stack++) *addr |= w;       // set bit if stack non-zero
 			else *addr &= ~w;               // else clear it
-			D_OP3(op_putflag_v);
+			D_OP3(kOpPutflagV);
 			break;
 
-		case op_putint:                     // put to integer field (mode)
+		case kOpPutint:                     // put to integer field (mode)
 			addr = byteAddress(this, &pc);   // get address of integer
 			*(uint16 *)addr = *stack;       // put integer to address
-			D_OP3(op_putint);
+			D_OP3(kOpPutint);
 			break;
 
-		case op_putint_v:                   // put to integer field (mode)
+		case kOpPutintV:                   // put to integer field (mode)
 			addr = byteAddress(this, &pc);   // get address of integer
 			*(uint16 *)addr = *stack++;     // put integer to address
-			D_OP3(op_putint_v);
+			D_OP3(kOpPutintV);
 			break;
 
-		case op_putbyte:                    // put to byte field (mode)
+		case kOpPutbyte:                    // put to byte field (mode)
 			addr = byteAddress(this, &pc);   // get address of integer
 			*addr = *stack;                 // put integer to address
-			D_OP3(op_putbyte);
+			D_OP3(kOpPutbyte);
 			break;
 
-		case op_putbyte_v:                  // put to byte field (mode)
+		case kOpPutbyteV:                  // put to byte field (mode)
 			addr = byteAddress(this, &pc);   // get address of integer
 			*addr = *stack++;               // put integer to address
-			D_OP3(op_putbyte_v);
+			D_OP3(kOpPutbyteV);
 			break;
 
-		case op_enter:
-			D_OP(op_enter);
+		case kOpEnter:
+			D_OP(kOpEnter);
 			print_script_name(pc - 1);
-			*--stack = framePtr;            // save old frame ptr on stack
-			framePtr = (uint8 *)stack - stackBase;  // new frame pointer
+			*--stack = _framePtr;            // save old frame ptr on stack
+			_framePtr = (uint8 *)stack - _stackBase;  // new frame pointer
 			IMMED_WORD(w);                  // pick up word after address
 			stack -= w / 2;                 // make room for the locals!
 			break;
 
 		//  function calls
 
-		case op_return:                     // return with value
-			D_OP(op_return);
-			returnVal = *stack++;
+		case kOpReturn:                     // return with value
+			D_OP(kOpReturn);
+			_returnVal = *stack++;
 			// fall through
 
-		case op_return_v:                   // return with void
-			D_OP(op_return_v);
-			stack = (int16 *)(stackBase + framePtr);    // pop autos
-			framePtr = *stack++;        // restore frame pointer
+		case kOpReturn_v:                   // return with void
+			D_OP(kOpReturn_v);
+			stack = (int16 *)(_stackBase + _framePtr);    // pop autos
+			_framePtr = *stack++;        // restore frame pointer
 
-			if (stack >= (int16 *)(stackBase + stackSize - initialStackFrameSize)) {
+			if (stack >= (int16 *)(_stackBase + _stackSize - initialStackFrameSize)) {
 				//  Halt the thread here, wait for death
-				programCounter.offset = (pc - (codeSeg));
-				stackPtr = (uint8 *)stack;
-				flags |= finished;
+				_programCounter.offset = (pc - (_codeSeg));
+				_stackPtr = (uint8 *)stack;
+				_flags |= kTFFinished;
 				return true;
 			} else {
-				programCounter.segment = *stack++;
-				programCounter.offset = *stack++;
+				_programCounter.segment = *stack++;
+				_programCounter.offset = *stack++;
 
-				//RUnlockHandle((RHANDLE)codeSeg);
-				codeSeg = scriptRes->loadIndexResource(programCounter.segment, "saga code segment");
-				pc = (codeSeg) + programCounter.offset;
+				//RUnlockHandle((RHANDLE)_codeSeg);
+				_codeSeg = scriptRes->loadIndexResource(_programCounter.segment, "saga code segment");
+				pc = (_codeSeg) + _programCounter.offset;
 
 				n = *stack++;               // get argument count from call
 				stack += n;                 // pop that many args
 
-				if (op == op_return)        // if not void
-					*--stack = returnVal;// push return value
+				if (op == kOpReturn)        // if not void
+					*--stack = _returnVal;// push return value
 			}
 			break;
 
-		case op_call_near:                  // call function in same seg
-			D_OP(op_call_near);
+		case kOpCallNear:                  // call function in same seg
+			D_OP(kOpCallNear);
 
 			n = *pc++;                      // get argument count
 
-			programCounter.offset = (pc + 2 - codeSeg);
+			_programCounter.offset = (pc + 2 - _codeSeg);
 
 			*--stack = n;                   // push number of args (16 bits)
 			// push the program counter
-			*--stack = programCounter.offset;
-			*--stack = programCounter.segment;
+			*--stack = _programCounter.offset;
+			*--stack = _programCounter.segment;
 
 			IMMED_WORD(w);               // pick up segment offset
-			programCounter.offset = w;      // store into pc
+			_programCounter.offset = w;      // store into pc
 
-			pc = codeSeg + w;              // calculate PC address
+			pc = _codeSeg + w;              // calculate PC address
 
 			print_script_name(pc);
 			break;
 
-		case op_call_far:                   // call function in other seg
-			D_OP(op_call_far);
+		case kOpCallFar:                   // call function in other seg
+			D_OP(kOpCallFar);
 
 			n = *pc++;                      // get argument count
 
-			programCounter.offset = (pc + 4 - codeSeg);
+			_programCounter.offset = (pc + 4 - _codeSeg);
 
 			*--stack = n;                   // push number of args (16 bits)
 			// push the program counter
-			*--stack = programCounter.offset;
-			*--stack = programCounter.segment;
+			*--stack = _programCounter.offset;
+			*--stack = _programCounter.segment;
 
 			IMMED_WORD(w);               // pick up segment number
-			programCounter.segment = w;     // set current segment
-			//RUnlockHandle((RHANDLE)codeSeg);
-			codeSeg = scriptRes->loadIndexResource(w, "saga code segment");
+			_programCounter.segment = w;     // set current segment
+			//RUnlockHandle((RHANDLE)_codeSeg);
+			_codeSeg = scriptRes->loadIndexResource(w, "saga code segment");
 			IMMED_WORD(w);               // pick up segment offset
-			programCounter.offset = w;      // store into pc
+			_programCounter.offset = w;      // store into pc
 
-			pc = codeSeg + w;              // calculate PC address
+			pc = _codeSeg + w;              // calculate PC address
 			print_script_name(pc);
 			break;
 
-		case op_ccall:                      // call C function
-		case op_ccall_v:                    // call C function
-			if (op == op_ccall)
-				D_OP(op_ccall);
+		case kOpCcall:                      // call C function
+		case kOpCcallV:                    // call C function
+			if (op == kOpCcall)
+				D_OP(kOpCcall);
 			else
 				D_OP(op_call_v);
 
@@ -774,28 +774,28 @@ bool Thread::interpret() {
 				error("Invalid function number");
 
 			cfunc = globalCFuncs.table[w];
-			argCount = n;
-			returnVal = cfunc(stack);        // call the function
+			_argCount = n;
+			_returnVal = cfunc(stack);        // call the function
 
 			stack += n;                     // pop args of of the stack
 
-			if (op == op_ccall) {           // push the return value
-				*--stack = returnVal;       // onto the stack
-				flags |= expectResult;      // script expecting result
-			} else flags &= ~expectResult;  // script not expecting result
+			if (op == kOpCcall) {           // push the return value
+				*--stack = _returnVal;       // onto the stack
+				_flags |= kTFExpectResult;      // script expecting result
+			} else _flags &= ~kTFExpectResult;  // script not expecting result
 
 			//  if the thread is asleep, then no more instructions
-			if (flags & asleep)
+			if (_flags & kTFAsleep)
 				instruction_count = maxTimeSlice;   // break out of loop!
 
 			break;
 
-		case op_call_member:                // call member function
-		case op_call_member_v:              // call member function ()
-			if (op == op_call_member)
-				D_OP(op_call_member);
+		case kOpCallMember:                // call member function
+		case kOpCallMemberV:              // call member function ()
+			if (op == kOpCallMember)
+				D_OP(kOpCallMember);
 			else
-				D_OP(op_call_member_v);
+				D_OP(kOpCallMemberV);
 
 			n = *pc++;                      // get argument count
 			w = *pc++;                      // index of member function
@@ -829,7 +829,7 @@ bool Thread::interpret() {
 				if (vtable == nullptr) {
 					//  Do nothing...
 				} else if (vtableEntry[0] != 0xffff) { // It's a SAGA func
-					programCounter.offset = (pc - codeSeg);
+					_programCounter.offset = (pc - _codeSeg);
 
 					//  Push the address of the object
 					*--stack = offset;
@@ -838,28 +838,28 @@ bool Thread::interpret() {
 					*--stack = n + 2;
 
 					// push the program counter
-					*--stack = programCounter.offset;
-					*--stack = programCounter.segment;
+					*--stack = _programCounter.offset;
+					*--stack = _programCounter.segment;
 
 					//  Get the segment of the member function, and
 					//  determine it's real address (save segment number
 					//  into thread).
 					w = vtableEntry[0];
-					programCounter.segment = w;
-					//RUnlockHandle((RHANDLE)codeSeg);
-					codeSeg = scriptRes->loadIndexResource(w, "saga code segment");
+					_programCounter.segment = w;
+					//RUnlockHandle((RHANDLE)_codeSeg);
+					_codeSeg = scriptRes->loadIndexResource(w, "saga code segment");
 
 					// store pc-offset into pc
-					programCounter.offset = vtableEntry[1];
+					_programCounter.offset = vtableEntry[1];
 
 					// calculate PC address
-					pc = (codeSeg) + programCounter.offset;
+					pc = (_codeSeg) + _programCounter.offset;
 					print_script_name(pc, objectName(seg, offset));
 
 					break;
 				} else if (vtableEntry[1] != 0xffff) { // It's a C func
 					//  Save the ID of the invoked object
-					ObjectID    saveID = threadArgs.invokedObject;
+					ObjectID    saveID = _threadArgs.invokedObject;
 
 					//  Get the function number
 					w = vtableEntry[1];
@@ -867,29 +867,29 @@ bool Thread::interpret() {
 						error("Invalid member function number");
 
 					//  Set up thread-specific vars
-					thisObject = addr;
-					argCount = n;
-					threadArgs.invokedObject = offset;
+					_thisObject = addr;
+					_argCount = n;
+					_threadArgs.invokedObject = offset;
 
 					//  Get address of function and call it.
 					cfunc = callTab->table[w];
-					returnVal = cfunc(stack);        // call the function
+					_returnVal = cfunc(stack);        // call the function
 
 					//  Restore object ID from thread args
-					threadArgs.invokedObject = saveID;
+					_threadArgs.invokedObject = saveID;
 
 					//  Pop args off of the stack
 					stack += n;
 
 					//  Push the return value onto the stack if it's
 					//  not a 'void' call.
-					if (op == op_call_member) {
-						*--stack = returnVal;   // onto the stack
-						flags |= expectResult;  // script expecting result
-					} else flags &= ~expectResult; // script not expecting result
+					if (op == kOpCallMember) {
+						*--stack = _returnVal;   // onto the stack
+						_flags |= kTFExpectResult;  // script expecting result
+					} else _flags &= ~kTFExpectResult; // script not expecting result
 
 					//  if the thread is asleep, then break interpret loop
-					if (flags & asleep) instruction_count = maxTimeSlice;
+					if (_flags & kTFAsleep) instruction_count = maxTimeSlice;
 					break;
 				}
 				// else it's a NULL function (i.e. pure virtual)
@@ -897,28 +897,28 @@ bool Thread::interpret() {
 
 			//  REM: Call the member function
 
-			if (op == op_call_member)       // push the return value
+			if (op == kOpCallMember)       // push the return value
 				*--stack = 0;               // onto the stack
 
 			break;
 
-		case op_jmp_true_v:
-			D_OP(op_jmp_true_v);
+		case kOpJmpTrueV:
+			D_OP(kOpJmpTrueV);
 			IMMED_WORD(w);               // pick up word after address
 			if (*stack++ != 0) {
 				BRANCH(w);    // if stack is non-zero, jump
 			}
 			break;
 
-		case op_jmp_false_v:
-			D_OP(op_jmp_false_v);
+		case kOpJmpFalseV:
+			D_OP(kOpJmpFalseV);
 			IMMED_WORD(w);               // pick up word after address
 			if (*stack++ == 0) {
 				BRANCH(w);    // if stack is zero, jump
 			}
 			break;
 
-		case op_jmp_true:
+		case kOpJmpTrue:
 			D_OP(op_true);
 			IMMED_WORD(w);               // pick up word after address
 			if (*stack != 0) {
@@ -926,7 +926,7 @@ bool Thread::interpret() {
 			}
 			break;
 
-		case op_jmp_false:
+		case kOpJmpDalse:
 			D_OP(op_false);
 			IMMED_WORD(w);               // pick up word after address
 			if (*stack == 0) {
@@ -934,14 +934,14 @@ bool Thread::interpret() {
 			}
 			break;
 
-		case op_jmp:
-			D_OP(op_jmp);
+		case kOpJmp:
+			D_OP(kOpJmp);
 			IMMED_WORD(w);               // pick up word after address
 			BRANCH(w);                   // jump relative to module
 			break;
 
-		case op_jmp_switch:
-			D_OP(op_jmp_switch);
+		case kOpJmpSwitch:
+			D_OP(kOpJmpSwitch);
 			IMMED_WORD(n);                  // n = number of cases
 			w = *stack++;                   // w = value on stack
 			{
@@ -965,14 +965,14 @@ bool Thread::interpret() {
 			}
 			break;
 
-		case op_jmp_seedrandom:             // seeded random jump
-		case op_jmp_random:                 // random jump
-			if (op == op_jmp_seedrandom)
-				D_OP(op_jmp_seedrandom);
+		case kOpJmp_seedrandom:             // seeded random jump
+		case kOpJmpRandom:                 // random jump
+			if (op == kOpJmp_seedrandom)
+				D_OP(kOpJmp_seedrandom);
 			else
 				D_OP(op_random);
 
-			if (op == op_jmp_random) {
+			if (op == kOpJmpRandom) {
 				IMMED_WORD(n);              // n = number of cases
 				IMMED_WORD(n);              // total probability
 				n = (uint16)(g_vm->_rnd->getRandomNumber(n - 1));     // random number between 0 and n-1
@@ -1003,40 +1003,40 @@ bool Thread::interpret() {
 			}
 			break;
 
-		case op_negate:
-			D_OP(op_negate);
+		case kOpNegate:
+			D_OP(kOpNegate);
 			*stack = - *stack;
 			break;   // negate TOS
-		case op_not:
-			D_OP(op_not);
+		case kOpNot:
+			D_OP(kOpNot);
 			*stack = ! *stack;
 			break;   // not TOS
-		case op_compl:
-			D_OP(op_compl);
+		case kOpCompl:
+			D_OP(kOpCompl);
 			*stack = ~ *stack;
 			break;   // complement TOS
 
-		case op_inc_v:
-			D_OP(op_inc_v);
+		case kOpIncV:
+			D_OP(kOpIncV);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*(uint16 *)addr += 1;           // bump value by one
 			break;
 
-		case op_dec_v:
-			D_OP(op_dec_v);
+		case kOpDecV:
+			D_OP(kOpDecV);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*(uint16 *)addr -= 1;           // bump value by one
 			break;
 
-		case op_postinc:
-			D_OP(op_postinc);
+		case kOpPostinc:
+			D_OP(kOpPostinc);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*--stack = *(uint16 *)addr;     // get integer from address
 			*(uint16 *)addr += 1;           // bump value by one
 			break;
 
-		case op_postdec:
-			D_OP(op_postdec);
+		case kOpPostdec:
+			D_OP(kOpPostdec);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*--stack = *(uint16 *)addr;     // get integer from address
 			*(uint16 *)addr -= 1;           // bump value by one
@@ -1047,107 +1047,107 @@ bool Thread::interpret() {
 		//  stack is incremented before storing to skip over the
 		//  dropped variable.
 
-		case op_add:
-			D_OP(op_add);
+		case kOpAdd:
+			D_OP(kOpAdd);
 			w = (stack[1] +  stack[0]);
 			*++stack = w;
 			break;
-		case op_sub:
-			D_OP(op_sub);
+		case kOpSub:
+			D_OP(kOpSub);
 			w = (stack[1] -  stack[0]);
 			*++stack = w;
 			break;
-		case op_mul:
-			D_OP(op_mul);
+		case kOpMul:
+			D_OP(kOpMul);
 			w = (stack[1] *  stack[0]);
 			*++stack = w;
 			break;
-		case op_div:
-			D_OP(op_div);
+		case kOpDiv:
+			D_OP(kOpDiv);
 			w = (stack[1] /  stack[0]);
 			*++stack = w;
 			break;
-		case op_mod:
-			D_OP(op_mod);
+		case kOpMod:
+			D_OP(kOpMod);
 			w = (stack[1] %  stack[0]);
 			*++stack = w;
 			break;
-		case op_eq:
-			D_OP(op_eq);
+		case kOpEq:
+			D_OP(kOpEq);
 			w = (stack[1] == stack[0]);
 			*++stack = w;
 			break;
-		case op_ne:
-			D_OP(op_ne);
+		case kOpNe:
+			D_OP(kOpNe);
 			w = (stack[1] != stack[0]);
 			*++stack = w;
 			break;
-		case op_gt:
-			D_OP(op_gt);
+		case kOpGt:
+			D_OP(kOpGt);
 			w = (stack[1] >  stack[0]);
 			*++stack = w;
 			break;
-		case op_lt:
-			D_OP(op_lt);
+		case kOpLt:
+			D_OP(kOpLt);
 			w = (stack[1] <  stack[0]);
 			*++stack = w;
 			break;
-		case op_ge:
-			D_OP(op_ge);
+		case kOpGe:
+			D_OP(kOpGe);
 			w = (stack[1] >= stack[0]);
 			*++stack = w;
 			break;
-		case op_le:
-			D_OP(op_le);
+		case kOpLe:
+			D_OP(kOpLe);
 			w = (stack[1] <= stack[0]);
 			*++stack = w;
 			break;
-		case op_rsh:
-			D_OP(op_rsh);
+		case kOpRsh:
+			D_OP(kOpRsh);
 			w = (stack[1] >> stack[0]);
 			*++stack = w;
 			break;
-		case op_lsh:
-			D_OP(op_lsh);
+		case kOpLsh:
+			D_OP(kOpLsh);
 			w = (stack[1] << stack[0]);
 			*++stack = w;
 			break;
-		case op_and:
-			D_OP(op_and);
+		case kOpAnd:
+			D_OP(kOpAnd);
 			w = (stack[1] &  stack[0]);
 			*++stack = w;
 			break;
-		case op_or:
-			D_OP(op_or);
+		case kOpOr:
+			D_OP(kOpOr);
 			w = (stack[1] |  stack[0]);
 			*++stack = w;
 			break;
-		case op_xor:
-			D_OP(op_xor);
+		case kOpXor:
+			D_OP(kOpXor);
 			w = (stack[1] ^  stack[0]);
 			*++stack = w;
 			break;
-		case op_land:
-			D_OP(op_land);
+		case kOpLand:
+			D_OP(kOpLand);
 			w = (stack[1] && stack[0]);
 			*++stack = w;
 			break;
-		case op_lor:
-			D_OP(op_lor);
+		case kOpLor:
+			D_OP(kOpLor);
 			w = (stack[1] || stack[0]);
 			*++stack = w;
 			break;
-		case op_lxor:
-			D_OP(op_lxor);
+		case kOpLxor:
+			D_OP(kOpLxor);
 			w = (stack[1] && !stack[0]) || (!stack[1] && stack[0]);
 			*++stack = w;
 			break;
 
-		case op_speak:
-		case op_dialog_begin:
-		case op_dialog_end:
-		case op_reply:
-		case op_animate:
+		case kOpSpeak:
+		case kOpDialogBegin:
+		case kOpDialogEnd:
+		case kOpReply:
+		case kOpAnimate:
 			script_error("Feature not implemented.\n");
 			break;
 
@@ -1157,8 +1157,8 @@ bool Thread::interpret() {
 		}
 	}
 
-	programCounter.offset = (pc - (codeSeg));
-	stackPtr = (uint8 *)stack;
+	_programCounter.offset = (pc - (_codeSeg));
+	_stackPtr = (uint8 *)stack;
 
 	return false;
 }
@@ -1428,24 +1428,24 @@ Thread *getThreadAddress(ThreadID id) {
 //	Thread constructor
 
 Thread::Thread(uint16 segNum, uint16 segOff, scriptCallFrame &args) {
-	codeSeg = scriptRes->loadIndexResource(segNum, "saga code segment");
+	_codeSeg = scriptRes->loadIndexResource(segNum, "saga code segment");
 
 	//  initialize the thread
-	stackSize = kStackSize;
-	flags = 0;
-	returnVal = 0;
-	programCounter.segment = segNum;
-	programCounter.offset = segOff;
-	threadArgs = args;
-	stackBase = (byte *)malloc(stackSize);
-	stackPtr = stackBase + stackSize - initialStackFrameSize;
-	((uint16 *)stackPtr)[0] = 0;          // 0 args
-	((uint16 *)stackPtr)[1] = 0;          // dummy return address
-	((uint16 *)stackPtr)[2] = 0;          // dummy return address
-	framePtr = stackSize;
+	_stackSize = kStackSize;
+	_flags = 0;
+	_returnVal = 0;
+	_programCounter.segment = segNum;
+	_programCounter.offset = segOff;
+	_threadArgs = args;
+	_stackBase = (byte *)malloc(_stackSize);
+	_stackPtr = _stackBase + _stackSize - initialStackFrameSize;
+	((uint16 *)_stackPtr)[0] = 0;          // 0 args
+	((uint16 *)_stackPtr)[1] = 0;          // dummy return address
+	((uint16 *)_stackPtr)[2] = 0;          // dummy return address
+	_framePtr = _stackSize;
 	_valid = true;
 
-	if ((codeSeg)[programCounter.offset] != op_enter) {
+	if ((_codeSeg)[_programCounter.offset] != kOpEnter) {
 		//warning("SAGA failure: Invalid script entry point (export=%d) [segment=%d:%d]\n", lastExport, segNum, segOff);
 		_valid = false;
 	}
@@ -1456,30 +1456,30 @@ Thread::Thread(uint16 segNum, uint16 segOff, scriptCallFrame &args) {
 Thread::Thread(Common::SeekableReadStream *stream, ThreadID id) {
 	int16   stackOffset;
 
-	programCounter.segment = stream->readUint16LE();
-	programCounter.offset = stream->readUint16LE();
+	_programCounter.segment = stream->readUint16LE();
+	_programCounter.offset = stream->readUint16LE();
 
-	stackSize = stream->readSint16LE();
-	flags = stream->readSint16LE();
-	framePtr = stream->readSint16LE();
-	returnVal = stream->readSint16LE();
+	_stackSize = stream->readSint16LE();
+	_flags = stream->readSint16LE();
+	_framePtr = stream->readSint16LE();
+	_returnVal = stream->readSint16LE();
 
-	waitAlarm.read(stream);
+	_waitAlarm.read(stream);
 
 	stackOffset = stream->readSint16LE();
 
-	debugC(4, kDebugSaveload, "...... stackSize = %d", stackSize);
-	debugC(4, kDebugSaveload, "...... flags = %d", flags);
-	debugC(4, kDebugSaveload, "...... framePtr = %d", framePtr);
-	debugC(4, kDebugSaveload, "...... returnVal = %d", returnVal);
+	debugC(4, kDebugSaveload, "...... _stackSize = %d", _stackSize);
+	debugC(4, kDebugSaveload, "...... flags = %d", _flags);
+	debugC(4, kDebugSaveload, "...... _framePtr = %d", _framePtr);
+	debugC(4, kDebugSaveload, "...... _returnVal = %d", _returnVal);
 	debugC(4, kDebugSaveload, "...... stackOffset = %d", stackOffset);
 
-	codeSeg = scriptRes->loadIndexResource(programCounter.segment, "saga code segment");
+	_codeSeg = scriptRes->loadIndexResource(_programCounter.segment, "saga code segment");
 
-	stackBase = (byte *)malloc(stackSize);
-	stackPtr = stackBase + stackSize - stackOffset;
+	_stackBase = (byte *)malloc(_stackSize);
+	_stackPtr = _stackBase + _stackSize - stackOffset;
 
-	stream->read(stackPtr, stackOffset);
+	stream->read(_stackPtr, stackOffset);
 
 	newThread(this, id);
 }
@@ -1492,10 +1492,10 @@ Thread::~Thread() {
 	clearExtended();
 
 	//  Free the thread's code segment
-	//RUnlockHandle((RHANDLE)codeSeg);
+	//RUnlockHandle((RHANDLE)_codeSeg);
 
 	//  Deallocate the thread stack
-	free(stackBase);
+	free(_stackBase);
 
 	deleteThread(this);
 }
@@ -1505,39 +1505,39 @@ Thread::~Thread() {
 //	buffer
 
 int32 Thread::archiveSize() {
-	return      sizeof(programCounter)
-	            +   sizeof(stackSize)
-	            +   sizeof(flags)
-	            +   sizeof(framePtr)
-	            +   sizeof(returnVal)
-	            +   sizeof(waitAlarm)
+	return      sizeof(_programCounter)
+	            +   sizeof(_stackSize)
+	            +   sizeof(_flags)
+	            +   sizeof(_framePtr)
+	            +   sizeof(_returnVal)
+	            +   sizeof(_waitAlarm)
 	            +   sizeof(int16)                //  stack offset
-	            + (stackBase + stackSize) - stackPtr;
+	            + (_stackBase + _stackSize) - _stackPtr;
 }
 
 void Thread::write(Common::MemoryWriteStreamDynamic *out) {
 	int16   stackOffset;
 
-	out->writeUint16LE(programCounter.segment);
-	out->writeUint16LE(programCounter.offset);
+	out->writeUint16LE(_programCounter.segment);
+	out->writeUint16LE(_programCounter.offset);
 
-	out->writeSint16LE(stackSize);
-	out->writeSint16LE(flags);
-	out->writeSint16LE(framePtr);
-	out->writeSint16LE(returnVal);
+	out->writeSint16LE(_stackSize);
+	out->writeSint16LE(_flags);
+	out->writeSint16LE(_framePtr);
+	out->writeSint16LE(_returnVal);
 
-	waitAlarm.write(out);
+	_waitAlarm.write(out);
 
 	warning("STUB: Thread::write: Pointer arithmetic");
-	stackOffset = (stackBase + stackSize) - stackPtr;
+	stackOffset = (_stackBase + _stackSize) - _stackPtr;
 	out->writeSint16LE(stackOffset);
 
-	out->write(stackPtr, stackOffset);
+	out->write(_stackPtr, stackOffset);
 
-	debugC(4, kDebugSaveload, "...... stackSize = %d", stackSize);
-	debugC(4, kDebugSaveload, "...... flags = %d", flags);
-	debugC(4, kDebugSaveload, "...... framePtr = %d", framePtr);
-	debugC(4, kDebugSaveload, "...... returnVal = %d", returnVal);
+	debugC(4, kDebugSaveload, "...... _stackSize = %d", _stackSize);
+	debugC(4, kDebugSaveload, "...... flags = %d", _flags);
+	debugC(4, kDebugSaveload, "...... _framePtr = %d", _framePtr);
+	debugC(4, kDebugSaveload, "...... _returnVal = %d", _returnVal);
 	debugC(4, kDebugSaveload, "...... stackOffset = %d", stackOffset);
 }
 
@@ -1556,16 +1556,16 @@ void Thread::dispatch() {
 	                    numWaitOther = 0;
 
 	for (th = threadList.first(); th; th = threadList.next(th)) {
-		if (th->flags & waiting) {
-			switch (th->waitType) {
+		if (th->_flags & kTFWaiting) {
+			switch (th->_waitType) {
 
-			case waitDelay:
+			case kWaitDelay:
 				numWaitDelay++;
 				break;
-			case waitFrameDelay:
+			case kWaitFrameDelay:
 				numWaitFrames++;
 				break;
-			case waitTagSemaphore:
+			case kWaitTagSemaphore:
 				numWaitSemi++;
 				break;
 			default:
@@ -1581,32 +1581,32 @@ void Thread::dispatch() {
 	for (th = threadList.first(); th; th = nextThread) {
 		nextThread = threadList.next(th);
 
-		if (th->flags & (finished | aborted)) {
+		if (th->_flags & (kTFFinished | kTFAborted)) {
 			delete th;
 			continue;
 		}
 
-		if (th->flags & waiting) {
-			switch (th->waitType) {
+		if (th->_flags & kTFWaiting) {
+			switch (th->_waitType) {
 
-			case waitDelay:
+			case kWaitDelay:
 
 				//  Wake up the thread!
 
-				if (th->waitAlarm.check())
-					th->flags &= ~waiting;
+				if (th->_waitAlarm.check())
+					th->_flags &= ~kTFWaiting;
 				break;
 
-			case waitFrameDelay:
+			case kWaitFrameDelay:
 
-				if (th->waitFrameAlarm.check())
-					th->flags &= ~waiting;
+				if (th->_waitFrameAlarm.check())
+					th->_flags &= ~kTFWaiting;
 				break;
 
-			case waitTagSemaphore:
-				if (th->waitParam->isExclusive() == false) {
-					th->flags &= ~waiting;
-					th->waitParam->setExclusive(true);
+			case kWaitTagSemaphore:
+				if (th->_waitParam->isExclusive() == false) {
+					th->_flags &= ~kTFWaiting;
+					th->_waitParam->setExclusive(true);
 				}
 				break;
 			default:
@@ -1615,12 +1615,12 @@ void Thread::dispatch() {
 		}
 
 		do {
-			if (th->flags & (waiting | finished | aborted))
+			if (th->_flags & (kTFWaiting | kTFFinished | kTFAborted))
 				break;
 
 			if (th->interpret())
 				goto break_thread_loop;
-		} while (th->flags & synchronous);
+		} while (th->_flags & kTFSynchronous);
 	}
 break_thread_loop:
 	;
@@ -1641,10 +1641,10 @@ scriptResult Thread::run() {
 
 	while (i--) {
 		//  If script stopped, then return
-		if (flags & (waiting | finished | aborted)) {
-			if (flags & finished)   return scriptResultFinished;
-			if (flags & waiting)    return scriptResultAsync;
-			return scriptResultAborted;
+		if (_flags & (kTFWaiting | kTFFinished | kTFAborted)) {
+			if (_flags & kTFFinished)   return kScriptResultFinished;
+			if (_flags & kTFWaiting)    return kScriptResultAsync;
+			return kScriptResultAborted;
 			// can't ever fall thru here...
 		}
 
@@ -1658,8 +1658,8 @@ scriptResult Thread::run() {
 //	Convert to extended thread
 
 void Thread::setExtended() {
-	if (!(flags & extended)) {
-		flags |= extended;
+	if (!(_flags & kTFExtended)) {
+		_flags |= kTFExtended;
 		extendedThreadLevel++;
 	}
 }
@@ -1668,8 +1668,8 @@ void Thread::setExtended() {
 //	Convert back to regular thread
 
 void Thread::clearExtended() {
-	if (flags & extended) {
-		flags &= ~extended;
+	if (_flags & kTFExtended) {
+		_flags &= ~kTFExtended;
 		extendedThreadLevel--;
 	}
 }
@@ -1780,19 +1780,19 @@ scriptResult runScript(uint16 exportEntryNum, scriptCallFrame &args) {
 	// FIXME: We should probably just use an error(), but this will work for mass debugging
 	if (th == nullptr) {
 		debugC(4, kDebugScripts, "Couldn't allocate memory for Thread(%d, %d)", segNum, segOff);
-		return scriptResultNoScript;
+		return kScriptResultNoScript;
 	} else if (!th->_valid) {
 		debugC(4, kDebugScripts, "Scripts: %d is not valid", lastExport);
-		return scriptResultNoScript;
+		return kScriptResultNoScript;
 	}
-	print_script_name((th->codeSeg) + th->programCounter.offset, objectName(segNum, segOff));
+	print_script_name((th->_codeSeg) + th->_programCounter.offset, objectName(segNum, segOff));
 
 	//  Run the thread to completion
 	result = th->run();
-	args.returnVal = th->returnVal;
+	args.returnVal = th->_returnVal;
 
 	//  If the thread is not still running, then delete it
-	if (result != scriptResultAsync) delete th;
+	if (result != kScriptResultAsync) delete th;
 
 	// restore "thisThread" ptr.
 	thisThread = saveThread;
@@ -1812,12 +1812,12 @@ scriptResult runMethod(
 	                segOff;
 	uint16          *vTable;
 	Thread          *th;
-	scriptResult    result = scriptResultNoScript;
+	scriptResult    result = kScriptResultNoScript;
 	Thread          *saveThread = thisThread;
 
 	//  For abstract classes, the object index is also the class
 	//  index.
-	if (bType == builtinAbstract)
+	if (bType == kBuiltinAbstract)
 		index = scriptClassID;
 
 	lookupExport(scriptClassID, segNum, segOff);
@@ -1831,7 +1831,7 @@ scriptResult runMethod(
 
 	if (segNum == 0xffff) {                 // it's a CFUNC or NULL func
 		if (segOff == 0xffff) {             // it's a NULL function
-			return scriptResultNoScript;
+			return kScriptResultNoScript;
 		} else {                            //  It's a C function
 			int16   funcNum = segOff;       // function number
 			int16   stack[1];             // dummy stack argument
@@ -1846,9 +1846,9 @@ scriptResult runMethod(
 			th = new Thread(0, 0, args);
 			thisThread = th;
 			if (th == nullptr)
-				return scriptResultNoScript;
+				return kScriptResultNoScript;
 			else if (!th->_valid)
-				return scriptResultNoScript;
+				return kScriptResultNoScript;
 
 			result = (scriptResult)cfunc(stack);   // call the function
 			delete th;
@@ -1859,23 +1859,23 @@ scriptResult runMethod(
 		thisThread = th;
 		if (th == nullptr) {
 			debugC(3, kDebugScripts, "Couldn't allocate memory for Thread(%d, %d)", segNum, segOff);
-			return scriptResultNoScript;
+			return kScriptResultNoScript;
 		} else if (!th->_valid) {
 			debugC(3, kDebugScripts, "Scripts: %d is not valid", lastExport);
-			return scriptResultNoScript;
+			return kScriptResultNoScript;
 		}
-		print_script_name((th->codeSeg) + th->programCounter.offset, objectName(bType, index));
+		print_script_name((th->_codeSeg) + th->_programCounter.offset, objectName(bType, index));
 
 		//  Put the object segment and ID onto the dummy stack frame
-		((uint16 *)th->stackPtr)[3] = bType;
-		((uint16 *)th->stackPtr)[4] = index;
+		((uint16 *)th->_stackPtr)[3] = bType;
+		((uint16 *)th->_stackPtr)[4] = index;
 
 		//  Run the thread to completion
 		result = th->run();
-		args.returnVal = th->returnVal;
-		debugC(3, kDebugScripts, "return: %d", th->returnVal);
+		args.returnVal = th->_returnVal;
+		debugC(3, kDebugScripts, "return: %d", th->_returnVal);
 
-		if (result != scriptResultAsync) delete th;
+		if (result != kScriptResultAsync) delete th;
 	}
 
 	thisThread = saveThread;        // restore "thisThread" ptr.
@@ -1894,7 +1894,7 @@ scriptResult runObjectMethod(
 	obj = GameObject::objectAddress(id);
 
 	return runMethod(obj->scriptClass(),
-	                 builtinTypeObject,
+	                 kBuiltinTypeObject,
 	                 id,
 	                 methodNum,
 	                 args);
@@ -1911,10 +1911,10 @@ scriptResult runTagMethod(
 
 	aItem = ActiveItem::activeItemAddress(index);
 	if (!aItem->_data.scriptClassID)
-		return scriptResultNoScript;
+		return kScriptResultNoScript;
 
 	return runMethod(aItem->_data.scriptClassID,
-	                 builtinTypeTAG,
+	                 kBuiltinTypeTAG,
 	                 index,
 	                 methodNum,
 	                 args);
@@ -1927,21 +1927,21 @@ void wakeUpThread(ThreadID id) {
 	if (id != NoThread) {
 		Thread  *thread = getThreadAddress(id);
 
-		thread->flags &= ~Thread::waiting;
+		thread->_flags &= ~Thread::kTFWaiting;
 	}
 }
 
-void wakeUpThread(ThreadID id, int16 returnVal) {
+void wakeUpThread(ThreadID id, int16 _returnVal) {
 	if (id != NoThread) {
 		Thread  *thread = getThreadAddress(id);
 
-		if (thread->flags & Thread::expectResult) {
-			WriteStatusF(8, "Result %d", returnVal);
-			thread->returnVal = returnVal;
-			*(int16 *)thread->stackPtr = returnVal;
+		if (thread->_flags & Thread::kTFExpectResult) {
+			WriteStatusF(8, "Result %d", _returnVal);
+			thread->_returnVal = _returnVal;
+			*(int16 *)thread->_stackPtr = _returnVal;
 		} else WriteStatusF(8, "Thread not expecting result!");
 
-		thread->flags &= ~(Thread::waiting | Thread::expectResult);
+		thread->_flags &= ~(Thread::kTFWaiting | Thread::kTFExpectResult);
 	}
 }
 

@@ -88,7 +88,7 @@ FlushXObject::FlushXObject(ObjectType ObjectType) :Object<FlushXObject>("FlushXO
 }
 
 void FlushXObj::m_new(int nargs) {
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void FlushXObj::m_clearMask(int nargs) {

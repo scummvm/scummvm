@@ -28,6 +28,9 @@ struct QueenGameDescription {
 	ADGameDescription desc;
 };
 
+#define GAMEOPTION_ALT_INTRO  GUIO_GAMEOPTIONS1
+#define GAMEOPTION_ALT_FONT   GUIO_GAMEOPTIONS2
+
 } // End of namespace Queen
 
 #endif // QUEEN_DETECTION_H

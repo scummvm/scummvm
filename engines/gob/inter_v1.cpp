@@ -358,6 +358,11 @@ void Inter_v1::o1_initCursor() {
 		_vm->_draw->_cursorSpritesBack.reset();
 		_vm->_draw->_scummvmCursor.reset();
 
+		if (_vm->_draw->_doCursorPalettes != nullptr) {
+			delete _vm->_draw->_doCursorPalettes;
+			_vm->_draw->_doCursorPalettes = nullptr;
+		}
+
 		_vm->_draw->_cursorWidth = width;
 		_vm->_draw->_cursorHeight = height;
 
@@ -496,6 +501,10 @@ void Inter_v1::o1_initMult() {
 
 			_vm->_mult->_objects[i].pAnimData->isStatic = 1;
 			_vm->_mult->_objects[i].tick = 0;
+			_vm->_mult->_objects[i].animName[0] = '\0';
+			_vm->_mult->_objects[i].videoSlot = 0;
+			_vm->_mult->_objects[i].animVariables = nullptr;
+			_vm->_mult->_objects[i].ownAnimVariables = false;
 			_vm->_mult->_objects[i].lastLeft = -1;
 			_vm->_mult->_objects[i].lastRight = -1;
 			_vm->_mult->_objects[i].lastTop = -1;
@@ -696,6 +705,13 @@ void Inter_v1::o1_callSub(OpFuncParams &params) {
 	// Skipping the copy protection screen in Gobliins 2
 	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob2) && (offset == 1746) &&
 	    _vm->isCurrentTot("intro0.tot")) {
+		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
+		return;
+	}
+
+	// Skipping the copy protection screen in Adibou 1
+	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeAdibou1) && (offset == 1746) &&
+		_vm->isCurrentTot("base.tot")) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		return;
 	}
@@ -961,13 +977,13 @@ void Inter_v1::o1_printText(OpFuncParams &params) {
 			switch (_vm->_game->_script->peekByte()) {
 			case TYPE_VAR_INT32:
 			case TYPE_ARRAY_INT32:
-				sprintf(buf + i, "%d",
+				Common::sprintf_s(buf + i, sizeof(buf) - i, "%d",
 					(int32)VAR_OFFSET(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_STR:
 			case TYPE_ARRAY_STR:
-				sprintf(buf + i, "%s",
+				Common::sprintf_s(buf + i, sizeof(buf) - i, "%s",
 					GET_VARO_STR(_vm->_game->_script->readVarIndex()));
 				break;
 
@@ -1146,6 +1162,19 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 		memset((char *)_vm->_draw->_vgaPalette, 0, 768);
 		break;
 
+	case 55:
+		// TODO case 55 implementation
+		warning("STUB: o1_palLoad case 55 not implemented");
+		_vm->_game->_script->skip(2);
+		_vm->_draw->_applyPal = false;
+		return;
+
+	case 56:
+		// TODO case 56 implementation
+		warning("STUB: o1_palLoad case 56 not implemented");
+		_vm->_game->_script->skip(2);
+		break;
+
 	case 61:
 		index1 =  _vm->_game->_script->readByte();
 		index2 = (_vm->_game->_script->readByte() - index1 + 1) * 3;
@@ -1165,6 +1194,15 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 			_vm->_draw->_vgaPalette[0].blue  = 0;
 		}
 
+		if (_vm->getGameType() == kGameTypeAdibou2) {
+			_vm->_draw->_vgaPalette[0].red = 0;
+			_vm->_draw->_vgaPalette[0].green = 0;
+			_vm->_draw->_vgaPalette[0].blue = 0;
+			_vm->_draw->_vgaPalette[255].red = 63;
+			_vm->_draw->_vgaPalette[255].green = 63;
+			_vm->_draw->_vgaPalette[255].blue = 63;
+		}
+
 		if (_vm->_draw->_applyPal) {
 			_vm->_draw->_applyPal = false;
 			_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
@@ -1177,6 +1215,14 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 	}
 
 	if (!_vm->_draw->_applyPal) {
+		if (_vm->getGameType() == kGameTypeAdibou2) {
+			if (_vm->_global->_pPaletteDesc)
+				_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+			else
+				_vm->_util->clearPalette();
+			return;
+		}
+
 		_vm->_global->_pPaletteDesc->unused2 = _vm->_draw->_unusedPalette2;
 		_vm->_global->_pPaletteDesc->unused1 = _vm->_draw->_unusedPalette1;
 
@@ -1218,9 +1264,6 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 	int16 key;
 
 	switch (cmd) {
-	case -1:
-		break;
-
 	case 0:
 		_vm->_draw->_showCursor &= ~2;
 		_vm->_util->longDelay(1);
@@ -1230,9 +1273,27 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 		_vm->_util->clearKeyBuf();
 		break;
 
+	case -1:
+		if (_vm->getGameType() != kGameTypeAdibou2)
+			break;
+		// fall through
 	case 1:
-		if (_vm->getGameType() != kGameTypeFascination)
+		if (_vm->getGameType() != kGameTypeFascination && _vm->getGameType() != kGameTypeAdibou2)
 			_vm->_util->forceMouseUp(true);
+
+		// FIXME This is a hack to fix an issue with "text" tool in Adibou2 paint game.
+		// keyFunc() is called twice in a loop before testing its return value.
+		// If the first keyFunc call catches the key event, the second call will reset
+		// the key buffer, and the loop continues.
+		// Strangely in the original game it seems that the event is always caught by the
+		// second keyFunc.
+		if (_vm->getGameType() == kGameTypeAdibou2
+			&&
+			(_vm->_game->_script->pos() == 18750 || _vm->_game->_script->pos() == 18955)
+			&&
+			_vm->isCurrentTot("palette.tot"))
+			break;
+
 		key = _vm->_game->checkKeys(&_vm->_global->_inter_mouseX,
 				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, 0);
 		storeKey(key);
@@ -1774,7 +1835,7 @@ void Inter_v1::o1_manageDataFile(OpFuncParams &params) {
 	Common::String file = _vm->_game->_script->evalString();
 
 	if (!file.empty()) {
-		_vm->_dataIO->openArchive(file, true);
+		_vm->_dataIO->openArchive(Common::Path(file, '\\').toString('/'), true);
 	} else {
 		_vm->_dataIO->closeArchive(true);
 

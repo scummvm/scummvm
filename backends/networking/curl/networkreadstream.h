@@ -40,6 +40,7 @@ class NetworkReadStream: public Common::ReadStream {
 	long _keepAliveIdle, _keepAliveInterval;
 	bool _eos, _requestComplete;
 	char *_errorBuffer;
+	uint32 _errorCode;
 	const byte *_sendingContentsBuffer;
 	uint32 _sendingContentsSize;
 	uint32 _sendingContentsPos;
@@ -168,6 +169,11 @@ public:
 	void setProgress(uint64 downloaded, uint64 total);
 
 	bool keepAlive() const { return _keepAlive; }
+
+	bool hasError() const;
+	uint32 getErrorCode() const { return _errorCode; }
+	const char *getError() const;
+
 };
 
 } // End of namespace Networking

@@ -26,7 +26,7 @@
 
 namespace Common {
 	class String;
-	class SeekableSubReadStreamEndian;
+	class SeekableReadStreamEndian;
 }
 
 namespace Gob {
@@ -85,14 +85,14 @@ private:
 	PartArray  _parts;
 
 
-	void load(Common::SeekableSubReadStreamEndian &dec, const Common::String &fileName);
+	void load(Common::SeekableReadStreamEndian &dec, const Common::String &fileName);
 
-	void loadBackdrop(Common::SeekableSubReadStreamEndian &dec);
+	void loadBackdrop(Common::SeekableReadStreamEndian &dec);
 
-	CMPFile *loadLayer(Common::SeekableSubReadStreamEndian &dec);
+	CMPFile *loadLayer(Common::SeekableReadStreamEndian &dec);
 
-	void loadParts(Common::SeekableSubReadStreamEndian &dec);
-	void loadPart(Part &part, Common::SeekableSubReadStreamEndian &dec);
+	void loadParts(Common::SeekableReadStreamEndian &dec);
+	void loadPart(Part &part, Common::SeekableReadStreamEndian &dec);
 };
 
 } // End of namespace Gob

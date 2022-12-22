@@ -62,6 +62,12 @@ bool Input::toggleActionIfActive(TwinEActionType actionType) {
 	return false;
 }
 
+void Input::resetActionStates() {
+	for (int i = 0; i < TwinEActionType::Max; ++i) {
+		_actionStates[i] = false;
+	}
+}
+
 bool Input::toggleAbortAction() {
 	bool abortState = false;
 	abortState |= toggleActionIfActive(TwinEActionType::CutsceneAbort);

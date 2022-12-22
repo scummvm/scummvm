@@ -19,8 +19,6 @@
  *
  */
 
-#define GAMEOPTION_ENGLISH_SPEECH GUIO_GAMEOPTIONS1
-
 namespace Sword25 {
 
 static const ADGameDescription gameDescriptions[] = {
@@ -101,6 +99,15 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		AD_ENTRY1s("lang_es.b25c", "384c19072d83725f351bb9ecb4d3f02b", 987965),
 		Common::ES_ESP,
+		Common::kPlatformUnknown,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NOASPECT)
+	},
+	{
+		"sword25",
+		"",
+		AD_ENTRY1s("lang_he.b25c","993604772b9c7d9d54219d6993ab9c6c", 1214843),
+		Common::HE_ISR,
 		Common::kPlatformUnknown,
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOASPECT)

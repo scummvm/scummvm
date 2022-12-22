@@ -53,6 +53,10 @@ VideoEntry::~VideoEntry() {
 void VideoEntry::close() {
 	delete _video;
 	_video = nullptr;
+
+	if (_subtitles.isLoaded()) {
+		g_system->hideOverlay();
+	}
 }
 
 bool VideoEntry::endOfVideo() const {
@@ -110,16 +114,41 @@ void VideoEntry::setRate(const Common::Rational &rate) {
 void VideoEntry::pause(bool isPaused) {
 	assert(_video);
 	_video->pauseVideo(isPaused);
+
+	if (_subtitles.isLoaded()) {
+		if (isPaused) {
+			g_system->hideOverlay();
+		} else {
+			g_system->showOverlay(false);
+			g_system->clearOverlay();
+			_subtitles.drawSubtitle(_video->getTime(), true);
+		}
+	}
 }
 
 void VideoEntry::start() {
 	assert(_video);
 	_video->start();
+
+	if (_subtitles.isLoaded()) {
+		const int16 h = g_system->getOverlayHeight(),
+			        w = g_system->getOverlayWidth();
+		_subtitles.setBBox(Common::Rect(20, h - 120, w - 20, h - 20));
+		_subtitles.setColor(0xff, 0xff, 0xff);
+		_subtitles.setFont("FreeSans.ttf");
+
+		g_system->showOverlay(false);
+		g_system->clearOverlay();
+	}
 }
 
 void VideoEntry::stop() {
 	assert(_video);
 	_video->stop();
+
+	if (_subtitles.isLoaded()) {
+		g_system->hideOverlay();
+	}
 }
 
 bool VideoEntry::isPlaying() const {
@@ -168,6 +197,10 @@ VideoEntryPtr VideoManager::playMovie(const Common::String &fileName, Audio::Mix
 	if (!ptr)
 		return VideoEntryPtr();
 
+
+	Common::String subtitlesName = Common::String::format("%s.srt", fileName.substr(0, fileName.size() - 4).c_str());
+	ptr->loadSubtitles(subtitlesName.c_str());
+
 	ptr->start();
 	return ptr;
 }
@@ -211,6 +244,8 @@ bool VideoManager::updateMovies() {
 			if (drawNextFrame(*it)) {
 				updateScreen = true;
 			}
+
+			updateScreen |= (*it)->_subtitles.drawSubtitle(video->getTime(), false);
 		}
 
 		// Remember to increase the iterator

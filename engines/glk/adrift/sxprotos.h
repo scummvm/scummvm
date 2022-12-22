@@ -49,9 +49,9 @@ typedef struct sx_test_descriptor_s {
 /*
  * Small utility and wrapper functions.
  */
-extern void sx_trace(const sc_char *format, ...) GCC_PRINTF(1, 2);
-extern void sx_error(const sc_char *format, ...) GCC_PRINTF(1, 2);
-extern void sx_fatal(const sc_char *format, ...) GCC_PRINTF(1, 2);
+extern void sx_trace(MSVC_PRINTF const sc_char *format, ...) GCC_PRINTF(1, 2);
+extern void sx_error(MSVC_PRINTF const sc_char *format, ...) GCC_PRINTF(1, 2);
+extern void sx_fatal(MSVC_PRINTF const sc_char *format, ...) GCC_PRINTF(1, 2);
 extern void *sx_malloc(size_t size);
 extern void *sx_realloc(void *pointer, size_t size);
 extern void sx_free(void *pointer);

@@ -39,6 +39,7 @@ BaseScriptable *makeSXSteamAPI(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXWMEGalaxyAPI(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSX3fStatistics(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXCommandLineHelper(BaseGame *inGame, ScStack *stack);
+BaseScriptable *makeSXSample(BaseGame *inGame, ScStack *stack);
 
 bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, char *name) {
 	ScValue *thisObj;
@@ -86,6 +87,18 @@ bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, cha
 		thisObj = thisStack->getTop();
 
 		thisObj->setNative(makeSXCommandLineHelper(inGame, stack));
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Window mode changer (from wme_windowmode.dll of "lostbride" game)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "Sample") == 0) {
+		thisObj = thisStack->getTop();
+
+		thisObj->setNative(makeSXSample(inGame, stack));
 
 		stack->pushNULL();
 		return STATUS_OK;

@@ -50,14 +50,10 @@ static const DebugChannelDef debugFlagList[] = {
 
 namespace CryOmni3D {
 
-static const ADExtraGuiOptionsMap optionsList[] = {
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
 class CryOmni3DMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	CryOmni3DMetaEngineDetection() : AdvancedMetaEngineDetection(CryOmni3D::gameDescriptions,
-				sizeof(CryOmni3DGameDescription), cryomni3DGames, optionsList) {
+				sizeof(CryOmni3DGameDescription), cryomni3DGames) {
 		_directoryGlobs = directoryGlobs;
 		_maxScanDepth = 5;
 	}

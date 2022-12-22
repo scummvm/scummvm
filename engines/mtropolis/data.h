@@ -76,7 +76,7 @@ enum TextAlignmentCode {
 
 namespace DataObjectTypes {
 
-enum DataObjectType {
+enum DataObjectType : uint {
 	kUnknown								= 0,
 
 	kProjectLabelMap						= 0x22,
@@ -102,7 +102,7 @@ enum DataObjectType {
 
 	kAliasModifier							= 0x27,
 	kChangeSceneModifier					= 0x136,
-	kReturnModifier							= 0x140,	// NYI
+	kReturnModifier							= 0x140,
 	kSoundEffectModifier					= 0x1a4,
 	kDragMotionModifier						= 0x208,
 	kPathMotionModifierV1					= 0x21c,
@@ -123,7 +123,7 @@ enum DataObjectType {
 	kGraphicModifier						= 0x334,
 	kImageEffectModifier					= 0x384,
 	kMiniscriptModifier						= 0x3c0,
-	kCursorModifierV1						= 0x3ca,	// NYI - Obsolete version
+	kCursorModifierV1						= 0x3ca,
 	kGradientModifier						= 0x4b0,	// NYI
 	kColorTableModifier						= 0x4c4,
 	kSoundFadeModifier						= 0x4ce,
@@ -137,6 +137,7 @@ enum DataObjectType {
 	kPointVariableModifier					= 0x326,
 	kFloatingPointVariableModifier			= 0x328,
 	kStringVariableModifier					= 0x329,
+	kObjectReferenceVariableModifierV1		= 0x33e,
 	kDebris									= 0xfffffffe,	// Deleted modifier in alias list
 	kPlugInModifier							= 0xffffffff,
 
@@ -215,8 +216,9 @@ private:
 };
 
 struct Rect {
+	Rect();
+
 	bool load(DataReader &reader);
-	static Rect createDefault();
 
 	bool toScummVMRect(Common::Rect &outRect) const;
 	bool toScummVMRectUnchecked(Common::Rect &outRect) const;
@@ -228,18 +230,19 @@ struct Rect {
 };
 
 struct Point {
+	Point();
+
 	bool load(DataReader &reader);
 	bool toScummVMPoint(Common::Point &outPoint) const;
-
-	static Point createDefault();
 
 	int16 x;
 	int16 y;
 };
 
 struct Event {
+	Event();
+
 	bool load(DataReader &reader);
-	static Event createDefault();
 
 	uint32 eventID;
 	uint32 eventInfo;
@@ -256,8 +259,9 @@ struct ColorRGB16 {
 };
 
 struct IntRange {
+	IntRange();
+
 	bool load(DataReader &reader);
-	static IntRange createDefault();
 
 	int32 min;
 	int32 max;
@@ -314,6 +318,8 @@ struct InternalTypeTaggedValue {
 	};
 
 	union ValueUnion {
+		ValueUnion();
+
 		uint8 asBool;
 		XPFloatPOD asFloat;
 		int32 asInteger;
@@ -321,9 +327,13 @@ struct InternalTypeTaggedValue {
 		VariableReference asVariableReference;
 		Label asLabel;
 		Point asPoint;
+
+		template<class T>
+		void constructField(T ValueUnion::*fieldPtr);
 	};
 
 	InternalTypeTaggedValue();
+	~InternalTypeTaggedValue();
 
 	uint16 type;
 	ValueUnion value;
@@ -347,6 +357,9 @@ struct PlugInTypeTaggedValue : public Common::NonCopyable {
 	};
 
 	union ValueUnion {
+		ValueUnion();
+		~ValueUnion();
+
 		int32 asInt;
 		Point asPoint;
 		IntRange asIntRange;
@@ -355,14 +368,21 @@ struct PlugInTypeTaggedValue : public Common::NonCopyable {
 		Event asEvent;
 		Label asLabel;
 		uint32 asVarRefGUID;
+		Common::String asString;
+
+		template<class T>
+		void constructField(T ValueUnion::*fieldPtr);
+
+		template<class T>
+		void destructField(T ValueUnion::*fieldPtr);
 	};
 
 	PlugInTypeTaggedValue();
+	~PlugInTypeTaggedValue();
 
 	uint16 type;
 	ValueUnion value;
 
-	Common::String str;
 	Common::Array<uint8> extraData;
 
 	bool load(DataReader &reader);
@@ -405,7 +425,7 @@ struct ProjectLabelMap : public DataObject {
 		LabelTree();
 		~LabelTree();
 
-		enum {
+		enum : uint {
 			kExpandedInEditor = 0x80000000,
 		};
 
@@ -699,7 +719,7 @@ protected:
 };
 
 struct SoundElement : public StructuralDef {
-	enum SoundFlags {
+	enum SoundFlags : uint {
 		kPaused = 0x40000000,
 		kLoop = 0x80000000,
 	};
@@ -990,7 +1010,7 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
-enum MessageFlags {
+enum MessageFlags : uint {
 	kMessageFlagNoRelay = 0x20000000,
 	kMessageFlagNoCascade = 0x40000000,
 	kMessageFlagNoImmediate = 0x80000000,
@@ -1058,12 +1078,14 @@ struct AliasModifier : public DataObject {
 
 	Common::String name;
 
+	bool haveGUID;
+
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
 struct ChangeSceneModifier : public DataObject {
-	enum ChangeSceneFlags {
+	enum ChangeSceneFlags : uint {
 		kChangeSceneFlagNextScene			= 0x80000000,
 		kChangeSceneFlagPrevScene			= 0x40000000,
 		kChangeSceneFlagSpecificScene		= 0x20000000,
@@ -1282,8 +1304,8 @@ struct SharedSceneModifier : public DataObject {
 
 	TypicalModifierHeader modHeader;
 
-	Event executeWhen;
 	uint8 unknown1[4];
+	Event executeWhen;
 	uint32 sectionGUID;
 	uint32 subsectionGUID;
 	uint32 sceneGUID;
@@ -1570,6 +1592,39 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
+struct ReturnModifier : public DataObject {
+	ReturnModifier();
+
+	TypicalModifierHeader modHeader;
+
+	Event executeWhen;
+	uint16 unknown1;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct CursorModifierV1 : public DataObject {
+	CursorModifierV1();
+
+	struct MacOnlyPart {
+		MacOnlyPart();
+
+		Event applyWhen;
+		uint32 unknown1;
+		uint16 unknown2;
+		uint32 cursorIndex;
+	};
+
+	TypicalModifierHeader modHeader;
+
+	bool hasMacOnlyPart;
+	MacOnlyPart macOnlyPart;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
 struct CompoundVariableModifier : public DataObject {
 	CompoundVariableModifier();
 
@@ -1665,6 +1720,17 @@ struct StringVariableModifier : public DataObject {
 	uint32 lengthOfString;
 	uint8 unknown1[4];
 	Common::String value;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct ObjectReferenceVariableModifierV1 : public DataObject {
+	ObjectReferenceVariableModifierV1();
+
+	TypicalModifierHeader modHeader;
+	uint32 unknown1;
+	Event setToSourcesParentWhen;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -1964,7 +2030,7 @@ struct MToonAsset : public DataObject {
 	uint32 codecID;
 	uint8 unknown4_1[8];
 	uint32 codecDataSize;
-	uint8 unknown4_2[4];
+	Point registrationPoint;
 
 	Common::Array<FrameDef> frames;
 

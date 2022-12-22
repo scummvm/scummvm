@@ -31,6 +31,7 @@ enum MovieFlag {
 };
 
 enum CastType {
+	kCastTypeAny = -1,
 	kCastTypeNull = 0,
 	kCastBitmap = 1,
 	kCastFilmLoop = 2,
@@ -337,26 +338,26 @@ enum {
 };
 
 enum DatumType {
-	ARRAY,
 	ARGC,
 	ARGCNORET,
+	ARRAY,
 	CASTREF,
 	CHUNKREF,
 	FIELDREF,
-	MENUREF,
 	FLOAT,
+	GLOBALREF,
 	INT,
+	LOCALREF,
+	MENUREF,
 	OBJECT,
 	PARRAY,
 	POINT,
+	PROPREF,
+	RECT,
 	STRING,
 	SYMBOL,
 	VARREF,
-	GLOBALREF,
-	LOCALREF,
-	PROPREF,
 	VOID,
-	RECT
 };
 
 enum VarType {

@@ -37,7 +37,7 @@ void TADS2::runGame() {
 	os_instbrk(true);
 
 	char name[255];
-	strcpy(name, getFilename().c_str());
+	Common::strcpy_s(name, getFilename().c_str());
 	char *argv[2] = { nullptr, name };
 
 	trdmain(2, argv, nullptr, ".sav");

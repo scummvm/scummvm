@@ -30,6 +30,9 @@
 
 #define LEFT	0x00
 #define RIGHT	0x01
+#define FRAC_ONE_CMS (1UL << 8)
+/*#define MASTER_CLOCK 14318180/2 */
+#define MASTER_CLOCK (7159090UL * FRAC_ONE_CMS)
 
 static const byte envelope[8][64] = {
 	/* zero amplitude */
@@ -81,54 +84,54 @@ static const int amplitude_lookup[16] = {
 	12*32767/16, 13*32767/16, 14*32767/16, 15*32767/16
 };
 
-void CMSEmulator::portWrite(int port, int val) {
-	switch (port) {
-	case 0x220:
-		portWriteIntern(0, 1, val);
+void DOSBoxCMS::write(int a, int v) {
+	switch (a-_basePort) {
+	case 0:
+		portWriteIntern(0, 0, v);
 		break;
 
-	case 0x221:
-		_saa1099[0].selected_reg = val & 0x1f;
-		if (_saa1099[0].selected_reg == 0x18 || _saa1099[0].selected_reg == 0x19) {
-			/* clock the envelope channels */
-			if (_saa1099[0].env_clock[0])
-				envelope(0, 0);
-			if (_saa1099[0].env_clock[1])
-				envelope(0, 1);
-		}
+	case 1:
+		portWriteIntern(0, 1, v);
 		break;
 
-	case 0x222:
-		portWriteIntern(1, 1, val);
+	case 2:
+		portWriteIntern(1, 0, v);
 		break;
 
-	case 0x223:
-		_saa1099[1].selected_reg = val & 0x1f;
-		if (_saa1099[1].selected_reg == 0x18 || _saa1099[1].selected_reg == 0x19) {
-			/* clock the envelope channels */
-			if (_saa1099[1].env_clock[0])
-				envelope(1, 0);
-			if (_saa1099[1].env_clock[1])
-				envelope(1, 1);
-		}
+	case 3:
+		portWriteIntern(1, 1, v);
 		break;
 
 	default:
-		warning("CMSEmulator got port: 0x%X", port);
+		warning("DOSBoxCMS got port: 0x%X", a);
 		break;
 	}
 }
 
-void CMSEmulator::readBuffer(int16 *buffer, const int numSamples) {
+void DOSBoxCMS::writeReg(int r, int v) {
+	int chip = 0;
+	if (r >= 0x100)
+		chip = 1;
+
+	portWriteIntern(chip, 1, r & 0x1F);
+	portWriteIntern(chip, 0, v);
+}
+
+void DOSBoxCMS::generateSamples(int16 *buffer, const int numSamples) {
 	update(0, &buffer[0], numSamples);
 	update(1, &buffer[0], numSamples);
 }
 
-void CMSEmulator::reset() {
+bool DOSBoxCMS::init() {
+	reset();
+	return true;
+}
+
+void DOSBoxCMS::reset() {
 	memset(_saa1099, 0, sizeof(SAA1099) * 2);
 }
 
-void CMSEmulator::envelope(int chip, int ch) {
+void DOSBoxCMS::envelope(int chip, int ch) {
 	SAA1099 *saa = &_saa1099[chip];
 	if (saa->env_enable[ch]) {
 		int step, mode, mask;
@@ -163,8 +166,9 @@ void CMSEmulator::envelope(int chip, int ch) {
 	}
 }
 
-void CMSEmulator::update(int chip, int16 *buffer, int length) {
+void DOSBoxCMS::update(int chip, int16 *buffer, int length) {
 	struct SAA1099 *saa = &_saa1099[chip];
+	int32 rate;
 	int j, ch;
 
 	if (chip == 0) {
@@ -178,13 +182,15 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 
 	for (ch = 0; ch < 2; ch++) {
 		switch (saa->noise_params[ch]) {
-		case 0: saa->noise[ch].freq = 31250.0 * 2; break;
-		case 1: saa->noise[ch].freq = 15625.0 * 2; break;
-		case 2: saa->noise[ch].freq =  7812.5 * 2; break;
+		case 0: saa->noise[ch].freq = (MASTER_CLOCK * 2) / 256;   break;
+		case 1: saa->noise[ch].freq = (MASTER_CLOCK * 2) / 512;   break;
+		case 2: saa->noise[ch].freq = (MASTER_CLOCK * 2) / 1024;  break;
 		case 3: saa->noise[ch].freq = saa->channels[ch * 3].freq; break;
 		default: break;
 		}
 	}
+
+	rate = getRate() * FRAC_ONE_CMS;
 
 	/* fill all data needed */
 	for (j = 0; j < length; ++j) {
@@ -192,18 +198,18 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 
 		/* for each channel */
 		for (ch = 0; ch < 6; ch++) {
-			if (saa->channels[ch].freq == 0.0)
-				saa->channels[ch].freq = (double)((2 * 15625) << saa->channels[ch].octave) /
-				(511.0 - (double)saa->channels[ch].frequency);
+			if (saa->channels[ch].freq == 0)
+				saa->channels[ch].freq = (((2 * MASTER_CLOCK) / 512) << saa->channels[ch].octave) /
+					(511 - saa->channels[ch].frequency);
 
 			/* check the actual position in the square wave */
 			saa->channels[ch].counter -= saa->channels[ch].freq;
 			while (saa->channels[ch].counter < 0) {
 				/* calculate new frequency now after the half wave is updated */
-				saa->channels[ch].freq = (double)((2 * 15625) << saa->channels[ch].octave) /
-					(511.0 - (double)saa->channels[ch].frequency);
+				saa->channels[ch].freq = (((2 * MASTER_CLOCK) / 512) << saa->channels[ch].octave) /
+					(511 - saa->channels[ch].frequency);
 
-				saa->channels[ch].counter += _sampleRate;
+				saa->channels[ch].counter += rate;
 				saa->channels[ch].level ^= 1;
 
 				/* eventually clock the envelope counters */
@@ -237,7 +243,7 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 			/* check the actual position in noise generator */
 			saa->noise[ch].counter -= saa->noise[ch].freq;
 			while (saa->noise[ch].counter < 0) {
-				saa->noise[ch].counter += _sampleRate;
+				saa->noise[ch].counter += rate;
 				if (((saa->noise[ch].level & 0x4000) == 0) == ((saa->noise[ch].level & 0x0040) == 0) )
 					saa->noise[ch].level = (saa->noise[ch].level << 1) | 1;
 				else
@@ -250,8 +256,20 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 	}
 }
 
-void CMSEmulator::portWriteIntern(int chip, int offset, int data) {
+void DOSBoxCMS::portWriteIntern(int chip, int offset, int data) {
 	SAA1099 *saa = &_saa1099[chip];
+	if(offset == 1) {
+		// address port
+		saa->selected_reg = data & 0x1f;
+		if (saa->selected_reg == 0x18 || saa->selected_reg == 0x19) {
+			/* clock the envelope channels */
+			if (saa->env_clock[0])
+				envelope(chip,0);
+			if (saa->env_clock[1])
+				envelope(chip,1);
+		}
+		return;
+	}
 	int reg = saa->selected_reg;
 	int ch;
 
@@ -336,7 +354,7 @@ void CMSEmulator::portWriteIntern(int chip, int offset, int data) {
 			/* Synch & Reset generators */
 			for (i = 0; i < 6; i++) {
 				saa->channels[i].level = 0;
-				saa->channels[i].counter = 0.0;
+				saa->channels[i].counter = 0;
 			}
 		}
 		break;

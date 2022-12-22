@@ -1137,7 +1137,7 @@ static const char *const noYes[] = { "no", "yes" };
 void Debugger::dumpCompact(uint16 cptId) {
 	uint16 type, size;
 	char name[256];
-	Compact *cpt = _skyCompact->fetchCptInfo(cptId, &size, &type, name);
+	Compact *cpt = _skyCompact->fetchCptInfo(cptId, &size, &type, name, sizeof(name));
 
 	if (type == COMPACT) {
 		debugPrintf("Compact %s: id = %04X, section %d, id %d\n", name, cptId, cptId >> 12, cptId & 0xFFF);
@@ -1154,9 +1154,9 @@ void Debugger::dumpCompact(uint16 cptId) {
 		debugPrintf("           : ar priority : %s\n", noYes[(cpt->status & ST_AR_PRIORITY) >> 8]);
 		debugPrintf("sync       : %04X\n", cpt->sync);
 		debugPrintf("screen     : %d\n", cpt->screen);
-		_skyCompact->fetchCptInfo(cpt->place, NULL, NULL, name);
+		_skyCompact->fetchCptInfo(cpt->place, NULL, NULL, name, sizeof(name));
 		debugPrintf("place      : %04X: %s\n", cpt->place, name);
-		_skyCompact->fetchCptInfo(cpt->getToTableId, NULL, NULL, name);
+		_skyCompact->fetchCptInfo(cpt->getToTableId, NULL, NULL, name, sizeof(name));
 		debugPrintf("get to tab : %04X: %s\n", cpt->getToTableId, name);
 		debugPrintf("x/y        : %d/%d\n", cpt->xcood, cpt->ycood);
 	} else {
@@ -1196,13 +1196,14 @@ bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 								debugPrintf("%s\n", line);
 								linePos = line;
 							} else
-								linePos += sprintf(linePos, ", ");
+								linePos += Common::sprintf_s(linePos, sizeof(line) - (linePos - line), ", ");
 						}
 						uint16 cptId = (uint16)((sec << 12) | cpt);
 						uint16 type, size;
 						char name[256];
-						_skyCompact->fetchCptInfo(cptId, &size, &type, name);
-						linePos += sprintf(linePos, "%04X: %10s %22s", cptId, _skyCompact->nameForType(type), name);
+						_skyCompact->fetchCptInfo(cptId, &size, &type, name, sizeof(name));
+						linePos += Common::sprintf_s(linePos, sizeof(line) - (linePos - line),
+								"%04X: %10s %22s", cptId, _skyCompact->nameForType(type), name);
 					}
 					if (linePos != line)
 						debugPrintf("%s\n", line);
@@ -1211,7 +1212,7 @@ bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 						uint16 cptId = (uint16)((sec << 12) | cpt);
 						uint16 type, size;
 						char name[256];
-						_skyCompact->fetchCptInfo(cptId, &size, &type, name);
+						_skyCompact->fetchCptInfo(cptId, &size, &type, name, sizeof(name));
 						if (type == COMPACT)
 							debugPrintf("%04X: %s\n", cptId, name);
 					}
@@ -1333,15 +1334,15 @@ bool Debugger::Cmd_LogicList(int argc, const char **argv) {
 
 	char cptName[256];
 	uint16 numElems, type;
-	uint16 *logicList = (uint16 *)_skyCompact->fetchCptInfo(Logic::_scriptVariables[LOGIC_LIST_NO], &numElems, &type, cptName);
+	uint16 *logicList = (uint16 *)_skyCompact->fetchCptInfo(Logic::_scriptVariables[LOGIC_LIST_NO], &numElems, &type, cptName, sizeof(cptName));
 	debugPrintf("Current LogicList: %04X (%s)\n", Logic::_scriptVariables[LOGIC_LIST_NO], cptName);
 	while (*logicList != 0) {
 		if (*logicList == 0xFFFF) {
 			uint16 newList = logicList[1];
-			logicList = (uint16 *)_skyCompact->fetchCptInfo(newList, &numElems, &type, cptName);
+			logicList = (uint16 *)_skyCompact->fetchCptInfo(newList, &numElems, &type, cptName, sizeof(cptName));
 			debugPrintf("New List: %04X (%s)\n", newList, cptName);
 		} else {
-			_skyCompact->fetchCptInfo(*logicList, &numElems, &type, cptName);
+			_skyCompact->fetchCptInfo(*logicList, &numElems, &type, cptName, sizeof(cptName));
 			debugPrintf(" Cpt %04X (%s) (%s)\n", *logicList, cptName, _skyCompact->nameForType(type));
 			logicList++;
 		}

@@ -196,6 +196,9 @@ Audio::RewindableAudioStream *Sound::makeAudioStream(uint16 id, CueList *cueList
 	Audio::RewindableAudioStream *audStream = nullptr;
 
 	switch (_vm->getGameType()) {
+	case GType_ZOOMBINI:
+		audStream = makeMohawkWaveStream(_vm->getResource(ID_SND, id));
+		break;
 	case GType_LIVINGBOOKSV1:
 		audStream = makeLivingBooksWaveStream_v1(_vm->getResource(ID_WAV, id));
 		break;

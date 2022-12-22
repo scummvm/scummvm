@@ -104,4 +104,4 @@ Common::Error XyzzyEngine::syncGame(Common::Serializer &s) {
 	return Common::kNoError;
 }
 
-} // namespace Xyzzy
+} // End of namespace Xyzzy

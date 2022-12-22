@@ -355,7 +355,7 @@ void SegaPCMChannel::stopInternal() {
 }
 
 SegaPSG::SegaPSG(int samplingRate, int deviceVolume) : _intRate(3579545), _extRate(samplingRate), _deviceVolume(deviceVolume), _numChannels(3), _cr(-1),
-	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume), _sfxChanMask(0), _nfb(0), _nfs(0), _timer(0) {
+	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume), _sfxChanMask(0), _nfb(0), _nfs(0), _nat(0), _timer(0) {
 	memset(_attnTable, 0, sizeof(_attnTable));
 	for (int i = 0; i < 15; ++i)
 		_attnTable[i] =  (32767.0 / (double)(_numChannels + 1)) / pow(2.0, (double)(i << 1) / 6.0);

@@ -295,7 +295,7 @@ uint8 GameClock::get_day_of_week() {
 
 char *GameClock::get_date_string() {
 
-	sprintf(date_string, "%2u-%02u-%04u", month, day, year);
+	Common::sprintf_s(date_string, "%2u-%02u-%04u", month, day, year);
 
 	return date_string;
 }
@@ -318,7 +318,7 @@ char *GameClock::get_time_string() {
 			tmp_hour = hour;
 	}
 
-	sprintf(time_string, "%0u:%02u %c.M.", tmp_hour, minute, c);
+	Common::sprintf_s(time_string, "%0u:%02u %c.M.", tmp_hour, minute, c);
 
 	return time_string;
 }

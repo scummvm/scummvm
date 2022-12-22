@@ -177,6 +177,8 @@ bool Script::loadScript(Common::String filename) {
 
 	// Load the code
 	_codeSize = scriptfile->size();
+	if (_codeSize <= 0)
+		return false;
 	delete[] _code;
 	_code = new byte[_codeSize];
 	if (!_code)
@@ -211,6 +213,11 @@ bool Script::loadScript(Common::String filename) {
 		_code[0x0795] = 0x41;
 		_code[0x078A] = 0x40;
 		_code[0x079B] = 0x3F;
+	} else if (_version == kGroovieT7G && filename.equals("mu.grv") && _codeSize == 1354) {
+		// remove the right exit hotspot in the piano, set to nops
+		_code[0x1d2] = 1;
+		_code[0x1d3] = 1;
+		_code[0x1d4] = 1;
 	} else if (_version == kGroovieT11H && filename.equals("script.grv") && _codeSize == 62447) {
 		// don't sleep before showing the skulls
 		memset(_code + 0x17, 1, 0x1F - 0x17); // set nop
@@ -292,7 +299,10 @@ void Script::directGameLoad(int slot) {
 		}
 	} else if (_version == kGroovieT11H) {
 		setVariable(0xF, slot);
-		_currentInstruction = 0xE78D;
+		if (_scriptFile == "suscript.grv")
+			_currentInstruction = 0x13;
+		else
+			_currentInstruction = 0xE78D;
 		return;
 	} else if (_version == kGroovieCDY) {
 		setVariable(0x1, slot);
@@ -698,7 +708,7 @@ void Script::printString(Graphics::Surface *surface, const char *str) {
 		message[i] = str[i];
 	}
 	Common::rtrim(message);
-	
+
 	// Draw the string
 	if (_version == kGroovieT7G) {
 		_vm->_font->drawString(surface, message, 0, 16, 640, 0xE2, Graphics::kTextAlignCenter);
@@ -817,7 +827,7 @@ void Script::o_videofromref() {			// 0x09
 		break;
 
 	case 0x2420:	// load from the main menu
-		if (_version == kGroovieT7G && !ConfMan.getBool("originalsaveload")) {
+		if (_version == kGroovieT7G && !ConfMan.getBool("originalsaveload") && _currentInstruction == 381) {
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 			int slot = dialog->runModalWithCurrentTarget();
 			delete dialog;
@@ -835,7 +845,7 @@ void Script::o_videofromref() {			// 0x09
 		break;
 
 	case 0x2422: // save from the in-game menu
-		if (_version == kGroovieT7G && !ConfMan.getBool("originalsaveload")) {
+		if (_version == kGroovieT7G && !ConfMan.getBool("originalsaveload") && _currentInstruction == 7618) {
 			GUI::MessageDialog saveOrLoad(_("Would you like to save or restore a game?"), _("Save"), _("Restore"));
 
 			int choice = saveOrLoad.runModal();
@@ -955,13 +965,14 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 			ResInfo info;
 			_vm->_resMan->getResInfo(fileref, info);
 
-			// Remove the extension and add ".txt"
-			info.filename.deleteLastChar();
-			info.filename.deleteLastChar();
-			info.filename.deleteLastChar();
-			info.filename += "txt";
+			// Prepend the GJD name and remove the extension
+			Common::String subtitleName = _vm->_resMan->getGjdName(info);
+			subtitleName = subtitleName.substr(0, subtitleName.size() - 4);
+			subtitleName.toUppercase();
+			// add the filename without the extension, then add the .txt extension
+			subtitleName += "-" + info.filename.substr(0, info.filename.size() - 3) + "txt";
 
-			_vm->_videoPlayer->loadSubtitles(info.filename.c_str());
+			_vm->_videoPlayer->loadSubtitles(subtitleName.c_str());
 		} else {
 			error("Groovie::Script: Couldn't open file");
 			return true;
@@ -985,6 +996,8 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 			_videoSkipAddress = 0;
 
 			_bitflags = 0;
+
+			_vm->_videoPlayer->unloadSubtitles();
 
 			// End the playback
 			return true;
@@ -1136,8 +1149,13 @@ void Script::o_hotspot_left() {
 
 	debugC(5, kDebugScript, "Groovie::Script: HOTSPOT-LEFT @0x%04X", address);
 
-	// Mark the leftmost 100 pixels of the game area
-	Common::Rect rect(0, 80, 100, 400);
+	// Mark the leftmost 50 or 100 pixels of the game area
+	// slim_hotspots is only for puzzles
+	int width = 100;
+	if (_savedCode != nullptr && ConfMan.getBool("slim_hotspots"))
+		width = 50;
+
+	Common::Rect rect(0, 80, width, 400);
 	hotspot(rect, address, 1);
 }
 
@@ -1146,8 +1164,13 @@ void Script::o_hotspot_right() {
 
 	debugC(5, kDebugScript, "Groovie::Script: HOTSPOT-RIGHT @0x%04X", address);
 
-	// Mark the rightmost 100 pixels of the game area
-	Common::Rect rect(540, 80, 640, 400);
+	// Mark the rightmost 50 or 100 pixels of the game area
+	// slim_hotspots is only for puzzles
+	int width = 100;
+	if (_savedCode != nullptr && ConfMan.getBool("slim_hotspots"))
+		width = 50;
+
+	Common::Rect rect(640 - width, 80, 640, 400);
 	hotspot(rect, address, 2);
 }
 
@@ -1175,6 +1198,12 @@ void Script::o_hotspot_current() {
 void Script::o_inputloopend() {
 	debugC(5, kDebugScript, "Groovie::Script: Input loop end");
 
+	// width for left and right sides
+	// slim_hotspots is only for puzzles
+	int width = 80;
+	if (_savedCode != nullptr && ConfMan.getBool("slim_hotspots"))
+		width = 50;
+
 	// Handle the predefined hotspots
 	if (_hotspotTopAction) {
 		Common::Rect rect(0, 0, 640, 80);
@@ -1185,11 +1214,11 @@ void Script::o_inputloopend() {
 		hotspot(rect, _hotspotBottomAction, _hotspotBottomCursor);
 	}
 	if (_hotspotRightAction) {
-		Common::Rect rect(560, 0, 640, 480);
+		Common::Rect rect(640 - width, 0, 640, 480);
 		hotspot(rect, _hotspotRightAction, 2);
 	}
 	if (_hotspotLeftAction) {
-		Common::Rect rect(0, 0, 80, 480);
+		Common::Rect rect(0, 0, width, 480);
 		hotspot(rect, _hotspotLeftAction, 1);
 	}
 
@@ -1204,7 +1233,7 @@ void Script::o_inputloopend() {
 		}
 		_vm->_grvCursorMan->show(true);
 
-		// Go back to the begining of the loop
+		// Go back to the beginning of the loop
 		_currentInstruction = _inputLoopAddress;
 
 		// There's nothing to do until we get some input
@@ -2192,7 +2221,7 @@ void Script::o2_videofromref() {
 	// Skip the 11th Hour intro videos on right mouse click, instead of
 	// fast-forwarding them. This has the same effect as pressing 'p' twice in
 	// the skulls screen after the Groovie logo
-	if (_version == kGroovieT11H && _currentInstruction == 0x0560 && fileref != _videoRef)
+	if (_version == kGroovieT11H && _currentInstruction == 0x0560 && fileref != _videoRef && _scriptFile == "script.grv")
 		_videoSkipAddress = 1417;
 
 	if (_version == kGroovieT11H && fileref != _videoRef && !ConfMan.getBool("originalsaveload")) {
@@ -2221,6 +2250,33 @@ void Script::o2_videofromref() {
 			}
 
 			_currentInstruction = 0xBF37; // main menu
+		}
+		// T11H Souped Up
+		else if (_currentInstruction == 0x10 && _scriptFile == "suscript.grv") {
+			// Load from the main menu
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			int slot = dialog->runModalWithCurrentTarget();
+			delete dialog;
+
+			if (slot >= 0) {
+				_currentInstruction = 0x16;
+				loadgame(slot);
+				return;
+			} else {
+				_currentInstruction = 0x8; // main menu
+			}
+		} else if (_currentInstruction == 0x1E && _scriptFile == "suscript.grv") {
+			// Save from the main menu
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+			int slot = dialog->runModalWithCurrentTarget();
+			Common::String saveName = dialog->getResultString();
+			delete dialog;
+
+			if (slot >= 0) {
+				directGameSave(slot, saveName);
+			}
+
+			_currentInstruction = 0x8; // main menu
 		}
 	}
 
@@ -2403,7 +2459,7 @@ void Script::o2_copyfgtobg() {
 	uint8 arg = readScript8bits();
 	debugC(1, kDebugScript, "Groovie::Script: o2_copyfgtobg (0x%02X)", arg);
 	debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: o2_copyfgtobg (0x%02X)", _currentInstruction-2, arg);
-	
+
 	_vm->_videoPlayer->copyfgtobg(arg);
 }
 

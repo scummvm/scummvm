@@ -36,7 +36,7 @@
 
 #include "engines/engine.h"
 
-#include "graphics/conversion.h"
+#include "graphics/blit.h"
 #include "graphics/opengl/context.h"
 #include "graphics/opengl/system_headers.h"
 
@@ -637,6 +637,8 @@ OpenGL::FrameBuffer *OpenGLSdlGraphics3dManager::createFramebuffer(uint width, u
 }
 
 void OpenGLSdlGraphics3dManager::updateScreen() {
+	GLint prevStateViewport[4];
+	glGetIntegerv(GL_VIEWPORT, prevStateViewport);
 	if (_frameBuffer) {
 		_frameBuffer->detach();
 		_surfaceRenderer->prepareState();
@@ -649,7 +651,8 @@ void OpenGLSdlGraphics3dManager::updateScreen() {
 	if (_overlayVisible) {
 		_overlayScreen->update();
 
-		if (_overlayBackground) {
+		// If the overlay is in game we expect the game to continue calling OpenGL
+		if (_overlayBackground && _overlayInGUI) {
 			_overlayBackground->update();
 		}
 
@@ -665,6 +668,7 @@ void OpenGLSdlGraphics3dManager::updateScreen() {
 	if (_frameBuffer) {
 		_frameBuffer->attach();
 	}
+	glViewport(prevStateViewport[0], prevStateViewport[1], prevStateViewport[2], prevStateViewport[3]);
 }
 
 int16 OpenGLSdlGraphics3dManager::getHeight() const {
@@ -685,11 +689,12 @@ int16 OpenGLSdlGraphics3dManager::getWidth() const {
 #pragma mark --- Overlays ---
 #pragma mark -
 
-void OpenGLSdlGraphics3dManager::showOverlay() {
-	if (_overlayVisible) {
+void OpenGLSdlGraphics3dManager::showOverlay(bool inGUI) {
+	if (_overlayVisible && _overlayInGUI == inGUI) {
 		return;
 	}
-	WindowedGraphicsManager::showOverlay();
+
+	WindowedGraphicsManager::showOverlay(inGUI);
 
 	delete _overlayBackground;
 	_overlayBackground = nullptr;

@@ -49,6 +49,8 @@ struct MadeGameDescription {
 	uint16 version;
 };
 
+#define GAMEOPTION_INTRO_MUSIC_DIGITAL GUIO_GAMEOPTIONS1
+
 } // End of namespace Made
 
 #endif // MADE_DETECTION_H

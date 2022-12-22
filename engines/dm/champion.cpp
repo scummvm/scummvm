@@ -1951,7 +1951,8 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 
 	char L0807_ac_DecodedChampionText[77];
 	char *decodedStringPtr = L0807_ac_DecodedChampionText;
-	dungeon.decodeText(decodedStringPtr, curThing, (TextType)(kDMTextTypeScroll | kDMMaskDecodeEvenIfInvisible));
+	dungeon.decodeText(decodedStringPtr, sizeof(L0807_ac_DecodedChampionText),
+			curThing, (TextType)(kDMTextTypeScroll | kDMMaskDecodeEvenIfInvisible));
 
 	uint16 charIdx = 0;
 	char tmpChar;
@@ -2308,21 +2309,21 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 		}
 
 		maxLoad = curChampion->_load / 10;
-		strcpy(_vm->_stringBuildBuffer, getStringFromInteger(maxLoad, true, 3).c_str());
+		Common::strcpy_s(_vm->_stringBuildBuffer, getStringFromInteger(maxLoad, true, 3).c_str());
 
 		switch (_vm->getGameLanguage()) { // localized
 		default:
-		case Common::EN_ANY: strcat(_vm->_stringBuildBuffer, "."); break;
-		case Common::DE_DEU: strcat(_vm->_stringBuildBuffer, ","); break;
-		case Common::FR_FRA: strcat(_vm->_stringBuildBuffer, "KG,"); break;
+		case Common::EN_ANY: Common::strcat_s(_vm->_stringBuildBuffer, "."); break;
+		case Common::DE_DEU: Common::strcat_s(_vm->_stringBuildBuffer, ","); break;
+		case Common::FR_FRA: Common::strcat_s(_vm->_stringBuildBuffer, "KG,"); break;
 		}
 
 		maxLoad = curChampion->_load - (maxLoad * 10);
-		strcat(_vm->_stringBuildBuffer, getStringFromInteger(maxLoad, false, 1).c_str());
-		strcat(_vm->_stringBuildBuffer, "/");
+		Common::strcat_s(_vm->_stringBuildBuffer, getStringFromInteger(maxLoad, false, 1).c_str());
+		Common::strcat_s(_vm->_stringBuildBuffer, "/");
 		maxLoad = (getMaximumLoad(curChampion) + 5) / 10;
-		strcat(_vm->_stringBuildBuffer, getStringFromInteger(maxLoad, true, 3).c_str());
-		strcat(_vm->_stringBuildBuffer, " KG");
+		Common::strcat_s(_vm->_stringBuildBuffer, getStringFromInteger(maxLoad, true, 3).c_str());
+		Common::strcat_s(_vm->_stringBuildBuffer, " KG");
 		txtMan.printToViewport(148, 132, loadColor, _vm->_stringBuildBuffer);
 		setFlag(championAttributes, kDMAttributeViewport);
 	}
@@ -2509,7 +2510,7 @@ void ChampionMan::renameChampion(Champion *champ) {
 					int16 characterIndexBackup = curCharacterIndex;
 					char championNameBackupString[8];
 					renamedChampionString = champ->_name;
-					strcpy(championNameBackupString, renamedChampionString);
+					Common::strcpy_s(championNameBackupString, renamedChampionString);
 					curCharacterIndex = strlen(renamedChampionString);
 					// Replace space characters on the right of the champion name by '\0' characters
 					while (renamedChampionString[--curCharacterIndex] == ' ')
@@ -2529,7 +2530,8 @@ void ChampionMan::renameChampion(Champion *champ) {
 					if (renamedChampionStringMode == kDMRenameChampionTitle)
 						renamedChampionString = champ->_title;
 
-					strcpy(renamedChampionString = champ->_name, championNameBackupString);
+					Common::strcpy_s(champ->_name, championNameBackupString);
+					renamedChampionString = champ->_name;
 					curCharacterIndex = characterIndexBackup;
 				} else {
 					if ((mousePos.x >= 107) && (mousePos.x <= 175) && (mousePos.y >= 147) && (mousePos.y <= 155)) { /* Coordinates of 'BACKSPACE' button */

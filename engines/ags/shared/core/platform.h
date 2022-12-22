@@ -146,6 +146,13 @@ namespace AGS3 {
 // or read from default config.
 #define AGS_SEARCH_FOR_GAME_ON_LAUNCH (AGS_PLATFORM_OS_WINDOWS || AGS_PLATFORM_OS_LINUX || AGS_PLATFORM_OS_MACOS)
 
+#if !defined(DEBUG_MANAGED_OBJECTS)
+	#define DEBUG_MANAGED_OBJECTS (0)
+#endif
+
+#if !defined(DEBUG_SPRITECACHE)
+	#define DEBUG_SPRITECACHE (0)
+#endif
 
 } // namespace AGS3
 

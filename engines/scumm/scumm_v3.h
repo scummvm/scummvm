@@ -32,7 +32,6 @@ namespace Scumm {
 class ScummEngine_v3 : public ScummEngine_v4 {
 public:
 	ScummEngine_v3(OSystem *syst, const DetectorResult &dr);
-	~ScummEngine_v3() override;
 
 	void resetScumm() override;
 

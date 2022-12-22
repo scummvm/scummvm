@@ -23,12 +23,12 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "create_kyradat.h"
+
+#include "md5.h"
+#include "pak.h"
 #include "resources.h"
 #include "types.h"
 
-#include "pak.h"
-
-#include "md5.h"
 #include "common/language.h"
 #include "common/platform.h"
 

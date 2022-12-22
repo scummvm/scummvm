@@ -189,9 +189,9 @@ void statusline() {
 	needsp = FALSE;
 	say(where(HERO));
 	if (header->maxscore > 0)
-		sprintf(line, "Score %d(%d)/%d moves", cur.score, (int)header->maxscore, cur.tick);
+		Common::sprintf_s(line, "Score %d(%d)/%d moves", cur.score, (int)header->maxscore, cur.tick);
 	else
-		sprintf(line, "%d moves", cur.tick);
+		Common::sprintf_s(line, "%d moves", cur.tick);
 	g_vm->glk_window_move_cursor(glkStatusWin, glkWidth - col - strlen(line), 0);
 	printf(line);
 	needsp = FALSE;
@@ -863,11 +863,11 @@ static void do_it(CONTEXT) {
 				if (alt[i]->action != 0) {
 					if (trcflg) {
 						if (i == 0)
-							strcpy(trace, "GLOBAL");
+							Common::strcpy_s(trace, "GLOBAL");
 						else if (i == 1)
-							strcpy(trace, "in LOCATION");
+							Common::strcpy_s(trace, "in LOCATION");
 						else
-							sprintf(trace, "in PARAMETER %d", i - 1);
+							Common::sprintf_s(trace, "in PARAMETER %d", i - 1);
 						if (alt[i]->qual == (Aword)Q_BEFORE)
 							printf("\n<VERB %d, %s (BEFORE), Body:>\n", cur.vrb, trace);
 						else
@@ -889,11 +889,11 @@ static void do_it(CONTEXT) {
 				if (!done[i] && alt[i]->action != 0) {
 					if (trcflg) {
 						if (i == 0)
-							strcpy(trace, "GLOBAL");
+							Common::strcpy_s(trace, "GLOBAL");
 						else if (i == 1)
-							strcpy(trace, "in LOCATION");
+							Common::strcpy_s(trace, "in LOCATION");
 						else
-							sprintf(trace, "in PARAMETER %d", i - 1);
+							Common::sprintf_s(trace, "in PARAMETER %d", i - 1);
 						printf("\n<VERB %d, %s, Body:>\n", cur.vrb, trace);
 					}
 					CALL1(interpret, alt[i]->action)
@@ -910,11 +910,11 @@ static void do_it(CONTEXT) {
 			if (!done[i] && alt[i]->action != 0) {
 				if (trcflg) {
 					if (i == 0)
-						strcpy(trace, "GLOBAL");
+						Common::strcpy_s(trace, "GLOBAL");
 					else if (i == 1)
-						strcpy(trace, "in LOCATION");
+						Common::strcpy_s(trace, "in LOCATION");
 					else
-						sprintf(trace, "in PARAMETER %d", i - 1);
+						Common::sprintf_s(trace, "in PARAMETER %d", i - 1);
 					printf("\n<VERB %d, %s (AFTER), Body:>\n", cur.vrb, trace);
 				}
 				CALL1(interpret, alt[i]->action)
@@ -943,7 +943,7 @@ void action(CONTEXT, ParamElem plst[] /* IN - Plural parameter list */) {
 		   over this position (and replace it by each present in the plst)
 		 */
 		for (mpos = 0; params[mpos].code != 0; mpos++); /* Find multiple position */
-		sprintf(marker, "($%d)", mpos + 1); /* Prepare a printout with $1/2/3 */
+		Common::sprintf_s(marker, "($%d)", mpos + 1); /* Prepare a printout with $1/2/3 */
 		for (i = 0; plst[i].code != EOD; i++) {
 			params[mpos] = plst[i];
 			output(marker);
@@ -1049,7 +1049,7 @@ static void checkvers(AcdHdr *hdr) {
 #endif
 				if (errflg) {
 					char str[80];
-					sprintf(str, "Incompatible version of ACODE program. Game is %ld.%ld, interpreter %ld.%ld.",
+					Common::sprintf_s(str, "Incompatible version of ACODE program. Game is %ld.%ld, interpreter %ld.%ld.",
 					        (long)(hdr->vers[0]),
 					        (long)(hdr->vers[1]),
 					        (long) alan.version.version,
@@ -1108,7 +1108,7 @@ static void load() {
 		crc += (memory[i] >> 24) & 0xff;
 	}
 	if (crc != tmphdr.acdcrc) {
-		sprintf(err, "Checksum error in .ACD file (0x%lx instead of 0x%lx).",
+		Common::sprintf_s(err, "Checksum error in .ACD file (0x%lx instead of 0x%lx).",
 		        (unsigned long) crc, (unsigned long) tmphdr.acdcrc);
 		if (errflg)
 			syserr(err);

@@ -25,44 +25,14 @@
 
 #include "common/gui_options.h"
 #include "common/file.h"
-#include "common/translation.h"
 
+#include "queen/defs.h"
 #include "queen/detection.h"
-#include "queen/resource.h"
+#include "queen/version.h"
 
 static const PlainGameDescriptor queenGames[] = {
 	{"queen", "Flight of the Amazon Queen"},
 	{nullptr, nullptr}
-};
-
-#define GAMEOPTION_ALT_INTRO  GUIO_GAMEOPTIONS1
-#define GAMEOPTION_ALT_FONT  GUIO_GAMEOPTIONS2 
-
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ALT_INTRO,
-		{
-			_s("Alternative intro"),
-			_s("Use an alternative game intro (CD version only)"),
-			"alt_intro",
-			false,
-			0,
-			0
-		}
-	},
-	{
-		GAMEOPTION_ALT_FONT,
-		{
-			_s("Improved font"),
-			_s("Use an easier to read custom font"),
-			"alt_font",
-			false,
-			0,
-			0
-		}
-	},
-
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
 namespace Queen {
@@ -494,7 +464,7 @@ static const QueenGameDescription gameDescriptions[] = {
 
 class QueenMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	QueenMetaEngineDetection() : AdvancedMetaEngineDetection(Queen::gameDescriptions, sizeof(Queen::QueenGameDescription), queenGames, optionsList) {
+	QueenMetaEngineDetection() : AdvancedMetaEngineDetection(Queen::gameDescriptions, sizeof(Queen::QueenGameDescription), queenGames) {
 	}
 
 	const char *getName() const override {
@@ -526,7 +496,7 @@ ADDetectedGame QueenMetaEngineDetection::fallbackDetect(const FileMap &allFiles,
 				continue;
 			}
 			Queen::DetectedGameVersion version;
-			if (Queen::Resource::detectVersion(&version, &dataFile)) {
+			if (Queen::detectVersion(&version, &dataFile)) {
 				desc.gameId = "queen";
 				desc.language = version.language;
 				desc.platform = version.platform;

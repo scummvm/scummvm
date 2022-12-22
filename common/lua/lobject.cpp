@@ -4,6 +4,10 @@
 ** See Copyright Notice in lua.h
 */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
+#define FORBIDDEN_SYMBOL_EXCEPTION_strcat
+#define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
+
 #include "common/util.h"
 
 #define lobject_c
@@ -138,7 +142,7 @@ const char *luaO_pushvfstring (lua_State *L, const char *fmt, va_list argp) {
       }
       case 'p': {
         char buff[4*sizeof(void *) + 8]; /* should be enough space for a `%p' */
-        sprintf(buff, "%p", va_arg(argp, void *));
+        snprintf(buff, 4*sizeof(void *) + 8, "%p", va_arg(argp, void *));
         pushstr(L, buff);
         break;
       }
