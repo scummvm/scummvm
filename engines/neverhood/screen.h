@@ -42,6 +42,7 @@ struct RenderItem {
 	bool _transparent;
 	byte _version;
 	bool _refresh;
+	byte _alphaColor;
 	bool operator==(const RenderItem &second) const {
 		return
 			_surface == second._surface &&
@@ -53,7 +54,8 @@ struct RenderItem {
 			_width == second._width &&
 			_height == second._height &&
 			_transparent == second._transparent &&
-			_version == second._version;
+			_version == second._version &&
+			_alphaColor == second._alphaColor;
 	}
 };
 
@@ -79,14 +81,14 @@ public:
 	void clear();
 	void clearRenderQueue();
 	void drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect, bool transparent, byte version,
-		const Graphics::Surface *shadowSurface = NULL);
+			  const Graphics::Surface *shadowSurface = NULL, byte alphaColor = 0);
 	void drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, NDrawRect &drawRect, NRect &clipRect, bool transparent, byte version);
 	void drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &drawRect);
 	void drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDrawRect &sysRect, NRect &clipRect, bool transparent, byte version);
 	void drawSurfaceClipRects(const Graphics::Surface *surface, NDrawRect &drawRect, NRect *clipRects, uint clipRectsCount, bool transparent, byte version);
 	void setSmackerDecoder(Video::SmackerDecoder *smackerDecoder) { _smackerDecoder = smackerDecoder; }
 	void queueBlit(const Graphics::Surface *surface, int16 destX, int16 destY, NRect &ddRect, bool transparent, byte version,
-		const Graphics::Surface *shadowSurface = NULL);
+		       const Graphics::Surface *shadowSurface = NULL, byte alphaColor = 0);
 	void blitRenderItem(const RenderItem &renderItem, const Common::Rect &clipRect);
 protected:
 	NeverhoodEngine *_vm;

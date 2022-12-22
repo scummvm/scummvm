@@ -186,7 +186,7 @@ void Screen::clearRenderQueue() {
 }
 
 void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect, bool transparent, byte version,
-	const Graphics::Surface *shadowSurface) {
+			  const Graphics::Surface *shadowSurface, byte alphaColor) {
 
 	int16 destX, destY;
 	NRect ddRect;
@@ -217,7 +217,7 @@ void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect,
 		ddRect.y1 = 0;
 	}
 
-	queueBlit(surface, destX, destY, ddRect, transparent, version, shadowSurface);
+	queueBlit(surface, destX, destY, ddRect, transparent, version, shadowSurface, alphaColor);
 
 }
 
@@ -350,7 +350,7 @@ void Screen::drawSurfaceClipRects(const Graphics::Surface *surface, NDrawRect &d
 }
 
 void Screen::queueBlit(const Graphics::Surface *surface, int16 destX, int16 destY, NRect &ddRect, bool transparent, byte version,
-	const Graphics::Surface *shadowSurface) {
+		       const Graphics::Surface *shadowSurface, byte alphaColor) {
 
 	const int width = ddRect.x2 - ddRect.x1;
 	const int height = ddRect.y2 - ddRect.y1;
@@ -369,6 +369,7 @@ void Screen::queueBlit(const Graphics::Surface *surface, int16 destX, int16 dest
 	renderItem._height = height;
 	renderItem._transparent = transparent;
 	renderItem._version = version;
+	renderItem._alphaColor = alphaColor;
 	_renderQueue->push_back(renderItem);
 
 }
@@ -406,10 +407,18 @@ void Screen::blitRenderItem(const RenderItem &renderItem, const Common::Rect &cl
 			source += surface->pitch;
 			dest += _backScreen->pitch;
 		}
-	} else {
+	} else if (renderItem._alphaColor == 0) {
 		while (height--) {
 			for (int xc = 0; xc < width; xc++)
 				if (source[xc] != 0)
+					dest[xc] = source[xc];
+			source += surface->pitch;
+			dest += _backScreen->pitch;
+		}
+	} else {
+		while (height--) {
+			for (int xc = 0; xc < width; xc++)
+				if (source[xc] != renderItem._alphaColor)
 					dest[xc] = source[xc];
 			source += surface->pitch;
 			dest += _backScreen->pitch;
