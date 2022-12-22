@@ -481,7 +481,7 @@ void Mouse::stopDragging(int mx, int my) {
 		assert(parent); // can't drag root gump
 		int32 px = mx, py = my;
 		parent->ScreenSpaceToGump(px, py);
-		gump->onDragStop(mx, my);
+		gump->onDragStop(px, py);
 	} else if (item) {
 		// for an item: notify gumps
 		if (_dragging != DRAG_INVALID) {
