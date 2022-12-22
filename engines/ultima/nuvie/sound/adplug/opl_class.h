@@ -39,17 +39,6 @@ namespace Nuvie {
 /* select output bits size of output : 8 or 16 */
 #define OPL_SAMPLE_BITS 16
 
-/* compiler dependence */
-#ifndef OSD_CPU_H
-#define OSD_CPU_H
-typedef unsigned char   uint8;   /* unsigned  8bit */
-typedef unsigned short  UINT16;  /* unsigned 16bit */
-typedef unsigned int    uint32;  /* unsigned 32bit */
-typedef signed char     int8;    /* signed  8bit   */
-typedef signed short    int16;   /* signed 16bit   */
-typedef signed int      int32;   /* signed 32bit   */
-#endif
-
 #if (OPL_SAMPLE_BITS==16)
 typedef int16 OPLSAMPLE;
 #endif
