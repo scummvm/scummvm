@@ -53,7 +53,7 @@ byte clamp_color(int c) {
 		return c;
 }
 
-int luaA_passresults();
+int32 luaA_passresults();
 
 void Lua_V1::new_dofile() {
 	const char *fname_str = luaL_check_string(1);
