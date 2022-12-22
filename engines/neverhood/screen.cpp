@@ -276,6 +276,31 @@ void Screen::drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &dra
 
 }
 
+void Screen::drawDoubleSurface2Alpha(const Graphics::Surface *surface, NDrawRect &drawRect, byte alphaColor) {
+
+	const byte *source = (const byte*)surface->getPixels();
+	byte *dest = (byte*)_backScreen->getBasePtr(drawRect.x, drawRect.y);
+
+	for (int16 yc = 0; yc < surface->h; yc++) {
+		byte *row = dest;
+		for (int16 xc = 0; xc < surface->w; xc++) {
+			if (*source != alphaColor) {
+				row[0] = *source;
+				row[1] = *source;
+				row[_backScreen->pitch] = *source;
+				row[_backScreen->pitch + 1] = *source;
+			}
+			source++;
+			row += 2;
+		}
+		dest += _backScreen->pitch;
+		dest += _backScreen->pitch;
+	}
+
+	_fullRefresh = true; // See Screen::update
+
+}
+
 void Screen::drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDrawRect &sysRect, NRect &clipRect, bool transparent, byte version) {
 
 	int16 x, y;
