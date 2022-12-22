@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-12-21 20:27+0000\n"
-"PO-Revision-Date: 2022-12-11 07:34+0000\n"
+"PO-Revision-Date: 2022-12-22 15:04+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -1589,22 +1589,16 @@ msgid "Autosave:"
 msgstr "Salvar Automat.:"
 
 #: gui/options.cpp:2452
-#, fuzzy
-#| msgid "Always return to the launcher when leaving a game"
 msgid "Return to the launcher when leaving a game"
-msgstr "Sempre retornar ao inicializador quando sair de um jogo"
+msgstr "Retornar ao inicializador quando sair de um jogo"
 
 #: gui/options.cpp:2453
-#, fuzzy
-#| msgid ""
-#| "Always return to the launcher when leaving a game instead of closing "
-#| "ScummVM."
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
 msgstr ""
-"Sempre retorna ao inicializador quando sai de um jogo em vez de fechar o "
-"ScummVM."
+"Retorna ao inicializador quando sai de um jogo em vez de fechar o ScummVM.\n"
+"(este recurso não é suportado por todos os jogos)."
 
 #: gui/options.cpp:2460
 msgid "Ask for confirmation on exit"
@@ -5348,11 +5342,13 @@ msgstr ""
 
 #: engines/groovie/metaengine.cpp:97
 msgid "Slim Left/Right Hotspots"
-msgstr ""
+msgstr "Reduzir Pontos de Acesso da Esquerda/Direita"
 
 #: engines/groovie/metaengine.cpp:98
 msgid "Shrinks the hotspots on the left and right sides for exiting puzzles"
 msgstr ""
+"Reduz os pontos de acesso nos lados esquerdo e direito para sair dos quebra-"
+"cabeças"
 
 #: engines/groovie/metaengine.cpp:109
 msgid "Speedrun Mode"
