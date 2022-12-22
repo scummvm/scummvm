@@ -189,8 +189,7 @@ protected:
 	int getGraphicsMode() const override;
 #endif
 
-	bool _haveDoubleClickTime;
-	uint32 _doubleClickTime;
+	virtual uint32 getOSDoubleClickTime() const { return 0; }
 };
 
 #endif

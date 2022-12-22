@@ -549,11 +549,6 @@ public:
 		* For platforms that should not have a Quit button.
 		*/
 		kFeatureNoQuit,
-
-		/**
-		* Supports getDoubleClickTime call.
-		*/
-		kFeatureDoubleClickTime,
 	};
 
 	/**
@@ -1396,11 +1391,9 @@ public:
 
 	
 
-	/** Get the system-configured double-click time interval.
-	 *
-	 * Backends which implement this should have the kFeatureDoubleClickTime flag set.
-	 *
-	 * @see kFeatureDoubleClickTime
+	/**
+	 * Get the system-configured double-click time interval.
+	 * If the system doesn't support configuring double-click time, returns 0.
 	 */
 	virtual uint32 getDoubleClickTime() const { return 0; }
 
