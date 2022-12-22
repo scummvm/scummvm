@@ -378,7 +378,7 @@ void Mouse::startDragging(int startx, int starty) {
 		assert(parent); // can't drag root gump
 		int32 px = startx, py = starty;
 		parent->ScreenSpaceToGump(px, py);
-		if (gump->IsDraggable() && parent->StartDraggingChild(gump, px, py))
+		if (gump->IsDraggable() && gump->onDragStart(px, py))
 			_dragging = DRAG_OK;
 		else {
 			_dragging_objId = 0;
@@ -437,7 +437,7 @@ void Mouse::moveDragging(int mx, int my) {
 		assert(parent); // can't drag root gump
 		int32 px = mx, py = my;
 		parent->ScreenSpaceToGump(px, py);
-		parent->DraggingChild(gump, px, py);
+		gump->onDrag(px, py);
 	} else {
 		// for an item, notify the gump it's on
 		if (item) {
@@ -479,7 +479,9 @@ void Mouse::stopDragging(int mx, int my) {
 	if (gump) {
 		Gump *parent = gump->GetParent();
 		assert(parent); // can't drag root gump
-		parent->StopDraggingChild(gump);
+		int32 px = mx, py = my;
+		parent->ScreenSpaceToGump(px, py);
+		gump->onDragStop(mx, my);
 	} else if (item) {
 		// for an item: notify gumps
 		if (_dragging != DRAG_INVALID) {

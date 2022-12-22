@@ -156,25 +156,37 @@ void SliderGump::InitGump(Gump *newparent, bool take_focus) {
 }
 
 void SliderGump::ChildNotify(Gump *child, uint32 message) {
-	if (message == ButtonWidget::BUTTON_CLICK) {
-		switch (child->GetIndex()) {
-		case OK_INDEX:
+	switch (child->GetIndex()) {
+	case OK_INDEX:
+		if (message == ButtonWidget::BUTTON_CLICK)
 			Close();
-			break;
-		case LEFT_INDEX:
+		break;
+	case LEFT_INDEX:
+		if (message == ButtonWidget::BUTTON_UP) {
 			_value -= _delta;
-			if (_value < _min) _value = _min;
+			if (_value < _min)
+				_value = _min;
 			setSliderPos();
-			break;
-		case RIGHT_INDEX:
-			_value += _delta;
-			if (_value > _max) _value = _max;
-			setSliderPos();
-			break;
 		}
+		break;
+	case RIGHT_INDEX:
+		if (message == ButtonWidget::BUTTON_UP) {
+			_value += _delta;
+			if (_value > _max)
+				_value = _max;
+			setSliderPos();
+		}
+		break;
+	case SLIDER_INDEX:
+		if (message == SlidingWidget::DRAGGING) {
+			int32 x, y;
+			child->getLocation(x, y);
+			setValueFromSlider(x);
+			setSliderPos();
+		}
+		break;
 	}
 }
-
 
 void SliderGump::Close(bool no_del) {
 	_processResult = _value;
@@ -187,28 +199,6 @@ void SliderGump::Close(bool no_del) {
 	}
 
 	ModalGump::Close(no_del);
-}
-
-bool SliderGump::StartDraggingChild(Gump *gump, int32 mx, int32 my) {
-	if (gump->GetIndex() == SLIDER_INDEX) {
-		gump->ParentToGump(mx, my);
-		Mouse::get_instance()->setDraggingOffset(mx, 0);
-		return true;
-	}
-
-	return false;
-}
-
-void SliderGump::DraggingChild(Gump *gump, int mx, int my) {
-	if (gump->GetIndex() == SLIDER_INDEX) {
-		int32 dox, doy;
-		Mouse::get_instance()->getDraggingOffset(dox, doy);
-		setValueFromSlider(mx - dox);
-		gump->Move(getSliderPos(), slidery);
-	}
-}
-
-void SliderGump::StopDraggingChild(Gump *gump) {
 }
 
 bool SliderGump::OnKeyDown(int key, int mod) {

@@ -52,6 +52,11 @@ uint16 SlidingWidget::TraceObjId(int32 mx, int32 my) {
 		return 0;
 }
 
+void SlidingWidget::onDrag(int mx, int my) {
+	Gump::onDrag(mx, my);
+	_parent->ChildNotify(this, DRAGGING);
+}
+
 void SlidingWidget::saveData(Common::WriteStream *ws) {
 	Gump::saveData(ws);
 }

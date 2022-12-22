@@ -39,8 +39,14 @@ public:
 	void InitGump(Gump *newparent, bool take_focus = true) override;
 	uint16 TraceObjId(int32 mx, int32 my) override;
 
+	void onDrag(int32 mx, int32 my) override;
+
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
+
+	enum Message {
+		DRAGGING = 0
+	};
 };
 
 } // End of namespace Ultima8
