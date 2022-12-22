@@ -779,7 +779,7 @@ uint32 OSystem_SDL::getDoubleClickTime() const {
 #ifdef ENABLE_EVENTRECORDER
 	g_eventRec.processDoubleClickTime(doubleClickTime);
 #endif
-	return _doubleClickTime;
+	return doubleClickTime;
 }
 
 //Not specified in base class
