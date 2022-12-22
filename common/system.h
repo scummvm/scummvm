@@ -548,7 +548,7 @@ public:
 		/**
 		* For platforms that should not have a Quit button.
 		*/
-		kFeatureNoQuit,
+		kFeatureNoQuit
 	};
 
 	/**

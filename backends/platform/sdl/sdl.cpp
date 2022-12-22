@@ -89,8 +89,7 @@ OSystem_SDL::OSystem_SDL()
 	_logger(nullptr),
 	_eventSource(nullptr),
 	_eventSourceWrapper(nullptr),
-	_window(nullptr)
-{
+	_window(nullptr) {
 }
 
 OSystem_SDL::~OSystem_SDL() {
@@ -189,7 +188,6 @@ bool OSystem_SDL::hasFeature(Feature f) {
 	if (f == kFeatureOpenGLForGame) return true;
 	if (f == kFeatureShadersForGame) return _supportsShaders;
 #endif
-
 	return ModularGraphicsBackend::hasFeature(f);
 }
 
