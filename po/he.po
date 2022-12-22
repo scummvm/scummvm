@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-22 18:21+0000\n"
+"POT-Creation-Date: 2022-12-22 22:45+0000\n"
 "PO-Revision-Date: 2022-10-27 02:33+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -6146,7 +6146,7 @@ msgstr "טלאי מסך רחב"
 msgid "Enable widescreen rendering in fullscreen mode."
 msgstr "הפעלת מסירת מסך רחב במצב מסך מלא."
 
-#: engines/myst3/myst3.cpp:364
+#: engines/myst3/myst3.cpp:363
 #, c-format
 msgid ""
 "This version of Myst III has not been updated with the latest official "
@@ -6160,7 +6160,7 @@ msgstr ""
 "את העדכונים ניתן להוריד מכאן:\n"
 "%s"
 
-#: engines/myst3/myst3.cpp:1578 engines/pegasus/pegasus.cpp:748
+#: engines/myst3/myst3.cpp:1577 engines/pegasus/pegasus.cpp:748
 msgid "Invalid file name for saving"
 msgstr "שם קובץ לא חוקי לשמירה"
 

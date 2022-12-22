@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-22 18:21+0000\n"
+"POT-Creation-Date: 2022-12-22 22:45+0000\n"
 "PO-Revision-Date: 2022-12-20 13:23+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -6335,7 +6335,7 @@ msgstr "Breitbild-Modus"
 msgid "Enable widescreen rendering in fullscreen mode."
 msgstr "Aktiviere Breitbild-Darstellung im Vollbildmodus."
 
-#: engines/myst3/myst3.cpp:364
+#: engines/myst3/myst3.cpp:363
 #, c-format
 msgid ""
 "This version of Myst III has not been updated with the latest official "
@@ -6350,7 +6350,7 @@ msgstr ""
 "Die Updates können unter folgender Website heruntergeladen werden:\n"
 "%s"
 
-#: engines/myst3/myst3.cpp:1578 engines/pegasus/pegasus.cpp:748
+#: engines/myst3/myst3.cpp:1577 engines/pegasus/pegasus.cpp:748
 msgid "Invalid file name for saving"
 msgstr "Dateiname zum Speichern eingeben"
 
