@@ -135,18 +135,19 @@ void ButtonWidget::onMouseUp(int button, int32 mx, int32 my) {
 			_shape = _shapeUp;
 			_frameNum = _frameNumUp;
 		}
-		_parent->ChildNotify(this, BUTTON_UP);
+		if (PointOnGump(mx, my))
+			_parent->ChildNotify(this, BUTTON_UP);
 	}
 }
 
 void ButtonWidget::onMouseClick(int button, int32 mx, int32 my) {
-	int gx = mx, gy = my;
-	if (PointOnGump(gx, gy))
+	if (PointOnGump(mx, my))
 		_parent->ChildNotify(this, BUTTON_CLICK);
 }
 
 void ButtonWidget::onMouseDouble(int button, int32 mx, int32 my) {
-	_parent->ChildNotify(this, BUTTON_DOUBLE);
+	if (PointOnGump(mx, my))
+		_parent->ChildNotify(this, BUTTON_DOUBLE);
 }
 
 void ButtonWidget::onMouseOver() {
