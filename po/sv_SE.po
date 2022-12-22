@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-21 20:27+0000\n"
+"POT-Creation-Date: 2022-12-22 12:26+0000\n"
 "PO-Revision-Date: 2022-11-29 23:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -3828,15 +3828,15 @@ msgstr "V-Sync i 3D-spel"
 msgid "Show SAF revoke permissions overlay button"
 msgstr ""
 
-#: backends/platform/ds/ds-graphics.cpp:253
+#: backends/platform/ds/ds-graphics.cpp:268
 msgid "Unscaled"
 msgstr "Oskalad"
 
-#: backends/platform/ds/ds-graphics.cpp:254
+#: backends/platform/ds/ds-graphics.cpp:269
 msgid "Hardware scale (fast, but low quality)"
 msgstr "Hårdvaruskalning (snabbt, men låg kvalitet)"
 
-#: backends/platform/ds/ds-graphics.cpp:255
+#: backends/platform/ds/ds-graphics.cpp:270
 msgid "Software scale (good quality, but slower)"
 msgstr "Mjukvaruskalning (bra kvalitet, men långsamt)"
 

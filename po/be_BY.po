@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-21 20:27+0000\n"
+"POT-Creation-Date: 2022-12-22 12:26+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -3817,16 +3817,16 @@ msgstr ""
 msgid "Show SAF revoke permissions overlay button"
 msgstr ""
 
-#: backends/platform/ds/ds-graphics.cpp:253
+#: backends/platform/ds/ds-graphics.cpp:268
 #, fuzzy
 msgid "Unscaled"
 msgstr "Маштабаваць відэа"
 
-#: backends/platform/ds/ds-graphics.cpp:254
+#: backends/platform/ds/ds-graphics.cpp:269
 msgid "Hardware scale (fast, but low quality)"
 msgstr "Апаратнае маштабаванне (хутка, але нізкай якасці)"
 
-#: backends/platform/ds/ds-graphics.cpp:255
+#: backends/platform/ds/ds-graphics.cpp:270
 msgid "Software scale (good quality, but slower)"
 msgstr "Праграмнае маштабаванне (добрая якасць, але марудней)"
 

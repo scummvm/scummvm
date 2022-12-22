@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-21 20:27+0000\n"
+"POT-Creation-Date: 2022-12-22 12:26+0000\n"
 "PO-Revision-Date: 2022-12-22 15:04+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -3803,15 +3803,15 @@ msgstr "Em jogos 3D"
 msgid "Show SAF revoke permissions overlay button"
 msgstr "Mostrar botão de sobreposição de permissões de revogação SAF"
 
-#: backends/platform/ds/ds-graphics.cpp:253
+#: backends/platform/ds/ds-graphics.cpp:268
 msgid "Unscaled"
 msgstr "Sem escala"
 
-#: backends/platform/ds/ds-graphics.cpp:254
+#: backends/platform/ds/ds-graphics.cpp:269
 msgid "Hardware scale (fast, but low quality)"
 msgstr "Redimensionamento por Hardware (rápido, mas com baixa qualidade)"
 
-#: backends/platform/ds/ds-graphics.cpp:255
+#: backends/platform/ds/ds-graphics.cpp:270
 msgid "Software scale (good quality, but slower)"
 msgstr "Redimensionamento por Software (boa qualidade, porém mais lento)"
 

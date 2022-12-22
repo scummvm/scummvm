@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-21 20:27+0000\n"
+"POT-Creation-Date: 2022-12-22 12:26+0000\n"
 "PO-Revision-Date: 2022-05-01 15:27+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -3859,15 +3859,15 @@ msgstr "V-Sync ve 3D hrách"
 msgid "Show SAF revoke permissions overlay button"
 msgstr ""
 
-#: backends/platform/ds/ds-graphics.cpp:253
+#: backends/platform/ds/ds-graphics.cpp:268
 msgid "Unscaled"
 msgstr ""
 
-#: backends/platform/ds/ds-graphics.cpp:254
+#: backends/platform/ds/ds-graphics.cpp:269
 msgid "Hardware scale (fast, but low quality)"
 msgstr "Hardwarová změna velikosti (rychlé, ale nízká kvalita)"
 
-#: backends/platform/ds/ds-graphics.cpp:255
+#: backends/platform/ds/ds-graphics.cpp:270
 msgid "Software scale (good quality, but slower)"
 msgstr "Softwarová změna velikosti (dobrá kvalita, ale pomalejší)"
 
