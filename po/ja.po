@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-12-21 20:27+0000\n"
-"PO-Revision-Date: 2022-12-21 08:34+0000\n"
+"PO-Revision-Date: 2022-12-22 07:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5259,11 +5259,11 @@ msgstr "クレジットでMIDI曲を再利用せず、代わりにThe Final Hour
 
 #: engines/groovie/metaengine.cpp:97
 msgid "Slim Left/Right Hotspots"
-msgstr ""
+msgstr "ホットスポットを縮小"
 
 #: engines/groovie/metaengine.cpp:98
 msgid "Shrinks the hotspots on the left and right sides for exiting puzzles"
-msgstr ""
+msgstr "パズル終了条件の左右のホットスポット範囲を縮小"
 
 #: engines/groovie/metaengine.cpp:109
 msgid "Speedrun Mode"
