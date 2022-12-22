@@ -43,6 +43,7 @@ protected:
 	DS::Background *_screen, *_overlayScreen;
 #ifdef DISABLE_TEXT_CONSOLE
 	DS::Background *_subScreen;
+	DS::TiledBackground *_banner;
 #endif
 	bool _subScreenActive;
 	Graphics::Surface _cursor;
@@ -70,6 +71,8 @@ protected:
 	bool _disableCursorPalette;
 
 	const Graphics::PixelFormat _pfCLUT8, _pfABGR1555;
+
+	bool _engineRunning;
 
 public:
 	OSystem_DS();
@@ -138,6 +141,8 @@ public:
 
 	virtual Common::String getSystemLanguage() const;
 
+	virtual void engineInit();
+	virtual void engineDone();
 	virtual void quit();
 
 	virtual void setFocusRectangle(const Common::Rect& rect);

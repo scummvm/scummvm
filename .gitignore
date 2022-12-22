@@ -81,6 +81,9 @@ lib*.a
 /backends/platform/dc/SCUMMVM.BIN
 /backends/platform/dc/*.PLG
 
+/backends/platform/ds/gfx/*.s
+/backends/platform/ds/gfx/*.h
+
 /backends/platform/maemo/scummvm
 
 /dists/rpl.exe

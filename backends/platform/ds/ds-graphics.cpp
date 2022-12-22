@@ -22,6 +22,7 @@
 #include <nds.h>
 
 #include "backends/platform/ds/osystem_ds.h"
+#include "backends/platform/ds/gfx/banner.h"
 
 #include "common/translation.h"
 
@@ -167,6 +168,13 @@ void initHardware() {
 
 #ifdef DISABLE_TEXT_CONSOLE
 	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
+
+	bgExtPaletteEnableSub();
+
+	/* The extended palette data can only be accessed in LCD mode. */
+	vramSetBankH(VRAM_H_LCD);
+	dmaCopy(bannerPal, &VRAM_H_EXT_PALETTE[1][0], bannerPalLen);
+	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 #endif
 }
 
@@ -185,11 +193,12 @@ void OSystem_DS::initGraphics() {
 	_screen = nullptr;
 #ifndef DISABLE_TEXT_CONSOLE
 	_subScreen = nullptr;
+	_banner = nullptr;
 #endif
 
 	_keyboard = new DS::Keyboard(_eventManager->getEventDispatcher());
 #ifndef DISABLE_TEXT_CONSOLE
-	_keyboard->init(0, 34, 1, false);
+	_keyboard->init(0, 21, 1, false);
 #endif
 }
 
@@ -226,8 +235,10 @@ void OSystem_DS::setFeatureState(Feature f, bool enable) {
 				if (_subScreen) {
 					_subScreen->hide();
 					_subScreen->reset();
+				} else if (_banner) {
+					_banner->hide();
 				}
-				_keyboard->init(0, 34, 1, false);
+				_keyboard->init(0, 21, 1, false);
 			}
 #endif
 			_keyboard->show();
@@ -237,9 +248,11 @@ void OSystem_DS::setFeatureState(Feature f, bool enable) {
 			if (_subScreen) {
 				_subScreen->reset();
 				_subScreen->show();
+				_paletteDirty = true;
+			} else if (_banner) {
+				_banner->show();
 			}
 			_subScreenActive = true;
-			_paletteDirty = true;
 #endif
 			setSwapLCDs(false);
 		}
@@ -357,8 +370,22 @@ void OSystem_DS::initSize(uint width, uint height, const Graphics::PixelFormat *
 	delete _subScreen;
 	_subScreen = nullptr;
 
-	if (DS::Background::getRequiredVRAM(width, height, isRGB, false) <= 0x20000) {
-		_subScreen = new DS::Background(&_framebuffer, 3, true, 0, false);
+	if (_engineRunning) {
+		if (_banner) {
+			_banner->reset();
+			_banner->hide();
+		}
+
+		delete _banner;
+		_banner = nullptr;
+
+		if (DS::Background::getRequiredVRAM(width, height, isRGB, false) <= 0x20000) {
+			_subScreen = new DS::Background(&_framebuffer, 3, true, 0, false);
+		}
+	} else {
+		if (!_banner)
+			_banner = new DS::TiledBackground(bannerTiles, bannerTilesLen, bannerMap, bannerMapLen, 1, true, 30, 0);
+		_banner->update();
 	}
 #endif
 
@@ -430,7 +457,7 @@ void OSystem_DS::updateScreen() {
 	if (_paletteDirty) {
 		dmaCopyHalfWords(3, _palette, BG_PALETTE, 256 * 2);
 #ifdef DISABLE_TEXT_CONSOLE
-		if (_subScreenActive)
+		if (_subScreen && _subScreenActive)
 			dmaCopyHalfWords(3, _palette, BG_PALETTE_SUB, 256 * 2);
 #endif
 		_paletteDirty = false;

@@ -4,11 +4,16 @@ else
 DESCRIPTION ?= DS Port
 endif
 
+NDSTOOL ?= ndstool
+GRIT ?= grit
+
 all: scummvm.nds
 
 clean: dsclean
 
 dsclean:
+	$(RM) backends/platform/ds/gfx/*.h
+	$(RM) backends/platform/ds/gfx/*.s
 	$(RM) scummvm.nds
 	$(RM) map.txt
 	$(RM_REC) romfs
@@ -23,7 +28,7 @@ dsdist: scummvm.nds $(DIST_FILES_DOCS)
 .PHONY: dsclean dsdist
 
 %.nds: %.elf romfs
-	ndstool -c $@ -9 $< -b $(srcdir)/backends/platform/ds/logo.bmp "$(@F);ScummVM $(VERSION);$(DESCRIPTION)" -d romfs
+	$(NDSTOOL) -c $@ -9 $< -b $(srcdir)/backends/platform/ds/logo.bmp "$(@F);ScummVM $(VERSION);$(DESCRIPTION)" -d romfs
 
 romfs: $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(PLUGINS)
 	@rm -rf romfs
@@ -42,6 +47,16 @@ ifeq ($(DYNAMIC_MODULES),1)
 	@mkdir -p romfs/plugins
 	@for i in $(PLUGINS); do $(STRIP) --strip-debug $$i -o romfs/plugins/`basename $$i`; done
 endif
+
+
+QUIET_GRIT    = @echo '   ' GRIT '   ' $@;
+
+vpath %.grit $(srcdir)
+vpath %.png $(srcdir)
+
+%.s %.h	: %.png %.grit
+	$(QUIET)$(MKDIR) $(*D)
+	$(QUIET_GRIT)$(GRIT) $< -fts -o$*
 
 
 # Command to build libmad is:

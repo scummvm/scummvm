@@ -59,6 +59,26 @@ protected:
 	Graphics::Surface *_surface;
 };
 
+class TiledBackground {
+public:
+	TiledBackground(const unsigned int *tiles, size_t tilesLen, const unsigned short *map, size_t mapLen, int layer, bool isSub, int mapBase, int tileBase);
+
+	void update();
+	void reset();
+
+	void show();
+	void hide();
+	inline bool isVisible() const { return _visible; }
+
+protected:
+	const unsigned int *_tiles;
+	const unsigned short *_map;
+	size_t _tilesLen, _mapLen;
+
+	int _bg;
+	bool _visible;
+};
+
 } // End of namespace DS
 
 #endif // #ifndef DS_BACKGROUND_H

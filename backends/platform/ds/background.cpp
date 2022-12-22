@@ -214,4 +214,43 @@ Common::Point Background::scaledToReal(int16 x, int16 y) const {
 	return Common::Point(x, y);
 }
 
+TiledBackground::TiledBackground(const unsigned int *tiles, size_t tilesLen, const unsigned short *map, size_t mapLen, int layer, bool isSub, int mapBase, int tileBase) :
+	_tiles(tiles), _tilesLen(tilesLen), _map(map), _mapLen(mapLen),
+	_bg(-1), _visible(true) {
+
+	if (isSub) {
+		_bg = bgInitSub(layer, BgType_Text8bpp, BgSize_T_256x256, mapBase, tileBase);
+	} else {
+		_bg = bgInit(layer, BgType_Text8bpp, BgSize_T_256x256, mapBase, tileBase);
+	}
+}
+
+void TiledBackground::update() {
+	if (_bg < 0)
+		return;
+
+	dmaCopy(_tiles, bgGetGfxPtr(_bg), _tilesLen);
+	dmaCopy(_map, bgGetMapPtr(_bg), _mapLen);
+}
+
+void TiledBackground::reset() {
+	if (_bg < 0)
+		return;
+
+	dmaFillHalfWords(0, bgGetMapPtr(_bg), _mapLen);
+	dmaFillHalfWords(0, bgGetGfxPtr(_bg), _tilesLen);
+}
+
+void TiledBackground::show() {
+	if (_bg >= 0)
+		bgShow(_bg);
+	_visible = true;
+}
+
+void TiledBackground::hide() {
+	if (_bg >= 0)
+		bgHide(_bg);
+	_visible = false;
+}
+
 } // End of namespace DS
