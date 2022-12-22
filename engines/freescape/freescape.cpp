@@ -208,6 +208,10 @@ void FreescapeEngine::drawUI() {
 	_gfx->setViewport(_viewArea);
 }
 
+void FreescapeEngine::drawInfoMenu() {
+	warning("Function \"%s\" not implemented", __FUNCTION__);
+}
+
 void FreescapeEngine::drawCrossair(Graphics::Surface *surface) {
 	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 
@@ -398,6 +402,9 @@ void FreescapeEngine::processInput() {
 				_shootMode = !_shootMode;
 				if (!_shootMode)
 					centerCrossair();
+				break;
+			case Common::KEYCODE_i:
+				drawInfoMenu();
 				break;
 			default:
 				pressedKey(event.kbd.keycode);

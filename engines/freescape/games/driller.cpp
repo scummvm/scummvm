@@ -686,6 +686,9 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	}
 }
 
+void DrillerEngine::drawInfoMenu() {
+}
+
 Math::Vector3d getProjectionToPlane(const Math::Vector3d &vect, const Math::Vector3d normal) {
 	assert (normal.length() == 1);
 	// Formula: return p - n * (n . p)

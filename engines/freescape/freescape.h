@@ -110,6 +110,8 @@ public:
 	void drawTitle();
 	void drawBackground();
 	virtual void drawUI();
+	virtual void drawInfoMenu();
+
 	virtual void drawCrossair(Graphics::Surface *surface);
 	Graphics::Surface *_border;
 	Graphics::Surface *_title;
@@ -365,6 +367,7 @@ public:
 	void processBorder() override;
 	void loadAssets() override;
 	void drawUI() override;
+	void drawInfoMenu() override;
 
 	void pressedKey(const int keycode) override;
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
