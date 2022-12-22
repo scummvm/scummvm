@@ -39,9 +39,10 @@ enum {
 
 class OSystem_DS : public ModularMixerBackend, public PaletteManager {
 protected:
-	DS::Background _framebuffer, _overlay;
+	Graphics::Surface _framebuffer, _overlay;
+	DS::Background *_screen, *_overlayScreen;
 #ifdef DISABLE_TEXT_CONSOLE
-	DS::Background _subScreen;
+	DS::Background *_subScreen;
 #endif
 	bool _subScreenActive;
 	Graphics::Surface _cursor;

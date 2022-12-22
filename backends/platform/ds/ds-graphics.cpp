@@ -25,6 +25,8 @@
 
 #include "common/translation.h"
 
+#include "graphics/conversion.h"
+
 namespace DS {
 
 // From console.c in NDSLib
@@ -178,7 +180,12 @@ void OSystem_DS::initGraphics() {
 	oamInit(&oamMain, SpriteMapping_Bmp_1D_128, false);
 	_cursorSprite = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_Bmp);
 
-	_overlay.create(256, 192, true, 2, false, 0, false);
+	_overlay.create(256, 192, _pfABGR1555);
+	_overlayScreen = new DS::Background(&_overlay, 2, false, 0, false);
+	_screen = nullptr;
+#ifndef DISABLE_TEXT_CONSOLE
+	_subScreen = nullptr;
+#endif
 
 	_keyboard = new DS::Keyboard(_eventManager->getEventDispatcher());
 #ifndef DISABLE_TEXT_CONSOLE
@@ -187,14 +194,18 @@ void OSystem_DS::initGraphics() {
 }
 
 void OSystem_DS::setMainScreen(int32 x, int32 y, int32 sx, int32 sy) {
-	_framebuffer.setScalef(sx, sy);
-	_framebuffer.setScrollf(x, y);
+	if (_screen) {
+		_screen->setScalef(sx, sy);
+		_screen->setScrollf(x, y);
+	}
 }
 
 void OSystem_DS::setSubScreen(int32 x, int32 y, int32 sx, int32 sy) {
 #ifdef DISABLE_TEXT_CONSOLE
-	_subScreen.setScalef(sx, sy);
-	_subScreen.setScrollf(x, y);
+	if (_subScreen) {
+		_subScreen->setScalef(sx, sy);
+		_subScreen->setScrollf(x, y);
+	}
 #endif
 }
 
@@ -212,8 +223,10 @@ void OSystem_DS::setFeatureState(Feature f, bool enable) {
 #ifdef DISABLE_TEXT_CONSOLE
 			if (_subScreenActive) {
 				_subScreenActive = false;
-				_subScreen.hide();
-				_subScreen.reset();
+				if (_subScreen) {
+					_subScreen->hide();
+					_subScreen->reset();
+				}
 				_keyboard->init(0, 34, 1, false);
 			}
 #endif
@@ -221,8 +234,10 @@ void OSystem_DS::setFeatureState(Feature f, bool enable) {
 		} else if (_keyboard->isVisible()) {
 			_keyboard->hide();
 #ifdef DISABLE_TEXT_CONSOLE
-			_subScreen.reset();
-			_subScreen.show();
+			if (_subScreen) {
+				_subScreen->reset();
+				_subScreen->show();
+			}
 			_subScreenActive = true;
 			_paletteDirty = true;
 #endif
@@ -319,25 +334,31 @@ Common::List<Graphics::PixelFormat> OSystem_DS::getSupportedFormats() const {
 
 void OSystem_DS::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	Graphics::PixelFormat actualFormat = format ? *format : _pfCLUT8;
+	_framebuffer.create(width, height, actualFormat);
+
 	bool isRGB = (actualFormat != _pfCLUT8), swScale = ((_graphicsMode == GFX_SWSCALE) && (width == 320));
+
+	if (_screen)
+		_screen->reset();
+	delete _screen;
+	_screen = nullptr;
 
 	// For Lost in Time, the title screen is displayed in 640x400.
 	// In order to support this game, the screen mode is set, but
 	// all draw calls are ignored until the game switches to 320x200.
-	if (_framebuffer.getRequiredVRAM(width, height, isRGB, swScale) > 0x40000) {
-		_framebuffer.create(width, height, isRGB);
-	} else {
-		_framebuffer.reset();
-		_framebuffer.create(width, height, isRGB, 3, false, 8, swScale);
+	if (DS::Background::getRequiredVRAM(width, height, isRGB, swScale) <= 0x40000) {
+		_screen = new DS::Background(&_framebuffer, 3, false, 8, swScale);
 	}
 
 #ifdef DISABLE_TEXT_CONSOLE
-	if (_framebuffer.getRequiredVRAM(width, height, isRGB, false) > 0x20000) {
-		_subScreen.init(&_framebuffer);
-	} else {
-		if (_subScreenActive)
-			_subScreen.reset();
-		_subScreen.init(&_framebuffer, 3, true, 0, false);
+	if (_subScreen && _subScreenActive)
+		_subScreen->reset();
+
+	delete _subScreen;
+	_subScreen = nullptr;
+
+	if (DS::Background::getRequiredVRAM(width, height, isRGB, false) <= 0x20000) {
+		_subScreen = new DS::Background(&_framebuffer, 3, true, 0, false);
 	}
 #endif
 
@@ -406,24 +427,24 @@ void OSystem_DS::updateScreen() {
 	       SpriteColorFormat_Bmp, _cursorSprite, 0, false, !_cursorVisible, false, false, false);
 	oamUpdate(&oamMain);
 
-	if (_overlay.isVisible()) {
-		_overlay.update();
-	}
-
-	if (_framebuffer.isVisible()) {
-		if (_paletteDirty) {
-			dmaCopyHalfWords(3, _palette, BG_PALETTE, 256 * 2);
-#ifdef DISABLE_TEXT_CONSOLE
-			if (_subScreenActive)
-				dmaCopyHalfWords(3, _palette, BG_PALETTE_SUB, 256 * 2);
-#endif
-			_paletteDirty = false;
-		}
-
-		_framebuffer.update();
+	if (_paletteDirty) {
+		dmaCopyHalfWords(3, _palette, BG_PALETTE, 256 * 2);
 #ifdef DISABLE_TEXT_CONSOLE
 		if (_subScreenActive)
-			_subScreen.update();
+			dmaCopyHalfWords(3, _palette, BG_PALETTE_SUB, 256 * 2);
+#endif
+		_paletteDirty = false;
+	}
+
+	if (_overlayScreen && _overlayScreen->isVisible()) {
+		_overlayScreen->update();
+	}
+
+	if (_screen && _screen->isVisible()) {
+		_screen->update();
+#ifdef DISABLE_TEXT_CONSOLE
+		if (_subScreen && _subScreenActive)
+			_subScreen->update();
 #endif
 	}
 }
@@ -433,29 +454,36 @@ void OSystem_DS::setShakePos(int shakeXOffset, int shakeYOffset) {
 }
 
 void OSystem_DS::showOverlay(bool inGUI) {
+	assert(_overlayScreen);
 	_overlayInGUI = inGUI;
-	_overlay.reset();
-	_overlay.show();
+	_overlayScreen->reset();
+	_overlayScreen->show();
 }
 
 void OSystem_DS::hideOverlay() {
+	assert(_overlayScreen);
 	_overlayInGUI = false;
-	_overlay.hide();
+	_overlayScreen->hide();
 }
 
 bool OSystem_DS::isOverlayVisible() const {
-	return _overlay.isVisible();
+	assert(_overlayScreen);
+	return _overlayScreen->isVisible();
 }
 
 void OSystem_DS::clearOverlay() {
-	_overlay.clear();
+	memset(_overlay.getPixels(), 0, _overlay.pitch * _overlay.h);
 }
 
 void OSystem_DS::grabOverlay(Graphics::Surface &surface) {
-	assert(surface.w >= _overlay.w);
-	assert(surface.h >= _overlay.h);
+	assert(surface.w >= getOverlayWidth());
+	assert(surface.h >= getOverlayHeight());
 	assert(surface.format.bytesPerPixel == _overlay.format.bytesPerPixel);
-	_overlay.grab((byte *)surface.getPixels(), surface.pitch);
+
+	byte *src = (byte *)_overlay.getPixels();
+	byte *dst = (byte *)surface.getPixels();
+	Graphics::copyBlit(dst, src, surface.pitch, _overlay.pitch,
+		getOverlayWidth(), getOverlayHeight(), _overlay.format.bytesPerPixel);
 }
 
 void OSystem_DS::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
@@ -475,10 +503,10 @@ Graphics::PixelFormat OSystem_DS::getOverlayFormat() const {
 }
 
 Common::Point OSystem_DS::transformPoint(int16 x, int16 y) {
-	if (_overlayInGUI)
+	if (_overlayInGUI || !_screen)
 		return Common::Point(x, y);
 	else
-		return _framebuffer.realToScaled(x, y);
+		return _screen->realToScaled(x, y);
 }
 
 bool OSystem_DS::showMouse(bool visible) {
@@ -488,10 +516,10 @@ bool OSystem_DS::showMouse(bool visible) {
 }
 
 void OSystem_DS::warpMouse(int x, int y) {
-	if (_overlayInGUI)
+	if (_overlayInGUI || !_screen)
 		_cursorPos = Common::Point(x, y);
 	else
-		_cursorPos = _framebuffer.scaledToReal(x, y);
+		_cursorPos = _screen->scaledToReal(x, y);
 }
 
 void OSystem_DS::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
