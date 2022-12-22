@@ -33,9 +33,8 @@ enum MTropolisGameID {
 	GID_ALBERT1				= 3,
 	GID_ALBERT2				= 4,
 	GID_ALBERT3				= 5,
-	GID_MTI					= 6,
-	GID_SPQR				= 7,
-	GID_STTGS				= 8,
+	GID_SPQR				= 6,
+	GID_STTGS				= 7,
 };
 
 // Boot IDs - These can be shared across different variants if the file list and other properties are identical.
