@@ -475,8 +475,20 @@
 	typedef signed char int8;
 	typedef unsigned short uint16;
 	typedef signed short int16;
+	// HACK: Some ports, such as NDS and AmigaOS, are not frequently
+	// tested during development, but cause frequent buildbot failures
+	// because they need to use 'long' for int32. Windows 32-bit
+	// binaries have this nice property of being easy to build, having
+	// a 32-bit 'long' too, *and* being frequently tested (incl. Github
+	// Actions). We want to catch this case as early and frequently
+	// as possible, so Win32 is probably the best candidate for this...
+	#if defined(WIN32) && !defined(_WIN64)
+	typedef unsigned long uint32;
+	typedef signed long int32;
+	#else
 	typedef unsigned int uint32;
 	typedef signed int int32;
+	#endif
 	typedef unsigned int uint;
 	typedef signed long long int64;
 	typedef unsigned long long uint64;
