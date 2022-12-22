@@ -353,7 +353,9 @@ public:
 
 	bool _useAutomaticDrilling;
 
-	Common::HashMap<uint16, uint32> _areaScores;
+	Common::HashMap<uint16, uint32> _drillStatusByArea;
+	Common::HashMap<uint16, uint32> _drillMaxScoreByArea;
+	Common::HashMap<uint16, uint32> _drillScoreByArea;
 
 	void initGameState() override;
 	bool checkIfGameEnded() override;
@@ -375,7 +377,6 @@ private:
 	void addDrill(const Math::Vector3d position, bool gasFound);
 	bool checkDrill(const Math::Vector3d position);
 	void removeDrill(Area *area);
-	StateBits _drilledAreas;
 
 	void loadAssetsDemo();
 	void loadAssetsFullGame();

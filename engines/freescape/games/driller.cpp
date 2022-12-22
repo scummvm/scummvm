@@ -575,7 +575,7 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 	} else {
 		if (_currentArea->_gasPocketRadius == 0)
 			message = _messagesList[2];
-		else if (_drilledAreas[_currentArea->getAreaID()])
+		else if (_drillStatusByArea[_currentArea->getAreaID()])
 			message = _messagesList[0];
 		else
 			message = _messagesList[1];
@@ -650,7 +650,7 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	} else {
 		if (_currentArea->_gasPocketRadius == 0)
 			message = _messagesList[2];
-		else if (_drilledAreas[_currentArea->getAreaID()])
+		else if (_drillStatusByArea[_currentArea->getAreaID()])
 			message = _messagesList[0];
 		else
 			message = _messagesList[1];
@@ -742,18 +742,22 @@ void DrillerEngine::pressedKey(const int keycode) {
 			return;
 		}
 		Common::String maxScoreMessage = _messagesList[5];
-		maxScoreMessage.replace(2, 6, Common::String::format("%d", _areaScores[_currentArea->getAreaID()]));
+		int maxScore = _drillMaxScoreByArea[_currentArea->getAreaID()];
+		maxScoreMessage.replace(2, 6, Common::String::format("%d", maxScore));
 		insertTemporaryMessage(maxScoreMessage, _countdown - 4);
 		Common::String successMessage = _messagesList[6];
 		successMessage.replace(0, 4, Common::String::format("%d", int(success)));
 		while (successMessage.size() < 14)
 			successMessage += " ";
 		insertTemporaryMessage(successMessage, _countdown - 6);
+		_drillScoreByArea[_currentArea->getAreaID()] = uint32(maxScore * success) / 100;
+		_gameStateVars[k8bitVariableScore] += _drillScoreByArea[_currentArea->getAreaID()];
+
 		if (success >= 50.0) {
-			_drilledAreas[_currentArea->getAreaID()] = kDrillerRigInPlace;
+			_drillStatusByArea[_currentArea->getAreaID()] = kDrillerRigInPlace;
 			_gameStateVars[32]++;
 		} else
-			_drilledAreas[_currentArea->getAreaID()] = kDrillerRigOutOfPlace;
+			_drillStatusByArea[_currentArea->getAreaID()] = kDrillerRigOutOfPlace;
 	} else if (keycode == Common::KEYCODE_c) {
 		if (isDOS() && isDemo()) // No support for drilling here yet
 			return;
@@ -782,13 +786,15 @@ void DrillerEngine::pressedKey(const int keycode) {
 		_gameStateVars[k8bitVariableEnergy] = _gameStateVars[k8bitVariableEnergy] - 5;
 
 		uint16 areaID = _currentArea->getAreaID();
-		if (_drilledAreas[areaID] > 0) {
-			if (_drilledAreas[areaID] == kDrillerRigInPlace)
+		if (_drillStatusByArea[areaID] > 0) {
+			if (_drillStatusByArea[areaID] == kDrillerRigInPlace)
 				_gameStateVars[32]--;
-			_drilledAreas[areaID] = kDrillerNoRig;
+			_drillStatusByArea[areaID] = kDrillerNoRig;
 		}
 		removeDrill(_currentArea);
 		insertTemporaryMessage(_messagesList[10], _countdown - 2);
+
+		_gameStateVars[k8bitVariableScore] -= _drillScoreByArea[_currentArea->getAreaID()];
 	}
 }
 
@@ -990,12 +996,13 @@ void DrillerEngine::initGameState() {
 	for (auto &it : _areaMap) {
 		it._value->resetArea();
 		_gameStateBits[it._key] = 0;
-		if (_drilledAreas[it._key] != kDrillerNoRig)
+		if (_drillStatusByArea[it._key] != kDrillerNoRig)
 			removeDrill(it._value);
-		_drilledAreas[it._key] = kDrillerNoRig;
+		_drillStatusByArea[it._key] = kDrillerNoRig;
 		if (it._key != 255) {
-			_areaScores[it._key] = (10 + _rnd->getRandomNumber(89)) * 1000;
+			_drillMaxScoreByArea[it._key] = (10 + _rnd->getRandomNumber(89)) * 1000;
 		}
+		_drillScoreByArea[it._key] = 0;
 	}
 
 	_gameStateVars[k8bitVariableEnergy] = _initialTankEnergy;
@@ -1066,8 +1073,9 @@ Common::Error DrillerEngine::saveGameStreamExtended(Common::WriteStream *stream,
 		if (it._key == 255)
 			continue;
 		stream->writeUint16LE(it._key);
-		stream->writeUint32LE(_drilledAreas[it._key]);
-		stream->writeUint32LE(_areaScores[it._key]);
+		stream->writeUint32LE(_drillStatusByArea[it._key]);
+		stream->writeUint32LE(_drillMaxScoreByArea[it._key]);
+		stream->writeUint32LE(_drillScoreByArea[it._key]);
 	}
 
 	return Common::kNoError;
@@ -1078,12 +1086,13 @@ Common::Error DrillerEngine::loadGameStreamExtended(Common::SeekableReadStream *
 		uint16 key = stream->readUint16LE();
 		assert(key != 255);
 		assert(_areaMap.contains(key));
-		_drilledAreas[key] = stream->readUint32LE();
-		if (_drilledAreas[key] == kDrillerNoRig)
+		_drillStatusByArea[key] = stream->readUint32LE();
+		if (_drillStatusByArea[key] == kDrillerNoRig)
 			if (drillDeployed(_areaMap[key]))
 				removeDrill(_areaMap[key]);
 
-		_areaScores[key] = stream->readUint32LE();
+		_drillMaxScoreByArea[key] = stream->readUint32LE();
+		_drillScoreByArea[key] = stream->readUint32LE();
 	}
 
 	return Common::kNoError;
