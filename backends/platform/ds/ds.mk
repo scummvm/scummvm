@@ -58,6 +58,8 @@ vpath %.png $(srcdir)
 	$(QUIET)$(MKDIR) $(*D)
 	$(QUIET_GRIT)$(GRIT) $< -fts -o$*
 
+backends/platform/ds/ds-graphics.o: backends/platform/ds/gfx/banner.o
+
 
 # Command to build libmad is:
 # ./configure --host=arm-elf --enable-speed --enable-sso -enable-fpm=arm CFLAGS='-specs=ds_arm9.specs -mthumb-interwork'
