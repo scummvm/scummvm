@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-12-21 20:27+0000\n"
-"PO-Revision-Date: 2022-12-20 16:11+0000\n"
+"PO-Revision-Date: 2022-12-22 17:32+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -5377,11 +5377,13 @@ msgstr ""
 
 #: engines/groovie/metaengine.cpp:97
 msgid "Slim Left/Right Hotspots"
-msgstr ""
+msgstr "Riduci aree interattive a sinistra/destra"
 
 #: engines/groovie/metaengine.cpp:98
 msgid "Shrinks the hotspots on the left and right sides for exiting puzzles"
 msgstr ""
+"Riduce le dimensioni degli hotspot ai lati dello schermo, usati per uscire "
+"dai puzzle"
 
 #: engines/groovie/metaengine.cpp:109
 msgid "Speedrun Mode"
