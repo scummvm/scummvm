@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-22 12:26+0000\n"
+"POT-Creation-Date: 2022-12-22 18:21+0000\n"
 "PO-Revision-Date: 2022-12-22 07:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -3757,15 +3757,15 @@ msgstr "3Dゲームで"
 msgid "Show SAF revoke permissions overlay button"
 msgstr "SAF権限の取り消しをボタン上に表示"
 
-#: backends/platform/ds/ds-graphics.cpp:268
+#: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
 msgstr "スケーリングしない"
 
-#: backends/platform/ds/ds-graphics.cpp:269
+#: backends/platform/ds/ds-graphics.cpp:282
 msgid "Hardware scale (fast, but low quality)"
 msgstr "ハードウェアスケーリング(高速・低画質)"
 
-#: backends/platform/ds/ds-graphics.cpp:270
+#: backends/platform/ds/ds-graphics.cpp:283
 msgid "Software scale (good quality, but slower)"
 msgstr "ソフトウェアスケーリング(低速・高画質)"
 

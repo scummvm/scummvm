@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-22 12:26+0000\n"
+"POT-Creation-Date: 2022-12-22 18:21+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -3888,15 +3888,15 @@ msgstr ""
 msgid "Show SAF revoke permissions overlay button"
 msgstr ""
 
-#: backends/platform/ds/ds-graphics.cpp:268
+#: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
 msgstr ""
 
-#: backends/platform/ds/ds-graphics.cpp:269
+#: backends/platform/ds/ds-graphics.cpp:282
 msgid "Hardware scale (fast, but low quality)"
 msgstr "Hardware bidezko eskala (arina, baina kalitate baxukoa)"
 
-#: backends/platform/ds/ds-graphics.cpp:270
+#: backends/platform/ds/ds-graphics.cpp:283
 msgid "Software scale (good quality, but slower)"
 msgstr "Software bidezko eskala (kalitate ona, baina geldoagoa)"
 

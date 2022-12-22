@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-22 12:26+0000\n"
+"POT-Creation-Date: 2022-12-22 18:21+0000\n"
 "PO-Revision-Date: 2022-12-22 07:34+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -3778,15 +3778,15 @@ msgstr "3D játékokban"
 msgid "Show SAF revoke permissions overlay button"
 msgstr "A SAF visszavonási engedélyek átfedés gomb megjelenítése"
 
-#: backends/platform/ds/ds-graphics.cpp:268
+#: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
 msgstr "Nem méretezett"
 
-#: backends/platform/ds/ds-graphics.cpp:269
+#: backends/platform/ds/ds-graphics.cpp:282
 msgid "Hardware scale (fast, but low quality)"
 msgstr "Hardveres átméretezés (gyors, alacsony minõség)"
 
-#: backends/platform/ds/ds-graphics.cpp:270
+#: backends/platform/ds/ds-graphics.cpp:283
 msgid "Software scale (good quality, but slower)"
 msgstr "Szoftveres átméretezés (jó minõség, lassú)"
 
