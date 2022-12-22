@@ -398,6 +398,22 @@ void MTIGameDataHandler::addPlugIns(ProjectDescription &projectDesc, const Commo
 	projectDesc.addPlugIn(standardPlugIn);
 }
 
+class AlbertGameDataHandler : public GameDataHandler {
+public:
+	AlbertGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc);
+
+	void addPlugIns(ProjectDescription &projectDesc, const Common::Array<FileIdentification> &files) override;
+};
+
+AlbertGameDataHandler::AlbertGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc) : GameDataHandler(game, gameDesc) {
+}
+
+void AlbertGameDataHandler::addPlugIns(ProjectDescription &projectDesc, const Common::Array<FileIdentification> &files) {
+	Common::SharedPtr<MTropolis::PlugIn> standardPlugIn = PlugIns::createStandard();
+	static_cast<Standard::StandardPlugIn *>(standardPlugIn.get())->getHacks().allowGarbledListModData = true;
+	projectDesc.addPlugIn(standardPlugIn);
+}
+
 class SPQRGameDataHandler : public GameDataHandler {
 public:
 	SPQRGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc);
@@ -611,7 +627,7 @@ static bool loadCursorsWin(FileIdentification &f, CursorGraphicCollection &curso
 
 	Common::SharedPtr<Common::WinResources> winRes(Common::WinResources::createFromEXE(stream.get()));
 	if (!winRes) {
-		warning("Couldn't load resources from PE file");
+		warning("Couldn't load resources from PE file '%s'", f.fileName.c_str());
 		return false;
 	}
 
@@ -832,6 +848,63 @@ const char *mtiRetailWinDirectories[] = {
 	nullptr
 };
 
+const ManifestFile albert1RetailWinDeFiles[] = {
+	{"Albert.exe",   MTFT_PLAYER},
+	{"album411.MPL", MTFT_MAIN},
+	{"album412.MPX", MTFT_ADDITIONAL},
+	{"BASIC.X95",    MTFT_SPECIAL},
+	{"BITMAP.R95",   MTFT_SPECIAL},
+	{"EXTRAS.R95",   MTFT_SPECIAL},
+	{"ROTATORK.R95", MTFT_SPECIAL},
+	{nullptr, MTFT_AUTO},
+};
+
+const char *albert1RetailWinDeDirectories[] = {
+	"ALBERT",
+	"ALBERT/DATA",
+	"ALBERT/DATA/RESOURCE",
+	"DATA",
+	"DATA/RESOURCE",
+	nullptr
+};
+
+const ManifestFile albert2RetailWinDeFiles[] = {
+	{"reise.exe",    MTFT_PLAYER},
+	{"voyage1.mpl",  MTFT_MAIN},
+	{"voyage2.mpx",  MTFT_ADDITIONAL},
+	{"BASIC.X95",    MTFT_SPECIAL},
+	{"BITMAP.R95",   MTFT_SPECIAL},
+	{"EXTRAS.R95",   MTFT_SPECIAL},
+	{"ROTATORK.R95", MTFT_SPECIAL},
+	{nullptr, MTFT_AUTO},
+};
+
+const char *albert2RetailWinDeDirectories[] = {
+	"REISE",
+	"REISE/DATA",
+	"REISE/DATA/RESOURCE",
+	"DATA",
+	"DATA/RESOURCE",
+	nullptr
+};
+
+const ManifestFile albert3RetailWinDeFiles[] = {
+	{"insel.exe",     MTFT_PLAYER},
+	{"ile_myst1.mpl", MTFT_MAIN},
+	{"ILEMYST2.MPX",  MTFT_ADDITIONAL},
+	{"BASIC.X95",     MTFT_SPECIAL},
+	{"BITMAP.R95",    MTFT_SPECIAL},
+	{"EXTRAS.R95",    MTFT_SPECIAL},
+	{"ROTATORK.R95",  MTFT_SPECIAL},
+	{nullptr, MTFT_AUTO},
+};
+
+const char *albert3RetailWinDeDirectories[] = {
+	"DATA",
+	"DATA/RESOURCE",
+	nullptr
+};
+
 const ManifestFile spqrRetailWinEnFiles[] = {
 	{"SPQR32.EXE", MTFT_PLAYER},
 	{"MCURSORS.C95", MTFT_EXTENSION},
@@ -974,6 +1047,30 @@ const Game games[] = {
 		nullptr,
 		nullptr,
 		GameDataHandlerFactory<MTIGameDataHandler>::create
+	},
+	// Uncle Albert's Magical Album - German - Windows
+	{
+		MTBOOT_ALBERT1_WIN_DE,
+		albert1RetailWinDeFiles,
+		albert1RetailWinDeDirectories,
+		nullptr,
+		GameDataHandlerFactory<AlbertGameDataHandler>::create
+	},
+	// Uncle Albert's Fabulous Voyage - German - Windows
+	{
+		MTBOOT_ALBERT2_WIN_DE,
+		albert2RetailWinDeFiles,
+		albert2RetailWinDeDirectories,
+		nullptr,
+		GameDataHandlerFactory<AlbertGameDataHandler>::create
+	},
+	// Uncle Albert's Mysterious Island - German - Windows
+	{
+		MTBOOT_ALBERT3_WIN_DE,
+		albert3RetailWinDeFiles,
+		albert3RetailWinDeDirectories,
+		nullptr,
+		GameDataHandlerFactory<AlbertGameDataHandler>::create
 	},
 	// SPQR: The Empire's Darkest Hour - Retail - Windows - English
 	{
