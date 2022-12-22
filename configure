@@ -3208,7 +3208,6 @@ if test -n "$_host"; then
 		3ds)
 			append_var DEFINES "-DDISABLE_FANCY_THEMES"
 			append_var DEFINES "-DDISABLE_HELP_STRINGS"
-			append_var DEFINES "-DDISABLE_SID"
 			append_var DEFINES "-DDISABLE_NES_APU"
 			_backend="3ds"
 			_build_scalers=no
@@ -3376,7 +3375,6 @@ if test -n "$_host"; then
 			append_var DEFINES "-DDISABLE_HELP_STRINGS"
 			append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 			append_var DEFINES "-DDISABLE_FANCY_THEMES"
-			append_var DEFINES "-DDISABLE_SID"
 			append_var DEFINES "-DDISABLE_NES_APU"
 			append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 			append_var DEFINES "-DSTREAM_AUDIO_FROM_DISK"
