@@ -68,7 +68,8 @@ MODULE_OBJS = \
 	smackerplayer.o \
 	sound.o \
 	sprite.o \
-	staticdata.o
+	staticdata.o \
+	subtitles.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_NEVERHOOD), DYNAMIC_PLUGIN)
