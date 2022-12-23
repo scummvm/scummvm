@@ -82,6 +82,8 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	}
 	else if (isAmiga() || isAtariST())
 		_viewArea = Common::Rect(36, 16, 284, 118);
+	else if (isSpectrum())
+		_viewArea = Common::Rect(58, 20, 266, 124);
 
 	_playerHeightNumber = 1;
 	_playerHeights.push_back(16);
@@ -406,6 +408,17 @@ void DrillerEngine::loadAssetsFullGame() {
 		load8bitBinary(&file, 0x29b3c, 16);
 		loadPalettes(&file, 0x296fa);
 		loadSoundsFx(&file, 0x30da6, 25);
+	} else if (isSpectrum()) {
+		loadBundledImages();
+		file.open("driller.zxspectrum.data");
+
+		if (!file.isOpen())
+			error("Failed to open driller.zxspectrum.data");
+
+		loadMessagesFixedSize(&file, 0x20e4, 14, 20);
+		loadFonts(&file, 0x62ca);
+		//loadGlobalObjects(&file, 0x3b42);
+		load8bitBinary(&file, 0x642c, 4);
 	} else if (_renderMode == Common::kRenderEGA) {
 		loadBundledImages();
 		file.open("DRILLE.EXE");
@@ -512,7 +525,7 @@ void DrillerEngine::drawUI() {
 	} else
 		return;
 
-	if (isDOS())
+	if (isDOS() || isSpectrum())
 		drawDOSUI(surface);
 	else if (isAmiga() || isAtariST())
 		drawAmigaAtariSTUI(surface);

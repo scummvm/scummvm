@@ -96,6 +96,7 @@ public:
 	bool isAmiga() { return _gameDescription->platform == Common::kPlatformAmiga; }
 	bool isAtariST() { return _gameDescription->platform == Common::kPlatformAtariST; }
 	bool isDOS() { return _gameDescription->platform == Common::kPlatformDOS; }
+	bool isSpectrum() { return _gameDescription->platform == Common::kPlatformZX; }
 
 	Common::Error run() override;
 

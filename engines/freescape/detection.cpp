@@ -39,6 +39,18 @@ static const ADGameDescription gameDescriptions[] = {
 		"driller",
 		"",
 		{
+			{"DRILLER.ZXSPECTRUM.DATA", 0, "396c1789a7da3db5058d18eb8d2d35a3", 37590},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformZX,
+		ADGF_TESTING,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"driller",
+		"",
+		{
 			{"DRILLER.EXE", 0, "cafc0ea0d3424640a7723af87f8bfc0b", 17427},
 			{"DRILLE.EXE", 0, "eb7e9e0acb72e30cf6e9ed20a6480e7a", 51944},
 			AD_LISTEND

@@ -41,9 +41,18 @@ byte dos_EGA_palette[16][3] = {
 	{0xff, 0xff, 0x55},
 	{0xff, 0xff, 0xff}};
 
+byte kDrillerZXPalettePinkBlueData[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x00, 0xaa, 0xaa},
+	{0xaa, 0x00, 0xaa},
+	{0xaa, 0xaa, 0xaa},
+};
+
 void FreescapeEngine::loadColorPalette() {
 	if (_renderMode == Common::kRenderEGA) {
 		_gfx->_palette = (byte *)&dos_EGA_palette;
+	} else if (_renderMode == Common::kRenderCGA) {
+		_gfx->_palette = (byte *)&kDrillerZXPalettePinkBlueData;
 	} else if (_renderMode == Common::kRenderCGA) {
 		_gfx->_palette = nullptr; // palette depends on the area
 	} else if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST) {

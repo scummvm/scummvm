@@ -49,6 +49,8 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 		_renderMode = Common::kRenderAmiga;
 	} else if (isAtariST()) {
 		_renderMode = Common::kRenderAtariST;
+	} else if (isSpectrum()) {
+		_renderMode = Common::kRenderCGA;
 	}
 
 	_variant = gd->flags;
@@ -511,7 +513,7 @@ Common::Error FreescapeEngine::run() {
 	}
 
 	loadBorder(); // Border is load unmodified
-	if (_border && isDOS()) {
+	if (_border && (isDOS() || isSpectrum())) {
 		if (saveSlot == -1) {
 			drawBorder();
 			_gfx->flipBuffer();
@@ -561,7 +563,8 @@ Common::Error FreescapeEngine::run() {
 }
 
 void FreescapeEngine::loadBorder() {
-	_borderTexture = _gfx->createTexture(_border);
+	if (_border)
+		_borderTexture = _gfx->createTexture(_border);
 }
 
 void FreescapeEngine::processBorder() {
@@ -663,7 +666,7 @@ void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int 
 	Common::String ustr = str;
 	ustr.toUppercase();
 
-	if (isDOS()) {
+	if (isDOS() || isSpectrum()) {
 		for (uint32 c = 0; c < ustr.size(); c++) {
 			assert(ustr[c] >= 32);
 			for (int j = 0; j < 6; j++) {
