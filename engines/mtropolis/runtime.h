@@ -2099,6 +2099,7 @@ public:
 class Structural : public RuntimeObject, public IModifierContainer, public IMessageConsumer, public Debuggable {
 public:
 	Structural();
+	explicit Structural(Runtime *runtime);
 	virtual ~Structural();
 
 	bool isStructural() const override;
@@ -2165,6 +2166,8 @@ protected:
 
 	virtual void onPauseStateChanged();
 
+	Runtime *getRuntime() const;
+
 	Structural *_parent;
 	Common::Array<Common::SharedPtr<Structural> > _children;
 	Common::Array<Common::SharedPtr<Modifier> > _modifiers;
@@ -2184,6 +2187,9 @@ protected:
 	int32 _flushPriority;
 
 	Common::SharedPtr<StructuralHooks> _hooks;
+
+private:
+	Runtime *_runtime;
 };
 
 struct ProjectPresentationSettings {
@@ -2493,8 +2499,6 @@ private:
 	Common::SharedPtr<KeyboardEventSignaller> _keyboardEventSignaller;
 
 	SubtitleTables _subtitles;
-
-	Runtime *_runtime;
 };
 
 class Section : public Structural {
@@ -2671,6 +2675,9 @@ public:
 	virtual bool isTextLabel() const;
 
 	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	bool isVisible() const;
 	void setVisible(Runtime *runtime, bool visible);

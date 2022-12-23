@@ -2935,7 +2935,10 @@ void StructuralHooks::onSetPosition(Runtime *runtime, Structural *structural, Co
 ProjectPresentationSettings::ProjectPresentationSettings() : width(640), height(480), bitsPerPixel(8) {
 }
 
-Structural::Structural() : _parent(nullptr), _paused(false), _loop(false), _flushPriority(0) {
+Structural::Structural() : Structural(nullptr) {
+}
+
+Structural::Structural(Runtime *runtime) : _parent(nullptr), _paused(false), _loop(false), _flushPriority(0), _runtime(runtime) {
 }
 
 Structural::~Structural() {
@@ -3239,6 +3242,10 @@ Structural *Structural::findPrevSibling() const {
 	return nullptr;
 }
 
+Runtime *Structural::getRuntime() const {
+	return _runtime;
+}
+
 void Structural::setParent(Structural *parent) {
 	_parent = parent;
 }
@@ -3281,6 +3288,8 @@ void Structural::materializeSelfAndDescendents(Runtime *runtime, ObjectLinkingSc
 	setRuntimeGUID(runtime->allocateRuntimeGUID());
 
 	materializeDescendents(runtime, outerScope);
+
+	_runtime = runtime;
 }
 
 void Structural::materializeDescendents(Runtime *runtime, ObjectLinkingScope *outerScope) {
@@ -6703,7 +6712,7 @@ Project::AssetDesc::AssetDesc() : typeCode(0), id(0) {
 }
 
 Project::Project(Runtime *runtime)
-	: _runtime(runtime), _projectFormat(Data::kProjectFormatUnknown), _isBigEndian(false),
+	: Structural(runtime), _projectFormat(Data::kProjectFormatUnknown), _isBigEndian(false),
 	  _haveGlobalObjectInfo(false), _haveProjectStructuralDef(false), _playMediaSignaller(new PlayMediaSignaller()),
 	  _keyboardEventSignaller(new KeyboardEventSignaller()) {
 }
@@ -7022,7 +7031,7 @@ Common::SharedPtr<SegmentUnloadSignaller> Project::notifyOnSegmentUnload(int seg
 }
 
 void Project::onPostRender() {
-	_playMediaSignaller->playMedia(_runtime, this);
+	_playMediaSignaller->playMedia(getRuntime(), this);
 }
 
 Common::SharedPtr<PlayMediaSignaller> Project::notifyOnPlayMedia(IPlayMediaSignalReceiver *receiver) {
@@ -7245,7 +7254,7 @@ Common::SharedPtr<Modifier> Project::loadModifierObject(ModifierLoaderContext &l
 		error("Modifier object failed to load");
 
 	uint32 guid = modifier->getStaticGUID();
-	const Common::HashMap<uint32, Common::SharedPtr<ModifierHooks> > &hooksMap = _runtime->getHacks().modifierHooks;
+	const Common::HashMap<uint32, Common::SharedPtr<ModifierHooks> > &hooksMap = getRuntime()->getHacks().modifierHooks;
 	Common::HashMap<uint32, Common::SharedPtr<ModifierHooks> >::const_iterator hooksIt = hooksMap.find(guid);
 	if (hooksIt != hooksMap.end()) {
 		modifier->setHooks(hooksIt->_value);
@@ -7474,11 +7483,11 @@ void Project::loadContextualObject(size_t streamIndex, ChildLoaderStack &stack, 
 					error("No element factory defined for structural object");
 				}
 
-				ElementLoaderContext elementLoaderContext(_runtime, streamIndex);
+				ElementLoaderContext elementLoaderContext(getRuntime(), streamIndex);
 				Common::SharedPtr<Element> element = elementFactory->createElement(elementLoaderContext, dataObject);
 
 				uint32 guid = element->getStaticGUID();
-				const Common::HashMap<uint32, Common::SharedPtr<StructuralHooks> > &hooksMap = _runtime->getHacks().structuralHooks;
+				const Common::HashMap<uint32, Common::SharedPtr<StructuralHooks> > &hooksMap = getRuntime()->getHacks().structuralHooks;
 				Common::HashMap<uint32, Common::SharedPtr<StructuralHooks> >::const_iterator hooksIt = hooksMap.find(guid);
 				if (hooksIt != hooksMap.end()) {
 					element->setHooks(hooksIt->_value);
@@ -7841,6 +7850,29 @@ VThreadState VisualElement::consumeCommand(Runtime *runtime, const Common::Share
 	}
 
 	return Element::consumeCommand(runtime, msg);
+}
+
+bool VisualElement::respondsToEvent(const Event &evt) const {
+	if (Event(EventIDs::kAuthorMessage, 13).respondsTo(evt)) {
+		if (getRuntime()->getHacks().mtiSceneReturnHack)
+			return true;
+	}
+
+	return Element::respondsToEvent(evt);
+}
+
+VThreadState VisualElement::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (Event(EventIDs::kAuthorMessage, 13).respondsTo(msg->getEvent())) {
+		if (getRuntime()->getHacks().mtiSceneReturnHack) {
+			assert(this->getParent());
+			assert(this->getParent()->isSubsection());
+			runtime->addSceneStateTransition(HighLevelSceneTransition(this->getSelfReference().lock().staticCast<Structural>(), HighLevelSceneTransition::kTypeChangeToScene, false, false));
+
+			return kVThreadReturn;
+		}
+	}
+
+	return Element::consumeMessage(runtime, msg);
 }
 
 bool VisualElement::isMouseInsideDrawableArea(int32 relativeX, int32 relativeY) const {

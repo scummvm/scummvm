@@ -173,8 +173,6 @@ private:
 	Common::SharedPtr<SubtitlePlayer> _subtitles;
 
 	Common::Array<int> _damagedFrames;
-
-	Runtime *_runtime;
 };
 
 class ImageElement : public VisualElement {
@@ -207,8 +205,6 @@ private:
 	Common::SharedPtr<CachedImage> _cachedImage;
 
 	Common::String _text;	// ...???
-
-	Runtime *_runtime;
 };
 
 class MToonElement : public VisualElement, public IPlayMediaSignalReceiver {
@@ -287,7 +283,6 @@ private:
 	uint32 _celStartTimeMSec;
 	bool _isPlaying;	// Is actually rolling media, this is only set by playMedia because it needs to start after scene transition
 
-	Runtime *_runtime;
 	Common::SharedPtr<Graphics::ManagedSurface> _renderSurface;
 	uint32 _renderedFrame;
 
@@ -361,8 +356,6 @@ private:
 	// If you need to render again, recreate the surface.  If you want to change
 	// this behavior, please add a flag indicating that it is from the asset.
 	Common::SharedPtr<Graphics::ManagedSurface> _renderedText;
-
-	Runtime *_runtime;
 };
 
 class SoundElement : public NonVisualElement, public IPlayMediaSignalReceiver {
@@ -430,8 +423,6 @@ private:
 	Common::SharedPtr<PlayMediaSignaller> _playMediaSignaller;
 
 	Common::SharedPtr<SubtitlePlayer> _subtitlePlayer;
-
-	Runtime *_runtime;
 };
 
 } // End of namespace MTropolis

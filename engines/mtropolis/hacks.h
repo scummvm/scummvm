@@ -52,6 +52,7 @@ struct Hacks {
 	bool removeQuickTimeEdits;
 	bool ignoreMToonMaintainRateFlag;
 	bool mtiVariableReferencesHack;
+	bool mtiSceneReturnHack;
 
 	uint midiVolumeScale;	// 256 = 1.0
 

@@ -42,6 +42,7 @@ Hacks::Hacks() {
 	minTransitionDuration = 0;
 	ignoreMToonMaintainRateFlag = false;
 	mtiVariableReferencesHack = false;
+	mtiSceneReturnHack = false;
 }
 
 Hacks::~Hacks() {
@@ -1044,6 +1045,11 @@ void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
 	// Haven't figured out anything that would explain why it would reference the variables in the compound
 	// modifier.  Probably some quirk of early-version mTropolis.
 	hacks.mtiVariableReferencesHack = true;
+
+	// MTI returns from the menu by transitioning to a "return" scene that sends a return message to the target
+	// scene, which is supposed to activate a scene transtion modifier in the scene that transitions to itself.
+	// This doesn't work because the modifier is gone when the scene is unloaded.
+	hacks.mtiSceneReturnHack = true;
 }
 
 } // End of namespace HackSuites
