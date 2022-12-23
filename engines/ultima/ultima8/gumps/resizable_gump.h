@@ -32,8 +32,8 @@ namespace Ultima8 {
  * An example of such would be the Console and the GameMap gumps
  */
 class ResizableGump : public Gump {
-private:
-	Gump::Position _dragPosition;
+protected:
+	Gump::Position _dragPosition, _mousePosition;
 	int32 _minWidth;
 	int32 _minHeight;
 
@@ -47,8 +47,15 @@ public:
 		_minHeight = minHeight;
 	}
 
+	Gump *onMouseMotion(int32 mx, int32 my) override;
+	void onMouseLeft() override;
+
 	bool onDragStart(int32 mx, int32 my) override;
+	void onDragStop(int32 mx, int32 my) override;
 	void onDrag(int32 mx, int32 my) override;
+
+private:
+	Gump::Position getPosition(int32 mx, int32 my);
 };
 
 } // End of namespace Ultima8

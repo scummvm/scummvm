@@ -33,6 +33,9 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MiniMapGump)
 
+static const uint32 NORMAL_COLOR = 0xFFFFAF00;
+static const uint32 HIGHLIGHT_COLOR = 0xFFFFCF00;
+
 MiniMapGump::MiniMapGump(int x, int y) : ResizableGump(x, y, 120, 120), _minimaps(), _ax(0), _ay(0) {
 	setMinSize(60, 60);
 }
@@ -106,11 +109,15 @@ void MiniMapGump::clear() {
 }
 
 void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
-	// Draw the yellow border
-	surf->Fill32(0xFFFFAF00, 0, 0, _dims.width(), 1);
-	surf->Fill32(0xFFFFAF00, 0, 1, 1, _dims.height());
-	surf->Fill32(0xFFFFAF00, 1, _dims.bottom - 1, _dims.width(), 1);
-	surf->Fill32(0xFFFFAF00, _dims.right - 1, 1, 1, _dims.height());
+	uint32 color = NORMAL_COLOR;
+	if (_dragPosition != Gump::CENTER || _mousePosition != Gump::CENTER)
+		color = HIGHLIGHT_COLOR;
+
+	// Draw the border
+	surf->Fill32(color, 0, 0, _dims.width(), 1);
+	surf->Fill32(color, 0, 1, 1, _dims.height());
+	surf->Fill32(color, 1, _dims.bottom - 1, _dims.width(), 1);
+	surf->Fill32(color, _dims.right - 1, 1, 1, _dims.height());
 
 	// Dimensions minus border
 	Common::Rect dims(_dims.left, _dims.top, _dims.right, _dims.bottom);
@@ -162,10 +169,10 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	int32 ay = _ay - sy;
 
 	// Paint the avatar position marker
-	surf->Fill32(0xFFFFFF00, 1 + ax - 2, 1 + ay + 0, 2, 1);
-	surf->Fill32(0xFFFFFF00, 1 + ax + 0, 1 + ay - 2, 1, 2);
-	surf->Fill32(0xFFFFFF00, 1 + ax + 1, 1 + ay + 0, 2, 1);
-	surf->Fill32(0xFFFFFF00, 1 + ax + 0, 1 + ay + 1, 1, 2);
+	surf->Fill32(color, 1 + ax - 2, 1 + ay + 0, 2, 1);
+	surf->Fill32(color, 1 + ax + 0, 1 + ay - 2, 1, 2);
+	surf->Fill32(color, 1 + ax + 1, 1 + ay + 0, 2, 1);
+	surf->Fill32(color, 1 + ax + 0, 1 + ay + 1, 1, 2);
 }
 
 Gump *MiniMapGump::onMouseDown(int button, int32 mx, int32 my) {
