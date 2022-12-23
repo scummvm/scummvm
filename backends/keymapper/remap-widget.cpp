@@ -114,29 +114,35 @@ void RemapWidget::reflowActionWidgets() {
 	Keymap *previousKeymap = nullptr;
 
 	for (uint i = 0; i < _actions.size(); i++) {
-		uint x;
-
 		ActionRow &row = _actions[i];
 
 		if (previousKeymap != row.keymap) {
 			previousKeymap = row.keymap;
 
 			// Insert a keymap separator
-			x = 2 * spacing + keyButtonWidth;
+			uint descriptionX = 2 * spacing + keyButtonWidth;
+			uint resetX = getWidth() - spacing - resetButtonWidth;
 
 			KeymapTitleRow keymapTitle = _keymapSeparators[row.keymap];
 			if (keymapTitle.descriptionText) {
-				int descriptionWidth = getWidth() - x - spacing - resetButtonWidth - spacing;
-				descriptionWidth = MAX(0, descriptionWidth);
+				int descriptionWidth = resetX - descriptionX - spacing;
+				int descriptionFullWidth = g_gui.getStringWidth(keymapTitle.descriptionText->getLabel());
 
-				keymapTitle.descriptionText->resize(x, y + textYOff, descriptionWidth, kLineHeight, false);
-				keymapTitle.resetButton->resize(x + descriptionWidth, y, resetButtonWidth, buttonHeight, false);
+				if (descriptionWidth < descriptionFullWidth) {
+					descriptionX -= (descriptionFullWidth - descriptionWidth);
+					descriptionWidth = descriptionFullWidth;
+				} else if (descriptionWidth < 0) {
+					descriptionWidth = 0;
+				}
+
+				keymapTitle.descriptionText->resize(descriptionX, y + textYOff, descriptionWidth, kLineHeight, false);
+				keymapTitle.resetButton->resize(resetX, y, resetButtonWidth, buttonHeight, false);
 			}
 
 			y += buttonHeight + spacing;
 		}
 
-		x = spacing;
+		uint x = spacing;
 
 		row.keyButton->resize(x, y, keyButtonWidth, buttonHeight, false);
 
