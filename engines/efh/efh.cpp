@@ -296,7 +296,6 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	_drawHeroOnMapFl = true;
 	_drawMonstersOnMapFl = true;
 	_word2C87A = false;
-	_dbgForceDisplayUpperRightBorder = false;
 	_dbgForceMonsterBlock = false;
 	_ongoingFightFl = false;
 	_statusMenuActive = false;
@@ -341,6 +340,8 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 
 	// If requested, load a savegame instead of showing the intro
 	_loadSaveSlot = -1;
+	_saveAuthorized = false;
+
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
 		if (saveSlot >= 0 && saveSlot <= 999)
@@ -743,6 +744,8 @@ void EfhEngine::initEngine() {
 		loadGameState(_loadSaveSlot);
 		_loadSaveSlot = -1;
 	}
+
+	_saveAuthorized = true;
 	_engineInitPending = false;
 }
 
@@ -1010,17 +1013,9 @@ void EfhEngine::drawScreen() {
 		if (!_largeMapFlag) {
 			if (_fullPlaceId != 0xFF)
 				displaySmallMap(_mapPosX, _mapPosY);
-
-			// TODO: When refactoring : Always false, to be removed
-			if (_dbgForceDisplayUpperRightBorder)
-				drawUpperRightBorders();
 		} else {
 			if (_techId != 0xFF)
 				displayLargeMap(_mapPosX, _mapPosY);
-
-			// TODO: When refactoring : Always false, to be removed
-			if (_dbgForceDisplayUpperRightBorder)
-				drawUpperRightBorders();
 		}
 		if (counter == 0)
 			displayFctFullScreen();
@@ -1158,6 +1153,7 @@ bool EfhEngine::isCharacterATeamMember(int16 id) {
 
 void EfhEngine::handleWinSequence() {
 	debugC(1, kDebugEngine, "handleWinSequence");
+	_saveAuthorized = false;
 
 	saveAnimImageSetId();
 	findMapFile(18);
@@ -1497,7 +1493,7 @@ int16 EfhEngine::sub151FD(int16 posX, int16 posY) {
 }
 
 bool EfhEngine::isPosOutOfMap(int16 mapPosX, int16 mapPosY) {
-	debug("isPosOutOfMap %d %d", mapPosX, mapPosY);
+	debugC(6, kDebugEngine, "isPosOutOfMap %d %d", mapPosX, mapPosY);
 
 	int16 maxMapBlocks = _largeMapFlag ? 63 : 23;
 
@@ -1678,6 +1674,8 @@ void EfhEngine::resetGame() {
 bool EfhEngine::handleDeathMenu() {
 	debug("handleDeathMenu");
 
+	_saveAuthorized = false;
+
 	displayAnimFrames(20, true);
 	_imageSetSubFilesIdx = 213;
 	drawScreen();
@@ -1709,9 +1707,13 @@ bool EfhEngine::handleDeathMenu() {
 		switch (input) {
 		case Common::KEYCODE_l:
 			//loadEfhGame();
-			//TODO : saveEfhGame opens the GUI save/load screen. It shouldn't bepossible to save at this point
+			//TODO:
+			//SaveEfhGame opens the GUI save/load screen. It's not possible to save at this point, which is fine, but it's possible to close the screen without loading.
+			//Maybe adding the _saveAuthorized flag in the savegame would do the trick and could then be used tp keep found at false and loop on the input selection?
+			//like: found = _saveAuthorized
 			saveEfhGame();
 			found = true;
+			_saveAuthorized = true;
 			break;
 		case Common::KEYCODE_q:
 			_shouldQuit = true;
@@ -1721,8 +1723,9 @@ bool EfhEngine::handleDeathMenu() {
 			loadEfhGame();
 			resetGame();
 			found = true;
+			_saveAuthorized = true;
 			break;
-		case Common::KEYCODE_x:
+		case Common::KEYCODE_x: // mysterious and unexpected keycode ?
 			found = true;
 			break;
 		default:
@@ -3414,8 +3417,8 @@ void EfhEngine::displayStatusMenu(int16 windowId) {
 	setTextColorRed();
 }
 
-void EfhEngine::countRightWindowItems(int16 menuId, int16 charId) {
-	debugC(6, kDebugEngine, "countRightWindowItems %d %d", menuId, charId);
+void EfhEngine::prepareStatusRightWindowIndexes(int16 menuId, int16 charId) {
+	debugC(6, kDebugEngine, "prepareStatusRightWindowIndexes %d %d", menuId, charId);
 
 	int16 maxId = 0;
 	int16 minId;
@@ -3455,21 +3458,21 @@ void EfhEngine::countRightWindowItems(int16 menuId, int16 charId) {
 }
 
 int16 EfhEngine::getXPLevel(int32 xp) {
-	debug("getXPLevel %ld", xp);
+	debugC(6, kDebugEngine, "getXPLevel %ld", xp);
 
 	int16 level = 0;
-	int16 var6 = 1500;
+	int16 nextLevelXP = 1500;
 
 	int32 wrkXp = xp;
 
 	while (wrkXp > 0) {
-		wrkXp -= var6;
+		wrkXp -= nextLevelXP;
 		if (wrkXp >= 0)
 			++level;
 
-		var6 += 1500;
-		if (var6 > 15000)
-			var6 = 15000;
+		nextLevelXP += 1500;
+		if (nextLevelXP > 15000)
+			nextLevelXP = 15000;
 	}
 
 	return level;
@@ -3609,7 +3612,7 @@ void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 cha
 }
 
 void EfhEngine::displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 npcId) {
-	debug("displayStatusMenuActions %d %d %d", menuId, curMenuLine, npcId);
+	debugC(6, kDebugEngine, "displayStatusMenuActions %d %d %d", menuId, curMenuLine, npcId);
 
 	drawColoredRect(144, 15, 310, 184, 0);
 	displayCenteredString("(ESCape Aborts)", 144, 310, 175);
@@ -3657,12 +3660,12 @@ void EfhEngine::displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 
 	}
 }
 
-void EfhEngine::unk_StatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool unusedFl, bool refreshFl) {
-	debug("unk_StatusMenu %d %d %d %d %s", windowId, menuId, curMenuLine, charId, refreshFl ? "True" : "False");
+void EfhEngine::prepareStatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool unusedFl, bool refreshFl) {
+	debugC(6, kDebugEngine, "prepareStatusMenu %d %d %d %d %s", windowId, menuId, curMenuLine, charId, refreshFl ? "True" : "False");
 
 	displayStatusMenu(windowId);
 
-	countRightWindowItems(menuId, charId);
+	prepareStatusRightWindowIndexes(menuId, charId);
 	displayStatusMenuActions(menuId, curMenuLine, charId);
 
 	if (refreshFl)
@@ -3674,7 +3677,7 @@ void EfhEngine::sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMe
 
 	for (int counter = 0; counter < 2; ++counter) {
 		displayWindow(_menuBuf, 0, 0, _hiResImageBuf);
-		unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, false);
+		prepareStatusMenu(windowId, menuId, curMenuLine, charId, true, false);
 
 		if (counter == 0)
 			displayFctFullScreen();
@@ -3687,7 +3690,7 @@ int16 EfhEngine::displayString_3(Common::String str, bool animFl, int16 charId, 
 	int16 retVal = 0;
 
 	for (uint counter = 0; counter < 2; ++counter) {
-		unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, false);
+		prepareStatusMenu(windowId, menuId, curMenuLine, charId, true, false);
 		displayWindow(_windowWithBorderBuf, 19, 113, _hiResImageBuf);
 
 		if (counter == 0) {
@@ -4393,7 +4396,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 
 	for (;;) {
 		if (windowId != -1)
-			unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, true);
+			prepareStatusMenu(windowId, menuId, curMenuLine, charId, true, true);
 		else
 			windowId = 0;
 
@@ -4474,7 +4477,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 						_menuDepth = 0;
 						curMenuLine = -1;
 						menuId = 9;
-						unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, true);
+						prepareStatusMenu(windowId, menuId, curMenuLine, charId, true, true);
 					} else {
 						selectedLine = curMenuLine;
 						var10 = true;
@@ -4485,7 +4488,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				_menuDepth = 0;
 				curMenuLine = -1;
 				menuId = 9;
-				unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, true);
+				prepareStatusMenu(windowId, menuId, curMenuLine, charId, true, true);
 				break;
 			case Common::KEYCODE_2:
 			case Common::KEYCODE_6:
@@ -4530,9 +4533,9 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			}
 
 			if (curMenuLine == -1)
-				unk_StatusMenu(windowId, menuId, curMenuLine, charId, false, true);
+				prepareStatusMenu(windowId, menuId, curMenuLine, charId, false, true);
 			else
-				unk_StatusMenu(windowId, menuId, curMenuLine, charId, true, true);
+				prepareStatusMenu(windowId, menuId, curMenuLine, charId, true, true);
 
 		} while (!var10);
 
