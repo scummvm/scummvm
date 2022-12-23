@@ -38,7 +38,7 @@ bool EfhEngine::canLoadGameStateCurrently() {
 }
 
 bool EfhEngine::canSaveGameStateCurrently() {
-	return true;
+	return _saveAuthorized;
 }
 
 Common::Error EfhEngine::loadGameState(int slot) {

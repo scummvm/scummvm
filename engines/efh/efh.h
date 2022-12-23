@@ -279,6 +279,7 @@ private:
 
 	Common::Platform _platform;
 	int _loadSaveSlot;
+	bool _saveAuthorized;
 
 	void initialize();
 	Common::KeyCode playSong(uint8 *buffer);
@@ -376,12 +377,12 @@ private:
 	void sub1D8C2(int16 charId, int16 damage);
 	void displayMenuItemString(int16 menuBoxId, int16 thisBoxId, int16 minX, int16 maxX, int16 minY, const char *str);
 	void displayStatusMenu(int16 windowId);
-	void countRightWindowItems(int16 menuId, int16 charId);
+	void prepareStatusRightWindowIndexes(int16 menuId, int16 charId);
 	int16 getXPLevel(int32 xp);
 	void displayCharacterSummary(int16 curMenuLine, int16 npcId);
 	void displayCharacterInformationOrSkills(int16 curMenuLine, int16 npcId);
 	void displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 npcId);
-	void unk_StatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool unusedFl, bool refreshFl);
+	void prepareStatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool unusedFl, bool refreshFl);
 	void sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
 	int16 displayString_3(Common::String str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
 	bool isItemCursed(int16 itemId);
@@ -589,7 +590,6 @@ private:
 	uint16 _tempTextDelay;
 	uint8 *_tempTextPtr;
 	// TODO: Remove those useless debug flags
-	bool _dbgForceDisplayUpperRightBorder; // Original debug flag? Always false.
 	bool _dbgForceMonsterBlock; // Original debug flag? Always false.
 
 	bool _ongoingFightFl;
