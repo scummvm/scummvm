@@ -319,7 +319,6 @@ private:
 	void displayMiddleLeftTempText(uint8 *impArray, bool flag);
 	void sub15A28(int16 arg0, int16 arg2);
 	void sub2455E(int16 arg0, int16 arg1, int16 arg2);
-	int16 sub1C219(Common::String str, int16 menuType, int16 displayOption, bool displayTeamWindowFl);
 	int16 sub151FD(int16 posX, int16 posY);
 	bool isPosOutOfMap(int16 mapPosX, int16 mapPosY);
 	void goSouth();
@@ -332,7 +331,6 @@ private:
 	void goSouthWest();
 	void handleNewRoundEffects();
 	void resetGame();
-	bool handleDeathMenu();
 	void computeMapAnimation();
 	void handleAnimations();
 	int8 sub16B08(int16 monsterId);
@@ -363,27 +361,8 @@ private:
 	void sub1BE9A(int16 monsterId);
 	int16 getTeamMonsterAnimId();
 	int16 countMonsterGroupMembers(int16 monsterGroup);
-	void sub1C4CA(bool WhiteFl);
-	void displayCombatMenu(int16 charId);
-	void drawCombatScreen(int16 charId, bool whiteFl, bool forceDrawFl);
-	int16 sub1DEC8(int16 groupNumber);
-	int16 getCharacterScore(int16 charId, int16 itemId);
-	bool checkSpecialItemsOnCurrentPlace(int16 itemId);
-	bool hasAdequateDefense(int16 monsterId, uint8 attackType);
-	bool hasAdequateDefense_2(int16 charId, uint8 attackType);
-	bool characterSearchesMonsterCorpse(int16 charId, int16 monsterId);
-	void getXPAndSearchCorpse(int16 charId, Common::String namePt1, Common::String namePt2, int16 monsterId);
-	void addReactionText(int16 id);
 	void sub1D8C2(int16 charId, int16 damage);
-	void displayMenuItemString(int16 menuBoxId, int16 thisBoxId, int16 minX, int16 maxX, int16 minY, const char *str);
-	void displayStatusMenu(int16 windowId);
-	void prepareStatusRightWindowIndexes(int16 menuId, int16 charId);
 	int16 getXPLevel(int32 xp);
-	void displayCharacterSummary(int16 curMenuLine, int16 npcId);
-	void displayCharacterInformationOrSkills(int16 curMenuLine, int16 npcId);
-	void displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 npcId);
-	void prepareStatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool unusedFl, bool refreshFl);
-	void sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
 	int16 displayString_3(Common::String str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
 	bool isItemCursed(int16 itemId);
 	bool hasObjectEquipped(int16 charId, int16 objectId);
@@ -415,6 +394,16 @@ private:
 	void getDeathTypeDescription(int16 attackerId, int16 victimId);
 	int16 sub1C956(int16 charId, int16 unkFied18Val, bool arg4);
 	bool sub1CB27();
+	void drawCombatScreen(int16 charId, bool whiteFl, bool forceDrawFl);
+	void getXPAndSearchCorpse(int16 charId, Common::String namePt1, Common::String namePt2, int16 monsterId);
+	bool characterSearchesMonsterCorpse(int16 charId, int16 monsterId);
+	void addReactionText(int16 id);
+	void sub1C4CA(bool WhiteFl);
+	int16 sub1DEC8(int16 groupNumber);
+	int16 getCharacterScore(int16 charId, int16 itemId);
+	bool checkSpecialItemsOnCurrentPlace(int16 itemId);
+	bool hasAdequateDefense(int16 monsterId, uint8 attackType);
+	bool hasAdequateDefense_2(int16 charId, uint8 attackType);
 
 	// Files
 	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);
@@ -465,6 +454,19 @@ private:
 	void displayCharAtTextPos(char character);
 	void displayWindow(uint8 *buffer, int16 posX, int16 posY, uint8 *dest);
 	void displayColoredMenuBox(int16 minX, int16 minY, int16 maxX, int16 maxY, int16 color);
+
+	// Menu
+	int16 sub1C219(Common::String str, int16 menuType, int16 displayOption, bool displayTeamWindowFl);
+	bool handleDeathMenu();
+	void displayCombatMenu(int16 charId);
+	void displayMenuItemString(int16 menuBoxId, int16 thisBoxId, int16 minX, int16 maxX, int16 minY, const char *str);
+	void displayStatusMenu(int16 windowId);
+	void prepareStatusRightWindowIndexes(int16 menuId, int16 charId);
+	void displayCharacterSummary(int16 curMenuLine, int16 npcId);
+	void displayCharacterInformationOrSkills(int16 curMenuLine, int16 npcId);
+	void displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 npcId);
+	void prepareStatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool unusedFl, bool refreshFl);
+	void sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
 
 	// Savegames
 	void synchronize(Common::Serializer &s);
