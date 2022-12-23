@@ -688,6 +688,7 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 }
 
 void DrillerEngine::drawInfoMenu() {
+	_savedScreen = _gfx->getScreenshot();
 
 	uint32 color = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 	Graphics::Surface *surface = new Graphics::Surface();
@@ -742,9 +743,10 @@ void DrillerEngine::drawInfoMenu() {
 	drawStringInSurface(Common::String::format("%13s : %d", "total sectors", 18), 84, 73, front, black, surface);
 	drawStringInSurface(Common::String::format("%13s : %d", "safe sectors", _gameStateVars[32]), 84, 81, front, black, surface);
 
+	drawStringInSurface("l-load s-save esc-terminate", 53, 97, front, black, surface);
+	drawStringInSurface("t-toggle sound on/off", 76, 105, front, black, surface);
+
 	_uiTexture->update(surface);
-
-
 	_gfx->setViewport(_fullscreenViewArea);
 	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
 	_gfx->setViewport(_viewArea);
@@ -752,8 +754,41 @@ void DrillerEngine::drawInfoMenu() {
 	_gfx->flipBuffer();
 	g_system->updateScreen();
 
-	g_system->delayMillis(10000);
+	Common::Event event;
+	bool cont = true;
+	while (!shouldQuit() && cont) {
+		while (g_system->getEventManager()->pollEvent(event)) {
 
+			// Events
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_l) {
+					_gfx->setViewport(_fullscreenViewArea);
+					loadGameDialog();
+					_gfx->setViewport(_viewArea);
+				} else if (event.kbd.keycode == Common::KEYCODE_s) {
+					_gfx->setViewport(_fullscreenViewArea);
+					saveGameDialog();
+					_gfx->setViewport(_viewArea);
+				} else if (event.kbd.keycode == Common::KEYCODE_t) {
+					// TODO
+				} else
+					cont = false;
+				break;
+			case Common::EVENT_SCREEN_CHANGED:
+				_gfx->computeScreenViewport();
+				// TODO: properly refresh screen
+				break;
+
+			default:
+				break;
+			}
+		}
+		g_system->delayMillis(10);
+	}
+
+	_savedScreen->free();
+	delete _savedScreen;
 	surface->free();
 	delete surface;
 }
