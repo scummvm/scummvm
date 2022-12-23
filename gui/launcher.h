@@ -63,6 +63,11 @@ struct GroupingMode {
 	const char *description;
 
 	/**
+	 * A short human-readable description for the mode.
+	 */
+	const char *lowresDescription;
+
+	/**
 	 * ID of he mode.
 	 */
 	GroupingMethod id;
