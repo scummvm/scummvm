@@ -225,7 +225,9 @@ public:
 		BOTTOM_LEFT = 4,
 		BOTTOM_RIGHT = 5,
 		TOP_CENTER = 6,
-		BOTTOM_CENTER = 7
+		BOTTOM_CENTER = 7,
+		LEFT_CENTER = 8,
+		RIGHT_CENTER = 9
 	};
 
 	//! Moves this gump to a relative location on the parent gump

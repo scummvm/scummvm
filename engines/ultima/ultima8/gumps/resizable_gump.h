@@ -32,9 +32,23 @@ namespace Ultima8 {
  * An example of such would be the Console and the GameMap gumps
  */
 class ResizableGump : public Gump {
+private:
+	Gump::Position _dragPosition;
+	int32 _minWidth;
+	int32 _minHeight;
+
 public:
+	ResizableGump();
 	ResizableGump(int x, int y, int width, int height);
 	~ResizableGump() override;
+
+	void setMinSize(int minWidth, int minHeight) {
+		_minWidth = minWidth;
+		_minHeight = minHeight;
+	}
+
+	bool onDragStart(int32 mx, int32 my) override;
+	void onDrag(int32 mx, int32 my) override;
 };
 
 } // End of namespace Ultima8

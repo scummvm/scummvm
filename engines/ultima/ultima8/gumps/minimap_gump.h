@@ -22,7 +22,7 @@
 #ifndef ULTIMA8_GUMPS_MINIMAPGUMP_H
 #define ULTIMA8_GUMPS_MINIMAPGUMP_H
 
-#include "ultima/ultima8/gumps/gump.h"
+#include "ultima/ultima8/gumps/resizable_gump.h"
 #include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {
@@ -30,7 +30,7 @@ namespace Ultima8 {
 
 class MiniMap;
 
-class MiniMapGump : public Gump {
+class MiniMapGump : public ResizableGump {
 private:
 	Common::HashMap<uint32, MiniMap *> _minimaps;
 	int32 _ax, _ay;

@@ -33,11 +33,12 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MiniMapGump)
 
-MiniMapGump::MiniMapGump(int x, int y) :
-	Gump(x, y, 120, 120, 0, FLAG_DRAGGABLE, LAYER_NORMAL), _minimaps(), _ax(0), _ay(0) {
+MiniMapGump::MiniMapGump(int x, int y) : ResizableGump(x, y, 120, 120), _minimaps(), _ax(0), _ay(0) {
+	setMinSize(60, 60);
 }
 
-MiniMapGump::MiniMapGump() : Gump(), _minimaps(), _ax(0), _ay(0) {
+MiniMapGump::MiniMapGump() : ResizableGump(), _minimaps(), _ax(0), _ay(0) {
+	setMinSize(60, 60);
 }
 
 MiniMapGump::~MiniMapGump(void) {
