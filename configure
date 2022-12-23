@@ -262,6 +262,7 @@ _has_fseeko64=no
 _endian=unknown
 _need_memalign=yes
 _have_x86=no
+_have_amd64=no
 
 # Add (virtual) features
 add_feature 16bit "16bit color" "_16bit"
@@ -2573,6 +2574,8 @@ case $_host_cpu in
 		;;
 	amd64 | x86_64)
 		echo "x86_64"
+		_have_amd64=yes
+		define_in_config_h_if_yes $_have_amd64 'HAVE_AMD64'
 		;;
 	wasm32)
 		echo "wasm32"
