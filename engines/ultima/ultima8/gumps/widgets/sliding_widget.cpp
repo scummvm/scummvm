@@ -30,10 +30,9 @@ SlidingWidget::SlidingWidget()
 	: Gump() {
 }
 
-SlidingWidget::SlidingWidget(int x, int y, const Shape *shape, uint32 frameNum)
+SlidingWidget::SlidingWidget(int x, int y, FrameID frame)
 	: Gump(x, y, 5, 5, 0, FLAG_DRAGGABLE) {
-	_shape = shape;
-	_frameNum = frameNum;
+	SetShape(frame, true);
 }
 
 SlidingWidget::~SlidingWidget() {

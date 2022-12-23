@@ -123,12 +123,9 @@ void SliderGump::InitGump(Gump *newparent, bool take_focus) {
 	_shape = GameData::get_instance()->getGumps()->getShape(gumpshape);
 	UpdateDimsFromShape();
 
-	const Shape *childshape = GameData::get_instance()->
-	                    getGumps()->getShape(slidershape);
-
 	// Create the SlidingWidget
-	Gump *widget = new SlidingWidget(getSliderPos(), slidery,
-	                                 childshape, sliderframe);
+	FrameID frame(GameData::GUMPS, slidershape, sliderframe);
+	Gump *widget = new SlidingWidget(getSliderPos(), slidery, frame);
 	widget->SetIndex(SLIDER_INDEX);
 	widget->InitGump(this);
 
