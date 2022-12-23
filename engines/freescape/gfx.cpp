@@ -40,6 +40,8 @@ Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode) {
 	_currentPixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	_palettePixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
 	_keyColor = -1;
+	_inkColor = -1;
+	_paperColor = -1;
 	_palette = nullptr;
 	_colorMap = nullptr;
 	_colorRemaps = nullptr;
@@ -90,6 +92,28 @@ bool Renderer::getRGBAtCGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 	return true;
 }
 
+bool Renderer::getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2) {
+	if (index == _keyColor)
+		return false;
+
+	byte *entry = (*_colorMap)[index - 1];
+	if (entry[0] == 0 && entry[1] == 0 && entry[2] == 0 && entry[3] == 0) { 
+		readFromPalette(_paperColor, r1, g1, b1);
+		readFromPalette(_paperColor, r2, g2, b2);
+		return true;
+	}
+
+	if (entry[0] == 0xff && entry[1] == 0xff && entry[2] == 0xff && entry[3] == 0xff) {
+		readFromPalette(_inkColor, r1, g1, b1);
+		readFromPalette(_inkColor, r2, g2, b2);
+		return true;
+	}
+
+	//setStippleData(entry);
+	readFromPalette(_inkColor, r1, g1, b1);
+	readFromPalette(_paperColor, r2, g2, b2);
+	return true;
+}
 
 bool Renderer::getRGBAtEGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2) {
  	// assert(index-1 < _colorMap->size());
@@ -145,6 +169,9 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2,
 		return getRGBAtEGA(index, r1, g1, b1, r2, g2, b2);
 	else if (_renderMode == Common::kRenderCGA)
 		return getRGBAtCGA(index, r1, g1, b1, r2, g2, b2);
+	else if (_renderMode == Common::kRenderZX)
+		return getRGBAtZX(index, r1, g1, b1, r2, g2, b2);
+
 
 	error("Invalid or unsupported render mode");
 }

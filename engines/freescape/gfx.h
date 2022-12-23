@@ -101,12 +101,15 @@ public:
 	bool getRGBAt(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2);
 	bool getRGBAtCGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2);
 	bool getRGBAtEGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2);
+	bool getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2);
 
 	virtual void useStipple(bool enabled) {};
 	byte *_palette;
 	ColorMap *_colorMap;
 	ColorReMap *_colorRemaps;
 	int _keyColor;
+	int _inkColor;
+	int _paperColor;
 
 	/**
 	 * Select the window where to render

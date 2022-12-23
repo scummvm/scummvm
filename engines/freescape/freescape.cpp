@@ -50,7 +50,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	} else if (isAtariST()) {
 		_renderMode = Common::kRenderAtariST;
 	} else if (isSpectrum()) {
-		_renderMode = Common::kRenderCGA;
+		_renderMode = Common::kRenderZX;
 	}
 
 	_variant = gd->flags;

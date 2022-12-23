@@ -296,8 +296,6 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	uint8 scale = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Scale: %d", scale);
 
-	uint8 ci3 = 0;
-	uint8 ci4 = 0;
 	uint8 skyColor = areaFlags & 15;
 	uint8 groundColor = areaFlags >> 4;
 
@@ -306,12 +304,14 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 
 	uint8 usualBackgroundColor = readField(file, 8);
 	uint8 underFireBackgroundColor = readField(file, 8);
-	ci3 = readField(file, 8);
-	ci4 = readField(file, 8);
+	uint8 paperColor = readField(file, 8);
+	uint8 inkColor = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Colors usual background: %d", usualBackgroundColor);
 	debugC(1, kFreescapeDebugParser, "Colors under fire background: %d", underFireBackgroundColor);
+	debugC(1, kFreescapeDebugParser, "Color Paper: %d", paperColor);
+	debugC(1, kFreescapeDebugParser, "Color Ink: %d", inkColor);
 
-	debugC(1, kFreescapeDebugParser, "Colors: %d %d %d %d", ci3, ci4, skyColor, groundColor);
+	debugC(1, kFreescapeDebugParser, "Additional colors: %d %d", skyColor, groundColor);
 	// CPC
 	// groundColor = file->readByte() & 15;
 	// skyColor = file->readByte() & 15;
@@ -397,6 +397,8 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	area->_scale = scale;
 	area->_skyColor = skyColor;
 	area->_groundColor = groundColor;
+	area->_inkColor = inkColor;
+	area->_paperColor = paperColor;
 	area->_usualBackgroundColor = usualBackgroundColor;
 	area->_underFireBackgroundColor = underFireBackgroundColor;
 

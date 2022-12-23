@@ -77,6 +77,8 @@ public:
 	uint8 _groundColor;
 	uint8 _usualBackgroundColor;
 	uint8 _underFireBackgroundColor;
+	uint8 _inkColor;
+	uint8 _paperColor;
 	ColorReMap _colorRemaps;
 
 private:
