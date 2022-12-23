@@ -48,6 +48,7 @@ const RenderModeDescription g_renderModes[] = {
 	{ "macintosh", "Macintosh", kRenderMacintosh },
 	// I18N: Macintosh black-and-white
 	{ "macintoshbw", _s("Macintosh b/w"), kRenderMacintoshBW },
+	{ "zx", "ZX Spectrum", kRenderZX },
 	{nullptr, nullptr, kRenderDefault}
 };
 
