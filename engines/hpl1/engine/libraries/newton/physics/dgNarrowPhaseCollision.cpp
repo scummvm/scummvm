@@ -319,7 +319,7 @@ dgCollision *dgWorld::CreateConvexHull(dgInt32 count,
 			 fprintf (file, "};\n");
 			 fclose (file);
 			 */
-			_ASSERTE(0);
+			NEWTON_ASSERT(0);
 			// could not make the shape destroy the shell and return NULL
 			// note this is the only newton shape that can return NULL;
 			collision->Release();
@@ -551,7 +551,7 @@ dgCollision *dgWorld::CreateFromSerialization(dgDeserialize deserialization,
 		}
 
 		default:
-			_ASSERTE(0);
+			NEWTON_ASSERT(0);
 		}
 	}
 
@@ -576,14 +576,14 @@ dgContactMaterial *dgWorld::GetMaterial(dgUnsigned32 bodyGroupId0,
 
 dgContactMaterial *dgWorld::GetFirstMaterial() const {
 	dgBodyMaterialList::dgTreeNode *const node = dgBodyMaterialList::Minimum();
-	_ASSERTE(node);
+	NEWTON_ASSERT(node);
 	return &node->GetInfo();
 }
 
 dgContactMaterial *dgWorld::GetNextMaterial(dgContactMaterial *material) const {
 	dgBodyMaterialList::dgTreeNode *const thisNode =
 	    dgBodyMaterialList::GetNodeFromInfo(*material);
-	_ASSERTE(thisNode);
+	NEWTON_ASSERT(thisNode);
 	dgBodyMaterialList::dgTreeNode *const node =
 	    (dgBodyMaterialList::dgTreeNode *)thisNode->Next();
 	if (node) {
@@ -620,7 +620,7 @@ void dgWorld::RemoveFromCache(dgCollision *const collision) {
 	            collision->m_signature);
 	if (node) {
 		collision->m_signature = 0xffffffff;
-		_ASSERTE(node->GetInfo() == collision);
+		NEWTON_ASSERT(node->GetInfo() == collision);
 		collision->Release();
 		dgBodyCollisionList::Remove(node);
 	}
@@ -638,7 +638,7 @@ void dgWorld::ReleaseCollision(dgCollision *const collision) {
 		dgBodyCollisionList::dgTreeNode *const node = dgBodyCollisionList::Find(
 		            collision->m_signature);
 		if (node) {
-			_ASSERTE(node->GetInfo() == collision);
+			NEWTON_ASSERT(node->GetInfo() == collision);
 			if (m_destroyCollision) {
 				m_destroyCollision(this, collision);
 			}
@@ -739,7 +739,7 @@ dgInt32 dgWorld::ClosestCompoundPoint(dgBody *const compoundConvexA,
                                       dgTriplex &normalAB, dgInt32 threadIndex) const {
 	dgCollisionCompound *const collision =
 	    (dgCollisionCompound *)compoundConvexA->m_collision;
-	_ASSERTE(collision->IsType(dgCollision::dgCollisionCompound_RTTI));
+	NEWTON_ASSERT(collision->IsType(dgCollision::dgCollisionCompound_RTTI));
 	return collision->ClosestDitance(compoundConvexA, contactA, collisionB,
 	                                 contactB, normalAB);
 
@@ -809,7 +809,7 @@ dgInt32 dgWorld::ClosestCompoundPoint(dgBody *const compoundConvexA,
 	 dgCollisionConvex** collisionArray1;
 	 dgCollisionCompound *compoundCollision1;
 
-	 _ASSERTE (collisionB->m_collision->IsType (dgCollision::dgCollisionCompound_RTTI));
+	 NEWTON_ASSERT (collisionB->m_collision->IsType (dgCollision::dgCollisionCompound_RTTI));
 
 	 dgMatrix saveCollMatrix (compoundConvexA->m_collisionWorldMatrix);
 	 dgMatrix saveCollMatrix1 (collisionB->m_collisionWorldMatrix);
@@ -914,7 +914,7 @@ dgInt32 dgWorld::ReduceContacts(dgInt32 count, dgContactPoint *const contact,
 		dgFloat32 window2 = window * window;
 		dgInt32 countOver = count - maxCount;
 
-		_ASSERTE(countOver >= 0);
+		NEWTON_ASSERT(countOver >= 0);
 		memset(mask, 0, size_t(count));
 		do {
 			for (dgInt32 i = 0; (i < count) && countOver; i++) {
@@ -946,7 +946,7 @@ dgInt32 dgWorld::ReduceContacts(dgInt32 count, dgContactPoint *const contact,
 				j++;
 			}
 		}
-		_ASSERTE(j == maxCount);
+		NEWTON_ASSERT(j == maxCount);
 
 	} else {
 		maxCount = count;
@@ -1009,13 +1009,13 @@ dgInt32 dgWorld::PruneContacts(dgInt32 count, dgContactPoint *const contact,
 void dgWorld::ProcessCachedContacts(dgContact *const contact,
                                     const dgContactMaterial *const material, dgFloat32 timestep,
                                     dgInt32 threadIndex) const {
-	_ASSERTE(contact);
-	_ASSERTE(contact->m_body0);
-	_ASSERTE(contact->m_body1);
-	_ASSERTE(contact->m_myCacheMaterial);
-	_ASSERTE(contact->m_myCacheMaterial == material);
+	NEWTON_ASSERT(contact);
+	NEWTON_ASSERT(contact->m_body0);
+	NEWTON_ASSERT(contact->m_body1);
+	NEWTON_ASSERT(contact->m_myCacheMaterial);
+	NEWTON_ASSERT(contact->m_myCacheMaterial == material);
 
-	_ASSERTE(contact->m_body0 != contact->m_body1);
+	NEWTON_ASSERT(contact->m_body0 != contact->m_body1);
 	dgList<dgContactMaterial> &list = *contact;
 	contact->m_broadphaseLru = dgInt32(m_broadPhaseLru);
 	contact->m_myCacheMaterial = material;
@@ -1026,16 +1026,16 @@ void dgWorld::ProcessCachedContacts(dgContact *const contact,
 		nextContactNode = contactNode->GetNext();
 		dgContactMaterial &contactMaterial = contactNode->GetInfo();
 
-		_ASSERTE(dgCheckFloat(contactMaterial.m_point.m_x));
-		_ASSERTE(dgCheckFloat(contactMaterial.m_point.m_y));
-		_ASSERTE(dgCheckFloat(contactMaterial.m_point.m_z));
-		_ASSERTE(contactMaterial.m_body0);
-		_ASSERTE(contactMaterial.m_body1);
-		_ASSERTE(contactMaterial.m_collision0);
-		_ASSERTE(contactMaterial.m_collision1);
-		_ASSERTE(contactMaterial.m_body0 == contact->m_body0);
-		_ASSERTE(contactMaterial.m_body1 == contact->m_body1);
-		//      _ASSERTE (contactMaterial.m_userId != 0xffffffff);
+		NEWTON_ASSERT(dgCheckFloat(contactMaterial.m_point.m_x));
+		NEWTON_ASSERT(dgCheckFloat(contactMaterial.m_point.m_y));
+		NEWTON_ASSERT(dgCheckFloat(contactMaterial.m_point.m_z));
+		NEWTON_ASSERT(contactMaterial.m_body0);
+		NEWTON_ASSERT(contactMaterial.m_body1);
+		NEWTON_ASSERT(contactMaterial.m_collision0);
+		NEWTON_ASSERT(contactMaterial.m_collision1);
+		NEWTON_ASSERT(contactMaterial.m_body0 == contact->m_body0);
+		NEWTON_ASSERT(contactMaterial.m_body1 == contact->m_body1);
+		//      NEWTON_ASSERT (contactMaterial.m_userId != 0xffffffff);
 
 		contactMaterial.m_softness = material->m_softness;
 		contactMaterial.m_restitution = material->m_restitution;
@@ -1067,7 +1067,7 @@ void dgWorld::ProcessTriggers(dgCollidingPairCollector::dgPair *const pair,
 	dgBody *const body1 = pair->m_body1;
 	dgContact *contact1 = pair->m_contact;
 	const dgContactMaterial *const material = pair->m_material;
-	_ASSERTE(body0 != body1);
+	NEWTON_ASSERT(body0 != body1);
 
 	if (!contact1) {
 		dgGetUserLock();
@@ -1076,9 +1076,9 @@ void dgWorld::ProcessTriggers(dgCollidingPairCollector::dgPair *const pair,
 		AttachConstraint(contact1, body0, body1);
 		dgReleasedUserLock();
 	} else if (contact1->GetBody0() != body0) {
-		_ASSERTE(0);
-		_ASSERTE(contact1->GetBody1() == body0);
-		_ASSERTE(contact1->GetBody0() == body1);
+		NEWTON_ASSERT(0);
+		NEWTON_ASSERT(contact1->GetBody1() == body0);
+		NEWTON_ASSERT(contact1->GetBody0() == body1);
 		Swap(contact1->m_body0, contact1->m_body1);
 		Swap(contact1->m_link0, contact1->m_link1);
 	}
@@ -1087,10 +1087,10 @@ void dgWorld::ProcessTriggers(dgCollidingPairCollector::dgPair *const pair,
 	contact->m_myCacheMaterial = material;
 	contact->m_broadphaseLru = dgInt32(m_broadPhaseLru);
 
-	_ASSERTE(body0);
-	_ASSERTE(body1);
-	_ASSERTE(contact->m_body0 == body0);
-	_ASSERTE(contact->m_body1 == body1);
+	NEWTON_ASSERT(body0);
+	NEWTON_ASSERT(body1);
+	NEWTON_ASSERT(contact->m_body0 == body0);
+	NEWTON_ASSERT(contact->m_body1 == body1);
 
 	if (material->m_contactPoint) {
 		material->m_contactPoint(*contact, timestep, threadIndex);
@@ -1105,7 +1105,7 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 	dgContact *contact1 = pair->m_contact;
 	const dgContactMaterial *const material = pair->m_material;
 	dgContactPoint *const contactArray = pair->m_contactBuffer;
-	_ASSERTE(body0 != body1);
+	NEWTON_ASSERT(body0 != body1);
 
 	if (!contact1) {
 		dgGetUserLock();
@@ -1114,9 +1114,9 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 		AttachConstraint(contact1, body0, body1);
 		dgReleasedUserLock();
 	} else if (contact1->GetBody0() != body0) {
-		_ASSERTE(0);
-		_ASSERTE(contact1->GetBody1() == body0);
-		_ASSERTE(contact1->GetBody0() == body1);
+		NEWTON_ASSERT(0);
+		NEWTON_ASSERT(contact1->GetBody1() == body0);
+		NEWTON_ASSERT(contact1->GetBody0() == body1);
 		Swap(contact1->m_body0, contact1->m_body1);
 		Swap(contact1->m_link0, contact1->m_link1);
 	}
@@ -1128,10 +1128,10 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 
 	contact->m_broadphaseLru = dgInt32(m_broadPhaseLru);
 
-	_ASSERTE(body0);
-	_ASSERTE(body1);
-	_ASSERTE(contact->m_body0 == body0);
-	_ASSERTE(contact->m_body1 == body1);
+	NEWTON_ASSERT(body0);
+	NEWTON_ASSERT(body1);
+	NEWTON_ASSERT(contact->m_body0 == body0);
+	NEWTON_ASSERT(contact->m_body1 == body1);
 
 	contact->m_prevPosit0 = body0->m_matrix.m_posit;
 	contact->m_prevPosit1 = body1->m_matrix.m_posit;
@@ -1181,10 +1181,10 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 			                   dgFloat32(0.0f));
 		}
 		controlDir0 = controlNormal * tangDir;
-		_ASSERTE(controlDir0 % controlDir0 > dgFloat32(1.0e-8f));
+		NEWTON_ASSERT(controlDir0 % controlDir0 > dgFloat32(1.0e-8f));
 		controlDir0 = controlDir0.Scale(dgRsqrt(controlDir0 % controlDir0));
 		controlDir1 = controlNormal * controlDir0;
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    dgAbsf((controlDir0 * controlDir1) % controlNormal - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
 	}
 
@@ -1210,7 +1210,7 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 
 		if (contactNode) {
 			count--;
-			_ASSERTE(index != -1);
+			NEWTON_ASSERT(index != -1);
 			nodes[index] = nodes[count];
 			cachePosition[index] = cachePosition[count];
 		} else {
@@ -1221,16 +1221,16 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 
 		dgContactMaterial *const contactMaterial = &contactNode->GetInfo();
 
-		_ASSERTE(dgCheckFloat(contactArray[i].m_point.m_x));
-		_ASSERTE(dgCheckFloat(contactArray[i].m_point.m_y));
-		_ASSERTE(dgCheckFloat(contactArray[i].m_point.m_z));
-		_ASSERTE(contactArray[i].m_body0);
-		_ASSERTE(contactArray[i].m_body1);
-		_ASSERTE(contactArray[i].m_collision0);
-		_ASSERTE(contactArray[i].m_collision1);
-		_ASSERTE(contactArray[i].m_body0 == body0);
-		_ASSERTE(contactArray[i].m_body1 == body1);
-		//      _ASSERTE (contactArray[i].m_userId != 0xffffffff);
+		NEWTON_ASSERT(dgCheckFloat(contactArray[i].m_point.m_x));
+		NEWTON_ASSERT(dgCheckFloat(contactArray[i].m_point.m_y));
+		NEWTON_ASSERT(dgCheckFloat(contactArray[i].m_point.m_z));
+		NEWTON_ASSERT(contactArray[i].m_body0);
+		NEWTON_ASSERT(contactArray[i].m_body1);
+		NEWTON_ASSERT(contactArray[i].m_collision0);
+		NEWTON_ASSERT(contactArray[i].m_collision1);
+		NEWTON_ASSERT(contactArray[i].m_body0 == body0);
+		NEWTON_ASSERT(contactArray[i].m_body1 == body1);
+		//      NEWTON_ASSERT (contactArray[i].m_userId != 0xffffffff);
 
 		contactMaterial->m_point = contactArray[i].m_point;
 		contactMaterial->m_normal = contactArray[i].m_normal;
@@ -1247,7 +1247,7 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 		contactMaterial->m_dynamicFriction0 = material->m_dynamicFriction0;
 		contactMaterial->m_dynamicFriction1 = material->m_dynamicFriction1;
 
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    (dgAbsf(contactMaterial->m_normal % contactMaterial->m_normal) - dgFloat32(1.0f)) < dgFloat32(1.0e-5f));
 
 		// dgTrace (("%f\n", contactMaterial.m_penetration));
@@ -1276,12 +1276,12 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 					                   contactMaterial->m_normal.m_x, dgFloat32(0.0f), dgFloat32(0.0f));
 				}
 				contactMaterial->m_dir0 = contactMaterial->m_normal * tangDir;
-				_ASSERTE(
+				NEWTON_ASSERT(
 				    contactMaterial->m_dir0 % contactMaterial->m_dir0 > dgFloat32(1.0e-8f));
 				contactMaterial->m_dir0 = contactMaterial->m_dir0.Scale(
 				                              dgRsqrt(contactMaterial->m_dir0 % contactMaterial->m_dir0));
 				contactMaterial->m_dir1 = contactMaterial->m_normal * contactMaterial->m_dir0;
-				_ASSERTE(
+				NEWTON_ASSERT(
 				    dgAbsf((contactMaterial->m_dir0 * contactMaterial->m_dir1) % contactMaterial->m_normal - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
 			}
 
@@ -1311,13 +1311,13 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 					                         contactMaterial->m_normal.m_x, dgFloat32(0.0f), dgFloat32(0.0f));
 				}
 				contactMaterial->m_dir0 = contactMaterial->m_normal * tangDirection;
-				_ASSERTE(
+				NEWTON_ASSERT(
 				    contactMaterial->m_dir0 % contactMaterial->m_dir0 > dgFloat32(1.0e-8f));
 				contactMaterial->m_dir0 = contactMaterial->m_dir0.Scale(
 				                              dgRsqrt(contactMaterial->m_dir0 % contactMaterial->m_dir0));
 			}
 			contactMaterial->m_dir1 = contactMaterial->m_normal * contactMaterial->m_dir0;
-			_ASSERTE(
+			NEWTON_ASSERT(
 			    dgAbsf((contactMaterial->m_dir0 * contactMaterial->m_dir1) % contactMaterial->m_normal - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
 		}
 		contactMaterial->m_normal.m_w = dgFloat32(0.0f);
@@ -1354,10 +1354,10 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 
 dgInt32 dgWorld::ValidateContactCache(dgBody *const convexBody,
                                       dgBody *const otherBody, dgContact *const contact) const {
-	_ASSERTE(contact && (contact->GetId() == dgContactConstraintId));
-	_ASSERTE(
+	NEWTON_ASSERT(contact && (contact->GetId() == dgContactConstraintId));
+	NEWTON_ASSERT(
 	    (contact->GetBody0() == otherBody) || (contact->GetBody1() == otherBody));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    (contact->GetBody0() == convexBody) || (contact->GetBody1() == convexBody));
 
 	dgInt32 contactCount = 0;
@@ -1514,13 +1514,13 @@ void dgWorld::ConvexContactsSimd(dgCollidingPairCollector::dgPair *const pair,
 			pair->m_body1 = otherBody;
 		}
 
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    convexBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    otherBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    pair->m_body0->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    pair->m_body1->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
 
 		proxy.m_referenceBody = convexBody;
@@ -1534,9 +1534,9 @@ void dgWorld::ConvexContactsSimd(dgCollidingPairCollector::dgPair *const pair,
 		pair->m_isTrigger = proxy.m_inTriggerVolume;
 
 	} else {
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    pair->m_body0->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    convexBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
 
 		proxy.m_referenceBody = convexBody;
@@ -1579,13 +1579,13 @@ void dgWorld::ConvexContacts(dgCollidingPairCollector::dgPair *const pair,
 			pair->m_body1 = otherBody;
 		}
 
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    convexBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    otherBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    pair->m_body0->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    pair->m_body1->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
 
 		proxy.m_referenceBody = convexBody;
@@ -1598,9 +1598,9 @@ void dgWorld::ConvexContacts(dgCollidingPairCollector::dgPair *const pair,
 		pair->m_isTrigger = proxy.m_inTriggerVolume;
 
 	} else {
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    pair->m_body0->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    convexBody->m_collision->IsType(dgCollision::dgConvexCollision_RTTI));
 
 		proxy.m_referenceBody = convexBody;
@@ -1617,7 +1617,7 @@ void dgWorld::ConvexContacts(dgCollidingPairCollector::dgPair *const pair,
 void dgWorld::SceneContactsSimd(const dgCollisionScene::dgProxy &sceneProxy,
                                 dgCollidingPairCollector::dgPair *const pair,
                                 dgCollisionParamProxy &proxy) const {
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    pair->m_body1->GetCollision()->IsType(dgCollision::dgCollisionScene_RTTI));
 	if (sceneProxy.m_shape->IsType(dgCollision::dgConvexCollision_RTTI)) {
 		proxy.m_floatingCollision = sceneProxy.m_shape;
@@ -1654,7 +1654,7 @@ void dgWorld::SceneContactsSimd(const dgCollisionScene::dgProxy &sceneProxy,
 void dgWorld::SceneContacts(const dgCollisionScene::dgProxy &sceneProxy,
                             dgCollidingPairCollector::dgPair *const pair,
                             dgCollisionParamProxy &proxy) const {
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    pair->m_body1->GetCollision()->IsType(dgCollision::dgCollisionScene_RTTI));
 	if (sceneProxy.m_shape->IsType(dgCollision::dgConvexCollision_RTTI)) {
 		proxy.m_floatingCollision = sceneProxy.m_shape;
@@ -1699,8 +1699,8 @@ void dgWorld::SceneContacts(dgCollidingPairCollector::dgPair *const pair,
 	proxy.m_inTriggerVolume = 0;
 	//  proxy.m_contacts = contacts;
 
-	//  _ASSERTE (pair->m_body0->m_invMass.m_w != dgFloat32 (0.0f));
-	//  _ASSERTE (pair->m_body1->m_invMass.m_w == dgFloat32 (0.0f));
+	//  NEWTON_ASSERT (pair->m_body0->m_invMass.m_w != dgFloat32 (0.0f));
+	//  NEWTON_ASSERT (pair->m_body1->m_invMass.m_w == dgFloat32 (0.0f));
 	if (constraint) {
 		dgInt32 contactCount = ValidateContactCache(pair->m_body0, pair->m_body1,
 		                       constraint);
@@ -1713,7 +1713,7 @@ void dgWorld::SceneContacts(dgCollidingPairCollector::dgPair *const pair,
 
 	dgCollisionScene *const scene =
 	    (dgCollisionScene *)pair->m_body1->GetCollision();
-	_ASSERTE(scene->IsType(dgCollision::dgCollisionScene_RTTI));
+	NEWTON_ASSERT(scene->IsType(dgCollision::dgCollisionScene_RTTI));
 	if (pair->m_body0->GetCollision()->IsType(
 	            dgCollision::dgConvexCollision_RTTI)) {
 		proxy.m_referenceBody = pair->m_body0;
@@ -1730,7 +1730,7 @@ void dgWorld::SceneContacts(dgCollidingPairCollector::dgPair *const pair,
 		}
 
 	} else {
-		_ASSERTE(0);
+		NEWTON_ASSERT(0);
 	}
 }
 
@@ -1745,8 +1745,8 @@ void dgWorld::SceneContactsSimd(dgCollidingPairCollector::dgPair *const pair,
 	proxy.m_inTriggerVolume = 0;
 	//  proxy.m_contacts = contacts;
 
-	//  _ASSERTE (pair->m_body0->m_invMass.m_w != dgFloat32 (0.0f));
-	//  _ASSERTE (pair->m_body1->m_invMass.m_w == dgFloat32 (0.0f));
+	//  NEWTON_ASSERT (pair->m_body0->m_invMass.m_w != dgFloat32 (0.0f));
+	//  NEWTON_ASSERT (pair->m_body1->m_invMass.m_w == dgFloat32 (0.0f));
 	if (constraint) {
 		dgInt32 contactCount = ValidateContactCache(pair->m_body0, pair->m_body1,
 		                       constraint);
@@ -1759,7 +1759,7 @@ void dgWorld::SceneContactsSimd(dgCollidingPairCollector::dgPair *const pair,
 
 	dgCollisionScene *const scene =
 	    (dgCollisionScene *)pair->m_body1->GetCollision();
-	_ASSERTE(scene->IsType(dgCollision::dgCollisionScene_RTTI));
+	NEWTON_ASSERT(scene->IsType(dgCollision::dgCollisionScene_RTTI));
 	if (pair->m_body0->GetCollision()->IsType(
 	            dgCollision::dgConvexCollision_RTTI)) {
 		proxy.m_referenceBody = pair->m_body0;
@@ -1777,7 +1777,7 @@ void dgWorld::SceneContactsSimd(dgCollidingPairCollector::dgPair *const pair,
 		}
 
 	} else {
-		_ASSERTE(0);
+		NEWTON_ASSERT(0);
 	}
 }
 

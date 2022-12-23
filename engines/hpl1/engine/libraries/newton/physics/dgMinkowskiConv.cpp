@@ -120,7 +120,7 @@ class dgContactSolver {
 
 	void CalcSupportVertexSimd(const dgVector &dir, dgInt32 entry) {
 #ifdef DG_BUILD_SIMD_CODE
-		_ASSERTE((dir % dir) > dgFloat32(0.999f));
+		NEWTON_ASSERT((dir % dir) > dgFloat32(0.999f));
 		dgVector p(m_referenceCollision->SupportVertexSimd(dir));
 		dgVector dir1(
 		    m_matrix.UnrotateVectorSimd(
@@ -136,7 +136,7 @@ class dgContactSolver {
 	}
 
 	void CalcSupportVertex(const dgVector &dir, dgInt32 entry) {
-		_ASSERTE((dir % dir) > dgFloat32(0.999f));
+		NEWTON_ASSERT((dir % dir) > dgFloat32(0.999f));
 		dgVector p(m_referenceCollision->SupportVertex(dir));
 		dgVector dir1(m_matrix.UnrotateVector(dir.Scale(dgFloat32(-1.0f))));
 		dgVector q(
@@ -147,7 +147,7 @@ class dgContactSolver {
 	}
 
 	void CalcSupportVertexLarge(const dgVector &dir, dgInt32 entry) {
-		_ASSERTE((dir % dir) > dgFloat32(0.999f));
+		NEWTON_ASSERT((dir % dir) > dgFloat32(0.999f));
 		dgVector p0(m_referenceCollision->SupportVertex(dir));
 		dgVector dir1(m_matrix.UnrotateVector(dir.Scale(dgFloat32(-1.0f))));
 		dgVector q0(
@@ -167,8 +167,8 @@ class dgContactSolver {
 
 	 ptr = polygon;
 	 do {
-	 _ASSERTE (ptr->m_prev->m_next == ptr);
-	 _ASSERTE (ptr->m_next->m_prev == ptr);
+	 NEWTON_ASSERT (ptr->m_prev->m_next == ptr);
+	 NEWTON_ASSERT (ptr->m_next->m_prev == ptr);
 	 ptr = ptr->m_next;
 	 } while (ptr != polygon);
 
@@ -208,7 +208,7 @@ class dgContactSolver {
 		                  dgFloat32(0.0f));
 		dgMinkReturnCode code = CalcSeparatingPlane(face);
 		if (code == dgMinkDisjoint) {
-			_ASSERTE(face);
+			NEWTON_ASSERT(face);
 			// dgInt32 i0 = face->m_vertex[0];
 			// dgInt32 i1 = face->m_vertex[1];
 			// dgInt32 i2 = face->m_vertex[2];
@@ -236,7 +236,7 @@ class dgContactSolver {
 				dgFloat32 dist = v % v;
 				dgVector dir(dir0);
 				if (dist > dgFloat32(1.0e-12f)) {
-					_ASSERTE(dist > DG_DISTANCE_TOLERANCE_ZERO);
+					NEWTON_ASSERT(dist > DG_DISTANCE_TOLERANCE_ZERO);
 
 					dir = v.Scale(-dgRsqrt(dist));
 					dist = dir0 % dir;
@@ -254,7 +254,7 @@ class dgContactSolver {
 
 				dir0 = dir;
 
-				//              _ASSERTE (0); // !!! this can be take outside the loop
+				//              NEWTON_ASSERT (0); // !!! this can be take outside the loop
 				//              if (dist < dgFloat32 (5.0e-4f)) {
 				if (dist < (DG_DISTANCE_TOLERANCE * dgFloat32(0.5f))) {
 					switch (m_vertexIndex) {
@@ -274,8 +274,8 @@ class dgContactSolver {
 
 						dgFloat32 alpha1 = -(m_hullVertex[0] % dp) / (dp % dp + dgFloat32(1.0e-24f));
 						dgFloat32 alpha0 = dgFloat32(1.0f) - alpha1;
-						_ASSERTE(alpha1 >= dgFloat32(0.0f));
-						_ASSERTE(alpha1 <= dgFloat32(1.0f));
+						NEWTON_ASSERT(alpha1 >= dgFloat32(0.0f));
+						NEWTON_ASSERT(alpha1 <= dgFloat32(1.0f));
 
 						contactA = lp0.Scale(alpha0) + lp1.Scale(alpha1);
 						contactB = lr0.Scale(alpha0) + lr1.Scale(alpha1);
@@ -315,7 +315,7 @@ class dgContactSolver {
 						dgFloat32 alpha1;
 						dgFloat32 alpha2;
 						if (den > dgFloat32(1.0e-7f)) {
-							_ASSERTE(den > dgFloat32(0.0f));
+							NEWTON_ASSERT(den > dgFloat32(0.0f));
 							alpha1 = b1 * a22 - a21 * b2;
 							alpha2 = a11 * b2 - b1 * a21;
 							alpha0 = den - alpha1 - alpha2;
@@ -331,12 +331,12 @@ class dgContactSolver {
 							alpha2 = dgFloat32(0.33f);
 						}
 
-						_ASSERTE(alpha0 >= dgFloat32(-2.0e-2f));
-						_ASSERTE(alpha1 >= dgFloat32(-2.0e-2f));
-						_ASSERTE(alpha2 >= dgFloat32(-2.0e-2f));
-						_ASSERTE(alpha0 <= dgFloat32(1.0f + 2.0e-2f));
-						_ASSERTE(alpha1 <= dgFloat32(1.0f + 2.0e-2f));
-						_ASSERTE(alpha2 <= dgFloat32(1.0f + 2.0e-2f));
+						NEWTON_ASSERT(alpha0 >= dgFloat32(-2.0e-2f));
+						NEWTON_ASSERT(alpha1 >= dgFloat32(-2.0e-2f));
+						NEWTON_ASSERT(alpha2 >= dgFloat32(-2.0e-2f));
+						NEWTON_ASSERT(alpha0 <= dgFloat32(1.0f + 2.0e-2f));
+						NEWTON_ASSERT(alpha1 <= dgFloat32(1.0f + 2.0e-2f));
+						NEWTON_ASSERT(alpha2 <= dgFloat32(1.0f + 2.0e-2f));
 
 						contactA = lp0.Scale(alpha0) + lp1.Scale(alpha1) + lp2.Scale(alpha2);
 						contactB = lr0.Scale(alpha0) + lr1.Scale(alpha1) + lr2.Scale(alpha2);
@@ -374,7 +374,7 @@ class dgContactSolver {
 				m_vertexIndex++;
 				switch (m_vertexIndex) {
 				case 1: {
-					_ASSERTE(0);
+					NEWTON_ASSERT(0);
 					break;
 				}
 
@@ -396,8 +396,8 @@ class dgContactSolver {
 			}
 		}
 
-		//_ASSERTE (i < CLOSE_DISTANCE_MAX_ITERATION);
-		_ASSERTE(code != dgMinkError);
+		//NEWTON_ASSERT (i < CLOSE_DISTANCE_MAX_ITERATION);
+		NEWTON_ASSERT(code != dgMinkError);
 		return 0;
 	}
 
@@ -418,8 +418,8 @@ class dgContactSolver {
 		dgInt32 count = 0;
 		dgVector *output = (dgVector *)&m_hullVertex[shape1VertexCount + shape2VertexCount + 1];
 
-		_ASSERTE(shape1VertexCount >= 3);
-		_ASSERTE(shape2VertexCount <= 2);
+		NEWTON_ASSERT(shape1VertexCount >= 3);
+		NEWTON_ASSERT(shape2VertexCount <= 2);
 
 		dgVector *ptr = NULL;
 		// face line intersection
@@ -428,7 +428,7 @@ class dgContactSolver {
 			dgInt32 i0 = shape1VertexCount - 1;
 			for (dgInt32 i1 = 0; i1 < shape1VertexCount; i1++) {
 				dgVector n(shapeNormal * (shape1[i1] - shape1[i0]));
-				_ASSERTE((n % n) > dgFloat32(0.0f));
+				NEWTON_ASSERT((n % n) > dgFloat32(0.0f));
 				dgPlane plane(n, -(n % shape1[i0]));
 
 				dgFloat32 test0 = plane.Evalue(ptr[0]);
@@ -570,7 +570,7 @@ class dgContactSolver {
 			shape1[i] += err;
 		}
 
-		//      _ASSERTE (penetration <= dgFloat32 (2.0e-1f));
+		//      NEWTON_ASSERT (penetration <= dgFloat32 (2.0e-1f));
 		dist = GetMax(-(penetration + DG_IMPULSIVE_CONTACT_PENETRATION),
 		              dgFloat32(0.0f));
 		if (count1) {
@@ -591,8 +591,8 @@ class dgContactSolver {
 			}
 
 			if (count2) {
-				_ASSERTE(count1);
-				_ASSERTE(count2);
+				NEWTON_ASSERT(count1);
+				NEWTON_ASSERT(count2);
 
 				if (count1 == 1) {
 					const dgMatrix &matrix1 = m_proxy->m_referenceMatrix;
@@ -722,12 +722,12 @@ class dgContactSolver {
 			dgPerimenterEdge *edgeClipped[2];
 			dgPerimenterEdge subdivision[128];
 
-			_ASSERTE(shape1VertexCount >= 3);
-			_ASSERTE(shape2VertexCount >= 3);
+			NEWTON_ASSERT(shape1VertexCount >= 3);
+			NEWTON_ASSERT(shape2VertexCount >= 3);
 			dgVector *output = (dgVector *)&m_hullVertex[shape1VertexCount + shape2VertexCount];
 
 			//          ptr = NULL;
-			_ASSERTE(
+			NEWTON_ASSERT(
 			    (shape1VertexCount + shape2VertexCount) < dgInt32(sizeof(subdivision) / (2 * sizeof(subdivision[0]))));
 			for (dgInt32 i0 = 0; i0 < shape2VertexCount; i0++) {
 				subdivision[i0].m_vertex = &shape2[i0];
@@ -741,7 +741,7 @@ class dgContactSolver {
 			subdivision[shape2VertexCount - 1].m_next = &subdivision[0];
 
 			dgPerimenterEdge *poly = &subdivision[0];
-			//_ASSERTE (CheckNormal (poly, shapeNormal));
+			//NEWTON_ASSERT (CheckNormal (poly, shapeNormal));
 
 #ifdef _DEBUG
 			{
@@ -752,12 +752,12 @@ class dgContactSolver {
 				p1 += dgVector(0.5f, 0.5f, 0.5f, 0.0f);
 				for (dgInt32 i = 0; i < shape1VertexCount; i++) {
 					dgVector p(shape1[i]);
-					_ASSERTE(p.m_x >= p0.m_x);
-					_ASSERTE(p.m_y >= p0.m_y);
-					_ASSERTE(p.m_z >= p0.m_z);
-					_ASSERTE(p.m_x <= p1.m_x);
-					_ASSERTE(p.m_y <= p1.m_y);
-					_ASSERTE(p.m_z <= p1.m_z);
+					NEWTON_ASSERT(p.m_x >= p0.m_x);
+					NEWTON_ASSERT(p.m_y >= p0.m_y);
+					NEWTON_ASSERT(p.m_z >= p0.m_z);
+					NEWTON_ASSERT(p.m_x <= p1.m_x);
+					NEWTON_ASSERT(p.m_y <= p1.m_y);
+					NEWTON_ASSERT(p.m_z <= p1.m_z);
 				}
 			}
 #endif
@@ -902,12 +902,12 @@ class dgContactSolver {
 
 					output += 2;
 					edgeIndex++;
-					_ASSERTE(edgeIndex < dgInt32(sizeof(subdivision) / sizeof(subdivision[0])));
-					//_ASSERTE (CheckNormal (poly, shapeNormal));
+					NEWTON_ASSERT(edgeIndex < dgInt32(sizeof(subdivision) / sizeof(subdivision[0])));
+					//NEWTON_ASSERT (CheckNormal (poly, shapeNormal));
 				}
 			}
 
-			_ASSERTE(poly);
+			NEWTON_ASSERT(poly);
 
 #ifdef _DEBUG
 			{
@@ -920,18 +920,18 @@ class dgContactSolver {
 				tmp = poly;
 				do {
 					dgVector p(*tmp->m_vertex);
-					_ASSERTE(p.m_x >= p0.m_x);
-					_ASSERTE(p.m_y >= p0.m_y);
-					_ASSERTE(p.m_z >= p0.m_z);
-					_ASSERTE(p.m_x <= p1.m_x);
-					_ASSERTE(p.m_y <= p1.m_y);
-					_ASSERTE(p.m_z <= p1.m_z);
+					NEWTON_ASSERT(p.m_x >= p0.m_x);
+					NEWTON_ASSERT(p.m_y >= p0.m_y);
+					NEWTON_ASSERT(p.m_z >= p0.m_z);
+					NEWTON_ASSERT(p.m_x <= p1.m_x);
+					NEWTON_ASSERT(p.m_y <= p1.m_y);
+					NEWTON_ASSERT(p.m_z <= p1.m_z);
 					tmp = tmp->m_next;
 				} while (tmp != poly);
 			}
 #endif
 
-			_ASSERTE(poly);
+			NEWTON_ASSERT(poly);
 			poly = ReduceContacts(poly, maxContacts);
 
 			// if (count > 0) {
@@ -984,12 +984,12 @@ class dgContactSolver {
 			dgPerimenterEdge *edgeClipped[2];
 			dgPerimenterEdge subdivision[128];
 
-			_ASSERTE(shape1VertexCount >= 3);
-			_ASSERTE(shape2VertexCount >= 3);
+			NEWTON_ASSERT(shape1VertexCount >= 3);
+			NEWTON_ASSERT(shape2VertexCount >= 3);
 			dgVector *output = (dgVector *)&m_hullVertex[shape1VertexCount + shape2VertexCount];
 
 			// ptr = NULL;
-			_ASSERTE(
+			NEWTON_ASSERT(
 			    (shape1VertexCount + shape2VertexCount) < dgInt32(sizeof(subdivision) / (2 * sizeof(subdivision[0]))));
 			for (dgInt32 i0 = 0; i0 < shape2VertexCount; i0++) {
 				subdivision[i0].m_vertex = &shape2[i0];
@@ -1080,12 +1080,12 @@ class dgContactSolver {
 
 					output += 2;
 					edgeIndex++;
-					_ASSERTE(edgeIndex < dgInt32(sizeof(subdivision) / sizeof(subdivision[0])));
-					//_ASSERTE (CheckNormal (poly, shapeNormal));
+					NEWTON_ASSERT(edgeIndex < dgInt32(sizeof(subdivision) / sizeof(subdivision[0])));
+					//NEWTON_ASSERT (CheckNormal (poly, shapeNormal));
 				}
 			}
 
-			_ASSERTE(poly);
+			NEWTON_ASSERT(poly);
 
 #ifdef _DEBUG
 			{
@@ -1098,18 +1098,18 @@ class dgContactSolver {
 				tmp = poly;
 				do {
 					dgVector p(*tmp->m_vertex);
-					_ASSERTE(p.m_x >= p0.m_x);
-					_ASSERTE(p.m_y >= p0.m_y);
-					_ASSERTE(p.m_z >= p0.m_z);
-					_ASSERTE(p.m_x <= p1.m_x);
-					_ASSERTE(p.m_y <= p1.m_y);
-					_ASSERTE(p.m_z <= p1.m_z);
+					NEWTON_ASSERT(p.m_x >= p0.m_x);
+					NEWTON_ASSERT(p.m_y >= p0.m_y);
+					NEWTON_ASSERT(p.m_z >= p0.m_z);
+					NEWTON_ASSERT(p.m_x <= p1.m_x);
+					NEWTON_ASSERT(p.m_y <= p1.m_y);
+					NEWTON_ASSERT(p.m_z <= p1.m_z);
 					tmp = tmp->m_next;
 				} while (tmp != poly);
 			}
 #endif
 
-			_ASSERTE(poly);
+			NEWTON_ASSERT(poly);
 			poly = ReduceContacts(poly, maxContacts);
 
 			// dgPerimenterEdge *intersection;
@@ -1158,7 +1158,7 @@ class dgContactSolver {
 			}
 		}
 
-		_ASSERTE(penetration <= dgFloat32(2.0e-1f));
+		NEWTON_ASSERT(penetration <= dgFloat32(2.0e-1f));
 		dist = GetMax(-(penetration + DG_IMPULSIVE_CONTACT_PENETRATION),
 		              dgFloat32(0.0f));
 		if (count1) {
@@ -1183,8 +1183,8 @@ class dgContactSolver {
 
 			if (count2) {
 
-				_ASSERTE(count1);
-				_ASSERTE(count2);
+				NEWTON_ASSERT(count1);
+				NEWTON_ASSERT(count2);
 				if (count1 == 1) {
 					const dgMatrix &matrix1 = m_proxy->m_referenceMatrix;
 
@@ -1318,7 +1318,7 @@ class dgContactSolver {
 			}
 		}
 
-		_ASSERTE(penetration <= dgFloat32(2.0e-1f));
+		NEWTON_ASSERT(penetration <= dgFloat32(2.0e-1f));
 		dist = GetMax(-(penetration + DG_IMPULSIVE_CONTACT_PENETRATION),
 		              dgFloat32(0.0f));
 		if (count1) {
@@ -1342,8 +1342,8 @@ class dgContactSolver {
 			}
 
 			if (count2) {
-				_ASSERTE(count1);
-				_ASSERTE(count2);
+				NEWTON_ASSERT(count1);
+				NEWTON_ASSERT(count2);
 
 				if (count1 == 1) {
 					const dgMatrix &matrix1 = m_proxy->m_referenceMatrix;
@@ -1487,7 +1487,7 @@ class dgContactSolver {
 		    simd_add_v((simd_type &)m_matrix.m_posit, (simd_type &)step);
 		dgInt32 count = CalculateContactsSimd(face, contacID, contactOut,
 		                                      maxContacts);
-		_ASSERTE(count <= maxContacts);
+		NEWTON_ASSERT(count <= maxContacts);
 
 		m_matrix.m_posit = minkFloatingPosit;
 
@@ -1519,14 +1519,14 @@ class dgContactSolver {
 		dgPlane &facePlane = *face;
 		//      if ((m_facePlane[face->m_face] % veloc) > dgFloat32 (0.0f)) {
 		if ((facePlane % m_localRelVeloc) > dgFloat32(0.0f)) {
-			//          _ASSERTE (0);
+			//          NEWTON_ASSERT (0);
 			facePlane = facePlane.Scale(dgFloat32(-1.0f));
 		}
 
 		dgVector minkFloatingPosit(m_matrix.m_posit);
 		m_matrix.m_posit += step;
 		dgInt32 count = CalculateContacts(face, contacID, contactOut, maxContacts);
-		_ASSERTE(count <= maxContacts);
+		NEWTON_ASSERT(count <= maxContacts);
 
 		m_matrix.m_posit = minkFloatingPosit;
 		return count;
@@ -1607,8 +1607,8 @@ class dgContactSolver {
 		dgFloat32 vc = alpha1 * alpha4 - alpha3 * alpha2;
 		if ((vc <= dgFloat32(0.0f)) && (alpha1 >= dgFloat32(0.0f)) && (alpha3 <= dgFloat32(0.0f))) {
 			dgFloat32 t = alpha1 / (alpha1 - alpha3);
-			_ASSERTE(t >= dgFloat32(0.0f));
-			_ASSERTE(t <= dgFloat32(1.0f));
+			NEWTON_ASSERT(t >= dgFloat32(0.0f));
+			NEWTON_ASSERT(t <= dgFloat32(1.0f));
 			m_vertexIndex = 2;
 			return p0.Scale(dgFloat32(1.0f) - t) + p1.Scale(t);
 		}
@@ -1626,8 +1626,8 @@ class dgContactSolver {
 		dgFloat32 vb = alpha5 * alpha2 - alpha1 * alpha6;
 		if ((vb <= dgFloat32(0.0f)) && (alpha2 >= dgFloat32(0.0f)) && (alpha6 <= dgFloat32(0.0f))) {
 			dgFloat32 t = alpha2 / (alpha2 - alpha6);
-			_ASSERTE(t >= dgFloat32(0.0f));
-			_ASSERTE(t <= dgFloat32(1.0f));
+			NEWTON_ASSERT(t >= dgFloat32(0.0f));
+			NEWTON_ASSERT(t <= dgFloat32(1.0f));
 			m_vertexIndex = 2;
 			m_hullVertex[1] = p2;
 			m_averVertex[1] = m_averVertex[2];
@@ -1637,8 +1637,8 @@ class dgContactSolver {
 		dgFloat32 va = alpha3 * alpha6 - alpha5 * alpha4;
 		if ((va <= dgFloat32(0.0f)) && ((alpha4 - alpha3) >= dgFloat32(0.0f)) && ((alpha5 - alpha6) >= dgFloat32(0.0f))) {
 			dgFloat32 t = (alpha4 - alpha3) / ((alpha4 - alpha3) + (alpha5 - alpha6));
-			_ASSERTE(t >= dgFloat32(0.0f));
-			_ASSERTE(t <= dgFloat32(1.0f));
+			NEWTON_ASSERT(t >= dgFloat32(0.0f));
+			NEWTON_ASSERT(t <= dgFloat32(1.0f));
 			// return b + (c - b).Scale (t);
 			// return dgVector (dgFloat32 (0.0f), dgFloat32 (1.0f) - t, t);
 			m_vertexIndex = 2;
@@ -1651,10 +1651,10 @@ class dgContactSolver {
 		dgFloat32 t = vb * den;
 		dgFloat32 s = vc * den;
 
-		_ASSERTE(t >= dgFloat32(0.0f));
-		_ASSERTE(s >= dgFloat32(0.0f));
-		_ASSERTE(t <= dgFloat32(1.0f));
-		_ASSERTE(s <= dgFloat32(1.0f));
+		NEWTON_ASSERT(t >= dgFloat32(0.0f));
+		NEWTON_ASSERT(s >= dgFloat32(0.0f));
+		NEWTON_ASSERT(t <= dgFloat32(1.0f));
+		NEWTON_ASSERT(s <= dgFloat32(1.0f));
 		m_vertexIndex = 3;
 		return p0 + p10.Scale(t) + p20.Scale(s);
 	}
@@ -1689,8 +1689,8 @@ class dgContactSolver {
 		dgFloat64 vc = alpha1 * alpha4 - alpha3 * alpha2;
 		if ((vc <= dgFloat64(0.0f)) && (alpha1 >= dgFloat64(0.0f)) && (alpha3 <= dgFloat64(0.0f))) {
 			dgFloat64 t = alpha1 / (alpha1 - alpha3);
-			_ASSERTE(t >= dgFloat64(0.0f));
-			_ASSERTE(t <= dgFloat64(1.0f));
+			NEWTON_ASSERT(t >= dgFloat64(0.0f));
+			NEWTON_ASSERT(t <= dgFloat64(1.0f));
 			m_vertexIndex = 2;
 			return p0.Scale(dgFloat64(1.0f) - t) + p1.Scale(t);
 		}
@@ -1708,8 +1708,8 @@ class dgContactSolver {
 		dgFloat64 vb = alpha5 * alpha2 - alpha1 * alpha6;
 		if ((vb <= dgFloat64(0.0f)) && (alpha2 >= dgFloat64(0.0f)) && (alpha6 <= dgFloat64(0.0f))) {
 			dgFloat64 t = alpha2 / (alpha2 - alpha6);
-			_ASSERTE(t >= dgFloat64(0.0f));
-			_ASSERTE(t <= dgFloat64(1.0f));
+			NEWTON_ASSERT(t >= dgFloat64(0.0f));
+			NEWTON_ASSERT(t <= dgFloat64(1.0f));
 			m_vertexIndex = 2;
 			m_hullVertexLarge[1] = p2;
 			m_averVertexLarge[1] = m_averVertexLarge[2];
@@ -1719,8 +1719,8 @@ class dgContactSolver {
 		dgFloat64 va = alpha3 * alpha6 - alpha5 * alpha4;
 		if ((va <= dgFloat64(0.0f)) && ((alpha4 - alpha3) >= dgFloat64(0.0f)) && ((alpha5 - alpha6) >= dgFloat64(0.0f))) {
 			dgFloat64 t = (alpha4 - alpha3) / ((alpha4 - alpha3) + (alpha5 - alpha6));
-			_ASSERTE(t >= dgFloat64(0.0f));
-			_ASSERTE(t <= dgFloat64(1.0f));
+			NEWTON_ASSERT(t >= dgFloat64(0.0f));
+			NEWTON_ASSERT(t <= dgFloat64(1.0f));
 			// return b + (c - b).Scale (t);
 			// return dgBigVector (dgFloat64 (0.0f), dgFloat64 (1.0f) - t, t);
 			m_vertexIndex = 2;
@@ -1733,10 +1733,10 @@ class dgContactSolver {
 		dgFloat64 t = vb * den;
 		dgFloat64 s = vc * den;
 
-		_ASSERTE(t >= dgFloat64(0.0f));
-		_ASSERTE(s >= dgFloat64(0.0f));
-		_ASSERTE(t <= dgFloat64(1.0f));
-		_ASSERTE(s <= dgFloat64(1.0f));
+		NEWTON_ASSERT(t >= dgFloat64(0.0f));
+		NEWTON_ASSERT(s >= dgFloat64(0.0f));
+		NEWTON_ASSERT(t <= dgFloat64(1.0f));
+		NEWTON_ASSERT(s <= dgFloat64(1.0f));
 		m_vertexIndex = 3;
 		return p0 + p10.Scale(t) + p20.Scale(s);
 	}
@@ -1901,7 +1901,7 @@ class dgContactSolver {
 					}
 
 					if (j == dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
-						_ASSERTE(maxErr > dgFloat32(0.0f));
+						NEWTON_ASSERT(maxErr > dgFloat32(0.0f));
 						CalcSupportVertex(m_dir[best], 1);
 					}
 					m_vertexIndex = 2;
@@ -1929,7 +1929,7 @@ class dgContactSolver {
 					}
 
 					if (j == dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
-						_ASSERTE(maxErr > dgFloat32(0.0f));
+						NEWTON_ASSERT(maxErr > dgFloat32(0.0f));
 						CalcSupportVertex(m_dir[best], 2);
 					}
 					m_vertexIndex = 3;
@@ -1943,7 +1943,7 @@ class dgContactSolver {
 					const dgVector &p2 = m_hullVertex[2];
 					dgVector normal((p1 - p0) * (p2 - p0));
 					dgFloat32 mag2 = normal % normal;
-					_ASSERTE(mag2 > dgFloat32(1.0e-10f));
+					NEWTON_ASSERT(mag2 > dgFloat32(1.0e-10f));
 					normal = normal.Scale(dgRsqrt(mag2));
 					CalcSupportVertex(normal, 3);
 					CalcSupportVertex(normal.Scale(dgFloat32(-1.0f)), 4);
@@ -1956,7 +1956,7 @@ class dgContactSolver {
 					if (!CheckTetraHedronVolume()) {
 						Swap(m_hullVertex[2], m_hullVertex[1]);
 						Swap(m_averVertex[2], m_averVertex[1]);
-						_ASSERTE(CheckTetraHedronVolume());
+						NEWTON_ASSERT(CheckTetraHedronVolume());
 					}
 				}
 				}
@@ -1968,7 +1968,7 @@ class dgContactSolver {
 				cicling = -1;
 			}
 
-			_ASSERTE(dist > dgFloat32(1.0e-24f));
+			NEWTON_ASSERT(dist > dgFloat32(1.0e-24f));
 			dgVector dir(v.Scale(-dgRsqrt(dist)));
 			dist = dir0 % dir;
 			if (dist < dgFloat32(0.9995f)) {
@@ -1993,9 +1993,9 @@ class dgContactSolver {
 				case 1: {
 					dgFloat32 minDistance = dgFloat32(1.0e10f);
 					rotMatrix = dgMatrix(dir);
-					_ASSERTE(rotMatrix.m_front.m_w == dgFloat32(0.0f));
-					_ASSERTE(rotMatrix.m_up.m_w == dgFloat32(0.0f));
-					_ASSERTE(rotMatrix.m_right.m_w == dgFloat32(0.0f));
+					NEWTON_ASSERT(rotMatrix.m_front.m_w == dgFloat32(0.0f));
+					NEWTON_ASSERT(rotMatrix.m_up.m_w == dgFloat32(0.0f));
+					NEWTON_ASSERT(rotMatrix.m_right.m_w == dgFloat32(0.0f));
 
 					dgInt32 keepSeaching = 1;
 					dgVector dir1(dgFloat32(1.0), dgFloat32(0.0f), dgFloat32(0.0f),
@@ -2027,7 +2027,7 @@ class dgContactSolver {
 							              dir2.m_y * yawPitch.m_z + dir2.m_z * yawPitch.m_y,
 							              dgFloat32(0.0f));
 
-							_ASSERTE(
+							NEWTON_ASSERT(
 							    dgAbsf((tmpV % tmpV) - dgFloat32(1.0f)) < dgFloat32(1.0e-4f));
 
 							dir2 = tmpV;
@@ -2037,7 +2037,7 @@ class dgContactSolver {
 							val = err0 % err0;
 							if (val > DG_FALLBACK_SEPARATING_DIST_TOLERANCE) {
 								val = separatingPlane.Evalue(m_hullVertex[2]);
-								_ASSERTE(val > dgFloat32(0.0f));
+								NEWTON_ASSERT(val > dgFloat32(0.0f));
 								if (val < minDistance) {
 									keepSeaching = 0;
 									minDistance = val;
@@ -2060,7 +2060,7 @@ class dgContactSolver {
 					rotMatrix.m_front = dir;
 					rotMatrix.m_up = m_hullVertex[1] - m_hullVertex[0];
 					dgFloat32 mag2 = rotMatrix.m_up % rotMatrix.m_up;
-					_ASSERTE(mag2 > dgFloat32(1.0e-24f));
+					NEWTON_ASSERT(mag2 > dgFloat32(1.0e-24f));
 					rotMatrix.m_up = rotMatrix.m_up.Scale(dgRsqrt(mag2));
 					rotMatrix.m_right = rotMatrix.m_front * rotMatrix.m_up;
 
@@ -2092,7 +2092,7 @@ class dgContactSolver {
 					} while (val < DG_FALLBACK_SEPARATING_DIST_TOLERANCE);
 #ifdef _DEBUG
 					dgFloat32 test = (m_hullVertex[0] - m_hullVertex[2]) % dir;
-					_ASSERTE(test >= dgFloat32(-2.0e-1f));
+					NEWTON_ASSERT(test >= dgFloat32(-2.0e-1f));
 #endif
 					dir1 = dgVector(dgFloat32(1.0), dgFloat32(0.0f), dgFloat32(0.0f),
 					                dgFloat32(0.0f));
@@ -2115,13 +2115,13 @@ class dgContactSolver {
 					} while (val < DG_FALLBACK_SEPARATING_DIST_TOLERANCE);
 #ifdef _DEBUG
 					dgFloat32 test1 = (m_hullVertex[0] - m_hullVertex[3]) % dir;
-					_ASSERTE(test1 >= dgFloat32(-2.0e-1f));
+					NEWTON_ASSERT(test1 >= dgFloat32(-2.0e-1f));
 #endif
 
 					dgFloat32 dist2 = separatingPlane.Evalue(m_hullVertex[2]);
 					dgFloat32 dist3 = separatingPlane.Evalue(m_hullVertex[3]);
-					_ASSERTE(dist2 > dgFloat32(0.0f));
-					_ASSERTE(dist3 > dgFloat32(0.0f));
+					NEWTON_ASSERT(dist2 > dgFloat32(0.0f));
+					NEWTON_ASSERT(dist3 > dgFloat32(0.0f));
 					if (dist3 < dist2) {
 						m_hullVertex[2] = m_hullVertex[3];
 						m_averVertex[2] = m_averVertex[3];
@@ -2143,7 +2143,7 @@ class dgContactSolver {
 				if (!CheckTetraHedronVolume()) {
 					Swap(m_hullVertex[2], m_hullVertex[1]);
 					Swap(m_averVertex[2], m_averVertex[1]);
-					_ASSERTE(CheckTetraHedronVolume());
+					NEWTON_ASSERT(CheckTetraHedronVolume());
 				}
 
 				return dgMinkDisjoint;
@@ -2152,7 +2152,7 @@ class dgContactSolver {
 			m_vertexIndex++;
 			switch (m_vertexIndex) {
 			case 1: {
-				_ASSERTE(0);
+				NEWTON_ASSERT(0);
 				break;
 			}
 
@@ -2178,7 +2178,7 @@ class dgContactSolver {
 			if (!CheckTetraHedronVolume()) {
 				Swap(m_hullVertex[2], m_hullVertex[1]);
 				Swap(m_averVertex[2], m_averVertex[1]);
-				_ASSERTE(CheckTetraHedronVolume());
+				NEWTON_ASSERT(CheckTetraHedronVolume());
 			}
 
 			minDistance = dgFloat32(1.0e20f);
@@ -2188,9 +2188,9 @@ class dgContactSolver {
 				dgInt32 i1 = m_faceIndex[i][1];
 				dgInt32 i2 = m_faceIndex[i][2];
 
-				_ASSERTE(i0 == m_simplex[i].m_vertex[0]);
-				_ASSERTE(i1 == m_simplex[i].m_vertex[1]);
-				_ASSERTE(i2 == m_simplex[i].m_vertex[2]);
+				NEWTON_ASSERT(i0 == m_simplex[i].m_vertex[0]);
+				NEWTON_ASSERT(i1 == m_simplex[i].m_vertex[1]);
+				NEWTON_ASSERT(i2 == m_simplex[i].m_vertex[2]);
 
 				const dgVector &p0 = m_hullVertex[i0];
 				const dgVector &p1 = m_hullVertex[i1];
@@ -2200,7 +2200,7 @@ class dgContactSolver {
 				dgVector n(e0 * e1);
 
 				dgFloat32 dist = n % n;
-				_ASSERTE(dist > dgFloat32(1.0e-20f));
+				NEWTON_ASSERT(dist > dgFloat32(1.0e-20f));
 				if (dist > DG_DISTANCE_TOLERANCE_ZERO) {
 					n = n.Scale(dgRsqrt(dist));
 					dist = dgAbsf(n % (origin - p0));
@@ -2210,12 +2210,12 @@ class dgContactSolver {
 					}
 				}
 			}
-			_ASSERTE(plane);
+			NEWTON_ASSERT(plane);
 			code = dgMinkIntersecting;
 		}
 #ifdef _DEBUG
 		if (m_vertexIndex < 4) {
-			_ASSERTE(0);
+			NEWTON_ASSERT(0);
 #ifdef _MSC_VER
 			dgTrace(("too many iterations  in: %s\n", __FUNCDNAME__));
 #else
@@ -2266,7 +2266,7 @@ class dgContactSolver {
 					}
 
 					if (j == dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
-						_ASSERTE(maxErr > dgFloat64(0.0f));
+						NEWTON_ASSERT(maxErr > dgFloat64(0.0f));
 						CalcSupportVertexLarge(m_dir[best], 1);
 					}
 					m_vertexIndex = 2;
@@ -2295,7 +2295,7 @@ class dgContactSolver {
 					}
 
 					if (j == dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
-						_ASSERTE(maxErr > dgFloat64(0.0f));
+						NEWTON_ASSERT(maxErr > dgFloat64(0.0f));
 						CalcSupportVertexLarge(m_dir[best], 2);
 					}
 					m_vertexIndex = 3;
@@ -2309,7 +2309,7 @@ class dgContactSolver {
 					const dgBigVector &p2 = m_hullVertexLarge[2];
 					dgBigVector normal((p1 - p0) * (p2 - p0));
 					dgFloat64 mag2 = normal % normal;
-					_ASSERTE(mag2 > dgFloat64(1.0e-10f));
+					NEWTON_ASSERT(mag2 > dgFloat64(1.0e-10f));
 					normal = normal.Scale(dgFloat64(1.0f) / sqrt(mag2));
 					dgVector dir(dgFloat32(normal.m_x), dgFloat32(normal.m_y),
 					             dgFloat32(normal.m_z), dgFloat32(0.0f));
@@ -2324,7 +2324,7 @@ class dgContactSolver {
 					if (!CheckTetraHedronVolumeLarge()) {
 						Swap(m_hullVertexLarge[2], m_hullVertexLarge[1]);
 						Swap(m_averVertexLarge[2], m_averVertexLarge[1]);
-						_ASSERTE(CheckTetraHedronVolumeLarge());
+						NEWTON_ASSERT(CheckTetraHedronVolumeLarge());
 					}
 				}
 				}
@@ -2336,7 +2336,7 @@ class dgContactSolver {
 				cicling = -1;
 			}
 
-			_ASSERTE(dist > dgFloat64(1.0e-24f));
+			NEWTON_ASSERT(dist > dgFloat64(1.0e-24f));
 			dgBigVector dir(v.Scale(-dgFloat64(1.0f) / sqrt(dist)));
 			dist = dir0 % dir;
 			if (dist < dgFloat64(0.9995f)) {
@@ -2368,9 +2368,9 @@ class dgContactSolver {
 				case 1: {
 					dgFloat64 minDistance = dgFloat64(1.0e10f);
 					rotMatrix = dgMatrix(dir32);
-					_ASSERTE(rotMatrix.m_front.m_w == dgFloat64(0.0f));
-					_ASSERTE(rotMatrix.m_up.m_w == dgFloat64(0.0f));
-					_ASSERTE(rotMatrix.m_right.m_w == dgFloat64(0.0f));
+					NEWTON_ASSERT(rotMatrix.m_front.m_w == dgFloat64(0.0f));
+					NEWTON_ASSERT(rotMatrix.m_up.m_w == dgFloat64(0.0f));
+					NEWTON_ASSERT(rotMatrix.m_right.m_w == dgFloat64(0.0f));
 
 					dgInt32 keepSeaching = 1;
 					dgVector dir1(dgFloat32(1.0), dgFloat32(0.0f), dgFloat32(0.0f),
@@ -2401,7 +2401,7 @@ class dgContactSolver {
 							              dir2.m_y * yawPitch.m_z + dir2.m_z * yawPitch.m_y,
 							              dgFloat64(0.0f));
 
-							//                              _ASSERTE (dgAbsf ((tmp2 % tmp2) - dgFloat32 (1.0f)) < dgFloat32 (1.0e-4f));
+							//                              NEWTON_ASSERT (dgAbsf ((tmp2 % tmp2) - dgFloat32 (1.0f)) < dgFloat32 (1.0e-4f));
 
 							dir2 = tmp2;
 							tmp2 = rotMatrix.RotateVector(dir2);
@@ -2411,7 +2411,7 @@ class dgContactSolver {
 							if (val > DG_FALLBACK_SEPARATING_DIST_TOLERANCE) {
 								//                                  val = separatingPlane.Evalue(m_hullVertex[2]);
 								val = separatingPlane.m_x * m_hullVertexLarge[2].m_x + separatingPlane.m_y * m_hullVertexLarge[2].m_y + separatingPlane.m_z * m_hullVertexLarge[2].m_z + separatingPlane.m_w;
-								_ASSERTE(val > dgFloat64(0.0f));
+								NEWTON_ASSERT(val > dgFloat64(0.0f));
 								if (val < minDistance) {
 									keepSeaching = 0;
 									minDistance = val;
@@ -2435,7 +2435,7 @@ class dgContactSolver {
 					// mag2 = rotMatrix.m_up % rotMatrix.m_up;
 					dgBigVector up(m_hullVertexLarge[1] - m_hullVertexLarge[0]);
 					dgFloat64 mag2 = up % up;
-					_ASSERTE(mag2 > dgFloat64(1.0e-24f));
+					NEWTON_ASSERT(mag2 > dgFloat64(1.0e-24f));
 					// rotMatrix.m_up = rotMatrix.m_up.Scale(dgRsqrt (mag2));
 					up = up.Scale(dgFloat64(1.0f) / sqrt(mag2));
 					rotMatrix.m_up = dgVector(dgFloat32(up.m_x), dgFloat32(up.m_y),
@@ -2468,7 +2468,7 @@ class dgContactSolver {
 							val = err1 % err1;
 						}
 					} while (val < DG_FALLBACK_SEPARATING_DIST_TOLERANCE);
-					_ASSERTE(
+					NEWTON_ASSERT(
 					    ((m_hullVertexLarge[0] - m_hullVertexLarge[2]) % dir) >= dgFloat64(-1.0e-1f));
 					dir1 = dgVector(dgFloat64(1.0), dgFloat64(0.0f), dgFloat64(0.0f),
 					                dgFloat64(0.0f));
@@ -2489,7 +2489,7 @@ class dgContactSolver {
 							val = err1 % err1;
 						}
 					} while (val < DG_FALLBACK_SEPARATING_DIST_TOLERANCE);
-					_ASSERTE(
+					NEWTON_ASSERT(
 					    ((m_hullVertexLarge[0] - m_hullVertexLarge[3]) % dir) >= dgFloat64(-1.0e-1f));
 
 					//                      dist2 = separatingPlane.Evalue(m_hullVertexLarge[2]);
@@ -2497,8 +2497,8 @@ class dgContactSolver {
 					dgFloat64 dist2 = separatingPlane.m_x * m_hullVertexLarge[2].m_x + separatingPlane.m_y * m_hullVertexLarge[2].m_y + separatingPlane.m_z * m_hullVertexLarge[2].m_z + separatingPlane.m_w;
 					dgFloat64 dist3 = separatingPlane.m_x * m_hullVertexLarge[3].m_x + separatingPlane.m_y * m_hullVertexLarge[3].m_y + separatingPlane.m_z * m_hullVertexLarge[3].m_z + separatingPlane.m_w;
 
-					_ASSERTE(dist2 > dgFloat64(0.0f));
-					_ASSERTE(dist3 > dgFloat64(0.0f));
+					NEWTON_ASSERT(dist2 > dgFloat64(0.0f));
+					NEWTON_ASSERT(dist3 > dgFloat64(0.0f));
 					if (dist3 < dist2) {
 						m_hullVertexLarge[2] = m_hullVertexLarge[3];
 						m_averVertexLarge[2] = m_averVertexLarge[3];
@@ -2520,7 +2520,7 @@ class dgContactSolver {
 				if (!CheckTetraHedronVolumeLarge()) {
 					Swap(m_hullVertexLarge[2], m_hullVertexLarge[1]);
 					Swap(m_averVertexLarge[2], m_averVertexLarge[1]);
-					_ASSERTE(CheckTetraHedronVolumeLarge());
+					NEWTON_ASSERT(CheckTetraHedronVolumeLarge());
 				}
 
 				return dgMinkDisjoint;
@@ -2529,7 +2529,7 @@ class dgContactSolver {
 			m_vertexIndex++;
 			switch (m_vertexIndex) {
 			case 1: {
-				_ASSERTE(0);
+				NEWTON_ASSERT(0);
 				break;
 			}
 
@@ -2554,7 +2554,7 @@ class dgContactSolver {
 			if (!CheckTetraHedronVolumeLarge()) {
 				Swap(m_hullVertexLarge[2], m_hullVertexLarge[1]);
 				Swap(m_averVertexLarge[2], m_averVertexLarge[1]);
-				_ASSERTE(CheckTetraHedronVolumeLarge());
+				NEWTON_ASSERT(CheckTetraHedronVolumeLarge());
 			}
 
 			dgFloat64 minDistance = dgFloat64(1.0e20f);
@@ -2563,9 +2563,9 @@ class dgContactSolver {
 				dgInt32 i1 = m_faceIndex[i][1];
 				dgInt32 i2 = m_faceIndex[i][2];
 
-				_ASSERTE(i0 == m_simplex[i].m_vertex[0]);
-				_ASSERTE(i1 == m_simplex[i].m_vertex[1]);
-				_ASSERTE(i2 == m_simplex[i].m_vertex[2]);
+				NEWTON_ASSERT(i0 == m_simplex[i].m_vertex[0]);
+				NEWTON_ASSERT(i1 == m_simplex[i].m_vertex[1]);
+				NEWTON_ASSERT(i2 == m_simplex[i].m_vertex[2]);
 
 				const dgBigVector &p0 = m_hullVertexLarge[i0];
 				const dgBigVector &p1 = m_hullVertexLarge[i1];
@@ -2575,7 +2575,7 @@ class dgContactSolver {
 				dgBigVector n(e0 * e1);
 
 				dgFloat64 dist = n % n;
-				_ASSERTE(dist > dgFloat64(1.0e-20f));
+				NEWTON_ASSERT(dist > dgFloat64(1.0e-20f));
 				if (dist > DG_DISTANCE_TOLERANCE_ZERO) {
 					n = n.Scale(dgFloat32(1.0f) / sqrt(dist));
 					dist = fabs(n % (origin - p0));
@@ -2585,12 +2585,12 @@ class dgContactSolver {
 					}
 				}
 			}
-			_ASSERTE(plane);
+			NEWTON_ASSERT(plane);
 			code = dgMinkIntersecting;
 		}
 #ifdef _DEBUG
 		if (m_vertexIndex < 4) {
-			_ASSERTE(0);
+			NEWTON_ASSERT(0);
 #ifdef _MSC_VER
 			dgTrace(("too many iterations  in: %s\n", __FUNCDNAME__));
 #else
@@ -2625,9 +2625,9 @@ class dgContactSolver {
 			//              dgInt32 i1 = m_faceIndex[i][1];
 			//              dgInt32 i2 = m_faceIndex[i][2];
 			//
-			//              _ASSERTE (i0 == m_simplex[i].m_vertex[0]);
-			//              _ASSERTE (i1 == m_simplex[i].m_vertex[1]);
-			//              _ASSERTE (i2 == m_simplex[i].m_vertex[2]);
+			//              NEWTON_ASSERT (i0 == m_simplex[i].m_vertex[0]);
+			//              NEWTON_ASSERT (i1 == m_simplex[i].m_vertex[1]);
+			//              NEWTON_ASSERT (i2 == m_simplex[i].m_vertex[2]);
 			//
 			//              const dgVector& p0 = m_hullVertex[i0];
 			//              const dgVector& p1 = m_hullVertex[i1];
@@ -2844,7 +2844,7 @@ class dgContactSolver {
 							plane = face;
 							// code = dgMinkDisjoint;
 							code = UpdateSeparatingPlaneFallbackSolution(plane, origin);
-							_ASSERTE(
+							NEWTON_ASSERT(
 							    (code == dgMinkDisjoint) || ((code == dgMinkIntersecting) && (m_vertexIndex == 4)));
 							break;
 						}
@@ -2857,9 +2857,9 @@ class dgContactSolver {
 				dgInt32 i0 = face->m_vertex[0];
 				dgInt32 i1 = face->m_vertex[1];
 				dgInt32 i2 = m_faceIndex[face - m_simplex][3];
-				_ASSERTE(i2 != face->m_vertex[0]);
-				_ASSERTE(i2 != face->m_vertex[1]);
-				_ASSERTE(i2 != face->m_vertex[2]);
+				NEWTON_ASSERT(i2 != face->m_vertex[0]);
+				NEWTON_ASSERT(i2 != face->m_vertex[1]);
+				NEWTON_ASSERT(i2 != face->m_vertex[2]);
 				Swap(m_hullVertex[i0], m_hullVertex[i1]);
 				Swap(m_averVertex[i0], m_averVertex[i1]);
 				m_hullVertex[i2] = m_hullVertex[4];
@@ -2867,13 +2867,13 @@ class dgContactSolver {
 				if (!CheckTetraHedronVolume()) {
 					Swap(m_hullVertex[1], m_hullVertex[2]);
 					Swap(m_averVertex[1], m_averVertex[2]);
-					_ASSERTE(CheckTetraHedronVolume());
+					NEWTON_ASSERT(CheckTetraHedronVolume());
 				}
 			}
 		}
 
 		if (j >= DG_UPDATE_SEPARATING_PLANE_MAX_ITERATION) {
-			_ASSERTE(CheckTetraHedronVolume());
+			NEWTON_ASSERT(CheckTetraHedronVolume());
 			code = UpdateSeparatingPlaneFallbackSolution(plane, origin);
 		}
 		return code;
@@ -2907,9 +2907,9 @@ class dgContactSolver {
 				dgInt32 i1 = m_faceIndex[i][1];
 				dgInt32 i2 = m_faceIndex[i][2];
 
-				_ASSERTE(i0 == m_simplex[i].m_vertex[0]);
-				_ASSERTE(i1 == m_simplex[i].m_vertex[1]);
-				_ASSERTE(i2 == m_simplex[i].m_vertex[2]);
+				NEWTON_ASSERT(i0 == m_simplex[i].m_vertex[0]);
+				NEWTON_ASSERT(i1 == m_simplex[i].m_vertex[1]);
+				NEWTON_ASSERT(i2 == m_simplex[i].m_vertex[2]);
 
 				const dgVector &p0 = m_hullVertex[i0];
 				const dgVector &p1 = m_hullVertex[i1];
@@ -2976,7 +2976,7 @@ class dgContactSolver {
 							plane = face;
 							// code = dgMinkDisjoint;
 							code = UpdateSeparatingPlaneFallbackSolution(plane, origin);
-							_ASSERTE(
+							NEWTON_ASSERT(
 							    (code == dgMinkDisjoint) || ((code == dgMinkIntersecting) && (m_vertexIndex == 4)));
 							break;
 						}
@@ -2989,9 +2989,9 @@ class dgContactSolver {
 				dgInt32 i0 = face->m_vertex[0];
 				dgInt32 i1 = face->m_vertex[1];
 				dgInt32 i2 = m_faceIndex[face - m_simplex][3];
-				_ASSERTE(i2 != face->m_vertex[0]);
-				_ASSERTE(i2 != face->m_vertex[1]);
-				_ASSERTE(i2 != face->m_vertex[2]);
+				NEWTON_ASSERT(i2 != face->m_vertex[0]);
+				NEWTON_ASSERT(i2 != face->m_vertex[1]);
+				NEWTON_ASSERT(i2 != face->m_vertex[2]);
 				Swap(m_hullVertex[i0], m_hullVertex[i1]);
 				Swap(m_averVertex[i0], m_averVertex[i1]);
 				m_hullVertex[i2] = m_hullVertex[4];
@@ -2999,13 +2999,13 @@ class dgContactSolver {
 				if (!CheckTetraHedronVolume()) {
 					Swap(m_hullVertex[1], m_hullVertex[2]);
 					Swap(m_averVertex[1], m_averVertex[2]);
-					_ASSERTE(CheckTetraHedronVolume());
+					NEWTON_ASSERT(CheckTetraHedronVolume());
 				}
 			}
 		}
 
 		if (j >= DG_UPDATE_SEPARATING_PLANE_MAX_ITERATION) {
-			_ASSERTE(CheckTetraHedronVolume());
+			NEWTON_ASSERT(CheckTetraHedronVolume());
 			code = UpdateSeparatingPlaneFallbackSolution(plane, origin);
 		}
 		return code;
@@ -3039,9 +3039,9 @@ class dgContactSolver {
 				dgInt32 i1 = m_faceIndex[i][1];
 				dgInt32 i2 = m_faceIndex[i][2];
 
-				_ASSERTE(i0 == m_simplex[i].m_vertex[0]);
-				_ASSERTE(i1 == m_simplex[i].m_vertex[1]);
-				_ASSERTE(i2 == m_simplex[i].m_vertex[2]);
+				NEWTON_ASSERT(i0 == m_simplex[i].m_vertex[0]);
+				NEWTON_ASSERT(i1 == m_simplex[i].m_vertex[1]);
+				NEWTON_ASSERT(i2 == m_simplex[i].m_vertex[2]);
 
 				const dgBigVector &p0 = m_hullVertexLarge[i0];
 				const dgBigVector &p1 = m_hullVertexLarge[i1];
@@ -3112,7 +3112,7 @@ class dgContactSolver {
 							plane = face;
 							// code = dgMinkDisjoint;
 							code = UpdateSeparatingPlaneFallbackSolutionLarge(plane, origin);
-							_ASSERTE(
+							NEWTON_ASSERT(
 							    (code == dgMinkDisjoint) || ((code == dgMinkIntersecting) && (m_vertexIndex == 4)));
 							break;
 						}
@@ -3125,9 +3125,9 @@ class dgContactSolver {
 				dgInt32 i0 = face->m_vertex[0];
 				dgInt32 i1 = face->m_vertex[1];
 				dgInt32 i2 = m_faceIndex[face - m_simplex][3];
-				_ASSERTE(i2 != face->m_vertex[0]);
-				_ASSERTE(i2 != face->m_vertex[1]);
-				_ASSERTE(i2 != face->m_vertex[2]);
+				NEWTON_ASSERT(i2 != face->m_vertex[0]);
+				NEWTON_ASSERT(i2 != face->m_vertex[1]);
+				NEWTON_ASSERT(i2 != face->m_vertex[2]);
 				Swap(m_hullVertexLarge[i0], m_hullVertexLarge[i1]);
 				Swap(m_averVertexLarge[i0], m_averVertexLarge[i1]);
 				m_hullVertexLarge[i2] = m_hullVertexLarge[4];
@@ -3135,13 +3135,13 @@ class dgContactSolver {
 				if (!CheckTetraHedronVolumeLarge()) {
 					Swap(m_hullVertexLarge[1], m_hullVertexLarge[2]);
 					Swap(m_averVertexLarge[1], m_averVertexLarge[2]);
-					_ASSERTE(CheckTetraHedronVolumeLarge());
+					NEWTON_ASSERT(CheckTetraHedronVolumeLarge());
 				}
 			}
 		}
 
 		if (j >= DG_UPDATE_SEPARATING_PLANE_MAX_ITERATION) {
-			_ASSERTE(CheckTetraHedronVolumeLarge());
+			NEWTON_ASSERT(CheckTetraHedronVolumeLarge());
 			code = UpdateSeparatingPlaneFallbackSolutionLarge(plane, origin);
 		}
 		return code;
@@ -3249,10 +3249,10 @@ class dgContactSolver {
 			Swap(m_averVertex[1], m_averVertex[2]);
 		}
 
-		_ASSERTE(CheckTetraHedronVolume());
+		NEWTON_ASSERT(CheckTetraHedronVolume());
 
-		_ASSERTE((((dgUnsigned64)&m_simplex[0]) & 0x0f) == 0);
-		_ASSERTE((((dgUnsigned64)&m_simplex[1]) & 0x0f) == 0);
+		NEWTON_ASSERT((((dgUnsigned64)&m_simplex[0]) & 0x0f) == 0);
+		NEWTON_ASSERT((((dgUnsigned64)&m_simplex[1]) & 0x0f) == 0);
 
 		// face 0
 		m_simplex[0].m_vertex[0] = 0;
@@ -3394,10 +3394,10 @@ class dgContactSolver {
 			Swap(m_hullVertex[1], m_hullVertex[2]);
 			Swap(m_averVertex[1], m_averVertex[2]);
 		}
-		_ASSERTE(CheckTetraHedronVolume());
+		NEWTON_ASSERT(CheckTetraHedronVolume());
 
-		_ASSERTE((((dgUnsigned64)&m_simplex[0]) & 0x0f) == 0);
-		_ASSERTE((((dgUnsigned64)&m_simplex[1]) & 0x0f) == 0);
+		NEWTON_ASSERT((((dgUnsigned64)&m_simplex[0]) & 0x0f) == 0);
+		NEWTON_ASSERT((((dgUnsigned64)&m_simplex[1]) & 0x0f) == 0);
 
 		// face 0
 		m_simplex[0].m_vertex[0] = 0;
@@ -3538,10 +3538,10 @@ class dgContactSolver {
 			Swap(m_hullVertexLarge[1], m_hullVertexLarge[2]);
 			Swap(m_averVertexLarge[1], m_averVertexLarge[2]);
 		}
-		_ASSERTE(CheckTetraHedronVolumeLarge());
+		NEWTON_ASSERT(CheckTetraHedronVolumeLarge());
 
-		_ASSERTE((((dgUnsigned64)&m_simplex[0]) & 0x0f) == 0);
-		_ASSERTE((((dgUnsigned64)&m_simplex[1]) & 0x0f) == 0);
+		NEWTON_ASSERT((((dgUnsigned64)&m_simplex[0]) & 0x0f) == 0);
+		NEWTON_ASSERT((((dgUnsigned64)&m_simplex[1]) & 0x0f) == 0);
 
 		// face 0
 		m_simplex[0].m_vertex[0] = 0;
@@ -3651,7 +3651,7 @@ class dgContactSolver {
 			ret = true;
 			plane = plane.Scale(dgRsqrt(mag2));
 		} else {
-			//_ASSERTE (0);
+			//NEWTON_ASSERT (0);
 			plane.m_w = dgFloat32(0.0f);
 		}
 
@@ -3675,7 +3675,7 @@ class dgContactSolver {
 			ret = true;
 			plane = plane.Scale(dgFloat64(1.0f) / sqrt(mag2));
 		} else {
-			//_ASSERTE (0);
+			//NEWTON_ASSERT (0);
 			plane.m_w = dgFloat64(0.0f);
 		}
 
@@ -3695,7 +3695,7 @@ class dgContactSolver {
 		} else {
 			face = &m_simplex[m_planeIndex];
 			m_planeIndex++;
-			_ASSERTE(m_planeIndex < dgInt32(sizeof(m_simplex) / sizeof(m_simplex[0])));
+			NEWTON_ASSERT(m_planeIndex < dgInt32(sizeof(m_simplex) / sizeof(m_simplex[0])));
 		}
 		return face;
 	}
@@ -3744,7 +3744,7 @@ class dgContactSolver {
 		m_facePurge = NULL;
 		penetration = dgFloat32(0.0f);
 
-		_ASSERTE(m_vertexIndex == 4);
+		NEWTON_ASSERT(m_vertexIndex == 4);
 		for (i = 0; i < 4; i++) {
 			face = &m_simplex[i];
 			face->m_inHeap = 0;
@@ -3841,12 +3841,12 @@ class dgContactSolver {
 				}
 
 				if (dist < (dgFloat32(DG_IMPULSIVE_CONTACT_PENETRATION) / dgFloat32(16.0f))) {
-					_ASSERTE(m_planeIndex <= DG_MINK_MAX_FACES_SIZE);
-					_ASSERTE(heapSort.GetCount() <= DG_HEAP_EDGE_COUNT);
+					NEWTON_ASSERT(m_planeIndex <= DG_MINK_MAX_FACES_SIZE);
+					NEWTON_ASSERT(heapSort.GetCount() <= DG_HEAP_EDGE_COUNT);
 					closestFace = face;
 					break;
 				} else if (dist > dgFloat32(0.0f)) {
-					_ASSERTE(face->m_inHeap == 0);
+					NEWTON_ASSERT(face->m_inHeap == 0);
 
 					stack = 0;
 					deadCount = 1;
@@ -3856,7 +3856,7 @@ class dgContactSolver {
 					face->m_isActive = 0;
 					for (i = 0; i < 3; i++) {
 						adjacent = &m_simplex[face->m_adjancentFace[i]];
-						_ASSERTE(adjacent->m_isActive);
+						NEWTON_ASSERT(adjacent->m_isActive);
 						dist = adjacent->Evalue(p);
 						if (dist > dgFloat32(0.0f)) {
 							adjacent->m_isActive = 0;
@@ -3881,8 +3881,8 @@ class dgContactSolver {
 									deadFaces[deadCount] = adjacent;
 									stack++;
 									deadCount++;
-									_ASSERTE(stack < dgInt32(sizeof(stackPool) / sizeof(stackPool[0])));
-									_ASSERTE(deadCount < dgInt32(sizeof(deadFaces) / sizeof(deadFaces[0])));
+									NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(stackPool[0])));
+									NEWTON_ASSERT(deadCount < dgInt32(sizeof(deadFaces) / sizeof(deadFaces[0])));
 
 								} else {
 									silhouette = adjacent;
@@ -3897,18 +3897,18 @@ class dgContactSolver {
 					}
 
 					// build silhouette
-					_ASSERTE(silhouette);
-					_ASSERTE(silhouette->m_isActive);
+					NEWTON_ASSERT(silhouette);
+					NEWTON_ASSERT(silhouette->m_isActive);
 
 					i2 = (m_vertexIndex - 1);
 					lastSilhouette = silhouette;
-					//                  _ASSERTE ( (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
+					//                  NEWTON_ASSERT ( (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
 					//                      (!m_simplex[silhouette->m_adjancentFace[1]].m_isActive) +
 					//                      (!m_simplex[silhouette->m_adjancentFace[2]].m_isActive)) == 1) ||
 					//                      (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
 					//                      (!m_simplex[silhouette->m_adjancentFace[1]].m_isActive) +
 					//                      (!m_simplex[silhouette->m_adjancentFace[2]].m_isActive)) == 2));
-					_ASSERTE(
+					NEWTON_ASSERT(
 					    (silhouette->m_adjancentFace[0] != silhouette->m_adjancentFace[1]) && (silhouette->m_adjancentFace[0] != silhouette->m_adjancentFace[2]) && (silhouette->m_adjancentFace[1] != silhouette->m_adjancentFace[2]));
 
 					adjacentIndex = DG_GETADJACENTINDEX_ACTIVE(silhouette);
@@ -3928,7 +3928,7 @@ class dgContactSolver {
 					sillueteCap[0].m_faceCopling =
 					    &silhouette->m_adjancentFace[adjacentIndex];
 					silhouetteCapCount = 1;
-					_ASSERTE(
+					NEWTON_ASSERT(
 					    silhouetteCapCount < dgInt32(sizeof(sillueteCap) / sizeof(sillueteCap[0])));
 					do {
 						silhouette = &m_simplex[silhouette->m_adjancentFace[adjacentIndex]];
@@ -3940,13 +3940,13 @@ class dgContactSolver {
 					lastSilhouetteVertex = i0;
 					prevEdgeIndex = dgInt32(face - m_simplex);
 					do {
-						//                      _ASSERTE ( (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
+						//                      NEWTON_ASSERT ( (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
 						//                          (!m_simplex[silhouette->m_adjancentFace[1]].m_isActive) +
 						//                          (!m_simplex[silhouette->m_adjancentFace[2]].m_isActive)) == 1) ||
 						//                          (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
 						//                          (!m_simplex[silhouette->m_adjancentFace[1]].m_isActive) +
 						//                          (!m_simplex[silhouette->m_adjancentFace[2]].m_isActive)) == 2));
-						_ASSERTE((silhouette->m_adjancentFace[0] != silhouette->m_adjancentFace[1]) && (silhouette->m_adjancentFace[0] != silhouette->m_adjancentFace[2]) && (silhouette->m_adjancentFace[1] != silhouette->m_adjancentFace[2]));
+						NEWTON_ASSERT((silhouette->m_adjancentFace[0] != silhouette->m_adjancentFace[1]) && (silhouette->m_adjancentFace[0] != silhouette->m_adjancentFace[2]) && (silhouette->m_adjancentFace[1] != silhouette->m_adjancentFace[2]));
 
 						adjacentIndex = adjacentIndex ? adjacentIndex - 1 : 2;
 
@@ -3971,7 +3971,7 @@ class dgContactSolver {
 						sillueteCap[silhouetteCapCount].m_faceCopling =
 						    &silhouette->m_adjancentFace[adjacentIndex];
 						silhouetteCapCount++;
-						_ASSERTE(
+						NEWTON_ASSERT(
 						    silhouetteCapCount < dgInt32(sizeof(sillueteCap) / sizeof(sillueteCap[0])));
 
 						do {
@@ -4011,7 +4011,7 @@ class dgContactSolver {
 					}
 				}
 			} else {
-				_ASSERTE(0);
+				NEWTON_ASSERT(0);
 				nextPurge = (dgMinkFacePurge *)face;
 				nextPurge->m_next = m_facePurge;
 				m_facePurge = nextPurge;
@@ -4059,7 +4059,7 @@ class dgContactSolver {
 		closestFace = NULL;
 		m_facePurge = NULL;
 
-		_ASSERTE(m_vertexIndex == 4);
+		NEWTON_ASSERT(m_vertexIndex == 4);
 		for (i = 0; i < 4; i++) {
 			face = &m_simplex[i];
 			face->m_inHeap = 0;
@@ -4155,12 +4155,12 @@ class dgContactSolver {
 				}
 
 				if (dist < (dgFloat32(DG_IMPULSIVE_CONTACT_PENETRATION) / dgFloat32(16.0f))) {
-					_ASSERTE(m_planeIndex <= DG_MINK_MAX_FACES_SIZE);
-					_ASSERTE(heapSort.GetCount() <= DG_HEAP_EDGE_COUNT);
+					NEWTON_ASSERT(m_planeIndex <= DG_MINK_MAX_FACES_SIZE);
+					NEWTON_ASSERT(heapSort.GetCount() <= DG_HEAP_EDGE_COUNT);
 					closestFace = face;
 					break;
 				} else if (dist > dgFloat32(0.0f)) {
-					_ASSERTE(face->m_inHeap == 0);
+					NEWTON_ASSERT(face->m_inHeap == 0);
 
 					stack = 0;
 					deadCount = 1;
@@ -4170,7 +4170,7 @@ class dgContactSolver {
 					face->m_isActive = 0;
 					for (i = 0; i < 3; i++) {
 						adjacent = &m_simplex[face->m_adjancentFace[i]];
-						_ASSERTE(adjacent->m_isActive);
+						NEWTON_ASSERT(adjacent->m_isActive);
 						dist = adjacent->Evalue(p);
 						if (dist > dgFloat32(0.0f)) {
 							adjacent->m_isActive = 0;
@@ -4195,8 +4195,8 @@ class dgContactSolver {
 									deadFaces[deadCount] = adjacent;
 									stack++;
 									deadCount++;
-									_ASSERTE(stack < dgInt32(sizeof(stackPool) / sizeof(stackPool[0])));
-									_ASSERTE(
+									NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(stackPool[0])));
+									NEWTON_ASSERT(
 									    deadCount < dgInt32(sizeof(deadFaces) / sizeof(deadFaces[0])));
 
 								} else {
@@ -4211,18 +4211,18 @@ class dgContactSolver {
 						break;
 					}
 					// build silhouette
-					_ASSERTE(silhouette);
-					_ASSERTE(silhouette->m_isActive);
+					NEWTON_ASSERT(silhouette);
+					NEWTON_ASSERT(silhouette->m_isActive);
 
 					i2 = (m_vertexIndex - 1);
 					lastSilhouette = silhouette;
-					//                  _ASSERTE ( (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
+					//                  NEWTON_ASSERT ( (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
 					//                              (!m_simplex[silhouette->m_adjancentFace[1]].m_isActive) +
 					//                              (!m_simplex[silhouette->m_adjancentFace[2]].m_isActive)) == 1) ||
 					//                             (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
 					//                              (!m_simplex[silhouette->m_adjancentFace[1]].m_isActive) +
 					//                              (!m_simplex[silhouette->m_adjancentFace[2]].m_isActive)) == 2));
-					_ASSERTE(
+					NEWTON_ASSERT(
 					    (silhouette->m_adjancentFace[0] != silhouette->m_adjancentFace[1]) && (silhouette->m_adjancentFace[0] != silhouette->m_adjancentFace[2]) && (silhouette->m_adjancentFace[1] != silhouette->m_adjancentFace[2]));
 
 					adjacentIndex = DG_GETADJACENTINDEX_ACTIVE(silhouette);
@@ -4242,7 +4242,7 @@ class dgContactSolver {
 					sillueteCap[0].m_faceCopling =
 					    &silhouette->m_adjancentFace[adjacentIndex];
 					silhouetteCapCount = 1;
-					_ASSERTE(silhouetteCapCount < dgInt32(sizeof(sillueteCap) / sizeof(sillueteCap[0])));
+					NEWTON_ASSERT(silhouetteCapCount < dgInt32(sizeof(sillueteCap) / sizeof(sillueteCap[0])));
 					do {
 						silhouette = &m_simplex[silhouette->m_adjancentFace[adjacentIndex]];
 						adjacentIndex = (DG_GETADJACENTINDEX_VERTEX(silhouette, i0));
@@ -4253,13 +4253,13 @@ class dgContactSolver {
 					lastSilhouetteVertex = i0;
 					prevEdgeIndex = dgInt32(face - m_simplex);
 					do {
-						//                      _ASSERTE ( (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
+						//                      NEWTON_ASSERT ( (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
 						//                                  (!m_simplex[silhouette->m_adjancentFace[1]].m_isActive) +
 						//                                  (!m_simplex[silhouette->m_adjancentFace[2]].m_isActive)) == 1) ||
 						//                                  (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
 						//                                  (!m_simplex[silhouette->m_adjancentFace[1]].m_isActive) +
 						//                                  (!m_simplex[silhouette->m_adjancentFace[2]].m_isActive)) == 2));
-						_ASSERTE(
+						NEWTON_ASSERT(
 						    (silhouette->m_adjancentFace[0] != silhouette->m_adjancentFace[1]) && (silhouette->m_adjancentFace[0] != silhouette->m_adjancentFace[2]) && (silhouette->m_adjancentFace[1] != silhouette->m_adjancentFace[2]));
 
 						adjacentIndex = adjacentIndex ? adjacentIndex - 1 : 2;
@@ -4285,7 +4285,7 @@ class dgContactSolver {
 						sillueteCap[silhouetteCapCount].m_faceCopling =
 						    &silhouette->m_adjancentFace[adjacentIndex];
 						silhouetteCapCount++;
-						_ASSERTE(silhouetteCapCount < dgInt32(sizeof(sillueteCap) / sizeof(sillueteCap[0])));
+						NEWTON_ASSERT(silhouetteCapCount < dgInt32(sizeof(sillueteCap) / sizeof(sillueteCap[0])));
 
 						do {
 							silhouette =
@@ -4324,7 +4324,7 @@ class dgContactSolver {
 					}
 				}
 			} else {
-				_ASSERTE(0);
+				NEWTON_ASSERT(0);
 				nextPurge = (dgMinkFacePurge *)face;
 				nextPurge->m_next = m_facePurge;
 				m_facePurge = nextPurge;
@@ -4369,7 +4369,7 @@ class dgContactSolver {
 		closestFace = NULL;
 		m_facePurge = NULL;
 
-		_ASSERTE(m_vertexIndex == 4);
+		NEWTON_ASSERT(m_vertexIndex == 4);
 		for (i = 0; i < 4; i++) {
 			face = &m_simplex[i];
 			face->m_inHeap = 0;
@@ -4471,12 +4471,12 @@ class dgContactSolver {
 				}
 
 				if (dist < (dgFloat32(DG_IMPULSIVE_CONTACT_PENETRATION) / dgFloat32(16.0f))) {
-					_ASSERTE(m_planeIndex <= DG_MINK_MAX_FACES_SIZE);
-					_ASSERTE(heapSort.GetCount() <= DG_HEAP_EDGE_COUNT);
+					NEWTON_ASSERT(m_planeIndex <= DG_MINK_MAX_FACES_SIZE);
+					NEWTON_ASSERT(heapSort.GetCount() <= DG_HEAP_EDGE_COUNT);
 					closestFace = face;
 					break;
 				} else if (dist > dgFloat32(0.0f)) {
-					_ASSERTE(face->m_inHeap == 0);
+					NEWTON_ASSERT(face->m_inHeap == 0);
 
 					stack = 0;
 					deadCount = 1;
@@ -4486,7 +4486,7 @@ class dgContactSolver {
 					face->m_isActive = 0;
 					for (i = 0; i < 3; i++) {
 						adjacent = &m_simplex[face->m_adjancentFace[i]];
-						_ASSERTE(adjacent->m_isActive);
+						NEWTON_ASSERT(adjacent->m_isActive);
 						dist = adjacent->Evalue(p);
 						if (dist > dgFloat64(0.0f)) {
 							adjacent->m_isActive = 0;
@@ -4512,8 +4512,8 @@ class dgContactSolver {
 									deadFaces[deadCount] = adjacent;
 									stack++;
 									deadCount++;
-									_ASSERTE(stack < dgInt32(sizeof(stackPool) / sizeof(stackPool[0])));
-									_ASSERTE(deadCount < dgInt32(sizeof(deadFaces) / sizeof(deadFaces[0])));
+									NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(stackPool[0])));
+									NEWTON_ASSERT(deadCount < dgInt32(sizeof(deadFaces) / sizeof(deadFaces[0])));
 
 								} else {
 									silhouette = adjacent;
@@ -4527,18 +4527,18 @@ class dgContactSolver {
 						break;
 					}
 					// build silhouette
-					_ASSERTE(silhouette);
-					_ASSERTE(silhouette->m_isActive);
+					NEWTON_ASSERT(silhouette);
+					NEWTON_ASSERT(silhouette->m_isActive);
 
 					i2 = (m_vertexIndex - 1);
 					lastSilhouette = silhouette;
-					//                  _ASSERTE ( (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
+					//                  NEWTON_ASSERT ( (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
 					//                              (!m_simplex[silhouette->m_adjancentFace[1]].m_isActive) +
 					//                              (!m_simplex[silhouette->m_adjancentFace[2]].m_isActive)) == 1) ||
 					//                             (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
 					//                              (!m_simplex[silhouette->m_adjancentFace[1]].m_isActive) +
 					//                              (!m_simplex[silhouette->m_adjancentFace[2]].m_isActive)) == 2));
-					_ASSERTE(
+					NEWTON_ASSERT(
 					    (silhouette->m_adjancentFace[0] != silhouette->m_adjancentFace[1]) && (silhouette->m_adjancentFace[0] != silhouette->m_adjancentFace[2]) && (silhouette->m_adjancentFace[1] != silhouette->m_adjancentFace[2]));
 
 					adjacentIndex = DG_GETADJACENTINDEX_ACTIVE(silhouette);
@@ -4558,7 +4558,7 @@ class dgContactSolver {
 					sillueteCap[0].m_faceCopling =
 					    &silhouette->m_adjancentFace[adjacentIndex];
 					silhouetteCapCount = 1;
-					_ASSERTE(
+					NEWTON_ASSERT(
 					    silhouetteCapCount < dgInt32(sizeof(sillueteCap) / sizeof(sillueteCap[0])));
 					do {
 						silhouette = &m_simplex[silhouette->m_adjancentFace[adjacentIndex]];
@@ -4570,13 +4570,13 @@ class dgContactSolver {
 					lastSilhouetteVertex = i0;
 					prevEdgeIndex = dgInt32(face - m_simplex);
 					do {
-						//                      _ASSERTE ( (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
+						//                      NEWTON_ASSERT ( (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
 						//                                  (!m_simplex[silhouette->m_adjancentFace[1]].m_isActive) +
 						//                                  (!m_simplex[silhouette->m_adjancentFace[2]].m_isActive)) == 1) ||
 						//                                  (((!m_simplex[silhouette->m_adjancentFace[0]].m_isActive) +
 						//                                  (!m_simplex[silhouette->m_adjancentFace[1]].m_isActive) +
 						//                                  (!m_simplex[silhouette->m_adjancentFace[2]].m_isActive)) == 2));
-						_ASSERTE(
+						NEWTON_ASSERT(
 						    (silhouette->m_adjancentFace[0] != silhouette->m_adjancentFace[1]) && (silhouette->m_adjancentFace[0] != silhouette->m_adjancentFace[2]) && (silhouette->m_adjancentFace[1] != silhouette->m_adjancentFace[2]));
 
 						adjacentIndex = adjacentIndex ? adjacentIndex - 1 : 2;
@@ -4602,7 +4602,7 @@ class dgContactSolver {
 						sillueteCap[silhouetteCapCount].m_faceCopling =
 						    &silhouette->m_adjancentFace[adjacentIndex];
 						silhouetteCapCount++;
-						_ASSERTE(
+						NEWTON_ASSERT(
 						    silhouetteCapCount < dgInt32(sizeof(sillueteCap) / sizeof(sillueteCap[0])));
 
 						do {
@@ -4643,14 +4643,14 @@ class dgContactSolver {
 				}
 
 			} else {
-				_ASSERTE(0);
+				NEWTON_ASSERT(0);
 				nextPurge = (dgMinkFacePurge *)face;
 				nextPurge->m_next = m_facePurge;
 				m_facePurge = nextPurge;
 			}
 		}
 
-		_ASSERTE(face);
+		NEWTON_ASSERT(face);
 		i = face->m_vertex[0];
 		//      m_hullVertex[i] = dgVector (dgFloat32 (m_hullVertexLarge[i].m_x), dgFloat32 (m_hullVertexLarge[i].m_y), dgFloat32 (m_hullVertexLarge[i].m_z), dgFloat32 (0.0f));
 		m_averVertex[i] = dgVector(dgFloat32(m_averVertexLarge[i].m_x),
@@ -4671,10 +4671,10 @@ public:
 		m_hullVertexLarge = (dgBigVector *)hullVertexLarge;
 		m_averVertexLarge = (dgBigVector *)averVertexLarge;
 
-		_ASSERTE((m_matrix.m_front % m_matrix.m_front) > dgFloat32(0.9999f));
-		_ASSERTE((m_matrix.m_up % m_matrix.m_up) > dgFloat32(0.9999f));
-		_ASSERTE((m_matrix.m_right % m_matrix.m_right) > dgFloat32(0.9999f));
-		_ASSERTE(
+		NEWTON_ASSERT((m_matrix.m_front % m_matrix.m_front) > dgFloat32(0.9999f));
+		NEWTON_ASSERT((m_matrix.m_up % m_matrix.m_up) > dgFloat32(0.9999f));
+		NEWTON_ASSERT((m_matrix.m_right % m_matrix.m_right) > dgFloat32(0.9999f));
+		NEWTON_ASSERT(
 		    ((m_matrix.m_front * m_matrix.m_up) % m_matrix.m_right) < dgFloat32(1.0001f));
 
 		m_lastFaceCode = dgMinkError;
@@ -4698,10 +4698,10 @@ public:
 		m_hullVertexLarge = (dgBigVector *)hullVertexLarge;
 		m_averVertexLarge = (dgBigVector *)averVertexLarge;
 
-		_ASSERTE((m_matrix.m_front % m_matrix.m_front) > dgFloat32(0.9995f));
-		_ASSERTE((m_matrix.m_up % m_matrix.m_up) > dgFloat32(0.9995f));
-		_ASSERTE((m_matrix.m_right % m_matrix.m_right) > dgFloat32(0.9995f));
-		_ASSERTE(
+		NEWTON_ASSERT((m_matrix.m_front % m_matrix.m_front) > dgFloat32(0.9995f));
+		NEWTON_ASSERT((m_matrix.m_up % m_matrix.m_up) > dgFloat32(0.9995f));
+		NEWTON_ASSERT((m_matrix.m_right % m_matrix.m_right) > dgFloat32(0.9995f));
+		NEWTON_ASSERT(
 		    ((m_matrix.m_front * m_matrix.m_up) % m_matrix.m_right) < dgFloat32(1.0001f));
 
 		m_lastFaceCode = dgMinkError;
@@ -4736,17 +4736,17 @@ public:
 				if (face) {
 					count = CalculateContactsSimd(face, contactID, m_proxy->m_contacts,
 					                              m_proxy->m_maxContacts);
-					_ASSERTE(count <= m_proxy->m_maxContacts);
+					NEWTON_ASSERT(count <= m_proxy->m_maxContacts);
 				}
 			}
 			break;
 		}
 
 		case dgMinkDisjoint: {
-			_ASSERTE(face);
+			NEWTON_ASSERT(face);
 			if (CalcFacePlaneSimd(face)) {
-				//                  _ASSERTE (face->m_w >= dgFloat32 (0.0f));
-				_ASSERTE((*face) % (*face) > dgFloat32(0.0f));
+				//                  NEWTON_ASSERT (face->m_w >= dgFloat32 (0.0f));
+				NEWTON_ASSERT((*face) % (*face) > dgFloat32(0.0f));
 				if (face->m_w < m_penetrationPadding) {
 					dgVector step(*face);
 					step = step.Scale(-(face->m_w + DG_IMPULSIVE_CONTACT_PENETRATION));
@@ -4761,7 +4761,7 @@ public:
 
 					count = CalculateContactsSimd(face, contactID, m_proxy->m_contacts,
 					                              m_proxy->m_maxContacts);
-					_ASSERTE(count < m_proxy->m_maxContacts);
+					NEWTON_ASSERT(count < m_proxy->m_maxContacts);
 					stepWorld = stepWorld.Scale(dgFloat32(0.5f));
 
 					if (m_proxy->m_isTriggerVolume) {
@@ -4809,19 +4809,19 @@ public:
 				if (face) {
 					count = CalculateContacts(face, contactID, m_proxy->m_contacts,
 					                          m_proxy->m_maxContacts);
-					_ASSERTE(count <= m_proxy->m_maxContacts);
+					NEWTON_ASSERT(count <= m_proxy->m_maxContacts);
 				}
 			}
 			break;
 		}
 
 		case dgMinkDisjoint: {
-			_ASSERTE(face);
+			NEWTON_ASSERT(face);
 
 			if (CalcFacePlane(face)) {
-				//_ASSERTE (face->m_w >= dgFloat32 (0.0f));
-				_ASSERTE(face->m_w >= dgFloat32(-1.0e-2f));
-				_ASSERTE((*face) % (*face) > dgFloat32(0.0f));
+				//NEWTON_ASSERT (face->m_w >= dgFloat32 (0.0f));
+				NEWTON_ASSERT(face->m_w >= dgFloat32(-1.0e-2f));
+				NEWTON_ASSERT((*face) % (*face) > dgFloat32(0.0f));
 				if (face->m_w < m_penetrationPadding) {
 					dgVector step(*face);
 					step = step.Scale(-(face->m_w + DG_IMPULSIVE_CONTACT_PENETRATION));
@@ -4886,9 +4886,9 @@ public:
 		case dgMinkDisjoint: {
 			if (CalcFacePlaneLarge(face)) {
 
-				//_ASSERTE (face->m_w >= dgFloat32 (0.0f));
-				_ASSERTE(face->m_w >= dgFloat32(-1.0e-1f));
-				_ASSERTE((*face) % (*face) > dgFloat32(0.0f));
+				//NEWTON_ASSERT (face->m_w >= dgFloat32 (0.0f));
+				NEWTON_ASSERT(face->m_w >= dgFloat32(-1.0e-1f));
+				NEWTON_ASSERT((*face) % (*face) > dgFloat32(0.0f));
 				if (face->m_w < m_penetrationPadding) {
 					dgInt32 i0;
 					dgVector step(*face);
@@ -4964,7 +4964,7 @@ public:
 					if (maxContacts) {
 						count = CalculateContactsSimd(face, contactID, contactOut,
 						                              maxContacts);
-						_ASSERTE(count <= maxContacts);
+						NEWTON_ASSERT(count <= maxContacts);
 					}
 
 					timeStep = dgFloat32(0.0f);
@@ -4980,15 +4980,15 @@ public:
 			dgVector saveHull[3];
 			dgVector saveAver[3];
 
-			_ASSERTE(face);
+			NEWTON_ASSERT(face);
 			t0 = dgFloat32(0.0f);
 			i0 = face->m_vertex[0];
 			i1 = face->m_vertex[1];
 			i2 = face->m_vertex[2];
 			dgVector plane(
 			    (m_hullVertex[i1] - m_hullVertex[i0]) * (m_hullVertex[i2] - m_hullVertex[i0]));
-			_ASSERTE(plane % plane > dgFloat32(0.0f));
-			//          _ASSERTE (dgAbsf (plane % vRel) > dgFloat32 (0.0f));
+			NEWTON_ASSERT(plane % plane > dgFloat32(0.0f));
+			//          NEWTON_ASSERT (dgAbsf (plane % vRel) > dgFloat32 (0.0f));
 			projVeloc = plane.DotProductSimd(m_localRelVeloc);
 			if (projVeloc >= dgFloat32(-1.0e-24f)) {
 				code = UpdateSeparatingPlaneSimd(
@@ -4998,16 +4998,16 @@ public:
 				if (code != dgMinkDisjoint) {
 					return 0;
 				}
-				_ASSERTE(code == dgMinkDisjoint);
+				NEWTON_ASSERT(code == dgMinkDisjoint);
 
 				i0 = face->m_vertex[0];
 				i1 = face->m_vertex[1];
 				i2 = face->m_vertex[2];
 				plane = (m_hullVertex[i1] - m_hullVertex[i0]) * (m_hullVertex[i2] - m_hullVertex[i0]);
-				_ASSERTE(plane % plane > dgFloat32(0.0f));
+				NEWTON_ASSERT(plane % plane > dgFloat32(0.0f));
 				projVeloc = plane.DotProductSimd(m_localRelVeloc);
 				if (projVeloc > dgFloat32(-1.0e-24f)) {
-					//_ASSERTE ((plane % m_localRelVeloc) < dgFloat32 (0.0f));
+					//NEWTON_ASSERT ((plane % m_localRelVeloc) < dgFloat32 (0.0f));
 					return 0;
 				}
 			}
@@ -5030,11 +5030,11 @@ public:
 					dgMinkFace *tmpFaceface;
 					t0 = timeOfImpact;
 					code = UpdateSeparatingPlaneSimd(tmpFaceface, p1);
-					_ASSERTE(code != dgMinkError);
+					NEWTON_ASSERT(code != dgMinkError);
 					if (code == dgMinkDisjoint) {
 						dgFloat32 den;
 
-						_ASSERTE(tmpFaceface);
+						NEWTON_ASSERT(tmpFaceface);
 
 						face = tmpFaceface;
 						i0 = face->m_vertex[0];
@@ -5043,13 +5043,13 @@ public:
 						// dgPlane plane (m_hullVertex[i0], m_hullVertex[i1], m_hullVertex[i2]);
 						dgVector plane(
 						    (m_hullVertex[i1] - m_hullVertex[i0]) * (m_hullVertex[i2] - m_hullVertex[i0]));
-						_ASSERTE(plane % plane > dgFloat32(0.0f));
+						NEWTON_ASSERT(plane % plane > dgFloat32(0.0f));
 
 						//                      den = plane % m_localRelVeloc ;
 						den = plane.DotProductSimd(m_localRelVeloc);
 						if (den >= dgFloat32(-1.0e-24f)) {
 							code = UpdateSeparatingPlaneSimd(tmpFaceface, p1);
-							_ASSERTE(code == dgMinkDisjoint);
+							NEWTON_ASSERT(code == dgMinkDisjoint);
 
 							i0 = face->m_vertex[0];
 							i1 = face->m_vertex[1];
@@ -5057,7 +5057,7 @@ public:
 							// dgPlane plane (m_hullVertex[i0], m_hullVertex[i1], m_hullVertex[i2]);
 							dgVector plane(
 							    (m_hullVertex[i1] - m_hullVertex[i0]) * (m_hullVertex[i2] - m_hullVertex[i0]));
-							_ASSERTE(plane % plane > dgFloat32(0.0f));
+							NEWTON_ASSERT(plane % plane > dgFloat32(0.0f));
 							//                          den = plane % m_localRelVeloc;
 							den = plane.DotProductSimd(m_localRelVeloc);
 							if (den > dgFloat32(-1.0e-24f)) {
@@ -5077,8 +5077,8 @@ public:
 							if (timeOfImpact < 0.0f) {
 								return 0;
 							}
-							_ASSERTE(timeOfImpact >= 0.0f);
-							//_ASSERTE (timeOfImpact >= dgFloat32 (-1.0f));
+							NEWTON_ASSERT(timeOfImpact >= 0.0f);
+							//NEWTON_ASSERT (timeOfImpact >= dgFloat32 (-1.0f));
 							p1 = m_localRelVeloc.Scale(timeOfImpact);
 						}
 					}
@@ -5089,7 +5089,7 @@ public:
 					if (maxContacts) {
 						count = CalculateContactsContinuesSimd(contactID, contactOut,
 						                                       maxContacts, saveHull, saveAver, timeOfImpact);
-						_ASSERTE(count <= maxContacts);
+						NEWTON_ASSERT(count <= maxContacts);
 					}
 
 					if (m_proxy->m_isTriggerVolume) {
@@ -5149,7 +5149,7 @@ public:
 					}
 					if (maxContacts) {
 						count = CalculateContacts(face, contactID, contactOut, maxContacts);
-						_ASSERTE(count <= maxContacts);
+						NEWTON_ASSERT(count <= maxContacts);
 					}
 					timeStep = dgFloat32(0.0f);
 				}
@@ -5164,15 +5164,15 @@ public:
 			dgVector saveHull[3];
 			dgVector saveAver[3];
 
-			_ASSERTE(face);
+			NEWTON_ASSERT(face);
 			t0 = dgFloat32(0.0f);
 			i0 = face->m_vertex[0];
 			i1 = face->m_vertex[1];
 			i2 = face->m_vertex[2];
 			dgVector plane(
 			    (m_hullVertex[i1] - m_hullVertex[i0]) * (m_hullVertex[i2] - m_hullVertex[i0]));
-			_ASSERTE(plane % plane > dgFloat32(0.0f));
-			//          _ASSERTE (dgAbsf (plane % vRel) > dgFloat32 (0.0f));
+			NEWTON_ASSERT(plane % plane > dgFloat32(0.0f));
+			//          NEWTON_ASSERT (dgAbsf (plane % vRel) > dgFloat32 (0.0f));
 			projVeloc = plane % m_localRelVeloc;
 			if (projVeloc >= dgFloat32(-1.0e-24f)) {
 				code = UpdateSeparatingPlane(
@@ -5182,16 +5182,16 @@ public:
 				if (code != dgMinkDisjoint) {
 					return 0;
 				}
-				_ASSERTE(code == dgMinkDisjoint);
+				NEWTON_ASSERT(code == dgMinkDisjoint);
 				i0 = face->m_vertex[0];
 				i1 = face->m_vertex[1];
 				i2 = face->m_vertex[2];
 				plane = (m_hullVertex[i1] - m_hullVertex[i0]) * (m_hullVertex[i2] - m_hullVertex[i0]);
 
-				_ASSERTE(plane % plane > dgFloat32(0.0f));
+				NEWTON_ASSERT(plane % plane > dgFloat32(0.0f));
 				projVeloc = plane % m_localRelVeloc;
 				if (projVeloc >= dgFloat32(-1.0e-24f)) {
-					//_ASSERTE ((plane % m_localRelVeloc) < dgFloat32 (0.0f));
+					//NEWTON_ASSERT ((plane % m_localRelVeloc) < dgFloat32 (0.0f));
 					return 0;
 				}
 			}
@@ -5214,11 +5214,11 @@ public:
 					dgMinkFace *tmpFaceface;
 					t0 = timeOfImpact;
 					code = UpdateSeparatingPlane(tmpFaceface, p1);
-					_ASSERTE(code != dgMinkError);
+					NEWTON_ASSERT(code != dgMinkError);
 					if (code == dgMinkDisjoint) {
 						dgFloat32 den;
 
-						_ASSERTE(tmpFaceface);
+						NEWTON_ASSERT(tmpFaceface);
 
 						face = tmpFaceface;
 						i0 = face->m_vertex[0];
@@ -5227,13 +5227,13 @@ public:
 						// dgPlane planeTemp (m_hullVertex[i0], m_hullVertex[i1], m_hullVertex[i2]);
 						dgVector planeTemp(
 						    (m_hullVertex[i1] - m_hullVertex[i0]) * (m_hullVertex[i2] - m_hullVertex[i0]));
-						_ASSERTE(planeTemp % planeTemp > dgFloat32(0.0f));
+						NEWTON_ASSERT(planeTemp % planeTemp > dgFloat32(0.0f));
 
 						den = planeTemp % m_localRelVeloc;
 						//                      if (dgAbsf (den) > dgFloat32 (1.0e-24f)) {
 						if (den >= dgFloat32(-1.0e-24f)) {
 							code = UpdateSeparatingPlane(tmpFaceface, p1);
-							_ASSERTE(code == dgMinkDisjoint);
+							NEWTON_ASSERT(code == dgMinkDisjoint);
 
 							i0 = face->m_vertex[0];
 							i1 = face->m_vertex[1];
@@ -5241,7 +5241,7 @@ public:
 							// dgPlane planeT (m_hullVertex[i0], m_hullVertex[i1], m_hullVertex[i2]);
 							dgVector planeT(
 							    (m_hullVertex[i1] - m_hullVertex[i0]) * (m_hullVertex[i2] - m_hullVertex[i0]));
-							_ASSERTE(planeT % planeT > dgFloat32(-1.0e-24f));
+							NEWTON_ASSERT(planeT % planeT > dgFloat32(-1.0e-24f));
 							den = planeT % m_localRelVeloc;
 							if (den >= dgFloat32(0.0f)) {
 								return 0;
@@ -5260,9 +5260,9 @@ public:
 								return 0;
 							}
 
-							_ASSERTE(timeOfImpact >= 0.0f);
+							NEWTON_ASSERT(timeOfImpact >= 0.0f);
 
-							//_ASSERTE (timeOfImpact >= dgFloat32 (-1.0f));
+							//NEWTON_ASSERT (timeOfImpact >= dgFloat32 (-1.0f));
 							p1 = m_localRelVeloc.Scale(timeOfImpact);
 						}
 					}
@@ -5273,7 +5273,7 @@ public:
 					if (maxContacts) {
 						count = CalculateContactsContinues(contactID, contactOut,
 						                                   maxContacts, saveHull, saveAver, timeOfImpact);
-						_ASSERTE(count <= maxContacts);
+						NEWTON_ASSERT(count <= maxContacts);
 					}
 
 					if (m_proxy->m_isTriggerVolume) {
@@ -5549,13 +5549,13 @@ void dgWorld::InitConvexCollision() {
 	        i < dgInt32(
 	            sizeof(dgContactSolver::m_dir) / sizeof(dgContactSolver::m_dir[0]));
 	        i++) {
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    dgContactSolver::m_dir[i] % dgContactSolver::m_dir[i] > dgFloat32(0.9999f));
 		for (dgInt32 j = i + 1;
 		        j < dgInt32(
 		            sizeof(dgContactSolver::m_dir) / sizeof(dgContactSolver::m_dir[0]));
 		        j++) {
-			_ASSERTE(
+			NEWTON_ASSERT(
 			    dgContactSolver::m_dir[i] % dgContactSolver::m_dir[j] < dgFloat32(0.9999f));
 		}
 	}
@@ -5620,9 +5620,9 @@ dgInt32 dgWorld::CalculateSphereToSphereContacts(
 	const dgCollisionSphere *collSph1;
 	const dgCollisionSphere *collSph2;
 
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_referenceCollision->IsType(dgCollision::dgCollisionSphere_RTTI));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_floatingCollision->IsType(dgCollision::dgCollisionSphere_RTTI));
 
 	collSph1 = (dgCollisionSphere *)proxy.m_referenceCollision;
@@ -5643,9 +5643,9 @@ dgInt32 dgWorld::CalculateCapsuleToSphereContacts(
 	const dgCollisionSphere *sphere;
 	const dgCollisionCapsule *capsule;
 
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_floatingCollision->IsType(dgCollision::dgCollisionSphere_RTTI));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_referenceCollision->IsType(dgCollision::dgCollisionCapsule_RTTI));
 
 	sphere = (dgCollisionSphere *)proxy.m_floatingCollision;
@@ -5680,9 +5680,9 @@ dgInt32 dgWorld::CalculateCapsuleToCapsuleContacts(
 	const dgCollisionCapsule *collSph1;
 	const dgCollisionCapsule *collSph2;
 
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_referenceCollision->IsType(dgCollision::dgCollisionCapsule_RTTI));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_floatingCollision->IsType(dgCollision::dgCollisionCapsule_RTTI));
 
 	proxy.m_inTriggerVolume = 0;
@@ -5739,8 +5739,8 @@ dgInt32 dgWorld::CalculateCapsuleToCapsuleContacts(
 			Swap(ql0, ql1);
 		}
 
-		_ASSERTE(pl0 <= pl1);
-		_ASSERTE(ql0 <= ql1);
+		NEWTON_ASSERT(pl0 <= pl1);
+		NEWTON_ASSERT(ql0 <= ql1);
 		if (ql0 >= pl1) {
 			dgVector center1(
 			    proxy.m_referenceMatrix.TransformVector(
@@ -5813,7 +5813,7 @@ dgInt32 dgWorld::CalculateCapsuleToCapsuleContacts(
 	}
 
 	for (dgInt32 i = 0; i < count; i++) {
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    dgAbsf((contactOut[i].m_normal % contactOut[i].m_normal) - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
 		contactOut[i].m_normal = proxy.m_referenceMatrix.RotateVector(
 		                             contactOut[i].m_normal);
@@ -5835,9 +5835,9 @@ dgInt32 dgWorld::CalculateBoxToSphereContacts(
 	const dgCollisionBox *collBox;
 	const dgCollisionSphere *collSph;
 
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_referenceCollision->IsType(dgCollision::dgCollisionBox_RTTI));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_floatingCollision->IsType(dgCollision::dgCollisionSphere_RTTI));
 
 	const dgMatrix &boxMatrix = proxy.m_referenceMatrix;
@@ -6246,7 +6246,7 @@ dgInt32 dgWorld::CalculateBoxToSphereContacts(
  dgBody* box2,
  dgContactPoint* const contactOut) const
  {
- _ASSERTE (0);
+ NEWTON_ASSERT (0);
  return 0;
 
  dgInt32 i;
@@ -6267,8 +6267,8 @@ dgInt32 dgWorld::CalculateBoxToSphereContacts(
 
 
 
- _ASSERTE (box1->m_collision->IsType (m_boxType));
- _ASSERTE (box2->m_collision->IsType (m_boxType));
+ NEWTON_ASSERT (box1->m_collision->IsType (m_boxType));
+ NEWTON_ASSERT (box2->m_collision->IsType (m_boxType));
 
  const dgMatrix& matrix1 = box1->m_collisionWorldMatrix;
  const dgMatrix& matrix2 = box2->m_collisionWorldMatrix;
@@ -6412,8 +6412,8 @@ dgInt32 dgWorld::CalculateBoxToSphereContacts(
  return 0;
  }
 
- _ASSERTE (count1 <= 6);
- _ASSERTE (count2 <= 6);
+ NEWTON_ASSERT (count1 <= 6);
+ NEWTON_ASSERT (count2 <= 6);
  matrix1.TransformTriplex (shape1, sizeof (dgVector), shape1, sizeof (dgVector), count1);
  matrix2.TransformTriplex (shape2, sizeof (dgVector), shape2, sizeof (dgVector), count2);
 
@@ -6447,7 +6447,7 @@ dgInt32 dgWorld::FilterPolygonEdgeContacts(dgInt32 count,
 
 		if (faceCount < count) {
 			for (dgInt32 i = 0; i < faceCount; i++) {
-				_ASSERTE(
+				NEWTON_ASSERT(
 				    (contact[i].m_isEdgeContact == 0) || (contact[i].m_isEdgeContact == 1));
 				for (dgInt32 k = faceCount; k < count; k++) {
 					dgFloat32 dist;
@@ -6464,7 +6464,7 @@ dgInt32 dgWorld::FilterPolygonEdgeContacts(dgInt32 count,
 		}
 
 		for (dgInt32 i = 0; i < count - 1; i++) {
-			_ASSERTE(
+			NEWTON_ASSERT(
 			    (contact[i].m_isEdgeContact == 0) || (contact[i].m_isEdgeContact == 1));
 			for (dgInt32 k = i + 1; k < count; k++) {
 				dgFloat32 dist;
@@ -6517,7 +6517,7 @@ dgInt32 dgWorld::FilterPolygonEdgeContacts(dgInt32 count,
  }
 
  dgVector dir0 (plane * testPoint);
- _ASSERTE (dir0  % dir0  > dgFloat32 (1.0e-8f));
+ NEWTON_ASSERT (dir0  % dir0  > dgFloat32 (1.0e-8f));
  dir0  = dir0 .Scale (dgRsqrt (dir0 % dir0) * size);
  dgVector dir1 (plane * dir0);
 
@@ -6548,9 +6548,9 @@ dgInt32 dgWorld::FilterPolygonEdgeContacts(dgInt32 count,
 //	dgTriplex& contactB,
 //	dgTriplex& normalAB) const
 dgInt32 dgWorld::ClosestPoint(dgCollisionParamProxy &proxy) const {
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_floatingCollision->IsType(dgCollision::dgConvexCollision_RTTI));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_referenceCollision->IsType(dgCollision::dgConvexCollision_RTTI));
 
 	dgMatrix matrix(proxy.m_floatingMatrix * proxy.m_referenceMatrix.Inverse());
@@ -6571,9 +6571,9 @@ dgInt32 dgWorld::CalculateHullToHullContactsSimd(
 	dgFloat32 radiusA;
 	dgFloat32 radiusB;
 
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_referenceCollision->IsType(dgCollision::dgConvexCollision_RTTI));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_floatingCollision->IsType(dgCollision::dgConvexCollision_RTTI));
 
 	dgMatrix matrix(
@@ -6601,9 +6601,9 @@ dgInt32 dgWorld::CalculateHullToHullContactsSimd(
 dgInt32 dgWorld::CalculateHullToHullContacts(dgCollisionParamProxy &proxy) const {
 	dgFloat32 radiusA;
 	dgFloat32 radiusB;
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_referenceCollision->IsType(dgCollision::dgConvexCollision_RTTI));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_floatingCollision->IsType(dgCollision::dgConvexCollision_RTTI));
 
 	dgMatrix matrix(proxy.m_floatingMatrix * proxy.m_referenceMatrix.Inverse());
@@ -6637,9 +6637,9 @@ dgInt32 dgWorld::CalculateConvexToConvexContactsSimd(
 	dgCollision *collision2;
 	dgContactPoint *contactOut;
 
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_referenceCollision->IsType(dgCollision::dgConvexCollision_RTTI));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_floatingCollision->IsType(dgCollision::dgConvexCollision_RTTI));
 
 	count = 0;
@@ -6651,10 +6651,10 @@ dgInt32 dgWorld::CalculateConvexToConvexContactsSimd(
 		return count;
 	}
 
-	_ASSERTE(collision1->GetCollisionPrimityType() != m_nullCollision);
-	_ASSERTE(collision2->GetCollisionPrimityType() != m_nullCollision);
+	NEWTON_ASSERT(collision1->GetCollisionPrimityType() != m_nullCollision);
+	NEWTON_ASSERT(collision2->GetCollisionPrimityType() != m_nullCollision);
 
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_floatingCollision->IsType(dgCollision::dgConvexCollision_RTTI));
 	if (proxy.m_continueCollision) {
 		dgInt32 maxContaCount;
@@ -6696,8 +6696,8 @@ dgInt32 dgWorld::CalculateConvexToConvexContactsSimd(
 	} else {
 		id1 = collision1->GetCollisionPrimityType();
 		id2 = collision2->GetCollisionPrimityType();
-		_ASSERTE(id1 != m_nullCollision);
-		_ASSERTE(id2 != m_nullCollision);
+		NEWTON_ASSERT(id1 != m_nullCollision);
+		NEWTON_ASSERT(id2 != m_nullCollision);
 
 		switch (id1) {
 		case m_sphereCollision: {
@@ -6826,9 +6826,9 @@ dgInt32 dgWorld::CalculateConvexToConvexContactsSimd(
 
 dgInt32 dgWorld::CalculateConvexToConvexContacts(
     dgCollisionParamProxy &proxy) const {
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_referenceCollision->IsType(dgCollision::dgConvexCollision_RTTI));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_floatingCollision->IsType(dgCollision::dgConvexCollision_RTTI));
 
 	proxy.m_inTriggerVolume = 0;
@@ -6841,10 +6841,10 @@ dgInt32 dgWorld::CalculateConvexToConvexContacts(
 		return count;
 	}
 
-	_ASSERTE(collision1->GetCollisionPrimityType() != m_nullCollision);
-	_ASSERTE(collision2->GetCollisionPrimityType() != m_nullCollision);
+	NEWTON_ASSERT(collision1->GetCollisionPrimityType() != m_nullCollision);
+	NEWTON_ASSERT(collision2->GetCollisionPrimityType() != m_nullCollision);
 
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_floatingCollision->IsType(dgCollision::dgConvexCollision_RTTI));
 	if (proxy.m_continueCollision) {
 		dgInt32 maxContaCount;
@@ -6885,8 +6885,8 @@ dgInt32 dgWorld::CalculateConvexToConvexContacts(
 	} else {
 		dgCollisionID id1 = collision1->GetCollisionPrimityType();
 		dgCollisionID id2 = collision2->GetCollisionPrimityType();
-		_ASSERTE(id1 != m_nullCollision);
-		_ASSERTE(id2 != m_nullCollision);
+		NEWTON_ASSERT(id1 != m_nullCollision);
+		NEWTON_ASSERT(id2 != m_nullCollision);
 
 		switch (id1) {
 		case m_sphereCollision: {
@@ -7036,8 +7036,8 @@ dgInt32 dgWorld::CalculatePolySoupToSphereContactsDescrete(
 	dgVector point;
 
 	count = 0;
-	_ASSERTE(proxy.m_referenceCollision->IsType(dgCollision::dgCollisionSphere_RTTI));
-	_ASSERTE(proxy.m_floatingCollision->IsType(dgCollision::dgCollisionMesh_RTTI));
+	NEWTON_ASSERT(proxy.m_referenceCollision->IsType(dgCollision::dgCollisionSphere_RTTI));
+	NEWTON_ASSERT(proxy.m_floatingCollision->IsType(dgCollision::dgCollisionMesh_RTTI));
 
 	sphere = (dgCollisionSphere *)proxy.m_referenceCollision;
 	polysoup = (dgCollisionMesh *)proxy.m_floatingCollision;
@@ -7054,7 +7054,7 @@ dgInt32 dgWorld::CalculatePolySoupToSphereContactsDescrete(
 	const dgInt32 *const idArray = (dgInt32 *)data.m_userAttribute;
 	dgInt32 *const indexArray = (dgInt32 *)data.m_faceVertexIndex;
 
-	_ASSERTE(idArray);
+	NEWTON_ASSERT(idArray);
 	polygon = polysoup->m_polygon[thread];
 	polygon->m_vertex = data.m_vertex;
 	polygon->m_stride = dgInt32(data.m_vertexStrideInBytes / sizeof(dgFloat32));
@@ -7064,7 +7064,7 @@ dgInt32 dgWorld::CalculatePolySoupToSphereContactsDescrete(
 	countleft = proxy.m_maxContacts;
 
 	indexCount = 0;
-	_ASSERTE(data.m_faceCount);
+	NEWTON_ASSERT(data.m_faceCount);
 	// strideInBytes = data.m_vertexStrideInBytes;
 	for (dgInt32 i = 0; (i < data.m_faceCount) && (countleft > 0); i++) {
 		polygon->m_count = data.m_faceIndexCount[i];
@@ -7086,13 +7086,13 @@ dgInt32 dgWorld::CalculatePolySoupToSphereContactsDescrete(
 			if (dist2 > dgFloat32(0.0f)) {
 				dgFloat32 side;
 				dgFloat32 dist2Inv;
-				_ASSERTE(dist2 > dgFloat32(0.0f));
+				NEWTON_ASSERT(dist2 > dgFloat32(0.0f));
 				dist2Inv = dgRsqrt(dist2);
 				side = dist2 * dist2Inv - radius;
 				if (side < (-DG_RESTING_CONTACT_PENETRATION)) {
 					dgVector normal(dp.Scale(dist2Inv));
 
-					_ASSERTE(dgAbsf(normal % normal - 1.0f) < dgFloat32(1.0e-5f));
+					NEWTON_ASSERT(dgAbsf(normal % normal - 1.0f) < dgFloat32(1.0e-5f));
 					contactOut[count].m_point = soupMatrix.TransformVector(
 					                                center - normal.Scale(radius + side * dgFloat32(0.5f)));
 					contactOut[count].m_normal = soupMatrix.RotateVector(normal);
@@ -7147,8 +7147,8 @@ dgInt32 dgWorld::CalculatePolySoupToElipseContactsDescrete(
 	dgVector point;
 
 	count = 0;
-	_ASSERTE(proxy.m_referenceCollision->IsType(dgCollision::dgCollisionEllipse_RTTI));
-	_ASSERTE(proxy.m_floatingCollision->IsType(dgCollision::dgCollisionMesh_RTTI));
+	NEWTON_ASSERT(proxy.m_referenceCollision->IsType(dgCollision::dgCollisionEllipse_RTTI));
+	NEWTON_ASSERT(proxy.m_floatingCollision->IsType(dgCollision::dgCollisionMesh_RTTI));
 
 	sphere = (dgCollisionEllipse *)proxy.m_referenceCollision;
 	polysoup = (dgCollisionMesh *)proxy.m_floatingCollision;
@@ -7168,7 +7168,7 @@ dgInt32 dgWorld::CalculatePolySoupToElipseContactsDescrete(
 	const dgInt32 *const idArray = (dgInt32 *)data.m_userAttribute;
 	dgInt32 *const indexArray = (dgInt32 *)data.m_faceVertexIndex;
 
-	_ASSERTE(idArray);
+	NEWTON_ASSERT(idArray);
 	polygon = polysoup->m_polygon[thread];
 	polygon->m_vertex = data.m_vertex;
 	polygon->m_stride = dgInt32(data.m_vertexStrideInBytes / sizeof(dgFloat32));
@@ -7178,7 +7178,7 @@ dgInt32 dgWorld::CalculatePolySoupToElipseContactsDescrete(
 	countleft = proxy.m_maxContacts;
 
 	indexCount = 0;
-	_ASSERTE(data.m_faceCount);
+	NEWTON_ASSERT(data.m_faceCount);
 	// strideInBytes = data.m_vertexStrideInBytes;
 	for (dgInt32 i = 0; (i < data.m_faceCount) && (countleft > 0); i++) {
 		polygon->m_count = data.m_faceIndexCount[i];
@@ -7272,8 +7272,8 @@ dgInt32 dgWorld::CalculatePolySoupToSphereContactsContinue (dgCollisionParamProx
 
   count = 0;
 
-  _ASSERTE(proxy.m_referenceCollision->IsType (dgCollision::dgCollisionSphere_RTTI));
-  _ASSERTE(proxy.m_floatingCollision->IsType (dgCollision::dgCollisionMesh_RTTI));
+  NEWTON_ASSERT(proxy.m_referenceCollision->IsType (dgCollision::dgCollisionSphere_RTTI));
+  NEWTON_ASSERT(proxy.m_floatingCollision->IsType (dgCollision::dgCollisionMesh_RTTI));
 
   sphere = (dgCollisionSphere*) proxy.m_referenceCollision;
   polysoup = (dgCollisionMesh *) proxy.m_floatingCollision;
@@ -7291,7 +7291,7 @@ dgInt32 dgWorld::CalculatePolySoupToSphereContactsContinue (dgCollisionParamProx
   idArray = (dgInt32*) data.m_userAttribute;
   indexArray = (dgInt32*) data.m_faceVertexIndex;
 
-  _ASSERTE(idArray);
+  NEWTON_ASSERT(idArray);
   polygon = polysoup->m_polygon[thread];
   polygon->m_vertex = data.m_vertex;
   polygon->m_stride = dgInt32(data.m_vertexStrideInBytes / sizeof(dgFloat32));
@@ -7300,7 +7300,7 @@ dgInt32 dgWorld::CalculatePolySoupToSphereContactsContinue (dgCollisionParamProx
   reduceContactCountLimit = 0;
   countleft = proxy.m_maxContacts;
 
-  _ASSERTE(data.m_faceCount);
+  NEWTON_ASSERT(data.m_faceCount);
   //strideInBytes = data.m_vertexStrideInBytes;
 
   indexCount = 0;
@@ -7332,7 +7332,7 @@ dgInt32 dgWorld::CalculatePolySoupToSphereContactsContinue (dgCollisionParamProx
       {
         minTime = timestep + dgFloat32(1.0e-5f);
 
-        _ASSERTE (dgAbsf (contact.m_normal % contact.m_normal - 1.0f) < dgFloat32 (1.0e-5f));
+        NEWTON_ASSERT (dgAbsf (contact.m_normal % contact.m_normal - 1.0f) < dgFloat32 (1.0e-5f));
         contactOut[count].m_point = soupMatrix.TransformVector (center - contact.m_normal.Scale (radius));
         contactOut[count].m_normal = soupMatrix.RotateVector (contact.m_normal);
         contactOut[count].m_userId = idArray[i];
@@ -7383,8 +7383,8 @@ dgInt32 dgWorld::CalculatePolySoupToSphereContactsContinue (dgCollisionParamProx
 dgInt32 dgWorld::CalculatePolySoupToSphereContactsContinue(dgCollisionParamProxy &proxy) const {
 	dgInt32 count = 0;
 
-	_ASSERTE(proxy.m_referenceCollision->IsType(dgCollision::dgCollisionSphere_RTTI));
-	_ASSERTE(proxy.m_floatingCollision->IsType(dgCollision::dgCollisionMesh_RTTI));
+	NEWTON_ASSERT(proxy.m_referenceCollision->IsType(dgCollision::dgCollisionSphere_RTTI));
+	NEWTON_ASSERT(proxy.m_floatingCollision->IsType(dgCollision::dgCollisionMesh_RTTI));
 
 	dgBody *const spheBody = proxy.m_referenceBody;
 	//  dgBody* const soupBody = proxy.m_floatingBody;
@@ -7404,7 +7404,7 @@ dgInt32 dgWorld::CalculatePolySoupToSphereContactsContinue(dgCollisionParamProxy
 	dgInt32 *const idArray = (dgInt32 *)data.m_userAttribute;
 	dgInt32 *const indexArray = (dgInt32 *)data.m_faceVertexIndex;
 
-	_ASSERTE(idArray);
+	NEWTON_ASSERT(idArray);
 	dgCollisionMesh::dgCollisionConvexPolygon *const polygon = polysoup->m_polygon[thread];
 	polygon->m_vertex = data.m_vertex;
 	polygon->m_stride = dgInt32(data.m_vertexStrideInBytes / sizeof(dgFloat32));
@@ -7413,7 +7413,7 @@ dgInt32 dgWorld::CalculatePolySoupToSphereContactsContinue(dgCollisionParamProxy
 	dgInt32 reduceContactCountLimit = 0;
 	dgInt32 countleft = proxy.m_maxContacts;
 
-	_ASSERTE(data.m_faceCount);
+	NEWTON_ASSERT(data.m_faceCount);
 	// strideInBytes = data.m_vertexStrideInBytes;
 
 	dgInt32 indexCount = 0;
@@ -7437,7 +7437,7 @@ dgInt32 dgWorld::CalculatePolySoupToSphereContactsContinue(dgCollisionParamProxy
 			if (timestep <= minTime) {
 				minTime = timestep + dgFloat32(1.0e-5f);
 
-				_ASSERTE(dgAbsf(contact.m_normal % contact.m_normal - 1.0f) < dgFloat32(1.0e-5f));
+				NEWTON_ASSERT(dgAbsf(contact.m_normal % contact.m_normal - 1.0f) < dgFloat32(1.0e-5f));
 				contactOut[count].m_point = soupMatrix.TransformVector(center - contact.m_normal.Scale(radius));
 				contactOut[count].m_normal = soupMatrix.RotateVector(contact.m_normal);
 				contactOut[count].m_userId = idArray[i];
@@ -7497,9 +7497,9 @@ dgInt32 dgWorld::CalculatePolySoupToHullContactsDescreteSimd(dgCollisionParamPro
 	dgCollisionBoundPlaneCache planeCache;
 
 	count = 0;
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_referenceCollision->IsType(dgCollision::dgConvexCollision_RTTI));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_floatingCollision->IsType(dgCollision::dgCollisionMesh_RTTI));
 
 	//  hullBody = proxy.m_referenceBody;
@@ -7508,9 +7508,9 @@ dgInt32 dgWorld::CalculatePolySoupToHullContactsDescreteSimd(dgCollisionParamPro
 	    (dgCollisionConvex *)proxy.m_referenceCollision;
 	dgCollisionMesh *const polysoup =
 	    (dgCollisionMesh *)proxy.m_floatingCollision;
-	_ASSERTE(collision->IsType(dgCollision::dgConvexCollision_RTTI));
-	_ASSERTE(polysoup->IsType(dgCollision::dgCollisionMesh_RTTI));
-	//  _ASSERTE (polysoup == soupBody->m_collision);
+	NEWTON_ASSERT(collision->IsType(dgCollision::dgConvexCollision_RTTI));
+	NEWTON_ASSERT(polysoup->IsType(dgCollision::dgCollisionMesh_RTTI));
+	//  NEWTON_ASSERT (polysoup == soupBody->m_collision);
 
 	const dgMatrix &soupMatrix = proxy.m_floatingMatrix;
 	const dgPolygonMeshDesc &data = *proxy.m_polyMeshData;
@@ -7519,8 +7519,8 @@ dgInt32 dgWorld::CalculatePolySoupToHullContactsDescreteSimd(dgCollisionParamPro
 	dgFloat32 *const faceSize = data.m_faceMaxSize;
 	dgInt32 *const idArray = (dgInt32 *)data.m_userAttribute;
 	dgInt32 *const indexArray = (dgInt32 *)data.m_faceVertexIndex;
-	_ASSERTE(data.m_faceCount);
-	_ASSERTE(idArray);
+	NEWTON_ASSERT(data.m_faceCount);
+	NEWTON_ASSERT(idArray);
 
 	dgCollisionMesh::dgCollisionConvexPolygon *const polygon =
 	    polysoup->m_polygon[thread];
@@ -7606,28 +7606,28 @@ dgInt32 dgWorld::CalculatePolySoupToHullContactsDescrete(
 	dgCollisionBoundPlaneCache planeCache;
 
 	count = 0;
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_referenceCollision->IsType(dgCollision::dgConvexCollision_RTTI));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_floatingCollision->IsType(dgCollision::dgCollisionMesh_RTTI));
 
 	dgCollisionConvex *const collision =
 	    (dgCollisionConvex *)proxy.m_referenceCollision;
 	dgCollisionMesh *const polysoup =
 	    (dgCollisionMesh *)proxy.m_floatingCollision;
-	_ASSERTE(collision->IsType(dgCollision::dgConvexCollision_RTTI));
-	_ASSERTE(polysoup->IsType(dgCollision::dgCollisionMesh_RTTI));
+	NEWTON_ASSERT(collision->IsType(dgCollision::dgConvexCollision_RTTI));
+	NEWTON_ASSERT(polysoup->IsType(dgCollision::dgCollisionMesh_RTTI));
 
 	const dgMatrix &soupMatrix = proxy.m_floatingMatrix;
 	const dgPolygonMeshDesc &data = *proxy.m_polyMeshData;
 	thread = data.m_threadNumber;
 
-	_ASSERTE(data.m_faceCount);
+	NEWTON_ASSERT(data.m_faceCount);
 	dgFloat32 *const faceSize = data.m_faceMaxSize;
 	dgInt32 *const idArray = (dgInt32 *)data.m_userAttribute;
 	dgInt32 *const indexArray = (dgInt32 *)data.m_faceVertexIndex;
 
-	_ASSERTE(idArray);
+	NEWTON_ASSERT(idArray);
 
 	dgCollisionMesh::dgCollisionConvexPolygon *const polygon =
 	    polysoup->m_polygon[thread];
@@ -7715,9 +7715,9 @@ dgInt32 dgWorld::CalculateConvexToNonConvexContactsContinueSimd(
 	//  dgCollisionMesh *polysoup;
 	//  dgCollisionMesh::dgCollisionConvexPolygon* polygon;
 
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_referenceCollision->IsType(dgCollision::dgConvexCollision_RTTI));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_floatingCollision->IsType(dgCollision::dgCollisionMesh_RTTI));
 
 	//  dgBody* const hullBody = proxy.m_referenceBody;
@@ -7727,25 +7727,25 @@ dgInt32 dgWorld::CalculateConvexToNonConvexContactsContinueSimd(
 	    (dgCollisionConvex *)proxy.m_referenceCollision;
 	dgCollisionMesh *const polysoup =
 	    (dgCollisionMesh *)proxy.m_floatingCollision;
-	_ASSERTE(collision->IsType(dgCollision::dgConvexCollision_RTTI));
-	_ASSERTE(polysoup->IsType(dgCollision::dgCollisionMesh_RTTI));
-	//  _ASSERTE (polysoup == soupBody->m_collision);
+	NEWTON_ASSERT(collision->IsType(dgCollision::dgConvexCollision_RTTI));
+	NEWTON_ASSERT(polysoup->IsType(dgCollision::dgCollisionMesh_RTTI));
+	//  NEWTON_ASSERT (polysoup == soupBody->m_collision);
 	const dgMatrix &soupMatrix = proxy.m_floatingMatrix;
 	const dgPolygonMeshDesc &data = *proxy.m_polyMeshData;
 
 	thread = data.m_threadNumber;
 	count = 0;
 	dgContactPoint *const contactOut = proxy.m_contacts;
-	_ASSERTE(proxy.m_timestep <= dgFloat32(1.0f));
-	_ASSERTE(proxy.m_timestep >= dgFloat32(0.0f));
+	NEWTON_ASSERT(proxy.m_timestep <= dgFloat32(1.0f));
+	NEWTON_ASSERT(proxy.m_timestep >= dgFloat32(0.0f));
 
 	//  timestep = GetMin (proxy.m_timestep, dgFloat32 (1.0f));
 	timestep = proxy.m_timestep;
-	_ASSERTE(timestep >= dgFloat32(0.0f));
-	_ASSERTE(timestep <= dgFloat32(1.0f));
+	NEWTON_ASSERT(timestep >= dgFloat32(0.0f));
+	NEWTON_ASSERT(timestep <= dgFloat32(1.0f));
 	// hack Omega to 0.5
 	// hullBody->SetOmega (hullBody->GetOmega().Scale(dgFloat32 (0.9f)));
-	_ASSERTE(data.m_faceCount);
+	NEWTON_ASSERT(data.m_faceCount);
 
 	dgFloat32 *const faceSize = data.m_faceMaxSize;
 	dgInt32 *const idArray = (dgInt32 *)data.m_userAttribute;
@@ -7864,17 +7864,17 @@ dgInt32 dgWorld::CalculateConvexToNonConvexContactsContinue(
 	dgFloat32 timestep;
 	dgFloat32 oldTimeStep;
 
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_referenceCollision->IsType(dgCollision::dgConvexCollision_RTTI));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_floatingCollision->IsType(dgCollision::dgCollisionMesh_RTTI));
 
 	dgCollisionConvex *const collision =
 	    (dgCollisionConvex *)proxy.m_referenceCollision;
 	dgCollisionMesh *const polysoup =
 	    (dgCollisionMesh *)proxy.m_floatingCollision;
-	_ASSERTE(collision->IsType(dgCollision::dgConvexCollision_RTTI));
-	_ASSERTE(polysoup->IsType(dgCollision::dgCollisionMesh_RTTI));
+	NEWTON_ASSERT(collision->IsType(dgCollision::dgConvexCollision_RTTI));
+	NEWTON_ASSERT(polysoup->IsType(dgCollision::dgCollisionMesh_RTTI));
 
 	const dgMatrix &soupMatrix = proxy.m_floatingMatrix;
 	const dgPolygonMeshDesc &data = *proxy.m_polyMeshData;
@@ -7882,15 +7882,15 @@ dgInt32 dgWorld::CalculateConvexToNonConvexContactsContinue(
 
 	count = 0;
 	dgContactPoint *const contactOut = proxy.m_contacts;
-	_ASSERTE(proxy.m_timestep <= dgFloat32(1.0f));
-	_ASSERTE(proxy.m_timestep >= dgFloat32(0.0f));
+	NEWTON_ASSERT(proxy.m_timestep <= dgFloat32(1.0f));
+	NEWTON_ASSERT(proxy.m_timestep >= dgFloat32(0.0f));
 
 	timestep = proxy.m_timestep;
-	_ASSERTE(timestep >= dgFloat32(0.0f));
-	_ASSERTE(timestep <= dgFloat32(1.0f));
+	NEWTON_ASSERT(timestep >= dgFloat32(0.0f));
+	NEWTON_ASSERT(timestep <= dgFloat32(1.0f));
 	// hack Omega to 0.5
 	// hullBody->SetOmega (hullBody->GetOmega().Scale(dgFloat32 (0.9f)));
-	_ASSERTE(data.m_faceCount);
+	NEWTON_ASSERT(data.m_faceCount);
 
 	dgFloat32 *const faceSize = data.m_faceMaxSize;
 	dgInt32 *const idArray = (dgInt32 *)data.m_userAttribute;
@@ -8013,11 +8013,11 @@ dgInt32 dgWorld::CalculateConvexToNonConvexContactsSimd(
 	dgBody *hullBody = proxy.m_referenceBody;
 	dgBody *soupBody = proxy.m_floatingBody;
 	dgCollisionMesh *polysoup = (dgCollisionMesh *)proxy.m_floatingCollision;
-	//  _ASSERTE (proxy.m_referenceCollision == hullBody->m_collision);
-	//  _ASSERTE (proxy.m_floatingCollision == soupBody->m_collision);
-	_ASSERTE(
+	//  NEWTON_ASSERT (proxy.m_referenceCollision == hullBody->m_collision);
+	//  NEWTON_ASSERT (proxy.m_floatingCollision == soupBody->m_collision);
+	NEWTON_ASSERT(
 	    proxy.m_referenceCollision->IsType(dgCollision::dgConvexCollision_RTTI));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_floatingCollision->IsType(dgCollision::dgCollisionMesh_RTTI));
 
 	const dgMatrix &hullMatrix = proxy.m_referenceMatrix;
@@ -8027,8 +8027,8 @@ dgInt32 dgWorld::CalculateConvexToNonConvexContactsSimd(
 
 	collision->CalcAABBSimd(matrix, data.m_boxP0, data.m_boxP1);
 
-	_ASSERTE(proxy.m_timestep <= dgFloat32(1.0f));
-	_ASSERTE(proxy.m_timestep >= dgFloat32(0.0f));
+	NEWTON_ASSERT(proxy.m_timestep <= dgFloat32(1.0f));
+	NEWTON_ASSERT(proxy.m_timestep >= dgFloat32(0.0f));
 
 	dgInt32 doContinueCollision = 0;
 	bool solverInContinueCollision = false;
@@ -8039,14 +8039,14 @@ dgInt32 dgWorld::CalculateConvexToNonConvexContactsSimd(
 		dgVector hullOmega;
 		dgVector hullVeloc;
 
-		_ASSERTE(proxy.m_timestep <= dgFloat32(1.0f));
-		_ASSERTE(proxy.m_timestep >= dgFloat32(0.0f));
+		NEWTON_ASSERT(proxy.m_timestep <= dgFloat32(1.0f));
+		NEWTON_ASSERT(proxy.m_timestep >= dgFloat32(0.0f));
 		// timestep = GetMin (timestep, dgFloat32 (1.0f));
 		// timestep = GetMin (proxy.m_timestep, dgFloat32 (1.0f));
 		hullBody->CalculateContinueVelocitySimd(proxy.m_timestep, hullVeloc,
 		                                        hullOmega);
 
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    (proxy.m_unconditionalCast == 0) || (proxy.m_unconditionalCast == 1));
 		if (proxy.m_unconditionalCast) {
 			doContinueCollision = 1;
@@ -8166,7 +8166,7 @@ dgInt32 dgWorld::CalculateConvexToNonConvexContactsSimd(
 
 		dgContactPoint *contactOut = proxy.m_contacts;
 		for (dgInt32 i = 0; i < count; i++) {
-			_ASSERTE(
+			NEWTON_ASSERT(
 			    (dgAbsf(contactOut[i].m_normal % contactOut[i].m_normal) - dgFloat32(1.0f)) < dgFloat32(1.0e-5f));
 			contactOut[i].m_body0 = proxy.m_referenceBody;
 			contactOut[i].m_body1 = proxy.m_floatingBody;
@@ -8235,9 +8235,9 @@ dgInt32 dgWorld::CalculateConvexToNonConvexContacts(
 	dgBody *hullBody = proxy.m_referenceBody;
 	dgBody *soupBody = proxy.m_floatingBody;
 	dgCollisionMesh *polysoup = (dgCollisionMesh *)proxy.m_floatingCollision;
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_referenceCollision->IsType(dgCollision::dgConvexCollision_RTTI));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    proxy.m_floatingCollision->IsType(dgCollision::dgCollisionMesh_RTTI));
 
 	const dgMatrix &hullMatrix = proxy.m_referenceMatrix;
@@ -8245,8 +8245,8 @@ dgInt32 dgWorld::CalculateConvexToNonConvexContacts(
 	dgMatrix matrix(hullMatrix * soupMatrix.Inverse());
 	collision->CalcAABB(matrix, data.m_boxP0, data.m_boxP1);
 
-	_ASSERTE(proxy.m_timestep <= dgFloat32(1.0f));
-	_ASSERTE(proxy.m_timestep >= dgFloat32(0.0f));
+	NEWTON_ASSERT(proxy.m_timestep <= dgFloat32(1.0f));
+	NEWTON_ASSERT(proxy.m_timestep >= dgFloat32(0.0f));
 
 	dgInt32 doContinueCollision = 0;
 	bool solverInContinueCollision = false;
@@ -8257,13 +8257,13 @@ dgInt32 dgWorld::CalculateConvexToNonConvexContacts(
 		dgVector hullOmega;
 		dgVector hullVeloc;
 
-		_ASSERTE(proxy.m_timestep <= dgFloat32(1.0f));
-		_ASSERTE(proxy.m_timestep >= dgFloat32(0.0f));
+		NEWTON_ASSERT(proxy.m_timestep <= dgFloat32(1.0f));
+		NEWTON_ASSERT(proxy.m_timestep >= dgFloat32(0.0f));
 		// timestep = GetMin (timestep, dgFloat32 (1.0f));
 		// timestep = GetMin (proxy.m_timestep, dgFloat32 (1.0f));
 		hullBody->CalculateContinueVelocity(proxy.m_timestep, hullVeloc, hullOmega);
 
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    (proxy.m_unconditionalCast == 0) || (proxy.m_unconditionalCast == 1));
 		if (proxy.m_unconditionalCast) {
 			doContinueCollision = 1;
@@ -8381,7 +8381,7 @@ dgInt32 dgWorld::CalculateConvexToNonConvexContacts(
 
 		dgContactPoint *contactOut = proxy.m_contacts;
 		for (dgInt32 i = 0; i < count; i++) {
-			_ASSERTE(
+			NEWTON_ASSERT(
 			    (dgAbsf(contactOut[i].m_normal % contactOut[i].m_normal) - dgFloat32(1.0f)) < dgFloat32(1.0e-5f));
 			contactOut[i].m_body0 = proxy.m_referenceBody;
 			contactOut[i].m_body1 = proxy.m_floatingBody;

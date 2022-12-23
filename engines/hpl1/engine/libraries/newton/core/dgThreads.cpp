@@ -82,7 +82,7 @@ void dgThreads::DestroydgThreads() {
 
 //Queues up another to work
 dgInt32 dgThreads::SubmitJob(dgWorkerThread *const job) {
-	_ASSERTE(job->m_threadIndex != -1);
+	NEWTON_ASSERT(job->m_threadIndex != -1);
 	job->ThreadExecute();
 	return 1;
 }
@@ -127,7 +127,7 @@ void dgThreads::CalculateChunkSizes(dgInt32 elements,
 }
 
 void dgThreads::dgGetLock() const {
-	_ASSERTE(sizeof(dgInt32) == sizeof(long));
+	NEWTON_ASSERT(sizeof(dgInt32) == sizeof(long));
 
 	//spinLock( &m_globalSpinLock );
 // linux and mac may need to yeald time
@@ -141,10 +141,10 @@ void dgThreads::dgReleaseLock() const {
 }
 
 void dgThreads::dgGetIndirectLock(dgInt32 *lockVar) {
-	_ASSERTE(sizeof(dgInt32) == sizeof(long));
+	NEWTON_ASSERT(sizeof(dgInt32) == sizeof(long));
 }
 
 void dgThreads::dgReleaseIndirectLock(dgInt32 *lockVar) {
-	_ASSERTE(sizeof(dgInt32) == sizeof(long));
+	NEWTON_ASSERT(sizeof(dgInt32) == sizeof(long));
 	dgSpinUnlock(lockVar);
 }

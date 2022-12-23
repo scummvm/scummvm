@@ -35,10 +35,10 @@ protected:
 	virtual ~dgBilateralConstraint();
 
 	virtual void Init() {
-		_ASSERTE(0);
+		NEWTON_ASSERT(0);
 	}
 	virtual void Remove(dgWorld *world) {
-		_ASSERTE(0);
+		NEWTON_ASSERT(0);
 	}
 	virtual bool IsBilateral() const;
 

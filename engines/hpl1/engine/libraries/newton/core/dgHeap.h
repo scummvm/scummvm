@@ -115,7 +115,7 @@ dgHeapBase<OBJECT, KEY>::dgHeapBase(dgInt32 maxElements, dgMemoryAllocator *cons
 
 template <class OBJECT, class KEY>
 dgHeapBase<OBJECT, KEY>::dgHeapBase(const void *const buffer, dgInt32 sizeInBytes) {
-//	_ASSERTE (0);
+//	NEWTON_ASSERT (0);
 //	m_allocated = false;
 	m_allocator = NULL;
 	m_pool = (RECORD *)Common::remove_const<void * const>::type(buffer);
@@ -172,7 +172,7 @@ dgInt32 dgHeapBase<OBJECT, KEY>::Find(OBJECT &obj) {
 	// ex: m_curCount < 32
 	// this will be change to a binary search in the heap should the
 	// the size of the heap get larger than 32
-	//  _ASSERTE (m_curCount <= 32);
+	//  NEWTON_ASSERT (m_curCount <= 32);
 	for (dgInt32 i = 0; i < m_curCount; i ++) {
 		if (m_pool[i].obj == obj) {
 			return i;
@@ -187,7 +187,7 @@ dgInt32 dgHeapBase<OBJECT, KEY>::Find(KEY key) {
 	// ex: m_curCount < 32
 	// this will be change to a binary search in the heap shoud the
 	// the size of the heap get larger than 32
-	_ASSERTE(m_curCount <= 32);
+	NEWTON_ASSERT(m_curCount <= 32);
 	for (dgInt32 i = 0; i < m_curCount; i ++)   {
 		if (m_pool[i].m_key == key) {
 			return i;
@@ -199,7 +199,7 @@ dgInt32 dgHeapBase<OBJECT, KEY>::Find(KEY key) {
 
 template <class OBJECT, class KEY>
 const OBJECT &dgHeapBase<OBJECT, KEY>::operator[](dgInt32 i) const {
-	_ASSERTE(i <= m_curCount);
+	NEWTON_ASSERT(i <= m_curCount);
 	return m_pool[i].m_obj;
 }
 
@@ -225,10 +225,10 @@ void dgDownHeap<OBJECT, KEY>::Push(OBJECT &obj, KEY key) {
 	dgInt32 i;
 	dgInt32 j;
 #ifdef _DEBUG
-//	_ASSERTE (m_curCount < m_maxCount);
+//	NEWTON_ASSERT (m_curCount < m_maxCount);
 	dgInt32 cc = dgHeapBase<OBJECT, KEY>::m_curCount;
 	dgInt32 cm = dgHeapBase<OBJECT, KEY>::m_maxCount;
-	_ASSERTE(cc < cm);
+	NEWTON_ASSERT(cc < cm);
 #endif
 
 	dgHeapBase<OBJECT, KEY>::m_curCount ++;
@@ -240,12 +240,12 @@ void dgDownHeap<OBJECT, KEY>::Push(OBJECT &obj, KEY key) {
 		}
 		dgHeapBase<OBJECT, KEY>::m_pool[i - 1] = dgHeapBase<OBJECT, KEY>::m_pool[j - 1];
 	}
-	_ASSERTE(i);
+	NEWTON_ASSERT(i);
 	dgHeapBase<OBJECT, KEY>::m_pool[i - 1].m_key = key;
 	dgHeapBase<OBJECT, KEY>::m_pool[i - 1].m_obj = obj;
 
 #ifdef DG_HEAP_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 }
 
@@ -272,7 +272,7 @@ void dgDownHeap<OBJECT, KEY>::Remove(dgInt32 index) {
 	dgHeapBase<OBJECT, KEY>::m_pool[k - 1].m_obj = dgHeapBase<OBJECT, KEY>::m_pool[dgHeapBase<OBJECT, KEY>::m_curCount].m_obj;
 
 #ifdef DG_HEAP_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 
 }
@@ -299,7 +299,7 @@ void dgDownHeap<OBJECT, KEY>::Pop() {
 	dgHeapBase<OBJECT, KEY>::m_pool[k - 1].m_obj = dgHeapBase<OBJECT, KEY>::m_pool[dgHeapBase<OBJECT, KEY>::m_curCount].m_obj;
 
 #ifdef DG_HEAP_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 }
 
@@ -331,7 +331,7 @@ void dgDownHeap<OBJECT, KEY>::Sort() {
 		dgHeapBase<OBJECT, KEY>::m_pool[count - i - 1].m_obj = obj;
 	}
 #ifdef DG_HEAP_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 }
 
@@ -395,10 +395,10 @@ void dgUpHeap<OBJECT, KEY>::Push(OBJECT &obj, KEY key) {
 	dgInt32 j;
 
 #ifdef _DEBUG
-	//  _ASSERTE (m_curCount < m_maxCount);
+	//  NEWTON_ASSERT (m_curCount < m_maxCount);
 	dgInt32 cc = dgHeapBase<OBJECT, KEY>::m_curCount;
 	dgInt32 cm = dgHeapBase<OBJECT, KEY>::m_maxCount;
-	_ASSERTE(cc < cm);
+	NEWTON_ASSERT(cc < cm);
 #endif
 	dgHeapBase<OBJECT, KEY>::m_curCount ++;
 
@@ -409,12 +409,12 @@ void dgUpHeap<OBJECT, KEY>::Push(OBJECT &obj, KEY key) {
 		}
 		dgHeapBase<OBJECT, KEY>::m_pool[i - 1] = dgHeapBase<OBJECT, KEY>::m_pool[j - 1];
 	}
-	_ASSERTE(i);
+	NEWTON_ASSERT(i);
 	dgHeapBase<OBJECT, KEY>::m_pool[i - 1].m_key = key;
 	dgHeapBase<OBJECT, KEY>::m_pool[i - 1].m_obj = obj;
 
 #ifdef DG_HEAP_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 }
 
@@ -444,7 +444,7 @@ void dgUpHeap<OBJECT, KEY>::Sort() {
 		dgHeapBase<OBJECT, KEY>::m_pool[count - i - 1].m_obj = obj;
 	}
 #ifdef DG_HEAP_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 }
 
@@ -471,7 +471,7 @@ void dgUpHeap<OBJECT, KEY>::Remove(dgInt32 index) {
 	dgHeapBase<OBJECT, KEY>::m_pool[k - 1].m_obj = dgHeapBase<OBJECT, KEY>::m_pool[dgHeapBase<OBJECT, KEY>::m_curCount].m_obj;
 
 #ifdef DG_HEAP_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 }
 
@@ -498,7 +498,7 @@ void dgUpHeap<OBJECT, KEY>::Pop() {
 	dgHeapBase<OBJECT, KEY>::m_pool[k - 1].m_obj = dgHeapBase<OBJECT, KEY>::m_pool[dgHeapBase<OBJECT, KEY>::m_curCount].m_obj;
 
 #ifdef DG_HEAP_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 }
 

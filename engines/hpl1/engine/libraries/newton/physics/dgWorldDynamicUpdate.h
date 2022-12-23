@@ -68,11 +68,11 @@ public:
 		if (m_firstIndex >= m_mod) {
 			m_firstIndex = 0;
 		}
-		_ASSERTE(m_firstIndex != m_lastIndex);
+		NEWTON_ASSERT(m_firstIndex != m_lastIndex);
 	}
 
 	T Remove() {
-		_ASSERTE(m_firstIndex != m_lastIndex);
+		NEWTON_ASSERT(m_firstIndex != m_lastIndex);
 
 		T element = m_pool[m_lastIndex];
 		m_lastIndex ++;
@@ -405,5 +405,5 @@ private:
 };
 
 
-#define DG_CHECK_ACTIVE(body) _ASSERTE (((body->m_invMass.m_w == dgFloat32 (0.0f)) && !body->m_active) || (body->m_invMass.m_w > dgFloat32 (0.0f)))
+#define DG_CHECK_ACTIVE(body) NEWTON_ASSERT (((body->m_invMass.m_w == dgFloat32 (0.0f)) && !body->m_active) || (body->m_invMass.m_w > dgFloat32 (0.0f)))
 #endif

@@ -33,7 +33,7 @@ dgBallConstraint::dgBallConstraint() : dgBilateralConstraint() {
 
 	//  dgBallConstraintArray& array = * world;
 	//  constraint = array.GetElement();
-	_ASSERTE((((dgUnsigned64)&m_localMatrix0) & 15) == 0);
+	NEWTON_ASSERT((((dgUnsigned64)&m_localMatrix0) & 15) == 0);
 
 	// constraint->SetStiffness (dgFloat32 (0.5f));
 	m_maxDOF = 6;
@@ -55,7 +55,7 @@ dgBallConstraint::~dgBallConstraint() {
 
  dgBallConstraintArray& array = * world;
  constraint = array.GetElement();
- _ASSERTE ((((dgUnsigned64) &constraint->m_localMatrix0) & 15) == 0);
+ NEWTON_ASSERT ((((dgUnsigned64) &constraint->m_localMatrix0) & 15) == 0);
 
  constraint->Init();
 
@@ -86,8 +86,8 @@ dgVector dgBallConstraint::GetJointAngle() const {
 }
 
 dgVector dgBallConstraint::GetJointOmega() const {
-	_ASSERTE(m_body0);
-	_ASSERTE(m_body1);
+	NEWTON_ASSERT(m_body0);
+	NEWTON_ASSERT(m_body1);
 	const dgMatrix &matrix = m_body0->GetMatrix();
 
 	dgVector dir0(matrix.RotateVector(m_localMatrix0[0]));
@@ -141,8 +141,8 @@ void dgBallConstraint::SetLatealLimitState(bool state) {
 }
 
 void dgBallConstraint::SetPivotPoint(const dgVector &pivot) {
-	_ASSERTE(m_body0);
-	_ASSERTE(m_body1);
+	NEWTON_ASSERT(m_body0);
+	NEWTON_ASSERT(m_body1);
 	const dgMatrix &matrix = m_body0->GetMatrix();
 
 	dgVector pin(pivot - matrix.m_posit);
@@ -168,8 +168,8 @@ void dgBallConstraint::SetLimits(const dgVector &coneDir,
 	dgMatrix matrix1;
 	CalculateGlobalMatrixAndAngle(matrix0, matrix1);
 
-	_ASSERTE(m_body0);
-	_ASSERTE(m_body1);
+	NEWTON_ASSERT(m_body0);
+	NEWTON_ASSERT(m_body1);
 	const dgMatrix &body0_Matrix = m_body0->GetMatrix();
 
 	dgVector lateralDir(bilateralDir * coneDir);
@@ -258,7 +258,7 @@ dgUnsigned32 dgBallConstraint::JacobianDerivative(dgContraintDescritor &params) 
 			}
 
 			penetrationErr = MIN_JOINT_PIN_LENGTH * (angle.m_x - m_twistAngle);
-			_ASSERTE(penetrationErr >= dgFloat32(0.0f));
+			NEWTON_ASSERT(penetrationErr >= dgFloat32(0.0f));
 
 			params.m_forceBounds[ret].m_low = dgFloat32(0.0f);
 			params.m_forceBounds[ret].m_normalIndex = DG_NORMAL_CONSTRAINT;
@@ -280,7 +280,7 @@ dgUnsigned32 dgBallConstraint::JacobianDerivative(dgContraintDescritor &params) 
 			}
 
 			penetrationErr = MIN_JOINT_PIN_LENGTH * (-m_twistAngle - angle.m_x);
-			_ASSERTE(penetrationErr >= dgFloat32(0.0f));
+			NEWTON_ASSERT(penetrationErr >= dgFloat32(0.0f));
 
 			params.m_forceBounds[ret].m_low = dgFloat32(0.0f);
 			params.m_forceBounds[ret].m_normalIndex = DG_NORMAL_CONSTRAINT;
@@ -318,7 +318,7 @@ dgUnsigned32 dgBallConstraint::JacobianDerivative(dgContraintDescritor &params) 
 			}
 
 			penetrationErr = MIN_JOINT_PIN_LENGTH * (dgAcos(GetMax(coneCos, dgFloat32(-0.9999f))) - m_coneAngle);
-			_ASSERTE(penetrationErr >= dgFloat32(0.0f));
+			NEWTON_ASSERT(penetrationErr >= dgFloat32(0.0f));
 
 			CalculatePointDerivative(ret, params, normalDir, pointData,
 			                         &m_jointForce[ret]);

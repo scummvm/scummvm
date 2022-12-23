@@ -54,8 +54,8 @@ dgInt32 dgGetMemoryUsed();
 #define DG_CLASS_ALLOCATOR_NEW_ARRAY(allocator)     inline void *operator new[] (size_t size, dgMemoryAllocator* const allocator) { return dgMalloc(size, allocator);}
 #define DG_CLASS_ALLOCATOR_DELETE(allocator)        inline void operator delete (void* const ptr, dgMemoryAllocator* const allocator) { dgFree(ptr); }
 #define DG_CLASS_ALLOCATOR_DELETE_ARRAY(allocator)  inline void operator delete[] (void* const ptr, dgMemoryAllocator* const allocator) { dgFree(ptr); }
-#define DG_CLASS_ALLOCATOR_NEW_DUMMY                inline void *operator new (size_t size) { _ASSERTE (0); return dgMalloc(size, NULL);}
-#define DG_CLASS_ALLOCATOR_NEW_ARRAY_DUMMY          inline void *operator new[] (size_t size) { _ASSERTE (0); return dgMalloc(size, NULL);}
+#define DG_CLASS_ALLOCATOR_NEW_DUMMY                inline void *operator new (size_t size) { NEWTON_ASSERT (0); return dgMalloc(size, NULL);}
+#define DG_CLASS_ALLOCATOR_NEW_ARRAY_DUMMY          inline void *operator new[] (size_t size) { NEWTON_ASSERT (0); return dgMalloc(size, NULL);}
 #define DG_CLASS_ALLOCATOR_DELETE_DUMMY             inline void operator delete (void* const ptr) { dgFree(ptr); }
 #define DG_CLASS_ALLOCATOR_DELETE_ARRAY_DUMMY       inline void operator delete[] (void* const ptr) { dgFree(ptr); }
 

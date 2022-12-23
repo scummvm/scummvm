@@ -47,7 +47,7 @@ dgCollisionCone::dgCollisionCone(dgWorld *const world,
 
 dgCollisionCone::~dgCollisionCone() {
 	m_shapeRefCount--;
-	_ASSERTE(m_shapeRefCount >= 0);
+	NEWTON_ASSERT(m_shapeRefCount >= 0);
 
 	dgCollisionConvex::m_simplex = NULL;
 	dgCollisionConvex::m_vertex = NULL;
@@ -95,7 +95,7 @@ void dgCollisionCone::Init(dgFloat32 radius, dgFloat32 height) {
 		polyhedra.AddFace(DG_CONE_SEGMENTS, wireframe);
 		polyhedra.EndFace();
 
-		_ASSERTE(SanityCheck(polyhedra));
+		NEWTON_ASSERT(SanityCheck(polyhedra));
 
 		dgUnsigned64 i = 0;
 		dgPolyhedra::Iterator iter(polyhedra);
@@ -182,7 +182,7 @@ void dgCollisionCone::DebugCollision(const dgMatrix &matrixPtr,
 
 void dgCollisionCone::SetCollisionBBox(const dgVector &p0__,
                                        const dgVector &p1__) {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 }
 
 dgVector dgCollisionCone::SupportVertexSimd(const dgVector &dir) const {
@@ -190,7 +190,7 @@ dgVector dgCollisionCone::SupportVertexSimd(const dgVector &dir) const {
 }
 
 dgVector dgCollisionCone::SupportVertex(const dgVector &dir) const {
-	_ASSERTE(dgAbsf(dir % dir - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
+	NEWTON_ASSERT(dgAbsf(dir % dir - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
 
 	if (dir.m_x > m_sinAngle) {
 		return dgVector(m_height, dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
@@ -278,7 +278,7 @@ dgInt32 dgCollisionCone::CalculatePlaneIntersection(const dgVector &normal,
 		magInv = dgRsqrt(normal.m_y * normal.m_y + normal.m_z * normal.m_z);
 		cosAng = normal.m_y * magInv;
 		sinAng = normal.m_z * magInv;
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    dgAbsf(normal.m_z * cosAng - normal.m_y * sinAng) < dgFloat32(1.0e-4f));
 		//      dgVector normal1 (normal.m_x, normal.m_y * cosAng + normal.m_z * sinAng,
 		//                                    normal.m_z * cosAng - normal.m_y * sinAng, dgFloat32 (0.0f));
@@ -339,7 +339,7 @@ dgInt32 dgCollisionCone::CalculatePlaneIntersectionSimd(const dgVector &normal,
 
 		cosAng = normal.m_y * magInv;
 		sinAng = normal.m_z * magInv;
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    dgAbsf(normal.m_z * cosAng - normal.m_y * sinAng) < dgFloat32(1.0e-4f));
 		//      dgVector normal1 (normal.m_x, normal.m_y * cosAng + normal.m_z * sinAng,
 		//                                    normal.m_z * cosAng - normal.m_y * sinAng, dgFloat32 (0.0f));

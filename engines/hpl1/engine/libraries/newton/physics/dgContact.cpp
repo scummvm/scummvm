@@ -33,8 +33,8 @@
 //////////////////////////////////////////////////////////////////////
 
 dgContactMaterial::dgContactMaterial() {
-	//  _ASSERTE ((sizeof (dgContactMaterial) & 15) == 0);
-	_ASSERTE((((dgUnsigned64)this) & 15) == 0);
+	//  NEWTON_ASSERT ((sizeof (dgContactMaterial) & 15) == 0);
+	NEWTON_ASSERT((((dgUnsigned64)this) & 15) == 0);
 	m_point.m_x = dgFloat32(0.0f);
 	m_point.m_y = dgFloat32(0.0f);
 	m_point.m_z = dgFloat32(0.0f);
@@ -59,7 +59,7 @@ dgContactMaterial::dgContactMaterial() {
 }
 
 dgContact::dgContact(dgWorld *world) : dgConstraint(), dgList<dgContactMaterial>(world->GetAllocator()) {
-	_ASSERTE((((dgUnsigned64)this) & 15) == 0);
+	NEWTON_ASSERT((((dgUnsigned64)this) & 15) == 0);
 
 	dgActiveContacts &activeContacts = *world;
 
@@ -89,8 +89,8 @@ void dgContact::GetInfo(dgConstraintInfo *const info) const {
 void dgContact::CalculatePointDerivative(dgInt32 index,
         dgContraintDescritor &desc, const dgVector &dir,
         const dgPointParam &param) const {
-	_ASSERTE(m_body0);
-	_ASSERTE(m_body1);
+	NEWTON_ASSERT(m_body0);
+	NEWTON_ASSERT(m_body1);
 
 	dgVector r0CrossDir(param.m_r0 * dir);
 	dgJacobian &jacobian0 = desc.m_jacobian[index].m_jacobian_IM0;
@@ -147,7 +147,7 @@ void dgContact::JacobianContactDerivative(dgContraintDescritor &params,
 	dgFloat32 penetration = GetMin(contact.m_penetration, dgFloat32(0.5f));
 	dgFloat32 penetrationStiffness = dgFloat32(50.0f) * contact.m_softness;
 	dgFloat32 penetrationVeloc = penetration * penetrationStiffness;
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    dgAbsf(penetrationVeloc - dgFloat32(50.0f) * contact.m_softness * GetMin(contact.m_penetration, dgFloat32(0.5f))) < dgFloat32(1.0e-6f));
 	if (relVelocErr > REST_RELATIVE_VELOCITY) {
 		relVelocErr *= (restitution + dgFloat32(1.0f));
@@ -216,7 +216,7 @@ void dgContact::JacobianContactDerivative(dgContraintDescritor &params,
 		params.m_penetrationStiffness[jacobIndex] = dgFloat32(0.0f);
 		//      if (contact.m_override1Accel) {
 		if (contact.m_flags & dgContactMaterial::m_override1Accel__) {
-			_ASSERTE(0);
+			NEWTON_ASSERT(0);
 			params.m_jointAccel[jacobIndex] = contact.m_dir1_Force;
 			params.m_isMotor[jacobIndex] = 1;
 		} else {
@@ -306,7 +306,7 @@ void dgContact::JointAccelerationsSimd(
 				//          penetrationVeloc = 0.0f;
 				//          if (params.m_penetration[k] > dgFloat32 (1.0e-2f)) {
 				//              if (vRel > dgFloat32 (0.0f)) {
-				//                  _ASSERTE (penetrationCorrection >= dgFloat32 (0.0f));
+				//                  NEWTON_ASSERT (penetrationCorrection >= dgFloat32 (0.0f));
 				//                  params.m_penetration[k] = GetMax (dgFloat32 (0.0f), params.m_penetration[k] - vRel * params.m_timeStep);
 				//              }
 				//              penetrationVeloc = -(params.m_penetration[k] * params.m_penetrationStiffness[k]);
@@ -372,7 +372,7 @@ void dgContact::JointAccelerations(const dgJointAccelerationDecriptor &params) {
 					dgFloat32 penetrationCorrection;
 					if (vRel > dgFloat32(0.0f)) {
 						penetrationCorrection = vRel * params.m_timeStep;
-						_ASSERTE(penetrationCorrection >= dgFloat32(0.0f));
+						NEWTON_ASSERT(penetrationCorrection >= dgFloat32(0.0f));
 						params.m_penetration[k] = GetMax(dgFloat32(0.0f),
 						                                 params.m_penetration[k] - penetrationCorrection);
 					}
@@ -389,7 +389,7 @@ void dgContact::JointAccelerations(const dgJointAccelerationDecriptor &params) {
 
 void dgContact::JointVelocityCorrection(
     const dgJointAccelerationDecriptor &params) {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 }
 
 dgCollidingPairCollector::dgCollidingPairCollector() {
@@ -458,7 +458,7 @@ void dgCollidingPairCollector::AddPair(dgBody *const bodyPtr0,
 					}
 				}
 			} else if (bodyPtr1->m_invMass.m_w != dgFloat32(0.0f)) {
-				_ASSERTE(bodyPtr1->m_invMass.m_w != dgFloat32(0.0f));
+				NEWTON_ASSERT(bodyPtr1->m_invMass.m_w != dgFloat32(0.0f));
 				for (dgBodyMasterListRow::dgListNode *link = world->FindConstraintLink(
 				            bodyPtr1, bodyPtr0);
 				        link;
@@ -474,7 +474,7 @@ void dgCollidingPairCollector::AddPair(dgBody *const bodyPtr0,
 			}
 
 			if (contact) {
-				_ASSERTE(contact->GetId() == dgContactConstraintId);
+				NEWTON_ASSERT(contact->GetId() == dgContactConstraintId);
 				contact->m_broadphaseLru = dgInt32(world->m_broadPhaseLru);
 			}
 
@@ -487,10 +487,10 @@ void dgCollidingPairCollector::AddPair(dgBody *const bodyPtr0,
 			dgBody *const body0(tmpbody0);
 			dgBody *const body1(tmpbody1);
 
-			_ASSERTE(body0->GetWorld());
-			_ASSERTE(body1->GetWorld());
-			_ASSERTE(body0->GetWorld() == world);
-			_ASSERTE(body1->GetWorld() == world);
+			NEWTON_ASSERT(body0->GetWorld());
+			NEWTON_ASSERT(body1->GetWorld());
+			NEWTON_ASSERT(body0->GetWorld() == world);
+			NEWTON_ASSERT(body1->GetWorld() == world);
 
 			dgContact *contact = NULL;
 			if (body0->m_invMass.m_w != dgFloat32(0.0f)) {
@@ -508,7 +508,7 @@ void dgCollidingPairCollector::AddPair(dgBody *const bodyPtr0,
 					}
 				}
 			} else if (body1->m_invMass.m_w != dgFloat32(0.0f)) {
-				_ASSERTE(body1->m_invMass.m_w != dgFloat32(0.0f));
+				NEWTON_ASSERT(body1->m_invMass.m_w != dgFloat32(0.0f));
 				for (dgBodyMasterListRow::dgListNode *link = world->FindConstraintLink(
 				            body1, body0);
 				        link;
@@ -532,7 +532,7 @@ void dgCollidingPairCollector::AddPair(dgBody *const bodyPtr0,
 				}
 			}
 
-			_ASSERTE(!contact || contact->GetId() == dgContactConstraintId);
+			NEWTON_ASSERT(!contact || contact->GetId() == dgContactConstraintId);
 
 			dgUnsigned32 group0_ID = dgUnsigned32(body0->m_bodyGroupId);
 			dgUnsigned32 group1_ID = dgUnsigned32(body1->m_bodyGroupId);
@@ -555,9 +555,9 @@ void dgCollidingPairCollector::AddPair(dgBody *const bodyPtr0,
 					                  threadIndex);
 				}
 				if (processContacts) {
-					_ASSERTE(
+					NEWTON_ASSERT(
 					    !body0->m_collision->IsType(dgCollision::dgCollisionNull_RTTI));
-					_ASSERTE(
+					NEWTON_ASSERT(
 					    !body1->m_collision->IsType(dgCollision::dgCollisionNull_RTTI));
 
 					dgThreadPairCache &pairChache = *m_chacheBuffers[threadIndex];

@@ -30,7 +30,7 @@
 //////////////////////////////////////////////////////////////////////
 
 dgSlidingConstraint::dgSlidingConstraint() : dgBilateralConstraint() {
-	_ASSERTE((((dgUnsigned64)&m_localMatrix0) & 15) == 0);
+	NEWTON_ASSERT((((dgUnsigned64)&m_localMatrix0) & 15) == 0);
 
 	//  constraint->Init ();
 	m_maxDOF = 6;
@@ -51,7 +51,7 @@ dgSlidingConstraint::~dgSlidingConstraint() {
  // constraint = dgSlidingConstraintArray::GetPool().GetElement();
  constraint = array.GetElement();
 
- _ASSERTE ((((dgUnsigned64) &constraint->m_localMatrix0) & 15) == 0);
+ NEWTON_ASSERT ((((dgUnsigned64) &constraint->m_localMatrix0) & 15) == 0);
 
  constraint->Init ();
  constraint->m_maxDOF = 6;
@@ -80,8 +80,8 @@ dgFloat32 dgSlidingConstraint::GetJointPosit() const {
 }
 
 dgFloat32 dgSlidingConstraint::GetJointVeloc() const {
-	_ASSERTE(m_body0);
-	_ASSERTE(m_body1);
+	NEWTON_ASSERT(m_body0);
+	NEWTON_ASSERT(m_body1);
 	dgVector dir(m_body0->GetMatrix().RotateVector(m_localMatrix0[0]));
 	const dgVector &veloc0 = m_body0->GetVelocity();
 	const dgVector &veloc1 = m_body1->GetVelocity();
@@ -113,7 +113,7 @@ dgFloat32 dgSlidingConstraint::CalculateStopAccel(dgFloat32 distance,
 			speed = dgFloat32(0.0f);
 		}
 		penetrationErr = distance - m_posit;
-		_ASSERTE(penetrationErr >= dgFloat32(0.0f));
+		NEWTON_ASSERT(penetrationErr >= dgFloat32(0.0f));
 		accel = dgFloat32(100.0f) * penetrationErr - speed * dgFloat32(1.01f) / param->m_timestep;
 	}
 	return accel;
@@ -138,11 +138,11 @@ dgUnsigned32 dgSlidingConstraint::JacobianDerivative(
 	m_posit = (matrix0.m_posit - matrix1.m_posit) % matrix0.m_front;
 	matrix1.m_posit += matrix1.m_front.Scale(m_posit);
 
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    dgAbsf(dgFloat32(1.0f) - (matrix0.m_front % matrix0.m_front)) < dgFloat32(1.0e-5f));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    dgAbsf(dgFloat32(1.0f) - (matrix0.m_up % matrix0.m_up)) < dgFloat32(1.0e-5f));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    dgAbsf(dgFloat32(1.0f) - (matrix0.m_right % matrix0.m_right)) < dgFloat32(1.0e-5f));
 
 	const dgVector &dir1 = matrix0.m_up;

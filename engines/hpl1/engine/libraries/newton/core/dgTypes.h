@@ -219,6 +219,8 @@ class dgBigVector;
 #endif
 #endif
 
+#define NEWTON_ASSERT(x) ((void)(x))
+
 DG_INLINE dgInt32 exp_2(dgInt32 x) {
 	dgInt32 exp;
 
@@ -303,8 +305,8 @@ dgInt32 dgBinarySearch(T const *array, dgInt32 elements, dgInt32 entry) {
 		entry1 = array[index1].m_Key;
 
 		if (entry1 == entry) {
-			_ASSERTE(array[index1].m_Key <= entry);
-			_ASSERTE(array[index1 + 1].m_Key >= entry);
+			NEWTON_ASSERT(array[index1].m_Key <= entry);
+			NEWTON_ASSERT(array[index1 + 1].m_Key >= entry);
 
 			return index1;
 		} else if (entry < entry1) {
@@ -318,8 +320,8 @@ dgInt32 dgBinarySearch(T const *array, dgInt32 elements, dgInt32 entry) {
 		index0--;
 	}
 
-	_ASSERTE(array[index0].m_Key <= entry);
-	_ASSERTE(array[index0 + 1].m_Key >= entry);
+	NEWTON_ASSERT(array[index0].m_Key <= entry);
+	NEWTON_ASSERT(array[index0 + 1].m_Key >= entry);
 
 	return index0;
 }
@@ -334,8 +336,8 @@ void dgRadixSort(T *const array,
 	dgInt32 scanCount[256];
 	dgInt32 histogram[256][4];
 
-	_ASSERTE(radixPass >= 1);
-	_ASSERTE(radixPass <= 4);
+	NEWTON_ASSERT(radixPass >= 1);
+	NEWTON_ASSERT(radixPass <= 4);
 
 	memset(histogram, 0, sizeof(histogram));
 
@@ -386,7 +388,7 @@ void dgRadixSort(T *const array,
 
 #ifdef _DEBUG
 	for (dgInt32 i = 0; i < (elements - 1); i++) {
-		_ASSERTE(getRadixKey(&array[i], context) <= getRadixKey(&array[i + 1], context));
+		NEWTON_ASSERT(getRadixKey(&array[i], context) <= getRadixKey(&array[i + 1], context));
 	}
 #endif
 }
@@ -439,7 +441,7 @@ void dgSort(T *const array,
 				stack[stackIndex][1] = j;
 				stackIndex++;
 			}
-			_ASSERTE(stackIndex < dgInt32(sizeof(stack) / (2 * sizeof(stack[0][0]))));
+			NEWTON_ASSERT(stackIndex < dgInt32(sizeof(stack) / (2 * sizeof(stack[0][0]))));
 		}
 	}
 
@@ -463,7 +465,7 @@ void dgSort(T *const array,
 
 		// for (; j && (compare (&array[j - 1], &tmp, context) > 0); j --) {
 		for (; compare(&array[j - 1], &tmp, context) > 0; j--) {
-			_ASSERTE(j > 0);
+			NEWTON_ASSERT(j > 0);
 			array[j] = array[j - 1];
 		}
 
@@ -472,7 +474,7 @@ void dgSort(T *const array,
 
 #ifdef _DEBUG
 	for (dgInt32 i = 0; i < (elements - 1); i++) {
-		_ASSERTE(compare(&array[i], &array[i + 1], context) <= 0);
+		NEWTON_ASSERT(compare(&array[i], &array[i + 1], context) <= 0);
 	}
 #endif
 }
@@ -525,7 +527,7 @@ void dgSortIndirect(T **const array,
 				stack[stackIndex][1] = j;
 				stackIndex++;
 			}
-			_ASSERTE(stackIndex < dgInt32(sizeof(stack) / (2 * sizeof(stack[0][0]))));
+			NEWTON_ASSERT(stackIndex < dgInt32(sizeof(stack) / (2 * sizeof(stack[0][0]))));
 		}
 	}
 
@@ -549,7 +551,7 @@ void dgSortIndirect(T **const array,
 
 		// for (; j && (compare (array[j - 1], tmp, context) > 0); j --) {
 		for (; compare(array[j - 1], tmp, context) > 0; j--) {
-			_ASSERTE(j > 0);
+			NEWTON_ASSERT(j > 0);
 			array[j] = array[j - 1];
 		}
 
@@ -558,7 +560,7 @@ void dgSortIndirect(T **const array,
 
 #ifdef _DEBUG
 	for (dgInt32 i = 0; i < (elements - 1); i++) {
-		_ASSERTE(compare(array[i], array[i + 1], context) <= 0);
+		NEWTON_ASSERT(compare(array[i], array[i + 1], context) <= 0);
 	}
 #endif
 }
@@ -637,7 +639,7 @@ DG_INLINE dgFloat32 dgAbsf(dgFloat32 x) {
 	dgDoubleInt val;
 	val.m_float = x;
 	val.m_intH &= ~(dgUnsigned64(1) << 31);
-	_ASSERTE(val.m_float == fabs(x));
+	NEWTON_ASSERT(val.m_float == fabs(x));
 
 	return dgFloat32(val.m_float);
 #else
@@ -666,7 +668,7 @@ DG_INLINE dgInt32 dgFastInt(dgFloat32 x) {
 	val.m_float = dgFloat64(x) + conversionMagicConst;
 	round.m_float = x - dgFloat64(val.m_intL);
 	dgInt32 ret = val.m_intL + (round.m_intH >> 31);
-	_ASSERTE(ret == dgInt32(floor(x)));
+	NEWTON_ASSERT(ret == dgInt32(floor(x)));
 
 	return ret;
 #else
@@ -683,7 +685,7 @@ DG_INLINE dgInt32 dgFastInt(dgFloat32 x) {
 DG_INLINE dgFloat32 dgFloor(dgFloat32 x) {
 #ifdef _MSC_VER
 	dgFloat32 ret = dgFloat32(dgFastInt(x));
-	_ASSERTE(ret == floor(x));
+	NEWTON_ASSERT(ret == floor(x));
 
 	return ret;
 #else
@@ -699,7 +701,7 @@ DG_INLINE dgFloat32 dgCeil(dgFloat32 x) {
 		ret += dgFloat32(1.0f);
 	}
 
-	_ASSERTE(ret == ceil(x));
+	NEWTON_ASSERT(ret == ceil(x));
 
 	return ret;
 #else

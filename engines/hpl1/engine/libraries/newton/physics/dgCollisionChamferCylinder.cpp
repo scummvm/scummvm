@@ -48,7 +48,7 @@ dgCollisionChamferCylinder::dgCollisionChamferCylinder(dgWorld *const world,
 
 dgCollisionChamferCylinder::~dgCollisionChamferCylinder() {
 	m_shapeRefCount--;
-	_ASSERTE(m_shapeRefCount >= 0);
+	NEWTON_ASSERT(m_shapeRefCount >= 0);
 
 	dgCollisionConvex::m_simplex = NULL;
 	dgCollisionConvex::m_vertex = NULL;
@@ -145,7 +145,7 @@ void dgCollisionChamferCylinder::Init(dgFloat32 radius, dgFloat32 height) {
 		polyhedra.AddFace(DG_CHAMFERCYLINDER_BRAKES, wireframe);
 		polyhedra.EndFace();
 
-		_ASSERTE(SanityCheck(polyhedra));
+		NEWTON_ASSERT(SanityCheck(polyhedra));
 
 		dgUnsigned64 i = 0;
 		dgPolyhedra::Iterator iter(polyhedra);
@@ -253,13 +253,13 @@ dgInt32 dgCollisionChamferCylinder::CalculateSignature() const {
 
 void dgCollisionChamferCylinder::SetCollisionBBox(const dgVector &p0__,
         const dgVector &p1__) {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 }
 
 /*
  DG_INLINE_FUNTION dgVector dgCollisionChamferCylinder::QuatizedSupportVertexSimd (const dgVector& dir) const
  {
- _ASSERTE (dgAbsf(dir % dir - dgFloat32 (1.0f)) < dgFloat32 (1.0e-3f));
+ NEWTON_ASSERT (dgAbsf(dir % dir - dgFloat32 (1.0f)) < dgFloat32 (1.0e-3f));
 
  dgVector sideDir (dgFloat32 (0.0f), dir.m_y, dir.m_z, dgFloat32 (0.0f));
  sideDir = sideDir.Scale (m_radius * dgRsqrt (sideDir % sideDir + dgFloat32 (1.0e-14f)));
@@ -268,7 +268,7 @@ void dgCollisionChamferCylinder::SetCollisionBBox(const dgVector &p0__,
 
  DG_INLINE_FUNTION dgVector dgCollisionChamferCylinder::QuatizedSupportVertex (const dgVector& dir) const
  {
- _ASSERTE (dgAbsf(dir % dir - dgFloat32 (1.0f)) < dgFloat32 (1.0e-3f));
+ NEWTON_ASSERT (dgAbsf(dir % dir - dgFloat32 (1.0f)) < dgFloat32 (1.0e-3f));
 
  dgVector sideDir (dgFloat32 (0.0f), dir.m_y, dir.m_z, dgFloat32 (0.0f));
  sideDir = sideDir.Scale (m_radius * dgRsqrt (sideDir % sideDir + dgFloat32 (1.0e-14f)));
@@ -282,7 +282,7 @@ dgVector dgCollisionChamferCylinder::SupportVertexSimd(
 }
 
 dgVector dgCollisionChamferCylinder::SupportVertex(const dgVector &dir) const {
-	_ASSERTE(dgAbsf(dir % dir - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
+	NEWTON_ASSERT(dgAbsf(dir % dir - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
 
 	if (dgAbsf(dir.m_x) > dgFloat32(0.9998f)) {
 		dgFloat32 x0;
@@ -290,7 +290,7 @@ dgVector dgCollisionChamferCylinder::SupportVertex(const dgVector &dir) const {
 		return dgVector(x0, dgFloat32(0.0f), m_radius, dgFloat32(0.0f));
 	}
 
-	_ASSERTE(dgAbsf(dir % dir - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
+	NEWTON_ASSERT(dgAbsf(dir % dir - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
 
 	dgVector sideDir(dgFloat32(0.0f), dir.m_y, dir.m_z, dgFloat32(0.0f));
 	sideDir = sideDir.Scale(
@@ -398,7 +398,7 @@ dgInt32 dgCollisionChamferCylinder::CalculatePlaneIntersection(
 		    dgRsqrt(normal.m_y * normal.m_y + normal.m_z * normal.m_z);
 		dgFloat32 cosAng = normal.m_y * magInv;
 		dgFloat32 sinAng = normal.m_z * magInv;
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    dgAbsf(normal.m_z * cosAng - normal.m_y * sinAng) < dgFloat32(1.0e-4f));
 		dgVector normal1(normal.m_x, normal.m_y * cosAng + normal.m_z * sinAng,
 		                 dgFloat32(0.0f), dgFloat32(0.0f));
@@ -431,7 +431,7 @@ dgInt32 dgCollisionChamferCylinder::CalculatePlaneIntersection(
 		} else {
 			dgVector dp(m_silhuette[1] - m_silhuette[0]);
 			dgFloat32 den = normal1 % dp;
-			_ASSERTE(dgAbsf(den) > dgFloat32(0.0f));
+			NEWTON_ASSERT(dgAbsf(den) > dgFloat32(0.0f));
 			test0 = -plane.Evalue(m_silhuette[0]) / den;
 			if ((test0 <= dgFloat32(1.0)) && (test0 >= dgFloat32(0.0f))) {
 				contactsOut[count] = m_silhuette[0] + dp.Scale(test0);
@@ -448,7 +448,7 @@ dgInt32 dgCollisionChamferCylinder::CalculatePlaneIntersection(
 					dgFloat32 c = d * d - m_height * m_height * plane.m_x * plane.m_x;
 					dgFloat32 desc = b * b - dgFloat32(4.0f) * a * c;
 					if (desc > dgFloat32(0.0f)) {
-						_ASSERTE(dgAbsf(a) > dgFloat32(0.0f));
+						NEWTON_ASSERT(dgAbsf(a) > dgFloat32(0.0f));
 						desc = dgSqrt(desc);
 						a = -dgFloat32(0.5f) * b / a;
 						dgFloat32 y0 = a + desc;
@@ -456,8 +456,8 @@ dgInt32 dgCollisionChamferCylinder::CalculatePlaneIntersection(
 						if (y0 > dgFloat32(0.0f)) {
 							y0 = y1;
 						}
-						_ASSERTE(y0 < dgFloat32(0.0f));
-						_ASSERTE(dgAbsf(plane.m_x) > dgFloat32(0.0f));
+						NEWTON_ASSERT(y0 < dgFloat32(0.0f));
+						NEWTON_ASSERT(dgAbsf(plane.m_x) > dgFloat32(0.0f));
 						dgFloat32 x = -(plane.m_y * y0 + d) / plane.m_x;
 						contactsOut[count] = dgVector(x, y0 + r, dgFloat32(0.0f),
 						                              dgFloat32(0.0f));
@@ -469,7 +469,7 @@ dgInt32 dgCollisionChamferCylinder::CalculatePlaneIntersection(
 			if (count < 2) {
 				dgVector dpp(m_silhuette[3] - m_silhuette[2]);
 				den = normal1 % dpp;
-				_ASSERTE(dgAbsf(den) > dgFloat32(0.0f));
+				NEWTON_ASSERT(dgAbsf(den) > dgFloat32(0.0f));
 				test0 = -plane.Evalue(m_silhuette[2]) / den;
 				if ((test0 <= dgFloat32(1.0)) && (test0 >= dgFloat32(0.0f))) {
 					contactsOut[count] = m_silhuette[2] + dpp.Scale(test0);
@@ -489,7 +489,7 @@ dgInt32 dgCollisionChamferCylinder::CalculatePlaneIntersection(
 					dgFloat32 c = d * d - m_height * m_height * plane.m_x * plane.m_x;
 					dgFloat32 desc = b * b - dgFloat32(4.0f) * a * c;
 					if (desc > dgFloat32(0.0f)) {
-						_ASSERTE(dgAbsf(a) > dgFloat32(0.0f));
+						NEWTON_ASSERT(dgAbsf(a) > dgFloat32(0.0f));
 						desc = dgSqrt(desc);
 						a = -dgFloat32(0.5f) * b / a;
 						dgFloat32 y0 = a + desc;
@@ -497,8 +497,8 @@ dgInt32 dgCollisionChamferCylinder::CalculatePlaneIntersection(
 						if (y0 < dgFloat32(0.0f)) {
 							y0 = y1;
 						}
-						_ASSERTE(y0 > dgFloat32(0.0f));
-						_ASSERTE(dgAbsf(plane.m_x) > dgFloat32(0.0f));
+						NEWTON_ASSERT(y0 > dgFloat32(0.0f));
+						NEWTON_ASSERT(dgAbsf(plane.m_x) > dgFloat32(0.0f));
 						dgFloat32 x = -(plane.m_y * y0 + d) / plane.m_x;
 						contactsOut[count] = dgVector(x, y0 + r, dgFloat32(0.0f),
 						                              dgFloat32(0.0f));

@@ -115,13 +115,13 @@ inline dgFloat32 dgPolygonSoupDatabase::GetRadius() const {
 }
 
 inline void dgPolygonSoupDatabase::ForAllSectorsSimd(const dgVector &min, const dgVector &max, dgAABBIntersectCallback callback, void *const context) const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 }
 
 
 
 inline void dgPolygonSoupDatabase::ForAllSectors(const dgVector &min, const dgVector &max, dgAABBIntersectCallback callback, void *const context) const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 }
 
 
@@ -130,11 +130,11 @@ inline void dgPolygonSoupDatabase::GetAABB(dgVector &p0, dgVector &p1) const {
 
 
 inline void dgPolygonSoupDatabase::ForAllSectorsRayHit(const dgFastRayTest &ray, dgRayIntersectCallback callback, void *const context) const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 }
 
 inline void dgPolygonSoupDatabase::ForAllSectorsRayHitSimd(const dgFastRayTest &ray, dgRayIntersectCallback callback, void *const context) const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 }
 
 #endif

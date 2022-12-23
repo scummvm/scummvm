@@ -31,7 +31,7 @@ dgBodyMasterListRow::dgBodyMasterListRow() : dgList<dgBodyMasterListCell>(NULL) 
 }
 
 dgBodyMasterListRow::~dgBodyMasterListRow() {
-	_ASSERTE(GetCount() == 0);
+	NEWTON_ASSERT(GetCount() == 0);
 }
 
 dgBodyMasterListRow::dgListNode *dgBodyMasterListRow::AddJoint(
@@ -93,10 +93,10 @@ void dgBodyMasterList::AddBody(dgBody *const body) {
 
 void dgBodyMasterList::RemoveBody(dgBody *const body) {
 	dgListNode *const node = body->m_masterNode;
-	_ASSERTE(node);
+	NEWTON_ASSERT(node);
 
 	node->GetInfo().RemoveAllJoints();
-	_ASSERTE(node->GetInfo().GetCount() == 0);
+	NEWTON_ASSERT(node->GetInfo().GetCount() == 0);
 
 	Remove(node);
 	body->m_masterNode = NULL;
@@ -104,9 +104,9 @@ void dgBodyMasterList::RemoveBody(dgBody *const body) {
 
 dgBodyMasterListRow::dgListNode *dgBodyMasterList::FindConstraintLink(
     const dgBody *const body0, const dgBody *const body1) const {
-	_ASSERTE(body0);
-	_ASSERTE(body1);
-	_ASSERTE(body0->m_masterNode);
+	NEWTON_ASSERT(body0);
+	NEWTON_ASSERT(body1);
+	NEWTON_ASSERT(body0->m_masterNode);
 
 	for (dgBodyMasterListRow::dgListNode *node =
 	            body0->m_masterNode->GetInfo().GetFirst();
@@ -122,8 +122,8 @@ dgBodyMasterListRow::dgListNode *dgBodyMasterList::FindConstraintLink(
 dgBodyMasterListRow::dgListNode *dgBodyMasterList::FindConstraintLinkNext(
     const dgBodyMasterListRow::dgListNode *const me,
     const dgBody *const body) const {
-	_ASSERTE(me);
-	_ASSERTE(body);
+	NEWTON_ASSERT(me);
+	NEWTON_ASSERT(body);
 	for (dgBodyMasterListRow::dgListNode *node = me->GetNext(); node;
 	        node = node->GetNext()) {
 		if (node->GetInfo().m_bodyNode == body) {
@@ -136,13 +136,13 @@ dgBodyMasterListRow::dgListNode *dgBodyMasterList::FindConstraintLinkNext(
 
 void dgBodyMasterList::AttachConstraint(dgConstraint *const constraint,
                                         dgBody *const body0, dgBody *const srcbody1) {
-	_ASSERTE(body0);
+	NEWTON_ASSERT(body0);
 	dgBody *body1 = srcbody1;
 	if (!body1) {
 		body1 = body0->GetWorld()->GetSentinelBody();
 		constraint->m_isUnilateral = true;
 	}
-	_ASSERTE(body1);
+	NEWTON_ASSERT(body1);
 
 	constraint->m_body0 = body0;
 	constraint->m_body1 = body1;
@@ -163,14 +163,14 @@ void dgBodyMasterList::AttachConstraint(dgConstraint *const constraint,
 
 void dgBodyMasterList::RemoveConstraint(dgConstraint *const constraint) {
 	m_constraintCount = m_constraintCount - 1;
-	_ASSERTE(((dgInt32)m_constraintCount) >= 0);
+	NEWTON_ASSERT(((dgInt32)m_constraintCount) >= 0);
 
 	dgBody *const body0 = constraint->m_body0;
 	dgBody *const body1 = constraint->m_body1;
-	_ASSERTE(body0);
-	_ASSERTE(body1);
-	_ASSERTE(body0 == constraint->m_link1->GetInfo().m_bodyNode);
-	_ASSERTE(body1 == constraint->m_link0->GetInfo().m_bodyNode);
+	NEWTON_ASSERT(body0);
+	NEWTON_ASSERT(body1);
+	NEWTON_ASSERT(body0 == constraint->m_link1->GetInfo().m_bodyNode);
+	NEWTON_ASSERT(body1 == constraint->m_link0->GetInfo().m_bodyNode);
 
 	body0->m_equilibrium = dgUnsigned32(body0->m_invMass.m_w ? false : true);
 	body1->m_equilibrium = dgUnsigned32(body1->m_invMass.m_w ? false : true);
@@ -192,7 +192,7 @@ void dgBodyMasterList::SortMasterList() {
 		node->GetInfo().SortList();
 		dgBody *const body1 = node->GetInfo().GetBody();
 
-		_ASSERTE(GetFirst() != node);
+		NEWTON_ASSERT(GetFirst() != node);
 
 		body1->InvalidateCache();
 
@@ -209,7 +209,7 @@ void dgBodyMasterList::SortMasterList() {
 		}
 
 		if (!prev) {
-			_ASSERTE(entry == GetFirst());
+			NEWTON_ASSERT(entry == GetFirst());
 			RotateToBegin(entry);
 		} else {
 			InsertAfter(prev, entry);

@@ -37,7 +37,7 @@ public:
 
 		dgListNode(dgListNode *const prev, dgListNode *const next)
 			: m_info() {
-//			_ASSERTE ((dgUnsigned64 (&m_info) & 0x0f) == 0);
+//			NEWTON_ASSERT ((dgUnsigned64 (&m_info) & 0x0f) == 0);
 			m_prev = prev;
 			m_next = next;
 			if (m_prev) {
@@ -50,7 +50,7 @@ public:
 
 		dgListNode(const T &info, dgListNode *const prev, dgListNode *const next)
 			: m_info(info) {
-//			_ASSERTE ((dgUnsigned64 (&m_info) & 0x0f) == 0);
+//			NEWTON_ASSERT ((dgUnsigned64 (&m_info) & 0x0f) == 0);
 			m_prev = prev;
 			m_next = next;
 			if (m_prev) {
@@ -79,7 +79,7 @@ public:
 
 //		void Remove()
 //		{
-//			_ASSERTE (0);
+//			NEWTON_ASSERT (0);
 //			Kill();
 //			Unlink();
 //			Release();
@@ -149,22 +149,22 @@ public:
 		}
 
 		void operator++ () {
-			_ASSERTE(m_ptr);
+			NEWTON_ASSERT(m_ptr);
 			m_ptr = m_ptr->m_next();
 		}
 
 		void operator++ (dgInt32) {
-			_ASSERTE(m_ptr);
+			NEWTON_ASSERT(m_ptr);
 			m_ptr = m_ptr->GetNext();
 		}
 
 		void operator-- () {
-			_ASSERTE(m_ptr);
+			NEWTON_ASSERT(m_ptr);
 			m_ptr = m_ptr->GetPrev();
 		}
 
 		void operator-- (dgInt32) {
-			_ASSERTE(m_ptr);
+			NEWTON_ASSERT(m_ptr);
 			m_ptr = m_ptr->GetPrev();
 		}
 
@@ -297,8 +297,8 @@ typename dgList<T>::dgListNode *dgList<T>::GetLast() const {
 
 template<class T>
 typename dgList<T>::dgListNode *dgList<T>::Append(dgListNode *const node) {
-	_ASSERTE(node->m_next == NULL);
-	_ASSERTE(node->m_prev == NULL);
+	NEWTON_ASSERT(node->m_next == NULL);
+	NEWTON_ASSERT(node->m_prev == NULL);
 	m_count ++;
 	if (m_first == NULL) {
 		m_last = node;
@@ -308,7 +308,7 @@ typename dgList<T>::dgListNode *dgList<T>::Append(dgListNode *const node) {
 		m_last = node;
 	}
 #ifdef __ENABLE_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 	return m_last;
 }
@@ -323,7 +323,7 @@ typename dgList<T>::dgListNode *dgList<T>::Append() {
 		m_last = new (m_allocator) dgListNode(m_last, NULL);
 	}
 #ifdef __ENABLE_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 	return m_last;
 }
@@ -338,7 +338,7 @@ typename dgList<T>::dgListNode *dgList<T>::Append(const T &element) {
 		m_last = new (m_allocator) dgListNode(element, m_last, NULL);
 	}
 #ifdef __ENABLE_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 
 	return m_last;
@@ -346,8 +346,8 @@ typename dgList<T>::dgListNode *dgList<T>::Append(const T &element) {
 
 template<class T>
 typename dgList<T>::dgListNode *dgList<T>::Addtop(dgListNode *const node) {
-	_ASSERTE(node->m_next == NULL);
-	_ASSERTE(node->m_prev == NULL);
+	NEWTON_ASSERT(node->m_next == NULL);
+	NEWTON_ASSERT(node->m_prev == NULL);
 	m_count ++;
 	if (m_last == NULL) {
 		m_last = node;
@@ -357,7 +357,7 @@ typename dgList<T>::dgListNode *dgList<T>::Addtop(dgListNode *const node) {
 		m_first = node;
 	}
 #ifdef __ENABLE_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 	return m_first;
 }
@@ -373,7 +373,7 @@ typename dgList<T>::dgListNode *dgList<T>::Addtop() {
 		m_first = new (m_allocator) dgListNode(NULL, m_first);
 	}
 #ifdef __ENABLE_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 	return m_first;
 }
@@ -389,15 +389,15 @@ typename dgList<T>::dgListNode *dgList<T>::Addtop(const T &element) {
 		m_first = new (m_allocator) dgListNode(element, NULL, m_first);
 	}
 #ifdef __ENABLE_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 	return m_first;
 }
 
 template<class T>
 void dgList<T>::InsertAfter(dgListNode *const root, dgListNode *const node) {
-	_ASSERTE(root);
-	_ASSERTE(node != root);
+	NEWTON_ASSERT(root);
+	NEWTON_ASSERT(node != root);
 
 	if (root->m_next != node) {
 		if (node == m_first) {
@@ -419,19 +419,19 @@ void dgList<T>::InsertAfter(dgListNode *const root, dgListNode *const node) {
 			m_last = node;
 		}
 
-		_ASSERTE(m_last);
-		_ASSERTE(!m_last->m_next);
-		_ASSERTE(m_first);
-		_ASSERTE(!m_first->m_prev);
-		_ASSERTE(SanityCheck());
+		NEWTON_ASSERT(m_last);
+		NEWTON_ASSERT(!m_last->m_next);
+		NEWTON_ASSERT(m_first);
+		NEWTON_ASSERT(!m_first->m_prev);
+		NEWTON_ASSERT(SanityCheck());
 	}
 }
 
 
 template<class T>
 void dgList<T>::InsertBefore(dgListNode *const root, dgListNode *const node) {
-	_ASSERTE(root);
-	_ASSERTE(node != root);
+	NEWTON_ASSERT(root);
+	NEWTON_ASSERT(node != root);
 
 	if (root->m_prev != node) {
 		if (node == m_last) {
@@ -453,11 +453,11 @@ void dgList<T>::InsertBefore(dgListNode *const root, dgListNode *const node) {
 			m_first = node;
 		}
 
-		_ASSERTE(m_first);
-		_ASSERTE(!m_first->m_prev);
-		_ASSERTE(m_last);
-		_ASSERTE(!m_last->m_next);
-		_ASSERTE(SanityCheck());
+		NEWTON_ASSERT(m_first);
+		NEWTON_ASSERT(!m_first->m_prev);
+		NEWTON_ASSERT(m_last);
+		NEWTON_ASSERT(!m_last->m_next);
+		NEWTON_ASSERT(SanityCheck());
 	}
 }
 
@@ -476,7 +476,7 @@ void dgList<T>::RotateToEnd(dgListNode *const node) {
 	}
 
 #ifdef __ENABLE_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 }
 
@@ -494,7 +494,7 @@ void dgList<T>::RotateToBegin(dgListNode *const node) {
 	}
 
 #ifdef __ENABLE_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 }
 
@@ -519,7 +519,7 @@ typename dgList<T>::dgListNode *dgList<T>::GetNodeFromInfo(T &info) const {
 	dgInt64 offset = ((char *) &node->m_info) - ((char *) node);
 	dgListNode *const retnode = (dgListNode *)(((char *) node) - offset);
 
-	_ASSERTE(&retnode->GetInfo() == &info);
+	NEWTON_ASSERT(&retnode->GetInfo() == &info);
 	return retnode;
 }
 
@@ -534,10 +534,10 @@ void dgList<T>::Remove(const T &element) {
 
 template<class T>
 void dgList<T>::Unlink(dgListNode *const node) {
-	_ASSERTE(node);
+	NEWTON_ASSERT(node);
 
 	m_count --;
-	_ASSERTE(m_count >= 0);
+	NEWTON_ASSERT(m_count >= 0);
 
 	if (node == m_first) {
 		m_first = m_first->GetNext();
@@ -549,7 +549,7 @@ void dgList<T>::Unlink(dgListNode *const node) {
 	node->Unlink();
 
 #ifdef __ENABLE_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 }
 
@@ -571,7 +571,7 @@ void dgList<T>::Merge(dgList<T> &list) {
 	list.m_last = NULL;
 	list.m_first = NULL;
 #ifdef __ENABLE_SANITY_CHECK
-	_ASSERTE(SanityCheck());
+	NEWTON_ASSERT(SanityCheck());
 #endif
 }
 
@@ -592,7 +592,7 @@ void dgList<T>::RemoveAll() {
 		node->Unlink();
 		delete node;
 	}
-	_ASSERTE(m_count == 0);
+	NEWTON_ASSERT(m_count == 0);
 	m_last = NULL;
 	m_first = NULL;
 }
@@ -604,22 +604,22 @@ bool dgList<T>::SanityCheck() const {
 	for (dgListNode *node = m_first; node; node = node->GetNext()) {
 		tCount ++;
 		if (node->GetPrev()) {
-			_ASSERTE(node->GetPrev() != node->GetNext());
+			NEWTON_ASSERT(node->GetPrev() != node->GetNext());
 			if (node->GetPrev()->GetNext() != node) {
-				_ASSERTE(0);
+				NEWTON_ASSERT(0);
 				return false;
 			}
 		}
 		if (node->GetNext()) {
-			_ASSERTE(node->GetPrev() != node->GetNext());
+			NEWTON_ASSERT(node->GetPrev() != node->GetNext());
 			if (node->GetNext()->GetPrev() != node) {
-				_ASSERTE(0);
+				NEWTON_ASSERT(0);
 				return false;
 			}
 		}
 	}
 	if (tCount != m_count) {
-		_ASSERTE(0);
+		NEWTON_ASSERT(0);
 		return false;
 	}
 #endif

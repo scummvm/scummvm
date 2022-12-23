@@ -67,13 +67,13 @@
 
  void dgConnectorConstraint::Remove()
  {
- _ASSERTE (0);
+ NEWTON_ASSERT (0);
  }
 
 
  void dgConnectorConstraint::Setup ()
  {
- _ASSERTE (0);
+ NEWTON_ASSERT (0);
 
  dgVector p0 (m_dynamic0->GetBody()->GetMatrix().posit);
  dgVector p1 (p0);
@@ -90,7 +90,7 @@
 
  dgUnsigned32 dgConnectorConstraint::JacobianDerivative (dgContraintDescritor& params)
  {
- _ASSERTE (0);
+ NEWTON_ASSERT (0);
  return 0;
 
  // dgFloat32 k;

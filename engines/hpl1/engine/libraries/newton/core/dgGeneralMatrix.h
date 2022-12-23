@@ -105,8 +105,8 @@ template<class T>
 dgGeneralMatrix<T>::dgGeneralMatrix(dgInt32 row, dgInt32 column) {
 	dgInt32 i;
 	dgInt32 columnPad;
-	_ASSERTE(row > 0);
-	_ASSERTE(column > 0);
+	NEWTON_ASSERT(row > 0);
+	NEWTON_ASSERT(column > 0);
 
 	m_rowCount = row;
 	m_colCount = column;
@@ -154,7 +154,7 @@ dgGeneralMatrix<T>::dgGeneralMatrix(
 	m_colCount = column;
 
 
-	_ASSERTE((((dgUnsigned32) elemBuffer) & 0x0f) == 0);
+	NEWTON_ASSERT((((dgUnsigned32) elemBuffer) & 0x0f) == 0);
 
 	m_buffer = elemBuffer;
 	columnPad = ((m_colCount * sizeof(T) + 0x0f) & -0x0f) / sizeof(T);
@@ -176,7 +176,7 @@ dgGeneralMatrix<T>::dgGeneralMatrix(
 	m_rowCount = src.m_rowCount;
 	m_colCount = src.m_colCount;
 
-	_ASSERTE((((dgUnsigned32) elemBuffer) & 0x0f) == 0);
+	NEWTON_ASSERT((((dgUnsigned32) elemBuffer) & 0x0f) == 0);
 	m_buffer = elemBuffer;
 
 	columnPad = ((m_colCount * sizeof(T) + 0x0f) & -0x0f) / sizeof(T);
@@ -221,15 +221,15 @@ void dgGeneralMatrix<T>::Trace() const {
 
 template<class T>
 dgGeneralVector<T> &dgGeneralMatrix<T>::operator[](dgInt32 i) {
-	_ASSERTE(i < m_rowCount);
-	_ASSERTE(i >= 0);
+	NEWTON_ASSERT(i < m_rowCount);
+	NEWTON_ASSERT(i >= 0);
 	return m_rows[i];
 }
 
 template<class T>
 const dgGeneralVector<T> &dgGeneralMatrix<T>::operator[](dgInt32 i) const {
-	_ASSERTE(i < m_rowCount);
-	_ASSERTE(i >= 0);
+	NEWTON_ASSERT(i < m_rowCount);
+	NEWTON_ASSERT(i >= 0);
 	return m_rows[i];
 }
 
@@ -258,7 +258,7 @@ void dgGeneralMatrix<T>::Identity() {
 //	dgInt32 i;
 //	dgInt32 j;
 //
-//	_ASSERTE (m_rowCount ==
+//	NEWTON_ASSERT (m_rowCount ==
 //	dgGeneralMatrix<T>& me = *this;
 //	for (i = 0; i < m_rowCount; i ++) {
 //		for (j = i + 1; j < m_rowCount; j ++) {
@@ -285,7 +285,7 @@ void dgGeneralMatrix<T>::GaussianPivotStep(
 	T num(me[pivotRow][pivotCol]);
 	if (T(dgAbsf(num)) > tol) {
 		T den(me[srcRow][pivotCol]);
-		_ASSERTE(T(dgAbsf(den)) > T(0.0f));
+		NEWTON_ASSERT(T(dgAbsf(den)) > T(0.0f));
 
 #ifdef DG_COUNT_FLOAT_OPS
 		dgGeneralVector<T>::m_floatsOp += 2;
@@ -300,7 +300,7 @@ void dgGeneralMatrix<T>::GaussianPivotStep(
 //template<class T>
 //void dgGeneralMatrix<T>::Inverse (dgGeneralMatrix& inverseOut)
 //{
-//	_ASSERTE (m_colCount == m_rowCount);
+//	NEWTON_ASSERT (m_colCount == m_rowCount);
 //}
 
 
@@ -312,9 +312,9 @@ void dgGeneralMatrix<T>::VectorTimeMatrix(const dgGeneralVector<T> &v, dgGeneral
 	T *outMem;
 	const T *inMem;
 
-	_ASSERTE(&v != &out);
-	_ASSERTE(m_rowCount    == v.m_colCount);
-	_ASSERTE(m_colCount == out.m_colCount);
+	NEWTON_ASSERT(&v != &out);
+	NEWTON_ASSERT(m_rowCount    == v.m_colCount);
+	NEWTON_ASSERT(m_colCount == out.m_colCount);
 
 	inMem = &v[0];
 	outMem = &out[0];
@@ -340,9 +340,9 @@ template<class T>
 void dgGeneralMatrix<T>::MatrixTimeVectorTranspose(const dgGeneralVector<T> &v, dgGeneralVector<T> &out) {
 	dgInt32 i;
 
-	_ASSERTE(&v != &out);
-	_ASSERTE(m_rowCount    == out.m_colCount);
-	_ASSERTE(m_colCount    == v.m_colCount);
+	NEWTON_ASSERT(&v != &out);
+	NEWTON_ASSERT(m_rowCount    == out.m_colCount);
+	NEWTON_ASSERT(m_colCount    == v.m_colCount);
 
 	for (i = 0; i < m_rowCount; i ++) {
 		out[i] = v.DotProduct(m_rows[i]);
@@ -358,11 +358,11 @@ void dgGeneralMatrix<T>::MatrixTimeMatrix(const dgGeneralMatrix<T> &A, const dgG
 	T *out;
 	T *rowA;
 
-	_ASSERTE(m_rowCount    == A.m_rowCount);
-	_ASSERTE(m_colCount    == B.m_colCount);
-	_ASSERTE(A.m_colCount == B.m_rowCount);
+	NEWTON_ASSERT(m_rowCount    == A.m_rowCount);
+	NEWTON_ASSERT(m_colCount    == B.m_colCount);
+	NEWTON_ASSERT(A.m_colCount == B.m_rowCount);
 
-	_ASSERTE(this != &A);
+	NEWTON_ASSERT(this != &A);
 
 	count = A.m_colCount;
 	for (i = 0; i < m_rowCount; i ++) {
@@ -397,12 +397,12 @@ void dgGeneralMatrix<T>::MatrixTimeMatrixTranspose(const dgGeneralMatrix<T> &A, 
 	T *rowA;
 	T *rowB;
 
-	_ASSERTE(m_rowCount    == A.m_rowCount);
-	_ASSERTE(m_colCount    == Bt.m_rowCount);
-	_ASSERTE(A.m_colCount == Bt.m_colCount);
+	NEWTON_ASSERT(m_rowCount    == A.m_rowCount);
+	NEWTON_ASSERT(m_colCount    == Bt.m_rowCount);
+	NEWTON_ASSERT(A.m_colCount == Bt.m_colCount);
 
-	_ASSERTE(this != &A);
-	_ASSERTE(this != &Bt);
+	NEWTON_ASSERT(this != &A);
+	NEWTON_ASSERT(this != &Bt);
 
 	count = A.m_colCount;
 	for (i = 0; i < m_rowCount; i ++) {
@@ -439,8 +439,8 @@ bool dgGeneralMatrix<T>::Solve(dgGeneralVector<T> &b, T tol) {
 	T *rowI;
 	T *rowK;
 
-	_ASSERTE(m_rowCount    == m_colCount);
-	_ASSERTE(b.m_colCount == m_colCount);
+	NEWTON_ASSERT(m_rowCount    == m_colCount);
+	NEWTON_ASSERT(b.m_colCount == m_colCount);
 
 	B = &b[0];
 	// convert to upper triangular matrix by applying gauss pivoting
@@ -506,21 +506,21 @@ bool dgGeneralMatrix<T>::Solve(dgGeneralVector<T> &b, T tol) {
 
 template<class T>
 void dgGeneralMatrix<T>::SwapRows(dgInt32 i, dgInt32 j) {
-	_ASSERTE(i >= 0);
-	_ASSERTE(j >= 0);
-	_ASSERTE(i < m_rowCount);
-	_ASSERTE(j < m_rowCount);
-	_ASSERTE(j != i);
+	NEWTON_ASSERT(i >= 0);
+	NEWTON_ASSERT(j >= 0);
+	NEWTON_ASSERT(i < m_rowCount);
+	NEWTON_ASSERT(j < m_rowCount);
+	NEWTON_ASSERT(j != i);
 	Swap(m_rows[i].m_columns, m_rows[j].m_columns);
 }
 
 template<class T>
 void dgGeneralMatrix<T>::SwapColumns(dgInt32 i, dgInt32 j) {
 	dgInt32 k;
-	_ASSERTE(i >= 0);
-	_ASSERTE(j >= 0);
-	_ASSERTE(i < m_colCount);
-	_ASSERTE(j < m_colCount);
+	NEWTON_ASSERT(i >= 0);
+	NEWTON_ASSERT(j >= 0);
+	NEWTON_ASSERT(i < m_colCount);
+	NEWTON_ASSERT(j < m_colCount);
 	for (k = 0; k < m_colCount; k ++) {
 		Swap(m_rows[k][i], m_rows[k][j]);
 	}

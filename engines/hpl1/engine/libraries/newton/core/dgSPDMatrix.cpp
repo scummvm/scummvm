@@ -47,8 +47,8 @@
  return CholeskyDecomposition (rows, size);
 
  } else {
- _ASSERTE (0);
- _ASSERTE (typeSizeInBytes == sizeof (dgFloat64));
+ NEWTON_ASSERT (0);
+ NEWTON_ASSERT (typeSizeInBytes == sizeof (dgFloat64));
  }
 
  return true;
@@ -77,8 +77,8 @@
  BackAndForwardSustitition (rows, size, (dgFloat32*)rightsideVector);
 
  } else {
- _ASSERTE (0);
- _ASSERTE (typeSizeInBytes == sizeof (dgFloat64));
+ NEWTON_ASSERT (0);
+ NEWTON_ASSERT (typeSizeInBytes == sizeof (dgFloat64));
  }
  }
  */
@@ -109,8 +109,8 @@
  return true;
  }
  } else {
- _ASSERTE (0);
- _ASSERTE (typeSizeInBytes == sizeof (dgFloat64));
+ NEWTON_ASSERT (0);
+ NEWTON_ASSERT (typeSizeInBytes == sizeof (dgFloat64));
  }
 
  return false;

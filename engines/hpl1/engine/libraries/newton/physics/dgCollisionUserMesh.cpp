@@ -42,7 +42,7 @@ dgCollisionUserMesh::dgCollisionUserMesh(dgMemoryAllocator *allocator,
 
 dgCollisionUserMesh::dgCollisionUserMesh(dgWorld *const world,
         dgDeserialize deserialization, void *const userData) : dgCollisionMesh(world, deserialization, userData) {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 	m_rtti |= dgCollisionUserMesh_RTTI;
 
 	/*
@@ -63,7 +63,7 @@ dgCollisionUserMesh::~dgCollisionUserMesh(void) {
 
 void dgCollisionUserMesh::Serialize(dgSerialize callback,
                                     void *const userData) const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 	/*
 	 SerializeLow(callback, userData);
 	 dgAABBPolygonSoup::Serialize ((dgSerialize) callback, userData);

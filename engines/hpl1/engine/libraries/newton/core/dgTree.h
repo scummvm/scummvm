@@ -93,7 +93,7 @@ public:
 		    const KEY &key,
 		    dgTreeNode *parentNode)
 			: dgRedBackNode(parentNode), m_info(info), m_key(key) {
-//			_ASSERTE ((dgUnsigned64 (&m_info) & 0x0f) == 0);
+//			NEWTON_ASSERT ((dgUnsigned64 (&m_info) & 0x0f) == 0);
 		}
 
 		~dgTreeNode() {
@@ -171,22 +171,22 @@ public:
 		}
 
 		void operator++ () {
-			_ASSERTE(m_ptr);
+			NEWTON_ASSERT(m_ptr);
 			m_ptr = m_ptr->Next();
 		}
 
 		void operator++ (dgInt32) {
-			_ASSERTE(m_ptr);
+			NEWTON_ASSERT(m_ptr);
 			m_ptr = m_ptr->Next();
 		}
 
 		void operator-- () {
-			_ASSERTE(m_ptr);
+			NEWTON_ASSERT(m_ptr);
 			m_ptr = m_ptr->Prev();
 		}
 
 		void operator-- (dgInt32) {
-			_ASSERTE(m_ptr);
+			NEWTON_ASSERT(m_ptr);
 			m_ptr = m_ptr->Prev();
 		}
 
@@ -371,13 +371,13 @@ typename dgTree<OBJECT, KEY>::dgTreeNode *dgTree<OBJECT, KEY>::Find(KEY key) con
 	dgTreeNode *ptr = m_head;
 	while (ptr != NULL) {
 		if (key < ptr->m_key) {
-			_ASSERTE(CompareKeys(ptr->m_key, key) == -1) ;
+			NEWTON_ASSERT(CompareKeys(ptr->m_key, key) == -1) ;
 			ptr = ptr->GetLeft();
 		} else if (key > ptr->m_key) {
-			_ASSERTE(CompareKeys(ptr->m_key, key) == 1) ;
+			NEWTON_ASSERT(CompareKeys(ptr->m_key, key) == 1) ;
 			ptr = ptr->GetRight();
 		} else {
-			_ASSERTE(CompareKeys(ptr->m_key, key) == 0) ;
+			NEWTON_ASSERT(CompareKeys(ptr->m_key, key) == 0) ;
 			break;
 		}
 	}
@@ -390,8 +390,8 @@ typename dgTree<OBJECT, KEY>::dgTreeNode *dgTree<OBJECT, KEY>::GetNodeFromInfo(O
 	dgInt64 offset = ((char *) &node->m_info) - ((char *) node);
 	dgTreeNode *const retnode = (dgTreeNode *)(((char *) node) - offset);
 
-	_ASSERTE(retnode->IsInTree());
-	_ASSERTE(&retnode->GetInfo() == &info);
+	NEWTON_ASSERT(retnode->IsInTree());
+	NEWTON_ASSERT(&retnode->GetInfo() == &info);
 	return (retnode->IsInTree()) ? retnode : NULL;
 
 }
@@ -419,11 +419,11 @@ typename dgTree<OBJECT, KEY>::dgTreeNode *dgTree<OBJECT, KEY>::FindGreater(KEY k
 		Iterator iter(*this);
 		for (iter.Begin(); iter.GetNode() != prev; iter ++) {
 			KEY key1 = iter.GetKey();
-			_ASSERTE(key1 <= key);
+			NEWTON_ASSERT(key1 <= key);
 		}
 		for (; iter.GetNode(); iter ++) {
 			KEY key1 = iter.GetKey();
-			_ASSERTE(key1 > key);
+			NEWTON_ASSERT(key1 > key);
 		}
 	}
 #endif
@@ -457,11 +457,11 @@ typename dgTree<OBJECT, KEY>::dgTreeNode *dgTree<OBJECT, KEY>::FindGreaterEqual(
 		Iterator iter(*this);
 		for (iter.Begin(); iter.GetNode() != prev; iter ++) {
 			KEY key1 = iter.GetKey();
-			_ASSERTE(key1 <= key);
+			NEWTON_ASSERT(key1 <= key);
 		}
 		for (; iter.GetNode(); iter ++) {
 			KEY key1 = iter.GetKey();
-			_ASSERTE(key1 >= key);
+			NEWTON_ASSERT(key1 >= key);
 		}
 	}
 #endif
@@ -497,11 +497,11 @@ typename dgTree<OBJECT, KEY>::dgTreeNode *dgTree<OBJECT, KEY>::FindLessEqual(KEY
 		Iterator iter(*this);
 		for (iter.End(); iter.GetNode() != prev; iter --) {
 			KEY key1 = iter.GetKey();
-			_ASSERTE(key1 >= key);
+			NEWTON_ASSERT(key1 >= key);
 		}
 		for (; iter.GetNode(); iter --) {
 			KEY key1 = iter.GetKey();
-			_ASSERTE(key1 < key);
+			NEWTON_ASSERT(key1 < key);
 		}
 	}
 #endif
@@ -519,22 +519,22 @@ typename dgTree<OBJECT, KEY>::dgTreeNode *dgTree<OBJECT, KEY>::Insert(const OBJE
 		parent = ptr;
 
 		if (key < ptr->m_key) {
-			_ASSERTE(CompareKeys(ptr->m_key, key) == -1) ;
+			NEWTON_ASSERT(CompareKeys(ptr->m_key, key) == -1) ;
 			val = -1;
 			ptr = ptr->GetLeft();
 		} else if (key > ptr->m_key) {
-			_ASSERTE(CompareKeys(ptr->m_key, key) == 1) ;
+			NEWTON_ASSERT(CompareKeys(ptr->m_key, key) == 1) ;
 			val = 1;
 			ptr = ptr->GetRight();
 		} else {
-			_ASSERTE(CompareKeys(ptr->m_key, key) == 0) ;
+			NEWTON_ASSERT(CompareKeys(ptr->m_key, key) == 0) ;
 			elementWasInTree = true;
 			return ptr;
 		}
 	}
 
 	m_count ++;
-	_ASSERTE(m_allocator);
+	NEWTON_ASSERT(m_allocator);
 	ptr = new (m_allocator) dgTreeNode(element, key, parent);
 	if (!parent) {
 		m_head = ptr;
@@ -580,15 +580,15 @@ typename dgTree<OBJECT, KEY>::dgTreeNode *dgTree<OBJECT, KEY>::Insert(typename d
 //		}
 
 		if (key < ptr->m_key) {
-			_ASSERTE(CompareKeys(ptr->m_key, key) == -1) ;
+			NEWTON_ASSERT(CompareKeys(ptr->m_key, key) == -1) ;
 			val = -1;
 			ptr = ptr->GetLeft();
 		} else if (key > ptr->m_key) {
-			_ASSERTE(CompareKeys(ptr->m_key, key) == 1) ;
+			NEWTON_ASSERT(CompareKeys(ptr->m_key, key) == 1) ;
 			val = 1;
 			ptr = ptr->GetRight();
 		} else {
-			_ASSERTE(CompareKeys(ptr->m_key, key) == 0) ;
+			NEWTON_ASSERT(CompareKeys(ptr->m_key, key) == 0) ;
 			return NULL;
 		}
 	}
@@ -624,7 +624,7 @@ typename dgTree<OBJECT, KEY>::dgTreeNode *dgTree<OBJECT, KEY>::Replace(OBJECT &e
 	while (ptr != NULL) {
 		parent = ptr;
 
-		_ASSERTE(0);
+		NEWTON_ASSERT(0);
 		val = CompareKeys(ptr->m_key, key);
 		if (val == 0) {
 			ptr->m_info = element;
@@ -637,7 +637,7 @@ typename dgTree<OBJECT, KEY>::dgTreeNode *dgTree<OBJECT, KEY>::Replace(OBJECT &e
 		}
 	}
 
-	_ASSERTE(m_allocator);
+	NEWTON_ASSERT(m_allocator);
 	ptr = new (m_allocator) dgTreeNode(element, key, parent);
 	if (!parent) {
 		m_head = ptr;
@@ -660,7 +660,7 @@ template<class OBJECT, class KEY>
 typename dgTree<OBJECT, KEY>::dgTreeNode *dgTree<OBJECT, KEY>::ReplaceKey(typename dgTree<OBJECT, KEY>::dgTreeNode *const node, KEY key) {
 	Unlink(node);
 	dgTreeNode *const ptr = Insert(node, key);
-	_ASSERTE(ptr);
+	NEWTON_ASSERT(ptr);
 	return ptr;
 }
 
@@ -676,7 +676,7 @@ void dgTree<OBJECT, KEY>::Unlink(typename dgTree<OBJECT, KEY>::dgTreeNode *const
 
 	dgTreeNode **const headPtr = (dgTreeNode **) &m_head;
 	node->Unlink((dgRedBackNode **)headPtr);
-	_ASSERTE(!Find(node->GetKey()));
+	NEWTON_ASSERT(!Find(node->GetKey()));
 }
 
 

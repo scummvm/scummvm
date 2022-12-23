@@ -280,7 +280,7 @@ inline dgInt32 dgPolyhedra::GetEdgeCount() const {
 	for (iter.Begin(); iter; iter ++) {
 		edgeCount ++;
 	}
-	_ASSERTE(edgeCount == GetCount());;
+	NEWTON_ASSERT(edgeCount == GetCount());;
 #endif
 	return GetCount();
 }
@@ -300,7 +300,7 @@ inline dgInt32 dgPolyhedra::GetLastVertexIndex() const {
 
 inline dgInt32 dgPolyhedra::IncLRU() const {
 	m_edgeMark ++;
-	_ASSERTE(m_edgeMark < 0x7fffffff);
+	NEWTON_ASSERT(m_edgeMark < 0x7fffffff);
 	return m_edgeMark;
 }
 

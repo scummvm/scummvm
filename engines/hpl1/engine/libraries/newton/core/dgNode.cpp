@@ -63,7 +63,7 @@ void dgBaseNode::CloneFixUp(const dgBaseNode &clone) {
 	dgBaseNode *obj;
 	dgBaseNode *cloneChild;
 
-	_ASSERTE(GetNameID() == clone.GetNameID());
+	NEWTON_ASSERT(GetNameID() == clone.GetNameID());
 
 	cloneChild = clone.GetChild();
 	for (obj = child; obj; obj = obj->sibling) {
@@ -88,9 +88,9 @@ void dgBaseNode::CloneFixUp(const dgBaseNode &clone) {
 
 void dgBaseNode::Attach(dgBaseNode *parentArg, bool addFirst) {
 	dgBaseNode *obj;
-	_ASSERTE(!parent);
-	_ASSERTE(!sibling);
-	_ASSERTE(parentArg);
+	NEWTON_ASSERT(!parent);
+	NEWTON_ASSERT(!sibling);
+	NEWTON_ASSERT(parentArg);
 
 	parent = parentArg;
 	if (parent->child) {

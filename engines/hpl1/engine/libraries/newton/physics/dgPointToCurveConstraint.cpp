@@ -71,7 +71,7 @@
 
  //dgUnsigned32 dgPointToCurveConstraint::CalcRestrictedDOF()
  //{
- // _ASSERTE (0);
+ // NEWTON_ASSERT (0);
  // return 0;
  //}
 
@@ -81,9 +81,9 @@
  OnPointToCurveCallback curve,
  void *curveContext)
  {
- _ASSERTE (0);
+ NEWTON_ASSERT (0);
 
- // _ASSERTE (m_dynamic0);
+ // NEWTON_ASSERT (m_dynamic0);
 
  // m_curve = curve;
  // m_context = curveContext;
@@ -94,17 +94,17 @@
 
  dgUnsigned32 dgPointToCurveConstraint::JacobianDerivative (dgContraintDescritor& params)
  {
- _ASSERTE (0);
+ NEWTON_ASSERT (0);
  return 0;
  // dgBody* body0;
  // dgFloat32 kPosit;
  //
- // _ASSERTE (m_dynamic0);
+ // NEWTON_ASSERT (m_dynamic0);
  //
  // body0 = m_dynamic0->GetBody();
- // _ASSERTE (body0);
+ // NEWTON_ASSERT (body0);
  //
- // _ASSERTE (body0->GetDynamic() == m_dynamic0);
+ // NEWTON_ASSERT (body0->GetDynamic() == m_dynamic0);
  //
  // const dgMatrix& mat0 = body0->GetMatrix();
  //

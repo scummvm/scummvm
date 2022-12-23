@@ -55,8 +55,8 @@ bool dgMeshTreeCSGFace::IsPointOnEdge(const dgHugeVector &p0,
 	if (numf > (DG_CLIPPER_TOL * dgFloat64(1.0e3))) {
 		if (numf < den.GetAproximateValue() * dgFloat64(1.0 - (DG_CLIPPER_TOL * dgFloat64(1.0e3)))) {
 			dgGoogol t = num / den;
-			_ASSERTE(t.GetAproximateValue() > dgFloat64(0.0f));
-			_ASSERTE(t.GetAproximateValue() < dgFloat64(1.0f));
+			NEWTON_ASSERT(t.GetAproximateValue() > dgFloat64(0.0f));
+			NEWTON_ASSERT(t.GetAproximateValue() < dgFloat64(1.0f));
 			dgHugeVector q1(p0 + p1p0.Scale(t));
 			dgHugeVector dist(q1 - q0);
 			dgGoogol dist2 = dist % dist;
@@ -302,17 +302,17 @@ void dgMeshTreeCSGFace::Clip(const dgHugeVector &plane,
 	*rightOut = NULL;
 	if ((leftPCount && !rightPCount) || (!leftPCount && rightPCount)) {
 		if (leftPCount) {
-			_ASSERTE(!rightPCount);
+			NEWTON_ASSERT(!rightPCount);
 			AddRef();
 			*leftOut = this;
 		} else {
-			_ASSERTE(!leftPCount);
+			NEWTON_ASSERT(!leftPCount);
 			*rightOut = this;
 			AddRef();
 		}
 	} else if (!(leftPCount || rightPCount)) {
-		_ASSERTE(!leftPCount);
-		_ASSERTE(!rightPCount);
+		NEWTON_ASSERT(!leftPCount);
+		NEWTON_ASSERT(!rightPCount);
 		AddRef();
 		// AddRef();
 	} else {
@@ -334,7 +334,7 @@ void dgMeshTreeCSGFace::Clip(const dgHugeVector &plane,
 				dgHugeVector dp(p1 - p0);
 				dgGoogol den(plane % dp);
 				dgGoogol num = plane.EvaluePlane(p0);
-				_ASSERTE(fabs(num.GetAproximateValue()) > dgFloat64(0.0f));
+				NEWTON_ASSERT(fabs(num.GetAproximateValue()) > dgFloat64(0.0f));
 				dgGoogol ti(num / den);
 				inter = p0 - dp.Scale(num / den);
 			}
@@ -366,8 +366,8 @@ void dgMeshTreeCSGFace::Clip(const dgHugeVector &plane,
 				leftFace[leftCount] = p1;
 				leftCount++;
 			}
-			_ASSERTE(leftCount < dgInt32((sizeof(leftFace) / sizeof(leftFace[0])) - 1));
-			_ASSERTE(rightCount < dgInt32((sizeof(rightFace) / sizeof(rightFace[0])) - 1));
+			NEWTON_ASSERT(leftCount < dgInt32((sizeof(leftFace) / sizeof(leftFace[0])) - 1));
+			NEWTON_ASSERT(rightCount < dgInt32((sizeof(rightFace) / sizeof(rightFace[0])) - 1));
 
 			i0 = i1;
 			i1++;
@@ -385,7 +385,7 @@ void dgMeshTreeCSGFace::Clip(const dgHugeVector &plane,
 			*rightOut = new (GetAllocator()) dgMeshTreeCSGFace(GetAllocator(),
 			        rightCount, rightFace);
 		}
-		_ASSERTE(*leftOut || *rightOut);
+		NEWTON_ASSERT(*leftOut || *rightOut);
 	}
 }
 
@@ -453,10 +453,10 @@ void dgMeshEffectSolidTree::AddFace(const dgMeshEffect &mesh,
 
 			stack--;
 			dgMeshEffectSolidTree *const root = pool[stack];
-			_ASSERTE(root->m_planeType == m_divider);
+			NEWTON_ASSERT(root->m_planeType == m_divider);
 
 			dgMeshTreeCSGFace *const curve = faces[stack];
-			_ASSERTE(curve->CheckConvex(plane));
+			NEWTON_ASSERT(curve->CheckConvex(plane));
 
 			dgMeshTreeCSGFace *backOut;
 			dgMeshTreeCSGFace *frontOut;
@@ -494,7 +494,7 @@ void dgMeshEffectSolidTree::AddFace(const dgMeshEffect &mesh,
 						faces[stack] = backOut;
 						pool[stack] = root->m_back;
 						stack++;
-						_ASSERTE(stack < dgInt32(sizeof(pool) / sizeof(pool[0])));
+						NEWTON_ASSERT(stack < dgInt32(sizeof(pool) / sizeof(pool[0])));
 					}
 				}
 
@@ -508,7 +508,7 @@ void dgMeshEffectSolidTree::AddFace(const dgMeshEffect &mesh,
 						faces[stack] = frontOut;
 						pool[stack] = root->m_front;
 						stack++;
-						_ASSERTE(stack < dgInt32(sizeof(pool) / sizeof(pool[0])));
+						NEWTON_ASSERT(stack < dgInt32(sizeof(pool) / sizeof(pool[0])));
 					}
 				}
 			}
@@ -522,7 +522,7 @@ dgMeshEffectSolidTree::dgPlaneType dgMeshEffectSolidTree::GetPointSide(
     const dgHugeVector &point) const {
 	const dgMeshEffectSolidTree *root = this;
 
-	_ASSERTE(root);
+	NEWTON_ASSERT(root);
 	while (root->m_planeType == dgMeshEffectSolidTree::m_divider) {
 		dgGoogol test = root->m_plane.EvaluePlane(point);
 		dgFloat64 dist = test.GetAproximateValue();
@@ -535,7 +535,7 @@ dgMeshEffectSolidTree::dgPlaneType dgMeshEffectSolidTree::GetPointSide(
 		} else if (dist > dgFloat64(0.0f)) {
 			root = root->m_front;
 		} else {
-			_ASSERTE(dist < dgFloat64(0.0f));
+			NEWTON_ASSERT(dist < dgFloat64(0.0f));
 			root = root->m_back;
 		}
 	}

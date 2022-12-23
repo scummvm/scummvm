@@ -219,7 +219,7 @@ public:
 		dgEdge *ptr = edge0->m_twin->m_next;
 		do {
 			if (ptr->m_twin->m_incidentFace == edge->m_twin->m_incidentFace) {
-				_ASSERTE(edge0->m_incidentVertex == ptr->m_incidentVertex);
+				NEWTON_ASSERT(edge0->m_incidentVertex == ptr->m_incidentVertex);
 				dgBigVector e0(points[edge0->m_twin->m_incidentVertex] - points[edge0->m_incidentVertex]);
 				dgBigVector e1(points[ptr->m_twin->m_incidentVertex] - points[edge0->m_incidentVertex]);
 				dgBigVector normal(e0 * e1);
@@ -228,7 +228,7 @@ public:
 			ptr = ptr->m_twin->m_next;
 		} while (ptr != edge->m_twin);
 
-		_ASSERTE(0);
+		NEWTON_ASSERT(0);
 		return true;
 	}
 
@@ -385,7 +385,7 @@ dgMeshEffect::dgMeshEffect(const dgMeshEffect &source, dgFloat32 absoluteconcavi
 		}
 	}
 
-	_ASSERTE(faceCount == clusterIndex);
+	NEWTON_ASSERT(faceCount == clusterIndex);
 
 	// recalculate all edge cost
 	dgStack<dgInt32> vertexMarksArray(mesh.GetVertexCount());
@@ -408,7 +408,7 @@ dgMeshEffect::dgMeshEffect(const dgMeshEffect &source, dgFloat32 absoluteconcavi
 	for (dgInt32 faceIndex = 1; faceIndex < faceCount; faceIndex++) {
 		vertexMark++;
 		dgClusterList &clusterList = clusters[faceIndex];
-		_ASSERTE(clusterList.GetFirst()->GetInfo().m_edge->m_incidentFace == faceIndex);
+		NEWTON_ASSERT(clusterList.GetFirst()->GetInfo().m_edge->m_incidentFace == faceIndex);
 		clusterList.CalculateNodeCost(mesh, meshMask, &vertexPool[0], &vertexMarks[0], vertexMark, &clusters[0], diagonalInv, aspectRatioCoeficent, proxyList, heap);
 	}
 
@@ -421,10 +421,10 @@ dgMeshEffect::dgMeshEffect(const dgMeshEffect &source, dgFloat32 absoluteconcavi
 		heap.Pop();
 		dgPairProxi &pair = pairNode->GetInfo();
 
-		_ASSERTE((pair.m_edgeA && pair.m_edgeA) || (!pair.m_edgeA && !pair.m_edgeA));
+		NEWTON_ASSERT((pair.m_edgeA && pair.m_edgeA) || (!pair.m_edgeA && !pair.m_edgeA));
 		if (pair.m_edgeA && pair.m_edgeB) {
 
-			_ASSERTE(pair.m_edgeA->m_incidentFace != pair.m_edgeB->m_incidentFace);
+			NEWTON_ASSERT(pair.m_edgeA->m_incidentFace != pair.m_edgeB->m_incidentFace);
 
 			// merge two clusters
 			dgInt32 faceIndexA = pair.m_edgeA->m_incidentFace;

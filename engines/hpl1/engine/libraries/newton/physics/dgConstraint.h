@@ -246,7 +246,7 @@ protected:
 } DG_GCC_VECTOR_ALIGMENT;
 
 inline dgConstraint::dgConstraint() {
-	_ASSERTE((((dgUnsigned64) this) & 15) == 0);
+	NEWTON_ASSERT((((dgUnsigned64) this) & 15) == 0);
 
 	m_link0 = NULL;
 	m_link1 = NULL;

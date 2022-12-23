@@ -50,7 +50,7 @@ dgCollisionNull::~dgCollisionNull() {
 
 void dgCollisionNull::SetCollisionBBox(const dgVector &p0__,
                                        const dgVector &p1__) {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 }
 
 void dgCollisionNull::DebugCollision(const dgMatrix &matrixPtr,
@@ -82,13 +82,13 @@ void dgCollisionNull::CalcAABBSimd(const dgMatrix &matrix, dgVector &p0,
 }
 
 dgVector dgCollisionNull::SupportVertex(const dgVector &dir) const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 	return dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
 	                dgFloat32(0.0f));
 }
 
 dgVector dgCollisionNull::SupportVertexSimd(const dgVector &dir) const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 	return dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
 	                dgFloat32(0.0f));
 }
@@ -113,7 +113,7 @@ dgFloat32 dgCollisionNull::RayCastSimd(const dgVector &localP0,
 
 dgVector dgCollisionNull::CalculateVolumeIntegral(const dgMatrix &matrix__,
         GetBuoyancyPlane buoyancuPlane__, void *context__) const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 	return dgVector(0.0f, 0.0f, 0.0f, 0.0f);
 }
 

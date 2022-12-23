@@ -227,9 +227,9 @@ void dgCollisionHeightField::CalculateMinExtend2d(const dgVector &p0,
 
 void dgCollisionHeightField::CalculateMinExtend3d(const dgVector &p0,
         const dgVector &p1, dgVector &boxP0, dgVector &boxP1) const {
-	_ASSERTE(p0.m_x <= p1.m_x);
-	_ASSERTE(p0.m_y <= p1.m_y);
-	_ASSERTE(p0.m_z <= p1.m_z);
+	NEWTON_ASSERT(p0.m_x <= p1.m_x);
+	NEWTON_ASSERT(p0.m_y <= p1.m_y);
+	NEWTON_ASSERT(p0.m_z <= p1.m_z);
 
 	dgFloat32 x0 = m_horizontalScale * dgFloor((p0.m_x - dgFloat32(1.0e-3f)) * m_horizontalScaleInv);
 	dgFloat32 z0 = m_horizontalScale * dgFloor((p0.m_z - dgFloat32(1.0e-3f)) * m_horizontalScaleInv);
@@ -654,7 +654,7 @@ dgFloat32 dgCollisionHeightField::RayCast(const dgVector &q0,
 
 void dgCollisionHeightField::GetVertexListIndexList(const dgVector &p0,
         const dgVector &p1, dgGetVertexListIndexList &data) const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 	data.m_vertexCount = 0;
 }
 
@@ -862,7 +862,7 @@ void dgCollisionHeightField::GetCollidingFaces(
 				                               m_verticalScale * dgFloat32(m_elevationMap[base + x]),
 				                               m_horizontalScale * z, dgFloat32(0.0f));
 				vertexIndex++;
-				_ASSERTE(
+				NEWTON_ASSERT(
 				    vertexIndex <= m_instanceData->m_vertexCount[data->m_threadNumber]);
 			}
 			base += m_width;

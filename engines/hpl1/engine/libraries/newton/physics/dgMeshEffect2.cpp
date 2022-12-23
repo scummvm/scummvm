@@ -255,7 +255,7 @@ public:
 
 #ifdef _DEBUG
 		for (dgEdgeSharedTetras::dgListNode *ptr = header.GetFirst(); ptr; ptr = ptr->GetNext()) {
-			_ASSERTE(ptr->GetInfo() != node);
+			NEWTON_ASSERT(ptr->GetInfo() != node);
 		}
 #endif
 
@@ -299,7 +299,7 @@ public:
 
 #ifdef _DEBUG
 		for (dgEdgeSharedTetras::dgListNode *ptr = header.GetFirst(); ptr; ptr = ptr->GetNext()) {
-			_ASSERTE(ptr->GetInfo() != node);
+			NEWTON_ASSERT(ptr->GetInfo() != node);
 		}
 #endif
 
@@ -308,7 +308,7 @@ public:
 
 	void RemoveNewVertexNode(dgInt32 index, dgListNode *const node) {
 		dgVertexMap::dgTreeNode *vertexNode = m_vertexMap.Find(index);
-		_ASSERTE(vertexNode);
+		NEWTON_ASSERT(vertexNode);
 		dgEdgeSharedTetras &header = vertexNode->GetInfo();
 
 		for (dgEdgeSharedTetras::dgListNode *ptr = header.GetFirst(); ptr; ptr = ptr->GetNext()) {
@@ -317,7 +317,7 @@ public:
 				break;
 			}
 		}
-		_ASSERTE(header.GetCount());
+		NEWTON_ASSERT(header.GetCount());
 
 	}
 
@@ -432,7 +432,7 @@ public:
 	dgInt32 ReplaceFaceNodes(dgListNode *const faceNode, dgInt32 faceIndex, const dgBigVector &vertex) {
 		dgConvexHull4dTetraherum *const tetra = &faceNode->GetInfo();
 		dgListNode *const neighborghNode = tetra->m_faces[faceIndex].m_twin;
-		_ASSERTE(neighborghNode);
+		NEWTON_ASSERT(neighborghNode);
 
 		dgConvexHull4dTetraherum *const neighborghTetra = &neighborghNode->GetInfo();
 
@@ -441,8 +441,8 @@ public:
 		m_points[vertexIndex].m_index = vertexIndex;
 		m_count ++;
 
-		_ASSERTE(SanityPointInTetra(tetra, vertex));
-		_ASSERTE(SanityPointInTetra(neighborghTetra, vertex));
+		NEWTON_ASSERT(SanityPointInTetra(tetra, vertex));
+		NEWTON_ASSERT(SanityPointInTetra(neighborghTetra, vertex));
 
 		dgInt32 mark = IncMark();
 		tetra->SetMark(mark);
@@ -459,12 +459,12 @@ public:
 			dgListNode *const deleteTetraNode = deletedNodes[i];
 
 			dgConvexHull4dTetraherum *const deletedTetra = &deleteTetraNode->GetInfo();
-			_ASSERTE(deletedTetra->GetMark() == mark);
+			NEWTON_ASSERT(deletedTetra->GetMark() == mark);
 
 			for (dgInt32 i = 0; i < 4; i ++) {
 				dgListNode *const twinNode = deletedTetra->m_faces[i].m_twin;
 				dgConvexHull4dTetraherum *const twinTetra = &twinNode->GetInfo();
-				_ASSERTE(twinTetra);
+				NEWTON_ASSERT(twinTetra);
 
 				if (twinTetra->GetMark() != mark) {
 					dgInt32 index = 0;
@@ -563,7 +563,7 @@ public:
 			dgUnsigned64 key = GetKey(i0, i1);
 			if (!m_edgeMap.Find(key)) {
 				dgVertexMap::dgTreeNode *const vertexNode = m_vertexMap.Find(i0);
-				_ASSERTE(vertexNode);
+				NEWTON_ASSERT(vertexNode);
 				const dgEdgeSharedTetras &tetraMap = vertexNode->GetInfo();
 
 				const dgBigVector &p0 = GetVertex(i0);
@@ -578,14 +578,14 @@ public:
 							faceIndex = i;
 						}
 					}
-					_ASSERTE(faceIndex != -1);
+					NEWTON_ASSERT(faceIndex != -1);
 
 					const dgBigVector &A = GetVertex(tetra->m_faces[faceIndex].m_index[0]);
 					const dgBigVector &B = GetVertex(tetra->m_faces[faceIndex].m_index[1]);
 					const dgBigVector &C = GetVertex(tetra->m_faces[faceIndex].m_index[2]);
 					dgBigVector baricentric(LineTriangleIntersection(p0, p1, A, B, C));
 					if (baricentric.m_w == dgFloat64(0.0f)) {
-						_ASSERTE((baricentric.m_x > dgFloat64(0.0f)) && (baricentric.m_y > dgFloat64(0.0f)) && (baricentric.m_z > dgFloat64(0.0f)));
+						NEWTON_ASSERT((baricentric.m_x > dgFloat64(0.0f)) && (baricentric.m_y > dgFloat64(0.0f)) && (baricentric.m_z > dgFloat64(0.0f)));
 						dgBigVector point(A.Scale4(baricentric.m_x) + B.Scale4(baricentric.m_y) + C.Scale4(baricentric.m_z));
 						dgInt32 index = ReplaceFaceNodes(tetraNode, faceIndex, point);
 
@@ -603,7 +603,7 @@ public:
 							dgInt32 index0 = GetVertexIndex(i0);
 							dgInt32 index1 = GetVertexIndex(i1);
 							dgPolyhedra::dgTreeNode *const edgeNode = m_mesh->FindEdgeNode(index0, index1);
-							_ASSERTE(edgeNode);
+							NEWTON_ASSERT(edgeNode);
 							m_missinEdges.Addtop(edgeNode);
 						}
 
@@ -611,7 +611,7 @@ public:
 						break;
 					}
 				}
-				_ASSERTE(edgeFound);
+				NEWTON_ASSERT(edgeFound);
 			}
 		}
 	}
@@ -678,7 +678,7 @@ public:
 		dgUnsigned64 key = GetKey(k0, k1);
 		dgEdgeMap::dgTreeNode *const edgeNode = m_edgeMap.Find(key);
 
-		_ASSERTE(edgeNode);
+		NEWTON_ASSERT(edgeNode);
 		dgEdgeSharedTetras &header = edgeNode->GetInfo();
 		for (dgEdgeSharedTetras::dgListNode *ptr = header.GetFirst(); ptr; ptr = ptr->GetNext()) {
 			dgListNode *const tetraNode = ptr->GetInfo();
@@ -701,8 +701,8 @@ public:
 						index[1] = index[2];
 						index[2] = tmp;
 					}
-					_ASSERTE(index[0] == faceEdge->m_incidentVertex);
-					_ASSERTE(index[1] == faceEdge->m_next->m_incidentVertex);
+					NEWTON_ASSERT(index[0] == faceEdge->m_incidentVertex);
+					NEWTON_ASSERT(index[1] == faceEdge->m_next->m_incidentVertex);
 
 					dgEdge *nextEdge = faceEdge->m_next->m_next;
 					do {
@@ -715,22 +715,22 @@ public:
 					if (nextEdge != faceEdge) {
 						if (nextEdge->m_prev != faceEdge->m_next) {
 							dgEdge *const edge = mesh.ConectVertex(faceEdge->m_next, nextEdge);
-							_ASSERTE(edge);
-							_ASSERTE(edge->m_next);
-							_ASSERTE(edge->m_prev);
-							_ASSERTE(edge->m_twin->m_next);
-							_ASSERTE(edge->m_twin->m_prev);
-							_ASSERTE(faceEdge->m_next == edge->m_twin);
+							NEWTON_ASSERT(edge);
+							NEWTON_ASSERT(edge->m_next);
+							NEWTON_ASSERT(edge->m_prev);
+							NEWTON_ASSERT(edge->m_twin->m_next);
+							NEWTON_ASSERT(edge->m_twin->m_prev);
+							NEWTON_ASSERT(faceEdge->m_next == edge->m_twin);
 						}
 						if (nextEdge->m_next != faceEdge) {
 #ifdef _DEBUG
 							dgEdge *const edge = mesh.ConectVertex(faceEdge, nextEdge);
-							_ASSERTE(edge);
-							_ASSERTE(edge->m_next);
-							_ASSERTE(edge->m_prev);
-							_ASSERTE(edge->m_twin->m_next);
-							_ASSERTE(edge->m_twin->m_prev);
-							_ASSERTE(faceEdge->m_prev == edge);
+							NEWTON_ASSERT(edge);
+							NEWTON_ASSERT(edge->m_next);
+							NEWTON_ASSERT(edge->m_prev);
+							NEWTON_ASSERT(edge->m_twin->m_next);
+							NEWTON_ASSERT(edge->m_twin->m_prev);
+							NEWTON_ASSERT(faceEdge->m_prev == edge);
 #else
 							mesh.ConectVertex(faceEdge, nextEdge);
 #endif
@@ -760,7 +760,7 @@ public:
 			edgeArray[count] = ptr;
 			perimterEdges[count] = ptr;
 			count ++;
-			_ASSERTE(count < sizeof(edgeArray) / sizeof(edgeArray[0]));
+			NEWTON_ASSERT(count < sizeof(edgeArray) / sizeof(edgeArray[0]));
 			ptr = ptr->m_next;
 		} while (ptr != face);
 		perimeterCount = count;
@@ -771,7 +771,7 @@ public:
 			dgEdge *const triangleFace = edgeArray[count];
 			bool state = MatchFace(mesh, triangleFace, tetraMark);
 			if (state) {
-				_ASSERTE(triangleFace == triangleFace->m_next->m_next->m_next);
+				NEWTON_ASSERT(triangleFace == triangleFace->m_next->m_next->m_next);
 				triangleFace->m_mark = faceMark;
 				dgEdge *ptr = triangleFace->m_next;
 				do {
@@ -789,7 +789,7 @@ public:
 			}
 		}
 
-		_ASSERTE(count == 0);
+		NEWTON_ASSERT(count == 0);
 		for (dgInt32 i = 1; i <= perimeterCount; i ++) {
 			dgEdge *const last = perimterEdges[i - 1];
 			for (dgEdge *edge = perimterEdges[i]->m_prev; edge != last; edge = edge->m_twin->m_prev) {
@@ -814,7 +814,7 @@ public:
 				dgEdge *const triangleFace = edgeArray[count];
 				bool state = MatchFace(mesh, triangleFace, tetraMark);
 				if (state) {
-					_ASSERTE(triangleFace == triangleFace->m_next->m_next->m_next);
+					NEWTON_ASSERT(triangleFace == triangleFace->m_next->m_next->m_next);
 					triangleFace->m_mark = faceMark;
 					dgEdge *ptr = triangleFace->m_next;
 					do {
@@ -832,12 +832,12 @@ public:
 				}
 			}
 
-			_ASSERTE(count == 0);
+			NEWTON_ASSERT(count == 0);
 			for (dgInt32 i = 0; i < perimeterCount; i ++) {
 				dgEdge *const edge = perimterEdges[i];
 				if (edge->m_mark != faceMark) {
 					dgEdge *const borderEdge = m_mesh->FindEdge(edge->m_incidentVertex, edge->m_twin->m_incidentVertex);
-					_ASSERTE(borderEdge);
+					NEWTON_ASSERT(borderEdge);
 					if (!(edgeInconflict.Find(borderEdge) || edgeInconflict.Find(borderEdge->m_twin))) {
 						edgeInconflict.Insert(borderEdge, borderEdge);
 					}
@@ -856,15 +856,15 @@ public:
 						for (dgEdge *ptr = edge; !begin; ptr = ptr->m_next->m_twin) {
 							begin = m_mesh->FindEdge(ptr->m_next->m_incidentVertex, ptr->m_next->m_twin->m_incidentVertex);
 						}
-						_ASSERTE(begin);
+						NEWTON_ASSERT(begin);
 
 						dgEdge *end = NULL;
 						for (dgEdge *ptr = edge->m_twin; !end; ptr = ptr->m_next->m_twin) {
 							end = m_mesh->FindEdge(ptr->m_next->m_incidentVertex, ptr->m_next->m_twin->m_incidentVertex);
 						}
-						_ASSERTE(end);
+						NEWTON_ASSERT(end);
 						dgEdge *const newEdge = m_mesh->ConectVertex(end, begin);
-						_ASSERTE(!edgeInconflict.Find(newEdge));
+						NEWTON_ASSERT(!edgeInconflict.Find(newEdge));
 						edgeInconflict.Insert(newEdge, newEdge);
 					}
 				}
@@ -893,7 +893,7 @@ public:
 			// if there are missing sub faces then we must recover those by insertion point on the sub edges of the missing faces
 			allFaceFound = true;
 			if (edgeInconflict.GetCount()) {
-				_ASSERTE(0);
+				NEWTON_ASSERT(0);
 				/*
 				 allFaceFound = false;
 
@@ -913,7 +913,7 @@ public:
 				 dgEdge* const newEdge = m_mesh->InsertEdgeVertex (missingEdge, spliteParam);
 				 dgBigVector p (p1.Add4(p0).Scale4 (spliteParam));
 				 dgInt32 index = AddVertex(p);
-				 _ASSERTE (index != -1);
+				 NEWTON_ASSERT (index != -1);
 				 indexMap[newEdge->m_twin->m_incidentVertex].m_convexIndex = index;
 				 }
 				 RecoverEdges ();
@@ -921,7 +921,7 @@ public:
 			}
 #ifdef _DEBUG
 			if (allFaceFound) {
-//				_ASSERTE (0);
+//				NEWTON_ASSERT (0);
 				/*
 				 dgFaceKeyMap faceMap (GetAllocator());
 				 for (dgListNode* node = GetFirst(); node; node = node->GetNext()) {
@@ -929,7 +929,7 @@ public:
 				 for (dgInt32 i = 0; i < 4; i ++) {
 				 dgConvexHull4dTetraherum::dgTetrahedrumFace& face = tetra->m_faces[i];
 				 dgEdgeFaceKey key (face.m_index[0], face.m_index[1], face.m_index[2]);
-				 _ASSERTE (!faceMap.Find(key));
+				 NEWTON_ASSERT (!faceMap.Find(key));
 				 faceMap.Insert (node, key);
 				 }
 				 }
@@ -944,7 +944,7 @@ public:
 				 ptr = ptr->m_next;
 				 } while (ptr != face);
 				 dgEdgeFaceKey key (face->m_incidentVertex, face->m_next->m_incidentVertex, face->m_next->m_next->m_incidentVertex);
-				 _ASSERTE (faceMap.Find(key));
+				 NEWTON_ASSERT (faceMap.Find(key));
 				 }
 				 }
 				 */
@@ -1004,7 +1004,7 @@ public:
 						if (face.m_twin && (face.m_twin->GetInfo().GetMark() != tetraMark)) {
 							stackPool[stack] = &face.m_twin->GetInfo();
 							stack ++;
-							_ASSERTE(stack < sizeof(stackPool) / sizeof(stackPool[0]));
+							NEWTON_ASSERT(stack < sizeof(stackPool) / sizeof(stackPool[0]));
 						}
 					}
 				}
@@ -1235,7 +1235,7 @@ public:
 
  dgBigVector p (p1.Add4(p0).Scale4 (spliteParam));
  dgInt32 index = AddVertex(p);
- _ASSERTE (index != -1);
+ NEWTON_ASSERT (index != -1);
  indexMap[newEdge->m_twin->m_incidentVertex].m_convexIndex = index;
 
  i0 = indexMap[newEdge->m_incidentVertex].m_convexIndex;
@@ -1245,7 +1245,7 @@ public:
  dgInt32 index0 = GetVertexIndex(i0);
  dgInt32 index1 = GetVertexIndex(i1);
  dgPolyhedra::dgTreeNode* const edgeNode = m_mesh->FindEdgeNode(index0, index1);
- _ASSERTE (edgeNode);
+ NEWTON_ASSERT (edgeNode);
  m_missinEdges.Append(edgeNode);
  }
 
@@ -1256,7 +1256,7 @@ public:
  dgInt32 index0 = GetVertexIndex(i0);
  dgInt32 index1 = GetVertexIndex(i1);
  dgPolyhedra::dgTreeNode* const edgeNode = m_mesh->FindEdgeNode(index0, index1);
- _ASSERTE (edgeNode);
+ NEWTON_ASSERT (edgeNode);
  m_missinEdges.Append(edgeNode);
  }
  }
@@ -1325,7 +1325,7 @@ public:
  dgUnsigned64 key = GetKey (k0, k1);
  dgEdgeMap::dgTreeNode* const edgeNode = m_edgeMap.Find(key);
 
- _ASSERTE (edgeNode);
+ NEWTON_ASSERT (edgeNode);
  dgEdgeSharedTetras& header = edgeNode->GetInfo();
  for (dgEdgeSharedTetras::dgListNode* ptr = header.GetFirst(); ptr; ptr = ptr->GetNext()) {
  dgListNode* const tetraNode = ptr->GetInfo();
@@ -1348,8 +1348,8 @@ public:
  index[1] = index[2];
  index[2] = tmp;
  }
- _ASSERTE (index[0] == faceEdge->m_incidentVertex);
- _ASSERTE (index[1] == faceEdge->m_next->m_incidentVertex);
+ NEWTON_ASSERT (index[0] == faceEdge->m_incidentVertex);
+ NEWTON_ASSERT (index[1] == faceEdge->m_next->m_incidentVertex);
 
  dgEdge* nextEdge = faceEdge->m_next->m_next;
  do {
@@ -1364,24 +1364,24 @@ public:
  #ifdef _DEBUG
  if (nextEdge->m_prev != faceEdge->m_next) {
  dgEdge* const edge = mesh.ConectVertex(faceEdge->m_next, nextEdge);
- _ASSERTE (edge);
- _ASSERTE (edge->m_next);
- _ASSERTE (edge->m_prev);
- _ASSERTE (edge->m_twin->m_next);
- _ASSERTE (edge->m_twin->m_prev);
- _ASSERTE (faceEdge->m_next == edge->m_twin);
+ NEWTON_ASSERT (edge);
+ NEWTON_ASSERT (edge->m_next);
+ NEWTON_ASSERT (edge->m_prev);
+ NEWTON_ASSERT (edge->m_twin->m_next);
+ NEWTON_ASSERT (edge->m_twin->m_prev);
+ NEWTON_ASSERT (faceEdge->m_next == edge->m_twin);
  }
  #endif
  #endif
  if (nextEdge->m_next != faceEdge) {
  #ifdef _DEBUG
  dgEdge* const edge = mesh.ConectVertex(faceEdge, nextEdge);
- _ASSERTE (edge);
- _ASSERTE (edge->m_next);
- _ASSERTE (edge->m_prev);
- _ASSERTE (edge->m_twin->m_next);
- _ASSERTE (edge->m_twin->m_prev);
- _ASSERTE (faceEdge->m_prev == edge);
+ NEWTON_ASSERT (edge);
+ NEWTON_ASSERT (edge->m_next);
+ NEWTON_ASSERT (edge->m_prev);
+ NEWTON_ASSERT (edge->m_twin->m_next);
+ NEWTON_ASSERT (edge->m_twin->m_prev);
+ NEWTON_ASSERT (faceEdge->m_prev == edge);
  #else
  mesh.ConectVertex(faceEdge, nextEdge);
  #endif
@@ -1412,7 +1412,7 @@ public:
  edgeArray[count] = ptr;
  perimterEdges[count] = ptr;
  count ++;
- _ASSERTE (count < sizeof (edgeArray) / sizeof (edgeArray[0]));
+ NEWTON_ASSERT (count < sizeof (edgeArray) / sizeof (edgeArray[0]));
  ptr = ptr->m_next;
  } while (ptr != face);
  perimeterCount = count;
@@ -1424,7 +1424,7 @@ public:
  dgEdge* const triangleFace = edgeArray[count];
  bool state = MatchFace (mesh, triangleFace, tetraMark);
  if (state) {
- _ASSERTE (triangleFace == triangleFace->m_next->m_next->m_next);
+ NEWTON_ASSERT (triangleFace == triangleFace->m_next->m_next->m_next);
  triangleFace->m_mark = faceMark;
  dgEdge* ptr = triangleFace->m_next;
  do {
@@ -1442,7 +1442,7 @@ public:
  }
  }
 
- _ASSERTE (count == 0);
+ NEWTON_ASSERT (count == 0);
  for (dgInt32 i = 1; i <= perimeterCount; i ++) {
  dgEdge* const last = perimterEdges[i - 1];
  for (dgEdge* edge = perimterEdges[i]->m_prev; edge != last; edge = edge->m_twin->m_prev) {
@@ -1467,7 +1467,7 @@ public:
  dgEdge* const triangleFace = edgeArray[count];
  bool state = MatchFace (mesh, triangleFace, tetraMark);
  if (state) {
- _ASSERTE (triangleFace == triangleFace->m_next->m_next->m_next);
+ NEWTON_ASSERT (triangleFace == triangleFace->m_next->m_next->m_next);
  triangleFace->m_mark = faceMark;
  dgEdge* ptr = triangleFace->m_next;
  do {
@@ -1485,12 +1485,12 @@ public:
  }
  }
 
- _ASSERTE (count == 0);
+ NEWTON_ASSERT (count == 0);
  for (dgInt32 i = 0; i < perimeterCount; i ++) {
  dgEdge* const edge = perimterEdges[i];
  if (edge->m_mark != faceMark) {
  dgEdge* const borderEdge = m_mesh->FindEdge(edge->m_incidentVertex, edge->m_twin->m_incidentVertex);
- _ASSERTE (borderEdge);
+ NEWTON_ASSERT (borderEdge);
  if (!(edgeInconflict.Find(borderEdge) || edgeInconflict.Find(borderEdge->m_twin))) {
  edgeInconflict.Insert(borderEdge, borderEdge);
  }
@@ -1509,15 +1509,15 @@ public:
  for (dgEdge* ptr = edge; !begin; ptr = ptr->m_next->m_twin) {
  begin = m_mesh->FindEdge(ptr->m_next->m_incidentVertex, ptr->m_next->m_twin->m_incidentVertex);
  }
- _ASSERTE (begin);
+ NEWTON_ASSERT (begin);
 
  dgEdge* end = NULL;
  for (dgEdge* ptr = edge->m_twin; !end; ptr = ptr->m_next->m_twin) {
  end = m_mesh->FindEdge(ptr->m_next->m_incidentVertex, ptr->m_next->m_twin->m_incidentVertex);
  }
- _ASSERTE (end);
+ NEWTON_ASSERT (end);
  dgEdge* const newEdge = m_mesh->ConectVertex(end, begin);
- _ASSERTE (!edgeInconflict.Find(newEdge));
+ NEWTON_ASSERT (!edgeInconflict.Find(newEdge));
  edgeInconflict.Insert(newEdge, newEdge);
  }
  }
@@ -1566,7 +1566,7 @@ public:
 
  #ifdef _DEBUG
  for (dgEdgeSharedTetras::dgListNode* ptr = header.GetFirst(); ptr; ptr = ptr->GetNext()) {
- _ASSERTE (ptr->GetInfo() != node);
+ NEWTON_ASSERT (ptr->GetInfo() != node);
  }
  #endif
  header.Append(node);
@@ -1709,7 +1709,7 @@ public:
  dgEdge* const newEdge = m_mesh->InsertEdgeVertex (missingEdge, spliteParam);
  dgBigVector p (p1.Add4(p0).Scale4 (spliteParam));
  dgInt32 index = AddVertex(p);
- _ASSERTE (index != -1);
+ NEWTON_ASSERT (index != -1);
  indexMap[newEdge->m_twin->m_incidentVertex].m_convexIndex = index;
  }
  RecoverEdges ();
@@ -1723,7 +1723,7 @@ public:
  for (dgInt32 i = 0; i < 4; i ++) {
  dgConvexHull4dTetraherum::dgTetrahedrumFace& face = tetra->m_faces[i];
  dgEdgeFaceKey key (face.m_index[0], face.m_index[1], face.m_index[2]);
- _ASSERTE (!faceMap.Find(key));
+ NEWTON_ASSERT (!faceMap.Find(key));
  faceMap.Insert (node, key);
  }
  }
@@ -1738,7 +1738,7 @@ public:
  ptr = ptr->m_next;
  } while (ptr != face);
  dgEdgeFaceKey key (face->m_incidentVertex, face->m_next->m_incidentVertex, face->m_next->m_next->m_incidentVertex);
- _ASSERTE (faceMap.Find(key));
+ NEWTON_ASSERT (faceMap.Find(key));
  }
  }
  }
@@ -1800,7 +1800,7 @@ public:
  if (face.m_twin && (face.m_twin->GetInfo().GetMark() != tetraMark)) {
  stackPool[stack] = &face.m_twin->GetInfo();
  stack ++;
- _ASSERTE (stack < sizeof (stackPool) / sizeof (stackPool[0]));
+ NEWTON_ASSERT (stack < sizeof (stackPool) / sizeof (stackPool[0]));
  }
  }
  }
@@ -1830,7 +1830,7 @@ public:
 
 dgMeshEffect *dgMeshEffect::CreateDelanayTretrahedralization(
     dgInt32 interionMaterial, dgMatrix &matrix) const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 	return NULL;
 }
 
@@ -1845,7 +1845,7 @@ dgMeshEffect *dgMeshEffect::CreateVoronoiPartition(dgInt32 pointsCount,
 #endif
 
 	dgMeshEffectSolidTree *const tree = CreateSolidTree();
-	_ASSERTE(tree);
+	NEWTON_ASSERT(tree);
 
 	dgStack<dgBigVector> buffer(pointsCount);
 	dgBigVector *const pool = &buffer[0];
@@ -1869,11 +1869,11 @@ dgMeshEffect *dgMeshEffect::CreateVoronoiPartition(dgInt32 pointsCount,
 		}
 	}
 
-	_ASSERTE(count >= 4);
+	NEWTON_ASSERT(count >= 4);
 	dgStack<dgInt32> indexList(count);
 	count = dgVertexListToIndexList(&pool[0].m_x, sizeof(dgBigVector), 3, count,
 	                                &indexList[0], dgFloat64(1.0e-5f));
-	_ASSERTE(count >= 4);
+	NEWTON_ASSERT(count >= 4);
 
 	dgDelaunayTetrahedralization delaunayTetrahedras(GetAllocator(), &pool[0].m_x,
 	        count, sizeof(dgBigVector), 0.0f);
@@ -1964,14 +1964,14 @@ dgMeshEffect *dgMeshEffect::CreateVoronoiPartition(dgInt32 pointsCount,
 						pointArray[countI] = voronoiPoints[i] + normal.Scale(perimeterConvexBound);
 
 						countI++;
-						_ASSERTE(countI < dgInt32(sizeof(pointArray) / sizeof(pointArray[0])));
+						NEWTON_ASSERT(countI < dgInt32(sizeof(pointArray) / sizeof(pointArray[0])));
 					}
 				}
 			}
 
 			pointArray[countI] = voronoiPoints[i];
 			countI++;
-			_ASSERTE(countI < dgInt32(sizeof(pointArray) / sizeof(pointArray[0])));
+			NEWTON_ASSERT(countI < dgInt32(sizeof(pointArray) / sizeof(pointArray[0])));
 		}
 
 		dgMeshEffect *const convexMesh = MakeDelanayIntersection(tree,

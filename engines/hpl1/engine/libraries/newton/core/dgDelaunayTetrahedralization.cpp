@@ -71,9 +71,9 @@ dgDelaunayTetrahedralization::dgDelaunayTetrahedralization(
 					q.m_y += dgFloat64(1.0e-3f);
 					q.m_z += dgFloat64(1.0e-3f);
 					index = AddVertex(q);
-					_ASSERTE(index != -1);
+					NEWTON_ASSERT(index != -1);
 				}
-				_ASSERTE(index != -1);
+				NEWTON_ASSERT(index != -1);
 //				m_points[index] = points[i];
 				m_points[index].m_index = i;
 			}
@@ -89,7 +89,7 @@ dgDelaunayTetrahedralization::dgDelaunayTetrahedralization(
 		points[0].m_z += dgFloat64(1.0e-0f);
 		points[0].m_w = points[0].m_x * points[0].m_x + points[0].m_y * points[0].m_y + points[0].m_z * points[0].m_z;
 		BuildHull(allocator, &pool[0], oldCount, distTol);
-		_ASSERTE(oldCount == m_count);
+		NEWTON_ASSERT(oldCount == m_count);
 		// restore the old point
 		//points[0].m_w = points[0].m_x * points[0].m_x + points[0].m_y * points[0].m_y + points[0].m_z * points[0].m_z;
 	}

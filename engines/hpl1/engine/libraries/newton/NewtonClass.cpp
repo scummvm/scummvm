@@ -128,10 +128,10 @@ NewtonUserJoint::NewtonUserJoint(dgWorld *world, dgInt32 maxDof,
 	m_jacobianFnt = callback;
 	m_getInfoCallback = getInfo;
 
-	_ASSERTE(world);
+	NEWTON_ASSERT(world);
 	m_forceArray = m_jointForce;
 	if (m_maxDOF > 24) {
-		_ASSERTE(0);
+		NEWTON_ASSERT(0);
 		m_forceArray = (dgFloat32 *) world->GetAllocator()->Malloc(
 		                   dgInt32(m_maxDOF * sizeof(dgFloat32)));
 	}
@@ -163,7 +163,7 @@ void NewtonUserJoint::AddLinearRowJacobian(const dgVector &pivot0,
 	CalculatePointDerivative(m_rows, *m_param, dir, pointData,
 	                         &m_forceArray[m_rows]);
 	m_rows++;
-	_ASSERTE(m_rows <= dgInt32(m_maxDOF));
+	NEWTON_ASSERT(m_rows <= dgInt32(m_maxDOF));
 }
 
 void NewtonUserJoint::AddAngularRowJacobian(const dgVector &dir,
@@ -176,7 +176,7 @@ void NewtonUserJoint::AddAngularRowJacobian(const dgVector &dir,
 	CalculateAngularDerivative(m_rows, *m_param, dir, m_stiffness, relAngle,
 	                           &m_forceArray[m_rows]);
 	m_rows++;
-	_ASSERTE(m_rows <= dgInt32(m_maxDOF));
+	NEWTON_ASSERT(m_rows <= dgInt32(m_maxDOF));
 }
 
 void NewtonUserJoint::AddGeneralRowJacobian(const dgFloat32 *jacobian0,
@@ -190,7 +190,7 @@ void NewtonUserJoint::AddGeneralRowJacobian(const dgFloat32 *jacobian0,
 	SetJacobianDerivative(m_rows, *m_param, jacobian0, jacobian1,
 	                      &m_forceArray[m_rows]);
 	m_rows++;
-	_ASSERTE(m_rows <= dgInt32(m_maxDOF));
+	NEWTON_ASSERT(m_rows <= dgInt32(m_maxDOF));
 }
 
 void NewtonUserJoint::SetAcceleration(dgFloat32 acceleration) {
@@ -210,7 +210,7 @@ void NewtonUserJoint::SetSpringDamperAcceleration(dFloat springK,
 		dgFloat32 accel;
 		accel = CalculateSpringDamperAcceleration(index, *m_param, m_lastJointAngle,
 		        m_lastPosit0, m_lastPosit1, springK, springD);
-		_ASSERTE(0);
+		NEWTON_ASSERT(0);
 //		m_param->m_jointAccel[index] = accel;
 		SetMotorAcceleration(index, accel, *m_param);
 	}

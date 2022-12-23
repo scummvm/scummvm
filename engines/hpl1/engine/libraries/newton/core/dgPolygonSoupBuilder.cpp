@@ -45,7 +45,7 @@ public:
 
 	dgInt32 AddFilterFace(dgUnsigned32 count, dgInt32 *const pool) {
 		BeginFace();
-		_ASSERTE(count);
+		NEWTON_ASSERT(count);
 		bool reduction = true;
 		while (reduction && !AddFace(dgInt32(count), pool)) {
 			reduction = false;
@@ -67,7 +67,7 @@ public:
 		}
 		EndFace();
 
-		_ASSERTE(reduction);
+		NEWTON_ASSERT(reduction);
 		return reduction ? dgInt32(count) : 0;
 	}
 };
@@ -288,7 +288,7 @@ void dgPolygonSoupDatabaseBuilder::OptimizeByGroupID() {
 					break;
 				}
 			}
-			_ASSERTE(builderLeftOver.m_faceCount == 0);
+			NEWTON_ASSERT(builderLeftOver.m_faceCount == 0);
 		}
 		polygonIndex += m_faceVertexCount[i];
 	}
@@ -331,7 +331,7 @@ void dgPolygonSoupDatabaseBuilder::OptimizeByGroupID(
 	for (dgInt32 i = faceNumber; i < source.m_faceCount; i++) {
 		dgInt32 indexCount;
 		indexCount = source.m_faceVertexCount[i];
-		_ASSERTE(indexCount < 1024);
+		NEWTON_ASSERT(indexCount < 1024);
 
 		if (source.m_vertexIndex[faceIndexNumber] == attribute) {
 			dgEdge *const face = polyhedra.AddFace(indexCount - 1,
@@ -441,7 +441,7 @@ void dgPolygonSoupDatabaseBuilder::OptimizeByIndividualFaces() {
 		}
 		polygonIndex += oldCount;
 	}
-	_ASSERTE(polygonIndex == m_indexCount);
+	NEWTON_ASSERT(polygonIndex == m_indexCount);
 	m_faceCount = newFaceCount;
 	m_indexCount = newIndexCount;
 }
@@ -685,7 +685,7 @@ dgInt32 dgPolygonSoupDatabaseBuilder::FilterFace(dgInt32 count,
 			    polyhedra.FaceNormal(edge, &m_vertexPoints[0].m_x,
 			                         sizeof(dgBigVector)));
 
-			_ASSERTE((normal % normal) > dgFloat32(1.0e-10f));
+			NEWTON_ASSERT((normal % normal) > dgFloat32(1.0e-10f));
 			normal = normal.Scale(dgRsqrt(normal % normal + dgFloat32(1.0e-20f)));
 
 			while (flag) {
@@ -785,7 +785,7 @@ dgInt32 dgPolygonSoupDatabaseBuilder::FilterFace(dgInt32 count,
 				dgBigVector e1((p2 - p1));
 
 				dgBigVector n(e1 * e0);
-				_ASSERTE((n % normal) > dgFloat32(0.0f));
+				NEWTON_ASSERT((n % normal) > dgFloat32(0.0f));
 				j0 = j1;
 				j1 = j2;
 			}
@@ -938,7 +938,7 @@ dgInt32 dgPolygonSoupDatabaseBuilder::AddConvexFace(dgInt32 count,
 		polyhedra2.ConvexPartition(&m_vertexPoints[0].m_x, sizeof(dgTriplex),
 		                           &leftOver);
 		leftOver.EndFace();
-		_ASSERTE(leftOver.GetCount() == 0);
+		NEWTON_ASSERT(leftOver.GetCount() == 0);
 
 		dgInt32 mark = polyhedra2.IncLRU();
 		dgInt32 index = 0;

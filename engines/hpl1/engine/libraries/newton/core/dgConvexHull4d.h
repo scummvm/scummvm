@@ -147,15 +147,15 @@ inline dgInt32 dgConvexHull4d::GetVertexCount() const {
 }
 
 inline dgInt32 dgConvexHull4d::GetVertexIndex(dgInt32 index) const {
-	_ASSERTE(index >= 0);
-	_ASSERTE(index < m_count);
+	NEWTON_ASSERT(index >= 0);
+	NEWTON_ASSERT(index < m_count);
 	return m_points[index].m_index;
 }
 
 
 inline const dgBigVector &dgConvexHull4d::GetVertex(dgInt32 index) const {
-	_ASSERTE(index >= 0);
-	_ASSERTE(index < m_count);
+	NEWTON_ASSERT(index >= 0);
+	NEWTON_ASSERT(index < m_count);
 //	return dgVector (dgFloat32 (m_points[index].m_x), dgFloat32 (m_points[index].m_y), dgFloat32 (m_points[index].m_z), dgFloat32 (m_points[index].m_w));
 	return m_points[index];
 }

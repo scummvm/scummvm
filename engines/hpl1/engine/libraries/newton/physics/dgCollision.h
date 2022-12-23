@@ -237,7 +237,7 @@ public:
 	virtual void DebugCollision(const dgMatrix &matrix, OnDebugCollisionMeshCallback callback, void *const userData) const = 0;
 	virtual dgFloat32 RayCast(const dgVector &localP0, const dgVector &localP1, dgContactPoint &contactOut, OnRayPrecastAction preFilter, const dgBody *const body, void *const userData) const = 0;
 	virtual dgFloat32 RayCastSimd(const dgVector &localP0, const dgVector &localP1, dgContactPoint &contactOut, OnRayPrecastAction preFilter, const dgBody *const body, void *const userData) const {
-		_ASSERTE(0);
+		NEWTON_ASSERT(0);
 		return 0;
 	};
 	virtual dgFloat32 GetVolume() const = 0;

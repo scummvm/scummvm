@@ -199,7 +199,7 @@ void dgRedBackNode::InsertFixup(dgRedBackNode **const head) {
 				}
 			}
 		} else {
-			_ASSERTE(ptr->m_parent == ptr->m_parent->m_parent->m_right);
+			NEWTON_ASSERT(ptr->m_parent == ptr->m_parent->m_parent->m_right);
 			// mirror image of above code
 			dgRedBackNode *const tmp = ptr->m_parent->m_parent->m_left;
 			if (tmp && (tmp->GetColor() == RED)) {
@@ -374,14 +374,14 @@ void dgRedBackNode::Unlink(dgRedBackNode **const head) {
 			endNode = endNode->m_left;
 		}
 
-		_ASSERTE(endNode);
-		_ASSERTE(endNode->m_parent);
-		_ASSERTE(!endNode->m_left);
+		NEWTON_ASSERT(endNode);
+		NEWTON_ASSERT(endNode->m_parent);
+		NEWTON_ASSERT(!endNode->m_left);
 
 		// x is y's only child
 		dgRedBackNode *const child = endNode->m_right;
 
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    (endNode != node->m_right) || !child || (child->m_parent == endNode));
 
 		endNode->m_left = node->m_left;

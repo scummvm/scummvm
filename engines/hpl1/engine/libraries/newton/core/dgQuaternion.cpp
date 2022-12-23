@@ -73,11 +73,11 @@ dgQuaternion::dgQuaternion(const dgMatrix &matrix) {
 	dgMatrix unitMatrix(tmp * matrix.Inverse());
 	for (dgInt32 i = 0; i < 4; i++) {
 		dgFloat32 err = dgAbsf(unitMatrix[i][i] - dgFloat32(1.0f));
-		_ASSERTE(err < dgFloat32(1.0e-2f));
+		NEWTON_ASSERT(err < dgFloat32(1.0e-2f));
 	}
 
 	dgFloat32 err = dgAbsf(DotProduct(*this) - dgFloat32(1.0f));
-	_ASSERTE(err < dgFloat32(dgEPSILON * 100.0f));
+	NEWTON_ASSERT(err < dgFloat32(dgEPSILON * 100.0f));
 #endif
 }
 
@@ -90,7 +90,7 @@ dgQuaternion::dgQuaternion(const dgVector &unitAxis, dgFloat32 Angle) {
 
 #ifdef _DEBUG
 	if (dgAbsf(Angle) > dgFloat32(dgEPSILON / 10.0f)) {
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    dgAbsf(dgFloat32(1.0f) - unitAxis % unitAxis) < dgFloat32(dgEPSILON * 10.0f));
 	}
 #endif
@@ -102,7 +102,7 @@ dgQuaternion::dgQuaternion(const dgVector &unitAxis, dgFloat32 Angle) {
 
 dgVector dgQuaternion::CalcAverageOmega(const dgQuaternion &QB,
                                         dgFloat32 dt) const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 	return dgVector(0, 0, 0, 0);
 	/*
 	 dgFloat32 dirMag;
@@ -110,7 +110,7 @@ dgVector dgQuaternion::CalcAverageOmega(const dgQuaternion &QB,
 	 dgFloat32 omegaMag;
 	 dgFloat32 dirMagInv;
 
-	 _ASSERTE (0);
+	 NEWTON_ASSERT (0);
 	 dgQuaternion dq (Inverse() * QB);
 	 //   dgQuaternion dq (QB * Inverse());
 	 dgVector omegaDir (dq.m_q1, dq.m_q2, dq.m_q3, dgFloat32 (0.0f));
@@ -130,7 +130,7 @@ dgVector dgQuaternion::CalcAverageOmega(const dgQuaternion &QB,
 }
 
 dgQuaternion dgQuaternion::Slerp(const dgQuaternion &QB, dgFloat32 t) const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 	return dgQuaternion();
 	/*
 	 dgFloat32 dot;

@@ -131,22 +131,22 @@ DG_INLINE dgMatrix::dgMatrix(const dgVector &front) {
 	m_right.m_w = dgFloat32(0.0f);
 	m_posit = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(1.0f));
 
-	_ASSERTE((dgAbsf(m_front % m_front) - dgFloat32(1.0f)) < dgFloat32(1.0e-5f));
-	_ASSERTE((dgAbsf(m_up % m_up) - dgFloat32(1.0f)) < dgFloat32(1.0e-5f));
-	_ASSERTE((dgAbsf(m_right % m_right) - dgFloat32(1.0f)) < dgFloat32(1.0e-5f));
-	_ASSERTE((dgAbsf(m_right % (m_front * m_up)) - dgFloat32(1.0f)) < dgFloat32(1.0e-5f));
+	NEWTON_ASSERT((dgAbsf(m_front % m_front) - dgFloat32(1.0f)) < dgFloat32(1.0e-5f));
+	NEWTON_ASSERT((dgAbsf(m_up % m_up) - dgFloat32(1.0f)) < dgFloat32(1.0e-5f));
+	NEWTON_ASSERT((dgAbsf(m_right % m_right) - dgFloat32(1.0f)) < dgFloat32(1.0e-5f));
+	NEWTON_ASSERT((dgAbsf(m_right % (m_front * m_up)) - dgFloat32(1.0f)) < dgFloat32(1.0e-5f));
 }
 
 
 DG_INLINE dgVector &dgMatrix::operator[](dgInt32  i) {
-	_ASSERTE(i < 4);
-	_ASSERTE(i >= 0);
+	NEWTON_ASSERT(i < 4);
+	NEWTON_ASSERT(i >= 0);
 	return (&m_front)[i];
 }
 
 DG_INLINE const dgVector &dgMatrix::operator[](dgInt32  i) const {
-	_ASSERTE(i < 4);
-	_ASSERTE(i >= 0);
+	NEWTON_ASSERT(i < 4);
+	NEWTON_ASSERT(i >= 0);
 	return (&m_front)[i];
 }
 
@@ -304,7 +304,7 @@ DG_INLINE dgMatrix dgMatrix::InverseSimd() const {
 	dgMatrix matrix;
 	const dgMatrix &source = *this;
 
-	_ASSERTE((dgUnsigned64(this) & 0x0f) == 0);
+	NEWTON_ASSERT((dgUnsigned64(this) & 0x0f) == 0);
 
 	r2 = simd_set1(dgFloat32(0.0f));
 	r0 = simd_pack_lo_v((simd_type &) source[0], (simd_type &) source[1]);

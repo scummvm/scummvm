@@ -83,8 +83,8 @@ void dgCollision::SetOffsetMatrix(const dgMatrix &matrix) {
 #ifdef _DEBUG
 	dgFloat32 det;
 	det = (m_offset.m_front * m_offset.m_up) % m_offset.m_right;
-	_ASSERTE(det > dgFloat32(0.999f));
-	_ASSERTE(det < dgFloat32(1.001f));
+	NEWTON_ASSERT(det > dgFloat32(0.999f));
+	NEWTON_ASSERT(det < dgFloat32(1.001f));
 #endif
 }
 
@@ -117,6 +117,6 @@ void dgCollision::SerializeLow(dgSerialize callback, void *const userData) const
 /*
  void dgCollision::Serialize(dgSerialize callback, void* const userData) const
  {
- _ASSERTE (0);
+ NEWTON_ASSERT (0);
  }
  */

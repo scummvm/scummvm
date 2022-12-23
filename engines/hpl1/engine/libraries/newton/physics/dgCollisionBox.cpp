@@ -123,7 +123,7 @@ void dgCollisionBox::Init(dgFloat32 size_x, dgFloat32 size_y, dgFloat32 size_z) 
 
 dgCollisionBox::~dgCollisionBox() {
 	//  m_shapeRefCount --;
-	//  _ASSERTE (m_shapeRefCount >= 0);
+	//  NEWTON_ASSERT (m_shapeRefCount >= 0);
 
 	dgCollisionConvex::m_simplex = NULL;
 	dgCollisionConvex::m_vertex = NULL;
@@ -131,7 +131,7 @@ dgCollisionBox::~dgCollisionBox() {
 
 void dgCollisionBox::SetCollisionBBox(const dgVector &p0__,
                                       const dgVector &p1__) {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 }
 
 dgInt32 dgCollisionBox::CalculateSignature() const {
@@ -170,7 +170,7 @@ dgVector dgCollisionBox::SupportVertexSimd(const dgVector &dir) const {
 }
 
 dgVector dgCollisionBox::SupportVertex(const dgVector &dir) const {
-	_ASSERTE(dgAbsf(dir % dir - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
+	NEWTON_ASSERT(dgAbsf(dir % dir - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
 
 #if 0
 	dgFloatSign *const ptr = (dgFloatSign *) &dir;
@@ -355,7 +355,7 @@ dgFloat32 dgCollisionBox::RayCast(const dgVector &localP0,
 	}
 
 	if (tmin >= dgFloat32(0.0f)) {
-		_ASSERTE(tmin < 1.0f);
+		NEWTON_ASSERT(tmin < 1.0f);
 		contactOut.m_normal = dgVector(dgFloat32(0.0f), dgFloat32(0.0f),
 		                               dgFloat32(0.0f), dgFloat32(0.0f));
 		contactOut.m_normal[index] = signDir;
@@ -441,13 +441,13 @@ dgInt32 dgCollisionBox::CalculatePlaneIntersection(const dgVector &normal,
 
 	dgInt32 count = 0;
 	if (edge) {
-		_ASSERTE(test[edge->m_vertex] > dgFloat32(0.0f));
+		NEWTON_ASSERT(test[edge->m_vertex] > dgFloat32(0.0f));
 
 		dgConvexSimplexEdge *ptr = edge;
 		dgConvexSimplexEdge *firstEdge = NULL;
 		dgFloat32 side0 = test[edge->m_vertex];
 		do {
-			_ASSERTE(m_vertex[ptr->m_twin->m_vertex].m_w == dgFloat32(1.0f));
+			NEWTON_ASSERT(m_vertex[ptr->m_twin->m_vertex].m_w == dgFloat32(1.0f));
 			dgFloat32 side1 = test[ptr->m_twin->m_vertex];
 			if (side1 < side0) {
 				if (side1 < dgFloat32(0.0f)) {
@@ -481,8 +481,8 @@ dgInt32 dgCollisionBox::CalculatePlaneIntersection(const dgVector &normal,
 					}
 				}
 
-				_ASSERTE(t <= dgFloat32(0.01f));
-				_ASSERTE(t >= dgFloat32(-1.05f));
+				NEWTON_ASSERT(t <= dgFloat32(0.01f));
+				NEWTON_ASSERT(t >= dgFloat32(-1.05f));
 				contactsOut[count] = m_vertex[ptr->m_vertex] - dp.Scale(t);
 				count++;
 
@@ -490,11 +490,11 @@ dgInt32 dgCollisionBox::CalculatePlaneIntersection(const dgVector &normal,
 				for (; ptr1 != ptr; ptr1 = ptr1->m_next) {
 					dgInt32 index0 = ptr1->m_twin->m_vertex;
 					if (test[index0] >= dgFloat32(0.0f)) {
-						_ASSERTE(test[ptr1->m_vertex] <= dgFloat32(0.0f));
+						NEWTON_ASSERT(test[ptr1->m_vertex] <= dgFloat32(0.0f));
 						break;
 					}
 				}
-				_ASSERTE(ptr != ptr1);
+				NEWTON_ASSERT(ptr != ptr1);
 				ptr = ptr1->m_twin;
 
 			} while ((ptr != edge) && (count < 8));
@@ -582,7 +582,7 @@ dgInt32 dgCollisionBox::CalculatePlaneIntersectionSimd(const dgVector &normal,
 		firstEdge = NULL;
 		side0 = test[edge->m_vertex];
 		do {
-			_ASSERTE(m_vertex[ptr->m_twin->m_vertex].m_w == dgFloat32(1.0f));
+			NEWTON_ASSERT(m_vertex[ptr->m_twin->m_vertex].m_w == dgFloat32(1.0f));
 			side1 = test[ptr->m_twin->m_vertex];
 			if (side1 < side0) {
 				if (side1 < dgFloat32(0.0f)) {
@@ -606,8 +606,8 @@ dgInt32 dgCollisionBox::CalculatePlaneIntersectionSimd(const dgVector &normal,
 				//          dgVector dp (m_vertex[index1] - m_vertex[index0]);
 				//          contactsOut[count] = m_vertex[index0] - dp.Scale (test[index0] / (plane % dp));
 
-				_ASSERTE(m_vertex[index0].m_w == dgFloat32(1.0f));
-				_ASSERTE(m_vertex[index1].m_w == dgFloat32(1.0f));
+				NEWTON_ASSERT(m_vertex[index0].m_w == dgFloat32(1.0f));
+				NEWTON_ASSERT(m_vertex[index1].m_w == dgFloat32(1.0f));
 				p1p0 =
 				    simd_sub_v(*(simd_type *)&m_vertex[index1], *(simd_type *)&m_vertex[index0]);
 				dot = simd_mul_v(p1p0, *(simd_type *)&plane);
@@ -619,8 +619,8 @@ dgInt32 dgCollisionBox::CalculatePlaneIntersectionSimd(const dgVector &normal,
 				den =
 				    simd_min_s(simd_max_s(den, *(simd_type *)&m_negOne), *(simd_type *)&m_zero);
 
-				_ASSERTE(((dgFloat32 *)&den)[0] <= dgFloat32(0.0f));
-				_ASSERTE(((dgFloat32 *)&den)[0] >= dgFloat32(-1.0f));
+				NEWTON_ASSERT(((dgFloat32 *)&den)[0] <= dgFloat32(0.0f));
+				NEWTON_ASSERT(((dgFloat32 *)&den)[0] >= dgFloat32(-1.0f));
 				(*(simd_type *)&contactsOut[count]) =
 				    simd_mul_sub_v(*(simd_type *)&m_vertex[index0], p1p0, simd_permut_v(den, den, PURMUT_MASK(3, 0, 0, 0)));
 
@@ -628,11 +628,11 @@ dgInt32 dgCollisionBox::CalculatePlaneIntersectionSimd(const dgVector &normal,
 				for (ptr1 = ptr->m_next; ptr1 != ptr; ptr1 = ptr1->m_next) {
 					index0 = ptr1->m_twin->m_vertex;
 					if (test[index0] >= dgFloat32(0.0f)) {
-						_ASSERTE(test[ptr1->m_vertex] <= dgFloat32(0.0f));
+						NEWTON_ASSERT(test[ptr1->m_vertex] <= dgFloat32(0.0f));
 						break;
 					}
 				}
-				_ASSERTE(ptr != ptr1);
+				NEWTON_ASSERT(ptr != ptr1);
 				ptr = ptr1->m_twin;
 			} while ((ptr != edge) && (count < 8));
 		}

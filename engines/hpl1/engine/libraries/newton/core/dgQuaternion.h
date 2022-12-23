@@ -68,7 +68,7 @@ inline dgQuaternion::dgQuaternion(dgFloat32 Q0, dgFloat32 Q1, dgFloat32 Q2, dgFl
 	m_q1 = Q1;
 	m_q2 = Q2;
 	m_q3 = Q3;
-//	_ASSERTE (dgAbsf (DotProduct (*this) -dgFloat32 (1.0f)) < dgFloat32(1.0e-4f));
+//	NEWTON_ASSERT (dgAbsf (DotProduct (*this) -dgFloat32 (1.0f)) < dgFloat32(1.0e-4f));
 }
 
 

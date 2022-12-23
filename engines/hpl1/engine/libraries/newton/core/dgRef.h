@@ -128,7 +128,7 @@ inline dgRef::~dgRef() {
 
 inline dgRef *dgRef::AddRef() {
 	m_ref ++;
-	_ASSERTE(m_ref < ((1 << 24) - 1));
+	NEWTON_ASSERT(m_ref < ((1 << 24) - 1));
 	return this;
 }
 
@@ -142,7 +142,7 @@ inline dgInt32 dgRef::Release() {
 }
 
 inline dgRef *dgRef::CreateClone() const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 	return NULL;
 }
 

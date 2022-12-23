@@ -123,7 +123,7 @@ dgTemplateVector<T>::dgTemplateVector() {}
 template<class T>
 dgTemplateVector<T>::dgTemplateVector(const T *ptr)
 	: m_x(ptr[0]), m_y(ptr[1]), m_z(ptr[2]), m_w(0.0f) {
-//	_ASSERTE (dgCheckVector ((*this)));
+//	NEWTON_ASSERT (dgCheckVector ((*this)));
 }
 
 template<class T>
@@ -134,15 +134,15 @@ constexpr dgTemplateVector<T>::dgTemplateVector(T x, T y, T z, T w)
 
 template<class T>
 T &dgTemplateVector<T>::operator[](dgInt32 i) {
-	_ASSERTE(i < 4);
-	_ASSERTE(i >= 0);
+	NEWTON_ASSERT(i < 4);
+	NEWTON_ASSERT(i >= 0);
 	return (&m_x)[i];
 }
 
 template<class T>
 const T &dgTemplateVector<T>::operator[](dgInt32 i) const {
-	_ASSERTE(i < 4);
-	_ASSERTE(i >= 0);
+	NEWTON_ASSERT(i < 4);
+	NEWTON_ASSERT(i >= 0);
 	return (&m_x)[i];
 }
 
@@ -167,7 +167,7 @@ dgTemplateVector<T> &dgTemplateVector<T>::operator+= (const dgTemplateVector<T> 
 	m_x += A.m_x;
 	m_y += A.m_y;
 	m_z += A.m_z;
-//	_ASSERTE (dgCheckVector ((*this)));
+//	NEWTON_ASSERT (dgCheckVector ((*this)));
 	return *this;
 }
 
@@ -181,7 +181,7 @@ dgTemplateVector<T> &dgTemplateVector<T>::operator-= (const dgTemplateVector<T> 
 	m_x -= A.m_x;
 	m_y -= A.m_y;
 	m_z -= A.m_z;
-	_ASSERTE(dgCheckVector((*this)));
+	NEWTON_ASSERT(dgCheckVector((*this)));
 	return *this;
 }
 
@@ -274,24 +274,24 @@ DG_INLINE dgVector::dgVector()
 
 DG_INLINE dgVector::dgVector(const dgTemplateVector<dgFloat32> &v)
 	: dgTemplateVector<dgFloat32>(v) {
-	_ASSERTE(dgCheckVector((*this)));
+	NEWTON_ASSERT(dgCheckVector((*this)));
 }
 
 DG_INLINE dgVector::dgVector(const dgFloat32 *ptr)
 	: dgTemplateVector<dgFloat32>(ptr) {
-	_ASSERTE(dgCheckVector((*this)));
+	NEWTON_ASSERT(dgCheckVector((*this)));
 }
 
 DG_INLINE dgVector::dgVector(const dgBigVector &copy)
 	: dgTemplateVector<dgFloat32>(dgFloat32(copy.m_x), dgFloat32(copy.m_y), dgFloat32(copy.m_z), dgFloat32(copy.m_w)) {
-	_ASSERTE(dgCheckVector((*this)));
+	NEWTON_ASSERT(dgCheckVector((*this)));
 }
 
 #ifdef DG_BUILD_SIMD_CODE
 DG_INLINE dgVector::dgVector(const simd_type &val) {
-	_ASSERTE((dgUnsigned64(this) & 0x0f) == 0);
+	NEWTON_ASSERT((dgUnsigned64(this) & 0x0f) == 0);
 	(simd_type &) *this = val;
-	_ASSERTE(dgCheckVector((*this)));
+	NEWTON_ASSERT(dgCheckVector((*this)));
 }
 #endif
 
@@ -340,29 +340,29 @@ DG_INLINE dgBigVector::dgBigVector()
 
 DG_INLINE dgBigVector::dgBigVector(const dgVector &v)
 	: dgTemplateVector<dgFloat64>(v.m_x, v.m_y, v.m_z, v.m_w) {
-	_ASSERTE(dgCheckVector((*this)));
+	NEWTON_ASSERT(dgCheckVector((*this)));
 }
 
 DG_INLINE dgBigVector::dgBigVector(const dgTemplateVector<dgFloat64> &v)
 	: dgTemplateVector<dgFloat64>(v) {
-	_ASSERTE(dgCheckVector((*this)));
+	NEWTON_ASSERT(dgCheckVector((*this)));
 }
 
 DG_INLINE dgBigVector::dgBigVector(const dgFloat32 *ptr)
 	: dgTemplateVector<dgFloat64>(ptr[0], ptr[1], ptr[2], dgFloat64(0.0f)) {
-	_ASSERTE(dgCheckVector((*this)));
+	NEWTON_ASSERT(dgCheckVector((*this)));
 }
 
 #ifndef __USE_DOUBLE_PRECISION__
 DG_INLINE dgBigVector::dgBigVector(const dgFloat64 *ptr)
 	: dgTemplateVector<dgFloat64>(ptr) {
-	_ASSERTE(dgCheckVector((*this)));
+	NEWTON_ASSERT(dgCheckVector((*this)));
 }
 #endif
 
 DG_INLINE dgBigVector::dgBigVector(dgFloat64 x, dgFloat64 y, dgFloat64 z, dgFloat64 w)
 	: dgTemplateVector<dgFloat64>(x, y, z, w) {
-	_ASSERTE(dgCheckVector((*this)));
+	NEWTON_ASSERT(dgCheckVector((*this)));
 }
 
 

@@ -89,13 +89,13 @@ dgCollisionConvexHull::dgCollisionConvexHull(dgMemoryAllocator *const allocator,
 				dgPlane plane(normal, dgFloat32(0.0f));
 				dgVector planeSupport(SupportVertex(plane));
 				plane.m_w = -(plane % planeSupport);
-				//              _ASSERTE (plane.Evalue(m_boxOrigin) < 0.0f);
+				//              NEWTON_ASSERT (plane.Evalue(m_boxOrigin) < 0.0f);
 				dgPlane &tmpPlane = planesArray[planeCount];
 				tmpPlane = plane;
 				planesArray[planeCount].m_index = i;
 				planesArray[planeCount].m_face = face;
 				planeCount++;
-				_ASSERTE(planeCount < dgInt32(sizeof(planesArray) / sizeof(planesArray[0])));
+				NEWTON_ASSERT(planeCount < dgInt32(sizeof(planesArray) / sizeof(planesArray[0])));
 			}
 		}
 	}
@@ -113,7 +113,7 @@ dgCollisionConvexHull::dgCollisionConvexHull(dgMemoryAllocator *const allocator,
 					break;
 				}
 			}
-			_ASSERTE(j < m_faceCount);
+			NEWTON_ASSERT(j < m_faceCount);
 		}
 		m_boundPlanesCount++;
 	}
@@ -197,7 +197,7 @@ dgBigVector dgCollisionConvexHull::FaceNormal(const dgEdge *face,
 		dgBigVector n1(e1 * e2);
 #ifdef _DEBUG
 		dgFloat64 mag = normal % n1;
-		_ASSERTE(mag >= -dgFloat32(0.1f));
+		NEWTON_ASSERT(mag >= -dgFloat32(0.1f));
 #endif
 		normal += n1;
 		e1 = e2;
@@ -214,7 +214,7 @@ dgBigVector dgCollisionConvexHull::FaceNormal(const dgEdge *face,
 		    pool[edge->m_next->m_incidentVertex] - pool[edge->m_incidentVertex]);
 		dgBigVector n1(e0 * e1);
 		dgFloat64 x = normal % n1;
-		_ASSERTE(x > -dgFloat64(0.01f));
+		NEWTON_ASSERT(x > -dgFloat64(0.01f));
 		e0 = e1;
 		edge = edge->m_next;
 	} while (edge != face);
@@ -258,8 +258,8 @@ bool dgCollisionConvexHull::RemoveCoplanarEdge(dgPolyhedra &polyhedra,
 						dgBigVector e0(
 						    hullVertexArray[edge0->m_incidentVertex] - hullVertexArray[edge0->m_prev->m_incidentVertex]);
 
-						_ASSERTE((e0 % e0) >= dgFloat64(0.0f));
-						_ASSERTE((e1 % e1) >= dgFloat64(0.0f));
+						NEWTON_ASSERT((e0 % e0) >= dgFloat64(0.0f));
+						NEWTON_ASSERT((e1 % e1) >= dgFloat64(0.0f));
 
 						e0 = e0.Scale(dgFloat64(1.0f) / sqrt(e0 % e0));
 						e1 = e1.Scale(dgFloat64(1.0f) / sqrt(e1 % e1));
@@ -272,8 +272,8 @@ bool dgCollisionConvexHull::RemoveCoplanarEdge(dgPolyhedra &polyhedra,
 							    hullVertexArray[edge0->m_next->m_next->m_incidentVertex] - hullVertexArray[edge0->m_twin->m_incidentVertex]);
 							dgBigVector ee0(
 							    hullVertexArray[edge0->m_twin->m_incidentVertex] - hullVertexArray[edge0->m_twin->m_prev->m_incidentVertex]);
-							_ASSERTE((ee0 % ee0) >= dgFloat64(0.0f));
-							_ASSERTE((ee1 % ee1) >= dgFloat64(0.0f));
+							NEWTON_ASSERT((ee0 % ee0) >= dgFloat64(0.0f));
+							NEWTON_ASSERT((ee1 % ee1) >= dgFloat64(0.0f));
 							// ee0 = ee0.Scale (dgRsqrt (ee0 % ee0));
 							// ee1 = ee1.Scale (dgRsqrt (ee1 % ee1));
 							ee0 = ee0.Scale(dgFloat64(1.0f) / sqrt(ee0 % ee0));
@@ -282,8 +282,8 @@ bool dgCollisionConvexHull::RemoveCoplanarEdge(dgPolyhedra &polyhedra,
 							dgBigVector nn1(ee0 * ee1);
 							projection = nn1 % normal0;
 							if (projection >= DG_MAX_EDGE_ANGLE) {
-								_ASSERTE(&(*iter) != edge0);
-								_ASSERTE(&(*iter) != edge0->m_twin);
+								NEWTON_ASSERT(&(*iter) != edge0);
+								NEWTON_ASSERT(&(*iter) != edge0->m_twin);
 								polyhedra.DeleteEdge(edge0);
 								removeEdge = true;
 							}
@@ -408,7 +408,7 @@ bool dgCollisionConvexHull::Create(dgInt32 count, dgInt32 strideInBytes,
 				} else if ((dist21 >= dist10) && (dist21 >= dist20)) {
 					index = 0;
 				}
-				_ASSERTE(index != -1);
+				NEWTON_ASSERT(index != -1);
 				mask[face.m_index[index]] = 0;
 			}
 		}
@@ -459,7 +459,7 @@ bool dgCollisionConvexHull::Create(dgInt32 count, dgInt32 strideInBytes,
 	dgStack<dgEdge *> stack(1024 + maxEdgeCount);
 	dgEdge *firstFace = &polyhedra.GetRoot()->GetInfo();
 
-	_ASSERTE(firstFace->m_twin->m_next != firstFace);
+	NEWTON_ASSERT(firstFace->m_twin->m_next != firstFace);
 
 	dgInt32 stackIndex = 1;
 	stack[0] = firstFace;
@@ -542,7 +542,7 @@ bool dgCollisionConvexHull::Create(dgInt32 count, dgInt32 strideInBytes,
 		if (!mark[i]) {
 			dgConvexSimplexEdge *ptr = face;
 			do {
-				_ASSERTE((ptr - m_simplex) >= 0);
+				NEWTON_ASSERT((ptr - m_simplex) >= 0);
 				mark[dgInt32(ptr - m_simplex)] = '1';
 				ptr = ptr->m_next;
 			} while (ptr != face);
@@ -561,7 +561,7 @@ bool dgCollisionConvexHull::Create(dgInt32 count, dgInt32 strideInBytes,
 }
 
 dgInt32 dgCollisionConvexHull::CalculateSignature() const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 	return dgInt32(GetSignature());
 }
 
@@ -575,7 +575,7 @@ dgFloat32 dgCollisionConvexHull::GetBreakImpulse() const {
 
 void dgCollisionConvexHull::SetCollisionBBox(const dgVector &p0__,
         const dgVector &p1__) {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 }
 
 void dgCollisionConvexHull::DebugCollision(const dgMatrix &matrixPtr,
@@ -649,7 +649,7 @@ void dgCollisionConvexHull::Serialize(dgSerialize callback,
 bool dgCollisionConvexHull::OOBBTest(const dgMatrix &matrix,
                                      const dgCollisionConvex *const shape, void *const cacheOrder) const {
 	bool ret;
-	_ASSERTE(cacheOrder);
+	NEWTON_ASSERT(cacheOrder);
 
 	ret = dgCollisionConvex::OOBBTest(matrix, shape, cacheOrder);
 	if (ret) {
@@ -691,7 +691,7 @@ bool dgCollisionConvexHull::OOBBTest(const dgMatrix &matrix,
 			dir.m_w = dgFloat32(0.0f);
 			dgVector p(matrix.TransformVector(shape->SupportVertex(dir)));
 
-			//_ASSERTE ((normal % (m_boxOrigin - p0)) < 0.0f);
+			//NEWTON_ASSERT ((normal % (m_boxOrigin - p0)) < 0.0f);
 			dist = normal % (p - p0);
 			if (dist > dgFloat32(0.1f)) {
 				for (dgInt32 j = 0;

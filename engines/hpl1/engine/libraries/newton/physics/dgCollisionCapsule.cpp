@@ -47,7 +47,7 @@ dgCollisionCapsule::dgCollisionCapsule(dgWorld *const world,
 
 dgCollisionCapsule::~dgCollisionCapsule() {
 	m_shapeRefCount--;
-	_ASSERTE(m_shapeRefCount >= 0);
+	NEWTON_ASSERT(m_shapeRefCount >= 0);
 
 	dgCollisionConvex::m_simplex = NULL;
 	dgCollisionConvex::m_vertex = NULL;
@@ -142,7 +142,7 @@ void dgCollisionCapsule::Init(dgFloat32 radius, dgFloat32 height) {
 		polyhedra.AddFace(DG_CAPSULE_SEGMENTS, wireframe);
 		polyhedra.EndFace();
 
-		_ASSERTE(SanityCheck(polyhedra));
+		NEWTON_ASSERT(SanityCheck(polyhedra));
 
 		dgUnsigned64 i = 0;
 		dgPolyhedra::Iterator iter(polyhedra);
@@ -190,9 +190,9 @@ void dgCollisionCapsule::TesselateTriangle(dgInt32 level, dgFloat32 side,
         const dgVector &p0, const dgVector &p1, const dgVector &p2, dgInt32 &count,
         dgVector *ouput) const {
 	if (level) {
-		_ASSERTE(dgAbsf(p0 % p0 - dgFloat32(1.0f)) < dgFloat32(1.0e-4f));
-		_ASSERTE(dgAbsf(p1 % p1 - dgFloat32(1.0f)) < dgFloat32(1.0e-4f));
-		_ASSERTE(dgAbsf(p2 % p2 - dgFloat32(1.0f)) < dgFloat32(1.0e-4f));
+		NEWTON_ASSERT(dgAbsf(p0 % p0 - dgFloat32(1.0f)) < dgFloat32(1.0e-4f));
+		NEWTON_ASSERT(dgAbsf(p1 % p1 - dgFloat32(1.0f)) < dgFloat32(1.0e-4f));
+		NEWTON_ASSERT(dgAbsf(p2 % p2 - dgFloat32(1.0f)) < dgFloat32(1.0e-4f));
 		dgVector p01(p0 + p1);
 		dgVector p12(p1 + p2);
 		dgVector p20(p2 + p0);
@@ -201,9 +201,9 @@ void dgCollisionCapsule::TesselateTriangle(dgInt32 level, dgFloat32 side,
 		p12 = p12.Scale(dgFloat32(1.0f) / dgSqrt(p12 % p12));
 		p20 = p20.Scale(dgFloat32(1.0f) / dgSqrt(p20 % p20));
 
-		_ASSERTE(dgAbsf(p01 % p01 - dgFloat32(1.0f)) < dgFloat32(1.0e-4f));
-		_ASSERTE(dgAbsf(p12 % p12 - dgFloat32(1.0f)) < dgFloat32(1.0e-4f));
-		_ASSERTE(dgAbsf(p20 % p20 - dgFloat32(1.0f)) < dgFloat32(1.0e-4f));
+		NEWTON_ASSERT(dgAbsf(p01 % p01 - dgFloat32(1.0f)) < dgFloat32(1.0e-4f));
+		NEWTON_ASSERT(dgAbsf(p12 % p12 - dgFloat32(1.0f)) < dgFloat32(1.0e-4f));
+		NEWTON_ASSERT(dgAbsf(p20 % p20 - dgFloat32(1.0f)) < dgFloat32(1.0e-4f));
 
 		TesselateTriangle(level - 1, side, p0, p01, p20, count, ouput);
 		TesselateTriangle(level - 1, side, p1, p12, p01, count, ouput);
@@ -301,7 +301,7 @@ void dgCollisionCapsule::DebugCollision(const dgMatrix &matrixPtr,
 
 void dgCollisionCapsule::SetCollisionBBox(const dgVector &p0__,
         const dgVector &p1__) {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 }
 
 dgVector dgCollisionCapsule::SupportVertexSimd(const dgVector &dir) const {
@@ -310,7 +310,7 @@ dgVector dgCollisionCapsule::SupportVertexSimd(const dgVector &dir) const {
 	dgInt32 index;
 	dgFloatSign *ptr;
 
-	_ASSERTE(dgAbsf(dir % dir - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
+	NEWTON_ASSERT(dgAbsf(dir % dir - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
 
 	ptr = (dgFloatSign *)&dir;
 	index = -(ptr[0].m_integer.m_iVal >> 31);
@@ -327,7 +327,7 @@ dgVector dgCollisionCapsule::SupportVertex(const dgVector &dir) const {
 	dgInt32 index;
 	const dgFloatSign *ptr;
 
-	_ASSERTE(dgAbsf(dir % dir - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
+	NEWTON_ASSERT(dgAbsf(dir % dir - dgFloat32(1.0f)) < dgFloat32(1.0e-3f));
 
 	ptr = (const dgFloatSign *)&dir;
 	index = -(ptr[0].m_integer.m_iVal >> 31);
@@ -550,7 +550,7 @@ dgInt32 dgCollisionCapsule::CalculatePlaneIntersection(const dgVector &normal,
 		dgFloat32 magInv = dgRsqrt(normal.m_y * normal.m_y + normal.m_z * normal.m_z);
 		dgFloat32 cosAng = normal.m_y * magInv;
 		dgFloat32 sinAng = normal.m_z * magInv;
-		_ASSERTE(dgAbsf(normal.m_z * cosAng - normal.m_y * sinAng) < dgFloat32(1.0e-4f));
+		NEWTON_ASSERT(dgAbsf(normal.m_z * cosAng - normal.m_y * sinAng) < dgFloat32(1.0e-4f));
 		dgVector normal1(normal.m_x, normal.m_y * cosAng + normal.m_z * sinAng, dgFloat32(0.0f), dgFloat32(0.0f));
 		dgVector origin1(origin.m_x, origin.m_y * cosAng + origin.m_z * sinAng,
 		                 origin.m_z * cosAng - origin.m_y * sinAng, dgFloat32(0.0f));
@@ -598,7 +598,7 @@ dgInt32 dgCollisionCapsule::CalculatePlaneIntersection(const dgVector &normal,
 					dgFloat32 c = d * d - m_radius * m_radius * plane.m_y * plane.m_y;
 					dgFloat32 desc = b * b - dgFloat32(4.0f) * a * c;
 					if (desc > dgFloat32(0.0f)) {
-						_ASSERTE(dgAbsf(a) > dgFloat32(0.0f));
+						NEWTON_ASSERT(dgAbsf(a) > dgFloat32(0.0f));
 						desc = dgSqrt(desc);
 						a = -dgFloat32(0.5f) * b / a;
 						dgFloat32 x0 = a + desc;
@@ -607,8 +607,8 @@ dgInt32 dgCollisionCapsule::CalculatePlaneIntersection(const dgVector &normal,
 							x0 = x1;
 						}
 						if (x0 < 0.0f) {
-							_ASSERTE(x0 <= dgFloat32(0.0f));
-							_ASSERTE(dgAbsf(plane.m_y) > dgFloat32(0.0f));
+							NEWTON_ASSERT(x0 <= dgFloat32(0.0f));
+							NEWTON_ASSERT(dgAbsf(plane.m_y) > dgFloat32(0.0f));
 							dgFloat32 y = -(plane.m_x * x0 + d) / plane.m_y;
 							contactsOut[count] = dgVector(x0 + r, y, dgFloat32(0.0f),
 							                              dgFloat32(0.0f));
@@ -641,7 +641,7 @@ dgInt32 dgCollisionCapsule::CalculatePlaneIntersection(const dgVector &normal,
 					dgFloat32 c = d * d - m_radius * m_radius * plane.m_y * plane.m_y;
 					dgFloat32 desc = b * b - dgFloat32(4.0f) * a * c;
 					if (desc > dgFloat32(0.0f)) {
-						_ASSERTE(dgAbsf(a) > dgFloat32(0.0f));
+						NEWTON_ASSERT(dgAbsf(a) > dgFloat32(0.0f));
 						desc = dgSqrt(desc);
 						a = -dgFloat32(0.5f) * b / a;
 						dgFloat32 x0 = a + desc;
@@ -650,8 +650,8 @@ dgInt32 dgCollisionCapsule::CalculatePlaneIntersection(const dgVector &normal,
 							x0 = x1;
 						}
 						if (x0 > 0.0f) {
-							_ASSERTE(x0 >= dgFloat32(0.0f));
-							_ASSERTE(dgAbsf(plane.m_y) > dgFloat32(0.0f));
+							NEWTON_ASSERT(x0 >= dgFloat32(0.0f));
+							NEWTON_ASSERT(dgAbsf(plane.m_y) > dgFloat32(0.0f));
 							dgFloat32 y = -(plane.m_x * x0 + d) / plane.m_y;
 							contactsOut[count] = dgVector(x0 + r, y, dgFloat32(0.0f),
 							                              dgFloat32(0.0f));

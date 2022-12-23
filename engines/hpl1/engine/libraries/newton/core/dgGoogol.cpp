@@ -39,7 +39,7 @@ dgGoogol::dgGoogol(dgFloat64 value) :
 	m_mantissa[0] = (dgInt64(dgFloat64(dgUnsigned64(1) << 62) * mantissa));
 
 	// it looks like GCC have problems with this
-	_ASSERTE(m_mantissa[0] >= 0);
+	NEWTON_ASSERT(m_mantissa[0] >= 0);
 }
 
 dgGoogol::~dgGoogol(void) {
@@ -116,7 +116,7 @@ dgInt32 dgGoogol::LeadinZeros(dgUnsigned64 a) const {
 }
 
 dgInt32 dgGoogol::NormalizeMantissa(dgUnsigned64 *const mantissa) const {
-	_ASSERTE(dgInt64(mantissa[0]) >= 0);
+	NEWTON_ASSERT(dgInt64(mantissa[0]) >= 0);
 
 	dgInt32 bits = 0;
 	if (dgInt64(mantissa[0] * 2) < 0) {
@@ -229,7 +229,7 @@ void dgGoogol::ExtendeMultiply(dgUnsigned64 a, dgUnsigned64 b,
 	dgUnsigned64 ml = m << 32;
 	dgUnsigned64 ll = l + ml;
 	dgUnsigned64 mh = (m >> 32) + CheckCarrier(l, ml);
-	_ASSERTE((mh & ~0xffffffff) == 0);
+	NEWTON_ASSERT((mh & ~0xffffffff) == 0);
 
 	dgUnsigned64 hh = h + mh;
 
@@ -246,7 +246,7 @@ void dgGoogol::ScaleMantissa(dgUnsigned64 *const dst, dgUnsigned64 scale) const 
 			ExtendeMultiply(scale, m_mantissa[i], high, low);
 			dgUnsigned64 acc = low + carrier;
 			carrier = CheckCarrier(low, carrier);
-			_ASSERTE(CheckCarrier(carrier, high) == 0);
+			NEWTON_ASSERT(CheckCarrier(carrier, high) == 0);
 			carrier += high;
 			dst[i + 1] = acc;
 		} else {
@@ -259,8 +259,8 @@ void dgGoogol::ScaleMantissa(dgUnsigned64 *const dst, dgUnsigned64 scale) const 
 }
 
 dgGoogol dgGoogol::operator*(const dgGoogol &A) const {
-	_ASSERTE(dgInt64(m_mantissa[0]) >= 0);
-	_ASSERTE(dgInt64(A.m_mantissa[0]) >= 0);
+	NEWTON_ASSERT(dgInt64(m_mantissa[0]) >= 0);
+	NEWTON_ASSERT(dgInt64(A.m_mantissa[0]) >= 0);
 
 	if (m_mantissa[0] && A.m_mantissa[0]) {
 		dgUnsigned64 mantissaAcc[DG_GOOGOL_SIZE * 2];
@@ -322,7 +322,7 @@ dgGoogol dgGoogol::operator/(const dgGoogol &A) const {
 			test = (copy[i] == tmp.m_mantissa[i]);
 		}
 	} while (!test || (passes > (2 * DG_GOOGOL_SIZE)));
-	_ASSERTE(
+	NEWTON_ASSERT(
 	    passes <= (2 * DG_GOOGOL_SIZE));
 	return (*this) * tmp;
 }
@@ -355,7 +355,7 @@ dgGoogol dgGoogol::Floor() const {
 	dgUnsigned64 mask = (-1LL) << (64 - bits);
 	tmp.m_mantissa[start] &= mask;
 	if (m_sign) {
-		_ASSERTE(0);
+		NEWTON_ASSERT(0);
 	}
 
 	return tmp;

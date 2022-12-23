@@ -48,12 +48,12 @@ class dgAABBTree {
 
 	public:
 		inline TreeNode() {
-			_ASSERTE(0);
+			NEWTON_ASSERT(0);
 		}
 
 		inline TreeNode(dgUnsigned32 node) {
 			m_node = node;
-			_ASSERTE(!IsLeaf());
+			NEWTON_ASSERT(!IsLeaf());
 		}
 
 		inline dgUnsigned32 IsLeaf() const {
@@ -61,18 +61,18 @@ class dgAABBTree {
 		}
 
 		inline dgUnsigned32 GetCount() const {
-			_ASSERTE(IsLeaf());
+			NEWTON_ASSERT(IsLeaf());
 			return (m_node & (~0x80000000)) >> (32 - DG_INDEX_COUNT_BITS - 1);
 		}
 
 		inline dgUnsigned32 GetIndex() const {
-			_ASSERTE(IsLeaf());
+			NEWTON_ASSERT(IsLeaf());
 			return m_node & (~(-(1 << (32 - DG_INDEX_COUNT_BITS - 1))));
 		}
 
 
 		inline TreeNode(dgUnsigned32 faceIndexCount, dgUnsigned32 faceIndexStart) {
-			_ASSERTE(faceIndexCount < (1 << DG_INDEX_COUNT_BITS));
+			NEWTON_ASSERT(faceIndexCount < (1 << DG_INDEX_COUNT_BITS));
 			m_node = 0x80000000 | (faceIndexCount << (32 - DG_INDEX_COUNT_BITS - 1))
 			         | faceIndexStart;
 		}
@@ -190,7 +190,7 @@ public:
 				if (parentNode) {
 					*parentNode = boxCopy[node->m_boxIndex].m_back;
 				} else {
-					//_ASSERTE(boxCount == 1);
+					//NEWTON_ASSERT(boxCount == 1);
 					dgAABBTree *const newNode = &boxArray[index];
 					*newNode = boxCopy[node->m_boxIndex];
 					index++;
@@ -259,8 +259,8 @@ public:
 			maxDepth = GetMax(maxDepth, depth);
 
 			if (node->m_boxIndex == -1) {
-				_ASSERTE(node->m_back);
-				_ASSERTE(node->m_front);
+				NEWTON_ASSERT(node->m_back);
+				NEWTON_ASSERT(node->m_front);
 
 				depth++;
 				depthPool[stack] = depth;
@@ -302,8 +302,8 @@ public:
 	}
 
 	void ImproveNodeFitness(dgConstructionTree *const node) const {
-		_ASSERTE(node->m_back);
-		_ASSERTE(node->m_front);
+		NEWTON_ASSERT(node->m_back);
+		NEWTON_ASSERT(node->m_front);
 
 		if (node->m_parent) {
 			if (node->m_parent->m_back == node) {
@@ -319,7 +319,7 @@ public:
 						if (parent->m_parent->m_back == parent) {
 							parent->m_parent->m_back = node;
 						} else {
-							_ASSERTE(parent->m_parent->m_front == parent);
+							NEWTON_ASSERT(parent->m_parent->m_front == parent);
 							parent->m_parent->m_front = node;
 						}
 					}
@@ -338,7 +338,7 @@ public:
 						if (parent->m_parent->m_back == parent) {
 							parent->m_parent->m_back = node;
 						} else {
-							_ASSERTE(parent->m_parent->m_front == parent);
+							NEWTON_ASSERT(parent->m_parent->m_front == parent);
 							parent->m_parent->m_front = node;
 						}
 					}
@@ -364,7 +364,7 @@ public:
 						if (parent->m_parent->m_back == parent) {
 							parent->m_parent->m_back = node;
 						} else {
-							_ASSERTE(parent->m_parent->m_front == parent);
+							NEWTON_ASSERT(parent->m_parent->m_front == parent);
 							parent->m_parent->m_front = node;
 						}
 					}
@@ -383,7 +383,7 @@ public:
 						if (parent->m_parent->m_back == parent) {
 							parent->m_parent->m_back = node;
 						} else {
-							_ASSERTE(parent->m_parent->m_front == parent);
+							NEWTON_ASSERT(parent->m_parent->m_front == parent);
 							parent->m_parent->m_front = node;
 						}
 					}
@@ -519,7 +519,7 @@ public:
 	 }
 	 }
 
-	 _ASSERTE (bestProxi != -1);
+	 NEWTON_ASSERT (bestProxi != -1);
 
 	 dgHeapNodePair pair;
 	 pair.m_nodeA = i;
@@ -557,7 +557,7 @@ public:
 	 }
 	 }
 
-	 _ASSERTE (newCount < count);
+	 NEWTON_ASSERT (newCount < count);
 	 count = newCount;
 	 }
 
@@ -571,8 +571,8 @@ public:
 	                              dgInt32 firstBox, dgInt32 lastBox, dgAABBTree *const boxArray,
 	                              const dgTriplex *const vertexArray, dgConstructionTree *parent) {
 		dgConstructionTree *const tree = new (allocator) dgConstructionTree();
-		_ASSERTE(firstBox >= 0);
-		_ASSERTE(lastBox >= 0);
+		NEWTON_ASSERT(firstBox >= 0);
+		NEWTON_ASSERT(lastBox >= 0);
 
 		tree->m_parent = parent;
 
@@ -710,9 +710,9 @@ public:
 						m_axis = i0 + 1;
 					}
 
-					_ASSERTE(maxP.m_x - minP.m_x >= dgFloat32(0.0f));
-					_ASSERTE(maxP.m_y - minP.m_y >= dgFloat32(0.0f));
-					_ASSERTE(maxP.m_z - minP.m_z >= dgFloat32(0.0f));
+					NEWTON_ASSERT(maxP.m_x - minP.m_x >= dgFloat32(0.0f));
+					NEWTON_ASSERT(maxP.m_y - minP.m_y >= dgFloat32(0.0f));
+					NEWTON_ASSERT(maxP.m_z - minP.m_z >= dgFloat32(0.0f));
 					m_p0 = minP;
 					m_p1 = maxP;
 				}
@@ -902,7 +902,7 @@ public:
 					}
 
 				} else {
-					_ASSERTE(stack < DG_STACK_DEPTH);
+					NEWTON_ASSERT(stack < DG_STACK_DEPTH);
 					stackPool[stack] = me->m_back.GetNode(this);
 					stack++;
 				}
@@ -916,7 +916,7 @@ public:
 						return;
 					}
 				} else {
-					_ASSERTE(stack < DG_STACK_DEPTH);
+					NEWTON_ASSERT(stack < DG_STACK_DEPTH);
 					stackPool[stack] = me->m_front.GetNode(this);
 					stack++;
 				}
@@ -948,7 +948,7 @@ public:
 					}
 
 				} else {
-					_ASSERTE(stack < DG_STACK_DEPTH);
+					NEWTON_ASSERT(stack < DG_STACK_DEPTH);
 					stackPool[stack] = me->m_back.GetNode(this);
 					stack++;
 				}
@@ -961,7 +961,7 @@ public:
 					}
 
 				} else {
-					_ASSERTE(stack < DG_STACK_DEPTH);
+					NEWTON_ASSERT(stack < DG_STACK_DEPTH);
 					stackPool[stack] = me->m_front.GetNode(this);
 					stack++;
 				}
@@ -992,7 +992,7 @@ public:
 
 						dgFloat32 param = callback(context, vertexArray, sizeof(dgTriplex),
 						                           &indexArray[index + 1], vCount);
-						_ASSERTE(param >= dgFloat32(0.0f));
+						NEWTON_ASSERT(param >= dgFloat32(0.0f));
 						if (param < maxParam) {
 							maxParam = param;
 							if (maxParam == dgFloat32(0.0f)) {
@@ -1003,7 +1003,7 @@ public:
 					}
 
 				} else {
-					_ASSERTE(stack < DG_STACK_DEPTH);
+					NEWTON_ASSERT(stack < DG_STACK_DEPTH);
 					stackPool[stack] = me->m_back.GetNode(this);
 					stack++;
 				}
@@ -1014,7 +1014,7 @@ public:
 						dgInt32 index = dgInt32(me->m_front.GetIndex());
 						dgFloat32 param = callback(context, vertexArray, sizeof(dgTriplex),
 						                           &indexArray[index + 1], vCount);
-						_ASSERTE(param >= dgFloat32(0.0f));
+						NEWTON_ASSERT(param >= dgFloat32(0.0f));
 						if (param < maxParam) {
 							maxParam = param;
 							if (maxParam == dgFloat32(0.0f)) {
@@ -1025,7 +1025,7 @@ public:
 					}
 
 				} else {
-					_ASSERTE(stack < DG_STACK_DEPTH);
+					NEWTON_ASSERT(stack < DG_STACK_DEPTH);
 					stackPool[stack] = me->m_front.GetNode(this);
 					stack++;
 				}
@@ -1054,7 +1054,7 @@ public:
 						dgInt32 index = dgInt32(me->m_back.GetIndex());
 						dgFloat32 param = callback(context, vertexArray, sizeof(dgTriplex),
 						                           &indexArray[index + 1], vCount);
-						_ASSERTE(param >= dgFloat32(0.0f));
+						NEWTON_ASSERT(param >= dgFloat32(0.0f));
 						if (param < maxParam) {
 							maxParam = param;
 							if (maxParam == dgFloat32(0.0f)) {
@@ -1065,7 +1065,7 @@ public:
 					}
 
 				} else {
-					_ASSERTE(stack < DG_STACK_DEPTH);
+					NEWTON_ASSERT(stack < DG_STACK_DEPTH);
 					stackPool[stack] = me->m_back.GetNode(this);
 					stack++;
 				}
@@ -1076,7 +1076,7 @@ public:
 						dgInt32 index = dgInt32(me->m_front.GetIndex());
 						dgFloat32 param = callback(context, vertexArray, sizeof(dgTriplex),
 						                           &indexArray[index + 1], vCount);
-						_ASSERTE(param >= dgFloat32(0.0f));
+						NEWTON_ASSERT(param >= dgFloat32(0.0f));
 						if (param < maxParam) {
 							maxParam = param;
 							if (maxParam == dgFloat32(0.0f)) {
@@ -1087,7 +1087,7 @@ public:
 					}
 
 				} else {
-					_ASSERTE(stack < DG_STACK_DEPTH);
+					NEWTON_ASSERT(stack < DG_STACK_DEPTH);
 					stackPool[stack] = me->m_front.GetNode(this);
 					stack++;
 				}
@@ -1514,7 +1514,7 @@ dgIntersectStatus dgAABBPolygonSoup::CalculateAllFaceEdgeNormals(void *context, 
 		adjacentFaces.m_normal = dgPlane(n, -(n % p));
 	}
 
-	_ASSERTE(indexCount < dgInt32(sizeof(adjacentFaces.m_edgeMap) / sizeof(adjacentFaces.m_edgeMap[0])));
+	NEWTON_ASSERT(indexCount < dgInt32(sizeof(adjacentFaces.m_edgeMap) / sizeof(adjacentFaces.m_edgeMap[0])));
 
 	dgInt32 edgeIndex = indexCount - 1;
 	dgInt32 i0 = indexArray[indexCount - 1];

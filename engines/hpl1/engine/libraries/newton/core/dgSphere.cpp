@@ -260,7 +260,7 @@ static void Statistics(dgSphere &sphere, dgVector &eigenValues,
  const dgFace face[],
  dgInt32 faceCount)
  {
- _ASSERTE (0);
+ NEWTON_ASSERT (0);
 
  dgInt32 i;
  dgInt32 index;
@@ -358,7 +358,7 @@ static void Statistics(dgSphere &sphere, dgVector &eigenValues,
 
 dgSphere::dgSphere() :
 	dgMatrix(dgGetIdentityMatrix()), m_size(0, 0, 0, 0) {
-//	_ASSERTE (0);
+//	NEWTON_ASSERT (0);
 //	planeTest = FrontTest;
 }
 
@@ -366,14 +366,14 @@ dgSphere::dgSphere(const dgQuaternion &quat, const dgVector &position,
                    const dgVector &dim) :
 	dgMatrix(quat, position) {
 	SetDimensions(dim.m_x, dim.m_y, dim.m_z);
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 //	planeTest = FrontTest;
 }
 
 dgSphere::dgSphere(const dgMatrix &matrix, const dgVector &dim) :
 	dgMatrix(matrix) {
 	SetDimensions(dim.m_x, dim.m_y, dim.m_z);
-//   _ASSERTE (0);
+//   NEWTON_ASSERT (0);
 //	planeTest = FrontTest;
 }
 
@@ -798,7 +798,7 @@ void dgSphere::SetDimensions(const dgFloat32 vertex[], dgInt32 strideInBytes,
  code = 0;
  for (i = 0; i < 6; i ++) {
  code |= (this->*planeTestArray[i]) (matrix, guardPlanes);
- _ASSERTE (code >= 0);
+ NEWTON_ASSERT (code >= 0);
  if (code) {
  return code;
  }

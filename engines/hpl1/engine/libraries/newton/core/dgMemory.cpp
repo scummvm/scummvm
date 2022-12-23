@@ -32,7 +32,7 @@ public:
 	}
 
 	~dgGlobalAllocator() {
-		_ASSERTE(GetCount() == 0);
+		NEWTON_ASSERT(GetCount() == 0);
 	}
 
 	static void *dgApi __malloc__(dgUnsigned32 size) {
@@ -44,7 +44,7 @@ public:
 	}
 
 	void operator delete (void *const ptr) {
-		_ASSERTE(0);
+		NEWTON_ASSERT(0);
 		//::delete (ptr);
 		free(ptr);
 	}
@@ -80,7 +80,7 @@ dgMemoryAllocator::dgMemoryAllocator(dgMemAlloc memAlloc, dgMemFree memFree) {
 
 dgMemoryAllocator::~dgMemoryAllocator() {
 	dgGlobalAllocator::m_globalAllocator.Remove(this);
-	_ASSERTE(m_memoryUsed == 0);
+	NEWTON_ASSERT(m_memoryUsed == 0);
 }
 
 void *dgMemoryAllocator::operator new (size_t size) {
@@ -101,8 +101,8 @@ void dgMemoryAllocator::SetAllocatorsCallback(dgMemAlloc memAlloc, dgMemFree mem
 }
 
 void *dgMemoryAllocator::MallocLow(dgInt32 workingSize, dgInt32 alignment) {
-	_ASSERTE(alignment >= DG_MEMORY_GRANULARITY);
-	_ASSERTE(((-alignment) & (alignment - 1)) == 0);
+	NEWTON_ASSERT(alignment >= DG_MEMORY_GRANULARITY);
+	NEWTON_ASSERT(((-alignment) & (alignment - 1)) == 0);
 	dgInt32 size = workingSize + alignment * 2;
 	void *const ptr = m_malloc(dgUnsigned32(size));
 	dgUnsigned64 val = dgUnsigned64(PointerToInt(ptr));
@@ -119,7 +119,7 @@ void *dgMemoryAllocator::MallocLow(dgInt32 workingSize, dgInt32 alignment) {
 void dgMemoryAllocator::FreeLow(void *const retPtr) {
 	dgMemoryInfo *info;
 	info = ((dgMemoryInfo *)(retPtr)) - 1;
-	_ASSERTE(info->m_allocator == this);
+	NEWTON_ASSERT(info->m_allocator == this);
 
 	dgAtomicAdd(&m_memoryUsed, -info->m_size);
 
@@ -133,7 +133,7 @@ void dgMemoryAllocator::FreeLow(void *const retPtr) {
 // alloca memory on pool that are quantized to DG_MEMORY_GRANULARITY
 // if memory size is larger than DG_MEMORY_BIN_ENTRIES then the memory is not placed into a pool
 void *dgMemoryAllocator::Malloc(dgInt32 memsize) {
-	_ASSERTE(dgInt32(sizeof(dgMemoryCacheEntry) + sizeof(dgInt32) + sizeof(dgInt32)) <= DG_MEMORY_GRANULARITY);
+	NEWTON_ASSERT(dgInt32(sizeof(dgMemoryCacheEntry) + sizeof(dgInt32) + sizeof(dgInt32)) <= DG_MEMORY_GRANULARITY);
 
 	dgInt32 size = memsize + DG_MEMORY_GRANULARITY - 1;
 	size &= (-DG_MEMORY_GRANULARITY);
@@ -177,7 +177,7 @@ void *dgMemoryAllocator::Malloc(dgInt32 memsize) {
 			m_memoryDirectory[entry].m_cache->m_prev = NULL;
 		}
 
-		_ASSERTE(m_memoryDirectory[entry].m_cache);
+		NEWTON_ASSERT(m_memoryDirectory[entry].m_cache);
 
 		dgMemoryCacheEntry *const cashe = m_memoryDirectory[entry].m_cache;
 		m_memoryDirectory[entry].m_cache = cashe->m_next;
@@ -189,7 +189,7 @@ void *dgMemoryAllocator::Malloc(dgInt32 memsize) {
 
 		dgMemoryInfo *info;
 		info = ((dgMemoryInfo *)(ptr)) - 1;
-		_ASSERTE(info->m_allocator == this);
+		NEWTON_ASSERT(info->m_allocator == this);
 
 		dgMemoryBin *const bin = (dgMemoryBin *) info->m_ptr;
 		bin->m_info.m_count++;
@@ -206,7 +206,7 @@ void *dgMemoryAllocator::Malloc(dgInt32 memsize) {
 // if memory size is larger than DG_MEMORY_BIN_ENTRIES then the memory is not placed into a pool
 void dgMemoryAllocator::Free(void *const retPtr) {
 	dgMemoryInfo *const info = ((dgMemoryInfo *)(retPtr)) - 1;
-	_ASSERTE(info->m_allocator == this);
+	NEWTON_ASSERT(info->m_allocator == this);
 
 	dgInt32 entry = info->m_size;
 
@@ -221,7 +221,7 @@ void dgMemoryAllocator::Free(void *const retPtr) {
 
 		dgMemoryCacheEntry *const tmpCashe = m_memoryDirectory[entry].m_cache;
 		if (tmpCashe) {
-			_ASSERTE(!tmpCashe->m_prev);
+			NEWTON_ASSERT(!tmpCashe->m_prev);
 			tmpCashe->m_prev = cashe;
 		}
 		cashe->m_next = tmpCashe;
@@ -232,7 +232,7 @@ void dgMemoryAllocator::Free(void *const retPtr) {
 		dgMemoryBin *const bin = (dgMemoryBin *) info->m_ptr;
 
 #ifdef _DEBUG
-		_ASSERTE((bin->m_info.m_stepInBites - DG_MEMORY_GRANULARITY) > 0);
+		NEWTON_ASSERT((bin->m_info.m_stepInBites - DG_MEMORY_GRANULARITY) > 0);
 		memset(retPtr, 0, bin->m_info.m_stepInBites - DG_MEMORY_GRANULARITY);
 #endif
 
@@ -305,10 +305,10 @@ void dgMemoryAllocator::dgMemoryLeaksTracker::InsertBlock(dgInt32 size, void *co
 	dgUnsigned32 key;
 	dgUnsigned32 index;
 
-	//_ASSERTE (ptr != (void*)0x04cf8080);
-	//_ASSERTE (ptr != (void*)0x04d38080);
-	//_ASSERTE (ptr != (void*)0x04f48080);
-	//_ASSERTE (ptr != (void*)0x04f78080);
+	//NEWTON_ASSERT (ptr != (void*)0x04cf8080);
+	//NEWTON_ASSERT (ptr != (void*)0x04d38080);
+	//NEWTON_ASSERT (ptr != (void*)0x04f48080);
+	//NEWTON_ASSERT (ptr != (void*)0x04f78080);
 	//if (m_leakAllocationCounter >= 2080840)
 	//m_leakAllocationCounter *=1;
 
@@ -319,8 +319,8 @@ void dgMemoryAllocator::dgMemoryLeaksTracker::InsertBlock(dgInt32 size, void *co
 		index = ((index + 1) < DG_TRACK_MEMORY_LEAKS_ENTRIES) ? index + 1 : 0;
 	}
 
-	_ASSERTE(i < 8);
-	_ASSERTE(i < DG_TRACK_MEMORY_LEAKS_ENTRIES);
+	NEWTON_ASSERT(i < 8);
+	NEWTON_ASSERT(i < DG_TRACK_MEMORY_LEAKS_ENTRIES);
 
 	m_density ++;
 	m_pool[index].m_size = size;
@@ -345,7 +345,7 @@ void dgMemoryAllocator::dgMemoryLeaksTracker::RemoveBlock(void *const ptr) {
 			m_density --;
 			m_totalAllocatedCalls--;
 			m_totalAllocatedBytes -= m_pool[index].m_size;
-			_ASSERTE(m_totalAllocatedBytes >= 0);
+			NEWTON_ASSERT(m_totalAllocatedBytes >= 0);
 			m_pool[index].m_size = 0;
 			m_pool[index].m_ptr = NULL;
 			break;
@@ -353,7 +353,7 @@ void dgMemoryAllocator::dgMemoryLeaksTracker::RemoveBlock(void *const ptr) {
 		index = ((index + 1) < DG_TRACK_MEMORY_LEAKS_ENTRIES) ? index + 1 : 0;
 	}
 
-	_ASSERTE(i < DG_TRACK_MEMORY_LEAKS_ENTRIES);
+	NEWTON_ASSERT(i < DG_TRACK_MEMORY_LEAKS_ENTRIES);
 }
 #endif
 
@@ -389,7 +389,7 @@ void  dgApi dgFreeStack(void *const ptr) {
 // general memory allocation for all data in the library
 void *dgApi dgMalloc(size_t size, dgMemoryAllocator *const allocator) {
 	void *ptr = NULL;
-	_ASSERTE(allocator);
+	NEWTON_ASSERT(allocator);
 	if (size) {
 		ptr = allocator->Malloc(dgInt32(size));
 	}
@@ -401,7 +401,7 @@ void dgApi dgFree(void *const ptr) {
 	if (ptr) {
 		dgMemoryAllocator::dgMemoryInfo *info;
 		info = ((dgMemoryAllocator::dgMemoryInfo *) ptr) - 1;
-		_ASSERTE(info->m_allocator);
+		NEWTON_ASSERT(info->m_allocator);
 		info->m_allocator->Free(ptr);
 	}
 }

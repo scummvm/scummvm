@@ -85,8 +85,8 @@ template<class T>
 T &dgStack<T>::operator[](dgInt32 entry) {
 	T *mem;
 
-	_ASSERTE(entry >= 0);
-	_ASSERTE((entry < m_size) || ((m_size == 0) && (entry == 0)));
+	NEWTON_ASSERT(entry >= 0);
+	NEWTON_ASSERT((entry < m_size) || ((m_size == 0) && (entry == 0)));
 
 	mem = (T *) m_ptr;
 	return mem[entry];
@@ -96,9 +96,9 @@ template<class T>
 const T &dgStack<T>::operator[](dgInt32 entry) const {
 	T *mem;
 
-	_ASSERTE(0);
-	_ASSERTE(entry >= 0);
-	_ASSERTE((entry < m_size) || ((m_size == 0) && (entry == 0)));
+	NEWTON_ASSERT(0);
+	NEWTON_ASSERT(entry >= 0);
+	NEWTON_ASSERT((entry < m_size) || ((m_size == 0) && (entry == 0)));
 
 	mem = (T *) m_ptr;
 	return mem[entry];

@@ -31,7 +31,7 @@ void GetMinMax(dgVector &minOut, dgVector &maxOut,
 	dgInt32 stride = dgInt32(strideInBytes / sizeof(dgFloat32));
 	const dgFloat32 *vArray = vertexArray + stride;
 
-	_ASSERTE(stride >= 3);
+	NEWTON_ASSERT(stride >= 3);
 	minOut = dgVector(vertexArray[0], vertexArray[1], vertexArray[2],
 	                  dgFloat32(0.0f));
 	maxOut = dgVector(vertexArray[0], vertexArray[1], vertexArray[2],
@@ -55,7 +55,7 @@ void GetMinMax(dgBigVector &minOut, dgBigVector &maxOut,
 	dgInt32 stride = dgInt32(strideInBytes / sizeof(dgFloat64));
 	const dgFloat64 *vArray = vertexArray + stride;
 
-	_ASSERTE(stride >= 3);
+	NEWTON_ASSERT(stride >= 3);
 	minOut = dgBigVector(vertexArray[0], vertexArray[1], vertexArray[2],
 	                     dgFloat64(0.0f));
 	maxOut = dgBigVector(vertexArray[0], vertexArray[1], vertexArray[2],
@@ -356,7 +356,7 @@ static dgInt32 SortVertices(dgFloat64 *const vertexList, dgInt32 stride,
 				stack[stackIndex][1] = j;
 				stackIndex++;
 			}
-			_ASSERTE(stackIndex < dgInt32(sizeof(stack) / (2 * sizeof(stack[0][0]))));
+			NEWTON_ASSERT(stackIndex < dgInt32(sizeof(stack) / (2 * sizeof(stack[0][0]))));
 		} else {
 			for (dgInt32 i = lo + 1; i <= hi; i++) {
 				dgFloat64 tmp[64];
@@ -377,7 +377,7 @@ static dgInt32 SortVertices(dgFloat64 *const vertexList, dgInt32 stride,
 
 #ifdef _DEBUG
 	for (dgInt32 i = 0; i < (vertexCount - 1); i++) {
-		_ASSERTE(
+		NEWTON_ASSERT(
 		    cmp_vertex(&vertexList[i * stride], &vertexList[(i + 1) * stride], firstSortAxis) <= 0);
 	}
 #endif
@@ -473,7 +473,7 @@ static dgInt32 QuickSortVertices(dgFloat64 *const vertList, dgInt32 stride,
 				i1--;
 			}
 		} while (i0 <= i1);
-		_ASSERTE(i0 < vertexCount);
+		NEWTON_ASSERT(i0 < vertexCount);
 
 		dgInt32 count0 = QuickSortVertices(&vertList[0 * stride], stride,
 		                                   compareCount, i0, tolerance);
@@ -515,8 +515,8 @@ dgInt32 dgVertexListToIndexList(dgFloat64 *const vertList,
 	if (compareCount < 3) {
 		return 0;
 	}
-	_ASSERTE(compareCount <= dgInt32(strideInBytes / sizeof(dgFloat64)));
-	_ASSERTE(strideInBytes == dgInt32(sizeof(dgFloat64) * (strideInBytes / sizeof(dgFloat64))));
+	NEWTON_ASSERT(compareCount <= dgInt32(strideInBytes / sizeof(dgFloat64)));
+	NEWTON_ASSERT(strideInBytes == dgInt32(sizeof(dgFloat64) * (strideInBytes / sizeof(dgFloat64))));
 
 	dgInt32 stride = strideInBytes / dgInt32(sizeof(dgFloat64));
 	dgInt32 stride2 = stride + 2;
@@ -570,7 +570,7 @@ dgInt32 dgVertexListToIndexList(dgFloat32 *const vertList,
                                 dgFloat32 tolerance) {
 	dgInt32 stride = strideInBytes / sizeof(dgFloat32);
 
-	_ASSERTE(!unsignedSizeInBytes);
+	NEWTON_ASSERT(!unsignedSizeInBytes);
 	dgStack<dgFloat64> pool(vertexCount * stride);
 
 	dgInt32 floatCount = floatSizeInBytes / sizeof(dgFloat32);

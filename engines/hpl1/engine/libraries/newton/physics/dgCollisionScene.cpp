@@ -39,7 +39,7 @@ dgCollisionScene::dgNode::dgNode(dgNode *const sibling, dgNode *const myNode) : 
 		if (m_parent->m_left == sibling) {
 			m_parent->m_left = this;
 		} else {
-			_ASSERTE(m_parent->m_right == sibling);
+			NEWTON_ASSERT(m_parent->m_right == sibling);
 			m_parent->m_right = this;
 		}
 	}
@@ -240,7 +240,7 @@ void *dgCollisionScene::GetProxyUserData(void *const proxy) const {
 
 void dgCollisionScene::SetCollisionCallback(
     dgCollisionMeshCollisionCallback debugCallback) {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 	/*
 	 for (dgList<dgProxy>::dgListNode* node = m_list.GetFirst(); node; node = node->GetNext()) {
 	 const dgCollisionScene::dgProxy& entry = node->GetInfo();
@@ -279,8 +279,8 @@ void dgCollisionScene::CalcAABB(const dgMatrix &matrix, dgVector &p0,
 	dgVector err1(p1 - q1);
 	dgFloat32 err;
 	err = GetMax(size.m_x, size.m_y, size.m_z) * 0.5f;
-	_ASSERTE((err0 % err0) < err);
-	_ASSERTE((err1 % err1) < err);
+	NEWTON_ASSERT((err0 % err0) < err);
+	NEWTON_ASSERT((err1 % err1) < err);
 #endif
 }
 
@@ -301,12 +301,12 @@ void dgCollisionScene::DebugCollision(const dgMatrix &matrix,
 }
 
 dgFloat32 dgCollisionScene::GetVolume() const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 	return dgFloat32(0.0f);
 }
 
 dgInt32 dgCollisionScene::CalculateSignature() const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 	return 0;
 }
 
@@ -319,9 +319,9 @@ dgFloat32 dgCollisionScene::GetBoxMaxRadius() const {
 }
 
 void dgCollisionScene::SetCollisionBBox(const dgVector &p0, const dgVector &p1) {
-	_ASSERTE(p0.m_x <= p1.m_x);
-	_ASSERTE(p0.m_y <= p1.m_y);
-	_ASSERTE(p0.m_z <= p1.m_z);
+	NEWTON_ASSERT(p0.m_x <= p1.m_x);
+	NEWTON_ASSERT(p0.m_y <= p1.m_y);
+	NEWTON_ASSERT(p0.m_z <= p1.m_z);
 
 	m_boxSize = (p1 - p0).Scale(dgFloat32(0.5f));
 	m_boxOrigin = (p1 + p0).Scale(dgFloat32(0.5f));
@@ -340,7 +340,7 @@ void dgCollisionScene::CalculateInertia(dgVector &inertia,
 
 dgVector dgCollisionScene::CalculateVolumeIntegral(const dgMatrix &globalMatrix,
         GetBuoyancyPlane bouyancyPlane, void *const context) const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 	return dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
 	                dgFloat32(0.0f));
 }
@@ -353,12 +353,12 @@ void dgCollisionScene::GetCollisionInfo(dgCollisionInfo *info) const {
 
 bool dgCollisionScene::OOBBTest(const dgMatrix &matrix,
                                 const dgCollisionConvex *const shape, void *const cacheOrder) const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 	return true;
 }
 
 dgVector dgCollisionScene::SupportVertex(const dgVector &dir) const {
-	_ASSERTE(0);
+	NEWTON_ASSERT(0);
 	return dgVector(0, 0, 0, 0);
 }
 
@@ -382,14 +382,14 @@ dgFloat32 dgCollisionScene::RayCastSimd(const dgVector &localP0,
 
 		if (ray.BoxTestSimd(me->m_minBox, me->m_maxBox)) {
 			if (!me->m_left) {
-				_ASSERTE(!me->m_right);
+				NEWTON_ASSERT(!me->m_right);
 				dgContactPoint tmpContactOut;
 				const dgProxy *const proxy = (const dgProxy *)me;
 				dgVector l0(proxy->m_matrix.UntransformVector(localP0));
 				dgVector l1(proxy->m_matrix.UntransformVector(localP1));
 				dgFloat32 param = proxy->m_shape->RayCastSimd(l0, l1, tmpContactOut,
 				                  preFilter, body, userData);
-				_ASSERTE(param >= dgFloat32(0.0f));
+				NEWTON_ASSERT(param >= dgFloat32(0.0f));
 				if (param < maxParam) {
 					contactOut.m_normal = proxy->m_matrix.RotateVectorSimd(
 					                          tmpContactOut.m_normal);
@@ -397,13 +397,13 @@ dgFloat32 dgCollisionScene::RayCastSimd(const dgVector &localP0,
 					ray.Reset(maxParam);
 				}
 			} else {
-				_ASSERTE(me->m_left);
-				_ASSERTE(stack < dgInt32(sizeof(stackPool) / sizeof(dgNode *)));
+				NEWTON_ASSERT(me->m_left);
+				NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(dgNode *)));
 				stackPool[stack] = me->m_left;
 				stack++;
 
-				_ASSERTE(me->m_right);
-				_ASSERTE(stack < dgInt32(sizeof(stackPool) / sizeof(dgNode *)));
+				NEWTON_ASSERT(me->m_right);
+				NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(dgNode *)));
 				stackPool[stack] = me->m_right;
 				stack++;
 			}
@@ -435,14 +435,14 @@ dgFloat32 dgCollisionScene::RayCast(const dgVector &localP0,
 		// xxx ++;
 		if (ray.BoxTest(me->m_minBox, me->m_maxBox)) {
 			if (!me->m_left) {
-				_ASSERTE(!me->m_right);
+				NEWTON_ASSERT(!me->m_right);
 				dgContactPoint tmpContactOut;
 				const dgProxy *const proxy = (const dgProxy *)me;
 				dgVector l0(proxy->m_matrix.UntransformVector(localP0));
 				dgVector l1(proxy->m_matrix.UntransformVector(localP1));
 				dgFloat32 param = proxy->m_shape->RayCast(l0, l1, tmpContactOut,
 				                  preFilter, body, userData);
-				_ASSERTE(param >= dgFloat32(0.0f));
+				NEWTON_ASSERT(param >= dgFloat32(0.0f));
 				if (param < maxParam) {
 					contactOut.m_normal = proxy->m_matrix.RotateVector(
 					                          tmpContactOut.m_normal);
@@ -450,13 +450,13 @@ dgFloat32 dgCollisionScene::RayCast(const dgVector &localP0,
 					ray.Reset(maxParam);
 				}
 			} else {
-				_ASSERTE(me->m_left);
-				_ASSERTE(stack < dgInt32(sizeof(stackPool) / sizeof(dgNode *)));
+				NEWTON_ASSERT(me->m_left);
+				NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(dgNode *)));
 				stackPool[stack] = me->m_left;
 				stack++;
 
-				_ASSERTE(me->m_right);
-				_ASSERTE(stack < dgInt32(sizeof(stackPool) / sizeof(dgNode *)));
+				NEWTON_ASSERT(me->m_right);
+				NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(dgNode *)));
 				stackPool[stack] = me->m_right;
 				stack++;
 			}
@@ -470,13 +470,13 @@ void dgCollisionScene::CollidePairSimd(
     dgCollisionParamProxy &proxy) const {
 	const dgNode *stackPool[DG_SCENE_MAX_STACK_DEPTH];
 
-	_ASSERTE(pair->m_body1->GetCollision() == this);
-	_ASSERTE(
+	NEWTON_ASSERT(pair->m_body1->GetCollision() == this);
+	NEWTON_ASSERT(
 	    pair->m_body1->GetCollision()->IsType(dgCollision::dgCollisionScene_RTTI));
 
 	dgVector p0;
 	dgVector p1;
-	_ASSERTE(m_world == pair->m_body1->GetWorld());
+	NEWTON_ASSERT(m_world == pair->m_body1->GetWorld());
 	dgMatrix matrix(pair->m_body0->m_matrix * pair->m_body1->m_matrix.Inverse());
 	pair->m_body0->GetCollision()->CalcAABBSimd(matrix, p0, p1);
 
@@ -489,17 +489,17 @@ void dgCollisionScene::CollidePairSimd(
 		if (dgOverlapTestSimd(me->m_minBox, me->m_maxBox, p0, p1)) {
 
 			if (!me->m_left) {
-				_ASSERTE(!me->m_right);
+				NEWTON_ASSERT(!me->m_right);
 				const dgProxy *const sceneProxy = (const dgProxy *)me;
 				m_world->SceneContactsSimd(*sceneProxy, pair, proxy);
 			} else {
-				_ASSERTE(me->m_left);
-				_ASSERTE(stack < dgInt32(sizeof(stackPool) / sizeof(dgNode *)));
+				NEWTON_ASSERT(me->m_left);
+				NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(dgNode *)));
 				stackPool[stack] = me->m_left;
 				stack++;
 
-				_ASSERTE(me->m_right);
-				_ASSERTE(stack < dgInt32(sizeof(stackPool) / sizeof(dgNode *)));
+				NEWTON_ASSERT(me->m_right);
+				NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(dgNode *)));
 				stackPool[stack] = me->m_right;
 				stack++;
 			}
@@ -511,13 +511,13 @@ void dgCollisionScene::CollidePair(dgCollidingPairCollector::dgPair *const pair,
                                    dgCollisionParamProxy &proxy) const {
 	const dgNode *stackPool[DG_SCENE_MAX_STACK_DEPTH];
 
-	_ASSERTE(pair->m_body1->GetCollision() == this);
-	_ASSERTE(
+	NEWTON_ASSERT(pair->m_body1->GetCollision() == this);
+	NEWTON_ASSERT(
 	    pair->m_body1->GetCollision()->IsType(dgCollision::dgCollisionScene_RTTI));
 
 	dgVector p0;
 	dgVector p1;
-	_ASSERTE(m_world == pair->m_body1->GetWorld());
+	NEWTON_ASSERT(m_world == pair->m_body1->GetWorld());
 	dgMatrix matrix(pair->m_body0->m_matrix * pair->m_body1->m_matrix.Inverse());
 	pair->m_body0->GetCollision()->CalcAABB(matrix, p0, p1);
 
@@ -530,17 +530,17 @@ void dgCollisionScene::CollidePair(dgCollidingPairCollector::dgPair *const pair,
 		if (dgOverlapTest(me->m_minBox, me->m_maxBox, p0, p1)) {
 
 			if (!me->m_left) {
-				_ASSERTE(!me->m_right);
+				NEWTON_ASSERT(!me->m_right);
 				const dgProxy *const sceneProxy = (const dgProxy *)me;
 				m_world->SceneContacts(*sceneProxy, pair, proxy);
 			} else {
-				_ASSERTE(me->m_left);
-				_ASSERTE(stack < dgInt32(sizeof(stackPool) / sizeof(dgNode *)));
+				NEWTON_ASSERT(me->m_left);
+				NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(dgNode *)));
 				stackPool[stack] = me->m_left;
 				stack++;
 
-				_ASSERTE(me->m_right);
-				_ASSERTE(stack < dgInt32(sizeof(stackPool) / sizeof(dgNode *)));
+				NEWTON_ASSERT(me->m_right);
+				NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(dgNode *)));
 				stackPool[stack] = me->m_right;
 				stack++;
 			}
@@ -549,8 +549,8 @@ void dgCollisionScene::CollidePair(dgCollidingPairCollector::dgPair *const pair,
 }
 
 void dgCollisionScene::ImproveNodeFitness(dgNode *const node) {
-	_ASSERTE(node->m_left);
-	_ASSERTE(node->m_right);
+	NEWTON_ASSERT(node->m_left);
+	NEWTON_ASSERT(node->m_right);
 
 	if (node->m_parent) {
 		if (node->m_parent->m_left == node) {
@@ -575,7 +575,7 @@ void dgCollisionScene::ImproveNodeFitness(dgNode *const node) {
 					if (parent->m_parent->m_left == parent) {
 						parent->m_parent->m_left = node;
 					} else {
-						_ASSERTE(parent->m_parent->m_right == parent);
+						NEWTON_ASSERT(parent->m_parent->m_right == parent);
 						parent->m_parent->m_right = node;
 					}
 				} else {
@@ -600,7 +600,7 @@ void dgCollisionScene::ImproveNodeFitness(dgNode *const node) {
 					if (parent->m_parent->m_left == parent) {
 						parent->m_parent->m_left = node;
 					} else {
-						_ASSERTE(parent->m_parent->m_right == parent);
+						NEWTON_ASSERT(parent->m_parent->m_right == parent);
 						parent->m_parent->m_right = node;
 					}
 				} else {
@@ -639,7 +639,7 @@ void dgCollisionScene::ImproveNodeFitness(dgNode *const node) {
 					if (parent->m_parent->m_left == parent) {
 						parent->m_parent->m_left = node;
 					} else {
-						_ASSERTE(parent->m_parent->m_right == parent);
+						NEWTON_ASSERT(parent->m_parent->m_right == parent);
 						parent->m_parent->m_right = node;
 					}
 				} else {
@@ -664,7 +664,7 @@ void dgCollisionScene::ImproveNodeFitness(dgNode *const node) {
 					if (parent->m_parent->m_left == parent) {
 						parent->m_parent->m_left = node;
 					} else {
-						_ASSERTE(parent->m_parent->m_right == parent);
+						NEWTON_ASSERT(parent->m_parent->m_right == parent);
 						parent->m_parent->m_right = node;
 					}
 				} else {
@@ -683,7 +683,7 @@ void dgCollisionScene::ImproveNodeFitness(dgNode *const node) {
 		}
 	}
 
-	_ASSERTE(!m_rootNode->m_parent);
+	NEWTON_ASSERT(!m_rootNode->m_parent);
 }
 
 void dgCollisionScene::ImproveTotalFitness() {

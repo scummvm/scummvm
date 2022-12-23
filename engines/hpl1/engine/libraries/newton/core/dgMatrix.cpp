@@ -58,7 +58,7 @@ dgMatrix::dgMatrix(const dgQuaternion &rotation, const dgVector &position) {
 
 #ifdef _DEBUG
 	dgFloat32 w2 = dgFloat32(2.0f) * rotation.m_q0 * rotation.m_q0;
-	_ASSERTE(dgAbsf(w2 + x2 + y2 + z2 - dgFloat32(2.0f)) < dgFloat32(1.0e-3f));
+	NEWTON_ASSERT(dgAbsf(w2 + x2 + y2 + z2 - dgFloat32(2.0f)) < dgFloat32(1.0e-3f));
 #endif
 
 	dgFloat32 xy = dgFloat32(2.0f) * rotation.m_q1 * rotation.m_q2;
@@ -263,7 +263,7 @@ dgMatrix dgMatrix::Inverse4x4() const {
 					break;
 				}
 			}
-			_ASSERTE(j < 4);
+			NEWTON_ASSERT(j < 4);
 			for (dgInt32 k = 0; k < 4; k ++) {
 				tmp[i][k] += tmp[j][k];
 				inv[i][k] += inv[j][k];
@@ -323,9 +323,9 @@ dgMatrix dgMatrix::Symetric3by3Inverse() const {
 	             dgFloat32(1.0f)));
 
 	dgMatrix test(matInv * mat);
-	_ASSERTE(dgAbsf(test[0][0] - dgFloat32(1.0f)) < dgFloat32(0.01f));
-	_ASSERTE(dgAbsf(test[1][1] - dgFloat32(1.0f)) < dgFloat32(0.01f));
-	_ASSERTE(dgAbsf(test[2][2] - dgFloat32(1.0f)) < dgFloat32(0.01f));
+	NEWTON_ASSERT(dgAbsf(test[0][0] - dgFloat32(1.0f)) < dgFloat32(0.01f));
+	NEWTON_ASSERT(dgAbsf(test[1][1] - dgFloat32(1.0f)) < dgFloat32(0.01f));
+	NEWTON_ASSERT(dgAbsf(test[2][2] - dgFloat32(1.0f)) < dgFloat32(0.01f));
 #endif
 
 	return dgMatrix(
@@ -347,7 +347,7 @@ dgVector dgMatrix::CalcPitchYawRoll() const {
 	dgFloat32 yaw =
 	    dgAsin(-ClampValue(matrix[0][2], dgFloat32(-0.999999f), dgFloat32(0.999999f)));
 
-	_ASSERTE(dgCheckFloat(yaw));
+	NEWTON_ASSERT(dgCheckFloat(yaw));
 	if (matrix[0][2] < minSin) {
 		if (matrix[0][2] > (-minSin)) {
 			roll = dgAtan2(matrix[0][1], matrix[0][0]);
@@ -364,7 +364,7 @@ dgVector dgMatrix::CalcPitchYawRoll() const {
 	for (dgInt32 i = 0; i < 3; i++) {
 		for (dgInt32 j = 0; j < 3; j++) {
 			dgFloat32 error = dgAbsf(m[i][j] - matrix[i][j]);
-			_ASSERTE(error < 5.0e-2f);
+			NEWTON_ASSERT(error < 5.0e-2f);
 		}
 	}
 #endif
@@ -415,9 +415,9 @@ void dgMatrix::EigenVectors (dgVector &eigenValues, const dgMatrix& initialGuess
         dgFloat32 sm = dgAbsf(mat[0][1]) + dgAbsf(mat[0][2]) + dgAbsf(mat[1][2]);
 
         if (sm < dgFloat32 (1.0e-6f)) {
-            _ASSERTE (dgAbsf((eigenVectors.m_front % eigenVectors.m_front) - dgFloat32(1.0f)) < dgEPSILON);
-            _ASSERTE (dgAbsf((eigenVectors.m_up % eigenVectors.m_up) - dgFloat32(1.0f)) < dgEPSILON);
-            _ASSERTE (dgAbsf((eigenVectors.m_right % eigenVectors.m_right) - dgFloat32(1.0f)) < dgEPSILON);
+            NEWTON_ASSERT (dgAbsf((eigenVectors.m_front % eigenVectors.m_front) - dgFloat32(1.0f)) < dgEPSILON);
+            NEWTON_ASSERT (dgAbsf((eigenVectors.m_up % eigenVectors.m_up) - dgFloat32(1.0f)) < dgEPSILON);
+            NEWTON_ASSERT (dgAbsf((eigenVectors.m_right % eigenVectors.m_right) - dgFloat32(1.0f)) < dgEPSILON);
 
             // order the eigenvalue vectors
             dgVector tmp (eigenVectors.m_front * eigenVectors.m_up);
@@ -569,9 +569,9 @@ void dgMatrix::EigenVectors(dgVector &eigenValues, const dgMatrix &initialGuess)
 		dgFloat32 sm = dgAbsf(mat[0][1]) + dgAbsf(mat[0][2]) + dgAbsf(mat[1][2]);
 
 		if (sm < dgFloat32(1.0e-6f)) {
-			_ASSERTE(dgAbsf((eigenVectors.m_front % eigenVectors.m_front) - dgFloat32(1.0f)) < dgEPSILON);
-			_ASSERTE(dgAbsf((eigenVectors.m_up % eigenVectors.m_up) - dgFloat32(1.0f)) < dgEPSILON);
-			_ASSERTE(dgAbsf((eigenVectors.m_right % eigenVectors.m_right) - dgFloat32(1.0f)) < dgEPSILON);
+			NEWTON_ASSERT(dgAbsf((eigenVectors.m_front % eigenVectors.m_front) - dgFloat32(1.0f)) < dgEPSILON);
+			NEWTON_ASSERT(dgAbsf((eigenVectors.m_up % eigenVectors.m_up) - dgFloat32(1.0f)) < dgEPSILON);
+			NEWTON_ASSERT(dgAbsf((eigenVectors.m_right % eigenVectors.m_right) - dgFloat32(1.0f)) < dgEPSILON);
 
 			// order the eigenvalue vectors
 			dgVector tmp(eigenVectors.m_front * eigenVectors.m_up);
