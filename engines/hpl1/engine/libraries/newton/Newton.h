@@ -22,6 +22,8 @@
 #ifndef __NEWTON_H_INCLUDED__
 #define __NEWTON_H_INCLUDED__
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/scummsys.h"
 
 #define NEWTON_MAJOR_VERSION 2
 #define NEWTON_MINOR_VERSION 36
@@ -596,7 +598,7 @@ NEWTON_API void NewtonCollisionGetInfo(const NewtonCollision *const collision, N
 //
 // **********************************************************************************************
 NEWTON_API NewtonCollision *NewtonCreateHeightFieldCollision(NewtonWorld *const newtonWorld, int width, int height, int gridsDiagonals,
-        const unsigned short *const elevationMap, const char *const attributeMap,
+        const unsigned short *const elevationMap, const int8 *const attributeMap,
         dFloat horizontalScale, dFloat verticalScale, int shapeID);
 NEWTON_API void NewtonHeightFieldSetUserRayCastCallback(NewtonCollision *const treeCollision, NewtonHeightFieldRayCastCallback rayHitCallback);
 

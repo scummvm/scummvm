@@ -22,6 +22,9 @@
 #ifndef AFX_DGTYPES__42YH_HY78GT_YHJ63Y__INCLUDED_
 #define AFX_DGTYPES__42YH_HY78GT_YHJ63Y__INCLUDED_
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/scummsys.h"
+
 #include <ctype.h>
 #include <math.h>
 #include <new>
@@ -144,18 +147,17 @@
 #define DG_GCC_VECTOR_ALIGMENT __attribute__((aligned(16)))
 #endif
 
-typedef char dgInt8;
-typedef unsigned char dgUnsigned8;
+typedef int8 dgInt8;
+typedef uint8 dgUnsigned8;
 
-typedef short dgInt16;
-typedef unsigned short dgUnsigned16;
+typedef int16 dgInt16;
+typedef uint16 dgUnsigned16;
 
-typedef int dgInt32;
-typedef unsigned dgUnsigned32;
-typedef unsigned int dgUnsigned32;
+typedef int32 dgInt32;
+typedef uint32 dgUnsigned32;
 
-typedef long long dgInt64;
-typedef unsigned long long dgUnsigned64;
+typedef int64 dgInt64;
+typedef uint64 dgUnsigned64;
 
 typedef double dgFloat64;
 

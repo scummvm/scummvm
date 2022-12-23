@@ -3710,7 +3710,7 @@ int NewtonTreeCollisionGetVertexListIndexListInAABB(
 NewtonCollision *NewtonCreateHeightFieldCollision(
     NewtonWorld *const newtonWorld, int width, int height,
     int cellsDiagonals, const unsigned short *const elevationMap,
-    const char *const atributeMap, dFloat horizontalScale, dFloat verticalScale,
+    const int8 *const atributeMap, dFloat horizontalScale, dFloat verticalScale,
     int shapeID) {
 	Newton *world;
 	dgCollision *collision;
