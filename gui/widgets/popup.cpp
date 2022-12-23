@@ -58,6 +58,15 @@ void PopUpDialog::open() {
 
 	// Calculate real popup dimensions
 	_h = _entries.size() * _lineHeight + 2;
+	_w = 0;
+
+	for (uint i = 0; i < _entries.size(); i++) {
+		int width = g_gui.getStringWidth(_entries[i]);
+
+		if (width > _w)
+			_w = width;
+	}
+
 
 	_entriesPerColumn = 1;
 
@@ -65,14 +74,13 @@ void PopUpDialog::open() {
 	// FIXME - OSystem should send out notification messages when the screen
 	// resolution changes... we could generalize CommandReceiver and CommandSender.
 
+	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
 	// HACK: For now, we do not do scrolling. Instead, we draw the dialog
 	// in two columns if it's too tall.
 
 	if (_h >= screenH) {
-		const int screenW = g_system->getOverlayWidth();
-
 		_twoColumns = true;
 		_entriesPerColumn = _entries.size() / 2;
 
@@ -80,15 +88,6 @@ void PopUpDialog::open() {
 			_entriesPerColumn++;
 
 		_h = _entriesPerColumn * _lineHeight + 2;
-		_w = 0;
-
-		for (uint i = 0; i < _entries.size(); i++) {
-			int width = g_gui.getStringWidth(_entries[i]);
-
-			if (width > _w)
-				_w = width;
-		}
-
 		_w = 2 * _w + 10;
 
 		if (!(_w & 1))
@@ -99,14 +98,18 @@ void PopUpDialog::open() {
 			_y = _boss->getAbsY() - (_selection - _entriesPerColumn) * _lineHeight;
 		}
 
-		if (_w >= screenW)
-			_w = screenW - 1;
-		if (_x < 0)
-			_x = 0;
-		if (_x + _w >= screenW)
-			_x = screenW - 1 - _w;
-	} else
+	} else {
 		_twoColumns = false;
+
+		_w = MAX<uint16>(_boss->getWidth(), _w + 20);
+	}
+
+	if (_w >= screenW)
+		_w = screenW - 1;
+	if (_x < 0)
+		_x = 0;
+	if (_x + _w >= screenW)
+		_x = screenW - 1 - _w;
 
 	if (_h >= screenH)
 		_h = screenH - 1;
@@ -413,7 +416,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 		g_gui.theme()->drawText(
 			r2,
 			name, hilite ? ThemeEngine::kStateHighlight : ThemeEngine::kStateEnabled,
-			alignment, ThemeEngine::kTextInversionNone, pad
+			alignment, ThemeEngine::kTextInversionNone, pad, false
 		);
 	}
 }
