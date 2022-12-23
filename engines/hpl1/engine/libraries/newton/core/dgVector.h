@@ -297,7 +297,6 @@ DG_INLINE dgVector::dgVector(const simd_type &val) {
 
 constexpr DG_INLINE dgVector::dgVector(dgFloat32 x, dgFloat32 y, dgFloat32 z, dgFloat32 w)
 	: dgTemplateVector<dgFloat32>(x, y, z, w) {
-	_ASSERTE(dgCheckVector((*this)));
 }
 
 DG_INLINE dgFloat32 dgVector::DotProductSimd(const dgVector &A) const {
