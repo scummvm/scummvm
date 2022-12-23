@@ -219,7 +219,7 @@ class dgBigVector;
 #endif
 #endif
 
-#define NEWTON_ASSERT(x) ((void)(x))
+#define NEWTON_ASSERT(x)
 
 DG_INLINE dgInt32 exp_2(dgInt32 x) {
 	dgInt32 exp;
