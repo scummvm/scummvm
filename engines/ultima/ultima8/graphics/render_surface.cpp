@@ -336,62 +336,8 @@ void RenderSurface::Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) {
 // Desc: Draw a (non-antialiased) line from (sx,sy) to (ex,ey) with color rgb
 //
 void RenderSurface::DrawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey) {
-	if (sy == ey) {
-		int w;
-		if (sx < ex) {
-			w = ex - sx + 1;
-		} else {
-			w = sx - ex + 1;
-			sx = ex;
-		}
-		Fill32(rgb, sx, sy, w, 1);
-	} else if (sx == ex) {
-		int h;
-		if (sy < ey) {
-			h = ey - sy + 1;
-		} else {
-			h = sy - ey + 1;
-			sy = ey;
-		}
-		Fill32(rgb, sx, sy, 1, h);
-	} else {
-		int32 t;
-		bool steep = ABS(ey - sy) > ABS(ex - sx);
-		if (steep) {
-			t = sx;
-			sx = sy;
-			sy = t;
-			t = ex;
-			ex = ey;
-			ey = t;
-		}
-		if (sx > ex) {
-			t = sx;
-			sx = ex;
-			ex = t;
-			t = sy;
-			sy = ey;
-			ey = t;
-		}
-		int deltax = ex - sx;
-		int deltay = ABS(ey - sy);
-		int error = -deltax / 2;
-		int y = sy;
-		int ystep = (sy < ey) ? 1 : -1;
-		for (int x = sx; x <= ex; ++x) {
-			// TODO: don't use Fill32 here; it's too slow
-			if (steep) {
-				Fill32(rgb, y, x, 1, 1);
-			} else {
-				Fill32(rgb, x, y, 1, 1);
-			}
-			error += deltay;
-			if (error > 0) {
-				y += ystep;
-				error -= deltax;
-			}
-		}
-	}
+	rgb = _surface->format.RGBToColor((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
+	_surface->drawLine(sx + _ox, sy + _oy, ex + _ox, ey + _oy, rgb);
 }
 
 //

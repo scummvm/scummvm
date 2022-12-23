@@ -114,10 +114,10 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		color = HIGHLIGHT_COLOR;
 
 	// Draw the border
-	surf->Fill32(color, 0, 0, _dims.width(), 1);
-	surf->Fill32(color, 0, 1, 1, _dims.height());
-	surf->Fill32(color, 1, _dims.bottom - 1, _dims.width(), 1);
-	surf->Fill32(color, _dims.right - 1, 1, 1, _dims.height());
+	surf->DrawLine32(color, _dims.left, _dims.top, _dims.right - 1, _dims.top);
+	surf->DrawLine32(color, _dims.left, _dims.top, _dims.left, _dims.bottom - 1);
+	surf->DrawLine32(color, _dims.left, _dims.bottom - 1, _dims.right - 1, _dims.bottom - 1);
+	surf->DrawLine32(color, _dims.right -1, _dims.top, _dims.right - 1, _dims.bottom - 1);
 
 	// Dimensions minus border
 	Common::Rect dims(_dims.left, _dims.top, _dims.right, _dims.bottom);
@@ -169,10 +169,10 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	int32 ay = _ay - sy;
 
 	// Paint the avatar position marker
-	surf->Fill32(color, 1 + ax - 2, 1 + ay + 0, 2, 1);
-	surf->Fill32(color, 1 + ax + 0, 1 + ay - 2, 1, 2);
-	surf->Fill32(color, 1 + ax + 1, 1 + ay + 0, 2, 1);
-	surf->Fill32(color, 1 + ax + 0, 1 + ay + 1, 1, 2);
+	surf->DrawLine32(color, ax - 1, ay + 1, ax, ay + 1);
+	surf->DrawLine32(color, ax + 1, ay - 1, ax + 1, ay);
+	surf->DrawLine32(color, ax + 2, ay + 1, ax + 3, ay + 1);
+	surf->DrawLine32(color, ax + 1, ay + 2, ax + 1, ay + 3);
 }
 
 Gump *MiniMapGump::onMouseDown(int button, int32 mx, int32 my) {
