@@ -64,6 +64,7 @@ enum {
 	kDrillerNoRig = 0,
 	kDrillerRigInPlace = 1,
 	kDrillerRigOutOfPlace = 2,
+	kDrillerRigNoGas = 3
 };
 
 DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
@@ -687,6 +688,74 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 }
 
 void DrillerEngine::drawInfoMenu() {
+
+	uint32 color = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+	surface->fillRect(_fullscreenViewArea, color);
+
+	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+	surface->fillRect(_viewArea, black);
+
+	color = _renderMode == Common::kRenderCGA ? 1 : 14;
+	uint8 r, g, b;
+
+	_gfx->readFromPalette(color, r, g, b);
+	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
+	drawStringInSurface(Common::String::format("%10s : %s", "sector", _currentArea->_name.c_str()), 69, 25, front, black, surface);
+	Common::String rigStatus;
+	Common::String gasFound;
+	Common::String perTapped;
+	Common::String gasTapped;
+
+	switch (_drillStatusByArea[_currentArea->getAreaID()]) {
+		case kDrillerNoRig:
+			rigStatus = "Unpositioned";
+			gasFound = "-";
+			perTapped = "-";
+			gasTapped = "-";
+			break;
+		case kDrillerRigInPlace:
+		case kDrillerRigOutOfPlace:
+			rigStatus = "Positioned";
+			gasFound = Common::String::format("%d CFT", _drillMaxScoreByArea[_currentArea->getAreaID()]);
+			perTapped = Common::String::format("%d %%", _drillSuccessByArea[_currentArea->getAreaID()]);
+			gasTapped = Common::String::format("%d", uint32(_drillSuccessByArea[_currentArea->getAreaID()] * _drillMaxScoreByArea[_currentArea->getAreaID()]) / 100);
+			break;
+		case kDrillerRigNoGas:
+			rigStatus = "Positioned";
+			gasFound = "none";
+			perTapped = "none";
+			gasTapped = "zero";
+			break;
+		default:
+			error("Invalid drill status");
+			break;
+	}
+
+	drawStringInSurface(Common::String::format("%10s : %s", "rig status", rigStatus.c_str()), 69, 33, front, black, surface);
+	drawStringInSurface(Common::String::format("%10s : %s", "gas found", gasFound.c_str()), 69, 41, front, black, surface);
+	drawStringInSurface(Common::String::format("%10s : %s", "% tapped", perTapped.c_str()), 69, 49, front, black, surface);
+	drawStringInSurface(Common::String::format("%10s : %s", "gas tapped", gasTapped.c_str()), 69, 57, front, black, surface);
+
+	drawStringInSurface(Common::String::format("%13s : %d", "total sectors", 18), 84, 73, front, black, surface);
+	drawStringInSurface(Common::String::format("%13s : %d", "safe sectors", _gameStateVars[32]), 84, 81, front, black, surface);
+
+	_uiTexture->update(surface);
+
+
+	_gfx->setViewport(_fullscreenViewArea);
+	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
+	_gfx->setViewport(_viewArea);
+
+	_gfx->flipBuffer();
+	g_system->updateScreen();
+
+	g_system->delayMillis(10000);
+
+	surface->free();
+	delete surface;
 }
 
 Math::Vector3d getProjectionToPlane(const Math::Vector3d &vect, const Math::Vector3d normal) {
@@ -742,6 +811,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 		addDrill(drill, success > 0);
 		if (success <= 0) {
 			insertTemporaryMessage(_messagesList[9], _countdown - 4);
+			_drillStatusByArea[_currentArea->getAreaID()] = kDrillerRigNoGas;
 			return;
 		}
 		Common::String maxScoreMessage = _messagesList[5];
@@ -753,8 +823,8 @@ void DrillerEngine::pressedKey(const int keycode) {
 		while (successMessage.size() < 14)
 			successMessage += " ";
 		insertTemporaryMessage(successMessage, _countdown - 6);
-		_drillScoreByArea[_currentArea->getAreaID()] = uint32(maxScore * success) / 100;
-		_gameStateVars[k8bitVariableScore] += _drillScoreByArea[_currentArea->getAreaID()];
+		_drillSuccessByArea[_currentArea->getAreaID()] = uint32(success);
+		_gameStateVars[k8bitVariableScore] += uint32(maxScore * uint32(success)) / 100;
 
 		if (success >= 50.0) {
 			_drillStatusByArea[_currentArea->getAreaID()] = kDrillerRigInPlace;
@@ -796,8 +866,11 @@ void DrillerEngine::pressedKey(const int keycode) {
 		}
 		removeDrill(_currentArea);
 		insertTemporaryMessage(_messagesList[10], _countdown - 2);
-
-		_gameStateVars[k8bitVariableScore] -= _drillScoreByArea[_currentArea->getAreaID()];
+		int maxScore = _drillMaxScoreByArea[_currentArea->getAreaID()];
+		uint32 success = _drillSuccessByArea[_currentArea->getAreaID()];
+		uint32 scoreToRemove = uint32(maxScore * success) / 100;
+		assert(scoreToRemove <= uint32(_gameStateVars[k8bitVariableScore]));
+		_gameStateVars[k8bitVariableScore] -= scoreToRemove;
 	}
 }
 
@@ -1005,7 +1078,7 @@ void DrillerEngine::initGameState() {
 		if (it._key != 255) {
 			_drillMaxScoreByArea[it._key] = (10 + _rnd->getRandomNumber(89)) * 1000;
 		}
-		_drillScoreByArea[it._key] = 0;
+		_drillSuccessByArea[it._key] = 0;
 	}
 
 	_gameStateVars[k8bitVariableEnergy] = _initialTankEnergy;
@@ -1078,7 +1151,7 @@ Common::Error DrillerEngine::saveGameStreamExtended(Common::WriteStream *stream,
 		stream->writeUint16LE(it._key);
 		stream->writeUint32LE(_drillStatusByArea[it._key]);
 		stream->writeUint32LE(_drillMaxScoreByArea[it._key]);
-		stream->writeUint32LE(_drillScoreByArea[it._key]);
+		stream->writeUint32LE(_drillSuccessByArea[it._key]);
 	}
 
 	return Common::kNoError;
@@ -1095,7 +1168,7 @@ Common::Error DrillerEngine::loadGameStreamExtended(Common::SeekableReadStream *
 				removeDrill(_areaMap[key]);
 
 		_drillMaxScoreByArea[key] = stream->readUint32LE();
-		_drillScoreByArea[key] = stream->readUint32LE();
+		_drillSuccessByArea[key] = stream->readUint32LE();
 	}
 
 	return Common::kNoError;

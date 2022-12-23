@@ -357,7 +357,7 @@ public:
 
 	Common::HashMap<uint16, uint32> _drillStatusByArea;
 	Common::HashMap<uint16, uint32> _drillMaxScoreByArea;
-	Common::HashMap<uint16, uint32> _drillScoreByArea;
+	Common::HashMap<uint16, uint32> _drillSuccessByArea;
 
 	void initGameState() override;
 	bool checkIfGameEnded() override;
