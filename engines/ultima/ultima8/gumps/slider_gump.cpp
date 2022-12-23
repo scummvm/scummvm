@@ -68,7 +68,7 @@ static const int sliderframe = 0;
 static const int slidery = 17;
 static const int sliderminx = 55;
 static const int slidermaxx = 130;
-static const int labelx = 161;
+static const int labelx = 18;
 static const int labely = 26;
 static const int labelfont = 0;
 
@@ -135,12 +135,12 @@ void SliderGump::InitGump(Gump *newparent, bool take_focus) {
 	FrameID button_up(GameData::GUMPS, okshape, 0);
 	FrameID button_down(GameData::GUMPS, okshape, 1);
 
-	widget = new ButtonWidget(14, 17, button_up, button_down);
+	widget = new ButtonWidget(158, 17, button_up, button_down);
 	widget->SetIndex(OK_INDEX);
 	widget->InitGump(this);
 
 	FrameID buttonleft_up(GameData::GUMPS, leftshape, 0);
-	FrameID buttonleft_down(GameData::GUMPS, leftshape, 1);
+	FrameID buttonleft_down(GameData::GUMPS, leftshape, 0);
 
 	widget = new ButtonWidget(36, 17, buttonleft_up, buttonleft_down);
 	widget->SetIndex(LEFT_INDEX);
@@ -148,7 +148,7 @@ void SliderGump::InitGump(Gump *newparent, bool take_focus) {
 
 
 	FrameID buttonright_up(GameData::GUMPS, rightshape, 0);
-	FrameID buttonright_down(GameData::GUMPS, rightshape, 1);
+	FrameID buttonright_down(GameData::GUMPS, rightshape, 0);
 
 	widget = new ButtonWidget(141, 17, buttonright_up, buttonright_down);
 	widget->SetIndex(RIGHT_INDEX);
