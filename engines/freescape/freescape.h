@@ -272,6 +272,7 @@ public:
 	int _screenW, _screenH;
 	Renderer *_gfx;
 	Graphics::FrameLimiter *_frameLimiter;
+	bool _vsyncEnabled;
 	Common::RenderMode _renderMode;
 	ColorMap _colorMap;
 	int _underFireFrames;

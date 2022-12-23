@@ -131,6 +131,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_ticks = 0;
 	_lastTick = -1;
 	_frameLimiter = nullptr;
+	_vsyncEnabled = false;
 
 	_underFireFrames = 0;
 	_shootingFrames = 0;
@@ -242,7 +243,7 @@ void FreescapeEngine::checkSensors() {
 		if (playerDetected) {
 			if (_ticks % sensor->_firingInterval == 0) {
 				if (_underFireFrames <= 0)
-					_underFireFrames = _gfx->_isAccelerated ? 60 : 4;
+					_underFireFrames = 4;
 				takeDamageFromSensor();
 			}
 		}
@@ -391,6 +392,7 @@ void FreescapeEngine::processInput() {
 				_flyMode = _noClipMode;
 				break;
 			case Common::KEYCODE_ESCAPE:
+				drawFrame();
 				_savedScreen = _gfx->getScreenshot();
 				_gfx->setViewport(_fullscreenViewArea);
 				openMainMenuDialog();
@@ -470,6 +472,7 @@ void FreescapeEngine::processInput() {
 }
 
 Common::Error FreescapeEngine::run() {
+	_vsyncEnabled = g_system->getFeatureState(OSystem::kFeatureVSync);
 	_frameLimiter = new Graphics::FrameLimiter(g_system, ConfMan.getInt("engine_speed"));
 	// Initialize graphics
 	_screenW = g_system->getWidth();
@@ -538,18 +541,19 @@ Common::Error FreescapeEngine::run() {
 			gotoArea(_startArea, _startEntrance);
 			endGame = false;
 		}
+		processInput();
+		if (_demoMode)
+			generateDemoInput();
 
 		checkSensors();
 		drawFrame();
 
-		if (_demoMode)
-			generateDemoInput();
-
-		processInput();
 		_gfx->flipBuffer();
 		_frameLimiter->delayBeforeSwap();
 		g_system->updateScreen();
 		_frameLimiter->startFrame();
+		if (_vsyncEnabled) // if vsync is enabled, the framelimiter will not work
+			g_system->delayMillis(15); // try to target ~60 FPS
 		endGame = checkIfGameEnded();
 	}
 
