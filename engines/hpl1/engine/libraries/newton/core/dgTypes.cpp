@@ -176,7 +176,7 @@ dgCpuClass dgApi dgGetCpuType() {
 
 }
 
-#else
+#elif defined(HAVE_X86) || defined(HAVE_AMD64)
 /*  #define cpuid(func,ax,bx,cx,dx) __asm__ __volatile__ ("cpuid": "=a" (ax), "=b" (bx), "=c" (cx), "=d" (dx) : "a" (func)); */
 
 void cpuid(dgUnsigned32 op, dgUnsigned32 reg[4]) {
@@ -223,6 +223,14 @@ dgCpuClass dgApi dgGetCpuType() {
 
 	return dgNoSimdPresent;
 }
+
+#else // defined(HAVE_X86) || defined(HAVE_AMD64)
+
+dgCpuClass dgApi dgGetCpuType() {
+	return dgNoSimdPresent;
+}
+
+
 #endif
 
 static inline dgInt32 cmp_vertex(const dgFloat64 *const v1,
