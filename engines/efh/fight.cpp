@@ -1139,4 +1139,406 @@ bool EfhEngine::sub1CB27() {
 	return var4;
 }
 
+void EfhEngine::drawCombatScreen(int16 charId, bool whiteFl, bool forceDrawFl) {
+	debug("drawCombatScreen %d %s %s", charId, whiteFl ? "True" : "False", forceDrawFl ? "True" : "False");
+
+	for (uint counter = 0; counter < 2; ++counter) {
+		if (counter == 0 || forceDrawFl) {
+			drawMapWindow();
+			displayCenteredString("Combat", 128, 303, 9);
+			drawColoredRect(200, 112, 278, 132, 0);
+			displayCenteredString("'T' for Terrain", 128, 303, 117);
+			sub1C219("", 1, 0, false);
+			sub1C4CA(whiteFl);
+			displayCombatMenu(charId);
+			displayLowStatusScreen(false);
+		}
+
+		if (counter == 0 && forceDrawFl)
+			displayFctFullScreen();
+	}
+}
+
+void EfhEngine::getXPAndSearchCorpse(int16 charId, Common::String namePt1, Common::String namePt2, int16 monsterId) {
+	debug("getXPAndSearchCorpse %d %s%s %d", charId, namePt1.c_str(), namePt2.c_str(), monsterId);
+
+	int16 xpLevel = getXPLevel(_npcBuf[charId]._xp);
+	_npcBuf[charId]._xp += kEncounters[_mapMonsters[monsterId]._monsterRef]._xpGiven;
+
+	if (getXPLevel(_npcBuf[charId]._xp) > xpLevel) {
+		generateSound(15);
+		int16 var2 = getRandom(20) + getRandom(_npcBuf[charId]._infoScore[4]);
+		_npcBuf[charId]._hitPoints += var2;
+		_npcBuf[charId]._maxHP += var2;
+		_npcBuf[charId]._infoScore[0] += getRandom(3) - 1;
+		_npcBuf[charId]._infoScore[1] += getRandom(3) - 1;
+		_npcBuf[charId]._infoScore[2] += getRandom(3) - 1;
+		_npcBuf[charId]._infoScore[3] += getRandom(3) - 1;
+		_npcBuf[charId]._infoScore[4] += getRandom(3) - 1;
+	}
+
+	_messageToBePrinted += Common::String::format("  %s%s gains %d experience", namePt1.c_str(), namePt2.c_str(), kEncounters[_mapMonsters[monsterId]._monsterRef]._xpGiven);
+	if (!characterSearchesMonsterCorpse(charId, monsterId))
+		_messageToBePrinted += "!";
+}
+
+bool EfhEngine::characterSearchesMonsterCorpse(int16 charId, int16 monsterId) {
+	debug("characterSearchesMonsterCorpse %d %d", charId, monsterId);
+
+	int16 rndVal = getRandom(100);
+	if (kEncounters[_mapMonsters[monsterId]._monsterRef]._dropOccurrencePct < rndVal)
+		return false;
+
+	rndVal = getRandom(5) - 1;
+	int16 itemId = kEncounters[_mapMonsters[monsterId]._monsterRef]._dropItemId[rndVal];
+	if (itemId == -1)
+		return false;
+
+	if (!giveItemTo(charId, itemId, 0xFF))
+		return false;
+
+	_messageToBePrinted += Common::String::format(" and finds a %s!", _items[itemId]._name);
+	return true;
+}
+
+void EfhEngine::addReactionText(int16 id) {
+	debug("addReactionText %d", id);
+
+	int16 rand3 = getRandom(3);
+
+	switch (id) {
+	case 0:
+		switch (rand3) {
+		case 1:
+			_messageToBePrinted += Common::String::format("  %s%s reels from the blow!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		case 2:
+			_messageToBePrinted += Common::String::format("  %s%s sways from the attack!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		case 3:
+			_messageToBePrinted += Common::String::format("  %s%s looks dazed!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		default:
+			break;
+		}
+		break;
+	case 1:
+		switch (rand3) {
+		case 1:
+			_messageToBePrinted += Common::String::format("  %s%s cries out in agony!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		case 2:
+			_messageToBePrinted += Common::String::format("  %s%s screams from the abuse!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		case 3:
+			_messageToBePrinted += Common::String::format("  %s%s wails terribly!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		default:
+			break;
+		}
+		break;
+	case 2:
+		switch (rand3) {
+		case 1:
+			_messageToBePrinted += Common::String::format("  %s%s is staggering!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		case 2:
+			_messageToBePrinted += Common::String::format("  %s%s falters for a moment!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		case 3:
+			_messageToBePrinted += Common::String::format("  %s%s is stumbling about!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		default:
+			break;
+		}
+		break;
+	case 3:
+		switch (rand3) {
+		case 1:
+			_messageToBePrinted += Common::String::format("  %s%s winces from the pain!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		case 2:
+			_messageToBePrinted += Common::String::format("  %s%s cringes from the damage!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		case 3:
+			_messageToBePrinted += Common::String::format("  %s%s shrinks from the wound!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		default:
+			break;
+		}
+		break;
+	case 4:
+		switch (rand3) {
+		case 1:
+			_messageToBePrinted += Common::String::format("  %s%s screams!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		case 2:
+			_messageToBePrinted += Common::String::format("  %s%s bellows!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		case 3:
+			_messageToBePrinted += Common::String::format("  %s%s shrills!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		default:
+			break;
+		}
+		break;
+	case 5:
+		switch (rand3) {
+		case 1:
+			_messageToBePrinted += Common::String::format("  %s%s chortles!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		case 2:
+			_messageToBePrinted += Common::String::format("  %s%s seems amused!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		case 3:
+			_messageToBePrinted += Common::String::format("  %s%s looks concerned!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		default:
+			break;
+		}
+		break;
+	case 6:
+		switch (rand3) {
+		case 1:
+			_messageToBePrinted += Common::String::format("  %s%s laughs at the feeble attack!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		case 2:
+			_messageToBePrinted += Common::String::format("  %s%s smiles at the pathetic attack!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		case 3:
+			_messageToBePrinted += Common::String::format("  %s%s laughs at the ineffective assault!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+			break;
+		default:
+			break;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void EfhEngine::sub1C4CA(bool whiteFl) {
+	debug("sub1C4CA %s", whiteFl ? "True" : "False");
+
+	int16 textPosY = 20;
+	for (uint counter = 0; counter < 5; ++counter) {
+		if (_teamMonsterIdArray[counter] == -1)
+			continue;
+
+		int16 var6C = computeMonsterGroupDistance(_teamMonsterIdArray[counter]);
+		int16 var6E = countMonsterGroupMembers(counter);
+		if (whiteFl)
+			setTextColorWhite();
+		else
+			setTextColorGrey();
+
+		setTextPos(129, textPosY);
+		char buffer[80];
+		snprintf(buffer, 80, "%c)", 'A' + counter);
+		displayStringAtTextPos(buffer);
+		setTextColorRed();
+		int16 var1 = _mapMonsters[_teamMonsterIdArray[counter]]._possessivePronounSHL6 & 0x3F;
+		if (var1 <= 0x3D) {
+			snprintf(buffer, 80, "%d %s", var6E, kEncounters[_mapMonsters[_teamMonsterIdArray[counter]]._monsterRef]._name);
+			displayStringAtTextPos(buffer);
+			if (var6E > 1)
+				displayStringAtTextPos("s");
+		} else if (var1 == 0x3E) {
+			displayStringAtTextPos("(NOT DEFINED)");
+		} else if (var1 == 0x3F) {
+			Common::String stringToDisplay = _npcBuf[_mapMonsters[_teamMonsterIdArray[counter]]._field_1]._name;
+			displayStringAtTextPos(stringToDisplay);
+		}
+
+		setTextPos(228, textPosY);
+		if (unkFct_checkMonsterField8(counter, true)) {
+			_textColor = 0xE;
+			displayStringAtTextPos("Hostile");
+		} else {
+			_textColor = 0x2;
+			displayStringAtTextPos("Friendly");
+		}
+
+		setTextColorRed();
+		switch (var6C) {
+		case 1:
+			displayCenteredString("S", 290, 302, textPosY);
+			break;
+		case 2:
+			displayCenteredString("M", 290, 302, textPosY);
+			break;
+		case 3:
+			displayCenteredString("L", 290, 302, textPosY);
+			break;
+		default:
+			displayCenteredString("?", 290, 302, textPosY);
+			break;
+		}
+
+		textPosY += 9;
+	}
+}
+
+int16 EfhEngine::sub1DEC8(int16 groupNumber) {
+	debug("sub1DEC8 %d", groupNumber);
+
+	int16 var4 = -1;
+	int16 monsterId = _teamMonsterIdArray[groupNumber];
+
+	if (monsterId == -1)
+		return -1;
+
+	for (uint counter = 0; counter < 9; ++counter) {
+		if (isMonsterActive(groupNumber, counter)) {
+			var4 = counter;
+			break;
+		}
+	}
+
+	for (int16 counter = var4 + 1; counter < 9; ++counter) {
+		if (!isMonsterActive(groupNumber, counter))
+			continue;
+
+		if (_mapMonsters[monsterId]._pictureRef[var4] > _mapMonsters[monsterId]._pictureRef[counter])
+			var4 = counter;
+	}
+
+	if (_mapMonsters[monsterId]._pictureRef[var4] <= 0)
+		return -1;
+
+	return var4;
+}
+
+int16 EfhEngine::getCharacterScore(int16 charId, int16 itemId) {
+	debug("getCharacterScore %d %d", charId, itemId);
+
+	int16 totalScore = 0;
+	switch (_items[itemId]._range) {
+	case 0:
+		totalScore = _npcBuf[charId]._passiveScore[5] + _npcBuf[charId]._passiveScore[3] + _npcBuf[charId]._passiveScore[4];
+		totalScore += _npcBuf[charId]._infoScore[0] / 5;
+		totalScore += _npcBuf[charId]._infoScore[2] * 2,
+			totalScore += _npcBuf[charId]._infoScore[6] / 5;
+		totalScore += 2 * _npcBuf[charId]._infoScore[5] / 5;
+		break;
+	case 1:
+		totalScore = _npcBuf[charId]._passiveScore[3] + _npcBuf[charId]._passiveScore[4];
+		totalScore += _npcBuf[charId]._infoScore[2] * 2;
+		totalScore += _npcBuf[charId]._infoScore[1] / 5;
+		totalScore += _npcBuf[charId]._infoScore[3] / 5;
+		break;
+	case 2:
+	case 3:
+	case 4:
+		totalScore = _npcBuf[charId]._passiveScore[1];
+		totalScore += _npcBuf[charId]._infoScore[2] * 2;
+		totalScore += _npcBuf[charId]._infoScore[1] / 5;
+		totalScore += _npcBuf[charId]._infoScore[3] / 5;
+		totalScore += _npcBuf[charId]._infoScore[8] / 5;
+	default:
+		break;
+	}
+
+	int16 extraScore = 0;
+	switch (_items[itemId]._attackType) {
+	case 0:
+	case 1:
+	case 2:
+		if (itemId == 0x3F)
+			extraScore = _npcBuf[charId]._passiveScore[2];
+		else if (itemId == 0x41 || itemId == 0x42 || itemId == 0x6A || itemId == 0x6C || itemId == 0x6D)
+			extraScore = _npcBuf[charId]._passiveScore[0];
+		break;
+	case 3:
+	case 4:
+	case 6:
+		extraScore = _npcBuf[charId]._infoScore[7];
+		break;
+	case 5:
+	case 7:
+		extraScore = _npcBuf[charId]._infoScore[9];
+		break;
+	case 8:
+	case 9:
+		extraScore = _npcBuf[charId]._activeScore[12];
+		break;
+	case 10:
+		extraScore = _npcBuf[charId]._passiveScore[10];
+		break;
+	case 11:
+		extraScore = _npcBuf[charId]._passiveScore[6];
+		break;
+	case 12:
+		extraScore = _npcBuf[charId]._passiveScore[7];
+		break;
+	case 13:
+		extraScore = _npcBuf[charId]._passiveScore[8];
+		break;
+	case 14:
+		extraScore = _npcBuf[charId]._activeScore[13];
+		break;
+	case 15:
+		extraScore = _npcBuf[charId]._passiveScore[9];
+		break;
+	default:
+		break;
+	}
+
+	extraScore += _items[itemId].field_13;
+
+	int16 grandTotalScore = totalScore + extraScore;
+	if (grandTotalScore > 60)
+		grandTotalScore = 60;
+
+	int16 retVal = CLIP(grandTotalScore + 30, 5, 90);
+	return retVal;
+}
+
+bool EfhEngine::checkSpecialItemsOnCurrentPlace(int16 itemId) {
+	debug("checkSpecialItemsOnCurrentPlace %d", itemId);
+
+	switch (_techDataArr[_techId][_techDataId_MapPosX * 64 + _techDataId_MapPosY]) {
+	case 1:
+		if ((itemId < 0x58 || itemId > 0x68) && (itemId < 0x86 || itemId > 0x89) && (itemId < 0x74 || itemId > 0x76) && (itemId != 0x8C))
+			return true;
+		return false;
+	case 2:
+		if ((itemId < 0x61 || itemId > 0x63) && (itemId < 0x74 || itemId > 0x76) && (itemId < 0x86 || itemId > 0x89) && (itemId < 0x5B || itemId > 0x5E) && (itemId < 0x66 || itemId > 0x68) && (itemId != 0x8C))
+			return true;
+		return false;
+	default:
+		return true;
+	}
+}
+
+bool EfhEngine::hasAdequateDefense(int16 monsterId, uint8 attackType) {
+	debug("hasAdequateDefense %d %d", monsterId, attackType);
+
+	int16 itemId = _mapMonsters[monsterId]._itemId_Weapon;
+
+	if (_items[itemId].field_16 != 0)
+		return false;
+
+	return _items[itemId].field17_attackTypeDefense == attackType;
+}
+
+bool EfhEngine::hasAdequateDefense_2(int16 charId, uint8 attackType) {
+	debug("hasAdequateDefense_2 %d %d", charId, attackType);
+
+	int16 itemId = _npcBuf[charId]._unkItemId;
+
+	if (_items[itemId].field_16 == 0 && _items[itemId].field17_attackTypeDefense == attackType)
+		return true;
+
+	for (uint counter = 0; counter < 10; ++counter) {
+		if (_npcBuf[charId]._inventory[counter]._ref == 0x7FFF || _npcBuf[charId]._inventory[counter]._stat1 == 0x80)
+			continue;
+
+		itemId = _npcBuf[charId]._inventory[counter]._ref;
+		if (_items[itemId].field_16 == 0 && _items[itemId].field17_attackTypeDefense == attackType)
+			return true;
+	}
+	return false;
+}
+
 } // End of namespace Efh
