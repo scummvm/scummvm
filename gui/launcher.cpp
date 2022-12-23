@@ -96,20 +96,20 @@ enum {
 
 const GroupingMode groupingModes[] = {
 	// I18N: Group name for the game list
-	{"none",     _sc("None", "group"),      kGroupByNone},
+	{"none",     _sc("None", "group"),         nullptr,                 kGroupByNone},
 	// I18N: Group name for the game list, grouped by the first letter of the game title
-	{"initial",  _sc("First letter", "group"), kGroupByFirstLetter},
+	{"initial",  _sc("First letter", "group"), _sc("Initial", "group"), kGroupByFirstLetter},
 	// I18N: Group name for the game list, grouped by game engine
-	{"engine",   _sc("Engine", "group"),    kGroupByEngine},
+	{"engine",   _sc("Engine", "group"),       nullptr,                 kGroupByEngine},
 	// I18N: Group name for the game list, grouped by game series
-	{"series",   _sc("Series", "group"),    kGroupBySeries},
+	{"series",   _sc("Series", "group"),       nullptr,                 kGroupBySeries},
 	// I18N: Group name for the game list, grouped by game publisher
-	{"company",  _sc("Publisher", "group"), kGroupByCompany},
+	{"company",  _sc("Publisher", "group"),    nullptr,                 kGroupByCompany},
 	// I18N: Group name for the game list, grouped by language
-	{"language", _sc("Language", "group"),  kGroupByLanguage},
+	{"language", _sc("Language", "group"),     nullptr,                 kGroupByLanguage},
 	// I18N: Group name for the game list, grouped by game platform
-	{"platform", _sc("Platform", "group"),  kGroupByPlatform},
-	{nullptr, nullptr, kGroupByNone}
+	{"platform", _sc("Platform", "group"),     nullptr,                 kGroupByPlatform},
+	{nullptr, nullptr, nullptr, kGroupByNone}
 };
 
 #pragma mark -
@@ -207,9 +207,6 @@ LauncherDialog::~LauncherDialog() {
 
 void LauncherDialog::build() {
 #ifndef DISABLE_FANCY_THEMES
-	_logo = nullptr;
-
-#ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
 		_grpChooserDesc = nullptr;
 		_groupPic = new GraphicsWidget(this, _title + ".GroupPic", _("Select Group by"));
@@ -217,18 +214,26 @@ void LauncherDialog::build() {
 		_groupPic->useThemeTransparency(true);
 	} else
 #endif
-		_grpChooserDesc = new StaticTextWidget(this, Common::String(_title + ".laGroupPopupDesc"), Common::U32String(_("Group by: ")));
+		_grpChooserDesc = new StaticTextWidget(this, Common::String(_title + ".laGroupPopupDesc"), _("Group:"));
 
-	_grpChooserPopup = new PopUpWidget(this, Common::String(_title + ".laGroupPopup"), Common::U32String(_("Select a criteria to group the entries")), kSetGroupMethodCmd);
+	_grpChooserPopup = new PopUpWidget(this, Common::String(_title + ".laGroupPopup"), _("Select a criteria to group the entries"), kSetGroupMethodCmd);
 	Common::String grouping = ConfMan.get("grouping");
 	const GroupingMode *mode = groupingModes;
 	while (mode->name) {
-		_grpChooserPopup->appendEntry(_c(mode->description, "group"), mode->id);
+		if (mode->lowresDescription && g_system->getOverlayWidth() <= 320) {
+			_grpChooserPopup->appendEntry(_c(mode->lowresDescription, "group"), mode->id);
+		} else {
+			_grpChooserPopup->appendEntry(_c(mode->description, "group"), mode->id);
+		}
 		if (grouping == mode->name)
 			_groupBy = mode->id;
 		++mode;
 	}
 	_grpChooserPopup->setSelected(_groupBy);
+
+#ifndef DISABLE_FANCY_THEMES
+	_logo = nullptr;
+
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GraphicsWidget(this, _title + ".Logo");
 		_logo->useThemeTransparency(true);
@@ -236,11 +241,9 @@ void LauncherDialog::build() {
 
 		new StaticTextWidget(this, _title + ".Version", Common::U32String(gScummVMVersionDate));
 	} else
-		new StaticTextWidget(this, _title + ".Version", Common::U32String(gScummVMFullVersion));
-#else
-	// Show ScummVM version
-	new StaticTextWidget(this, _title + ".Version", Common::U32String(gScummVMFullVersion));
 #endif
+		new StaticTextWidget(this, _title + ".Version", Common::U32String(gScummVMFullVersion));
+
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
 		new ButtonWidget(this, _title + ".QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
 
@@ -793,7 +796,7 @@ void LauncherDialog::reflowLayout() {
 		}
 
 		if (!_grpChooserDesc)
-			_grpChooserDesc = new StaticTextWidget(this, _title + ".SearchDesc", _("Group by:"));
+			_grpChooserDesc = new StaticTextWidget(this, _title + ".SearchDesc", _("Group:"));
 
 		if (_groupPic) {
 			removeWidget(_groupPic);
