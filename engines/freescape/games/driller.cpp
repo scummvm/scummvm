@@ -677,17 +677,17 @@ void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 	int shield = _gameStateVars[k8bitVariableShield];
 
 	if (energy >= 0) {
-		Common::Rect backBar(43, 188, 105 - energy, 194);
+		Common::Rect backBar(45, 188, 109 - energy, 194);
 		surface->fillRect(backBar, back);
-		Common::Rect energyBar(105 - energy, 188, 106, 194);
+		Common::Rect energyBar(108 - energy, 188, 108, 194);
 		surface->fillRect(energyBar, front);
 	}
 
 	if (shield >= 0) {
-		Common::Rect backBar(43, 181, 106 - shield, 187);
+		Common::Rect backBar(45, 181, 109 - shield, 187);
 		surface->fillRect(backBar, back);
 
-		Common::Rect shieldBar(106 - shield, 181, 106, 187);
+		Common::Rect shieldBar(108 - shield, 181, 108, 187);
 		surface->fillRect(shieldBar, front);
 	}
 }
