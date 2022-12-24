@@ -28,7 +28,7 @@ namespace CreateProjectTool {
 
 class CodeBlocksProvider final : public ProjectProvider {
 public:
-	CodeBlocksProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version = 0);
+	CodeBlocksProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors, const int version = 0);
 
 protected:
 

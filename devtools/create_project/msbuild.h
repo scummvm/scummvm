@@ -28,7 +28,7 @@ namespace CreateProjectTool {
 
 class MSBuildProvider final : public MSVCProvider {
 public:
-	MSBuildProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion &msvc);
+	MSBuildProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors, const int version, const MSVCVersion &msvc);
 
 protected:
 	void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,

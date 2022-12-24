@@ -271,8 +271,8 @@ void XcodeProvider::addBuildFile(const std::string &id, const std::string &name,
 	_buildFile._flags = kSettingsSingleItem;
 }
 
-XcodeProvider::XcodeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
-	: ProjectProvider(global_warnings, project_warnings, version) {
+XcodeProvider::XcodeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors, const int version)
+	: ProjectProvider(global_warnings, project_warnings, global_errors, version) {
 	_rootSourceGroup = nullptr;
 }
 

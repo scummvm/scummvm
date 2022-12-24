@@ -34,7 +34,7 @@ namespace CreateProjectTool {
  */
 class CMakeProvider final : public ProjectProvider {
 public:
-	CMakeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version = 0);
+	CMakeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors, const int version = 0);
 
 protected:
 

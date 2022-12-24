@@ -31,8 +31,8 @@ namespace CreateProjectTool {
 // MSBuild Provider (Visual Studio 2010 and later)
 //////////////////////////////////////////////////////////////////////////
 
-MSBuildProvider::MSBuildProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion &msvc)
-	: MSVCProvider(global_warnings, project_warnings, version, msvc) {
+MSBuildProvider::MSBuildProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors, const int version, const MSVCVersion &msvc)
+	: MSVCProvider(global_warnings, project_warnings, global_errors, version, msvc) {
 
 	_archs.push_back(ARCH_X86);
 	_archs.push_back(ARCH_AMD64);
@@ -349,6 +349,10 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	for (StringList::const_iterator i = _globalWarnings.begin(); i != _globalWarnings.end(); ++i)
 		warnings += *i + ';';
 
+	std::string warningsAsErrors;
+	for (StringList::const_iterator i = _globalErrors.begin(); i != _globalErrors.end(); ++i)
+		warningsAsErrors += "/we\"" + (*i) + "\" ";
+
 	std::string definesList;
 	for (StringList::const_iterator i = defines.begin(); i != defines.end(); ++i)
 		definesList += *i + ';';
@@ -395,7 +399,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	           << "\t\t\t<MultiProcessorCompilation>true</MultiProcessorCompilation>\n"
 	           << "\t\t\t<ConformanceMode>true</ConformanceMode>\n"
 	           << "\t\t\t<ObjectFileName>$(IntDir)dists\\msvc\\%(RelativeDir)</ObjectFileName>\n"
-	           << "\t\t\t<AdditionalOptions>/utf-8 " << (_msvcVersion.version >= 15 ? "/Zc:__cplusplus " : "") << "%(AdditionalOptions)</AdditionalOptions>\n"
+			   << "\t\t\t<AdditionalOptions>/utf-8 " << (_msvcVersion.version >= 15 ? "/Zc:__cplusplus " : "") << warningsAsErrors << "%(AdditionalOptions)</AdditionalOptions>\n"
 	           << "\t\t</ClCompile>\n"
 	           << "\t\t<Link>\n"
 	           << "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n";

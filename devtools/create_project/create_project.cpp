@@ -452,6 +452,7 @@ int main(int argc, char *argv[]) {
 	// actually...). While in MSVC this is solely for disabling warnings.
 	// That is really not nice. We should consider a nicer way of doing this.
 	StringList globalWarnings;
+	StringList globalErrors;
 	std::map<std::string, StringList> projectWarnings;
 
 	CreateProjectTool::ProjectProvider *provider = nullptr;
@@ -470,7 +471,7 @@ int main(int argc, char *argv[]) {
 
 		addGCCWarnings(globalWarnings);
 
-		provider = new CreateProjectTool::CMakeProvider(globalWarnings, projectWarnings);
+		provider = new CreateProjectTool::CMakeProvider(globalWarnings, projectWarnings, globalErrors);
 
 		break;
 
@@ -482,7 +483,7 @@ int main(int argc, char *argv[]) {
 
 		addGCCWarnings(globalWarnings);
 
-		provider = new CreateProjectTool::CodeBlocksProvider(globalWarnings, projectWarnings);
+		provider = new CreateProjectTool::CodeBlocksProvider(globalWarnings, projectWarnings, globalErrors);
 
 		break;
 
@@ -613,6 +614,16 @@ int main(int argc, char *argv[]) {
 			globalWarnings.push_back("4577");
 		}
 
+		globalErrors.push_back("4701"); // potential use of uninitialized local variable
+		globalErrors.push_back("4703"); // potential use of uninitialized local pointer
+		globalErrors.push_back("4456"); // declaration hides previous local declaration
+		globalErrors.push_back("4003"); // not enough arguments for function-like macro invocation
+		globalErrors.push_back("4840"); // use of non-trivial class as an argument to a variadic function
+		globalErrors.push_back("4805"); // comparison of bool to non-bool, unsafe mix of bool and int in arithmetic or bitwise operation
+		globalErrors.push_back("4305"); // truncation of double to float or int to bool
+		globalErrors.push_back("4366"); // address taken of unaligned field
+		globalErrors.push_back("4315"); // unaligned field has constructor that expects to be aligned
+
 		projectWarnings["agi"].push_back("4510");
 		projectWarnings["agi"].push_back("4610");
 
@@ -631,7 +642,9 @@ int main(int argc, char *argv[]) {
 
 		projectWarnings["sci"].push_back("4373");
 
-		provider = new CreateProjectTool::MSBuildProvider(globalWarnings, projectWarnings, msvcVersion, *msvc);
+		projectWarnings["grim"].push_back("4611");
+
+		provider = new CreateProjectTool::MSBuildProvider(globalWarnings, projectWarnings, globalErrors, msvcVersion, *msvc);
 
 		break;
 
@@ -643,7 +656,7 @@ int main(int argc, char *argv[]) {
 
 		addGCCWarnings(globalWarnings);
 
-		provider = new CreateProjectTool::XcodeProvider(globalWarnings, projectWarnings);
+		provider = new CreateProjectTool::XcodeProvider(globalWarnings, projectWarnings, globalErrors);
 		break;
 	}
 
@@ -1528,8 +1541,8 @@ FileNode *scanFiles(const std::string &dir, const StringList &includeList, const
 //////////////////////////////////////////////////////////////////////////
 // Project Provider methods
 //////////////////////////////////////////////////////////////////////////
-ProjectProvider::ProjectProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
-	: _version(version), _globalWarnings(global_warnings), _projectWarnings(project_warnings) {
+ProjectProvider::ProjectProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors, const int version)
+	: _version(version), _globalWarnings(global_warnings), _projectWarnings(project_warnings), _globalErrors(global_errors) {
 }
 
 void ProjectProvider::createProject(BuildSetup &setup) {
