@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-22 22:45+0000\n"
+"POT-Creation-Date: 2022-12-24 16:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2299,12 +2299,12 @@ msgstr ""
 msgid "Macintosh b/w"
 msgstr ""
 
-#: common/rendermode.cpp:80
+#: common/rendermode.cpp:81
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr ""
 
-#: common/rendermode.cpp:81
+#: common/rendermode.cpp:82
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr ""
