@@ -307,8 +307,10 @@ void XcodeProvider::addResourceFiles(const BuildSetup &setup, StringList &includ
 		includeList.push_back(setup.srcDir + "/" + *it);
 	}
 
+	StringList pchDirs, pchEx;
+
 	StringList td;
-	createModuleList(setup.srcDir + "/backends/platform/ios7", setup.defines, td, includeList, excludeList);
+	createModuleList(setup.srcDir + "/backends/platform/ios7", setup.defines, td, includeList, excludeList, pchDirs, pchEx);
 }
 
 void XcodeProvider::createWorkspace(const BuildSetup &setup) {
@@ -343,7 +345,7 @@ void XcodeProvider::createOtherBuildFiles(const BuildSetup &setup) {
 
 // Store information about a project here, for use at the end
 void XcodeProvider::createProjectFile(const std::string &, const std::string &, const BuildSetup &setup, const std::string &moduleDir,
-									  const StringList &includeList, const StringList &excludeList) {
+									  const StringList &includeList, const StringList &excludeList, const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude) {
 	std::string modulePath;
 	if (!moduleDir.compare(0, setup.srcDir.size(), setup.srcDir)) {
 		modulePath = moduleDir.substr(setup.srcDir.size());
@@ -353,9 +355,9 @@ void XcodeProvider::createProjectFile(const std::string &, const std::string &, 
 
 	std::ofstream project;
 	if (!modulePath.empty())
-		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix + '/' + modulePath);
+		addFilesToProject(moduleDir, project, includeList, excludeList, pchIncludeRoot, pchDirs, pchExclude, setup.filePrefix + '/' + modulePath);
 	else
-		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
+		addFilesToProject(moduleDir, project, includeList, excludeList, pchIncludeRoot, pchDirs, pchExclude, setup.filePrefix);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -402,7 +404,8 @@ void XcodeProvider::outputMainProjectFile(const BuildSetup &setup) {
 // Files
 //////////////////////////////////////////////////////////////////////////
 void XcodeProvider::writeFileListToProject(const FileNode &dir, std::ostream &projectFile, const int indentation,
-										   const std::string &objPrefix, const std::string &filePrefix) {
+										   const std::string &objPrefix, const std::string &filePrefix,
+										   const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude) {
 
 	// Ensure that top-level groups are generated for i.e. engines/
 	Group *group = touchGroupsForPath(filePrefix);
@@ -416,7 +419,7 @@ void XcodeProvider::writeFileListToProject(const FileNode &dir, std::ostream &pr
 		}
 		// Process child nodes
 		if (!node->children.empty())
-			writeFileListToProject(*node, projectFile, indentation + 1, objPrefix + node->name + '_', filePrefix + node->name + '/');
+			writeFileListToProject(*node, projectFile, indentation + 1, objPrefix + node->name + '_', filePrefix + node->name + '/', pchIncludeRoot, pchDirs, pchExclude);
 	}
 }
 

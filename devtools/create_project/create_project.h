@@ -410,6 +410,21 @@ void splitFilename(const std::string &fileName, std::string &name, std::string &
 void splitPath(const std::string &path, std::string &dir, std::string &file);
 
 /**
+ * Calculates the include path and PCH file path (without the base directory).
+ *
+ * @param filePath Path to the source file.
+ * @param pchIncludeRoot Path to the PCH inclusion root directory (ending with separator).
+ * @param pchDirs List of PCH directories.
+ * @param pchExclude List of PCH exclusions.
+ * @param separator Path separator
+ * @param outPchIncludePath Output path to be used by #include directives.
+ * @param outPchFilePath Output file path.
+ * @param outPchFileName Output file name.
+ * @return True if the file path uses PCH, false if not.
+ */
+bool calculatePchPaths(const std::string &sourceFilePath, const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude, char separator, std::string &outPchIncludePath, std::string &outPchFilePath, std::string &outPchFileName);
+
+/**
  * Returns the basename of a path.
  * examples:
  *   a/b/c/d.ext -> d.ext
@@ -551,7 +566,7 @@ protected:
 	 * @param excludeList Files to exclude (must have "moduleDir" as prefix).
 	 */
 	virtual void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
-	                               const StringList &includeList, const StringList &excludeList) = 0;
+								   const StringList &includeList, const StringList &excludeList, const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude) = 0;
 
 	/**
 	 * Writes file entries for the specified directory node into
@@ -564,7 +579,8 @@ protected:
 	 * @param filePrefix Generic prefix to all files of the node.
 	 */
 	virtual void writeFileListToProject(const FileNode &dir, std::ostream &projectFile, const int indentation,
-	                                    const std::string &objPrefix, const std::string &filePrefix) = 0;
+										const std::string &objPrefix, const std::string &filePrefix,
+										const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude) = 0;
 
 	/**
 	 * Output a list of project references to the file stream
@@ -588,7 +604,8 @@ protected:
 	 * @param filePrefix Prefix to use for relative path arguments.
 	 */
 	void addFilesToProject(const std::string &dir, std::ostream &projectFile,
-	                       const StringList &includeList, const StringList &excludeList,
+						   const StringList &includeList, const StringList &excludeList,
+						   const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude,
 	                       const std::string &filePrefix);
 
 	/**
@@ -602,7 +619,7 @@ protected:
 	 * @param includeList Reference to a list, where included files should be added.
 	 * @param excludeList Reference to a list, where excluded files should be added.
 	 */
-	void createModuleList(const std::string &moduleDir, const StringList &defines, StringList &testDirs, StringList &includeList, StringList &excludeList, bool forDetection = false) const;
+	void createModuleList(const std::string &moduleDir, const StringList &defines, StringList &testDirs, StringList &includeList, StringList &excludeList, StringList &pchDirs, StringList &pchExclude, bool forDetection = false) const;
 
 	/**
 	 * Creates an UUID for every enabled engine of the
