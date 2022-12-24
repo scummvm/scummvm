@@ -192,7 +192,7 @@ void OpenGLRenderer::renderPlayerShoot(byte color, const Common::Point position,
 	glOrtho(0, _screenW, _screenH, 0, 0, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	if (_renderMode == Common::kRenderCGA) {
+	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX) {
 		r = g = b = 255;
 	} else {
 		uint32 pixel = 0x0;
