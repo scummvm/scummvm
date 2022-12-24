@@ -410,15 +410,28 @@ void DrillerEngine::loadAssetsFullGame() {
 		loadSoundsFx(&file, 0x30da6, 25);
 	} else if (isSpectrum()) {
 		loadBundledImages();
-		file.open("driller.zxspectrum.data");
+		file.open("driller.zx.extracted");
 
 		if (!file.isOpen())
-			error("Failed to open driller.zxspectrum.data");
+			error("Failed to open driller.zx.extracted");
 
 		loadMessagesFixedSize(&file, 0x20e4, 14, 20);
-		loadFonts(&file, 0x62ca);
-		//loadGlobalObjects(&file, 0x3b42);
-		load8bitBinary(&file, 0x642c, 4);
+
+		if (_variant & ADGF_ZX_RETAIL)
+			loadFonts(&file, 0x62ca);
+		if (_variant & ADGF_ZX_MUSICAL)
+			loadFonts(&file, 0x5aa8);
+
+		//loadGlobalObjects(&file, 0x642c);
+		//loadGlobalObjects(&file, 0x5c0a);
+
+		if (_variant & ADGF_ZX_RETAIL)
+			load8bitBinary(&file, 0x642c, 4);
+		else if (_variant & ADGF_ZX_MUSICAL)
+			load8bitBinary(&file, 0x5c0a, 4);
+		else
+			error("Unknown ZX spectrum variant");
+
 	} else if (_renderMode == Common::kRenderEGA) {
 		loadBundledImages();
 		file.open("DRILLE.EXE");

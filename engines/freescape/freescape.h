@@ -343,6 +343,8 @@ public:
 enum DrillerReleaseFlags {
 		ADGF_AMIGA_RETAIL = (1 << 0),
 		ADGF_AMIGA_BUDGET = (1 << 1),
+		ADGF_ZX_RETAIL = (1 << 2),
+		ADGF_ZX_MUSICAL = (1 << 3),
 };
 
 class DrillerEngine : public FreescapeEngine {
