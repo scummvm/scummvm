@@ -151,7 +151,7 @@ void ShadowSurface::draw() {
 // FontSurface
 
 FontSurface::FontSurface(NeverhoodEngine *vm, NPointArray *tracking, uint charsPerRow, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight)
-	: BaseSurface(vm, 0, charWidth * charsPerRow, charHeight * numRows, "font"), _charsPerRow(charsPerRow), _numRows(numRows),
+	: BaseSurface(vm, 0, charWidth * charsPerRow, charHeight * numRows + 4, "font"), _charsPerRow(charsPerRow), _numRows(numRows),
 	_firstChar(firstChar), _charWidth(charWidth), _charHeight(charHeight), _tracking(nullptr) {
 
 	_tracking = new NPointArray();
@@ -160,7 +160,7 @@ FontSurface::FontSurface(NeverhoodEngine *vm, NPointArray *tracking, uint charsP
 }
 
 FontSurface::FontSurface(NeverhoodEngine *vm, uint32 fileHash, uint charsPerRow, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight)
-	: BaseSurface(vm, 0, charWidth * charsPerRow, charHeight * numRows, "font"), _charsPerRow(charsPerRow), _numRows(numRows),
+	: BaseSurface(vm, 0, charWidth * charsPerRow, charHeight * numRows + 4, "font"), _charsPerRow(charsPerRow), _numRows(numRows),
 	_firstChar(firstChar), _charWidth(charWidth), _charHeight(charHeight), _tracking(nullptr) {
 
 	SpriteResource fontSpriteResource(_vm);
