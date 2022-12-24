@@ -489,7 +489,7 @@ public:
 	 * @param project_warnings List of project-specific warnings
 	 * @param version Target project version.
 	 */
-	ProjectProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version = 0);
+	ProjectProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors, const int version = 0);
 	virtual ~ProjectProvider() {}
 
 	/**
@@ -509,7 +509,8 @@ public:
 
 protected:
 	const int _version;                                  ///< Target project version
-	StringList &_globalWarnings;                         ///< Global warnings
+	StringList &_globalWarnings;                         ///< Global (ignored) warnings
+	StringList &_globalErrors;                           ///< Global errors (promoted from warnings)
 	std::map<std::string, StringList> &_projectWarnings; ///< Per-project warnings
 
 	UUIDMap _engineUuidMap; ///< List of (project name, UUID) pairs

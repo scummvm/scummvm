@@ -31,7 +31,7 @@ namespace CreateProjectTool {
 
 class XcodeProvider final : public ProjectProvider {
 public:
-	XcodeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version = 0);
+	XcodeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors, const int version = 0);
 
 protected:
 

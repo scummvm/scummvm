@@ -31,8 +31,8 @@ namespace CreateProjectTool {
 //////////////////////////////////////////////////////////////////////////
 // MSVC Provider (Base class)
 //////////////////////////////////////////////////////////////////////////
-MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion &msvc)
-	: ProjectProvider(global_warnings, project_warnings, version), _msvcVersion(msvc) {
+MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors, const int version, const MSVCVersion &msvc)
+	: ProjectProvider(global_warnings, project_warnings, global_errors, version), _msvcVersion(msvc) {
 
 	_enableLanguageExtensions = tokenize(ENABLE_LANGUAGE_EXTENSIONS, ',');
 	_disableEditAndContinue = tokenize(DISABLE_EDIT_AND_CONTINUE, ',');

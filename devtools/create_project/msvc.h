@@ -28,7 +28,7 @@ namespace CreateProjectTool {
 
 class MSVCProvider : public ProjectProvider {
 public:
-	MSVCProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion &msvcVersion);
+	MSVCProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, StringList &global_errors, const int version, const MSVCVersion &msvcVersion);
 
 protected:
 	const MSVCVersion _msvcVersion;
