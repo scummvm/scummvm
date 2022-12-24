@@ -52,7 +52,7 @@ protected:
 		int16 xpos, ypos;
 		byte color;
 		byte charset;
-		byte text[256];
+		byte text[512];
 
 		void clear() {
 			xpos = 0;
