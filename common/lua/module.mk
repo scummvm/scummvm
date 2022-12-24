@@ -1,5 +1,6 @@
 MODULE := common/lua
 
+ifdef USE_LUA
 MODULE_OBJS := \
 	double_serialization.o \
 	lapi.o \
@@ -33,6 +34,7 @@ MODULE_OBJS := \
 	lvm.o \
 	lzio.o \
 	scummvm_file.o
+endif
 
 # Include common rules
 include $(srcdir)/rules.mk
