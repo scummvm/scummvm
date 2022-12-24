@@ -363,18 +363,13 @@ private:
 	int16 countMonsterGroupMembers(int16 monsterGroup);
 	void sub1D8C2(int16 charId, int16 damage);
 	int16 getXPLevel(int32 xp);
-	int16 displayString_3(Common::String str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
 	bool isItemCursed(int16 itemId);
 	bool hasObjectEquipped(int16 charId, int16 objectId);
-	void equipCursedItem(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
-	void sub191FF(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
-	void sub1E028(int16 id, uint8 mask, int16 groupFl);
+	void setMapMonsterField8(int16 id, uint8 mask, bool groupFl);
 	bool isMonsterActive(int16 groupId, int16 id);
 	int16 sub15538(int16 mapPosX, int16 mapPosY);
 	void setCharacterObjectToBroken(int16 charId, int16 objectId);
 	int16 selectOtherCharFromTeam();
-	int16 sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA);
-	int16 handleStatusMenu(int16 gameMode, int16 charId);
 	bool checkMonsterCollision();
 
 	// Fight
@@ -467,6 +462,11 @@ private:
 	void displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 npcId);
 	void prepareStatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool unusedFl, bool refreshFl);
 	void sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
+	int16 displayString_3(Common::String str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
+	int16 handleStatusMenu(int16 gameMode, int16 charId);
+	void equipCursedItem(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
+	void sub191FF(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
+	int16 sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA);
 
 	// Savegames
 	void synchronize(Common::Serializer &s);

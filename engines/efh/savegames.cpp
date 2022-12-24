@@ -219,6 +219,8 @@ void EfhEngine::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_npcBuf[i].field_84);
 		s.syncAsByte(_npcBuf[i].field_85);
 	}
+
+	s.syncAsByte(_saveAuthorized);
 }
 
 } // End of namespace Efh
