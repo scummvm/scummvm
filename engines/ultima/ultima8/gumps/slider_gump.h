@@ -66,9 +66,7 @@ protected:
 	int16 _renderedValue;
 	RenderedText *_renderedText;
 
-	int getSliderPos();
 	void setSliderPos();
-	void setValueFromSlider(int sliderx);
 	void drawText(RenderSurface *surf);
 };
 

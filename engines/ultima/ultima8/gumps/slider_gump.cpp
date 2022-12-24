@@ -67,7 +67,7 @@ static const int slidershape = 45;
 static const int sliderframe = 0;
 static const int slidery = 17;
 static const int sliderminx = 55;
-static const int slidermaxx = 130;
+static const int slidermaxx = 140;
 static const int labelx = 18;
 static const int labely = 26;
 static const int labelfont = 0;
@@ -77,21 +77,10 @@ static const int LEFT_INDEX = 2;
 static const int RIGHT_INDEX = 3;
 static const int SLIDER_INDEX = 4;
 
-int SliderGump::getSliderPos() {
-	return sliderminx + (_value - _min) * (slidermaxx - sliderminx) / (_max - _min);
-}
-
-void SliderGump::setValueFromSlider(int sliderx) {
-	int val = (sliderx - sliderminx) * (_max - _min) / (slidermaxx - sliderminx) + _min;
-	if (val < _min) val = _min;
-	if (val > _max) val = _max;
-	_value = _min + _delta * (static_cast<int16>(val / _delta));
-}
-
 void SliderGump::setSliderPos() {
-	Gump *slider = Gump::FindGump<SlidingWidget>();
+	SlidingWidget *slider = dynamic_cast<SlidingWidget *>(Gump::FindGump<SlidingWidget>());
 	assert(slider);
-	slider->Move(getSliderPos(), slidery);
+	slider->setValueForRange(_value, _min, _max);
 }
 
 void SliderGump::drawText(RenderSurface *surf) {
@@ -125,14 +114,15 @@ void SliderGump::InitGump(Gump *newparent, bool take_focus) {
 
 	// Create the SlidingWidget
 	FrameID frame(GameData::GUMPS, slidershape, sliderframe);
-	Gump *widget = new SlidingWidget(getSliderPos(), slidery, frame);
-	widget->SetIndex(SLIDER_INDEX);
-	widget->InitGump(this);
+	SlidingWidget *slider = new SlidingWidget(sliderminx, slidery, frame, Rect(sliderminx, slidery, slidermaxx, slidery));
+	slider->SetIndex(SLIDER_INDEX);
+	slider->InitGump(this);
+	slider->setValueForRange(_value, _min, _max);
 
 	FrameID button_up(GameData::GUMPS, okshape, 0);
 	FrameID button_down(GameData::GUMPS, okshape, 1);
 
-	widget = new ButtonWidget(158, 17, button_up, button_down);
+	Gump *widget = new ButtonWidget(158, 17, button_up, button_down);
 	widget->SetIndex(OK_INDEX);
 	widget->InitGump(this);
 
@@ -176,10 +166,13 @@ void SliderGump::ChildNotify(Gump *child, uint32 message) {
 		break;
 	case SLIDER_INDEX:
 		if (message == SlidingWidget::DRAGGING) {
-			int32 x, y;
-			child->getLocation(x, y);
-			setValueFromSlider(x);
-			setSliderPos();
+			SlidingWidget *slider = dynamic_cast<SlidingWidget *>(child);
+			assert(slider);
+			_value = slider->getValueForRange(_min, _max);
+			_value = _min + _delta * (static_cast<int16>(_value / _delta));
+
+			// Set value to force slider to snap to increment
+			slider->setValueForRange(_value, _min, _max);
 		}
 		break;
 	}

@@ -27,15 +27,36 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(SlidingWidget)
 
 SlidingWidget::SlidingWidget()
-	: Gump() {
+	: Gump(), _dragBounds() {
 }
 
-SlidingWidget::SlidingWidget(int x, int y, FrameID frame)
-	: Gump(x, y, 5, 5, 0, FLAG_DRAGGABLE) {
+SlidingWidget::SlidingWidget(int x, int y, FrameID frame, const Rect &dragBounds)
+	: Gump(x, y, 5, 5, 0, FLAG_DRAGGABLE), _dragBounds(dragBounds) {
 	SetShape(frame, true);
+	if (_dragBounds.width() < _dims.width())
+		_dragBounds.setWidth(_dims.width());
+	if (_dragBounds.height() < _dims.height())
+		_dragBounds.setHeight(_dims.height());
 }
 
 SlidingWidget::~SlidingWidget() {
+}
+
+int SlidingWidget::getValueForRange(int min, int max) {
+	int val = min;
+	if (_dragBounds.isValidRect()) {
+		val = min + (_x - _dragBounds.left) * (max - min) / (_dragBounds.width() - _dims.width());
+		if (val < min)
+			val = min;
+		if (val > max)
+			val = max;
+	}
+	return val;
+}
+
+void SlidingWidget::setValueForRange(int value, int min, int max) {
+	assert(_dragBounds.isValidRect());
+	_x = _dragBounds.left + (value - min) * (_dragBounds.width() - _dims.width()) / (max - min);
 }
 
 void SlidingWidget::InitGump(Gump *newparent, bool take_focus) {
@@ -49,6 +70,22 @@ uint16 SlidingWidget::TraceObjId(int32 mx, int32 my) {
 		return getObjId();
 	else
 		return 0;
+}
+
+void SlidingWidget::Move(int32 x, int32 y) {
+	if (_dragBounds.isValidRect()) {
+		if (x < _dragBounds.left)
+			x = _dragBounds.left;
+		if (x > _dragBounds.right - _dims.width())
+			x = _dragBounds.right - _dims.width();
+		if (y < _dragBounds.top)
+			y = _dragBounds.top;
+		if (y > _dragBounds.bottom - _dims.height())
+			y = _dragBounds.bottom - _dims.height();
+	}
+
+	_x = x;
+	_y = y;
 }
 
 void SlidingWidget::onDrag(int32 mx, int32 my) {
