@@ -422,8 +422,7 @@ void DrillerEngine::loadAssetsFullGame() {
 		if (_variant & ADGF_ZX_MUSICAL)
 			loadFonts(&file, 0x5aa8);
 
-		//loadGlobalObjects(&file, 0x642c);
-		//loadGlobalObjects(&file, 0x5c0a);
+		loadGlobalObjects(&file, 0x1c93);
 
 		if (_variant & ADGF_ZX_RETAIL)
 			load8bitBinary(&file, 0x642c, 4);
