@@ -387,6 +387,7 @@ private:
 	void loadAssetsFullGame();
 
 	void drawDOSUI(Graphics::Surface *surface);
+	void drawZXUI(Graphics::Surface *surface);
 	void drawAmigaAtariSTUI(Graphics::Surface *surface);
 };
 

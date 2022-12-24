@@ -525,8 +525,10 @@ void DrillerEngine::drawUI() {
 	} else
 		return;
 
-	if (isDOS() || isSpectrum())
+	if (isDOS())
 		drawDOSUI(surface);
+	else if (isSpectrum())
+		drawZXUI(surface);
 	else if (isAmiga() || isAtariST())
 		drawAmigaAtariSTUI(surface);
 
@@ -612,6 +614,80 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 		surface->fillRect(backBar, back);
 
 		Common::Rect shieldBar(87 - shield, 177, 88, 183);
+		surface->fillRect(shieldBar, front);
+	}
+}
+
+
+void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
+	uint32 color = 5;
+	uint8 r, g, b;
+
+	_gfx->readFromPalette(color, r, g, b);
+	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
+	color = _currentArea->_usualBackgroundColor;
+	if (_gfx->_colorRemaps && _gfx->_colorRemaps->contains(color)) {
+		color = (*_gfx->_colorRemaps)[color];
+	}
+
+	_gfx->readFromPalette(color, r, g, b);
+	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
+	int score = _gameStateVars[k8bitVariableScore];
+	drawStringInSurface(_currentArea->_name, 176, 188, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 152, 149, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 152, 157, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 152, 165, front, back, surface);
+	if (_playerHeightNumber >= 0)
+		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 74, 165, front, back, surface);
+	else
+		drawStringInSurface(Common::String::format("%s", "J"), 74, 165, front, back, surface);
+
+	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 64, 149, front, back, surface);
+	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 65, 157, front, back, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 217, 133, front, back, surface);
+
+	int hours = _countdown <= 0 ? 0 : _countdown / 3600;
+	drawStringInSurface(Common::String::format("%02d", hours), 187, 12, front, back, surface);
+	int minutes = _countdown <= 0 ? 0 : (_countdown - hours * 3600) / 60;
+	drawStringInSurface(Common::String::format("%02d", minutes), 209, 12, front, back, surface);
+	int seconds = _countdown <= 0 ? 0 : _countdown - hours * 3600 - minutes * 60;
+	drawStringInSurface(Common::String::format("%02d", seconds), 233, 12, front, back, surface);
+
+	Common::String message;
+	int deadline;
+	getLatestMessages(message, deadline);
+	if (deadline <= _countdown) {
+		drawStringInSurface(message, 169, 181, back, front, surface);
+		_temporaryMessages.push_back(message);
+		_temporaryMessageDeadlines.push_back(deadline);
+	} else {
+		if (_currentArea->_gasPocketRadius == 0)
+			message = _messagesList[2];
+		else if (_drillStatusByArea[_currentArea->getAreaID()])
+			message = _messagesList[0];
+		else
+			message = _messagesList[1];
+
+		drawStringInSurface(message, 169, 181, front, back, surface);
+	}
+
+	int energy = _gameStateVars[k8bitVariableEnergy];
+	int shield = _gameStateVars[k8bitVariableShield];
+
+	if (energy >= 0) {
+		Common::Rect backBar(43, 188, 105 - energy, 194);
+		surface->fillRect(backBar, back);
+		Common::Rect energyBar(105 - energy, 188, 106, 194);
+		surface->fillRect(energyBar, front);
+	}
+
+	if (shield >= 0) {
+		Common::Rect backBar(43, 181, 106 - shield, 187);
+		surface->fillRect(backBar, back);
+
+		Common::Rect shieldBar(106 - shield, 181, 106, 187);
 		surface->fillRect(shieldBar, front);
 	}
 }
