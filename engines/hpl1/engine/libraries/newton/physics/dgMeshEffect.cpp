@@ -3962,21 +3962,21 @@ void dgMeshEffect::ClipMesh(const dgMeshEffectSolidTree *const clipper,
 					for (dgList<dgMeshTreeCSGFace *>::dgListNode *node1 =
 					            faceList.GetFirst();
 					        node1; node1 = node1->GetNext()) {
-						dgMeshTreeCSGFace *const face = node1->GetInfo();
+						dgMeshTreeCSGFace *const dface = node1->GetInfo();
 						NEWTON_ASSERT(
-						    clipper->GetFaceSide(face) == dgMeshEffectSolidTree::m_empty);
+						    clipper->GetFaceSide(dface) == dgMeshEffectSolidTree::m_empty);
 					}
 #endif
 					frontMesh->AddPolygon(count, &facePoints[0].m_vertex.m_x,
 					                      sizeof(dgVertexAtribute), dgFastInt(facePoints[0].m_material));
 				} else {
 #ifdef _DEBUG
-					for (dgList<dgMeshTreeCSGFace *>::dgListNode *node1 =
+					for (dgList<dgMeshTreeCSGFace *>::dgListNode *dnode1 =
 					            faceList.GetFirst();
-					        node1; node1 = node1->GetNext()) {
-						dgMeshTreeCSGFace *const face = node1->GetInfo();
+					        dnode1; dnode1 = dnode1->GetNext()) {
+						dgMeshTreeCSGFace *const dface = dnode1->GetInfo();
 						NEWTON_ASSERT(
-						    clipper->GetFaceSide(face) == dgMeshEffectSolidTree::m_solid);
+						    clipper->GetFaceSide(dface) == dgMeshEffectSolidTree::m_solid);
 					}
 #endif
 					backMesh->AddPolygon(count, &facePoints[0].m_vertex.m_x,

@@ -52,11 +52,11 @@
 #endif
 
 #ifndef FLT_MIN
-	#define FLT_MIN 1E-37
+	#define FLT_MIN 1E-37f
 #endif
 
 #ifndef FLT_MAX
-	#define FLT_MAX 1E+37
+	#define FLT_MAX 1E+37f
 #endif
 
 namespace Common {

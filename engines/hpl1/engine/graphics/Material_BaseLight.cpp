@@ -162,8 +162,10 @@ iGpuProgram *iMaterial_BaseLight::getGpuProgram(const eMaterialRenderType aType,
 				program = eBaseLightProgram_Point1;
 			else if (apLight->GetLightType() == eLight3DType_Spot)
 				program = eBaseLightProgram_Spot1;
-			else
+			else {
 				assert(false);
+				program = static_cast<eBaseLightProgram>(0);
+			}
 		}
 		return _shaders[program];
 	} else if (aType == eMaterialRenderType_Diffuse) {

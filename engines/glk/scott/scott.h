@@ -198,7 +198,7 @@ public:
 	void output(const Common::U32String &a);
 	void outputNumber(int a);
 	void display(winid_t w, const char *fmt, ...);
-	void display(winid_t w, const Common::U32String fmt, ...);
+	template<class... TParam> void display(winid_t w, const Common::U32String &fmt, TParam... param);
 	void fatal(const char *x);
 	void hitEnter();
 	void updates(event_t ev);
@@ -251,7 +251,15 @@ public:
 	 * in the Quetzal save file that will be created
 	 */
 	Common::Error writeGameData(Common::WriteStream *ws) override;
+
+private:
+	void display_u32_internal(winid_t w, const Common::U32String *fmt, ...);
 };
+
+template<class... TParam>
+inline void Scott::display(winid_t w, const Common::U32String &fmt, TParam... param) {
+	display_u32_internal(w, &fmt, Common::forward<TParam>(param)...);
+}
 
 extern Scott *g_scott;
 

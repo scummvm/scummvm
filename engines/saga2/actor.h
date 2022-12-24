@@ -946,7 +946,7 @@ public:
 
 	//  Returns 0 if not moving, 1 if path being calculated,
 	//  2 if path being followed.
-	bool pathFindState();
+	int pathFindState();
 
 	//  High level actor behavior functions
 private:

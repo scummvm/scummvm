@@ -215,9 +215,11 @@ void FreescapeEngine::executeSPFX(FCLInstruction &instruction) {
 		if (src == 0 && dst >= 2 && dst <= 5) {
 			_currentArea->remapColor(dst, 1);
 			return;
-		} if (src == 0) {
+		}
+
+		if (src == 0) {
 			color = dst;
-		} else if (src > 0) {
+		} else {
 
 			switch (src) {
 			case 1:
@@ -268,7 +270,7 @@ bool FreescapeEngine::executeEndIfVisibilityIsEqual(FCLInstruction &instruction)
 		}
 	}
 
-	return (obj->isInvisible() == value);
+	return (obj->isInvisible() == (value != 0));
 }
 
 bool FreescapeEngine::executeEndIfNotEqual(FCLInstruction &instruction) {

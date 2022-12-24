@@ -233,7 +233,8 @@ public:
 	virtual void set_font(uint8 font_type);
 	virtual bool is_garg_font();
 
-	int print(const Std::string format, ...);
+	template<class... TParam>
+	int print(const Std::string &format, TParam... param);
 
 	virtual void display_string(Std::string s, Font *f, bool include_on_map_window);
 	void display_string(Std::string s, Font *f, uint8 color, bool include_on_map_window);
@@ -324,8 +325,14 @@ protected:
 		return font_color;
 	}
 
-
+private:
+	int print_internal(const Std::string *format, ...);
 };
+
+template<class... TParam>
+inline int MsgScroll::print(const Std::string &format, TParam... param) {
+	return print_internal(&format, Common::forward<TParam>(param)...);
+}
 
 } // End of namespace Nuvie
 } // End of namespace Ultima

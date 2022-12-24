@@ -125,7 +125,7 @@ void cGameMusicHandler::Update(float afTimeStep) {
 		}
 		// Music playing
 		else {
-			bool bFound;
+			bool bFound = false;
 			tGameEnemyIterator enemyIt = mpInit->mpMapHandler->GetGameEnemyIterator();
 			while (enemyIt.HasNext()) {
 				iGameEnemy *pEnemy = enemyIt.Next();

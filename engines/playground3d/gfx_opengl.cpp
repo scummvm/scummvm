@@ -269,11 +269,11 @@ void OpenGLRenderer::drawInViewport() {
 	glDisableClientState(GL_VERTEX_ARRAY);
 
 	glPushMatrix();
-	_pos.x() += 0.01;
-	_pos.y() += 0.01;
+	_pos.x() += 0.01f;
+	_pos.y() += 0.01f;
 	if (_pos.x() >= 1.0f) {
-		_pos.x() = -1.0;
-		_pos.y() = -1.0;
+		_pos.x() = -1.0f;
+		_pos.y() = -1.0f;
 	}
 	glTranslatef(_pos.x(), _pos.y(), 0);
 
@@ -314,7 +314,7 @@ void OpenGLRenderer::drawRgbaTexture() {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	glTranslatef(-0.8, 0.8, 0);
+	glTranslatef(-0.8f, 0.8f, 0);
 
 	glVertexPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), bitmapVertices);
 	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(GLfloat), textCords);

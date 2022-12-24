@@ -177,12 +177,14 @@ public:
 	/**
 	 * Write some text to the screen
 	 */
-	void write(const String fmt, ...);
+	template<class... TParam>
+	void write(const String &fmt, TParam... args);
 
 	/**
 	 * Write a line to the screen
 	 */
-	void writeln(const String fmt, ...);
+	template<class... TParam>
+	void writeln(const String &fmt, TParam... args);
 	void writeln() { writeln(""); }
 
 	/**
@@ -194,7 +196,21 @@ public:
 	 * Read in a single key
 	 */
 	char readKey();
+
+private:
+	void write_internal(const String *fmt, ...);
+	void writeln_internal(const String *fmt, ...);
 };
+
+template<class... TParam>
+inline void Archetype::write(const String &format, TParam... param) {
+	return write_internal(&format, Common::forward<TParam>(param)...);
+}
+
+template<class... TParam>
+inline void Archetype::writeln(const String &format, TParam... param) {
+	return writeln_internal(&format, Common::forward<TParam>(param)...);
+}
 
 extern Archetype *g_vm;
 

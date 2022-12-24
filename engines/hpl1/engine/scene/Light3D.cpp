@@ -668,7 +668,7 @@ void iLight3D::RenderShadow(iRenderable *apObject, cRenderSettings *apRenderSett
 		const cTriEdge &Edge = pEdges[edge];
 
 		const cTriangleData *pTri1 = &pTriangles[Edge.tri1];
-		const cTriangleData *pTri2;
+		const cTriangleData *pTri2 = nullptr;
 		if (Edge.invert_tri2 == false)
 			pTri2 = &pTriangles[Edge.tri2];
 

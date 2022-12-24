@@ -285,7 +285,7 @@ void Window::loadEXE(const Common::String movie) {
 }
 
 void Window::loadEXEv3(Common::SeekableReadStream *stream) {
-	uint32 mmmSize;
+	uint32 mmmSize = 0;
 	Common::String mmmFileName;
 	Common::String directoryName;
 

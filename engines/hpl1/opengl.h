@@ -44,7 +44,7 @@ Common::ScopedPtr<Graphics::Surface> createGLViewportScreenshot();
 }
 
 #define GL_CHECK(x) {x; ::Hpl1::checkOGLErrors(__func__, __LINE__);}
-#define GL_CHECK_FN() GL_CHECK()
+#define GL_CHECK_FN() {::Hpl1::checkOGLErrors(__func__, __LINE__);}
 
 #endif // USE_OPENGL
 #endif // HPL1_OPENGL_H

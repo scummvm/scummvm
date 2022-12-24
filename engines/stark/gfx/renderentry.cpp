@@ -122,7 +122,7 @@ bool RenderEntry::compare(const RenderEntry *x, const RenderEntry *y) {
 		// This should ensure the items remain in the same order if they have the same sort key
 		return x->_owner->getIndex() < y->_owner->getIndex();
 	} else {
-		return -1;
+		return (x->_owner < y->_owner);
 	}
 }
 

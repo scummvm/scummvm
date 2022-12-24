@@ -287,7 +287,7 @@ void MsgScroll::set_scroll_dimensions(uint16 w, uint16 h) {
 	display_pos = 0;
 }
 
-int MsgScroll::print(Std::string format, ...) {
+int MsgScroll::print_internal(const Std::string *format, ...) {
 
 	va_list ap;
 	int printed = 0;
@@ -311,7 +311,7 @@ int MsgScroll::print(Std::string format, ...) {
 
 		/* try formatting */
 		va_start(ap, format);
-		printed = vsnprintf(buffer, bufsize, format.c_str(), ap);
+		printed = vsnprintf(buffer, bufsize, format->c_str(), ap);
 		va_end(ap);
 
 		if (printed < 0) {

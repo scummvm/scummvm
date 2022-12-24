@@ -699,8 +699,8 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 
 	if (_vm->isAGA() || _vm->isECS()) {
 		int curY = 0, curX = 0;
-		unsigned realY;
-		unsigned outbit;
+		unsigned realY = 0;
+		unsigned outbit = 0;
 		// TODO: Check if we want to use tempaltes instead to optimize AGA case
 		unsigned int pixelSize = _vm->isAGA() ? 8 : 5;
 		while (1) {

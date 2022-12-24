@@ -179,7 +179,7 @@ bool BaseRenderOpenGL3DShader::enableShadows() {
 
 		float nearPlane = 1.0f;
 		float farPlane = 10000.0f;
-		float fovy = M_PI / 4.0f;
+		float fovy = static_cast<float>(M_PI / 4.0f);
 
 		float top = nearPlane *  tanf(fovy * 0.5f);
 		float bottom = -top;

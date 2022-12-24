@@ -3112,7 +3112,7 @@ uint8 Actor::evaluateFollowerNeeds(Actor *follower) {
 
 //  Returns 0 if not moving, 1 if path being calculated,
 //  2 if path being followed.
-bool Actor::pathFindState() {
+int Actor::pathFindState() {
 	if (_moveTask == nullptr)
 		return 0;
 	if (_moveTask->_pathFindTask)
