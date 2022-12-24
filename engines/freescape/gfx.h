@@ -98,11 +98,12 @@ public:
 	// palette
 	void readFromPalette(uint8 index, uint8 &r, uint8 &g, uint8 &b);
 	uint8 indexFromColor(uint8 r, uint8 g, uint8 b);
-	bool getRGBAt(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2);
+	bool getRGBAt(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2, byte *stipple);
 	bool getRGBAtCGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2);
 	bool getRGBAtEGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2);
-	bool getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2);
+	bool getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2, byte *stipple);
 
+	virtual void setStippleData(byte *data) {};
 	virtual void useStipple(bool enabled) {};
 	byte *_palette;
 	ColorMap *_colorMap;

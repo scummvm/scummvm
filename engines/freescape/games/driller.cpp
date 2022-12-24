@@ -653,7 +653,7 @@ void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 	int minutes = _countdown <= 0 ? 0 : (_countdown - hours * 3600) / 60;
 	drawStringInSurface(Common::String::format("%02d", minutes), 209, 12, front, back, surface);
 	int seconds = _countdown <= 0 ? 0 : _countdown - hours * 3600 - minutes * 60;
-	drawStringInSurface(Common::String::format("%02d", seconds), 233, 12, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", seconds), 232, 12, front, back, surface);
 
 	Common::String message;
 	int deadline;

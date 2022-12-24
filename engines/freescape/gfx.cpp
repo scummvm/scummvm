@@ -92,7 +92,7 @@ bool Renderer::getRGBAtCGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 	return true;
 }
 
-bool Renderer::getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2) {
+bool Renderer::getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2, byte *stipple) {
 	if (index == _keyColor)
 		return false;
 
@@ -109,9 +109,15 @@ bool Renderer::getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r
 		return true;
 	}
 
-	//setStippleData(entry);
-	readFromPalette(_inkColor, r1, g1, b1);
-	readFromPalette(_paperColor, r2, g2, b2);
+	if (stipple) {
+		stipple[0] = entry[0];
+		stipple[1] = entry[1];
+		stipple[2] = entry[2];
+		stipple[3] = entry[3];
+	}
+
+	readFromPalette(_paperColor, r1, g1, b1);
+	readFromPalette(_inkColor, r2, g2, b2);
 	return true;
 }
 
@@ -137,7 +143,7 @@ bool Renderer::getRGBAtEGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 	return true;
 }
 
-bool Renderer::getRGBAt(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2) {
+bool Renderer::getRGBAt(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2, byte *stipple) {
 
 	if (_colorRemaps && _colorRemaps->contains(index)) {
 		index = (*_colorRemaps)[index];
@@ -170,7 +176,7 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2,
 	else if (_renderMode == Common::kRenderCGA)
 		return getRGBAtCGA(index, r1, g1, b1, r2, g2, b2);
 	else if (_renderMode == Common::kRenderZX)
-		return getRGBAtZX(index, r1, g1, b1, r2, g2, b2);
+		return getRGBAtZX(index, r1, g1, b1, r2, g2, b2, stipple);
 
 
 	error("Invalid or unsupported render mode");
@@ -302,8 +308,10 @@ void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d 
 	}
 
 	Common::Array<Math::Vector3d> face;
+	uint32 stipple = 0;
 	uint8 r1, g1, b1, r2, g2, b2;
-	if (getRGBAt((*colours)[0], r1, g1, b1, r2, g2, b2)) {
+	if (getRGBAt((*colours)[0], r1, g1, b1, r2, g2, b2, (byte *)&stipple)) {
+		setStippleData((byte *)&stipple);
 		useColor(r1, g1, b1);
 
 		face.push_back(vertices[4]);
@@ -323,7 +331,8 @@ void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d 
 		face.clear();
 	}
 
-	if (getRGBAt((*colours)[1], r1, g1, b1, r2, g2, b2)) {
+	if (getRGBAt((*colours)[1], r1, g1, b1, r2, g2, b2, (byte *)&stipple)) {
+		setStippleData((byte *)&stipple);
 		useColor(r1, g1, b1);
 
 		face.push_back(vertices[5]);
@@ -342,7 +351,8 @@ void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d 
 		face.clear();
 	}
 
-	if (getRGBAt((*colours)[2], r1, g1, b1, r2, g2, b2)) {
+	if (getRGBAt((*colours)[2], r1, g1, b1, r2, g2, b2, (byte *)&stipple)) {
+		setStippleData((byte *)&stipple);
 		useColor(r1, g1, b1);
 
 		face.push_back(vertices[6]);
@@ -360,7 +370,8 @@ void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d 
 		face.clear();
 	}
 
-	if (getRGBAt((*colours)[3], r1, g1, b1, r2, g2, b2)) {
+	if (getRGBAt((*colours)[3], r1, g1, b1, r2, g2, b2, (byte *)&stipple)) {
+		setStippleData((byte *)&stipple);
 		useColor(r1, g1, b1);
 
 		face.push_back(vertices[7]);
@@ -379,7 +390,8 @@ void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d 
 		face.clear();
 	}
 
-	if (getRGBAt((*colours)[4], r1, g1, b1, r2, g2, b2)) {
+	if (getRGBAt((*colours)[4], r1, g1, b1, r2, g2, b2, (byte *)&stipple)) {
+		setStippleData((byte *)&stipple);
 		useColor(r1, g1, b1);
 
 		face.push_back(vertices[0]);
@@ -397,7 +409,8 @@ void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d 
 		face.clear();
 	}
 
-	if (getRGBAt((*colours)[5], r1, g1, b1, r2, g2, b2)) {
+	if (getRGBAt((*colours)[5], r1, g1, b1, r2, g2, b2, (byte *)&stipple)) {
+		setStippleData((byte *)&stipple);
 		useColor(r1, g1, b1);
 
 		face.push_back(vertices[7]);
@@ -415,10 +428,12 @@ void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d 
 }
 
 void Renderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &size, Common::Array<uint8> *colours) {
+	uint32 stipple = 0;
 	uint8 r1, g1, b1, r2, g2, b2;
 	Common::Array<Math::Vector3d> face;
 
-	if (getRGBAt((*colours)[0], r1, g1, b1, r2, g2, b2)) {
+	if (getRGBAt((*colours)[0], r1, g1, b1, r2, g2, b2, (byte *)&stipple)) {
+		setStippleData((byte *)&stipple);
 		useColor(r1, g1, b1);
 		face.push_back(origin);
 		face.push_back(Math::Vector3d(origin.x(), origin.y(), origin.z() + size.z()));
@@ -433,7 +448,8 @@ void Renderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &si
 		}
 	}
 
-	if (getRGBAt((*colours)[1], r1, g1, b1, r2, g2, b2)) {
+	if (getRGBAt((*colours)[1], r1, g1, b1, r2, g2, b2, (byte *)&stipple)) {
+		setStippleData((byte *)&stipple);
 		useColor(r1, g1, b1);
 		face.clear();
 		face.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z()));
@@ -449,7 +465,8 @@ void Renderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &si
 		}
 	}
 
-	if (getRGBAt((*colours)[2], r1, g1, b1, r2, g2, b2)) {
+	if (getRGBAt((*colours)[2], r1, g1, b1, r2, g2, b2, (byte *)&stipple)) {
+		setStippleData((byte *)&stipple);
 		useColor(r1, g1, b1);
 		face.clear();
 		face.push_back(Math::Vector3d(origin.x() + size.x(), origin.y(), origin.z()));
@@ -465,7 +482,8 @@ void Renderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &si
 		}
 	}
 
-	if (getRGBAt((*colours)[3], r1, g1, b1, r2, g2, b2)) {
+	if (getRGBAt((*colours)[3], r1, g1, b1, r2, g2, b2, (byte *)&stipple)) {
+		setStippleData((byte *)&stipple);
 		useColor(r1, g1, b1);
 		face.clear();
 		face.push_back(Math::Vector3d(origin.x(), origin.y() + size.y(), origin.z()));
@@ -481,7 +499,8 @@ void Renderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &si
 		}
 	}
 
-	if (getRGBAt((*colours)[4], r1, g1, b1, r2, g2, b2)) {
+	if (getRGBAt((*colours)[4], r1, g1, b1, r2, g2, b2, (byte *)&stipple)) {
+		setStippleData((byte *)&stipple);
 		useColor(r1, g1, b1);
 		face.clear();
 		face.push_back(Math::Vector3d(origin.x(), origin.y() + size.y(), origin.z()));
@@ -497,7 +516,8 @@ void Renderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &si
 		}
 	}
 
-	if (getRGBAt((*colours)[5], r1, g1, b1, r2, g2, b2)) {
+	if (getRGBAt((*colours)[5], r1, g1, b1, r2, g2, b2, (byte *)&stipple)) {
+		setStippleData((byte *)&stipple);
 		useColor(r1, g1, b1);
 		face.clear();
 		face.push_back(Math::Vector3d(origin.x(), origin.y(), origin.z() + size.z()));
@@ -521,11 +541,13 @@ void Renderer::renderRectangle(const Math::Vector3d &origin, const Math::Vector3
 
 	float dx, dy, dz;
 	uint8 r1, g1, b1, r2, g2, b2;
+	uint32 stipple = 0;
 	Common::Array<Math::Vector3d> vertices;
 	for (int i = 0; i < 2; i++) {
 
 		// debug("rec color: %d", (*colours)[i]);
-		if (getRGBAt((*colours)[i], r1, g1, b1, r2, g2, b2)) {
+		if (getRGBAt((*colours)[i], r1, g1, b1, r2, g2, b2, (byte *)&stipple)) {
+			setStippleData((byte *)&stipple);
 			useColor(r1, g1, b1);
 			vertices.clear();
 			vertices.push_back(Math::Vector3d(origin.x(), origin.y(), origin.z()));
@@ -577,6 +599,7 @@ void Renderer::renderRectangle(const Math::Vector3d &origin, const Math::Vector3
 
 void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) {
 	uint8 r1, g1, b1, r2, g2, b2;
+	uint32 stipple = 0;
 	if (ordinates->size() % 3 > 0 && ordinates->size() > 0)
 		error("Invalid polygon with size %f %f %f and ordinates %d", size.x(), size.y(), size.z(), ordinates->size());
 
@@ -584,7 +607,8 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 	polygonOffset(true);
 
 	if (ordinates->size() == 6) {                 // Line
-		assert(getRGBAt((*colours)[0], r1, g1, b1, r2, g2, b2)); // It will never return false?
+		assert(getRGBAt((*colours)[0], r1, g1, b1, r2, g2, b2, (byte *)&stipple)); // It will never return false?
+		setStippleData((byte *)&stipple);
 		useColor(r1, g1, b1);
 		for (uint i = 0; i < ordinates->size(); i = i + 3)
 			vertices.push_back(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
@@ -597,7 +621,8 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 		}
 
 		vertices.clear();
-		assert(getRGBAt((*colours)[1], r1, g1, b1, r2, g2, b2)); // It will never return false?
+		assert(getRGBAt((*colours)[1], r1, g1, b1, r2, g2, b2, (byte *)&stipple)); // It will never return false?
+		setStippleData((byte *)&stipple);
 		useColor(r1, g1, b1);
 		for (int i = ordinates->size(); i > 0; i = i - 3)
 			vertices.push_back(Math::Vector3d((*ordinates)[i - 3], (*ordinates)[i - 2], (*ordinates)[i - 1]));
@@ -610,7 +635,8 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 		}
 
 	} else {
-		if (getRGBAt((*colours)[0], r1, g1, b1, r2, g2, b2)) {
+		if (getRGBAt((*colours)[0], r1, g1, b1, r2, g2, b2, (byte *)&stipple)) {
+			setStippleData((byte *)&stipple);
 			useColor(r1, g1, b1);
 			for (uint i = 0; i < ordinates->size(); i = i + 3) {
 				vertices.push_back(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
@@ -624,7 +650,8 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 			}
 		}
 		vertices.clear();
-		if (getRGBAt((*colours)[1], r1, g1, b1, r2, g2, b2)) {
+		if (getRGBAt((*colours)[1], r1, g1, b1, r2, g2, b2, (byte *)&stipple)) {
+			setStippleData((byte *)&stipple);
 			useColor(r1, g1, b1);
 			for (int i = ordinates->size(); i > 0; i = i - 3) {
 				vertices.push_back(Math::Vector3d((*ordinates)[i - 3], (*ordinates)[i - 2], (*ordinates)[i - 1]));

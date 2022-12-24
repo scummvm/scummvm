@@ -272,12 +272,20 @@ void OpenGLRenderer::polygonOffset(bool enabled) {
 	}
 }
 
+void OpenGLRenderer::setStippleData(byte *data) {
+	if (!data)
+		return;
+
+	for (int i = 0; i < 128; i++)
+		_variableStippleArray[i] = data[(i / 16) % 4];
+}
+
 void OpenGLRenderer::useStipple(bool enabled) {
 	if (enabled) {
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(-5.0f, 1.0f);
 		glEnable(GL_POLYGON_STIPPLE);
-		glPolygonStipple(_stippleArray);
+		glPolygonStipple(_renderMode == Common::kRenderCGA ? _defaultStippleArray : _variableStippleArray);
 	} else {
 		glPolygonOffset(0, 0);
 		glDisable(GL_POLYGON_OFFSET_FILL);
@@ -303,7 +311,8 @@ void OpenGLRenderer::clear(uint8 color) {
 
 void OpenGLRenderer::drawFloor(uint8 color) {
 	uint8 r1, g1, b1, r2, g2, b2;
-	assert(getRGBAt(color, r1, g1, b1, r2, g2, b2)); // TODO: move check inside this function
+	uint32 stipple = 0;
+	assert(getRGBAt(color, r1, g1, b1, r2, g2, b2, (byte *)&stipple)); // TODO: move check inside this function
 	glColor3ub(r1, g1, b1);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
