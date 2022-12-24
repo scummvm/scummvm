@@ -311,7 +311,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x11:
 			if (flag)
-				_unkArray2C8AA[0] = 0;
+				_unk2C8AA = 0;
 			break;
 		case 0x12:
 			// Guess : disable special tile { }
@@ -465,7 +465,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x1F:
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
 			if (flag)
-				_unkArray2C8AA[0] = scriptNumberArray[0];
+				_unk2C8AA = scriptNumberArray[0];
 
 			break;
 		case 0x20:

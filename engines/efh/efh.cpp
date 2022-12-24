@@ -256,13 +256,13 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	_fullPlaceId = 0xFF;
 	_guessAnimationAmount = 9;
 	_largeMapFlag = 0xFFFF;
+	_unk2C8AA = 0;
 	_teamCharId[0] = 0;
 	_teamCharId[1] = _teamCharId[2] = -1;
 
 	for (int i = 0; i < 3; ++i) {
 		_teamCharStatus[i]._status = 0;
 		_teamCharStatus[i]._duration = 0;
-		_unkArray2C8AA[i] = 0;
 		_teamPctVisible[i] = 0;
 		_word32482[i] = 0;
 		_teamNextAttack[i] = -1;
@@ -275,7 +275,6 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 		_stru32686[i].init();
 	}
 
-	_unkArray2C8AA[2] = 1;
 	_teamSize = 1;
 	_word2C872 = 0;
 	_imageSetSubFilesIdx = 144;
@@ -538,7 +537,7 @@ Common::Error EfhEngine::run() {
 		}
 
 		if (!_shouldQuit) {
-			sub174A0();
+			handleMapMonsterMoves();
 		}
 
 		if (_redrawNeededFl && !_shouldQuit) {
@@ -556,8 +555,8 @@ Common::Error EfhEngine::run() {
 			}
 		}
 
-		if (--_unkArray2C8AA[0] < 0 && !_shouldQuit)
-			_unkArray2C8AA[0] = 0;
+		if (_unk2C8AA > 0)
+			--_unk2C8AA;
 
 		if (isTPK()) {
 			if (handleDeathMenu())
@@ -806,7 +805,7 @@ void EfhEngine::loadMapArrays(int idx) {
 		_mapMonsters[i]._itemId_Weapon = mapMonstersPtr[29 * i + 5];
 		_mapMonsters[i]._field_6 = mapMonstersPtr[29 * i + 6];
 		_mapMonsters[i]._monsterRef = mapMonstersPtr[29 * i + 7];
-		_mapMonsters[i]._field_8 = mapMonstersPtr[29 * i + 8];
+		_mapMonsters[i]._moveInfo = mapMonstersPtr[29 * i + 8];
 		_mapMonsters[i]._field9_textId = mapMonstersPtr[29 * i + 9];
 		_mapMonsters[i]._groupSize = mapMonstersPtr[29 * i + 10];
 		for (int j = 0; j < 9; ++j)
@@ -1593,7 +1592,7 @@ void EfhEngine::resetGame() {
 	_oldMapPosX = _mapPosX = 31;
 	_oldMapPosY = _mapPosY = 31;
 	_unkRelatedToAnimImageSetId = 0;
-	_unkArray2C8AA[0] = 0;
+	_unk2C8AA = 0;
 }
 
 void EfhEngine::computeMapAnimation() {
@@ -1807,8 +1806,8 @@ bool EfhEngine::moveMonsterGroupOther(int16 monsterId, int16 direction) {
 	return retVal;
 }
 
-bool EfhEngine::moveMonsterGroup(int16 monsterId) {
-	debugC(2, kDebugEngine, "moveMonsterGroup %d", monsterId);
+bool EfhEngine::moveMonsterGroupRandom(int16 monsterId) {
+	debugC(2, kDebugEngine, "moveMonsterGroupRandom %d", monsterId);
 
 	int16 rand100 = getRandom(100);
 
@@ -1846,20 +1845,17 @@ bool EfhEngine::checkWeaponRange(int16 monsterId, int16 weaponId) {
 	return true;
 }
 
-bool EfhEngine::unkFct_checkMonsterField8(int16 id, bool teamFlag) {
-	debugC(6, kDebugEngine, "unkFct_checkMonsterField8 %d %s", id, teamFlag ? "True" : "False");
+bool EfhEngine::checkMonsterMovementType(int16 id, bool teamFlag) {
+	debugC(6, kDebugEngine, "checkMonsterMovementType %d %s", id, teamFlag ? "True" : "False");
 
 	int16 monsterId = id;
 	if (teamFlag)
 		monsterId = _teamMonsterIdArray[id];
 
-	if ((_mapMonsters[monsterId]._field_8 & 0xF) >= 8)
+	if ((_mapMonsters[monsterId]._moveInfo & 0xF) >= 8)
 		return true;
 
-	if (_unkArray2C8AA[0] == 0)
-		return false;
-
-	if ((_mapMonsters[monsterId]._field_8 & 0x80) != 0)
+	if (_unk2C8AA != 0 && (_mapMonsters[monsterId]._moveInfo & 0x80) != 0)
 		return true;
 
 	return false;
@@ -1872,7 +1868,7 @@ bool EfhEngine::checkTeamWeaponRange(int16 monsterId) {
 		return true;
 
 	for (uint counter = 0; counter < 5; ++counter) {
-		if (_teamMonsterIdArray[counter] == monsterId && unkFct_checkMonsterField8(monsterId, false) && checkWeaponRange(monsterId, _mapMonsters[monsterId]._itemId_Weapon))
+		if (_teamMonsterIdArray[counter] == monsterId && checkMonsterMovementType(monsterId, false) && checkWeaponRange(monsterId, _mapMonsters[monsterId]._itemId_Weapon))
 			return false;
 	}
 
@@ -1897,14 +1893,11 @@ bool EfhEngine::checkMonsterWeaponRange(int16 monsterId) {
 	return checkWeaponRange(monsterId, _mapMonsters[monsterId]._itemId_Weapon);
 }
 
-void EfhEngine::sub174A0() {
-	debug("sub174A0");
-
-	static int16 sub174A0_monsterPosX = -1;
-	static int16 sub174A0_monsterPosY = -1;
+void EfhEngine::handleMapMonsterMoves() {
+	debug("handleMapMonsterMoves");
 
 	_redrawNeededFl = true;
-	int16 unkMonsterId = -1;
+	int16 attackMonsterId = -1;
 	int16 mapSize = _largeMapFlag ? 63 : 23;
 	int16 minDisplayedMapX = CLIP<int16>(_mapPosX - 10, 0, mapSize);
 	int16 minDisplayedMapY = CLIP<int16>(_mapPosY - 9, 0, mapSize);
@@ -1921,82 +1914,79 @@ void EfhEngine::sub174A0() {
 		if (!checkIfMonsterOnSameLargeMapPlace(monsterId))
 			continue;
 
-		int16 var4 = _mapMonsters[monsterId]._posX;
-		int16 var2 = _mapMonsters[monsterId]._posY;
+		int16 previousPosX = _mapMonsters[monsterId]._posX;
+		int16 previousPosY = _mapMonsters[monsterId]._posY;
 
-		if (var4 < minDisplayedMapX || var4 > maxDisplayedMapX || var2 < minDisplayedMapY || var2 > maxDisplayedMapY)
+		if (previousPosX < minDisplayedMapX || previousPosX > maxDisplayedMapX || previousPosY < minDisplayedMapY || previousPosY > maxDisplayedMapY)
 			continue;
 
 		bool monsterMovedFl = false;
 		int16 lastRangeCheck = 0;
 
-		sub174A0_monsterPosX = _mapMonsters[monsterId]._posX;
-		sub174A0_monsterPosY = _mapMonsters[monsterId]._posY;
-		int8 var1C = _mapMonsters[monsterId]._field_8 & 0xF;
+		int8 monsterMoveType = _mapMonsters[monsterId]._moveInfo & 0xF; // 0000 1111
 
-		if (_unkArray2C8AA[0] != 0 && (_mapMonsters[monsterId]._field_8 & 0x80))
-			var1C = 9;
+		if (_unk2C8AA != 0 && (_mapMonsters[monsterId]._moveInfo & 0x80)) // 1000 0000
+			monsterMoveType = 9;
 
-		int16 var1E = _mapMonsters[monsterId]._field_8 & 0x70;
-		var1E >>= 4;
+		int16 randomModPct = _mapMonsters[monsterId]._moveInfo & 0x70; // 0111 0000
+		randomModPct >>= 4; // Max 7 (0111)
 
-		int16 var16 = var1E;
+		int16 retryCounter = randomModPct;
 		do {
-			switch (var1C - 1) {
+			switch (monsterMoveType - 1) {
 			case 0:
-				if (getRandom(100) >= 0xE - var1E)
+				if (getRandom(100) >= 14 - randomModPct)
 					monsterMovedFl = moveMonsterTowardsTeam(monsterId);
 				else
-					monsterMovedFl = moveMonsterGroup(monsterId);
+					monsterMovedFl = moveMonsterGroupRandom(monsterId);
 				break;
 			case 1:
-				if (getRandom(100) >= 0xE - var1E)
+				if (getRandom(100) >= 14 - randomModPct)
 					monsterMovedFl = moveMonsterAwayFromTeam(monsterId);
 				else
-					monsterMovedFl = moveMonsterGroup(monsterId);
+					monsterMovedFl = moveMonsterGroupRandom(monsterId);
 				break;
 			case 2:
 				monsterMovedFl = moveMonsterGroupOther(monsterId, getRandom(8));
 				break;
 			case 3:
-				monsterMovedFl = moveMonsterGroup(monsterId);
+				monsterMovedFl = moveMonsterGroupRandom(monsterId);
 				break;
 			case 4:
-				if (getRandom(100) > 0x32 - var1E)
+				if (getRandom(100) > 50 - randomModPct)
 					monsterMovedFl = moveMonsterTowardsTeam(monsterId);
 				else
-					monsterMovedFl = moveMonsterGroup(monsterId);
+					monsterMovedFl = moveMonsterGroupRandom(monsterId);
 				break;
 			case 5:
-				if (getRandom(100) > 0x32 - var1E)
+				if (getRandom(100) > 50 - randomModPct)
 					monsterMovedFl = moveMonsterAwayFromTeam(monsterId);
 				else
-					monsterMovedFl = moveMonsterGroup(monsterId);
+					monsterMovedFl = moveMonsterGroupRandom(monsterId);
 				break;
 			case 6:
-				if (getRandom(100) >= 0x32 - var1E)
-					monsterMovedFl = moveMonsterGroup(monsterId);
+				if (getRandom(100) >= 50 - randomModPct)
+					monsterMovedFl = moveMonsterGroupRandom(monsterId);
 				break;
 			case 7:
-				// var14 is not a typo.
 				lastRangeCheck = checkMonsterWeaponRange(monsterId);
 				break;
 			case 8:
 				lastRangeCheck = checkMonsterWeaponRange(monsterId);
 				if (lastRangeCheck == 0) {
-					if (getRandom(100) >= 0xE - var1E)
+					if (getRandom(100) >= 14 - randomModPct)
 						monsterMovedFl = moveMonsterTowardsTeam(monsterId);
 					else
-						monsterMovedFl = moveMonsterGroup(monsterId);
+						monsterMovedFl = moveMonsterGroupRandom(monsterId);
 				}
 				break;
 			case 9:
 				lastRangeCheck = checkMonsterWeaponRange(monsterId);
 				if (lastRangeCheck == 0) {
-					if (getRandom(100) >= 0xE - var1E)
+					if (getRandom(100) >= 14 - randomModPct)
 						monsterMovedFl = moveMonsterAwayFromTeam(monsterId);
 					else
-						monsterMovedFl = moveMonsterGroup(monsterId);
+						monsterMovedFl = moveMonsterGroupRandom(monsterId);
 				}
 				break;
 			case 10:
@@ -2008,31 +1998,31 @@ void EfhEngine::sub174A0() {
 			case 11:
 				lastRangeCheck = checkMonsterWeaponRange(monsterId);
 				if (lastRangeCheck == 0) {
-					monsterMovedFl = moveMonsterGroup(monsterId);
+					monsterMovedFl = moveMonsterGroupRandom(monsterId);
 				}
 				break;
 			case 12:
 				lastRangeCheck = checkMonsterWeaponRange(monsterId);
 				if (lastRangeCheck == 0) {
-					if (getRandom(100) >= 0x32 - var1E)
+					if (getRandom(100) >= 50 - randomModPct)
 						monsterMovedFl = moveMonsterTowardsTeam(monsterId);
 					else
-						monsterMovedFl = moveMonsterGroup(monsterId);
+						monsterMovedFl = moveMonsterGroupRandom(monsterId);
 				}
 				break;
 			case 13:
 				lastRangeCheck = checkMonsterWeaponRange(monsterId);
 				if (lastRangeCheck == 0) {
-					if (getRandom(100) >= 0x32 - var1E)
+					if (getRandom(100) >= 50 - randomModPct)
 						monsterMovedFl = moveMonsterAwayFromTeam(monsterId);
 					else
-						monsterMovedFl = moveMonsterGroup(monsterId);
+						monsterMovedFl = moveMonsterGroupRandom(monsterId);
 				}
 				break;
 			case 14:
 				lastRangeCheck = checkMonsterWeaponRange(monsterId);
-				if (lastRangeCheck == 0 && getRandom(100) >= 0x32 - var1E)
-					monsterMovedFl = moveMonsterGroup(monsterId);
+				if (lastRangeCheck == 0 && getRandom(100) >= 50 - randomModPct)
+					monsterMovedFl = moveMonsterGroupRandom(monsterId);
 				break;
 			default:
 				break;
@@ -2043,35 +2033,35 @@ void EfhEngine::sub174A0() {
 					if (lastRangeCheck == 0) {
 						monsterMovedFl = true;
 					} else {
-						unkMonsterId = monsterId;
+						attackMonsterId = monsterId;
 						monsterMovedFl = true;
 					}
 				} else {
 					int8 var18 = sub16B08(monsterId);
 
 					if (var18 == 0) {
-						_mapMonsters[monsterId]._posX = sub174A0_monsterPosX;
-						_mapMonsters[monsterId]._posY = sub174A0_monsterPosY;
+						_mapMonsters[monsterId]._posX = previousPosX;
+						_mapMonsters[monsterId]._posY = previousPosY;
 						monsterMovedFl = false;
-						--var16;
+						--retryCounter;
 					} else if (var18 == 2) {
-						_mapMonsters[monsterId]._posX = sub174A0_monsterPosX;
-						_mapMonsters[monsterId]._posY = sub174A0_monsterPosY;
+						_mapMonsters[monsterId]._posX = previousPosX;
+						_mapMonsters[monsterId]._posY = previousPosY;
 					}
 				}
 
-				if (!monsterMovedFl && var16 == 1 && var1E > 1) {
+				if (!monsterMovedFl && retryCounter == 1 && randomModPct > 1) {
 					monsterMovedFl = moveMonsterGroupOther(monsterId, getRandom(8));
 					continue;
 				}
 
 				break;
 			}
-		} while (!monsterMovedFl && var16 > 0);
+		} while (!monsterMovedFl && retryCounter > 0);
 	}
 
-	if (unkMonsterId != -1)
-		handleFight(unkMonsterId);
+	if (attackMonsterId != -1)
+		handleFight(attackMonsterId);
 }
 
 bool EfhEngine::checkPictureRefAvailability(int16 monsterId) {
@@ -2723,7 +2713,7 @@ int16 EfhEngine::getTeamMonsterAnimId() {
 		if (monsterId == -1)
 			continue;
 
-		if (!unkFct_checkMonsterField8(monsterId, false))
+		if (!checkMonsterMovementType(monsterId, false))
 			continue;
 
 		retVal = kEncounters[_mapMonsters[monsterId]._monsterRef]._animId;
@@ -2834,8 +2824,8 @@ bool EfhEngine::hasObjectEquipped(int16 charId, int16 objectId) {
 }
 
 
-void EfhEngine::setMapMonsterField8(int16 id, uint8 mask, bool groupFl) {
-	debugC(2, kDebugEngine, "setMapMonsterField8 %d 0x%X %s", id, mask, groupFl ? "True" : "False");
+void EfhEngine::setMapMonsterField8(int16 id, uint8 movementType, bool groupFl) {
+	debugC(2, kDebugEngine, "setMapMonsterField8 %d 0x%X %s", id, movementType, groupFl ? "True" : "False");
 
 	int16 monsterId;
 	if (groupFl) { // groupFl is always True
@@ -2844,9 +2834,9 @@ void EfhEngine::setMapMonsterField8(int16 id, uint8 mask, bool groupFl) {
 		monsterId = id;
 	}
 
-	mask &= 0x0F;
-	_mapMonsters[monsterId]._field_8 &= 0xF0;
-	_mapMonsters[monsterId]._field_8 |= mask;
+	movementType &= 0x0F;
+	_mapMonsters[monsterId]._moveInfo &= 0xF0;
+	_mapMonsters[monsterId]._moveInfo |= movementType;
 }
 
 bool EfhEngine::isMonsterActive(int16 groupId, int16 id) {
@@ -3068,7 +3058,7 @@ void EfhEngine::loadEfhGame() {
 
 	_teamSize = f.readSint16LE();
 
-	_unkArray2C8AA[0] = f.readSint16LE();
+	_unk2C8AA = f.readSint16LE();
 
 	_word2C872 = f.readSint16LE();
 

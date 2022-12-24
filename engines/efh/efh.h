@@ -211,7 +211,7 @@ struct MapMonster {
 	uint8 _itemId_Weapon;
 	uint8 _field_6;
 	uint8 _monsterRef;
-	uint8 _field_8;
+	uint8 _moveInfo; // abbb cccc a: special move flag, bbb: Pct modifier for random move, cccc movement type
 	uint8 _field9_textId;
 	uint8 _groupSize;
 	int16 _pictureRef[9];
@@ -337,14 +337,14 @@ private:
 	bool moveMonsterAwayFromTeam(int16 monsterId);
 	bool moveMonsterTowardsTeam(int16 monsterId);
 	bool moveMonsterGroupOther(int16 monsterId, int16 direction);
-	bool moveMonsterGroup(int16 monsterId);
+	bool moveMonsterGroupRandom(int16 monsterId);
 	int16 computeMonsterGroupDistance(int16 monsterId);
 	bool checkWeaponRange(int16 monsterId, int16 weaponId);
-	bool unkFct_checkMonsterField8(int16 id, bool teamFlag);
+	bool checkMonsterMovementType(int16 id, bool teamFlag);
 	bool checkTeamWeaponRange(int16 monsterId);
 	bool checkIfMonsterOnSameLargeMapPlace(int16 monsterId);
 	bool checkMonsterWeaponRange(int16 monsterId);
-	void sub174A0();
+	void handleMapMonsterMoves();
 	bool checkPictureRefAvailability(int16 monsterId);
 	void displayMonsterAnim(int16 monsterId);
 	int16 countPictureRef(int16 id, bool teamMemberFl);
@@ -365,7 +365,7 @@ private:
 	int16 getXPLevel(int32 xp);
 	bool isItemCursed(int16 itemId);
 	bool hasObjectEquipped(int16 charId, int16 objectId);
-	void setMapMonsterField8(int16 id, uint8 mask, bool groupFl);
+	void setMapMonsterField8(int16 id, uint8 movementType, bool groupFl);
 	bool isMonsterActive(int16 groupId, int16 id);
 	int16 sub15538(int16 mapPosX, int16 mapPosY);
 	void setCharacterObjectToBroken(int16 charId, int16 objectId);
@@ -571,7 +571,7 @@ private:
 
 	int16 _teamMonsterIdArray[5];
 	CharStatus _teamCharStatus[3];
-	int16 _unkArray2C8AA[3];
+	int16 _unk2C8AA;
 	int16 _teamLastAction[3];
 	int16 _teamSize;
 	int16 _word2C872;
