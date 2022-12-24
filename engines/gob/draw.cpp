@@ -404,8 +404,8 @@ void Draw::resizeCursors(int16 width, int16 height, int16 count, bool transparen
 
 	debugC(5, kDebugGraphics, "Resizing cursors: size %dx%d -> %dx%d, cursor count %d -> %d)",
 		   _vm->_draw->_cursorWidth,
-		   width,
 		   _vm->_draw->_cursorHeight,
+		   width,
 		   height,
 		   _vm->_draw->_cursorCount,
 		   count);

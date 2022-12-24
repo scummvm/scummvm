@@ -184,7 +184,6 @@ void Draw_v7::animateCursor(int16 cursor) {
 				(_cursorAnimLow[_cursorIndex] > _cursorAnim))
 				_cursorAnim = _cursorAnimLow[_cursorIndex];
 
-			//debugC(1, kDebugGraphics, "Draw_v7::animateCursor() - cursor index %d replaced by cursor anim '%d'", cursorIndex, _cursorAnim);
 			cursorIndex = _cursorAnim;
 		}
 		// '------
@@ -193,11 +192,6 @@ void Draw_v7::animateCursor(int16 cursor) {
 
 		if (((!_cursorNames[cursorIndex].empty() || _isCursorFromExe)) && cursorChanged) {
 			_cursorName = _cursorNames[cursorIndex];
-
-			// Clear the cursor sprite at that index
-			_vm->_draw->_cursorSprites->fillRect(cursorIndex * _vm->_draw->_cursorWidth, 0,
-												 cursorIndex * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
-												 _vm->_draw->_cursorHeight - 1, 0);
 
 			// If the cursor name is empty, that cursor will be drawn by the scripts
 			if (_cursorNames[cursorIndex].empty() || _cursorNames[cursorIndex] == "VIDE") { // "VIDE" is "empty" in french
@@ -209,13 +203,20 @@ void Draw_v7::animateCursor(int16 cursor) {
 
 				// Make sure the cursors sprite is big enough and set to non-extern palette
 				resizeCursors(-1, -1, cursorIndex + 1, true);
-				_vm->_draw->_doCursorPalettes[cursorIndex] = false;
+				for (int i = 0; i < _vm->_draw->_cursorCount; i++) {
+					_vm->_draw->_doCursorPalettes[i] = false;
+				}
 
 				_cursorX =  _vm->_global->_inter_mouseX;
 				_cursorY =  _vm->_global->_inter_mouseY;
 				_showCursor &= ~1;
 				return;
 			} else {
+				// Clear the cursor sprite at that index
+				_vm->_draw->_cursorSprites->fillRect(cursorIndex * _vm->_draw->_cursorWidth, 0,
+													 cursorIndex * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
+													 _vm->_draw->_cursorHeight - 1, 0);
+
 				if (!loadCursorFromFile(cursorIndex)) {
 					_cursorX =  _vm->_global->_inter_mouseX;
 					_cursorY =  _vm->_global->_inter_mouseY;
