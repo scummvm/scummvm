@@ -89,8 +89,12 @@ void NetworkReadStream::initCurl(const char *url, curl_slist *headersList) {
 	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);
 	curl_easy_setopt(_easy, CURLOPT_USERAGENT, gScummVMFullVersion);
 	curl_easy_setopt(_easy, CURLOPT_NOPROGRESS, 0L);
+#if LIBCURL_VERSION_NUM < 0x075700
+	// These are used for compatibility with runtime curl <7.32.
+	// They're declared deprecated in 7.87, so stop using them.
 	curl_easy_setopt(_easy, CURLOPT_PROGRESSFUNCTION, curlProgressCallbackOlder);
 	curl_easy_setopt(_easy, CURLOPT_PROGRESSDATA, this);
+#endif
 #if defined NINTENDO_SWITCH || defined ANDROID_PLAIN_PORT || defined PSP2
 	curl_easy_setopt(_easy, CURLOPT_SSL_VERIFYPEER, 0);
 #endif
@@ -159,6 +163,28 @@ void NetworkReadStream::setupBufferContents(const byte *buffer, uint32 bufferSiz
 
 void NetworkReadStream::setupFormMultipart(Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles) {
 	// set POST multipart upload form fields/files
+#if LIBCURL_VERSION_NUM >= 0x075700
+	// Not using deprecated APIs, but breaks compatibility when runtime curl is <7.56
+	curl_mime *mime = curl_mime_init(_easy);
+
+	for (Common::HashMap<Common::String, Common::String>::iterator i = formFields.begin(); i != formFields.end(); ++i) {
+		curl_mimepart *part = curl_mime_addpart(mime);
+		if (curl_mime_name(part, i->_key.c_str()) != CURLE_OK)
+			warning("NetworkReadStream: field curl_mime_name('%s') failed", i->_key.c_str());
+		if (curl_mime_data(part, i->_value.c_str(), i->_value.size()) != CURLE_OK)
+			warning("NetworkReadStream: field curl_mime_data('%s') failed", i->_value.c_str());
+	}
+
+	for (Common::HashMap<Common::String, Common::String>::iterator i = formFiles.begin(); i != formFiles.end(); ++i) {
+		curl_mimepart *part = curl_mime_addpart(mime);
+		if (curl_mime_name(part, i->_key.c_str()) != CURLE_OK)
+			warning("NetworkReadStream: field curl_mime_name('%s') failed", i->_key.c_str());
+		if (curl_mime_filedata(part, i->_value.c_str()) != CURLE_OK)
+			warning("NetworkReadStream: field curl_mime_filedata('%s') failed", i->_value.c_str());
+	}
+
+	curl_easy_setopt(_easy, CURLOPT_MIMEPOST, mime);
+#else
 	struct curl_httppost *formpost = nullptr;
 	struct curl_httppost *lastptr = nullptr;
 
@@ -189,6 +215,7 @@ void NetworkReadStream::setupFormMultipart(Common::HashMap<Common::String, Commo
 	}
 
 	curl_easy_setopt(_easy, CURLOPT_HTTPPOST, formpost);
+#endif
 	ConnMan.registerEasyHandle(_easy);
 }
 
