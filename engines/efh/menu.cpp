@@ -62,7 +62,7 @@ int16 EfhEngine::sub1C219(Common::String str, int16 menuType, int16 displayOptio
 	}
 
 	drawColoredRect(minX, minY, maxX, maxY, 0);
-	if (str.size())
+	if (!str.empty())
 		varA = script_parse(str, minX, minY, maxX, maxY, true);
 
 	if (displayTeamWindowFl)
@@ -74,7 +74,7 @@ int16 EfhEngine::sub1C219(Common::String str, int16 menuType, int16 displayOptio
 			_word2C87A = false;
 		else {
 			drawColoredRect(minX, minY, maxX, maxY, 0);
-			if (str.size())
+			if (!str.empty())
 				script_parse(str, minX, minY, maxX, maxY, false);
 		}
 
@@ -92,7 +92,7 @@ int16 EfhEngine::sub1C219(Common::String str, int16 menuType, int16 displayOptio
 }
 
 bool EfhEngine::handleDeathMenu() {
-	debug("handleDeathMenu");
+	debugC(3, kDebugEngine, "handleDeathMenu");
 
 	_saveAuthorized = false;
 
@@ -126,14 +126,12 @@ bool EfhEngine::handleDeathMenu() {
 		Common::KeyCode input = waitForKey();
 		switch (input) {
 		case Common::KEYCODE_l:
-			//loadEfhGame();
-			//TODO:
-			//SaveEfhGame opens the GUI save/load screen. It's not possible to save at this point, which is fine, but it's possible to close the screen without loading.
-			//Maybe adding the _saveAuthorized flag in the savegame would do the trick and could then be used tp keep found at false and loop on the input selection?
-			//like: found = _saveAuthorized
+			// SaveEfhGame opens the GUI save/load screen. It's not possible to save at this point (_saveAuthorizd is false).
+			// If the user actually loads a savegame, it'll get _saveAuthorized from the savegame (always true) and will set 'found' to true.
+			// If 'found' remains false, it means the user cancelled the loading and still needs to take a decision
+			// Original is calling loadEfhGame() because there's only one savegame, so it's not ambiguous
 			saveEfhGame();
-			found = true;
-			_saveAuthorized = true;
+			found = _saveAuthorized;
 			break;
 		case Common::KEYCODE_q:
 			_shouldQuit = true;
@@ -158,10 +156,9 @@ bool EfhEngine::handleDeathMenu() {
 }
 
 void EfhEngine::displayCombatMenu(int16 charId) {
-	debug("displayCombatMenu %d", charId);
+	debugC(6, kDebugEngine, "displayCombatMenu %d", charId);
 
-	Common::String buffer = _npcBuf[charId]._name;
-	buffer += ":";
+	Common::String buffer = Common::String::format("%s:", _npcBuf[charId]._name);
 	setTextColorWhite();
 	setTextPos(144, 7);
 	displayStringAtTextPos(buffer);
@@ -480,6 +477,979 @@ void EfhEngine::sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMe
 		if (counter == 0)
 			displayFctFullScreen();
 	}
+}
+
+int16 EfhEngine::displayString_3(Common::String str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
+	debug("displayString_3 %s %s %d %d %d %d", str.c_str(), animFl ? "True" : "False", charId, windowId, menuId, curMenuLine);
+
+	int16 retVal = 0;
+
+	for (uint counter = 0; counter < 2; ++counter) {
+		prepareStatusMenu(windowId, menuId, curMenuLine, charId, true, false);
+		displayWindow(_windowWithBorderBuf, 19, 113, _hiResImageBuf);
+
+		if (counter == 0) {
+			script_parse(str, 28, 122, 105, 166, false);
+			displayFctFullScreen();
+		} else {
+			retVal = script_parse(str, 28, 122, 105, 166, true);
+		}
+	}
+
+	if (animFl) {
+		getLastCharAfterAnimCount(_guessAnimationAmount);
+		sub18E80(charId, windowId, menuId, curMenuLine);
+	}
+
+	return retVal;
+}
+
+int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
+	debug("handleStatusMenu %d %d", gameMode, charId);
+
+	int16 menuId = 9;
+	int16 selectedLine = -1;
+	int16 windowId = -1;
+	int16 curMenuLine = -1;
+	bool var10 = false;
+	bool var2 = false;
+
+	saveAnimImageSetId();
+
+	_statusMenuActive = true;
+	_menuDepth = 0;
+
+	sub18E80(charId, windowId, menuId, curMenuLine);
+
+	for (;;) {
+		if (windowId != -1)
+			prepareStatusMenu(windowId, menuId, curMenuLine, charId, true, true);
+		else
+			windowId = 0;
+
+		do {
+			Common::KeyCode var19 = handleAndMapInput(false);
+			if (_menuDepth == 0) {
+				switch (var19) {
+				case Common::KEYCODE_ESCAPE:
+					windowId = 8;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				case Common::KEYCODE_a:
+					windowId = 7;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				case Common::KEYCODE_d:
+					windowId = 4;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				case Common::KEYCODE_e:
+					windowId = 0;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				case Common::KEYCODE_g:
+					windowId = 2;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				case Common::KEYCODE_i:
+					windowId = 5;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				case Common::KEYCODE_l:
+					windowId = 8;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				case Common::KEYCODE_p:
+					windowId = 6;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				case Common::KEYCODE_t:
+					windowId = 3;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				case Common::KEYCODE_u:
+					windowId = 1;
+					var19 = Common::KEYCODE_RETURN;
+					break;
+				// case 0xFB: Joystick button 2
+				default:
+					//	warning("handleStatusMenu - unhandled keys (or joystick event?) 0xBA, 0xBB, 0xBC");
+					break;
+				}
+			} else if (_menuDepth == 1) {
+				// in the sub-menus, only a list of selectable items is displayed
+				if (var19 >= Common::KEYCODE_a && var19 <= Common::KEYCODE_z) {
+					int16 var8 = var19 - Common::KEYCODE_a;
+					if (var8 < _menuItemCounter) {
+						curMenuLine = var8;
+						var19 = Common::KEYCODE_RETURN;
+					}
+				}
+			}
+
+			switch (var19) {
+			case Common::KEYCODE_RETURN:
+				// case 0xFA: Joystick button 1
+				if (_menuDepth == 0) {
+					menuId = windowId;
+					if (menuId > 7)
+						var10 = true;
+					else {
+						_menuDepth = 1;
+						curMenuLine = 0;
+					}
+				} else if (_menuDepth == 1) {
+					if (_menuItemCounter == 0) {
+						_menuDepth = 0;
+						curMenuLine = -1;
+						menuId = 9;
+						prepareStatusMenu(windowId, menuId, curMenuLine, charId, true, true);
+					} else {
+						selectedLine = curMenuLine;
+						var10 = true;
+					}
+				}
+				break;
+			case Common::KEYCODE_ESCAPE:
+				_menuDepth = 0;
+				curMenuLine = -1;
+				menuId = 9;
+				prepareStatusMenu(windowId, menuId, curMenuLine, charId, true, true);
+				break;
+			case Common::KEYCODE_2:
+			case Common::KEYCODE_6:
+			// Added for ScummVM
+			case Common::KEYCODE_DOWN:
+			case Common::KEYCODE_RIGHT:
+			case Common::KEYCODE_KP2:
+			case Common::KEYCODE_KP6:
+				// Original checks joystick axis: case 0xCC, 0xCF
+				if (_menuDepth == 0) {
+					if (++windowId > 8)
+						windowId = 0;
+				} else if (_menuDepth == 1) {
+					if (_menuItemCounter != 0) {
+						++curMenuLine;
+						if (curMenuLine > _menuItemCounter - 1)
+							curMenuLine = 0;
+					}
+				}
+				break;
+			case Common::KEYCODE_4:
+			case Common::KEYCODE_8:
+			// Added for ScummVM
+			case Common::KEYCODE_LEFT:
+			case Common::KEYCODE_UP:
+			case Common::KEYCODE_KP4:
+			case Common::KEYCODE_KP8:
+				// Original checks joystick axis: case 0xC7, 0xCA
+				if (_menuDepth == 0) {
+					if (--windowId < 0)
+						windowId = 8;
+				} else if (_menuDepth == 1) {
+					if (_menuItemCounter != 0) {
+						--curMenuLine;
+						if (curMenuLine < 0)
+							curMenuLine = _menuItemCounter - 1;
+					}
+				}
+				break;
+			default:
+				break;
+			}
+
+			if (curMenuLine == -1)
+				prepareStatusMenu(windowId, menuId, curMenuLine, charId, false, true);
+			else
+				prepareStatusMenu(windowId, menuId, curMenuLine, charId, true, true);
+
+		} while (!var10);
+
+		bool validationFl = true;
+
+		int16 objectId;
+		int16 itemId;
+		switch (menuId) {
+		case 0:
+			objectId = _menuStatItemArr[selectedLine];
+			itemId = _npcBuf[charId]._inventory[objectId]._ref; // CHECKME: Useless?
+			sub191FF(charId, objectId, windowId, menuId, curMenuLine);
+			if (gameMode == 2) {
+				restoreAnimImageSetId();
+				_statusMenuActive = false;
+				return 0x7D00;
+			}
+			break;
+		case 1:
+			objectId = _menuStatItemArr[selectedLine];
+			itemId = _npcBuf[charId]._inventory[objectId]._ref;
+			if (gameMode == 2) {
+				restoreAnimImageSetId();
+				_statusMenuActive = false;
+				return objectId;
+			}
+
+			if (sub22293(_mapPosX, _mapPosY, charId, itemId, 2, -1)) {
+				_statusMenuActive = false;
+				return -1;
+			}
+
+			sub19E2E(charId, objectId, windowId, menuId, curMenuLine, 2);
+			break;
+		case 2:
+			objectId = _menuStatItemArr[selectedLine];
+			itemId = _npcBuf[charId]._inventory[objectId]._ref;
+			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
+				displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
+			} else if (hasObjectEquipped(charId, objectId)) {
+				displayString_3("Item is Equipped!  Give anyway?", false, charId, windowId, menuId, curMenuLine);
+				if (!getValidationFromUser())
+					validationFl = false;
+				sub18E80(charId, windowId, menuId, curMenuLine);
+
+				if (validationFl) {
+					if (gameMode == 2) {
+						displayString_3("Not a Combat Option !", true, charId, windowId, menuId, curMenuLine);
+					} else {
+						removeObject(charId, objectId);
+						int16 var8 = sub22293(_mapPosX, _mapPosY, charId, itemId, 3, -1);
+						if (var8 != 0) {
+							_statusMenuActive = false;
+							return -1;
+						}
+					}
+				}
+			}
+
+			break;
+		case 3:
+			objectId = _menuStatItemArr[selectedLine];
+			itemId = _npcBuf[charId]._inventory[objectId]._ref;
+			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
+				displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
+			} else if (hasObjectEquipped(charId, objectId)) {
+				displayString_3("Item is Equipped!  Trade anyway?", false, charId, windowId, menuId, curMenuLine);
+				if (!getValidationFromUser())
+					validationFl = false;
+				sub18E80(charId, windowId, menuId, curMenuLine);
+
+				if (validationFl) {
+					bool var6;
+					int16 var8;
+					do {
+						if (_teamCharId[2] != -1) {
+							var8 = displayString_3("Who will you give the item to?", false, charId, windowId, menuId, curMenuLine);
+							var2 = false;
+						} else if (_teamCharId[1]) {
+							var8 = 0x1A;
+							var2 = false;
+						} else {
+							var2 = true;
+							if (_teamCharId[0] == charId)
+								var8 = 1;
+							else
+								var8 = 0;
+						}
+
+						if (var8 != 0x1A && var8 != 0x1B) {
+							var6 = giveItemTo(_teamCharId[var8], objectId, charId);
+							if (!var6) {
+								displayString_3("That character cannot carry anymore!", false, charId, windowId, menuId, curMenuLine);
+								getLastCharAfterAnimCount(_guessAnimationAmount);
+							}
+						} else {
+							if (var8 == 0x1A) {
+								displayString_3("No one to trade with!", false, charId, windowId, menuId, curMenuLine);
+								getLastCharAfterAnimCount(_guessAnimationAmount);
+								var8 = 0x1B;
+							}
+							var6 = false;
+						}
+					} while (!var6 && !var2 && var8 != 0x1B);
+
+					if (var6) {
+						removeObject(charId, objectId);
+						if (gameMode == 2) {
+							restoreAnimImageSetId();
+							_statusMenuActive = false;
+							return 0x7D00;
+						}
+					}
+
+					sub18E80(charId, windowId, menuId, curMenuLine);
+				}
+			}
+			break;
+		case 4:
+			objectId = _menuStatItemArr[selectedLine];
+			itemId = _npcBuf[charId]._inventory[objectId]._ref;
+			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
+				displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
+			} else if (hasObjectEquipped(charId, objectId)) {
+				displayString_3("Item Is Equipped!  Drop Anyway?", false, charId, windowId, menuId, curMenuLine);
+				if (!getValidationFromUser())
+					validationFl = false;
+				sub18E80(charId, windowId, menuId, curMenuLine);
+
+				if (validationFl) {
+					removeObject(charId, objectId);
+					if (gameMode == 2) {
+						restoreAnimImageSetId();
+						_statusMenuActive = false;
+						return 0x7D00;
+					}
+
+					bool var8 = sub22293(_mapPosX, _mapPosY, charId, itemId, 1, -1);
+					if (var8) {
+						_statusMenuActive = false;
+						return -1;
+					}
+				}
+			}
+			break;
+		case 5:
+			objectId = _menuStatItemArr[selectedLine];
+			if (gameMode == 2) {
+				displayString_3("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
+			} else {
+				bool var8 = sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1);
+				if (var8) {
+					_statusMenuActive = false;
+					return -1;
+				}
+			}
+			break;
+		case 6: // Identical to case 5?
+			objectId = _menuStatItemArr[selectedLine];
+			if (gameMode == 2) {
+				displayString_3("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
+			} else {
+				bool var8 = sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1);
+				if (var8) {
+					_statusMenuActive = false;
+					return -1;
+				}
+			}
+			break;
+		case 7: // Identical to case 5?
+			objectId = _menuStatItemArr[selectedLine];
+			if (gameMode == 2) {
+				displayString_3("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
+			} else {
+				bool var8 = sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1);
+				if (var8) {
+					_statusMenuActive = false;
+					return -1;
+				}
+			}
+			break;
+		default:
+			break;
+		}
+
+		if (menuId != 8) {
+			var10 = false;
+			_menuDepth = 0;
+			menuId = 9;
+			selectedLine = -1;
+			curMenuLine = -1;
+		}
+
+		if (menuId == 8) {
+			restoreAnimImageSetId();
+			_statusMenuActive = false;
+			return 0x7FFF;
+		}
+	}
+
+	return 0;
+}
+
+void EfhEngine::equipCursedItem(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine) {
+	debug("equipCursedItem %d %d %d %d %d", charId, objectId, windowId, menuId, curMenuLine);
+
+	int16 itemId = _npcBuf[charId]._inventory[objectId]._ref;
+
+	if (isItemCursed(itemId)) {
+		_npcBuf[charId]._inventory[objectId]._stat1 &= 0x7F;
+	} else {
+		displayString_3("Cursed Item Already Equipped!", true, charId, windowId, menuId, curMenuLine);
+	}
+}
+
+void EfhEngine::sub191FF(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine) {
+	debug("sub191FF %d %d %d %d %d", charId, objectId, windowId, menuId, curMenuLine);
+
+	int16 itemId = _npcBuf[charId]._inventory[objectId]._ref;
+
+	if (hasObjectEquipped(charId, objectId)) {
+		equipCursedItem(charId, objectId, windowId, menuId, curMenuLine);
+	} else {
+		int16 var2 = _items[itemId].field_18;
+		if (var2 != 4) {
+			for (uint counter = 0; counter < 10; ++counter) {
+				if (var2 == _items[_npcBuf[charId]._inventory[counter]._ref].field_18)
+					equipCursedItem(charId, objectId, windowId, menuId, curMenuLine);
+			}
+		}
+
+		_npcBuf[charId]._inventory[objectId]._stat1 |= 0x80;
+	}
+}
+
+int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA) {
+	debug("sub19E2E %d %d %d %d %d %d", charId, objectId, windowId, menuId, curMenuLine, argA);
+
+	Common::String buffer1 = "";
+
+	bool varA6 = false;
+	bool retVal = false;
+
+	int16 itemId = _npcBuf[charId]._inventory[objectId]._ref;
+	switch (_items[itemId].field_16 - 1) {
+	case 0: // "Demonic Powers", "MindDomination", "Guilt Trip", "Sleep Grenade", "SleepGrenader"
+		if (argA == 2) {
+			displayString_3("The item emits a low droning hum...", false, charId, windowId, menuId, curMenuLine);
+		} else {
+			int16 victims = 0;
+			_messageToBePrinted += "  The item emits a low droning hum...";
+			if (getRandom(100) < 50) {
+				for (uint counter = 0; counter < 9; ++counter) {
+					if (isMonsterActive(windowId, counter)) {
+						++victims;
+						_stru32686[windowId]._field0[counter] = 1;
+						_stru32686[windowId]._field2[counter] = getRandom(8);
+					}
+				}
+			} else {
+				int16 NumberOfTargets = getRandom(9);
+				for (uint counter = 0; counter < 9; ++counter) {
+					if (NumberOfTargets == 0)
+						break;
+
+					if (isMonsterActive(windowId, counter)) {
+						++victims;
+						--NumberOfTargets;
+						_stru32686[windowId]._field0[counter] = 1;
+						_stru32686[windowId]._field2[counter] = getRandom(8);
+					}
+				}
+			}
+			// The original was duplicating this code in each branch of the previous random check.
+			if (victims > 1) {
+				buffer1 = Common::String::format("%d %ss fall asleep!", victims, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._monsterRef]._name);
+			} else {
+				buffer1 = Common::String::format("%d %s falls asleep!", victims, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._monsterRef]._name);
+			}
+			_messageToBePrinted += buffer1;
+		}
+
+		varA6 = true;
+		break;
+	case 1: // "Chilling Touch", "Guilt", "Petrify Rod", "Elmer's Gun"
+		if (argA == 2) {
+			displayString_3("The item grows very cold for a moment...", false, charId, windowId, menuId, curMenuLine);
+		} else {
+			_messageToBePrinted += "  The item emits a blue beam...";
+			int16 victim = 0;
+			if (getRandom(100) < 50) {
+				for (uint varA8 = 0; varA8 < 9; ++varA8) {
+					if (isMonsterActive(windowId, varA8)) {
+						++victim;
+						_stru32686[windowId]._field0[varA8] = 2;
+						_stru32686[windowId]._field2[varA8] = getRandom(8);
+					}
+				}
+			} else {
+				int16 varAC = getRandom(9);
+				for (uint varA8 = 0; varA8 < 9; ++varA8) {
+					if (varAC == 0)
+						break;
+
+					if (isMonsterActive(windowId, varA8)) {
+						++victim;
+						--varAC;
+						_stru32686[windowId]._field0[varA8] = 2;
+						_stru32686[windowId]._field2[varA8] = getRandom(8);
+					}
+				}
+			}
+			// <CHECKME>: This part is only present in the original in the case < 50, but for me
+			// it's missing in the other case as there's an effect (frozen enemies) but no feedback to the player
+			if (victim > 1) {
+				buffer1 = Common::String::format("%d %ss are frozen in place!", victim, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._monsterRef]._name);
+			} else {
+				buffer1 = Common::String::format("%d %s is frozen in place!", victim, kEncounters[_mapMonsters[_teamMonsterIdArray[windowId]]._monsterRef]._name);
+			}
+			_messageToBePrinted += buffer1;
+			// </CHECKME>
+		}
+
+		varA6 = true;
+		break;
+	case 2:
+		if (argA == 2) {
+			displayString_3("A serene feeling passes through the air...", false, charId, windowId, menuId, curMenuLine);
+		} else {
+			_messageToBePrinted += "  The combat pauses...as there is a moment of forgiveness...";
+			_unkArray2C8AA[0] = 0;
+		}
+
+		varA6 = true;
+		break;
+	case 4: // "Unholy Sinwave", "Holy Water"
+		if (argA == 2) {
+			displayString_3("A dark sense fills your soul...then fades!", false, charId, windowId, menuId, curMenuLine);
+		} else {
+			_messageToBePrinted += "  A dark gray fiery whirlwind surrounds the poor victim...the power fades and death abounds!";
+			if (getRandom(100) < 50) {
+				for (uint counter = 0; counter < 9; ++counter) {
+					if (getRandom(100) < 50) {
+						_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
+					}
+				}
+			} else {
+				for (uint counter = 0; counter < 9; ++counter) {
+					if (isMonsterActive(windowId, counter)) {
+						if (getRandom(100) < 50) {
+							_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
+						}
+						break;
+					}
+				}
+			}
+		}
+		varA6 = true;
+		break;
+	case 5: // "Lucifer'sTouch", "Book of Death", "Holy Cross"
+		if (argA == 2) {
+			displayString_3("A dark sense fills your soul...then fades!", false, charId, windowId, menuId, curMenuLine);
+		} else {
+			if (getRandom(100) < 50) {
+				_messageToBePrinted += "  A dark fiery whirlwind surrounds the poor victim...the power fades and all targeted die!";
+				for (uint counter = 0; counter < 9; ++counter) {
+					_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
+				}
+			} else {
+				_messageToBePrinted += "  A dark fiery whirlwind surrounds the poor victim...the power fades and one victim dies!";
+				for (uint counter = 0; counter < 9; ++counter) {
+					if (isMonsterActive(windowId, counter)) {
+						_mapMonsters[_teamMonsterIdArray[windowId]]._pictureRef[counter] = 0;
+					}
+				}
+			}
+		}
+
+		varA6 = true;
+		break;
+	case 12: // "Terror Gaze", "Servitude Rod", "Despair Ankh", "ConfusionPrism", "Pipe of Peace", "Red Cape", "Peace Symbol", "Hell Badge"
+		if (argA == 2) {
+			displayString_3("There is no apparent affect!", false, charId, windowId, menuId, curMenuLine);
+		} else {
+			_messageToBePrinted += "  The magic sparkles brilliant hues in the air!";
+			setMapMonsterField8(windowId, _items[itemId].field17_attackTypeDefense, true);
+		}
+		varA6 = true;
+		break;
+	case 14: { // "Feathered Cap"
+		int16 varAA;
+		if (argA == 2) {
+			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
+			varAA = selectOtherCharFromTeam();
+		} else {
+			varAA = windowId;
+		}
+
+		if (varAA != 0x1B) {
+			buffer1 = "  The magic makes the user as quick and agile as a bird!";
+			if (argA == 2) {
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+			} else {
+				_messageToBePrinted += buffer1;
+			}
+			_word32482[varAA] -= 50;
+			if (_word32482[varAA] < 0)
+				_word32482[varAA] = 0;
+		}
+
+		varA6 = true;
+	} break;
+	case 15: { // "Regal Crown"
+		int16 teamCharId;
+		if (argA == 2) {
+			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
+			teamCharId = selectOtherCharFromTeam();
+		} else {
+			teamCharId = windowId;
+		}
+
+		if (teamCharId != 0x1B) {
+			buffer1 = "  The magic makes the user invisible!";
+			if (argA == 2) {
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+			} else {
+				_messageToBePrinted += buffer1;
+			}
+
+			_teamPctVisible[teamCharId] -= 50;
+			if (_teamPctVisible[teamCharId] < 0)
+				_teamPctVisible[teamCharId] = 0;
+		}
+
+		varA6 = true;
+	} break;
+	case 16: { // Fairy Dust
+		_mapPosX = getRandom(_largeMapFlag ? 63 : 23);
+		_mapPosY = getRandom(_largeMapFlag ? 63 : 23);
+		int16 varAE = sub15538(_mapPosX, _mapPosY);
+
+		if (_tileFact[varAE]._field0 == 0) {
+			totalPartyKill();
+			buffer1 = "The entire party vanishes in a flash... only to appear in stone !";
+			if (argA == 2) {
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+			} else {
+				_messageToBePrinted += buffer1;
+				retVal = true;
+			}
+			// emptyFunction(2);
+		} else {
+			if (varAE == 0 || varAE == 0x48) {
+				buffer1 = "The entire party vanishes in a flash...but re-appears, as if nothing happened!";
+				if (argA == 2) {
+					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+				} else {
+					_messageToBePrinted += buffer1;
+					retVal = true;
+				}
+			} else {
+				buffer1 = "The entire party vanishes in a flash...only to appear elsewhere!";
+				if (argA == 2) {
+					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+				} else {
+					_messageToBePrinted += buffer1;
+					retVal = true;
+				}
+			}
+		}
+
+		varA6 = true;
+	} break;
+	case 17: { // "Devil Dust"
+		_mapPosX = _items[itemId].field_19;
+		_mapPosY = _items[itemId].field_1A;
+		int16 varAE = sub15538(_mapPosX, _mapPosY);
+		if (_tileFact[varAE]._field0 == 0) {
+			totalPartyKill();
+			buffer1 = "The entire party vanishes in a flash... only to appear in stone !";
+			if (argA == 2) {
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+			} else {
+				_messageToBePrinted += buffer1;
+				retVal = true;
+			}
+			// emptyFunction(2);
+		} else {
+			if (varAE == 0 || varAE == 0x48) {
+				buffer1 = "The entire party vanishes in a flash...but re-appears, as if nothing happened!";
+				if (argA == 2) {
+					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+				} else {
+					_messageToBePrinted += buffer1;
+					retVal = true;
+				}
+			} else {
+				buffer1 = "The entire party vanishes in a flash...only to appear elsewhere!";
+				if (argA == 2) {
+					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+				} else {
+					_messageToBePrinted += buffer1;
+					retVal = true;
+				}
+			}
+		}
+
+		varA6 = true;
+	} break;
+	case 18:
+		if (argA == 2) {
+			displayString_3("The item makes a loud noise!", false, charId, windowId, menuId, curMenuLine);
+		} else {
+			int16 teamCharId = windowId;
+			if (teamCharId != 0x1B) {
+				if (_teamCharStatus[teamCharId]._status == 2) { // frozen
+					_messageToBePrinted += "  The item makes a loud noise, awakening the character!";
+					_teamCharStatus[teamCharId]._status = 0;
+					_teamCharStatus[teamCharId]._duration = 0;
+				} else {
+					_messageToBePrinted += "  The item makes a loud noise, but has no effect!";
+				}
+			}
+		}
+
+		varA6 = true;
+		break;
+	case 19: // "Junk"
+		buffer1 = "  * The item breaks!";
+		if (argA == 2) {
+			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+		} else {
+			_messageToBePrinted += buffer1;
+		}
+		setCharacterObjectToBroken(charId, objectId);
+		varA6 = true;
+		break;
+	case 23: // "Divining Rod"
+		buffer1 = Common::String::format("The %s says, '", _items[itemId]._name);
+		if (_items[itemId].field_19 < _mapPosX) {
+			if (_items[itemId].field_1A < _mapPosY) {
+				buffer1 += "North West!";
+			} else if (_items[itemId].field_1A > _mapPosY) {
+				buffer1 += "South West!";
+			} else {
+				buffer1 += "West!";
+			}
+		} else if (_items[itemId].field_19 > _mapPosX) {
+			if (_items[itemId].field_1A < _mapPosY) {
+				buffer1 += "North East!";
+			} else if (_items[itemId].field_1A > _mapPosY) {
+				buffer1 += "South East!";
+			} else {
+				buffer1 += "East!";
+			}
+		} else { // equals _mapPosX
+			if (_items[itemId].field_1A < _mapPosY) {
+				buffer1 += "North!";
+			} else if (_items[itemId].field_1A > _mapPosY) {
+				buffer1 += "South!";
+			} else {
+				buffer1 += "Here!!!";
+			}
+		}
+		buffer1 += "'";
+		if (argA == 2) {
+			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+		} else {
+			_messageToBePrinted += buffer1;
+			retVal = true;
+		}
+
+		varA6 = true;
+		break;
+	case 24: {
+		int16 teamCharId;
+		if (argA == 2) {
+			displayString_3("Who will use this item?", false, charId, windowId, menuId, curMenuLine);
+			teamCharId = selectOtherCharFromTeam();
+		} else
+			teamCharId = windowId;
+
+		if (teamCharId != 0x1B) {
+			uint8 varAE = _items[itemId].field17_attackTypeDefense;
+			uint8 effectPoints = getRandom(_items[itemId].field_19);
+			_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] += effectPoints;
+			if (_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] > 20) {
+				_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] = 20;
+			}
+			if (effectPoints > 1)
+				buffer1 = Common::String::format("%s increased %d points!", kSkillArray[varAE], effectPoints);
+			else
+				buffer1 = Common::String::format("%s increased 1 point!", kSkillArray[varAE]);
+
+			if (argA == 2) {
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+			} else {
+				_messageToBePrinted += buffer1;
+				retVal = true;
+			}
+		}
+
+		varA6 = true;
+	} break;
+	case 25: {
+		int16 teamCharId;
+		if (argA == 2) {
+			displayString_3("Who will use this item?", false, charId, windowId, menuId, curMenuLine);
+			teamCharId = selectOtherCharFromTeam();
+		} else
+			teamCharId = windowId;
+
+		if (teamCharId != 0x1B) {
+			uint8 varAE = _items[itemId].field17_attackTypeDefense;
+			uint8 effectPoints = getRandom(_items[itemId].field_19);
+			_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] -= effectPoints;
+			if (_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] > 20 || _npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] < 0) {
+				_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] = 1;
+			}
+			if (effectPoints > 1)
+				buffer1 = Common::String::format("%s lowered %d points!", kSkillArray[varAE], effectPoints);
+			else
+				buffer1 = Common::String::format("%s lowered 1 point!", kSkillArray[varAE]);
+
+			if (argA == 2) {
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+			} else {
+				_messageToBePrinted += buffer1;
+				retVal = true;
+			}
+		}
+
+		varA6 = true;
+	} break;
+	case 26: // "Black Sphere"
+		buffer1 = "The entire party collapses, dead!!!";
+		if (argA == 2) {
+			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+		} else {
+			_messageToBePrinted += buffer1;
+			retVal = true;
+		}
+		totalPartyKill();
+		// emptyFunction(2);
+		varA6 = true;
+		break;
+	case 27: { // "Magic Pyramid", "Razor Blade"
+		int16 teamCharId;
+		if (argA == 2) {
+			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
+			teamCharId = selectOtherCharFromTeam();
+		} else {
+			teamCharId = windowId;
+		}
+
+		if (teamCharId != 0x1B) {
+			_npcBuf[_teamCharId[teamCharId]]._hitPoints = 0;
+			buffer1 = Common::String::format("%s collapses, dead!!!", _npcBuf[_teamCharId[teamCharId]]._name);
+			if (argA == 2) {
+				displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+			} else {
+				_messageToBePrinted += buffer1;
+				retVal = true;
+			}
+			// emptyFunction(2);
+		}
+
+		varA6 = true;
+	} break;
+	case 28: // "Bugle"
+		if (argA == 2) {
+			displayString_3("The item makes a loud noise!", false, charId, windowId, menuId, curMenuLine);
+		} else {
+			int16 teamCharId = windowId;
+			if (teamCharId != 0x1B) {
+				if (_teamCharStatus[teamCharId]._status == 0) {
+					_messageToBePrinted += "  The item makes a loud noise, awakening the character!";
+					_teamCharStatus[teamCharId]._status = 0;
+					_teamCharStatus[teamCharId]._duration = 0;
+				} else {
+					_messageToBePrinted += "  The item makes a loud noise, but has no effect!";
+				}
+			}
+		}
+
+		varA6 = true;
+		break;
+	case 29: { // "Healing Spray", "Healing Elixir", "Curing Potion", "Magic Potion"
+		int16 teamCharId;
+		if (argA == 2) {
+			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
+			teamCharId = selectOtherCharFromTeam();
+		} else {
+			teamCharId = windowId;
+		}
+
+		if (teamCharId != 0x1B) {
+			int16 effectPoints = getRandom(_items[itemId].field17_attackTypeDefense);
+			_npcBuf[_teamCharId[teamCharId]]._hitPoints += effectPoints;
+			if (_npcBuf[_teamCharId[teamCharId]]._hitPoints > _npcBuf[_teamCharId[teamCharId]]._maxHP)
+				_npcBuf[_teamCharId[teamCharId]]._hitPoints = _npcBuf[_teamCharId[teamCharId]]._maxHP;
+
+			if (effectPoints > 1)
+				buffer1 = Common::String::format("%s is healed %d points!", _npcBuf[_teamCharId[teamCharId]]._name, effectPoints);
+			else
+				buffer1 = Common::String::format("%s is healed 1 point!", _npcBuf[_teamCharId[teamCharId]]._name);
+		}
+
+		if (argA == 2) {
+			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+		} else {
+			_messageToBePrinted += buffer1;
+			retVal = true;
+		}
+
+		varA6 = true;
+	} break;
+	case 30: {
+		int16 teamCharId;
+		if (argA == 2) {
+			displayString_3("Who will use the item?", false, charId, windowId, menuId, curMenuLine);
+			teamCharId = selectOtherCharFromTeam();
+		} else {
+			teamCharId = windowId;
+		}
+
+		if (teamCharId != 0x1B) {
+			int16 effectPoints = getRandom(_items[itemId].field17_attackTypeDefense);
+			_npcBuf[_teamCharId[teamCharId]]._hitPoints -= effectPoints;
+			if (_npcBuf[_teamCharId[teamCharId]]._hitPoints < 0)
+				_npcBuf[_teamCharId[teamCharId]]._hitPoints = 0;
+
+			if (effectPoints > 1)
+				buffer1 = Common::String::format("%s is harmed for %d points!", _npcBuf[_teamCharId[teamCharId]]._name, effectPoints);
+			else
+				buffer1 = Common::String::format("%s is harmed for 1 point!", _npcBuf[_teamCharId[teamCharId]]._name);
+		}
+
+		if (argA == 2) {
+			displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+		} else {
+			_messageToBePrinted += buffer1;
+			retVal = true;
+		}
+
+		varA6 = true;
+
+	} break;
+	case 3:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 13:
+	case 20:
+	case 21:
+	case 22:
+	default:
+		break;
+	}
+
+	if (varA6) {
+		if ((_npcBuf[charId]._inventory[objectId]._stat1 & 0x7F) != 0x7F) {
+			int8 varA1 = (_npcBuf[charId]._inventory[objectId]._stat1 & 0x7F) - 1;
+			if (varA1 <= 0) {
+				buffer1 = "  * The item breaks!";
+				if (argA == 2) {
+					getLastCharAfterAnimCount(_guessAnimationAmount);
+					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
+				} else {
+					_messageToBePrinted += buffer1;
+				}
+				setCharacterObjectToBroken(charId, objectId);
+			} else {
+				_npcBuf[charId]._inventory[objectId]._stat1 &= 0x80;
+				_npcBuf[charId]._inventory[objectId]._stat1 |= 0xA1;
+			}
+		}
+
+		if (argA == 2) {
+			getLastCharAfterAnimCount(_guessAnimationAmount);
+			sub18E80(charId, windowId, menuId, curMenuLine);
+		}
+	}
+
+	return retVal;
 }
 
 } // End of namespace Efh

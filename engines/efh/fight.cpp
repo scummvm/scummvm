@@ -456,7 +456,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 				if (isMonsterActive(groupId, var7E) && var6E) {
 					int16 var5C;
 					if (unkFct_checkMonsterField8(groupId, true)) {
-						sub1E028(groupId, 9, true);
+						setMapMonsterField8(groupId, 9, true);
 						_unkArray2C8AA[0] += 500;
 						var5C = -1;
 					} else
