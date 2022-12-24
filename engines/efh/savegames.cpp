@@ -138,7 +138,7 @@ void EfhEngine::synchronize(Common::Serializer &s) {
 	}
 
 	s.syncAsSint16LE(_teamSize);
-	s.syncAsSint16LE(_unkArray2C8AA[0]);
+	s.syncAsSint16LE(_unk2C8AA);
 	s.syncAsSint16LE(_word2C872);
 	s.syncAsSint16LE(_imageSetSubFilesIdx);
 	s.syncAsSint16LE(_mapPosX);

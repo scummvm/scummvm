@@ -992,7 +992,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			displayString_3("A serene feeling passes through the air...", false, charId, windowId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += "  The combat pauses...as there is a moment of forgiveness...";
-			_unkArray2C8AA[0] = 0;
+			_unk2C8AA = 0;
 		}
 
 		varA6 = true;

@@ -157,7 +157,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 						break;
 					}
 				}
-			} else if (unkFct_checkMonsterField8(monsterGroupIdOrMonsterId, true)) {
+			} else if (checkMonsterMovementType(monsterGroupIdOrMonsterId, true)) {
 				// handleFight - Loop on var86 - Start
 				for (uint var86 = 0; var86 < 9; ++var86) {
 					if (isMonsterActive(monsterGroupIdOrMonsterId, var86)) {
@@ -367,7 +367,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 			}
 		}
 
-		sub174A0();
+		handleMapMonsterMoves();
 		sub1BE9A(monsterId);
 	}
 
@@ -455,9 +455,9 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 			for (int16 var7E = teamMemberId; var7E < var54; ++var7E) {
 				if (isMonsterActive(groupId, var7E) && var6E) {
 					int16 var5C;
-					if (unkFct_checkMonsterField8(groupId, true)) {
+					if (checkMonsterMovementType(groupId, true)) {
 						setMapMonsterField8(groupId, 9, true);
-						_unkArray2C8AA[0] += 500;
+						_unk2C8AA += 500;
 						var5C = -1;
 					} else
 						var5C = 0;
@@ -1351,7 +1351,7 @@ void EfhEngine::sub1C4CA(bool whiteFl) {
 		}
 
 		setTextPos(228, textPosY);
-		if (unkFct_checkMonsterField8(counter, true)) {
+		if (checkMonsterMovementType(counter, true)) {
 			_textColor = 0xE;
 			displayStringAtTextPos("Hostile");
 		} else {
