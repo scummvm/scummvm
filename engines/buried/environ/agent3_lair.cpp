@@ -80,7 +80,7 @@ int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) 
 
 	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().alRestoreSkipAgent3Initial == 1) {
 		// Start new secondary ambient
-		_vm->_sound->setSecondaryAmbientSound(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14), 64);
+		_vm->_sound->setSecondaryAmbientSound(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14), true, 64);
 
 		_staticData.cycleStartFrame = 0;
 		_staticData.cycleFrameCount = 54;
@@ -180,7 +180,7 @@ int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) 
 	_currentSoundID = _vm->_sound->playSoundEffect(_vm->getFilePath(IDS_AGENT3_VIRUS_SOUND_BASE + 6), 128, false, true);
 
 	// Start new secondary ambient
-	_vm->_sound->setSecondaryAmbientSound(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14), 64);
+	_vm->_sound->setSecondaryAmbientSound(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, 14), true, 64);
 
 	_passwordIndex = 0;
 	_stepDelay = 0;

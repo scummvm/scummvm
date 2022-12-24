@@ -980,6 +980,9 @@ int yyparse() {
 	/* Push a new state, which is found in  yystate  .  */
 	/* In all cases, when you get here, the value and location stacks
 	have just been pushed. so pushing a state here evens the stacks.  */
+
+	memset(&yylval, 0, sizeof(yylval));
+
 yynewstate:
 
 	*++yyssp = yystate;

@@ -111,7 +111,7 @@ iMaterial_Fallback01_BaseLight::~iMaterial_Fallback01_BaseLight() {
 //-----------------------------------------------------------------------
 
 iGpuProgram *iMaterial_Fallback01_BaseLight::getGpuProgram(const eMaterialRenderType aType, const int alPass, iLight3D *apLight) {
-	eBaseLightProgram program;
+	eBaseLightProgram program = eBaseLightProgram_Point1;
 	if (apLight) {
 		if (apLight->GetLightType() == eLight3DType_Point)
 			program = eBaseLightProgram_Point1;

@@ -757,7 +757,7 @@ int cWorld2D::LoadTileData(cTile *apTile, tString *asData, int alStart) {
 	int lCount = alStart;
 	int lStart = lCount;
 	int lValType = 0;
-	int lSet;
+	int lSet = 0;
 	int lNum;
 
 	while (true) {

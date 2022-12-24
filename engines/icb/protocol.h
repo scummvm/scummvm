@@ -71,6 +71,8 @@ typedef struct {
 	uint16 blend;
 } _animHeader;
 
+#pragma pack(pop)
+
 _frameHeader *FetchFrameHeader(uint8 *animFile, uint16 frameNo); // (25sep96JEL)
 
 } // End of namespace ICB

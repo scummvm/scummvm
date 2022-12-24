@@ -71,8 +71,8 @@ dgQuaternion::dgQuaternion(const dgMatrix &matrix) {
 #ifdef _DEBUG
 	dgMatrix tmp(*this, matrix.m_posit);
 	dgMatrix unitMatrix(tmp * matrix.Inverse());
-	for (dgInt32 i = 0; i < 4; i++) {
-		dgFloat32 err = dgAbsf(unitMatrix[i][i] - dgFloat32(1.0f));
+	for (dgInt32 di = 0; di < 4; di++) {
+		dgFloat32 err = dgAbsf(unitMatrix[di][di] - dgFloat32(1.0f));
 		NEWTON_ASSERT(err < dgFloat32(1.0e-2f));
 	}
 

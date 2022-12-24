@@ -81,7 +81,7 @@ void SpiderEngine::showConversation() {
 	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
 		Talk *a = (Talk *)*itt;
 		if (a->active && !skipRepeated) {
-			uint32 frame;
+			uint32 frame = 0;
 			Common::String path;
 			for (TalkCommands::const_iterator it = a->commands.begin(); it != a->commands.end(); ++it) {
 				if (it->command == "F") {

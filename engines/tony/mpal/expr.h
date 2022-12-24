@@ -106,7 +106,7 @@ enum ExprListTypes {
  * will point to the area of memory containing the parsed expression
  * @returns		Pointer to the buffer immediately after the expression, or NULL if error.
  */
-const byte *parseExpression(const byte *lpBuf, MpalHandle *h);
+const byte *parseExpression(const byte *lpBuf, const Common::UnalignedPtr<MpalHandle> &h);
 
 /**
  * Calculate the value of a mathamatical expression

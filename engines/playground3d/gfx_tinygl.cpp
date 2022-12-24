@@ -313,8 +313,8 @@ void TinyGLRenderer::drawInViewport() {
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 
 	tglPushMatrix();
-	_pos.x() += 0.01;
-	_pos.y() += 0.01;
+	_pos.x() += 0.01f;
+	_pos.y() += 0.01f;
 	if (_pos.x() >= 1.0f) {
 		_pos.x() = -1.0;
 		_pos.y() = -1.0;
@@ -358,7 +358,7 @@ void TinyGLRenderer::drawRgbaTexture() {
 	tglEnableClientState(TGL_VERTEX_ARRAY);
 	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
 
-	tglTranslatef(-0.799f, 0.8, 0);
+	tglTranslatef(-0.799f, 0.8f, 0);
 	//tglTranslatef(-0.8, 0.8, 0); // some gfx issue
 
 	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);
@@ -373,7 +373,7 @@ void TinyGLRenderer::drawRgbaTexture() {
 	tglBindTexture(TGL_TEXTURE_2D, _textureRgbId[0]);
 	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
 
-	tglTranslatef(0.501, 0, 0);
+	tglTranslatef(0.501f, 0, 0);
 	//tglTranslatef(0.5, 0, 0); // some gfx issue
 
 	tglVertexPointer(2, TGL_FLOAT, 2 * sizeof(TGLfloat), bitmapVertices);

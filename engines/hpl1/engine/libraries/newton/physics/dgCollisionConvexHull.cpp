@@ -210,12 +210,12 @@ dgBigVector dgCollisionConvexHull::FaceNormal(const dgEdge *face,
 	dgBigVector e0(
 	    pool[edge->m_incidentVertex] - pool[edge->m_prev->m_incidentVertex]);
 	do {
-		dgBigVector e1(
+		dgBigVector de1(
 		    pool[edge->m_next->m_incidentVertex] - pool[edge->m_incidentVertex]);
-		dgBigVector n1(e0 * e1);
+		dgBigVector n1(e0 * de1);
 		dgFloat64 x = normal % n1;
 		NEWTON_ASSERT(x > -dgFloat64(0.01f));
-		e0 = e1;
+		e0 = de1;
 		edge = edge->m_next;
 	} while (edge != face);
 #endif

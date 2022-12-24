@@ -228,7 +228,7 @@ void Puzzles::leversBall(int16 var) {
 
 	const NewPosition *position = nullptr;
 	for (uint i = 0; i < ARRAYSIZE(move->p); i++)
-		if (move->p[i].newLeft == newLeverLeft && move->p[i].newRight == newLeverRight) {
+		if (move->p[i].newLeft == (newLeverLeft != 0) && move->p[i].newRight == (newLeverRight != 0)) {
 			position = &move->p[i];
 			break;
 		}

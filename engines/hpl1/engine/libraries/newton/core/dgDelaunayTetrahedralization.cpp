@@ -144,8 +144,8 @@ void dgDelaunayTetrahedralization::SortVertexArray() {
 			dgInt32 index = face.m_otherVertex;
 			face.m_otherVertex = points[index].m_index;
 			for (dgInt32 j = 0; j < 3; j++) {
-				dgInt32 index = face.m_index[j];
-				face.m_index[j] = points[index].m_index;
+				dgInt32 ptindex = face.m_index[j];
+				face.m_index[j] = points[ptindex].m_index;
 			}
 		}
 	}

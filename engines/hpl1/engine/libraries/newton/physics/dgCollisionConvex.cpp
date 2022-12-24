@@ -1515,8 +1515,8 @@ dgInt32 dgCollisionConvex::CalculatePlaneIntersection(const dgVector &normal,
 			for (dgInt32 i = 0; i < m_edgeCount; i++) {
 				ptr = &m_simplex[i];
 				side0 = plane.Evalue(m_vertex[ptr->m_vertex]);
-				dgFloat32 side1 = plane.Evalue(m_vertex[ptr->m_twin->m_vertex]);
-				if ((side1 < dgFloat32(0.0f)) && (side0 > dgFloat32(0.0f))) {
+				dgFloat32 dside1 = plane.Evalue(m_vertex[ptr->m_twin->m_vertex]);
+				if ((dside1 < dgFloat32(0.0f)) && (side0 > dgFloat32(0.0f))) {
 					NEWTON_ASSERT(0);
 					firstEdge = ptr;
 					break;

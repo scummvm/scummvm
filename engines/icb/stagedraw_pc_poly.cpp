@@ -523,7 +523,7 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 int32 drawSpecialObjects(SDactor &actor, MATRIXPC *local2screen, int32 brightness, SVECTOR *minBBox, SVECTOR *maxBBox) {
 	// Shooting ?
 	int32 mflash = 0;
-	SVECTOR mpos;
+	SVECTOR mpos = {0, 0, 0, 0};
 
 	_mega *&mega = actor.log->mega;
 	_vox_image *&vox = actor.log->voxel_info;

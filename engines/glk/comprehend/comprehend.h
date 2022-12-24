@@ -133,7 +133,8 @@ public:
 	/**
 	 * Print unicode-string to the buffer window
 	 */
-	void print(const Common::U32String fmt, ...);
+	template<class... TParam>
+	void print(const Common::U32String &fmt, TParam... param);
 
 	/**
 	 * Prints the room description in the room description window
@@ -216,7 +217,15 @@ public:
 	 * Returns true if an input line is currently active
 	 */
 	bool isInputLineActive() const;
+
+private:
+	void print_u32_internal(const Common::U32String *fmt, ...);
 };
+
+template<class... TParam>
+void Comprehend::print(const Common::U32String &fmt, TParam... param) {
+	print_u32_internal(&fmt, Common::forward<TParam>(param)...);
+}
 
 extern Comprehend *g_comprehend;
 

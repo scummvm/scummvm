@@ -175,9 +175,9 @@ Graphics::Surface *Playground3dEngine::generateRgbaTexture(int width, int height
 void Playground3dEngine::drawAndRotateCube() {
 	Math::Vector3d pos = Math::Vector3d(0.0f, 0.0f, 6.0f);
 	_gfx->drawCube(pos, Math::Vector3d(_rotateAngleX, _rotateAngleY, _rotateAngleZ));
-	_rotateAngleX += 0.25;
-	_rotateAngleY += 0.50;
-	_rotateAngleZ += 0.10;
+	_rotateAngleX += 0.25f;
+	_rotateAngleY += 0.50f;
+	_rotateAngleZ += 0.10f;
 	if (_rotateAngleX >= 360)
 		_rotateAngleX = 0;
 	if (_rotateAngleY >= 360)
@@ -189,7 +189,7 @@ void Playground3dEngine::drawAndRotateCube() {
 void Playground3dEngine::drawPolyOffsetTest() {
 	Math::Vector3d pos = Math::Vector3d(0.0f, 0.0f, 6.0f);
 	_gfx->drawPolyOffsetTest(pos, Math::Vector3d(0, _rotateAngleY, 0));
-	_rotateAngleY += 0.10;
+	_rotateAngleY += 0.10f;
 	if (_rotateAngleY >= 360)
 		_rotateAngleY = 0;
 }

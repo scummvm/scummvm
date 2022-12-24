@@ -182,7 +182,7 @@ static int evaluateAndFreeExpression(byte *expr) {
  * will point to the area of memory containing the parsed expression
  * @returns		Pointer to the buffer immediately after the expression, or NULL if error.
  */
-const byte *parseExpression(const byte *lpBuf, MpalHandle *h) {
+const byte *parseExpression(const byte *lpBuf, const Common::UnalignedPtr<MpalHandle> &h) {
 	byte *start;
 
 	uint32 num = *lpBuf;
@@ -191,11 +191,11 @@ const byte *parseExpression(const byte *lpBuf, MpalHandle *h) {
 	if (num == 0)
 		return NULL;
 
-	*h = globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, num * sizeof(Expression) + 1);
-	if (*h == NULL)
+	h.store(globalAllocate(GMEM_MOVEABLE | GMEM_ZEROINIT, num * sizeof(Expression) + 1));
+	if (h.load() == NULL)
 		return NULL;
 
-	start = (byte *)globalLock(*h);
+	start = (byte *)globalLock(h.load());
 	*start = (byte)num;
 
 	LpExpression cur = (LpExpression)(start + 1);

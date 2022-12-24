@@ -734,6 +734,82 @@ private:
 	bool                  _isvalid;
 };
 
+
+/**
+ * UnalignedPtr: Allows pointers to and access of memory addresses where the underlying data
+ * doesn't have proper alignment.
+ */
+
+#if defined(_MSC_VER) && (defined(_M_X64) || defined(_M_ARM) || defined(_M_ARM64))
+
+template<class T>
+class UnalignedPtr {
+public:
+	UnalignedPtr();
+	UnalignedPtr(__unaligned T *ptr);
+
+	T load() const;
+	void store(const T &value) const;
+
+private:
+	__unaligned T *_ptr;
+};
+
+template<class T>
+UnalignedPtr<T>::UnalignedPtr() : _ptr(nullptr) {
+}
+
+template<class T>
+UnalignedPtr<T>::UnalignedPtr(__unaligned T *ptr) : _ptr(ptr) {
+}
+
+template<class T>
+T UnalignedPtr<T>::load() const {
+	return *_ptr;
+}
+
+template<class T>
+void UnalignedPtr<T>::store(const T &value) const {
+	*_ptr = value;
+}
+
+#else
+
+template<class T>
+class UnalignedPtr {
+public:
+	UnalignedPtr();
+	UnalignedPtr(T *ptr);
+
+	T load() const;
+	void store(const T &value) const;
+
+private:
+	T *_ptr;
+};
+
+template<class T>
+UnalignedPtr<T>::UnalignedPtr() : _ptr(nullptr) {
+}
+
+template<class T>
+UnalignedPtr<T>::UnalignedPtr(T *ptr) : _ptr(ptr) {
+}
+
+template<class T>
+T UnalignedPtr<T>::load() const {
+	T result;
+	memcpy(&result, _ptr, sizeof(T));
+	return result;
+}
+
+template<class T>
+void UnalignedPtr<T>::store(const T &value) const {
+	memcpy(_ptr, &value, sizeof(T));
+}
+
+#endif
+
 /** @} */
 
 } // End of namespace Common

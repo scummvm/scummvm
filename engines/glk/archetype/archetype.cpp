@@ -131,10 +131,10 @@ void Archetype::interpret() {
 	cleanup(result);
 }
 
-void Archetype::write(const String fmt, ...) {
+void Archetype::write_internal(const String *fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
-	Common::String s = Common::String::vformat(fmt.c_str(), ap);
+	Common::String s = Common::String::vformat(fmt->c_str(), ap);
 	va_end(ap);
 
 	_lastOutputText = s;
@@ -143,10 +143,10 @@ void Archetype::write(const String fmt, ...) {
 		glk_put_buffer(s.c_str(), s.size());
 }
 
-void Archetype::writeln(const String fmt, ...) {
+void Archetype::writeln_internal(const String *fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
-	Common::String s = Common::String::vformat(fmt.c_str(), ap);
+	Common::String s = Common::String::vformat(fmt->c_str(), ap);
 	va_end(ap);
 
 	s += '\n';

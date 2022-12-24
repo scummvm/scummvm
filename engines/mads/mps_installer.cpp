@@ -131,18 +131,22 @@ Common::SharedArchiveContents MpsInstaller::readContentsForPath(const Common::St
 		uncompressedSize = desc._compressedSize;
 		compressedBuf = nullptr;
 		break;
-	case 1:
-		Common::MemoryReadStream compressedReadStream(compressedBuf, desc._compressedSize);
-		uncompressedBuf = new byte[uncompressedSize];
-		if (!Common::decompressDCL(&compressedReadStream, uncompressedBuf, desc._compressedSize, uncompressedSize)) {
+	case 1: {
+			Common::MemoryReadStream compressedReadStream(compressedBuf, desc._compressedSize);
+			uncompressedBuf = new byte[uncompressedSize];
+			if (!Common::decompressDCL(&compressedReadStream, uncompressedBuf, desc._compressedSize, uncompressedSize)) {
+				delete[] compressedBuf;
+				delete[] uncompressedBuf;
+				error("Unable to decompress %s", desc._fileName.c_str());
+				return Common::SharedArchiveContents();
+			}
 			delete[] compressedBuf;
-			delete[] uncompressedBuf;
-			error("Unable to decompress %s", desc._fileName.c_str());
-			return Common::SharedArchiveContents();
-		}
-		delete[] compressedBuf;
-		compressedBuf = nullptr;
+			compressedBuf = nullptr;
 
+		} break;
+	default:
+		error("Unsupported compression algorithm");
+		uncompressedBuf = nullptr;
 		break;
 	}
 

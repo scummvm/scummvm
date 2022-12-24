@@ -795,6 +795,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 	if (_vm->_game.version <= 4) {
 		abr.x = destX;
 		abr.y = destY;
+		abr.box = kInvalidBox;
 	} else {
 		abr = adjustXYToBeInBox(destX, destY);
 	}
