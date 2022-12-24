@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-22 22:45+0000\n"
+"POT-Creation-Date: 2022-12-24 16:23+0000\n"
 "PO-Revision-Date: 2022-08-02 15:16+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -2377,12 +2377,12 @@ msgstr "PC-9801 (16 колераў)"
 msgid "Macintosh b/w"
 msgstr "Ч/б Macintosh"
 
-#: common/rendermode.cpp:80
+#: common/rendermode.cpp:81
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Зялёны Hercules"
 
-#: common/rendermode.cpp:81
+#: common/rendermode.cpp:82
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Бурштынавы Hercules"
