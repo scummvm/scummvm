@@ -270,7 +270,7 @@ static std::string filePrefix(const BuildSetup &setup, const std::string &module
 }
 
 void CMakeProvider::createProjectFile(const std::string &name, const std::string &, const BuildSetup &setup, const std::string &moduleDir,
-										   const StringList &includeList, const StringList &excludeList) {
+									  const StringList &includeList, const StringList &excludeList, const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude) {
 
 	const std::string projectFile = setup.outputDir + "/CMakeLists.txt";
 	std::ofstream project(projectFile.c_str(), std::ofstream::out | std::ofstream::app);
@@ -284,12 +284,12 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 		project << "add_library(" << name << "\n";
 	} else {
 		enginesStr << "add_engine(" << name << "\n";
-		addFilesToProject(moduleDir, enginesStr, includeList, excludeList, filePrefix(setup, moduleDir));
+		addFilesToProject(moduleDir, enginesStr, includeList, excludeList, pchIncludeRoot, pchDirs, pchExclude, filePrefix(setup, moduleDir));
 		enginesStr << ")\n\n";
 		return;
 	}
 
-	addFilesToProject(moduleDir, project, includeList, excludeList, filePrefix(setup, moduleDir));
+	addFilesToProject(moduleDir, project, includeList, excludeList, pchIncludeRoot, pchDirs, pchExclude, filePrefix(setup, moduleDir));
 
 	project << ")\n";
 	project << "\n";
@@ -356,12 +356,13 @@ void CMakeProvider::writeDefines(const BuildSetup &setup, std::ofstream &output)
 }
 
 void CMakeProvider::writeFileListToProject(const FileNode &dir, std::ostream &projectFile, const int indentation,
-												const std::string &objPrefix, const std::string &filePrefix) {
+										   const std::string &objPrefix, const std::string &filePrefix,
+										   const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude) {
 
 	std::string lastName;
 	for (const FileNode *node : dir.children) {
 		if (!node->children.empty()) {
-			writeFileListToProject(*node, projectFile, indentation + 1, objPrefix + node->name + '_', filePrefix + node->name + '/');
+			writeFileListToProject(*node, projectFile, indentation + 1, objPrefix + node->name + '_', filePrefix + node->name + '/', pchIncludeRoot, pchDirs, pchExclude);
 		} else {
 			std::string name, ext;
 			splitFilename(node->name, name, ext);
