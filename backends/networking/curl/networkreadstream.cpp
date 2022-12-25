@@ -20,6 +20,7 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#define CURL_DISABLE_DEPRECATION
 
 #include <curl/curl.h>
 #include "backends/networking/curl/networkreadstream.h"
