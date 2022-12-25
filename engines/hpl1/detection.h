@@ -54,10 +54,6 @@ public:
 	const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
 	}
-
-	DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) override;
-
-	PlainGameList getSupportedGames() const override;
 };
 
 #endif

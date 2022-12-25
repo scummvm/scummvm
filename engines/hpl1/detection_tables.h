@@ -26,13 +26,16 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{0, 0}};
 
 const ADGameDescription GAME_DESCRIPTIONS[] = {
-	{"penumbraoverture",
-	 nullptr,
-	 AD_ENTRY1s("Penumbra.exe", nullptr, -1),
-	 Common::Language::EN_ANY,
-	 Common::Platform::kPlatformWindows,
-	 ADGF_UNSTABLE,
-	 GUIO1(GUIO_NONE)},
+	// GOG release
+	{
+		"penumbraoverture",
+		nullptr,
+		AD_ENTRY1s("Penumbra.exe", "f840b972ee889200ba501ee3a465317e", 2744320),
+		Common::Language::EN_ANY,
+		Common::Platform::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 
 	AD_TABLE_END_MARKER};
 
