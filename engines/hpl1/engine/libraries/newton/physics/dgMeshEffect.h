@@ -215,12 +215,12 @@ public:
 
 	void *GetFirstVertex() const;
 	void *GetNextVertex(void *const vertex) const;
-	int GetVertexIndex(void *const vertex) const;
+	dgInt32 GetVertexIndex(void *const vertex) const;
 
 	void *GetFirstPoint() const;
 	void *GetNextPoint(void *const point) const;
-	int GetPointIndex(const void *const point) const;
-	int GetVertexIndexFromPoint(void *const point) const;
+	dgInt32 GetPointIndex(const void *const point) const;
+	dgInt32 GetVertexIndexFromPoint(void *const point) const;
 
 	void *GetFirstEdge() const;
 	void *GetNextEdge(void *const edge) const;
@@ -229,9 +229,9 @@ public:
 
 	void *GetFirstFace() const;
 	void *GetNextFace(void *const face) const;
-	int IsFaceOpen(const void *const face) const;
-	int GetFaceMaterial(const void *const face) const;
-	int GetFaceIndexCount(const void *const face) const;
+	dgInt32 IsFaceOpen(const void *const face) const;
+	dgInt32 GetFaceMaterial(const void *const face) const;
+	dgInt32 GetFaceIndexCount(const void *const face) const;
 	void GetFaceIndex(const void *const face, int *const indices) const;
 	void GetFaceAttributeIndex(const void *const face, int *const indices) const;
 
@@ -346,7 +346,7 @@ inline dgMeshEffect *dgMeshEffect::GetNextLayer(const dgMeshEffect *const layerS
 }
 
 inline dgFloat64 dgMeshEffect::QuantizeCordinade(dgFloat64 x) const {
-	dgInt32 exp;
+	int exp;
 	dgFloat64 mantissa = frexp(x, &exp);
 	mantissa = DG_MESH_EFFECT_PRECISION_SCALE_INV * floor(mantissa * DG_MESH_EFFECT_PRECISION_SCALE);
 

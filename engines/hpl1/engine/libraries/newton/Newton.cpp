@@ -2823,8 +2823,8 @@ NEWTON_API NewtonCollision *NewtonCreateCompoundCollisionFromMesh(NewtonWorld *c
 
 NEWTON_API NewtonCollision *NewtonCreateCompoundBreakable(
     NewtonWorld *const newtonWorld, int meshCount,
-    NewtonMesh **const solids, const int *const shapeIDArray,
-    const dFloat *const densities, const int *const internalFaceMaterial,
+	NewtonMesh **const solids, const int32 *const shapeIDArray,
+    const dFloat *const densities, const int32 *const internalFaceMaterial,
     int shapeID, int debriID, dFloat debriSeparationGap) {
 	Newton *world;
 	dgCollision *collision;
@@ -3068,7 +3068,7 @@ int NewtonBreakableSegmentGetIndexCount(void *const segment) {
 int NewtonBreakableSegmentGetIndexStream(
     const NewtonCollision *const compoundBreakable,
     NewtonbreakableComponentMesh *const meshOwner,
-    void *const segment, int *const index) {
+	void *const segment, int32 *const index) {
 	int count;
 	const dgCollision *collision;
 
@@ -3229,7 +3229,7 @@ unsigned NewtonCollisionGetUserID(NewtonCollision *const collision) {
 // See also: NewtonCollisionGetInfo, NewtonCreateConvexHull
 int NewtonConvexHullGetFaceIndices(
     const NewtonCollision *const convexHullCollision, int face,
-    int *const faceIndices) {
+    int32 *const faceIndices) {
 	const dgCollision *coll;
 
 	TRACE_FUNTION(__FUNCTION__);
@@ -3589,7 +3589,7 @@ void NewtonTreeCollisionEndBuild(NewtonCollision *const treeCollision,
 //
 // See also: NewtonTreeCollisionSetFaceAtribute, NewtonCreateTreeCollision, NewtonCreateTreeCollisionFromSerialization
 int NewtonTreeCollisionGetFaceAtribute(
-    const NewtonCollision *const treeCollision, const int *const faceIndexArray) {
+    const NewtonCollision *const treeCollision, const int32 *const faceIndexArray) {
 	TRACE_FUNTION(__FUNCTION__);
 	const dgCollisionBVH *const collision = (const dgCollisionBVH *)treeCollision;
 	NEWTON_ASSERT(collision->IsType(dgCollision::dgCollisionBVH_RTTI));
@@ -3615,7 +3615,7 @@ int NewtonTreeCollisionGetFaceAtribute(
 //
 // See also: NewtonTreeCollisionGetFaceAtribute, NewtonCreateTreeCollision, NewtonCreateTreeCollisionFromSerialization
 void NewtonTreeCollisionSetFaceAtribute(
-    NewtonCollision *const treeCollision, const int *const faceIndexArray,
+    NewtonCollision *const treeCollision, const int32 *const faceIndexArray,
     int attribute) {
 	TRACE_FUNTION(__FUNCTION__);
 	dgCollisionBVH *const collision = (dgCollisionBVH *)treeCollision;
@@ -3651,9 +3651,9 @@ void NewtonTreeCollisionSetFaceAtribute(
 int NewtonTreeCollisionGetVertexListIndexListInAABB(
     const NewtonCollision *const treeCollision, const dFloat *const p0,
     const dFloat *const p1, const dFloat **const vertexArray,
-    int *const vertexCount, int *const vertexStrideInBytes,
-    int *const indexList, int maxIndexCount,
-    int *const faceAttribute) {
+    int32 *const vertexCount, int *const vertexStrideInBytes,
+    int32 *const indexList, int maxIndexCount,
+    int32 *const faceAttribute) {
 	dgInt32 count;
 	const dgCollision *meshColl;
 
@@ -8007,7 +8007,7 @@ NewtonMesh *NewtonMeshIntersection(NewtonMesh *const mesh,
 }
 
 void NewtonRemoveUnusedVertices(NewtonMesh *const mesh,
-                                int *const vertexRemapTable) {
+                                int32 *const vertexRemapTable) {
 	TRACE_FUNTION(__FUNCTION__);
 
 	((dgMeshEffect *)mesh)->RemoveUnusedVertices(vertexRemapTable);
@@ -8037,13 +8037,13 @@ void NewtonMeshEndFace(NewtonMesh *const mesh) {
 }
 
 void NewtonMeshBuildFromVertexListIndexList(NewtonMesh *const mesh,
-        int faceCount, const int *const faceIndexCount,
-        const int *const faceMaterialIndex, const dFloat *const vertex,
-        int vertexStrideInBytes, const int *const vertexIndex,
+        int faceCount, const int32 *const faceIndexCount,
+        const int32 *const faceMaterialIndex, const dFloat *const vertex,
+        int vertexStrideInBytes, const int32 *const vertexIndex,
         const dFloat *const normal, int normalStrideInBytes,
-        const int *const normalIndex, const dFloat *const uv0, int uv0StrideInBytes,
-        const int *const uv0Index, const dFloat *const uv1, int uv1StrideInBytes,
-        const int *const uv1Index) {
+        const int32 *const normalIndex, const dFloat *const uv0, int uv0StrideInBytes,
+        const int32 *const uv0Index, const dFloat *const uv1, int uv1StrideInBytes,
+        const int32 *const uv1Index) {
 	dgMeshEffect *const meshEffect = (dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
@@ -8208,7 +8208,7 @@ int NewtonMeshMaterialGetIndexCount(const NewtonMesh *const mesh,
 }
 
 void NewtonMeshMaterialGetIndexStream(const NewtonMesh *const mesh,
-                                      void *const handle, int materialId, int *const index) {
+                                      void *const handle, int materialId, int32 *const index) {
 
 	const dgMeshEffect *const meshEffect = (const dgMeshEffect *)mesh;
 
@@ -8289,8 +8289,8 @@ int NewtonMeshGetTotalIndexCount(const NewtonMesh *const mesh) {
 	return ((const dgMeshEffect *)mesh)->GetTotalIndexCount();
 }
 
-void NewtonMeshGetFaces(const NewtonMesh *const mesh, int *const faceIndexCount,
-                        int *const faceMaterial, void **const faceIndices) {
+void NewtonMeshGetFaces(const NewtonMesh *const mesh, int32 *const faceIndexCount,
+                        int32 *const faceMaterial, void **const faceIndices) {
 	((const dgMeshEffect *)mesh)->GetFaces(faceIndexCount, faceMaterial, faceIndices);
 }
 
@@ -8345,7 +8345,7 @@ void *NewtonMeshGetNextEdge(const NewtonMesh *const mesh,
 }
 
 void NewtonMeshGetEdgeIndices(const NewtonMesh *const mesh,
-                              const void *const edge, int *const v0, int *const v1) {
+                              const void *const edge, int32 *const v0, int32 *const v1) {
 	TRACE_FUNTION(__FUNCTION__);
 	return ((const dgMeshEffect *)mesh)->GetEdgeIndex(edge, *v0, *v1);
 }
