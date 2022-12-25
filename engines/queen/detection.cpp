@@ -160,10 +160,10 @@ static const QueenGameDescription gameDescriptions[] = {
 		{
 			"queen",
 			"Floppy",
-			AD_ENTRY1s("queen.1", "f5e827645d3c887be3bdf4729d847756", 22677657),
+			AD_ENTRY1s("queen.1", "979a33954634fae674b59711ef423f40", 22677657),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_TAILMD5,
 			GUIO1(GUIO_NOSPEECH)
 		},
 	},
@@ -194,15 +194,15 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
-	// DOS Floppy - Russian (From Bugreport #6946)
+	// DOS Floppy - Russian (From Bugreport #6946) - Saveliev Translation
 	{
 		{
 			"queen",
 			"Floppy",
-			AD_ENTRY1s("queen.1", "f5e827645d3c887be3bdf4729d847756", 22677657),
+			AD_ENTRY1s("queen.1", "6e30974bfab8e5f5180363831d204ba0", 22677657),
 			Common::RU_RUS,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_TAILMD5,
 			GUIO1(GUIO_NOSPEECH)
 		},
 	},
