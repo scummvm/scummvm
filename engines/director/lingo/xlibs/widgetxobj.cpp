@@ -91,4 +91,4 @@ void WidgetXObj::m_askQuit(int nargs) {
 	g_lingo->dropStack(nargs);
 }
 
-}
+} // End of namespace Director
