@@ -1424,7 +1424,7 @@ bool Console::cmdMapInstrument(int argc, const char **argv) {
 			char *instrumentName = new char[11];
 			Common::strlcpy(instrumentName, argv[1], 11);
 
-			for (uint16 i = 0; i < Common::strnlen(instrumentName, 11); i++)
+			for (uint16 i = 0; i < scumm_strnlen(instrumentName, 11); i++)
 				if (instrumentName[i] == '_')
 					instrumentName[i] = ' ';
 

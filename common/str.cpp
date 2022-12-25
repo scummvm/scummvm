@@ -944,13 +944,6 @@ size_t strlcat(char *dst, const char *src, size_t size) {
 	return dstLength + (src - srcStart);
 }
 
-size_t strnlen(const char *src, size_t maxSize) {
-	size_t counter = 0;
-	while (counter != maxSize && *src++)
-		++counter;
-	return counter;
-}
-
 String toPrintable(const String &in, bool keepNewLines) {
 	Common::String res;
 
@@ -1068,4 +1061,12 @@ const char *scumm_strcasestr(const char *s, const char *find) {
 		s--;
 	}
 	return s;
+}
+
+//  Portable implementation of strnlen.
+size_t scumm_strnlen(const char *src, size_t maxSize) {
+	size_t counter = 0;
+	while (counter != maxSize && *src++)
+		++counter;
+	return counter;
 }

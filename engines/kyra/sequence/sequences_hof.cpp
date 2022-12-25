@@ -420,14 +420,14 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 	char **tmpSndLst = new char *[_sequenceSoundListSize];
 
 	for (int i = 0; i < _sequenceSoundListSize; i++) {
-		const int len = Common::strnlen(seqSoundList[i], 8);
+		const int len = scumm_strnlen(seqSoundList[i], 8);
 
 		tmpSndLst[i] = new char[len + 1];
 		tmpSndLst[i][0] = 0;
 
 		if (tlkfiles && len > 1) {
 			for (int ii = 0; ii < tempSize; ii++) {
-				if (Common::strnlen(tlkfiles[ii], 8) > 1 && !scumm_stricmp(&seqSoundList[i][1], &tlkfiles[ii][1]))
+				if (scumm_strnlen(tlkfiles[ii], 8) > 1 && !scumm_stricmp(&seqSoundList[i][1], &tlkfiles[ii][1]))
 					Common::strlcpy(tmpSndLst[i], tlkfiles[ii], len + 1);
 			}
 		}

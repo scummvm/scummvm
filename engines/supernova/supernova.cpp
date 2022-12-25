@@ -262,7 +262,7 @@ void SupernovaEngine::renderRoom(Room &room) {
 }
 
 void SupernovaEngine::renderMessage(const char *text, MessagePosition position) {
-	_gm->_messageDuration = (Common::strnlen(text, 512) + 20) * _textSpeed / 10;
+	_gm->_messageDuration = (scumm_strnlen(text, 512) + 20) * _textSpeed / 10;
 	_screen->renderMessage(text, position);
 }
 

@@ -807,11 +807,11 @@ public:
 			while (source < end && *source != '\0' && *source != showChar && *source <= kWhitespaceBoundary) {
 				++source;
 			}
-			memmove(target, source, Common::strnlen((char *)source, _size - 1) + 1);
+			memmove(target, source, scumm_strnlen((char *)source, _size - 1) + 1);
 		}
 
 		if (flags & kArrayTrimRight) {
-			source = data + Common::strnlen((char *)data, _size) - 1;
+			source = data + scumm_strnlen((char *)data, _size) - 1;
 			while (source > data && *source != showChar && *source <= kWhitespaceBoundary) {
 				*source = '\0';
 				--source;
@@ -847,7 +847,7 @@ public:
 					}
 					++source;
 
-					memmove(target, source, Common::strnlen((char *)source, _size - 1) + 1);
+					memmove(target, source, scumm_strnlen((char *)source, _size - 1) + 1);
 				}
 			}
 		}

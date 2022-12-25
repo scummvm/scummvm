@@ -581,6 +581,12 @@
 #define strdup(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
+// Use scumm_strnlen in common/str.h
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strnlen
+#undef strnlen
+#define strnlen(a,b)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
 /*
  * We also would like to disable the following symbols;
  * however, these are also frequently used in regular code,

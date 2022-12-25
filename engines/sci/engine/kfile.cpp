@@ -367,7 +367,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 				score = Common::String::format("%u%03u", save.highScore, save.lowScore);
 			}
 
-			const uint nameLength = Common::strnlen(save.name, kMaxSaveNameLength);
+			const uint nameLength = scumm_strnlen(save.name, kMaxSaveNameLength);
 			const uint size = nameLength + /* \r\n */ 2 + score.size();
 			byte *buffer = (byte *)malloc(size);
 			memcpy(buffer, save.name, nameLength);
@@ -412,7 +412,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 			}
 
 			const Common::String avatarId = Common::String::format("%02d", save.avatarId);
-			const uint nameLength = Common::strnlen(save.name, kMaxSaveNameLength);
+			const uint nameLength = scumm_strnlen(save.name, kMaxSaveNameLength);
 			const uint size = nameLength + /* \r\n */ 2 + avatarId.size() + 1;
 			char *buffer = (char *)malloc(size);
 			memcpy(buffer, save.name, nameLength);

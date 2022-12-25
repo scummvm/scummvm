@@ -4166,7 +4166,7 @@ void Outro::animate(int filenumber, int section1, int section2, int duration) {
 void Outro::animate(int filenumber, int section1, int section2, int duration,
 					MessagePosition position, const char *text) {
 	_vm->renderMessage(text, position);
-	int delay = (Common::strnlen(text, 512) + 20) * (10 - duration) * _vm->_textSpeed / 400;
+	int delay = (scumm_strnlen(text, 512) + 20) * (10 - duration) * _vm->_textSpeed / 400;
 	_vm->setCurrentImage(filenumber);
 	while (delay) {
 		if (section1)
@@ -4184,7 +4184,7 @@ void Outro::animate(int filenumber, int section1, int section2, int section3, in
 					int duration, MessagePosition position, const char *text) {
 	_vm->renderMessage(text, position);
 	if (duration == 0)
-		duration = (Common::strnlen(text, 512) + 20) * _vm->_textSpeed / 40;
+		duration = (scumm_strnlen(text, 512) + 20) * _vm->_textSpeed / 40;
 
 	_vm->setCurrentImage(filenumber);
 	while(duration) {

@@ -557,7 +557,7 @@ void TextDisplayer_rpg::printDialogueText(int stringId, const char *pageBreakStr
 }
 
 void TextDisplayer_rpg::printDialogueText(const char *str, bool wait) {
-	assert(Common::strnlen(str, kEoBTextBufferSize) < kEoBTextBufferSize);
+	assert(scumm_strnlen(str, kEoBTextBufferSize) < kEoBTextBufferSize);
 	Common::strlcpy(_dialogueBuffer, str, kEoBTextBufferSize);
 
 	displayText(_dialogueBuffer);

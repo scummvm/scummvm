@@ -518,17 +518,6 @@ size_t strlcpy(char *dst, const char *src, size_t size);
 size_t strlcat(char *dst, const char *src, size_t size);
 
 /**
- * Determine the length of a string up to a maximum of `maxSize` characters.
- * This should be used instead of `strlen` when reading the length of a C string
- * from potentially unsafe or corrupt sources, like game assets.
- *
- * @param src The source string.
- * @param maxSize The maximum size of the string.
- * @return The length of the string.
- */
-size_t strnlen(const char *src, size_t maxSize);
-
-/**
  * Convenience wrapper for tag2string which "returns" a C string.
  * Note: It is *NOT* safe to do anything with the return value other than directly
  * copying or printing it.
@@ -564,5 +553,16 @@ extern int scumm_compareDictionary(const char *s1, const char *s2);
 extern const char *scumm_skipArticle(const char *s1);
 
 extern const char *scumm_strcasestr(const char *s, const char *find);
+
+/**
+ * Determine the length of a string up to a maximum of `maxSize` characters.
+ * This should be used instead of `strlen` when reading the length of a C string
+ * from potentially unsafe or corrupt sources, like game assets.
+ *
+ * @param src The source string.
+ * @param maxSize The maximum size of the string.
+ * @return The length of the string.
+ */
+extern size_t scumm_strnlen(const char *src, size_t maxSize);
 
 #endif

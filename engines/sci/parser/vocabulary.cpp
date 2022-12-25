@@ -219,7 +219,7 @@ bool Vocabulary::loadSuffixes() {
 
 		int maxSize = resource->size() - seeker;
 		suffix.alt_suffix = (const char *)resource->getUnsafeDataAt(seeker, maxSize);
-		suffix.alt_suffix_length = Common::strnlen(suffix.alt_suffix, maxSize);
+		suffix.alt_suffix_length = scumm_strnlen(suffix.alt_suffix, maxSize);
 		if (suffix.alt_suffix_length == maxSize) {
 			error("Vocabulary alt from %s appears truncated for suffix %d at %u", resource->name().c_str(), _parserSuffixes.size(), seeker);
 		}
@@ -239,7 +239,7 @@ bool Vocabulary::loadSuffixes() {
 
 		maxSize = resource->size() - seeker;
 		suffix.word_suffix = (const char *)resource->getUnsafeDataAt(seeker, maxSize);
-		suffix.word_suffix_length = Common::strnlen(suffix.word_suffix, maxSize);
+		suffix.word_suffix_length = scumm_strnlen(suffix.word_suffix, maxSize);
 		if (suffix.word_suffix_length == maxSize) {
 			error("Vocabulary word from %s appears truncated for suffix %d at %u", resource->name().c_str(), _parserSuffixes.size(), seeker);
 		}
@@ -314,7 +314,7 @@ bool Vocabulary::loadAltInputs() {
 		t._input = (const char *)&*it;
 
 		uint32 maxSize = end - it;
-		uint32 l = Common::strnlen(t._input, maxSize);
+		uint32 l = scumm_strnlen(t._input, maxSize);
 		if (l == maxSize) {
 			error("Alt input from %s appears truncated at %d", resource->name().c_str(), it - resource->cbegin());
 		}
@@ -323,7 +323,7 @@ bool Vocabulary::loadAltInputs() {
 
 		t._replacement = (const char *)&*it;
 		maxSize = end - it;
-		l = Common::strnlen(t._replacement, maxSize);
+		l = scumm_strnlen(t._replacement, maxSize);
 		if (l == maxSize) {
 			error("Alt input replacement from %s appears truncated at %d", resource->name().c_str(), it - resource->cbegin());
 		}
@@ -380,9 +380,9 @@ bool Vocabulary::checkAltInput(Common::String &text, uint16 &cursorPos) {
 					// replace
 					const uint32 maxSize = text.size() - cursorPos;
 					if (cursorPos > p + i->_inputLength) {
-						cursorPos += Common::strnlen(i->_replacement, maxSize) - i->_inputLength;
+						cursorPos += scumm_strnlen(i->_replacement, maxSize) - i->_inputLength;
 					} else if (cursorPos > p) {
-						cursorPos = p + Common::strnlen(i->_replacement, maxSize);
+						cursorPos = p + scumm_strnlen(i->_replacement, maxSize);
 					}
 
 					for (uint32 j = 0; j < i->_inputLength; ++j)

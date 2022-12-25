@@ -163,7 +163,7 @@ void TextDisplayer_LoL::printDialogueText2(int dim, const char *str, EMCState *s
 	Screen::FontId of = _screen->setFont(_pc98TextMode ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_9_FNT);
 
 	preprocessString(str, script, paramList, paramIndex);
-	_numCharsTotal = Common::strnlen(_dialogueBuffer, 2559);
+	_numCharsTotal = scumm_strnlen(_dialogueBuffer, 2559);
 	displayText(_dialogueBuffer);
 
 	_screen->setScreenDim(oldDim);
@@ -304,13 +304,13 @@ void TextDisplayer_LoL::preprocessString(const char *str, EMCState *script, cons
 		switch (para) {
 		case 'a':
 			Common::strlcpy(dst, Common::String::format("%d", _scriptTextParameter).c_str(), 2560 - (dst - _dialogueBuffer));
-			dst += Common::strnlen(dst, 2559 - (dst - _dialogueBuffer));
+			dst += scumm_strnlen(dst, 2559 - (dst - _dialogueBuffer));
 			break;
 
 		case 'n':
 			if (script || paramList) {
 				Common::strlcpy(dst, _vm->_characters[script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]].name, 2560 - (dst - _dialogueBuffer));
-				dst += Common::strnlen(dst, 2559 - (dst - _dialogueBuffer));
+				dst += scumm_strnlen(dst, 2559 - (dst - _dialogueBuffer));
 			} else {
 				warning("TextDisplayer_LoL::preprocessString(): Missing replacement data for placeholder '%%%c'", para);
 			}
@@ -319,7 +319,7 @@ void TextDisplayer_LoL::preprocessString(const char *str, EMCState *script, cons
 		case 's':
 			if (script || paramList) {
 				Common::strlcpy(dst, _vm->getLangString(script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]), 2560 - (dst - _dialogueBuffer));
-				dst += Common::strnlen(dst, 2559 - (dst - _dialogueBuffer));
+				dst += scumm_strnlen(dst, 2559 - (dst - _dialogueBuffer));
 			} else {
 				warning("TextDisplayer_LoL::preprocessString(): Missing replacement data for placeholder '%%%c'", para);
 			}
@@ -331,7 +331,7 @@ void TextDisplayer_LoL::preprocessString(const char *str, EMCState *script, cons
 		case 'x':
 			if (script || paramList) {
 				Common::strlcpy(dst, Common::String::format("%d", script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]).c_str(), 2560 - (dst - _dialogueBuffer));
-				dst += Common::strnlen(dst, 2559 - (dst - _dialogueBuffer));
+				dst += scumm_strnlen(dst, 2559 - (dst - _dialogueBuffer));
 			} else {
 				warning("TextDisplayer_LoL::preprocessString(): Missing replacement data for placeholder '%%%c'", para);
 			}

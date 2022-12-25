@@ -82,7 +82,7 @@ public:
 				const uint16 stringOffset = recordPtr.getUint16LEAt(2);
 				const uint32 maxSize = _data.size() - stringOffset;
 				record.string = (const char *)_data.getUnsafeDataAt(stringOffset, maxSize);
-				record.length = Common::strnlen(record.string, maxSize);
+				record.length = scumm_strnlen(record.string, maxSize);
 				if (record.length == maxSize) {
 					warning("Message %s from %s appears truncated at %d", tuple.toString().c_str(), _data.name().c_str(), recordPtr - _data);
 				}
@@ -110,7 +110,7 @@ public:
 				const uint16 stringOffset = recordPtr.getUint16LEAt(5);
 				const uint32 maxSize = _data.size() - stringOffset;
 				record.string = (const char *)_data.getUnsafeDataAt(stringOffset, maxSize);
-				record.length = Common::strnlen(record.string, maxSize);
+				record.length = scumm_strnlen(record.string, maxSize);
 				if (record.length == maxSize) {
 					warning("Message %s from %s appears truncated at %d", tuple.toString().c_str(), _data.name().c_str(), recordPtr - _data);
 				}
@@ -138,7 +138,7 @@ public:
 				const uint16 stringOffset = recordPtr.getUint16SEAt(5);
 				const uint32 maxSize = _data.size() - stringOffset;
 				record.string = (const char *)_data.getUnsafeDataAt(stringOffset, maxSize);
-				record.length = Common::strnlen(record.string, maxSize);
+				record.length = scumm_strnlen(record.string, maxSize);
 				if (record.length == maxSize) {
 					warning("Message %s from %s appears truncated at %d", tuple.toString().c_str(), _data.name().c_str(), recordPtr - _data);
 				}
@@ -169,7 +169,7 @@ public:
 				const uint16 stringOffset = recordPtr.getUint16BEAt(6);
 				const uint32 maxSize = _data.size() - stringOffset;
 				record.string = (const char *)_data.getUnsafeDataAt(stringOffset, maxSize);
-				record.length = Common::strnlen(record.string, maxSize);
+				record.length = scumm_strnlen(record.string, maxSize);
 				if (record.length == maxSize) {
 					warning("Message %s from %s appears truncated at %d", tuple.toString().c_str(), _data.name().c_str(), recordPtr - _data);
 				}

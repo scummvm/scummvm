@@ -2527,7 +2527,7 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 			// Trim long GMM save descriptions to fit our save slots
 			int fC = _screen->getTextWidth(s);
 			while (s[0] && fC >= saveSlotMaxLen) {
-				s[Common::strnlen(s, buffLeft) - 1]  = 0;
+				s[scumm_strnlen(s, buffLeft) - 1]  = 0;
 				fC = _screen->getTextWidth(s);
 			}
 
@@ -2540,7 +2540,7 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 			}
 
 			menu.item[i].itemString = s;
-			int slotLen = Common::strnlen(s, buffLeft) + 1;
+			int slotLen = scumm_strnlen(s, buffLeft) + 1;
 			s += slotLen;
 			buffLeft -= slotLen;
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset - slotOffs];

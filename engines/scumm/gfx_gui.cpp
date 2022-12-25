@@ -1483,8 +1483,8 @@ void ScummEngine::queryQuit(bool returnToLauncher) {
 
 	convertMessageToString((const byte *)getGUIString(gsQuitPrompt), (byte *)msgLabelPtr, sizeof(msgLabelPtr));
 	if (msgLabelPtr[0] != '\0') {
-		localizedYesKey = msgLabelPtr[Common::strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
-		msgLabelPtr[Common::strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
+		localizedYesKey = msgLabelPtr[scumm_strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
+		msgLabelPtr[scumm_strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
 
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
@@ -1521,8 +1521,8 @@ void ScummEngine::queryRestart() {
 
 	convertMessageToString((const byte *)getGUIString(gsRestart), (byte *)msgLabelPtr, sizeof(msgLabelPtr));
 	if (msgLabelPtr[0] != '\0') {
-		localizedYesKey = msgLabelPtr[Common::strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
-		msgLabelPtr[Common::strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
+		localizedYesKey = msgLabelPtr[scumm_strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
+		msgLabelPtr[scumm_strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
 
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
@@ -1614,8 +1614,8 @@ bool ScummEngine::canWriteGame(int slotId) {
 			Common::strlcpy(msgLabelPtr, "Do you want to replace this saved game?  (Y/N)Y", sizeof(msgLabelPtr));
 		}
 
-		localizedYesKey = msgLabelPtr[Common::strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
-		msgLabelPtr[Common::strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
+		localizedYesKey = msgLabelPtr[scumm_strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
+		msgLabelPtr[scumm_strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
 
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
@@ -2106,7 +2106,7 @@ bool ScummEngine::executeMainMenuOperationSegaCD(int op, int mouseX, int mouseY,
 	case GUI_CTRL_NUMPAD_BACK:
 	{
 		int inputNum = (op == GUI_CTRL_NUMPAD_0) ? 0 : op;
-		uint curIdx = Common::strnlen(_mainMenuSegaCDPasscode, sizeof(_mainMenuSegaCDPasscode));
+		uint curIdx = scumm_strnlen(_mainMenuSegaCDPasscode, sizeof(_mainMenuSegaCDPasscode));
 
 		if (op == GUI_CTRL_NUMPAD_BACK) {
 			if (curIdx > 0) {

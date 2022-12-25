@@ -282,7 +282,7 @@ int fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 	int readBytes = 0;
 	if (maxsize > 1) {
 		f->_in->readLine(dest, maxsize);
-		readBytes = Common::strnlen(dest, maxsize); // FIXME: sierra sci returned byte count and didn't react on NUL characters
+		readBytes = scumm_strnlen(dest, maxsize); // FIXME: sierra sci returned byte count and didn't react on NUL characters
 		// The returned string must not have an ending LF
 		if (readBytes > 0) {
 			if (dest[readBytes - 1] == 0x0A)

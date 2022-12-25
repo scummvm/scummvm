@@ -587,7 +587,7 @@ void TextMgr::statusDraw() {
 		if (!_vm->isLanguageRTL())
 			charPos_Set(_statusRow, 1);
 		else
-			charPos_Set(_statusRow, FONT_COLUMN_CHARACTERS - Common::strnlen(statusTextPtr, FONT_COLUMN_CHARACTERS) - 1);
+			charPos_Set(_statusRow, FONT_COLUMN_CHARACTERS - scumm_strnlen(statusTextPtr, FONT_COLUMN_CHARACTERS) - 1);
 		displayText(statusTextPtr);
 
 		if (!_vm->isLanguageRTL())
@@ -850,7 +850,7 @@ void TextMgr::promptRedraw() {
 			displayText((char *)&_prompt);
 			inputEditOff();
 		} else {
-			charPos_Set(_promptRow, FONT_COLUMN_CHARACTERS - 2 - Common::strnlen((const char *)_prompt, FONT_COLUMN_CHARACTERS));
+			charPos_Set(_promptRow, FONT_COLUMN_CHARACTERS - 2 - scumm_strnlen((const char *)_prompt, FONT_COLUMN_CHARACTERS));
 			inputEditOff();
 			displayText((char *)&_prompt);
 			displayText(textPtr);

@@ -393,7 +393,7 @@ public:
 		const char *string = (const char *)impl().data() + index;
 
 		if (numEntries == kSpanMaxSize) {
-			numEntries = strnlen(string, impl().size() - index);
+			numEntries = scumm_strnlen(string, impl().size() - index);
 		}
 
 		impl().validate(index, numEntries);

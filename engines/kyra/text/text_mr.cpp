@@ -46,7 +46,7 @@ char *TextDisplayer_MR::preprocessString(const char *str) {
 
 	if (_vm->_lang == 3) {
 		Screen::FontId curFont = _screen->setFont(Screen::FID_CHINESE_FNT);
-		int textLen = Common::strnlen(p, sizeof(_talkBuffer));
+		int textLen = scumm_strnlen(p, sizeof(_talkBuffer));
 
 		if (textLen > 68) {
 			int maxTextWidth = ((textLen + 3) / 3) & ~1;
