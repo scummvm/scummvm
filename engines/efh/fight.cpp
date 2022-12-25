@@ -40,7 +40,7 @@ void EfhEngine::sub1BCA7(int16 monsterTeamId) {
 			if (_mapMonsters[monsterId]._guess_fullPlaceId == 0xFF)
 				continue;
 
-			if (((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) != 0x3F || isCharacterATeamMember(_mapMonsters[monsterId]._field_1)) && (_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) > 0x3D)
+			if (((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) != 0x3F || isCharacterATeamMember(_mapMonsters[monsterId]._npcId)) && (_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) > 0x3D)
 				continue;
 
 			if (!checkIfMonsterOnSameLargeMapPlace(monsterId))
@@ -128,11 +128,11 @@ bool EfhEngine::handleFight(int16 monsterId) {
 				mainLoopCond = true;
 		}
 
-		sub1CDFA();
+		computeInitiatives();
 		sub1C219("", 2, 1, false);
 
 		for (uint counter = 0; counter < 8; ++counter) {
-			int16 monsterGroupIdOrMonsterId = _stru3244C[counter]._field0;
+			int16 monsterGroupIdOrMonsterId = _initiatives[counter]._id;
 			if (monsterGroupIdOrMonsterId == -1)
 				continue;
 			if (monsterGroupIdOrMonsterId > 999) { // Team Member
@@ -195,7 +195,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 								int16 hitPoints = 0;
 								int16 originalDamage = 0;
 								int16 damagePointsAbsorbed = 0;
-								int16 var64 = _mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._field_1 * _items[unk_monsterField5_itemId]._attacks;
+								int16 var64 = _mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._npcId * _items[unk_monsterField5_itemId]._attacks;
 								for (int var84 = 0; var84 < var64; ++var84) {
 									// handleFight - Loop var84 on var64 (objectId) - Start
 									if (getRandom(100) > _word32482[var7E])
@@ -1346,7 +1346,7 @@ void EfhEngine::sub1C4CA(bool whiteFl) {
 		} else if (var1 == 0x3E) {
 			displayStringAtTextPos("(NOT DEFINED)");
 		} else if (var1 == 0x3F) {
-			Common::String stringToDisplay = _npcBuf[_mapMonsters[_teamMonsterIdArray[counter]]._field_1]._name;
+			Common::String stringToDisplay = _npcBuf[_mapMonsters[_teamMonsterIdArray[counter]]._npcId]._name;
 			displayStringAtTextPos(stringToDisplay);
 		}
 
