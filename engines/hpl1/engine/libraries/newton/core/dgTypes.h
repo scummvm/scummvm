@@ -133,11 +133,7 @@
 #undef DLL_DECLSPEC
 #endif
 
-#ifdef _WIN32
-#define DG_INLINE __forceinline
-#else
-#define DG_INLINE inline
-#endif
+#define DG_INLINE FORCEINLINE
 
 #ifdef _MSC_VER
 #define DG_MSC_VECTOR_ALIGMENT __declspec(align(16))
