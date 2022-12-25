@@ -1052,12 +1052,12 @@ rbool match_str(const char **pstr, const char *match);
 
 #ifdef NEED_STR_CMP
 #undef strcasecmp
-//define strcasecmp Common::scumm_strcasecmp
+//define strcasecmp scumm_strcasecmp
 extern int strcasecmp(const char *s1, const char *s2);
 #endif
 #ifdef NEED_STRN_CMP
 #undef strncasecmp
-//define strncasecmp Common::scumm_strnicmp
+//define strncasecmp scumm_strnicmp
 extern int strncasecmp(const char *s1, const char *s2, size_t len);
 #endif
 
