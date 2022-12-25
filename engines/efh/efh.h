@@ -204,7 +204,7 @@ struct CharStatus {
 
 struct MapMonster {
 	uint8 _possessivePronounSHL6;
-	uint8 _field_1;
+	uint8 _npcId;
 	uint8 _guess_fullPlaceId; // unsigned? Magic values are 0xFF and 0xFE
 	uint8 _posX;
 	uint8 _posY;
@@ -224,9 +224,9 @@ struct Stru32686 {
 	void init();
 };
 
-struct Stru3244C {
-	int16 _field0;
-	int16 _field2;
+struct InitiativeStruct {
+	int16 _id;
+	int16 _initiative;
 
 	void init();
 };
@@ -353,8 +353,8 @@ private:
 	void sub221D2(int16 monsterId);
 	void displayImp1Text(int16 textId);
 	bool sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId);
-	int8 sub15581(int16 mapPosX, int16 mapPosY, int16 arg4);
-	void sub1CDFA();
+	int8 sub15581(int16 mapPosX, int16 mapPosY, bool arg4);
+	void computeInitiatives();
 	void redrawScreenForced();
 	int16 selectMonsterGroup();
 	void sub1CAB6(int16 charId);
@@ -605,7 +605,7 @@ private:
 
 	int16 _menuStatItemArr[15];
 	Stru32686 _stru32686[5];
-	Stru3244C _stru3244C[8];
+	InitiativeStruct _initiatives[8];
 };
 
 
