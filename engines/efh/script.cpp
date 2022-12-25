@@ -59,7 +59,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 
 	bool doneFlag = false;
 	int16 var_F2 = -1;
-	int16 var_F0 = 0xFF;
+	int16 retVal = 0xFF;
 	int16 var_EE = 0xFF;
 	uint16 curLineNb = 0;
 	int16 numbLines = (1 + maxY - posY) / 9;
@@ -288,9 +288,9 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 				}
 
 				if (found)
-					var_F0 = scriptNumberArray[1];
+					retVal = scriptNumberArray[1];
 				else
-					var_F0 = scriptNumberArray[2];
+					retVal = scriptNumberArray[2];
 			}
 			break;
 		case 0x0F:
@@ -298,15 +298,15 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			if (flag) {
 				int16 var110 = scriptNumberArray[0];
 				if (isCharacterATeamMember(var110))
-					var_F0 = scriptNumberArray[1];
+					retVal = scriptNumberArray[1];
 				else
-					var_F0 = scriptNumberArray[2];
+					retVal = scriptNumberArray[2];
 			}
 			break;
 		case 0x10:
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
 			if (flag)
-				var_F0 = scriptNumberArray[0];
+				retVal = scriptNumberArray[0];
 
 			break;
 		case 0x11:
@@ -328,7 +328,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 				loadPlacesFile(scriptNumberArray[0], false);
 				sub15A28(scriptNumberArray[1], scriptNumberArray[2]);
 				sub2455E(scriptNumberArray[0], scriptNumberArray[1], scriptNumberArray[2]);
-				var_F0 = -1;
+				retVal = -1;
 			}
 			break;
 		case 0x14:
@@ -338,7 +338,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 				int16 var110 = scriptNumberArray[0];
 				if (!isCharacterATeamMember(var110))
 					var_EE = var110;
-				var_F0 = -1;
+				retVal = -1;
 			}
 			break;
 		case 0x15:
@@ -457,9 +457,9 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
 			if (flag) {
 				if (_history[scriptNumberArray[0]] == 0)
-					var_F0 = scriptNumberArray[2];
+					retVal = scriptNumberArray[2];
 				else
-					var_F0 = scriptNumberArray[1];
+					retVal = scriptNumberArray[1];
 			}
 			break;
 		case 0x1F:
@@ -490,7 +490,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		refreshTeamSize();
 	}
 
-	return var_F0;
+	return retVal;
 }
 
 } // End of namespace Efh

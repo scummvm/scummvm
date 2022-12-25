@@ -1394,7 +1394,7 @@ void EfhEngine::sub2455E(int16 arg0, int16 arg2, int16 arg4) {
 
 	for (int16 var4 = varC; var4 <= var8; ++var4) {
 		for (int16 var2 = varA; var2 <= var6; ++var2) {
-			_techDataArr[_techId][var2 + var4 * 64] = varD;
+			WRITE_LE_INT16(&_techDataArr[_techId][var2 + var4 * 64], varD);
 		}
 	}
 }
