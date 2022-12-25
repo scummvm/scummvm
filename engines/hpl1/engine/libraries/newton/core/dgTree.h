@@ -175,7 +175,7 @@ public:
 			m_ptr = m_ptr->Next();
 		}
 
-		void operator++ (dgInt32) {
+		void operator++ (int) {
 			NEWTON_ASSERT(m_ptr);
 			m_ptr = m_ptr->Next();
 		}
@@ -185,7 +185,7 @@ public:
 			m_ptr = m_ptr->Prev();
 		}
 
-		void operator-- (dgInt32) {
+		void operator-- (int) {
 			NEWTON_ASSERT(m_ptr);
 			m_ptr = m_ptr->Prev();
 		}

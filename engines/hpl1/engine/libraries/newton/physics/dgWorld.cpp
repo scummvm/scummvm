@@ -342,7 +342,7 @@ dgBody *dgWorld::GetSentinelBody() const {
 }
 
 void dgWorld::SetSolverMode(dgInt32 mode) {
-	m_solverMode = dgUnsigned32(GetMax(0, mode));
+	m_solverMode = dgUnsigned32(GetMax(dgInt32(0), mode));
 }
 
 void dgWorld::SetFrictionMode(dgInt32 mode) {

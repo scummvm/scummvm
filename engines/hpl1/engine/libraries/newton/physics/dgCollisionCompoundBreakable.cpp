@@ -479,7 +479,7 @@ void dgCollisionCompoundBreakable::dgDebriGraph::Serialize(dgSerialize callback,
 	dgDebriNodeInfo::PackedSaveData packedData(data.m_commonData);
 	packedData.m_lru = 0;
 	callback(userData, &packedData, sizeof(packedData));
-	enumerator.Insert(0, GetFirst());
+	enumerator.Insert(dgInt32(0), GetFirst());
 
 	for (dgListNode *node = GetFirst()->GetNext(); node; node = node->GetNext()) {
 		dgDebriNodeInfo &dataN = node->GetInfo().m_nodeData;

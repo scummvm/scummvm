@@ -1871,7 +1871,7 @@ dgInt32 dgWorld::CollideContinueSimd(dgCollision *const collisionA,
 
 	dgInt32 count = 0;
 	retTimeStep = dgFloat32(1.0e10f);
-	maxSize = GetMin(DG_MAX_CONTATCS, maxSize);
+	maxSize = GetMin(dgInt32(DG_MAX_CONTATCS), maxSize);
 
 	collideBodyA.m_world = this;
 	collideBodyA.SetContinuesCollisionMode(true);
@@ -1993,7 +1993,7 @@ dgInt32 dgWorld::CollideContinue(dgCollision *const collisionA,
 
 	dgInt32 count = 0;
 	retTimeStep = dgFloat32(1.0e10f);
-	maxSize = GetMin(DG_MAX_CONTATCS, maxSize);
+	maxSize = GetMin(dgInt32(DG_MAX_CONTATCS), maxSize);
 
 	collideBodyA.m_world = this;
 	collideBodyA.SetContinuesCollisionMode(true);
@@ -2111,7 +2111,7 @@ dgInt32 dgWorld::Collide(dgCollision *const collisionA, const dgMatrix &matrixA,
 	dgContactPoint contacts[DG_MAX_CONTATCS];
 
 	dgInt32 count = 0;
-	maxSize = GetMin(DG_MAX_CONTATCS, maxSize);
+	maxSize = GetMin(dgInt32(DG_MAX_CONTATCS), maxSize);
 
 	collideBodyA.m_world = this;
 	collideBodyA.m_masterNode = NULL;

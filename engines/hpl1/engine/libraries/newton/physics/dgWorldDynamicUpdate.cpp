@@ -2794,7 +2794,7 @@ void dgJacobianMemory::CalculateSimpleBodyReactionsForces(
 			}
 
 			i = -1;
-			maxPasses = GetMax(maxPasses - 1, 1);
+			maxPasses = GetMax(maxPasses - 1, dgInt32(1));
 
 		} else if (clampedForceIndex >= 0) {
 			akNum = dgFloat32(0.0f);
@@ -2813,7 +2813,7 @@ void dgJacobianMemory::CalculateSimpleBodyReactionsForces(
 			force[clampedForceIndex] = clampedForceIndexValue;
 
 			i = -1;
-			maxPasses = GetMax(maxPasses - 1, 1);
+			maxPasses = GetMax(maxPasses - 1, dgInt32(1));
 
 		} else {
 			accNorm = dgFloat32(0.0f);
@@ -5128,7 +5128,7 @@ dgFloat32 dgJacobianMemory::CalculateJointForces(dgInt32 joint,
 			NEWTON_ASSERT(activeRow[clampedForceIndex] == dgFloat32(0.0f));
 
 			i = -1;
-			maxPasses = GetMax(maxPasses - 1, 1);
+			maxPasses = GetMax(maxPasses - 1, dgInt32(1));
 
 		} else if (clampedForceIndex >= 0) {
 			akNum = dgFloat32(0.0f);
@@ -5149,7 +5149,7 @@ dgFloat32 dgJacobianMemory::CalculateJointForces(dgInt32 joint,
 			force[clampedForceIndex + first] = clampedForceIndexValue;
 
 			i = -1;
-			maxPasses = GetMax(maxPasses - 1, 1);
+			maxPasses = GetMax(maxPasses - 1, dgInt32(1));
 
 		} else {
 			accNorm = dgFloat32(0.0f);

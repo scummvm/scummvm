@@ -29,7 +29,7 @@ dgGoogol::dgGoogol(void) :
 
 dgGoogol::dgGoogol(dgFloat64 value) :
 	m_sign(0), m_exponent(0) {
-	dgInt32 exp;
+	int exp;
 	dgFloat64 mantissa = fabs(frexp(value, &exp));
 
 	m_exponent = dgInt16(exp);

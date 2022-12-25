@@ -6859,7 +6859,7 @@ dgInt32 dgWorld::CalculateConvexToConvexContacts(
 		timestep = proxy.m_timestep;
 		mink.CalculateVelocities(proxy.m_timestep);
 
-		maxContaCount = GetMin(proxy.m_maxContacts, 16);
+		maxContaCount = GetMin(proxy.m_maxContacts, dgInt32(16));
 		count = mink.HullHullContinueContacts(proxy.m_timestep, proxy.m_contacts, 0,
 		                                      maxContaCount, proxy.m_unconditionalCast);
 
