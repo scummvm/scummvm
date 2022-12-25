@@ -47,20 +47,16 @@ Hpl1MetaEngineDetection::Hpl1MetaEngineDetection() : AdvancedMetaEngineDetection
 }
 
 DetectedGames Hpl1MetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) {
-	DetectedGames games; 
+	DetectedGames games;
 	for(auto file : fslist) {
 		if (file.getName() == "Penumbra.exe")
-			games.push_back(DetectedGame(getName(), Hpl1::GAME_NAMES[0])); 
+			games.push_back(DetectedGame(getName(), Hpl1::GAME_NAMES[0]));
 	}
-	return games; 
-} 
+	return games;
+}
 
 PlainGameList Hpl1MetaEngineDetection::getSupportedGames() const {
-	return PlainGameList(Hpl1::GAME_NAMES); 	
-} 
-
-PlainGameDescriptor Hpl1MetaEngineDetection::findGame(const char *gameid) const {
-	return Hpl1::GAME_NAMES[0]; 
+	return PlainGameList(Hpl1::GAME_NAMES);
 }
 
 REGISTER_PLUGIN_STATIC(HPL1_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Hpl1MetaEngineDetection);

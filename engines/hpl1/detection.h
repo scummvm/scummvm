@@ -58,8 +58,6 @@ public:
 	DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) override;
 
 	PlainGameList getSupportedGames() const override;
-
-	PlainGameDescriptor findGame(const char *gameid) const override;
 };
 
 #endif
