@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-24 16:23+0000\n"
+"POT-Creation-Date: 2022-12-25 15:11+0000\n"
 "PO-Revision-Date: 2022-12-21 10:14+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -633,7 +633,7 @@ msgid "Seventh-order"
 msgstr "Seitsemännen asteen"
 
 #. I18N: Button to reset keymap mappings to defaults
-#: gui/fluidsynth-dialog.cpp:150 backends/keymapper/remap-widget.cpp:318
+#: gui/fluidsynth-dialog.cpp:150 backends/keymapper/remap-widget.cpp:324
 msgid "Reset"
 msgstr "Vakioasetukset"
 
@@ -3366,12 +3366,12 @@ msgstr "Oikean hatun X"
 msgid "Right Stick Y"
 msgstr "Oikean hatun Y"
 
-#: backends/keymapper/remap-widget.cpp:289
-#: backends/keymapper/remap-widget.cpp:319
+#: backends/keymapper/remap-widget.cpp:295
+#: backends/keymapper/remap-widget.cpp:325
 msgid "Reset to defaults"
 msgstr "Palauta vakioasetukset"
 
-#: backends/keymapper/remap-widget.cpp:290
+#: backends/keymapper/remap-widget.cpp:296
 msgid "Clear mapping"
 msgstr "Vakioasetukset"
 

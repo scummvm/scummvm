@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-24 16:23+0000\n"
+"POT-Creation-Date: 2022-12-25 15:11+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -639,7 +639,7 @@ msgid "Seventh-order"
 msgstr "Сёмага парадку"
 
 #. I18N: Button to reset keymap mappings to defaults
-#: gui/fluidsynth-dialog.cpp:150 backends/keymapper/remap-widget.cpp:318
+#: gui/fluidsynth-dialog.cpp:150 backends/keymapper/remap-widget.cpp:324
 msgid "Reset"
 msgstr "Скінуць"
 
@@ -3395,12 +3395,12 @@ msgstr "Правы сцік вось X"
 msgid "Right Stick Y"
 msgstr "Правы сцік вось Y"
 
-#: backends/keymapper/remap-widget.cpp:289
-#: backends/keymapper/remap-widget.cpp:319
+#: backends/keymapper/remap-widget.cpp:295
+#: backends/keymapper/remap-widget.cpp:325
 msgid "Reset to defaults"
 msgstr "Скінуць па змаўчанні"
 
-#: backends/keymapper/remap-widget.cpp:290
+#: backends/keymapper/remap-widget.cpp:296
 msgid "Clear mapping"
 msgstr "Ачысціць раскладку"
 

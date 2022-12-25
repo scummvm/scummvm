@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-24 16:23+0000\n"
+"POT-Creation-Date: 2022-12-25 15:11+0000\n"
 "PO-Revision-Date: 2022-12-22 07:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -630,7 +630,7 @@ msgid "Seventh-order"
 msgstr "７次補間"
 
 #. I18N: Button to reset keymap mappings to defaults
-#: gui/fluidsynth-dialog.cpp:150 backends/keymapper/remap-widget.cpp:318
+#: gui/fluidsynth-dialog.cpp:150 backends/keymapper/remap-widget.cpp:324
 msgid "Reset"
 msgstr "リセット"
 
@@ -3339,12 +3339,12 @@ msgstr "右スティック横"
 msgid "Right Stick Y"
 msgstr "右スティック縦"
 
-#: backends/keymapper/remap-widget.cpp:289
-#: backends/keymapper/remap-widget.cpp:319
+#: backends/keymapper/remap-widget.cpp:295
+#: backends/keymapper/remap-widget.cpp:325
 msgid "Reset to defaults"
 msgstr "デフォルトに戻す"
 
-#: backends/keymapper/remap-widget.cpp:290
+#: backends/keymapper/remap-widget.cpp:296
 msgid "Clear mapping"
 msgstr "クリア"
 

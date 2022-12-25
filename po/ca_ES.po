@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-24 16:23+0000\n"
+"POT-Creation-Date: 2022-12-25 15:11+0000\n"
 "PO-Revision-Date: 2022-12-05 05:34+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -637,7 +637,7 @@ msgid "Seventh-order"
 msgstr "Setè ordre"
 
 #. I18N: Button to reset keymap mappings to defaults
-#: gui/fluidsynth-dialog.cpp:150 backends/keymapper/remap-widget.cpp:318
+#: gui/fluidsynth-dialog.cpp:150 backends/keymapper/remap-widget.cpp:324
 msgid "Reset"
 msgstr "Reset"
 
@@ -3398,12 +3398,12 @@ msgstr "Stick dret X"
 msgid "Right Stick Y"
 msgstr "Stick dret Y"
 
-#: backends/keymapper/remap-widget.cpp:289
-#: backends/keymapper/remap-widget.cpp:319
+#: backends/keymapper/remap-widget.cpp:295
+#: backends/keymapper/remap-widget.cpp:325
 msgid "Reset to defaults"
 msgstr "Reinicia als valors predeterminats"
 
-#: backends/keymapper/remap-widget.cpp:290
+#: backends/keymapper/remap-widget.cpp:296
 msgid "Clear mapping"
 msgstr "Esborra l'assignació"
 
