@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-12-25 15:26+0000\n"
-"PO-Revision-Date: 2022-12-21 10:14+0000\n"
+"PO-Revision-Date: 2022-12-25 23:25+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -745,7 +745,7 @@ msgstr "Ensimmäinen kirjain"
 #: gui/launcher.cpp:101
 msgctxt "group"
 msgid "Initial"
-msgstr ""
+msgstr "Alkukirjain"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
@@ -782,8 +782,6 @@ msgid "Select Group by"
 msgstr "Valitse ryhmitys"
 
 #: gui/launcher.cpp:217 gui/launcher.cpp:799
-#, fuzzy
-#| msgid "Group by:"
 msgid "Group:"
 msgstr "Ryhmitä:"
 
@@ -5313,11 +5311,11 @@ msgstr "Soita laulu 'The Final Hour' MIDI-musiikin sijaan lopputeksteissä"
 
 #: engines/groovie/metaengine.cpp:97
 msgid "Slim Left/Right Hotspots"
-msgstr ""
+msgstr "Kapeat kohdealueet sivuilla"
 
 #: engines/groovie/metaengine.cpp:98
 msgid "Shrinks the hotspots on the left and right sides for exiting puzzles"
-msgstr ""
+msgstr "Kaventaa vasemman ja oikean sivun pulmasta poistumisen kohdealueita"
 
 #: engines/groovie/metaengine.cpp:109
 msgid "Speedrun Mode"
