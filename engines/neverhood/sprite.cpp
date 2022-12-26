@@ -187,13 +187,13 @@ void StaticSprite::updatePosition() {
 // AnimatedSprite
 
 AnimatedSprite::AnimatedSprite(NeverhoodEngine *vm, int objectPriority)
-	: Sprite(vm, objectPriority), _animResource(vm) {
+	: Sprite(vm, objectPriority), _animResource(vm), _subtitleSurface(vm, this) {
 
 	init();
 }
 
 AnimatedSprite::AnimatedSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x, int16 y)
-	: Sprite(vm, 1100), _animResource(vm) {
+	: Sprite(vm, 1100), _animResource(vm), _subtitleSurface(vm, this) {
 
 	init();
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -313,6 +313,7 @@ void AnimatedSprite::updateAnim() {
 			if (_animStatus == 1) {
 				if (_animResource.load(_newAnimFileHash)) {
 					_currAnimFileHash = _newAnimFileHash;
+					_subtitles.reset(new SubtitlePlayer(_vm, _newAnimFileHash, kSubtitleWidth));
 				} else {
 					_animResource.load(calcHash("sqDefault"));
 					_currAnimFileHash = 0;
@@ -326,6 +327,7 @@ void AnimatedSprite::updateAnim() {
 			} else {
 				if (_animResource.load(_newAnimFileHash)) {
 					_currAnimFileHash = _newAnimFileHash;
+					_subtitles.reset(new SubtitlePlayer(_vm, _newAnimFileHash, kSubtitleWidth));
 				} else {
 					_animResource.load(calcHash("sqDefault"));
 					_currAnimFileHash = 0;
@@ -369,6 +371,12 @@ void AnimatedSprite::updatePosition() {
 		_surface->getDrawRect().y = filterY(_y + _drawOffset.y);
 	}
 
+	int subCenterX = _surface->getDrawRect().x + _surface->getDrawRect().width / 2;
+	_subtitleSurface.getDrawRect().x = MAX(subCenterX - kSubtitleWidth / 2, 0);
+	_subtitleSurface.getDrawRect().width = kSubtitleWidth;
+	_subtitleSurface.getDrawRect().y = MIN(_surface->getDrawRect().y + _surface->getDrawRect().height + 1, 480 - (SubtitlePlayer::kSubtitleCharHeight - 1));
+	_subtitleSurface.getDrawRect().height = SubtitlePlayer::kSubtitleCharHeight;
+
 	if (_needRefresh) {
 		_surface->drawAnimResource(_animResource, _currFrameIndex, _doDeltaX, _doDeltaY, _drawOffset.width, _drawOffset.height);
 		_needRefresh = false;
@@ -395,6 +403,25 @@ void AnimatedSprite::updateFrameIndex() {
 			if (_newAnimFileHash == 0)
 				_currFrameIndex = _lastFrameIndex;
 		}
+	}
+}
+
+AnimatedSprite::AnimatedSpriteSubtitles::AnimatedSpriteSubtitles(NeverhoodEngine *vm, AnimatedSprite *backref) :
+	_backref(backref), BaseSurface(vm, 0xffff, kSubtitleWidth, SubtitlePlayer::kSubtitleCharHeight, "animated sprite subtitles") {
+}
+
+void AnimatedSprite::AnimatedSpriteSubtitles::draw() {
+	if (_backref->_subtitles && _backref->_subtitles->isValid() &&
+	    _backref->_currFrameIndex != 0 &&
+	    _backref->_currFrameIndex < _backref->_lastFrameIndex) {
+		int subCenterX = _backref->_surface->getDrawRect().x + _backref->_surface->getDrawRect().width / 2;
+		_backref->_subtitles->renderFrame(_backref->_currFrameIndex, subCenterX - getDrawRect().x);
+		const Graphics::Surface *bottom = _backref->_subtitles->getBottomSubs();
+		if (bottom) {
+			_vm->_screen->drawSurface2(bottom, _drawRect, _clipRect, true, ++_version, nullptr, _backref->_subtitles->kSubtitleAlpha);
+		}
+		if (_backref->_subtitles->getTopSubs())
+			warning("Top subs are unsupported");
 	}
 }
 

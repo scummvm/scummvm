@@ -158,6 +158,7 @@ void Scene::printSurfaces(Console *con) {
 Sprite *Scene::addSprite(Sprite *sprite) {
 	addEntity(sprite);
 	addSurface(sprite->getSurface());
+	addSurface(sprite->getSubtitleSurface());
 	return sprite;
 }
 
