@@ -31,6 +31,7 @@ namespace GUI {
 class ScrollContainerWidget: public Widget, public CommandSender {
 	ScrollBarWidget *_verticalScroll;
 	int16 _scrolledX, _scrolledY;
+	int _scrollbarWidth;
 	uint16 _limitH;
 	uint32 _reflowCmd;
 	ThemeEngine::WidgetBackground _backgroundType;
@@ -49,8 +50,6 @@ public:
 
 	bool containsWidget(Widget *) const override;
 
-	Common::Rect getClipRect() const override;
-
 	void setBackgroundType(ThemeEngine::WidgetBackground backgroundType);
 
 	void handleMouseWheel(int x, int y, int direction) override;
@@ -61,6 +60,9 @@ public:
 	int16	getChildY() const override;
 	uint16	getWidth() const override;
 	uint16	getHeight() const override;
+
+	void draw() override;
+	void markAsDirty() override;
 
 protected:
 	void drawWidget() override;

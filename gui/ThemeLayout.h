@@ -50,6 +50,7 @@ public:
 		kLayoutHorizontal,
 		kLayoutWidget,
 		kLayoutTabWidget,
+		kLayoutScrollContainerWidget,
 		kLayoutSpace
 	};
 
@@ -280,6 +281,40 @@ protected:
 
 	ThemeLayout *makeClone(ThemeLayout *newParent) override {
 		ThemeLayoutTabWidget *n = new ThemeLayoutTabWidget(*this);
+		n->_parent = newParent;
+		return n;
+	}
+};
+
+class ThemeLayoutScrollContainerWidget : public ThemeLayoutWidget {
+	int _scrollWidth;
+
+public:
+	ThemeLayoutScrollContainerWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, Graphics::TextAlign align, int scrollWidth):
+		ThemeLayoutWidget(p, name, w, h, align, p->getUseRTL()) {
+		_scrollWidth = scrollWidth;
+	}
+
+	void reflowLayout(Widget *widgetChain) override {
+		for (uint i = 0; i < _children.size(); ++i) {
+			_children[i]->reflowLayout(widgetChain);
+		}
+	}
+
+	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h, bool &useRTL) override {
+		if (ThemeLayoutWidget::getWidgetData(name, x, y, w, h, useRTL)) {
+			w -= _scrollWidth;
+			return true;
+		}
+
+		return false;
+	}
+
+protected:
+	LayoutType getLayoutType() const override { return kLayoutScrollContainerWidget; }
+
+	ThemeLayout *makeClone(ThemeLayout *newParent) override {
+		ThemeLayoutScrollContainerWidget *n = new ThemeLayoutScrollContainerWidget(*this);
 		n->_parent = newParent;
 		return n;
 	}
