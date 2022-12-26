@@ -78,6 +78,8 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, Common::M
 
 	_radioChatterSFX = false;
 	_isEngineDisabled = false;
+	_checkForUnderrun = false;
+	_underrunCooldown = 0;
 
 	_audioNames = nullptr;
 	_numAudioNames = 0;
@@ -115,14 +117,20 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, Common::M
 			_maxQueuedStreams++;
 		}
 
-		// The lower optimal bound is always 5, except if we're operating in low latency mode
-		_maxQueuedStreams = MAX(_mixer->getOutputBufSize() <= 1024 ? 4 : 5, _maxQueuedStreams);
+		// The lower optimal bound is always 4, except if we're operating in low latency mode
+		_maxQueuedStreams = MAX(_mixer->getOutputBufSize() <= 1024 ? 3 : 4, _maxQueuedStreams);
 	} else {
 		debug(5, "IMuseDigital::IMuseDigital(): WARNING: output audio buffer size not specified for this platform, defaulting _maxQueuedStreams to 4");
 		_maxQueuedStreams = 4;
 	}
 
+	// This value has been calculated in a way that is a good compromise
+	// between the absence of underruns and the lowest latency achievable.
+	// Of course this is never perfect, given the vast number of platforms
+	// we support, so the value might eventually be corrected by our custom
+	// adaptive buffer underrun correction routine.
 	_nominalBufferCount = _maxQueuedStreams;
+	_underrunCooldown = _maxQueuedStreams;
 
 	_vm->getTimerManager()->installTimerProc(timer_handler, 1000000 / _callbackFps, this, "IMuseDigital");
 }
@@ -152,8 +160,8 @@ IMuseDigital::~IMuseDigital() {
 }
 
 int IMuseDigital::roundRobinSetBufferCount() {
-	int minStreams = MAX<int>(_nominalBufferCount - 3, 0);
-	int maxStreams = _nominalBufferCount + 3;
+	int minStreams = MAX<int>(_nominalBufferCount - 5, 1);
+	int maxStreams = _nominalBufferCount + 5;
 	_maxQueuedStreams++;
 
 	if (_maxQueuedStreams > maxStreams) {
@@ -161,6 +169,11 @@ int IMuseDigital::roundRobinSetBufferCount() {
 	}
 
 	return _maxQueuedStreams;
+}
+
+void IMuseDigital::adaptBufferCount() {
+	_maxQueuedStreams++;
+	_nominalBufferCount = _maxQueuedStreams;
 }
 
 void IMuseDigital::stopSound(int sound) {

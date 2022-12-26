@@ -84,6 +84,8 @@ private:
 
 	bool _isEarlyDiMUSE;
 	bool _isEngineDisabled;
+	bool _checkForUnderrun;
+	int _underrunCooldown;
 
 	// These three are manipulated in the waveOut functions
 	uint8 *_outputAudioBuffer;
@@ -405,6 +407,7 @@ public:
 	int clampTuning(int value, int minValue, int maxValue);
 	int checkHookId(int &trackHookId, int sampleHookId);
 	int roundRobinSetBufferCount();
+	void adaptBufferCount();
 
 	// CMDs
 	int cmdsHandleCmd(int cmd, uint8 *ptr = nullptr,
