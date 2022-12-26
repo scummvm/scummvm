@@ -585,7 +585,9 @@
 
 	<dialog name = 'GlobalOptions_Graphics' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
-			<widget name = 'Container'/>
+			<widget name = 'Container'
+					type = 'ScrollContainerWidget'
+			/>
 		</layout>
 	</dialog>
 	<dialog name = 'GlobalOptions_Graphics_Container' overlays = 'GlobalOptions_Graphics.Container'>
@@ -913,7 +915,9 @@
 
 	<dialog name = 'GlobalOptions_GUI' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
-			<widget name = 'Container'/>
+			<widget name = 'Container'
+					type = 'ScrollContainerWidget'
+			/>
 		</layout>
 	</dialog>
 
@@ -1035,7 +1039,9 @@
 
 	<dialog name = 'GlobalOptions_Cloud' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
-			<widget name = 'Container'/>
+			<widget name = 'Container'
+					type = 'ScrollContainerWidget'
+			/>
 		</layout>
 	</dialog>
 
@@ -1494,13 +1500,17 @@
 
 	<dialog name = 'GameOptions_Achievements' overlays = 'Dialog.GameOptions.TabWidget'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
-			<widget name = 'Container'/>
+			<widget name = 'Container'
+					type = 'ScrollContainerWidget'
+			/>
 		</layout>
 	</dialog>
 
 	<dialog name = 'GameOptions_Graphics' overlays = 'Dialog.GameOptions.TabWidget'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
-			<widget name = 'Container'/>
+			<widget name = 'Container'
+					type = 'ScrollContainerWidget'
+			/>
 		</layout>
 	</dialog>
 	<dialog name = 'GameOptions_Graphics_Container' overlays = 'GameOptions_Graphics.Container'>
@@ -1788,7 +1798,9 @@
 
 	<dialog name = 'GlobalConfig_Achievements' overlays = 'Dialog.GlobalConfig.TabWidget'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
-			<widget name = 'Container'/>
+			<widget name = 'Container'
+					type = 'ScrollContainerWidget'
+			/>
 		</layout>
 	</dialog>
 
@@ -2337,6 +2349,7 @@
 	<dialog name = 'UnknownGameDialog' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
 		<layout type = 'vertical' padding = '8, 8, 8, 0'>
 			<widget name = 'TextContainer'
+					type = 'ScrollContainerWidget'
 			/>
 			<layout type = 'horizontal' padding = '0, 0, 16, 16'>
 				<space/>
