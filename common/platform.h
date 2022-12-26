@@ -46,7 +46,7 @@ class String;
 enum Platform : int8 {
 	kPlatformDOS,
 	kPlatformAmiga,
-	kPlatformAmstrad,
+	kPlatformAmstradCPC,
 	kPlatformAtari8Bit,
 	kPlatformAtariST,
 	kPlatformMacintosh,
