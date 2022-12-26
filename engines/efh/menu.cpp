@@ -1101,9 +1101,9 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 	case 16: { // Fairy Dust
 		_mapPosX = getRandom(_largeMapFlag ? 63 : 23);
 		_mapPosY = getRandom(_largeMapFlag ? 63 : 23);
-		int16 varAE = sub15538(_mapPosX, _mapPosY);
+		int16 tileFactId = getTileFactId(_mapPosX, _mapPosY);
 
-		if (_tileFact[varAE]._field0 == 0) {
+		if (_tileFact[tileFactId]._field0 == 0) {
 			totalPartyKill();
 			buffer1 = "The entire party vanishes in a flash... only to appear in stone !";
 			if (argA == 2) {
@@ -1112,9 +1112,8 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				_messageToBePrinted += buffer1;
 				retVal = true;
 			}
-			// emptyFunction(2);
 		} else {
-			if (varAE == 0 || varAE == 0x48) {
+			if (tileFactId == 0 || tileFactId == 0x48) {
 				buffer1 = "The entire party vanishes in a flash...but re-appears, as if nothing happened!";
 				if (argA == 2) {
 					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
@@ -1138,8 +1137,8 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 	case 17: { // "Devil Dust"
 		_mapPosX = _items[itemId].field_19;
 		_mapPosY = _items[itemId].field_1A;
-		int16 varAE = sub15538(_mapPosX, _mapPosY);
-		if (_tileFact[varAE]._field0 == 0) {
+		int16 tileFactId = getTileFactId(_mapPosX, _mapPosY);
+		if (_tileFact[tileFactId]._field0 == 0) {
 			totalPartyKill();
 			buffer1 = "The entire party vanishes in a flash... only to appear in stone !";
 			if (argA == 2) {
@@ -1148,9 +1147,8 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				_messageToBePrinted += buffer1;
 				retVal = true;
 			}
-			// emptyFunction(2);
 		} else {
-			if (varAE == 0 || varAE == 0x48) {
+			if (tileFactId == 0 || tileFactId == 0x48) {
 				buffer1 = "The entire party vanishes in a flash...but re-appears, as if nothing happened!";
 				if (argA == 2) {
 					displayString_3(buffer1, false, charId, windowId, menuId, curMenuLine);
@@ -1305,7 +1303,6 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 			retVal = true;
 		}
 		totalPartyKill();
-		// emptyFunction(2);
 		varA6 = true;
 		break;
 	case 27: { // "Magic Pyramid", "Razor Blade"
@@ -1326,7 +1323,6 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				_messageToBePrinted += buffer1;
 				retVal = true;
 			}
-			// emptyFunction(2);
 		}
 
 		varA6 = true;

@@ -249,7 +249,7 @@ void EfhEngine::readTileFact() {
 
 	for (int i = 0; i < 432; ++i) {
 		_tileFact[i]._field0 = f.readByte();
-		_tileFact[i]._field1 = f.readByte();
+		_tileFact[i]._tileId = f.readByte();
 	}
 }
 
