@@ -324,8 +324,7 @@ bool Actor::giveTreasure() {
 			uint32 shapeNum = ti._shapes[0];
 			const ShapeInfo *si = mainshapes->getShapeInfo(shapeNum);
 			if (!si) {
-				perr << "Trying to create treasure with an invalid shapeNum ("
-				     << shapeNum << ")" << Std::endl;
+				warning("Trying to create treasure with an invalid shapeNum (%u)", shapeNum);
 				continue;
 			}
 			if (si->hasQuantity()) {
@@ -345,7 +344,7 @@ bool Actor::giveTreasure() {
 		}
 
 		if (ti._shapes.empty() || ti._frames.empty()) {
-			perr << "No shape/frame set in treasure" << Std::endl;
+			warning("No shape/frame set in treasure");
 			continue;
 		}
 
@@ -362,8 +361,7 @@ bool Actor::giveTreasure() {
 			const ShapeInfo *si = GameData::get_instance()->getMainShapes()->
 			                getShapeInfo(shapeNum);
 			if (!si) {
-				perr << "Trying to create treasure with an invalid shapeNum ("
-				     << shapeNum << ")" << Std::endl;
+				warning("Trying to create treasure with an invalid shapeNum (%u)", shapeNum);
 				continue;
 			}
 			uint16 qual = 0;
@@ -448,7 +446,7 @@ void Actor::teleport(int newmap, int32 newx, int32 newy, int32 newz) {
 	// Move it to this map
 	if (newmapnum == World::get_instance()->getCurrentMap()->getNum()) {
 #ifdef DEBUG
-		perr << "Actor::teleport: " << getObjId() << " to " << newmap << ","
+		pout << "Actor::teleport: " << getObjId() << " to " << newmap << ","
 		     << newx << "," << newy << "," << newz << Std::endl;
 #endif
 		move(newx, newy, newz);
@@ -464,7 +462,7 @@ void Actor::teleport(int newmap, int32 newx, int32 newy, int32 newz) {
 
 uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps) {
 	if (dir < 0 || dir > 16) {
-		perr << "Actor::doAnim: Invalid _direction (" << dir << ")" << Std::endl;
+		warning("Actor::doAnim: Invalid _direction (%d)", dir);
 		return 0;
 	}
 
@@ -472,10 +470,8 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 		dir = getDir();
 
 #if 0
-	if (tryAnim(anim, dir)) {
-		perr << "Actor::doAnim: tryAnim = Ok!" << Std::endl;
-	} else {
-		perr << "Actor::doAnim: tryAnim = bad!" << Std::endl;
+	if (!tryAnim(anim, dir)) {
+		warning("Actor::doAnim: tryAnim = bad!");
 	}
 #endif
 
@@ -755,8 +751,7 @@ uint16 Actor::setActivityU8(int activity) {
 		return doAnim(Animation::stand, dir_current);
 
 	default:
-		perr << "Actor::setActivityU8: invalid activity (" << activity << ")"
-		     << Std::endl;
+		warning("Actor::setActivityU8: invalid activity (%d)", activity);
 	}
 
 	return 0;
@@ -838,8 +833,7 @@ uint16 Actor::setActivityCru(int activity) {
 	case 0x72:
 		return setActivity(getDefaultActivity(2));
 	default:
-		perr << "Actor::setActivityCru: invalid activity (" << activity << ")"
-		     << Std::endl;
+		warning("Actor::setActivityCru: invalid activity (%d)", activity);
 		return doAnim(Animation::stand, dir_current);
 	}
 
@@ -1979,8 +1973,7 @@ Actor *Actor::createActor(uint32 shape, uint32 frame) {
 
 	// set stats
 	if (!newactor->loadMonsterStats()) {
-		perr << "I_createActor failed to set stats for actor (" << shape
-		     << ")." << Std::endl;
+		warning("I_createActor failed to set stats for actor (%u).", shape);
 	}
 
 	const Actor *av = getMainActor();
@@ -2579,8 +2572,7 @@ uint32 Actor::I_createActor(const uint8 *args, unsigned int /*argsize*/) {
 
 	Actor *newactor = createActor(shape, frame);
 	if (!newactor) {
-		perr << "I_createActor failed to create actor (" << shape
-		     << ")." << Std::endl;
+		warning("I_createActor failed to create actor (%u).", shape);
 		return 0;
 	}
 	uint16 objID = newactor->getObjId();
@@ -2591,7 +2583,7 @@ uint32 Actor::I_createActor(const uint8 *args, unsigned int /*argsize*/) {
 	UCMachine::get_instance()->assignPointer(ptr, buf, 2);
 
 #if 0
-	perr << "I_createActor: created actor #" << objID << " shape "
+	pout << "I_createActor: created actor #" << objID << " shape "
 		 << shape << " frame " << frame << Std::endl;
 #endif
 
@@ -2629,16 +2621,14 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 	                  Item::FLG_IN_NPC_LIST | Item::FLG_DISPOSABLE,
 	                  0, 0, ext, true);
 	if (!newactor) {
-		perr << "I_createActorCru failed to create actor ("
-			 << npcData->getShapeNo() << ")." << Std::endl;
+		warning("I_createActorCru failed to create actor (%u).", npcData->getShapeNo());
 		return 0;
 	}
 
 	// Most of these will be overwritten below, but this is cleaner..
 	bool loaded = newactor->loadMonsterStats();
 	if (!loaded) {
-		perr << "I_createActorCru failed to load monster stats ("
-			 << npcData->getShapeNo() << ")." << Std::endl;
+		warning("I_createActorCru failed to load monster stats (%u).", npcData->getShapeNo());
 		return 0;
 	}
 

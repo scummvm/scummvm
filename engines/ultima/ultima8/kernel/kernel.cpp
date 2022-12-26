@@ -103,7 +103,7 @@ ProcId Kernel::addProcess(Process *proc, bool dispose) {
 	assert(proc->_pid != 0 && proc->_pid != 0xFFFF);
 
 #if 0
-	perr << "[Kernel] Adding process " << proc
+	pout << "[Kernel] Adding process " << proc
 	<< ", pid = " << proc->_pid << " type " << proc->GetClassType()._className << Std::endl;
 #endif
 
@@ -125,7 +125,7 @@ ProcId Kernel::addProcessExec(Process *proc, bool dispose) {
 	assert(proc->_pid != 0 && proc->_pid != 0xFFFF);
 
 #if 0
-	perr << "[Kernel] Adding process " << proc
+	pout << "[Kernel] Adding process " << proc
 	     << ", pid = " << proc->_pid << Std::endl;
 #endif
 
@@ -459,7 +459,7 @@ Process *Kernel::loadProcess(Common::ReadStream *rs, uint32 version) {
 	iter = _processLoaders.find(classname);
 
 	if (iter == _processLoaders.end()) {
-		perr << "Unknown Process class: " << classname << Std::endl;
+		warning("Unknown Process class: %s", classname.c_str());
 		return nullptr;
 	}
 

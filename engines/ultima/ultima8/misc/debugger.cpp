@@ -63,16 +63,13 @@ namespace Ultima8 {
 
 Debugger *g_debugger;
 
-// Console out/err pointers
 console_ostream<char> *ppout;
-console_err_ostream<char> *pperr;
 
 Debugger::Debugger() : Shared::Debugger() {
 	g_debugger = this;
 
 	// Set output pointers
 	ppout = &_strOut;
-	pperr = &_errOut;
 
 	// WARNING: Not only can the methods below be executed directly in the debugger,
 	// they also act as the methods keybindings are made to. So be wary of changing names
@@ -221,7 +218,6 @@ Debugger::Debugger() : Shared::Debugger() {
 Debugger::~Debugger() {
 	g_debugger = nullptr;
 	ppout = nullptr;
-	pperr = nullptr;
 }
 
 

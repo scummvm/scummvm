@@ -65,7 +65,7 @@ void Shape::loadFrames(const uint8 *data, uint32 size, const ConvertShapeFormat 
 
 	if (!format) {
 		// Should be fatal?
-		perr << "Error: Unable to detect shape format" << Std::endl;
+		warning("Unable to detect shape format");
 		return;
 	}
 

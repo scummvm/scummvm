@@ -58,7 +58,7 @@ CruGame::~CruGame() {
 static bool loadPalette(const char *path, PaletteManager::PalIndex index) {
 	Common::SeekableReadStream *pf = FileSystem::get_instance()->ReadFile(path);
 	if (!pf) {
-		perr << "Unable to load " << path << Std::endl;
+		warning("Unable to load %s", path);
 		return false;
 	}
 
@@ -187,8 +187,7 @@ void CruGame::playDemoScreen() {
 	static const Std::string bmp_filename = "static/buyme.dat";
 	Common::SeekableReadStream *bmprs = FileSystem::get_instance()->ReadFile(bmp_filename);
 	if (!bmprs) {
-		perr << "RemorseGame::playDemoScreen: error opening demo background: "
-			 << bmp_filename << Std::endl;
+		warning("RemorseGame::playDemoScreen: error opening demo background: %s", bmp_filename.c_str());
 		return;
 	}
 	Gump *gump = new CruDemoGump(bmprs);
@@ -208,13 +207,11 @@ ProcId CruGame::playCreditsNoMenu() {
 	Common::SeekableReadStream *bmprs = FileSystem::get_instance()->ReadFile(bmp_filename);
 
 	if (!txtrs) {
-		perr << "RemorseGame::playCredits: error opening credits text: "
-			 << txt_filename << Std::endl;
+		warning("RemorseGame::playCredits: error opening credits text: %s", txt_filename.c_str());
 		return 0;
 	}
 	if (!bmprs) {
-		perr << "RemorseGame::playCredits: error opening credits background: "
-			 << bmp_filename << Std::endl;
+		warning("RemorseGame::playCredits: error opening credits background: %s", bmp_filename.c_str());
 		return 0;
 	}
 	Gump *creditsgump = new CruCreditsGump(txtrs, bmprs);

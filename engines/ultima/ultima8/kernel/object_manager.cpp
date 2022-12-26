@@ -266,8 +266,7 @@ bool ObjectManager::load(Common::ReadStream *rs, uint32 version) {
 	// We also fail loading when we're out of _objIDs since this could
 	// have caused serious issues when critical _objects haven't been created.
 	if (_objIDs->isFull()) {
-		perr << "Savegame has been corrupted by running out of _objIDs."
-		     << Std::endl;
+		warning("Savegame has been corrupted by running out of _objIDs.");
 		return false;
 	}
 	unsigned int count = 0;
@@ -336,14 +335,14 @@ Object *ObjectManager::loadObject(Common::ReadStream *rs, Std::string classname,
 	iter = _objectLoaders.find(classname);
 
 	if (iter == _objectLoaders.end()) {
-		perr << "Unknown Object class: " << classname << Std::endl;
+		warning("Unknown Object class: %s", classname.c_str());
 		return nullptr;
 	}
 
 	Object *obj = (*(iter->_value))(rs, version);
 
 	if (!obj) {
-		perr << "Error loading object of type " << classname << Std::endl;
+		warning("Error loading object of type %s", classname.c_str());
 		return nullptr;
 	}
 	uint16 objid = obj->getObjId();
@@ -356,8 +355,7 @@ Object *ObjectManager::loadObject(Common::ReadStream *rs, Std::string classname,
 		else
 			used = _actorIDs->isIDUsed(objid);
 		if (!used) {
-			perr << "Error: object ID " << objid
-			     << " used but marked available. " << Std::endl;
+			warning("Error: object ID %u used but marked available.", objid);
 			return nullptr;
 		}
 	}

@@ -72,7 +72,7 @@ bool U8Game::loadFiles() {
 	pout << "Load Palette" << Std::endl;
 	Common::SeekableReadStream *pf = FileSystem::get_instance()->ReadFile("static/u8pal.pal");
 	if (!pf) {
-		perr << "Unable to load static/u8pal.pal." << Std::endl;
+		warning("Unable to load static/u8pal.pal.");
 		return false;
 	}
 	pf->seek(4); // seek past header
@@ -103,26 +103,26 @@ bool U8Game::startGame() {
 
 	Common::SeekableReadStream *savers = FileSystem::get_instance()->ReadFile("savegame/u8save.000");
 	if (!savers) {
-		perr << "Unable to load savegame/u8save.000." << Std::endl;
+		warning("Unable to load savegame/u8save.000.");
 		return false;
 	}
 	U8SaveFile *u8save = new U8SaveFile(savers);
 
 	Common::SeekableReadStream *nfd = u8save->getDataSource("NONFIXED.DAT");
 	if (!nfd) {
-		perr << "Unable to load savegame/u8save.000/NONFIXED.DAT." << Std::endl;
+		warning("Unable to load savegame/u8save.000/NONFIXED.DAT.");
 		return false;
 	}
 	World::get_instance()->loadNonFixed(nfd); // deletes nfd
 
 	Common::SeekableReadStream *icd = u8save->getDataSource("ITEMCACH.DAT");
 	if (!icd) {
-		perr << "Unable to load savegame/u8save.000/ITEMCACH.DAT." << Std::endl;
+		warning("Unable to load savegame/u8save.000/ITEMCACH.DAT.");
 		return false;
 	}
 	Common::SeekableReadStream *npcd = u8save->getDataSource("NPCDATA.DAT");
 	if (!npcd) {
-		perr << "Unable to load savegame/u8save.000/NPCDATA.DAT." << Std::endl;
+		warning("Unable to load savegame/u8save.000/NPCDATA.DAT.");
 		delete icd;
 		return false;
 	}
@@ -158,7 +158,7 @@ ProcId U8Game::playIntroMovie(bool fade) {
 	const GameInfo *gameinfo = Ultima8Engine::get_instance()->getGameInfo();
 	char langletter = gameinfo->getLanguageFileLetter();
 	if (!langletter) {
-		perr << "U8Game::playIntro: Unknown language." << Std::endl;
+		warning("U8Game::playIntro: Unknown language.");
 		return 0;
 	}
 
@@ -192,7 +192,7 @@ void U8Game::playCredits() {
 	const GameInfo *gameinfo = Ultima8Engine::get_instance()->getGameInfo();
 	char langletter = gameinfo->getLanguageFileLetter();
 	if (!langletter) {
-		perr << "U8Game::playCredits: Unknown language." << Std::endl;
+		warning("U8Game::playCredits: Unknown language.");
 		return;
 	}
 	Std::string filename = "static/";
@@ -201,8 +201,7 @@ void U8Game::playCredits() {
 
 	Common::SeekableReadStream *rs = FileSystem::get_instance()->ReadFile(filename);
 	if (!rs) {
-		perr << "U8Game::playCredits: error opening credits file: "
-		     << filename << Std::endl;
+		warning("U8Game::playCredits: error opening credits file: %s", filename.c_str());
 		return;
 	}
 	Std::string text = getCreditText(rs);
@@ -222,8 +221,7 @@ void U8Game::playQuotes() {
 
 	Common::SeekableReadStream *rs = FileSystem::get_instance()->ReadFile(filename);
 	if (!rs) {
-		perr << "U8Game::playCredits: error opening credits file: "
-		     << filename << Std::endl;
+		warning("U8Game::playQuotes: error opening quotes file: %s", filename.c_str());
 		return;
 	}
 	const Std::string text = getCreditText(rs);

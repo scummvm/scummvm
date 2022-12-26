@@ -410,7 +410,7 @@ void Mouse::startDragging(int startx, int starty) {
 
 #if 0
 	Object *obj = ObjectManager::get_instance()->getObject(_dragging_objId);
-	perr << "Dragging object " << _dragging_objId << " (class=" << (obj ? obj->GetClassType().class_name : "NULL") << ")" << Std::endl;
+	pout << "Dragging object " << _dragging_objId << " (class=" << (obj ? obj->GetClassType().class_name : "NULL") << ")" << Std::endl;
 #endif
 
 	pushMouseCursor(MOUSE_NORMAL);
@@ -471,7 +471,7 @@ void Mouse::moveDragging(int mx, int my) {
 
 
 void Mouse::stopDragging(int mx, int my) {
-	//	perr << "Dropping object " << _dragging_objId << Std::endl;
+	//pout << "Dropping object " << _dragging_objId << Std::endl;
 
 	Gump *gump = getGump(_dragging_objId);
 	Item *item = getItem(_dragging_objId);

@@ -100,7 +100,7 @@ Graphics::Font *FontManager::getTTF_Font(const Std::string &filename, int points
 	Common::SeekableReadStream *fontids;
 	fontids = FileSystem::get_instance()->ReadFile("data/" + filename);
 	if (!fontids) {
-		perr << "Failed to open TTF: data/" << filename << Std::endl;
+		warning("Failed to open TTF: data/%s", filename.c_str());
 		return nullptr;
 	}
 
@@ -111,7 +111,7 @@ Graphics::Font *FontManager::getTTF_Font(const Std::string &filename, int points
 	Graphics::Font *font = Graphics::loadTTFFont(*fontids, pointsize, Graphics::kTTFSizeModeCharacter, 0, mode, 0, false);
 
 	if (!font) {
-		perr << "Failed to open TTF: data/" << filename << Std::endl;
+		warning("Failed to open TTF: data/%s", filename.c_str());
 		return nullptr;
 	}
 

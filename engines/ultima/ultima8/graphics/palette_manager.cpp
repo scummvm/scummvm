@@ -298,7 +298,7 @@ void PaletteManager::getTransformMatrix(int16 matrix[12], PalTransforms trans) {
 
 	// Unknown
 	default: {
-		perr << "Unknown Palette Transformation: " << trans << Std::endl;
+		warning("Unknown Palette Transformation: %d", trans);
 		matrix[0] = 0x800;
 		matrix[1] = 0;
 		matrix[2] = 0;

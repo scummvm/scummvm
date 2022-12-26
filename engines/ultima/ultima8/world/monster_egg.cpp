@@ -54,16 +54,14 @@ uint16 MonsterEgg::hatch() {
 	                  FLG_FAST_ONLY | FLG_DISPOSABLE | FLG_IN_NPC_LIST,
 	                  0, 0, 0, true);
 	if (!newactor) {
-		perr << "MonsterEgg::hatch failed to create actor (" << shapeNum
-		     << ")." << Std::endl;
+		warning("MonsterEgg::hatch failed to create actor (%d).", shapeNum);
 		return 0;
 	}
 	uint16 objID = newactor->getObjId();
 
 	// set stats
 	if (!newactor->loadMonsterStats()) {
-		perr << "MonsterEgg::hatch failed to set stats for actor (" << shapeNum
-		     << ")." << Std::endl;
+		warning("MonsterEgg::hatch failed to set stats for actor (%d).", shapeNum);
 	}
 
 	if (!newactor->canExistAt(_x, _y, _z)) {

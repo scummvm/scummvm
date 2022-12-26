@@ -99,7 +99,7 @@ uint32 HealProcess::I_feedAvatar(const uint8 *args, unsigned int /*argsize*/) {
 	Process *p = Kernel::get_instance()->findProcess(0, 0x222); // CONSTANT!
 	HealProcess *hp = dynamic_cast<HealProcess *>(p);
 	if (!hp) {
-		perr << "I_feedAvatar: unable to find HealProcess!" << Std::endl;
+		warning("I_feedAvatar: unable to find HealProcess!");
 		return 0;
 	}
 

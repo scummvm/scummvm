@@ -49,7 +49,7 @@ PathfinderProcess::PathfinderProcess(Actor *actor, ObjId itemid, bool hit) :
 
 	Item *item = getItem(itemid);
 	if (!item) {
-		perr << "PathfinderProcess: non-existent target" << Std::endl;
+		warning("PathfinderProcess: non-existent target");
 		// can't get there...
 		_result = PATH_FAILED;
 		terminateDeferred();
@@ -129,7 +129,7 @@ void PathfinderProcess::run() {
 		int32 curx, cury, curz;
 		Item *item = getItem(_targetItem);
 		if (!item) {
-			perr << "PathfinderProcess: target missing" << Std::endl;
+			warning("PathfinderProcess: target missing");
 			_result = PATH_FAILED;
 			terminate();
 			return;
@@ -164,7 +164,7 @@ void PathfinderProcess::run() {
 	// since the running animation may move the actor, which could break
 	// the found _path.
 	if (actor->hasActorFlags(Actor::ACT_ANIMLOCK)) {
-		perr << "PathfinderProcess: ANIMLOCK, waiting" << Std::endl;
+		warning("PathfinderProcess: ANIMLOCK, waiting");
 		return;
 	}
 

@@ -48,7 +48,7 @@ UCProcess::~UCProcess() {
 void UCProcess::load(uint16 classid, uint16 offset, uint32 this_ptr,
 					 int thissize, const uint8 *args, int argsize) {
 	if (_usecode->get_class_size(classid) == 0)
-		perr << "Class is empty..." << Std::endl;
+		warning("Class is empty.");
 
 	_classId = 0xFFFF;
 	_ip = 0xFFFF;

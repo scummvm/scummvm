@@ -397,12 +397,12 @@ void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
 		costHeuristic(newnode);
 
 #if 0
-	perr << "trying dir " << state._direction;
+	pout << "trying dir " << state._direction;
 
 	if (steps > 0) {
-		perr << ", " << steps << " steps";
+		pout << ", " << steps << " steps";
 	}
-	perr << " from ("
+	pout << " from ("
 	     << oldnode->state._x << "," << oldnode->state._y << ") to ("
 	     << newnode->state._x << "," << newnode->state._y
 	     << "), cost = " << newnode->cost << ", heurtotcost = "

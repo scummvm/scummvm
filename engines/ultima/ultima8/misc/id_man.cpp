@@ -102,7 +102,7 @@ void idMan::expand() {
 	_ids.resize(_end + 1);
 
 #if 0
-	perr << "Expanding idMan from (" << _begin << "-" << old_end << ") to ("
+	pout << "Expanding idMan from (" << _begin << "-" << old_end << ") to ("
 	     << _begin << "-" << _end << ")" << Std::endl;
 #endif
 

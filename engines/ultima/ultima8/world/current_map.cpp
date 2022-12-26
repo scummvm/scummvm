@@ -234,8 +234,7 @@ void CurrentMap::addItem(Item *item) {
 
 	if (ix < 0 || ix >= _mapChunkSize * MAP_NUM_CHUNKS ||
 	        iy < 0 || iy >= _mapChunkSize * MAP_NUM_CHUNKS) {
-		/*perr << "Skipping item " << item->getObjId() << ": out of range ("
-		     << ix << "," << iy << ")" << Std::endl;*/
+		//warning("Skipping item %u: out of range (%d, %d)", item->getObjId(), ix, iy);
 		return;
 	}
 
@@ -274,8 +273,7 @@ void CurrentMap::addItemToEnd(Item *item) {
 
 	if (ix < 0 || ix >= _mapChunkSize * MAP_NUM_CHUNKS ||
 	        iy < 0 || iy >= _mapChunkSize * MAP_NUM_CHUNKS) {
-		/*perr << "Skipping item " << item->getObjId() << ": out of range ("
-		     << ix << "," << iy << ")" << Std::endl;*/
+		//warning("Skipping item %u: out of range (%d, %d)", item->getObjId(), ix, iy);
 		return;
 	}
 
@@ -403,8 +401,7 @@ void CurrentMap::removeItemFromList(Item *item, int32 oldx, int32 oldy) {
 
 	if (oldx < 0 || oldx >= _mapChunkSize * MAP_NUM_CHUNKS ||
 	        oldy < 0 || oldy >= _mapChunkSize * MAP_NUM_CHUNKS) {
-		/*perr << "Skipping item " << item->getObjId() << ": out of range ("
-		     << oldx << "," << oldy << ")" << Std::endl;*/
+		//warning("Skipping item %u: out of range (%d, %d)", item->getObjId(), oldx, oldy);
 		return;
 	}
 
@@ -801,10 +798,10 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 
 #if 0
 				if (item->getShape() == 145) {
-					perr << "Shape 145: (" << ix - ixd << "," << iy - iyd << ","
+					pout << "Shape 145: (" << ix - ixd << "," << iy - iyd << ","
 					     << iz << ")-(" << ix << "," << iy << "," << iz + izd
 					     << ")" << Std::endl;
-					if (!si->is_solid()) perr << "not solid" << Std::endl;
+					if (!si->is_solid()) pout << "not solid" << Std::endl;
 				}
 #endif
 

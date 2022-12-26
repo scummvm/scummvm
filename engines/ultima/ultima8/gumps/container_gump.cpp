@@ -457,9 +457,8 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 			                  item->getFlags() & (Item::FLG_DISPOSABLE | Item::FLG_OWNED | Item::FLG_INVISIBLE | Item::FLG_FLIPPED | Item::FLG_FAST_ONLY | Item::FLG_LOW_FRICTION), item->getNpcNum(), item->getMapNum(),
 			                  item->getExtFlags() & (Item::EXT_SPRITE | Item::EXT_HIGHLIGHT | Item::EXT_TRANSPARENT), true);
 			if (!splittarget) {
-				perr << "ContainerGump failed to create item ("
-				     << item->getShape() << "," << item->getFrame()
-				     << ") while splitting" << Std::endl;
+				warning("ContainerGump failed to create item (%u,%u) while splitting",
+					item->getShape(), item->getFrame());
 				return;
 			}
 

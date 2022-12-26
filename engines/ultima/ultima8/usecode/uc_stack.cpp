@@ -39,7 +39,7 @@ bool UCStack::load(Common::ReadStream *rs, uint32 version) {
 	_buf = new uint8[_size];
 #else
 	if (_size > sizeof(_bufArray)) {
-		perr << "Error: UCStack _size mismatch (buf_array too small)" << Std::endl;
+		warning("UCStack _size mismatch (buf_array too small)");
 		return false;
 	}
 	_buf = _bufArray;

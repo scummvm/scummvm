@@ -131,8 +131,7 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 		gump = GetRootGump()->FindGump<GameMapGump>();
 
 		if (!gump) {
-			perr << "ItemRelativeGump::GetItemLocation(): "
-			     << "Unable to find GameMapGump!?!?" << Std::endl;
+			warning("ItemRelativeGump::GetItemLocation(): Unable to find GameMapGump!");
 			return;
 		}
 

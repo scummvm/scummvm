@@ -108,9 +108,8 @@ bool ActorAnimProcess::init() {
 		//! don't do this animation or kill the previous one?
 		//! Or maybe wait until the previous one finishes?
 
-		perr << "ActorAnimProcess [" << getPid() << "]: ANIMLOCK set on actor "
-		     << _itemNum << ", skipping anim (" << _action << "," << _dir << ")"
-			 << Std::endl;
+		warning("ActorAnimProcess [%u]: ANIMLOCK set on actor %u, skipping anim (%d, %d)",
+			getPid(), _itemNum, _action, _dir);
 
 		// for now, just don't play this one.
 		return false;

@@ -157,13 +157,13 @@ bool World::switchMap(uint32 newmap) {
 
 	uint32 oldmap = _currentMap->getNum();
 	if (oldmap != 0) {
-		perr << "Unloading map " << oldmap << Std::endl;
+		pout << "Unloading map " << oldmap << Std::endl;
 
 		assert(oldmap < _maps.size() && _maps[oldmap] != nullptr);
 
 		_currentMap->writeback();
 
-		perr << "Unloading Fixed items from map " << oldmap << Std::endl;
+		pout << "Unloading Fixed items from map " << oldmap << Std::endl;
 
 		_maps[oldmap]->unloadFixed();
 	}

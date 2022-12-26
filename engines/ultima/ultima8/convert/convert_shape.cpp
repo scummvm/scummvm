@@ -64,7 +64,7 @@ void ConvertShape::Read(Common::SeekableReadStream &source, const ConvertShapeFo
 		source.read(ident, csf->_bytes_ident);
 
 		if (memcmp(ident, csf->_ident, csf->_bytes_ident)) {
-			perr << "Warning: Corrupt shape!" << Std::endl;
+			warning("Corrupt shape!");
 			return;
 		}
 	}
@@ -94,7 +94,7 @@ void ConvertShape::Read(Common::SeekableReadStream &source, const ConvertShapeFo
 
 //	if (_num_frames == 0xFFFF || _num_frames == 0xFFFFFF || _num_frames == -1)
 //	{
-//		perr << "Corrupt shape? " << Std::endl;
+//		warning("Corrupt shape?);
 //		_num_frames = 0;
 //		_frames = 0;
 //		return;
@@ -180,8 +180,7 @@ void ConvertShapeFrame::Read(Common::SeekableReadStream &source, const ConvertSh
 		_height = 0;
 		_xoff = 0;
 		_yoff = 0;
-		//perr << "Corrupt frame? (frame " << f << ")" << Std::endl;
-		perr << "Corrupt frame?" << Std::endl;
+		warning("Corrupt frame?");
 	}
 
 	if (_height) {
@@ -203,7 +202,7 @@ void ConvertShapeFrame::Read(Common::SeekableReadStream &source, const ConvertSh
 #ifdef COMP_SHAPENUM
 		if (_bytes_rle < 0) {
 			_bytes_rle = 0;
-			perr << "Corrupt frame?" << Std::endl;
+			warning("Corrupt frame?");
 		}
 
 #endif
@@ -298,7 +297,7 @@ void ConvertShapeFrame::ReadCmpFrame(Common::SeekableReadStream &source, const C
 				}
 
 				if (((dlen+extra) << _compression) > 255) {
-					perr << "Error! Corrupt Frame. RLE dlen too large" << Std::endl;
+					warning("Corrupt Frame. RLE dlen too large");
 				}
 
 				rlebuf.writeByte((dlen+extra) << _compression);
@@ -707,7 +706,7 @@ void ConvertShape::Write(Common::SeekableWriteStream &dest, const ConvertShapeFo
 	// Now write _num_frames
 	if (csf->_bytes_num_frames) writeX(dest, _num_frames, csf->_bytes_num_frames);
 	else if (!csf->_bytes_num_frames && _num_frames > 1) {
-		perr << "Error: Unable to convert multiple frame shapes to " << csf->_name << Std::endl;
+		warning("Error: Unable to convert multiple frame shapes to %s", csf->_name);
 		return;
 	}
 

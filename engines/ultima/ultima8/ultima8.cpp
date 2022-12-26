@@ -552,9 +552,9 @@ Common::Error Ultima8Engine::runGame() {
 					_desktopGump->run();
 				}
 #if 0
-				perr << "--------------------------------------" << Std::endl;
-				perr << "NEW FRAME" << Std::endl;
-				perr << "--------------------------------------" << Std::endl;
+				pout << "--------------------------------------" << Std::endl;
+				pout << "NEW FRAME" << Std::endl;
+				pout << "--------------------------------------" << Std::endl;
 #endif
 				_inBetweenFrame = false;
 
@@ -680,7 +680,7 @@ void Ultima8Engine::GraphicSysInit() {
 	RenderSurface *new_screen = RenderSurface::SetVideoMode(width, height, bpp);
 
 	if (!new_screen) {
-		perr << Common::String::format("Unable to set new video mode. Trying %dx%dx32", U8_DEFAULT_SCREEN_WIDTH, U8_DEFAULT_SCREEN_HEIGHT) << Std::endl;
+		warning("Unable to set new video mode. Trying %dx%dx32", U8_DEFAULT_SCREEN_WIDTH, U8_DEFAULT_SCREEN_HEIGHT);
 		new_screen = RenderSurface::SetVideoMode(U8_DEFAULT_SCREEN_WIDTH, U8_DEFAULT_SCREEN_HEIGHT, 32);
 	}
 
@@ -1269,7 +1269,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 		if (!ignore) {
 			error("%s", message.c_str());
 		}
-		perr << message << Std::endl;
+		pout << message << Std::endl;
 #else
 		delete sg;
 		return Common::Error(Common::kReadingFailed, message);

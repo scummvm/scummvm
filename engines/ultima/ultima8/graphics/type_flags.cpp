@@ -431,8 +431,7 @@ void TypeFlags::loadMonsterInfo() {
 		if (config->get(category, section, "treasure", treasure)) {
 			bool ok = treasureLoader.parse(treasure, mi->_treasure);
 			if (!ok) {
-				perr << "failed to parse treasure info for monster '" << section
-				     << "'"  << Std::endl;
+				warning("failed to parse treasure info for monster '%s;", section.c_str());
 				mi->_treasure.clear();
 			}
 		} else {

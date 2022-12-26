@@ -126,7 +126,7 @@ Container *Item::getParentAsContainer() const {
 	Container *p = getContainer(_parent);
 
 	if (!p) {
-		perr << "Item " << getObjId() << " _parent (" << _parent << ") is an invalid Container ObjID" << Std::endl;
+		warning("Item %u _parent (%u) is an invalid Container ObjID", getObjId(), _parent);
 		CANT_HAPPEN();
 	}
 
@@ -161,7 +161,7 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 	int mapChunkSize = map->getChunkSize();
 
 	if (getObjId() == 1 && Z < 0) {
-		perr.Print("Warning: moving avatar below Z=0. (%d,%d,%d)\n", X, Y, Z);
+		warning("Warning: moving avatar below Z=0. (%d,%d,%d)\n", X, Y, Z);
 	}
 
 	// TODO: In Crusader, if we are moving the avatar the game also checks whether
@@ -183,7 +183,7 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 				if (p) p->removeItem(this);
 			}
 		} else
-			perr << "Item " << getObjId() << " FLG_CONTAINED or FLG_EQUIPPED set but item has no _parent" << Std::endl;
+			warning("Item %u FLG_CONTAINED or FLG_EQUIPPED set but item has no _parent", getObjId());
 
 		// Clear our owner.
 		_parent = 0;
@@ -258,7 +258,7 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 bool Item::moveToContainer(Container *container, bool checkwghtvol) {
 	// Null container, report an error message
 	if (!container) {
-		perr << "NULL container passed to Item::moveToContainer" << Std::endl;
+		warning("NULL container passed to Item::moveToContainer");
 		return false;
 	}
 
@@ -289,7 +289,7 @@ bool Item::moveToContainer(Container *container, bool checkwghtvol) {
 				if (p) p->removeItem(this);
 			}
 		} else
-			perr << "Item " << getObjId() << " FLG_CONTAINED or FLG_EQUIPPED set but item has no _parent" << Std::endl;
+			warning("Item %u FLG_CONTAINED or FLG_EQUIPPED set but item has no _parent", getObjId());
 
 		// Clear our owner.
 		_parent = 0;
@@ -361,7 +361,7 @@ void Item::moveToEtherealVoid() {
 			Container *p = getParentAsContainer();
 			if (p) p->removeItem(this);
 		} else
-			perr << "Item " << getObjId() << " FLG_CONTAINED or FLG_EQUIPPED set but item has no _parent" << Std::endl;
+			warning("Item %u FLG_CONTAINED or FLG_EQUIPPED set but item has no _parent", getObjId());
 	} else if (_extendedFlags & EXT_INCURMAP) {
 		World::get_instance()->getCurrentMap()->removeItem(this);
 	}
@@ -379,7 +379,7 @@ void Item::returnFromEtherealVoid() {
 	if (_flags & (FLG_CONTAINED | FLG_EQUIPPED)) {
 		Container *p = getParentAsContainer();
 		if (!p) {
-			perr << "Item " << getObjId() << " FLG_CONTAINED or FLG_EQUIPPED set but item has no valid _parent" << Std::endl;
+			warning("Item %u FLG_CONTAINED or FLG_EQUIPPED set but item has no _parent", getObjId());
 			CANT_HAPPEN();
 		}
 		moveToContainer(p);
@@ -1016,12 +1016,12 @@ bool Item::checkLoopScript(const uint8 *script, uint32 scriptsize) const {
 		break;
 
 		default:
-			perr.Print("Unknown loopscript opcode %02X\n", script[i]);
+			warning("Unknown loopscript opcode %02X", script[i]);
 		}
 
 		i++;
 	}
-	perr.Print("Didn't encounter $ in loopscript\n");
+	warning("Didn't encounter $ in loopscript");
 	return false;
 }
 
@@ -2953,9 +2953,9 @@ uint32 Item::I_getTypeFlag(const uint8 *args, unsigned int /*argsize*/) {
 	const ShapeInfo *info = item->getShapeInfo();
 
 	if (GAME_IS_U8 && typeflag >= 64)
-		perr << "Invalid TypeFlag greater than 63 requested (" << typeflag << ") by Usecode" << Std::endl;
+		warning("Invalid TypeFlag greater than 63 requested (%u) by Usecode", typeflag);
 	if (GAME_IS_CRUSADER && typeflag >= 72)
-		perr << "Invalid TypeFlag greater than 72 requested (" << typeflag << ") by Usecode" << Std::endl;
+		warning("Invalid TypeFlag greater than 72 requested (%u) by Usecode", typeflag);
 
 	if (info->getTypeFlag(typeflag))
 		return 1;
@@ -3151,8 +3151,7 @@ uint32 Item::I_legalCreateAtPoint(const uint8 *args, unsigned int /*argsize*/) {
 
 	Item *newitem = ItemFactory::createItem(shape, frame, 0, 0, 0, 0, 0, true);
 	if (!newitem) {
-		perr << "I_legalCreateAtPoint failed to create item (" << shape
-		     << "," << frame << ")." << Std::endl;
+		warning("I_legalCreateAtPoint failed to create item (%u, %u).", shape, frame);
 		return 0;
 	}
 	uint16 objID = newitem->getObjId();
@@ -3185,8 +3184,7 @@ uint32 Item::I_legalCreateAtCoords(const uint8 *args, unsigned int /*argsize*/) 
 	// if yes, create it
 	Item *newitem = ItemFactory::createItem(shape, frame, 0, 0, 0, 0, 0, true);
 	if (!newitem) {
-		perr << "I_legalCreateAtCoords failed to create item (" << shape
-		     << "," << frame << ")." << Std::endl;
+		warning("I_legalCreateAtCoords failed to create item (%u, %u).", shape, frame);
 		return 0;
 	}
 	uint16 objID = newitem->getObjId();
@@ -3217,8 +3215,7 @@ uint32 Item::I_legalCreateInCont(const uint8 *args, unsigned int /*argsize*/) {
 
 	Item *newitem = ItemFactory::createItem(shape, frame, 0, 0, 0, 0, 0, true);
 	if (!newitem) {
-		perr << "I_legalCreateInCont failed to create item (" << shape
-		     << "," << frame << ")." << Std::endl;
+		warning("I_legalCreateInCont failed to create item (%u, %u).", shape, frame);
 		return 0;
 	}
 
@@ -3232,8 +3229,7 @@ uint32 Item::I_legalCreateInCont(const uint8 *args, unsigned int /*argsize*/) {
 
 		return 1;
 	} else {
-		perr << "I_legalCreateInCont failed to add item to container ("
-		     << container->getObjId() << ")" << Std::endl;
+		warning("I_legalCreateInCont failed to add item to container (%u)", container->getObjId());
 		// failed to add; clean up
 		newitem->destroy();
 
@@ -3366,7 +3362,7 @@ uint32 Item::I_push(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 
 	#if 0
-		perr << "Pushing item to ethereal void: id: " << item->getObjId() << " shp: " << item->getShape() << "," << item->getFrame() << Std::endl;
+		pout << "Pushing item to ethereal void: id: " << item->getObjId() << " shp: " << item->getShape() << "," << item->getFrame() << Std::endl;
 	#endif
 
 	item->moveToEtherealVoid();
@@ -3381,8 +3377,7 @@ uint32 Item::I_create(const uint8 *args, unsigned int /*argsize*/) {
 
 	Item *newitem = ItemFactory::createItem(shape, frame, 0, 0, 0, 0, 0, true);
 	if (!newitem) {
-		perr << "I_create failed to create item (" << shape
-		     << "," << frame << ")." << Std::endl;
+		warning("I_create failed to create item (%u, %u).", shape, frame);
 		return 0;
 	}
 	uint16 objID = newitem->getObjId();
@@ -3420,7 +3415,7 @@ uint32 Item::I_pop(const uint8 */*args*/, unsigned int /*argsize*/) {
 	item->returnFromEtherealVoid();
 
 #if 0
-	perr << "Popping item to original location: " << item->getShape() << "," << item->getFrame() << Std::endl;
+	pout << "Popping item to original location: " << item->getShape() << "," << item->getFrame() << Std::endl;
 #endif
 
 	//! Anything else?
@@ -3458,7 +3453,7 @@ uint32 Item::I_popToCoords(const uint8 *args, unsigned int /*argsize*/) {
 	item->move(x, y, z);
 
 #if 0
-	perr << "Popping item into map: " << item->getShape() << "," << item->getFrame() << " at (" << x << "," << y << "," << z << ")" << Std::endl;
+	pout << "Popping item into map: " << item->getShape() << "," << item->getFrame() << " at (" << x << "," << y << "," << z << ")" << Std::endl;
 #endif
 
 	//! Anything else?
@@ -3490,15 +3485,15 @@ uint32 Item::I_popToContainer(const uint8 *args, unsigned int /*argsize*/) {
 		citem->getLocation(pt);
 		item->move(pt);
 	} else {
-		perr << "Trying to popToContainer to invalid container (" << id_citem << ")" << Std::endl;
+		warning("Trying to popToContainer to invalid container (%u)", id_citem);
 		item->dumpInfo();
 		// This object now has no home, destroy it - unless it doesn't think it's
 		// ethereal, in that case it is somehow there by mistake?
 		if (item->getFlags() & FLG_ETHEREAL) {
-			perr << "Destroying orphaned ethereal object (" << objId << ")" << Std::endl;
+			warning("Destroying orphaned ethereal object (%u)", objId);
 			item->destroy();
 		} else {
-			perr << "Leaving orphaned ethereal object (" << objId << ")" << Std::endl;
+			warning("Leaving orphaned ethereal object (%u)", objId);
 			w->etherealRemove(objId);
 		}
 	}
@@ -3533,15 +3528,15 @@ uint32 Item::I_popToEnd(const uint8 *args, unsigned int /*argsize*/) {
 		citem->getLocation(pt);
 		item->move(pt);
 	} else {
-		perr << "Trying to popToEnd to invalid container (" << id_citem << ")" << Std::endl;
+		warning("Trying to popToEnd to invalid container (%u)", id_citem);
 		item->dumpInfo();
 		// This object now has no home, destroy it - unless it doesn't think it's
 		// ethereal, in that case it is somehow there by mistake?
 		if (item->getFlags() & FLG_ETHEREAL) {
-			perr << "Destroying orphaned ethereal object (" << objId << ")" << Std::endl;
+			warning("Destroying orphaned ethereal object (%u)", objId);
 			item->destroy();
 		} else {
-			perr << "Leaving orphaned ethereal object (" << objId << ")" << Std::endl;
+			warning("Leaving orphaned ethereal object (%u)", objId);
 			w->etherealRemove(objId);
 		}
 	}
@@ -3566,7 +3561,7 @@ uint32 Item::I_move(const uint8 *args, unsigned int /*argsize*/) {
 	World_FromUsecodeXY(x, y);
 
 	#if 0
-		perr << "Moving item: " << item->getShape() << "," << item->getFrame() << " to (" << x << "," << y << "," << z << ")" << Std::endl;
+		pout << "Moving item: " << item->getShape() << "," << item->getFrame() << " to (" << x << "," << y << "," << z << ")" << Std::endl;
 	#endif
 
 	item->move(x, y, z);

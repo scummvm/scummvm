@@ -70,7 +70,7 @@ SKFPlayer::SKFPlayer(Common::SeekableReadStream *rs, int width, int height, bool
 	_skf = new RawArchive(rs);
 	Common::ReadStream *eventlist = _skf->get_datasource(0);
 	if (!eventlist) {
-		perr << "No eventlist found in SKF" << Std::endl;
+		warning("No eventlist found in SKF");
 		return;
 	}
 

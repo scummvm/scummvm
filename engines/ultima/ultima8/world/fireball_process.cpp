@@ -177,11 +177,11 @@ uint32 FireballProcess::I_TonysBalls(const uint8 *args,
 	Item *ball = ItemFactory::createItem(260, 4, 0, Item::FLG_FAST_ONLY,
 	                                     0, 0, 0, true);
 	if (!ball) {
-		perr << "I_TonysBalls failed to create item (260, 4)." << Std::endl;
+		warning("I_TonysBalls failed to create item (260, 4).");
 		return 0;
 	}
 	if (!ball->canExistAt(x, y, z)) {
-		perr << "I_TonysBalls: failed to create fireball." << Std::endl;
+		warning("I_TonysBalls: failed to create fireball.");
 		ball->destroy();
 		return 0;
 	}

@@ -261,8 +261,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			ui16b = p->_stack.access2(p->_bp + si8a);
 			UCList *l = getList(ui16b);
 			if (!l) {
-				perr << "assign element to an invalid list (" << ui16b << ")"
-				     << Std::endl;
+				warning("assign element to an invalid list (%u)", ui16b);
 				error = true;
 				break;
 			}
@@ -270,8 +269,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				// what special behaviour do we need here?
 				// probably just that the overwritten element has to be freed?
 				if (ui32a != 2) {
-					perr << "Unhandled operand " << ui32a << " to pop slist"
-					     << Std::endl;
+					warning("Unhandled operand %u to pop slist", ui32a);
 					error = true; // um?
 				}
 				l->assign(ui16a, p->_stack.access());
@@ -329,8 +327,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("push string\t\"%s\"\n", str));
 			ui16b = cs->readByte();
 			if (ui16b != 0) {
-				perr << "Zero terminator missing in push string"
-				     << Std::endl;
+				warning("Zero terminator missing in push string");
 				error = true;
 			}
 			p->_stack.push2(assignString(str));
@@ -383,15 +380,16 @@ void UCMachine::execProcess(UCProcess *p) {
 					testItem = getItem(testItemId);
 					delete [] argmem;
 				}
-				perr << "Unhandled intrinsic << " << func << " \'" << _convUse->intrinsics()[func] << "\'? (";
+
+				Common::String info;
 				if (testItem) {
-					perr << "item " << testItem->getObjId();
+					info = Common::String::format("item %u", testItem->getObjId());
 					if (arg_bytes > 4)
-						perr << " + " << arg_bytes - 4 << " bytes";
+						info += Common::String::format(" + %u bytes", arg_bytes - 4);
 				} else {
-					perr << arg_bytes << " bytes";
+					info = Common::String::format("%u bytes", arg_bytes);
 				}
-				perr << ") called" << Std::endl;
+				warning("Unhandled intrinsic %u \'%s\'? (%s) called", func, _convUse->intrinsics()[func], info.c_str());
 				if (testItem) {
 					testItem->dumpInfo();
 				}
@@ -399,7 +397,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				//!! hackish
 				if (_intrinsics[func] == UCMachine::I_dummyProcess ||
 				        _intrinsics[func] == UCMachine::I_true) {
-//						perr << "Unhandled intrinsic \'" << _convUse->_intrinsics()[func] << "\' (" << ConsoleStream::hex << func << ConsoleStream::dec << ") called" << Std::endl;
+					warning("Unhandled intrinsic %u \'%s\'? called", func, _convUse->intrinsics()[func]);
 				}
 				uint8 *argbuf = new uint8[arg_bytes];
 				p->_stack.pop(argbuf, arg_bytes);
@@ -494,7 +492,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			ui16a = p->_stack.pop2();
 			ui16b = p->_stack.pop2();
 			if (ui16b == 0) {
-				perr << "Trying to append to string 0." << Std::endl;
+				warning("Trying to append to string 0.");
 				error = true;
 				break;
 			}
@@ -515,9 +513,8 @@ void UCMachine::execProcess(UCProcess *p) {
 
 			if (listB && listA) {
 				if (listA->getElementSize() != listB->getElementSize()) {
-					perr << "Trying to append lists with different element "
-					     << "sizes (" << listB->getElementSize() << " != "
-					     << listA->getElementSize() << ")" << Std::endl;
+					warning("Trying to append lists with different element sizes (%u != %u)",
+						listB->getElementSize(), listA->getElementSize());
 					error = true;
 				} else {
 					listB->appendList(*listA);
@@ -549,8 +546,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// add two stringlists, removing duplicates
 			ui32a = cs->readByte();
 			if (ui32a != 2) {
-				perr << "Unhandled operand " << ui32a << " to union slist"
-				     << Std::endl;
+				warning("Unhandled operand %u to union slist", ui32a);
 				error = true;
 			}
 			ui16a = p->_stack.pop2();
@@ -558,7 +554,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			UCList *srclist = getList(ui16a);
 			UCList *dstlist = getList(ui16b);
 			if (!srclist || !dstlist) {
-				perr << "Invalid list param to union slist" << Std::endl;
+				warning("Invalid list param to union slist");
 				error = true;
 			} else {
 				dstlist->unionStringList(*srclist);
@@ -578,7 +574,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			UCList *srclist = getList(ui16a);
 			UCList *dstlist = getList(ui16b);
 			if (!srclist || !dstlist) {
-				perr << "Invalid list param to subtract slist" << Std::endl;
+				warning("Invalid list param to subtract slist");
 				error = true;
 			} else {
 				dstlist->subtractStringList(*srclist);
@@ -599,7 +595,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			UCList *srclist = getList(ui16a);
 			UCList *dstlist = getList(ui16b);
 			if (!srclist || !dstlist) {
-				perr << "Invalid list param to remove from slist" << Std::endl;
+				warning("Invalid list param to remove from slist");
 				error = true;
 			} else {
 				dstlist->subtractList(*srclist);
@@ -653,7 +649,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			if (si16a != 0) {
 				p->_stack.push2(static_cast<uint16>(si16b / si16a));
 			} else {
-				perr.Print("0x20 division by zero.\n");
+				warning("0x20 division by zero.");
 				p->_stack.push2(0);
 			}
 			LOGPF(("div\n"));
@@ -667,7 +663,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			if (si32a != 0) {
 				p->_stack.push4(static_cast<uint32>(si32b / si32a));
 			} else {
-				perr.Print("0x21 division by zero.\n");
+				warning("0x21 division by zero.");
 				p->_stack.push4(0);
 			}
 			LOGPF(("div\n"));
@@ -682,7 +678,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			if (si16a != 0) {
 				p->_stack.push2(static_cast<uint16>(si16b % si16a));
 			} else {
-				perr.Print("0x22 division by zero.\n");
+				warning("0x22 division by zero.");
 				p->_stack.push2(0);
 			}
 			LOGPF(("mod\n"));
@@ -696,7 +692,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			if (si32a != 0) {
 				p->_stack.push4(static_cast<uint32>(si32b % si32a));
 			} else {
-				perr.Print("0x23 division by zero.\n");
+				warning("0x23 division by zero.");
 				p->_stack.push4(0);
 			}
 			LOGPF(("mod long\n"));
@@ -961,12 +957,11 @@ void UCMachine::execProcess(UCProcess *p) {
 			ui16b = p->_stack.pop2();
 			UCList *l = getList(ui16b);
 			if (!l) {
-				perr << "Invalid list id " << ui16b << Std::endl;
+				warning("Invalid list id %u", ui16b);
 				error = true;
 			} else if (ui32a) { // stringlist
 				if (ui16a != 2) {
-					perr << "Unhandled operand " << ui16a << " to in slist"
-					     << Std::endl;
+					warning("Unhandled operand %u to in slist", ui16a);
 					error = true;
 				}
 				if (l->stringInList(p->_stack.pop2()))
@@ -1093,7 +1088,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			} else {
 				// trying to push non-existent list. Error or not?
 				// Not: for example, function 01E3::0080, offset 0112
-				// perr << "Pushing non-existent list" << Std::endl;
+				// warning("Pushing non-existent list");
 				// error = true;
 			}
 			uint16 newlistid = assignList(l);
@@ -1115,7 +1110,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			} else {
 				// trying to push non-existent list. Error or not?
 				// (Devon's talk code seems to use it; so no error for now)
-				// perr << "Pushing non-existent slist" << Std::endl;
+				// warning("Pushing non-existent slist");
 				// error = true;
 			}
 			p->_stack.push2(assignList(l));
@@ -1138,8 +1133,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			ui16b = p->_stack.pop2(); // list
 			UCList *l = getList(ui16b);
 			if (!l) {
-//				perr << "push element from invalid list (" << ui16b << ")"
-//					 << Std::endl;
+//				warning("push element from invalid list (%u)", ui16b);
 				// This is necessary for closing the backpack to work
 				p->_stack.push0(ui32a);
 //				error = true;
@@ -1242,8 +1236,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			_globals->setEntries(ui16a, ui16b, ui32a);
 
 			if ((GAME_IS_U8 && (ui32a & ~(((1 << ui16b) - 1)))) || (GAME_IS_CRUSADER && (ui16b > 2))) {
-				perr << "Warning: value popped into a flag it doesn't fit in (" << ConsoleStream::hex
-					 << ui16a << " " << ui16b << " " << ui32a << ")" << Std::endl;
+				warning("Value popped into a flag it doesn't fit in (%04X %04X %04X)", ui16a, ui16b, ui32a);
 			}
 
 			// paranoid :-)
@@ -1351,15 +1344,13 @@ void UCMachine::execProcess(UCProcess *p) {
 				// until we hit a suspend or return.
 				go_until_cede = true;
 			} else {
-				perr << "Non-existent process PID (";
 				if (!proc && !proc2) {
-					perr << ui16a << "," << ui16b;
+					warning("Non-existent process PID (%u, %u) in implies.", ui16a, ui16b);
 				} else if (!proc) {
-					perr << ui16b;
+					warning("Non-existent process PID (%u) in implies.", ui16b);
 				} else {
-					perr << ui16a;
+					warning("Non-existent process PID (%u) in implies.", ui16a);
 				}
-				perr << ") in implies." << Std::endl;
 				// This condition triggers in 057C:1090 when talking
 				// to a child (class 02C4), directly after the conversation
 				// Specifically, it occurs because there is no
@@ -1635,8 +1626,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				UCList *l = new UCList(2);
 				const UCList *srclist = getList(ui16a);
 				if (!srclist) {
-					perr << "Warning: invalid src list passed to slist copy"
-						 << Std::endl;
+					warning("Invalid src list passed to slist copy");
 					ui16b = 0;
 					delete l;
 					break;
@@ -1648,8 +1638,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			case 3: { // list
 				const UCList *l = getList(ui16a);
 				if (!l) {
-					perr << "Warning: invalid src list passed to list copy"
-						 << Std::endl;
+					warning("Invalid src list passed to list copy");
 					ui16b = 0;
 					break;
 				}
@@ -1661,8 +1650,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			break;
 			default:
 				ui16b = 0;
-				perr << "Error: invalid param _pid change type (" << ui8a
-				     << ")" << Std::endl;
+				warning("Error: invalid param _pid change type (%u)", ui8a);
 				error = true;
 			}
 			p->_stack.assign2(p->_bp + si8a, ui16b); // assign new index
@@ -1729,7 +1717,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			//    loopscript of 0x20 bytes)
 
 			if (scriptsize > 0x20) {
-				perr << "Loopscript too long" << Std::endl;
+				warning("Loopscript too long");
 				error = true;
 				break;
 			}
@@ -1764,8 +1752,7 @@ void UCMachine::execProcess(UCProcess *p) {
 					                                   range, recurse, ix, iy);
 				} else {
 					// return error or return empty list?
-					perr << "Warning: invalid item " << ui16a << " passed to area search"
-					     << Std::endl;
+					warning("Invalid item %u passed to area search", ui16a);
 				}
 				break;
 			}
@@ -1782,8 +1769,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				Container *container = getContainer(ui16b);
 
 				if (ui16a != 0xFFFF) {
-					perr << "Warning: non-FFFF value passed to "
-					     << "container search" << Std::endl;
+					warning("non-FFFF value passed to container search");
 				}
 
 				if (container) {
@@ -1791,8 +1777,7 @@ void UCMachine::execProcess(UCProcess *p) {
 					                           scriptsize, recurse);
 				} else {
 					// return error or return empty list?
-					perr << "Warning: invalid container "<< ui16b << " passed to "
-					     << "container search" << Std::endl;
+					warning("Invalid container %u passed to container search", ui16b);
 				}
 				break;
 			}
@@ -1810,13 +1795,12 @@ void UCMachine::execProcess(UCProcess *p) {
 					                                      above, below);
 				} else {
 					// return error or return empty list?
-					perr << "Warning: invalid item passed to surface search"
-					     << Std::endl;
+					warning("Warning: invalid item passed to surface search");
 				}
 				break;
 			}
 			default:
-				perr << "Unhandled search type " << searchtype << Std::endl;
+				warning("Unhandled search type %u", searchtype);
 				error = true;
 				delete[] script;
 				script = nullptr;
@@ -1853,7 +1837,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			si16a = static_cast<int16>(p->_stack.access2(sp + 4));
 
 			if (!itemlist) {
-				perr << "Invalid item list in loopnext!" << Std::endl;
+				warning("Invalid item list in loopnext!");
 				error = true;
 				break;
 			}
@@ -2013,14 +1997,14 @@ void UCMachine::execProcess(UCProcess *p) {
 			// end of function
 			// shouldn't happen
 			LOGPF(("end\n"));
-			perr.Print("end of function opcode %02X reached!\n", opcode);
+			warning("end of function opcode %02X reached!", opcode);
 			error = true;
 			break;
 
 		// 0x7B REGRESS (Unused)
 
 		default:
-			perr.Print("unhandled opcode %02X\n", opcode);
+			warning("unhandled opcode %02X", opcode);
 
 		} // switch(opcode)
 
@@ -2036,8 +2020,8 @@ void UCMachine::execProcess(UCProcess *p) {
 	delete cs;
 
 	if (error) {
-		perr.Print("Process %d caused an error at %04X:%04X (item %d). Killing process.\n",
-		            p->_pid, p->_classId, p->_ip, p->_itemNum);
+		warning("Process %d caused an error at %04X:%04X (item %d). Killing process.",
+			p->_pid, p->_classId, p->_ip, p->_itemNum);
 		p->terminateDeferred();
 	}
 }
@@ -2180,8 +2164,7 @@ bool UCMachine::assignPointer(uint32 ptr, const uint8 *data, uint32 size) {
 		// reference to the stack of _pid 'segment'
 		if (!proc) {
 			// segfault :-)
-			perr << "Trying to access stack of non-existent "
-			     << "process (pid: " << segment << ")" << Std::endl;
+			warning("Trying to access stack of non-existent process (pid: %u)", segment);
 			return false;
 		} else {
 			proc->_stack.assign(offset, data, size);
@@ -2199,8 +2182,7 @@ bool UCMachine::assignPointer(uint32 ptr, const uint8 *data, uint32 size) {
 			CANT_HAPPEN_MSG("Global pointers must be size 1 or 2");
 		}
 	} else {
-		perr << "Trying to access segment " << ConsoleStream::hex
-		     << segment << ConsoleStream::dec << Std::endl;
+		warning("Trying to access segment %04X", segment);
 		return false;
 	}
 
@@ -2227,16 +2209,14 @@ bool UCMachine::dereferencePointer(uint32 ptr, uint8 *data, uint32 size) {
 		// reference to the stack of _pid 'segment'
 		if (!proc) {
 			// segfault :-)
-			perr << "Trying to access stack of non-existent "
-			     << "process (pid: " << segment << ")" << Std::endl;
+			warning("Trying to access stack of non-existent process (pid: %u)", segment);
 			return false;
 		} else {
 			memcpy(data, proc->_stack.access(offset), size);
 		}
 	} else if (segment == SEG_OBJ) {
 		if (size != 2) {
-			perr << "Trying to read other than 2 bytes from objptr"
-			     << Std::endl;
+			warning("Trying to read other than 2 bytes from objptr");
 			return false;
 		} else {
 			// push objref
@@ -2257,8 +2237,7 @@ bool UCMachine::dereferencePointer(uint32 ptr, uint8 *data, uint32 size) {
 			CANT_HAPPEN_MSG("Global pointers must be size 1 or 2");
 		}
 	} else {
-		perr << "Trying to access segment " << ConsoleStream::hex
-		     << segment << ConsoleStream::dec << Std::endl;
+		warning("Trying to access segment %04X", segment);
 		return false;
 	}
 	return true;
@@ -2277,13 +2256,11 @@ uint16 UCMachine::ptrToObject(uint32 ptr) {
 		// reference to the stack of _pid 'segment'
 		if (!proc) {
 			// segfault :-)
-			perr << "Trying to access stack of non-existent "
-			     << "process (pid: " << segment << ")" << Std::endl;
+			warning("Trying to access stack of non-existent process (pid: %u)", segment);
 			return 0;
 		} else if (proc->_stack.getSize() < (uint32)offset + 2) {
-			perr << "Trying to access past end of stack offset " << offset
-			     << " (size: " << proc->_stack.getSize()
-				 << ") process (pid: " << segment << ")" << Std::endl;
+			warning("Trying to access past end of stack offset %u (size: %u) process (pid: %u)",
+				offset, proc->_stack.getSize(), segment);
 			return 0;
 		} else {
 			return proc->_stack.access2(offset);
@@ -2293,8 +2270,7 @@ uint16 UCMachine::ptrToObject(uint32 ptr) {
 	} else if (segment == SEG_GLOBAL) {
 		return get_instance()->_globals->getEntries(offset, 2);
 	} else {
-		perr << "Trying to access segment " << ConsoleStream::hex
-		     << segment << ConsoleStream::dec << Std::endl;
+		warning("Trying to access segment %04X", segment);
 		return 0;
 	}
 }

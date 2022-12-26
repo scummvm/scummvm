@@ -59,7 +59,7 @@ void ShapeArchive::cache(uint32 shapenum) {
 
 	if (!_format) {
 		delete [] data;
-		perr << "Error: Unable to detect shape format for flex." << Std::endl;
+		warning("Unable to detect shape format for flex.");
 		return;
 	}
 

@@ -91,34 +91,10 @@ class console_ostream : public ConsoleStream {
 	}
 };
 
-template<class T>
-class console_err_ostream : public ConsoleStream {
-private:
-	Common::String _line;
-public:
-	uint32 write(const void *dataPtr, uint32 dataSize) override {
-		_line += Common::String((const char *)dataPtr, dataSize);
-
-		size_t lineEnd;
-		while ((lineEnd = _line.find('\n')) != Common::String::npos) {
-			if (lineEnd > 0)
-				warning("%s", Common::String(_line.c_str(), lineEnd).c_str());
-
-			_line = Common::String(_line.c_str() + lineEnd + 1);
-		}
-
-		return dataSize;
-	}
-};
-
 // Standard Output Stream Object
 extern console_ostream<char> *ppout;
-// Error Output Stream Object
-extern console_err_ostream<char> *pperr;
 
 #define pout (*ppout)
-#define perr (*pperr)
-
 
 /**
  * Debugger base class
@@ -127,8 +103,6 @@ class Debugger : public Shared::Debugger {
 private:
 	// Standard Output Stream Object
 	console_ostream<char> _strOut;
-	// Error Output Stream Object
-	console_err_ostream<char> _errOut;
 private:
 	const char *strBool(bool flag) {
 		return flag ? "true" : "false";
