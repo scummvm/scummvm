@@ -51,7 +51,7 @@
 		AD_ENTRY1s("intro.stk", "71e7db034890885ac96dd1be43a21c38", 556834),
 		EN_ANY,
 		kPlatformAmiga,
-		ADGF_NO_FLAGS,
+		ADGF_UNSTABLE,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeAJWorld,
