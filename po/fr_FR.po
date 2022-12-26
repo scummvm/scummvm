@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-12-25 15:26+0000\n"
-"PO-Revision-Date: 2022-12-21 19:29+0000\n"
+"PO-Revision-Date: 2022-12-26 08:28+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -748,12 +748,12 @@ msgstr "Aucun"
 #: gui/launcher.cpp:101
 msgctxt "group"
 msgid "First letter"
-msgstr "Initiale"
+msgstr "Première lettre"
 
 #: gui/launcher.cpp:101
 msgctxt "group"
 msgid "Initial"
-msgstr ""
+msgstr "Initiale"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
@@ -787,13 +787,11 @@ msgstr "Plateforme"
 
 #: gui/launcher.cpp:212
 msgid "Select Group by"
-msgstr "Sélectionner Regrouper par"
+msgstr "Sélectionner Grouper par"
 
 #: gui/launcher.cpp:217 gui/launcher.cpp:799
-#, fuzzy
-#| msgid "Group by:"
 msgid "Group:"
-msgstr "Regrouper par :"
+msgstr "Grouper :"
 
 #: gui/launcher.cpp:219
 msgid "Select a criteria to group the entries"
