@@ -26,6 +26,7 @@
 #include "neverhood/entity.h"
 #include "neverhood/graphics.h"
 #include "neverhood/resource.h"
+#include "neverhood/subtitles.h"
 
 namespace Neverhood {
 
@@ -56,6 +57,7 @@ public:
 	~Sprite() override;
 	void init() {}
 	BaseSurface *getSurface() { return _surface; }
+	virtual BaseSurface *getSubtitleSurface() { return nullptr; }
 	void updateBounds();
 	void setDoDeltaX(int type);
 	void setDoDeltaY(int type);
@@ -149,8 +151,20 @@ public:
 	int16 getFrameIndex(uint32 frameHash) { return _animResource.getFrameIndex(frameHash); }
 	void setNewHashListIndex(int value) { _newStickFrameIndex = value; }
 	void startAnimation(uint32 fileHash, int16 plFirstFrameIndex, int16 plLastFrameIndex);
+	BaseSurface *getSubtitleSurface() override { return &_subtitleSurface; }
 protected:
+	class AnimatedSpriteSubtitles : public BaseSurface {
+	public:
+		void draw() override;
+		AnimatedSpriteSubtitles(NeverhoodEngine *vm, AnimatedSprite *backRef);
+	private:
+		AnimatedSprite *_backref;
+	};
+	
+	static const int kSubtitleWidth = 320;
+	AnimatedSpriteSubtitles _subtitleSurface;
 	typedef void (AnimatedSprite::*AnimationCb)();
+	Common::ScopedPtr<SubtitlePlayer> _subtitles;
 	AnimResource _animResource;
 	uint32 _currAnimFileHash, _newAnimFileHash, _nextAnimFileHash;
 	int16 _currFrameIndex, _lastFrameIndex;
