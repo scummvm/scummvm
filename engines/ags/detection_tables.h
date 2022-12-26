@@ -282,6 +282,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "larrylotter", "Larry Lotter and the Test of Time / Warthogs" },
 	{ "lastdayadolf","The Last Day of Adolf" },
 	{ "lastpirateadventure","The Last Pirate Adventure: Drake's Treasure" },
+	{ "leewardep1","Leeward - Episode 1" },
 	{ "legendofhand", "Legend of Hand" },
 	{ "mage", "Mage's Initiation: Reign of the Elements" },
 	{ "metaldead", "Metal Dead" },
@@ -1285,6 +1286,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "harrys21stbirthday", "Harry's 21st Birthday" },
 	{ "harryshopshock", "Harry and the Locked Crocs Shop Shock" },
 	{ "hauntedcastle", "Haunted Castle" },
+	{ "hauntingsmanor", "Hauntings of Mystery Manor" },
 	{ "haven1", "Haven - Episode 1" },
 	{ "hawkeye", "Hawk Eye Quandaries" },
 	{ "headbangerheaven", "Headbanger's Heaven - A Rock & Roll Adventure" },
@@ -3649,6 +3651,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("larrylotter", "warthogs.exe", "cbe62572ed082a3063a49d594612ac0b", 12397280), // v1.7
 	GAME_ENTRY_STEAM("larrylotter", "larry lotter.ags", "2802b69370de199a1f8d47889a197c14", 47202232),
 	GAME_ENTRY_EN_STEAM("lastdayadolf", "thelastdayofadolf.ags", "6ed2d17ac0fcdb9da877daa89d4c9d30", 24559188),
+	GAME_ENTRY("leewardep1", "LeeWard.exe", "886b68d435856de8fe38b65cabf38273", 1885509300),  // itch.io Eng-Esp
 	GAME_ENTRY_EN_STEAM("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75797285),
 	GAME_ENTRY_EN("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75797155),
 	GAME_ENTRY_EN_GOG("mage", "ac2game.dat", "2e822f554994f36e0c62da2acda874da", 30492258), // Mac
@@ -5344,6 +5347,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("harryshopshock", "Harry and the Locked Crocs Shop Shock.exe", "495d45fb8adfd49690ae3b97921feec6", 13062995),
 	GAME_ENTRY_EN("harryshopshock", "snapattack.ags", "8f45073f4c89b9b9fd8990740bafa03a", 10582339),
 	GAME_ENTRY_EN("hauntedcastle", "haunted.exe", "3c22ec19306691b68c34f6ce98377265", 40287804),
+	GAME_ENTRY_EN("hauntingsmanor", "Hauntings.exe", "0710e2ec71042617f565c01824f0cf3c", 24783520),
 	GAME_ENTRY_EN("haven1", "A small world.exe", "b142b43c146c25443a1d155d441a6a81", 43019171),  // Windows
 	GAME_ENTRY_EN("haven1", "A small world.ags", "c764faa670679c24eb4d51957387f8b4", 40539027),  // Linux
 	GAME_ENTRY_EN("hawkeye", "heq.exe", "2870eb249d21d414ca1de98401190293", 136607518),
