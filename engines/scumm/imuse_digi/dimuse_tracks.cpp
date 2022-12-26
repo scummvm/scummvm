@@ -150,6 +150,23 @@ void IMuseDigital::tracksCallback() {
 		_tracksPauseTimer = 3;
 	}
 
+	// This piece of code is responsible for adaptive buffer overrun correction:
+	// it checks whether a buffer underrun has occurred within our output stream
+	// and then it increments the buffer count.
+	//
+	// This is not part of the original implementation, but it's used to yield
+	// smooth audio hopefully on every device.
+	if (_internalMixer->_stream->endOfData() && _checkForUnderrun) {
+		debug(5, "IMuseDigital::tracksCallback(): WARNING: audio buffer underrun, adapting the buffer queue count...");
+
+		adaptBufferCount();
+
+		// Allow the routine to cooldown: i.e. wait until the engine manages to
+		// refill the stream with the most recent maximum number of queueable buffers.
+		_underrunCooldown = _maxQueuedStreams;
+		_checkForUnderrun = false;
+	}
+
 	// If we leave the number of queued streams unbounded, we fill the queue with streams faster than
 	// we can play them: this leads to a very noticeable audio latency and desync with the graphics.
 	if ((int)_internalMixer->_stream->numQueuedStreams() < _maxQueuedStreams) {
@@ -159,6 +176,15 @@ void IMuseDigital::tracksCallback() {
 		waveOutWrite(&_outputAudioBuffer, _outputFeedSize, _outputSampleRate);
 
 		if (_outputFeedSize != 0) {
+			// Let's see if we should check for buffer underruns...
+			if (!_checkForUnderrun) {
+				if (_underrunCooldown == 0) {
+					_checkForUnderrun = true;
+				} else {
+					_underrunCooldown--;
+				}
+			}
+
 			_internalMixer->clearMixerBuffer();
 			if (_isEarlyDiMUSE && _splayer && _splayer->isAudioCallbackEnabled()) {
 				_splayer->processDispatches(_outputFeedSize);
