@@ -233,7 +233,7 @@ struct InitiativeStruct {
 
 struct TileFactStruct {
 	uint8 _field0;
-	uint8 _field1;
+	uint8 _tileId;
 
 	void init();
 };
@@ -317,7 +317,7 @@ private:
 	int16 handleCharacterJoining();
 	void drawText(uint8 *impPtr, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag);
 	void displayMiddleLeftTempText(uint8 *impArray, bool flag);
-	void sub15A28(int16 arg0, int16 arg2);
+	void transitionMap(int16 centerX, int16 centerY);
 	void sub2455E(int16 arg0, int16 arg1, int16 arg2);
 	int16 sub151FD(int16 posX, int16 posY);
 	bool isPosOutOfMap(int16 mapPosX, int16 mapPosY);
@@ -333,7 +333,7 @@ private:
 	void resetGame();
 	void computeMapAnimation();
 	void handleAnimations();
-	int8 sub16B08(int16 monsterId);
+	int8 checkMonsterMoveCollisionAndTileTexture(int16 monsterId);
 	bool moveMonsterAwayFromTeam(int16 monsterId);
 	bool moveMonsterTowardsTeam(int16 monsterId);
 	bool moveMonsterGroupOther(int16 monsterId, int16 direction);
@@ -353,7 +353,7 @@ private:
 	void sub221D2(int16 monsterId);
 	void displayImp1Text(int16 textId);
 	bool sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId);
-	int8 sub15581(int16 mapPosX, int16 mapPosY, bool arg4);
+	int8 checkTileStatus(int16 mapPosX, int16 mapPosY, bool arg4);
 	void computeInitiatives();
 	void redrawScreenForced();
 	int16 selectMonsterGroup();
@@ -367,7 +367,7 @@ private:
 	bool hasObjectEquipped(int16 charId, int16 objectId);
 	void setMapMonsterField8(int16 id, uint8 movementType, bool groupFl);
 	bool isMonsterActive(int16 groupId, int16 id);
-	int16 sub15538(int16 mapPosX, int16 mapPosY);
+	int16 getTileFactId(int16 mapPosX, int16 mapPosY);
 	void setCharacterObjectToBroken(int16 charId, int16 objectId);
 	int16 selectOtherCharFromTeam();
 	bool checkMonsterCollision();
