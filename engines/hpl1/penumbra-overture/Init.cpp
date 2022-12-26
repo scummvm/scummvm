@@ -25,7 +25,6 @@
  * This file is part of Penumbra Overture.
  */
 
-#include "hpl1/penumbra-overture/Init.h"
 #include "hpl1/engine/graphics/Material.h"
 #include "hpl1/penumbra-overture/ButtonHandler.h"
 #include "hpl1/penumbra-overture/GameArea.h"
@@ -43,6 +42,7 @@
 #include "hpl1/penumbra-overture/GameScripts.h"
 #include "hpl1/penumbra-overture/GameStickArea.h"
 #include "hpl1/penumbra-overture/GameSwingDoor.h"
+#include "hpl1/penumbra-overture/Init.h"
 #include "hpl1/penumbra-overture/MapHandler.h"
 #include "hpl1/penumbra-overture/Player.h"
 
@@ -78,106 +78,7 @@
 // Global init...
 cInit *gpInit;
 
-///////////////////////////////////////////////
-// BEGIN TIME LIMIT
-
-//#define TIMELIMIT
-
-#ifdef TIMELIMIT
-float gfNoHealthLeftMin = 19;
-float gfNoHealthLeftMax = 26;
-void CheckTimeLimit() {
-	iLowLevelSystem *pLowlevelSystem = gpInit->mpGame->GetSystem()->GetLowLevel();
-	cDate date = pLowlevelSystem->GetDate();
-
-	if (date.month_day < gfNoHealthLeftMin ||
-		date.month_day > gfNoHealthLeftMax ||
-		date.year != 2007 || date.month != 0 ||
-		pLowlevelSystem->FileExists("c:\\WINDOWS\\ocregx.dat")) {
-		if (pLowlevelSystem->FileExists("c:\\WINDOWS\\ocregx.dat") == false) {
-			FILE *pFile = fopen("c:\\WINDOWS\\ocregx.dat", "wb");
-
-			for (int i = 0; i < 937; ++i) {
-				unsigned char c = (char)cMath::RandRectl(0, 255);
-				fwrite(&c, 1, 1, pFile);
-			}
-		}
-
-		exit(0);
-	}
-}
-#endif
-
-// END TIME LIMIT
-///////////////////////////////////////////////
-
-///////////////////////////////////////////////
-// BEGIN CHECK SUPPORT
-
 bool CheckSupport(cInit *apInit) {
-	return true;
-#if 0
-	iLowLevelGraphics *pLowLevelGraphics = apInit->mpGame->GetGraphics()->GetLowLevel();
-	cInit *mpInit = apInit;
-	// Vertex shader support.
-	if (pLowLevelGraphics->GetCaps(eGraphicCaps_GL_VertexProgram) == 0) {
-		apInit->msErrorMessage = kTranslate("StartUp", "Error_NoVertexShader") + _W("\n") +
-								 kTranslate("StartUp", "ErrorAdd01") + _W("\n") +
-								 kTranslate("StartUp", "ErrorAdd02");
-		return false;
-	}
-	// Texture units
-	if (pLowLevelGraphics->GetCaps(eGraphicCaps_MaxTextureImageUnits) <= 1) {
-		apInit->msErrorMessage = kTranslate("StartUp", "Error_FewTextureUnits") + _W("\n") +
-								 kTranslate("StartUp", "ErrorAdd01") + _W("\n") +
-								 kTranslate("StartUp", "ErrorAdd02");
-		return false;
-	}
-
-	Log("Checking Supported Profiles\n");
-#define CG_CHECK(p)                \
-	if (cgGLIsProfileSupported(p)) \
-	Log("  Profile " #p " is supported\n")
-	CG_CHECK(CG_PROFILE_VP20);
-	CG_CHECK(CG_PROFILE_FP20);
-
-	CG_CHECK(CG_PROFILE_VP30);
-	CG_CHECK(CG_PROFILE_FP30);
-
-	CG_CHECK(CG_PROFILE_VP40);
-	CG_CHECK(CG_PROFILE_FP40);
-
-	CG_CHECK(CG_PROFILE_ARBVP1);
-	CG_CHECK(CG_PROFILE_ARBFP1);
-
-	CG_CHECK(CG_PROFILE_GLSLV);
-	CG_CHECK(CG_PROFILE_GLSLF);
-	CG_CHECK(CG_PROFILE_GLSLC);
-#undef CG_CHECK
-#endif
-	// Try compiling vertex shader
-#if 0
-	Log("Trying to load vertex program!\n");
-	iGpuProgram *pTestVtxProg = pLowLevelGraphics->CreateGpuProgram("Test", eGpuProgramType_Vertex);
-	if (pTestVtxProg->CreateFromFile("core/programs/Fallback01_Diffuse_Light_p1_vp.cg", "main") == false) {
-		Log("Did not succeed!\n");
-		if (iMaterial::GetQuality() != eMaterialQuality_VeryLow) {
-			apInit->msErrorMessage = kTranslate("StartUp", "Error_BadVertexShader") + _W("\n") +
-									 kTranslate("StartUp", "Error_BadVertexShader02") + _W("\n") +
-									 kTranslate("StartUp", "Error_BadVertexShader03") + _W("\n") +
-									 kTranslate("StartUp", "Error_BadVertexShader04") + _W("\n") +
-									 kTranslate("StartUp", "ErrorAdd02");
-			hplDelete(pTestVtxProg);
-
-			mpInit->mpConfig->SetInt("Graphics", "ShaderQuality", eMaterialQuality_VeryLow);
-			mpInit->mpConfig->Save();
-
-			return false;
-		}
-	}
-	Log("Success!\n");
-	hplDelete(pTestVtxProg);
-#endif
 	return true;
 }
 
@@ -257,37 +158,8 @@ bool cInit::Init(tString saveToLoad) {
 
 	// MAIN INIT /////////////////////
 
-	// Check for what settings file to use.
-	if (FileExists(gsUserSettingsPath)) {
-		mpConfig = hplNew(cConfigFile, (gsUserSettingsPath));
-		gbUsingUserSettings = true;
-	} else {
-		mpConfig = hplNew(cConfigFile, (gsDefaultSettingsPath));
-		gbUsingUserSettings = false;
-	}
-
-	// Load config file
-	mpConfig->Load();
-
-#ifdef LAST_INIT_OK
-	// If last init was not okay, reset all settings.
-	if (mpConfig->GetBool("Game", "LastInitOK", true) == false) {
-		hplDelete(mpConfig);
-		mpConfig = hplNew(cConfigFile, (gsDefaultSettingsPath));
-		gbUsingUserSettings = false;
-		CreateMessageBoxW(
-			_W("Info"),
-			_W("Game did not end properly last run, resetting configuration"));
-	}
-#endif
-
-	// Init is not done, so we do not know if it is okay.
-	if (gbUsingUserSettings) {
-		mpConfig->SetBool("Game", "LastInitOK", false);
-		mpConfig->Save();
-	}
-
-	mpGameConfig = hplNew(cConfigFile, (_W("config/game.cfg")));
+	mpConfig = new cConfigFile(_W(""));
+	mpGameConfig = new cConfigFile(_W("config/game.cfg"));
 	mpGameConfig->Load();
 
 	mvScreenSize.x = getIntConfig("screen-width", 800);
@@ -304,22 +176,16 @@ bool cInit::Init(tString saveToLoad) {
 	mbFlashItems = getBoolConfig("flash_items", true);
 	mbShowCrossHair = getBoolConfig("show_crosshair", false);
 
-	mbHapticsAvailable = mpConfig->GetBool("Haptics", "Available", false);
-	if (mbHapticsAvailable) {
-		mbHasHaptics = mpConfig->GetBool("Haptics", "Active", false);
-		cHaptic::SetIsUsed(mbHasHaptics);
-		mbHasHapticsOnRestart = mbHasHaptics;
-	} else {
-		mbHasHaptics = false;
-	}
-	mfHapticForceMul = mpConfig->GetFloat("Haptics", "ForceMul", 1.0f);
-	mfHapticMoveScreenSpeedMul = mpConfig->GetFloat("Haptics", "MoveScreenSpeedMul", 1.0f);
-	mfHapticScale = mpConfig->GetFloat("Haptics", "Scale", 0.04f);
-	mfHapticProxyRadius = mpConfig->GetFloat("Haptics", "ProxyRadius", 0.019f);
-	mfHapticOffsetZ = mpConfig->GetFloat("Haptics", "OffsetZ", 1.9f);
-	mfHapticMaxInteractDist = mpConfig->GetFloat("Haptics", "HapticMaxInteractDist", 2);
+	mbHapticsAvailable = false;
+	mbHasHaptics = false;
+	mfHapticForceMul = 1.0f;
+	mfHapticMoveScreenSpeedMul = 1.0f;
+	mfHapticScale = 0.04f;
+	mfHapticProxyRadius = 0.019f;
+	mfHapticOffsetZ = 1.9f;
+	mfHapticMaxInteractDist = 2;
 
-	mbSimpleSwingInOptions = mpConfig->GetBool("Game", "SimpleSwingInOptions", mbHapticsAvailable ? true : false);
+	mbSimpleSwingInOptions = false;
 
 	msGlobalScriptFile = getStringConfig("global_script", "global_script.hps");
 	msLanguageFile = "English.lang"; // TODO: replace with proper language support
@@ -337,17 +203,13 @@ bool cInit::Init(tString saveToLoad) {
 	mPhysicsAccuracy = static_cast<ePhysicsAccuracy>(getIntConfig("physics_accuracy", ePhysicsAccuracy_High));
 	mfPhysicsUpdatesPerSec = static_cast<float>(getIntConfig("physics_updates_per_second", 60));
 
-	mlMaxSoundChannels = mpConfig->GetInt("Sound", "MaxSoundChannels", 32);
-	mbUseSoundHardware = mpConfig->GetBool("Sound", "UseSoundHardware", false);
-	// mbForceGenericSoundDevice = mpConfig->GetBool("Sound", "ForceGeneric", false);
-	mlStreamUpdateFreq = mpConfig->GetInt("Sound", "StreamUpdateFreq", 10);
-	mbUseSoundThreading = mpConfig->GetBool("Sound", "UseThreading", true);
-	// mbUseVoiceManagement = mpConfig->GetBool("Sound","UseVoiceManagement", true);
-	mlMaxMonoChannelsHint = mpConfig->GetInt("Sound", "MaxMonoChannelsHint", 0);
-	mlMaxStereoChannelsHint = mpConfig->GetInt("Sound", "MaxStereoChannelsHint", 0);
-	// mlStreamBufferSize = mpConfig->GetInt("Sound", "StreamBufferSize", 64);
-	// mlStreamBufferCount = mpConfig->GetInt("Sound", "StreamBufferCount", 4);
-	msDeviceName = mpConfig->GetString("Sound", "DeviceName", "NULL");
+	mlMaxSoundChannels = 32;
+	mbUseSoundHardware = false;
+	mlStreamUpdateFreq = 10;
+	mbUseSoundThreading = true;
+	mlMaxMonoChannelsHint = 0;
+	mlMaxStereoChannelsHint = 0;
+	msDeviceName = "NULL";
 
 	iGpuProgram::SetLogDebugInformation(true);
 	iResourceBase::SetLogCreateAndDelete(mbLogResources);
@@ -360,32 +222,32 @@ bool cInit::Init(tString saveToLoad) {
 	Vars.AddInt("Multisampling", mlFSAA);
 	Vars.AddInt("LogicUpdateRate", 60);
 	Vars.AddBool("UseSoundHardware", mbUseSoundHardware);
-	Vars.AddBool("ForceGeneric", mpConfig->GetBool("Sound", "ForceGeneric", false));
+	Vars.AddBool("ForceGeneric", false);
 	Vars.AddInt("MaxSoundChannels", mlMaxSoundChannels);
 	Vars.AddInt("StreamUpdateFreq", mlStreamUpdateFreq);
 	Vars.AddBool("UseSoundThreading", mbUseSoundThreading);
-	Vars.AddBool("UseVoiceManagement", mpConfig->GetBool("Sound", "UseVoiceManagement", true));
+	Vars.AddBool("UseVoiceManagement", true);
 	Vars.AddInt("MaxMonoChannelsHint", mlMaxMonoChannelsHint);
 	Vars.AddInt("MaxStereoChannelsHint", mlMaxStereoChannelsHint);
-	Vars.AddInt("StreamBufferSize", mpConfig->GetInt("Sound", "StreamBufferSize", 64));
-	Vars.AddInt("StreamBufferCount", mpConfig->GetInt("Sound", "StreamBufferCount", 4));
-	Vars.AddString("DeviceName", mpConfig->GetString("Sound", "DeviceName", "NULL"));
+	Vars.AddInt("StreamBufferSize", 64);
+	Vars.AddInt("StreamBufferCount", 4);
+	Vars.AddString("DeviceName", "NULL");
 	Vars.AddString("WindowCaption", "Penumbra Loading...");
 
-	Vars.AddBool("LowLevelSoundLogging", mpConfig->GetBool("Sound", "LowLevelLogging", false));
+	Vars.AddBool("LowLevelSoundLogging", false);
 
 	LowLevelGameSetup *pSetUp = NULL;
 
 	pSetUp = hplNew(LowLevelGameSetup, ());
 	mpGame = hplNew(cGame, (pSetUp, Vars));
 
-#ifdef TIMELIMIT
+#ifdef TIMELIMIT // TODO: supporting demo
 	CheckTimeLimit();
 #endif
 
 	// Make sure there really is haptic support!
 	if (mbHasHaptics && cHaptic::GetIsUsed() == false) {
-		//CreateMessageBoxW(_W("Error!"), _W("No haptic support found. Mouse will be used instead!\n"));
+		// CreateMessageBoxW(_W("Error!"), _W("No haptic support found. Mouse will be used instead!\n"));
 		mbHasHaptics = false;
 	}
 
@@ -409,10 +271,6 @@ bool cInit::Init(tString saveToLoad) {
 	mpGame->GetResources()->SetLanguageFile(msLanguageFile);
 
 	Log("Initializing " PRODUCT_NAME "\n  Version\t" PRODUCT_VERSION "\n  Date\t" PRODUCT_DATE "\n");
-	//////////////////////////////////////////////7
-	// Check if computer supports game
-	if (CheckSupport(this) == false)
-		return false;
 
 	// Add loaders
 	mpGame->GetResources()->AddEntity3DLoader(hplNew(cEntityLoader_GameObject, ("Object", this)));
@@ -461,7 +319,7 @@ bool cInit::Init(tString saveToLoad) {
 
 	mpGame->GetResources()->GetMaterialManager()->SetTextureSizeLevel(getIntConfig("texture_size_level", 0));
 	mpGame->GetResources()->GetMaterialManager()->SetTextureFilter(static_cast<eTextureFilter>(getIntConfig("texture_filter", eTextureFilter_Bilinear)));
-	mpGame->GetResources()->GetMaterialManager()->SetTextureAnisotropy(mpConfig->GetFloat("Graphics", "TextureAnisotropy", 1.0f));
+	mpGame->GetResources()->GetMaterialManager()->SetTextureAnisotropy(1.0f);
 
 	mpGame->GetGraphics()->GetLowLevel()->SetGammaCorrection(static_cast<float>(getIntConfig("gamma", 1000)) / 1000.f);
 
@@ -573,22 +431,8 @@ bool cInit::Init(tString saveToLoad) {
 		}
 	} else {
 		mpGame->GetInput()->GetLowLevel()->BeginInputUpdate(); // prevents the game from becoming unresponsive
-	 	mpSaveHandler->LoadGameFromFile(cString::To16Char(saveToLoad), false);
+		mpSaveHandler->LoadGameFromFile(cString::To16Char(saveToLoad), false);
 		mpGame->GetInput()->GetLowLevel()->EndInputUpdate(); // clears the event queue
-	}
-
-	if (gbUsingUserSettings) {
-		mpConfig->SetBool("Game", "LastInitOK", true);
-		mpConfig->Save();
-	}
-
-	//////////////////////////////////////////////////////////
-	// Create newer settings file, if using default.
-	if (gbUsingUserSettings == false) {
-		if (mpConfig)
-			hplDelete(mpConfig);
-		mpConfig = hplNew(cConfigFile, (gsUserSettingsPath));
-		gbUsingUserSettings = true;
 	}
 
 	SetWindowCaption("Penumbra");
@@ -638,21 +482,6 @@ void cInit::Reset() {
 //-----------------------------------------------------------------------
 
 void cInit::Exit() {
-	mpConfig->SetBool("Haptics", "Active", mbHasHapticsOnRestart);
-	mpConfig->SetBool("Haptics", "Available", mbHapticsAvailable);
-	mpConfig->SetFloat("Haptics", "ForceMul", mfHapticForceMul);
-	mpConfig->SetFloat("Haptics", "MoveScreenSpeedMul", mfHapticMoveScreenSpeedMul);
-	mpConfig->SetFloat("Haptics", "Scale", mfHapticScale);
-	mpConfig->SetFloat("Haptics", "ProxyRadius", mfHapticProxyRadius);
-	mpConfig->SetFloat("Haptics", "OffsetZ", mfHapticOffsetZ);
-	mpConfig->SetFloat("Haptics", "HapticMaxInteractDist", mfHapticMaxInteractDist);
-	mpConfig->SetFloat("Haptics", "ProxyRadius", mfHapticProxyRadius);
-	mpConfig->SetFloat("Haptics", "OffsetZ", mfHapticOffsetZ);
-	if (mbHasHaptics) {
-		mpConfig->SetFloat("Haptics", "InteractModeCameraSpeed", mpPlayer->GetHapticCamera()->GetInteractModeCameraSpeed());
-		mpConfig->SetFloat("Haptics", "ActionModeCameraSpeed", mpPlayer->GetHapticCamera()->GetActionModeCameraSpeed());
-	}
-
 	// PLAYER EXIT /////////////////////
 	// Log(" Exit Save Handler\n");
 	// hplDelete( mpSaveHandler );
@@ -669,8 +498,6 @@ void cInit::Exit() {
 	hplDelete(mpButtonHandler);
 	Log(" Exit Map Handler\n");
 	hplDelete(mpMapHandler);
-	// Log(" Exit Game Scripts\n");
-	// hplDelete( mpGameScripts );
 	Log(" Exit Game Message Handler\n");
 	hplDelete(mpGameMessageHandler);
 	Log(" Exit Radio Handler\n");
@@ -721,14 +548,6 @@ void cInit::Exit() {
 	ConfMan.setBool("depth_of_field", !mpEffectHandler->GetDepthOfField()->IsDisabled());
 	ConfMan.setInt("motion_blur_amount", static_cast<int>(mpGame->GetGraphics()->GetRendererPostEffects()->GetMotionBlurAmount() * 1000.f));
 	ConfMan.setBool("refractions", mpGame->GetGraphics()->GetRenderer3D()->GetRefractionUsed());
-
-	mpConfig->SetBool("Sound", "UseSoundHardware", mbUseSoundHardware);
-	mpConfig->SetInt("Sound", "MaxSoundChannels", mlMaxSoundChannels);
-	mpConfig->SetInt("Sound", "StreamUpdateFreq", mlStreamUpdateFreq);
-	mpConfig->SetBool("Sound", "UseThreading", mbUseSoundThreading);
-	mpConfig->SetInt("Sound", "MaxMonoChannelsHint", mlMaxMonoChannelsHint);
-	mpConfig->SetInt("Sound", "MaxStereoChannelsHint", mlMaxStereoChannelsHint);
-	mpConfig->SetString("Sound", "DeviceName", msDeviceName);
 
 	ConfMan.setInt("texture_size_level", mpGame->GetResources()->GetMaterialManager()->GetTextureSizeLevel());
 	ConfMan.setInt("texture_filter", mpGame->GetResources()->GetMaterialManager()->GetTextureFilter());
@@ -805,11 +624,6 @@ void cInit::PreloadSoundEntityData(const tString &asFile) {
 		return;
 
 	mpGame->GetResources()->GetSoundEntityManager()->Preload(asFile);
-
-	/*iSoundData *pSound = mpGame->GetResources()->GetSoundManager()->CreateSoundData(asFile,false);
-	if(pSound){
-		Warning("Couldn't preload sound '%s'\n",asFile.c_str());
-	}*/
 }
 
 //-----------------------------------------------------------------------
