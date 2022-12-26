@@ -82,9 +82,6 @@
 
 #else
 #include <assert.h>
-#include <pthread.h>
-//#include <semaphore.h>
-#include <unistd.h>
 
 #ifdef __APPLE__
 #include <libkern/OSAtomic.h>
