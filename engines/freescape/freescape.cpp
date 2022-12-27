@@ -89,6 +89,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_currentDemoMousePosition = _crossairPosition;
 	_flyMode = false;
 	_noClipMode = false;
+	_forceEndGame = false;
 	_playerHeightNumber = 1;
 	_angleRotationIndex = 0;
 

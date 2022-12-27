@@ -308,6 +308,7 @@ public:
 	StateVars _gameStateVars;
 	StateBits _gameStateBits;
 	virtual bool checkIfGameEnded();
+	bool _forceEndGame;
 	ObjectArray _sensors;
 	void checkSensors();
 	void drawSensorShoot(Sensor *sensor);

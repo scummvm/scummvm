@@ -821,7 +821,7 @@ void DrillerEngine::drawInfoMenu() {
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 	surface->fillRect(_viewArea, black);
 
-	color = _renderMode == Common::kRenderCGA ? 1 : 14;
+	color = _renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX ? 1 : 14;
 	uint8 r, g, b;
 
 	_gfx->readFromPalette(color, r, g, b);
@@ -866,8 +866,13 @@ void DrillerEngine::drawInfoMenu() {
 	drawStringInSurface(Common::String::format("%13s : %d", "total sectors", 18), 84, 73, front, black, surface);
 	drawStringInSurface(Common::String::format("%13s : %d", "safe sectors", _gameStateVars[32]), 84, 81, front, black, surface);
 
-	drawStringInSurface("l-load s-save esc-terminate", 53, 97, front, black, surface);
-	drawStringInSurface("t-toggle sound on/off", 76, 105, front, black, surface);
+	if (isDOS()) {
+		drawStringInSurface("l-load s-save esc-terminate", 53, 97, front, black, surface);
+		drawStringInSurface("t-toggle sound on/off", 76, 105, front, black, surface);
+	} else if (isSpectrum()) {
+		drawStringInSurface("l-load s-save 1-abort", 53, 97, front, black, surface);
+		drawStringInSurface("any other key-continue", 76, 105, front, black, surface);
+	}
 
 	_uiTexture->update(surface);
 	_gfx->setViewport(_fullscreenViewArea);
@@ -893,8 +898,14 @@ void DrillerEngine::drawInfoMenu() {
 					_gfx->setViewport(_fullscreenViewArea);
 					saveGameDialog();
 					_gfx->setViewport(_viewArea);
-				} else if (event.kbd.keycode == Common::KEYCODE_t) {
+				} else if (isDOS() && event.kbd.keycode == Common::KEYCODE_t) {
 					// TODO
+				} else if (isDOS() && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					_forceEndGame = true;
+					cont = false;
+				} else if (isSpectrum() && event.kbd.keycode == Common::KEYCODE_1) {
+					_forceEndGame = true;
+					cont = false;
 				} else
 					cont = false;
 				break;
@@ -1281,6 +1292,16 @@ bool DrillerEngine::checkIfGameEnded() {
 
 	if (_gameStateVars[k8bitVariableEnergy] == 0) {
 		insertTemporaryMessage(_messagesList[16], _countdown - 2);
+		drawFrame();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(2000);
+		gotoArea(127, 0);
+	}
+
+	if (_forceEndGame) {
+		_forceEndGame = false;
+		insertTemporaryMessage(_messagesList[18], _countdown - 2);
 		drawFrame();
 		_gfx->flipBuffer();
 		g_system->updateScreen();
