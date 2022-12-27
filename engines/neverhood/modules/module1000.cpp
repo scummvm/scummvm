@@ -22,6 +22,8 @@
 #include "neverhood/modules/module1000.h"
 #include "neverhood/modules/module1000_sprites.h"
 
+#include "common/config-manager.h"
+
 namespace Neverhood {
 
 Module1000::Module1000(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -686,7 +688,7 @@ uint32 Scene1005::getTextIndex() {
 		textIndex = getKloggsTextIndex();
 	}
 	if (getGlobalVar(V_TEXT_FLAG1) && getGlobalVar(V_TEXT_INDEX) == textIndex) {
-		textIndex = getTextIndex3();
+		textIndex = getTextIndex3(textIndex);
 	} else {
 		setGlobalVar(V_TEXT_FLAG1, 1);
 		setGlobalVar(V_TEXT_INDEX, textIndex);
@@ -773,8 +775,12 @@ uint32 Scene1005::getKloggsTextIndex() {
 	return textIndex + 40;
 }
 
-uint32 Scene1005::getTextIndex3() {
+uint32 Scene1005::getTextIndex3(uint32 usefulHint) {
 	uint32 textIndex = getGlobalVar(V_TEXT_COUNTING_INDEX2);
+	if (textIndex + 1 > 10 && ConfMan.getBool("repeatwilliehint")) {
+		setGlobalVar(V_TEXT_COUNTING_INDEX2, 0);
+		return usefulHint;
+	}
 	if (textIndex + 1 > 10) {
 		textIndex = 0;
 	}
