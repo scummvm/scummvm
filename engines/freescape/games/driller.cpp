@@ -821,7 +821,16 @@ void DrillerEngine::drawInfoMenu() {
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 	surface->fillRect(_viewArea, black);
 
-	color = _renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX ? 1 : 14;
+	switch (_renderMode) {
+		case Common::kRenderCGA:
+			color = 1;
+			break;
+		case Common::kRenderZX:
+			color = 6;
+			break;
+		default:
+			color = 14;
+	}
 	uint8 r, g, b;
 
 	_gfx->readFromPalette(color, r, g, b);
