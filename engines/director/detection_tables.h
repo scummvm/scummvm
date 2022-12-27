@@ -1815,6 +1815,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("warlock", "v1.1.1 Classic", "xn--Spaceship Warlock-306j", "cfa68a1bc49251497ebde18e5fc9c217", 270851, 200), // 1994
 	MACGAME1("warlock", "v1.1.1 Classic", "xn--Spaceship Warlock-306j", "cfa68a1bc49251497ebde18e5fc9c217", 273115, 200), // 1996
 	MACDEMO1("warlock", "v1.0 Demo", "xn--Spaceship Warlock Demo-j40n", "cfa68a1bc49251497ebde18e5fc9c217", 271099, 200),
+	MACDEMO1("warlock", "v1.0 Demo", "xn--Spaceship Warlock Demo-j40n", "cfa68a1bc49251497ebde18e5fc9c217", 270843, 200), // 1991
 	MACDEMO1("warlock", "Trailer",	 "SS Warlock Movie Trailer", "cfa68a1bc49251497ebde18e5fc9c217", 270843, 200), // 1991
 	MACDEMO1("warlock", "Trailer",	 "SS Warlock Movie Trailer", "cfa68a1bc49251497ebde18e5fc9c217", 270857, 200), // 1994
 	MACDEMO1("warlock", "Trailer",	 "SS Warlock Movie Trailer", "cfa68a1bc49251497ebde18e5fc9c217", 273121, 200), // 1996
