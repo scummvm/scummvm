@@ -165,31 +165,31 @@ Common::U32String DetectionResults::generateUnknownGameReport(bool translate, ui
 	return ::generateUnknownGameReport(_detectedGames, translate, false, wordwrapAt);
 }
 
-char md5PropToCacheChar(MD5Properties flags) {
+const char *md5PropToCachePrefix(MD5Properties flags) {
 	switch (flags & kMD5MacMask) {
 	case kMD5MacDataFork: {
 		if (flags & kMD5Tail)
-			return 'd';
-		return 'z';
+			return "dt";
+		return "d";
 	}
 
 	case kMD5MacResOrDataFork: {
 		if (flags & kMD5Tail)
-			return 'e';
-		return 'm';
+			return "mt";
+		return "m";
 	}
 
 	case kMD5MacResFork: {
 		if (flags & kMD5Tail)
-			return 'x';
-		return 'r';
+			return "rt";
+		return "r";
 	}
 
 	default: {
 		if (flags & kMD5Tail)
-			return 't';
+			return "ft";
 
-		return 'f';
+		return "f";
 	}
 	}
 }
@@ -240,7 +240,7 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 
 		// Consolidate matched files across all engines and detection entries
 		for (FilePropertiesMap::const_iterator it = game.matchedFiles.begin(); it != game.matchedFiles.end(); it++) {
-			Common::String key = Common::String::format("%c:%s", md5PropToCacheChar(it->_value.md5prop), it->_key.c_str());
+			Common::String key = Common::String::format("%s:%s", md5PropToCachePrefix(it->_value.md5prop), it->_key.c_str());
 			matchedFiles.setVal(key, it->_value);
 		}
 	}

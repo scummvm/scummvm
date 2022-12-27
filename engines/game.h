@@ -111,7 +111,7 @@ enum MD5Properties {
 	kMD5MacMask              = kMD5MacResFork | kMD5MacDataFork,    // Mask for mac type
 };
 
-char md5PropToCacheChar(MD5Properties val);
+const char *md5PropToCachePrefix(MD5Properties val);
 
 /**
  * A record describing the properties of a file. Used on the existing
