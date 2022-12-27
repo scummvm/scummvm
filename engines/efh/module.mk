@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	fight.o \
 	files.o \
 	graphics.o \
+	init.o \
 	menu.o \
 	savegames.o \
 	script.o \

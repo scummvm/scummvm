@@ -275,8 +275,6 @@ protected:
 	Common::Error run() override;
 
 private:
-	static EfhEngine *s_Engine;
-
 	Common::Platform _platform;
 	int _loadSaveSlot;
 	bool _saveAuthorized;

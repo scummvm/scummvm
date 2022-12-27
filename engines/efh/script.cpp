@@ -162,11 +162,11 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x03:
 			buffer = script_readNumberArray(buffer, 4, scriptNumberArray);
 			if (flag) {
-				int16 var110 = scriptNumberArray[2] - scriptNumberArray[0];
-				int16 var10E = scriptNumberArray[3] - scriptNumberArray[1];
+				int16 rangeX = scriptNumberArray[2] - scriptNumberArray[0];
+				int16 rangeY = scriptNumberArray[3] - scriptNumberArray[1];
 
-				_mapPosX = getRandom(var110) + scriptNumberArray[0] - 1;
-				_mapPosY = getRandom(var10E) + scriptNumberArray[1] - 1;
+				_mapPosX = getRandom(rangeX) + scriptNumberArray[0] - 1;
+				_mapPosY = getRandom(rangeY) + scriptNumberArray[1] - 1;
 				_word2C880 = true;
 				_redrawNeededFl = true;
 			}
@@ -183,28 +183,27 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x05:
 			buffer = script_readNumberArray(buffer, 4, scriptNumberArray);
 			if (flag) {
-				int16 var110 = _teamCharId[scriptNumberArray[0]];
-				if (var110 != -1) {
-					int16 var10E = scriptNumberArray[1];
-					_npcBuf[var110]._activeScore[var10E] += scriptNumberArray[2] & 0xFF;
-					_npcBuf[var110]._activeScore[var10E] -= scriptNumberArray[3] & 0xFF;
+				int16 npcId = _teamCharId[scriptNumberArray[0]];
+				if (npcId != -1) {
+					int16 scoreId = scriptNumberArray[1];
+					_npcBuf[npcId]._activeScore[scoreId] += scriptNumberArray[2] & 0xFF;
+					_npcBuf[npcId]._activeScore[scoreId] -= scriptNumberArray[3] & 0xFF;
 				}
 			}
 			break;
 		case 0x06:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
 			if (flag) {
-				int16 var110 = _teamCharId[scriptNumberArray[0]];
-				if (var110 != -1) {
-					int16 var10E = scriptNumberArray[1];
-					_npcBuf[var110]._activeScore[var10E] = scriptNumberArray[1];
+				int16 npcId = _teamCharId[scriptNumberArray[0]];
+				if (npcId != -1) {
+					int16 scoreId = scriptNumberArray[1];
+					_npcBuf[npcId]._activeScore[scoreId] = scriptNumberArray[2] & 0xFF;
 				}
 			}
 			break;
 		case 0x07:
 			if (flag) {
 				totalPartyKill();
-				// emptyFunction(2);
 			}
 			break;
 		case 0x08:
@@ -216,44 +215,42 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x09:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
 			if (flag) {
-				int16 var110 = _teamCharId[scriptNumberArray[0]];
-				if (var110 != -1) {
-					int16 var10E = getRandom(scriptNumberArray[1]);
-					_npcBuf[var110]._hitPoints += var10E;
-					if (_npcBuf[var110]._hitPoints > _npcBuf[var110]._maxHP)
-						_npcBuf[var110]._hitPoints = _npcBuf[var110]._maxHP;
+				int16 npcId = _teamCharId[scriptNumberArray[0]];
+				if (npcId != -1) {
+					_npcBuf[npcId]._hitPoints += getRandom(scriptNumberArray[1]);
+					if (_npcBuf[npcId]._hitPoints > _npcBuf[npcId]._maxHP)
+						_npcBuf[npcId]._hitPoints = _npcBuf[npcId]._maxHP;
 				}
 			}
 			break;
 		case 0x0A:
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
 			if (flag) {
-				int16 var110 = _teamCharId[scriptNumberArray[0]];
-				if (var110 != -1) {
-					_npcBuf[var110]._hitPoints = _npcBuf[var110]._maxHP;
+				int16 npcId = _teamCharId[scriptNumberArray[0]];
+				if (npcId != -1) {
+					_npcBuf[npcId]._hitPoints = _npcBuf[npcId]._maxHP;
 				}
 			}
 			break;
 		case 0x0B:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
 			if (flag) {
-				int16 var110 = _teamCharId[scriptNumberArray[0]];
-				if (var110 != -1) {
-					int16 var10E = getRandom(scriptNumberArray[1]);
-					_npcBuf[var110]._hitPoints -= var10E;
-					if (_npcBuf[var110]._hitPoints < 0)
-						_npcBuf[var110]._hitPoints = 0;
+				int16 npcId = _teamCharId[scriptNumberArray[0]];
+				if (npcId != -1) {
+					_npcBuf[npcId]._hitPoints -= getRandom(scriptNumberArray[1]);
+					if (_npcBuf[npcId]._hitPoints < 0)
+						_npcBuf[npcId]._hitPoints = 0;
 				}
 			}
 			break;
 		case 0x0C:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
 			if (flag) {
-				int16 var110 = scriptNumberArray[0];
+				int16 scriptItemId = scriptNumberArray[0];
 				bool found = false;
 				for (int counter = 0; counter < _teamSize && !found; ++counter) {
 					for (uint objectId = 0; objectId < 10; ++objectId) {
-						if (_npcBuf[_teamCharId[counter]]._inventory[objectId]._ref == var110) {
+						if (_npcBuf[_teamCharId[counter]]._inventory[objectId]._ref == scriptItemId) {
 							removeObject(_teamCharId[counter], objectId);
 							found = true;
 							break;
@@ -266,9 +263,9 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			// Put item in inventory { objectId }
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
 			if (flag) {
-				int16 var110 = scriptNumberArray[0];
+				int16 scriptObjectId = scriptNumberArray[0];
 				for (int counter = 0; counter < _teamSize; ++counter) {
-					if (giveItemTo(_teamCharId[counter], var110, 0xFF))
+					if (giveItemTo(_teamCharId[counter], scriptObjectId, 0xFF))
 						break;
 				}
 			}
@@ -276,11 +273,11 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x0E:
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
 			if (flag) {
-				int16 var110 = scriptNumberArray[0];
+				int16 scriptItemId = scriptNumberArray[0];
 				bool found = false;
 				for (int counter = 0; counter < _teamSize && !found; ++counter) {
 					for (uint objectId = 0; objectId < 10; ++objectId) {
-						if (_npcBuf[_teamCharId[counter]]._inventory[objectId]._ref == var110) {
+						if (_npcBuf[_teamCharId[counter]]._inventory[objectId]._ref == scriptItemId) {
 							found = true;
 							break;
 						}
@@ -296,8 +293,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x0F:
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
 			if (flag) {
-				int16 var110 = scriptNumberArray[0];
-				if (isCharacterATeamMember(var110))
+				if (isCharacterATeamMember(scriptNumberArray[0]))
 					retVal = scriptNumberArray[1];
 				else
 					retVal = scriptNumberArray[2];
@@ -335,9 +331,9 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			// Add character to team { charId }
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
 			if (flag) {
-				int16 var110 = scriptNumberArray[0];
-				if (!isCharacterATeamMember(var110))
-					var_EE = var110;
+				int16 scriptNpcId = scriptNumberArray[0];
+				if (!isCharacterATeamMember(scriptNpcId))
+					var_EE = scriptNpcId;
 				retVal = -1;
 			}
 			break;
@@ -353,11 +349,11 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x16:
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
 			if (flag) {
-				int16 var110 = scriptNumberArray[0];
+				int16 scriptNpcId = scriptNumberArray[0];
 				// TODO: This "if" is useless, it's doing just the same loop and if statement. Consider removing it.
-				if (isCharacterATeamMember(var110)) {
+				if (isCharacterATeamMember(scriptNpcId)) {
 					for (uint counter = 0; counter < 3; ++counter) {
-						if (_teamCharId[counter] == var110) {
+						if (_teamCharId[counter] == scriptNpcId) {
 							removeCharacterFromTeam(counter);
 							break;
 						}
@@ -375,12 +371,11 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x18:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
 			if (flag) {
-				int16 var110 = scriptNumberArray[1] - scriptNumberArray[0] + 1;
 				bool found = false;
-				var110 = getRandom(var110) + scriptNumberArray[0] - 1;
+				int16 scriptRandomItemId = getRandom(scriptNumberArray[1] - scriptNumberArray[0] + 1) + scriptNumberArray[0] - 1;
 				int16 counter;
 				for (counter = 0; counter < _teamSize; ++counter) {
-					if (giveItemTo(_teamCharId[counter], var110, 0xFF)) {
+					if (giveItemTo(_teamCharId[counter], scriptRandomItemId, 0xFF)) {
 						found = true;
 						break;
 					}
@@ -390,22 +385,22 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 					drawMapWindow();
 					displayFctFullScreen();
 					drawMapWindow();
-					var110 = sub1C219("Nothing...", 1, 2, true);
+					scriptRandomItemId = sub1C219("Nothing...", 1, 2, true);
 					displayFctFullScreen();
 				} else {
 					_enemyNamePt2 = _npcBuf[_teamCharId[counter]]._name;
-					_nameBuffer = _items[var110]._name;
+					_nameBuffer = _items[scriptRandomItemId]._name;
 					curLine = Common::String::format("%s finds a %s!", _enemyNamePt2.c_str(), _nameBuffer.c_str());
 					drawMapWindow();
 					displayFctFullScreen();
 					drawMapWindow();
-					var110 = sub1C219(curLine, 1, 2, true);
+					scriptRandomItemId = sub1C219(curLine, 1, 2, true);
 					displayFctFullScreen();
 				}
 
-				var110 = sub151FD(_mapPosX, _mapPosY);
-				if (var110 != -1) {
-					_mapUnknown[var110]._posX = 0xFF;
+				int16 mapUnkId = sub151FD(_mapPosX, _mapPosY);
+				if (mapUnkId != -1) {
+					_mapUnknown[mapUnkId]._posX = 0xFF;
 				}
 				_redrawNeededFl = true;
 			}
@@ -423,18 +418,18 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x1A:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
 			if (flag) {
-				int16 var110 = sub151FD(scriptNumberArray[0], scriptNumberArray[1]);
-				if (var110 != -1) {
-					_mapUnknown[var110]._posX = 0xFF;
+				int16 mapUnkId = sub151FD(scriptNumberArray[0], scriptNumberArray[1]);
+				if (mapUnkId != -1) {
+					_mapUnknown[mapUnkId]._posX = 0xFF;
 				}
 			}
 			break;
 		case 0x1B:
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
 			if (flag) {
-				int16 var110 = sub151FD(scriptNumberArray[0], scriptNumberArray[1]);
-				if (var110 != -1) {
-					_mapUnknown[var110]._posX = 0xFF;
+				int16 mapUnkId = sub151FD(scriptNumberArray[0], scriptNumberArray[1]);
+				if (mapUnkId != -1) {
+					_mapUnknown[mapUnkId]._posX = 0xFF;
 				}
 				_mapUnknown[scriptNumberArray[2]]._posX = scriptNumberArray[0];
 				_mapUnknown[scriptNumberArray[2]]._posY = scriptNumberArray[1];
