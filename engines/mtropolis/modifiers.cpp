@@ -1734,22 +1734,37 @@ bool CollisionDetectionMessengerModifier::respondsToEvent(const Event &evt) cons
 }
 
 VThreadState CollisionDetectionMessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	if (_enableWhen.respondsTo(msg->getEvent())) {
-		if (!_isActive) {
-			_isActive = true;
-			_runtime = runtime;
+	// If we get a message that enables AND disables this at the same time, then we need to detect collisions and fire them,
+	// then disable this element.
+	// MTI depends on this behavior for the save game menu.
 
-			runtime->addCollider(this);
-		}
+	if (_disableWhen.respondsTo(msg->getEvent())) {
+		runtime->getVThread().pushTask("CollisionDetectionModifier::disableTask", this, &CollisionDetectionMessengerModifier::disableTask);
+	}
+	if (_enableWhen.respondsTo(msg->getEvent())) {
+		runtime->getVThread().pushTask("CollisionDetectionModifier::enableTask", this, &CollisionDetectionMessengerModifier::enableTask);
+
 		_incomingData = msg->getValue();
 		if (_incomingData.getType() == DynamicValueTypes::kList)
 			_incomingData.setList(_incomingData.getList()->clone());
 		_triggerSource = msg->getSource();
-	}
-	if (_disableWhen.respondsTo(msg->getEvent())) {
-		disable(runtime);
+		_runtime = runtime;
 	}
 
+	return kVThreadReturn;
+}
+
+VThreadState CollisionDetectionMessengerModifier::enableTask(const EnableTaskData &taskData) {
+	if (!_isActive) {
+		_isActive = true;
+		_runtime->addCollider(this);
+		_runtime->checkCollisions(this);
+	}
+	return kVThreadReturn;
+}
+
+VThreadState CollisionDetectionMessengerModifier::disableTask(const DisableTaskData &taskData) {
+	disable(_runtime);
 	return kVThreadReturn;
 }
 

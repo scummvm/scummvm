@@ -107,7 +107,7 @@ WindowParameters::WindowParameters(Runtime *wp_runtime, int32 wp_x, int32 wp_y, 
 }
 
 Window::Window(const WindowParameters &windowParams)
-	: _runtime(windowParams.runtime), _x(windowParams.x), _y(windowParams.y), _strata(0), _isMouseTransparent(false) {
+	: _runtime(windowParams.runtime), _x(windowParams.x), _y(windowParams.y), _strata(0), _isMouseTransparent(false), _isMouseVisible(true) {
 	_surface.reset(new Graphics::ManagedSurface(windowParams.width, windowParams.height, windowParams.format));
 }
 
@@ -155,6 +155,14 @@ const Common::SharedPtr<CursorGraphic> &Window::getCursorGraphic() const {
 
 void Window::setCursorGraphic(const Common::SharedPtr<CursorGraphic>& cursor) {
 	_cursor = cursor;
+}
+
+bool Window::getMouseVisible() const {
+	return _isMouseVisible;
+}
+
+void Window::setMouseVisible(bool visible) {
+	_isMouseVisible = visible;
 }
 
 void Window::setStrata(int strata) {

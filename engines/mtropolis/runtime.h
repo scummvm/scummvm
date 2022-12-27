@@ -1671,7 +1671,10 @@ public:
 
 	void addCollider(ICollider *collider);
 	void removeCollider(ICollider *collider);
-	void checkCollisions();
+	void checkCollisions(ICollider *optRestrictToCollider);
+
+	void setCursorElement(const Common::WeakPtr<VisualElement> &element);
+	void updateCursorElementPosition();
 
 	void addBoundaryDetector(IBoundaryDetector *boundaryDetector);
 	void removeBoundaryDetector(IBoundaryDetector *boundaryDetector);
@@ -1891,6 +1894,7 @@ private:
 
 	Common::SharedPtr<CursorGraphic> _lastFrameCursor;
 	Common::SharedPtr<CursorGraphic> _defaultCursor;
+	bool _lastFrameMouseVisible;
 
 	Common::WeakPtr<Window> _mouseFocusWindow;
 	bool _mouseFocusFlags[Actions::kMouseButtonCount];
@@ -1925,6 +1929,7 @@ private:
 
 	uint32 _modifierOverrideCursorID;
 	bool _haveModifierOverrideCursor;
+	bool _haveCursorElement;
 
 	uint32 _multiClickStartTime;
 	uint32 _multiClickInterval;
@@ -1940,6 +1945,9 @@ private:
 	Common::Array<Common::SharedPtr<CollisionCheckState> > _colliders;
 	Common::Array<BoundaryCheckState> _boundaryChecks;
 	uint32 _collisionCheckTime;
+
+	Common::WeakPtr<VisualElement> _elementTrackedToCursor;
+	uint32 _elementCursorUpdateTime;
 
 	Common::Array<IPostEffect *> _postEffects;
 
@@ -2048,6 +2056,7 @@ private:
 	MiniscriptInstructionOutcome setRefreshCursor(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome setAutoResetCursor(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome setWinSndBufferSize(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome setCursor(MiniscriptThread *thread, const DynamicValue &value);
 
 	int32 _opInt;
 	bool _gameMode;

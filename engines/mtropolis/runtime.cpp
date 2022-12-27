@@ -2716,8 +2716,14 @@ MiniscriptInstructionOutcome WorldManagerInterface::writeRefAttribute(Miniscript
 		DynamicValueWriteIntegerHelper<int32>::create(&_opInt, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "scenefades") {
-		// TODO
+#ifdef MTROPOLIS_DEBUG_ENABLE
+		if (Debugger *debugger = thread->getRuntime()->debugGetDebugger())
+			debugger->notify(kDebugSeverityWarning, "'scenefades' attribute was set on WorldManager, which is implemented yet");
+#endif
 		DynamicValueWriteDiscardHelper::create(result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "cursor") {
+		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setCursor, true>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	return RuntimeObject::writeRefAttribute(thread, result, attrib);
@@ -2772,6 +2778,28 @@ MiniscriptInstructionOutcome WorldManagerInterface::setAutoResetCursor(Miniscrip
 MiniscriptInstructionOutcome WorldManagerInterface::setWinSndBufferSize(MiniscriptThread *thread, const DynamicValue &value) {
 	// Ignore
 	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome WorldManagerInterface::setCursor(MiniscriptThread *thread, const DynamicValue &value) {
+	switch (value.getType())
+	{
+	case DynamicValueTypes::kNull:
+		thread->getRuntime()->setCursorElement(Common::WeakPtr<VisualElement>());
+		return kMiniscriptInstructionOutcomeContinue;
+	case DynamicValueTypes::kObject: {
+			Common::SharedPtr<RuntimeObject> obj = value.getObject().object.lock();
+			if (obj && obj->isElement() && static_cast<Element *>(obj.get())->isVisual()) {
+				thread->getRuntime()->setCursorElement(obj.staticCast<VisualElement>());
+				return kMiniscriptInstructionOutcomeContinue;
+			} else {
+				thread->error("Object assigned as cursor wasn't a visual element");
+				return kMiniscriptInstructionOutcomeFailed;
+			}
+		} break;
+	default:
+		thread->error("Value assigned as cursor wasn't an object");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
 }
 
 SystemInterface::SystemInterface() : _masterVolume(kFullVolume) {
@@ -4180,10 +4208,10 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	: _system(system), _mixer(mixer), _saveProvider(saveProvider), _loadProvider(loadProvider),
 	  _nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
 	  _displayWidth(1024), _displayHeight(768), _realTime(0), _realTimeBase(0), _playTime(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
-	  _lastFrameCursor(nullptr), _defaultCursor(new DefaultCursorGraphic()), _platform(kProjectPlatformUnknown),
+	  _lastFrameCursor(nullptr), _lastFrameMouseVisible(false), _defaultCursor(new DefaultCursorGraphic()), _platform(kProjectPlatformUnknown),
 	  _cachedMousePosition(Common::Point(0, 0)), _realMousePosition(Common::Point(0, 0)), _trackedMouseOutside(false),
-	  _forceCursorRefreshOnce(true), _autoResetCursor(false), _haveModifierOverrideCursor(false), _sceneGraphChanged(false), _isQuitting(false),
-	  _collisionCheckTime(0), _defaultVolumeState(true), _activeSceneTransitionEffect(nullptr), _sceneTransitionStartTime(0), _sceneTransitionEndTime(0),
+	  _forceCursorRefreshOnce(true), _autoResetCursor(false), _haveModifierOverrideCursor(false), _haveCursorElement(false), _sceneGraphChanged(false), _isQuitting(false),
+	  _collisionCheckTime(0), _elementCursorUpdateTime(0), _defaultVolumeState(true), _activeSceneTransitionEffect(nullptr), _sceneTransitionStartTime(0), _sceneTransitionEndTime(0),
 	  _sharedSceneWasSetExplicitly(false), _modifierOverrideCursorID(0), _subtitleRenderer(subRenderer), _multiClickStartTime(0), _multiClickInterval(500), _multiClickCount(0)
 {
 	_random.reset(new Common::RandomSource("mtropolis"));
@@ -4509,8 +4537,13 @@ bool Runtime::runFrame() {
 			_collisionCheckTime = _playTime;
 
 			checkBoundaries();
-			checkCollisions();
+			checkCollisions(nullptr);
+			continue;
 		}
+
+		// Reset cursor if the cursor element is gone
+		if (_haveCursorElement && _elementTrackedToCursor.expired())
+			updateMainWindowCursor();
 
 		if (_isQuitting)
 			return false;
@@ -4642,23 +4675,30 @@ void Runtime::drawFrame() {
 	_system->updateScreen();
 
 	Common::SharedPtr<CursorGraphic> cursor;
+	bool mouseVisible = true;
 
 	Common::SharedPtr<Window> focusWindow = _mouseFocusWindow.lock();
 
 	if (!focusWindow)
 		focusWindow = findTopWindow(_realMousePosition.x, _realMousePosition.y);
 
-	if (focusWindow)
+	if (focusWindow) {
 		cursor = focusWindow->getCursorGraphic();
+		mouseVisible = focusWindow->getMouseVisible();
+	}
 
 	if (!cursor)
 		cursor = _defaultCursor;
 
-	if (cursor != _lastFrameCursor) {
+	if ((cursor != _lastFrameCursor || !_lastFrameMouseVisible) && mouseVisible) {
 		CursorMan.showMouse(true);
 		CursorMan.replaceCursor(cursor->getCursor());
 
 		_lastFrameCursor = cursor;
+		_lastFrameMouseVisible = true;
+	} else if (_lastFrameMouseVisible && !mouseVisible) {
+		CursorMan.showMouse(false);
+		_lastFrameMouseVisible = false;
 	}
 
 	if (_project)
@@ -5656,8 +5696,14 @@ VThreadState Runtime::updateMousePositionTask(const UpdateMousePositionTaskData 
 		sendMessageOnVThread(dispatch);
 	}
 
+	// Cursor element positions are only updated on mouse movement, not when initially set
+	bool needUpdateElementPosition = (_cachedMousePosition.x != data.x || _cachedMousePosition.y != data.y);
+
 	_cachedMousePosition.x = data.x;
 	_cachedMousePosition.y = data.y;
+
+	if (needUpdateElementPosition)
+		updateCursorElementPosition();
 
 	return kVThreadReturn;
 }
@@ -5667,6 +5713,17 @@ void Runtime::updateMainWindowCursor() {
 	const uint32 kArrowID = 10011;
 
 	if (!_mainWindow.expired()) {
+		if (_haveCursorElement) {
+			Common::SharedPtr<Window> mainWindow = _mainWindow.lock();
+			if (_elementTrackedToCursor.expired()) {
+				mainWindow->setMouseVisible(true);
+				_elementTrackedToCursor.reset();
+			} else {
+				mainWindow->setMouseVisible(false);
+				return;
+			}
+		}
+
 		uint32 selectedCursor = kArrowID;
 		if (!_mouseOverObject.expired())
 			selectedCursor = kHandPointUpID;
@@ -5681,6 +5738,7 @@ void Runtime::updateMainWindowCursor() {
 				if (graphic) {
 					Common::SharedPtr<Window> mainWindow = _mainWindow.lock();
 					mainWindow->setCursorGraphic(graphic);
+					mainWindow->setMouseVisible(true);
 				}
 			}
 		}
@@ -5931,7 +5989,7 @@ void Runtime::removeCollider(ICollider *collider) {
 	}
 }
 
-void Runtime::checkCollisions() {
+void Runtime::checkCollisions(ICollider *optRestrictToCollider) {
 	if (!_colliders.size())
 		return;
 
@@ -5943,6 +6001,9 @@ void Runtime::checkCollisions() {
 
 	for (const Common::SharedPtr<CollisionCheckState> &collisionCheckPtr : _colliders) {
 		CollisionCheckState &colCheck = *collisionCheckPtr.get();
+
+		if (optRestrictToCollider && colCheck.collider != optRestrictToCollider)
+			continue;
 
 		Modifier *modifier = nullptr;
 		bool collideInFront;
@@ -6059,6 +6120,26 @@ void Runtime::checkCollisions() {
 
 			oldCollidingElements.push_back(colElement);
 		}
+	}
+}
+
+void Runtime::setCursorElement(const Common::WeakPtr<VisualElement> &element) {
+	_elementTrackedToCursor = element;
+	_haveCursorElement = !element.expired();
+
+	updateMainWindowCursor();
+}
+
+void Runtime::updateCursorElementPosition() {
+	Common::SharedPtr<VisualElement> element = _elementTrackedToCursor.lock();
+	if (!element)
+		return;
+
+	Common::Point elementPos = element->getGlobalPosition();
+	if (elementPos != _cachedMousePosition) {
+		VisualElement::OffsetTranslateTaskData *taskData = _vthread->pushTask("VisualElement::offsetTranslateTask", element.get(), &VisualElement::offsetTranslateTask);
+		taskData->dx = _cachedMousePosition.x - elementPos.x;
+		taskData->dy = _cachedMousePosition.y - elementPos.y;
 	}
 }
 

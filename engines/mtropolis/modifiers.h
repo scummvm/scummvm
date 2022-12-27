@@ -704,6 +704,15 @@ private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	const char *getDefaultName() const override;
 
+	struct EnableTaskData {
+	};
+
+	struct DisableTaskData {
+	};
+
+	VThreadState enableTask(const EnableTaskData &taskData);
+	VThreadState disableTask(const DisableTaskData &taskData);
+
 	void getCollisionProperties(Modifier *&modifier, bool &collideInFront, bool &collideBehind, bool &excludeParents) const override;
 	void triggerCollision(Runtime *runtime, Structural *collidingElement, bool wasInContact, bool isInContact, bool &outShouldStop) override;
 

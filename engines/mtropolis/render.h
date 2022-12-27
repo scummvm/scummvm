@@ -108,6 +108,9 @@ public:
 	const Common::SharedPtr<CursorGraphic> &getCursorGraphic() const;
 	void setCursorGraphic(const Common::SharedPtr<CursorGraphic> &cursor);
 
+	bool getMouseVisible() const;
+	void setMouseVisible(bool visible);
+
 	void setStrata(int strata);
 	int getStrata() const;
 
@@ -130,6 +133,7 @@ protected:
 	Runtime *_runtime;
 	int _strata;
 	bool _isMouseTransparent;
+	bool _isMouseVisible;
 
 	Common::SharedPtr<Graphics::ManagedSurface> _surface;
 	Common::SharedPtr<CursorGraphic> _cursor;
