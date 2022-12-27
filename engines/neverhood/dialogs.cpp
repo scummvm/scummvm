@@ -58,6 +58,11 @@ NeverhoodOptionsWidget::NeverhoodOptionsWidget(GuiObject *boss, const Common::St
 		"NeverhoodGameOptionsDialog.ScaleMakingOfVideos", _("Scale the making of videos to full screen"),
 		_("Scale the making of videos, so that they use the whole screen"));
 
+	_repeatWillieHint = new GUI::CheckboxWidget(
+		widgetsBoss(),
+		"NeverhoodGameOptionsDialog.RepeatWillieHint", _("Repeat useful Willie's hint"),
+		_("Repeat actual useful hint by Willie"));
+
 	Common::String path = ConfMan.get("path", _domain);
 	Common::FSDirectory dir(path);
 	Common::FSDirectory *langdir = dir.getSubDirectory("language");
@@ -94,6 +99,7 @@ void NeverhoodOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common:
 	                .addWidget("OriginalSaveLoad", "Checkbox")
 	                .addWidget("SkipHallOfRecords", "Checkbox")
 		        .addWidget("ScaleMakingOfVideos", "Checkbox")
+			.addWidget("RepeatWillieHint", "Checkbox")
 	                .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
 	                    .addPadding(0, 0, 0, 0)
 	                    .addWidget("NhcDesc", "OptionsLabel")
@@ -116,6 +122,10 @@ void NeverhoodOptionsWidget::load() {
 		_scaleMakingOfVideosCheckbox->setState(ConfMan.getBool("scalemakingofvideos", _domain));
 	}
 
+	if (_repeatWillieHint) {
+		_repeatWillieHint->setState(ConfMan.getBool("repeatwilliehint", _domain));
+	}
+
 	if (_nhcPopUp) {
 		Common::String nhcFile(ConfMan.get("nhc_file", _domain));
 		for (uint i = 0; i < _nhcFiles.size(); i++)
@@ -135,6 +145,10 @@ bool NeverhoodOptionsWidget::save() {
 
 	if (_scaleMakingOfVideosCheckbox) {
 		ConfMan.setBool("scalemakingofvideos", _scaleMakingOfVideosCheckbox->getState(), _domain);
+	}
+
+	if (_repeatWillieHint) {
+		ConfMan.setBool("repeatwilliehint", _repeatWillieHint->getState(), _domain);
 	}
 
 	if (_nhcPopUp) {

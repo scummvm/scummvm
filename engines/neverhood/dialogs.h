@@ -57,6 +57,7 @@ private:
 	GUI::CheckboxWidget *_originalSaveLoadCheckbox;
 	GUI::CheckboxWidget *_skipHallOfRecordsCheckbox;
 	GUI::CheckboxWidget *_scaleMakingOfVideosCheckbox;
+	GUI::CheckboxWidget *_repeatWillieHint;
 
 	GUI::PopUpWidget *_nhcPopUp;
 	Common::StringArray _nhcFiles;
