@@ -41,8 +41,29 @@ static const struct CGAPalettteEntry {
 	{1, kDrillerCGAPaletteRedGreen},
 	{2, kDrillerCGAPalettePinkBlue},
 	{3, kDrillerCGAPaletteRedGreen},
+	{4, kDrillerCGAPalettePinkBlue},
+	{5, kDrillerCGAPaletteRedGreen},
+	{6, kDrillerCGAPalettePinkBlue},
+	{7, kDrillerCGAPaletteRedGreen},
 	{8, kDrillerCGAPalettePinkBlue},
+	{9, kDrillerCGAPaletteRedGreen},
+	{10, kDrillerCGAPalettePinkBlue},
+	{11, kDrillerCGAPaletteRedGreen},
+	{12, kDrillerCGAPalettePinkBlue},
+
 	{14, kDrillerCGAPalettePinkBlue},
+
+	{16, kDrillerCGAPalettePinkBlue},
+
+	{20, kDrillerCGAPalettePinkBlue},
+	{21, kDrillerCGAPaletteRedGreen},
+	{22, kDrillerCGAPalettePinkBlue},
+	{23, kDrillerCGAPaletteRedGreen},
+
+	{28, kDrillerCGAPalettePinkBlue},
+
+	{32, kDrillerCGAPalettePinkBlue},
+	{127, kDrillerCGAPaletteRedGreen},
 	{0, 0}   // This marks the end
 };
 
