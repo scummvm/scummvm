@@ -4342,6 +4342,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("moworld", "", "MO-World", "27519b873d23565470f627ad2f3d1b03", 321547, Common::JA_JPN, 400),
 
+	MACGAME1_l("murphystv", "", "MURPHY", "8ea9e9a699c61edddffd79ddd0c994d7", 288162, Common::JA_JPN, 402),
 	WINGAME1t_l("murphystv", "", "MURPHY.EXE", "8614c962ec56d95d8a0b602621661bcd", 742693, Common::JA_JPN, 404),
 
 	// Created by Fritsch & Friends MediaGroup, Babelsberg, Germany
