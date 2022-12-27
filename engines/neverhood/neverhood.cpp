@@ -102,20 +102,22 @@ Common::Error NeverhoodEngine::run() {
 
 	Common::String nhcFile = ConfMan.get("nhc_file");
 	if (!nhcFile.empty() && _res->addNhcArchive("language/" + nhcFile + ".nhc")) {
-		Common::SeekableReadStream *s = _res->createNhcStream(0x544E4F46, kResNhcTypeSubFont);
-		if (s && s->size() >= 4096) {
-			for (uint i = 0; i < 256; i++) {
-				s->read(&_subFont[i].bitmap, sizeof(_subFont[i].bitmap));
-				for (uint j = 0; j < 16; j++)
-					_subFont[i].outline[j] = (_subFont[i].bitmap[j] << 1) | (_subFont[i].bitmap[j] >> 1);
-				for (uint j = 1; j < 16; j++)
-					_subFont[i].outline[j] |= _subFont[i].bitmap[j-1];
-				for (uint j = 0; j < 15; j++)
-					_subFont[i].outline[j] |= _subFont[i].bitmap[j+1];
-				for (uint j = 0; j < 16; j++)
-					_subFont[i].outline[j] &= ~_subFont[i].bitmap[j];
+		if (ConfMan.getBool("subtitles")) {
+			Common::SeekableReadStream *s = _res->createNhcStream(0x544E4F46, kResNhcTypeSubFont);
+			if (s && s->size() >= 4096) {
+				for (uint i = 0; i < 256; i++) {
+					s->read(&_subFont[i].bitmap, sizeof(_subFont[i].bitmap));
+					for (uint j = 0; j < 16; j++)
+						_subFont[i].outline[j] = (_subFont[i].bitmap[j] << 1) | (_subFont[i].bitmap[j] >> 1);
+					for (uint j = 1; j < 16; j++)
+						_subFont[i].outline[j] |= _subFont[i].bitmap[j-1];
+					for (uint j = 0; j < 15; j++)
+						_subFont[i].outline[j] |= _subFont[i].bitmap[j+1];
+					for (uint j = 0; j < 16; j++)
+						_subFont[i].outline[j] &= ~_subFont[i].bitmap[j];
+				}
+				_haveSubtitles = true;
 			}
-			_haveSubtitles = true;
 		}
 	}
 
