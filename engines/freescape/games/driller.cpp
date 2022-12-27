@@ -666,6 +666,7 @@ void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 
 	int score = _gameStateVars[k8bitVariableScore];
 	drawStringInSurface(_currentArea->_name, 176, 188, front, back, surface);
@@ -679,7 +680,7 @@ void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 
 	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 64, 149, front, back, surface);
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 65, 157, front, back, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 217, 133, front, back, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 217, 133, white, back, surface);
 
 	int hours = _countdown <= 0 ? 0 : _countdown / 3600;
 	drawStringInSurface(Common::String::format("%02d", hours), 187, 12, front, back, surface);
