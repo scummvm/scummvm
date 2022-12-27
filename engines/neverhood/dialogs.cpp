@@ -39,7 +39,8 @@ NeverhoodOptionsWidget::NeverhoodOptionsWidget(GuiObject *boss, const Common::St
 		OptionsContainerWidget(boss, name, "NeverhoodGameOptionsDialog", false, domain),
 		_originalSaveLoadCheckbox(nullptr),
 		_skipHallOfRecordsCheckbox(nullptr),
-		_scaleMakingOfVideosCheckbox(nullptr) {
+		_scaleMakingOfVideosCheckbox(nullptr),
+		_nhcPopUp(nullptr) {
 
 	_originalSaveLoadCheckbox = new GUI::CheckboxWidget(
 		widgetsBoss(),
@@ -56,6 +57,31 @@ NeverhoodOptionsWidget::NeverhoodOptionsWidget(GuiObject *boss, const Common::St
 		widgetsBoss(),
 		"NeverhoodGameOptionsDialog.ScaleMakingOfVideos", _("Scale the making of videos to full screen"),
 		_("Scale the making of videos, so that they use the whole screen"));
+
+	Common::String path = ConfMan.get("path", _domain);
+	Common::FSDirectory dir(path);
+	Common::FSDirectory *langdir = dir.getSubDirectory("language");
+	_nhcFiles.push_back("");
+	if (langdir) {
+		Common::ArchiveMemberList nhcFileList;
+		langdir->listMatchingMembers(nhcFileList, "*.nhc");
+
+		for (Common::ArchiveMemberList::iterator iter = nhcFileList.begin(); iter != nhcFileList.end(); ++iter) {
+			Common::String nhcFileName = (*iter)->getName();
+			nhcFileName.erase(nhcFileName.size() - 4); // remove .nhc extension
+			_nhcFiles.push_back(nhcFileName);
+		}
+	}
+
+	if (_nhcFiles.size() > 1) {
+		GUI::StaticTextWidget *nhcCaption = new GUI::StaticTextWidget(widgetsBoss(), "NeverhoodGameOptionsDialog.NhcDesc", _("NHC replacement:"));
+		nhcCaption->setAlign(Graphics::kTextAlignRight);
+
+		_nhcPopUp = new GUI::PopUpWidget(widgetsBoss(), "NeverhoodGameOptionsDialog.Nhc");
+
+		for (uint i = 0; i < _nhcFiles.size(); i++)
+			_nhcPopUp->appendEntry(_nhcFiles[i].empty() ? _("<original>") : Common::U32String(_nhcFiles[i]), i);
+	}
 }
 
 NeverhoodOptionsWidget::~NeverhoodOptionsWidget() {
@@ -68,6 +94,11 @@ void NeverhoodOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common:
 	                .addWidget("OriginalSaveLoad", "Checkbox")
 	                .addWidget("SkipHallOfRecords", "Checkbox")
 		        .addWidget("ScaleMakingOfVideos", "Checkbox")
+	                .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+	                    .addPadding(0, 0, 0, 0)
+	                    .addWidget("NhcDesc", "OptionsLabel")
+	                    .addWidget("Nhc", "PopUp")
+	                .closeLayout()
 	            .closeLayout()
 	        .closeDialog();
 }
@@ -84,6 +115,13 @@ void NeverhoodOptionsWidget::load() {
 	if (_scaleMakingOfVideosCheckbox) {
 		_scaleMakingOfVideosCheckbox->setState(ConfMan.getBool("scalemakingofvideos", _domain));
 	}
+
+	if (_nhcPopUp) {
+		Common::String nhcFile(ConfMan.get("nhc_file", _domain));
+		for (uint i = 0; i < _nhcFiles.size(); i++)
+			if (_nhcFiles[i].equalsIgnoreCase(nhcFile))
+				_nhcPopUp->setSelectedTag(i);
+	}
 }
 
 bool NeverhoodOptionsWidget::save() {
@@ -97,6 +135,12 @@ bool NeverhoodOptionsWidget::save() {
 
 	if (_scaleMakingOfVideosCheckbox) {
 		ConfMan.setBool("scalemakingofvideos", _scaleMakingOfVideosCheckbox->getState(), _domain);
+	}
+
+	if (_nhcPopUp) {
+		uint32 selectedNhcFile = _nhcPopUp->getSelectedTag();
+		if (selectedNhcFile < _nhcFiles.size())
+			ConfMan.set("nhc_file", _nhcFiles[selectedNhcFile], _domain);
 	}
 
 	return true;
