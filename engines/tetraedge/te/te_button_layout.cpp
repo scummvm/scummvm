@@ -99,8 +99,8 @@ bool TeButtonLayout::onMouseLeftDown(const Common::Point &pt) {
 	// very simplified.
 	bool mouseIn = isMouseIn(pt);
 
-	if (mouseIn)
-		debug("mouse down on button '%s' (current state %d)", name().c_str(), _currentState);
+	//if (mouseIn)
+	//	debug("mouse down on button '%s' (current state %d)", name().c_str(), _currentState);
 
 	enum State newState = _currentState;
 	switch (_currentState) {
@@ -141,8 +141,8 @@ bool TeButtonLayout::onMouseLeftUp(const Common::Point &pt) {
 	// somewhat simplified.
 	bool mouseIn = isMouseIn(pt);
 
-	if (mouseIn)
-		debug("mouse up on button '%s' (current state %d)", name().c_str(), _currentState);
+	//if (mouseIn)
+	//	debug("mouse up on button '%s' (current state %d)", name().c_str(), _currentState);
 
 	enum State newState = _currentState;
 	switch (_currentState) {

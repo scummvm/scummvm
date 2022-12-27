@@ -41,6 +41,10 @@ void TeTiledSurface::cont() {
 	_frameAnim.cont();
 }
 
+TeTiledSurface::~TeTiledSurface() {
+	unload();
+}
+
 void TeTiledSurface::draw() {
 	if (_tiledTexture && _tiledTexture->isLoaded())
 		TeModel::draw();

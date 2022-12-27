@@ -122,15 +122,16 @@ private:
 	Common::Array<TeRectBlocker> *_rectBlockers;
 
 	Common::Array<TeVector3f32> _freeMoveZoneVerticies;
-	// TODO: Find better names..
-	Common::Array<unsigned int> _uintArray1;
-	Common::Array<TeVector3f32> _vectorArray;
-	Common::Array<unsigned int> _uintArray2;
+	Common::Array<unsigned int> _pickMesh;
+	Common::Array<TeVector3f32> _transformedVerticies;
+	Common::Array<unsigned int> _borders;
 
+	// TODO: Find better names..
 	TeVector2f32 _gridOffsetSomething;
 	TeVector2f32 _someGridVec1;
 	TeVector2f32 _someGridVec2;
 	TeMatrix4x4 _gridMatrix;
+	TeMatrix4x4 _inverseWorldTransform;
 
 	float _gridWorldY;
 

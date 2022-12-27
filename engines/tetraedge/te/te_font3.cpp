@@ -149,6 +149,9 @@ void TeFont3::draw(TeImage &destImage, const Common::String &str, int fontSize, 
 
 
 bool TeFont3::load(const Common::Path &path) {
+	if (_loadedPath == path && _fontFile.isOpen())
+		return true; // already open
+
 	setAccessName(path);
 	_loadedPath = path;
 

@@ -23,7 +23,12 @@
 
 namespace Tetraedge {
 
-TeScrollingLayout::TeScrollingLayout() : _autoScrollDelay(0), _contentLayout(nullptr) {
+TeScrollingLayout::TeScrollingLayout() : _contentLayout(nullptr),
+	_enclose(true), _mouseControl(true), _autoScrollLoop(-1), _autoScrollDelay(1500),
+	_autoScrollAnimation1Enabled(true), _autoScrollAnimation2Enabled(true),
+	_autoScrollAnimation1Speed(0.1), _autoScrollAnimation2Speed(0.1),
+	_autoScrollAnimation1Delay(1000), _autoScrollAnimation2Delay(1000)
+{
 }
 
 void TeScrollingLayout::setContentLayout(TeLayout *layout) {

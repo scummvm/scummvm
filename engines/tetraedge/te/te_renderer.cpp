@@ -265,7 +265,7 @@ void TeRenderer::init() {
 	debug("[TeRenderer::init] Sentil buffer bits : %d", bits);
 	glGetIntegerv(GL_DEPTH_BITS, &bits);
 	debug("[TeRenderer::init] Depth buffer bits : %d", bits);
-	//debug("[TeRenderer::init] Extensions : %s\n", glGetString(GL_EXTENSIONS));
+	//debug("[TeRenderer::init] Extensions : %s", glGetString(GL_EXTENSIONS));
 	//TeOpenGLExtensions::loadExtensions(); // this does nothing in the game?
 	_currentColor = TeColor(255, 255, 255, 255);
 	_scissorEnabled = false;

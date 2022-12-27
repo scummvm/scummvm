@@ -214,7 +214,7 @@ static bool _g_bWidescreen = false;
 
 int layoutBindings(lua_State *L) {
 	if (lua_type(L, -1) != LUA_TTABLE) {
-		warning("layoutBindings:: the lua value is not a table\n");
+		warning("layoutBindings:: the lua value is not a table");
 		return 0;
 	}
 
@@ -232,7 +232,7 @@ int layoutBindings(lua_State *L) {
 					layout->setScale(TeVector3f32(0.7500001f, 1.0f ,1.0f));
 				}
 			} else {
-				warning("[TeLuaGUI.layoutBindings] Unreconized attribute : %s\n", s);
+				warning("[TeLuaGUI.layoutBindings] Unreconized attribute : %s", s);
 			}
 		} else if (type == LUA_TNUMBER) {
 			Te3DObject2 *obj = TeLuaTo<Te3DObject2*>(L, -1);

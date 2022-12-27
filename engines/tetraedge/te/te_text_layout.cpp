@@ -107,8 +107,9 @@ void TeTextLayout::setText(const Common::String &val) {
 
 	if (parser.fontFile().size()) {
 		Common::Path fontPath(parser.fontFile());
+		fontPath = g_engine->getCore()->findFile(fontPath);
 		TeIntrusivePtr<TeFont3> font = g_engine->getResourceManager()->getResource<TeFont3>(fontPath);
-		font->load(fontPath);
+		//font->load(fontPath); // lazy load this later.
 		_base.setFont(0, font);
 	}
 	if (parser.style().size())

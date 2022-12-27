@@ -287,6 +287,7 @@ void TeLuaGUI::unload() {
 		delete iter._value;
 	}
 	_colorLinearAnimations.clear();
+	_loaded = false;
 }
 
 TeVariant TeLuaGUI::value(const Common::String &globalName) {
