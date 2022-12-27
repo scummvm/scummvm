@@ -41,6 +41,7 @@ static const char *const directoryGlobs[] = {
 	"clusters",
 	"music",
 	"smackshi",
+	"video",
 	"english",
 	"italian",
 	"speech",
