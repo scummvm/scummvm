@@ -25,6 +25,8 @@
 #include "hpl1/engine/graphics/OcclusionQuery.h"
 #include "common/scummsys.h"
 
+#ifdef USE_TINYGL
+
 namespace hpl {
 
 class OcclusionQueryTGL : public iOcclusionQuery {
@@ -39,5 +41,7 @@ public:
 };
 
 }     // namespace hpl
+
+#endif // USE_TINYGL
 
 #endif // HPL_OCCLUSION_QUERY_TGL_H

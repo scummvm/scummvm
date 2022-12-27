@@ -98,9 +98,6 @@ MODULE_OBJS := \
 	engine/impl/CollideShapeNewton.o \
 	engine/impl/KeyboardSDL.o \
 	engine/impl/LowLevelGraphicsSDL.o \
-	engine/impl/low_level_graphics_tgl.o \
-	engine/impl/texture_tgl.o \
-	engine/impl/vertex_buffer_tgl.o \
 	engine/impl/LowLevelInputSDL.o \
 	engine/impl/LowLevelPhysicsNewton.o \
 	engine/impl/LowLevelSoundOpenAL.o \
@@ -391,6 +388,13 @@ MODULE_OBJS := \
 	engine/libraries/angelscript/sources/as_tokenizer.o \
 	engine/libraries/angelscript/sources/as_typeinfo.o \
 	engine/libraries/angelscript/sources/as_variablescope.o
+
+ifdef USE_TINYGL
+MODULE_OBJS += \
+	engine/impl/low_level_graphics_tgl.o \
+	engine/impl/texture_tgl.o \
+	engine/impl/vertex_buffer_tgl.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_HPL1), DYNAMIC_PLUGIN)

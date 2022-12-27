@@ -40,7 +40,11 @@ static iLowLevelGraphics *createLowLevelGfx()
 	if (Hpl1::useOpenGL())
 		return hplNew(cLowLevelGraphicsSDL, ());
 #endif
+#ifdef USE_TINYGL
 	return hplNew(LowLevelGraphicsTGL, ());
+#else
+	error("Can't find a valid renderer: TinyGL is not supported");
+#endif
 }
 
 LowLevelGameSetup::LowLevelGameSetup() {

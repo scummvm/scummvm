@@ -24,6 +24,8 @@
 
 #include "hpl1/engine/graphics/VertexBuffer.h"
 
+#ifdef USE_TINYGL
+
 namespace hpl {
 
 class VertexBufferTGL : public iVertexBuffer {
@@ -82,5 +84,7 @@ private:
 };
 
 }     // namespace hpl
+
+#endif // USE_TINYGL
 
 #endif // HPL_RENDERER3D_OGL_H

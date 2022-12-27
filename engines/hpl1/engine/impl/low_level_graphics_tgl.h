@@ -29,6 +29,8 @@
 #include "common/ptr.h"
 #include "graphics/tinygl/tinygl.h"
 
+#ifdef USE_TINYGL
+
 namespace hpl {
 
 TGLenum ColorFormatToTGL(eColorDataFormat format);
@@ -276,5 +278,7 @@ private:
 };
 
 }     // namespace hpl
+
+#endif // USE_TINYGL
 
 #endif // HPL_LOWLEVELGRAPHICS_TGL_H

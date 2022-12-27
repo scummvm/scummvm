@@ -26,6 +26,8 @@
 #include "hpl1/engine/impl/low_level_graphics_tgl.h"
 #include "hpl1/engine/graphics/bitmap2D.h"
 
+#ifdef USE_TINYGL
+
 namespace hpl {
 
 class TGLTexture : public iTexture {
@@ -91,5 +93,7 @@ private:
 };
 
 }     // namespace hpl
+
+#endif // USE_TINYGL
 
 #endif // HPL_TEXTURE_TGL_H
