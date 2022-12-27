@@ -25,47 +25,11 @@
 #include "common/file.h"
 #include "common/translation.h"
 
+#include "neverhood/dialogs.h"
 #include "neverhood/neverhood.h"
 #include "neverhood/detection.h"
 
 namespace Neverhood {
-
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"originalsaveload",
-			false,
-			0,
-			0
-		}
-	},
-	{
-		GAMEOPTION_SKIP_HALL_OF_RECORDS,
-		{
-			_s("Skip the Hall of Records storyboard scenes"),
-			_s("Allows the player to skip past the Hall of Records storyboard scenes"),
-			"skiphallofrecordsscenes",
-			false,
-			0,
-			0
-		}
-	},
-	{
-		GAMEOPTION_SCALE_MAKING_OF_VIDEOS,
-		{
-			_s("Scale the making of videos to full screen"),
-			_s("Scale the making of videos, so that they use the whole screen"),
-			"scalemakingofvideos",
-			false,
-			0,
-			0
-		}
-	},
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
 
 const char *NeverhoodEngine::getGameId() const {
 	return _gameDescription->gameId;
@@ -99,8 +63,8 @@ public:
 		return "neverhood";
 	}
 
-	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
-		return Neverhood::optionsList;
+	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+		return new Neverhood::NeverhoodOptionsWidget(boss, name, target);
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;

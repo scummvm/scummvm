@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	background.o \
 	blbarchive.o \
 	console.o \
+	dialogs.o \
 	diskplayerscene.o \
 	entity.o \
 	gamemodule.o \
