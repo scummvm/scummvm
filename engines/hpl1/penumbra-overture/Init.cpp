@@ -581,7 +581,7 @@ void cInit::Exit() {
 
 	ConfMan.setBool("simple_weapon_swing", mbSimpleWeaponSwing);
 	ConfMan.setBool("disable_personal_notes", mbDisablePersonalNotes);
-	ConfMan.setBool("allow_quick_save", true);
+	ConfMan.setBool("allow_quick_save", mbAllowQuickSave);
 	ConfMan.setBool("flash_tems", mbFlashItems);
 	ConfMan.setBool("show_crosshair", mbShowCrossHair);
 
