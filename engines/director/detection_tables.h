@@ -917,6 +917,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "henachoco11",		"スロプロウエスタン" }, // Slowpro Western
 	{ "henachococd",		"ギャラクレヤン'75 オレニモインゼイクレヤン" }, // Galakureyan'75 Inzeikureyan
 	{ "henachocoexpo",		"イタチョコの野望" }, // Itachoco's Ambition
+	{ "henachocogala",		"スペースギャラクレヤン" }, // Space Galakureyan
 	{ "hidoiyokun",			"ひどいよくん" }, // Hidoiyo-kun
 	{ "himejijo",			"A.MAZING姫路城" },									// A.MAZING Himejijo (the HIMEJI Castle)
 	{ "horrortour2",		"Zeddas: Horror Tour 2" },
@@ -3878,6 +3879,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Decomposed variant of the above
 	MACGAME1_l("henachococd", "", "xn--New-hh4b3bb3b5b1g6gnk3a0hh4hg", "ace16ae334528bef72c8a232539b4952", 292201, Common::JA_JPN, 402),
 	WINGAME1t_l("henachococd", "", "INKURE.EXE", "0eeb6c11f37605f7e506eab7624cc193", 19324531, Common::JA_JPN, 404),
+
+	MACGAME1_l("henachocogala", "", "galacle", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
 
 	// Mac version is D3
 	WINGAME1t("hhouse", "",			"HHOUSE.EXE",  "b0486032820bc6a413dd836650f8b0c3", 3181345, 400),
