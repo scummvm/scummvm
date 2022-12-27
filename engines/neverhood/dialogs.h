@@ -57,6 +57,9 @@ private:
 	GUI::CheckboxWidget *_originalSaveLoadCheckbox;
 	GUI::CheckboxWidget *_skipHallOfRecordsCheckbox;
 	GUI::CheckboxWidget *_scaleMakingOfVideosCheckbox;
+
+	GUI::PopUpWidget *_nhcPopUp;
+	Common::StringArray _nhcFiles;
 };
 
 } // End of namespace Neverhood
