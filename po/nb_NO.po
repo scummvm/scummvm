@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-12-25 15:26+0000\n"
-"PO-Revision-Date: 2022-12-21 19:18+0000\n"
+"PO-Revision-Date: 2022-12-27 12:28+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -748,7 +748,7 @@ msgstr "Forbokstav"
 #: gui/launcher.cpp:101
 msgctxt "group"
 msgid "Initial"
-msgstr ""
+msgstr "Initial"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
@@ -785,10 +785,8 @@ msgid "Select Group by"
 msgstr "Velg Gruppere etter"
 
 #: gui/launcher.cpp:217 gui/launcher.cpp:799
-#, fuzzy
-#| msgid "Group by:"
 msgid "Group:"
-msgstr "Gruppere etter:"
+msgstr "Gruppe:"
 
 #: gui/launcher.cpp:219
 msgid "Select a criteria to group the entries"
