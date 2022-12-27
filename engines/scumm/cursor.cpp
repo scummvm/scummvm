@@ -725,7 +725,7 @@ void ScummEngine_v2::setBuiltinCursor(int idx) {
 
 	memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
 
-	if (_game.version == 0)
+	if (_game.platform == Common::kPlatformC64)
 		color = default_v0_cursor_colors[idx];
 	else if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp)
 		color = (idx & 1) * 3;
@@ -867,7 +867,7 @@ void ScummEngine_v2::setSnailCursor() {
 	} else {
 		memcpy(_grabbedCursor, c64_dos_snail_cursor, sizeof(c64_dos_snail_cursor));
 
-		if (_game.version == 0) {
+		if (_game.platform == Common::kPlatformC64) {
 			for (uint i = 0; i < sizeof(c64_dos_snail_cursor); i++) {
 				if (_grabbedCursor[i] == 0x0F)
 					_grabbedCursor[i] = 0x01;
