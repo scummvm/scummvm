@@ -278,7 +278,8 @@ void Game::enter(bool newgame) {
 	_score = 0;
 	Application *app = g_engine->getApplication();
 	app->visualFade().init();
-	Common::SharedPtr<TeCallback1Param<Game, const Common::Point &>> callbackptr(new TeCallback1Param<Game, const Common::Point &>(this, &Game::onMouseClick, -10000.0f));
+	// FIXME: Original puts this click handler at -10000.. but then it never gets hit?
+	Common::SharedPtr<TeCallback1Param<Game, const Common::Point &>> callbackptr(new TeCallback1Param<Game, const Common::Point &>(this, &Game::onMouseClick, 10000.0f));
 	g_engine->getInputMgr()->_mouseLUpSignal.push_back(callbackptr);
 	_movePlayerCharacterDisabled = false;
 	// TODO? Set character mouse move event no to -1
@@ -524,12 +525,12 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	Application *app = g_engine->getApplication();
 	if (forLuaExists) {
 		_forGui.load(forLuaPath);
-		TeLayout *bg = _forGui.layout("background");
+		TeLayout *bg = _forGui.layoutChecked("background");
 		bg->setRatioMode(TeILayout::RATIO_MODE_NONE);
 		app->_frontLayout.addChild(bg);
 		// Note: Game also adds cellphone to both frontLayout *and* noScaleLayout2,
 		// so we reproduce the broken behavior exactly.
-		TeLayout *cellbg = _inventory.cellphone()->gui().buttonLayout("background");
+		TeLayout *cellbg = _inventory.cellphone()->gui().buttonLayoutChecked("background");
 		app->_frontLayout.removeChild(cellbg);
 		app->_frontLayout.addChild(cellbg);
 		_objectif.reattachLayout(&app->_frontLayout);
@@ -727,7 +728,7 @@ void Game::leave(bool flag) {
 		delete sound;
 	}
 	_gameSounds.clear();
-	
+
 	for (auto &randsoundlist : _randomSounds) {
 		for (auto *randsound : randsoundlist._value) {
 			delete randsound;

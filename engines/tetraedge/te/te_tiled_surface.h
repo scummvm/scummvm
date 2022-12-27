@@ -38,6 +38,7 @@ namespace Tetraedge {
 class TeTiledSurface : public TeModel {
 public:
 	TeTiledSurface();
+	virtual ~TeTiledSurface();
 
 	virtual int bufferSize() { return 1; } // unused?
 	void cont();

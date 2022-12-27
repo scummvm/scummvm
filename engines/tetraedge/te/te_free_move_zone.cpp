@@ -93,10 +93,44 @@ TeVector2s32 TeFreeMoveZone::aStarResolution() const {
 
 void TeFreeMoveZone::buildAStar() {
 	preUpdateGrid();
-	TeVector2s32 resolution = aStarResolution();
-	_graph->setSize(resolution);
+	const TeVector2s32 graphSize = aStarResolution();
+	_graph->setSize(graphSize);
+
+	// Original checks these inside the loop below, seems like a waste as they never change?
+	if (graphSize._x == 0 || graphSize._y == 0)
+		return;
+
 	if (!_loadedFromBin) {
-		error("TODO: Implement TeFreeMoveZone::buildAStar for *not* loaded from bin case");
+		for (int x = 0; x < graphSize._x; x++) {
+			for (int y = 0; y < graphSize._y; y++) {
+				byte blockerIntersection = hasBlockerIntersection(TeVector2s32(x, y));
+				if (blockerIntersection == 1) {
+					_graph->_flags[_graph->_size._x * y + x] = 1;
+				} else {
+					if (!hasCellBorderIntersection(TeVector2s32(x, y))) {
+						const float gridOffX = _gridOffsetSomething.getX();
+						const float gridOffY = _gridOffsetSomething.getY();
+						TeVector3f32 vout;
+						float fout;
+						TeVector3f32 gridPt(x * gridOffX + _someGridVec1.getX() + gridOffX * 0.5,
+										1000000.0,
+										gridOffY * 0.5 + y * gridOffY + _someGridVec1.getY());
+						bool doesIntersect = intersect(gridPt, TeVector3f32(0.0, -1.0, 0.0), vout, fout, true, nullptr);
+						if (!doesIntersect)
+							doesIntersect = intersect(gridPt, TeVector3f32(0.0, 1.0, 0.0), vout, fout, true, nullptr);
+
+						if (!doesIntersect)
+							_graph->_flags[graphSize._x * y + x] = 1;
+						else if (blockerIntersection == 2)
+							_graph->_flags[graphSize._x * y + x] = 2;
+						else
+							_graph->_flags[graphSize._x * y + x] = 0;
+					} else {
+					_graph->_flags[graphSize._x * y + x] = 2;
+					}
+				}
+			}
+		}
 	} else {
 		// Loaded from bin..
 		error("TODO: Implement TeFreeMoveZone::buildAStar for loaded from bin case");
@@ -111,8 +145,8 @@ void TeFreeMoveZone::clear() {
 	setNbTriangles(0);
 	_pickMeshDirty = true;
 	_projectedPointsDirty = true;
-	_vectorArray.clear();
-	_uintArray2.clear();
+	_transformedVerticies.clear();
+	_borders.clear();
 	// TODO: Some other point vector here.
 	_gridDirty = true;
 	_graph->_flags.clear();
@@ -213,9 +247,9 @@ void TeFreeMoveZone::deserialize(Common::ReadStream &stream, TeFreeMoveZone &des
 	dest._gridDirty = (stream.readByte() != 0);
 
 	Te3DObject2::deserializeVectorArray(stream, dest._freeMoveZoneVerticies);
-	Te3DObject2::deserializeUintArray(stream, dest._uintArray1);
-	Te3DObject2::deserializeVectorArray(stream, dest._vectorArray);
-	Te3DObject2::deserializeUintArray(stream, dest._uintArray2);
+	Te3DObject2::deserializeUintArray(stream, dest._pickMesh);
+	Te3DObject2::deserializeVectorArray(stream, dest._transformedVerticies);
+	Te3DObject2::deserializeUintArray(stream, dest._borders);
 
 	TeOBP::deserialize(stream, dest._obp);
 
@@ -241,10 +275,10 @@ void TeFreeMoveZone::draw() {
 	renderer->enableWireFrame();
 	TePickMesh2::draw();
 	TeMesh mesh;
-	mesh.setConf(_uintArray2.size(), _uintArray2.size(), TeMesh::MeshMode_Lines, 0, 0);
-	for (unsigned int i = 0; i < _uintArray2.size(); i++) {
+	mesh.setConf(_borders.size(), _borders.size(), TeMesh::MeshMode_Lines, 0, 0);
+	for (unsigned int i = 0; i < _borders.size(); i++) {
 		mesh.setIndex(i, i);
-		mesh.setVertex(i, verticies()[_uintArray2[i]]);
+		mesh.setVertex(i, verticies()[_borders[i]]);
 	}
 
 	const TeColor prevColor = renderer->currentColor();
@@ -262,38 +296,6 @@ void TeFreeMoveZone::draw() {
 
 TeVector3f32 TeFreeMoveZone::findNearestPointOnBorder(const TeVector2f32 &pt) {
 	error("TODO: Implement TeFreeMoveZone::findNearestPointOnBorder");
-}
-
-bool TeFreeMoveZone::hasBlockerIntersection(const TeVector2s32 &pt) {
-	error("TODO: Implement TeFreeMoveZone::hasBlockerIntersection");
-}
-
-bool TeFreeMoveZone::hasCellBorderIntersection(const TeVector2s32 &pt) {
-	error("TODO: Implement TeFreeMoveZone::hasCellBorderIntersection");
-}
-
-TeActZone *TeFreeMoveZone::isInZone(const TeVector3f32 &pt) {
-	error("TODO: Implement TeFreeMoveZone::isInZone");
-}
-
-bool TeFreeMoveZone::onViewportChanged() {
-	_projectedPointsDirty = true;
-	return false;
-}
-
-void TeFreeMoveZone::preUpdateGrid() {
-	error("TODO: Implement TeFreeMoveZone::preUpdateGrid");
-}
-
-TeVector2s32 TeFreeMoveZone::projectOnAStarGrid(const TeVector3f32 &pt) {
-	TeVector2f32 otherpt;
-	if (!_loadedFromBin) {
-		otherpt = TeVector2f32(pt.x() - _someGridVec1.getX(), pt.z() - _someGridVec1.getY());
-	} else {
-		error("TODO: Implement TeFreeMoveZone::projectOnAStarGrid for _loadedFromBin");
-	}
-	TeVector2f32 projected = otherpt / _gridOffsetSomething;
-	return TeVector2s32((int)projected.getX(), (int)projected.getY());
 }
 
 static int segmentIntersection(const TeVector2f32 &s1start, const TeVector2f32 &s1end,
@@ -324,6 +326,187 @@ static int segmentIntersection(const TeVector2f32 &s1start, const TeVector2f32 &
 	return result;
 }
 
+
+bool TeFreeMoveZone::hasBlockerIntersection(const TeVector2s32 &pt) {
+	TeVector2f32 borders[4];
+
+	const float gridOffsetX = _gridOffsetSomething.getX();
+	const float gridOffsetY = _gridOffsetSomething.getX();
+	borders[0] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX(),
+             pt._y * gridOffsetY + _someGridVec1.getY());
+	borders[1] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX() + gridOffsetX,
+             pt._y * gridOffsetY + _someGridVec1.getY());
+	borders[2] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX(),
+             pt._y * gridOffsetY + _someGridVec1.getY() + gridOffsetY);
+	borders[3] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX() + gridOffsetX,
+             pt._y * gridOffsetY + _someGridVec1.getY() + gridOffsetY);
+
+	for (unsigned int i = 0; i < _blockers->size(); i++) {
+		const TeBlocker &blocker = (*_blockers)[i];
+
+		if (blocker._s != name())
+			continue;
+
+		for (unsigned int b = 0; b < 4; b++) {
+			int si = segmentIntersection(borders[b], borders[(b + 1) % 4], blocker._pts[0],
+                                      blocker._pts[1], nullptr, nullptr, nullptr);
+			if (si == 2)
+				return 2;
+		}
+
+        TeVector2f32 borderVec = ((borders[0] + borders[3]) / 2.0) - blocker._pts[0];
+        TeVector2f32 blockerVec = blocker._pts[1] - blocker._pts[0];
+        float dotVal = borderVec.dotProduct(blockerVec.getNormalized());
+        float crosVal = borderVec.crossProduct(blockerVec);
+        if ((crosVal < 0.0) && (0.0 <= dotVal)) {
+			if (dotVal < blockerVec.length())
+				return 1;
+        }
+	}
+	return 0;
+}
+
+bool TeFreeMoveZone::hasCellBorderIntersection(const TeVector2s32 &pt) {
+	TeVector2f32 borders[4];
+
+	const float gridOffsetX = _gridOffsetSomething.getX();
+	const float gridOffsetY = _gridOffsetSomething.getX();
+	borders[0] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX(),
+             pt._y * gridOffsetY + _someGridVec1.getY());
+	borders[1] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX() + gridOffsetX,
+             pt._y * gridOffsetY + _someGridVec1.getY());
+	borders[2] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX(),
+             pt._y * gridOffsetY + _someGridVec1.getY() + gridOffsetY);
+	borders[3] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX() + gridOffsetX,
+             pt._y * gridOffsetY + _someGridVec1.getY() + gridOffsetY);
+
+	int iresult = 0;
+	for (unsigned int border = 0; border < _borders.size() / 2; border++) {
+		TeVector2f32 v1;
+		TeVector2f32 v2;
+		unsigned int off1 = _pickMesh[_borders[border * 2]];
+		unsigned int off2 = _pickMesh[_borders[border * 2 + 1]];
+		if (!_loadedFromBin) {
+			v1 = TeVector2f32(_transformedVerticies[off1].x(), _transformedVerticies[off1].z());
+			v2 = TeVector2f32(_transformedVerticies[off2].x(), _transformedVerticies[off2].z());
+		} else {
+			TeMatrix4x4 gridInverse = _gridMatrix;
+			gridInverse.inverse();
+			const TeVector3f32 v1_inv = gridInverse * _freeMoveZoneVerticies[off1];
+			const TeVector3f32 v2_inv = gridInverse * _freeMoveZoneVerticies[off2];
+			v1 = TeVector2f32(v1_inv.x(), v1_inv.z());
+			v2 = TeVector2f32(v2_inv.x(), v2_inv.z());
+		}
+		iresult = segmentIntersection(borders[0], borders[1], v1, v2, nullptr, nullptr, nullptr);
+		if (iresult == 2) break;
+		iresult = segmentIntersection(borders[1], borders[2], v1, v2, nullptr, nullptr, nullptr);
+		if (iresult == 2) break;
+		iresult = segmentIntersection(borders[2], borders[3], v1, v2, nullptr, nullptr, nullptr);
+		if (iresult == 2) break;
+		iresult = segmentIntersection(borders[3], borders[0], v1, v2, nullptr, nullptr, nullptr);
+		if (iresult == 2) break;
+	}
+	return iresult == 2;
+}
+
+TeActZone *TeFreeMoveZone::isInZone(const TeVector3f32 &pt) {
+	error("TODO: Implement TeFreeMoveZone::isInZone");
+}
+
+bool TeFreeMoveZone::onViewportChanged() {
+	_projectedPointsDirty = true;
+	return false;
+}
+
+void TeFreeMoveZone::preUpdateGrid() {
+	updateTransformedVertices();
+	updatePickMesh();
+	updateBorders();
+	if (_loadedFromBin) {
+		calcGridMatrix();
+	}
+
+	TeMatrix4x4 gridInverse = _gridMatrix;
+	gridInverse.inverse();
+
+	TeVector3f32 newVec;
+	if (_transformedVerticies.empty() || _pickMesh.empty()) {
+		debug("[TeFreeMoveZone::buildAStar] %s have no mesh or is entierly occluded", name().c_str());
+	} else {
+		if (!_loadedFromBin) {
+			newVec = _transformedVerticies[_pickMesh[0]];
+		} else {
+			newVec = gridInverse * _freeMoveZoneVerticies[_pickMesh[0]];
+		}
+		_someGridVec1.setX(newVec.x());
+		_someGridVec1.setY(newVec.z());
+
+		_gridWorldY = newVec.y();
+	}
+	for (unsigned int i = 0; i < _pickMesh.size(); i++) {
+		  unsigned int vertNo = _pickMesh[_pickMesh[i]];
+
+		  if (!_loadedFromBin)
+			newVec = _transformedVerticies[vertNo];
+		  else
+			newVec = gridInverse * _freeMoveZoneVerticies[vertNo];
+
+		  if (_someGridVec1.getX() <= newVec.x()) {
+			if (_someGridVec2.getX() < newVec.x()) {
+			  _someGridVec2.setX(newVec.x());
+			}
+		  } else {
+			_someGridVec1.setX(newVec.x());
+		  }
+
+		  if (_someGridVec1.getY() <= newVec.z()) {
+			if (_someGridVec2.getY() < newVec.z()) {
+			  _someGridVec2.setY(newVec.z());
+			}
+		  } else {
+			_someGridVec1.setY(newVec.z());
+		  }
+
+		  if (newVec.y() < _gridWorldY) {
+			_gridWorldY = newVec.y();
+		  }
+	}
+
+	if (!_loadedFromBin) {
+		if (!name().contains("19000"))
+		  _gridOffsetSomething = TeVector2f32(5.0f, 5.0f);
+		else
+		  _gridOffsetSomething = TeVector2f32(2.0f, 2.0f);
+	} else {
+		const TeVector2f32 gridVecDiff = _someGridVec2 - _someGridVec1;
+		float minSide = MIN(gridVecDiff.getX(), gridVecDiff.getY()) / 20.0f;
+		_gridOffsetSomething.setX(minSide);
+		_gridOffsetSomething.setY(minSide);
+
+		error("FIXME: Finish preUpdateGrid for non-loaded-from-bin case.");
+		/*
+		// what's this field?
+		if (_field_0x414.x != 0.0)
+			_gridOffsetSomething = _field_0x414;
+		*/
+	}
+
+	TeMatrix4x4 worldTrans = worldTransformationMatrix();
+	worldTrans.inverse();
+	_inverseWorldTransform = worldTrans;
+}
+
+TeVector2s32 TeFreeMoveZone::projectOnAStarGrid(const TeVector3f32 &pt) {
+	TeVector2f32 otherpt;
+	if (!_loadedFromBin) {
+		otherpt = TeVector2f32(pt.x() - _someGridVec1.getX(), pt.z() - _someGridVec1.getY());
+	} else {
+		error("TODO: Implement TeFreeMoveZone::projectOnAStarGrid for _loadedFromBin");
+	}
+	TeVector2f32 projected = otherpt / _gridOffsetSomething;
+	return TeVector2s32((int)projected.getX(), (int)projected.getY());
+}
+
 Common::Array<TeVector3f32> TeFreeMoveZone::removeInsignificantPoints(const Common::Array<TeVector3f32> &points) {
 	if (points.size() < 2)
 		return points;
@@ -337,10 +520,10 @@ Common::Array<TeVector3f32> TeFreeMoveZone::removeInsignificantPoints(const Comm
         do {
 			const TeVector2f32 pt1(points[point1].x(), points[point1].z());
 			const TeVector2f32 pt2(points[point2].x(), points[point2].z());
-			for (unsigned int i = 0; i * 2 < _uintArray2.size() / 2; i++) {
-				const TeVector3f32 transpt3d1 = worldTransformationMatrix() * verticies()[_uintArray2[i * 2]];
+			for (unsigned int i = 0; i * 2 < _borders.size() / 2; i++) {
+				const TeVector3f32 transpt3d1 = worldTransformationMatrix() * verticies()[_borders[i * 2]];
 				const TeVector2f32 transpt1(transpt3d1.x(), transpt3d1.z());
-				const TeVector3f32 transpt3d2 = worldTransformationMatrix() * verticies()[_uintArray2[i * 2 + 1]];
+				const TeVector3f32 transpt3d2 = worldTransformationMatrix() * verticies()[_borders[i * 2 + 1]];
 				const TeVector2f32 transpt2(transpt3d2.x(), transpt3d2.z());
 				if (segmentIntersection(pt1, pt2, transpt1, transpt2, nullptr, nullptr, nullptr) == 2)
 					break;
@@ -425,7 +608,45 @@ TeVector3f32 TeFreeMoveZone::transformVectorInWorldSpace(float x, float y) {
 }
 
 void TeFreeMoveZone::updateBorders() {
-	error("TODO: Implement TeFreeMoveZone::updateBorders");
+	if (!_bordersDirty)
+		return;
+
+	updatePickMesh();
+
+	if (_verticies.size() > 2) {
+		for (unsigned int triNo1 = 0; triNo1 < _verticies.size() / 3; triNo1++) {
+			for (unsigned int vecNo1 = 0; vecNo1 < 3; vecNo1++) {
+				unsigned int left1 = triNo1 * 3 + vecNo1;
+				unsigned int left2 = triNo1 * 3 + (vecNo1 == 2 ? 0 : vecNo1 + 1);
+				const TeVector3f32 vleft1 = _verticies[left1];
+				const TeVector3f32 vleft2 = _verticies[left2];
+
+				bool skip = false;
+				for (unsigned int triNo2 = 0; triNo2 < _verticies.size() / 3; triNo2++) {
+					if (skip)
+						break;
+
+					for (unsigned int vecNo2 = 0; vecNo2 < 3; vecNo2++) {
+						if (triNo2 == triNo1)
+							continue;
+						unsigned int right1 = triNo2 * 3 + vecNo2;
+						unsigned int right2 = triNo2 * 3 + (vecNo2 == 2 ? 0 : vecNo2 + 1);
+						TeVector3f32 vright1 = _verticies[right1];
+						TeVector3f32 vright2 = _verticies[right2];
+						if (vright1 == vleft1 && vright2 == vleft2 && vright1 == vleft2 && vright2 == vleft1) {
+							skip = true;
+							break;
+						}
+					}
+				}
+				if (!skip) {
+					_borders.push_back(left1);
+					_borders.push_back(left2);
+				}
+			}
+		}
+    }
+	_bordersDirty = false;
 }
 
 void TeFreeMoveZone::updateGrid(bool force) {
@@ -444,7 +665,29 @@ void TeFreeMoveZone::updatePickMesh() {
 	if (!_pickMeshDirty)
 		return;
 
-	error("TODO: Implement TeFreeMoveZone::updatePickMesh");
+	updateTransformedVertices();
+	_pickMesh.clear();
+	_pickMesh.reserve(_freeMoveZoneVerticies.size());
+	int vecNo = 0;
+    for (unsigned int tri = 0; tri < _freeMoveZoneVerticies.size() / 3; tri++) {
+        _pickMesh.push_back(vecNo);
+        _pickMesh.push_back(vecNo + 1);
+        _pickMesh.push_back(vecNo + 2);
+        vecNo += 3;
+    }
+
+    debug("[TeFreeMoveZone::updatePickMesh] %s nb triangles reduced from : %d to : %d", name().c_str(),
+             _freeMoveZoneVerticies.size() / 3, _pickMesh.size() / 3);
+
+    TePickMesh2::setNbTriangles(_pickMesh.size() / 3);
+
+    for (unsigned int i = 0; i < _pickMesh.size(); i++) {
+        _verticies[i] = _freeMoveZoneVerticies[_pickMesh[i]];
+    }
+    _bordersDirty = true;
+    _pickMeshDirty = false;
+    _projectedPointsDirty = true;
+    _gridDirty = true;
 }
 
 void TeFreeMoveZone::updateProjectedPoints() {
@@ -458,7 +701,12 @@ void TeFreeMoveZone::updateTransformedVertices() {
 	if (!_transformedVerticiesDirty)
 		return;
 
-	error("TODO: Implement TeFreeMoveZone::updateTransformedVertices");
+	const TeMatrix4x4 worldTransform = worldTransformationMatrix();
+	_transformedVerticies.resize(_freeMoveZoneVerticies.size());
+	for (unsigned int i = 0; i < _transformedVerticies.size(); i++) {
+        _transformedVerticies[i] = worldTransform * _freeMoveZoneVerticies[i];
+    }
+    _transformedVerticiesDirty = false;
 }
 
 /*========*/

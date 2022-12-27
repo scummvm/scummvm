@@ -514,7 +514,10 @@ static void StartAnimation(const Common::String name, int loops, bool repeat) {
 	if (game->startAnimation(name, loops, repeat))
 		return;
 
-	error("[StartAnimation] Animation \"%s\" doesn't exist.", name.c_str());
+	// NOTE: Not error, some game scripts try to start animations that don't
+	// exist.  eg, ValVoralberg/14030 loads anim 14020, which is in a different
+	// zone
+	warning("[StartAnimation] Animation \"%s\" doesn't exist.", name.c_str());
 }
 
 int tolua_ExportedFunctions_StartAnimation00(lua_State *L) {
@@ -714,7 +717,7 @@ static int tolua_ExportedFunctions_PlaceCharacterOnDummy00(lua_State *L) {
 	}
 	error("#ferror in function 'SetCharacterRotation': %d %d %s", err.index, err.array, err.type);
 }
- 
+
 static void SetCharacterRotation(const Common::String &charname, float rx, float ry, float rz) {
 	TeQuaternion quat = TeQuaternion::fromEuler(TeVector3f32(rx * M_PI / 180.0, ry * M_PI / 180.0, rz * M_PI / 180.0));
 	Game *game = g_engine->getGame();
@@ -1248,7 +1251,7 @@ static int tolua_ExportedFunctions_SetBackground00(lua_State *L) {
 static void LaunchDialog(const Common::String &name, uint param_2, const Common::String &charname,
 						const Common::String &animfile, float animblend) {
 	Game *game = g_engine->getGame();
-  
+
 	if (!game->launchDialog(name, param_2, charname, animfile, animblend))
 		warning("[LaunchDialog] Dialog \"%s\" doesn't exist.", name.c_str());
 }
@@ -1588,12 +1591,24 @@ static int tolua_ExportedFunctions_SetRecallageY00(lua_State *L) {
 	error("#ferror in function 'SetRecallageY': %d %d %s", err.index, err.array, err.type);
 }
 
-static void DisabledZone(const Common::String &s1, bool b) {
+static void DisabledZone(const Common::String &zone, bool disable) {
 	Game *game = g_engine->getGame();
 	if (!game->scene().markerGui().loaded())
 		return;
 
-	warning("TODO: Implement DisabledZone");
+	TeLayout *bg = game->scene().markerGui().layout("background");
+	if (!bg) {
+		warning("DisabledZone(%s): No background in markerGui", zone.c_str());
+		return;
+	}
+	for (auto *child : bg->childList()) {
+		TeLayout *childLayout = dynamic_cast<TeLayout *>(child);
+		if (!childLayout)
+			continue;
+		if (child->name() == zone) {
+			child->setVisible(!disable);
+		}
+	}
 }
 
 static int tolua_ExportedFunctions_DisabledZone00(lua_State *L) {

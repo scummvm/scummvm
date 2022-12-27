@@ -234,7 +234,6 @@ TeVector2s32 Te3DTexture::optimisedSize(const TeVector2s32 &size) {
 		v2 = 8;
 	}
 	return TeVector2s32(v1, v2);
-	
 }
 
 /*static*/

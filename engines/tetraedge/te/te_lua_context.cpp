@@ -33,7 +33,7 @@ namespace Tetraedge {
 
 static int luaPanicFunction(lua_State *state) {
 	const char *msg = lua_tolstring(state, -1, nullptr);
-	warning("Lua: %s\n",msg);
+	warning("Lua: %s",msg);
 	lua_settop(state, -2);
 	return 1;
 }

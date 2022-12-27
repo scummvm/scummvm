@@ -74,11 +74,11 @@ void Dialog2::launchNextDialog() {
 
 			if (_currentDialogData._animBlend == 0.0f) {
 				if (!c->setAnimation(_currentDialogData._animfile, false, true))
-					error("[Dialog2::launchNextDialog] Character's animation \"%s\" doesn't exist for the character\"%s\"  \n",
+					error("[Dialog2::launchNextDialog] Character's animation \"%s\" doesn't exist for the character\"%s\"",
 							_currentDialogData._animfile.c_str(), _currentDialogData._charname.c_str());
 			} else {
 				if (!c->blendAnimation(_currentDialogData._animfile, _currentDialogData._animBlend, false, true))
-					error("[Dialog2::launchNextDialog] Character's animation \"%s\" doesn't exist for the character\"%s\"  \n",
+					error("[Dialog2::launchNextDialog] Character's animation \"%s\" doesn't exist for the character\"%s\"",
 							_currentDialogData._animfile.c_str(), _currentDialogData._charname.c_str());
 			}
 		}
