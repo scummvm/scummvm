@@ -92,9 +92,7 @@ bool PathfindingState::checkItem(const Item *item, int xyRange, int zRange) cons
 
 bool PathfindingState::checkHit(const Actor *_actor, const Item *target) const {
 	assert(target);
-#if 0
-	pout << "Trying hit in _direction " << _actor->getDirToItemCentre(*target) << Std::endl;
-#endif
+	debugC(Shared::kDebugPath, "Trying hit in _direction %d", _actor->getDirToItemCentre(*target));
 	AnimationTracker tracker;
 	if (!tracker.init(_actor, Animation::attack,
 	                  _actor->getDirToItemCentre(*target), this)) {
@@ -123,11 +121,8 @@ Pathfinder::Pathfinder() : _actor(nullptr), _targetItem(nullptr),
 }
 
 Pathfinder::~Pathfinder() {
-#if 1
-	pout << "~Pathfinder: " << _cleanupNodes.size() << " nodes to clean up, visited "
-		 << _visited.size() << " and "
-	     << expandednodes << " expanded nodes in " << _expandTime << "ms." << Std::endl;
-#endif
+	debugC(Shared::kDebugPath, "~Pathfinder: %u nodes to clean up, visited %u and %u expanded nodes in %dms.",
+		_cleanupNodes.size(), _visited.size(), expandednodes, _expandTime);
 
 	// clean up _nodes
 	Std::vector<PathNode *>::iterator iter;
@@ -396,18 +391,10 @@ void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
 	else
 		costHeuristic(newnode);
 
-#if 0
-	pout << "trying dir " << state._direction;
-
-	if (steps > 0) {
-		pout << ", " << steps << " steps";
-	}
-	pout << " from ("
-	     << oldnode->state._x << "," << oldnode->state._y << ") to ("
-	     << newnode->state._x << "," << newnode->state._y
-	     << "), cost = " << newnode->cost << ", heurtotcost = "
-	     << newnode->heuristicTotalCost << Std::endl;
-#endif
+	debugC(Shared::kDebugPath, "Trying dir %d, steps %d from (%d, %d) to (%d, %d), cost %d, heurtotcost %d",
+		   state._direction, steps,
+		   oldnode->state._x, oldnode->state._y, newnode->state._x, newnode->state._y,
+		   newnode->cost, newnode->heuristicTotalCost);
 
 #ifdef DEBUG
 	if (_actor->getObjId() == _visualDebugActor) {
@@ -511,16 +498,12 @@ void Pathfinder::expandNode(PathNode *node) {
 }
 
 bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
-#if 0
-	pout << "Actor " << _actor->getObjId();
-
 	if (_targetItem) {
-		pout << " pathfinding to item: ";
+		debugC(Shared::kDebugPath, "Actor %u pathfinding to item %u", _actor->getObjId(), _targetItem->getObjId());
 		_targetItem->dumpInfo();
 	} else {
-		pout << " pathfinding to (" << _targetX << "," << _targetY << "," << _targetZ << ")" << Std::endl;
+		debugC(Shared::kDebugPath, "Actor %u pathfinding to (%d, %d, %d)", _actor->getObjId(), _targetX, _targetY, _targetZ);
 	}
-#endif
 
 #ifdef DEBUG
 	if (_actor->getObjId() == _visualDebugActor) {
@@ -557,11 +540,9 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 		_cleanupNodes.push_back(node);
 		_nodes.pop();
 
-#if 0
-		pout << "Trying node: (" << node->state._x << "," << node->state._y
-		     << "," << node->state._z << ") target=(" << _targetX << ","
-		     << _targetY << "," << _targetZ << ")" << Std::endl;
-#endif
+		debugC(Shared::kDebugPath, "Trying node: (%d, %d, %d) target=(%d, %d, %d)",
+			node->state._x, node->state._y, node->state._z,
+			_targetX, _targetY, _targetZ);
 
 		if (checkTarget(node)) {
 			// done!
@@ -573,10 +554,8 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 				n = n->parent;
 				length++;
 			}
-#if 0
-			pout << "Pathfinder: path found (length = " << length << ")"
-			     << Std::endl;
-#endif
+
+			debugC(Shared::kDebugPath, "Pathfinder: path found (length = %u)", length);
 
 			unsigned int i = length;
 			if (length > 0) length++; // add space for final 'stand' action
@@ -589,11 +568,9 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 				action._direction = node->state._direction;
 				action._steps = node->stepsfromparent;
 				path[--i] = action;
-#if 0
-				pout << "anim = " << node->state._lastAnim << ", dir = "
-				     << node->state._direction << ", steps = "
-				     << node->stepsfromparent << Std::endl;
-#endif
+
+				debugC(Shared::kDebugPath, "anim = %d, dir = %d, steps = %d",
+					node->state._lastAnim, node->state._direction, node->stepsfromparent);
 
 				//TODO: check how turns work
 				//TODO: append final 'stand' animation
@@ -624,13 +601,11 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 
 	_expandTime = g_system->getMillis() - starttime;
 
-#if 0
 	static int32 pfcalls = 0;
 	static int32 pftotaltime = 0;
 	pfcalls++;
 	pftotaltime += _expandTime;
-	pout << "maxout average = " << (pftotaltime / pfcalls) << "ms." << Std::endl;
-#endif
+	debugC(Shared::kDebugPath, "maxout average = %dms.", pftotaltime / pfcalls);
 
 	return false;
 }

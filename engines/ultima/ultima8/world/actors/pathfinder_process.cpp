@@ -68,7 +68,7 @@ PathfinderProcess::PathfinderProcess(Actor *actor, ObjId itemid, bool hit) :
 
 	if (!ok) {
 		// can't get there...
-		debug(MM_INFO, "PathfinderProcess: actor %d failed to find path", _itemNum);
+		debugC(Shared::kDebugPath, "PathfinderProcess: actor %d failed to find path", _itemNum);
 		_result = PATH_FAILED;
 		terminateDeferred();
 		return;
@@ -92,7 +92,7 @@ PathfinderProcess::PathfinderProcess(Actor *actor, int32 x, int32 y, int32 z) :
 
 	if (!ok) {
 		// can't get there...
-		debug(MM_INFO, "PathfinderProcess: actor %d failed to find path", _itemNum);
+		debugC(Shared::kDebugPath, "PathfinderProcess: actor %d failed to find path", _itemNum);
 		_result = PATH_FAILED;
 		terminateDeferred();
 		return;
@@ -145,26 +145,21 @@ void PathfinderProcess::run() {
 
 	if (ok && _currentStep >= _path.size()) {
 		// done
-#if 0
-		pout << "PathfinderProcess: done" << Std::endl;
-#endif
+		debugC(Shared::kDebugPath, "PathfinderProcess: done");
 		_result = PATH_OK;
 		terminate();
 		return;
 	}
 
 	// try to take the next step
-
-#if 0
-	pout << "PathfinderProcess: trying step" << Std::endl;
-#endif
+	debugC(Shared::kDebugPath, "PathfinderProcess: trying step");
 
 	// if actor is still animating for whatever reason, wait until he stopped
 	// FIXME: this should happen before the pathfinder is actually called,
 	// since the running animation may move the actor, which could break
 	// the found _path.
 	if (actor->hasActorFlags(Actor::ACT_ANIMLOCK)) {
-		warning("PathfinderProcess: ANIMLOCK, waiting");
+		debugC(Shared::kDebugPath, "PathfinderProcess: ANIMLOCK, waiting");
 		return;
 	}
 
@@ -175,9 +170,7 @@ void PathfinderProcess::run() {
 	}
 
 	if (!ok) {
-#if 0
-		pout << "PathfinderProcess: recalculating _path" << Std::endl;
-#endif
+		debugC(Shared::kDebugPath, "PathfinderProcess: recalculating _path");
 
 		// need to redetermine _path
 		ok = true;
@@ -204,7 +197,7 @@ void PathfinderProcess::run() {
 		_currentStep = 0;
 		if (!ok) {
 			// can't get there anymore
-			debug(MM_INFO, "PathfinderProcess: actor %d failed to find path", _itemNum);
+			debugC(Shared::kDebugPath, "PathfinderProcess: actor %d failed to find path", _itemNum);
 			_result = PATH_FAILED;
 			terminate();
 			return;
@@ -212,9 +205,7 @@ void PathfinderProcess::run() {
 	}
 
 	if (_currentStep >= _path.size()) {
-#if 0
-		pout << "PathfinderProcess: done" << Std::endl;
-#endif
+		debugC(Shared::kDebugPath, "PathfinderProcess: done");
 		// done
 		_result = PATH_OK;
 		terminate();
@@ -224,11 +215,10 @@ void PathfinderProcess::run() {
 	uint16 animpid = actor->doAnim(_path[_currentStep]._action,
 	                               _path[_currentStep]._direction,
 	                               _path[_currentStep]._steps);
-#if 0
-	pout << "PathfinderProcess(" << getPid() << "): taking step "
-	     << _path[_currentStep].action << "," << _path[_currentStep].direction
-	     << " (animpid=" << animpid << ")" << Std::endl;
-#endif
+
+	debugC(Shared::kDebugPath, "PathfinderProcess(%u): taking step %d, %d (animpid=%u)",
+		getPid(), _path[_currentStep]._action, _path[_currentStep]._direction, animpid);
+
 	_currentStep++;
 
 	waitFor(animpid);
