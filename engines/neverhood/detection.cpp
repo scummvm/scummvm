@@ -28,7 +28,7 @@
 #include "neverhood/detection.h"
 
 static const PlainGameDescriptor neverhoodGames[] = {
-	{"neverhood", "The Neverhood Chronicles"},
+	{"neverhood", "The Neverhood"},
 	{nullptr, nullptr}
 };
 
@@ -142,11 +142,11 @@ public:
 	}
 
 	const char *getEngineName() const override {
-		return "The Neverhood Chronicles";
+		return "The Neverhood";
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "The Neverhood Chronicles (C) The Neverhood, Inc.";
+		return "The Neverhood (C) The Neverhood, Inc.";
 	}
 };
 
