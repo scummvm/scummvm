@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/ultima.h"
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/skf_player.h"
 #include "ultima/ultima8/convert/u8/convert_shape_u8.h"
@@ -157,7 +158,7 @@ void SKFPlayer::run() {
 				return;
 			}
 		} else {
-			pout << "Unknown fade action: " << _curAction << Std::endl;
+			debugC(kDebugVideo, "Unknown fade action: %u", _curAction);
 		}
 	}
 
@@ -183,54 +184,54 @@ void SKFPlayer::run() {
 
 	// handle _events for the current frame
 	while (_curEvent < _events.size() && _events[_curEvent]->_frame <= _curFrame) {
-//		pout << "event " << _curEvent << Std::endl;
+		debugCN(kDebugVideo, "Event %u: ", _curEvent);
 		switch (_events[_curEvent]->_action) {
 		case SKF_FadeOut:
 			_curAction = SKF_FadeOut;
 			_fadeColour = 0;
 			_fadeLevel = 0;
-//			pout << "FadeOut" << Std::endl;
+			debugC(kDebugVideo, "FadeOut");
 			break;
 		case SKF_FadeIn:
 			_curAction = SKF_FadeIn;
 			_fadeLevel = FADESTEPS;
-//			pout << "FadeIn" << Std::endl;
+			debugC(kDebugVideo, "FadeIn");
 			break;
 		case SKF_FadeWhite:
 			_curAction = SKF_FadeWhite;
 			_fadeColour = 0xFF;
 			_fadeLevel = 0;
-//			pout << "FadeWhite" << Std::endl;
+			debugC(kDebugVideo, "FadeWhite");
 			break;
 		case SKF_Wait:
-//			pout << "Wait " << _events[_curEvent]->_data << Std::endl;
+			debugC(kDebugVideo, "Wait %u", _events[_curEvent]->_data);
 			_timer = _events[_curEvent]->_data;
 			_curEvent++;
 			return;
 		case SKF_PlayMusic:
-//			pout << "PlayMusic " << _events[_curEvent]->_data << Std::endl;
+			debugC(kDebugVideo, "PlayMusic %u", _events[_curEvent]->_data);
 			if (musicproc) musicproc->playMusic(_events[_curEvent]->_data);
 			break;
 		case SKF_SlowStopMusic:
-//			pout << "SlowStopMusic" << Std::endl;
+			debugC(kDebugVideo, "SlowStopMusic");
 			if (musicproc)
 				musicproc->fadeMusic(1500);
 			_curAction = SKF_SlowStopMusic;
 			break;
 		case SKF_PlaySFX:
-//			pout << "PlaySFX " << _events[_curEvent]->_data << Std::endl;
+			debugC(kDebugVideo, "PlaySFX %u", _events[_curEvent]->_data);
 			if (audioproc) audioproc->playSFX(_events[_curEvent]->_data, 0x60, 0, 0);
 			break;
 		case SKF_StopSFX:
-//			pout << "StopSFX" << _events[_curEvent]->_data << Std::endl;
+			debugC(kDebugVideo, "StopSFX %u", _events[_curEvent]->_data);
 			if (audioproc) audioproc->stopSFX(_events[_curEvent]->_data, 0);
 			break;
 		case SKF_SetSpeed:
-//			pout << "SetSpeed " << _events[_curEvent]->_data << Std::endl;
+			debugC(kDebugVideo, "SetSpeed %u", _events[_curEvent]->_data);
 //			_frameRate = _events[_curEvent]->_data;
 			break;
 		case SKF_PlaySound: {
-//			pout << "PlaySound " << _events[_curEvent]->_data << Std::endl;
+			debugC(kDebugVideo, "PlaySound %u", _events[_curEvent]->_data);
 
 			if (!speechMute && audioproc) {
 				uint8 *buf = _skf->get_object(_events[_curEvent]->_data);
@@ -262,12 +263,12 @@ void SKFPlayer::run() {
 			break;
 		}
 		case SKF_ClearSubs:
-//			pout << "ClearSubs" << Std::endl;
+			debugC(kDebugVideo, "ClearSubs");
 			delete _subs;
 			_subs = nullptr;
 			break;
 		default:
-			pout << "Unknown action" << Std::endl;
+			debugC(kDebugVideo, "Unknown action %d", _events[_curEvent]->_action);
 			break;
 		}
 
@@ -294,9 +295,7 @@ void SKFPlayer::run() {
 
 		objecttype = object->readUint16LE();
 
-//		pout << "Object " << _curObject << "/" << _skf->getCount()
-//			 << ", type = " << objecttype << Std::endl;
-
+		debugC(kDebugVideo, "Object %u/%u, type = %u", _curObject, _skf->getCount(),  objecttype);
 
 		if (objecttype == 1) {
 			palman->load(PaletteManager::Pal_Movie, *object);
