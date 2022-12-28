@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-27 14:37+0000\n"
+"POT-Creation-Date: 2022-12-28 11:56+0000\n"
 "PO-Revision-Date: 2022-12-25 23:25+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -2505,7 +2505,7 @@ msgstr ""
 msgid "Achievement unlocked!"
 msgstr "¡Logro desbloqueado!"
 
-#: engines/advancedDetector.cpp:245
+#: engines/advancedDetector.cpp:235
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 "Copia de juego ilegítima detectada. No proporcionamos soporte en estos casos"
@@ -2762,7 +2762,7 @@ msgstr "No se puede cargar la partida en estos momentos"
 msgid "Saving game is currently unavailable"
 msgstr "No se puede guardar la partida en estos momentos"
 
-#: engines/game.cpp:184
+#: engines/game.cpp:200
 #, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
@@ -2775,7 +2775,7 @@ msgstr ""
 "Por favor, envía los siguientes datos al equipo de ScummVM en %s, junto con "
 "el nombre del juego que intentabas añadir, su versión, idioma, etc.:"
 
-#: engines/game.cpp:188
+#: engines/game.cpp:204
 #, c-format
 msgid "Matched game IDs for the %s engine:"
 msgstr "IDs de juegos disponibles para el motor %s:"

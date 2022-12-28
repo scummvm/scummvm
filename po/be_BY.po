@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-27 14:37+0000\n"
+"POT-Creation-Date: 2022-12-28 11:56+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -2502,7 +2502,7 @@ msgstr ""
 msgid "Achievement unlocked!"
 msgstr "Дасягненне разблакавана!"
 
-#: engines/advancedDetector.cpp:245
+#: engines/advancedDetector.cpp:235
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr "Знойдзена нелегальная копія. Мы не даём падтрымкі ў такіх выпадках"
 
@@ -2760,7 +2760,7 @@ msgstr "Загрузка гульні цяпер недаступна"
 msgid "Saving game is currently unavailable"
 msgstr "Цяпер захаванне гульні недаступна"
 
-#: engines/game.cpp:184
+#: engines/game.cpp:200
 #, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
@@ -2773,7 +2773,7 @@ msgstr ""
 "Калі ласка, перадайце камандзе ScummVM па %s наступныя дадзеныя разам з "
 "назвай гульні, яе версіяй, мовай і інш.:"
 
-#: engines/game.cpp:188
+#: engines/game.cpp:204
 #, c-format
 msgid "Matched game IDs for the %s engine:"
 msgstr "Магчымыя ідэнтыфікатары гульні для рухавічка %s:"
