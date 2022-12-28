@@ -7104,6 +7104,23 @@ Common::SeekableReadStream* Project::getStreamForSegment(int segmentIndex) {
 	return _segments[segmentIndex].weakStream;
 }
 
+const Common::String *Project::findNameOfLabel(const Label &label) const {
+	for (const LabelSuperGroup &superGroup : _labelSuperGroups) {
+		if (superGroup.superGroupID == label.superGroupID) {
+			size_t firstRootIndex = superGroup.firstRootNodeIndex;
+			size_t totalNodes = superGroup.numTotalNodes;
+
+			for (size_t i = 0; i < totalNodes; i++) {
+				const LabelTree &tree = _labelTree[i + firstRootIndex];
+				if (tree.id == label.id)
+					return &tree.name;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 Common::SharedPtr<SegmentUnloadSignaller> Project::notifyOnSegmentUnload(int segmentIndex, ISegmentUnloadSignalReceiver *receiver) {
 	Common::SharedPtr<SegmentUnloadSignaller> signaller = _segments[segmentIndex].unloadSignaller;
 	if (signaller)
@@ -7372,6 +7389,7 @@ void Project::loadLabelMap(const Data::ProjectLabelMap &projectLabelMap) {
 		sg.superGroupID = dataSG.id;
 
 		sg.firstRootNodeIndex = insertionOffset;
+		sg.numRootNodes = dataSG.numChildren;
 
 		for (size_t j = 0; j < dataSG.numChildren; j++)
 			treeQueue[insertionOffset++] = &dataSG.tree[j];

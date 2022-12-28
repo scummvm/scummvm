@@ -2385,6 +2385,8 @@ public:
 	void closeSegmentStream(int segmentIndex);
 	Common::SeekableReadStream *getStreamForSegment(int segmentIndex);
 
+	const Common::String *findNameOfLabel(const Label &label) const;
+
 	void onPostRender();
 	void onKeyboardEvent(Runtime *runtime, const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt);
 
