@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-12-28 18:15+0000\n"
-"PO-Revision-Date: 2022-12-03 23:47+0000\n"
+"PO-Revision-Date: 2022-12-28 23:19+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -748,7 +748,7 @@ msgstr "Первая буква"
 #: gui/launcher.cpp:101
 msgctxt "group"
 msgid "Initial"
-msgstr ""
+msgstr "Буква"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
@@ -785,10 +785,8 @@ msgid "Select Group by"
 msgstr "Выбрать как группировать"
 
 #: gui/launcher.cpp:217 gui/launcher.cpp:799
-#, fuzzy
-#| msgid "Group by:"
 msgid "Group:"
-msgstr "Группировать по:"
+msgstr "Группа:"
 
 #: gui/launcher.cpp:219
 msgid "Select a criteria to group the entries"
@@ -1588,22 +1586,17 @@ msgid "Autosave:"
 msgstr "Автосохр.:"
 
 #: gui/options.cpp:2452
-#, fuzzy
-#| msgid "Always return to the launcher when leaving a game"
 msgid "Return to the launcher when leaving a game"
-msgstr "Всегда возвращаться в главное меню при выходе из игры"
+msgstr "Возвращаться в главное меню при выходе из игры"
 
 #: gui/options.cpp:2453
-#, fuzzy
-#| msgid ""
-#| "Always return to the launcher when leaving a game instead of closing "
-#| "ScummVM."
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
 msgstr ""
-"Всегда возвращаться в главное меню при выходе из игры вместо того, чтобы "
-"закрывать ScummVM."
+"Возвращаться в главное меню при выходе из игры вместо того, чтобы закрывать "
+"ScummVM.\n"
+"(эта опция поддерживается не всеми играми)."
 
 #: gui/options.cpp:2460
 msgid "Ask for confirmation on exit"
@@ -5329,11 +5322,11 @@ msgstr ""
 
 #: engines/groovie/metaengine.cpp:97
 msgid "Slim Left/Right Hotspots"
-msgstr ""
+msgstr "Уменьшить хотспоты слева/справа"
 
 #: engines/groovie/metaengine.cpp:98
 msgid "Shrinks the hotspots on the left and right sides for exiting puzzles"
-msgstr ""
+msgstr "Уменьшает хотспоты слева и справа для выхода из головоломок"
 
 #: engines/groovie/metaengine.cpp:109
 msgid "Speedrun Mode"
