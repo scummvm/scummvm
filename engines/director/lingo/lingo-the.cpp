@@ -1133,9 +1133,9 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	case kTheStageColor:
 		g_director->getCurrentWindow()->setStageColor(g_director->transformColor(d.asInt()));
 
-		// Queue an immediate update of the stage
-		if (!score->getNextFrame())
-			score->setCurrentFrame(score->getCurrentFrame());
+		// Redraw the stage
+		score->renderSprites(score->getCurrentFrame(), kRenderForceUpdate);
+		g_director->getCurrentWindow()->render();
 		break;
 	case kTheSwitchColorDepth:
 		setTheEntitySTUB(kTheSwitchColorDepth);
