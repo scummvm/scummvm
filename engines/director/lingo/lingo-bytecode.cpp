@@ -588,11 +588,9 @@ void LC::cb_theassign() {
 	Common::String name = g_lingo->readString();
 	Datum value = g_lingo->pop();
 	if (g_lingo->_state->me.type == OBJECT) {
-		if (g_lingo->_state->me.u.obj->hasProp(name)) {
-			g_lingo->_state->me.u.obj->setProp(name, value);
-		} else {
-			warning("cb_theassign: me object has no property '%s'", name.c_str());
-		}
+		// Don't bother checking if the property is defined, leave that to the object.
+		// For D3-style anonymous objects/factories, you are allowed to define whatever properties you like.
+		g_lingo->_state->me.u.obj->setProp(name, value);
 	} else {
 		warning("cb_theassign: no me object");
 	}
