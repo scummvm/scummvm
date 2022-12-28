@@ -182,6 +182,14 @@ void FreescapeEngine::drawTitle() {
 		return;
 
 	_gfx->setViewport(_fullscreenViewArea);
+	if (isSpectrum()) {
+		Graphics::Surface *title = new Graphics::Surface();
+		title->create(320, 200, _title->format);
+		title->copyRectToSurface(*_title, (320 - _title->w) / 2, (200 - _title->h) / 2, Common::Rect(_title->w, _title->h));
+		_title->free();
+		delete _title;
+		_title = title;
+	}
 	if (!_titleTexture)
 		_titleTexture = _gfx->createTexture(_title);
 	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _titleTexture);
