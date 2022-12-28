@@ -125,12 +125,14 @@ void ScummEngine::parseEvent(Common::Event event) {
 		} else if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == Common::KEYCODE_s) {
 			_res->resourceStats();
 		} else if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == Common::KEYCODE_x) {
-			if (_game.version < 8) {
-				if (isUsingOriginalGUI()) {
-					_keyPressed = event.kbd;
-				} else {
-					quitGame();
-				}
+			if (isUsingOriginalGUI()) {
+				_keyPressed = event.kbd;
+			} else {
+				quitGame();
+			}
+		} else if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == Common::KEYCODE_q) {
+			if (_game.version > 4 && _game.heversion == 0) {
+				quitGame();
 			}
 		} else {
 			// Normal key press, pass on to the game.
