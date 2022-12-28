@@ -81,7 +81,7 @@ public:
 
 struct InvObject {
 	int16 _ref;
-	uint8 _stat1;
+	uint8 _stat1; // abbb bbbb - a: equipped b: durability
 	uint8 _stat2;
 
 	void init();
@@ -121,7 +121,7 @@ struct ItemStruct {
 	int8 field_13; // data contains values from -8 to +8
 	uint8 _range;
 	uint8 _attackType;
-	uint8 field_16;
+	uint8 _specialEffect;
 	uint8 field17_attackTypeDefense;
 	uint8 field_18;
 	uint8 field_19;
@@ -218,8 +218,8 @@ struct MapMonster {
 };
 
 struct Stru32686 {
-	int16 _field0[9];
-	int16 _field2[9];
+	int16 _effect[9];
+	int16 _duration[9];
 
 	void init();
 };
@@ -462,7 +462,7 @@ private:
 	void sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
 	int16 displayString_3(Common::String str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
 	int16 handleStatusMenu(int16 gameMode, int16 charId);
-	void equipCursedItem(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
+	void unequipItem(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
 	void sub191FF(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
 	int16 sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA);
 
@@ -602,7 +602,7 @@ private:
 	int16 _word31780[3];
 
 	int16 _menuStatItemArr[15];
-	Stru32686 _stru32686[5];
+	Stru32686 _teamMonsterEffects[5];
 	InitiativeStruct _initiatives[8];
 };
 

@@ -303,7 +303,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 									// handleFight - Check armor - end
 
 									// handleFight - Check effect - start
-									switch (_items[unk_monsterField5_itemId].field_16) {
+									switch (_items[unk_monsterField5_itemId]._specialEffect) {
 									case 1:
 										if (getRandom(100) < 20) {
 											_teamCharStatus[var7E]._status = 1;
@@ -337,9 +337,9 @@ bool EfhEngine::handleFight(int16 monsterId) {
 							}
 							// handleFight - Loop on var7E - End
 						}
-					} else if (_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._pictureRef[var86] > 0 && _stru32686[monsterGroupIdOrMonsterId]._field0[var86]) {
-						--_stru32686[monsterGroupIdOrMonsterId]._field2[var86];
-						if (_stru32686[monsterGroupIdOrMonsterId]._field2[var86] <= 0) {
+					} else if (_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._pictureRef[var86] > 0 && _teamMonsterEffects[monsterGroupIdOrMonsterId]._effect[var86]) {
+						--_teamMonsterEffects[monsterGroupIdOrMonsterId]._duration[var86];
+						if (_teamMonsterEffects[monsterGroupIdOrMonsterId]._duration[var86] <= 0) {
 							_enemyNamePt2 = kEncounters[_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._monsterRef]._name;
 							int16 var70 = kEncounters[_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._monsterRef]._nameArticle;
 							if (var70 == 2)
@@ -347,7 +347,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 							else
 								_enemyNamePt1 = "";
 
-							switch (_stru32686[monsterGroupIdOrMonsterId]._field0[var86]) {
+							switch (_teamMonsterEffects[monsterGroupIdOrMonsterId]._effect[var86]) {
 							case 1:
 								_messageToBePrinted = Common::String::format("%s%s wakes up!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str());
 								break;
@@ -358,7 +358,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 								_messageToBePrinted = Common::String::format("%s%s recovers!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str());
 								break;
 							}
-							_stru32686[monsterGroupIdOrMonsterId]._field0[var86] = 0;
+							_teamMonsterEffects[monsterGroupIdOrMonsterId]._effect[var86] = 0;
 							sub1C219(_messageToBePrinted, 1, 2, true);
 						}
 					}
@@ -472,7 +472,6 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 					int16 charScore = getCharacterScore(_teamCharId[teamCharId], unk_monsterField5_itemId);
 					int16 var80 = _mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E];
 					int16 var62 = 0;
-					int16 hitPoints = 0;
 					int16 originalDamage = 0;
 					int16 damagePointsAbsorbed = 0;
 					int16 var64 = _items[unk_monsterField5_itemId]._attacks * _npcBuf[_teamCharId[teamCharId]]._speed;
@@ -498,7 +497,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 					if (originalDamage < 0)
 						originalDamage = 0;
 
-					hitPoints = originalDamage + damagePointsAbsorbed;
+					int16 hitPoints = originalDamage + damagePointsAbsorbed;
 
 					if (!checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId))
 						var62 = 0;
@@ -603,15 +602,15 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						// Action A - Check item durability - End
 
 						// Action A - Check effect - Start
-						if (_items[unk_monsterField5_itemId].field_16 == 1 && _mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] > 0) {
+						if (_items[unk_monsterField5_itemId]._specialEffect == 1 && _mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] > 0) {
 							if (getRandom(100) < 35) {
-								_stru32686[var7E]._field0[groupId] = 1;
-								_stru32686[var7E]._field2[groupId] = getRandom(10);
+								_teamMonsterEffects[groupId]._effect[var7E] = 1;
+								_teamMonsterEffects[groupId]._duration[var7E] = getRandom(10);
 								_messageToBePrinted += Common::String::format("  %s%s falls asleep!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 							}
-						} else if (_items[unk_monsterField5_itemId].field_16 == 2 && _mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] > 0) {
-							_stru32686[var7E]._field0[groupId] = 2;
-							_stru32686[var7E]._field2[groupId] = getRandom(10);
+						} else if (_items[unk_monsterField5_itemId]._specialEffect == 2 && _mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] > 0) {
+							_teamMonsterEffects[groupId]._effect[var7E] = 2;
+							_teamMonsterEffects[groupId]._duration[var7E] = getRandom(10);
 							_messageToBePrinted += Common::String::format("  %s%s is frozen!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 						}
 						// Action A - Check effect - End
@@ -707,8 +706,8 @@ void EfhEngine::reset_stru32686() {
 	debug("reset_stru32686");
 	for (uint counter1 = 0; counter1 < 5; ++counter1) {
 		for (uint counter2 = 0; counter2 < 9; ++counter2) {
-			_stru32686[counter1]._field0[counter2] = 0;
-			_stru32686[counter1]._field2[counter2] = 0;
+			_teamMonsterEffects[counter1]._effect[counter2] = 0;
+			_teamMonsterEffects[counter1]._duration[counter2] = 0;
 		}
 	}
 }
@@ -1516,7 +1515,7 @@ bool EfhEngine::hasAdequateDefense(int16 monsterId, uint8 attackType) {
 
 	int16 itemId = _mapMonsters[monsterId]._itemId_Weapon;
 
-	if (_items[itemId].field_16 != 0)
+	if (_items[itemId]._specialEffect != 0)
 		return false;
 
 	return _items[itemId].field17_attackTypeDefense == attackType;
@@ -1527,7 +1526,7 @@ bool EfhEngine::hasAdequateDefense_2(int16 charId, uint8 attackType) {
 
 	int16 itemId = _npcBuf[charId]._unkItemId;
 
-	if (_items[itemId].field_16 == 0 && _items[itemId].field17_attackTypeDefense == attackType)
+	if (_items[itemId]._specialEffect == 0 && _items[itemId].field17_attackTypeDefense == attackType)
 		return true;
 
 	for (uint counter = 0; counter < 10; ++counter) {
@@ -1535,7 +1534,7 @@ bool EfhEngine::hasAdequateDefense_2(int16 charId, uint8 attackType) {
 			continue;
 
 		itemId = _npcBuf[charId]._inventory[counter]._ref;
-		if (_items[itemId].field_16 == 0 && _items[itemId].field17_attackTypeDefense == attackType)
+		if (_items[itemId]._specialEffect == 0 && _items[itemId].field17_attackTypeDefense == attackType)
 			return true;
 	}
 	return false;
