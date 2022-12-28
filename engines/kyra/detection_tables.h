@@ -316,10 +316,10 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			"StuffIt multi-floppy",
-			AD_ENTRY1s("xn--Legend of Kyrandia Installer-o11r", "83d0f8e8c44a0aaa92b06081c40cd3c2", 69726),
+			AD_ENTRY1s("xn--Legend of Kyrandia Installer-o11r", "d:23ae9506979d844c29cccb40774e471e", 1363968),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK,
+			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSPEECH, GUIO_MIDIGM, GUIO_RENDERVGA)
 		},
 				KYRA1_FLOPPY_CMP_FLAGS
@@ -329,23 +329,10 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			"StuffIt",
-			AD_ENTRY1s("xn--Install Legend of Kyrandia-jf8p", "1d763e991c787431cac3786afbbdae72", 53899),
+			AD_ENTRY1s("xn--Install Legend of Kyrandia-jf8p", "d:e279c397f46b0913abb5595e2cdce2ed", 10276153),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK,
-			GUIO3(GUIO_NOSPEECH, GUIO_MIDIGM, GUIO_RENDERVGA)
-		},
-				KYRA1_FLOPPY_CMP_FLAGS
-	},
-
-	{
-		{
-			"kyra1",
-			"StuffIt",
-			AD_ENTRY1s("xn--Install Legend of Kyrandia-jf8p", "e279c397f46b0913abb5595e2cdce2ed", 10276153),
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK,
+			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSPEECH, GUIO_MIDIGM, GUIO_RENDERVGA)
 		},
 		KYRA1_FLOPPY_CMP_FLAGS
