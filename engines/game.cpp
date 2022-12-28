@@ -258,16 +258,20 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 	Common::sort(filenames.begin(), filenames.end());
 	for (uint i = 0; i < filenames.size(); ++i) {
 		const FileProperties &file = matchedFiles[filenames[i]];
-		Common::String addon;
+		Common::String md5Prefix;
 
 		if (file.md5prop & kMD5MacResFork)
-			addon += ", ADGF_MACRESFORK";
+			md5Prefix += "r";
+		if (file.md5prop & kMD5MacDataFork)
+			md5Prefix += "d";
 		if (file.md5prop & kMD5Tail)
-			addon += ", ADGF_TAILMD5";
+			md5Prefix += "t";
+		if (!md5Prefix.empty())
+			md5Prefix += ":";
 
-		report += Common::String::format("  {\"%s\", 0, \"%s\", %lld}%s,\n",
-			Common::punycode_encodefilename(Common::U32String(&filenames[i].c_str()[2])).c_str(), // Skip the md5 prefix
-			file.md5.c_str(), (long long)file.size, addon.c_str());
+		report += Common::String::format("  {\"%s\", 0, \"%s%s\", %lld},\n",
+			Common::punycode_encodefilename(Common::U32String(strchr(filenames[i].c_str(), ':') + 1)).c_str(), // Skip the md5 prefix
+			md5Prefix.c_str(), file.md5.c_str(), (long long)file.size);
 	}
 
 	report += Common::U32String("\n");
