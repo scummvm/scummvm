@@ -173,6 +173,7 @@ bool cInit::Init(tString saveToLoad) {
 	mbSimpleWeaponSwing = getBoolConfig("simple_weapon_swing", false);
 	mbDisablePersonalNotes = getBoolConfig("disable_personal_notes", false);
 	mbAllowQuickSave = getBoolConfig("allow_quick_save", false);
+	_allowInputUnlock = getBoolConfig("allow_input_unlock", false);
 	mbFlashItems = getBoolConfig("flash_items", true);
 	mbShowCrossHair = getBoolConfig("show_crosshair", false);
 
@@ -582,6 +583,7 @@ void cInit::Exit() {
 	ConfMan.setBool("simple_weapon_swing", mbSimpleWeaponSwing);
 	ConfMan.setBool("disable_personal_notes", mbDisablePersonalNotes);
 	ConfMan.setBool("allow_quick_save", mbAllowQuickSave);
+	ConfMan.setBool("allow_input_unlock", _allowInputUnlock);
 	ConfMan.setBool("flash_tems", mbFlashItems);
 	ConfMan.setBool("show_crosshair", mbShowCrossHair);
 

@@ -138,6 +138,7 @@ public:
 	bool mbSimpleWeaponSwing;
 	bool mbDisablePersonalNotes;
 	bool mbAllowQuickSave;
+	bool _allowInputUnlock;
 	bool mbFlashItems;
 	bool mbSimpleSwingInOptions;
 	bool mbShowCrossHair;

@@ -107,7 +107,7 @@ static constexpr cButtonHandlerAction gvDefaultActions[] = {
 #ifdef __APPLE__
 	{"QuitGame", "Keyboard", eKeyModifier_META | eKey_q, false},
 #endif
-	//{"LockInput","Keyboard",eKey_k,false},
+	{"LockInput","Keyboard", eKey_k, false},
 	{"Screenshot", "Keyboard", eKey_F12, false},
 
 	//{"Hit","Keyboard",eKey_h,false},
@@ -219,11 +219,9 @@ void cButtonHandler::Update(float afTimeStep) {
 
 		mpInit->mpGame->GetGraphics()->GetLowLevel()->SaveScreenToBMP(sFileName);
 	}
-	if (mpInput->BecameTriggerd("LockInput")) {
-#ifndef WIN32
+	if (mpInit->_allowInputUnlock && mpInput->BecameTriggerd("LockInput")) {
 		bLockState = !bLockState;
 		mpInit->mpGame->GetInput()->GetLowLevel()->LockInput(bLockState);
-#endif
 	}
 	///////////////////////////////////
 	// DEMO END TEXT
