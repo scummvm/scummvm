@@ -305,16 +305,16 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ite",
 			"CD",
 			{
-				{"ite resources",	GAME_RESOURCEFILE | GAME_MACBINARY,	"ee65f8e713127cf7f2d56371d2b8e63d", 2264},
-				{"ite scripts",		GAME_SCRIPTFILE | GAME_MACBINARY,	"ee65f8e713127cf7f2d56371d2b8e63d", 2264},
-				{"ite sounds",		GAME_SOUNDFILE | GAME_MACBINARY,	"ee65f8e713127cf7f2d56371d2b8e63d", 2264},
-				{"ite music",		GAME_MUSICFILE_GM | GAME_MACBINARY,	"b0d66d7ae48f35c5c9a3444343b86f85", 3135053},
+				{"ite resources",	GAME_RESOURCEFILE | GAME_MACBINARY,	"d:4f7fa11c5175980ed593392838523060", 8862102},
+				{"ite scripts",		GAME_SCRIPTFILE | GAME_MACBINARY,	"d:adf1f46c1d0589083996a7060c798ad0", 336006},
+				{"ite sounds",		GAME_SOUNDFILE | GAME_MACBINARY,	"d:8ee4d9ee27688785608d09faaa4a974c", 3680672},
+				{"ite music",		GAME_MUSICFILE_GM | GAME_MACBINARY,	"r:b0d66d7ae48f35c5c9a3444343b86f85", 3135053},
 				// {"ite voices",		GAME_VOICEFILE | GAME_MACBINARY,	"ee65f8e713127cf7f2d56371d2b8e63d", 2264},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_CD | ADGF_MACRESFORK,
+			ADGF_CD,
 			GUIO0()
 		},
 		GID_ITE,
