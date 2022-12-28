@@ -49,7 +49,7 @@ cLowLevelInputSDL::~cLowLevelInputSDL() {
 //-----------------------------------------------------------------------
 
 void cLowLevelInputSDL::LockInput(bool abX) {
-	//g_system->lockMouse(abX);
+	g_system->lockMouse(abX);
 }
 
 //-----------------------------------------------------------------------
