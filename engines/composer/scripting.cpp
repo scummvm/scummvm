@@ -24,6 +24,7 @@
 #include "composer/composer.h"
 #include "composer/graphics.h"
 #include "composer/resource.h"
+#include "common/macresman.h"
 
 namespace Composer {
 
@@ -616,8 +617,9 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 			if (!_bookIni.hasKey(Common::String::format("%d", param1), "Data"))
 				return 0;
 			filename = getFilename("Data", param1);
-			Common::File *file = new Common::File();
-			if (!file->open(filename))
+			Common::SeekableReadStream *file =
+				Common::MacResManager::openFileOrDataFork(filename);
+			if (!file)
 				error("couldn't open '%s' to get vars id '%d'", filename.c_str(), param1);
 			stream = file;
 		}
