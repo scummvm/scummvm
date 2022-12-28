@@ -32,11 +32,6 @@
 namespace Ultima {
 namespace Shared {
 
-enum UltimaDebugChannels {
-	kDebugPath = 1 << 0,
-	kDebugGraphics = 1 << 1
-};
-
 class UltimaEngine : public Engine, public EventsCallback {
 private:
 	Common::RandomSource _randomSource;

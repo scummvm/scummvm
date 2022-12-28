@@ -19,8 +19,8 @@
  *
  */
 
+#include "ultima/ultima.h"
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
-
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/misc/direction_util.h"
@@ -68,7 +68,7 @@ PathfinderProcess::PathfinderProcess(Actor *actor, ObjId itemid, bool hit) :
 
 	if (!ok) {
 		// can't get there...
-		debugC(Shared::kDebugPath, "PathfinderProcess: actor %d failed to find path", _itemNum);
+		debugC(kDebugPath, "PathfinderProcess: actor %d failed to find path", _itemNum);
 		_result = PATH_FAILED;
 		terminateDeferred();
 		return;
@@ -92,7 +92,7 @@ PathfinderProcess::PathfinderProcess(Actor *actor, int32 x, int32 y, int32 z) :
 
 	if (!ok) {
 		// can't get there...
-		debugC(Shared::kDebugPath, "PathfinderProcess: actor %d failed to find path", _itemNum);
+		debugC(kDebugPath, "PathfinderProcess: actor %d failed to find path", _itemNum);
 		_result = PATH_FAILED;
 		terminateDeferred();
 		return;
@@ -145,21 +145,21 @@ void PathfinderProcess::run() {
 
 	if (ok && _currentStep >= _path.size()) {
 		// done
-		debugC(Shared::kDebugPath, "PathfinderProcess: done");
+		debugC(kDebugPath, "PathfinderProcess: done");
 		_result = PATH_OK;
 		terminate();
 		return;
 	}
 
 	// try to take the next step
-	debugC(Shared::kDebugPath, "PathfinderProcess: trying step");
+	debugC(kDebugPath, "PathfinderProcess: trying step");
 
 	// if actor is still animating for whatever reason, wait until he stopped
 	// FIXME: this should happen before the pathfinder is actually called,
 	// since the running animation may move the actor, which could break
 	// the found _path.
 	if (actor->hasActorFlags(Actor::ACT_ANIMLOCK)) {
-		debugC(Shared::kDebugPath, "PathfinderProcess: ANIMLOCK, waiting");
+		debugC(kDebugPath, "PathfinderProcess: ANIMLOCK, waiting");
 		return;
 	}
 
@@ -170,7 +170,7 @@ void PathfinderProcess::run() {
 	}
 
 	if (!ok) {
-		debugC(Shared::kDebugPath, "PathfinderProcess: recalculating _path");
+		debugC(kDebugPath, "PathfinderProcess: recalculating _path");
 
 		// need to redetermine _path
 		ok = true;
@@ -197,7 +197,7 @@ void PathfinderProcess::run() {
 		_currentStep = 0;
 		if (!ok) {
 			// can't get there anymore
-			debugC(Shared::kDebugPath, "PathfinderProcess: actor %d failed to find path", _itemNum);
+			debugC(kDebugPath, "PathfinderProcess: actor %d failed to find path", _itemNum);
 			_result = PATH_FAILED;
 			terminate();
 			return;
@@ -205,7 +205,7 @@ void PathfinderProcess::run() {
 	}
 
 	if (_currentStep >= _path.size()) {
-		debugC(Shared::kDebugPath, "PathfinderProcess: done");
+		debugC(kDebugPath, "PathfinderProcess: done");
 		// done
 		_result = PATH_OK;
 		terminate();
@@ -216,7 +216,7 @@ void PathfinderProcess::run() {
 	                               _path[_currentStep]._direction,
 	                               _path[_currentStep]._steps);
 
-	debugC(Shared::kDebugPath, "PathfinderProcess(%u): taking step %d, %d (animpid=%u)",
+	debugC(kDebugPath, "PathfinderProcess(%u): taking step %d, %d (animpid=%u)",
 		getPid(), _path[_currentStep]._action, _path[_currentStep]._direction, animpid);
 
 	_currentStep++;

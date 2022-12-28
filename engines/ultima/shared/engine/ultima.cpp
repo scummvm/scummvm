@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/ultima.h"
 #include "ultima/shared/engine/ultima.h"
 #include "ultima/shared/engine/data_archive.h"
 #include "ultima/shared/engine/events.h"
