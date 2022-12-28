@@ -865,14 +865,15 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 	return 0;
 }
 
-void EfhEngine::equipCursedItem(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine) {
-	debug("equipCursedItem %d %d %d %d %d", charId, objectId, windowId, menuId, curMenuLine);
+void EfhEngine::unequipItem(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine) {
+	debugC(6,kDebugEngine, "unequipItem %d %d %d %d %d", charId, objectId, windowId, menuId, curMenuLine);
 
 	int16 itemId = _npcBuf[charId]._inventory[objectId]._ref;
 
 	if (isItemCursed(itemId)) {
 		_npcBuf[charId]._inventory[objectId]._stat1 &= 0x7F;
 	} else {
+		// Original message. "Cursed item can't be unequipped" would make more sense, imho
 		displayString_3("Cursed Item Already Equipped!", true, charId, windowId, menuId, curMenuLine);
 	}
 }
@@ -883,16 +884,17 @@ void EfhEngine::sub191FF(int16 charId, int16 objectId, int16 windowId, int16 men
 	int16 itemId = _npcBuf[charId]._inventory[objectId]._ref;
 
 	if (hasObjectEquipped(charId, objectId)) {
-		equipCursedItem(charId, objectId, windowId, menuId, curMenuLine);
+		unequipItem(charId, objectId, windowId, menuId, curMenuLine);
 	} else {
 		int16 var2 = _items[itemId].field_18;
 		if (var2 != 4) {
 			for (uint counter = 0; counter < 10; ++counter) {
 				if (var2 == _items[_npcBuf[charId]._inventory[counter]._ref].field_18)
-					equipCursedItem(charId, objectId, windowId, menuId, curMenuLine);
+					unequipItem(charId, objectId, windowId, menuId, curMenuLine);
 			}
 		}
 
+		// Set item as Equipped
 		_npcBuf[charId]._inventory[objectId]._stat1 |= 0x80;
 	}
 }
@@ -906,7 +908,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 	bool retVal = false;
 
 	int16 itemId = _npcBuf[charId]._inventory[objectId]._ref;
-	switch (_items[itemId].field_16 - 1) {
+	switch (_items[itemId]._specialEffect - 1) {
 	case 0: // "Demonic Powers", "MindDomination", "Guilt Trip", "Sleep Grenade", "SleepGrenader"
 		if (argA == 2) {
 			displayString_3("The item emits a low droning hum...", false, charId, windowId, menuId, curMenuLine);
@@ -917,8 +919,8 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				for (uint counter = 0; counter < 9; ++counter) {
 					if (isMonsterActive(windowId, counter)) {
 						++victims;
-						_stru32686[windowId]._field0[counter] = 1;
-						_stru32686[windowId]._field2[counter] = getRandom(8);
+						_teamMonsterEffects[windowId]._effect[counter] = 1;
+						_teamMonsterEffects[windowId]._duration[counter] = getRandom(8);
 					}
 				}
 			} else {
@@ -930,8 +932,8 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 					if (isMonsterActive(windowId, counter)) {
 						++victims;
 						--NumberOfTargets;
-						_stru32686[windowId]._field0[counter] = 1;
-						_stru32686[windowId]._field2[counter] = getRandom(8);
+						_teamMonsterEffects[windowId]._effect[counter] = 1;
+						_teamMonsterEffects[windowId]._duration[counter] = getRandom(8);
 					}
 				}
 			}
@@ -956,8 +958,8 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 				for (uint varA8 = 0; varA8 < 9; ++varA8) {
 					if (isMonsterActive(windowId, varA8)) {
 						++victim;
-						_stru32686[windowId]._field0[varA8] = 2;
-						_stru32686[windowId]._field2[varA8] = getRandom(8);
+						_teamMonsterEffects[windowId]._effect[varA8] = 2;
+						_teamMonsterEffects[windowId]._duration[varA8] = getRandom(8);
 					}
 				}
 			} else {
@@ -969,8 +971,8 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 me
 					if (isMonsterActive(windowId, varA8)) {
 						++victim;
 						--varAC;
-						_stru32686[windowId]._field0[varA8] = 2;
-						_stru32686[windowId]._field2[varA8] = getRandom(8);
+						_teamMonsterEffects[windowId]._effect[varA8] = 2;
+						_teamMonsterEffects[windowId]._duration[varA8] = getRandom(8);
 					}
 				}
 			}

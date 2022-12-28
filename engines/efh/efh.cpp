@@ -2299,15 +2299,15 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 
 		for (uint counter2 = 0; counter2 < 9; ++counter2) {
 			_mapMonsters[_teamMonsterIdArray[counter1]]._pictureRef[counter2] = 0;
-			_stru32686[counter1]._field0[counter2] = 0;
-			_stru32686[counter1]._field2[counter2] = 0;
+			_teamMonsterEffects[counter1]._effect[counter2] = 0;
+			_teamMonsterEffects[counter1]._duration[counter2] = 0;
 		}
 
 		_teamMonsterIdArray[counter1] = -1;
 		for (uint counter2 = counter1 + 1; counter2 < 5; ++counter2) {
 			for (uint var8 = 0; var8 < 9; ++var8) {
-				_stru32686[counter1]._field0[var8] = _stru32686[counter2]._field0[var8];
-				_stru32686[counter1]._field2[var8] = _stru32686[counter2]._field2[var8];
+				_teamMonsterEffects[counter1]._effect[var8] = _teamMonsterEffects[counter2]._effect[var8];
+				_teamMonsterEffects[counter1]._duration[var8] = _teamMonsterEffects[counter2]._duration[var8];
 			}
 			_teamMonsterIdArray[counter1] = _teamMonsterIdArray[counter2];
 		}
@@ -2356,11 +2356,11 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 
 						// The original at this point was doing a loop on counter1, which is not a good idea as
 						// it was resetting the counter1 to 9 whatever its value before the loop.
-						// Furthermore, it was accessing _stru32686[counter1]._field0[counter1] which doesn't make
+						// Furthermore, it was accessing _teamMonsterEffects[counter1]._effect[counter1] which doesn't make
 						// sense...
 						// I therefore decided to use another counter as it looks like an original misbehavior/bug.
 						for (uint counter2 = 0; counter2 < 9; ++counter2) {
-							_stru32686[counter1]._field0[counter2] = 0;
+							_teamMonsterEffects[counter1]._effect[counter2] = 0;
 						}
 
 						if (++var4 >= 5)
@@ -2379,7 +2379,7 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 	for (int16 counter1 = var4; counter1 < 5; ++counter1) {
 		_teamMonsterIdArray[counter1] = -1;
 		for (uint counter2 = 0; counter2 < 9; ++counter2) {
-			_stru32686[counter1]._field0[counter2] = (int16)0x8000;
+			_teamMonsterEffects[counter1]._effect[counter2] = (int16)0x8000;
 		}
 	}
 	// sub1BE9A - last loop counter1_monsterId - End
@@ -2490,7 +2490,7 @@ int16 EfhEngine::getXPLevel(int32 xp) {
 bool EfhEngine::isItemCursed(int16 itemId) {
 	debugC(6, kDebugEngine, "isItemCursed %d", itemId);
 
-	if (_items[itemId].field_16 == 21 || _items[itemId].field_16 == 22 || _items[itemId].field_16 == 23)
+	if (_items[itemId]._specialEffect == 21 || _items[itemId]._specialEffect == 22 || _items[itemId]._specialEffect == 23)
 		return true;
 
 	return false;
@@ -2523,7 +2523,7 @@ void EfhEngine::setMapMonsterField8(int16 id, uint8 movementType, bool groupFl) 
 bool EfhEngine::isMonsterActive(int16 groupId, int16 id) {
 	debugC(5, kDebugEngine, "isMonsterActive %d %d", groupId, id);
 
-	if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[id] > 0 && _stru32686[groupId]._field0[id] == 0)
+	if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[id] > 0 && _teamMonsterEffects[groupId]._effect[id] == 0)
 		return true;
 	return false;
 }

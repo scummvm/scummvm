@@ -74,7 +74,7 @@ void ItemStruct::init() {
 	field_13 = 0;
 	_range = 0;
 	_attackType = 0;
-	field_16 = 0;
+	_specialEffect = 0;
 	field17_attackTypeDefense = 0;
 	field_18 = 0;
 	field_19 = 0;
@@ -138,8 +138,8 @@ void NPCStruct::init() {
 
 void Stru32686::init() {
 	for (int i = 0; i < 9; ++i) {
-		_field0[i] = 0;
-		_field2[i] = 0;
+		_effect[i] = 0;
+		_duration[i] = 0;
 	}
 }
 
@@ -252,7 +252,7 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 
 	for (int i = 0; i < 5; ++i) {
 		_teamMonsterIdArray[i] = -1;
-		_stru32686[i].init();
+		_teamMonsterEffects[i].init();
 	}
 
 	_teamSize = 1;
