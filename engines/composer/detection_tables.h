@@ -245,6 +245,24 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
+	// Magic Tales: Imo and the King Mac Demo from Baba Yaga CD
+	{
+		{
+			"imoking",
+			"Magic Tales: Imo and the King Demo",
+			{
+				{"book.mac", GAME_CONFIGFILE, "d:b3456692eab14e9bdac64db6dad27be9", 136},
+				{"imo and the king", GAME_EXECUTABLE, "d:764e0feea86cc201471f2b443161023b", 44321},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+		},
+		GType_ComposerV1
+	},
+
 	// Magic Tales: Imo and the King German - from bug #10199
 	{
 		{
