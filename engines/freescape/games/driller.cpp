@@ -596,9 +596,9 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 
 	int score = _gameStateVars[k8bitVariableScore];
 	drawStringInSurface(_currentArea->_name, 196, 185, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 150, 145, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 150, 153, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 150, 161, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 150, 145, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 150, 153, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 150, 161, front, back, surface);
 	if (_playerHeightNumber >= 0)
 		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 57, 161, front, back, surface);
 	else
@@ -671,9 +671,9 @@ void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 
 	int score = _gameStateVars[k8bitVariableScore];
 	drawStringInSurface(_currentArea->_name, 176, 188, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 152, 149, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 152, 157, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 152, 165, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 152, 149, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 152, 157, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 152, 165, front, back, surface);
 	if (_playerHeightNumber >= 0)
 		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 74, 165, front, back, surface);
 	else

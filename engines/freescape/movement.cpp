@@ -36,6 +36,15 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 
 	Math::Vector3d rotation = entrance->getRotation();
 	_position = entrance->getOrigin();
+
+	if (scale == 1) {
+		_position.x() = _position.x() + 16;
+		_position.z() = _position.z() + 16;
+	} else if (scale == 5) {
+		_position.x() = _position.x() + 4;
+		_position.z() = _position.z() + 4;
+	}
+
 	_pitch = rotation.x();
 	if (ABS(_objExecutingCodeSize.x()) <= ABS(_objExecutingCodeSize.z()))
 		_yaw = rotation.y() - 90;
@@ -172,8 +181,11 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	debugC(1, kFreescapeDebugMove, "old player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	int previousAreaID = _currentArea->getAreaID();
 
-	Math::Vector3d stepFront = _cameraFront * (_playerSteps[_playerStepIndex] * 0.5 / _cameraFront.length());
-	Math::Vector3d stepRight = _cameraRight * (_playerSteps[_playerStepIndex] * 0.5 / _cameraRight.length());
+	Math::Vector3d stepFront = _cameraFront * (float(_playerSteps[_playerStepIndex]) / 2 / _cameraFront.length());
+	Math::Vector3d stepRight = _cameraRight * (float(_playerSteps[_playerStepIndex]) / 2 / _cameraRight.length());
+
+	stepFront.x() = floor(stepFront.x()) + 0.5;
+	stepFront.z() = floor(stepFront.z()) + 0.5;
 
 	float positionY = _position.y();
 	switch (direction) {
