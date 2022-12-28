@@ -55,6 +55,7 @@ static const struct CGAPalettteEntry {
 
 	{16, kDrillerCGAPalettePinkBlue},
 
+	{19, kDrillerCGAPaletteRedGreen},
 	{20, kDrillerCGAPalettePinkBlue},
 	{21, kDrillerCGAPaletteRedGreen},
 	{22, kDrillerCGAPalettePinkBlue},
