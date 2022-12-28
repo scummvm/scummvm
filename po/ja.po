@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-28 11:56+0000\n"
+"POT-Creation-Date: 2022-12-28 12:02+0000\n"
 "PO-Revision-Date: 2022-12-26 07:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -6496,12 +6496,6 @@ msgstr "おしゃべりAIの切り替え"
 msgid "This menu item is not yet implemented"
 msgstr "このメニューは未実装です"
 
-#: engines/private/detection.cpp:193 engines/private/detection.cpp:212
-msgid ""
-"Compressed game detected. Please uncompress it as specified in the game "
-"description on our Wiki"
-msgstr "圧縮されたゲームが検出されました。Wikiの説明に従って解凍して下さい"
-
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
 msgstr "代替のイントロ"
@@ -9115,6 +9109,11 @@ msgstr ""
 "Arialが必要です。LiberationFontsを使用する場合、LiberationMono、"
 "LiberationSans、LiberationSerifが必要です。GNUFreeFontを使用する場合、"
 "FreeMono、FreeSans、FreeSerifが必要です。"
+
+#~ msgid ""
+#~ "Compressed game detected. Please uncompress it as specified in the game "
+#~ "description on our Wiki"
+#~ msgstr "圧縮されたゲームが検出されました。Wikiの説明に従って解凍して下さい"
 
 #~ msgid "Group by: "
 #~ msgstr "グループ化: "
