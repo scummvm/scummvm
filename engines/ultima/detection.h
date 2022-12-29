@@ -83,6 +83,8 @@ struct UltimaGameDescription {
 } // End of namespace Ultima
 
 class UltimaMetaEngineDetection : public AdvancedMetaEngineDetection {
+	static const DebugChannelDef debugFlagList[];
+
 public:
 	UltimaMetaEngineDetection();
 	~UltimaMetaEngineDetection() override {}
@@ -97,6 +99,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Ultima Games (C) 1980-1995 Origin Systems Inc.";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 

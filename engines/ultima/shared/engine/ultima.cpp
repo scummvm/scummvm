@@ -48,10 +48,6 @@ bool UltimaEngine::initialize() {
 	Common::String folder;
 	int reqMajorVersion, reqMinorVersion;
 
-	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
-	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
-	DebugMan.addDebugChannel(kDebugVideo, "Video", "Debug video and audio playback");
-
 	// Call syncSoundSettings to get default volumes set
 	syncSoundSettings();
 
