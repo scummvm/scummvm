@@ -166,6 +166,7 @@ static eAGSMouseButton mgetbutton() {
 	if ((butis > 0) & (_G(butwas) > 0))
 		return kMouseNone;  // don't allow holding button down
 
+	_G(butwas) = butis;
 	if (butis & MouseBitLeft)
 		return kMouseLeft;
 	else if (butis & MouseBitRight)
