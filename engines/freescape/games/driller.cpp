@@ -107,6 +107,8 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 		_viewArea = Common::Rect(36, 16, 284, 118);
 	else if (isSpectrum())
 		_viewArea = Common::Rect(58, 20, 266, 124);
+	else if (isCPC())
+		_viewArea = Common::Rect(36, 19, 284, 120);
 
 	_playerHeightNumber = 1;
 	_playerHeights.push_back(16);
@@ -501,6 +503,7 @@ void DrillerEngine::loadAssetsFullGame() {
 		else
 			error("Unknown ZX spectrum variant");
 	} else if (isCPC()) {
+		loadBundledImages();
 		Common::SeekableReadStream *stream = parseEDSK("driller.cpc.edsk");
 		//loadMessagesFixedSize(&file, 0x20e4, 14, 20);
 
