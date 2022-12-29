@@ -2296,6 +2296,7 @@ void SceneViewWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 			// Return to main menu
 			if (_vm->runQuitDialog())
 				((FrameWindow *)_vm->_mainWindow)->showMainMenu();
+			((FrameWindow *)_vm->_mainWindow)->_controlDown = false;
 			return;
 		}
 		break;
@@ -2304,6 +2305,7 @@ void SceneViewWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 			// Current points (ScummVM enhancement - Agent evaluation
 			// from death screens)
 			_vm->showPoints();
+			((FrameWindow *)_vm->_mainWindow)->_controlDown = false;
 			return;
 		}
 		break;
