@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-29 10:20+0000\n"
+"POT-Creation-Date: 2022-12-29 13:53+0000\n"
 "PO-Revision-Date: 2022-12-25 23:25+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -2379,12 +2379,12 @@ msgstr "PC-9801 (16 Väriä)"
 msgid "Macintosh b/w"
 msgstr "Macintosh mustavalkoinen"
 
-#: common/rendermode.cpp:81
+#: common/rendermode.cpp:82
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "Hercules vihreä"
 
-#: common/rendermode.cpp:82
+#: common/rendermode.cpp:83
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "Hercules keltainen"
