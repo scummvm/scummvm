@@ -504,6 +504,10 @@ void BuriedEngine::pollForEvents() {
 			window->postMessage(new RButtonUpMessage(window->convertPointToLocal(event.mouse), 0));
 			break;
 		}
+		case Common::EVENT_MAINMENU: {
+			((FrameWindow *)_mainWindow)->_controlDown = false;
+			break;
+		}
 		default:
 			break;
 		}

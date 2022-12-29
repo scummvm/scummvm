@@ -311,6 +311,7 @@ void GameUIWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 	case Common::KEYCODE_s:
 		if ((key.flags & Common::KBD_CTRL) && cloakingDisabled && !interfaceMenuActive) {
 			_vm->handleSaveDialog();
+			((FrameWindow *)_vm->_mainWindow)->_controlDown = false;
 		} else if (_sceneViewWindow)
 			_sceneViewWindow->sendMessage(new KeyUpMessage(key, flags));
 		break;
@@ -318,13 +319,15 @@ void GameUIWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 	case Common::KEYCODE_l:
 		if ((key.flags & Common::KBD_CTRL) && cloakingDisabled && !interfaceMenuActive) {
 			_vm->handleRestoreDialog();
+			((FrameWindow *)_vm->_mainWindow)->_controlDown = false;
 		} else if (_sceneViewWindow)
 			_sceneViewWindow->sendMessage(new KeyUpMessage(key, flags));
 		break;
 	case Common::KEYCODE_p:
-		if ((key.flags & Common::KBD_CTRL) && cloakingDisabled && !interfaceMenuActive)
+		if ((key.flags & Common::KBD_CTRL) && cloakingDisabled && !interfaceMenuActive) {
 			_vm->pauseGame();
-		else if (_sceneViewWindow)
+			((FrameWindow *)_vm->_mainWindow)->_controlDown = false;
+		} else if (_sceneViewWindow)
 			_sceneViewWindow->sendMessage(new KeyUpMessage(key, flags));
 		break;
 	default:
