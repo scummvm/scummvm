@@ -63,7 +63,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"driller",
 		"",
 		{
-			{"DRILLER.CPC.EXTRACTED", 0, "4e4b2fa20f96cea9c19ea3940ae76956", 204032},
+			{"DRILLER.CPC.EDSK", 0, "05df84207b5373e145ef90a3e4b98ae0", 215073},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
