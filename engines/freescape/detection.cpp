@@ -68,7 +68,19 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmstradCPC,
-		ADGF_TESTING,
+		ADGF_CPC_RETAIL | ADGF_TESTING,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"driller",
+		"",
+		{
+			{"DRILLER.CPC.EDSK", 0, "252f90756eaee25f2231e8d3bfaab68f", 125952},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmstradCPC,
+		ADGF_CPC_ZAFIRO | ADGF_TESTING,
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{

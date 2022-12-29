@@ -368,31 +368,31 @@ Common::SeekableReadStream *parseEDSK(const Common::String filename) {
 	// We don't know the final size, but we allocate enough
 	byte *memBuffer = (byte *)malloc(size); 
 
-	byte ntracks = edskBuffer[48] - 2;
 	byte nsides = edskBuffer[49];
 	assert(nsides == 1);
+	int ntracks = 0;
 	int i = 256;
 	int j = 0;
-	while (ntracks > 0) {
-		ntracks--;
-
+	while (i + 1 < size) {
 		byte ssize = edskBuffer[i + 0x14];
 		int start = i + 0x100;
-
+		debugC(1, kFreescapeDebugParser, "sector size: %d", ssize);
 		if (ssize == 2) {
 			i = i + 9 * 512 + 256;
 		} else if (ssize == 5) {
 			i = i + 8 * 512 + 256;
 		} else if (ssize == 0) {
-			i = i + 0x8400;
+			i = size - 1;
+		} else if (ssize == 3) {
+			break; // Not sure
 		} else {
-			assert(ntracks == 0);
+			error("ssize: %d", ssize);
 		}
 		int osize = i - start;
-		debugC(1, kFreescapeDebugParser, "copying start: %x size: %x", start, osize);
+		debugC(1, kFreescapeDebugParser, "copying track %d start: %x size: %x", ntracks, start, osize);
 		memcpy(memBuffer + j, edskBuffer + start, osize);
 		j = j + osize;
-
+		ntracks++;
 	}
 	free(edskBuffer);
 	return (new Common::MemoryReadStream(memBuffer, size));
@@ -507,7 +507,13 @@ void DrillerEngine::loadAssetsFullGame() {
 		//loadFonts(&file, 0x62ca);
 		//loadGlobalObjects(&file, 0x1c93);
 
-		load8bitBinary(stream, 0xec76, 4);
+		if (_variant & ADGF_CPC_RETAIL)
+			load8bitBinary(stream, 0xec76, 4);
+		else if (_variant & ADGF_CPC_ZAFIRO)
+			load8bitBinary(stream, 0xda76, 4);
+		else
+			error("Unknown Amstrad CPC variant");
+
 	} else if (_renderMode == Common::kRenderEGA) {
 		loadBundledImages();
 		file.open("DRILLE.EXE");
