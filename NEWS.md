@@ -90,7 +90,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved support for Hebrew HE game localizations.
    - Fixed Roland MT-32 support in Sam & Max.
    - Implemented original GUI and save menus for LucasArts games (DOS, Windows,
-     Amiga, Macintosh, FM-Towns, SegaCD, NES and Commodore 64 versions).
+     Amiga, Macintosh, FM-Towns, SegaCD, Atari ST, NES and Commodore 64 versions).
 
  Sherlock:
    - Added support for Chinese Rose Tattoo.
