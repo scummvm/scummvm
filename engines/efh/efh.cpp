@@ -920,7 +920,7 @@ void EfhEngine::handleWinSequence() {
 }
 
 bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int16 altCharId) {
-	debug("giveItemTo %d %d %d", charId, objectId, altCharId);
+	debugC(3, kDebugEngine, "giveItemTo %d %d %d", charId, objectId, altCharId);
 
 	for (uint newObjectId = 0; newObjectId < 10; ++newObjectId) {
 		if (_npcBuf[charId]._inventory[newObjectId]._ref != 0x7FFF)
@@ -933,7 +933,7 @@ bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int16 altCharId) {
 		} else {
 			_npcBuf[charId]._inventory[newObjectId]._ref = _npcBuf[altCharId]._inventory[newObjectId]._ref;
 			_npcBuf[charId]._inventory[newObjectId]._stat2 = _npcBuf[altCharId]._inventory[newObjectId]._stat2;
-			_npcBuf[charId]._inventory[newObjectId]._stat1 = _npcBuf[altCharId]._inventory[newObjectId]._stat1 & 0x7F;
+			_npcBuf[charId]._inventory[newObjectId]._stat1 = _npcBuf[altCharId]._inventory[newObjectId]._stat1 & 0x7F; // not equipped as the upper bit isn't set (0x80)
 		}
 
 		return true;

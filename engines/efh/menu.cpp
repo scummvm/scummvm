@@ -734,40 +734,41 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				sub18E80(charId, windowId, menuId, curMenuLine);
 
 				if (validationFl) {
-					bool var6;
-					int16 var8;
+					bool givenFl;
+					int16 destCharId;
 					do {
 						if (_teamCharId[2] != -1) {
-							var8 = displayString_3("Who will you give the item to?", false, charId, windowId, menuId, curMenuLine);
+							displayString_3("Who will you give the item to?", false, charId, windowId, menuId, curMenuLine);
+							destCharId = selectOtherCharFromTeam();
 							var2 = false;
 						} else if (_teamCharId[1]) {
-							var8 = 0x1A;
+							destCharId = 0x1A;
 							var2 = false;
 						} else {
 							var2 = true;
 							if (_teamCharId[0] == charId)
-								var8 = 1;
+								destCharId = 1;
 							else
-								var8 = 0;
+								destCharId = 0;
 						}
 
-						if (var8 != 0x1A && var8 != 0x1B) {
-							var6 = giveItemTo(_teamCharId[var8], objectId, charId);
-							if (!var6) {
+						if (destCharId != 0x1A && destCharId != 0x1B) {
+							givenFl = giveItemTo(_teamCharId[destCharId], objectId, charId);
+							if (!givenFl) {
 								displayString_3("That character cannot carry anymore!", false, charId, windowId, menuId, curMenuLine);
 								getLastCharAfterAnimCount(_guessAnimationAmount);
 							}
 						} else {
-							if (var8 == 0x1A) {
+							if (destCharId == 0x1A) {
 								displayString_3("No one to trade with!", false, charId, windowId, menuId, curMenuLine);
 								getLastCharAfterAnimCount(_guessAnimationAmount);
-								var8 = 0x1B;
+								destCharId = 0x1B;
 							}
-							var6 = false;
+							givenFl = false;
 						}
-					} while (!var6 && !var2 && var8 != 0x1B);
+					} while (!givenFl && !var2 && destCharId != 0x1B);
 
-					if (var6) {
+					if (givenFl) {
 						removeObject(charId, objectId);
 						if (gameMode == 2) {
 							restoreAnimImageSetId();
