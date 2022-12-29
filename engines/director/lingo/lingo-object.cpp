@@ -402,6 +402,10 @@ bool ScriptContext::setProp(const Common::String &propName, const Datum &value) 
 			debugC(3, kDebugLingoExec, "Getting prop '%s' from ancestor: <%s>", propName.c_str(), _properties["ancestor"].asString(true).c_str());
 			return _properties["ancestor"].u.obj->setProp(propName, value);
 		}
+	} else if (_objType == kFactoryObj) {
+		// D3 style anonymous objects/factories, set whatever properties you like 
+		_properties[propName] = value;
+		return true;
 	}
 	return false;
 }
