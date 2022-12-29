@@ -464,7 +464,7 @@ private:
 	int16 handleStatusMenu(int16 gameMode, int16 charId);
 	void unequipItem(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
 	void sub191FF(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
-	int16 sub19E2E(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine, int16 argA);
+	int16 sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int16 menuId, int16 curMenuLine, int16 argA);
 
 	// Savegames
 	void synchronize(Common::Serializer &s);
