@@ -2290,8 +2290,6 @@ void EfhEngine::sub1CAB6(int16 charId) {
 void EfhEngine::sub1BE9A(int16 monsterId) {
 	debug("sub1BE9A %d", monsterId);
 
-	int16 var4 = 1;
-
 	// sub1BE9A - 1rst loop counter1_monsterId - Start
 	for (uint counter1 = 0; counter1 < 5; ++counter1) {
 		if (countMonsterGroupMembers(counter1))
@@ -2304,6 +2302,9 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 		}
 
 		_teamMonsterIdArray[counter1] = -1;
+
+		// CHECKME: counter1 is not incrementing, which is very, very suspicious as we are copying over and over to the same destination
+		// if the purpose is compact the array, it should be handle differently
 		for (uint counter2 = counter1 + 1; counter2 < 5; ++counter2) {
 			for (uint var8 = 0; var8 < 9; ++var8) {
 				_teamMonsterEffects[counter1]._effect[var8] = _teamMonsterEffects[counter2]._effect[var8];
@@ -2315,55 +2316,53 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 	}
 	// sub1BE9A - 1rst loop counter1_monsterId - End
 
-	var4 = -1;
+	int16 teamMonsterId = -1;
 	for (uint counter1 = 0; counter1 < 5; ++counter1) {
 		if (_teamMonsterIdArray[counter1] == -1) {
-			var4 = counter1;
+			teamMonsterId = counter1;
 			break;
 		}
 	}
 
-	if (var4 != -1) {
+	if (teamMonsterId != -1) {
 		// sub1BE9A - loop var2 - Start
 		for (int var2 = 1; var2 < 3; ++var2) {
-			if (var4 >= 5)
+			if (teamMonsterId >= 5)
 				break;
 
-			for (uint counter1 = 0; counter1 < 64; ++counter1) {
-				if (_mapMonsters[counter1]._guess_fullPlaceId == 0xFF)
+			for (uint ctrMapMonsterId = 0; ctrMapMonsterId < 64; ++ctrMapMonsterId) {
+				if (_mapMonsters[ctrMapMonsterId]._guess_fullPlaceId == 0xFF)
 					continue;
 
-				if (((_mapMonsters[counter1]._possessivePronounSHL6 & 0x3F) == 0x3F && !isCharacterATeamMember(_mapMonsters[counter1]._npcId)) || (_mapMonsters[counter1]._possessivePronounSHL6 & 0x3F) <= 0x3D) {
-					if (checkIfMonsterOnSameLargeMapPlace(counter1)) {
-						bool var6 = false;
-						for (uint counter2 = 0; counter2 < 9; ++counter2) {
-							if (_mapMonsters[counter1]._pictureRef[counter2] > 0) {
-								var6 = true;
+				if (((_mapMonsters[ctrMapMonsterId]._possessivePronounSHL6 & 0x3F) == 0x3F && !isCharacterATeamMember(_mapMonsters[ctrMapMonsterId]._npcId)) || (_mapMonsters[ctrMapMonsterId]._possessivePronounSHL6 & 0x3F) <= 0x3D) {
+					if (checkIfMonsterOnSameLargeMapPlace(ctrMapMonsterId)) {
+						bool monsterActiveFound = false;
+						for (uint ctrSubId = 0; ctrSubId < 9; ++ctrSubId) {
+							if (_mapMonsters[ctrMapMonsterId]._pictureRef[ctrSubId] > 0) {
+								monsterActiveFound = true;
 								break;
 							}
 						}
 
-						if (!var6)
+						if (!monsterActiveFound)
 							continue;
 
-						if (computeMonsterGroupDistance(counter1) > var2)
+						if (computeMonsterGroupDistance(ctrMapMonsterId) > var2)
 							continue;
 
-						if (sub1BC74(counter1, var4))
+						if (sub1BC74(ctrMapMonsterId, teamMonsterId))
 							continue;
 
-						_teamMonsterIdArray[var4] = counter1;
+						_teamMonsterIdArray[teamMonsterId] = ctrMapMonsterId;
 
 						// The original at this point was doing a loop on counter1, which is not a good idea as
 						// it was resetting the counter1 to 9 whatever its value before the loop.
-						// Furthermore, it was accessing _teamMonsterEffects[counter1]._effect[counter1] which doesn't make
-						// sense...
 						// I therefore decided to use another counter as it looks like an original misbehavior/bug.
-						for (uint counter2 = 0; counter2 < 9; ++counter2) {
-							_teamMonsterEffects[counter1]._effect[counter2] = 0;
+						for (uint ctrEffectId = 0; ctrEffectId < 9; ++ctrEffectId) {
+							_teamMonsterEffects[teamMonsterId]._effect[ctrEffectId] = 0;
 						}
 
-						if (++var4 >= 5)
+						if (++teamMonsterId >= 5)
 							break;
 					}
 				}
@@ -2372,14 +2371,14 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 		// sub1BE9A - loop var2 - End
 	}
 
-	if (var4 == -1 || var4 > 4)
+	if (teamMonsterId == -1 || teamMonsterId > 4)
 		return;
 
 	// sub1BE9A - last loop counter1_monsterId - Start
-	for (int16 counter1 = var4; counter1 < 5; ++counter1) {
-		_teamMonsterIdArray[counter1] = -1;
-		for (uint counter2 = 0; counter2 < 9; ++counter2) {
-			_teamMonsterEffects[counter1]._effect[counter2] = (int16)0x8000;
+	for (int16 ctrTeamMonsterId = teamMonsterId; ctrTeamMonsterId < 5; ++ctrTeamMonsterId) {
+		_teamMonsterIdArray[ctrTeamMonsterId] = -1;
+		for (uint ctrEffectId = 0; ctrEffectId < 9; ++ctrEffectId) {
+			_teamMonsterEffects[ctrTeamMonsterId]._effect[ctrEffectId] = (int16)0x8000;
 		}
 	}
 	// sub1BE9A - last loop counter1_monsterId - End
