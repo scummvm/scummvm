@@ -253,7 +253,9 @@ void ScummEngine::parseEvent(Common::Event event) {
 		break;
 	case Common::EVENT_RETURN_TO_LAUNCHER:
 	case Common::EVENT_QUIT:
-		if (isUsingOriginalGUI() && _game.platform != Common::kPlatformSegaCD) {
+		if (isUsingOriginalGUI() &&
+			_game.platform != Common::kPlatformSegaCD &&
+			_game.platform != Common::kPlatformNES) {
 			if (!_quitByGUIPrompt && !_mainMenuIsActive) {
 				bool exitType = (event.type == Common::EVENT_RETURN_TO_LAUNCHER);
 				// If another message banner is currently on the screen, close it
@@ -804,10 +806,6 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 			if (_game.id == GID_MANIAC && _game.version == 0) {
 				runScript(2, 0, 0, nullptr);
 			}
-
-			if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformNES) {
-				runScript(163, 0, 0, nullptr);
-			}
 		}
 	}
 
@@ -886,6 +884,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 	bool snapScrollKeyEnabled = (_game.version >= 2 && _game.version <= 4);
 	bool optionKeysEnabled = !isUsingOriginalGUI();
 	bool isSegaCD = _game.platform == Common::kPlatformSegaCD;
+	bool isNES = _game.platform == Common::kPlatformNES;
 
 	// In FM-TOWNS games F8 / restart is always enabled
 	if (_game.platform == Common::kPlatformFMTowns)
@@ -921,6 +920,9 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 				_cursor.state = oldCursorState;
 				return;
 			}
+		} else if (lastKeyHit.keycode == Common::KEYCODE_SPACE && isNES) {
+			runScript(163, 0, 0, nullptr);
+			return;
 		} else if (_game.version <= 2 && lastKeyHit.keycode == Common::KEYCODE_SPACE) {
 			printMessageAndPause(getGUIString(gsPause), 0, -1, true);
 			return;
@@ -939,8 +941,8 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		restartKeyPressed |= _game.platform == Common::kPlatformFMTowns && _game.version == 3 &&
 			lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.hasFlags(0);
 
-		// ...but do not allow the restart banner to appear at all, if this is MI1 SegaCD.
-		restartKeyPressed &= _game.platform != Common::kPlatformSegaCD;
+		// ...but do not allow the restart banner to appear at all, if this is MI1 SegaCD or Maniac NES.
+		restartKeyPressed &= !isSegaCD && !isNES;
 
 		if (restartKeyPressed) {
 			queryRestart();
@@ -1086,6 +1088,9 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 				showMainMenu();
 			}
 			return;
+		} else if (lastKeyHit.keycode == Common::KEYCODE_F5 && isNES) {
+			// We map the GMM to F5, while SPACE (which acts as our pause button) calls the original menu...
+			openMainMenuDialog();
 		} else if (lastKeyHit.keycode == Common::KEYCODE_F5 && _game.version == 3 && _game.platform == Common::kPlatformMacintosh) {
 			// We don't have original menus for Mac versions of LOOM and INDY3, so let's just open the GMM...
 			openMainMenuDialog();
@@ -1122,7 +1127,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		// The following ones serve no purpose whatsoever, but just for the sake of completeness...
 		// Also, some of these were originally mapped with the CTRL flag, but they would clash with other
 		// internal ScummVM commands, so they are instead available with the SHIFT flag.
-		if (_game.version < 7 && !isSegaCD) {
+		if (_game.version < 7 && !isSegaCD && !isNES) {
 			if (_game.version == 6 && lastKeyHit.keycode == Common::KEYCODE_j && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 				showBannerAndPause(0, 90, getGUIString(gsRecalJoystick));
 				return;
