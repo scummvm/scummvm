@@ -121,6 +121,28 @@ bool Renderer::getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r
 	return true;
 }
 
+bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2) {
+	if (index == _keyColor)
+		return false;
+
+	assert (_renderMode == Common::kRenderCPC);
+	if (index == 4) { // Solid colors 
+		readFromPalette(index - 1, r1, g1, b1);
+		r2 = r1;
+		g2 = g1;
+		b2 = b1;
+		return true;
+	}
+
+	byte *entry = (*_colorMap)[index - 1];
+	byte be = *(entry);
+	readFromPalette((be >> 4), r1, g1, b1);
+	entry++;
+	be = *(entry);
+	readFromPalette((be >> 4), r2, g2, b2);
+	return true;
+}
+
 bool Renderer::getRGBAtEGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2) {
  	// assert(index-1 < _colorMap->size());
 	byte *entry = (*_colorMap)[index - 1];
@@ -175,6 +197,8 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2,
 		return getRGBAtEGA(index, r1, g1, b1, r2, g2, b2);
 	else if (_renderMode == Common::kRenderCGA)
 		return getRGBAtCGA(index, r1, g1, b1, r2, g2, b2);
+	else if (_renderMode == Common::kRenderCPC)
+		return getRGBAtCPC(index, r1, g1, b1, r2, g2, b2);
 	else if (_renderMode == Common::kRenderZX)
 		return getRGBAtZX(index, r1, g1, b1, r2, g2, b2, stipple);
 

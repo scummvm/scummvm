@@ -97,6 +97,7 @@ public:
 	bool isAtariST() { return _gameDescription->platform == Common::kPlatformAtariST; }
 	bool isDOS() { return _gameDescription->platform == Common::kPlatformDOS; }
 	bool isSpectrum() { return _gameDescription->platform == Common::kPlatformZX; }
+	bool isCPC() { return _gameDescription->platform == Common::kPlatformAmstradCPC; }
 
 	Common::Error run() override;
 

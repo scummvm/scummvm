@@ -63,6 +63,18 @@ static const ADGameDescription gameDescriptions[] = {
 		"driller",
 		"",
 		{
+			{"DRILLER.CPC.EXTRACTED", 0, "4e4b2fa20f96cea9c19ea3940ae76956", 204032},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmstradCPC,
+		ADGF_TESTING,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"driller",
+		"",
+		{
 			{"DRILLER.EXE", 0, "cafc0ea0d3424640a7723af87f8bfc0b", 17427},
 			{"DRILLE.EXE", 0, "eb7e9e0acb72e30cf6e9ed20a6480e7a", 51944},
 			AD_LISTEND

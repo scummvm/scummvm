@@ -452,7 +452,18 @@ void DrillerEngine::loadAssetsFullGame() {
 			load8bitBinary(&file, 0x5c0a, 4);
 		else
 			error("Unknown ZX spectrum variant");
+	} else if (isCPC()) {
+		file.open("driller.cpc.extracted");
 
+		if (!file.isOpen())
+			error("Failed to open driller.cpc.extracted");
+
+		//loadMessagesFixedSize(&file, 0x20e4, 14, 20);
+
+		//loadFonts(&file, 0x62ca);
+		//loadGlobalObjects(&file, 0x1c93);
+
+		load8bitBinary(&file, 0xec76, 4);
 	} else if (_renderMode == Common::kRenderEGA) {
 		loadBundledImages();
 		file.open("DRILLE.EXE");

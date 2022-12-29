@@ -49,6 +49,8 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 		_renderMode = Common::kRenderAmiga;
 	} else if (isAtariST()) {
 		_renderMode = Common::kRenderAtariST;
+	} else if (isCPC()) {
+		_renderMode = Common::kRenderCPC;
 	} else if (isSpectrum()) {
 		_renderMode = Common::kRenderZX;
 	}
