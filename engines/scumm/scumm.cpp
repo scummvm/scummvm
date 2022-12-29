@@ -3165,8 +3165,7 @@ bool ScummEngine::isUsingOriginalGUI() {
 	if (_game.id == GID_MONKEY2 && (_game.features & GF_DEMO))
 		return false;
 
-	if (_game.platform == Common::kPlatformPCEngine ||
-		(_game.platform == Common::kPlatformAtariST && _game.version == 2))
+	if (_game.platform == Common::kPlatformPCEngine)
 		return false;
 
 	if (_game.heversion != 0)
