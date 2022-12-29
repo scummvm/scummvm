@@ -218,7 +218,7 @@ public:
 
 	ObjectReferenceVariableStorage();
 
-	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad(Runtime *runtime) override;
 
 	Common::SharedPtr<VariableStorage> clone() const override;
 
@@ -335,7 +335,7 @@ public:
 
 	ListVariableStorage();
 
-	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad(Runtime *runtime) override;
 
 	Common::SharedPtr<VariableStorage> clone() const override;
 

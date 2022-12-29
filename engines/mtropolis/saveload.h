@@ -67,11 +67,12 @@ struct IAutoSaveProvider : public IInterfaceBase {
 
 class CompoundVarSaver : public ISaveWriter {
 public:
-	explicit CompoundVarSaver(RuntimeObject *object);
+	CompoundVarSaver(Runtime *runtime, RuntimeObject *object);
 
 	bool writeSave(Common::WriteStream *stream) override;
 
 private:
+	Runtime *_runtime;
 	RuntimeObject *_object;
 };
 

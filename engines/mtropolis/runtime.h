@@ -2859,7 +2859,7 @@ public:
 	virtual bool isBehavior() const;
 	virtual bool isCompoundVariable() const;
 	virtual bool isKeyboardMessenger() const;
-	virtual Common::SharedPtr<ModifierSaveLoad> getSaveLoad();
+	virtual Common::SharedPtr<ModifierSaveLoad> getSaveLoad(Runtime *runtime);
 
 	bool isModifier() const override;
 
@@ -2925,7 +2925,7 @@ protected:
 class VariableStorage {
 public:
 	virtual ~VariableStorage();
-	virtual Common::SharedPtr<ModifierSaveLoad> getSaveLoad() = 0;
+	virtual Common::SharedPtr<ModifierSaveLoad> getSaveLoad(Runtime *runtime) = 0;
 
 	virtual Common::SharedPtr<VariableStorage> clone() const = 0;
 };
@@ -2938,7 +2938,7 @@ public:
 	virtual bool isVariable() const override;
 	virtual bool isListVariable() const;
 
-	virtual Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override final;
+	virtual Common::SharedPtr<ModifierSaveLoad> getSaveLoad(Runtime *runtime) override final;
 
 	const Common::SharedPtr<VariableStorage> &getStorage() const;
 	void setStorage(const Common::SharedPtr<VariableStorage> &storage);

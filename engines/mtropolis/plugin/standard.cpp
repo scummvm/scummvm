@@ -2327,7 +2327,7 @@ ObjectReferenceVariableStorage::SaveLoad::SaveLoad(ObjectReferenceVariableStorag
 ObjectReferenceVariableStorage::ObjectReferenceVariableStorage() {
 }
 
-Common::SharedPtr<ModifierSaveLoad> ObjectReferenceVariableStorage::getSaveLoad() {
+Common::SharedPtr<ModifierSaveLoad> ObjectReferenceVariableStorage::getSaveLoad(Runtime *runtime) {
 	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
@@ -3056,7 +3056,7 @@ const char *ListVariableModifier::getDefaultName() const {
 ListVariableStorage::ListVariableStorage() : _preferredContentType(DynamicValueTypes::kInteger), _list(new DynamicList()) {
 }
 
-Common::SharedPtr<ModifierSaveLoad> ListVariableStorage::getSaveLoad() {
+Common::SharedPtr<ModifierSaveLoad> ListVariableStorage::getSaveLoad(Runtime *runtime) {
 	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 

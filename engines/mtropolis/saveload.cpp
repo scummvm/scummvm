@@ -33,7 +33,7 @@
 namespace MTropolis {
 
 
-CompoundVarSaver::CompoundVarSaver(RuntimeObject *object) : _object(object) {
+CompoundVarSaver::CompoundVarSaver(Runtime *runtime, RuntimeObject *object) : _runtime(runtime), _object(object) {
 }
 
 bool CompoundVarSaver::writeSave(Common::WriteStream *stream) {
@@ -41,7 +41,7 @@ bool CompoundVarSaver::writeSave(Common::WriteStream *stream) {
 		return false;
 
 	Modifier *modifier = static_cast<Modifier *>(_object);
-	Common::SharedPtr<ModifierSaveLoad> saveLoad = modifier->getSaveLoad();
+	Common::SharedPtr<ModifierSaveLoad> saveLoad = modifier->getSaveLoad(_runtime);
 	if (!saveLoad)
 		return false;
 

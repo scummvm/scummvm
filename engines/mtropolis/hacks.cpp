@@ -881,10 +881,10 @@ void ObsidianAutoSaveSceneTransitionHooks::onSceneTransitionEnded(Runtime *runti
 
 		if (saveVar && saveVar->isModifier()) {
 			Modifier *modifier = static_cast<Modifier *>(saveVar.get());
-			Common::SharedPtr<ModifierSaveLoad> saveLoad = modifier->getSaveLoad();
+			Common::SharedPtr<ModifierSaveLoad> saveLoad = modifier->getSaveLoad(runtime);
 
 			if (saveLoad) {
-				CompoundVarSaver saver(saveVar.get());
+				CompoundVarSaver saver(runtime, saveVar.get());
 				_autoSaveProvider->autoSave(&saver);
 
 				_varsState->resyncAllVars(runtime);
@@ -1010,8 +1010,8 @@ Common::SharedPtr<ISaveWriter> ObsidianSaveLoadMechanism::createSaveWriter(Runti
 	if (!cgstCompoundVar)
 		return nullptr;
 
-	if (cgstCompoundVar->getSaveLoad())
-		return Common::SharedPtr<CompoundVarSaver>(new CompoundVarSaver(cgstCompoundVar));
+	if (cgstCompoundVar->getSaveLoad(runtime))
+		return Common::SharedPtr<CompoundVarSaver>(new CompoundVarSaver(runtime, cgstCompoundVar));
 
 	return nullptr;
 }

@@ -964,7 +964,7 @@ public:
 
 	void disable(Runtime *runtime) override;
 
-	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad(Runtime *runtime) override;
 
 	IModifierContainer *getChildContainer() override;
 
@@ -978,7 +978,7 @@ public:
 private:
 	class SaveLoad : public ModifierSaveLoad {
 	public:
-		explicit SaveLoad(CompoundVariableModifier *modifier);
+		SaveLoad(Runtime *runtime, CompoundVariableModifier *modifier);
 
 		void saveInternal(Common::WriteStream *stream) const override;
 		bool loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) override;
@@ -1040,7 +1040,7 @@ public:
 
 	BooleanVariableStorage();
 
-	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad(Runtime *runtime) override;
 
 	Common::SharedPtr<VariableStorage> clone() const override;
 
@@ -1087,7 +1087,7 @@ public:
 
 	IntegerVariableStorage();
 
-	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad(Runtime *runtime) override;
 
 	Common::SharedPtr<VariableStorage> clone() const override;
 
@@ -1137,7 +1137,7 @@ public:
 
 	IntegerRangeVariableStorage();
 
-	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad(Runtime *runtime) override;
 
 	Common::SharedPtr<VariableStorage> clone() const override;
 
@@ -1186,7 +1186,7 @@ class VectorVariableStorage : public VariableStorage {
 
 	VectorVariableStorage();
 
-	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad(Runtime *runtime) override;
 
 	Common::SharedPtr<VariableStorage> clone() const override;
 
@@ -1236,7 +1236,7 @@ public:
 
 	PointVariableStorage();
 
-	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad(Runtime *runtime) override;
 
 	Common::SharedPtr<VariableStorage> clone() const override;
 
@@ -1283,7 +1283,7 @@ public:
 
 	FloatingPointVariableStorage();
 
-	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad(Runtime *runtime) override;
 
 	Common::SharedPtr<VariableStorage> clone() const override;
 
@@ -1330,7 +1330,7 @@ public:
 
 	StringVariableStorage();
 
-	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad(Runtime *runtime) override;
 
 	Common::SharedPtr<VariableStorage> clone() const override;
 
@@ -1382,7 +1382,7 @@ public:
 
 	ObjectReferenceVariableV1Storage();
 
-	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad(Runtime *runtime) override;
 
 	Common::SharedPtr<VariableStorage> clone() const override;
 

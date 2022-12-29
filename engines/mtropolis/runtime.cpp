@@ -3489,6 +3489,8 @@ void Structural::debugInspect(IDebugInspectionReport *report) const {
 		report->declareStaticContents(debugGetTypeName());
 	if (report->declareStatic("guid"))
 		report->declareStaticContents(Common::String::format("%x", getStaticGUID()));
+	if (report->declareStatic("runtimeID"))
+		report->declareStaticContents(Common::String::format("%x", getRuntimeGUID()));
 }
 
 void Structural::debugSkipMovies() {
@@ -8723,7 +8725,7 @@ bool Modifier::isKeyboardMessenger() const {
 	return false;
 }
 
-Common::SharedPtr<ModifierSaveLoad> Modifier::getSaveLoad() {
+Common::SharedPtr<ModifierSaveLoad> Modifier::getSaveLoad(Runtime *runtime) {
 	return nullptr;
 }
 
@@ -8819,6 +8821,8 @@ void Modifier::debugInspect(IDebugInspectionReport *report) const {
 		report->declareStaticContents(debugGetTypeName());
 	if (report->declareStatic("guid"))
 		report->declareStaticContents(Common::String::format("%x", getStaticGUID()));
+	if (report->declareStatic("runtimeID"))
+		report->declareStaticContents(Common::String::format("%x", getRuntimeGUID()));
 }
 
 #endif /* MTROPOLIS_DEBUG_ENABLE */
@@ -8841,8 +8845,8 @@ bool VariableModifier::isListVariable() const {
 }
 
 
-Common::SharedPtr<ModifierSaveLoad> VariableModifier::getSaveLoad() {
-	return _storage->getSaveLoad();
+Common::SharedPtr<ModifierSaveLoad> VariableModifier::getSaveLoad(Runtime *runtime) {
+	return _storage->getSaveLoad(runtime);
 }
 
 const Common::SharedPtr<VariableStorage> &VariableModifier::getStorage() const {
