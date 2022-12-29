@@ -506,7 +506,8 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"darby",
 			0,
 			{
-				{"page99.rsc", GAME_SCRIPTFILE, "ca350397f0c009649afc0cb6145921f0", 1286480},
+				{"page99.rsc", GAME_SCRIPTFILE, "d:ca350397f0c009649afc0cb6145921f0", 1286480},
+				{"Dragor le dragon.ini", GAME_CONFIGFILE, "d:b0ccebb50cf8377486d86cb65ee7215d", 2240},
 				AD_LISTEND
 			},
 			Common::FR_FRA,
