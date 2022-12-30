@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/ultima.h"
 #include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
@@ -117,10 +118,7 @@ Graphics::Font *FontManager::getTTF_Font(const Std::string &filename, int points
 
 	_ttfFonts[id] = font;
 
-#ifdef DEBUG
-	pout << "Opened TTF: data/" << filename << "." << Std::endl;
-#endif
-
+	debugC(kDebugGraphics, "Opened TTF: data/%s.", filename.c_str());
 	return font;
 #else // !USE_FREETYPE2
 	return nullptr;
@@ -152,10 +150,7 @@ bool FontManager::addTTFOverride(unsigned int fontnum, const Std::string &filena
 
 	setOverride(fontnum, font);
 
-#ifdef DEBUG
-	pout << "Added TTF override for font " << fontnum << Std::endl;
-#endif
-
+	debugC(kDebugGraphics, "Added TTF override for font %u", fontnum);
 	return true;
 }
 
@@ -184,10 +179,7 @@ bool FontManager::addJPOverride(unsigned int fontnum,
 	}
 	palman->updatedPalette(fontpal);
 
-#ifdef DEBUG
-	pout << "Added JP override for font " << fontnum << Std::endl;
-#endif
-
+	debugC(kDebugGraphics, "Added JP override for font %u", fontnum);
 	return true;
 }
 

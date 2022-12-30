@@ -19,8 +19,8 @@
  *
  */
 
+#include "ultima/ultima.h"
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/graphics/fonts/font.h"
 
 namespace Ultima {
@@ -181,10 +181,8 @@ Std::list<PositionedText> typesetText(Font *font,
 	const Std::string &text, unsigned int &remaining, int32 width, int32 height,
 	Font::TextAlign align, bool u8specials, int32 &resultwidth,
 	int32 &resultheight, Std::string::size_type cursor) {
-#if 0
-	pout << "typeset (" << width << "," << height << ") : "
-	     << text << Std::endl;
-#endif
+
+	debugC(kDebugGraphics, "typeset (%d, %d) %s", width, height, text.c_str());
 
 	// be optimistic and assume everything will fit
 	remaining = text.size();
@@ -350,11 +348,9 @@ Std::list<PositionedText> typesetText(Font *font,
 			lineiter->_dims.moveTo((totalwidth - lineiter->_dims.width()) / 2, lineiter->_dims.top);
 			break;
 		}
-#if 0
-		pout << lineiter->_dims.x << "," << lineiter->_dims.y << " "
-		     << lineiter->_dims.width() << "," << lineiter->_dims.height() << ": "
-		     << lineiter->text << Std::endl;
-#endif
+
+		debugC(kDebugGraphics, "%d, %d, %d, %d: %s", lineiter->_dims.left, lineiter->_dims.top,
+			lineiter->_dims.width(), lineiter->_dims.height(), lineiter->_text.c_str());
 	}
 
 	resultwidth = totalwidth;
