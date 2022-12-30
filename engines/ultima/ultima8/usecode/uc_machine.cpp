@@ -1180,14 +1180,12 @@ void UCMachine::execProcess(UCProcess *p) {
 			ui32a = p->_stack.pop4();
 
 			p->_stack.addSP(-ui16a);
-			if (!dereferencePointer(ui32a,
-			                        p->_stack.access(),
-			                        ui16a))
+			if (!dereferencePointer(ui32a, p->_stack.access(), ui16a)) {
 				error = true;
+			}
 
-				if (!error && ui16a == 2) {
-				TRACE_OP("%s\tpush indirect\t%02Xh bytes = %04Xh",
-					  op_info, ui16a, p->_stack.access2(p->_stack.getSP()));
+			if (!error && ui16a == 2) {
+				TRACE_OP("%s\tpush indirect\t%02Xh bytes = %04Xh", op_info, ui16a, p->_stack.access2(p->_stack.getSP()));
 			} else {
 				TRACE_OP("%s\tpush indirect\t%02Xh bytes", op_info, ui16a);
 			}
@@ -1415,6 +1413,11 @@ void UCMachine::execProcess(UCProcess *p) {
 			TRACE_OP("%s\tspawn inline\t%04X:%04X+%04X=%04X %02X %02X",
 				  op_info, classid, offset, delta, offset + delta, this_size, unknown);
 
+			 // This also ensures that unknown variable is used when TRACE_OP is empty
+			if (unknown != 0 && unknown != 2 && unknown != 5) {
+				debug(10, "unknown unknown value: %02X", unknown);
+			}
+
 			uint32 thisptr = 0;
 			if (this_size > 0)
 				thisptr = p->_stack.access4(p->_bp + 6);
@@ -1470,6 +1473,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				name[x] = cs->readByte();
 			}
 			TRACE_OP("%s\tdebug\tline number %d\t\"%s\"", op_info, opcode, ui16a, name);
+			debug(10, "name: \"%s\"", name); // Ensures that name variable is used when TRACE_OP is empty
 			break;
 		}
 
