@@ -31,6 +31,11 @@
 
 #include "engines/savestate.h"
 
+#if defined(USE_FREETYPE2)
+#include "graphics/font.h"
+#include "graphics/fonts/ttf.h"
+#endif
+
 namespace Neverhood {
 
 enum {
@@ -1191,6 +1196,37 @@ void DeleteGameMenu::performAction() {
 	}
 }
 
+void QueryOverwriteMenu::displayOverwriteStrings(const Common::String &description) {
+#if defined(USE_FREETYPE2)
+	if (_vm->getLanguage() == Common::Language::JA_JPN) {
+		Common::Array<Common::U32String> textLines;
+		textLines.push_back(Common::U32String(description));
+		textLines.push_back(Common::U32String("\xe6\x97\xa2\xe3\x81\xab\xef\xbe\x83\xef\xbe\x9e\xef\xbd\xb0\xef\xbe\x80\xe3\x81\x8c\xe5\xad\x98\xe5\x9c\xa8\xe3\x81\x97\xe3\x81\xa6\xe3\x81\x84\xe3\x81\xbe\xe3\x81\x99\xe3\x80\x82")); // "既にﾃﾞｰﾀが存在しています。"
+		textLines.push_back(Common::U32String("\xe4\xb8\x8a\xe6\x9b\xb8\xe3\x81\x8d\xe3\x81\x97\xe3\x81\xa6\xe3\x82\x82\xe3\x82\x88\xe3\x82\x8d\xe3\x81\x97\xe3\x81\x84\xe3\x81\xa7\xe3\x81\x99\xe3\x81\x8b\xef\xbc\x9f")); // "上書きしてもよろしいですか？"
+		Common::ScopedPtr<Graphics::Font> font(Graphics::loadTTFFontFromArchive("NotoSansJP-Regular.otf", 16, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeLight));
+		if (font) {
+			for (uint i = 0; i < textLines.size(); ++i) {
+				font->drawString(_background->getSurface()->getSurface(), textLines[i], 106,
+						 127 + 31 + i * 17, 423, 240, Graphics::kTextAlignCenter);
+			}
+			return;
+		}
+	}
+#endif
+
+	// Draw the query text to the background, each text line is centered
+	// NOTE The original had this text in its own class
+	FontSurface *fontSurface = new FontSurface(_vm, 0x94188D4D, 32, 7, 32, 11, 17);
+	Common::StringArray textLines;
+	textLines.push_back(description);
+	textLines.push_back("Game exists.");
+	textLines.push_back("Overwrite it?");
+	for (uint i = 0; i < textLines.size(); ++i)
+		fontSurface->drawString(_background->getSurface(), 106 + (423 - textLines[i].size() * 11) / 2,
+					127 + 31 + i * 17, (const byte*)textLines[i].c_str());
+	delete fontSurface;
+}
+
 QueryOverwriteMenu::QueryOverwriteMenu(NeverhoodEngine *vm, Module *parentModule, const Common::String &description)
 	: Scene(vm, parentModule) {
 
@@ -1215,17 +1251,7 @@ QueryOverwriteMenu::QueryOverwriteMenu(NeverhoodEngine *vm, Module *parentModule
 		addCollisionSprite(menuButton);
 	}
 
-	// Draw the query text to the background, each text line is centered
-	// NOTE The original had this text in its own class
-	FontSurface *fontSurface = new FontSurface(_vm, 0x94188D4D, 32, 7, 32, 11, 17);
-	Common::StringArray textLines;
-	textLines.push_back(description);
-	textLines.push_back("Game exists.");
-	textLines.push_back("Overwrite it?");
-	for (uint i = 0; i < textLines.size(); ++i)
-		fontSurface->drawString(_background->getSurface(), 106 + (423 - textLines[i].size() * 11) / 2,
-			127 + 31 + i * 17, (const byte*)textLines[i].c_str());
-	delete fontSurface;
+	displayOverwriteStrings(description);
 
 	SetUpdateHandler(&Scene::update);
 	SetMessageHandler(&QueryOverwriteMenu::handleMessage);
