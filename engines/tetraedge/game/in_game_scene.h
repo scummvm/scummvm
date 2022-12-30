@@ -180,7 +180,7 @@ public:
 	TeLuaGUI &hitObjectGui() { return _hitObjectGui; }
 	TeLuaGUI &markerGui() { return _markerGui; }
 
-	Common::Array<TePickMesh2 *> &pickMeshes() { return _pickMeshes; }
+	Common::Array<TePickMesh2 *> &clickMeshes() { return _clickMeshes; }
 
 	float shadowFarPlane() const { return _shadowFarPlane; }
 	float shadowNearPlane() const { return _shadowNearPlane; }
@@ -218,7 +218,7 @@ private:
 	Common::Array<Object3D *> _object3Ds;
 	Common::Array<Billboard *> _billboards;
 	Common::Array<TeSpriteLayout *> _sprites;
-	Common::Array<TePickMesh2 *> _pickMeshes;
+	Common::Array<TePickMesh2 *> _clickMeshes;
 
 	Common::HashMap<Common::String, SoundStep> _soundSteps;
 	Common::HashMap<Common::String, Common::Array<Callback*>> _callbacks;

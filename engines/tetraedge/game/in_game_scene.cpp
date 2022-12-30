@@ -42,7 +42,7 @@
 #include "tetraedge/te/te_lua_script.h"
 #include "tetraedge/te/te_lua_thread.h"
 
-//#define DEBUG_PATHFINDING 1
+#define DEBUG_PATHFINDING 1
 
 namespace Tetraedge {
 
@@ -204,9 +204,9 @@ void InGameScene::close() {
 		delete zone;
 	_freeMoveZones.clear();
 	_hitObjects.clear();
-	for (TePickMesh2 *mesh : _pickMeshes)
+	for (TePickMesh2 *mesh : _clickMeshes)
 		delete mesh;
-	_pickMeshes.clear();
+	_clickMeshes.clear();
 	_bezierCurves.clear();
 	_dummies.clear();
 	freeSceneObjects();
@@ -289,6 +289,8 @@ void InGameScene::deserializeModel(Common::ReadStream &stream, TeIntrusivePtr<Te
 	TeQuaternion rot;
 	TeColor col;
 	TeMesh mesh;
+	
+	assert(pickmesh);
 
 	TeVector3f32::deserialize(stream, vec);
 	model->setPosition(vec);
@@ -328,7 +330,7 @@ void InGameScene::deserializeModel(Common::ReadStream &stream, TeIntrusivePtr<Te
 	pickmesh->setNbTriangles(indexcount / 3);
 	for (unsigned int i = 0; i < indexcount; i++) {
 		vec = mesh.vertex(mesh.index(i));
-		pickmesh->verticies().push_back(vec);
+		pickmesh->verticies()[i] = vec;
 	}
 	model->addMesh(mesh);
 }
@@ -350,6 +352,11 @@ void InGameScene::draw() {
 	for (TeFreeMoveZone *zone : _freeMoveZones) {
 		zone->setVisible(true);
 		zone->draw();
+	}
+	
+	for (TePickMesh2 *mesh : _clickMeshes) {
+		mesh->setVisible(true);
+		mesh->draw();
 	}
 #endif
 
@@ -583,12 +590,13 @@ bool InGameScene::load(const Common::Path &path) {
 		TePickMesh2 *pickmesh = new TePickMesh2();
 		deserializeModel(scenefile, model, pickmesh);
 		if (modelname.contains("Clic")) {
+			//debug("Loaded clickMesh %s", modelname.c_str());
 			_hitObjects.push_back(model);
-			model->setVisible(false);
+			model->setVisible(true);
 			model->setColor(TeColor(0, 0xff, 0, 0xff));
 			models().push_back(model);
 			pickmesh->setName(modelname);
-			_pickMeshes.push_back(pickmesh);
+			_clickMeshes.push_back(pickmesh);
 		} else {
 			delete pickmesh;
 			if (modelname.substr(0, 2) != "ZB") {

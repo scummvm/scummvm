@@ -22,7 +22,7 @@
 #ifndef TETRAEDGE_TE_TE_NAME_VAL_XML_PARSER_H
 #define TETRAEDGE_TE_TE_NAME_VAL_XML_PARSER_H
 
-#include "common/xmlparser.h"
+#include "common/formats/xmlparser.h"
 
 namespace Tetraedge {
 

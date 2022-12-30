@@ -62,7 +62,7 @@ void MainMenu::enter() {
 	_entered = true;
 	load("menus/mainMenu/mainMenu.lua");
 
-	TeLayout *menuLayout = layout("menu");
+	TeLayout *menuLayout = layoutChecked("menu");
 	appSpriteLayout.addChild(menuLayout);
 
 	app->mouseCursorLayout().setVisible(true);

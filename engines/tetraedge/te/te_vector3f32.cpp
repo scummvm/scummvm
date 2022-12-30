@@ -51,8 +51,8 @@ TeVector3f32 operator^(const TeVector3f32 &left, const TeVector3f32 &right) {
 	float ly = left.y();
 	float lz = left.z();
 	retval.x() = ly * rz - lz * ry;
-	retval.y() = lz * rx - rz * lx;
-	retval.z() = ry * lx - ly * rx;
+	retval.y() = lz * rx - lx * rz;
+	retval.z() = lx * ry - ly * rx;
 	return retval;
 }
 

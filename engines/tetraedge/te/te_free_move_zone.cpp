@@ -176,13 +176,13 @@ TeVector3f32 TeFreeMoveZone::correctCharacterPosition(const TeVector3f32 &pos, b
 	return intersectPoint;
 }
 
-TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt, const TeVector2s32 &endpt, float param_5, bool findMeshFlag) {
+TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt, const TeVector2s32 &clickPt, float param_5, bool findMeshFlag) {
 	updateGrid(false);
 	Common::Array<TePickMesh2 *> meshes;
 	TeVector3f32 newend;
 	meshes.push_back(this);
 
-	TePickMesh2 *nearest = findNearestMesh(_camera, endpt, meshes, &newend, findMeshFlag);
+	TePickMesh2 *nearest = findNearestMesh(_camera, clickPt, meshes, &newend, findMeshFlag);
 	if (!nearest)
 		return TeIntrusivePtr<TeBezierCurve>();
 
@@ -803,54 +803,52 @@ void TeFreeMoveZoneGraph::serialize(Common::WriteStream &stream) const {
 }
 
 /*static*/
-TePickMesh2 *TeFreeMoveZone::findNearestMesh(TeIntrusivePtr<TeCamera> &camera, const TeVector2s32 &frompt,
+TePickMesh2 *TeFreeMoveZone::findNearestMesh(TeIntrusivePtr<TeCamera> &camera, const TeVector2s32 &fromPt,
 			Common::Array<TePickMesh2*> &pickMeshes, TeVector3f32 *outloc, bool lastHitFirst) {
-	TeVector3f32 locresult;
-	TePickMesh2 *nearest = nullptr;
-	float furthest = camera->_orthFarVal;
-	if (!pickMeshes.empty()) {
-		TeVector3f32 v1;
-		TeVector3f32 v2;
-		for (unsigned int i = 0; i < pickMeshes.size(); i++) {
-			TePickMesh2 *mesh = pickMeshes[i];
-			const TeMatrix4x4 transform = mesh->worldTransformationMatrix();
-			if (lastHitFirst) {
-				unsigned int tricount = mesh->verticies().size() / 3;
-				unsigned int vert = mesh->lastTriangleHit() * 3;
-				if (mesh->lastTriangleHit() >= tricount)
-					vert = 0;
-				const TeVector3f32 v3 = transform * mesh->verticies()[vert];
-				const TeVector3f32 v4 = transform * mesh->verticies()[vert + 1];
-				const TeVector3f32 v5 = transform * mesh->verticies()[vert + 2];
-				TeVector3f32 result;
-				float fresult;
-				int intresult = TeRayIntersection::intersect(v1, v2, v3, v4, v5, result, fresult);
-				if (intresult == 1 && fresult < furthest && fresult >= camera->_orthNearVal)
-					return mesh;
-			}
-			for (unsigned int tri = 0; tri < mesh->verticies().size() / 3; tri++) {
-				const TeVector3f32 v3 = transform * mesh->verticies()[tri * 3];
-				const TeVector3f32 v4 = transform * mesh->verticies()[tri * 3 + 1];
-				const TeVector3f32 v5 = transform * mesh->verticies()[tri * 3 + 1];
-				camera->getRay(frompt, v1, v2);
-				TeVector3f32 result;
-				float fresult;
-				int intresult = TeRayIntersection::intersect(v1, v2, v3, v4, v5, result, fresult);
-				if (intresult == 1 && fresult < furthest && fresult >= camera->_orthNearVal) {
-					mesh->setLastTriangleHit(tri);
-					locresult = result;
-					furthest = fresult;
-					nearest = mesh;
-					if (lastHitFirst)
-						break;
-				}
+	TeVector3f32 closestLoc;
+	TePickMesh2 *nearestMesh = nullptr;
+	float closestDist = camera->_orthFarVal;
+	TeVector3f32 rayLoc;
+	TeVector3f32 rayDir;
+	for (unsigned int i = 0; i < pickMeshes.size(); i++) {
+		TePickMesh2 *mesh = pickMeshes[i];
+		const TeMatrix4x4 meshWorldTransform = mesh->worldTransformationMatrix();
+		if (lastHitFirst) {
+			unsigned int tricount = mesh->verticies().size() / 3;
+			unsigned int vert = mesh->lastTriangleHit() * 3;
+			if (mesh->lastTriangleHit() >= tricount)
+				vert = 0;
+			const TeVector3f32 v1 = meshWorldTransform * mesh->verticies()[vert];
+			const TeVector3f32 v2 = meshWorldTransform * mesh->verticies()[vert + 1];
+			const TeVector3f32 v3 = meshWorldTransform * mesh->verticies()[vert + 2];
+			TeVector3f32 intersectLoc;
+			float intersectDist;
+			int intResult = TeRayIntersection::intersect(rayLoc, rayDir, v1, v2, v3, intersectLoc, intersectDist);
+			if (intResult == 1 && intersectDist < closestDist && intersectDist >= camera->_orthNearVal)
+				return mesh;
+		}
+		for (unsigned int tri = 0; tri < mesh->verticies().size() / 3; tri++) {
+			const TeVector3f32 v1 = meshWorldTransform * mesh->verticies()[tri * 3];
+			const TeVector3f32 v2 = meshWorldTransform * mesh->verticies()[tri * 3 + 1];
+			const TeVector3f32 v3 = meshWorldTransform * mesh->verticies()[tri * 3 + 2];
+			camera->getRay(fromPt, rayLoc, rayDir);
+			TeVector3f32 intersectLoc;
+			float intersectDist;
+			int intResult = TeRayIntersection::intersect(rayLoc, rayDir, v1, v2, v3, intersectLoc, intersectDist);
+			if (intResult == 1 && intersectDist < closestDist && intersectDist >= camera->_orthNearVal) {
+				mesh->setLastTriangleHit(tri);
+				closestLoc = intersectLoc;
+				closestDist = intersectDist;
+				nearestMesh = mesh;
+				if (lastHitFirst)
+					break;
 			}
 		}
 	}
 	if (outloc) {
-		*outloc = locresult;
+		*outloc = closestLoc;
 	}
-	return nearest;
+	return nearestMesh;
 }
 
 

@@ -22,7 +22,7 @@
 #ifndef TETRAEDGE_METAENGINE_H
 #define TETRAEDGE_METAENGINE_H
 
-#include "common/achievements.h"
+#include "engines/achievements.h"
 #include "engines/advancedDetector.h"
 
 class TetraedgeMetaEngine : public AdvancedMetaEngine {

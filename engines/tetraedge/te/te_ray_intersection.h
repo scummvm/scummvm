@@ -34,8 +34,8 @@ namespace TeRayIntersection {
 TePickMesh *getMesh(const TeVector3f32 &param_1, const TeVector3f32 &param_2, const Common::Array<TePickMesh *> &pickMeshes,
 			float param_4, float param_5, TeVector3f32 *param_6);
 
-int intersect(const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32 &v3,
-              const TeVector3f32 &v4, const TeVector3f32 &v5, TeVector3f32 &vout, float &fout);
+int intersect(const TeVector3f32 &rayPos, const TeVector3f32 &rayDir, const TeVector3f32 &v1,
+              const TeVector3f32 &v2, const TeVector3f32 &v3, TeVector3f32 &vout, float &fout);
 
 } // end namespace TeRayIntersection
 

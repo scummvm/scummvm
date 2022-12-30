@@ -253,7 +253,7 @@ int layoutBindings(lua_State *L) {
 		lua_pushlightuserdata(L, static_cast<Te3DObject2*>(layout));
 		return true;
 	} else {
-		warning("layoutBindings:: multiple objects with name %s\n", layout->name().c_str());
+		warning("layoutBindings:: multiple objects with name %s", layout->name().c_str());
 		delete layout;
 		return false;
 	}
@@ -261,7 +261,7 @@ int layoutBindings(lua_State *L) {
 
 int listLayoutBindings(lua_State *L) {
 	if (lua_type(L, -1) != LUA_TTABLE) {
-		warning("listLayoutBindings:: the lua value is not a table\n");
+		warning("listLayoutBindings:: the lua value is not a table");
 		return 0;
 	}
 
@@ -292,7 +292,7 @@ int listLayoutBindings(lua_State *L) {
 					layout->setScale(TeVector3f32(0.7500001f, 1.0f ,1.0f));
 				}
 			} else {
-				warning("[TeLuaGUI.layoutBindings] Unreconized attribute : %s\n", s);
+				warning("[TeLuaGUI.layoutBindings] Unreconized attribute : %s", s);
 			}
 		} else if (type == LUA_TNUMBER) {
 			Te3DObject2 *obj = TeLuaTo<Te3DObject2*>(L, -1);
@@ -313,7 +313,7 @@ int listLayoutBindings(lua_State *L) {
 		lua_pushlightuserdata(L, static_cast<Te3DObject2*>(layout));
 		return true;
 	} else {
-		warning("listLayoutBindings:: multiple objects with name %s\n", layout->name().c_str());
+		warning("listLayoutBindings:: multiple objects with name %s", layout->name().c_str());
 		delete layout;
 		return false;
 	}
@@ -321,7 +321,7 @@ int listLayoutBindings(lua_State *L) {
 
 int spriteLayoutBindings(lua_State *L) {
 	if (lua_type(L, -1) != LUA_TTABLE) {
-		warning("spriteLayoutBindings:: the lua value is not a table\n");
+		warning("spriteLayoutBindings:: the lua value is not a table");
 		return 0;
 	}
 
@@ -379,7 +379,7 @@ int spriteLayoutBindings(lua_State *L) {
 					layout->setScale(TeVector3f32(0.7500001,1.0,1.0));
 				}
 			} else {
-				warning("[TeLuaGUI.layoutBindings] Unreconized attribute : %s\n", s);
+				warning("[TeLuaGUI.layoutBindings] Unreconized attribute : %s", s);
 			}
 		}
 		lua_settop(L, -2);
@@ -429,7 +429,7 @@ int spriteLayoutBindings(lua_State *L) {
 		lua_pushlightuserdata(L, static_cast<Te3DObject2*>(layout));
 		return true;
 	} else {
-		warning("layoutBindings:: multiple objects with name %s\n", layout->name().c_str());
+		warning("layoutBindings:: multiple objects with name %s", layout->name().c_str());
 		delete layout;
 		return false;
 	}
@@ -505,7 +505,7 @@ int buttonLayoutBindings(lua_State *L) {
 
 int checkboxLayoutBindings(lua_State *L) {
 	if (lua_type(L, -1) != LUA_TTABLE) {
-		warning("checkboxLayoutBindings:: the lua value is not a table\n");
+		warning("checkboxLayoutBindings:: the lua value is not a table");
 		return 0;
 	}
 
@@ -575,7 +575,7 @@ int checkboxLayoutBindings(lua_State *L) {
 
 int layoutPositionLinearAnimationBindings(lua_State *L) {
 	if (lua_type(L, -1) != LUA_TTABLE) {
-		warning("layoutPositionLinearAnimationBindings:: the lua value is not a table\n");
+		warning("layoutPositionLinearAnimationBindings:: the lua value is not a table");
 		return 0;
 	}
 
@@ -584,7 +584,7 @@ int layoutPositionLinearAnimationBindings(lua_State *L) {
 
 int layoutAnchorLinearAnimationBindings(lua_State *L) {
 	if (lua_type(L, -1) != LUA_TTABLE) {
-		warning("layoutAnchorLinearAnimationBindings:: the lua value is not a table\n");
+		warning("layoutAnchorLinearAnimationBindings:: the lua value is not a table");
 		return 0;
 	}
 
@@ -639,7 +639,7 @@ int layoutAnchorLinearAnimationBindings(lua_State *L) {
 
 int textLayoutBindings(lua_State *L) {
 	if (lua_type(L, -1) != LUA_TTABLE) {
-		warning("textLayoutBindings:: the lua value is not a table\n");
+		warning("textLayoutBindings:: the lua value is not a table");
 		return 0;
 	}
 
@@ -689,7 +689,7 @@ int textLayoutBindings(lua_State *L) {
 		lua_pushlightuserdata(L, static_cast<Te3DObject2*>(layout));
 		return true;
 	} else {
-		warning("textLayoutBindings:: multiple objects with name %s\n", layout->name().c_str());
+		warning("textLayoutBindings:: multiple objects with name %s", layout->name().c_str());
 		delete layout;
 		return false;
 	}
@@ -697,7 +697,7 @@ int textLayoutBindings(lua_State *L) {
 
 int clipLayoutBindings(lua_State *L) {
 	if (lua_type(L, -1) != LUA_TTABLE) {
-		warning("clipLayoutBindings:: the lua value is not a table\n");
+		warning("clipLayoutBindings:: the lua value is not a table");
 		return 0;
 	}
 
@@ -706,7 +706,7 @@ int clipLayoutBindings(lua_State *L) {
 
 int colorLinearAnimationBindings(lua_State *L) {
 	if (lua_type(L, -1) != LUA_TTABLE) {
-		warning("colorLinearAnimationBindings:: the lua value is not a table\n");
+		warning("colorLinearAnimationBindings:: the lua value is not a table");
 		return 0;
 	}
 
@@ -758,7 +758,7 @@ int colorLinearAnimationBindings(lua_State *L) {
 
 int rotationLinearAnimationBindings(lua_State *L) {
 	if (lua_type(L, -1) != LUA_TTABLE) {
-		warning("rotationLinearAnimationBindings:: the lua value is not a table\n");
+		warning("rotationLinearAnimationBindings:: the lua value is not a table");
 		return 0;
 	}
 
@@ -767,7 +767,7 @@ int rotationLinearAnimationBindings(lua_State *L) {
 
 int scrollingLayoutBindings(lua_State *L) {
 	if (lua_type(L, -1) != LUA_TTABLE) {
-		warning("scrollingLayoutBindings:: the lua value is not a table\n");
+		warning("scrollingLayoutBindings:: the lua value is not a table");
 		return 0;
 	}
 
@@ -840,7 +840,7 @@ int scrollingLayoutBindings(lua_State *L) {
 		lua_pushlightuserdata(L, static_cast<Te3DObject2*>(layout));
 		return true;
 	} else {
-		warning("scrollingLayoutBindings:: multiple objects with name %s\n", layout->name().c_str());
+		warning("scrollingLayoutBindings:: multiple objects with name %s", layout->name().c_str());
 		delete layout;
 		return false;
 	}
@@ -848,7 +848,7 @@ int scrollingLayoutBindings(lua_State *L) {
 
 int extendedTextLayoutBindings(lua_State *L) {
 	if (lua_type(L, -1) != LUA_TTABLE) {
-		warning("extendedTextLayoutBindings:: the lua value is not a table\n");
+		warning("extendedTextLayoutBindings:: the lua value is not a table");
 		return 0;
 	}
 
@@ -902,7 +902,7 @@ int extendedTextLayoutBindings(lua_State *L) {
 		lua_pushlightuserdata(L, static_cast<Te3DObject2*>(layout));
 		return true;
 	} else {
-		warning("extendedTextLayoutBindings:: multiple objects with name %s\n", layout->name().c_str());
+		warning("extendedTextLayoutBindings:: multiple objects with name %s", layout->name().c_str());
 		delete layout;
 		return false;
 	}

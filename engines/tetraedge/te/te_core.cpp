@@ -156,6 +156,8 @@ Common::Path TeCore::findFile(const Common::Path &path) {
 			testPath.joinInPlace(fname);
 			if (Common::File::exists(testPath) || Common::FSNode(path).exists()) {
 				return testPath;
+			} else {
+				debug("not found %s", testPath.toString().c_str());
 			}
 		}
 	}

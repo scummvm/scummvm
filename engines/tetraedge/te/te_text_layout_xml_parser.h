@@ -24,7 +24,7 @@
 
 #include "common/array.h"
 #include "common/str.h"
-#include "common/xmlparser.h"
+#include "common/formats/xmlparser.h"
 
 #include "tetraedge/te/te_color.h"
 

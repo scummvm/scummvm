@@ -33,7 +33,7 @@ class TeQuaternion;
 class TeVector3f32 : public Math::Vector3d {
 
 public:
-	TeVector3f32() { };
+	TeVector3f32() { }; // Note: vector3d constructor sets 0, 0, 0
 	TeVector3f32(float x_, float y_, float z_) {
 		set(x_, y_, z_);
 	}
