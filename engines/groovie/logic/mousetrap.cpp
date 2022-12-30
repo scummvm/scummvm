@@ -133,6 +133,10 @@ void MouseTrapGame::init() {
 	initX[6] = 4;
 	initX[7] = 4;
 
+	// easier AI gives a fixed board state, because the random configurations can give you some bad ones
+	if(_easierAi)
+		_random.setSeed(711);
+
 	for (int i = 7; i >= 0; i--) {
 		int8 j = _random.getRandomNumber(i);
 
