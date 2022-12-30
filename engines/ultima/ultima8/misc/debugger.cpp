@@ -190,14 +190,11 @@ Debugger::Debugger() : Shared::Debugger() {
 
 	registerCmd("UCMachine::getGlobal", WRAP_METHOD(Debugger, cmdGetGlobal));
 	registerCmd("UCMachine::setGlobal", WRAP_METHOD(Debugger, cmdSetGlobal));
-#ifdef DEBUG
 	registerCmd("UCMachine::traceObjID", WRAP_METHOD(Debugger, cmdTraceObjID));
 	registerCmd("UCMachine::tracePID", WRAP_METHOD(Debugger, cmdTracePID));
 	registerCmd("UCMachine::traceClass", WRAP_METHOD(Debugger, cmdTraceClass));
-	registerCmd("UCMachine::traceEvents", WRAP_METHOD(Debugger, cmdTraceEvents));
 	registerCmd("UCMachine::traceAll", WRAP_METHOD(Debugger, cmdTraceAll));
 	registerCmd("UCMachine::stopTrace", WRAP_METHOD(Debugger, cmdStopTrace));
-#endif
 
 	registerCmd("FastAreaVisGump::toggle", WRAP_METHOD(Debugger, cmdToggleFastArea));
 	registerCmd("InverterProcess::invertScreen", WRAP_METHOD(Debugger, cmdInvertScreen));
@@ -1618,8 +1615,6 @@ bool Debugger::cmdSetGlobal(int argc, const char **argv) {
 	return true;
 }
 
-#ifdef DEBUG
-
 bool Debugger::cmdTracePID(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Usage: UCMachine::tracePID _pid\n");
@@ -1677,15 +1672,6 @@ bool Debugger::cmdTraceAll(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmdTraceEvents(int argc, const char **argv) {
-	UCMachine *uc = UCMachine::get_instance();
-	uc->_tracingEnabled = true;
-	uc->_traceEvents = true;
-
-	debugPrintf("UCMachine: tracing usecode events\n");
-	return true;
-}
-
 bool Debugger::cmdStopTrace(int argc, const char **argv) {
 	UCMachine *uc = UCMachine::get_instance();
 	uc->_traceObjIDs.clear();
@@ -1693,14 +1679,10 @@ bool Debugger::cmdStopTrace(int argc, const char **argv) {
 	uc->_traceClasses.clear();
 	uc->_tracingEnabled = false;
 	uc->_traceAll = false;
-	uc->_traceEvents = false;
 
 	debugPrintf("Trace stopped\n");
 	return true;
 }
-
-#endif
-
 
 bool Debugger::cmdVerifyQuit(int argc, const char **argv) {
 	QuitGump::verifyQuit();

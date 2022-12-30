@@ -111,11 +111,9 @@ private:
 
 	static UCMachine *_ucMachine;
 
-#ifdef DEBUG
 	// tracing
 	bool _tracingEnabled;
 	bool _traceAll;
-	bool _traceEvents;
 	Std::set<ObjId> _traceObjIDs;
 	Std::set<ProcId> _tracePIDs;
 	Std::set<uint16> _traceClasses;
@@ -129,11 +127,6 @@ private:
 		return false;
 	}
 
-public:
-	bool trace_event() const {
-		return (_tracingEnabled && (_traceAll || _traceEvents));
-	}
-#endif
 };
 
 } // End of namespace Ultima8

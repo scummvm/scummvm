@@ -234,14 +234,11 @@ private:
 	// UCMachine
 	bool cmdGetGlobal(int argc, const char **argv);
 	bool cmdSetGlobal(int argc, const char **argv);
-#ifdef DEBUG
 	bool cmdTracePID(int argc, const char **argv);
 	bool cmdTraceObjID(int argc, const char **argv);
 	bool cmdTraceClass(int argc, const char **argv);
 	bool cmdTraceAll(int argc, const char **argv);
-	bool cmdTraceEvents(int argc, const char **argv);
 	bool cmdStopTrace(int argc, const char **argv);
-#endif
 
 	// Miscellaneous
 	bool cmdToggleFastArea(int argc, const char **argv);
