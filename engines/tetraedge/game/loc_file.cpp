@@ -21,7 +21,7 @@
 
 #include "common/file.h"
 #include "common/textconsole.h"
-#include "common/xmlparser.h"
+#include "common/formats/xmlparser.h"
 
 #include "tetraedge/game/loc_file.h"
 #include "tetraedge/te/te_name_val_xml_parser.h"

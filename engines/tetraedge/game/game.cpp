@@ -988,16 +988,16 @@ bool Game::onMouseClick(const Common::Point &pt) {
 	if (_previousMousePos == TeVector2s32(-1, -1)) {
 		_previousMousePos = pt;
 	} else {
-		TeVector3f32 winSize = app->getMainWindow().size();
-		TeVector2s32 lastMousePos = _previousMousePos;
+		const TeVector3f32 winSize = app->getMainWindow().size();
+		const TeVector2s32 prevMousePos = _previousMousePos;
 		_previousMousePos = pt;
-		float xdist = pt.x / winSize.x() - lastMousePos._x / winSize.x();
-		float ydist = pt.y / winSize.y() - lastMousePos._y / winSize.y();
+		float xdist = (pt.x - prevMousePos._x) / winSize.x();
+		float ydist = (pt.y - prevMousePos._y) / winSize.y();
 		float sqrdist = xdist * xdist + ydist * ydist;
-		if (sqrdist > 0.0001 && (!_walkTimer.running() || _walkTimer.timeElapsed() > 300000.0
+		if (sqrdist < 0.0001 && (!_walkTimer.running() || _walkTimer.timeElapsed() > 300000.0
 						 || (_scene._character && _scene._character->walkModeStr() != "Walk"))) {
 			return false;
-			// Double-click, but already jogging
+			// Normal walk click
 		}
 	}
 
@@ -1006,11 +1006,12 @@ bool Game::onMouseClick(const Common::Point &pt) {
 
 	Common::String nearestMeshName = "None";
 	TeIntrusivePtr<TeCamera> curCamera = _scene.currentCamera();
-	Common::Array<TePickMesh2*> pickMeshes = _scene.pickMeshes();
+	Common::Array<TePickMesh2*> pickMeshes = _scene.clickMeshes();
 	TePickMesh2 *nearestMesh = TeFreeMoveZone::findNearestMesh(curCamera, pt, pickMeshes, nullptr, false);
 	if (nearestMesh) {
 		nearestMeshName = nearestMesh->name();
-		_lastCharMoveMousePos = TeVector2s32(0, 0);
+		debug("Game::onMouseClick: Click near mesh %s", nearestMeshName.c_str());
+		_lastCharMoveMousePos = TeVector2s32();
 	}
 
 	if (app->isLockCursor() || _movePlayerCharacterDisabled)
@@ -1025,49 +1026,51 @@ bool Game::onMouseClick(const Common::Point &pt) {
 		|| charAnim == character->walkAnim(Character::WalkPart_EndD)
 		|| charAnim == character->walkAnim(Character::WalkPart_EndG)) {
 		_luaScript.execute("On");
-		if (!_scene.isObjectBlocking(nearestMeshName)) {
-			if (character->freeMoveZone()) {
-				TeVector3f32 charPos = character->_model->position();
-				TeIntrusivePtr<TeBezierCurve> curve = character->freeMoveZone()->curve(charPos, TeVector2s32(pt), 8.0, true);
-				if (curve) {
-					_scene.setCurve(curve);
-					character->setCurveStartLocation(TeVector3f32());
-					if (curve->controlPoints().size() == 1) {
-						character->endMove();
-					} else {
-						if (!_walkTimer.running() || _walkTimer.timeElapsed() > 300000) {
-							_walkTimer.stop();
-							_walkTimer.start();
-							character->walkMode("Walk");
-						} else {
-							// Note: original checks the timer elapsed again here.. why?
-							_walkTimer.stop();
-							character->walkMode("Jog");
-						}
-						character->placeOnCurve(curve);
-						character->setCurveOffset(0.0);
-						if (charAnim != character->walkAnim(Character::WalkPart_Start)) {
-							character->setAnimation(character->walkAnim(Character::WalkPart_Start), false);
-						}
-						character->walkTo(1.0, false);
-						_sceneCharacterVisibleFromLoad = false;
-						_lastCharMoveMousePos = pt;
-					}
+		if (!_scene.isObjectBlocking(nearestMeshName) && character->freeMoveZone()) {
+			const TeVector3f32 charPos = character->_model->position();
+			TeIntrusivePtr<TeBezierCurve> curve = character->freeMoveZone()->curve(charPos, pt, 8.0, true);
+			if (!curve)
+				return false;
+
+			_scene.setCurve(curve);
+			character->setCurveStartLocation(TeVector3f32());
+			if (curve->controlPoints().size() == 1) {
+				character->endMove();
+			} else {
+				if (!_walkTimer.running() || _walkTimer.timeElapsed() > 300000) {
+					_walkTimer.stop();
+					_walkTimer.start();
+					character->walkMode("Walk");
 				} else {
-					return false;
+					// Note: original checks the timer elapsed again here.. why?
+					_walkTimer.stop();
+					character->walkMode("Jog");
 				}
+				character->placeOnCurve(curve);
+				character->setCurveOffset(0.0);
+				if (charAnim != character->walkAnim(Character::WalkPart_Start)) {
+					character->setAnimation(character->walkAnim(Character::WalkPart_Start), false);
+				}
+				character->walkTo(1.0, false);
+				_sceneCharacterVisibleFromLoad = false;
+				_lastCharMoveMousePos = pt;
 			}
 		}
-		TeVector3f32 lastPoint = _scene.curve()->controlPoints().back();
-		character->setAnimation(character->walkAnim(Character::WalkPart_Loop), true);
-		character->walkTo(1.0, false);
-		_isCharacterWalking = true;
-		_posPlayer = lastPoint;
+		// FIXME: The original never checks for empty/null curve here.. why?
+		if (_scene.curve() && _scene.curve()->length()) {
+			TeVector3f32 lastPoint = _scene.curve()->controlPoints().back();
+			character->setAnimation(character->walkAnim(Character::WalkPart_Loop), true);
+			character->walkTo(1.0, false);
+			_isCharacterWalking = true;
+			_posPlayer = lastPoint;
+		}
 	}
-
-	if (!_sceneCharacterVisibleFromLoad || (character->curAnimName() == character->characterSettings()._idleAnimFileName)) {
+	
+	// Note: charAnim above may no longer be valid as anim may have changed.
+	if (_sceneCharacterVisibleFromLoad || (character->curAnimName() == character->characterSettings()._idleAnimFileName)) {
 		_lastCharMoveMousePos = TeVector2s32(0, 0);
-		_movePlayerCharacterDisabled = true;
+		_movePlayerCharacterDisabled = false;
+		_isCharacterIdle = true;
 		_isCharacterWalking = false;
 		if (nearestMesh) {
 			character->stop();

@@ -22,7 +22,7 @@
 #ifndef TETRAEDGE_GAME_OBJECT_SETTINGS_XML_PARSER_H
 #define TETRAEDGE_GAME_OBJECT_SETTINGS_XML_PARSER_H
 
-#include "common/xmlparser.h"
+#include "common/formats/xmlparser.h"
 #include "tetraedge/game/object3d.h"
 #include "tetraedge/te/te_vector3f32.h"
 

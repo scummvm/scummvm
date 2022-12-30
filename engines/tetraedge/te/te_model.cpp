@@ -21,8 +21,8 @@
 
 #include "common/file.h"
 #include "common/util.h"
-#include "common/zlib.h"
 #include "common/substream.h"
+#include "common/compression/zlib.h"
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/te/te_light.h"

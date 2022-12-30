@@ -136,24 +136,25 @@ void TeCamera::draw() {
 	error("TODO: Implement TeCamera::draw");
 }
 
-void TeCamera::getRay(const TeVector2s32 &pxloc, TeVector3f32 &out1, TeVector3f32 &out2) {
+void TeCamera::getRay(const TeVector2s32 &pxloc, TeVector3f32 &raypos, TeVector3f32 &raydir) {
+	raypos = position();
+
 	float xval = (pxloc._x - _viewportX) / fabs(_viewportW);
-	out2.x() = xval * 2 - 1;
+	raydir.x() = xval * 2 - 1;
 	float yval = (pxloc._y - _viewportY) / fabs(_viewportH);
-	out2.y() = yval * 2 - 1;
-	out2.z() = 1.0;
+	raydir.y() = yval * 2 - 1;
+	raydir.z() = 1.0;
 
-	TeMatrix4x4 inverse = projectionMatrix();
-	inverse.inverse();
-	out2 = inverse * out2;
-	out2.normalize();
+	TeMatrix4x4 projInverse = _projectionMatrix;
+	projInverse.inverse();
+	raydir = projInverse * raydir;
+	raydir.normalize();
 
-	TeVector3f32 pos = position();
-	TeQuaternion rot = rotation();
-	out1 = pos;
+	TeQuaternion rot = _rotation;
 	rot.normalize();
-	TeMatrix4x4 rotmatrix = rot.toTeMatrix();
-	out2 = rotmatrix * out2;
+	const TeMatrix4x4 rotmatrix = rot.toTeMatrix();
+
+	raydir = rotmatrix * raydir;
 }
 
 void TeCamera::loadBin(const Common::String &path) {

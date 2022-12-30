@@ -21,7 +21,7 @@
 
 #include "common/hashmap.h"
 #include "common/str.h"
-#include "common/xmlparser.h"
+#include "common/formats/xmlparser.h"
 #include "tetraedge/game/inventory.h"
 
 #ifndef TETRAEDGE_GAME_INVENTORY_OBJECTS_XML_PARSER_H

@@ -50,6 +50,7 @@ void TePickMesh2::draw() {
 
 	const TeColor prevCol = renderer->currentColor();
 
+	renderer->enableWireFrame(); // NOTE: added this so we can draw _clickMeshes in scene.
 	renderer->setCurrentColor(TeColor(0xff, 0, 0, 0xff));
 	renderer->pushMatrix();
 	renderer->multiplyMatrix(transformationMatrix());
@@ -57,6 +58,7 @@ void TePickMesh2::draw() {
 
 	renderer->popMatrix();
 	renderer->setCurrentColor(prevCol);
+	renderer->disableWireFrame();
 }
 
 bool TePickMesh2::intersect(const TeVector3f32 &v1, const TeVector3f32 &v2, TeVector3f32 &vout, float &fout, bool lastHitFirst, unsigned long *triangleHitOut) {

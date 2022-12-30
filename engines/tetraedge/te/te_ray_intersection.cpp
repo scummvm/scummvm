@@ -30,39 +30,74 @@ TePickMesh *getMesh(const TeVector3f32 &param_1, const TeVector3f32 &param_2, co
 	error("TODO: implement TeRayIntersection::getMesh");
 }
 
-int intersect(const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32 &v3,
-			  const TeVector3f32 &v4, const TeVector3f32 &v5, TeVector3f32 &vout, float &fout) {
-	const TeVector3f32 v4_v3 = (v4 - v3);
-	const TeVector3f32 v5_v3 = (v5 - v3);
-	TeVector3f32 v = v4_v3 ^ v5_v3;
+// This is a version from https://www.lighthouse3d.com/tutorials/maths/ray-triangle-intersection/
+int intersect(const TeVector3f32 &p, const TeVector3f32 &d, const TeVector3f32 &v0,
+			  const TeVector3f32 &v1, const TeVector3f32 &v2, TeVector3f32 &vout, float &fout) {
+	const TeVector3f32 e1 = v1 - v0;
+	const TeVector3f32 e2 = v2 - v0;
+	const TeVector3f32 h = d ^ e2;
+
+	if (h == TeVector3f32())
+		return -1;
+
+	float a = e1.dotProduct(h);
+	if (fabs(a) < 1e-6)
+		return 0;
+	
+	float f = 1 / a;
+	TeVector3f32 s = p - v0;
+	float u = f * s.dotProduct(h);
+	if (u < 0.0 || u > 1.0)
+		return 0;
+
+	TeVector3f32 q = TeVector3f32::crossProduct(s, e1);
+	float v = f * d.dotProduct(q);
+
+	if (v < 0.0 || u + v > 1.0)
+		return 0;
+		
+	float t = f * e2.dotProduct(q);
+	
+	if (t < 0.00001)
+		return 0;
+	
+	fout = t;
+	vout = p + t * d;
+	
+	return 1;
+}
+
+/*
+int intersect(const TeVector3f32 &rayPos, const TeVector3f32 &rayDir, const TeVector3f32 &v1,
+			  const TeVector3f32 &v2, const TeVector3f32 &v3, TeVector3f32 &vout, float &fout) {
+	const TeVector3f32 v2_v1 = v2 - v1;
+	const TeVector3f32 v3_v1 = v3 - v1;
+	const TeVector3f32 v = v2_v1 ^ v3_v1;
 
 	if (v == TeVector3f32(0.0f, 0.0f, 0.0f))
 		return -1;
 
 	int result = -1;
-	float f1 = v.dotProduct(v1 - v3);
-	float f2 = v.dotProduct(v2);
+	float f1 = v.dotProduct(rayPos - v1);
+	float f2 = v.dotProduct(rayDir);
 	if (fabs(f2) > 1e-9) {
 		f2 = -f1 / f2;
 		fout = f2;
 		result = 0;
 		if (f2 >= 0.0) {
-			vout = v1 + (v2 * f2);
-			float dot1 = v4_v3.dotProduct(v4_v3);
-			float dot2 = v4_v3.dotProduct(v5_v3);
-			float dot3 = v5_v3.dotProduct(v5_v3);
-			const TeVector3f32 vout_v3 = vout - v3;
-			float dots1 = (dot2 * dot2) - (dot1 * dot3);
-			float dot4 = vout_v3.dotProduct(v4_v3);
-			float dot5 = vout_v3.dotProduct(v5_v3);
-			float dots2 = ((dot2 * dot5) - (dot3 * dot4)) / dots1;
-			if (dots2 >= 0.0) {
-				result = 0;
-				if (dots2 <= 1.0) {
-					float dots3 = (dot2 * dot4 - dot1 * dot5) / dots1;
-					if (dots3 >= 0 && dots2 + dots3 <= 1.0)
-						result = 1;
-				}
+			vout = rayPos + (rayDir * f2);
+			float dot1 = v2_v1.dotProduct(v2_v1);
+			float dot2 = v2_v1.dotProduct(v3_v1);
+			float dot3 = v3_v1.dotProduct(v3_v1);
+			const TeVector3f32 vout_v1 = vout - v1;
+			float dots1 = dot2 * dot2 - dot1 * dot3;
+			float dot4 = vout_v1.dotProduct(v2_v1);
+			float dot5 = vout_v1.dotProduct(v3_v1);
+			float dots2 = (dot2 * dot5 - dot3 * dot4) / dots1;
+			if (dots2 >= 0.0 && dots2 <= 1.0) {
+				float dots3 = (dot2 * dot4 - dot1 * dot5) / dots1;
+				if (dots3 >= 0.0 && dots2 + dots3 <= 1.0)
+					result = 1;
 			}
 		}
 	} else {
@@ -72,10 +107,56 @@ int intersect(const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32
 	}
 	return result;
 }
+*/
 
+/*
+bool testIntersection(const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32 &v3, const TeVector3f32 &orig, TeVector3f32 &dir) {
+	TeVector3f32 qvec,tvec;
 
+	TeVector3f32 e1 = v2 - v1;
+	TeVector3f32 e2 = v3 - v1;
+
+	TeVector3f32 pvec = TeVector3f32::crossProduct(dir, e2);
+
+	dir.normalize();
+	float det = pvec.dotProduct(e1);
+//#ifdef TEST_CULL
+	if (det < FLT_EPSILON)
+		return false;
+
+	tvec = orig - v1;
+	float u = tvec.dotProduct(pvec);
+	if (u < 0.0 || u > det) {
+		return false;
+	}
+	CROSS(qvec,tvec,e1);
+	float v = dir.dotProduct(qvec);
+	if (v < 0.0f || v + u > det) {
+		return false;
+	}
+#else
+	if (det < FLT_EPSILON && det > -FLT_EPSILON ) {
+		return false;
+	}
+
+	float invDet = 1.0f / det;
+	tvec = orig - v1;
+	// NORMALIZE(tvec);
+	float u = invDet * tvec.dotProduct(pvec);
+	if (u <0.0f || u > 1.0f) {
+		return false;
+	}
+
+	qvec = TeVector3f32::crossProduct(tvec, e1);
+	float v = invDet * qvec.dotProduct(dir);
+	if (v < 0.0f || u+v > 1.0f) {
+		return false;
+	}
+#endif
+	return true;
 }
+*/
 
-
+} // end namespace TeRayIntersection
 
 } // end namespace Tetraedge
