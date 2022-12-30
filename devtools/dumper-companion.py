@@ -304,6 +304,7 @@ def extract_volume(args: argparse.Namespace) -> int:
     dopunycode: bool = not args.nopunycode
     loglevel: str = args.log
     force_macbinary: bool = args.forcemacbinary
+    add_macbinary_ext: bool = args.addmacbinaryext
 
     numeric_level = getattr(logging, loglevel.upper(), None)
     if not isinstance(numeric_level, int):
@@ -385,6 +386,8 @@ def extract_volume(args: argparse.Namespace) -> int:
             upath.write_bytes(obj.data)
 
         elif obj.rsrc or force_macbinary:
+            if add_macbinary_ext:
+                upath = upath.with_name(upath.name + ".bin")
             with upath.open("wb") as out_file:
                 file_to_macbin(out_file, obj, hpath[-1].encode("mac_roman"))
 
@@ -508,6 +511,7 @@ def collect_forks(args: argparse.Namespace) -> int:
     directory: bytes = bytes(args.dir)
     punify: bool = args.punycode
     force_macbinary: bool = args.forcemacbinary
+    add_macbinary_ext: bool = args.addmacbinaryext
     count_resources = 0
     count_renames = 0
     for dirpath, _, filenames in os.walk(directory):
@@ -520,6 +524,8 @@ def collect_forks(args: argparse.Namespace) -> int:
                 to_filename = filename
 
                 filepath = os.path.join(dirpath, filename)
+                if add_macbinary_ext:
+                        filepath = upath.with_name(filepath.name + ".bin")
                 resourcepath = os.path.join(dirpath, resource_filename)
 
                 file = machfs.File()
@@ -729,6 +735,11 @@ def generate_parser() -> argparse.ArgumentParser:
         help="always encode using MacBinary, even for files with no resource fork",
     )
     parser_iso.add_argument(
+        "--addmacbinaryext",
+        action="store_true",
+        help="add .bin extension when using MacBinary",
+    )
+    parser_iso.add_argument(
         "dir", metavar="OUTPUT", type=Path, help="Destination folder"
     )
     parser_iso.set_defaults(func=extract_volume)
@@ -776,6 +787,11 @@ def generate_parser() -> argparse.ArgumentParser:
             action="store_true",
             help="always encode using MacBinary, even for files with no resource fork",
             default=False,
+        )
+        parser_iso.add_argument(
+            "--addmacbinaryext",
+            action="store_true",
+            help="add .bin extension when using MacBinary",
         )
         parser_macbinary.add_argument(
             "dir", metavar="directory", type=Path, help="input directory"
