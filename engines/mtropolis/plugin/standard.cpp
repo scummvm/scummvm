@@ -2936,7 +2936,19 @@ bool ListVariableModifier::readAttributeIndexed(MiniscriptThread *thread, Dynami
 	if (attrib == "value") {
 		size_t realIndex = 0;
 		return storage->_list->dynamicValueToIndex(realIndex, index) && storage->_list->getAtIndex(realIndex, result);
+	} else if (attrib == "delete") {
+		size_t realIndex = 0;
+		if (!storage->_list->dynamicValueToIndex(realIndex, index))
+			return false;
+		if (!storage->_list->getAtIndex(realIndex, result))
+			return false;
+
+		storage->_list = storage->_list->clone();
+		storage->_list->deleteAtIndex(realIndex);
+
+		return true;
 	}
+
 	return Modifier::readAttributeIndexed(thread, result, attrib, index);
 }
 

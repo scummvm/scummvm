@@ -777,6 +777,7 @@ struct DynamicList {
 
 	bool getAtIndex(size_t index, DynamicValue &value) const;
 	bool setAtIndex(size_t index, const DynamicValue &value);
+	void deleteAtIndex(size_t index);
 	void truncateToSize(size_t sz);
 	void expandToMinimumSize(size_t sz);
 	size_t getSize() const;
@@ -2869,6 +2870,9 @@ public:
 
 	const Common::WeakPtr<RuntimeObject> &getParent() const;
 	void setParent(const Common::WeakPtr<RuntimeObject> &parent);
+
+	Modifier *findNextSibling() const;
+	Modifier *findPrevSibling() const;
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;

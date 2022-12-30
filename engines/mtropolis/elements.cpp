@@ -1566,8 +1566,10 @@ MiniscriptInstructionOutcome MToonElement::scriptSetRange(MiniscriptThread *thre
 		}
 
 		for (const MToonMetadata::FrameRangeDef &frameRange : _metadata->frameRanges) {
-			if (caseInsensitiveEqual(frameRange.name, *nameStrPtr))
-				return scriptSetRangeTyped(thread, IntRange(frameRange.startFrame, frameRange.endFrame));
+			if (caseInsensitiveEqual(frameRange.name, *nameStrPtr)) {
+				// Frame ranges in the metadata are 0-based, but setting the range is 1-based, so add 1
+				return scriptSetRangeTyped(thread, IntRange(frameRange.startFrame + 1, frameRange.endFrame + 1));
+			}
 		}
 
 		thread->error("mToon range was assigned to a label but the label doesn't exist in the mToon data");

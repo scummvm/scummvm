@@ -847,6 +847,21 @@ bool DynamicList::setAtIndex(size_t index, const DynamicValue &value) {
 	}
 }
 
+void DynamicList::deleteAtIndex(size_t index) {
+	if (_container != nullptr) {
+		size_t size = _container->getSize();
+		if (size < _container->getSize()) {
+			for (size_t i = index + 1; i < size; i++) {
+				DynamicValue valueToMove;
+				_container->getAtIndex(i, valueToMove);
+				_container->setAtIndex(i - 1, valueToMove);
+			}
+
+			_container->truncateToSize(size - 1);
+		}
+	}
+}
+
 void DynamicList::truncateToSize(size_t sz) {
 	if (sz == 0)
 		clear();
@@ -7955,7 +7970,7 @@ VThreadState VisualElement::consumeCommand(Runtime *runtime, const Common::Share
 
 bool VisualElement::respondsToEvent(const Event &evt) const {
 	if (Event(EventIDs::kAuthorMessage, 13).respondsTo(evt)) {
-		if (getRuntime()->getHacks().mtiSceneReturnHack)
+		if (getRuntime()->getHacks().mtiSceneReturnHack && getParent() && getParent()->isSubsection())
 			return true;
 	}
 
@@ -7965,11 +7980,11 @@ bool VisualElement::respondsToEvent(const Event &evt) const {
 VThreadState VisualElement::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (Event(EventIDs::kAuthorMessage, 13).respondsTo(msg->getEvent())) {
 		if (getRuntime()->getHacks().mtiSceneReturnHack) {
-			assert(this->getParent());
-			assert(this->getParent()->isSubsection());
-			runtime->addSceneStateTransition(HighLevelSceneTransition(this->getSelfReference().lock().staticCast<Structural>(), HighLevelSceneTransition::kTypeChangeToScene, false, false));
+			if (getParent() && getParent()->isSubsection()) {
+				runtime->addSceneStateTransition(HighLevelSceneTransition(this->getSelfReference().lock().staticCast<Structural>(), HighLevelSceneTransition::kTypeChangeToScene, false, false));
 
-			return kVThreadReturn;
+				return kVThreadReturn;
+			}
 		}
 	}
 
@@ -8673,10 +8688,23 @@ bool Modifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, con
 		Structural *owner = findStructuralOwner();
 		result.setObject(owner ? owner->getSelfReference() : Common::WeakPtr<RuntimeObject>());
 		return true;
+	} else if (attrib == "previous") {
+		Modifier *sibling = findPrevSibling();
+		if (sibling)
+			result.setObject(sibling->getSelfReference());
+		else
+			result.clear();
+		return true;
+	} else if (attrib == "next") {
+		Modifier *sibling = findNextSibling();
+		if (sibling)
+			result.setObject(sibling->getSelfReference());
+		else
+			result.clear();
+		return true;
 	}
 
 	return false;
-
 }
 
 MiniscriptInstructionOutcome Modifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
@@ -8747,6 +8775,65 @@ const Common::WeakPtr<RuntimeObject>& Modifier::getParent() const {
 
 void Modifier::setParent(const Common::WeakPtr<RuntimeObject> &parent) {
 	_parent = parent;
+}
+
+Modifier *Modifier::findNextSibling() const {
+	RuntimeObject *parent = getParent().lock().get();
+	if (parent) {
+		IModifierContainer *container = nullptr;
+		if (parent->isModifier())
+			container = static_cast<Modifier *>(parent)->getChildContainer();
+		else if (parent->isStructural())
+			container = static_cast<Structural *>(parent);
+
+		if (container)
+		{
+			const Common::Array<Common::SharedPtr<Modifier> > &neighborhood = container->getModifiers();
+			bool found = false;
+			size_t foundIndex = 0;
+			for (size_t i = 0; i < neighborhood.size(); i++) {
+				if (neighborhood[i].get() == this) {
+					foundIndex = i;
+					found = true;
+					break;
+				}
+			}
+
+			if (found && foundIndex < neighborhood.size() - 1)
+				return neighborhood[foundIndex + 1].get();
+		}
+	}
+
+	return nullptr;
+}
+
+Modifier *Modifier::findPrevSibling() const {
+	RuntimeObject *parent = getParent().lock().get();
+	if (parent) {
+		IModifierContainer *container = nullptr;
+		if (parent->isModifier())
+			container = static_cast<Modifier *>(parent)->getChildContainer();
+		else if (parent->isStructural())
+			container = static_cast<Structural *>(parent);
+
+		if (container) {
+			const Common::Array<Common::SharedPtr<Modifier> > &neighborhood = container->getModifiers();
+			bool found = false;
+			size_t foundIndex = 0;
+			for (size_t i = 0; i < neighborhood.size(); i++) {
+				if (neighborhood[i].get() == this) {
+					foundIndex = i;
+					found = true;
+					break;
+				}
+			}
+
+			if (found && foundIndex > 0)
+				return neighborhood[foundIndex - 1].get();
+		}
+	}
+
+	return nullptr;
 }
 
 bool Modifier::respondsToEvent(const Event &evt) const {
