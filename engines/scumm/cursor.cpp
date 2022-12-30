@@ -797,7 +797,7 @@ void ScummEngine_v2::setBuiltinCursor(int idx) {
 
 		memcpy(_grabbedCursor, atari_main_cursor, sizeof(atari_main_cursor));
 
-		for (i = 0; i < sizeof(_grabbedCursor); i++) {
+		for (i = 0; i < ARRAYSIZE(_grabbedCursor); i++) {
 			if (_grabbedCursor[i] == 0x0F) {
 				_grabbedCursor[i] = color;
 			}
