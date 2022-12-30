@@ -1008,14 +1008,14 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			if (getRandom(100) < 50) {
 				for (uint counter = 0; counter < 9; ++counter) {
 					if (getRandom(100) < 50) {
-						_mapMonsters[_teamMonsterIdArray[teamMonsterId]]._pictureRef[counter] = 0;
+						_mapMonsters[_teamMonsterIdArray[teamMonsterId]]._hitPoints[counter] = 0;
 					}
 				}
 			} else {
 				for (uint counter = 0; counter < 9; ++counter) {
 					if (isMonsterActive(teamMonsterId, counter)) {
 						if (getRandom(100) < 50) {
-							_mapMonsters[_teamMonsterIdArray[teamMonsterId]]._pictureRef[counter] = 0;
+							_mapMonsters[_teamMonsterIdArray[teamMonsterId]]._hitPoints[counter] = 0;
 						}
 						break;
 					}
@@ -1031,13 +1031,13 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			if (getRandom(100) < 50) {
 				_messageToBePrinted += "  A dark fiery whirlwind surrounds the poor victim...the power fades and all targeted die!";
 				for (uint counter = 0; counter < 9; ++counter) {
-					_mapMonsters[_teamMonsterIdArray[teamMonsterId]]._pictureRef[counter] = 0;
+					_mapMonsters[_teamMonsterIdArray[teamMonsterId]]._hitPoints[counter] = 0;
 				}
 			} else {
 				_messageToBePrinted += "  A dark fiery whirlwind surrounds the poor victim...the power fades and one victim dies!";
 				for (uint counter = 0; counter < 9; ++counter) {
 					if (isMonsterActive(teamMonsterId, counter)) {
-						_mapMonsters[_teamMonsterIdArray[teamMonsterId]]._pictureRef[counter] = 0;
+						_mapMonsters[_teamMonsterIdArray[teamMonsterId]]._hitPoints[counter] = 0;
 					}
 				}
 			}

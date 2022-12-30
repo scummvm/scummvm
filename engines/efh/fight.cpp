@@ -23,11 +23,11 @@
 
 namespace Efh {
 
-void EfhEngine::sub1BCA7(int16 monsterTeamId) {
-	debug("sub1BCA7 %d", monsterTeamId);
+void EfhEngine::createOpponentList(int16 monsterTeamId) {
+	debugC(3, kDebugEngine, "createOpponentList %d", monsterTeamId);
 
 	int16 counter = 0;
-	if (monsterTeamId != -1 && countPictureRef(monsterTeamId, false) > 0) {
+	if (monsterTeamId != -1 && countAliveMonsters(monsterTeamId) > 0) {
 		counter = 1;
 		_teamMonsterIdArray[0] = monsterTeamId;
 	}
@@ -40,22 +40,22 @@ void EfhEngine::sub1BCA7(int16 monsterTeamId) {
 			if (_mapMonsters[monsterId]._guess_fullPlaceId == 0xFF)
 				continue;
 
-			if (((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) != 0x3F || isCharacterATeamMember(_mapMonsters[monsterId]._npcId)) && (_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) > 0x3D)
+			if (((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) != 0x3F || isNpcATeamMember(_mapMonsters[monsterId]._npcId)) && (_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) > 0x3D)
 				continue;
 
 			if (!checkIfMonsterOnSameLargeMapPlace(monsterId))
 				continue;
 
 			bool found = false;
-			for (uint counter3 = 0; counter3 < 9; ++counter3) {
-				if (_mapMonsters[monsterId]._pictureRef[counter3] > 0) {
+			for (uint subId = 0; subId < 9; ++subId) {
+				if (_mapMonsters[monsterId]._hitPoints[subId] > 0) {
 					found = true;
 					break;
 				}
 			}
 
 			if (found) {
-				if (computeMonsterGroupDistance(monsterId) <= counter2 && !sub1BC74(monsterId, counter)) {
+				if (computeMonsterGroupDistance(monsterId) <= counter2 && !isMonsterAlreadyFighting(monsterId, counter)) {
 					_teamMonsterIdArray[counter] = monsterId;
 					if (++counter >= 5)
 						break;
@@ -73,8 +73,8 @@ void EfhEngine::sub1BCA7(int16 monsterTeamId) {
 
 void EfhEngine::sub1BE89(int16 monsterId) {
 	debug("sub1BE89 %d", monsterId);
-	sub1BCA7(monsterId);
-	reset_stru32686();
+	createOpponentList(monsterId);
+	resetTeamMonsterEffects();
 }
 
 bool EfhEngine::handleFight(int16 monsterId) {
@@ -337,7 +337,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 							}
 							// handleFight - Loop on var7E - End
 						}
-					} else if (_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._pictureRef[var86] > 0 && _teamMonsterEffects[monsterGroupIdOrMonsterId]._effect[var86]) {
+					} else if (_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._hitPoints[var86] > 0 && _teamMonsterEffects[monsterGroupIdOrMonsterId]._effect[var86]) {
 						--_teamMonsterEffects[monsterGroupIdOrMonsterId]._duration[var86];
 						if (_teamMonsterEffects[monsterGroupIdOrMonsterId]._duration[var86] <= 0) {
 							_enemyNamePt2 = kEncounters[_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._monsterRef]._name;
@@ -470,7 +470,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 					varInt = _teamMonsterIdArray[groupId];
 					int16 var5E = kEncounters[_mapMonsters[varInt]._monsterRef]._nameArticle;
 					int16 charScore = getCharacterScore(_teamCharId[teamCharId], unk_monsterField5_itemId);
-					int16 var80 = _mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E];
+					int16 hitPointsBefore = _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E];
 					int16 var62 = 0;
 					int16 originalDamage = 0;
 					int16 damagePointsAbsorbed = 0;
@@ -503,7 +503,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						var62 = 0;
 
 					if (var62 > 0) {
-						_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] -= originalDamage;
+						_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E] -= originalDamage;
 						if (var62 > 1) {
 							_attackBuffer = Common::String::format("%d times ", var62);
 						} else {
@@ -535,7 +535,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 							_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s, but does no damage!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[var70], _nameBuffer.c_str());
 						} else if (hitPoints == 1) {
 							_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s for 1 point", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[var70], _nameBuffer.c_str());
-							if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] <= 0) {
+							if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E] <= 0) {
 								getDeathTypeDescription(groupId, teamCharId + 1000);
 								getXPAndSearchCorpse(_teamCharId[teamCharId], _enemyNamePt1, _enemyNamePt2, _teamMonsterIdArray[groupId]);
 							} else {
@@ -543,7 +543,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 							}
 						} else {
 							_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s for %d points", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[var70], _nameBuffer.c_str(), hitPoints);
-							if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] <= 0) {
+							if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E] <= 0) {
 								getDeathTypeDescription(groupId, teamCharId + 1000);
 								getXPAndSearchCorpse(_teamCharId[teamCharId], _enemyNamePt1, _enemyNamePt2, _teamMonsterIdArray[groupId]);
 							} else {
@@ -553,19 +553,19 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						// Action A - Check damages - End
 
 						// Action A - Add reaction text - Start
-						if (var62 != 0 && originalDamage > 0 && getRandom(100) <= 35 && _mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] > 0) {
-							if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] - 5 <= originalDamage) {
+						if (var62 != 0 && originalDamage > 0 && getRandom(100) <= 35 && _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E] > 0) {
+							if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E] - 5 <= originalDamage) {
 								addReactionText(0);
-							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] < var80 / 8) {
+							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E] < hitPointsBefore / 8) {
 								addReactionText(1);
-							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] < var80 / 4) {
+							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E] < hitPointsBefore / 4) {
 								addReactionText(2);
-							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] < var80 / 2) {
+							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E] < hitPointsBefore / 2) {
 								addReactionText(3);
-							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] < var80 / 3) {
+							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E] < hitPointsBefore / 3) {
 								// CHECKME: Doesn't make any sense to check /3 after /2... I don't get it
 								addReactionText(4);
-							} else if (var80 / 8 >= originalDamage) {
+							} else if (hitPointsBefore / 8 >= originalDamage) {
 								addReactionText(5);
 							} else if (originalDamage == 0 && getRandom(100) < 35) {
 								addReactionText(6);
@@ -574,7 +574,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						// Action A - Add reaction text - End
 
 						// Action A - Add armor absorb text - Start
-						if (var76 && var62 && _mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] > 0) {
+						if (var76 && var62 && _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E] > 0) {
 							if (damagePointsAbsorbed <= 1)
 								_messageToBePrinted += Common::String::format("  %s%s's armor absorbs 1 point!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 							else
@@ -602,13 +602,13 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						// Action A - Check item durability - End
 
 						// Action A - Check effect - Start
-						if (_items[unk_monsterField5_itemId]._specialEffect == 1 && _mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] > 0) {
+						if (_items[unk_monsterField5_itemId]._specialEffect == 1 && _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E] > 0) {
 							if (getRandom(100) < 35) {
 								_teamMonsterEffects[groupId]._effect[var7E] = 1;
 								_teamMonsterEffects[groupId]._duration[var7E] = getRandom(10);
 								_messageToBePrinted += Common::String::format("  %s%s falls asleep!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 							}
-						} else if (_items[unk_monsterField5_itemId]._specialEffect == 2 && _mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[var7E] > 0) {
+						} else if (_items[unk_monsterField5_itemId]._specialEffect == 2 && _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E] > 0) {
 							_teamMonsterEffects[groupId]._effect[var7E] = 2;
 							_teamMonsterEffects[groupId]._duration[var7E] = getRandom(10);
 							_messageToBePrinted += Common::String::format("  %s%s is frozen!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
@@ -692,8 +692,8 @@ bool EfhEngine::isTPK() {
 	return zeroedChar == _teamSize;
 }
 
-bool EfhEngine::sub1BC74(int16 monsterId, int16 teamMonsterId) {
-	debug("sub1BC74 %d %d", monsterId, teamMonsterId);
+bool EfhEngine::isMonsterAlreadyFighting(int16 monsterId, int16 teamMonsterId) {
+	debug("isMonsterAlreadyFighting %d %d", monsterId, teamMonsterId);
 
 	for (int counter = 0; counter < teamMonsterId; ++counter) {
 		if (_teamMonsterIdArray[counter] == monsterId)
@@ -702,12 +702,12 @@ bool EfhEngine::sub1BC74(int16 monsterId, int16 teamMonsterId) {
 	return false;
 }
 
-void EfhEngine::reset_stru32686() {
-	debug("reset_stru32686");
-	for (uint counter1 = 0; counter1 < 5; ++counter1) {
-		for (uint counter2 = 0; counter2 < 9; ++counter2) {
-			_teamMonsterEffects[counter1]._effect[counter2] = 0;
-			_teamMonsterEffects[counter1]._duration[counter2] = 0;
+void EfhEngine::resetTeamMonsterEffects() {
+	debugC(6, kDebugEngine, "resetTeamMonsterEffects");
+	for (uint ctrMonsterId = 0; ctrMonsterId < 5; ++ctrMonsterId) {
+		for (uint ctrEffectId = 0; ctrEffectId < 9; ++ctrEffectId) {
+			_teamMonsterEffects[ctrMonsterId]._effect[ctrEffectId] = 0;
+			_teamMonsterEffects[ctrMonsterId]._duration[ctrEffectId] = 0;
 		}
 	}
 }
@@ -1398,11 +1398,11 @@ int16 EfhEngine::sub1DEC8(int16 groupNumber) {
 		if (!isMonsterActive(groupNumber, counter))
 			continue;
 
-		if (_mapMonsters[monsterId]._pictureRef[var4] > _mapMonsters[monsterId]._pictureRef[counter])
+		if (_mapMonsters[monsterId]._hitPoints[var4] > _mapMonsters[monsterId]._hitPoints[counter])
 			var4 = counter;
 	}
 
-	if (_mapMonsters[monsterId]._pictureRef[var4] <= 0)
+	if (_mapMonsters[monsterId]._hitPoints[var4] <= 0)
 		return -1;
 
 	return var4;
