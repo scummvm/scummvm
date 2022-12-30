@@ -447,7 +447,7 @@ void EfhEngine::initMapMonsters() {
 			continue;
 
 		for (uint counter = 0; counter < 9; ++counter)
-			_mapMonsters[monsterId]._pictureRef[counter] = 0;
+			_mapMonsters[monsterId]._hitPoints[counter] = 0;
 
 		uint8 groupSize = _mapMonsters[monsterId]._groupSize;
 		if (groupSize == 0)
@@ -462,12 +462,12 @@ void EfhEngine::initMapMonsters() {
 
 			if (rand100 <= 25) {
 				uint16 delta = getRandom(pictureRef / 2);
-				_mapMonsters[monsterId]._pictureRef[counter] = pictureRef - delta;
+				_mapMonsters[monsterId]._hitPoints[counter] = pictureRef - delta;
 			} else if (rand100 <= 75) {
-				_mapMonsters[monsterId]._pictureRef[counter] = pictureRef;
+				_mapMonsters[monsterId]._hitPoints[counter] = pictureRef;
 			} else {
 				uint16 delta = getRandom(pictureRef / 2);
-				_mapMonsters[monsterId]._pictureRef[counter] = pictureRef + delta;
+				_mapMonsters[monsterId]._hitPoints[counter] = pictureRef + delta;
 			}
 		}
 	}
@@ -503,7 +503,7 @@ void EfhEngine::loadMapArrays(int idx) {
 		_mapMonsters[i]._field9_textId = mapMonstersPtr[29 * i + 9];
 		_mapMonsters[i]._groupSize = mapMonstersPtr[29 * i + 10];
 		for (int j = 0; j < 9; ++j)
-			_mapMonsters[i]._pictureRef[j] = READ_LE_INT16(&mapMonstersPtr[29 * i + 11 + j * 2]);
+			_mapMonsters[i]._hitPoints[j] = READ_LE_INT16(&mapMonstersPtr[29 * i + 11 + j * 2]);
 	}
 
 	uint8 *mapPtr = &_mapArr[idx][2758];
@@ -667,7 +667,7 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 map
 					continue;
 
 				for (uint counterY = 0; counterY < 9 && !var4; ++counterY) {
-					if (_mapMonsters[var16]._pictureRef[counterY] > 0)
+					if (_mapMonsters[var16]._hitPoints[counterY] > 0)
 						var4 = true;
 				}
 
@@ -677,7 +677,7 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 map
 				int16 var6 = 148 + kEncounters[_mapMonsters[var16]._monsterRef]._animId;
 				int16 var1 = _mapMonsters[var16]._possessivePronounSHL6 & 0x3F;
 
-				if (var1 == 0x3F && isCharacterATeamMember(_mapMonsters[var16]._npcId))
+				if (var1 == 0x3F && isNpcATeamMember(_mapMonsters[var16]._npcId))
 					continue;
 
 				int16 drawPosX = 128 + (posX - minX) * 16;
@@ -826,8 +826,8 @@ void EfhEngine::refreshTeamSize() {
 	}
 }
 
-bool EfhEngine::isCharacterATeamMember(int16 id) {
-	debugC(6, kDebugEngine,"isCharacterATeamMember %d", id);
+bool EfhEngine::isNpcATeamMember(int16 id) {
+	debugC(6, kDebugEngine,"isNpcATeamMember %d", id);
 
 	for (int counter = 0; counter < _teamSize; ++counter) {
 		if (_teamCharId[counter] == id)
@@ -1753,7 +1753,7 @@ bool EfhEngine::checkPictureRefAvailability(int16 monsterId) {
 		return false;
 
 	for (uint counter = 0; counter < 9; ++counter) {
-		if (_mapMonsters[monsterId]._pictureRef[counter] > 0)
+		if (_mapMonsters[monsterId]._hitPoints[counter] > 0)
 			return true;
 	}
 
@@ -1767,19 +1767,15 @@ void EfhEngine::displayMonsterAnim(int16 monsterId) {
 	displayAnimFrames(animId, true);
 }
 
-int16 EfhEngine::countPictureRef(int16 id, bool teamMemberFl) {
-	debug("countPictureRef %d %s", id, teamMemberFl ? "True" : "False");
+// The original is using an additional bool parameter which was only passed as 'False'.
+// It has been removed as well as the associated code
+int16 EfhEngine::countAliveMonsters(int16 id) {
+	debugC(6, kDebugEngine, "countAliveMonsters %d", id);
 
 	int16 count = 0;
-	int16 monsterId;
-
-	if (teamMemberFl)
-		monsterId = _teamMonsterIdArray[id];
-	else
-		monsterId = id;
 
 	for (uint counter = 0; counter < 9; ++counter) {
-		if (_mapMonsters[monsterId]._pictureRef[counter] > 0)
+		if (_mapMonsters[id]._hitPoints[counter] > 0)
 			++count;
 	}
 
@@ -1787,7 +1783,7 @@ int16 EfhEngine::countPictureRef(int16 id, bool teamMemberFl) {
 }
 
 bool EfhEngine::checkMonsterGroupDistance1OrLess(int16 monsterId) {
-	debug("checkMonsterGroupDistance1OrLess %d", monsterId);
+	debugC(6,kDebugEngine, "checkMonsterGroupDistance1OrLess %d", monsterId);
 
 	if (computeMonsterGroupDistance(monsterId) > 1)
 		return false;
@@ -1802,7 +1798,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 	if (_mapMonsters[monsterId]._guess_fullPlaceId == 0xFF)
 		return false;
 
-	if (countPictureRef(monsterId, false) < 1)
+	if (countAliveMonsters(monsterId) < 1)
 		return false;
 
 	if (!checkIfMonsterOnSameLargeMapPlace(monsterId))
@@ -1821,7 +1817,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 		return true;
 	}
 
-	if (isCharacterATeamMember(_mapMonsters[monsterId]._npcId))
+	if (isNpcATeamMember(_mapMonsters[monsterId]._npcId))
 		return false;
 
 	int16 npcId = _mapMonsters[monsterId]._npcId;
@@ -2296,7 +2292,7 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 			continue;
 
 		for (uint counter2 = 0; counter2 < 9; ++counter2) {
-			_mapMonsters[_teamMonsterIdArray[counter1]]._pictureRef[counter2] = 0;
+			_mapMonsters[_teamMonsterIdArray[counter1]]._hitPoints[counter2] = 0;
 			_teamMonsterEffects[counter1]._effect[counter2] = 0;
 			_teamMonsterEffects[counter1]._duration[counter2] = 0;
 		}
@@ -2334,11 +2330,11 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 				if (_mapMonsters[ctrMapMonsterId]._guess_fullPlaceId == 0xFF)
 					continue;
 
-				if (((_mapMonsters[ctrMapMonsterId]._possessivePronounSHL6 & 0x3F) == 0x3F && !isCharacterATeamMember(_mapMonsters[ctrMapMonsterId]._npcId)) || (_mapMonsters[ctrMapMonsterId]._possessivePronounSHL6 & 0x3F) <= 0x3D) {
+				if (((_mapMonsters[ctrMapMonsterId]._possessivePronounSHL6 & 0x3F) == 0x3F && !isNpcATeamMember(_mapMonsters[ctrMapMonsterId]._npcId)) || (_mapMonsters[ctrMapMonsterId]._possessivePronounSHL6 & 0x3F) <= 0x3D) {
 					if (checkIfMonsterOnSameLargeMapPlace(ctrMapMonsterId)) {
 						bool monsterActiveFound = false;
 						for (uint ctrSubId = 0; ctrSubId < 9; ++ctrSubId) {
-							if (_mapMonsters[ctrMapMonsterId]._pictureRef[ctrSubId] > 0) {
+							if (_mapMonsters[ctrMapMonsterId]._hitPoints[ctrSubId] > 0) {
 								monsterActiveFound = true;
 								break;
 							}
@@ -2350,7 +2346,7 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 						if (computeMonsterGroupDistance(ctrMapMonsterId) > var2)
 							continue;
 
-						if (sub1BC74(ctrMapMonsterId, teamMonsterId))
+						if (isMonsterAlreadyFighting(ctrMapMonsterId, teamMonsterId))
 							continue;
 
 						_teamMonsterIdArray[teamMonsterId] = ctrMapMonsterId;
@@ -2522,7 +2518,7 @@ void EfhEngine::setMapMonsterField8(int16 id, uint8 movementType, bool groupFl) 
 bool EfhEngine::isMonsterActive(int16 groupId, int16 id) {
 	debugC(5, kDebugEngine, "isMonsterActive %d %d", groupId, id);
 
-	if (_mapMonsters[_teamMonsterIdArray[groupId]]._pictureRef[id] > 0 && _teamMonsterEffects[groupId]._effect[id] == 0)
+	if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[id] > 0 && _teamMonsterEffects[groupId]._effect[id] == 0)
 		return true;
 	return false;
 }
@@ -2573,7 +2569,7 @@ bool EfhEngine::checkMonsterCollision() {
 			continue;
 
 		if ((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) > 0x3D
-		&& !(((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) == 0x3F) && !isCharacterATeamMember(_mapMonsters[monsterId]._npcId)))
+		&& !(((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) == 0x3F) && !isNpcATeamMember(_mapMonsters[monsterId]._npcId)))
 			continue;
 
 		if (_mapMonsters[monsterId]._posX != _mapPosX || _mapMonsters[monsterId]._posY != _mapPosY)
@@ -2587,7 +2583,7 @@ bool EfhEngine::checkMonsterCollision() {
 
 		int16 var6A = 0;
 		for (uint var6C = 0; var6C < 9; ++var6C) {
-			if (_mapMonsters[monsterId]._pictureRef[var6C])
+			if (_mapMonsters[monsterId]._hitPoints[var6C])
 				++var6A;
 		}
 

@@ -214,7 +214,7 @@ struct MapMonster {
 	uint8 _moveInfo; // abbb cccc a: special move flag, bbb: Pct modifier for random move, cccc movement type
 	uint8 _field9_textId;
 	uint8 _groupSize;
-	int16 _pictureRef[9];
+	int16 _hitPoints[9];
 };
 
 struct Stru32686 {
@@ -308,7 +308,7 @@ private:
 	void totalPartyKill();
 	void removeCharacterFromTeam(int16 teamMemberId);
 	void refreshTeamSize();
-	bool isCharacterATeamMember(int16 id);
+	bool isNpcATeamMember(int16 id);
 	void handleWinSequence();
 	bool giveItemTo(int16 charId, int16 objectId, int16 altCharId);
 	int16 chooseCharacterToReplace();
@@ -345,7 +345,7 @@ private:
 	void handleMapMonsterMoves();
 	bool checkPictureRefAvailability(int16 monsterId);
 	void displayMonsterAnim(int16 monsterId);
-	int16 countPictureRef(int16 id, bool teamMemberFl);
+	int16 countAliveMonsters(int16 id);
 	bool checkMonsterGroupDistance1OrLess(int16 monsterId);
 	bool sub21820(int16 monsterId, int16 arg2, int16 itemId);
 	void sub221D2(int16 monsterId);
@@ -378,9 +378,9 @@ private:
 	void handleFight_lastAction_H(int16 teamCharId);
 	void handleFight_lastAction_U(int16 teamCharId);
 	bool isTPK();
-	bool sub1BC74(int16 monsterId, int16 teamMonsterId);
-	void sub1BCA7(int16 monsterTeamId);
-	void reset_stru32686();
+	bool isMonsterAlreadyFighting(int16 monsterId, int16 teamMonsterId);
+	void createOpponentList(int16 monsterTeamId);
+	void resetTeamMonsterEffects();
 	void sub1BE89(int16 monsterId);
 	void resetTeamMonsterIdArray();
 	bool isTeamMemberStatusNormal(int16 id);
