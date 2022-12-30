@@ -83,13 +83,20 @@ byte kDrillerCPCPalette[27][3] = {
 	{0xff, 0xff, 0xff},
 };
 
+byte kDrillerCPCPalette1[27][3] = {
+	{0x00, 0x00, 0x00},  // 0: black
+	{0xff, 0x80, 0x00},  // 1: orange
+	{0x00, 0xff, 0xff},  // 2: cyan
+	{0x00, 0x80, 0x00},  // 3: green
+};
+
 void FreescapeEngine::loadColorPalette() {
 	if (_renderMode == Common::kRenderEGA) {
 		_gfx->_palette = (byte *)&dos_EGA_palette;
 	} else if (_renderMode == Common::kRenderZX) {
 		_gfx->_palette = (byte *)kDrillerZXPalette;
 	} else if (_renderMode == Common::kRenderCPC) {
-		_gfx->_palette = (byte *)kDrillerCPCPalette;
+		_gfx->_palette = (byte *)kDrillerCPCPalette1;
 	} else if (_renderMode == Common::kRenderCGA) {
 		_gfx->_palette = nullptr; // palette depends on the area
 	} else if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST) {

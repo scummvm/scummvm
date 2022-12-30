@@ -126,7 +126,7 @@ bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 		return false;
 
 	assert (_renderMode == Common::kRenderCPC);
-	if (index == 4) { // Solid colors 
+	if (index <= 4) { // Solid colors
 		readFromPalette(index - 1, r1, g1, b1);
 		r2 = r1;
 		g2 = g1;
@@ -135,11 +135,12 @@ bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 	}
 
 	byte *entry = (*_colorMap)[index - 1];
-	byte be = *(entry);
-	readFromPalette((be >> 4), r1, g1, b1);
+	//entry++;
 	entry++;
-	be = *(entry);
-	readFromPalette((be >> 4), r2, g2, b2);
+	byte be = *(entry);
+	//be = *(entry);
+	readFromPalette((be >> 4) % 4, r1, g1, b1);
+	readFromPalette((be & 0xf) % 4, r2, g2, b2);
 	return true;
 }
 
