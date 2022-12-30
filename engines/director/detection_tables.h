@@ -297,6 +297,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "mmalgebra",			"Multimedia Algebra" },
 	{ "mmiqtest",			"Multimedia IQ Test" },
 	{ "mmmath3",			"Mission Masters Math Grade 3: Defeat Dirty D!" },
+	{ "moominparty",		"The Great Moomin Party" },
 	{ "mrsquack",			"Reading with Peter Cottontail: The Story of Mrs. Quack" },
 	{ "mummy",				"Mummy: Tomb of the Pharaoh" },
 	{ "muppetkidsearly5",	"Muppets Kids Early Learning Series Volume 5: Sound Patterns: Phonics" },
@@ -5846,6 +5847,37 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1t("mobiclic", "Windows 3.1", "CLICK31.EXE", "10771f3a2f953a520de24746c1031f68", 927410, 501),
 	WINGAME1t("mobiclic", "Windows 95", "CLICK95.EXE", "b540921a864caea4868e7e0261b59f3d", 1405572, 501),
+
+	// Original finnish release: "Suuri Muumijuhla"
+	// English release: "The Great Moomin Party"
+	// Norwegian release: "Fest i Mummidalen"
+	// Swedish release: "Fest i Mumindalen"
+	// Danish release: "Fest i Mumidalen"
+	// Windows versions require installation
+	MACGAME2("moominparty", "", "The Great Moomin Party", "250a5349ecb5d19b4352b5d11095f24b", 719033,
+								"HD_DATA/MENU.Dxr",		  "7fb1b0b67828e2e04245895c8d67c63d", 5076140, 501),
+	WINGAME2t("moominparty", "Windows 95",  "Mumin95.exe", 		"f11b230993af8dba0fd2efa0d3271c89", 1416715,
+									  	    "hd_data/MENU.DXR", "6a895814b03d85d79c53c7a1f9eaf128", 5076140, 501),
+	WINGAME2t("moominparty", "Windows 3.1", "MUMIN31.EXE", 		"92fc805cebf17a05026b508293afd0c4", 938553,
+									  		"HD_DATA/MENU.DXR", "6a895814b03d85d79c53c7a1f9eaf128", 5076140, 501),
+	MACGAME2_l("moominparty", "", "Fest i Mummidalen", "250a5349ecb5d19b4352b5d11095f24b", 719033,
+								  "HD_DATA/MENU.Dxr",  "36355463fa9d59c7f191445d07aa9072", 5064032, Common::NB_NOR, 501),
+	WINGAME2t_l("moominparty", "Windows 95",  "Mumin95.exe", 	  "f11b230993af8dba0fd2efa0d3271c89", 1416715,
+									  	      "hd_data/MENU.DXR", "21d9332d7345fddebcab25b8482e7cfb", 5064032, Common::NB_NOR, 501),
+	WINGAME2t_l("moominparty", "Windows 3.1", "MUMIN31.EXE", 	  "92fc805cebf17a05026b508293afd0c4", 938553,
+									  		  "hd_data/MENU.DXR", "21d9332d7345fddebcab25b8482e7cfb", 5064032, Common::NB_NOR, 501),
+	MACGAME2_l("moominparty", "", "Fest i Mumindalen", "231d3041df162be4a0ddd36a74eb03b6", 719033,
+								  "HD_DATA/MENU.Dxr",  "2ad2b9e9477bdc7d48959b8df8830fd5", 5072990, Common::SE_SWE, 501),
+	WINGAME2t_l("moominparty", "Windows 95",  "Mumin95.exe", 	  "f11b230993af8dba0fd2efa0d3271c89", 1416715,
+									  	      "hd_data/MENU.DXR", "4809a8c0c7c064f3ea0dbd6844260c67", 5072990, Common::SE_SWE, 501),
+	WINGAME2t_l("moominparty", "Windows 3.1", "MUMIN31.EXE", 	  "92fc805cebf17a05026b508293afd0c4", 938553,
+									  		  "HD_DATA/MENU.DXR", "4809a8c0c7c064f3ea0dbd6844260c67", 5072990, Common::SE_SWE, 501),
+	MACGAME2_l("moominparty", "", "Suuri Muumijuhla", "250a5349ecb5d19b4352b5d11095f24b", 719033,
+								  "HD_DATA/MENU.Dxr",  "f4b8f898cb03062f0d2e94b5c9922879", 5070544, Common::FI_FIN, 501),
+	WINGAME2t_l("moominparty", "Windows 95",  "Mumin95.exe", 	  "f11b230993af8dba0fd2efa0d3271c89", 1416715,
+									  	      "hd_data/MENU.DXR", "4809a8c0c7c064f3ea0dbd6844260c67", 5070544, Common::FI_FIN, 501),
+	WINGAME2t_l("moominparty", "Windows 3.1", "MUMIN31.EXE", 	  "92fc805cebf17a05026b508293afd0c4", 938553,
+									  		  "HD_DATA/MENU.DXR", "4809a8c0c7c064f3ea0dbd6844260c67", 5070544, Common::FI_FIN, 501),
 
 	WINGAME1("msn", "Preview", "MSNPREV8.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 5215403, 501),
 
