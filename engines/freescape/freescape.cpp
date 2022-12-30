@@ -408,7 +408,9 @@ void FreescapeEngine::processInput() {
 				drawFrame();
 				_savedScreen = _gfx->getScreenshot();
 				_gfx->setViewport(_fullscreenViewArea);
+				g_system->lockMouse(false);
 				openMainMenuDialog();
+				g_system->lockMouse(true);
 				_gfx->setViewport(_viewArea);
 				_savedScreen->free();
 				delete _savedScreen;
@@ -509,6 +511,7 @@ Common::Error FreescapeEngine::run() {
 
 	_gfx->convertImageFormatIfNecessary(_title);
 	_gfx->convertImageFormatIfNecessary(_border);
+	g_system->lockMouse(true);
 
 	// Simple main event loop
 	int saveSlot = ConfMan.getInt("save_slot");

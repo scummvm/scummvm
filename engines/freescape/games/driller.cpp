@@ -966,11 +966,15 @@ void DrillerEngine::drawInfoMenu() {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_l) {
 					_gfx->setViewport(_fullscreenViewArea);
+					g_system->lockMouse(false);
 					loadGameDialog();
+					g_system->lockMouse(true);
 					_gfx->setViewport(_viewArea);
 				} else if (event.kbd.keycode == Common::KEYCODE_s) {
 					_gfx->setViewport(_fullscreenViewArea);
+					g_system->lockMouse(false);
 					saveGameDialog();
+					g_system->lockMouse(true);
 					_gfx->setViewport(_viewArea);
 				} else if (isDOS() && event.kbd.keycode == Common::KEYCODE_t) {
 					// TODO
