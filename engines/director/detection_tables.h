@@ -4215,8 +4215,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO1("madtg", "1996 Demo", "MADTG.EXE", "f53afbe0ae5126fa04adce4952a84b7f", 5867859, 404),
 
+	// German 16bit version is unconfirmed (Trac #13225)
 	MACGAME1("majestic", "", "Majestic", "01be45e7241194dad07938e7059b88e3", 483774, 400),
 	WINGAME1("majestic", "", "MAJESTIC.EXE", "624267f70253e5327981003a6fc0aeba", 23437631, 400),
+	WINGAME1_l("majestic", "",  "Maj16.exe", "65ef7246e9ab04aff59fb734e9551727", 23688481, Common::DE_DEU, 400),
 	WINGAME1t_l("majestic", "", "Maj32.exe", "d1cced6eff47da53845679d05b5d2bf3", 24166899, Common::DE_DEU, 400),
 
 	// Original filename is Make•A•Mug™ V1.0
