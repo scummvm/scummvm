@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-29 13:56+0000\n"
+"POT-Creation-Date: 2022-12-30 21:12+0000\n"
 "PO-Revision-Date: 2022-05-01 15:27+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -137,7 +137,7 @@ msgstr ""
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
 #: gui/options.cpp:3202 gui/options.cpp:3240 gui/options.cpp:3664
-#: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:580
+#: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:584
 #: engines/director/events.cpp:91 engines/grim/grim.cpp:355
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:145
@@ -149,7 +149,7 @@ msgstr "Ano"
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
 #: gui/options.cpp:3202 gui/options.cpp:3240 gui/options.cpp:3664
-#: engines/buried/buried.cpp:580 engines/director/events.cpp:91
+#: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/grim/grim.cpp:355 engines/kyra/gui/saveload_eob.cpp:597
 #: engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:151
@@ -4800,12 +4800,12 @@ msgstr ""
 msgid "Quit Game"
 msgstr " (Hra)"
 
-#: engines/buried/buried.cpp:580
+#: engines/buried/buried.cpp:584
 #, fuzzy
 msgid "Are you sure you want to quit?"
 msgstr "Jste si jisti, že chcete odejít?  (A/N)A"
 
-#: engines/buried/buried.cpp:590
+#: engines/buried/buried.cpp:594
 #, fuzzy
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "Hra je pozastavena. Pro pokračovaní stiskněte libovolnou klávesu."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-29 13:56+0000\n"
+"POT-Creation-Date: 2022-12-30 21:12+0000\n"
 "PO-Revision-Date: 2022-12-26 07:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -133,7 +133,7 @@ msgstr "接続が制限されているようです。ダウンロードしても
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
 #: gui/options.cpp:3202 gui/options.cpp:3240 gui/options.cpp:3664
-#: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:580
+#: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:584
 #: engines/director/events.cpp:91 engines/grim/grim.cpp:355
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:145
@@ -145,7 +145,7 @@ msgstr "はい"
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
 #: gui/options.cpp:3202 gui/options.cpp:3240 gui/options.cpp:3664
-#: engines/buried/buried.cpp:580 engines/director/events.cpp:91
+#: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/grim/grim.cpp:355 engines/kyra/gui/saveload_eob.cpp:597
 #: engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:151
@@ -4687,11 +4687,11 @@ msgstr "手がかりデータベース"
 msgid "Quit Game"
 msgstr "ゲームを終了する"
 
-#: engines/buried/buried.cpp:580
+#: engines/buried/buried.cpp:584
 msgid "Are you sure you want to quit?"
 msgstr "終了してもよろしいですか?"
 
-#: engines/buried/buried.cpp:590
+#: engines/buried/buried.cpp:594
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "ゲームが一時停止しました。OKをクリックして続行してください。"
 

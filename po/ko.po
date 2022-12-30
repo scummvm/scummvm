@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-29 13:56+0000\n"
+"POT-Creation-Date: 2022-12-30 21:12+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -133,7 +133,7 @@ msgstr "인터넷 연결에 제한이 있는 것 같습니다. 다운로드를 �
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
 #: gui/options.cpp:3202 gui/options.cpp:3240 gui/options.cpp:3664
-#: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:580
+#: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:584
 #: engines/director/events.cpp:91 engines/grim/grim.cpp:355
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:145
@@ -145,7 +145,7 @@ msgstr "예"
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
 #: gui/options.cpp:3202 gui/options.cpp:3240 gui/options.cpp:3664
-#: engines/buried/buried.cpp:580 engines/director/events.cpp:91
+#: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/grim/grim.cpp:355 engines/kyra/gui/saveload_eob.cpp:597
 #: engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:151
@@ -4714,11 +4714,11 @@ msgstr "단서 데이터베이스"
 msgid "Quit Game"
 msgstr "게임 종료"
 
-#: engines/buried/buried.cpp:580
+#: engines/buried/buried.cpp:584
 msgid "Are you sure you want to quit?"
 msgstr "정말로 종료하겠습니까?"
 
-#: engines/buried/buried.cpp:590
+#: engines/buried/buried.cpp:594
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "게임이 일시 중지되었습니다. OK를 눌러 다시 시작합니다."
 
