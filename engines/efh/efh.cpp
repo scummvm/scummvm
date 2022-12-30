@@ -726,7 +726,7 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 			displayCenteredString("DEF", 104, 128, 152);
 			displayCenteredString("HP", 144, 176, 152);
 			displayCenteredString("Max HP", 192, 224, 152);
-			displayCenteredString("* DEAD *", 225, 302, 152);
+			displayCenteredString("Weapon", 225, 302, 152);
 			setTextColorRed();
 
 			for (int i = 0; i < 3; ++i) {
