@@ -259,6 +259,7 @@ public:
 protected:
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void displayOverwriteStrings(const Common::String &description);
 };
 
 } // End of namespace Neverhood
