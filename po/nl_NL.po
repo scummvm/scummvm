@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-31 19:47+0000\n"
+"POT-Creation-Date: 2022-12-31 19:51+0000\n"
 "PO-Revision-Date: 2022-07-13 06:51+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4197,18 +4197,20 @@ msgstr ""
 #: engines/agi/metaengine.cpp:119 engines/chewy/metaengine.cpp:36
 #: engines/cine/metaengine.cpp:42 engines/drascula/metaengine.cpp:38
 #: engines/dreamweb/metaengine.cpp:36 engines/groovie/metaengine.cpp:49
-#: engines/sci/detection_options.h:105 engines/sherlock/metaengine.cpp:39
-#: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
-#: engines/ultima/metaengine.cpp:44 engines/zvision/metaengine.cpp:46
+#: engines/neverhood/dialogs.cpp:48 engines/sci/detection_options.h:105
+#: engines/sherlock/metaengine.cpp:39 engines/toltecs/metaengine.cpp:40
+#: engines/trecision/metaengine.cpp:37 engines/ultima/metaengine.cpp:44
+#: engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr "Gebruik originele opslaan/laad schermen"
 
 #: engines/agi/metaengine.cpp:120 engines/chewy/metaengine.cpp:37
 #: engines/cine/metaengine.cpp:43 engines/drascula/metaengine.cpp:39
 #: engines/dreamweb/metaengine.cpp:37 engines/groovie/metaengine.cpp:50
-#: engines/sci/detection_options.h:106 engines/sherlock/metaengine.cpp:40
-#: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
-#: engines/ultima/metaengine.cpp:45 engines/zvision/metaengine.cpp:47
+#: engines/neverhood/dialogs.cpp:49 engines/sci/detection_options.h:106
+#: engines/sherlock/metaengine.cpp:40 engines/toltecs/metaengine.cpp:41
+#: engines/trecision/metaengine.cpp:38 engines/ultima/metaengine.cpp:45
+#: engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Gebruik de originele opslaan/laden schermen in plaats van die van ScummVM"
@@ -6560,6 +6562,44 @@ msgstr "Seconden"
 #: engines/nancy/dialogs.cpp:212
 msgid "Invalid Scene ID!"
 msgstr "Ongeldige Scene ID!"
+
+#: engines/neverhood/dialogs.cpp:53
+msgid "Skip the Hall of Records storyboard scenes"
+msgstr "Sla de Hall of Records verhaallijnscenes over"
+
+#: engines/neverhood/dialogs.cpp:54
+msgid "Allows the player to skip past the Hall of Records storyboard scenes"
+msgstr ""
+"Maakt het voor de speler mogelijk om de Hall of Records verhaallijnscenes "
+"over te slaan"
+
+#: engines/neverhood/dialogs.cpp:58
+msgid "Scale the making of videos to full screen"
+msgstr "Schaal het maken van videos naar het volledige scherm"
+
+#: engines/neverhood/dialogs.cpp:59
+msgid "Scale the making of videos, so that they use the whole screen"
+msgstr "Schaal het maken van videos zodat ze het volledige scherm gebruiken"
+
+#: engines/neverhood/dialogs.cpp:63
+msgid "Repeat useful Willie's hint"
+msgstr ""
+
+#: engines/neverhood/dialogs.cpp:64
+msgid "Repeat actual useful hint by Willie"
+msgstr ""
+
+#: engines/neverhood/dialogs.cpp:82
+#, fuzzy
+#| msgid "Enable font replacement"
+msgid "NHC replacement:"
+msgstr "Lettertypes vervangen"
+
+#: engines/neverhood/dialogs.cpp:88
+#, fuzzy
+#| msgid "Original Save"
+msgid "<original>"
+msgstr "Origineel opgeslagen spel"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -9334,20 +9374,6 @@ msgstr ""
 "alle lettertypes van de collectie nodig die u selecteert, dus "
 "LiberationMono, LiberationSans en LiberationSerif, of FreeMono, FreeSans en "
 "FreeSerif respectievelijk."
-
-#~ msgid "Skip the Hall of Records storyboard scenes"
-#~ msgstr "Sla de Hall of Records verhaallijnscenes over"
-
-#~ msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-#~ msgstr ""
-#~ "Maakt het voor de speler mogelijk om de Hall of Records verhaallijnscenes "
-#~ "over te slaan"
-
-#~ msgid "Scale the making of videos to full screen"
-#~ msgstr "Schaal het maken van videos naar het volledige scherm"
-
-#~ msgid "Scale the making of videos, so that they use the whole screen"
-#~ msgstr "Schaal het maken van videos zodat ze het volledige scherm gebruiken"
 
 #~ msgid ""
 #~ "Compressed game detected. Please uncompress it as specified in the game "

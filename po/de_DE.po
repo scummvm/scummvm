@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-31 19:47+0000\n"
+"POT-Creation-Date: 2022-12-31 19:51+0000\n"
 "PO-Revision-Date: 2022-12-31 08:10+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -4180,18 +4180,20 @@ msgstr ""
 #: engines/agi/metaengine.cpp:119 engines/chewy/metaengine.cpp:36
 #: engines/cine/metaengine.cpp:42 engines/drascula/metaengine.cpp:38
 #: engines/dreamweb/metaengine.cpp:36 engines/groovie/metaengine.cpp:49
-#: engines/sci/detection_options.h:105 engines/sherlock/metaengine.cpp:39
-#: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
-#: engines/ultima/metaengine.cpp:44 engines/zvision/metaengine.cpp:46
+#: engines/neverhood/dialogs.cpp:48 engines/sci/detection_options.h:105
+#: engines/sherlock/metaengine.cpp:39 engines/toltecs/metaengine.cpp:40
+#: engines/trecision/metaengine.cpp:37 engines/ultima/metaengine.cpp:44
+#: engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr "Originale Spielstand-Menüs"
 
 #: engines/agi/metaengine.cpp:120 engines/chewy/metaengine.cpp:37
 #: engines/cine/metaengine.cpp:43 engines/drascula/metaengine.cpp:39
 #: engines/dreamweb/metaengine.cpp:37 engines/groovie/metaengine.cpp:50
-#: engines/sci/detection_options.h:106 engines/sherlock/metaengine.cpp:40
-#: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
-#: engines/ultima/metaengine.cpp:45 engines/zvision/metaengine.cpp:47
+#: engines/neverhood/dialogs.cpp:49 engines/sci/detection_options.h:106
+#: engines/sherlock/metaengine.cpp:40 engines/toltecs/metaengine.cpp:41
+#: engines/trecision/metaengine.cpp:38 engines/ultima/metaengine.cpp:45
+#: engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Verwende die originalen Speicher- und Lade-Menüs statt der Menüs von ScummVM"
@@ -6540,6 +6542,45 @@ msgstr "Sekunden"
 #: engines/nancy/dialogs.cpp:212
 msgid "Invalid Scene ID!"
 msgstr "Ungültige Szenen-ID!"
+
+#: engines/neverhood/dialogs.cpp:53
+msgid "Skip the Hall of Records storyboard scenes"
+msgstr "Szenenbuch-Sequenz in der Chronikhalle überspringen"
+
+#: engines/neverhood/dialogs.cpp:54
+msgid "Allows the player to skip past the Hall of Records storyboard scenes"
+msgstr ""
+"Ermöglicht dem Spieler, die Szenenbuch-Sequenz in der Chronikhalle zu "
+"überspringen"
+
+#: engines/neverhood/dialogs.cpp:58
+msgid "Scale the making of videos to full screen"
+msgstr "Making-Of-Videos auf Vollbild skalieren"
+
+#: engines/neverhood/dialogs.cpp:59
+msgid "Scale the making of videos, so that they use the whole screen"
+msgstr ""
+"Skaliert die Making-Of-Videos, sodass sie den gesamten Bildschirm ausfüllen"
+
+#: engines/neverhood/dialogs.cpp:63
+msgid "Repeat useful Willie's hint"
+msgstr ""
+
+#: engines/neverhood/dialogs.cpp:64
+msgid "Repeat actual useful hint by Willie"
+msgstr ""
+
+#: engines/neverhood/dialogs.cpp:82
+#, fuzzy
+#| msgid "Enable font replacement"
+msgid "NHC replacement:"
+msgstr "Verwende Ersatz-Schriftarten"
+
+#: engines/neverhood/dialogs.cpp:88
+#, fuzzy
+#| msgid "Original Save"
+msgid "<original>"
+msgstr "Originaler Spielstand"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -9348,22 +9389,6 @@ msgstr ""
 "FreeFont-Paket herunterladen. Sie benötigen jeweils alle Schriftarten des "
 "gewählten Paketes, beispielsweise LiberationMono, LiberationSans und "
 "LiberationSerif oder FreeMono, FreeSans und FreeSerif."
-
-#~ msgid "Skip the Hall of Records storyboard scenes"
-#~ msgstr "Szenenbuch-Sequenz in der Chronikhalle überspringen"
-
-#~ msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-#~ msgstr ""
-#~ "Ermöglicht dem Spieler, die Szenenbuch-Sequenz in der Chronikhalle zu "
-#~ "überspringen"
-
-#~ msgid "Scale the making of videos to full screen"
-#~ msgstr "Making-Of-Videos auf Vollbild skalieren"
-
-#~ msgid "Scale the making of videos, so that they use the whole screen"
-#~ msgstr ""
-#~ "Skaliert die Making-Of-Videos, sodass sie den gesamten Bildschirm "
-#~ "ausfüllen"
 
 #~ msgid ""
 #~ "Compressed game detected. Please uncompress it as specified in the game "

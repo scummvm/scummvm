@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-31 19:47+0000\n"
+"POT-Creation-Date: 2022-12-31 19:51+0000\n"
 "PO-Revision-Date: 2022-10-01 14:37+0000\n"
 "Last-Translator: kane159 <kane12369@gmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -4038,18 +4038,20 @@ msgstr ""
 #: engines/agi/metaengine.cpp:119 engines/chewy/metaengine.cpp:36
 #: engines/cine/metaengine.cpp:42 engines/drascula/metaengine.cpp:38
 #: engines/dreamweb/metaengine.cpp:36 engines/groovie/metaengine.cpp:49
-#: engines/sci/detection_options.h:105 engines/sherlock/metaengine.cpp:39
-#: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
-#: engines/ultima/metaengine.cpp:44 engines/zvision/metaengine.cpp:46
+#: engines/neverhood/dialogs.cpp:48 engines/sci/detection_options.h:105
+#: engines/sherlock/metaengine.cpp:39 engines/toltecs/metaengine.cpp:40
+#: engines/trecision/metaengine.cpp:37 engines/ultima/metaengine.cpp:44
+#: engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr ""
 
 #: engines/agi/metaengine.cpp:120 engines/chewy/metaengine.cpp:37
 #: engines/cine/metaengine.cpp:43 engines/drascula/metaengine.cpp:39
 #: engines/dreamweb/metaengine.cpp:37 engines/groovie/metaengine.cpp:50
-#: engines/sci/detection_options.h:106 engines/sherlock/metaengine.cpp:40
-#: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
-#: engines/ultima/metaengine.cpp:45 engines/zvision/metaengine.cpp:47
+#: engines/neverhood/dialogs.cpp:49 engines/sci/detection_options.h:106
+#: engines/sherlock/metaengine.cpp:40 engines/toltecs/metaengine.cpp:41
+#: engines/trecision/metaengine.cpp:38 engines/ultima/metaengine.cpp:45
+#: engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 
@@ -6113,6 +6115,38 @@ msgstr ""
 
 #: engines/nancy/dialogs.cpp:212
 msgid "Invalid Scene ID!"
+msgstr ""
+
+#: engines/neverhood/dialogs.cpp:53
+msgid "Skip the Hall of Records storyboard scenes"
+msgstr ""
+
+#: engines/neverhood/dialogs.cpp:54
+msgid "Allows the player to skip past the Hall of Records storyboard scenes"
+msgstr ""
+
+#: engines/neverhood/dialogs.cpp:58
+msgid "Scale the making of videos to full screen"
+msgstr ""
+
+#: engines/neverhood/dialogs.cpp:59
+msgid "Scale the making of videos, so that they use the whole screen"
+msgstr ""
+
+#: engines/neverhood/dialogs.cpp:63
+msgid "Repeat useful Willie's hint"
+msgstr ""
+
+#: engines/neverhood/dialogs.cpp:64
+msgid "Repeat actual useful hint by Willie"
+msgstr ""
+
+#: engines/neverhood/dialogs.cpp:82
+msgid "NHC replacement:"
+msgstr ""
+
+#: engines/neverhood/dialogs.cpp:88
+msgid "<original>"
 msgstr ""
 
 #: engines/parallaction/saveload.cpp:129
