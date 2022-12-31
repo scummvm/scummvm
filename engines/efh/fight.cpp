@@ -1159,16 +1159,16 @@ void EfhEngine::drawCombatScreen(int16 charId, bool whiteFl, bool forceDrawFl) {
 }
 
 void EfhEngine::getXPAndSearchCorpse(int16 charId, Common::String namePt1, Common::String namePt2, int16 monsterId) {
-	debug("getXPAndSearchCorpse %d %s%s %d", charId, namePt1.c_str(), namePt2.c_str(), monsterId);
+	debugC(3, kDebugEngine, "getXPAndSearchCorpse %d %s%s %d", charId, namePt1.c_str(), namePt2.c_str(), monsterId);
 
-	int16 xpLevel = getXPLevel(_npcBuf[charId]._xp);
+	int16 oldXpLevel = getXPLevel(_npcBuf[charId]._xp);
 	_npcBuf[charId]._xp += kEncounters[_mapMonsters[monsterId]._monsterRef]._xpGiven;
 
-	if (getXPLevel(_npcBuf[charId]._xp) > xpLevel) {
+	if (getXPLevel(_npcBuf[charId]._xp) > oldXpLevel) {
 		generateSound(15);
-		int16 var2 = getRandom(20) + getRandom(_npcBuf[charId]._infoScore[4]);
-		_npcBuf[charId]._hitPoints += var2;
-		_npcBuf[charId]._maxHP += var2;
+		int16 hpGain = getRandom(20) + getRandom(_npcBuf[charId]._infoScore[4]);
+		_npcBuf[charId]._hitPoints += hpGain;
+		_npcBuf[charId]._maxHP += hpGain;
 		_npcBuf[charId]._infoScore[0] += getRandom(3) - 1;
 		_npcBuf[charId]._infoScore[1] += getRandom(3) - 1;
 		_npcBuf[charId]._infoScore[2] += getRandom(3) - 1;

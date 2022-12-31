@@ -316,6 +316,7 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	memset(_mapMonsters, 0, ARRAYSIZE(_mapMonsters));
 	memset(_mapGameMap, 0, ARRAYSIZE(_mapGameMap));
 	memset(_imageSetSubFilesArray, 0, ARRAYSIZE(_imageSetSubFilesArray));
+	_regenCounter = 0;
 
 	// If requested, load a savegame instead of showing the intro
 	_loadSaveSlot = -1;
