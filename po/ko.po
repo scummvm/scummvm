@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-31 17:43+0000\n"
+"POT-Creation-Date: 2022-12-31 19:47+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4153,20 +4153,18 @@ msgstr ""
 #: engines/agi/metaengine.cpp:119 engines/chewy/metaengine.cpp:36
 #: engines/cine/metaengine.cpp:42 engines/drascula/metaengine.cpp:38
 #: engines/dreamweb/metaengine.cpp:36 engines/groovie/metaengine.cpp:49
-#: engines/neverhood/metaengine.cpp:37 engines/sci/detection_options.h:105
-#: engines/sherlock/metaengine.cpp:39 engines/toltecs/metaengine.cpp:40
-#: engines/trecision/metaengine.cpp:37 engines/ultima/metaengine.cpp:44
-#: engines/zvision/metaengine.cpp:46
+#: engines/sci/detection_options.h:105 engines/sherlock/metaengine.cpp:39
+#: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
+#: engines/ultima/metaengine.cpp:44 engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr "원본 저장/불러오기 화면 사용"
 
 #: engines/agi/metaengine.cpp:120 engines/chewy/metaengine.cpp:37
 #: engines/cine/metaengine.cpp:43 engines/drascula/metaengine.cpp:39
 #: engines/dreamweb/metaengine.cpp:37 engines/groovie/metaengine.cpp:50
-#: engines/neverhood/metaengine.cpp:38 engines/sci/detection_options.h:106
-#: engines/sherlock/metaengine.cpp:40 engines/toltecs/metaengine.cpp:41
-#: engines/trecision/metaengine.cpp:38 engines/ultima/metaengine.cpp:45
-#: engines/zvision/metaengine.cpp:47
+#: engines/sci/detection_options.h:106 engines/sherlock/metaengine.cpp:40
+#: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
+#: engines/ultima/metaengine.cpp:45 engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "ScummVM의 화면 대신 원본 저장/불러오기 화면을 사용합니다"
 
@@ -6470,22 +6468,6 @@ msgstr "초"
 #: engines/nancy/dialogs.cpp:212
 msgid "Invalid Scene ID!"
 msgstr "씬 ID가 잘못되었습니다!"
-
-#: engines/neverhood/metaengine.cpp:48
-msgid "Skip the Hall of Records storyboard scenes"
-msgstr "Hall of Records 스토리 보드 장면 건너뛰기"
-
-#: engines/neverhood/metaengine.cpp:49
-msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr "플레이어가 Hall of Records 스토리 보드 장면을 건너 뛰게 합니다"
-
-#: engines/neverhood/metaengine.cpp:59
-msgid "Scale the making of videos to full screen"
-msgstr "제작 영상을 전체 화면으로 확장"
-
-#: engines/neverhood/metaengine.cpp:60
-msgid "Scale the making of videos, so that they use the whole screen"
-msgstr "제작 영상이 전체 화면을 사용하도록 크기 조절합니다"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -9195,6 +9177,18 @@ msgstr ""
 "다. 선택한 글꼴 패키지의 모든 글꼴이 필요할 수 있습니다. 예: LiberationMono, "
 "LiberationSans 및 LiberationSerif 또는 FreeMono, FreeSans 및 FreeSerif가 각"
 "각 필요함."
+
+#~ msgid "Skip the Hall of Records storyboard scenes"
+#~ msgstr "Hall of Records 스토리 보드 장면 건너뛰기"
+
+#~ msgid "Allows the player to skip past the Hall of Records storyboard scenes"
+#~ msgstr "플레이어가 Hall of Records 스토리 보드 장면을 건너 뛰게 합니다"
+
+#~ msgid "Scale the making of videos to full screen"
+#~ msgstr "제작 영상을 전체 화면으로 확장"
+
+#~ msgid "Scale the making of videos, so that they use the whole screen"
+#~ msgstr "제작 영상이 전체 화면을 사용하도록 크기 조절합니다"
 
 #~ msgid ""
 #~ "Compressed game detected. Please uncompress it as specified in the game "

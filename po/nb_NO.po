@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-31 17:43+0000\n"
+"POT-Creation-Date: 2022-12-31 19:47+0000\n"
 "PO-Revision-Date: 2022-12-27 12:28+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -4165,20 +4165,18 @@ msgstr ""
 #: engines/agi/metaengine.cpp:119 engines/chewy/metaengine.cpp:36
 #: engines/cine/metaengine.cpp:42 engines/drascula/metaengine.cpp:38
 #: engines/dreamweb/metaengine.cpp:36 engines/groovie/metaengine.cpp:49
-#: engines/neverhood/metaengine.cpp:37 engines/sci/detection_options.h:105
-#: engines/sherlock/metaengine.cpp:39 engines/toltecs/metaengine.cpp:40
-#: engines/trecision/metaengine.cpp:37 engines/ultima/metaengine.cpp:44
-#: engines/zvision/metaengine.cpp:46
+#: engines/sci/detection_options.h:105 engines/sherlock/metaengine.cpp:39
+#: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
+#: engines/ultima/metaengine.cpp:44 engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr "Bruk originale lagre/laste-skjermer"
 
 #: engines/agi/metaengine.cpp:120 engines/chewy/metaengine.cpp:37
 #: engines/cine/metaengine.cpp:43 engines/drascula/metaengine.cpp:39
 #: engines/dreamweb/metaengine.cpp:37 engines/groovie/metaengine.cpp:50
-#: engines/neverhood/metaengine.cpp:38 engines/sci/detection_options.h:106
-#: engines/sherlock/metaengine.cpp:40 engines/toltecs/metaengine.cpp:41
-#: engines/trecision/metaengine.cpp:38 engines/ultima/metaengine.cpp:45
-#: engines/zvision/metaengine.cpp:47
+#: engines/sci/detection_options.h:106 engines/sherlock/metaengine.cpp:40
+#: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
+#: engines/ultima/metaengine.cpp:45 engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "Bruk de opprinnelige Lagre-/Laste-skjermene istedenfor ScummVMs egne"
 
@@ -6491,22 +6489,6 @@ msgstr "Sekunder"
 #: engines/nancy/dialogs.cpp:212
 msgid "Invalid Scene ID!"
 msgstr "Ugyldig scene-ID!"
-
-#: engines/neverhood/metaengine.cpp:48
-msgid "Skip the Hall of Records storyboard scenes"
-msgstr "Hopp over Hall of Records storyboard scenene"
-
-#: engines/neverhood/metaengine.cpp:49
-msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr "Tillater spilleren å hoppe forbi Hall of Records storyboard scener"
-
-#: engines/neverhood/metaengine.cpp:59
-msgid "Scale the making of videos to full screen"
-msgstr "Skaler «making of»-videoer til fullskjerm"
-
-#: engines/neverhood/metaengine.cpp:60
-msgid "Scale the making of videos, so that they use the whole screen"
-msgstr "Skaler «making of»-videoene, slik at de bruker hele skjermen"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -9285,6 +9267,18 @@ msgstr ""
 "Liberation Fonts-pakken eller GNU FreeFont-pakken. Du trenger alle fontene "
 "fra fontpakken du velger å bruke, dvs. enten LiberationMono, LiberationSans "
 "og LiberationSerif eller FreeMono, FreeSans og FreeSerif."
+
+#~ msgid "Skip the Hall of Records storyboard scenes"
+#~ msgstr "Hopp over Hall of Records storyboard scenene"
+
+#~ msgid "Allows the player to skip past the Hall of Records storyboard scenes"
+#~ msgstr "Tillater spilleren å hoppe forbi Hall of Records storyboard scener"
+
+#~ msgid "Scale the making of videos to full screen"
+#~ msgstr "Skaler «making of»-videoer til fullskjerm"
+
+#~ msgid "Scale the making of videos, so that they use the whole screen"
+#~ msgstr "Skaler «making of»-videoene, slik at de bruker hele skjermen"
 
 #~ msgid ""
 #~ "Compressed game detected. Please uncompress it as specified in the game "

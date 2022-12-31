@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-31 17:43+0000\n"
+"POT-Creation-Date: 2022-12-31 19:47+0000\n"
 "PO-Revision-Date: 2022-12-26 07:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4129,20 +4129,18 @@ msgstr ""
 #: engines/agi/metaengine.cpp:119 engines/chewy/metaengine.cpp:36
 #: engines/cine/metaengine.cpp:42 engines/drascula/metaengine.cpp:38
 #: engines/dreamweb/metaengine.cpp:36 engines/groovie/metaengine.cpp:49
-#: engines/neverhood/metaengine.cpp:37 engines/sci/detection_options.h:105
-#: engines/sherlock/metaengine.cpp:39 engines/toltecs/metaengine.cpp:40
-#: engines/trecision/metaengine.cpp:37 engines/ultima/metaengine.cpp:44
-#: engines/zvision/metaengine.cpp:46
+#: engines/sci/detection_options.h:105 engines/sherlock/metaengine.cpp:39
+#: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
+#: engines/ultima/metaengine.cpp:44 engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr "オリジナルのセーブ/ロード画面を使用する"
 
 #: engines/agi/metaengine.cpp:120 engines/chewy/metaengine.cpp:37
 #: engines/cine/metaengine.cpp:43 engines/drascula/metaengine.cpp:39
 #: engines/dreamweb/metaengine.cpp:37 engines/groovie/metaengine.cpp:50
-#: engines/neverhood/metaengine.cpp:38 engines/sci/detection_options.h:106
-#: engines/sherlock/metaengine.cpp:40 engines/toltecs/metaengine.cpp:41
-#: engines/trecision/metaengine.cpp:38 engines/ultima/metaengine.cpp:45
-#: engines/zvision/metaengine.cpp:47
+#: engines/sci/detection_options.h:106 engines/sherlock/metaengine.cpp:40
+#: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
+#: engines/ultima/metaengine.cpp:45 engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "ScummVMの代わりに、オリジナルのセーブ/ロード画面を使用する"
 
@@ -6383,22 +6381,6 @@ msgstr "秒"
 #: engines/nancy/dialogs.cpp:212
 msgid "Invalid Scene ID!"
 msgstr "シーンIDが不正です!"
-
-#: engines/neverhood/metaengine.cpp:48
-msgid "Skip the Hall of Records storyboard scenes"
-msgstr "古代図書館のストーリーをスキップ"
-
-#: engines/neverhood/metaengine.cpp:49
-msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr "古代図書館のストーリーをスキップできます"
-
-#: engines/neverhood/metaengine.cpp:59
-msgid "Scale the making of videos to full screen"
-msgstr "メイキング映像をフルスクリーンで再生"
-
-#: engines/neverhood/metaengine.cpp:60
-msgid "Scale the making of videos, so that they use the whole screen"
-msgstr "メイキング映像を画面全体に広げて再生"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -9109,6 +9091,18 @@ msgstr ""
 "Arialが必要です。LiberationFontsを使用する場合、LiberationMono、"
 "LiberationSans、LiberationSerifが必要です。GNUFreeFontを使用する場合、"
 "FreeMono、FreeSans、FreeSerifが必要です。"
+
+#~ msgid "Skip the Hall of Records storyboard scenes"
+#~ msgstr "古代図書館のストーリーをスキップ"
+
+#~ msgid "Allows the player to skip past the Hall of Records storyboard scenes"
+#~ msgstr "古代図書館のストーリーをスキップできます"
+
+#~ msgid "Scale the making of videos to full screen"
+#~ msgstr "メイキング映像をフルスクリーンで再生"
+
+#~ msgid "Scale the making of videos, so that they use the whole screen"
+#~ msgstr "メイキング映像を画面全体に広げて再生"
 
 #~ msgid ""
 #~ "Compressed game detected. Please uncompress it as specified in the game "

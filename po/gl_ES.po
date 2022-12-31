@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-31 17:43+0000\n"
+"POT-Creation-Date: 2022-12-31 19:47+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -4274,20 +4274,18 @@ msgstr ""
 #: engines/agi/metaengine.cpp:119 engines/chewy/metaengine.cpp:36
 #: engines/cine/metaengine.cpp:42 engines/drascula/metaengine.cpp:38
 #: engines/dreamweb/metaengine.cpp:36 engines/groovie/metaengine.cpp:49
-#: engines/neverhood/metaengine.cpp:37 engines/sci/detection_options.h:105
-#: engines/sherlock/metaengine.cpp:39 engines/toltecs/metaengine.cpp:40
-#: engines/trecision/metaengine.cpp:37 engines/ultima/metaengine.cpp:44
-#: engines/zvision/metaengine.cpp:46
+#: engines/sci/detection_options.h:105 engines/sherlock/metaengine.cpp:39
+#: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
+#: engines/ultima/metaengine.cpp:44 engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr "Empregar pantallas orixinais de gardado e carga"
 
 #: engines/agi/metaengine.cpp:120 engines/chewy/metaengine.cpp:37
 #: engines/cine/metaengine.cpp:43 engines/drascula/metaengine.cpp:39
 #: engines/dreamweb/metaengine.cpp:37 engines/groovie/metaengine.cpp:50
-#: engines/neverhood/metaengine.cpp:38 engines/sci/detection_options.h:106
-#: engines/sherlock/metaengine.cpp:40 engines/toltecs/metaengine.cpp:41
-#: engines/trecision/metaengine.cpp:38 engines/ultima/metaengine.cpp:45
-#: engines/zvision/metaengine.cpp:47
+#: engines/sci/detection_options.h:106 engines/sherlock/metaengine.cpp:40
+#: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
+#: engines/ultima/metaengine.cpp:45 engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Emprega as pantallas orixinais de gardado e carga, no canto das de ScummVM."
@@ -6566,22 +6564,6 @@ msgstr "Rapaz 2"
 #, fuzzy
 msgid "Invalid Scene ID!"
 msgstr "Código non válido"
-
-#: engines/neverhood/metaengine.cpp:48
-msgid "Skip the Hall of Records storyboard scenes"
-msgstr "Omitir as escenas do Salón dos rexistros"
-
-#: engines/neverhood/metaengine.cpp:49
-msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr "Permite ao xogador saltar as escenas do Salón dos rexistros"
-
-#: engines/neverhood/metaengine.cpp:59
-msgid "Scale the making of videos to full screen"
-msgstr "Redimensionar vídeos a pantalla completa"
-
-#: engines/neverhood/metaengine.cpp:60
-msgid "Scale the making of videos, so that they use the whole screen"
-msgstr "Redimensionar a creación de vídeos en pantalla completa"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -9380,6 +9362,18 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#~ msgid "Skip the Hall of Records storyboard scenes"
+#~ msgstr "Omitir as escenas do Salón dos rexistros"
+
+#~ msgid "Allows the player to skip past the Hall of Records storyboard scenes"
+#~ msgstr "Permite ao xogador saltar as escenas do Salón dos rexistros"
+
+#~ msgid "Scale the making of videos to full screen"
+#~ msgstr "Redimensionar vídeos a pantalla completa"
+
+#~ msgid "Scale the making of videos, so that they use the whole screen"
+#~ msgstr "Redimensionar a creación de vídeos en pantalla completa"
 
 #, fuzzy
 #~ msgid "[too modern]"

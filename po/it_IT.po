@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-31 17:43+0000\n"
+"POT-Creation-Date: 2022-12-31 19:47+0000\n"
 "PO-Revision-Date: 2022-12-27 10:52+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -4201,20 +4201,18 @@ msgstr ""
 #: engines/agi/metaengine.cpp:119 engines/chewy/metaengine.cpp:36
 #: engines/cine/metaengine.cpp:42 engines/drascula/metaengine.cpp:38
 #: engines/dreamweb/metaengine.cpp:36 engines/groovie/metaengine.cpp:49
-#: engines/neverhood/metaengine.cpp:37 engines/sci/detection_options.h:105
-#: engines/sherlock/metaengine.cpp:39 engines/toltecs/metaengine.cpp:40
-#: engines/trecision/metaengine.cpp:37 engines/ultima/metaengine.cpp:44
-#: engines/zvision/metaengine.cpp:46
+#: engines/sci/detection_options.h:105 engines/sherlock/metaengine.cpp:39
+#: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
+#: engines/ultima/metaengine.cpp:44 engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr "Usa schermate di salvataggio originali"
 
 #: engines/agi/metaengine.cpp:120 engines/chewy/metaengine.cpp:37
 #: engines/cine/metaengine.cpp:43 engines/drascula/metaengine.cpp:39
 #: engines/dreamweb/metaengine.cpp:37 engines/groovie/metaengine.cpp:50
-#: engines/neverhood/metaengine.cpp:38 engines/sci/detection_options.h:106
-#: engines/sherlock/metaengine.cpp:40 engines/toltecs/metaengine.cpp:41
-#: engines/trecision/metaengine.cpp:38 engines/ultima/metaengine.cpp:45
-#: engines/zvision/metaengine.cpp:47
+#: engines/sci/detection_options.h:106 engines/sherlock/metaengine.cpp:40
+#: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
+#: engines/ultima/metaengine.cpp:45 engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Usa le schermate originali di salvataggio e caricamento, al posto di quelle "
@@ -6547,23 +6545,6 @@ msgstr "Secondi"
 #: engines/nancy/dialogs.cpp:212
 msgid "Invalid Scene ID!"
 msgstr "ID scena non valido!"
-
-#: engines/neverhood/metaengine.cpp:48
-msgid "Skip the Hall of Records storyboard scenes"
-msgstr "Salta le scene della Hall of Records"
-
-#: engines/neverhood/metaengine.cpp:49
-msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr "Permette al giocatore di saltare le scene della Hall of Records"
-
-#: engines/neverhood/metaengine.cpp:59
-msgid "Scale the making of videos to full screen"
-msgstr "Ridimensiona a tutto schermo i video \"dietro le quinte\""
-
-#: engines/neverhood/metaengine.cpp:60
-msgid "Scale the making of videos, so that they use the whole screen"
-msgstr ""
-"Ridimensiona i video \"dietro le quinte\", visualizzandoli a schermo intero"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -9367,6 +9348,20 @@ msgstr ""
 "GNU. Ti serviranno tutti i font presenti nel pacchetto di tua preferenza, "
 "precisamente: LiberationMono, LiberationSans e LiberationSerif; oppure "
 "FreeMono, FreeSans e FreeSerif."
+
+#~ msgid "Skip the Hall of Records storyboard scenes"
+#~ msgstr "Salta le scene della Hall of Records"
+
+#~ msgid "Allows the player to skip past the Hall of Records storyboard scenes"
+#~ msgstr "Permette al giocatore di saltare le scene della Hall of Records"
+
+#~ msgid "Scale the making of videos to full screen"
+#~ msgstr "Ridimensiona a tutto schermo i video \"dietro le quinte\""
+
+#~ msgid "Scale the making of videos, so that they use the whole screen"
+#~ msgstr ""
+#~ "Ridimensiona i video \"dietro le quinte\", visualizzandoli a schermo "
+#~ "intero"
 
 #~ msgid ""
 #~ "Compressed game detected. Please uncompress it as specified in the game "
