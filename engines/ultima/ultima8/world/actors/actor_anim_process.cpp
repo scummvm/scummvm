@@ -699,9 +699,9 @@ void ActorAnimProcess::terminate() {
 	Process::terminate();
 }
 
-void ActorAnimProcess::dumpInfo() const {
-	Process::dumpInfo();
-	pout << "_action: " << _action << ", _dir: " << _dir << Std::endl;
+Common::String ActorAnimProcess::dumpInfo() const {
+	return Process::dumpInfo() +
+		Common::String::format(", _action: %d, _dir: %d", _action, _dir);
 }
 
 void ActorAnimProcess::saveData(Common::WriteStream *ws) {

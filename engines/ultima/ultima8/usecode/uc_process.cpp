@@ -140,16 +140,17 @@ void UCProcess::terminate() {
 	Process::terminate();
 }
 
-void UCProcess::dumpInfo() const {
-	Process::dumpInfo();
+Common::String UCProcess::dumpInfo() const {
+	Common::String info = Process::dumpInfo();
 
 	if (_classId == 0xFFFF) {
-		pout.Print("IP undefined\n");
+		info += ", IP undefined";
 	} else {
 		const char *classname = GameData::get_instance()->getMainUsecode()->
 		                        get_class_name(_classId);
-		pout.Print("classname: %s, IP: %04X:%04X\n", classname, _classId, _ip);
+		info += Common::String::format(", classname: %s, IP: %04X:%04X", classname, _classId, _ip);
 	}
+	return info;
 }
 
 void UCProcess::saveData(Common::WriteStream *ws) {

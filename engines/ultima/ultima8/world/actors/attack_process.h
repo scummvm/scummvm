@@ -51,7 +51,7 @@ public:
 
 	void terminate() override;
 
-	void dumpInfo() const override;
+	Common::String dumpInfo() const override;
 
 	void setIsActivityAOrB() {
 		_isActivityAorB = true;

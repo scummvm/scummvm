@@ -65,9 +65,9 @@ void GumpNotifyProcess::terminate() {
 void GumpNotifyProcess::run() {
 }
 
-void GumpNotifyProcess::dumpInfo() const {
-	Process::dumpInfo();
-	pout << " gump: " << _gump << Std::endl;
+Common::String GumpNotifyProcess::dumpInfo() const {
+	return Process::dumpInfo() +
+		Common::String::format(", gump: %u", _gump);
 }
 
 void GumpNotifyProcess::saveData(Common::WriteStream *ws) {

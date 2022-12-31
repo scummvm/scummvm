@@ -876,8 +876,9 @@ bool Debugger::cmdListProcesses(int argc, const char **argv) {
 		for (ProcessIterator it = kern->_processes.begin();
 			it != kern->_processes.end(); ++it) {
 			Process *p = *it;
-			if (argc == 1 || p->_itemNum == item)
-				p->dumpInfo();
+			if (argc == 1 || p->_itemNum == item) {
+				debugPrintf("%s\n", p->dumpInfo().c_str());
+			}
 		}
 	}
 
@@ -896,7 +897,7 @@ bool Debugger::cmdProcessInfo(int argc, const char **argv) {
 		if (p == 0) {
 			debugPrintf("No such process: %d\n", procid);
 		} else {
-			p->dumpInfo();
+			debugPrintf("%s\n", p->dumpInfo().c_str());
 		}
 	}
 

@@ -300,9 +300,9 @@ void CombatProcess::waitForTarget() {
 	}
 }
 
-void CombatProcess::dumpInfo() const {
-	Process::dumpInfo();
-	pout << "Target: " << _target << Std::endl;
+Common::String CombatProcess::dumpInfo() const {
+	return Process::dumpInfo() +
+		Common::String::format(", target: %u", _target);
 }
 
 void CombatProcess::saveData(Common::WriteStream *ws) {

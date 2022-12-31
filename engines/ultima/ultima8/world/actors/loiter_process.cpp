@@ -116,9 +116,9 @@ void LoiterProcess::run() {
 	}
 }
 
-void LoiterProcess::dumpInfo() const {
-	Process::dumpInfo();
-	pout << "Frames left: " << _count;
+Common::String LoiterProcess::dumpInfo() const {
+	return Process::dumpInfo() +
+		Common::String::format(", frames left: %d", _count);
 }
 
 void LoiterProcess::saveData(Common::WriteStream *ws) {

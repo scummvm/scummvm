@@ -1111,9 +1111,8 @@ uint16 AttackProcess::readNextWordRaw() {
 	return _tacticDatReadStream->readUint16LE();
 }
 
-void AttackProcess::dumpInfo() const {
-	Process::dumpInfo();
-
+Common::String AttackProcess::dumpInfo() const {
+	return Process::dumpInfo();
 }
 
 void AttackProcess::saveData(Common::WriteStream *ws) {

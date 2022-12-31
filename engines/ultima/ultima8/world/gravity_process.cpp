@@ -374,11 +374,9 @@ void GravityProcess::actorFallStoppedCru(Actor *actor, int height) {
 	}
 }
 
-void GravityProcess::dumpInfo() const {
-	Process::dumpInfo();
-
-	pout << "_gravity: " << _gravity << ", speed: (" << _xSpeed << ","
-	     << _ySpeed << "," << _zSpeed << ")" << Std::endl;
+Common::String GravityProcess::dumpInfo() const {
+	return Process::dumpInfo() +
+		Common::String::format(", _gravity: %d, speed: (%d, %d, %d)", _gravity, _xSpeed, _ySpeed, _zSpeed);
 }
 
 

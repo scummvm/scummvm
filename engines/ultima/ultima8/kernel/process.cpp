@@ -104,7 +104,7 @@ void Process::suspend() {
 	_flags |= PROC_SUSPENDED;
 }
 
-void Process::dumpInfo() const {
+Common::String Process::dumpInfo() const {
 	Common::String info = Common::String::format(
 		"Process %d class %s, item %d, type %x, status ",
 		getPid(), GetClassType()._className, _itemNum, _type);
@@ -125,7 +125,7 @@ void Process::dumpInfo() const {
 		}
 	}
 
-	g_debugger->debugPrintf("%s\n", info.c_str());
+	return info;
 }
 
 void Process::saveData(Common::WriteStream *ws) {

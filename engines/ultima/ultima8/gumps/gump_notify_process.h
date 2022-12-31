@@ -51,7 +51,7 @@ public:
 
 	void run() override;
 
-	void dumpInfo() const override;
+	Common::String dumpInfo() const override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;

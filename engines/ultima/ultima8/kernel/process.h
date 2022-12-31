@@ -110,8 +110,8 @@ public:
 		return _ticksPerRun;
 	}
 
-	//! dump some info about this process to pout
-	virtual void dumpInfo() const;
+	//! dump some info about this process to a string
+	virtual Common::String dumpInfo() const;
 
 	//! load Process data
 	bool loadData(Common::ReadStream *rs, uint32 version);

@@ -49,7 +49,7 @@ public:
 
 	void terminate() override;
 
-	void dumpInfo() const override;
+	Common::String dumpInfo() const override;
 
 	Animation::Sequence getAction() const {
 		return _action;
