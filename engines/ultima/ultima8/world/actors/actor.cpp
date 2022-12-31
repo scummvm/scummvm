@@ -1985,15 +1985,11 @@ Actor *Actor::createActor(uint32 shape, uint32 frame) {
 	return newactor;
 }
 
-void Actor::dumpInfo() const {
-	Container::dumpInfo();
-
-	pout << "  Actor hp: " << _hitPoints << ", mp: " << _mana << ", str: " << _strength
-	     << ", dex: " << _dexterity << ", int: " << _intelligence
-	     << ", ac: " << getArmourClass() << ", defense: " << ConsoleStream::hex
-	     << getDefenseType() << " align: " << getAlignment() << " enemy: "
-	     << getEnemyAlignment() << ", flags: " << _actorFlags << ", activity: " << _currentActivityNo
-	     << ConsoleStream::dec << Std::endl;
+Common::String Actor::dumpInfo() const {
+	return Container::dumpInfo() +
+		Common::String::format("; Actor hp: %u, mp: %d, str: %d, dex: %d, int: %d, ac: %u, defense: %x, align: %x, enemy: %x, flags: %x, activity: %x",
+			_hitPoints, _mana, _strength, _dexterity, _intelligence, getArmourClass(),
+			getDefenseType(), getAlignment(), getEnemyAlignment(), _actorFlags, _currentActivityNo);
 }
 
 void Actor::addFireAnimOffsets(int32 &x, int32 &y, int32 &z) {

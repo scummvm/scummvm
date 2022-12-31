@@ -85,8 +85,7 @@ void TargetGump::onMouseUp(int button, int32 mx, int32 my) {
 
 	if (item) {
 		// done
-		pout << "Target result: ";
-		item->dumpInfo();
+		pout << "Target result: " << item->dumpInfo() << Std::endl;
 
 		_processResult = objId;
 		Close();

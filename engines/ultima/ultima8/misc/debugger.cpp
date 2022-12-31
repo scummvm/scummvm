@@ -1479,7 +1479,7 @@ bool Debugger::cmdObjectInfo(int argc, const char **argv) {
 			else
 				debugPrintf("No such object: %d\n", objid);
 		} else {
-			obj->dumpInfo();
+			debugPrintf("%s\n", obj->dumpInfo().c_str());
 		}
 	}
 

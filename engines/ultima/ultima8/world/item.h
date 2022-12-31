@@ -497,8 +497,8 @@ public:
 	//! \note This can destroy the object
 	virtual void leaveFastArea();
 
-	//! dump some info about this item to pout
-	void dumpInfo() const override;
+	//! dump some info about this item to a string
+	Common::String dumpInfo() const override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;

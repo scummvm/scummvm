@@ -498,8 +498,7 @@ void AnimationTracker::checkWeaponHit() {
 			hit = itemid;
 #ifdef WATCHACTOR
 			if (a->getObjId() == watchactor) {
-				pout << "hit: ";
-				item->dumpInfo();
+				pout << "hit: " << item->dumpInfo() << Std::endl;
 			}
 #endif
 			break;

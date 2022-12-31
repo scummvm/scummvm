@@ -501,7 +501,7 @@ void Pathfinder::expandNode(PathNode *node) {
 bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 	if (_targetItem) {
 		debugC(kDebugPath, "Actor %u pathfinding to item %u", _actor->getObjId(), _targetItem->getObjId());
-		_targetItem->dumpInfo();
+		debugC(kDebugPath, "Target Item: %s", _targetItem->dumpInfo().c_str());
 	} else {
 		debugC(kDebugPath, "Actor %u pathfinding to (%d, %d, %d)", _actor->getObjId(), _targetX, _targetY, _targetZ);
 	}

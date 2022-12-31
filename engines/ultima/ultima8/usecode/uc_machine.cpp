@@ -386,7 +386,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				}
 				warning("Unhandled intrinsic %u \'%s\'? (%s) called", func, _convUse->intrinsics()[func], info.c_str());
 				if (testItem) {
-					testItem->dumpInfo();
+					warning("%s", testItem->dumpInfo().c_str());
 				}
 			} else {
 				//!! hackish

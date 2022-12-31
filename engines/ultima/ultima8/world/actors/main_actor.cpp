@@ -419,7 +419,7 @@ void MainActor::teleport(int mapNum, int teleport_id) {
 	egg->getLocation(xv, yv, zv);
 
 	pout << "Found destination: " << xv << "," << yv << "," << zv << Std::endl;
-	egg->dumpInfo();
+	pout << egg->dumpInfo() << Std::endl;
 
 	if (GAME_IS_CRUSADER) {
 		// Keep the camera on the avatar (the snap process will update on next move)

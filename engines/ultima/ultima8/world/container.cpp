@@ -325,12 +325,10 @@ void Container::getItemsWithShapeFamily(Std::vector<Item *> &itemlist, uint16 fa
 
 }
 
-void Container::dumpInfo() const {
-	Item::dumpInfo();
-
-	pout << "  Container vol: " << getContentVolume() << "/" << getCapacity()
-	     << ", total weight: " << getTotalWeight()
-		 << ", items: " << _contents.size() << Std::endl;
+Common::String Container::dumpInfo() const {
+	return Item::dumpInfo() +
+		Common::String::format("; Container vol: %u/%u, total weight: %u, items: %u",
+			getContentVolume(), getCapacity(), getTotalWeight(), _contents.size());
 }
 
 void Container::saveData(Common::WriteStream *ws) {

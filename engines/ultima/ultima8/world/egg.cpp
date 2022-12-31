@@ -52,10 +52,9 @@ uint16 Egg::unhatch() {
 	return 0;
 }
 
-void Egg::dumpInfo() const {
-	Item::dumpInfo();
-	pout << "range: " << getXRange() << "," << getYRange()
-	     << ", hatched=" << _hatched << Std::endl;
+Common::String Egg::dumpInfo() const {
+	return Item::dumpInfo() +
+		Common::String::format(", range: %d, %d, hatched=%d", getXRange(), getYRange(), _hatched);
 }
 
 void Egg::leaveFastArea() {

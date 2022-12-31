@@ -84,38 +84,35 @@ Item::Item()
 Item::~Item() {
 }
 
-void Item::dumpInfo() const {
-	pout << "Item " << getObjId() << " (class "
-	     << GetClassType()._className << ", shape "
-		 << getShape();
+Common::String Item::dumpInfo() const {
+	Common::String info = Common::String::format("Item %u (class %s, shape %u)", getObjId(), GetClassType()._className, getShape());
 
 	const char *ucname = GameData::get_instance()->getMainUsecode()->get_class_name(_shape);
 	if (ucname != nullptr) {
-		pout << " (uc:" << ucname << ")";
+		info += Common::String::format(" (uc: %s)", ucname);
 	}
 
-	pout << ", " << getFrame() << ", (";
+	info += Common::String::format(", %u, (", getFrame());
 
 	if (_parent) {
 		int32 gx, gy;
 		getGumpLocation(gx, gy);
-		pout << gx << "," << gy;
+		info += Common::String::format("%d, %d", gx, gy);
 	} else {
-		pout << _x << "," << _y << "," << _z;
+		info += Common::String::format("%d, %d, %d", _x, _y, _z);
 	}
 
-	pout << ") q:" << getQuality()
-	     << ", m:" << getMapNum() << ", n:" << getNpcNum()
-	     << ", f:0x" << ConsoleStream::hex << getFlags() << ", ef:0x"
-		 << getExtFlags();
+	info += Common::String::format(") q: %u, m: %u, n: %u, f: 0x%x, ef: 0x%x",
+		getQuality(), getMapNum() , getNpcNum(), getFlags(), getExtFlags());
 
-	const ShapeInfo *info = getShapeInfo();
-	if (info) {
-		pout << " shapeinfo f:" << info->_flags << ", fam:"
-			 << info->_family << ", et:" << info->_equipType;
+	const ShapeInfo *si = getShapeInfo();
+	if (si) {
+		info += Common::String::format(" shapeinfo f: %x, fam: %x, et: %x",
+			si->_flags, si->_family, si->_equipType);
 	}
 
-	pout << ")" << ConsoleStream::dec << Std::endl;
+	info += ")";
+	return info;
 }
 
 Container *Item::getParentAsContainer() const {
@@ -3486,7 +3483,7 @@ uint32 Item::I_popToContainer(const uint8 *args, unsigned int /*argsize*/) {
 		item->move(pt);
 	} else {
 		warning("Trying to popToContainer to invalid container (%u)", id_citem);
-		item->dumpInfo();
+		warning("%s", item->dumpInfo().c_str());
 		// This object now has no home, destroy it - unless it doesn't think it's
 		// ethereal, in that case it is somehow there by mistake?
 		if (item->getFlags() & FLG_ETHEREAL) {
@@ -3529,7 +3526,7 @@ uint32 Item::I_popToEnd(const uint8 *args, unsigned int /*argsize*/) {
 		item->move(pt);
 	} else {
 		warning("Trying to popToEnd to invalid container (%u)", id_citem);
-		item->dumpInfo();
+		warning("%s", item->dumpInfo().c_str());
 		// This object now has no home, destroy it - unless it doesn't think it's
 		// ethereal, in that case it is somehow there by mistake?
 		if (item->getFlags() & FLG_ETHEREAL) {

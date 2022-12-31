@@ -50,8 +50,8 @@ void Object::clearObjId() {
 	_objId = 0xFFFF;
 }
 
-void Object::dumpInfo() const {
-	g_debugger->debugPrintf("Object %d (class %s)\n", getObjId(), GetClassType()._className);
+Common::String Object::dumpInfo() const {
+	return Common::String::format("Object %d (class %s)", getObjId(), GetClassType()._className);
 }
 
 ProcId Object::callUsecode(uint16 classid, uint16 offset,

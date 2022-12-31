@@ -303,7 +303,7 @@ void GameMapGump::onMouseClick(int button, int32 mx, int32 my) {
 		if (item) {
 			int32 xv, yv, zv;
 			item->getLocation(xv, yv, zv);
-			item->dumpInfo();
+			pout << item->dumpInfo() << Std::endl;
 
 			if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 				pout << "Can't look: avatarInStasis" << Std::endl;
@@ -319,7 +319,7 @@ void GameMapGump::onMouseClick(int button, int32 mx, int32 my) {
 		if (item) {
 			int32 xv, yv, zv;
 			item->getLocation(xv, yv, zv);
-			item->dumpInfo();
+			pout << item->dumpInfo() << Std::endl;
 
 #if 1
 			Actor *avatarControlled = getControlledActor();
@@ -368,7 +368,7 @@ void GameMapGump::onMouseDouble(int button, int32 mx, int32 my) {
 		if (item) {
 			int32 xv, yv, zv;
 			item->getLocation(xv, yv, zv);
-			item->dumpInfo();
+			pout << item->dumpInfo() << Std::endl;
 
 			int range = 128; // CONSTANT!
 			if (GAME_IS_CRUSADER) {

@@ -817,7 +817,7 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 				         startz + zd <= iz || startz >= iz + izd)) {
 					// overlapping an item. Invalid position
 #if 0
-					item->dumpInfo();
+					pout << item->dumpInfo() << Std::endl;
 #endif
 					if (blocker == nullptr) {
 						blocker = item;
@@ -1390,8 +1390,7 @@ uint32 CurrentMap::I_canExistAtPoint(const uint8 *args, unsigned int /*argsize*/
 	ARG_WORLDPOINT(pt);
 
 	if (other) {
-		debug("I_canExistAtPoint other object: ");
-		other->dumpInfo();
+		debug("I_canExistAtPoint other object: %s", other->dumpInfo().c_str());
 	} else {
 		debug("I_canExistAtPoint other object null.");
 	}
