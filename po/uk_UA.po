@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-12-31 19:51+0000\n"
-"PO-Revision-Date: 2022-12-28 23:20+0000\n"
+"PO-Revision-Date: 2022-12-31 20:35+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -6484,23 +6484,19 @@ msgstr "Розтягувати відео про створення ігри т�
 
 #: engines/neverhood/dialogs.cpp:63
 msgid "Repeat useful Willie's hint"
-msgstr ""
+msgstr "Повторити важливі підказки Віллі"
 
 #: engines/neverhood/dialogs.cpp:64
 msgid "Repeat actual useful hint by Willie"
-msgstr ""
+msgstr "Повторити підказку від Віллі"
 
 #: engines/neverhood/dialogs.cpp:82
-#, fuzzy
-#| msgid "Enable font replacement"
 msgid "NHC replacement:"
-msgstr "Ввімкнути заміну шрифтів"
+msgstr "Заміна NHC:"
 
 #: engines/neverhood/dialogs.cpp:88
-#, fuzzy
-#| msgid "Original Save"
 msgid "<original>"
-msgstr "Оригінальне збереження"
+msgstr "<оригінал>"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
