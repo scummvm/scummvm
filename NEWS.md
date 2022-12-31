@@ -60,6 +60,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Neverhood:
    - Added support for Japanese version of Neverhood.
+   - Support localizations by Ctpax-Che@ter & Rigel.
 
  Plumbers:
    - Fixed crash with windows version.
