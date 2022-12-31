@@ -23,10 +23,10 @@
 #define ULTIMA_ULTIMA8_ENGINE_DEBUGGER_H
 
 #include "ultima/ultima8/misc/common_types.h"
-#include "ultima/shared/engine/debugger.h"
 #include "ultima/shared/std/containers.h"
 #include "common/debug.h"
 #include "common/stream.h"
+#include "gui/debugger.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,7 +34,7 @@ namespace Ultima8 {
 /**
  * Debugger base class
  */
-class Debugger : public Shared::Debugger {
+class Debugger : public GUI::Debugger {
 private:
 	const char *strBool(bool flag) {
 		return flag ? "true" : "false";
