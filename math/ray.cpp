@@ -45,6 +45,11 @@ void Ray::rotate(const Quaternion &rot) {
 	_direction.normalize();
 }
 
+void Ray::rotateDirection(const Quaternion &rot) {
+	rot.transform(_direction);
+	_direction.normalize();
+}
+
 void Ray::translate(const Vector3d &v) {
 	_origin += v;
 }
@@ -74,6 +79,40 @@ bool Ray::intersectAABB(const AABB &aabb) const {
 	if (tMin > tMax) {
 		return false;
 	}
+
+	return true;
+}
+
+// Algorithm adapted from https://www.lighthouse3d.com/tutorials/maths/ray-triangle-intersection/
+bool Ray::intersectTriangle(const Vector3d &v0, const Vector3d &v1,
+		const Vector3d &v2, Vector3d &vout, float &fout) const {
+	const Vector3d e1 = v1 - v0;
+	const Vector3d e2 = v2 - v0;
+	const Vector3d h = Vector3d::crossProduct(_direction, e2);
+
+	float a = e1.dotProduct(h);
+	if (fabs(a) < 1e-6f)
+		return false;
+
+	float f = 1.0f / a;
+	const Vector3d s = _origin - v0;
+	float u = f * s.dotProduct(h);
+	if (u < 0.0f || u > 1.0f)
+		return false;
+
+	const Vector3d q = Vector3d::crossProduct(s, e1);
+	float v = f * _direction.dotProduct(q);
+
+	if (v < 0.0f || u + v > 1.0f)
+		return false;
+
+	float t = f * e2.dotProduct(q);
+
+	if (t < 1e-6f)
+		return false;
+
+	fout = t;
+	vout = _origin + t * _direction;
 
 	return true;
 }
