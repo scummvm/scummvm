@@ -173,7 +173,7 @@ void EfhEngine::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_npcBuf[i].fieldE_textId);
 		s.syncAsByte(_npcBuf[i].field_F);
 		s.syncAsByte(_npcBuf[i].field_10);
-		s.syncAsByte(_npcBuf[i].field_11);
+		s.syncAsByte(_npcBuf[i].field11_NpcId);
 		s.syncAsSint16LE(_npcBuf[i].field12_textId);
 		s.syncAsSint16LE(_npcBuf[i].field14_textId);
 		s.syncAsSint32LE(_npcBuf[i]._xp);
