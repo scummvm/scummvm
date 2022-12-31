@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-12-30 21:12+0000\n"
-"PO-Revision-Date: 2022-12-20 13:23+0000\n"
+"PO-Revision-Date: 2022-12-31 08:10+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -754,7 +754,7 @@ msgstr "Alphabet"
 #: gui/launcher.cpp:101
 msgctxt "group"
 msgid "Initial"
-msgstr ""
+msgstr "Initialien"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
@@ -791,10 +791,8 @@ msgid "Select Group by"
 msgstr "Gruppieren nach"
 
 #: gui/launcher.cpp:217 gui/launcher.cpp:799
-#, fuzzy
-#| msgid "Group by:"
 msgid "Group:"
-msgstr "Gruppieren nach:"
+msgstr "Gruppiere:"
 
 #: gui/launcher.cpp:219
 msgid "Select a criteria to group the entries"
@@ -5366,11 +5364,13 @@ msgstr ""
 
 #: engines/groovie/metaengine.cpp:97
 msgid "Slim Left/Right Hotspots"
-msgstr ""
+msgstr "Schlanke linke/rechte Hotspots"
 
 #: engines/groovie/metaengine.cpp:98
 msgid "Shrinks the hotspots on the left and right sides for exiting puzzles"
 msgstr ""
+"Verkleinert die Hotspots auf der linken und rechten Seite beim Verlassen von "
+"Puzzles"
 
 #: engines/groovie/metaengine.cpp:109
 msgid "Speedrun Mode"
