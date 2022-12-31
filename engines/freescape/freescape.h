@@ -394,6 +394,7 @@ private:
 
 	void drawDOSUI(Graphics::Surface *surface);
 	void drawZXUI(Graphics::Surface *surface);
+	void drawCPCUI(Graphics::Surface *surface);
 	void drawAmigaAtariSTUI(Graphics::Surface *surface);
 };
 

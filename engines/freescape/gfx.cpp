@@ -121,6 +121,48 @@ bool Renderer::getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r
 	return true;
 }
 
+void extractIndexes(byte cm1, byte cm2, uint8 &i1, uint8 &i2) {
+	if (cm1 == 0xb4)
+		i1 = 1;
+	else if (cm1 == 0xb0)
+		i1 = 1;
+	else if (cm1 == 0x05)
+		i1 = 2;
+	else if (cm1 == 0x50)
+		i1 = 1;
+	else if (cm1 == 0x55)
+		i1 = 3;
+	else if (cm1 == 0xf5)
+		i1 = 3;
+	else if (cm1 == 0x5a)
+		i1 = 1;
+	else if (cm1 == 0xbb)
+		i1 = 3;
+	else
+		error("%x %x", cm1, cm2);
+
+	if (cm2 == 0xe1)
+		i2 = 2;
+	else if (cm2 == 0x0a)
+		i2 = 0;
+	else if (cm2 == 0xaa)
+		i2 = 0;
+	else if (cm2 == 0xa0)
+		i2 = 0;
+	else if (cm2 == 0x00)
+		i2 = 0;
+	else if (cm2 == 0xfa)
+		i2 = 1;
+	else if (cm2 == 0xa5)
+		i2 = 2;
+	else if (cm2 == 0xee)
+		i2 = 0;
+	else if (cm2 == 0xe0)
+		i2 = 0;
+	else
+		error("%x %x", cm1, cm2);
+}
+
 bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2) {
 	if (index == _keyColor)
 		return false;
@@ -135,12 +177,15 @@ bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 	}
 
 	byte *entry = (*_colorMap)[index - 1];
-	//entry++;
+	byte cm1 = *(entry);
 	entry++;
-	byte be = *(entry);
-	//be = *(entry);
-	readFromPalette((be >> 4) % 4, r1, g1, b1);
-	readFromPalette((be & 0xf) % 4, r2, g2, b2);
+	byte cm2 = *(entry);
+
+	uint8 i1;
+	uint8 i2;
+	extractIndexes(cm1, cm2, i1, i2);
+	readFromPalette(i1, r1, g1, b1);
+	readFromPalette(i2, r2, g2, b2);
 	return true;
 }
 
