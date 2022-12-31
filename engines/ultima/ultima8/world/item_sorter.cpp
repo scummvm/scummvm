@@ -349,9 +349,9 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si) {
 	if (_sortLimit) {
 		if (si->_order == _sortLimit) {
 			if (!_painted || _painted->_itemNum != si->_itemNum) {
-				pout << "SortItem: " << *si << Std::endl;
+				pout << "SortItem: " << si->dumpInfo() << Std::endl;
 				if (_painted && si->overlap(_painted)) {
-					pout << "Overlaps: " << *_painted << Std::endl;
+					pout << "Overlaps: " << _painted->dumpInfo() << Std::endl;
 				}
 			}
 
