@@ -75,6 +75,18 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 
+	// Red Comrades 2: For the Great Justice (CD)
+	{
+		"petka2",
+		"Compressed",
+		AD_ENTRY2s("main.str",  "4e515669c343609518277cab6e7d8c8f", 18992879,
+				   "data1.cab", "ac9ee2e481ee5a6389a6cd58faf5a358", 23287376),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_DROPLANGUAGE | GF_COMPRESSED,
+		GUIO1(GUIO_NOMIDI)
+	},
+
 	AD_TABLE_END_MARKER
 };
 
