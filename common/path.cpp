@@ -61,13 +61,17 @@ String Path::toString(char separator) const {
 	return res;
 }
 
-size_t Path::findLastSeparator() const {
+size_t Path::findLastSeparator(size_t last) const {
+	if (_str.size() < 2)
+		return String::npos;
+
 	size_t res = String::npos;
-	for (uint i = 0; i + 2 < _str.size(); i++) {
-		if (_str[i] == ESCAPER) {
-			i++;
-			if (_str[i] == ESCAPE_SEPARATOR)
-				res = i - 1;
+	if (last == String::npos || last > _str.size())
+		last = _str.size();
+
+	for (uint i = 0; i < last - 1; i++) {
+		if (_str[i] == ESCAPER && _str[i + 1] == ESCAPE_SEPARATOR) {
+			res = i;
 		}
 	}
 
@@ -77,7 +81,8 @@ size_t Path::findLastSeparator() const {
 Path Path::getParent() const {
 	if (_str.size() < 2)
 		return Path();
-	size_t separatorPos = findLastSeparator();
+	// ignore potential trailing separator
+	size_t separatorPos = findLastSeparator(_str.size() - 1);
 	if (separatorPos == String::npos)
 		return Path();
 	Path ret;
@@ -88,7 +93,8 @@ Path Path::getParent() const {
 Path Path::getLastComponent() const {
 	if (_str.size() < 2)
 		return *this;
-	size_t separatorPos = findLastSeparator();
+	// ignore potential trailing separator
+	size_t separatorPos = findLastSeparator(_str.size() - 1);
 	if (separatorPos == String::npos)
 		return *this;
 	Path ret;
@@ -197,7 +203,7 @@ Path &Path::joinInPlace(const Path &x) {
 		return *this;
 
 	size_t lastSep = findLastSeparator();
-	if (!_str.empty() && (lastSep == String::npos || lastSep != _str.size() - 2) && x._str.hasPrefix(DIR_SEPARATOR))
+	if (!_str.empty() && (lastSep == String::npos || lastSep != _str.size() - 2) && !x._str.hasPrefix(DIR_SEPARATOR))
 		_str += DIR_SEPARATOR;
 
 	_str += x._str;

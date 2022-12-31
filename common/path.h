@@ -49,7 +49,7 @@ private:
 	String _str;
 
 	String getIdentifierString() const;
-	size_t findLastSeparator() const;
+	size_t findLastSeparator(size_t last = String::npos) const;
 
 public:
 	/**
