@@ -1,5 +1,10 @@
 OD_EXE_STRIPPED := scummvm_stripped$(EXEEXT)
 bundle = od-opk
+ifeq ($(OPENDINGUX_TARGET), rg99)
+OPKNAME = rg99_rs90
+else
+OPKNAME = $(OPENDINGUX_TARGET)
+endif
 
 all: $(OD_EXE_STRIPPED)
 
@@ -40,6 +45,13 @@ ifdef dualopk
 	$(CP) $(srcdir)/dists/opendingux/startGame.$(OPENDINGUX_TARGET).desktop $(bundle)/
 	$(CP) $(srcdir)/dists/opendingux/scummvm.sh $(bundle)/
 endif
+ifeq ($(OPENDINGUX_TARGET), rg99)
+	$(CP) $(srcdir)/dists/opendingux/startUI.rs90.desktop $(bundle)/
+ifdef dualopk
+	$(CP) $(srcdir)/dists/opendingux/startGame.rs90.desktop $(bundle)/
+endif
+endif
+
 	$(CP) $(srcdir)/backends/platform/sdl/opendingux/README.OPENDINGUX $(bundle)/README.man.txt
 	echo >> $(bundle)/README.man.txt
 	echo '[General README]' >> $(bundle)/README.man.txt
@@ -50,7 +62,7 @@ od-make-opk: $(bundle)
 	$(STRIP) $(bundle)/scummvm
 
 ifdef dualopk
-	$(srcdir)/dists/opendingux/make-opk.sh -d $(bundle) -o scummvm_$(OPENDINGUX_TARGET)_dual
+	$(srcdir)/dists/opendingux/make-opk.sh -d $(bundle) -o scummvm_$(OPKNAME)_dual
 else
-	$(srcdir)/dists/opendingux/make-opk.sh -d $(bundle) -o scummvm_$(OPENDINGUX_TARGET)
+	$(srcdir)/dists/opendingux/make-opk.sh -d $(bundle) -o scummvm_$(OPKNAME)
 endif

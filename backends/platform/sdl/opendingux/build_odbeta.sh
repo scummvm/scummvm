@@ -21,13 +21,14 @@ case $target in
 	libc=musl
         ;;
 
-        rg99)
+        rg99 | rs90)
 	target2=rs90
+        target=rg99
 	libc=musl
         ;;
-        
+
         *)
-        echo "please provide a valid target for the build: gcw0, lepus or rg99"
+        echo "please provide a valid target for the build: gcw0, lepus, rg99 or rs90"
         exit 1
         ;;
 esac

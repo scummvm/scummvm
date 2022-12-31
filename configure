@@ -839,7 +839,8 @@ Special configuration feature:
                                            n64 for Nintendo 64
                                            opendingux-gcw0 for GCW0 with Opendingux Beta
                                            opendingux-lepus for Lepus with Opendingux Beta
-                                           opendingux-rg99 for RG99 with Opendingux Beta
+                                           opendingux-rg99 for RG99 and RS90 with Opendingux Beta
+                                           opendingux-rs90 for RG99 and RS90 with Opendingux Beta
                                            openpandora for OpenPandora
                                            ouya for OUYA
                                            ps3 for PlayStation 3
@@ -3581,11 +3582,12 @@ if test -n "$_host"; then
 					_highres=no
 					_build_hq_scalers=no
 					;;
-				opendingux-rg99)
+				opendingux-rg99 | opendingux-rs90)
 					append_var DEFINES "-DRS90 -DDISABLE_FANCY_THEMES"
 					_16bit=no
 					_highres=no
 					_build_hq_scalers=no
+					_host=opendingux-rg99
 					;;
 				*)
 					echo "WARNING: Unknown OpenDingux target"
