@@ -45,7 +45,7 @@ void InvObject::init() {
 }
 
 void UnkMapStruct::init() {
-	_placeId = _posX = _posY = _field3 = _field4 = 0;
+	_placeId = _posX = _posY = _field3 = _field4_NpcId = 0;
 	_field5_textId = _field7_textId = 0;
 }
 
@@ -90,7 +90,7 @@ void NPCStruct::init() {
 	fieldE_textId = 0;
 	field_F = 0;
 	field_10 = 0;
-	field_11 = 0;
+	field11_NpcId = 0;
 	field12_textId = 0;
 	field14_textId = 0;
 	_xp = 0;

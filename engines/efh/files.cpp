@@ -270,7 +270,7 @@ void EfhEngine::loadNPCS() {
 		_npcBuf[i].fieldE_textId = f.readByte();
 		_npcBuf[i].field_F = f.readByte();
 		_npcBuf[i].field_10 = f.readByte();
-		_npcBuf[i].field_11 = f.readByte();
+		_npcBuf[i].field11_NpcId = f.readByte();
 		_npcBuf[i].field12_textId = f.readUint16LE();
 		_npcBuf[i].field14_textId = f.readUint16LE();
 		_npcBuf[i]._xp = f.readUint32LE();

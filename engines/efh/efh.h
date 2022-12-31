@@ -92,7 +92,7 @@ struct UnkMapStruct {
 	uint8 _posX;
 	uint8 _posY;
 	uint8 _field3;
-	uint8 _field4;
+	uint8 _field4_NpcId;
 	uint16 _field5_textId;
 	uint16 _field7_textId;
 
@@ -138,7 +138,7 @@ struct NPCStruct {
 	uint8 fieldE_textId;
 	uint8 field_F;
 	uint8 field_10;
-	uint8 field_11;
+	uint8 field11_NpcId;
 	uint16 field12_textId;
 	uint16 field14_textId;
 	uint32 _xp;
@@ -203,7 +203,7 @@ struct CharStatus {
 };
 
 struct MapMonster {
-	uint8 _possessivePronounSHL6;
+	uint8 _possessivePronounSHL6; // aabb bbbb aa:Possessive Pronoun, bb bbbb: unknown
 	uint8 _npcId;
 	uint8 _guess_fullPlaceId; // unsigned? Magic values are 0xFF and 0xFE
 	uint8 _posX;
@@ -343,12 +343,12 @@ private:
 	bool checkIfMonsterOnSameLargeMapPlace(int16 monsterId);
 	bool checkMonsterWeaponRange(int16 monsterId);
 	void handleMapMonsterMoves();
-	bool checkPictureRefAvailability(int16 monsterId);
+	bool checkMapMonsterAvailability(int16 monsterId);
 	void displayMonsterAnim(int16 monsterId);
 	int16 countAliveMonsters(int16 id);
 	bool checkMonsterGroupDistance1OrLess(int16 monsterId);
-	bool sub21820(int16 monsterId, int16 arg2, int16 itemId);
-	void sub221D2(int16 monsterId);
+	bool handleTalk(int16 monsterId, int16 arg2, int16 itemId);
+	void startTalkMenu(int16 monsterId);
 	void displayImp1Text(int16 textId);
 	bool sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId);
 	int8 checkTileStatus(int16 mapPosX, int16 mapPosY, bool arg4);
