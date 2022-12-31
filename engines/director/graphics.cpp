@@ -35,15 +35,11 @@ namespace Director {
 #include "director/graphics-data.h"
 
 /**
- * The sprites colors are in reverse order with respect to the ids in director.
- * The palette is in reverse order, this eases the code for loading files.
- * All other color ids can be converted with: 255 - colorId.
+ * Used to upgrade to 32-bit color if required.
  **/
 uint32 DirectorEngine::transformColor(uint32 color) {
 	if (_pixelformat.bytesPerPixel == 1)
-		return 255 - color;
-
-	color = 255 - color;
+		return color;
 
 	return _wm->findBestColor(_currentPalette[color * 3], _currentPalette[color * 3 + 1], _currentPalette[color * 3 + 2]);
 }
@@ -171,24 +167,23 @@ void DirectorEngine::shiftPalette(int startIndex, int endIndex, bool reverse) {
 	if (startIndex == endIndex)
 		return;
 
-	if (endIndex > startIndex)
+	if (startIndex > endIndex)
 		return;
 
-	// Palette indexes are in reverse order thanks to transformColor
 	byte temp[3] = { 0, 0, 0 };
-	int span = startIndex - endIndex + 1;
+	int span = endIndex - startIndex + 1;
 	if (reverse) {
-		memcpy(temp, _currentPalette + 3 * endIndex, 3);
-		memmove(_currentPalette + 3 * endIndex,
-			_currentPalette + 3 * endIndex + 3,
-			(span - 1) * 3);
-		memcpy(_currentPalette + 3 * startIndex, temp, 3);
-	} else {
 		memcpy(temp, _currentPalette + 3 * startIndex, 3);
-		memmove(_currentPalette + 3 * endIndex + 3,
-			_currentPalette + 3 * endIndex,
+		memmove(_currentPalette + 3 * startIndex,
+			_currentPalette + 3 * startIndex + 3,
 			(span - 1) * 3);
 		memcpy(_currentPalette + 3 * endIndex, temp, 3);
+	} else {
+		memcpy(temp, _currentPalette + 3 * endIndex, 3);
+		memmove(_currentPalette + 3 * startIndex + 3,
+			_currentPalette + 3 * startIndex,
+			(span - 1) * 3);
+		memcpy(_currentPalette + 3 * startIndex, temp, 3);
 	}
 
 	// Pass the palette to OSystem only for 8bpp mode
@@ -303,7 +298,7 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 	case kInkTypeCopy: {
 		if (p->applyColor) {
 			if (sizeof(T) == 1) {
-				*dst = src == 0x00 ? p->foreColor : (src == 0xff ? p->backColor : *dst);
+				*dst = src == 0xff ? p->foreColor : (src == 0x00 ? p->backColor : *dst);
 			} else {
 				// TODO: Improve the efficiency of this composition
 				byte rSrc, gSrc, bSrc;
@@ -328,7 +323,7 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 	case kInkTypeNotCopy:
 		if (p->applyColor) {
 			if (sizeof(T) == 1) {
-				*dst = src == 0x00 ? p->backColor : (src == 0xff ? p->foreColor : src);
+				*dst = src == 0xff ? p->backColor : (src == 0x00 ? p->foreColor : src);
 			} else {
 				// TODO: Improve the efficiency of this composition
 				byte rSrc, gSrc, bSrc;
@@ -350,22 +345,22 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		}
 		break;
 	case kInkTypeTransparent:
-		*dst = p->applyColor ? (~src & p->foreColor) | (*dst & src) : (*dst & src);
-		break;
-	case kInkTypeNotTrans:
 		*dst = p->applyColor ? (src & p->foreColor) | (*dst & ~src) : (*dst & ~src);
 		break;
-	case kInkTypeReverse:
-		*dst ^= ~(src);
+	case kInkTypeNotTrans:
+		*dst = p->applyColor ? (~src & p->foreColor) | (*dst & src) : (*dst & src);
 		break;
-	case kInkTypeNotReverse:
+	case kInkTypeReverse:
 		*dst ^= src;
 		break;
+	case kInkTypeNotReverse:
+		*dst ^= ~(src);
+		break;
 	case kInkTypeGhost:
-		*dst = p->applyColor ? (src | p->backColor) & (*dst | ~src) : (*dst | ~src);
+		*dst = p->applyColor ? (~src | p->backColor) & (*dst | src) : *dst | src;
 		break;
 	case kInkTypeNotGhost:
-		*dst = p->applyColor ? (~src | p->backColor) & (*dst | src) : *dst | src;
+		*dst = p->applyColor ? (src | p->backColor) & (*dst | ~src) : (*dst | ~src);
 		break;
 		// Arithmetic ink types
 	default: {

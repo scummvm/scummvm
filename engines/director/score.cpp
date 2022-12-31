@@ -737,7 +737,6 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 		return;
 	// 30 (the maximum) is actually unbounded
 	int delay = speed == 30 ? 10 : 1000 / speed;
-	// Palette indexes are in reverse order thanks to transformColor
 	if (_frames[frameId]->_palette.colorCycling) {
 		// Cycle the colors of a chosen palette
 		int firstColor = _frames[frameId]->_palette.firstColor;
@@ -753,7 +752,7 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 			g_director->draw();
 		} else {
 			// Do a full color cycle in one frame transition
-			int steps = firstColor - lastColor + 1;
+			int steps = lastColor - firstColor + 1;
 			for (int i = 0; i < _frames[frameId]->_palette.cycleCount; i++) {
 				for (int j = 0; j < steps; j++) {
 					g_director->shiftPalette(firstColor, lastColor, false);

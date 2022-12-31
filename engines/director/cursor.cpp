@@ -106,7 +106,7 @@ void Cursor::readFromCast(Datum cursorCasts) {
 			if (!cursor) {
 				*dst = 3;
 			} else {
-				*dst = *mask ? 3 : (*cursor ? 1 : 0);
+				*dst = *mask ? (*cursor ? 0 : 1) : 3;
 				cursor++;
 				mask++;
 			}

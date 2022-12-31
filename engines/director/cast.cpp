@@ -866,8 +866,8 @@ Common::String Cast::getVideoPath(int castId) {
 
 PaletteV4 Cast::loadPalette(Common::SeekableReadStreamEndian &stream) {
 	uint16 steps = stream.size() / 6;
-	uint16 index = (steps * 3) - 1;
-	byte *_palette = new byte[index + 1];
+	uint16 index = 0;
+	byte *_palette = new byte[steps * 3];
 
 	debugC(3, kDebugLoading, "Cast::loadPalette(): %d steps, %d bytes", steps, (int)stream.size());
 
@@ -877,15 +877,15 @@ PaletteV4 Cast::loadPalette(Common::SeekableReadStreamEndian &stream) {
 	}
 
 	for (int i = 0; i < steps; i++) {
-		_palette[index - 2] = stream.readByte();
-		stream.readByte();
-
-		_palette[index - 1] = stream.readByte();
-		stream.readByte();
-
 		_palette[index] = stream.readByte();
 		stream.readByte();
-		index -= 3;
+
+		_palette[index + 1] = stream.readByte();
+		stream.readByte();
+
+		_palette[index + 2] = stream.readByte();
+		stream.readByte();
+		index += 3;
 	}
 
 	return PaletteV4(0, _palette, steps);

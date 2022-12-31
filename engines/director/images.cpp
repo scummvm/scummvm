@@ -52,20 +52,20 @@ void DIBDecoder::destroy() {
 
 void DIBDecoder::loadPalette(Common::SeekableReadStream &stream) {
 	uint16 steps = stream.size() / 6;
-	uint16 index = (steps * 3) - 1;
+	uint16 index = 0;
 	_paletteColorCount = steps;
-	_palette = new byte[index + 1];
+	_palette = new byte[steps * 3];
 
 	for (uint8 i = 0; i < steps; i++) {
-		_palette[index - 2] = stream.readByte();
-		stream.readByte();
-
-		_palette[index - 1] = stream.readByte();
-		stream.readByte();
-
 		_palette[index] = stream.readByte();
 		stream.readByte();
-		index -= 3;
+
+		_palette[index + 1] = stream.readByte();
+		stream.readByte();
+
+		_palette[index + 2] = stream.readByte();
+		stream.readByte();
+		index += 3;
 	}
 }
 
@@ -98,6 +98,15 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 		return false;
 
 	_surface = _codec->decodeFrame(subStream);
+
+	// For some reason, DIB cast members have the palette indexes reversed
+	if (bitsPerPixel == 8) {
+		for (int y = 0; y < _surface->h; y++) {
+			for (int x = 0; x < _surface->w; x++) {
+				*(byte *)_surface->getBasePtr(x, y) = 255 - *(byte *)_surface->getBasePtr(x, y);
+			}
+		}
+	}
 
 	return true;
 }
@@ -243,7 +252,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 				switch (_bitsPerPixel) {
 				case 1:
 					for (int c = 0; c < 8 && x < _surface->w; c++, x++) {
-						color = (pixels[(((y * _pitch) + x) / 8)] & (1 << (7 - c))) ? 0 : 0xff;
+						color = (pixels[(((y * _pitch) + x) / 8)] & (1 << (7 - c))) ? 0xff : 0x00;
 						if (paletted) {
 							*((byte *)_surface->getBasePtr(x, y)) = color;
 						} else {
