@@ -22,6 +22,7 @@
 #ifndef NUVIE_NUVIE_H
 #define NUVIE_NUVIE_H
 
+#include "ultima/shared/engine/events.h"
 #include "ultima/shared/engine/ultima.h"
 #include "ultima/shared/std/string.h"
 #include "ultima/nuvie/conf/configuration.h"
@@ -39,7 +40,7 @@ class Screen;
 class Script;
 class SoundManager;
 
-class NuvieEngine : public Ultima::Shared::UltimaEngine {
+class NuvieEngine : public Ultima::Shared::UltimaEngine, public Ultima::Shared::EventsCallback {
 private:
 	Configuration *_config;
 	Screen *_screen;
@@ -48,6 +49,7 @@ private:
 	SaveGame *_savegame;
 
 	SoundManager *_soundManager;
+	Ultima::Shared::EventsManager *_events;
 private:
 	void initConfig();
 	void assignGameConfigValues(uint8 game_type);

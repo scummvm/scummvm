@@ -110,7 +110,7 @@ Gump *ButtonWidget::onMouseDown(int button, int32 mx, int32 my) {
 	Gump *ret = Gump::onMouseDown(button, mx, my);
 	if (ret)
 		return ret;
-	if (button == Shared::BUTTON_LEFT) {
+	if (button == Mouse::BUTTON_LEFT) {
 		// CHECKME: change dimensions or not?
 		if (!_mouseOver) {
 			_shape = _shapeDown;
@@ -130,7 +130,7 @@ uint16 ButtonWidget::TraceObjId(int32 mx, int32 my) {
 
 
 void ButtonWidget::onMouseUp(int button, int32 mx, int32 my) {
-	if (button == Shared::BUTTON_LEFT) {
+	if (button == Mouse::BUTTON_LEFT) {
 		if (!_mouseOver) {
 			_shape = _shapeUp;
 			_frameNum = _frameNumUp;

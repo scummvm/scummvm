@@ -24,7 +24,6 @@
 
 #include "common/system.h"
 #include "common/rect.h"
-#include "ultima/shared/engine/events.h"
 #include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/misc/direction.h"
 
@@ -81,6 +80,14 @@ class Gump;
 
 class Mouse {
 public:
+	enum MouseButton {
+		BUTTON_NONE = 0,
+		BUTTON_LEFT = 1,
+		BUTTON_RIGHT = 2,
+		BUTTON_MIDDLE = 3,
+		MOUSE_LAST
+	};
+
 	enum MouseCursor {
 		MOUSE_NORMAL = 0,
 		MOUSE_NONE = 1,
@@ -109,7 +116,7 @@ private:
 	uint32 _flashingCursorTime;
 
 	// mouse input state
-	MButton _mouseButton[Shared::MOUSE_LAST];
+	MButton _mouseButton[MOUSE_LAST];
 
 	uint16 _mouseOverGump;
 	Common::Point _mousePos;
@@ -134,12 +141,12 @@ public:
 	/**
 	 * Called when a mouse button is pressed down
 	 */
-	bool buttonDown(Shared::MouseButton button);
+	bool buttonDown(MouseButton button);
 
 	/**
 	 * Called when a mouse ubtton is released
 	 */
-	bool buttonUp(Shared::MouseButton button);
+	bool buttonUp(MouseButton button);
 
 	//! get mouse cursor length. 0 = short, 1 = medium, 2 = long
 	int getMouseLength(int mx, int my) const;
@@ -174,7 +181,7 @@ public:
 	//! set current mouse cursor location
 	void setMouseCoords(int mx, int my);
 
-	bool isMouseDownEvent(Shared::MouseButton button) const;
+	bool isMouseDownEvent(MouseButton button) const;
 
 	//! remove all existing cursors
 	void popAllCursors();

@@ -302,14 +302,14 @@ Gump *ContainerGump::onMouseDown(int button, int32 mx, int32 my) {
 	if (handled) return handled;
 
 	// only interested in left clicks
-	if (button == Shared::BUTTON_LEFT)
+	if (button == Mouse::BUTTON_LEFT)
 		return this;
 
 	return nullptr;
 }
 
 void ContainerGump::onMouseClick(int button, int32 mx, int32 my) {
-	if (button == Shared::BUTTON_LEFT) {
+	if (button == Mouse::BUTTON_LEFT) {
 		uint16 objID = TraceObjId(mx, my);
 
 		Item *item = getItem(objID);
@@ -326,7 +326,7 @@ void ContainerGump::onMouseClick(int button, int32 mx, int32 my) {
 }
 
 void ContainerGump::onMouseDouble(int button, int32 mx, int32 my) {
-	if (button == Shared::BUTTON_LEFT) {
+	if (button == Mouse::BUTTON_LEFT) {
 		uint16 objID = TraceObjId(mx, my);
 
 		if (objID == getObjId()) {

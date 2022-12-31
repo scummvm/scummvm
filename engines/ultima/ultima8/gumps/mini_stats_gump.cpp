@@ -102,7 +102,7 @@ uint16 MiniStatsGump::TraceObjId(int32 mx, int32 my) {
 }
 
 Gump *MiniStatsGump::onMouseDown(int button, int32 mx, int32 my) {
-	if (button == Shared::BUTTON_LEFT)
+	if (button == Mouse::BUTTON_LEFT)
 		return this;
 
 	return nullptr;

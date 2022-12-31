@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/events.h"
+
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/gumps/keypad_gump.h"
 #include "ultima/ultima8/games/game_data.h"

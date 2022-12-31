@@ -23,7 +23,9 @@
 #ifndef ULTIMA8_ULTIMA8
 #define ULTIMA8_ULTIMA8
 
+#include "common/events.h"
 #include "common/stream.h"
+#include "graphics/screen.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/engine/ultima.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
@@ -104,6 +106,7 @@ private:
 	// Timing stuff
 	int32 _lerpFactor;       //!< Interpolation factor for this frame (0-256)
 	bool _inBetweenFrame;    //!< Set true if we are doing an inbetween frame
+	uint32 _priorFrameCounterTime;
 
 	bool _highRes;			 //!< Set to true to enable larger screen size
 	bool _frameSkip;         //!< Set to true to enable frame skipping (default false)
@@ -165,6 +168,7 @@ private:
 	//! \return true if detected all the fields, false if detection failed
 	bool getGameInfo(const istring &game, GameInfo *gameinfo);
 
+	bool pollEvent(Common::Event &event);
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -206,7 +210,7 @@ public:
 		return _screen;
 	}
 
-	Graphics::Screen *getScreen() const override;
+	Graphics::Screen *getScreen() const;
 
 	Common::Error runGame();
 	virtual void handleEvent(const Common::Event &event);
