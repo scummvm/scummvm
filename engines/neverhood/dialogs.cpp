@@ -79,6 +79,7 @@ NeverhoodOptionsWidget::NeverhoodOptionsWidget(GuiObject *boss, const Common::St
 	}
 
 	if (_nhcFiles.size() > 1) {
+		// I18N: NHC is a file extension
 		GUI::StaticTextWidget *nhcCaption = new GUI::StaticTextWidget(widgetsBoss(), "NeverhoodGameOptionsDialog.NhcDesc", _("NHC replacement:"));
 		nhcCaption->setAlign(Graphics::kTextAlignRight);
 
