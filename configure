@@ -3550,10 +3550,14 @@ if test -n "$_host"; then
 		opendingux-*)
 			_sysroot=`$CXX --print-sysroot`
 			_sdlpath=$_sysroot/usr/bin
-			append_var DEFINES  "-DDINGUX -DOPENDINGUX -DREDUCE_MEMORY_USAGE"
-			append_var CXXFLAGS "-ffast-math -fdata-sections -ffunction-sections -mplt -mno-shared"
-			append_var LDFLAGS  "-ffast-math -fdata-sections -ffunction-sections -mplt -mno-shared"
+			append_var DEFINES  "-DDINGUX -DOPENDINGUX -DREDUCE_MEMORY_USAGE -DUNCACHED_PLUGINS"
+			append_var CXXFLAGS "-ffast-math -fdata-sections -ffunction-sections -mplt"
+			append_var LDFLAGS  "-ffast-math -fdata-sections -ffunction-sections -mplt"
 			append_var LDFLAGS  "-O3 -Wl,--as-needed,--gc-sections"
+			if [ x"$_dynamic_modules" != xyes ]; then
+				append_var CXXFLAGS "-mno-shared"
+				append_var LDFLAGS  "-mno-shared"
+			fi
 			_vkeybd=yes
 			_alsa=no
 			_vorbis=no
