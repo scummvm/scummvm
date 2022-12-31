@@ -156,9 +156,8 @@ void GravityProcess::run() {
 			return; // shouldn't happen..
 		if (_zSpeed < -2 && !dynamic_cast<Actor *>(item)) {
 #ifdef BOUNCE_DIAG
-			pout << "item " << _itemNum << " bounce ["
-			     << Kernel::get_instance()->getFrameNum()
-			     << "]: hit " << hititem->getObjId() << Std::endl;
+			debugC(kDebugObject, "item %u bounce [%u]: hit %u",
+				_itemNum, Kernel::get_instance()->getFrameNum(), hititem->getObjId());
 #endif
 
 			if (GAME_IS_U8 && (!hititem->getShapeInfo()->is_land() || _zSpeed < -2 * _gravity)) {
@@ -204,27 +203,22 @@ void GravityProcess::run() {
 					if (ABS(_xSpeed) > 2) _xSpeed /= 2;
 				}
 #ifdef BOUNCE_DIAG
-				pout << "item " << _itemNum << " bounce ["
-				     << Kernel::get_instance()->getFrameNum()
-				     << "]: speed was (" << xspeedold << ","
-				     << yspeedold << "," << zspeedold << ") new _zSpeed "
-				     << _zSpeed << " heading " << headingold_r
-				     << " impulse " << heading_r << " ("
-				     << (_xSpeed - xspeedold) << "," << (_ySpeed - yspeedold)
-				     << "), termFlag: " << termFlag << Std::endl;
+				debugc(kDebugObject, "item %u bounce [%u]: speed was (%d, %d, %d) new _zSpeed %d heading %lf impulse %lf (%d, %d), termFlag: %d",
+					  _itemNum, Kernel::get_instance()->getFrameNum(),
+					  xspeedold, yspeedold, zspeedold
+					  _zSpeed, headingold_r, heading_r,
+					  (_xSpeed - xspeedold), (_ySpeed - yspeedold), termFlag);
 #endif
 			} else {
 #ifdef BOUNCE_DIAG
-				pout << "item " << _itemNum << " bounce ["
-				     << Kernel::get_instance()->getFrameNum()
-				     << "]: no bounce" << Std::endl;
+				debugC(kDebugObject, "item %u bounce [%u]: no bounce",
+					  _itemNum, Kernel::get_instance()->getFrameNum());
 #endif
 			}
 		} else {
 #ifdef BOUNCE_DIAG
-			pout << "item " << _itemNum << " bounce ["
-			     << Kernel::get_instance()->getFrameNum()
-			     << "]: slow hit" << Std::endl;
+			debugC(kDebugObject, "item %u bounce [%u]: slow hit",
+				  _itemNum, Kernel::get_instance()->getFrameNum());
 #endif
 		}
 		if (termFlag) {
@@ -255,11 +249,10 @@ void GravityProcess::run() {
 			_zSpeed = -_zSpeed / 2;
 
 #ifdef BOUNCE_DIAG
-		pout << "item " << _itemNum << " bounce ["
-		     << Kernel::get_instance()->getFrameNum()
-		     << "]: speed was (" << xspeedold << ","
-		     << yspeedold << "," << zspeedold << ") new speed ("
-		     << _xSpeed << "," << _ySpeed << "," << _zSpeed << ")" << Std::endl;
+		debugC(kDebugObject, "item %u bounce [%u]: speed was (%d, %d, %d) new speed (%d, %d, %d)",
+			  _itemNum, Kernel::get_instance()->getFrameNum(),
+			  xspeedold, yspeedold, zspeedold ,
+			  _xSpeed, _ySpeed, _zSpeed);
 #endif
 
 		item->setFlag(Item::FLG_BOUNCING);

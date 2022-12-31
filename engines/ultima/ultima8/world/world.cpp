@@ -278,7 +278,8 @@ void World::loadItemCachNPCData(Common::SeekableReadStream *itemcach, Common::Se
 		}
 
 #ifdef DUMP_ITEMS
-		pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << Std::hex << flags << Std::dec << ", " << quality << ", " << npcnum << ", " << mapnum << ", " << next << Std::endl;
+		debugC(kDebugObject, "%u,%u:\t(%d, %d, %d),\t%04X, %u, %u, u",
+			shape, frame, x, y, z, flags, quality, npcnum, mapnum);
 #endif
 
 		Actor *actor = ItemFactory::createActor(shape, frame, quality,
@@ -286,9 +287,7 @@ void World::loadItemCachNPCData(Common::SeekableReadStream *itemcach, Common::Se
 		                                        npcnum, mapnum,
 		                                        Item::EXT_PERMANENT_NPC, false);
 		if (!actor) {
-#ifdef DUMP_ITEMS
-			pout << "Couldn't create actor" << Std::endl;
-#endif
+			warning("Couldn't create actor");
 			continue;
 		}
 		ObjectManager::get_instance()->assignActorObjId(actor, i);

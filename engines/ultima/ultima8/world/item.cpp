@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/ultima.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/usecode/usecode.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -1539,7 +1540,7 @@ uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 	uint32 offset = u->get_class_event(class_id, event);
 	if (!offset) return 0; // event not found
 
-	debug(10, "Item: %d (shape %d) calling usecode event %d @ %04X:%04X",
+	debugC(kDebugObject, "Item: %d (shape %d) calling usecode event %d @ %04X:%04X",
 			_objId, _shape, event, class_id, offset);
 
 	return callUsecode(static_cast<uint16>(class_id),
@@ -1844,7 +1845,7 @@ void Item::animateItem() {
 		break;
 
 	default:
-		pout << "type " << info->_animType << " data " << anim_data << Std::endl;
+		debugC(kDebugObject, "type %u data %u", info->_animType, anim_data);
 		break;
 	}
 }
@@ -1927,7 +1928,7 @@ uint32 Item::enterFastArea() {
 // Called when an item is leaving the fast area
 void Item::leaveFastArea() {
 	if (_objId == 1) {
-		debug(6, "avatar leaving fast area");
+		debugC(kDebugActor, "Main actor leaving fast area");
 	}
 
 	// Call usecode
@@ -2022,7 +2023,7 @@ void Item::clearGump() {
 }
 
 int32 Item::ascend(int delta) {
-//	pout << "Ascend: _objId=" << getObjId() << ", delta=" << delta << Std::endl;
+	debugC(kDebugObject, "Ascend: _objId=%u, delta=%d", getObjId(), delta);
 
 	if (delta == 0) return 0x4000;
 
@@ -2051,7 +2052,7 @@ int32 Item::ascend(int delta) {
 	int dist = collideMove(xv, yv, zv + delta, false, false);
 	delta = (delta * dist) / 0x4000;
 
-//	pout << "Ascend: dist=" << dist << Std::endl;
+	debugC(kDebugObject, "Ascend: dist=%d", dist);
 
 	// move other items
 	for (uint32 i = 0; i < uclist.getSize(); i++) {
@@ -2747,7 +2748,7 @@ uint32 Item::I_setShape(const uint8 *args, unsigned int /*argsize*/) {
 	if (!item) return 0;
 
 #if 0
-	debug(6, "Item::setShape: objid %04X shape (%d -> %d)",
+	debugC(kDebugObject, "Item::setShape: objid %04X shape (%d -> %d)",
 		  item->getObjId(), item->getShape(), shape);
 #endif
 
@@ -3359,7 +3360,8 @@ uint32 Item::I_push(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 
 	#if 0
-		pout << "Pushing item to ethereal void: id: " << item->getObjId() << " shp: " << item->getShape() << "," << item->getFrame() << Std::endl;
+		debugC(kDebugObject, "Pushing item to ethereal void: id: %u shp: %u, %u",
+			item->getObjId(), item->getShape(), item->getFrame());
 	#endif
 
 	item->moveToEtherealVoid();
@@ -3380,7 +3382,7 @@ uint32 Item::I_create(const uint8 *args, unsigned int /*argsize*/) {
 	uint16 objID = newitem->getObjId();
 
 #if 0
-	debug(6, "Item::create: objid %04X shape (%d, %d)",
+	debugC(kDebugObject, "Item::create: objid %04X shape (%d, %d)",
 		  objID, shape, frame);
 #endif
 
@@ -3412,7 +3414,7 @@ uint32 Item::I_pop(const uint8 */*args*/, unsigned int /*argsize*/) {
 	item->returnFromEtherealVoid();
 
 #if 0
-	pout << "Popping item to original location: " << item->getShape() << "," << item->getFrame() << Std::endl;
+	debugC(kDebugObject, "Popping item to original location: %u, %u", item->getShape(), item->getFrame());
 #endif
 
 	//! Anything else?
@@ -3450,7 +3452,8 @@ uint32 Item::I_popToCoords(const uint8 *args, unsigned int /*argsize*/) {
 	item->move(x, y, z);
 
 #if 0
-	pout << "Popping item into map: " << item->getShape() << "," << item->getFrame() << " at (" << x << "," << y << "," << z << ")" << Std::endl;
+	debugC(kDebugObject, "Popping item into map: %u, %u at (%d, %d, %d)",
+		item->getShape(), item->getFrame(), x, y, z);
 #endif
 
 	//! Anything else?
@@ -3558,7 +3561,8 @@ uint32 Item::I_move(const uint8 *args, unsigned int /*argsize*/) {
 	World_FromUsecodeXY(x, y);
 
 	#if 0
-		pout << "Moving item: " << item->getShape() << "," << item->getFrame() << " to (" << x << "," << y << "," << z << ")" << Std::endl;
+		debugC(kDebugObject, "Moving item: %u, %u to (%d, %d, %d)",
+			item->getShape(), item->getFrame(), x, y, z);
 	#endif
 
 	item->move(x, y, z);
@@ -3800,7 +3804,7 @@ uint32 Item::I_getSliderInput(const uint8 *args, unsigned int /*argsize*/) {
 	UCProcess *current = dynamic_cast<UCProcess *>(Kernel::get_instance()->getRunningProcess());
 	assert(current);
 
-//	pout << "SliderGump: min=" << minval << ", max=" << maxval << ", step=" << step << Std::endl;
+//	debugC(kDebugObject, "SliderGump: min=%d, max=%d, step=%d", minval, maxval, step);
 
 	SliderGump *_gump = new SliderGump(100, 100, minval, maxval, minval, step);
 	_gump->InitGump(0); // modal _gump
