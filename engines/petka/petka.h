@@ -76,6 +76,10 @@ enum {
 	kPetkaDebugDialogs = 1 << 3
 };
 
+enum {
+	GF_COMPRESSED = (1 << 0),
+};
+
 class PetkaEngine : public Engine {
 public:
 	PetkaEngine(OSystem *syst, const ADGameDescription *desc);
