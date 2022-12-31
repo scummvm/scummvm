@@ -46,7 +46,7 @@
 	<key>UILaunchImages</key>
 	<array/>
 	<key>UILaunchStoryboardName</key>
-	<string></string>
+	<string>LaunchScreen_tvos</string>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UIRequiresFullScreen</key>
