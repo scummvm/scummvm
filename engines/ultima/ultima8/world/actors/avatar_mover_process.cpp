@@ -182,11 +182,11 @@ void AvatarMoverProcess::onMouseDown(int button, int32 mx, int32 my) {
 	int bid = 0;
 
 	switch (button) {
-	case Shared::BUTTON_LEFT: {
+	case Mouse::BUTTON_LEFT: {
 		bid = 0;
 		break;
 	}
-	case Shared::BUTTON_RIGHT: {
+	case Mouse::BUTTON_RIGHT: {
 		bid = 1;
 		break;
 	}
@@ -204,9 +204,9 @@ void AvatarMoverProcess::onMouseDown(int button, int32 mx, int32 my) {
 void AvatarMoverProcess::onMouseUp(int button) {
 	int bid = 0;
 
-	if (button == Shared::BUTTON_LEFT) {
+	if (button == Mouse::BUTTON_LEFT) {
 		bid = 0;
-	} else if (button == Shared::BUTTON_RIGHT) {
+	} else if (button == Mouse::BUTTON_RIGHT) {
 		bid = 1;
 	} else {
 		CANT_HAPPEN_MSG("invalid MouseUp passed to AvatarMoverProcess");

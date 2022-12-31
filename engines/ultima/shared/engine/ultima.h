@@ -23,8 +23,6 @@
 #define ULTIMA_SHARED_ENGINE_ULTIMA_H
 
 #include "ultima/detection.h"
-#include "ultima/shared/engine/debugger.h"
-#include "ultima/shared/engine/events.h"
 #include "common/archive.h"
 #include "common/random.h"
 #include "engines/engine.h"
@@ -32,7 +30,7 @@
 namespace Ultima {
 namespace Shared {
 
-class UltimaEngine : public Engine, public EventsCallback {
+class UltimaEngine : public Engine {
 private:
 	Common::RandomSource _randomSource;
 protected:
@@ -56,8 +54,6 @@ protected:
 		return false;
 	}
 
-public:
-	EventsManager *_events;
 public:
 	UltimaEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~UltimaEngine() override;

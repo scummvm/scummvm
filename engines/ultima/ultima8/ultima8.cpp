@@ -97,6 +97,8 @@
 
 //#define PAINT_TIMING 1
 
+#define GAME_FRAME_TIME 50
+
 namespace Ultima {
 namespace Ultima8 {
 
@@ -138,7 +140,6 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 }
 
 Ultima8Engine::~Ultima8Engine() {
-	FORGET_OBJECT(_events);
 	FORGET_OBJECT(_kernel);
 	FORGET_OBJECT(_objectManager);
 	FORGET_OBJECT(_audioMixer);
@@ -175,9 +176,6 @@ Common::Error Ultima8Engine::run() {
 bool Ultima8Engine::initialize() {
 	if (!Shared::UltimaEngine::initialize())
 		return false;
-
-	// Set up the events manager
-	_events = new Shared::EventsManager(this);
 
 	return true;
 }
@@ -574,7 +572,7 @@ Common::Error Ultima8Engine::runGame() {
 		}
 
 		// get & handle all events in queue
-		while (_isRunning && _events->pollEvent(event)) {
+		while (_isRunning && pollEvent(event)) {
 			handleEvent(event);
 		}
 		handleDelayedEvents();
@@ -781,11 +779,11 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_MBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN: {
-		Shared::MouseButton button = Shared::BUTTON_LEFT;
+		Mouse::MouseButton button = Mouse::BUTTON_LEFT;
 		if (event.type == Common::EVENT_RBUTTONDOWN)
-			button = Shared::BUTTON_RIGHT;
+			button = Mouse::BUTTON_RIGHT;
 		else if (event.type == Common::EVENT_MBUTTONDOWN)
-			button = Shared::BUTTON_MIDDLE;
+			button = Mouse::BUTTON_MIDDLE;
 
 		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
 		_mouse->buttonDown(button);
@@ -795,11 +793,11 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_MBUTTONUP:
 	case Common::EVENT_RBUTTONUP: {
-		Shared::MouseButton button = Shared::BUTTON_LEFT;
+		Mouse::MouseButton button = Mouse::BUTTON_LEFT;
 		if (event.type == Common::EVENT_RBUTTONUP)
-			button = Shared::BUTTON_RIGHT;
+			button = Mouse::BUTTON_RIGHT;
 		else if (event.type == Common::EVENT_MBUTTONUP)
-			button = Shared::BUTTON_MIDDLE;
+			button = Mouse::BUTTON_MIDDLE;
 
 		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
 		_mouse->buttonUp(button);
@@ -1662,7 +1660,24 @@ void Ultima8Engine::showSplashScreen() {
 	scr->update();
 	// Handle a single event to get the splash screen shown
 	Common::Event event;
-	_events->pollEvent(event);
+	pollEvent(event);
+}
+
+bool Ultima8Engine::pollEvent(Common::Event &event) {
+	uint32 timer = g_system->getMillis();
+
+	if (timer >= (_priorFrameCounterTime + GAME_FRAME_TIME)) {
+		// Time to build up next game frame
+		_priorFrameCounterTime = timer;
+
+		// Render anything pending for the screen
+		Graphics::Screen *screen = getScreen();
+		if (screen)
+			screen->update();
+	}
+
+	// Event handling
+	return g_system->getEventManager()->pollEvent(event);
 }
 
 } // End of namespace Ultima8

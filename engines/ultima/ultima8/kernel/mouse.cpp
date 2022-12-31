@@ -52,8 +52,8 @@ Mouse::~Mouse() {
 	_instance = nullptr;
 }
 
-bool Mouse::buttonDown(Shared::MouseButton button) {
-	assert(button != Shared::MOUSE_LAST);
+bool Mouse::buttonDown(MouseButton button) {
+	assert(button != MOUSE_LAST);
 	bool handled = false;
 	uint32 now = g_system->getMillis();
 
@@ -91,8 +91,8 @@ bool Mouse::buttonDown(Shared::MouseButton button) {
 	return handled;
 }
 
-bool Mouse::buttonUp(Shared::MouseButton button) {
-	assert(button != Shared::MOUSE_LAST);
+bool Mouse::buttonUp(MouseButton button) {
+	assert(button != MOUSE_LAST);
 	bool handled = false;
 
 	_mouseButton[button].clearState(MBS_DOWN);
@@ -112,7 +112,7 @@ bool Mouse::buttonUp(Shared::MouseButton button) {
 		handled = true;
 	}
 
-	if (button == Shared::BUTTON_LEFT && _dragging != Mouse::DRAG_NOT) {
+	if (button == BUTTON_LEFT && _dragging != Mouse::DRAG_NOT) {
 		stopDragging(_mousePos.x, _mousePos.y);
 		handled = true;
 	}
@@ -126,7 +126,7 @@ void Mouse::popAllCursors() {
 	update();
 }
 
-bool Mouse::isMouseDownEvent(Shared::MouseButton button) const {
+bool Mouse::isMouseDownEvent(MouseButton button) const {
 	return _mouseButton[button].isState(MBS_DOWN);
 }
 
@@ -329,9 +329,9 @@ void Mouse::setMouseCoords(int mx, int my) {
 	}
 
 	if (_dragging == DRAG_NOT) {
-		if (_mouseButton[Shared::BUTTON_LEFT].isState(MBS_DOWN)) {
-			int startx = _mouseButton[Shared::BUTTON_LEFT]._downPoint.x;
-			int starty = _mouseButton[Shared::BUTTON_LEFT]._downPoint.y;
+		if (_mouseButton[BUTTON_LEFT].isState(MBS_DOWN)) {
+			int startx = _mouseButton[BUTTON_LEFT]._downPoint.x;
+			int starty = _mouseButton[BUTTON_LEFT]._downPoint.y;
 			if (ABS(startx - mx) > 2 ||
 				ABS(starty - my) > 2) {
 				startDragging(startx, starty);
@@ -417,7 +417,7 @@ void Mouse::startDragging(int startx, int starty) {
 	// pause the kernel
 	Kernel::get_instance()->pause();
 
-	_mouseButton[Shared::BUTTON_LEFT].setState(MBS_HANDLED);
+	_mouseButton[BUTTON_LEFT].setState(MBS_HANDLED);
 
 	if (_dragging == DRAG_INVALID) {
 		setMouseCursor(MOUSE_CROSS);
@@ -518,7 +518,7 @@ void Mouse::stopDragging(int mx, int my) {
 }
 
 void Mouse::handleDelayedEvents() {
-	for (int button = 0; button < Shared::MOUSE_LAST; ++button) {
+	for (int button = 0; button < MOUSE_LAST; ++button) {
 		if (!(_mouseButton[button]._state & (MBS_HANDLED | MBS_DOWN)) &&
 			!_mouseButton[button].lastWithinDblClkTimeout()) {
 			Gump *gump = getGump(_mouseButton[button]._downGump);

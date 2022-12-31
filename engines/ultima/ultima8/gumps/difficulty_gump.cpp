@@ -141,7 +141,7 @@ void DifficultyGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scal
 }
 
 void DifficultyGump::onMouseClick(int button, int32 mx, int32 my) {
-	if (button == Shared::BUTTON_LEFT) {
+	if (button == Mouse::BUTTON_LEFT) {
 		Gump *gump = FindGump(mx, my);
 		if (gump && gump->GetIndex() > 0) {
 			int idx = gump->GetIndex();

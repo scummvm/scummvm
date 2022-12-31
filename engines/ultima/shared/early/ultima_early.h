@@ -34,6 +34,7 @@
 #include "engines/engine.h"
 #include "ultima/detection.h"
 
+#include "ultima/shared/engine/events.h"
 #include "ultima/shared/engine/ultima.h"
 
 namespace Ultima {
@@ -65,7 +66,7 @@ namespace Gfx {
 class Screen;
 }
 
-class UltimaEarlyEngine : public UltimaEngine {
+class UltimaEarlyEngine : public UltimaEngine, public EventsCallback {
 private:
 	/**
 	 * Initialize the engine
@@ -86,6 +87,7 @@ public:
 	GameBase *_game;
 	MouseCursor *_mouseCursor;
 	Gfx::Screen *_screen;
+	EventsManager *_events;
 public:
 	UltimaEarlyEngine(OSystem *syst, const UltimaGameDescription *gameDesc);
 	~UltimaEarlyEngine() override;

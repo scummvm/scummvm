@@ -271,12 +271,12 @@ Gump *GameMapGump::onMouseDown(int button, int32 mx, int32 my) {
 	GumpToScreenSpace(sx, sy);
 
 	AvatarMoverProcess *amp = Ultima8Engine::get_instance()->getAvatarMoverProcess();
-	if (button == Shared::BUTTON_RIGHT || button == Shared::BUTTON_LEFT) {
+	if (button == Mouse::BUTTON_RIGHT || button == Mouse::BUTTON_LEFT) {
 		amp->onMouseDown(button, sx, sy);
 	}
 
-	if (button == Shared::BUTTON_LEFT || button == Shared::BUTTON_RIGHT ||
-	        button == Shared::BUTTON_MIDDLE) {
+	if (button == Mouse::BUTTON_LEFT || button == Mouse::BUTTON_RIGHT ||
+	        button == Mouse::BUTTON_MIDDLE) {
 		// we take all clicks
 		return this;
 	}
@@ -286,7 +286,7 @@ Gump *GameMapGump::onMouseDown(int button, int32 mx, int32 my) {
 
 void GameMapGump::onMouseUp(int button, int32 mx, int32 my) {
 	AvatarMoverProcess *amp = Ultima8Engine::get_instance()->getAvatarMoverProcess();
-	if (button == Shared::BUTTON_RIGHT || button == Shared::BUTTON_LEFT) {
+	if (button == Mouse::BUTTON_RIGHT || button == Mouse::BUTTON_LEFT) {
 		amp->onMouseUp(button);
 	}
 }
@@ -294,10 +294,10 @@ void GameMapGump::onMouseUp(int button, int32 mx, int32 my) {
 void GameMapGump::onMouseClick(int button, int32 mx, int32 my) {
 	MainActor *avatar = getMainActor();
 	switch (button) {
-	case Shared::BUTTON_LEFT: {
+	case Mouse::BUTTON_LEFT: {
 		if (avatar->isInCombat()) break;
 
-		if (Mouse::get_instance()->isMouseDownEvent(Shared::BUTTON_RIGHT)) break;
+		if (Mouse::get_instance()->isMouseDownEvent(Mouse::BUTTON_RIGHT)) break;
 
 		uint16 objID = TraceObjId(mx, my);
 		Item *item = getItem(objID);
@@ -314,7 +314,7 @@ void GameMapGump::onMouseClick(int button, int32 mx, int32 my) {
 		}
 		break;
 	}
-	case Shared::BUTTON_MIDDLE: {
+	case Mouse::BUTTON_MIDDLE: {
 		uint16 objID = TraceObjId(mx, my);
 		Item *item = getItem(objID);
 		if (item) {
@@ -359,10 +359,10 @@ void GameMapGump::onMouseClick(int button, int32 mx, int32 my) {
 void GameMapGump::onMouseDouble(int button, int32 mx, int32 my) {
 	MainActor *avatar = getMainActor();
 	switch (button) {
-	case Shared::BUTTON_LEFT: {
+	case Mouse::BUTTON_LEFT: {
 		if (avatar->isInCombat()) break;
 
-		if (Mouse::get_instance()->isMouseDownEvent(Shared::BUTTON_RIGHT)) break;
+		if (Mouse::get_instance()->isMouseDownEvent(Mouse::BUTTON_RIGHT)) break;
 
 		uint16 objID = TraceObjId(mx, my);
 		Item *item = getItem(objID);

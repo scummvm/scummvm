@@ -20,6 +20,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/events.h"
 
 #include "ultima/ultima8/gumps/credits_gump.h"
 
