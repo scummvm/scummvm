@@ -36,7 +36,6 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM | ADGF_DROPLANGUAGE | ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
-
 	},
 
 	// Red Comrades 1: Save the Galaxy
@@ -48,7 +47,6 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM | ADGF_DROPLANGUAGE,
 		GUIO1(GUIO_NOMIDI)
-
 	},
 
 	// Red Comrades 1: Save the Galaxy (3 CD)
@@ -61,7 +59,6 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM | ADGF_DROPLANGUAGE | GF_COMPRESSED,
 		GUIO1(GUIO_NOMIDI)
-
 	},
 
 	// Red Comrades 2: For the Great Justice
