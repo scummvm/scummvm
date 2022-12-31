@@ -28,7 +28,8 @@ enum UltimaDebugChannels {
 	kDebugPath = 1 << 0,
 	kDebugGraphics = 1 << 1,
 	kDebugVideo = 1 << 2,
-	kDebugActor = 1 << 3
+	kDebugActor = 1 << 3,
+	kDebugObject = 1 << 4
 };
 
 } // End of namespace Ultima

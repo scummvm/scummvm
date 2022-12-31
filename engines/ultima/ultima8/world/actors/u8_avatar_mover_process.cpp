@@ -180,7 +180,7 @@ void U8AvatarMoverProcess::handleCombatMode() {
 
 		if (canAttack()) {
 			// double right click = kick
-//			debug(MM_INFO, "AvatarMover: combat kick");
+//			debugC(kDebugActor, "AvatarMover: combat kick");
 
 			if (checkTurn(mousedir, false))
 				return;

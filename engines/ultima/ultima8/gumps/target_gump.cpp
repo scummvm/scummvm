@@ -19,8 +19,8 @@
  *
  */
 
+#include "ultima/ultima.h"
 #include "ultima/ultima8/gumps/target_gump.h"
-
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
@@ -85,7 +85,7 @@ void TargetGump::onMouseUp(int button, int32 mx, int32 my) {
 
 	if (item) {
 		// done
-		pout << "Target result: " << item->dumpInfo() << Std::endl;
+		debugC(kDebugObject, "Target result: %s", item->dumpInfo().c_str());
 
 		_processResult = objId;
 		Close();

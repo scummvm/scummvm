@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/ultima.h"
 #include "ultima/ultima8/gumps/container_gump.h"
 
 #include "ultima/ultima8/graphics/shape.h"
@@ -313,10 +314,10 @@ void ContainerGump::onMouseClick(int button, int32 mx, int32 my) {
 
 		Item *item = getItem(objID);
 		if (item) {
-			pout << item->dumpInfo() << Std::endl;
+			debugC(kDebugObject, "%s", item->dumpInfo().c_str());
 
 			if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-				pout << "Can't look: avatarInStasis" << Std::endl;
+				debugC(kDebugObject, "Can't look: avatarInStasis");
 			} else {
 				item->callUsecodeEvent_look();
 			}
@@ -334,10 +335,10 @@ void ContainerGump::onMouseDouble(int button, int32 mx, int32 my) {
 
 		Item *item = getItem(objID);
 		if (item) {
-			pout << item->dumpInfo() << Std::endl;
+			debugC(kDebugObject, "%s", item->dumpInfo().c_str());
 
 			if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-				pout << "Can't use: avatarInStasis" << Std::endl;
+				debugC(kDebugObject, "Can't use: avatarInStasis");
 				return;
 			}
 

@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/ultima.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/world.h"
@@ -303,10 +304,10 @@ void GameMapGump::onMouseClick(int button, int32 mx, int32 my) {
 		if (item) {
 			int32 xv, yv, zv;
 			item->getLocation(xv, yv, zv);
-			pout << item->dumpInfo() << Std::endl;
+			debugC(kDebugObject, "%s", item->dumpInfo().c_str());
 
 			if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-				pout << "Can't look: avatarInStasis" << Std::endl;
+				debugC(kDebugObject, "Can't look: avatarInStasis");
 			} else {
 				item->callUsecodeEvent_look();
 			}
@@ -319,7 +320,7 @@ void GameMapGump::onMouseClick(int button, int32 mx, int32 my) {
 		if (item) {
 			int32 xv, yv, zv;
 			item->getLocation(xv, yv, zv);
-			pout << item->dumpInfo() << Std::endl;
+			debugC(kDebugObject, "%s", item->dumpInfo().c_str());
 
 #if 1
 			Actor *avatarControlled = getControlledActor();
@@ -368,7 +369,7 @@ void GameMapGump::onMouseDouble(int button, int32 mx, int32 my) {
 		if (item) {
 			int32 xv, yv, zv;
 			item->getLocation(xv, yv, zv);
-			pout << item->dumpInfo() << Std::endl;
+			debugC(kDebugObject, "%s", item->dumpInfo().c_str());
 
 			int range = 128; // CONSTANT!
 			if (GAME_IS_CRUSADER) {
@@ -376,7 +377,7 @@ void GameMapGump::onMouseDouble(int button, int32 mx, int32 my) {
 			}
 
 			if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-				pout << "Can't use: avatarInStasis" << Std::endl;
+				debugC(kDebugObject, "Can't use: avatarInStasis");
 				break;
 			}
 
@@ -497,7 +498,7 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 		ObjId bp = avatar->getEquip(7); // !! constant
 		Container *backpack = getContainer(bp);
 		if (backpack && item->moveToContainer(backpack)) {
-			pout << "Dropped item in backpack" << Std::endl;
+			debugC(kDebugObject, "Dropped item in backpack");
 			item->randomGumpLocation();
 			return;
 		}
@@ -506,8 +507,8 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 	if (!avatar->canReach(item, 128, // CONSTANT!
 	                      _draggingPos[0], _draggingPos[1], _draggingPos[2])) {
 		// can't reach, so throw
-		pout << "Throwing item to (" << _draggingPos[0] << ","
-		     << _draggingPos[1] << "," << _draggingPos[2] << ")" << Std::endl;
+		debugC(kDebugObject, "Throwing item to (%d, %d, %d)",
+			   _draggingPos[0], _draggingPos[1], _draggingPos[2]);
 		int speed = 64 - item->getTotalWeight() + avatar->getStr();
 		if (speed < 1) speed = 1;
 		int32 ax, ay, az;
@@ -534,8 +535,8 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 		                                  _draggingPos[0] - ax));
 #endif
 	} else {
-		pout << "Dropping item at (" << _draggingPos[0] << ","
-		     << _draggingPos[1] << "," << _draggingPos[2] << ")" << Std::endl;
+		debugC(kDebugObject, "Dropping item at (%d, %d, %d)",
+			   _draggingPos[0], _draggingPos[1], _draggingPos[2]);
 
 		// CHECKME: collideMove and grab (in StopDraggingItem)
 		// both call release on supporting items.

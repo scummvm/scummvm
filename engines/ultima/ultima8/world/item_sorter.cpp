@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/ultima.h"
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/item_sorter.h"
 #include "ultima/ultima8/world/item.h"
@@ -349,9 +350,9 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si) {
 	if (_sortLimit) {
 		if (si->_order == _sortLimit) {
 			if (!_painted || _painted->_itemNum != si->_itemNum) {
-				pout << "SortItem: " << si->dumpInfo() << Std::endl;
+				debugC(kDebugObject, "SortItem: %s", si->dumpInfo().c_str());
 				if (_painted && si->overlap(_painted)) {
-					pout << "Overlaps: " << _painted->dumpInfo() << Std::endl;
+					debugC(kDebugObject, "Overlaps: %s", _painted->dumpInfo().c_str());
 				}
 			}
 

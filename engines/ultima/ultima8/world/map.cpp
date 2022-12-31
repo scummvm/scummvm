@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/ultima.h"
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/map.h"
 #include "ultima/ultima8/world/item_factory.h"
@@ -238,32 +239,21 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist,
 			cont.pop();
 			contdepth--;
 #ifdef DUMP_ITEMS
-			pout << "---- Ending container ----" << Std::endl;
+			debugC(kDebugObject, "---- Ending container ----");
 #endif
 		}
 
 #ifdef DUMP_ITEMS
-		pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << ConsoleStream::hex << flags << ConsoleStream::dec << ", " << quality << ", " << npcNum << ", " << mapNum << ", " << next << Std::endl;
+		debugC(kDebugObject, "%u,%u:\t(%d, %d, %d),\t%x, %u, %u, %u, %u",
+			shape , frame, x, y, z, flags, quality, npcNum, mapNum, next);
 #endif
 
 		Item *item = ItemFactory::createItem(shape, frame, quality, flags, npcNum,
 		                                     mapNum, extendedflags, false);
 		if (!item) {
-			pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << ConsoleStream::hex << flags << ConsoleStream::dec << ", " << quality << ", " << npcNum << ", " << mapNum << ", " << next;
-
-			const ShapeInfo *info = GameData::get_instance()->getMainShapes()->
-			                  getShapeInfo(shape);
-			if (info) pout << ", family = " << info->_family;
-			pout << Std::endl;
-
-			pout << "Couldn't create item" << Std::endl;
+			warning("Couldn't create item: %u,%u:\t(%d, %d, %d),\t%x, %u, %u, %u, %u",
+				shape, frame, x, y, z, flags, quality, npcNum, mapNum, next);
 			continue;
-		} else {
-			const ShapeInfo *info = item->getShapeInfo();
-			assert(info);
-			if (info->_family > 10) {
-				//warning("Created fixed item unknown family %d, shape (%d, %d) at (%d, %d, %d)", info->_family, shape, frame, x, y, z);
-			}
 		}
 		item->setLocation(x, y, z);
 
@@ -279,7 +269,7 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist,
 			contdepth++;
 			cont.push(c);
 #ifdef DUMP_ITEMS
-			pout << "---- Starting container ----" << Std::endl;
+			debugC(kDebugObject, "---- Starting container ----");
 #endif
 		}
 	}

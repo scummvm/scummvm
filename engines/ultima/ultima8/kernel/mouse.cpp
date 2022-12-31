@@ -20,6 +20,7 @@
  */
 
 #include "graphics/cursorman.h"
+#include "ultima/ultima.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -374,6 +375,8 @@ void Mouse::startDragging(int startx, int starty) {
 
 	// for a Gump, notify the Gump's parent that we started _dragging:
 	if (gump) {
+		debugC(kDebugObject, "Dragging gump %u (class=%s)", _dragging_objId, gump->GetClassType()._className);
+
 		Gump *parent = gump->GetParent();
 		assert(parent); // can't drag root gump
 		int32 px = startx, py = starty;
@@ -386,6 +389,7 @@ void Mouse::startDragging(int startx, int starty) {
 		}
 	} else if (item) {
 		// for an Item, notify the gump the item is in that we started _dragging
+		debugC(kDebugObject, "Dragging item %u (class=%s)", _dragging_objId, item->GetClassType()._className);
 
 		// find gump item was in
 		gump = desktopGump->FindGump(startx, starty);
@@ -407,11 +411,6 @@ void Mouse::startDragging(int startx, int starty) {
 	} else {
 		_dragging = DRAG_INVALID;
 	}
-
-#if 0
-	Object *obj = ObjectManager::get_instance()->getObject(_dragging_objId);
-	pout << "Dragging object " << _dragging_objId << " (class=" << (obj ? obj->GetClassType().class_name : "NULL") << ")" << Std::endl;
-#endif
 
 	pushMouseCursor(MOUSE_NORMAL);
 
@@ -471,7 +470,7 @@ void Mouse::moveDragging(int mx, int my) {
 
 
 void Mouse::stopDragging(int mx, int my) {
-	//pout << "Dropping object " << _dragging_objId << Std::endl;
+	debugC(kDebugObject, "Dropping object %u", _dragging_objId);
 
 	Gump *gump = getGump(_dragging_objId);
 	Item *item = getItem(_dragging_objId);
