@@ -40,8 +40,6 @@ uint16 TeleportEgg::hatch() {
 	if (!isTeleporter()) return 0; // teleport target
 
 	// teleport to destination egg
-	pout << "Teleport!!!!!!!!" << Std::endl;
-
 	MainActor *av = getMainActor();
 	av->teleport(_mapNum, getTeleportId());
 

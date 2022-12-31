@@ -272,8 +272,6 @@ bool U8SaveGump::loadgame(int saveIndex) {
 }
 
 bool U8SaveGump::savegame(int saveIndex, const Std::string &name) {
-	pout << "Save " << saveIndex << ": \"" << name << "\"" << Std::endl;
-
 	if (name.empty())
 		return false;
 
