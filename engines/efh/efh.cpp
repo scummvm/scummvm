@@ -1257,27 +1257,28 @@ void EfhEngine::goSouthWest() {
 }
 
 void EfhEngine::handleNewRoundEffects() {
-	debug("handleNewRoundEffects");
-
-	static int16 regenCounter = 0;
+	debugC(6, kDebugEngine, "handleNewRoundEffects");
 
 	for (int counter = 0; counter < _teamSize; ++counter) {
-		if (_teamCharStatus[counter]._status == 0) // normal
+		CharStatus *curStatus = &_teamCharStatus[counter];
+		if (curStatus->_status == 0) // normal
 			continue;
-		if (--_teamCharStatus[counter]._duration <= 0) {
-			_teamCharStatus[counter]._status = 0;
-			_teamCharStatus[counter]._duration = 0;
+
+		if (--curStatus->_duration <= 0) {
+			curStatus->_status = 0;
+			curStatus->_duration = 0;
 		}
 	}
 
-	if (++regenCounter <= 8)
+	if (++_regenCounter <= 8)
 		return;
 
 	for (int counter = 0; counter < _teamSize; ++counter) {
-		if (++_npcBuf[_teamCharId[counter]]._hitPoints > _npcBuf[_teamCharId[counter]]._maxHP)
-			_npcBuf[_teamCharId[counter]]._hitPoints = _npcBuf[_teamCharId[counter]]._maxHP;
+		NPCStruct *curNpc = &_npcBuf[_teamCharId[counter]];
+		if (curNpc->_hitPoints < curNpc->_maxHP)
+			++curNpc->_hitPoints = curNpc->_maxHP;
 	}
-	regenCounter = 0;
+	_regenCounter = 0;
 }
 
 void EfhEngine::resetGame() {

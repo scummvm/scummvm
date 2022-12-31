@@ -604,6 +604,8 @@ private:
 	int16 _menuStatItemArr[15];
 	Stru32686 _teamMonsterEffects[5];
 	InitiativeStruct _initiatives[8];
+
+	int16 _regenCounter;
 };
 
 
