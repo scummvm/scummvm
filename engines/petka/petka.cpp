@@ -76,7 +76,7 @@ Common::Error PetkaEngine::run() {
 	initGraphics(640, 480, &format);
 	syncSoundSettings();
 
-	if(_desc->flags & GF_COMPRESSED) {
+	if (_desc->flags & GF_COMPRESSED) {
 		Common::Archive *cabinet = Common::makeInstallShieldArchive("data");
 		if (cabinet)
 			SearchMan.add("data1.cab", cabinet);
