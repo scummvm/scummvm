@@ -63,7 +63,7 @@ namespace Ultima8 {
 
 Debugger *g_debugger;
 
-Debugger::Debugger() : Shared::Debugger() {
+Debugger::Debugger() : GUI::Debugger() {
 	g_debugger = this;
 
 	// WARNING: Not only can the methods below be executed directly in the debugger,
