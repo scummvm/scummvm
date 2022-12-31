@@ -69,10 +69,8 @@ ActorAnimProcess::ActorAnimProcess(Actor *actor, Animation::Sequence action,
 	_type = ACTOR_ANIM_PROC_TYPE;
 #ifdef WATCHACTOR
 	if (_itemNum == watchactor)
-		pout << "Animation [" << Kernel::get_instance()->getFrameNum()
-			 << "] ActorAnimProcess created (" << _itemNum << ","
-			 << _action << "," << _dir << ") steps " << _steps
-			 << Std::endl;
+		debugC(kDebugActor, "Animation [%u] ActorAnimProcess created (%u, %d, %d) steps %u",
+			  Kernel::get_instance()->getFrameNum(), _itemNum, _action, _dir, _steps);
 #endif
 }
 
@@ -95,9 +93,8 @@ bool ActorAnimProcess::init() {
 
 #ifdef WATCHACTOR
 	if (_itemNum == watchactor)
-		pout << "Animation [" << Kernel::get_instance()->getFrameNum()
-			 << "] ActorAnimProcess " << getPid() << " init failed "
-			 << "(actor " << _itemNum << "not fast)" << Std::endl;
+		debugC(kDebugActor, "Animation [%u] ActorAnimProcess %u init failed (actor %u not fast)",
+			  Kernel::get_instance()->getFrameNum(), getPid(), _itemNum);
 #endif
 
 		return false;
@@ -122,9 +119,8 @@ bool ActorAnimProcess::init() {
 
 #ifdef WATCHACTOR
 	if (_itemNum == watchactor)
-		pout << "Animation [" << Kernel::get_instance()->getFrameNum()
-			 << "] ActorAnimProcess " << getPid() << " init failed "
-			 << "(tracker init failed)" << Std::endl;
+		debugC(kDebugActor, "Animation [%u] ActorAnimProcess %u init failed (tracker not fast)",
+			  Kernel::get_instance()->getFrameNum(), getPid());
 #endif
 
 		return false;
@@ -138,10 +134,8 @@ bool ActorAnimProcess::init() {
 
 #ifdef WATCHACTOR
 	if (_itemNum == watchactor)
-		pout << "Animation [" << Kernel::get_instance()->getFrameNum()
-		     << "] ActorAnimProcess " << getPid() << " initalized ("
-			 << _itemNum << "," << _action << "," << _dir << ") steps "
-			 << _steps << Std::endl;
+		debugC(kDebugActor, "Animation [%u] ActorAnimProcess %u initalized (%u, %d, %d) steps %d",
+			  Kernel::get_instance()->getFrameNum(), getPid(), _itemNum, _action, _dir, _steps);
 #endif
 
 	return true;
@@ -189,10 +183,8 @@ void ActorAnimProcess::run() {
 		//  AnimationTracker is done.)
 #ifdef WATCHACTOR
 		if (_itemNum == watchactor)
-			pout << "Animation ["
-			     << Kernel::get_instance()->getFrameNum()
-			     << "] ActorAnimProcess left fastarea; terminating"
-			     << Std::endl;
+			debugC(kDebugActor, "Animation [%u] ActorAnimProcess left fastarea; terminating",
+				  Kernel::get_instance()->getFrameNum());
 #endif
 		terminate();
 		return;
@@ -214,19 +206,16 @@ void ActorAnimProcess::run() {
 				// all done
 #ifdef WATCHACTOR
 				if (_itemNum == watchactor)
-					pout << "Animation ["
-					     << Kernel::get_instance()->getFrameNum()
-					     << "] ActorAnimProcess done; terminating"
-					     << Std::endl;
+					debugC(kDebugActor, "Animation [%u] ActorAnimProcess done; terminating",
+						  Kernel::get_instance()->getFrameNum());
 #endif
 
 				// TODO: there are _three_ places where we can fall; clean up
 				if (_tracker->isUnsupported()) {
 #ifdef WATCHACTOR
 					if (_itemNum == watchactor) {
-						pout << "Animation ["
-						     << Kernel::get_instance()->getFrameNum()
-						     << "] falling at end" << Std::endl;
+						debugC(kDebugActor, "Animation [%u] ActorAnimProcess falling at end",
+							  Kernel::get_instance()->getFrameNum());
 					}
 #endif
 					int32 dx, dy, dz;
@@ -246,18 +235,15 @@ void ActorAnimProcess::run() {
 
 #ifdef WATCHACTOR
 				if (_itemNum == watchactor)
-					pout << "Animation ["
-					     << Kernel::get_instance()->getFrameNum()
-					     << "] ActorAnimProcess blocked; terminating"
-					     << Std::endl;
+					debugC(kDebugActor, "Animation [%u] ActorAnimProcess blocked; terminating",
+						  Kernel::get_instance()->getFrameNum());
 #endif
 
 				if (_tracker->isUnsupported()) {
 #ifdef WATCHACTOR
 					if (_itemNum == watchactor) {
-						pout << "Animation ["
-						     << Kernel::get_instance()->getFrameNum()
-						     << "] falling from blocked" << Std::endl;
+						debugC(kDebugActor, "Animation [%u] ActorAnimProcess falling from blocked",
+							  Kernel::get_instance()->getFrameNum());
 					}
 #endif
 					// no inertia here because we just crashed into something
@@ -316,8 +302,8 @@ void ActorAnimProcess::run() {
 #ifdef WATCHACTOR
 		} else {
 			if (_itemNum == watchactor) {
-				pout << "Animation [" << Kernel::get_instance()->getFrameNum()
-					 << "] moved, so aborting this frame." << Std::endl;
+				debugC(kDebugActor, "Animation [%u] ActorAnimProcess moved, so aborting this frame.",
+						Kernel::get_instance()->getFrameNum());
 			}
 #endif // WATCHACTOR
 		}
@@ -338,10 +324,8 @@ void ActorAnimProcess::run() {
 	if (!a->hasFlags(Item::FLG_FASTAREA)) {
 #ifdef WATCHACTOR
 		if (_itemNum == watchactor)
-			pout << "Animation ["
-			     << Kernel::get_instance()->getFrameNum()
-			     << "] ActorAnimProcess left fastarea; terminating"
-			     << Std::endl;
+			debugC(kDebugActor, "Animation [%u] ActorAnimProcess left fastarea; terminating",
+				  Kernel::get_instance()->getFrameNum());
 #endif
 		terminate();
 		return;
@@ -349,20 +333,20 @@ void ActorAnimProcess::run() {
 
 #ifdef WATCHACTOR
 	if (_itemNum == watchactor) {
-		pout << "Animation [" << Kernel::get_instance()->getFrameNum()
-		     << "] showing frame (" << x << "," << y << "," << z << ")-("
-			 << x2 << "," << y2 << "," << z2 << ")"
-		     << " shp (" << a->getShape() << "," << _tracker->getFrame()
-		     << ") sfx " << _tracker->getAnimFrame()->_sfx
-		     << " rep " << _repeatCounter << ConsoleStream::hex
-			 << " flg " << _tracker->getAnimFrame()->_flags << " "
-			 << ConsoleStream::dec;
+		Common::String info;
+		if (_tracker->isDone())
+			info += "D";
+		if (_tracker->isBlocked())
+			info += "B";
+		if (_tracker->isUnsupported())
+			info += "U";
+		if (_tracker->hitSomething())
+			info += "H";
 
-		if (_tracker->isDone()) pout << "D";
-		if (_tracker->isBlocked()) pout << "B";
-		if (_tracker->isUnsupported()) pout << "U";
-		if (_tracker->hitSomething()) pout << "H";
-		pout << Std::endl;
+		debugC(kDebugActor, "Animation [%u] ActorAnimProcess showing frame (%d, %d, %d)-(%d, %d, %d) shp (%u, %u) sfx %d rep %d flg %04X %s",
+			  Kernel::get_instance()->getFrameNum(), x, y, z, x2, y2, z2,
+			  a->getShape(), _tracker->getFrame(), _tracker->getAnimFrame()->_sfx,
+			  _repeatCounter, _tracker->getAnimFrame()->_flags, info.c_str());
 	}
 #endif
 
@@ -373,8 +357,8 @@ void ActorAnimProcess::run() {
 
 #ifdef WATCHACTOR
 			if (_itemNum == watchactor) {
-				pout << "Animation [" << Kernel::get_instance()->getFrameNum()
-				     << "] falling from repeat" << Std::endl;
+				debugC(kDebugActor, "Animation [%u] ActorAnimProcess falling from repeat",
+					  Kernel::get_instance()->getFrameNum());
 			}
 #endif
 
@@ -667,10 +651,8 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 void ActorAnimProcess::terminate() {
 #ifdef WATCHACTOR
 	if (_itemNum == watchactor)
-		pout << "Animation ["
-		     << Kernel::get_instance()->getFrameNum()
-		     << "] ActorAnimProcess " << getPid() << " terminating"
-		     << Std::endl;
+		debugC(kDebugActor, "Animation [%u] ActorAnimProcess %u terminating",
+			  Kernel::get_instance()->getFrameNum(), getPid());
 #endif
 
 	Actor *a = getActor(_itemNum);
@@ -681,10 +663,8 @@ void ActorAnimProcess::terminate() {
 				// destroy the actor
 #ifdef WATCHACTOR
 				if (_itemNum == watchactor)
-					pout << "Animation ["
-					     << Kernel::get_instance()->getFrameNum()
-					     << "] ActorAnimProcess destroying actor " << _itemNum
-					     << Std::endl;
+					debugC(kDebugActor, "Animation [%u] ActorAnimProcess destroying actor %u",
+						  Kernel::get_instance()->getFrameNum(), _itemNum);
 #endif
 				Process *vanishproc = new DestroyItemProcess(a);
 				Kernel::get_instance()->addProcess(vanishproc);

@@ -133,7 +133,7 @@ void U8AvatarMoverProcess::handleCombatMode() {
 		if (lastanim == Animation::startBlock)
 			return;
 
-//		pout << "AvatarMover: combat block" << Std::endl;
+//		debugC(kDebugActor ,"AvatarMover: combat block");
 
 		if (checkTurn(mousedir, false))
 			return;
@@ -148,7 +148,7 @@ void U8AvatarMoverProcess::handleCombatMode() {
 
 		if (canAttack()) {
 			// double left click = attack
-//			pout << "AvatarMover: combat attack" << Std::endl;
+//			debugC(kDebugActor, "AvatarMover: combat attack");
 
 			if (checkTurn(mousedir, false))
 				return;
@@ -180,7 +180,7 @@ void U8AvatarMoverProcess::handleCombatMode() {
 
 		if (canAttack()) {
 			// double right click = kick
-//			pout << "AvatarMover: combat kick" << Std::endl;
+//			debug(MM_INFO, "AvatarMover: combat kick");
 
 			if (checkTurn(mousedir, false))
 				return;

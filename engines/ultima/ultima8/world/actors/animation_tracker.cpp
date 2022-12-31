@@ -66,7 +66,7 @@ bool AnimationTracker::init(const Actor *actor, Animation::Sequence action,
 	if (!_animAction) {
 #ifdef WATCHACTOR
 		if (actor && actor->getObjId() == watchactor) {
-			debug(6, "AnimationTracker: no animation action %d for shape %d",
+			debugC(kDebugActor, "AnimationTracker: no animation action %d for shape %d",
 				  actionnum, shape);
 		}
 #endif
@@ -95,7 +95,7 @@ bool AnimationTracker::init(const Actor *actor, Animation::Sequence action,
 
 #ifdef WATCHACTOR
 	if (actor && actor->getObjId() == watchactor) {
-		debug(6, "AnimationTracker: playing action %d %d-%d (animAction flags: 0x04%x)",
+		debugC(kDebugActor, "AnimationTracker: playing action %d %d-%d (animAction flags: 0x04%x)",
 			  actionnum, _startFrame, _endFrame, _animAction->getFlags());
 	}
 #endif
@@ -292,8 +292,7 @@ bool AnimationTracker::step() {
 			if (!it->_touching && it->_blocking) {
 #ifdef WATCHACTOR
 				if (a->getObjId() == watchactor) {
-					pout << "AnimationTracker: did sweepTest for large step; "
-					     << "collision at time " << it->_hitTime << Std::endl;
+					debugC(kDebugActor, "AnimationTracker: did sweepTest for large step; collision at time %d", it->_hitTime);
 				}
 #endif
 				_blocked = true;
@@ -362,11 +361,8 @@ bool AnimationTracker::step() {
 			} else {
 #ifdef WATCHACTOR
 				if (a->getObjId() == watchactor) {
-					pout << "AnimationTracker: adjusted step: x: "
-					     << tx << "," << _x << "," << dx << " y: "
-						 << ty << "," << _y << "," << dy << " z: "
-						 << tz << "," << _z << "," << dz
-					     << Std::endl;
+					debugC(kDebugActor, "AnimationTracker: adjusted step: x: %d, %d, %d y: %d, %d, %d z: %d, %d, %d",
+						  tx, _x, dx, ty, _y, dy, tz, _z, dz);
 				}
 #endif
 			}
@@ -380,8 +376,8 @@ bool AnimationTracker::step() {
 
 #ifdef WATCHACTOR
 	if (a->getObjId() == watchactor) {
-		pout << "AnimationTracker: step (" << _x << "," << _y << "," << _z << ") +("<< tx - _x << "," << ty - _y
-		     << "," << tz - _z << ")" << Std::endl;
+		debugC(kDebugActor, "AnimationTracker: step (%d, %d, %d) + (%d, %d, %d)",
+			_x, _y, _z, tx - _x, ty - _y, tz - _z);
 	}
 #endif
 
@@ -471,9 +467,8 @@ void AnimationTracker::checkWeaponHit() {
 
 #ifdef WATCHACTOR
 	if (a->getObjId() == watchactor) {
-		pout << "AnimationTracker: Checking hit, range " << range << ", box "
-		     << abox._x << "," << abox._y << "," << abox._z << "," << abox._xd
-		     << "," << abox._yd << "," << abox._zd << ": ";
+		debugC(kDebugActor, "AnimationTracker: Checking hit, range %d, box %d, %d, %d : %d, %d, %d",
+			range, abox._x, abox._y, abox._z, abox._xd, abox._yd, abox._zd);
 	}
 #endif
 
@@ -498,7 +493,7 @@ void AnimationTracker::checkWeaponHit() {
 			hit = itemid;
 #ifdef WATCHACTOR
 			if (a->getObjId() == watchactor) {
-				pout << "hit: " << item->dumpInfo() << Std::endl;
+				debugC(kDebugActor, "hit: %s", item->dumpInfo().c_str());
 			}
 #endif
 			break;
@@ -507,7 +502,7 @@ void AnimationTracker::checkWeaponHit() {
 
 #ifdef WATCHACTOR
 	if (a->getObjId() == watchactor && !hit) {
-		pout << "nothing" << Std::endl;
+		debugC(kDebugActor, "nothing");
 	}
 #endif
 

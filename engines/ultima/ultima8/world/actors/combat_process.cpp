@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/ultima.h"
 #include "ultima/ultima8/world/actors/combat_process.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/current_map.h"
@@ -79,8 +80,7 @@ void CombatProcess::run() {
 			return;
 		}
 
-		pout << "[COMBAT " << _itemNum << "] _target found: "
-		     << _target << Std::endl;
+		debugC(kDebugActor, "[COMBAT %u] _target found: %u", _itemNum, _target);
 		_combatMode = CM_WAITING;
 	}
 
@@ -93,8 +93,7 @@ void CombatProcess::run() {
 	if (inAttackRange()) {
 		_combatMode = CM_ATTACKING;
 
-		pout << "[COMBAT " << _itemNum << "] _target (" << _target
-		     << ") in range" << Std::endl;
+		debugC(kDebugActor, "[COMBAT %u] _target (%u) in range", _itemNum, _target);
 
 		bool hasidle1 = a->hasAnim(Animation::idle1);
 		bool hasidle2 = a->hasAnim(Animation::idle2);

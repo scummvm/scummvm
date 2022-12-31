@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/ultima.h"
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/kernel/kernel.h"
@@ -203,10 +204,9 @@ bool Actor::giveTreasure() {
 					if (!chance) continue;
 
 					int r = getRandom() % 100;
-#if 0
-					pout << "weapon (" << s << ") chance: " << r << "/"
-					     << chance << Std::endl;
-#endif
+
+					debugC(kDebugActor, "weapon (%u) chance: %d/%d", s, r, chance);
+
 					if (r >= chance) continue;
 
 					// create the weapon
@@ -311,8 +311,7 @@ bool Actor::giveTreasure() {
 				}
 
 			} else {
-				pout << "Unhandled special treasure: " << ti._special
-				     << Std::endl;
+				debugC(kDebugActor, "Unhandled special treasure: %s", ti._special.c_str());
 			}
 			continue;
 		}
@@ -445,10 +444,8 @@ void Actor::teleport(int newmap, int32 newx, int32 newy, int32 newz) {
 
 	// Move it to this map
 	if (newmapnum == World::get_instance()->getCurrentMap()->getNum()) {
-#ifdef DEBUG
-		pout << "Actor::teleport: " << getObjId() << " to " << newmap << ","
-		     << newx << "," << newy << "," << newz << Std::endl;
-#endif
+		debugC(kDebugActor, "Actor::teleport: %u to %d (%d, %d, %d)",
+			getObjId(), newmap, newx, newy, newz);
 		move(newx, newy, newz);
 	}
 	// Move it to another map
@@ -550,7 +547,7 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 		getLocation(x, y, z);
 		int32 actionno = AnimDat::getActionNumberForSequence(anim, this);
 		const AnimAction *action = GameData::get_instance()->getMainShapes()->getAnim(getShape(), actionno);
-		debug(6, "Actor::doAnim(%d, %d, %d) from (%d, %d, %d) frame repeat %d", anim, dir, steps, x, y, z, action ? action->getFrameRepeat() : -1);
+		debugC(kDebugActor, "Actor::doAnim(%d, %d, %d) from (%d, %d, %d) frame repeat %d", anim, dir, steps, x, y, z, action ? action->getFrameRepeat() : -1);
 	}
 #endif
 
@@ -1188,16 +1185,15 @@ void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_
 		av->accumulateStr(damage / 4);
 	}
 
-	pout << "Actor " << getObjId() << " received hit from " << other
-	     << " (dmg=" << damage << ",type=" << ConsoleStream::hex << damage_type
-	     << ConsoleStream::dec << "). ";
+	debugCN(kDebugActor, "Actor %u received hit from %u (dmg=%d,type=%x) ",
+		getObjId(), other, damage, damage_type);
 
 	damage = calculateAttackDamage(other, damage, damage_type);
 
 	if (!damage) {
-		pout << "No damage." << Std::endl;
+		debugC(kDebugActor, "No damage.");
 	} else {
-		pout << "Damage: " << damage << Std::endl;
+		debugC(kDebugActor, "Damage: %d", damage);
 	}
 
 	if (damage >= 4 && _objId == 1 && attacker) {
@@ -1350,7 +1346,7 @@ ProcId Actor::dieU8(uint16 damageType) {
 	if (mi && mi->_resurrection && !(damageType & WeaponInfo::DMG_FIRE)) {
 		// this monster will be resurrected after a while
 
-		pout << "Actor::die: scheduling resurrection" << Std::endl;
+		debugC(kDebugActor, "Actor::die: scheduling resurrection");
 
 		int timeout = ((getRandom() % 25) + 5) * 30; // 5-30 seconds
 
@@ -1370,8 +1366,7 @@ ProcId Actor::dieU8(uint16 damageType) {
 
 	if (mi && mi->_explode) {
 		// this monster explodes when it dies
-
-		pout << "Actor::die: exploding" << Std::endl;
+		debugC(kDebugActor, "Actor::die: exploding");
 
 		int count = 5;
 		Shape *explosionshape = GameData::get_instance()->getMainShapes()
@@ -2579,8 +2574,7 @@ uint32 Actor::I_createActor(const uint8 *args, unsigned int /*argsize*/) {
 	UCMachine::get_instance()->assignPointer(ptr, buf, 2);
 
 #if 0
-	pout << "I_createActor: created actor #" << objID << " shape "
-		 << shape << " frame " << frame << Std::endl;
+	debugC(kDebugActor, "I_createActor: created actor #%u shape %u frame %u", objID, shape, frame);
 #endif
 
 	return objID;

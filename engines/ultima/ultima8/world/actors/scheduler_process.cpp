@@ -52,8 +52,8 @@ void SchedulerProcess::run() {
 		if (_nextActor == 256) { // CONSTANT
 			_nextActor = 0; // done
 #if 0
-			pout << "Scheduler: finished run at "
-			     << Kernel::get_instance()->getFrameNum() << Std::endl;
+			debugC(kDebugActor, "Scheduler: finished run at %u",
+				Kernel::get_instance()->getFrameNum());
 #endif
 		}
 
@@ -68,8 +68,7 @@ void SchedulerProcess::run() {
 		_lastRun = currenthour;
 		_nextActor = 1;
 #if 0
-		pout << "Scheduler:  " << Kernel::get_instance()->getFrameNum()
-		     << Std::endl;
+		debugC(kDebugActor, "Scheduler: %u" , Kernel::get_instance()->getFrameNum());
 #endif
 	}
 }

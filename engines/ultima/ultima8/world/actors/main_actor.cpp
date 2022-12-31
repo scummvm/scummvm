@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/ultima.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/teleport_egg.h"
 #include "ultima/ultima8/world/current_map.h"
@@ -396,8 +397,7 @@ void MainActor::teleport(int mapNum, int teleport_id) {
 	World *world = World::get_instance();
 	CurrentMap *currentmap = world->getCurrentMap();
 
-	pout << "MainActor::teleport(): teleporting to map " << mapNum
-	     << ", egg " << teleport_id << Std::endl;
+	debugC(kDebugActor, "MainActor::teleport(): teleporting to map %d, egg %d", mapNum, teleport_id);
 
 	setMapNum(mapNum);
 
@@ -418,8 +418,8 @@ void MainActor::teleport(int mapNum, int teleport_id) {
 	int32 xv, yv, zv;
 	egg->getLocation(xv, yv, zv);
 
-	pout << "Found destination: " << xv << "," << yv << "," << zv << Std::endl;
-	pout << egg->dumpInfo() << Std::endl;
+	debugC(kDebugActor, "Found destination: %d, %d, %d", xv, yv, zv);
+	debugC(kDebugActor, "%s", egg->dumpInfo().c_str());
 
 	if (GAME_IS_CRUSADER) {
 		// Keep the camera on the avatar (the snap process will update on next move)
@@ -610,7 +610,7 @@ void MainActor::accumulateStr(int n) {
 		_accumStr = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
-		pout << "Gained _strength!" << Std::endl;
+		debugC(kDebugActor, "Gained _strength!");
 	}
 }
 
@@ -624,7 +624,7 @@ void MainActor::accumulateDex(int n) {
 		_accumDex = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
-		pout << "Gained _dexterity!" << Std::endl;
+		debugC(kDebugActor, "Gained _dexterity!");
 	}
 }
 
@@ -638,7 +638,7 @@ void MainActor::accumulateInt(int n) {
 		_accumInt = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
-		pout << "Gained _intelligence!" << Std::endl;
+		debugC(kDebugActor, "Gained _intelligence!");
 	}
 }
 
@@ -965,7 +965,7 @@ void MainActor::useInventoryItem(Item *item) {
 	if (!item)
 		return;
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		pout << "Can't use item: avatarInStasis" << Std::endl;
+		debugC(kDebugActor, "Can't use item: avatarInStasis");
 		return;
 	}
 	const int32 shapenum = item->getShape();
