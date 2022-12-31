@@ -387,13 +387,13 @@ Graphics::Surface *BitmapCastMember::getMatte(Common::Rect &bbox) {
 
 Common::String BitmapCastMember::formatInfo() {
 	return Common::String::format(
-		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, foreColor: %d, backColor: %d, regX: %d, regY: %d, pitch: %d, bitsPerPixel: %d",
+		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, foreColor: %d, backColor: %d, regX: %d, regY: %d, pitch: %d, bitsPerPixel: %d, palette: %d",
 		_initialRect.width(), _initialRect.height(),
 		_initialRect.left, _initialRect.top,
 		_boundingRect.width(), _boundingRect.height(),
 		_boundingRect.left, _boundingRect.top,
 		getForeColor(), getBackColor(),
-		_regX, _regY, _pitch, _bitsPerPixel
+		_regX, _regY, _pitch, _bitsPerPixel, _clut
 	);
 }
 
