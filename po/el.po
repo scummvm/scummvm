@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-30 21:12+0000\n"
+"POT-Creation-Date: 2022-12-31 17:43+0000\n"
 "PO-Revision-Date: 2022-11-27 15:23+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -2592,7 +2592,7 @@ msgstr "Επισ~τ~ρ. σε Launcher"
 #: engines/groovie/script.cpp:2311 engines/hugo/file.cpp:297
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:729
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
-#: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:909
+#: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:914
 #: engines/pegasus/pegasus.cpp:406 engines/prince/saveload.cpp:54
 #: engines/sci/engine/guest_additions.cpp:742 engines/sci/engine/kfile.cpp:1079
 #: engines/sherlock/scalpel/scalpel.cpp:1249
@@ -2614,7 +2614,7 @@ msgstr "Αποθήκευση παιχνιδιού:"
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:729 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
-#: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:909
+#: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:914
 #: engines/parallaction/metaengine.cpp:133
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:406
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
@@ -4319,7 +4319,7 @@ msgstr "Προσθήκη ενός μενού ταχύτητας (παρόμοι�
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:739 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
-#: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:922
+#: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:927
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:745
 #: engines/sci/engine/kfile.cpp:1209 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
@@ -4339,7 +4339,7 @@ msgstr "Επαναφορά παιχνιδιού:"
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:739
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
-#: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:922
+#: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:927
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:746
 #: engines/sci/engine/kfile.cpp:1209 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
