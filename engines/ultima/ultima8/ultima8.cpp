@@ -95,6 +95,8 @@
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
 #include "ultima/ultima8/meta_engine.h"
 
+#include "ultima/shared/engine/data_archive.h"
+
 //#define PAINT_TIMING 1
 
 #define GAME_FRAME_TIME 50
@@ -124,7 +126,7 @@ inline bool HasPreventSaveFlag(const Gump *g) { return g->hasFlags(Gump::FLAG_PR
 Ultima8Engine *Ultima8Engine::_instance = nullptr;
 
 Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Shared::UltimaEngine(syst, gameDesc),
+		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima8"),
 		_isRunning(false),  _gameInfo(nullptr), _fileSystem(nullptr),
 		_configFileMan(nullptr), _saveCount(0), _game(nullptr), _lastError(Common::kNoError),
 		_kernel(nullptr), _objectManager(nullptr), _mouse(nullptr), _ucMachine(nullptr),
@@ -174,8 +176,23 @@ Common::Error Ultima8Engine::run() {
 
 
 bool Ultima8Engine::initialize() {
-	if (!Shared::UltimaEngine::initialize())
+	Common::String folder;
+	int reqMajorVersion, reqMinorVersion;
+
+	// Call syncSoundSettings to get default volumes set
+	syncSoundSettings();
+
+	// Check if the game uses data from te ultima.dat archive
+	if (!isDataRequired(folder, reqMajorVersion, reqMinorVersion))
+		return true;
+
+	// Try and set up the data archive
+	// TODO: Refactor this to use a separate archive
+	Common::U32String errorMsg;
+	if (!Shared::UltimaDataArchive::load(folder, reqMajorVersion, reqMinorVersion, errorMsg)) {
+		GUIErrorMessage(errorMsg);
 		return false;
+	}
 
 	return true;
 }
@@ -200,6 +217,10 @@ bool Ultima8Engine::hasFeature(EngineFeature f) const {
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime) ||
 		(f == kSupportsChangingOptionsDuringRuntime);
+}
+
+Common::Language Ultima8Engine::getLanguage() const {
+	return _gameDescription->desc.language;
 }
 
 Common::Error Ultima8Engine::startup() {
@@ -925,7 +946,7 @@ void Ultima8Engine::writeSaveInfo(Common::WriteStream *ws) {
 	_game->writeSaveInfo(ws);
 }
 
-bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
+bool Ultima8Engine::canSaveGameStateCurrently() {
 	// Can't save when avatar in stasis during cutscenes
 	if (_avatarInStasis || _cruStasis)
 		return false;
@@ -950,7 +971,7 @@ bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 }
 
 Common::Error Ultima8Engine::loadGameState(int slot) {
-	Common::Error result = Shared::UltimaEngine::loadGameState(slot);
+	Common::Error result = Engine::loadGameState(slot);
 	if (result.getCode() == Common::kNoError)
 		ConfMan.setInt("lastSave", slot);
 	else
@@ -962,7 +983,7 @@ Common::Error Ultima8Engine::loadGameState(int slot) {
 }
 
 Common::Error Ultima8Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	Common::Error result = Shared::UltimaEngine::saveGameState(slot, desc, isAutosave);
+	Common::Error result = Engine::saveGameState(slot, desc, isAutosave);
 
 	if (!isAutosave) {
 		if (result.getCode() == Common::kNoError)
@@ -1179,7 +1200,7 @@ bool Ultima8Engine::newGame(int saveSlot) {
 }
 
 void Ultima8Engine::syncSoundSettings() {
-	UltimaEngine::syncSoundSettings();
+	Engine::syncSoundSettings();
 
 	// Update music volume
 	AudioMixer *audioMixer = AudioMixer::get_instance();
@@ -1189,7 +1210,7 @@ void Ultima8Engine::syncSoundSettings() {
 }
 
 void Ultima8Engine::applyGameSettings() {
-	UltimaEngine::applyGameSettings();
+	Engine::applyGameSettings();
 
 	bool fontOverride = ConfMan.getBool("font_override");
 	bool fontAntialiasing = ConfMan.getBool("font_antialiasing");

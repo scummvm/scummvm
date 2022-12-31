@@ -312,7 +312,7 @@ Gump *U8SaveGump::showLoadSaveGump(Gump *parent, bool save) {
 		return nullptr;
 	}
 
-	if (save && !Ultima8Engine::get_instance()->canSaveGameStateCurrently(false)) {
+	if (save && !Ultima8Engine::get_instance()->canSaveGameStateCurrently()) {
 		return nullptr;
 	}
 
