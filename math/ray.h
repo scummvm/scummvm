@@ -48,9 +48,14 @@ public:
 	void transform(const Matrix4 &matrix);
 
 	/**
-	 * Rotate the ray using a quaternion
+	 * Rotate the ray using a quaternion - rotates both origin and direction
 	 */
 	void rotate(const Quaternion &rot);
+
+	/**
+	 * Rotate the ray direction only using a quaternion - origin stays fixed
+	 */
+	void rotateDirection(const Quaternion &rot);
 
 	/**
 	 * Translate the ray by a vector
@@ -61,6 +66,17 @@ public:
 	 * Test the intersection of the ray with an Axis Aligned Bounding Box
 	 */
 	bool intersectAABB(const AABB &aabb) const;
+
+	/**
+	 * Test and return the intersection of the ray with a triangle defned by 3 verticies
+	 *
+	 * @param v0 first triangle vertex
+	 * @param v1 second triangle vertex
+	 * @param v2 third triangle vertex
+	 * @param loc If return is true, set to the intersection point
+	 * @param dist If return is true, set to distance along the ray (relative to direction)
+	 */
+	bool intersectTriangle(const Vector3d &v0, const Vector3d &v1, const Vector3d &v2, Vector3d &loc, float &dist) const;
 
 private:
 	Vector3d _origin;
