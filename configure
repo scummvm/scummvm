@@ -853,6 +853,7 @@ Special configuration feature:
                                            psp for PlayStation Portable
                                            samsungtv for Samsung TV
                                            switch for Nintendo Switch
+                                           tvos for Apple TV (tvOS 9.0+)
                                            wasm32-unknown-emscripten for WebAssembly
                                            wii for Nintendo Wii
 
@@ -1736,6 +1737,12 @@ switch)
 	datarootdir='${prefix}/data'
 	datadir='${datarootdir}'
 	docdir='${prefix}/doc'
+	;;
+tvos)
+	_host_os=iphone
+	# Remains of configure not knowing about arm64
+	_host_cpu=aarch64
+	_host_alias=arm64-apple-darwin11
 	;;
 wasm32-*)
 	_endian=little # the endian check below fails, but emscripten is always little endian anyway
@@ -3771,6 +3778,13 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_port_mk="backends/platform/psp/psp.mk"
 			;;
+		tvos)
+			add_line_to_config_mk 'IPHONE = 1'
+			append_var DEFINES "-DIPHONE -DIPHONE_IOS7 -DIPHONE_SANDBOXED"
+			_backend="ios7"
+			_seq_midi=no
+			_timidity=no
+			;;
 		samsungtv)
 			append_var DEFINES "-DSAMSUNGTV"
 			append_var DEFINES "-DDISABLE_COMMAND_LINE"
@@ -3874,7 +3888,11 @@ case $_backend in
 		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
 		append_var LIBS "-framework AudioToolbox -framework CoreAudio -framework SystemConfiguration "
 		append_var LIBS "-framework GameController -framework Accelerate"
-		if test "$_host_cpu" = 'aarch64' ; then
+		if test "$_host" = 'tvos'; then
+			append_var LDFLAGS "-mtvos-version-min=9 -arch arm64"
+			append_var CFLAGS "-mtvos-version-min=9 -arch arm64"
+			append_var CXXFLAGS "-mtvos-version-min=9 -arch arm64"
+		elif test "$_host_cpu" = 'aarch64' ; then
 			append_var LDFLAGS "-miphoneos-version-min=7.1 -arch arm64"
 			append_var CFLAGS "-miphoneos-version-min=7.1 -arch arm64"
 			append_var CXXFLAGS "-miphoneos-version-min=7.1 -arch arm64"
