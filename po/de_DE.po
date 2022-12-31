@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-12-31 19:51+0000\n"
+"POT-Creation-Date: 2022-12-31 22:47+0000\n"
 "PO-Revision-Date: 2022-12-31 08:10+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -6570,13 +6570,14 @@ msgstr ""
 msgid "Repeat actual useful hint by Willie"
 msgstr ""
 
-#: engines/neverhood/dialogs.cpp:82
+#. I18N: NHC is a file extension
+#: engines/neverhood/dialogs.cpp:83
 #, fuzzy
 #| msgid "Enable font replacement"
 msgid "NHC replacement:"
 msgstr "Verwende Ersatz-Schriftarten"
 
-#: engines/neverhood/dialogs.cpp:88
+#: engines/neverhood/dialogs.cpp:89
 #, fuzzy
 #| msgid "Original Save"
 msgid "<original>"
