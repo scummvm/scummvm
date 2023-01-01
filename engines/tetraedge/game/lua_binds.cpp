@@ -40,8 +40,9 @@ using namespace ToLua;
 static void LoadObjectMaterials(const Common::String &objname) {
 	Game *game = g_engine->getGame();
 	bool result = game->scene().loadObjectMaterials(objname);
+	// Not an error if it fails, eg ValAttic/16050 calls this but has no object
 	if (!result)
-		error("[LoadObjectMaterials] Object \"%s\" doesn't exist or no Object in this scene.",
+		warning("[LoadObjectMaterials] Object \"%s\" doesn't exist or no Object in this scene.",
 				objname.c_str());
 }
 
@@ -795,7 +796,9 @@ static int tolua_ExportedFunctions_SetCharacterAnimation00(lua_State *L) {
 		SetCharacterAnimation(s1, s2, b1, b2, (int)f3, (int)f4);
 		return 0;
 	}
-	error("#ferror in function 'SetCharacterAnimation': %d %d %s", err.index, err.array, err.type);
+	// Incorrectly called in scenes/ValTrain/19000 line 305 with a 0.5 parameter instead of bool
+	warning("#ferror in function 'SetCharacterAnimation': %d %d %s", err.index, err.array, err.type);
+	return 0;
 }
 
 static int tolua_ExportedFunctions_SetCharacterAnimationAndWaitForEnd00(lua_State *L) {
@@ -1363,7 +1366,10 @@ static int tolua_ExportedFunctions_DeleteTask00(lua_State *L) {
 		DeleteTask(s1, s2);
 		return 0;
 	}
-	error("#ferror in function 'DeleteTask': %d %d %s", err.index, err.array, err.type);
+	// Note: There is an incorrect call to this in scenes/ValChurch/13120/Logic13120.lua
+	// which only passes a single string.
+	warning("#ferror in function 'DeleteTask': %d %d %s", err.index, err.array, err.type);
+	return 0;
 }
 
 static void SetVisibleButtonHelp(bool val) {

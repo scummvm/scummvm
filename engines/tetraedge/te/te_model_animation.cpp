@@ -144,15 +144,13 @@ TeVector3f32 TeModelAnimation::getNMOTranslation(unsigned long boneNo, float amo
 
 //TeTRS TeModelAnimation::getTRS(const Common::String &boneName, unsigned long frame, bool param_5);
 
-TeTRS TeModelAnimation::getTRS(unsigned long boneNo, unsigned long frame, bool param_5) const {
+TeTRS TeModelAnimation::getTRS(unsigned long boneNo, unsigned long frame, bool forceUseFbx) const {
 	TeTRS retval;
 
-	if (!_useNMOArrays || param_5) {
+	if (!_useNMOArrays || forceUseFbx) {
 		unsigned int nframes = 0;
 		if (!_useNMOArrays) {
-			if (_fbxArrays.size()) {
-				nframes = _fbxArrays[0].size();
-			}
+			nframes = _fbxArrays[0].size();
 		} else {
 			nframes = _numNMOFrames;
 		}
@@ -305,7 +303,10 @@ void TeModelAnimation::setBoneName(uint boneNo, const Common::String &bname) {
 
 void TeModelAnimation::setRotation(unsigned long num, float amount, const TeQuaternion &rot) {
 	if (!_useNMOArrays) {
-		_fbxArrays[num][(int)amount].setRotation(rot);
+		uint frame = amount;
+		if (_fbxArrays[num].size() <= frame)
+			_fbxArrays[num].resize(frame + 1);
+		_fbxArrays[num][frame].setRotation(rot);
 	} else {
 		NMORotation nmorot;
 		nmorot._rot = rot;
@@ -321,7 +322,10 @@ void TeModelAnimation::setScale(unsigned long num, float amount, const TeVector3
 
 void TeModelAnimation::setTranslation(unsigned long num, float amount, const TeVector3f32 &trans) {
 	if (!_useNMOArrays) {
-		_fbxArrays[num][(int)amount].setTranslation(trans);
+		uint frame = amount;
+		if (_fbxArrays[num].size() <= frame)
+			_fbxArrays[num].resize(frame + 1);
+		_fbxArrays[num][frame].setTranslation(trans);
 	} else {
 		NMOTranslation nmotrans;
 		nmotrans._trans = trans;
@@ -336,7 +340,7 @@ void TeModelAnimation::unbind() {
 
 void TeModelAnimation::update(double proportion) {
 	int frames;
-	if (_useNMOArrays == 0) {
+	if (!_useNMOArrays) {
 		if (_fbxArrays.empty())
 			return;
 

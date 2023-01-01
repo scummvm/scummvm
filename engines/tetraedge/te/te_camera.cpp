@@ -20,6 +20,7 @@
  */
 
 #include "common/math.h"
+#include "math/ray.h"
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/te/te_camera.h"
@@ -136,25 +137,29 @@ void TeCamera::draw() {
 	error("TODO: Implement TeCamera::draw");
 }
 
-void TeCamera::getRay(const TeVector2s32 &pxloc, TeVector3f32 &raypos, TeVector3f32 &raydir) {
-	raypos = position();
+Math::Ray TeCamera::getRay(const TeVector2s32 &pxloc) {
+	const Math::Vector3d origin = position();
 
-	float xval = (pxloc._x - _viewportX) / fabs(_viewportW);
-	raydir.x() = xval * 2 - 1;
-	float yval = (pxloc._y - _viewportY) / fabs(_viewportH);
-	raydir.y() = yval * 2 - 1;
-	raydir.z() = 1.0;
+	// point offset relative to viewport
+	const float xval = (pxloc._x - _viewportX) / fabs(_viewportW);
+	const float yval = (_viewportH - (pxloc._y - _viewportY)) / fabs(_viewportH);
+
+	// normalized to -1..1
+	const TeVector3f32 projectedPoint(xval * 2.0f - 1.0f, yval * 2.0f - 1.0f, 1.0f);
 
 	TeMatrix4x4 projInverse = _projectionMatrix;
-	projInverse.inverse();
-	raydir = projInverse * raydir;
-	raydir.normalize();
+	bool inverted = projInverse.inverse();
+	if (!inverted)
+		error("failed to invert camera projection");
+	TeVector3f32 unprojectedPoint = projInverse * projectedPoint;
+	unprojectedPoint.normalize();
 
 	TeQuaternion rot = _rotation;
 	rot.normalize();
-	const TeMatrix4x4 rotmatrix = rot.toTeMatrix();
-
-	raydir = rotmatrix * raydir;
+	TeMatrix4x4 rotMatrix = rot.toTeMatrix();
+	TeVector3f32 rayDir = rotMatrix * unprojectedPoint;
+	Math::Ray ray(origin, rayDir);
+	return ray;
 }
 
 void TeCamera::loadBin(const Common::String &path) {

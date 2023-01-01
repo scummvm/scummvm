@@ -61,43 +61,44 @@ void TePickMesh2::draw() {
 	renderer->disableWireFrame();
 }
 
-bool TePickMesh2::intersect(const TeVector3f32 &v1, const TeVector3f32 &v2, TeVector3f32 &vout, float &fout, bool lastHitFirst, unsigned long *triangleHitOut) {
+bool TePickMesh2::intersect(const TeVector3f32 &origin, const TeVector3f32 &dir, TeVector3f32 &hitPtOut, float &hitDistOut, bool lastHitFirst, unsigned long *triangleHitOut) {
 	if (_verticies.size() / 3 == 0)
 		return false;
 
-	TeVector3f32 intersection;
-	float f;
+	TeVector3f32 hitPt;
+	float hitDist;
 	const TeMatrix4x4 worldTrans = worldTransformationMatrix();
+	const Math::Ray ray(origin, dir);
 	if (lastHitFirst) {
 		const TeVector3f32 triv1 = worldTrans * _verticies[_lastTriangleHit * 3 + 0];
 		const TeVector3f32 triv2 = worldTrans * _verticies[_lastTriangleHit * 3 + 1];
 		const TeVector3f32 triv3 = worldTrans * _verticies[_lastTriangleHit * 3 + 2];
-		int result = TeRayIntersection::intersect(v1, v2, triv1, triv2, triv3, intersection, f);
-		if (result == 1 && f >= 0.0 && f < FLT_MAX) {
-			vout = v1 + v2 * f;
-			fout = f;
+		bool result = ray.intersectTriangle(triv1, triv2, triv3, hitPt, hitDist);
+		if (result && hitDist >= 0.0 && hitDist < FLT_MAX) {
+			hitPtOut = origin + dir * hitDist;
+			hitDistOut = hitDist;
 			if (triangleHitOut)
 				*triangleHitOut = _lastTriangleHit;
 			return true;
 		}
 	}
 
-	float hitf = FLT_MAX;
+	float lastHitDist = FLT_MAX;
 	for (unsigned int i = 0; i < _verticies.size() / 3; i++) {
 		const TeVector3f32 triv1 = worldTrans * _verticies[i * 3 + 0];
 		const TeVector3f32 triv2 = worldTrans * _verticies[i * 3 + 1];
 		const TeVector3f32 triv3 = worldTrans * _verticies[i * 3 + 2];
-		int result = TeRayIntersection::intersect(v1, v2, triv1, triv2, triv3, intersection, f);
-		if (result == 1 && f >= 0.0 && f < FLT_MAX) {
+		bool result = ray.intersectTriangle(triv1, triv2, triv3, hitPt, hitDist);
+		if (result && hitDist >= 0.0 && hitDist < FLT_MAX) {
 			_lastTriangleHit = i;
-			hitf = f;
+			lastHitDist = hitDist;
 			if (lastHitFirst)
 				break;
 		}
 	}
-	if (hitf != FLT_MAX) {
-		vout = v1 + v2 * hitf;
-		fout = hitf;
+	if (lastHitDist != FLT_MAX) {
+		hitPtOut = origin + dir * lastHitDist;
+		hitDistOut = lastHitDist;
 		if (triangleHitOut)
 			*triangleHitOut = _lastTriangleHit;
 		return true;
