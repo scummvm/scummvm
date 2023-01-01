@@ -808,34 +808,40 @@ TePickMesh2 *TeFreeMoveZone::findNearestMesh(TeIntrusivePtr<TeCamera> &camera, c
 	TeVector3f32 closestLoc;
 	TePickMesh2 *nearestMesh = nullptr;
 	float closestDist = camera->_orthFarVal;
-	TeVector3f32 rayLoc;
-	TeVector3f32 rayDir;
+	Math::Ray camRay;
 	for (unsigned int i = 0; i < pickMeshes.size(); i++) {
 		TePickMesh2 *mesh = pickMeshes[i];
 		const TeMatrix4x4 meshWorldTransform = mesh->worldTransformationMatrix();
 		if (lastHitFirst) {
+			// Note: it seems like a bug in the original.. this never sets
+			// the ray parameters?? It should still find the right triangle below.
 			unsigned int tricount = mesh->verticies().size() / 3;
 			unsigned int vert = mesh->lastTriangleHit() * 3;
 			if (mesh->lastTriangleHit() >= tricount)
 				vert = 0;
-			const TeVector3f32 v1 = meshWorldTransform * mesh->verticies()[vert];
+			const TeVector3f32 v1 = meshWorldTransform * mesh->verticies()[vert + 0];
 			const TeVector3f32 v2 = meshWorldTransform * mesh->verticies()[vert + 1];
 			const TeVector3f32 v3 = meshWorldTransform * mesh->verticies()[vert + 2];
 			TeVector3f32 intersectLoc;
 			float intersectDist;
-			int intResult = TeRayIntersection::intersect(rayLoc, rayDir, v1, v2, v3, intersectLoc, intersectDist);
-			if (intResult == 1 && intersectDist < closestDist && intersectDist >= camera->_orthNearVal)
+			bool intResult = camRay.intersectTriangle(v1, v2, v3, intersectLoc, intersectDist);
+			if (intResult && intersectDist < closestDist && intersectDist >= camera->_orthNearVal)
 				return mesh;
 		}
 		for (unsigned int tri = 0; tri < mesh->verticies().size() / 3; tri++) {
-			const TeVector3f32 v1 = meshWorldTransform * mesh->verticies()[tri * 3];
+			const TeVector3f32 v1 = meshWorldTransform * mesh->verticies()[tri * 3 + 0];
 			const TeVector3f32 v2 = meshWorldTransform * mesh->verticies()[tri * 3 + 1];
 			const TeVector3f32 v3 = meshWorldTransform * mesh->verticies()[tri * 3 + 2];
-			camera->getRay(fromPt, rayLoc, rayDir);
+			camRay = camera->getRay(fromPt);
 			TeVector3f32 intersectLoc;
 			float intersectDist;
-			int intResult = TeRayIntersection::intersect(rayLoc, rayDir, v1, v2, v3, intersectLoc, intersectDist);
-			if (intResult == 1 && intersectDist < closestDist && intersectDist >= camera->_orthNearVal) {
+			bool intResult = camRay.intersectTriangle(v1, v2, v3, intersectLoc, intersectDist);
+			/*debug("PickMesh2 %s intersect Ray(%s, %s) Triangle(%s, %s, %s) -> %s", mesh->name().c_str(),
+					TeVector3f32(camRay.getOrigin()).dump().c_str(),
+					TeVector3f32(camRay.getDirection()).dump().c_str(),
+					v1.dump().c_str(), v2.dump().c_str(), v3.dump().c_str(),
+					intResult ? "hit!" : "no hit");*/
+			if (intResult && intersectDist < closestDist && intersectDist >= camera->_orthNearVal) {
 				mesh->setLastTriangleHit(tri);
 				closestLoc = intersectLoc;
 				closestDist = intersectDist;

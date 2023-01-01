@@ -42,7 +42,7 @@
 #include "tetraedge/te/te_lua_script.h"
 #include "tetraedge/te/te_lua_thread.h"
 
-#define DEBUG_PATHFINDING 1
+//#define DEBUG_PATHFINDING 1
 
 namespace Tetraedge {
 
@@ -183,6 +183,13 @@ Character *InGameScene::character(const Common::String &name) {
 
 	for (Character *c : _characters) {
 		if (c->_model->name() == name)
+			return c;
+	}
+
+	// WORKAROUND: Didn't find char, try again with case insensitive
+	// for "OScar" typo in scenes/ValTrain/19000.
+	for (Character *c : _characters) {
+		if (c->_model->name().compareToIgnoreCase(name) == 0)
 			return c;
 	}
 
@@ -327,6 +334,7 @@ void InGameScene::deserializeModel(Common::ReadStream &stream, TeIntrusivePtr<Te
 		col.deserialize(stream);
 		mesh.setColor(i, col);
 	}
+
 	pickmesh->setNbTriangles(indexcount / 3);
 	for (unsigned int i = 0; i < indexcount; i++) {
 		vec = mesh.vertex(mesh.index(i));
@@ -592,7 +600,7 @@ bool InGameScene::load(const Common::Path &path) {
 		if (modelname.contains("Clic")) {
 			//debug("Loaded clickMesh %s", modelname.c_str());
 			_hitObjects.push_back(model);
-			model->setVisible(true);
+			model->setVisible(false);
 			model->setColor(TeColor(0, 0xff, 0, 0xff));
 			models().push_back(model);
 			pickmesh->setName(modelname);

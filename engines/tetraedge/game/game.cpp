@@ -1068,7 +1068,7 @@ bool Game::onMouseClick(const Common::Point &pt) {
 	
 	// Note: charAnim above may no longer be valid as anim may have changed.
 	if (_sceneCharacterVisibleFromLoad || (character->curAnimName() == character->characterSettings()._idleAnimFileName)) {
-		_lastCharMoveMousePos = TeVector2s32(0, 0);
+		_lastCharMoveMousePos = TeVector2s32();
 		_movePlayerCharacterDisabled = false;
 		_isCharacterIdle = true;
 		_isCharacterWalking = false;

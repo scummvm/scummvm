@@ -30,42 +30,43 @@ TePickMesh *getMesh(const TeVector3f32 &param_1, const TeVector3f32 &param_2, co
 	error("TODO: implement TeRayIntersection::getMesh");
 }
 
+/*
 // This is a version from https://www.lighthouse3d.com/tutorials/maths/ray-triangle-intersection/
 int intersect(const TeVector3f32 &p, const TeVector3f32 &d, const TeVector3f32 &v0,
-			  const TeVector3f32 &v1, const TeVector3f32 &v2, TeVector3f32 &vout, float &fout) {
+			  const TeVector3f32 &v1, const TeVector3f32 &v2, TeVector3f32 &hitPt, float &hitDist) {
 	const TeVector3f32 e1 = v1 - v0;
 	const TeVector3f32 e2 = v2 - v0;
-	const TeVector3f32 h = d ^ e2;
+	const TeVector3f32 h = TeVector3f32::crossProduct(d, e2);
 
 	if (h == TeVector3f32())
 		return -1;
 
 	float a = e1.dotProduct(h);
-	if (fabs(a) < 1e-6)
+	if (fabs(a) < 1e-6f)
 		return 0;
 	
-	float f = 1 / a;
-	TeVector3f32 s = p - v0;
+	float f = 1.0f / a;
+	const TeVector3f32 s = p - v0;
 	float u = f * s.dotProduct(h);
-	if (u < 0.0 || u > 1.0)
+	if (u < 0.0f || u > 1.0f)
 		return 0;
 
-	TeVector3f32 q = TeVector3f32::crossProduct(s, e1);
+	const TeVector3f32 q = TeVector3f32::crossProduct(s, e1);
 	float v = f * d.dotProduct(q);
 
-	if (v < 0.0 || u + v > 1.0)
+	if (v < 0.0f || u + v > 1.0f)
 		return 0;
 		
 	float t = f * e2.dotProduct(q);
 	
-	if (t < 0.00001)
+	if (t < 1e-6f)
 		return 0;
 	
-	fout = t;
-	vout = p + t * d;
+	hitDist = t;
+	hitPt = p + t * d;
 	
 	return 1;
-}
+}*/
 
 /*
 int intersect(const TeVector3f32 &rayPos, const TeVector3f32 &rayDir, const TeVector3f32 &v1,

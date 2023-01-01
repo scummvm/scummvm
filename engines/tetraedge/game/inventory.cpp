@@ -495,7 +495,7 @@ bool Inventory::updateLayout() {
 	return false;
 }
 
-#define DEBUG_SAVELOAD 1
+//#define DEBUG_SAVELOAD 1
 
 Common::Error Inventory::syncState(Common::Serializer &s) {
 	unsigned int nitems = _invObjects.size();

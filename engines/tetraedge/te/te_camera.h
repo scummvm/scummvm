@@ -23,6 +23,8 @@
 #define TETRAEDGE_TE_TE_CAMERA_H
 
 #include "common/str.h"
+#include "math/ray.h"
+
 #include "tetraedge/te/te_3d_object2.h"
 #include "tetraedge/te/te_matrix4x4.h"
 #include "tetraedge/te/te_references_counter.h"
@@ -45,7 +47,7 @@ public:
 	void buildPerspectiveMatrix3();
 	void draw() override;
 
-	void getRay(const TeVector2s32 &param_1, TeVector3f32 &out1, TeVector3f32 &out2);
+	Math::Ray getRay(const TeVector2s32 &pxloc);
 
 	void loadBin(const Common::String &path);
 	void loadBin(const Common::ReadStream &stream);
