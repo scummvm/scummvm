@@ -29,7 +29,7 @@
 namespace Myst3 {
 
 static const PlainGameDescriptor myst3Games[] = {
-	{ "myst3", "Myst III Exile" },
+	{ "myst3", "Myst III: Exile" },
 	{ nullptr, nullptr }
 };
 
