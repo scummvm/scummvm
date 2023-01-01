@@ -320,7 +320,7 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 		int16 textPosY = 81 + counter * 9;
 		int16 itemId = _npcBuf[npcId]._inventory[_menuStatItemArr[counter]]._ref;
 		if (itemId != 0x7FFF) {
-			if (_npcBuf[npcId]._inventory[_menuStatItemArr[counter]]._stat1 & 0x80) {
+			if (_npcBuf[npcId]._inventory[_menuStatItemArr[counter]].isEquipped()) {
 				setTextPos(146, textPosY);
 				displayCharAtTextPos('E');
 			}
@@ -353,7 +353,7 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 				//	var54 = _items[_npcBuf[npcId]._inventory[_menuStatItemArr[counter]]._ref]._defense;
 				// {
 			} else if (_items[itemId]._uses != 0x7F) {
-				int16 stat1 = _npcBuf[npcId]._inventory[_menuStatItemArr[counter]]._stat1;
+				int16 stat1 = _npcBuf[npcId]._inventory[_menuStatItemArr[counter]].getUsesLeft();
 				if (stat1 != 0x7F) {
 					buffer1 = Common::String::format("%d", stat1);
 					displayStringAtTextPos(buffer1);
@@ -1425,9 +1425,10 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 	}
 
 	if (varA6) {
-		if ((_npcBuf[charId]._inventory[objectId]._stat1 & 0x7F) != 0x7F) {
-			int8 varA1 = (_npcBuf[charId]._inventory[objectId]._stat1 & 0x7F) - 1;
-			if (varA1 <= 0) {
+		int16 usesLeft = _npcBuf[charId]._inventory[objectId].getUsesLeft();
+		if (usesLeft != 0x7F) {
+			--usesLeft;
+			if (usesLeft <= 0) {
 				buffer1 = "  * The item breaks!";
 				if (argA == 2) {
 					getLastCharAfterAnimCount(_guessAnimationAmount);
@@ -1438,7 +1439,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 				setCharacterObjectToBroken(charId, objectId);
 			} else {
 				_npcBuf[charId]._inventory[objectId]._stat1 &= 0x80;
-				_npcBuf[charId]._inventory[objectId]._stat1 |= 0xA1;
+				_npcBuf[charId]._inventory[objectId]._stat1 |= usesLeft;
 			}
 		}
 
