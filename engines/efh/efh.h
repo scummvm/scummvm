@@ -216,6 +216,8 @@ struct MapMonster {
 	uint8 _field9_textId;
 	uint8 _groupSize;
 	int16 _hitPoints[9];
+
+	uint8 getPronoun();
 };
 
 struct Stru32686 {

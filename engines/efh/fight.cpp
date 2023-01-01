@@ -732,18 +732,18 @@ bool EfhEngine::isTeamMemberStatusNormal(int16 teamMemberId) {
 void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	debug("getDeathTypeDescription %d %d", attackerId, victimId);
 
-	int16 possessivePronoun;
+	int16 pronoun;
 
 	if (attackerId > 999) {
 		int16 charId = _teamCharId[attackerId - 1000];
-		possessivePronoun = _npcBuf[charId]._possessivePronounSHL6 >> 6;
+		pronoun = _npcBuf[charId].getPronoun();
 	} else {
 		int16 charId = _teamMonsterIdArray[attackerId];
-		possessivePronoun = _mapMonsters[charId]._possessivePronounSHL6 >> 6;
+		pronoun = _mapMonsters[charId].getPronoun();
 	}
 
-	if (possessivePronoun > 2)
-		possessivePronoun = 2;
+	if (pronoun > 2)
+		pronoun = 2;
 
 	int16 deathType;
 	if (getRandom(100) < 20) {
@@ -774,13 +774,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 0:
 		switch (rndDescrForDeathType) {
 		case 0:
-			tmpStr = Common::String::format(", killing %s!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", killing %s!", kPersonal[pronoun]);
 			break;
 		case 1:
-			tmpStr = Common::String::format(", slaughtering %s!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", slaughtering %s!", kPersonal[pronoun]);
 			break;
 		case 2:
-			tmpStr = Common::String::format(", annihilating %s!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", annihilating %s!", kPersonal[pronoun]);
 			break;
 		default:
 			break;
@@ -789,13 +789,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 1:
 		switch (rndDescrForDeathType) {
 		case 0:
-			tmpStr = Common::String::format(", cutting %s in two!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", cutting %s in two!", kPersonal[pronoun]);
 			break;
 		case 1:
-			tmpStr = Common::String::format(", dicing %s into small cubes!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", dicing %s into small cubes!", kPersonal[pronoun]);
 			break;
 		case 2:
-			tmpStr = Common::String::format(", butchering %s into lamb chops!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", butchering %s into lamb chops!", kPersonal[pronoun]);
 			break;
 		default:
 			break;
@@ -804,13 +804,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 2:
 		switch (rndDescrForDeathType) {
 		case 0:
-			tmpStr = Common::String::format(", piercing %s heart!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", piercing %s heart!", kPersonal[pronoun]);
 			break;
 		case 1:
-			tmpStr = Common::String::format(", leaving %s a spouting mass of blood!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", leaving %s a spouting mass of blood!", kPersonal[pronoun]);
 			break;
 		case 2:
-			tmpStr = Common::String::format(", popping %s like a zit!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", popping %s like a zit!", kPersonal[pronoun]);
 			break;
 		default:
 			break;
@@ -819,13 +819,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 3:
 		switch (rndDescrForDeathType) {
 		case 0:
-			tmpStr = Common::String::format(", pulping %s head over a wide area!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", pulping %s head over a wide area!", kPersonal[pronoun]);
 			break;
 		case 1:
-			tmpStr = Common::String::format(", smashing %s into a meat patty!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", smashing %s into a meat patty!", kPersonal[pronoun]);
 			break;
 		case 2:
-			tmpStr = Common::String::format(", squashing %s like a ripe tomato!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", squashing %s like a ripe tomato!", kPersonal[pronoun]);
 			break;
 		default:
 			break;
@@ -834,10 +834,10 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 4:
 		switch (rndDescrForDeathType) {
 		case 0:
-			tmpStr = Common::String::format(", totally incinerating %s!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", totally incinerating %s!", kPersonal[pronoun]);
 			break;
 		case 1:
-			tmpStr = Common::String::format(", reducing %s to a pile of ash!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", reducing %s to a pile of ash!", kPersonal[pronoun]);
 			break;
 		case 2:
 			tmpStr = Common::String::format(", leaving a blistered mass of flesh behind!");
@@ -850,13 +850,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 		switch (rndDescrForDeathType) {
 		case 0:
 			// The original has a typo: popscicle
-			tmpStr = Common::String::format(", turning %s into a popsicle!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", turning %s into a popsicle!", kPersonal[pronoun]);
 			break;
 		case 1:
-			tmpStr = Common::String::format(", encasing %s in a block of ice!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", encasing %s in a block of ice!", kPersonal[pronoun]);
 			break;
 		case 2:
-			tmpStr = Common::String::format(", shattering %s into shards!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", shattering %s into shards!", kPersonal[pronoun]);
 			break;
 		default:
 			break;
@@ -868,10 +868,10 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 			tmpStr = Common::String::format(", leaving pudding for brains");
 			break;
 		case 1:
-			tmpStr = Common::String::format(", bursting %s head like a bubble!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", bursting %s head like a bubble!", kPersonal[pronoun]);
 			break;
 		case 2:
-			tmpStr = Common::String::format(", turning %s into a mindless vegetable", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", turning %s into a mindless vegetable", kPersonal[pronoun]);
 			break;
 		default:
 			break;
@@ -880,13 +880,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 7:
 		switch (rndDescrForDeathType) {
 		case 0:
-			tmpStr = Common::String::format(", reducing %s to an oozing pile of flesh!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", reducing %s to an oozing pile of flesh!", kPersonal[pronoun]);
 			break;
 		case 1:
-			tmpStr = Common::String::format(", melting %s like an ice cube in hot coffee!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", melting %s like an ice cube in hot coffee!", kPersonal[pronoun]);
 			break;
 		case 2:
-			tmpStr = Common::String::format(", vaporizing %s into a steaming cloud!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", vaporizing %s into a steaming cloud!", kPersonal[pronoun]);
 			break;
 		default:
 			break;
@@ -895,13 +895,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 8:
 		switch (rndDescrForDeathType) {
 		case 0:
-			tmpStr = Common::String::format(", engulfing %s in black smoke puffs!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", engulfing %s in black smoke puffs!", kPersonal[pronoun]);
 			break;
 		case 1:
-			tmpStr = Common::String::format(", sucking %s into eternity!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", sucking %s into eternity!", kPersonal[pronoun]);
 			break;
 		case 2:
-			tmpStr = Common::String::format(", turning %s into a mindless zombie!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", turning %s into a mindless zombie!", kPersonal[pronoun]);
 			break;
 		default:
 			break;
@@ -912,13 +912,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 11:
 		switch (rndDescrForDeathType) {
 		case 0:
-			tmpStr = Common::String::format(", completely disintegrating %s!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", completely disintegrating %s!", kPersonal[pronoun]);
 			break;
 		case 1:
-			tmpStr = Common::String::format(", spreading %s into a fine mist!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", spreading %s into a fine mist!", kPersonal[pronoun]);
 			break;
 		case 2:
-			tmpStr = Common::String::format(", leaving a smoking crater in %s place!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", leaving a smoking crater in %s place!", kPersonal[pronoun]);
 			break;
 		default:
 			break;
@@ -929,13 +929,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 14:
 		switch (rndDescrForDeathType) {
 		case 0:
-			tmpStr = Common::String::format(", tearing a chunk out of %s back!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", tearing a chunk out of %s back!", kPersonal[pronoun]);
 			break;
 		case 1:
-			tmpStr = Common::String::format(", blowing %s brains out!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", blowing %s brains out!", kPersonal[pronoun]);
 			break;
 		case 2:
-			tmpStr = Common::String::format(", exploding %s entire chest!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", exploding %s entire chest!", kPersonal[pronoun]);
 			break;
 		default:
 			break;
@@ -944,13 +944,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 15:
 		switch (rndDescrForDeathType) {
 		case 0:
-			tmpStr = Common::String::format(", choking %s to death!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", choking %s to death!", kPersonal[pronoun]);
 			break;
 		case 1:
-			tmpStr = Common::String::format(", melting %s lungs!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", melting %s lungs!", kPersonal[pronoun]);
 			break;
 		case 2:
-			tmpStr = Common::String::format(", leaving %s gasping for air as %s collapses!", kPersonal[possessivePronoun], kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", leaving %s gasping for air as %s collapses!", kPersonal[pronoun], kPersonal[pronoun]);
 			break;
 		default:
 			break;
@@ -959,13 +959,13 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	case 16:
 		switch (rndDescrForDeathType) {
 		case 0:
-			tmpStr = Common::String::format(", tearing a chunk out of %s back!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", tearing a chunk out of %s back!", kPersonal[pronoun]);
 			break;
 		case 1:
-			tmpStr = Common::String::format(", piercing %s heart!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", piercing %s heart!", kPersonal[pronoun]);
 			break;
 		case 2:
-			tmpStr = Common::String::format(", impaling %s brain!", kPersonal[possessivePronoun]);
+			tmpStr = Common::String::format(", impaling %s brain!", kPersonal[pronoun]);
 			break;
 		default:
 			break;
