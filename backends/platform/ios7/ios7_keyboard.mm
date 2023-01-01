@@ -405,9 +405,6 @@
 	inputView.clearsOnBeginEditing = YES;
 	[inputView layoutIfNeeded];
 
-#if TARGET_OS_IOS
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(prepareKeyboard:) name:UIKeyboardWillShowNotification object:nil];
-#endif
 	return self;
 }
 
@@ -449,23 +446,6 @@
 
 - (void)handleMainMenuKey {
 	[inputDelegate handleMainMenuKey];
-}
-
-- (void)prepareKeyboard:(NSNotification *)notification {
-#if TARGET_OS_IOS
-	// Check if a hardware keyboard is connected, and only show the accessory view if there isn't one.
-	// If there is a hardware keyboard, the software one will only contains the text assistance bar
-	// and will be small (less than 100 pt, but use a bit more in case it changes with future iOS versions).
-	// This only works with iOS 9 and above. For ealier version the keyboard size is fixed and instead it
-	// only shows part of the keyboard (which could be detected with the origin position, but that would
-	// depend on the current orientation and screen resolution).
-	NSDictionary* info = [notification userInfo];
-	CGRect keyboardEndFrame = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-	if (keyboardEndFrame.size.height < 140)
-		[inputView detachAccessoryView];
-	else
-		[inputView attachAccessoryView];
-#endif
 }
 
 - (void)showKeyboard {
