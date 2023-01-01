@@ -738,25 +738,27 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 
 		char filename[30];
 		char roomname[10];
+		int roomNumber = offset;
+		int fileNumber = b;
 
-		if (offset == 1)
+		if (roomNumber == 1)
 			Common::strlcpy(roomname, "logo", sizeof(roomname));
-		else if (offset == 15)
+		else if (roomNumber == 15)
 			Common::strlcpy(roomname, "canyon", sizeof(roomname));
-		else if (offset == 17)
+		else if (roomNumber == 17)
 			Common::strlcpy(roomname, "pig", sizeof(roomname));
-		else if (offset == 18)
+		else if (roomNumber == 18)
 			Common::strlcpy(roomname, "derelict", sizeof(roomname));
-		else if (offset == 19)
+		else if (roomNumber == 19)
 			Common::strlcpy(roomname, "wreck", sizeof(roomname));
-		else if (offset == 20)
+		else if (roomNumber == 20)
 			Common::strlcpy(roomname, "grave", sizeof(roomname));
-		else if (offset == 23)
+		else if (roomNumber == 23)
 			Common::strlcpy(roomname, "nexus", sizeof(roomname));
-		else if (offset == 79)
+		else if (roomNumber == 79)
 			Common::strlcpy(roomname, "newton", sizeof(roomname));
 		else {
-			warning("startTalkSound: dig demo: unknown room number: %d", offset);
+			warning("startTalkSound: dig demo: unknown room number: %d", roomNumber);
 			return;
 		}
 
@@ -764,14 +766,14 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		if (!file)
 			error("startTalkSound: Out of memory");
 
-		Common::sprintf_s(filename, "audio/%s.%u/%u.voc", roomname, offset, b);
+		Common::sprintf_s(filename, "audio/%s.%u/%u.voc", roomname, roomNumber, fileNumber);
 		if (!_vm->openFile(*file, filename)) {
-			Common::sprintf_s(filename, "audio/%s_%u/%u.voc", roomname, offset, b);
+			Common::sprintf_s(filename, "audio/%s_%u/%u.voc", roomname, roomNumber, fileNumber);
 			_vm->openFile(*file, filename);
 		}
 
 		if (!file->isOpen()) {
-			Common::sprintf_s(filename, "%u.%u.voc", offset, b);
+			Common::sprintf_s(filename, "%u.%u.voc", roomNumber, fileNumber);
 			_vm->openFile(*file, filename);
 		}
 
@@ -787,7 +789,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 #endif
 		return;
 	} else if (_vm->_game.id == GID_FT) {
-		int totalOffset, soundSize, fileSize, headerTag;
+		int totalOffset, soundSize, fileSize, headerTag, vctlBlockSize;
 
 		if (_vm->_voiceMode != 2) {
 			file.reset(new ScummFile());
@@ -799,11 +801,30 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 				return;
 			}
 
-			file->setEnc(_sfxFileEncByte);
-			file->seek(offset, SEEK_SET);
+			// File format for each speech file:
+			// - VCTL block; containing:
+			//   - "VCTL" string (4 bytes);
+			//   - The size of said block (4 bytes);
+			//   - A variable number of mouth sync timestamps (2 bytes each);
+			//     subtracting 8 from the size of the block, and dividing by 2,
+			//     yields the number of mouth syncs available for the current file.
+			//     Curiously, the number of syncs is already given as an argument
+			//     to this function, coming from the control codes of the current
+			//     dialog string.
+			//
+			// - VTLK block; containing:
+			//   - "VTLK" string (4 bytes);
+			//   - The size of said block (4 bytes);
+			//   - A full VOC file (complete with each header).
+			//
+			// The engine also allows for a VOC file without a VTLK header.
 
-			if (b > 8) {
-				num = (b - 8) >> 1;
+			file->setEnc(_sfxFileEncByte);
+			file->seek(offset + 4 + 4, SEEK_SET); // Skip "VCTL" and the block size
+			vctlBlockSize = b;
+
+			if (vctlBlockSize > 8) {
+				num = (vctlBlockSize - 8) >> 1;
 			}
 
 			if (num >= 50)
@@ -818,7 +839,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			resetSpeechTimer();
 			_mouthSyncMode = true;
 
-			totalOffset = offset + b;
+			totalOffset = offset + vctlBlockSize;
 			file->seek(totalOffset, SEEK_SET);
 			headerTag = file->readUint32BE();
 			soundSize = file->readUint32BE() - 8;
