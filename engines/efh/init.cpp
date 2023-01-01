@@ -140,6 +140,9 @@ uint8 NPCStruct::getPronoun() {
 	return _possessivePronounSHL6 >> 6;
 }
 
+uint8 MapMonster::getPronoun() {
+	return _possessivePronounSHL6 >> 6;
+}
 
 void Stru32686::init() {
 	for (int i = 0; i < 9; ++i) {
