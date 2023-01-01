@@ -464,8 +464,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 
 					int16 var76 = getRandom(_mapMonsters[_teamMonsterIdArray[groupId]]._field_6);
 					int16 varInt = _teamCharId[teamCharId];
-					int16 var51 = _npcBuf[varInt].getPronoun();
-					int16 var70 = var51;
+					int16 var70 = _npcBuf[varInt].getPronoun();
 					varInt = _teamMonsterIdArray[groupId];
 					int16 var5E = kEncounters[_mapMonsters[varInt]._monsterRef]._nameArticle;
 					int16 charScore = getCharacterScore(_teamCharId[teamCharId], unk_monsterField5_itemId);
@@ -587,15 +586,15 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						// Action A - Check item durability - Start
 						varInt = _teamCharId[teamCharId];
 						var64 = sub1C80A(varInt, 9, false);
-						if (var64 != 0x7FFF && (_npcBuf[varInt]._inventory[var64]._stat1 & 0x7F) != 0x7F) {
-							var51 = _npcBuf[varInt]._inventory[var64]._stat1 & 0x7F;
-							--var51;
-							if (var51 <= 0) {
+						if (var64 != 0x7FFF && _npcBuf[varInt]._inventory[var64].getUsesLeft() != 0x7F) {
+							int16 usesLeft = _npcBuf[varInt]._inventory[var64].getUsesLeft();
+							--usesLeft;
+							if (usesLeft <= 0) {
 								_messageToBePrinted += Common::String::format("  * %s%s's %s breaks!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), _nameBuffer.c_str());
 								setCharacterObjectToBroken(varInt, var64);
 								var6E = false;
 							} else {
-								_npcBuf[varInt]._inventory[var64]._stat1 = (_npcBuf[varInt]._inventory[var64]._stat1 & 80) + var51;
+								_npcBuf[varInt]._inventory[var64]._stat1 = (_npcBuf[varInt]._inventory[var64]._stat1 & 80) + usesLeft;
 							}
 						}
 						// Action A - Check item durability - End
@@ -732,7 +731,7 @@ bool EfhEngine::isTeamMemberStatusNormal(int16 teamMemberId) {
 void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	debug("getDeathTypeDescription %d %d", attackerId, victimId);
 
-	int16 pronoun;
+	uint8 pronoun;
 
 	if (attackerId > 999) {
 		int16 charId = _teamCharId[attackerId - 1000];
@@ -1530,7 +1529,7 @@ bool EfhEngine::hasAdequateDefense_2(int16 charId, uint8 attackType) {
 		return true;
 
 	for (uint counter = 0; counter < 10; ++counter) {
-		if (_npcBuf[charId]._inventory[counter]._ref == 0x7FFF || _npcBuf[charId]._inventory[counter]._stat1 == 0x80)
+		if (_npcBuf[charId]._inventory[counter]._ref == 0x7FFF || !_npcBuf[charId]._inventory[counter].isEquipped())
 			continue;
 
 		itemId = _npcBuf[charId]._inventory[counter]._ref;

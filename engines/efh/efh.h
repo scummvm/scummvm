@@ -81,10 +81,12 @@ public:
 
 struct InvObject {
 	int16 _ref;
-	uint8 _stat1; // abbb bbbb - a: equipped b: durability
+	uint8 _stat1; // abbb bbbb - a: equipped b: uses left
 	uint8 _stat2;
 
 	void init();
+	bool isEquipped();
+	int8 getUsesLeft();
 };
 
 struct UnkMapStruct {
@@ -313,7 +315,7 @@ private:
 	void refreshTeamSize();
 	bool isNpcATeamMember(int16 id);
 	void handleWinSequence();
-	bool giveItemTo(int16 charId, int16 objectId, int16 altCharId);
+	bool giveItemTo(int16 charId, int16 objectId, int16 fromCharId);
 	int16 chooseCharacterToReplace();
 	int16 handleCharacterJoining();
 	void drawText(uint8 *impPtr, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag);

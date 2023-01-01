@@ -39,6 +39,14 @@ void EfhGraphicsStruct::copy(EfhGraphicsStruct *src) {
 	_area = src->_area;
 }
 
+bool InvObject::isEquipped() {
+	return (_stat1 & 0x80) != 0;
+}
+
+int8 InvObject::getUsesLeft() {
+	return _stat1 & 0x7F;
+}
+
 EfhEngine::~EfhEngine() {
 	delete _rnd;
 	delete _graphicsStruct;
@@ -530,7 +538,7 @@ int16 EfhEngine::getEquipmentDefense(int16 charId, bool flag) {
 		if (_npcBuf[charId]._inventory[i]._ref == 0x7FFF)
 			continue;
 
-		if ((_npcBuf[charId]._inventory[i]._stat1 & 0x80) == 0)
+		if (!_npcBuf[charId]._inventory[i].isEquipped())
 			continue;
 
 		int16 curDef = _npcBuf[charId]._inventory[i]._stat2;
@@ -554,7 +562,7 @@ uint16 EfhEngine::sub1C80A(int16 charId, int16 field18, bool flag) {
 	debugC(2, kDebugEngine, "sub1C80A %d %d %s", charId, field18, flag ? "True" : "False");
 
 	for (int i = 0; i < 10; ++i) {
-		if ((_npcBuf[charId]._inventory[i]._stat1 & 0x80) == 0)
+		if (!_npcBuf[charId]._inventory[i].isEquipped())
 			continue;
 
 		int16 itemId = _npcBuf[charId]._inventory[i]._ref;
@@ -919,21 +927,21 @@ void EfhEngine::handleWinSequence() {
 	free(winSeqBuf4);
 }
 
-bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int16 altCharId) {
-	debugC(3, kDebugEngine, "giveItemTo %d %d %d", charId, objectId, altCharId);
+bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int16 fromCharId) {
+	debugC(3, kDebugEngine, "giveItemTo %d %d %d", charId, objectId, fromCharId);
 
 	for (uint newObjectId = 0; newObjectId < 10; ++newObjectId) {
 		if (_npcBuf[charId]._inventory[newObjectId]._ref != 0x7FFF)
 			continue;
 
-		if (altCharId == 0xFF) {
+		if (fromCharId == 0xFF) {
 			_npcBuf[charId]._inventory[newObjectId]._ref = objectId;
 			_npcBuf[charId]._inventory[newObjectId]._stat2 = _items[objectId]._defense;
 			_npcBuf[charId]._inventory[newObjectId]._stat1 = _items[objectId]._uses;
 		} else {
-			_npcBuf[charId]._inventory[newObjectId]._ref = _npcBuf[altCharId]._inventory[newObjectId]._ref;
-			_npcBuf[charId]._inventory[newObjectId]._stat2 = _npcBuf[altCharId]._inventory[newObjectId]._stat2;
-			_npcBuf[charId]._inventory[newObjectId]._stat1 = _npcBuf[altCharId]._inventory[newObjectId]._stat1 & 0x7F; // not equipped as the upper bit isn't set (0x80)
+			_npcBuf[charId]._inventory[newObjectId]._ref = _npcBuf[fromCharId]._inventory[newObjectId]._ref;
+			_npcBuf[charId]._inventory[newObjectId]._stat2 = _npcBuf[fromCharId]._inventory[newObjectId]._stat2;
+			_npcBuf[charId]._inventory[newObjectId]._stat1 = _npcBuf[fromCharId]._inventory[newObjectId].getUsesLeft(); // not equipped as the upper bit isn't set (0x80)
 		}
 
 		return true;
@@ -2427,7 +2435,7 @@ void EfhEngine::sub1D8C2(int16 charId, int16 damage) {
 	int16 curDamage = CLIP<int16>(damage, 0, 50);
 
 	for (uint objectId = 0; objectId < 10; ++objectId) {
-		if (_npcBuf[charId]._inventory[objectId]._ref == 0x7FFF || (_npcBuf[charId]._inventory[objectId]._stat1 & 0x80) == 0 || _items[_npcBuf[charId]._inventory[objectId]._ref]._defense == 0)
+		if (_npcBuf[charId]._inventory[objectId]._ref == 0x7FFF || !_npcBuf[charId]._inventory[objectId].isEquipped() || _items[_npcBuf[charId]._inventory[objectId]._ref]._defense == 0)
 			continue;
 
 		int16 remainingDamage = curDamage - _npcBuf[charId]._inventory[objectId]._stat2;
@@ -2496,10 +2504,7 @@ bool EfhEngine::isItemCursed(int16 itemId) {
 
 bool EfhEngine::hasObjectEquipped(int16 charId, int16 objectId) {
 	debugC(6, kDebugEngine, "hasObjectEquipped %d %d", charId, objectId);
-	if ((_npcBuf[charId]._inventory[objectId]._stat1 & 0x80) == 0)
-		return false;
-
-	return true;
+	return _npcBuf[charId]._inventory[objectId].isEquipped();
 }
 
 
