@@ -20,6 +20,7 @@
  */
 
 #include "graphics/macgui/macbutton.h"
+#include "graphics/surface.h"
 #include "image/image_decoder.h"
 #include "video/avi_decoder.h"
 #include "video/qt_decoder.h"
@@ -30,6 +31,7 @@
 #include "director/cursor.h"
 #include "director/channel.h"
 #include "director/movie.h"
+#include "director/score.h"
 #include "director/sprite.h"
 #include "director/sound.h"
 #include "director/window.h"
@@ -100,7 +102,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	_pitch = 0;
 	_flags2 = 0;
 	_regX = _regY = 0;
-	_clut = kClutSystemMac;
+	_clut = 0;
 	_bitsPerPixel = 0;
 
 	if (version < kFileVer400) {
@@ -123,6 +125,9 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		_pitch = _initialRect.width();
 		if (_pitch % 16)
 			_pitch += 16 - (_initialRect.width() % 16);
+
+		_pitch *= _bitsPerPixel;
+		_pitch >>= 3;
 
 	} else if (version >= kFileVer400 && version < kFileVer500) {
 		_flags1 = flags1;
@@ -152,9 +157,6 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 
 		if (_bitsPerPixel == 0)
 			_bitsPerPixel = 1;
-
-		if (_bitsPerPixel == 1)
-			_pitch *= 8;
 
 		int tail = 0;
 		byte buf[256];
@@ -219,8 +221,10 @@ BitmapCastMember::~BitmapCastMember() {
 	if (_img)
 		delete _img;
 
-	if (_ditheredImg)
+	if (_ditheredImg) {
+		_ditheredImg->free();
 		delete _ditheredImg;
+	}
 
 	if (_matte)
 		delete _matte;
@@ -241,6 +245,11 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 	int srcBpp = _img->getSurface()->format.bytesPerPixel;
 
 	const byte *pal = _img->getPalette();
+	if (_ditheredImg) {
+		_ditheredImg->free();
+		delete _ditheredImg;
+		_ditheredImg = nullptr;
+	}
 
 	if (dstBpp == 1) {
 		if (srcBpp > 1
@@ -255,6 +264,68 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 			_ditheredImg = _img->getSurface()->convertTo(g_director->_wm->_pixelformat, _img->getPalette(), _img->getPaletteColorCount(), g_director->_wm->getPalette(), g_director->_wm->getPaletteSize());
 
 			pal = g_director->_wm->getPalette();
+		} else {
+			// Convert indexed image to indexed palette
+			Movie *movie = g_director->getCurrentMovie();
+			Cast *cast = movie->getCast();
+			Score *score = movie->getScore();
+			// Get the current score palette
+			int currentPaletteId = score->resolvePaletteId(score->getCurrentPalette());
+			if (!currentPaletteId)
+				currentPaletteId = cast->_defaultPalette;
+			PaletteV4 *currentPalette = g_director->getPalette(currentPaletteId);
+			if (!currentPalette)
+				currentPalette = g_director->getPalette(kClutSystemMac);
+			// First, check if the palettes are different
+			switch (_bitsPerPixel) {
+			// 1bpp - this is preconverted to 0x00 and 0xff, change nothing.
+			case 1:
+				break;
+			// 2bpp - convert to nearest using the standard 2-bit palette.
+			case 2:
+				{
+					const PaletteV4 &srcPal = g_director->getLoaded4Palette();
+					_ditheredImg = _img->getSurface()->convertTo(g_director->_wm->_pixelformat, srcPal.palette, srcPal.length, currentPalette->palette, currentPalette->length, Graphics::kDitherNaive);
+				}
+				break;
+			// 4bpp - if using a builtin palette, use one of the corresponding 4-bit ones.
+			case 4:
+				{
+					const auto pals = g_director->getLoaded16Palettes();
+					// in D4 you aren't allowed to use custom palettes for 4-bit images, so uh...
+					// I guess default to the mac palette?
+					int palIndex = pals.contains(_clut) ? _clut : kClutSystemMac;
+					const PaletteV4 &srcPal = pals.getVal(palIndex);
+					_ditheredImg = _img->getSurface()->convertTo(g_director->_wm->_pixelformat, srcPal.palette, srcPal.length, currentPalette->palette, currentPalette->length, Graphics::kDitherNaive);
+				}
+				break;
+			// 8bpp - if using a different palette, convert using nearest colour matching
+			case 8:
+				if (_clut != currentPaletteId) {
+					const auto pals = g_director->getLoadedPalettes();
+					int palIndex = pals.contains(_clut) ? _clut : kClutSystemMac;
+					const PaletteV4 &srcPal = pals.getVal(palIndex);
+					_ditheredImg = _img->getSurface()->convertTo(g_director->_wm->_pixelformat, srcPal.palette, srcPal.length, currentPalette->palette, currentPalette->length, Graphics::kDitherNaive);
+				}
+				break;
+			default:
+				break;
+			}
+
+			// Finally, the first and last colours in the palette are special. No matter what the palette remap
+			// does, we need to scrub those to be the same.
+			if (_ditheredImg) {
+				const Graphics::Surface *src = _img->getSurface();
+				for (int y = 0; y < src->h; y++) {
+					for (int x = 0; x < src->w; x++) {
+						const int test = *(const byte *)src->getBasePtr(x, y);
+						if (test == 0 || test == (1 << _bitsPerPixel) - 1) {
+							*(byte *)_ditheredImg->getBasePtr(x, y) = test == 0 ? 0x00 : 0xff;
+						}
+					}
+				}
+			}
+
 		}
 	}
 

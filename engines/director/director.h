@@ -191,6 +191,8 @@ public:
 	void loadDefaultPalettes();
 
 	const Common::HashMap<int, PaletteV4> &getLoadedPalettes() { return _loadedPalettes; }
+	const Common::HashMap<int, PaletteV4> &getLoaded16Palettes() { return _loaded16Palettes; }
+	const PaletteV4 &getLoaded4Palette() { return _loaded4Palette; }
 
 	const Common::FSNode *getGameDataDir() const { return &_gameDataDir; }
 	const byte *getPalette() const { return _currentPalette; }
@@ -272,6 +274,8 @@ private:
 	PatternTile _builtinTiles[kNumBuiltinTiles];
 
 	Common::HashMap<int, PaletteV4> _loadedPalettes;
+	Common::HashMap<int, PaletteV4> _loaded16Palettes;
+	PaletteV4 _loaded4Palette;
 
 	Graphics::ManagedSurface *_surface;
 
