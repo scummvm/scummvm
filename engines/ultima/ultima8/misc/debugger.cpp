@@ -1483,11 +1483,11 @@ bool Debugger::cmdObjectInfo(int argc, const char **argv) {
 static bool _quickMoveKey(uint32 flag, const char *debugname) {
 	Ultima8Engine *engine = Ultima8Engine::get_instance();
 	if (engine->isAvatarInStasis()) {
-		debug("Can't %s: avatarInStasis\n", debugname);
+		g_debugger->debugPrintf("Can't %s: avatarInStasis\n", debugname);
 		return true;
 	}
 	if (!engine->areCheatsEnabled()) {
-		debug("Can't %s: Cheats aren't enabled\n", debugname);
+		g_debugger->debugPrintf("Can't %s: Cheats aren't enabled\n", debugname);
 		return true;
 	}
 
