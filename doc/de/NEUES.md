@@ -21,10 +21,6 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Verbesserte Cursor-Skalierung im OpenGL-Modus.
    - Absturz beim Zugriff auf Verzeichnisse, die Dateien mit "\1" im Dateinamen enthalten, behoben.
 
- 3DS-Portierung:
-   - Der Relocation-Parser wurde um Unterstützung für PREL31, welches von neuen Compilern verwendet wird, erweitert.
-   - Weitere Optionen zur automatischen Konfiguration in ./configure hinzugefügt.
-
  AGI:
    - Unterstützung der französischen Übersetzungen verbessert.
 
@@ -133,6 +129,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Hintergründe werden nun korrekt dargestellt, wenn Zwischenszenen im Fernseher angesehen werden.
    - Der Bildschirm wird nun nicht mehr zentriert, wenn ein Inventar-Item aktiviert wird.
    - Wenn man W drückt, um mit Leuten zu sprechen, springt man nicht mehr automatisch.
+
+ 3DS-Portierung:
+   - Der Relocation-Parser wurde um Unterstützung für PREL31, welches von neuen Compilern verwendet wird, erweitert.
+   - Weitere Optionen zur automatischen Konfiguration in ./configure hinzugefügt.
 
 #### 2.6.1 "Incremental Escapism" (31.10.2022)
 
