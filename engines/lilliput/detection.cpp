@@ -30,7 +30,7 @@ namespace Lilliput {
 
 static const PlainGameDescriptor lilliputGames[] = {
 	// Games
-	{"robin", "Adventures of Robin Hood"},
+	{"robin", "The Adventures of Robin Hood"},
 	{"rome", "Rome: Pathway to Power"},
 	{nullptr, nullptr}
 };
