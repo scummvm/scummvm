@@ -56,10 +56,10 @@ static const PlainGameDescriptor agosGames[] = {
 	{"simon1", "Simon the Sorcerer"},
 	{"simon2", "Simon the Sorcerer II: The Lion, the Wizard and the Wardrobe"},
 	{"feeble", "The Feeble Files"},
-	{"dimp", "Demon in my Pocket"},
-	{"jumble", "Jumble"},
-	{"puzzle", "NoPatience"},
-	{"swampy", "Swampy Adventures"},
+	{"dimp", "Simon the Sorcerer's Puzzle Pack: Demon in my Pocket"},
+	{"jumble", "Simon the Sorcerer's Puzzle Pack: Jumble"},
+	{"puzzle", "Simon the Sorcerer's Puzzle Pack: NoPatience"},
+	{"swampy", "Simon the Sorcerer's Puzzle Pack: Swampy Adventures"},
 	{nullptr, nullptr}
 };
 
