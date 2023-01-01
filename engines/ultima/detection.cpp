@@ -56,6 +56,7 @@ const DebugChannelDef UltimaMetaEngineDetection::debugFlagList[] = {
 	{Ultima::kDebugVideo, "Video", "Video playback debug level"},
 	{Ultima::kDebugActor, "Actor", "Actor debug level"},
 	{Ultima::kDebugObject, "Object", "Object debug level"},
+	{Ultima::kDebugCollision, "Collision", "Collision debug level"},
 	DEBUG_CHANNEL_END
 };
 

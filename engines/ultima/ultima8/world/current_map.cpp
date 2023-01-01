@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/ultima.h"
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/map.h"
@@ -798,10 +799,9 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 
 #if 0
 				if (item->getShape() == 145) {
-					pout << "Shape 145: (" << ix - ixd << "," << iy - iyd << ","
-					     << iz << ")-(" << ix << "," << iy << "," << iz + izd
-					     << ")" << Std::endl;
-					if (!si->is_solid()) pout << "not solid" << Std::endl;
+					debugC(kDebugObject, "Shape 145: (%d, %d, %d)-(%d, %d, %d) %s",
+						ix - ixd, iy - iyd, iz, ix, iy, iz + izd,
+						si->is_solid() ? "solid" : "not solid");
 				}
 #endif
 
@@ -817,7 +817,7 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 				         startz + zd <= iz || startz >= iz + izd)) {
 					// overlapping an item. Invalid position
 #if 0
-					pout << item->dumpInfo() << Std::endl;
+					debugC(kDebugObject, "%s", item->dumpInfo().c_str());
 #endif
 					if (blocker == nullptr) {
 						blocker = item;
@@ -969,11 +969,11 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 	bool foundunsupported = false;
 
 #if 0
-	pout.Print("valid | support\n");
+	debugC(kDebugCollision, "valid | support")
 	for (unsigned int i = 0; i < SCANSIZE * 2 + 1; ++i) {
-		pout.Print("%05x | %05x\n", validmask[SCANSIZE * 2 - i], supportmask[SCANSIZE * 2 - i]);
+		debugC(kDebugCollision, "%05x | %05x", validmask[SCANSIZE * 2 - i], supportmask[SCANSIZE * 2 - i]);
 	}
-	pout.Print("-----------\n");
+	debugC(kDebugCollision, ("-----------");
 #endif
 
 	//
@@ -1070,10 +1070,11 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 	// Z is opposite direction to x and y..
 	centre[2] = start[2] + ext[2];
 
-//	pout << "Sweeping from (" << -ext[0] << ", " << -ext[1] << ", " << -ext[2] << ")" << Std::endl;
-//	pout << "              (" << ext[0] << ", " << ext[1] << ", " << ext[2] << ")" << Std::endl;
-//	pout << "Sweeping to   (" << vel[0]-ext[0] << ", " << vel[1]-ext[1] << ", " << vel[2]-ext[2] << ")" << Std::endl;
-//	pout << "              (" << vel[0]+ext[0] << ", " << vel[1]+ext[1] << ", " << vel[2]+ext[2] << ")" << Std::endl;
+	debugC(kDebugCollision, "Sweeping from (%d, %d, %d) - (%d, %d, %d) to (%d, %d, %d) - (%d, %d, %d)",
+		   -ext[0], -ext[1], -ext[2],
+		   ext[0], ext[1], ext[2],
+		   vel[0] - ext[0], vel[1] - ext[1], vel[2] - ext[2],
+		   vel[0] + ext[0], vel[1] + ext[1], vel[2] + ext[2]);
 
 	Std::list<SweepItem>::iterator sw_it;
 	if (hit) sw_it = hit->end();
@@ -1214,8 +1215,6 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 				//the first time of overlap occurred
 				//before the last time of overlap
 				if (first <= last) {
-					//pout << "Hit item " << other_item->getObjId() << " at first: " << first << "  last: " << last << Std::endl;
-
 					if (!hit)
 						return true;
 
@@ -1239,11 +1238,12 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 					// Now add it
 					sw_it = hit->insert(sw_it, SweepItem(other_item->getObjId(), first, last, touch, touch_floor, blocking, dirs));
-//					pout << "Hit item " << other_item->getObjId() << " at (" << first << "," << last << ")" << Std::endl;
-//					pout << "hit item      (" << other[0] << ", " << other[1] << ", " << other[2] << ")" << Std::endl;
-//					pout << "hit item time (" << u_0[0] << "-" << u_1[0] << ") (" << u_0[1] << "-" << u_1[1] << ") ("
-//						 << u_0[2] << "-" << u_1[2] << ")" << Std::endl;
-//					pout << "touch: " << touch << ", floor: " << touch_floor << ", block: " << blocking << Std::endl;
+
+					//debugC(kDebugCollision, "Hit item %u (%d, %d, %d) at first: %d, last: %d",
+					//	   other_item->getObjId(), other[0], other[1], other[2], first, last);
+					//debugC(kDebugCollision, "hit item time (%d-%d) (%d-%d) (%d-%d)",
+					//	u_0[0], u_1[0], u_0[1], u_1[1], u_0[2], u_1[2]);
+					//debugC(kDebugCollision, "touch: %d, floor: %d, block: %d", touch, touch_floor, blocking);
 				}
 			}
 		}
@@ -1390,9 +1390,9 @@ uint32 CurrentMap::I_canExistAtPoint(const uint8 *args, unsigned int /*argsize*/
 	ARG_WORLDPOINT(pt);
 
 	if (other) {
-		debug("I_canExistAtPoint other object: %s", other->dumpInfo().c_str());
+		debugC(kDebugObject, "I_canExistAtPoint other object: %s", other->dumpInfo().c_str());
 	} else {
-		debug("I_canExistAtPoint other object null.");
+		debugC(kDebugObject, "I_canExistAtPoint other object null.");
 	}
 	if (shape > 0x800)
 		return 0;

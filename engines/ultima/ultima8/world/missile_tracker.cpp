@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/ultima.h"
 #include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/world/missile_tracker.h"
@@ -100,11 +101,9 @@ void MissileTracker::init(int32 x, int32 y, int32 z, int32 speed) {
 		_speedX = ((_destX - x) + (_frames / 2)) / _frames;
 		_speedY = ((_destY - y) + (_frames / 2)) / _frames;
 
-#if 0
-		pout.printf("MissileTracker: from (%d,%d,%d) to (%d,%d,%d)\n", x, y, z, _destX, _destY, _destZ);
-		pout.printf("speed: %d, _gravity: %d, _frames: %d\n", speed, _gravity, _frames);
-		pout.printf("resulting speed: (%d,%d,%d)\n", _speedX, _speedY, _speedZ);
-#endif
+		debugC(kDebugCollision, "MissileTracker: from (%d,%d,%d) to (%d,%d,%d)", x, y, z, _destX, _destY, _destZ);
+		debugC(kDebugCollision, "speed: %d, _gravity: %d, _frames: %d", speed, _gravity, _frames);
+		debugC(kDebugCollision, "resulting speed: (%d,%d,%d)", _speedX, _speedY, _speedZ);
 	} else {
 
 		// no significant horizontal movement

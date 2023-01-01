@@ -1133,15 +1133,12 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 			if (hit < 0) hit = 0;
 
 			if (hit != 0x4000) {
-#if 0
-				pout << " Hit time: " << hit << Std::endl;
-				pout << "    Start: " << start[0] << ", " << start[1] << ", " << start[2] << Std::endl;
-				pout << "      End: " << end[0] << ", " << end[1] << ", " << end[2] << Std::endl;
-#endif
+				debugC(kDebugCollision, "Hit time: %d; Start: %d, %d, %d; End: %d, %d, %d",
+					hit, start[0], start[1], start[2], end[0], end[1], end[2]);
+
 				it->GetInterpolatedCoords(end, start, end);
-#if 0
-				pout << "Collision: " << end[0] << ", " << end[1] << ", " << end[2] << Std::endl;
-#endif
+
+				debugC(kDebugCollision, "Collision: %d, %d, %d", end[0], end[1], end[2]);
 			}
 		}
 
