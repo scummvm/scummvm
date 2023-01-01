@@ -540,8 +540,8 @@ Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *
 		if (dstFormat.bytesPerPixel == 1) { // Checking if dithering could be skipped
 			if (!srcPalette // No palette is specified
 					|| !dstPalette // No dst palette
-					|| srcPaletteCount != dstPaletteCount // palettes have different size
-					|| !memcmp(srcPalette, dstPalette, srcPaletteCount * 3)) { // palettes are different
+					|| (srcPaletteCount == dstPaletteCount // palettes are the same
+						&& !memcmp(srcPalette, dstPalette, srcPaletteCount * 3))) {
 				surface->copyFrom(*this);
 				return surface;
 			}
