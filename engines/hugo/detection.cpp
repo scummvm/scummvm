@@ -43,9 +43,9 @@ namespace Hugo {
 
 static const PlainGameDescriptor hugoGames[] = {
 	// Games
-	{"hugo1", "Hugo 1: Hugo's House of Horrors"},
-	{"hugo2", "Hugo 2: Whodunit?"},
-	{"hugo3", "Hugo 3: Jungle of Doom"},
+	{"hugo1", "Hugo's House of Horrors"},
+	{"hugo2", "Hugo II: Whodunit?"},
+	{"hugo3", "Hugo III: Jungle of Doom"},
 	{nullptr, nullptr}
 };
 
