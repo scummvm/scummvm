@@ -358,11 +358,6 @@ void Inter_v1::o1_initCursor() {
 		_vm->_draw->_cursorSpritesBack.reset();
 		_vm->_draw->_scummvmCursor.reset();
 
-		if (_vm->_draw->_doCursorPalettes != nullptr) {
-			delete _vm->_draw->_doCursorPalettes;
-			_vm->_draw->_doCursorPalettes = nullptr;
-		}
-
 		_vm->_draw->_cursorWidth = width;
 		_vm->_draw->_cursorHeight = height;
 

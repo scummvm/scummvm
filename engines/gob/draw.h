@@ -149,16 +149,9 @@ public:
 	int8 _cursorAnimDelays[40];
 	Common::String _cursorNames[40];
 	Common::String _cursorName;
-	bool _isCursorFromExe;
+	bool _cursorDrawnFromScripts;
 
 	int32 _cursorCount;
-	bool *_doCursorPalettes;
-	byte *_cursorPalettes;
-	byte *_cursorKeyColors;
-	uint16 *_cursorPaletteStarts;
-	uint16 *_cursorPaletteCounts;
-	int32 *_cursorHotspotsX;
-	int32 *_cursorHotspotsY;
 
 	int16 _palLoadData1[4];
 	int16 _palLoadData2[4];
@@ -321,7 +314,7 @@ private:
 	Common::WinResources *_cursors;
 
 	bool loadCursorFile();
-	bool loadCursorFromFile(int cursorIndex);
+	bool loadCursorFromFile(Common::String filename);
 };
 
 // Draw operations

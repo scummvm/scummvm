@@ -112,13 +112,6 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	}
 
 	_cursorCount         = 0;
-	_doCursorPalettes    = nullptr;
-	_cursorPalettes      = nullptr;
-	_cursorKeyColors     = nullptr;
-	_cursorPaletteStarts = nullptr;
-	_cursorPaletteCounts = nullptr;
-	_cursorHotspotsX     = nullptr;
-	_cursorHotspotsY     = nullptr;
 
 	_palLoadData1[0] = 0;
 	_palLoadData1[1] = 17;
@@ -137,14 +130,6 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 }
 
 Draw::~Draw() {
-	delete[] _cursorPalettes;
-	delete[] _doCursorPalettes;
-	delete[] _cursorKeyColors;
-	delete[] _cursorPaletteStarts;
-	delete[] _cursorPaletteCounts;
-	delete[] _cursorHotspotsX;
-	delete[] _cursorHotspotsY;
-
 	for (int i = 0; i < kFontCount; i++)
 		delete _fonts[i];
 }
@@ -398,8 +383,7 @@ void Draw::resizeCursors(int16 width, int16 height, int16 count, bool transparen
 
 	// Cursors sprite already big enough
 	if (sameCursorDimensions &&
-		_vm->_draw->_cursorCount >= count &&
-		_vm->_draw->_doCursorPalettes != nullptr)
+		_vm->_draw->_cursorCount >= count)
 		return;
 
 	debugC(5, kDebugGraphics, "Resizing cursors: size %dx%d -> %dx%d, cursor count %d -> %d)",
@@ -418,7 +402,6 @@ void Draw::resizeCursors(int16 width, int16 height, int16 count, bool transparen
 	_vm->_draw->freeSprite(Draw::kCursorSurface);
 	_vm->_draw->_cursorSprites.reset();
 	_vm->_draw->_cursorSpritesBack.reset();
-	_vm->_draw->_scummvmCursor.reset();
 
 	_vm->_draw->initSpriteSurf(Draw::kCursorSurface, width * count, height, 2);
 
@@ -428,59 +411,6 @@ void Draw::resizeCursors(int16 width, int16 height, int16 count, bool transparen
 	if (sameCursorDimensions && oldCursorCount < count)
 		_vm->_draw->_cursorSprites->blit(*oldCursorsSprites);
 	oldCursorsSprites.reset();
-
-	_vm->_draw->_scummvmCursor = _vm->_video->initSurfDesc(width, height, SCUMMVM_CURSOR);
-
-	if (oldCursorCount < count || _vm->_draw->_doCursorPalettes == nullptr) {
-		bool *oldDoCursorPalettes = _vm->_draw->_doCursorPalettes;
-		byte *oldCursorPalettes = _vm->_draw->_cursorPalettes;
-		byte *oldCursorKeyColors = _vm->_draw->_cursorKeyColors;
-		uint16 *oldCursorPaletteStarts = _vm->_draw->_cursorPaletteStarts;
-		uint16 *oldCursorPaletteCounts = _vm->_draw->_cursorPaletteCounts;
-		int32 *oldCursorHotspotsX = _vm->_draw->_cursorHotspotsX;
-		int32 *oldCursorHotspotsY = _vm->_draw->_cursorHotspotsY;
-
-		_vm->_draw->_cursorPalettes      = new byte[256 * 3 * count];
-		_vm->_draw->_doCursorPalettes    = new bool[count];
-		_vm->_draw->_cursorKeyColors     = new byte[count];
-		_vm->_draw->_cursorPaletteStarts = new uint16[count];
-		_vm->_draw->_cursorPaletteCounts = new uint16[count];
-		_vm->_draw->_cursorHotspotsX     = new int32[count];
-		_vm->_draw->_cursorHotspotsY     = new int32[count];
-
-		memset(_vm->_draw->_cursorPalettes     , 0, count * 256 * 3);
-		memset(_vm->_draw->_doCursorPalettes   , 0, count * sizeof(bool));
-		memset(_vm->_draw->_cursorKeyColors    , 0, count * sizeof(byte));
-		memset(_vm->_draw->_cursorPaletteStarts, 0, count * sizeof(uint16));
-		memset(_vm->_draw->_cursorPaletteCounts, 0, count * sizeof(uint16));
-		memset(_vm->_draw->_cursorHotspotsX    , 0, count * sizeof(int32));
-		memset(_vm->_draw->_cursorHotspotsY    , 0, count * sizeof(int32));
-
-		if (sameCursorDimensions && oldCursorCount < count) {
-			if (oldCursorPalettes != nullptr)
-				memcpy(_vm->_draw->_cursorPalettes, oldCursorPalettes, oldCursorCount * 256 * 3);
-			if (oldDoCursorPalettes != nullptr)
-				memcpy(_vm->_draw->_doCursorPalettes, oldDoCursorPalettes, oldCursorCount * sizeof(bool));
-			if (oldCursorKeyColors != nullptr)
-				memcpy(_vm->_draw->_cursorKeyColors, oldCursorKeyColors, oldCursorCount * sizeof(byte));
-			if (oldCursorPaletteStarts != nullptr)
-				memcpy(_vm->_draw->_cursorPaletteStarts, oldCursorPaletteStarts, oldCursorCount * sizeof(uint16));
-			if (oldCursorPaletteCounts != nullptr)
-				memcpy(_vm->_draw->_cursorPaletteCounts, oldCursorPaletteCounts, oldCursorCount * sizeof(uint16));
-			if (oldCursorHotspotsX != nullptr)
-				memcpy(_vm->_draw->_cursorHotspotsX, oldCursorHotspotsX, oldCursorCount * sizeof(int32));
-			if (oldCursorHotspotsY != nullptr)
-				memcpy(_vm->_draw->_cursorHotspotsY, oldCursorHotspotsY, oldCursorCount * sizeof(int32));
-		}
-
-		delete[] oldDoCursorPalettes;
-		delete[] oldCursorPalettes;
-		delete[] oldCursorKeyColors;
-		delete[] oldCursorPaletteStarts;
-		delete[] oldCursorPaletteCounts;
-		delete[] oldCursorHotspotsX;
-		delete[] oldCursorHotspotsY;
-	}
 }
 
 int Draw::stringLength(const char *str, uint16 fontIndex) {

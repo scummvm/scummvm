@@ -63,12 +63,7 @@ bool Draw_v7::loadCursorFile() {
 	return false;
 }
 
-bool Draw_v7::loadCursorFromFile(int cursorIndex) {
-	if (cursorIndex < 0 || cursorIndex >= 40)
-		return false;
-
-	Common::String cursorName = _cursorNames[cursorIndex];
-
+bool Draw_v7::loadCursorFromFile(Common::String cursorName) {
 	Graphics::WinCursorGroup *cursorGroup = nullptr;
 	Graphics::Cursor *defaultCursor = nullptr;
 
@@ -85,21 +80,29 @@ bool Draw_v7::loadCursorFromFile(int cursorIndex) {
 	} else
 		cursor = cursorGroup->cursors[0].cursor;
 
-	// Make sure the cursors sprite it big enough
-	resizeCursors(cursor->getWidth(), cursor->getHeight(), cursorIndex + 1, true);
+	// Make sure the cursor sprite is big enough
+	if (_scummvmCursor->getWidth() != cursor->getWidth() || _scummvmCursor->getHeight() != cursor->getHeight()) {
+		_vm->_draw->_scummvmCursor.reset();
+		_vm->_draw->_scummvmCursor = _vm->_video->initSurfDesc(cursor->getWidth(), cursor->getHeight(), SCUMMVM_CURSOR);
+	}
+
+	_scummvmCursor->clear();
 
 	Surface cursorSurf(cursor->getWidth(), cursor->getHeight(), 1, cursor->getSurface());
+	_scummvmCursor->blit(cursorSurf, 0, 0);
 
-	_vm->_draw->_cursorSprites->blit(cursorSurf, cursorIndex * _vm->_draw->_cursorWidth, 0);
-
-	memcpy(_vm->_draw->_cursorPalettes + cursorIndex * 256 * 3, cursor->getPalette(), cursor->getPaletteCount() * 3);
-
-	_vm->_draw->_doCursorPalettes   [cursorIndex] = true;
-	_vm->_draw->_cursorKeyColors    [cursorIndex] = cursor->getKeyColor();
-	_vm->_draw->_cursorPaletteStarts[cursorIndex] = cursor->getPaletteStartIndex();
-	_vm->_draw->_cursorPaletteCounts[cursorIndex] = cursor->getPaletteCount();
-	_vm->_draw->_cursorHotspotsX    [cursorIndex] = cursor->getHotspotX();
-	_vm->_draw->_cursorHotspotsY    [cursorIndex] = cursor->getHotspotY();
+	CursorMan.replaceCursor(_scummvmCursor->getData(),
+							cursor->getWidth(),
+							cursor->getHeight(),
+							cursor->getHotspotX(),
+							cursor->getHotspotY(),
+							cursor->getKeyColor(),
+							false,
+							&_vm->getPixelFormat());
+	CursorMan.replaceCursorPalette(cursor->getPalette(),
+								   cursor->getPaletteStartIndex(),
+								   cursor->getPaletteCount());
+	CursorMan.disableCursorPalette(false);
 
 	delete cursorGroup;
 	delete defaultCursor;
@@ -154,7 +157,8 @@ void Draw_v7::animateCursor(int16 cursor) {
 	// '------
 
 	if (_cursorAnimLow[cursorIndex] != -1) {
-		// .-- _draw_animateCursorSUB2 ---
+		// --- Advance cursor animation
+		// TODO: Not sure if this is still valid in Adibou2/Adi4
 		if (cursorIndex == _cursorIndex) {
 			if ((_cursorAnimDelays[_cursorIndex] != 0) &&
 				((_cursorTimeKey + (_cursorAnimDelays[_cursorIndex] * 10)) <=
@@ -164,13 +168,13 @@ void Draw_v7::animateCursor(int16 cursor) {
 					(_cursorAnimLow[_cursorIndex] > _cursorAnim))
 					_cursorAnim = _cursorAnimLow[_cursorIndex];
 				_cursorTimeKey = _vm->_util->getTimeKey();
-			} else {
+			} /* else { // Not found in Adibou 2 ASM
 				if (_noInvalidated && (_vm->_global->_inter_mouseX == _cursorX) &&
 					(_vm->_global->_inter_mouseY == _cursorY)) {
 					_vm->_video->waitRetrace();
 					return;
 				}
-			}
+			}*/
 		} else {
 			_cursorIndex = cursorIndex;
 			if (_cursorAnimDelays[cursorIndex] != 0) {
@@ -188,46 +192,33 @@ void Draw_v7::animateCursor(int16 cursor) {
 		}
 		// '------
 
+		if (cursorIndex == -1)
+			return;
+
 		bool cursorChanged = _cursorNames[cursorIndex] != _cursorName;
-
-		if (((!_cursorNames[cursorIndex].empty() || _isCursorFromExe)) && cursorChanged) {
+		if ((!_cursorDrawnFromScripts || !_cursorNames[cursorIndex].empty()) && cursorChanged) {
 			_cursorName = _cursorNames[cursorIndex];
-
 			// If the cursor name is empty, that cursor will be drawn by the scripts
 			if (_cursorNames[cursorIndex].empty() || _cursorNames[cursorIndex] == "VIDE") { // "VIDE" is "empty" in french
 				for (int i = 0; i < 40; i++) {
 					_cursorNames[i].clear();
 				}
 
-				_isCursorFromExe = false;
-
-				// Make sure the cursors sprite is big enough and set to non-extern palette
-				resizeCursors(-1, -1, cursorIndex + 1, true);
-				for (int i = 0; i < _vm->_draw->_cursorCount; i++) {
-					_vm->_draw->_doCursorPalettes[i] = false;
-				}
+				_cursorDrawnFromScripts = true;
 
 				_cursorX =  _vm->_global->_inter_mouseX;
 				_cursorY =  _vm->_global->_inter_mouseY;
 				_showCursor &= ~1;
 				return;
 			} else {
-				// Clear the cursor sprite at that index
-				_vm->_draw->_cursorSprites->fillRect(cursorIndex * _vm->_draw->_cursorWidth, 0,
-													 cursorIndex * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
-													 _vm->_draw->_cursorHeight - 1, 0);
-
-				if (!loadCursorFromFile(cursorIndex)) {
-					_cursorX =  _vm->_global->_inter_mouseX;
-					_cursorY =  _vm->_global->_inter_mouseY;
-					return;
-				}
-
-				_isCursorFromExe = true;
+				_cursorDrawnFromScripts = false;
+				loadCursorFromFile(_cursorName);
+				_cursorX =  _vm->_global->_inter_mouseX;
+				_cursorY =  _vm->_global->_inter_mouseY;
 			}
 		}
 
-		if (cursorChanged || !_isCursorFromExe) {
+		if (_cursorDrawnFromScripts) {
 			hotspotX = 0;
 			hotspotY = 0;
 
@@ -237,13 +228,15 @@ void Draw_v7::animateCursor(int16 cursor) {
 			} else if (_cursorHotspotX != -1) {
 				hotspotX = _cursorHotspotX;
 				hotspotY = _cursorHotspotY;
-			} else if (_cursorHotspotsX != nullptr) {
-				hotspotX = _cursorHotspotsX[_cursorIndex];
-				hotspotY = _cursorHotspotsY[_cursorIndex];
 			}
 
 			newX = _vm->_global->_inter_mouseX - hotspotX;
 			newY = _vm->_global->_inter_mouseY - hotspotY;
+
+			if (_scummvmCursor->getWidth() != _cursorWidth || _scummvmCursor->getHeight() != _cursorHeight) {
+				_vm->_draw->_scummvmCursor.reset();
+				_vm->_draw->_scummvmCursor = _vm->_video->initSurfDesc(_cursorWidth, _cursorHeight, SCUMMVM_CURSOR);
+			}
 
 			_scummvmCursor->clear();
 			_scummvmCursor->blit(*_cursorSprites,
@@ -251,19 +244,9 @@ void Draw_v7::animateCursor(int16 cursor) {
 								 (cursorIndex + 1) * _cursorWidth - 1,
 								 _cursorHeight - 1, 0, 0);
 
-			uint32 keyColor = 0;
-			if (_doCursorPalettes && _cursorKeyColors && _doCursorPalettes[cursorIndex])
-				keyColor = _cursorKeyColors[cursorIndex];
-
 			CursorMan.replaceCursor(_scummvmCursor->getData(),
-									_cursorWidth, _cursorHeight, hotspotX, hotspotY, keyColor, false, &_vm->getPixelFormat());
-
-			if (_doCursorPalettes && _doCursorPalettes[cursorIndex]) {
-				CursorMan.replaceCursorPalette(_cursorPalettes + (cursorIndex * 256 * 3),
-											   _cursorPaletteStarts[cursorIndex], _cursorPaletteCounts[cursorIndex]);
-				CursorMan.disableCursorPalette(false);
-			} else
-				CursorMan.disableCursorPalette(true);
+									_cursorWidth, _cursorHeight, hotspotX, hotspotY, 0, false, &_vm->getPixelFormat());
+			CursorMan.disableCursorPalette(true);
 		}
 
 		if (_frontSurface != _backSurface) {
@@ -278,10 +261,11 @@ void Draw_v7::animateCursor(int16 cursor) {
 				if (MIN(newY, _cursorY) < 50)
 					_vm->_util->delay(5);
 			}
-
-			if (!cursorChanged)
-				return;
 		}
+
+		if (!cursorChanged && !_cursorDrawnFromScripts)
+			return;
+
 	} else {
 		blitCursor();
 		_cursorX = newX;

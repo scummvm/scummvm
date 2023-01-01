@@ -144,9 +144,6 @@ void Draw_v2::animateCursor(int16 cursor) {
 		} else if (_cursorHotspotX != -1) {
 			hotspotX = _cursorHotspotX;
 			hotspotY = _cursorHotspotY;
-		} else if (_cursorHotspotsX != nullptr) {
-			hotspotX = _cursorHotspotsX[_cursorIndex];
-			hotspotY = _cursorHotspotsY[_cursorIndex];
 		}
 
 		newX = _vm->_global->_inter_mouseX - hotspotX;
@@ -158,19 +155,9 @@ void Draw_v2::animateCursor(int16 cursor) {
 				(cursorIndex + 1) * _cursorWidth - 1,
 				_cursorHeight - 1, 0, 0);
 
-		uint32 keyColor = 0;
-		if (_doCursorPalettes && _cursorKeyColors && _doCursorPalettes[cursorIndex])
-			keyColor = _cursorKeyColors[cursorIndex];
-
 		CursorMan.replaceCursor(_scummvmCursor->getData(),
-				_cursorWidth, _cursorHeight, hotspotX, hotspotY, keyColor, false, &_vm->getPixelFormat());
-
-		if (_doCursorPalettes && _doCursorPalettes[cursorIndex]) {
-			CursorMan.replaceCursorPalette(_cursorPalettes + (cursorIndex * 256 * 3),
-					_cursorPaletteStarts[cursorIndex], _cursorPaletteCounts[cursorIndex]);
-			CursorMan.disableCursorPalette(false);
-		} else
-			CursorMan.disableCursorPalette(true);
+				_cursorWidth, _cursorHeight, hotspotX, hotspotY, 0, false, &_vm->getPixelFormat());
+		CursorMan.disableCursorPalette(true);
 
 		if (_frontSurface != _backSurface) {
 			if (!_noInvalidated) {
