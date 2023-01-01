@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-12-31 22:47+0000\n"
-"PO-Revision-Date: 2022-12-26 07:34+0000\n"
+"PO-Revision-Date: 2023-01-01 11:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -6402,24 +6402,20 @@ msgstr "メイキング映像を画面全体に広げて再生"
 
 #: engines/neverhood/dialogs.cpp:63
 msgid "Repeat useful Willie's hint"
-msgstr ""
+msgstr "Willieのヒントを繰り返す"
 
 #: engines/neverhood/dialogs.cpp:64
 msgid "Repeat actual useful hint by Willie"
-msgstr ""
+msgstr "Willieによる有用なヒントの繰り返し"
 
 #. I18N: NHC is a file extension
 #: engines/neverhood/dialogs.cpp:83
-#, fuzzy
-#| msgid "Enable font replacement"
 msgid "NHC replacement:"
-msgstr "フォントの置き換えを有効化"
+msgstr "拡張子の置き換え："
 
 #: engines/neverhood/dialogs.cpp:89
-#, fuzzy
-#| msgid "Original Save"
 msgid "<original>"
-msgstr "オリジナルセーブ"
+msgstr "<オリジナル>"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
