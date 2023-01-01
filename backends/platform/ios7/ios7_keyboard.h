@@ -39,7 +39,6 @@
 - (void)handleKeyPress:(unichar)c;
 - (void)handleMainMenuKey;
 
-- (void)prepareKeyboard:(NSNotification *)notification;
 - (void)showKeyboard;
 - (void)hideKeyboard;
 
