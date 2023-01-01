@@ -27,14 +27,14 @@
 
 @class TextInputHandler;
 
-@interface SoftKeyboard : UIView<UITextViewDelegate> {
+@interface SoftKeyboard : UIView<UITextFieldDelegate> {
 	id inputDelegate;
 	TextInputHandler *inputView;
 }
 
 - (id)initWithFrame:(CGRect)frame;
 - (void)dealloc;
-- (UITextView *)inputView;
+- (UITextField *)inputView;
 - (void)setInputDelegate:(id)delegate;
 - (void)handleKeyPress:(unichar)c;
 - (void)handleMainMenuKey;

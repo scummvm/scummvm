@@ -605,9 +605,18 @@ void OSystem_iOS7::updateMouseTexture() {
 
 void OSystem_iOS7::setShowKeyboard(bool show) {
 	if (show) {
+#if TARGET_OS_IOS
 		execute_on_main_thread(^ {
 			[[iOS7AppDelegate iPhoneView] showKeyboard];
 		});
+#elif TARGET_OS_TV
+		// Delay the showing of keyboard 1 second so the user
+		// is able to see the message
+		dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC));
+		dispatch_after(delay, dispatch_get_main_queue(), ^(void){
+			[[iOS7AppDelegate iPhoneView] showKeyboard];
+		});
+#endif
 	} else {
 		// Do not hide the keyboard in portrait mode as it is shown automatically and not
 		// just when asked with the kFeatureVirtualKeyboard.
