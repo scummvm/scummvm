@@ -143,7 +143,7 @@ _tremolo=no
 _flac=auto
 _mad=auto
 _opl2lpt=no
-_retrowave=no
+_retrowave=auto
 _alsa=auto
 _seq_midi=auto
 _sndio=auto
@@ -4653,18 +4653,18 @@ echo "$_opl2lpt"
 # Check for retrowave for RetroWave OPL3
 #
 echocheck "RetroWave OPL3"
-if test "$_retrowave" = yes ; then
+if test "$_retrowave" = auto ; then
 	_retrowave=no
 	cat > $TMPC << EOF
 #include <RetroWaveLib/RetroWave.h>
 RetroWaveContext context;
 int main(void) { retrowave_init(&context); return 0; }
 EOF
-	cc_check $RETROWAVE_CFLAGS $RETROWAVE_LIBS -lretrowave && \
+	cc_check $RETROWAVE_CFLAGS $RETROWAVE_LIBS -lRetroWave && \
 	_retrowave=yes
 fi
 if test "$_retrowave" = yes; then
-	append_var LIBS "$RETROWAVE_LIBS -lretrowave"
+	append_var LIBS "$RETROWAVE_LIBS -lRetroWave"
 	append_var INCLUDES "$RETROWAVE_CFLAGS"
 fi
 define_in_config_if_yes "$_retrowave" 'USE_RETROWAVE'
