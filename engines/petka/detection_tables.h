@@ -36,7 +36,6 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM | ADGF_DROPLANGUAGE | ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
-
 	},
 
 	// Red Comrades 1: Save the Galaxy
@@ -48,7 +47,18 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM | ADGF_DROPLANGUAGE,
 		GUIO1(GUIO_NOMIDI)
+	},
 
+	// Red Comrades 1: Save the Galaxy (3 CD)
+	{
+		"petka1",
+		"Compressed",
+		AD_ENTRY2s("BGS1.STR",  "99832accda859e2e1daeaae0a8561aeb", 20280804,
+				   "data1.cab", "7e73a644d8b15d2fd3781de5edce0c18", 228838940),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_DROPLANGUAGE | GF_COMPRESSED,
+		GUIO1(GUIO_NOMIDI)
 	},
 
 	// Red Comrades 2: For the Great Justice
@@ -59,6 +69,18 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM | ADGF_DROPLANGUAGE,
+		GUIO1(GUIO_NOMIDI)
+	},
+
+	// Red Comrades 2: For the Great Justice (CD)
+	{
+		"petka2",
+		"Compressed",
+		AD_ENTRY2s("main.str",  "4e515669c343609518277cab6e7d8c8f", 18992879,
+				   "data1.cab", "ac9ee2e481ee5a6389a6cd58faf5a358", 23287376),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_DROPLANGUAGE | GF_COMPRESSED,
 		GUIO1(GUIO_NOMIDI)
 	},
 

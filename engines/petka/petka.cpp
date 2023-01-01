@@ -27,6 +27,7 @@
 #include "common/formats/ini-file.h"
 #include "common/system.h"
 #include "common/file.h"
+#include "common/compression/installshield_cab.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -74,6 +75,12 @@ Common::Error PetkaEngine::run() {
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	initGraphics(640, 480, &format);
 	syncSoundSettings();
+
+	if (_desc->flags & GF_COMPRESSED) {
+		Common::Archive *cabinet = Common::makeInstallShieldArchive("data");
+		if (cabinet)
+			SearchMan.add("data1.cab", cabinet);
+	}
 
 	const char *const videos[] = {"buka.avi", "skif.avi", "adv.avi"};
 	for (uint i = 0; i < sizeof(videos) / sizeof(char *); ++i) {
