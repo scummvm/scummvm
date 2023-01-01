@@ -19,6 +19,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für shader-basierte Skalierungen hinzugefügt.
    - Unterstützung für Mono-Ausgabe hinzugefügt (über die Kommandozeilen-Option --output-channels=CHANNELS)
    - Verbesserte Cursor-Skalierung im OpenGL-Modus.
+   - Absturz beim Zugriff auf Verzeichnisse, die Dateien mit "\1" im Dateinamen enthalten, behoben.
+
+ 3DS-Portierung:
+   - Der Relocation-Parser wurde um Unterstützung für PREL31, welches von neuen Compilern verwendet wird, erweitert.
+   - Weitere Optionen zur automatischen Konfiguration in ./configure hinzugefügt.
 
  AGI:
    - Unterstützung der französischen Übersetzungen verbessert.
@@ -28,21 +33,38 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      deaktiviert werden können.
 
  AGS:
-   - Unterstützung für die originalen Installationsdateien von Maniac Mansion Deluxe und The New Adventures of Zak McKracken hinzugefügt..
+   - Unterstützung für die originalen Installationsdateien von Maniac Mansion Deluxe und The New Adventures of Zak McKracken hinzugefügt.
+
+ Director:
+   - Unterstützung für die Pippin-Version von L-Zone hinzugefügt.
+   - Absturz beim Zugriff auf Dateien mit einem Slash im Dateinamen behoben.
+
+ Dreamweb:
+   - Das Spiel kann nun direkt von den originalen Installations-Disketten gespielt werden.
 
  GOB:
    - Unterstützung für Adibou 2 (Adi Junior) "Environment", "Read/Count 4 & 5" und "Read/Count 6 & 7" hinzugefügt.
 
+ Hadesch:
+   - Unterstützung für eine weitere Version von 1997 hinzugefügt.
+
  Kyra:
    - Unterstützung für die koreanische Version von Legend of Kyrandia 1 hinzugefügt.
+   - Unterstützung für die Macintosh-Version von Kyra1, die auf mehreren Disketten verteilt wurde, hinzugefügt.
    - Unterstützung für die hebräische Version von Legend of Kyrandia 3 hinzugefügt.
-   - Unterstützung für die chinesische Version von Legend of Kyrandia 3 hinzugefügt.
 
  MADS:
    - Unterstützung für das Datei-Layout des Installationsprogramms der Disketten-Version von Rex Nebular hinzugefügt.Added support for original floppy installer file layout for Rex Nebular.
 
  Neverhood:
    - Unterstützung für die japanische Version von Neverhood hinzugefügt.
+   - Unterstützung für die Übersetzungen von Ctpax-Che@ter & Rigel hinzugefügt.
+
+ Plumbers:
+   - Absturz in der Windows-Version behoben.
+
+ Private:
+   - Die Macintosh-Version kann nun direkt von der Installations-CD gespielt werden.
 
  Queen:
    - Eine zusätzliche Option erlaubt die Verwendung einer verbesserten Schriftart für die hebräische Version.
@@ -52,6 +74,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für die chinesische Version von I Have no Mouth and I Must Scream hinzugefügt.
    - Unterstützung für die koreanische Version von I Have no Mouth and I Must Scream hinzugefügt.
    - Inherit the Earth kann nun direkt mit den Dateien des Disketten-Installationsprogramms gespielt werden.
+   - Unterstützung für die Amiga-Versionen (AGA/ECS, Retail/Demo, Englisch/Deutsch) von Inherit the Earth hinzugefügt.
 
  SCUMM:
    - Unterstützung von CGA-, CGA Composite-, CGA schwarz/weiß- und Herkules-Grafikmodi
@@ -86,7 +109,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      in den anderen Sprachen).
    - Verbesserte Unterstützung der hebräischen Versionen der Spiele von Humongous Entertainment.
    - Unterstützung für Roland MT-32 in Sam & Max korrigiert.
-   - Unterstützung für die originale Benutzeroberfläche und die Speicher-Menüs von LucasArts-Spielen hinzugefügt (DOS, Windows, Amiga, Macintosh, FM-Towns, Atari ST und Commodore 64-Versionen).
+   - Unterstützung für die originale Benutzeroberfläche und die Speicher-Menüs von LucasArts-Spielen hinzugefügt (DOS, Windows, Amiga, Macintosh, FM-Towns, Atari ST, Sega CD, NES- und Commodore 64-Versionen).
    - Unterstützung für die originale Benutzeroberfläche für die SegaCD-Version von MI1 hinzugefügt.
 
  Sherlock:
@@ -94,6 +117,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Sky:
    - Unterstützung für die chinesische Version von Beneath a Steel Sky hinzugefügt.
+
+ Sword1:
+   - Unterstützung für die russische Übersetzung von ND hinzugefügt.
 
  Toon:
    - Die Spiel-Menüs verhalten sich nun wie im Original.
