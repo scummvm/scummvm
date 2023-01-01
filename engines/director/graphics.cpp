@@ -113,6 +113,17 @@ void DirectorEngine::loadDefaultPalettes() {
 	_loadedPalettes[kClutNTSC] = PaletteV4(kClutNTSC, ntscPalette, 256);
 	_loadedPalettes[kClutMetallic] = PaletteV4(kClutMetallic, metallicPalette, 256);
 	_loadedPalettes[kClutSystemWin] = PaletteV4(kClutSystemWin, winPalette, 256);
+
+	_loaded16Palettes[kClutSystemMac] = PaletteV4(kClutSystemMac, mac16Palette, 16);
+	_loaded16Palettes[kClutRainbow] = PaletteV4(kClutRainbow, rainbow16Palette, 16);
+	_loaded16Palettes[kClutGrayscale] = PaletteV4(kClutGrayscale, grayscale16Palette, 16);
+	_loaded16Palettes[kClutPastels] = PaletteV4(kClutPastels, pastels16Palette, 16);
+	_loaded16Palettes[kClutVivid] = PaletteV4(kClutVivid, vivid16Palette, 16);
+	_loaded16Palettes[kClutNTSC] = PaletteV4(kClutNTSC, ntsc16Palette, 16);
+	_loaded16Palettes[kClutMetallic] = PaletteV4(kClutMetallic, metallic16Palette, 16);
+	_loaded16Palettes[kClutSystemWin] = PaletteV4(kClutSystemWin, win16Palette, 16);
+
+	_loaded4Palette = PaletteV4(kClutGrayscale, grayscale4Palette, 4);
 }
 
 PaletteV4 *DirectorEngine::getPalette(int id) {
