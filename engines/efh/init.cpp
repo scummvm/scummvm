@@ -75,10 +75,10 @@ void ItemStruct::init() {
 	_range = 0;
 	_attackType = 0;
 	_specialEffect = 0;
-	field17_attackTypeDefense = 0;
+	_field17_attackTypeDefense = 0;
 	field_18 = 0;
-	field_19 = 0;
-	field_1A = 0;
+	_field19_mapPosX_or_maxDeltaPoints = 0;
+	_mapPosY = 0;
 }
 
 void NPCStruct::init() {
@@ -135,6 +135,11 @@ void NPCStruct::init() {
 	field_84 = 0;
 	field_85 = 0;
 }
+
+uint8 NPCStruct::getPronoun() {
+	return _possessivePronounSHL6 >> 6;
+}
+
 
 void Stru32686::init() {
 	for (int i = 0; i < 9; ++i) {
