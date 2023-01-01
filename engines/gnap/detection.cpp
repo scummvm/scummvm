@@ -29,7 +29,7 @@
 #include "graphics/thumbnail.h"
 
 static const PlainGameDescriptor gnapGames[] = {
-	{ "gnap", "Gnap" },
+	{ "gnap", "U.F.O.s" },
 	{ nullptr, nullptr }
 };
 
