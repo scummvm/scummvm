@@ -2418,21 +2418,20 @@ void EfhEngine::sub1D8C2(int16 charId, int16 damage) {
 	debug("sub1D8C2 %d %d", charId, damage);
 
 	int16 destroyCounter = 0;
-	int16 var40 = _npcBuf[charId]._possessivePronounSHL6 / 64;
+	int16 pronoun = _npcBuf[charId].getPronoun();
 
-	if (var40 > 2) {
-		var40 = 2;
+	if (pronoun > 2) {
+		pronoun = 2;
 	}
 
-	if (damage > 50)
-		damage = 50;
+	int16 curDamage = CLIP<int16>(damage, 0, 50);
 
 	for (uint objectId = 0; objectId < 10; ++objectId) {
-		if (_npcBuf[charId]._inventory[objectId]._ref == 0x7FFF || (_npcBuf[charId]._inventory[objectId]._stat1 & 0x80) == 0 && _items[_npcBuf[charId]._inventory[objectId]._ref]._defense == 0)
+		if (_npcBuf[charId]._inventory[objectId]._ref == 0x7FFF || (_npcBuf[charId]._inventory[objectId]._stat1 & 0x80) == 0 || _items[_npcBuf[charId]._inventory[objectId]._ref]._defense == 0)
 			continue;
 
-		int16 var44 = damage - _npcBuf[charId]._inventory[objectId]._stat2;
-		_npcBuf[charId]._inventory[objectId]._stat2 -= damage;
+		int16 remainingDamage = curDamage - _npcBuf[charId]._inventory[objectId]._stat2;
+		_npcBuf[charId]._inventory[objectId]._stat2 -= curDamage;
 
 		if (_npcBuf[charId]._inventory[objectId]._stat2 <= 0) {
 			Common::String buffer2 = _items[_npcBuf[charId]._inventory[objectId]._ref]._name;
@@ -2440,15 +2439,19 @@ void EfhEngine::sub1D8C2(int16 charId, int16 damage) {
 
 			if (destroyCounter == 0) {
 				destroyCounter = 1;
-				_messageToBePrinted += Common::String::format(", but %s ", kPossessive[var40]) + buffer2;
+				_messageToBePrinted += Common::String::format(", but %s ", kPossessive[pronoun]) + buffer2;
 			} else {
 				++destroyCounter;
 				_messageToBePrinted += Common::String(", ") + buffer2;
 			}
 		}
 
-		if (var44 > 0)
-			damage = var44;
+		if (remainingDamage > 0)
+			curDamage = remainingDamage;
+		// The original doesn't contain this Else clause. But logically, if the remainingDamage is less than 0, it doesn't make sense to keep damaging equipment with the previous damage.
+		// As it looks like an original bug, I just added the code to stop damaging equipped protections.
+		else
+			break;
 	}
 
 	if (destroyCounter == 0) {

@@ -1050,7 +1050,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			displayString_3("There is no apparent affect!", false, charId, teamMonsterId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += "  The magic sparkles brilliant hues in the air!";
-			setMapMonsterField8(teamMonsterId, _items[itemId].field17_attackTypeDefense, true);
+			setMapMonsterField8(teamMonsterId, _items[itemId]._field17_attackTypeDefense, true);
 		}
 		varA6 = true;
 		break;
@@ -1138,8 +1138,8 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 		varA6 = true;
 	} break;
 	case 17: { // "Devil Dust"
-		_mapPosX = _items[itemId].field_19;
-		_mapPosY = _items[itemId].field_1A;
+		_mapPosX = _items[itemId]._field19_mapPosX_or_maxDeltaPoints;
+		_mapPosY = _items[itemId]._mapPosY;
 		int16 tileFactId = getTileFactId(_mapPosX, _mapPosY);
 		if (_tileFact[tileFactId]._field0 == 0) {
 			totalPartyKill();
@@ -1202,26 +1202,26 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 		break;
 	case 23: // "Divining Rod"
 		buffer1 = Common::String::format("The %s says, '", _items[itemId]._name);
-		if (_items[itemId].field_19 < _mapPosX) {
-			if (_items[itemId].field_1A < _mapPosY) {
+		if (_items[itemId]._field19_mapPosX_or_maxDeltaPoints < _mapPosX) {
+			if (_items[itemId]._mapPosY < _mapPosY) {
 				buffer1 += "North West!";
-			} else if (_items[itemId].field_1A > _mapPosY) {
+			} else if (_items[itemId]._mapPosY > _mapPosY) {
 				buffer1 += "South West!";
 			} else {
 				buffer1 += "West!";
 			}
-		} else if (_items[itemId].field_19 > _mapPosX) {
-			if (_items[itemId].field_1A < _mapPosY) {
+		} else if (_items[itemId]._field19_mapPosX_or_maxDeltaPoints > _mapPosX) {
+			if (_items[itemId]._mapPosY < _mapPosY) {
 				buffer1 += "North East!";
-			} else if (_items[itemId].field_1A > _mapPosY) {
+			} else if (_items[itemId]._mapPosY > _mapPosY) {
 				buffer1 += "South East!";
 			} else {
 				buffer1 += "East!";
 			}
 		} else { // equals _mapPosX
-			if (_items[itemId].field_1A < _mapPosY) {
+			if (_items[itemId]._mapPosY < _mapPosY) {
 				buffer1 += "North!";
-			} else if (_items[itemId].field_1A > _mapPosY) {
+			} else if (_items[itemId]._mapPosY > _mapPosY) {
 				buffer1 += "South!";
 			} else {
 				buffer1 += "Here!!!";
@@ -1246,8 +1246,8 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			teamCharId = teamMonsterId;
 
 		if (teamCharId != 0x1B) {
-			uint8 varAE = _items[itemId].field17_attackTypeDefense;
-			uint8 effectPoints = getRandom(_items[itemId].field_19);
+			uint8 varAE = _items[itemId]._field17_attackTypeDefense;
+			uint8 effectPoints = getRandom(_items[itemId]._field19_mapPosX_or_maxDeltaPoints);
 			_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] += effectPoints;
 			if (_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] > 20) {
 				_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] = 20;
@@ -1276,8 +1276,8 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			teamCharId = teamMonsterId;
 
 		if (teamCharId != 0x1B) {
-			uint8 varAE = _items[itemId].field17_attackTypeDefense;
-			uint8 effectPoints = getRandom(_items[itemId].field_19);
+			uint8 varAE = _items[itemId]._field17_attackTypeDefense;
+			uint8 effectPoints = getRandom(_items[itemId]._field19_mapPosX_or_maxDeltaPoints);
 			_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] -= effectPoints;
 			if (_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] > 20 || _npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] < 0) {
 				_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] = 1;
@@ -1358,7 +1358,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 		}
 
 		if (teamCharId != 0x1B) {
-			int16 effectPoints = getRandom(_items[itemId].field17_attackTypeDefense);
+			int16 effectPoints = getRandom(_items[itemId]._field17_attackTypeDefense);
 			_npcBuf[_teamCharId[teamCharId]]._hitPoints += effectPoints;
 			if (_npcBuf[_teamCharId[teamCharId]]._hitPoints > _npcBuf[_teamCharId[teamCharId]]._maxHP)
 				_npcBuf[_teamCharId[teamCharId]]._hitPoints = _npcBuf[_teamCharId[teamCharId]]._maxHP;
@@ -1388,7 +1388,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 		}
 
 		if (teamCharId != 0x1B) {
-			int16 effectPoints = getRandom(_items[itemId].field17_attackTypeDefense);
+			int16 effectPoints = getRandom(_items[itemId]._field17_attackTypeDefense);
 			_npcBuf[_teamCharId[teamCharId]]._hitPoints -= effectPoints;
 			if (_npcBuf[_teamCharId[teamCharId]]._hitPoints < 0)
 				_npcBuf[_teamCharId[teamCharId]]._hitPoints = 0;

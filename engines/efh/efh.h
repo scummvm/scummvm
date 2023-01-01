@@ -122,10 +122,10 @@ struct ItemStruct {
 	uint8 _range;
 	uint8 _attackType;
 	uint8 _specialEffect;
-	uint8 field17_attackTypeDefense;
+	uint8 _field17_attackTypeDefense;
 	uint8 field_18;
-	uint8 field_19;
-	uint8 field_1A;
+	uint8 _field19_mapPosX_or_maxDeltaPoints;
+	uint8 _mapPosY;
 
 	void init();
 };
@@ -175,6 +175,7 @@ struct NPCStruct {
 	uint8 field_85;
 
 	void init();
+	uint8 getPronoun();
 };
 
 struct FontDescr {

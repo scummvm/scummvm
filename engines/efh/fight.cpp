@@ -187,8 +187,8 @@ bool EfhEngine::handleFight(int16 monsterId) {
 
 								int16 var76 = getRandom(getEquipmentDefense(_teamCharId[var7E], false));
 								varInt = _teamMonsterIdArray[monsterGroupIdOrMonsterId];
-								int16 var70 = kEncounters[_mapMonsters[varInt]._monsterRef]._nameArticle;
-								int16 var5E = _npcBuf[_teamCharId[var7E]]._possessivePronounSHL6 >> 6;
+								int16 ennemyPronoun = kEncounters[_mapMonsters[varInt]._monsterRef]._nameArticle;
+								int16 characterPronoun = _npcBuf[_teamCharId[var7E]].getPronoun();
 								varInt = _items[unk_monsterField5_itemId].field_13;
 								_word32482[var7E] += (varInt * 5);
 								int16 var62 = 0;
@@ -235,12 +235,12 @@ bool EfhEngine::handleFight(int16 monsterId) {
 
 								int16 var68 = _items[unk_monsterField5_itemId]._attackType + 1;
 								int16 var6A = getRandom(3);
-								if (var5E == 2)
+								if (characterPronoun == 2)
 									_characterNamePt1 = "The ";
 								else
 									_characterNamePt1 = "";
 
-								if (var7E == 2)
+								if (ennemyPronoun == 2)
 									_enemyNamePt1 = "The ";
 								else
 									_enemyNamePt1 = "";
@@ -251,17 +251,17 @@ bool EfhEngine::handleFight(int16 monsterId) {
 								if (checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId)) {
 									// handleFight - check damages - Start
 									if (var62 == 0) {
-										_messageToBePrinted = Common::String::format("%s%s %s at %s%s with %s %s, but misses!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[var68 * 3 + var6A], _characterNamePt1.c_str(), _characterNamePt2.c_str(), kPossessive[var70], _nameBuffer.c_str());
+										_messageToBePrinted = Common::String::format("%s%s %s at %s%s with %s %s, but misses!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[var68 * 3 + var6A], _characterNamePt1.c_str(), _characterNamePt2.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str());
 									} else if (hitPoints <= 0) {
-										_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s, but does no damage!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[var68 * 3 + var6A], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[var70], _nameBuffer.c_str());
+										_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s, but does no damage!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[var68 * 3 + var6A], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str());
 									} else if (hitPoints == 1) {
-										_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s for 1 point", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[var68 * 3 + var6A], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[var70], _nameBuffer.c_str());
+										_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s for 1 point", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[var68 * 3 + var6A], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str());
 										if (_npcBuf[_teamCharId[var7E]]._hitPoints <= 0)
 											getDeathTypeDescription(var7E + 1000, monsterGroupIdOrMonsterId);
 										else
 											_messageToBePrinted += "!";
 									} else {
-										_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s for %d points", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[var68 * 3 + var6A], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[var70], _nameBuffer.c_str(), hitPoints);
+										_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s for %d points", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[var68 * 3 + var6A], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str(), hitPoints);
 										if (_npcBuf[_teamCharId[var7E]]._hitPoints <= 0)
 											getDeathTypeDescription(var7E + 1000, monsterGroupIdOrMonsterId);
 										else
@@ -330,7 +330,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 									}
 									// handleFight - Check effect - end
 								} else {
-									_messageToBePrinted = Common::String::format("%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPossessive[var70], _nameBuffer.c_str());
+									_messageToBePrinted = Common::String::format("%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str());
 								}
 								genericGenerateSound(_items[unk_monsterField5_itemId]._attackType, var62);
 								sub1C219(_messageToBePrinted, 1, 2, true);
@@ -389,7 +389,7 @@ void EfhEngine::handleFight_checkEndEffect(int16 charId) {
 
 	// At this point : The status is different to 0 (normal) and the effect duration is finally 0 (end of effect)
 	_enemyNamePt2 = _npcBuf[_teamCharId[charId]]._name;
-	if ((_npcBuf[_teamCharId[charId]]._possessivePronounSHL6 >> 6) == 2) {
+	if (_npcBuf[_teamCharId[charId]].getPronoun() == 2) {
 		_enemyNamePt1 = "The ";
 	} else {
 		_enemyNamePt1 = "";
@@ -464,8 +464,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 
 					int16 var76 = getRandom(_mapMonsters[_teamMonsterIdArray[groupId]]._field_6);
 					int16 varInt = _teamCharId[teamCharId];
-					int16 var51 = _npcBuf[varInt]._possessivePronounSHL6;
-					var51 >>= 6;
+					int16 var51 = _npcBuf[varInt].getPronoun();
 					int16 var70 = var51;
 					varInt = _teamMonsterIdArray[groupId];
 					int16 var5E = kEncounters[_mapMonsters[varInt]._monsterRef]._nameArticle;
@@ -631,14 +630,15 @@ void EfhEngine::handleFight_lastAction_D(int16 teamCharId) {
 
 	_word32482[teamCharId] -= 40;
 	_enemyNamePt2 = _npcBuf[_teamCharId[teamCharId]]._name;
-	int16 var70 = _npcBuf[_teamCharId[teamCharId]]._possessivePronounSHL6 >> 6;
 
-	if (var70 == 2)
+	uint8 pronoun = _npcBuf[_teamCharId[teamCharId]].getPronoun();
+
+	if (pronoun == 2)
 		_enemyNamePt1 = "The ";
 	else
 		_enemyNamePt1 = "";
 
-	_messageToBePrinted = Common::String::format("%s%s prepares to defend %sself!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPersonal[var70]);
+	_messageToBePrinted = Common::String::format("%s%s prepares to defend %sself!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPersonal[pronoun]);
 	sub1C219(_messageToBePrinted, 1, 2, true);
 }
 
@@ -650,14 +650,14 @@ void EfhEngine::handleFight_lastAction_H(int16 teamCharId) {
 
 	_teamPctVisible[teamCharId] -= 50;
 	_enemyNamePt2 = _npcBuf[_teamCharId[teamCharId]]._name;
-	int16 var70 = _npcBuf[_teamCharId[teamCharId]]._possessivePronounSHL6 >> 6;
+	int16 pronoun = _npcBuf[_teamCharId[teamCharId]].getPronoun();
 
-	if (var70 == 2)
+	if (pronoun == 2)
 		_enemyNamePt1 = "The ";
 	else
 		_enemyNamePt1 = "";
 
-	_messageToBePrinted = Common::String::format("%s%s attempts to hide %sself!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPersonal[var70]);
+	_messageToBePrinted = Common::String::format("%s%s attempts to hide %sself!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPersonal[pronoun]);
 	sub1C219(_messageToBePrinted, 1, 2, true);
 }
 
@@ -670,13 +670,13 @@ void EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
 	int16 itemId = _npcBuf[_teamCharId[teamCharId]]._inventory[_word31780[teamCharId]]._ref;
 	_enemyNamePt2 = _npcBuf[_teamCharId[teamCharId]]._name;
 	_nameBuffer = _items[itemId]._name;
-	int16 var70 = _npcBuf[_teamCharId[teamCharId]]._possessivePronounSHL6 >> 6;
-	if (var70 == 2)
+	int16 pronoun = _npcBuf[_teamCharId[teamCharId]].getPronoun();
+	if (pronoun == 2)
 		_enemyNamePt1 = "The ";
 	else
 		_enemyNamePt1 = "";
 
-	_messageToBePrinted = Common::String::format("%s%s uses %s %s!  ", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPossessive[var70], _nameBuffer.c_str());
+	_messageToBePrinted = Common::String::format("%s%s uses %s %s!  ", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPossessive[pronoun], _nameBuffer.c_str());
 	sub1C219(_messageToBePrinted, 1, 2, true);
 }
 
@@ -713,7 +713,7 @@ void EfhEngine::resetTeamMonsterEffects() {
 }
 
 void EfhEngine::resetTeamMonsterIdArray() {
-	debug("resetTeamMonsterIdArray");
+	debugC(6, kDebugEngine, "resetTeamMonsterIdArray");
 
 	for (int i = 0; i < 5; ++i) {
 		_teamMonsterIdArray[i] = -1;
@@ -1518,7 +1518,7 @@ bool EfhEngine::hasAdequateDefense(int16 monsterId, uint8 attackType) {
 	if (_items[itemId]._specialEffect != 0)
 		return false;
 
-	return _items[itemId].field17_attackTypeDefense == attackType;
+	return _items[itemId]._field17_attackTypeDefense == attackType;
 }
 
 bool EfhEngine::hasAdequateDefense_2(int16 charId, uint8 attackType) {
@@ -1526,7 +1526,7 @@ bool EfhEngine::hasAdequateDefense_2(int16 charId, uint8 attackType) {
 
 	int16 itemId = _npcBuf[charId]._unkItemId;
 
-	if (_items[itemId]._specialEffect == 0 && _items[itemId].field17_attackTypeDefense == attackType)
+	if (_items[itemId]._specialEffect == 0 && _items[itemId]._field17_attackTypeDefense == attackType)
 		return true;
 
 	for (uint counter = 0; counter < 10; ++counter) {
@@ -1534,7 +1534,7 @@ bool EfhEngine::hasAdequateDefense_2(int16 charId, uint8 attackType) {
 			continue;
 
 		itemId = _npcBuf[charId]._inventory[counter]._ref;
-		if (_items[itemId]._specialEffect == 0 && _items[itemId].field17_attackTypeDefense == attackType)
+		if (_items[itemId]._specialEffect == 0 && _items[itemId]._field17_attackTypeDefense == attackType)
 			return true;
 	}
 	return false;
