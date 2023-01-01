@@ -173,7 +173,7 @@ void GameData::loadTranslation() {
 	if (!translationfile.empty()) {
 		translationfile = "data/" + translationfile;
 
-		pout << "Loading translation: " << translationfile << Std::endl;
+		debug(MM_INFO, "Loading translation: %s", translationfile.c_str());
 
 		config->readConfigFile(translationfile, "language");
 	}
@@ -251,7 +251,7 @@ void GameData::loadU8Data() {
 	_mainUsecode = new UsecodeFlex(uds);
 
 	// Load main shapes
-	pout << "Load Shapes" << Std::endl;
+	debug(MM_INFO, "Load Shapes");
 	Common::SeekableReadStream *sf = filesystem->ReadFile("static/u8shapes.flx");
 	if (!sf) sf = filesystem->ReadFile("static/u8shapes.cmp");
 
@@ -527,7 +527,7 @@ void GameData::loadRemorseData() {
 	_mainUsecode = new UsecodeFlex(uds);
 
 	// Load main shapes
-	pout << "Load Shapes" << Std::endl;
+	debug(MM_INFO, "Load Shapes");
 	Common::SeekableReadStream *sf = filesystem->ReadFile("static/shapes.flx");
 
 	if (!sf)

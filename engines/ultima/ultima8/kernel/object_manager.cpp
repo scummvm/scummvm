@@ -276,7 +276,7 @@ bool ObjectManager::load(Common::ReadStream *rs, uint32 version) {
 			count++;
 		}
 	}
-	pout << "Reclaimed " << count << " _objIDs on load." << Std::endl;
+	debug(MM_INFO, "Reclaimed %u _objIDs on load.", count);
 
 	// Integrity check items - their ids should match, and if they have
 	// parents, those should be valid.

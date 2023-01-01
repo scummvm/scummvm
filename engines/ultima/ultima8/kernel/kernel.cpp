@@ -103,8 +103,8 @@ ProcId Kernel::addProcess(Process *proc, bool dispose) {
 	assert(proc->_pid != 0 && proc->_pid != 0xFFFF);
 
 #if 0
-	pout << "[Kernel] Adding process " << proc
-	<< ", pid = " << proc->_pid << " type " << proc->GetClassType()._className << Std::endl;
+	debug(MM_INFO, "[Kernel] Adding process %p, pid = %u type %s",
+		proc, proc->_pid, proc->GetClassType()._className);
 #endif
 
 	if (dispose) {
@@ -125,8 +125,8 @@ ProcId Kernel::addProcessExec(Process *proc, bool dispose) {
 	assert(proc->_pid != 0 && proc->_pid != 0xFFFF);
 
 #if 0
-	pout << "[Kernel] Adding process " << proc
-	     << ", pid = " << proc->_pid << Std::endl;
+	debug(MM_INFO, "[Kernel] Adding process %p, pid = %u type %s",
+		proc, proc->_pid, proc->GetClassType()._className);
 #endif
 
 	if (dispose) {

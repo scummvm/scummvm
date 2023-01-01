@@ -69,7 +69,7 @@ U8Game::~U8Game() {
 
 bool U8Game::loadFiles() {
 	// Load palette
-	pout << "Load Palette" << Std::endl;
+	debug(MM_INFO, "Load Palette");
 	Common::SeekableReadStream *pf = FileSystem::get_instance()->ReadFile("static/u8pal.pal");
 	if (!pf) {
 		warning("Unable to load static/u8pal.pal.");
@@ -81,7 +81,7 @@ bool U8Game::loadFiles() {
 	PaletteManager::get_instance()->load(PaletteManager::Pal_Game, *pf, xfds);
 	delete pf;
 
-	pout << "Load GameData" << Std::endl;
+	debug(MM_INFO, "Load GameData");
 	GameData::get_instance()->loadU8Data();
 
 	return true;
@@ -89,8 +89,7 @@ bool U8Game::loadFiles() {
 
 bool U8Game::startGame() {
 	// NOTE: assumes the entire engine has been reset!
-
-	pout << "Starting new Ultima 8 game." << Std::endl;
+	debug(MM_INFO, "Starting new Ultima 8 game.");
 
 	ObjectManager *objman = ObjectManager::get_instance();
 
@@ -169,7 +168,7 @@ ProcId U8Game::playIntroMovie(bool fade) {
 	FileSystem *filesys = FileSystem::get_instance();
 	Common::SeekableReadStream *skf = filesys->ReadFile(filename);
 	if (!skf) {
-		pout << "U8Game::playIntro: movie not found." << Std::endl;
+		debug(MM_INFO, "U8Game::playIntro: movie not found.");
 		return 0;
 	}
 
@@ -181,7 +180,7 @@ ProcId U8Game::playEndgameMovie(bool fade) {
 	FileSystem *filesys = FileSystem::get_instance();
 	Common::SeekableReadStream *skf = filesys->ReadFile(filename);
 	if (!skf) {
-		pout << "U8Game::playEndgame: movie not found." << Std::endl;
+		debug(MM_INFO, "U8Game::playEndgame: movie not found.");
 		return 0;
 	}
 

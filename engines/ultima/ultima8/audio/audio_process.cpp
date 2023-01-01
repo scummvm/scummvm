@@ -259,7 +259,7 @@ void AudioProcess::playSFX(int sfxNum, int priority, ObjId objId, int loops,
 				// Exactly the same (and playing) so just return
 				//if (it->priority == priority)
 				if (mixer->isPlaying(it->_channel)) {
-					pout << "Sound " << sfxNum << " already playing on obj " << objId << Std::endl;
+					debug(MM_INFO, "Sound %d already playing on obj %u", sfxNum, objId);
 					return;
 				} else {
 					it = _sampleInfo.erase(it);
@@ -374,7 +374,7 @@ bool AudioProcess::playSpeech(const Std::string &barked, int shapeNum, ObjId obj
 		        it->_priority == shapeNum && it->_objId == objId) {
 
 			if (mixer->isPlaying(it->_channel)) {
-				pout << "Speech already playing" << Std::endl;
+				debug(MM_INFO, "Speech already playing");
 				return true;
 			} else {
 				it = _sampleInfo.erase(it);

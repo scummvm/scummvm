@@ -46,7 +46,7 @@ SpeechFlex::SpeechFlex(Common::SeekableReadStream *rs) : SoundFlex(rs) {
 		TabsToSpaces(str, 1);
 		TrimSpaces(str);
 
-		// pout << "Found string: \"" << str << "\"" << Std::endl;
+		//debug(MM_INFO, "Found string: \"%s\"", str.c_str());
 
 		_phrases.push_back(str);
 	}
@@ -72,11 +72,11 @@ int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
 	Std::string::size_type pos2 = text.findLastNotOf(' ');
 	text = text.substr(pos1, pos2 - pos1 + 1);
 
-//	pout << "Looking for string: \"" << text << "\"" << Std::endl;
+	//debug(MM_INFO, "Looking for string: \"%s\"", text.c_str());
 
 	for (it = _phrases.begin(); it != _phrases.end(); ++it) {
 		if (text.find(it->c_str()) == 0) {
-//			pout << "Found: " << i << Std::endl;
+			//debug(MM_INFO, "Found: %d", i);
 			end = (*it).size() + start + pos1;
 			if (end >= start + pos2)
 				end = phrase.size();
@@ -85,7 +85,7 @@ int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
 		i++;
 	}
 
-//	pout << "Not found" << Std::endl;
+	//debug(MM_INFO, "Not found");
 
 	return 0;
 }

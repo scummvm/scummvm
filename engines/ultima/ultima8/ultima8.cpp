@@ -206,7 +206,7 @@ bool Ultima8Engine::hasFeature(EngineFeature f) const {
 
 Common::Error Ultima8Engine::startup() {
 	setDebugger(new Debugger());
-	pout << "-- Initializing Pentagram -- " << Std::endl;
+	debug(MM_INFO, "-- Initializing Pentagram --");
 
 	_gameInfo = nullptr;
 	_fileSystem = new FileSystem;
@@ -328,7 +328,7 @@ Common::Error Ultima8Engine::startup() {
 	// Audio Mixer
 	_audioMixer = new AudioMixer(_mixer);
 
-	pout << "-- Pentagram Initialized -- " << Std::endl << Std::endl;
+	debug(MM_INFO, "-- Pentagram Initialized -- ");
 
 	if (setupGame()) {
 		GraphicSysInit();
@@ -353,22 +353,22 @@ bool Ultima8Engine::setupGame() {
 	if (detected) {
 		// add game to games map
 		Std::string details = info->getPrintDetails();
-		debugN(MM_INFO, "%s", details.c_str());
+		debug(MM_INFO, "%s", details.c_str());
 	} else {
-		debugN(MM_INFO, "unknown, skipping");
+		debug(MM_INFO, "unknown, skipping");
 		return false;
 	}
 
 	_gameInfo = info;
 
-	pout << "Selected game: " << info->_name << Std::endl;
-	pout << info->getPrintDetails() << Std::endl;
+	debug(MM_INFO, "Selected game: %s", info->_name.c_str());
+	debug(MM_INFO, "%s", info->getPrintDetails().c_str());
 
 	return true;
 }
 
 Common::Error Ultima8Engine::startupGame() {
-	pout  << Std::endl << "-- Initializing Game: " << _gameInfo->_name << " --" << Std::endl;
+	debug(MM_INFO, "-- Initializing Game: %s --", _gameInfo->_name.c_str());
 
 	GraphicSysInit();
 
@@ -449,7 +449,7 @@ Common::Error Ultima8Engine::startupGame() {
 
 	newGame(saveSlot);
 
-	pout << "-- Game Initialized --" << Std::endl << Std::endl;
+	debug(MM_INFO, "-- Game Initialized --");
 	return Common::kNoError;
 }
 
@@ -458,7 +458,7 @@ void Ultima8Engine::shutdown() {
 }
 
 void Ultima8Engine::shutdownGame(bool reloading) {
-	pout << "-- Shutting down Game -- " << Std::endl;
+	debug(MM_INFO, "-- Shutting down Game -- ");
 
 	// Save config here....
 
@@ -498,7 +498,7 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 	_configFileMan->clearRoot("game");
 	_gameInfo = nullptr;
 
-	pout << "-- Game Shutdown -- " << Std::endl;
+	debug(MM_INFO, "-- Game Shutdown -- ");
 
 	if (reloading) {
 		Rect dims;
@@ -552,9 +552,7 @@ Common::Error Ultima8Engine::runGame() {
 					_desktopGump->run();
 				}
 #if 0
-				pout << "--------------------------------------" << Std::endl;
-				pout << "NEW FRAME" << Std::endl;
-				pout << "--------------------------------------" << Std::endl;
+				debug(MM_INFO, "--- NEW FRAME ---");
 #endif
 				_inBetweenFrame = false;
 
@@ -570,7 +568,7 @@ Common::Error Ultima8Engine::runGame() {
 
 			// Calculate the lerp_factor
 			_lerpFactor = ((_animationRate - diff) * 256) / _animationRate;
-			//pout << "_lerpFactor: " << _lerpFactor << " framenum: " << framenum << Std::endl;
+			//debug(MM_INFO, "_lerpFactor: %d framenum: %d", _lerpFactor, framenum);
 			if (!_interpolate || _kernel->isPaused() || _lerpFactor > 256)
 				_lerpFactor = 256;
 		}
@@ -1054,7 +1052,7 @@ Common::Error Ultima8Engine::saveGameStream(Common::WriteStream *stream, bool is
 	// Restore mouse over
 	if (gump) gump->onMouseOver();
 
-	pout << "Done" << Std::endl;
+	debug(MM_INFO, "Done");
 
 	_mouse->popMouseCursor();
 
@@ -1269,7 +1267,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 		if (!ignore) {
 			error("%s", message.c_str());
 		}
-		pout << message << Std::endl;
+		debug(MM_INFO, "%s", message.c_str());
 #else
 		delete sg;
 		return Common::Error(Common::kReadingFailed, message);
@@ -1293,7 +1291,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	ok = _ucMachine->loadStrings(ds, version);
 	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
-	pout << "UCSTRINGS: " << (ok ? "ok" : "failed") << Std::endl;
+	debug(MM_INFO, "UCSTRINGS: %s", (ok ? "ok" : "failed"));
 	if (!ok) message += "UCSTRINGS: failed\n";
 	delete ds;
 
@@ -1301,7 +1299,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	ok = _ucMachine->loadGlobals(ds, version);
 	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
-	pout << "UCGLOBALS: " << (ok ? "ok" : "failed") << Std::endl;
+	debug(MM_INFO, "UCGLOBALS: %s", (ok ? "ok" : "failed"));
 	if (!ok) message += "UCGLOBALS: failed\n";
 	delete ds;
 
@@ -1309,7 +1307,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	ok = _ucMachine->loadLists(ds, version);
 	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
-	pout << "UCLISTS: " << (ok ? "ok" : "failed") << Std::endl;
+	debug(MM_INFO, "UCLISTS: %s", (ok ? "ok" : "failed"));
 	if (!ok) message += "UCLISTS: failed\n";
 	delete ds;
 
@@ -1319,7 +1317,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	ok = _kernel->load(ds, version);
 	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
-	pout << "KERNEL: " << (ok ? "ok" : "failed") << Std::endl;
+	debug(MM_INFO, "KERNEL: %s", (ok ? "ok" : "failed"));
 	if (!ok) message += "KERNEL: failed\n";
 	delete ds;
 
@@ -1327,7 +1325,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	ok = load(ds, version);
 	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
-	pout << "APP: " << (ok ? "ok" : "failed") << Std::endl;
+	debug(MM_INFO, "APP: %s", (ok ? "ok" : "failed"));
 	if (!ok) message += "APP: failed\n";
 	delete ds;
 
@@ -1336,7 +1334,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	ok = _world->load(ds, version);
 	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
-	pout << "WORLD: " << (ok ? "ok" : "failed") << Std::endl;
+	debug(MM_INFO, "WORLD: %s", (ok ? "ok" : "failed"));
 	if (!ok) message += "WORLD: failed\n";
 	delete ds;
 
@@ -1344,7 +1342,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	ok = _world->getCurrentMap()->load(ds, version);
 	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
-	pout << "CURRENTMAP: " << (ok ? "ok" : "failed") << Std::endl;
+	debug(MM_INFO, "CURRENTMAP: %s", (ok ? "ok" : "failed"));
 	if (!ok) message += "CURRENTMAP: failed\n";
 	delete ds;
 
@@ -1352,7 +1350,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	ok = _objectManager->load(ds, version);
 	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
-	pout << "OBJECTS: " << (ok ? "ok" : "failed") << Std::endl;
+	debug(MM_INFO, "OBJECTS: %s", (ok ? "ok" : "failed"));
 	if (!ok) message += "OBJECTS: failed\n";
 	delete ds;
 
@@ -1360,7 +1358,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	ok = _world->loadMaps(ds, version);
 	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
-	pout << "MAPS: " << (ok ? "ok" : "failed") << Std::endl;
+	debug(MM_INFO, "MAPS: %s", (ok ? "ok" : "failed"));
 	if (!ok) message += "MAPS: failed\n";
 	delete ds;
 
@@ -1387,7 +1385,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 		return Common::Error(Common::kReadingFailed, message);
 	}
 
-	pout << "Done" << Std::endl;
+	debug(MM_INFO, "Done");
 
 	delete sg;
 	return Common::kNoError;
