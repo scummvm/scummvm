@@ -22,10 +22,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved cursor scaling in OpenGL mode.
    - Fix crash when browsing folders containing files with \1 in the names.
 
- 3DS:
-   - Update relocation parser to support PREL31 that are emitted by new compiler.
-   - Do more autoconfiguration in ./configure
-
  AGI:
    - Improved support for French translations.
 
@@ -42,7 +38,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix a bug caused by use of slash in filename.
 
  Dreamweb:
-   - Support playing from the original installer floppies
+   - Support playing from the original installer floppies.
 
  GOB:
    - Added support for Adibou 2 "Environment", "Read/Count 4 & 5" and "Read/Count 6 & 7".
@@ -76,7 +72,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Chinese I Have no Mouth and I Must Scream.
    - Added support for Korean I Have no Mouth and I Must Scream.
    - Added support for playing directly from floppy installer for ITE.
-   - Support for Amiga (AGA/ECS, Retail/Demo, English/German) Inherit the Earth
+   - Support for Amiga (AGA/ECS, Retail/Demo, English/German) Inherit the Earth.
 
  SCI:
    - Improved text rendering for Macintosh titles.
@@ -119,11 +115,11 @@ For a more comprehensive changelog of the latest experimental code, see:
  Sherlock:
    - Added support for Chinese Rose Tattoo.
 
- Sword1:
-   - Support ND Russian translation
-
  Sky:
    - Added support for Chinese Beneath a Steel Sky.
+
+ Sword1:
+   - Support ND Russian translation.
 
  Toon:
    - Made game menus behave like in the original.
@@ -137,6 +133,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed background redraw when watching cutscenes at the television.
    - Fixed recenter the screen on activating an inventory item.
    - Fixed pressing W to talk to people also makes you jump.
+
+ 3DS port:
+   - Update relocation parser to support PREL31 that are emitted by new compiler.
+   - Do more autoconfiguration in ./configure.
 
 #### 2.6.1 "Incremental Escapism" (2022-10-31)
 
