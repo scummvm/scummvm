@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-12-31 22:47+0000\n"
-"PO-Revision-Date: 2022-12-26 20:34+0000\n"
+"PO-Revision-Date: 2023-01-01 11:34+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -6479,24 +6479,20 @@ msgstr "Hogyan készült videók átméretezése, hogy teljesképernyõt haszná
 
 #: engines/neverhood/dialogs.cpp:63
 msgid "Repeat useful Willie's hint"
-msgstr ""
+msgstr "Ismételd meg Willie hasznos tippjét"
 
 #: engines/neverhood/dialogs.cpp:64
 msgid "Repeat actual useful hint by Willie"
-msgstr ""
+msgstr "Ismételd meg Willie tényleges hasznos tippjét"
 
 #. I18N: NHC is a file extension
 #: engines/neverhood/dialogs.cpp:83
-#, fuzzy
-#| msgid "Enable font replacement"
 msgid "NHC replacement:"
-msgstr "Betűcsere engedélyezése"
+msgstr "NHC csere:"
 
 #: engines/neverhood/dialogs.cpp:89
-#, fuzzy
-#| msgid "Original Save"
 msgid "<original>"
-msgstr "Eredeti mentés"
+msgstr "<eredeti>"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
