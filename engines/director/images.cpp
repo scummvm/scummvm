@@ -173,10 +173,26 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	int x = 0, y = 0;
 
 	Common::Array<uint> pixels;
+	// Unpacking bodges for D3 and below
+	bool skipCompression = false;
+	uint32 bytesNeed = _pitch * _surface->h;
+	if (_bitsPerPixel != 1) {
+		bytesNeed = _surface->w * _surface->h * _bitsPerPixel / 8;
+		if (_version < kFileVer300) {
+			skipCompression = stream.size() >= bytesNeed;
+		} else if (_version < kFileVer400) {
+			// for D3, looks like it will round up the _surface->w to align 2
+			// not sure whether D2 will have the same logic.
+			// check lzone-mac data/r-c/tank.a-1 and lzone-mac data/r-a/station-b.01.
+			if (_surface->w & 1)
+				bytesNeed += _surface->h * _bitsPerPixel / 8;
+			skipCompression = stream.size() == bytesNeed;
+		}
+	}
+
 	// If the stream has exactly the required number of bits for this image,
 	// we assume it is uncompressed.
-
-	if (stream.size() == (uint32)(_pitch * _surface->h)) {
+	if (stream.size() == bytesNeed || skipCompression) {
 		debugC(6, kDebugImages, "Skipping compression");
 		for (int i = 0; i < stream.size(); i++) {
 			pixels.push_back((int)stream.readByte());
@@ -209,13 +225,13 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	if (pixels.size() < (uint32)(_pitch * _surface->h)) {
-		int tail = (_pitch * _surface->h) - pixels.size();
+	if (pixels.size() < bytesNeed) {
+		uint32 tail = bytesNeed - pixels.size();
 
 		warning("BITDDecoder::loadStream(): premature end of stream (srcSize: %d, targetSize: %d, expected: %d, w: %d, h: %d, pitch: %d, bitsPerPixel: %d)",
 				(int)stream.size(), pixels.size(), pixels.size() + tail, _surface->w, _surface->h, _pitch, _bitsPerPixel);
 
-		for (int i = 0; i < tail; i++)
+		for (uint32 i = 0; i < tail; i++)
 			pixels.push_back(0);
 	}
 
