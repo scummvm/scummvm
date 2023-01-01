@@ -2439,9 +2439,11 @@ void EfhEngine::sub1D8C2(int16 charId, int16 damage) {
 			continue;
 
 		int16 remainingDamage = curDamage - _npcBuf[charId]._inventory[objectId]._stat2;
-		_npcBuf[charId]._inventory[objectId]._stat2 -= curDamage;
+		// not in the original: this int16 is used to test if the result is negative. Otherwise _stat2 (uint8) turns it into a "large" positive value.
+		int16 newDurability = _npcBuf[charId]._inventory[objectId]._stat2 - curDamage;
+		_npcBuf[charId]._inventory[objectId]._stat2 = newDurability;
 
-		if (_npcBuf[charId]._inventory[objectId]._stat2 <= 0) {
+		if (newDurability <= 0) {
 			Common::String buffer2 = _items[_npcBuf[charId]._inventory[objectId]._ref]._name;
 			removeObject(charId, objectId);
 
