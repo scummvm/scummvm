@@ -1254,62 +1254,6 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 	return hit && hit->size();
 }
 
-
-const Item *CurrentMap::traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId ignore, uint32 shflags) const {
-	const Item *top = nullptr;
-
-	if (ztop < zbot) {
-		int32 temp = ztop;
-		ztop = zbot;
-		zbot = temp;
-	}
-
-	int minx = (x / _mapChunkSize);
-	int maxx = (x / _mapChunkSize) + 1;
-	int miny = (y / _mapChunkSize);
-	int maxy = (y / _mapChunkSize) + 1;
-	clipMapChunks(minx, maxx, miny, maxy);
-
-	for (int cx = minx; cx <= maxx; cx++) {
-		for (int cy = miny; cy <= maxy; cy++) {
-			item_list::const_iterator iter;
-			for (iter = _items[cx][cy].begin();
-			        iter != _items[cx][cy].end(); ++iter) {
-				const Item *item = *iter;
-				if (item->getObjId() == ignore)
-					continue;
-				if (item->hasExtFlags(Item::EXT_SPRITE))
-					continue;
-
-				const ShapeInfo *si = item->getShapeInfo();
-				if (!(si->_flags & shflags) || si->is_editor() || si->is_translucent()) continue;
-
-				int32 ix, iy, iz, ixd, iyd, izd;
-				item->getLocation(ix, iy, iz);
-				item->getFootpadWorld(ixd, iyd, izd);
-
-				if ((ix - ixd) >= x || ix <= x)
-					continue;
-				if ((iy - iyd) >= y || iy <= y)
-					continue;
-				if (iz >= ztop || (iz + izd) <= zbot)
-					continue;
-
-				if (top) {
-					int32 tix, tiy, tiz, tixd, tiyd, tizd;
-					top->getLocation(tix, tiy, tiz);
-					top->getFootpadWorld(tixd, tiyd, tizd);
-
-					if ((tiz + tizd) < (iz + izd)) top = nullptr;
-				}
-
-				if (!top) top = item;
-			}
-		}
-	}
-	return top;
-}
-
 void CurrentMap::setWholeMapFast() {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; ++i) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS; ++j) {
