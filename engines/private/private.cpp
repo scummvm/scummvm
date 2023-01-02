@@ -147,7 +147,10 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 
 	delete test;
 
-	file = Common::MacResManager::openFileOrDataFork(isDemo() ? "Private Eye Demo Installer" : "Private Eye Installer");
+	if (_language == Common::JA_JPN)
+		file = Common::MacResManager::openFileOrDataFork("xn--16jc8na7ay6a0eyg9e5nud0e4525d");
+	else
+		file = Common::MacResManager::openFileOrDataFork(isDemo() ? "Private Eye Demo Installer" : "Private Eye Installer");
 	if (file) {
 		Common::Archive *s = createStuffItArchive(file);
 		Common::SeekableReadStream *file2 = nullptr;

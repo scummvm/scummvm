@@ -198,6 +198,15 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
+		"private-eye", // MacOS release (JP) uninstalled
+		0,
+		AD_ENTRY1s("xn--16jc8na7ay6a0eyg9e5nud0e4525d", "d:113b57e2f6bdaf1146fe83fe0f992891", 1477309),
+		Common::JA_JPN,
+		Common::kPlatformMacintosh,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
 		"private-eye", // MacOS demo (US)
 		nullptr,
 		AD_ENTRY2s("demogame.mac", "d:cfbceaa8b91f0f53c745db61d1bc9749", 6103,
