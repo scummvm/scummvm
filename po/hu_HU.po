@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-02 15:13+0000\n"
-"PO-Revision-Date: 2023-01-01 11:34+0000\n"
+"PO-Revision-Date: 2023-01-02 20:30+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -1632,11 +1632,11 @@ msgstr "Automentés:"
 
 #: gui/options.cpp:2534
 msgid "Random seed:"
-msgstr ""
+msgstr "Véletlen mag:"
 
 #: gui/options.cpp:2534
 msgid "Seed for initializing all random number generators"
-msgstr ""
+msgstr "Mag az összes véletlenszám-generátor inicializálásához"
 
 #: gui/options.cpp:2544
 msgid "Enable Discord integration"
