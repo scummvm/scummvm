@@ -27,7 +27,7 @@
 #include "sword25/sword25.h"
 
 static const PlainGameDescriptor sword25Game[] = {
-	{"sword25", "Broken Sword 2.5"},
+	{"sword25", "Broken Sword 2.5: The Return of the Templars"},
 	{0, 0}
 };
 
