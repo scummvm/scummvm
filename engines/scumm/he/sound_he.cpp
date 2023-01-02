@@ -44,13 +44,14 @@
 
 namespace Scumm {
 
-SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer)
+SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer, Common::Mutex *mutex)
 	:
 	Sound(parent, mixer, false),
 	_vm((ScummEngine_v60he *)parent),
 	_overrideFreq(0),
 	_heMusic(nullptr),
-	_heMusicTracks(0) {
+	_heMusicTracks(0),
+	_mutex(mutex) {
 
 	memset(_heChannel, 0, sizeof(_heChannel));
 	_heSoundChannels = new Audio::SoundHandle[8]();
@@ -160,9 +161,9 @@ void SoundHE::stopSound(int sound) {
 		if (_heChannel[i].sound == sound) {
 			_heChannel[i].sound = 0;
 			_heChannel[i].priority = 0;
-			_heChannel[i].rate = 0;
+			_heChannel[i].frequency = 0;
 			_heChannel[i].timer = 0;
-			_heChannel[i].sbngBlock = 0;
+			_heChannel[i].hasSoundTokens = false;
 			_heChannel[i].codeOffs = 0;
 			memset(_heChannel[i].soundVars, 0, sizeof(_heChannel[i].soundVars));
 		}
@@ -181,6 +182,27 @@ void SoundHE::stopAllSounds() {
 	Sound::stopAllSounds();
 }
 
+int SoundHE::findSoundChannel(int sound) {
+	if (sound >= HSND_CHANNEL_0) {
+		int channel = sound - HSND_CHANNEL_0;
+
+		if (channel < 0 || channel > HSND_MAX_CHANNELS - 1) {
+			error("SoundHE::findSoundChannel(): ERROR: Channel %d out of range (%d-%d)",
+				channel, 0, HSND_MAX_CHANNELS - 1);
+		}
+
+		return channel;
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_heChannel); ++i) {
+		if (sound == _heChannel[i].sound) {
+			return i;
+		}
+	}
+
+	return -1;
+}
+
 void SoundHE::setupSound() {
 	Sound::setupSound();
 
@@ -190,7 +212,7 @@ void SoundHE::setupSound() {
 }
 
 void SoundHE::stopSoundChannel(int chan) {
-	if (_heChannel[chan].sound == 1) {
+	if (_heChannel[chan].sound == HSND_TALKIE_SLOT || chan == _vm->VAR(_vm->VAR_TALK_CHANNEL)) {
 		_vm->_haveMsg = 3;
 		_vm->_talkDelay = 0;
 	}
@@ -199,9 +221,9 @@ void SoundHE::stopSoundChannel(int chan) {
 
 	_heChannel[chan].sound = 0;
 	_heChannel[chan].priority = 0;
-	_heChannel[chan].rate = 0;
+	_heChannel[chan].frequency = 0;
 	_heChannel[chan].timer = 0;
-	_heChannel[chan].sbngBlock = 0;
+	_heChannel[chan].hasSoundTokens = false;
 	_heChannel[chan].codeOffs = 0;
 	memset(_heChannel[chan].soundVars, 0, sizeof(_heChannel[chan].soundVars));
 
@@ -218,9 +240,9 @@ void SoundHE::stopSoundChannel(int chan) {
 int SoundHE::findFreeSoundChannel() {
 	int chan, min;
 
-	min = _vm->VAR(_vm->VAR_RESERVED_SOUND_CHANNELS);
+	min = _vm->VAR(_vm->VAR_START_DYN_SOUND_CHANNELS);
 	if (min == 0) {
-		_vm->VAR(_vm->VAR_RESERVED_SOUND_CHANNELS) = 8;
+		_vm->VAR(_vm->VAR_START_DYN_SOUND_CHANNELS) = 8;
 		return 1;
 	}
 
@@ -236,7 +258,7 @@ int SoundHE::findFreeSoundChannel() {
 	return min;
 }
 
-int SoundHE::isSoundCodeUsed(int sound) {
+bool SoundHE::isSoundCodeUsed(int sound) {
 	int chan = -1;
 	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
 		if (_heChannel[i].sound == sound)
@@ -244,9 +266,9 @@ int SoundHE::isSoundCodeUsed(int sound) {
 	}
 
 	if (chan != -1 && _mixer->isSoundHandleActive(_heSoundChannels[chan])) {
-		return _heChannel[chan].sbngBlock;
+		return _heChannel[chan].hasSoundTokens;
 	} else {
-		return 0;
+		return false;
 	}
 }
 
@@ -258,7 +280,7 @@ int SoundHE::getSoundPos(int sound) {
 	}
 
 	if (chan != -1 && _mixer->isSoundHandleActive(_heSoundChannels[chan])) {
-		int time =  _vm->getHETimer(chan + 4) * _heChannel[chan].rate / 1000;
+		int time = _vm->getHETimer(chan + 4) * _heChannel[chan].frequency / 1000;
 		return time;
 	} else {
 		return 0;
@@ -351,9 +373,143 @@ bool SoundHE::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
 	return 0;
 }
 
-void SoundHE::processSoundCode() {
-	byte *codePtr;
-	int chan, tmr, size, time;
+void SoundHE::handleSoundFrame() {
+	_soundsDebugFrameCounter++;
+
+	if (_stopActorTalkingFlag) {
+		_vm->stopTalk();
+		_stopActorTalkingFlag = false;
+	}
+
+	unqueueSoundCallbackScripts();
+
+	runSoundCode();
+	checkSoundTimeouts();
+}
+
+void SoundHE::unqueueSoundCallbackScripts() {
+	Common::StackLock lock(*_mutex);
+
+	for (int i = 0; i < _soundCallbacksQueueSize; i++) {
+
+		if (_soundCallbackScripts[i].sound) {
+			int args[NUM_SCRIPT_LOCAL];
+
+			memset(args, 0, sizeof(args));
+			args[0] = _soundCallbackScripts[i].sound;
+			args[1] = _soundCallbackScripts[i].channel;
+			args[2] = 0;
+			args[3] = 0;
+
+			_vm->runScript(_vm->VAR(_vm->VAR_SOUND_CALLBACK_SCRIPT), 0, 0, args);
+		}
+
+		_soundCallbackScripts[i].sound = 0;
+		_soundCallbackScripts[i].channel = 0;
+		_soundCallbackScripts[i].whatFrame = 0;
+	}
+
+	_soundCallbacksQueueSize = 0;
+}
+
+void SoundHE::checkSoundTimeouts() {
+	byte *soundPtr;
+	int chan, soundPos, len, freq;
+
+	for (chan = 0; chan < ARRAYSIZE(_heChannel); chan++) {
+		if (_heChannel[chan].sound == 0 || _heChannel[chan].timer == 0)
+			continue;
+
+		if (_vm->getHETimer(chan + HSND_TIMER_SLOT) > _heChannel[chan].timer) {
+			digitalSoundCallback(HSND_SOUND_TIMEOUT, chan);
+		}
+	}
+}
+
+void SoundHE::digitalSoundCallback(int message, int channel) {
+	// The action done for each sound is always the same;
+	// it's useful to keep track of the message for debugging
+	// purposes though...
+	switch (message) {
+	case HSND_SOUND_TIMEOUT:
+		debug(5, "SoundHE::digitalSoundCallback(): TIMEOUT, channel %d", channel);
+		break;
+	case HSND_SOUND_ENDED:
+		debug(5, "SoundHE::digitalSoundCallback(): ENDED, channel %d", channel);
+		break;
+	case HSND_SOUND_STOPPED:
+		debug(5, "SoundHE::digitalSoundCallback(): STOPPED, channel %d", channel);
+		break;
+	default:
+		warning("SoundHE::digitalSoundCallback(): WARNING: invalid message (%d), channel = %d", message, channel);
+		break;
+	}
+
+	_inSoundCallbackFlag = true;
+
+	switch (message) {
+	case HSND_SOUND_TIMEOUT:
+	case HSND_SOUND_ENDED:
+	case HSND_SOUND_STOPPED:
+
+		if (_heChannel[channel].sound == HSND_TALKIE_SLOT) {
+			// In the original this was used to prevent an edge case bug
+			// which caused recursive resource accesses/allocations.
+			// I think there's no harm in doing that ourselves too...
+			if (_vm->_insideCreateResource == 0) {
+				_vm->stopTalk();
+			} else {
+				_stopActorTalkingFlag = true;
+			}
+		}
+
+		_heChannel[channel].clearChannel();
+
+		queueSoundCallbackScript(_heChannel[channel].sound, channel, message);
+		break;
+	}
+
+	_inSoundCallbackFlag = false;
+}
+
+void SoundHE::queueSoundCallbackScript(int sound, int channel, int message) {
+	// Avoid queueing up a sound callback if the mixer is not available.
+	if (!_mixer->isReady())
+		return;
+
+	// Check if we are about to duplicate this event...
+	for (int i = 0; i < _soundCallbacksQueueSize; i++) {
+
+		if ((sound == _soundCallbackScripts[i].sound) &&
+			(channel == _soundCallbackScripts[i].channel)) {
+
+			_soundAlreadyInQueueCount++;
+
+			debug(5, "SoundHE::queueSoundCallbackScript(): callback for channel %d, sound %d, already in list.",
+				channel, sound);
+
+			return;
+		}
+	}
+
+	// Finally queue up sound...
+	_soundCallbackScripts[_soundCallbacksQueueSize].sound = sound;
+	_soundCallbackScripts[_soundCallbacksQueueSize].channel = channel;
+	_soundCallbackScripts[_soundCallbacksQueueSize].whatFrame = _soundsDebugFrameCounter;
+
+	_soundCallbacksQueueSize++;
+
+	if (_soundCallbacksQueueSize >= HSND_MAX_CALLBACK_SCRIPTS) {
+		error("SoundHE::queueSoundCallbackScript(): ERROR: Got too many sound callbacks (got %d, max %d), message %d",
+			_soundCallbacksQueueSize,
+			HSND_MAX_CALLBACK_SCRIPTS,
+			message);
+	}
+}
+
+void SoundHE::runSoundCode() {
+	byte *soundPtr;
+	int chan, soundPos, len, freq;
 
 	for (chan = 0; chan < ARRAYSIZE(_heChannel); chan++) {
 		if (_heChannel[chan].sound == 0) {
@@ -364,58 +520,41 @@ void SoundHE::processSoundCode() {
 			continue;
 		}
 
-		tmr = _vm->getHETimer(chan + 4) * _heChannel[chan].rate / 1000;
-		tmr += _vm->VAR(_vm->VAR_SOUNDCODE_TMR);
-		if (tmr < 0)
-			tmr = 0;
+		soundPos = _vm->getHETimer(chan + HSND_TIMER_SLOT) * _heChannel[chan].frequency / 1000;
+		soundPos += _vm->VAR(_vm->VAR_SOUND_TOKEN_OFFSET);
 
-		if (_heChannel[chan].sound > _vm->_numSounds) {
-			codePtr = _vm->getResourceAddress(rtSpoolBuffer, chan);
+		if (soundPos < 0)
+			soundPos = 0;
+
+		if (_heChannel[chan].codeBuffer == nullptr) {
+			soundPtr = _vm->getResourceAddress(rtSound, _heChannel[chan].sound);
 		} else {
-			codePtr = _vm->getResourceAddress(rtSound, _heChannel[chan].sound);
+			soundPtr = _heChannel[chan].codeBuffer;
 		}
-		assert(codePtr);
-		codePtr += _heChannel[chan].codeOffs;
 
-		while (1) {
-			size = READ_LE_UINT16(codePtr);
-			time = READ_LE_UINT32(codePtr + 2);
+		assert(soundPtr);
 
-			if (size == 0) {
+		soundPtr += _heChannel[chan].codeOffs;
+
+		len = READ_LE_UINT16(soundPtr);
+		freq = READ_LE_UINT32(soundPtr + sizeof(uint16));
+
+		while (soundPos > freq) {
+			debug(5, "Channel %d Timer %d Time %d", chan, soundPos, freq);
+
+			processSoundOpcodes(_heChannel[chan].sound, soundPtr + sizeof(uint16) + sizeof(uint32), _heChannel[chan].soundVars);
+
+			_heChannel[chan].codeOffs += len;
+
+			soundPtr += len;
+
+			len = READ_LE_UINT16(soundPtr);
+			freq = READ_LE_UINT32(soundPtr + sizeof(uint16));
+
+			if (len == 0) {
 				_heChannel[chan].codeOffs = -1;
 				break;
 			}
-
-			debug(5, "Channel %d Timer %d Time %d", chan, tmr, time);
-			if (time >= tmr)
-				break;
-
-			processSoundOpcodes(_heChannel[chan].sound, codePtr + 6, _heChannel[chan].soundVars);
-
-			codePtr += size;
-			_heChannel[chan].codeOffs += size;
-		}
-	}
-
-	for (chan = 0; chan < ARRAYSIZE(_heChannel); chan++) {
-		if (_heChannel[chan].sound == 0)
-			continue;
-
-		if (_heChannel[chan].timer == 0)
-			continue;
-
-		if (_vm->getHETimer(chan + 4) > _heChannel[chan].timer) {
-			if (_heChannel[chan].sound == 1) {
-				_vm->stopTalk();
-			}
-
-			_heChannel[chan].sound = 0;
-			_heChannel[chan].priority = 0;
-			_heChannel[chan].rate = 0;
-			_heChannel[chan].timer = 0;
-			_heChannel[chan].sbngBlock = 0;
-			_heChannel[chan].codeOffs = 0;
-			_heChannel[chan].soundVars[0] = 0;
 		}
 	}
 }
@@ -548,7 +687,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 
 
 	if (heChannel == -1)
-		heChannel = (_vm->VAR_RESERVED_SOUND_CHANNELS != 0xFF) ? findFreeSoundChannel() : 1;
+		heChannel = (_vm->VAR_START_DYN_SOUND_CHANNELS != 0xFF) ? findFreeSoundChannel() : 1;
 
 	debug(5,"playHESound: soundID %d heOffset %d heChannel %d heFlags %d", soundID, heOffset, heChannel, heFlags);
 
@@ -642,8 +781,8 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 		_vm->setHETimer(heChannel + 4);
 		_heChannel[heChannel].sound = soundID;
 		_heChannel[heChannel].priority = priority;
-		_heChannel[heChannel].rate = rate;
-		_heChannel[heChannel].sbngBlock = (codeOffs != -1) ? 1 : 0;
+		_heChannel[heChannel].frequency = rate;
+		_heChannel[heChannel].hasSoundTokens = (codeOffs != -1);
 		_heChannel[heChannel].codeOffs = codeOffs;
 		memset(_heChannel[heChannel].soundVars, 0, sizeof(_heChannel[heChannel].soundVars));
 
@@ -736,8 +875,8 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 		_vm->setHETimer(heChannel + 4);
 		_heChannel[heChannel].sound = soundID;
 		_heChannel[heChannel].priority = priority;
-		_heChannel[heChannel].rate = rate;
-		_heChannel[heChannel].sbngBlock = (codeOffs != -1) ? 1 : 0;
+		_heChannel[heChannel].frequency = rate;
+		_heChannel[heChannel].hasSoundTokens = (codeOffs != -1);
 		_heChannel[heChannel].codeOffs = codeOffs;
 		memset(_heChannel[heChannel].soundVars, 0, sizeof(_heChannel[heChannel].soundVars));
 
@@ -919,8 +1058,8 @@ void SoundHE::startHETalkSound(uint32 offset) {
 }
 
 #ifdef ENABLE_HE
-void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
-	byte *snd1Ptr, *snd2Ptr;
+void ScummEngine_v80he::createSound(int baseSound, int sound) {
+	byte *baseSoundPtr, *soundPtr;
 	byte *sbng1Ptr, *sbng2Ptr;
 	byte *sdat1Ptr, *sdat2Ptr;
 	byte *src, *dst;
@@ -930,35 +1069,30 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 	sbng1Ptr = NULL;
 	sbng2Ptr = NULL;
 
-	if (snd2id == -1) {
+	if (sound == -1) {
 		_sndPtrOffs = 0;
 		_sndTmrOffs = 0;
 		_sndDataSize = 0;
 		return;
 	}
 
-	if (snd1id != _curSndId) {
-		_curSndId = snd1id;
+	if (baseSound != _curSndId) {
+		_curSndId = baseSound;
 		_sndPtrOffs = 0;
 		_sndTmrOffs = 0;
 		_sndDataSize = 0;
 	}
 
-	snd1Ptr = getResourceAddress(rtSound, snd1id);
-	assert(snd1Ptr);
-	snd2Ptr = getResourceAddress(rtSound, snd2id);
-	assert(snd2Ptr);
+	baseSoundPtr = getResourceAddress(rtSound, baseSound);
+	assert(baseSoundPtr);
+	soundPtr = getResourceAddress(rtSound, sound);
+	assert(soundPtr);
 
-	int i;
-	int chan = -1;
-	for (i = 0; i < ARRAYSIZE(((SoundHE *)_sound)->_heChannel); i++) {
-		if (((SoundHE *)_sound)->_heChannel[i].sound == snd1id)
-			chan =  i;
-	}
+	int chan = ((SoundHE *)_sound)->findSoundChannel(baseSound);
 
-	if (!findSoundTag(MKTAG('d','a','t','a'), snd1Ptr)) {
-		sbng1Ptr = heFindResource(MKTAG('S','B','N','G'), snd1Ptr);
-		sbng2Ptr = heFindResource(MKTAG('S','B','N','G'), snd2Ptr);
+	if (!findSoundTag(MKTAG('d','a','t','a'), baseSoundPtr)) {
+		sbng1Ptr = heFindResource(MKTAG('S','B','N','G'), baseSoundPtr);
+		sbng2Ptr = heFindResource(MKTAG('S','B','N','G'), soundPtr);
 	}
 
 	if (sbng1Ptr != NULL && sbng2Ptr != NULL) {
@@ -966,10 +1100,10 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 			// Copy any code left over to the beginning of the code block
 			int curOffs = ((SoundHE *)_sound)->_heChannel[chan].codeOffs;
 
-			src = snd1Ptr + curOffs;
+			src = baseSoundPtr + curOffs;
 			dst = sbng1Ptr + 8;
 			size = READ_BE_UINT32(sbng1Ptr + 4);
-			len = sbng1Ptr - snd1Ptr + size - curOffs;
+			len = sbng1Ptr - baseSoundPtr + size - curOffs;
 
 			memmove(dst, src, len);
 
@@ -983,8 +1117,7 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 		}
 
 		// Reset the current code offset to the beginning of the code block
-		if (chan >= 0)
-			((SoundHE *)_sound)->_heChannel[chan].codeOffs = sbng1Ptr - snd1Ptr + 8;
+		((SoundHE *)_sound)->_heChannel[chan].codeOffs = sbng1Ptr - baseSoundPtr + 8;
 
 		// Seek to the end of the code block for sound 2
 		byte *tmp = sbng2Ptr + 8;
@@ -1008,10 +1141,10 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 	}
 
 	// Find the data pointers and sizes
-	if (findSoundTag(MKTAG('d','a','t','a'), snd1Ptr)) {
-		sdat1Ptr = findSoundTag(MKTAG('d','a','t','a'), snd1Ptr);
+	if (findSoundTag(MKTAG('d','a','t','a'), baseSoundPtr)) {
+		sdat1Ptr = findSoundTag(MKTAG('d','a','t','a'), baseSoundPtr);
 		assert(sdat1Ptr);
-		sdat2Ptr = findSoundTag(MKTAG('d','a','t','a'), snd2Ptr);
+		sdat2Ptr = findSoundTag(MKTAG('d','a','t','a'), soundPtr);
 		assert(sdat2Ptr);
 
 		if (!_sndDataSize)
@@ -1019,9 +1152,9 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 
 		sdat2size = READ_LE_UINT32(sdat2Ptr + 4) - 8;
 	} else {
-		sdat1Ptr = heFindResource(MKTAG('S','D','A','T'), snd1Ptr);
+		sdat1Ptr = heFindResource(MKTAG('S','D','A','T'), baseSoundPtr);
 		assert(sdat1Ptr);
-		sdat2Ptr = heFindResource(MKTAG('S','D','A','T'), snd2Ptr);
+		sdat2Ptr = heFindResource(MKTAG('S','D','A','T'), soundPtr);
 		assert(sdat2Ptr);
 
 		_sndDataSize = READ_BE_UINT32(sdat1Ptr + 4) - 8;
@@ -1063,6 +1196,8 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 		_sndPtrOffs = sdat2size - sdat1size;
 		_sndTmrOffs += sdat2size;
 	}
+
+	// TODO: PX_SoftRemixAllChannels()
 }
 #endif
 

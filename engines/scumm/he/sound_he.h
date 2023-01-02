@@ -23,10 +23,30 @@
 #define SCUMM_HE_SOUND_HE_H
 
 #include "common/scummsys.h"
+#include "common/mutex.h"
 #include "scumm/sound.h"
 #include "audio/audiostream.h"
 
 namespace Scumm {
+
+#define HSND_SOUND_STOPPED        1
+#define HSND_SOUND_ENDED          2
+#define HSND_SOUND_TIMEOUT        3
+#define HSND_TALKIE_SLOT          4
+#define HSND_TIMER_SLOT           4
+#define HSND_MAX_CALLBACK_SCRIPTS 20
+#define HSND_MAX_CHANNELS         8
+#define HSND_CHANNEL_0            10000
+#define HSND_CHANNEL_1            10001
+#define HSND_CHANNEL_2            10002
+#define HSND_CHANNEL_3            10003
+#define HSND_CHANNEL_4            10004
+#define HSND_CHANNEL_5            10005
+#define HSND_CHANNEL_6            10006
+#define HSND_CHANNEL_7            10007
+#define HSND_MAX_SOUND_VARS       26
+#define HSND_DEFAULT_FREQUENCY    11025
+#define HSND_BASE_FREQ_FACTOR     1024
 
 class ScummEngine_v60he;
 
@@ -35,11 +55,21 @@ protected:
 	ScummEngine_v60he *_vm;
 
 	int _overrideFreq;
+	Common::Mutex *_mutex;
+
+	struct HESoundCallbackItem {
+		int32 sound;
+		int32 channel;
+		int32 whatFrame;
+	};
+	HESoundCallbackItem _soundCallbackScripts[HSND_MAX_CALLBACK_SCRIPTS];
 
 	struct HEMusic {
 		int32 id;
 		int32 offset;
 		int32 size;
+
+		char filename[128];
 	};
 	HEMusic *_heMusic;
 	int16 _heMusicTracks;
@@ -50,15 +80,30 @@ public: // Used by createSound()
 	struct {
 		int sound;
 		int codeOffs;
+		byte *codeBuffer;
 		int priority;
-		int rate;
+		int frequency;
 		int timer;
-		int sbngBlock;
-		int soundVars[27];
-	} _heChannel[8];
+		bool hasSoundTokens;
+		int soundVars[HSND_MAX_SOUND_VARS];
+		int age;
+
+		void clearChannel() {
+			sound = 0;
+			codeOffs = 0;
+			codeBuffer = nullptr;
+			priority = 0;
+			frequency = 0;
+			timer = 0;
+			hasSoundTokens = false;
+			memset(soundVars, 0, sizeof(soundVars));
+			age = 0;
+		}
+
+	} _heChannel[HSND_MAX_CHANNELS];
 
 public:
-	SoundHE(ScummEngine *parent, Audio::Mixer *mixer);
+	SoundHE(ScummEngine *parent, Audio::Mixer *mixer, Common::Mutex *mutex);
 	~SoundHE() override;
 
 	void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0) override;
@@ -67,16 +112,22 @@ public:
 	int isSoundRunning(int sound) const override;
 	void stopSound(int sound) override;
 	void stopAllSounds() override;
+	int findSoundChannel(int sound);
 	void setupSound() override;
 
 	bool getHEMusicDetails(int id, int &musicOffs, int &musicSize);
 	int findFreeSoundChannel();
-	int isSoundCodeUsed(int sound);
+	bool isSoundCodeUsed(int sound);
 	int getSoundPos(int sound);
 	int getSoundVar(int sound, int var);
 	void setSoundVar(int sound, int var, int val);
 	void playHESound(int soundID, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol);
-	void processSoundCode();
+	void handleSoundFrame();
+	void unqueueSoundCallbackScripts();
+	void checkSoundTimeouts();
+	void digitalSoundCallback(int message, int channel);
+	void queueSoundCallbackScript(int sound, int channel, int message);
+	void runSoundCode();
 	void processSoundOpcodes(int sound, byte *codePtr, int *soundVars);
 	void setOverrideFreq(int freq);
 	void setupHEMusicFile();
@@ -88,6 +139,11 @@ protected:
 
 private:
 	int _heTalkOffset;
+	bool _stopActorTalkingFlag = false;
+	bool _inSoundCallbackFlag = false;
+	int _soundCallbacksQueueSize = 0;
+	int _soundAlreadyInQueueCount = 0;
+	int _soundsDebugFrameCounter = 0;
 
 	Audio::RewindableAudioStream *tryLoadAudioOverride(int soundID, int *duration = nullptr);
 };

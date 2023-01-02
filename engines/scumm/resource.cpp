@@ -839,8 +839,12 @@ byte ResourceManager::Resource::getResourceCounter() const {
 byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 	debugC(DEBUG_RESOURCE, "_res->createResource(%s,%d,%d)", nameOfResType(type), idx, size);
 
-	if (!validateResource("allocating", type, idx))
+	_vm->_insideCreateResource++; // For the HE sound engine
+
+	if (!validateResource("allocating", type, idx)) {
+		_vm->_insideCreateResource--;
 		return nullptr;
+	}
 
 	if (_vm->_game.version <= 2) {
 		// Nuking and reloading a resource can be harmful in some
@@ -866,6 +870,8 @@ byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 	_types[type][idx]._size = size;
 	setResourceCounter(type, idx, 1);
 	return ptr;
+
+	_vm->_insideCreateResource--;
 }
 
 ResourceManager::Resource::Resource() {

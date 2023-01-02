@@ -69,7 +69,7 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 	}
 
 	if (cycle == 0)
-		cycle = (_game.heversion >= 90) ? VAR(VAR_SCRIPT_CYCLE) : 1;
+		cycle = (_game.heversion >= 90) ? VAR(VAR_DEFAULT_SCRIPT_PRIORITY) : 1;
 
 	slot = getScriptSlot();
 
@@ -118,7 +118,7 @@ void ScummEngine::runObjectScript(int object, int entry, bool freezeResistant, b
 		return;
 
 	if (cycle == 0)
-		cycle = (_game.heversion >= 90) ? VAR(VAR_SCRIPT_CYCLE) : 1;
+		cycle = (_game.heversion >= 90) ? VAR(VAR_DEFAULT_SCRIPT_PRIORITY) : 1;
 
 	s = &vm.slot[slot];
 	s->number = object;
@@ -989,7 +989,7 @@ void ScummEngine::runAllScripts() {
 		vm.slot[i].didexec = false;
 
 	_currentScript = 0xFF;
-	int numCycles = (_game.heversion >= 90) ? VAR(VAR_NUM_SCRIPT_CYCLES) : 1;
+	int numCycles = (_game.heversion >= 90) ? VAR(VAR_LAST_SCRIPT_PRIORITY) : 1;
 
 	for (int cycle = 1; cycle <= numCycles; cycle++) {
 		for (i = 0; i < NUM_SCRIPT_SLOT; i++) {

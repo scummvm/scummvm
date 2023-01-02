@@ -747,17 +747,16 @@ void ScummEngine_v100he::o100_createSound() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 0:
+	case SO_INIT:
 		_heSndResId = pop();
 		break;
-	case 53:
+	case SO_NEW:
 		createSound(_heSndResId, -1);
 		break;
-	case 92:
-		// dummy case
-		break;
-	case 128:
+	case SO_SOUND_ADD:
 		createSound(_heSndResId, pop());
+		break;
+	case SO_END:
 		break;
 	default:
 		error("o100_createSound: default case %d", subOp);
@@ -1738,7 +1737,7 @@ void ScummEngine_v100he::o100_setSystemMessage() {
 void ScummEngine_v100he::o100_soundOps() {
 	byte filename[260];
 	int var, value;
-
+	//da qui
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
@@ -2469,6 +2468,7 @@ void ScummEngine_v100he::o100_getResourceSize() {
 		break;
 	case SO_SOUND:
 		push(getSoundResourceSize(resid));
+		// TODO: Implement the case in which resid < _numSounds
 		return;
 	default:
 		error("o100_getResourceSize: default type %d", subOp);

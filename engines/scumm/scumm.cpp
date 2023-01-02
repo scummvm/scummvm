@@ -1389,7 +1389,7 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 
 	// Create the sound manager
 	if (_game.heversion > 0)
-		_sound = new SoundHE(this, _mixer);
+		_sound = new SoundHE(this, _mixer, &_resourceAccessMutex);
 	else
 		_sound = new Sound(this, _mixer, useReplacementAudioTracks);
 
@@ -2651,7 +2651,7 @@ load_game:
 	}
 
 	if (_game.heversion >= 80) {
-		((SoundHE *)_sound)->processSoundCode();
+		((SoundHE *)_sound)->handleSoundFrame();
 	}
 
 	if (_game.version < 8) {
