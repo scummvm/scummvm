@@ -359,7 +359,7 @@ uint32 EventRecorder::getRandomSeed(const Common::String &name) {
 	if (_recordMode == kRecorderPlayback) {
 		return _playbackFile->getHeader().randomSourceRecords[name];
 	}
-	uint32 result = g_system->getMillis();
+	uint32 result = Common::RandomSource::generateNewSeed();
 	if (_recordMode == kRecorderRecord) {
 		_recordFile->getHeader().randomSourceRecords[name] = result;
 	}

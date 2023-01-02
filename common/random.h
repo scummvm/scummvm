@@ -54,6 +54,11 @@ public:
 	 */
 	RandomSource(const String &name);
 
+	/**
+	 * Generates new seed based on the current date/time
+	 */
+	static uint32 generateNewSeed();
+
 	void setSeed(uint32 seed); /*!< Set the seed used to initialize the RNG. */
 
 	uint32 getSeed() const { /*!< Get a random seed that can be used to initialize the RNG. */
@@ -89,7 +94,7 @@ public:
 	 * @return	a random number in the interval [min, max]
 	 */
 	int getRandomNumberRngSigned(int min, int max);
-	
+
 	/**
 	* Scrambles the seed in order to get a new result.
 	* Code is shared between getRandomNumber and getRandomBit,
