@@ -479,6 +479,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "aliencarniage", "Alien Carniage" },
 	{ "aliencowrampage", "Alien Cow Rampage: Orion Needs Your Milk!" },
 	{ "alienescapade", "Alien Escapade" },
+	{ "alienprison", "Alien Prison Escape" },
 	{ "alienpuzzleinvasion", "Alien Puzzle Invasion" },
 	{ "alienrapeescape", "Alien Rape Escape" },
 	{ "alienspaceman", "The Alien / The Spaceman" },
@@ -2413,6 +2414,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "santaclausdown", "Santa Claus Down" },
 	{ "santaflight", "Santa Claus in A Flight To Remember" },
 	{ "santaorphanage", "Santa and the orphanage" },
+	{ "santaquest", "Santa Quest" },
 	{ "santassidekick", "Santa's Sidekick" },
 	{ "santasstolensleigh", "Santa's Stolen Sleigh" },
 	{ "sarmanyanha", "The Manuscripts of Sarmanyanha" },
@@ -4476,6 +4478,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("aliencarniage", "AlienCarni.exe", "06a03fe35791b0578068ab1873455463", 22301801),
 	GAME_ENTRY_EN("aliencowrampage", "alien.exe", "57dc38c78f323a5a45e486ee7fff767f", 15639495),
 	GAME_ENTRY_EN("alienescapade", "Alien Escapade.exe", "4fb72c890984548ed6782063f2230942", 30092272),
+	GAME_ENTRY_EN("alienprison", "Alien prison escape.exe", "2f2bc0b9c539d20529c0e343315d5f65", 8510852),  // itch.io 1.1
 	GAME_ENTRY("alienpuzzleinvasion", "alien.exe", "a524cbb1c51589903c4043b98917f1d9", 10552264),  // En-Fr
 	GAME_ENTRY_EN("alienrapeescape", "a.r.e.exe", "39d7a558298a9f1d40c1f415daf9bb74", 4802707),
 	GAME_ENTRY_EN("alienspaceman", "AGS1.exe", "8aff96231ca059cd61fe5ce68b83f50f", 18075265),
@@ -6687,6 +6690,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("santaclausdown", "scdown.exe", "f120690b506dd63cd7d1112ea6af2f77", 14385095),
 	GAME_ENTRY_EN("santaflight", "A Flight To Remember.exe", "2569c8f271dc356e32483d40ee16b3e9", 112461458),
 	GAME_ENTRY_EN("santaorphanage", "Santa and the orphanage.exe", "099a8b752cba39bb76552e94197edbf4", 163644553),
+	GAME_ENTRY_EN("santaquest", "Santaquest.exe", "0564de07d3fd5c16e6947a647061913c", 5318615),
 	GAME_ENTRY_EN("santassidekick", "Xmas.exe", "0710e2ec71042617f565c01824f0cf3c", 1921077),
 	GAME_ENTRY_EN("santasstolensleigh", "SantaStolenSleigh.exe", "414c1d7cefe1a637bc1fc155e69b642c", 15296926),
 	GAME_ENTRY_EN("sarmanyanha", "Manuscript.exe", "e88bd0c3e4578a170a4fd64bba97b301", 531055749),
@@ -6842,8 +6846,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("sockstoday", "Should Have Worn Socks Today.ags", "60926de91f63495a0da6a028604aae90", 19457016),  // Linux
 	GAME_ENTRY_EN("solitude", "solitude.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 2397809),
 	GAME_ENTRY_EN("somethingnovel", "SN.exe", "d1bf56bc9ea61d84fdf10f135a4967ca", 10151965),
-	GAME_ENTRY_EN("somethingpipes", "Pipes.exe", "4d5d25446373d4df71c6bda77a15230a", 119506949),  // 0.9.0
+	GAME_ENTRY_EN_PLATFORM("somethingpipes", "Pipes.exe", "4d5d25446373d4df71c6bda77a15230a", 119506949, "MAGS"),  // 0.9.0
 	GAME_ENTRY_EN("somethingpipes", "Pipes.exe", "4d5d25446373d4df71c6bda77a15230a", 144554792),  // 0.9.1
+	GAME_ENTRY_EN("somethingpipes", "Pipes.exe", "4d5d25446373d4df71c6bda77a15230a", 71094818),  // 1.0.1
 	GAME_ENTRY_EN("somewhere", "somewhere.ags", "03808527826e547ed7c86412f4df38f7", 16470512),
 	GAME_ENTRY_EN("somnamulizer", "Hypnos.exe", "618d7dce9631229b4579340b964c6810", 50943313),
 	GAME_ENTRY_EN("songanimals", "SongAnimals.exe", "f982756f0e2c2fbeca15d199b9851559", 120864978),   //v1.0.1
@@ -7495,6 +7500,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("winterrose", "Winter Rose.exe", "0500aacb6c176d47ac0f8158f055db83", 37444693),  //v1.3
 	GAME_ENTRY_EN("wisp", "Wisp.exe", "9cb3c8dc7a8ab9c44815955696be2677", 2090032),
 	GAME_ENTRY_EN("witchlullaby", "The Witch's Lullaby.exe", "ca511538e3e3244813db0f905a31810a", 70312050),  // v1.1
+	GAME_ENTRY_EN("witchlullaby", "The Witch's Lullaby.ags", "3e89d1cade6b23ae330390a2924882f0", 59534130),  // v1.2
 	GAME_ENTRY_EN("witchnight", "wnight.exe", "9cf51833e787cc919837d9a8bd8fc14c", 2792150),
 	GAME_ENTRY_EN("witchron", "Witch!.exe", "b52d56422af9cb50fd5cf369af69388f", 1838433),
 	GAME_ENTRY_EN("witchwizardcup", "Witch.exe", "f120690b506dd63cd7d1112ea6af2f77", 2693486),
