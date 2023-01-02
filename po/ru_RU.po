@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-02 15:13+0000\n"
-"PO-Revision-Date: 2022-12-31 20:35+0000\n"
+"PO-Revision-Date: 2023-01-02 21:53+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -1643,11 +1643,11 @@ msgstr "Автосохр.:"
 
 #: gui/options.cpp:2534
 msgid "Random seed:"
-msgstr ""
+msgstr "Начальное значение ГСЧ:"
 
 #: gui/options.cpp:2534
 msgid "Seed for initializing all random number generators"
-msgstr ""
+msgstr "Значение для инициализации всех генераторов случайных чисел"
 
 #: gui/options.cpp:2544
 msgid "Enable Discord integration"
