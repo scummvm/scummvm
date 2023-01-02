@@ -1430,7 +1430,20 @@ void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 		filesAreCompressed |= _sound->isSfxFileCompressed();
 	}
 
-	_musicEngine = _imuseDigital = new IMuseDigital(this, _mixer, &_resourceAccessMutex);
+	int sampleRate = DIMUSE_BASE_SAMPLERATE;
+
+	ConfMan.registerDefault("dimuse_sample_rate", DIMUSE_BASE_SAMPLERATE);
+	if (ConfMan.hasKey("dimuse_sample_rate", _targetName)) {
+		// Only accept sample rates which are a multiple or submultiple of 22050, with
+		// lower and upper bounds set to what the internal mixer is currently able to achieve...
+		if ((ConfMan.getInt("dimuse_sample_rate") % (DIMUSE_BASE_SAMPLERATE / 2)) == 0 &&
+			(ConfMan.getInt("dimuse_sample_rate") >= DIMUSE_BASE_SAMPLERATE / 2) &&
+			(ConfMan.getInt("dimuse_sample_rate") <= DIMUSE_BASE_SAMPLERATE * 4)) {
+			sampleRate = ConfMan.getInt("dimuse_sample_rate");
+		}
+	}
+
+	_musicEngine = _imuseDigital = new IMuseDigital(this, sampleRate, _mixer, &_resourceAccessMutex);
 
 	if (filesAreCompressed) {
 		GUI::MessageDialog dialog(_(

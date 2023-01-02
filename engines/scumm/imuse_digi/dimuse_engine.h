@@ -307,7 +307,7 @@ private:
 	byte waveOutGetStreamFlags();
 
 public:
-	IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, Common::Mutex *mutex);
+	IMuseDigital(ScummEngine_v7 *scumm, int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex);
 	~IMuseDigital() override;
 
 	// Wrapper functions used by the main engine

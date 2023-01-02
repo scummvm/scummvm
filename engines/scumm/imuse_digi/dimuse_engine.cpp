@@ -41,7 +41,7 @@ void IMuseDigital::timer_handler(void *refCon) {
 	diMUSE->callback();
 }
 
-IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, Common::Mutex *mutex)
+IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex)
 	: _vm(scumm), _mixer(mixer), _mutex(mutex) {
 	assert(_vm);
 	assert(mixer);
@@ -50,7 +50,7 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, Common::M
 	_callbackFps = DIMUSE_TIMER_BASE_RATE_HZ;
 	_usecPerInt = DIMUSE_TIMER_BASE_RATE_USEC;
 
-	_internalSampleRate = DIMUSE_BASE_SAMPLERATE;
+	_internalSampleRate = sampleRate;
 	_internalFeedSize = (int)(DIMUSE_BASE_FEEDSIZE * ((float)_internalSampleRate / DIMUSE_BASE_SAMPLERATE));
 
 	_splayer = nullptr;
