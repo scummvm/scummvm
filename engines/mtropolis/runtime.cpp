@@ -4138,6 +4138,10 @@ Runtime::ConsumeMessageTaskData::ConsumeMessageTaskData() : consumer(nullptr) {
 Runtime::ConsumeCommandTaskData::ConsumeCommandTaskData() : structural(nullptr) {
 }
 
+Runtime::ApplyDefaultVisibilityTaskData::ApplyDefaultVisibilityTaskData() : element(nullptr), targetVisibility(false) {
+}
+
+
 Runtime::UpdateMouseStateTaskData::UpdateMouseStateTaskData() : mouseDown(false) {
 }
 
@@ -4444,7 +4448,7 @@ bool Runtime::runFrame() {
 		}
 
 		// This has to be in this specific spot: Queued messages that occur from scene transitions are normally discharged
-		// after the "Scene Started" event, but before scene transition.
+		// after Scene Started, Scene Changed, and element Show events, but before scene transition.
 		//
 		// Obsidian depends on this behavior in several scripts, most notably setting up conditional ambience correctly.
 		// For example, in Inspiration chapter, on exiting the plane into the statue:
@@ -4780,9 +4784,31 @@ void Runtime::executeLowLevelSceneStateTransition(const LowLevelSceneStateTransi
 			forceCursorRefreshOnce();
 		}
 		break;
+	case LowLevelSceneStateTransitionAction::kShowDefaultVisibleElements:
+		executeSceneChangeRecursiveVisibilityChange(action.getScene().get(), true);
+		break;
+	case LowLevelSceneStateTransitionAction::kHideAllElements:
+		executeSceneChangeRecursiveVisibilityChange(action.getScene().get(), false);
+		break;
 	default:
 		assert(false);
 		break;
+	}
+}
+
+void Runtime::executeSceneChangeRecursiveVisibilityChange(Structural *structural, bool showing) {
+	const Common::Array<Common::SharedPtr<Structural> > &children = structural->getChildren();
+
+	// Queue in reverse order since VThread sends are LIFO
+	for (size_t i = 0; i < children.size(); i++)
+		executeSceneChangeRecursiveVisibilityChange(children[children.size() - 1 - i].get(), showing);
+
+	if (structural->isElement() && static_cast<Element *>(structural)->isVisual()) {
+		VisualElement *visual = static_cast<VisualElement *>(structural);
+
+		ApplyDefaultVisibilityTaskData *taskData = getVThread().pushTask("Runtime::applyDefaultVisibility", this, &Runtime::applyDefaultVisibility);
+		taskData->element = visual;
+		taskData->targetVisibility = showing;
 	}
 }
 
@@ -4813,6 +4839,7 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 		Common::SharedPtr<Structural> stackedScene = _sceneStack[i].scene;
 
 		queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneEnded, 0), _activeMainScene.get(), true, true);
+		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kHideAllElements));
 		queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentDisabled, 0), _activeMainScene.get(), true, true);
 		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kUnload));
 
@@ -4825,6 +4852,7 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 	if (targetSharedScene != _activeSharedScene) {
 		if (_activeSharedScene) {
 			queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneEnded, 0), _activeSharedScene.get(), true, true);
+			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kHideAllElements));
 			queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentDisabled, 0), _activeSharedScene.get(), true, true);
 			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeSharedScene, LowLevelSceneStateTransitionAction::kUnload));
 		}
@@ -4832,6 +4860,8 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetSharedScene, LowLevelSceneStateTransitionAction::kLoad));
 		queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentEnabled, 0), targetSharedScene.get(), true, true);
 		queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneStarted, 0), targetSharedScene.get(), true, true);
+
+		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetSharedScene, LowLevelSceneStateTransitionAction::kShowDefaultVisibleElements));
 
 		SceneStackEntry sharedSceneEntry;
 		sharedSceneEntry.scene = targetSharedScene;
@@ -4942,6 +4972,7 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetSharedScene, LowLevelSceneStateTransitionAction::kLoad));
 						queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentEnabled, 0), targetSharedScene.get(), true, true);
 						queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneStarted, 0), targetSharedScene.get(), true, true);
+						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetSharedScene, LowLevelSceneStateTransitionAction::kShowDefaultVisibleElements));
 
 						SceneStackEntry sharedSceneEntry;
 						sharedSceneEntry.scene = targetScene;
@@ -4993,6 +5024,7 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 				_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetSharedScene, LowLevelSceneStateTransitionAction::kLoad));
 				queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentEnabled, 0), targetSharedScene.get(), true, true);
 				queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneStarted, 0), targetSharedScene.get(), true, true);
+				_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetSharedScene, LowLevelSceneStateTransitionAction::kShowDefaultVisibleElements));
 
 				SceneStackEntry sharedSceneEntry;
 				sharedSceneEntry.scene = targetSharedScene;
@@ -5022,6 +5054,8 @@ void Runtime::executeSharedScenePostSceneChangeActions() {
 		if (_activeMainScene == subsectionScenes[1])
 			queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSharedSceneNoPrevScene, 0), _activeSharedScene.get(), true, true);
 	}
+
+	_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kShowDefaultVisibleElements));
 }
 
 void Runtime::recursiveDeactivateStructural(Structural *structural) {
@@ -5721,6 +5755,29 @@ VThreadState Runtime::updateMousePositionTask(const UpdateMousePositionTaskData 
 
 	if (needUpdateElementPosition)
 		updateCursorElementPosition();
+
+	return kVThreadReturn;
+}
+
+VThreadState Runtime::applyDefaultVisibility(const ApplyDefaultVisibilityTaskData &data) {
+	Event evt;
+	if (data.targetVisibility) {
+		if (data.element->isVisibleByDefault() == false || data.element->isVisible())
+			return kVThreadReturn;
+
+		evt = Event(EventIDs::kElementShow, 0);
+	} else {
+		if (!data.element->isVisible())
+			return kVThreadReturn;
+
+		evt = Event(EventIDs::kElementHide, 0);
+	}
+
+	// Visibility change events are sourced from the element
+ 	Common::SharedPtr<MessageProperties> props(new MessageProperties(evt, DynamicValue(), data.element->getSelfReference()));
+	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(props, data.element, false, false, true));
+
+	sendMessageOnVThread(dispatch);
 
 	return kVThreadReturn;
 }
@@ -7894,7 +7951,7 @@ VisualElementRenderProperties &VisualElementRenderProperties::operator=(const Vi
 */
 
 VisualElement::VisualElement()
-	: _rect(0, 0, 0, 0), _cachedAbsoluteOrigin(Common::Point(0, 0)), _contentsDirty(true), _directToScreen(false), _visible(true), _layer(0) {
+	: _rect(0, 0, 0, 0), _cachedAbsoluteOrigin(Common::Point(0, 0)), _contentsDirty(true), _directToScreen(false), _visible(false), _layer(0) {
 }
 
 bool VisualElement::isVisual() const {
@@ -7907,6 +7964,10 @@ bool VisualElement::isTextLabel() const {
 
 bool VisualElement::isVisible() const {
 	return _visible;
+}
+
+bool VisualElement::isVisibleByDefault() const {
+	return _visibleByDefault;
 }
 
 void VisualElement::setVisible(Runtime *runtime, bool visible) {
@@ -8329,7 +8390,7 @@ void VisualElement::debugInspect(IDebugInspectionReport *report) const {
 #endif
 
 MiniscriptInstructionOutcome VisualElement::scriptSetVisibility(MiniscriptThread *thread, const DynamicValue &result) {
-	// FIXME: Need to make this fire Show/Hide events!
+	// FIXME: Need to make this fire Show/Hide events??
 	if (result.getType() == DynamicValueTypes::kBoolean) {
 		const bool targetValue = result.getBool();
 		if (_visible != targetValue) {
@@ -8348,7 +8409,7 @@ bool VisualElement::loadCommon(const Common::String &name, uint32 guid, const Da
 
 	_name = name;
 	_guid = guid;
-	_visible = ((elementFlags & Data::ElementFlags::kHidden) == 0);
+	_visibleByDefault = ((elementFlags & Data::ElementFlags::kHidden) == 0);	// Element isn't actually flagged as visible until after Scene Changed, when Show commands are fired
 	_directToScreen = ((elementFlags & Data::ElementFlags::kNotDirectToScreen) == 0);
 	_streamLocator = streamLocator;
 	_sectionID = sectionID;

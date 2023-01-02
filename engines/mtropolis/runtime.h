@@ -1313,6 +1313,8 @@ struct LowLevelSceneStateTransitionAction {
 		kUnload,
 		kSendMessage,
 		kAutoResetCursor,
+		kHideAllElements,
+		kShowDefaultVisibleElements,
 	};
 
 	explicit LowLevelSceneStateTransitionAction(const Common::SharedPtr<MessageDispatch> &msg);
@@ -1573,7 +1575,6 @@ public:
 
 	void addVolume(int volumeID, const char *name, bool isMounted);
 	bool getVolumeState(const Common::String &name, int &outVolumeID, bool &outIsMounted) const;
-	void setDefaultVolumeState(bool defaultState);
 
 	void addSceneStateTransition(const HighLevelSceneTransition &transition);
 
@@ -1762,6 +1763,13 @@ private:
 		Common::SharedPtr<MessageProperties> message;
 	};
 
+	struct ApplyDefaultVisibilityTaskData {
+		ApplyDefaultVisibilityTaskData();
+
+		VisualElement *element;
+		bool targetVisibility;
+	};
+
 	struct UpdateMouseStateTaskData {
 		UpdateMouseStateTaskData();
 
@@ -1806,6 +1814,7 @@ private:
 	void executeHighLevelSceneTransition(const HighLevelSceneTransition &transition);
 	void executeCompleteTransitionToScene(const Common::SharedPtr<Structural> &scene);
 	void executeSharedScenePostSceneChangeActions();
+	void executeSceneChangeRecursiveVisibilityChange(Structural *structural, bool showing);
 
 	void recursiveAutoPlayMedia(Structural *structural);
 	void recursiveDeactivateStructural(Structural *structural);
@@ -1831,6 +1840,7 @@ private:
 	VThreadState consumeCommandTask(const ConsumeCommandTaskData &data);
 	VThreadState updateMouseStateTask(const UpdateMouseStateTaskData &data);
 	VThreadState updateMousePositionTask(const UpdateMousePositionTaskData &data);
+	VThreadState applyDefaultVisibility(const ApplyDefaultVisibilityTaskData &data);
 
 	void updateMainWindowCursor();
 
@@ -2692,6 +2702,7 @@ public:
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	bool isVisible() const;
+	bool isVisibleByDefault() const;
 	void setVisible(Runtime *runtime, bool visible);
 
 	bool isDirectToScreen() const;
@@ -2787,6 +2798,7 @@ protected:
 
 	bool _directToScreen;
 	bool _visible;
+	bool _visibleByDefault;
 	Common::Rect _rect;
 	Common::Point _cachedAbsoluteOrigin;
 	uint16 _layer;
