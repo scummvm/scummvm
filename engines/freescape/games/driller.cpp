@@ -109,6 +109,8 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 		_viewArea = Common::Rect(58, 20, 266, 124);
 	else if (isCPC())
 		_viewArea = Common::Rect(36, 19, 284, 120);
+	else if (isC64())
+		_viewArea = Common::Rect(32, 16, 288, 119);
 
 	_playerHeightNumber = 1;
 	_playerHeights.push_back(16);
@@ -518,6 +520,7 @@ void DrillerEngine::loadAssetsFullGame() {
 			error("Unknown Amstrad CPC variant");
 	} else if (isC64()) {
 		if (_targetName.hasPrefix("spacestationoblivion")) {
+			loadBundledImages();
 			file.open("spacestationoblivion.c64.extracted");
 			//load8bitBinary(&file, 0xeee, 4);
 			load8bitBinary(&file, 0x8e02, 4);
