@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-02 15:13+0000\n"
-"PO-Revision-Date: 2023-01-01 11:34+0000\n"
+"PO-Revision-Date: 2023-01-02 20:30+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1626,11 +1626,11 @@ msgstr "自動セーブ："
 
 #: gui/options.cpp:2534
 msgid "Random seed:"
-msgstr ""
+msgstr "シード値："
 
 #: gui/options.cpp:2534
 msgid "Seed for initializing all random number generators"
-msgstr ""
+msgstr "乱数ジェネレーターを初期するためのシード値"
 
 #: gui/options.cpp:2544
 msgid "Enable Discord integration"
