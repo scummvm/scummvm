@@ -2918,7 +2918,7 @@ void GlobalOptionsDialog::apply() {
 	if (ConfMan.hasKey("random_seed")) {
 		if (_randomSeed->getEditString().empty()) {
 			differs = true;
-		} else if ((uint32)_randomSeed->getEditString().asUint64() != ConfMan.getInt("random_seed")) {
+		} else if ((uint32)_randomSeed->getEditString().asUint64() != (uint32)ConfMan.getInt("random_seed")) {
 			differs = true;
 		}
 	} else {
