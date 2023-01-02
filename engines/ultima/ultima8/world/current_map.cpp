@@ -1227,14 +1227,16 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 					// Small speed up.
 					if (sw_it != hit->end()) {
-						const SweepItem &si = *sw_it;
-						if (si._hitTime > first) sw_it = hit->begin();
+						if (sw_it->_hitTime > first)
+							sw_it = hit->begin();
 					} else
 						sw_it = hit->begin();
 
-					for (; sw_it != hit->end(); ++sw_it)
-						if ((*sw_it)._hitTime > first)
+					for (; sw_it != hit->end(); ++sw_it) {
+						if (sw_it->_hitTime > first ||
+							sw_it->_hitTime == first && sw_it->_endTime > last)
 							break;
+					}
 
 					// Now add it
 					sw_it = hit->insert(sw_it, SweepItem(other_item->getObjId(), first, last, touch, touch_floor, blocking, dirs));
