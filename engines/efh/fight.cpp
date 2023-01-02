@@ -151,7 +151,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 						handleFight_lastAction_H(monsterGroupIdOrMonsterId);
 						break;
 					case 0x55: // 'U'se
-						handleFight_lastAction_U(monsterGroupIdOrMonsterId);
+						mainLoopCond = handleFight_lastAction_U(monsterGroupIdOrMonsterId);
 						break;
 					default:
 						break;
@@ -660,7 +660,7 @@ void EfhEngine::handleFight_lastAction_H(int16 teamCharId) {
 	sub1C219(_messageToBePrinted, 1, 2, true);
 }
 
-void EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
+bool EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
 	debug("handleFight_lastAction_U %d", teamCharId);
 
 	// Fight - Action 'U' - Use Item
@@ -676,7 +676,10 @@ void EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
 		_enemyNamePt1 = "";
 
 	_messageToBePrinted = Common::String::format("%s%s uses %s %s!  ", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPossessive[pronoun], _nameBuffer.c_str());
+	bool retVal = useObject(_teamCharId[teamCharId], _word31780[teamCharId], _teamNextAttack[teamCharId], teamCharId, 0, 3);
 	sub1C219(_messageToBePrinted, 1, 2, true);
+
+	return retVal;
 }
 
 bool EfhEngine::isTPK() {

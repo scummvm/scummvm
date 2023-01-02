@@ -541,7 +541,7 @@ int16 EfhEngine::getEquipmentDefense(int16 charId, bool flag) {
 		if (!_npcBuf[charId]._inventory[i].isEquipped())
 			continue;
 
-		int16 curDef = _npcBuf[charId]._inventory[i]._stat2;
+		int16 curDef = _npcBuf[charId]._inventory[i]._curHitPoints;
 		if (curDef == 0xFF)
 			curDef = _items[_npcBuf[charId]._inventory[i]._ref]._defense;
 
@@ -791,7 +791,7 @@ void EfhEngine::removeObject(int16 charId, int16 objectId) {
 	debugC(6, kDebugEngine, "removeObject %d %d", charId, objectId);
 	_npcBuf[charId]._inventory[objectId]._ref = 0x7FFF;
 	_npcBuf[charId]._inventory[objectId]._stat1 = 0;
-	_npcBuf[charId]._inventory[objectId]._stat2 = 0;
+	_npcBuf[charId]._inventory[objectId]._curHitPoints = 0;
 }
 
 void EfhEngine::totalPartyKill() {
@@ -936,11 +936,11 @@ bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int16 fromCharId) {
 
 		if (fromCharId == 0xFF) {
 			_npcBuf[charId]._inventory[newObjectId]._ref = objectId;
-			_npcBuf[charId]._inventory[newObjectId]._stat2 = _items[objectId]._defense;
+			_npcBuf[charId]._inventory[newObjectId]._curHitPoints = _items[objectId]._defense;
 			_npcBuf[charId]._inventory[newObjectId]._stat1 = _items[objectId]._uses;
 		} else {
 			_npcBuf[charId]._inventory[newObjectId]._ref = _npcBuf[fromCharId]._inventory[newObjectId]._ref;
-			_npcBuf[charId]._inventory[newObjectId]._stat2 = _npcBuf[fromCharId]._inventory[newObjectId]._stat2;
+			_npcBuf[charId]._inventory[newObjectId]._curHitPoints = _npcBuf[fromCharId]._inventory[newObjectId]._curHitPoints;
 			_npcBuf[charId]._inventory[newObjectId]._stat1 = _npcBuf[fromCharId]._inventory[newObjectId].getUsesLeft(); // not equipped as the upper bit isn't set (0x80)
 		}
 
@@ -2438,10 +2438,10 @@ void EfhEngine::sub1D8C2(int16 charId, int16 damage) {
 		if (_npcBuf[charId]._inventory[objectId]._ref == 0x7FFF || !_npcBuf[charId]._inventory[objectId].isEquipped() || _items[_npcBuf[charId]._inventory[objectId]._ref]._defense == 0)
 			continue;
 
-		int16 remainingDamage = curDamage - _npcBuf[charId]._inventory[objectId]._stat2;
-		// not in the original: this int16 is used to test if the result is negative. Otherwise _stat2 (uint8) turns it into a "large" positive value.
-		int16 newDurability = _npcBuf[charId]._inventory[objectId]._stat2 - curDamage;
-		_npcBuf[charId]._inventory[objectId]._stat2 = newDurability;
+		int16 remainingDamage = curDamage - _npcBuf[charId]._inventory[objectId]._curHitPoints;
+		// not in the original: this int16 is used to test if the result is negative. Otherwise _curHitPoints (uint8) turns it into a "large" positive value.
+		int16 newDurability = _npcBuf[charId]._inventory[objectId]._curHitPoints - curDamage;
+		_npcBuf[charId]._inventory[objectId]._curHitPoints = newDurability;
 
 		if (newDurability <= 0) {
 			Common::String buffer2 = _items[_npcBuf[charId]._inventory[objectId]._ref]._name;

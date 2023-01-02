@@ -41,7 +41,7 @@ EfhGraphicsStruct::EfhGraphicsStruct(int8 **lineBuf, int16 x, int16 y, int16 wid
 void InvObject::init() {
 	_ref = 0;
 	_stat1 = 0;
-	_stat2 = 0;
+	_curHitPoints = 0;
 }
 
 void UnkMapStruct::init() {
@@ -144,7 +144,7 @@ uint8 MapMonster::getPronoun() {
 	return _possessivePronounSHL6 >> 6;
 }
 
-void Stru32686::init() {
+void TeamMonsterEffect::init() {
 	for (int i = 0; i < 9; ++i) {
 		_effect[i] = 0;
 		_duration[i] = 0;

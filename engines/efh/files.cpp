@@ -288,7 +288,7 @@ void EfhEngine::loadNPCS() {
 		for (int idx = 0; idx < 10; ++idx) {
 			_npcBuf[i]._inventory[idx]._ref = f.readSint16LE();
 			_npcBuf[i]._inventory[idx]._stat1 = f.readByte();
-			_npcBuf[i]._inventory[idx]._stat2 = f.readByte();
+			_npcBuf[i]._inventory[idx]._curHitPoints = f.readByte();
 		}
 		_npcBuf[i]._possessivePronounSHL6 = f.readByte();
 		_npcBuf[i]._speed = f.readByte();
