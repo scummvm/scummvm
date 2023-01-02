@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-12-31 22:47+0000\n"
-"PO-Revision-Date: 2022-12-25 23:25+0000\n"
+"PO-Revision-Date: 2023-01-02 10:39+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -6556,24 +6556,20 @@ msgstr "Redimensiona los vídeos para que ocupen toda la pantalla"
 
 #: engines/neverhood/dialogs.cpp:63
 msgid "Repeat useful Willie's hint"
-msgstr ""
+msgstr "Repetir la pista útil de Willie"
 
 #: engines/neverhood/dialogs.cpp:64
 msgid "Repeat actual useful hint by Willie"
-msgstr ""
+msgstr "Hace que Willie repita la pista útil de verdad"
 
 #. I18N: NHC is a file extension
 #: engines/neverhood/dialogs.cpp:83
-#, fuzzy
-#| msgid "Enable font replacement"
 msgid "NHC replacement:"
-msgstr "Activar sustitución de fuentes"
+msgstr "Sustituir NHC:"
 
 #: engines/neverhood/dialogs.cpp:89
-#, fuzzy
-#| msgid "Original Save"
 msgid "<original>"
-msgstr "Guardado original"
+msgstr "<original>"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
