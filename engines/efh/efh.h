@@ -82,7 +82,7 @@ public:
 struct InvObject {
 	int16 _ref;
 	uint8 _stat1; // abbb bbbb - a: equipped b: uses left
-	uint8 _stat2;
+	uint8 _curHitPoints;
 
 	void init();
 	bool isEquipped();
@@ -222,7 +222,7 @@ struct MapMonster {
 	uint8 getPronoun();
 };
 
-struct Stru32686 {
+struct TeamMonsterEffect {
 	int16 _effect[9];
 	int16 _duration[9];
 
@@ -381,7 +381,7 @@ private:
 	void handleFight_lastAction_A(int16 teamCharId);
 	void handleFight_lastAction_D(int16 teamCharId);
 	void handleFight_lastAction_H(int16 teamCharId);
-	void handleFight_lastAction_U(int16 teamCharId);
+	bool handleFight_lastAction_U(int16 teamCharId);
 	bool isTPK();
 	bool isMonsterAlreadyFighting(int16 monsterId, int16 teamMonsterId);
 	void createOpponentList(int16 monsterTeamId);
@@ -469,7 +469,7 @@ private:
 	int16 handleStatusMenu(int16 gameMode, int16 charId);
 	void unequipItem(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
 	void sub191FF(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
-	int16 sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int16 menuId, int16 curMenuLine, int16 argA);
+	int16 useObject(int16 charId, int16 objectId, int16 teamMonsterId, int16 menuId, int16 curMenuLine, int16 argA);
 
 	// Savegames
 	void synchronize(Common::Serializer &s);
@@ -607,7 +607,7 @@ private:
 	int16 _word31780[3];
 
 	int16 _menuStatItemArr[15];
-	Stru32686 _teamMonsterEffects[5];
+	TeamMonsterEffect _teamMonsterEffects[5];
 	InitiativeStruct _initiatives[8];
 
 	int16 _regenCounter;

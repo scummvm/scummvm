@@ -191,7 +191,7 @@ void EfhEngine::synchronize(Common::Serializer &s) {
 		for (int idx = 0; idx < 10; ++idx) {
 			s.syncAsSint16LE(_npcBuf[i]._inventory[idx]._ref);
 			s.syncAsByte(_npcBuf[i]._inventory[idx]._stat1);
-			s.syncAsByte(_npcBuf[i]._inventory[idx]._stat2);
+			s.syncAsByte(_npcBuf[i]._inventory[idx]._curHitPoints);
 		}
 		s.syncAsByte(_npcBuf[i]._possessivePronounSHL6);
 		s.syncAsByte(_npcBuf[i]._speed);

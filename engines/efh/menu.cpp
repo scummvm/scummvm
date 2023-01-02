@@ -341,9 +341,9 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 			setTextPos(262, textPosY);
 
 			if (_items[itemId]._defense > 0) {
-				int16 stat2 = _npcBuf[npcId]._inventory[_menuStatItemArr[counter]]._stat2;
-				if (stat2 != 0xFF) {
-					buffer1 = Common::String::format("%d", 1 + stat2 / 8);
+				int16 curHitPoints = _npcBuf[npcId]._inventory[_menuStatItemArr[counter]]._curHitPoints;
+				if (curHitPoints != 0xFF) {
+					buffer1 = Common::String::format("%d", 1 + curHitPoints / 8);
 					displayStringAtTextPos(buffer1);
 					setTextPos(286, textPosY);
 					displayStringAtTextPos("Def");
@@ -694,7 +694,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				return -1;
 			}
 
-			sub19E2E(charId, objectId, windowId, menuId, curMenuLine, 2);
+			useObject(charId, objectId, windowId, menuId, curMenuLine, 2);
 			break;
 		case 2:
 			objectId = _menuStatItemArr[selectedLine];
@@ -900,12 +900,12 @@ void EfhEngine::sub191FF(int16 charId, int16 objectId, int16 windowId, int16 men
 	}
 }
 
-int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int16 menuId, int16 curMenuLine, int16 argA) {
-	debug("sub19E2E %d %d %d %d %d %d", charId, objectId, teamMonsterId, menuId, curMenuLine, argA);
+int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, int16 menuId, int16 curMenuLine, int16 argA) {
+	debug("useObject %d %d %d %d %d %d", charId, objectId, teamMonsterId, menuId, curMenuLine, argA);
 
 	Common::String buffer1 = "";
 
-	bool varA6 = false;
+	bool objectUsedFl = false;
 	bool retVal = false;
 
 	int16 itemId = _npcBuf[charId]._inventory[objectId]._ref;
@@ -947,7 +947,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			_messageToBePrinted += buffer1;
 		}
 
-		varA6 = true;
+		objectUsedFl = true;
 		break;
 	case 1: // "Chilling Touch", "Guilt", "Petrify Rod", "Elmer's Gun"
 		if (argA == 2) {
@@ -988,7 +988,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			// </CHECKME>
 		}
 
-		varA6 = true;
+		objectUsedFl = true;
 		break;
 	case 2:
 		if (argA == 2) {
@@ -998,7 +998,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			_unk2C8AA = 0;
 		}
 
-		varA6 = true;
+		objectUsedFl = true;
 		break;
 	case 4: // "Unholy Sinwave", "Holy Water"
 		if (argA == 2) {
@@ -1022,7 +1022,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 				}
 			}
 		}
-		varA6 = true;
+		objectUsedFl = true;
 		break;
 	case 5: // "Lucifer'sTouch", "Book of Death", "Holy Cross"
 		if (argA == 2) {
@@ -1043,7 +1043,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			}
 		}
 
-		varA6 = true;
+		objectUsedFl = true;
 		break;
 	case 12: // "Terror Gaze", "Servitude Rod", "Despair Ankh", "ConfusionPrism", "Pipe of Peace", "Red Cape", "Peace Symbol", "Hell Badge"
 		if (argA == 2) {
@@ -1052,7 +1052,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			_messageToBePrinted += "  The magic sparkles brilliant hues in the air!";
 			setMapMonsterField8(teamMonsterId, _items[itemId]._field17_attackTypeDefense, true);
 		}
-		varA6 = true;
+		objectUsedFl = true;
 		break;
 	case 14: { // "Feathered Cap"
 		int16 varAA;
@@ -1075,7 +1075,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 				_word32482[varAA] = 0;
 		}
 
-		varA6 = true;
+		objectUsedFl = true;
 	} break;
 	case 15: { // "Regal Crown"
 		int16 teamCharId;
@@ -1099,7 +1099,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 				_teamPctVisible[teamCharId] = 0;
 		}
 
-		varA6 = true;
+		objectUsedFl = true;
 	} break;
 	case 16: { // Fairy Dust
 		_mapPosX = getRandom(_largeMapFlag ? 63 : 23);
@@ -1135,7 +1135,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			}
 		}
 
-		varA6 = true;
+		objectUsedFl = true;
 	} break;
 	case 17: { // "Devil Dust"
 		_mapPosX = _items[itemId]._field19_mapPosX_or_maxDeltaPoints;
@@ -1170,7 +1170,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			}
 		}
 
-		varA6 = true;
+		objectUsedFl = true;
 	} break;
 	case 18:
 		if (argA == 2) {
@@ -1188,7 +1188,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			}
 		}
 
-		varA6 = true;
+		objectUsedFl = true;
 		break;
 	case 19: // "Junk"
 		buffer1 = "  * The item breaks!";
@@ -1198,7 +1198,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			_messageToBePrinted += buffer1;
 		}
 		setCharacterObjectToBroken(charId, objectId);
-		varA6 = true;
+		objectUsedFl = true;
 		break;
 	case 23: // "Divining Rod"
 		buffer1 = Common::String::format("The %s says, '", _items[itemId]._name);
@@ -1235,7 +1235,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			retVal = true;
 		}
 
-		varA6 = true;
+		objectUsedFl = true;
 		break;
 	case 24: {
 		int16 teamCharId;
@@ -1265,7 +1265,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			}
 		}
 
-		varA6 = true;
+		objectUsedFl = true;
 	} break;
 	case 25: {
 		int16 teamCharId;
@@ -1295,7 +1295,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			}
 		}
 
-		varA6 = true;
+		objectUsedFl = true;
 	} break;
 	case 26: // "Black Sphere"
 		buffer1 = "The entire party collapses, dead!!!";
@@ -1306,7 +1306,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			retVal = true;
 		}
 		totalPartyKill();
-		varA6 = true;
+		objectUsedFl = true;
 		break;
 	case 27: { // "Magic Pyramid", "Razor Blade"
 		int16 teamCharId;
@@ -1328,7 +1328,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			}
 		}
 
-		varA6 = true;
+		objectUsedFl = true;
 	} break;
 	case 28: // "Bugle"
 		if (argA == 2) {
@@ -1346,7 +1346,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			}
 		}
 
-		varA6 = true;
+		objectUsedFl = true;
 		break;
 	case 29: { // "Healing Spray", "Healing Elixir", "Curing Potion", "Magic Potion"
 		int16 teamCharId;
@@ -1376,7 +1376,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			retVal = true;
 		}
 
-		varA6 = true;
+		objectUsedFl = true;
 	} break;
 	case 30: {
 		int16 teamCharId;
@@ -1406,7 +1406,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 			retVal = true;
 		}
 
-		varA6 = true;
+		objectUsedFl = true;
 
 	} break;
 	case 3:
@@ -1424,7 +1424,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 		break;
 	}
 
-	if (varA6) {
+	if (objectUsedFl) {
 		int16 usesLeft = _npcBuf[charId]._inventory[objectId].getUsesLeft();
 		if (usesLeft != 0x7F) {
 			--usesLeft;
@@ -1438,6 +1438,7 @@ int16 EfhEngine::sub19E2E(int16 charId, int16 objectId, int16 teamMonsterId, int
 				}
 				setCharacterObjectToBroken(charId, objectId);
 			} else {
+				// Keep the Equipped bit and set the new number of uses
 				_npcBuf[charId]._inventory[objectId]._stat1 &= 0x80;
 				_npcBuf[charId]._inventory[objectId]._stat1 |= usesLeft;
 			}
