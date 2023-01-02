@@ -103,6 +103,7 @@ enum {
 	kGraphicsTabContainerReflowCmd = 'gtcr',
 	kScalerPopUpCmd			= 'scPU',
 	kFullscreenToggled		= 'oful',
+	kRandomSeedClearCmd     = 'rndc',
 };
 
 enum {
@@ -2526,6 +2527,18 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 		_autosavePeriodPopUp->appendEntry(_(savePeriodLabels[i]), savePeriodValues[i]);
 	}
 
+	Common::String seed;
+	if (ConfMan.hasKey("random_seed"))
+		seed = Common::String::format("%u", ConfMan.getInt("random_seed"));
+
+	_randomSeedDesc = new StaticTextWidget(boss, prefix + "RandomSeedDesc", _("Random seed:"), _("Seed for initializing all random number generators"));
+
+	if (ConfMan.isKeyTemporary("random_seed"))
+		_randomSeedDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
+
+	_randomSeed = new EditTextWidget(boss, prefix + "RandomSeedEditText", seed, Common::U32String());
+	_randomSeedClearButton = addClearButton(boss, prefix + "RandomSeedClearButton", kRandomSeedClearCmd);
+
 #ifdef USE_DISCORD
 	_discordRpcCheckbox = new CheckboxWidget(boss, prefix + "DiscordRpc",
 		_("Enable Discord integration"),
@@ -2901,6 +2914,27 @@ void GlobalOptionsDialog::apply() {
 	}
 #endif // USE_DISCORD
 
+	bool differs = false;
+	if (ConfMan.hasKey("random_seed")) {
+		if (_randomSeed->getEditString().empty()) {
+			differs = true;
+		} else if ((uint32)_randomSeed->getEditString().asUint64() != ConfMan.getInt("random_seed")) {
+			differs = true;
+		}
+	} else {
+		if (!_randomSeed->getEditString().empty())
+			differs = true;
+	}
+
+	if (differs) {
+		if (_randomSeed->getEditString().empty())
+			ConfMan.removeKey("random_seed", _domain);
+		else
+			ConfMan.setInt("random_seed", (uint32)_randomSeed->getEditString().asUint64());
+
+		_randomSeedDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
+	}
+
 	GUI::ThemeEngine::GraphicsMode gfxMode = (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag();
 	Common::String oldGfxConfig = ConfMan.get("gui_renderer");
 	Common::String newGfxConfig = GUI::ThemeEngine::findModeConfigName(gfxMode);
@@ -3131,6 +3165,13 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			_curTheme->setLabel(browser.getSelectedName());
 			_curTheme->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 		}
+		break;
+	}
+	case kRandomSeedClearCmd: {
+		if (_randomSeed) {
+			_randomSeed->setEditString(Common::U32String());
+		}
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	}
 #ifdef USE_CLOUD

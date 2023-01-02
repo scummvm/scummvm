@@ -311,6 +311,9 @@ protected:
 	//
 	StaticTextWidget *_autosavePeriodPopUpDesc;
 	PopUpWidget *_autosavePeriodPopUp;
+	StaticTextWidget *_randomSeedDesc;
+	EditTextWidget   *_randomSeed;
+	ButtonWidget	 *_randomSeedClearButton;
 
 #ifdef USE_UPDATES
 	StaticTextWidget *_updatesPopUpDesc;
