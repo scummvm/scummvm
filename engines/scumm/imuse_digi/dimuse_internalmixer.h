@@ -78,7 +78,7 @@ private:
 	void mixBits16Stereo(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *ampTable);
 
 public:
-	IMuseDigiInternalMixer(Audio::Mixer *mixer, bool isEarlyDiMUSE);
+	IMuseDigiInternalMixer(Audio::Mixer *mixer, int sampleRate, bool isEarlyDiMUSE);
 	~IMuseDigiInternalMixer();
 	int  init(int bytesPerSample, int numChannels, uint8 *mixBuf, int mixBufSize, int sizeSampleKB, int mixChannelsNum);
 	void setRadioChatter();

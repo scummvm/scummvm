@@ -23,13 +23,13 @@
 
 namespace Scumm {
 
-int IMuseDigital::waveOutInit(int sampleRate, waveOutParamsStruct *waveOutSettingsStruct) {
-	_waveOutSampleRate = sampleRate;
-
+int IMuseDigital::waveOutInit(waveOutParamsStruct *waveOutSettingsStruct) {
 	_waveOutBytesPerSample = 2;
 	_waveOutNumChannels = _mixer->getOutputStereo() ? 2 : 1;
 	_waveOutZeroLevel = 0;
-	_waveOutPreferredFeedSize = DIMUSE_FEEDSIZE;
+
+	_waveOutSampleRate = _internalSampleRate;
+	_waveOutPreferredFeedSize = _internalFeedSize;
 
 	// Nine buffers (waveOutPreferredFeedSize * 4 bytes each), two will be used for the mixer
 	_waveOutOutputBuffer = (uint8 *)malloc(_waveOutNumChannels * _waveOutBytesPerSample * _waveOutPreferredFeedSize * 9);

@@ -89,6 +89,8 @@ private:
 
 	// These three are manipulated in the waveOut functions
 	uint8 *_outputAudioBuffer;
+	int _internalFeedSize;
+	int _internalSampleRate;
 	int _outputFeedSize;
 	int _outputSampleRate;
 
@@ -189,7 +191,6 @@ private:
 
 	int _trackCount;
 	int _tracksPauseTimer;
-	int _tracksPrefSampleRate;
 	int _tracksMicroSecsToFeed;
 
 	int tracksInit();
@@ -299,7 +300,7 @@ private:
 	int _waveOutWriteIndex;
 	int _waveOutDisableWrite;
 
-	int waveOutInit(int sampleRate, waveOutParamsStruct *waveOutSettings);
+	int waveOutInit(waveOutParamsStruct *waveOutSettings);
 	void waveOutWrite(uint8 **audioBuffer, int &feedSize, int &sampleRate);
 	int waveOutDeinit();
 	void waveOutCallback();
@@ -342,6 +343,8 @@ public:
 	void floodMusicBuffer();
 	void fillStreamsWhileMusicCritical(int fillTimesAfter);
 	bool queryNextSoundFile(int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused);
+	int getSampleRate();
+	int getFeedSize();
 
 	bool isFTSoundEngine(); // Used in the handlers to check if we're using the FT version of the engine
 

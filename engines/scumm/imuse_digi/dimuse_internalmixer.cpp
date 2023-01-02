@@ -30,9 +30,9 @@
 
 namespace Scumm {
 
-IMuseDigiInternalMixer::IMuseDigiInternalMixer(Audio::Mixer *mixer, bool isEarlyDiMUSE) {
+IMuseDigiInternalMixer::IMuseDigiInternalMixer(Audio::Mixer *mixer, int sampleRate, bool isEarlyDiMUSE) {
 	_mixer = mixer;
-	_stream = Audio::makeQueuingAudioStream(DIMUSE_SAMPLERATE, _mixer->getOutputStereo());
+	_stream = Audio::makeQueuingAudioStream(sampleRate, _mixer->getOutputStereo());
 	_isEarlyDiMUSE = isEarlyDiMUSE;
 	_radioChatter = 0;
 	_amp8Table = nullptr;

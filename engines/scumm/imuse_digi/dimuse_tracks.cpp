@@ -27,9 +27,8 @@ int IMuseDigital::tracksInit() {
 	_trackCount = 6;
 	_tracksPauseTimer = 0;
 	_trackList = nullptr;
-	_tracksPrefSampleRate = DIMUSE_SAMPLERATE;
 
-	if (waveOutInit(DIMUSE_SAMPLERATE, &waveOutSettings))
+	if (waveOutInit(&waveOutSettings))
 		return -1;
 
 	if (_internalMixer->init(waveOutSettings.bytesPerSample,

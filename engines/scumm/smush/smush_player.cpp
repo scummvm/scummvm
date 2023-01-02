@@ -262,7 +262,7 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_smushAudioInitialized = false;
 	_smushAudioCallbackEnabled = false;
 
-	initAudio(DIMUSE_SAMPLERATE, 200000);
+	initAudio(_imuseDigital->getSampleRate(), 200000);
 }
 
 SmushPlayer::~SmushPlayer() {
@@ -1569,6 +1569,8 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 	bool isPlayableTrack;
 	bool speechIsPlaying = false;
 
+	int engineBaseFeedSize = _imuseDigital->getFeedSize();
+
 	if (!_paused) {
 		if (_smushTracksNeedInit) {
 			_smushTracksNeedInit = false;
@@ -1657,7 +1659,7 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 
 				fadeMixStartingPoint = 0;
 				while (fadeRemaining) {
-					fadeInFrameCount = (fadeRemaining < DIMUSE_FEEDSIZE / 2) ? fadeRemaining : DIMUSE_FEEDSIZE / 2;
+					fadeInFrameCount = (fadeRemaining < engineBaseFeedSize / 2) ? fadeRemaining : engineBaseFeedSize / 2;
 
 					if (fadeInFrameCount == maxFadeChunkSize) {
 						fadeFeedSize = feedSize;
@@ -1716,8 +1718,8 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 								if (_smushDispatch[i].volumeStep < 16)
 									_smushDispatch[i].volumeStep++;
 
-								if (mixInFrameCount > DIMUSE_FEEDSIZE / 2)
-									mixInFrameCount = DIMUSE_FEEDSIZE / 2;
+								if (mixInFrameCount > engineBaseFeedSize / 2)
+									mixInFrameCount = engineBaseFeedSize / 2;
 
 								_smushTracks[i].state = TRK_STATE_PLAYING;
 
@@ -1731,8 +1733,8 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 
 								_smushTracks[i].state = TRK_STATE_ENDING;
 
-								if (mixInFrameCount > DIMUSE_FEEDSIZE / 2)
-									mixInFrameCount = DIMUSE_FEEDSIZE / 2;
+								if (mixInFrameCount > engineBaseFeedSize / 2)
+									mixInFrameCount = engineBaseFeedSize / 2;
 
 								_smushDispatch[i].audioRemaining -= mixInFrameCount;
 								_smushDispatch[i].currentOffset += mixInFrameCount;
