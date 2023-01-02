@@ -21,6 +21,7 @@
 
 #include "common/random.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "gui/EventRecorder.h"
 
 
@@ -39,6 +40,9 @@ RandomSource::RandomSource(const String &name) {
 }
 
 uint32 RandomSource::generateNewSeed() {
+	if (ConfMan.hasKey("random_seed"))
+		return ConfMan.getInt("random_seed");
+
 	TimeDate time;
 	g_system->getTimeAndDate(time);
 	uint32 newSeed = time.tm_sec + time.tm_min * 60U + time.tm_hour * 3600U;
