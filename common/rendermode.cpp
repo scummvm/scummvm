@@ -50,6 +50,7 @@ const RenderModeDescription g_renderModes[] = {
 	{ "macintoshbw", _s("Macintosh b/w"), kRenderMacintoshBW },
 	{ "cpc", "Amstrad CPC", kRenderCPC },
 	{ "zx", "ZX Spectrum", kRenderZX },
+	{ "c64", "Commodore 64", kRenderC64 },
 	{nullptr, nullptr, kRenderDefault}
 };
 
