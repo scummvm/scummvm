@@ -385,7 +385,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 					drawMapWindow();
 					displayFctFullScreen();
 					drawMapWindow();
-					scriptRandomItemId = sub1C219("Nothing...", 1, 2, true);
+					scriptRandomItemId = displayBoxWithText("Nothing...", 1, 2, true);
 					displayFctFullScreen();
 				} else {
 					_enemyNamePt2 = _npcBuf[_teamCharId[counter]]._name;
@@ -394,7 +394,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 					drawMapWindow();
 					displayFctFullScreen();
 					drawMapWindow();
-					scriptRandomItemId = sub1C219(curLine, 1, 2, true);
+					scriptRandomItemId = displayBoxWithText(curLine, 1, 2, true);
 					displayFctFullScreen();
 				}
 

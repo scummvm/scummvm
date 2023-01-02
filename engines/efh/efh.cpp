@@ -2056,7 +2056,7 @@ void EfhEngine::displayImp1Text(int16 textId) {
 								displayFctFullScreen();
 						}
 
-						nextTextId = sub1C219(_messageToBePrinted, 1, 1, true);
+						nextTextId = displayBoxWithText(_messageToBePrinted, 1, 1, true);
 						if (nextTextId != 0xFF)
 							curTextId = nextTextId;
 

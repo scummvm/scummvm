@@ -129,7 +129,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 		}
 
 		computeInitiatives();
-		sub1C219("", 2, 1, false);
+		displayBoxWithText("", 2, 1, false);
 
 		for (uint counter = 0; counter < 8; ++counter) {
 			int16 monsterGroupIdOrMonsterId = _initiatives[counter]._id;
@@ -333,7 +333,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 									_messageToBePrinted = Common::String::format("%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str());
 								}
 								genericGenerateSound(_items[unk_monsterField5_itemId]._attackType, var62);
-								sub1C219(_messageToBePrinted, 1, 2, true);
+								displayBoxWithText(_messageToBePrinted, 1, 2, true);
 							}
 							// handleFight - Loop on var7E - End
 						}
@@ -359,7 +359,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 								break;
 							}
 							_teamMonsterEffects[monsterGroupIdOrMonsterId]._effect[var86] = 0;
-							sub1C219(_messageToBePrinted, 1, 2, true);
+							displayBoxWithText(_messageToBePrinted, 1, 2, true);
 						}
 					}
 				}
@@ -412,7 +412,7 @@ void EfhEngine::handleFight_checkEndEffect(int16 charId) {
 	_teamCharStatus[charId]._status = 0;
 
 	// Finally, display the message
-	sub1C219(_messageToBePrinted, 1, 2, true);
+	displayBoxWithText(_messageToBePrinted, 1, 2, true);
 }
 
 void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
@@ -617,7 +617,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 					}
 
 					genericGenerateSound(_items[unk_monsterField5_itemId]._attackType, var62);
-					sub1C219(_messageToBePrinted, 1, 2, true);
+					displayBoxWithText(_messageToBePrinted, 1, 2, true);
 				}
 			}
 		}
@@ -638,11 +638,11 @@ void EfhEngine::handleFight_lastAction_D(int16 teamCharId) {
 		_enemyNamePt1 = "";
 
 	_messageToBePrinted = Common::String::format("%s%s prepares to defend %sself!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPersonal[pronoun]);
-	sub1C219(_messageToBePrinted, 1, 2, true);
+	displayBoxWithText(_messageToBePrinted, 1, 2, true);
 }
 
 void EfhEngine::handleFight_lastAction_H(int16 teamCharId) {
-	debug("handleFight_lastAction_H %d", teamCharId);
+	debugC(3, kDebugEngine, "handleFight_lastAction_H %d", teamCharId);
 
 	// In the original, this function is part of handleFight.
 	// It has been split for readability purposes.
@@ -657,7 +657,7 @@ void EfhEngine::handleFight_lastAction_H(int16 teamCharId) {
 		_enemyNamePt1 = "";
 
 	_messageToBePrinted = Common::String::format("%s%s attempts to hide %sself!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPersonal[pronoun]);
-	sub1C219(_messageToBePrinted, 1, 2, true);
+	displayBoxWithText(_messageToBePrinted, 1, 2, true);
 }
 
 bool EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
@@ -677,7 +677,7 @@ bool EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
 
 	_messageToBePrinted = Common::String::format("%s%s uses %s %s!  ", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPossessive[pronoun], _nameBuffer.c_str());
 	bool retVal = useObject(_teamCharId[teamCharId], _word31780[teamCharId], _teamNextAttack[teamCharId], teamCharId, 0, 3);
-	sub1C219(_messageToBePrinted, 1, 2, true);
+	displayBoxWithText(_messageToBePrinted, 1, 2, true);
 
 	return retVal;
 }
@@ -1009,7 +1009,7 @@ int16 EfhEngine::sub1C956(int16 charId, int16 unkFied18Val, bool arg4) {
 		for (uint counter = 0; counter < 2; ++counter) {
 			drawCombatScreen(charId, true, false);
 			if (_teamMonsterIdArray[1] != -1)
-				sub1C219("Select Monster Group:", 3, 0, false);
+				displayBoxWithText("Select Monster Group:", 3, 0, false);
 
 			if (counter == 0)
 				displayFctFullScreen();
@@ -1105,7 +1105,7 @@ bool EfhEngine::sub1CB27() {
 					case 28:
 					case 29:
 					case 30:
-						sub1C219("Select Character:", 3, 1, false);
+						displayBoxWithText("Select Character:", 3, 1, false);
 						_teamNextAttack[counter1] = selectOtherCharFromTeam();
 						break;
 
@@ -1149,7 +1149,7 @@ void EfhEngine::drawCombatScreen(int16 charId, bool whiteFl, bool forceDrawFl) {
 			displayCenteredString("Combat", 128, 303, 9);
 			drawColoredRect(200, 112, 278, 132, 0);
 			displayCenteredString("'T' for Terrain", 128, 303, 117);
-			sub1C219("", 1, 0, false);
+			displayBoxWithText("", 1, 0, false);
 			sub1C4CA(whiteFl);
 			displayCombatMenu(charId);
 			displayLowStatusScreen(false);

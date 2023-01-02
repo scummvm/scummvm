@@ -23,10 +23,10 @@
 
 namespace Efh {
 
-int16 EfhEngine::sub1C219(Common::String str, int16 menuType, int16 displayOption, bool displayTeamWindowFl) {
-	debug("sub1C219 %s %d %d %s", str.c_str(), menuType, displayOption, displayTeamWindowFl ? "True" : "False");
+int16 EfhEngine::displayBoxWithText(Common::String str, int16 menuType, int16 displayOption, bool displayTeamWindowFl) {
+	debugC(3, kDebugEngine, "displayBoxWithText %s %d %d %s", str.c_str(), menuType, displayOption, displayTeamWindowFl ? "True" : "False");
 
-	int16 varA = 0xFF;
+	int16 retVal = 0xFF;
 	int16 minX, maxX, minY, maxY;
 
 	switch (menuType) {
@@ -63,7 +63,7 @@ int16 EfhEngine::sub1C219(Common::String str, int16 menuType, int16 displayOptio
 
 	drawColoredRect(minX, minY, maxX, maxY, 0);
 	if (!str.empty())
-		varA = script_parse(str, minX, minY, maxX, maxY, true);
+		retVal = script_parse(str, minX, minY, maxX, maxY, true);
 
 	if (displayTeamWindowFl)
 		displayLowStatusScreen(false);
@@ -88,7 +88,7 @@ int16 EfhEngine::sub1C219(Common::String str, int16 menuType, int16 displayOptio
 			drawColoredRect(minX, minY, maxX, maxY, 0);
 	}
 
-	return varA;
+	return retVal;
 }
 
 bool EfhEngine::handleDeathMenu() {

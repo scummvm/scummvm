@@ -454,7 +454,7 @@ private:
 	void displayColoredMenuBox(int16 minX, int16 minY, int16 maxX, int16 maxY, int16 color);
 
 	// Menu
-	int16 sub1C219(Common::String str, int16 menuType, int16 displayOption, bool displayTeamWindowFl);
+	int16 displayBoxWithText(Common::String str, int16 menuType, int16 displayOption, bool displayTeamWindowFl);
 	bool handleDeathMenu();
 	void displayCombatMenu(int16 charId);
 	void displayMenuItemString(int16 menuBoxId, int16 thisBoxId, int16 minX, int16 maxX, int16 minY, const char *str);
