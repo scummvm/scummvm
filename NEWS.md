@@ -21,6 +21,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      line option).
    - Improved cursor scaling in OpenGL mode.
    - Fix crash when browsing folders containing files with \1 in the names.
+   - Added possibility to specify RNG seed via GUI or command line option.
 
  AGI:
    - Improved support for French translations.
