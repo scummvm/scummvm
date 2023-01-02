@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-02 15:13+0000\n"
-"PO-Revision-Date: 2023-01-02 08:34+0000\n"
+"PO-Revision-Date: 2023-01-02 17:39+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1658,11 +1658,11 @@ msgstr "Sauv. auto :"
 
 #: gui/options.cpp:2534
 msgid "Random seed:"
-msgstr ""
+msgstr "Graine aléatoire :"
 
 #: gui/options.cpp:2534
 msgid "Seed for initializing all random number generators"
-msgstr ""
+msgstr "Graine pour initialiser tous les générateurs de nombres aléatoires"
 
 #: gui/options.cpp:2544
 msgid "Enable Discord integration"
