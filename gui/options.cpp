@@ -2205,12 +2205,18 @@ void GlobalOptionsDialog::build() {
 	addPathsControls(tab, "GlobalOptions_Paths.", g_system->getOverlayWidth() <= 320);
 
 	//
-	// 6) The miscellaneous tab
+	// 6) The GUI tab
 	//
-	if (g_system->getOverlayWidth() > 320)
-		tab->addTab(_("Misc"), "GlobalOptions_Misc", false);
-	else
-		tab->addTab(_c("Misc", "lowres"), "GlobalOptions_Misc", false);
+	tab->addTab(_("GUI"), "GlobalOptions_GUI", false);
+	ScrollContainerWidget *guiContainer = new ScrollContainerWidget(tab, "GlobalOptions_GUI.Container", "GlobalOptions_GUI_Container");
+	guiContainer->setTarget(this);
+	guiContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
+	addGUIControls(guiContainer, "GlobalOptions_GUI_Container.", g_system->getOverlayWidth() <= 320);
+
+	//
+	// 7) The miscellaneous tab
+	//
+	tab->addTab(_("Misc"), "GlobalOptions_Misc", false);
 	ScrollContainerWidget *miscContainer = new ScrollContainerWidget(tab, "GlobalOptions_Misc.Container", "GlobalOptions_Misc_Container");
 	miscContainer->setTarget(this);
 	miscContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
@@ -2219,7 +2225,7 @@ void GlobalOptionsDialog::build() {
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
 	//
-	// 7) The Cloud tab (remote storages)
+	// 8) The Cloud tab (remote storages)
 	//
 	if (g_system->getOverlayWidth() > 320)
 		tab->addTab(_("Cloud"), "GlobalOptions_Cloud", false);
@@ -2235,7 +2241,7 @@ void GlobalOptionsDialog::build() {
 #endif // USE_LIBCURL
 #ifdef USE_SDL_NET
 	//
-	// 8) The LAN tab (local "cloud" webserver)
+	// 9) The LAN tab (local "cloud" webserver)
 	//
 	if (g_system->getOverlayWidth() > 320)
 		tab->addTab(_("LAN"), "GlobalOptions_Network");
@@ -2245,7 +2251,9 @@ void GlobalOptionsDialog::build() {
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
 
-	//Accessibility
+	//
+	// 10) Accessibility
+	//
 #ifdef USE_TTS
 	if (g_system->getOverlayWidth() > 320)
 		tab->addTab(_("Accessibility"), "GlobalOptions_Accessibility");
@@ -2413,7 +2421,7 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 	_browserPathClearButton = addClearButton(boss, prefix + "BrowserPathClearButton", kBrowserPathClearCmd);
 }
 
-void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
+void GlobalOptionsDialog::addGUIControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
 	new ButtonWidget(boss, prefix + "ThemeButton", _("Theme:"), Common::U32String(), kChooseThemeCmd);
 	_curTheme = new StaticTextWidget(boss, prefix + "CurTheme", g_gui.theme()->getThemeName());
 	if (ConfMan.isKeyTemporary("gui_theme"))
@@ -2437,16 +2445,6 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 			_rendererPopUp->appendEntry(_(GUI::ThemeEngine::_rendererModes[i].shortname), GUI::ThemeEngine::_rendererModes[i].mode);
 	}
 
-	if (!lowres)
-		_autosavePeriodPopUpDesc = new StaticTextWidget(boss, prefix + "AutosavePeriodPopupDesc", _("Autosave:"));
-	else
-		_autosavePeriodPopUpDesc = new StaticTextWidget(boss, prefix + "AutosavePeriodPopupDesc", _c("Autosave:", "lowres"));
-	_autosavePeriodPopUp = new PopUpWidget(boss, prefix + "AutosavePeriodPopup");
-
-	for (int i = 0; savePeriodLabels[i]; i++) {
-		_autosavePeriodPopUp->appendEntry(_(savePeriodLabels[i]), savePeriodValues[i]);
-	}
-
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit)) {
 		_guiReturnToLauncherAtExit = new CheckboxWidget(boss, prefix + "ReturnToLauncherAtExit",
 			_("Return to the launcher when leaving a game"),
@@ -2462,17 +2460,6 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 	);
 
 	_guiConfirmExit->setState(ConfMan.getBool("confirm_exit", _domain));
-
-#ifdef USE_DISCORD
-	_discordRpcCheckbox = new CheckboxWidget(boss, prefix + "DiscordRpc",
-		_("Enable Discord integration"),
-		_("Show information about the games you are playing on Discord if the Discord client is running.")
-	);
-
-	_discordRpcCheckbox->setState(ConfMan.getBool("discord_rpc", _domain));
-#endif
-
-	// TODO: joystick setting
 
 #ifdef USE_TRANSLATION
 	_guiLanguagePopUpDesc = new StaticTextWidget(boss, prefix + "GuiLanguagePopupDesc", _("GUI language:"), _("Language of ScummVM GUI"));
@@ -2521,6 +2508,35 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 		_useSystemDialogsCheckbox->setState(ConfMan.getBool("gui_browser_native", _domain));
 	}
 
+#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
+	new ButtonWidget(boss, prefix + "UpdateIconsButton", _("Update Icons"), Common::U32String(), kUpdateIconsCmd);
+#endif
+#endif
+}
+
+void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
+	if (!lowres)
+		_autosavePeriodPopUpDesc = new StaticTextWidget(boss, prefix + "AutosavePeriodPopupDesc", _("Autosave:"));
+	else
+		_autosavePeriodPopUpDesc = new StaticTextWidget(boss, prefix + "AutosavePeriodPopupDesc", _c("Autosave:", "lowres"));
+	_autosavePeriodPopUp = new PopUpWidget(boss, prefix + "AutosavePeriodPopup");
+
+	for (int i = 0; savePeriodLabels[i]; i++) {
+		_autosavePeriodPopUp->appendEntry(_(savePeriodLabels[i]), savePeriodValues[i]);
+	}
+
+#ifdef USE_DISCORD
+	_discordRpcCheckbox = new CheckboxWidget(boss, prefix + "DiscordRpc",
+		_("Enable Discord integration"),
+		_("Show information about the games you are playing on Discord if the Discord client is running.")
+	);
+
+	_discordRpcCheckbox->setState(ConfMan.getBool("discord_rpc", _domain));
+#endif
+
+	// TODO: joystick setting
+
 #ifdef USE_UPDATES
 	if (g_system->getUpdateManager()) {
 		_updatesPopUpDesc = new StaticTextWidget(boss, prefix + "UpdatesPopupDesc", _("Update check:"), _("How often to check ScummVM updates"));
@@ -2537,12 +2553,6 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 		new ButtonWidget(boss, prefix + "UpdatesCheckManuallyButton", _("Check now"), Common::U32String(), kUpdatesCheckCmd);
 	}
 #endif // USE_UPDATES
-
-#ifdef USE_CLOUD
-#ifdef USE_LIBCURL
-	new ButtonWidget(boss, prefix + "UpdateIconsButton", _("Update Icons"), Common::U32String(), kUpdateIconsCmd);
-#endif
-#endif
 }
 
 #ifdef USE_CLOUD

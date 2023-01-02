@@ -290,15 +290,13 @@ protected:
 	void addPathsControls(GuiObject *boss, const Common::String &prefix, bool lowres);
 
 	//
-	// Misc controls
+	// GUI controls
 	//
 	StaticTextWidget *_curTheme;
 	StaticTextWidget *_guiBasePopUpDesc;
 	PopUpWidget *_guiBasePopUp;
 	StaticTextWidget *_rendererPopUpDesc;
 	PopUpWidget *_rendererPopUp;
-	StaticTextWidget *_autosavePeriodPopUpDesc;
-	PopUpWidget *_autosavePeriodPopUp;
 	StaticTextWidget *_guiLanguagePopUpDesc;
 	PopUpWidget *_guiLanguagePopUp;
 	CheckboxWidget *_guiLanguageUseGameLanguageCheckbox;
@@ -306,6 +304,13 @@ protected:
 	CheckboxWidget *_guiReturnToLauncherAtExit;
 	CheckboxWidget *_guiConfirmExit;
 
+	void addGUIControls(GuiObject *boss, const Common::String &prefix, bool lowres);
+
+	//
+	// Misc controls
+	//
+	StaticTextWidget *_autosavePeriodPopUpDesc;
+	PopUpWidget *_autosavePeriodPopUp;
 
 #ifdef USE_UPDATES
 	StaticTextWidget *_updatesPopUpDesc;
