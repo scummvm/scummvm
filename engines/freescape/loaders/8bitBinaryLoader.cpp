@@ -546,7 +546,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	// grab the areas
 	Area *newArea = nullptr;
 	for (uint16 area = 0; area < numberOfAreas; area++) {
-		debugC(1, kFreescapeDebugParser, "Area offset %d", fileOffsetForArea[area]);
+		debugC(1, kFreescapeDebugParser, "Starting to parse area index %d at offset %x", area, fileOffsetForArea[area]);
 
 		file->seek(offset + fileOffsetForArea[area]);
 		newArea = load8bitArea(file, ncolors);

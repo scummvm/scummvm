@@ -92,6 +92,19 @@ bool Renderer::getRGBAtCGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 	return true;
 }
 
+bool Renderer::getRGBAtC64(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2) {
+	if (index == _keyColor)
+		return false;
+
+	byte *entry = (*_colorMap)[index - 1];
+	byte be = *(entry);
+	readFromPalette(be >> 4, r1, g1, b1);
+	entry++;
+	be = *(entry);
+	readFromPalette(be >> 4, r2, g2, b2);
+	return true;
+}
+
 bool Renderer::getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2, byte *stipple) {
 	if (index == _keyColor)
 		return false;
@@ -241,6 +254,8 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2,
 		return true;
 	} else if (_renderMode == Common::kRenderEGA)
 		return getRGBAtEGA(index, r1, g1, b1, r2, g2, b2);
+	else if (_renderMode == Common::kRenderC64)
+		return getRGBAtC64(index, r1, g1, b1, r2, g2, b2);
 	else if (_renderMode == Common::kRenderCGA)
 		return getRGBAtCGA(index, r1, g1, b1, r2, g2, b2);
 	else if (_renderMode == Common::kRenderCPC)

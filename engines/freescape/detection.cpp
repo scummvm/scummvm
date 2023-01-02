@@ -84,6 +84,44 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{
+		"spacestationoblivion",
+		"",
+		{
+			{"SPACESTATIONOBLIVION.C64.EXTRACTED", 0, "85680576865e211f868885e9997a08b8", 22782},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_TESTING,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+
+	{
+		"spacestationoblivion",
+		"",
+		{
+			{"SPACESTATIONOBLIVION.C64.EXTRACTED", 0, "2b3537e21b8b871ec074df2962999781", 64514},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_TESTING,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+
+	{
+		"driller",
+		"",
+		{
+			{"DRILLER.C64.EXTRACTED", 0, "73a6f206e54fb13245fe6d92f60fbb34", 41071},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_TESTING,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
 		"driller",
 		"",
 		{

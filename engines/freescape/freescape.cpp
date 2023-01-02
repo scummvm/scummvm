@@ -53,6 +53,8 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 		_renderMode = Common::kRenderCPC;
 	} else if (isSpectrum()) {
 		_renderMode = Common::kRenderZX;
+	} else if (isC64()) {
+		_renderMode = Common::kRenderC64;
 	}
 
 	_variant = gd->flags;

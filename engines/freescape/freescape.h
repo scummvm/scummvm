@@ -98,6 +98,7 @@ public:
 	bool isDOS() { return _gameDescription->platform == Common::kPlatformDOS; }
 	bool isSpectrum() { return _gameDescription->platform == Common::kPlatformZX; }
 	bool isCPC() { return _gameDescription->platform == Common::kPlatformAmstradCPC; }
+	bool isC64() { return _gameDescription->platform == Common::kPlatformC64; }
 
 	Common::Error run() override;
 

@@ -516,7 +516,16 @@ void DrillerEngine::loadAssetsFullGame() {
 			// TODO
 		} else
 			error("Unknown Amstrad CPC variant");
-
+	} else if (isC64()) {
+		if (_targetName.hasPrefix("spacestationoblivion")) {
+			file.open("spacestationoblivion.c64.extracted");
+			//load8bitBinary(&file, 0xeee, 4);
+			load8bitBinary(&file, 0x8e02, 4);
+		} else if (_targetName.hasPrefix("driller")) {
+			file.open("driller.c64.extracted");
+			load8bitBinary(&file, 0x63a6, 4);
+			//load8bitBinary(&file, 0x58f4, 4);
+		}
 	} else if (_renderMode == Common::kRenderEGA) {
 		loadBundledImages();
 		file.open("DRILLE.EXE");
