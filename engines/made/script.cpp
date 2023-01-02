@@ -512,7 +512,7 @@ void ScriptInterpreter::cmd_rand() {
 }
 
 void ScriptInterpreter::cmd_randomize() {
-	_vm->_rnd->setSeed(g_system->getMillis());
+	_vm->_rnd->setSeed(Common::RandomSource::generateNewSeed());
 	_stack.setTop(0);
 }
 

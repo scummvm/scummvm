@@ -27,7 +27,7 @@ static const int x_talk_dch[6] = {1, 25, 49, 73, 97, 121};
 static const int x_talk_izq[6] = {145, 169, 193, 217, 241, 265};
 
 void DrasculaEngine::talkInit(const char *filename) {
-	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
+	_rnd->setSeed(Common::RandomSource::generateNewSeed());
 
 	playFile(filename);
 }

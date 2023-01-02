@@ -2317,7 +2317,7 @@ int Hugo::RunSystem() {
 		case 22:		/* INIT_RANDOM */
 		{
 #if !defined (RANDOM)
-			_random.setSeed(g_system->getMillis());
+			_random.setSeed(Common::RandomSource::generateNewSeed());
 #else
 			time_t seed;
 			SRANDOM((unsigned int)time((time_t *)&seed));
