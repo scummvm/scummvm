@@ -24,6 +24,7 @@
 #include "ultima/ultima8/world/minimap.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/item.h"
+#include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
@@ -77,23 +78,30 @@ Common::Point MiniMap::getItemLocation(const Item &item, unsigned int chunkSize)
 }
 
 uint32 MiniMap::sampleAtPoint(const CurrentMap &map, int x, int y) {
-	uint32 val = 0;
-	const Item *item = map.traceTopItem(x, y, 1 << 15, -1, 0, ShapeInfo::SI_ROOF | ShapeInfo::SI_OCCL | ShapeInfo::SI_LAND | ShapeInfo::SI_SEA);
-	if (item) {
-		val = sampleAtPoint(*item, x, y);
-		if (val == 0) {
-			item = map.traceTopItem(x, y, 1 << 15, -1, item->getObjId(), ShapeInfo::SI_ROOF | ShapeInfo::SI_OCCL | ShapeInfo::SI_LAND | ShapeInfo::SI_SEA);
-			if (item) {
-				val = sampleAtPoint(*item, x, y);
-			}
-		}
+	int32 start[3] = {x, y, 1 << 15};
+	int32 end[3] = {x, y, -1};
+	int32 dims[3] = {0, 0, 0};
+	uint32 shflags = ShapeInfo::SI_ROOF | ShapeInfo::SI_OCCL | ShapeInfo::SI_LAND | ShapeInfo::SI_SEA;
+	Std::list<CurrentMap::SweepItem> collisions;
+	if (!map.sweepTest(start, end, dims, shflags, 0, false, &collisions))
+		return 0;
 
-		if (val == 0) {
-			// set to avoid reprocessing
-			val = _surface.format.RGBToColor(0x00, 0x00, 0x00);
+	Std::list<CurrentMap::SweepItem>::const_iterator it;
+	for (it = collisions.begin(); it != collisions.end(); it++) {
+		const Item *item = getItem(it->_item);
+		if (item) {
+			const ShapeInfo *si = item->getShapeInfo();
+			if (!(si->_flags & shflags) || si->is_editor() || si->is_translucent())
+				continue;
+
+			uint32 val = sampleAtPoint(*item, x, y);
+			if (val != 0)
+				return val;
 		}
 	}
-	return val;
+
+	// set to avoid reprocessing
+	return _surface.format.RGBToColor(0x00, 0x00, 0x00);
 }
 
 uint32 MiniMap::sampleAtPoint(const Item &item, int x, int y) {
