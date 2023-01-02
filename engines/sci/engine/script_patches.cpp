@@ -8345,9 +8345,10 @@ static const uint16 larry1PatchBuyApple[] = {
 	PATCH_END
 };
 
-//          script, description,                               signature                patch
+//          script, description,                                signature                     patch
 static const SciScriptPatcherEntry larry1Signatures[] = {
-	{  true,   300, "Spanish: buy apple from barrel man",    1, larry1SignatureBuyApple, larry1PatchBuyApple },
+	{  true,   300, "Spanish: buy apple from barrel man",    1, larry1SignatureBuyApple,      larry1PatchBuyApple },
+	{  true,   803, "disable speed test",                    1, sci01SpeedTestLocalSignature, sci01SpeedTestLocalPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
