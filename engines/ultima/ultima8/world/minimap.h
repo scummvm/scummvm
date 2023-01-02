@@ -38,15 +38,16 @@ private:
 	uint32 _mapNum;
 	Graphics::Surface _surface;
 
-	uint32 sampleAtPoint(CurrentMap *map, int x, int y);
-	uint32 sampleAtPoint(const Item *item, int x, int y);
+	uint32 sampleAtPoint(const CurrentMap &map, int x, int y);
+	uint32 sampleAtPoint(const Item &item, int x, int y);
 
 	const Common::Rect getCropBounds() const;
 public:
 	MiniMap(uint32 mapNum);
 	~MiniMap();
 
-	void update(CurrentMap *map);
+	void update(const CurrentMap &map);
+	Common::Point getItemLocation(const Item &item, unsigned int chunkSize);
 
 	uint32 getMapNum() const { return _mapNum; }
 	Graphics::Surface *getSurface() { return &_surface; }

@@ -41,8 +41,8 @@ MiniMap::~MiniMap() {
 	_surface.free();
 }
 
-void MiniMap::update(CurrentMap *currentmap) {
-	int mapChunkSize = currentmap->getChunkSize();
+void MiniMap::update(const CurrentMap &map) {
+	int mapChunkSize = map.getChunkSize();
 
 	// Draw into the map surface
 	for (int x = 0; x < _surface.w; x++) {
@@ -51,7 +51,7 @@ void MiniMap::update(CurrentMap *currentmap) {
 			if (val == 0) {
 				int cx = x / MINMAPGUMP_SCALE;
 				int cy = y / MINMAPGUMP_SCALE;
-				if (currentmap->isChunkFast(cx, cy)) {
+				if (map.isChunkFast(cx, cy)) {
 					int mx = (x * mapChunkSize) / MINMAPGUMP_SCALE;
 					int my = (y * mapChunkSize) / MINMAPGUMP_SCALE;
 
@@ -59,7 +59,7 @@ void MiniMap::update(CurrentMap *currentmap) {
 					mx += mapChunkSize / (MINMAPGUMP_SCALE * 2);
 					my += mapChunkSize / (MINMAPGUMP_SCALE * 2);
 
-					val = sampleAtPoint(currentmap, mx, my);
+					val = sampleAtPoint(map, mx, my);
 					_surface.setPixel(x, y, val);
 				}
 			}
@@ -67,15 +67,24 @@ void MiniMap::update(CurrentMap *currentmap) {
 	}
 }
 
-uint32 MiniMap::sampleAtPoint(CurrentMap *currentmap, int x, int y) {
+Common::Point MiniMap::getItemLocation(const Item &item, unsigned int chunkSize) {
+	int32 x, y, z;
+	item.getLocation(x, y, z);
+
+	x = x / (chunkSize / MINMAPGUMP_SCALE);
+	y = y / (chunkSize / MINMAPGUMP_SCALE);
+	return Common::Point(x, y);
+}
+
+uint32 MiniMap::sampleAtPoint(const CurrentMap &map, int x, int y) {
 	uint32 val = 0;
-	const Item *item = currentmap->traceTopItem(x, y, 1 << 15, -1, 0, ShapeInfo::SI_ROOF | ShapeInfo::SI_OCCL | ShapeInfo::SI_LAND | ShapeInfo::SI_SEA);
+	const Item *item = map.traceTopItem(x, y, 1 << 15, -1, 0, ShapeInfo::SI_ROOF | ShapeInfo::SI_OCCL | ShapeInfo::SI_LAND | ShapeInfo::SI_SEA);
 	if (item) {
-		val = sampleAtPoint(item, x, y);
+		val = sampleAtPoint(*item, x, y);
 		if (val == 0) {
-			item = currentmap->traceTopItem(x, y, 1 << 15, -1, item->getObjId(), ShapeInfo::SI_ROOF | ShapeInfo::SI_OCCL | ShapeInfo::SI_LAND | ShapeInfo::SI_SEA);
+			item = map.traceTopItem(x, y, 1 << 15, -1, item->getObjId(), ShapeInfo::SI_ROOF | ShapeInfo::SI_OCCL | ShapeInfo::SI_LAND | ShapeInfo::SI_SEA);
 			if (item) {
-				val = sampleAtPoint(item, x, y);
+				val = sampleAtPoint(*item, x, y);
 			}
 		}
 
@@ -87,19 +96,19 @@ uint32 MiniMap::sampleAtPoint(CurrentMap *currentmap, int x, int y) {
 	return val;
 }
 
-uint32 MiniMap::sampleAtPoint(const Item *item, int x, int y) {
+uint32 MiniMap::sampleAtPoint(const Item &item, int x, int y) {
 	int32 ix, iy, iz, idx, idy, idz;
-	item->getLocation(ix, iy, iz);
-	item->getFootpadWorld(idx, idy, idz);
+	item.getLocation(ix, iy, iz);
+	item.getFootpadWorld(idx, idy, idz);
 
 	ix -= x;
 	iy -= y;
 
-	const Shape *sh = item->getShapeObject();
+	const Shape *sh = item.getShapeObject();
 	if (!sh)
 		return 0;
 
-	const ShapeFrame *frame = sh->getFrame(item->getFrame());
+	const ShapeFrame *frame = sh->getFrame(item.getFrame());
 	if (!frame)
 		return 0;
 
@@ -107,7 +116,7 @@ uint32 MiniMap::sampleAtPoint(const Item *item, int x, int y) {
 	if (!pal)
 		return 0;
 
-	if (item->canDrag())
+	if (item.canDrag())
 		return 0;
 
 	// Screenspace bounding box bottom x_ coord (RNB x_ coord)

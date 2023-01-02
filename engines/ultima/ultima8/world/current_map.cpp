@@ -1253,7 +1253,7 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 }
 
 
-const Item *CurrentMap::traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId ignore, uint32 shflags) {
+const Item *CurrentMap::traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId ignore, uint32 shflags) const {
 	const Item *top = nullptr;
 
 	if (ztop < zbot) {

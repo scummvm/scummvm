@@ -204,7 +204,7 @@ public:
 	}
 
 	// A simple trace to find the top item at a specific xy point
-	const Item *traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId ignore, uint32 shflags);
+	const Item *traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId ignore, uint32 shflags) const;
 
 	// Set the entire map as being 'fast'
 	void setWholeMapFast();

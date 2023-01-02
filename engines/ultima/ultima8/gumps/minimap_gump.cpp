@@ -62,27 +62,23 @@ void MiniMapGump::run() {
 	if (!actor || actor->isDead())
 		return;
 
-	int32 ax, ay, az;
-	actor->getLocation(ax, ay, az);
-
-	ax = ax / (mapChunkSize / MINMAPGUMP_SCALE);
-	ay = ay / (mapChunkSize / MINMAPGUMP_SCALE);
-
-	// Skip map update if location has not changed
-	if (ax == _ax && ay == _ay)
-		return;
-
-	_ax = ax;
-	_ay = ay;
-
 	uint32 mapNum = currentmap->getNum();
-
 	MiniMap *minimap = _minimaps[mapNum];
 	if (!minimap) {
 		minimap = new MiniMap(mapNum);
 		_minimaps[mapNum] = minimap;
 	}
-	minimap->update(currentmap);
+
+	Common::Point p = minimap->getItemLocation(*actor, mapChunkSize);
+
+	// Skip map update if location has not changed
+	if (p.x == _ax && p.y == _ay)
+		return;
+
+	_ax = p.x;
+	_ay = p.y;
+
+	minimap->update(*currentmap);
 }
 
 void MiniMapGump::generate() {
@@ -97,7 +93,7 @@ void MiniMapGump::generate() {
 		minimap = new MiniMap(mapNum);
 		_minimaps[mapNum] = minimap;
 	}
-	minimap->update(currentmap);
+	minimap->update(*currentmap);
 }
 
 void MiniMapGump::clear() {
