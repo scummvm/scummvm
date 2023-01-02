@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-02 11:44+0000\n"
+"POT-Creation-Date: 2023-01-02 14:10+0000\n"
 "PO-Revision-Date: 2022-10-01 14:37+0000\n"
 "Last-Translator: kane159 <kane12369@gmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -59,7 +59,7 @@ msgstr "向上"
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/downloadiconsdialog.cpp:257
 #: gui/downloadiconsdialog.cpp:452 gui/editgamedialog.cpp:352
 #: gui/editrecorddialog.cpp:66 gui/filebrowser-dialog.cpp:68
-#: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2262
+#: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2270
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
 #: gui/recorderdialog.cpp:213 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:457
@@ -132,7 +132,7 @@ msgstr "你的连接似乎受到限制。你确定想用它下载文件吗？"
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
-#: gui/options.cpp:3202 gui/options.cpp:3240 gui/options.cpp:3664
+#: gui/options.cpp:3212 gui/options.cpp:3250 gui/options.cpp:3674
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:584
 #: engines/director/events.cpp:91 engines/grim/grim.cpp:355
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
@@ -144,7 +144,7 @@ msgstr "是"
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
-#: gui/options.cpp:3202 gui/options.cpp:3240 gui/options.cpp:3664
+#: gui/options.cpp:3212 gui/options.cpp:3250 gui/options.cpp:3674
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/grim/grim.cpp:355 engines/kyra/gui/saveload_eob.cpp:597
 #: engines/kyra/gui/saveload_eob.cpp:630
@@ -166,7 +166,7 @@ msgstr "无法创建下载目录 —— 指定的目录中有相同文件名的�
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:353
 #: gui/editrecorddialog.cpp:67 gui/fluidsynth-dialog.cpp:153
 #: gui/launcher.cpp:537 gui/launcher.cpp:541 gui/massadd.cpp:90
-#: gui/options.cpp:2264 gui/predictivedialog.cpp:69
+#: gui/options.cpp:2272 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1224 engines/engine.cpp:506 engines/engine.cpp:529
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/buried/saveload.cpp:69
@@ -312,8 +312,8 @@ msgstr "游戏的语言。这并不会将你的西班牙语版本游戏变成英
 #: gui/editgamedialog.cpp:153 gui/editgamedialog.cpp:168 gui/options.cpp:1515
 #: gui/options.cpp:1530 gui/options.cpp:1546 gui/options.cpp:1558
 #: gui/options.cpp:1588 gui/options.cpp:1602 gui/options.cpp:2007
-#: gui/options.cpp:2407 gui/options.cpp:2481 gui/options.cpp:2661
-#: gui/options.cpp:3089 audio/null.cpp:40
+#: gui/options.cpp:2415 gui/options.cpp:2468 gui/options.cpp:2671
+#: gui/options.cpp:3099 audio/null.cpp:40
 #: backends/platform/android/options.cpp:112
 #: backends/platform/android/options.cpp:113 engines/ags/dialogs.cpp:62
 msgid "<default>"
@@ -443,7 +443,7 @@ msgctxt "lowres"
 msgid "Game Path:"
 msgstr "游戏路径："
 
-#: gui/editgamedialog.cpp:315 gui/options.cpp:2381
+#: gui/editgamedialog.cpp:315 gui/options.cpp:2389
 msgid "Extra Path:"
 msgstr "其他路径："
 
@@ -452,21 +452,21 @@ msgstr "其他路径："
 msgid "Specifies path to additional data used by the game"
 msgstr "指定游戏使用的其他数据的路径"
 
-#: gui/editgamedialog.cpp:317 gui/options.cpp:2383
+#: gui/editgamedialog.cpp:317 gui/options.cpp:2391
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "其他路径："
 
-#: gui/editgamedialog.cpp:324 gui/options.cpp:2357
+#: gui/editgamedialog.cpp:324 gui/options.cpp:2365
 msgid "Save Path:"
 msgstr "保存路径："
 
 #: gui/editgamedialog.cpp:324 gui/editgamedialog.cpp:326
-#: gui/editgamedialog.cpp:327 gui/options.cpp:2357 gui/options.cpp:2359
+#: gui/editgamedialog.cpp:327 gui/options.cpp:2365 gui/options.cpp:2367
 msgid "Specifies where your saved games are put"
 msgstr "指定游戏存档的位置"
 
-#: gui/editgamedialog.cpp:326 gui/options.cpp:2359
+#: gui/editgamedialog.cpp:326 gui/options.cpp:2367
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "存档路径："
@@ -481,24 +481,24 @@ msgstr "統計"
 
 #: gui/editgamedialog.cpp:366 gui/editgamedialog.cpp:468
 #: gui/editgamedialog.cpp:530 gui/editgamedialog.cpp:597 gui/options.cpp:1158
-#: gui/options.cpp:2287 gui/options.cpp:2289 gui/options.cpp:2294
-#: gui/options.cpp:2325 gui/options.cpp:2368 gui/options.cpp:2384
-#: gui/options.cpp:2393 gui/options.cpp:2780 gui/options.cpp:2782
-#: gui/options.cpp:2786 gui/options.cpp:2795 gui/options.cpp:3070
-#: gui/options.cpp:3076 gui/options.cpp:3083 gui/options.cpp:3095
-#: gui/options.cpp:3106
+#: gui/options.cpp:2295 gui/options.cpp:2297 gui/options.cpp:2302
+#: gui/options.cpp:2333 gui/options.cpp:2376 gui/options.cpp:2392
+#: gui/options.cpp:2401 gui/options.cpp:2790 gui/options.cpp:2792
+#: gui/options.cpp:2796 gui/options.cpp:2805 gui/options.cpp:3080
+#: gui/options.cpp:3086 gui/options.cpp:3093 gui/options.cpp:3105
+#: gui/options.cpp:3116
 msgctxt "path"
 msgid "None"
 msgstr "无"
 
 #: gui/editgamedialog.cpp:371 gui/editgamedialog.cpp:474
-#: gui/editgamedialog.cpp:601 gui/options.cpp:2286 gui/options.cpp:2288
-#: gui/options.cpp:2779 gui/options.cpp:2781 gui/options.cpp:3073
-#: gui/options.cpp:3079 backends/platform/wii/options.cpp:55
+#: gui/editgamedialog.cpp:601 gui/options.cpp:2294 gui/options.cpp:2296
+#: gui/options.cpp:2789 gui/options.cpp:2791 gui/options.cpp:3083
+#: gui/options.cpp:3089 backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "默认"
 
-#: gui/editgamedialog.cpp:523 gui/options.cpp:3100
+#: gui/editgamedialog.cpp:523 gui/options.cpp:3110
 msgid "Select SoundFont"
 msgstr "选择 SoundFont"
 
@@ -506,11 +506,11 @@ msgstr "选择 SoundFont"
 msgid "Select additional game directory"
 msgstr "选择附加游戏目录"
 
-#: gui/editgamedialog.cpp:575 gui/options.cpp:2986
+#: gui/editgamedialog.cpp:575 gui/options.cpp:2996
 msgid "Select directory for saved games"
 msgstr "选择游戏存档目录"
 
-#: gui/editgamedialog.cpp:582 gui/options.cpp:2993
+#: gui/editgamedialog.cpp:582 gui/options.cpp:3003
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "所選取的資料夾不能被寫入.請選擇另一資料夾."
 
@@ -598,7 +598,7 @@ msgstr "正弦"
 msgid "Triangle"
 msgstr "三角形"
 
-#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:2211
+#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:2219
 msgid "Misc"
 msgstr "杂项"
 
@@ -636,7 +636,7 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr "你确定要重置所有 FluidSynth 设置到默认值吗？"
 
-#: gui/gui-manager.cpp:219
+#: gui/gui-manager.cpp:219 gui/options.cpp:2210
 msgid "GUI"
 msgstr "图形界面"
 
@@ -1009,7 +1009,7 @@ msgstr "扫描了 %d 目录..."
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr "找到了%d个新游戏，忽略了%d个之前添加的游戏..."
 
-#: gui/message.cpp:218 gui/message.cpp:222 gui/options.cpp:2596
+#: gui/message.cpp:218 gui/message.cpp:222 gui/options.cpp:2606
 msgid "Open URL"
 msgstr "打开链接"
 
@@ -1445,137 +1445,123 @@ msgstr "语音音量："
 msgid "Control"
 msgstr "控制"
 
-#: gui/options.cpp:2213
-msgctxt "lowres"
-msgid "Misc"
-msgstr "杂项"
-
-#: gui/options.cpp:2225
+#: gui/options.cpp:2231
 msgid "Cloud"
 msgstr "云端"
 
-#: gui/options.cpp:2227
+#: gui/options.cpp:2233
 msgctxt "lowres"
 msgid "Cloud"
 msgstr "云端"
 
-#: gui/options.cpp:2241
+#: gui/options.cpp:2247
 msgid "LAN"
 msgstr "本地局域网"
 
-#: gui/options.cpp:2243
+#: gui/options.cpp:2249
 msgctxt "lowres"
 msgid "LAN"
 msgstr "本地局域网"
 
-#: gui/options.cpp:2251
+#: gui/options.cpp:2259
 msgid "Accessibility"
 msgstr "访问性"
 
-#: gui/options.cpp:2253
+#: gui/options.cpp:2261
 msgctxt "lowres"
 msgid "Accessibility"
 msgstr "访问性"
 
-#: gui/options.cpp:2262
+#: gui/options.cpp:2270
 msgid "Discard changes and close the dialog"
 msgstr "取消更改并关闭对话框"
 
-#: gui/options.cpp:2263
+#: gui/options.cpp:2271
 msgid "Apply"
 msgstr "应用"
 
-#: gui/options.cpp:2263
+#: gui/options.cpp:2271
 msgid "Apply changes without closing the dialog"
 msgstr "应用更改并保留对话框"
 
-#: gui/options.cpp:2264
+#: gui/options.cpp:2272
 msgid "Apply changes and close the dialog"
 msgstr "应用更改并关闭对话框"
 
-#: gui/options.cpp:2346
+#: gui/options.cpp:2354
 msgid "FluidSynth Settings"
 msgstr "FluidSynth设置"
 
-#: gui/options.cpp:2360
+#: gui/options.cpp:2368
 msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
 msgstr "標註您的存檔會存在什麼位置.紅色表示這數值為暫時的將不會被保存"
 
-#: gui/options.cpp:2365
-msgid "Theme Path:"
-msgstr "主题路径："
-
-#: gui/options.cpp:2367
-msgctxt "lowres"
-msgid "Theme Path:"
-msgstr "主题路径："
-
 #: gui/options.cpp:2373
-msgid "Icon Path:"
-msgstr "圖標路徑:"
+msgid "Theme Path:"
+msgstr "主题路径："
 
 #: gui/options.cpp:2375
 msgctxt "lowres"
+msgid "Theme Path:"
+msgstr "主题路径："
+
+#: gui/options.cpp:2381
 msgid "Icon Path:"
 msgstr "圖標路徑:"
 
-#: gui/options.cpp:2376
+#: gui/options.cpp:2383
+msgctxt "lowres"
+msgid "Icon Path:"
+msgstr "圖標路徑:"
+
+#: gui/options.cpp:2384
 msgctxt "path"
 msgid "Default"
 msgstr "預設"
 
-#: gui/options.cpp:2381 gui/options.cpp:2383 gui/options.cpp:2384
+#: gui/options.cpp:2389 gui/options.cpp:2391 gui/options.cpp:2392
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr "ScummVM在所有遊戲中使用添加資料的指定位置"
 
-#: gui/options.cpp:2390
+#: gui/options.cpp:2398
 msgid "Plugins Path:"
 msgstr "插件位置:"
 
-#: gui/options.cpp:2392
+#: gui/options.cpp:2400
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "插件位置:"
 
-#: gui/options.cpp:2402
+#: gui/options.cpp:2410
 msgid "ScummVM config path: "
 msgstr "ScummVM 設置保存位置: "
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2412 gui/options.cpp:3089
+#: gui/options.cpp:2420 gui/options.cpp:3099
 msgid "Last browser path: "
 msgstr "上次最後瀏覽的位置: "
 
-#: gui/options.cpp:2417
+#: gui/options.cpp:2425
 msgid "Theme:"
 msgstr "主題:"
 
-#: gui/options.cpp:2422
+#: gui/options.cpp:2430
 msgid "GUI scale:"
 msgstr "使用者介面比例:"
 
-#: gui/options.cpp:2429
+#: gui/options.cpp:2437
 msgid "GUI renderer:"
 msgstr "使用者介面渲染:"
 
-#: gui/options.cpp:2441
-msgid "Autosave:"
-msgstr "自動存檔:"
-
-#: gui/options.cpp:2443
-msgctxt "lowres"
-msgid "Autosave:"
-msgstr "自動存檔:"
-
-#: gui/options.cpp:2452
+#: gui/options.cpp:2450
 #, fuzzy
 #| msgid "Always return to the launcher when leaving a game"
 msgid "Return to the launcher when leaving a game"
 msgstr "離開遊戲的時候總是回到遊戲選擇介面"
 
-#: gui/options.cpp:2453
+#: gui/options.cpp:2451
 #, fuzzy
 #| msgid ""
 #| "Always return to the launcher when leaving a game instead of closing "
@@ -1585,37 +1571,27 @@ msgid ""
 "(this feature is not supported by all games)."
 msgstr "離開遊戲的時候不關閉ScummVM而是回到遊戲選擇介面."
 
-#: gui/options.cpp:2460
+#: gui/options.cpp:2458
 msgid "Ask for confirmation on exit"
 msgstr "離開時必須確認"
 
-#: gui/options.cpp:2461
+#: gui/options.cpp:2459
 msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr "當關閉遊戲或退回選擇介面時顯示確認畫面."
 
-#: gui/options.cpp:2468
-msgid "Enable Discord integration"
-msgstr "啟用Discord整合"
-
-#: gui/options.cpp:2469
-msgid ""
-"Show information about the games you are playing on Discord if the Discord "
-"client is running."
-msgstr "當Discord客戶端運行的時候在上面顯示您正在遊玩的遊戲資訊."
-
-#: gui/options.cpp:2478
+#: gui/options.cpp:2465
 msgid "GUI language:"
 msgstr "使用者介面語言:"
 
-#: gui/options.cpp:2478
+#: gui/options.cpp:2465
 msgid "Language of ScummVM GUI"
 msgstr "ScummVM的使用的語言"
 
-#: gui/options.cpp:2504
+#: gui/options.cpp:2491
 msgid "Switch the ScummVM GUI language to the game language"
 msgstr "切換ScummVM的語言到與遊戲語言一致"
 
-#: gui/options.cpp:2505
+#: gui/options.cpp:2492
 msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
@@ -1624,252 +1600,271 @@ msgstr ""
 "當開啟遊戲的時候切換ScummVM的介面語言. 這樣的話, 如果遊戲使用 ScummVM 儲存與"
 "讀取, 它就會與遊戲中語言保持一致."
 
-#: gui/options.cpp:2517
+#: gui/options.cpp:2504
 msgid "Use native system file browser"
 msgstr "使用系統預設的文件瀏覽器"
 
-#: gui/options.cpp:2518
+#: gui/options.cpp:2505
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr "使用系統預設的文件瀏覽器而不是使用ScummVM內建的來選擇文件或資料夾."
 
-#: gui/options.cpp:2526 gui/updates-dialog.cpp:85
-msgid "Update check:"
-msgstr "檢查更新:"
-
-#: gui/options.cpp:2526
-msgid "How often to check ScummVM updates"
-msgstr "要多常檢查ScummVM的更新"
-
-#: gui/options.cpp:2537
-msgid "Check now"
-msgstr "現在檢查"
-
-#: gui/options.cpp:2543
+#: gui/options.cpp:2513
 msgid "Update Icons"
 msgstr "更新圖標"
 
-#: gui/options.cpp:2551
+#: gui/options.cpp:2520
+msgid "Autosave:"
+msgstr "自動存檔:"
+
+#: gui/options.cpp:2522
+msgctxt "lowres"
+msgid "Autosave:"
+msgstr "自動存檔:"
+
+#: gui/options.cpp:2531
+msgid "Enable Discord integration"
+msgstr "啟用Discord整合"
+
+#: gui/options.cpp:2532
+msgid ""
+"Show information about the games you are playing on Discord if the Discord "
+"client is running."
+msgstr "當Discord客戶端運行的時候在上面顯示您正在遊玩的遊戲資訊."
+
+#: gui/options.cpp:2542 gui/updates-dialog.cpp:85
+msgid "Update check:"
+msgstr "檢查更新:"
+
+#: gui/options.cpp:2542
+msgid "How often to check ScummVM updates"
+msgstr "要多常檢查ScummVM的更新"
+
+#: gui/options.cpp:2553
+msgid "Check now"
+msgstr "現在檢查"
+
+#: gui/options.cpp:2561
 msgid "Active storage:"
 msgstr "啟用儲存空間:"
 
-#: gui/options.cpp:2551
+#: gui/options.cpp:2561
 msgid "Active cloud storage"
 msgstr "啟用雲端儲存空間"
 
-#: gui/options.cpp:2560
+#: gui/options.cpp:2570
 msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr "4. 儲存空間尚未啟用. 驗證使用者名稱來啟用它:"
 
-#: gui/options.cpp:2562
+#: gui/options.cpp:2572
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr "4. 儲存空間尚未啟用. 驗證使用者名稱來啟用它:"
 
-#: gui/options.cpp:2563
+#: gui/options.cpp:2573
 msgid "Enable storage"
 msgstr "啟用儲存空間"
 
-#: gui/options.cpp:2563
+#: gui/options.cpp:2573
 msgid "Confirm you want to use this account for this storage"
 msgstr "確認是否要在這個儲存空間中使用這個使用者名稱"
 
-#: gui/options.cpp:2565 backends/platform/wii/options.cpp:113
+#: gui/options.cpp:2575 backends/platform/wii/options.cpp:113
 msgid "Username:"
 msgstr "使用者名稱:"
 
-#: gui/options.cpp:2565
+#: gui/options.cpp:2575
 msgid "Username used by this storage"
 msgstr "儲存空間使用的使用者名稱"
 
-#: gui/options.cpp:2566
+#: gui/options.cpp:2576
 msgid "<none>"
 msgstr "<無>"
 
-#: gui/options.cpp:2568
+#: gui/options.cpp:2578
 msgid "Used space:"
 msgstr "已使用容量:"
 
-#: gui/options.cpp:2568
+#: gui/options.cpp:2578
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr "在這空間中已用於保存ScummVM遊戲存檔的容量"
 
-#: gui/options.cpp:2571
+#: gui/options.cpp:2581
 msgid "Last sync:"
 msgstr "上一次同步:"
 
-#: gui/options.cpp:2571
+#: gui/options.cpp:2581
 msgid "When was the last time saved games were synced with this storage"
 msgstr "上一次同步遊戲存檔到空間中的時間"
 
-#: gui/options.cpp:2572 gui/options.cpp:3447
+#: gui/options.cpp:2582 gui/options.cpp:3457
 msgid "<never>"
 msgstr "<永遠不要>"
 
-#: gui/options.cpp:2574
+#: gui/options.cpp:2584
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr "運行,讀取或儲存前自動同步遊戲存檔."
 
-#: gui/options.cpp:2576
+#: gui/options.cpp:2586
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr "運行,讀取或儲存前自動同步遊戲存檔."
 
-#: gui/options.cpp:2577
+#: gui/options.cpp:2587
 msgid "Sync now"
 msgstr "馬上同步"
 
-#: gui/options.cpp:2577
+#: gui/options.cpp:2587
 msgid "Start saved games sync"
 msgstr "開始同步存檔"
 
-#: gui/options.cpp:2580
+#: gui/options.cpp:2590
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "您可以從自己雲端的ScummVM資料夾中下載遊戲數據:"
 
-#: gui/options.cpp:2582
+#: gui/options.cpp:2592
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "您可以從自己雲端的ScummVM資料夾中下載遊戲數據:"
 
-#: gui/options.cpp:2583
+#: gui/options.cpp:2593
 msgid "Download game files"
 msgstr "下載遊戲數據"
 
-#: gui/options.cpp:2583
+#: gui/options.cpp:2593
 msgid "Open downloads manager dialog"
 msgstr ""
 
-#: gui/options.cpp:2586
+#: gui/options.cpp:2596
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
-
-#: gui/options.cpp:2588
-msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
-
-#: gui/options.cpp:2589
-msgid "Disconnect"
-msgstr ""
-
-#: gui/options.cpp:2589
-msgid "Stop using this storage on this device"
-msgstr ""
-
-#: gui/options.cpp:2592
-msgctxt "lowres"
-msgid "This storage is not connected yet! To connect,"
-msgstr ""
-
-#: gui/options.cpp:2594
-msgid "This storage is not connected yet! To connect,"
-msgstr ""
-
-#: gui/options.cpp:2595
-msgid "1. Open this link:"
 msgstr ""
 
 #: gui/options.cpp:2598
+msgid "To change account for this storage, disconnect and connect again:"
+msgstr ""
+
+#: gui/options.cpp:2599
+msgid "Disconnect"
+msgstr ""
+
+#: gui/options.cpp:2599
+msgid "Stop using this storage on this device"
+msgstr ""
+
+#: gui/options.cpp:2602
+msgctxt "lowres"
+msgid "This storage is not connected yet! To connect,"
+msgstr ""
+
+#: gui/options.cpp:2604
+msgid "This storage is not connected yet! To connect,"
+msgstr ""
+
+#: gui/options.cpp:2605
+msgid "1. Open this link:"
+msgstr ""
+
+#: gui/options.cpp:2608
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
 msgstr ""
 
-#: gui/options.cpp:2600
+#: gui/options.cpp:2610
 msgid "2. Get the code and enter it here:"
 msgstr ""
 
-#: gui/options.cpp:2602
+#: gui/options.cpp:2612
 msgid "Paste"
 msgstr ""
 
-#: gui/options.cpp:2602
+#: gui/options.cpp:2612
 msgid "Paste code from clipboard"
 msgstr ""
 
-#: gui/options.cpp:2603
+#: gui/options.cpp:2613
 msgid "3. Connect"
 msgstr ""
 
-#: gui/options.cpp:2603
+#: gui/options.cpp:2613
 msgid "Connect your cloud storage account"
 msgstr ""
 
-#: gui/options.cpp:2612
+#: gui/options.cpp:2622
 msgid "Run server"
 msgstr ""
 
-#: gui/options.cpp:2612
+#: gui/options.cpp:2622
 msgid "Run local webserver"
 msgstr ""
 
-#: gui/options.cpp:2613 gui/options.cpp:3562
+#: gui/options.cpp:2623 gui/options.cpp:3572
 msgid "Not running"
 msgstr ""
 
-#: gui/options.cpp:2617
+#: gui/options.cpp:2627
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr ""
 
-#: gui/options.cpp:2617 gui/options.cpp:2619 gui/options.cpp:2620
+#: gui/options.cpp:2627 gui/options.cpp:2629 gui/options.cpp:2630
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr ""
 
-#: gui/options.cpp:2619
+#: gui/options.cpp:2629
 msgid "/root/ Path:"
 msgstr ""
 
-#: gui/options.cpp:2625
+#: gui/options.cpp:2635
 msgid "Server's port:"
 msgstr ""
 
-#: gui/options.cpp:2625
+#: gui/options.cpp:2635
 msgid "Port for server to use"
 msgstr "伺服器使用的端口"
 
-#: gui/options.cpp:2630
+#: gui/options.cpp:2640
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 
-#: gui/options.cpp:2631
+#: gui/options.cpp:2641
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
 msgstr ""
 
-#: gui/options.cpp:2633
+#: gui/options.cpp:2643
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 
-#: gui/options.cpp:2634
+#: gui/options.cpp:2644
 msgid "Closing options dialog will stop the server."
 msgstr ""
 
-#: gui/options.cpp:2646
+#: gui/options.cpp:2656
 msgid "Use Text to speech"
 msgstr ""
 
-#: gui/options.cpp:2646
+#: gui/options.cpp:2656
 msgid "Will read text in gui on mouse over."
 msgstr ""
 
-#: gui/options.cpp:2659
+#: gui/options.cpp:2669
 msgid "None"
 msgstr ""
 
-#: gui/options.cpp:2720
+#: gui/options.cpp:2730
 msgid "Ignore"
 msgstr ""
 
-#: gui/options.cpp:2721
+#: gui/options.cpp:2731
 msgid "Disable autosave"
 msgstr "禁用自動存檔"
 
-#: gui/options.cpp:2722
+#: gui/options.cpp:2732
 msgid ""
 "WARNING: Autosave was enabled. Some of your games have existing saved games "
 "on the autosave slot. You can either move the existing saves to new slots, "
@@ -1878,7 +1873,7 @@ msgid ""
 "List of games:\n"
 msgstr ""
 
-#: gui/options.cpp:2731
+#: gui/options.cpp:2741
 msgid ""
 "\n"
 "And more..."
@@ -1886,31 +1881,31 @@ msgstr ""
 "\n"
 "添加更多..."
 
-#: gui/options.cpp:2732 engines/engine.cpp:559
+#: gui/options.cpp:2742 engines/engine.cpp:559
 msgid "Move"
 msgstr "移動"
 
-#: gui/options.cpp:2745
+#: gui/options.cpp:2755
 msgid "ERROR: Failed to move the following saved games:\n"
 msgstr "錯誤: 移動下列遊戲存檔的時候出錯:\n"
 
-#: gui/options.cpp:2831
+#: gui/options.cpp:2841
 msgid "Failed to change cloud storage!"
 msgstr "更改雲端空間時出錯!"
 
-#: gui/options.cpp:2834
+#: gui/options.cpp:2844
 msgid "Another cloud storage is already active."
 msgstr "另一雲端空間已在使用中."
 
-#: gui/options.cpp:2924
+#: gui/options.cpp:2934
 msgid "Theme does not support selected language!"
 msgstr "主題不支援所選的語言!"
 
-#: gui/options.cpp:2927
+#: gui/options.cpp:2937
 msgid "Theme cannot be loaded!"
 msgstr "無法載入主題!"
 
-#: gui/options.cpp:2930
+#: gui/options.cpp:2940
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -1918,27 +1913,27 @@ msgstr ""
 "\n"
 "雜項設置將被恢復."
 
-#: gui/options.cpp:3002
+#: gui/options.cpp:3012
 msgid "Select directory for GUI themes"
 msgstr "選擇介面主題文件存放位置"
 
-#: gui/options.cpp:3012
+#: gui/options.cpp:3022
 msgid "Select directory for GUI launcher thumbnails"
 msgstr "選擇使用者介面預覽圖存放位置"
 
-#: gui/options.cpp:3022
+#: gui/options.cpp:3032
 msgid "Select directory for extra files"
 msgstr "選擇額外文件存放位置"
 
-#: gui/options.cpp:3033
+#: gui/options.cpp:3043
 msgid "Select directory for plugins"
 msgstr "選擇插件存放位置"
 
-#: gui/options.cpp:3046
+#: gui/options.cpp:3056
 msgid "Select directory for Files Manager /root/"
 msgstr "選擇文件瀏覽器 /根目錄/的位置"
 
-#: gui/options.cpp:3177
+#: gui/options.cpp:3187
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1946,59 +1941,59 @@ msgstr ""
 "打開 URL 出錯!\n"
 "請以手動方式進入這個頁面."
 
-#: gui/options.cpp:3202
+#: gui/options.cpp:3212
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr ""
 
-#: gui/options.cpp:3211 gui/options.cpp:3249
+#: gui/options.cpp:3221 gui/options.cpp:3259
 msgid "Wait until current Storage finishes up and try again."
 msgstr ""
 
-#: gui/options.cpp:3224
+#: gui/options.cpp:3234
 msgid "Connecting..."
 msgstr "正在連線..."
 
-#: gui/options.cpp:3240
+#: gui/options.cpp:3250
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr ""
 
-#: gui/options.cpp:3445 backends/cloud/cloudmanager.cpp:156
+#: gui/options.cpp:3455 backends/cloud/cloudmanager.cpp:156
 msgid "<right now>"
 msgstr ""
 
-#: gui/options.cpp:3554
+#: gui/options.cpp:3564
 msgid "Stop server"
 msgstr ""
 
-#: gui/options.cpp:3555
+#: gui/options.cpp:3565
 msgid "Stop local webserver"
 msgstr ""
 
-#: gui/options.cpp:3607
+#: gui/options.cpp:3617
 msgid "Storage connected."
 msgstr ""
 
-#: gui/options.cpp:3609
+#: gui/options.cpp:3619
 msgid "Failed to connect storage."
 msgstr ""
 
-#: gui/options.cpp:3611
+#: gui/options.cpp:3621
 msgid "Failed to connect storage: "
 msgstr ""
 
-#: gui/options.cpp:3631
+#: gui/options.cpp:3641
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
 
-#: gui/options.cpp:3662
+#: gui/options.cpp:3672
 msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
 msgstr ""
 
-#: gui/options.cpp:3665
+#: gui/options.cpp:3675
 #, c-format
 msgid "Reverting automatically in %d seconds"
 msgstr ""
@@ -8716,6 +8711,10 @@ msgstr ""
 "载 Liberation Fonts 或 GNU FreeFont 这两套字体包，并二选一。你会需要用到其中"
 "任意一套中的全部字体，也就是：LiberationMono，LiberationSans 和"
 "LiberationSerif ，或者 FreeMono，FreeSans 和 FreeSerif。"
+
+#~ msgctxt "lowres"
+#~ msgid "Misc"
+#~ msgstr "杂项"
 
 #~ msgid "Group by: "
 #~ msgstr "類別: "
