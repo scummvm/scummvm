@@ -43,7 +43,7 @@ private:
 	NhcArchive *nhcArchive;
 	NhcArchiveEntry *nhcArchiveEntry;
 
-	friend class ResourceHandle;
+	friend struct ResourceHandle;
 	friend class ResourceMan;
 
 public:
