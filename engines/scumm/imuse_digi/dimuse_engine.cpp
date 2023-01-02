@@ -51,7 +51,7 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, Common::M
 	_usecPerInt = DIMUSE_TIMER_BASE_RATE_USEC;
 
 	_internalSampleRate = DIMUSE_BASE_SAMPLERATE;
-	_internalFeedSize = DIMUSE_BASE_FEEDSIZE * (_internalSampleRate / DIMUSE_BASE_SAMPLERATE);
+	_internalFeedSize = (int)(DIMUSE_BASE_FEEDSIZE * ((float)_internalSampleRate / DIMUSE_BASE_SAMPLERATE));
 
 	_splayer = nullptr;
 	_isEarlyDiMUSE = (_vm->_game.id == GID_FT || (_vm->_game.id == GID_DIG && _vm->_game.features & GF_DEMO));
