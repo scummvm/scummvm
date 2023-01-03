@@ -451,7 +451,7 @@ void EfhEngine::initMapMonsters() {
 	debugC(3, kDebugEngine, "initMapMonsters");
 
 	for (uint monsterId = 0; monsterId < 64; ++monsterId) {
-		if (_mapMonsters[monsterId]._guess_fullPlaceId == 0xFF)
+		if (_mapMonsters[monsterId]._fullPlaceId == 0xFF)
 			continue;
 
 		for (uint counter = 0; counter < 9; ++counter)
@@ -501,11 +501,11 @@ void EfhEngine::loadMapArrays(int idx) {
 	for (int i = 0; i < 64; ++i) {
 		_mapMonsters[i]._possessivePronounSHL6 = mapMonstersPtr[29 * i];
 		_mapMonsters[i]._npcId = mapMonstersPtr[29 * i + 1];
-		_mapMonsters[i]._guess_fullPlaceId = mapMonstersPtr[29 * i + 2];
+		_mapMonsters[i]._fullPlaceId = mapMonstersPtr[29 * i + 2];
 		_mapMonsters[i]._posX = mapMonstersPtr[29 * i + 3];
 		_mapMonsters[i]._posY = mapMonstersPtr[29 * i + 4];
-		_mapMonsters[i]._itemId_Weapon = mapMonstersPtr[29 * i + 5];
-		_mapMonsters[i]._field_6 = mapMonstersPtr[29 * i + 6];
+		_mapMonsters[i]._weaponItemId = mapMonstersPtr[29 * i + 5];
+		_mapMonsters[i]._maxDamageAbsorption = mapMonstersPtr[29 * i + 6];
 		_mapMonsters[i]._monsterRef = mapMonstersPtr[29 * i + 7];
 		_mapMonsters[i]._moveInfo = mapMonstersPtr[29 * i + 8];
 		_mapMonsters[i]._field9_textId = mapMonstersPtr[29 * i + 9];
@@ -667,7 +667,7 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 map
 
 	if (drawMonstersFl) {
 		for (uint var16 = 0; var16 < 64; ++var16) {
-			if ((_largeMapFlag && _mapMonsters[var16]._guess_fullPlaceId == 0xFE) || (!_largeMapFlag && _mapMonsters[var16]._guess_fullPlaceId == _fullPlaceId)){
+			if ((_largeMapFlag && _mapMonsters[var16]._fullPlaceId == 0xFE) || (!_largeMapFlag && _mapMonsters[var16]._fullPlaceId == _fullPlaceId)){
 				bool var4 = false;
 				int16 posX = _mapMonsters[var16]._posX;
 				int16 posY = _mapMonsters[var16]._posY;
@@ -1371,7 +1371,7 @@ int8 EfhEngine::checkMonsterMoveCollisionAndTileTexture(int16 monsterId) {
 		if (!checkMapMonsterAvailability(counter))
 			continue;
 
-		if (_mapMonsters[monsterId]._guess_fullPlaceId == _mapMonsters[counter]._guess_fullPlaceId
+		if (_mapMonsters[monsterId]._fullPlaceId == _mapMonsters[counter]._fullPlaceId
 		 && _mapMonsters[monsterId]._posX == _mapMonsters[counter]._posX
 		 && _mapMonsters[monsterId]._posY == _mapMonsters[counter]._posY)
 			return 0;
@@ -1560,7 +1560,7 @@ bool EfhEngine::checkTeamWeaponRange(int16 monsterId) {
 		return true;
 
 	for (uint counter = 0; counter < 5; ++counter) {
-		if (_teamMonsterIdArray[counter] == monsterId && checkMonsterMovementType(monsterId, false) && checkWeaponRange(monsterId, _mapMonsters[monsterId]._itemId_Weapon))
+		if (_teamMonsterIdArray[counter] == monsterId && checkMonsterMovementType(monsterId, false) && checkWeaponRange(monsterId, _mapMonsters[monsterId]._weaponItemId))
 			return false;
 	}
 
@@ -1570,10 +1570,10 @@ bool EfhEngine::checkTeamWeaponRange(int16 monsterId) {
 bool EfhEngine::checkIfMonsterOnSameLargeMapPlace(int16 monsterId) {
 	debugC(6, kDebugEngine, "checkIfMonsterOnSameLargeMapPlace %d", monsterId);
 
-	if (_largeMapFlag && _mapMonsters[monsterId]._guess_fullPlaceId == 0xFE)
+	if (_largeMapFlag && _mapMonsters[monsterId]._fullPlaceId == 0xFE)
 		return true;
 
-	if (!_largeMapFlag && _mapMonsters[monsterId]._guess_fullPlaceId == _fullPlaceId)
+	if (!_largeMapFlag && _mapMonsters[monsterId]._fullPlaceId == _fullPlaceId)
 		return true;
 
 	return false;
@@ -1582,7 +1582,7 @@ bool EfhEngine::checkIfMonsterOnSameLargeMapPlace(int16 monsterId) {
 bool EfhEngine::checkMonsterWeaponRange(int16 monsterId) {
 	debugC(6, kDebugEngine, "checkMonsterWeaponRange %d", monsterId);
 
-	return checkWeaponRange(monsterId, _mapMonsters[monsterId]._itemId_Weapon);
+	return checkWeaponRange(monsterId, _mapMonsters[monsterId]._weaponItemId);
 }
 
 void EfhEngine::handleMapMonsterMoves() {
@@ -1759,7 +1759,7 @@ void EfhEngine::handleMapMonsterMoves() {
 bool EfhEngine::checkMapMonsterAvailability(int16 monsterId) {
 	debugC(6, kDebugEngine, "checkMapMonsterAvailability %d", monsterId);
 
-	if (_mapMonsters[monsterId]._guess_fullPlaceId == 0xFF)
+	if (_mapMonsters[monsterId]._fullPlaceId == 0xFF)
 		return false;
 
 	for (uint counter = 0; counter < 9; ++counter) {
@@ -1804,7 +1804,7 @@ bool EfhEngine::checkMonsterGroupDistance1OrLess(int16 monsterId) {
 bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 	debug("handleTalk %d %d %d", monsterId, arg2, itemId);
 
-	if (_mapMonsters[monsterId]._guess_fullPlaceId == 0xFF)
+	if (_mapMonsters[monsterId]._fullPlaceId == 0xFF)
 		return false;
 
 	if (countAliveMonsters(monsterId) < 1)
@@ -2336,7 +2336,7 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 				break;
 
 			for (uint ctrMapMonsterId = 0; ctrMapMonsterId < 64; ++ctrMapMonsterId) {
-				if (_mapMonsters[ctrMapMonsterId]._guess_fullPlaceId == 0xFF)
+				if (_mapMonsters[ctrMapMonsterId]._fullPlaceId == 0xFF)
 					continue;
 
 				if (((_mapMonsters[ctrMapMonsterId]._possessivePronounSHL6 & 0x3F) == 0x3F && !isNpcATeamMember(_mapMonsters[ctrMapMonsterId]._npcId)) || (_mapMonsters[ctrMapMonsterId]._possessivePronounSHL6 & 0x3F) <= 0x3D) {
@@ -2511,8 +2511,8 @@ bool EfhEngine::hasObjectEquipped(int16 charId, int16 objectId) {
 }
 
 
-void EfhEngine::setMapMonsterField8(int16 id, uint8 movementType, bool groupFl) {
-	debugC(2, kDebugEngine, "setMapMonsterField8 %d 0x%X %s", id, movementType, groupFl ? "True" : "False");
+void EfhEngine::setMapMonsterMovementType(int16 id, uint8 movementType, bool groupFl) {
+	debugC(2, kDebugEngine, "setMapMonsterMovementType %d 0x%X %s", id, movementType, groupFl ? "True" : "False");
 
 	int16 monsterId;
 	if (groupFl) { // groupFl is always True
@@ -2574,8 +2574,8 @@ bool EfhEngine::checkMonsterCollision() {
 		if (!checkMapMonsterAvailability(monsterId))
 			continue;
 
-		if (!(_largeMapFlag && _mapMonsters[monsterId]._guess_fullPlaceId == 0xFE)
-		 && !(!_largeMapFlag && _mapMonsters[monsterId]._guess_fullPlaceId == _fullPlaceId))
+		if (!(_largeMapFlag && _mapMonsters[monsterId]._fullPlaceId == 0xFE)
+		 && !(!_largeMapFlag && _mapMonsters[monsterId]._fullPlaceId == _fullPlaceId))
 			continue;
 
 		if ((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) > 0x3D
