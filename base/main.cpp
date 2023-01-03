@@ -405,7 +405,31 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	// Parse the command line
 	Common::StringMap settings;
+	Common::String autoCommand;
+
+	// Check for the autorun name
+	if (argv[0]) {
+		const char *s = strrchr(argv[0], '/');
+
+		if (!s)
+			s = strrchr(argv[0], '\\');
+
+		const char *appName =s ? (s + 1) : argv[0];
+
+		if (!scumm_strnicmp(appName, "scummvm-auto", strlen("scummvm-auto"))) {
+			warning("Running in autodetection mode");
+			// Simulate autodetection
+			const char * const arguments[] = { "scummvm-auto", "-p", ".", "--auto-detect" };
+
+			autoCommand = Base::parseCommandLine(settings, ARRAYSIZE(arguments), arguments);
+		}
+	}
+
 	command = Base::parseCommandLine(settings, argc, argv);
+
+	// We allow overriding the automatic command
+	if (command.empty())
+		command = autoCommand;
 
 	// Load the config file (possibly overridden via command line):
 	if (settings.contains("config")) {
