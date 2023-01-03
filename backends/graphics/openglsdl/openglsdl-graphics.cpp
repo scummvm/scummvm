@@ -134,9 +134,7 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 	_glContextType = OpenGL::kContextGL;
 #endif
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	_vsync = ConfMan.getBool("vsync");
-#endif
 
 	// Retrieve a list of working fullscreen modes
 	Common::Rect desktopRes = _window->getDesktopResolution();
@@ -199,9 +197,9 @@ bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
 	case OSystem::kFeatureIconifyWindow:
+	case OSystem::kFeatureVSync:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	case OSystem::kFeatureFullscreenToggleKeepsContext:
-	case OSystem::kFeatureVSync:
 #endif
 		return true;
 
@@ -217,12 +215,10 @@ void OpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) 
 		_wantsFullScreen = enable;
 		break;
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	case OSystem::kFeatureVSync:
 		assert(getTransactionMode() != kTransactionNone);
 		_vsync = enable;
 		break;
-#endif
 
 	case OSystem::kFeatureIconifyWindow:
 		if (enable) {
@@ -251,10 +247,9 @@ bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 			return _wantsFullScreen;
 		}
 #endif
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+
 	case OSystem::kFeatureVSync:
 		return _vsync;
-#endif
 
 	default:
 		return OpenGLGraphicsManager::getFeatureState(f);
@@ -597,6 +592,8 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		// recreate the OpenGL context.
 		notifyContextDestroy();
 	}
+
+	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, _vsync ? 1 : 0);
 
 	_hwScreen = SDL_SetVideoMode(width, height, 32, flags);
 

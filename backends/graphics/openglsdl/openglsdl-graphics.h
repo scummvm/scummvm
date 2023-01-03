@@ -76,9 +76,7 @@ private:
 	uint _graphicsScale;
 	bool _gotResize;
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	bool _vsync;
-#endif
 	bool _wantsFullScreen;
 	uint _ignoreResizeEvents;
 
