@@ -425,7 +425,11 @@ void OptionsDialog::build() {
 			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 		}
 
-		_vsyncCheckbox->setState(ConfMan.getBool("vsync", _domain));
+		if (g_system->hasFeature(OSystem::kFeatureVSync)) {
+			_vsyncCheckbox->setState(ConfMan.getBool("vsync", _domain));
+			if (ConfMan.isKeyTemporary("vsync"))
+				_vsyncCheckbox->setOverride(true);
+		}
 
 		_rendererTypePopUp->setEnabled(true);
 		_rendererTypePopUp->setSelectedTag(Graphics::Renderer::parseTypeCode(ConfMan.get("renderer", _domain)));
@@ -603,11 +607,15 @@ void OptionsDialog::apply() {
 			}
 			if (ConfMan.getBool("aspect_ratio", _domain) != _aspectCheckbox->getState())
 				graphicsModeChanged = true;
-			if (ConfMan.getBool("vsync", _domain) != _vsyncCheckbox->getState())
-				graphicsModeChanged = true;
+			if (g_system->hasFeature(OSystem::kFeatureVSync)) {
+				if (ConfMan.getBool("vsync", _domain) != _vsyncCheckbox->getState()) {
+					graphicsModeChanged = true;
+					ConfMan.setBool("vsync", _vsyncCheckbox->getState(), _domain);
+					_vsyncCheckbox->setOverride(false);
+				}
+			}
 
 			ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
-			ConfMan.setBool("vsync", _vsyncCheckbox->getState(), _domain);
 
 			bool isSet = false;
 
@@ -763,6 +771,8 @@ void OptionsDialog::apply() {
 			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen", _domain));
 		if (ConfMan.hasKey("filtering"))
 			g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering", _domain));
+		if (ConfMan.hasKey("vsync"))
+			g_system->setFeatureState(OSystem::kFeatureVSync, ConfMan.getBool("vsync", _domain));
 
 		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
@@ -824,6 +834,12 @@ void OptionsDialog::apply() {
 				ConfMan.setBool("filtering", g_system->getFeatureState(OSystem::kFeatureFilteringMode), _domain);
 				message += Common::U32String("\n");
 				message += _("the filtering setting could not be changed");
+			}
+
+			if (gfxError & OSystem::kTransactionVSyncFailed) {
+				ConfMan.setBool("vsync", g_system->getFeatureState(OSystem::kFeatureVSync), _domain);
+				message += Common::U32String("\n");
+				message += _("the vsync setting could not be changed");
 			}
 
 			if (gfxError & OSystem::kTransactionShaderChangeFailed) {
@@ -1204,7 +1220,6 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_gfxPopUp->setEnabled(enabled);
 	_renderModePopUpDesc->setEnabled(enabled);
 	_renderModePopUp->setEnabled(enabled);
-	_vsyncCheckbox->setEnabled(enabled);
 	_rendererTypePopUpDesc->setEnabled(enabled);
 	_rendererTypePopUp->setEnabled(enabled);
 	_antiAliasPopUpDesc->setEnabled(enabled);
@@ -1253,6 +1268,10 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		_aspectCheckbox->setEnabled(false);
 	else
 		_aspectCheckbox->setEnabled(enabled);
+
+	if (g_system->hasFeature(OSystem::kFeatureVSync))
+		_vsyncCheckbox->setEnabled(enabled);
+
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
@@ -1585,7 +1604,8 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	// Fullscreen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"), Common::U32String(), kFullscreenToggled);
 
-	_vsyncCheckbox = new CheckboxWidget(boss, prefix + "grVSyncCheckbox", _("V-Sync"), _("Wait for the vertical sync to refresh the screen in order to prevent tearing artifacts"));
+	if (g_system->hasFeature(OSystem::kFeatureVSync))
+		_vsyncCheckbox = new CheckboxWidget(boss, prefix + "grVSyncCheckbox", _("V-Sync"), _("Wait for the vertical sync to refresh the screen in order to prevent tearing artifacts"));
 
 	if (g_system->getOverlayWidth() > 320)
 		_rendererTypePopUpDesc = new StaticTextWidget(boss, prefix + "grRendererTypePopupDesc", _("Game 3D Renderer:"));

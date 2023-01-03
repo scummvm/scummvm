@@ -191,7 +191,6 @@ protected:
 	int SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors);
 	int SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha);
 	int SDL_SetColorKey(SDL_Surface *surface, Uint32 flag, Uint32 key);
-	bool _vsync;
 #endif
 
 	/** Unseen game screen */
@@ -263,6 +262,7 @@ protected:
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		int stretchMode;
+		bool vsync;
 #endif
 
 		uint scalerIndex;
@@ -284,6 +284,7 @@ protected:
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 			stretchMode = 0;
+			vsync = false;
 #endif
 
 			scalerIndex = 0;
@@ -425,6 +426,9 @@ protected:
 
 	virtual void setAspectRatioCorrection(bool enable);
 	void setFilteringMode(bool enable);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	void setVSync(bool enable);
+#endif
 
 	bool saveScreenshot(const Common::String &filename) const override;
 	virtual void setGraphicsModeIntern();

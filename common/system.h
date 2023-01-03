@@ -993,6 +993,7 @@ public:
 		kTransactionFilteringFailed = (1 << 5),         /**< Failed setting the filtering mode */
 		kTransactionStretchModeSwitchFailed = (1 << 6), /**< Failed setting the stretch mode */
 		kTransactionShaderChangeFailed = (1 << 7),      /**< Failed setting the shader */
+		kTransactionVSyncFailed = (1 << 8),             /**< Failed switching vsync mode */
 	};
 
 	/**

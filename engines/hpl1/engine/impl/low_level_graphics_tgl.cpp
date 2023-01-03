@@ -488,8 +488,11 @@ void LowLevelGraphicsTGL::ShowCursor(bool toggle) {
 //-----------------------------------------------------------------------
 
 void LowLevelGraphicsTGL::SetVsyncActive(bool toggle) {
-	if (g_system->hasFeature(OSystem::kFeatureVSync))
+	if (g_system->hasFeature(OSystem::kFeatureVSync)) {
+		g_system->beginGFXTransaction();
 		g_system->setFeatureState(OSystem::kFeatureVSync, toggle);
+		g_system->endGFXTransaction();
+	}
 }
 
 //-----------------------------------------------------------------------

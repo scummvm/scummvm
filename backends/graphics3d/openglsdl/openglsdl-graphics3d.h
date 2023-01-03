@@ -175,8 +175,6 @@ protected:
 	OpenGL::FrameBuffer *createFramebuffer(uint width, uint height);
 	bool shouldRenderToFramebuffer() const;
 
-	bool isVSyncEnabled() const;
-
 protected:
 
 	enum TransactionMode {

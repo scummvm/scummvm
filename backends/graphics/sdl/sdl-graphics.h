@@ -109,6 +109,7 @@ public:
 		bool aspectRatio;
 		bool fullscreen;
 		bool cursorPalette;
+		bool vsync;
 
 #ifdef USE_RGB_COLOR
 		Graphics::PixelFormat pixelFormat;

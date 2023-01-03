@@ -140,6 +140,8 @@ OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSour
 #else
 	_glContextType = OpenGL::kContextGL;
 #endif
+
+	_vsync = ConfMan.getBool("vsync");
 }
 
 OpenGLSdlGraphics3dManager::~OpenGLSdlGraphics3dManager() {
@@ -165,7 +167,7 @@ bool OpenGLSdlGraphics3dManager::hasFeature(OSystem::Feature f) const {
 bool OpenGLSdlGraphics3dManager::getFeatureState(OSystem::Feature f) const {
 	switch (f) {
 		case OSystem::kFeatureVSync:
-			return isVSyncEnabled();
+			return _vsync;
 		case OSystem::kFeatureFullscreenMode:
 			return _fullscreen;
 		case OSystem::kFeatureAspectRatioCorrection:
@@ -183,6 +185,10 @@ void OpenGLSdlGraphics3dManager::setFeatureState(OSystem::Feature f, bool enable
 				if (_transactionMode == kTransactionNone)
 					createOrUpdateScreen();
 			}
+			break;
+		case OSystem::kFeatureVSync:
+			assert(_transactionMode != kTransactionNone);
+			_vsync = enable;
 			break;
 		case OSystem::kFeatureAspectRatioCorrection:
 			_lockAspectRatio = enable;
@@ -291,7 +297,6 @@ void OpenGLSdlGraphics3dManager::setupScreen() {
 	closeOverlay();
 
 	_antialiasing = ConfMan.getInt("antialiasing");
-	_vsync = ConfMan.getBool("vsync");
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	bool needsWindowReset = false;
@@ -596,16 +601,6 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 bool OpenGLSdlGraphics3dManager::shouldRenderToFramebuffer() const {
 	bool engineSupportsArbitraryResolutions = !g_engine || g_engine->hasFeature(Engine::kSupportsArbitraryResolutions);
 	return !engineSupportsArbitraryResolutions && _supportsFrameBuffer;
-}
-
-bool OpenGLSdlGraphics3dManager::isVSyncEnabled() const {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	return SDL_GL_GetSwapInterval() != 0;
-#else
-	int swapControl = 0;
-	SDL_GL_GetAttribute(SDL_GL_SWAP_CONTROL, &swapControl);
-	return swapControl != 0;
-#endif
 }
 
 void OpenGLSdlGraphics3dManager::drawOverlay() {
