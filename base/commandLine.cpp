@@ -94,7 +94,8 @@ static const char HELP_STRING1[] =
 	"  --console                Enable the console window (default:enabled)\n"
 #endif
 	"\n"
-	"  -c, --config=CONFIG      Use alternate configuration file\n"
+	"  -c, --config=CONFIG      Use alternate configuration file path\n"
+	"  -i, --initial-cfg=CONFIG Load an initial configuration file if no configuration file has been saved yet\n"
 #if defined(SDL_BACKEND)
 	"  -l, --logfile=PATH       Use alternate path for log file\n"
 	"  --screenshotpath=PATH    Specify path where screenshot files are created\n"
@@ -631,6 +632,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_COMMAND
 
 			DO_OPTION('c', "config")
+			END_OPTION
+
+			DO_OPTION('i', "initial-cfg")
 			END_OPTION
 
 #if defined(SDL_BACKEND)
@@ -1884,6 +1888,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	// Finally, store the command line settings into the config manager.
 	static const char * const sessionSettings[] = {
 		"config",
+		"initial-cfg",
 		"fullscreen",
 		"gfx-mode",
 		"stretch-mode",

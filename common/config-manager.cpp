@@ -78,7 +78,7 @@ void ConfigManager::copyFrom(ConfigManager &source) {
 }
 
 
-void ConfigManager::loadDefaultConfigFile() {
+void ConfigManager::loadDefaultConfigFile(const String &fallbackFilename) {
 	// Open the default config file
 	assert(g_system);
 	SeekableReadStream *stream = g_system->createConfigReadStream();
@@ -92,24 +92,39 @@ void ConfigManager::loadDefaultConfigFile() {
 		delete stream;
 
 	} else {
-		// No config file -> create new one!
-		debug("Default configuration file missing, creating a new one");
+		// No config file -> try to load fallback, flush initial config to disk
+		if (!loadFallbackConfigFile(fallbackFilename))
+			debug("Default configuration file missing, creating a new one");
 
 		flushToDisk();
 	}
 }
 
-void ConfigManager::loadConfigFile(const String &filename) {
+void ConfigManager::loadConfigFile(const String &filename, const String &fallbackFilename) {
 	_filename = filename;
 
 	FSNode node(filename);
 	File cfg_file;
 	if (!cfg_file.open(node)) {
-		debug("Creating configuration file: %s", filename.c_str());
+		if (!loadFallbackConfigFile(fallbackFilename))
+			debug("Creating configuration file: %s", filename.c_str());
 	} else {
 		debug("Using configuration file: %s", _filename.c_str());
 		loadFromStream(cfg_file);
 	}
+}
+
+bool ConfigManager::loadFallbackConfigFile(const String &filename) {
+	if (filename.empty())
+		return false;
+
+	File fallbackFile;
+	if (!fallbackFile.open(FSNode(filename)))
+		return false;
+
+	debug("Using initial configuration file: %s", filename.c_str());
+	loadFromStream(fallbackFile);
+	return true;
 }
 
 /**

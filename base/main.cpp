@@ -493,10 +493,14 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		command = autoCommand;
 
 	// Load the config file (possibly overridden via command line):
+	Common::String initConfigFilename;
+	if (settings.contains("initial-cfg"))
+		initConfigFilename = settings["initial-cfg"];
+
 	if (settings.contains("config")) {
-		ConfMan.loadConfigFile(settings["config"]);
+		ConfMan.loadConfigFile(settings["config"], initConfigFilename);
 	} else {
-		ConfMan.loadDefaultConfigFile();
+		ConfMan.loadDefaultConfigFile(initConfigFilename);
 	}
 
 	// Update the config file
