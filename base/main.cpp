@@ -42,6 +42,7 @@
 #include "common/debug-channels.h" /* for debug manager */
 #include "common/events.h"
 #include "gui/EventRecorder.h"
+#include "common/file.h"
 #include "common/fs.h"
 #ifdef ENABLE_EVENTRECORDER
 #include "common/recorderfile.h"
@@ -406,6 +407,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// Parse the command line
 	Common::StringMap settings;
 	Common::String autoCommand;
+	bool autodetect = false;
 
 	// Check for the autorun name
 	if (argv[0]) {
@@ -417,9 +419,68 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		const char *appName =s ? (s + 1) : argv[0];
 
 		if (!scumm_strnicmp(appName, "scummvm-auto", strlen("scummvm-auto"))) {
-			warning("Running in autodetection mode");
+			warning("Will run in autodetection mode");
+			autodetect = true;
+		}
+	}
+
+	Common::StringArray autorunArgs;
+
+	// Check for the autorun file
+	if (Common::File::exists("scummvm-autorun")) {
+		// Okay, the file exists. We open it and if it is empty, then run in the autorun mode
+		// If the file is not empty, we read command line arguments from it, one per line
+		warning("Autorun file is detected");
+
+		Common::File autorun;
+		Common::String line;
+		Common::String res;
+
+		autorunArgs.push_back(argv[0]);
+
+		if (autorun.open("scummvm-autorun")) {
+			while (!autorun.eos()) {
+				line = autorun.readLine();
+
+				if (!line.empty() && line[0] != '#') {
+					autorunArgs.push_back(line);
+
+					res += Common::String::format("\"%s\" ", line.c_str());
+				}
+			}
+		}
+
+		if (!res.empty())
+			warning("Autorun command: %s", res.c_str());
+		else
+			warning("Empty autorun file");
+
+		autorun.close();
+
+		autodetect = true;
+	}
+
+	if (autodetect) {
+		if (autorunArgs.size() > 1) {
+			uint argumentsSize = autorunArgs.size();
+			char **arguments = (char **)malloc(argumentsSize * sizeof(char *));
+
+			for (uint i = 0; i < argumentsSize; i++) {
+				arguments[i] = (char *)malloc(autorunArgs[i].size() + 1);
+				Common::strlcpy(arguments[i], autorunArgs[i].c_str(), autorunArgs[i].size() + 1);
+			}
+
+			autoCommand = Base::parseCommandLine(settings, argumentsSize, arguments);
+
+			for (uint i = 0; i < argumentsSize; i++)
+				free(arguments[i]);
+
+			free(arguments);
+		} else {
 			// Simulate autodetection
 			const char * const arguments[] = { "scummvm-auto", "-p", ".", "--auto-detect" };
+
+			warning("Running autodetection");
 
 			autoCommand = Base::parseCommandLine(settings, ARRAYSIZE(arguments), arguments);
 		}
