@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-02 22:31+0000\n"
+"POT-Creation-Date: 2023-01-03 23:51+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -2326,11 +2326,11 @@ msgstr ""
 msgid "Saves"
 msgstr "Kaydet"
 
-#: base/main.cpp:637
+#: base/main.cpp:722
 msgid "Error running game:"
 msgstr "Çalıştırılan oyunda hata:"
 
-#: base/main.cpp:684
+#: base/main.cpp:769
 msgid "Could not find any engine capable of running the selected game"
 msgstr "ScummVM bu oyunu çalıştırabilecek bir motor bulamadı"
 
