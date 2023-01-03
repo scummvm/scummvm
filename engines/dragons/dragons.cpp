@@ -1757,7 +1757,7 @@ void DragonsEngine::mainMenu() {
 		uint16 curMenuItem = 0;
 		do {
 			for (int i = 0; i <= lastMenuItem; i++) {
-				_fontManager->addText((i == 0 ? 17 : 16) * 8, (0x12 + i) * 8, menuItems[lang_index][i], wideStrLen(menuItems[lang_index][i]),
+				_fontManager->addText( ((i == 0) && (lang_index != 3) ? 17 : 16) * 8, (0x12 + i) * 8, menuItems[lang_index][i], wideStrLen(menuItems[lang_index][i]),
 									  i == curMenuItem ? 0 : 1);
 			}
 			if (checkForDownKeyRelease() || checkForWheelDown()) {
