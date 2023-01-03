@@ -140,6 +140,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed recenter the screen on activating an inventory item.
    - Fixed pressing W to talk to people also makes you jump.
 
+ Ultima8:
+   - Added support for saving and resizing of minimap.
+   - Adjust cursor to behave closer to the original.
+   - Adjust item quantity slider to behave closer to the original.
+
  3DS port:
    - Update relocation parser to support PREL31 that are emitted by new compiler.
    - Do more autoconfiguration in ./configure.
