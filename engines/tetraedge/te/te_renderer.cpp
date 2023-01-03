@@ -272,7 +272,6 @@ void TeRenderer::init() {
 	_scissorX = _scissorY = _scissorWidth = _scissorHeight = 0;
 }
 
-
 void TeRenderer::loadIdentityMatrix() {
 	_matriciesStacks[_matrixMode].loadIdentity();
 }

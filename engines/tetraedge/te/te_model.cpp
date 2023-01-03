@@ -118,6 +118,7 @@ void TeModel::draw() {
 			mesh.draw();
 		}
 		renderer->popMatrix();
+		// Note: no corresponding enableAll - they can be enabled inside TeMaterial::apply
 		TeLight::disableAll();
 	}
 }

@@ -29,10 +29,10 @@ TeFrameAnim::TeFrameAnim() : _nbFrames(0), _frameRate(25.0f), _reversed(false), 
 _numFramesToShow(-1), _startTime(0), _endTime(FLT_MAX), _loopCount(0), _lastFrameShown(-1) {
 }
 
-void TeFrameAnim::update(double amount) {
+void TeFrameAnim::update(double millis) {
 	int minFrame = MIN(_minFrame, _nbFrames);
 	int maxFrame = MIN(_minFrame + _numFramesToShow, _nbFrames);
-	double frameNo = _frameRate * amount / 1000.0;
+	double frameNo = _frameRate * millis / 1000.0;
 
 	int loopsDone;
 	int framesToPlay = maxFrame - minFrame;

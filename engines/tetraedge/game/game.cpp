@@ -475,11 +475,13 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	scenePath.joinInPlace(scene);
 	_sceneZonePath = scenePath;
 
-	const Common::Path intLuaPath = scenePath.join(Common::String::format("Int%s.lua", scene.c_str()));
-	const Common::Path logicLuaPath = scenePath.join(Common::String::format("Logic%s.lua", scene.c_str()));
-	const Common::Path setLuaPath = scenePath.join(Common::String::format("Set%s.lua", scene.c_str()));
-	Common::Path forLuaPath = scenePath.join(Common::String::format("For%s.lua", scene.c_str()));
-	const Common::Path markerLuaPath = scenePath.join(Common::String::format("Marker%s.lua", scene.c_str()));
+	TeCore *core = g_engine->getCore();
+
+	const Common::Path intLuaPath = core->findFile(scenePath.join(Common::String::format("Int%s.lua", scene.c_str())));
+	const Common::Path logicLuaPath = core->findFile(scenePath.join(Common::String::format("Logic%s.lua", scene.c_str())));
+	const Common::Path setLuaPath = core->findFile(scenePath.join(Common::String::format("Set%s.lua", scene.c_str())));
+	Common::Path forLuaPath = core->findFile(scenePath.join(Common::String::format("For%s.lua", scene.c_str())));
+	const Common::Path markerLuaPath = core->findFile(scenePath.join(Common::String::format("Marker%s.lua", scene.c_str())));
 
 	bool intLuaExists = Common::File::exists(intLuaPath);
 	bool logicLuaExists = Common::File::exists(logicLuaPath);
@@ -650,13 +652,16 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		i--;
 	}
 
-	for (auto &randsoundlist : _randomSounds) {
+	// Take a copy and clear the global list first, as deleting a sound can cause the
+	// next sound to trigger (which might have been deleted already).
+	Common::HashMap<Common::String, Common::Array<RandomSound *>> rsounds = _randomSounds;
+	_randomSounds.clear();
+	for (auto &randsoundlist : rsounds) {
 		for (auto *randsound : randsoundlist._value) {
 			delete randsound;
 		}
 		randsoundlist._value.clear();
 	}
-	_randomSounds.clear();
 
 	_scene.initScroll();
 	return true;
@@ -1065,7 +1070,7 @@ bool Game::onMouseClick(const Common::Point &pt) {
 			_posPlayer = lastPoint;
 		}
 	}
-	
+
 	// Note: charAnim above may no longer be valid as anim may have changed.
 	if (_sceneCharacterVisibleFromLoad || (character->curAnimName() == character->characterSettings()._idleAnimFileName)) {
 		_lastCharMoveMousePos = TeVector2s32();
@@ -1531,8 +1536,9 @@ void Game::update() {
 				app->_lockCursorButton.setVisible(false);
 		}
 
-		TeButtonLayout *invbtn = _inGameGui.buttonLayoutChecked("inventoryButton");
-		invbtn->setVisible(!app->isLockCursor() && !_dialog2.isDialogPlaying());
+		TeButtonLayout *invbtn = _inGameGui.buttonLayout("inventoryButton");
+		if (invbtn)
+			invbtn->setVisible(!app->isLockCursor() && !_dialog2.isDialogPlaying());
 
 		Character *player = _scene._character;
 		if (player) {

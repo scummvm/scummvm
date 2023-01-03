@@ -54,7 +54,7 @@ public:
 
 	TeModelAnimation();
 
-	~TeModelAnimation() {
+	virtual ~TeModelAnimation() {
 		destroy();
 	}
 
@@ -89,7 +89,7 @@ public:
 	void setScale(unsigned long num, float amount, const TeVector3f32 &scale);
 	void setTranslation(unsigned long num, float amount, const TeVector3f32 &trans);
 	void unbind();
-	void update(double proportion) override;
+	void update(double millis) override;
 
 	int curFrame2() const { return _curFrame2; }
 	float speed() const { return _speed; }

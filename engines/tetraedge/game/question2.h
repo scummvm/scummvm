@@ -48,6 +48,7 @@ public:
 	void enter();
 	void leave();
 	void load();
+	bool onBackgroundClick() {}
 	bool onAnswerValidated(Answer &answer);
 	void pushAnswer(const Common::String &name, const Common::String &unk, const Common::String &path);
 	void unload();

@@ -46,10 +46,10 @@ public:
 		_interp.load(curve);
 	}
 
-	void update(double time) {
-		_lastUpdateTime = time;
+	void update(double millis) {
+		_lastUpdateTime = millis;
 
-		double amount = _interp.interpole(time, _duration);
+		double amount = _interp.interpole(millis, _duration);
 
 		const S interpVal = linearInterpolation<S>(_startVal, _endVal, amount);
 		//debug("CurveAnim %.02f/%.02f (%.02f) -> %s", time, _maxTime, amount, interpVal.toString().c_str());

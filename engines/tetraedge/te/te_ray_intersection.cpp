@@ -44,7 +44,7 @@ int intersect(const TeVector3f32 &p, const TeVector3f32 &d, const TeVector3f32 &
 	float a = e1.dotProduct(h);
 	if (fabs(a) < 1e-6f)
 		return 0;
-	
+
 	float f = 1.0f / a;
 	const TeVector3f32 s = p - v0;
 	float u = f * s.dotProduct(h);
@@ -56,15 +56,15 @@ int intersect(const TeVector3f32 &p, const TeVector3f32 &d, const TeVector3f32 &
 
 	if (v < 0.0f || u + v > 1.0f)
 		return 0;
-		
+
 	float t = f * e2.dotProduct(q);
-	
+
 	if (t < 1e-6f)
 		return 0;
-	
+
 	hitDist = t;
 	hitPt = p + t * d;
-	
+
 	return 1;
 }*/
 

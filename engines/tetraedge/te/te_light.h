@@ -54,6 +54,7 @@ public:
 	void update(uint lightno);
 	static void updateGlobal();
 	static void setGlobalAmbient(const TeColor &col) { _globalAmbientColor = col; }
+	static const TeColor &globalAmbient() { return _globalAmbientColor; }
 
 	void setSpecular(const TeColor &col) { _colSpecular = col; }
 	void setDiffuse(const TeColor &col) { _colDiffuse = col; }
@@ -71,6 +72,8 @@ public:
 
 	const TeVector2f32 &positionRadial() const { return _positionRadial; }
 	const TeVector3f32 &position3d() const { return _position3d; }
+
+	Common::String dump() const;
 
 private:
 	TeVector3f32 _position3d;

@@ -30,8 +30,9 @@ namespace Tetraedge {
 class TeFrameAnim : public TeAnimation {
 public:
 	TeFrameAnim();
+	virtual ~TeFrameAnim() {}
 
-	void update(double amount) override;
+	void update(double millis) override;
 
 	TeSignal0Param &frameChangedSignal() { return _frameChangedSignal; };
 

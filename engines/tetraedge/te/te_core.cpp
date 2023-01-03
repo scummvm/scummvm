@@ -154,7 +154,8 @@ Common::Path TeCore::findFile(const Common::Path &path) {
 				testPath.joinInPlace(langs[langtype]);
 			}
 			testPath.joinInPlace(fname);
-			if (Common::File::exists(testPath) || Common::FSNode(path).exists())
+			//debug("check for %s", testPath.toString());
+			if (Common::File::exists(testPath) || Common::FSNode(testPath).exists())
 				return testPath;
 		}
 	}

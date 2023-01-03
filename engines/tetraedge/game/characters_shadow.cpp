@@ -64,7 +64,7 @@ void CharactersShadow::createTexture(InGameScene *scene) {
 	if (light) {
 		TeQuaternion q1 = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 1, 0), light->positionRadial().getX() - M_PI_2);
 		TeQuaternion q2 = TeQuaternion::fromAxisAndAngle(TeVector3f32(1, 0, 0), light->positionRadial().getY());
-		_camera->rotate(q2 * q1);
+		_camera->setRotation(q2 * q1);
 		_camera->setPosition(light->position3d());
 	}
 	_camera->_fov = scene->shadowFov() * M_PI / 180.0;
