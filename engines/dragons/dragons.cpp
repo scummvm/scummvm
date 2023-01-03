@@ -1612,6 +1612,9 @@ void DragonsEngine::mainMenu() {
 	_inMenu = true;
 
 	int lang_index, y_offset;
+
+	int lastMenuItem = 1;
+
 	uint16 copyright[4][11][40] = {
 		{   // US
 			{ 0x43, 0x72, 0x79, 0x73, 0x74, 0x61, 0x6c, 0x20, 0x44, 0x79, 0x6e, 0x61, 0x6d, 0x69, 0x63, 0x73, 0x20, 0x69, 0x73, 0x20,
@@ -1710,6 +1713,7 @@ void DragonsEngine::mainMenu() {
 	else {
 		lang_index = 0;
 		y_offset = 0x12;
+		lastMenuItem = 2;
 	}
 
 	_screen->clearScreen();
@@ -1733,12 +1737,12 @@ void DragonsEngine::mainMenu() {
 	do {
 		uint16 curMenuItem = 0;
 		do {
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i <= lastMenuItem; i++) {
 				_fontManager->addAsciiText((i == 0 ? 17 : 16) * 8, (0x12 + i) * 8, &menuItems[i][0],
 										   strlen(menuItems[i]), i == curMenuItem ? 0 : 1);
 			}
 			if (checkForDownKeyRelease() || checkForWheelDown()) {
-				if (curMenuItem < 2) {
+				if (curMenuItem < lastMenuItem) {
 					curMenuItem++;
 				} else {
 					curMenuItem = 0;
@@ -1750,7 +1754,7 @@ void DragonsEngine::mainMenu() {
 				if (curMenuItem > 0) {
 					curMenuItem--;
 				} else {
-					curMenuItem = 2;
+					curMenuItem = lastMenuItem;
 				}
 				playOrStopSound(0x8009);
 			}
