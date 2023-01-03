@@ -3693,7 +3693,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Original filename 'がんばれ！いぬちゃん'
 	MACGAME1_l("ganbareinuchan", "", "xn--n8jp8dzbs1jpcwcg96593c", "411051c134236a9ead0d0d1837aafb5e", 290426, Common::JA_JPN, 402),
-	WINGAME1_l("ganbareinuchan", "", "INU.EXE", "5c30d0b58fcc65a7227225e97dbb1539", 1860265, Common::JA_JPN, 404),
+	WINGAME2_l("ganbareinuchan", "", "INU.EXE", 	 "5c30d0b58fcc65a7227225e97dbb1539", 1860265,
+									 "02SYOKAI.DIR", "192ef6907b84eedc325617e7950fb5f6", 597974, Common::JA_JPN, 404),
 	// Original filename is 'ロケンロ−ル編デモ'
 	MACDEMO1_l("ganbareinuchan", "Demo", "xn--t9gx88c6b6evbjb1c4777j", "cb46b4a5d76bdea0b0b4b9b7b2a42d01", 1452700, Common::JA_JPN, 402),
 	// Decomposed variant of the above
@@ -7300,7 +7301,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t("gasbook7", "", "gasbook7.exe", "27fe7bf1c767294750b1a858c6d87e9c", 3061158, 702),
 
 	MACGAME1_l("gasbook8", "Intro", "gasb8k", "fa52f0136cde568a46249ce74f01a324", 128168, Common::JA_JPN, 700),
-	WINGAME1t_l("gasbook8", "Intro", "Intro.EXE", "b364adb2ef39400c0b55236e45e41aa9", 2277870, Common::JA_JPN, 702),
+	WINGAME2t_l("gasbook8", "Intro", "Intro.EXE",			 "b364adb2ef39400c0b55236e45e41aa9", 2277870,
+									 "XMOVS/Gasb8k_win.Dxr", "8000d7a8b3b19d75d8caf4079babff18", 99327, Common::JA_JPN, 702),
 	MACGAME1_l("gasbook8", "C404 - #28", "#28.PRJ", "0944b962ebb00f4b5d5149d220f8449b", 133058, Common::JA_JPN, 700),
 	WINGAME1t_l("gasbook8", "C404 - #28", "%2328.exe", "27fe7bf1c767294750b1a858c6d87e9c", 3061158, Common::JA_JPN, 702),
 	MACGAME1_l("gasbook8", "tomato - tokyo-ga", "tokyo-ga", "0944b962ebb00f4b5d5149d220f8449b", 134437, Common::JA_JPN, 700),
