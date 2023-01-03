@@ -215,7 +215,7 @@ struct MapMonster {
 	uint8 _maxDamageAbsorption;
 	uint8 _monsterRef;
 	uint8 _moveInfo; // abbb cccc a: special move flag, bbb: Pct modifier for random move, cccc movement type
-	uint8 _field9_textId;
+	uint8 _talkTextId;
 	uint8 _groupSize;
 	int16 _hitPoints[9];
 

@@ -508,7 +508,7 @@ void EfhEngine::loadMapArrays(int idx) {
 		_mapMonsters[i]._maxDamageAbsorption = mapMonstersPtr[29 * i + 6];
 		_mapMonsters[i]._monsterRef = mapMonstersPtr[29 * i + 7];
 		_mapMonsters[i]._moveInfo = mapMonstersPtr[29 * i + 8];
-		_mapMonsters[i]._field9_textId = mapMonstersPtr[29 * i + 9];
+		_mapMonsters[i]._talkTextId = mapMonstersPtr[29 * i + 9];
 		_mapMonsters[i]._groupSize = mapMonstersPtr[29 * i + 10];
 		for (int j = 0; j < 9; ++j)
 			_mapMonsters[i]._hitPoints[j] = READ_LE_INT16(&mapMonstersPtr[29 * i + 11 + j * 2]);
@@ -1817,11 +1817,11 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 		return false;
 
 	if ((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) != 0x3F) {
-		if (_mapMonsters[monsterId]._field9_textId == 0xFF || arg2 != 5) {
+		if (_mapMonsters[monsterId]._talkTextId == 0xFF || arg2 != 5) {
 			return false;
 		}
 		displayMonsterAnim(monsterId);
-		displayImp1Text(_mapMonsters[monsterId]._field9_textId);
+		displayImp1Text(_mapMonsters[monsterId]._talkTextId);
 		displayAnimFrames(0xFE, true);
 		return true;
 	}
