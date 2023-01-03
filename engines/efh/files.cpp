@@ -150,11 +150,11 @@ void EfhEngine::readItems() {
 		_items[i]._attackType = f.readByte();
 		_items[i]._specialEffect = f.readByte();
 		_items[i]._field17_attackTypeDefense = f.readByte();
-		_items[i].field_18 = f.readByte();
+		_items[i]._exclusiveType = f.readByte();
 		_items[i]._field19_mapPosX_or_maxDeltaPoints = f.readByte();
 		_items[i]._mapPosY = f.readByte();
 
-		debugC(7, kDebugEngine, "%s\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x", _items[i]._name, _items[i]._damage, _items[i]._defense, _items[i]._attacks, _items[i]._uses, _items[i].field_13, _items[i]._range, _items[i]._attackType, _items[i]._specialEffect, _items[i]._field17_attackTypeDefense, _items[i].field_18, _items[i]._field19_mapPosX_or_maxDeltaPoints, _items[i]._mapPosY);
+		debugC(7, kDebugEngine, "%s\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x", _items[i]._name, _items[i]._damage, _items[i]._defense, _items[i]._attacks, _items[i]._uses, _items[i].field_13, _items[i]._range, _items[i]._attackType, _items[i]._specialEffect, _items[i]._field17_attackTypeDefense, _items[i]._exclusiveType, _items[i]._field19_mapPosX_or_maxDeltaPoints, _items[i]._mapPosY);
 	}
 }
 

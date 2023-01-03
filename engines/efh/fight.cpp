@@ -421,9 +421,9 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 	// In the original, this function is part of handleFight.
 	// It has been split for readability purposes.
 
-	int16 unk_monsterField5_itemId = sub1C80A(_teamCharId[teamCharId], 9, true);
-	if (unk_monsterField5_itemId == 0x7FFF)
-		unk_monsterField5_itemId = 0x3F;
+	int16 teamCharItemId = getEquippedExclusiveType(_teamCharId[teamCharId], 9, true);
+	if (teamCharItemId == 0x7FFF)
+		teamCharItemId = 0x3F;
 	int16 monsterGroupNumber = _teamNextAttack[teamCharId];
 	if (monsterGroupNumber == 0x64)
 		monsterGroupNumber = 0;
@@ -431,14 +431,14 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 	if (monsterGroupNumber == -1)
 		return;
 	int16 var58;
-	if (_items[unk_monsterField5_itemId]._range == 4)
+	if (_items[teamCharItemId]._range == 4)
 		var58 = 5;
 	else
 		var58 = monsterGroupNumber + 1;
 
 	int16 var54;
 	int16 teamMemberId;
-	if (_items[unk_monsterField5_itemId]._range < 3) {
+	if (_items[teamCharItemId]._range < 3) {
 		teamMemberId = sub1DEC8(monsterGroupNumber);
 		var54 = teamMemberId + 1;
 	} else {
@@ -467,19 +467,19 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 					int16 var70 = _npcBuf[varInt].getPronoun();
 					varInt = _teamMonsterIdArray[groupId];
 					int16 var5E = kEncounters[_mapMonsters[varInt]._monsterRef]._nameArticle;
-					int16 charScore = getCharacterScore(_teamCharId[teamCharId], unk_monsterField5_itemId);
+					int16 charScore = getCharacterScore(_teamCharId[teamCharId], teamCharItemId);
 					int16 hitPointsBefore = _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E];
 					int16 var62 = 0;
 					int16 originalDamage = 0;
 					int16 damagePointsAbsorbed = 0;
-					int16 var64 = _items[unk_monsterField5_itemId]._attacks * _npcBuf[_teamCharId[teamCharId]]._speed;
+					int16 var64 = _items[teamCharItemId]._attacks * _npcBuf[_teamCharId[teamCharId]]._speed;
 
 					// Action A - Loop var84 - Start
 					for (int var84 = 0; var84 < var64; ++var84) {
 						if (getRandom(100) < charScore) {
 							++var62;
-							if (!hasAdequateDefense(_teamMonsterIdArray[groupId], _items[unk_monsterField5_itemId]._attackType)) {
-								int16 var7C = getRandom(_items[unk_monsterField5_itemId]._damage);
+							if (!hasAdequateDefense(_teamMonsterIdArray[groupId], _items[teamCharItemId]._attackType)) {
+								int16 var7C = getRandom(_items[teamCharItemId]._damage);
 								varInt = var7C - var76;
 								if (varInt > 0) {
 									originalDamage += varInt;
@@ -497,7 +497,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 
 					int16 hitPoints = originalDamage + damagePointsAbsorbed;
 
-					if (!checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId))
+					if (!checkSpecialItemsOnCurrentPlace(teamCharItemId))
 						var62 = 0;
 
 					if (var62 > 0) {
@@ -508,7 +508,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 							_attackBuffer = "";
 						}
 					}
-					int16 var68 = _items[unk_monsterField5_itemId]._attackType + 1;
+					int16 var68 = _items[teamCharItemId]._attackType + 1;
 					int16 var6A = getRandom(3) - 1;
 					if (var5E == 2) {
 						_characterNamePt1 = "The ";
@@ -524,8 +524,8 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 
 					_characterNamePt2 = kEncounters[_mapMonsters[_teamMonsterIdArray[groupId]]._monsterRef]._name;
 					_enemyNamePt2 = _npcBuf[_teamCharId[teamCharId]]._name;
-					_nameBuffer = _items[unk_monsterField5_itemId]._name;
-					if (checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId)) {
+					_nameBuffer = _items[teamCharItemId]._name;
+					if (checkSpecialItemsOnCurrentPlace(teamCharItemId)) {
 						// Action A - Check damages - Start
 						if (var62 == 0) {
 							_messageToBePrinted = Common::String::format("%s%s %s at %s%s with %s %s, but misses!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[(var68 * 3) + var6A], _characterNamePt1.c_str(), _characterNamePt2.c_str(), kPossessive[var70], _nameBuffer.c_str());
@@ -585,7 +585,9 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 
 						// Action A - Check item durability - Start
 						varInt = _teamCharId[teamCharId];
-						var64 = sub1C80A(varInt, 9, false);
+
+						// get equipped inventory slot with exclusiveType == 9
+						var64 = getEquippedExclusiveType(varInt, 9, false);
 						if (var64 != 0x7FFF && _npcBuf[varInt]._inventory[var64].getUsesLeft() != 0x7F) {
 							int16 usesLeft = _npcBuf[varInt]._inventory[var64].getUsesLeft();
 							--usesLeft;
@@ -600,13 +602,13 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						// Action A - Check item durability - End
 
 						// Action A - Check effect - Start
-						if (_items[unk_monsterField5_itemId]._specialEffect == 1 && _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E] > 0) {
+						if (_items[teamCharItemId]._specialEffect == 1 && _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E] > 0) {
 							if (getRandom(100) < 35) {
 								_teamMonsterEffects[groupId]._effect[var7E] = 1;
 								_teamMonsterEffects[groupId]._duration[var7E] = getRandom(10);
 								_messageToBePrinted += Common::String::format("  %s%s falls asleep!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 							}
-						} else if (_items[unk_monsterField5_itemId]._specialEffect == 2 && _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E] > 0) {
+						} else if (_items[teamCharItemId]._specialEffect == 2 && _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[var7E] > 0) {
 							_teamMonsterEffects[groupId]._effect[var7E] = 2;
 							_teamMonsterEffects[groupId]._duration[var7E] = getRandom(10);
 							_messageToBePrinted += Common::String::format("  %s%s is frozen!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
@@ -616,7 +618,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						_messageToBePrinted = Common::String::format("%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPossessive[var70], _nameBuffer.c_str());
 					}
 
-					genericGenerateSound(_items[unk_monsterField5_itemId]._attackType, var62);
+					genericGenerateSound(_items[teamCharItemId]._attackType, var62);
 					displayBoxWithText(_messageToBePrinted, 1, 2, true);
 				}
 			}
@@ -756,11 +758,11 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 			if (charId == -1)
 				deathType = 0;
 			else {
-				int16 var6 = sub1C80A(charId, 9, true);
-				if (var6 == 0x7FFF)
+				int16 exclusiveItemId = getEquippedExclusiveType(charId, 9, true);
+				if (exclusiveItemId == 0x7FFF)
 					deathType = 0;
 				else
-					deathType = _items[var6]._attackType + 1;
+					deathType = _items[exclusiveItemId]._attackType + 1;
 			}
 		} else if (_teamMonsterIdArray[victimId] == -1)
 			deathType = 0;
@@ -985,17 +987,19 @@ int16 EfhEngine::sub1C956(int16 charId, int16 unkFied18Val, bool arg4) {
 
 	int16 varE = -1;
 
-	int16 var6 = sub1C80A(charId, unkFied18Val, true);
+	int16 curItemId = getEquippedExclusiveType(charId, unkFied18Val, true);
 	int16 range = 0;
-	if (var6 != 0x7FFF)
-		range = _items[var6]._range;
+	if (curItemId != 0x7FFF)
+		range = _items[curItemId]._range;
 
 	switch (range) {
 	case 3:
 	case 2:
 		++range;
+		// no break on purpose
 	case 1:
 		++range;
+		// no break on purpose
 	case 0:
 		++range;
 		break;

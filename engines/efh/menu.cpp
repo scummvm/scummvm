@@ -455,7 +455,7 @@ void EfhEngine::displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 
 	}
 }
 
-void EfhEngine::prepareStatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool unusedFl, bool refreshFl) {
+void EfhEngine::prepareStatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool refreshFl) {
 	debugC(6, kDebugEngine, "prepareStatusMenu %d %d %d %d %s", windowId, menuId, curMenuLine, charId, refreshFl ? "True" : "False");
 
 	displayStatusMenu(windowId);
@@ -467,12 +467,12 @@ void EfhEngine::prepareStatusMenu(int16 windowId, int16 menuId, int16 curMenuLin
 		displayFctFullScreen();
 }
 
-void EfhEngine::sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
-	debug("sub18E80 %d %d %d %d", charId, windowId, menuId, curMenuLine);
+void EfhEngine::displayWindowAndStatusMenu(int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
+	debug("displayWindowAndStatusMenu %d %d %d %d", charId, windowId, menuId, curMenuLine);
 
 	for (int counter = 0; counter < 2; ++counter) {
 		displayWindow(_menuBuf, 0, 0, _hiResImageBuf);
-		prepareStatusMenu(windowId, menuId, curMenuLine, charId, true, false);
+		prepareStatusMenu(windowId, menuId, curMenuLine, charId, false);
 
 		if (counter == 0)
 			displayFctFullScreen();
@@ -485,7 +485,7 @@ int16 EfhEngine::displayString_3(Common::String str, bool animFl, int16 charId, 
 	int16 retVal = 0;
 
 	for (uint counter = 0; counter < 2; ++counter) {
-		prepareStatusMenu(windowId, menuId, curMenuLine, charId, true, false);
+		prepareStatusMenu(windowId, menuId, curMenuLine, charId, false);
 		displayWindow(_windowWithBorderBuf, 19, 113, _hiResImageBuf);
 
 		if (counter == 0) {
@@ -498,7 +498,7 @@ int16 EfhEngine::displayString_3(Common::String str, bool animFl, int16 charId, 
 
 	if (animFl) {
 		getLastCharAfterAnimCount(_guessAnimationAmount);
-		sub18E80(charId, windowId, menuId, curMenuLine);
+		displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
 	}
 
 	return retVal;
@@ -519,11 +519,11 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 	_statusMenuActive = true;
 	_menuDepth = 0;
 
-	sub18E80(charId, windowId, menuId, curMenuLine);
+	displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
 
 	for (;;) {
 		if (windowId != -1)
-			prepareStatusMenu(windowId, menuId, curMenuLine, charId, true, true);
+			prepareStatusMenu(windowId, menuId, curMenuLine, charId, true);
 		else
 			windowId = 0;
 
@@ -603,7 +603,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 						_menuDepth = 0;
 						curMenuLine = -1;
 						menuId = 9;
-						prepareStatusMenu(windowId, menuId, curMenuLine, charId, true, true);
+						prepareStatusMenu(windowId, menuId, curMenuLine, charId, true);
 					} else {
 						selectedLine = curMenuLine;
 						var10 = true;
@@ -614,7 +614,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				_menuDepth = 0;
 				curMenuLine = -1;
 				menuId = 9;
-				prepareStatusMenu(windowId, menuId, curMenuLine, charId, true, true);
+				prepareStatusMenu(windowId, menuId, curMenuLine, charId, true);
 				break;
 			case Common::KEYCODE_2:
 			case Common::KEYCODE_6:
@@ -658,10 +658,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				break;
 			}
 
-			if (curMenuLine == -1)
-				prepareStatusMenu(windowId, menuId, curMenuLine, charId, false, true);
-			else
-				prepareStatusMenu(windowId, menuId, curMenuLine, charId, true, true);
+			prepareStatusMenu(windowId, menuId, curMenuLine, charId, true);
 
 		} while (!var10);
 
@@ -673,7 +670,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 		case 0:
 			objectId = _menuStatItemArr[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref; // CHECKME: Useless?
-			sub191FF(charId, objectId, windowId, menuId, curMenuLine);
+			tryToggleEquipped(charId, objectId, windowId, menuId, curMenuLine);
 			if (gameMode == 2) {
 				restoreAnimImageSetId();
 				_statusMenuActive = false;
@@ -705,7 +702,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				displayString_3("Item is Equipped!  Give anyway?", false, charId, windowId, menuId, curMenuLine);
 				if (!getValidationFromUser())
 					validationFl = false;
-				sub18E80(charId, windowId, menuId, curMenuLine);
+				displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
 
 				if (validationFl) {
 					if (gameMode == 2) {
@@ -731,7 +728,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				displayString_3("Item is Equipped!  Trade anyway?", false, charId, windowId, menuId, curMenuLine);
 				if (!getValidationFromUser())
 					validationFl = false;
-				sub18E80(charId, windowId, menuId, curMenuLine);
+				displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
 
 				if (validationFl) {
 					bool givenFl;
@@ -777,7 +774,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 						}
 					}
 
-					sub18E80(charId, windowId, menuId, curMenuLine);
+					displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
 				}
 			}
 			break;
@@ -790,7 +787,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				displayString_3("Item Is Equipped!  Drop Anyway?", false, charId, windowId, menuId, curMenuLine);
 				if (!getValidationFromUser())
 					validationFl = false;
-				sub18E80(charId, windowId, menuId, curMenuLine);
+				displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
 
 				if (validationFl) {
 					removeObject(charId, objectId);
@@ -879,24 +876,26 @@ void EfhEngine::unequipItem(int16 charId, int16 objectId, int16 windowId, int16 
 	}
 }
 
-void EfhEngine::sub191FF(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine) {
-	debug("sub191FF %d %d %d %d %d", charId, objectId, windowId, menuId, curMenuLine);
+void EfhEngine::tryToggleEquipped(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine) {
+	debugC(3, kDebugEngine, "tryToggleEquipped %d %d %d %d %d", charId, objectId, windowId, menuId, curMenuLine);
 
 	int16 itemId = _npcBuf[charId]._inventory[objectId]._ref;
 
 	if (hasObjectEquipped(charId, objectId)) {
 		unequipItem(charId, objectId, windowId, menuId, curMenuLine);
 	} else {
-		int16 var2 = _items[itemId].field_18;
-		if (var2 != 4) {
+		int16 curType = _items[itemId]._exclusiveType;
+		if (curType != 4) {
 			for (uint counter = 0; counter < 10; ++counter) {
-				if (var2 == _items[_npcBuf[charId]._inventory[counter]._ref].field_18)
+				if (curType == _items[_npcBuf[charId]._inventory[counter]._ref]._exclusiveType)
 					unequipItem(charId, objectId, windowId, menuId, curMenuLine);
 			}
 		}
 
-		// Set item as Equipped
-		_npcBuf[charId]._inventory[objectId]._stat1 |= 0x80;
+		if (curType != 0) {
+			// Set item as Equipped
+			_npcBuf[charId]._inventory[objectId]._stat1 |= 0x80;
+		}
 	}
 }
 
@@ -1446,7 +1445,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 
 		if (argA == 2) {
 			getLastCharAfterAnimCount(_guessAnimationAmount);
-			sub18E80(charId, teamMonsterId, menuId, curMenuLine);
+			displayWindowAndStatusMenu(charId, teamMonsterId, menuId, curMenuLine);
 		}
 	}
 

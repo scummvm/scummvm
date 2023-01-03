@@ -76,7 +76,7 @@ void ItemStruct::init() {
 	_attackType = 0;
 	_specialEffect = 0;
 	_field17_attackTypeDefense = 0;
-	field_18 = 0;
+	_exclusiveType = 0;
 	_field19_mapPosX_or_maxDeltaPoints = 0;
 	_mapPosY = 0;
 }
