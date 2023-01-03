@@ -40,6 +40,8 @@ protected:
 	void initLUT(Graphics::PixelFormat format);
 	inline void HQ2x16(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height);
 	inline void HQ3x16(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height);
+	inline void HQ2x32(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height);
+	inline void HQ3x32(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height);
 
 	uint32 *_RGBtoYUV;
 #ifdef USE_NASM

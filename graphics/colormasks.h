@@ -286,6 +286,42 @@ struct ColorMasks<8888> {
 	typedef uint32 PixelType;
 };
 
+template<>
+struct ColorMasks<-8888> {
+	enum {
+		kBytesPerPixel = 4,
+
+		kAlphaBits  = 8,
+		kRedBits    = 8,
+		kGreenBits  = 8,
+		kBlueBits   = 8,
+
+		kAlphaShift = 0,
+		kRedShift   = kAlphaBits,
+		kGreenShift = kRedBits+kAlphaBits,
+		kBlueShift  = kGreenBits+kRedBits+kAlphaBits,
+
+		kAlphaMask = ((1u << kAlphaBits) - 1) << kAlphaShift,
+		kRedMask   = ((1u << kRedBits) - 1) << kRedShift,
+		kGreenMask = ((1u << kGreenBits) - 1) << kGreenShift,
+		kBlueMask  = ((1u << kBlueBits) - 1) << kBlueShift,
+
+		kRedBlueMask = kRedMask | kBlueMask,
+
+		kLowBits    = (1 << kRedShift) | (1 << kGreenShift) | (1 << kBlueShift) | (1 << kAlphaShift),
+		kLow2Bits   = (3 << kRedShift) | (3 << kGreenShift) | (3 << kBlueShift) | (3 << kAlphaShift),
+		kLow3Bits   = (7 << kRedShift) | (7 << kGreenShift) | (7 << kBlueShift) | (7 << kAlphaShift),
+		kLow4Bits   = (15 << kRedShift) | (15 << kGreenShift) | (15 << kBlueShift) | (15 << kAlphaShift),
+
+		kLowBitsMask = kLowBits,
+		kHighBitsMask = ~kLowBits,
+		qlowBits = kLow2Bits,
+		qhighBits = ~kLow2Bits
+	};
+
+	typedef uint32 PixelType;
+};
+
 } // End of namespace Graphics
 
 #endif

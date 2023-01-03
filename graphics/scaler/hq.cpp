@@ -5003,6 +5003,38 @@ void HQScaler::HQ3x16(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint3
 }
 #endif
 
+void HQScaler::HQ2x32(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	if (_format.aLoss == 0) {
+		if (_format.aShift == 0) {
+			HQ2x_implementation<Graphics::ColorMasks<-8888> >(srcPtr, srcPitch, dstPtr,
+					dstPitch, width, height, _RGBtoYUV);
+		} else {
+			HQ2x_implementation<Graphics::ColorMasks<8888> >(srcPtr, srcPitch, dstPtr,
+					dstPitch, width, height, _RGBtoYUV);
+		}
+	} else {
+		assert((_format.rMax() | _format.gMax() | _format.bMax()) <= 0xffffff);
+		HQ2x_implementation<Graphics::ColorMasks<888> >(srcPtr, srcPitch, dstPtr,
+				dstPitch, width, height, _RGBtoYUV);
+	}
+}
+
+void HQScaler::HQ3x32(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	if (_format.aLoss == 0) {
+		if (_format.aShift == 0) {
+			HQ3x_implementation<Graphics::ColorMasks<-8888> >(srcPtr, srcPitch, dstPtr,
+					dstPitch, width, height, _RGBtoYUV);
+		} else {
+			HQ3x_implementation<Graphics::ColorMasks<8888> >(srcPtr, srcPitch, dstPtr,
+					dstPitch, width, height, _RGBtoYUV);
+		}
+	} else {
+		assert((_format.rMax() | _format.gMax() | _format.bMax()) <= 0xffffff);
+		HQ3x_implementation<Graphics::ColorMasks<888> >(srcPtr, srcPitch, dstPtr,
+				dstPitch, width, height, _RGBtoYUV);
+	}
+}
+
 void HQScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
@@ -5017,20 +5049,10 @@ void HQScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 	} else {
 		switch (_factor) {
 		case 2:
-			if (_format.aLoss == 0)
-				HQ2x_implementation<Graphics::ColorMasks<8888> >(srcPtr, srcPitch, dstPtr,
-						dstPitch, width, height, _RGBtoYUV);
-			else
-				HQ2x_implementation<Graphics::ColorMasks<888> >(srcPtr, srcPitch, dstPtr,
-						dstPitch, width, height, _RGBtoYUV);
+			HQ2x32(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 			break;
 		case 3:
-			if (_format.aLoss == 0)
-				HQ3x_implementation<Graphics::ColorMasks<8888> >(srcPtr, srcPitch, dstPtr,
-						dstPitch, width, height, _RGBtoYUV);
-			else
-				HQ3x_implementation<Graphics::ColorMasks<888> >(srcPtr, srcPitch, dstPtr,
-						dstPitch, width, height, _RGBtoYUV);
+			HQ3x32(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 			break;
 		}
 	}
