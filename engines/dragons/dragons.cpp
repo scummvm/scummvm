@@ -1719,7 +1719,7 @@ void DragonsEngine::mainMenu() {
 
 	if (_language == Common::EN_GRB) {
 		lang_index = 1;
-		y_offset = 0x0e;
+		y_offset = 0x0f;
 	}
 	else if (_language == Common::DE_DEU) {
 		lang_index = 2;
