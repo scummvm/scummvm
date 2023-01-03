@@ -123,8 +123,12 @@ bool ScummVMRendererGraphicsDriver::SetDisplayMode(const DisplayMode &mode) {
 	const int driver = GFX_SCUMMVM;
 	if (set_gfx_mode(driver, mode.Width, mode.Height, mode.ColorDepth) != 0)
 		return false;
-	if (g_system->hasFeature(OSystem::kFeatureVSync))
+
+	if (g_system->hasFeature(OSystem::kFeatureVSync)) {
+		g_system->beginGFXTransaction();
 		g_system->setFeatureState(OSystem::kFeatureVSync, mode.Vsync);
+		g_system->endGFXTransaction();
+	}
 
 	OnInit();
 	OnModeSet(mode);
@@ -222,7 +226,10 @@ bool ScummVMRendererGraphicsDriver::DoesSupportVsyncToggle() {
 
 bool ScummVMRendererGraphicsDriver::SetVsync(bool enabled) {
 	if (g_system->hasFeature(OSystem::kFeatureVSync)) {
+		g_system->beginGFXTransaction();
 		g_system->setFeatureState(OSystem::kFeatureVSync, enabled);
+		g_system->endGFXTransaction();
+
 		_mode.Vsync = g_system->getFeatureState(OSystem::kFeatureVSync);
 	}
 	return _mode.Vsync;

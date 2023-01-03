@@ -364,6 +364,7 @@ static void setupGraphics(OSystem &system) {
 		system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
 		system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 		system.setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
+		system.setFeatureState(OSystem::kFeatureVSync, ConfMan.getBool("vsync"));
 	system.endGFXTransaction();
 
 	system.applyBackendSettings();

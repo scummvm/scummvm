@@ -114,7 +114,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_osdIconSurface(nullptr),
 #endif
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	_renderer(nullptr), _screenTexture(nullptr), _vsync(false),
+	_renderer(nullptr), _screenTexture(nullptr),
 #endif
 #if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
 	_originalBitsPerPixel(0),
@@ -180,6 +180,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_videoMode.filtering = ConfMan.getBool("filtering");
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_videoMode.stretchMode = STRETCH_FIT;
+	_videoMode.vsync = ConfMan.getBool("vsync");
 #endif
 
 	_videoMode.scalerIndex = getDefaultScaler();
@@ -236,6 +237,11 @@ void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable)
 	case OSystem::kFeatureFilteringMode:
 		setFilteringMode(enable);
 		break;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	case OSystem::kFeatureVSync:
+		setVSync(enable);
+		break;
+#endif
 	case OSystem::kFeatureCursorPalette:
 		_cursorPaletteDisabled = !enable;
 		blitCursor();
@@ -264,7 +270,7 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 #endif
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	case OSystem::kFeatureVSync:
-		return _vsync;
+		return _videoMode.vsync;
 #endif
 	case OSystem::kFeatureFilteringMode:
 		return _videoMode.filtering;
@@ -342,6 +348,12 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 			errors |= OSystem::kTransactionStretchModeSwitchFailed;
 
 			_videoMode.stretchMode = _oldVideoMode.stretchMode;
+		}
+
+		if (_videoMode.vsync != _oldVideoMode.vsync) {
+			errors |= OSystem::kTransactionVSyncFailed;
+
+			_videoMode.vsync = _oldVideoMode.vsync;
 		}
 #endif
 		if (_videoMode.filtering != _oldVideoMode.filtering) {
@@ -1523,6 +1535,23 @@ void SurfaceSdlGraphicsManager::setFullscreenMode(bool enable) {
 	}
 }
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+void SurfaceSdlGraphicsManager::setVSync(bool enable) {
+	Common::StackLock lock(_graphicsMutex);
+
+	if (!g_system->hasFeature(OSystem::kFeatureVSync))
+		return;
+
+	if (_oldVideoMode.setup && _oldVideoMode.vsync == enable)
+		return;
+
+	if (_transactionMode == kTransactionActive) {
+		_videoMode.vsync = enable;
+		_transactionDetails.needHotswap = true;
+	}
+}
+#endif
+
 void SurfaceSdlGraphicsManager::setAspectRatioCorrection(bool enable) {
 	Common::StackLock lock(_graphicsMutex);
 
@@ -2627,17 +2656,16 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 #endif
 
-	_vsync = ConfMan.getBool("vsync");
-	if (_vsync) {
+	if (_videoMode.vsync) {
 		rendererFlags |= SDL_RENDERER_PRESENTVSYNC;
 	}
 
 	_renderer = SDL_CreateRenderer(_window->getSDLWindow(), -1, rendererFlags);
 	if (!_renderer) {
-		if (_vsync) {
+		if (_videoMode.vsync) {
 			// VSYNC might not be available, so retry without VSYNC
 			warning("SDL_SetVideoMode: SDL_CreateRenderer() failed with VSYNC option, retrying without it...");
-			_vsync = false;
+			_videoMode.vsync = false;
 			rendererFlags &= ~SDL_RENDERER_PRESENTVSYNC;
 			_renderer = SDL_CreateRenderer(_window->getSDLWindow(), -1, rendererFlags);
 		}
