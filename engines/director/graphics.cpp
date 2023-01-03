@@ -352,14 +352,18 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 										(~bSrc | bFor) & (bSrc | bBak));
 			}
 		} else {
-			*dst = src;
+			// Find the inverse of the colour and match it back to the palette if required
+			byte rSrc, gSrc, bSrc;
+			wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
+
+			*dst = wm->findBestColor(~rSrc, ~gSrc, ~bSrc);
 		}
 		break;
 	case kInkTypeTransparent:
-		*dst = p->applyColor ? (src & p->foreColor) | (*dst & ~src) : (*dst & ~src);
+		*dst = p->applyColor ? (~src | p->backColor) & (*dst | src) : *dst | src;
 		break;
 	case kInkTypeNotTrans:
-		*dst = p->applyColor ? (~src & p->foreColor) | (*dst & src) : (*dst & src);
+		*dst = p->applyColor ? (src | p->backColor) & (*dst | ~src) : (*dst | ~src);
 		break;
 	case kInkTypeReverse:
 		*dst ^= src;
@@ -368,10 +372,10 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		*dst ^= ~(src);
 		break;
 	case kInkTypeGhost:
-		*dst = p->applyColor ? (~src | p->backColor) & (*dst | src) : *dst | src;
+		*dst = p->applyColor ? (src & p->foreColor) | (*dst & ~src) : (*dst & ~src);
 		break;
 	case kInkTypeNotGhost:
-		*dst = p->applyColor ? (src | p->backColor) & (*dst | ~src) : (*dst | ~src);
+		*dst = p->applyColor ? (~src & p->foreColor) | (*dst & src) : (*dst & src);
 		break;
 		// Arithmetic ink types
 	default: {
