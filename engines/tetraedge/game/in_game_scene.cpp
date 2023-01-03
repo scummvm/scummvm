@@ -43,6 +43,7 @@
 #include "tetraedge/te/te_lua_thread.h"
 
 //#define DEBUG_PATHFINDING 1
+//#define DEBUG_LIGHTS 1
 
 namespace Tetraedge {
 
@@ -178,7 +179,7 @@ bool InGameScene::changeBackground(const Common::String &name) {
 }
 
 Character *InGameScene::character(const Common::String &name) {
-	if (_character->_model->name() == name)
+	if (_character && _character->_model->name() == name)
 		return _character;
 
 	for (Character *c : _characters) {
@@ -296,7 +297,7 @@ void InGameScene::deserializeModel(Common::ReadStream &stream, TeIntrusivePtr<Te
 	TeQuaternion rot;
 	TeColor col;
 	TeMesh mesh;
-	
+
 	assert(pickmesh);
 
 	TeVector3f32::deserialize(stream, vec);
@@ -361,7 +362,7 @@ void InGameScene::draw() {
 		zone->setVisible(true);
 		zone->draw();
 	}
-	
+
 	for (TePickMesh2 *mesh : _clickMeshes) {
 		mesh->setVisible(true);
 		mesh->draw();
@@ -430,6 +431,7 @@ InGameScene::SoundStep InGameScene::findSoundStep(const Common::String &name) {
 
 void InGameScene::freeGeometry() {
 	_loadedPath.set("");
+
 	for (TeFreeMoveZone *zone : _freeMoveZones)
 		delete zone;
 	_freeMoveZones.clear();
@@ -706,6 +708,16 @@ bool InGameScene::loadLights(const Common::Path &path) {
 	for (unsigned int i = 0; i < _lights.size(); i++) {
 		_lights[i].enable(i);
 	}
+
+#if DEBUG_LIGHTS
+	debug("--- Scene lights ---");
+	debug("Shadow: %s no:%d far:%.02f near:%.02f fov:%.02f", _shadowColor.dump().c_str(), _shadowLightNo, _shadowFarPlane, _shadowNearPlane, _shadowFov);
+	debug("Global: %s", TeLight::globalAmbient().dump().c_str());
+	for (unsigned int i = 0; i < _lights.size(); i++) {
+		debug("%s", _lights[i].dump().c_str());
+	}
+	debug("---  end lights  ---");
+#endif
 
 	return true;
 }
@@ -1015,7 +1027,17 @@ void InGameScene::setVisibleMarker(const Common::String &markerName, bool val) {
 	if (!isMarker(markerName))
 		return;
 
-	error("TODO: Implement InGameScene::setVisibleMarker");
+	Game *game = g_engine->getGame();
+	TeLayout *bg = game->forGui().layout("background");
+	if (!bg)
+		return;
+
+	for (Te3DObject2 *child : bg->childList()) {
+		if (child->name() == markerName) {
+			child->setVisible(val);
+			break;
+		}
+	}
 }
 
 void InGameScene::unloadCharacter(const Common::String &name) {
@@ -1023,6 +1045,9 @@ void InGameScene::unloadCharacter(const Common::String &name) {
 		_character->removeAnim();
 		_character->deleteAnim();
 		_character->deleteAllCallback();
+		if (_character->_model->anim())
+		_character->_model->anim()->stop(); // TODO: added this
+		_character->setFreeMoveZone(nullptr); // TODO: added this
 		// TODO: deleteLater() something here..
 		_character = nullptr;
 	}
@@ -1033,6 +1058,9 @@ void InGameScene::unloadCharacter(const Common::String &name) {
 			c->deleteAnim();
 			c->deleteAllCallback();
 			// TODO: deleteLater() something here..
+			if (c->_model->anim())
+				c->_model->anim()->stop(); // TODO: added this
+			c->setFreeMoveZone(nullptr); // TODO: added this
 			_characters.remove_at(i);
 			break;
 		}
@@ -1145,7 +1173,9 @@ void InGameScene::update() {
 	for (Object3D *obj : _object3Ds) {
 		// TODO: update object3ds if they are translating or rotating.
 		if (obj->_translateTime >= 0) {
-			error("TODO: handle _translateTime > 0 in InGameScene::update");
+			float time = MIN((float)(obj->_translateTimer.getTimeFromStart() / 1000000.0), obj->_translateTime);
+			TeVector3f32 trans = obj->_translateStart + (obj->_translateAmount * (time / obj->_translateTime));
+			obj->model()->setPosition(trans);
 		}
 		if (obj->_rotateTime >= 0) {
 			// Never actually used in the game.

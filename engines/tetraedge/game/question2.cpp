@@ -78,6 +78,10 @@ void Question2::load() {
 	if (backgroundButton) {
 		addChild(backgroundButton);
 		backgroundButton->setVisible(false);
+
+		// WORKAROUND: Block clicks going to the Game (which is set to pri 10000)
+		Common::SharedPtr<TeCallback0Param<Question2>> callbackptr(new TeCallback0Param<Question2>(this, &Question2::onBackgroundClick, 20000.0f));
+		backgroundButton->onMouseClickValidated().push_back(callbackptr);
 	}
 	size();
 }

@@ -57,6 +57,12 @@ void TeAnimation::removeThisFromAnimations() {
 			break;
 		}
 	}
+
+	for (iter = anims->begin(); iter != anims->end(); iter++) {
+		if (*iter == this) {
+			error("anim was added twice to active anims");
+		}
+	}
 }
 
 void TeAnimation::pause() {

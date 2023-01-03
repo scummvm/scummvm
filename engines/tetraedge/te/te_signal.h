@@ -57,8 +57,7 @@ public:
 		typename Common::Array<TeICallback0ParamPtr>::iterator end_ = this->end();
 		for (; i < end_; i++) {
 			if ((*i)->equals(item.get())) {
-				this->erase(i);
-				break;
+				i = this->erase(i);
 			}
 		}
 	}
@@ -98,8 +97,7 @@ public:
 		typename Common::Array<TeICallback1ParamPtr<T>>::iterator end_ = this->end();
 		for (; i < end_; i++) {
 			if ((*i)->equals(item.get())) {
-				this->erase(i);
-				break;
+				i = this->erase(i);
 			}
 		}
 	}
@@ -138,8 +136,7 @@ public:
 		typename Common::Array<TeICallback2ParamPtr<S, T>>::iterator end_ = this->end();
 		for (; i < end_; i++) {
 			if ((*i)->equals(item.get())) {
-				this->erase(i);
-				break;
+				i = this->erase(i);
 			}
 		}
 	}

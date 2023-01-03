@@ -112,6 +112,14 @@ void Character::addCallback(const Common::String &animKey, const Common::String 
 	// the way this gets used later, setting large negative is more correct.
 	c->_callsMade = (maxCalls == -1.0 ? -1e9 : 0.0f);
 
+	//
+	// WORKAROUND: This callback seems to be set too late.. frame 31, but it
+	// only gets to 15?  Some bug in the way anim blends hand off?
+	// for scenes/CitSpace2/34230/Logic34230.lua
+	//
+	if (fnName == "ChangeClef" && c->_triggerFrame == 31)
+		c->_triggerFrame = 15;
+
 	const Common::Path animPath = _model->anim()->_loadedPath;
 
 	// Another difference.. the original messes with paths a bit - just
@@ -126,6 +134,7 @@ void Character::addCallback(const Common::String &animKey, const Common::String 
 		Common::Path animKeyPath(animKey);
 		Common::Array<Callback *> callbacks;
 		callbacks.push_back(c);
+
 		_callbacks.setVal(animKeyPath.getLastComponent().toString(), callbacks);
 	}
 }
@@ -142,10 +151,13 @@ void Character::addCallback(const Common::String &animKey, const Common::String 
 	//_animCache.pop_back();
 }
 
-/*static*/ TeIntrusivePtr<TeModelAnimation> Character::animCacheLoad(const Common::Path &path) {
+/*static*/
+TeIntrusivePtr<TeModelAnimation> Character::animCacheLoad(const Common::Path &path) {
 	const Common::String pathStr = path.toString();
-	if (_animCacheMap.contains(pathStr))
-		return _animCacheMap.getVal(pathStr);
+	if (_animCacheMap.contains(pathStr)) {
+		// Copy from the cache (keep the cached instance clean)
+		return new TeModelAnimation(*_animCacheMap.getVal(pathStr));
+	}
 
 	TeIntrusivePtr<TeModelAnimation> modelAnim = new TeModelAnimation();
 	if (!modelAnim->load(path)) {
@@ -531,6 +543,10 @@ bool Character::onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneM
 }
 
 bool Character::onModelAnimationFinished() {
+	// this shouldn't happen but check to be sure..
+	if (!_model->anim())
+		return false;
+
 	const Common::Path loadedPath = _model->anim()->_loadedPath;
 	const Common::String animfile = loadedPath.getLastComponent().toString();
 
@@ -613,6 +629,8 @@ void Character::permanentUpdate() {
 	if (_callbacks.contains(animFile)) {
 		Common::Array<Callback *> &cbs = _callbacks.getVal(animFile);
 		for (Callback *cb : cbs) {
+			//debug("check cb for %s frame %d against %d. speed %.02f", animFile.c_str(),
+			//		curFrame, cb->_triggerFrame, _model->anim()->speed());
 			if (cb->_triggerFrame > cb->_lastCheckFrame && curFrame >= cb->_triggerFrame){
 				int callsMade = cb->_callsMade;
 				cb->_callsMade++;
@@ -934,8 +952,9 @@ void Character::walkTo(float curveEnd, bool walkFlag) {
 	_walkCurveLast = _walkCurveStart;
 	_walkCurveNextLength = 0.0f;
 	_walkedLength = 0.0f;
-	assert(_curve);
-	if (_curve->controlPoints().size()) {
+	if (!_curve)
+		warning("_curve not set in Character::walkTo");
+	if (_curve && _curve->controlPoints().size()) {
 		const float walkEndLen = (walkFlag ? 0 : _walkEndGAnimLen);
 		_walkCurveLen = _curve->length();
 		_walkEndAnimG = false;

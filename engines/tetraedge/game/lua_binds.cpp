@@ -107,7 +107,7 @@ static int tolua_ExportedFunctions_PlayMovieAndWaitForEnd00(lua_State *L) {
 		Game *game = g_engine->getGame();
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName && cb._luaParam == s1)
-				error("PlayMovieAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
+				warning("PlayMovieAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
 		}
 		game->yieldedCallbacks().push_back(callback);
 		return callback._luaThread->yield();
@@ -551,7 +551,7 @@ int tolua_ExportedFunctions_StartAnimationAndWaitForEnd00(lua_State *L) {
 		Game *game = g_engine->getGame();
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName && cb._luaParam == s1)
-				error("StartAnimationAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
+				warning("StartAnimationAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
 		}
 		game->yieldedCallbacks().push_back(callback);
 		return callback._luaThread->yield();
@@ -823,7 +823,7 @@ static int tolua_ExportedFunctions_SetCharacterAnimationAndWaitForEnd00(lua_Stat
 		Game *game = g_engine->getGame();
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName && cb._luaParam == s1 && cb._luaParam2 == s2)
-				error("SetCharacterAnimationAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
+				warning("SetCharacterAnimationAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
 		}
 		game->yieldedCallbacks().push_back(callback);
 		return callback._luaThread->yield();
@@ -877,7 +877,7 @@ static int tolua_ExportedFunctions_BlendCharacterAnimationAndWaitForEnd00(lua_St
 		Game *game = g_engine->getGame();
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName && cb._luaParam == s1 && cb._luaParam2 == s2)
-				error("BlendCharacterAnimationAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
+				warning("BlendCharacterAnimationAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
 		}
 		game->yieldedCallbacks().push_back(callback);
 		return callback._luaThread->yield();
@@ -1199,7 +1199,7 @@ static int tolua_ExportedFunctions_WaitAndWaitForEnd00(lua_State *L) {
 		Game *game = g_engine->getGame();
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName)
-				error("WaitAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
+				warning("WaitAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
 		}
 		game->yieldedCallbacks().push_back(callback);
 		return callback._luaThread->yield();
@@ -1294,7 +1294,7 @@ static int tolua_ExportedFunctions_LaunchDialogAndWaitForEnd00(lua_State *L) {
 		Game *game = g_engine->getGame();
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName && cb._luaParam == callback._luaParam)
-				error("LaunchDialogAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
+				warning("LaunchDialogAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
 		}
 		game->yieldedCallbacks().push_back(callback);
 		return callback._luaThread->yield();
@@ -1513,8 +1513,10 @@ static int tolua_ExportedFunctions_ActivateAnchorZone00(lua_State *L) {
 static void SetCharacterLookChar(const Common::String &charname, const Common::String &destname, bool tall) {
 	Game *game = g_engine->getGame();
 	Character *character = game->scene().character(charname);
-	if (!character)
-		error("[SetCharacterLookChar] Character \"%s\" doesn't exist", charname.c_str());
+	if (!character) {
+		warning("[SetCharacterLookChar] Character \"%s\" doesn't exist", charname.c_str());
+		return;
+	}
 	character->setLookingAtTallThing(tall);
 	if (destname.empty()) {
 		character->setCharLookingAt(nullptr);
@@ -1567,14 +1569,14 @@ static void SetCharacterMeshVisible(const Common::String &charName, const Common
 
 static int tolua_ExportedFunctions_SetCharacterMeshVisible00(lua_State *L) {
 	tolua_Error err;
-	if (tolua_isstring(L, 1, 0, &err) && tolua_isboolean(L, 2, 1, &err) && tolua_isnoobj(L, 3, &err)) {
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err) && tolua_isboolean(L, 3, 1, &err) && tolua_isnoobj(L, 4, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
 		bool b = tolua_toboolean(L, 3, 0);
 		SetCharacterMeshVisible(s1, s2, b);
 		return 0;
 	}
-	error("#ferror in function 'SetRecallageY': %d %d %s", err.index, err.array, err.type);
+	error("#ferror in function 'SetCharacterMeshVisible': %d %d %s", err.index, err.array, err.type);
 }
 
 static void SetRecallageY(const Common::String &charName, bool val) {
@@ -1697,7 +1699,7 @@ static int tolua_ExportedFunctions_PlaySoundAndWaitForEnd00(lua_State *L) {
 		Game *game = g_engine->getGame();
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName && cb._luaParam == s1)
-				error("PlaySoundAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
+				warning("PlaySoundAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
 		}
 		game->yieldedCallbacks().push_back(callback);
 		return callback._luaThread->yield();
@@ -1972,7 +1974,7 @@ static int tolua_ExportedFunctions_MoveCharacterToAndWaitForEnd00(lua_State *L) 
 		Game *game = g_engine->getGame();
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName)
-				error("MoveCharacterToAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
+				warning("MoveCharacterToAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
 		}
 		game->yieldedCallbacks().push_back(callback);
 		return callback._luaThread->yield();

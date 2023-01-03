@@ -40,7 +40,7 @@ public:
 	void play() {
 		cont();
 	}
-	virtual void update(double time) = 0;
+	virtual void update(double millis) = 0;
 
 	void seekToStart();
 	//void staticDestroy();

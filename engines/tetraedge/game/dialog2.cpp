@@ -107,7 +107,10 @@ void Dialog2::load() {
 	size(); // refresh size? seems to do nothing with result again.
 
 	TeButtonLayout *dialogBtn = _gui.buttonLayoutChecked("dialog");
-	dialogBtn->onMouseClickValidated().add(this, &Dialog2::onSkipButton);
+
+	// WORKAROUND: Ensure this is always above the Game (which is set to pri 10000)
+	Common::SharedPtr<TeCallback0Param<Dialog2>> callbackptr(new TeCallback0Param<Dialog2>(this, &Dialog2::onSkipButton, 20000.0f));
+	dialogBtn->onMouseClickValidated().push_back(callbackptr);
 
 	TeCurveAnim2<TeLayout,TeVector3f32> *dialogAnimUp = _gui.layoutAnchorLinearAnimation("dialogAnimationUp");
 	TeCurveAnim2<TeLayout,TeVector3f32> *dialogAnimDown = _gui.layoutAnchorLinearAnimation("dialogAnimationDown");

@@ -76,6 +76,7 @@ void TeModelAnimation::destroy() {
 	_nmoRotArrays.clear();
 	_nmoScaleArrays.clear();
 	_fbxArrays.clear();
+	_numNMOFrames = 0;
 }
 
 int TeModelAnimation::findBone(const Common::String &bname) {
@@ -338,7 +339,7 @@ void TeModelAnimation::unbind() {
 	_model.release();
 }
 
-void TeModelAnimation::update(double proportion) {
+void TeModelAnimation::update(double millis) {
 	int frames;
 	if (!_useNMOArrays) {
 		if (_fbxArrays.empty())
@@ -351,7 +352,7 @@ void TeModelAnimation::update(double proportion) {
 
 	if (frames) {
 		_curFrameValFresh = false;
-		_curFrame2 = calcCurrentFrame(proportion);
+		_curFrame2 = calcCurrentFrame(millis);
 		if (_finishedSignalPending) {
 			_finishedSignalPending = false;
 			_onFinishedSignal.call();

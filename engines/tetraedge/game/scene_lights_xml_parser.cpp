@@ -113,20 +113,30 @@ bool SceneLightsXmlParser::parserCallback_Specular(ParserNode *node) {
 }
 
 bool SceneLightsXmlParser::parserCallback_Attenuation(ParserNode *node) {
-	_lights->back().setConstAtten(atof(node->values["constant"].c_str()));
-	_lights->back().setLinearAtten(atof(node->values["linear"].c_str()));
-	_lights->back().setQuadraticAtten(atof(node->values["quadratic"].c_str()));
+	float c = atof(node->values["constant"].c_str());
+	float l = atof(node->values["linear"].c_str());
+	float q = atof(node->values["quadratic"].c_str());
+	if (c < 0 || l < 0 || q < 0)
+		warning("Loaded invalid lighting attenuation vals %f %f %f", c, l, q);
+	_lights->back().setConstAtten(c);
+	_lights->back().setLinearAtten(l);
+	_lights->back().setQuadraticAtten(q);
 	return true;
 }
 
 bool SceneLightsXmlParser::parserCallback_Cutoff(ParserNode *node) {
-	float f = atof(node->values["value"].c_str());
-	_lights->back().setCutoff((f * M_PI) / 180.0);
+	float cutoff = atof(node->values["value"].c_str());
+	if (cutoff < 0.0f || (cutoff > 90.0f && cutoff != 180.0f))
+		warning("Loaded invalid lighting cutoff value %f", cutoff);
+	_lights->back().setCutoff((cutoff * M_PI) / 180.0);
 	return true;
 }
 
 bool SceneLightsXmlParser::parserCallback_Exponent(ParserNode *node) {
-	_lights->back().setExponent(atof(node->values["value"].c_str()));
+	float expon = atof(node->values["value"].c_str());
+	if (expon < 0.0f || expon > 128.0f)
+		warning("Loaded invalid lighting exponent value %f", expon);
+	_lights->back().setExponent(expon);
 	return true;
 }
 

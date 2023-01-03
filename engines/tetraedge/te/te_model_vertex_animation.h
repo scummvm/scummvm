@@ -47,6 +47,9 @@ public:
 	};
 
 	TeModelVertexAnimation();
+	virtual ~TeModelVertexAnimation() {
+		_keydata.clear();
+	}
 
 	void bind(TeIntrusivePtr<TeModel> &model);
 	// void deleteLater() // original overrides this, but just calls the super.
@@ -59,7 +62,7 @@ public:
 	bool load(Common::ReadStream &stream);
 	void save(Common::WriteStream &stream) const;
 
-	void update(double amount) override;
+	void update(double millis) override;
 
 private:
 	float _lastMillis;

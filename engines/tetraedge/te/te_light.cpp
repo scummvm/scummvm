@@ -93,6 +93,8 @@ void TeLight::transformSpotPoint(TeVector3f32 &pt) {
 }
 
 void TeLight::update(uint lightno) {
+	if (lightno > GL_MAX_LIGHTS)
+		error("Invalid light no %d", lightno);
 	float col[4];
 	const uint glLight = _toGlLight(lightno);
 	col[0] = _colAmbient.r() / 255.0f;
@@ -106,7 +108,12 @@ void TeLight::update(uint lightno) {
 	col[2] = _colDiffuse.b() / 255.0f;
 	col[3] = 1.0;
 	glLightfv(glLight, GL_DIFFUSE, col);
-	if (col[0] < 0.01f && col[1] < 0.01f && col[2] < 0.01f)
+
+	// WORKAROUND: Original game sets 0.01 as threshold here to avoid enabling
+	// the "shadow" light.  However, CitStation/31130 has shadowlight with values
+	// 4,0,0 which means it gets enabled.
+
+	if (col[0] < 0.02f && col[1] < 0.02f && col[2] < 0.02f)
 		glDisable(glLight);
 
 	col[0] = _colSpecular.r() / 255.0f;
@@ -166,6 +173,29 @@ void TeLight::updateGlobal() {
 	col[2] = _globalAmbientColor.b() / 255.0f;
 	col[3] = 1.0;
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, col);
+}
+
+Common::String TeLight::dump() const {
+	const char *ltype;
+	switch (_type) {
+		case LightTypeSpot:
+			ltype = "Spot";
+			break;
+		case LightTypePoint:
+			ltype = "Point";
+			break;
+		case LightTypeDirectional:
+			ltype = "Directional";
+			break;
+		default:
+			error("Invalid light type %d", (int)_type);
+	}
+
+	return Common::String::format("%sLight(\n\tamb:%s diff:%s spec:%s\n\tpos:%s posRad:%s atten:%.02f %.02f %.02f\n\tcutoff:%.02f exp:%.02f dispSz:%.02f\n)",
+		ltype, _colAmbient.dump().c_str(), _colDiffuse.dump().c_str(),
+		_colSpecular.dump().c_str(), _position3d.dump().c_str(),
+		_positionRadial.dump().c_str(), _constAtten, _linearAtten,
+		_quadraticAtten, _cutoff, _exponent, _displaySize);
 }
 
 
