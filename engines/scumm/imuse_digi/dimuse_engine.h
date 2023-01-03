@@ -87,10 +87,11 @@ private:
 	bool _checkForUnderrun;
 	int _underrunCooldown;
 
-	// These three are manipulated in the waveOut functions
-	uint8 *_outputAudioBuffer;
 	int _internalFeedSize;
 	int _internalSampleRate;
+
+	// These three are manipulated in the waveOut functions
+	uint8 *_outputAudioBuffer;
 	int _outputFeedSize;
 	int _outputSampleRate;
 
