@@ -1692,10 +1692,29 @@ void DragonsEngine::mainMenu() {
 		}
 	};
 
-	const char menuItems[3][40] = {
-			"Start",
-			"Options",
-			"Previews"
+	uint16 menuItems[4][3][40] = {
+		{
+			// US
+			{ 0x53, 0x74, 0x61, 0x72, 0x74, 0 },
+			{ 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0 },
+			{ 0x50, 0x72, 0x65, 0x76, 0x69, 0x65, 0x77, 0x73, 0 },
+
+		},
+		{
+			// UK
+			{ 0x53, 0x74, 0x61, 0x72, 0x74, 0 },
+			{ 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0 },
+		},
+		{
+			// GERMANY
+			{ 0x53, 0x74, 0x61, 0x72, 0x74, 0 },
+			{ 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x65, 0x6e, 0 },
+		},
+		{
+			// FRANCE
+			{ 0x44, 0x82, 0x6d, 0x61, 0x72, 0x72, 0x65, 0x72, 0 },
+			{ 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0 },
+		}
 	};
 
 	if (_language == Common::EN_GRB) {
@@ -1738,8 +1757,8 @@ void DragonsEngine::mainMenu() {
 		uint16 curMenuItem = 0;
 		do {
 			for (int i = 0; i <= lastMenuItem; i++) {
-				_fontManager->addAsciiText((i == 0 ? 17 : 16) * 8, (0x12 + i) * 8, &menuItems[i][0],
-										   strlen(menuItems[i]), i == curMenuItem ? 0 : 1);
+				_fontManager->addText((i == 0 ? 17 : 16) * 8, (0x12 + i) * 8, menuItems[lang_index][i], wideStrLen(menuItems[lang_index][i]),
+									  i == curMenuItem ? 0 : 1);
 			}
 			if (checkForDownKeyRelease() || checkForWheelDown()) {
 				if (curMenuItem < lastMenuItem) {
