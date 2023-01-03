@@ -125,8 +125,8 @@ public:
 	static char const *const kCloudDomain;
 #endif
 
-	void                     loadDefaultConfigFile(); /*!< Load the default configuration file. */
-	void                     loadConfigFile(const String &filename); /*!< Load a specific configuration file. */
+	void                     loadDefaultConfigFile(const String &fallbackFilename); /*!< Load the default configuration file. */
+	void                     loadConfigFile(const String &filename, const String &fallbackFilename); /*!< Load a specific configuration file. */
 
 	/**
 	 * Retrieve the config domain with the given name.
@@ -222,6 +222,7 @@ private:
 	friend class Singleton<SingletonBaseType>;
 	ConfigManager();
 
+	bool            loadFallbackConfigFile(const String &filename);
 	void			loadFromStream(SeekableReadStream &stream);
 	void			addDomain(const String &domainName, const Domain &domain);
 	void			writeDomain(WriteStream &stream, const String &name, const Domain &domain);
