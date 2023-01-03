@@ -125,7 +125,7 @@ struct ItemStruct {
 	uint8 _attackType;
 	uint8 _specialEffect;
 	uint8 _field17_attackTypeDefense;
-	uint8 field_18;
+	uint8 _exclusiveType;
 	uint8 _field19_mapPosX_or_maxDeltaPoints;
 	uint8 _mapPosY;
 
@@ -292,7 +292,7 @@ private:
 	void loadMapArrays(int idx);
 	void saveAnimImageSetId();
 	int16 getEquipmentDefense(int16 charId, bool flag);
-	uint16 sub1C80A(int16 charId, int16 field18, bool flag);
+	uint16 getEquippedExclusiveType(int16 charId, int16 exclusiveType, bool flag);
 	void displayLowStatusScreen(bool flag);
 	void loadImageSetToTileBank(int16 tileBankId, int16 imageSetId);
 	void restoreAnimImageSetId();
@@ -463,12 +463,12 @@ private:
 	void displayCharacterSummary(int16 curMenuLine, int16 npcId);
 	void displayCharacterInformationOrSkills(int16 curMenuLine, int16 npcId);
 	void displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 npcId);
-	void prepareStatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool unusedFl, bool refreshFl);
-	void sub18E80(int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
+	void prepareStatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool refreshFl);
+	void displayWindowAndStatusMenu(int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
 	int16 displayString_3(Common::String str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
 	int16 handleStatusMenu(int16 gameMode, int16 charId);
 	void unequipItem(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
-	void sub191FF(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
+	void tryToggleEquipped(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
 	int16 useObject(int16 charId, int16 objectId, int16 teamMonsterId, int16 menuId, int16 curMenuLine, int16 argA);
 
 	// Savegames

@@ -558,22 +558,23 @@ int16 EfhEngine::getEquipmentDefense(int16 charId, bool flag) {
 	return altDef;
 }
 
-uint16 EfhEngine::sub1C80A(int16 charId, int16 field18, bool flag) {
-	debugC(2, kDebugEngine, "sub1C80A %d %d %s", charId, field18, flag ? "True" : "False");
+uint16 EfhEngine::getEquippedExclusiveType(int16 charId, int16 exclusiveType, bool flag) {
+	debugC(2, kDebugEngine, "getEquippedExclusiveType %d %d %s", charId, exclusiveType, flag ? "True" : "False");
 
 	for (int i = 0; i < 10; ++i) {
 		if (!_npcBuf[charId]._inventory[i].isEquipped())
 			continue;
 
-		int16 itemId = _npcBuf[charId]._inventory[i]._ref;
+		int16 curItemId = _npcBuf[charId]._inventory[i]._ref;
 
-		if (_items[itemId].field_18 != field18)
+		if (_items[curItemId]._exclusiveType != exclusiveType)
 			continue;
 
+		// If flag is set, returns the ItemId, otherwise return the inventory slot number
 		if (!flag)
 			return i;
 
-		return itemId;
+		return curItemId;
 	}
 
 	return 0x7FFF;
@@ -759,11 +760,11 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 
 				switch (_teamCharStatus[i]._status) {
 				case 0: {
-					uint16 var4 = sub1C80A(charId, 9, true);
-					if (var4 == 0x7FFF)
+					uint16 exclusiveItemId = getEquippedExclusiveType(charId, 9, true);
+					if (exclusiveItemId == 0x7FFF)
 						_nameBuffer = "(NONE)";
 					else
-						_nameBuffer = _items[var4]._name;
+						_nameBuffer = _items[exclusiveItemId]._name;
 					}
 					break;
 				case 1:
