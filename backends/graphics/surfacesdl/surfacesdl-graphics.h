@@ -324,7 +324,7 @@ protected:
 
 	const PluginList &_scalerPlugins;
 	ScalerPluginObject *_scalerPlugin;
-	Scaler *_scaler;
+	Scaler *_scaler, *_mouseScaler;
 	uint _maxExtraPixels;
 	uint _extraPixels;
 
@@ -363,7 +363,6 @@ protected:
 			{ }
 	};
 
-	byte *_mouseData;
 	SDL_Rect _mouseBackup;
 	MousePos _mouseCurState;
 #ifdef USE_RGB_COLOR
@@ -375,9 +374,6 @@ protected:
 	bool _cursorPaletteDisabled;
 	SDL_Surface *_mouseOrigSurface;
 	SDL_Surface *_mouseSurface;
-	enum {
-		kMouseColorKey = 1
-	};
 
 	// Shake mode
 	// This is always set to 0 when building with SDL2.
