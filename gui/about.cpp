@@ -86,7 +86,7 @@ static const char *gpl_text[] = {
 
 AboutDialog::AboutDialog()
 	: Dialog(10, 20, 300, 174),
-	_scrollPos(0), _scrollTime(0), _willClose(false) {
+	  _scrollPos(0), _scrollTime(0), _willClose(false), _autoScroll(true) {
 
 	reflowLayout();
 
@@ -257,7 +257,7 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 void AboutDialog::handleTickle() {
 	const uint32 t = g_system->getMillis();
 	int scrollOffset = ((int)t - (int)_scrollTime) / kScrollMillisPerPixel;
-	if (scrollOffset > 0) {
+	if (_autoScroll && scrollOffset > 0) {
 		int modifiers = g_system->getEventManager()->getModifierState();
 
 		// Scroll faster when shift is pressed
@@ -282,6 +282,24 @@ void AboutDialog::handleTickle() {
 void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	// Close upon any mouse click
 	close();
+}
+
+void AboutDialog::handleMouseWheel(int x, int y, int direction) {
+	const int stepping = 5 * _lineHeight * direction;
+
+	if (stepping == 0)
+		return;
+
+	_autoScroll = false;
+
+	int newScrollPos = _scrollPos + stepping;
+
+	if (_scrollPos < 0) {
+		_scrollPos = 0;
+	} else if ((uint32)newScrollPos < _lines.size() * _lineHeight) {
+		_scrollPos = newScrollPos;
+	}
+	drawDialog(kDrawLayerForeground);
 }
 
 void AboutDialog::handleKeyDown(Common::KeyState state) {

@@ -39,6 +39,7 @@ protected:
 	Common::U32StringArray _lines;
 	uint32         _lineHeight;
 	bool           _willClose;
+	bool _autoScroll;
 
 	int _xOff, _yOff;
 
@@ -54,6 +55,7 @@ public:
 	void drawDialog(DrawLayer layerToDraw) override;
 	void handleTickle() override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	void handleMouseWheel(int x, int y, int direction) override;
 	void handleKeyDown(Common::KeyState state) override;
 	void handleKeyUp(Common::KeyState state) override;
 
