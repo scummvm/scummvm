@@ -208,11 +208,11 @@ struct CharStatus {
 struct MapMonster {
 	uint8 _possessivePronounSHL6; // aabb bbbb aa:Possessive Pronoun, bb bbbb: unknown
 	uint8 _npcId;
-	uint8 _guess_fullPlaceId; // unsigned? Magic values are 0xFF and 0xFE
+	uint8 _fullPlaceId; // unsigned? Magic values are 0xFF and 0xFE
 	uint8 _posX;
 	uint8 _posY;
-	uint8 _itemId_Weapon;
-	uint8 _field_6;
+	uint8 _weaponItemId;
+	uint8 _maxDamageAbsorption;
 	uint8 _monsterRef;
 	uint8 _moveInfo; // abbb cccc a: special move flag, bbb: Pct modifier for random move, cccc movement type
 	uint8 _field9_textId;
@@ -368,7 +368,7 @@ private:
 	int16 getXPLevel(int32 xp);
 	bool isItemCursed(int16 itemId);
 	bool hasObjectEquipped(int16 charId, int16 objectId);
-	void setMapMonsterField8(int16 id, uint8 movementType, bool groupFl);
+	void setMapMonsterMovementType(int16 id, uint8 movementType, bool groupFl);
 	bool isMonsterActive(int16 groupId, int16 id);
 	int16 getTileFactId(int16 mapPosX, int16 mapPosY);
 	void setCharacterObjectToBroken(int16 charId, int16 objectId);
