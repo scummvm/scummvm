@@ -161,7 +161,7 @@ void Frame::readChannels(Common::SeekableReadStreamEndian *stream, uint16 versio
 		}
 
 		// palette
-		_palette.paletteId = stream->readUint16();
+		_palette.paletteId = stream->readSint16();
 		// loop points for color cycling
 		_palette.firstColor = g_director->transformColor(stream->readByte() ^ 0x80);
 		_palette.lastColor = g_director->transformColor(stream->readByte() ^ 0x80);
