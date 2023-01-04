@@ -39,6 +39,7 @@
 #include "hpl1/penumbra-overture/SaveHandler.h"
 
 #include "hpl1/penumbra-overture/GlobalInit.h"
+#include "hpl1/algorithms.h"
 
 //////////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS
@@ -1442,31 +1443,26 @@ void cInventory::AddCombineCallback(const tString &asItem1, const tString &asIte
 
 //-----------------------------------------------------------------------
 
-void cInventory::RemovePickupCallback(const tString &asFunction) {
-	tInventoryPickupCallbackMapIt it = m_mapPickupCallbacks.begin();
-	for (; it != m_mapPickupCallbacks.end();) {
-		cInventoryPickupCallback *pCallback = it->second;
-		if (pCallback->msFunction == asFunction) {
-			m_mapPickupCallbacks.erase(it++);
-			hplDelete(pCallback);
-		} else {
-			it++;
+template<typename Map>
+void removeCallbacks(Map &callbackMap, const tString &fn) {
+	auto newEnd = Hpl1::removeIf(callbackMap.begin(), callbackMap.end(), [&](typename Map::value_type& p) -> bool {
+		if (p.second->msFunction == fn) {
+			hplDelete(p.second);
+			return true;
 		}
-	}
+		return false;
+	});
+	callbackMap.erase(newEnd, callbackMap.end());
+}
+
+void cInventory::RemovePickupCallback(const tString &asFunction) {
+	removeCallbacks(m_mapPickupCallbacks, asFunction);
 }
 
 void cInventory::RemoveUseCallback(const tString &asFunction) {
-	tInventoryUseCallbackMapIt it = m_mapUseCallbacks.begin();
-	for (; it != m_mapUseCallbacks.end();) {
-		cInventoryUseCallback *pCallback = it->second;
-		if (pCallback->msFunction == asFunction) {
-			m_mapUseCallbacks.erase(it++);
-			hplDelete(pCallback);
-		} else {
-			it++;
-		}
-	}
+	removeCallbacks(m_mapUseCallbacks, asFunction);
 }
+
 void cInventory::RemoveCombineCallback(const tString &asFunction) {
 	tInventoryCombineCallbackListIt it = mlstCombineCallbacks.begin();
 	for (; it != mlstCombineCallbacks.end(); ++it) {
