@@ -3542,7 +3542,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("elroypave", "", "Elroy Hits the Pavement", "17efee018a660458fae80de4364021ac", 525584, 404),
 	WINGAME1("elroypave", "", "PAVEMENT.EXE", "7937f42747788b558bc32cced3d8f66b", 758491, 404),
 	MACDEMO1("elroypave", "Demo", "Pavement Demo", "17efee018a660458fae80de4364021ac", 520880, 404),
-	WINDEMO1("elroypave", "Demo", "PAVEDEMO.EXE", "073eb1dd818796efe9513b11a8a4bb2d", 802180, 404),
+	WINDEMO2("elroypave", "Demo", "PAVEDEMO.EXE",			 "073eb1dd818796efe9513b11a8a4bb2d", 802180,
+								  "PAVEDEMO/P12/SHARED.DXR", "7fe5e2fa28260cbfa2d8675d948401b8", 112470, 404),
 
 	// Separate binaries for English or French, 68K or PowerPC
 	MACGAME1("emme", "", "The Keys to Knowledge PowerMac", "6d6772c4177764f6b556ba7c88f9b949", 60649, 404),
@@ -3731,21 +3732,25 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("ggmd", "", "xn--Musejagd-0za",			"ea646eccc9a53f44ce082459d4809a06", 483490, Common::DE_DEU, 404),
 	MACGAME1_l("ggmd", "", "Help! Muizen in 't hotel!", "e6833f1ce3b022f0128e4c80a55bcd46", 285538, Common::NL_NLD, 404),
 	WINGAME1("ggmd", "",   "KMDGM.EXE",					"c45bac8f730cae2e2a174dbc14deff7b", 690021, 404),
-	WINGAME1_l("ggmd", "", "MAUSJAGD.EXE",				"04d63d66464bce6356f9d70d83487838", 1302352, Common::DE_DEU, 404),
+	WINGAME2_l("ggmd", "", "MAUSJAGD.EXE",				"04d63d66464bce6356f9d70d83487838", 1302352,
+						   "SHARED.DXR",				"15f0add56f03a01a98b076f4792608f6", 389060, Common::DE_DEU, 404),
 	WINGAME1_l("ggmd", "", "MUIZEN.EXE",				"97f8977dae92d12cc8f9c7deff5e8f8d", 1483435, Common::NL_NLD, 404),
 	MACGAME1("ggmdmaze", "", "Mouse Maze",				"17efee018a660458fae80de4364021ac", 482866, 404),
 	WINGAME1("ggmdmaze", "", "MOUSMAZE.EXE",			"c306a1b1065c2ffe0ce2bfc0d58c52b4", 1690622, 404),
 	MACGAME1_l("ggmdpics", "", "Gallery",				"ea646eccc9a53f44ce082459d4809a06", 483490, Common::DE_DEU, 404),
 	MACGAME1_l("ggmdpics", "", "Galerij",				"ea646eccc9a53f44ce082459d4809a06", 483774, Common::NL_NLD, 404),
-	WINGAME1_l("ggmdpics", "", "GALLERY.EXE",			"c476512cadbbcffc6af5cfee8670f8f7", 5099674, Common::DE_DEU, 404),
+	WINGAME2_l("ggmdpics", "", "GALLERY.EXE",			"c476512cadbbcffc6af5cfee8670f8f7", 5099674,
+							   "SHARED.DXR",			"15f0add56f03a01a98b076f4792608f6", 389060, Common::DE_DEU, 404),
 	WINGAME1_l("ggmdpics", "", "GALERIJ.EXE",			"c476512cadbbcffc6af5cfee8670f8f7", 5099674, Common::NL_NLD, 404),
 	MACGAME1("ggmdsuper", "", "SuperGame",				"17efee018a660458fae80de4364021ac", 482866, 404),
 	MACGAME1_l("ggmdsuper", "", "Super Spel",			"17efee018a660458fae80de4364021ac", 482866, Common::NL_NLD, 404),
 	WINGAME1("ggmdsuper", "", "SUPRGAME.EXE",			"5da9f151d28659d83cb381ceca7493f1", 740518, 404),
-	WINGAME1_l("ggmdsuper", "", "SUPER.EXE",			"5da9f151d28659d83cb381ceca7493f1", 740518, Common::NL_NLD, 404),
+	WINGAME2_l("ggmdsuper", "", "SUPER.EXE",			"5da9f151d28659d83cb381ceca7493f1", 740518,
+								"GGMDMENU.DXR",			"019cea5d103d926591e3845b9516997b", 283120, Common::NL_NLD, 404),
 
-	MACGAME1("gigglecity", "",	   "Infinity City",		 "e6833f1ce3b022f0128e4c80a55bcd46", 285538, 404),
-	WINGAME1("gigglecity", "",	   "INFINITY.EXE",		 "07b919509db761c7910f5677216b588d", 3228770, 404),
+	MACGAME1("gigglecity", "",	   "Infinity City",		 "e6833f1ce3b022f0128e4c80a55bcd46", 285282, 404),
+	WINGAME2("gigglecity", "",	   "INFINITY.EXE",		 "07b919509db761c7910f5677216b588d", 3228770,
+								   "INTRO.DXR",			 "42c09c7363745b69f0616591055d510d", 2498942, 404),
 	MACDEMO1("gigglecity", "Demo", "Infinity City Demo", "2d1fb07ef7ec0f4dad1a279989fa8f57", 304124, 404),
 	WINDEMO1("gigglecity", "Demo", "ICDEMO.EXE",		 "f8eb3a346a02193cec8bc14497b73a8f", 802018, 404),
 
@@ -3756,7 +3761,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("gigglefarm", "Demo", "ABFDEMO.EXE", "6ccff5b1e2541065b66ce6b33b2ade9f", 8517847, 404),
 
 	MACGAME1("gigglevania", "", "Pantsylvania", "d9082ba24e164f376ffb3090c43fa997", 304149, 404),
-	WINGAME1("gigglevania", "", "PANTS.EXE",	"1b10e3c6f6a47971802fe835642130ce", 697317, 404),
+	WINGAME2("gigglevania", "", "PANTS.EXE",	"1b10e3c6f6a47971802fe835642130ce", 697317,
+								"INTRO.DXR",	"41101e9d94da0a627e75f5b93ae22f48", 5008606, 404),
 
 	// CD-ROM Expanded Album by Ion, Los Angeles and Cryptic, San Francisco (1994)
 	// European distribution by BMG Interactive, New York
@@ -3788,14 +3794,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1("grolier", "Catalog", "Grolier Products", "f5033f237ad1b1639fc46d01a82ac380", 283274, 404),
 
-	MACGAME1_l("guignols1", "", "LE JEU ! 12Mo", "e07d16e7d0986ef7acf3a5e302ed905e", 484331, Common::FR_FRA, 404),
-	WINGAME1_l("guignols1", "", "ELM.EXE", "b04c8494176cbc3b2080bf1630ae1748", 697216, Common::FR_FRA, 404),
+	MACGAME1_l("guignols1", "", "LE JEU ! 12Mo", "e07d16e7d0986ef7acf3a5e302ed905e", 484075, Common::FR_FRA, 404),
+	WINGAME2_l("guignols1", "", "ELM.EXE",	   "b04c8494176cbc3b2080bf1630ae1748", 697216,
+								"GIGAMAT.DXR", "ab5960b3e663600388b5cc1b29f4920e", 744020, Common::FR_FRA, 404),
 
 	// Full game is D5
 	MACDEMO1("gundam0079", "Demo", "Gundam Demo", "01be45e7241194dad07938e7059b88e3", 483376, 400),
 
-	MACGAME1("guns", "", "Multimedia Guns", "01be45e7241194dad07938e7059b88e3", 486927, 404),
-	WINGAME1("guns", "", "GUNS.EXE", "43342caa10c6dc46f983787da1b625b7", 1636235, 404),
+	MACGAME1("guns", "", "Multimedia Guns", "01be45e7241194dad07938e7059b88e3", 486671, 404),
+	WINGAME2("guns", "", "GUNS.EXE", "43342caa10c6dc46f983787da1b625b7", 1636235,
+						 "DATA/MAINMENU/MAINMENU.PIC", "9453f965417c5cb5c22d78bb3ce84a4f", 260166, 404),
 
 	MACGAME1("gusbuds", "",		"MMV Product Demos for PowerMac", "692f6732b6d7deaa00c9b3df57bb30ce", 60324, 404),
 	MACDEMO1("guscarn", "Demo", "Carnival Demo 4 you",			  "67f572196550aedb1f9523d782022be0", 481482, 404),
@@ -3803,7 +3811,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("guspark", "",		"Gus goes to CyberStone Park",	  "ccfbfc1a0ac231db40a250babaa6ad7c", 285538, 404),
 	MACDEMO1("gustown", "Demo", "Gus Goes To CyberTown DEMO",	  "77f4098988d5386794d1530065f514cd", 304217, 400),
 	// Guus in Cyberstad (demo)
-	WINDEMO1_l("gustown", "Demo", "GUUS.EXE",	  "775eb4d8a78916b10e7531eebc758dd2", 8319869, Common::NL_NLD, 404),
+	WINDEMO2_l("gustown", "Demo", "GUUS.EXE",	  "775eb4d8a78916b10e7531eebc758dd2", 8319869,
+								  "STRAAT.DIR",	  "3f8a0dbad3f6af64d23bf2fc257bdd3d", 3286688, Common::NL_NLD, 404),
 
 	WINGAME1("gusbuds", "",		"MMVDEMOS.EXE", "71d4ad9e9dc92a81561476d4d9813492", 692037, 404),
 
