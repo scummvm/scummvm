@@ -124,6 +124,13 @@ namespace Scumm {
 #define DIMUSE_C_PROCESS_STREAMS  27
 #define DIMUSE_C_FEED_STREAM      29
 
+// Block IDs for the Creative Voice File format
+// used within Full Throttle and The Dig (demo)
+#define VOC_DIGI_DATA_BLOCK  1
+#define VOC_MARKER_BLOCK     4
+#define VOC_LOOP_START_BLOCK 6
+#define VOC_LOOP_END_BLOCK   7
+
 struct IMuseDigiDispatch;
 struct IMuseDigiTrack;
 struct IMuseDigiStreamZone;

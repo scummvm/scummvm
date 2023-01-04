@@ -729,7 +729,7 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 	int mixVolume;
 
 	dispatchPtr = trackPtr->dispatchPtr;
-	tentativeFeedSize = (dispatchPtr->sampleRate == 22050) ? feedSize : feedSize / 2;
+	tentativeFeedSize = (dispatchPtr->sampleRate == DIMUSE_BASE_SAMPLERATE) ? feedSize : feedSize / 2;
 
 	if (dispatchPtr->fadeBuf) {
 		if (tentativeFeedSize >= dispatchPtr->fadeRemaining) {
@@ -739,7 +739,19 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 		}
 
 		mixVolume = dispatchUpdateFadeMixVolume(dispatchPtr, fadeChunkSize);
-		_internalMixer->mix(dispatchPtr->fadeBuf, fadeChunkSize, 8, 1, feedSize, 0, mixVolume, trackPtr->pan, (dispatchPtr->sampleRate == 11025));
+
+		_internalMixer->mix(
+			dispatchPtr->fadeBuf,
+			fadeChunkSize,
+			8,
+			1,
+			feedSize,
+			0,
+			mixVolume,
+			trackPtr->pan,
+			(dispatchPtr->sampleRate == (DIMUSE_BASE_SAMPLERATE / 2))
+		);
+
 		dispatchPtr->fadeRemaining -= fadeChunkSize;
 		dispatchPtr->fadeBuf += fadeChunkSize;
 		if (dispatchPtr->fadeRemaining == fadeChunkSize)
@@ -796,7 +808,16 @@ void IMuseDigital::dispatchProcessDispatches(IMuseDigiTrack *trackPtr, int feedS
 				mixVolume = trackPtr->effVol;
 			}
 
-			_internalMixer->mix(buffer, inFrameCount, 8, 1, feedSize, mixStartingPoint, mixVolume, trackPtr->pan, (dispatchPtr->sampleRate == 11025));
+			_internalMixer->mix(
+				buffer,
+				inFrameCount,
+				8,
+				1,
+				feedSize,
+				mixStartingPoint,
+				mixVolume,
+				trackPtr->pan,
+				(dispatchPtr->sampleRate == (DIMUSE_BASE_SAMPLERATE / 2)));
 			mixStartingPoint += inFrameCount;
 			tentativeFeedSize -= inFrameCount;
 			dispatchPtr->currentOffset += inFrameCount;
@@ -1680,9 +1701,16 @@ int IMuseDigital::dispatchSeekToNextChunk(IMuseDigiDispatch *dispatchPtr) {
 		} else {
 			uint8 *headerTag = _currentVOCHeader;
 
+			// All blocks specification described here are documented as
+			// per the official SoundBlaster file format specification
 			switch (headerTag[0]) {
-			case 1:
-				dispatchPtr->sampleRate = headerTag[4] > 196 ? 22050 : 11025;
+			case VOC_DIGI_DATA_BLOCK:
+				// Block format:
+				// - BYTE bBlockId;             Always 1 for this block
+				// - BYTE nBlockLen[3];         3-byte block length (excluding this and the previous field size)
+				// - BYTE bTimeConstant;        Used to determine the sample rate
+				// - BYTE bPackMethod;          Packing method, unused here
+				dispatchPtr->sampleRate = headerTag[4] > 196 ? DIMUSE_BASE_SAMPLERATE : (DIMUSE_BASE_SAMPLERATE / 2);
 				dispatchPtr->audioRemaining = (READ_LE_UINT32(headerTag) >> 8) - 2;
 				dispatchPtr->currentOffset += 6;
 
@@ -1692,18 +1720,32 @@ int IMuseDigital::dispatchSeekToNextChunk(IMuseDigiDispatch *dispatchPtr) {
 						streamerSetLoopFlag(dispatchPtr->streamPtr, dispatchPtr->audioRemaining + dispatchPtr->currentOffset);
 				}
 				return 0;
-			case 4:
-				// Marker, 2 bytes, theoretically used for triggers, but never actually found in the game;
-				// I am keeping this case here, in order to correctly keep track of the offset
+			case VOC_MARKER_BLOCK:
+				// Block format:
+				// - BYTE bBlockId;             Always 4 for this block
+				// - BYTE nBlockLen[3];         3-byte block length (excluding this and the previous field size)
+				// - WORD wMarker;              Marker value
+				//
+				// These markers are theoretically used for triggers, but never actually used in-game;
+				// We keep this case here, in order to correctly keep track of the offset.
 				dispatchPtr->currentOffset += 6;
 				continue;
-			case 6:
+			case VOC_LOOP_START_BLOCK:
+				// Block format:
+				// - BYTE bBlockId;             Always 6 for this block
+				// - BYTE nBlockLen[3];         3-byte block length (excluding this and the previous field size)
+				// - WORD wRepeatTimes;         Number of repeats (from 1 to 0xFFFE); 0xFFFF yields an endless loop
 				dispatchPtr->vocLoopStartingPoint = dispatchPtr->currentOffset;
 				dispatchPtr->currentOffset += 6;
 				if (dispatchPtr->streamPtr)
 					streamerGetStreamBuffer(dispatchPtr->streamPtr, 6);
 				continue;
-			case 7:
+			case VOC_LOOP_END_BLOCK:
+				// Block format:
+				// - BYTE bBlockId;             Always 7 for this block
+				// - BYTE nBlockLen[3];         3-byte block length (excluding this and the previous field size)
+				//
+				// Works in conjunction with the previous block to reset the stream offset to the loop beginning
 				dispatchPtr->currentOffset = dispatchPtr->vocLoopStartingPoint;
 				if (dispatchPtr->streamPtr)
 					streamerGetStreamBuffer(dispatchPtr->streamPtr, 1);
