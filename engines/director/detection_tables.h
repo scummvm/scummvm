@@ -836,6 +836,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "max3",				"Max and the Haunted Castle" },
 	{ "mrmore",				"Mr. More Interaktive" },
 	{ "otelo",				"o.tel.o Online 01011" },
+	{ "ravecard2001",		"Ravecard 2001" },
 	{ "ravensburger",		"Ravensburger Interactive Demo-Sampler" },
 	{ "raveshuttle",		"Rave Shuttle: The Cosmic Challenge" },
 	{ "ritterrost",			"Ritter Rost - Die Eiserne Burg" },
@@ -1255,6 +1256,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "acneattack",			"Acne-Attack!" },
 	{ "backpacker2",		"Backpacker 2" },							// Other games listed under English
 	{ "backpackerjrdiy",	"BackPacker Junior - Do-It-Yourself" },
+	{ "balticmission",		"Baltic Mission" },
 	{ "ernie",				"Ernie: Broke in Bayonne" },
 	{ "garygadget2",		"Bygg båtar med Mulle Meck" },              // First game listed under English
 	{ "garygadget3",		"Bygg flygplan med Mulle Meck" },
@@ -1276,6 +1278,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "polis3",				"Polis 3: Vargspår" },
 	{ "requiem",			"Requiem: en mordgåta på 1600-talet" },
 	{ "rymdjakten",			"Rymdjakten" },
+	{ "trazanbanarne",		"Trazan & Banarne - Speltajm" },
 	{ "xtown1",				"CrossTown: Giftet" },
 	{ "xtown2",				"CrossTown: Ängeln" },
 
@@ -7434,6 +7437,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("rainbowfish2", "", "Arcobaleno.exe", "06f5ec786e7f2e94e36571f651810fb4", 1817774, Common::IT_ITA, 702),
 	WINGAME1_l("rainbowfish2", "", "wal.exe", "06f5ec786e7f2e94e36571f651810fb4", 1817774, Common::DE_DEU, 702),
 
+	WINGAME1t_l("ravecard2001", "", "RAVECARD2001.exe", "1f74104a44a6d8b1decfdc8f16c22639", 3010820, Common::DE_DEU, 702),
+
 	WINGAME1("relaxation", "ECD",  "solitude.exe", "7a4164849d026c0f2aa8ea4c7d5447ba", 1807680, 702),
 	MACGAME1("relaxplayer", "ECD", "Relax",		   "0944b962ebb00f4b5d5149d220f8449b", 112738, 702),
 
@@ -7606,6 +7611,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 								  "movie.dxr",	   "6d0c0712fdd32cf1de489b4c152b2460", 50908119, 800),
 	WINGAME2("avrilletgo", "ECD", "Projector.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 56830,
 								  "movie.dxr",	   "b8dc39b080e4892913c2d302fec39567", 50907991, 800),
+
+	MACGAME1_l("balticmission",  "", 		"Baltic Mission", 	  "4ea5fc09f79eee6dded94dc40f303779", 219073, Common::SE_SWE, 800),
+	WINGAME2t_l("balticmission", "Autorun", "autorun.exe",		  "60a23965ff21326edf26fbb9e8f268ca", 2461710,
+								     		"baltic/main.dxr",	  "024047676242d7d277d39a6abd57c7fb", 58099778, Common::SE_SWE, 800),
+	WINGAME2t_l("balticmission", "",		"Baltic Mission.exe", "06575527a84aa9e0dca4a756855e3935", 2563068,
+								     		"baltic/main.dxr",	  "024047676242d7d277d39a6abd57c7fb", 58099778, Common::SE_SWE, 800),
 
 	MACDEMO1("balto2", "Trailer", "MacBolto", "08c9ea94f6469e71ae0c71987bbf6323", 155737, 850),
 	WINDEMO1("balto2", "Trailer", "Balto.exe", "c163f36141579ee374f7b4b2bddee95a", 2309044, 850),
@@ -7874,6 +7885,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("plcd", "Nº4 2001", "Start.exe",		  "e24d4bab978b1a5c2326d2c56cf4d781", 2247370,
 								   "PL_2001_#04.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 3842928, Common::RU_RUS, 800),
 
+	//Requires installation
+	WINGAME2_l("polis3", "",		 "polis3.exe",				 "e24d4bab978b1a5c2326d2c56cf4d781", 3901334,
+									 "polis3.dxr",				 "3dea9440d719e76e1be194554580751a", 365957, Common::SE_SWE, 800),
+	WINGAME2_l("polis3", "Launcher", "launcher.exe",			 "402a7987696daf894708bd448b4d66ae", 946176,
+									 "data/video/introfilm.bin", "767f5ad8cdf8cb021b03eb881b879e22", 4425728, Common::SE_SWE, 800),
+	// unconfirmed version (spanish?)
 	WINGAME2_l("polis3", "", "launcher.exe", "0c81c84ca4966313ad27d47daba44537", 2860282,
 							 "polis3.dxr",	 "1a391250c502a1f55da5a4d0438b493d", 3533782, Common::ES_ESP, 851),
 
@@ -8002,6 +8019,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("trans", "", "Trans", "2e860522900a5342e52e5ce51bcad9dd", 219919, Common::JA_JPN, 850),
 	WINGAME1t_l("trans", "", "Trans.exe", "de336a369a0fa4aab1b3d9dc07b1624d", 2117070, Common::JA_JPN, 850),
+
+	MACGAME1_l("trazanbanarne", "",	 "Trazan & Banarne",	 "4ea5fc09f79eee6dded94dc40f303779", 196935, Common::SE_SWE, 800),
+	WINGAME1t_l("trazanbanarne", "", "Trazan & Banarne.exe", "00a3e2aecf8a07a5dd532bf8fdce390c", 2895014, Common::SE_SWE, 800),
 
 	WINGAME1("tweeniesrtp", "", "BBC Tweenies Tour.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 5435024, 800),
 
