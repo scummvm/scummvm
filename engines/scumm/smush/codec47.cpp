@@ -601,7 +601,7 @@ bool SmushDeltaGlyphsDecoder::decode(byte *dst, const byte *src) {
 		break;
 	case 1:
 		// Used by Outlaws, but not by any SCUMM game.
-		error("codec47: not implemented decode1 proc");
+		error("SmushDeltaGlyphsDecoder::decode(): ERROR: Case 1 not implemented (used by Outlaws).");
 		break;
 	case 2:
 		if (seqNb == _prevSeqNb + 1) {
