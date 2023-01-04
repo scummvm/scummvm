@@ -310,11 +310,11 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 				_unk2C8AA = 0;
 			break;
 		case 0x12:
-			// Guess : disable special tile { }
+			// Disable special tile
 			if (flag) {
-				int16 var110 = sub151FD(_mapPosX, _mapPosY);
-				if (var110 != -1)
-					_mapUnknown[var110]._posX = 0xFF;
+				int16 tileId = findMapSpecialTileIndex(_mapPosX, _mapPosY);
+				if (tileId != -1)
+					_mapSpecialTile[tileId]._posX = 0xFF;
 			}
 			break;
 		case 0x13:
@@ -398,9 +398,10 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 					displayFctFullScreen();
 				}
 
-				int16 mapUnkId = sub151FD(_mapPosX, _mapPosY);
-				if (mapUnkId != -1) {
-					_mapUnknown[mapUnkId]._posX = 0xFF;
+				int16 tileId = findMapSpecialTileIndex(_mapPosX, _mapPosY);
+				if (tileId != -1) {
+					// Disable special tile
+					_mapSpecialTile[tileId]._posX = 0xFF;
 				}
 				_redrawNeededFl = true;
 			}
@@ -418,21 +419,23 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x1A:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
 			if (flag) {
-				int16 mapUnkId = sub151FD(scriptNumberArray[0], scriptNumberArray[1]);
-				if (mapUnkId != -1) {
-					_mapUnknown[mapUnkId]._posX = 0xFF;
+				int16 tileId = findMapSpecialTileIndex(scriptNumberArray[0], scriptNumberArray[1]);
+				if (tileId != -1) {
+					// Disable tile
+					_mapSpecialTile[tileId]._posX = 0xFF;
 				}
 			}
 			break;
 		case 0x1B:
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
 			if (flag) {
-				int16 mapUnkId = sub151FD(scriptNumberArray[0], scriptNumberArray[1]);
-				if (mapUnkId != -1) {
-					_mapUnknown[mapUnkId]._posX = 0xFF;
+				int16 tileId = findMapSpecialTileIndex(scriptNumberArray[0], scriptNumberArray[1]);
+				if (tileId != -1) {
+					// Disable tile
+					_mapSpecialTile[tileId]._posX = 0xFF;
 				}
-				_mapUnknown[scriptNumberArray[2]]._posX = scriptNumberArray[0];
-				_mapUnknown[scriptNumberArray[2]]._posY = scriptNumberArray[1];
+				_mapSpecialTile[scriptNumberArray[2]]._posX = scriptNumberArray[0];
+				_mapSpecialTile[scriptNumberArray[2]]._posY = scriptNumberArray[1];
 			}
 			break;
 		case 0x1C:

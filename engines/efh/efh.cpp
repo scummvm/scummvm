@@ -484,16 +484,16 @@ void EfhEngine::initMapMonsters() {
 void EfhEngine::loadMapArrays(int idx) {
 	debugC(6, kDebugEngine, "loadMapArrays %d", idx);
 
-	uint8 *_mapUnknownPtr = &_mapArr[idx][2];
+	uint8 *mapSpecialTilePtr = &_mapArr[idx][2];
 
 	for (int i = 0; i < 100; ++i) {
-		_mapUnknown[i]._placeId = _mapUnknownPtr[9 * i];
-		_mapUnknown[i]._posX = _mapUnknownPtr[9 * i + 1];
-		_mapUnknown[i]._posY = _mapUnknownPtr[9 * i + 2];
-		_mapUnknown[i]._field3 = _mapUnknownPtr[9 * i + 3];
-		_mapUnknown[i]._field4_NpcId = _mapUnknownPtr[9 * i + 4];
-		_mapUnknown[i]._field5_textId = READ_LE_UINT16(&_mapUnknownPtr[9 * i + 5]);
-		_mapUnknown[i]._field7_textId = READ_LE_UINT16(&_mapUnknownPtr[9 * i + 7]);
+		_mapSpecialTile[i]._placeId = mapSpecialTilePtr[9 * i];
+		_mapSpecialTile[i]._posX = mapSpecialTilePtr[9 * i + 1];
+		_mapSpecialTile[i]._posY = mapSpecialTilePtr[9 * i + 2];
+		_mapSpecialTile[i]._field3 = mapSpecialTilePtr[9 * i + 3];
+		_mapSpecialTile[i]._field4_NpcId = mapSpecialTilePtr[9 * i + 4];
+		_mapSpecialTile[i]._field5_textId = READ_LE_UINT16(&mapSpecialTilePtr[9 * i + 5]);
+		_mapSpecialTile[i]._field7_textId = READ_LE_UINT16(&mapSpecialTilePtr[9 * i + 7]);
 	}
 
 	uint8 *mapMonstersPtr = &_mapArr[idx][902];
@@ -1102,20 +1102,16 @@ void EfhEngine::sub2455E(int16 arg0, int16 arg2, int16 arg4) {
 	}
 }
 
-int16 EfhEngine::sub151FD(int16 posX, int16 posY) {
-	debug("sub151FD %d %d", posX, posY);
+int16 EfhEngine::findMapSpecialTileIndex(int16 posX, int16 posY) {
+	debugC(5, kDebugEngine, "findMapSpecialTileIndex %d %d", posX, posY);
 
-	if (_largeMapFlag) {
-		for (uint counter = 0; counter < 100; ++counter) {
-			if (_mapUnknown[counter]._posX == posX && _mapUnknown[counter]._posY == posY && _mapUnknown[counter]._placeId == 0xFE)
-				return counter;
-		}
-	} else {
-		for (uint counter = 0; counter < 100; ++counter) {
-			if (_mapUnknown[counter]._posX == posX && _mapUnknown[counter]._posY == posY && _mapUnknown[counter]._placeId == _fullPlaceId)
-				return counter;
-		}
+	uint16 searchPlaceId = _largeMapFlag ? 0xFE : _fullPlaceId;
+	
+	for (uint counter = 0; counter < 100; ++counter) {
+		if (_mapSpecialTile[counter]._posX == posX && _mapSpecialTile[counter]._posY == posY && _mapSpecialTile[counter]._placeId == searchPlaceId)
+			return counter;
 	}
+
 	return -1;
 }
 
@@ -2092,41 +2088,41 @@ void EfhEngine::displayImp1Text(int16 textId) {
 bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId) {
 	debug("sub22293 %d-%d %d %d %d %d", mapPosX, mapPosY, charId, itemId, arg8, imageSetId);
 
-	int16 var8 = sub151FD(mapPosX, mapPosY);
+	int16 tileId = findMapSpecialTileIndex(mapPosX, mapPosY);
 
-	if (var8 == -1) {
+	if (tileId == -1) {
 		if (imageSetId != -1 && *_imp2PtrArray[imageSetId] != 0x30)
 			displayMiddleLeftTempText(_imp2PtrArray[imageSetId], true);
 	} else if (arg8 == 0) {
-		if (_mapUnknown[var8]._field3 == 0xFF) {
-			displayImp1Text(_mapUnknown[var8]._field5_textId); // word!
+		if (_mapSpecialTile[tileId]._field3 == 0xFF) {
+			displayImp1Text(_mapSpecialTile[tileId]._field5_textId); // word!
 			return true;
 		}
 
-		if (_mapUnknown[var8]._field3 == 0xFE) {
+		if (_mapSpecialTile[tileId]._field3 == 0xFE) {
 			for (int counter = 0; counter < _teamSize; ++counter) {
 				if (_teamCharId[counter] == -1)
 					continue;
-				if (_teamCharId[counter] == _mapUnknown[var8]._field4_NpcId) {
-					displayImp1Text(_mapUnknown[var8]._field5_textId);
+				if (_teamCharId[counter] == _mapSpecialTile[tileId]._field4_NpcId) {
+					displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
 					return true;
 				}
 			}
-		} else if (_mapUnknown[var8]._field3 == 0xFD) {
+		} else if (_mapSpecialTile[tileId]._field3 == 0xFD) {
 			for (int counter = 0; counter < _teamSize; ++counter) {
 				if (_teamCharId[counter] == -1)
 					continue;
 
 				for (uint var2 = 0; var2 < 10; ++var2) {
-					if (_npcBuf[_teamCharId[counter]]._inventory[var2]._ref == _mapUnknown[var8]._field4_NpcId) {
-						displayImp1Text(_mapUnknown[var8]._field5_textId);
+					if (_npcBuf[_teamCharId[counter]]._inventory[var2]._ref == _mapSpecialTile[tileId]._field4_NpcId) {
+						displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
 						return true;
 					}
 				}
 			}
 		// original makes a useless check on (_mapUnknownPtr[var8 * 9 + 3] > 0x7F)
-		} else if (_mapUnknown[var8]._field3 <= 0x77) {
-			int16 var6 = _mapUnknown[var8]._field3;
+		} else if (_mapSpecialTile[tileId]._field3 <= 0x77) {
+			int16 var6 = _mapSpecialTile[tileId]._field3;
 			for (int counter = 0; counter < _teamSize; ++counter) {
 				if (_teamCharId[counter] == -1)
 					continue;
@@ -2134,25 +2130,25 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 				for (uint var2 = 0; var2 < 39; ++var2) {
 					// CHECKME : the whole loop doesn't make much sense as it's using var6 instead of var2, plus _activeScore is an array of 15 bytes, not 0x77...
 					// Also, 39 correspond to the size of activeScore + passiveScore + infoScore + the 2 remaining bytes of the struct
-					if (_npcBuf[_teamCharId[counter]]._activeScore[var6] >= _mapUnknown[var8]._field4_NpcId) {
-						displayImp1Text(_mapUnknown[var8]._field5_textId);
+					if (_npcBuf[_teamCharId[counter]]._activeScore[var6] >= _mapSpecialTile[tileId]._field4_NpcId) {
+						displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
 						return true;
 					}
 				}
 			}
 		}
 	} else {
-		if ((_mapUnknown[var8]._field3 == 0xFA && arg8 == 1) || (_mapUnknown[var8]._field3 == 0xFC && arg8 == 2) || (_mapUnknown[var8]._field3 == 0xFB && arg8 == 3)) {
-			if (_mapUnknown[var8]._field4_NpcId == itemId) {
-				displayImp1Text(_mapUnknown[var8]._field5_textId);
+		if ((_mapSpecialTile[tileId]._field3 == 0xFA && arg8 == 1) || (_mapSpecialTile[tileId]._field3 == 0xFC && arg8 == 2) || (_mapSpecialTile[tileId]._field3 == 0xFB && arg8 == 3)) {
+			if (_mapSpecialTile[tileId]._field4_NpcId == itemId) {
+				displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
 				return true;
 			}
 		} else if (arg8 == 4) {
-			int16 var6 = _mapUnknown[var8]._field3;
+			int16 var6 = _mapSpecialTile[tileId]._field3;
 			if (var6 >= 0x7B && var6 <= 0xEF) {
 				var6 -= 0x78;
-				if (var6 >= 0 && var6 <= 0x8B && var6 == itemId && _mapUnknown[var8]._field4_NpcId <= _npcBuf[charId]._activeScore[itemId]) {
-					displayImp1Text(_mapUnknown[var8]._field5_textId);
+				if (var6 >= 0 && var6 <= 0x8B && var6 == itemId && _mapSpecialTile[tileId]._field4_NpcId <= _npcBuf[charId]._activeScore[itemId]) {
+					displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
 					return true;
 				}
 			}
@@ -2164,10 +2160,11 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 			return true;
 	}
 
-	if ((arg8 == 4 && _mapUnknown[var8]._field3 < 0xFA) || arg8 != 4) {
-		if (_mapUnknown[var8]._field7_textId > 0xFE)
+	// CHECKME: there's suspiciously no check on tileId
+	if ((arg8 == 4 && _mapSpecialTile[tileId]._field3 < 0xFA) || arg8 != 4) {
+		if (_mapSpecialTile[tileId]._field7_textId > 0xFE)
 			return false;
-		displayImp1Text(_mapUnknown[var8]._field7_textId);
+		displayImp1Text(_mapSpecialTile[tileId]._field7_textId);
 		return true;
 	}
 

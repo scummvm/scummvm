@@ -89,7 +89,7 @@ struct InvObject {
 	int8 getUsesLeft();
 };
 
-struct UnkMapStruct {
+struct MapSpecialTileStruct {
 	uint8 _placeId;
 	uint8 _posX;
 	uint8 _posY;
@@ -322,7 +322,7 @@ private:
 	void displayMiddleLeftTempText(uint8 *impArray, bool flag);
 	void transitionMap(int16 centerX, int16 centerY);
 	void sub2455E(int16 arg0, int16 arg1, int16 arg2);
-	int16 sub151FD(int16 posX, int16 posY);
+	int16 findMapSpecialTileIndex(int16 posX, int16 posY);
 	bool isPosOutOfMap(int16 mapPosX, int16 mapPosY);
 	void goSouth();
 	void goNorth();
@@ -537,7 +537,7 @@ private:
 	Common::String _messageToBePrinted;
 
 	uint8 *_mapBitmapRefArr[19];
-	UnkMapStruct _mapUnknown[100];
+	MapSpecialTileStruct _mapSpecialTile[100];
 	MapMonster _mapMonsters[64];
 	uint8 _mapGameMap[64][64];
 

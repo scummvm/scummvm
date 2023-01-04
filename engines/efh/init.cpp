@@ -44,7 +44,7 @@ void InvObject::init() {
 	_curHitPoints = 0;
 }
 
-void UnkMapStruct::init() {
+void MapSpecialTileStruct::init() {
 	_placeId = _posX = _posY = _field3 = _field4_NpcId = 0;
 	_field5_textId = _field7_textId = 0;
 }
@@ -229,7 +229,7 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 
 	for (int i = 0; i < 100; ++i) {
 		_imp1PtrArray[i] = nullptr;
-		_mapUnknown[i].init();
+		_mapSpecialTile[i].init();
 	}
 
 	for (int i = 0; i < 432; ++i)

@@ -196,7 +196,7 @@ void EfhEngine::loadHistory() {
 }
 
 void EfhEngine::loadTechMapImp(int16 fileId) {
-	debug("loadTechMapImp %d", fileId);
+	debugC(3, kDebugEngine, "loadTechMapImp %d", fileId);
 
 	if (fileId == 0xFF)
 		return;
