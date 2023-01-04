@@ -32,15 +32,15 @@ TeImage::TeImage() : ManagedSurface(), _format(INVALID) {
 }
 
 TeImage::TeImage(const TeImage &other) {
-	error("TODO: TeImage:: copy constructor Implement me.");
+	error("TODO: Implement TeImage::TeImage copy constructor");
 }
 
 void TeImage::copy(TeImage &dest, const TeVector2s32 &vec1, const TeVector2s32 &vec2, const TeVector2s32 &vec3) const {
-	error("TODO: TeImage::copy Implement me.");
+	error("TODO: Implement TeImage::copy");
 }
 
 unsigned long TeImage::countPixelsOfColor(const TeColor &col) const {
-	error("TODO: TeImage: Implement me.");
+	error("TODO: Implement TeImage::countPixelsOfColor");
 }
 
 void TeImage::create() {
@@ -59,7 +59,7 @@ void TeImage::create(uint xsize, uint ysize, Common::SharedPtr<TePalette> &pal,
 }
 
 void TeImage::deserialize(Common::ReadStream &stream) {
-	error("TODO: TeImage: Implement me.");
+	error("TODO: Implement TeImage::deserialize");
 }
 
 void TeImage::destroy() {
@@ -68,11 +68,11 @@ void TeImage::destroy() {
 }
 
 void TeImage::drawPlot(void *outbuf, int x, int y, const TeVector2s32 &bufsize, const TeColor &col) {
-	error("TODO: TeImage: Implement me.");
+	error("TODO: Implement TeImage::drawPlot");
 }
 
 void TeImage::fill(byte val) {
-	error("TODO: TeImage: Implement me.");
+	error("TODO: Implement TeImage::fill");
 }
 
 void TeImage::fill(byte r, byte g, byte b, byte a) {
@@ -83,11 +83,11 @@ void TeImage::fill(byte r, byte g, byte b, byte a) {
 }
 
 void TeImage::getBuff(uint x, uint y, byte *pout, uint w_, uint h_) {
-	error("TODO: TeImage: Implement me.");
+	error("TODO: Implement TeImage::getBuff");
 }
 
 bool TeImage::isExtensionSupported(const Common::Path &path) {
-	error("TODO: TeImage: Implement me.");
+	error("TODO: Implement TeImage::isExtensionSupported");
 }
 
 bool TeImage::load(const Common::Path &path) {
@@ -108,15 +108,15 @@ bool TeImage::load(const Common::Path &path) {
 }
 
 bool TeImage::load(Common::ReadStream &stream, const Common::Path &path) {
-	error("TODO: TeImage::load Implement me.");
+	error("TODO: Implement TeImage::load");
 }
 
 bool TeImage::save(const Common::Path &path, enum Type type) {
-	error("TODO: TeImage::save Implement me.");
+	error("TODO: Implement TeImage::save");
 }
 
 int TeImage::serialize(Common::WriteStream &stream) {
-	error("TODO: TeImage::serialize Implement me.");
+	error("TODO: Implement TeImage::serialize");
 }
 
 } // end namespace Tetraedge

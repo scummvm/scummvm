@@ -55,10 +55,20 @@ void TeTextBase2::build() {
 	_size = TeVector2s32(0, 0);
 	_wrappedLines.clear();
 
-	if (_text.find(' ') != Common::String::npos)
-		font->wordWrapText(_text, _fontSize, _drawRect._x, _wrappedLines);
-	else
-		_wrappedLines.push_back(_text);
+	Common::Array<uint32> endPts = _lineBreaks;
+	uint32 npos = Common::String::npos;
+	endPts.push_back(npos);
+	uint32 start = 0;
+	for (uint32 end : endPts) {
+		Common::Array<Common::String> lines;
+		Common::String txt = _text.substr(start, end - start);
+		if (txt.find(' ') != Common::String::npos)
+			font->wordWrapText(txt, _fontSize, _drawRect._x, lines);
+		else
+			lines.push_back(txt);
+		_wrappedLines.push_back(lines);
+		start = end;
+	}
 
 	Common::Array<float> lineoffsets;
 	float lineHeight = font->getHeight(_fontSize);
@@ -95,7 +105,7 @@ void TeTextBase2::build() {
 
 #if DUMP_RENDERED_FONTS
 	Common::DumpFile dumpFile;
-	dumpFile.open(Common::String::format("/Users/stauff/tmp/%04d.png", dumpCount));
+	dumpFile.open(Common::String::format("/tmp/rendered-font-dump-%04d.png", dumpCount));
 	dumpCount++;
 	Image::writePNG(dumpFile, img);
 #endif
@@ -125,7 +135,7 @@ void TeTextBase2::build() {
 	_mesh.setIndex(1, 1);
 	_mesh.setIndex(2, 3);
 	_mesh.setIndex(3, 2);
-	//_mesh.setHasAlpha(true);
+	_mesh.setHasAlpha(true);
 }
 
 void TeTextBase2::clear() {

@@ -100,7 +100,7 @@ public:
 	static TeIntrusivePtr<TeModelAnimation> animCacheLoad(const Common::Path &path);
 
 	float animLength(const TeModelAnimation &modelanim, long bone, long lastframe);
-	float animLengthFromFile(const Common::String &animname, uint *pframeCount, uint lastframe = 9999);
+	float animLengthFromFile(const Common::String &animname, uint32 *pframeCount, uint lastframe = 9999);
 	bool blendAnimation(const Common::String &animname, float amount, bool repeat, bool returnToIdle);
 	TeVector3f32 correctPosition(const TeVector3f32 &pos);
 	float curveOffset();

@@ -19,7 +19,10 @@
  *
  */
 
+#include "tetraedge/tetraedge.h"
+
 #include "tetraedge/game/how_to.h"
+#include "tetraedge/game/application.h"
 
 namespace Tetraedge {
 
@@ -27,10 +30,20 @@ HowTo::HowTo() : _entered(false) {
 }
 
 void HowTo::leave()	{
-	error("TODO: Implement HowTo::leave");
+	Application *app = g_engine->getApplication();
+	app->captureFade();
+	unload();
+	//app->helpOptionMenu().enter();
+	app->fade();
+	_entered = false;
+	error("TODO: Finish HowTo::leave - need app->helpOptionMenu");
 }
 
 void HowTo::enter()	{
+	if (_entered)
+		return;
+
+	_entered = true;
 	error("TODO: Implement HowTo::enter");
 }
 

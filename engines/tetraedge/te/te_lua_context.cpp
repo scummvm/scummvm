@@ -33,7 +33,7 @@ namespace Tetraedge {
 
 static int luaPanicFunction(lua_State *state) {
 	const char *msg = lua_tolstring(state, -1, nullptr);
-	warning("Lua: %s",msg);
+	warning("Lua: %s", msg);
 	lua_settop(state, -2);
 	return 1;
 }
@@ -69,7 +69,7 @@ TeVariant TeLuaContext::global(const Common::String &name) {
 	TeVariant retval;
 	int type = lua_type(_luaState, -1);
 	if (type == LUA_TBOOLEAN) {
-		int result = lua_toboolean(_luaState,-1);
+		int result = lua_toboolean(_luaState, -1);
 		lua_settop(_luaState, -2);
 		return TeVariant(result > 0);
 	} else if (type == LUA_TNUMBER) {

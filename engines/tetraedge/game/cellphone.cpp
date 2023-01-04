@@ -41,7 +41,7 @@ bool Cellphone::addNumber(const Common::String &num) {
 	layout->setName(namePrefix + num);
 	layout->setSizeType(RELATIVE_TO_PARENT);
 	layout->setAnchor(TeVector3f32(0.5f, 0.0f, 0.0f));
-	// WORKAROUND: Original uses 1.0,1.0,1.0 here but then the text area is too high.
+	// WORKAROUND: Original uses (1.0, 1.0, 1.0) here but then the text area is too high.
 	layout->setSize(TeVector3f32(1.0f, 0.6f, 0.0f));
 	layout->setPosition(TeVector3f32(0.5f, 0.08f, 0.0f));
 	layout->setTextSizeType(1);

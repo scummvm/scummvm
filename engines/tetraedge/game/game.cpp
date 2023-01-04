@@ -52,7 +52,7 @@ _sceneCharacterVisibleFromLoad(false), _isCharacterWalking(false),
 _lastCharMoveMousePos(0.0f, 0.0f), _randomSoundFinished(false),
 _previousMousePos(-1, -1), _markersVisible(true), _saveRequested(false),
 _gameLoadState(0), _luaShowOwnerError(false), _score(0), _warped(false),
-_firstInventory(true), _loadName("save.xml"), _randomSource("SyberiaGameRandom") {
+_firstInventory(true), _randomSource("SyberiaGameRandom") {
 	for (int i = 0; i < NUM_OBJECTS_TAKEN_IDS; i++) {
 		_objectsTakenBits[i] = false;
 	}
@@ -213,7 +213,7 @@ bool Game::changeWarp2(const Common::String &zone, const Common::String &scene, 
 	_warped = false;
 	_movePlayerCharacterDisabled = false;
 	_sceneCharacterVisibleFromLoad = false;
-	// TODO: set another field here (0x3f40 = -1)
+	// TODO? _charMoveMouseEventNo = -1?
 	_isCharacterIdle = true;
 	_isCharacterWalking = false;
 	Common::Path luapath("scenes");
@@ -278,11 +278,11 @@ void Game::enter(bool newgame) {
 	_score = 0;
 	Application *app = g_engine->getApplication();
 	app->visualFade().init();
-	// FIXME: Original puts this click handler at -10000.. but then it never gets hit?
+	// TODO: Original puts this click handler at -10000.. but then it never gets hit?
 	Common::SharedPtr<TeCallback1Param<Game, const Common::Point &>> callbackptr(new TeCallback1Param<Game, const Common::Point &>(this, &Game::onMouseClick, 10000.0f));
 	g_engine->getInputMgr()->_mouseLUpSignal.push_back(callbackptr);
 	_movePlayerCharacterDisabled = false;
-	// TODO? Set character mouse move event no to -1
+	// TODO? Set _charMoveMouseEventNo = -1
 	_isCharacterIdle = true;
 	_sceneCharacterVisibleFromLoad = false;
 	Character::loadSettings("models/ModelsSettings.xml");
@@ -352,11 +352,14 @@ void Game::enter(bool newgame) {
 	_notifier.load();
 }
 
-/*static*/ TeI3DObject2 *Game::findLayoutByName(TeLayout *parent, const Common::String &name) {
-	error("TODO: Implement Game::findLayoutByName - although maybe never used?");
+/*static*/
+TeI3DObject2 *Game::findLayoutByName(TeLayout *parent, const Common::String &name) {
+	// Seems like this is never used?
+	error("TODO: Implement Game::findLayoutByName");
 }
 
-/*static*/ TeSpriteLayout *Game::findSpriteLayoutByName(TeLayout *parent, const Common::String &name) {
+/*static*/
+TeSpriteLayout *Game::findSpriteLayoutByName(TeLayout *parent, const Common::String &name) {
 	if (!parent)
 		return nullptr;
 
@@ -380,7 +383,9 @@ void Game::finishFreemium() {
 
 void Game::finishGame() {
 	Application *app = g_engine->getApplication();
-	app->_finishedGame = true;
+	// FIXME: The original sets this, but then Application::run immediately
+	// returns to the menu.. how does the original wait for the credits to end??
+	//app->_finishedGame = true;
 	_playedTimer.stop();
 	/* Game does this but does nothing with result?
 	if (app->difficulty() == 2) {
@@ -569,8 +574,8 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 
 	TeSpriteLayout *video = _inGameGui.spriteLayout("video");
 	video->setVisible(false);
-	video->_tiledSurfacePtr->_frameAnim.onFinished().remove(this, &Game::onVideoFinished);
-	video->_tiledSurfacePtr->_frameAnim.onFinished().add(this, &Game::onVideoFinished);
+	video->_tiledSurfacePtr->_frameAnim.onStop().remove(this, &Game::onVideoFinished);
+	video->_tiledSurfacePtr->_frameAnim.onStop().add(this, &Game::onVideoFinished);
 
 	TeButtonLayout *invbtn = _inGameGui.buttonLayout("inventoryButton");
 	invbtn->onMouseClickValidated().remove(this, &Game::onInventoryButtonValidated);
@@ -579,9 +584,9 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 
 	const TeVector3f32 winSize = app->getMainWindow().size();
 	if (g_engine->getCore()->fileFlagSystemFlag("definition") == "SD") {
-		invbtn->setSize(TeVector3f32(0.12, (4.0 / ((winSize.y() / winSize.x()) * 4.0)) * 0.12, 0.0));
+		invbtn->setSize(TeVector3f32(0.12f, (4.0f / ((winSize.y() / winSize.x()) * 4.0f)) * 0.12f, 0.0));
 	} else {
-		invbtn->setSize(TeVector3f32(0.08, (4.0 / ((winSize.y() / winSize.x()) * 4.0)) * 0.08, 0.0));
+		invbtn->setSize(TeVector3f32(0.08f, (4.0f / ((winSize.y() / winSize.x()) * 4.0f)) * 0.08f, 0.0));
 	}
 
 	TeCheckboxLayout *markersCheckbox = _inGameGui.checkboxLayout("markersVisibleButton");
@@ -688,12 +693,34 @@ static const char *DIALOG_IDS[20] = {
 bool Game::launchDialog(const Common::String &dname, uint param_2, const Common::String &charname,
 				  const Common::String &animfile, float animblend) {
 	Application *app = g_engine->getApplication();
-	const Common::String *locdname = app->_loc.value(dname);
-	if (!locdname)
-		locdname = &dname;
+	const Common::String *locstring = app->_loc.value(dname);
 
-	if (!locdname)
+	if (!locstring)
+		locstring = &dname;
+
+	if (!locstring) // shouldn't happen?
 		return false;
+
+	Common::String dstring = *locstring;
+
+	//
+	// WORKAROUND: Fix some errors in en version strings
+	//
+	if (g_engine->getCore()->language() == "en") {
+		if (dname == "C_OK_tel03_09") {
+			size_t rloc = dstring.find("pleased to here");
+			if (rloc != Common::String::npos)
+				dstring.replace(rloc + 11, 4, "hear");
+		} else if (dname == "B_diapo04") {
+			size_t rloc = dstring.find("little imagination ? he draws");
+			if (rloc != Common::String::npos)
+				dstring.replace(rloc + 19, 1, "-");
+		} else if (dname == "V_NK_lettre_01") {
+			size_t rloc = dstring.find("you now ? my brother");
+			if (rloc != Common::String::npos)
+				dstring.replace(rloc + 8, 1, "-");
+		}
+	}
 
 	for (unsigned int i = 0; i < ARRAYSIZE(DIALOG_IDS); i++) {
 		if (dname.contains(Common::String::format("_%s_", DIALOG_IDS[i])))
@@ -701,7 +728,7 @@ bool Game::launchDialog(const Common::String &dname, uint param_2, const Common:
 	}
 
 	const Common::String sndfile = dname + ".ogg";
-	_dialog2.pushDialog(dname, *locdname, sndfile, charname, animfile, animblend);
+	_dialog2.pushDialog(dname, dstring, sndfile, charname, animfile, animblend);
 	return true;
 }
 
@@ -1061,7 +1088,8 @@ bool Game::onMouseClick(const Common::Point &pt) {
 				_lastCharMoveMousePos = pt;
 			}
 		}
-		// FIXME: The original never checks for empty/null curve here.. why?
+		// FIXME: The original never checks for empty/null curve here..
+		// but it seems our curve can possibly become null.
 		if (_scene.curve() && _scene.curve()->length()) {
 			TeVector3f32 lastPoint = _scene.curve()->controlPoints().back();
 			character->setAnimation(character->walkAnim(Character::WalkPart_Loop), true);
@@ -1317,7 +1345,8 @@ void Game::playSound(const Common::String &name, int repeats, float volume) {
 		if (!sound->play()) {
 			game->luaScript().execute("OnFreeSoundFinished", name);
 			game->luaScript().execute("OnCellFreeSoundFinished", name);
-			// TODO: original seems to leak sound here??
+			// Note: original leaks sound here, don't do that..
+			delete sound;
 		} else {
 			sound->onStopSignal().add(sound, &GameSound::onSoundStopped);
 			sound->setRetain(true);
@@ -1396,10 +1425,13 @@ void Game::resumeMovie() {
 }
 
 void Game::saveBackup(const Common::String &saveName) {
+	Application *app = g_engine->getApplication();
+	app->showLoadingIcon(true);
 	if (saveName == "save.xml")
 		g_engine->saveAutosaveIfEnabled();
 	else
 		warning("TODO: Implemet Game::saveBackup %s", saveName.c_str());
+	app->showLoadingIcon(false);
 }
 
 bool Game::setBackground(const Common::String &name) {
@@ -1419,7 +1451,7 @@ void Game::setCurrentObjectSprite(const Common::Path &spritePath) {
 
 bool Game::showMarkers(bool val) {
 	TeLayout *bg = _forGui.layoutChecked("background");
-	for (unsigned int i = 0; i < bg->childCount(); i++) {
+	for (long i = 0; i < bg->childCount(); i++) {
 		const InGameScene::TeMarker *marker = _scene.findMarker(bg->child(i)->name());
 		if (marker)
 			bg->child(i)->setVisible(!val);
@@ -1516,7 +1548,7 @@ void Game::update() {
 	if (!_entered)
 		return;
 
-	TeTextLayout *debugTimeTextLayout = _inGameGui.textLayout("debugTimeText1");
+	TeITextLayout *debugTimeTextLayout = _inGameGui.textLayout("debugTimeText1");
 	if (debugTimeTextLayout) {
 		warning("TODO: Game::update: Fill out debugTimeTextLayout");
 	}

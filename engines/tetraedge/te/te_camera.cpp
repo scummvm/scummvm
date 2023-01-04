@@ -214,14 +214,14 @@ TeMatrix4x4 TeCamera::transformationMatrix() {
 		return Te3DObject2::transformationMatrix();
 
 	TeMatrix4x4 retval;
-	warning("TODO: TeCamera::transformationMatrix Implement me.");
+	warning("TODO: Implement TeCamera::transformationMatrix");
 
 	retval.setToIdentity();
 	return retval;
 }
 
 TeVector3f32 TeCamera::transformCoord(const TeVector3f32 &pt) {
-	warning("TODO: TeCamera::transformCoord Implement me.");
+	warning("TODO: Implement TeCamera::transformCoord");
 	return pt;
 }
 

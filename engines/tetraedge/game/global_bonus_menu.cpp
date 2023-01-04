@@ -39,25 +39,25 @@ void GlobalBonusMenu::enter() {
 
 	// Original checks each layout's existence
 	TeButtonLayout *btn;
-	btn = buttonLayoutChecked("Val");
+	btn = buttonLayout("Val");
 	if (btn)
 		btn->onMouseClickValidated().add(this, &GlobalBonusMenu::onValButtonValidated);
-	btn = buttonLayoutChecked("Bar");
+	btn = buttonLayout("Bar");
 	if (btn)
 		btn->onMouseClickValidated().add(this, &GlobalBonusMenu::onBarButtonValidated);
-	btn = buttonLayoutChecked("Cit");
+	btn = buttonLayout("Cit");
 	if (btn)
 		btn->onMouseClickValidated().add(this, &GlobalBonusMenu::onCitButtonValidated);
-	btn = buttonLayoutChecked("Ara");
+	btn = buttonLayout("Ara");
 	if (btn)
 		btn->onMouseClickValidated().add(this, &GlobalBonusMenu::onAraButtonValidated);
-	btn = buttonLayoutChecked("Syb2");
+	btn = buttonLayout("Syb2");
 	if (btn)
 		btn->onMouseClickValidated().add(this, &GlobalBonusMenu::onSyb2ButtonValidated);
-	btn = buttonLayoutChecked("Syb3");
+	btn = buttonLayout("Syb3");
 	if (btn)
 		btn->onMouseClickValidated().add(this, &GlobalBonusMenu::onSyb3ButtonValidated);
-	btn = buttonLayoutChecked("Back");
+	btn = buttonLayout("Back");
 	if (btn)
 		btn->onMouseClickValidated().add(this, &GlobalBonusMenu::onQuitButton);
 }

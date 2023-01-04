@@ -23,11 +23,12 @@
 #define TETRAEDGE_TE_TE_TEXT_LAYOUT_H
 
 #include "tetraedge/te/te_layout.h"
+#include "tetraedge/te/te_i_text_layout.h"
 #include "tetraedge/te/te_text_base2.h"
 
 namespace Tetraedge {
 
-class TeTextLayout : public TeLayout {
+class TeTextLayout : public TeITextLayout {
 public:
 	TeTextLayout();
 
@@ -38,11 +39,11 @@ public:
 	}
 
 	void draw() override;
-	void setText(const Common::String &val);
-	void setInterLine(float val);
-	void setWrapMode(TeTextBase2::WrapMode mode);
-	void setTextSizeType(int type);
-	void setTextSizeProportionalToWidth(int val);
+	void setText(const Common::String &val) override;
+	void setInterLine(float val) override;
+	void setWrapMode(TeTextBase2::WrapMode mode) override;
+	void setTextSizeType(int type) override;
+	void setTextSizeProportionalToWidth(int val) override;
 	void strikethrough(bool val);
 	bool strikethrough() const;
 	const Common::String &text() const;

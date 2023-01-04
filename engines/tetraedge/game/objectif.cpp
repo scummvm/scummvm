@@ -180,7 +180,7 @@ void Objectif::update() {
 			}
 		}
 
-		float z = 0.1;
+		float z = 0.1f;
 		for (Te3DObject2 *child : tasks->childList()) {
 			TeTextLayout *text = dynamic_cast<TeTextLayout *>(child);
 			/*TeVector3f32 size =*/

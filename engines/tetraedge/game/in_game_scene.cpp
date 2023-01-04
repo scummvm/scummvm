@@ -113,9 +113,9 @@ bool InGameScene::addMarker(const Common::String &markerName, const Common::Stri
 
 		const TeVector3f32 winSize = g_engine->getApplication()->getMainWindow().size();
 		if (g_engine->getCore()->fileFlagSystemFlag("definition") == "SD") {
-			markerSprite->setSize(TeVector3f32(0.07, (4.0 / ((winSize.y() / winSize.x()) * 4.0)) * 0.07, 0.0));
+			markerSprite->setSize(TeVector3f32(0.07f, (4.0f / ((winSize.y() / winSize.x()) * 4.0f)) * 0.07f, 0.0));
 		} else {
-			markerSprite->setSize(TeVector3f32(0.04, (4.0 / ((winSize.y() / winSize.x()) * 4.0)) * 0.04, 0.0));
+			markerSprite->setSize(TeVector3f32(0.04f, (4.0f / ((winSize.y() / winSize.x()) * 4.0f)) * 0.04f, 0.0));
 		}
 		markerSprite->setVisible(game->markersVisible());
 		markerSprite->_tiledSurfacePtr->_frameAnim._loopCount = -1;
@@ -137,13 +137,11 @@ bool InGameScene::addMarker(const Common::String &markerName, const Common::Stri
 
 /*static*/
 float InGameScene::angularDistance(float a1, float a2) {
-	float result;
-
-	result = a2 - a1;
-	if (result >= -3.141593 && result > 3.141593) {
-		result = result + -6.283185;
+	float result = a2 - a1;
+	if (result >= -M_PI && result > M_PI) {
+		result = result + -(M_PI * 2);
 	} else {
-		result = result + 6.283185;
+		result = result + (M_PI * 2);
 	}
 	return result;
 }
@@ -489,9 +487,9 @@ float InGameScene::getHeadHorizontalRotation(Character *cter, const TeVector3f32
 	zvec.rotate(cter->_model->rotation());
 	float angle = atan2f(-pos.x(), pos.z()) - atan2f(-zvec.x(), zvec.z());
 	if (angle < -M_PI)
-		angle += (M_PI * 2);
+		angle += (float)(M_PI * 2);
 	else if (angle > M_PI)
-		angle -= (M_PI * 2);
+		angle -= (float)(M_PI * 2);
 	return angle;
 }
 
@@ -1117,11 +1115,11 @@ void InGameScene::update() {
 				targetpos.y() += 17;
 			TeVector2f32 headRot(getHeadHorizontalRotation(_character, targetpos),
 					getHeadVerticalRotation(_character, targetpos));
-			float hangle = headRot.getX() * 180.0 / M_PI;
+			float hangle = headRot.getX() * 180.0f / M_PI;
 			if (hangle > 90.0f)
-				headRot.setX(M_PI_2);
+				headRot.setX((float)M_PI_2);
 			else if (hangle < -90.0f)
-				headRot.setX(-M_PI_2);
+				headRot.setX((float)-M_PI_2);
 			_character->setHeadRotation(headRot);
 			_character->setHasAnchor(true);
 		}
@@ -1133,11 +1131,11 @@ void InGameScene::update() {
 				targetpos.y() += 17;
 			TeVector2f32 headRot(getHeadHorizontalRotation(c, targetpos),
 					getHeadVerticalRotation(c, targetpos));
-			float hangle = headRot.getX() * 180.0 / M_PI;
+			float hangle = headRot.getX() * 180.0f / M_PI;
 			if (hangle > 90)
-				headRot.setX(M_PI_2);
+				headRot.setX((float)M_PI_2);
 			else if (hangle < -90)
-				headRot.setX(-M_PI_2);
+				headRot.setX((float)-M_PI_2);
 			c->setHeadRotation(headRot);
 			c->setHasAnchor(true);
 		}

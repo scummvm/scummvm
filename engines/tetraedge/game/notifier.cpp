@@ -55,7 +55,7 @@ void Notifier::launchNextnotifier() {
 	TeVariant textformat = _gui.value("textFormat");
 	Common::String formattedName = Common::String::format(textformat.toString().c_str(), _notifierDataArray[0]._name.c_str());
 
-	TeTextLayout *text = _gui.textLayout("text");
+	TeITextLayout *text = _gui.textLayout("text");
 	text->setText(formattedName);
 
 	if (!_notifierDataArray[0]._imgpath.empty()) {

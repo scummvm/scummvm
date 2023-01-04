@@ -99,8 +99,11 @@ float TeTheora::frameRate() {
 
 bool TeTheora::update(unsigned long i, TeImage &imgout) {
 	// TODO: Should this seek to frame i? Currently just continues.
-	const Graphics::Surface *frame = _decoder->decodeNextFrame();
-	if (frame) {
+	const Graphics::Surface *frame = nullptr;
+	while (_decoder->getCurFrame() < (int)i && !_decoder->endOfVideo())
+		frame = _decoder->decodeNextFrame();
+
+	if (frame && frame->getPixels()) {
 		//debug("TeTheora: %s %ld", _path.toString().c_str(), i);
 		imgout.copyFrom(*frame);
 		return true;

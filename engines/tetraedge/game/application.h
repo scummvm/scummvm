@@ -82,6 +82,8 @@ public:
 	void loadOptions(const Common::String &fname);
 	void saveOptions(const Common::String &fname);
 
+	void getSavegameThumbnail(Graphics::Surface &thumb);
+
 	Common::String getHelpText(const Common::String &key);
 
 	const char *inAppUnlockFullVersionID();

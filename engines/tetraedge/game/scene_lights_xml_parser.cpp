@@ -39,14 +39,13 @@ bool SceneLightsXmlParser::parseCol(ParserNode *node, TeColor &colout) {
 	else
 		a = 0xff;
 
-	if (r > 255 || g > 255 || b > 255 | a > 255) {
+	if (r > 255 || g > 255 || b > 255 || a > 255) {
 		parserError("Invalid color values");
 		return false;
 	}
 	colout = TeColor(r, g, b, a);
 	return true;
 }
-
 
 bool SceneLightsXmlParser::parserCallback_Ambient(ParserNode *node) {
 	// can appear under either global or light

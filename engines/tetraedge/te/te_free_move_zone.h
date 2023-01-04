@@ -76,7 +76,7 @@ public:
 
 	void draw() override;
 	TeVector3f32 findNearestPointOnBorder(const TeVector2f32 &pt);
-	bool hasBlockerIntersection(const TeVector2s32 &pt);
+	byte hasBlockerIntersection(const TeVector2s32 &pt);
 	bool hasCellBorderIntersection(const TeVector2s32 &pt);
 
 	TeActZone *isInZone(const TeVector3f32 &pt);
@@ -99,7 +99,7 @@ public:
 	void setVertex(unsigned int offset, const TeVector3f32 &vertex);
 	TeVector3f32 transformAStarGridInWorldSpace(const TeVector2s32 &gridpt);
 	float transformHeightMin(float minval);
-	TeVector3f32 transformVectorInWorldSpace(float param_3,float param_4);
+	TeVector3f32 transformVectorInWorldSpace(float param_3, float param_4);
 	void updateBorders();
 	void updateGrid(bool force);
 	void updatePickMesh();

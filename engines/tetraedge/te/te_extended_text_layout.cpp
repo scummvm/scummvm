@@ -24,6 +24,26 @@
 namespace Tetraedge {
 
 TeExtendedTextLayout::TeExtendedTextLayout() {
+	_textLayout.setSizeType(RELATIVE_TO_PARENT);
+	_textLayout.setAnchor(TeVector3f32(0.5, 0.0, 0.0));
+	_textLayout.setPosition(TeVector3f32(0.5, 0.0, 0.0));
+	const TeVector3f32 usersz = userSize();
+	_textLayout.setSize(TeVector3f32(1.0, 1.0, usersz.z()));
+	_scrollingLayout.setContentLayout(&_textLayout);
+	_scrollingLayout.setSizeType(RELATIVE_TO_PARENT);
+	_scrollingLayout.setSize(TeVector3f32(1.0, 1.0, usersz.z()));
+	_scrollingLayout.setDirection(TeVector3f32(0.0, 1.0, 0.0));
+	_scrollingLayout.setMouseControl(false);
+	_scrollingLayout.setEnclose(true);
+	_scrollingLayout.setAutoScrollLoop(1);
+	_scrollingLayout.setAutoScrollDelay(4000);
+	_scrollingLayout.setAutoScrollAnimation1Enabled(true);
+	_scrollingLayout.setAutoScrollAnimation1Delay(0);
+	_scrollingLayout.setAutoScrollAnimation1Speed(0.1f);
+	_scrollingLayout.setAutoScrollAnimation2Enabled(false);
+	_scrollingLayout.setAutoScrollAnimation2Delay(0);
+	_scrollingLayout.setAutoScrollAnimation2Speed(0.1f);
+	addChild(&_scrollingLayout);
 }
 
 void TeExtendedTextLayout::setAutoScrollDelay(int val) {
@@ -33,6 +53,39 @@ void TeExtendedTextLayout::setAutoScrollDelay(int val) {
 void TeExtendedTextLayout::setAutoScrollSpeed(float val) {
 	_scrollingLayout.setAutoScrollAnimation1Speed(val);
 	_scrollingLayout.setAutoScrollAnimation2Speed(val);
+}
+
+void TeExtendedTextLayout::setText(const Common::String &val) {
+	_textLayout.setText(val);
+	_scrollingLayout.resetScrollPosition();
+	_scrollingLayout.playAutoScroll();
+}
+
+void TeExtendedTextLayout::setInterLine(float val) {
+	_textLayout.setInterLine(val);
+}
+
+void TeExtendedTextLayout::setWrapMode(TeTextBase2::WrapMode mode) {
+	if (mode == TeTextBase2::WrapModeFixed) {
+		_textLayout.setAnchor(TeVector3f32(0.5f, 0.0f, 0.0f));
+		_textLayout.setPosition(TeVector3f32(0.5f, 0.0f, 0.0f));
+		_scrollingLayout.setDirection(TeVector3f32(0.0, 1.0, 0.0));
+	} else {
+		_textLayout.setAnchor(TeVector3f32(0.0f, 0.5f, 0.0f));
+		_textLayout.setPosition(TeVector3f32(0.0f, 0.5f, 0.0f));
+		_scrollingLayout.setDirection(TeVector3f32(1.0, 0.0, 0.0));
+	}
+	_scrollingLayout.setContentLayout(nullptr);
+	_scrollingLayout.setContentLayout(&_textLayout);
+	_textLayout.setWrapMode(mode);
+}
+
+void TeExtendedTextLayout::setTextSizeType(int type) {
+	_textLayout.setTextSizeType(type);
+}
+
+void TeExtendedTextLayout::setTextSizeProportionalToWidth(int val) {
+	_textLayout.setTextSizeProportionalToWidth(val);
 }
 
 

@@ -39,21 +39,24 @@ public:
 	float _pri;
 };
 
-/*static*/ bool TeButtonLayout::_mousePositionChangedCatched = false;
-/*static*/ TeTimer *TeButtonLayout::_doubleValidationProtectionTimer = nullptr;
+/*static*/
+bool TeButtonLayout::_mousePositionChangedCatched = false;
+/*static*/
+TeTimer *TeButtonLayout::_doubleValidationProtectionTimer = nullptr;
 
-/*static*/ TeTimer *TeButtonLayout::getDoubleValidationProtectionTimer() {
+/*static*/
+TeTimer *TeButtonLayout::getDoubleValidationProtectionTimer() {
 	if (!_doubleValidationProtectionTimer) {
 		_doubleValidationProtectionTimer = new TeTimer();
 	}
 	return _doubleValidationProtectionTimer;
 }
 
-TeButtonLayout::TeButtonLayout() :
-_currentState(BUTTON_STATE_UP), _clickPassThrough(false), _validationSoundVolume(1.0),
-_ignoreMouseEvents(false), _doubleValidationProtectionEnabled(true), _upLayout(nullptr),
-_downLayout(nullptr), _rolloverLayout(nullptr), _disabledLayout(nullptr),
-_hitZoneLayout(nullptr)
+TeButtonLayout::TeButtonLayout() : _currentState(BUTTON_STATE_UP),
+_clickPassThrough(false), _validationSoundVolume(1.0),
+_ignoreMouseEvents(false), _doubleValidationProtectionEnabled(true),
+_upLayout(nullptr), _downLayout(nullptr), _rolloverLayout(nullptr),
+_disabledLayout(nullptr), _hitZoneLayout(nullptr)
 {
 	_onMousePositionChangedMaxPriorityCallback.reset(new TeCallback1Param<TeButtonLayout, const Common::Point &>(this, &TeButtonLayout::onMousePositionChangedMaxPriority, FLT_MAX));
 

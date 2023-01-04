@@ -19,11 +19,26 @@
  *
  */
 
-#include "tetraedge/te/te_palette.h"
+#ifndef TETRAEDGE_TE_TE_I_TEXT_LAYOUT_H
+#define TETRAEDGE_TE_TE_I_TEXT_LAYOUT_H
+
+#include "tetraedge/te/te_layout.h"
+#include "tetraedge/te/te_text_base2.h"
 
 namespace Tetraedge {
 
-TePalette::TePalette() {
-}
+class TeITextLayout : public TeLayout {
+public:
+	TeITextLayout();
+
+	virtual void setText(const Common::String &val) = 0;
+	virtual void setInterLine(float val) = 0;
+	virtual void setWrapMode(TeTextBase2::WrapMode mode) = 0;
+	virtual void setTextSizeType(int type) = 0;
+	virtual void setTextSizeProportionalToWidth(int val) = 0;
+
+};
 
 } // end namespace Tetraedge
+
+#endif // TETRAEDGE_TE_TE_I_TEXT_LAYOUT_H

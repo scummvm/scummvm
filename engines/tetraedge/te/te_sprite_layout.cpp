@@ -29,10 +29,9 @@ namespace Tetraedge {
 TeSpriteLayout::TeSpriteLayout() : _tiledSurfacePtr(new TeTiledSurface()), _sizeSet(false) {
 	_tiledSurfacePtr->setColor(TeColor(255, 255, 255, 255));
 	//_tiledSurfacePtr->_shouldDraw = true // should already be true..
-	// TODO: set some other flag in _tiledSurfacePtr?
+
 	updateMesh();
 }
-
 
 int TeSpriteLayout::bufferSize() {
 	return _tiledSurfacePtr->bufferSize();

@@ -112,8 +112,8 @@ void Dialog2::load() {
 	Common::SharedPtr<TeCallback0Param<Dialog2>> callbackptr(new TeCallback0Param<Dialog2>(this, &Dialog2::onSkipButton, 20000.0f));
 	dialogBtn->onMouseClickValidated().push_back(callbackptr);
 
-	TeCurveAnim2<TeLayout,TeVector3f32> *dialogAnimUp = _gui.layoutAnchorLinearAnimation("dialogAnimationUp");
-	TeCurveAnim2<TeLayout,TeVector3f32> *dialogAnimDown = _gui.layoutAnchorLinearAnimation("dialogAnimationDown");
+	TeCurveAnim2<TeLayout, TeVector3f32> *dialogAnimUp = _gui.layoutAnchorLinearAnimation("dialogAnimationUp");
+	TeCurveAnim2<TeLayout, TeVector3f32> *dialogAnimDown = _gui.layoutAnchorLinearAnimation("dialogAnimationDown");
 	if (!dialogAnimUp || !dialogAnimDown)
 		error("Dialog2::load: didn't get dialogAnimUp or dialogAnimationDown");
 
@@ -152,9 +152,9 @@ bool Dialog2::onMinimumTimeTimer() {
 }
 
 bool Dialog2::onSkipButton() {
-	const TeCurveAnim2<TeLayout,TeVector3f32> *dialogAnimUp = _gui.layoutAnchorLinearAnimation("dialogAnimationUp");
+	const TeCurveAnim2<TeLayout, TeVector3f32> *dialogAnimUp = _gui.layoutAnchorLinearAnimation("dialogAnimationUp");
 	if (!dialogAnimUp->_runTimer.running()) {
-		const TeCurveAnim2<TeLayout,TeVector3f32> *dialogAnimDown = _gui.layoutAnchorLinearAnimation("dialogAnimationDown");
+		const TeCurveAnim2<TeLayout, TeVector3f32> *dialogAnimDown = _gui.layoutAnchorLinearAnimation("dialogAnimationDown");
 		if (!dialogAnimDown->_runTimer.running()) {
 			startDownAnimation();
 			_music.stop();
@@ -198,16 +198,16 @@ void Dialog2::pushDialog(const Common::String &name, const Common::String &textV
 
 void Dialog2::startDownAnimation() {
 	_minimumTimeTimer.stop();
-	TeCurveAnim2<TeLayout,TeVector3f32> *dialogAnimDown = _gui.layoutAnchorLinearAnimation("dialogAnimationDown");
+	TeCurveAnim2<TeLayout, TeVector3f32> *dialogAnimDown = _gui.layoutAnchorLinearAnimation("dialogAnimationDown");
 	dialogAnimDown->play();
 }
 
 void Dialog2::unload() {
 	if (!_gui.loaded())
 		return;
-	TeCurveAnim2<TeLayout,TeVector3f32> *dialogAnimUp = _gui.layoutAnchorLinearAnimation("dialogAnimationUp");
+	TeCurveAnim2<TeLayout, TeVector3f32> *dialogAnimUp = _gui.layoutAnchorLinearAnimation("dialogAnimationUp");
 	dialogAnimUp->stop();
-	TeCurveAnim2<TeLayout,TeVector3f32> *dialogAnimDown = _gui.layoutAnchorLinearAnimation("dialogAnimationDown");
+	TeCurveAnim2<TeLayout, TeVector3f32> *dialogAnimDown = _gui.layoutAnchorLinearAnimation("dialogAnimationDown");
 	dialogAnimDown->stop();
 	_music.close();
 	_gui.unload();

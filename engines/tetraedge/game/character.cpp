@@ -179,7 +179,7 @@ float Character::animLength(const TeModelAnimation &modelanim, long bone, long l
 	return ((endtrans.z() - starttrans.z()) + secondtrans.z()) - starttrans.z();
 }
 
-float Character::animLengthFromFile(const Common::String &animname, uint *pframeCount, uint lastframe /* = 9999 */) {
+float Character::animLengthFromFile(const Common::String &animname, uint32 *pframeCount, uint lastframe /* = 9999 */) {
 	if (animname.empty()) {
 		*pframeCount = 0;
 		return 0.0f;
@@ -288,7 +288,6 @@ void Character::deleteCallback(const Common::String &key, const Common::String &
 		_callbacks.erase(animFile);
 }
 
-//static bool deserialize(TiXmlElement *param_1, Walk *param_2);
 void Character::endMove() {
 	if (_model->name() == "Kate")
 		walkMode("Walk");
@@ -388,7 +387,7 @@ bool Character::loadModel(const Common::String &mname, bool unused) {
 		arr[1] = TeVector3f32(-60.0, 0.0, 60.0);
 		arr[2] = TeVector3f32(60.0, 0.0, -60.0);
 		arr[3] = TeVector3f32(60.0, 0.0, 60.0);
-		pmodel->setQuad(shadow, arr, TeColor(0xff,0xff,0xff,0x50));
+		pmodel->setQuad(shadow, arr, TeColor(0xff, 0xff, 0xff, 0x50));
 	}
 	return true;
 }
@@ -581,7 +580,6 @@ bool Character::onModelAnimationFinished() {
 		const TeTRS endTRS = trsFromAnim(*_curModelAnim, pereBone, _curModelAnim->lastFrame());
 		TeVector3f32 trans = endTRS.getTranslation();
 		trans.x() = -trans.x();
-		trans.y() = 0;
 
 		TeVector3f32 newpos;
 		if (!_recallageY) {
@@ -592,6 +590,7 @@ bool Character::onModelAnimationFinished() {
 			newpos = _model->worldTransformationMatrix() * trans;
 		} else if (!_freeMoveZone) {
 			trans.x() = -trans.x();
+			trans.y() = 0.0;
 			newpos = _model->worldTransformationMatrix() * trans;
 		} else {
 			newpos = correctPosition(_model->worldTransformationMatrix() * trans);
@@ -798,7 +797,7 @@ void Character::update(double msFromStart) {
 	_walkCurveNextLength = speedFromAnim(msFromStart) * _walkCurveIncrement + _walkCurveNextLength;
 
 	if (_curve->controlPoints().size() < 2) {
-		blendAnimation(_characterSettings._idleAnimFileName, 0.0667, true, false);
+		blendAnimation(_characterSettings._idleAnimFileName, 0.0667f, true, false);
 		endMove();
 		return;
 	}
@@ -884,7 +883,7 @@ void Character::update(double msFromStart) {
 			endMove();
 		}
 		if (endGAnim.empty()) {
-			blendAnimation(_characterSettings._idleAnimFileName, 0.0667, true, false);
+			blendAnimation(_characterSettings._idleAnimFileName, 0.0667f, true, false);
 			endMove();
 		}
 	}
@@ -965,7 +964,7 @@ void Character::walkTo(float curveEnd, bool walkFlag) {
 			if (game->scene()._character == this && _walkModeStr == "Walk") {
 				int looplen = (int)(nloops * _walkLoopAnimFrameCount);
 				int repeats = looplen / _walkLoopAnimFrameCount;
-				uint remainder = looplen % _walkLoopAnimFrameCount;
+				uint32 remainder = looplen % _walkLoopAnimFrameCount;
 
 				uint framecounts[4];
 

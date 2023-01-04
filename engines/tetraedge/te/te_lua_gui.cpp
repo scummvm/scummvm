@@ -110,7 +110,7 @@ TeCurveAnim2<TeLayout, TeVector3f32> *TeLuaGUI::layoutAnchorLinearAnimation(cons
 	return _layoutAnchorLinearAnimations.getVal(name);
 }
 
-TeCurveAnim2<TeI3DObject2, TeVector3f32> *TeLuaGUI::layoutPositionLinearAnimation(const Common::String &name) {
+TeCurveAnim2<TeLayout, TeVector3f32> *TeLuaGUI::layoutPositionLinearAnimation(const Common::String &name) {
 	return _layoutPositionLinearAnimations.getVal(name);
 }
 
@@ -122,7 +122,7 @@ TeListLayout *TeLuaGUI::listLayout(const Common::String &name) {
 }
 
 TeCurveAnim2<TeI3DObject2, TeQuaternion> *TeLuaGUI::rotationLinearAnimation(const Common::String &name) {
-	error("TODO: Implement me.");
+	error("TODO: Implement TeLuaGUI::rotationLinearAnimation.");
 	return nullptr;
 }
 
@@ -140,7 +140,7 @@ TeSpriteLayout *TeLuaGUI::spriteLayout(const Common::String &name) {
 	return nullptr;
 }
 
-TeTextLayout *TeLuaGUI::textLayout(const Common::String &name) {
+TeITextLayout *TeLuaGUI::textLayout(const Common::String &name) {
 	StringMap<TeTextLayout *>::iterator iter = _textLayouts.find(name);
 	if (iter != _textLayouts.end())
 		return iter->_value;
@@ -206,7 +206,7 @@ bool TeLuaGUI::load(const Common::Path &path_) {
 	_luaContext.registerCFunction("TeRotationLinearAnimation", rotationLinearAnimationBindings);
 	_luaContext.registerCFunction("TeScrollingLayout", scrollingLayoutBindings);
 	_luaContext.registerCFunction("TeExtendedTextLayout", extendedTextLayoutBindings);
-	_luaContext.setInRegistry("__TeLuaGUIThis",this);
+	_luaContext.setInRegistry("__TeLuaGUIThis", this);
 	_luaScript.attachToContext(&_luaContext);
 	_luaScript.load(path);
 	_luaScript.execute();

@@ -52,4 +52,13 @@ bool TeTextLayoutXmlParser::parserCallback_br(ParserNode *node) {
 	return true;
 }
 
+bool TeTextLayoutXmlParser::parserCallback_b(ParserNode *node) {
+	//
+	// WORKAROUND: There is a <b /> in the The Syberia credits text xml.
+	// It's almost certainly a typo for <br />, bold fonts are not supported.
+	//
+	_lineBreaks.push_back(_textContent.size());
+	return true;
+}
+
 } // end namespace Tetraedge

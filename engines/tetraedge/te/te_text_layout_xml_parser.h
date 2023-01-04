@@ -49,6 +49,8 @@ public:
 			KEY_END()
 			XML_KEY(br)
 			KEY_END()
+			XML_KEY(b)
+			KEY_END()
 		KEY_END()
 	} PARSER_END()
 
@@ -59,6 +61,7 @@ private:
 	bool parserCallback_color(ParserNode *node);
 	bool parserCallback_font(ParserNode *node);
 	bool parserCallback_br(ParserNode *node);
+	bool parserCallback_b(ParserNode *node);
 
 	virtual bool textCallback(const Common::String &str) override;
 

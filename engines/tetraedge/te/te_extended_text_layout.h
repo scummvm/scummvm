@@ -22,24 +22,28 @@
 #ifndef TETRAEDGE_TE_TE_EXTENDED_TEXT_LAYOUT_H
 #define TETRAEDGE_TE_TE_EXTENDED_TEXT_LAYOUT_H
 
+#include "tetraedge/te/te_i_text_layout.h"
 #include "tetraedge/te/te_text_layout.h"
 #include "tetraedge/te/te_scrolling_layout.h"
 
 namespace Tetraedge {
 
-class TeExtendedTextLayout : public TeTextLayout {
+class TeExtendedTextLayout : public TeITextLayout {
 public:
 	TeExtendedTextLayout();
 
 	void setAutoScrollDelay(int val);
 	void setAutoScrollSpeed(float val);
 
-	// TODO add public members
+	void setText(const Common::String &val) override;
+	void setInterLine(float val) override;
+	void setWrapMode(TeTextBase2::WrapMode mode) override;
+	void setTextSizeType(int type) override;
+	void setTextSizeProportionalToWidth(int val) override;
 
 private:
 	TeScrollingLayout _scrollingLayout;
-	// TODO add private members
-
+	TeTextLayout _textLayout;
 };
 
 } // end namespace Tetraedge

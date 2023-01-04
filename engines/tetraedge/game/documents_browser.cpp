@@ -193,8 +193,8 @@ void DocumentsBrowser::showDocument(const Common::String &docName, long startPag
 	TeVector2s32 spriteSize = sprite->_tiledSurfacePtr->_tiledTexture->_totalSize;
 	sprite->setSizeType(RELATIVE_TO_PARENT);
 	TeVector3f32 winSize = app->getMainWindow().size();
-	sprite->setSize(TeVector3f32(1.0, (4.0 / (winSize.y() / winSize.x() * 4.0)) *
-               ((float)spriteSize._y / (float)spriteSize._x), 0.0));
+	sprite->setSize(TeVector3f32(1.0f, (4.0f / (winSize.y() / winSize.x() * 4.0f)) *
+               ((float)spriteSize._y / (float)spriteSize._x), 0.0f));
 	TeScrollingLayout *scroll = _gui1.scrollingLayout("scroll");
 	if (!scroll)
 		error("DocumentsBrowser::showDocument Couldn't fetch scroll object");
@@ -225,9 +225,8 @@ void DocumentsBrowser::unload() {
 			TeLayout *slot = _gui1.layout(pageSlotName);
 			if (!slot)
 				break;
-			for (unsigned int i = 0; i < slot->childCount(); i++) {
-				Te3DObject2 *child = slot->child(i);
-				Document *doc = dynamic_cast<Document *>(child);
+			for (long i = 0; i < slot->childCount(); i++) {
+				Document *doc = dynamic_cast<Document *>(slot->child(i));
 				if (doc)
 					delete doc;
 			}

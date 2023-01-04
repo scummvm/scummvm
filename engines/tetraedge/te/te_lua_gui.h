@@ -33,6 +33,7 @@
 #include "tetraedge/te/te_extended_text_layout.h"
 #include "tetraedge/te/te_i_3d_object2.h"
 #include "tetraedge/te/te_i_layout.h"
+#include "tetraedge/te/te_i_text_layout.h"
 #include "tetraedge/te/te_layout.h"
 #include "tetraedge/te/te_list_layout.h"
 #include "tetraedge/te/te_lua_context.h"
@@ -64,12 +65,12 @@ public:
 	TeCurveAnim2<Te3DObject2, TeColor> *colorLinearAnimation(const Common::String &name);
 	TeExtendedTextLayout *extendedTextLayout(const Common::String &name);
 	TeCurveAnim2<TeLayout, TeVector3f32> *layoutAnchorLinearAnimation(const Common::String &name);
-	TeCurveAnim2<TeI3DObject2, TeVector3f32> *layoutPositionLinearAnimation(const Common::String &name);
+	TeCurveAnim2<TeLayout, TeVector3f32> *layoutPositionLinearAnimation(const Common::String &name);
 	TeListLayout *listLayout(const Common::String &name);
 	TeCurveAnim2<TeI3DObject2, TeQuaternion> *rotationLinearAnimation(const Common::String &name);
 	TeScrollingLayout *scrollingLayout(const Common::String &name);
 	TeSpriteLayout *spriteLayout(const Common::String &name);
-	TeTextLayout *textLayout(const Common::String &name);
+	TeITextLayout *textLayout(const Common::String &name);
 
 	// Same as the above functions, but call error() if the result is null.
 	TeLayout *layoutChecked(const Common::String &name);
@@ -94,7 +95,7 @@ public:
 	StringMap<TeClipLayout *> &clipLayouts() { return _clipLayouts; }
 	StringMap<TeExtendedTextLayout *> &extendedTextLayouts() { return _extendedTextLayouts; }
 	StringMap<TeCurveAnim2<TeLayout, TeVector3f32> *> &layoutAnchorLinearAnimations() { return _layoutAnchorLinearAnimations; }
-	StringMap<TeCurveAnim2<TeI3DObject2, TeVector3f32> *> &layoutPositionLinearAnimations() { return _layoutPositionLinearAnimations; }
+	StringMap<TeCurveAnim2<TeLayout, TeVector3f32> *> &layoutPositionLinearAnimations() { return _layoutPositionLinearAnimations; }
 	StringMap<TeCurveAnim2<Te3DObject2, TeColor> *> &colorLinearAnimations() { return _colorLinearAnimations; }
 
 	bool loaded() const { return _loaded; }
@@ -119,7 +120,7 @@ private:
 	StringMap<TeClipLayout *> _clipLayouts;
 	StringMap<TeExtendedTextLayout *> _extendedTextLayouts;
 	StringMap<TeCurveAnim2<TeLayout, TeVector3f32> *> _layoutAnchorLinearAnimations;
-	StringMap<TeCurveAnim2<TeI3DObject2, TeVector3f32> *> _layoutPositionLinearAnimations;
+	StringMap<TeCurveAnim2<TeLayout, TeVector3f32> *> _layoutPositionLinearAnimations;
 	StringMap<TeCurveAnim2<Te3DObject2, TeColor> *> _colorLinearAnimations;
 };
 

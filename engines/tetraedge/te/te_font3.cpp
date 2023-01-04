@@ -133,10 +133,10 @@ void TeFont3::draw(TeImage &destImage, const Common::String &str, int fontSize, 
 		case AlignRight:
 			talign = Graphics::kTextAlignRight;
 			break;
+		// Note: we don't support justify.. just center. (justify is not used anyway)
 		case AlignJustify:
-			talign = Graphics::kTextAlignCenter;
-			break;
 		case AlignCenter:
+		default:
 			talign = Graphics::kTextAlignCenter;
 			break;
 	}
@@ -187,7 +187,7 @@ float TeFont3::ascender(unsigned int pxSize) {
 }
 
 float TeFont3::descender(unsigned int pxSize) {
-	error("TeFont3::descender: Implement me.");
+	error("TODO: Implement TeFont3::descender");
 }
 
 float TeFont3::height(unsigned int pxSize) {

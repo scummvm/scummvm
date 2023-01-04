@@ -36,6 +36,7 @@ public:
 
 	class SaveButton : public TeLayout {
 	public:
+		SaveButton(TeButtonLayout *btn, const Common::String &name);
 		bool onLoadSave();
 		Common::String path() const;
 	};
@@ -49,7 +50,7 @@ public:
 	}
 
 	bool onLeftButton();
-	bool onMouseMove();
+	bool onMouseMove(const Common::Point &pt);
 	bool onPictureButton();
 	bool onQuitButton();
 	bool onRightButton();
@@ -61,6 +62,7 @@ private:
 	Common::Array<SaveButton *> _saveButtons;
 	TeVector2s32 _slideBtnStartMousePos;
 	Common::String _gameName;
+	int _pageNo;
 };
 
 } // end namespace Tetraedge
