@@ -28,26 +28,26 @@
 
 namespace Scumm {
 
-Codec37Decoder::Codec37Decoder(int width, int height) {
+SmushDeltaBlocksDecoder::SmushDeltaBlocksDecoder(int width, int height) {
 	_width = width;
 	_height = height;
 	_frameSize = _width * _height;
 	_deltaSize = _frameSize * 3 + 0x13600;
 	_deltaBuf = (byte *)calloc(_deltaSize, sizeof(byte));
 	if (_deltaBuf == nullptr)
-		error("unable to allocate decoder buffer");
+		error("SmushDeltaBlocksDecoder::SmushDeltaBlocksDecoder(): ERROR: Unable to allocate decoder buffer.");
 	_deltaBufs[0] = _deltaBuf + 0x4D80;
 	_deltaBufs[1] = _deltaBuf + 0xE880 + _frameSize;
 	_offsetTable = new int16[255];
 	if (_offsetTable == nullptr)
-		error("unable to allocate decoder offset table");
-	_curtable = 0;
+		error("SmushDeltaBlocksDecoder::SmushDeltaBlocksDecoder(): ERROR: Unable to allocate decoder offset table.");
+	_curTable = 0;
 	_prevSeqNb = 0;
 	_tableLastPitch = -1;
 	_tableLastIndex = -1;
 }
 
-Codec37Decoder::~Codec37Decoder() {
+SmushDeltaBlocksDecoder::~SmushDeltaBlocksDecoder() {
 	if (_offsetTable) {
 		delete[] _offsetTable;
 		_offsetTable = nullptr;
@@ -63,8 +63,8 @@ Codec37Decoder::~Codec37Decoder() {
 	}
 }
 
-void Codec37Decoder::maketable(int pitch, int index) {
-	static const int8 maketable_bytes[] = {
+void SmushDeltaBlocksDecoder::makeTable(int pitch, int index) {
+	static const int8 makeTableBytes[] = {
     0,   0,   1,   0,   2,   0,   3,   0,   5,   0,
     8,   0,  13,   0,  21,   0,  -1,   0,  -2,   0,
    -3,   0,  -5,   0,  -8,   0, -13,   0, -17,   0,
@@ -226,105 +226,105 @@ void Codec37Decoder::maketable(int pitch, int index) {
 	_tableLastPitch = pitch;
 	_tableLastIndex = index;
 	index *= 255;
-	assert(index + 254 < (int32)(sizeof(maketable_bytes) / 2));
+	assert(index + 254 < (int32)(sizeof(makeTableBytes) / 2));
 
 	for (int32 i = 0; i < 255; i++) {
 		int32 j = (i + index) * 2;
-		_offsetTable[i] = maketable_bytes[j + 1] * pitch + maketable_bytes[j];
+		_offsetTable[i] = makeTableBytes[j + 1] * pitch + makeTableBytes[j];
 	}
 }
 
 #if defined(SCUMM_NEED_ALIGNMENT)
 
-#define DECLARE_LITERAL_TEMP(v)			\
+#define DECLARE_LITERAL_TEMP(v) \
 	byte v
 
-#define READ_LITERAL_PIXEL(src, v)		\
+#define READ_LITERAL_PIXEL(src, v) \
 	v = *src++
 
-#define WRITE_4X1_LINE(dst, v)			\
-	do {					\
-		int j;				\
-		for (j=0; j<4; j++)		\
-			(dst)[j] = v;		\
+#define WRITE_4X1_LINE(dst, v)  \
+	do {                        \
+		int j;                  \
+		for (j = 0; j < 4; j++) \
+			(dst)[j] = v;       \
 	} while (0)
 
-#define COPY_4X1_LINE(dst, src)			\
-	do {					\
-		int j;				\
-		for (j=0; j<4; j++)		\
-			(dst)[j] = (src)[j];	\
+#define COPY_4X1_LINE(dst, src)  \
+	do {                         \
+		int j;                   \
+		for (j = 0; j < 4; j++)  \
+			(dst)[j] = (src)[j]; \
 	} while (0)
 
 #else /* SCUMM_NEED_ALIGNMENT */
 
-#define DECLARE_LITERAL_TEMP(v)			\
+#define DECLARE_LITERAL_TEMP(v) \
 	uint32 v
 
-#define READ_LITERAL_PIXEL(src, v)			\
-	do {						\
-		v = *src++;				\
-		v += (v << 8) + (v << 16) + (v << 24);	\
+#define READ_LITERAL_PIXEL(src, v)             \
+	do {                                       \
+		v = *src++;                            \
+		v += (v << 8) + (v << 16) + (v << 24); \
 	} while (0)
 
-#define WRITE_4X1_LINE(dst, v)			\
+#define WRITE_4X1_LINE(dst, v) \
 	*(uint32 *)(dst) = v
 
-#define COPY_4X1_LINE(dst, src)			\
+#define COPY_4X1_LINE(dst, src)               \
 	*(uint32 *)(dst) = *(const uint32 *)(src)
 
 #endif /* SCUMM_NEED_ALIGNMENT */
 
 /* Fill a 4x4 pixel block with a literal pixel value */
 
-#define LITERAL_4X4(src, dst, pitch)				\
-	do {							\
-		int x;						\
-		DECLARE_LITERAL_TEMP(t);			\
-		READ_LITERAL_PIXEL(src, t);			\
-		for (x=0; x<4; x++) {				\
-			WRITE_4X1_LINE(dst + pitch * x, t);	\
-		}						\
-		dst += 4;					\
+#define LITERAL_4X4(src, dst, pitch)            \
+	do {                                        \
+		int x;                                  \
+		DECLARE_LITERAL_TEMP(t);                \
+		READ_LITERAL_PIXEL(src, t);             \
+		for (x = 0; x < 4; x++) {               \
+			WRITE_4X1_LINE(dst + pitch * x, t); \
+		}                                       \
+		dst += 4;                               \
 	} while (0)
 
 /* Fill four 4x1 pixel blocks with literal pixel values */
 
-#define LITERAL_4X1(src, dst, pitch)				\
-	do {							\
-		int x;						\
-		DECLARE_LITERAL_TEMP(t);			\
-		for (x=0; x<4; x++) {				\
-			READ_LITERAL_PIXEL(src, t);		\
-			WRITE_4X1_LINE(dst + pitch * x, t);	\
-		}						\
-		dst += 4;					\
+#define LITERAL_4X1(src, dst, pitch)            \
+	do {                                        \
+		int x;                                  \
+		DECLARE_LITERAL_TEMP(t);                \
+		for (x = 0; x < 4; x++) {               \
+			READ_LITERAL_PIXEL(src, t);	        \
+			WRITE_4X1_LINE(dst + pitch * x, t); \
+		}                                       \
+		dst += 4;                               \
 	} while (0)
 
 /* Fill sixteen 1x1 pixel blocks with literal pixel values */
 
-#define LITERAL_1X1(src, dst, pitch)				\
-	do {							\
-		int x;						\
-		for (x=0; x<4; x++) {				\
-			COPY_4X1_LINE(dst + pitch * x, src);	\
-			src += 4;				\
-		}						\
-		dst += 4;					\
+#define LITERAL_1X1(src, dst, pitch)             \
+	do {                                         \
+		int x;                                   \
+		for (x = 0; x < 4; x++) {                \
+			COPY_4X1_LINE(dst + pitch * x, src); \
+			src += 4;                            \
+		}                                        \
+		dst += 4;                                \
 	} while (0)
 
 /* Copy a 4x4 pixel block from a different place in the framebuffer */
 
-#define COPY_4X4(dst2, dst, pitch)					  \
-	do {								  \
-		int x;							  \
-		for (x=0; x<4; x++) {					  \
+#define COPY_4X4(dst2, dst, pitch)                            \
+	do {                                                      \
+		int x;                                                \
+		for (x=0; x<4; x++) {                                 \
 			COPY_4X1_LINE(dst + pitch * x, dst2 + pitch * x); \
-		}							  \
-		dst += 4;						  \
+		}                                                     \
+		dst += 4;                                             \
 	} while (0)
 
-void Codec37Decoder::proc1(byte *dst, const byte *src, int32 next_offs, int bw, int bh, int pitch, int16 *offset_table) {
+void SmushDeltaBlocksDecoder::proc1(byte *dst, const byte *src, int32 nextOffs, int bw, int bh, int pitch, int16 *offsetTable) {
 	uint8 code;
 	bool filling, skipCode;
 	int32 len;
@@ -376,7 +376,7 @@ void Codec37Decoder::proc1(byte *dst, const byte *src, int32 next_offs, int bw, 
 				continue;
 			}
 		}
-		byte *dst2 = dst + offset_table[code] + next_offs;
+		byte *dst2 = dst + offsetTable[code] + nextOffs;
 		COPY_4X4(dst2, dst, pitch);
 		--i;
 		if (i == 0) {
@@ -389,7 +389,7 @@ void Codec37Decoder::proc1(byte *dst, const byte *src, int32 next_offs, int bw, 
 	}
 }
 
-void Codec37Decoder::proc3WithFDFE(byte *dst, const byte *src, int32 next_offs, int bw, int bh, int pitch, int16 *offset_table) {
+void SmushDeltaBlocksDecoder::proc3WithFDFE(byte *dst, const byte *src, int32 nextOffs, int bw, int bh, int pitch, int16 *offsetTable) {
 	do {
 		int32 i = bw;
 		do {
@@ -401,7 +401,7 @@ void Codec37Decoder::proc3WithFDFE(byte *dst, const byte *src, int32 next_offs, 
 			} else if (code == 0xFF) {
 				LITERAL_1X1(src, dst, pitch);
 			} else {
-				byte *dst2 = dst + _offsetTable[code] + next_offs;
+				byte *dst2 = dst + _offsetTable[code] + nextOffs;
 				COPY_4X4(dst2, dst, pitch);
 			}
 		} while (--i);
@@ -409,7 +409,7 @@ void Codec37Decoder::proc3WithFDFE(byte *dst, const byte *src, int32 next_offs, 
 	} while (--bh);
 }
 
-void Codec37Decoder::proc3WithoutFDFE(byte *dst, const byte *src, int32 next_offs, int bw, int bh, int pitch, int16 *offset_table) {
+void SmushDeltaBlocksDecoder::proc3WithoutFDFE(byte *dst, const byte *src, int32 nextOffs, int bw, int bh, int pitch, int16 *offsetTable) {
 	do {
 		int32 i = bw;
 		do {
@@ -417,7 +417,7 @@ void Codec37Decoder::proc3WithoutFDFE(byte *dst, const byte *src, int32 next_off
 			if (code == 0xFF) {
 				LITERAL_1X1(src, dst, pitch);
 			} else {
-				byte *dst2 = dst + _offsetTable[code] + next_offs;
+				byte *dst2 = dst + _offsetTable[code] + nextOffs;
 				COPY_4X4(dst2, dst, pitch);
 			}
 		} while (--i);
@@ -425,7 +425,7 @@ void Codec37Decoder::proc3WithoutFDFE(byte *dst, const byte *src, int32 next_off
 	} while (--bh);
 }
 
-void Codec37Decoder::proc4WithFDFE(byte *dst, const byte *src, int32 next_offs, int bw, int bh, int pitch, int16 *offset_table) {
+void SmushDeltaBlocksDecoder::proc4WithFDFE(byte *dst, const byte *src, int32 nextOffs, int bw, int bh, int pitch, int16 *offsetTable) {
 	do {
 		int32 i = bw;
 		do {
@@ -439,7 +439,7 @@ void Codec37Decoder::proc4WithFDFE(byte *dst, const byte *src, int32 next_offs, 
 			} else if (code == 0x00) {
 				int32 length = *src++ + 1;
 				for (int32 l = 0; l < length; l++) {
-					byte *dst2 = dst + next_offs;
+					byte *dst2 = dst + nextOffs;
 					COPY_4X4(dst2, dst, pitch);
 					i--;
 					if (i == 0) {
@@ -453,7 +453,7 @@ void Codec37Decoder::proc4WithFDFE(byte *dst, const byte *src, int32 next_offs, 
 				}
 				i++;
 			} else {
-				byte *dst2 = dst + _offsetTable[code] + next_offs;
+				byte *dst2 = dst + _offsetTable[code] + nextOffs;
 				COPY_4X4(dst2, dst, pitch);
 			}
 		} while (--i);
@@ -461,7 +461,7 @@ void Codec37Decoder::proc4WithFDFE(byte *dst, const byte *src, int32 next_offs, 
 	} while (--bh);
 }
 
-void Codec37Decoder::proc4WithoutFDFE(byte *dst, const byte *src, int32 next_offs, int bw, int bh, int pitch, int16 *offset_table) {
+void SmushDeltaBlocksDecoder::proc4WithoutFDFE(byte *dst, const byte *src, int32 nextOffs, int bw, int bh, int pitch, int16 *offsetTable) {
 	do {
 		int32 i = bw;
 		do {
@@ -471,7 +471,7 @@ void Codec37Decoder::proc4WithoutFDFE(byte *dst, const byte *src, int32 next_off
 			} else if (code == 0x00) {
 				int32 length = *src++ + 1;
 				for (int32 l = 0; l < length; l++) {
-					byte *dst2 = dst + next_offs;
+					byte *dst2 = dst + nextOffs;
 					COPY_4X4(dst2, dst, pitch);
 					i--;
 					if (i == 0) {
@@ -485,7 +485,7 @@ void Codec37Decoder::proc4WithoutFDFE(byte *dst, const byte *src, int32 next_off
 				}
 				i++;
 			} else {
-				byte *dst2 = dst + _offsetTable[code] + next_offs;
+				byte *dst2 = dst + _offsetTable[code] + nextOffs;
 				COPY_4X4(dst2, dst, pitch);
 			}
 		} while (--i);
@@ -493,80 +493,80 @@ void Codec37Decoder::proc4WithoutFDFE(byte *dst, const byte *src, int32 next_off
 	} while (--bh);
 }
 
-void Codec37Decoder::decode(byte *dst, const byte *src) {
+void SmushDeltaBlocksDecoder::decode(byte *dst, const byte *src) {
 	int32 bw = (_width + 3) / 4, bh = (_height + 3) / 4;
 	int32 pitch = bw * 4;
 
-	int16 seq_nb = READ_LE_UINT16(src + 2);
-	int32 decoded_size = READ_LE_UINT32(src + 4);
-	byte mask_flags = src[12];
-	maketable(pitch, src[1]);
+	int16 seqNb = READ_LE_UINT16(src + 2);
+	int32 decodedSize = READ_LE_UINT32(src + 4);
+	byte maskFlags = src[12];
+	makeTable(pitch, src[1]);
 	int32 tmp;
 
 	switch (src[0]) {
 	case 0:
-		if ((_deltaBufs[_curtable] - _deltaBuf) > 0) {
-			memset(_deltaBuf, 0, _deltaBufs[_curtable] - _deltaBuf);
+		if ((_deltaBufs[_curTable] - _deltaBuf) > 0) {
+			memset(_deltaBuf, 0, _deltaBufs[_curTable] - _deltaBuf);
 		}
-		tmp = (_deltaBuf + _deltaSize) - _deltaBufs[_curtable] - decoded_size;
+		tmp = (_deltaBuf + _deltaSize) - _deltaBufs[_curTable] - decodedSize;
 		if (tmp > 0) {
-			memset(_deltaBufs[_curtable] + decoded_size, 0, tmp);
+			memset(_deltaBufs[_curTable] + decodedSize, 0, tmp);
 		}
-		memcpy(_deltaBufs[_curtable], src + 16, decoded_size);
+		memcpy(_deltaBufs[_curTable], src + 16, decodedSize);
 		break;
 	case 1:
-		if ((seq_nb & 1) || !(mask_flags & 1)) {
-			_curtable ^= 1;
+		if ((seqNb & 1) || !(maskFlags & 1)) {
+			_curTable ^= 1;
 		}
-		proc1(_deltaBufs[_curtable], src + 16, _deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable],
+		proc1(_deltaBufs[_curTable], src + 16, _deltaBufs[_curTable ^ 1] - _deltaBufs[_curTable],
 										bw, bh, pitch, _offsetTable);
 		break;
 	case 2:
-		bompDecodeLine(_deltaBufs[_curtable], src + 16, decoded_size);
-		if ((_deltaBufs[_curtable] - _deltaBuf) > 0) {
-			memset(_deltaBuf, 0, _deltaBufs[_curtable] - _deltaBuf);
+		bompDecodeLine(_deltaBufs[_curTable], src + 16, decodedSize);
+		if ((_deltaBufs[_curTable] - _deltaBuf) > 0) {
+			memset(_deltaBuf, 0, _deltaBufs[_curTable] - _deltaBuf);
 		}
-		tmp = (_deltaBuf + _deltaSize) - _deltaBufs[_curtable] - decoded_size;
+		tmp = (_deltaBuf + _deltaSize) - _deltaBufs[_curTable] - decodedSize;
 		if (tmp > 0) {
-			memset(_deltaBufs[_curtable] + decoded_size, 0, tmp);
+			memset(_deltaBufs[_curTable] + decodedSize, 0, tmp);
 		}
 		break;
 	case 3:
-		if ((seq_nb & 1) || !(mask_flags & 1)) {
-			_curtable ^= 1;
+		if ((seqNb & 1) || !(maskFlags & 1)) {
+			_curTable ^= 1;
 		}
 
-		if ((mask_flags & 4) != 0) {
-			proc3WithFDFE(_deltaBufs[_curtable], src + 16,
-										_deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable], bw, bh,
+		if ((maskFlags & 4) != 0) {
+			proc3WithFDFE(_deltaBufs[_curTable], src + 16,
+										_deltaBufs[_curTable ^ 1] - _deltaBufs[_curTable], bw, bh,
 										pitch, _offsetTable);
 		} else {
-			proc3WithoutFDFE(_deltaBufs[_curtable], src + 16,
-										_deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable], bw, bh,
+			proc3WithoutFDFE(_deltaBufs[_curTable], src + 16,
+										_deltaBufs[_curTable ^ 1] - _deltaBufs[_curTable], bw, bh,
 										pitch, _offsetTable);
 		}
 		break;
 	case 4:
-		if ((seq_nb & 1) || !(mask_flags & 1)) {
-			_curtable ^= 1;
+		if ((seqNb & 1) || !(maskFlags & 1)) {
+			_curTable ^= 1;
 		}
 
-		if ((mask_flags & 4) != 0) {
-			proc4WithFDFE(_deltaBufs[_curtable], src + 16,
-										_deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable], bw, bh,
+		if ((maskFlags & 4) != 0) {
+			proc4WithFDFE(_deltaBufs[_curTable], src + 16,
+										_deltaBufs[_curTable ^ 1] - _deltaBufs[_curTable], bw, bh,
 										pitch, _offsetTable);
 		} else {
-			proc4WithoutFDFE(_deltaBufs[_curtable], src + 16,
-										_deltaBufs[_curtable ^ 1] - _deltaBufs[_curtable], bw, bh,
+			proc4WithoutFDFE(_deltaBufs[_curTable], src + 16,
+										_deltaBufs[_curTable ^ 1] - _deltaBufs[_curTable], bw, bh,
 										pitch, _offsetTable);
 		}
 		break;
 	default:
 		break;
 	}
-	_prevSeqNb = seq_nb;
+	_prevSeqNb = seqNb;
 
-	memcpy(dst, _deltaBufs[_curtable], _frameSize);
+	memcpy(dst, _deltaBufs[_curTable], _frameSize);
 }
 
 } // End of namespace Scumm

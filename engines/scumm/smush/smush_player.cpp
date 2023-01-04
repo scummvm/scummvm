@@ -218,8 +218,8 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_imuseDigital = imuseDigital;
 	_insane = insane;
 	_nbframes = 0;
-	_codec37 = 0;
-	_codec47 = 0;
+	_deltaBlocksCodec = 0;
+	_deltaGlyphsCodec = 0;
 	_strings = nullptr;
 	_sf[0] = nullptr;
 	_sf[1] = nullptr;
@@ -330,10 +330,10 @@ void SmushPlayer::release() {
 	_vm->_virtscr[kMainVirtScreen].pitch = _origPitch;
 	_vm->_gdi->_numStrips = _origNumStrips;
 
-	delete _codec37;
-	_codec37 = 0;
-	delete _codec47;
-	_codec47 = 0;
+	delete _deltaBlocksCodec;
+	_deltaBlocksCodec = 0;
+	delete _deltaGlyphsCodec;
+	_deltaGlyphsCodec = 0;
 }
 
 void SmushPlayer::handleStore(int32 subSize, Common::SeekableReadStream &b) {
@@ -771,17 +771,17 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	case SMUSH_CODEC_RLE_ALT:
 		smushDecodeRLE(_dst, src, left, top, width, height, _vm->_screenWidth);
 		break;
-	case SMUSH_CODEC_37:
-		if (!_codec37)
-			_codec37 = new Codec37Decoder(width, height);
-		if (_codec37)
-			_codec37->decode(_dst, src);
+	case SMUSH_CODEC_DELTA_BLOCKS:
+		if (!_deltaBlocksCodec)
+			_deltaBlocksCodec = new SmushDeltaBlocksDecoder(width, height);
+		if (_deltaBlocksCodec)
+			_deltaBlocksCodec->decode(_dst, src);
 		break;
-	case SMUSH_CODEC_47:
-		if (!_codec47)
-			_codec47 = new Codec47Decoder(width, height);
-		if (_codec47)
-			_codec47->decode(_dst, src);
+	case SMUSH_CODEC_DELTA_GLYPHS:
+		if (!_deltaGlyphsCodec)
+			_deltaGlyphsCodec = new SmushDeltaGlyphsDecoder(width, height);
+		if (_deltaGlyphsCodec)
+			_deltaGlyphsCodec->decode(_dst, src);
 		break;
 	case SMUSH_CODEC_UNCOMPRESSED:
 		// Used by Full Throttle Classic (from Remastered)

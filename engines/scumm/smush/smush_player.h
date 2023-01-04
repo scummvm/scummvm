@@ -57,15 +57,15 @@ namespace Scumm {
 #define SMUSH_CODEC_RLE          1
 #define SMUSH_CODEC_RLE_ALT      3
 #define SMUSH_CODEC_UNCOMPRESSED 20
-#define SMUSH_CODEC_37           37 // TODO: Relabel!
-#define SMUSH_CODEC_47           47 // TODO: Relabel!
+#define SMUSH_CODEC_DELTA_BLOCKS 37
+#define SMUSH_CODEC_DELTA_GLYPHS 47
 
 class ScummEngine_v7;
 class SmushFont;
 class SmushMixer;
 class StringResource;
-class Codec37Decoder;
-class Codec47Decoder;
+class SmushDeltaBlocksDecoder;
+class SmushDeltaGlyphsDecoder;
 class IMuseDigital;
 class Insane;
 
@@ -114,8 +114,8 @@ private:
 	byte _pal[0x300];
 	SmushFont *_sf[5];
 	StringResource *_strings;
-	Codec37Decoder *_codec37;
-	Codec47Decoder *_codec47;
+	SmushDeltaBlocksDecoder *_deltaBlocksCodec;
+	SmushDeltaGlyphsDecoder *_deltaGlyphsCodec;
 	Common::SeekableReadStream *_base;
 	uint32 _baseSize;
 	byte *_frameBuffer;

@@ -26,14 +26,14 @@
 
 namespace Scumm {
 
-class Codec37Decoder {
+class SmushDeltaBlocksDecoder {
 private:
 
 	int32 _deltaSize;
 	byte *_deltaBufs[2];
 	byte *_deltaBuf;
 	int16 *_offsetTable;
-	int _curtable;
+	int _curTable;
 	uint16 _prevSeqNb;
 	int _tableLastPitch;
 	int _tableLastIndex;
@@ -41,10 +41,10 @@ private:
 	int _width, _height;
 
 public:
-	Codec37Decoder(int width, int height);
-	~Codec37Decoder();
+	SmushDeltaBlocksDecoder(int width, int height);
+	~SmushDeltaBlocksDecoder();
 protected:
-	void maketable(int, int);
+	void makeTable(int, int);
 	void proc1(byte *dst, const byte *src, int32, int, int, int, int16 *);
 	void proc3WithFDFE(byte *dst, const byte *src, int32, int, int, int, int16 *);
 	void proc3WithoutFDFE(byte *dst, const byte *src, int32, int, int, int, int16 *);
