@@ -48,11 +48,6 @@ namespace Ultima8 {
 
 #define TEX32_PACK_RGBA(r,g,b,a)    (((a)<<TEX32_A_SHIFT)|((r)<<TEX32_R_SHIFT)|\
 									 ((g)<<TEX32_G_SHIFT)|((b)<<TEX32_B_SHIFT))
-#define TEX32_PACK_RGBA16(r,g,b,a)  ((((a)>>8)<<TEX32_A_SHIFT)|\
-									 (((r)>>8)<<TEX32_R_SHIFT)|\
-									 (((g)>>8)<<TEX32_G_SHIFT)|\
-									 (((b)>>8)<<TEX32_B_SHIFT))
-
 
 } // End of namespace Ultima8
 } // End of namespace Ultima
