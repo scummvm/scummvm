@@ -623,11 +623,11 @@ void Ultima8Engine::paint() {
 	Rect r;
 	_screen->GetSurfaceDims(r);
 	if (_highRes)
-		_screen->Fill32(0, 0, 0, r.width(), r.height());
+		_screen->Fill32(0, r);
 
 #ifdef DEBUG
 	// Fill the screen with an annoying color so we can see fast area bugs
-	_screen->Fill32(0xFF10FF10, 0, 0, r.width(), r.height());
+	_screen->Fill32(0xFF10FF10, r);
 #endif
 
 	_desktopGump->Paint(_screen, _lerpFactor, false);

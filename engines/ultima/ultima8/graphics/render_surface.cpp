@@ -323,8 +323,8 @@ bool RenderSurface::IsFlipped() const {
 //
 // Desc: Fill buffer (using a RGB colour)
 //
-void RenderSurface::Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) {
-	Rect rect(sx, sy, sx + w, sy + h);
+void RenderSurface::Fill32(uint32 rgb, const Rect &r) {
+	Rect rect = r;
 	rect.clip(_clipWindow);
 	rgb = _surface->format.RGBToColor((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
 	_surface->fillRect(Common::Rect(rect.left + _ox, rect.top + _oy, rect.right + _ox, rect.bottom + _oy), rgb);

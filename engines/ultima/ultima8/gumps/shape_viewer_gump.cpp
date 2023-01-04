@@ -87,7 +87,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 		return;
 	}
 
-	surf->Fill32(_background, 0, 0, _dims.width(), _dims.height());
+	surf->Fill32(_background, _dims);
 
 	int32 posx = (_dims.width() - _shapeW) / 2 + _shapeX;
 	int32 posy = (_dims.height() - _shapeH) / 2 + _shapeY - 25;

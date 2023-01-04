@@ -156,7 +156,7 @@ void EditWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 	renderText();
 
 	if (scaled && _gameFont && getFont()->isHighRes()) {
-		surf->FillAlpha(0xFF, _dims.left, _dims.top, _dims.width(), _dims.height());
+		surf->FillAlpha(0xFF, _dims);
 		return;
 	}
 
@@ -176,7 +176,7 @@ void EditWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 	Rect rect(_dims);
 	GumpRectToScreenSpace(rect, ROUND_OUTSIDE);
-	surf->FillAlpha(0x00, rect.left, rect.top, rect.width(), rect.height());
+	surf->FillAlpha(0x00, rect);
 }
 
 // don't handle any mouse motion events, so let parent handle them for us.

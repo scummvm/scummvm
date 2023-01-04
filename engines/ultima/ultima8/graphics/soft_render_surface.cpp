@@ -54,15 +54,13 @@ template<class uintX> SoftRenderSurface<uintX>::SoftRenderSurface(Graphics::Mana
 
 //#define CHECK_ALPHA_FILLS
 
-template<class uintX> void SoftRenderSurface<uintX>::FillAlpha(uint8 alpha, int32 sx, int32 sy, int32 w, int32 h) {
+template<class uintX> void SoftRenderSurface<uintX>::FillAlpha(uint8 alpha, const Rect &r) {
 	const Graphics::PixelFormat &format = _surface->format;
 	uint32 aMask = format.aMax() << format.aShift;
-	Rect rect(sx, sy, sx + w, sy + h);
+	Rect rect = r;
 	rect.clip(_clipWindow);
-	sx = rect.left;
-	sy = rect.top;
-	w = rect.width();
-	h = rect.height();
+	int32 w = rect.width();
+	int32 h = rect.height();
 
 	if (!w || !h || !aMask)
 		return;
@@ -73,7 +71,7 @@ template<class uintX> void SoftRenderSurface<uintX>::FillAlpha(uint8 alpha, int3
 		h = 1;
 	}
 
-	uint8 *pixel = _pixels + sy * _pitch + sx * format.bytesPerPixel;
+	uint8 *pixel = _pixels + rect.top * _pitch + rect.left * format.bytesPerPixel;
 	uint8 *end = pixel + h * _pitch;
 
 	uint8 *line_end = pixel + w * format.bytesPerPixel;
@@ -108,21 +106,19 @@ template<class uintX> void SoftRenderSurface<uintX>::FillAlpha(uint8 alpha, int3
 	}
 }
 
-template<class uintX> void SoftRenderSurface<uintX>::FillBlended(uint32 rgba, int32 sx, int32 sy, int32 w, int32 h) {
+template<class uintX> void SoftRenderSurface<uintX>::FillBlended(uint32 rgba, const Rect &r) {
 	int alpha = TEX32_A(rgba);
 	if (alpha == 0xFF) {
-		Fill32(rgba, sx, sy, w, h);
+		Fill32(rgba, r);
 		return;
 	} else if (!alpha) {
 		return;
 	}
 
-	Rect rect(sx, sy, sx + w, sy + h);
+	Rect rect = r;
 	rect.clip(_clipWindow);
-	sx = rect.left;
-	sy = rect.top;
-	w = rect.width();
-	h = rect.height();
+	int32 w = rect.width();
+	int32 h = rect.height();
 
 	if (!w || !h) return;
 
@@ -134,7 +130,7 @@ template<class uintX> void SoftRenderSurface<uintX>::FillBlended(uint32 rgba, in
 		h = 1;
 	}
 
-	uint8 *pixel = _pixels + sy * _pitch + sx * format.bytesPerPixel;
+	uint8 *pixel = _pixels + rect.top * _pitch + rect.left * format.bytesPerPixel;
 	uint8 *end = pixel + h * _pitch;
 
 	uint8 *line_end = pixel + w * format.bytesPerPixel;

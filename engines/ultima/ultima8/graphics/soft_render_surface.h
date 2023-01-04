@@ -44,10 +44,10 @@ public:
 	//
 
 	//! Fill alpha channel
-	void FillAlpha(uint8 alpha, int32 sx, int32 sy, int32 w, int32 h) override;
+	void FillAlpha(uint8 alpha, const Rect &r) override;
 
 	// Fill the region doing alpha blending
-	void FillBlended(uint32 rgba, int32 sx, int32 sy, int32 w, int32 h) override;
+	void FillBlended(uint32 rgba, const Rect &r) override;
 
 	//
 	// The rule for painting methods:

@@ -116,11 +116,11 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	surf->DrawLine32(color, _dims.right -1, _dims.top, _dims.right - 1, _dims.bottom - 1);
 
 	// Dimensions minus border
-	Common::Rect dims(_dims.left, _dims.top, _dims.right, _dims.bottom);
+	Rect dims = _dims;
 	dims.grow(-1);
 
 	// Fill the background
-	surf->Fill32(0xFF000000, dims.left, dims.top, dims.width(), dims.height());
+	surf->Fill32(0xFF000000, dims);
 
 	// Center on avatar
 	int sx = _ax - dims.width() / 2;
