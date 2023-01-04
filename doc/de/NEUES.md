@@ -12,6 +12,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Added support for Pink Panther: Passport to Peril hinzugefügt.
    - Unterstützung für Pink Panther: Hokus Pokus Pink hinzugefügt.
    - Unterstützung für Driller/Space Station Oblivion (DOS/EGA, Amiga und Atari ST-Versionen) hinzugefügt.
+   - Unterstützung für Halls of the Dead: Faery Tale Adventure II hinzugefügt.
 
  Allgemein:
    - Anzahl an falsch-positiven Einträgen reduziert, wenn das Gerät nach Spielen durchsucht wird.
