@@ -43,10 +43,10 @@ bool GalleryMenu::onSkipVideoButtonValidated() {
 	Game *game = g_engine->getGame();
 
 	game->stopSound(AMBIENT_SND_BIKE);
-	game->playSound(AMBIENT_SND_BIKE, -1, 0.1);
+	game->playSound(AMBIENT_SND_BIKE, -1, 0.1f);
 
 	game->stopSound(AMBIENT_SND_ENGR);
-	game->playSound(AMBIENT_SND_ENGR, -1, 0.09);
+	game->playSound(AMBIENT_SND_ENGR, -1, 0.09f);
 
 	TeSpriteLayout *video = spriteLayoutChecked("video");
 	video->stop();
@@ -86,10 +86,10 @@ void GalleryMenu::enter() {
 	app->_frontLayout.addChild(menu);
 
 	game->stopSound(AMBIENT_SND_BIKE);
-	game->playSound(AMBIENT_SND_BIKE, -1, 0.1);
+	game->playSound(AMBIENT_SND_BIKE, -1, 0.1f);
 
 	game->stopSound(AMBIENT_SND_ENGR);
-	game->playSound(AMBIENT_SND_ENGR, -1, 0.09);
+	game->playSound(AMBIENT_SND_ENGR, -1, 0.09f);
 
 	TeButtonLayout *btn = buttonLayoutChecked("quitButton");
 	btn->onMouseClickValidated().add(this, &GalleryMenu::onQuitButton);

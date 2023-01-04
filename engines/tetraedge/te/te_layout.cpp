@@ -396,7 +396,7 @@ void TeLayout::updateSize() {
 						newSize.x() = _ratio * newSize.y();
 					else
 						newSize.y() = newSize.x() / _ratio;
-			  }
+				}
 			}
 
 			_size.x() = newSize.x();

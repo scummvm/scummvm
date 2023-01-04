@@ -76,7 +76,7 @@ void TeLight::draw(TeCamera &camera) {
 	error("TODO: Finish TeLight::draw");
 }
 
-void TeLight::transformDirPoint(const TeVector3f32 &pt1,TeVector3f32 &pt2) {
+void TeLight::transformDirPoint(const TeVector3f32 &pt1, TeVector3f32 &pt2) {
 	const TeQuaternion q1 = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 1, 0), _positionRadial.getX() + M_PI);
 	const TeQuaternion q2 = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 0, -1), -_positionRadial.getY());
 	pt2.rotate(q2);
@@ -95,39 +95,29 @@ void TeLight::transformSpotPoint(TeVector3f32 &pt) {
 void TeLight::update(uint lightno) {
 	if (lightno > GL_MAX_LIGHTS)
 		error("Invalid light no %d", lightno);
-	float col[4];
 	const uint glLight = _toGlLight(lightno);
-	col[0] = _colAmbient.r() / 255.0f;
-	col[1] = _colAmbient.g() / 255.0f;
-	col[2] = _colAmbient.b() / 255.0f;
-	col[3] = 1.0;
-	glLightfv(glLight, GL_AMBIENT, col);
 
-	col[0] = _colDiffuse.r() / 255.0f;
-	col[1] = _colDiffuse.g() / 255.0f;
-	col[2] = _colDiffuse.b() / 255.0f;
-	col[3] = 1.0;
-	glLightfv(glLight, GL_DIFFUSE, col);
+	const float ambient[4] = {_colAmbient.r() / 255.0f, _colAmbient.g() / 255.0f,
+			_colAmbient.b() / 255.0f, 1.0};
+	glLightfv(glLight, GL_AMBIENT, ambient);
+
+	const float diff[4] = {_colDiffuse.r() / 255.0f, _colDiffuse.g() / 255.0f,
+			_colDiffuse.b() / 255.0f, 1.0};
+	glLightfv(glLight, GL_DIFFUSE, diff);
 
 	// WORKAROUND: Original game sets 0.01 as threshold here to avoid enabling
-	// the "shadow" light.  However, CitStation/31130 has shadowlight with values
-	// 4,0,0 which means it gets enabled.
+	// the "shadow" light.  However, Syberia CitStation/31130 has shadowlight with
+	// values (4, 0, 0) which means it gets enabled and everything is dark.
 
-	if (col[0] < 0.02f && col[1] < 0.02f && col[2] < 0.02f)
+	if (diff[0] < 0.02f && diff[1] < 0.02f && diff[2] < 0.02f)
 		glDisable(glLight);
 
-	col[0] = _colSpecular.r() / 255.0f;
-	col[1] = _colSpecular.g() / 255.0f;
-	col[2] = _colSpecular.b() / 255.0f;
-	col[3] = 1.0;
-	glLightfv(glLight, GL_SPECULAR, col);
+	const float spec[4] = {_colSpecular.r() / 255.0f, _colSpecular.g() / 255.0f,
+			_colSpecular.b() / 255.0f, 1.0};
+	glLightfv(glLight, GL_SPECULAR, spec);
 
 	if (_type == LightTypeSpot || _type == LightTypePoint) {
-		float pos[4];
-		pos[0] = _position3d.x();
-		pos[1] = _position3d.y();
-		pos[2] = _position3d.z();
-		pos[3] = 1.0f;
+		const float pos[4] = {_position3d.x(), _position3d.y(), _position3d.z(), 1.0f};
 		glLightfv(glLight, GL_POSITION, pos);
 		glLightf(glLight, GL_CONSTANT_ATTENUATION, _constAtten);
 		glLightf(glLight, GL_LINEAR_ATTENUATION, _linearAtten);
@@ -135,28 +125,20 @@ void TeLight::update(uint lightno) {
 	}
 
 	if (_type == LightTypeDirectional) {
-		float pos[4];
 		float cosx = cosf(_positionRadial.getX());
 		float cosy = cosf(_positionRadial.getY());
 		float sinx = sinf(_positionRadial.getX());
 		float siny = sinf(_positionRadial.getY());
-		pos[0] = cosx * cosy;
-		pos[1] = siny;
-		pos[2] = sinx * cosy;
-		pos[3] = 0.0;
+		const float pos[4] = {cosx * cosy, siny, sinx * cosy, 0.0f};
 		glLightfv(glLight, GL_POSITION, pos);
 	}
 
 	if (_type == LightTypeSpot) {
-		float pos[4];
 		float cosx = cosf(_positionRadial.getX());
 		float cosy = cosf(_positionRadial.getY());
 		float sinx = sinf(_positionRadial.getX());
 		float siny = sinf(_positionRadial.getY());
-		pos[0] = cosx * cosy;
-		pos[1] = siny;
-		pos[2] = sinx * cosy;
-		pos[3] = 0.0;
+		const float pos[4] = {cosx * cosy, siny, sinx * cosy, 0.0f};
 		glLightfv(glLight, GL_SPOT_DIRECTION, pos);
 		glLightf(glLight, GL_SPOT_CUTOFF, (_cutoff * 180.0) / M_PI);
 		glLightf(glLight, GL_SPOT_EXPONENT, _exponent);
@@ -167,11 +149,8 @@ void TeLight::update(uint lightno) {
 
 /*static*/
 void TeLight::updateGlobal() {
-	float col[4];
-	col[0] = _globalAmbientColor.r() / 255.0f;
-	col[1] = _globalAmbientColor.g() / 255.0f;
-	col[2] = _globalAmbientColor.b() / 255.0f;
-	col[3] = 1.0;
+	const float col[4] = {_globalAmbientColor.r() / 255.0f,
+			_globalAmbientColor.g() / 255.0f, _globalAmbientColor.b() / 255.0f, 1.0};
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, col);
 }
 

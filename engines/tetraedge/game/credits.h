@@ -45,9 +45,9 @@ private:
 	TeTimer _timer;
 	TeLuaGUI _gui;
 	TeCurveAnim2<Te3DObject2, TeColor> _curveAnim;
-	TeColor _col1;
-	TeColor _col2;
 	Common::Array<double> _doubleArr;
+	int _animCounter;
+	bool _returnToOptions; // if true, return to OptionsMenu instead of MainMenu.
 };
 
 } // end namespace Tetraedge

@@ -22,13 +22,18 @@
 #ifndef TETRAEDGE_TE_TE_SCROLLING_LAYOUT_H
 #define TETRAEDGE_TE_TE_SCROLLING_LAYOUT_H
 
+#include "tetraedge/te/te_animation.h"
+#include "tetraedge/te/te_curve_anim2.h"
 #include "tetraedge/te/te_layout.h"
+#include "tetraedge/te/te_timer.h"
+#include "tetraedge/te/te_signal.h"
 
 namespace Tetraedge {
 
 class TeScrollingLayout : public TeLayout {
 public:
 	TeScrollingLayout();
+	virtual ~TeScrollingLayout();
 
 	void setInertiaAnimationDuration(int duration) {
 		_inertiaAnimationDuration = duration;
@@ -79,28 +84,64 @@ public:
 		_enclose = val;
 	}
 	void setContentLayout(TeLayout *layout);
+	void setSpeed(const TeVector3f32 &speed);
+
+	bool onAutoScrollDelayTimer();
+	bool onAutoScrollAnimation1DelayTimer();
+	bool onAutoScrollAnimation2DelayTimer();
+	bool onAutoScrollAnimation1Finished();
+	bool onAutoScrollAnimation2Finished();
+	bool onMouseMove(const Common::Point &pt);
+	bool onSlideButtonDown();
+	bool onMouseLeftUp(const Common::Point &pt);
+
+	void playAutoScrollAnimation1();
+	void playAutoScrollAnimation2();
 
 	void resetScrollPosition();
 	void playAutoScroll();
+	TeVector3f32 scrollPosition();
+	void setScrollPosition(const TeVector3f32 &newpos);
 
 private:
 	int _inertiaAnimationDuration;
 	Common::Array<float> _inertiaAnimationCurve;
-	uint _autoScrollDelay;
+	TeCurveAnim2<TeScrollingLayout, TeVector3f32> _inertiaAnimation;
+
 	int _autoScrollLoop;
+	int _currentScrollLoopNo;
+
+	uint _autoScrollDelay;
+	TeTimer _autoScrollDelayTimer;
+
 	float _autoScrollAnimation1Speed;
 	float _autoScrollAnimation2Speed;
 	bool _autoScrollAnimation1Enabled;
 	bool _autoScrollAnimation2Enabled;
 	int _autoScrollAnimation1Delay;
 	int _autoScrollAnimation2Delay;
+	TeTimer _autoScrollAnimation1Timer;
+	TeTimer _autoScrollAnimation2Timer;
 	Common::Array<float> _autoScrollAnimation1Curve;
 	Common::Array<float> _autoScrollAnimation2Curve;
+	TeCurveAnim2<TeScrollingLayout, TeVector3f32> _autoScrollAnimation1;
+	TeCurveAnim2<TeScrollingLayout, TeVector3f32> _autoScrollAnimation2;
+
 	TeVector3f32 _direction;
+	TeVector3f32 _speed;
+	TeTimer _scrollTimer;
 	bool _mouseControl;
 	bool _enclose;
 	TeLayout *_contentLayout;
 	TeVector3f32 _contentLayoutUserPos;
+
+	TeVector2s32 _slideDownMousePos;
+	float _mouseMoveThreshold;
+
+	TeVector3f32 _lastMouseDownPos;
+	bool _insideMouseThreshold;
+
+	TeSignal0Param _posUpdatedSignal;
 };
 
 } // end namespace Tetraedge

@@ -50,6 +50,8 @@ public:
 
 	TeCurveAnim2<Te3DObject2, TeColor> blackFadeCurveAnim() { return _blackFadeCurveAnim; }
 
+	TeIntrusivePtr<Te3DTexture> texture() { return _texturePtr; }
+
 private:
 
 	TeIntrusivePtr<Te3DTexture> _texturePtr;

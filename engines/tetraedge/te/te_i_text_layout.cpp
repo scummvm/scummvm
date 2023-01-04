@@ -19,11 +19,13 @@
  *
  */
 
-#include "tetraedge/te/te_palette.h"
+#include "tetraedge/te/te_i_text_layout.h"
 
 namespace Tetraedge {
 
-TePalette::TePalette() {
+TeITextLayout::TeITextLayout() {
 }
+
+// TODO: Add more functions here.
 
 } // end namespace Tetraedge

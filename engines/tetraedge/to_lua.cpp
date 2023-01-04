@@ -28,6 +28,8 @@ namespace Tetraedge {
 
 namespace ToLua {
 
+// Also see the tolua copyright notice in to_lua.h.
+
 static char toluaname[128] = "tolua.";
 
 static void tolua_push_globals_table(lua_State *L) {
@@ -41,76 +43,76 @@ static void tolua_push_globals_table(lua_State *L) {
 }
 
 static int class_index_event(lua_State *L) {
-	error ("TODO: Implement ToLua::class_index_event");
+	error("TODO: Implement ToLua::class_index_event");
 }
 
 static int class_newindex_event(lua_State *L) {
-	error ("TODO: Implement ToLua::class_newindex_event");
+	error("TODO: Implement ToLua::class_newindex_event");
 }
 
 static int class_add_event(lua_State *L) {
-	error ("TODO: Implement ToLua::class_add_event");
+	error("TODO: Implement ToLua::class_add_event");
 }
 
 static int class_sub_event(lua_State *L) {
-	error ("TODO: Implement ToLua::class_sub_event");
+	error("TODO: Implement ToLua::class_sub_event");
 }
 
 static int class_mul_event(lua_State *L) {
-	error ("TODO: Implement ToLua::class_mul_event");
+	error("TODO: Implement ToLua::class_mul_event");
 }
 
 static int class_div_event(lua_State *L) {
-	error ("TODO: Implement ToLua::class_div_event");
+	error("TODO: Implement ToLua::class_div_event");
 }
 
 static int class_lt_event(lua_State *L) {
-	error ("TODO: Implement ToLua::class_lt_event");
+	error("TODO: Implement ToLua::class_lt_event");
 }
 
 static int class_le_event(lua_State *L) {
-	error ("TODO: Implement ToLua::class_le_event");
+	error("TODO: Implement ToLua::class_le_event");
 }
 
 static int class_eq_event(lua_State *L) {
-	error ("TODO: Implement ToLua::class_eq_event");
+	error("TODO: Implement ToLua::class_eq_event");
 }
 
 static int class_gc_event(lua_State *L) {
-	error ("TODO: Implement ToLua::class_gc_event");
+	error("TODO: Implement ToLua::class_gc_event");
 }
 
 static void tolua_classevents(lua_State *L) {
-	lua_pushstring(L,"__index");
-	lua_pushcclosure(L,class_index_event,0);
-	lua_rawset(L,-3);
-	lua_pushstring(L,"__newindex");
-	lua_pushcclosure(L,class_newindex_event,0);
-	lua_rawset(L,-3);
-	lua_pushstring(L,"__add");
-	lua_pushcclosure(L,class_add_event,0);
-	lua_rawset(L,-3);
-	lua_pushstring(L,"__sub");
-	lua_pushcclosure(L,class_sub_event,0);
-	lua_rawset(L,-3);
-	lua_pushstring(L,"__mul");
-	lua_pushcclosure(L,class_mul_event,0);
-	lua_rawset(L,-3);
-	lua_pushstring(L,"__div");
-	lua_pushcclosure(L,class_div_event,0);
-	lua_rawset(L,-3);
-	lua_pushstring(L,"__lt");
-	lua_pushcclosure(L,class_lt_event,0);
-	lua_rawset(L,-3);
-	lua_pushstring(L,"__le");
-	lua_pushcclosure(L,class_le_event,0);
-	lua_rawset(L,-3);
-	lua_pushstring(L,"__eq");
-	lua_pushcclosure(L,class_eq_event,0);
-	lua_rawset(L,-3);
-	lua_pushstring(L,"__gc");
-	lua_pushcclosure(L,class_gc_event,0);
-	lua_rawset(L,-3);
+	lua_pushstring(L, "__index");
+	lua_pushcclosure(L, class_index_event, 0);
+	lua_rawset(L, -3);
+	lua_pushstring(L, "__newindex");
+	lua_pushcclosure(L, class_newindex_event, 0);
+	lua_rawset(L, -3);
+	lua_pushstring(L, "__add");
+	lua_pushcclosure(L, class_add_event, 0);
+	lua_rawset(L, -3);
+	lua_pushstring(L, "__sub");
+	lua_pushcclosure(L, class_sub_event, 0);
+	lua_rawset(L, -3);
+	lua_pushstring(L, "__mul");
+	lua_pushcclosure(L, class_mul_event, 0);
+	lua_rawset(L, -3);
+	lua_pushstring(L, "__div");
+	lua_pushcclosure(L, class_div_event, 0);
+	lua_rawset(L, -3);
+	lua_pushstring(L, "__lt");
+	lua_pushcclosure(L, class_lt_event, 0);
+	lua_rawset(L, -3);
+	lua_pushstring(L, "__le");
+	lua_pushcclosure(L, class_le_event, 0);
+	lua_rawset(L, -3);
+	lua_pushstring(L, "__eq");
+	lua_pushcclosure(L, class_eq_event, 0);
+	lua_rawset(L, -3);
+	lua_pushstring(L, "__gc");
+	lua_pushcclosure(L, class_gc_event, 0);
+	lua_rawset(L, -3);
 }
 
 static void tolua_newmetatable(lua_State *L, const char *name) {
@@ -154,7 +156,7 @@ static const char* tolua_typename(lua_State *L, int lo) {
 			lua_concat(L, 2);
 		}
 	}
-	return lua_tostring(L,-1);
+	return lua_tostring(L, -1);
 }
 
 static int tolua_bnd_type(lua_State *L) {
@@ -167,8 +169,8 @@ static void *tolua_clone(lua_State *L, void *dest, lua_CFunction fn) {
 	lua_rawget(L, LUA_REGISTRYINDEX);
 	lua_pushlightuserdata(L, dest);
 	lua_pushcclosure(L, fn, 0);
-	lua_rawset(L,-3);
-	lua_settop(L,-2);
+	lua_rawset(L, -3);
+	lua_settop(L, -2);
 	return dest;
 }
 
@@ -177,12 +179,12 @@ static int tolua_bnd_takeownership(lua_State *L) {
 	lua_CFunction fn = nullptr;
 	if (lua_isuserdata(L, 1)) {
 		if (lua_getmetatable(L, 1)) {
-			lua_pushstring(L,".collector");
-			lua_rawget(L,-2);
-			if (lua_iscfunction(L,-1)) {
+			lua_pushstring(L, ".collector");
+			lua_rawget(L, -2);
+			if (lua_iscfunction(L, -1)) {
 				fn = lua_tocfunction(L, -1);
 			}
-			lua_settop(L,-3);
+			lua_settop(L, -3);
 			void *data = lua_touserdata(L, 1);
 			tolua_clone(L, data, fn);
 		}
@@ -230,7 +232,7 @@ static int tolua_bnd_cast(lua_State *L) {
 }
 
 static void tolua_release(lua_State *L, void *p) {
-	lua_pushstring(L,"tolua_ubox");
+	lua_pushstring(L, "tolua_ubox");
 	lua_rawget(L, LUA_REGISTRYINDEX);
 	lua_pushlightuserdata(L, p);
 	lua_rawget(L, -2);
@@ -431,7 +433,7 @@ void *tolua_tousertype(lua_State *L, int narg, void* def) {
 }
 
 int tolua_toboolean(lua_State *L, int narg, int def) {
-	return lua_gettop(L) < abs(narg) ?  def : lua_toboolean(L,narg);
+	return lua_gettop(L) < abs(narg) ?  def : lua_toboolean(L, narg);
 }
 
 void tolua_pushboolean(lua_State *L, bool val) {

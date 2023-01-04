@@ -20,19 +20,113 @@
  */
 
 #include "common/textconsole.h"
+
+#include "tetraedge/tetraedge.h"
 #include "tetraedge/game/credits.h"
+#include "tetraedge/game/application.h"
 
 namespace Tetraedge {
 
-Credits::Credits() {
+Credits::Credits() : _animCounter(0), _returnToOptions(false) {
 }
 
-void Credits::enter(bool flag) {
-	error("TODO: Implement Credits::enter");
+void Credits::enter(bool returnToOptions) {
+	_returnToOptions = returnToOptions;
+	_animCounter = 0;
+	_timer.start();
+	// TODO: set _field0x50 = 0;
+	_gui.load("menus/credits/credits.lua");
+	Application *app = g_engine->getApplication();
+	app->_frontLayout.addChild(_gui.layoutChecked("menu"));
+
+	Common::String musicPath = _gui.value("musicPath").toString();
+	if (!app->music().isPlaying() || app->music().path() != musicPath) {
+		app->music().stop();
+		app->music().load(musicPath);
+		app->music().play();
+		app->music().volume(1.0f);
+	}
+
+	TeButtonLayout *bgbtn = _gui.buttonLayout("background");
+	if (bgbtn) {
+		bgbtn->onMouseClickValidated().add(this, &Credits::onQuitButton);
+	}
+
+	TeCurveAnim2<TeLayout, TeVector3f32> *posAnim = _gui.layoutPositionLinearAnimation("scrollTextPositionAnim");
+	if (!posAnim)
+		error("Credits gui - couldn't find scrollTextPositionAnim");
+	posAnim->onFinished().add(this, &Credits::onAnimFinished);
+	posAnim->_callbackObj = _gui.layoutChecked("text");
+	posAnim->_callbackMethod = &TeLayout::setPosition;
+	posAnim->play();
+
+	TeCurveAnim2<TeLayout, TeVector3f32> *anchorAnim = _gui.layoutAnchorLinearAnimation("scrollTextAnchorAnim");
+	if (!anchorAnim)
+		error("Credits gui - couldn't find scrollTextAnchorAnim");
+
+	anchorAnim->_callbackObj = _gui.layoutChecked("text");
+	anchorAnim->_callbackMethod = &TeLayout::setAnchor;
+	anchorAnim->play();
+
+	TeCurveAnim2<TeLayout, TeVector3f32> *bgPosAnim = _gui.layoutPositionLinearAnimation("scrollBackgroundPositionAnim");
+	if (!bgPosAnim)
+		error("Credits gui - couldn't find scrollBackgroundPositionAnim");
+
+	bgPosAnim->_callbackObj = _gui.layoutChecked("backgroundSprite");
+	bgPosAnim->_callbackMethod = &TeLayout::setAnchor;
+	bgPosAnim->play();
+
+	_curveAnim._runTimer.pausable(false);
+	_curveAnim.stop();
+	_curveAnim._startVal = TeColor(0xff, 0xff, 0xff, 0);
+	_curveAnim._endVal = TeColor(0xff, 0xff, 0xff, 0xff);
+	Common::Array<float> curve;
+	curve.push_back(0.0f);
+	curve.push_back(0.0f);
+	curve.push_back(0.0f);
+	curve.push_back(0.0f);
+	curve.push_back(1.0f);
+	_curveAnim._repeatCount = 1;
+	_curveAnim.setCurve(curve);
+	_curveAnim._duration = 12000;
+
+	TeLayout *backgrounds = _gui.layoutChecked("Backgrounds");
+	if (_animCounter < backgrounds->childCount()) {
+		TeSpriteLayout *bgchild = dynamic_cast<TeSpriteLayout *>(backgrounds->child(_animCounter));
+		if (!bgchild)
+			error("Child of backgrounds is not a TeSpriteLayout");
+		_curveAnim._callbackObj = bgchild;
+		_curveAnim._callbackMethod = &TeLayout::setColor;
+		_curveAnim.play();
+		const Common::String bgAnimName = bgchild->name() + "Anim";
+		bgPosAnim = _gui.layoutPositionLinearAnimation(bgAnimName);
+		if (!bgPosAnim)
+			error("Couldn't find bg position anim %s", bgAnimName.c_str());
+		bgPosAnim->_callbackObj = bgchild;
+		bgPosAnim->_callbackMethod = &TeLayout::setPosition;
+		bgPosAnim->play();
+	}
+	_curveAnim.onFinished().add(this, &Credits::onBackgroundAnimFinished);
 }
 
 void Credits::leave() {
-	error("TODO: Implement Credits::leave");
+	_curveAnim.stop();
+	for (auto anim : _gui.layoutPositionLinearAnimations()) {
+		anim._value->stop();
+	}
+	if (_gui.loaded()) {
+		Application *app = g_engine->getApplication();
+		app->captureFade();
+		app->_frontLayout.removeChild(_gui.layoutChecked("menu"));
+		_timer.stop();
+		_gui.unload();
+		if (_returnToOptions)
+			error("TODO: Implement returning to options menu");
+		else
+			app->mainMenu().enter();
+		app->fade();
+		_curveAnim.onFinished().remove(this, &Credits::onBackgroundAnimFinished);
+	}
 }
 
 bool Credits::onAnimFinished() {
@@ -41,8 +135,24 @@ bool Credits::onAnimFinished() {
 }
 
 bool Credits::onBackgroundAnimFinished() {
-	//TeLayout *buttonsLayout = _gui.layout("buttons");
-	error("TODO: Implement Credits::onBackgroundAnimFinished");
+	_animCounter++;
+	TeLayout *backgrounds = _gui.layoutChecked("Backgrounds");
+	if (_animCounter < backgrounds->childCount()) {
+		TeSpriteLayout *bgchild = dynamic_cast<TeSpriteLayout *>(backgrounds->child(_animCounter));
+		if (!bgchild)
+			error("Children of credits Backgrounds should be Sprites.");
+		_curveAnim._callbackObj = bgchild;
+		_curveAnim._callbackMethod = &TeLayout::setColor;
+		_curveAnim.play();
+		const Common::String bgAnimName = bgchild->name() + "Anim";
+		TeCurveAnim2<TeLayout, TeVector3f32> *bgposanim = _gui.layoutPositionLinearAnimation(bgAnimName);
+		if (!bgposanim)
+			error("Couldn't find bg position anim %s", bgAnimName.c_str());
+		bgposanim->_callbackObj = bgchild;
+		bgposanim->_callbackMethod = &TeLayout::setPosition;
+		bgposanim->play();
+	}
+	return false;
 }
 
 bool Credits::onPadButtonUp(uint button) {
@@ -54,13 +164,12 @@ bool Credits::onPadButtonUp(uint button) {
 }
 
 bool Credits::onQuitButton() {
-	TeCurveAnim2<TeI3DObject2, TeVector3f32> *anim1 = _gui.layoutPositionLinearAnimation("scrollTextPositionAnim");
+	TeCurveAnim2<TeLayout, TeVector3f32> *anim1 = _gui.layoutPositionLinearAnimation("scrollTextPositionAnim");
 	anim1->stop();
-	TeCurveAnim2<TeI3DObject2, TeVector3f32> *anim2 = _gui.layoutPositionLinearAnimation("scrollTextAnchorAnim");
+	TeCurveAnim2<TeLayout, TeVector3f32> *anim2 = _gui.layoutAnchorLinearAnimation("scrollTextAnchorAnim");
 	anim2->stop();
 	leave();
 	return true;
 }
-
 
 } // end namespace Tetraedge

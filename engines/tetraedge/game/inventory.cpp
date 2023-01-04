@@ -199,10 +199,10 @@ bool Inventory::addObject(InventoryObject *obj) {
 				TeLayout *slot = _gui.layout(Common::String::format("page%dSlot%d", pageNo, slotNo));
 				if (!slot)
 					break;
-				for (unsigned int c = 0; c < slot->childCount(); c++) {
+				for (long c = 0; c < slot->childCount(); c++) {
 					Te3DObject2 *child = slot->child(c);
-					InventoryObject *obj = dynamic_cast<InventoryObject *>(child);
-					if (obj) {
+					InventoryObject *iobj = dynamic_cast<InventoryObject *>(child);
+					if (iobj) {
 						slot->removeChild(child);
 						c--;
 					}
@@ -215,7 +215,7 @@ bool Inventory::addObject(InventoryObject *obj) {
 
 	int pageno = 0;
 	unsigned int totalSlots = 0;
-	bool retval;
+	bool retval = false;
 	const Common::String newObjName = obj->name();
 	auto invObjIter = _invObjects.begin();
 	bool finished = false;
@@ -238,8 +238,8 @@ bool Inventory::addObject(InventoryObject *obj) {
 
 			TeTextLayout *newText = new TeTextLayout();
 			newText->setSizeType(CoordinatesType::RELATIVE_TO_PARENT);
-			newText->setPosition(TeVector3f32(1.0,1.0,0.0));
-			newText->setSize(TeVector3f32(1.0,1.0,0.0));
+			newText->setPosition(TeVector3f32(1.0, 1.0, 0.0));
+			newText->setSize(TeVector3f32(1.0, 1.0, 0.0));
 			newText->setTextSizeType(1);
 			newText->setTextSizeProportionalToWidth(200);
 			newText->setText(_gui.value("textAttributs").toString() + objectName((*invObjIter)->name()));
@@ -426,7 +426,7 @@ void Inventory::selectedObject(InventoryObject *obj) {
 		_gui.buttonLayoutChecked("lire")->setEnable(isDocument(objId));
 		game->setCurrentObjectSprite(obj->spritePath());
 		TeLayout *textObj = _gui.layout("textObject");
-		for (unsigned int i = 0; i < textObj->childCount(); i++) {
+		for (long i = 0; i < textObj->childCount(); i++) {
 			if (textObj->child(i)->name() == obj->name()) {
 				textObj->setVisible(true);
 				textObj->child(i)->setVisible(true);

@@ -26,6 +26,4 @@ namespace Tetraedge {
 TeListLayout::TeListLayout() {
 }
 
-// TODO: Add more functions here.
-
 } // end namespace Tetraedge

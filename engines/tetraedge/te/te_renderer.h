@@ -95,7 +95,7 @@ public:
 	void renderTransparentMeshes();
 	void reset();
 	void rotate(const TeQuaternion &rot);
-	void rotate(float f1, float f2, float f3, float f4);
+	void rotate(float angle, float rx, float ry, float rz);
 	void scale(float xs, float ys, float zs);
 	bool scissorEnabled() const { return _scissorEnabled; }
 	int scissorHeight() const { return _scissorHeight; }

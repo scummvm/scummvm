@@ -26,6 +26,4 @@ namespace Tetraedge {
 TeI3DObject2::TeI3DObject2() {
 }
 
-// TODO: Add more functions here.
-
 } // end namespace Tetraedge

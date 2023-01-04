@@ -39,12 +39,12 @@ bool TetraedgeMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSupportsListSaves) ||
 	    (f == kSupportsDeleteSave) ||
 	    (f == kSavesSupportMetaInfo) ||
-	   // (f == kSavesSupportThumbnail) || // TODO: support save thumbnail
+	    (f == kSavesSupportThumbnail) ||
 	    (f == kSupportsLoadingDuringStartup);
 }
 
 void TetraedgeMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
-	thumb.create(320, 200, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	Tetraedge::TetraedgeEngine::getSavegameThumbnail(thumb);
 }
 
 

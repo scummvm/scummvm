@@ -63,27 +63,27 @@ void Confirm::enter(const Common::String &guiPath, const Common::String &y) {
 			error("Missing translations for ok and cancel");
 		}
 
-		TeTextLayout *yesUpLayout = _gui.textLayout("yesUpLayout");
+		TeITextLayout *yesUpLayout = _gui.textLayout("yesUpLayout");
 		if (yesUpLayout)
 			yesUpLayout->setText(textAttributs + *okButtonLoc);
 
-		TeTextLayout *yesDownLayout = _gui.textLayout("yesDownLayout");
+		TeITextLayout *yesDownLayout = _gui.textLayout("yesDownLayout");
 		if (yesDownLayout)
 			yesDownLayout->setText(textAttributsDown + *okButtonLoc);
 
-		TeTextLayout *yesRollOverLayout = _gui.textLayout("yesRollOverLayout");
+		TeITextLayout *yesRollOverLayout = _gui.textLayout("yesRollOverLayout");
 		if (yesRollOverLayout)
 			yesRollOverLayout->setText(textAttributs + *okButtonLoc);
 
-		TeTextLayout *noUpLayout = _gui.textLayout("noUpLayout");
+		TeITextLayout *noUpLayout = _gui.textLayout("noUpLayout");
 		if (noUpLayout)
 			noUpLayout->setText(textAttributs + *cancelButtonLoc);
 
-		TeTextLayout *noDownLayout = _gui.textLayout("noDownLayout");
+		TeITextLayout *noDownLayout = _gui.textLayout("noDownLayout");
 		if (noDownLayout)
 			noDownLayout->setText(textAttributsDown + *cancelButtonLoc);
 
-		TeTextLayout *noRollOverLayout = _gui.textLayout("noRollOverLayout");
+		TeITextLayout *noRollOverLayout = _gui.textLayout("noRollOverLayout");
 		if (noRollOverLayout)
 			noRollOverLayout->setText(textAttributs + *cancelButtonLoc);
 	}

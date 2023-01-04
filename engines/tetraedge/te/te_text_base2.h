@@ -98,7 +98,7 @@ private:
 
 	Common::Array<Common::String> _wrappedLines;
 
-	Common::Array<unsigned int> _lineBreaks;
+	Common::Array<uint32> _lineBreaks;
 	Common::HashMap<unsigned int, TeColor> _colors;
 	Common::HashMap<unsigned int, TeIntrusivePtr<TeFont3>> _fonts;
 };

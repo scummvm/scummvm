@@ -225,7 +225,7 @@ void TeRenderer::disableZBuffer() {
 }
 
 void TeRenderer::drawLine(const TeVector3f32 &from, const TeVector3f32 &to) {
-	error("TODO: TeRenderer::drawLine Implement me.");
+	error("TODO: Implement TeRenderer::drawLine");
 }
 
 void TeRenderer::enableTexture() {
@@ -494,15 +494,15 @@ void TeRenderer::reset() {
 }
 
 void TeRenderer::rotate(const TeQuaternion &rot) {
-	error("TODO: TeRenderer::rotate Implement me.");
+	_matriciesStacks[_matrixMode].rotate(rot);
 }
 
-void TeRenderer::rotate(float f1, float f2, float f3, float f4) {
-	error("TODO: TeRenderer::rotate Implement me.");
+void TeRenderer::rotate(float angle, float rx, float ry, float rz) {
+	_matriciesStacks[_matrixMode].rotate(angle, TeVector3f32(rx, ry, rz));
 }
 
 void TeRenderer::scale(float xs, float ys, float zs) {
-	error("TODO: TeRenderer::scale Implement me.");
+	_matriciesStacks[_matrixMode].scale(TeVector3f32(xs, ys, zs));
 }
 
 void TeRenderer::setClearColor(const TeColor &col) {
@@ -564,7 +564,7 @@ void TeRenderer::shadowMode(enum ShadowMode mode) {
 }
 
 void TeRenderer::translate(float x, float y, float z) {
-	error("TODO: TeRenderer::translate Implement me.");
+	_matriciesStacks[_matrixMode].translate(TeVector3f32(x, y, z));
 }
 
 Common::String TeRenderer::vendor() {

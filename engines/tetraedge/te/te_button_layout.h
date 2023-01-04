@@ -86,6 +86,7 @@ public:
 	}
 
 	void setState(State newState);
+	State state() const { return _currentState; };
 
 	TeSignal0Param &onMouseClickValidated() { return _onMouseClickValidatedSignal; };
 	TeSignal0Param &onButtonChangedToStateUpSignal() { return _onButtonChangedToStateUpSignal; };

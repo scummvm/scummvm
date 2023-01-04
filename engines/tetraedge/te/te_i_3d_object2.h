@@ -29,12 +29,6 @@ public:
 	TeI3DObject2();
 
 	virtual ~TeI3DObject2() {}
-
-	// TODO add public members
-
-private:
-	// TODO add private members
-
 };
 
 } // end namespace Tetraedge

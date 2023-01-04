@@ -85,17 +85,17 @@ void TeCore::fileFlagSystemSetFlag(const Common::String &name, const Common::Str
 }
 
 bool TeCore::fileFlagSystemFlagsContains(const Common::String &name) const {
-	// TODO: Implement me
+	error("TODO: Implement TeCore::fileFlagSystemFlagsContains");
 	return false;
 }
 
 Common::Array<Common::String> TeCore::fileFlagSystemPossibleFlags() {
-	// TODO: Implement me
+	error("TODO: Implement TeCore::fileFlagSystemPossibleFlags");
 	return Common::Array<Common::String>();
 }
 
 bool TeCore::fileFlagSystemPossibleFlagsContains(const Common::String &name) const {
-	// TODO: Implement me
+	error("TODO: Implement TeCore::fileFlagSystemPossibleFlagsContains");
 	return false;
 }
 
@@ -108,7 +108,7 @@ void TeCore::language(const Common::String &val) {
 }
 
 bool TeCore::onActivityTrackingAlarm() {
-	error("TODO: Implement me");
+	error("TODO: Implement TeCore::onActivityTrackingAlarm");
 }
 
 
@@ -147,16 +147,32 @@ Common::Path TeCore::findFile(const Common::Path &path) {
 		"de-es-fr-it-en"
 	};
 
+	// Note: the audio files for a few videos have a weird path
+	// structure where the language is first, followed by some other
+	// part names, followed by the file.
+	// Dialogs have part stuff followed by lang, so we have to try
+	// adding language before *and* after the suffix.
+
 	for (int langtype = 0; langtype < ARRAYSIZE(langs); langtype++) {
+		const Common::Path &lang = langs[langtype];
 		for (int i = 0; i < ARRAYSIZE(pathSuffixes); i++) {
-			Common::Path testPath = dir.join(pathSuffixes[i]);
-			if (!langs[langtype].empty()) {
-				testPath.joinInPlace(langs[langtype]);
-			}
+			const Common::Path &suffix = pathSuffixes[i];
+
+			Common::Path testPath = dir;
+			if (!suffix.empty())
+				testPath.joinInPlace(suffix);
+			if (!lang.empty())
+				testPath.joinInPlace(lang);
 			testPath.joinInPlace(fname);
-			//debug("check for %s", testPath.toString());
 			if (Common::File::exists(testPath) || Common::FSNode(testPath).exists())
 				return testPath;
+
+			// also try the other way around
+ 			if (!lang.empty() && !suffix.empty()) {
+				testPath = dir.join(lang).joinInPlace(suffix).join(fname);
+				if (Common::File::exists(testPath) || Common::FSNode(testPath).exists())
+					return testPath;
+			}
 		}
 	}
 

@@ -147,7 +147,7 @@ void TeFreeMoveZone::clear() {
 	_projectedPointsDirty = true;
 	_transformedVerticies.clear();
 	_borders.clear();
-	// TODO: Some other point vector here.
+	// TODO: Clear some other TeVector2f32 list here (field_0x178)
 	_gridDirty = true;
 	_graph->_flags.clear();
 	_graph->_size = TeVector2s32(0, 0);
@@ -327,7 +327,7 @@ static int segmentIntersection(const TeVector2f32 &s1start, const TeVector2f32 &
 }
 
 
-bool TeFreeMoveZone::hasBlockerIntersection(const TeVector2s32 &pt) {
+byte TeFreeMoveZone::hasBlockerIntersection(const TeVector2s32 &pt) {
 	TeVector2f32 borders[4];
 
 	const float gridOffsetX = _gridOffsetSomething.getX();

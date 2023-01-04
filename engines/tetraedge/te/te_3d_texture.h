@@ -59,6 +59,8 @@ public:
 	bool unload();
 	void update(const TeImage &img, uint xoff, uint yoff);
 
+	void writeTo(Graphics::Surface &surf);
+
 	int _numFrames;
 	int _frameRate;
 	uint _width;

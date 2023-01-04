@@ -198,6 +198,7 @@ public:
 	void setExitZone(const Common::String &zone) { _exitZone = zone; }
 	Common::RandomSource &randomSource() { return _randomSource; }
 	void setLoadName(const Common::String &loadName) { _loadName = loadName; }
+	bool hasLoadName() const { return !_loadName.empty(); }
 
 private:
 	bool _luaShowOwnerError;

@@ -37,9 +37,6 @@ public:
 	void load(const Common::Path &path);
 	const Common::String *value(const Common::String &key);
 
-private:
-	// TODO add private members
-
 };
 
 } // end namespace Tetraedge

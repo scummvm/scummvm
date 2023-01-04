@@ -148,11 +148,11 @@ byte TeMusic::currentData() {
 	return retval;
 }
 
-/*
- This is probably not needed - it's the thread function
- which is handled by the mixer in ScummVM */
+
+// This is probably not needed - it's the thread function
+// which is handled by the mixer in ScummVM
 void TeMusic::entry() {
-	error("TODO: Implement me");
+	error("TODO: Implement TeMusic::entry");
 }
 
 bool TeMusic::isPlaying() {

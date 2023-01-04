@@ -118,7 +118,7 @@ void MainMenu::enter() {
 		}
 	}
 	setCenterButtonsVisibility(true);
-	TeTextLayout *versionNum = textLayout("versionNumber");
+	TeITextLayout *versionNum = textLayout("versionNumber");
 	if (versionNum) {
 		const Common::String versionSectionStr("<section style=\"left\" /><color r=\"255\" g=\"255\" b=\"255\"/><font file=\"Common/Fonts/arial.ttf\" size=\"12\" />");
 		versionNum->setText(versionSectionStr + app->getVersionString());
@@ -222,7 +222,12 @@ bool MainMenu::onEnterGameRotateAnimFinished() {
 }
 
 bool MainMenu::onGalleryButtonValidated() {
-	error("TODO: Implement MainMenu::onGalleryButtonValidated");
+	Application *app = g_engine->getApplication();
+	app->captureFade();
+	leave();
+	app->globalBonusMenu().enter();
+	app->fade();
+	return false;
 }
 
 bool MainMenu::onHowToButtonValidated() {

@@ -64,6 +64,15 @@ void Te3DTexture::copyCurrentRender(uint xoffset, uint yoffset, uint x, uint y) 
 	glCopyTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, x, y, _texWidth, _texHeight);
 }
 
+void Te3DTexture::writeTo(Graphics::Surface &surf) {
+	Graphics::Surface fullTex;
+	fullTex.create(_texWidth, _texHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, fullTex.getPixels());
+	surf.create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	surf.copyRectToSurface(fullTex, 0, 0, Common::Rect(_width, _height));
+	fullTex.free();
+}
+
 void Te3DTexture::create() {
 	_flipY = false;
 	_leftBorder = _btmBorder = _texWidth = _texHeight = 0;

@@ -25,6 +25,7 @@
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/application.h"
+#include "tetraedge/game/game.h"
 #include "tetraedge/game/splash_screens.h"
 
 namespace Tetraedge {
@@ -87,7 +88,11 @@ bool SplashScreens::onQuitSplash() {
 	app->captureFade();
 	TeLuaGUI::unload();
 	_entered = false;
-	app->mainMenu().enter();
+	if (!g_engine->getGame()->hasLoadName()) {
+		app->mainMenu().enter();
+	} else {
+		app->startGame(false, 1);
+	}
 	app->fade();
 	return false;
 }

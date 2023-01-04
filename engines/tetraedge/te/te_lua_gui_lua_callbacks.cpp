@@ -74,7 +74,7 @@ static float TeLuaToF32(lua_State *L, int index) {
 	}
 }
 
-static bool TeLuaToBool(lua_State *L,int index) {
+static bool TeLuaToBool(lua_State *L, int index) {
 	if (lua_type(L, index) != LUA_TBOOLEAN) {
 		warning("TeLuaToBool:: not a bool");
 		return false;
@@ -107,7 +107,7 @@ static TeColor TeLuaToTeColor(lua_State *L, int index) {
 
 	lua_settop(L, -2);
 	lua_pushinteger(L, 3);
-	lua_gettable(L,index);
+	lua_gettable(L, index);
 	if (lua_isnumber(L, -1)) {
 		retval.b() = TeLuaToU32(L, -1);
 	}
@@ -209,7 +209,7 @@ static bool loadCommonLayoutItems(lua_State *L, const char *s, TeLayout *layout)
 }
 
 
-// TODO: Fix this.
+// TODO: Fix this widescreen flag
 static bool _g_bWidescreen = false;
 
 int layoutBindings(lua_State *L) {
@@ -229,7 +229,7 @@ int layoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "consoleNoStretch")) {
 				warning("TODO: Handle _g_bWidescreen");
 				if (_g_bWidescreen) {
-					layout->setScale(TeVector3f32(0.7500001f, 1.0f ,1.0f));
+					layout->setScale(TeVector3f32(0.7500001f, 1.0f, 1.0f));
 				}
 			} else {
 				warning("[TeLuaGUI.layoutBindings] Unreconized attribute : %s", s);
@@ -246,7 +246,7 @@ int layoutBindings(lua_State *L) {
 	}
 	lua_pushstring(L, "__TeLuaGUIThis");
 	lua_gettable(L, LUA_REGISTRYINDEX);
-	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L,-1);
+	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L, -1);
 	TeLuaGUI::StringMap<TeLayout *> &layouts = gui->layouts();
 	if (!layouts.contains(layout->name())) {
 		layouts.setVal(layout->name(), layout);
@@ -289,7 +289,7 @@ int listLayoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "consoleNoStretch")) {
 				warning("TODO: Handle _g_bWidescreen");
 				if (_g_bWidescreen) {
-					layout->setScale(TeVector3f32(0.7500001f, 1.0f ,1.0f));
+					layout->setScale(TeVector3f32(0.7500001f, 1.0f, 1.0f));
 				}
 			} else {
 				warning("[TeLuaGUI.layoutBindings] Unreconized attribute : %s", s);
@@ -306,7 +306,7 @@ int listLayoutBindings(lua_State *L) {
 	}
 	lua_pushstring(L, "__TeLuaGUIThis");
 	lua_gettable(L, LUA_REGISTRYINDEX);
-	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L,-1);
+	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L, -1);
 	TeLuaGUI::StringMap<TeListLayout *> &layouts = gui->listLayouts();
 	if (!layouts.contains(layout->name())) {
 		layouts.setVal(layout->name(), layout);
@@ -376,7 +376,7 @@ int spriteLayoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "consoleNoStretch")) {
 				warning("TODO: Handle _g_bWidescreen");
 				if (_g_bWidescreen) {
-					layout->setScale(TeVector3f32(0.7500001,1.0,1.0));
+					layout->setScale(TeVector3f32(0.7500001f, 1.0f, 1.0f));
 				}
 			} else {
 				warning("[TeLuaGUI.layoutBindings] Unreconized attribute : %s", s);
@@ -470,7 +470,7 @@ int buttonLayoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "consoleNoStretch")) {
 				warning("TODO: Handle _g_bWidescreen");
 				if (_g_bWidescreen) {
-					layout->setScale(TeVector3f32(0.7500001,1.0,1.0));
+					layout->setScale(TeVector3f32(0.7500001f, 1.0f, 1.0f));
 				}
 			} else {
 				warning("[TeLuaGUI.buttonLayoutBindings] Unreconized attribute : %s", s);
@@ -490,7 +490,7 @@ int buttonLayoutBindings(lua_State *L) {
 
 	lua_pushstring(L, "__TeLuaGUIThis");
 	lua_gettable(L, LUA_REGISTRYINDEX);
-	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L,-1);
+	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L, -1);
 	TeLuaGUI::StringMap<TeButtonLayout *> &blayouts = gui->buttonLayouts();
 	if (!blayouts.contains(layout->name())) {
 		blayouts.setVal(layout->name(), layout);
@@ -540,7 +540,7 @@ int checkboxLayoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "consoleNoStretch")) {
 				warning("TODO: Handle _g_bWidescreen");
 				if (_g_bWidescreen) {
-					layout->setScale(TeVector3f32(0.7500001,1.0,1.0));
+					layout->setScale(TeVector3f32(0.7500001f, 1.0f, 1.0f));
 				}
 			} else {
 				warning("[TeLuaGUI.checkboxLayoutBindings] Unreconized attribute : %s", s);
@@ -560,7 +560,7 @@ int checkboxLayoutBindings(lua_State *L) {
 
 	lua_pushstring(L, "__TeLuaGUIThis");
 	lua_gettable(L, LUA_REGISTRYINDEX);
-	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L,-1);
+	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L, -1);
 	TeLuaGUI::StringMap<TeCheckboxLayout *> &blayouts = gui->checkboxLayouts();
 	if (!blayouts.contains(layout->name())) {
 		blayouts.setVal(layout->name(), layout);
@@ -579,7 +579,53 @@ int layoutPositionLinearAnimationBindings(lua_State *L) {
 		return 0;
 	}
 
-	error("TODO: Implement layoutPositionLinearAnimationBindings.");
+	TeCurveAnim2<TeLayout, TeVector3f32> *anim = new TeCurveAnim2<TeLayout, TeVector3f32>();
+	lua_pushnil(L);
+	Common::String name;
+	while (lua_next(L, -2) != 0) {
+		int type = lua_type(L, -2);
+		if (type == LUA_TSTRING) {
+			const char *s = lua_tolstring(L, -2, nullptr);
+			if (!strcmp(s, "name")) {
+				name = TeLuaToTeString(L, -1);
+			} else if (!strcmp(s, "duration")) {
+				anim->_duration = TeLuaToF32(L, -1);
+			} else if (!strcmp(s, "startValue")) {
+				static const TeVector3f32 defaultStart(0.0f, 0.0f, 0.0f);
+				anim->_startVal = TeLuaToTeVector3f32(L, -1, defaultStart);
+			} else if (!strcmp(s, "endValue")) {
+				static const TeVector3f32 defaultEnd(0.0f, 0.0f, 0.0f);
+				anim->_endVal = TeLuaToTeVector3f32(L, -1, defaultEnd);
+			} else if (!strcmp(s, "layout")) {
+				// skip.
+			} else if (!strcmp(s, "curve")) {
+				const Common::Array<float> curve = TeLuaToFloatArray(L, -1);
+				anim->setCurve(curve);
+			} else {
+				error("[TeLuaGUI.layoutPositionLinearAnimationBindings] Unreconized attribute : %s", s);
+			}
+			lua_settop(L, -2);
+		}
+	}
+
+	if (name.empty()) {
+		name = Common::String::format("%p", (void *)anim);
+	}
+	anim->_callbackMethod = &TeLayout::setPosition;
+	lua_pushstring(L, "__TeLuaGUIThis");
+	lua_gettable(L, LUA_REGISTRYINDEX);
+	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L, -1);
+	TeLuaGUI::StringMap<TeCurveAnim2<TeLayout, TeVector3f32> *> &anims = gui->layoutPositionLinearAnimations();
+	if (!anims.contains(name)) {
+		anims.setVal(name, anim);
+		lua_pushlightuserdata(L, (void *)(anim));
+		return true;
+	} else {
+		warning("layoutPositionLinearAnimationBindings:: multiple objects with name %s", name.c_str());
+		delete anim;
+		return false;
+	}
+	return true;
 }
 
 int layoutAnchorLinearAnimationBindings(lua_State *L) {
@@ -588,7 +634,7 @@ int layoutAnchorLinearAnimationBindings(lua_State *L) {
 		return 0;
 	}
 
-	TeCurveAnim2<TeLayout,TeVector3f32> *anim = new TeCurveAnim2<TeLayout,TeVector3f32>();
+	TeCurveAnim2<TeLayout, TeVector3f32> *anim = new TeCurveAnim2<TeLayout, TeVector3f32>();
 	lua_pushnil(L);
 	Common::String name;
 	while (lua_next(L, -2) != 0) {
@@ -613,7 +659,7 @@ int layoutAnchorLinearAnimationBindings(lua_State *L) {
 			} else {
 				error("[TeLuaGUI.layoutAnchorLinearAnimationBindings] Unreconized attribute : %s", s);
 			}
-			lua_settop(L,-2);
+			lua_settop(L, -2);
 		}
 	}
 
@@ -623,7 +669,7 @@ int layoutAnchorLinearAnimationBindings(lua_State *L) {
 	anim->_callbackMethod = &TeLayout::setAnchor;
 	lua_pushstring(L, "__TeLuaGUIThis");
 	lua_gettable(L, LUA_REGISTRYINDEX);
-	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L,-1);
+	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L, -1);
 	TeLuaGUI::StringMap<TeCurveAnim2<TeLayout, TeVector3f32> *> &anims = gui->layoutAnchorLinearAnimations();
 	if (!anims.contains(name)) {
 		anims.setVal(name, anim);
@@ -664,7 +710,7 @@ int textLayoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "consoleNoStretch")) {
 				warning("TODO: Handle _g_bWidescreen");
 				if (_g_bWidescreen) {
-					layout->setScale(TeVector3f32(0.7500001,1.0,1.0));
+					layout->setScale(TeVector3f32(0.7500001f, 1.0f, 1.0f));
 				}
 			} else {
 				warning("[TeLuaGUI.textLayoutBindings] Unreconized attribute : %s", s);
@@ -682,7 +728,7 @@ int textLayoutBindings(lua_State *L) {
 	lua_pushstring(L, "__TeLuaGUIThis");
 	lua_gettable(L, LUA_REGISTRYINDEX);
 
-	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L,-1);
+	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L, -1);
 	TeLuaGUI::StringMap<TeTextLayout *> &layouts = gui->textLayouts();
 	if (!layouts.contains(layout->name())) {
 		layouts.setVal(layout->name(), layout);
@@ -710,7 +756,7 @@ int colorLinearAnimationBindings(lua_State *L) {
 		return 0;
 	}
 
-	TeCurveAnim2<Te3DObject2,TeColor> *anim = new TeCurveAnim2<Te3DObject2, TeColor>();
+	TeCurveAnim2<Te3DObject2, TeColor> *anim = new TeCurveAnim2<Te3DObject2, TeColor>();
 	lua_pushnil(L);
 	Common::String name;
 	while (lua_next(L, -2) != 0) {
@@ -732,7 +778,7 @@ int colorLinearAnimationBindings(lua_State *L) {
 			} else {
 				error("[TeLuaGUI.colorLinearAnimationBindings] Unreconized attribute : %s", s);
 			}
-			lua_settop(L,-2);
+			lua_settop(L, -2);
 		}
 	}
 
@@ -742,7 +788,7 @@ int colorLinearAnimationBindings(lua_State *L) {
 	anim->_callbackMethod = &Te3DObject2::setColor;
 	lua_pushstring(L, "__TeLuaGUIThis");
 	lua_gettable(L, LUA_REGISTRYINDEX);
-	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L,-1);
+	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L, -1);
 	TeLuaGUI::StringMap<TeCurveAnim2<Te3DObject2, TeColor> *> &anims = gui->colorLinearAnimations();
 	if (!anims.contains(name)) {
 		anims.setVal(name, anim);
@@ -782,7 +828,7 @@ int scrollingLayoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "inertiaAnimationDuration")) {
 				layout->setInertiaAnimationDuration(TeLuaToU32(L, -1));
 			} else if (!strcmp(s, "inertiaAnimationCurve")) {
-				layout->setInertiaAnimationCurve(TeLuaToFloatArray(L ,-1));
+				layout->setInertiaAnimationCurve(TeLuaToFloatArray(L, -1));
 			} else if (!strcmp(s, "direction")) {
 				TeVector3f32 newdir = TeLuaToTeVector3f32(L, -1, layout->direction());
 				layout->setDirection(newdir);
@@ -815,7 +861,7 @@ int scrollingLayoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "consoleNoStretch")) {
 				warning("TODO: Handle _g_bWidescreen");
 				if (_g_bWidescreen) {
-					layout->setScale(TeVector3f32(0.7500001,1.0,1.0));
+					layout->setScale(TeVector3f32(0.7500001f, 1.0f, 1.0f));
 				}
 			} else {
 				warning("[TeLuaGUI.scrollingLayoutBindings] Unreconized attribute : %s", s);
@@ -833,7 +879,7 @@ int scrollingLayoutBindings(lua_State *L) {
 	lua_pushstring(L, "__TeLuaGUIThis");
 	lua_gettable(L, LUA_REGISTRYINDEX);
 
-	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L,-1);
+	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L, -1);
 	TeLuaGUI::StringMap<TeScrollingLayout *> &layouts = gui->scrollingLayouts();
 	if (!layouts.contains(layout->name())) {
 		layouts.setVal(layout->name(), layout);
@@ -869,7 +915,7 @@ int extendedTextLayoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "autoScrollDelay")) {
 				layout->setAutoScrollDelay(TeLuaToS32(L, -1));
 			} else if (!strcmp(s, "autoScrollSpeed")) {
-				layout->setAutoScrollSpeed(TeLuaToS32(L, -1));
+				layout->setAutoScrollSpeed(TeLuaToF32(L, -1));
 			} else if (!strcmp(s, "textSizeType")) {
 				layout->setTextSizeType(TeLuaToS32(L, -1));
 			} else if (!strcmp(s, "textSizeProportionalToWidth")) {
@@ -877,7 +923,7 @@ int extendedTextLayoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "consoleNoStretch")) {
 				warning("TODO: Handle _g_bWidescreen");
 				if (_g_bWidescreen) {
-					layout->setScale(TeVector3f32(0.7500001,1.0,1.0));
+					layout->setScale(TeVector3f32(0.7500001f, 1.0f, 1.0f));
 				}
 			} else {
 				warning("[TeLuaGUI.textLayoutBindings] Unreconized attribute : %s", s);
@@ -895,7 +941,7 @@ int extendedTextLayoutBindings(lua_State *L) {
 	lua_pushstring(L, "__TeLuaGUIThis");
 	lua_gettable(L, LUA_REGISTRYINDEX);
 
-	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L,-1);
+	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L, -1);
 	TeLuaGUI::StringMap<TeExtendedTextLayout *> &layouts = gui->extendedTextLayouts();
 	if (!layouts.contains(layout->name())) {
 		layouts.setVal(layout->name(), layout);

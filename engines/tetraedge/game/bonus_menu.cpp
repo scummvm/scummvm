@@ -32,11 +32,68 @@ BonusMenu::BonusMenu() {
 }
 
 void BonusMenu::enter(const Common::String &scriptName) {
-	error("TODO: implement me.");
+	bool loaded = load(scriptName);
+	if (!loaded)
+		error("BonusMenu::enter: failed to load %s", scriptName.c_str());
+	Application *app = g_engine->getApplication();
+	app->_frontLayout.addChild(layoutChecked("menu"));
+
+	buttonLayoutChecked("quitButton")->onMouseClickValidated().add(this, &BonusMenu::onQuitButton);
+
+	int btnNo = 0;
+	while (true) {
+		const Common::String btnNoStr = Common::String::format("%d", btnNo);
+		TeButtonLayout *btn = buttonLayout(btnNoStr);
+		if (!btn)
+			break;
+		SaveButton *saveBtn = new SaveButton(btn, btnNoStr);
+		_saveButtons.push_back(saveBtn);
+
+		// TODO: Finish this.
+
+		btnNo++;
+	}
+
+	btnNo = 0;
+	while( true ) {
+		const Common::String btnNoStr = Common::String::format("slot%d", btnNo);
+		TeLayout *l = layout(btnNoStr);
+		if (!l)
+			break;
+
+		if (btnNo < (int)_saveButtons.size()) {
+			l->addChild(_saveButtons[btnNo]);
+		}
+		btnNo = btnNo + 1;
+	}
+
+	TeButtonLayout *slideBtn = buttonLayoutChecked("slideButton");
+	slideBtn->onButtonChangedToStateDownSignal().add(this, &BonusMenu::onSlideButtonDown);
+
+	TeInputMgr *inputmgr = g_engine->getInputMgr();
+	inputmgr->_mouseMoveSignal.add(this, &BonusMenu::onMouseMove);
+
+	_pageNo = 0;
+
+	TeButtonLayout *leftBtn = buttonLayout("leftButton");
+	if (leftBtn)
+		leftBtn->onMouseClickValidated().add(this, &BonusMenu::onLeftButton);
+
+	TeButtonLayout *rightBtn = buttonLayout("rightButton");
+	if (rightBtn)
+		rightBtn->onMouseClickValidated().add(this, &BonusMenu::onRightButton);
+
+	// TODO: more stuff here with "text" values (also finish loop above)
+	warning("TODO: Finish BonusMenu::enter(%s)", scriptName.c_str());
+
+	TeButtonLayout *pictureBtn = buttonLayout("fullScreenPictureButton");
+	if (pictureBtn) {
+		pictureBtn->onMouseClickValidated().add(this, &BonusMenu::onPictureButton);
+	}
 }
 
 void BonusMenu::enter() {
-	error("TODO: implement me.");
+	error("TODO: implement BonusMenu::enter()");
 }
 
 void BonusMenu::leave() {
@@ -44,23 +101,58 @@ void BonusMenu::leave() {
 		delete s;
 	}
 	_saveButtons.clear();
-	warning("TODO: remove oMouseMove signal from inputmgr.");
+	TeInputMgr *inputmgr = g_engine->getInputMgr();
+	inputmgr->_mouseMoveSignal.remove(this, &BonusMenu::onMouseMove);
 	TeLuaGUI::unload();
 }
 
 bool BonusMenu::onLeftButton() {
-	error("TODO: implement me.");
+	TeCurveAnim2<TeLayout, TeVector3f32> *slideAnim = layoutPositionLinearAnimation("slideAnimation");
+
+	if (!slideAnim->_runTimer.running() && _pageNo != 0) {
+		TeLayout *slotsLayout = layout("slots");
+		TeVector3f32 slotsPos = slotsLayout->userPosition();
+		slideAnim->_startVal = slotsPos;
+		slotsPos.x() += value("slideTranslation").toFloat64();
+		slideAnim->_endVal = slotsPos;
+
+		slideAnim->_callbackObj = layoutChecked("slots");
+		slideAnim->_callbackMethod = &TeLayout::setPosition;
+		slideAnim->play();
+
+		_pageNo--;
+
+		buttonLayoutChecked("slideButton")->reset();
+
+		warning("TODO: Finish BonusMenu::onLeftButton");
+		// TODO: Set values depending on whether saves exist (lines 95-120)
+	}
+
 	return false;
 }
 
-bool BonusMenu::onMouseMove() {
-	error("TODO: implement me.");
+bool BonusMenu::onMouseMove(const Common::Point &pt) {
+	TeButtonLayout *slideLayout = buttonLayout("slideButton");
+	if (slideLayout->state() == TeButtonLayout::BUTTON_STATE_DOWN) {
+		TeCurveAnim2<TeLayout, TeVector3f32> *slideAnim = layoutPositionLinearAnimation("slideAnimation");
+		if (!slideAnim->_runTimer.running()) {
+			warning("TODO: implement BonusMenu::onMouseMove");
+		}
+	}
+
 	return false;
 }
 
 bool BonusMenu::onPictureButton() {
-	error("TODO: implement me.");
-	return false;
+	TeButtonLayout *btn = buttonLayoutChecked("menu");
+	btn->setVisible(true);
+
+	Application *app = g_engine->getApplication();
+	TeSpriteLayout *pictureLayout = spriteLayoutChecked("fullScreenPictureLayout");
+	app->_frontLayout.removeChild(pictureLayout);
+	pictureLayout->setVisible(true);
+
+	return true;
 }
 
 bool BonusMenu::onQuitButton() {
@@ -75,7 +167,26 @@ bool BonusMenu::onQuitButton() {
 }
 
 bool BonusMenu::onRightButton() {
-	error("TODO: implement me.");
+	TeCurveAnim2<TeLayout, TeVector3f32> *slideAnim = layoutPositionLinearAnimation("slideAnimation");
+
+	if (!slideAnim->_runTimer.running() && _pageNo < (int)_saveButtons.size() - 1) {
+		TeLayout *slotsLayout = layout("slots");
+		TeVector3f32 slotsPos = slotsLayout->userPosition();
+		slideAnim->_startVal = slotsPos;
+		slotsPos.x() -= value("slideTranslation").toFloat64();
+		slideAnim->_endVal = slotsPos;
+
+		slideAnim->_callbackObj = layoutChecked("slots");
+		slideAnim->_callbackMethod = &TeLayout::setPosition;
+		slideAnim->play();
+
+		_pageNo++;
+
+		buttonLayoutChecked("slideButton")->reset();
+
+		// TODO: Set values depending on whether saves exist (lines 95-120)
+		warning("TODO: Finish BonusMenu::onRightButton");
+	}
 	return false;
 }
 
@@ -87,12 +198,19 @@ bool BonusMenu::onSlideButtonDown() {
 	return false;
 }
 
+BonusMenu::SaveButton::SaveButton(TeButtonLayout *btn, const Common::String &name) {
+	setName(name);
+	btn->setEnable(true);
+	// TODO: Add child something here?
+	btn->onMouseClickValidated().add(this, &BonusMenu::SaveButton::onLoadSave);
+}
+
 Common::String BonusMenu::SaveButton::path() const {
 	return Common::String("Backup/") + name() + ".xml";
 }
 
 bool BonusMenu::SaveButton::onLoadSave() {
-	error("TODO: implement me.");
+	error("TODO: implement BonusMenu::SaveButton::onLoadSave");
 }
 
 } // end namespace Tetraedge

@@ -25,7 +25,7 @@
 namespace Tetraedge {
 
 TeModelVertexAnimation::TeModelVertexAnimation() : _lastMillis(0.0f), _modelAnim(nullptr) {
-	_rot.fromAxisAndAngle(TeVector3f32(0.0f, 1.0f, 0.0f), -M_PI_2);
+	_rot.fromAxisAndAngle(TeVector3f32(0.0f, 1.0f, 0.0f), (float)-M_PI_2);
 }
 
 void TeModelVertexAnimation::bind(TeIntrusivePtr<TeModel> &model) {

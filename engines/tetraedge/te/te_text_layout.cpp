@@ -71,6 +71,7 @@ static TeFont3::AlignStyle _alignNameToEnum(const Common::String &name) {
 void TeTextLayout::setText(const Common::String &val) {
 	if (!val.size()) {
 		clear();
+		_sizeChanged = true;
 		return;
 	}
 
@@ -88,6 +89,16 @@ void TeTextLayout::setText(const Common::String &val) {
 		}
 		bstart = replaced.find("$(", bstart + 1);
 	}
+
+	//
+	// WORKAROUND: The Syberia credits xml has an unmatched "</t>" at the end..
+	// just delete it.
+	//
+	// Note there is another workaround for the credits xml in the parser.
+	//
+	size_t tagstart = replaced.find("</t>");
+	if (tagstart != Common::String::npos)
+		replaced.replace(tagstart, 4, "    ");
 
 	const Common::String xmlDocStr = Common::String::format("<?xml version=\"1.0\" encoding=\"UTF-8\"?><document>%s</document>", replaced.c_str());
 
@@ -116,6 +127,7 @@ void TeTextLayout::setText(const Common::String &val) {
 		_base.setAlignStyle(_alignNameToEnum(parser.style()));
 	for (unsigned int offset : parser.lineBreaks())
 		_base.insertNewLine(offset);
+	_sizeChanged = true;
 }
 
 void TeTextLayout::setTextSizeType(int type) {
@@ -158,15 +170,15 @@ void TeTextLayout::updateSize() {
 
 	TeLayout::updateSize();
 
-	TeMatrix4x4 transform = worldTransformationMatrix();
+	const TeMatrix4x4 transform = worldTransformationMatrix();
 
 	const TeVector3f32 v1 = transform * TeVector3f32(0, 0, 0);
 	const TeVector3f32 v2 = transform * TeVector3f32(1, 0, 0);
 	const TeVector3f32 v3 = transform * TeVector3f32(0, 1, 0);
 
-	const TeVector3f32 newSize((v2 - v1).length(), (v3 - v1).length(), 1.0);
+	const TeVector3f32 transformVec((v2 - v1).length(), (v3 - v1).length(), 1.0);
 	const TeVector3f32 thisSize = size();
-	const TeVector3f32 textSize = thisSize * newSize;
+	const TeVector3f32 textSize = thisSize * transformVec;
 	const TeVector2s32 textSizeI(textSize.x(), textSize.y());
 	_base.setRect(textSizeI);
 
@@ -177,15 +189,29 @@ void TeTextLayout::updateSize() {
 		newFontSize = (thisSize.x() / _textSizeProportionalToWidth) * _baseFontSize;
 	}
 
-	newFontSize *= newSize.y();
+	newFontSize *= transformVec.y();
 
 	_base.setFontSize(newFontSize);
 	_base.build();
-	//TeVector2s32 renderedSize = _base.size();
 
-	/*const TeVector3f32 thisUserSize = */TeLayout::userSize();
+	TeVector3f32 userSz = userSize();
+	const TeVector2s32 baseSz = _base.size();
 
-	//warning("TODO: finish the last bit of TeTextLayout::updateSize");
+	if (sizeType() == RELATIVE_TO_PARENT && parent()) {
+		if (wrapMode() != TeTextBase2::WrapModeFixed) {
+			if (parent()->xSize() != 0.0)
+				userSz.x() = ((float)baseSz._x / transformVec.y()) / parent()->xSize();
+		}
+		if (parent()->ySize() != 0.0)
+			userSz.y() = ((float)baseSz._y / transformVec.y()) / parent()->ySize();
+	} else if (sizeType() == ABSOLUTE) {
+		if (wrapMode() != TeTextBase2::WrapModeFixed) {
+			userSz.x() = baseSz._x / transformVec.y();
+		}
+		userSz.y() = baseSz._y / transformVec.y();
+	}
+
+	setSize(userSz);
 }
 
 } // end namespace Tetraedge

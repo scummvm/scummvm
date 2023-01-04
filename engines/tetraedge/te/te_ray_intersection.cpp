@@ -110,54 +110,6 @@ int intersect(const TeVector3f32 &rayPos, const TeVector3f32 &rayDir, const TeVe
 }
 */
 
-/*
-bool testIntersection(const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32 &v3, const TeVector3f32 &orig, TeVector3f32 &dir) {
-	TeVector3f32 qvec,tvec;
-
-	TeVector3f32 e1 = v2 - v1;
-	TeVector3f32 e2 = v3 - v1;
-
-	TeVector3f32 pvec = TeVector3f32::crossProduct(dir, e2);
-
-	dir.normalize();
-	float det = pvec.dotProduct(e1);
-//#ifdef TEST_CULL
-	if (det < FLT_EPSILON)
-		return false;
-
-	tvec = orig - v1;
-	float u = tvec.dotProduct(pvec);
-	if (u < 0.0 || u > det) {
-		return false;
-	}
-	CROSS(qvec,tvec,e1);
-	float v = dir.dotProduct(qvec);
-	if (v < 0.0f || v + u > det) {
-		return false;
-	}
-#else
-	if (det < FLT_EPSILON && det > -FLT_EPSILON ) {
-		return false;
-	}
-
-	float invDet = 1.0f / det;
-	tvec = orig - v1;
-	// NORMALIZE(tvec);
-	float u = invDet * tvec.dotProduct(pvec);
-	if (u <0.0f || u > 1.0f) {
-		return false;
-	}
-
-	qvec = TeVector3f32::crossProduct(tvec, e1);
-	float v = invDet * qvec.dotProduct(dir);
-	if (v < 0.0f || u+v > 1.0f) {
-		return false;
-	}
-#endif
-	return true;
-}
-*/
-
 } // end namespace TeRayIntersection
 
 } // end namespace Tetraedge

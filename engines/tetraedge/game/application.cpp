@@ -26,6 +26,7 @@
 #include "common/events.h"
 
 #include "graphics/opengl/system_headers.h"
+#include "graphics/scaler.h"
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/game.h"
@@ -64,10 +65,10 @@ _drawShadows(true) {
 	_firstScene = tempGui.value("firstScene").toString();
 
 	TeSoundManager *soundmgr = g_engine->getSoundManager();
-	soundmgr->setChannelVolume("sfx", 0.7);
-	soundmgr->setChannelVolume("music", 0.7);
-	soundmgr->setChannelVolume("dialog", 0.7);
-	soundmgr->setChannelVolume("video", 0.7);
+	soundmgr->setChannelVolume("sfx", 0.7f);
+	soundmgr->setChannelVolume("music", 0.7f);
+	soundmgr->setChannelVolume("dialog", 0.7f);
+	soundmgr->setChannelVolume("video", 0.7f);
 	// TODO: Configure freemium things here?
 
 	// Note: original has an app run timer, but it's never used?
@@ -96,7 +97,7 @@ void Application::create() {
 	_mainWindow.setSize(TeVector3f32(winWidth, winHeight, 0.0));
 	_mainWindow.setSizeType(TeILayout::ABSOLUTE);
 	_mainWindow.setPositionType(TeILayout::ABSOLUTE);
-	_mainWindow.setPosition(TeVector3f32(0.0f, 0.0f ,0.0f));
+	_mainWindow.setPosition(TeVector3f32(0.0f, 0.0f, 0.0f));
 
 	TeResourceManager *resmgr = g_engine->getResourceManager();
 	_fontComic = resmgr->getResourceNoSearch<TeFont3>("Common/Fonts/ComicRelief.ttf");
@@ -481,6 +482,18 @@ void Application::captureFade() {
 	_captureFade = true;
 	performRender();
 	_visFade.captureFrame();
+}
+
+void Application::getSavegameThumbnail(Graphics::Surface &thumb) {
+	captureFade();
+	Graphics::Surface screen;
+	_visFade.texture()->writeTo(screen);
+	screen.flipVertical(Common::Rect(screen.w, screen.h));
+    Common::ScopedPtr<Graphics::Surface> scaledScreen(screen.scale(kThumbnailWidth, kThumbnailHeight2, true));
+    //scaledScreen->convertToInPlace(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+    thumb.copyFrom(*scaledScreen);
+    screen.free();
+    scaledScreen->free();
 }
 
 bool Application::isFading() {

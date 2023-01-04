@@ -223,4 +223,10 @@ void TetraedgeEngine::openConfigDialog() {
 	syncSoundSettings();
 }
 
+/*static*/
+void TetraedgeEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	g_engine->getApplication()->getSavegameThumbnail(thumb);
+}
+
+
 } // namespace Tetraedge

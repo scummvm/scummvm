@@ -25,9 +25,15 @@
 #include "tetraedge/te/te_frame_anim.h"
 #include "tetraedge/te/te_resource_manager.h"
 
+//#define DUMP_LOADED_IMAGES 1
+
+#ifdef DUMP_LOADED_IMAGES
+#include "image/png.h"
+#endif
+
 namespace Tetraedge {
 
-static void getRangeIntersection(float start1,float end1,float start2,float end2,float *pstart,float *pend) {
+static void getRangeIntersection(float start1, float end1, float start2, float end2, float *pstart, float *pend) {
 	*pstart = MAX(start1, start2);
 	*pend = MIN(end1, end2);
 }
@@ -61,8 +67,6 @@ bool TeTiledSurface::load(const Common::Path &path) {
 	_path = path;
 
 	TeIntrusivePtr<TeTiledTexture> texture;
-	if (path.toString() == "menus/inGame/Inventory.png")
-		debug("loading inventory from path");
 	if (resmgr->exists(path.append(".tt"))) {
 		texture = resmgr->getResourceNoSearch<TeTiledTexture>(path.append(".tt"));
 		// we don't own this one..
@@ -102,6 +106,13 @@ bool TeTiledSurface::load(const Common::Path &path) {
 			img.create(_codec->width(), _codec->height(), nullpal, _imgFormat, bufx, bufy);
 
 			if (_codec->update(0, img)) {
+#if DUMP_LOADED_IMAGES
+				static int dumpCount = 0;
+				Common::DumpFile dumpFile;
+				dumpFile.open(Common::String::format("/tmp/dump-tiledsurf-%s-%04d.png", name().c_str(), dumpCount));
+				dumpCount++;
+				Image::writePNG(dumpFile, img);
+#endif
 				texture->load(img);
 			}
 		} else {
@@ -114,7 +125,7 @@ bool TeTiledSurface::load(const Common::Path &path) {
 }
 
 bool TeTiledSurface::load(const TeImage &image) {
-	error("TODO: Implement me TeTiledSurface::load(image)");
+	error("TODO: Implement TeTiledSurface::load(image)");
 }
 
 bool TeTiledSurface::load(const TeIntrusivePtr<Te3DTexture> &texture) {
@@ -124,8 +135,6 @@ bool TeTiledSurface::load(const TeIntrusivePtr<Te3DTexture> &texture) {
 	TeIntrusivePtr<TeTiledTexture> tiledTexture;
 
 	const Common::Path ttPath = texture->getAccessName().append(".tt");
-	if (ttPath.toString() == "menus/inGame/Inventory.png.tt")
-		debug("loading inventory from texture");
 
 	if (resmgr->exists(ttPath)) {
 		tiledTexture = resmgr->getResourceNoSearch<TeTiledTexture>(ttPath);
