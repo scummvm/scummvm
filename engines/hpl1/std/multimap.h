@@ -22,7 +22,7 @@
 #ifndef HPL1_STD_MULTIMAP_H
 #define HPL1_STD_MULTIMAP_H
 
-#include "common/array.h"
+#include "hpl1/std/tree.h"
 #include "hpl1/std/pair.h"
 
 namespace Hpl1 {
@@ -32,9 +32,9 @@ namespace Std {
 template<class Key, class Val, class CompFunc = Common::Less<Key> >
 class multimap {
 public:
-	using value_type = pair<Key, Val>;
-	using iterator = typename Common::Array<value_type>::iterator;
-	using const_iterator = typename Common::Array<value_type>::const_iterator;
+	using value_type = typename Tree<Key, Val, CompFunc>::ValueType;
+	using iterator = typename Tree<Key, Val, CompFunc>::BasicIterator;
+	using const_iterator = typename Tree<Key, Val, CompFunc>::ConstIterator;
 
 	/**
 	 * Clears the map
@@ -76,31 +76,29 @@ public:
 	 * not less than the given key
 	 */
 	const_iterator lower_bound(const Key &key) const {
-		return lowerBound(this->begin(), this->end(), key, [&](value_type const &p, Key const &k) { return _comp(p.first, k); });
+		return _items.lowerBound(key);
 	}
 
 	iterator lower_bound(const Key &key) {
-		return lowerBound(this->begin(), this->end(), key, [&](value_type const &p, Key const &k) { return _comp(p.first, k); });
+		return _items.lowerBound(key);
 	}
 
 	iterator upper_bound(const Key &key) {
-		return upperBound(this->begin(), this->end(), key, [&](Key const &k, value_type const &p) { return _comp(k, p.first); });
+		return _items.upperBound(key);
 	}
 
 	/**
 	 * Find the entry with the given key
 	 */
 	iterator find(const Key &theKey) {
-		iterator it = this->lower_bound(theKey);
-
+		iterator it = _items.lowerBound(theKey);
 		if (it != this->end() && compareEqual(it->first, theKey))
 			return it;
 		return this->end();
 	}
 
 	const_iterator find(const Key &theKey) const {
-		const_iterator it = this->lower_bound(theKey);
-
+		const_iterator it = _items.lowerBound(theKey);
 		if (it != this->end() && compareEqual(it->first, theKey))
 			return it;
 		return this->end();
@@ -126,10 +124,7 @@ public:
 	}
 
 	iterator insert(const value_type &val) {
-		iterator it = this->lower_bound(val.first);
-		size_t idx = it - this->begin();
-		_items.insert_at(idx, val);
-		return it;
+		return _items.insert(val);
 	}
 
 	/**
@@ -140,7 +135,7 @@ public:
 	}
 
 	bool empty() const {
-		return _items.empty();
+		return _items.isEmpty();
 	}
 
 	/**
@@ -152,7 +147,6 @@ public:
 			if (compareEqual(it->first, theKey))
 				++count_;
 		}
-
 		return count_;
 	}
 
@@ -161,7 +155,7 @@ private:
 		return !_comp(a, b) && !_comp(b, a);
 	}
 
-	Common::Array<value_type> _items;
+	Tree<Key, Val, CompFunc> _items;
 	CompFunc _comp;
 };
 
