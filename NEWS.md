@@ -23,7 +23,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix crash when browsing folders containing files with \1 in the names.
    - Added possibility to specify RNG seed via GUI or command line option.
    - Added possibility to run ScummVM in autodetection name by renaming the
-     executalble starting with 'scummvm-auto' or by providing an empty file
+     executable starting with 'scummvm-auto' or by providing an empty file
      named 'scummvm-autorun' next to the ScummVM executable.
    - Added possibility to supply command line parameters which will be picked
      up automatically. Put them one per line in a file named 'scummvm-autorun'.
