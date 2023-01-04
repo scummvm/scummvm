@@ -78,7 +78,7 @@ void StartU8Process::run() {
 		currentmap->areaSearch(&uclist, script, sizeof(script),
 		                       0, 256, false, 16188, 7500);
 		if (uclist.getSize() < 1) {
-			warning("Unable to find FIRST egg!");
+			warning("Unable to find FIRST egg");
 			return;
 		}
 
@@ -99,7 +99,7 @@ void StartU8Process::run() {
 	                       0, 256, false, 11551, 2079);
 
 	if (uclist.getSize() < 1) {
-		warning("Unable to find MUSIC egg!");
+		warning("Unable to find MUSIC egg");
 	} else {
 		ObjId objid = uclist.getuint16(0);
 		Item *musicEgg = getItem(objid);

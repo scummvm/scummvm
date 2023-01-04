@@ -159,7 +159,7 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 	int mapChunkSize = map->getChunkSize();
 
 	if (getObjId() == 1 && Z < 0) {
-		warning("Warning: moving avatar below Z=0. (%d,%d,%d)\n", X, Y, Z);
+		warning("Moving avatar below Z=0. (%d,%d,%d)", X, Y, Z);
 	}
 
 	// TODO: In Crusader, if we are moving the avatar the game also checks whether

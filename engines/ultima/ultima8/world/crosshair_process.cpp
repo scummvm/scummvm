@@ -65,7 +65,7 @@ void CrosshairProcess::run() {
 
 		const CruAvatarMoverProcess *mover = dynamic_cast<CruAvatarMoverProcess *>(Ultima8Engine::get_instance()->getAvatarMoverProcess());
 		if (!mover) {
-			warning("lost CruAvatarMoverProcess!");
+			warning("lost CruAvatarMoverProcess");
 			return;
 		}
 		double angle = mover->getAvatarAngleDegrees() + 90.0;

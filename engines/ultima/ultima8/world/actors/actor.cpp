@@ -468,7 +468,7 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 
 #if 0
 	if (!tryAnim(anim, dir)) {
-		warning("Actor::doAnim: tryAnim = bad!");
+		warning("Actor::doAnim: tryAnim = bad");
 	}
 #endif
 

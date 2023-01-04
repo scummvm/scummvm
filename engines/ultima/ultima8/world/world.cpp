@@ -151,7 +151,7 @@ bool World::switchMap(uint32 newmap) {
 			if (i->getFlags() & Item::FLG_ETHEREAL)
 				i->destroy();
 			else
-				warning("Not destroying ethereal item %d - it doesn't think it's ethereal!", eth);
+				warning("Not destroying ethereal item %d - it doesn't think it's ethereal", eth);
 		}
 	}
 

@@ -1782,7 +1782,7 @@ void UCMachine::execProcess(UCProcess *p) {
 					                                      above, below);
 				} else {
 					// return error or return empty list?
-					warning("Warning: invalid item passed to surface search");
+					warning("Invalid item passed to surface search");
 				}
 				break;
 			}
@@ -1824,7 +1824,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			si16a = static_cast<int16>(p->_stack.access2(sp + 4));
 
 			if (!itemlist) {
-				warning("Invalid item list in loopnext!");
+				warning("Invalid item list in loopnext");
 				error = true;
 				break;
 			}
@@ -1983,7 +1983,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// end of function
 			// shouldn't happen
 			TRACE_OP("%s\tend", op_info);
-			warning("end of function opcode %02X reached!", opcode);
+			warning("end of function opcode %02X reached", opcode);
 			error = true;
 			break;
 

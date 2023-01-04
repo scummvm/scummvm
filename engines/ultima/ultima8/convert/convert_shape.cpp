@@ -59,7 +59,7 @@ void ConvertShape::Read(Common::SeekableReadStream &source, const ConvertShapeFo
 		source.read(ident, csf->_bytes_ident);
 
 		if (memcmp(ident, csf->_ident, csf->_bytes_ident)) {
-			warning("Corrupt shape!");
+			warning("Corrupt shape");
 			return;
 		}
 	}

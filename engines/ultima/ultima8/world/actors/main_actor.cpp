@@ -372,7 +372,7 @@ void MainActor::teleport(int mapNum, int32 x, int32 y, int32 z) {
 
 	// (attempt to) load the new map
 	if (!world->switchMap(mapNum)) {
-		warning("MainActor::teleport(): switchMap(%d) failed!", mapNum);
+		warning("MainActor::teleport(): switchMap(%d) failed", mapNum);
 		return;
 	}
 
@@ -403,7 +403,7 @@ void MainActor::teleport(int mapNum, int teleport_id) {
 
 	// (attempt to) load the new map
 	if (!world->switchMap(mapNum)) {
-		warning("MainActor::teleport(): switchMap() failed!");
+		warning("MainActor::teleport(): switchMap() failed");
 		setMapNum(oldmap);
 		return;
 	}
@@ -411,7 +411,7 @@ void MainActor::teleport(int mapNum, int teleport_id) {
 	// find destination
 	TeleportEgg *egg = currentmap->findDestination(teleport_id);
 	if (!egg) {
-		warning("MainActor::teleport(): destination egg not found!");
+		warning("MainActor::teleport(): destination egg not found");
 		teleport(oldmap, oldx, oldy, oldz);
 		return;
 	}
