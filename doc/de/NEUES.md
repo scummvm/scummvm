@@ -20,6 +20,12 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Mono-Ausgabe hinzugefügt (über die Kommandozeilen-Option --output-channels=CHANNELS)
    - Verbesserte Cursor-Skalierung im OpenGL-Modus.
    - Absturz beim Zugriff auf Verzeichnisse, die Dateien mit "\1" im Dateinamen enthalten, behoben.
+   - Dem Zufallsgenerator kann nun ein bestimmter Start-Wert über die GUI oder Kommandozeile übergeben werden.
+   - Unterstützung für einen Modus zur automatischen Erkennung zu ScummVM hinzugefügt.
+     Dazu wird die ScummVM-Programmdatei in 'scummvm-auto' umbenannt oder eine leere Datei mit dem
+     Dateinamen 'scummvm-autorun' im ScummVM-Programmverzeichnis abgelegt.
+   - Unterstützung für zusätzliche Kommandozeilenparameter, die automatisch ausgeführt werden, hinzugefügt.
+     Die Anweisungen werden zeilenweise in einer Datei namens 'scummvm-autorun' abgelegt.
 
  AGI:
    - Unterstützung der französischen Übersetzungen verbessert.
@@ -129,6 +135,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Hintergründe werden nun korrekt dargestellt, wenn Zwischenszenen im Fernseher angesehen werden.
    - Der Bildschirm wird nun nicht mehr zentriert, wenn ein Inventar-Item aktiviert wird.
    - Wenn man W drückt, um mit Leuten zu sprechen, springt man nicht mehr automatisch.
+
+ Ultima8:
+   - Die Minimap kann nun gespeichert und in ihrer Größe verändert werden.
+   - Der Curor verhält sich nun originalgetreuer.
+   - Der Schieberegler für die Item-Anzahl verhält sich nun originalgetreuer.
 
  3DS-Portierung:
    - Der Relocation-Parser wurde um Unterstützung für PREL31, welches von neuen Compilern verwendet wird, erweitert.
