@@ -564,7 +564,7 @@ void cSaveHandler::AutoSave(const tWString &asDir, int alMaxSaves) {
 	sMapName = cString::ReplaceCharToW(sMapName, _W("\n"), _W(" "));
 	sMapName = cString::ReplaceCharToW(sMapName, _W(":"), _W(" "));
 	cDate date = mpInit->mpGame->GetSystem()->GetLowLevel()->getDate();
-	tWString sFile = Common::U32String::format("%S: %S %d-%02d-%02d %02d:%02d:%02d",
+	tWString sFile = Common::U32String::format("%S: %S %d-%d-%d %d:%d:%d",
 			 asDir.c_str(),
 			 sMapName.c_str(),
 			 date.year,
