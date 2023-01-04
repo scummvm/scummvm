@@ -112,7 +112,7 @@ static const SAGA2GameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_FTA2
