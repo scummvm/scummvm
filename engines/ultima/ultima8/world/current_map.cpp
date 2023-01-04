@@ -1234,7 +1234,7 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 					for (; sw_it != hit->end(); ++sw_it) {
 						if (sw_it->_hitTime > first ||
-							sw_it->_hitTime == first && sw_it->_endTime > last)
+							(sw_it->_hitTime == first && sw_it->_endTime > last))
 							break;
 					}
 
