@@ -44,27 +44,34 @@ private:
 	Common::SeekableReadStream *_patchFile;
 	const char *_fileName;
 	bool _deletePatchFile;
+	bool _patchFileOpened;
 
 public:
-	PatchData(const char *fileName): _fileName(fileName), _deletePatchFile(true), _patchFile(nullptr) {
+	PatchData(const char *fileName): _fileName(fileName), _deletePatchFile(true), _patchFile(nullptr), _patchFileOpened(false) {
 	}
-	PatchData(Common::SeekableReadStream *patchFile, const char *fileName): _patchFile(patchFile), _fileName(fileName), _deletePatchFile(false) {
+	PatchData(Common::SeekableReadStream *patchFile, const char *fileName): _patchFile(patchFile), _fileName(fileName), _deletePatchFile(false), _patchFileOpened(true) {
 	}
 
 	Common::SeekableReadStream *getStream() {
-		if (_patchFile)
+		if (_patchFileOpened)
 			return _patchFile;
 		
 		Common::File *file = new Common::File();
-		file->open(_fileName);
+		_patchFileOpened = true;
+		if (!file->open(_fileName)) {
+			_patchFile = nullptr;
+			delete file;
+			return nullptr;
+		}
 		_patchFile = file;
 		return _patchFile;
 	}
 
 	void closeStream() {
-		if (_deletePatchFile) {
+		if (_deletePatchFile && _patchFileOpened) {
 			delete _patchFile;
 			_patchFile = nullptr;
+			_patchFileOpened = false;
 		}
 	}
 
