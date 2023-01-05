@@ -436,6 +436,11 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 }
 
 Graphics::PixelFormat SurfaceSdlGraphicsManager::convertSDLPixelFormat(SDL_PixelFormat *in) const {
+	if (in->BytesPerPixel == 1 && (
+		    (in->Rmask == 0xff && in->Gmask == 0xff && in->Bmask == 0xff) ||
+		    (in->Rmask == 0 && in->Gmask == 0 && in->Bmask == 0)
+		    ))
+		return Graphics::PixelFormat::createFormatCLUT8();
 	Graphics::PixelFormat out(in->BytesPerPixel,
 		8 - in->Rloss, 8 - in->Gloss,
 		8 - in->Bloss, 8 - in->Aloss,
