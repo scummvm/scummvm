@@ -254,7 +254,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("demops.rlb", "8a2aa522b4473bcc32e06371568c0d9a", 1019247),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
 		},
 		GType_Ringworld,
@@ -269,7 +269,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("demops.rlb", "efe17413126b13228564f687d185a7ad", 511111),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
 		},
 		GType_Ringworld,
