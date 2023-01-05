@@ -558,7 +558,8 @@ Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *
 
 	// We are here when we are converting from a higher bpp or palettes are different
 	if (dstFormat.bytesPerPixel == 1) {
-		ditherFloyd(srcPalette, srcPaletteCount, surface, dstPalette, dstPaletteCount, method);
+		ditherFloyd(srcPalette, srcPaletteCount, surface, dstPalette, dstPaletteCount, method,
+			    dstFormat);
 		return surface;
 	}
 
@@ -732,13 +733,8 @@ static void updatePixel(byte *surf, int x, int y, int w, int h, int qr, int qg, 
 	ptr[2] = CLIP(ptr[2] + qb * qq / qdiv, 0, 255);
 }
 
-void Surface::ditherFloyd(const byte *srcPalette, int srcPaletteCount, Surface *dstSurf, const byte *dstPalette, int dstPaletteCount, DitherMethod method) const {
-	assert(dstPalette);
-
-	PaletteLookup _paletteLookup;
-
-	_paletteLookup.setPalette(dstPalette, dstPaletteCount);
-
+void Surface::ditherFloyd(const byte *srcPalette, int srcPaletteCount, Surface *dstSurf, const byte *dstPalette, int dstPaletteCount,
+			  DitherMethod method, const PixelFormat &dstFormat) const {
 	byte *tmpSurf = (byte *)malloc(w * h * 3);
 
 	int bpp = format.bytesPerPixel;
@@ -903,29 +899,60 @@ void Surface::ditherFloyd(const byte *srcPalette, int srcPaletteCount, Surface *
 		{ nullptr, nullptr, 0 }
 	};
 
-	for (int y = 0; y < h; y++) {
-		const byte *src = &tmpSurf[y * w * 3];
-		byte *dst = (byte *)dstSurf->getBasePtr(0, y);
+	if (dstPalette) {
+		PaletteLookup _paletteLookup;
 
-		for (int x = 0; x < w; x++) {
-			byte r = src[0], g = src[1], b = src[2];
-			byte col = _paletteLookup.findBestColor(r, g, b);
+		_paletteLookup.setPalette(dstPalette, dstPaletteCount);
 
-			*dst = col;
+		for (int y = 0; y < h; y++) {
+			const byte *src = &tmpSurf[y * w * 3];
+			byte *dst = (byte *)dstSurf->getBasePtr(0, y);
 
-			int qr = r - dstPalette[col * 3 + 0];
-			int qg = g - dstPalette[col * 3 + 1];
-			int qb = b - dstPalette[col * 3 + 2];
+			for (int x = 0; x < w; x++) {
+				byte r = src[0], g = src[1], b = src[2];
+				byte col = _paletteLookup.findBestColor(r, g, b);
 
-			const DitherParams *params = algos[method].params;
+				*dst = col;
 
-			for (int i = 0; params[i].dx != 0 || params[i].dy != 0; i++)
-				updatePixel(tmpSurf, x + params[i].dx, y + params[i].dy, w, h, qr, qg, qb, params[i].qq, algos[method].qdiv);
+				int qr = r - dstPalette[col * 3 + 0];
+				int qg = g - dstPalette[col * 3 + 1];
+				int qb = b - dstPalette[col * 3 + 2];
 
-			src += 3;
-			dst++;
+				const DitherParams *params = algos[method].params;
+
+				for (int i = 0; params[i].dx != 0 || params[i].dy != 0; i++)
+					updatePixel(tmpSurf, x + params[i].dx, y + params[i].dy, w, h, qr, qg, qb, params[i].qq, algos[method].qdiv);
+
+				src += 3;
+				dst++;
+			}
 		}
-	}
+	} else if (dstFormat == PixelFormat(1, 3, 3, 2, 0, 5, 2, 0, 0)) {
+		for (int y = 0; y < h; y++) {
+			const byte *src = &tmpSurf[y * w * 3];
+			byte *dst = (byte *)dstSurf->getBasePtr(0, y);
+
+			for (int x = 0; x < w; x++) {
+				byte r = src[0], g = src[1], b = src[2];
+				byte col = (r & 0xe0) | ((g >> 3) & 0x1c) | ((b >> 6) & 3);
+
+				*dst = col;
+
+				int qr = r & 0x1f;
+				int qg = g & 0x1f;
+				int qb = b & 0x3f;
+
+				const DitherParams *params = algos[method].params;
+
+				for (int i = 0; params[i].dx != 0 || params[i].dy != 0; i++)
+					updatePixel(tmpSurf, x + params[i].dx, y + params[i].dy, w, h, qr, qg, qb, params[i].qq, algos[method].qdiv);
+
+				src += 3;
+				dst++;
+			}
+		}
+	} else
+		error("Unsupported dithering target format or missing palette");
 
 	::free(tmpSurf);
 }
