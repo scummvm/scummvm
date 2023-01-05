@@ -258,6 +258,7 @@ protected:
 		bool aspectRatioCorrection;
 		AspectRatio desiredAspectRatio;
 		bool filtering;
+		bool isHwPalette;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		int stretchMode;
@@ -370,6 +371,7 @@ protected:
 #else
 	byte _mouseKeyColor;
 #endif
+	byte _mappedMouseKeyColor;
 	bool _cursorDontScale;
 	bool _cursorPaletteDisabled;
 	SDL_Surface *_mouseOrigSurface;
@@ -383,6 +385,9 @@ protected:
 	// Palette data
 	SDL_Color *_currentPalette;
 	uint _paletteDirtyStart, _paletteDirtyEnd;
+
+	SDL_Color *_overlayPalette;
+	bool _isInOverlayPalette;
 
 	// Cursor palette data
 	SDL_Color *_cursorPalette;
