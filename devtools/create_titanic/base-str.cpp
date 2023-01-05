@@ -1,2 +1,2 @@
 #define SCUMMVM_UTIL 1
-#include "../common/base-str.cpp"
+#include "../common/str-base.cpp"
