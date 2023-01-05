@@ -124,26 +124,6 @@ void GuiManager::initIconsSet() {
 
 	_iconsSet.clear();
 
-	if (!ConfMan.get("iconspath").empty()) {
-		Common::FSDirectory *iconDir = new Common::FSDirectory(ConfMan.get("iconspath"));
-		Common::ArchiveMemberList iconFiles;
-
-		iconDir->listMatchingMembers(iconFiles, "gui-icons*.dat");
-		Common::sort(iconFiles.begin(), iconFiles.end(), ArchiveMemberListBackComparator());
-
-		for (Common::ArchiveMemberList::iterator ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
-			debug(2, "GUI: Loaded icon file: %s", (*ic)->getName().c_str());
-
-			dat = Common::makeZipArchive((*ic)->createReadStream());
-
-			if (dat) {
-				_iconsSet.add((*ic)->getName(), dat);
-			}
-		}
-
-		delete iconDir;
-	}
-
 	dat = nullptr;
 
 	const char fname[] = "gui-icons.dat";
@@ -170,14 +150,34 @@ void GuiManager::initIconsSet() {
 		if (!dat) {
 			warning("GUI: Could not find '%s'", fname);
 			delete file;
-			return;
 		}
 	}
 
-	_iconsSet.add(fname, dat);
-	_iconsSetChanged = true;
+	if (dat) {
+		_iconsSet.add(fname, dat);
+		_iconsSetChanged = true;
+		debug(2, "GUI: Loaded icon file: %s", fname);
+	}
 
-	debug(2, "GUI: Loaded icon file: %s", fname);
+	if (!ConfMan.get("iconspath").empty()) {
+		Common::FSDirectory *iconDir = new Common::FSDirectory(ConfMan.get("iconspath"));
+		Common::ArchiveMemberList iconFiles;
+
+		iconDir->listMatchingMembers(iconFiles, "gui-icons*.dat");
+		Common::sort(iconFiles.begin(), iconFiles.end(), ArchiveMemberListBackComparator());
+
+		for (Common::ArchiveMemberList::iterator ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
+			dat = Common::makeZipArchive((*ic)->createReadStream());
+
+			if (dat) {
+				_iconsSet.add((*ic)->getName(), dat);
+				_iconsSetChanged = true;
+				debug(2, "GUI: Loaded icon file: %s", (*ic)->getName().c_str());
+			}
+		}
+
+		delete iconDir;
+	}
 }
 
 void GuiManager::computeScaleFactor() {
