@@ -25,7 +25,7 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 #include "common/str-enc.h"
-#include "common/base-str.h"
+#include "common/str-base.h"
 
 namespace Common {
 

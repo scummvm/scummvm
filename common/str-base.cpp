@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/base-str.h"
+#include "common/str-base.h"
 #include "common/hash-str.h"
 #include "common/list.h"
 #include "common/memorypool.h"

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef COMMON_BASE_STRING_H
-#define COMMON_BASE_STRING_H
+#ifndef COMMON_STR_BASE_H
+#define COMMON_STR_BASE_H
 
 #include "common/scummsys.h"
 #include "common/str-enc.h"

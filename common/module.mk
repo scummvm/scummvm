@@ -2,7 +2,6 @@ MODULE := common
 
 MODULE_OBJS := \
 	archive.o \
-	base-str.o \
 	concatstream.o \
 	config-manager.o \
 	coroutines.o \
@@ -29,6 +28,7 @@ MODULE_OBJS := \
 	str.o \
 	stream.o \
 	streamdebug.o \
+	str-base.o \
 	str-enc.o \
 	encodings/singlebyte.o \
 	system.o \
