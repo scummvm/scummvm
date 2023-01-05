@@ -1404,13 +1404,14 @@ bool Scripts::cmdDisplayLarge(ParamsIterator &params) {
 
 bool Scripts::cmdExchObj(ParamsIterator &params) {
 	int id1 = params.readByte(), id2 = params.readByte();
+	auto objects = _vm->_map->_mobData._objects;
+	Common::Point empty(-1, -1);
 
-	MazeObject &obj1 = _vm->_map->_mobData._objects[id1];
-	MazeObject &obj2 = _vm->_map->_mobData._objects[id2];
-
-	Common::Point pt = obj1._position;
-	obj1._position = obj2._position;
-	obj2._position = pt;
+	// WORKAROUND: In Swords of Xeen, there's an invalid indexing for a chest.
+	// In such cases, set the position to nowhere
+	Common::Point &objPos1 = (id1 >= objects.size()) ? empty : objects[id1]._position;
+	Common::Point &objPos2 = (id2 >= objects.size()) ? empty : objects[id2]._position;
+	SWAP(objPos1, objPos2);
 
 	return true;
 }
