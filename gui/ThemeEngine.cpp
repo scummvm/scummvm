@@ -443,6 +443,9 @@ void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 		} else if (g_system->getOverlayFormat().bytesPerPixel == 2) {
 			_bytesPerPixel = sizeof(uint16);
 			break;
+		} else if (g_system->getOverlayFormat().bytesPerPixel == 1) {
+			_bytesPerPixel = sizeof(uint8);
+			break;
 		}
 		// fall through
 	default:
