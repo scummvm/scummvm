@@ -102,10 +102,16 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _par
 						_("OK"));
 					dialog.runModal();
 
-					_driver = new MidiDriver_ADLIB_Multisource(OPL::Config::kOpl3);
+					OPL::Config::OplType oplType =
+						MidiDriver_ADLIB_Multisource::detectOplType(OPL::Config::kOpl3) ? OPL::Config::kOpl3 : OPL::Config::kOpl2;
+
+					_driver = new MidiDriver_ADLIB_Multisource(oplType);
 				}
 			} else {
-				_driver = new MidiDriver_ADLIB_Multisource(OPL::Config::kOpl3);
+				OPL::Config::OplType oplType =
+					MidiDriver_ADLIB_Multisource::detectOplType(OPL::Config::kOpl3) ? OPL::Config::kOpl3 : OPL::Config::kOpl2;
+
+				_driver = new MidiDriver_ADLIB_Multisource(oplType);
 			}
 			break;
 		case MT_MT32:
