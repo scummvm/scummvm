@@ -588,7 +588,7 @@ uint SurfaceSdlGraphicsManager::getDefaultScaler() const {
 }
 
 uint SurfaceSdlGraphicsManager::getDefaultScaleFactor() const {
-#ifdef USE_SCALERS
+#if defined (USE_SCALERS)
 	return 2;
 #else
 	return 1;
@@ -870,6 +870,13 @@ void SurfaceSdlGraphicsManager::fixupResolutionForAspectRatio(AspectRatio desire
 }
 
 void SurfaceSdlGraphicsManager::setupHardwareSize() {
+#ifdef RS90
+	_videoMode.isHwPalette = true;
+	_videoMode.scaleFactor = 1;
+#else
+	_videoMode.isHwPalette = false;
+#endif
+
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
