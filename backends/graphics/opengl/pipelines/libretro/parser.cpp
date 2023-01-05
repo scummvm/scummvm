@@ -24,7 +24,7 @@
 #if !USE_FORCED_GLES
 #include "backends/graphics/opengl/pipelines/libretro/parser.h"
 
-#include "common/fs.h"
+#include "common/file.h"
 #include "common/hash-str.h"
 #include "common/stream.h"
 #include "common/algorithm.h"
@@ -533,30 +533,31 @@ bool PresetParser::parseParameters() {
 	return true;
 }
 
-ShaderPreset *parsePreset(const Common::FSNode &shaderPreset) {
-	if (!shaderPreset.exists() || !shaderPreset.isReadable() || shaderPreset.isDirectory()) {
-		warning("LibRetro Preset Parsing: No such readable file '%s'", shaderPreset.getName().c_str());
-		return nullptr;
+ShaderPreset *parsePreset(const Common::String &shaderPreset) {
+	Common::File file;
+
+	// First try SearchMan, then fallback to filesystem
+	if (Common::File::exists(shaderPreset)) {
+		if (!file.open(shaderPreset)) {
+			warning("LibRetro Preset Parsing: Cannot open file '%s'", shaderPreset.c_str());
+			return nullptr;
+		}
+	} else {
+		Common::FSNode fsnode(shaderPreset);
+		if (!fsnode.exists() || !fsnode.isReadable() || fsnode.isDirectory()
+				|| !file.open(fsnode)) {
+			warning("LibRetro Preset Parsing: Invalid file path '%s'", shaderPreset.c_str());
+			return nullptr;
+		}
 	}
 
-	Common::FSNode basePath(shaderPreset.getParent());
-	if (!basePath.exists() || !basePath.isReadable() || !basePath.isDirectory()) {
-		warning("LibRetro Preset Parsing: Base path '%s' to file '%s' invalid", basePath.getName().c_str(), shaderPreset.getName().c_str());
-		return nullptr;
-	}
-
-	Common::SeekableReadStream *stream = shaderPreset.createReadStream();
-	if (!stream) {
-		return nullptr;
-	}
+	Common::String basePath(Common::firstPathComponents(shaderPreset, '/'));
 
 	PresetParser parser;
-	ShaderPreset *shader = parser.parseStream(*stream);
-	delete stream;
-	stream = nullptr;
+	ShaderPreset *shader = parser.parseStream(file);
 
 	if (!shader) {
-		warning("LibRetro Preset Parsing: Error while parsing file '%s': %s", shaderPreset.getName().c_str(), parser.getErrorDesc().c_str());
+		warning("LibRetro Preset Parsing: Error while parsing file '%s': %s", shaderPreset.c_str(), parser.getErrorDesc().c_str());
 		return nullptr;
 	}
 

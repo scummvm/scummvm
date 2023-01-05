@@ -44,16 +44,26 @@ namespace OpenGL {
 using LibRetro::UniformsMap;
 
 template<typename DecoderType>
-static Graphics::Surface *loadViaImageDecoder(const Common::FSNode &fileNode) {
-	Common::SeekableReadStream *stream = fileNode.createReadStream();
-	if (!stream) {
-		return nullptr;
+static Graphics::Surface *loadViaImageDecoder(const Common::String &fileName) {
+	Common::File file;
+
+	// First try SearchMan, then fallback to filesystem
+	if (Common::File::exists(fileName)) {
+		if (!file.open(fileName)) {
+			warning("LibRetroPipeline::loadViaImageDecoder: Cannot open file '%s'", fileName.c_str());
+			return nullptr;
+		}
+	} else {
+		Common::FSNode fsnode(fileName);
+		if (!fsnode.exists() || !fsnode.isReadable() || fsnode.isDirectory()
+				|| !file.open(fsnode)) {
+			warning("LibRetroPipeline::loadViaImageDecoder: Invalid file path '%s'", fileName.c_str());
+			return nullptr;
+		}
 	}
 
 	DecoderType decoder;
-	const bool success = decoder.loadStream(*stream);
-	delete stream;
-	stream = nullptr;
+	const bool success = decoder.loadStream(file);
 
 	if (!success) {
 		return nullptr;
@@ -71,7 +81,7 @@ static Graphics::Surface *loadViaImageDecoder(const Common::FSNode &fileNode) {
 
 struct ImageLoader {
 	const char *extension;
-	Graphics::Surface *(*load)(const Common::FSNode &fileNode);
+	Graphics::Surface *(*load)(const Common::String &fileName);
 };
 
 static const ImageLoader s_imageLoaders[] = {
@@ -189,7 +199,7 @@ LibRetroPipeline::LibRetroPipeline()
 	  _isAnimated(false), _frameCount(0) {
 }
 
-LibRetroPipeline::LibRetroPipeline(const Common::FSNode &shaderPreset)
+LibRetroPipeline::LibRetroPipeline(const Common::String &shaderPreset)
 	: _inputPipeline(ShaderMan.query(ShaderManager::kDefault)),
 	  _outputPipeline(ShaderMan.query(ShaderManager::kDefault)),
 	  _needsScaling(false), _shaderPreset(nullptr), _linearFiltering(false),
@@ -336,7 +346,7 @@ void LibRetroPipeline::deactivateInternal() {
 	// Don't call Pipeline::deactivateInternal as our framebuffer is passed to _outputPipeline
 }
 
-bool LibRetroPipeline::open(const Common::FSNode &shaderPreset) {
+bool LibRetroPipeline::open(const Common::String &shaderPreset) {
 	close();
 
 	_shaderPreset = LibRetro::parsePreset(shaderPreset);
@@ -384,20 +394,11 @@ void LibRetroPipeline::close() {
 	_currentTarget = uint(-1);
 }
 
-static Common::FSNode getChildRecursive(const Common::FSNode &basePath, const Common::String &fileName) {
-	Common::FSNode finalPath = basePath;
-	Common::StringTokenizer tok(fileName, "\\/");
-	while (!tok.empty()) {
-		finalPath = finalPath.getChild(tok.nextToken());
-	}
-	return finalPath;
-}
-
 bool LibRetroPipeline::loadTextures() {
 	for (LibRetro::ShaderPreset::TextureArray::const_iterator
 		 i = _shaderPreset->textures.begin(), end = _shaderPreset->textures.end();
 		 i != end; ++i) {
-		Texture texture = loadTexture(getChildRecursive( _shaderPreset->basePath, i->fileName));
+		Texture texture = loadTexture(Common::normalizePath(_shaderPreset->basePath + Common::String("/") + i->fileName, '/'));
 		texture.id = i->id;
 
 		if (!texture.textureData || !texture.glTexture) {
@@ -460,23 +461,31 @@ bool LibRetroPipeline::loadPasses() {
 	for (LibRetro::ShaderPreset::PassArray::const_iterator
 		 i = _shaderPreset->passes.begin(), end = _shaderPreset->passes.end();
 		 i != end; ++i) {
-		Common::FSNode fileNode(getChildRecursive(_shaderPreset->basePath, i->fileName));
+		Common::String fileName(Common::normalizePath(_shaderPreset->basePath + Common::String("/") + i->fileName, '/'));
+		Common::File file;
 
-		Common::SeekableReadStream *stream = fileNode.createReadStream();
-		if (!stream) {
-			warning("LibRetroPipeline::loadPasses: Could not open file '%s'", fileNode.isReadable() ? fileNode.getName().c_str() : i->fileName.c_str());
-			return false;
+		// First try SearchMan, then fallback to filesystem
+		if (Common::File::exists(fileName)) {
+			if (!file.open(fileName)) {
+				warning("LibRetroPipeline::loadPasses: Cannot open file '%s'", fileName.c_str());
+				return false;
+			}
+		} else {
+			Common::FSNode fsnode(fileName);
+			if (!fsnode.exists() || !fsnode.isReadable() || fsnode.isDirectory()
+					|| !file.open(fsnode)) {
+				warning("LibRetroPipeline::loadPasses: Invalid file path '%s'", fileName.c_str());
+				return false;
+			}
 		}
 
 		Common::Array<char> shaderFileContents;
-		shaderFileContents.resize(stream->size() + 1);
-		shaderFileContents[stream->size()] = 0;
-		const bool readSuccess = stream->read(shaderFileContents.begin(), stream->size()) == (uint32)stream->size();
-		delete stream;
-		stream = nullptr;
+		shaderFileContents.resize(file.size() + 1);
+		shaderFileContents[file.size()] = 0;
+		const bool readSuccess = file.read(shaderFileContents.begin(), file.size()) == (uint32)file.size();
 
 		if (!readSuccess) {
-			warning("LibRetroPipeline::loadPasses: Could not read file '%s'", fileNode.getName().c_str());
+			warning("LibRetroPipeline::loadPasses: Could not read file '%s'", fileName.c_str());
 			return false;
 		}
 
@@ -532,7 +541,7 @@ bool LibRetroPipeline::loadPasses() {
 			shaderFileStart,
 		};
 
-		if (!shader->loadFromStringsArray(fileNode.getName(),
+		if (!shader->loadFromStringsArray(fileName,
 				 ARRAYSIZE(vertexSources), vertexSources,
 				 ARRAYSIZE(fragmentSources), fragmentSources,
 				 g_libretroShaderAttributes)) {
@@ -724,8 +733,7 @@ void LibRetroPipeline::setShaderTexUniforms(const Common::String &prefix, Shader
 	shader->setUniform(prefix + "TextureSize", Math::Vector2d(texture.getWidth(), texture.getHeight()));
 }
 
-LibRetroPipeline::Texture LibRetroPipeline::loadTexture(const Common::FSNode &fileNode) {
-	Common::String fileName = fileNode.getName();
+LibRetroPipeline::Texture LibRetroPipeline::loadTexture(const Common::String &fileName) {
 	const char *extension = nullptr;
 	for (int dotPos = fileName.size() - 1; dotPos >= 0; --dotPos) {
 		if (fileName[dotPos] == '.') {
@@ -741,7 +749,7 @@ LibRetroPipeline::Texture LibRetroPipeline::loadTexture(const Common::FSNode &fi
 
 	for (const ImageLoader *loader = s_imageLoaders; loader->extension; ++loader) {
 		if (!scumm_stricmp(loader->extension, extension)) {
-			Graphics::Surface *textureData = loader->load(fileNode);
+			Graphics::Surface *textureData = loader->load(fileName);
 			if (!textureData) {
 				warning("LibRetroPipeline::loadTexture: Loader for '%s' could not load file '%s'", loader->extension, fileName.c_str());
 				return Texture();

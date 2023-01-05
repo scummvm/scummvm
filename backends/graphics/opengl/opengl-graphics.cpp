@@ -356,7 +356,7 @@ bool OpenGLGraphicsManager::loadShader(const Common::String &fileName) {
 
 	// Load selected shader preset
 	if (!fileName.empty()) {
-		if (!_libretroPipeline->open(Common::FSNode(fileName))) {
+		if (!_libretroPipeline->open(fileName)) {
 			warning("Failed to load shader %s", fileName.c_str());
 			return false;
 		}
