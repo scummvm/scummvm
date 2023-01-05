@@ -23,11 +23,14 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved cursor scaling in OpenGL mode.
    - Fix crash when browsing folders containing files with \1 in the names.
    - Added possibility to specify RNG seed via GUI or command line option.
-   - Added possibility to run ScummVM in autodetection name by renaming the
+   - Added possibility to run ScummVM in autodetection mode by renaming the
      executable starting with 'scummvm-auto' or by providing an empty file
      named 'scummvm-autorun' next to the ScummVM executable.
    - Added possibility to supply command line parameters which will be picked
      up automatically. Put them one per line in a file named 'scummvm-autorun'.
+   - Added possibility to customize the default settings by specifying an initial
+     configuration file to load if no configuration file exists in the usual
+     location (via --initial-cfg=FILE or -i command line option).
 
  AGI:
    - Improved support for French translations.
