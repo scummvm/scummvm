@@ -351,7 +351,14 @@ static void setupGraphics(OSystem &system) {
 		system.setScaler(ConfMan.get("scaler").c_str(), ConfMan.getInt("scale_factor"));
 		system.setShader(ConfMan.get("shader"));
 
+#ifdef OPENDINGUX
+		// 0, 0 means "autodetect" but currently only SDL supports
+		// it and really useful only on Opendingux. When more platforms
+		// support it we will switch to it.
+		system.initSize(0, 0);
+#else
 		system.initSize(320, 200);
+#endif
 
 		// Parse graphics configuration, implicit fallback to defaults set with RegisterDefaults()
 		system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
