@@ -172,7 +172,11 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_scaler = nullptr;
 	_maxExtraPixels = ScalerMan.getMaxExtraPixels();
 
+#ifdef RS90
+	_videoMode.fullscreen = false;
+#else
 	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
+#endif
 	_videoMode.filtering = ConfMan.getBool("filtering");
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_videoMode.stretchMode = STRETCH_FIT;
@@ -942,8 +946,10 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 #else
 		Uint32 flags = _videoMode.isHwPalette ? (SDL_HWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF) : SDL_SWSURFACE;
 #endif
+#ifndef RS90
 		if (_videoMode.fullscreen)
 			flags |= SDL_FULLSCREEN;
+#endif
 		_hwScreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, _videoMode.isHwPalette ? 8 : 16,
 					       flags);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
