@@ -136,7 +136,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #endif
 	_transactionMode(kTransactionNone),
 	_scalerPlugins(ScalerMan.getPlugins()), _scalerPlugin(nullptr), _scaler(nullptr),
-	_needRestoreAfterOverlay(false), _isInOverlayPalette(false) {
+	_needRestoreAfterOverlay(false), _isInOverlayPalette(false), _isDoubleBuf(false), _prevForceRedraw(false), _numPrevDirtyRects(0) {
 
 	// allocate palette storage
 	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
@@ -905,12 +905,17 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		Uint32 flags = SDL_SWSURFACE;
 #else
-		Uint32 flags = _videoMode.isHwPalette ? (SDL_HWSURFACE | SDL_HWPALETTE) : SDL_SWSURFACE;
+		Uint32 flags = _videoMode.isHwPalette ? (SDL_HWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF) : SDL_SWSURFACE;
 #endif
 		if (_videoMode.fullscreen)
 			flags |= SDL_FULLSCREEN;
 		_hwScreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, _videoMode.isHwPalette ? 8 : 16,
 					       flags);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		_isDoubleBuf = false;
+#else
+		_isDoubleBuf = flags & SDL_DOUBLEBUF;
+#endif
 	}
 
 #ifdef USE_RGB_COLOR
@@ -1113,6 +1118,12 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	if (debugger)
 		debugger->onFrame();
 
+	bool curCursorNeedsRedraw = _cursorNeedsRedraw;
+	if (_prevCursorNeedsRedraw && _isDoubleBuf) {
+		_cursorNeedsRedraw = true;
+	}
+	_prevCursorNeedsRedraw = curCursorNeedsRedraw;
+
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 	// If the shake position changed, fill the dirty area with blackness
 	// When building with SDL2, the shake offset is added to the active rect instead,
@@ -1211,22 +1222,40 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		_isInOverlayPalette = _overlayVisible;
 	}
 
+	// In case of double buferring partially good version may be on another page,
+	// so we need to fully redraw
+	if (_isDoubleBuf && _numDirtyRects)
+		_forceRedraw = true;
+
+	bool doRedraw = _forceRedraw || (_prevForceRedraw && _isDoubleBuf);
+	int actualDirtyRects = _numDirtyRects;
+	if (_isDoubleBuf && _numPrevDirtyRects > 0) {
+		memcpy(_dirtyRectList + _numDirtyRects, _prevDirtyRectList, _numPrevDirtyRects * sizeof(_dirtyRectList[0]));
+		actualDirtyRects += _numPrevDirtyRects;
+	}
+
 	// Force a full redraw if requested.
 	// If _useOldSrc, the scaler will do its own partial updates.
-	if (_forceRedraw) {
-		_numDirtyRects = 1;
+	if (doRedraw) {
+		actualDirtyRects = 1;
 		_dirtyRectList[0].x = 0;
 		_dirtyRectList[0].y = 0;
 		_dirtyRectList[0].w = width;
 		_dirtyRectList[0].h = height;
 	}
 
+	_prevForceRedraw = _forceRedraw;
+	if (!_prevForceRedraw && _numDirtyRects && _isDoubleBuf) {
+		memcpy(_prevDirtyRectList, _dirtyRectList, _numDirtyRects * sizeof(_dirtyRectList[0]));
+		_numPrevDirtyRects = _numDirtyRects;
+	}
+
 	// Only draw anything if necessary
-	if (_numDirtyRects > 0 || _cursorNeedsRedraw) {
+	if (actualDirtyRects > 0 || _cursorNeedsRedraw) {
 		SDL_Rect *r;
 		SDL_Rect dst;
 		uint32 bpp, srcPitch, dstPitch;
-		SDL_Rect *lastRect = _dirtyRectList + _numDirtyRects;
+		SDL_Rect *lastRect = _dirtyRectList + actualDirtyRects;
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
 			dst = *r;
@@ -1382,7 +1411,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 
 		// Finally, blit all our changes to the screen
 		if (!_displayDisabled) {
-			SDL_UpdateRects(_hwScreen, _numDirtyRects, _dirtyRectList);
+			SDL_UpdateRects(_hwScreen, actualDirtyRects, _dirtyRectList);
 		}
 	}
 
@@ -1392,6 +1421,10 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	_numDirtyRects = 0;
 	_forceRedraw = false;
 	_cursorNeedsRedraw = false;
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+	if (_isDoubleBuf)
+		SDL_Flip(_hwScreen);
+#endif
 }
 
 bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &filename) const {
