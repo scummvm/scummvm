@@ -74,7 +74,9 @@ static void blit(Graphics::Surface *surf_dst, Graphics::Surface *surf_src, int16
 	if (surf_dst->format.bytesPerPixel != surf_src->format.bytesPerPixel)
 		return;
 
-	if (surf_dst->format.bytesPerPixel == 2)
+	if (surf_dst->format.bytesPerPixel == 1)
+		blitImplementation<uint8>(surf_dst, surf_src, x, y, transparent);
+	else if (surf_dst->format.bytesPerPixel == 2)
 		blitImplementation<uint16>(surf_dst, surf_src, x, y, transparent);
 	else if (surf_dst->format.bytesPerPixel == 4)
 		blitImplementation<uint32>(surf_dst, surf_src, x, y, transparent);
