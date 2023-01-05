@@ -5309,8 +5309,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2t("amber", "Demo", "DEMO.EXE", "98f65233a8d80a75513267fed14c1e18", 1417811,
 							   "AMBERHUB.DXR", "a95601f2521fd00c88ac424d66da1605", 868766, 501),
 
-	MACGAME1_l("aozoragaho", "", "PPC", "08166af62693ceab79b28d90d2f6c86b", 105571, Common::JA_JPN, 501),
-	WINGAME1t_l("aozoragaho", "", "32.EXE", "2787761ff8a943701c291da6e618310b", 1410721, Common::JA_JPN, 501),
+	MACGAME2_l("aozoragaho", "", "PPC", 	    "08166af62693ceab79b28d90d2f6c86b", 105571,
+								 "BIRTH1.Dxr",  "323c3b8c0caed115a9c574b7aed4f0c4", 507450, Common::JA_JPN, 501),
+	WINGAME2t_l("aozoragaho", "", "32.EXE",     "2787761ff8a943701c291da6e618310b", 1410721,
+								  "BIRTH1.Dxr", "4d2206c4a02f720aafae108334a7880a", 507450, Common::JA_JPN, 501),
 
 	// Original file names are ' ANKH2 ' and ' ANKH3 '
 	MACGAME1_l("ankh2", "", "ANKH2", "779a44f65837ded641cc3fbbebe5ace1", 721432, Common::JA_JPN, 501),
@@ -5693,10 +5695,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("giggletour", "Trailer", "WRLD95.EXE", "3460ad87d2ba57104e2810a77b53c220", 4262595, 500),
 
 	// Original filename is 'たむらしげる原画集クジラの跳躍'
-	MACGAME1_l("glassyocean", "", "xn--18jjx6d7d8bq20axc8y5662a7j1dsf3cv0b8v9c", "8f4da7096fa8725ad3ed3153811c9e38", 719664, Common::JA_JPN, 501),
+	MACGAME2_l("glassyocean", "", "xn--18jjx6d7d8bq20axc8y5662a7j1dsf3cv0b8v9c", "8f4da7096fa8725ad3ed3153811c9e38", 719664,
+								  "DATA/TAMURA.Dxr", "401a9dcb7a3d874bc3798bdef929ead2", 155168, Common::JA_JPN, 501),  // unconfirmed
+	MACGAME2_l("glassyocean", "", "xn--18jjx6d7d8bq20axc8y5662a7j1dsf3cv0b8v9c", "285baf96a2c5333603f23e3ff8ef7940", 4718,
+								  "DATA/TAMURA.Dxr", "401a9dcb7a3d874bc3798bdef929ead2", 155168, Common::JA_JPN, 501),
 	// Decomposed variant
-	MACGAME1_l("glassyocean", "", "xn--08jlx6d7d8bq5ib3t8cv3a0327avlsefrrdo9bit3d", "285baf96a2c5333603f23e3ff8ef7940", 4718, Common::JA_JPN, 501),
-	WINGAME1t_l("glassyocean", "", "START.EXE", "c5dcc03aca7e0bed95844afdd86f866c", 1410529, Common::JA_JPN, 501),
+	MACGAME2_l("glassyocean", "", "xn--08jlx6d7d8bq5ib3t8cv3a0327avlsefrrdo9bit3d", "285baf96a2c5333603f23e3ff8ef7940", 4718,
+								  "DATA/TAMURA.Dxr", "401a9dcb7a3d874bc3798bdef929ead2", 155168, Common::JA_JPN, 501),
+	WINGAME2t_l("glassyocean", "", "START.EXE",		  "c5dcc03aca7e0bed95844afdd86f866c", 1410529,
+								   "DATA/TAMURA.DXR", "a7bd15f6f42162fed7f32e0a739617ec", 155168, Common::JA_JPN, 501),
 
 	// Green Eggs and Hamulator mini-game
 	// Demo for a Living Books game that is supported in MOHAWK engine
@@ -6164,8 +6171,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("secretsafari", "", "S_SAFARI",    "552992fb31c736ca67ffd403096596d6", 719604, Common::JA_JPN, 500),
 	WINGAME1t_l("secretsafari", "", "S_SAFARI.EXE",    "3095ddaae36b31cbf935ffc4b86e9b0d", 1411782, Common::JA_JPN, 501),
 
-	MACGAME1_l("seesawc1", "", "PPC", "56418baf7647cf3d7759cab01570ae52", 107863, Common::JA_JPN, 501),
-	WINGAME1t_l("seesawc1", "", "SC01_32.EXE", "e2d36c3beece0f74c7879b0b52392fb5", 1409869, Common::JA_JPN, 501),
+	MACGAME2_l("seesawc1", "", "PPC", 		"56418baf7647cf3d7759cab01570ae52", 107863,
+							   "LOGO.Dxr", 	"c07ca30e8b34193973884a0c0976ce58", 307654, Common::JA_JPN, 501),
+	WINGAME2t_l("seesawc1", "", "SC01_32.EXE", "e2d36c3beece0f74c7879b0b52392fb5", 1409869,
+								"LOGO.Dxr",	   "337cb3bf89776b70541bc8257cdc5f24", 307654, Common::JA_JPN, 501),
 
 	// Microfolie's Editions, Vanves, Paris (1997)
 	// English title is "The Shadoks The Game - The Stroll" (official website)
@@ -7457,7 +7466,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("relaxation", "ECD",  "solitude.exe", "7a4164849d026c0f2aa8ea4c7d5447ba", 1807680, 702),
 	MACGAME1("relaxplayer", "ECD", "Relax",		   "0944b962ebb00f4b5d5149d220f8449b", 112738, 702),
 
-	WINGAME1t_l("ritterrost", "",  "start.exe", "9bc3d64be0fe3caa612f070b27c943b8", 2595758, Common::DE_DEU, 702),
+	WINGAME2t_l("ritterrost", "",  "start.exe",			"9bc3d64be0fe3caa612f070b27c943b8", 2595758,
+								   "data/Rostburg.DXR", "6bf95a48f366bdf8af3a198c7b723c77", 38107269, Common::DE_DEU, 702),
 
 	// original filename is a single space
 	MACGAME1("sentence", "", "xn-- -", "0944b962ebb00f4b5d5149d220f8449b", 113458, 702),
