@@ -561,6 +561,8 @@ VectorRenderer *createRenderer(int mode) {
 			return new VectorRendererSpec<uint32>(format);
 		else if (g_system->getOverlayFormat().bytesPerPixel == 2)
 			return new VectorRendererSpec<uint16>(format);
+		else if (g_system->getOverlayFormat().bytesPerPixel == 1)
+			return new VectorRendererSpec<uint8>(format);
 		break;
 #ifndef DISABLE_FANCY_THEMES
 	case GUI::ThemeEngine::kGfxAntialias:
@@ -568,6 +570,9 @@ VectorRenderer *createRenderer(int mode) {
 			return new VectorRendererAA<uint32>(format);
 		else if (g_system->getOverlayFormat().bytesPerPixel == 2)
 			return new VectorRendererAA<uint16>(format);
+		// No AA with 8-bit
+		else if (g_system->getOverlayFormat().bytesPerPixel == 1)
+			return new VectorRendererSpec<uint8>(format);
 		break;
 #endif
 	default:
@@ -902,6 +907,9 @@ blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
 			(_alphaMask & ((idst & _alphaMask) +
 			((int)(((int)(_alphaMask) -
 			(int)(idst & _alphaMask)) * alpha) >> 8))));
+	} else if (sizeof(PixelType) == 1) {
+		if (alpha & 0x80)
+			*ptr = color;
 	} else {
 		error("Unsupported BPP format: %u", (uint)sizeof(PixelType));
 	}
