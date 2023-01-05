@@ -673,6 +673,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "bjcase6", "Ben Jordan P.I. Case 6: Scourge of the Sea People" },
 	{ "bjcase7", "Ben Jordan P.I. Case 7: The Cardinal Sins" },
 	{ "bjcase8", "Ben Jordan P.I. Case 8: Relics of the Past" },
+	{ "bjcults", "Ben Jordan and the dark cults" },
 	{ "bjpww1", "Ben Jordan P.W.W. Case 1: Wrath of the Skunk Ape" },
 	{ "blackbirdstrikesback", "The Blackbird Strikes Back" },
 	{ "blackfriday", "Black Friday" },
@@ -3103,6 +3104,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "zakrepixeled", "Zak McKracken and the Alien Mindbenders - repixeled" },
 	{ "zakseamonster", "Zak McKracken and the Lonely Sea Monster" },
 	{ "zeke", "Zeke and the Island of Barentsev" },
+	{ "zempquest", "Zemp's Birthday Kuest" },
 	{ "zippermeteor", "The Zipper Meteor" },
 	{ "zogmoonbuckle", "Zog Moonbuckle: The Mysterious Planet" },
 	{ "zombieattack", "Zombie Attack" },
@@ -3566,6 +3568,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "ac2game.dat", "ff5b05b81909683fcd57580c58a81d87", 64200209, AGSTEAM_WADJETEYE), // Linux & Mac
 	GAME_ENTRY_PLUGIN_STEAM_EN("blackwell1", "ac2game.dat", "1051d3fa462b1e0cc8973a8775128307", 66679994, AGSTEAM_WADJETEYE), // Mac
 	GAME_ENTRY_EN("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18824247), // Humble Bundle (Windows)
+	GAME_ENTRY_EN("blackwell1", "ac2game.dat", "ca6edbac96264b2adf73ef10d5a0348d", 18800040), // v1.4 Wadjet Eye store (Win)
 	GAME_ENTRY_EN("blackwell1", "ac2game.dat", "605e124cb7e0b56841c471e2d641c224", 68665467), // Android
 	GAME_ENTRY_EN("blackwell1", "ac2game.dat", "4668e05ef2a94267b0d571e715413302", 64200367), // Humble Bundle (Linux)
 	GAME_ENTRY_EN("blackwell1", "ac2game.dat", "7fe0cac6736427d67822bca3d4bb30cb", 66675482),
@@ -4711,6 +4714,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("bjcase6", "bj6.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 18281493),
 	GAME_ENTRY_EN("bjcase7", "bj7.exe", "18b284c22010850f79bc5c20054a70c4", 13714066),
 	GAME_ENTRY_EN("bjcase8", "BJ8.exe", "98df40b0885b4e5f90f1093987f1f56c", 28334295),
+	GAME_ENTRY_EN("bjcults", "the darck colts.exe", "615e73fc1874e92d60a1996c2330ea36", 5977335),
 	GAME_ENTRY_EN("bjpww1", "BJWW.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 3538560),
 	GAME_ENTRY_EN("bjpww1", "BJWW.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 3538617),
 	GAME_ENTRY_EN("blackbirdstrikesback", "MAGSSept2013.exe", "615e73fc1874e92d60a1996c2330ea36", 4349965),
@@ -7535,6 +7539,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("zakrepixeled", "ZAK.exe", "305a819bce4004ef3c9b1a3a9f6ac1c8", 5741632), // v0.2.2.2
 	GAME_ENTRY_EN("zakrepixeled", "ZAK.exe", "7bf50af77154660465704b80cec1476d", 5816900), // v0.2.3.3
 	GAME_ENTRY_EN("zeke", "ZTO.exe", "f120690b506dd63cd7d1112ea6af2f77", 1201019),
+	GAME_ENTRY_EN("zempquest", "HBDZemp.30", "06a03fe35791b0578068ab1873455463", 2028630),
 	GAME_ENTRY_EN("zippermeteor", "TheZipperMeteor.exe", "06a03fe35791b0578068ab1873455463", 11886514),
 	GAME_ENTRY_EN("zogmoonbuckle", "Zog_Moonbuckle.exe", "0a3d57052500c7e93510ca2c317b6991", 37433537),
 	GAME_ENTRY_EN("zombiefish", "FZombie.exe", "3128b9f90e2f954ba704414ae854d10b", 4220305),
