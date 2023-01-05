@@ -39,6 +39,8 @@ struct Encounter {
 	uint8 _nameArticle;
 };
 
+#define kDefaultNoteDuration 616;
+
 extern const uint8 kFontWidthArray[96];
 extern const uint8 kFontExtraLinesArray[96];
 extern const Font kFontData[96];
@@ -48,6 +50,7 @@ extern const uint8 kByte2C7D0[60];
 extern const char kPossessive[3][4];
 extern const char kPersonal[3][4];
 extern const char kAttackVerbs[51][20];
+extern const int16 kSoundFrequency[72];
 
 } // End of namespace Efh
 
