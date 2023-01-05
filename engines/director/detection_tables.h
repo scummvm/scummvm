@@ -3914,7 +3914,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO2_l("himejijo", "Demo", "Macromedia Player", "de889febf08007ca7ac501a952cfba6f", 457275,
 								   "Demo",				"88c318f3e821b4a76f8ff67bb97c002f", 6736268, Common::JA_JPN, 400),
 
-	WINGAME1("hkbigfun", "", "KITTY.EXE", "42e600e8a917de593f4048428ec8d8b8", 703689, 404),
+	WINGAME2("hkbigfun", "", "KITTY.EXE", "42e600e8a917de593f4048428ec8d8b8", 703689,
+							 "KINTRO",	  "b3fc8f8073f442573a371729d242c6c6", 971508, 404),
 
 	MACGAME1("horobroy", "", "Rob Roy", "01be45e7241194dad07938e7059b88e3", 483382, 404),
 	WINGAME1("horobroy", "", "ROBROY.EXE", "65d06b5fef155a2473434571aff5bc29", 2047746, 400),
@@ -3925,9 +3926,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 								  "HORROR.DAT", "42f0450d970a95f0dd47727988996ce9", 450, Common::ZH_TWN, 404),
 
 	MACGAME1_l("horrortour1", "", "HorrorTour(7M)", "b7e69c37b7355022d400c14aa97c5d54", 483443, Common::JA_JPN, 404),
-	WINGAME1_l("horrortour1", "", "HORROR.EXE", "b16ecf8ebc02142c742b8a9acc935d52", 752425, Common::JA_JPN, 404),
+	WINGAME2_l("horrortour1", "", "HORROR.EXE", 	"b16ecf8ebc02142c742b8a9acc935d52", 752425,
+								  "MOVIE/A00W.DXR", "772a21f2ab11134c6ec34f8c0fda3335", 8182870, Common::JA_JPN, 404),
 	MACGAME1_l("horrortour2", "", "ZEDDAS PowerPC", "da7d3f1d85bdb99518b586c40d2a673e", 60013, Common::JA_JPN, 400),
-	WINGAME1_l("horrortour2", "", "HT2.EXE", "499d8545ee2325b18d3f09fb2c0fc26e", 698029, Common::JA_JPN, 400),
+	WINGAME2_l("horrortour2", "", "HT2.EXE",		   "499d8545ee2325b18d3f09fb2c0fc26e", 698029,
+								  "NEWHT2/A002AW.DIR", "fa060cc849870e9f7821033a61edeb89", 6262642, Common::JA_JPN, 404),
 
 	// Developed by Michael Eleftheriades
 	// Mac version from The Mac CD-ROM 6
@@ -3936,12 +3939,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t("housejam", "", "HOUSEJAM.EXE", "f00912d1c03213bb002d3062cbd1d123", 12034983, 404),
 
 	// Full game is supported in SCI engine
-	WINDEMO1t("hoyle5", "Demo", "HOYLE5.EXE", "499760334d09425e80c69e9a1b178ec5", 6287863, 404),
+	WINDEMO2t("hoyle5", "Demo", "HOYLE5.EXE", "499760334d09425e80c69e9a1b178ec5", 6287863,
+								"LINGO.INI",  "4f75e838a13079b4fc75af0fd6f70f3c", 826, 404),
 
 	MACGAME1("hurlman", "", "Hurlman", "6385f77fa00b44ccbb04258b864eeae6", 338931, 400),
 
 	// full game is not Director
-	WINDEMO1("hyperblade", "Demo", "HYPER.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400),
+	WINDEMO2("hyperblade", "Demo", "HYPER.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817,
+								   "HYPER.DIR", "44dce69e0473dae382bf80926a080c80", 2003612, 404),
 
 	WINGAME1t("hotwheelscamaro", "", "CAMARO.EXE", "564b1fa630690b74eb1e2b940df4a8c6", 1435537, 404),
 	WINGAME1t("hotwheelshydro", "", "HYDRO.EXE", "74a10424115e3f5e47b0422f31998e53", 1437147, 404),
@@ -5729,7 +5734,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("hollywoodhigh", "Demo", "HOTSHOT.EXE", "5b056b97e60209a45665e27ff39d8010", 10066133, 501),
 
 	// Win version must be installed in 32-bit Windows to extract executable
-	WINGAME1_l("horrortour3", "", "HT3.exe", "3460ad87d2ba57104e2810a77b53c220", 5128359, Common::JA_JPN, 500),
+	WINGAME2_l("horrortour3", "", "HT3.exe", 	"3460ad87d2ba57104e2810a77b53c220", 5128359,
+								  "Asm001.dir", "d67f5146ef071f8a1e074383659fc9b0", 249634, Common::JA_JPN, 500),
 	MACGAME1_l("horrortour3", "", "HT3", "b545372e9f6e9351d4119af9258d8de0", 108736, Common::JA_JPN, 500),
 
 	WINGAME1t_l("humanbody", "", "ANIM.EXE", "10883c886da86bd2359a60c689d106a7", 1709290, Common::JA_JPN, 501),
