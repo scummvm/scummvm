@@ -216,6 +216,7 @@ protected:
 	SDL_Surface *_overlayscreen;
 	bool _useOldSrc;
 	Graphics::PixelFormat _overlayFormat;
+	bool _isDoubleBuf;
 
 	enum {
 		kTransactionNone = 0,
@@ -340,8 +341,14 @@ protected:
 	};
 
 	// Dirty rect management
-	SDL_Rect _dirtyRectList[NUM_DIRTY_RECT];
+	// When double-buffering we need to redraw both updates from
+	// current frame and previous frame. For convenience we copy
+	// them here before traversing the list.
+	SDL_Rect _dirtyRectList[2 * NUM_DIRTY_RECT];
 	int _numDirtyRects;
+
+	SDL_Rect _prevDirtyRectList[NUM_DIRTY_RECT];
+	int _numPrevDirtyRects;
 
 	struct MousePos {
 		// The size and hotspot of the original cursor image.
@@ -459,6 +466,8 @@ private:
 	 * can be triggered.
 	 */
 	bool _needRestoreAfterOverlay;
+	bool _prevForceRedraw;
+	bool _prevCursorNeedsRedraw;
 };
 
 #endif
