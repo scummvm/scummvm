@@ -285,6 +285,8 @@ private:
 	bool _saveAuthorized;
 
 	void initialize();
+	void songDelay(int delay);
+	void playNote(int frequencyIndex, int totalDelay);
 	Common::KeyCode playSong(uint8 *buffer);
 	void playIntro();
 	void initEngine();

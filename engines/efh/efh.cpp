@@ -273,12 +273,65 @@ void EfhEngine::initialize() {
 	_shouldQuit = false;
 }
 
+void EfhEngine::songDelay(int delay) {
+	debug("songDelay %d", delay);
+
+	int remainingDelay = delay * kDefaultNoteDuration;
+	Common::KeyCode input = Common::KEYCODE_INVALID;
+	Common::Event event;
+	while (input == Common::KEYCODE_INVALID && remainingDelay > 0 && !shouldQuit()) {
+		_system->delayMillis(20);
+		remainingDelay -= 20;
+
+		_system->getEventManager()->pollEvent(event);
+		if (event.type == Common::EVENT_KEYUP) {
+			input = event.kbd.keycode;
+		}
+	}
+}
+
+void EfhEngine::playNote(int frequencyIndex, int totalDelay) {
+	debug("playNote %d %d", frequencyIndex, totalDelay);
+}
+
 Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
-	warning("STUB: playSong");
+	debug("playSong");
 
-	_system->delayMillis(1000);
+	Common::KeyCode inputChar = Common::KEYCODE_INVALID;
+	int32 totalDelay = 0;
 
-	return Common::KEYCODE_INVALID;
+	uint8 varC = *buffer++;
+	int8 stopFl = *buffer & 0x3F;
+	while (stopFl != 0) {
+		int32 delay = stopFl * varC * 0x2200 / 1000;
+		if (*buffer > 0x7F)
+			delay /= 2;
+		if (*buffer & 0x40)
+			delay = (delay * 2) / 3;
+		int8 frequencyIndex = *++buffer & 0xF;
+		++buffer;
+
+		if (frequencyIndex > 0x7F)
+			totalDelay += delay;
+		else if (frequencyIndex == 0)
+			songDelay(delay);
+		else {
+			playNote(frequencyIndex, totalDelay + delay);
+			totalDelay = 0;
+		}
+
+		songDelay(10);
+		Common::Event event;
+		_system->getEventManager()->pollEvent(event);
+		if (event.type == Common::EVENT_KEYUP) {
+			inputChar = event.kbd.keycode;
+		}
+
+		if (inputChar != Common::KEYCODE_INVALID)
+			stopFl = 0;
+	}
+	
+	return inputChar;
 }
 
 void EfhEngine::playIntro() {
