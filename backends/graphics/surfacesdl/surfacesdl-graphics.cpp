@@ -707,11 +707,41 @@ int SurfaceSdlGraphicsManager::getStretchMode() const {
 }
 #endif
 
+void SurfaceSdlGraphicsManager::getDefaultResolution(uint &w, uint &h) {
+#ifdef RS90
+	SDL_PixelFormat p;
+	p.BitsPerPixel = 16;
+	p.BytesPerPixel = 2;
+	p.Rloss = 3;
+	p.Gloss = 2;
+	p.Bloss = 3;
+	p.Rshift = 11;
+	p.Gshift = 5;
+	p.Bshift = 0;
+	p.Rmask = 0xf800;
+	p.Gmask = 0x07e0;
+	p.Bmask = 0x001f;
+	p.colorkey = 0;
+	p.alpha = 0;
+	// Only native screen resolution is supported in RGB565 fullscreen hwsurface.
+	SDL_Rect const* const*availableModes = SDL_ListModes(&p, SDL_FULLSCREEN|SDL_HWSURFACE);
+	w = availableModes[0]->w;
+	h = availableModes[0]->h;
+#else
+	w = 320;
+	h = 200;
+#endif
+}
+
 void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
 	_gameScreenShakeXOffset = 0;
 	_gameScreenShakeYOffset = 0;
+
+	if (w == 0) {
+		getDefaultResolution(w, h);
+	}
 
 #ifdef USE_RGB_COLOR
 	//avoid redundant format changes
