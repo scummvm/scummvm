@@ -104,6 +104,8 @@ public:
 	bool getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2);
 	bool getRGBAtEGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2);
 	bool getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2, byte *stipple);
+	void extractCPCIndexes(uint8 cm1, uint8 cm2, uint8 &i1, uint8 &i2);
+	void selectColorFromCPCPalette(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1);
 
 	virtual void setStippleData(byte *data) {};
 	virtual void useStipple(bool enabled) {};
@@ -113,6 +115,7 @@ public:
 	int _keyColor;
 	int _inkColor;
 	int _paperColor;
+	int _underFireBackgroundColor;
 
 	/**
 	 * Select the window where to render

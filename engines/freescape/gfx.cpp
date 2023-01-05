@@ -42,6 +42,7 @@ Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode) {
 	_keyColor = -1;
 	_inkColor = -1;
 	_paperColor = -1;
+	_underFireBackgroundColor = -1;
 	_palette = nullptr;
 	_colorMap = nullptr;
 	_colorRemaps = nullptr;
@@ -134,46 +135,54 @@ bool Renderer::getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r
 	return true;
 }
 
-void extractIndexes(byte cm1, byte cm2, uint8 &i1, uint8 &i2) {
-	if (cm1 == 0xb4)
+void Renderer::extractCPCIndexes(uint8 cm1, uint8 cm2, uint8 &i1, uint8 &i2) {
+	if (cm1 == 0xb4 && cm2 == 0xe1) {
 		i1 = 1;
-	else if (cm1 == 0xb0)
+		i2 = 2;
+	} else if (cm1 == 0xb0 && cm2 == 0xe0) {
 		i1 = 1;
-	else if (cm1 == 0x05)
+		i2 = 0;
+	} else if (cm1 == 0x05 && cm2 == 0x0a) {
 		i1 = 2;
-	else if (cm1 == 0x50)
+		i2 = 0;
+	} else if (cm1 == 0x50 && cm2 == 0xa0) {
 		i1 = 1;
-	else if (cm1 == 0x55)
+		i2 = 0;
+	} else if (cm1 == 0x55 && cm2 == 0xaa) {
 		i1 = 3;
-	else if (cm1 == 0xf5)
+		i2 = 0;
+	} else if (cm1 == 0xf5 && cm2 == 0xfa) {
 		i1 = 3;
-	else if (cm1 == 0x5a)
-		i1 = 1;
-	else if (cm1 == 0xbb)
-		i1 = 3;
-	else
-		error("%x %x", cm1, cm2);
-
-	if (cm2 == 0xe1)
-		i2 = 2;
-	else if (cm2 == 0x0a)
-		i2 = 0;
-	else if (cm2 == 0xaa)
-		i2 = 0;
-	else if (cm2 == 0xa0)
-		i2 = 0;
-	else if (cm2 == 0x00)
-		i2 = 0;
-	else if (cm2 == 0xfa)
 		i2 = 1;
-	else if (cm2 == 0xa5)
+	} else if (cm1 == 0x5a && cm2 == 0xa5) {
+		i1 = 1;
 		i2 = 2;
-	else if (cm2 == 0xee)
+	} else if (cm1 == 0xbb && cm2 == 0xee) {
+		i1 = 3;
 		i2 = 0;
-	else if (cm2 == 0xe0)
+	} else if (cm1 == 0x5f && cm2 == 0xaf) {
+		i1 = 3;
+		i2 = 2;
+	} else if (cm1 == 0xfb && cm2 == 0xfe) { // TODO
+		i1 = 0;
 		i2 = 0;
-	else
+	} else
 		error("%x %x", cm1, cm2);
+}
+
+void Renderer::selectColorFromCPCPalette(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1) {
+	if (index == 0) {
+		r1 = 0;
+		g1 = 0;
+		b1 = 0;
+	} else if (index == 1) {
+		readFromPalette(_underFireBackgroundColor, r1, g1, b1);
+	} else if (index == 2) {
+		readFromPalette(_paperColor, r1, g1, b1);
+	} else if (index == 3) {
+		readFromPalette(_inkColor, r1, g1, b1);
+	} else
+		error("Invalid color");
 }
 
 bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2) {
@@ -182,23 +191,22 @@ bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 
 	assert (_renderMode == Common::kRenderCPC);
 	if (index <= 4) { // Solid colors
-		readFromPalette(index - 1, r1, g1, b1);
+		selectColorFromCPCPalette(index - 1, r1, g1, b1);
 		r2 = r1;
 		g2 = g1;
 		b2 = b1;
 		return true;
 	}
 
+	uint8 i1, i2;
 	byte *entry = (*_colorMap)[index - 1];
-	byte cm1 = *(entry);
+	uint8 cm1 = *(entry);
 	entry++;
-	byte cm2 = *(entry);
+	uint8 cm2 = *(entry);
 
-	uint8 i1;
-	uint8 i2;
-	extractIndexes(cm1, cm2, i1, i2);
-	readFromPalette(i1, r1, g1, b1);
-	readFromPalette(i2, r2, g2, b2);
+	extractCPCIndexes(cm1, cm2, i1, i2);
+	selectColorFromCPCPalette(i1, r1, g1, b1);
+	selectColorFromCPCPalette(i2, r2, g2, b2);
 	return true;
 }
 

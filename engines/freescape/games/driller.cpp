@@ -734,7 +734,7 @@ void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
 	uint32 color = 1;
 	uint8 r, g, b;
 
-	_gfx->readFromPalette(color, r, g, b);
+	_gfx->selectColorFromCPCPalette(color, r, g, b);
 	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	color = 0;
