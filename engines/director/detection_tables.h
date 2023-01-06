@@ -4105,7 +4105,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 										 "NAVLOAD.DXR",		"ff8446121236a1cbfb1fe431fea5bc09", 405042, 404),
 	WINGAME2_l("jewels1", "",			 "JEWELS.EXE",		"bb6d81471d166088260090472c6c3a87", 800395,
 										 "NAVLOAD.DXR",		"e7dfda887f9040bb29ad822717a11cc7", 405236, Common::DE_DEU, 404),
-	WINDEMO1("jewels1", "Horses Demo",	 "HORSE.EXE",		"03bbe56c80fcbca3939ba08407d99f76", 847689, 400),
+	WINDEMO2("jewels1", "Horses Demo",	 "HORSE.EXE",		"03bbe56c80fcbca3939ba08407d99f76", 847689,
+										 "PUZZ_19.DXR",		"7de54130d57b063db0649027c3fd052d", 1181314, 404),
 	WINDEMO2("jewels1", "Demo",			 "JEWELS.EXE",		"abcc448c035e88d4edb4a29034fd1e34", 863983,
 										 "PUZZ_01.DXR",		"ea75491b1be5352de158c310fcf7baf5", 267074, 400),
 	WINDEMO2("jewels1", "Nightsky Demo", "DEMO.EXE",		"ebee52d3c4280674c600177df5b09da0", 800403,
@@ -4147,19 +4148,23 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("jmmd", "", "Just Me & My Dad", "ea646eccc9a53f44ce082459d4809a06", 486710, 400),
 
 	// Bilingual English & Spanish
-	MACGAME1("journey2life", "", "The Journey to Life", "bcd3c718db258701496b3c5bcb827ef2", 483774, 404),
-	WINGAME1("journey2life", "", "LIFE.EXE", "b23041f4f5cce3d15ef985bbd513030a", 756297, 404),
+	MACGAME2("journey2life", "", "The Journey to Life", "bcd3c718db258701496b3c5bcb827ef2", 483518,
+								 "MEDIA/INTRO.Dxr",		"429f9d51429671b2f9bdd44d33ffb6b2", 774408, 404),
+	WINGAME2("journey2life", "", "LIFE.EXE",			"b23041f4f5cce3d15ef985bbd513030a", 756297,
+								 "MEDIA/INTRO.Dxr",		"429f9d51429671b2f9bdd44d33ffb6b2", 774408, 404),
 
 	PIPGAME1_l("junglepark", "", "JunglePark for Pippin", "dcf4cc0d9aa3cf8fa0c127cf72477af9", 60665, Common::JA_JPN, 404),
 	MACGAME1_l("junglepark", "", "JunglePark for ppc", "fb8ad82e79d2c65872a48261c8aeaaac", 60665, Common::JA_JPN, 404),
-	WINGAME1t_l("junglepark", "Hybrid release", "JU_PARK.EXE", "f5357cf42fc929f98b4000015bf327db", 697087, Common::JA_JPN, 404),
 	MACGAME1_l("junglepark", "Hybrid release", "JunglePark ppc", "af6f439598af8d750d8298c4e62ba88c", 60665, Common::JA_JPN, 404),
-	WINGAME1t_l("junglepark", "", "JUNGLE.EXE", "ce26af47699aa5a1c1948de7d81916f8", 742377, Common::FR_FRA, 404),
+	WINGAME1t_l("junglepark", "Hybrid release", "JU_PARK.EXE", "f5357cf42fc929f98b4000015bf327db", 697087, Common::JA_JPN, 404),
 	MACGAME1_l("junglepark", "", "Jungle Park PPC", "4730ce8bdd2ab17bf714da3ff7f3e510", 60884, Common::FR_FRA, 404),
+	WINGAME2t_l("junglepark", "", "JUNGLE.EXE",		  "ce26af47699aa5a1c1948de7d81916f8", 742377,
+								  "JUNGLE/TITLE.DXR", "3576dfffc2f643049f421ffb2087ddaa", 1405334, Common::FR_FRA, 404),
 
 	// Original Taiwan release is called 塔克拉玛干—敦煌传奇 (Taklamakan: Dunhuang Chuanqi)
-	MACGAME1("karma", "", "Karma", "ea646eccc9a53f44ce082459d4809a06", 485535, 400),
-	WINGAME1("karma", "", "KARMA.EXE", "e830af6b5dfca4964184e7d61039e120", 697047, 400),
+	MACGAME1("karma", "", "Karma", "ea646eccc9a53f44ce082459d4809a06", 485279, 404),
+	WINGAME2("karma", "", "KARMA.EXE", "e830af6b5dfca4964184e7d61039e120", 697047,
+						  "01_0Y.BIM", "246c2f5ab5499d46f395aa9d0da05c9a", 780158, 404),
 	WINGAME1_l("karma", "", "DH.EXE", "f917ac9c649bff9eaf538ae69432a145", 690991, Common::ZH_TWN, 400),
 
 	// Original Mac filename is かるたでおじゃる
@@ -4172,7 +4177,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1_l("kenji", "Demo", "KENJI", "4577dd3eadc467a986ab172d90871b22", 502033, Common::JA_JPN, 404),
 
-	WINGAME1("kfk", "", "KFK.EXE", "75a9f8838cd654701afdd50e68cf5736", 2696447, 404),
+	WINGAME2("kfk", "", "KFK.EXE", 		"75a9f8838cd654701afdd50e68cf5736", 2696447,
+						"KFKTHEME.MID", "ce462c95d4fcb85c6a967893937ed7be", 13033, 404),
 
 	// Windows and Mac versions are D5
 	PIPGAME1("kidsbox", "", "KIDS BOX", "bcd3c718db258701496b3c5bcb827ef2", 484095, 404),
@@ -4197,11 +4203,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("korkydragons", "", "Dragons!", "0c7bbb4b24823e5ab871cb4c1d6f3710", 486726, 404),
 	WINGAME1t("korkydragons", "", "DRAGONS!.EXE", "4d35a9f14ea5b012e552cd6b3a7e7452", 698833, 404),
 
-	MACGAME1("kyoto", "v2.0", "Cosmology of KYOTO", "8719de9c083aca942fc0e5c0a127b6dc", 484370, 400),
-	WINGAME1("kyoto", "", "PLAY_E.EXE", "84cc8880f8c46b4da121b4c9f184418a", 691269, 400),
-	MACGAME1_l("kyoto", "v2.0", "Cosmology of KYOTO", "8719de9c083aca942fc0e5c0a127b6dc", 484445, Common::JA_JPN, 400),
+	MACGAME1("kyoto", "v2.0", "Cosmology of KYOTO", "8719de9c083aca942fc0e5c0a127b6dc", 484114, 404),
+	WINGAME2("kyoto", "", "PLAY_E.EXE",					  "84cc8880f8c46b4da121b4c9f184418a", 691269,
+						  "CK_DATA/OPENING/ID_INPUT.DXR", "7c17a91e5b06471c11e3c6977040773a", 550062,  404),
+	MACGAME1_l("kyoto", "v2.0", "Cosmology of KYOTO", "8719de9c083aca942fc0e5c0a127b6dc", 484189, Common::JA_JPN, 404),
 	WINGAME2_l("kyoto", "", "PLAY.EXE",		"865b1b59e32e51a6670b9105ac8501ec", 741137,
-							"OPENING1.DXR", "b96015c8c138c6626b10fffaed28efea", 679328, Common::JA_JPN, 400),
+							"OPENING1.DXR", "b96015c8c138c6626b10fffaed28efea", 679328, Common::JA_JPN, 404),
 
 	MACGAME1("laughingbird", "", "The Laughing Bird Restaurant", "547553eca48ebc089e893ba1905c2b74", 673138, 404),
 
@@ -4210,7 +4217,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("leonardo", "", "LEO.EXE", "0be0b03b89bb4aba716a974c3ccc3950", 692347,
 							   "LEOWINMV/INDEX.DIR", "f43523ae0244588c5a42656f54837b80", 201882, Common::PT_BRA, 404),
 
-	WINDEMO1("letters", "Demo", "LETTERS.EXE", "ed0636bab94b299d96552e4c71bc82a1", 3875399, 404),
+	WINDEMO2("letters", "Demo", "LETTERS.EXE", "ed0636bab94b299d96552e4c71bc82a1", 3875399,
+								"CWLOGO.DIR",  "efb5c1918f5637bf9228ffc24f89ef72", 652996, 404),
 
 	WINGAME1t("lifemysteries", "v1.01", "_SETUP/LGM/LGM.EXE", "c9ffbacdc78482eeaf644730a2fedc15", 1024075, 404),
 	WINGAME1t("lifemysteries", "Demo", "LGMDEM.EXE", "dd13662fa71a413c2ba9228ea73e5448", 5539283, 404),
@@ -4220,11 +4228,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1_l("lobomau", "", "LOBO.EXE", "162d4d1aaf42b6e8d7dfc520e5de2bed", 201828999, Common::PT_BRA, 400),
 
-	MACGAME1("louiscatorze", "", "Louis Catorze", "2c7d0c0d55cbe3f622c7d68cedb671e0", 486954, 400),
-	WINGAME1("louiscatorze", "", "LOUIS.EXE", "21610856ba0f75598624edd58291600b", 719433, 400),
+	MACGAME1("louiscatorze", "", "Louis Catorze", "2c7d0c0d55cbe3f622c7d68cedb671e0", 486698, 404),
+	WINGAME2("louiscatorze", "", "LOUIS.EXE",		   "21610856ba0f75598624edd58291600b", 719433,
+								 "LOUIS/V0ASTART.DIR", "65586336bda5bdc737c1ad420b0d403b", 2019106, 404),
 
-	MACGAME1("louvre", "", "Louvre 5 Mo", "a685f1809706f42bff5f3ee94f606065", 483774, 404),
-	WINGAME1("louvre", "", "LOUVRE.EXE", "f575ed4b37c05ab4249f9d6d3c3d7e17", 698829, 404),
+	MACGAME1("louvre", "", "Louvre 5 Mo", "a685f1809706f42bff5f3ee94f606065", 483518, 404),
+	WINGAME2("louvre", "", "LOUVRE.EXE",  "f575ed4b37c05ab4249f9d6d3c3d7e17", 698829,
+						   "DATA/M1.DXR", "17648995fadc61c05dcf096190b33287", 4914344, 404),
 
 	// From MacFormat #44
 	MACGAME1("lovinghenry", "", "Loving Henry", "041f913ae9bfaebe53a238c14a7281e0", 291052, 403),
