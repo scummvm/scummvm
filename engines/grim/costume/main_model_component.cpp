@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/foreach.h"
-
 #include "engines/grim/model.h"
 #include "engines/grim/costume/model_component.h"
 #include "engines/grim/costume/main_model_component.h"
@@ -49,7 +47,7 @@ MainModelComponent::~MainModelComponent() {
 		_animation = nullptr;
 	}
 
-	foreach (MainModelComponent *child, _children) {
+	for (MainModelComponent *child : _children) {
 		child->_obj = nullptr;
 		child->_hier = nullptr;
 		child->_parentModel = nullptr;

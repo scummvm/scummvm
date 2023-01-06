@@ -20,7 +20,6 @@
  */
 
 #include "common/endian.h"
-#include "common/foreach.h"
 #include "common/system.h"
 #include "common/events.h"
 
@@ -513,7 +512,7 @@ void LuaBase::setTextObjectParams(TextObjectCommon *textObject, lua_Object table
 		if (g_grim->getGameType() == GType_MONKEY4 && lua_isstring(keyObj)) {
 			const char *str = lua_getstring(keyObj);
 			Font *font = nullptr;
-			foreach (Font *f, Font::getPool()) {
+			for (Font *f : Font::getPool()) {
 				if (f->getFilename() == str) {
 					font = f;
 				}

@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/foreach.h"
-
 #include "engines/grim/emi/costume/emimesh_component.h"
 #include "engines/grim/emi/modelemi.h"
 #include "engines/grim/resource.h"
@@ -41,7 +39,7 @@ EMIMeshComponent::~EMIMeshComponent() {
 		delete _obj;
 	}
 
-	foreach (EMIMeshComponent *child, _children) {
+	for (EMIMeshComponent *child : _children) {
 		child->_obj = nullptr;
 		//child->_hier = NULL;
 		child->_parentModel = nullptr;

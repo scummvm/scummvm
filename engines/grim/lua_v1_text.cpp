@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/foreach.h"
 #include "common/savefile.h"
 #include "common/system.h"
 
@@ -135,7 +134,7 @@ void Lua_V1::GetTextObjectDimensions() {
 
 void Lua_V1::ExpireText() {
 	// Cleanup actor references to deleted text objects
-	foreach (Actor *a, Actor::getPool()) {
+	for (Actor *a : Actor::getPool()) {
 		a->lineCleanup();
 	}
 }
