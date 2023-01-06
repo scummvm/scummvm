@@ -24,7 +24,7 @@
 namespace Scumm {
 
 int IMuseDigital::tracksInit() {
-	_trackCount = 6;
+	_trackCount = _lowLatencyMode ? DIMUSE_MAX_TRACKS : 6;
 	_tracksPauseTimer = 0;
 	_trackList = nullptr;
 
@@ -43,6 +43,7 @@ int IMuseDigital::tracksInit() {
 	}
 
 	for (int l = 0; l < _trackCount; l++) {
+		_tracks[l].index = l;
 		_tracks[l].prev = nullptr;
 		_tracks[l].next = nullptr;
 		_tracks[l].dispatchPtr = dispatchGetDispatchByTrackId(l);
@@ -210,6 +211,109 @@ void IMuseDigital::tracksCallback() {
 				waveOutWrite(&_outputAudioBuffer, _outputFeedSize, _outputSampleRate);
 			}
 		}
+	}
+}
+
+void IMuseDigital::tracksLowLatencyCallback() {
+	// Why do we need a low latency mode?
+	//
+	// For every audio callback, this engine works by collecting all the sound
+	// data for every track and by mixing it up in a single output stream.
+	// This is exactly how the original executables worked, so our implementation
+	// provides a very faithful recreation of that experience. And it comes with
+	// a compromise that e.g. The Dig and Full Throttle didn't have to front:
+	//
+	// in order to provide glitchless audio, an appropriate stream queue size
+	// has to be enforced: a longer queue yields a lower probability of audio glitches
+	// but a higher latency, and viceversa. In our case, this depends on the audio backend
+	// configuration. As such: some configurations might encounter audible latency (#13462).
+	//
+	// We solve this issue by offering this alternate low latency mode which, instead
+	// of keeping a single stream for everything, creates (and disposes) streams on the fly
+	// for every different sound. This means that whenever the new sound data is ready,
+	// a new stream is initialized and played immediately, without having to wait for all
+	// the other sounds to be processed and mixed in the same sample pool.
+
+	if (_tracksPauseTimer) {
+		if (++_tracksPauseTimer < 3)
+			return;
+		_tracksPauseTimer = 3;
+	}
+
+	// The callback path is heavily inspired from the original one (see tracksCallback()),
+	// but it handles each track separatedly, with the exception of SMUSH audio for Full
+	// Throttle: this is why we operate on two parallel paths...
+
+	if (!_isEarlyDiMUSE)
+		dispatchPredictFirstStream();
+
+	IMuseDigiTrack *track = _trackList;
+
+	// This flag ensures that, even when no track is available,
+	// FT SMUSH audio can still be played. At least, and AT MOST once :-)
+	bool runSMUSHAudio = _isEarlyDiMUSE;
+
+	while (track || runSMUSHAudio) {
+
+		IMuseDigiTrack *next = track ? track->next : nullptr;
+		int idx = track ? track->index : -1;
+
+		// We use a separate queue cardinality handling, since SMUSH audio and iMUSE audio can overlap...
+		bool canQueueBufs = (int)_internalMixer->getStream(idx)->numQueuedStreams() < _maxQueuedStreams;
+		bool canQueueFtSmush = (int)_internalMixer->getStream(-1)->numQueuedStreams() < _maxQueuedStreams;
+
+		if (canQueueBufs) {
+			if (track)
+				waveOutLowLatencyWrite(&_outputLowLatencyAudioBuffers[idx], _outputFeedSize, _outputSampleRate, idx);
+
+			// Notice how SMUSH audio for Full Throttle uses the original single-stream mode:
+			// this is necessary both for code cleanliness and for correct audio sync.
+			if (runSMUSHAudio && canQueueFtSmush)
+				waveOutWrite(&_outputAudioBuffer, _outputFeedSize, _outputSampleRate);
+
+			if (_outputFeedSize != 0) {
+				// FT SMUSH dispatch processing...
+				if (runSMUSHAudio && canQueueFtSmush && _isEarlyDiMUSE && _splayer && _splayer->isAudioCallbackEnabled()) {
+					_internalMixer->setCurrentMixerBuffer(_outputAudioBuffer);
+					_internalMixer->clearMixerBuffer();
+
+					_splayer->processDispatches(_outputFeedSize);
+					_internalMixer->loop(&_outputAudioBuffer, _outputFeedSize);
+				}
+
+				// Ordinary audio tracks handling...
+				if (track) {
+					_internalMixer->setCurrentMixerBuffer(_outputLowLatencyAudioBuffers[idx]);
+					_internalMixer->clearMixerBuffer();
+
+					if (!_tracksPauseTimer) {
+						if (_isEarlyDiMUSE) {
+							dispatchProcessDispatches(track, _outputFeedSize);
+						} else {
+							dispatchProcessDispatches(track, _outputFeedSize, _outputSampleRate);
+						}
+					}
+
+					_internalMixer->loop(&_outputLowLatencyAudioBuffers[idx], _outputFeedSize);
+
+					// The Dig tries to write a second time
+					if (!_isEarlyDiMUSE && _vm->_game.id == GID_DIG) {
+						waveOutLowLatencyWrite(&_outputLowLatencyAudioBuffers[idx], _outputFeedSize, _outputSampleRate, idx);
+					}
+
+					// If, after processing the track dispatch, the sound is set to zero
+					// it means that it has reached the end: let's notify its stream...
+					if (track->soundId == 0) {
+						_internalMixer->endStream(idx);
+					}
+				}
+			}
+		}
+
+		if (track)
+			track = next;
+
+		runSMUSHAudio = false;
 	}
 }
 
@@ -399,6 +503,9 @@ void IMuseDigital::tracksClear(IMuseDigiTrack *trackPtr) {
 	if (trackPtr->soundId < 1000 && trackPtr->soundId) {
 		_vm->_res->unlock(rtSound, trackPtr->soundId);
 	}
+
+	if (_lowLatencyMode)
+		waveOutEmptyBuffer(trackPtr->index);
 
 	trackPtr->soundId = 0;
 }

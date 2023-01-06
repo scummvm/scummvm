@@ -181,6 +181,7 @@ typedef struct {
 } IMuseDigiFade;
 
 struct IMuseDigiTrack {
+	int index;
 	IMuseDigiTrack *prev;
 	IMuseDigiTrack *next;
 	IMuseDigiDispatch *dispatchPtr;

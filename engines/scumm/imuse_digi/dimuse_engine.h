@@ -86,6 +86,7 @@ private:
 	bool _isEngineDisabled;
 	bool _checkForUnderrun;
 	int _underrunCooldown;
+	bool _lowLatencyMode;
 
 	int _internalFeedSize;
 	int _internalSampleRate;
@@ -94,6 +95,9 @@ private:
 	uint8 *_outputAudioBuffer;
 	int _outputFeedSize;
 	int _outputSampleRate;
+
+	// Used in low latency mode only
+	uint8 *_outputLowLatencyAudioBuffers[DIMUSE_MAX_TRACKS];
 
 	int _maxQueuedStreams; // maximum number of streams which can be queued before they are played
 	int _nominalBufferCount;
@@ -200,6 +204,7 @@ private:
 	void tracksSaveLoad(Common::Serializer &ser);
 	void tracksSetGroupVol();
 	void tracksCallback();
+	void tracksLowLatencyCallback();
 	int tracksStartSound(int soundId, int tryPriority, int group);
 	int tracksStopSound(int soundId);
 	int tracksStopAllSounds();
@@ -307,8 +312,14 @@ private:
 	void waveOutCallback();
 	byte waveOutGetStreamFlags();
 
+	// Low latency mode
+	void waveOutLowLatencyWrite(uint8 **audioBuffer, int &feedSize, int &sampleRate, int idx);
+	void waveOutEmptyBuffer(int idx);
+
+	uint8 *_waveOutLowLatencyOutputBuffer;
+
 public:
-	IMuseDigital(ScummEngine_v7 *scumm, int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex);
+	IMuseDigital(ScummEngine_v7 *scumm, int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool lowLatencyMode = false);
 	~IMuseDigital() override;
 
 	// Wrapper functions used by the main engine

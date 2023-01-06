@@ -41,7 +41,7 @@ void IMuseDigital::timer_handler(void *refCon) {
 	diMUSE->callback();
 }
 
-IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex)
+IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, int sampleRate, Audio::Mixer *mixer, Common::Mutex *mutex, bool lowLatencyMode)
 	: _vm(scumm), _mixer(mixer), _mutex(mutex) {
 	assert(_vm);
 	assert(mixer);
@@ -83,12 +83,13 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, int sampleRate, Audio::Mixer *
 	_isEngineDisabled = false;
 	_checkForUnderrun = false;
 	_underrunCooldown = 0;
+	_lowLatencyMode = lowLatencyMode;
 
 	_audioNames = nullptr;
 	_numAudioNames = 0;
 
 	_emptyMarker[0] = '\0';
-	_internalMixer = new IMuseDigiInternalMixer(mixer, _internalSampleRate, _isEarlyDiMUSE);
+	_internalMixer = new IMuseDigiInternalMixer(mixer, _internalSampleRate, _isEarlyDiMUSE, _lowLatencyMode);
 	_groupsHandler = new IMuseDigiGroupsHandler(this);
 	_fadesHandler = new IMuseDigiFadesHandler(this);
 	_triggersHandler = new IMuseDigiTriggersHandler(this);
@@ -158,6 +159,9 @@ IMuseDigital::~IMuseDigital() {
 	// Deinit the WaveOut module
 	free(_waveOutOutputBuffer);
 	_waveOutOutputBuffer = nullptr;
+
+	free(_waveOutLowLatencyOutputBuffer);
+	_waveOutLowLatencyOutputBuffer = nullptr;
 
 	free(_audioNames);
 }

@@ -58,8 +58,10 @@ private:
 	int _radioChatter;
 	int _outWordSize;
 	int _outChannelCount;
+	int _sampleRate;
 	int _stereoReverseFlag;
 	bool _isEarlyDiMUSE;
+	bool _lowLatencyMode;
 
 	void mixBits8Mono(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *ampTable, bool ftIs11025Hz);
 	void mixBits12Mono(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *ampTable);
@@ -78,7 +80,7 @@ private:
 	void mixBits16Stereo(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *ampTable);
 
 public:
-	IMuseDigiInternalMixer(Audio::Mixer *mixer, int sampleRate, bool isEarlyDiMUSE);
+	IMuseDigiInternalMixer(Audio::Mixer *mixer, int sampleRate, bool isEarlyDiMUSE, bool lowLatencyMode = false);
 	~IMuseDigiInternalMixer();
 	int  init(int bytesPerSample, int numChannels, uint8 *mixBuf, int mixBufSize, int sizeSampleKB, int mixChannelsNum);
 	void setRadioChatter();
@@ -88,6 +90,14 @@ public:
 	void mix(uint8 *srcBuf, int32 inFrameCount, int wordSize, int channelCount, int feedSize, int32 mixBufStartIndex, int volume, int pan, bool ftIs11025Hz);
 	int  loop(uint8 **destBuffer, int len);
 	Audio::QueuingAudioStream *_stream;
+
+	// For low latency audio
+	void setCurrentMixerBuffer(uint8 *newBuf);
+	void endStream(int idx);
+	Audio::QueuingAudioStream *getStream(int idx);
+
+	Audio::QueuingAudioStream *_separateStreams[DIMUSE_MAX_TRACKS];
+	Audio::SoundHandle _separateChannelHandles[DIMUSE_MAX_TRACKS];
 };
 
 } // End of namespace Scumm
