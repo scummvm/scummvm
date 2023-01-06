@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/foreach.h"
-
 #include "engines/grim/debug.h"
 #include "engines/grim/set.h"
 #include "engines/grim/textsplit.h"
@@ -81,7 +79,7 @@ Set::~Set() {
 		}
 		delete[] _shadows;
 	}
-	foreach (Light *l, _overworldLightsList) {
+	for (Light *l : _overworldLightsList) {
 		delete l;
 	}
 }
@@ -820,7 +818,7 @@ void Set::setupLights(const Math::Vector3d &pos, bool inOverworld) {
 	Common::sort(lightsList->begin(), lightsList->end(), sorter);
 
 	int count = 0;
-	foreach (Light *l, *lightsList) {
+	for (Light *l : *lightsList) {
 		if (l->_enabled) {
 			g_driver->setupLight(l, count);
 			++count;

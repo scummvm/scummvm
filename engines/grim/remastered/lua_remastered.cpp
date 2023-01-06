@@ -20,7 +20,6 @@
  */
 
 #include "common/endian.h"
-#include "common/foreach.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
 
@@ -177,7 +176,7 @@ void Lua_Remastered::QueryActiveHotspots() {
 	Math::Vector2d pos(g_grim->_cursorX*scaleX, g_grim->_cursorY*scaleY);
 	lua_Object result = lua_createtable();
 	int count = 0;
-	foreach (Hotspot *h, Hotspot::getPool()) {
+	for (Hotspot *h : Hotspot::getPool()) {
 		if (!h->_rect.containsPoint(pos)) {
 			continue;
 		}

@@ -41,8 +41,6 @@
 #include "engines/grim/emi/costume/emiskel_component.h"
 #include "engines/grim/emi/modelemi.h"
 
-#include "common/foreach.h"
-
 namespace Grim {
 
 Shadow::Shadow() :
@@ -516,7 +514,7 @@ void Actor::setPos(const Math::Vector3d &position) {
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		Math::Vector3d moveVec = position - _pos;
-		foreach (Actor *a, g_grim->getActiveActors()) {
+		for (Actor *a : g_grim->getActiveActors()) {
 			handleCollisionWith(a, _collisionMode, &moveVec);
 		}
 	}
@@ -792,7 +790,7 @@ void Actor::moveTo(const Math::Vector3d &pos) {
 	}
 
 	Math::Vector3d moveVec = pos - _pos;
-	foreach (Actor *a, g_grim->getActiveActors()) {
+	for (Actor *a : g_grim->getActiveActors()) {
 		handleCollisionWith(a, mode, &moveVec);
 	}
 	_pos += moveVec;
@@ -1239,14 +1237,14 @@ void Actor::sayLine(const char *msgId, bool background, float x, float y) {
 			// if we're talking background draw the text object only if there are no no-background
 			// talking actors. This prevents glottis and nick subtitles overlapping in the high roller lounge,
 			// where glottis is background and nick isn't. (https://github.com/residualvm/residualvm/issues/685)
-			foreach (Actor *a, g_grim->getTalkingActors()) {
+			for (Actor *a : g_grim->getTalkingActors()) {
 				if (!a->_backgroundTalk && a->_sayLineText) {
 					return;
 				}
 			}
 		} else {
 			// if we're not background then delete the TextObject of any talking background actor.
-			foreach (Actor *a, g_grim->getTalkingActors()) {
+			for (Actor *a : g_grim->getTalkingActors()) {
 				if (a->_backgroundTalk && a->_sayLineText) {
 					delete TextObject::getPool().getObject(a->_sayLineText);
 					a->_sayLineText = 0;
@@ -1994,7 +1992,7 @@ Math::Vector3d Actor::handleCollisionTo(const Math::Vector3d &from, const Math::
 
 	Math::Vector3d p = pos;
 	Math::Vector3d moveVec = pos - _pos;
-	foreach (Actor *a, Actor::getPool()) {
+	for (Actor *a : Actor::getPool()) {
 		if (a != this && a->isInSet(_setName) && a->isVisible()) {
 			p = a->getTangentPos(from, p);
 			handleCollisionWith(a, _collisionMode, &moveVec);

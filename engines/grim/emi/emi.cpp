@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/foreach.h"
-
 #include "engines/grim/emi/emi.h"
 #include "engines/grim/emi/emi_registry.h"
 #include "engines/grim/emi/lua_v2.h"
@@ -81,7 +79,7 @@ const char *EMIEngine::getUpdateFilename() {
 }
 
 void EMIEngine::pushText() {
-	foreach (TextObject *t, TextObject::getPool()) {
+	for (TextObject *t : TextObject::getPool()) {
 		t->incStackLevel();
 	}
 	invalidateTextObjectsSortOrder();
@@ -90,7 +88,7 @@ void EMIEngine::pushText() {
 void EMIEngine::popText() {
 	Common::List<TextObject *> toDelete;
 
-	foreach (TextObject *t, TextObject::getPool()) {
+	for (TextObject *t : TextObject::getPool()) {
 		if (t->getStackLevel() == 0) {
 			warning("Text stack top not empty; deleting object");
 			toDelete.push_back(t);
@@ -111,7 +109,7 @@ void EMIEngine::popText() {
 void EMIEngine::purgeText() {
 	Common::List<TextObject *> toDelete;
 
-	foreach (TextObject *t, TextObject::getPool()) {
+	for (TextObject *t : TextObject::getPool()) {
 		if (t->getStackLevel() == 0) {
 			toDelete.push_back(t);
 		}
@@ -192,13 +190,13 @@ void EMIEngine::drawNormalMode() {
 
 	g_driver->drawDimPlane();
 
-	foreach (Actor *a, _activeActors) {
+	for (Actor *a : _activeActors) {
 		if (a->isInOverworld())
 			a->draw();
 	}
 
 	// Draw Primitives
-	foreach (PrimitiveObject *p, PrimitiveObject::getPool()) {
+	for (PrimitiveObject *p : PrimitiveObject::getPool()) {
 		p->draw();
 	}
 
@@ -274,7 +272,7 @@ bool EMIEngine::compareLayer(const Layer *x, const Layer *y) {
 
 void EMIEngine::drawTextObjects() {
 	sortTextObjects();
-	foreach (TextObject *t, _textObjects) {
+	for (TextObject *t : _textObjects) {
 		t->draw();
 	}
 }
@@ -286,7 +284,7 @@ void EMIEngine::sortTextObjects() {
 	_textObjectsSortOrderInvalidated = false;
 
 	_textObjects.clear();
-	foreach (TextObject *t, TextObject::getPool()) {
+	for (TextObject *t : TextObject::getPool()) {
 		if (t->getStackLevel() == 0) {
 			_textObjects.push_back(t);
 		}
@@ -297,7 +295,7 @@ void EMIEngine::sortTextObjects() {
 
 void EMIEngine::sortLayers() {
 	_layers.clear();
-	foreach (Layer *l, Layer::getPool()) {
+	for (Layer *l : Layer::getPool()) {
 		_layers.push_back(l);
 	}
 

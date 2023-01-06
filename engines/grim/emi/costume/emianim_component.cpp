@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/foreach.h"
-
 #include "engines/grim/debug.h"
 #include "engines/grim/emi/costume/emianim_component.h"
 #include "engines/grim/emi/costume/emiskel_component.h"

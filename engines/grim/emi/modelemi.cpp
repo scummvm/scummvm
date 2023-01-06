@@ -20,7 +20,6 @@
  */
 
 #include "common/endian.h"
-#include "common/foreach.h"
 
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
@@ -324,7 +323,7 @@ void EMIModel::updateLighting(const Math::Matrix4 &modelToWorld) {
 
 	Actor *actor = _costume->getOwner();
 
-	foreach(Light *l, g_grim->getCurrSet()->getLights(actor->isInOverworld())) {
+	for (Light *l : g_grim->getCurrSet()->getLights(actor->isInOverworld())) {
 		if (l->_enabled) {
 			activeLights.push_back(l);
 			if (l->_type == Light::Ambient)

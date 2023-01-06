@@ -28,7 +28,6 @@
 #include "common/archive.h"
 #include "common/debug-channels.h"
 #include "common/file.h"
-#include "common/foreach.h"
 #include "common/fs.h"
 #include "common/config-manager.h"
 #include "common/compression/stuffit.h"
@@ -756,7 +755,7 @@ void GrimEngine::handleDebugLoadResource() {
 }
 
 void GrimEngine::drawTextObjects() {
-	foreach (TextObject *t, TextObject::getPool()) {
+	for (TextObject *t : TextObject::getPool()) {
 		t->draw();
 	}
 }
@@ -797,7 +796,7 @@ void GrimEngine::luaUpdate() {
 		// Update the actors. Do it here so that we are sure to react asap to any change
 		// in the actors state caused by lua.
 		buildActiveActorsList();
-		foreach (Actor *a, _activeActors) {
+		for (Actor *a : _activeActors) {
 			// Note that the actor need not be visible to update chores, for example:
 			// when Manny has just brought Meche back he is offscreen several times
 			// when he needs to perform certain chores
@@ -806,7 +805,7 @@ void GrimEngine::luaUpdate() {
 
 		_iris->update(_frameTime);
 
-		foreach (TextObject *t, TextObject::getPool()) {
+		for (TextObject *t : TextObject::getPool()) {
 			t->update();
 		}
 	}
@@ -903,11 +902,11 @@ void GrimEngine::drawNormalMode() {
 	_currSet->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
 
 	// Draw Primitives
-	foreach (PrimitiveObject *p, PrimitiveObject::getPool()) {
+	for (PrimitiveObject *p : PrimitiveObject::getPool()) {
 		p->draw();
 	}
 
-	foreach (Overlay *p, Overlay::getPool()) {
+	for (Overlay *p : Overlay::getPool()) {
 		p->draw();
 	}
 
@@ -922,7 +921,7 @@ void GrimEngine::drawNormalMode() {
 
 	// Draw actors
 	buildActiveActorsList();
-	foreach (Actor *a, _activeActors) {
+	for (Actor *a : _activeActors) {
 		if (a->isVisible())
 			a->draw();
 	}
@@ -1447,7 +1446,7 @@ void GrimEngine::saveGRIM() {
 
 Set *GrimEngine::findSet(const Common::String &name) {
 	// Find scene object
-	foreach (Set *s, Set::getPool()) {
+	for (Set *s : Set::getPool()) {
 		if (s->getName() == name)
 			return s;
 	}
@@ -1495,14 +1494,14 @@ void GrimEngine::setSet(Set *scene) {
 		return;
 
 	if (getGameType() == GType_MONKEY4) {
-		foreach (PoolSound *s, PoolSound::getPool()) {
+		for (PoolSound *s : PoolSound::getPool()) {
 			s->stop();
 		}
 	}
 	// Stop the actors. This fixes bug #289 (https://github.com/residualvm/residualvm/issues/289)
 	// and it makes sense too, since when changing set the directions
 	// and coords change too.
-	foreach (Actor *a, Actor::getPool()) {
+	for (Actor *a : Actor::getPool()) {
 		a->stopWalking();
 	}
 
@@ -1569,7 +1568,7 @@ void GrimEngine::buildActiveActorsList() {
 	}
 
 	_activeActors.clear();
-	foreach (Actor *a, Actor::getPool()) {
+	for (Actor *a : Actor::getPool()) {
 		if (((_mode == NormalMode || _mode == DrawMode) && a->isDrawableInSet(_currSet->getName())) || a->isInOverworld()) {
 			_activeActors.push_back(a);
 		}
@@ -1584,7 +1583,7 @@ void GrimEngine::addTalkingActor(Actor *a) {
 bool GrimEngine::areActorsTalking() const {
 	//This takes into account that there may be actors which are still talking, but in the background.
 	bool talking = false;
-	foreach (Actor *a, _talkingActors) {
+	for (Actor *a : _talkingActors) {
 		if (a->isTalkingForeground()) {
 			talking = true;
 			break;
