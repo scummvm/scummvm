@@ -175,6 +175,17 @@ int TetraedgeEngine::getDefaultScreenHeight() const {
 	return 600;
 }
 
+bool TetraedgeEngine::onKeyUp(const Common::KeyState &state) {
+	if (state.keycode == Common::KEYCODE_l) {
+		if (loadGameDialog())
+			_game->initLoadedBackupData();
+	} else if (state.keycode == Common::KEYCODE_s) {
+		saveGameDialog();
+	}
+
+	return false;
+}
+
 Common::Error TetraedgeEngine::run() {
 	initGraphics3d(getDefaultScreenWidth(), getDefaultScreenHeight());
 
@@ -189,12 +200,13 @@ Common::Error TetraedgeEngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
+	getInputMgr()->_keyUpSignal.add(this, &TetraedgeEngine::onKeyUp);
+
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	// Simple event handling loop
 	Common::Event e;
 
 	while (!shouldQuit()) {

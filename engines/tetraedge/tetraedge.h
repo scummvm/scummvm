@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/error.h"
+#include "common/events.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "common/random.h"
@@ -123,6 +124,7 @@ public:
 	TeInputMgr *getInputMgr();
 
 	void openConfigDialog();
+	bool onKeyUp(const Common::KeyState &state);
 
 	static Common::StringArray splitString(const Common::String &text, char c);
 
