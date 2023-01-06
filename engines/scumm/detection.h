@@ -33,6 +33,7 @@ namespace Scumm {
 #define GUIO_ENHANCEMENTS                              GUIO_GAMEOPTIONS2
 #define GUIO_AUDIO_OVERRIDE                            GUIO_GAMEOPTIONS3
 #define GUIO_ORIGINALGUI                               GUIO_GAMEOPTIONS4
+#define GUIO_LOWLATENCYAUDIO                           GUIO_GAMEOPTIONS5
 
 /**
  * Descriptor of a specific SCUMM game. Used internally to store

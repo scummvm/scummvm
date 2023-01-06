@@ -1449,7 +1449,7 @@ void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 		lowLatencyMode = ConfMan.getBool("dimuse_low_latency_mode");
 	}
 
-	_musicEngine = _imuseDigital = new IMuseDigital(this, sampleRate, _mixer, &_resourceAccessMutex);
+	_musicEngine = _imuseDigital = new IMuseDigital(this, sampleRate, _mixer, &_resourceAccessMutex, lowLatencyMode);
 
 	if (filesAreCompressed) {
 		GUI::MessageDialog dialog(_(
