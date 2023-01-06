@@ -94,7 +94,7 @@ struct MapSpecialTileStruct {
 	uint8 _posX;
 	uint8 _posY;
 	uint8 _field3;
-	uint8 _field4_NpcId;
+	uint8 _triggerId;
 	uint16 _field5_textId;
 	uint16 _field7_textId;
 

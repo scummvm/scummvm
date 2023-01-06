@@ -274,7 +274,7 @@ void EfhEngine::initialize() {
 }
 
 void EfhEngine::songDelay(int delay) {
-	debug("songDelay %d", delay);
+	debug("songDelay %ld", delay);
 
 	int remainingDelay = delay * kDefaultNoteDuration;
 	Common::KeyCode input = Common::KEYCODE_INVALID;
@@ -291,12 +291,14 @@ void EfhEngine::songDelay(int delay) {
 }
 
 void EfhEngine::playNote(int frequencyIndex, int totalDelay) {
-	debug("playNote %d %d", frequencyIndex, totalDelay);
+	debug("playNote %d %ld", frequencyIndex, totalDelay);
 }
 
 Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
 	debug("playSong");
 
+	return Common::KEYCODE_INVALID;
+	
 	Common::KeyCode inputChar = Common::KEYCODE_INVALID;
 	int32 totalDelay = 0;
 
@@ -544,7 +546,7 @@ void EfhEngine::loadMapArrays(int idx) {
 		_mapSpecialTile[i]._posX = mapSpecialTilePtr[9 * i + 1];
 		_mapSpecialTile[i]._posY = mapSpecialTilePtr[9 * i + 2];
 		_mapSpecialTile[i]._field3 = mapSpecialTilePtr[9 * i + 3];
-		_mapSpecialTile[i]._field4_NpcId = mapSpecialTilePtr[9 * i + 4];
+		_mapSpecialTile[i]._triggerId = mapSpecialTilePtr[9 * i + 4];
 		_mapSpecialTile[i]._field5_textId = READ_LE_UINT16(&mapSpecialTilePtr[9 * i + 5]);
 		_mapSpecialTile[i]._field7_textId = READ_LE_UINT16(&mapSpecialTilePtr[9 * i + 7]);
 	}
@@ -1851,7 +1853,7 @@ bool EfhEngine::checkMonsterGroupDistance1OrLess(int16 monsterId) {
 }
 
 bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
-	debug("handleTalk %d %d %d", monsterId, arg2, itemId);
+	debugC(6, kDebugEngine, "handleTalk %d %d %d", monsterId, arg2, itemId);
 
 	if (_mapMonsters[monsterId]._fullPlaceId == 0xFF)
 		return false;
@@ -2139,7 +2141,7 @@ void EfhEngine::displayImp1Text(int16 textId) {
 }
 
 bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId) {
-	debug("sub22293 %d-%d %d %d %d %d", mapPosX, mapPosY, charId, itemId, arg8, imageSetId);
+	debugC(3, kDebugEngine, "sub22293 %d-%d %d %d %d %d", mapPosX, mapPosY, charId, itemId, arg8, imageSetId);
 
 	int16 tileId = findMapSpecialTileIndex(mapPosX, mapPosY);
 
@@ -2148,7 +2150,7 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 			displayMiddleLeftTempText(_imp2PtrArray[imageSetId], true);
 	} else if (arg8 == 0) {
 		if (_mapSpecialTile[tileId]._field3 == 0xFF) {
-			displayImp1Text(_mapSpecialTile[tileId]._field5_textId); // word!
+			displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
 			return true;
 		}
 
@@ -2156,7 +2158,7 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 			for (int counter = 0; counter < _teamSize; ++counter) {
 				if (_teamCharId[counter] == -1)
 					continue;
-				if (_teamCharId[counter] == _mapSpecialTile[tileId]._field4_NpcId) {
+				if (_teamCharId[counter] == _mapSpecialTile[tileId]._triggerId) {
 					displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
 					return true;
 				}
@@ -2167,13 +2169,13 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 					continue;
 
 				for (uint var2 = 0; var2 < 10; ++var2) {
-					if (_npcBuf[_teamCharId[counter]]._inventory[var2]._ref == _mapSpecialTile[tileId]._field4_NpcId) {
+					if (_npcBuf[_teamCharId[counter]]._inventory[var2]._ref == _mapSpecialTile[tileId]._triggerId) {
 						displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
 						return true;
 					}
 				}
 			}
-		// original makes a useless check on (_mapUnknownPtr[var8 * 9 + 3] > 0x7F)
+		// original makes a useless check on (_mapSpecialTile[tileId]._field3 > 0x7F)
 		} else if (_mapSpecialTile[tileId]._field3 <= 0x77) {
 			int16 var6 = _mapSpecialTile[tileId]._field3;
 			for (int counter = 0; counter < _teamSize; ++counter) {
@@ -2183,33 +2185,34 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 				for (uint var2 = 0; var2 < 39; ++var2) {
 					// CHECKME : the whole loop doesn't make much sense as it's using var6 instead of var2, plus _activeScore is an array of 15 bytes, not 0x77...
 					// Also, 39 correspond to the size of activeScore + passiveScore + infoScore + the 2 remaining bytes of the struct
-					if (_npcBuf[_teamCharId[counter]]._activeScore[var6] >= _mapSpecialTile[tileId]._field4_NpcId) {
+					warning("sub22293 - _activeScore[%d]", var6);
+					if (_npcBuf[_teamCharId[counter]]._activeScore[var6] >= _mapSpecialTile[tileId]._triggerId) {
 						displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
 						return true;
 					}
 				}
 			}
 		}
-	} else {
-		if ((_mapSpecialTile[tileId]._field3 == 0xFA && arg8 == 1) || (_mapSpecialTile[tileId]._field3 == 0xFC && arg8 == 2) || (_mapSpecialTile[tileId]._field3 == 0xFB && arg8 == 3)) {
-			if (_mapSpecialTile[tileId]._field4_NpcId == itemId) {
+	} else if ((_mapSpecialTile[tileId]._field3 == 0xFA && arg8 == 1) || (_mapSpecialTile[tileId]._field3 == 0xFC && arg8 == 2) || (_mapSpecialTile[tileId]._field3 == 0xFB && arg8 == 3)) {
+		if (_mapSpecialTile[tileId]._triggerId == itemId) {
+			displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
+			return true;
+		}
+	} else if (arg8 == 4) {
+		int16 var6 = _mapSpecialTile[tileId]._field3;
+		if (var6 >= 0x78 && var6 <= 0xEF) {
+			var6 -= 0x78;
+			warning("sub22293 - _activeScore[%d]", var6);
+			// The 2 checks on var6 are useless, as [0x78..0xEF] - 0x78 => [0x00..0x77]
+			if (var6 >= 0 && var6 <= 0x8B && var6 == itemId && _mapSpecialTile[tileId]._triggerId <= _npcBuf[charId]._activeScore[itemId]) {
 				displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
 				return true;
-			}
-		} else if (arg8 == 4) {
-			int16 var6 = _mapSpecialTile[tileId]._field3;
-			if (var6 >= 0x7B && var6 <= 0xEF) {
-				var6 -= 0x78;
-				if (var6 >= 0 && var6 <= 0x8B && var6 == itemId && _mapSpecialTile[tileId]._field4_NpcId <= _npcBuf[charId]._activeScore[itemId]) {
-					displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
-					return true;
-				}
 			}
 		}
 	}
 
 	for (uint counter = 0; counter < 64; ++counter) {
-		if (!handleTalk(counter, arg8, itemId))
+		if (handleTalk(counter, arg8, itemId))
 			return true;
 	}
 

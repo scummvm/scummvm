@@ -45,7 +45,7 @@ void InvObject::init() {
 }
 
 void MapSpecialTileStruct::init() {
-	_placeId = _posX = _posY = _field3 = _field4_NpcId = 0;
+	_placeId = _posX = _posY = _field3 = _triggerId = 0;
 	_field5_textId = _field7_textId = 0;
 }
 
