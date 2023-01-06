@@ -248,6 +248,10 @@ void TeMesh::resizeUpdatedTables(unsigned long newSize) {
 	_updatedNormals.resize(newSize);
 }
 
+void TeMesh::setglTexEnvBlend() {
+	_gltexEnvMode = GL_BLEND;
+}
+
 void TeMesh::setColor(const TeColor &col) {
 	Te3DObject2::setColor(col);
 

@@ -25,7 +25,6 @@
 #include "common/util.h"
 #include "common/events.h"
 
-#include "graphics/opengl/system_headers.h"
 #include "graphics/scaler.h"
 
 #include "tetraedge/tetraedge.h"
@@ -430,7 +429,7 @@ void Application::performRender() {
 	drawBack();
 
 	renderer->renderTransparentMeshes();
-	renderer->clearBuffer(GL_ACCUM);
+	renderer->clearBuffer(TeRenderer::DepthBuffer);
 	if (game->running()) {
 		if (_drawShadows && game->scene()._character
 			&& game->scene().shadowLightNo() != -1
@@ -447,7 +446,7 @@ void Application::performRender() {
 	}
 
 	renderer->renderTransparentMeshes();
-	renderer->clearBuffer(GL_ACCUM);
+	renderer->clearBuffer(TeRenderer::DepthBuffer);
 	drawFront();
 	renderer->renderTransparentMeshes();
 	game->scene().drawPath();

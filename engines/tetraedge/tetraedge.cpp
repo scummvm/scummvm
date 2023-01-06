@@ -41,8 +41,6 @@
 #include "tetraedge/te/te_sound_manager.h"
 #include "tetraedge/te/te_input_mgr.h"
 
-#include "graphics/opengl/system_headers.h"
-
 namespace Tetraedge {
 
 TetraedgeEngine *g_engine;

@@ -195,7 +195,14 @@ void TeRenderer::addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsign
 }
 
 void TeRenderer::clearBuffer(TeRenderer::Buffer buf) {
-	glClear(buf);
+	GLenum glBuf = 0;
+	if (buf & StencilBuffer)
+		glBuf |= GL_STENCIL_BUFFER_BIT;
+	if (buf & DepthBuffer)
+		glBuf |= GL_DEPTH_BUFFER_BIT;
+	if (buf & ColorBuffer)
+		glBuf |= GL_COLOR_BUFFER_BIT;
+	glClear(glBuf);
 }
 
 void TeRenderer::create() {

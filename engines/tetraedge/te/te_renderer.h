@@ -55,7 +55,7 @@ public:
 
 		TeMaterial _material;
 
-		uint _glTexEnvMode;
+		uint32 _glTexEnvMode;
 		uint _sourceTransparentMesh;
 		bool _hasColor;
 		float _zOrder;
@@ -67,7 +67,11 @@ public:
 		bool _shouldDraw;
 	};
 
-	typedef uint32 Buffer;
+	enum Buffer {
+		DepthBuffer = 1,
+		ColorBuffer = 2,
+		StencilBuffer = 4
+	};
 
 	void addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsigned long i2, unsigned long i3);
 	void checkError(const Common::String &str) {};
