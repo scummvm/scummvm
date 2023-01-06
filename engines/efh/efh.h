@@ -388,13 +388,13 @@ private:
 	bool isMonsterAlreadyFighting(int16 monsterId, int16 teamMonsterId);
 	void createOpponentList(int16 monsterTeamId);
 	void resetTeamMonsterEffects();
-	void sub1BE89(int16 monsterId);
+	void initFight(int16 monsterId);
 	void resetTeamMonsterIdArray();
 	bool isTeamMemberStatusNormal(int16 id);
 	void getDeathTypeDescription(int16 attackerId, int16 victimId);
 	int16 sub1C956(int16 charId, int16 unkFied18Val, bool arg4);
 	bool sub1CB27();
-	void drawCombatScreen(int16 charId, bool whiteFl, bool forceDrawFl);
+	void drawCombatScreen(int16 charId, bool whiteFl, bool drawFl);
 	void getXPAndSearchCorpse(int16 charId, Common::String namePt1, Common::String namePt2, int16 monsterId);
 	bool characterSearchesMonsterCorpse(int16 charId, int16 monsterId);
 	void addReactionText(int16 id);
