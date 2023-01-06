@@ -670,6 +670,15 @@ static const ExtraGuiOption enableOriginalGUI = {
 	0
 };
 
+static const ExtraGuiOption enableLowLatencyAudio = {
+	_s("Enable low latency audio mode"),
+	_s("Allows the game to use low latency audio, at the cost of sound accuracy."),
+	"dimuse_low_latency_mode",
+	false,
+	0,
+	0
+};
+
 const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -684,6 +693,9 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	}
 	if (target.empty() || guiOptions.contains(GUIO_ENHANCEMENTS)) {
 		options.push_back(enableEnhancements);
+	}
+	if (target.empty() || guiOptions.contains(GUIO_LOWLATENCYAUDIO)) {
+		options.push_back(enableLowLatencyAudio);
 	}
 	if (target.empty() || guiOptions.contains(GUIO_AUDIO_OVERRIDE)) {
 		options.push_back(audioOverride);
