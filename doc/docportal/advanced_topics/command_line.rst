@@ -204,6 +204,7 @@ Short options are listed where they are available.
         ``--output-rate=RATE``,,"Selects output sample rate in Hz"
         ``--path=PATH``,``-p``,"Sets path to where the game is installed"
         ``--platform=STRING``,,":ref:`Specifes platform of game <platform>`. Allowed values: 2gs, 3do, acorn, amiga, atari, c64, fmtowns, nes, mac, pc pc98, pce, segacd, wii, windows."
+        ``--random-seed=SEED``,,":ref:`Set the random seed used to initialize entropy`"
         ``--recursive``,,"In combination with ``--add or ``--detect`` recurses down all subdirectories"
         ``--render-mode=MODE``,,":ref:`Enables additional render modes <render>`"
         ``--save-slot=NUM``,``-x``,"Specifies the saved game slot to load (default: autosave)"
