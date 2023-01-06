@@ -79,15 +79,15 @@ inline uint32 P_FASTCALL BlendHighlight(uint32 src, uint32 cr, uint32 cg, uint32
 							 (sb * ica + cb * ca) >> 8);
 }
 
-// This does the invisible blending. I've set it to about 40%
+// This does the invisible blending. (50%)
 inline uint32 P_FASTCALL BlendInvisible(uint32 src, uint32 dst, const Graphics::PixelFormat &format) {
 	uint8 sr, sg, sb;
 	uint8 dr, dg, db;
 	format.colorToRGB(src, sr, sg, sb);
 	format.colorToRGB(dst, dr, dg, db);
-	return format.RGBToColor((sr * 100 + dr * 156) >> 8,
-							 (sg * 100 + dg * 156) >> 8,
-							 (sb * 100 + db * 156) >> 8);
+	return format.RGBToColor((sr * 128 + dr * 128) >> 8,
+							 (sg * 128 + dg * 128) >> 8,
+							 (sb * 128 + db * 128) >> 8);
 }
 
 // This does the translucent highlight blending. (50%)
