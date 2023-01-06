@@ -30,10 +30,21 @@
 
 namespace Scumm {
 
-IMuseDigiInternalMixer::IMuseDigiInternalMixer(Audio::Mixer *mixer, int sampleRate, bool isEarlyDiMUSE) {
+IMuseDigiInternalMixer::IMuseDigiInternalMixer(Audio::Mixer *mixer, int sampleRate, bool isEarlyDiMUSE, bool lowLatencyMode) {
 	_mixer = mixer;
-	_stream = Audio::makeQueuingAudioStream(sampleRate, _mixer->getOutputStereo());
+	_sampleRate = sampleRate;
+	_lowLatencyMode = lowLatencyMode;
+
+	// Mark all separate streams for low latency mode as available...
+	for (int i = 0; i < ARRAYSIZE(_separateStreams); i++) {
+		_separateStreams[i] = nullptr;
+	}
+
+	if (!_lowLatencyMode || _isEarlyDiMUSE)
+		_stream = Audio::makeQueuingAudioStream(_sampleRate, _mixer->getOutputStereo());
+
 	_isEarlyDiMUSE = isEarlyDiMUSE;
+
 	_radioChatter = 0;
 	_amp8Table = nullptr;
 }
@@ -148,10 +159,21 @@ int IMuseDigiInternalMixer::init(int bytesPerSample, int numChannels, uint8 *mix
 				((int16 *)_softLMID)[-i - 1] = -1 - (int16)softLcurValue;
 			}
 		}
-		_mixer->playStream(Audio::Mixer::kPlainSoundType, &_channelHandle, _stream, -1, Audio::Mixer::kMaxChannelVolume, false);
+
+		// In low latency the following stream is still used
+		// for FTSMUSH cutscenes, so let's still play it.
+		if (!_lowLatencyMode || _isEarlyDiMUSE) {
+			_mixer->playStream(
+				Audio::Mixer::kPlainSoundType,
+				&_channelHandle,
+				_stream,
+				-1,
+				Audio::Mixer::kMaxChannelVolume);
+		}
+
 		return 0;
 	} else {
-		debug(5, "DiMUSE_InternalMixer::init(): ERROR: couldn't allocate mixer tables");
+		debug(5, "IMuseDigiInternalMixer::init(): ERROR: couldn't allocate mixer tables");
 		return -1;
 	}
 }
@@ -307,6 +329,44 @@ int IMuseDigiInternalMixer::loop(uint8 **destBuffer, int len) {
 		}
 	}
 	return 0;
+}
+
+void IMuseDigiInternalMixer::setCurrentMixerBuffer(uint8 *newBuf) {
+	// Used to swap mixer buffers in low latency mode
+	_mixBuf = newBuf;
+}
+
+void IMuseDigiInternalMixer::endStream(int idx) {
+	// We mark the stream as finished and then remove
+	// the reference: in this way, the stream will have time
+	// to flush the remaining sound data and will be disposed
+	// by the mixer, while we freed up a slot for a new stream.
+	if (_lowLatencyMode && idx != -1) {
+		_separateStreams[idx]->finish();
+		_separateStreams[idx] = nullptr;
+	}
+}
+
+Audio::QueuingAudioStream *IMuseDigiInternalMixer::getStream(int idx) {
+	if (!_lowLatencyMode || idx == -1) {
+		// Stream for the original mode
+		return _stream;
+	} else if (!_separateStreams[idx]) {
+		// New stream for a new sound
+		_separateStreams[idx] = Audio::makeQueuingAudioStream(_sampleRate, _mixer->getOutputStereo());
+
+		_mixer->playStream(
+			Audio::Mixer::kPlainSoundType,
+			&_separateChannelHandles[idx],
+			_separateStreams[idx],
+			-1,
+			Audio::Mixer::kMaxChannelVolume);
+
+		return _separateStreams[idx];
+	} else {
+		// On-going stream
+		return _separateStreams[idx];
+	}
 }
 
 void IMuseDigiInternalMixer::mixBits8Mono(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *ampTable, bool ftIs11025Hz) {

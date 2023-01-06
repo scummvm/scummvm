@@ -1443,6 +1443,12 @@ void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 		}
 	}
 
+	bool lowLatencyMode = false;
+	ConfMan.registerDefault("dimuse_low_latency_mode", false);
+	if (ConfMan.hasKey("dimuse_low_latency_mode", _targetName)) {
+		lowLatencyMode = ConfMan.getBool("dimuse_low_latency_mode");
+	}
+
 	_musicEngine = _imuseDigital = new IMuseDigital(this, sampleRate, _mixer, &_resourceAccessMutex);
 
 	if (filesAreCompressed) {

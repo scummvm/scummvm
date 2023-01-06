@@ -31,19 +31,36 @@ int IMuseDigital::waveOutInit(waveOutParamsStruct *waveOutSettingsStruct) {
 	_waveOutSampleRate = _internalSampleRate;
 	_waveOutPreferredFeedSize = _internalFeedSize;
 
-	// Nine buffers (waveOutPreferredFeedSize * 4 bytes each), two will be used for the mixer
-	_waveOutOutputBuffer = (uint8 *)malloc(_waveOutNumChannels * _waveOutBytesPerSample * _waveOutPreferredFeedSize * 9);
-	_waveOutMixBuffer = _waveOutOutputBuffer + (_waveOutNumChannels * _waveOutBytesPerSample * _waveOutPreferredFeedSize * 7); // 8-th buffer
+	_waveOutOutputBuffer = nullptr;
+	_waveOutMixBuffer = nullptr;
+	_waveOutLowLatencyOutputBuffer = nullptr;
+
+	if (!_lowLatencyMode || _isEarlyDiMUSE) {
+		// Nine buffers (waveOutPreferredFeedSize * 4 bytes each), two will be used for the mixer
+		_waveOutOutputBuffer = (uint8 *)malloc(_waveOutNumChannels * _waveOutBytesPerSample * _waveOutPreferredFeedSize * 9);
+		_waveOutMixBuffer = _waveOutOutputBuffer + (_waveOutNumChannels * _waveOutBytesPerSample * _waveOutPreferredFeedSize * 7); // 8-th buffer
+	}
+
+	// Replicate another set of buffers for the low latency mode, we will use the previous ones for cutscenes if the mode is active
+	if (_lowLatencyMode) {
+		_waveOutLowLatencyOutputBuffer = (uint8 *)malloc(_waveOutNumChannels * _waveOutBytesPerSample * _waveOutPreferredFeedSize * 9);
+	}
 
 	// This information will be fed to the internal mixer during its initialization
 	waveOutSettingsStruct->bytesPerSample = _waveOutBytesPerSample * 8;
 	waveOutSettingsStruct->numChannels = _waveOutNumChannels;
 	waveOutSettingsStruct->mixBufSize = (_waveOutBytesPerSample * _waveOutNumChannels) * _waveOutPreferredFeedSize;
 	waveOutSettingsStruct->sizeSampleKB = 0;
-	waveOutSettingsStruct->mixBuf = _waveOutMixBuffer;
+	waveOutSettingsStruct->mixBuf = _waveOutMixBuffer; // Note: in low latency mode this initialization is a dummy
 
-	// Init the buffer filling it with zero volume samples
-	memset(_waveOutOutputBuffer, _waveOutZeroLevel, _waveOutNumChannels * _waveOutBytesPerSample * _waveOutPreferredFeedSize * 9);
+	// Init the buffers filling them with zero volume samples
+	if (!_lowLatencyMode || _isEarlyDiMUSE) {
+		memset(_waveOutOutputBuffer, _waveOutZeroLevel, _waveOutNumChannels * _waveOutBytesPerSample * _waveOutPreferredFeedSize * 9);
+	}
+
+	if (_lowLatencyMode) {
+		memset(_waveOutLowLatencyOutputBuffer, _waveOutZeroLevel, _waveOutNumChannels * _waveOutBytesPerSample * _waveOutPreferredFeedSize * 9);
+	}
 
 	_waveOutDisableWrite = 0;
 	return 0;
@@ -73,7 +90,7 @@ void IMuseDigital::waveOutWrite(uint8 **audioData, int &feedSize, int &sampleRat
 		byte *ptr = (byte *)malloc(_outputFeedSize * _waveOutBytesPerSample * _waveOutNumChannels);
 		memcpy(ptr, curBufferBlock, _outputFeedSize * _waveOutBytesPerSample * _waveOutNumChannels);
 
-		_internalMixer->_stream->queueBuffer(ptr,
+		_internalMixer->getStream(-1)->queueBuffer(ptr,
 			_outputFeedSize * _waveOutBytesPerSample * _waveOutNumChannels,
 			DisposeAfterUse::YES,
 			waveOutGetStreamFlags());
@@ -88,7 +105,11 @@ int IMuseDigital::waveOutDeinit() {
 
 void IMuseDigital::waveOutCallback() {
 	Common::StackLock lock(*_mutex);
-	tracksCallback();
+	if (_lowLatencyMode) {
+		tracksLowLatencyCallback();
+	} else {
+		tracksCallback();
+	}
 }
 
 byte IMuseDigital::waveOutGetStreamFlags() {
@@ -102,6 +123,42 @@ byte IMuseDigital::waveOutGetStreamFlags() {
 	flags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif
 	return flags;
+}
+
+void IMuseDigital::waveOutLowLatencyWrite(uint8 **audioData, int &feedSize, int &sampleRate, int idx) {
+	uint8 *curBufferBlock;
+	if (_waveOutDisableWrite)
+		return;
+
+	if (!_isEarlyDiMUSE && _vm->_game.id == GID_DIG) {
+		_waveOutXorTrigger ^= 1;
+		if (!_waveOutXorTrigger)
+			return;
+	}
+
+	feedSize = 0;
+	if (_mixer->isReady()) {
+		curBufferBlock = &_waveOutLowLatencyOutputBuffer[_waveOutPreferredFeedSize * idx * _waveOutBytesPerSample * _waveOutNumChannels];
+
+		*audioData = curBufferBlock;
+
+		sampleRate = _waveOutSampleRate;
+		feedSize = _waveOutPreferredFeedSize;
+
+		byte *ptr = (byte *)malloc(_outputFeedSize * _waveOutBytesPerSample * _waveOutNumChannels);
+		memcpy(ptr, curBufferBlock, _outputFeedSize * _waveOutBytesPerSample * _waveOutNumChannels);
+
+		_internalMixer->getStream(idx)->queueBuffer(ptr,
+			 _outputFeedSize * _waveOutBytesPerSample * _waveOutNumChannels,
+			 DisposeAfterUse::YES,
+			 waveOutGetStreamFlags());
+	}
+}
+
+void IMuseDigital::waveOutEmptyBuffer(int idx) {
+	// This is necessary in low latency mode to clean-up the buffers of stale/finished sounds
+	int bufferSize = _waveOutNumChannels * _waveOutBytesPerSample * _waveOutPreferredFeedSize;
+	memset(&_waveOutLowLatencyOutputBuffer[bufferSize * idx], _waveOutZeroLevel, bufferSize);
 }
 
 } // End of namespace Scumm
