@@ -562,7 +562,7 @@ void EfhEngine::loadMapArrays(int idx) {
 		_mapMonsters[i]._weaponItemId = mapMonstersPtr[29 * i + 5];
 		_mapMonsters[i]._maxDamageAbsorption = mapMonstersPtr[29 * i + 6];
 		_mapMonsters[i]._monsterRef = mapMonstersPtr[29 * i + 7];
-		_mapMonsters[i]._moveInfo = mapMonstersPtr[29 * i + 8];
+		_mapMonsters[i]._additionalInfo = mapMonstersPtr[29 * i + 8];
 		_mapMonsters[i]._talkTextId = mapMonstersPtr[29 * i + 9];
 		_mapMonsters[i]._groupSize = mapMonstersPtr[29 * i + 10];
 		for (int j = 0; j < 9; ++j)
@@ -1595,10 +1595,10 @@ bool EfhEngine::checkMonsterMovementType(int16 id, bool teamFlag) {
 	if (teamFlag)
 		monsterId = _teamMonsterIdArray[id];
 
-	if ((_mapMonsters[monsterId]._moveInfo & 0xF) >= 8)
+	if ((_mapMonsters[monsterId]._additionalInfo & 0xF) >= 8)
 		return true;
 
-	if (_unk2C8AA != 0 && (_mapMonsters[monsterId]._moveInfo & 0x80) != 0)
+	if (_unk2C8AA != 0 && (_mapMonsters[monsterId]._additionalInfo & 0x80) != 0)
 		return true;
 
 	return false;
@@ -1666,12 +1666,12 @@ void EfhEngine::handleMapMonsterMoves() {
 		bool monsterMovedFl = false;
 		int16 lastRangeCheck = 0;
 
-		int8 monsterMoveType = _mapMonsters[monsterId]._moveInfo & 0xF; // 0000 1111
+		int8 monsterMoveType = _mapMonsters[monsterId]._additionalInfo & 0xF; // 0000 1111
 
-		if (_unk2C8AA != 0 && (_mapMonsters[monsterId]._moveInfo & 0x80)) // 1000 0000
+		if (_unk2C8AA != 0 && (_mapMonsters[monsterId]._additionalInfo & 0x80)) // 1000 0000
 			monsterMoveType = 9;
 
-		int16 randomModPct = _mapMonsters[monsterId]._moveInfo & 0x70; // 0111 0000
+		int16 randomModPct = _mapMonsters[monsterId]._additionalInfo & 0x70; // 0111 0000
 		randomModPct >>= 4; // Max 7 (0111)
 
 		int16 retryCounter = randomModPct;
@@ -2564,8 +2564,8 @@ bool EfhEngine::hasObjectEquipped(int16 charId, int16 objectId) {
 }
 
 
-void EfhEngine::setMapMonsterMovementType(int16 id, uint8 movementType, bool groupFl) {
-	debugC(2, kDebugEngine, "setMapMonsterMovementType %d 0x%X %s", id, movementType, groupFl ? "True" : "False");
+void EfhEngine::setMapMonsterAggressivenessAndMovementType(int16 id, uint8 mask, bool groupFl) {
+	debugC(2, kDebugEngine, "setMapMonsterAggressivenessAndMovementType %d 0x%X %s", id, mask, groupFl ? "True" : "False");
 
 	int16 monsterId;
 	if (groupFl) { // groupFl is always True
@@ -2574,9 +2574,9 @@ void EfhEngine::setMapMonsterMovementType(int16 id, uint8 movementType, bool gro
 		monsterId = id;
 	}
 
-	movementType &= 0x0F;
-	_mapMonsters[monsterId]._moveInfo &= 0xF0;
-	_mapMonsters[monsterId]._moveInfo |= movementType;
+	mask &= 0x0F;
+	_mapMonsters[monsterId]._additionalInfo &= 0xF0;
+	_mapMonsters[monsterId]._additionalInfo |= mask;
 }
 
 bool EfhEngine::isMonsterActive(int16 groupId, int16 id) {
