@@ -93,16 +93,66 @@ bool Renderer::getRGBAtCGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 	return true;
 }
 
+
+void Renderer::extractC64Indexes(uint8 cm1, uint8 cm2, uint8 &i1, uint8 &i2) {
+	if (cm1 == 0xaa && cm2 == 0x5a) {
+		i1 = 2;
+		i2 = 3;
+	} else if (cm1 == 0x4f && cm2 == 0x46) {
+		i1 = 0;
+		i2 = 2;
+	} else if (cm1 == 0x56 && cm2 == 0x45) {
+		i1 = 0;
+		i2 = 1;
+	} else if (cm1 == 0xa0 && cm2 == 0x55) {
+		i1 = 1;
+		i2 = 3;
+	} else if (cm1 == 0x4c && cm2 == 0x54) {
+		i1 = 1;
+		i2 = 2;
+	} else if (cm1 == 0x41 && cm2 == 0x52) {
+		i1 = 0;
+		i2 = 3;
+	} else if (cm1 == 0x5a && cm2 == 0xa5) {
+		i1 = 0;
+		i2 = 0;
+	} else if (cm1 == 0xbb && cm2 == 0xee) {
+		i1 = 0;
+		i2 = 0;
+	} else if (cm1 == 0x5f && cm2 == 0xaf) {
+		i1 = 0;
+		i2 = 0;
+	} else if (cm1 == 0xfb && cm2 == 0xfe) {
+		i1 = 0;
+		i2 = 0;
+	} else {
+		i1 = 0;
+		i2 = 0;
+	}
+}
+
+
 bool Renderer::getRGBAtC64(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2) {
 	if (index == _keyColor)
 		return false;
 
+	if (index <= 4) { // Solid colors
+		selectColorFromFourColorPalette(index - 1, r1, g1, b1);
+		r2 = r1;
+		g2 = g1;
+		b2 = b1;
+		return true;
+	}
+
+	uint8 i1, i2;
 	byte *entry = (*_colorMap)[index - 1];
-	byte be = *(entry);
-	readFromPalette(be >> 4, r1, g1, b1);
+	uint8 cm1 = *(entry);
 	entry++;
-	be = *(entry);
-	readFromPalette(be >> 4, r2, g2, b2);
+	uint8 cm2 = *(entry);
+
+	extractC64Indexes(cm1, cm2, i1, i2);
+	selectColorFromFourColorPalette(i1, r1, g1, b1);
+	selectColorFromFourColorPalette(i2, r2, g2, b2);
 	return true;
 }
 
@@ -170,7 +220,7 @@ void Renderer::extractCPCIndexes(uint8 cm1, uint8 cm2, uint8 &i1, uint8 &i2) {
 		error("%x %x", cm1, cm2);
 }
 
-void Renderer::selectColorFromCPCPalette(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1) {
+void Renderer::selectColorFromFourColorPalette(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1) {
 	if (index == 0) {
 		r1 = 0;
 		g1 = 0;
@@ -191,7 +241,7 @@ bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 
 	assert (_renderMode == Common::kRenderCPC);
 	if (index <= 4) { // Solid colors
-		selectColorFromCPCPalette(index - 1, r1, g1, b1);
+		selectColorFromFourColorPalette(index - 1, r1, g1, b1);
 		r2 = r1;
 		g2 = g1;
 		b2 = b1;
@@ -205,8 +255,8 @@ bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 	uint8 cm2 = *(entry);
 
 	extractCPCIndexes(cm1, cm2, i1, i2);
-	selectColorFromCPCPalette(i1, r1, g1, b1);
-	selectColorFromCPCPalette(i2, r2, g2, b2);
+	selectColorFromFourColorPalette(i1, r1, g1, b1);
+	selectColorFromFourColorPalette(i2, r2, g2, b2);
 	return true;
 }
 
