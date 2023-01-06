@@ -36,7 +36,7 @@ void BonusMenu::enter(const Common::String &scriptName) {
 	if (!loaded)
 		error("BonusMenu::enter: failed to load %s", scriptName.c_str());
 	Application *app = g_engine->getApplication();
-	app->_frontLayout.addChild(layoutChecked("menu"));
+	app->frontLayout().addChild(layoutChecked("menu"));
 
 	buttonLayoutChecked("quitButton")->onMouseClickValidated().add(this, &BonusMenu::onQuitButton);
 
@@ -149,7 +149,7 @@ bool BonusMenu::onPictureButton() {
 
 	Application *app = g_engine->getApplication();
 	TeSpriteLayout *pictureLayout = spriteLayoutChecked("fullScreenPictureLayout");
-	app->_frontLayout.removeChild(pictureLayout);
+	app->frontLayout().removeChild(pictureLayout);
 	pictureLayout->setVisible(true);
 
 	return true;

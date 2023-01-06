@@ -115,11 +115,10 @@ void Question2::pushAnswer(const Common::String &name, const Common::String &loc
 		xpos = 0.15f;
 	}
 	blayout->setPosition(TeVector3f32(xpos, _answers.size() * 0.08f + 0.06f, 1.0f));
-
-	blayout->_upLayout->setSizeType(RELATIVE_TO_PARENT);
-	blayout->_upLayout->setSize(TeVector3f32(1.0f, 1.0f, 1.0f));
-	blayout->_downLayout->setSizeType(RELATIVE_TO_PARENT);
-	blayout->_downLayout->setSize(TeVector3f32(1.0f, 1.0f, 1.0f));
+	blayout->upLayout()->setSizeType(RELATIVE_TO_PARENT);
+	blayout->upLayout()->setSize(TeVector3f32(1.0f, 1.0f, 1.0f));
+	blayout->downLayout()->setSizeType(RELATIVE_TO_PARENT);
+	blayout->downLayout()->setSize(TeVector3f32(1.0f, 1.0f, 1.0f));
 
 	TeSpriteLayout *calepinLayout = _gui.spriteLayoutChecked("Calepin");
 	calepinLayout->addChild(blayout);
@@ -142,7 +141,7 @@ void Question2::Answer::load(const Common::String &name, const Common::String &l
 	TeButtonLayout *answerButton = _gui.buttonLayout("answer");
 	if (answerButton) {
 		answerButton->onMouseClickValidated().add(this, &Question2::Answer::onButtonValidated);
-		answerButton->_ignoreMouseEvents = false;
+		answerButton->setIgnoreMouseEvents(false);
 	}
 }
 

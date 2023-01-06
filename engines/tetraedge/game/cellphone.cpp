@@ -47,7 +47,7 @@ bool Cellphone::addNumber(const Common::String &num) {
 	layout->setTextSizeType(1);
 	layout->setTextSizeProportionalToWidth(46);
 	Common::String val("Unknown");
-	Common::String *locNum = g_engine->getCore()->loc()->text(num);
+	const Common::String *locNum = g_engine->getCore()->loc()->text(num);
 	if (locNum)
 		val = *locNum;
 

@@ -39,7 +39,7 @@ void Confirm::enter(const Common::String &guiPath, const Common::String &y) {
 
 	Application *app = g_engine->getApplication();
 	TeButtonLayout *confirmButtonLayout = _gui.buttonLayout("confirm");
-	app->_frontOrientationLayout.addChild(confirmButtonLayout);
+	app->frontOrientationLayout().addChild(confirmButtonLayout);
 
 	TeButtonLayout *yesButtonLayout = _gui.buttonLayout("yes");
 	if (yesButtonLayout)
@@ -53,11 +53,11 @@ void Confirm::enter(const Common::String &guiPath, const Common::String &y) {
 	if (textLayout) {
 		const Common::String textAttributs = _gui.value("textAttributs").toString();
 		const Common::String textAttributsDown = _gui.value("textAttributsDown").toString();
-		const Common::String *okButtonLoc = app->_loc.value("okButton");
-		const Common::String *cancelButtonLoc = app->_loc.value("cancelButton");
+		const Common::String *okButtonLoc = app->loc().value("okButton");
+		const Common::String *cancelButtonLoc = app->loc().value("cancelButton");
 
 		TeTextLayout *textTextLayout = dynamic_cast<TeTextLayout *>(textLayout->child(0));
-		textTextLayout->setText(textAttributs + *app->_loc.value(textTextLayout->name()));
+		textTextLayout->setText(textAttributs + *app->loc().value(textTextLayout->name()));
 
 		if (!okButtonLoc || !cancelButtonLoc) {
 			error("Missing translations for ok and cancel");
@@ -89,8 +89,8 @@ void Confirm::enter(const Common::String &guiPath, const Common::String &y) {
 	}
 
 	// Make sure the mouse cursor is back on top.
-	app->_frontOrientationLayout.removeChild(&app->mouseCursorLayout());
-	app->_frontOrientationLayout.addChild(&app->mouseCursorLayout());
+	app->frontOrientationLayout().removeChild(&app->mouseCursorLayout());
+	app->frontOrientationLayout().addChild(&app->mouseCursorLayout());
 
 	if (ConfMan.get("skip_confirm") == "true") {
 		onButtonYes();
@@ -101,7 +101,7 @@ void Confirm::leave() {
 	Application *app = g_engine->getApplication();
 	TeButtonLayout *confirmButtonLayout = _gui.buttonLayout("confirm");
 	if (confirmButtonLayout) {
-		app->_frontLayout.removeChild(confirmButtonLayout);
+		app->frontLayout().removeChild(confirmButtonLayout);
 	}
 	_gui.unload();
 }

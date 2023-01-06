@@ -26,6 +26,4 @@ namespace Tetraedge {
 TeActZone::TeActZone() {
 }
 
-// TODO: Add more functions here.
-
 } // end namespace Tetraedge

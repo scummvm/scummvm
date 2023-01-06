@@ -80,13 +80,10 @@ public:
 	TeVector2s32 bufSize() const {
 		return TeVector2s32(pitch / format.bytesPerPixel, h);
 	}
-
-	Format _format;
+	Format teFormat() const { return _teFormat; }
 
 private:
-
-	// No private members?
-
+	Format _teFormat;
 };
 
 } // end namespace Tetraedge

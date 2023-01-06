@@ -39,9 +39,13 @@ public:
 	bool onButtonNo();
 	bool onButtonYes();
 
+	TeSignal0Param &onButtonNoSignal() { return _onButtonNoSignal; }
+	TeSignal0Param &onButtonYesSignal() { return _onButtonYesSignal; }
+
+private:
+	TeLuaGUI _gui;
 	TeSignal0Param _onButtonNoSignal;
 	TeSignal0Param _onButtonYesSignal;
-	TeLuaGUI _gui;
 };
 
 } // end namespace Tetraedge

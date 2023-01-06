@@ -93,15 +93,17 @@ public:
 	TeSignal0Param &onButtonChangedToStateDownSignal() { return _onButtonChangedToStateDownSignal; };
 	TeSignal0Param &onButtonChangedToStateRolloverSignal() { return _onButtonChangedToStateRolloverSignal; };
 
-	bool _ignoreMouseEvents;
-	TeLayout *_upLayout;
-	TeLayout *_downLayout;
+	TeLayout *upLayout() { return _upLayout; }
+	TeLayout *downLayout() { return _downLayout; }
+	void setIgnoreMouseEvents(bool val) { _ignoreMouseEvents = val; }
 
 private:
 	static bool _mousePositionChangedCatched;
-	bool _doubleValidationProtectionEnabled;
 	static TeTimer *getDoubleValidationProtectionTimer();
 	static TeTimer *_doubleValidationProtectionTimer;
+
+	bool _doubleValidationProtectionEnabled;
+	bool _ignoreMouseEvents;
 
 	State _currentState;
 	bool _clickPassThrough;
@@ -119,6 +121,8 @@ private:
 	TeLayout *_rolloverLayout;
 	TeLayout *_disabledLayout;
 	TeLayout *_hitZoneLayout;
+	TeLayout *_upLayout;
+	TeLayout *_downLayout;
 
 	TeSignal0Param _onMouseClickValidatedSignal;
 	TeSignal0Param _onButtonChangedToStateUpSignal;

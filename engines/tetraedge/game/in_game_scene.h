@@ -186,9 +186,9 @@ public:
 	float shadowNearPlane() const { return _shadowNearPlane; }
 	float shadowFov() const { return _shadowFov; }
 	const TeColor &shadowColor() const { return _shadowColor; }
+	int shadowLightNo() const { return _shadowLightNo; }
+	CharactersShadow *charactersShadow() { return _charactersShadow; }
 
-	int _shadowLightNo;
-	CharactersShadow *_charactersShadow;
 	TeIntrusivePtr<TeBezierCurve> curve() { return _curve; }
 	void setCurve(TeIntrusivePtr<TeBezierCurve> &c) { _curve = c; }
 	Common::Array<TeIntrusivePtr<TeModel>> &zoneModels() { return _zoneModels; }
@@ -199,7 +199,10 @@ public:
 	TeTimer &waitTimeTimer() { return _waitTimeTimer; }
 	Common::Array<TeLight> &lights() { return _lights; }
 
+
 private:
+	int _shadowLightNo;
+	CharactersShadow *_charactersShadow;
 	TeColor _shadowColor;
 	float _shadowFarPlane;
 	float _shadowNearPlane;

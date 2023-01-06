@@ -1304,7 +1304,7 @@ static int tolua_ExportedFunctions_LaunchDialogAndWaitForEnd00(lua_State *L) {
 
 static void PushAnswer(const Common::String &val, const Common::String &gui) {
 	Application *app = g_engine->getApplication();
-	const Common::String *locVal = app->_loc.value(val);
+	const Common::String *locVal = app->loc().value(val);
 	Common::String locValStr;
 	if (locVal) {
 		locValStr = *locVal;

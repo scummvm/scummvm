@@ -82,7 +82,7 @@ bool TeSpriteLayout::load(const Common::Path &path) {
 	unload();
 
 	if (_tiledSurfacePtr->load(path)) {
-		const TeVector2s32 texSize = _tiledSurfacePtr->_tiledTexture->_totalSize;
+		const TeVector2s32 texSize = _tiledSurfacePtr->tiledTexture()->totalSize();
 		if (texSize._y <= 0) {
 			setRatio(1.0);
 		} else {
@@ -102,7 +102,7 @@ bool TeSpriteLayout::load(TeIntrusivePtr<Te3DTexture> &texture) {
 	unload();
 
 	if (_tiledSurfacePtr->load(texture)) {
-		const TeVector2s32 tiledTexSize = _tiledSurfacePtr->_tiledTexture->_totalSize;
+		const TeVector2s32 tiledTexSize = _tiledSurfacePtr->tiledTexture()->totalSize();
 		if (tiledTexSize._y <= 0) {
 			setRatio(1.0);
 		} else {
@@ -124,7 +124,7 @@ bool TeSpriteLayout::load(TeImage &img) {
 	unload();
 
 	if (_tiledSurfacePtr->load(img)) {
-		const TeVector2s32 tiledTexSize = _tiledSurfacePtr->_tiledTexture->_totalSize;
+		const TeVector2s32 tiledTexSize = _tiledSurfacePtr->tiledTexture()->totalSize();
 		if (tiledTexSize._y <= 0) {
 			setRatio(1.0);
 		} else {

@@ -26,14 +26,10 @@
 
 namespace Tetraedge {
 
+// Not used in Syberia1
 class TeClipLayout : public TeLayout {
 public:
 	TeClipLayout();
-
-	// TODO add public members
-
-private:
-	// TODO add private members
 
 };
 

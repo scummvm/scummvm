@@ -56,7 +56,6 @@ public:
 		AlignCenter
 	};
 
-	class FontSizeData {};
 	struct GlyphData {
 		uint32 _charcode;
 		Common::Rect _bitmapSize;
@@ -65,7 +64,6 @@ public:
 
 	bool load(const Common::Path &path);
 	void unload();
-	void init();
 
 	GlyphData glyph(unsigned int size, unsigned int charcode);
 
@@ -77,13 +75,15 @@ public:
 		return _fontSizeData[size];
 	}
 
-	int wordWrapText(const Common::String &str, int fontSize, int maxWidth, Common::Array<Common::String> &lines);
 	Common::Rect getBoundingBox(const Common::String &str, int fontSize);
 	int getHeight(int fontSize);
 
 	void draw(TeImage &destImage, const Common::String &str, int fontSize, int yoff, const TeColor &col, AlignStyle alignMode);
 
+	int wordWrapText(const Common::String &str, int fontSize, int maxWidth, Common::Array<Common::String> &lines);
+
 private:
+	void init();
 	Graphics::Font *getAtSize(unsigned int size);
 
 	Common::File _fontFile;

@@ -48,7 +48,7 @@ bool Object3D::loadModel(const Common::String &name) {
 	if (settings != _objectSettings->end()) {
 		_modelFileName = settings->_value._modelFileName;
 		_defaultScale = settings->_value._defaultScale;
-		_modelPtr->_texturePath = Common::Path("objects/Textures");
+		_modelPtr->setTexturePath("objects/Textures");
 		bool loaded = _modelPtr->load(Common::Path("objects").join(_modelFileName));
 		if (loaded) {
 			_modelPtr->setName(name);

@@ -56,8 +56,8 @@ public:
 	TeSignal1Param<const Common::String &> &onAnswerSignal() { return _onAnswerSignal; }
 
 private:
-	TeLuaGUI _gui;
 	Common::Array<Answer *> _answers;
+	TeLuaGUI _gui;
 	TeSignal1Param<const Common::String &> _onAnswerSignal;
 
 };

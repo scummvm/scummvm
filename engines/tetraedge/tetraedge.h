@@ -106,7 +106,7 @@ public:
 		Common::Serializer s(nullptr, stream);
 		return syncGame(s);
 	}
-	
+
 	static void getSavegameThumbnail(Graphics::Surface &thumb);
 
 	Common::Error loadGameState(int slot) override;
@@ -128,7 +128,6 @@ public:
 
 private:
 	void configureSearchPaths();
-
 };
 
 extern TetraedgeEngine *g_engine;

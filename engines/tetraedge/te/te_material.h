@@ -64,9 +64,8 @@ public:
 	TeColor _specularColor;
 	TeColor _emissionColor;
 	float _shininess;
-	bool _enableLights;
 	bool _enableSomethingDefault0;
-private:
+	bool _enableLights;
 };
 
 } // end namespace Tetraedge

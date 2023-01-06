@@ -41,8 +41,8 @@ public:
 
 private:
 	bool _entered;
-	TeTimer _timer;
 	int _splashNo;
+	TeTimer _timer;
 };
 
 } // end namespace Tetraedge

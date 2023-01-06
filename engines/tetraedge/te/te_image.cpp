@@ -28,7 +28,7 @@
 
 namespace Tetraedge {
 
-TeImage::TeImage() : ManagedSurface(), _format(INVALID) {
+TeImage::TeImage() : ManagedSurface(), _teFormat(INVALID) {
 }
 
 TeImage::TeImage(const TeImage &other) {
@@ -50,7 +50,7 @@ void TeImage::create() {
 
 void TeImage::create(uint xsize, uint ysize, Common::SharedPtr<TePalette> &pal,
 			Format teformat, uint bufxsize, uint bufysize) {
-	_format = teformat;
+	_teFormat = teformat;
 	Graphics::PixelFormat pxformat = ((teformat == TeImage::RGB8) ?
 									  Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0) : Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
@@ -64,7 +64,7 @@ void TeImage::deserialize(Common::ReadStream &stream) {
 
 void TeImage::destroy() {
 	Graphics::ManagedSurface::free();
-	_format = INVALID;
+	_teFormat = INVALID;
 }
 
 void TeImage::drawPlot(void *outbuf, int x, int y, const TeVector2s32 &bufsize, const TeColor &col) {

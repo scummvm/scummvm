@@ -38,9 +38,9 @@ void OwnerErrorMenu::enter() {
 	load(luaPath);
 	Application *app = g_engine->getApplication();
 	TeLayout *menuLayout = layoutChecked("menu");
-	app->_frontLayout.addChild(menuLayout);
+	app->frontLayout().addChild(menuLayout);
 	TeTextLayout *txt = dynamic_cast<TeTextLayout*>(layoutChecked("ownerMenuText"));
-	const Common::String *locname = app->_loc.value(txt->name());
+	const Common::String *locname = app->loc().value(txt->name());
 	txt->setText(value("textAttributs").toString() + (locname ? *locname : txt->name()));
 }
 

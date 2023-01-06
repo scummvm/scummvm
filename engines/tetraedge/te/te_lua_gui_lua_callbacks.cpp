@@ -47,7 +47,7 @@ static Common::String TeLuaToTeString(lua_State *L, int index) {
 	}
 }
 
-long TeLuaToS32(lua_State *L, int index) {
+static long TeLuaToS32(lua_State *L, int index) {
 	if (!lua_isnumber(L, index)) {
 		warning("TeLuaToS32:: not a number");
 		return 0;
@@ -82,7 +82,6 @@ static bool TeLuaToBool(lua_State *L, int index) {
 		return lua_toboolean(L, index);
 	}
 }
-
 
 static TeColor TeLuaToTeColor(lua_State *L, int index) {
 	TeColor retval(255, 255, 255, 255);
@@ -123,7 +122,6 @@ static TeColor TeLuaToTeColor(lua_State *L, int index) {
 
 	return retval;
 }
-
 
 static TeVector3f32 TeLuaToTeVector3f32(lua_State *L, int index, TeVector3f32 defaultVal) {
 	TeVector3f32 retval = defaultVal;
@@ -172,6 +170,7 @@ static Common::Array<float> TeLuaToFloatArray(lua_State *L, int index) {
 	}
 	return result;
 }
+
 
 static bool loadCommonLayoutItems(lua_State *L, const char *s, TeLayout *layout) {
 	if (!strcmp(s, "name")) {
@@ -229,7 +228,7 @@ int layoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "consoleNoStretch")) {
 				warning("TODO: Handle _g_bWidescreen");
 				if (_g_bWidescreen) {
-					layout->setScale(TeVector3f32(0.7500001f, 1.0f, 1.0f));
+					layout->setScale(TeVector3f32(0.75f, 1.0f, 1.0f));
 				}
 			} else {
 				warning("[TeLuaGUI.layoutBindings] Unreconized attribute : %s", s);
@@ -275,21 +274,21 @@ int listLayoutBindings(lua_State *L) {
 			if (loadCommonLayoutItems(L, s, layout)) {
 				// do nothing.
 			} else if (!strcmp(s, "direction")) {
-				const TeVector3f32 lastDirection = layout->_direction;
+				const TeVector3f32 lastDirection = layout->direction();
 				const TeVector3f32 direction = TeLuaToTeVector3f32(L, -1, lastDirection);
-				layout->_direction = direction;
+				layout->setDirection(direction);
 			} else if (!strcmp(s, "minimumMargin")) {
-				const TeVector3f32 lastMinimumMargin = layout->_minimumMargin;
+				const TeVector3f32 lastMinimumMargin = layout->minimumMargin();
 				const TeVector3f32 minimumMargin = TeLuaToTeVector3f32(L, -1, lastMinimumMargin);
-				layout->_minimumMargin = minimumMargin;
+				layout->setMinimumMargin(minimumMargin);
 			} else if (!strcmp(s, "maximumMargin")) {
-				const TeVector3f32 lastMaximumMargin = layout->_maximumMargin;
+				const TeVector3f32 lastMaximumMargin = layout->maximumMargin();
 				const TeVector3f32 maximumMargin = TeLuaToTeVector3f32(L, -1, lastMaximumMargin);
-				layout->_maximumMargin = maximumMargin;
+				layout->setMaximumMargin(maximumMargin);
 			} else if (!strcmp(s, "consoleNoStretch")) {
 				warning("TODO: Handle _g_bWidescreen");
 				if (_g_bWidescreen) {
-					layout->setScale(TeVector3f32(0.7500001f, 1.0f, 1.0f));
+					layout->setScale(TeVector3f32(0.75f, 1.0f, 1.0f));
 				}
 			} else {
 				warning("[TeLuaGUI.layoutBindings] Unreconized attribute : %s", s);
@@ -364,11 +363,11 @@ int spriteLayoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "bottomCropping")) {
 				layout->_tiledSurfacePtr->setBottomCropping(TeLuaToF32(L, -1));
 			} else if (!strcmp(s, "loopCount")) {
-				layout->_tiledSurfacePtr->_frameAnim._loopCount = TeLuaToS32(L, -1);
+				layout->_tiledSurfacePtr->_frameAnim.setLoopCount(TeLuaToS32(L, -1));
 			} else if (!strcmp(s, "play")) {
 				playNow = TeLuaToBool(L, -1);
 			} else if (!strcmp(s, "reversed")) {
-				layout->_tiledSurfacePtr->_frameAnim._reversed = TeLuaToBool(L, -1);
+				layout->_tiledSurfacePtr->_frameAnim.setReversed(TeLuaToBool(L, -1));
 			} else if (!strcmp(s, "startingFrame")) {
 				startingFrame = TeLuaToU32(L, -1);
 			} else if (!strcmp(s, "endingFrame")) {
@@ -376,7 +375,7 @@ int spriteLayoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "consoleNoStretch")) {
 				warning("TODO: Handle _g_bWidescreen");
 				if (_g_bWidescreen) {
-					layout->setScale(TeVector3f32(0.7500001f, 1.0f, 1.0f));
+					layout->setScale(TeVector3f32(0.75f, 1.0f, 1.0f));
 				}
 			} else {
 				warning("[TeLuaGUI.layoutBindings] Unreconized attribute : %s", s);
@@ -412,14 +411,14 @@ int spriteLayoutBindings(lua_State *L) {
 		layout->stop();
 	}
 
-	TeICodec *codec = layout->_tiledSurfacePtr->_codec;
+	TeICodec *codec = layout->_tiledSurfacePtr->codec();
 	if (codec) {
 		float frameRate = codec->frameRate();
-		layout->_tiledSurfacePtr->_frameAnim._startTime = (startingFrame / frameRate) * 1000.0 * 1000.0;
+		layout->_tiledSurfacePtr->_frameAnim.setStartTime((startingFrame / frameRate) * 1000.0 * 1000.0);
 		if (endingFrame == -1) {
-			layout->_tiledSurfacePtr->_frameAnim._endTime = FLT_MAX;
+			layout->_tiledSurfacePtr->_frameAnim.setEndTime(FLT_MAX);
 		} else {
-			layout->_tiledSurfacePtr->_frameAnim._endTime = (endingFrame / frameRate) * 1000.0 * 1000.0;
+			layout->_tiledSurfacePtr->_frameAnim.setEndTime((endingFrame / frameRate) * 1000.0 * 1000.0);
 		}
 	}
 
@@ -470,7 +469,7 @@ int buttonLayoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "consoleNoStretch")) {
 				warning("TODO: Handle _g_bWidescreen");
 				if (_g_bWidescreen) {
-					layout->setScale(TeVector3f32(0.7500001f, 1.0f, 1.0f));
+					layout->setScale(TeVector3f32(0.75f, 1.0f, 1.0f));
 				}
 			} else {
 				warning("[TeLuaGUI.buttonLayoutBindings] Unreconized attribute : %s", s);
@@ -540,7 +539,7 @@ int checkboxLayoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "consoleNoStretch")) {
 				warning("TODO: Handle _g_bWidescreen");
 				if (_g_bWidescreen) {
-					layout->setScale(TeVector3f32(0.7500001f, 1.0f, 1.0f));
+					layout->setScale(TeVector3f32(0.75f, 1.0f, 1.0f));
 				}
 			} else {
 				warning("[TeLuaGUI.checkboxLayoutBindings] Unreconized attribute : %s", s);
@@ -710,7 +709,7 @@ int textLayoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "consoleNoStretch")) {
 				warning("TODO: Handle _g_bWidescreen");
 				if (_g_bWidescreen) {
-					layout->setScale(TeVector3f32(0.7500001f, 1.0f, 1.0f));
+					layout->setScale(TeVector3f32(0.75f, 1.0f, 1.0f));
 				}
 			} else {
 				warning("[TeLuaGUI.textLayoutBindings] Unreconized attribute : %s", s);
@@ -861,7 +860,7 @@ int scrollingLayoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "consoleNoStretch")) {
 				warning("TODO: Handle _g_bWidescreen");
 				if (_g_bWidescreen) {
-					layout->setScale(TeVector3f32(0.7500001f, 1.0f, 1.0f));
+					layout->setScale(TeVector3f32(0.75f, 1.0f, 1.0f));
 				}
 			} else {
 				warning("[TeLuaGUI.scrollingLayoutBindings] Unreconized attribute : %s", s);
@@ -923,7 +922,7 @@ int extendedTextLayoutBindings(lua_State *L) {
 			} else if (!strcmp(s, "consoleNoStretch")) {
 				warning("TODO: Handle _g_bWidescreen");
 				if (_g_bWidescreen) {
-					layout->setScale(TeVector3f32(0.7500001f, 1.0f, 1.0f));
+					layout->setScale(TeVector3f32(0.75f, 1.0f, 1.0f));
 				}
 			} else {
 				warning("[TeLuaGUI.textLayoutBindings] Unreconized attribute : %s", s);

@@ -36,20 +36,31 @@ public:
 
 	TeSignal0Param &frameChangedSignal() { return _frameChangedSignal; };
 
-	int _nbFrames;
+	void setFrameRate(float rate) { _frameRate = rate; }
+	void setNbFrames(int frames) { _nbFrames = frames; }
+	void setLoopCount(int count) { _loopCount = count; }
+	void setReversed(bool reverse) { _reversed = reverse; }
+
+	void setStartTime(double start) { _startTime = start; }
+	void setEndTime(double end) { _endTime = end; }
+
+	int lastFrameShown() const { return _lastFrameShown; }
+
+private:
 	float _frameRate;
 	int _loopCount;
+	int _nbFrames;
+	int _numFramesToShow;
+
 	bool _reversed;
+
 	int _lastFrameShown;
 	int _minFrame;
-	int _numFramesToShow;
 
 	double _startTime;
 	double _endTime;
 
-private:
 	TeSignal0Param _frameChangedSignal;
-
 };
 
 } // end namespace Tetraedge

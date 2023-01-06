@@ -61,12 +61,14 @@ public:
 
 	void writeTo(Graphics::Surface &surf);
 
-	int _numFrames;
-	int _frameRate;
-	uint _width;
-	uint _height;
+	uint width() const { return _width; }
+	uint height() const { return _height; }
 
 private:
+	uint _width;
+	uint _height;
+	int _numFrames;
+	int _frameRate;
 	TeImage::Format _format;
 	bool _createdTexture;
 	bool _loaded;

@@ -104,20 +104,20 @@ public:
 	int &difficulty() { return _difficulty; }
 	bool &tutoActivated() { return _tutoActivated; }
 
-	// TODO: Add accessors for these and make them private.
-	bool _finishedGame;
-	bool _finishedFremium;
-	TeLayout _frontLayout;
-	TeLayout _frontOrientationLayout;
-	TeLayout _backLayout;
-	TeButtonLayout _lockCursorButton;
-	TeButtonLayout _lockCursorFromActionButton;
-	LocFile _loc;
-	Common::String _firstWarpPath;
-	Common::String _firstZone;
-	Common::String _firstScene;
+	void setFinishedGame(bool val) { _finishedGame = val; }
+	void setFinishedFremium(bool val) { _finishedFremium = val; }
+	const Common::String &firstWarpPath() { return _firstWarpPath; }
+	const Common::String &firstZone() { return _firstZone; }
+	const Common::String &firstScene() { return _firstScene; }
+	TeLayout &frontLayout() { return _frontLayout; };
+	TeLayout &frontOrientationLayout() { return _frontOrientationLayout; }
+	TeLayout &backLayout() { return _backLayout; }
+	LocFile &loc() { return _loc; }
 
 private:
+	bool _finishedGame;
+	bool _finishedFremium;
+
 	TeVisualFade _visFade;
 	TeMusic _music;
 	TeSpriteLayout _appSpriteLayout;
@@ -125,8 +125,20 @@ private:
 	TeSpriteLayout _autoSaveIcon1;
 	TeSpriteLayout _autoSaveIcon2;
 
+	TeButtonLayout _lockCursorButton;
+	TeButtonLayout _lockCursorFromActionButton;
+
+	TeLayout _frontLayout;
+	TeLayout _frontOrientationLayout;
+	TeLayout _backLayout;
+
+	LocFile _loc;
+
 	Common::String _applicationTitle;
 	Common::String _versionString;
+	Common::String _firstWarpPath;
+	Common::String _firstZone;
+	Common::String _firstScene;
 
 	Common::Array<Common::String> _unrecalAnims;
 

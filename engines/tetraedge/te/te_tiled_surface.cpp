@@ -169,7 +169,7 @@ bool TeTiledSurface::onFrameAnimCurrentFrameChanged() {
 
 	Common::SharedPtr<TePalette> nullPal;
 	img.create(vidSize._x, vidSize._y, nullPal, _imgFormat, bufxsize, bufysize);
-	if (_codec->update(_frameAnim._lastFrameShown, img))
+	if (_codec->update(_frameAnim.lastFrameShown(), img))
 		update(img);
 	return _codec->isAtEnd();
 }
@@ -180,8 +180,8 @@ void TeTiledSurface::pause() {
 
 void TeTiledSurface::play() {
 	if (_codec) {
-		_frameAnim._nbFrames = _codec->nbFrames();
-		_frameAnim._frameRate = _codec->frameRate();
+		_frameAnim.setNbFrames(_codec->nbFrames());
+		_frameAnim.setFrameRate(_codec->frameRate());
 		_frameAnim.play();
 	}
 }

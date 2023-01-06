@@ -27,7 +27,6 @@ MODULE_OBJS := \
 	game/inventory_menu.o \
 	game/inventory_object.o \
 	game/inventory_objects_xml_parser.o \
-	game/loading_menu.o \
 	game/loc_file.o \
 	game/lua_binds.o \
 	game/main_menu.o \
@@ -94,10 +93,8 @@ MODULE_OBJS := \
 	te/te_resource.o \
 	te/te_resource_manager.o \
 	te/te_scene.o \
-	te/te_screen.o \
 	te/te_scrolling_layout.o \
 	te/te_scummvm_codec.o \
-	te/te_sfx.o \
 	te/te_sound_manager.o \
 	te/te_sprite_layout.o \
 	te/te_text_base2.o \

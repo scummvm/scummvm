@@ -41,10 +41,10 @@ namespace Tetraedge {
 static const char *LAST_SAVE_CONF = "lastSaveSlot";
 
 MainMenu::MainMenu() : _entered(false), _confirmingTuto(false) {
-	_newGameConfirm._onButtonYesSignal.add(this, &MainMenu::onNewGameConfirmed);
-	_tutoConfirm._onButtonYesSignal.add(this, &MainMenu::onActivedTuto);
-	_tutoConfirm._onButtonNoSignal.add(this, &MainMenu::onDisabledTuto);
-	_quitConfirm._onButtonYesSignal.add(this, &MainMenu::onQuit);
+	_newGameConfirm.onButtonYesSignal().add(this, &MainMenu::onNewGameConfirmed);
+	_tutoConfirm.onButtonYesSignal().add(this, &MainMenu::onActivedTuto);
+	_tutoConfirm.onButtonNoSignal().add(this, &MainMenu::onDisabledTuto);
+	_quitConfirm.onButtonYesSignal().add(this, &MainMenu::onQuit);
 	onFacebookLoggedSignal.add(this, &MainMenu::onFacebookLogged);
 }
 
@@ -54,7 +54,7 @@ void MainMenu::enter() {
 	appSpriteLayout.setVisible(true);
 	if (!appSpriteLayout._tiledSurfacePtr->_frameAnim._runTimer.running()) {
 		appSpriteLayout.load("menus/menu.ogv");
-		appSpriteLayout._tiledSurfacePtr->_frameAnim._loopCount = -1;
+		appSpriteLayout._tiledSurfacePtr->_frameAnim.setLoopCount(-1);
 		appSpriteLayout._tiledSurfacePtr->play();
 	}
 	app->captureFade();

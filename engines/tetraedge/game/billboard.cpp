@@ -70,22 +70,22 @@ void Billboard::calcVertex() {
 	fx = _pos.x();
 	fy = _pos.y();
 	meshVertex = camTotalInverse * TeVector3f32(fx + fx - 1.0f, fy + fy - 1.0f, posvec.z());
-	_model->_meshes[0].setVertex(0, meshVertex);
+	_model->meshes()[0].setVertex(0, meshVertex);
 
 	fx = _pos.x();
 	fy = _pos.y() + _size.getY();
 	meshVertex = camTotalInverse * TeVector3f32(fx + fx - 1.0f, fy + fy - 1.0f, posvec.z());
-	_model->_meshes[0].setVertex(1, meshVertex);
+	_model->meshes()[0].setVertex(1, meshVertex);
 
 	fx = _pos.x() + _size.getX();
 	fy = _pos.y();
 	meshVertex = camTotalInverse * TeVector3f32(fx + fx - 1.0f, fy + fy - 1.0f, posvec.z());
-	_model->_meshes[0].setVertex(2, meshVertex);
+	_model->meshes()[0].setVertex(2, meshVertex);
 
 	fx = _pos.x() + _size.getX();
 	fy = _pos.y() + _size.getY();
 	meshVertex = camTotalInverse * TeVector3f32(fx + fx - 1.0f, fy + fy - 1.0f, posvec.z());
-	_model->_meshes[0].setVertex(3, meshVertex);
+	_model->meshes()[0].setVertex(3, meshVertex);
 }
 
 void Billboard::position(const TeVector3f32 &pos) {

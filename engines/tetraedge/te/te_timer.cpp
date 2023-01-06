@@ -33,7 +33,7 @@ namespace Tetraedge {
 
 TeTimer::TeTimer() : _stopped(true), _pausable(true), _alarmTime(0),
 _startTime(0), _lastTimeElapsed(0), _startTimeOffset(0), _updated(false) {
-	if (realTimer()->_paused) {
+	if (realTimer()->isPaused()) {
 		realTimer()->start();
 		_realTime = realTimer()->getTimeFromStart();
 	}

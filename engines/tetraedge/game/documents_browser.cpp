@@ -190,7 +190,7 @@ void DocumentsBrowser::showDocument(const Common::String &docName, long startPag
 	TeSpriteLayout *sprite = _gui1.spriteLayoutChecked("zoomedSprite");
 	//sprite->setSizeType(ABSOLUTE);
 	sprite->load(docPath);
-	TeVector2s32 spriteSize = sprite->_tiledSurfacePtr->_tiledTexture->_totalSize;
+	TeVector2s32 spriteSize = sprite->_tiledSurfacePtr->tiledTexture()->totalSize();
 	sprite->setSizeType(RELATIVE_TO_PARENT);
 	TeVector3f32 winSize = app->getMainWindow().size();
 	sprite->setSize(TeVector3f32(1.0f, (4.0f / (winSize.y() / winSize.x() * 4.0f)) *

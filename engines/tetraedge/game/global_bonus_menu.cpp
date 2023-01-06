@@ -35,7 +35,7 @@ void GlobalBonusMenu::enter() {
 	_entered = true;
 	load("menus/bonusmenu/GlobalBonusMenu.lua");
 	TeLayout *menu = layoutChecked("menu");
-	app->_frontLayout.addChild(menu);
+	app->frontLayout().addChild(menu);
 
 	// Original checks each layout's existence
 	TeButtonLayout *btn;

@@ -86,7 +86,7 @@ public:
 	void blendAnim(TeIntrusivePtr<TeModelAnimation>& anim, float amount, bool repeat);
 	void blendMesh(const Common::String &s1, const Common::String &s2, float amount);
 
-	int checkFileType(Common::SeekableReadStream &instream);
+	int checkFileType(Common::SeekableReadStream &instream) const;
 
 	void create();
 	void destroy();
@@ -97,7 +97,6 @@ public:
 	int findOrAddWeights(const Common::Array<weightElement> &weights);
 	void forceMatrix(const TeMatrix4x4 &matrix);
 	TeTRS getBone(TeIntrusivePtr<TeModelAnimation> anim, unsigned int num);
-	TeMatrix4x4 lerpElementsMatrix(unsigned int weightNum, const Common::Array<TeMatrix4x4> &matricies);
 
 	/* Align the stream to the nearest 4 byte boudary*/
 	static void loadAlign(Common::SeekableReadStream &stream);
@@ -109,9 +108,8 @@ public:
 	bool loadWeights(Common::ReadStream &stream, Common::Array<weightElement> &weights);
 	bool loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh);
 
-	void optimize();
-	void update();
 	void removeAnim();
+	void update();
 
 	void saveBone(Common::SeekableWriteStream &stream, unsigned long boneno);
 	void saveMesh(Common::SeekableWriteStream &stream, const TeMesh &mesh);
@@ -126,27 +124,36 @@ public:
 
 	TeMatrix4x4 skinOffset(unsigned long boneno) const;
 
-	TeSignal2Param<const Common::String &, TeMatrix4x4 &> &bonesUpdatedSignal() { return _bonesUpdatedSignal; }
-
 	static Common::SeekableReadStream *tryLoadZlibStream(Common::SeekableReadStream &instr);
-	TeIntrusivePtr<TeTiledTexture> _tiledTexture;
 
-	Common::Path _texturePath;
-	bool _enableLights;
-	bool _skipSkinOffsets;
+	TeSignal2Param<const Common::String &, TeMatrix4x4 &> &bonesUpdatedSignal() { return _bonesUpdatedSignal; }
+	Common::Array<BonesBlender *> &boneBlenders() { return _boneBlenders; }
+	Common::Array<TeMesh> &meshes() { return _meshes; }
+	TeIntrusivePtr<TeTiledTexture> tiledTexture() { return _tiledTexture; }
 
-	Common::Array<TeMesh> _meshes;
-	Common::Array<BonesBlender *> _boneBlenders;
+	void setEnableLights(bool val) { _enableLights = val; }
+	void setTexturePath(const Common::Path &path) { _texturePath = path; }
 
 protected:
+	TeMatrix4x4 lerpElementsMatrix(unsigned int weightNum, const Common::Array<TeMatrix4x4> &matricies);
+	void optimize();
+
+	Common::Path _texturePath;
+	TeIntrusivePtr<TeTiledTexture> _tiledTexture;
+
+	bool _enableLights;
 	bool _matrixForced;
+	bool _skipSkinOffsets;
+
 	TeMatrix4x4 _forcedMatrix;
+	Common::Array<BonesBlender *> _boneBlenders;
 	Common::Array<MeshBlender *> _meshBlenders;
 	Common::Array<bone> _bones;
 	Common::Array<TeMatrix4x4> _skinOffsets;
 	Common::Array<TeMatrix4x4> _boneMatricies;
 	Common::Array<TeMatrix4x4> _lerpedElements;
 	Common::Array<Common::Array<weightElement>> _weightElements;
+	Common::Array<TeMesh> _meshes;
 
 	TeQuaternion _boneRotation;
 

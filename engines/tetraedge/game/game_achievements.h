@@ -32,10 +32,6 @@ public:
 	GameAchievements();
 
 	static void registerAchievements(TeLuaContext &context);
-	// TODO add public members
-
-private:
-	// TODO add private members
 
 };
 

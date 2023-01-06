@@ -43,7 +43,7 @@ void SplashScreens::enter()	{
 			TeLuaGUI::load(scriptPath.toString());
 			Application *app = g_engine->getApplication();
 			TeLayout *splash = layout("splash");
-			app->_frontLayout.addChild(splash);
+			app->frontLayout().addChild(splash);
 			app->performRender();
 		}
 		onAlarm();
@@ -72,7 +72,7 @@ bool SplashScreens::onAlarm() {
 		btnLayout->onMouseClickValidated().add(this, &SplashScreens::onQuitSplash);
 
 		TeLayout *splash = layout("splash");
-		app->_frontLayout.addChild(splash);
+		app->frontLayout().addChild(splash);
 
 		_timer.start();
 		_timer.setAlarmIn(1500000);
