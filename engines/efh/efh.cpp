@@ -1822,7 +1822,7 @@ bool EfhEngine::checkMapMonsterAvailability(int16 monsterId) {
 }
 
 void EfhEngine::displayMonsterAnim(int16 monsterId) {
-	debug("displayMonsterAnim %d", monsterId);
+	debugC(6, kDebugEngine, "displayMonsterAnim %d", monsterId);
 
 	int16 animId = kEncounters[_mapMonsters[monsterId]._monsterRef]._animId;
 	displayAnimFrames(animId, true);

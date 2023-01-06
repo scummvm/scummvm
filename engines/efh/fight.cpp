@@ -71,8 +71,8 @@ void EfhEngine::createOpponentList(int16 monsterTeamId) {
 		_teamMonsterIdArray[id] = -1;
 }
 
-void EfhEngine::sub1BE89(int16 monsterId) {
-	debug("sub1BE89 %d", monsterId);
+void EfhEngine::initFight(int16 monsterId) {
+	debugC(3, kDebugEngine, "initFight %d", monsterId);
 	createOpponentList(monsterId);
 	resetTeamMonsterEffects();
 }
@@ -82,7 +82,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 
 	_ongoingFightFl = true;
 
-	sub1BE89(monsterId);
+	initFight(monsterId);
 
 	if (_teamMonsterIdArray[0] == -1) {
 		resetTeamMonsterIdArray();
@@ -455,7 +455,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 			for (int16 mobsterCounter = teamMemberId; mobsterCounter < var54; ++mobsterCounter) {
 				if (isMonsterActive(groupId, mobsterCounter) && var6E) {
 					bool noticedFl;
-					if (checkMonsterMovementType(groupId, true)) {
+					if (!checkMonsterMovementType(groupId, true)) {
 						setMapMonsterMovementType(groupId, 9, true);
 						_unk2C8AA += 500;
 						noticedFl = true;
@@ -695,7 +695,7 @@ bool EfhEngine::isTPK() {
 }
 
 bool EfhEngine::isMonsterAlreadyFighting(int16 monsterId, int16 teamMonsterId) {
-	debug("isMonsterAlreadyFighting %d %d", monsterId, teamMonsterId);
+	debugC(6, kDebugEngine, "isMonsterAlreadyFighting %d %d", monsterId, teamMonsterId);
 
 	for (int counter = 0; counter < teamMonsterId; ++counter) {
 		if (_teamMonsterIdArray[counter] == monsterId)
@@ -1142,11 +1142,11 @@ bool EfhEngine::sub1CB27() {
 	return var4;
 }
 
-void EfhEngine::drawCombatScreen(int16 charId, bool whiteFl, bool forceDrawFl) {
-	debug("drawCombatScreen %d %s %s", charId, whiteFl ? "True" : "False", forceDrawFl ? "True" : "False");
+void EfhEngine::drawCombatScreen(int16 charId, bool whiteFl, bool drawFl) {
+	debugC(6, kDebugEngine, "drawCombatScreen %d %s %s", charId, whiteFl ? "True" : "False", drawFl ? "True" : "False");
 
 	for (uint counter = 0; counter < 2; ++counter) {
-		if (counter == 0 || forceDrawFl) {
+		if (counter == 0 || drawFl) {
 			drawMapWindow();
 			displayCenteredString("Combat", 128, 303, 9);
 			drawColoredRect(200, 112, 278, 132, 0);
@@ -1157,7 +1157,7 @@ void EfhEngine::drawCombatScreen(int16 charId, bool whiteFl, bool forceDrawFl) {
 			displayLowStatusScreen(false);
 		}
 
-		if (counter == 0 && forceDrawFl)
+		if (counter == 0 && drawFl)
 			displayFctFullScreen();
 	}
 }
@@ -1321,30 +1321,29 @@ void EfhEngine::addReactionText(int16 id) {
 }
 
 void EfhEngine::sub1C4CA(bool whiteFl) {
-	debug("sub1C4CA %s", whiteFl ? "True" : "False");
+	debugC(5, kDebugEngine, "sub1C4CA %s", whiteFl ? "True" : "False");
 
 	int16 textPosY = 20;
 	for (uint counter = 0; counter < 5; ++counter) {
 		if (_teamMonsterIdArray[counter] == -1)
 			continue;
 
-		int16 var6C = computeMonsterGroupDistance(_teamMonsterIdArray[counter]);
-		int16 var6E = countMonsterGroupMembers(counter);
+		int16 monsterDistance = computeMonsterGroupDistance(_teamMonsterIdArray[counter]);
+		int16 mobsterCount = countMonsterGroupMembers(counter);
 		if (whiteFl)
 			setTextColorWhite();
 		else
 			setTextColorGrey();
 
 		setTextPos(129, textPosY);
-		char buffer[80];
-		snprintf(buffer, 80, "%c)", 'A' + counter);
+		Common::String buffer = Common::String::format("%c)", 'A' + counter);
 		displayStringAtTextPos(buffer);
 		setTextColorRed();
 		int16 var1 = _mapMonsters[_teamMonsterIdArray[counter]]._possessivePronounSHL6 & 0x3F;
 		if (var1 <= 0x3D) {
-			snprintf(buffer, 80, "%d %s", var6E, kEncounters[_mapMonsters[_teamMonsterIdArray[counter]]._monsterRef]._name);
+			buffer = Common::String::format("%d %s", mobsterCount, kEncounters[_mapMonsters[_teamMonsterIdArray[counter]]._monsterRef]._name);
 			displayStringAtTextPos(buffer);
-			if (var6E > 1)
+			if (mobsterCount > 1)
 				displayStringAtTextPos("s");
 		} else if (var1 == 0x3E) {
 			displayStringAtTextPos("(NOT DEFINED)");
@@ -1363,7 +1362,7 @@ void EfhEngine::sub1C4CA(bool whiteFl) {
 		}
 
 		setTextColorRed();
-		switch (var6C) {
+		switch (monsterDistance) {
 		case 1:
 			displayCenteredString("S", 290, 302, textPosY);
 			break;

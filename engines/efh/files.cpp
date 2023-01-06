@@ -174,7 +174,7 @@ void EfhEngine::loadNewPortrait() {
 }
 
 void EfhEngine::loadAnimImageSet() {
-	debug("loadAnimImageSet");
+	debugC(3, kDebugEngine, "loadAnimImageSet");
 
 	if (_currentAnimImageSetId == _animImageSetId || _animImageSetId == 0xFF)
 		return;
@@ -189,7 +189,7 @@ void EfhEngine::loadAnimImageSet() {
 }
 
 void EfhEngine::loadHistory() {
-	debug("loadHistory");
+	debugC(2, kDebugEngine, "loadHistory");
 
 	Common::String fileName = "history";
 	readFileToBuffer(fileName, _history);
