@@ -26,7 +26,7 @@ namespace Tetraedge {
 TeILoc::TeILoc() {
 }
 
-Common::String *TeILoc::text(const Common::String &key) {
+const Common::String *TeILoc::text(const Common::String &key) const {
 	if (!_map.contains(key)) {
 		return nullptr;
 	}

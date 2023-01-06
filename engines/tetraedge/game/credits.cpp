@@ -37,7 +37,7 @@ void Credits::enter(bool returnToOptions) {
 	// TODO: set _field0x50 = 0;
 	_gui.load("menus/credits/credits.lua");
 	Application *app = g_engine->getApplication();
-	app->_frontLayout.addChild(_gui.layoutChecked("menu"));
+	app->frontLayout().addChild(_gui.layoutChecked("menu"));
 
 	Common::String musicPath = _gui.value("musicPath").toString();
 	if (!app->music().isPlaying() || app->music().path() != musicPath) {
@@ -117,7 +117,7 @@ void Credits::leave() {
 	if (_gui.loaded()) {
 		Application *app = g_engine->getApplication();
 		app->captureFade();
-		app->_frontLayout.removeChild(_gui.layoutChecked("menu"));
+		app->frontLayout().removeChild(_gui.layoutChecked("menu"));
 		_timer.stop();
 		_gui.unload();
 		if (_returnToOptions)

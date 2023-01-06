@@ -346,8 +346,8 @@ bool Character::loadModel(const Common::String &mname, bool unused) {
 		return false;
 
 	_characterSettings = _globalCharacterSettings->getVal(mname);
-	_model->_texturePath = Common::Path("models/Textures");
-	_model->_enableLights = true;
+	_model->setTexturePath("models/Textures");
+	_model->setEnableLights(true);
 	Common::Path modelPath("models");
 	modelPath.joinInPlace(_characterSettings._modelFileName);
 	if (!_model->load(modelPath))
@@ -356,8 +356,9 @@ bool Character::loadModel(const Common::String &mname, bool unused) {
 	_model->setName(mname);
 	_model->setScale(_characterSettings._defaultScale);
 
-	for (auto &mesh : _model->_meshes)
+	for (auto &mesh : _model->meshes())
 		mesh.setVisible(true);
+
 	// Set all mouthes not visible by default
 	_model->setVisibleByName("_B_", false);
 	// Set all eyes not visible by default
@@ -744,10 +745,10 @@ float Character::speedFromAnim(double msFromStart) {
 		return 0.0f;
 
 	TeIntrusivePtr<TeModelAnimation> modelAnim;
-	if (_model->_boneBlenders.empty()) {
+	if (_model->boneBlenders().empty()) {
 		modelAnim = _model->anim();
 	} else {
-		modelAnim = _model->_boneBlenders.back()->_anim;
+		modelAnim = _model->boneBlenders().back()->_anim;
 	}
 
 	if (!modelAnim)

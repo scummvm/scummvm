@@ -64,20 +64,32 @@ public:
 	TeMatrix4x4 transformationMatrix();
 	TeVector3f32 transformCoord(const TeVector3f32 &pt);
 	TeVector3f32 transformPoint2Dto3D(const TeVector3f32 &pt);
-	void updateProjectionMatrix();
 
 	void viewport(int x, int y, uint width, uint height);
 	TeVector2f32 viewportSize() const { return TeVector2f32(_viewportW, _viewportH); }
 
 	TeSignal0Param &onViewportChangedSignal() { return _onViewportChangedSignal; }
 
-	int _projectionMatrixType;
+	void setFov(float fov) { _fov = fov; }
+	void setOrthoPlanes(float near, float far) {
+		_orthFarVal = far;
+		_orthNearVal = near;
+	}
+	void setProjMatrixType(int matrixType) { _projectionMatrixType = matrixType; }
+	int projMatrixType() const { return _projectionMatrixType; }
+	void setPerspectiveVal(float val) { _somePerspectiveVal = val; }
+	float orthoNearPlane() const { return _orthNearVal; }
+	float orthoFarPlane() const { return _orthNearVal; }
+
+private:
+	void updateProjectionMatrix();
+
+	int _projectionMatrixType; // TODO: Should be an enum.
 	float _orthNearVal;
 	float _orthFarVal;
 	float _fov;
 	float _somePerspectiveVal;
 
-private:
 	int _viewportX;
 	int _viewportY;
 	uint _viewportW;

@@ -42,8 +42,8 @@ void CharactersShadow::create(InGameScene *scene) {
 	TeRenderer *renderer = g_engine->getRenderer();
 	renderer->enableTexture();
 	_camera = new TeCamera();
-	_camera->_projectionMatrixType = 2;
-	_camera->_somePerspectiveVal = 1.0;
+	_camera->setProjMatrixType(2);
+	_camera->setPerspectiveVal(1.0);
 	_camera->setName("_shadowCam");
 	_camera->viewport(0, 0, _texSize, _texSize);
 	Te3DTexture::unbind();
@@ -67,9 +67,8 @@ void CharactersShadow::createTexture(InGameScene *scene) {
 		_camera->setRotation(q2 * q1);
 		_camera->setPosition(light->position3d());
 	}
-	_camera->_fov = scene->shadowFov() * M_PI / 180.0;
-	_camera->_orthNearVal = scene->shadowNearPlane();
-	_camera->_orthFarVal = scene->shadowFarPlane();
+	_camera->setFov((float)(scene->shadowFov() * M_PI / 180.0));
+	_camera->setOrthoPlanes(scene->shadowNearPlane(), scene->shadowFarPlane());
 	_camera->apply();
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -154,10 +153,10 @@ void CharactersShadow::draw(InGameScene *scene) {
 	renderer->setCurrentColor(scene->shadowColor());
 
 	for (TeIntrusivePtr<TeModel> model : scene->zoneModels()) {
-		if (model->_meshes.size() > 0 && model->_meshes[0].materials().empty()) {
-			model->_meshes[0].defaultMaterial(TeIntrusivePtr<Te3DTexture>());
-			model->_meshes[0].materials()[0]._enableSomethingDefault0 = true;
-			model->_meshes[0].materials()[0]._diffuseColor = scene->shadowColor();
+		if (model->meshes().size() > 0 && model->meshes()[0].materials().empty()) {
+			model->meshes()[0].defaultMaterial(TeIntrusivePtr<Te3DTexture>());
+			model->meshes()[0].materials()[0]._enableSomethingDefault0 = true;
+			model->meshes()[0].materials()[0]._diffuseColor = scene->shadowColor();
 		}
 		model->draw();
 	}

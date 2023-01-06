@@ -102,7 +102,7 @@ bool InGameScene::addMarker(const Common::String &markerName, const Common::Stri
 		TeVector3f32 newPos;
 		if (locType == "PERCENT") {
 			Application *app = g_engine->getApplication();
-			TeVector3f32 frontLayoutSize = app->_frontLayout.userSize();
+			TeVector3f32 frontLayoutSize = app->frontLayout().userSize();
 			newPos.x() = frontLayoutSize.x() * (x / 100.0);
 			newPos.y() = frontLayoutSize.y() * (y / 100.0);
 		} else {
@@ -118,7 +118,7 @@ bool InGameScene::addMarker(const Common::String &markerName, const Common::Stri
 			markerSprite->setSize(TeVector3f32(0.04f, (4.0f / ((winSize.y() / winSize.x()) * 4.0f)) * 0.04f, 0.0));
 		}
 		markerSprite->setVisible(game->markersVisible());
-		markerSprite->_tiledSurfacePtr->_frameAnim._loopCount = -1;
+		markerSprite->_tiledSurfacePtr->_frameAnim.setLoopCount(-1);
 		markerSprite->play();
 
 		TeMarker newMarker;
@@ -220,17 +220,17 @@ void InGameScene::close() {
 
 void InGameScene::convertPathToMesh(TeFreeMoveZone *zone) {
 	TeIntrusivePtr<TeModel> model = new TeModel();
-	model->_meshes.resize(1);
+	model->meshes().resize(1);
 	model->setName("shadowReceiving");
 	model->setPosition(zone->position());
 	model->setRotation(zone->rotation());
 	model->setScale(zone->scale());
 	unsigned long nverticies = zone->verticies().size();
-	model->_meshes[0].setConf(nverticies, nverticies, TeMesh::MeshMode_Triangles, 0, 0);
+	model->meshes()[0].setConf(nverticies, nverticies, TeMesh::MeshMode_Triangles, 0, 0);
 	for (unsigned int i = 0; i < nverticies; i++) {
-		model->_meshes[0].setIndex(i, i);
-		model->_meshes[0].setVertex(i, zone->verticies()[i]);
-		model->_meshes[0].setNormal(i, TeVector3f32(0, 0, 1));
+		model->meshes()[0].setIndex(i, i);
+		model->meshes()[0].setVertex(i, zone->verticies()[i]);
+		model->meshes()[0].setNormal(i, TeVector3f32(0, 0, 1));
 	}
 	_zoneModels.push_back(model);
 }
@@ -277,16 +277,15 @@ void InGameScene::deleteMarker(const Common::String &markerName) {
 }
 
 void InGameScene::deserializeCam(Common::ReadStream &stream, TeIntrusivePtr<TeCamera> &cam) {
-	cam->_projectionMatrixType = 2;
+	cam->setProjMatrixType(2);
 	cam->viewport(0, 0, _viewportSize.getX(), _viewportSize.getY());
 	// load name/position/rotation/scale
 	Te3DObject2::deserialize(stream, *cam);
-	cam->_fov = stream.readFloatLE();
-	cam->_somePerspectiveVal = stream.readFloatLE();
-	cam->_orthNearVal = stream.readFloatLE();
-	// Original loads the val then ignores it and sets 3000.
+	cam->setFov(stream.readFloatLE());
+	cam->setPerspectiveVal(stream.readFloatLE());
+	// Original loads the second val then ignores it and sets 3000.
+	cam->setOrthoPlanes(stream.readFloatLE(), 3000.0);
 	stream.readFloatLE();
-	cam->_orthFarVal = 3000.0;
 }
 
 void InGameScene::deserializeModel(Common::ReadStream &stream, TeIntrusivePtr<TeModel> &model, TePickMesh2 *pickmesh) {
@@ -755,7 +754,7 @@ bool InGameScene::loadObjectMaterials(const Common::String &name) {
 		if (img.load(mpath)) {
 			Te3DTexture *tex = new Te3DTexture();
 			tex->load(img);
-			obj._model->_meshes[0].defaultMaterial(tex);
+			obj._model->meshes()[0].defaultMaterial(tex);
 			retval = true;
 		}
 	}
@@ -858,7 +857,7 @@ void InGameScene::loadBackground(const Common::Path &path) {
 	root->setRatioMode(TeILayout::RATIO_MODE_NONE);
 	TeCamera *wincam = g_engine->getApplication()->mainWindowCamera();
 	bg->disableAutoZ();
-	bg->setZPosition(wincam->_orthNearVal);
+	bg->setZPosition(wincam->orthoNearPlane());
 
 	for (auto layoutEntry : _bgGui.spriteLayouts()) {
 		AnimObject *animobj = new AnimObject();
@@ -976,7 +975,7 @@ void InGameScene::setImagePathMarker(const Common::String &markerName, const Com
 			TeSpriteLayout *sprite = dynamic_cast<TeSpriteLayout *>(child);
 			if (sprite) {
 				sprite->load(path);
-				sprite->_tiledSurfacePtr->_frameAnim._loopCount = -1;
+				sprite->_tiledSurfacePtr->_frameAnim.setLoopCount(-1);
 				sprite->play();
 			}
 		}

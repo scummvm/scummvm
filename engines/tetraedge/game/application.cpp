@@ -88,11 +88,10 @@ void Application::create() {
 	// See TeMainWindowBase::initCamera
 	_mainWindowCamera.reset(new TeCamera());
 	_mainWindowCamera->setName("_mainWinCam");
-	_mainWindowCamera->_projectionMatrixType = 4;
+	_mainWindowCamera->setProjMatrixType(4);
 	_mainWindowCamera->viewport(0, 0, winWidth, winHeight);
 	_mainWindowCamera->orthogonalParams(winWidth * -0.5f, winWidth * 0.5f, winHeight * 0.5f, winHeight * -0.5f);
-	_mainWindowCamera->_orthNearVal = -2048.0f;
-	_mainWindowCamera->_orthFarVal = 2048.0f;
+	_mainWindowCamera->setOrthoPlanes(-2048.0f, 2048.0f);
 
 	_mainWindow.setSize(TeVector3f32(winWidth, winHeight, 0.0));
 	_mainWindow.setSizeType(TeILayout::ABSOLUTE);
@@ -421,10 +420,10 @@ void Application::performRender() {
 	TeRenderer *renderer = g_engine->getRenderer();
 
 	if (_drawShadows && game->running() && game->scene()._character
-			&& game->scene()._shadowLightNo != -1
-			&& game->scene()._charactersShadow != nullptr) {
+			&& game->scene().shadowLightNo() != -1
+			&& game->scene().charactersShadow() != nullptr) {
 		renderer->shadowMode(TeRenderer::ShadowMode1);
-		game->scene()._charactersShadow->createTexture(&game->scene());
+		game->scene().charactersShadow()->createTexture(&game->scene());
 		renderer->shadowMode(TeRenderer::ShadowMode0);
 	}
 
@@ -434,13 +433,13 @@ void Application::performRender() {
 	renderer->clearBuffer(GL_ACCUM);
 	if (game->running()) {
 		if (_drawShadows && game->scene()._character
-			&& game->scene()._shadowLightNo != -1
-			&& game->scene()._charactersShadow != nullptr) {
+			&& game->scene().shadowLightNo() != -1
+			&& game->scene().charactersShadow() != nullptr) {
 			TeIntrusivePtr<TeCamera> currentCamera = game->scene().currentCamera();
 			if (currentCamera) {
 				currentCamera->apply();
 				renderer->shadowMode(TeRenderer::ShadowMode2);
-				game->scene()._charactersShadow->draw(&game->scene());
+				game->scene().charactersShadow()->draw(&game->scene());
 				renderer->shadowMode(TeRenderer::ShadowMode0);
 			}
 		}
@@ -489,8 +488,7 @@ void Application::getSavegameThumbnail(Graphics::Surface &thumb) {
 	Graphics::Surface screen;
 	_visFade.texture()->writeTo(screen);
 	screen.flipVertical(Common::Rect(screen.w, screen.h));
-    Common::ScopedPtr<Graphics::Surface> scaledScreen(screen.scale(kThumbnailWidth, kThumbnailHeight2, true));
-    //scaledScreen->convertToInPlace(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+    Common::ScopedPtr<Graphics::Surface> scaledScreen(screen.scale(kThumbnailWidth, kThumbnailHeight2));
     thumb.copyFrom(*scaledScreen);
     screen.free();
     scaledScreen->free();

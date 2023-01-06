@@ -83,7 +83,7 @@ bool TeTiledTexture::load(const TeImage &img) {
 
 			const TeImage *tileimage;
 			if (newTileSize != _totalSize) {
-				TeImage *optimizedimg = optimisedTileImage(imgArray, newTileSize, Common::SharedPtr<TePalette>(), img._format);
+				TeImage *optimizedimg = optimisedTileImage(imgArray, newTileSize, Common::SharedPtr<TePalette>(), img.teFormat());
 				img.copy(*optimizedimg, TeVector2s32(0, 0), TeVector2s32(_tileSize._x * row, _tileSize._y * col), newTileSize);
 				//optimizedimg->_flipY = img._flipY;
 				Common::String accessName = Common::String::format("%s.Tile%dx%d", img.getAccessName().toString().c_str(), row, col);
@@ -98,9 +98,9 @@ bool TeTiledTexture::load(const TeImage &img) {
 				tiledata->_texture = new Te3DTexture();
 				tiledata->_texture->load(*tileimage);
 				tiledata->_vec2 = TeVector3f32
-						((float)tiledata->_texture->_width / (float)_totalSize._x,
-						 (float)tiledata->_texture->_height / (float)_totalSize._y, 0.0);
-				_somethingSize += TeVector2s32(tiledata->_texture->_width, tiledata->_texture->_height);
+						((float)tiledata->_texture->width() / (float)_totalSize._x,
+						 (float)tiledata->_texture->height() / (float)_totalSize._y, 0.0);
+				_somethingSize += TeVector2s32(tiledata->_texture->width(), tiledata->_texture->height());
 			} else {
 				tiledata->_texture.release();
 				tiledata->_vec2 = TeVector3f32(0.0, 0.0, 0.0);
@@ -122,8 +122,8 @@ bool TeTiledTexture::load(const TeImage &img) {
 
 bool TeTiledTexture::load(const TeIntrusivePtr<Te3DTexture> &texture) {
 	release();
-	_tileSize._x = texture->_width;
-	_tileSize._y = texture->_height;
+	_tileSize._x = texture->width();
+	_tileSize._y = texture->height();
 	_totalSize = _tileSize;
 	_tileArray.resize(1);
 	Tile *tileData = tile(TeVector2s32(0, 0));
@@ -146,7 +146,7 @@ long TeTiledTexture::numberOfRow() const {
 TeImage *TeTiledTexture::optimisedTileImage(Common::Array<TeImage> &images, const TeVector2s32 &size,
 									   const Common::SharedPtr<TePalette> &pal, enum TeImage::Format format) {
 	for (TeImage &image : images) {
-		if (image.w == size._x && image.h == size._y && image._format == format) {
+		if (image.w == size._x && image.h == size._y && image.teFormat() == format) {
 			return &image;
 		}
 	}

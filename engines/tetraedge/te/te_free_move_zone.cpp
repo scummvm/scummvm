@@ -807,7 +807,7 @@ TePickMesh2 *TeFreeMoveZone::findNearestMesh(TeIntrusivePtr<TeCamera> &camera, c
 			Common::Array<TePickMesh2*> &pickMeshes, TeVector3f32 *outloc, bool lastHitFirst) {
 	TeVector3f32 closestLoc;
 	TePickMesh2 *nearestMesh = nullptr;
-	float closestDist = camera->_orthFarVal;
+	float closestDist = camera->orthoFarPlane();
 	Math::Ray camRay;
 	for (unsigned int i = 0; i < pickMeshes.size(); i++) {
 		TePickMesh2 *mesh = pickMeshes[i];
@@ -825,7 +825,7 @@ TePickMesh2 *TeFreeMoveZone::findNearestMesh(TeIntrusivePtr<TeCamera> &camera, c
 			TeVector3f32 intersectLoc;
 			float intersectDist;
 			bool intResult = camRay.intersectTriangle(v1, v2, v3, intersectLoc, intersectDist);
-			if (intResult && intersectDist < closestDist && intersectDist >= camera->_orthNearVal)
+			if (intResult && intersectDist < closestDist && intersectDist >= camera->orthoNearPlane())
 				return mesh;
 		}
 		for (unsigned int tri = 0; tri < mesh->verticies().size() / 3; tri++) {
@@ -841,7 +841,7 @@ TePickMesh2 *TeFreeMoveZone::findNearestMesh(TeIntrusivePtr<TeCamera> &camera, c
 					TeVector3f32(camRay.getDirection()).dump().c_str(),
 					v1.dump().c_str(), v2.dump().c_str(), v3.dump().c_str(),
 					intResult ? "hit!" : "no hit");*/
-			if (intResult && intersectDist < closestDist && intersectDist >= camera->_orthNearVal) {
+			if (intResult && intersectDist < closestDist && intersectDist >= camera->orthoNearPlane()) {
 				mesh->setLastTriangleHit(tri);
 				closestLoc = intersectLoc;
 				closestDist = intersectDist;

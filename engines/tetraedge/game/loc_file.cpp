@@ -54,7 +54,7 @@ void LocFile::load(const Common::Path &path) {
 	_map = parser.getMap();
 }
 
-const Common::String *LocFile::value(const Common::String &key) {
+const Common::String *LocFile::value(const Common::String &key) const {
 	return text(key);
 }
 

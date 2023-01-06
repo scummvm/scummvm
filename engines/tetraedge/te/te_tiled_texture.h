@@ -52,7 +52,7 @@ public:
 	long numberOfColumns() const;
 	long numberOfRow() const;
 
-	/*static*/ TeImage *optimisedTileImage(Common::Array<TeImage> &images, const TeVector2s32 &size,
+	TeImage *optimisedTileImage(Common::Array<TeImage> &images, const TeVector2s32 &size,
 								  const Common::SharedPtr<TePalette> &pal, enum TeImage::Format format);
 
 	void release();
@@ -60,9 +60,10 @@ public:
 	Tile *tile(const TeVector2s32 &loc);
 	void update(const TeImage &image);
 
-	TeVector2s32 _totalSize;
+	TeVector2s32 totalSize() const { return _totalSize; }
 
 private:
+	TeVector2s32 _totalSize;
 	Common::Array<Tile> _tileArray;
 	TeVector2s32 _tileSize;
 	TeVector2s32 _somethingSize;

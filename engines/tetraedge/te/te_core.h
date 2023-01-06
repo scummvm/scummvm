@@ -64,6 +64,7 @@ public:
 	Common::Path findFile(const Common::Path &path);
 
 	bool _coreNotReady;
+
 private:
 	TeILoc *_loc;
 

@@ -39,14 +39,14 @@ public:
 	unsigned long timeElapsed();
 	unsigned long timeFromLastTimeElapsed();
 
-	bool _paused;
+	bool isPaused() const { return _paused; }
 
 private:
+	bool _paused;
 	unsigned long _startTime;
 	unsigned long _startTime2;
 	unsigned long _pausedTime;
 	unsigned long _maxTimeSeen;
-	// TODO add private members
 
 };
 

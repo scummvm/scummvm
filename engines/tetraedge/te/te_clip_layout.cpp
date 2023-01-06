@@ -26,6 +26,4 @@ namespace Tetraedge {
 TeClipLayout::TeClipLayout() {
 }
 
-// TODO: Add more functions here.
-
 } // end namespace Tetraedge

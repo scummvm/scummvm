@@ -70,6 +70,7 @@ private:
 	TeLayout *_activeRollOverLayout;
 	TeLayout *_unactiveRollOverLayout;
 	TeLayout *_hitZone;
+
 	bool _clickPassThrough;
 	Common::String _activationSound;
 	Common::String _unactivationSound;

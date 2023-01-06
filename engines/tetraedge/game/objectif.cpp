@@ -61,7 +61,7 @@ void Objectif::load() {
 	_gui2.load("menus/helpButton.lua");
 
 	TeButtonLayout *btn = _gui2.buttonLayoutChecked("helpButton");
-	app->_frontLayout.addChild(btn);
+	app->frontLayout().addChild(btn);
 	btn->setVisible(true);
 	_helpButtonVisible = true;
 	btn->onMouseClickValidated().add(this, &Objectif::onHelpButtonValidated);

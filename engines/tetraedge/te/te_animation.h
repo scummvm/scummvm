@@ -55,9 +55,9 @@ public:
 
 	TeTimer _runTimer;
 	int _repeatCount;
-	bool _dontRepeat;
 
 protected:
+	bool _dontRepeat;
 	TeSignal0Param _onStopSignal;
 	TeSignal0Param _onFinishedSignal;
 

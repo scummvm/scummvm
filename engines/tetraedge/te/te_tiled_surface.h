@@ -86,13 +86,16 @@ public:
 	const Common::Path &path() const { return _path; }
 
 	TeFrameAnim _frameAnim;
-	TeICodec *_codec;
+
+	TeICodec *codec() { return _codec; }
 
 private:
 	float _bottomCrop;
 	float _leftCrop;
 	float _rightCrop;
 	float _topCrop;
+
+	TeICodec *_codec;
 
 	TeColor _colorKey;
 	bool _colorKeyActive;

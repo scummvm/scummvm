@@ -83,7 +83,7 @@ void GalleryMenu::enter() {
 
 	load("menus/galleryMenu/galleryMenu.lua");
 	TeLayout *menu = layoutChecked("galleryMenu");
-	app->_frontLayout.addChild(menu);
+	app->frontLayout().addChild(menu);
 
 	game->stopSound(AMBIENT_SND_BIKE);
 	game->playSound(AMBIENT_SND_BIKE, -1, 0.1f);

@@ -30,11 +30,18 @@ class TeListLayout : public TeLayout {
 public:
 	TeListLayout();
 
+	void setMinimumMargin(const TeVector3f32 &val) { _minimumMargin = val; }
+	void setMaximumMargin(const TeVector3f32 &val) { _maximumMargin = val; }
+	void setDirection(const TeVector3f32 &val) { _direction = val; }
+
+	const TeVector3f32 &minimumMargin() { return _minimumMargin; }
+	const TeVector3f32 &maximumMargin() { return _maximumMargin; }
+	const TeVector3f32 &direction() { return _direction; }
+
+private:
 	TeVector3f32 _minimumMargin;
 	TeVector3f32 _maximumMargin;
 	TeVector3f32 _direction;
-private:
-	// TODO add private members
 
 };
 

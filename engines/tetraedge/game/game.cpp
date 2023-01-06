@@ -144,7 +144,7 @@ void Game::addNoScaleChildren() {
 	_noScaleLayout->addChild(&_question2);
 
 	Application *app = g_engine->getApplication();
-	app->_frontLayout.addChild(&_dialog2);
+	app->frontLayout().addChild(&_dialog2);
 
 	_noScaleLayout->addChild(&_inventory);
 	_noScaleLayout->addChild(&_inventoryMenu);
@@ -377,8 +377,8 @@ TeSpriteLayout *Game::findSpriteLayoutByName(TeLayout *parent, const Common::Str
 
 void Game::finishFreemium() {
 	Application *app = g_engine->getApplication();
-	app->_finishedGame = true;
-	app->_finishedFremium = true;
+	app->setFinishedGame(true);
+	app->setFinishedFremium(true);
 }
 
 void Game::finishGame() {
@@ -408,9 +408,9 @@ void Game::initLoadedBackupData() {
 				g_engine->setTotalPlayTime(header.playtime);
 		}
 	} else {
-		firstWarpPath = app->_firstWarpPath;
-		_currentScene = app->_firstScene;
-		_currentZone = app->_firstZone;
+		firstWarpPath = app->firstWarpPath();
+		_currentScene = app->firstScene();
+		_currentZone = app->firstZone();
 		_playedTimer.start();
 		_objectsTakenVal = 0;
 		for (int i = 0; i < ARRAYSIZE(_objectsTakenBits); i++) {
@@ -534,13 +534,13 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		_forGui.load(forLuaPath);
 		TeLayout *bg = _forGui.layoutChecked("background");
 		bg->setRatioMode(TeILayout::RATIO_MODE_NONE);
-		app->_frontLayout.addChild(bg);
+		app->frontLayout().addChild(bg);
 		// Note: Game also adds cellphone to both frontLayout *and* noScaleLayout2,
 		// so we reproduce the broken behavior exactly.
 		TeLayout *cellbg = _inventory.cellphone()->gui().buttonLayoutChecked("background");
-		app->_frontLayout.removeChild(cellbg);
-		app->_frontLayout.addChild(cellbg);
-		_objectif.reattachLayout(&app->_frontLayout);
+		app->frontLayout().removeChild(cellbg);
+		app->frontLayout().addChild(cellbg);
+		_objectif.reattachLayout(&app->frontLayout());
 	}
 
 	if (intLuaExists) {
@@ -595,17 +595,17 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 
 	initNoScale();
 	removeNoScale2Children();
-	app->_frontLayout.removeChild(_noScaleLayout2);
+	app->frontLayout().removeChild(_noScaleLayout2);
 
 	TeLayout *vidLayout = _inGameGui.layout("videoLayout");
-	app->_frontLayout.removeChild(vidLayout);
+	app->frontLayout().removeChild(vidLayout);
 	removeNoScaleChildren();
-	app->_frontLayout.removeChild(_noScaleLayout);
+	app->frontLayout().removeChild(_noScaleLayout);
 
-	app->_frontLayout.addChild(_noScaleLayout);
+	app->frontLayout().addChild(_noScaleLayout);
 	addNoScaleChildren();
-	app->_frontLayout.addChild(vidLayout);
-	app->_frontLayout.addChild(_noScaleLayout2);
+	app->frontLayout().addChild(vidLayout);
+	app->frontLayout().addChild(_noScaleLayout2);
 	addNoScale2Children();
 	if (!fadeFlag) {
 		if (_inventory.selectedObject().size()) {
@@ -618,11 +618,11 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		loadScene("save.xml");
 	}
 
-	app->_backLayout.addChild(_scene.background());
+	app->backLayout().addChild(_scene.background());
 
 	if (markerLuaExists) {
 		TeLayout *bg = _scene.markerGui().layout("background");
-		app->_frontLayout.addChild(bg);
+		app->frontLayout().addChild(bg);
 	}
 
 	Common::String camname = Common::String("Camera") + scene;
@@ -693,7 +693,7 @@ static const char *DIALOG_IDS[20] = {
 bool Game::launchDialog(const Common::String &dname, uint param_2, const Common::String &charname,
 				  const Common::String &animfile, float animblend) {
 	Application *app = g_engine->getApplication();
-	const Common::String *locstring = app->_loc.value(dname);
+	const Common::String *locstring = app->loc().value(dname);
 
 	if (!locstring)
 		locstring = &dname;
@@ -787,8 +787,8 @@ void Game::leave(bool flag) {
 	_enteredFlag2 = false;
 
 	Application *app = g_engine->getApplication();
-	app->_lockCursorButton.setVisible(false);
-	app->_lockCursorFromActionButton.setVisible(false);
+	app->lockCursor(false);
+	app->lockCursorFromAction(false);
 	// TODO: Set some inputmgr flag here?
 	Character::animCacheFreeAll();
 }
@@ -1033,7 +1033,7 @@ bool Game::onMouseClick(const Common::Point &pt) {
 		}
 	}
 
-	if (!app->_frontLayout.isMouseIn(pt))
+	if (!app->frontLayout().isMouseIn(pt))
 		return false;
 
 	Common::String nearestMeshName = "None";
@@ -1280,7 +1280,7 @@ void Game::playMovie(const Common::String &vidPath, const Common::String &musicP
 
 	// Stop the movie and sound early for testing if skip_videos set
 	if (ConfMan.get("skip_videos") == "true") {
-		videoSpriteLayout->_tiledSurfacePtr->_frameAnim._nbFrames = 10;
+		videoSpriteLayout->_tiledSurfacePtr->_frameAnim.setNbFrames(10);
 		music.stop();
 	}
 
@@ -1408,7 +1408,7 @@ void Game::removeNoScaleChildren() {
 		return;
 	_noScaleLayout->removeChild(&_question2);
 	Application *app = g_engine->getApplication();
-	app->_frontLayout.removeChild(&_dialog2);
+	app->frontLayout().removeChild(&_dialog2);
 	_noScaleLayout->removeChild(&_inventory);
 	_noScaleLayout->removeChild(&_inventoryMenu);
 	_noScaleLayout->removeChild(&_documentsBrowser);
@@ -1450,6 +1450,9 @@ void Game::setCurrentObjectSprite(const Common::Path &spritePath) {
 }
 
 bool Game::showMarkers(bool val) {
+	if (!_forGui.loaded())
+		return false;
+
 	TeLayout *bg = _forGui.layoutChecked("background");
 	for (long i = 0; i < bg->childCount(); i++) {
 		const InGameScene::TeMarker *marker = _scene.findMarker(bg->child(i)->name());
@@ -1462,8 +1465,8 @@ bool Game::showMarkers(bool val) {
 bool Game::startAnimation(const Common::String &animName, int loopcount, bool reversed) {
 	TeSpriteLayout *layout = _scene.bgGui().spriteLayout(animName);
 	if (layout) {
-		layout->_tiledSurfacePtr->_frameAnim._loopCount = loopcount;
-		layout->_tiledSurfacePtr->_frameAnim._reversed = reversed;
+		layout->_tiledSurfacePtr->_frameAnim.setLoopCount(loopcount);
+		layout->_tiledSurfacePtr->_frameAnim.setReversed(reversed);
 		layout->_tiledSurfacePtr->play();
 	}
 	return layout != nullptr;
@@ -1565,7 +1568,7 @@ void Game::update() {
 
 		if (_scene._character) {
 			if (!_scene._character->_model->visible())
-				app->_lockCursorButton.setVisible(false);
+				app->lockCursor(false);
 		}
 
 		TeButtonLayout *invbtn = _inGameGui.buttonLayout("inventoryButton");

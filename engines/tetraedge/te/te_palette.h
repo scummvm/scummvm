@@ -28,11 +28,6 @@ class TePalette {
 public:
 	TePalette();
 
-	// TODO add public members
-
-private:
-	// TODO add private members
-
 };
 
 } // end namespace Tetraedge

@@ -35,7 +35,7 @@ public:
 
 	//const Common::String *avatar(const Common::String &key);
 	void load(const Common::Path &path);
-	const Common::String *value(const Common::String &key);
+	const Common::String *value(const Common::String &key) const;
 
 };
 

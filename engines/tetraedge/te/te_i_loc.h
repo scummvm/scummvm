@@ -32,7 +32,7 @@ public:
 	TeILoc();
 	virtual ~TeILoc() {};
 
-	virtual Common::String *text(const Common::String &key);
+	virtual const Common::String *text(const Common::String &key) const;
 
 protected:
 	Common::StringMap _map;

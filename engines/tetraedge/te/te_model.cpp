@@ -58,7 +58,7 @@ void TeModel::blendMesh(const Common::String &s1, const Common::String &s2, floa
 	_meshBlenders.push_back(new MeshBlender(s1, s2, amount, this));
 }
 
-int TeModel::checkFileType(Common::SeekableReadStream &instream) {
+int TeModel::checkFileType(Common::SeekableReadStream &instream) const {
 	char buf[4];
 	instream.seek(0);
 	int sz = instream.read(buf, 4);

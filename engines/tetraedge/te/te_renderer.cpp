@@ -34,7 +34,7 @@ _numTransparentMeshes(0), _pendingTransparentMeshProperties(0) {
 }
 
 void TeRenderer::addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsigned long tricount, unsigned long materialno) {
-	const float orthNearVal = _currentCamera->_orthNearVal;
+	const float orthNearVal = _currentCamera->orthoNearPlane();
 	const TeMesh::Mode meshMode = mesh.getMode();
 	if (!tricount) {
 		if (meshMode == TeMesh::MeshMode_TriangleStrip) {
@@ -123,9 +123,9 @@ void TeRenderer::addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsign
 
 		midpoint.z() -= orthNearVal;
 		float zOrder;
-		if (_currentCamera->_projectionMatrixType < 4) {
+		if (_currentCamera->projMatrixType() < 4) {
 			zOrder = -midpoint.squaredLength();
-		} else if (_currentCamera->_projectionMatrixType == 4) {
+		} else if (_currentCamera->projMatrixType() == 4) {
 			zOrder = midpoint.z() * midpoint.z();
 		} else {
 			zOrder = midpoint.squaredLength();
@@ -165,9 +165,9 @@ void TeRenderer::addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsign
 			midpoint.z() -= orthNearVal;
 
 			float zOrder;
-			if (_currentCamera->_projectionMatrixType < 4) {
+			if (_currentCamera->projMatrixType() < 4) {
 				zOrder = -midpoint.squaredLength();
-			} else if (_currentCamera->_projectionMatrixType == 4) {
+			} else if (_currentCamera->projMatrixType() == 4) {
 				zOrder = midpoint.z() * midpoint.z();
 			} else {
 				zOrder = midpoint.squaredLength();
