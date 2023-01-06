@@ -214,7 +214,7 @@ struct MapMonster {
 	uint8 _weaponItemId;
 	uint8 _maxDamageAbsorption;
 	uint8 _monsterRef;
-	uint8 _moveInfo; // abbb cccc a: special move flag, bbb: Pct modifier for random move, cccc movement type
+	uint8 _additionalInfo; // abbb cddd a: special move flag, bbb: Pct modifier for random move, c aggressiveness, ddd movetype
 	uint8 _talkTextId;
 	uint8 _groupSize;
 	int16 _hitPoints[9];
@@ -370,7 +370,7 @@ private:
 	int16 getXPLevel(int32 xp);
 	bool isItemCursed(int16 itemId);
 	bool hasObjectEquipped(int16 charId, int16 objectId);
-	void setMapMonsterMovementType(int16 id, uint8 movementType, bool groupFl);
+	void setMapMonsterAggressivenessAndMovementType(int16 id, uint8 mask, bool groupFl);
 	bool isMonsterActive(int16 groupId, int16 id);
 	int16 getTileFactId(int16 mapPosX, int16 mapPosY);
 	void setCharacterObjectToBroken(int16 charId, int16 objectId);
