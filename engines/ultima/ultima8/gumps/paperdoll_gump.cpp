@@ -303,6 +303,15 @@ bool PaperdollGump::StartDraggingItem(Item *item, int mx, int my) {
 	Mouse::get_instance()->setDraggingOffset(frame->_width / 2 - frame->_xoff,
 	        frame->_height / 2 - frame->_yoff);
 
+	// Remove equipment and clear owner on drag start for better drag feedback
+	// NOTE: This original game appears to equip/unequip the item during drag instead of on drop
+	if (_owner == item->getParent() && item->hasFlags(Item::FLG_EQUIPPED)) {
+		Actor *a = getActor(_owner);
+		if (a && a->removeItem(item)) {
+			item->setParent(0);
+		}
+	}
+
 	return ret;
 }
 
