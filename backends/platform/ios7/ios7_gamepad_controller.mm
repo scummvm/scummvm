@@ -27,10 +27,6 @@
 #include "backends/platform/ios7/ios7_video.h"
 #include <GameController/GameController.h>
 
-// This value will be multiplied with the x and y values of a thumbstick
-// value (-1, 1). Should ideally be configurable through ScummVM settings
-#define GAMEPAD_SENSITIVITY 20
-
 @implementation GamepadController {
 	GCController *_controller;
 }
@@ -50,10 +46,25 @@
 }
 
 - (void)controllerDidConnect:(NSNotification *)notification {
-	[self setIsConnected:YES];
 	_controller = (GCController*)notification.object;
 
+#if TARGET_OS_TV
+	if (_controller.microGamepad != nil) {
+		[self setIsConnected:YES];
+
+		_controller.microGamepad.buttonA.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
+			[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_A isPressed:pressed];
+		};
+
+		_controller.microGamepad.buttonX.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
+			// Map button X to button B because B is mapped to left button
+			[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_B isPressed:pressed];
+		};
+	}
+#endif
 	if (_controller.extendedGamepad != nil) {
+		[self setIsConnected:YES];
+
 		_controller.extendedGamepad.leftThumbstick.valueChangedHandler = ^(GCControllerDirectionPad * _Nonnull dpad, float xValue, float yValue) {
 			// Convert the given axis values in float (-1 to 1) to ScummVM Joystick
 			// Axis value as integers (0 to int16_max)
@@ -105,12 +116,6 @@
 		_controller.extendedGamepad.rightShoulder.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
 			[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_RIGHT_SHOULDER isPressed:pressed];
 		};
-#ifdef __IPHONE_13_0
-		_controller.extendedGamepad.buttonMenu.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
-			[[self view] addEvent:InternalEvent(kInputMainMenu, 0, 0)];
-
-		};
-#endif
 	}
 }
 

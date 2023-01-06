@@ -22,6 +22,7 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include "common/events.h"
 #include "backends/platform/ios7/ios7_video.h"
 #include "backends/platform/ios7/ios7_touch_controller.h"
 #include "backends/platform/ios7/ios7_mouse_controller.h"
@@ -420,6 +421,34 @@ uint getSizeNextPOT(uint size) {
 	[swipeUp3 release];
 	[swipeDown3 release];
 	[doubleTapTwoFingers release];
+#elif TARGET_OS_TV
+	UITapGestureRecognizer *tapUpGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(threeFingersSwipeUp:)];
+	[tapUpGestureRecognizer setAllowedPressTypes:@[@(UIPressTypeUpArrow)]];
+
+	UITapGestureRecognizer *tapDownGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(threeFingersSwipeDown:)];
+	[tapDownGestureRecognizer setAllowedPressTypes:@[@(UIPressTypeDownArrow)]];
+
+	UITapGestureRecognizer *tapLeftGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(threeFingersSwipeLeft:)];
+	[tapLeftGestureRecognizer setAllowedPressTypes:@[@(UIPressTypeLeftArrow)]];
+
+	UITapGestureRecognizer *tapRightGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(threeFingersSwipeRight:)];
+	[tapRightGestureRecognizer setAllowedPressTypes:@[@(UIPressTypeRightArrow)]];
+
+	UILongPressGestureRecognizer *longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(showKeyboard)];
+	[longPressGestureRecognizer setAllowedPressTypes:@[[NSNumber numberWithInteger:UIPressTypePlayPause]]];
+	[longPressGestureRecognizer setMinimumPressDuration:1.0];
+
+	[self addGestureRecognizer:tapUpGestureRecognizer];
+	[self addGestureRecognizer:tapDownGestureRecognizer];
+	[self addGestureRecognizer:tapLeftGestureRecognizer];
+	[self addGestureRecognizer:tapRightGestureRecognizer];
+	[self addGestureRecognizer:longPressGestureRecognizer];
+
+	[tapUpGestureRecognizer release];
+	[tapDownGestureRecognizer release];
+	[tapLeftGestureRecognizer release];
+	[tapRightGestureRecognizer release];
+	[longPressGestureRecognizer release];
 #endif
 }
 
@@ -949,6 +978,58 @@ uint getSizeNextPOT(uint size) {
 		}
 	}
 }
+
+#if TARGET_OS_TV
+// UIKit calls these methods when a button is pressed by the user.
+// These methods are used to determine which button was pressed and
+// to take any needed actions. The default implementation of these
+// methods forwardsm the message up the responder chain.
+// Button presses are already handled by the GameController class for
+// connected game controllers (including the Apple TV remote).
+// The Apple TV remote is not registered as a micro game controller
+// when running the application in tvOS simulator, hence these methods
+// only needs to be implemented for the tvOS simulator to handle presses
+// on the Apple TV remote.
+-(void)pressesBegan:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event {
+#if TARGET_OS_SIMULATOR
+	UIPress *press = [presses anyObject];
+	if (press.type == UIPressTypeMenu) {
+		// Trigger on pressesEnded
+	} else if (press.type == UIPressTypeSelect || press.type == UIPressTypePlayPause) {
+		[self addEvent:InternalEvent(kInputJoystickButtonDown, press.type == UIPressTypeSelect ? Common::JOYSTICK_BUTTON_A : Common::JOYSTICK_BUTTON_B, 0)];
+	}
+	else {
+		[super pressesBegan:presses withEvent:event];
+	}
+#endif
+}
+
+-(void)pressesEnded:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event {
+#if TARGET_OS_SIMULATOR
+	UIPress *press = [presses anyObject];
+	if (press.type == UIPressTypeMenu) {
+		[self handleMainMenuKey];
+	} else if (press.type == UIPressTypeSelect || press.type == UIPressTypePlayPause) {
+		[self addEvent:InternalEvent(kInputJoystickButtonUp, press.type == UIPressTypeSelect ? Common::JOYSTICK_BUTTON_A : Common::JOYSTICK_BUTTON_B, 0)];
+	}
+	else {
+		[super pressesEnded:presses withEvent:event];
+	}
+#endif
+}
+
+-(void)pressesChanged:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event {
+#if TARGET_OS_SIMULATOR
+	[super pressesChanged:presses withEvent:event];
+#endif
+}
+
+-(void)pressesCancelled:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event {
+#if TARGET_OS_SIMULATOR
+	[super pressesCancelled:presses withEvent:event];
+#endif
+}
+#endif
 
 #if TARGET_OS_IOS
 - (void)keyboardPinch:(UIPinchGestureRecognizer *)recognizer {
