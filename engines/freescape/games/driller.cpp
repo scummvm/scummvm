@@ -419,7 +419,7 @@ Common::SeekableReadStream *parseEDSK(const Common::String filename) {
 void DrillerEngine::loadAssetsFullGame() {
 	Common::File file;
 	if (isAmiga()) {
-		if (_variant & ADGF_AMIGA_RETAIL) {
+		if (_variant & GF_AMIGA_RETAIL) {
 			file.open("driller");
 
 			if (!file.isOpen())
@@ -440,7 +440,7 @@ void DrillerEngine::loadAssetsFullGame() {
 			load8bitBinary(&file, 0x29c16, 16);
 			loadPalettes(&file, 0x297d4);
 			loadSoundsFx(&file, 0x30e80, 25);
-		} else if (_variant & ADGF_AMIGA_BUDGET) {
+		} else if (_variant & GF_AMIGA_BUDGET) {
 			file.open("lift.neo");
 			if (!file.isOpen())
 				error("Failed to open 'lift.neo' file");
@@ -504,16 +504,16 @@ void DrillerEngine::loadAssetsFullGame() {
 
 		loadMessagesFixedSize(&file, 0x20e4, 14, 20);
 
-		if (_variant & ADGF_ZX_RETAIL)
+		if (_variant & GF_ZX_RETAIL)
 			loadFonts(&file, 0x62ca);
-		if (_variant & ADGF_ZX_MUSICAL)
+		if (_variant & GF_ZX_BUDGET)
 			loadFonts(&file, 0x5aa8);
 
 		loadGlobalObjects(&file, 0x1c93);
 
-		if (_variant & ADGF_ZX_RETAIL)
+		if (_variant & GF_ZX_RETAIL)
 			load8bitBinary(&file, 0x642c, 4);
-		else if (_variant & ADGF_ZX_MUSICAL)
+		else if (_variant & GF_ZX_BUDGET)
 			load8bitBinary(&file, 0x5c0a, 4);
 		else
 			error("Unknown ZX spectrum variant");
@@ -521,12 +521,12 @@ void DrillerEngine::loadAssetsFullGame() {
 		loadBundledImages();
 		Common::SeekableReadStream *stream = parseEDSK("driller.cpc.edsk");
 
-		if (_variant & ADGF_CPC_RETAIL) {
+		if (_variant & GF_CPC_RETAIL) {
 			loadMessagesFixedSize(stream, 0xb0f7, 14, 20);
 			loadFonts(stream, 0xeb14);
 			load8bitBinary(stream, 0xec76, 4);
 			loadGlobalObjects(stream, 0xacb2);
-		} else if (_variant & ADGF_CPC_ZAFIRO) {
+		} else if (_variant & GF_CPC_BUDGET) {
 			loadMessagesFixedSize(stream, 0x9ef7, 14, 20);
 			loadFonts(stream, 0xd914);
 			load8bitBinary(stream, 0xda76, 4);
