@@ -26,14 +26,13 @@
 #endif
 
 #include "tetraedge/te/te_text_base2.h"
-#include "graphics/opengl/system_headers.h"
 
 namespace Tetraedge {
 
 TeTextBase2::TeTextBase2() : _drawRect(0, 0), _size(0, 0),
 _alignStyle(TeFont3::AlignLeft), _interLine(0.0f), _globalColor(0xff, 0xff, 0xff, 0xff),
 _wrapMode(WrapModeFixed), _strikethrough(false), _fontSize(10), _valueWasSet(true) {
-	_mesh.setglTexEnv(GL_BLEND);
+	_mesh.setglTexEnvBlend();
 	_mesh.setShouldDraw(true);
 }
 
@@ -112,7 +111,7 @@ void TeTextBase2::build() {
 
 	_mesh.setConf(4, 4, TeMesh::MeshMode_TriangleStrip, 0, 0);
 	_mesh.defaultMaterial(texture);
-	_mesh.setglTexEnv(GL_BLEND);
+	_mesh.setglTexEnvBlend();
 	_mesh.setShouldDraw(true);
 	_mesh.setColor(_globalColor);
 	_mesh.setVertex(0, TeVector3f32(_size._x * -0.5f, _size._y * -0.5f, 0.0f));
