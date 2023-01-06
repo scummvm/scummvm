@@ -519,12 +519,6 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, ByteArr
 		error("Resource::loadResource() failed to read");
 	}
 
-	// ITE uses several patch files which are loaded and then not needed
-	// anymore (as they're in memory), so close them here. IHNM uses only
-	// 1 patch file, which is reused, so don't close it
-	if (resourceData->patchData != nullptr && _vm->getGameId() == GID_ITE)
-		context->closeFile();
-
 	if (_vm->getPlatform() == Common::Platform::kPlatformAmiga &&
 	    resourceBuffer.size() >= 16 && READ_BE_UINT32(resourceBuffer.getBuffer()) == MKTAG('H', 'E', 'A', 'D')
 	    && READ_BE_UINT32(resourceBuffer.getBuffer() + 12) == MKTAG('P', 'A', 'C', 'K')) {
