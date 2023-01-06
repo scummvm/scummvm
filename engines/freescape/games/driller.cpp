@@ -398,6 +398,19 @@ Common::SeekableReadStream *parseEDSK(const Common::String filename) {
 		j = j + osize;
 		ntracks++;
 	}
+
+	if (0) { // Useful to debug where exactly each object is located in memory once it is parsed
+		i = 0;
+		while(i < j) {
+			debugN("%0.5x: ", i);
+			for (int k = 0; k <= 16; k++) {
+				debugN("%0.2x ", memBuffer[i]);
+				i++;
+			}
+			debugN("\n");
+		}
+	}
+
 	free(edskBuffer);
 	return (new Common::MemoryReadStream(memBuffer, size));
 }
@@ -512,10 +525,12 @@ void DrillerEngine::loadAssetsFullGame() {
 			loadMessagesFixedSize(stream, 0xb0f7, 14, 20);
 			loadFonts(stream, 0xeb14);
 			load8bitBinary(stream, 0xec76, 4);
-			//loadGlobalObjects(&file, 0x1c93);
+			loadGlobalObjects(stream, 0xacb2);
 		} else if (_variant & ADGF_CPC_ZAFIRO) {
+			loadMessagesFixedSize(stream, 0x9ef7, 14, 20);
+			loadFonts(stream, 0xd914);
 			load8bitBinary(stream, 0xda76, 4);
-			// TODO
+			loadGlobalObjects(stream, 0x9ab2);
 		} else
 			error("Unknown Amstrad CPC variant");
 	} else if (isC64()) {
