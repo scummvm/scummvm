@@ -1093,7 +1093,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "inuchanvalentine",	"いぬちゃんバレンタイン" }, // Inuchan Valentine
 	{ "inuchanfighter",		"いぬちゃんファイタ−" }, // Inuchan Fighter
 	{ "inuchanmovieparody",	"デジタルまんが いぬちゃん ナチュラルボーンクラーズ" }, // Digital Manga Inuchan: Natural Born Killers
-	{ "ioshow",				"iós How To Game" },
 	{ "japanart04",			"Japan Art Today 04" },
 	{ "japanart07",			"Japan Art Today 07 村上隆「ロマンスの夕べ」展" }, // Japan Art Today 07: Takashi Murakami - "Romantic Evening" Exhibition
 	{ "jinseiproresu",		"人生プロレス" }, // Life Pro Wrestling
@@ -3958,23 +3957,36 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("hunchback", "", "Hunchback", "17efee018a660458fae80de4364021ac", 481226, 404),
 	WINGAME1t("hunchback", "", "HUNCH.EXE", "27d1a388006a4b2d63b1810248a55b14", 25837061, 404),
 
-	WINGAME1("id4p1", "iD4 Mission Disk 1 - Alien Supreme Commander", "SUPREME.EXE", "629eb9a5d991a2dbe380804e8c37043a", 1664965, 400),
-	WINGAME1("id4p2", "iD4 Mission Disk 2 - Alien Science Officer", "SCIENCE.EXE", "812a4b81b70e61e547c14dbbd507b402", 1766499, 400),
-	WINGAME1("id4p3", "iD4 Mission Disk 3 - Warrior Alien", "WARRIOR.EXE", "387245092ce0583c6fd0c54000b1502a", 1751593, 400),
-	WINGAME1("id4p4", "iD4 Mission Disk 4 - Alien Navigator", "NAV.EXE", "29de2d1fd34029b3c97ce852a7fc665e", 1834037, 400),
-	WINGAME1("id4p5", "iD4 Mission Disk 5 - Captain Steve Hiller", "STEVE.EXE", "14f19b724dd6361e4bf3cfddbac87d3f", 1797301, 400),
-	WINGAME1("id4p6", "iD4 Mission Disk 6 - Dave's Computer", "DAVE.EXE", "237f9db2ea9a38fa6f7292974539f494", 1774167, 400),
-	WINGAME1("id4p7", "iD4 Mission Disk 7 - President Whitmore", "PREZ.EXE", "e7d03a6d749d65dbcea7171ec4627e9c", 1666293, 400),
-	WINGAME1("id4p8", "iD4 Mission Disk 8 - Alien Attack Fighter", "ALIEN_F.EXE", "ee2eb92900d515ed7872c57f3b89a408", 1754975, 400),
-	WINGAME1("id4p9", "iD4 Mission Disk 9 - FA-18 Fighter Jet", "F18.EXE", "7a0292909a5103c89297c40cce1d836c", 1691893, 400),
-	WINGAME1("id4p10", "iD4 Mission Disk 10 - Alien Bomber", "BOMBER.EXE", "17758a9f425f7f3e7a926951e6c770f4", 1844189, 400),
-	WINGAME1("id4p11", "iD4 Mission Disk 11 - Area 51", "AREA51.EXE", "78be40f9c7e8e1770c388cc16a522aaf", 1776077, 400),
+	WINGAME2("id4p1", "", "SUPREME.EXE", "629eb9a5d991a2dbe380804e8c37043a", 1664965,
+						  "ALIEN.ICO",	 "fcd97560b8b3f7404f9119bc06bbd5b5", 766, 404),
+	WINGAME2("id4p2", "", "SCIENCE.EXE", "812a4b81b70e61e547c14dbbd507b402", 1766499,
+						  "ALIEN.ICO",	 "fcd97560b8b3f7404f9119bc06bbd5b5", 766, 404),
+	WINGAME2("id4p3", "", "WARRIOR.EXE", "387245092ce0583c6fd0c54000b1502a", 1751593,
+						  "ALIEN.ICO",	 "fcd97560b8b3f7404f9119bc06bbd5b5", 766, 404),
+	WINGAME2("id4p4", "", "NAV.EXE", 	 "29de2d1fd34029b3c97ce852a7fc665e", 1834037,
+						  "ALIEN.ICO",	 "fcd97560b8b3f7404f9119bc06bbd5b5", 766, 404),
+	WINGAME2("id4p5", "", "STEVE.EXE",   "14f19b724dd6361e4bf3cfddbac87d3f", 1797301,
+						  "F18.ICO",	 "02a3ae4b3fc4d7dce93542f2345f178d", 766, 404),
+	WINGAME2("id4p6", "", "DAVE.EXE", 	 "237f9db2ea9a38fa6f7292974539f494", 1774167,
+						  "F18.ICO",	 "02a3ae4b3fc4d7dce93542f2345f178d", 766, 404),
+	WINGAME2("id4p7", "", "PREZ.EXE",	 "e7d03a6d749d65dbcea7171ec4627e9c", 1666293,
+						  "F18.ICO",	 "02a3ae4b3fc4d7dce93542f2345f178d", 766, 404),
+	WINGAME2("id4p8", "", "ALIEN_F.EXE", "ee2eb92900d515ed7872c57f3b89a408", 1754975,
+						  "ID4.ICO",	 "309dc88201ab742ffeb3e77f391cef3d", 766, 404),
+	WINGAME2("id4p9", "", "F18.EXE",	 "7a0292909a5103c89297c40cce1d836c", 1691893,
+						  "F18.ICO",	 "02a3ae4b3fc4d7dce93542f2345f178d", 766, 404),
+	WINGAME2("id4p10", "", "BOMBER.EXE", "17758a9f425f7f3e7a926951e6c770f4", 1844189,
+						   "ID4.ICO",	 "309dc88201ab742ffeb3e77f391cef3d", 766, 404),
+	WINGAME2("id4p11", "", "AREA51.EXE", "78be40f9c7e8e1770c388cc16a522aaf", 1776077,
+						   "ID4.ICO",	 "309dc88201ab742ffeb3e77f391cef3d", 766, 404),
 
 	// From More MacCube, disc 3
 	MACGAME1("illusions", "", "ILLUSIONS", "7fd44b6dffa0ea0402eaed4c3769b39b", 285282, 404),
 
-	MACGAME1_l("illustratorsamerica", "", "IIA.PPC", "da7d3f1d85bdb99518b586c40d2a673e", 63845, Common::JA_JPN, 403),
-	WINGAME1t_l("illustratorsamerica", "", "IIA.EXE", "77a83014d697fbb3f908739b03e8341a", 771599, Common::JA_JPN, 404),
+	MACGAME2_l("illustratorsamerica", "", "IIA.PPC",  "da7d3f1d85bdb99518b586c40d2a673e", 63845,
+										  "MENU.Dxr", "1b5b5a6ed3a683e5a03c2b77d4558cc9", 6195040, Common::JA_JPN, 403),
+	WINGAME2t_l("illustratorsamerica", "", "IIA.EXE",  "77a83014d697fbb3f908739b03e8341a", 771599,
+										   "MENU.Dxr", "215b90c31bdf2dd19104534d11af3328", 6195040, Common::JA_JPN, 403),
 
 	MACDEMO1("imagineers", "Portfolio", "The Imagineers Demo", "f00c61f30719f8ed5f64ddff2e3c7268", 482302, 404),
 
@@ -4007,11 +4019,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Also launches three other projectors on disc, including some D3 and D5
 	MACGAME1("interactivemagic", "", "Mac Interactive Magic", "337c94c66b435e075a2d7f94b3cffc49", 483490, 404),
 
-	MACGAME1_l("intro2", "", "Intro_02", "0666ae690e459d3d0d91800ebd94de46", 290398, Common::JA_JPN, 402),
-	WINGAME1t_l("intro2", "", "INTRO_2.EXE", "bbca5270c1b88a67e5f05f498ef61114", 1531397, Common::JA_JPN, 400),
+	MACGAME2_l("intro2", "", "Intro_02",	 "0666ae690e459d3d0d91800ebd94de46", 290398,
+							 "NEW_EDGE.DIR", "d0b2d1726192b1b9f54c9958e29e337b", 407960, Common::JA_JPN, 402),
+	WINGAME2t_l("intro2", "", "INTRO_2.EXE",  "bbca5270c1b88a67e5f05f498ef61114", 1531397,
+							  "NEW_EDGE.DIR", "132a479c6e69f34a13961c77431d46a8", 407960, Common::JA_JPN, 404),
 
-	MACGAME1_l("intro4", "", "Intro_04", "8719de9c083aca942fc0e5c0a127b6dc", 484067, Common::JA_JPN, 404),
-	WINGAME1t_l("intro4", "", "INTRO_04.EXE", "192f16367c1d249beff3d416f1e99c6c", 2221741, Common::JA_JPN, 404),
+	MACGAME2_l("intro4", "", "Intro_04",  "8719de9c083aca942fc0e5c0a127b6dc", 484067,
+							 "INTRO.DIR", "542e9b1dda64de784066a65a557b1496", 2063096, Common::JA_JPN, 404),
+	WINGAME2t_l("intro4", "", "INTRO_04.EXE", "192f16367c1d249beff3d416f1e99c6c", 2221741,
+							  "INTRO.DIR", 	  "1917276c6c3af2efdb740a36903ae7e7", 2063096, Common::JA_JPN, 404),
 
 	// Original filename is チュートリアル
 	MACDEMO1_l("inposition", "Tutorial", "Tutorial", "77f4098988d5386794d1530065f514cd", 305533, Common::JA_JPN, 400),
@@ -4045,18 +4061,22 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2t("iona", "'96+Edmark", "DEMO.EXE",		"103e0c6cce7f5f1f61580dc6913f273c", 1060457,
 									"EDMOVIES/BBH", "3ada3c95704cafcbee5c96e7d2216c4c", 3051912, 404),
 
-	WINGAME1_l("ios", "",	 "IOS.EXE", "2b8edd5af0f79d84542c57754b7fbf61", 1004833, Common::JA_JPN, 404),
-	WINGAME1_l("ioshow", "", "HOW.EXE", "a526a724f26e266b17815b4f7f7ae079", 1863309, Common::JA_JPN, 404),
+	WINGAME2_l("ios", "", "IOS.EXE",   "2b8edd5af0f79d84542c57754b7fbf61", 1004833,
+						  "0START/05", "3c35f13540c5cef6cc69556934fbf0f0", 45486, Common::JA_JPN, 404),
+	WINGAME2_l("ios", "How To Game", "HOW.EXE", "a526a724f26e266b17815b4f7f7ae079", 1863309,
+									 "HOW02",	"86a19681ed45c043b5756f5a6ea189de", 2116536, Common::JA_JPN, 404),
 
 	MACGAME1("isaslm", "", "install this stuff/VM folder/VMplay", "27519b873d23565470f627ad2f3d1b03", 322465, 400),
 	// WINGAME1t("isaslm", "", "PLAY_IT.EXE", "ab30cc755f44ac3844fee3214cfc5ead", 691009, 400),
 	WINGAME1t("isaslm", "", "VMCD.EXE", "02b7441caf27724af5d055259d0d8e30", 1104401, 400),
 
 
-	MACGAME1("isis", "", "ISIS", "dedfabf9ee7bf5aab003bdab4137bca6", 777886, 400),
-	WINGAME1("isis", "", "ISIS.EXE", "59c1cb960199dd3f041262ab5271bb23", 14747213, 400),
-	MACGAME1_l("isis", "", "ISIS", "dedfabf9ee7bf5aab003bdab4137bca6", 780610, Common::DE_DEU, 400),
-	WINGAME1_l("isis", "", "ISIS.EXE", "d7f7e89495ac22c75b3fc04c09675b6e", 16750643, Common::DE_DEU, 400),
+	MACGAME1("isis", "", "ISIS", "dedfabf9ee7bf5aab003bdab4137bca6", 777630, 404),
+	WINGAME2("isis", "", "ISIS.EXE", 				 "59c1cb960199dd3f041262ab5271bb23", 14747213,
+						 "ISISF/ISISMOV/AWAKEN.MOV", "4af94a98adcce7f9132492d9ae951857", 7308178, 404),
+	MACGAME1_l("isis", "", "ISIS", "dedfabf9ee7bf5aab003bdab4137bca6", 780354, Common::DE_DEU, 404),
+	WINGAME2_l("isis", "", "ISIS.EXE",				   "d7f7e89495ac22c75b3fc04c09675b6e", 16750643,
+						   "ISISF/ISISMOV/AWAKEN.MOV", "44547ec0c4277d7a9e0df5cd9ae92929", 7307271, Common::DE_DEU, 404),
 
 	WINDEMO1t("it1d", "Demo", "INTHE1ST.EXE", "b6c6fd5d3cdb941f63128e13716c2f68", 2597207, 400),
 	// found on PC Format CD-ROM Collection 19
