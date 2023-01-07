@@ -69,11 +69,16 @@ bool generateZipSet(Common::SearchSet &searchSet, const char *defaultFile, const
 
 	if (!dat) {
 		Common::File *file = new Common::File;
-		if (ConfMan.hasKey(packsPath))
-			file->open(normalizePath(ConfMan.get(packsPath) + "/" + defaultFile, '/'));
+		if (ConfMan.hasKey(packsPath)) {
+			Common::String path(normalizePath(ConfMan.get(packsPath) + "/" + defaultFile, '/'));
+
+			if (File::exists(path))
+				file->open(path);
+		}
 
 		if (!file->isOpen())
-			file->open(defaultFile);
+			if (File::exists(defaultFile))
+				file->open(defaultFile);
 
 		if (file->isOpen())
 			dat = Common::makeZipArchive(defaultFile);
