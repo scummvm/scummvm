@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-07 00:40+0000\n"
+"POT-Creation-Date: 2023-01-07 17:51+0000\n"
 "PO-Revision-Date: 2022-12-31 08:10+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -6701,17 +6701,17 @@ msgid "Use an easier to read custom font"
 msgstr "Verwende eine Schriftart, die leichter zu lesen ist"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:790
+#: engines/saga/detection_tables.h:818
 msgid "Windows Trial version is not supported"
 msgstr "Die Demo-Version für Windows wird nicht unterstützt"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:817
+#: engines/saga/detection_tables.h:845
 msgid "macOS Trial version is not supported"
 msgstr "Die Demo-Version für macOS wird nicht unterstützt"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:843
+#: engines/saga/detection_tables.h:871
 msgid "Pocket PC Trial version is not supported"
 msgstr "Die Demo-Version für Pocket PC wird nicht unterstützt"
 
@@ -6730,7 +6730,7 @@ msgstr ""
 "wurden nicht gefunden. Ohne diese Dateien\n"
 "wird die Musik im Spiel anders klingen als im Original-Spiel."
 
-#: engines/saga/saga.cpp:390
+#: engines/saga/saga.cpp:395
 msgid "Error loading game resources."
 msgstr "Fehler beim Laden der Spiel-Dateien."
 
