@@ -71,12 +71,16 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	if (!Common::parseBool(ConfMan.get("disable_sensors"), _disableSensors))
 		error("Failed to parse bool from disable_sensors option");
 
+	if (!Common::parseBool(ConfMan.get("disable_falling"), _disableFalling))
+		error("Failed to parse bool from disable_falling option");
+
 	_startArea = 0;
 	_startEntrance = 0;
 	_currentArea = nullptr;
 	_rotation = Math::Vector3d(0, 0, 0);
 	_position = Math::Vector3d(0, 0, 0);
 	_lastPosition = Math::Vector3d(0, 0, 0);
+	_hasFallen = false;
 	_velocity = Math::Vector3d(0, 0, 0);
 	_cameraFront = Math::Vector3d(0, 0, 0);
 	_cameraRight = Math::Vector3d(0, 0, 0);
@@ -356,6 +360,8 @@ void FreescapeEngine::processInput() {
 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
+			if (_hasFallen)
+				break;
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_o:
 			case Common::KEYCODE_UP:
@@ -441,6 +447,8 @@ void FreescapeEngine::processInput() {
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
+			if (_hasFallen)
+				break;
 			mousePos = event.mouse;
 
 			if (_demoMode)
@@ -479,6 +487,8 @@ void FreescapeEngine::processInput() {
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
+			if (_hasFallen)
+				break;
 			shoot();
 			break;
 

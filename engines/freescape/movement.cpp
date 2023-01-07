@@ -230,7 +230,8 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 			fallen++;
 			fallen++;
 			if (fallen >= 67) {
-				_position = _lastPosition; // error("NASTY FALL!");
+				_position = _lastPosition;
+				_hasFallen = !_disableFalling && true;
 				return;
 			}
 			_position.set(_position.x(), positionY - fallen, _position.z());

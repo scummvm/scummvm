@@ -84,6 +84,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_DISABLE_SENSORS,
+		{
+			_s("Disable falling"),
+			_s("Player cannot fall over edges"),
+			"disable_falling",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

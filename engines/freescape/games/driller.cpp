@@ -1568,6 +1568,19 @@ bool DrillerEngine::checkIfGameEnded() {
 		gotoArea(127, 0);
 	}
 
+	if (_hasFallen) {
+		_hasFallen = false;
+		playSound(14, false);
+		insertTemporaryMessage(_messagesList[17], _countdown - 4);
+		drawBackground();
+		drawBorder();
+		drawUI();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(1000);
+		gotoArea(127, 0);
+	}
+
 	if (_forceEndGame) {
 		_forceEndGame = false;
 		insertTemporaryMessage(_messagesList[18], _countdown - 2);

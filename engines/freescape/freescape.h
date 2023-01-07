@@ -186,6 +186,7 @@ public:
 	bool checkFloor(Math::Vector3d currentPosition);
 	bool tryStepUp(Math::Vector3d currentPosition);
 	bool tryStepDown(Math::Vector3d currentPosition);
+	bool _hasFallen;
 
 	void rotate(Common::Point lastMousePos, Common::Point mousePos);
 	void rotate(float xoffset, float yoffset);
@@ -338,6 +339,7 @@ public:
 	// Cheats
 	bool _useExtendedTimer;
 	bool _disableSensors;
+	bool _disableFalling;
 
 	// Random
 	Common::RandomSource *_rnd;
