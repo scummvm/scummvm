@@ -252,6 +252,13 @@ void ItemSorter::AddItem(const Item *add) {
 }
 
 void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight) {
+	if (_sortLimit) {
+		// Clear the surface when debugging the sorter
+		Rect r;
+		surf->GetClippingRect(r);
+		surf->Fill32(0, r);
+	}
+
 	SortItem *it = _items;
 	SortItem *end = nullptr;
 	_painted = nullptr;  // Reset the paint tracking
