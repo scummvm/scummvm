@@ -219,6 +219,9 @@ void Renderer::extractCPCIndexes(uint8 cm1, uint8 cm2, uint8 &i1, uint8 &i2) {
 	} else if (cm1 == 0xfb && cm2 == 0xfe) { // TODO
 		i1 = 0;
 		i2 = 0;
+	} else if (cm1 == 0x40 && cm2 == 0x20) { // This one has a special stapple pattern
+		i1 = 1;
+		i2 = 0;
 	} else
 		error("%x %x", cm1, cm2);
 }
