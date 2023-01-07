@@ -600,6 +600,17 @@ bool MacResManager::readAndValidateMacBinaryHeader(SeekableReadStream &stream, b
 	if (stream.read(infoHeader, MBI_INFOHDR) != MBI_INFOHDR)
 		return false;
 
+	/* CRC_BINHEX of block of zeros is zero so checksum below will lead a false positive.
+	   Header of all zeros is not a valid MacBinary header
+	   as it lacks name, resource fork and data fork.
+	   Exclude headers that have zero name len, zero data fork, zero name fork and zero type_creator.
+	   Keep it at the top as a quick and cheap check
+	*/
+	if (infoHeader[MBI_NAMELEN] == 0 && READ_BE_UINT32(infoHeader + MBI_DFLEN) == 0
+	    && READ_BE_UINT32(infoHeader + MBI_RFLEN) == 0 &&
+	    READ_BE_UINT32(infoHeader + MBI_TYPE) == 0 && READ_BE_UINT32(infoHeader + MBI_CREATOR) == 0)
+		return false;
+
 	CRC_BINHEX crc;
 	uint16 checkSum = crc.crcFast(infoHeader, 124);
 
