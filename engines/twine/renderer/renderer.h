@@ -57,11 +57,13 @@ namespace TwinE {
 class BodyData;
 class TwinEEngine;
 
-struct Vertex {
-	int16 colorIndex = 0;
+struct ComputedVertex {
+	int16 intensity = 0;
 	int16 x = 0;
 	int16 y = 0;
 };
+
+bool isPolygonVisible(const ComputedVertex *vertices);
 
 struct CmdRenderPolygon {
 	uint8 renderType = 0;
@@ -182,8 +184,8 @@ private:
 	 * that is needed to render the primitive.
 	 */
 	uint8 _renderCoordinatesBuffer[10000]{0};
-	Vertex _clippedPolygonVertices1[128];
-	Vertex _clippedPolygonVertices2[128];
+	ComputedVertex _clippedPolygonVertices1[128];
+	ComputedVertex _clippedPolygonVertices2[128];
 
 	int32 _polyTabSize = 0;
 	int16 *_polyTab = nullptr; // also _tabVerticG
@@ -207,7 +209,7 @@ private:
 	void renderPolygonsDither(int vtop, int32 vsize) const;
 	void renderPolygonsMarble(int vtop, int32 vsize, uint16 color) const;
 	void renderPolygonsSimplified(int vtop, int32 vsize, uint16 color) const;
-	bool computePoly(int16 polyRenderType, const Vertex *vertices, int32 numVertices);
+	bool computePoly(int16 polyRenderType, const ComputedVertex *vertices, int32 numVertices);
 
 	const RenderCommand *depthSortRenderCommands(int32 numOfPrimitives);
 	uint8 *preparePolygons(const Common::Array<BodyPolygon>& polygons, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData);
@@ -218,13 +220,13 @@ private:
 
 	void renderHolomapPolygons(int32 top, int32 bottom, uint8 *holomapImage, uint32 holomapImageSize);
 	void fillHolomapTriangle(int16 *pDest, int32 x1, int32 y1, int32 x2, int32 y2);
-	void fillHolomapTriangles(const Vertex &vertex1, const Vertex &vertex2, const Vertex &texCoord1, const Vertex &texCoord2, int32 &top, int32 &bottom);
+	void fillHolomapTriangles(const ComputedVertex &vertex1, const ComputedVertex &vertex2, const ComputedVertex &texCoord1, const ComputedVertex &texCoord2, int32 &top, int32 &bottom);
 
-	int16 leftClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices);
-	int16 rightClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices);
-	int16 topClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices);
-	int16 bottomClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices);
-	int32 computePolyMinMax(int16 polyRenderType, Vertex **offTabPoly, int32 numVertices);
+	int16 leftClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices);
+	int16 rightClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices);
+	int16 topClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices);
+	int16 bottomClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices);
+	int32 computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabPoly, int32 numVertices);
 public:
 	Renderer(TwinEEngine *engine);
 	~Renderer();
@@ -244,7 +246,7 @@ public:
 	}
 
 	void fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 color);
-	void renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom);
+	void renderPolygons(const CmdRenderPolygon &polygon, ComputedVertex *vertices, int vtop, int vbottom);
 
 	inline IVec3 &projectPositionOnScreen(const IVec3& pos) { // ProjettePoint
 		return projectPositionOnScreen(pos.x, pos.y, pos.z);
@@ -281,7 +283,7 @@ public:
 
 	void renderInventoryItem(int32 x, int32 y, const BodyData &bodyData, int32 angle, int32 param);
 
-	void renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex textureCoordinates[3], uint8 *holomapImage, uint32 holomapImageSize);
+	void renderHolomapVertices(const ComputedVertex vertexCoordinates[3], const ComputedVertex textureCoordinates[3], uint8 *holomapImage, uint32 holomapImageSize);
 };
 
 inline void Renderer::setBaseRotationPos(int32 x, int32 y, int32 z) {

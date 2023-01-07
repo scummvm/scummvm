@@ -50,8 +50,6 @@ class Holomap {
 private:
 	TwinEEngine *_engine;
 
-	bool isPolygonVisible(const Vertex *vertices) const;
-
 	struct Location {
 		int16 angleX;
 		int16 angleY;
@@ -93,11 +91,11 @@ private:
 	/**
 	 * Renders a holomap path with single path points appearing slowly one after another
 	 */
-	void renderHolomapPointModel(const IVec3 &angle, int32 x, int32 y);
+	void drawHoloObj(const IVec3 &angle, int32 x, int32 y);
 	void computeCoorGlobe(Common::SeekableReadStream *holomapSurfaceStream);
 	void computeCoorMapping();
 	void computeGlobeProj();
-	void renderHolomapSurfacePolygons(uint8 *holomapImage, uint32 holomapImageSize);
+	void drawHoloMap(uint8 *holomapImage, uint32 holomapImageSize);
 	void renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, AnimTimerDataStruct &animTimerData, BodyData &bodyData, AnimData &animData);
 
 	/**

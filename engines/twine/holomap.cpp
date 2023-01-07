@@ -226,23 +226,15 @@ void Holomap::computeGlobeProj() {
 	Common::sort(_holomapSort, _holomapSort + ARRAYSIZE(_holomapSort), [](const HolomapSort &a, const HolomapSort &b) { return a.z < b.z; });
 }
 
-bool Holomap::isPolygonVisible(const Vertex *vertices) const { // TestVuePoly
-	const int32 iVar2 = ((int32)vertices[1].x - (int32)vertices[0].x) *
-						((int32)vertices[0].y - (int32)vertices[2].y);
-	const int32 iVar1 = ((int32)vertices[1].y - (int32)vertices[0].y) *
-						((int32)vertices[0].x - (int32)vertices[2].x);
-	return iVar2 - iVar1 != 0 && iVar1 <= iVar2;
-}
-
 #define SURFACE_POS_OFFSET ((ANGLE_360 / ANGLE_11_25) + 1)
-void Holomap::renderHolomapSurfacePolygons(uint8 *holomapImage, uint32 holomapImageSize) {
+void Holomap::drawHoloMap(uint8 *holomapImage, uint32 holomapImageSize) {
 	computeGlobeProj();
 	for (int32 i = 0; i < ARRAYSIZE(_holomapSort); ++i) {
 		assert(_holomapSort[i].projectedPosIdx + 34 < _projectedSurfaceIndex);
 		const HolomapProjectedPos &pos1 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 0];
 		const HolomapProjectedPos &pos2 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 0 + SURFACE_POS_OFFSET];
 		const HolomapProjectedPos &pos3 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 1];
-		Vertex vertexCoordinates[3];
+		ComputedVertex vertexCoordinates[3];
 		vertexCoordinates[0].x = (int16)pos1.x1;
 		vertexCoordinates[0].y = (int16)pos1.y1;
 		vertexCoordinates[1].x = (int16)pos2.x1;
@@ -250,7 +242,7 @@ void Holomap::renderHolomapSurfacePolygons(uint8 *holomapImage, uint32 holomapIm
 		vertexCoordinates[2].x = (int16)pos3.x1;
 		vertexCoordinates[2].y = (int16)pos3.y1;
 		if (isPolygonVisible(vertexCoordinates)) {
-			Vertex textureCoordinates[3];
+			ComputedVertex textureCoordinates[3];
 			textureCoordinates[0].x = (int16)pos1.x2;
 			textureCoordinates[0].y = (int16)pos1.y2;
 			textureCoordinates[1].x = (int16)pos2.x2;
@@ -269,7 +261,7 @@ void Holomap::renderHolomapSurfacePolygons(uint8 *holomapImage, uint32 holomapIm
 		vertexCoordinates[2].x = (int16)pos6.x1;
 		vertexCoordinates[2].y = (int16)pos6.y1;
 		if (isPolygonVisible(vertexCoordinates)) {
-			Vertex textureCoordinates[3];
+			ComputedVertex textureCoordinates[3];
 			textureCoordinates[0].x = (int16)pos4.x2;
 			textureCoordinates[0].y = (int16)pos4.y2;
 			textureCoordinates[1].x = (int16)pos5.x2;
@@ -289,7 +281,7 @@ void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
 	_engine->_text->drawText(x, y, title);
 }
 
-void Holomap::renderHolomapPointModel(const IVec3 &angle, int32 x, int32 y) {
+void Holomap::drawHoloObj(const IVec3 &angle, int32 x, int32 y) {
 	_engine->_renderer->setAngleCamera(x, y, 0);
 	const IVec3 &destPos = _engine->_renderer->getBaseRotationPosition(0, 0, 1000);
 	_engine->_renderer->setBaseTranslation(0, 0, 0);
@@ -355,10 +347,10 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	if (holomapImageSize == 0) {
 		error("Failed to load holomap image");
 	}
-	renderHolomapSurfacePolygons(holomapImagePtr, holomapImageSize);
+	drawHoloMap(holomapImagePtr, holomapImageSize);
 
 	const Location &loc = _locations[data->locationIdx];
-	renderHolomapPointModel(data->pos, loc.angleX, loc.angleY);
+	drawHoloObj(data->pos, loc.angleX, loc.angleY);
 
 	ActorMoveStruct move;
 	AnimTimerDataStruct animTimerData;
@@ -412,7 +404,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 				modelX = loc.angleX;
 				modelY = loc.angleY;
 			}
-			renderHolomapPointModel(data->pos, modelX, modelY);
+			drawHoloObj(data->pos, modelX, modelY);
 			++trajAnimFrameIdx;
 		}
 
@@ -619,7 +611,7 @@ void Holomap::processHolomap() {
 			renderLocations(xRot, yRot, 0, false);
 			_engine->_renderer->setAngleCamera(xRot, yRot, 0, true);
 			_engine->_renderer->setBaseRotationPos(0, 0, distance(zDistanceHolomap));
-			renderHolomapSurfacePolygons(holomapImagePtr, holomapImageSize);
+			drawHoloMap(holomapImagePtr, holomapImageSize);
 			renderLocations(xRot, yRot, 0, true);
 			drawHolomapText(_engine->width() / 2, 25, "HoloMap");
 			if (automove) {

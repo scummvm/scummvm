@@ -287,12 +287,21 @@ void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *current
 	}
 }
 
+bool isPolygonVisible(const ComputedVertex *vertices) { // TestVuePoly
+	const int32 a = ((int32)vertices[0].y - (int32)vertices[2].y) * ((int32)vertices[1].x - (int32)vertices[0].x);
+	const int32 b = ((int32)vertices[1].y - (int32)vertices[0].y) * ((int32)vertices[0].x - (int32)vertices[2].x);
+	if (a <= b) {
+		return false;
+	}
+	return true;
+}
+
 void Renderer::applyPointsRotation(const Common::Array<BodyVertex> &vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *rotationMatrix, const IVec3 &destPos) {
 	for (int32 i = 0; i < numPoints; ++i) {
 		const BodyVertex &vertex = vertices[i + firstPoint];
-		destPoints->x = ((rotationMatrix->row1.x * vertex.x + rotationMatrix->row1.y * vertex.y + rotationMatrix->row1.z * vertex.z) / SCENE_SIZE_HALF) + destPos.x;
-		destPoints->y = ((rotationMatrix->row2.x * vertex.x + rotationMatrix->row2.y * vertex.y + rotationMatrix->row2.z * vertex.z) / SCENE_SIZE_HALF) + destPos.y;
-		destPoints->z = ((rotationMatrix->row3.x * vertex.x + rotationMatrix->row3.y * vertex.y + rotationMatrix->row3.z * vertex.z) / SCENE_SIZE_HALF) + destPos.z;
+		destPoints->x = (int16)((rotationMatrix->row1.x * vertex.x + rotationMatrix->row1.y * vertex.y + rotationMatrix->row1.z * vertex.z) / SCENE_SIZE_HALF) + destPos.x;
+		destPoints->y = (int16)((rotationMatrix->row2.x * vertex.x + rotationMatrix->row2.y * vertex.y + rotationMatrix->row2.z * vertex.z) / SCENE_SIZE_HALF) + destPos.y;
+		destPoints->z = (int16)((rotationMatrix->row3.x * vertex.x + rotationMatrix->row3.y * vertex.y + rotationMatrix->row3.z * vertex.z) / SCENE_SIZE_HALF) + destPos.z;
 
 		destPoints++;
 	}
@@ -378,10 +387,10 @@ static FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 	return x < a ? a : (x > b ? b : x);
 }
 
-int16 Renderer::leftClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices) {
+int16 Renderer::leftClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices) {
 	const Common::Rect &clip = _engine->_interface->_clip;
-	Vertex *pTabPolyClip = offTabPoly[1];
-	Vertex *pTabPoly = offTabPoly[0];
+	ComputedVertex *pTabPolyClip = offTabPoly[1];
+	ComputedVertex *pTabPoly = offTabPoly[0];
 	int16 newNbPoints = 0;
 
 	// invert the pointers to continue on the clipped vertices in the next method
@@ -389,8 +398,8 @@ int16 Renderer::leftClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVer
 	offTabPoly[1] = pTabPoly;
 
 	for (; numVertices > 0; --numVertices, pTabPoly++) {
-		const Vertex *p0 = pTabPoly;
-		const Vertex *p1 = p0 + 1;
+		const ComputedVertex *p0 = pTabPoly;
+		const ComputedVertex *p1 = p0 + 1;
 
 		// clipFlag :
 		// 0x00 : none clipped
@@ -425,7 +434,7 @@ int16 Renderer::leftClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVer
 			pTabPolyClip->x = (int16)clip.left;
 
 			if (polyRenderType >= POLYGONTYPE_GOURAUD) {
-				pTabPolyClip->colorIndex = (int16)(p0->colorIndex + (((p1->colorIndex - p0->colorIndex) * dxClip) / dx));
+				pTabPolyClip->intensity = (int16)(p0->intensity + (((p1->intensity - p0->intensity) * dxClip) / dx));
 			}
 
 			++pTabPolyClip;
@@ -438,10 +447,10 @@ int16 Renderer::leftClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVer
 	return newNbPoints;
 }
 
-int16 Renderer::rightClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices) {
+int16 Renderer::rightClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices) {
 	const Common::Rect &clip = _engine->_interface->_clip;
-	Vertex *pTabPolyClip = offTabPoly[1];
-	Vertex *pTabPoly = offTabPoly[0];
+	ComputedVertex *pTabPolyClip = offTabPoly[1];
+	ComputedVertex *pTabPoly = offTabPoly[0];
 	int16 newNbPoints = 0;
 
 	// invert the pointers to continue on the clipped vertices in the next method
@@ -449,8 +458,8 @@ int16 Renderer::rightClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVe
 	offTabPoly[1] = pTabPoly;
 
 	for (; numVertices > 0; --numVertices, pTabPoly++) {
-		const Vertex *p0 = pTabPoly;
-		const Vertex *p1 = p0 + 1;
+		const ComputedVertex *p0 = pTabPoly;
+		const ComputedVertex *p1 = p0 + 1;
 
 		// clipFlag :
 		// 0x00 : none clipped
@@ -485,7 +494,7 @@ int16 Renderer::rightClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVe
 			pTabPolyClip->x = (int16)clip.right;
 
 			if (polyRenderType >= POLYGONTYPE_GOURAUD) {
-				pTabPolyClip->colorIndex = (int16)(p0->colorIndex + (((p1->colorIndex - p0->colorIndex) * dxClip) / dx));
+				pTabPolyClip->intensity = (int16)(p0->intensity + (((p1->intensity - p0->intensity) * dxClip) / dx));
 			}
 
 			++pTabPolyClip;
@@ -498,10 +507,10 @@ int16 Renderer::rightClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVe
 	return newNbPoints;
 }
 
-int16 Renderer::topClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices) {
+int16 Renderer::topClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices) {
 	const Common::Rect &clip = _engine->_interface->_clip;
-	Vertex *pTabPolyClip = offTabPoly[1];
-	Vertex *pTabPoly = offTabPoly[0];
+	ComputedVertex *pTabPolyClip = offTabPoly[1];
+	ComputedVertex *pTabPoly = offTabPoly[0];
 	int16 newNbPoints = 0;
 
 	// invert the pointers to continue on the clipped vertices in the next method
@@ -509,8 +518,8 @@ int16 Renderer::topClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVert
 	offTabPoly[1] = pTabPoly;
 
 	for (; numVertices > 0; --numVertices, pTabPoly++) {
-		const Vertex *p0 = pTabPoly;
-		const Vertex *p1 = p0 + 1;
+		const ComputedVertex *p0 = pTabPoly;
+		const ComputedVertex *p1 = p0 + 1;
 
 		// clipFlag :
 		// 0x00 : none clipped
@@ -545,7 +554,7 @@ int16 Renderer::topClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVert
 			pTabPolyClip->y = (int16)clip.top;
 
 			if (polyRenderType >= POLYGONTYPE_GOURAUD) {
-				pTabPolyClip->colorIndex = (int16)(p0->colorIndex + (((p1->colorIndex - p0->colorIndex) * dyClip) / dy));
+				pTabPolyClip->intensity = (int16)(p0->intensity + (((p1->intensity - p0->intensity) * dyClip) / dy));
 			}
 
 			++pTabPolyClip;
@@ -558,10 +567,10 @@ int16 Renderer::topClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVert
 	return newNbPoints;
 }
 
-int16 Renderer::bottomClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices) {
+int16 Renderer::bottomClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices) {
 	const Common::Rect &clip = _engine->_interface->_clip;
-	Vertex *pTabPolyClip = offTabPoly[1];
-	Vertex *pTabPoly = offTabPoly[0];
+	ComputedVertex *pTabPolyClip = offTabPoly[1];
+	ComputedVertex *pTabPoly = offTabPoly[0];
 	int16 newNbPoints = 0;
 
 	// invert the pointers to continue on the clipped vertices in the next method
@@ -569,8 +578,8 @@ int16 Renderer::bottomClip(int16 polyRenderType, Vertex** offTabPoly, int32 numV
 	offTabPoly[1] = pTabPoly;
 
 	for (; numVertices > 0; --numVertices, pTabPoly++) {
-		const Vertex *p0 = pTabPoly;
-		const Vertex *p1 = p0 + 1;
+		const ComputedVertex *p0 = pTabPoly;
+		const ComputedVertex *p1 = p0 + 1;
 
 		// clipFlag :
 		// 0x00 : none clipped
@@ -605,7 +614,7 @@ int16 Renderer::bottomClip(int16 polyRenderType, Vertex** offTabPoly, int32 numV
 			pTabPolyClip->y = (int16)clip.bottom;
 
 			if (polyRenderType >= POLYGONTYPE_GOURAUD) {
-				pTabPolyClip->colorIndex = (int16)(p0->colorIndex + (((p1->colorIndex - p0->colorIndex) * dyClip) / dy));
+				pTabPolyClip->intensity = (int16)(p0->intensity + (((p1->intensity - p0->intensity) * dyClip) / dy));
 			}
 
 			++pTabPolyClip;
@@ -618,7 +627,7 @@ int16 Renderer::bottomClip(int16 polyRenderType, Vertex** offTabPoly, int32 numV
 	return newNbPoints;
 }
 
-int32 Renderer::computePolyMinMax(int16 polyRenderType, Vertex **offTabPoly, int32 numVertices) {
+int32 Renderer::computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabPoly, int32 numVertices) {
 	const Common::Rect &clip = _engine->_interface->_clip;
 	if (clip.isEmpty()) {
 		return numVertices;
@@ -629,7 +638,7 @@ int32 Renderer::computePolyMinMax(int16 polyRenderType, Vertex **offTabPoly, int
 	int32 minsy = SCENE_SIZE_MAX;
 	int32 maxsy = SCENE_SIZE_MIN;
 
-	Vertex* pTabPoly = offTabPoly[0];
+	ComputedVertex* pTabPoly = offTabPoly[0];
 	for (int32 i = 0; i < numVertices; i++) {
 		if (pTabPoly[i].x < minsx) {
 			minsx = pTabPoly[i].x;
@@ -714,7 +723,7 @@ int32 Renderer::computePolyMinMax(int16 polyRenderType, Vertex **offTabPoly, int
 	return clippedNumVertices;
 }
 
-bool Renderer::computePoly(int16 polyRenderType, const Vertex *vertices, int32 numVertices) {
+bool Renderer::computePoly(int16 polyRenderType, const ComputedVertex *vertices, int32 numVertices) {
 	const int16 *polyTabBegin = _polyTab;
 	const int16 *polyTabEnd = &_polyTab[_polyTabSize - 1];
 	const int16 *colProgressBufStart = _colorProgressionBuffer;
@@ -726,15 +735,15 @@ bool Renderer::computePoly(int16 polyRenderType, const Vertex *vertices, int32 n
 		_clippedPolygonVertices1[i] = vertices[i];
 	}
 
-	Vertex *offTabPoly[] = {_clippedPolygonVertices1, _clippedPolygonVertices2};
+	ComputedVertex *offTabPoly[] = {_clippedPolygonVertices1, _clippedPolygonVertices2};
 
 	numVertices = computePolyMinMax(polyRenderType, offTabPoly, numVertices);
 	if (numVertices == 0) {
 		return false;
 	}
 
-	const Vertex *clippedVertices = offTabPoly[0];
-	uint8 vertexParam1 = clippedVertices[numVertices - 1].colorIndex;
+	const ComputedVertex *clippedVertices = offTabPoly[0];
+	uint8 vertexParam1 = clippedVertices[numVertices - 1].intensity;
 	int16 currentVertexX = clippedVertices[numVertices - 1].x;
 	int16 currentVertexY = clippedVertices[numVertices - 1].y;
 
@@ -743,7 +752,7 @@ bool Renderer::computePoly(int16 polyRenderType, const Vertex *vertices, int32 n
 		const int16 oldVertexX = currentVertexX;
 		const uint8 oldVertexParam = vertexParam1;
 
-		vertexParam1 = clippedVertices[nVertex].colorIndex;
+		vertexParam1 = clippedVertices[nVertex].intensity;
 		const uint8 vertexParam2 = vertexParam1;
 		currentVertexX = clippedVertices[nVertex].x;
 		currentVertexY = clippedVertices[nVertex].y;
@@ -1299,7 +1308,7 @@ void Renderer::renderPolygonsSimplified(int vtop, int32 vsize, uint16 color) con
 	}
 }
 
-void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom) {
+void Renderer::renderPolygons(const CmdRenderPolygon &polygon, ComputedVertex *vertices, int vtop, int vbottom) {
 	if (computePoly(polygon.renderType, vertices, polygon.numVertices)) {
 		const int32 vsize = vbottom - vtop + 1;
 		fillVertices(vtop, vsize, polygon.renderType, polygon.colorIndex);
@@ -1504,7 +1513,7 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 		assert(numVertices <= 16);
 		const int16 colorIndex = polygon.color;
 
-		int16 bestDepth = -32000;
+		int16 zMax = -32000;
 
 		CmdRenderPolygon *destinationPolygon = (CmdRenderPolygon *)renderBufferPtr;
 		destinationPolygon->numVertices = numVertices;
@@ -1513,10 +1522,10 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 
 		renderBufferPtr += sizeof(CmdRenderPolygon);
 
-		Vertex *const vertices = (Vertex *)renderBufferPtr;
-		renderBufferPtr += destinationPolygon->numVertices * sizeof(Vertex);
+		ComputedVertex *const vertices = (ComputedVertex *)renderBufferPtr;
+		renderBufferPtr += destinationPolygon->numVertices * sizeof(ComputedVertex);
 
-		Vertex *vertex = vertices;
+		ComputedVertex *vertex = vertices;
 
 		if (materialType >= MAT_GOURAUD) {
 			destinationPolygon->renderType = polygon.materialType - (MAT_GOURAUD - POLYGONTYPE_GOURAUD);
@@ -1528,12 +1537,12 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 				const int16 vertexIndex = polygon.indices[idx];
 				const I16Vec3 *point = &modelData->flattenPoints[vertexIndex];
 
-				vertex->colorIndex = shadeValue;
+				vertex->intensity = shadeValue;
 				vertex->x = clamp(point->x, 0, maxWidth);
 				vertex->y = clamp(point->y, 0, maxHeight);
 				destinationPolygon->top = MIN<int>(destinationPolygon->top, vertex->y);
 				destinationPolygon->bottom = MAX<int>(destinationPolygon->bottom, vertex->y);
-				bestDepth = MAX(bestDepth, point->z);
+				zMax = MAX(zMax, point->z);
 				++vertex;
 			}
 		} else {
@@ -1553,19 +1562,24 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 				const int16 vertexIndex = polygon.indices[idx];
 				const I16Vec3 *point = &modelData->flattenPoints[vertexIndex];
 
-				vertex->colorIndex = destinationPolygon->colorIndex;
+				vertex->intensity = destinationPolygon->colorIndex;
 				vertex->x = clamp(point->x, 0, maxWidth);
 				vertex->y = clamp(point->y, 0, maxHeight);
 				destinationPolygon->top = MIN<int>(destinationPolygon->top, vertex->y);
 				destinationPolygon->bottom = MAX<int>(destinationPolygon->bottom, vertex->y);
-				bestDepth = MAX(bestDepth, point->z);
+				zMax = MAX(zMax, point->z);
 				++vertex;
 			}
 		}
 
+		if (!isPolygonVisible(vertices)) {
+			renderBufferPtr = (uint8 *)destinationPolygon;
+			continue;
+		}
+
 		numOfPrimitives++;
 
-		(*renderCmds)->depth = bestDepth;
+		(*renderCmds)->depth = zMax;
 		(*renderCmds)->renderType = RENDERTYPE_DRAWPOLYGON;
 		(*renderCmds)->dataPtr = (uint8 *)destinationPolygon;
 		(*renderCmds)++;
@@ -1608,7 +1622,7 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 		}
 		case RENDERTYPE_DRAWPOLYGON: {
 			const CmdRenderPolygon *header = (const CmdRenderPolygon *)pointer;
-			Vertex *vertices = (Vertex *)(pointer + sizeof(CmdRenderPolygon));
+			ComputedVertex *vertices = (ComputedVertex *)(pointer + sizeof(CmdRenderPolygon));
 			renderPolygons(*header, vertices, header->top, header->bottom);
 			break;
 		}
@@ -1967,7 +1981,7 @@ void Renderer::fillHolomapTriangle(int16 *pDest, int32 x0, int32 y0, int32 x1, i
 	}
 }
 
-void Renderer::fillHolomapTriangles(const Vertex &vertex0, const Vertex &vertex1, const Vertex &texCoord0, const Vertex &texCoord1, int32 &lymin, int32 &lymax) {
+void Renderer::fillHolomapTriangles(const ComputedVertex &vertex0, const ComputedVertex &vertex1, const ComputedVertex &texCoord0, const ComputedVertex &texCoord1, int32 &lymin, int32 &lymax) {
 	const int32 y0 = vertex0.y;
 	const int32 y1 = vertex1.y;
 
@@ -1994,7 +2008,7 @@ void Renderer::fillHolomapTriangles(const Vertex &vertex0, const Vertex &vertex1
 	}
 }
 
-void Renderer::renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex textureCoordinates[3], uint8 *holomapImage, uint32 holomapImageSize) {
+void Renderer::renderHolomapVertices(const ComputedVertex vertexCoordinates[3], const ComputedVertex textureCoordinates[3], uint8 *holomapImage, uint32 holomapImageSize) {
 	int32 lymin = SCENE_SIZE_MAX;
 	int32 lymax = SCENE_SIZE_MIN;
 	fillHolomapTriangles(vertexCoordinates[0], vertexCoordinates[1], textureCoordinates[0], textureCoordinates[1], lymin, lymax);

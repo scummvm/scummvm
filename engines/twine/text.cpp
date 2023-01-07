@@ -467,17 +467,17 @@ void Text::renderContinueReadingTriangle() {
 	const int32 top = _dialTextBox.bottom - (size + border);
 	const int32 bottom = _dialTextBox.bottom - border;
 
-	Vertex vertices[3];
+	ComputedVertex vertices[3];
 
-	vertices[0].colorIndex = color;
+	vertices[0].intensity = color;
 	vertices[0].x = right;
 	vertices[0].y = top;
 
-	vertices[1].colorIndex = color;
+	vertices[1].intensity = color;
 	vertices[1].x = left;
 	vertices[1].y = bottom;
 
-	vertices[2].colorIndex = color;
+	vertices[2].intensity = color;
 	vertices[2].x = right;
 	vertices[2].y = bottom;
 
