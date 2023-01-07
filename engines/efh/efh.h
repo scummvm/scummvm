@@ -363,7 +363,6 @@ private:
 	void redrawScreenForced();
 	int16 selectMonsterGroup();
 	void sub1CAB6(int16 charId);
-	void sub1BE9A(int16 monsterId);
 	int16 getTeamMonsterAnimId();
 	int16 countMonsterGroupMembers(int16 monsterGroup);
 	void sub1D8C2(int16 charId, int16 damage);
@@ -404,6 +403,7 @@ private:
 	bool checkSpecialItemsOnCurrentPlace(int16 itemId);
 	bool hasAdequateDefense(int16 monsterId, uint8 attackType);
 	bool hasAdequateDefense_2(int16 charId, uint8 attackType);
+	void sub1BE9A(int16 monsterId);
 
 	// Files
 	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);
