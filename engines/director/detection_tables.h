@@ -1097,6 +1097,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "inuchanmovieparody",	"デジタルまんが いぬちゃん ナチュラルボーンクラーズ" }, // Digital Manga Inuchan: Natural Born Killers
 	{ "japanart04",			"Japan Art Today 04" },
 	{ "japanart07",			"Japan Art Today 07 村上隆「ロマンスの夕べ」展" }, // Japan Art Today 07: Takashi Murakami - "Romantic Evening" Exhibition
+	{ "japanart14",			"Japan Art Today 14 岡崎京子" }, // Japan Art Today 14: "Kyoko Okazaki" First Exhibition in P-House Project Room
 	{ "jinseiproresu",		"人生プロレス" }, // Life Pro Wrestling
 	{ "keiri",				"経理入門" },										// Introduction to Accounting
 	{ "llla",				"Live Love Life AIDS" },
@@ -2249,6 +2250,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("japanart07", "", "xn-- -17t4bh9eswa8k2a2qnika8408g", "f5277c53bacd27936158dd3867e587e2", 392401, Common::JA_JPN, 310),
 	// Decomposed variant of the above
 	MACGAME1_l("japanart07", "", "xn-- -17t4bh9etpa0pa0nxb5n6jma0692i", "f5277c53bacd27936158dd3867e587e2", 392401, Common::JA_JPN, 310),
+
+	// Original filename is ' ﾀﾞﾌﾞﾙｸﾘｯｸして下さい'
+	MACGAME1_l("japanart14", "", "xn-- -17t4bh9e390vlr5tbcab1fyg4fl2eb", "276bee761e48a6fd709df77d5c2f60dd", 393777, Common::JA_JPN, 313),
 
 	MACGAME1("jman", "",	 "Journeyman.16 MB", "1ae45c23586b41997ba52e2e7c771c4c", 437743, 300),
 	MACGAME1("jman", "v1.2", "Journeyman 16MB",  "2ce360c9ea2da80a2c6d1040b0ad92dd", 440902, 313),
