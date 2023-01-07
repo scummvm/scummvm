@@ -274,11 +274,7 @@ void cBeam::UpdateGraphics(cCamera3D *apCamera, float afFrameTime, cRenderList *
 		pTex += 3;
 	}
 
-	if (mpMaterial->IsTransperant()) {
-		mpVtxBuffer->UpdateData(eVertexFlag_Position | eVertexFlag_Texture0, false);
-	} else {
-		mpVtxBuffer->UpdateData(eVertexFlag_Position | eVertexFlag_Texture0, false);
-	}
+	mpVtxBuffer->UpdateData(eVertexFlag_Position | eVertexFlag_Texture0, false);
 }
 
 //-----------------------------------------------------------------------
