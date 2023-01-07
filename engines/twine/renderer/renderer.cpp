@@ -20,6 +20,7 @@
  */
 
 #include "twine/renderer/renderer.h"
+#include "common/util.h"
 #include "twine/menu/interface.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/shadeangletab.h"
@@ -48,12 +49,12 @@ void Renderer::init(int32 w, int32 h) {
 	_polyTabSize = _engine->height() * 6;
 	_polyTab = (int16 *)malloc(_polyTabSize * sizeof(int16));
 	_colorProgressionBuffer = (int16 *)malloc(_polyTabSize * sizeof(int16));
-	_holomap_polytab_1_1 = &_polyTab[_engine->height() * 0];
-	_holomap_polytab_2_1 = &_polyTab[_engine->height() * 1];
-	_holomap_polytab_1_2 = &_polyTab[_engine->height() * 2];
-	_holomap_polytab_2_2 = &_polyTab[_engine->height() * 3];
-	_holomap_polytab_1_3 = &_polyTab[_engine->height() * 4];
-	_holomap_polytab_2_3 = &_polyTab[_engine->height() * 5];
+	_tabVerticG = &_polyTab[_engine->height() * 0];
+	_tabVerticD = &_polyTab[_engine->height() * 1];
+	_tabx0 = &_polyTab[_engine->height() * 2];
+	_tabx1 = &_polyTab[_engine->height() * 3];
+	_taby0 = &_polyTab[_engine->height() * 4];
+	_taby1 = &_polyTab[_engine->height() * 5];
 }
 
 IVec3 &Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) { // ProjettePoint
@@ -117,7 +118,7 @@ void Renderer::baseMatrixTranspose() {
 	SWAP(_baseMatrix.row2.z, _baseMatrix.row3.y);
 }
 
-IVec3 Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
+IVec3 Renderer::setAngleCamera(int32 x, int32 y, int32 z, bool transpose) {
 	const double Xradians = (double)((ANGLE_90 - x) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 	const double Yradians = (double)((ANGLE_90 - y) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 	const double Zradians = (double)((ANGLE_90 - z) % ANGLE_360) * 2 * M_PI / ANGLE_360;
@@ -174,7 +175,7 @@ void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ,
 	_baseTransPos.y = transPosY;
 	_baseTransPos.z = transPosZ;
 
-	setBaseRotation(rotPosX, rotPosY, rotPosZ);
+	setAngleCamera(rotPosX, rotPosY, rotPosZ);
 
 	_baseRotPos.z += param6;
 
@@ -1917,121 +1918,117 @@ void Renderer::renderInventoryItem(int32 x, int32 y, const BodyData &bodyData, i
 	renderIsoModel(0, 0, 0, ANGLE_0, angle, ANGLE_0, bodyData, dummy);
 }
 
-void Renderer::computeHolomapPolygon(int32 top, int32 x1, int32 bottom, int32 x2, int16 *polygonTabPtr) {
-	int32 minY = bottom;
-	int32 minX = x1;
-	if (top < bottom) {
-		minY = top;
-		top = bottom;
-		minX = x2;
-		x2 = x1;
+void Renderer::fillHolomapTriangle(int16 *pDest, int32 x0, int32 y0, int32 x1, int32 y1) {
+	uint32 dx, step, reminder;
+	if (y0 > y1) {
+		SWAP(x0, x1);
+		SWAP(y0, y1);
 	}
-	const uint32 deltaY = top - minY;
-	int16 *currentPolygonTabEntry = &polygonTabPtr[minY];
-	if (minX < x2) {
-		const uint32 deltaX = (x2 - minX) * 0x10000;
-		const uint32 deltaRatio = deltaX / deltaY;
-		uint32 iVar01 = (deltaRatio % deltaY >> 1) + 0x7fffU;
-		for (uint32 y = 0; y <= deltaY; ++y) {
-			if (currentPolygonTabEntry < _polyTab || currentPolygonTabEntry >= _polyTab + _polyTabSize) {
-				currentPolygonTabEntry++;
-				continue;
+
+	y1 -= y0;
+	pDest += y0;
+
+	if (x0 <= x1) {
+		dx = (x1 - x0) << 16;
+
+		step = dx / y1;
+		reminder = ((dx % y1) >> 1) + 0x7FFF;
+
+		x1 = step >> 16;
+		step &= 0xFFFF;
+
+		for (; y1 >= 0; --y1) {
+			*pDest++ = (int16)x0;
+			x0 += x1;
+			if (reminder & 0xFFFF0000) {
+				x0 += reminder >> 16;
+				reminder &= 0xFFFF;
 			}
-			*currentPolygonTabEntry++ = (int16)x2;
-			x2 -= (deltaRatio >> 0x10);
-			if ((iVar01 & 0xffff0000U) != 0) {
-				x2 += (iVar01 >> 0x10);
-				iVar01 = iVar01 & 0xffffU;
-			}
-			iVar01 -= (deltaRatio & 0xffffU);
+			reminder += step;
 		}
 	} else {
-		const uint32 deltaX = (minX - x2) * 0x10000;
-		const uint32 deltaRatio = deltaX / deltaY;
-		uint32 iVar01 = (deltaX % deltaY >> 1) + 0x7fffU;
-		for (uint32 y = 0; y <= deltaY; ++y) {
-			if (currentPolygonTabEntry < _polyTab || currentPolygonTabEntry >= _polyTab + _polyTabSize) {
-				currentPolygonTabEntry++;
-				continue;
+		dx = (x0 - x1) << 16;
+
+		step = dx / y1;
+		reminder = ((dx % y1) >> 1) + 0x7FFF;
+
+		x1 = step >> 16;
+		step &= 0xFFFF;
+
+		for (; y1 >= 0; --y1) {
+			*pDest++ = (int16)x0;
+			x0 -= x1;
+			if (reminder & 0xFFFF0000) {
+				x0 += reminder >> 16;
+				reminder &= 0xFFFF;
 			}
-			*currentPolygonTabEntry++ = (int16)x2;
-			x2 += (deltaRatio >> 0x10);
-			if ((iVar01 & 0xffff0000U) != 0) {
-				x2 += (iVar01 >> 0x10);
-				iVar01 = iVar01 & 0xffffU;
-			}
-			iVar01 += (deltaRatio & 0xffffU);
+			reminder -= step;
 		}
 	}
 }
 
-void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2, const Vertex &texCoord1, const Vertex &texCoord2, int32 &top, int32 &bottom) {
-	const int32 yBottom = vertex1.y;
-	const int32 yTop = vertex2.y;
-	if (yBottom == yTop) {
-		return;
-	}
+void Renderer::fillHolomapTriangles(const Vertex &vertex0, const Vertex &vertex1, const Vertex &texCoord0, const Vertex &texCoord1, int32 &lymin, int32 &lymax) {
+	const int32 y0 = vertex0.y;
+	const int32 y1 = vertex1.y;
 
-	int16 *polygonTabPtr;
-	if (yBottom < yTop) {
-		if (yBottom < top) {
-			top = yBottom;
+	if (y0 < y1) {
+		if (y0 < lymin) {
+			lymin = y0;
 		}
-		if (bottom < yTop) {
-			bottom = yTop;
+		if (y1 > lymax) {
+			lymax = y1;
 		}
-		computeHolomapPolygon(yTop, vertex2.x, yBottom, vertex1.x, _holomap_polytab_1_1);
-		computeHolomapPolygon(yTop, (uint32)(uint16)texCoord2.x, yBottom, (uint32)(uint16)texCoord1.x, _holomap_polytab_1_2);
-		polygonTabPtr = _holomap_polytab_1_3;
-	} else {
-		if (bottom < yBottom) {
-			bottom = yBottom;
+		fillHolomapTriangle(_tabVerticG, vertex0.x, y0, vertex1.x, y1);
+		fillHolomapTriangle(_tabx0, (int32)(uint16)texCoord0.x, y0, (int32)(uint16)texCoord1.x, y1);
+		fillHolomapTriangle(_taby0, (int32)(uint16)texCoord0.y, y0, (int32)(uint16)texCoord1.y, y1);
+	} else if (y0 > y1) {
+		if (y0 > lymax) {
+			lymax = y0;
 		}
-		if (yTop < top) {
-			top = yTop;
+		if (y1 < lymin) {
+			lymin = y1;
 		}
-		computeHolomapPolygon(yTop, vertex2.x, yBottom, vertex1.x, _holomap_polytab_2_1);
-		computeHolomapPolygon(yTop, (uint32)(uint16)texCoord2.x, yBottom, (uint32)(uint16)texCoord1.x, _holomap_polytab_2_2);
-		polygonTabPtr = _holomap_polytab_2_3;
+		fillHolomapTriangle(_tabVerticD, vertex0.x, y0, vertex1.x, y1);
+		fillHolomapTriangle(_tabx1, (int32)(uint16)texCoord0.x, y0, (int32)(uint16)texCoord1.x, y1);
+		fillHolomapTriangle(_taby1, (int32)(uint16)texCoord0.y, y0, (int32)(uint16)texCoord1.y, y1);
 	}
-	computeHolomapPolygon(yTop, (uint32)(uint16)texCoord2.y, yBottom, (uint32)(uint16)texCoord1.y, polygonTabPtr);
 }
 
 void Renderer::renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex textureCoordinates[3], uint8 *holomapImage, uint32 holomapImageSize) {
-	int32 top = SCENE_SIZE_MAX;
-	int32 bottom = SCENE_SIZE_MIN;
-	fillHolomapPolygons(vertexCoordinates[0], vertexCoordinates[1], textureCoordinates[0], textureCoordinates[1], top, bottom);
-	fillHolomapPolygons(vertexCoordinates[1], vertexCoordinates[2], textureCoordinates[1], textureCoordinates[2], top, bottom);
-	fillHolomapPolygons(vertexCoordinates[2], vertexCoordinates[0], textureCoordinates[2], textureCoordinates[0], top, bottom);
-	renderHolomapPolygons(top, bottom, holomapImage, holomapImageSize);
+	int32 lymin = SCENE_SIZE_MAX;
+	int32 lymax = SCENE_SIZE_MIN;
+	fillHolomapTriangles(vertexCoordinates[0], vertexCoordinates[1], textureCoordinates[0], textureCoordinates[1], lymin, lymax);
+	fillHolomapTriangles(vertexCoordinates[1], vertexCoordinates[2], textureCoordinates[1], textureCoordinates[2], lymin, lymax);
+	fillHolomapTriangles(vertexCoordinates[2], vertexCoordinates[0], textureCoordinates[2], textureCoordinates[0], lymin, lymax);
+	renderHolomapPolygons(lymin, lymax, holomapImage, holomapImageSize);
 }
 
-void Renderer::renderHolomapPolygons(int32 top, int32 bottom, uint8 *holomapImage, uint32 holomapImageSize) {
-	if (top < 0 || top >= _engine->_frontVideoBuffer.h) {
+void Renderer::renderHolomapPolygons(int32 ymin, int32 ymax, uint8 *holomapImage, uint32 holomapImageSize) {
+	if (ymin < 0 || ymin >= _engine->_frontVideoBuffer.h) {
 		return;
 	}
-	uint8 *screenBufPtr = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, top);
+	uint8 *pDestLine = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, ymin);
 
-	const int16 *lholomap_polytab_1_1 = _holomap_polytab_1_1 + top;
-	const int16 *lholomap_polytab_2_1 = _holomap_polytab_2_1 + top;
-	const uint16 *lholomap_polytab_1_2 = (const uint16 *)(_holomap_polytab_1_2 + top);
-	const uint16 *lholomap_polytab_1_3 = (const uint16 *)(_holomap_polytab_1_3 + top);
-	const uint16 *lholomap_polytab_2_2 = (const uint16 *)(_holomap_polytab_2_2 + top);
-	const uint16 *lholomap_polytab_2_3 = (const uint16 *)(_holomap_polytab_2_3 + top);
+	const int16 *pVerticG = _tabVerticG + ymin;
+	const int16 *pVerticD = _tabVerticD + ymin;
+	const uint16 *pu0 = (const uint16 *)(_tabx0 + ymin);
+	const uint16 *pv0 = (const uint16 *)(_taby0 + ymin);
+	const uint16 *pu1 = (const uint16 *)(_tabx1 + ymin);
+	const uint16 *pv1 = (const uint16 *)(_taby1 + ymin);
 
-	int32 yHeight = bottom - top;
+	int32 yHeight = ymax - ymin;
 	while (yHeight > -1) {
 		int32 u;
 		int32 v;
-		const int16 left = *lholomap_polytab_1_1++;
-		const int16 right = *lholomap_polytab_2_1++;
-		const uint32 u0 = u = *lholomap_polytab_1_2++;
-		const uint32 v0 = v = *lholomap_polytab_1_3++;
-		const uint32 u1 = *lholomap_polytab_2_2++;
-		const uint32 v1 = *lholomap_polytab_2_3++;
-		const int16 width = right - left;
+		const int16 xmin = *pVerticG++;
+		const int16 xmax = *pVerticD++;
+		const uint32 u0 = u = *pu0++;
+		const uint32 v0 = v = *pv0++;
+		const uint32 u1 = *pu1++;
+		const uint32 v1 = *pv1++;
+		const int16 width = xmax - xmin;
 		if (width > 0) {
-			uint8 *pixelBufPtr = screenBufPtr + left;
+			uint8 *pixelBufPtr = pDestLine + xmin;
 
 			int32 ustep = ((int32)u1 - (int32)u0 + 1) / width;
 			int32 vstep = ((int32)v1 - (int32)v0 + 1) / width;
@@ -2046,7 +2043,7 @@ void Renderer::renderHolomapPolygons(int32 top, int32 bottom, uint8 *holomapImag
 				v += vstep;
 			}
 		}
-		screenBufPtr += _engine->_frontVideoBuffer.pitch;
+		pDestLine += _engine->_frontVideoBuffer.pitch;
 		--yHeight;
 	}
 }

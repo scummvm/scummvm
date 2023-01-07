@@ -186,14 +186,14 @@ private:
 	Vertex _clippedPolygonVertices2[128];
 
 	int32 _polyTabSize = 0;
-	int16 *_polyTab = nullptr;
+	int16 *_polyTab = nullptr; // also _tabVerticG
 	int16 *_colorProgressionBuffer = nullptr;
-	int16* _holomap_polytab_1_1 = nullptr;
-	int16* _holomap_polytab_1_2 = nullptr;
-	int16* _holomap_polytab_1_3 = nullptr;
-	int16* _holomap_polytab_2_3 = nullptr;
-	int16* _holomap_polytab_2_2 = nullptr;
-	int16* _holomap_polytab_2_1 = nullptr;
+	int16* _tabVerticG = nullptr;
+	int16* _tabx0 = nullptr; // also TabCoulG
+	int16* _taby0 = nullptr; // also TabCoulD
+	int16* _taby1 = nullptr;
+	int16* _tabx1 = nullptr;
+	int16* _tabVerticD = nullptr;
 
 	bool _isUsingOrthoProjection = false;
 
@@ -217,8 +217,8 @@ private:
 	void baseMatrixTranspose();
 
 	void renderHolomapPolygons(int32 top, int32 bottom, uint8 *holomapImage, uint32 holomapImageSize);
-	void computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int16 *polygonTabPtr);
-	void fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2, const Vertex &texCoord1, const Vertex &texCoord2, int32 &top, int32 &bottom);
+	void fillHolomapTriangle(int16 *pDest, int32 x1, int32 y1, int32 x2, int32 y2);
+	void fillHolomapTriangles(const Vertex &vertex1, const Vertex &vertex2, const Vertex &texCoord1, const Vertex &texCoord2, int32 &top, int32 &bottom);
 
 	int16 leftClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices);
 	int16 rightClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices);
@@ -256,10 +256,10 @@ public:
 	void setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6);
 	IVec3 updateCameraAnglePositions(int zShift = 0);
 	void setBaseTranslation(int32 x, int32 y, int32 z);
-	IVec3 setBaseRotation(int32 x, int32 y, int32 z, bool transpose = false);
+	IVec3 setAngleCamera(int32 x, int32 y, int32 z, bool transpose = false);
 
 	inline IVec3 setBaseRotation(const IVec3 &rot, bool transpose = false) {
-		return setBaseRotation(rot.x, rot.y, rot.z, transpose);
+		return setAngleCamera(rot.x, rot.y, rot.z, transpose);
 	}
 
 	void setOrthoProjection(int32 x, int32 y, int32 z);
