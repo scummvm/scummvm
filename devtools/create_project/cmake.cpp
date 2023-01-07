@@ -192,35 +192,25 @@ void CMakeProvider::writeFeatureLibSearch(const BuildSetup &setup, std::ofstream
 	if (library) {
 		workspace << "find_feature(";
 		workspace << "name " << library->feature;
-		workspace << " pkgconfig_name ";
 		if (library->pkgConfig) {
+			workspace << " pkgconfig_name ";
 			workspace << library->pkgConfig;
-		} else {
-			workspace << "IGNORE";
 		}
-		workspace << " findpackage_name ";
 		if (library->package) {
+			workspace << " findpackage_name ";
 			workspace << library->package;
-		} else {
-			workspace << "IGNORE";
 		}
-		workspace << " include_dirs_var ";
 		if (library->includesVar) {
+			workspace << " include_dirs_var ";
 			workspace << library->includesVar;
-		} else {
-			workspace << "IGNORE";
 		}
-		workspace << " libraries_var ";
 		if (library->librariesVar) {
+			workspace << " libraries_var ";
 			workspace << library->librariesVar;
-		} else {
-			workspace << "IGNORE";
 		}
-		workspace << " libraries ";
 		if (library->libraries) {
+			workspace << " libraries ";
 			workspace << library->libraries;
-		} else {
-			workspace << "IGNORE";
 		}
 		workspace << ")\n";
 	}
