@@ -20,7 +20,7 @@
  */
 
 #include "backends/networking/curl/request.h"
-#include "gui/downloadiconsdialog.h"
+#include "gui/downloadpacksdialog.h"
 #include "gui/downloaddialog.h"
 #include "backends/networking/curl/session.h"
 #include "common/config-manager.h"

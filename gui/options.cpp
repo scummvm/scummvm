@@ -58,7 +58,7 @@
 #ifdef USE_LIBCURL
 #include "backends/cloud/cloudmanager.h"
 #include "gui/downloaddialog.h"
-#include "gui/downloadiconsdialog.h"
+#include "gui/downloadpacksdialog.h"
 #endif
 
 #ifdef USE_SDL_NET
