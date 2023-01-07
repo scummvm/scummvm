@@ -75,12 +75,36 @@ static const ADGameDescription gameDescriptions[] = {
 		"driller",
 		"",
 		{
+			{"DRILLER.CPC.EDSK", 0, "ccca1fb22252f43403f75a546ebb5a57", 194816},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmstradCPC,
+		GF_CPC_RETAIL2 | ADGF_TESTING,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"driller",
+		"",
+		{
 			{"DRILLER.CPC.EDSK", 0, "252f90756eaee25f2231e8d3bfaab68f", 125952},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmstradCPC,
 		GF_CPC_BUDGET | ADGF_TESTING,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
+	{
+		"driller",
+		"VirtualWorlds-A",
+		{
+			{"VIRTUALWORLDS.A.CPC.EDSK", 0, "421d369636984fc209a0969007daa35b", 195635},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmstradCPC,
+		GF_CPC_VIRTUALWORLDS | ADGF_TESTING,
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{

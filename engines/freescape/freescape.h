@@ -349,7 +349,9 @@ enum DrillerReleaseFlags {
 		GF_ZX_RETAIL = (1 << 2),
 		GF_ZX_BUDGET = (1 << 3),
 		GF_CPC_RETAIL = (1 << 4),
-		GF_CPC_BUDGET = (1 << 5),
+		GF_CPC_RETAIL2 = (1 << 5),
+		GF_CPC_BUDGET = (1 << 6),
+		GF_CPC_VIRTUALWORLDS = (1 << 7),
 };
 
 class DrillerEngine : public FreescapeEngine {

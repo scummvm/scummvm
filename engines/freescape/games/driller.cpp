@@ -519,13 +519,24 @@ void DrillerEngine::loadAssetsFullGame() {
 			error("Unknown ZX spectrum variant");
 	} else if (isCPC()) {
 		loadBundledImages();
-		Common::SeekableReadStream *stream = parseEDSK("driller.cpc.edsk");
+		Common::SeekableReadStream *stream;
+		if (_variant & GF_CPC_VIRTUALWORLDS)
+			stream = parseEDSK("virtualworlds.A.cpc.edsk");
+		else
+			stream = parseEDSK("driller.cpc.edsk");
 
 		if (_variant & GF_CPC_RETAIL) {
 			loadMessagesFixedSize(stream, 0xb0f7, 14, 20);
 			loadFonts(stream, 0xeb14);
 			load8bitBinary(stream, 0xec76, 4);
 			loadGlobalObjects(stream, 0xacb2);
+		} else if (_variant & GF_CPC_RETAIL2) {
+			loadMessagesFixedSize(stream, 0xb0f7 - 0x3fab, 14, 20);
+			loadFonts(stream, 0xeb14 - 0x3fab);
+			load8bitBinary(stream, 0xaccb, 4);
+			loadGlobalObjects(stream, 0xacb2 - 0x3fab);
+		} else if (_variant & _variant & GF_CPC_VIRTUALWORLDS) {
+			error("Not implemented yet");
 		} else if (_variant & GF_CPC_BUDGET) {
 			loadMessagesFixedSize(stream, 0x9ef7, 14, 20);
 			loadFonts(stream, 0xd914);
