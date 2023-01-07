@@ -48,7 +48,7 @@ public:
 	void enter();
 	void leave();
 	void load();
-	bool onBackgroundClick() { return false; }
+	bool isEntered() const { return _entered; }
 	bool onAnswerValidated(Answer &answer);
 	void pushAnswer(const Common::String &name, const Common::String &unk, const Common::String &path);
 	void unload();
@@ -56,6 +56,7 @@ public:
 	TeSignal1Param<const Common::String &> &onAnswerSignal() { return _onAnswerSignal; }
 
 private:
+	bool _entered;
 	Common::Array<Answer *> _answers;
 	TeLuaGUI _gui;
 	TeSignal1Param<const Common::String &> _onAnswerSignal;

@@ -108,9 +108,7 @@ void Dialog2::load() {
 
 	TeButtonLayout *dialogBtn = _gui.buttonLayoutChecked("dialog");
 
-	// WORKAROUND: Ensure this is always above the Game (which is set to pri 10000)
-	Common::SharedPtr<TeCallback0Param<Dialog2>> callbackptr(new TeCallback0Param<Dialog2>(this, &Dialog2::onSkipButton, 20000.0f));
-	dialogBtn->onMouseClickValidated().push_back(callbackptr);
+	dialogBtn->onMouseClickValidated().add(this, &Dialog2::onSkipButton);
 
 	TeCurveAnim2<TeLayout, TeVector3f32> *dialogAnimUp = _gui.layoutAnchorLinearAnimation("dialogAnimationUp");
 	TeCurveAnim2<TeLayout, TeVector3f32> *dialogAnimDown = _gui.layoutAnchorLinearAnimation("dialogAnimationDown");
@@ -160,7 +158,8 @@ bool Dialog2::onSkipButton() {
 			_music.stop();
 		}
 	}
-	return false;
+	// Divergence from original: don't let clicks through on skip operation.
+	return true;
 }
 
 bool Dialog2::onSoundFinished() {

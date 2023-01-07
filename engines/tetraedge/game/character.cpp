@@ -174,7 +174,7 @@ float Character::animLength(const TeModelAnimation &modelanim, long bone, long l
 		lastframe = last;
 	int first = modelanim.firstFrame();
 	const TeVector3f32 starttrans = translationVectorFromAnim(modelanim, bone, first);
-	const TeVector3f32 endtrans = translationVectorFromAnim(modelanim, bone, last);
+	const TeVector3f32 endtrans = translationVectorFromAnim(modelanim, bone, lastframe);
 	const TeVector3f32 secondtrans = translationVectorFromAnim(modelanim, bone, first + 1);
 	return ((endtrans.z() - starttrans.z()) + secondtrans.z()) - starttrans.z();
 }
@@ -970,7 +970,7 @@ void Character::walkTo(float curveEnd, bool walkFlag) {
 				uint framecounts[4];
 
 				if (repeats == 0)
-					framecounts[0] = UINT_MAX;
+					framecounts[0] = INT_MAX;
 				else
 					framecounts[0] = (repeats - 1) * _walkLoopAnimFrameCount + 29;
 
@@ -1011,7 +1011,7 @@ void Character::walkTo(float curveEnd, bool walkFlag) {
 				play();
 				return; // NOTE: early return here.
 			} else {
-				// NPC walk
+				// Run or NPC walk
 				double intpart;
 				double remainder = modf(nloops, &intpart);
 				if (remainder >= 0.5) {

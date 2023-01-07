@@ -158,8 +158,8 @@ bool TeButtonLayout::onMouseLeftUp(const Common::Point &pt) {
 				sndMgr->playFreeSound(_validationSound, _validationSoundVolume, "sfx");
 			}
 			setState(newState);
-			_onMouseClickValidatedSignal.call();
-			return !_clickPassThrough;
+			bool stopProcessing = _onMouseClickValidatedSignal.call();
+			return !_clickPassThrough || stopProcessing;
 		}
 		break;
 	case BUTTON_STATE_ROLLOVER:
