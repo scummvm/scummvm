@@ -97,7 +97,16 @@ void ShaderBrowserDialog::reflowLayout() {
 		if (!_searchPic)
 			_searchPic = new GraphicsWidget(this, "ShaderBrowser.SearchPic", _("Search in game list"));
 		_searchPic->setGfxFromTheme(ThemeEngine::kImageSearch);
+
+		if (_searchDesc) {
+			removeWidget(_searchDesc);
+			g_gui.addToTrash(_searchDesc, this);
+			_searchDesc = nullptr;
+		}
 	} else {
+		if (!_searchDesc)
+			_searchDesc = new StaticTextWidget(this, "ShaderBrowser.SearchDesc", _("Search:"));
+
 		if (_searchPic) {
 			removeWidget(_searchPic);
 			g_gui.addToTrash(_searchPic, this);
