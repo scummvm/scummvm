@@ -3110,6 +3110,9 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 		else
 			result.setObject(_children[0]->getSelfReference());
 		return true;
+	} else if (attrib == "element") {
+		result.setObject(getSelfReference());
+		return true;
 	}
 
 	// Traverse children (modifiers must be first)

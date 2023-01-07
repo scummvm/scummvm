@@ -104,6 +104,7 @@ enum DataObjectType : uint {
 	kChangeSceneModifier					= 0x136,
 	kReturnModifier							= 0x140,
 	kSoundEffectModifier					= 0x1a4,
+	kSimpleMotionModifier					= 0x1fe,
 	kDragMotionModifier						= 0x208,
 	kPathMotionModifierV1					= 0x21c,
 	kPathMotionModifierV2					= 0x21b,
@@ -1185,6 +1186,23 @@ struct PathMotionModifier : public DataObject {
 	bool havePointDefMessageSpecs;
 
 	Common::Array<PointDef> points;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct SimpleMotionModifier : public DataObject {
+	SimpleMotionModifier();
+
+	TypicalModifierHeader modHeader;
+
+	Event executeWhen;
+	Event terminateWhen;
+	uint16 motionType;
+	uint16 directionFlags;
+	uint16 steps;
+	uint32 delayMSecTimes4800;
+	uint8 unknown1[4];
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;

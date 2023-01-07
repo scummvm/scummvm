@@ -904,6 +904,57 @@ const char *PathMotionModifier::getDefaultName() const {
 	return "Path Motion Modifier";
 }
 
+
+SimpleMotionModifier::SimpleMotionModifier() : _motionType(kMotionTypeIntoScene), _directionFlags(0), _steps(0), _delayMSecTimes4800(0) {
+}
+
+bool SimpleMotionModifier::load(ModifierLoaderContext &context, const Data::SimpleMotionModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_executeWhen.load(data.executeWhen) || !_terminateWhen.load(data.terminateWhen))
+		return false;
+
+	_directionFlags = data.directionFlags;
+	_steps = data.steps;
+	_motionType = static_cast<MotionType>(data.motionType);
+
+	return true;
+}
+
+bool SimpleMotionModifier::respondsToEvent(const Event &evt) const {
+	return _executeWhen.respondsTo(evt) || _terminateWhen.respondsTo(evt);
+}
+
+VThreadState SimpleMotionModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_executeWhen.respondsTo(msg->getEvent())) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+		if (Debugger *debugger = runtime->debugGetDebugger())
+			debugger->notify(kDebugSeverityError, "Simple Motion Modifier was supposed to execute, but is not implemented");
+#endif
+		return kVThreadReturn;
+	}
+	if (_terminateWhen.respondsTo(msg->getEvent())) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+		if (Debugger *debugger = runtime->debugGetDebugger())
+			debugger->notify(kDebugSeverityError, "Simple Motion Modifier was supposed to terminate, but is not implemented");
+#endif
+		return kVThreadReturn;
+	}
+	return kVThreadReturn;
+}
+
+void SimpleMotionModifier::disable(Runtime *runtime) {
+}
+
+Common::SharedPtr<Modifier> SimpleMotionModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new SimpleMotionModifier(*this));
+}
+
+const char *SimpleMotionModifier::getDefaultName() const {
+	return "Simple Motion Modifier";
+}
+
 bool DragMotionModifier::load(ModifierLoaderContext &context, const Data::DragMotionModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;

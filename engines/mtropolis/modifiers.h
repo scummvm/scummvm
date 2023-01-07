@@ -394,6 +394,47 @@ private:
 	DynamicValue _incomingData;
 };
 
+class SimpleMotionModifier : public Modifier {
+public:
+	SimpleMotionModifier();
+
+	bool load(ModifierLoaderContext &context, const Data::SimpleMotionModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Simple Motion Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusNone; }
+#endif
+
+private:
+	enum MotionType {
+		kMotionTypeOutOfScene = 1,
+		kMotionTypeIntoScene = 2,
+		kMotionTypeRandomBounce = 3,
+	};
+
+	enum DirectionFlags {
+		kDirectionFlagDown = 1,
+		kDirectionFlagUp = 2,
+		kDirectionFlagRight = 4,
+		kDirectionFlagLeft = 8,
+	};
+
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+
+	Event _executeWhen;
+	Event _terminateWhen;
+
+	MotionType _motionType;
+	uint16 _directionFlags;
+	uint16 _steps;
+	uint32 _delayMSecTimes4800;
+};
+
 class DragMotionModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::DragMotionModifier &data);

@@ -95,6 +95,7 @@ bool isModifier(DataObjectType type) {
 	case kChangeSceneModifier:
 	case kReturnModifier:
 	case kSoundEffectModifier:
+	case kSimpleMotionModifier:
 	case kDragMotionModifier:
 	case kPathMotionModifierV1:
 	case kPathMotionModifierV2:
@@ -1427,6 +1428,24 @@ DataReadErrorCode PathMotionModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+SimpleMotionModifier::SimpleMotionModifier()
+	: motionType(0), directionFlags(0), steps(0), delayMSecTimes4800(0), unknown1{0, 0, 0, 0} {
+}
+
+DataReadErrorCode SimpleMotionModifier::load(DataReader &reader) {
+	if (_revision != 1001)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader))
+		return kDataReadErrorReadFailed;
+
+	if (!executeWhen.load(reader) || !terminateWhen.load(reader) || !reader.readU16(motionType) || !reader.readU16(directionFlags)
+		|| !reader.readU16(steps) || !reader.readU32(delayMSecTimes4800) || !reader.readBytes(unknown1))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 DragMotionModifier::DragMotionModifier()
 	: haveMacPart(false), haveWinPart(false), unknown1(0) {
 	memset(&this->platform, 0, sizeof(this->platform));
@@ -2442,6 +2461,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kSoundEffectModifier:
 		dataObject = new SoundEffectModifier();
+		break;
+	case DataObjectTypes::kSimpleMotionModifier:
+		dataObject = new SimpleMotionModifier();
 		break;
 	case DataObjectTypes::kDragMotionModifier:
 		dataObject = new DragMotionModifier();

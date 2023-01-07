@@ -85,11 +85,13 @@ SIModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectTyp
 		return ModifierFactory<ChangeSceneModifier, Data::ChangeSceneModifier>::getInstance();
 	case Data::DataObjectTypes::kSoundEffectModifier:
 		return ModifierFactory<SoundEffectModifier, Data::SoundEffectModifier>::getInstance();
+	case Data::DataObjectTypes::kDragMotionModifier:
+		return ModifierFactory<DragMotionModifier, Data::DragMotionModifier>::getInstance();
+	case Data::DataObjectTypes::kSimpleMotionModifier:
+		return ModifierFactory<SimpleMotionModifier, Data::SimpleMotionModifier>::getInstance();
 	case Data::DataObjectTypes::kPathMotionModifierV1:
 	case Data::DataObjectTypes::kPathMotionModifierV2:
 		return ModifierFactory<PathMotionModifier, Data::PathMotionModifier>::getInstance();
-	case Data::DataObjectTypes::kDragMotionModifier:
-		return ModifierFactory<DragMotionModifier, Data::DragMotionModifier>::getInstance();
 	case Data::DataObjectTypes::kVectorMotionModifier:
 		return ModifierFactory<VectorMotionModifier, Data::VectorMotionModifier>::getInstance();
 	case Data::DataObjectTypes::kSceneTransitionModifier:
