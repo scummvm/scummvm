@@ -534,7 +534,7 @@ VThreadState MovieElement::consumeCommand(Runtime *runtime, const Common::Shared
 		return kVThreadReturn;
 	}
 
-	return Structural::consumeCommand(runtime, msg);
+	return VisualElement::consumeCommand(runtime, msg);
 }
 
 void MovieElement::activate() {
