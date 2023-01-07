@@ -26,7 +26,7 @@
 
 namespace Tetraedge {
 
-Question2::Question2() {
+Question2::Question2() : _entered(false) {
 }
 
 Question2::~Question2() {
@@ -40,9 +40,11 @@ void Question2::enter() {
 	TeButtonLayout *backgroundButton = _gui.buttonLayoutChecked("background");
 	backgroundButton->setVisible(true);
 	g_engine->getGame()->showMarkers(true);
+	_entered = true;
 }
 
 void Question2::leave() {
+	_entered = false;
 	TeLayout *background = _gui.layout("background");
 	if (!background)
 		return;
@@ -78,10 +80,6 @@ void Question2::load() {
 	if (backgroundButton) {
 		addChild(backgroundButton);
 		backgroundButton->setVisible(false);
-
-		// WORKAROUND: Block clicks going to the Game (which is set to pri 10000)
-		Common::SharedPtr<TeCallback0Param<Question2>> callbackptr(new TeCallback0Param<Question2>(this, &Question2::onBackgroundClick, 20000.0f));
-		backgroundButton->onMouseClickValidated().push_back(callbackptr);
 	}
 	size();
 }

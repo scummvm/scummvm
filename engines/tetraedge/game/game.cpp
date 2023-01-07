@@ -1016,8 +1016,8 @@ bool Game::onMouseClick(const Common::Point &pt) {
 	if (app->isFading())
 		return true;
 
-	// In case we capture a click during a video..
-	if (!_scene.currentCamera())
+	// In case we capture a click during a video or dialog (shouldn't happen?)
+	if (!_scene.currentCamera() || _dialog2.isDialogPlaying() || _question2.isEntered())
 		return false;
 
 	_posPlayer = TeVector3f32(-1.0f, -1.0f, -1.0f);
