@@ -35,7 +35,7 @@ const uint8 U8XFormPal[1024] = {
 	0,  0,  0,  0,
 	0,  0,  0,  0,
 	48, 48, 48, 80, // (green->dark grey)
-	24, 24, 24, 80, // (black->vdark grey)
+	24, 24, 24, 128, // (*->vdark grey)
 	64, 64, 24, 64, // (yellow)
 	80, 80, 80, 80, // (white->grey)
 	180, 90, 0,  80, // (red->orange)
@@ -55,7 +55,7 @@ const uint8 CruXFormPal[1024] = {
 	0,  0,  0,  0,
 	0,  0,  0,  0,
 	48, 48, 48, 80, // (green->dark grey)
-	24, 24, 24, 80, // (black->vdark grey)
+	24, 24, 24, 128, // (*->vdark grey)
 	64, 64, 24, 64, // (yellow)
 	80, 80, 80, 80,
 	48, 48, 48, 140, // (*->grey)
