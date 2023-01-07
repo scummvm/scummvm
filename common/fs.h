@@ -378,7 +378,7 @@ public:
 	/**
 	 * Return a list of matching file names. Pattern can use GLOB wildcards.
 	 */
-	int listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const override;
+	int listMatchingMembers(ArchiveMemberList &list, const Path &pattern, bool matchPathComponents = false) const override;
 
 	/**
 	 * Return a list of all the files in the cache.

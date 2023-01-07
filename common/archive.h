@@ -115,9 +115,12 @@ public:
 	 * Add all members of the Archive matching the specified pattern to the list.
 	 * Must only append to list, and not remove elements from it.
 	 *
+	 * @param matchPathComponents if set, then whole string will be matched, otherwise (default),
+	 *                            path separator ('/') does not match with wildcards
+	 *
 	 * @return The number of members added to list.
 	 */
-	virtual int listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const;
+	virtual int listMatchingMembers(ArchiveMemberList &list, const Path &pattern, bool matchPathComponents = false) const;
 
 	/**
 	 * Add all members of the Archive to the list.
@@ -318,7 +321,7 @@ public:
 	void setPriority(const String& name, int priority);
 
 	bool hasFile(const Path &path) const override;
-	int listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const override;
+	int listMatchingMembers(ArchiveMemberList &list, const Path &pattern, bool matchPathComponents = false) const override;
 	int listMembers(ArchiveMemberList &list) const override;
 
 	const ArchiveMemberPtr getMember(const Path &path) const override;

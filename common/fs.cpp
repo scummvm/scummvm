@@ -327,7 +327,7 @@ void FSDirectory::ensureCached() const  {
 	_cached = true;
 }
 
-int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const {
+int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, bool matchPathComponents) const {
 	if (!_node.isDirectory())
 		return 0;
 

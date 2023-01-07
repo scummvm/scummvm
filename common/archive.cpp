@@ -40,19 +40,20 @@ SeekableReadStream *GenericArchiveMember::createReadStream() const {
 }
 
 
-int Archive::listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const {
+int Archive::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, bool matchPathComponents) const {
 	// Get all "names" (TODO: "files" ?)
 	ArchiveMemberList allNames;
 	listMembers(allNames);
 
 	String patternString = pattern.toString();
 	int matches = 0;
+	const char *wildcardExclusions = matchPathComponents ? NULL : "/";
 
 	ArchiveMemberList::const_iterator it = allNames.begin();
 	for (; it != allNames.end(); ++it) {
 		// TODO: We match case-insenstivie for now, our API does not define whether that's ok or not though...
 		// For our use case case-insensitive is probably what we want to have though.
-		if ((*it)->getName().matchString(patternString, true, "/")) {
+		if ((*it)->getName().matchString(patternString, true, wildcardExclusions)) {
 			list.push_back(*it);
 			matches++;
 		}
@@ -258,12 +259,12 @@ bool SearchSet::hasFile(const Path &path) const {
 	return false;
 }
 
-int SearchSet::listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const {
+int SearchSet::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, bool matchPathComponents) const {
 	int matches = 0;
 
 	ArchiveNodeList::const_iterator it = _list.begin();
 	for (; it != _list.end(); ++it)
-		matches += it->_arc->listMatchingMembers(list, pattern);
+		matches += it->_arc->listMatchingMembers(list, pattern, matchPathComponents);
 
 	return matches;
 }
