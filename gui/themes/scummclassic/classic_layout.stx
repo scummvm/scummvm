@@ -247,6 +247,48 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'ShaderBrowser' overlays = 'screen' inset = '32' shading = 'dim'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16'>
+			<widget name = 'Headline'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'Filename'
+					height = 'Globals.Line.Height'
+			/>
+			<space size = '10' />
+			<layout type = 'horizontal'  spacing = '5' padding = '10, 0, 0, 0'>
+				<widget name = 'SearchDesc'
+						width = '60'
+						height = 'Globals.Line.Height'
+						textalign = 'end'
+				/>
+				<widget name = 'Search'
+						width = '120'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'SearchClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
+			</layout>
+			<widget name = 'List'/>
+			<layout type = 'vertical' padding = '0, 0, 16, 0'>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+					<widget name = 'Cancel'
+							type = 'Button'
+					/>
+					<widget name = 'Choose'
+							type = 'Button'
+					/>
+					<space/>
+					<widget name = 'BrowseFile'
+							type = 'Button'
+					/>
+				</layout>
+			</layout>
+		</layout>
+	</dialog>
+
 	<dialog name = 'GlobalOptions' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'TabWidget' type = 'TabWidget'/>
@@ -361,6 +403,9 @@
 				<widget name = 'grShaderClearButton'
 						height = 'Globals.Line.Height'
 						width = 'Globals.Line.Height'
+				/>
+				<widget name = 'UpdateShadersButton'
+						type = 'Button'
 				/>
 			</layout>
 			<widget name = 'grAspectCheckbox'
