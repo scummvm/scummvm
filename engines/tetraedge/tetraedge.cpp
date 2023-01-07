@@ -148,7 +148,7 @@ Common::Error TetraedgeEngine::loadGameState(int slot) {
 		return Common::kReadingFailed;
 
 	// The game will reopen the file and do the loading, see Game::initLoadedBackupData
-	_game->setLoadName(saveStateName);
+	getGame()->setLoadName(saveStateName);
 
 	delete saveFile;
 	return Common::kNoError;
@@ -193,17 +193,21 @@ Common::Error TetraedgeEngine::run() {
 	_renderer = new TeRenderer();
 	_renderer->init();
 	_renderer->reset();
-	_application->create();
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
 	getInputMgr()->_keyUpSignal.add(this, &TetraedgeEngine::onKeyUp);
 
-	// If a savegame was selected from the launcher, load it
+	// If a savegame was selected from the launcher, load it.
+	// Should be before application->create() because it only
+	// sets the game name to load inside the Game object.  It will
+	// actually be loaded when the application is created.
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
+
+	_application->create();
 
 	Common::Event e;
 

@@ -271,7 +271,7 @@ void Game::draw() {
 	}
 }
 
-void Game::enter(bool newgame) {
+void Game::enter() {
 	_enteredFlag2 = true;
 	_entered = true;
 	_luaShowOwnerError = false;
@@ -339,7 +339,7 @@ void Game::enter(bool newgame) {
 
 	_inventory.cellphone()->onCallNumber().add(this, &Game::onCallNumber);
 
-	if (!newgame) {
+	if (hasLoadName()) {
 		loadBackup(_loadName);
 	} else {
 		_gameLoadState = 1;
@@ -1015,6 +1015,10 @@ bool Game::onMouseClick(const Common::Point &pt) {
 
 	if (app->isFading())
 		return true;
+
+	// In case we capture a click during a video..
+	if (!_scene.currentCamera())
+		return false;
 
 	_posPlayer = TeVector3f32(-1.0f, -1.0f, -1.0f);
 	if (_previousMousePos == TeVector2s32(-1, -1)) {
