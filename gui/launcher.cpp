@@ -765,7 +765,7 @@ void LauncherDialog::reflowLayout() {
 
 	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
 		if (!_searchPic)
-			_searchPic = new GraphicsWidget(this, _title + ".SearchPic");
+			_searchPic = new GraphicsWidget(this, _title + ".SearchPic", _("Search in game list"));
 		_searchPic->setGfxFromTheme(ThemeEngine::kImageSearch);
 
 		if (_searchDesc) {
