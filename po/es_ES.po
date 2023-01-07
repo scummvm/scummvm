@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-07 17:51+0000\n"
+"POT-Creation-Date: 2023-01-07 22:56+0000\n"
 "PO-Revision-Date: 2023-01-02 20:30+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -5039,6 +5039,18 @@ msgstr "Desactivar sensores"
 #: engines/freescape/metaengine.cpp:80
 msgid "Sensors will not shoot the player"
 msgstr "Los sensores no dispararán al jugador"
+
+#: engines/freescape/metaengine.cpp:90
+#, fuzzy
+#| msgid "Disable save menu"
+msgid "Disable falling"
+msgstr "Desactivar menú de guardado"
+
+#: engines/freescape/metaengine.cpp:91
+#, fuzzy
+#| msgid "Player ammo will never decrease."
+msgid "Player cannot fall over edges"
+msgstr "La munición del jugador no se reducirá nunca."
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"

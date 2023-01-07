@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-07 17:51+0000\n"
+"POT-Creation-Date: 2023-01-07 22:56+0000\n"
 "PO-Revision-Date: 2023-01-02 17:39+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -5050,6 +5050,18 @@ msgstr "Désactiver les détecteurs"
 #: engines/freescape/metaengine.cpp:80
 msgid "Sensors will not shoot the player"
 msgstr "Les détecteurs ne tireront pas sur le joueur"
+
+#: engines/freescape/metaengine.cpp:90
+#, fuzzy
+#| msgid "Disable save menu"
+msgid "Disable falling"
+msgstr "Désactiver le menu sauvegarde"
+
+#: engines/freescape/metaengine.cpp:91
+#, fuzzy
+#| msgid "Player ammo will never decrease."
+msgid "Player cannot fall over edges"
+msgstr "La quantité de munitions ne baissera jamais."
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"

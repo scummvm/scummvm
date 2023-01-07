@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-07 17:51+0000\n"
+"POT-Creation-Date: 2023-01-07 22:56+0000\n"
 "PO-Revision-Date: 2022-10-01 14:37+0000\n"
 "Last-Translator: kane159 <kane12369@gmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -4790,6 +4790,16 @@ msgstr "禁用自動存檔"
 
 #: engines/freescape/metaengine.cpp:80
 msgid "Sensors will not shoot the player"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:90
+#, fuzzy
+#| msgid "Disabled"
+msgid "Disable falling"
+msgstr "关闭"
+
+#: engines/freescape/metaengine.cpp:91
+msgid "Player cannot fall over edges"
 msgstr ""
 
 #: engines/glk/glk_api.cpp:62
