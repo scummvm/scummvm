@@ -346,7 +346,7 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 			int16 id = menuSettings->getButtonState(i);
 			switch (id) {
 			case MenuButtonTypes::kAggressiveMode:
-				if (_engine->_actor->_autoAggressive) {
+				if (_engine->_actor->_combatAuto) {
 					menuSettings->setButtonTextId(i, TextId::kBehaviourAggressiveAuto);
 				} else {
 					menuSettings->setButtonTextId(i, TextId::kBehaviourAggressiveManual);
@@ -473,7 +473,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 			switch (id) {
 			case MenuButtonTypes::kAggressiveMode:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
-					_engine->_actor->_autoAggressive = !_engine->_actor->_autoAggressive;
+					_engine->_actor->_combatAuto = !_engine->_actor->_combatAuto;
 					startMillis = loopMillis;
 				}
 				break;
@@ -948,7 +948,7 @@ void Menu::drawMagicPointsBar(int32 left, int32 right, int32 top, int32 barLeftP
 	}
 	const int32 barLeft = left + barLeftPadding;
 	const int32 barBottom = top + barHeight;
-	const int32 barRight = _engine->_screens->lerp(barLeft, right, 80, _engine->_gameState->_inventoryMagicPoints);
+	const int32 barRight = _engine->_screens->lerp(barLeft, right, 80, _engine->_gameState->_magicPoint);
 	const Common::Rect pointsRect(barLeft, top, barRight, barBottom);
 	_engine->_interface->drawFilledRect(pointsRect, COLOR_75);
 	drawRectBorders(barLeft, top, barLeft + _engine->_gameState->_magicLevelIdx * 80, barBottom);

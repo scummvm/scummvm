@@ -85,13 +85,13 @@ void GameState::initGameStateVars() {
 void GameState::initHeroVars() {
 	_engine->_actor->resetActor(OWN_ACTOR_SCENE_INDEX); // reset Hero
 
-	_magicBallIdx = -1;
+	_magicBall = -1;
 
 	_inventoryNumLeafsBox = 2;
 	_inventoryNumLeafs = 2;
 	_inventoryNumKashes = 0;
 	_inventoryNumKeys = 0;
-	_inventoryMagicPoints = 0;
+	_magicPoint = 0;
 
 	_usingSabre = false;
 
@@ -122,7 +122,7 @@ void GameState::initEngineVars() {
 
 	_inventoryNumLeafs = 0;
 	_inventoryNumLeafsBox = 2;
-	_inventoryMagicPoints = 0;
+	_magicPoint = 0;
 	_inventoryNumKashes = 0;
 	_inventoryNumKeys = 0;
 	_inventoryNumGas = 0;
@@ -252,7 +252,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeByte(_engine->_scene->_sceneHero->_life);
 	file->writeSint16LE(_inventoryNumKashes);
 	file->writeByte(_magicLevelIdx);
-	file->writeByte(_inventoryMagicPoints);
+	file->writeByte(_magicPoint);
 	file->writeByte(_inventoryNumLeafsBox);
 	// we don't save the whole scene state - so we have to make sure that the hero is
 	// respawned at the start of the scene - and not at its current position
@@ -594,22 +594,22 @@ void GameState::addKashes(int16 val) {
 }
 
 int16 GameState::setMagicPoints(int16 val) {
-	_inventoryMagicPoints = val;
-	if (_inventoryMagicPoints > _magicLevelIdx * 20) {
-		_inventoryMagicPoints = _magicLevelIdx * 20;
-	} else if (_inventoryMagicPoints < 0) {
-		_inventoryMagicPoints = 0;
+	_magicPoint = val;
+	if (_magicPoint > _magicLevelIdx * 20) {
+		_magicPoint = _magicLevelIdx * 20;
+	} else if (_magicPoint < 0) {
+		_magicPoint = 0;
 	}
-	return _inventoryMagicPoints;
+	return _magicPoint;
 }
 
 int16 GameState::setMaxMagicPoints() {
-	_inventoryMagicPoints = _magicLevelIdx * 20;
-	return _inventoryMagicPoints;
+	_magicPoint = _magicLevelIdx * 20;
+	return _magicPoint;
 }
 
 void GameState::addMagicPoints(int16 val) {
-	setMagicPoints(_inventoryMagicPoints + val);
+	setMagicPoints(_magicPoint + val);
 }
 
 int16 GameState::setLeafs(int16 val) {

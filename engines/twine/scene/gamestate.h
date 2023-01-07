@@ -96,11 +96,11 @@ public:
 	int16 _gameChapter = 0;
 
 	/** Magic ball type index */
-	int16 _magicBallIdx = 0;
+	int16 _magicBall = 0;
 	/** Magic ball num bounce */
-	int16 _magicBallNumBounce = 0;
+	int16 _magicBallType = 0;
 	/** Magic ball auxiliar bounce number */
-	int16 _magicBallAuxBounce = 0; // magicBallParam
+	int16 _magicBallCount = 0; // magicBallParam
 	/** Magic level index */
 	int16 _magicLevelIdx = 0;
 
@@ -113,7 +113,7 @@ public:
 	/** Store the number of inventory clover leafs */
 	int16 _inventoryNumLeafs = 0;
 	/** Store the number of inventory magic points */
-	int16 _inventoryMagicPoints = 0;
+	int16 _magicPoint = 0;
 	/** Store the number of gas */
 	int16 _inventoryNumGas = 0;
 

@@ -88,17 +88,17 @@ class Extra {
 private:
 	TwinEEngine *_engine;
 
-	void throwExtra(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32 x, int32 extraAngle);
+	void initFly(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32 x, int32 extraAngle);
 	void bounceExtra(ExtraListStruct *extra, int32 x, int32 y, int32 z);
-	int32 findExtraKey() const;
-	int32 addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 extraIdx);
+	int32 searchBonusKey() const;
+	int32 extraSearchKey(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 extraIdx);
 	void drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size, Common::Rect &renderRect);
 
 public:
 	Extra(TwinEEngine *engine);
 	ExtraListStruct _extraList[EXTRA_MAX_ENTRIES];
 
-	int32 addExtra(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 targetActor, int32 maxSpeed, int32 strengthOfHit);
+	int32 extraSearch(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 targetActor, int32 maxSpeed, int32 strengthOfHit);
 
 	/**
 	 * Add extra explosion
@@ -108,7 +108,7 @@ public:
 	 */
 	int32 addExtraExplode(int32 x, int32 y, int32 z);
 
-	inline int32 addExtraExplode(const IVec3 &pos) {
+	inline int32 extraExplo(const IVec3 &pos) {
 		return addExtraExplode(pos.x, pos.y, pos.z);
 	}
 
@@ -122,7 +122,7 @@ public:
 		return addExtraBonus(pos.x, pos.y, pos.z, xAngle, yAngle, type, bonusAmount);
 	}
 
-	int32 addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 xAngle, int32 yAngle, int32 xRotPoint, int32 extraAngle, int32 strengthOfHit);
+	int32 throwExtra(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 xAngle, int32 yAngle, int32 xRotPoint, int32 extraAngle, int32 strengthOfHit);
 	int32 addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 targetActorIdx, int32 finalAngle, int32 strengthOfHit);
 	void addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle, int32 xRotPoint, int32 extraAngle);
 
@@ -131,7 +131,7 @@ public:
 	int getBonusSprite(BonusParameter bonusParameter) const;
 
 	/** Process extras */
-	void processExtras();
+	void gereExtras();
 };
 
 } // namespace TwinE

@@ -48,8 +48,8 @@ bool Collision::standingOnActor(int32 actorIdx1, int32 actorIdx2) const {
 	const IVec3 &mins1 = processActor + actor1->_boundingBox.mins;
 	const IVec3 &maxs1 = processActor + actor1->_boundingBox.maxs;
 
-	const IVec3 &mins2 = actor2->pos() + actor2->_boundingBox.mins;
-	const IVec3 &maxs2 = actor2->pos() + actor2->_boundingBox.maxs;
+	const IVec3 &mins2 = actor2->posObj() + actor2->_boundingBox.mins;
+	const IVec3 &maxs2 = actor2->posObj() + actor2->_boundingBox.maxs;
 
 	if (mins1.x >= maxs2.x) {
 		return false;
@@ -187,7 +187,7 @@ void Collision::handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, Acto
 	IVec3 &processActor = actor->_processActor;
 	const IVec3 &previousActor = actor->_previousActor;
 
-	const int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(processActor, actorTest->pos());
+	const int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(processActor, actorTest->posObj());
 
 	// protect against chain reactions
 	if (actorTest->_staticFlags.bCanBePushed && !actor->_staticFlags.bCanBePushed) {
@@ -207,8 +207,8 @@ void Collision::handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, Acto
 				actorTest->_animStep.z = SIZE_BRICK_XZ / 4 + SIZE_BRICK_XZ / 8;
 			}
 		} else {
-			actorTest->_animStep.x = processActor.x - actor->_collisionPos.x;
-			actorTest->_animStep.z = processActor.z - actor->_collisionPos.z;
+			actorTest->_animStep.x = processActor.x - actor->_oldPos.x;
+			actorTest->_animStep.z = processActor.z - actor->_oldPos.z;
 		}
 	}
 
@@ -234,12 +234,12 @@ void Collision::handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, Acto
 bool Collision::checkValidObjPos(int32 actorIdx) {
 	const ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
-	const int16 x0 = actor->pos().x + actor->_boundingBox.mins.x;
-	const int16 x1 = actor->pos().x + actor->_boundingBox.maxs.x;
-	const int16 y0 = actor->pos().y + actor->_boundingBox.mins.y;
-	const int16 y1 = actor->pos().y + actor->_boundingBox.maxs.y;
-	const int16 z0 = actor->pos().z + actor->_boundingBox.mins.z;
-	const int16 z1 = actor->pos().z + actor->_boundingBox.maxs.z;
+	const int16 x0 = actor->posObj().x + actor->_boundingBox.mins.x;
+	const int16 x1 = actor->posObj().x + actor->_boundingBox.maxs.x;
+	const int16 y0 = actor->posObj().y + actor->_boundingBox.mins.y;
+	const int16 y1 = actor->posObj().y + actor->_boundingBox.maxs.y;
+	const int16 z0 = actor->posObj().z + actor->_boundingBox.mins.z;
+	const int16 z1 = actor->posObj().z + actor->_boundingBox.maxs.z;
 
 	if (x0 < 0 || x0 > SIZE_BRICK_XZ * 63) {
 		return false;
@@ -271,12 +271,12 @@ bool Collision::checkValidObjPos(int32 actorIdx) {
 	for (int32 n = 0; n < _engine->_scene->_sceneNumActors; ++n) {
 		const ActorStruct *actorTest = _engine->_scene->getActor(n);
 		if (n != actorIdx && actorTest->_body != -1 && !actor->_staticFlags.bIsHidden && actorTest->_carryBy != actorIdx) {
-			const int16 xt0 = actorTest->pos().x + actorTest->_boundingBox.mins.x;
-			const int16 xt1 = actorTest->pos().x + actorTest->_boundingBox.maxs.x;
-			const int16 yt0 = actorTest->pos().y + actorTest->_boundingBox.mins.y;
-			const int16 yt1 = actorTest->pos().y + actorTest->_boundingBox.maxs.y;
-			const int16 zt0 = actorTest->pos().z + actorTest->_boundingBox.mins.z;
-			const int16 zt1 = actorTest->pos().z + actorTest->_boundingBox.maxs.z;
+			const int16 xt0 = actorTest->posObj().x + actorTest->_boundingBox.mins.x;
+			const int16 xt1 = actorTest->posObj().x + actorTest->_boundingBox.maxs.x;
+			const int16 yt0 = actorTest->posObj().y + actorTest->_boundingBox.mins.y;
+			const int16 yt1 = actorTest->posObj().y + actorTest->_boundingBox.maxs.y;
+			const int16 zt0 = actorTest->posObj().z + actorTest->_boundingBox.mins.z;
+			const int16 zt1 = actorTest->posObj().z + actorTest->_boundingBox.maxs.z;
 
 			if (x0 < xt1 && x1 > xt0 && y0 < yt1 && y1 > yt0 && z0 < zt1 && z1 > zt0) {
 				return false;
@@ -300,8 +300,8 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 
 		// avoid current processed actor
 		if (a != actorIdx && actorTest->_body != -1 && !actor->_staticFlags.bIsHidden && actorTest->_carryBy != actorIdx) {
-			const IVec3 &minsTest = actorTest->pos() + actorTest->_boundingBox.mins;
-			const IVec3 &maxsTest = actorTest->pos() + actorTest->_boundingBox.maxs;
+			const IVec3 &minsTest = actorTest->posObj() + actorTest->_boundingBox.mins;
+			const IVec3 &maxsTest = actorTest->posObj() + actorTest->_boundingBox.maxs;
 
 			if (mins.x < maxsTest.x && maxs.x > minsTest.x && mins.y < maxsTest.y && maxs.y > minsTest.y && mins.z < maxsTest.z && maxs.z > minsTest.z) {
 				actor->_collision = a; // mark as collision with actor a
@@ -335,8 +335,8 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 
 			// avoid current processed actor
 			if (a != actorIdx && actorTest->_body != -1 && !actorTest->_staticFlags.bIsHidden && actorTest->_carryBy != actorIdx) {
-				const IVec3 minsTest = actorTest->pos() + actorTest->_boundingBox.mins;
-				const IVec3 maxsTest = actorTest->pos() + actorTest->_boundingBox.maxs;
+				const IVec3 minsTest = actorTest->posObj() + actorTest->_boundingBox.mins;
+				const IVec3 maxsTest = actorTest->posObj() + actorTest->_boundingBox.maxs;
 				if (mins.x < maxsTest.x && maxs.x > minsTest.x && mins.y < maxsTest.y && maxs.y > minsTest.y && mins.z < maxsTest.z && maxs.z > minsTest.z) {
 					_engine->_actor->hitObj(actorIdx, a, actor->_strengthOfHit, actor->_angle + ANGLE_180);
 					actor->_dynamicFlags.bIsHitting = 0;
@@ -423,7 +423,7 @@ void Collision::receptionObj(int actorIdx) {
 		const int32 fall = _engine->_scene->_startYFalling - processActor.y;
 
 		if (fall >= SIZE_BRICK_Y * 8) {
-			const IVec3 &actorPos = _engine->_actor->_processActorPtr->pos();
+			const IVec3 &actorPos = _engine->_actor->_processActorPtr->posObj();
 			_engine->_extra->initSpecial(actorPos.x, actorPos.y + 1000, actorPos.z, ExtraSpecialType::kHitStars);
 			if (fall >= SIZE_BRICK_Y * 16) {
 				_engine->_actor->_processActorPtr->setLife(0);
@@ -460,8 +460,8 @@ int32 Collision::extraCheckObjCol(ExtraListStruct *extra, int32 actorIdx) {
 		const ActorStruct *actorTest = _engine->_scene->getActor(a);
 
 		if (a != actorIdx && actorTest->_body != -1) {
-			const IVec3 minsTest = actorTest->pos() + actorTest->_boundingBox.mins;
-			const IVec3 maxsTest = actorTest->pos() + actorTest->_boundingBox.maxs;
+			const IVec3 minsTest = actorTest->posObj() + actorTest->_boundingBox.mins;
+			const IVec3 maxsTest = actorTest->posObj() + actorTest->_boundingBox.maxs;
 
 			if (mins.x < maxsTest.x && maxs.x > minsTest.x && mins.y < maxsTest.y && maxs.y > minsTest.y && mins.z < maxsTest.z && maxs.z > minsTest.z) {
 				if (extra->strengthOfHit != 0) {

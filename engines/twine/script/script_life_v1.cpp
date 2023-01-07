@@ -59,8 +59,8 @@ struct LifeScriptContext {
 	uint8 *opcodePtr; // local opcode script pointer
 
 	LifeScriptContext(int32 _actorIdx, ActorStruct *_actor) : actorIdx(_actorIdx), actor(_actor), stream(_actor->_lifeScript, _actor->_lifeScriptSize) {
-		assert(actor->_positionInLifeScript >= 0);
-		stream.skip(_actor->_positionInLifeScript);
+		assert(actor->_offsetLife >= 0);
+		stream.skip(_actor->_offsetLife);
 		updateOpcodePos();
 	}
 
@@ -165,7 +165,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 				engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 			} else {
 				// Returns int32, so we check for integer overflow
-				int32 distance = getDistance2D(ctx.actor->pos(), otherActor->pos());
+				int32 distance = getDistance2D(ctx.actor->posObj(), otherActor->posObj());
 				if (ABS(distance) > MAX_TARGET_ACTOR_DISTANCE) {
 					engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 				} else {
@@ -237,7 +237,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		}
 
 		if (ABS(targetActor->_pos.y - ctx.actor->_pos.y) < 1500) {
-			newAngle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos(), targetActor->pos());
+			newAngle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->posObj(), targetActor->posObj());
 			if (ABS(engine->_movements->_targetActorDistance) > MAX_TARGET_ACTOR_DISTANCE) {
 				engine->_movements->_targetActorDistance = MAX_TARGET_ACTOR_DISTANCE;
 			}
@@ -331,7 +331,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 
 		if (!targetActor->_dynamicFlags.bIsDead) {
 			// Returns int32, so we check for integer overflow
-			int32 distance = getDistance3D(ctx.actor->pos(), targetActor->pos());
+			int32 distance = getDistance3D(ctx.actor->posObj(), targetActor->posObj());
 			if (ABS(distance) > MAX_TARGET_ACTOR_DISTANCE) {
 				engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 			} else {
@@ -348,7 +348,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		break;
 	case kcMAGIC_POINTS:
 		debugCN(3, kDebugLevels::kDebugScripts, "magic_points(");
-		engine->_scene->_currentScriptValue = engine->_gameState->_inventoryMagicPoints;
+		engine->_scene->_currentScriptValue = engine->_gameState->_magicPoint;
 		break;
 	case kcUSE_INVENTORY: {
 		int32 item = ctx.stream.readByte();
@@ -474,7 +474,7 @@ static int32 lEMPTY(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lEND(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::END()");
-	ctx.actor->_positionInLifeScript = -1;
+	ctx.actor->_offsetLife = -1;
 	return 1; // break script
 }
 
@@ -680,7 +680,7 @@ static int32 lANIM_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSET_LIFE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int16 offset = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_LIFE(%i)", (int)offset);
-	ctx.actor->_positionInLifeScript = offset;
+	ctx.actor->_offsetLife = offset;
 	return 0;
 }
 
@@ -692,7 +692,7 @@ static int32 lSET_LIFE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const int16 offset = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_LIFE_OBJ(%i, %i)", (int)otherActorIdx, (int)offset);
-	engine->_scene->getActor(otherActorIdx)->_positionInLifeScript = offset;
+	engine->_scene->getActor(otherActorIdx)->_offsetLife = offset;
 	return 0;
 }
 
@@ -702,7 +702,7 @@ static int32 lSET_LIFE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int16 offset = ctx.stream.readSint16LE();
-	ctx.actor->_positionInMoveScript = offset;
+	ctx.actor->_offsetTrack = offset;
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_TRACK(%i)", (int)offset);
 	return 0;
 }
@@ -714,7 +714,7 @@ static int32 lSET_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSET_TRACK_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const int16 offset = ctx.stream.readSint16LE();
-	engine->_scene->getActor(otherActorIdx)->_positionInMoveScript = offset;
+	engine->_scene->getActor(otherActorIdx)->_offsetTrack = offset;
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_TRACK_OBJ(%i, %i)", (int)otherActorIdx, (int)offset);
 	return 0;
 }
@@ -859,8 +859,8 @@ static int32 lCOMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x21
  */
 static int32 lSET_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	ctx.actor->_positionInLifeScript = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_COMPORTEMENT(%i)", (int)ctx.actor->_positionInLifeScript);
+	ctx.actor->_offsetLife = ctx.stream.readSint16LE();
+	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_COMPORTEMENT(%i)", (int)ctx.actor->_offsetLife);
 	return 0;
 }
 
@@ -872,7 +872,7 @@ static int32 lSET_COMPORTEMENT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) 
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const int16 pos = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_COMPORTEMENT_OBJ(%i, %i)", (int)otherActorIdx, (int)pos);
-	engine->_scene->getActor(otherActorIdx)->_positionInLifeScript = pos;
+	engine->_scene->getActor(otherActorIdx)->_offsetLife = pos;
 	return 0;
 }
 
@@ -980,7 +980,7 @@ static int32 lGIVE_GOLD_PIECES(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lEND_LIFE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::END_LIFE()");
-	ctx.actor->_positionInLifeScript = -1;
+	ctx.actor->_offsetLife = -1;
 	return 1; // break;
 }
 
@@ -991,7 +991,7 @@ static int32 lEND_LIFE(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSTOP_L_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::STOP_L_TRACK(%i)", (int)ctx.actor->_currentLabelPtr);
 	ctx.actor->_pausedTrackPtr = ctx.actor->_currentLabelPtr;
-	ctx.actor->_positionInMoveScript = -1;
+	ctx.actor->_offsetTrack = -1;
 	return 0;
 }
 
@@ -1001,7 +1001,7 @@ static int32 lSTOP_L_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lRESTORE_L_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::RESTORE_L_TRACK(%i)", (int)ctx.actor->_pausedTrackPtr);
-	ctx.actor->_positionInMoveScript = ctx.actor->_pausedTrackPtr;
+	ctx.actor->_offsetTrack = ctx.actor->_pausedTrackPtr;
 	return 0;
 }
 
@@ -1665,11 +1665,11 @@ static int32 lEXPLODE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::EXPLODE_OBJ(%i)", (int)otherActorIdx);
 	const ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
 
-	IVec3 pos = otherActor->pos();
+	IVec3 pos = otherActor->posObj();
 	pos.x += engine->getRandomNumber(512) - 256;
 	pos.y += engine->getRandomNumber(256) - 128;
 	pos.z += engine->getRandomNumber(512) - 256;
-	engine->_extra->addExtraExplode(pos);
+	engine->_extra->extraExplo(pos);
 	return 0;
 }
 
@@ -2033,7 +2033,7 @@ ScriptLife::ScriptLife(TwinEEngine *engine) : _engine(engine) {
 	lTextYPos = 0;
 }
 
-void ScriptLife::processLifeScript(int32 actorIdx) {
+void ScriptLife::doLife(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	int32 end = -2;
 

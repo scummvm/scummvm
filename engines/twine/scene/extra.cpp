@@ -77,7 +77,7 @@ const ExtraShape explodeCloudShape { ARRAYSIZE(explodeCloudData), explodeCloudDa
 
 Extra::Extra(TwinEEngine *engine) : _engine(engine) {}
 
-int32 Extra::addExtra(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 targetActor, int32 maxSpeed, int32 strengthOfHit) { // ExtraSearch
+int32 Extra::extraSearch(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 targetActor, int32 maxSpeed, int32 strengthOfHit) { // ExtraSearch
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &_extraList[i];
 		if (extra->sprite != -1) {
@@ -96,7 +96,7 @@ int32 Extra::addExtra(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx
 
 		_engine->_movements->setActorAngle(ANGLE_0, maxSpeed, ANGLE_17, &extra->trackActorMove);
 		const ActorStruct *actor = _engine->_scene->getActor(targetActor);
-		extra->angle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos, actor->pos());
+		extra->angle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos, actor->posObj());
 		return i;
 	}
 	return -1;
@@ -130,7 +130,7 @@ void Extra::resetExtras() {
 	}
 }
 
-void Extra::throwExtra(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32 x, int32 extraAngle) {
+void Extra::initFly(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32 x, int32 extraAngle) {
 	extra->type |= ExtraType::FLY;
 
 	extra->lastPos = extra->pos;
@@ -166,7 +166,7 @@ int32 Extra::initSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) {
 			extra->pos.y = y;
 			extra->pos.z = z;
 
-			throwExtra(extra, _engine->getRandomNumber(ANGLE_90) + ANGLE_45, _engine->getRandomNumber(ANGLE_360), 50, 20);
+			initFly(extra, _engine->getRandomNumber(ANGLE_90) + ANGLE_45, _engine->getRandomNumber(ANGLE_360), 50, 20);
 
 			extra->strengthOfHit = 0;
 			extra->payload.lifeTime = 100;
@@ -238,7 +238,7 @@ int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle
 		extra->pos.y = y;
 		extra->pos.z = z;
 
-		throwExtra(extra, xAngle, yAngle, 40, ToAngle(15));
+		initFly(extra, xAngle, yAngle, 40, ToAngle(15));
 
 		extra->strengthOfHit = 0;
 		extra->payload.lifeTime = TO_SECONDS(20);
@@ -249,7 +249,7 @@ int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle
 	return -1;
 }
 
-int32 Extra::addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 xAngle, int32 yAngle, int32 xRotPoint, int32 extraAngle, int32 strengthOfHit) {
+int32 Extra::throwExtra(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 xAngle, int32 yAngle, int32 xRotPoint, int32 extraAngle, int32 strengthOfHit) {
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &_extraList[i];
 		if (extra->sprite != -1) {
@@ -261,7 +261,7 @@ int32 Extra::addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spri
 		extra->pos.y = y;
 		extra->pos.z = z;
 
-		throwExtra(extra, xAngle, yAngle, xRotPoint, extraAngle);
+		initFly(extra, xAngle, yAngle, xRotPoint, extraAngle);
 
 		extra->strengthOfHit = strengthOfHit;
 		extra->spawnTime = _engine->_lbaTime;
@@ -292,7 +292,7 @@ int32 Extra::addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spr
 		extra->strengthOfHit = strengthOfHit;
 		_engine->_movements->setActorAngle(ANGLE_0, finalAngle, ANGLE_17, &extra->trackActorMove);
 		const ActorStruct *actor = _engine->_scene->getActor(targetActorIdx);
-		extra->angle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos, actor->pos());
+		extra->angle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos, actor->posObj());
 
 		return i;
 	}
@@ -300,7 +300,7 @@ int32 Extra::addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spr
 	return -1;
 }
 
-int32 Extra::findExtraKey() const {
+int32 Extra::searchBonusKey() const {
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		const ExtraListStruct *extra = &_extraList[i];
 		if (extra->sprite == SPRITEHQR_KEY) {
@@ -311,7 +311,7 @@ int32 Extra::findExtraKey() const {
 	return -1;
 }
 
-int32 Extra::addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 extraIdx) {
+int32 Extra::extraSearchKey(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 extraIdx) {
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &_extraList[i];
 		if (extra->sprite != -1) {
@@ -359,38 +359,38 @@ void Extra::addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 xAngle, int3
 		break;
 	}
 
-	_engine->_gameState->_magicBallNumBounce = ((_engine->_gameState->_inventoryMagicPoints - 1) / 20) + 1;
-	if (_engine->_gameState->_inventoryMagicPoints == 0) {
-		_engine->_gameState->_magicBallNumBounce = 0;
+	_engine->_gameState->_magicBallType = ((_engine->_gameState->_magicPoint - 1) / 20) + 1;
+	if (_engine->_gameState->_magicPoint == 0) {
+		_engine->_gameState->_magicBallType = 0;
 	}
 
-	const int32 extraIdx = findExtraKey();
+	const int32 extraIdx = searchBonusKey();
 	if (extraIdx != -1) { // there is a key to aim
-		_engine->_gameState->_magicBallNumBounce = 5;
+		_engine->_gameState->_magicBallType = 5;
 	}
 
-	switch (_engine->_gameState->_magicBallNumBounce) {
+	switch (_engine->_gameState->_magicBallType) {
 	case 0:
-		_engine->_gameState->_magicBallIdx = addExtraThrow(OWN_ACTOR_SCENE_INDEX, x, y, z, ballSprite, xAngle, yAngle, xRotPoint, extraAngle, ballStrength);
+		_engine->_gameState->_magicBall = throwExtra(OWN_ACTOR_SCENE_INDEX, x, y, z, ballSprite, xAngle, yAngle, xRotPoint, extraAngle, ballStrength);
 		break;
 	case 1:
-		_engine->_gameState->_magicBallAuxBounce = 4;
-		_engine->_gameState->_magicBallIdx = addExtraThrow(OWN_ACTOR_SCENE_INDEX, x, y, z, ballSprite, xAngle, yAngle, xRotPoint, extraAngle, ballStrength);
+		_engine->_gameState->_magicBallCount = 4;
+		_engine->_gameState->_magicBall = throwExtra(OWN_ACTOR_SCENE_INDEX, x, y, z, ballSprite, xAngle, yAngle, xRotPoint, extraAngle, ballStrength);
 		break;
 	case 2:
 	case 3:
 	case 4:
-		_engine->_gameState->_magicBallNumBounce = 1;
-		_engine->_gameState->_magicBallAuxBounce = 4;
-		_engine->_gameState->_magicBallIdx = addExtraThrow(OWN_ACTOR_SCENE_INDEX, x, y, z, ballSprite, xAngle, yAngle, xRotPoint, extraAngle, ballStrength);
+		_engine->_gameState->_magicBallType = 1;
+		_engine->_gameState->_magicBallCount = 4;
+		_engine->_gameState->_magicBall = throwExtra(OWN_ACTOR_SCENE_INDEX, x, y, z, ballSprite, xAngle, yAngle, xRotPoint, extraAngle, ballStrength);
 		break;
 	case 5:
-		_engine->_gameState->_magicBallIdx = addExtraAimingAtKey(OWN_ACTOR_SCENE_INDEX, x, y, z, ballSprite, extraIdx);
+		_engine->_gameState->_magicBall = extraSearchKey(OWN_ACTOR_SCENE_INDEX, x, y, z, ballSprite, extraIdx);
 		break;
 	}
 
-	if (_engine->_gameState->_inventoryMagicPoints > 0) {
-		_engine->_gameState->_inventoryMagicPoints--;
+	if (_engine->_gameState->_magicPoint > 0) {
+		_engine->_gameState->_magicPoint--;
 	}
 }
 
@@ -518,7 +518,7 @@ void Extra::bounceExtra(ExtraListStruct *extra, int32 x, int32 y, int32 z) {
 	extra->spawnTime = _engine->_lbaTime;
 }
 
-void Extra::processExtras() { // GereExtras
+void Extra::gereExtras() {
 	int32 currentExtraX = 0;
 	int32 currentExtraY = 0;
 	int32 currentExtraZ = 0;
@@ -563,7 +563,7 @@ void Extra::processExtras() { // GereExtras
 			// check if extra is out of scene
 			if (extra->pos.y < 0 || extra->pos.x < 0 || extra->pos.x > SCENE_SIZE_MAX || extra->pos.z < 0 || extra->pos.z > SCENE_SIZE_MAX) {
 				// if extra is Magic Ball
-				if (i == _engine->_gameState->_magicBallIdx) {
+				if (i == _engine->_gameState->_magicBall) {
 					int32 spriteIdx = SPRITEHQR_MAGICBALL_YELLOW_TRANS;
 
 					if (extra->sprite == SPRITEHQR_MAGICBALL_GREEN) {
@@ -573,7 +573,7 @@ void Extra::processExtras() { // GereExtras
 						spriteIdx = SPRITEHQR_MAGICBALL_RED_TRANS;
 					}
 
-					_engine->_gameState->_magicBallIdx = addExtra(-1, extra->pos.x, extra->pos.y, extra->pos.z,
+					_engine->_gameState->_magicBall = extraSearch(-1, extra->pos.x, extra->pos.y, extra->pos.z,
 							spriteIdx, OWN_ACTOR_SCENE_INDEX, 10000, 0);
 				}
 
@@ -604,7 +604,7 @@ void Extra::processExtras() { // GereExtras
 			currentExtraY = actor->_pos.y + 1000;
 			currentExtraZ = actor->_pos.z;
 
-			const int32 tmpAngle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos, actor->pos());
+			const int32 tmpAngle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos, actor->posObj());
 			const int32 angle = ClampAngle(tmpAngle - extra->angle);
 
 			if (angle > ANGLE_140 && angle < ANGLE_210) {
@@ -612,8 +612,8 @@ void Extra::processExtras() { // GereExtras
 					_engine->_actor->hitObj(actorIdx, actorIdxAttacked, extra->strengthOfHit, -1);
 				}
 
-				if (i == _engine->_gameState->_magicBallIdx) {
-					_engine->_gameState->_magicBallIdx = -1;
+				if (i == _engine->_gameState->_magicBall) {
+					_engine->_gameState->_magicBall = -1;
 				}
 
 				extra->sprite = -1;
@@ -636,8 +636,8 @@ void Extra::processExtras() { // GereExtras
 			_engine->_movements->setActorAngle(ANGLE_0, extra->destPos.z, ANGLE_17, &extra->trackActorMove);
 
 			if (actorIdxAttacked == _engine->_collision->extraCheckObjCol(extra, actorIdx)) {
-				if (i == _engine->_gameState->_magicBallIdx) {
-					_engine->_gameState->_magicBallIdx = -1;
+				if (i == _engine->_gameState->_magicBall) {
+					_engine->_gameState->_magicBall = -1;
 				}
 
 				extra->sprite = -1;
@@ -653,7 +653,7 @@ void Extra::processExtras() { // GereExtras
 			const int32 angle = ClampAngle(tmpAngle - extra->angle);
 
 			if (angle > ANGLE_140 && angle < ANGLE_210) {
-				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->_sceneHero->pos(), OWN_ACTOR_SCENE_INDEX);
+				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->_sceneHero->posObj(), OWN_ACTOR_SCENE_INDEX);
 
 				if (extraKey->info1 > 1) {
 					const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->_camera);
@@ -666,7 +666,7 @@ void Extra::processExtras() { // GereExtras
 				extraKey->sprite = -1;
 
 				extra->sprite = -1;
-				_engine->_gameState->_magicBallIdx = addExtra(-1, extra->pos.x, extra->pos.y, extra->pos.z, SPRITEHQR_KEY, 0, 8000, 0);
+				_engine->_gameState->_magicBall = extraSearch(-1, extra->pos.x, extra->pos.y, extra->pos.z, SPRITEHQR_KEY, 0, 8000, 0);
 				continue;
 			}
 			const int32 angle2 = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos.y, 0, extraKey->pos.y, _engine->_movements->_targetActorDistance);
@@ -685,8 +685,8 @@ void Extra::processExtras() { // GereExtras
 
 			_engine->_movements->setActorAngle(ANGLE_0, extra->destPos.z, ANGLE_17, &extra->trackActorMove);
 
-			if (extraIdx == _engine->_collision->extraCheckExtraCol(extra, _engine->_gameState->_magicBallIdx)) {
-				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->_sceneHero->pos(), OWN_ACTOR_SCENE_INDEX);
+			if (extraIdx == _engine->_collision->extraCheckExtraCol(extra, _engine->_gameState->_magicBall)) {
+				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->_sceneHero->posObj(), OWN_ACTOR_SCENE_INDEX);
 
 				if (extraKey->info1 > 1) {
 					const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->_camera);
@@ -699,7 +699,7 @@ void Extra::processExtras() { // GereExtras
 				extraKey->sprite = -1;
 
 				extra->sprite = -1;
-				_engine->_gameState->_magicBallIdx = addExtra(-1, extra->pos.x, extra->pos.y, extra->pos.z, SPRITEHQR_KEY, 0, 8000, 0);
+				_engine->_gameState->_magicBall = extraSearch(-1, extra->pos.x, extra->pos.y, extra->pos.z, SPRITEHQR_KEY, 0, 8000, 0);
 				continue;
 			}
 			if (extraKey->sprite == -1) {
@@ -713,7 +713,7 @@ void Extra::processExtras() { // GereExtras
 				}
 
 				extra->sprite = -1;
-				_engine->_gameState->_magicBallIdx = addExtra(-1, extra->pos.x, extra->pos.y, extra->pos.z,
+				_engine->_gameState->_magicBall = extraSearch(-1, extra->pos.x, extra->pos.y, extra->pos.z,
 						spriteIdx, 0, 8000, 0);
 				continue;
 			}
@@ -722,7 +722,7 @@ void Extra::processExtras() { // GereExtras
 		if (extra->type & ExtraType::END_OBJ) {
 			if (_engine->_collision->extraCheckObjCol(extra, extra->payload.actorIdx) != -1) {
 				// if extra is Magic Ball
-				if (i == _engine->_gameState->_magicBallIdx) {
+				if (i == _engine->_gameState->_magicBall) {
 					int32 spriteIdx = SPRITEHQR_MAGICBALL_YELLOW_TRANS;
 
 					if (extra->sprite == SPRITEHQR_MAGICBALL_GREEN) {
@@ -732,7 +732,7 @@ void Extra::processExtras() { // GereExtras
 						spriteIdx = SPRITEHQR_MAGICBALL_RED_TRANS;
 					}
 
-					_engine->_gameState->_magicBallIdx = addExtra(-1, extra->pos.x, extra->pos.y, extra->pos.z,
+					_engine->_gameState->_magicBall = extraSearch(-1, extra->pos.x, extra->pos.y, extra->pos.z,
 							spriteIdx, 0, 10000, 0);
 				}
 
@@ -762,11 +762,11 @@ void Extra::processExtras() { // GereExtras
 					initSpecial(currentExtraX, currentExtraY, currentExtraZ, ExtraSpecialType::kExplodeCloud);
 				}
 				// if extra is magic ball
-				if (i == _engine->_gameState->_magicBallIdx) {
+				if (i == _engine->_gameState->_magicBall) {
 					_engine->_sound->playSample(Samples::Hit, 1, extra->pos);
 
 					// can't bounce with not magic points
-					if (_engine->_gameState->_magicBallNumBounce <= 0) {
+					if (_engine->_gameState->_magicBallType <= 0) {
 						int32 spriteIdx = SPRITEHQR_MAGICBALL_YELLOW_TRANS;
 
 						if (extra->sprite == SPRITEHQR_MAGICBALL_GREEN) {
@@ -776,15 +776,15 @@ void Extra::processExtras() { // GereExtras
 							spriteIdx = SPRITEHQR_MAGICBALL_RED_TRANS;
 						}
 
-						_engine->_gameState->_magicBallIdx = addExtra(-1, extra->pos.x, extra->pos.y, extra->pos.z, spriteIdx, 0, 10000, 0);
+						_engine->_gameState->_magicBall = extraSearch(-1, extra->pos.x, extra->pos.y, extra->pos.z, spriteIdx, 0, 10000, 0);
 
 						extra->sprite = -1;
 						continue;
 					}
 
 					// if has magic points
-					if (_engine->_gameState->_magicBallNumBounce == 1) {
-						if (!_engine->_gameState->_magicBallAuxBounce--) {
+					if (_engine->_gameState->_magicBallType == 1) {
+						if (!_engine->_gameState->_magicBallCount--) {
 							int32 spriteIdx = SPRITEHQR_MAGICBALL_YELLOW_TRANS;
 
 							if (extra->sprite == SPRITEHQR_MAGICBALL_GREEN) {
@@ -794,7 +794,7 @@ void Extra::processExtras() { // GereExtras
 								spriteIdx = SPRITEHQR_MAGICBALL_RED_TRANS;
 							}
 
-							_engine->_gameState->_magicBallIdx = addExtra(-1, extra->pos.x, extra->pos.y, extra->pos.z, spriteIdx, 0, 10000, 0);
+							_engine->_gameState->_magicBall = extraSearch(-1, extra->pos.x, extra->pos.y, extra->pos.z, spriteIdx, 0, 10000, 0);
 
 							extra->sprite = -1;
 							continue;

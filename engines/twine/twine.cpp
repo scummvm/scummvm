@@ -355,7 +355,7 @@ Common::Error TwinEEngine::run() {
 		}
 	}
 
-	ConfMan.setBool("combatauto", _actor->_autoAggressive);
+	ConfMan.setBool("combatauto", _actor->_combatAuto);
 	ConfMan.setInt("shadow", _cfgfile.ShadowMode);
 	ConfMan.setBool("scezoom", _cfgfile.SceZoom);
 	ConfMan.setInt("polygondetails", _cfgfile.PolygonDetails);
@@ -492,7 +492,7 @@ void TwinEEngine::initConfigurations() {
 	_cfgfile.UseAutoSaving = ConfGetBoolOrDefault("useautosaving", false);
 	_cfgfile.WallCollision = ConfGetBoolOrDefault("wallcollision", false);
 
-	_actor->_autoAggressive = ConfGetBoolOrDefault("combatauto", true);
+	_actor->_combatAuto = ConfGetBoolOrDefault("combatauto", true);
 	_cfgfile.ShadowMode = ConfGetIntOrDefault("shadow", 2);
 	_cfgfile.SceZoom = ConfGetBoolOrDefault("scezoom", false);
 	_cfgfile.PolygonDetails = ConfGetIntOrDefault("polygondetails", 2);
@@ -508,7 +508,7 @@ void TwinEEngine::initConfigurations() {
 	debug(1, "Debug:          %s", (_cfgfile.Debug ? "true" : "false"));
 	debug(1, "UseAutoSaving:  %s", (_cfgfile.UseAutoSaving ? "true" : "false"));
 	debug(1, "WallCollision:  %s", (_cfgfile.WallCollision ? "true" : "false"));
-	debug(1, "AutoAggressive: %s", (_actor->_autoAggressive ? "true" : "false"));
+	debug(1, "AutoAggressive: %s", (_actor->_combatAuto ? "true" : "false"));
 	debug(1, "ShadowMode:     %i", _cfgfile.ShadowMode);
 	debug(1, "PolygonDetails: %i", _cfgfile.PolygonDetails);
 	debug(1, "SceZoom:        %s", (_cfgfile.SceZoom ? "true" : "false"));
@@ -624,7 +624,7 @@ void TwinEEngine::unfreezeTime() {
 void TwinEEngine::processActorSamplePosition(int32 actorIdx) {
 	const ActorStruct *actor = _scene->getActor(actorIdx);
 	const int32 channelIdx = _sound->getActorChannel(actorIdx);
-	_sound->setSamplePosition(channelIdx, actor->pos());
+	_sound->setSamplePosition(channelIdx, actor->posObj());
 }
 
 void TwinEEngine::processBookOfBu() {
@@ -919,7 +919,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		_scene->getActor(a)->_hitBy = -1;
 	}
 
-	_extra->processExtras();
+	_extra->gereExtras();
 
 	for (int32 a = 0; a < _scene->_sceneNumActors; a++) {
 		ActorStruct *actor = _scene->getActor(a);
@@ -933,10 +933,10 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 				_animations->initAnim(AnimationTypes::kLandDeath, AnimType::kAnimationSet, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 				actor->_controlMode = ControlMode::kNoMove;
 			} else {
-				_sound->playSample(Samples::Explode, 1, actor->pos(), a);
+				_sound->playSample(Samples::Explode, 1, actor->posObj(), a);
 
 				if (a == _scene->_mecaPenguinIdx) {
-					_extra->addExtraExplode(actor->pos());
+					_extra->extraExplo(actor->posObj());
 				}
 			}
 
@@ -945,12 +945,12 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			}
 		}
 
-		_movements->processActorMovements(a);
+		_movements->doDir(a);
 
-		actor->_collisionPos = actor->pos();
+		actor->_oldPos = actor->posObj();
 
-		if (actor->_positionInMoveScript != -1) {
-			_scriptMove->processMoveScript(a);
+		if (actor->_offsetTrack != -1) {
+			_scriptMove->doTrack(a);
 		}
 
 		_animations->doAnim(a);
@@ -959,8 +959,8 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			_scene->checkZoneSce(a);
 		}
 
-		if (actor->_positionInLifeScript != -1) {
-			_scriptLife->processLifeScript(a);
+		if (actor->_offsetLife != -1) {
+			_scriptLife->doLife(a);
 		}
 
 		processActorSamplePosition(a);
@@ -980,14 +980,14 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 						if (!_actor->_cropBottomScreen) {
 							_animations->initAnim(AnimationTypes::kDrawn, AnimType::kAnimationSet, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 						}
-						const IVec3 &projPos = _renderer->projectPositionOnScreen(actor->pos() - _grid->_camera);
+						const IVec3 &projPos = _renderer->projectPositionOnScreen(actor->posObj() - _grid->_camera);
 						actor->_controlMode = ControlMode::kNoMove;
 						actor->setLife(-1);
 						_actor->_cropBottomScreen = projPos.y;
 						actor->_staticFlags.bDoesntCastShadow = 1;
 					}
 				} else {
-					_sound->playSample(Samples::Explode, 1, actor->pos(), a);
+					_sound->playSample(Samples::Explode, 1, actor->posObj(), a);
 					if (actor->_bonusParameter.cloverleaf || actor->_bonusParameter.kashes || actor->_bonusParameter.key || actor->_bonusParameter.lifepoints || actor->_bonusParameter.magicpoints) {
 						if (!actor->_bonusParameter.givenNothing) {
 							_actor->giveExtraBonus(a);

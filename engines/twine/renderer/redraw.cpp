@@ -197,7 +197,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 		// no redraw required
 		if (actor->_staticFlags.bIsBackgrounded && !bgRedraw) {
 			// get actor position on screen
-			const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor->pos() - _engine->_grid->_camera);
+			const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor->posObj() - _engine->_grid->_camera);
 			// check if actor is visible on screen, otherwise don't display it
 			if (projPos.x > VIEW_X0 && projPos.x < VIEW_X1(_engine) && projPos.y > VIEW_Y0 && projPos.y < VIEW_Y1(_engine)) {
 				actor->_dynamicFlags.bIsDrawn = 1;
@@ -209,7 +209,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 			continue;
 		}
 		// get actor position on screen
-		const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor->pos() - _engine->_grid->_camera);
+		const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor->posObj() - _engine->_grid->_camera);
 
 		if ((actor->_staticFlags.bUsesClipping && projPos.x > -112 && projPos.x < _engine->width() + 112 && projPos.y > -50 && projPos.y < _engine->height() + 171) ||
 		    ((!actor->_staticFlags.bUsesClipping) && projPos.x > VIEW_X0 && projPos.x < VIEW_X1(_engine) && projPos.y > VIEW_Y0 && projPos.y < VIEW_Y1(_engine))) {
@@ -244,7 +244,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 					drawList[drawListPos].y = actor->_pos.y - 1;
 					drawList[drawListPos].z = actor->_pos.z;
 				} else {
-					const IVec3 shadowCoord = _engine->_movements->getShadowPosition(actor->pos());
+					const IVec3 shadowCoord = _engine->_movements->getShadowPosition(actor->posObj());
 					drawList[drawListPos].x = shadowCoord.x;
 					drawList[drawListPos].y = shadowCoord.y;
 					drawList[drawListPos].z = shadowCoord.z;
@@ -350,7 +350,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 		_engine->_animations->setModelAnimation(actor->_animPosition, animData, _engine->_resources->_bodyData[actor->_body], &actor->_animTimerData);
 	}
 
-	const IVec3 &delta = actor->pos() - _engine->_grid->_camera;
+	const IVec3 &delta = actor->posObj() - _engine->_grid->_camera;
 	Common::Rect renderRect;
 
 	if (actorIdx == OWN_ACTOR_SCENE_INDEX) {
@@ -395,7 +395,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 	const uint8 *spritePtr = _engine->_resources->_spriteTable[actor->_body];
 
 	// get actor position on screen
-	const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor->pos() - _engine->_grid->_camera);
+	const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor->posObj() - _engine->_grid->_camera);
 
 	const int32 spriteWidth = spriteData.surface().w;
 	const int32 spriteHeight = spriteData.surface().h;
@@ -492,8 +492,8 @@ void Redraw::correctZLevels(DrawListStruct *drawList, int32 drawListPos) {
 		return;
 	}
 
-	IVec3 tmin = ptrobj->pos() + ptrobj->_boundingBox.mins;
-	IVec3 tmax = ptrobj->pos() + ptrobj->_boundingBox.maxs;
+	IVec3 tmin = ptrobj->posObj() + ptrobj->_boundingBox.mins;
+	IVec3 tmax = ptrobj->posObj() + ptrobj->_boundingBox.maxs;
 	int32 twinsenpos = -1;
 	int32 twinsenz = -1;
 	for (int32 pos = 0; pos < drawListPos; ++pos) {

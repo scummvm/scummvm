@@ -113,7 +113,7 @@ private:
 	void processManualMovementExecution(int actorIdx);
 	void processManualRotationExecution(int actorIdx);
 
-	bool _heroAction = false;
+	bool _actionNormal = false;
 
 public:
 	Movements(TwinEEngine *engine);
@@ -189,11 +189,11 @@ public:
 	 */
 	void initRealAngleConst(int32 start, int32 end, int32 duration, ActorMoveStruct *movePtr) const;
 
-	void processActorMovements(int32 actorIdx);
+	void doDir(int32 actorIdx);
 };
 
 inline bool Movements::shouldTriggerZoneAction() const {
-	return _heroAction;
+	return _actionNormal;
 }
 
 } // namespace TwinE

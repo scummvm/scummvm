@@ -43,8 +43,8 @@ struct MoveScriptContext {
 	Common::MemorySeekableReadWriteStream stream;
 
 	MoveScriptContext(int32 _actorIdx, ActorStruct *_actor) : actorIdx(_actorIdx), actor(_actor), stream(actor->_moveScript, actor->_moveScriptSize) {
-		assert(actor->_positionInMoveScript >= 0);
-		stream.skip(actor->_positionInMoveScript);
+		assert(actor->_offsetTrack >= 0);
+		stream.skip(actor->_offsetTrack);
 	}
 
 	void undo(int32 bytes) {
@@ -73,7 +73,7 @@ struct ScriptMoveFunction {
  */
 static int32 mEND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::END()");
-	ctx.actor->_positionInMoveScript = -1;
+	ctx.actor->_offsetTrack = -1;
 	return 1;
 }
 
@@ -155,7 +155,7 @@ static int32 mWAIT_ANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
  * @note Opcode @c 0x06
  */
 static int32 mLOOP(TwinEEngine *engine, MoveScriptContext &ctx) {
-	ctx.actor->_positionInMoveScript = 0;
+	ctx.actor->_offsetTrack = 0;
 	ctx.stream.seek(0);
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::LOOP()");
 	return 0;
@@ -224,7 +224,7 @@ static int32 mGOTO(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 pos = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::GOTO(%i)", (int)pos);
 	if (pos == -1) {
-		ctx.actor->_positionInMoveScript = -1;
+		ctx.actor->_offsetTrack = -1;
 		return 1;
 	}
 	ctx.stream.seek(pos);
@@ -237,7 +237,7 @@ static int32 mGOTO(TwinEEngine *engine, MoveScriptContext &ctx) {
  */
 static int32 mSTOP(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::STOP()");
-	ctx.actor->_positionInMoveScript = -1;
+	ctx.actor->_offsetTrack = -1;
 	return 1;
 }
 
@@ -304,7 +304,7 @@ static int32 mWAIT_NUM_ANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
 static int32 mSAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::SAMPLE(%i)", (int)sampleIdx);
-	engine->_sound->playSample(sampleIdx, 1, ctx.actor->pos(), ctx.actorIdx);
+	engine->_sound->playSample(sampleIdx, 1, ctx.actor->posObj(), ctx.actorIdx);
 	return 0;
 }
 
@@ -515,7 +515,7 @@ static int32 mWAIT_DOOR(TwinEEngine *engine, MoveScriptContext &ctx) {
 static int32 mSAMPLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::SAMPLE_RND(%i)", (int)sampleIdx);
-	engine->_sound->playSample(sampleIdx, 1, ctx.actor->pos(), ctx.actorIdx);
+	engine->_sound->playSample(sampleIdx, 1, ctx.actor->posObj(), ctx.actorIdx);
 	return 0;
 }
 
@@ -527,7 +527,7 @@ static int32 mSAMPLE_ALWAYS(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::SAMPLE_ALWAYS(%i)", (int)sampleIdx);
 	if (!engine->_sound->isSamplePlaying(sampleIdx)) { // if its not playing
-		engine->_sound->playSample(sampleIdx, -1, ctx.actor->pos(), ctx.actorIdx);
+		engine->_sound->playSample(sampleIdx, -1, ctx.actor->posObj(), ctx.actorIdx);
 	}
 	return 0;
 }
@@ -585,7 +585,7 @@ static int32 mREPEAT_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 static int32 mSIMPLE_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::SIMPLE_SAMPLE(%i)", (int)sampleIdx);
-	engine->_sound->playSample(sampleIdx, ctx.numRepeatSample, ctx.actor->pos(), ctx.actorIdx);
+	engine->_sound->playSample(sampleIdx, ctx.numRepeatSample, ctx.actor->posObj(), ctx.actorIdx);
 	ctx.numRepeatSample = 1;
 	return 0;
 }
@@ -602,7 +602,7 @@ static int32 mFACE_HERO(TwinEEngine *engine, MoveScriptContext &ctx) {
 	}
 	engine->_scene->_currentScriptValue = angle;
 	if (engine->_scene->_currentScriptValue == -1 && ctx.actor->_move.numOfStep == 0) {
-		engine->_scene->_currentScriptValue = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos(), engine->_scene->_sceneHero->pos());
+		engine->_scene->_currentScriptValue = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->posObj(), engine->_scene->_sceneHero->posObj());
 		engine->_movements->initRealAngleConst(ctx.actor->_angle, engine->_scene->_currentScriptValue, ctx.actor->_speed, &ctx.actor->_move);
 		ctx.stream.rewind(2);
 		ctx.stream.writeSint16LE(engine->_scene->_currentScriptValue);
@@ -696,7 +696,7 @@ static const ScriptMoveFunction function_map[] = {
 ScriptMove::ScriptMove(TwinEEngine *engine) : _engine(engine) {
 }
 
-void ScriptMove::processMoveScript(int32 actorIdx) {
+void ScriptMove::doTrack(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	int32 end = -2;
@@ -718,8 +718,8 @@ void ScriptMove::processMoveScript(int32 actorIdx) {
 			debugC(3, kDebugLevels::kDebugScripts, "MOVE::BREAK(%i)", actorIdx);
 		}
 
-		if (ctx.actor->_positionInMoveScript != -1) {
-			actor->_positionInMoveScript = ctx.stream.pos();
+		if (ctx.actor->_offsetTrack != -1) {
+			actor->_offsetTrack = ctx.stream.pos();
 		}
 	} while (end != 1);
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::END(%i)", actorIdx);

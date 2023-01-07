@@ -165,7 +165,7 @@ public:
 	bool isAttackAnimationActive() const;
 	bool isJumpAnimationActive() const;
 
-	const IVec3 &pos() const;
+	const IVec3 &posObj() const;
 
 	int32 _body = -1; // costumeIndex - index into bodyTable
 	BodyType _genBody = BodyType::btNormal;
@@ -198,13 +198,13 @@ public:
 	IVec3 _processActor;
 	/** Previous process actor coordinate */
 	IVec3 _previousActor;
-	IVec3 _collisionPos;
+	IVec3 _oldPos;
 
-	int32 _positionInMoveScript = -1;
+	int32 _offsetTrack = -1;
 	uint8 *_moveScript = nullptr;
 	int32 _moveScriptSize = 0;
 
-	int32 _positionInLifeScript = 0;
+	int32 _offsetLife = 0;
 	uint8 *_lifeScript = nullptr;
 	int32 _lifeScriptSize = 0;
 
@@ -236,7 +236,7 @@ public:
 	AnimTimerDataStruct _animTimerData;
 };
 
-inline const IVec3 &ActorStruct::pos() const {
+inline const IVec3 &ActorStruct::posObj() const {
 	return _pos;
 }
 
@@ -286,7 +286,7 @@ public:
 
 	HeroBehaviourType _heroBehaviour = HeroBehaviourType::kNormal; // Comportement
 	/** Hero auto aggressive mode */
-	bool _autoAggressive = true;
+	bool _combatAuto = true;
 	/** Previous Hero behaviour */
 	HeroBehaviourType _previousHeroBehaviour = HeroBehaviourType::kNormal;
 	/** Previous Hero angle */

@@ -57,9 +57,9 @@ void Actor::restartHeroScene() {
 	sceneHero->_staticFlags.bCanFall = 1;
 
 	sceneHero->_armor = 1;
-	sceneHero->_positionInMoveScript = -1;
+	sceneHero->_offsetTrack = -1;
 	sceneHero->_labelIdx = -1;
-	sceneHero->_positionInLifeScript = 0;
+	sceneHero->_offsetLife = 0;
 	sceneHero->_zone = -1;
 	sceneHero->_angle = _previousHeroAngle;
 
@@ -142,7 +142,7 @@ void Actor::initSpriteActor(int32 actorIdx) {
 }
 
 TextId Actor::getTextIdForBehaviour() const {
-	if (_heroBehaviour == HeroBehaviourType::kAggressive && _autoAggressive) {
+	if (_heroBehaviour == HeroBehaviourType::kAggressive && _combatAuto) {
 		return TextId::kBehaviourAggressiveAuto;
 	}
 	// the other values are matching the text ids
@@ -234,7 +234,7 @@ void Actor::initActor(int16 actorIdx) {
 		_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, ANGLE_0, &actor->_move);
 
 		if (actor->_staticFlags.bUsesClipping) {
-			actor->_animStep = actor->pos();
+			actor->_animStep = actor->posObj();
 		}
 	} else {
 		actor->_body = -1;
@@ -252,9 +252,9 @@ void Actor::initActor(int16 actorIdx) {
 		_engine->_movements->setActorAngleSafe(actor->_angle, actor->_angle, ANGLE_0, &actor->_move);
 	}
 
-	actor->_positionInMoveScript = -1;
+	actor->_offsetTrack = -1;
 	actor->_labelIdx = -1;
-	actor->_positionInLifeScript = 0;
+	actor->_offsetLife = 0;
 }
 
 // InitObject
@@ -339,11 +339,11 @@ void Actor::giveExtraBonus(int32 actorIdx) {
 		return;
 	}
 	if (actor->_dynamicFlags.bIsDead) {
-		_engine->_extra->addExtraBonus(actor->pos(), ANGLE_90, ANGLE_0, bonusSprite, actor->_bonusAmount);
-		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->pos(), actorIdx);
+		_engine->_extra->addExtraBonus(actor->posObj(), ANGLE_90, ANGLE_0, bonusSprite, actor->_bonusAmount);
+		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->posObj(), actorIdx);
 	} else {
 		const ActorStruct *sceneHero = _engine->_scene->_sceneHero;
-		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->pos(), sceneHero->pos());
+		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->posObj(), sceneHero->posObj());
 		const IVec3 pos(actor->_pos.x, actor->_pos.y + actor->_boundingBox.maxs.y, actor->_pos.z);
 		_engine->_extra->addExtraBonus(pos, ANGLE_70, angle, bonusSprite, actor->_bonusAmount);
 		_engine->_sound->playSample(Samples::ItemPopup, 1, pos, actorIdx);

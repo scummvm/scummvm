@@ -136,7 +136,7 @@ bool TwinEConsole::doToggleSceneryView(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doToggleAutoAggressive(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_actor->_autoAggressive, "auto aggressive\n")
+	TOGGLE_DEBUG(_engine->_actor->_combatAuto, "auto aggressive\n")
 	return true;
 }
 
@@ -180,7 +180,7 @@ bool TwinEConsole::doSetTrackObject(int argc, const char **argv) {
 
 	const int32 otherActorIdx = atoi(argv[1]);
 	const int32 offset = atoi(argv[2]);
-	_engine->_scene->getActor(otherActorIdx)->_positionInMoveScript = offset;
+	_engine->_scene->getActor(otherActorIdx)->_offsetTrack = offset;
 	return true;
 }
 

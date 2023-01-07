@@ -144,7 +144,7 @@ bool DebugScene::displayActors() {
 	bool state = false;
 	for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
 		const ActorStruct *actorPtr = _engine->_scene->getActor(a);
-		const IVec3 &pos = actorPtr->pos();
+		const IVec3 &pos = actorPtr->posObj();
 		const BoundingBox &bbox = actorPtr->_boundingBox;
 		const ScenePositionsProjected &positions = calculateBoxPositions(pos + bbox.mins, pos + bbox.maxs);
 		if (!drawBox(positions, COLOR_WHITE)) {
