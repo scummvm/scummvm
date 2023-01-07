@@ -574,11 +574,11 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 
 void FreescapeEngine::loadBundledImages() {
 	Image::BitmapDecoder decoder;
-	Common::String targetName = _targetName;
+	Common::String targetName = Common::String(_gameDescription->gameId);
 	if (isDOS() && isDemo())
 		Common::replace(targetName, "-demo", "");
 
-	Common::String borderFilename = targetName + "_" + Common::getRenderModeDescription(_renderMode) + ".bmp";
+	Common::String borderFilename = targetName + "_" + Common::getRenderModeCode(_renderMode) + ".bmp";
 	if (_dataBundle->hasFile(borderFilename)) {
 		Common::SeekableReadStream *borderFile = _dataBundle->createReadStreamForMember(borderFilename);
 		decoder.loadStream(*borderFile);
