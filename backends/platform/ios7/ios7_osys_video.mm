@@ -28,32 +28,29 @@
 #include "graphics/blit.h"
 #include "backends/platform/ios7/ios7_app_delegate.h"
 
-#if TARGET_OS_IOS
-@interface iOS7AlertHandler : NSObject<UIAlertViewDelegate>
-@end
-
-@implementation iOS7AlertHandler
-
-- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
-	OSystem_iOS7::sharedInstance()->quit();
-	abort();
-}
-
-@end
+#define UIViewParentController(__view) ({ \
+	UIResponder *__responder = __view; \
+	while ([__responder isKindOfClass:[UIView class]]) \
+		__responder = [__responder nextResponder]; \
+	(UIViewController *)__responder; \
+})
 
 static void displayAlert(void *ctx) {
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Fatal Error"
-	                                                message:[NSString stringWithCString:(const char *)ctx encoding:NSUTF8StringEncoding]
-	                                               delegate:[[iOS7AlertHandler alloc] init]
-	                                      cancelButtonTitle:@"OK"
-	                                      otherButtonTitles:nil];
-	[alert show];
-	[alert autorelease];
+	UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Fatal Error"
+								message:[NSString stringWithCString:(const char *)ctx 	encoding:NSUTF8StringEncoding]
+								preferredStyle:UIAlertControllerStyleAlert];
+
+	UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+	   handler:^(UIAlertAction * action) {
+		OSystem_iOS7::sharedInstance()->quit();
+		abort();
+	}];
+
+	[alert addAction:defaultAction];
+	[UIViewParentController([iOS7AppDelegate iPhoneView]) presentViewController:alert animated:YES completion:nil];
 }
-#endif
 
 void OSystem_iOS7::fatalError() {
-#if TARGET_OS_IOS
 	if (_lastErrorMessage.size()) {
 		dispatch_async_f(dispatch_get_main_queue(), (void *)_lastErrorMessage.c_str(), displayAlert);
 		for(;;);
@@ -61,7 +58,6 @@ void OSystem_iOS7::fatalError() {
 	else {
 		OSystem::fatalError();
 	}
-#endif
 }
 
 void OSystem_iOS7::logMessage(LogMessageType::Type type, const char *message) {
