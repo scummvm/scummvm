@@ -24,7 +24,7 @@
 namespace Efh {
 
 void EfhEngine::createOpponentList(int16 monsterTeamId) {
-	debugC(3, kDebugEngine, "createOpponentList %d", monsterTeamId);
+	debugC(3, kDebugFight, "createOpponentList %d", monsterTeamId);
 
 	int16 counter = 0;
 	if (monsterTeamId != -1 && countAliveMonsters(monsterTeamId) > 0) {
@@ -72,7 +72,7 @@ void EfhEngine::createOpponentList(int16 monsterTeamId) {
 }
 
 void EfhEngine::initFight(int16 monsterId) {
-	debugC(3, kDebugEngine, "initFight %d", monsterId);
+	debugC(3, kDebugFight, "initFight %d", monsterId);
 	createOpponentList(monsterId);
 	resetTeamMonsterEffects();
 }
@@ -642,7 +642,7 @@ void EfhEngine::handleFight_lastAction_D(int16 teamCharId) {
 }
 
 void EfhEngine::handleFight_lastAction_H(int16 teamCharId) {
-	debugC(3, kDebugEngine, "handleFight_lastAction_H %d", teamCharId);
+	debugC(3, kDebugFight, "handleFight_lastAction_H %d", teamCharId);
 
 	// In the original, this function is part of handleFight.
 	// It has been split for readability purposes.
@@ -695,7 +695,7 @@ bool EfhEngine::isTPK() {
 }
 
 bool EfhEngine::isMonsterAlreadyFighting(int16 monsterId, int16 teamMonsterId) {
-	debugC(6, kDebugEngine, "isMonsterAlreadyFighting %d %d", monsterId, teamMonsterId);
+	debugC(6, kDebugFight, "isMonsterAlreadyFighting %d %d", monsterId, teamMonsterId);
 
 	for (int counter = 0; counter < teamMonsterId; ++counter) {
 		if (_teamMonsterIdArray[counter] == monsterId)
@@ -705,7 +705,7 @@ bool EfhEngine::isMonsterAlreadyFighting(int16 monsterId, int16 teamMonsterId) {
 }
 
 void EfhEngine::resetTeamMonsterEffects() {
-	debugC(6, kDebugEngine, "resetTeamMonsterEffects");
+	debugC(6, kDebugFight, "resetTeamMonsterEffects");
 	for (uint ctrMonsterId = 0; ctrMonsterId < 5; ++ctrMonsterId) {
 		for (uint ctrEffectId = 0; ctrEffectId < 9; ++ctrEffectId) {
 			_teamMonsterEffects[ctrMonsterId]._effect[ctrEffectId] = 0;
@@ -715,7 +715,7 @@ void EfhEngine::resetTeamMonsterEffects() {
 }
 
 void EfhEngine::resetTeamMonsterIdArray() {
-	debugC(6, kDebugEngine, "resetTeamMonsterIdArray");
+	debugC(6, kDebugFight, "resetTeamMonsterIdArray");
 
 	for (int i = 0; i < 5; ++i) {
 		_teamMonsterIdArray[i] = -1;
@@ -1143,7 +1143,7 @@ bool EfhEngine::sub1CB27() {
 }
 
 void EfhEngine::drawCombatScreen(int16 charId, bool whiteFl, bool drawFl) {
-	debugC(6, kDebugEngine, "drawCombatScreen %d %s %s", charId, whiteFl ? "True" : "False", drawFl ? "True" : "False");
+	debugC(6, kDebugFight, "drawCombatScreen %d %s %s", charId, whiteFl ? "True" : "False", drawFl ? "True" : "False");
 
 	for (uint counter = 0; counter < 2; ++counter) {
 		if (counter == 0 || drawFl) {
@@ -1163,20 +1163,25 @@ void EfhEngine::drawCombatScreen(int16 charId, bool whiteFl, bool drawFl) {
 }
 
 void EfhEngine::getXPAndSearchCorpse(int16 charId, Common::String namePt1, Common::String namePt2, int16 monsterId) {
-	debugC(3, kDebugEngine, "getXPAndSearchCorpse %d %s%s %d", charId, namePt1.c_str(), namePt2.c_str(), monsterId);
+	debugC(3, kDebugFight, "getXPAndSearchCorpse %d %s%s %d", charId, namePt1.c_str(), namePt2.c_str(), monsterId);
 
 	int16 oldXpLevel = getXPLevel(_npcBuf[charId]._xp);
 	_npcBuf[charId]._xp += kEncounters[_mapMonsters[monsterId]._monsterRef]._xpGiven;
 
 	if (getXPLevel(_npcBuf[charId]._xp) > oldXpLevel) {
 		generateSound(15);
-		int16 hpGain = getRandom(20) + getRandom(_npcBuf[charId]._infoScore[4]);
+		int16 hpGain = getRandom(20) + getRandom(_npcBuf[charId]._infoScore[4]); // "Stamina"
 		_npcBuf[charId]._hitPoints += hpGain;
 		_npcBuf[charId]._maxHP += hpGain;
+		// "Strength",
 		_npcBuf[charId]._infoScore[0] += getRandom(3) - 1;
+		// "Intelligence",
 		_npcBuf[charId]._infoScore[1] += getRandom(3) - 1;
+		// "Piety",
 		_npcBuf[charId]._infoScore[2] += getRandom(3) - 1;
+		// "Agility",
 		_npcBuf[charId]._infoScore[3] += getRandom(3) - 1;
+		// "Stamina",
 		_npcBuf[charId]._infoScore[4] += getRandom(3) - 1;
 	}
 
@@ -1321,7 +1326,7 @@ void EfhEngine::addReactionText(int16 id) {
 }
 
 void EfhEngine::sub1C4CA(bool whiteFl) {
-	debugC(5, kDebugEngine, "sub1C4CA %s", whiteFl ? "True" : "False");
+	debugC(5, kDebugFight, "sub1C4CA %s", whiteFl ? "True" : "False");
 
 	int16 textPosY = 20;
 	for (uint counter = 0; counter < 5; ++counter) {
@@ -1412,7 +1417,7 @@ int16 EfhEngine::sub1DEC8(int16 groupNumber) {
 }
 
 int16 EfhEngine::getCharacterScore(int16 charId, int16 itemId) {
-	debug("getCharacterScore %d %d", charId, itemId);
+	debugC(3, kDebugFight, "getCharacterScore %d %d", charId, itemId);
 
 	int16 totalScore = 0;
 	switch (_items[itemId]._range) {
@@ -1420,7 +1425,7 @@ int16 EfhEngine::getCharacterScore(int16 charId, int16 itemId) {
 		totalScore = _npcBuf[charId]._passiveScore[5] + _npcBuf[charId]._passiveScore[3] + _npcBuf[charId]._passiveScore[4];
 		totalScore += _npcBuf[charId]._infoScore[0] / 5;
 		totalScore += _npcBuf[charId]._infoScore[2] * 2,
-			totalScore += _npcBuf[charId]._infoScore[6] / 5;
+		totalScore += _npcBuf[charId]._infoScore[6] / 5;
 		totalScore += 2 * _npcBuf[charId]._infoScore[5] / 5;
 		break;
 	case 1:
@@ -1488,12 +1493,9 @@ int16 EfhEngine::getCharacterScore(int16 charId, int16 itemId) {
 
 	extraScore += _items[itemId].field_13;
 
-	int16 grandTotalScore = totalScore + extraScore;
-	if (grandTotalScore > 60)
-		grandTotalScore = 60;
+	int16 grandTotalScore = CLIP(totalScore + extraScore + 30, 5, 90);
 
-	int16 retVal = CLIP(grandTotalScore + 30, 5, 90);
-	return retVal;
+	return grandTotalScore;
 }
 
 bool EfhEngine::checkSpecialItemsOnCurrentPlace(int16 itemId) {
@@ -1501,13 +1503,13 @@ bool EfhEngine::checkSpecialItemsOnCurrentPlace(int16 itemId) {
 
 	switch (_techDataArr[_techId][_techDataId_MapPosX * 64 + _techDataId_MapPosY]) {
 	case 1:
-		if ((itemId < 0x58 || itemId > 0x68) && (itemId < 0x86 || itemId > 0x89) && (itemId < 0x74 || itemId > 0x76) && (itemId != 0x8C))
-			return true;
-		return false;
+		if ((itemId >= 0x58 && itemId <= 0x68) || (itemId >= 0x86 && itemId <= 0x89) || (itemId >= 0x74 && itemId <= 0x76) || itemId == 0x8C)
+			return false;
+		return true;
 	case 2:
-		if ((itemId < 0x61 || itemId > 0x63) && (itemId < 0x74 || itemId > 0x76) && (itemId < 0x86 || itemId > 0x89) && (itemId < 0x5B || itemId > 0x5E) && (itemId < 0x66 || itemId > 0x68) && (itemId != 0x8C))
-			return true;
-		return false;
+		if ((itemId >= 0x61 && itemId <= 0x63) || (itemId >= 0x74 && itemId <= 0x76) || (itemId >= 0x86 && itemId <= 0x89) || itemId == 0x5B || itemId == 0x5E || itemId == 0x66 || itemId == 0x68 || itemId == 0x8C)
+			return false;
+		return true;
 	default:
 		return true;
 	}
@@ -1541,6 +1543,103 @@ bool EfhEngine::hasAdequateDefense_2(int16 charId, uint8 attackType) {
 			return true;
 	}
 	return false;
+}
+
+// The parameter isn't used in the original
+void EfhEngine::sub1BE9A(int16 monsterId) {
+	debug("sub1BE9A %d", monsterId);
+
+	// sub1BE9A - 1rst loop counter1_monsterId - Start
+	for (uint counter1 = 0; counter1 < 5; ++counter1) {
+		if (countMonsterGroupMembers(counter1))
+			continue;
+
+		for (uint counter2 = 0; counter2 < 9; ++counter2) {
+			_mapMonsters[_teamMonsterIdArray[counter1]]._hitPoints[counter2] = 0;
+			_teamMonsterEffects[counter1]._effect[counter2] = 0;
+			_teamMonsterEffects[counter1]._duration[counter2] = 0;
+		}
+
+		_teamMonsterIdArray[counter1] = -1;
+
+		// CHECKME: counter1 is not incrementing, which is very, very suspicious as we are copying over and over to the same destination
+		// if the purpose is compact the array, it should be handle differently
+		for (uint counter2 = counter1 + 1; counter2 < 5; ++counter2) {
+			for (uint var8 = 0; var8 < 9; ++var8) {
+				_teamMonsterEffects[counter1]._effect[var8] = _teamMonsterEffects[counter2]._effect[var8];
+				_teamMonsterEffects[counter1]._duration[var8] = _teamMonsterEffects[counter2]._duration[var8];
+			}
+			_teamMonsterIdArray[counter1] = _teamMonsterIdArray[counter2];
+		}
+	}
+	// sub1BE9A - 1rst loop counter1_monsterId - End
+
+	int16 teamMonsterId = -1;
+	for (uint counter1 = 0; counter1 < 5; ++counter1) {
+		if (_teamMonsterIdArray[counter1] == -1) {
+			teamMonsterId = counter1;
+			break;
+		}
+	}
+
+	if (teamMonsterId != -1) {
+		// sub1BE9A - loop var2 - Start
+		for (int var2 = 1; var2 < 3; ++var2) {
+			if (teamMonsterId >= 5)
+				break;
+
+			for (uint ctrMapMonsterId = 0; ctrMapMonsterId < 64; ++ctrMapMonsterId) {
+				if (_mapMonsters[ctrMapMonsterId]._fullPlaceId == 0xFF)
+					continue;
+
+				if (((_mapMonsters[ctrMapMonsterId]._possessivePronounSHL6 & 0x3F) == 0x3F && !isNpcATeamMember(_mapMonsters[ctrMapMonsterId]._npcId)) || (_mapMonsters[ctrMapMonsterId]._possessivePronounSHL6 & 0x3F) <= 0x3D) {
+					if (checkIfMonsterOnSameLargeMapPlace(ctrMapMonsterId)) {
+						bool monsterActiveFound = false;
+						for (uint ctrSubId = 0; ctrSubId < 9; ++ctrSubId) {
+							if (_mapMonsters[ctrMapMonsterId]._hitPoints[ctrSubId] > 0) {
+								monsterActiveFound = true;
+								break;
+							}
+						}
+
+						if (!monsterActiveFound)
+							continue;
+
+						if (computeMonsterGroupDistance(ctrMapMonsterId) > var2)
+							continue;
+
+						if (isMonsterAlreadyFighting(ctrMapMonsterId, teamMonsterId))
+							continue;
+
+						_teamMonsterIdArray[teamMonsterId] = ctrMapMonsterId;
+
+						// The original at this point was doing a loop on counter1, which is not a good idea as
+						// it was resetting the counter1 to 9 whatever its value before the loop.
+						// I therefore decided to use another counter as it looks like an original misbehavior/bug.
+						for (uint ctrEffectId = 0; ctrEffectId < 9; ++ctrEffectId) {
+							_teamMonsterEffects[teamMonsterId]._effect[ctrEffectId] = 0;
+						}
+
+						if (++teamMonsterId >= 5)
+							break;
+					}
+				}
+			}
+		}
+		// sub1BE9A - loop var2 - End
+	}
+
+	if (teamMonsterId == -1 || teamMonsterId > 4)
+		return;
+
+	// sub1BE9A - last loop counter1_monsterId - Start
+	for (int16 ctrTeamMonsterId = teamMonsterId; ctrTeamMonsterId < 5; ++ctrTeamMonsterId) {
+		_teamMonsterIdArray[ctrTeamMonsterId] = -1;
+		for (uint ctrEffectId = 0; ctrEffectId < 9; ++ctrEffectId) {
+			_teamMonsterEffects[ctrTeamMonsterId]._effect[ctrEffectId] = (int16)0x8000;
+		}
+	}
+	// sub1BE9A - last loop counter1_monsterId - End
 }
 
 } // End of namespace Efh

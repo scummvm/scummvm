@@ -398,8 +398,14 @@ void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 cha
 
 		displayStringAtTextPos(buffer);
 		setTextPos(163, textPosY);
-		displayStringAtTextPos(kSkillArray[_menuStatItemArr[counter]]);
-		buffer = Common::String::format("%d", _npcBuf[charId]._activeScore[_menuStatItemArr[counter]]);
+		int16 scoreId = _menuStatItemArr[counter];
+		displayStringAtTextPos(kSkillArray[scoreId]);
+		if (scoreId < 15)
+			buffer = Common::String::format("%d", _npcBuf[charId]._activeScore[_menuStatItemArr[counter]]);
+		else if (scoreId < 26)
+			buffer = Common::String::format("%d", _npcBuf[charId]._passiveScore[_menuStatItemArr[counter] - 15]);
+		else if (scoreId < 37)
+			buffer = Common::String::format("%d", _npcBuf[charId]._infoScore[_menuStatItemArr[counter] - 26]);
 		setTextPos(278, textPosY);
 		displayStringAtTextPos(buffer);
 		setTextColorRed();
@@ -468,7 +474,7 @@ void EfhEngine::prepareStatusMenu(int16 windowId, int16 menuId, int16 curMenuLin
 }
 
 void EfhEngine::displayWindowAndStatusMenu(int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
-	debug("displayWindowAndStatusMenu %d %d %d %d", charId, windowId, menuId, curMenuLine);
+	debugC(6, kDebugEngine, "displayWindowAndStatusMenu %d %d %d %d", charId, windowId, menuId, curMenuLine);
 
 	for (int counter = 0; counter < 2; ++counter) {
 		displayWindow(_menuBuf, 0, 0, _hiResImageBuf);

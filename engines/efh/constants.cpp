@@ -342,6 +342,7 @@ const Encounter kEncounters[] {
 };
 
 const char kSkillArray[37][20] = {
+// Active Scores
 	"Flying",
 	"Swimming",
 	"Electrical",
@@ -357,6 +358,7 @@ const char kSkillArray[37][20] = {
 	"Explosives",
 	"Chemistry",
 	"Steal",
+// Passive Scores
 	"Dueling",
 	"Marksmanship",
 	"Fist Fighting",
@@ -368,6 +370,7 @@ const char kSkillArray[37][20] = {
 	"Automatic/SMG",
 	"Archery",
 	"Rocket Lncher",
+// Info Scores
 	"Strength",
 	"Intelligence",
 	"Piety",
