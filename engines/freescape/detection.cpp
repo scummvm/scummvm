@@ -132,7 +132,18 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_TESTING,
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
-
+	{
+		"driller", // Commodore Force - Jan 94
+		"",
+		{
+			{"DRILLER.C64.EXTRACTED", 0, "511778d3167ff7504d905df507a03ac5", 63490},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformC64,
+		ADGF_TESTING,
+		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
+	},
 	{
 		"driller",
 		"",

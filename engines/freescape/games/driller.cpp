@@ -554,8 +554,10 @@ void DrillerEngine::loadAssetsFullGame() {
 			loadGlobalObjects(&file, 0x1855);
 		} else if (_targetName.hasPrefix("driller")) {
 			file.open("driller.c64.extracted");
-			load8bitBinary(&file, 0x63a6, 4);
-			//load8bitBinary(&file, 0x58f4, 4);
+			loadMessagesFixedSize(&file, 0x167a - 0x400, 14, 20);
+			//loadFonts(&file, 0xae54);
+			load8bitBinary(&file, 0x8e02 - 0x400, 4);
+			loadGlobalObjects(&file, 0x1855 - 0x400);
 		}
 	} else if (_renderMode == Common::kRenderEGA) {
 		loadBundledImages();
