@@ -1043,7 +1043,7 @@ uint getSizeNextPOT(uint size) {
 
 - (void)handleKeyPress:(unichar)c {
 	if (c == '`') {
-		[self addEvent:InternalEvent(kInputKeyPressed, '\E', 0)];
+		[self addEvent:InternalEvent(kInputKeyPressed, '\033', 0)];
 	} else {
 		[self addEvent:InternalEvent(kInputKeyPressed, c, 0)];
 	}
