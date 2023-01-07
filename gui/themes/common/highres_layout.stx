@@ -386,6 +386,21 @@
 					height = 'Globals.Line.Height'
 			/>
 			<space size = '10' />
+			<layout type = 'horizontal'  spacing = '5' padding = '10, 0, 0, 0'>
+				<widget name = 'SearchPic'
+						width = '16'
+						height = '17'
+						rtl = 'no'
+				/>
+				<widget name = 'Search'
+						width = '120'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'SearchClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
+			</layout>
 			<widget name = 'List'/>
 			<layout type = 'vertical' padding = '0, 0, 16, 0'>
 				<layout type = 'horizontal' padding = '0, 0, 0, 0'>

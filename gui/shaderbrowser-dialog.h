@@ -41,6 +41,7 @@ public:
 	ShaderBrowserDialog();
 
 	void open() override;
+	void reflowLayout() override;
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
@@ -50,6 +51,14 @@ protected:
 	EditTextWidget   *_fileName;
 	ListWidget	     *_fileList;
 	Common::SearchSet _shaderSet;
+	Common::String	  _search;
+
+	EditTextWidget   *_searchWidget;
+#ifndef DISABLE_FANCY_THEMES
+	GraphicsWidget	 *_searchPic;
+#endif
+	StaticTextWidget *_searchDesc;
+	ButtonWidget     *_searchClearButton;
 
 	void updateListing();
 	void normalieFileName();

@@ -28,6 +28,7 @@
 
 #include "common/translation.h"
 
+#include "gui/ThemeEval.h"
 #include "gui/widgets/list.h"
 #include "gui/browser.h"
 #include "gui/gui-manager.h"
@@ -38,6 +39,9 @@ namespace GUI {
 enum {
 	kChooseCmd = 'Chos',
 	kChooseFileCmd = 'File',
+	kSearchCmd = 'SRCH',
+	kListSearchCmd = 'LSSR',
+	kSearchClearCmd = 'SRCL',
 };
 
 const char *kFileMask = "*.glslp";
@@ -48,6 +52,20 @@ ShaderBrowserDialog::ShaderBrowserDialog() : Dialog("ShaderBrowser") {
 	new StaticTextWidget(this, "ShaderBrowser.Headline", _("Choose shader for loading"));
 
 	_fileName = new EditTextWidget(this, "ShaderBrowser.Filename", Common::U32String());
+
+	// Search box
+	_searchDesc = nullptr;
+#ifndef DISABLE_FANCY_THEMES
+	_searchPic = nullptr;
+	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+		_searchPic = new GraphicsWidget(this, "ShaderBrowser.SearchPic", _("Search in game list"));
+		_searchPic->setGfxFromTheme(ThemeEngine::kImageSearch);
+	} else
+#endif
+		_searchDesc = new StaticTextWidget(this, "ShaderBrowser.SearchDesc", _("Search:"));
+
+	_searchWidget = new EditTextWidget(this, "ShaderBrowser.Search", _search, Common::U32String(), kSearchCmd);
+	_searchClearButton = addClearButton(this, "ShaderBrowser.SearchClearButton", kSearchClearCmd);
 
 	// Add file list
 	_fileList = new ListWidget(this, "ShaderBrowser.List");
@@ -68,6 +86,28 @@ void ShaderBrowserDialog::open() {
 	Common::generateZipSet(_shaderSet, "shaders.dat", "shaders*.dat");
 
 	updateListing();
+}
+
+void ShaderBrowserDialog::reflowLayout() {
+#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+		if (!_searchPic)
+			_searchPic = new GraphicsWidget(this, "ShaderBrowser.SearchPic", _("Search in game list"));
+		_searchPic->setGfxFromTheme(ThemeEngine::kImageSearch);
+	} else {
+		if (_searchPic) {
+			removeWidget(_searchPic);
+			g_gui.addToTrash(_searchPic, this);
+			_searchPic = nullptr;
+		}
+	}
+#endif
+
+	removeWidget(_searchClearButton);
+	g_gui.addToTrash(_searchClearButton, this);
+	_searchClearButton = addClearButton(this, "ShaderBrowser.SearchClearButton", kSearchClearCmd);
+
+	Dialog::reflowLayout();
 }
 
 void ShaderBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -92,6 +132,15 @@ void ShaderBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 		break;
 	}
+	case kSearchCmd:
+		// Update the active search filter.
+		_fileList->setFilter(_searchWidget->getEditString());
+		break;
+	case kSearchClearCmd:
+		// Reset the active search filter, thus showing all games again
+		_searchWidget->setEditString(Common::U32String());
+		_fileList->setFilter(Common::U32String());
+		break;
 	case kListSelectionChangedCmd:
 		_fileName->setEditString(_fileList->getList().operator[](_fileList->getSelected()));
 		_fileName->markAsDirty();
