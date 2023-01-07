@@ -402,9 +402,9 @@ Common::SeekableReadStream *parseEDSK(const Common::String filename) {
 	if (0) { // Useful to debug where exactly each object is located in memory once it is parsed
 		i = 0;
 		while(i < j) {
-			debugN("%0.5x: ", i);
+			debugN("%05x: ", i);
 			for (int k = 0; k <= 16; k++) {
-				debugN("%0.2x ", memBuffer[i]);
+				debugN("%02x ", memBuffer[i]);
 				i++;
 			}
 			debugN("\n");

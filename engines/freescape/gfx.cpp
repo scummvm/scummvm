@@ -113,6 +113,8 @@ void Renderer::extractC64Indexes(uint8 cm1, uint8 cm2, uint8 &i1, uint8 &i2) {
 	} else if (cm1 == 0x41 && cm2 == 0x52) {
 		i1 = 0;
 		i2 = 3;
+// Covered by the default of i1 = 0, i2 = 0
+#if 0
 	} else if (cm1 == 0x5a && cm2 == 0xa5) {
 		i1 = 0;
 		i2 = 0;
@@ -125,6 +127,7 @@ void Renderer::extractC64Indexes(uint8 cm1, uint8 cm2, uint8 &i1, uint8 &i2) {
 	} else if (cm1 == 0xfb && cm2 == 0xfe) {
 		i1 = 0;
 		i2 = 0;
+#endif
 	} else {
 		i1 = 0;
 		i2 = 0;
