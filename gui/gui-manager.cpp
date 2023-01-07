@@ -20,15 +20,8 @@
  */
 
 #include "common/events.h"
-#include "common/system.h"
-#include "common/util.h"
-#include "common/config-manager.h"
-#include "common/algorithm.h"
-#include "common/file.h"
-#include "common/rect.h"
-#include "common/textconsole.h"
 #include "common/translation.h"
-#include "common/compression/unzip.h"
+#include "common/zip-set.h"
 #include "gui/EventRecorder.h"
 
 #include "backends/keymapper/action.h"
@@ -113,71 +106,12 @@ GuiManager::~GuiManager() {
 	delete _theme;
 }
 
-struct ArchiveMemberListBackComparator {
-	bool operator()(const Common::ArchiveMemberPtr &a, const Common::ArchiveMemberPtr &b) {
-		return a->getName() > b->getName();
-	}
-};
 void GuiManager::initIconsSet() {
 	Common::StackLock lock(_iconsMutex);
-	Common::Archive *dat;
 
 	_iconsSet.clear();
 
-	dat = nullptr;
-
-	const char fname[] = "gui-icons.dat";
-
-	if (ConfMan.hasKey("themepath")) {
-		Common::FSNode *fs = new Common::FSNode(normalizePath(ConfMan.get("themepath") + "/" + fname, '/'));
-		if (fs->exists()) {
-			dat = Common::makeZipArchive(*fs);
-		}
-		delete fs;
-	}
-
-	if (!dat) {
-		Common::File *file = new Common::File;
-		if (ConfMan.hasKey("iconspath"))
-			file->open(normalizePath(ConfMan.get("iconspath") + "/" + fname, '/'));
-
-		if (!file->isOpen())
-			file->open(fname);
-
-		if (file->isOpen())
-			dat = Common::makeZipArchive(file);
-
-		if (!dat) {
-			warning("GUI: Could not find '%s'", fname);
-			delete file;
-		}
-	}
-
-	if (dat) {
-		_iconsSet.add(fname, dat);
-		_iconsSetChanged = true;
-		debug(2, "GUI: Loaded icon file: %s", fname);
-	}
-
-	if (!ConfMan.get("iconspath").empty()) {
-		Common::FSDirectory *iconDir = new Common::FSDirectory(ConfMan.get("iconspath"));
-		Common::ArchiveMemberList iconFiles;
-
-		iconDir->listMatchingMembers(iconFiles, "gui-icons*.dat");
-		Common::sort(iconFiles.begin(), iconFiles.end(), ArchiveMemberListBackComparator());
-
-		for (Common::ArchiveMemberList::iterator ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
-			dat = Common::makeZipArchive((*ic)->createReadStream());
-
-			if (dat) {
-				_iconsSet.add((*ic)->getName(), dat);
-				_iconsSetChanged = true;
-				debug(2, "GUI: Loaded icon file: %s", (*ic)->getName().c_str());
-			}
-		}
-
-		delete iconDir;
-	}
+	_iconsSetChanged = Common::generateZipSet(_iconsSet, "gui-icons.dat", "gui-icons*.dat");
 }
 
 void GuiManager::computeScaleFactor() {

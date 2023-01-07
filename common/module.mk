@@ -39,7 +39,8 @@ MODULE_OBJS := \
 	unicode-bidi.o \
 	ustr.o \
 	util.o \
-	xpfloat.o
+	xpfloat.o \
+	zip-set.o
 
 ifdef ENABLE_EVENTRECORDER
 MODULE_OBJS += \
