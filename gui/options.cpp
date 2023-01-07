@@ -20,6 +20,7 @@
  */
 
 #include "gui/browser.h"
+#include "gui/shaderbrowser-dialog.h"
 #include "gui/themebrowser.h"
 #include "gui/message.h"
 #include "gui/gui-manager.h"
@@ -1150,13 +1151,12 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kChooseShaderCmd: {
-		BrowserDialog browser(_("Select shader"), false);
+		ShaderBrowserDialog browser;
 		if (browser.runModal() > 0) {
 			// User made his choice...
-			Common::FSNode file(browser.getResult());
-			_shader->setLabel(file.getPath());
+			_shader->setLabel(browser.getResult());
 
-			if (!file.getPath().empty() && (file.getPath().decode() != _c("None", "path")))
+			if (!browser.getResult().empty() && (browser.getResult().decode() != _c("None", "path")))
 				_shaderClearButton->setEnabled(true);
 			else
 				_shaderClearButton->setEnabled(false);

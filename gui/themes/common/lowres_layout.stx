@@ -334,6 +334,29 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'ShaderBrowser' overlays = 'screen' inset = '16' shading = 'dim'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16'>
+			<widget name = 'Headline'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'Filename'
+					height = 'Globals.Line.Height'
+			/>
+			<space size = '5' />
+			<widget name = 'List'/>
+			<layout type = 'vertical' padding = '0, 0, 16, 0'>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+					<widget name = 'Cancel'
+							type = 'Button'
+					/>
+					<widget name = 'Choose'
+							type = 'Button'
+					/>
+				</layout>
+			</layout>
+		</layout>
+	</dialog>
+
 	<dialog name = 'GlobalOptions' overlays = 'screen' inset = '16' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'TabWidget' type = 'TabWidget'/>
