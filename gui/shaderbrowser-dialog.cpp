@@ -47,11 +47,12 @@ enum {
 const char *kFileMask = "*.glslp";
 const char *kFileExt  = "glslp";
 
-ShaderBrowserDialog::ShaderBrowserDialog() : Dialog("ShaderBrowser") {
+ShaderBrowserDialog::ShaderBrowserDialog(const Common::String &initialSelection) : Dialog("ShaderBrowser") {
 
-	new StaticTextWidget(this, "ShaderBrowser.Headline", _("Choose shader for loading"));
+	new StaticTextWidget(this, "ShaderBrowser.Headline", _("Choose shader from the list below (or pick a file instead)"));
 
 	_fileName = new EditTextWidget(this, "ShaderBrowser.Filename", Common::U32String());
+	_fileName->setEditString(initialSelection);
 
 	// Search box
 	_searchDesc = nullptr;
@@ -66,6 +67,8 @@ ShaderBrowserDialog::ShaderBrowserDialog() : Dialog("ShaderBrowser") {
 
 	_searchWidget = new EditTextWidget(this, "ShaderBrowser.Search", _search, Common::U32String(), kSearchCmd);
 	_searchClearButton = addClearButton(this, "ShaderBrowser.SearchClearButton", kSearchClearCmd);
+
+	new ButtonWidget(this, "ShaderBrowser.BrowseFile", _("Pick file instead..."), _("Pick shader from file system"), kChooseFileCmd);
 
 	// Add file list
 	_fileList = new ListWidget(this, "ShaderBrowser.List");
@@ -128,7 +131,8 @@ void ShaderBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			Common::FSNode file(browser.getResult());
 			_fileName->setEditString(file.getPath());
 
-			g_gui.scheduleTopDialogRedraw();
+			setResult(1);
+			close();
 		}
 		break;
 	}

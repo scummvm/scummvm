@@ -1151,7 +1151,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kChooseShaderCmd: {
-		ShaderBrowserDialog browser;
+		ShaderBrowserDialog browser(ConfMan.get("shader", _domain));
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			_shader->setLabel(browser.getResult());

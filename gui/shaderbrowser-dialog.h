@@ -38,7 +38,7 @@ enum {
 
 class ShaderBrowserDialog : public Dialog {
 public:
-	ShaderBrowserDialog();
+	ShaderBrowserDialog(const Common::String &initialSelection);
 
 	void open() override;
 	void reflowLayout() override;

@@ -410,6 +410,10 @@
 					<widget name = 'Choose'
 							type = 'Button'
 					/>
+					<space/>
+					<widget name = 'BrowseFile'
+							type = 'Button'
+					/>
 				</layout>
 			</layout>
 		</layout>
