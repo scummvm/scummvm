@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GUI_DOWNLOADICONSDIALOG_H
-#define GUI_DOWNLOADICONSDIALOG_H
+#ifndef GUI_DOWNLOADPACKSDIALOG_H
+#define GUI_DOWNLOADPACKSDIALOG_H
 
 #include "gui/dialog.h"
 #include "common/str.h"
@@ -45,7 +45,7 @@ enum IconProcessState {
 	kDownloadComplete
 };
 
-class DownloadIconsDialog : public Dialog, public CommandSender {
+class DownloadPacksDialog : public Dialog, public CommandSender {
 	StaticTextWidget *_statusText;
 	StaticTextWidget *_errorText;
 	StaticTextWidget *_percentLabel;
@@ -65,8 +65,8 @@ class DownloadIconsDialog : public Dialog, public CommandSender {
 	void refreshWidgets();
 
 public:
-	DownloadIconsDialog();
-	~DownloadIconsDialog() override;
+	DownloadPacksDialog();
+	~DownloadPacksDialog() override;
 
 	void open() override;
 	void close() override;

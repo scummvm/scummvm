@@ -950,7 +950,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GlobalOptions_DownloadIconsDialog' overlays = 'Dialog.GlobalOptions' shading = 'dim'>
+	<dialog name = 'GlobalOptions_DownloadPacksDialog' overlays = 'Dialog.GlobalOptions' shading = 'dim'>
 		<layout type = 'vertical' padding = '8, 8, 8, 4' spacing = '8'>
 			<widget name = 'StatusText'
 					height = 'Globals.Line.Height'

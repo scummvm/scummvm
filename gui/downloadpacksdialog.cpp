@@ -47,7 +47,7 @@ enum {
 };
 
 struct DialogState {
-	DownloadIconsDialog *dialog;
+	DownloadPacksDialog *dialog;
 	Networking::Session session;
 	Common::HashMap<Common::String, uint32> fileHash;
 	IconProcessState state;
@@ -116,7 +116,7 @@ void DialogState::downloadListCallback(Networking::DataResponse r) {
 
 		size_t pos = s.findFirstOf(',');
 		if (pos == Common::String::npos) {
-			warning("DownloadIconsDialog: wrong string format at line %d: <%s>", nline, s.c_str());
+			warning("DownloadPacksDialog: wrong string format at line %d: <%s>", nline, s.c_str());
 			continue;
 		}
 
@@ -168,26 +168,26 @@ static uint32 getDownloadSpeed() {
 	return speed;
 }
 
-DownloadIconsDialog::DownloadIconsDialog() :
-	Dialog("GlobalOptions_DownloadIconsDialog"), CommandSender(this), _close(false) {
+DownloadPacksDialog::DownloadPacksDialog() :
+	Dialog("GlobalOptions_DownloadPacksDialog"), CommandSender(this), _close(false) {
 
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
-	_statusText = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.StatusText", _("Downloading icons list..."));
-	_errorText = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.ErrorText", Common::U32String(""));
+	_statusText = new StaticTextWidget(this, "GlobalOptions_DownloadPacksDialog.StatusText", _("Downloading icons list..."));
+	_errorText = new StaticTextWidget(this, "GlobalOptions_DownloadPacksDialog.ErrorText", Common::U32String(""));
 
 	uint32 progress = getDownloadingProgress();
-	_progressBar = new SliderWidget(this, "GlobalOptions_DownloadIconsDialog.ProgressBar");
+	_progressBar = new SliderWidget(this, "GlobalOptions_DownloadPacksDialog.ProgressBar");
 	_progressBar->setMinValue(0);
 	_progressBar->setMaxValue(100);
 	_progressBar->setValue(progress);
 	_progressBar->setEnabled(false);
-	_percentLabel = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.PercentText", Common::String::format("%u %%", progress));
-	_downloadSizeLabel = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.DownloadSize", Common::U32String());
-	_downloadSpeedLabel = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.DownloadSpeed", Common::U32String());
-	_cancelButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.MainButton", _("Cancel download"), Common::U32String(), kCleanupCmd);
-	_closeButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.CloseButton", _("Hide"), Common::U32String(), kCloseCmd);
-	_clearCacheButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.ResetButton", _("Clear Cache"), Common::U32String(), kClearCacheCmd);
+	_percentLabel = new StaticTextWidget(this, "GlobalOptions_DownloadPacksDialog.PercentText", Common::String::format("%u %%", progress));
+	_downloadSizeLabel = new StaticTextWidget(this, "GlobalOptions_DownloadPacksDialog.DownloadSize", Common::U32String());
+	_downloadSpeedLabel = new StaticTextWidget(this, "GlobalOptions_DownloadPacksDialog.DownloadSpeed", Common::U32String());
+	_cancelButton = new ButtonWidget(this, "GlobalOptions_DownloadPacksDialog.MainButton", _("Cancel download"), Common::U32String(), kCleanupCmd);
+	_closeButton = new ButtonWidget(this, "GlobalOptions_DownloadPacksDialog.CloseButton", _("Hide"), Common::U32String(), kCloseCmd);
+	_clearCacheButton = new ButtonWidget(this, "GlobalOptions_DownloadPacksDialog.ResetButton", _("Clear Cache"), Common::U32String(), kClearCacheCmd);
 
 	if (!g_state) {
 		g_state = new DialogState;
@@ -206,23 +206,23 @@ DownloadIconsDialog::DownloadIconsDialog() :
 	}
 }
 
-DownloadIconsDialog::~DownloadIconsDialog() {
+DownloadPacksDialog::~DownloadPacksDialog() {
 }
 
-void DownloadIconsDialog::open() {
+void DownloadPacksDialog::open() {
 	Dialog::open();
 	reflowLayout();
 	g_gui.scheduleTopDialogRedraw();
 }
 
-void DownloadIconsDialog::close() {
+void DownloadPacksDialog::close() {
 	if (g_state)
 		g_state->dialog = nullptr;
 
 	Dialog::close();
 }
 
-void DownloadIconsDialog::setState(IconProcessState state) {
+void DownloadPacksDialog::setState(IconProcessState state) {
 	g_state->state = state;
 
 	switch (state) {
@@ -289,7 +289,7 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 	}
 }
 
-void DownloadIconsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+void DownloadPacksDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kCleanupCmd:
 		{
@@ -326,7 +326,7 @@ void DownloadIconsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 }
 
-void DownloadIconsDialog::handleTickle() {
+void DownloadPacksDialog::handleTickle() {
 	if (_close) {
 		close();
 		_close = false;
@@ -342,26 +342,26 @@ void DownloadIconsDialog::handleTickle() {
 	Dialog::handleTickle();
 }
 
-void DownloadIconsDialog::reflowLayout() {
+void DownloadPacksDialog::reflowLayout() {
 	Dialog::reflowLayout();
 	refreshWidgets();
 }
 
-Common::U32String DownloadIconsDialog::getSizeLabelText() {
+Common::U32String DownloadPacksDialog::getSizeLabelText() {
 	Common::String downloaded, downloadedUnits, total, totalUnits;
 	downloaded = getHumanReadableBytes(g_state->downloadedSize, downloadedUnits);
 	total = getHumanReadableBytes(g_state->totalSize, totalUnits);
 	return Common::U32String::format(_("Downloaded %s %S / %s %S"), downloaded.c_str(), _(downloadedUnits).c_str(), total.c_str(), _(totalUnits).c_str());
 }
 
-Common::U32String DownloadIconsDialog::getSpeedLabelText() {
+Common::U32String DownloadPacksDialog::getSpeedLabelText() {
 	Common::String speed, speedUnits;
 	speed = getHumanReadableBytes(getDownloadSpeed(), speedUnits);
 	speedUnits += "/s";
 	return Common::U32String::format(_("Download speed: %s %S"), speed.c_str(), _(speedUnits).c_str());
 }
 
-void DownloadIconsDialog::refreshWidgets() {
+void DownloadPacksDialog::refreshWidgets() {
 	uint32 progress = getDownloadingProgress();
 	_percentLabel->setLabel(Common::String::format("%u %%", progress));
 	_downloadSizeLabel->setLabel(getSizeLabelText());
@@ -369,14 +369,14 @@ void DownloadIconsDialog::refreshWidgets() {
 	_progressBar->setValue(progress);
 }
 
-void DownloadIconsDialog::setError(Common::U32String &msg) {
+void DownloadPacksDialog::setError(Common::U32String &msg) {
 	_errorText->setLabel(msg);
 
 	_cancelButton->setLabel(_("Close"));
 	_cancelButton->setCmd(kCleanupCmd);
 }
 
-void DownloadIconsDialog::calculateList() {
+void DownloadPacksDialog::calculateList() {
 	Common::String iconsPath = ConfMan.get("iconspath");
 	if (iconsPath.empty()) {
 		Common::U32String str(_("ERROR: No icons path set"));
@@ -422,7 +422,7 @@ void DownloadIconsDialog::calculateList() {
 	setState(kDownloadStateListCalculated);
 }
 
-void DownloadIconsDialog::clearCache() {
+void DownloadPacksDialog::clearCache() {
 	Common::String iconsPath = ConfMan.get("iconspath");
 	if (iconsPath.empty()) {
 		Common::U32String str(_("ERROR: No icons path set"));
