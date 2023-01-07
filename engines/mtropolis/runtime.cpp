@@ -4579,6 +4579,8 @@ bool Runtime::runFrame() {
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	if (_debugger)
 		_debugger->runFrame(realMSec);
+#else
+	(void)realMSec;
 #endif
 
 	// Frame completed

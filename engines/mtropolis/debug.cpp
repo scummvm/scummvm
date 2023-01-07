@@ -29,6 +29,7 @@
 #include "mtropolis/render.h"
 #include "mtropolis/runtime.h"
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
 
 namespace MTropolis {
 
@@ -1581,3 +1582,5 @@ void Debugger::scanDebuggableStatus(IDebuggable *debuggable, Common::HashMap<Com
 
 
 } // End of namespace MTropolis
+
+#endif
