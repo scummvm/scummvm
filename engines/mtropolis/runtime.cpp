@@ -8398,6 +8398,12 @@ MiniscriptInstructionOutcome VisualElement::scriptSetVisibility(MiniscriptThread
 	// FIXME: Need to make this fire Show/Hide events??
 	if (result.getType() == DynamicValueTypes::kBoolean) {
 		const bool targetValue = result.getBool();
+
+		// Weird quirk: The element's visible flag reads as "false" until initial Show events fire, but
+		// setting "visible" here prevents it from showing.  This is necessary for the vidbots in Obsidian's
+		// bureau area, to make them appear turned off initially.
+		_visibleByDefault = targetValue;
+
 		if (_visible != targetValue) {
 			_visible = targetValue;
 			thread->getRuntime()->setSceneGraphDirty();
