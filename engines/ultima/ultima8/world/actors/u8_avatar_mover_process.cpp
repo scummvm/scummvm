@@ -65,6 +65,10 @@ void U8AvatarMoverProcess::handleHangingMode() {
 		_mouseButton[1].setState(MBS_HANDLED);
 	}
 
+	if (!_mouseButton[1].isState(MBS_DOWN)) {
+		clearMovementFlag(MOVE_MOUSE_DIRECTION);
+	}
+
 	// if left mouse is down, try to climb up
 	if (_mouseButton[0].isState(MBS_DOWN) &&
 			(!_mouseButton[0].isState(MBS_HANDLED) || m0clicked)) {
