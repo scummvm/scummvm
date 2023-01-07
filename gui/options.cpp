@@ -3110,7 +3110,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 
 #ifdef USE_LIBCURL
 	case kUpdateIconsCmd: {
-		DownloadPacksDialog dia;
+		DownloadPacksDialog dia(_("icon packs"), "LIST", "gui-icons*.dat");
 		dia.runModal();
 		break;
 	}

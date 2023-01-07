@@ -55,8 +55,14 @@ struct DialogState {
 	uint32 totalSize;
 	uint32 totalFiles;
 	uint32 startTime;
+	const char *listfname;
 
-	DialogState() { state = kDownloadStateNone; downloadedSize = totalSize = totalFiles = startTime = 0; dialog = nullptr; }
+	DialogState(const char *fname) {
+		listfname = fname;
+		state = kDownloadStateNone;
+		downloadedSize = totalSize = totalFiles = startTime = 0;
+		dialog = nullptr;
+	}
 
 	void downloadList();
 	void proceedDownload();
@@ -71,7 +77,7 @@ private:
 
 
 void DialogState::downloadList() {
-	Networking::SessionRequest *rq = session.get("https://downloads.scummvm.org/frs/icons/LIST", "",
+	Networking::SessionRequest *rq = session.get(Common::String::format("https://downloads.scummvm.org/frs/icons/%s", listfname), "",
 		new Common::Callback<DialogState, Networking::DataResponse>(this, &DialogState::downloadListCallback),
 		new Common::Callback<DialogState, Networking::ErrorResponse>(this, &DialogState::errorCallback),
 		true);
@@ -168,12 +174,14 @@ static uint32 getDownloadSpeed() {
 	return speed;
 }
 
-DownloadPacksDialog::DownloadPacksDialog() :
-	Dialog("GlobalOptions_DownloadPacksDialog"), CommandSender(this), _close(false) {
+DownloadPacksDialog::DownloadPacksDialog(Common::U32String packname, const char *listfname, const char *packsglob) :
+	Dialog("GlobalOptions_DownloadPacksDialog"), CommandSender(this), _close(false), _packname(packname),
+	_packsglob(packsglob) {
 
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
-	_statusText = new StaticTextWidget(this, "GlobalOptions_DownloadPacksDialog.StatusText", _("Downloading icons list..."));
+	// I18N: String like "Downloading icon packs list..."
+	_statusText = new StaticTextWidget(this, "GlobalOptions_DownloadPacksDialog.StatusText", Common::U32String::format(_("Downloading %S list..."), _packname.c_str()));
 	_errorText = new StaticTextWidget(this, "GlobalOptions_DownloadPacksDialog.ErrorText", Common::U32String(""));
 
 	uint32 progress = getDownloadingProgress();
@@ -190,7 +198,7 @@ DownloadPacksDialog::DownloadPacksDialog() :
 	_clearCacheButton = new ButtonWidget(this, "GlobalOptions_DownloadPacksDialog.ResetButton", _("Clear Cache"), Common::U32String(), kClearCacheCmd);
 
 	if (!g_state) {
-		g_state = new DialogState;
+		g_state = new DialogState(listfname);
 
 		g_state->dialog = this;
 
@@ -228,7 +236,7 @@ void DownloadPacksDialog::setState(IconProcessState state) {
 	switch (state) {
 	case kDownloadStateNone:
 	case kDownloadStateList:
-		_statusText->setLabel(_("Downloading icons list..."));
+		_statusText->setLabel(Common::U32String::format(_("Downloading %S list..."), _packname.c_str()));
 		_cancelButton->setLabel(_("Cancel download"));
 		_cancelButton->setCmd(kCleanupCmd);
 		_closeButton->setVisible(true);
@@ -238,7 +246,7 @@ void DownloadPacksDialog::setState(IconProcessState state) {
 		break;
 
 	case kDownloadStateListDownloaded:
-		_statusText->setLabel(Common::U32String::format(_("Downloading icons list... %d entries"), g_state->fileHash.size()));
+		_statusText->setLabel(Common::U32String::format(_("Downloading %S list... %d entries"), _packname.c_str(), g_state->fileHash.size()));
 		_cancelButton->setLabel(_("Cancel download"));
 		_cancelButton->setCmd(kCleanupCmd);
 		_closeButton->setVisible(true);
@@ -390,7 +398,7 @@ void DownloadPacksDialog::calculateList() {
 
 	Common::ArchiveMemberList iconFiles;
 
-	iconDir->listMatchingMembers(iconFiles, "gui-icons*.dat");
+	iconDir->listMatchingMembers(iconFiles, _packsglob);
 
 	for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
 		Common::String fname = (*ic)->getName();
@@ -413,7 +421,8 @@ void DownloadPacksDialog::calculateList() {
 	g_state->totalFiles = g_state->fileHash.size();
 
 	if (g_state->totalSize == 0) {
-		Common::U32String error(_("No new icons packs available"));
+		// I18N: String like "No new icon packs available"
+		Common::U32String error(Common::U32String::format(_("No new %S available"), _packname.c_str()));
 		_closeButton->setEnabled(false);
 		setError(error);
 		return;
@@ -434,7 +443,7 @@ void DownloadPacksDialog::clearCache() {
 
 	Common::ArchiveMemberList iconFiles;
 
-	iconDir->listMatchingMembers(iconFiles, "gui-icons*.dat");
+	iconDir->listMatchingMembers(iconFiles, _packsglob);
 	int totalSize = 0;
 
 	for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
@@ -458,7 +467,7 @@ void DownloadPacksDialog::clearCache() {
 			Common::FSNode fs(Common::Path(iconsPath).join(fname));
 			Common::WriteStream *str = fs.createWriteStream();
 
-			// Overwrite previously downloaded icon files with dummy data
+			// Overwrite previously downloaded pack files with dummy data
 			str->writeByte(0);
 			str->finalize();
 		}
@@ -467,7 +476,7 @@ void DownloadPacksDialog::clearCache() {
 		// Reload (now empty) icons set
 		g_gui.initIconsSet();
 
-		// Fetch current icons list file and re-trigger downloads
+		// Fetch current packs list file and re-trigger downloads
 		g_state->downloadList();
 		calculateList();
 		_cancelButton->setVisible(true);

@@ -56,6 +56,9 @@ class DownloadPacksDialog : public Dialog, public CommandSender {
 	ButtonWidget *_closeButton;
 	ButtonWidget *_clearCacheButton;
 
+	Common::U32String _packname;
+	const char *_packsglob;
+
 	Common::String _localDirectory;
 	bool _close;
 
@@ -65,7 +68,7 @@ class DownloadPacksDialog : public Dialog, public CommandSender {
 	void refreshWidgets();
 
 public:
-	DownloadPacksDialog();
+	DownloadPacksDialog(Common::U32String packname, const char *listfname, const char *packsglob);
 	~DownloadPacksDialog() override;
 
 	void open() override;
