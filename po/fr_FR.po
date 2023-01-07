@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-03 23:51+0000\n"
+"POT-Creation-Date: 2023-01-07 00:40+0000\n"
 "PO-Revision-Date: 2023-01-02 17:39+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -136,7 +136,7 @@ msgstr ""
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
 #: gui/options.cpp:3253 gui/options.cpp:3291 gui/options.cpp:3715
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:584
-#: engines/director/events.cpp:91 engines/grim/grim.cpp:355
+#: engines/director/events.cpp:91 engines/grim/grim.cpp:354
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:145
 #: engines/sci/graphics/controls32.cpp:929 engines/toon/toon.cpp:1502
@@ -148,7 +148,7 @@ msgstr "Oui"
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
 #: gui/options.cpp:3253 gui/options.cpp:3291 gui/options.cpp:3715
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
-#: engines/grim/grim.cpp:355 engines/kyra/gui/saveload_eob.cpp:597
+#: engines/grim/grim.cpp:354 engines/kyra/gui/saveload_eob.cpp:597
 #: engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:151
 #: engines/sci/graphics/controls32.cpp:929 engines/toon/toon.cpp:1502
@@ -665,7 +665,7 @@ msgstr "Interagir"
 
 #: gui/gui-manager.cpp:234 engines/metaengine.cpp:115
 #: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:121
-#: engines/grim/grim.cpp:453 engines/grim/grim.cpp:534
+#: engines/grim/grim.cpp:452 engines/grim/grim.cpp:533
 #: engines/twine/metaengine.cpp:472 engines/twine/metaengine.cpp:539
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -677,7 +677,7 @@ msgstr "Haut"
 
 #: gui/gui-manager.cpp:239 engines/metaengine.cpp:121
 #: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:127
-#: engines/grim/grim.cpp:458 engines/grim/grim.cpp:539
+#: engines/grim/grim.cpp:457 engines/grim/grim.cpp:538
 #: engines/twine/metaengine.cpp:479 engines/twine/metaengine.cpp:547
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -689,7 +689,7 @@ msgstr "Bas"
 
 #: gui/gui-manager.cpp:244 engines/metaengine.cpp:127
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
-#: engines/grim/grim.cpp:463 engines/grim/grim.cpp:544
+#: engines/grim/grim.cpp:462 engines/grim/grim.cpp:543
 #: engines/twine/metaengine.cpp:494 engines/twine/metaengine.cpp:562
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -702,7 +702,7 @@ msgstr "Gauche"
 
 #: gui/gui-manager.cpp:249 engines/metaengine.cpp:133
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
-#: engines/grim/grim.cpp:468 engines/grim/grim.cpp:549
+#: engines/grim/grim.cpp:467 engines/grim/grim.cpp:548
 #: engines/twine/metaengine.cpp:486 engines/twine/metaengine.cpp:555
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -2819,7 +2819,7 @@ msgstr "Clic Milieu"
 msgid "Right Click"
 msgstr "Clic Droit"
 
-#: engines/metaengine.cpp:77 engines/grim/grim.cpp:521
+#: engines/metaengine.cpp:77 engines/grim/grim.cpp:520
 #: engines/hdb/metaengine.cpp:258 engines/mohawk/myst.cpp:596
 #: engines/mohawk/riven.cpp:860 engines/sky/metaengine.cpp:125
 #: engines/twine/metaengine.cpp:242 engines/wintermute/keymapper_tables.h:1608
@@ -2830,8 +2830,8 @@ msgstr "Pause"
 msgid "Game menu"
 msgstr "Menu du jeu"
 
-#: engines/metaengine.cpp:90 engines/grim/grim.cpp:504
-#: engines/grim/grim.cpp:600 engines/mohawk/myst.cpp:567
+#: engines/metaengine.cpp:90 engines/grim/grim.cpp:503
+#: engines/grim/grim.cpp:599 engines/mohawk/myst.cpp:567
 #: engines/mohawk/riven.cpp:831 engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1276
@@ -2853,8 +2853,8 @@ msgstr "Dialogue de saisie prédictive"
 #. and allows confirming popup dialogue prompts (eg. for save game deletion or overwriting)
 #. and also submitting a new save game name, or choosing an existing save game for overwriting.
 #: engines/metaengine.cpp:109 engines/bladerunner/metaengine.cpp:273
-#: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:510
-#: engines/grim/grim.cpp:606 engines/sky/metaengine.cpp:100
+#: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:509
+#: engines/grim/grim.cpp:605 engines/sky/metaengine.cpp:100
 #: engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
 msgstr "Confirmer"
@@ -4959,7 +4959,7 @@ msgid "Change Command"
 msgstr "Changer de commande"
 
 #: engines/dragons/metaengine.cpp:149 engines/griffon/metaengine.cpp:152
-#: engines/grim/grim.cpp:493 engines/grim/grim.cpp:589
+#: engines/grim/grim.cpp:492 engines/grim/grim.cpp:588
 #: engines/hdb/metaengine.cpp:251 engines/nancy/dialogs.cpp:145
 #: engines/scumm/help.cpp:223 engines/scumm/help.cpp:232
 #: engines/scumm/help.cpp:246 engines/scumm/help.cpp:254
@@ -5178,7 +5178,7 @@ msgstr "Attaque"
 msgid "Speed Up Cutscene"
 msgstr "Accélérer la séquence vidéo"
 
-#: engines/grim/grim.cpp:350
+#: engines/grim/grim.cpp:349
 #, c-format
 msgid ""
 "ScummVM found some problems with your game data files.\n"
@@ -5190,49 +5190,49 @@ msgstr ""
 "des plantages.\n"
 "Voulez-vous quand même lancer %s ?"
 
-#: engines/grim/grim.cpp:473 engines/grim/grim.cpp:564
+#: engines/grim/grim.cpp:472 engines/grim/grim.cpp:563
 msgid "Run"
 msgstr "Courir"
 
-#: engines/grim/grim.cpp:478 engines/scumm/help.cpp:244
+#: engines/grim/grim.cpp:477 engines/scumm/help.cpp:244
 #: engines/scumm/help.cpp:252
 msgid "Examine"
 msgstr "Examiner"
 
-#: engines/grim/grim.cpp:483 engines/grim/grim.cpp:579
+#: engines/grim/grim.cpp:482 engines/grim/grim.cpp:578
 msgid "Use/Talk"
 msgstr "Utiliser/Parler"
 
-#: engines/grim/grim.cpp:488 engines/grim/grim.cpp:584
+#: engines/grim/grim.cpp:487 engines/grim/grim.cpp:583
 msgid "Pick up/Put away"
 msgstr "Prendre/Déposer"
 
-#: engines/grim/grim.cpp:498 engines/grim/grim.cpp:594
+#: engines/grim/grim.cpp:497 engines/grim/grim.cpp:593
 msgid "Skip dialog lines"
 msgstr "Passer les dialogues"
 
-#: engines/grim/grim.cpp:516 engines/grim/grim.cpp:612
+#: engines/grim/grim.cpp:515 engines/grim/grim.cpp:611
 #: engines/hdb/metaengine.cpp:264
 msgid "Menu"
 msgstr "Menu"
 
-#: engines/grim/grim.cpp:554
+#: engines/grim/grim.cpp:553
 msgid "Cycle Objects Up"
 msgstr "Objet suivant"
 
-#: engines/grim/grim.cpp:559
+#: engines/grim/grim.cpp:558
 msgid "Cycle Objects Down"
 msgstr "Objet précédent"
 
-#: engines/grim/grim.cpp:569
+#: engines/grim/grim.cpp:568
 msgid "Quick Room Exit"
 msgstr "Sortie rapide d'une pièce"
 
-#: engines/grim/grim.cpp:574
+#: engines/grim/grim.cpp:573
 msgid "Examine/Look"
 msgstr "Examiner/Regarder"
 
-#: engines/grim/grim.cpp:1347
+#: engines/grim/grim.cpp:1346
 msgid "Error: the game could not be saved."
 msgstr "Erreur : le jeu n'a pas été sauvegardé."
 
