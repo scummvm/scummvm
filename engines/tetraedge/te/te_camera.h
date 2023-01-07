@@ -79,7 +79,7 @@ public:
 	int projMatrixType() const { return _projectionMatrixType; }
 	void setPerspectiveVal(float val) { _somePerspectiveVal = val; }
 	float orthoNearPlane() const { return _orthNearVal; }
-	float orthoFarPlane() const { return _orthNearVal; }
+	float orthoFarPlane() const { return _orthFarVal; }
 
 private:
 	void updateProjectionMatrix();

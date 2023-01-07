@@ -214,7 +214,9 @@ void TeTextBase2::drawEmptyChar(unsigned int offset) {
 void TeTextBase2::drawLine(TeImage &img, const Common::String &str, int yoffset) {
 	TeIntrusivePtr<TeFont3> font = _fonts[0];
 
-	font->draw(img, str, _fontSize, yoffset, _globalColor, _alignStyle);
+	// Note: We draw this with black because the global color will be applied on
+	// the mesh.
+	font->draw(img, str, _fontSize, yoffset, TeColor(0, 0, 0, 255), _alignStyle);
 }
 
 unsigned int TeTextBase2::endOfWord(unsigned int offset) const {

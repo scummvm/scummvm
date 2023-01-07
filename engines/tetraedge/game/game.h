@@ -101,7 +101,7 @@ public:
 
 	void deleteNoScale();
 	void draw();
-	void enter(bool newgame);
+	void enter(); // will load game if _loadName is set.
 	// Note: game uses ILayouts here..
 	static TeI3DObject2 *findLayoutByName(TeLayout *parent, const Common::String &name);
 	static TeSpriteLayout *findSpriteLayoutByName(TeLayout *parent, const Common::String &name);

@@ -299,7 +299,7 @@ void Application::startGame(bool newGame, int difficulty) {
 	_appSpriteLayout.unload();
 	if (newGame)
 		_difficulty = difficulty;
-	g_engine->getGame()->enter(newGame);
+	g_engine->getGame()->enter();
 }
 
 void Application::resume() {

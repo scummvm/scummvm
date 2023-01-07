@@ -124,7 +124,9 @@ void MainMenu::enter() {
 		versionNum->setText(versionSectionStr + app->getVersionString());
 	}
 
-	if (ConfMan.get("skip_mainmenu") == "true") {
+	// Skip the menu if we are loading.
+	Game *game = g_engine->getGame();
+	if (game->hasLoadName() || ConfMan.get("skip_mainmenu") == "true") {
 		onNewGameConfirmed();
 	}
 }

@@ -807,6 +807,8 @@ TePickMesh2 *TeFreeMoveZone::findNearestMesh(TeIntrusivePtr<TeCamera> &camera, c
 			Common::Array<TePickMesh2*> &pickMeshes, TeVector3f32 *outloc, bool lastHitFirst) {
 	TeVector3f32 closestLoc;
 	TePickMesh2 *nearestMesh = nullptr;
+	if (!camera)
+		return nullptr;
 	float closestDist = camera->orthoFarPlane();
 	Math::Ray camRay;
 	for (unsigned int i = 0; i < pickMeshes.size(); i++) {
