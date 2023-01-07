@@ -109,7 +109,7 @@ public:
 	ResourceContext():
 		_fileName(NULL), _fileType(0), _isCompressed(false), _serial(0),
 		_isBigEndian(false),
-		_fileSize(0) {
+		_fileSize(0), _tombstone(false) {
 	}
 
 	virtual ~ResourceContext() { }
@@ -125,6 +125,11 @@ public:
 		if (resourceData && resourceData->patchData != NULL) {
 			return resourceData->patchData->getStream();
 		} else {
+			if (!_file && !_tombstone)
+				_file.reset(Common::MacResManager::openFileOrDataFork(_fileName));
+			if (!_file)
+				_tombstone = true;
+
 			return _file.get();
 		}
 	}
@@ -155,6 +160,7 @@ protected:
 	Common::ScopedPtr<Common::SeekableReadStream> _file;
 	Common::ScopedPtr<Common::MacResManager> _macRes;
 	int32 _fileSize;
+	bool _tombstone;
 
 	bool load(SagaEngine *_vm, Resource *resource);
 	bool loadResV1();
