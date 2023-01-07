@@ -34,6 +34,7 @@
 #include "common/translation.h"
 #include "common/algorithm.h"
 #include "common/file.h"
+#include "common/zip-set.h"
 #include "gui/debugger.h"
 #include "engines/engine.h"
 #ifdef USE_OSD
@@ -354,9 +355,13 @@ bool OpenGLGraphicsManager::loadShader(const Common::String &fileName) {
 		return true;
 	}
 
+	Common::SearchSet shaderSet;
+
+	Common::generateZipSet(shaderSet, "shaders.dat", "shaders*.dat");
+
 	// Load selected shader preset
 	if (!fileName.empty()) {
-		if (!_libretroPipeline->open(fileName)) {
+		if (!_libretroPipeline->open(fileName, shaderSet)) {
 			warning("Failed to load shader %s", fileName.c_str());
 			return false;
 		}

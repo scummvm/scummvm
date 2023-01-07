@@ -50,13 +50,12 @@ class LibRetroTextureTarget;
 class LibRetroPipeline : public Pipeline {
 public:
 	LibRetroPipeline();
-	LibRetroPipeline(const Common::String &shaderPath);
 	~LibRetroPipeline() override;
 
 	void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) override;
 	void setProjectionMatrix(const Math::Matrix4 &projectionMatrix) override;
 
-	bool open(const Common::String &shaderPath);
+	bool open(const Common::String &shaderPath, Common::SearchSet &archSet);
 	void close();
 
 	/* Called by OpenGLGraphicsManager */
@@ -80,8 +79,8 @@ private:
 	void deactivateInternal() override;
 	void drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override;
 
-	bool loadTextures();
-	bool loadPasses();
+	bool loadTextures(Common::SearchSet &archSet);
+	bool loadPasses(Common::SearchSet &archSet);
 
 	void setPipelineState();
 	bool setupFBOs();
@@ -118,7 +117,7 @@ private:
 		Graphics::Surface *textureData;
 		GLTexture *glTexture;
 	};
-	Texture loadTexture(const Common::String &fileName);
+	Texture loadTexture(const Common::String &fileName, Common::SearchSet &archSet);
 
 	typedef Common::Array<Texture> TextureArray;
 	TextureArray _textures;

@@ -30,7 +30,7 @@
 namespace OpenGL {
 namespace LibRetro {
 
-ShaderPreset *parsePreset(const Common::String &shaderPreset);
+ShaderPreset *parsePreset(const Common::String &shaderPreset, Common::SearchSet &archSet);
 
 } // End of namespace LibRetro
 } // End of namespace OpenGL
