@@ -254,9 +254,7 @@ void ItemSorter::AddItem(const Item *add) {
 void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight) {
 	if (_sortLimit) {
 		// Clear the surface when debugging the sorter
-		Rect r;
-		surf->GetClippingRect(r);
-		surf->Fill32(0, r);
+		surf->Fill32(0, _clipWindow);
 	}
 
 	SortItem *it = _items;

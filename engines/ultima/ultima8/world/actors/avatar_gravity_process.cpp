@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima8/world/actors/avatar_gravity_process.h"
+#include "ultima/ultima8/world/actors/avatar_mover_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/kernel/mouse.h"
@@ -41,33 +42,25 @@ AvatarGravityProcess::AvatarGravityProcess(MainActor *avatar, int gravity)
 }
 
 void AvatarGravityProcess::run() {
-	if (!Mouse::get_instance()->isMouseDownEvent(Mouse::BUTTON_RIGHT)) {
-		// right mouse button not down, so fall normally
+	AvatarMoverProcess *amp = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+	if (amp && amp->hasMovementFlags(AvatarMoverProcess::MOVE_ANY_DIRECTION)) {
+		// See if we can cling to a ledge
+		MainActor *avatar = getMainActor();
+		if (avatar->tryAnim(Animation::climb40, dir_current) == Animation::SUCCESS) {
 
-		GravityProcess::run();
-		return;
+			// We can climb, so perform a hang animation
+			// CHECKME: do we need to perform any other checks?
+			if (avatar->getLastAnim() != Animation::hang)
+				avatar->doAnim(Animation::hang, dir_current);
+
+			return;
+		}
 	}
 
-	// right mouse button down, so see if we can cling to a ledge
-	MainActor *avatar = getMainActor();
-	Direction direction = avatar->getDir();
-	if (avatar->tryAnim(Animation::climb40, direction) == Animation::SUCCESS) {
-
-		// we can, so perform a hang animation
-		// CHECKME: do we need to perform any other checks?
-
-		if (avatar->getLastAnim() != Animation::hang)
-			avatar->doAnim(Animation::hang, dir_current);
-
-		return;
-	} else {
-
-		// fall normally
-		GravityProcess::run();
-		return;
-	}
+	// fall normally
+	GravityProcess::run();
+	return;
 }
-
 
 void AvatarGravityProcess::saveData(Common::WriteStream *ws) {
 	GravityProcess::saveData(ws);

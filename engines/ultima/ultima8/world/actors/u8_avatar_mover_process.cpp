@@ -66,13 +66,17 @@ void U8AvatarMoverProcess::handleHangingMode() {
 	}
 
 	// if left mouse is down, try to climb up
-
 	if (_mouseButton[0].isState(MBS_DOWN) &&
 			(!_mouseButton[0].isState(MBS_HANDLED) || m0clicked)) {
 		_mouseButton[0].setState(MBS_HANDLED);
 		_mouseButton[0]._lastDown = 0;
-		MainActor *avatar = getMainActor();
+		setMovementFlag(MOVE_JUMP);
+	}
 
+	if (hasMovementFlags(MOVE_JUMP)) {
+		clearMovementFlag(MOVE_JUMP);
+
+		MainActor *avatar = getMainActor();
 		if (avatar->tryAnim(Animation::climb40, dir_current) == Animation::SUCCESS) {
 			avatar->ensureGravityProcess()->terminate();
 			waitFor(avatar->doAnim(Animation::climb40, dir_current));
