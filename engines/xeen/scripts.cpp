@@ -1409,8 +1409,8 @@ bool Scripts::cmdExchObj(ParamsIterator &params) {
 
 	// WORKAROUND: In Swords of Xeen, there's an invalid indexing for a chest.
 	// In such cases, set the position to nowhere
-	Common::Point &objPos1 = (id1 >= objects.size()) ? empty : objects[id1]._position;
-	Common::Point &objPos2 = (id2 >= objects.size()) ? empty : objects[id2]._position;
+	Common::Point &objPos1 = (id1 >= (int)objects.size()) ? empty : objects[id1]._position;
+	Common::Point &objPos2 = (id2 >= (int)objects.size()) ? empty : objects[id2]._position;
 	SWAP(objPos1, objPos2);
 
 	return true;
