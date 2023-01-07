@@ -28,24 +28,24 @@
 namespace Common {
 
 struct ArchiveMemberListBackComparator {
-	bool operator()(const Common::ArchiveMemberPtr &a, const Common::ArchiveMemberPtr &b) {
+	bool operator()(const ArchiveMemberPtr &a, const ArchiveMemberPtr &b) {
 		return a->getName() > b->getName();
 	}
 };
 
-bool generateZipSet(Common::SearchSet &searchSet, const char *defaultFile, const char *packsMask, const char *packsPath) {
-	Common::Archive *dat;
+bool generateZipSet(SearchSet &searchSet, const char *defaultFile, const char *packsMask, const char *packsPath) {
+	Archive *dat;
 	bool changed = false;
 
 	if (!ConfMan.get(packsPath).empty()) {
-		Common::FSDirectory *iconDir = new Common::FSDirectory(ConfMan.get(packsPath));
-		Common::ArchiveMemberList iconFiles;
+		FSDirectory *iconDir = new FSDirectory(ConfMan.get(packsPath));
+		ArchiveMemberList iconFiles;
 
 		iconDir->listMatchingMembers(iconFiles, packsMask);
-		Common::sort(iconFiles.begin(), iconFiles.end(), ArchiveMemberListBackComparator());
+		sort(iconFiles.begin(), iconFiles.end(), ArchiveMemberListBackComparator());
 
-		for (Common::ArchiveMemberList::iterator ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
-			dat = Common::makeZipArchive((*ic)->createReadStream());
+		for (ArchiveMemberList::iterator ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
+			dat = makeZipArchive((*ic)->createReadStream());
 
 			if (dat) {
 				searchSet.add((*ic)->getName(), dat);
@@ -60,17 +60,17 @@ bool generateZipSet(Common::SearchSet &searchSet, const char *defaultFile, const
 	dat = nullptr;
 
 	if (ConfMan.hasKey("themepath")) {
-		Common::FSNode *fs = new Common::FSNode(normalizePath(ConfMan.get("themepath") + "/" + defaultFile, '/'));
+		FSNode *fs = new FSNode(normalizePath(ConfMan.get("themepath") + "/" + defaultFile, '/'));
 		if (fs->exists()) {
-			dat = Common::makeZipArchive(*fs);
+			dat = makeZipArchive(*fs);
 		}
 		delete fs;
 	}
 
 	if (!dat) {
-		Common::File *file = new Common::File;
+		File *file = new File;
 		if (ConfMan.hasKey(packsPath)) {
-			Common::String path(normalizePath(ConfMan.get(packsPath) + "/" + defaultFile, '/'));
+			String path(normalizePath(ConfMan.get(packsPath) + "/" + defaultFile, '/'));
 
 			if (File::exists(path))
 				file->open(path);
@@ -81,7 +81,7 @@ bool generateZipSet(Common::SearchSet &searchSet, const char *defaultFile, const
 				file->open(defaultFile);
 
 		if (file->isOpen())
-			dat = Common::makeZipArchive(defaultFile);
+			dat = makeZipArchive(defaultFile);
 
 		if (!dat) {
 			warning("generateZipSet: Could not find '%s'", defaultFile);

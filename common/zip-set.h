@@ -47,7 +47,7 @@ namespace Common {
  * @return True if the string has been parsed correctly, false if an error
  *
  */
-bool generateZipSet(Common::SearchSet &searchSet, const char *defaultFile, const char *packsMask, const char *packsPath = "iconspath");
+bool generateZipSet(SearchSet &searchSet, const char *defaultFile, const char *packsMask, const char *packsPath = "iconspath");
 
 }
 
