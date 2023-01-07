@@ -490,6 +490,9 @@
 						height = 'Globals.Line.Height'
 						width = 'Globals.Line.Height'
 				/>
+				<widget name = 'UpdateShadersButton'
+						type = 'Button'
+				/>
 			</layout>
 			<widget name = 'grAspectCheckbox'
 					type = 'Checkbox'

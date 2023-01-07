@@ -96,6 +96,7 @@ enum {
 	kPluginsPathClearCmd	= 'clpl',
 	kChooseThemeCmd			= 'chtf',
 	kUpdateIconsCmd			= 'upic',
+	kUpdateShadersCmd		= 'upsh',
 	kChooseShaderCmd        = 'chsh',
 	kClearShaderCmd         = 'clsh',
 	kUpdatesCheckCmd		= 'updc',
@@ -1573,6 +1574,12 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 		_shader = new StaticTextWidget(boss, prefix + "grShader", _c("None", "shader"), _("Specifies path to the shader used for scaling the game screen"));
 
 		_shaderClearButton = addClearButton(boss, prefix + "grShaderClearButton", kClearShaderCmd);
+
+#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
+		new ButtonWidget(boss, prefix + "UpdateShadersButton", _("Update Shaders"), _("Check for updates of shader packs"), kUpdateShadersCmd);
+#endif
+#endif
 	}
 
 	// Fullscreen checkbox
@@ -2511,7 +2518,7 @@ void GlobalOptionsDialog::addGUIControls(GuiObject *boss, const Common::String &
 
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
-	new ButtonWidget(boss, prefix + "UpdateIconsButton", _("Update Icons"), Common::U32String(), kUpdateIconsCmd);
+	new ButtonWidget(boss, prefix + "UpdateIconsButton", _("Update Icons"),  _("Check for updates of icon packs"), kUpdateIconsCmd);
 #endif
 #endif
 }
