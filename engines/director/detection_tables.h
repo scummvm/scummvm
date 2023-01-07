@@ -1039,6 +1039,8 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// Japanese art and multimedia reference
 	{ "a5tours",			"A5 Tours: Special Data Library" },
+	{ "americaodan",		"America Ōdan Ultra Quiz Dai 1-dan" }, // アメリカ横断ウルトラクイズ(第１弾)
+	{ "americaodan2",		"America Ōdan Ultra Quiz ct.II Fukuzawa Anna-hen" }, // アメリカ横断ウルトラクイズｃｔ.II 福澤アナ編
 	{ "anony",				"Anony" },
 	{ "aumhodozenkiroku",	"「オウム」報道全記録 1989〜1995" }, // All Aum Coverage, 1989-1995
 	{ "allthelunar",		"オール・ザ・ルナ LUNAR -ハイパーアプリケーションズ-" }, // All the Lunar: Hyper Applications
@@ -1119,6 +1121,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "pbosakana",			"PerfectBLUE OSAKANA" },
 	{ "pbtoilet1",			"PerfectBLUE TOILET1" },
 	{ "pbtoilet2",			"PerfectBLUE TOILET2" },
+	{ "panicook",			"PANICOOK" },
 	{ "pepperon",			"ペペロン村の四季" },			// Four Seasons in Pepperon Village, aka Valmaison au fil des saisons, aka Livet i Pepperon
 	{ "perfectblue",		"Perfect Blue そらいろ★ナイト" },
 	{ "please",				"Please!" }, // by Teruo Takashima
@@ -3008,6 +3011,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Windows version is D5
 	MACGAME1("amber", "", "xn--AMBER-Journeys Beyond-yb4m", "a6a7812d8b3de0da884197eb26a1b059", 60086, 404),
 
+	// Original filename is 'ｱﾒﾘｶ横断ｳﾙﾄﾗｸｲｽﾞ Demo'
+	MACDEMO1_l("americaodan", "Demo", "xn-- Demo-g40kn3x3n73alaj4a1a0e1ezj7clw4h", "32cb3a881f2d47a7e525370b198b2c5c", 484095, Common::JA_JPN, 404),
+	WINDEMO1t_l("americaodan", "Demo", "UQDEMO.EXE", "5c1a4cd7aa8a767a2729af64d9c7654c", 15259871, Common::JA_JPN, 404),
+	// Original filename is 'ｱﾒﾘｶ横断ｳﾙﾄﾗｸｲｽﾞct.Ⅱ Demo'
+	MACDEMO1_l("americaodan2", "Demo", "xn--ct. Demo-q35dl985ddlkjw05bpan6b9a5f2ftlvdpa0a4j", "bcd3c718db258701496b3c5bcb827ef2", 484067, Common::JA_JPN, 404),
+	WINDEMO1t_l("americaodan2", "Demo", "UQ2DEMO.EXE", "b49fa67b361e2692023d464b43beae4e", 12070621, Common::JA_JPN, 404),
+
 	MACGAME2("amnesty", "", "Double-Click Me", "ef59432e7b24df951cb7096cfd45d168", 373184,
 							"Media/Rights.Dir", "196e02dd14e685b599cfc6f8dcc7cd3b", 641230, 400),
 	WINGAME1t("amnesty", "", "AMNESTY.EXE", "3e647bd639f00391da11f015a241d9e7", 736902, 404),
@@ -4599,6 +4609,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("painters", "", "PAINTERS.EXE", "3cba94b585493ef5f22d0d650b6eb7fd", 895727, 404),
 	MACGAME1("painters", "", "Painters Painting", "0a81aee4106eec4ffc0cc564a7c15a23", 288774, 404),
+
+	MACGAME1_l("panicook", "", "Panicook", "bcd3c718db258701496b3c5bcb827ef2", 484095, Common::JA_JPN, 404),
+	WINGAME1t_l("panicook", "", "PANICOOK.EXE", "50c3a90ab98c6c048014c27de116cdfd", 123273637, Common::JA_JPN, 404),
+	MACDEMO1_l("panicook", "Demo", "Panicook Demo", "bcd3c718db258701496b3c5bcb827ef2", 484095, Common::JA_JPN, 404),
+	WINDEMO1t_l("panicook", "Demo", "PANIDEMO.EXE", "90fefc4f81483cbe9aa06e98a7c3afff", 15573239, Common::JA_JPN, 404),
 
 	// Full version isn't Director
 	// Found on Electronic Entertainment CD-ROM Sampler Disc (December 1995)
