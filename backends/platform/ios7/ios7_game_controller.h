@@ -43,7 +43,7 @@ typedef enum {
 @property (nonatomic, readwrite, retain) iPhoneView *view;
 @property (nonatomic, assign) BOOL isConnected;
 
-- (id)initWithView:(iPhoneView *)view;
+- (id)initWithView:(iPhoneView *)v;
 
 - (void)handlePointerMoveTo:(CGPoint)point;
 - (void)handleMouseButtonAction:(GameControllerMouseButton)button isPressed:(bool)pressed at:(CGPoint)point;

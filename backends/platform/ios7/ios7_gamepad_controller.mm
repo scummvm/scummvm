@@ -107,13 +107,17 @@
 			[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_Y isPressed:pressed];
 		};
 #ifdef __IPHONE_12_1
-		_controller.extendedGamepad.leftThumbstickButton.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
-			[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_LEFT_STICK isPressed:pressed];
-		};
+		if (@available(iOS 12.1, tvOS 12.1, *)) {
+			_controller.extendedGamepad.leftThumbstickButton.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
+				[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_LEFT_STICK isPressed:pressed];
+			};
+		}
 
-		_controller.extendedGamepad.rightThumbstickButton.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
-			[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_RIGHT_STICK isPressed:pressed];
-		};
+		if (@available(iOS 12.1, tvOS 12.1, *)) {
+			_controller.extendedGamepad.rightThumbstickButton.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
+				[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_RIGHT_STICK isPressed:pressed];
+			};
+		}
 #endif
 		_controller.extendedGamepad.leftShoulder.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
 			[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_LEFT_SHOULDER isPressed:pressed];

@@ -35,10 +35,10 @@
 
 @synthesize view;
 
-- (id)initWithView:(iPhoneView *)view {
+- (id)initWithView:(iPhoneView *)v {
 	self = [super init];
 	if (self) {
-		[self setView:view];
+		[self setView:v];
 	}
 	_firstButtonPressed = _secondButtonPressed = NO;
 	return self;
