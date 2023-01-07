@@ -3116,6 +3116,14 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 #endif
 
+#ifdef USE_LIBCURL
+	case kUpdateShadersCmd: {
+		DownloadPacksDialog dia(_("shader packs"), "LIST-SHADERS", "shaders*.dat");
+		dia.runModal();
+		break;
+	}
+#endif
+
 #endif
 	case kThemePathClearCmd:
 		_themePath->setLabel(_c("None", "path"));
