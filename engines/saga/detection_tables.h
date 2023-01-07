@@ -145,6 +145,34 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{},
 	},
 
+	// Inherit the earth - Win32 Demo version 3, compressed
+	{
+		{
+			"ite",
+			"Win Demo 3",
+			{
+				{"itedemo.exe",		0,	"0a12e3ff2d511c2723acc4abc4480ee1", 31675904},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO0()
+		},
+		GID_ITE,
+		GF_INSTALLER,
+		ITE_DEFAULT_SCENE,
+		RESOURCELIST_ITE,
+		FONTLIST_ITE_WIN_DEMO,
+		PATCHLIST_ITE_MAC, // Skip midi patches.
+		INTROLIST_ITE_DEFAULT,
+		{
+			{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac", 1951395},
+			{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb", 70051},
+			AD_LISTEND
+		},
+	},
+
 
 	// Inherit the earth - Win32 Demo version 1
 	// Non-interactive demo

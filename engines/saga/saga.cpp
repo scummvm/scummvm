@@ -26,6 +26,7 @@
 #include "common/events.h"
 #include "common/translation.h"
 #include "common/compression/unarj.h"
+#include "common/compression/unzip.h"
 
 #include "audio/mixer.h"
 
@@ -352,10 +353,14 @@ Common::Error SagaEngine::run() {
 		for (const ADGameFileDescription *gameArchiveDescription = getArchivesDescriptions();
 		     gameArchiveDescription->fileName; gameArchiveDescription++)
 			filenames.push_back(gameArchiveDescription->fileName);
-		Common::Archive *arj = Common::makeArjArchive(filenames);
-		if (!arj)
-			error("Error opening ARJ archive");
-		SearchMan.add("arj", arj, DisposeAfterUse::YES);
+		Common::Archive *archive = nullptr;
+		if (filenames.size() == 1 && filenames[0].hasSuffix(".exe"))
+			archive = Common::makeZipArchive(filenames[0]);
+		else
+			archive = Common::makeArjArchive(filenames);
+		if (!archive)
+			error("Error opening archive");
+		SearchMan.add("archive", archive, DisposeAfterUse::YES);
 	}
 
 	// Assign default values to the config manager, in case settings are missing
