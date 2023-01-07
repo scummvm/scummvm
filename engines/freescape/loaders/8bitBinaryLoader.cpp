@@ -602,7 +602,7 @@ void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {
 	file->seek(offset);
 	int charNumber = 60;
 	byte *font = nullptr;
-	if (isDOS() || isSpectrum() || isCPC()) {
+	if (isDOS() || isSpectrum() || isCPC() || isC64()) {
 		font = (byte *)malloc(6 * charNumber);
 		file->read(font, 6 * charNumber);
 
