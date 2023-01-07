@@ -129,17 +129,6 @@ public:
 	//
 	// Surface Palettes
 	//
-	// TODO: Handle Ultima8 and Crusader Xforms
-	//
-
-	// Set The Surface Palette
-	// virtual void SetPalette(uint8 palette[768]) = 0;
-
-	// Set The Surface Palette to be the one used by another surface
-	// TODO: virtual void SetPalette(RenderSurface &) = 0;
-
-	// Get The Surface Palette
-	// TODO: virtual void GetPalette(uint8 palette[768]) = 0;
 
 	virtual void CreateNativePalette(Palette *palette, int maxindex = 0);
 
