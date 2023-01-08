@@ -50,8 +50,13 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, int sampleRate, Audio::Mixer *
 	_callbackFps = DIMUSE_TIMER_BASE_RATE_HZ;
 	_usecPerInt = DIMUSE_TIMER_BASE_RATE_USEC;
 
+	_lowLatencyMode = lowLatencyMode;
 	_internalSampleRate = sampleRate;
 	_internalFeedSize = (int)(DIMUSE_BASE_FEEDSIZE * ((float)_internalSampleRate / DIMUSE_BASE_SAMPLERATE));
+
+	if (_lowLatencyMode) {
+		_internalFeedSize *= 2;
+	}
 
 	_splayer = nullptr;
 	_isEarlyDiMUSE = (_vm->_game.id == GID_FT || (_vm->_game.id == GID_DIG && _vm->_game.features & GF_DEMO));
@@ -83,7 +88,6 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, int sampleRate, Audio::Mixer *
 	_isEngineDisabled = false;
 	_checkForUnderrun = false;
 	_underrunCooldown = 0;
-	_lowLatencyMode = lowLatencyMode;
 
 	_audioNames = nullptr;
 	_numAudioNames = 0;
