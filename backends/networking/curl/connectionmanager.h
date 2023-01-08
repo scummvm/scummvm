@@ -37,7 +37,7 @@ namespace Networking {
 class NetworkReadStream;
 
 class ConnectionManager : public Common::Singleton<ConnectionManager> {
-	static const uint32 FRAMES_PER_SECOND = 25;
+	static const uint32 FRAMES_PER_SECOND = 100;
 	static const uint32 TIMER_INTERVAL = 1000000 / FRAMES_PER_SECOND;
 	static const uint32 CLOUD_PERIOD = 1; //every frame
 	static const uint32 CURL_PERIOD = 1; //every frame
