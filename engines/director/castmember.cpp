@@ -116,7 +116,9 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 
 		if (_bytes & 0x8000) {
 			_bitsPerPixel = stream.readUint16();
-			_clut = stream.readSint16() - 1;
+			_clut = stream.readSint16();
+			if (_clut <= 0) // builtin palette
+				_clut -= 1;
 		} else {
 			_bitsPerPixel = 1;
 			_clut = kClutSystemMac;
@@ -144,7 +146,9 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		if (stream.eos()) {
 			_bitsPerPixel = 0;
 		} else {
-			_clut = stream.readSint16() - 1;
+			_clut = stream.readSint16();
+			if (_clut <= 0) // builtin palette
+				_clut -= 1;
 			stream.readUint16();
 			/* uint16 unk1 = */ stream.readUint16();
 			stream.readUint16();
@@ -269,13 +273,16 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 			Movie *movie = g_director->getCurrentMovie();
 			Cast *cast = movie->getCast();
 			Score *score = movie->getScore();
-			// Get the current score palette
+			// Get the current score palette. Note that this is the ID of the palette in the list, not the cast member!
 			int currentPaletteId = score->resolvePaletteId(score->getCurrentPalette());
 			if (!currentPaletteId)
 				currentPaletteId = cast->_defaultPalette;
 			PaletteV4 *currentPalette = g_director->getPalette(currentPaletteId);
 			if (!currentPalette)
 				currentPalette = g_director->getPalette(kClutSystemMac);
+			int castPaletteId = score->resolvePaletteId(_clut);
+			if (!castPaletteId)
+				castPaletteId = cast->_defaultPalette;
 			// First, check if the palettes are different
 			switch (_bitsPerPixel) {
 			// 1bpp - this is preconverted to 0x00 and 0xff, change nothing.
@@ -294,16 +301,16 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 					const auto pals = g_director->getLoaded16Palettes();
 					// in D4 you aren't allowed to use custom palettes for 4-bit images, so uh...
 					// I guess default to the mac palette?
-					int palIndex = pals.contains(_clut) ? _clut : kClutSystemMac;
+					int palIndex = pals.contains(castPaletteId) ? castPaletteId : kClutSystemMac;
 					const PaletteV4 &srcPal = pals.getVal(palIndex);
 					_ditheredImg = _img->getSurface()->convertTo(g_director->_wm->_pixelformat, srcPal.palette, srcPal.length, currentPalette->palette, currentPalette->length, Graphics::kDitherNaive);
 				}
 				break;
 			// 8bpp - if using a different palette, convert using nearest colour matching
 			case 8:
-				if (_clut != currentPaletteId) {
+				if (castPaletteId != currentPaletteId) {
 					const auto pals = g_director->getLoadedPalettes();
-					int palIndex = pals.contains(_clut) ? _clut : kClutSystemMac;
+					int palIndex = pals.contains(castPaletteId) ? castPaletteId : kClutSystemMac;
 					const PaletteV4 &srcPal = pals.getVal(palIndex);
 					_ditheredImg = _img->getSurface()->convertTo(g_director->_wm->_pixelformat, srcPal.palette, srcPal.length, currentPalette->palette, currentPalette->length, Graphics::kDitherNaive);
 				}
