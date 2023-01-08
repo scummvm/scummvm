@@ -373,7 +373,7 @@ void TeMesh::update(TeIntrusivePtr<TeModelVertexAnimation> vertexanim) {
 	_updatedVerticies.resize(_verticies.size());
 	_updatedNormals.resize(_normals.size());
 
-	const Common::Array<TeVector3f32> &animverts = vertexanim->getVertices();
+	const Common::Array<TeVector3f32> animverts = vertexanim->getVertices();
 	assert(animverts.size() >= _verticies.size());
 	for (uint i = 0; i < _verticies.size(); i++) {
 		_updatedVerticies[i] = animverts[i];

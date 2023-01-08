@@ -125,8 +125,8 @@ Common::Path TeCore::findFile(const Common::Path &path) {
 	const Common::Path fname = path.getLastComponent();
 	const Common::Path dir = path.getParent();
 
-	static const Common::Path pathSuffixes[] = {
-		"",
+	static const char *pathSuffixes[] = {
+		nullptr, // no suffix
 		"PC-MacOSX",
 		"PC-PS3-Android-MacOSX",
 		"PC-MacOSX-Xbox360-PS3",
@@ -156,10 +156,10 @@ Common::Path TeCore::findFile(const Common::Path &path) {
 	for (int langtype = 0; langtype < ARRAYSIZE(langs); langtype++) {
 		const Common::Path &lang = langs[langtype];
 		for (int i = 0; i < ARRAYSIZE(pathSuffixes); i++) {
-			const Common::Path &suffix = pathSuffixes[i];
+			const char *suffix = pathSuffixes[i];
 
 			Common::Path testPath = dir;
-			if (!suffix.empty())
+			if (suffix)
 				testPath.joinInPlace(suffix);
 			if (!lang.empty())
 				testPath.joinInPlace(lang);
@@ -168,7 +168,7 @@ Common::Path TeCore::findFile(const Common::Path &path) {
 				return testPath;
 
 			// also try the other way around
-			if (!lang.empty() && !suffix.empty()) {
+			if (!lang.empty() && suffix) {
 				testPath = dir.join(lang).joinInPlace(suffix).join(fname);
 				if (Common::File::exists(testPath) || Common::FSNode(testPath).exists())
 					return testPath;

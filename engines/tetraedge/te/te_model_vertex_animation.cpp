@@ -49,10 +49,9 @@ TeVector3f32 TeModelVertexAnimation::getKeyVertex(unsigned long keyno, uint vert
 	return retval;
 }
 
-const Common::Array<TeVector3f32> &TeModelVertexAnimation::getVertices() {
-	static Common::Array<TeVector3f32> lerpVtx;
+Common::Array<TeVector3f32> TeModelVertexAnimation::getVertices() {
+	Common::Array<TeVector3f32> lerpVtx;
 
-	lerpVtx.clear();
 	if (_keydata.size() < 2)
 		return lerpVtx;
 

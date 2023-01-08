@@ -736,18 +736,24 @@ void Game::leave(bool flag) {
 	if (!_enteredFlag2)
 		return;
 
+	Application *app = g_engine->getApplication();
+
 	deleteNoScale();
 	_entered = false;
 	_running = false;
 	_notifier.unload();
 	g_engine->getInputMgr()->_mouseLUpSignal.remove(this, &Game::onMouseClick);
 	_question2.unload();
+	TeLayout *cellbg = _inventory.cellphone()->gui().buttonLayout("background");
+	if (cellbg)
+		app->frontLayout().removeChild(cellbg);
 	_inventory.cellphone()->leave();
 	_dialog2.unload();
 	_inventory.unload();
 	_documentsBrowser.unload();
 	_inventoryMenu.unload();
 	_gui1.unload();
+	_objectif.unload(); // not done in original, but should be.
 	_scene.close();
 	_forGui.unload();
 	if (_scene._character) {
@@ -786,7 +792,6 @@ void Game::leave(bool flag) {
 	_playedTimer.stop();
 	_enteredFlag2 = false;
 
-	Application *app = g_engine->getApplication();
 	app->lockCursor(false);
 	app->lockCursorFromAction(false);
 	// TODO: Set some inputmgr flag here?

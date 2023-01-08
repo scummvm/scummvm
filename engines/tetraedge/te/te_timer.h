@@ -53,10 +53,14 @@ public:
 	static void resumeAll();
 	static void updateAll();
 
+	static void cleanup();
+
 	bool running() const { return !_stopped; }
 
 private:
 	static TeRealTimer *realTimer();
+	static Common::Array<TeTimer *> *timers();
+	static Common::Array<TeTimer *> *pausedTimers();
 
 	unsigned long _startTime;
 	unsigned long _startTimeOffset;
@@ -71,8 +75,8 @@ private:
 
 	static bool _pausedAll;
 	static unsigned long _realTime;
-	static Common::Array<TeTimer *> _timers;
-	static Common::Array<TeTimer *> _pausedTimers;
+	static Common::Array<TeTimer *> *_timers;
+	static Common::Array<TeTimer *> *_pausedTimers;
 	static TeRealTimer *_realTimer;
 };
 

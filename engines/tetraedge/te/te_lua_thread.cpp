@@ -32,22 +32,24 @@
 
 namespace Tetraedge {
 
-/*static*/ Common::Array<TeLuaThread *> TeLuaThread::_threadList;
+/*static*/
+Common::Array<TeLuaThread *> *TeLuaThread::_threadList = nullptr;
 
 TeLuaThread::TeLuaThread(TeLuaContext *context) : _resumeCount(0), _lastResumeResult(0), _released(false) {
 	_luaThread = lua_newthread(context->luaState());
 	_bottomRef = luaL_ref(context->luaState(), LUA_REGISTRYINDEX);
-	_threadList.push_back(this);
+	threadList()->push_back(this);
 }
 
 TeLuaThread::~TeLuaThread() {
 	luaL_unref(_luaThread, LUA_REGISTRYINDEX, _bottomRef);
 	uint i;
-	for (i = 0; i < _threadList.size(); i++)
-		if (_threadList[i] == this)
+	Common::Array<TeLuaThread *> *threads = threadList();
+	for (i = 0; i < threads->size(); i++)
+		if ((*threads)[i] == this)
 			break;
-	if (i < _threadList.size())
-		_threadList.remove_at(i);
+	if (i < threads->size())
+		threads->remove_at(i);
 }
 
 /*static*/ TeLuaThread *TeLuaThread::create(TeLuaContext *context) {
@@ -226,12 +228,27 @@ void TeLuaThread::resume(const TeVariant &p1, const TeVariant &p2, const TeVaria
 	}
 }
 
-/*static*/ TeLuaThread *TeLuaThread::threadFromState(lua_State *state) {
-	for (auto &thread : _threadList) {
+/*static*/
+TeLuaThread *TeLuaThread::threadFromState(lua_State *state) {
+	Common::Array<TeLuaThread *> *threads = threadList();
+	for (auto &thread : *threads) {
 		if (thread->_luaThread == state)
 			return thread;
 	}
 	return nullptr;
+}
+
+/*static*/
+Common::Array<TeLuaThread *> *TeLuaThread::threadList() {
+	if (!_threadList)
+		_threadList = new Common::Array<TeLuaThread *>();
+	return _threadList;
+}
+
+/*static*/
+void TeLuaThread::cleanup() {
+	delete _threadList;
+	_threadList = nullptr;
 }
 
 int TeLuaThread::yield() {

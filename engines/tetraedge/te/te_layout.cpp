@@ -51,7 +51,9 @@ TeLayout::TeLayout() : Te3DObject2(), _autoz(true), _needZUpdate(true), _updatin
 TeLayout::~TeLayout() {
 	if (parent() && _onParentSizeChangedCallback) {
 		parent()->onSizeChanged().remove(_onParentSizeChangedCallback);
+		_onParentSizeChangedCallback.reset();
 		parent()->onWorldTransformationMatrixChanged().remove(_onParentWorldTransformationMatrixChangedCallback);
+		_onParentWorldTransformationMatrixChangedCallback.reset();
 	}
 
 	if (_onChildSizeChangedCallback) {

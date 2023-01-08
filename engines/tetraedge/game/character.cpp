@@ -36,10 +36,10 @@
 namespace Tetraedge {
 
 /*static*/ Common::HashMap<Common::String, Character::CharacterSettings> *Character::_globalCharacterSettings = nullptr;
+/*static*/ Common::HashMap<Common::String, TeIntrusivePtr<TeModelAnimation>> *Character::_animCacheMap = nullptr;
 
-/*static*/ Common::Array<Character::AnimCacheElement> Character::_animCache;
-/*static*/ Common::HashMap<Common::String, TeIntrusivePtr<TeModelAnimation>> Character::_animCacheMap;
-uint Character::_animCacheSize = 0;
+// /*static*/ Common::Array<Character::AnimCacheElement> *Character::_animCache = nullptr;
+// /*static*/ uint Character::_animCacheSize = 0;
 
 void Character::CharacterSettings::clear() {
 	_name.clear();
@@ -139,14 +139,24 @@ void Character::addCallback(const Common::String &animKey, const Common::String 
 	}
 }
 
-/*static*/ void Character::animCacheFreeAll() {
-	for (const auto &entry : _animCache)
-		_animCacheSize -= entry._size;
-	_animCache.clear();
-	_animCacheMap.clear();
+/*static*/
+void Character::animCacheFreeAll() {
+	/*
+	if (_animCache) {
+		for (const auto &entry : (*_animCache))
+			_animCacheSize -= entry._size;
+		delete _animCache;
+		_animCache = nullptr;
+	} */
+	if (_animCacheMap) {
+		delete _animCacheMap;
+		_animCacheMap = nullptr;
+	}
 }
 
-/*static*/ void Character::animCacheFreeOldest() {
+/*static*/
+void Character::animCacheFreeOldest() {
+	// Unused?
 	//_animCacheSize -= _animCache[_animCache.size() - 1]._size;
 	//_animCache.pop_back();
 }
@@ -154,9 +164,12 @@ void Character::addCallback(const Common::String &animKey, const Common::String 
 /*static*/
 TeIntrusivePtr<TeModelAnimation> Character::animCacheLoad(const Common::Path &path) {
 	const Common::String pathStr = path.toString();
-	if (_animCacheMap.contains(pathStr)) {
+	if (!_animCacheMap) {
+		_animCacheMap = new Common::HashMap<Common::String, TeIntrusivePtr<TeModelAnimation>>();
+	}
+	if (_animCacheMap->contains(pathStr)) {
 		// Copy from the cache (keep the cached instance clean)
-		return new TeModelAnimation(*_animCacheMap.getVal(pathStr));
+		return new TeModelAnimation(*_animCacheMap->getVal(pathStr));
 	}
 
 	TeIntrusivePtr<TeModelAnimation> modelAnim = new TeModelAnimation();
@@ -164,7 +177,7 @@ TeIntrusivePtr<TeModelAnimation> Character::animCacheLoad(const Common::Path &pa
 		warning("Failed to load anim %s", path.toString().c_str());
 	}
 
-	_animCacheMap.setVal(pathStr, modelAnim);
+	_animCacheMap->setVal(pathStr, modelAnim);
 	return modelAnim;
 }
 
