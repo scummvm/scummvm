@@ -110,7 +110,7 @@ DrivePOSIXFilesystemNode *DrivePOSIXFilesystemNode::getChildWithKnownType(const 
 		newPath += '/';
 	newPath += n;
 
-	DrivePOSIXFilesystemNode *child = new DrivePOSIXFilesystemNode(_config);
+	DrivePOSIXFilesystemNode *child = reinterpret_cast<DrivePOSIXFilesystemNode *>(makeNode());
 	child->_path = newPath;
 	child->_isValid = true;
 	child->_isPseudoRoot = false;
@@ -187,8 +187,7 @@ AbstractFSNode *DrivePOSIXFilesystemNode::getParent() const {
 	}
 
 	if (isDrive(_path)) {
-		DrivePOSIXFilesystemNode *root = new DrivePOSIXFilesystemNode(_config);
-		return root;
+		return makeNode();
 	}
 
 	return POSIXFilesystemNode::getParent();
