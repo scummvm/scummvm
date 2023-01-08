@@ -1170,13 +1170,24 @@ const char *ScummEngine_v7::getGUIString(int stringId) {
 		resStringId = 49;
 		break;
 	case gsVoiceOnly:
-		resStringId = 50;
+		if (_game.id == GID_FT &&
+			(_language != Common::EN_ANY && _language != Common::RU_RUS)) {
+			resStringId = 52;
+		} else {
+			resStringId = 50;
+		}
+
 		break;
 	case gsVoiceAndText:
 		resStringId = 51;
 		break;
 	case gsTextDisplayOnly:
-		resStringId = 52;
+		if (_game.id == GID_FT &&
+			(_language != Common::EN_ANY && _language != Common::RU_RUS)) {
+			resStringId = 50;
+		} else {
+			resStringId = 52;
+		}
 		break;
 	case gsTextSpeedSlider:
 		resStringId = 53;
