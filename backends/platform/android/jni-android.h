@@ -26,6 +26,7 @@
 
 #include <jni.h>
 #include <semaphore.h>
+#include <pthread.h>
 
 #include "common/fs.h"
 #include "common/archive.h"
@@ -59,7 +60,14 @@ public:
 
 	static jint onLoad(JavaVM *vm);
 
-	static JNIEnv *getEnv();
+	static inline JNIEnv *getEnv() {
+		JNIEnv *env = (JNIEnv*) pthread_getspecific(_env_tls);
+		if (env != nullptr) {
+			return env;
+		}
+
+		return fetchEnv();
+	}
 
 	static void attachThread();
 	static void detachThread();
@@ -102,6 +110,8 @@ public:
 	static bool isDirectoryWritableWithSAF(const Common::String &dirPath);
 
 private:
+	static pthread_key_t _env_tls;
+
 	static JavaVM *_vm;
 	// back pointer to (java) peer instance
 	static jobject _jobj;
@@ -172,6 +182,8 @@ private:
 	static Common::U32String convertFromJString(JNIEnv *env, const jstring &jstr);
 
 	static PauseToken _pauseToken;
+
+	static JNIEnv *fetchEnv();
 };
 
 inline bool JNI::haveSurface() {

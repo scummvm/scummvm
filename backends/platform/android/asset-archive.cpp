@@ -24,18 +24,18 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
+
+#include "backends/platform/android/jni-android.h"
+#include "backends/platform/android/asset-archive.h"
+
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/util.h"
 #include "common/archive.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
-
-#include "backends/platform/android/jni-android.h"
-#include "backends/platform/android/asset-archive.h"
-
-#include <android/asset_manager.h>
-#include <android/asset_manager_jni.h>
 
 class AssetInputStream : public Common::SeekableReadStream {
 public:
