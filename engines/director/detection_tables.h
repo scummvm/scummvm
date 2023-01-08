@@ -5227,6 +5227,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 							   "SSWARLCK.DIR", "3713bde5de54cd74cafacbe430134022", 608862, Common::JA_JPN, 400),
 	MACDEMO2_l("warlock", "Demo", "sswdemo",	   "9e3f05103eeb6b4b356e3c7c1e9b6802", 288134,
 							   "SSWdemo.DIR", "12a30501049536d72d5d46e285f48c47", 10112, Common::JA_JPN, 402),
+	MACGAME2_l("warlock", "", "SSWARLOCK",	   "22815cf659b911c4e07d0015cac5d98f", 301929,
+							   "NAV/SHARED.DIR", "18e32edc1081957290c03aafa89354e4", 624390, Common::JA_JPN, 400),
 
 	// Original Mac filename is わりわりワールド_デモ
 	MACDEMO1_l("wariwari", "Demo", "Wari Wari World Demo", "f808a9f231b77617fa559cf9d2da66c1", 502975, Common::JA_JPN, 400),
