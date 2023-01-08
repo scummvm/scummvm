@@ -24,11 +24,11 @@
 namespace Tetraedge {
 
 
-/*static*/ bool TeTimer::_pausedAll;
-/*static*/ unsigned long TeTimer::_realTime;
-/*static*/ Common::Array<TeTimer *> TeTimer::_timers;
-/*static*/ Common::Array<TeTimer *> TeTimer::_pausedTimers;
-/*static*/ TeRealTimer *TeTimer::_realTimer;
+/*static*/ bool TeTimer::_pausedAll = false;
+/*static*/ unsigned long TeTimer::_realTime = 0;
+/*static*/ Common::Array<TeTimer *> *TeTimer::_timers = nullptr;
+/*static*/ Common::Array<TeTimer *> *TeTimer::_pausedTimers = nullptr;
+/*static*/ TeRealTimer *TeTimer::_realTimer = nullptr;
 
 
 TeTimer::TeTimer() : _stopped(true), _pausable(true), _alarmTime(0),
@@ -40,16 +40,19 @@ _startTime(0), _lastTimeElapsed(0), _startTimeOffset(0), _updated(false) {
 }
 
 TeTimer::~TeTimer() {
-	for (uint i = 0; i < _timers.size(); i++) {
-		if (_timers[i] == this) {
-			_timers.remove_at(i);
+	Common::Array<TeTimer *> *ts = timers();
+	for (uint i = 0; i < ts->size(); i++) {
+		if ((*ts)[i] == this) {
+			ts->remove_at(i);
 			break;
 		}
 	}
+
 	// Not done in original, but probably should be?
-	for (uint i = 0; i < _pausedTimers.size(); i++) {
-		if (_pausedTimers[i] == this) {
-			_pausedTimers.remove_at(i);
+	Common::Array<TeTimer *> *pts = pausedTimers();
+	for (uint i = 0; i < pts->size(); i++) {
+		if ((*pts)[i] == this) {
+			pts->remove_at(i);
 			break;
 		}
 	}
@@ -72,9 +75,9 @@ void TeTimer::start() {
 	_lastTimeElapsed = timeOffset;
 	_stopped = false;
 	_updated = false;
-	_timers.push_back(this);
+	timers()->push_back(this);
 	if (_pausedAll && _pausable) {
-		_pausedTimers.push_back(this);
+		pausedTimers()->push_back(this);
 		pause();
 	}
 }
@@ -83,9 +86,10 @@ void TeTimer::pause() {
 	if (!_stopped) {
 		_startTime = _realTime;
 		_stopped = true;
-		for (uint i = 0; i < _timers.size(); i++) {
-			if (_timers[i] == this) {
-				_timers.remove_at(i);
+		Common::Array<TeTimer *> *ts = timers();
+		for (uint i = 0; i < ts->size(); i++) {
+			if ((*ts)[i] == this) {
+				ts->remove_at(i);
 				break;
 			}
 		}
@@ -138,24 +142,25 @@ unsigned long TeTimer::time_() {
 
 void TeTimer::pausable(bool ispausable) {
 	_pausable = ispausable;
+	Common::Array<TeTimer *> *paused = pausedTimers();
 	if (!_pausable) {
-		for (uint i = 0; i < _pausedTimers.size(); i++) {
-			if (_pausedTimers[i] == this) {
-				_pausedTimers.remove_at(i);
+		for (uint i = 0; i < paused->size(); i++) {
+			if ((*paused)[i] == this) {
+				paused->remove_at(i);
 				break;
 			}
 		}
 	} else if (_pausedAll) {
 		// ensure this is paused now
 		bool add = true;
-		for (TeTimer *pausedTimer : _pausedTimers) {
+		for (TeTimer *pausedTimer : *paused) {
 			if (pausedTimer == this) {
 				add = false;
 				break;
 			}
 		}
 		if (add)
-			_pausedTimers.push_back(this);
+			paused->push_back(this);
 		pause();
 	}
 }
@@ -169,43 +174,72 @@ void TeTimer::setAlarmIn(unsigned long offset) {
 	_alarmSet = true;
 }
 
-/*static*/ TeRealTimer *TeTimer::realTimer() {
+/*static*/
+TeRealTimer *TeTimer::realTimer() {
 	if (!_realTimer)
 		_realTimer = new TeRealTimer();
 	return _realTimer;
 }
 
-/*static*/ void TeTimer::pauseAll() {
+/*static*/
+Common::Array<TeTimer *> *TeTimer::timers() {
+	if (!_timers)
+		_timers = new Common::Array<TeTimer *>();
+	return _timers;
+}
+
+/*static*/
+Common::Array<TeTimer *> *TeTimer::pausedTimers() {
+	if (!_pausedTimers)
+		_pausedTimers = new Common::Array<TeTimer *>();
+	return _pausedTimers;
+}
+
+/*static*/
+void TeTimer::pauseAll() {
 	if (_pausedAll)
 		return;
 
 	_pausedAll = true;
 	_realTime = realTimer()->getTimeFromStart();
-	for (TeTimer *timer : _timers) {
+	for (TeTimer *timer : (*timers())) {
 		if (timer->_stopped || !timer->_pausable)
 			continue;
-		_pausedTimers.push_back(timer);
+		pausedTimers()->push_back(timer);
 		timer->pause();
 	}
 }
 
-/*static*/ void TeTimer::resumeAll() {
+/*static*/
+void TeTimer::resumeAll() {
 	if (!_pausedAll)
 		return;
 
 	_pausedAll = false;
 
 	_realTime = realTimer()->getTimeFromStart();
-	for (TeTimer *timer : _pausedTimers) {
+	for (TeTimer *timer : (*pausedTimers())) {
 		timer->start();
 	}
-	_pausedTimers.clear();
+	pausedTimers()->clear();
 }
 
-/*static*/ void TeTimer::updateAll() {
+/*static*/
+void TeTimer::updateAll() {
 	_realTime = realTimer()->getTimeFromStart();
-	for (auto *timer : _timers)
+	for (auto *timer : (*timers()))
 		timer->update();
 }
+
+/*static*/
+void TeTimer::cleanup() {
+	delete _timers;
+	_timers = nullptr;
+	delete _pausedTimers;
+	_pausedTimers = nullptr;
+	delete _realTimer;
+	_realTimer = nullptr;
+}
+
 
 } // end namespace Tetraedge

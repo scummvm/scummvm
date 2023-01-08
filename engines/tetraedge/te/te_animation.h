@@ -49,6 +49,7 @@ public:
 	static void resumeAll();
 	static void updateAll();
 
+	static void cleanup();
 
 	TeSignal0Param &onStop() { return _onStopSignal; }
 	TeSignal0Param &onFinished() { return _onFinishedSignal; }

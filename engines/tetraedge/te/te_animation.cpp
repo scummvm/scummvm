@@ -23,12 +23,13 @@
 
 namespace Tetraedge {
 
+/*static*/
 Common::Array<TeAnimation *> *TeAnimation::_animations = nullptr;
 
-/*static*/ Common::Array<TeAnimation *> *TeAnimation::animations() {
+/*static*/
+Common::Array<TeAnimation *> *TeAnimation::animations() {
 	if (!_animations)
 		_animations = new Common::Array<TeAnimation *>();
-
 	return _animations;
 }
 
@@ -106,6 +107,12 @@ void TeAnimation::resumeAll() {
 	for (auto &anim : *animations()) {
 		anim->cont();
 	}
+}
+
+/*static*/
+void TeAnimation::cleanup() {
+	delete _animations;
+	_animations = nullptr;
 }
 
 /*static*/

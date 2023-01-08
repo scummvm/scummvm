@@ -238,9 +238,9 @@ private:
 
 	Common::HashMap<Common::String, Common::Array<Callback *>> _callbacks;
 
-	static Common::Array<AnimCacheElement> _animCache;
-	static Common::HashMap<Common::String, TeIntrusivePtr<TeModelAnimation>> _animCacheMap;
-	static uint _animCacheSize;
+	// static Common::Array<AnimCacheElement> *_animCache; // Never used?
+	// static uint _animCacheSize; // Never used?
+	static Common::HashMap<Common::String, TeIntrusivePtr<TeModelAnimation>> *_animCacheMap;
 	static Common::HashMap<Common::String, CharacterSettings> *_globalCharacterSettings;
 
 };

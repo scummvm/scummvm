@@ -36,6 +36,8 @@ Te3DObject2::~Te3DObject2() {
 	for (auto *child : _children) {
 		child->setParent(nullptr);
 	}
+	// clear list in case parent->removeChild triggers a signal which ends up referencing it.
+	_children.clear();
 	if (parent()) {
 		parent()->removeChild(this);
 	}

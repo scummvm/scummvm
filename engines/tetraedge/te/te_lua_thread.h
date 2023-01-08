@@ -59,6 +59,8 @@ public:
 	static TeLuaThread *threadFromState(lua_State *state);
 	int yield();
 
+	static void cleanup();
+
 private:
 	void _resume(int nargs);
 
@@ -68,7 +70,8 @@ private:
 	int _lastResumeResult;
 	bool _released;
 
-	static Common::Array<TeLuaThread *> _threadList;
+	static Common::Array<TeLuaThread *> *threadList();
+	static Common::Array<TeLuaThread *> *_threadList;
 
 };
 

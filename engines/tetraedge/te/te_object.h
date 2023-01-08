@@ -38,8 +38,11 @@ public:
 	/** Delete all pending objects now */
 	static void deleteNow();
 
+	static void cleanup();
+
 private:
-	static Common::Array<TeObject *> _pendingDeleteList;
+	static Common::Array<TeObject *> *_pendingDeleteList;
+	static Common::Array<TeObject *> *pendingDeleteList();
 
 };
 

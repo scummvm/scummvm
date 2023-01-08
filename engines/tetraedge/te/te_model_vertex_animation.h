@@ -57,7 +57,7 @@ public:
 
 	const Common::String &head() const { return _head; }
 	TeVector3f32 getKeyVertex(unsigned long keyno, uint vertexno);
-	const Common::Array<TeVector3f32> &getVertices();
+	Common::Array<TeVector3f32> getVertices();
 
 	bool load(Common::ReadStream &stream);
 	void save(Common::WriteStream &stream) const;

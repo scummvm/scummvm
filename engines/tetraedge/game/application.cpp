@@ -291,6 +291,13 @@ void Application::create() {
 
 void Application::destroy() {
 	Character::animCacheFreeAll();
+
+	_globalBonusMenu.unload();
+	_bonusMenu.unload();
+	_mainMenu.unload();
+	_credits.leave();
+	_ownerErrorMenu.unload();
+	_splashScreens.unload();
 }
 
 void Application::startGame(bool newGame, int difficulty) {

@@ -80,6 +80,7 @@ void Objectif::load() {
 }
 
 void Objectif::leave() {
+	Application *app = g_engine->getApplication();
 	TeLayout *layout;
 	layout = _gui1.layout("background");
 	if (layout)
@@ -228,6 +229,13 @@ void Objectif::createChildLayout(TeLayout *layout, Common::String const &taskId,
 void Objectif::unload() {
 	removeChildren();
 	leave();
+
+	Application *app = g_engine->getApplication();
+	TeButtonLayout *btn = _gui2.buttonLayoutChecked("helpButton");
+	app->frontLayout().removeChild(btn);
+	btn = _gui1.buttonLayoutChecked("background");
+	app->frontLayout().removeChild(btn);
+
 	_gui1.unload();
 	_gui2.unload();
 	_tasks.clear();

@@ -248,17 +248,17 @@ void TeModel::update() {
 				mesh.update(&_boneMatricies, &_lerpedElements);
 			} else {
 				mesh.resizeUpdatedTables(mesh.numVerticies());
-				const Common::Array<TeVector3f32> *verticies = nullptr;
+				Common::Array<TeVector3f32> verticies;
 				if (_modelVertexAnim && mesh.name() == _modelVertexAnim->head())
-					verticies = &_modelVertexAnim->getVertices();
+					verticies = _modelVertexAnim->getVertices();
 
 				for (uint i = 0; i < mesh.numVerticies(); i++) {
 					TeVector3f32 vertex;
-					if (!verticies) {
+					if (verticies.empty()) {
 						vertex = mesh.preUpdatedVertex(i);
 					} else {
-						if (i < verticies->size())
-							vertex = (*verticies)[i];
+						if (i < verticies.size())
+							vertex = verticies[i];
 					}
 					TeVector3f32 normal = mesh.preUpdatedNormal(i);
 					int idx = (int)mesh.matrixIndex(i);
@@ -268,7 +268,7 @@ void TeModel::update() {
 
 					if (idx < (int)_bones.size()) {
 						updatedvertex = vertex;
-						if (!verticies)
+						if (verticies.empty())
 							updatedvertex = _boneMatricies[idx] * updatedvertex;
 						updatednormal = _boneMatricies[idx] * normal;
 					} else {

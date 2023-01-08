@@ -20,6 +20,7 @@
  */
 
 #include "tetraedge/te/te_object.h"
+#include "common/debug.h"
 
 namespace Tetraedge {
 
@@ -27,17 +28,40 @@ TeObject::TeObject() {
 }
 
 void TeObject::deleteLater() {
-	_pendingDeleteList.push_back(this);
+	pendingDeleteList()->push_back(this);
 }
 
-/*static*/ void TeObject::deleteNow() {
-	uint len = _pendingDeleteList.size();
-	for (uint i = 0; i < len; i++) {
-		delete _pendingDeleteList[i];
+/*static*/
+void TeObject::deleteNow() {
+	Common::Array<TeObject *> *pending = pendingDeleteList();
+	for (auto *obj : (*pending)) {
+		delete obj;
 	}
-	_pendingDeleteList.clear();
+	pending->clear();
 }
 
-Common::Array<TeObject *> TeObject::_pendingDeleteList;
+/*static*/
+Common::Array<TeObject *> *TeObject::_pendingDeleteList = nullptr;
+
+/*static*/
+Common::Array<TeObject *> *TeObject::pendingDeleteList() {
+	if (!_pendingDeleteList)
+		_pendingDeleteList = new Common::Array<TeObject *>();
+	return _pendingDeleteList;
+}
+
+/*static*/
+void TeObject::cleanup() {
+	// Should be deleted already, but if not..
+	if (_pendingDeleteList && _pendingDeleteList->size()) {
+		warning("Leaking %d objects on shutdown.", _pendingDeleteList->size());
+		for (auto *obj : (*_pendingDeleteList)) {
+			debug("Leaked %p", obj);
+		}
+	}
+	delete _pendingDeleteList;
+	_pendingDeleteList = nullptr;
+}
+
 
 } // end namespace Tetraedge
