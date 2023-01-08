@@ -29,6 +29,9 @@ const PlainGameDescriptor GAME_NAMES[] = {
 };
 
 const ADGameDescription GAME_DESCRIPTIONS[] = {
+	// GOG and Steam releases
+	// Note: Full sum of GOG and Steam are different,
+	// but size and first 5000 bytes are the same.
 	{
 		"syberia",
 		nullptr,
