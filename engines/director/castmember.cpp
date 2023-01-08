@@ -283,6 +283,10 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 			int castPaletteId = score->resolvePaletteId(_clut);
 			if (!castPaletteId)
 				castPaletteId = cast->_defaultPalette;
+
+			// Check if the palette is in the middle of a color fade event
+			bool isColorCycling = score->isPaletteColorCycling();
+
 			// First, check if the palettes are different
 			switch (_bitsPerPixel) {
 			// 1bpp - this is preconverted to 0x00 and 0xff, change nothing.
@@ -306,9 +310,9 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 					_ditheredImg = _img->getSurface()->convertTo(g_director->_wm->_pixelformat, srcPal.palette, srcPal.length, currentPalette->palette, currentPalette->length, Graphics::kDitherNaive);
 				}
 				break;
-			// 8bpp - if using a different palette, convert using nearest colour matching
+			// 8bpp - if using a different palette, and we're not doing a color cycling operation, convert using nearest colour matching
 			case 8:
-				if (castPaletteId != currentPaletteId) {
+				if (castPaletteId != currentPaletteId && !isColorCycling) {
 					const auto pals = g_director->getLoadedPalettes();
 					int palIndex = pals.contains(castPaletteId) ? castPaletteId : kClutSystemMac;
 					const PaletteV4 &srcPal = pals.getVal(palIndex);

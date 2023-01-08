@@ -113,6 +113,7 @@ public:
 	void renderSprites(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	bool renderPrePaletteCycle(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void setLastPalette(uint16 frameId);
+	bool isPaletteColorCycling();
 	void renderPaletteCycle(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderCursor(Common::Point pos, bool forceUpdate = false);
 	void updateWidgets(bool hasVideoPlayback);
