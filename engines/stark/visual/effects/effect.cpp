@@ -25,7 +25,7 @@
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/surfacerenderer.h"
-#include "engines/stark/gfx/texture.h"
+#include "engines/stark/gfx/bitmap.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/settings.h"
 
@@ -40,8 +40,8 @@ VisualEffect::VisualEffect(VisualType type, const Common::Point &size, Gfx::Driv
 	_surface = new Graphics::Surface();
 	_surface->create(size.x, size.y, Gfx::Driver::getRGBAPixelFormat());
 
-	_texture = _gfx->createBitmap(_surface);
-	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
+	_bitmap = _gfx->createBitmap(_surface);
+	_bitmap->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 
 	_surfaceRenderer = _gfx->createSurfaceRenderer();
 }
@@ -51,7 +51,7 @@ VisualEffect::~VisualEffect() {
 		_surface->free();
 	}
 	delete _surface;
-	delete _texture;
+	delete _bitmap;
 	delete _surfaceRenderer;
 }
 

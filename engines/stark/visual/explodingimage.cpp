@@ -26,7 +26,7 @@
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/surfacerenderer.h"
-#include "engines/stark/gfx/texture.h"
+#include "engines/stark/gfx/bitmap.h"
 
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
@@ -37,7 +37,7 @@ namespace Stark {
 VisualExplodingImage::VisualExplodingImage(Gfx::Driver *gfx) :
 		Visual(TYPE),
 		_gfx(gfx),
-		_texture(nullptr),
+		_bitmap(nullptr),
 		_surface(nullptr),
 		_originalWidth(0),
 		_originalHeight(0) {
@@ -49,20 +49,20 @@ VisualExplodingImage::~VisualExplodingImage() {
 		_surface->free();
 	}
 	delete _surface;
-	delete _texture;
+	delete _bitmap;
 	delete _surfaceRenderer;
 }
 
 void VisualExplodingImage::initFromSurface(const Graphics::Surface *surface, uint originalWidth, uint originalHeight) {
-	assert(!_surface && !_texture);
+	assert(!_surface && !_bitmap);
 
 	_surface = new Graphics::Surface();
 	_surface->copyFrom(*surface);
 	_originalWidth  = originalWidth;
 	_originalHeight = originalHeight;
 
-	_texture = _gfx->createBitmap(_surface);
-	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
+	_bitmap = _gfx->createBitmap(_surface);
+	_bitmap->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 
 	// Create an explosion unit for each pixel in the surface
 	_units.resize(_surface->w * _surface->h);
@@ -91,8 +91,8 @@ void VisualExplodingImage::render(const Common::Point &position) {
 		_units[i].draw(_surface);
 	}
 
-	_texture->update(_surface);
-	_surfaceRenderer->render(_texture, position, _originalWidth, _originalHeight);
+	_bitmap->update(_surface);
+	_surfaceRenderer->render(_bitmap, position, _originalWidth, _originalHeight);
 }
 
 VisualExplodingImage::ExplosionUnit::ExplosionUnit() :

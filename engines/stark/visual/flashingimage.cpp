@@ -26,7 +26,7 @@
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/surfacerenderer.h"
-#include "engines/stark/gfx/texture.h"
+#include "engines/stark/gfx/bitmap.h"
 
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
@@ -39,7 +39,7 @@ const float VisualFlashingImage::_fadeValueMax = 0.55f;
 VisualFlashingImage::VisualFlashingImage(Gfx::Driver *gfx) :
 		Visual(TYPE),
 		_gfx(gfx),
-		_texture(nullptr),
+		_bitmap(nullptr),
 		_fadeLevelIncreasing(true),
 		_fadeLevel(0),
 		_flashingTimeRemaining(150 * 33),
@@ -49,18 +49,18 @@ VisualFlashingImage::VisualFlashingImage(Gfx::Driver *gfx) :
 }
 
 VisualFlashingImage::~VisualFlashingImage() {
-	delete _texture;
+	delete _bitmap;
 	delete _surfaceRenderer;
 }
 
 void VisualFlashingImage::initFromSurface(const Graphics::Surface *surface, uint originalWidth, uint originalHeight) {
-	assert(!_texture);
+	assert(!_bitmap);
 
 	_originalWidth  = originalWidth;
 	_originalHeight = originalHeight;
 
-	_texture = _gfx->createBitmap(surface);
-	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
+	_bitmap = _gfx->createBitmap(surface);
+	_bitmap->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 }
 
 void VisualFlashingImage::updateFadeLevel() {
@@ -86,7 +86,7 @@ void VisualFlashingImage::render(const Common::Point &position) {
 	updateFadeLevel();
 
 	_surfaceRenderer->setFadeLevel(_fadeLevel);
-	_surfaceRenderer->render(_texture, position, _originalWidth, _originalHeight);
+	_surfaceRenderer->render(_bitmap, position, _originalWidth, _originalHeight);
 }
 
 } // End of namespace Stark

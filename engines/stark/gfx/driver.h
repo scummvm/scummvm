@@ -38,6 +38,7 @@ namespace Gfx {
 
 class SurfaceRenderer;
 class FadeRenderer;
+class Bitmap;
 class Texture;
 
 class Driver {
@@ -67,15 +68,15 @@ public:
 	 * The caller is responsible for freeing it.
 	 *
 	 */
-	virtual Texture *createTexture(const Graphics::Surface *surface = nullptr, const byte *palette = nullptr) = 0;
+	virtual Texture *createTexture() = 0;
 
 	/**
-	 * Create a new texture for 2D
+	 * Create a new bitmap for 2D
 	 *
 	 * The caller is responsible for freeing it.
 	 *
 	 */
-	virtual Texture *createBitmap(const Graphics::Surface *surface = nullptr, const byte *palette = nullptr) = 0;
+	virtual Bitmap *createBitmap(const Graphics::Surface *surface = nullptr, const byte *palette = nullptr) = 0;
 
 	/**
 	 * Create a new actor renderer

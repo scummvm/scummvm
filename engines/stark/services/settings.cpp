@@ -94,8 +94,8 @@ bool Settings::shouldPreMultiplyReplacementPNGs() const {
 	return ConfMan.getBool("replacement_png_premultiply_alpha");
 }
 
-Gfx::Texture::SamplingFilter Settings::getImageSamplingFilter() const {
-	return ConfMan.getBool("use_linear_filtering") ? Gfx::Texture::kLinear : Gfx::Texture::kNearest;
+Gfx::Bitmap::SamplingFilter Settings::getImageSamplingFilter() const {
+	return ConfMan.getBool("use_linear_filtering") ? Gfx::Bitmap::kLinear : Gfx::Bitmap::kNearest;
 }
 
 bool Settings::isFontAntialiasingEnabled() const {

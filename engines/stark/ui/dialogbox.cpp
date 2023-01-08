@@ -22,7 +22,7 @@
 #include "engines/stark/ui/dialogbox.h"
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/surfacerenderer.h"
-#include "engines/stark/gfx/texture.h"
+#include "engines/stark/gfx/bitmap.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/fontprovider.h"
 #include "engines/stark/ui/cursor.h"
@@ -46,7 +46,7 @@ static const uint buttonVerticalMargin   = 5;
 
 DialogBox::DialogBox(StarkEngine *vm, Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor),
-		_foregroundTexture(nullptr),
+		_foreground(nullptr),
 		_confirmCallback(nullptr) {
 	_vm = vm;
 	_surfaceRenderer = gfx->createSurfaceRenderer();
@@ -60,8 +60,8 @@ DialogBox::DialogBox(StarkEngine *vm, Gfx::Driver *gfx, Cursor *cursor) :
 		uint32 blue = background->format.RGBToColor(26, 28, 57);
 		background->fillRect(Common::Rect(256, 256), blue);
 	}
-	_backgroundTexture = gfx->createBitmap(background);
-	_backgroundTexture->setSamplingFilter(Gfx::Texture::kLinear);
+	_background = gfx->createBitmap(background);
+	_background->setSamplingFilter(Gfx::Bitmap::kLinear);
 
 	background->free();
 	delete background;
@@ -87,7 +87,7 @@ DialogBox::~DialogBox() {
 	delete _confirmLabelVisual;
 	delete _cancelLabelVisual;
 
-	delete _backgroundTexture;
+	delete _background;
 
 	delete _surfaceRenderer;
 }
@@ -166,30 +166,30 @@ void DialogBox::recomputeLayout() {
 	drawBevel(&foreground, _confirmButtonRect);
 	drawBevel(&foreground, _cancelButtonRect);
 
-	_foregroundTexture = _gfx->createBitmap(&foreground);
-	_foregroundTexture->setSamplingFilter(Gfx::Texture::kLinear);
+	_foreground = _gfx->createBitmap(&foreground);
+	_foreground->setSamplingFilter(Gfx::Bitmap::kLinear);
 
 	foreground.free();
 
 	Common::Point screenCenter(Gfx::Driver::kOriginalWidth / 2, Gfx::Driver::kOriginalHeight / 2);
 	_position = Common::Rect::center(screenCenter.x, screenCenter.y,
-	                                 _foregroundTexture->width(), _foregroundTexture->height());
+	                                 _foreground->width(), _foreground->height());
 }
 
 void DialogBox::freeForeground() {
-	delete _foregroundTexture;
-	_foregroundTexture = nullptr;
+	delete _foreground;
+	_foreground = nullptr;
 
 	if (_messageVisual) {
-		_messageVisual->resetTexture();
+		_messageVisual->reset();
 	}
 
 	if (_confirmLabelVisual) {
-		_confirmLabelVisual->resetTexture();
+		_confirmLabelVisual->reset();
 	}
 
 	if (_cancelLabelVisual) {
-		_cancelLabelVisual->resetTexture();
+		_cancelLabelVisual->reset();
 	}
 }
 
@@ -267,12 +267,12 @@ Graphics::Surface *DialogBox::loadBackground() {
 }
 
 void DialogBox::onRender() {
-	uint32 backgroundRepeatX = ceil(_foregroundTexture->width() / (float)_backgroundTexture->width());
+	uint32 backgroundRepeatX = ceil(_foreground->width() / (float)_background->width());
 	for (uint i = 0; i < backgroundRepeatX; i++) {
-		_surfaceRenderer->render(_backgroundTexture, Common::Point(i * _backgroundTexture->width(), 0));
+		_surfaceRenderer->render(_background, Common::Point(i * _background->width(), 0));
 	}
 
-	_surfaceRenderer->render(_foregroundTexture, Common::Point(0, 0));
+	_surfaceRenderer->render(_foreground, Common::Point(0, 0));
 
 	_messageVisual->render(Common::Point(_messageRect.left, _messageRect.top));
 

@@ -36,22 +36,11 @@ namespace Gfx {
  */
 class Texture {
 public:
-	Texture();
-	virtual ~Texture();
-
-	enum SamplingFilter {
-		kNearest,
-		kLinear
-	};
+	Texture() {}
+	virtual ~Texture() {}
 
 	/** Make the texture active */
 	virtual void bind() const = 0;
-
-	/** Define or update the texture pixel data */
-	virtual void update(const Graphics::Surface *surface, const byte *palette = nullptr) = 0;
-
-	/** Set the filter used when sampling the texture */
-	virtual void setSamplingFilter(SamplingFilter filter) = 0;
 
 	/**
 	 * Define the total number of levels of details
@@ -64,16 +53,6 @@ public:
 	 * Add a detail level to the texture
 	 */
 	virtual void addLevel(uint32 level, const Graphics::Surface *surface, const byte *palette = nullptr) = 0;
-
-	/** Get the texture width */
-	uint32 width() const { return _width; }
-
-	/** Get the texture height */
-	uint32 height() const { return _height; }
-
-protected:
-	uint32 _width;
-	uint32 _height;
 };
 
 /**

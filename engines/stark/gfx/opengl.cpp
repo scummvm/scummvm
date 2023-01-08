@@ -28,6 +28,7 @@
 #if defined(USE_OPENGL_GAME)
 
 #include "engines/stark/gfx/openglactor.h"
+#include "engines/stark/gfx/openglbitmap.h"
 #include "engines/stark/gfx/openglprop.h"
 #include "engines/stark/gfx/openglsurface.h"
 #include "engines/stark/gfx/openglfade.h"
@@ -188,18 +189,18 @@ void OpenGLDriver::setupLights(const LightEntryArray &lights) {
 	}
 }
 
-Texture *OpenGLDriver::createTexture(const Graphics::Surface *surface, const byte *palette) {
-	OpenGlTexture *texture = new OpenGlTexture();
-
-	if (surface) {
-		texture->update(surface, palette);
-	}
-
-	return texture;
+Texture *OpenGLDriver::createTexture() {
+	return new OpenGlTexture();
 }
 
-Texture *OpenGLDriver::createBitmap(const Graphics::Surface *surface, const byte *palette) {
-	return createTexture(surface, palette);
+Bitmap *OpenGLDriver::createBitmap(const Graphics::Surface *surface, const byte *palette) {
+	OpenGlBitmap *bitmap = new OpenGlBitmap();
+
+	if (surface) {
+		bitmap->update(surface, palette);
+	}
+
+	return bitmap;
 }
 
 VisualActor *OpenGLDriver::createActorRenderer() {

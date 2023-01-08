@@ -242,7 +242,7 @@ void StaticLocationWidget::onScreenChanged() {
 
 	VisualText *text = _renderEntry->getText();
 	if (text) {
-		text->resetTexture();
+		text->reset();
 	}
 }
 

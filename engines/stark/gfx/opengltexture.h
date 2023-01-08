@@ -41,8 +41,6 @@ public:
 
 	// Texture API
 	void bind() const override;
-	void update(const Graphics::Surface *surface, const byte *palette = nullptr) override;
-	void setSamplingFilter(SamplingFilter filter) override;
 	void setLevelCount(uint32 count) override;
 	void addLevel(uint32 level, const Graphics::Surface *surface, const byte *palette = nullptr) override;
 

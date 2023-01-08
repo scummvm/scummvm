@@ -33,7 +33,7 @@ namespace Stark {
 namespace Gfx {
 
 class OpenGLDriver;
-class Texture;
+class Bitmap;
 
 struct _SurfaceVertex {
 	float x;
@@ -50,8 +50,8 @@ public:
 	virtual ~OpenGLSurfaceRenderer();
 
 	// SurfaceRenderer API
-	void render(const Texture *texture, const Common::Point &dest) override;
-	void render(const Texture *texture, const Common::Point &dest, uint width, uint height) override;
+	void render(const Bitmap *bitmap, const Common::Point &dest) override;
+	void render(const Bitmap *bitmap, const Common::Point &dest, uint width, uint height) override;
 
 private:
 	Math::Vector2d normalizeOriginalCoordinates(int x, int y) const;

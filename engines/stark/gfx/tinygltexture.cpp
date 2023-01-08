@@ -51,11 +51,6 @@ void TinyGlTexture::bind() const {
 }
 
 void TinyGlTexture::updateLevel(uint32 level, const Graphics::Surface *surface, const byte *palette) {
-	if (level == 0) {
-		_width = surface->w;
-		_height = surface->h;
-	}
-
 	if (surface->format.bytesPerPixel != 4) {
 		// Convert the surface to texture format
 		Graphics::Surface *convertedSurface = surface->convertTo(Driver::getRGBAPixelFormat(), palette);
@@ -67,28 +62,6 @@ void TinyGlTexture::updateLevel(uint32 level, const Graphics::Surface *surface, 
 	} else {
 		// Convert the surface to texture format
 		tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, surface->w, surface->h, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, const_cast<void *>(surface->getPixels()));
-	}
-}
-
-void TinyGlTexture::update(const Graphics::Surface *surface, const byte *palette) {
-	bind();
-	updateLevel(0, surface, palette);
-}
-
-void TinyGlTexture::setSamplingFilter(Texture::SamplingFilter filter) {
-	assert(_levelCount == 0);
-
-	switch (filter) {
-	case kNearest:
-		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_NEAREST);
-		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_NEAREST);
-		break;
-	case kLinear:
-		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
-		tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
-		break;
-	default:
-		warning("Unhandled sampling filter %d", filter);
 	}
 }
 

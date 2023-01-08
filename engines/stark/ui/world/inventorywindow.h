@@ -73,7 +73,7 @@ protected:
 private:
 	ActionMenu *_actionMenu;
 
-	VisualImageXMG *_backgroundTexture;
+	VisualImageXMG *_backgroundImage;
 	Common::Rect _backgroundRect;
 
 	VisualImageXMG *_scrollUpArrowImage;

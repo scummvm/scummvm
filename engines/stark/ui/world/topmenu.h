@@ -47,7 +47,7 @@ public:
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;
 
-	/** The screen resolution changed, rebuild the text textures accordingly */
+	/** The screen resolution changed, rebuild the text accordingly */
 	void onScreenChanged();
 
 	/** A new item has been added to the player's inventory. Play relevant animation */

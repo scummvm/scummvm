@@ -21,7 +21,6 @@
 
 #include "engines/stark/gfx/tinyglsurface.h"
 #include "engines/stark/gfx/tinyglbitmap.h"
-#include "engines/stark/gfx/texture.h"
 
 #include "graphics/tinygl/tinygl.h"
 
@@ -36,11 +35,11 @@ TinyGLSurfaceRenderer::TinyGLSurfaceRenderer(TinyGLDriver *gfx) :
 TinyGLSurfaceRenderer::~TinyGLSurfaceRenderer() {
 }
 
-void TinyGLSurfaceRenderer::render(const Texture *texture, const Common::Point &dest) {
-	render(texture, dest, texture->width(), texture->height());
+void TinyGLSurfaceRenderer::render(const Bitmap *bitmap, const Common::Point &dest) {
+	render(bitmap, dest, bitmap->width(), bitmap->height());
 }
 
-void TinyGLSurfaceRenderer::render(const Texture *texture, const Common::Point &dest, uint width, uint height) {
+void TinyGLSurfaceRenderer::render(const Bitmap *bitmap, const Common::Point &dest, uint width, uint height) {
 	if (width == 0 || height == 0)
 		return;
 	_gfx->start2DMode();
@@ -54,25 +53,25 @@ void TinyGLSurfaceRenderer::render(const Texture *texture, const Common::Point &
 	auto verOffsetXY = normalizeOriginalCoordinates(dest.x, dest.y);
 	auto nativeViewport = _gfx->getViewport();
 	auto viewport = Math::Vector2d(nativeViewport.width(), nativeViewport.height());
-	auto blitImage = ((TinyGlBitmap *)const_cast<Texture *>(texture))->getBlitTexture();
-	int blitTextureWidth, blitTextureHeight;
-	tglGetBlitImageSize(blitImage, blitTextureWidth, blitTextureHeight);
+	auto blitImage = ((TinyGlBitmap *)const_cast<Bitmap *>(bitmap))->getBlitImage();
+	int blitImageWidth, blitImageHeight;
+	tglGetBlitImageSize(blitImage, blitImageWidth, blitImageHeight);
 	int posX = viewport.getX() * verOffsetXY.getX() + nativeViewport.left;
 	int posY = viewport.getY() * verOffsetXY.getY() + nativeViewport.top;
 	TinyGL::BlitTransform transform(posX, posY);
 
-	// W/A for not clipped textures in prompt dialog
+	// W/A for not clipped bitmaps in prompt dialog
 	if (width == 256 && height == 256) {
-		blitTextureHeight = viewport.getY() - dest.y;
-		blitTextureWidth = viewport.getX() - dest.x;
+		blitImageHeight = viewport.getY() - dest.y;
+		blitImageWidth = viewport.getX() - dest.x;
 	}
 
-	transform.sourceRectangle(0, 0, blitTextureWidth, blitTextureHeight);
+	transform.sourceRectangle(0, 0, blitImageWidth, blitImageHeight);
 
-	// W/A for 1x1 dimension texture
-	// it needs new filled and scalled texture based on one pixel color
-	if (blitTextureWidth == 1 && blitTextureHeight == 1) {
-		auto pixelColor = ((TinyGlBitmap *)const_cast<Texture *>(texture))->getTexture1x1Color();
+	// W/A for 1x1 dimension bitmap
+	// it needs new filled and scaled bitmap based on one pixel color
+	if (blitImageWidth == 1 && blitImageHeight == 1) {
+		auto pixelColor = ((TinyGlBitmap *)const_cast<Bitmap *>(bitmap))->get1x1Color();
 		Graphics::Surface surface;
 		surface.create(width, height, Driver::getRGBAPixelFormat());
 		surface.fillRect(Common::Rect(0, 0, width, height), pixelColor);

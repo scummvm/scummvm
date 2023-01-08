@@ -32,7 +32,6 @@ namespace Stark {
 namespace Gfx {
 class Driver;
 class SurfaceRenderer;
-class Texture;
 }
 
 /**

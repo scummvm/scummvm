@@ -19,48 +19,38 @@
  *
  */
 
-#ifndef STARK_GFX_OPENGL_S_SURFACE_H
-#define STARK_GFX_OPENGL_S_SURFACE_H
+#ifndef STARK_GFX_OPENGL_BITMAP_H
+#define STARK_GFX_OPENGL_BITMAP_H
 
-#include "engines/stark/gfx/surfacerenderer.h"
+#include "engines/stark/gfx/bitmap.h"
 
-#include "math/vector2d.h"
+#include "graphics/opengl/system_headers.h"
 
-#if defined(USE_OPENGL_SHADERS)
-
-namespace OpenGL {
-class Shader;
-}
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
 namespace Stark {
 namespace Gfx {
 
-class OpenGLSDriver;
-class Bitmap;
-
 /**
- * An programmable pipeline OpenGL surface renderer
+ * An OpenGL texture wrapper for 2D elements
  */
-class OpenGLSSurfaceRenderer : public SurfaceRenderer {
+class OpenGlBitmap : public Bitmap {
 public:
-	OpenGLSSurfaceRenderer(OpenGLSDriver *gfx);
-	virtual ~OpenGLSSurfaceRenderer();
+	OpenGlBitmap();
+	virtual ~OpenGlBitmap();
 
-	// SurfaceRenderer API
-	void render(const Bitmap *bitmap, const Common::Point &dest) override;
-	void render(const Bitmap *bitmap, const Common::Point &dest, uint width, uint height) override;
+	// Bitmap API
+	void bind() const override;
+	void update(const Graphics::Surface *surface, const byte *palette = nullptr) override;
+	void setSamplingFilter(SamplingFilter filter) override;
 
-private:
-	Math::Vector2d normalizeOriginalCoordinates(int x, int y) const;
-	Math::Vector2d normalizeCurrentCoordinates(int x, int y) const;
-
-	OpenGLSDriver *_gfx;
-	OpenGL::Shader *_shader;
+protected:
+	GLuint _id;
 };
 
 } // End of namespace Gfx
 } // End of namespace Stark
 
-#endif // defined(USE_OPENGL_SHADERS)
+#endif // defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
-#endif // STARK_GFX_OPENGL_S_SURFACE_H
+#endif // STARK_GFX_OPENGL_BITMAP_H

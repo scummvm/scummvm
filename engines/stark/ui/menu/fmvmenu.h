@@ -92,7 +92,7 @@ public:
 
 	void setTextColor(const Color &color) { _title.setColor(color); }
 
-	void onScreenChanged() { _title.resetTexture(); }
+	void onScreenChanged() { _title.reset(); }
 
 private:
 	const Color _textColorHovered = Color(0x1E, 0x1E, 0x96);

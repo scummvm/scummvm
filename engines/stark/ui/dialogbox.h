@@ -33,7 +33,7 @@ namespace Stark {
 
 namespace Gfx {
 class SurfaceRenderer;
-class Texture;
+class Bitmap;
 }
 
 typedef Common::Functor0<void> ConfirmCallback;
@@ -79,8 +79,8 @@ private:
 	StarkEngine *_vm;
 
 	Gfx::SurfaceRenderer *_surfaceRenderer;
-	Gfx::Texture *_backgroundTexture;
-	Gfx::Texture *_foregroundTexture;
+	Gfx::Bitmap *_background;
+	Gfx::Bitmap *_foreground;
 
 	VisualText *_messageVisual;
 	VisualText *_confirmLabelVisual;

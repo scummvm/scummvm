@@ -27,7 +27,7 @@
 namespace Stark {
 namespace Gfx {
 
-class Texture;
+class Bitmap;
 
 /**
  * A renderer to draw textures as two dimensional surfaces to the current viewport
@@ -38,14 +38,14 @@ public:
 	virtual ~SurfaceRenderer();
 
 	/**
-	 * Draw a 2D surface from the specified texture
+	 * Draw a 2D surface from the specified bitmap
 	 */
-	virtual void render(const Texture *texture, const Common::Point &dest) = 0;
+	virtual void render(const Bitmap *bitmap, const Common::Point &dest) = 0;
 
 	/**
-	 * Draw a 2D surface from the specified texture with given width and height
+	 * Draw a 2D surface from the specified bitmap with given width and height
 	 */
-	virtual void render(const Texture *texture, const Common::Point &dest, uint width, uint height) = 0;
+	virtual void render(const Bitmap *bitmap, const Common::Point &dest, uint width, uint height) = 0;
 
 	/**
 	 * When this is set to true, the texture size is expected to be in current

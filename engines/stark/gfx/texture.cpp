@@ -26,14 +26,6 @@
 namespace Stark {
 namespace Gfx {
 
-Texture::Texture() :
-		_width(0),
-		_height(0) {
-}
-
-Texture::~Texture() {
-}
-
 TextureSet::TextureSet() {
 }
 

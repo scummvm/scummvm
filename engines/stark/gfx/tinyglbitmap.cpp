@@ -28,8 +28,8 @@ namespace Stark {
 namespace Gfx {
 
 TinyGlBitmap::TinyGlBitmap() :
-		Texture(),
-		 _texture1x1Color(0) {
+		Bitmap(),
+		 _1x1Color(0) {
 	_blitImage = tglGenBlitImage();
 }
 
@@ -40,41 +40,31 @@ TinyGlBitmap::~TinyGlBitmap() {
 void TinyGlBitmap::bind() const {
 }
 
-void TinyGlBitmap::updateLevel(uint32 level, const Graphics::Surface *surface, const byte *palette) {
+void TinyGlBitmap::update(const Graphics::Surface *surface, const byte *palette) {
 	_width = surface->w;
 	_height = surface->h;
 
 	if (surface->format.bytesPerPixel != 4) {
-		// Convert the surface to texture format
+		// Convert the surface to bitmap format
 		Graphics::Surface *convertedSurface = surface->convertTo(Driver::getRGBAPixelFormat(), palette);
 		tglUploadBlitImage(_blitImage, *convertedSurface, 0, false);
 		convertedSurface->free();
 		delete convertedSurface;
 	} else {
 		assert(surface->format == Driver::getRGBAPixelFormat());
-		// W/A for 1x1 size texture
-		// store pixel color used later fo creating scalled texture
+		// W/A for 1x1 size bitmap
+		// store pixel color used later fo creating scalled bitmap
 		if (_width == 1 && _height == 1) {
-			_texture1x1Color = surface->getPixel(0, 0);
+			_1x1Color = surface->getPixel(0, 0);
 		}
 		tglUploadBlitImage(_blitImage, *surface, 0, false);
 	}
 }
 
-void TinyGlBitmap::update(const Graphics::Surface *surface, const byte *palette) {
-	updateLevel(0, surface, palette);
+void TinyGlBitmap::setSamplingFilter(Bitmap::SamplingFilter filter) {
 }
 
-void TinyGlBitmap::setSamplingFilter(Texture::SamplingFilter filter) {
-}
-
-void TinyGlBitmap::setLevelCount(uint32 count) {
-}
-
-void TinyGlBitmap::addLevel(uint32 level, const Graphics::Surface *surface, const byte *palette) {
-}
-
-TinyGL::BlitImage *TinyGlBitmap::getBlitTexture() const {
+TinyGL::BlitImage *TinyGlBitmap::getBlitImage() const {
 	return _blitImage;
 }
 

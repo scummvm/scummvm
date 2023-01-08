@@ -96,7 +96,7 @@ public:
 	uint getHeight() { return _text.getRect().bottom - _text.getRect().top; }
 
 	void render() { _text.render(_pos); }
-	void onScreenChanged() { _text.resetTexture(); }
+	void onScreenChanged() { _text.reset(); }
 
 private:
 	const Color _color = Color(0x68, 0x05, 0x04);
@@ -122,8 +122,8 @@ public:
 	}
 
 	void onScreenChanged() {
-		_nameText.resetTexture();
-		_lineText.resetTexture();
+		_nameText.reset();
+		_lineText.reset();
 	}
 
 private:

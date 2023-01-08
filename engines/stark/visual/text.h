@@ -34,7 +34,7 @@ namespace Stark {
 namespace Gfx {
 class Driver;
 class SurfaceRenderer;
-class Texture;
+class Bitmap;
 }
 
 struct Color {
@@ -78,19 +78,19 @@ public:
 	uint getTargetHeight() { return _targetHeight; }
 
 	void render(const Common::Point &position);
-	void resetTexture();
+	void reset();
 
 private:
-	void createTexture();
-	void freeTexture();
+	void createBitmap();
+	void freeBitmap();
 
 	/** Check whether the text is blank */
 	bool isBlank();
 
 	Gfx::Driver *_gfx;
 	Gfx::SurfaceRenderer *_surfaceRenderer;
-	Gfx::Texture *_texture;
-	Gfx::Texture *_bgTexture;
+	Gfx::Bitmap *_bitmap;
+	Gfx::Bitmap *_bgBitmap;
 
 	Common::String _text;
 	Color _color;

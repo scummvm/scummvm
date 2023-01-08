@@ -244,7 +244,7 @@ void ActionMenu::onGameLoop() {
 }
 
 void ActionMenu::onScreenChanged() {
-	_itemDescription->resetTexture();
+	_itemDescription->reset();
 }
 
 } // End of namespace Stark

@@ -48,7 +48,7 @@ public:
 	/** Abort the currently playing dialog */
 	void reset();
 
-	/** The screen resolution changed, rebuild the text textures accordingly */
+	/** The screen resolution changed, rebuild the text accordingly */
 	void onScreenChanged();
 
 	/** Scroll up and down the panel */
@@ -83,8 +83,8 @@ private:
 	void updateFirstVisibleOption();
 	void updateLastVisibleOption();
 
-	VisualImageXMG *_passiveBackGroundTexture;
-	VisualImageXMG *_activeBackGroundTexture;
+	VisualImageXMG *_passiveBackGroundImage;
+	VisualImageXMG *_activeBackGroundImage;
 	VisualImageXMG *_scrollUpArrowImage;
 	VisualImageXMG *_scrollDownArrowImage;
 	VisualImageXMG *_dialogOptionBullet;

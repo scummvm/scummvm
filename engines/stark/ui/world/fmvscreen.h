@@ -35,7 +35,7 @@ namespace Stark {
 
 namespace Gfx {
 class SurfaceRenderer;
-class Texture;
+class Bitmap;
 }
 
 /**
@@ -59,7 +59,7 @@ private:
 
 	Video::BinkDecoder *_decoder;
 	Gfx::SurfaceRenderer *_surfaceRenderer;
-	Gfx::Texture *_texture;
+	Gfx::Bitmap *_bitmap;
 };
 
 } // End of namespace Stark

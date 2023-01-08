@@ -28,6 +28,7 @@
 #if defined(USE_OPENGL_SHADERS)
 
 #include "engines/stark/gfx/openglsactor.h"
+#include "engines/stark/gfx/openglbitmap.h"
 #include "engines/stark/gfx/openglsprop.h"
 #include "engines/stark/gfx/openglssurface.h"
 #include "engines/stark/gfx/openglsfade.h"
@@ -130,18 +131,18 @@ void OpenGLSDriver::flipBuffer() {
 	g_system->updateScreen();
 }
 
-Texture *OpenGLSDriver::createTexture(const Graphics::Surface *surface, const byte *palette) {
-	OpenGlTexture *texture = new OpenGlTexture();
-
-	if (surface) {
-		texture->update(surface, palette);
-	}
-
-	return texture;
+Texture *OpenGLSDriver::createTexture() {
+	return new OpenGlTexture();
 }
 
-Texture *OpenGLSDriver::createBitmap(const Graphics::Surface *surface, const byte *palette) {
-	return createTexture(surface, palette);
+Bitmap *OpenGLSDriver::createBitmap(const Graphics::Surface *surface, const byte *palette) {
+	OpenGlBitmap *bitmap = new OpenGlBitmap();
+
+	if (surface) {
+		bitmap->update(surface, palette);
+	}
+
+	return bitmap;
 }
 
 VisualActor *OpenGLSDriver::createActorRenderer() {

@@ -20,7 +20,7 @@
  */
 
 #include "engines/stark/gfx/openglsurface.h"
-#include "engines/stark/gfx/texture.h"
+#include "engines/stark/gfx/bitmap.h"
 
 #if defined(USE_OPENGL_GAME)
 
@@ -43,11 +43,11 @@ OpenGLSurfaceRenderer::OpenGLSurfaceRenderer(OpenGLDriver *gfx) :
 OpenGLSurfaceRenderer::~OpenGLSurfaceRenderer() {
 }
 
-void OpenGLSurfaceRenderer::render(const Texture *texture, const Common::Point &dest) {
-	render(texture, dest, texture->width(), texture->height());
+void OpenGLSurfaceRenderer::render(const Bitmap *bitmap, const Common::Point &dest) {
+	render(bitmap, dest, bitmap->width(), bitmap->height());
 }
 
-void OpenGLSurfaceRenderer::render(const Texture *texture, const Common::Point &dest, uint width, uint height) {
+void OpenGLSurfaceRenderer::render(const Bitmap *bitmap, const Common::Point &dest, uint width, uint height) {
 	// Destination rectangle with given width and height
 	_gfx->start2DMode();
 
@@ -104,7 +104,7 @@ void OpenGLSurfaceRenderer::render(const Texture *texture, const Common::Point &
 	glTexCoordPointer(2, GL_FLOAT, 2 * sizeof(float), textCords);
 	glColor3f(1.0f - _fadeLevel, 1.0f - _fadeLevel, 1.0f - _fadeLevel);
 
-	texture->bind();
+	bitmap->bind();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
