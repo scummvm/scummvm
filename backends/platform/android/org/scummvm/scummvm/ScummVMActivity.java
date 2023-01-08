@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.UriPermission;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
@@ -24,6 +25,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.os.SystemClock;
+import android.provider.DocumentsContract;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -45,7 +47,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.documentfile.provider.DocumentFile;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -83,8 +84,13 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 //	private File _usingLogFile;
 
 	// SAF related
-	private LinkedHashMap<String, ParcelFileDescriptor> hackyNameToOpenFileDescriptorList;
 	public final static int REQUEST_SAF = 50000;
+
+	// Use an Object to allow synchronization on it
+	private Object safSyncObject;
+	private int safRequestCode;
+	private int safResultCode;
+	private Uri safResultURI;
 
 	/**
 	 * Ids to identify an external storage read (and write) request.
@@ -642,6 +648,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			runOnUiThread(new Runnable() {
 				public void run() {
 					clearStorageAccessFrameworkTreeUri();
+					SAFFSTree.loadSAFTrees(ScummVMActivity.this);
 					_scummvm.displayMessageOnOSD(getString(R.string.saf_revoke_done));
 				}
 			});
@@ -830,178 +837,26 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			return new String[0]; // an array of zero length
 		}
 
-		// In this method we first try the old method for creating directories (mkdirs())
-		// That should work with app spaces but will probably have issues with external physical "secondary" storage locations
-		// (eg user SD Card) on some devices, anyway.
 		@Override
-		protected boolean createDirectoryWithSAF(String dirPath) {
-			final boolean[] retRes = {false};
-
-			Log.d(ScummVM.LOG_TAG, "Attempt to create folder on path: " + dirPath);
-			File folderToCreate = new File (dirPath);
-//			if (folderToCreate.canWrite()) {
-//				Log.d(ScummVM.LOG_TAG, "This file node has write permission!" + dirPath);
-//			}
-//
-//			if (folderToCreate.canRead()) {
-//				Log.d(ScummVM.LOG_TAG, "This file node has read permission!" + dirPath);
-//
-//			}
-//
-//			if (folderToCreate.getParentFile() != null) {
-//				if( folderToCreate.getParentFile().canWrite()) {
-//					Log.d(ScummVM.LOG_TAG, "The parent of this node permits write operation!" + dirPath);
-//				}
-//
-//				if (folderToCreate.getParentFile().canRead()) {
-//					Log.d(ScummVM.LOG_TAG, "The parent of this node permits read operation!" + dirPath);
-//
-//				}
-//			}
-
-			if (folderToCreate.mkdirs()) {
-				Log.d(ScummVM.LOG_TAG, "Folder created with the simple mkdirs() command!");
-			} else {
-				Log.d(ScummVM.LOG_TAG, "Folder creation with mkdirs() failed!");
-				if (getStorageAccessFrameworkTreeUri() == null) {
-					requestStorageAccessFramework(dirPath);
-					Log.d(ScummVM.LOG_TAG, "Requested Storage Access via Storage Access Framework!");
-				} else {
-					Log.d(ScummVM.LOG_TAG, "Already requested Storage Access (Storage Access Framework) in the past (share prefs saved)!");
-				}
-
-				if (canWriteFile(folderToCreate, true)) {
-					// TODO we should only need the callback if we want to do something with the file descriptor
-					//  (the writeFile will close it afterwards if keepFileDescriptorOpen is false)
-					Log.d(ScummVM.LOG_TAG, "(post SAF request) Writing is possible for this directory node");
-					writeFile(folderToCreate, true, false, new MyWriteFileCallback() {
-						@Override
-						public void handle(Boolean created, String hackyFilename) {
-							//Log.d(ScummVM.LOG_TAG, "Via callback: file operation success: " + created);
-							retRes[0] = created;
-						}
-					});
-				} else {
-					Log.d(ScummVM.LOG_TAG, "(post SAF request) Error - writing is still not possible for this directory node");
-
-				}
+		protected SAFFSTree getNewSAFTree(boolean folder, boolean write, String initialURI, String prompt) {
+			Uri initialURI_ = Uri.parse(initialURI);
+			Uri uri = selectWithNativeUI(folder, write, initialURI_, prompt);
+			if (uri == null) {
+				return null;
 			}
 
-//			// debug purpose
-//			if (folderToCreate.canWrite()) {
-//				// This is expected to return false here (since we don't check via SAF here)
-//				Log.d(ScummVM.LOG_TAG, "(post SAF access) We can write in folder:" + dirPath);
-//			}
-//			if (folderToCreate.canRead()) {
-//				// This will probably return true (at least for Android 28 and below)
-//				Log.d(ScummVM.LOG_TAG, "(post SAF access) We can read from folder:" + dirPath);
-//
-//			}
-
-			return retRes[0];
-		}
-
-
-		// This is a simplified version of createDirectoryWithSAF
-		// TODO Maybe we could merge isDirectoryWritableWithSAF() with createDirectoryWithSAF() using an extra argument parameter
-		@Override
-		protected boolean isDirectoryWritableWithSAF(String dirPath) {
-			final boolean[] retRes = {false};
-
-			Log.d(ScummVM.LOG_TAG, "Check if folder writable: " + dirPath);
-			File folderToCheck = new File (dirPath);
-			if (folderToCheck.canWrite()) {
-				Log.d(ScummVM.LOG_TAG, "This path has write permission!" + dirPath);
-			} else {
-				Log.d(ScummVM.LOG_TAG, "Trying to get write access with SAF");
-				if (getStorageAccessFrameworkTreeUri() == null) {
-					requestStorageAccessFramework(dirPath);
-				} else {
-					Log.d(ScummVM.LOG_TAG, "Already requested Storage Access (Storage Access Framework) in the past (share prefs saved)!");
-				}
-			}
-
-			if (canWriteFile(folderToCheck, true)) {
-				Log.d(ScummVM.LOG_TAG, "(post SAF request) Writing is possible for this directory node");
-				retRes[0] = true;
-			} else {
-				Log.d(ScummVM.LOG_TAG, "(post SAF request) Error - writing is still not possible for this directory node");
-			}
-
-			return retRes[0];
+			return SAFFSTree.newTree(ScummVMActivity.this, uri);
 		}
 
 		@Override
-		protected String createFileWithSAF(String filePath) {
-			final String[] retResStr = {""};
-			File fileToCreate = new File (filePath);
-
-			Log.d(ScummVM.LOG_TAG, "Attempting file creation for: " + filePath);
-
-			// normal (no SAF) file create attempt
-			boolean needToGoThroughSAF = false;
-			try {
-				if (fileToCreate.exists() || !fileToCreate.createNewFile()) {
-					Log.d(ScummVM.LOG_TAG, "The file already exists!");
-					// already existed
-				} else {
-					Log.d(ScummVM.LOG_TAG, "An empty file was created!");
-
-				}
-			} catch(Exception e) {
-				//e.printStackTrace();
-				needToGoThroughSAF = true;
-			}
-
-			if (needToGoThroughSAF) {
-				Log.d(ScummVM.LOG_TAG, "File creation with createNewFile() failed!");
-				if (getStorageAccessFrameworkTreeUri() == null) {
-					requestStorageAccessFramework(filePath);
-					Log.d(ScummVM.LOG_TAG, "Requested Storage Access via Storage Access Framework!");
-				}
-
-				if (canWriteFile(fileToCreate, false)) {
-					// TODO we should only need the callback if we want to do something with the file descriptor
-					//      (the writeFile will close it afterwards if keepFileDescriptorOpen is false)
-					//      we need the fileDescriptor open for the native to continue the write operation
-					Log.d(ScummVM.LOG_TAG, "(post SAF request check) File writing should be possible");
-					writeFile(fileToCreate, false, true, new MyWriteFileCallback() {
-						@Override
-						public void handle(Boolean created, String hackyFilename) {
-							//Log.d(ScummVM.LOG_TAG, "Via callback: file operation success: " + created + " :: " + hackyFilename);
-							if (created) {
-								retResStr[0] = hackyFilename;
-							} else {
-								retResStr[0] = "";
-							}
-						}
-					});
-				} else {
-					Log.e(ScummVM.LOG_TAG, "(post SAF request) Error - writing is still not possible for this directory node");
-				}
-			}
-			return retResStr[0];
+		protected SAFFSTree[] getSAFTrees() {
+			return SAFFSTree.getTrees(ScummVMActivity.this);
 		}
 
 		@Override
-		protected void closeFileWithSAF(String hackyFileName) {
-			if (hackyNameToOpenFileDescriptorList.containsKey(hackyFileName)) {
-				ParcelFileDescriptor openFileDescriptor = hackyNameToOpenFileDescriptorList.get(hackyFileName);
-
-				Log.d(ScummVM.LOG_TAG, "Closing file descriptor for " + hackyFileName);
-				if (openFileDescriptor != null) {
-					try {
-						openFileDescriptor.close();
-					} catch (IOException e) {
-						Log.e(ScummVM.LOG_TAG, e.getMessage());
-						e.printStackTrace();
-					}
-				}
-				hackyNameToOpenFileDescriptorList.remove(hackyFileName);
-			}
+		protected SAFFSTree findSAFTree(String name) {
+			return SAFFSTree.findTree(ScummVMActivity.this, name);
 		}
-
-		// TODO do we also need SAF enabled methods for deletion (file/folder) and reading (for files), listing of files (for folders)?
 	}
 
 	private MyScummVM _scummvm;
@@ -1014,7 +869,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		hackyNameToOpenFileDescriptorList = new LinkedHashMap<>();
+		safSyncObject = new Object();
 
 		hideSystemUI();
 
@@ -1219,23 +1074,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 //		Log.d(ScummVM.LOG_TAG, "onDestroy");
 
 		super.onDestroy();
-
-		// close any open file descriptors due to the SAF code
-		for (String hackyFileName : hackyNameToOpenFileDescriptorList.keySet()) {
-			Log.d(ScummVM.LOG_TAG, "Destroy: Closing file descriptor for " + hackyFileName);
-
-			ParcelFileDescriptor openFileDescriptor = hackyNameToOpenFileDescriptorList.get(hackyFileName);
-
-			if (openFileDescriptor != null) {
-				try {
-					openFileDescriptor.close();
-				} catch (IOException e) {
-					Log.e(ScummVM.LOG_TAG, e.getMessage());
-					e.printStackTrace();
-				}
-			}
-		}
-		hackyNameToOpenFileDescriptorList.clear();
 
 		if (_events != null) {
 			_events.clearEventHandler();
@@ -2285,253 +2123,99 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 	// -------------------------------------------------------------------------------------------
 	// Start of SAF enabled code
-	// Code borrows parts from open source project: OpenLaucher's SharedUtil class
-	// https://github.com/OpenLauncherTeam/openlauncher
-	// https://github.com/OpenLauncherTeam/openlauncher/blob/master/app/src/main/java/net/gsantner/opoc/util/ShareUtil.java
-	// as well as StackOverflow threads:
-	// https://stackoverflow.com/questions/43066117/android-m-write-to-sd-card-permission-denied
-	// https://stackoverflow.com/questions/59000390/android-accessing-files-in-native-c-c-code-with-google-scoped-storage-api
 	// -------------------------------------------------------------------------------------------
 	public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-		if (resultCode != RESULT_OK)
-			return;
-		else {
-			if (requestCode == REQUEST_SAF) {
-				if (resultCode == RESULT_OK && resultData != null && resultData.getData() != null) {
-					Uri treeUri = resultData.getData();
-					//SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(getApplicationContext().getPackageName() + "_preferences", Context.MODE_PRIVATE);
-					SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+		synchronized(safSyncObject) {
+			safRequestCode = requestCode;
+			safResultCode = resultCode;
+			safResultURI = null;
+			if (resultData != null) {
+				safResultURI = resultData.getData();
+			}
+			safSyncObject.notifyAll();
+		}
+	}
 
-					SharedPreferences.Editor editor = sharedPref.edit();
-					editor.putString(getString(R.string.preference_saf_tree_key), treeUri.toString());
-					editor.apply();
+	// From: https://developer.android.com/training/data-storage/shared/documents-files
+	// Caution: If you iterate through a large number of files within the directory that's accessed using ACTION_OPEN_DOCUMENT_TREE, your app's performance might be reduced.
+	// Access restrictions
+	// On Android 11 (API level 30) and higher, you cannot use the ACTION_OPEN_DOCUMENT_TREE intent action to request access to the following directories:
+	// - The root directory of the internal storage volume.
+	// - The root directory of each SD card volume that the device manufacturer considers to be reliable, regardless of whether the card is emulated or removable. A reliable volume is one that an app can successfully access most of the time.
+	// - The Download directory.
+	// Furthermore, on Android 11 (API level 30) and higher, you cannot use the ACTION_OPEN_DOCUMENT_TREE intent action to request that the user select individual files from the following directories:
+	// - The Android/data/ directory and all subdirectories.
+	// - The Android/obb/ directory and all subdirectories.
+	public Uri selectWithNativeUI(boolean folder, boolean write, Uri initialURI, String prompt) {
+		// Choose a directory using the system's folder picker.
+		Intent intent;
+		if (folder) {
+			intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+		} else {
+			intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+			intent.addCategory(Intent.CATEGORY_OPENABLE);
+			intent.setType("*/*");
+		}
+		if (initialURI != null) {
+			intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, initialURI);
+		}
+		if (prompt != null) {
+			intent.putExtra(DocumentsContract.EXTRA_PROMPT, prompt);
+		}
 
-					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-						getContentResolver().takePersistableUriPermission(treeUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-					}
-					return;
+		int resultCode;
+		Uri resultURI;
+		synchronized(safSyncObject) {
+			safRequestCode = 0;
+			startActivityForResult(intent, REQUEST_SAF);
+			while(safRequestCode != REQUEST_SAF) {
+				try {
+					safSyncObject.wait();
+				} catch (InterruptedException e) {
+					Log.d(ScummVM.LOG_TAG, "Warning: interrupted while waiting for SAF");
+					return null;
 				}
 			}
+			resultCode = safResultCode;
+			resultURI = safResultURI;
+
+			// Keep our URI safe from other calls
+			safResultURI = null;
 		}
-	}
 
-	/***
-	 * Request storage access. The user needs to press "Select storage" at the correct storage.
-	 */
-	public void requestStorageAccessFramework(String dirPathSample) {
-
-		_scummvm.displayMessageOnOSD(getString(R.string.saf_request_prompt) + dirPathSample);
-
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-			// Directory picker
-			Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-			intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
-			                | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-			                | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
-			                | Intent.FLAG_GRANT_PREFIX_URI_PERMISSION
-			);
-			startActivityForResult(intent, REQUEST_SAF);
+		if (resultCode != RESULT_OK) {
+			Log.d(ScummVM.LOG_TAG, "Warning: resultCode NOT OK for SAF selection!");
+			return null;
 		}
-	}
 
-	/**
-	 * Get storage access framework tree uri. The user must have granted access via requestStorageAccessFramework
-	 *
-	 * @return Uri or null if not granted yet
-	 */
-	public Uri getStorageAccessFrameworkTreeUri() {
-		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-		String treeStr = sharedPref.getString(getString(R.string.preference_saf_tree_key), null);
-
-		if (!TextUtils.isEmpty(treeStr)) {
-			try {
-				Log.d(ScummVM.LOG_TAG, "getStorageAccessFrameworkTreeUri: " + treeStr);
-				return Uri.parse(treeStr);
-			} catch (Exception ignored) {
-			}
+		if (resultURI == null) {
+			Log.d(ScummVM.LOG_TAG, "Warning: NO selected Folder URI!");
+			return null;
 		}
-		return null;
+
+		Log.d(ScummVM.LOG_TAG, "Selected SAF URI: " + resultURI.toString());
+
+		int grant = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+		if (write) {
+			grant |= Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
+		}
+		getContentResolver().takePersistableUriPermission(resultURI, grant);
+
+		return resultURI;
 	}
 
 	// A method to revoke SAF granted stored permissions
-	// TODO We need a button or setting to trigger this on user's demand
 	public void clearStorageAccessFrameworkTreeUri() {
 		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
 			return;
 		}
 
-		Uri treeUri;
-		if ((treeUri = getStorageAccessFrameworkTreeUri()) == null) {
-			return;
-		}
-
-		// revoke SAF permission AND clear the pertinent SharedPreferences key
-		getContentResolver().releasePersistableUriPermission(treeUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = sharedPref.edit();
-		editor.remove(getString(R.string.preference_saf_tree_key));
-		editor.apply();
-	}
-
-	public File getStorageRootFolder(final File file) {
-		String filepath;
-		try {
-			filepath = file.getCanonicalPath();
-		} catch (Exception ignored) {
-			return null;
-		}
-
-		for (String storagePath : _scummvm.getAllStorageLocationsNoPermissionRequest() ) {
-			if (filepath.startsWith(storagePath)) {
-				return new File(storagePath);
-			}
-		}
-		return null;
-	}
-
-	// TODO we need to implement support for reading access somewhere too
-	@SuppressWarnings({"ResultOfMethodCallIgnored", "StatementWithEmptyBody"})
-	public void writeFile(final File file, final boolean isDirectory, final boolean keepFileDescriptorOpen, final MyWriteFileCallback writeFileCallback ) {
-		try {
-			// TODO we need code for read access too (even though currently API28 reading works without SAF, just with the runtime permissions)
-			String hackyFilename = "";
-
-			ParcelFileDescriptor pfd = null;
-			if (file.canWrite() || (!file.exists() && file.getParentFile().canWrite())) {
-				if (isDirectory) {
-					file.mkdirs();
-				} else {
-					// If we are here this means creating a new file can be done with fopen from native
-					//fileOutputStream = new FileOutputStream(file);
-					Log.d(ScummVM.LOG_TAG, "writeFile() file can be created normally -- (not created here)" );
-					hackyFilename = "";
-				}
-			} else {
-				DocumentFile dof = getDocumentFile(file, isDirectory);
-				if (dof != null && dof.getUri() != null && dof.canWrite()) {
-					if (isDirectory) {
-						// Nothing more to do
-					} else {
-						pfd = getContentResolver().openFileDescriptor(dof.getUri(), "w");
-						if (pfd != null) {
-							// https://stackoverflow.com/questions/59000390/android-accessing-files-in-native-c-c-code-with-google-scoped-storage-api
-							int fd = pfd.getFd();
-							hackyFilename = "/proc/self/fd/" + fd;
-							hackyNameToOpenFileDescriptorList.put(hackyFilename, pfd);
-							Log.d(ScummVM.LOG_TAG, "writeFile() file created with SAF -- hacky name: " + hackyFilename );
-						}
-					}
-				}
-			}
-
-			// TODO the idea of a callback is to work with the output (or input) streams, then return here and close the streams and the descriptors properly
-			//      however since we are interacting with native this would not work for those cases
-
-			if (writeFileCallback != null) {
-				writeFileCallback.handle( (isDirectory && file.exists()) || (!isDirectory && file.exists() && file.isFile() ), hackyFilename);
-
-			}
-
-			// TODO We need to close the file descriptor when we are done with it from native
-			//		- what if the call is not from native but from the activity?
-			//      - directory operations don't create or need a file descriptor
-			if (!keepFileDescriptorOpen && pfd != null) {
-				if (hackyNameToOpenFileDescriptorList.containsKey(hackyFilename)) {
-					hackyNameToOpenFileDescriptorList.remove(hackyFilename);
-				}
-				pfd.close();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		for (UriPermission permission : getContentResolver().getPersistedUriPermissions()) {
+			getContentResolver().releasePersistableUriPermission(permission.getUri(),
+					Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 		}
 	}
 
-	/**
-	 * Get a DocumentFile object out of a normal java File object.
-	 * When used on a external storage (SD), use requestStorageAccessFramework()
-	 * first to get access. Otherwise this will fail.
-	 *
-	 * @param file  The file/folder to convert
-	 * @param isDir Whether or not file is a directory. For non-existing (to be created) files this info is not known hence required.
-	 * @return A DocumentFile object or null if file cannot be converted
-	 */
-	@SuppressWarnings("RegExpRedundantEscape")
-	public DocumentFile getDocumentFile(final File file, final boolean isDir) {
-		// On older versions use fromFile
-		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-			return DocumentFile.fromFile(file);
-		}
-
-		// Get ContextUtils to find storageRootFolder
-		File baseFolderFile = getStorageRootFolder(file);
-
-		String baseFolder = baseFolderFile == null ? null : baseFolderFile.getAbsolutePath();
-		boolean originalDirectory = false;
-		if (baseFolder == null) {
-			return null;
-		}
-
-		String relPath = null;
-		try {
-			String fullPath = file.getCanonicalPath();
-			if (!baseFolder.equals(fullPath)) {
-				relPath = fullPath.substring(baseFolder.length() + 1);
-			} else {
-				originalDirectory = true;
-			}
-		} catch (IOException e) {
-			return null;
-		} catch (Exception ignored) {
-			originalDirectory = true;
-		}
-
-		Uri treeUri;
-		if ((treeUri = getStorageAccessFrameworkTreeUri()) == null) {
-			return null;
-		}
-
-		DocumentFile dof = DocumentFile.fromTreeUri(getApplicationContext(), treeUri);
-		if (originalDirectory) {
-			return dof;
-		}
-
-		// Important note: We cannot assume that anything sent here is a relative path on top of the *ONLY* SAF "root" path
-		//                 since the user could select another SD Card (from multiple inserted or replaces the current one and inserts another)
-		// TODO Can we translate our path string "/storage/XXXX-XXXXX/folder/doc.ext' a content URI? or a document URI?
-		String[] parts = relPath.split("\\/");
-		for (int i = 0; i < parts.length; i++) {
-			DocumentFile nextDof = dof.findFile(parts[i]);
-			if (nextDof == null) {
-				try {
-					nextDof = ((i < parts.length - 1) || isDir) ? dof.createDirectory(parts[i]) : dof.createFile("image", parts[i]);
-				} catch (Exception ignored) {
-					nextDof = null;
-				}
-			}
-			dof = nextDof;
-		}
-		return dof;
-	}
-
-	/**
-	 * Check whether or not a file can be written.
-	 * Requires storage access framework permission for external storage (SD)
-	 *
-	 * @param file  The file object (file/folder)
-	 * @param isDirectory Whether or not the given file parameter is a directory
-	 * @return Whether or not the file can be written
-	 */
-	public boolean canWriteFile(final File file, final boolean isDirectory) {
-		if (file == null) {
-			return false;
-		} else if (file.getAbsolutePath().startsWith(Environment.getExternalStorageDirectory().getAbsolutePath())
-		           || file.getAbsolutePath().startsWith(getFilesDir().getAbsolutePath())) {
-			return (!isDirectory && file.getParentFile() != null) ? file.getParentFile().canWrite() : file.canWrite();
-		} else {
-			DocumentFile dof = getDocumentFile(file, isDirectory);
-			return dof != null && dof.canWrite();
-		}
-	}
 	// -------------------------------------------------------------------------------------------
 	// End of SAF enabled code
 	// -------------------------------------------------------------------------------------------
@@ -2609,11 +2293,6 @@ abstract class SetLayerType {
 
 		public void setLayerType(final View view) { }
 	}
-}
-
-// Used to define the interface for a callback after a write operation (via the method that is enhanced to use SAF if the normal way fails)
-interface MyWriteFileCallback {
-	public void handle(Boolean created, String hackyFilename);
 }
 
 // Used to define the interface for a callback after ScummVM thread has finished
