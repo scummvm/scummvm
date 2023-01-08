@@ -893,12 +893,13 @@ void EfhEngine::tryToggleEquipped(int16 charId, int16 objectId, int16 windowId, 
 		int16 curType = _items[itemId]._exclusiveType;
 		if (curType != 4) {
 			for (uint counter = 0; counter < 10; ++counter) {
-				if (_npcBuf[charId]._inventory[counter]._ref == 0x7FFF) {
+				int16 curItemId = _npcBuf[charId]._inventory[counter]._ref;
+				if (curItemId == 0x7FFF) {
 					warning("CHECKME : hack");
 					continue;
 				}
-				if (curType == _items[_npcBuf[charId]._inventory[counter]._ref]._exclusiveType)
-					unequipItem(charId, objectId, windowId, menuId, curMenuLine);
+				if (curType == _items[curItemId]._exclusiveType)
+					unequipItem(charId, counter, windowId, menuId, curMenuLine);
 			}
 		}
 
