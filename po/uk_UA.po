@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-08 00:31+0000\n"
-"PO-Revision-Date: 2023-01-02 21:53+0000\n"
+"PO-Revision-Date: 2023-01-08 13:20+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -218,20 +218,18 @@ msgstr "ПОМИЛКА %d:%s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:184 gui/downloadpacksdialog.cpp:239
-#, fuzzy, c-format
-#| msgid "Downloading icons list..."
+#, c-format
 msgid "Downloading %S list..."
-msgstr "Завантажую список іконок..."
+msgstr "Завантажую список %S..."
 
 #: gui/downloadpacksdialog.cpp:198
 msgid "Clear Cache"
 msgstr "Очистити кеш"
 
 #: gui/downloadpacksdialog.cpp:249
-#, fuzzy, c-format
-#| msgid "Downloading icons list... %d entries"
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "Завантажую список іконок... %d записів"
+msgstr "Завантажую список %S... %d записів"
 
 #: gui/downloadpacksdialog.cpp:259
 #, c-format
@@ -261,10 +259,9 @@ msgstr "ПОМИЛКА: Не завдано шлях до іконок"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:425
-#, fuzzy, c-format
-#| msgid "No new icons packs available"
+#, c-format
 msgid "No new %S available"
-msgstr "Не знайдено нових пакетів іконок"
+msgstr "Не знайдено нових %S"
 
 #: gui/downloadpacksdialog.cpp:461
 #, c-format
@@ -1209,16 +1206,12 @@ msgid "Shader Path:"
 msgstr "Шлях до шейдеру:"
 
 #: gui/options.cpp:1580
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Shaders"
-msgstr "Перевіряти оновлення:"
+msgstr "Поновити шейдери"
 
 #: gui/options.cpp:1580
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of shader packs"
-msgstr "Перевірити оновлення..."
+msgstr "Перевірити оновлення пакетів шейдерів"
 
 #: gui/options.cpp:1586 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
@@ -1648,10 +1641,8 @@ msgid "Update Icons"
 msgstr "Поновити іконки"
 
 #: gui/options.cpp:2521
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of icon packs"
-msgstr "Перевірити оновлення..."
+msgstr "Перевірити оновлення пакетів іконок"
 
 #: gui/options.cpp:2528
 msgid "Autosave:"
@@ -2010,11 +2001,11 @@ msgstr "Виберіть папку /root/ для Керування файла�
 
 #: gui/options.cpp:3113
 msgid "icon packs"
-msgstr ""
+msgstr "пакетів іконок"
 
 #: gui/options.cpp:3121
 msgid "shader packs"
-msgstr ""
+msgstr "пакетів шейдерів"
 
 #: gui/options.cpp:3243
 msgid ""
@@ -2236,15 +2227,15 @@ msgstr "Введіть опис для слоту %d:"
 
 #: gui/shaderbrowser-dialog.cpp:52
 msgid "Choose shader from the list below (or pick a file instead)"
-msgstr ""
+msgstr "Оберіть шейдер зі списку знизу (або ж виберіть файл)"
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick file instead..."
-msgstr ""
+msgstr "Вибрати файл..."
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick shader from file system"
-msgstr ""
+msgstr "Обрати шейдер з файлу на диску"
 
 #: gui/shaderbrowser-dialog.cpp:137
 msgid "Select shader"
@@ -5046,16 +5037,12 @@ msgid "Sensors will not shoot the player"
 msgstr "Сенсори не будуть стріляти у гравця"
 
 #: engines/freescape/metaengine.cpp:90
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable falling"
-msgstr "Заборонити меню збереження"
+msgstr "Заборонити падіння"
 
 #: engines/freescape/metaengine.cpp:91
-#, fuzzy
-#| msgid "Player ammo will never decrease."
 msgid "Player cannot fall over edges"
-msgstr "Боєприпаси гравця ніколи не зменшуються."
+msgstr "Гравець не зможе впасти за краї"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
