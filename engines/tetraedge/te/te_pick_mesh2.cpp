@@ -39,11 +39,11 @@ void TePickMesh2::draw() {
 		return;
 
 	const uint nverticies = _verticies.size();
-	TeMesh mesh;
-	mesh.setConf(nverticies, nverticies, TeMesh::MeshMode_Triangles, 0, 0);
+	Common::SharedPtr<TeMesh> mesh(TeMesh::makeInstance());
+	mesh->setConf(nverticies, nverticies, TeMesh::MeshMode_Triangles, 0, 0);
 	for (uint i = 0; i < nverticies; i++) {
-		mesh.setIndex(i, i);
-		mesh.setVertex(i, _verticies[i]);
+		mesh->setIndex(i, i);
+		mesh->setVertex(i, _verticies[i]);
 	}
 
 	TeRenderer *renderer = g_engine->getRenderer();
@@ -54,7 +54,7 @@ void TePickMesh2::draw() {
 	renderer->setCurrentColor(TeColor(0xff, 0, 0, 0xff));
 	renderer->pushMatrix();
 	renderer->multiplyMatrix(transformationMatrix());
-	mesh.draw();
+	mesh->draw();
 
 	renderer->popMatrix();
 	renderer->setCurrentColor(prevCol);

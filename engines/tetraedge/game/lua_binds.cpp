@@ -993,11 +993,11 @@ static void EnableLight(uint lightno, bool enable) {
 	if (lightno > game->scene().lights().size()) {
 		error("[EnableLight] Light not found %d", lightno);
 	}
-	TeLight &light = game->scene().lights()[lightno];
+	Common::SharedPtr<TeLight> light = game->scene().lights()[lightno];
 	if (enable)
-		light.enable(lightno);
+		light->enable(lightno);
 	else
-		light.disable(lightno);
+		light->disable(lightno);
 }
 
 static int tolua_ExportedFunctions_EnableLight00(lua_State *L) {

@@ -22,9 +22,12 @@
 #include "common/textconsole.h"
 #include "common/debug.h"
 
-#include "graphics/opengl/system_headers.h"
+#include "graphics/renderer.h"
+#include "tetraedge/tetraedge.h"
 
 #include "tetraedge/te/te_renderer.h"
+#include "tetraedge/te/te_renderer_opengl.h"
+#include "tetraedge/te/te_renderer_tinygl.h"
 #include "tetraedge/te/te_light.h"
 
 namespace Tetraedge {
@@ -138,7 +141,7 @@ void TeRenderer::addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsign
 
 		destProperties._material = *mesh.material(materialno);
 		destProperties._matrix = currentMatrix;
-		destProperties._glTexEnvMode = mesh.gltexEnvMode();
+		destProperties._glTexEnvMode = mesh.getTexEnvMode();
 		destProperties._sourceTransparentMesh = _numTransparentMeshes * 3;
 		destProperties._hasColor = mesh.hasColor();
 		destProperties._zOrder = zOrder;
@@ -178,7 +181,7 @@ void TeRenderer::addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsign
 			destProperties._camera = _currentCamera;
 
 			destProperties._material = *mesh.material(materialno);
-			destProperties._glTexEnvMode = mesh.gltexEnvMode();
+			destProperties._glTexEnvMode = mesh.getTexEnvMode();
 			destProperties._sourceTransparentMesh = meshPropNo;
 			destProperties._hasColor = mesh.hasColor();
 			destProperties._zOrder = zOrder;
@@ -194,17 +197,6 @@ void TeRenderer::addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsign
 	_pendingTransparentMeshProperties = _transparentMeshProps.size();
 }
 
-void TeRenderer::clearBuffer(TeRenderer::Buffer buf) {
-	GLenum glBuf = 0;
-	if (buf & StencilBuffer)
-		glBuf |= GL_STENCIL_BUFFER_BIT;
-	if (buf & DepthBuffer)
-		glBuf |= GL_DEPTH_BUFFER_BIT;
-	if (buf & ColorBuffer)
-		glBuf |= GL_COLOR_BUFFER_BIT;
-	glClear(glBuf);
-}
-
 void TeRenderer::create() {
 	_textureEnabled = false;
 	_currentCamera = nullptr;
@@ -217,68 +209,6 @@ TeMatrix4x4 TeRenderer::currentMatrix() {
 	return _matriciesStacks[_matrixMode].currentMatrix();
 }
 
-void TeRenderer::disableTexture() {
-	glDisable(GL_TEXTURE_2D);
-	_textureEnabled = false;
-}
-
-void TeRenderer::disableWireFrame() {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-}
-
-void TeRenderer::disableZBuffer() {
-	glDisable(GL_DEPTH_TEST);
-	glDepthMask(GL_FALSE);
-}
-
-void TeRenderer::drawLine(const TeVector3f32 &from, const TeVector3f32 &to) {
-	error("TODO: Implement TeRenderer::drawLine");
-}
-
-void TeRenderer::enableTexture() {
-	glEnable(GL_TEXTURE_2D);
-	_textureEnabled = true;
-}
-
-void TeRenderer::enableWireFrame() {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-}
-
-void TeRenderer::enableZBuffer() {
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-}
-
-void TeRenderer::init() {
-	glDisable(GL_CULL_FACE);
-	TeLight::disableAll();
-	glDisable(GL_COLOR_MATERIAL);
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-	glShadeModel(GL_SMOOTH);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDepthFunc(GL_LEQUAL);
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_DONT_CARE);
-	glClearDepth(1.0);
-	glClearStencil(0);
-	_clearColor = TeColor(0, 0, 0, 255);
-	glClearColor(0, 0, 0, 1.0);
-	debug("[TeRenderer::init] Vendor : %s", glGetString(GL_VENDOR));
-	debug("[TeRenderer::init] Renderer : %s", glGetString(GL_RENDERER));
-	debug("[TeRenderer::init] Version : %s", glGetString(GL_VERSION));
-	int bits;
-	glGetIntegerv(GL_STENCIL_BITS, &bits);
-	debug("[TeRenderer::init] Sentil buffer bits : %d", bits);
-	glGetIntegerv(GL_DEPTH_BITS, &bits);
-	debug("[TeRenderer::init] Depth buffer bits : %d", bits);
-	//debug("[TeRenderer::init] Extensions : %s", glGetString(GL_EXTENSIONS));
-	//TeOpenGLExtensions::loadExtensions(); // this does nothing in the game?
-	_currentColor = TeColor(255, 255, 255, 255);
-	_scissorEnabled = false;
-	_scissorX = _scissorY = _scissorWidth = _scissorHeight = 0;
-}
-
 void TeRenderer::loadIdentityMatrix() {
 	_matriciesStacks[_matrixMode].loadIdentity();
 }
@@ -287,26 +217,9 @@ void TeRenderer::loadMatrix(const TeMatrix4x4 &matrix) {
 	_matriciesStacks[_matrixMode].loadMatrix(matrix);
 }
 
-void TeRenderer::loadMatrixToGL(const TeMatrix4x4 &matrix) {
-	//int mmode;
-	//glGetIntegerv(GL_MATRIX_MODE, &mmode);
-	//debug("loadMatrixToGL[0x%x]: %s", mmode, matrix.toString().c_str());
-	glLoadMatrixf(matrix.getData());
-}
-
 void TeRenderer::loadCurrentMatrixToGL() {
 	const TeMatrix4x4 current = currentMatrix();
 	loadMatrixToGL(current);
-}
-
-void TeRenderer::loadProjectionMatrix(const TeMatrix4x4 &matrix) {
-	glMatrixMode(GL_PROJECTION);
-	_matrixMode = MM_GL_PROJECTION;
-	_matriciesStacks[_matrixMode].loadIdentity();
-	_matriciesStacks[_matrixMode].loadMatrix(matrix);
-	glMatrixMode(GL_MODELVIEW);
-	_matrixMode = MM_GL_MODELVIEW;
-	_matriciesStacks[_matrixMode].loadIdentity();
 }
 
 void TeRenderer::multiplyMatrix(const TeMatrix4x4 &matrix) {
@@ -346,16 +259,6 @@ void TeRenderer::pushMatrix() {
 	_matriciesStacks[_matrixMode].pushMatrix();
 }
 
-Common::String TeRenderer::renderer() {
-	return Common::String((const char *)glGetString(GL_RENDERER));
-}
-
-
-static bool compareTransparentMeshProperties(const TeRenderer::TransparentMeshProperties &p1,
-											const TeRenderer::TransparentMeshProperties &p2) {
-	return (p1._zOrder < p2._zOrder);
-}
-
 void TeRenderer::dumpTransparentMeshProps() const {
 	debug("** Transparent MeshProps: num:%ld pending:%d **", _numTransparentMeshes, _pendingTransparentMeshProperties);
 	debug("draw? / nverts / source / transl / zorder");
@@ -384,122 +287,6 @@ void TeRenderer::dumpTransparentMeshData() const {
 	}
 }
 
-void TeRenderer::renderTransparentMeshes() {
-	if (!_numTransparentMeshes)
-		return;
-
-	glDepthMask(GL_FALSE);
-	//dumpTransparentMeshProps();
-
-	Common::sort(_transparentMeshProps.begin(), _transparentMeshProps.end(),
-		 compareTransparentMeshProperties);
-
-	int vertsDrawn = 0;
-	for (uint i = 0; i < _transparentMeshProps.size(); i++) {
-		const uint vcount = _transparentMeshProps[i]._vertexCount;
-		for (uint j = 0; j < vcount; j++)
-			_transparentMeshVertexNums[vertsDrawn + j] = (short)(_transparentMeshProps[i]._sourceTransparentMesh + j);
-		vertsDrawn += vcount;
-	}
-
-	optimiseTransparentMeshProperties();
-
-	//dumpTransparentMeshProps();
-	//dumpTransparentMeshData();
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
-
-	glVertexPointer(3, GL_FLOAT, 12, _transparentMeshVertexes.data());
-	glNormalPointer(GL_FLOAT, 12, _transparentMeshNormals.data());
-	glTexCoordPointer(2, GL_FLOAT, 8, _transparentMeshCoords.data());
-	glColorPointer(4, GL_UNSIGNED_BYTE, 4, _transparentMeshColors.data());
-
-	TeMaterial lastMaterial;
-	TeMatrix4x4 lastMatrix;
-
-	vertsDrawn = 0;
-	for (uint i = 0; i < _transparentMeshProps.size(); i++) {
-		const TransparentMeshProperties &meshProperties = _transparentMeshProps[i];
-		if (!meshProperties._shouldDraw)
-			continue;
-
-		const TeMaterial &material = meshProperties._material;
-
-		meshProperties._camera->applyProjection();
-		glMatrixMode(GL_MODELVIEW);
-		_matrixMode = MM_GL_MODELVIEW;
-		glPushMatrix();
-		_matriciesStacks[_matrixMode].pushMatrix();
-		_matriciesStacks[_matrixMode].loadMatrix(meshProperties._matrix);
-		glPushMatrix();
-		loadCurrentMatrixToGL();
-		if (material._texture) {
-			glEnable(GL_TEXTURE_2D);
-			_textureEnabled = true;
-		}
-		if (material._enableSomethingDefault0) {
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-			glDisableClientState(GL_COLOR_ARRAY);
-		}
-
-		if (material != lastMaterial) {
-			material.apply();
-			lastMaterial = material;
-		}
-
-		if (meshProperties._scissorEnabled) {
-			glEnable(GL_SCISSOR_TEST);
-			glScissor(meshProperties._scissorX,
-					  meshProperties._scissorY,
-					  meshProperties._scissorWidth,
-					  meshProperties._scissorHeight);
-		}
-		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, meshProperties._glTexEnvMode);
-		glDrawElements(GL_TRIANGLES, meshProperties._vertexCount, GL_UNSIGNED_SHORT,
-				   _transparentMeshVertexNums.data() + vertsDrawn);
-
-		vertsDrawn += meshProperties._vertexCount;
-
-		if (material._enableSomethingDefault0) {
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glEnableClientState(GL_COLOR_ARRAY);
-		}
-		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		if (meshProperties._scissorEnabled) {
-			glDisable(GL_SCISSOR_TEST);
-		}
-		if (material._texture) {
-			glDisable(GL_TEXTURE_2D);
-			_textureEnabled = false;
-		}
-		glPopMatrix();
-		glPopMatrix();
-		_matriciesStacks[_matrixMode].popMatrix();
-		TeCamera::restore();
-	}
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	_numTransparentMeshes = 0;
-	_pendingTransparentMeshProperties = 0;
-	glDepthMask(GL_TRUE);
-	_transparentMeshProps.clear();
-}
-
-void TeRenderer::reset() {
-	clearBuffer(AllBuffers);
-	glMatrixMode(GL_PROJECTION);
-	_matrixMode = MM_GL_PROJECTION;
-	_matriciesStacks[MM_GL_PROJECTION].loadIdentity();
-	glMatrixMode(GL_MODELVIEW);
-	_matrixMode = MM_GL_MODELVIEW;
-	_matriciesStacks[MM_GL_MODELVIEW].loadIdentity();
-}
-
 void TeRenderer::rotate(const TeQuaternion &rot) {
 	_matriciesStacks[_matrixMode].rotate(rot);
 }
@@ -512,33 +299,6 @@ void TeRenderer::scale(float xs, float ys, float zs) {
 	_matriciesStacks[_matrixMode].scale(TeVector3f32(xs, ys, zs));
 }
 
-void TeRenderer::setClearColor(const TeColor &col) {
-	_clearColor = col;
-	glClearColor(col.r() / 255.0f, col.g() / 255.0f, col.b() / 255.0f, col.a() / 255.0f);
-}
-
-void TeRenderer::setCurrentColor(const TeColor &col) {
-	if (col == _currentColor)
-		return;
-
-	glColor4ub(col.r(), col.g(), col.b(), col.a());
-	_currentColor = col;
-}
-
-void TeRenderer::setMatrixMode(enum MatrixMode mode) {
-	GLenum glmode = 0;
-	if (mode == MM_GL_TEXTURE)
-		glmode = GL_TEXTURE;
-	else if (mode == MM_GL_MODELVIEW)
-		glmode = GL_MODELVIEW;
-	else if (mode == MM_GL_PROJECTION)
-		glmode = GL_PROJECTION;
-
-	if (glmode)
-		glMatrixMode(glmode);
-	_matrixMode = mode;
-}
-
 void TeRenderer::setScissor(int x, int y, int w, int h) {
 	_scissorX = x;
 	_scissorY = y;
@@ -546,36 +306,26 @@ void TeRenderer::setScissor(int x, int y, int w, int h) {
 	_scissorHeight = h;
 }
 
-void TeRenderer::setViewport(int x, int y, int w, int h) {
-	glViewport(x, y, w, h);
-}
-
-void TeRenderer::shadowMode(enum ShadowMode mode) {
-	_shadowMode = mode;
-	if (mode == ShadowMode0) {
-		glDisable(GL_CULL_FACE);
-		glShadeModel(GL_SMOOTH);
-		return;
-	}
-
-	if (mode == ShadowMode1) {
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-	} else { // ShadowMode2
-		glDisable(GL_CULL_FACE);
-	}
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glShadeModel(GL_FLAT);
-	TeLight::disableAll();
-}
-
 void TeRenderer::translate(float x, float y, float z) {
 	_matriciesStacks[_matrixMode].translate(TeVector3f32(x, y, z));
 }
 
-Common::String TeRenderer::vendor() {
-	return Common::String((const char *)glGetString(GL_VENDOR));
+
+/*static*/
+TeRenderer *TeRenderer::makeInstance() {
+	Graphics::RendererType r = g_engine->preferredRendererType();
+
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+	if (r == Graphics::kRendererTypeOpenGL)
+		return new TeRendererOpenGL();
+#endif
+
+#if defined(USE_TINYGL)
+	if (r == Graphics::kRendererTypeTinyGL)
+		return new TeRendererTinyGL();
+#endif
+	error("Couldn't create TeRenderer for selected renderer");
 }
+
 
 } // end namespace Tetraedge

@@ -44,21 +44,21 @@ void TeBezierCurve::draw() {
 	if (!worldVisible() || _controlPoints.empty())
 		return;
 
-	TeMesh mesh1;
-	TeMesh mesh2;
+	Common::SharedPtr<TeMesh> mesh1(TeMesh::makeInstance());
+	Common::SharedPtr<TeMesh> mesh2(TeMesh::makeInstance());
 	uint npoints = _controlPoints.size();
 
-	mesh1.setConf(npoints, npoints, TeMesh::MeshMode_Points, 0, 0);
+	mesh1->setConf(npoints, npoints, TeMesh::MeshMode_Points, 0, 0);
 	for (uint i = 0; i < npoints; i++) {
-		mesh1.setVertex(i, _controlPoints[i]);
-		mesh1.setIndex(i, i);
+		mesh1->setVertex(i, _controlPoints[i]);
+		mesh1->setIndex(i, i);
 	}
 
-	mesh2.setConf(npoints, npoints, TeMesh::MeshMode_LineStrip, 0, 0);
+	mesh2->setConf(npoints, npoints, TeMesh::MeshMode_LineStrip, 0, 0);
 	for (uint i = 0; i < npoints; i++) {
-		mesh2.setVertex(i, _controlPoints[i]);
-		mesh2.setNormal(i, TeVector3f32(0.0f, 1.0f, 0.0));
-		mesh2.setIndex(i, i);
+		mesh2->setVertex(i, _controlPoints[i]);
+		mesh2->setNormal(i, TeVector3f32(0.0f, 1.0f, 0.0));
+		mesh2->setIndex(i, i);
 	}
 
 	TeRenderer *renderer = g_engine->getRenderer();
@@ -66,9 +66,9 @@ void TeBezierCurve::draw() {
 	renderer->pushMatrix();
 	renderer->multiplyMatrix(worldTransformationMatrix());
 	renderer->setCurrentColor(TeColor(0, 0xff, 0xff, 0xff));
-	mesh2.draw();
+	mesh2->draw();
 	renderer->setCurrentColor(TeColor(0xff, 0, 0xff, 0xff));
-	mesh1.draw();
+	mesh1->draw();
 	renderer->popMatrix();
 	renderer->setCurrentColor(prevColor);
 }

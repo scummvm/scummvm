@@ -19,40 +19,37 @@
  *
  */
 
-#ifndef TETRAEDGE_GAME_CHARACTERS_SHADOW_H
-#define TETRAEDGE_GAME_CHARACTERS_SHADOW_H
+#ifndef TETRAEDGE_TE_TE_MESH_OPENGL_H
+#define TETRAEDGE_TE_TE_MESH_OPENGL_H
 
-#include "tetraedge/game/in_game_scene.h"
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+
+#include "tetraedge/te/te_mesh.h"
 
 namespace Tetraedge {
 
-class InGameScene;
-
-class CharactersShadow {
+class TeMeshOpenGL : public TeMesh {
 public:
-	CharactersShadow();
-	virtual ~CharactersShadow() {};
+	TeMeshOpenGL();
 
-	void create(InGameScene *scene);
-	void createTexture(InGameScene *scene);
-	void destroy();
-	virtual void draw(InGameScene *scene) = 0;
-	//void drawTexture(); // empty?
+	void copy(const TeMesh &other);
+	void draw() override;
+	TeMesh::Mode getMode() const override;
+	void setMode(enum Mode mode) override;
 
-	// Make an instance which is correct for the preferred renderer
-	static CharactersShadow *makeInstance();
+	void setConf(unsigned long vertexCount, unsigned long indexCount, enum Mode mode, uint materialCount, uint materialIndexCount);
 
-protected:
-	virtual void createInternal() = 0;
-	virtual void createTextureInternal(InGameScene *scene) = 0;
-	virtual void deleteTexture() = 0;
+	void setglTexEnvBlend() override;
+	uint32 getTexEnvMode() const override;
 
-	uint _glTex;
-	int _texSize;
-	TeIntrusivePtr<TeCamera> _camera;
-	static Te3DObject2 *_camTarget;
+private:
+	uint _glMeshMode;
+	uint32 _gltexEnvMode;
+
 };
 
 } // end namespace Tetraedge
 
-#endif // TETRAEDGE_GAME_CHARACTERS_SHADOW_H
+#endif // USE_OPENGL
+
+#endif // TETRAEDGE_TE_TE_MESH_H

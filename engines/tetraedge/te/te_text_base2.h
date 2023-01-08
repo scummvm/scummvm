@@ -36,6 +36,7 @@ namespace Tetraedge {
 class TeTextBase2 {
 public:
 	TeTextBase2();
+	virtual ~TeTextBase2();
 
 	struct  Line {
 		uint _startOffset;
@@ -94,7 +95,7 @@ private:
 	Common::String _text;
 	bool _strikethrough;
 
-	TeMesh _mesh;
+	TeMesh *_mesh;
 
 	Common::Array<Common::String> _wrappedLines;
 

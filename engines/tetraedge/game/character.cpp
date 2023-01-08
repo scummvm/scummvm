@@ -370,7 +370,7 @@ bool Character::loadModel(const Common::String &mname, bool unused) {
 	_model->setScale(_characterSettings._defaultScale);
 
 	for (auto &mesh : _model->meshes())
-		mesh.setVisible(true);
+		mesh->setVisible(true);
 
 	// Set all mouthes not visible by default
 	_model->setVisibleByName("_B_", false);
@@ -388,7 +388,7 @@ bool Character::loadModel(const Common::String &mname, bool unused) {
 	_walkEndGAnimLen = animLengthFromFile(walkAnim(WalkPart_EndG), &_walkEndGAnimFrameCount);
 	_walkLoopAnimLen = animLengthFromFile(walkAnim(WalkPart_Loop), &_walkLoopAnimFrameCount);
 
-	TeIntrusivePtr<Te3DTexture> shadow = new Te3DTexture();
+	TeIntrusivePtr<Te3DTexture> shadow = Te3DTexture::makeInstance();
 	shadow->load("models/Textures/simple_shadow_alpha.tga");
 
 	for (int i = 0; i < 2; i++) {

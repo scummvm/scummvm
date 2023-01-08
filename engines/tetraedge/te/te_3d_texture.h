@@ -39,32 +39,32 @@ public:
 	Te3DTexture();
 	virtual ~Te3DTexture();
 
-	void bind() const;
-	void copyCurrentRender(uint xoffset, uint yoffset, uint x, uint y);
-	void create();
-	void destroy();
-
-	void forceTexData(uint gltexture, uint xsize, uint ysize);
+	virtual void bind() const = 0;
+	virtual void copyCurrentRender(uint xoffset, uint yoffset, uint x, uint y) = 0;
+	virtual void create() = 0;
+	virtual void destroy() = 0;
+	virtual void forceTexData(uint gltexture, uint xsize, uint ysize) = 0;
 
 	TeImage::Format getFormat() const { return _format; }
 	bool hasAlpha() const;
 
 	bool load(const Common::Path &path);
-	bool load(const TeImage &img);
+	virtual bool load(const TeImage &img) = 0;
 	static TeIntrusivePtr<Te3DTexture> load2(const Common::Path &path, uint size);
 
 	static TeVector2s32 optimisedSize(const TeVector2s32 &size);
 
-	static void unbind();
-	bool unload();
-	void update(const TeImage &img, uint xoff, uint yoff);
+	virtual bool unload() = 0;
+	virtual void update(const TeImage &img, uint xoff, uint yoff) = 0;
 
-	void writeTo(Graphics::Surface &surf);
+	virtual void writeTo(Graphics::Surface &surf) = 0;
 
 	uint width() const { return _width; }
 	uint height() const { return _height; }
 
-private:
+	static Te3DTexture *makeInstance();
+
+protected:
 	uint _width;
 	uint _height;
 	int _numFrames;
@@ -72,8 +72,6 @@ private:
 	TeImage::Format _format;
 	bool _createdTexture;
 	bool _loaded;
-	uint _glTexture;
-	//uint _glPixelFormat;
 	TeMatrix4x4 _matrix;
 
 	uint _texWidth;

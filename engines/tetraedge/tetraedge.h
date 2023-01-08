@@ -34,6 +34,7 @@
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
+#include "graphics/renderer.h"
 
 #include "tetraedge/detection.h"
 
@@ -127,6 +128,10 @@ public:
 	bool onKeyUp(const Common::KeyState &state);
 
 	static Common::StringArray splitString(const Common::String &text, char c);
+	
+	/* Pick the renderer type to use.
+	   Currently will only return kRendererTypeOpenGL or kRendererTypeTinyGL */
+	Graphics::RendererType preferredRendererType() const;
 
 private:
 	void configureSearchPaths();

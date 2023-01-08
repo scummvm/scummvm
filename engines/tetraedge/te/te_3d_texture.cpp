@@ -23,96 +23,18 @@
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/te/te_3d_texture.h"
+#include "tetraedge/te/te_3d_texture_opengl.h"
+#include "tetraedge/te/te_3d_texture_tinygl.h"
 #include "tetraedge/te/te_resource_manager.h"
 #include "tetraedge/te/te_renderer.h"
 
 namespace Tetraedge {
 
-static const uint NO_TEXTURE = 0xffffffff;
-
-Te3DTexture::Te3DTexture() : _glTexture(NO_TEXTURE), _createdTexture(false),
-_numFrames(1), _frameRate(0), _format(TeImage::INVALID)/*, _glPixelFormat(GL_INVALID_ENUM)*/ {
-	create();
+Te3DTexture::Te3DTexture() : _createdTexture(false),
+_numFrames(1), _frameRate(0), _format(TeImage::INVALID) {
 }
 
 Te3DTexture::~Te3DTexture() {
-	destroy();
-}
-
-void Te3DTexture::bind() const {
-	TeRenderer *renderer = g_engine->getRenderer();
-	glBindTexture(GL_TEXTURE_2D, _glTexture);
-	renderer->setMatrixMode(TeRenderer::MM_GL_TEXTURE);
-	renderer->loadMatrix(_matrix);
-	renderer->loadCurrentMatrixToGL();
-	renderer->setMatrixMode(TeRenderer::MM_GL_MODELVIEW);
-}
-
-void Te3DTexture::copyCurrentRender(uint xoffset, uint yoffset, uint x, uint y) {
-	_matrix.setToIdentity();
-	const TeVector3f32 texScale((float)_width / _texWidth, (float)_height / _texHeight, 1.0);
-	_matrix.scale(texScale);
-	const TeVector3f32 offset((float)_leftBorder / _width, (float)_btmBorder / _height, 0.0);
-	_matrix.translate(offset);
-	const TeVector3f32 borderScale(
-			1.0 - (float)(_rightBorder + _leftBorder) / (float)_width,
-			1.0 - (float)(_topBorder + _btmBorder) / (float)_height, 1.0);
-	_matrix.scale(borderScale);
-	bind();
-	glCopyTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, x, y, _texWidth, _texHeight);
-}
-
-void Te3DTexture::writeTo(Graphics::Surface &surf) {
-	Graphics::Surface fullTex;
-	fullTex.create(_texWidth, _texHeight, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, fullTex.getPixels());
-	surf.create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-	surf.copyRectToSurface(fullTex, 0, 0, Common::Rect(_width, _height));
-	fullTex.free();
-}
-
-void Te3DTexture::create() {
-	_flipY = false;
-	_leftBorder = _btmBorder = _texWidth = _texHeight = 0;
-	_rightBorder = _topBorder = _width = _height = 0;
-	_format = TeImage::INVALID;
-	_loaded = false;
-	if (!_createdTexture)
-		glGenTextures(1, &_glTexture);
-	if (_glTexture == NO_TEXTURE) {
-		_createdTexture = false;
-		return;
-	}
-
-	_createdTexture = true;
-	glBindTexture(GL_TEXTURE_2D, _glTexture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-}
-
-void Te3DTexture::destroy() {
-	if (_createdTexture) {
-		glDeleteTextures(1, &_glTexture);
-	}
-	_createdTexture = false;
-	_loaded = false;
-	_glTexture = NO_TEXTURE;
-}
-
-void Te3DTexture::forceTexData(uint gltexture, uint xsize, uint ysize) {
-	if (_glTexture != 0xffffffff) {
-		if (_createdTexture)
-			glDeleteTextures(1, &_glTexture);
-		_createdTexture = false;
-		_loaded = false;
-	}
-	_glTexture = gltexture;
-	_width = xsize;
-	_height = ysize;
-	_texWidth = xsize;
-	_texHeight = ysize;
 }
 
 bool Te3DTexture::hasAlpha() const {
@@ -127,13 +49,13 @@ TeIntrusivePtr<Te3DTexture> Te3DTexture::load2(const Common::Path &path, uint si
 
 	TeResourceManager *resMgr = g_engine->getResourceManager();
 	if (!resMgr->exists(fullPath)) {
-		TeIntrusivePtr<Te3DTexture> retval(new Te3DTexture());
+		TeIntrusivePtr<Te3DTexture> retval(makeInstance());
 		retval->load(path);
 		retval->setAccessName(fullPath);
 		resMgr->addResource(retval.get());
 		return retval;
 	} else {
-		return resMgr->getResource<Te3DTexture>(fullPath);
+		return resMgr->getResourceOrMakeInstance<Te3DTexture>(fullPath);
 	}
 }
 
@@ -143,67 +65,6 @@ bool Te3DTexture::load(const Common::Path &path) {
 	TeIntrusivePtr<TeImage> img = resmgr->getResource<TeImage>(resPath);
 	load(*img);
 	setAccessName(resPath.append(".3dtex"));
-	return true;
-}
-
-bool Te3DTexture::load(const TeImage &img) {
-	Common::Path accessName = img.getAccessName();
-	setAccessName(accessName.append(".3dtex"));
-
-	_width = img.w;
-	_height = img.h;
-	_format = img.teFormat();
-
-	// TODO? set some other fields from the image here.
-	// for now just set some good defaults.
-	_flipY = true;    //img._flipY;
-	_leftBorder = 0;  //img._leftBorder;
-	_btmBorder = 0;   //img._btmBorder;
-	_rightBorder = 0; //img._rightBorder;
-	_topBorder = 0;   //img._topBorder;
-
-	const TeVector2s32 optimizedSz = optimisedSize(img.bufSize());
-	_texWidth = optimizedSz._x;
-	_texHeight = optimizedSz._y;
-
-	glBindTexture(GL_TEXTURE_2D, _glTexture);
-	glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_FALSE);
-	glPixelStorei(GL_UNPACK_LSB_FIRST, GL_FALSE);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-	const void *imgdata = img.getPixels();
-	if (_format == TeImage::RGB8) {
-		/*GLenum glpxformat = GL_RGB;
-		if (_glPixelFormat != GL_INVALID_ENUM) {
-			glpxformat = _glPixelFormat;
-		}*/
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, _texWidth, _texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img.pitch / 3, img.h, GL_RGB, GL_UNSIGNED_BYTE, imgdata);
-	} else if (_format == TeImage::RGBA8) {
-		/*GLenum glpxformat = GL_RGBA8;
-		if (_glPixelFormat != GL_INVALID_ENUM) {
-			glpxformat = _glPixelFormat;
-		}*/
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img.w, img.h, GL_RGBA, GL_UNSIGNED_BYTE, imgdata);
-	} else {
-		warning("Te3DTexture::load can't send image format %d to GL.", _format);
-	}
-
-	_matrix.setToIdentity();
-
-	_matrix.scale(TeVector3f32((float)_width / _texWidth, (float)_height / _texHeight, 1.0f));
-	_matrix.translate(TeVector3f32((float)_leftBorder / _width, (float)_btmBorder / _height, 0.0f));
-	_matrix.scale(TeVector3f32(1.0 - (float)(_rightBorder + _leftBorder) / _width,
-					1.0 - (float)(_topBorder + _btmBorder) / _height, 1.0f));
-	if (_flipY) {
-		_matrix.translate(TeVector3f32(0.0f, 1.0f, 0.0f));
-		_matrix.scale(TeVector3f32(1.0f, -1.0f, 1.0f));
-	}
-	_loaded = true;
 	return true;
 }
 
@@ -244,44 +105,19 @@ TeVector2s32 Te3DTexture::optimisedSize(const TeVector2s32 &size) {
 }
 
 /*static*/
-void Te3DTexture::unbind() {
-	TeRenderer *renderer = g_engine->getRenderer();
-	renderer->setMatrixMode(TeRenderer::MM_GL_TEXTURE);
-	renderer->loadIdentityMatrix();
-	renderer->loadCurrentMatrixToGL();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	renderer->setMatrixMode(TeRenderer::MM_GL_MODELVIEW);
-}
+Te3DTexture *Te3DTexture::makeInstance() {
+	Graphics::RendererType r = g_engine->preferredRendererType();
 
-bool Te3DTexture::unload() {
-	glBindTexture(GL_TEXTURE_2D, _glTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	_loaded = false;
-	return true;
-}
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+	if (r == Graphics::kRendererTypeOpenGL)
+		return new Te3DTextureOpenGL();
+#endif
 
-void Te3DTexture::update(const TeImage &img, uint xoff, uint yoff) {
-	if (!img.w || !img.h)
-		return;
-
-	setAccessName(img.getAccessName().append(".3dtex"));
-	glBindTexture(GL_TEXTURE_2D, _glTexture);
-	glPixelStorei(GL_UNPACK_SWAP_BYTES, 0);
-	glPixelStorei(GL_UNPACK_LSB_FIRST, 0);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-	const void *imgdata = img.getPixels();
-	if (_format == TeImage::RGB8) {
-		glTexSubImage2D(GL_TEXTURE_2D, 0, xoff, yoff, img.w, img.h, GL_RGB, GL_UNSIGNED_BYTE, imgdata);
-	} else if (_format == TeImage::RGBA8) {
-		glTexSubImage2D(GL_TEXTURE_2D, 0, xoff, yoff, img.w, img.h, GL_RGBA, GL_UNSIGNED_BYTE, imgdata);
-	} else {
-		warning("Te3DTexture::update can't send image format %d to GL.", _format);
-	}
-	return;
+#if defined(USE_TINYGL)
+	if (r == Graphics::kRendererTypeTinyGL)
+		return new Te3DTextureTinyGL();
+#endif
+	error("Couldn't create Te3DTexture for selected renderer");
 }
 
 } // end namespace Tetraedge

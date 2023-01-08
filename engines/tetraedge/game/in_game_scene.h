@@ -197,7 +197,7 @@ public:
 	Common::Array<Object3D *> object3Ds() { return _object3Ds; }
 	void setWaitTime(float usecs) { _waitTime = usecs; }
 	TeTimer &waitTimeTimer() { return _waitTimeTimer; }
-	Common::Array<TeLight> &lights() { return _lights; }
+	Common::Array<Common::SharedPtr<TeLight>> &lights() { return _lights; }
 
 
 private:
@@ -239,7 +239,7 @@ private:
 	TeLuaGUI _markerGui;
 	TeLuaGUI _hitObjectGui;
 
-	Common::Array<TeLight> _lights;
+	Common::Array<Common::SharedPtr<TeLight>> _lights;
 
 	TeVector2f32 _someScrollVector;
 	TeVector2f32 _viewportSize;

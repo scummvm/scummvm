@@ -190,13 +190,11 @@ bool TetraedgeEngine::onKeyUp(const Common::KeyState &state) {
 }
 
 Common::Error TetraedgeEngine::run() {
-	initGraphics3d(getDefaultScreenWidth(), getDefaultScreenHeight());
-
 	configureSearchPaths();
 	// from BasicOpenGLView::prepareOpenGL..
 	_application = new Application();
-	_renderer = new TeRenderer();
-	_renderer->init();
+	_renderer = TeRenderer::makeInstance();
+	_renderer->init(getDefaultScreenWidth(), getDefaultScreenHeight());
 	_renderer->reset();
 
 	getInputMgr()->_keyUpSignal.add(this, &TetraedgeEngine::onKeyUp);
@@ -244,10 +242,39 @@ void TetraedgeEngine::openConfigDialog() {
 	syncSoundSettings();
 }
 
+
+Graphics::RendererType TetraedgeEngine::preferredRendererType() const {
+	Common::String rendererConfig = ConfMan.get("renderer");
+	Graphics::RendererType desiredRendererType = Graphics::Renderer::parseTypeCode(rendererConfig);
+	uint32 availableRendererTypes = Graphics::Renderer::getAvailableTypes();
+
+	availableRendererTypes &=
+#if defined(USE_OPENGL_GAME)
+			Graphics::kRendererTypeOpenGL |
+#endif
+#if defined(USE_OPENGL_SHADERS)
+			Graphics::kRendererTypeOpenGLShaders |
+#endif
+#if defined(USE_TINYGL)
+			Graphics::kRendererTypeTinyGL |
+#endif
+			0;
+
+	Graphics::RendererType matchingRendererType = Graphics::Renderer::getBestMatchingType(desiredRendererType, availableRendererTypes);
+	// Currently no difference between shaders and otherwise for this engine.
+	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders)
+		matchingRendererType = Graphics::kRendererTypeOpenGL;
+	
+	if (matchingRendererType == 0) {
+		error("No supported renderer available.");
+	}
+	
+	return matchingRendererType;
+}
+
 /*static*/
 void TetraedgeEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	g_engine->getApplication()->getSavegameThumbnail(thumb);
 }
-
 
 } // namespace Tetraedge

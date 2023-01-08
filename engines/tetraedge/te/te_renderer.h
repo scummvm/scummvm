@@ -33,6 +33,7 @@ namespace Tetraedge {
 class TeRenderer {
 public:
 	TeRenderer();
+	virtual ~TeRenderer() {};
 
 	enum MatrixMode {
 		MM_GL_PROJECTION = 0,
@@ -49,6 +50,7 @@ public:
 	class TransparentMeshProperties {
 	public:
 		TransparentMeshProperties() : _camera(nullptr), _vertexCount(0), _shouldDraw(false), _scissorEnabled(false), _hasColor(false) {}
+
 		TeCamera *_camera;
 		int _vertexCount;
 		TeMatrix4x4 _matrix;
@@ -77,29 +79,31 @@ public:
 
 	void addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsigned long i2, unsigned long i3);
 	void checkError(const Common::String &str) {};
-	void clearBuffer(Buffer buf);
+	virtual void clearBuffer(Buffer buf) = 0;
 	void create();
 	TeMatrix4x4 currentMatrix();
-	void disableTexture();
-	void disableWireFrame();
-	void disableZBuffer();
-	void drawLine(const TeVector3f32 &from, const TeVector3f32 &to);
-	void enableTexture();
-	void enableWireFrame();
-	void enableZBuffer();
+	virtual void disableAllLights() = 0;
+	virtual void disableTexture() = 0;
+	virtual void disableWireFrame() = 0;
+	virtual void disableZBuffer() = 0;
+	virtual void drawLine(const TeVector3f32 &from, const TeVector3f32 &to) = 0;
+	virtual void enableAllLights() = 0;
+	virtual void enableTexture() = 0;
+	virtual void enableWireFrame() = 0;
+	virtual void enableZBuffer() = 0;
 	//void extractFrameBufferToImg(const TeVector2s32 &from, const TeVector2s32 &to, TeImage &output);
-	void init();
+	virtual void init(uint width, uint height) = 0;
 	void loadIdentityMatrix();
 	void loadMatrix(const TeMatrix4x4 &matrix);
 	void loadCurrentMatrixToGL();
-	void loadProjectionMatrix(const TeMatrix4x4 &matrix);
+	virtual void loadProjectionMatrix(const TeMatrix4x4 &matrix) = 0;
 	void multiplyMatrix(const TeMatrix4x4 &matrix);
 	void optimiseTransparentMeshProperties();
 	void popMatrix();
 	void pushMatrix();
-	Common::String renderer();
-	void renderTransparentMeshes();
-	void reset();
+	virtual Common::String renderer() = 0;
+	virtual void renderTransparentMeshes() = 0;
+	virtual void reset() = 0;
 	void rotate(const TeQuaternion &rot);
 	void rotate(float angle, float rx, float ry, float rz);
 	void scale(float xs, float ys, float zs);
@@ -109,25 +113,29 @@ public:
 	int scissorX() const { return _scissorX; }
 	int scissorY() const { return _scissorY; }
 	void sendModelMatrix(const TeMatrix4x4 &matrix) {}
-	void setClearColor(const TeColor &col);
+	virtual void setClearColor(const TeColor &col) = 0;
 	void setCurrentCamera(TeCamera *camera) {
 		_currentCamera = camera;
 	}
-	void setCurrentColor(const TeColor &col);
-	void setMatrixMode(enum MatrixMode mode);
+	virtual void setCurrentColor(const TeColor &col) = 0;
+	virtual void setMatrixMode(enum MatrixMode mode) = 0;
 	void setScissor(int x, int y, int w, int h);
 	void setScissorEnabled(bool val) { _scissorEnabled = val; }
-	void setViewport(int x, int y, int w, int h);
-	void shadowMode(enum ShadowMode mode);
+	virtual void setViewport(int x, int y, int w, int h) = 0;
+	virtual void shadowMode(enum ShadowMode mode) = 0;
 	enum ShadowMode shadowMode() const { return _shadowMode; }
 	void translate(float x, float y, float z);
-	Common::String vendor();
+	virtual Common::String vendor() = 0;
 
 	void dumpTransparentMeshProps() const;
 	void dumpTransparentMeshData() const;
 	const TeColor &currentColor() const { return _currentColor; }
 
-private:
+	virtual void applyMaterial(const TeMaterial &m) = 0;
+
+	static TeRenderer *makeInstance();
+
+protected:
 	TeCamera *_currentCamera;
 	TeColor _currentColor;
 	TeColor _clearColor;
@@ -154,7 +162,7 @@ private:
 
 	TeMatriciesStack _matriciesStacks[3];  // one per matrix mode.
 
-	void loadMatrixToGL(const TeMatrix4x4 &matrix);
+	virtual void loadMatrixToGL(const TeMatrix4x4 &matrix) = 0;
 };
 
 } // end namespace Tetraedge
