@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-08 00:31+0000\n"
+"POT-Creation-Date: 2023-01-08 13:10+0000\n"
 "PO-Revision-Date: 2023-01-08 08:59+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -57,8 +57,8 @@ msgctxt "lowres"
 msgid "Go up"
 msgstr "Pfad hoch"
 
-#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/downloadpacksdialog.cpp:265
-#: gui/downloadpacksdialog.cpp:461 gui/editgamedialog.cpp:352
+#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/downloadpacksdialog.cpp:264
+#: gui/downloadpacksdialog.cpp:460 gui/editgamedialog.cpp:352
 #: gui/editrecorddialog.cpp:66 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2278
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
@@ -110,9 +110,9 @@ msgstr "Von: "
 msgid "To: "
 msgstr "Nach: "
 
-#: gui/downloaddialog.cpp:63 gui/downloadpacksdialog.cpp:196
-#: gui/downloadpacksdialog.cpp:240 gui/downloadpacksdialog.cpp:250
-#: gui/downloadpacksdialog.cpp:272 gui/downloadpacksdialog.cpp:287
+#: gui/downloaddialog.cpp:63 gui/downloadpacksdialog.cpp:195
+#: gui/downloadpacksdialog.cpp:239 gui/downloadpacksdialog.cpp:249
+#: gui/downloadpacksdialog.cpp:271 gui/downloadpacksdialog.cpp:286
 msgid "Cancel download"
 msgstr "Download abbrechen"
 
@@ -121,8 +121,8 @@ msgctxt "lowres"
 msgid "Cancel download"
 msgstr "Abbrechen"
 
-#: gui/downloaddialog.cpp:67 gui/downloadpacksdialog.cpp:197
-#: gui/downloadpacksdialog.cpp:276
+#: gui/downloaddialog.cpp:67 gui/downloadpacksdialog.cpp:196
+#: gui/downloadpacksdialog.cpp:275
 msgid "Hide"
 msgstr "Verstecken"
 
@@ -137,7 +137,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
-#: gui/options.cpp:3268 gui/options.cpp:3306 gui/options.cpp:3730
+#: gui/options.cpp:3271 gui/options.cpp:3309 gui/options.cpp:3733
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:584
 #: engines/director/events.cpp:91 engines/grim/grim.cpp:354
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
@@ -149,7 +149,7 @@ msgstr "Ja"
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
-#: gui/options.cpp:3268 gui/options.cpp:3306 gui/options.cpp:3730
+#: gui/options.cpp:3271 gui/options.cpp:3309 gui/options.cpp:3733
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/grim/grim.cpp:354 engines/kyra/gui/saveload_eob.cpp:597
 #: engines/kyra/gui/saveload_eob.cpp:630
@@ -202,51 +202,51 @@ msgstr ""
 "\"%s\" existiert im gewählten Verzeichnis bereits.\n"
 "Möchten Sie wirklich die Dateien in das gewählte Verzeichnis herunterladen?"
 
-#: gui/downloaddialog.cpp:214 gui/downloadpacksdialog.cpp:362
+#: gui/downloaddialog.cpp:214 gui/downloadpacksdialog.cpp:361
 #, c-format
 msgid "Downloaded %s %S / %s %S"
 msgstr "%s %S / %s %S heruntergeladen"
 
-#: gui/downloaddialog.cpp:221 gui/downloadpacksdialog.cpp:369
+#: gui/downloaddialog.cpp:221 gui/downloadpacksdialog.cpp:368
 #, c-format
 msgid "Download speed: %s %S"
 msgstr "Download-Geschwindigkeit: %s %S"
 
-#: gui/downloadpacksdialog.cpp:156
+#: gui/downloadpacksdialog.cpp:155
 #, c-format
 msgid "ERROR %d: %s"
 msgstr "FEHLER %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
-#: gui/downloadpacksdialog.cpp:184 gui/downloadpacksdialog.cpp:239
+#: gui/downloadpacksdialog.cpp:183 gui/downloadpacksdialog.cpp:238
 #, c-format
 msgid "Downloading %S list..."
 msgstr "Liste %S wird geladen..."
 
-#: gui/downloadpacksdialog.cpp:198
+#: gui/downloadpacksdialog.cpp:197
 msgid "Clear Cache"
 msgstr "Cache leeren"
 
-#: gui/downloadpacksdialog.cpp:249
+#: gui/downloadpacksdialog.cpp:248
 #, c-format
 msgid "Downloading %S list... %d entries"
 msgstr "Liste %S wird heruntergeladen... %d Einträge"
 
-#: gui/downloadpacksdialog.cpp:259
+#: gui/downloadpacksdialog.cpp:258
 #, c-format
 msgid "Detected %d new packs, %s %S"
 msgstr "%d neue Packs erkannt, %s %S"
 
-#: gui/downloadpacksdialog.cpp:261
+#: gui/downloadpacksdialog.cpp:260
 msgid "Download"
 msgstr "Herunterladen"
 
-#: gui/downloadpacksdialog.cpp:285
+#: gui/downloadpacksdialog.cpp:284
 #, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
 msgstr "Download abgeschlossen, %d Packs heruntergeladen, %s %S"
 
-#: gui/downloadpacksdialog.cpp:291 gui/downloadpacksdialog.cpp:383
+#: gui/downloadpacksdialog.cpp:290 gui/downloadpacksdialog.cpp:382
 #: gui/gui-manager.cpp:162 gui/unknown-game-dialog.cpp:53
 #: engines/nancy/dialogs.cpp:313 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
@@ -254,17 +254,17 @@ msgstr "Download abgeschlossen, %d Packs heruntergeladen, %s %S"
 msgid "Close"
 msgstr "Schließen"
 
-#: gui/downloadpacksdialog.cpp:390 gui/downloadpacksdialog.cpp:437
+#: gui/downloadpacksdialog.cpp:389 gui/downloadpacksdialog.cpp:436
 msgid "ERROR: No icons path set"
 msgstr "FEHLER: Kein Icon-Pfad gesetzt"
 
 #. I18N: String like "No new icon packs available"
-#: gui/downloadpacksdialog.cpp:425
+#: gui/downloadpacksdialog.cpp:424
 #, c-format
 msgid "No new %S available"
 msgstr "Kein neues Pack verfügbar"
 
-#: gui/downloadpacksdialog.cpp:461
+#: gui/downloadpacksdialog.cpp:460
 #, c-format
 msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
@@ -273,7 +273,7 @@ msgstr ""
 "Das Löschen des Icon-Caches wird %s %s Daten entfernen. Dabei werden alle "
 "bisher heruntergeladenen Icon-Dateien gelöscht. Möchtest du fortfahren?"
 
-#: gui/downloadpacksdialog.cpp:461 gui/updates-dialog.cpp:115
+#: gui/downloadpacksdialog.cpp:460 gui/updates-dialog.cpp:115
 msgid "Proceed"
 msgstr "Fortfahren"
 
@@ -330,7 +330,7 @@ msgstr ""
 #: gui/options.cpp:1532 gui/options.cpp:1548 gui/options.cpp:1560
 #: gui/options.cpp:1596 gui/options.cpp:1610 gui/options.cpp:2015
 #: gui/options.cpp:2423 gui/options.cpp:2476 gui/options.cpp:2691
-#: gui/options.cpp:3148 audio/null.cpp:40
+#: gui/options.cpp:3151 audio/null.cpp:40
 #: backends/platform/android/options.cpp:112
 #: backends/platform/android/options.cpp:113 engines/ags/dialogs.cpp:62
 msgid "<default>"
@@ -501,21 +501,21 @@ msgstr "Statistiken"
 #: gui/options.cpp:2303 gui/options.cpp:2305 gui/options.cpp:2310
 #: gui/options.cpp:2341 gui/options.cpp:2384 gui/options.cpp:2400
 #: gui/options.cpp:2409 gui/options.cpp:2810 gui/options.cpp:2812
-#: gui/options.cpp:2816 gui/options.cpp:2825 gui/options.cpp:3129
-#: gui/options.cpp:3135 gui/options.cpp:3142 gui/options.cpp:3154
-#: gui/options.cpp:3165
+#: gui/options.cpp:2816 gui/options.cpp:2825 gui/options.cpp:3132
+#: gui/options.cpp:3138 gui/options.cpp:3145 gui/options.cpp:3157
+#: gui/options.cpp:3168
 msgctxt "path"
 msgid "None"
 msgstr "Standard"
 
 #: gui/editgamedialog.cpp:371 gui/editgamedialog.cpp:474
 #: gui/editgamedialog.cpp:601 gui/options.cpp:2302 gui/options.cpp:2304
-#: gui/options.cpp:2809 gui/options.cpp:2811 gui/options.cpp:3132
-#: gui/options.cpp:3138 backends/platform/wii/options.cpp:55
+#: gui/options.cpp:2809 gui/options.cpp:2811 gui/options.cpp:3135
+#: gui/options.cpp:3141 backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "Standard"
 
-#: gui/editgamedialog.cpp:523 gui/options.cpp:3159
+#: gui/editgamedialog.cpp:523 gui/options.cpp:3162
 msgid "Select SoundFont"
 msgstr "SoundFont auswählen"
 
@@ -1574,7 +1574,7 @@ msgid "ScummVM config path: "
 msgstr "ScummVM-Konfiguration: "
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2428 gui/options.cpp:3148
+#: gui/options.cpp:2428 gui/options.cpp:3151
 msgid "Last browser path: "
 msgstr "Zuletzt aufgerufener Datei-Pfad: "
 
@@ -1757,7 +1757,7 @@ msgstr "Letzte Synchronisation:"
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Zeitpunkt der letzten Spielstand-Synchronisierung"
 
-#: gui/options.cpp:2602 gui/options.cpp:3513
+#: gui/options.cpp:2602 gui/options.cpp:3516
 msgid "<never>"
 msgstr "<nie>"
 
@@ -1858,7 +1858,7 @@ msgstr "Server starten"
 msgid "Run local webserver"
 msgstr "Startet den lokalen Webserver"
 
-#: gui/options.cpp:2643 gui/options.cpp:3628
+#: gui/options.cpp:2643 gui/options.cpp:3631
 msgid "Not running"
 msgstr "Nicht gestartet"
 
@@ -2007,11 +2007,11 @@ msgstr ""
 msgid "icon packs"
 msgstr "Icon-Packs"
 
-#: gui/options.cpp:3121
+#: gui/options.cpp:3124
 msgid "shader packs"
 msgstr "Shader-Packs"
 
-#: gui/options.cpp:3243
+#: gui/options.cpp:3246
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -2019,49 +2019,49 @@ msgstr ""
 "Fehler beim Öffnen der URL!\n"
 "Sie sollten diese Seite manuell aufrufen."
 
-#: gui/options.cpp:3268
+#: gui/options.cpp:3271
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr ""
 "Ein anderer Cloud-Speicher arbeitet gerade. Möchten Sie ihn unterbrechen?"
 
-#: gui/options.cpp:3277 gui/options.cpp:3315
+#: gui/options.cpp:3280 gui/options.cpp:3318
 msgid "Wait until current Storage finishes up and try again."
 msgstr ""
 "Warten Sie, bis der Cloud-Speicher fertig ist und versuchen Sie es erneut."
 
-#: gui/options.cpp:3290
+#: gui/options.cpp:3293
 msgid "Connecting..."
 msgstr "Verbinden..."
 
-#: gui/options.cpp:3306
+#: gui/options.cpp:3309
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Dieser Cloud-Speicher arbeitet gerade. Möchten Sie ihn unterbrechen?"
 
-#: gui/options.cpp:3511 backends/cloud/cloudmanager.cpp:156
+#: gui/options.cpp:3514 backends/cloud/cloudmanager.cpp:156
 msgid "<right now>"
 msgstr "<gerade eben>"
 
-#: gui/options.cpp:3620
+#: gui/options.cpp:3623
 msgid "Stop server"
 msgstr "Server anhalten"
 
-#: gui/options.cpp:3621
+#: gui/options.cpp:3624
 msgid "Stop local webserver"
 msgstr "Lokalen Webserver anhalten"
 
-#: gui/options.cpp:3673
+#: gui/options.cpp:3676
 msgid "Storage connected."
 msgstr "Cloud-Speicher verbunden."
 
-#: gui/options.cpp:3675
+#: gui/options.cpp:3678
 msgid "Failed to connect storage."
 msgstr "Verbindung mit Cloud-Speicher fehlgeschlagen."
 
-#: gui/options.cpp:3677
+#: gui/options.cpp:3680
 msgid "Failed to connect storage: "
 msgstr "Verbindung mit Cloud-Speicher fehlgeschlagen: "
 
-#: gui/options.cpp:3697
+#: gui/options.cpp:3700
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -2069,7 +2069,7 @@ msgstr ""
 "Anfrage fehlgeschlagen.\n"
 "Bitte überprüfen Sie Ihre Internetverbindung."
 
-#: gui/options.cpp:3728
+#: gui/options.cpp:3731
 msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
@@ -2077,7 +2077,7 @@ msgstr ""
 "Ein Testbild sollte nun angezeigt werden.\n"
 "Möchtest Du diese Shader-Einstellungen beibehalten?"
 
-#: gui/options.cpp:3731
+#: gui/options.cpp:3734
 #, c-format
 msgid "Reverting automatically in %d seconds"
 msgstr "Einstellungen werden in %d Sekunden zurückgesetzt"

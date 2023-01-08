@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-08 00:31+0000\n"
+"POT-Creation-Date: 2023-01-08 13:10+0000\n"
 "PO-Revision-Date: 2023-01-08 13:20+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -56,8 +56,8 @@ msgctxt "lowres"
 msgid "Go up"
 msgstr "Вверх"
 
-#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/downloadpacksdialog.cpp:265
-#: gui/downloadpacksdialog.cpp:461 gui/editgamedialog.cpp:352
+#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/downloadpacksdialog.cpp:264
+#: gui/downloadpacksdialog.cpp:460 gui/editgamedialog.cpp:352
 #: gui/editrecorddialog.cpp:66 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2278
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
@@ -107,9 +107,9 @@ msgstr "Из: "
 msgid "To: "
 msgstr "В: "
 
-#: gui/downloaddialog.cpp:63 gui/downloadpacksdialog.cpp:196
-#: gui/downloadpacksdialog.cpp:240 gui/downloadpacksdialog.cpp:250
-#: gui/downloadpacksdialog.cpp:272 gui/downloadpacksdialog.cpp:287
+#: gui/downloaddialog.cpp:63 gui/downloadpacksdialog.cpp:195
+#: gui/downloadpacksdialog.cpp:239 gui/downloadpacksdialog.cpp:249
+#: gui/downloadpacksdialog.cpp:271 gui/downloadpacksdialog.cpp:286
 msgid "Cancel download"
 msgstr "Прервать загрузку"
 
@@ -118,8 +118,8 @@ msgctxt "lowres"
 msgid "Cancel download"
 msgstr "Прервать"
 
-#: gui/downloaddialog.cpp:67 gui/downloadpacksdialog.cpp:197
-#: gui/downloadpacksdialog.cpp:276
+#: gui/downloaddialog.cpp:67 gui/downloadpacksdialog.cpp:196
+#: gui/downloadpacksdialog.cpp:275
 msgid "Hide"
 msgstr "Спрятать"
 
@@ -134,7 +134,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
-#: gui/options.cpp:3268 gui/options.cpp:3306 gui/options.cpp:3730
+#: gui/options.cpp:3271 gui/options.cpp:3309 gui/options.cpp:3733
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:584
 #: engines/director/events.cpp:91 engines/grim/grim.cpp:354
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
@@ -146,7 +146,7 @@ msgstr "Да"
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
-#: gui/options.cpp:3268 gui/options.cpp:3306 gui/options.cpp:3730
+#: gui/options.cpp:3271 gui/options.cpp:3309 gui/options.cpp:3733
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/grim/grim.cpp:354 engines/kyra/gui/saveload_eob.cpp:597
 #: engines/kyra/gui/saveload_eob.cpp:630
@@ -199,51 +199,51 @@ msgstr ""
 "\"%s\" уже существует в указанном каталоге.\n"
 "Вы действительно хотите загрузить файлы в этот каталог?"
 
-#: gui/downloaddialog.cpp:214 gui/downloadpacksdialog.cpp:362
+#: gui/downloaddialog.cpp:214 gui/downloadpacksdialog.cpp:361
 #, c-format
 msgid "Downloaded %s %S / %s %S"
 msgstr "Загружено %s %S из %s %S"
 
-#: gui/downloaddialog.cpp:221 gui/downloadpacksdialog.cpp:369
+#: gui/downloaddialog.cpp:221 gui/downloadpacksdialog.cpp:368
 #, c-format
 msgid "Download speed: %s %S"
 msgstr "Скорость загрузки: %s %S"
 
-#: gui/downloadpacksdialog.cpp:156
+#: gui/downloadpacksdialog.cpp:155
 #, c-format
 msgid "ERROR %d: %s"
 msgstr "ОШИБКА %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
-#: gui/downloadpacksdialog.cpp:184 gui/downloadpacksdialog.cpp:239
+#: gui/downloadpacksdialog.cpp:183 gui/downloadpacksdialog.cpp:238
 #, c-format
 msgid "Downloading %S list..."
 msgstr "Загружаю список %S..."
 
-#: gui/downloadpacksdialog.cpp:198
+#: gui/downloadpacksdialog.cpp:197
 msgid "Clear Cache"
 msgstr "Очистить кеш"
 
-#: gui/downloadpacksdialog.cpp:249
+#: gui/downloadpacksdialog.cpp:248
 #, c-format
 msgid "Downloading %S list... %d entries"
 msgstr "Загружаю список %S... %d записей"
 
-#: gui/downloadpacksdialog.cpp:259
+#: gui/downloadpacksdialog.cpp:258
 #, c-format
 msgid "Detected %d new packs, %s %S"
 msgstr "Обнаружено %d новых пакетов, %s %S"
 
-#: gui/downloadpacksdialog.cpp:261
+#: gui/downloadpacksdialog.cpp:260
 msgid "Download"
 msgstr "Скачать"
 
-#: gui/downloadpacksdialog.cpp:285
+#: gui/downloadpacksdialog.cpp:284
 #, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
 msgstr "Загрузка завершена, скачано %d пакетов, %s %S"
 
-#: gui/downloadpacksdialog.cpp:291 gui/downloadpacksdialog.cpp:383
+#: gui/downloadpacksdialog.cpp:290 gui/downloadpacksdialog.cpp:382
 #: gui/gui-manager.cpp:162 gui/unknown-game-dialog.cpp:53
 #: engines/nancy/dialogs.cpp:313 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
@@ -251,17 +251,17 @@ msgstr "Загрузка завершена, скачано %d пакетов, %
 msgid "Close"
 msgstr "Закрыть"
 
-#: gui/downloadpacksdialog.cpp:390 gui/downloadpacksdialog.cpp:437
+#: gui/downloadpacksdialog.cpp:389 gui/downloadpacksdialog.cpp:436
 msgid "ERROR: No icons path set"
 msgstr "ОШИБКА: Не задан путь иконок"
 
 #. I18N: String like "No new icon packs available"
-#: gui/downloadpacksdialog.cpp:425
+#: gui/downloadpacksdialog.cpp:424
 #, c-format
 msgid "No new %S available"
 msgstr "Новые %S не обнаружены"
 
-#: gui/downloadpacksdialog.cpp:461
+#: gui/downloadpacksdialog.cpp:460
 #, c-format
 msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
@@ -270,7 +270,7 @@ msgstr ""
 "Вы собираетесь удалить %s%s данных и удалите все скачанные иконки. Вы "
 "действительно хотите продолжить?"
 
-#: gui/downloadpacksdialog.cpp:461 gui/updates-dialog.cpp:115
+#: gui/downloadpacksdialog.cpp:460 gui/updates-dialog.cpp:115
 msgid "Proceed"
 msgstr "Продолжить"
 
@@ -326,7 +326,7 @@ msgstr ""
 #: gui/options.cpp:1532 gui/options.cpp:1548 gui/options.cpp:1560
 #: gui/options.cpp:1596 gui/options.cpp:1610 gui/options.cpp:2015
 #: gui/options.cpp:2423 gui/options.cpp:2476 gui/options.cpp:2691
-#: gui/options.cpp:3148 audio/null.cpp:40
+#: gui/options.cpp:3151 audio/null.cpp:40
 #: backends/platform/android/options.cpp:112
 #: backends/platform/android/options.cpp:113 engines/ags/dialogs.cpp:62
 msgid "<default>"
@@ -497,21 +497,21 @@ msgstr "Статистика"
 #: gui/options.cpp:2303 gui/options.cpp:2305 gui/options.cpp:2310
 #: gui/options.cpp:2341 gui/options.cpp:2384 gui/options.cpp:2400
 #: gui/options.cpp:2409 gui/options.cpp:2810 gui/options.cpp:2812
-#: gui/options.cpp:2816 gui/options.cpp:2825 gui/options.cpp:3129
-#: gui/options.cpp:3135 gui/options.cpp:3142 gui/options.cpp:3154
-#: gui/options.cpp:3165
+#: gui/options.cpp:2816 gui/options.cpp:2825 gui/options.cpp:3132
+#: gui/options.cpp:3138 gui/options.cpp:3145 gui/options.cpp:3157
+#: gui/options.cpp:3168
 msgctxt "path"
 msgid "None"
 msgstr "Не задан"
 
 #: gui/editgamedialog.cpp:371 gui/editgamedialog.cpp:474
 #: gui/editgamedialog.cpp:601 gui/options.cpp:2302 gui/options.cpp:2304
-#: gui/options.cpp:2809 gui/options.cpp:2811 gui/options.cpp:3132
-#: gui/options.cpp:3138 backends/platform/wii/options.cpp:55
+#: gui/options.cpp:2809 gui/options.cpp:2811 gui/options.cpp:3135
+#: gui/options.cpp:3141 backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "По умолчанию"
 
-#: gui/editgamedialog.cpp:523 gui/options.cpp:3159
+#: gui/editgamedialog.cpp:523 gui/options.cpp:3162
 msgid "Select SoundFont"
 msgstr "Выберите SoundFont"
 
@@ -1565,7 +1565,7 @@ msgid "ScummVM config path: "
 msgstr "Файл настроек ScummVM: "
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2428 gui/options.cpp:3148
+#: gui/options.cpp:2428 gui/options.cpp:3151
 msgid "Last browser path: "
 msgstr "Последний путь в браузере файлов: "
 
@@ -1749,7 +1749,7 @@ msgid "When was the last time saved games were synced with this storage"
 msgstr ""
 "Когда в последний раз сохранённые игры синхронизировались с этим хранилищем"
 
-#: gui/options.cpp:2602 gui/options.cpp:3513
+#: gui/options.cpp:2602 gui/options.cpp:3516
 msgid "<never>"
 msgstr "<никогда>"
 
@@ -1858,7 +1858,7 @@ msgstr "Запустить сервер"
 msgid "Run local webserver"
 msgstr "Запускает локальный веб-сервер"
 
-#: gui/options.cpp:2643 gui/options.cpp:3628
+#: gui/options.cpp:2643 gui/options.cpp:3631
 msgid "Not running"
 msgstr "Не запущен"
 
@@ -2001,11 +2001,11 @@ msgstr "Выберите корневой каталог для менеджер
 msgid "icon packs"
 msgstr "пакетов иконок"
 
-#: gui/options.cpp:3121
+#: gui/options.cpp:3124
 msgid "shader packs"
 msgstr "пакетов шейдеров"
 
-#: gui/options.cpp:3243
+#: gui/options.cpp:3246
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -2013,47 +2013,47 @@ msgstr ""
 "Не удалось открыть URL!\n"
 "Пожалуйста, перейдите на указанную страницу вручную."
 
-#: gui/options.cpp:3268
+#: gui/options.cpp:3271
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Сейчас работает ещё одно хранилище. Вы хотите остановить его?"
 
-#: gui/options.cpp:3277 gui/options.cpp:3315
+#: gui/options.cpp:3280 gui/options.cpp:3318
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Подождите, пока текущее хранилище завершит работу, и попробуйте снова."
 
-#: gui/options.cpp:3290
+#: gui/options.cpp:3293
 msgid "Connecting..."
 msgstr "Подключение..."
 
-#: gui/options.cpp:3306
+#: gui/options.cpp:3309
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Это хранилище сейчас работает. Вы хотите остановить его?"
 
-#: gui/options.cpp:3511 backends/cloud/cloudmanager.cpp:156
+#: gui/options.cpp:3514 backends/cloud/cloudmanager.cpp:156
 msgid "<right now>"
 msgstr "<сейчас>"
 
-#: gui/options.cpp:3620
+#: gui/options.cpp:3623
 msgid "Stop server"
 msgstr "Остановить сервер"
 
-#: gui/options.cpp:3621
+#: gui/options.cpp:3624
 msgid "Stop local webserver"
 msgstr "Остановить локальный веб-сервер"
 
-#: gui/options.cpp:3673
+#: gui/options.cpp:3676
 msgid "Storage connected."
 msgstr "Хранилище подключено."
 
-#: gui/options.cpp:3675
+#: gui/options.cpp:3678
 msgid "Failed to connect storage."
 msgstr "Не удалось подключить хранилище."
 
-#: gui/options.cpp:3677
+#: gui/options.cpp:3680
 msgid "Failed to connect storage: "
 msgstr "Не удалось подключить хранилище: "
 
-#: gui/options.cpp:3697
+#: gui/options.cpp:3700
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -2061,7 +2061,7 @@ msgstr ""
 "Ошибка запроса.\n"
 "Проверьте ваше Интернет-соединение."
 
-#: gui/options.cpp:3728
+#: gui/options.cpp:3731
 msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
@@ -2069,7 +2069,7 @@ msgstr ""
 "Вы должны видеть испытательную таблицу.\n"
 "Желаете ли сохранить эти настройки для шейдера?"
 
-#: gui/options.cpp:3731
+#: gui/options.cpp:3734
 #, c-format
 msgid "Reverting automatically in %d seconds"
 msgstr "Автоматический откат через %d секунд"

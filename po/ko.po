@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-08 00:31+0000\n"
+"POT-Creation-Date: 2023-01-08 13:10+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -56,8 +56,8 @@ msgctxt "lowres"
 msgid "Go up"
 msgstr "위로"
 
-#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/downloadpacksdialog.cpp:265
-#: gui/downloadpacksdialog.cpp:461 gui/editgamedialog.cpp:352
+#: gui/browser.cpp:81 gui/chooser.cpp:45 gui/downloadpacksdialog.cpp:264
+#: gui/downloadpacksdialog.cpp:460 gui/editgamedialog.cpp:352
 #: gui/editrecorddialog.cpp:66 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2278
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
@@ -107,9 +107,9 @@ msgstr "리모트: "
 msgid "To: "
 msgstr "로컬: "
 
-#: gui/downloaddialog.cpp:63 gui/downloadpacksdialog.cpp:196
-#: gui/downloadpacksdialog.cpp:240 gui/downloadpacksdialog.cpp:250
-#: gui/downloadpacksdialog.cpp:272 gui/downloadpacksdialog.cpp:287
+#: gui/downloaddialog.cpp:63 gui/downloadpacksdialog.cpp:195
+#: gui/downloadpacksdialog.cpp:239 gui/downloadpacksdialog.cpp:249
+#: gui/downloadpacksdialog.cpp:271 gui/downloadpacksdialog.cpp:286
 msgid "Cancel download"
 msgstr "다운로드 취소"
 
@@ -118,8 +118,8 @@ msgctxt "lowres"
 msgid "Cancel download"
 msgstr "다운로드 취소"
 
-#: gui/downloaddialog.cpp:67 gui/downloadpacksdialog.cpp:197
-#: gui/downloadpacksdialog.cpp:276
+#: gui/downloaddialog.cpp:67 gui/downloadpacksdialog.cpp:196
+#: gui/downloadpacksdialog.cpp:275
 msgid "Hide"
 msgstr "숨김"
 
@@ -132,7 +132,7 @@ msgstr "인터넷 연결에 제한이 있는 것 같습니다. 다운로드를 �
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
-#: gui/options.cpp:3268 gui/options.cpp:3306 gui/options.cpp:3730
+#: gui/options.cpp:3271 gui/options.cpp:3309 gui/options.cpp:3733
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:584
 #: engines/director/events.cpp:91 engines/grim/grim.cpp:354
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
@@ -144,7 +144,7 @@ msgstr "예"
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
-#: gui/options.cpp:3268 gui/options.cpp:3306 gui/options.cpp:3730
+#: gui/options.cpp:3271 gui/options.cpp:3309 gui/options.cpp:3733
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/grim/grim.cpp:354 engines/kyra/gui/saveload_eob.cpp:597
 #: engines/kyra/gui/saveload_eob.cpp:630
@@ -197,56 +197,56 @@ msgstr ""
 "지정된 디렉토리에 \"%s\" 파일이 이미 존재합니다.\n"
 "정말로 해당 디렉토리에 파일을 다운로드하시겠습니까?"
 
-#: gui/downloaddialog.cpp:214 gui/downloadpacksdialog.cpp:362
+#: gui/downloaddialog.cpp:214 gui/downloadpacksdialog.cpp:361
 #, c-format
 msgid "Downloaded %s %S / %s %S"
 msgstr "%s %S / %s %S 다운로드 됨"
 
-#: gui/downloaddialog.cpp:221 gui/downloadpacksdialog.cpp:369
+#: gui/downloaddialog.cpp:221 gui/downloadpacksdialog.cpp:368
 #, c-format
 msgid "Download speed: %s %S"
 msgstr "다운로드 속도: %s %S"
 
-#: gui/downloadpacksdialog.cpp:156
+#: gui/downloadpacksdialog.cpp:155
 #, c-format
 msgid "ERROR %d: %s"
 msgstr "에러 %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
-#: gui/downloadpacksdialog.cpp:184 gui/downloadpacksdialog.cpp:239
+#: gui/downloadpacksdialog.cpp:183 gui/downloadpacksdialog.cpp:238
 #, fuzzy, c-format
 #| msgid "Downloading icons list..."
 msgid "Downloading %S list..."
 msgstr "아이콘 목록을 다운로드하는 중..."
 
-#: gui/downloadpacksdialog.cpp:198
+#: gui/downloadpacksdialog.cpp:197
 #, fuzzy
 msgid "Clear Cache"
 msgstr "값 제거"
 
-#: gui/downloadpacksdialog.cpp:249
+#: gui/downloadpacksdialog.cpp:248
 #, fuzzy, c-format
 #| msgid "Downloading icons list... %d entries"
 msgid "Downloading %S list... %d entries"
 msgstr "아이콘 목록을 다운로드하는 중... %d개 항목"
 
-#: gui/downloadpacksdialog.cpp:259
+#: gui/downloadpacksdialog.cpp:258
 #, c-format
 msgid "Detected %d new packs, %s %S"
 msgstr "%d개의 새 팩을 발견했습니다, %s %S"
 
-#: gui/downloadpacksdialog.cpp:261
+#: gui/downloadpacksdialog.cpp:260
 msgid "Download"
 msgstr "다운로드"
 
-#: gui/downloadpacksdialog.cpp:285
+#: gui/downloadpacksdialog.cpp:284
 #, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
 msgstr ""
 "다운로드 완료.\n"
 "%d팩을 다운로드했습니다, %s %S."
 
-#: gui/downloadpacksdialog.cpp:291 gui/downloadpacksdialog.cpp:383
+#: gui/downloadpacksdialog.cpp:290 gui/downloadpacksdialog.cpp:382
 #: gui/gui-manager.cpp:162 gui/unknown-game-dialog.cpp:53
 #: engines/nancy/dialogs.cpp:313 engines/scumm/help.cpp:123
 #: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
@@ -254,25 +254,25 @@ msgstr ""
 msgid "Close"
 msgstr "닫기"
 
-#: gui/downloadpacksdialog.cpp:390 gui/downloadpacksdialog.cpp:437
+#: gui/downloadpacksdialog.cpp:389 gui/downloadpacksdialog.cpp:436
 msgid "ERROR: No icons path set"
 msgstr "에러: 아이콘 경로가 설정되지 않음"
 
 #. I18N: String like "No new icon packs available"
-#: gui/downloadpacksdialog.cpp:425
+#: gui/downloadpacksdialog.cpp:424
 #, fuzzy, c-format
 #| msgid "No new icons packs available"
 msgid "No new %S available"
 msgstr "사용 가능한 새 아이콘 팩 없음"
 
-#: gui/downloadpacksdialog.cpp:461
+#: gui/downloadpacksdialog.cpp:460
 #, c-format
 msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
 "icon files. Do you want to proceed?"
 msgstr ""
 
-#: gui/downloadpacksdialog.cpp:461 gui/updates-dialog.cpp:115
+#: gui/downloadpacksdialog.cpp:460 gui/updates-dialog.cpp:115
 msgid "Proceed"
 msgstr "진행"
 
@@ -325,7 +325,7 @@ msgstr "게임의 언어. 선택한 언어로 게임이 번역되지는 않음"
 #: gui/options.cpp:1532 gui/options.cpp:1548 gui/options.cpp:1560
 #: gui/options.cpp:1596 gui/options.cpp:1610 gui/options.cpp:2015
 #: gui/options.cpp:2423 gui/options.cpp:2476 gui/options.cpp:2691
-#: gui/options.cpp:3148 audio/null.cpp:40
+#: gui/options.cpp:3151 audio/null.cpp:40
 #: backends/platform/android/options.cpp:112
 #: backends/platform/android/options.cpp:113 engines/ags/dialogs.cpp:62
 msgid "<default>"
@@ -496,21 +496,21 @@ msgstr "통계"
 #: gui/options.cpp:2303 gui/options.cpp:2305 gui/options.cpp:2310
 #: gui/options.cpp:2341 gui/options.cpp:2384 gui/options.cpp:2400
 #: gui/options.cpp:2409 gui/options.cpp:2810 gui/options.cpp:2812
-#: gui/options.cpp:2816 gui/options.cpp:2825 gui/options.cpp:3129
-#: gui/options.cpp:3135 gui/options.cpp:3142 gui/options.cpp:3154
-#: gui/options.cpp:3165
+#: gui/options.cpp:2816 gui/options.cpp:2825 gui/options.cpp:3132
+#: gui/options.cpp:3138 gui/options.cpp:3145 gui/options.cpp:3157
+#: gui/options.cpp:3168
 msgctxt "path"
 msgid "None"
 msgstr "없음"
 
 #: gui/editgamedialog.cpp:371 gui/editgamedialog.cpp:474
 #: gui/editgamedialog.cpp:601 gui/options.cpp:2302 gui/options.cpp:2304
-#: gui/options.cpp:2809 gui/options.cpp:2811 gui/options.cpp:3132
-#: gui/options.cpp:3138 backends/platform/wii/options.cpp:55
+#: gui/options.cpp:2809 gui/options.cpp:2811 gui/options.cpp:3135
+#: gui/options.cpp:3141 backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "기본값"
 
-#: gui/editgamedialog.cpp:523 gui/options.cpp:3159
+#: gui/editgamedialog.cpp:523 gui/options.cpp:3162
 msgid "Select SoundFont"
 msgstr "SoundFont 선택"
 
@@ -1571,7 +1571,7 @@ msgid "ScummVM config path: "
 msgstr "ScummVM 설정 경로: "
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2428 gui/options.cpp:3148
+#: gui/options.cpp:2428 gui/options.cpp:3151
 msgid "Last browser path: "
 msgstr "마지막 접근 경로: "
 
@@ -1754,7 +1754,7 @@ msgstr "최근 동기화:"
 msgid "When was the last time saved games were synced with this storage"
 msgstr "세이브 파일이 이 스토리지와 마지막으로 동기화된 시점"
 
-#: gui/options.cpp:2602 gui/options.cpp:3513
+#: gui/options.cpp:2602 gui/options.cpp:3516
 msgid "<never>"
 msgstr "<없음>"
 
@@ -1855,7 +1855,7 @@ msgstr "서버 실행"
 msgid "Run local webserver"
 msgstr "로컬 웹 서버를 실행"
 
-#: gui/options.cpp:2643 gui/options.cpp:3628
+#: gui/options.cpp:2643 gui/options.cpp:3631
 msgid "Not running"
 msgstr "실행되지 않음"
 
@@ -1998,11 +1998,11 @@ msgstr "파일 매니저 /root/ 디렉토리를 선택"
 msgid "icon packs"
 msgstr ""
 
-#: gui/options.cpp:3121
+#: gui/options.cpp:3124
 msgid "shader packs"
 msgstr ""
 
-#: gui/options.cpp:3243
+#: gui/options.cpp:3246
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -2010,47 +2010,47 @@ msgstr ""
 "URL을 여는데 실패했습니다!\n"
 "해당 페이지로 직접 이동해 주세요."
 
-#: gui/options.cpp:3268
+#: gui/options.cpp:3271
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "다른 스토리지가 현재 동작 중입니다. 중단할까요?"
 
-#: gui/options.cpp:3277 gui/options.cpp:3315
+#: gui/options.cpp:3280 gui/options.cpp:3318
 msgid "Wait until current Storage finishes up and try again."
 msgstr "현재 스토리지 작업이 완료될 때까지 기다린 후 다시 시도해 주세요."
 
-#: gui/options.cpp:3290
+#: gui/options.cpp:3293
 msgid "Connecting..."
 msgstr "연결 중..."
 
-#: gui/options.cpp:3306
+#: gui/options.cpp:3309
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "이 스토리지가 현재 동작 중입니다. 중단할까요?"
 
-#: gui/options.cpp:3511 backends/cloud/cloudmanager.cpp:156
+#: gui/options.cpp:3514 backends/cloud/cloudmanager.cpp:156
 msgid "<right now>"
 msgstr "<지금>"
 
-#: gui/options.cpp:3620
+#: gui/options.cpp:3623
 msgid "Stop server"
 msgstr "서버 정지"
 
-#: gui/options.cpp:3621
+#: gui/options.cpp:3624
 msgid "Stop local webserver"
 msgstr "내부 웹서버를 정지합니다"
 
-#: gui/options.cpp:3673
+#: gui/options.cpp:3676
 msgid "Storage connected."
 msgstr "스토리지가 연결되었습니다."
 
-#: gui/options.cpp:3675
+#: gui/options.cpp:3678
 msgid "Failed to connect storage."
 msgstr "스토리지 연결에 실패했습니다."
 
-#: gui/options.cpp:3677
+#: gui/options.cpp:3680
 msgid "Failed to connect storage: "
 msgstr "스토리지 연결에 실패했습니다: "
 
-#: gui/options.cpp:3697
+#: gui/options.cpp:3700
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -2058,13 +2058,13 @@ msgstr ""
 "요청이 실패했습니다.\n"
 "인터넷 연결을 확인해 주세요."
 
-#: gui/options.cpp:3728
+#: gui/options.cpp:3731
 msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
 msgstr ""
 
-#: gui/options.cpp:3731
+#: gui/options.cpp:3734
 #, c-format
 msgid "Reverting automatically in %d seconds"
 msgstr ""
