@@ -497,6 +497,19 @@ Common::Language charToScummVMLanguage(const char c) {
 	}
 }
 
+Common::Language sciToScummVMLanguage(const int sciLanguage) {
+	switch (sciLanguage) {
+	case K_LANG_ENGLISH:    return Common::EN_ANY;
+	case K_LANG_FRENCH:     return Common::FR_FRA;
+	case K_LANG_SPANISH:    return Common::ES_ESP;
+	case K_LANG_ITALIAN:    return Common::IT_ITA;
+	case K_LANG_GERMAN:     return Common::DE_DEU;
+	case K_LANG_JAPANESE:   return Common::JA_JPN;
+	case K_LANG_PORTUGUESE: return Common::PT_BRA;
+	default:                return Common::UNK_LANG;
+	}
+}
+
 static char s_fallbackGameIdBuf[256];
 
 /**
@@ -700,6 +713,35 @@ ADDetectedGame SciMetaEngine::fallbackDetectExtern(uint md5Bytes, const FileMap 
 				}
 			}
 			seeker++;
+		}
+	}
+
+	// Try to determine the game language from config file (SCI1.1 and later)
+	const char *configNames[] = { "resource.cfg", "resource.win" };
+	for (int i = 0; i < ARRAYSIZE(configNames) && language == Common::EN_ANY; i++) {
+		Common::File file;
+		if (allFiles.contains(configNames[i]) && file.open(allFiles[configNames[i]])) {
+			while (true) {
+				Common::String line = file.readLine();
+				if (file.eos()) {
+					break;
+				}
+				uint32 separatorPos = line.find('=');
+				if (separatorPos == Common::String::npos) {
+					continue;
+				}
+				Common::String key = line.substr(0, separatorPos);
+				key.trim();
+				if (key.equalsIgnoreCase("language")) {
+					Common::String val = line.substr(separatorPos + 1);
+					val.trim();
+					Common::Language parsedLanguage = sciToScummVMLanguage(atoi(val.c_str()));
+					if (parsedLanguage != Common::UNK_LANG) {
+						language = parsedLanguage;
+					}
+					break;
+				}
+			}
 		}
 	}
 
