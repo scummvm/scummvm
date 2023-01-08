@@ -421,11 +421,12 @@ void FreescapeEngine::processInput() {
 				break;
 			case Common::KEYCODE_SPACE:
 				_shootMode = !_shootMode;
+				centerCrossair();
 				if (!_shootMode) {
 					g_system->lockMouse(true);
-					centerCrossair();
 				} else {
 					g_system->lockMouse(false);
+					g_system->warpMouse(_crossairPosition.x, _crossairPosition.y);
 				}
 				break;
 			case Common::KEYCODE_i:
@@ -456,6 +457,14 @@ void FreescapeEngine::processInput() {
 
 			if (_shootMode) {
 				_crossairPosition = mousePos;
+				if (mousePos.x < _viewArea.left)
+					g_system->warpMouse(_viewArea.left + 1, _crossairPosition.y);
+				else if  (mousePos.x > _viewArea.right)
+					g_system->warpMouse(_viewArea.right - 1, _crossairPosition.y);
+				else if (mousePos.y < _viewArea.top)
+					g_system->warpMouse(_crossairPosition.x, _viewArea.top + 1);
+				else if  (mousePos.y > _viewArea.bottom)
+					g_system->warpMouse(_crossairPosition.x, _viewArea.bottom - 1);
 				break;
 			}
 
