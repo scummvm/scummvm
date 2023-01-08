@@ -24,7 +24,7 @@ tasks.withType(JavaCompile) {
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 33
     buildToolsVersion "33.0.1"
     ndkVersion "21.3.6528147"
 
@@ -36,7 +36,7 @@ android {
         setProperty("archivesBaseName", "ScummVM")
 
         minSdkVersion 19
-        targetSdkVersion 29
+        targetSdkVersion 33
 
         versionName "2.7.0"
         versionCode 89
