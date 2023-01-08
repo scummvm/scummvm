@@ -322,33 +322,13 @@ void GameMapGump::onMouseClick(int button, int32 mx, int32 my) {
 			item->getLocation(xv, yv, zv);
 			debugC(kDebugObject, "%s", item->dumpInfo().c_str());
 
-#if 1
-			Actor *avatarControlled = getControlledActor();
-			PathfinderProcess *pfp = new PathfinderProcess(avatarControlled, xv, yv, zv);
-			Kernel::get_instance()->addProcess(pfp);
-#elif 0
-			if (dynamic_cast<Actor *>(item)) {
-				dynamic_cast<Actor *>(item)->die(0);
+			if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+				debugC(kDebugObject, "Can't move: avatarInStasis");
 			} else {
-				item->destroy();
+				Actor *avatarControlled = getControlledActor();
+				PathfinderProcess *pfp = new PathfinderProcess(avatarControlled, xv, yv, zv);
+				Kernel::get_instance()->addProcess(pfp);
 			}
-#elif 0
-			UCList uclist(2);
-			LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
-			World *world = World::get_instance();
-			world->getCurrentMap()->surfaceSearch(&uclist, script,
-			                                      sizeof(script),
-			                                      item, true, false, true);
-			for (uint32 i = 0; i < uclist.getSize(); i++) {
-				Item *item2 = getItem(uclist.getuint16(i));
-				if (!item2) continue;
-				item2->setExtFlag(Item::EXT_HIGHLIGHT);
-			}
-#elif 0
-			item->receiveHit(1, 0, 1024, 0);
-#elif 0
-			item->clearFlag(Item::FLG_HANGING);
-#endif
 		}
 	}
 	default:
