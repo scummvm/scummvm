@@ -36,7 +36,8 @@ enum DebugChannels {
 	kDebugRenderer = 1 << 4,
 	kDebugAudio = 1 << 5,
 	kDebugSaves = 1 << 6,
-	kDebugTextures = 1 << 7
+	kDebugTextures = 1 << 7,
+	kDebugScripts = 1 << 8
 };
 
 enum DebugLevels {
