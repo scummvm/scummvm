@@ -733,7 +733,8 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			resetSpeechTimer();
 
 		return;
-	} else if (_vm->_game.id == GID_DIG && (_vm->_game.features & GF_DEMO)) {
+	} else if (_vm->_game.id == GID_DIG && (_vm->_game.features & GF_DEMO) &&
+			   _vm->_voiceMode != 2) {
 		_sfxMode |= mode;
 
 		char filename[30];
