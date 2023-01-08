@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-08 00:31+0000\n"
-"PO-Revision-Date: 2023-01-02 20:30+0000\n"
+"PO-Revision-Date: 2023-01-08 13:19+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -216,20 +216,18 @@ msgstr "HIBA %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:184 gui/downloadpacksdialog.cpp:239
-#, fuzzy, c-format
-#| msgid "Downloading icons list..."
+#, c-format
 msgid "Downloading %S list..."
-msgstr "Ikonlista letöltése ..."
+msgstr "%S lista letöltése"
 
 #: gui/downloadpacksdialog.cpp:198
 msgid "Clear Cache"
 msgstr "Gyorsítótár Törlése"
 
 #: gui/downloadpacksdialog.cpp:249
-#, fuzzy, c-format
-#| msgid "Downloading icons list... %d entries"
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "Ikonlista letöltése... %d bejegyzés"
+msgstr "%S lista letöltése %d bejegyzés"
 
 #: gui/downloadpacksdialog.cpp:259
 #, c-format
@@ -259,10 +257,9 @@ msgstr "HIBA: Ikon elérési út nincs beállítva"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:425
-#, fuzzy, c-format
-#| msgid "No new icons packs available"
+#, c-format
 msgid "No new %S available"
-msgstr "Új ikoncsomag nem érhető el"
+msgstr "Nem érhető el új %S"
 
 #: gui/downloadpacksdialog.cpp:461
 #, c-format
@@ -1205,16 +1202,12 @@ msgid "Shader Path:"
 msgstr "Shader Mappa:"
 
 #: gui/options.cpp:1580
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Shaders"
-msgstr "Frissítés ellenõrzés:"
+msgstr "Shader-ek Frissítése"
 
 #: gui/options.cpp:1580
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of shader packs"
-msgstr "Frissítések keresése..."
+msgstr "Ellenőrizd a shader csomagok frissítését"
 
 #: gui/options.cpp:1586 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
@@ -1639,10 +1632,8 @@ msgid "Update Icons"
 msgstr "Ikonok frissítése"
 
 #: gui/options.cpp:2521
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of icon packs"
-msgstr "Frissítések keresése..."
+msgstr "Ellenőrizd az ikon csomagok frissítését"
 
 #: gui/options.cpp:2528
 msgid "Autosave:"
@@ -1992,11 +1983,11 @@ msgstr "Válassz mappát a Fájlkezelõnek /gyökér/"
 
 #: gui/options.cpp:3113
 msgid "icon packs"
-msgstr ""
+msgstr "ikon csomagok"
 
 #: gui/options.cpp:3121
 msgid "shader packs"
-msgstr ""
+msgstr "shader csomagok"
 
 #: gui/options.cpp:3243
 msgid ""
@@ -2219,14 +2210,15 @@ msgstr "Adj meg egy leírást a %d slothoz:"
 #: gui/shaderbrowser-dialog.cpp:52
 msgid "Choose shader from the list below (or pick a file instead)"
 msgstr ""
+"Válaszd ki a shadert az alábbi listából (vagy válassz helyette egy fájlt)"
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick file instead..."
-msgstr ""
+msgstr "Válassz inkább fájlt..."
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick shader from file system"
-msgstr ""
+msgstr "Válassz shadert a fájlrendszerből"
 
 #: gui/shaderbrowser-dialog.cpp:137
 msgid "Select shader"
@@ -5031,16 +5023,12 @@ msgid "Sensors will not shoot the player"
 msgstr "Az érzékelők nem lövik le a játékost"
 
 #: engines/freescape/metaengine.cpp:90
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable falling"
-msgstr "Mentés menü letiltás"
+msgstr "Leesés tiltása"
 
 #: engines/freescape/metaengine.cpp:91
-#, fuzzy
-#| msgid "Player ammo will never decrease."
 msgid "Player cannot fall over edges"
-msgstr "A játékos lőszere soha nem fog csökkenni."
+msgstr "A játékos nem eshet át a széleken"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
