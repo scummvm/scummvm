@@ -39,7 +39,7 @@ _retain(false) {
 TeMusic::~TeMusic() {
 	close();
 	Common::Array<TeMusic *> &m = g_engine->getSoundManager()->musics();
-	for (unsigned int i = 0; i < m.size(); i++) {
+	for (uint i = 0; i < m.size(); i++) {
 		if (m[i] == this) {
 			m.remove_at(i);
 			break;

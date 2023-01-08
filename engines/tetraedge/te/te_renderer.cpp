@@ -54,7 +54,7 @@ void TeRenderer::addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsign
 	int newPropsSize = _pendingTransparentMeshProperties + (mesh.shouldDrawMaybe() ? tricount : 1);
 	_transparentMeshProps.resize(newPropsSize);
 	if (meshMode == TeMesh::MeshMode_Triangles) {
-		for (unsigned int i = 0; i < tricount; i++) {
+		for (uint i = 0; i < tricount; i++) {
 			const uint meshNo0 = (i1 + i) * 3;
 			const uint propNo = (_numTransparentMeshes + i) * 3;
 
@@ -83,7 +83,7 @@ void TeRenderer::addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsign
 			}
 		}
 	} else if (meshMode == TeMesh::MeshMode_TriangleStrip && tricount > 0) {
-		for (unsigned int i = 0; i < tricount; i++) {
+		for (uint i = 0; i < tricount; i++) {
 			const uint meshNo0 = (i1 + i);  // TODO: This appears to be the only difference between this and the above?
 			const uint propNo = (_numTransparentMeshes + i) * 3;
 
@@ -317,9 +317,9 @@ void TeRenderer::optimiseTransparentMeshProperties() {
 	if (_transparentMeshProps.size() <= 1)
 		return;
 
-	unsigned int i = 0;
-	for (unsigned int other = 1; other < _transparentMeshProps.size(); other++) {
-		unsigned int nextI = other;
+	uint i = 0;
+	for (uint other = 1; other < _transparentMeshProps.size(); other++) {
+		uint nextI = other;
 		if (_transparentMeshProps[i]._camera == _transparentMeshProps[other]._camera
 			&& _transparentMeshProps[i]._material == _transparentMeshProps[other]._material
 			&& _transparentMeshProps[i]._glTexEnvMode == _transparentMeshProps[other]._glTexEnvMode
@@ -359,7 +359,7 @@ static bool compareTransparentMeshProperties(const TeRenderer::TransparentMeshPr
 void TeRenderer::dumpTransparentMeshProps() const {
 	debug("** Transparent MeshProps: num:%ld pending:%d **", _numTransparentMeshes, _pendingTransparentMeshProperties);
 	debug("draw? / nverts / source / transl / zorder");
-	for (unsigned int i = 0; i < _transparentMeshProps.size(); i++) {
+	for (uint i = 0; i < _transparentMeshProps.size(); i++) {
 		debug("%s %d %d %s %f",
 			  _transparentMeshProps[i]._shouldDraw ? "draw" : "nodr",
 			  _transparentMeshProps[i]._vertexCount,
@@ -373,7 +373,7 @@ void TeRenderer::dumpTransparentMeshProps() const {
 void TeRenderer::dumpTransparentMeshData() const {
 	debug("** Transparent Meshes: num:%ld pending:%d **", _numTransparentMeshes, _pendingTransparentMeshProperties);
 	debug("vert / normal / coord / color / vertNo");
-	for (unsigned int i = 0; i < _transparentMeshVertexes.size(); i++) {
+	for (uint i = 0; i < _transparentMeshVertexes.size(); i++) {
 		debug("%s %s %s %s %d",
 			  _transparentMeshVertexes[i].dump().c_str(),
 			  _transparentMeshNormals[i].dump().c_str(),
@@ -395,9 +395,9 @@ void TeRenderer::renderTransparentMeshes() {
 		 compareTransparentMeshProperties);
 
 	int vertsDrawn = 0;
-	for (unsigned int i = 0; i < _transparentMeshProps.size(); i++) {
+	for (uint i = 0; i < _transparentMeshProps.size(); i++) {
 		const uint vcount = _transparentMeshProps[i]._vertexCount;
-		for (unsigned int j = 0; j < vcount; j++)
+		for (uint j = 0; j < vcount; j++)
 			_transparentMeshVertexNums[vertsDrawn + j] = (short)(_transparentMeshProps[i]._sourceTransparentMesh + j);
 		vertsDrawn += vcount;
 	}
@@ -421,7 +421,7 @@ void TeRenderer::renderTransparentMeshes() {
 	TeMatrix4x4 lastMatrix;
 
 	vertsDrawn = 0;
-	for (unsigned int i = 0; i < _transparentMeshProps.size(); i++) {
+	for (uint i = 0; i < _transparentMeshProps.size(); i++) {
 		const TransparentMeshProperties &meshProperties = _transparentMeshProps[i];
 		if (!meshProperties._shouldDraw)
 			continue;
@@ -491,7 +491,7 @@ void TeRenderer::renderTransparentMeshes() {
 }
 
 void TeRenderer::reset() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	clearBuffer(AllBuffers);
 	glMatrixMode(GL_PROJECTION);
 	_matrixMode = MM_GL_PROJECTION;
 	_matriciesStacks[MM_GL_PROJECTION].loadIdentity();

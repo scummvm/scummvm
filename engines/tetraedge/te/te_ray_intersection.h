@@ -36,7 +36,7 @@ TePickMesh *getMesh(const TeVector3f32 &param_1, const TeVector3f32 &param_2, co
 
 // Replaced with Math::Ray::intersectTriangle
 //int intersect(const TeVector3f32 &rayPos, const TeVector3f32 &rayDir, const TeVector3f32 &v1,
-//              const TeVector3f32 &v2, const TeVector3f32 &v3, TeVector3f32 &vout, float &fout);
+//				const TeVector3f32 &v2, const TeVector3f32 &v3, TeVector3f32 &vout, float &fout);
 
 } // end namespace TeRayIntersection
 

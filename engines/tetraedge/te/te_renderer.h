@@ -70,7 +70,9 @@ public:
 	enum Buffer {
 		DepthBuffer = 1,
 		ColorBuffer = 2,
-		StencilBuffer = 4
+		StencilBuffer = 4,
+		ColorAndDepth = DepthBuffer | ColorBuffer,
+		AllBuffers = DepthBuffer | ColorBuffer | StencilBuffer
 	};
 
 	void addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsigned long i2, unsigned long i3);

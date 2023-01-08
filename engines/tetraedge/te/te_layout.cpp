@@ -244,9 +244,9 @@ void TeLayout::setPositionType(CoordinatesType newtype) {
 
 void TeLayout::setRatio(float val) {
 	if (_ratio != val) {
-	  _ratio = val;
-	  _sizeChanged = true;
-	  _worldMatrixChanged = true;
+		_ratio = val;
+		_sizeChanged = true;
+		_worldMatrixChanged = true;
 	}
 }
 
@@ -300,9 +300,9 @@ void TeLayout::setSizeType(CoordinatesType coordtype) {
 
 void TeLayout::setZPosition(float zpos) {
 	if (_userPosition.z() != zpos) {
-	  _userPosition.z() = zpos;
-	  _positionChanged = true;
-	  _worldMatrixChanged = true;
+		_userPosition.z() = zpos;
+		_positionChanged = true;
+		_worldMatrixChanged = true;
 	}
 }
 

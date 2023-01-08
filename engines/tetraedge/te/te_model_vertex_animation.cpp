@@ -37,7 +37,7 @@ void TeModelVertexAnimation::destroy() {
 	_keydata.clear();
 }
 
-TeVector3f32 TeModelVertexAnimation::getKeyVertex(unsigned long keyno, unsigned int vertexno) {
+TeVector3f32 TeModelVertexAnimation::getKeyVertex(unsigned long keyno, uint vertexno) {
 	assert(keyno < _keydata.size());
 	const KeyData &data = _keydata[keyno];
 	assert(vertexno < data._vectors.size());
@@ -57,7 +57,7 @@ const Common::Array<TeVector3f32> &TeModelVertexAnimation::getVertices() {
 		return lerpVtx;
 
 	float frame = fmod((_lastMillis / 1000.0) * 30, _keydata[_keydata.size() - 1]._frame);
-	unsigned int keyno = 0;
+	uint keyno = 0;
 	while (keyno < _keydata.size() - 1 && _keydata[keyno]._frame < frame)
 		keyno++;
 
@@ -66,7 +66,7 @@ const Common::Array<TeVector3f32> &TeModelVertexAnimation::getVertices() {
 	float nextFrame = _keydata[keyno + 1]._frame;
 	float interp = (frame - nextFrame) / (nextFrame - prevFrame);
 
-	for (unsigned int i = 0; i < _keydata[0]._vectors.size(); i++) {
+	for (uint i = 0; i < _keydata[0]._vectors.size(); i++) {
 		const TeVector3f32 prevVector = getKeyVertex(keyno, i);
 		const TeVector3f32 nextVector = getKeyVertex(keyno + 1, i);
 		lerpVtx[i] = prevVector * (1.0 - interp) + nextVector * interp;

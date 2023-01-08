@@ -75,7 +75,7 @@ TeFont3::~TeFont3() {
 	unload();
 }
 
-Graphics::Font *TeFont3::getAtSize(unsigned int size) {
+Graphics::Font *TeFont3::getAtSize(uint size) {
 	if (_fonts.contains(size))
 		return _fonts.getVal(size);
 
@@ -94,7 +94,7 @@ Graphics::Font *TeFont3::getAtSize(unsigned int size) {
 	return newFont;
 }
 
-TeFont3::GlyphData TeFont3::glyph(unsigned int pxSize, unsigned int charcode) {
+TeFont3::GlyphData TeFont3::glyph(uint pxSize, uint charcode) {
 	Graphics::Font *font = getAtSize(pxSize);
 	Common::Rect bbox = font->getBoundingBox(charcode);
 	TeImage *img = new TeImage();
@@ -181,21 +181,21 @@ void TeFont3::unload() {
 void TeFont3::init() {
 }
 
-float TeFont3::ascender(unsigned int pxSize) {
+float TeFont3::ascender(uint pxSize) {
 	Graphics::Font *font = getAtSize(pxSize);
 	return font->getFontAscent();
 }
 
-float TeFont3::descender(unsigned int pxSize) {
+float TeFont3::descender(uint pxSize) {
 	error("TODO: Implement TeFont3::descender");
 }
 
-float TeFont3::height(unsigned int pxSize) {
+float TeFont3::height(uint pxSize) {
 	Graphics::Font *font = getAtSize(pxSize);
 	return font->getFontHeight();
 }
 
-TeVector3f32 TeFont3::kerning(unsigned int pxSize, unsigned int isocode1, unsigned int isocode2) {
+TeVector3f32 TeFont3::kerning(uint pxSize, uint isocode1, uint isocode2) {
 	uint32 uni1 = getUnicodeFromISO(isocode1);
 	uint32 uni2 = getUnicodeFromISO(isocode2);
 	Graphics::Font *font = getAtSize(pxSize);

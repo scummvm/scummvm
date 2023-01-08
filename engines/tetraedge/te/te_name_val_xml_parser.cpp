@@ -29,7 +29,7 @@ bool TeNameValXmlParser::parserCallback_value(ParserNode *node) {
 
 	// Replace "&quot;" with " character.  This is the only character
 	// entity used in the game files.
-	unsigned int qpos = valStr.find("&quot;");
+	uint qpos = valStr.find("&quot;");
 	while (qpos != Common::String::npos) {
 		valStr.replace(qpos, 6, "\"");
 		qpos = valStr.find("&quot;");

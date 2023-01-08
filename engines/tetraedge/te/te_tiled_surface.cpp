@@ -256,9 +256,9 @@ void TeTiledSurface::updateSurface() {
 			getRangeIntersection(_leftCrop, 1.0 - _rightCrop, tile->_vec1.x(), tile->_vec2.x() + tile->_vec1.x(), &left, &right);
 			getRangeIntersection(_bottomCrop, 1.0 - _topCrop, tile->_vec1.y(), tile->_vec2.y() + tile->_vec1.y(), &top, &bottom);
 			if (right < left)
-			  right = left;
+				right = left;
 			if (bottom < top)
-			  bottom = top;
+				bottom = top;
 
 			const float scaled_l = (left - tile->_vec1.x()) / tile->_vec2.x();
 			const float scaled_r = (right - tile->_vec1.x()) / tile->_vec2.x();

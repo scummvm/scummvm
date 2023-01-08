@@ -94,9 +94,9 @@ public:
 	Common::Array<TeVector3f32> removeInsignificantPoints(const Common::Array<TeVector3f32> &points);
 	void setBordersDistance(float dist);
 	void setCamera(TeIntrusivePtr<TeCamera> &cam, bool noRecalcProjPoints);
-	void setNbTriangles(unsigned int len);
+	void setNbTriangles(uint len);
 	void setPathFindingOccluder(const TeOBP &occluder);
-	void setVertex(unsigned int offset, const TeVector3f32 &vertex);
+	void setVertex(uint offset, const TeVector3f32 &vertex);
 	TeVector3f32 transformAStarGridInWorldSpace(const TeVector2s32 &gridpt);
 	float transformHeightMin(float minval);
 	TeVector3f32 transformVectorInWorldSpace(float param_3, float param_4);
@@ -122,9 +122,9 @@ private:
 	Common::Array<TeRectBlocker> *_rectBlockers;
 
 	Common::Array<TeVector3f32> _freeMoveZoneVerticies;
-	Common::Array<unsigned int> _pickMesh;
+	Common::Array<uint> _pickMesh;
 	Common::Array<TeVector3f32> _transformedVerticies;
-	Common::Array<unsigned int> _borders;
+	Common::Array<uint> _borders;
 
 	// TODO: Find better names..
 	TeVector2f32 _gridOffsetSomething;

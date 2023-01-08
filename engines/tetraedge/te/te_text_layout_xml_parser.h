@@ -71,7 +71,7 @@ public:
 	int fontSize() const { return _fontSize; }
 	const Common::String &style() const { return _style; }
 	const Common::String &textContent() const { return _textContent; }
-	const Common::Array<unsigned int> &lineBreaks() const { return _lineBreaks; }
+	const Common::Array<uint> &lineBreaks() const { return _lineBreaks; }
 
 private:
 	TeColor _color;
@@ -79,7 +79,7 @@ private:
 	int _fontSize;
 	Common::String _style;
 	Common::String _textContent;
-	Common::Array<unsigned int> _lineBreaks;
+	Common::Array<uint> _lineBreaks;
 };
 
 } // end namespace Tetraedge

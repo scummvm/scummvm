@@ -132,21 +132,21 @@ static TeVector3f32 TeLuaToTeVector3f32(lua_State *L, int index, TeVector3f32 de
 		index--;
 		lua_gettable(L, index);
 		if (lua_isnumber(L, -1)) {
-		  retval.x() = TeLuaToF32(L, -1);
+			retval.x() = TeLuaToF32(L, -1);
 		}
 
 		lua_settop(L, -2);
 		lua_pushinteger(L, 2);
 		lua_gettable(L, index);
 		if (lua_isnumber(L, -1)) {
-		  retval.y() = TeLuaToF32(L, -1);
+			retval.y() = TeLuaToF32(L, -1);
 		}
 
 		lua_settop(L, -2);
 		lua_pushinteger(L, 3);
 		lua_gettable(L, index);
 		if (lua_isnumber(L, -1)) {
-		  retval.z() = TeLuaToF32(L, -1);
+			retval.z() = TeLuaToF32(L, -1);
 		}
 		lua_settop(L, -2);
 	}
@@ -166,7 +166,7 @@ static Common::Array<float> TeLuaToFloatArray(lua_State *L, int index) {
 			lua_settop(L, -2);
 		}
 	} else {
-	  warning("TeLuaToF32TeArray:: the lua value is not a table");
+		warning("TeLuaToF32TeArray:: the lua value is not a table");
 	}
 	return result;
 }

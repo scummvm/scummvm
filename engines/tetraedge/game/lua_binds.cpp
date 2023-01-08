@@ -1551,7 +1551,7 @@ static int tolua_ExportedFunctions_Random00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isnumber(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
 		double d1 = tolua_tonumber(L, 1, 0.0);
-		unsigned int result = Random(d1);
+		uint result = Random(d1);
 		tolua_pushnumber(L, result);
 		return 1;
 	}
@@ -2111,7 +2111,7 @@ void LuaOpenBinds(lua_State *L) {
 				 tolua_ExportedFunctions_MoveCharacterToAndWaitForEnd00);
 	tolua_function(L, "MoveCharacterPlayerTo", tolua_ExportedFunctions_MoveCharacterPlayerTo00);
 	// tolua_function(L, "MoveCharacterPlayerToAndWaitForEnd",
-	// 			 tolua_ExportedFunctions_MoveCharacterPlayerToAndWaitForEnd00); // Unused
+	//				tolua_ExportedFunctions_MoveCharacterPlayerToAndWaitForEnd00); // Unused
 	// tolua_function(L, "MoveCharacterPlayerAtTo", tolua_ExportedFunctions_MoveCharacterPlayerAtTo00); // Unused
 	tolua_function(L, "SetCharacterPosition", tolua_ExportedFunctions_SetCharacterPosition00);
 	tolua_function(L, "PlaceCharacterOnDummy", tolua_ExportedFunctions_PlaceCharacterOnDummy00);

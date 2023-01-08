@@ -144,7 +144,7 @@ public:
 	static bool loadAndCheckFourCC(Common::ReadStream &stream, const char *str);
 	static Common::String deserializeString(Common::ReadStream &stream);
 	static void deserializeVectorArray(Common::ReadStream &stream, Common::Array<TeVector3f32> &dest);
-	static void deserializeUintArray(Common::ReadStream &stream, Common::Array<unsigned int> &dest);
+	static void deserializeUintArray(Common::ReadStream &stream, Common::Array<uint> &dest);
 
 protected:
 	TeVector3f32 _size;

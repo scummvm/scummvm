@@ -72,7 +72,7 @@ void CharactersShadow::createTexture(InGameScene *scene) {
 	_camera->apply();
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	renderer->clearBuffer(TeRenderer::ColorAndDepth);
 
 	for (Character *character : scene->_characters) {
 		character->_model->draw();
@@ -81,7 +81,7 @@ void CharactersShadow::createTexture(InGameScene *scene) {
 	Te3DTexture::unbind();
 	glBindTexture(GL_TEXTURE_2D, _glTex);
 	glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, _texSize, _texSize);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	renderer->clearBuffer(TeRenderer::ColorAndDepth);
 
 	TeCamera::restore();
 	TeCamera::restore();
@@ -124,25 +124,25 @@ void CharactersShadow::draw(InGameScene *scene) {
 	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
 
 	float f[4];
-	for (unsigned int i = 0; i < 4; i++)
+	for (uint i = 0; i < 4; i++)
 		f[i] = matrix(i, 0);
 
 	glTexGenfv(GL_S, GL_EYE_PLANE, f);
 	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
 
-	for (unsigned int i = 0; i < 4; i++)
+	for (uint i = 0; i < 4; i++)
 		f[i] = matrix(i, 1);
 
 	glTexGenfv(GL_T, GL_EYE_PLANE, f);
 	glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
 
-	for (unsigned int i = 0; i < 4; i++)
+	for (uint i = 0; i < 4; i++)
 		f[i] = matrix(i, 2);
 
 	glTexGenfv(GL_R, GL_EYE_PLANE, f);
 	glTexGeni(GL_Q, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
 
-	for (unsigned int i = 0; i < 4; i++)
+	for (uint i = 0; i < 4; i++)
 		f[i] = matrix(i, 3);
 
 	glTexGenfv(GL_Q, GL_EYE_PLANE, f);

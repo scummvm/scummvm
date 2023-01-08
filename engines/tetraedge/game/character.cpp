@@ -77,15 +77,15 @@ Character::~Character() {
 	deleteAnim();
 	Game *game = g_engine->getGame();
 	Common::Array<TeIntrusivePtr<TeModel>> &models = game->scene().models();
-	for (unsigned int i = 0; i < models.size(); i++) {
+	for (uint i = 0; i < models.size(); i++) {
 		if (models[i] == _model) {
 			models.remove_at(i);
 			break;
 		}
 	}
 	removeAnim();
-	for (unsigned int s = 0; s < 2; s++) {
-		for (unsigned int i = 0; i < models.size(); i++) {
+	for (uint s = 0; s < 2; s++) {
+		for (uint i = 0; i < models.size(); i++) {
 			if (models[i] == _shadowModel[s]) {
 				models.remove_at(i);
 				break;
@@ -120,7 +120,7 @@ void Character::addCallback(const Common::String &animKey, const Common::String 
 	if (fnName == "ChangeClef" && c->_triggerFrame == 31)
 		c->_triggerFrame = 15;
 
-	const Common::Path animPath = _model->anim()->_loadedPath;
+	const Common::Path animPath = _model->anim()->loadedPath();
 
 	// Another difference.. the original messes with paths a bit - just
 	// use the file name, since it's already limited by character.
@@ -185,7 +185,7 @@ float Character::animLengthFromFile(const Common::String &animname, uint32 *pfra
 		return 0.0f;
 	}
 	TeIntrusivePtr<TeModelAnimation> anim = _model->anim();
-	if (!anim->_loadedPath.toString().contains(animname)) {
+	if (!anim->loadedPath().toString().contains(animname)) {
 		Common::Path animpath("models/Anims");
 		animpath.joinInPlace(animname);
 		anim = animCacheLoad(animpath);
@@ -264,12 +264,12 @@ void Character::deleteAnim() {
 void Character::deleteCallback(const Common::String &key, const Common::String &fnName, float f) {
 	_callbacksChanged = true;
 	assert(_model->anim());
-	Common::String animFile = _model->anim()->_loadedPath.getLastComponent().toString();
+	Common::String animFile = _model->anim()->loadedPath().getLastComponent().toString();
 	if (!_callbacks.contains(animFile))
 		return;
 
 	Common::Array<Callback *> &cbs = _callbacks.getVal(animFile);
-	for (unsigned int i = 0; i < cbs.size(); i++) {
+	for (uint i = 0; i < cbs.size(); i++) {
 		if (fnName.empty()) {
 			delete cbs[i];
 			// don't remove from array, clear at the end.
@@ -309,7 +309,7 @@ bool Character::isFramePassed(int frameno) {
 }
 
 bool Character::isWalkEnd() {
-	const Common::String animFile = _model->anim()->_loadedPath.getLastComponent().toString();
+	const Common::String animFile = _model->anim()->loadedPath().getLastComponent().toString();
 	for (const auto & walkSettings : _characterSettings._walkSettings) {
 		if (walkSettings._value._walkParts[WalkPart_EndD]._file.contains(animFile)
 				|| walkSettings._value._walkParts[WalkPart_EndG]._file.contains(animFile))
@@ -446,7 +446,7 @@ bool Character::onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneM
 
 	Game *game = g_engine->getGame();
 	if (boneName == "Pere") {
-		const Common::String animfile = _model->anim()->_loadedPath.getLastComponent().toString();
+		const Common::String animfile = _model->anim()->loadedPath().getLastComponent().toString();
 		bool resetX = false;
 		if (game->scene()._character == this) {
 			for (const auto &walkSettings : _characterSettings._walkSettings) {
@@ -547,7 +547,7 @@ bool Character::onModelAnimationFinished() {
 	if (!_model->anim())
 		return false;
 
-	const Common::Path loadedPath = _model->anim()->_loadedPath;
+	const Common::Path loadedPath = _model->anim()->loadedPath();
 	const Common::String animfile = loadedPath.getLastComponent().toString();
 
 	bool shouldAdjust = true;
@@ -619,7 +619,7 @@ bool Character::onModelAnimationFinished() {
 
 void Character::permanentUpdate() {
 	assert(_model->anim());
-	const Common::Path animPath = _model->anim()->_loadedPath;
+	const Common::Path &animPath = _model->anim()->loadedPath();
 	int curFrame = _model->anim()->curFrame2();
 	Game *game = g_engine->getGame();
 	_callbacksChanged = false;
@@ -892,14 +892,13 @@ void Character::update(double msFromStart) {
 	if (!endGAnim.empty() && _curAnimName == walkAnim(WalkPart_Loop) &&
 		   ((_curModelAnim->speed() * (msFromStart / 1000.0)) >= _walkTotalFrames)) {
 		if (_walkToFlag) {
-		  _walkToFlag = false;
-		  endMove();
+			_walkToFlag = false;
+			endMove();
 		} else {
-			if (_walkEndAnimG) {
-			  setAnimation(walkAnim(WalkPart_EndG), false);
-			} else {
-			  setAnimation(walkAnim(WalkPart_EndD), false);
-			}
+			if (_walkEndAnimG)
+				setAnimation(walkAnim(WalkPart_EndG), false);
+			else
+				setAnimation(walkAnim(WalkPart_EndD), false);
 		}
 	}
 
@@ -990,20 +989,21 @@ void Character::walkTo(float curveEnd, bool walkFlag) {
 
 				switch(minoffset) {
 				case 0:
-				  remainder = 29;
-				  _walkEndAnimG = true;
-				  repeats--;
-				  break;
+					remainder = 29;
+					_walkEndAnimG = true;
+					repeats--;
+					break;
 				case 1:
-				  remainder = 13;
-				  break;
+					remainder = 13;
+					break;
 				case 2:
-				  remainder = 29;
-				  _walkEndAnimG = true;
-				  break;
+					remainder = 29;
+					_walkEndAnimG = true;
+					break;
 				case 3:
-				  remainder = 13;
-				  repeats++;
+					remainder = 13;
+					repeats++;
+					break;
 				}
 				_walkTotalFrames = _walkLoopAnimFrameCount * repeats + _walkStartAnimFrameCount + remainder;
 				const float loopAnimLen = animLengthFromFile(walkAnim(WalkPart_Loop), &remainder, remainder);

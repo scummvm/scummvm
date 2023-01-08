@@ -44,18 +44,18 @@ void TeBezierCurve::draw() {
 	if (!worldVisible() || _controlPoints.empty())
 		return;
 
-    TeMesh mesh1;
-    TeMesh mesh2;
-    unsigned int npoints = _controlPoints.size();
+	TeMesh mesh1;
+	TeMesh mesh2;
+	uint npoints = _controlPoints.size();
 
 	mesh1.setConf(npoints, npoints, TeMesh::MeshMode_Points, 0, 0);
-	for (unsigned int i = 0; i < npoints; i++) {
+	for (uint i = 0; i < npoints; i++) {
 		mesh1.setVertex(i, _controlPoints[i]);
 		mesh1.setIndex(i, i);
 	}
 
 	mesh2.setConf(npoints, npoints, TeMesh::MeshMode_LineStrip, 0, 0);
-	for (unsigned int i = 0; i < npoints; i++) {
+	for (uint i = 0; i < npoints; i++) {
 		mesh2.setVertex(i, _controlPoints[i]);
 		mesh2.setNormal(i, TeVector3f32(0.0f, 1.0f, 0.0));
 		mesh2.setIndex(i, i);
@@ -81,7 +81,7 @@ float TeBezierCurve::length() {
 
 		TeVector3f32 lastpt = _controlPoints[0];
 		lastpt.y() = 0;
-		for (unsigned int i = 0; i < _numIterations; i++) {
+		for (uint i = 0; i < _numIterations; i++) {
 			float amount = (float)i / _numIterations;
 			TeVector3f32 pt = retrievePoint(amount);
 			pt.y() = 0;
@@ -111,7 +111,7 @@ float TeBezierCurve::rawLength() {
 		_rawLength = 0.0;
 		_rawLengths.clear();
 		_rawLengths.push_back(0.0);
-		for (unsigned int i = 1; i < _controlPoints.size(); i++) {
+		for (uint i = 1; i < _controlPoints.size(); i++) {
 			const TeVector3f32 diff = _controlPoints[i] - _controlPoints[i - 1];
 			_rawLength += diff.length();
 			_rawLengths.push_back(_rawLength);
@@ -200,7 +200,7 @@ void TeBezierCurve::deserialize(Common::ReadStream &stream, TeBezierCurve &curve
 	if (npoints > 1000000)
 		error("TeBezierCurve::deserialize improbable number of control ponts %d", npoints);
 
-	for (unsigned int i = 0; i < npoints; i++) {
+	for (uint i = 0; i < npoints; i++) {
 		TeVector3f32 vec;
 		TeVector3f32::deserialize(stream, vec);
 		curve._controlPoints.push_back(vec);

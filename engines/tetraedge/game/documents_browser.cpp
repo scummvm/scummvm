@@ -54,7 +54,7 @@ void DocumentsBrowser::hideDocument() {
 
 	bool callFn = true;
 	Common::Array<Game::YieldedCallback> &yieldedcallbacks = game->yieldedCallbacks();
-	for (unsigned int i = 0; i < yieldedcallbacks.size(); i++) {
+	for (uint i = 0; i < yieldedcallbacks.size(); i++) {
 		if (yieldedcallbacks[i]._luaFnName == "OnDocumentClosed" &&
 			yieldedcallbacks[i]._luaParam == docName) {
 			yieldedcallbacks.remove_at(i);
@@ -194,7 +194,7 @@ void DocumentsBrowser::showDocument(const Common::String &docName, long startPag
 	sprite->setSizeType(RELATIVE_TO_PARENT);
 	TeVector3f32 winSize = app->getMainWindow().size();
 	sprite->setSize(TeVector3f32(1.0f, (4.0f / (winSize.y() / winSize.x() * 4.0f)) *
-               ((float)spriteSize._y / (float)spriteSize._x), 0.0f));
+							((float)spriteSize._y / (float)spriteSize._x), 0.0f));
 	TeScrollingLayout *scroll = _gui1.scrollingLayout("scroll");
 	if (!scroll)
 		error("DocumentsBrowser::showDocument Couldn't fetch scroll object");

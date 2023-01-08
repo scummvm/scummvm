@@ -113,7 +113,7 @@ void TeAnimation::updateAll() {
 	Common::Array<TeAnimation *> &anims = *animations();
 	// Note: update can cause events which cascade into animtaions
 	// getting deleted, so be careful about the numbers.
-	for (unsigned int i = 0; i < anims.size(); i++) {
+	for (uint i = 0; i < anims.size(); i++) {
 		if (anims[i]->_runTimer.running()) {
 			float msFromStart = anims[i]->_runTimer.getTimeFromStart() / 1000.0;
 			anims[i]->update(msFromStart);

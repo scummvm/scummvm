@@ -80,7 +80,7 @@ void TeModelAnimation::destroy() {
 }
 
 int TeModelAnimation::findBone(const Common::String &bname) {
-	for (unsigned int i = 0; i < _boneNames.size(); i++) {
+	for (uint i = 0; i < _boneNames.size(); i++) {
 		if (_boneNames[i] == bname)
 			return i;
 	}
@@ -99,7 +99,7 @@ TeQuaternion TeModelAnimation::getNMORotation(unsigned long boneNo, float amount
 	if (boneNo < _nmoRotArrays.size()) {
 		const Common::Array<NMORotation> &arr = _nmoRotArrays[boneNo];
 		if (arr.size()) {
-			unsigned int i = 0;
+			uint i = 0;
 			while (i < arr.size() && arr[i]._f < amount)
 				i++;
 
@@ -123,7 +123,7 @@ TeVector3f32 TeModelAnimation::getNMOTranslation(unsigned long boneNo, float amo
 	if (boneNo < _nmoTransArrays.size()) {
 		const Common::Array<NMOTranslation> &arr = _nmoTransArrays[boneNo];
 		if (arr.size()) {
-			unsigned int i = 0;
+			uint i = 0;
 			while (i < arr.size() && arr[i]._f < amount)
 				i++;
 
@@ -143,13 +143,13 @@ TeVector3f32 TeModelAnimation::getNMOTranslation(unsigned long boneNo, float amo
 	return TeVector3f32(0, 0, 0);
 }
 
-//TeTRS TeModelAnimation::getTRS(const Common::String &boneName, unsigned long frame, bool param_5);
+//TeTRS TeModelAnimation::getTRS(const Common::String &boneName, unsigned long frame, bool forceUseFbx);
 
 TeTRS TeModelAnimation::getTRS(unsigned long boneNo, unsigned long frame, bool forceUseFbx) const {
 	TeTRS retval;
 
 	if (!_useNMOArrays || forceUseFbx) {
-		unsigned int nframes = 0;
+		uint nframes = 0;
 		if (!_useNMOArrays) {
 			nframes = _fbxArrays[0].size();
 		} else {
@@ -230,7 +230,7 @@ bool TeModelAnimation::load(Common::SeekableReadStream &stream) {
 	}
 
 	_speed = stream.readFloatLE();
-	for (unsigned int i = 0; i < numBones; i++) {
+	for (uint i = 0; i < numBones; i++) {
 		if (!Te3DObject2::loadAndCheckFourCC(stream, "BONE"))
 			return false;
 		const Common::String boneName = Te3DObject2::deserializeString(stream);
@@ -241,7 +241,7 @@ bool TeModelAnimation::load(Common::SeekableReadStream &stream) {
 		uint32 numTrans = stream.readUint32LE();
 		if (numTrans > 100000)
 			error("TeModelAnimation::load: Improbable number of bone translations %d", numTrans);
-		for (unsigned int j = 0; j < numTrans; j++) {
+		for (uint j = 0; j < numTrans; j++) {
 			float f = stream.readFloatLE();
 			TeVector3f32 trans;
 			TeVector3f32::deserialize(stream, trans);
@@ -252,7 +252,7 @@ bool TeModelAnimation::load(Common::SeekableReadStream &stream) {
 		uint32 numRots = stream.readUint32LE();
 		if (numRots > 100000)
 			error("TeModelAnimation::load: Improbable number of bone rotations %d", numRots);
-		for (unsigned int j = 0; j < numRots; j++) {
+		for (uint j = 0; j < numRots; j++) {
 			float f = stream.readFloatLE();
 			TeQuaternion rot;
 			TeQuaternion::deserialize(stream, rot);

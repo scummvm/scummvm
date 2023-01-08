@@ -236,7 +236,7 @@ TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt,
 
 /*static*/
 void TeFreeMoveZone::deserialize(Common::ReadStream &stream, TeFreeMoveZone &dest, Common::Array<TeBlocker> *blockers,
-               Common::Array<TeRectBlocker> *rectblockers, Common::Array<TeActZone> *actzones) {
+			Common::Array<TeRectBlocker> *rectblockers, Common::Array<TeActZone> *actzones) {
 	dest.clear();
 	TePickMesh2::deserialize(stream, dest);
 	TeVector2f32::deserialize(stream, dest._gridOffsetSomething);
@@ -276,7 +276,7 @@ void TeFreeMoveZone::draw() {
 	TePickMesh2::draw();
 	TeMesh mesh;
 	mesh.setConf(_borders.size(), _borders.size(), TeMesh::MeshMode_Lines, 0, 0);
-	for (unsigned int i = 0; i < _borders.size(); i++) {
+	for (uint i = 0; i < _borders.size(); i++) {
 		mesh.setIndex(i, i);
 		mesh.setVertex(i, verticies()[_borders[i]]);
 	}
@@ -300,7 +300,7 @@ TeVector3f32 TeFreeMoveZone::findNearestPointOnBorder(const TeVector2f32 &pt) {
 
 static int segmentIntersection(const TeVector2f32 &s1start, const TeVector2f32 &s1end,
 						const TeVector2f32 &s2start, const TeVector2f32 &s2end,
-                       TeVector2f32 *sout, float *fout1, float *fout2) {
+						TeVector2f32 *sout, float *fout1, float *fout2) {
 	TeVector2f32 s1len = s1end - s1start;
 	TeVector2f32 s2len = s2end - s2start;
 	float squarelen = s1len.getX() * s2len.getX() + s1len.getY() * s2len.getY();
@@ -309,11 +309,11 @@ static int segmentIntersection(const TeVector2f32 &s1start, const TeVector2f32 &
 		result = 1;
 		float intersection1 = -((s1len.getY() * s1start.getX() +
 						(s1len.getX() * s2start.getY() - s1len.getX() * s1start.getY())) -
-                          s1len.getY() * s2start.getX()) / squarelen;
+						 s1len.getY() * s2start.getX()) / squarelen;
 		if (intersection1 >= 0.0f && intersection1 <= 1.0f) {
 			float intersection2 = -((s2len.getY() * s2start.getY() +
 						(s2len.getX() * s1start.getX() - s2len.getX() * s2start.getX())) -
-                          s2len.getY() * s1start.getY()) / squarelen;
+						 s2len.getY() * s1start.getY()) / squarelen;
 			if (intersection2 >= 0.0f && intersection2 <= 1.0f) {
 				result = 2;
 				if (sout || fout1 || fout2) {
@@ -333,35 +333,35 @@ byte TeFreeMoveZone::hasBlockerIntersection(const TeVector2s32 &pt) {
 	const float gridOffsetX = _gridOffsetSomething.getX();
 	const float gridOffsetY = _gridOffsetSomething.getX();
 	borders[0] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX(),
-             pt._y * gridOffsetY + _someGridVec1.getY());
+							  pt._y * gridOffsetY + _someGridVec1.getY());
 	borders[1] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX() + gridOffsetX,
-             pt._y * gridOffsetY + _someGridVec1.getY());
+							  pt._y * gridOffsetY + _someGridVec1.getY());
 	borders[2] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX(),
-             pt._y * gridOffsetY + _someGridVec1.getY() + gridOffsetY);
+							  pt._y * gridOffsetY + _someGridVec1.getY() + gridOffsetY);
 	borders[3] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX() + gridOffsetX,
-             pt._y * gridOffsetY + _someGridVec1.getY() + gridOffsetY);
+							  pt._y * gridOffsetY + _someGridVec1.getY() + gridOffsetY);
 
-	for (unsigned int i = 0; i < _blockers->size(); i++) {
+	for (uint i = 0; i < _blockers->size(); i++) {
 		const TeBlocker &blocker = (*_blockers)[i];
 
 		if (blocker._s != name())
 			continue;
 
-		for (unsigned int b = 0; b < 4; b++) {
+		for (uint b = 0; b < 4; b++) {
 			int si = segmentIntersection(borders[b], borders[(b + 1) % 4], blocker._pts[0],
-                                      blocker._pts[1], nullptr, nullptr, nullptr);
+										 blocker._pts[1], nullptr, nullptr, nullptr);
 			if (si == 2)
 				return 2;
 		}
 
-        TeVector2f32 borderVec = ((borders[0] + borders[3]) / 2.0) - blocker._pts[0];
-        TeVector2f32 blockerVec = blocker._pts[1] - blocker._pts[0];
-        float dotVal = borderVec.dotProduct(blockerVec.getNormalized());
-        float crosVal = borderVec.crossProduct(blockerVec);
-        if ((crosVal < 0.0) && (0.0 <= dotVal)) {
+		TeVector2f32 borderVec = ((borders[0] + borders[3]) / 2.0) - blocker._pts[0];
+		TeVector2f32 blockerVec = blocker._pts[1] - blocker._pts[0];
+		float dotVal = borderVec.dotProduct(blockerVec.getNormalized());
+		float crosVal = borderVec.crossProduct(blockerVec);
+		if ((crosVal < 0.0) && (0.0 <= dotVal)) {
 			if (dotVal < blockerVec.length())
 				return 1;
-        }
+		}
 	}
 	return 0;
 }
@@ -372,20 +372,20 @@ bool TeFreeMoveZone::hasCellBorderIntersection(const TeVector2s32 &pt) {
 	const float gridOffsetX = _gridOffsetSomething.getX();
 	const float gridOffsetY = _gridOffsetSomething.getX();
 	borders[0] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX(),
-             pt._y * gridOffsetY + _someGridVec1.getY());
+							  pt._y * gridOffsetY + _someGridVec1.getY());
 	borders[1] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX() + gridOffsetX,
-             pt._y * gridOffsetY + _someGridVec1.getY());
+							  pt._y * gridOffsetY + _someGridVec1.getY());
 	borders[2] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX(),
-             pt._y * gridOffsetY + _someGridVec1.getY() + gridOffsetY);
+							  pt._y * gridOffsetY + _someGridVec1.getY() + gridOffsetY);
 	borders[3] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX() + gridOffsetX,
-             pt._y * gridOffsetY + _someGridVec1.getY() + gridOffsetY);
+							  pt._y * gridOffsetY + _someGridVec1.getY() + gridOffsetY);
 
 	int iresult = 0;
-	for (unsigned int border = 0; border < _borders.size() / 2; border++) {
+	for (uint border = 0; border < _borders.size() / 2; border++) {
 		TeVector2f32 v1;
 		TeVector2f32 v2;
-		unsigned int off1 = _pickMesh[_borders[border * 2]];
-		unsigned int off2 = _pickMesh[_borders[border * 2 + 1]];
+		uint off1 = _pickMesh[_borders[border * 2]];
+		uint off2 = _pickMesh[_borders[border * 2 + 1]];
 		if (!_loadedFromBin) {
 			v1 = TeVector2f32(_transformedVerticies[off1].x(), _transformedVerticies[off1].z());
 			v2 = TeVector2f32(_transformedVerticies[off2].x(), _transformedVerticies[off2].z());
@@ -443,47 +443,44 @@ void TeFreeMoveZone::preUpdateGrid() {
 
 		_gridWorldY = newVec.y();
 	}
-	for (unsigned int i = 0; i < _pickMesh.size(); i++) {
-		  unsigned int vertNo = _pickMesh[_pickMesh[i]];
+	for (uint i = 0; i < _pickMesh.size(); i++) {
+		uint vertNo = _pickMesh[_pickMesh[i]];
 
-		  if (!_loadedFromBin)
+		if (!_loadedFromBin)
 			newVec = _transformedVerticies[vertNo];
-		  else
+		else
 			newVec = gridInverse * _freeMoveZoneVerticies[vertNo];
 
-		  if (_someGridVec1.getX() <= newVec.x()) {
-			if (_someGridVec2.getX() < newVec.x()) {
-			  _someGridVec2.setX(newVec.x());
-			}
-		  } else {
+		if (_someGridVec1.getX() <= newVec.x()) {
+			if (_someGridVec2.getX() < newVec.x())
+				_someGridVec2.setX(newVec.x());
+		} else {
 			_someGridVec1.setX(newVec.x());
-		  }
+		}
 
-		  if (_someGridVec1.getY() <= newVec.z()) {
-			if (_someGridVec2.getY() < newVec.z()) {
-			  _someGridVec2.setY(newVec.z());
-			}
-		  } else {
+		if (_someGridVec1.getY() <= newVec.z()) {
+			if (_someGridVec2.getY() < newVec.z())
+				_someGridVec2.setY(newVec.z());
+		} else {
 			_someGridVec1.setY(newVec.z());
-		  }
+		}
 
-		  if (newVec.y() < _gridWorldY) {
+		if (newVec.y() < _gridWorldY)
 			_gridWorldY = newVec.y();
-		  }
 	}
 
 	if (!_loadedFromBin) {
 		if (!name().contains("19000"))
-		  _gridOffsetSomething = TeVector2f32(5.0f, 5.0f);
+			_gridOffsetSomething = TeVector2f32(5.0f, 5.0f);
 		else
-		  _gridOffsetSomething = TeVector2f32(2.0f, 2.0f);
+			_gridOffsetSomething = TeVector2f32(2.0f, 2.0f);
 	} else {
 		const TeVector2f32 gridVecDiff = _someGridVec2 - _someGridVec1;
 		float minSide = MIN(gridVecDiff.getX(), gridVecDiff.getY()) / 20.0f;
 		_gridOffsetSomething.setX(minSide);
 		_gridOffsetSomething.setY(minSide);
 
-		error("FIXME: Finish preUpdateGrid for non-loaded-from-bin case.");
+		error("FIXME: Finish preUpdateGrid for loaded-from-bin case.");
 		/*
 		// what's this field?
 		if (_field_0x414.x != 0.0)
@@ -517,10 +514,10 @@ Common::Array<TeVector3f32> TeFreeMoveZone::removeInsignificantPoints(const Comm
 	if (points.size() > 2) {
 		int point1 = 0;
 		int point2 = 2;
-        do {
+		do {
 			const TeVector2f32 pt1(points[point1].x(), points[point1].z());
 			const TeVector2f32 pt2(points[point2].x(), points[point2].z());
-			for (unsigned int i = 0; i * 2 < _borders.size() / 2; i++) {
+			for (uint i = 0; i * 2 < _borders.size() / 2; i++) {
 				const TeVector3f32 transpt3d1 = worldTransformationMatrix() * verticies()[_borders[i * 2]];
 				const TeVector2f32 transpt1(transpt3d1.x(), transpt3d1.z());
 				const TeVector3f32 transpt3d2 = worldTransformationMatrix() * verticies()[_borders[i * 2 + 1]];
@@ -531,13 +528,13 @@ Common::Array<TeVector3f32> TeFreeMoveZone::removeInsignificantPoints(const Comm
 			point1 = point2 - 1;
 			result.push_back(points[point1]);
 			point2++;
-		} while (point2 < points.size());
+		} while (point2 < (int)points.size());
 	}
 
 	if (result.back() != points[points.size() - 2]) {
-        result.push_back(points[points.size() - 1]);
+		result.push_back(points[points.size() - 1]);
 	} else {
-        result.back() = points[points.size() - 1];
+		result.back() = points[points.size() - 1];
 	}
 	return result;
 }
@@ -557,7 +554,7 @@ void TeFreeMoveZone::setCamera(TeIntrusivePtr<TeCamera> &cam, bool noRecalcProjP
 		_projectedPointsDirty = true;
 }
 
-void TeFreeMoveZone::setNbTriangles(unsigned int len) {
+void TeFreeMoveZone::setNbTriangles(uint len) {
 	_freeMoveZoneVerticies.resize(len * 3);
 
 	_gridDirty = true;
@@ -574,7 +571,7 @@ void TeFreeMoveZone::setPathFindingOccluder(const TeOBP &occluder) {
 	_gridDirty = true;
 }
 
-void TeFreeMoveZone::setVertex(unsigned int offset, const TeVector3f32 &vertex) {
+void TeFreeMoveZone::setVertex(uint offset, const TeVector3f32 &vertex) {
 	_freeMoveZoneVerticies[offset] = vertex;
 
 	_gridDirty = true;
@@ -614,23 +611,23 @@ void TeFreeMoveZone::updateBorders() {
 	updatePickMesh();
 
 	if (_verticies.size() > 2) {
-		for (unsigned int triNo1 = 0; triNo1 < _verticies.size() / 3; triNo1++) {
-			for (unsigned int vecNo1 = 0; vecNo1 < 3; vecNo1++) {
-				unsigned int left1 = triNo1 * 3 + vecNo1;
-				unsigned int left2 = triNo1 * 3 + (vecNo1 == 2 ? 0 : vecNo1 + 1);
+		for (uint triNo1 = 0; triNo1 < _verticies.size() / 3; triNo1++) {
+			for (uint vecNo1 = 0; vecNo1 < 3; vecNo1++) {
+				uint left1 = triNo1 * 3 + vecNo1;
+				uint left2 = triNo1 * 3 + (vecNo1 == 2 ? 0 : vecNo1 + 1);
 				const TeVector3f32 vleft1 = _verticies[left1];
 				const TeVector3f32 vleft2 = _verticies[left2];
 
 				bool skip = false;
-				for (unsigned int triNo2 = 0; triNo2 < _verticies.size() / 3; triNo2++) {
+				for (uint triNo2 = 0; triNo2 < _verticies.size() / 3; triNo2++) {
 					if (skip)
 						break;
 
-					for (unsigned int vecNo2 = 0; vecNo2 < 3; vecNo2++) {
+					for (uint vecNo2 = 0; vecNo2 < 3; vecNo2++) {
 						if (triNo2 == triNo1)
 							continue;
-						unsigned int right1 = triNo2 * 3 + vecNo2;
-						unsigned int right2 = triNo2 * 3 + (vecNo2 == 2 ? 0 : vecNo2 + 1);
+						uint right1 = triNo2 * 3 + vecNo2;
+						uint right2 = triNo2 * 3 + (vecNo2 == 2 ? 0 : vecNo2 + 1);
 						TeVector3f32 vright1 = _verticies[right1];
 						TeVector3f32 vright2 = _verticies[right2];
 						if (vright1 == vleft1 && vright2 == vleft2 && vright1 == vleft2 && vright2 == vleft1) {
@@ -645,7 +642,7 @@ void TeFreeMoveZone::updateBorders() {
 				}
 			}
 		}
-    }
+	}
 	_bordersDirty = false;
 }
 
@@ -669,25 +666,25 @@ void TeFreeMoveZone::updatePickMesh() {
 	_pickMesh.clear();
 	_pickMesh.reserve(_freeMoveZoneVerticies.size());
 	int vecNo = 0;
-    for (unsigned int tri = 0; tri < _freeMoveZoneVerticies.size() / 3; tri++) {
-        _pickMesh.push_back(vecNo);
-        _pickMesh.push_back(vecNo + 1);
-        _pickMesh.push_back(vecNo + 2);
-        vecNo += 3;
-    }
+	for (uint tri = 0; tri < _freeMoveZoneVerticies.size() / 3; tri++) {
+		_pickMesh.push_back(vecNo);
+		_pickMesh.push_back(vecNo + 1);
+		_pickMesh.push_back(vecNo + 2);
+		vecNo += 3;
+}
 
-    debug("[TeFreeMoveZone::updatePickMesh] %s nb triangles reduced from : %d to : %d", name().c_str(),
-             _freeMoveZoneVerticies.size() / 3, _pickMesh.size() / 3);
+	debug("[TeFreeMoveZone::updatePickMesh] %s nb triangles reduced from : %d to : %d", name().c_str(),
+			 _freeMoveZoneVerticies.size() / 3, _pickMesh.size() / 3);
 
-    TePickMesh2::setNbTriangles(_pickMesh.size() / 3);
+	TePickMesh2::setNbTriangles(_pickMesh.size() / 3);
 
-    for (unsigned int i = 0; i < _pickMesh.size(); i++) {
-        _verticies[i] = _freeMoveZoneVerticies[_pickMesh[i]];
-    }
-    _bordersDirty = true;
-    _pickMeshDirty = false;
-    _projectedPointsDirty = true;
-    _gridDirty = true;
+	for (uint i = 0; i < _pickMesh.size(); i++) {
+		_verticies[i] = _freeMoveZoneVerticies[_pickMesh[i]];
+	}
+	_bordersDirty = true;
+	_pickMeshDirty = false;
+	_projectedPointsDirty = true;
+	_gridDirty = true;
 }
 
 void TeFreeMoveZone::updateProjectedPoints() {
@@ -703,10 +700,10 @@ void TeFreeMoveZone::updateTransformedVertices() {
 
 	const TeMatrix4x4 worldTransform = worldTransformationMatrix();
 	_transformedVerticies.resize(_freeMoveZoneVerticies.size());
-	for (unsigned int i = 0; i < _transformedVerticies.size(); i++) {
-        _transformedVerticies[i] = worldTransform * _freeMoveZoneVerticies[i];
-    }
-    _transformedVerticiesDirty = false;
+	for (uint i = 0; i < _transformedVerticies.size(); i++) {
+		_transformedVerticies[i] = worldTransform * _freeMoveZoneVerticies[i];
+	}
+	_transformedVerticiesDirty = false;
 }
 
 /*========*/
@@ -792,7 +789,7 @@ void TeFreeMoveZoneGraph::deserialize(Common::ReadStream &stream) {
 	if (flaglen > 1000000 || (int)flaglen != _size._x * _size._y)
 		error("TeFreeMoveZoneGraph: Flags unexpected size, expect %d got %d", _size._x * _size._y, flaglen);
 	_flags.resize(flaglen);
-	for (unsigned int i = 0; i < flaglen; i++) {
+	for (uint i = 0; i < flaglen; i++) {
 		_flags[i] = stream.readByte();
 	}
 	_bordersDistance = stream.readFloatLE();
@@ -811,14 +808,14 @@ TePickMesh2 *TeFreeMoveZone::findNearestMesh(TeIntrusivePtr<TeCamera> &camera, c
 		return nullptr;
 	float closestDist = camera->orthoFarPlane();
 	Math::Ray camRay;
-	for (unsigned int i = 0; i < pickMeshes.size(); i++) {
+	for (uint i = 0; i < pickMeshes.size(); i++) {
 		TePickMesh2 *mesh = pickMeshes[i];
 		const TeMatrix4x4 meshWorldTransform = mesh->worldTransformationMatrix();
 		if (lastHitFirst) {
 			// Note: it seems like a bug in the original.. this never sets
 			// the ray parameters?? It should still find the right triangle below.
-			unsigned int tricount = mesh->verticies().size() / 3;
-			unsigned int vert = mesh->lastTriangleHit() * 3;
+			uint tricount = mesh->verticies().size() / 3;
+			uint vert = mesh->lastTriangleHit() * 3;
 			if (mesh->lastTriangleHit() >= tricount)
 				vert = 0;
 			const TeVector3f32 v1 = meshWorldTransform * mesh->verticies()[vert + 0];
@@ -830,7 +827,7 @@ TePickMesh2 *TeFreeMoveZone::findNearestMesh(TeIntrusivePtr<TeCamera> &camera, c
 			if (intResult && intersectDist < closestDist && intersectDist >= camera->orthoNearPlane())
 				return mesh;
 		}
-		for (unsigned int tri = 0; tri < mesh->verticies().size() / 3; tri++) {
+		for (uint tri = 0; tri < mesh->verticies().size() / 3; tri++) {
 			const TeVector3f32 v1 = meshWorldTransform * mesh->verticies()[tri * 3 + 0];
 			const TeVector3f32 v2 = meshWorldTransform * mesh->verticies()[tri * 3 + 1];
 			const TeVector3f32 v3 = meshWorldTransform * mesh->verticies()[tri * 3 + 2];

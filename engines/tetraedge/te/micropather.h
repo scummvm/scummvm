@@ -107,7 +107,7 @@ namespace micropather
 	*/
 	class Graph
 	{
-	  public:
+	public:
 		virtual ~Graph() {}
 
 		/**
@@ -150,7 +150,7 @@ namespace micropather
 	*/
 	class PathNode
 	{
-	  public:
+	public:
 		void Init(	unsigned _frame,
 					void* _state,
 					float _costFromStart,
@@ -210,7 +210,7 @@ namespace micropather
 				totalCost = FLT_MAX;
 		}
 
-	  private:
+	private:
 
 		void operator=( const PathNode& );
 	};
@@ -311,7 +311,7 @@ namespace micropather
 
 			unsigned Hash() const {
 				const unsigned char *p = (const unsigned char *)(&start);
-				unsigned int h = 2166136261U;
+				uint h = 2166136261U;
 
 				for( unsigned i=0; i<sizeof(void*)*2; ++i, ++p ) {
 					h ^= *p;
@@ -363,7 +363,7 @@ namespace micropather
 	{
 		friend class micropather::PathNode;
 
-	  public:
+	public:
 		enum
 		{
 			SOLVED,
@@ -388,7 +388,7 @@ namespace micropather
 								  would be set to 8x8 (64)
 								- If your map is large, something like 1/4 the number of possible
 								  states is good.
-							    - If your state space is huge, use a multiple (5-10x) of the normal
+								- If your state space is huge, use a multiple (5-10x) of the normal
 								  path. "Occasionally" call Reset() to free unused memory.
 			@param typicalAdjacent	Used to determine cache size. The typical number of adjacent states
 									to a given state. (On a chessboard, 8.) Higher values use a little
@@ -431,7 +431,7 @@ namespace micropather
 		void StatesInPool( Common::Array< void* >* stateVec );
 		void GetCacheData( CacheData* data );
 
-	  private:
+	private:
 		MicroPather( const MicroPather& );	// undefined and unsupported
 		void operator=( const MicroPather ); // undefined and unsupported
 

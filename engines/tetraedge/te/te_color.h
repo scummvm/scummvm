@@ -59,7 +59,7 @@ public:
 
 	Common::String dump() const {
 		return Common::String::format("TeColor(%d %d %d %d)",
-									  _c[0], _c[1], _c[2], _c[3]);
+									 _c[0], _c[1], _c[2], _c[3]);
 	}
 
 private:

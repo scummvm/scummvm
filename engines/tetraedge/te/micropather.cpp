@@ -367,7 +367,7 @@ unsigned PathNodePool::Hash( void* voidval )
 	// public domain.
 	MP_UPTR val = (MP_UPTR)(voidval);
 	const unsigned char *p = (unsigned char *)(&val);
-	unsigned int h = 2166136261;
+	uint h = 2166136261;
 
 	for( size_t i=0; i<sizeof(MP_UPTR); ++i, ++p ) {
 		h ^= *p;
@@ -704,20 +704,20 @@ void MicroPather::DumpStats()
 
 void MicroPather::StatesInPool( Common::Array< void* >* stateVec )
 {
- 	stateVec->clear();
+	stateVec->clear();
 	pathNodePool.AllStates( frame, stateVec );
 }
 
 
 void PathNodePool::AllStates( unsigned frame, Common::Array< void* >* stateVec )
 {
-    for ( Block* b=blocks; b; b=b->nextBlock )
-    {
-    	for( unsigned i=0; i<allocate; ++i )
-    	{
-    	    if ( b->pathNode[i].frame == frame )
-	    	    stateVec->push_back( b->pathNode[i].state );
-    	}
+	for ( Block* b=blocks; b; b=b->nextBlock )
+	{
+		for( unsigned i=0; i<allocate; ++i )
+		{
+			if ( b->pathNode[i].frame == frame )
+				stateVec->push_back( b->pathNode[i].state );
+		}
 	}
 }
 

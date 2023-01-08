@@ -102,7 +102,7 @@ void TeMesh::draw() {
 		} else {
 			assert(_faceCounts.size() == _materials.size());
 			int totalFaceCount = 0;
-			for (unsigned int i = 0; i < _faceCounts.size(); i++) {
+			for (uint i = 0; i < _faceCounts.size(); i++) {
 				if (!_faceCounts[i])
 					continue;
 				if (hasAlpha(i)) {
@@ -155,7 +155,7 @@ void TeMesh::draw() {
 	} else {
 		int totalFaceCount = 0;
 		assert(_faceCounts.size() == _materials.size());
-		for (unsigned int i = 0; i < _materials.size(); i++) {
+		for (uint i = 0; i < _materials.size(); i++) {
 			if (!_faceCounts[i])
 				continue;
 			if (!hasAlpha(i) || renderer->shadowMode() == TeRenderer::ShadowMode1 || !_shouldDraw) {
@@ -182,7 +182,7 @@ void TeMesh::draw() {
 		TeLight::disableAll();
 		glBegin(GL_LINES);
 		renderer->setCurrentColor(TeColor(255, 255, 255, 255));
-		for (unsigned int i = 0; i < verticies.size(); i++) {
+		for (uint i = 0; i < verticies.size(); i++) {
 			glVertex3f(verticies[i].x(), verticies[i].y(), verticies[i].z());
 			glVertex3f(verticies[i].x() + normals[i].x(),
 					verticies[i].y() + normals[i].y(),
@@ -261,7 +261,7 @@ void TeMesh::setColor(const TeColor &col) {
 		if (colnow.a() != 255)
 			_hasAlpha = true;
 
-		for (unsigned int i = 0; i < _verticies.size(); i++) {
+		for (uint i = 0; i < _verticies.size(); i++) {
 			_colors[i] = colnow;
 		}
 	}
@@ -275,7 +275,7 @@ void TeMesh::setColor(uint idx, const TeColor &col) {
 	_colors[idx] = col;
 }
 
-void TeMesh::setConf(unsigned long vertexCount, unsigned long indexCount, enum Mode mode, unsigned int materialCount, unsigned int materialIndexCount) {
+void TeMesh::setConf(unsigned long vertexCount, unsigned long indexCount, enum Mode mode, uint materialCount, uint materialIndexCount) {
 	destroy();
 	_initialMaterialIndexCount = materialIndexCount;
 	_verticies.resize(vertexCount);
@@ -309,21 +309,21 @@ void TeMesh::setConf(unsigned long vertexCount, unsigned long indexCount, enum M
 	}
 }
 
-void TeMesh::setIndex(unsigned int idx, unsigned int val) {
+void TeMesh::setIndex(uint idx, uint val) {
 	_indexes[idx] = val;
 }
 
-void TeMesh::setNormal(unsigned int idx, const TeVector3f32 &val) {
+void TeMesh::setNormal(uint idx, const TeVector3f32 &val) {
 	_normals.resize(_verticies.size());
 	_normals[idx] = val;
 }
 
-void TeMesh::setTextureUV(unsigned int idx, const TeVector2f32 &val) {
+void TeMesh::setTextureUV(uint idx, const TeVector2f32 &val) {
 	_uvs.resize(_verticies.size());
 	_uvs[idx] = val;
 }
 
-void TeMesh::setVertex(unsigned int idx, const TeVector3f32 &val) {
+void TeMesh::setVertex(uint idx, const TeVector3f32 &val) {
 	_verticies[idx] = val;
 }
 
@@ -375,10 +375,10 @@ void TeMesh::update(TeIntrusivePtr<TeModelVertexAnimation> vertexanim) {
 
 	const Common::Array<TeVector3f32> &animverts = vertexanim->getVertices();
 	assert(animverts.size() >= _verticies.size());
-	for (unsigned int i = 0; i < _verticies.size(); i++) {
+	for (uint i = 0; i < _verticies.size(); i++) {
 		_updatedVerticies[i] = animverts[i];
 	}
-	for (unsigned int i = 0; i < _normals.size(); i++) {
+	for (uint i = 0; i < _normals.size(); i++) {
 		_updatedNormals[i] = _normals[i];
 	}
 }
@@ -386,8 +386,8 @@ void TeMesh::update(TeIntrusivePtr<TeModelVertexAnimation> vertexanim) {
 void TeMesh::updateTo(const Common::Array<TeMatrix4x4> *matricies1, const Common::Array<TeMatrix4x4> *matricies2,
 				Common::Array<TeVector3f32> &verts, Common::Array<TeVector3f32> &normals) {
 	static const TeMatrix4x4 emptyMatrix;
-	for (unsigned int i = 0; i < _verticies.size(); i++) {
-		unsigned int m = _matricies[i];
+	for (uint i = 0; i < _verticies.size(); i++) {
+		uint m = _matricies[i];
 		const TeMatrix4x4 *mat;
 		if (m < matricies1->size()) {
 			mat = &((*matricies1)[m]);

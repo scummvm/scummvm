@@ -389,7 +389,7 @@ void Game::finishGame() {
 	_playedTimer.stop();
 	/* Game does this but does nothing with result?
 	if (app->difficulty() == 2) {
-	  _playedTimer.getTimeFromStart();
+		_playedTimer.getTimeFromStart();
 	} */
 	app->credits().enter(false);
 }
@@ -648,7 +648,7 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		_luaScript.execute("OnSelectedObject", _inventory.selectedObject());
 	}
 
-	for (unsigned int i = 0; i < _gameSounds.size(); i++) {
+	for (uint i = 0; i < _gameSounds.size(); i++) {
 		if (_gameSounds[i]->retain())
 			continue;
 		_gameSounds[i]->stop();
@@ -691,7 +691,7 @@ static const char *DIALOG_IDS[20] = {
 	"KFJ", "KM", "KN", "KFM"};
 
 bool Game::launchDialog(const Common::String &dname, uint param_2, const Common::String &charname,
-				  const Common::String &animfile, float animblend) {
+						const Common::String &animfile, float animblend) {
 	Application *app = g_engine->getApplication();
 	const Common::String *locstring = app->loc().value(dname);
 
@@ -722,7 +722,7 @@ bool Game::launchDialog(const Common::String &dname, uint param_2, const Common:
 		}
 	}
 
-	for (unsigned int i = 0; i < ARRAYSIZE(DIALOG_IDS); i++) {
+	for (uint i = 0; i < ARRAYSIZE(DIALOG_IDS); i++) {
 		if (dname.contains(Common::String::format("_%s_", DIALOG_IDS[i])))
 			_dialogsTold++;
 	}
@@ -851,7 +851,7 @@ bool Game::onCharacterAnimationFinished(const Common::String &charName) {
 	if (!_scene._character)
 		return false;
 
-	for (unsigned int i = 0; i < _yieldedCallbacks.size(); i++) {
+	for (uint i = 0; i < _yieldedCallbacks.size(); i++) {
 		YieldedCallback &cb = _yieldedCallbacks[i];
 		if (cb._luaFnName == "OnCharacterAnimationFinished" && cb._luaParam == charName) {
 			TeLuaThread *lua = cb._luaThread;
@@ -872,7 +872,7 @@ bool Game::onCharacterAnimationPlayerFinished(const Common::String &anim) {
 		return false;
 
 	bool callScripts = true;
-	for (unsigned int i = 0; i < _yieldedCallbacks.size(); i++) {
+	for (uint i = 0; i < _yieldedCallbacks.size(); i++) {
 		YieldedCallback &cb = _yieldedCallbacks[i];
 		if (cb._luaFnName == "OnCharacterAnimationFinished" && cb._luaParam == "Kate") {
 			TeLuaThread *lua = cb._luaThread;
@@ -920,7 +920,7 @@ bool Game::onCharacterAnimationPlayerFinished(const Common::String &anim) {
 }
 
 bool Game::onDialogFinished(const Common::String &val) {
-	for (unsigned int i = 0; i < _yieldedCallbacks.size(); i++) {
+	for (uint i = 0; i < _yieldedCallbacks.size(); i++) {
 		YieldedCallback &cb = _yieldedCallbacks[i];
 		if (cb._luaFnName == "OnDialogFinished" && cb._luaParam == val) {
 			TeLuaThread *lua = cb._luaThread;
@@ -952,7 +952,7 @@ bool Game::onDisplacementFinished() {
 
 	TeLuaThread *thread = nullptr;
 
-	for (unsigned int i = 0; i < _yieldedCallbacks.size(); i++) {
+	for (uint i = 0; i < _yieldedCallbacks.size(); i++) {
 		YieldedCallback &cb = _yieldedCallbacks[i];
 		if (cb._luaFnName == "OnDisplacementFinished") {
 			thread = cb._luaThread;
@@ -1186,7 +1186,7 @@ bool Game::onMouseMove() {
 	bool checkedCursor = false;
 	if (!skipFullSearch && _scene.gui2().loaded()) {
 		TeLayout *bglayout = _scene.gui2().layoutChecked("background");
-		for (unsigned int i = 0; i < bglayout->childCount(); i++) {
+		for (uint i = 0; i < bglayout->childCount(); i++) {
 			TeLayout *childlayout = dynamic_cast<TeLayout *>(bglayout->child(i));
 			if (childlayout && childlayout->isMouseIn(mouseLoc) && childlayout->visible()) {
 				for (int i = 0; i < ARRAYSIZE(cursorsTable); i++) {
@@ -1235,7 +1235,7 @@ bool Game::onVideoFinished() {
 	_music.stop();
 	_running = true;
 	bool resumed = false;
-	for (unsigned int i = 0; i < _yieldedCallbacks.size(); i++) {
+	for (uint i = 0; i < _yieldedCallbacks.size(); i++) {
 		YieldedCallback &cb = _yieldedCallbacks[i];
 		if (cb._luaFnName == "OnMovieFinished" && cb._luaParam == vidPath) {
 			TeLuaThread *lua = cb._luaThread;
@@ -1317,7 +1317,7 @@ void Game::playRandomSound(const Common::String &name) {
 		}
 		int r = _randomSource.getRandomNumber(RAND_MAX);
 		float total2 = 0.0;
-		unsigned int i = 0;
+		uint i = 0;
 		while (i < sndlist.size() && total2 <= r * 4.656613e-10 * total) {
 			total2 += sndlist[i]->_f1;
 			i++;
@@ -1445,11 +1445,10 @@ bool Game::setBackground(const Common::String &name) {
 void Game::setCurrentObjectSprite(const Common::Path &spritePath) {
 	TeSpriteLayout *currentSprite = _inGameGui.spriteLayout("currentObjectSprite");
 	if (currentSprite) {
-		if (spritePath.empty()) {
+		if (spritePath.empty())
 			currentSprite->unload();
-		} else {
+		else
 			currentSprite->load(spritePath);
-	  }
 	}
 }
 
@@ -1477,7 +1476,7 @@ bool Game::startAnimation(const Common::String &animName, int loopcount, bool re
 }
 
 void Game::stopSound(const Common::String &name) {
-	for (unsigned int i = 0; i < _gameSounds.size(); i++) {
+	for (uint i = 0; i < _gameSounds.size(); i++) {
 		GameSound *sound = _gameSounds[i];
 		if (sound->rawPath() == name) {
 			sound->stop();
@@ -1504,7 +1503,7 @@ Common::Error Game::syncGame(Common::Serializer &s) {
 	_playedTimer.stop();
 	_playedTimer.start();
 	s.syncAsUint32LE(_objectsTakenVal);
-	for (unsigned int i = 0; i < ARRAYSIZE(_objectsTakenBits); i++)
+	for (uint i = 0; i < ARRAYSIZE(_objectsTakenBits); i++)
 		s.syncAsByte(_objectsTakenBits[i]);
 	s.syncAsUint32LE(_dialogsTold);
 	s.syncString(_prevSceneName);
@@ -1524,7 +1523,7 @@ bool Game::unloadCharacter(const Common::String &charname) {
 	if (!c)
 		return false;
 
-	for (unsigned int i = 0; i < _scene.models().size(); i++) {
+	for (uint i = 0; i < _scene.models().size(); i++) {
 		if (_scene.models()[i] == c->_model) {
 			_scene.models().remove_at(i);
 			break;

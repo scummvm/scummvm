@@ -110,7 +110,7 @@ private:
 	Common::String _validationSound;
 	float _validationSoundVolume;
 
-	Common::Array<unsigned int> _intArr;
+	Common::Array<uint> _intArr;
 
 	TeICallback1ParamPtr<const Common::Point &> _onMousePositionChangedMaxPriorityCallback;
 	TeICallback1ParamPtr<const Common::Point &> _onMousePositionChangedCallback;

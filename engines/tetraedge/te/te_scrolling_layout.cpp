@@ -97,19 +97,19 @@ void TeScrollingLayout::setScrollPosition(const TeVector3f32 &scrPos) {
 	pos.x() = CLIP(pos.x(), 0.0f, 1.0f);
 	pos.y() = CLIP(pos.y(), 0.0f, 1.0f);
 
-    const TeVector3f32 thisSize(xSize(), ySize(), 1.0);
-    const TeVector3f32 contentSize(_contentLayout->xSize(), _contentLayout->ySize(), 1.0);
-    TeVector3f32 sizeRatio;
+	const TeVector3f32 thisSize(xSize(), ySize(), 1.0);
+	const TeVector3f32 contentSize(_contentLayout->xSize(), _contentLayout->ySize(), 1.0);
+	TeVector3f32 sizeRatio;
 
-    if (thisSize.x() == 0.0 || thisSize.y() == 0.0) {
+	if (thisSize.x() == 0.0 || thisSize.y() == 0.0) {
 		sizeRatio = TeVector3f32(1.0, 1.0, 1.0);
-    } else {
+	} else {
 		sizeRatio = contentSize / thisSize;
-    }
+	}
 
-    TeVector3f32 posToSet = _contentLayout->userPosition();
-    const TeVector3f32 contentAnchor = _contentLayout->anchor();
-    if (!_enclose) {
+	TeVector3f32 posToSet = _contentLayout->userPosition();
+	const TeVector3f32 contentAnchor = _contentLayout->anchor();
+	if (!_enclose) {
 		if (thisSize.x() < contentSize.x()) {
 			float offset = (sizeRatio.x() + 1.0) * pos.x();
 			posToSet.x() = contentAnchor.x() * sizeRatio.x() + (1.0 - offset);
@@ -118,7 +118,7 @@ void TeScrollingLayout::setScrollPosition(const TeVector3f32 &scrPos) {
 			float offset = (sizeRatio.y() + 1.0) * pos.y();
 			posToSet.y() = contentAnchor.y() * sizeRatio.y() + (1.0 - offset);
 		}
-    } else {
+	} else {
 		if (thisSize.x() < contentSize.x()) {
 			float offset = (sizeRatio.x() - 1.0) * pos.x();
 			posToSet.x() = contentAnchor.x() * sizeRatio.x() - offset;
@@ -127,25 +127,25 @@ void TeScrollingLayout::setScrollPosition(const TeVector3f32 &scrPos) {
 			float offset = (sizeRatio.y() - 1.0) * pos.y();
 			posToSet.y() = contentAnchor.y() * sizeRatio.y() - offset;
 		}
-    }
+	}
 
-    _contentLayout->setPosition(posToSet);
-    _posUpdatedSignal.call();
+	_contentLayout->setPosition(posToSet);
+	_posUpdatedSignal.call();
 }
 
 TeVector3f32 TeScrollingLayout::scrollPosition() {
 	if (!_contentLayout)
 		return TeVector3f32();
 
-    const TeVector3f32 thisSize(xSize(), ySize(), 1.0);
-    const TeVector3f32 contentSize(_contentLayout->xSize(), _contentLayout->ySize(), 1.0);
+	const TeVector3f32 thisSize(xSize(), ySize(), 1.0);
+	const TeVector3f32 contentSize(_contentLayout->xSize(), _contentLayout->ySize(), 1.0);
 
 	TeVector3f32 sizeRatio;
-    if (thisSize.x() == 0.0 || thisSize.y() == 0.0) {
+	if (thisSize.x() == 0.0 || thisSize.y() == 0.0) {
 		sizeRatio = TeVector3f32(1.0, 1.0, 1.0);
-    } else {
+	} else {
 		sizeRatio = contentSize / thisSize;
-    }
+	}
 
 	TeVector3f32 result(0.0, 0.0, 0.0);
 	if (_enclose) {
@@ -165,7 +165,7 @@ TeVector3f32 TeScrollingLayout::scrollPosition() {
 }
 
 bool TeScrollingLayout::onAutoScrollDelayTimer() {
-  	_autoScrollDelayTimer.stop();
+	_autoScrollDelayTimer.stop();
 	playAutoScrollAnimation1();
 	return false;
 }
@@ -275,15 +275,15 @@ bool TeScrollingLayout::onMouseMove(const Common::Point &pt) {
 		}
 	}
 
-    setScrollPosition(scrollPos + offset);
-    _slideDownMousePos = inputmgr->lastMousePos();
-    TeVector3f32 nowMousePos(inputmgr->lastMousePos());
-    _insideMouseThreshold = (_lastMouseDownPos - nowMousePos).length() <= _mouseMoveThreshold;
-    long elapsed = _scrollTimer.timeElapsed();
-    if (elapsed > 0) {
+	setScrollPosition(scrollPos + offset);
+	_slideDownMousePos = inputmgr->lastMousePos();
+	TeVector3f32 nowMousePos(inputmgr->lastMousePos());
+	_insideMouseThreshold = (_lastMouseDownPos - nowMousePos).length() <= _mouseMoveThreshold;
+	long elapsed = _scrollTimer.timeElapsed();
+	if (elapsed > 0) {
 		_speed = offset / (float)(elapsed / 1000000.0);
-    }
-    return false;
+	}
+	return false;
 }
 
 bool TeScrollingLayout::onMouseLeftUp(const Common::Point &pt) {
@@ -292,7 +292,7 @@ bool TeScrollingLayout::onMouseLeftUp(const Common::Point &pt) {
 		_inertiaAnimation.setCurve(_inertiaAnimationCurve);
 		_inertiaAnimation._duration = _inertiaAnimationDuration;
 		_inertiaAnimation._startVal = _speed;
-		_inertiaAnimation._endVal = TeVector3f32(0.0, 0.0, 0.0);
+		_inertiaAnimation._endVal = TeVector3f32(0, 0, 0);
 		_inertiaAnimation._callbackObj = this;
 		_inertiaAnimation._callbackMethod = &TeScrollingLayout::setSpeed;
 		_inertiaAnimation.play();

@@ -345,9 +345,9 @@ bool Application::run() {
 				finalGui.unload();
 			}
 			_finishedGame = false;
-	  }
-	  InGameScene::updateScroll();
-	  TeObject::deleteNow();
+		}
+		InGameScene::updateScroll();
+		TeObject::deleteNow();
 	}
 	return true;
 }
@@ -487,10 +487,10 @@ void Application::getSavegameThumbnail(Graphics::Surface &thumb) {
 	Graphics::Surface screen;
 	_visFade.texture()->writeTo(screen);
 	screen.flipVertical(Common::Rect(screen.w, screen.h));
-    Common::ScopedPtr<Graphics::Surface> scaledScreen(screen.scale(kThumbnailWidth, kThumbnailHeight2));
-    thumb.copyFrom(*scaledScreen);
-    screen.free();
-    scaledScreen->free();
+	Common::ScopedPtr<Graphics::Surface> scaledScreen(screen.scale(kThumbnailWidth, kThumbnailHeight2));
+	thumb.copyFrom(*scaledScreen);
+	screen.free();
+	scaledScreen->free();
 }
 
 bool Application::isFading() {

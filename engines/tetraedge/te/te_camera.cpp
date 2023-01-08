@@ -68,15 +68,15 @@ void TeCamera::applyTransformations() {
 void TeCamera::buildOrthoMatrix() {
 	float widthNorm = FLT_MAX;
 	if ((_orthogonalParamR - _orthogonalParamL) != 0.0) {
-	  widthNorm = 1.0 / (_orthogonalParamR - _orthogonalParamL);
+		widthNorm = 1.0 / (_orthogonalParamR - _orthogonalParamL);
 	}
 	float heightNorm = FLT_MAX;
 	if (_orthogonalParamB - _orthogonalParamT != 0.0) {
-	  heightNorm = 1.0 / (_orthogonalParamB - _orthogonalParamT);
+		heightNorm = 1.0 / (_orthogonalParamB - _orthogonalParamT);
 	}
 	float depthNorm = FLT_MAX;
 	if ((_orthFarVal - _orthNearVal) != 0.0) {
-	  depthNorm = 1.0 / (_orthFarVal - _orthNearVal);
+		depthNorm = 1.0 / (_orthFarVal - _orthNearVal);
 	}
 
 	_projectionMatrix.setValue(0, 0, widthNorm * 2.0f);

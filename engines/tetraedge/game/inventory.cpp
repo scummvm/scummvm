@@ -211,10 +211,10 @@ bool Inventory::addObject(InventoryObject *obj) {
 			}
 			pageNo++;
 		}
-    }
+	}
 
 	int pageno = 0;
-	unsigned int totalSlots = 0;
+	uint totalSlots = 0;
 	bool retval = false;
 	const Common::String newObjName = obj->name();
 	auto invObjIter = _invObjects.begin();
@@ -498,13 +498,13 @@ bool Inventory::updateLayout() {
 //#define DEBUG_SAVELOAD 1
 
 Common::Error Inventory::syncState(Common::Serializer &s) {
-	unsigned int nitems = _invObjects.size();
+	uint nitems = _invObjects.size();
 	s.syncAsUint32LE(nitems);
 	if (s.isLoading()) {
 #if DEBUG_SAVELOAD
 		debug("Inventory::syncState: --- Loading %d inventory items: ---", nitems);
 #endif
-		for (unsigned int i = 0; i < nitems; i++) {
+		for (uint i = 0; i < nitems; i++) {
 			Common::String objname;
 			s.syncString(objname);
 			addObject(objname);

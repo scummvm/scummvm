@@ -55,10 +55,8 @@ void Te3DTexture::copyCurrentRender(uint xoffset, uint yoffset, uint x, uint y) 
 	const TeVector3f32 offset((float)_leftBorder / _width, (float)_btmBorder / _height, 0.0);
 	_matrix.translate(offset);
 	const TeVector3f32 borderScale(
-			   1.0 - (float)(_rightBorder + _leftBorder) /
-					 (float)_width,
-			   1.0 - (float)(_topBorder + _btmBorder) /
-					 (float)_height, 1.0);
+			1.0 - (float)(_rightBorder + _leftBorder) / (float)_width,
+			1.0 - (float)(_topBorder + _btmBorder) / (float)_height, 1.0);
 	_matrix.scale(borderScale);
 	bind();
 	glCopyTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, x, y, _texWidth, _texHeight);
@@ -96,7 +94,7 @@ void Te3DTexture::create() {
 
 void Te3DTexture::destroy() {
 	if (_createdTexture) {
-	  glDeleteTextures(1, &_glTexture);
+		glDeleteTextures(1, &_glTexture);
 	}
 	_createdTexture = false;
 	_loaded = false;
@@ -200,7 +198,7 @@ bool Te3DTexture::load(const TeImage &img) {
 	_matrix.scale(TeVector3f32((float)_width / _texWidth, (float)_height / _texHeight, 1.0f));
 	_matrix.translate(TeVector3f32((float)_leftBorder / _width, (float)_btmBorder / _height, 0.0f));
 	_matrix.scale(TeVector3f32(1.0 - (float)(_rightBorder + _leftBorder) / _width,
-			   1.0 - (float)(_topBorder + _btmBorder) / _height, 1.0f));
+					1.0 - (float)(_topBorder + _btmBorder) / _height, 1.0f));
 	if (_flipY) {
 		_matrix.translate(TeVector3f32(0.0f, 1.0f, 0.0f));
 		_matrix.scale(TeVector3f32(1.0f, -1.0f, 1.0f));

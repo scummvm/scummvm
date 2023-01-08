@@ -128,7 +128,7 @@ void TeModel::forceMatrix(const TeMatrix4x4 &matrix) {
 	_forcedMatrix = matrix;
 }
 
-TeTRS TeModel::getBone(TeIntrusivePtr<TeModelAnimation> anim, unsigned int num) {
+TeTRS TeModel::getBone(TeIntrusivePtr<TeModelAnimation> anim, uint num) {
 	if (anim) {
 		int bone = anim->findBone(_bones[num]._name);
 		if (bone != -1)
@@ -137,10 +137,10 @@ TeTRS TeModel::getBone(TeIntrusivePtr<TeModelAnimation> anim, unsigned int num) 
 	return _bones[num]._trs;
 }
 
-TeMatrix4x4 TeModel::lerpElementsMatrix(unsigned int weightsNum, const Common::Array<TeMatrix4x4> &matricies) {
+TeMatrix4x4 TeModel::lerpElementsMatrix(uint weightsNum, const Common::Array<TeMatrix4x4> &matricies) {
 	TeMatrix4x4 retval;
 	// Start with a 0 matrix.
-	for (unsigned int i = 0; i < 4; i++)
+	for (uint i = 0; i < 4; i++)
 		retval.setValue(i, i, 0);
 
 	const Common::Array<weightElement> &weights = _weightElements[weightsNum];
@@ -173,7 +173,7 @@ void TeModel::update() {
 	if (_bones.size()) {
 		Common::Array<TeMatrix4x4> matricies;
 		matricies.resize(_bones.size());
-		for (unsigned int i = 0; i < _bones.size(); i++) {
+		for (uint i = 0; i < _bones.size(); i++) {
 			const bone &b = _bones[i];
 			const TeMatrix4x4 matrix = TeMatrix4x4::fromTRS(b._trs);
 			if (b._parentBone == -1 || _bones.size() < 2) {
@@ -188,9 +188,9 @@ void TeModel::update() {
 
 		TeMatrix4x4 invertx;
 		invertx.scale(TeVector3f32(-1, 1, 1));
-		for (unsigned int b = 0; b < _bones.size(); b++) {
+		for (uint b = 0; b < _bones.size(); b++) {
 			TeTRS trs = getBone(_modelAnim, b);
-			for (unsigned int i = 0; i < _boneBlenders.size(); i++) {
+			for (uint i = 0; i < _boneBlenders.size(); i++) {
 				BonesBlender *blender = _boneBlenders[i];
 				float complete = blender->coef();
 				TeTRS endTRS = getBone(blender->_anim, b);
@@ -224,18 +224,18 @@ void TeModel::update() {
 		}
 
 		if (!_skinOffsets.empty() && !_bones.empty()) {
-			for (unsigned int b = 0; b < _bones.size(); b++) {
+			for (uint b = 0; b < _bones.size(); b++) {
 				_boneMatricies[b] = _boneMatricies[b] * _skinOffsets[b];
 			}
 		}
 
 		if (!_skipSkinOffsets && !_weightElements.empty()) {
-			for (unsigned int i = 0; i < _weightElements.size(); i++) {
+			for (uint i = 0; i < _weightElements.size(); i++) {
 				_lerpedElements[i] = lerpElementsMatrix(i, _boneMatricies);
 			}
 		}
 
-		for (unsigned int m = 0; m < _meshes.size(); m++) {
+		for (uint m = 0; m < _meshes.size(); m++) {
 			TeMesh &mesh = _meshes[m];
 			if (!mesh.visible())
 				continue;
@@ -252,7 +252,7 @@ void TeModel::update() {
 				if (_modelVertexAnim && mesh.name() == _modelVertexAnim->head())
 					verticies = &_modelVertexAnim->getVertices();
 
-				for (unsigned int i = 0; i < mesh.numVerticies(); i++) {
+				for (uint i = 0; i < mesh.numVerticies(); i++) {
 					TeVector3f32 vertex;
 					if (!verticies) {
 						vertex = mesh.preUpdatedVertex(i);
@@ -273,7 +273,7 @@ void TeModel::update() {
 						updatednormal = _boneMatricies[idx] * normal;
 					} else {
 						idx -= _bones.size();
-						for (unsigned int w = 0; w < _weightElements[idx].size(); w++) {
+						for (uint w = 0; w < _weightElements[idx].size(); w++) {
 							const TeMatrix4x4 &wmatrix = _boneMatricies[_weightElements[idx][w]._x];
 							float weight = _weightElements[idx][w]._weight;
 							updatedvertex = updatedvertex + ((wmatrix * vertex) * weight);
@@ -374,7 +374,7 @@ bool TeModel::load(Common::SeekableReadStream &stream) {
 		error("[TeModel::load] Unable to find skeleton.");
 	}
 
-	for (unsigned int i = 0; i < _bones.size(); i++) {
+	for (uint i = 0; i < _bones.size(); i++) {
 		_bones[i]._name = Te3DObject2::deserializeString(stream);
 		loadAlign(stream);
 		_bones[i]._parentBone = stream.readUint32LE();
@@ -384,7 +384,7 @@ bool TeModel::load(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	for (unsigned int m = 0; m < _meshes.size(); m++) {
+	for (uint m = 0; m < _meshes.size(); m++) {
 		if (!loadMesh(stream, _meshes[m])) {
 			error("[TeModel::load] Error on meshes loading.");
 		}
@@ -393,7 +393,7 @@ bool TeModel::load(Common::SeekableReadStream &stream) {
 	if (!loadAndCheckFourCC(stream, "WEIG")) {
 		error("[TeModel::load] Unable to load weight.");
 	}
-	for (unsigned int i = 0; i < _weightElements.size(); i++) {
+	for (uint i = 0; i < _weightElements.size(); i++) {
 		loadWeights(stream, _weightElements[i]);
 	}
 
@@ -444,7 +444,7 @@ bool TeModel::loadWeights(Common::ReadStream &stream, Common::Array<weightElemen
 	if (nweights > 100000)
 		error("Improbable number of weights %d", (int)nweights);
 	weights.resize(nweights);
-	for (unsigned int i = 0; i < nweights; i++) {
+	for (uint i = 0; i < nweights; i++) {
 		weights[i]._weight = stream.readFloatLE();
 		weights[i]._x = stream.readUint16LE();
 		stream.readUint16LE();
@@ -478,7 +478,7 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 	if (!loadAndCheckFourCC(stream, "MTRL"))
 		return false;
 
-	for (unsigned int i = 0; i < mesh.materials().size(); i++) {
+	for (uint i = 0; i < mesh.materials().size(); i++) {
 		TeMaterial mat;
 		TeMaterial::deserialize(stream, mat, _texturePath);
 		if (_enableLights)
@@ -489,7 +489,7 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 	if (!loadAndCheckFourCC(stream, "VERT"))
 		return false;
 
-	for (unsigned int i = 0; i < mesh.numVerticies(); i++) {
+	for (uint i = 0; i < mesh.numVerticies(); i++) {
 		TeVector3f32 v;
 		TeVector3f32::deserialize(stream, v);
 		mesh.setVertex(i, v);
@@ -497,7 +497,7 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 	if (mesh.hasUvs()) {
 		if (!loadAndCheckFourCC(stream, "TUVS"))
 			return false;
-		for (unsigned int i = 0; i < mesh.numVerticies(); i++) {
+		for (uint i = 0; i < mesh.numVerticies(); i++) {
 			TeVector2f32 v;
 			TeVector2f32::deserialize(stream, v);
 			mesh.setTextureUV(i, v);
@@ -507,7 +507,7 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 	if (!loadAndCheckFourCC(stream, "NORM"))
 		return false;
 
-	for (unsigned int i = 0; i < mesh.numVerticies(); i++) {
+	for (uint i = 0; i < mesh.numVerticies(); i++) {
 		TeVector3f32 v;
 		TeVector3f32::deserialize(stream, v);
 		mesh.setNormal(i, v);
@@ -517,7 +517,7 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 		if (!loadAndCheckFourCC(stream, "COLS"))
 			return false;
 
-		for (unsigned int i = 0; i < mesh.numVerticies(); i++) {
+		for (uint i = 0; i < mesh.numVerticies(); i++) {
 			TeColor c;
 			c.deserialize(stream);
 			mesh.setColor(i, c);
@@ -527,7 +527,7 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 	if (!loadAndCheckFourCC(stream, "FCPM"))
 		return false;
 
-	for (unsigned int i = 0; i < mesh.materials().size(); i++) {
+	for (uint i = 0; i < mesh.materials().size(); i++) {
 		mesh.facesPerMaterial(i, stream.readUint16LE());
 	}
 
@@ -535,7 +535,7 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 	if (!loadAndCheckFourCC(stream, "MTXI"))
 		return false;
 
-	for (unsigned int i = 0; i < mesh.numVerticies(); i++) {
+	for (uint i = 0; i < mesh.numVerticies(); i++) {
 		mesh.matrixIndex(i, stream.readUint16LE());
 	}
 
@@ -543,7 +543,7 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 	if (!loadAndCheckFourCC(stream, "IDXS"))
 		return false;
 
-	for (unsigned int i = 0; i < mesh.numIndexes(); i++) {
+	for (uint i = 0; i < mesh.numIndexes(); i++) {
 		mesh.setIndex(i, stream.readUint16LE());
 	}
 

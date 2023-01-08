@@ -38,8 +38,8 @@ public:
 	TeTextBase2();
 
 	struct  Line {
-		unsigned int _startOffset;
-		unsigned int _endOffset;
+		uint _startOffset;
+		uint _endOffset;
 		float _height;
 		float _width;
 	};
@@ -54,17 +54,17 @@ public:
 	void clearStyles();
 	void clearText();
 
-	TeColor currentColor(unsigned int offset) const;
-	TeIntrusivePtr<TeFont3> currentFont(unsigned int offset);
+	TeColor currentColor(uint offset) const;
+	TeIntrusivePtr<TeFont3> currentFont(uint offset);
 	void draw();
-	unsigned int endOfWord(unsigned int i) const;
-	void insertNewLine(unsigned int offset);
-	bool isASpace(unsigned int offset) const;
-	int newLines(unsigned int offset) const;
-	int nextNonSpaceChar(unsigned int start);
+	uint endOfWord(uint i) const;
+	void insertNewLine(uint offset);
+	bool isASpace(uint offset) const;
+	int newLines(uint offset) const;
+	int nextNonSpaceChar(uint start);
 	void setAlignStyle(TeFont3::AlignStyle style);
-	void setColor(unsigned int offset, const TeColor &color);
-	void setFont(unsigned int offset, const TeIntrusivePtr<TeFont3> &newfont);
+	void setColor(uint offset, const TeColor &color);
+	void setFont(uint offset, const TeIntrusivePtr<TeFont3> &newfont);
 	void setFontSize(unsigned long fontSz);
 	void setGlobalColor(const TeColor &color);
 	void setInterLine(float val);
@@ -79,8 +79,8 @@ public:
 	const TeVector2s32 &size() const { return _size; }
 
 private:
-	void computeNbSpaces(Line &line, unsigned int startOffset, unsigned int endOffset);
-	void drawEmptyChar(unsigned int offset);
+	void computeNbSpaces(Line &line, uint startOffset, uint endOffset);
+	void drawEmptyChar(uint offset);
 	void drawLine(TeImage &img, const Common::String &str, int yoffset);
 
 	TeFont3::AlignStyle _alignStyle;
@@ -99,8 +99,8 @@ private:
 	Common::Array<Common::String> _wrappedLines;
 
 	Common::Array<uint32> _lineBreaks;
-	Common::HashMap<unsigned int, TeColor> _colors;
-	Common::HashMap<unsigned int, TeIntrusivePtr<TeFont3>> _fonts;
+	Common::HashMap<uint, TeColor> _colors;
+	Common::HashMap<uint, TeIntrusivePtr<TeFont3>> _fonts;
 };
 
 } // end namespace Tetraedge

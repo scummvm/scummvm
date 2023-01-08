@@ -128,7 +128,7 @@ bool Cellphone::onCloseButtonValidated() {
 }
 
 bool Cellphone::onNextNumber() {
-	unsigned int numoffset = _nextNumber + 1;
+	uint numoffset = _nextNumber + 1;
 	if (numoffset < _textLayoutArray.size()) {
 		currentPage(numoffset);
 	}
@@ -137,9 +137,8 @@ bool Cellphone::onNextNumber() {
 
 bool Cellphone::onPreviousNumber() {
 	int numoffset = _nextNumber - 1;
-	if (numoffset >= 0) {
-	  currentPage(numoffset);
-	}
+	if (numoffset >= 0)
+		currentPage(numoffset);
 	return false;
 }
 
@@ -158,10 +157,10 @@ void Cellphone::unload() {
 
 Common::Error Cellphone::syncState(Common::Serializer &s) {
 	Common::Array<Common::String> numbers = _addedNumbers;
-	unsigned int numElems = numbers.size();
+	uint numElems = numbers.size();
 	s.syncAsUint32LE(numElems);
 	numbers.resize(numElems);
-	for (unsigned int i = 0; i < numElems; i++) {
+	for (uint i = 0; i < numElems; i++) {
 		s.syncString(numbers[i]);
 	}
 	if (s.isLoading()) {
