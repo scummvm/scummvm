@@ -769,6 +769,12 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 			g_director->shiftPalette(firstColor, lastColor, false);
 			g_director->draw();
 		} else {
+			// Short circuit for few frames renderer
+			if (debugChannelSet(-1, kDebugFewFramesOnly)) {
+				g_director->setPalette(resolvePaletteId(currentPalette));
+				return;
+			}
+
 			// Do a full color cycle in one frame transition
 			int steps = lastColor - firstColor + 1;
 			for (int i = 0; i < _frames[frameId]->_palette.cycleCount; i++) {
@@ -858,8 +864,13 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 			_paletteTransitionIndex++;
 			_paletteTransitionIndex %= frameCount;
 		} else {
-			// Do a full cycle in one frame transition
+			// Short circuit for few frames renderer
+			if (debugChannelSet(-1, kDebugFewFramesOnly)) {
+				g_director->setPalette(resolvePaletteId(currentPalette));
+				return;
+			}
 
+			// Do a full cycle in one frame transition
 			// For normal mode, we've already faded the palette in renderPrePaletteCycle
 			if (!_frames[frameId]->_palette.normal) {
 				byte *fadePal = nullptr;
