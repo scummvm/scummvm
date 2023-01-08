@@ -1,38 +1,41 @@
 buildscript {
     repositories {
+        gradlePluginPortal()
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.1'
+        classpath 'com.android.tools.build:gradle:7.3.1'
     }
 }
 
 dependencies {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 }
 
 // Enable to see use of deprecated API
- tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile) {
 	 options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
- }
+}
 
 apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    buildToolsVersion "33.0.1"
     ndkVersion "21.3.6528147"
+
+    namespace "org.scummvm.scummvm"
 
     defaultConfig {
         applicationId "org.scummvm.scummvm"
 
         setProperty("archivesBaseName", "ScummVM")
 
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 29
 
         versionName "2.7.0"

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="org.scummvm.scummvm"
 	android:installLocation="auto"
 	android:launchMode="singleTask"
 	android:sharedUserId="org.scummvm.scummvm">
@@ -43,6 +42,7 @@
 		android:requestLegacyExternalStorage="true">
 		<activity
 			android:name=".SplashActivity"
+			android:exported="true"
 			android:banner="@drawable/leanback_icon"
 			android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
 			android:screenOrientation="landscape"
@@ -58,14 +58,12 @@
 		</activity>
 		<activity
 			android:name=".ScummVMActivity"
+			android:exported="false"
 			android:banner="@drawable/leanback_icon"
 			android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
 			android:screenOrientation="landscape"
 			android:theme="@style/AppTheme"
 			android:windowSoftInputMode="adjustResize">
-			<intent-filter>
-				<category android:name="tv.ouya.intent.category.GAME" />
-			</intent-filter>
 		</activity>
 	</application>
 
