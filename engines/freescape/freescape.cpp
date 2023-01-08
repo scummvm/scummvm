@@ -416,17 +416,19 @@ void FreescapeEngine::processInput() {
 				drawFrame();
 				_savedScreen = _gfx->getScreenshot();
 				_gfx->setViewport(_fullscreenViewArea);
-				g_system->lockMouse(false);
 				openMainMenuDialog();
-				g_system->lockMouse(true);
 				_gfx->setViewport(_viewArea);
 				_savedScreen->free();
 				delete _savedScreen;
 				break;
 			case Common::KEYCODE_SPACE:
 				_shootMode = !_shootMode;
-				if (!_shootMode)
+				if (!_shootMode) {
+					g_system->lockMouse(true);
 					centerCrossair();
+				} else {
+					g_system->lockMouse(false);
+				}
 				break;
 			case Common::KEYCODE_i:
 				drawInfoMenu();
@@ -872,5 +874,15 @@ void FreescapeEngine::removeTimers() {
 	g_system->getTimerManager()->removeTimerProc(&countdownCallback);
 }
 
+void FreescapeEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+
+	// TODO: Handle the viewport here
+
+	// Unlock the mouse so that the cursor is usable when the GMM opens
+	if (!_shootMode) {
+		_system->lockMouse(!pause);
+	}
+}
 
 } // namespace Freescape
