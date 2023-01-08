@@ -21,7 +21,6 @@
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/detection.h"
-#include "tetraedge/console.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -193,9 +192,6 @@ Common::Error TetraedgeEngine::run() {
 	_renderer = new TeRenderer();
 	_renderer->init();
 	_renderer->reset();
-
-	// Set the engine's debugger console
-	setDebugger(new Console());
 
 	getInputMgr()->_keyUpSignal.add(this, &TetraedgeEngine::onKeyUp);
 
