@@ -4,7 +4,7 @@ gui/about.cpp
 gui/browser.cpp
 gui/chooser.cpp
 gui/downloaddialog.cpp
-gui/downloadiconsdialog.cpp
+gui/downloadpacksdialog.cpp
 gui/editgamedialog.cpp
 gui/editrecorddialog.cpp
 gui/filebrowser-dialog.cpp
