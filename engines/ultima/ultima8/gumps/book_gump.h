@@ -49,6 +49,8 @@ public:
 	// Close on double click
 	void onMouseDouble(int button, int32 mx, int32 my) override;
 
+	bool OnKeyDown(int key, int mod) override;
+
 	// Init the gump, call after construction
 	void InitGump(Gump *newparent, bool take_focus = true) override;
 

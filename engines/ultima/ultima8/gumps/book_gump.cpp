@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/keyboard.h"
 #include "ultima/ultima8/gumps/book_gump.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -103,6 +104,21 @@ void BookGump::onMouseClick(int button, int32 mx, int32 my) {
 
 void BookGump::onMouseDouble(int button, int32 mx, int32 my) {
 	Close();
+}
+
+bool BookGump::OnKeyDown(int key, int mod) {
+	switch (key) {
+	case Common::KEYCODE_ESCAPE:
+		Close();
+		break;
+	case Common::KEYCODE_SPACE:
+		NextText();
+		break;
+	default:
+		break;
+	}
+
+	return true;
 }
 
 uint32 BookGump::I_readBook(const uint8 *args, unsigned int /*argsize*/) {
