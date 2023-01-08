@@ -1135,15 +1135,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_GK2_MAC },
 
-	// Gabriel Knight 2 - PIRATED US English GOG.com version with German data
-	// From Trac#9744
-	{"gk2", "", {
-		{"resource.aud", 0, "3812e15c3a187f5b633bde3a4832b2cf", 167630831},
-		{"ressci.000", 0, "a19fc3604c6e5407abcf03d59ee87217", 169500205},
-		{"resmap.000", 0, "e6bab045e2b5eb205e150338e74d8641", 8092},
-		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformDOS, ADGF_PIRATED, GUIO_GK2 },
-
 #undef GUIO_GK2_DEMO
 #undef GUIO_GK2
 #undef GUIO_GK2_MAC
