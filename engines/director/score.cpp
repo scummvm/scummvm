@@ -725,10 +725,14 @@ void Score::setLastPalette(uint16 frameId) {
 		_paletteTransitionIndex = 0;
 
 		// For color cycling mode, if there's a new palette, switch to it immediately
-//		if (_frames[frameId]->_palette.colorCycling)
-//			g_director->setPalette(resolvePaletteId(_lastPalette));
+		if (_frames[frameId]->_palette.colorCycling)
+			g_director->setPalette(resolvePaletteId(_lastPalette));
 	}
 
+}
+
+bool Score::isPaletteColorCycling() {
+	return _frames[_currentFrame]->_palette.colorCycling;
 }
 
 void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
