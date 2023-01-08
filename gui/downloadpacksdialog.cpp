@@ -56,11 +56,12 @@ struct DialogState {
 	uint32 totalFiles;
 	uint32 startTime;
 	const char *listfname;
+	uint32 lastUpdate;
 
 	DialogState(const char *fname) {
 		listfname = fname;
 		state = kDownloadStateNone;
-		downloadedSize = totalSize = totalFiles = startTime = 0;
+		downloadedSize = totalSize = totalFiles = startTime = lastUpdate = 0;
 		dialog = nullptr;
 	}
 
@@ -86,7 +87,7 @@ void DialogState::downloadList() {
 }
 
 void DialogState::proceedDownload() {
-	startTime = g_system->getMillis();
+	startTime = lastUpdate = g_system->getMillis();
 	takeOneFile();
 }
 
@@ -147,8 +148,10 @@ void DialogState::downloadFileCallback(Networking::DataResponse r) {
 		}
 	}
 
-	if (dialog)
+	if (dialog && g_system->getMillis() > lastUpdate + 500) {
+		lastUpdate = g_system->getMillis();
 		dialog->sendCommand(kDownloadProgressCmd, 0);
+	}
 }
 
 void DialogState::errorCallback(Networking::ErrorResponse error) {
