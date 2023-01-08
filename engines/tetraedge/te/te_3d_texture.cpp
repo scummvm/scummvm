@@ -19,8 +19,6 @@
  *
  */
 
-#include "graphics/opengl/system_headers.h"
-
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/te/te_3d_texture.h"
 #include "tetraedge/te/te_3d_texture_opengl.h"

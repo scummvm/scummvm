@@ -21,41 +21,41 @@
 
 #include "common/math.h"
 
+#include "graphics/tinygl/tinygl.h"
+
 #include "tetraedge/te/te_light_tinygl.h"
 #include "tetraedge/te/te_color.h"
 #include "tetraedge/te/te_quaternion.h"
 #include "tetraedge/te/te_vector3f32.h"
 
-#include "graphics/opengl/system_headers.h"
-
 namespace Tetraedge {
 
 static inline uint _toGlLight(uint lightno) {
-	return GL_LIGHT0 + lightno;
+	return TGL_LIGHT0 + lightno;
 }
 
 TeLightTinyGL::TeLightTinyGL() {
 }
 
 void TeLightTinyGL::disable(uint lightno) {
-	glDisable(_toGlLight(lightno));
+	tglDisable(_toGlLight(lightno));
 }
 
 void TeLightTinyGL::enable(uint lightno) {
 	if (_colDiffuse.r() == 0 && _colDiffuse.g() == 0 && _colDiffuse.b() == 0)
-		glDisable(_toGlLight(lightno));
+		tglDisable(_toGlLight(lightno));
 	else
-		glEnable(_toGlLight(lightno));
+		tglEnable(_toGlLight(lightno));
 }
 
 /*static*/
 void TeLightTinyGL::disableAll() {
-	glDisable(GL_LIGHTING);
+	tglDisable(TGL_LIGHTING);
 }
 
 /*static*/
 void TeLightTinyGL::enableAll() {
-	glEnable(GL_LIGHTING);
+	tglEnable(TGL_LIGHTING);
 }
 
 void TeLightTinyGL::draw(TeCamera &camera) {
@@ -63,35 +63,35 @@ void TeLightTinyGL::draw(TeCamera &camera) {
 }
 
 void TeLightTinyGL::update(uint lightno) {
-	if (lightno > GL_MAX_LIGHTS)
+	if (lightno > TGL_MAX_LIGHTS)
 		error("Invalid light no %d", lightno);
 	const uint glLight = _toGlLight(lightno);
 
 	const float ambient[4] = {_colAmbient.r() / 255.0f, _colAmbient.g() / 255.0f,
 			_colAmbient.b() / 255.0f, 1.0};
-	glLightfv(glLight, GL_AMBIENT, ambient);
+	tglLightfv(glLight, TGL_AMBIENT, ambient);
 
 	const float diff[4] = {_colDiffuse.r() / 255.0f, _colDiffuse.g() / 255.0f,
 			_colDiffuse.b() / 255.0f, 1.0};
-	glLightfv(glLight, GL_DIFFUSE, diff);
+	tglLightfv(glLight, TGL_DIFFUSE, diff);
 
 	// WORKAROUND: Original game sets 0.01 as threshold here to avoid enabling
 	// the "shadow" light.  However, Syberia CitStation/31130 has shadowlight with
 	// values (4, 0, 0) which means it gets enabled and everything is dark.
 
 	if (diff[0] < 0.02f && diff[1] < 0.02f && diff[2] < 0.02f)
-		glDisable(glLight);
+		tglDisable(glLight);
 
 	const float spec[4] = {_colSpecular.r() / 255.0f, _colSpecular.g() / 255.0f,
 			_colSpecular.b() / 255.0f, 1.0};
-	glLightfv(glLight, GL_SPECULAR, spec);
+	tglLightfv(glLight, TGL_SPECULAR, spec);
 
 	if (_type == LightTypeSpot || _type == LightTypePoint) {
 		const float pos[4] = {_position3d.x(), _position3d.y(), _position3d.z(), 1.0f};
-		glLightfv(glLight, GL_POSITION, pos);
-		glLightf(glLight, GL_CONSTANT_ATTENUATION, _constAtten);
-		glLightf(glLight, GL_LINEAR_ATTENUATION, _linearAtten);
-		glLightf(glLight, GL_QUADRATIC_ATTENUATION, _quadraticAtten);
+		tglLightfv(glLight, TGL_POSITION, pos);
+		tglLightf(glLight, TGL_CONSTANT_ATTENUATION, _constAtten);
+		tglLightf(glLight, TGL_LINEAR_ATTENUATION, _linearAtten);
+		tglLightf(glLight, TGL_QUADRATIC_ATTENUATION, _quadraticAtten);
 	}
 
 	if (_type == LightTypeDirectional) {
@@ -100,7 +100,7 @@ void TeLightTinyGL::update(uint lightno) {
 		float sinx = sinf(_positionRadial.getX());
 		float siny = sinf(_positionRadial.getY());
 		const float pos[4] = {cosx * cosy, siny, sinx * cosy, 0.0f};
-		glLightfv(glLight, GL_POSITION, pos);
+		tglLightfv(glLight, TGL_POSITION, pos);
 	}
 
 	if (_type == LightTypeSpot) {
@@ -109,11 +109,11 @@ void TeLightTinyGL::update(uint lightno) {
 		float sinx = sinf(_positionRadial.getX());
 		float siny = sinf(_positionRadial.getY());
 		const float pos[4] = {cosx * cosy, siny, sinx * cosy, 0.0f};
-		glLightfv(glLight, GL_SPOT_DIRECTION, pos);
-		glLightf(glLight, GL_SPOT_CUTOFF, (_cutoff * 180.0) / M_PI);
-		glLightf(glLight, GL_SPOT_EXPONENT, _exponent);
+		tglLightfv(glLight, TGL_SPOT_DIRECTION, pos);
+		tglLightf(glLight, TGL_SPOT_CUTOFF, (_cutoff * 180.0) / M_PI);
+		tglLightf(glLight, TGL_SPOT_EXPONENT, _exponent);
 	} else {
-		glLightf(glLight, GL_SPOT_CUTOFF, 180.0);
+		tglLightf(glLight, TGL_SPOT_CUTOFF, 180.0);
 	}
 }
 
@@ -121,7 +121,7 @@ void TeLightTinyGL::update(uint lightno) {
 void TeLightTinyGL::updateGlobal() {
 	const float col[4] = {_globalAmbientColor.r() / 255.0f,
 			_globalAmbientColor.g() / 255.0f, _globalAmbientColor.b() / 255.0f, 1.0};
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, col);
+	tglLightModelfv(TGL_LIGHT_MODEL_AMBIENT, col);
 }
 
 } // end namespace Tetraedge
