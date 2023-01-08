@@ -22,13 +22,12 @@
 #ifndef EFH_H
 #define EFH_H
 
-#include "engines/advancedDetector.h"
-
 #include "common/file.h"
 #include "common/rect.h"
 #include "common/events.h"
 #include "common/serializer.h"
 
+#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
 
