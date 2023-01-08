@@ -3112,6 +3112,9 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kUpdateIconsCmd: {
 		DownloadPacksDialog dia(_("icon packs"), "LIST", "gui-icons*.dat");
 		dia.runModal();
+
+		// Refresh the icons
+		g_gui.initIconsSet();
 		break;
 	}
 #endif

@@ -141,7 +141,6 @@ void DialogState::downloadFileCallback(Networking::DataResponse r) {
 	if (response->eos) {
 		if (!takeOneFile()) {
 			state = kDownloadComplete;
-			g_gui.initIconsSet();
 			if (dialog)
 				dialog->sendCommand(kDownloadEndedCmd, 0);
 			return;
@@ -472,9 +471,6 @@ void DownloadPacksDialog::clearCache() {
 			str->finalize();
 		}
 		g_state->fileHash.clear();
-
-		// Reload (now empty) icons set
-		g_gui.initIconsSet();
 
 		// Fetch current packs list file and re-trigger downloads
 		g_state->downloadList();
