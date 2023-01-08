@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-08 00:31+0000\n"
-"PO-Revision-Date: 2023-01-02 20:30+0000\n"
+"PO-Revision-Date: 2023-01-08 13:20+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -214,20 +214,18 @@ msgstr "エラー %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:184 gui/downloadpacksdialog.cpp:239
-#, fuzzy, c-format
-#| msgid "Downloading icons list..."
+#, c-format
 msgid "Downloading %S list..."
-msgstr "アイコンリストをDL中..."
+msgstr "リスト%SをDL中..."
 
 #: gui/downloadpacksdialog.cpp:198
 msgid "Clear Cache"
 msgstr "キャッシュクリア"
 
 #: gui/downloadpacksdialog.cpp:249
-#, fuzzy, c-format
-#| msgid "Downloading icons list... %d entries"
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "アイコンリストをDL中... %d"
+msgstr "リスト%SをDL中... %d"
 
 #: gui/downloadpacksdialog.cpp:259
 #, c-format
@@ -257,10 +255,9 @@ msgstr "エラー：アイコンパス未指定"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:425
-#, fuzzy, c-format
-#| msgid "No new icons packs available"
+#, c-format
 msgid "No new %S available"
-msgstr "新しい利用可能なアイコンパックなし"
+msgstr "新しい利用可能な%Sなし"
 
 #: gui/downloadpacksdialog.cpp:461
 #, c-format
@@ -1202,16 +1199,12 @@ msgid "Shader Path:"
 msgstr "パス："
 
 #: gui/options.cpp:1580
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Shaders"
-msgstr "アップデートの確認："
+msgstr "シェーダーの更新"
 
 #: gui/options.cpp:1580
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of shader packs"
-msgstr "アップデートを確認中..."
+msgstr "シェーダーパックの更新を確認"
 
 #: gui/options.cpp:1586 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
@@ -1633,10 +1626,8 @@ msgid "Update Icons"
 msgstr "アップデートアイコン"
 
 #: gui/options.cpp:2521
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of icon packs"
-msgstr "アップデートを確認中..."
+msgstr "アイコンパックの更新を確認"
 
 #: gui/options.cpp:2528
 msgid "Autosave:"
@@ -1979,11 +1970,11 @@ msgstr "ルートディレクトリーとして使用するフォルダーを選
 
 #: gui/options.cpp:3113
 msgid "icon packs"
-msgstr ""
+msgstr "アイコンパック"
 
 #: gui/options.cpp:3121
 msgid "shader packs"
-msgstr ""
+msgstr "シェーダーパック"
 
 #: gui/options.cpp:3243
 msgid ""
@@ -2205,15 +2196,15 @@ msgstr "セーブデータ%dの詳細を入力してください："
 
 #: gui/shaderbrowser-dialog.cpp:52
 msgid "Choose shader from the list below (or pick a file instead)"
-msgstr ""
+msgstr "以下のリストからシェーダー(orファイル)を選択"
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick file instead..."
-msgstr ""
+msgstr "代替ファイルを選択..."
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick shader from file system"
-msgstr ""
+msgstr "ファイルからシェーダーを選択"
 
 #: gui/shaderbrowser-dialog.cpp:137
 msgid "Select shader"
@@ -4988,16 +4979,12 @@ msgid "Sensors will not shoot the player"
 msgstr "センサーに撃たれなくなる"
 
 #: engines/freescape/metaengine.cpp:90
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable falling"
-msgstr "セーブメニューを無効にする"
+msgstr "落下を無効化"
 
 #: engines/freescape/metaengine.cpp:91
-#, fuzzy
-#| msgid "Player ammo will never decrease."
 msgid "Player cannot fall over edges"
-msgstr "プレイヤーの弾薬が減りません。"
+msgstr "プレイヤーが落ちなくなる"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
