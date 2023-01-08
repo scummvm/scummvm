@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-07 22:56+0000\n"
-"PO-Revision-Date: 2022-12-31 08:10+0000\n"
+"PO-Revision-Date: 2023-01-08 00:14+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1653,11 +1653,11 @@ msgstr "Autospeichern:"
 
 #: gui/options.cpp:2534
 msgid "Random seed:"
-msgstr ""
+msgstr "Seed für Zufallsgenerator:"
 
 #: gui/options.cpp:2534
 msgid "Seed for initializing all random number generators"
-msgstr ""
+msgstr "Seed, um alle Zufallszahlen-Generatoren zu initialisieren"
 
 #: gui/options.cpp:2544
 msgid "Enable Discord integration"
@@ -5035,16 +5035,12 @@ msgid "Sensors will not shoot the player"
 msgstr "Sensoren werden nicht auf den Spieler schießen"
 
 #: engines/freescape/metaengine.cpp:90
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable falling"
-msgstr "Speichermenü deaktivieren"
+msgstr "Fallen deaktivieren"
 
 #: engines/freescape/metaengine.cpp:91
-#, fuzzy
-#| msgid "Player ammo will never decrease."
 msgid "Player cannot fall over edges"
-msgstr "Die Munition des Spielers wird sich nie verringern."
+msgstr "Der Spieler kann nicht über Kanten fallen"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -6587,16 +6583,12 @@ msgstr ""
 
 #. I18N: NHC is a file extension
 #: engines/neverhood/dialogs.cpp:83
-#, fuzzy
-#| msgid "Enable font replacement"
 msgid "NHC replacement:"
-msgstr "Verwende Ersatz-Schriftarten"
+msgstr "Alternative NHC-Datei:"
 
 #: engines/neverhood/dialogs.cpp:89
-#, fuzzy
-#| msgid "Original Save"
 msgid "<original>"
-msgstr "Originaler Spielstand"
+msgstr "<original>"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
