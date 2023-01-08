@@ -80,7 +80,6 @@ void Objectif::load() {
 }
 
 void Objectif::leave() {
-	Application *app = g_engine->getApplication();
 	TeLayout *layout;
 	layout = _gui1.layout("background");
 	if (layout)
