@@ -10,7 +10,6 @@ MODULE_OBJS := \
 	game/character.o \
 	game/character_settings_xml_parser.o \
 	game/characters_shadow.o \
-	game/characters_shadow_opengl.o \
 	game/confirm.o \
 	game/credits.o \
 	game/dialog2.o \
@@ -43,7 +42,6 @@ MODULE_OBJS := \
 	te/micropather.o \
 	te/te_3d_object2.o \
 	te/te_3d_texture.o \
-	te/te_3d_texture_opengl.o \
 	te/te_act_zone.o \
 	te/te_animation.o \
 	te/te_bezier_curve.o \
@@ -68,7 +66,6 @@ MODULE_OBJS := \
 	te/te_jpeg.o \
 	te/te_layout.o \
 	te/te_light.o \
-	te/te_light_opengl.o \
 	te/te_list_layout.o \
 	te/te_lua_context.o \
 	te/te_lua_gui.o \
@@ -79,7 +76,6 @@ MODULE_OBJS := \
 	te/te_matricies_stack.o \
 	te/te_matrix4x4.o \
 	te/te_mesh.o \
-	te/te_mesh_opengl.o \
 	te/te_model.o \
 	te/te_model_animation.o \
 	te/te_model_vertex_animation.o \
@@ -94,7 +90,6 @@ MODULE_OBJS := \
 	te/te_ray_intersection.o \
 	te/te_real_timer.o \
 	te/te_renderer.o \
-	te/te_renderer_opengl.o \
 	te/te_resource.o \
 	te/te_resource_manager.o \
 	te/te_scene.o \
@@ -128,6 +123,14 @@ MODULE_OBJS += \
 	te/te_renderer_tinygl.o
 endif
 
+ifdef USE_OPENGL
+MODULE_OBJS += \
+	game/characters_shadow_opengl.o \
+	te/te_3d_texture_opengl.o \
+	te/te_light_opengl.o \
+	te/te_mesh_opengl.o \
+	te/te_renderer_opengl.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TETRAEDGE), DYNAMIC_PLUGIN)
