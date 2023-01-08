@@ -112,6 +112,7 @@ public:
 	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderSprites(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	bool renderPrePaletteCycle(uint16 frameId, RenderMode mode = kRenderModeNormal);
+	void setLastPalette(uint16 frameId);
 	void renderPaletteCycle(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderCursor(Common::Point pos, bool forceUpdate = false);
 	void updateWidgets(bool hasVideoPlayback);
@@ -171,6 +172,7 @@ private:
 	uint16 _nextFrame;
 	int _currentLabel;
 	DirectorSound *_soundManager;
+	int _currentPalette;
 };
 
 } // End of namespace Director
