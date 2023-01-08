@@ -165,12 +165,6 @@ private:
 
 	void handleDelayedEvents();
 
-	//! Fill a GameInfo struct for the give game name
-	//! \param game The id of the game to check (from pentagram.cfg)
-	//! \param gameinfo The GameInfo struct to fill
-	//! \return true if detected all the fields, false if detection failed
-	bool getGameInfo(const istring &game, GameInfo *gameinfo);
-
 	bool pollEvent(Common::Event &event);
 protected:
 	// Engine APIs

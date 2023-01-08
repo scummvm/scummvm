@@ -363,26 +363,87 @@ Common::Error Ultima8Engine::startup() {
 }
 
 bool Ultima8Engine::setupGame() {
-	istring gamename = _gameDescription->desc.gameId;
 	GameInfo *info = new GameInfo;
-	bool detected = getGameInfo(gamename, info);
+	info->_name = _gameDescription->desc.gameId;
+	info->_type = GameInfo::GAME_UNKNOWN;
+	info->version = 0;
+	info->_language = GameInfo::GAMELANG_UNKNOWN;
+	info->_ucOffVariant = GameInfo::GAME_UC_DEFAULT;
 
-	// output detected game info
-	debugN(MM_INFO, "%s: ", gamename.c_str());
-	if (detected) {
-		// add game to games map
-		Std::string details = info->getPrintDetails();
-		debug(MM_INFO, "%s", details.c_str());
-	} else {
-		debug(MM_INFO, "unknown, skipping");
+	if (info->_name == "ultima8")
+		info->_type = GameInfo::GAME_U8;
+	else if (info->_name == "remorse")
+		info->_type = GameInfo::GAME_REMORSE;
+	else if (info->_name == "regret")
+		info->_type = GameInfo::GAME_REGRET;
+
+	if (info->_type == GameInfo::GAME_REMORSE) {
+		switch (_gameDescription->desc.flags & ADGF_USECODE_MASK) {
+		case ADGF_USECODE_DEMO:
+			info->_ucOffVariant = GameInfo::GAME_UC_DEMO;
+			break;
+		case ADGF_USECODE_ORIG:
+			info->_ucOffVariant = GameInfo::GAME_UC_ORIG;
+			break;
+		case ADGF_USECODE_ES:
+			info->_ucOffVariant = GameInfo::GAME_UC_REM_ES;
+			break;
+		case ADGF_USECODE_FR:
+			info->_ucOffVariant = GameInfo::GAME_UC_REM_FR;
+			break;
+		case ADGF_USECODE_JA:
+			info->_ucOffVariant = GameInfo::GAME_UC_REM_JA;
+			break;
+		default:
+			break;
+		}
+	} else if (info->_type == GameInfo::GAME_REGRET) {
+		switch (_gameDescription->desc.flags & ADGF_USECODE_MASK) {
+		case ADGF_USECODE_DEMO:
+			info->_ucOffVariant = GameInfo::GAME_UC_DEMO;
+			break;
+		case ADGF_USECODE_ORIG:
+			info->_ucOffVariant = GameInfo::GAME_UC_ORIG;
+			break;
+		case ADGF_USECODE_DE:
+			info->_ucOffVariant = GameInfo::GAME_UC_REG_DE;
+			break;
+		default:
+			break;
+		}
+	}
+
+	switch (_gameDescription->desc.language) {
+	case Common::EN_ANY:
+		info->_language = GameInfo::GAMELANG_ENGLISH;
+		break;
+	case Common::FR_FRA:
+		info->_language = GameInfo::GAMELANG_FRENCH;
+		break;
+	case Common::DE_DEU:
+		info->_language = GameInfo::GAMELANG_GERMAN;
+		break;
+	case Common::ES_ESP:
+		info->_language = GameInfo::GAMELANG_SPANISH;
+		break;
+	case Common::JA_JPN:
+		info->_language = GameInfo::GAMELANG_JAPANESE;
+		break;
+	default:
+		error("Unknown language");
+		break;
+	}
+
+	if (info->_type == GameInfo::GAME_UNKNOWN) {
+		warning("%s: unknown, skipping", info->_name.c_str());
 		return false;
 	}
 
+	// output detected game info
+	Std::string details = info->getPrintDetails();
+	debug(MM_INFO, "%s: %s", info->_name.c_str(), details.c_str());
+
 	_gameInfo = info;
-
-	debug(MM_INFO, "Selected game: %s", info->_name.c_str());
-	debug(MM_INFO, "%s", info->getPrintDetails().c_str());
-
 	return true;
 }
 
@@ -847,83 +908,6 @@ void Ultima8Engine::handleDelayedEvents() {
 	//uint32 now = g_system->getMillis();
 
 	_mouse->handleDelayedEvents();
-}
-
-bool Ultima8Engine::getGameInfo(const istring &game, GameInfo *ginfo) {
-	ginfo->_name = game;
-	ginfo->_type = GameInfo::GAME_UNKNOWN;
-	ginfo->version = 0;
-	ginfo->_language = GameInfo::GAMELANG_UNKNOWN;
-	ginfo->_ucOffVariant = GameInfo::GAME_UC_DEFAULT;
-
-	assert(game == "ultima8" || game == "remorse" || game == "regret");
-
-	if (game == "ultima8")
-		ginfo->_type = GameInfo::GAME_U8;
-	else if (game == "remorse")
-		ginfo->_type = GameInfo::GAME_REMORSE;
-	else if (game == "regret")
-		ginfo->_type = GameInfo::GAME_REGRET;
-
-	if (ginfo->_type == GameInfo::GAME_REMORSE)
-	{
-		switch (_gameDescription->desc.flags & ADGF_USECODE_MASK) {
-		case ADGF_USECODE_DEMO:
-			ginfo->_ucOffVariant = GameInfo::GAME_UC_DEMO;
-			break;
-		case ADGF_USECODE_ORIG:
-			ginfo->_ucOffVariant = GameInfo::GAME_UC_ORIG;
-			break;
-		case ADGF_USECODE_ES:
-			ginfo->_ucOffVariant = GameInfo::GAME_UC_REM_ES;
-			break;
-		case ADGF_USECODE_FR:
-			ginfo->_ucOffVariant = GameInfo::GAME_UC_REM_FR;
-			break;
-		case ADGF_USECODE_JA:
-			ginfo->_ucOffVariant = GameInfo::GAME_UC_REM_JA;
-			break;
-		default:
-			break;
-		}
-	} else if (ginfo->_type == GameInfo::GAME_REGRET) {
-		switch (_gameDescription->desc.flags & ADGF_USECODE_MASK) {
-		case ADGF_USECODE_DEMO:
-			ginfo->_ucOffVariant = GameInfo::GAME_UC_DEMO;
-			break;
-		case ADGF_USECODE_ORIG:
-			ginfo->_ucOffVariant = GameInfo::GAME_UC_ORIG;
-			break;
-		case ADGF_USECODE_DE:
-			ginfo->_ucOffVariant = GameInfo::GAME_UC_REG_DE;
-			break;
-		default:
-			break;
-		}
-	}
-
-	switch (_gameDescription->desc.language) {
-	case Common::EN_ANY:
-		ginfo->_language = GameInfo::GAMELANG_ENGLISH;
-		break;
-	case Common::FR_FRA:
-		ginfo->_language = GameInfo::GAMELANG_FRENCH;
-		break;
-	case Common::DE_DEU:
-		ginfo->_language = GameInfo::GAMELANG_GERMAN;
-		break;
-	case Common::ES_ESP:
-		ginfo->_language = GameInfo::GAMELANG_SPANISH;
-		break;
-	case Common::JA_JPN:
-		ginfo->_language = GameInfo::GAMELANG_JAPANESE;
-		break;
-	default:
-		error("Unknown language");
-		break;
-	}
-
-	return ginfo->_type != GameInfo::GAME_UNKNOWN;
 }
 
 void Ultima8Engine::writeSaveInfo(Common::WriteStream *ws) {

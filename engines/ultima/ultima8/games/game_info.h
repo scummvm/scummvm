@@ -39,8 +39,7 @@ struct GameInfo {
 		GAME_UNKNOWN = 0,
 		GAME_U8,
 		GAME_REMORSE,
-		GAME_REGRET,
-		GAME_PENTAGRAM_MENU
+		GAME_REGRET
 	} _type;
 
 	// Usecode coff variant
