@@ -124,7 +124,7 @@ bool UltimaDataArchive::hasFile(const Common::Path &path) const {
 	return _zip->hasFile(realFilename);
 }
 
-int UltimaDataArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::Path &pattern) const {
+int UltimaDataArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::Path &pattern, bool matchPathComponents) const {
 	Common::String patt = pattern.toString();
 	if (patt.hasPrefixIgnoreCase(_publicFolder))
 		patt = innerToPublic(patt);

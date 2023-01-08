@@ -146,7 +146,7 @@ bool XARCArchive::hasFile(const Common::Path &path) const {
 	return false;
 }
 
-int XARCArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::Path &pattern) const {
+int XARCArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::Path &pattern, bool matchPathComponents) const {
 	Common::String patternString = pattern.toString();
 	int matches = 0;
 	for (Common::ArchiveMemberList::const_iterator it = _members.begin(); it != _members.end(); ++it) {
