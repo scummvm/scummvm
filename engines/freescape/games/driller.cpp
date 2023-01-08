@@ -332,6 +332,7 @@ void DrillerEngine::loadAssetsDemo() {
 		loadSoundsFx(&file, 0, 25);
 	} else if (isDOS()) {
 		_renderMode = Common::kRenderCGA; // DOS demos is CGA only
+		_viewArea = Common::Rect(36, 16, 284, 117); // correct view area
 		_gfx->_renderMode = _renderMode;
 		loadBundledImages();
 		file.open("d2");
