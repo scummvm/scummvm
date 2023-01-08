@@ -71,7 +71,7 @@ Common::Archive *JNI::_asset_archive = 0;
 OSystem_Android *JNI::_system = 0;
 
 bool JNI::pause = false;
-sem_t JNI::pause_sem = { 0 };
+sem_t JNI::pause_sem;
 
 int JNI::surface_changeid = 0;
 int JNI::egl_surface_width = 0;
@@ -165,6 +165,7 @@ jint JNI::onLoad(JavaVM *vm) {
 	if (env->RegisterNatives(cls, _natives, ARRAYSIZE(_natives)) < 0)
 		return JNI_ERR;
 
+	env->DeleteLocalRef(cls);
 	return JNI_VERSION_1_2;
 }
 
@@ -550,6 +551,7 @@ void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 
 		env->DeleteLocalRef(path_obj);
 	}
+	env->DeleteLocalRef(array);
 
 	// add the internal asset (android's structure) with a lower priority,
 	// since:
@@ -576,12 +578,16 @@ bool JNI::initSurface() {
 	}
 
 	_jobj_egl_surface = env->NewGlobalRef(obj);
+	env->DeleteLocalRef(obj);
 
 	return true;
 }
 
 void JNI::deinitSurface() {
 	JNIEnv *env = JNI::getEnv();
+
+	env->DeleteGlobalRef(_jobj_egl_surface);
+	_jobj_egl_surface = 0;
 
 	env->CallVoidMethod(_jobj, _MID_deinitSurface);
 
@@ -591,9 +597,6 @@ void JNI::deinitSurface() {
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 	}
-
-	env->DeleteGlobalRef(_jobj_egl_surface);
-	_jobj_egl_surface = 0;
 }
 
 void JNI::setAudioPause() {
@@ -649,19 +652,11 @@ void JNI::setAudioStop() {
 void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 				jobject egl, jobject egl_display,
 				jobject at, jint audio_sample_rate, jint audio_buffer_size) {
-	LOGI("%s", gScummVMFullVersion);
+	LOGI("Native version: %s", gScummVMFullVersion);
 
 	assert(!_system);
 
-	pause = false;
-	// initial value of zero!
-	sem_init(&pause_sem, 0, 0);
-
-	_asset_archive = new AndroidAssetArchive(asset_manager);
-	assert(_asset_archive);
-
-	_system = new OSystem_Android(audio_sample_rate, audio_buffer_size);
-	assert(_system);
+	// Resolve every JNI method before anything else in case we need it
 
 	// weak global ref to allow class to be unloaded
 	// ... except dalvik implements NewWeakGlobalRef only on froyo
@@ -671,11 +666,13 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 
 	jclass cls = env->GetObjectClass(_jobj);
 
-#define FIND_METHOD(prefix, name, signature) do {							\
-		_MID_ ## prefix ## name = env->GetMethodID(cls, #name, signature);	\
-		if (_MID_ ## prefix ## name == 0)									\
-			return;															\
-	} while (0)
+#define FIND_METHOD(prefix, name, signature) do {                           \
+    _MID_ ## prefix ## name = env->GetMethodID(cls, #name, signature);      \
+        if (_MID_ ## prefix ## name == 0) {                                 \
+            LOGE("Can't find function %s", #name);                          \
+            abort();                                                        \
+        }                                                                   \
+    } while (0)
 
 	FIND_METHOD(, setWindowCaption, "(Ljava/lang/String;)V");
 	FIND_METHOD(, getDPI, "([F)V");
@@ -703,6 +700,8 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	_jobj_egl = env->NewGlobalRef(egl);
 	_jobj_egl_display = env->NewGlobalRef(egl_display);
 
+	env->DeleteLocalRef(cls);
+
 	cls = env->GetObjectClass(_jobj_egl);
 
 	FIND_METHOD(EGL10_, eglSwapBuffers,
@@ -710,6 +709,8 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 				"Ljavax/microedition/khronos/egl/EGLSurface;)Z");
 
 	_jobj_audio_track = env->NewGlobalRef(at);
+
+	env->DeleteLocalRef(cls);
 
 	cls = env->GetObjectClass(_jobj_audio_track);
 
@@ -719,7 +720,18 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(AudioTrack_, stop, "()V");
 	FIND_METHOD(AudioTrack_, write, "([BII)I");
 
+	env->DeleteLocalRef(cls);
 #undef FIND_METHOD
+
+	pause = false;
+	// initial value of zero!
+	sem_init(&pause_sem, 0, 0);
+
+	_asset_archive = new AndroidAssetArchive(asset_manager);
+	assert(_asset_archive);
+
+	_system = new OSystem_Android(audio_sample_rate, audio_buffer_size);
+	assert(_system);
 
 	g_system = _system;
 }
@@ -893,6 +905,8 @@ jint JNI::getAndroidSDKVersionId() {
 
 	jint sdkInt = env->GetStaticIntField(versionClass, sdkIntFieldID);
 	//LOGD("sdkInt = %d", sdkInt);
+
+	env->DeleteLocalRef(versionClass);
 	return sdkInt;
 }
 
@@ -917,7 +931,7 @@ Common::U32String JNI::convertFromJString(JNIEnv *env, const jstring &jstr) {
 
 // TODO should this be a U32String array?
 Common::Array<Common::String> JNI::getAllStorageLocations() {
-	Common::Array<Common::String> *res = new Common::Array<Common::String>();
+	Common::Array<Common::String> res;
 
 	JNIEnv *env = JNI::getEnv();
 
@@ -930,7 +944,7 @@ Common::Array<Common::String> JNI::getAllStorageLocations() {
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 
-		return *res;
+		return res;
 	}
 
 	jsize size = env->GetArrayLength(array);
@@ -939,14 +953,15 @@ Common::Array<Common::String> JNI::getAllStorageLocations() {
 		const char *path = env->GetStringUTFChars(path_obj, 0);
 
 		if (path != 0) {
-			res->push_back(path);
+			res.push_back(path);
 			env->ReleaseStringUTFChars(path_obj, path);
 		}
 
 		env->DeleteLocalRef(path_obj);
 	}
 
-	return *res;
+	env->DeleteLocalRef(array);
+	return res;
 }
 
 bool JNI::createDirectoryWithSAF(const Common::String &dirPath) {
@@ -1018,6 +1033,4 @@ bool JNI::isDirectoryWritableWithSAF(const Common::String &dirPath) {
 
 	return isWritable;
 }
-
 #endif
-
