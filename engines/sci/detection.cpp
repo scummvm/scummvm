@@ -183,7 +183,12 @@ public:
 	SciMetaEngineDetection() : AdvancedMetaEngineDetection(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles) {
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
-		_flags = kADFlagMatchFullPaths;
+		// Use SCI fallback detection results instead of the partial matches found by
+		// advanced detector. SCI fallback detection is excellent because games have
+		// predictable file names and contain a unique game string.
+		// Advanced detector's partial matches aren't very useful in SCI because of
+		// those similar file names; most games are partial matches of each other.
+		_flags = kADFlagMatchFullPaths | kADFlagPreferFallbackDetection;
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {
