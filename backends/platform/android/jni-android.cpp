@@ -58,6 +58,8 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
 	return JNI::onLoad(vm);
 }
 
+pthread_key_t JNI::_env_tls;
+
 JavaVM *JNI::_vm = 0;
 jobject JNI::_jobj = 0;
 jobject JNI::_jobj_audio_track = 0;
@@ -141,12 +143,20 @@ JNI::~JNI() {
 }
 
 jint JNI::onLoad(JavaVM *vm) {
+	if (pthread_key_create(&_env_tls, NULL)) {
+		return JNI_ERR;
+	}
+
 	_vm = vm;
 
 	JNIEnv *env;
 
 	if (_vm->GetEnv((void **)&env, JNI_VERSION_1_2))
 		return JNI_ERR;
+
+	if (pthread_setspecific(_env_tls, env)) {
+		return JNI_ERR;
+	}
 
 	jclass cls = env->FindClass("org/scummvm/scummvm/ScummVM");
 	if (cls == 0)
@@ -158,8 +168,8 @@ jint JNI::onLoad(JavaVM *vm) {
 	return JNI_VERSION_1_2;
 }
 
-JNIEnv *JNI::getEnv() {
-	JNIEnv *env = 0;
+JNIEnv *JNI::fetchEnv() {
+	JNIEnv *env;
 
 	jint res = _vm->GetEnv((void **)&env, JNI_VERSION_1_2);
 
@@ -167,6 +177,8 @@ JNIEnv *JNI::getEnv() {
 		LOGE("GetEnv() failed: %d", res);
 		abort();
 	}
+
+	pthread_setspecific(_env_tls, env);
 
 	return env;
 }
@@ -180,9 +192,16 @@ void JNI::attachThread() {
 		LOGE("AttachCurrentThread() failed: %d", res);
 		abort();
 	}
+
+	if (pthread_setspecific(_env_tls, env)) {
+		LOGE("pthread_setspecific() failed");
+		abort();
+	}
 }
 
 void JNI::detachThread() {
+	pthread_setspecific(_env_tls, NULL);
+
 	jint res = _vm->DetachCurrentThread();
 
 	if (res != JNI_OK) {
