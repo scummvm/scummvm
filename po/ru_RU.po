@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-08 00:31+0000\n"
-"PO-Revision-Date: 2023-01-08 13:19+0000\n"
+"PO-Revision-Date: 2023-01-08 13:20+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -5043,7 +5043,7 @@ msgstr "Запретить падение"
 
 #: engines/freescape/metaengine.cpp:91
 msgid "Player cannot fall over edges"
-msgstr "Игрок не сможет падать за край"
+msgstr "Игрок не будет падать в пропасть"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
