@@ -100,7 +100,7 @@ Score::~Score() {
 }
 
 int Score::getCurrentPalette() {
-	return _frames[_currentFrame]->_palette.paletteId;
+	return _lastPalette;
 }
 
 int Score::resolvePaletteId(int id) {
@@ -533,6 +533,7 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 
 	if (!renderTransition(frameId)) {
 		bool skip = renderPrePaletteCycle(frameId, mode);
+		setLastPalette(frameId);
 		renderSprites(frameId, mode);
 		_window->render();
 		if (!skip)
@@ -560,6 +561,7 @@ bool Score::renderTransition(uint16 frameId) {
 		_window->_puppetTransition = nullptr;
 		return true;
 	} else if (currentFrame->_transType) {
+		setLastPalette(frameId);
 		_window->playTransition(frameId, currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType, resolvePaletteId(currentFrame->_palette.paletteId));
 		return true;
 	} else {
@@ -707,7 +709,7 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 	return false;
 }
 
-void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
+void Score::setLastPalette(uint16 frameId) {
 	if (_puppetPalette)
 		return;
 
@@ -721,7 +723,23 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 	if (paletteChanged) {
 		_lastPalette = currentPalette;
 		_paletteTransitionIndex = 0;
+
+		// For color cycling mode, if there's a new palette, switch to it immediately
+//		if (_frames[frameId]->_palette.colorCycling)
+//			g_director->setPalette(resolvePaletteId(_lastPalette));
 	}
+
+}
+
+void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
+	if (_puppetPalette)
+		return;
+
+	// If the palette is defined in the frame and doesn't match
+	// the current one, set it
+	int currentPalette = _frames[frameId]->_palette.paletteId;
+	if (!currentPalette || !resolvePaletteId(currentPalette))
+		return;
 
 	// For palette cycling, the only thing that is checked is if
 	// the palette ID is the same. Different cycling configs with
@@ -741,10 +759,6 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 		// Cycle the colors of a chosen palette
 		int firstColor = _frames[frameId]->_palette.firstColor;
 		int lastColor = _frames[frameId]->_palette.lastColor;
-
-		// If we've just chosen this palette, set it immediately
-		if (paletteChanged)
-			g_director->setPalette(resolvePaletteId(currentPalette));
 
 		if (_frames[frameId]->_palette.overTime) {
 			// Do a single color step in one frame transition
