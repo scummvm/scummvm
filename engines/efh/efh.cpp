@@ -538,7 +538,7 @@ void EfhEngine::initMapMonsters() {
 
 void EfhEngine::loadMapArrays(int idx) {
 	debugC(6, kDebugEngine, "loadMapArrays %d", idx);
-	debug("TODO : rewrite the pre-loadign of data and loadMapArrays in order to avoid to lose info when changing map");
+	debug("TODO : rewrite the pre-loading of data and loadMapArrays in order to avoid to lose info when changing map");
 
 	uint8 *mapSpecialTilePtr = &_mapArr[idx][2];
 

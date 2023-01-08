@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef EFH_EFH_H
-#define EFH_EFH_H
+#ifndef EFH_H
+#define EFH_H
 
 #include "engines/advancedDetector.h"
 
