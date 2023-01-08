@@ -271,7 +271,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "martian",			"Ray Bradbury's The Martian Chronicles Adventure Game" },
 	{ "mask",				"The Mask: The Origin" },
 	{ "mastermansion",		"Masterpiece Mansion" },
-	{ "mastermansionex",	"Masterpiece Mansion: Art Explorer" },
 	{ "mathacejr",			"Math Ace Jr." },  // aka Bit-Bot's Math Voyage
 	{ "mathmystery",		"Math Blaster Mystery: The Great Brain Robbery" },
 	{ "maze",				"The Riddle of the Maze" },
@@ -4272,7 +4271,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Mac filenames contain n° instead of no
 	MACGAME1_l("macsca", "Numéro 12", "Version Director no12", "7093a24634992bf9d23ff31ae1dea424", 284048, Common::FR_FRA, 404),
 
-	WINDEMO1("madpup", "Demo 1", "MAD.EXE", "c135c843d7313da01272f061d2ab64b1", 4725743, 404),
+	WINDEMO2("madpup", "Demo 1", "MAD.EXE",			  "c135c843d7313da01272f061d2ab64b1", 4725743,
+								 "SHARED/CWLOGO.DIR", "78025e16a47ae3826fc2221ced7f4acd", 653008, 404),
 	WINDEMO1("madpup", "Demo 2", "MADPUP2.EXE", "a399589a31c26a01663c00a265ac3640", 696857, 404),
 
 	WINDEMO1("madtg", "1996 Demo", "MADTG.EXE", "f53afbe0ae5126fa04adce4952a84b7f", 5867859, 404),
@@ -4291,8 +4291,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Decomposed variant of the above filename
 	MACDEMO1_l("makingmusic", "Demo", "xn--  -of4abb5d3cqd2fzgpb5ywa2a4b3r6f", "0c7bbb4b24823e5ab871cb4c1d6f3710", 502657, Common::JA_JPN, 404),
 
-	MACGAME1("makers", "", "Makers of the 20th Century", "da0da5d543b237051975ad70bec129f4", 482866, 404),
-	WINGAME1("makers", "", "MAKERS.EXE", "d879d7b40dd9f2eb59a2fbae5bc62306", 690883, 404),
+	MACGAME1("makers", "", "Makers of the 20th Century", "da0da5d543b237051975ad70bec129f4", 482610, 404),
+	WINGAME2("makers", "", "MAKERS.EXE", "d879d7b40dd9f2eb59a2fbae5bc62306", 690883, 
+						   "MAKERS/MAIN.DIR", "05c3dff851aecbfeb1d3818404f3140c", 3391418, 404),
 
 	// Original filename is 'ママ　うたおう！'
 	MACGAME1_l("mamauta1", "", "xn--p6jvhap8h77aa78233b", "8b138db44d4421cc7294a9dc792ccf1b", 308012, Common::JA_JPN, 402),
@@ -4306,16 +4307,21 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Windows version on same disc is D3
 	MACGAME1("mask", "", "The Mask", "32a48ccef630fd453ac3501f72474545", 291308, 403),
 
-	MACGAME1("mastermansion", "", "Masterpiece Mansion", "bdd793ba61c4333dfeaf976d6adc38fe", 285533, 404),
-	WINGAME1("mastermansion", "", "MANSION.EXE", "b397657fec77654afc589000612de963", 84700821, 404),
+	MACGAME2("mastermansion", "", "Masterpiece Mansion", "bdd793ba61c4333dfeaf976d6adc38fe", 285277,
+								  "movs/carm.aif",		 "adbfaa083d5bc24c33f533298f2708ed", 965436, 404),
+	WINGAME2("mastermansion", "", "MANSION.EXE", 	"b397657fec77654afc589000612de963", 84700821,
+								  "MOVS/CARM.AIF",  "adbfaa083d5bc24c33f533298f2708ed", 965436, 404),
 	WINDEMO1t("mastermansion", "Demo", "MANSION.EXE", "c641804b034e11abeaa289ca52c4b38c", 17866669, 404),
-	MACGAME1("mastermansionex", "", "Art Explorer", "9e9696433d18629b88714089034c086b", 285509, 404),
-	WINGAME1("mastermansionex", "", "EXPLORER.EXE", "7a335c6571e359b56453edb78e6fdc53", 36685767, 404),
+	MACGAME2("mastermansion", "Art Explorer", "Art Explorer",  "9e9696433d18629b88714089034c086b", 285253,
+											  "movs/carm.aif", "adbfaa083d5bc24c33f533298f2708ed", 965436, 404),
+	WINGAME2("mastermansion", "Art Explorer", "EXPLORER.EXE",  "7a335c6571e359b56453edb78e6fdc53", 36685767,
+											  "MOVS/CARM.AIF", "adbfaa083d5bc24c33f533298f2708ed", 965436, 404),
 
 	WINDEMO1t_l("mathmystery", "Demo", "LB_DEMO.EXE", "32f5a6d9ad00ece84526e1fe23965524", 698539, Common::NB_NOR, 404),
 
-	MACGAME1("martian", "", "The Martian Chronicles PPC CD", "db9b7f11aea52a294d2986a94a184000", 60328, 400),
-	WINGAME1t("martian", "", "MC.EXE", "55e0837d623be4218b317370abc5fc3b", 1764151, 404),
+	MACGAME1("martian", "", "The Martian Chronicles PPC CD", "db9b7f11aea52a294d2986a94a184000", 60072, 404),
+	WINGAME2t("martian", "", "MC.EXE",			 "55e0837d623be4218b317370abc5fc3b", 1764151,
+							 "BUTTONS/MAIN.QTW", "06a9aab09811715e8ec2cc553c4bdcb4", 1391726, 404),
 
 	MACDEMO1("mathblasterjr", "Preview v1.0c", "Math Blaster Jr. Power MAC", "602e61f10c158183218405dd30a09b3f", 60068, 404),
 	// from Great Adventures by Fisher-Price: Castle (1995)
@@ -4343,7 +4349,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("max3", "", "Max und das Schlossgespenst",  "dd5bb78cb7db5c8fa7b87ddf3136b337", 504078, Common::DE_DEU, 404),
 	MACGAME1_l("max3", "", "Max et le chateau hante",      "504e7e5b53a02dbebd3d19bf9a9b73d9", 504078, Common::FR_FRA, 404),
 	MACGAME1_l("max3", "", "Max en het gele-sokjes-spook", "a2f5930615493c2358b2ad07e731c475", 502790, Common::NL_NLD, 404),
-	WINGAME1_l("max3", "", "MAX3.EXE",     "aba98fa8042bb9f87dedf00be1d19de2", 702881, Common::DE_DEU, 404),
+	WINGAME2_l("max3", "", "MAX3.EXE",      "aba98fa8042bb9f87dedf00be1d19de2", 702881,
+						   "MAX/INTRO.DXR", "d24b1bf0650bf2be02da6b55bf045b2e", 3340376, Common::DE_DEU, 404),
 	WINGAME1_l("max3", "", "M3_START.EXE", "99cc0c88814c402d8de01e8980582d65", 702863, Common::FR_FRA, 404),
 
 	MACGAME1("maxissampler", "", "Maxis Power Mac CD-ROM Sampler", "01be45e7241194dad07938e7059b88e3", 483490, 404),
@@ -4382,10 +4389,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 						  "MILO.EXE", "4035595e298631d18e23dd377fa469c0", 704645, 400),
 	WINGAME1("milo", "v2.02", "milo/milo.exe", "ade4937def30cb38c60f3ac737036577", 704645, 404),
 
-	MACGAME1("mirage", "", "Mirage", "0c7bbb4b24823e5ab871cb4c1d6f3710", 486954, 400),
-	WINGAME1("mirage", "", "MIRAGE.EXE", "2291ea234c14f1ccb8f2e67ae09bbfa3", 696867, 400),
-	MACGAME1("mirage", "Making Of", "The Making of Mirage", "78138a77207907642744d0960c14d9e5", 486982, 400),
-	WINGAME1("mirage", "Making Of", "MAKINGOF.EXE", "2458926212e5589c013b7e7c28b9bee0", 698407, 400),
+	MACGAME1("mirage", "", "Mirage", "0c7bbb4b24823e5ab871cb4c1d6f3710", 486698, 404),
+	WINGAME2("mirage", "", "MIRAGE.EXE", "2291ea234c14f1ccb8f2e67ae09bbfa3", 696867,
+						   "SALOON.DXR", "907076196661a01bc709488945e3aa88", 4118090, 404),
+	MACGAME2("mirage", "Making Of", "The Making of Mirage", "78138a77207907642744d0960c14d9e5", 486726,
+									"MAKING.MOV",			"3d0bca691d8c8c9ca3c37633f4178006", 39280, 404),
+	WINGAME2("mirage", "Making Of", "MAKINGOF.EXE", "2458926212e5589c013b7e7c28b9bee0", 698407,
+									"MAKING.MOV",	"9ef43f401f119a913b3edfcde52de341", 53442432, 404),
 	WINDEMO1t("mirage", "Demo", "MIRAGE.EXE", "83f5b8b60d480ac0d39a8356d9457c81", 1810139, 404),
 
 	MACGAME1("mmiqtest", "", "Multimedia IQ Test", "7fd44b6dffa0ea0402eaed4c3769b39b", 285566, 404),
@@ -4409,7 +4419,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("moworld", "", "MO-World", "27519b873d23565470f627ad2f3d1b03", 321547, Common::JA_JPN, 400),
 
 	MACGAME1_l("murphystv", "", "MURPHY", "8ea9e9a699c61edddffd79ddd0c994d7", 288162, Common::JA_JPN, 402),
-	WINGAME1t_l("murphystv", "", "MURPHY.EXE", "8614c962ec56d95d8a0b602621661bcd", 742693, Common::JA_JPN, 404),
+	WINGAME2t_l("murphystv", "", "MURPHY.EXE",		  "8614c962ec56d95d8a0b602621661bcd", 742693,
+								 "MAF_MAIN/OP_W.DIR", "3abaa54840ef29e069be8811dee5588c", 655758, Common::JA_JPN, 404),
 
 	// Created by Fritsch & Friends MediaGroup, Babelsberg, Germany
 	// Found on In´side MULTIMEDIA: Das Computermagazin mit CD-ROM 07/96 by Tronic Media World, Hesse, Germany
@@ -4467,8 +4478,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("multiakindo", "", "DATA/MA for Mac", "0c7bbb4b24823e5ab871cb4c1d6f3710", 481803, Common::JA_JPN, 404),
 
 	// Both Mac and Win versions require installation to extract executable and some data files
-	MACGAME1("mummy", "", "MUMMY", "01be45e7241194dad07938e7059b88e3", 503560, 400),
-	WINGAME1("mummy", "", "MUMMY.EXE", "2ebe3a4ef8c128db46794333d4b61c36", 2939630, 404),
+	MACGAME1("mummy", "", "MUMMY", "01be45e7241194dad07938e7059b88e3", 503304, 404),
+	WINGAME2("mummy", "", "MUMMY.EXE",		  "2ebe3a4ef8c128db46794333d4b61c36", 2939630,
+						  "MUSIC/INTRO1.MOV", "a7df6b011014719d3fbc9c5f1af18f3b", 1919338, 404),
 
 	// Demo for a game that is detected in mTropolis engine
 	WINDEMO1("mti", "Demo", "MUPPETS/MUPPETS.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400),
@@ -8250,7 +8262,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("stalker", "Press Kit", "Stalker.exe", "c612aa43e7ef55aa4fd2e1085fb1ef7a", 55314588, 900),
 
 	// Most likely this is ES_MEX. Find more examples to justify a new language code.
-	WINGAME1_l("timmysafari", "", "safari.exe", "c612aa43e7ef55aa4fd2e1085fb1ef7a", 2891613, Common::ES_ESP, 900),
+	WINGAME2_l("timmysafari", "", "safari.exe", 		"c612aa43e7ef55aa4fd2e1085fb1ef7a", 2891613,
+								  "menus/mainmenu.dxr", "61c019c326dae90c3ff7f53edf9c21b5", 95556, Common::ES_ESP, 900),
 
 	// Classic Mac OS versions of these TKKG games are D8
 	// ein Fall für TKKG: Film ab! (bilingual DE/EN)
