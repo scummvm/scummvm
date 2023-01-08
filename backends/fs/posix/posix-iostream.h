@@ -29,17 +29,8 @@
  */
 class PosixIoStream final : public StdioStream {
 public:
-#if defined(ANDROID_PLAIN_PORT)
-	bool createdWithSAF;
-	Common::String hackyfilename;
-#endif
-
 	static PosixIoStream *makeFromPath(const Common::String &path, bool writeMode);
 	PosixIoStream(void *handle);
-#if defined(ANDROID_PLAIN_PORT)
-	PosixIoStream(void *handle, bool bCreatedWithSAF, Common::String sHackyFilename);
-	~PosixIoStream() override;
-#endif
 
 	int64 size() const override;
 };

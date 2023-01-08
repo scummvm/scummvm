@@ -55,10 +55,6 @@
 #include <os2.h>
 #endif
 
-#if defined(ANDROID_PLAIN_PORT)
-#include "backends/platform/android/jni-android.h"
-#endif
-
 bool POSIXFilesystemNode::exists() const {
 	return access(_path.c_str(), F_OK) == 0;
 }
@@ -68,14 +64,7 @@ bool POSIXFilesystemNode::isReadable() const {
 }
 
 bool POSIXFilesystemNode::isWritable() const {
-	bool retVal = access(_path.c_str(), W_OK) == 0;
-#if defined(ANDROID_PLAIN_PORT)
-	if (!retVal) {
-		// Update return value if going through Android's SAF grants the permission
-		retVal = JNI::isDirectoryWritableWithSAF(_path);
-	}
-#endif // ANDROID_PLAIN_PORT
-	return retVal;
+	return access(_path.c_str(), W_OK) == 0;
 }
 
 void POSIXFilesystemNode::setFlags() {
@@ -179,23 +168,6 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 	}
 #endif
 
-#if defined(ANDROID_PLAIN_PORT)
-	if (_path == "/") {
-		Common::Array<Common::String> list = JNI::getAllStorageLocations();
-		for (Common::Array<Common::String>::const_iterator it = list.begin(), end = list.end(); it != end; ++it) {
-			POSIXFilesystemNode *entry = new POSIXFilesystemNode();
-
-			entry->_isDirectory = true;
-			entry->_isValid = true;
-			entry->_displayName = *it;
-			++it;
-			entry->_path = *it;
-			myList.push_back(entry);
-		}
-		return true;
-	}
-#endif
-
 	DIR *dirp = opendir(_path.c_str());
 	struct dirent *dp;
 
@@ -272,12 +244,6 @@ AbstractFSNode *POSIXFilesystemNode::getParent() const {
 	if (_path.size() == 3 && _path.hasSuffix(":/"))
 		// This is a root directory of a drive
 		return makeNode("/");   // return a virtual root for a list of drives
-#elif defined(ANDROID_PLAIN_PORT)
-	Common::String pathCopy = _path;
-	pathCopy.trim();
-	if (pathCopy.empty()) {
-		return makeNode("/");   // return a virtual root for a list of drives
-	}
 #endif
 
 	const char *start = _path.c_str();
@@ -310,17 +276,6 @@ Common::SeekableWriteStream *POSIXFilesystemNode::createWriteStream() {
 bool POSIXFilesystemNode::createDirectory() {
 	if (mkdir(_path.c_str(), 0755) == 0)
 		setFlags();
-#if defined(ANDROID_PLAIN_PORT)
-	else {
-		// TODO eventually android specific stuff should be moved to an Android backend for fs
-		//      peterkohaut already has some work on that in his fork (moving the port to more native code)
-		//      However, I have not found a way to do this Storage Access Framework stuff natively yet.
-		if (JNI::createDirectoryWithSAF(_path)) {
-			setFlags();
-		}
-	}
-#endif // ANDROID_PLAIN_PORT
-
 
 	return _isValid && _isDirectory;
 }

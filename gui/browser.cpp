@@ -103,22 +103,8 @@ void BrowserDialog::open() {
 	// Call super implementation
 	Dialog::open();
 
-#if defined(ANDROID_PLAIN_PORT)
-	// Currently, the "default" path in Android port will present a list of shortcuts, (most of) which should be usable.
-	// The "/" will list these shortcuts (see POSIXFilesystemNode::getChildren())
-	Common::String blPath = "/";
-	if (ConfMan.hasKey("browser_lastpath")) {
-		Common::String blPathCandidate = ConfMan.get("browser_lastpath");
-		blPathCandidate.trim();
-		if (!blPathCandidate.empty()) {
-			blPath = blPathCandidate;
-		}
-	}
-	_node = Common::FSNode(blPath);
-#else
 	if (ConfMan.hasKey("browser_lastpath"))
 		_node = Common::FSNode(ConfMan.get("browser_lastpath"));
-#endif
 
 	if (!_node.isDirectory())
 		_node = Common::FSNode(".");
@@ -133,23 +119,7 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	switch (cmd) {
 	//Search for typed-in directory
 	case kPathEditedCmd:
-#if defined(ANDROID_PLAIN_PORT)
-	{
-		// Currently, the "default" path in Android port will present a list of shortcuts, (most of) which should be usable.
-		// The "/" will list these shortcuts (see POSIXFilesystemNode::getChildren())
-		// If the user enters an empty text or blank spaces for the path, then upon committing it as an edit,
-		// Android will show the list of shortcuts and default the path text field to "/".
-		// The code is placed in brackets for edtPath var to have proper local scope in this particular switch case.
-		Common::String edtPath = Common::convertFromU32String(_currentPath->getEditString());
-		edtPath.trim();
-		if (edtPath.empty()) {
-			edtPath = "/";
-		}
-		_node = Common::FSNode(edtPath);
-	}
-#else
 		_node = Common::FSNode(Common::convertFromU32String(_currentPath->getEditString()));
-#endif
 		updateListing();
 		break;
 	//Search by text input
