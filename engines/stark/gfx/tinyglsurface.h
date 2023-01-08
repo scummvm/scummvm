@@ -33,7 +33,7 @@ namespace Stark {
 namespace Gfx {
 
 class TinyGLDriver;
-class Texture;
+class Bitmap;
 
 /**
  * An programmable pipeline TinyGL surface renderer
@@ -44,8 +44,8 @@ public:
 	virtual ~TinyGLSurfaceRenderer();
 
 	// SurfaceRenderer API
-	void render(const Texture *texture, const Common::Point &dest) override;
-	void render(const Texture *texture, const Common::Point &dest, uint width, uint height) override;
+	void render(const Bitmap *bitmap, const Common::Point &dest) override;
+	void render(const Bitmap *bitmap, const Common::Point &dest, uint width, uint height) override;
 
 private:
 	Math::Vector2d normalizeOriginalCoordinates(int x, int y) const;

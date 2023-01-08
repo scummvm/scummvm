@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	gfx/openglssurface.o \
 	gfx/opengl.o \
 	gfx/openglactor.o \
+	gfx/openglbitmap.o \
 	gfx/openglfade.o \
 	gfx/openglprop.o \
 	gfx/openglsurface.o \

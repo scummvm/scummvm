@@ -21,7 +21,6 @@
 
 #include "engines/stark/ui/cursor.h"
 #include "engines/stark/gfx/driver.h"
-#include "engines/stark/gfx/texture.h"
 #include "engines/stark/services/gameinterface.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
@@ -85,7 +84,7 @@ void Cursor::setItemActive(bool itemActive) {
 
 void Cursor::onScreenChanged() {
 	if (_mouseText) {
-		_mouseText->resetTexture();
+		_mouseText->reset();
 	}
 }
 

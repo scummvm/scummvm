@@ -19,7 +19,7 @@
  *
  */
 
-#include "engines/stark/gfx/opengltexture.h"
+#include "engines/stark/gfx/openglbitmap.h"
 
 #include "engines/stark/gfx/driver.h"
 
@@ -32,10 +32,9 @@
 namespace Stark {
 namespace Gfx {
 
-OpenGlTexture::OpenGlTexture() :
-	Texture(),
-	_id(0),
-	_levelCount(0) {
+OpenGlBitmap::OpenGlBitmap() :
+	Bitmap(),
+	_id(0) {
 	glGenTextures(1, &_id);
 
 	bind();
@@ -47,56 +46,47 @@ OpenGlTexture::OpenGlTexture() :
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
-OpenGlTexture::~OpenGlTexture() {
+OpenGlBitmap::~OpenGlBitmap() {
 	glDeleteTextures(1, &_id);
 }
 
-void OpenGlTexture::bind() const {
+void OpenGlBitmap::bind() const {
 	glBindTexture(GL_TEXTURE_2D, _id);
 }
 
-void OpenGlTexture::updateLevel(uint32 level, const Graphics::Surface *surface, const byte *palette) {
+void OpenGlBitmap::update(const Graphics::Surface *surface, const byte *palette) {
+	bind();
+
+	_width = surface->w;
+	_height = surface->h;
+
 	if (surface->format.bytesPerPixel != 4) {
 		// Convert the surface to texture format
 		Graphics::Surface *convertedSurface = surface->convertTo(Driver::getRGBAPixelFormat(), palette);
 
-		glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, convertedSurface->w, convertedSurface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, convertedSurface->getPixels());
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, convertedSurface->w, convertedSurface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, convertedSurface->getPixels());
 
 		convertedSurface->free();
 		delete convertedSurface;
 	} else {
 		assert(surface->format == Driver::getRGBAPixelFormat());
 
-		glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
 	}
 }
 
-void OpenGlTexture::setLevelCount(uint32 count) {
-	_levelCount = count;
-
-	if (count >= 1) {
-#if !USE_FORCED_GLES2
-		// GLES2 does not allow setting the max provided mipmap level.
-		// It expects all the levels to be provided, which is not the case in TLJ.
-		// FIXME: Enable mipmapping on GLES2
-		if (OpenGLContext.type != OpenGL::kContextGLES2) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, count - 1);
-
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-#endif
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-	}
-}
-
-void OpenGlTexture::addLevel(uint32 level, const Graphics::Surface *surface, const byte *palette) {
-	assert(level < _levelCount);
-
-	if (level == 0 || OpenGLContext.type != OpenGL::kContextGLES2) {
-		updateLevel(level, surface, palette);
+void OpenGlBitmap::setSamplingFilter(Bitmap::SamplingFilter filter) {
+	switch (filter) {
+	case kNearest:
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		break;
+	case kLinear:
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		break;
+	default:
+		warning("Unhandled sampling filter %d", filter);
 	}
 }
 

@@ -22,7 +22,7 @@
 #ifndef STARK_GFX_TINYGL_BITMAP_H
 #define STARK_GFX_TINYGL_BITMAP_H
 
-#include "engines/stark/gfx/texture.h"
+#include "engines/stark/gfx/bitmap.h"
 
 #include "graphics/tinygl/tinygl.h"
 
@@ -32,25 +32,21 @@ namespace Gfx {
 /**
  * An TinyGL bitmap wrapper
  */
-class TinyGlBitmap : public Texture {
+class TinyGlBitmap : public Bitmap {
 public:
 	TinyGlBitmap();
 	virtual ~TinyGlBitmap();
 
-	// Texture API
+	// Bitmap API
 	void bind() const override;
-	TinyGL::BlitImage *getBlitTexture() const;
+	TinyGL::BlitImage *getBlitImage() const;
 	void update(const Graphics::Surface *surface, const byte *palette = nullptr) override;
 	void setSamplingFilter(SamplingFilter filter) override;
-	void setLevelCount(uint32 count) override;
-	void addLevel(uint32 level, const Graphics::Surface *surface, const byte *palette = nullptr) override;
-	uint32 getTexture1x1Color() { return _texture1x1Color; }
+	uint32 get1x1Color() { return _1x1Color; }
 
 protected:
-	void updateLevel(uint32 level, const Graphics::Surface *surface, const byte *palette = nullptr);
-
 	TinyGL::BlitImage *_blitImage;
-	uint32 _texture1x1Color;
+	uint32 _1x1Color;
 };
 
 } // End of namespace Gfx

@@ -28,7 +28,7 @@
 #include "engines/stark/debug.h"
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/surfacerenderer.h"
-#include "engines/stark/gfx/texture.h"
+#include "engines/stark/gfx/bitmap.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/settings.h"
@@ -40,8 +40,8 @@ namespace Stark {
 VisualText::VisualText(Gfx::Driver *gfx) :
 		Visual(TYPE),
 		_gfx(gfx),
-		_texture(nullptr),
-		_bgTexture(nullptr),
+		_bitmap(nullptr),
+		_bgBitmap(nullptr),
 		_color(Color(0, 0, 0)),
 		_backgroundColor(Color(0, 0, 0, 0)),
 		_align(Graphics::kTextAlignLeft),
@@ -55,20 +55,20 @@ VisualText::VisualText(Gfx::Driver *gfx) :
 }
 
 VisualText::~VisualText() {
-	freeTexture();
+	freeBitmap();
 	delete _surfaceRenderer;
 }
 
 Common::Rect VisualText::getRect() {
-	if (!_texture) {
-		createTexture();
+	if (!_bitmap) {
+		createBitmap();
 	}
 	return _originalRect;
 }
 
 void VisualText::setText(const Common::String &text) {
 	if (_text != text) {
-		freeTexture();
+		freeBitmap();
 		_text = text;
 	}
 }
@@ -78,7 +78,7 @@ void VisualText::setColor(const Color &color) {
 		return;
 	}
 
-	freeTexture();
+	freeBitmap();
 	_color = color;
 }
 
@@ -87,34 +87,34 @@ void VisualText::setBackgroundColor(const Color &color) {
 		return;
 	}
 
-	freeTexture();
+	freeBitmap();
 	_backgroundColor = color;
 }
 
 void VisualText::setAlign(Graphics::TextAlign align) {
 	if (align != _align) {
-		freeTexture();
+		freeBitmap();
 		_align = align;
 	}
 }
 
 void VisualText::setTargetWidth(uint32 width) {
 	if (width != _targetWidth) {
-		freeTexture();
+		freeBitmap();
 		_targetWidth = width;
 	}
 }
 
 void VisualText::setTargetHeight(uint32 height) {
 	if (height != _targetHeight) {
-		freeTexture();
+		freeBitmap();
 		_targetHeight = height;
 	}
 }
 
 void VisualText::setFont(FontProvider::FontType type, int32 customFontIndex) {
 	if (type != _fontType || customFontIndex != _fontCustomIndex) {
-		freeTexture();
+		freeBitmap();
 		_fontType = type;
 		_fontCustomIndex = customFontIndex;
 	}
@@ -237,7 +237,7 @@ static void blendWithColor(Graphics::Surface *source, const Color &color) {
 	}
 }
 
-void VisualText::createTexture() {
+void VisualText::createBitmap() {
 	Common::CodePage codePage = StarkSettings->getTextCodePage();
 	Common::U32String unicodeText = Common::convertToU32String(_text.c_str(), codePage);
 
@@ -292,13 +292,13 @@ void VisualText::createTexture() {
 	blendWithColor(&surface, _color);
 	multiplyColorWithAlpha(&surface);
 
-	// Create a texture from the surface
-	_texture = _gfx->createBitmap(&surface);
-	_texture->setSamplingFilter(Gfx::Texture::kNearest);
+	// Create a bitmap from the surface
+	_bitmap = _gfx->createBitmap(&surface);
+	_bitmap->setSamplingFilter(Gfx::Bitmap::kNearest);
 
 	surface.free();
 
-	// If we have a background color, generate a 1x1px texture of that color
+	// If we have a background color, generate a 1x1px bitmap of that color
 	if (_backgroundColor.a != 0) {
 		surface.create(1, 1, Gfx::Driver::getRGBAPixelFormat());
 
@@ -309,33 +309,33 @@ void VisualText::createTexture() {
 		surface.fillRect(Common::Rect(surface.w, surface.h), bgColor);
 		multiplyColorWithAlpha(&surface);
 
-		_bgTexture = _gfx->createBitmap(&surface);
+		_bgBitmap = _gfx->createBitmap(&surface);
 
 		surface.free();
 	}
 }
 
-void VisualText::freeTexture() {
-	delete _texture;
-	_texture = nullptr;
-	delete _bgTexture;
-	_bgTexture = nullptr;
+void VisualText::freeBitmap() {
+	delete _bitmap;
+	_bitmap = nullptr;
+	delete _bgBitmap;
+	_bgBitmap = nullptr;
 }
 
 void VisualText::render(const Common::Point &position) {
-	if (!_texture) {
-		createTexture();
+	if (!_bitmap) {
+		createBitmap();
 	}
 
-	if (_bgTexture) {
-		_surfaceRenderer->render(_bgTexture, position, _texture->width(), _texture->height());
+	if (_bgBitmap) {
+		_surfaceRenderer->render(_bgBitmap, position, _bitmap->width(), _bitmap->height());
 	}
 
-	_surfaceRenderer->render(_texture, position);
+	_surfaceRenderer->render(_bitmap, position);
 }
 
-void VisualText::resetTexture() {
-	freeTexture();
+void VisualText::reset() {
+	freeBitmap();
 }
 
 bool VisualText::isBlank() {

@@ -28,7 +28,7 @@
 #include "engines/stark/services/gamechapter.h"
 #include "engines/stark/services/gamemessage.h"
 #include "engines/stark/gfx/driver.h"
-#include "engines/stark/gfx/texture.h"
+#include "engines/stark/gfx/bitmap.h"
 #include "engines/stark/gfx/surfacerenderer.h"
 #include "engines/stark/stark.h"
 #include "engines/stark/savemetadata.h"
@@ -239,7 +239,7 @@ SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *s
 		_screen(screen),
 		_thumbWidth(kThumbnailWidth),
 		_thumbHeight(kThumbnailHeight),
-		_texture(gfx->createBitmap()),
+		_bitmap(gfx->createBitmap()),
 		_outline(gfx->createBitmap()),
 		_surfaceRenderer(gfx->createSurfaceRenderer()),
 		_textDesc(gfx),
@@ -261,7 +261,7 @@ SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *s
 			_outlineColor.a, _outlineColor.r, _outlineColor.g, _outlineColor.b
 	);
 
-	// Create the outline texture
+	// Create the outline bitmap
 	Graphics::Surface lineSurface;
 	lineSurface.create(_thumbWidth, _thumbHeight, pixelFormat);
 	lineSurface.drawThickLine(0, 0, _thumbWidth - 1, 0, 2, 2, outlineColor);
@@ -284,13 +284,13 @@ SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *s
 }
 
 SaveDataWidget::~SaveDataWidget() {
-	delete _texture;
+	delete _bitmap;
 	delete _outline;
 	delete _surfaceRenderer;
 }
 
 void SaveDataWidget::render() {
-	_surfaceRenderer->render(_texture, _thumbPos);
+	_surfaceRenderer->render(_bitmap, _thumbPos);
 	_textDesc.render(_textDescPos);
 	_textTime.render(_textTimePos);
 	if (_isMouseHovered) {
@@ -315,8 +315,8 @@ void SaveDataWidget::onMouseMove(const Common::Point &mousePos) {
 
 void SaveDataWidget::onScreenChanged() {
 	StaticLocationWidget::onScreenChanged();
-	_textDesc.resetTexture();
-	_textTime.resetTexture();
+	_textDesc.reset();
+	_textTime.reset();
 }
 
 void SaveDataWidget::loadSaveDataElements() {
@@ -335,8 +335,8 @@ void SaveDataWidget::loadSaveDataElements() {
 		// Obtain the thumbnail
 		if (metadata.version >= 9) {
 			Graphics::Surface *thumb = metadata.readGameScreenThumbnail(&stream);
-			_texture->update(thumb);
-			_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
+			_bitmap->update(thumb);
+			_bitmap->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 
 			thumb->free();
 			delete thumb;

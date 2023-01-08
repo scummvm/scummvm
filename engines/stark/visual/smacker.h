@@ -40,7 +40,7 @@ namespace Stark {
 namespace Gfx {
 class Driver;
 class SurfaceRenderer;
-class Texture;
+class Bitmap;
 }
 
 class VisualSmacker : public Visual {
@@ -97,7 +97,7 @@ private:
 
 	Gfx::Driver *_gfx;
 	Gfx::SurfaceRenderer *_surfaceRenderer;
-	Gfx::Texture *_texture;
+	Gfx::Bitmap *_bitmap;
 	int32 _overridenFramerate;
 };
 

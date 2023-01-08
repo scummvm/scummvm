@@ -23,7 +23,7 @@
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/surfacerenderer.h"
-#include "engines/stark/gfx/texture.h"
+#include "engines/stark/gfx/bitmap.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/settings.h"
@@ -40,7 +40,7 @@ VisualSmacker::VisualSmacker(Gfx::Driver *gfx) :
 		Visual(TYPE),
 		_gfx(gfx),
 		_surface(nullptr),
-		_texture(nullptr),
+		_bitmap(nullptr),
 		_decoder(nullptr),
 		_position(0, 0),
 		_originalWidth(0),
@@ -50,13 +50,13 @@ VisualSmacker::VisualSmacker(Gfx::Driver *gfx) :
 }
 
 VisualSmacker::~VisualSmacker() {
-	delete _texture;
+	delete _bitmap;
 	delete _decoder;
 	delete _surfaceRenderer;
 }
 
 void VisualSmacker::loadSmacker(Common::SeekableReadStream *stream) {
-	delete _texture;
+	delete _bitmap;
 	delete _decoder;
 
 	_decoder = new Video::SmackerDecoder();
@@ -67,7 +67,7 @@ void VisualSmacker::loadSmacker(Common::SeekableReadStream *stream) {
 }
 
 void VisualSmacker::loadBink(Common::SeekableReadStream *stream) {
-	delete _texture;
+	delete _bitmap;
 	delete _decoder;
 
 	_decoder = new Video::BinkDecoder();
@@ -84,8 +84,8 @@ void VisualSmacker::init() {
 
 	rewind();
 
-	_texture = _gfx->createBitmap();
-	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
+	_bitmap = _gfx->createBitmap();
+	_bitmap->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 
 	update();
 }
@@ -102,7 +102,7 @@ void VisualSmacker::render(const Common::Point &position) {
 	assert(_decoder->getCurFrame() >= 0);
 
 	// The position argument contains the scroll offset
-	_surfaceRenderer->render(_texture, _position - position, _originalWidth, _originalHeight);
+	_surfaceRenderer->render(_bitmap, _position - position, _originalWidth, _originalHeight);
 }
 
 void VisualSmacker::update() {
@@ -141,11 +141,11 @@ void VisualSmacker::update() {
 				}
 			}
 
-			_texture->update(&convertedSurface);
+			_bitmap->update(&convertedSurface);
 
 			convertedSurface.free();
 		} else {
-			_texture->update(_surface);
+			_bitmap->update(_surface);
 		}
 	}
 }

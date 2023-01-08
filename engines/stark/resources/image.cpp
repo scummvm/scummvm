@@ -358,7 +358,7 @@ void ImageText::resetVisual() {
 
 	VisualText *text = _visual->get<VisualText>();
 	if (text) {
-		text->resetTexture();
+		text->reset();
 	}
 }
 

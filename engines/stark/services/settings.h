@@ -26,7 +26,7 @@
 #include "common/language.h"
 #include "common/ustr.h"
 
-#include "engines/stark/gfx/texture.h"
+#include "engines/stark/gfx/bitmap.h"
 #include "engines/stark/services/services.h"
 
 struct ADGameDescription;
@@ -102,7 +102,7 @@ public:
 	/**
 	 * Should the engine apply alpha pre-multiplication when loading replacement PNGs
 	 *
-	 * When rendering, textures are expected to be in pre-multiplied alpha format.
+	 * When rendering, bitmaps are expected to be in pre-multiplied alpha format.
 	 * It's best to have the PNGs in that format on file to speed up loading by removing
 	 * the need to convert them. However this option enables the conversion when loading
 	 * the files to they can be stored with regular alpha transparency for convenience
@@ -110,8 +110,8 @@ public:
 	 */
 	bool shouldPreMultiplyReplacementPNGs() const;
 
-	/** Should linear filtering be used when sampling the background image textures? */
-	Gfx::Texture::SamplingFilter getImageSamplingFilter() const;
+	/** Should linear filtering be used when sampling the background image bitmaps? */
+	Gfx::Bitmap::SamplingFilter getImageSamplingFilter() const;
 
 	/** The codepage text is encoded in or this version of the game */
 	Common::CodePage getTextCodePage() const;

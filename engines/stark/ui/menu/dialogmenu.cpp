@@ -384,7 +384,7 @@ void DialogTitleWidget::onClick() {
 }
 
 void DialogTitleWidget::onScreenChanged() {
-	_text.resetTexture();
+	_text.reset();
 }
 
 } // End of namespace Stark

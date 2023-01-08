@@ -19,48 +19,52 @@
  *
  */
 
-#ifndef STARK_GFX_OPENGL_S_SURFACE_H
-#define STARK_GFX_OPENGL_S_SURFACE_H
+#ifndef STARK_GFX_BITMAP_H
+#define STARK_GFX_BITMAP_H
 
-#include "engines/stark/gfx/surfacerenderer.h"
+#include "common/hash-str.h"
 
-#include "math/vector2d.h"
-
-#if defined(USE_OPENGL_SHADERS)
-
-namespace OpenGL {
-class Shader;
+namespace Graphics {
+	struct Surface;
 }
 
 namespace Stark {
 namespace Gfx {
 
-class OpenGLSDriver;
-class Bitmap;
-
 /**
- * An programmable pipeline OpenGL surface renderer
+ * An abstract bitmap
  */
-class OpenGLSSurfaceRenderer : public SurfaceRenderer {
+class Bitmap {
 public:
-	OpenGLSSurfaceRenderer(OpenGLSDriver *gfx);
-	virtual ~OpenGLSSurfaceRenderer();
+	Bitmap() : _width(0), _height(0) {}
+	virtual ~Bitmap() {}
 
-	// SurfaceRenderer API
-	void render(const Bitmap *bitmap, const Common::Point &dest) override;
-	void render(const Bitmap *bitmap, const Common::Point &dest, uint width, uint height) override;
+	enum SamplingFilter {
+		kNearest,
+		kLinear
+	};
 
-private:
-	Math::Vector2d normalizeOriginalCoordinates(int x, int y) const;
-	Math::Vector2d normalizeCurrentCoordinates(int x, int y) const;
+	/** Make the texture active */
+	virtual void bind() const = 0;
 
-	OpenGLSDriver *_gfx;
-	OpenGL::Shader *_shader;
+	/** Define or update the texture pixel data */
+	virtual void update(const Graphics::Surface *surface, const byte *palette = nullptr) = 0;
+
+	/** Set the filter used when sampling the texture */
+	virtual void setSamplingFilter(SamplingFilter filter) = 0;
+
+	/** Get the texture width */
+	uint32 width() const { return _width; }
+
+	/** Get the texture height */
+	uint32 height() const { return _height; }
+
+protected:
+	uint32 _width;
+	uint32 _height;
 };
 
 } // End of namespace Gfx
 } // End of namespace Stark
 
-#endif // defined(USE_OPENGL_SHADERS)
-
-#endif // STARK_GFX_OPENGL_S_SURFACE_H
+#endif // STARK_GFX_BITMAP_H

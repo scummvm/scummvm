@@ -48,10 +48,10 @@ InventoryWindow::InventoryWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *a
 	_position = Common::Rect(Gfx::Driver::kGameViewportWidth, Gfx::Driver::kGameViewportHeight);
 	_position.translate(0, Gfx::Driver::kTopBorderHeight);
 
-	_backgroundTexture = StarkStaticProvider->getUIImage(StaticProvider::kInventoryBg);
+	_backgroundImage = StarkStaticProvider->getUIImage(StaticProvider::kInventoryBg);
 
 	// Center the background in the window
-	_backgroundRect = Common::Rect(_backgroundTexture->getWidth(), _backgroundTexture->getHeight());
+	_backgroundRect = Common::Rect(_backgroundImage->getWidth(), _backgroundImage->getHeight());
 	_backgroundRect.translate((_position.width() - _backgroundRect.width()) / 2,
 			(_position.height() - _backgroundRect.height()) / 2);
 
@@ -121,7 +121,7 @@ Common::Rect InventoryWindow::getItemRect(uint32 slot, VisualImageXMG *image) co
 void InventoryWindow::onRender() {
 	_renderEntries = StarkGlobal->getInventory()->getInventoryRenderEntries();
 
-	_backgroundTexture->render(Common::Point(_backgroundRect.left, _backgroundRect.top), false);
+	_backgroundImage->render(Common::Point(_backgroundRect.left, _backgroundRect.top), false);
 	drawScrollArrows();
 
 	for (uint i = _firstVisibleSlot; i < _renderEntries.size() && isSlotVisible(i); i++) {

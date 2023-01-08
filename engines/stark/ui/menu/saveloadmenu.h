@@ -30,7 +30,7 @@
 namespace Stark {
 
 namespace Gfx {
-class Texture;
+class Bitmap;
 class SurfaceRenderer;
 }
 
@@ -165,8 +165,8 @@ private:
 	Common::Point _thumbPos, _textDescPos, _textTimePos;
 	int _thumbWidth, _thumbHeight;
 
-	Gfx::Texture *_texture;
-	Gfx::Texture *_outline;
+	Gfx::Bitmap *_bitmap;
+	Gfx::Bitmap *_outline;
 	Gfx::SurfaceRenderer *_surfaceRenderer;
 
 	VisualText _textDesc, _textTime;

@@ -49,8 +49,8 @@ DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
 
 	_visible = true;
 
-	_activeBackGroundTexture = StarkStaticProvider->getUIElement(StaticProvider::kTextBackgroundActive);
-	_passiveBackGroundTexture = StarkStaticProvider->getUIElement(StaticProvider::kTextBackgroundPassive);
+	_activeBackGroundImage = StarkStaticProvider->getUIElement(StaticProvider::kTextBackgroundActive);
+	_passiveBackGroundImage = StarkStaticProvider->getUIElement(StaticProvider::kTextBackgroundPassive);
 	_scrollUpArrowImage = StarkStaticProvider->getUIElement(StaticProvider::kTextScrollUpArrow);
 	_scrollDownArrowImage = StarkStaticProvider->getUIElement(StaticProvider::kTextScrollDownArrow);
 	_dialogOptionBullet = StarkStaticProvider->getUIImage(StaticProvider::kDialogOptionBullet);
@@ -142,12 +142,12 @@ void DialogPanel::onGameLoop() {
 void DialogPanel::onRender() {
 	// Draw options if available
 	if (!_options.empty()) {
-		_activeBackGroundTexture->render(Common::Point(0, 0), false);
+		_activeBackGroundImage->render(Common::Point(0, 0), false);
 
 		renderOptions();
 		renderScrollArrows();
 	} else {
-		_passiveBackGroundTexture->render(Common::Point(0, 0), false);
+		_passiveBackGroundImage->render(Common::Point(0, 0), false);
 
 		// Draw subtitle if available
 		if (_subtitleVisual && StarkSettings->getBoolSetting(Settings::kSubtitle)) {

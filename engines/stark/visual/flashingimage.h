@@ -40,7 +40,7 @@ namespace Stark {
 namespace Gfx {
 class Driver;
 class SurfaceRenderer;
-class Texture;
+class Bitmap;
 }
 
 /**
@@ -66,7 +66,7 @@ private:
 
 	Gfx::Driver *_gfx;
 	Gfx::SurfaceRenderer *_surfaceRenderer;
-	Gfx::Texture *_texture;
+	Gfx::Bitmap *_bitmap;
 
 	uint _originalWidth;
 	uint _originalHeight;

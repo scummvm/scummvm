@@ -28,7 +28,7 @@
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/surfacerenderer.h"
-#include "engines/stark/gfx/texture.h"
+#include "engines/stark/gfx/bitmap.h"
 
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
@@ -75,8 +75,8 @@ void VisualEffectFish::render(const Common::Point &position) {
 		drawFish(_fishList[i]);
 	}
 
-	_texture->update(_surface);
-	_surfaceRenderer->render(_texture, position);
+	_bitmap->update(_surface);
+	_surfaceRenderer->render(_bitmap, position);
 }
 
 void VisualEffectFish::setParams(const Common::String &params) {

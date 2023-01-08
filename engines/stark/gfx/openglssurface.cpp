@@ -22,7 +22,7 @@
 #include "engines/stark/gfx/openglssurface.h"
 
 #include "engines/stark/gfx/opengls.h"
-#include "engines/stark/gfx/texture.h"
+#include "engines/stark/gfx/bitmap.h"
 
 #if defined(USE_OPENGL_SHADERS)
 
@@ -41,11 +41,11 @@ OpenGLSSurfaceRenderer::~OpenGLSSurfaceRenderer() {
 	delete _shader;
 }
 
-void OpenGLSSurfaceRenderer::render(const Texture *texture, const Common::Point &dest) {
-	render(texture, dest, texture->width(), texture->height());
+void OpenGLSSurfaceRenderer::render(const Bitmap *bitmap, const Common::Point &dest) {
+	render(bitmap, dest, bitmap->width(), bitmap->height());
 }
 
-void OpenGLSSurfaceRenderer::render(const Texture *texture, const Common::Point &dest, uint width, uint height) {
+void OpenGLSSurfaceRenderer::render(const Bitmap *bitmap, const Common::Point &dest, uint width, uint height) {
 	// Destination rectangle with given width and height
 	_gfx->start2DMode();
 
@@ -62,7 +62,7 @@ void OpenGLSSurfaceRenderer::render(const Texture *texture, const Common::Point 
 	Common::Rect nativeViewport = _gfx->getViewport();
 	_shader->setUniform("viewport", Math::Vector2d(nativeViewport.width(), nativeViewport.height()));
 
-	texture->bind();
+	bitmap->bind();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	_shader->unbind();

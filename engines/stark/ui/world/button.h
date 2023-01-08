@@ -54,7 +54,7 @@ public:
 	void render();
 	bool containsPoint(const Common::Point &point);
 
-	/** Reset the hint text visual so it is rebuilt with the appropriate texture size */
+	/** Reset the hint text visual so it is rebuilt with the appropriate size */
 	void resetHintVisual();
 
 	/** Move execution of the button's icon anim script to the specified item */
