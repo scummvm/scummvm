@@ -241,7 +241,17 @@ enum ADFlags {
 	 * the detector to find files inside subdirectories. @c _directoryGlobs are
 	 * extracted from the entries.
 	 */
-	 kADFlagMatchFullPaths = (1 << 1)
+	 kADFlagMatchFullPaths = (1 << 1),
+	 
+	/**
+	 * If set, the engine's fallback detection results are used instead of the
+	 * partial matches found in the detection table.
+	 *
+	 * An engine sets this if its fallback detection produces good results that
+	 * should always be used. If fallback detection fails, then partial matches
+	 * are still used.
+	 */
+	 kADFlagPreferFallbackDetection = (1 << 2)
 };
 
 

@@ -292,6 +292,11 @@ DetectedGames AdvancedMetaEngineDetection::detectGames(const Common::FSList &fsl
 				fallbackDetectedGame.preferredTarget += "-fallback";
 			}
 
+			if (_flags & kADFlagPreferFallbackDetection) {
+				// fallback detection was successful and this engine prefers
+				// it over the partial matches found in the detection table
+				detectedGames.clear();
+			}
 			detectedGames.push_back(fallbackDetectedGame);
 		}
 	}
