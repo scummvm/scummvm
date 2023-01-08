@@ -87,7 +87,6 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_yaw = 0;
 	_pitch = 0;
 	_upVector = Math::Vector3d(0, 1, 0);
-	_movementSpeed = 1.5f;
 	_mouseSensitivity = 0.25f;
 	_demoMode = false;
 	_shootMode = false;
@@ -460,7 +459,7 @@ void FreescapeEngine::processInput() {
 				break;
 			}
 
-			rotate(event.relMouse.x / 10., event.relMouse.y / 10.);
+			rotate(event.relMouse.x * _mouseSensitivity, event.relMouse.y * _mouseSensitivity);
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
@@ -618,31 +617,6 @@ void FreescapeEngine::rotate(float xoffset, float yoffset) {
 	if (_yaw < 0.0f)
 		_yaw += 360.0f;
 
-	updateCamera();
-}
-
-void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos) {
-	if (lastMousePos != Common::Point(0, 0)) {
-		float xoffset = mousePos.x - lastMousePos.x;
-		float yoffset = mousePos.y - lastMousePos.y;
-
-		xoffset *= _mouseSensitivity;
-		yoffset *= _mouseSensitivity;
-
-		_yaw -= xoffset;
-		_pitch += yoffset;
-
-		// Make sure that when pitch is out of bounds, screen doesn't get flipped
-		if (_pitch > 360.0f)
-			_pitch -= 360.0f;
-		if (_pitch < 0.0f)
-			_pitch += 360.0f;
-
-		if (_yaw > 360.0f)
-			_yaw -= 360.0f;
-		if (_yaw < 0.0f)
-			_yaw += 360.0f;
-	}
 	updateCamera();
 }
 
