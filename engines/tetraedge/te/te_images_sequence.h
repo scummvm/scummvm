@@ -61,11 +61,11 @@ public:
 
 private:
 	float _frameRate;
-	unsigned int _width;
-	unsigned int _height;
+	uint _width;
+	uint _height;
 	Common::Array<Common::FSNode> _files;
 	Common::Array<Graphics::ManagedSurface *> _cachedSurfaces;
-	unsigned int _curFrame;
+	uint _curFrame;
 };
 
 } // end namespace Tetraedge

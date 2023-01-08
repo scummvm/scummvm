@@ -151,12 +151,12 @@ TeVector3f32 TeMatrix4x4::operator*(const TeVector3f32 &mul) const {
 	const float *d = getData();
 	float w = d[3] * x + d[7] * y + d[11] * z + d[15];
 	if (w == 0.0)
-	  w = 1e-09f;
+		w = 1e-09f;
 
 	return TeVector3f32
-			  ((d[0] * x + d[4] * y + d[8] *  z + d[12]) / w,
-			   (d[1] * x + d[5] * y + d[9] *  z + d[13]) / w,
-			   (d[2] * x + d[6] * y + d[10] * z + d[14]) / w);
+			((d[0] * x + d[4] * y + d[8] *  z + d[12]) / w,
+			 (d[1] * x + d[5] * y + d[9] *  z + d[13]) / w,
+			 (d[2] * x + d[6] * y + d[10] * z + d[14]) / w);
 }
 
 

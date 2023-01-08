@@ -103,12 +103,11 @@ bool TeTiledTexture::load(const TeImage &img) {
 				_somethingSize += TeVector2s32(tiledata->_texture->width(), tiledata->_texture->height());
 			} else {
 				tiledata->_texture.release();
-				tiledata->_vec2 = TeVector3f32(0.0, 0.0, 0.0);
+				tiledata->_vec2 = TeVector3f32(0, 0, 0);
 				_somethingSize = Te3DTexture::optimisedSize(TeVector2s32(tileimage->w, tileimage->h));
 			}
-			tiledata->_vec1 = TeVector3f32
-					  (row * ((float)_tileSize._x / _totalSize._x),
-					   col * ((float)_tileSize._y / _totalSize._y), 0.0);
+			tiledata->_vec1 = TeVector3f32(row * ((float)_tileSize._x / _totalSize._x),
+										   col * ((float)_tileSize._y / _totalSize._y), 0.0);
 		}
 	}
 
@@ -128,8 +127,8 @@ bool TeTiledTexture::load(const TeIntrusivePtr<Te3DTexture> &texture) {
 	_tileArray.resize(1);
 	Tile *tileData = tile(TeVector2s32(0, 0));
 	tileData->_texture = texture;
-	tileData->_vec2 = TeVector3f32(1.0, 1.0, 0.0);
-	tileData->_vec1 = TeVector3f32(0.0, 0.0, 0.0);
+	tileData->_vec2 = TeVector3f32(1, 1, 0);
+	tileData->_vec1 = TeVector3f32(0, 0, 0);
 	setAccessName(texture->getAccessName().append(".tt"));
 	return true;
 }
@@ -144,7 +143,7 @@ long TeTiledTexture::numberOfRow() const {
 
 /*static*/
 TeImage *TeTiledTexture::optimisedTileImage(Common::Array<TeImage> &images, const TeVector2s32 &size,
-									   const Common::SharedPtr<TePalette> &pal, enum TeImage::Format format) {
+							const Common::SharedPtr<TePalette> &pal, enum TeImage::Format format) {
 	for (TeImage &image : images) {
 		if (image.w == size._x && image.h == size._y && image.teFormat() == format) {
 			return &image;

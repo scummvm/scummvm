@@ -36,11 +36,11 @@ bool TetraedgeMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSavesUseExtendedFormat) ||
 		(f == kSimpleSavesNames) ||
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsDeleteSave) ||
-	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail) ||
-	    (f == kSupportsLoadingDuringStartup);
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSupportsLoadingDuringStartup);
 }
 
 void TetraedgeMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {

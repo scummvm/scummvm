@@ -227,7 +227,7 @@ void InGameScene::convertPathToMesh(TeFreeMoveZone *zone) {
 	model->setScale(zone->scale());
 	unsigned long nverticies = zone->verticies().size();
 	model->meshes()[0].setConf(nverticies, nverticies, TeMesh::MeshMode_Triangles, 0, 0);
-	for (unsigned int i = 0; i < nverticies; i++) {
+	for (uint i = 0; i < nverticies; i++) {
 		model->meshes()[0].setIndex(i, i);
 		model->meshes()[0].setVertex(i, zone->verticies()[i]);
 		model->meshes()[0].setNormal(i, TeVector3f32(0, 0, 1));
@@ -257,7 +257,7 @@ void InGameScene::deleteMarker(const Common::String &markerName) {
 	if (!isMarker(markerName))
 		return;
 
-	for (unsigned int i = 0; i < _markers.size(); i++) {
+	for (uint i = 0; i < _markers.size(); i++) {
 		if (_markers[i]._name == markerName) {
 			_markers.remove_at(i);
 			break;
@@ -313,28 +313,28 @@ void InGameScene::deserializeModel(Common::ReadStream &stream, TeIntrusivePtr<Te
 		error("InGameScene::deserializeModel: Unxpected counts %d %d", indexcount, vertexcount);
 
 	mesh.setConf(vertexcount, indexcount, TeMesh::MeshMode_Triangles, 0, 0);
-	for (unsigned int i = 0; i < indexcount; i++)
+	for (uint i = 0; i < indexcount; i++)
 		mesh.setIndex(i, stream.readUint32LE());
 
-	for (unsigned int i = 0; i < vertexcount; i++) {
+	for (uint i = 0; i < vertexcount; i++) {
 		TeVector3f32::deserialize(stream, vec);
 		mesh.setVertex(i, vec);
 	}
-	for (unsigned int i = 0; i < vertexcount; i++) {
+	for (uint i = 0; i < vertexcount; i++) {
 		TeVector3f32::deserialize(stream, vec);
 		mesh.setNormal(i, vec);
 	}
-	for (unsigned int i = 0; i < vertexcount; i++) {
+	for (uint i = 0; i < vertexcount; i++) {
 		TeVector2f32::deserialize(stream, vec2);
 		mesh.setTextureUV(i, vec2);
 	}
-	for (unsigned int i = 0; i < vertexcount; i++) {
+	for (uint i = 0; i < vertexcount; i++) {
 		col.deserialize(stream);
 		mesh.setColor(i, col);
 	}
 
 	pickmesh->setNbTriangles(indexcount / 3);
-	for (unsigned int i = 0; i < indexcount; i++) {
+	for (uint i = 0; i < indexcount; i++) {
 		vec = mesh.vertex(mesh.index(i));
 		pickmesh->verticies()[i] = vec;
 	}
@@ -367,7 +367,7 @@ void InGameScene::draw() {
 #endif
 
 	TeLight::updateGlobal();
-	for (unsigned int i = 0; i < _lights.size(); i++)
+	for (uint i = 0; i < _lights.size(); i++)
 		_lights[i].update(i);
 
 	TeCamera::restore();
@@ -380,7 +380,7 @@ void InGameScene::drawPath() {
 	currentCamera()->apply();
 	g_engine->getRenderer()->disableZBuffer();
 
-	for (unsigned int i = 0; i < _freeMoveZones.size(); i++)
+	for (uint i = 0; i < _freeMoveZones.size(); i++)
 		_freeMoveZones[i]->draw();
 
 	g_engine->getRenderer()->enableZBuffer();
@@ -545,7 +545,7 @@ bool InGameScene::load(const Common::Path &path) {
 			if (count > 1000000)
 				error("Improbable number of actzones %d", count);
 			_actZones.resize(count);
-			for (unsigned int i = 0; i < _actZones.size(); i++) {
+			for (uint i = 0; i < _actZones.size(); i++) {
 				_actZones[i].s1 = Te3DObject2::deserializeString(actzonefile);
 				_actZones[i].s2 = Te3DObject2::deserializeString(actzonefile);
 				for (int j = 0; j < 4; j++)
@@ -557,7 +557,7 @@ bool InGameScene::load(const Common::Path &path) {
 	}
 	if (!_lights.empty()) {
 		TeLight::disableAll();
-		for (unsigned int i = 0; i < _lights.size(); i++) {
+		for (uint i = 0; i < _lights.size(); i++) {
 			_lights[i].disable(i);
 		}
 		_lights.clear();
@@ -580,7 +580,7 @@ bool InGameScene::load(const Common::Path &path) {
 	uint32 ncameras = scenefile.readUint32LE();
 	if (ncameras > 1024)
 		error("Improbable number of cameras %d", ncameras);
-	for (unsigned int i = 0; i < ncameras; i++) {
+	for (uint i = 0; i < ncameras; i++) {
 		TeIntrusivePtr<TeCamera> cam = new TeCamera();
 		deserializeCam(scenefile, cam);
 		cameras().push_back(cam);
@@ -589,7 +589,7 @@ bool InGameScene::load(const Common::Path &path) {
 	uint32 nobjects = scenefile.readUint32LE();
 	if (nobjects > 1024)
 		error("Improbable number of objects %d", nobjects);
-	for (unsigned int i = 0; i < nobjects; i++) {
+	for (uint i = 0; i < nobjects; i++) {
 		TeIntrusivePtr<TeModel> model = new TeModel();
 		const Common::String modelname = Te3DObject2::deserializeString(scenefile);
 		model->setName(modelname);
@@ -624,7 +624,7 @@ bool InGameScene::load(const Common::Path &path) {
 	uint32 nfreemovezones = scenefile.readUint32LE();
 	if (nfreemovezones > 1024)
 		error("Improbable number of free move zones %d", nfreemovezones);
-	for (unsigned int i = 0; i < nfreemovezones; i++) {
+	for (uint i = 0; i < nfreemovezones; i++) {
 		TeFreeMoveZone *zone = new TeFreeMoveZone();
 		TeFreeMoveZone::deserialize(scenefile, *zone, &_blockers, &_rectBlockers, &_actZones);
 		_freeMoveZones.push_back(zone);
@@ -634,7 +634,7 @@ bool InGameScene::load(const Common::Path &path) {
 	uint32 ncurves = scenefile.readUint32LE();
 	if (ncurves > 1024)
 		error("Improbable number of curves %d", ncurves);
-	for (unsigned int i = 0; i < ncurves; i++) {
+	for (uint i = 0; i < ncurves; i++) {
 		TeIntrusivePtr<TeBezierCurve> curve = new TeBezierCurve();
 		TeBezierCurve::deserialize(scenefile, *curve);
 		curve->setVisible(true);
@@ -644,7 +644,7 @@ bool InGameScene::load(const Common::Path &path) {
 	uint32 ndummies = scenefile.readUint32LE();
 	if (ndummies > 1024)
 		error("Improbable number of dummies %d", ndummies);
-	for (unsigned int i = 0; i < ndummies; i++) {
+	for (uint i = 0; i < ndummies; i++) {
 		InGameScene::Dummy dummy;
 		TeVector3f32 vec;
 		TeQuaternion rot;
@@ -702,7 +702,7 @@ bool InGameScene::loadLights(const Common::Path &path) {
 	_shadowFov = parser.getShadowFov();
 
 	TeLight::enableAll();
-	for (unsigned int i = 0; i < _lights.size(); i++) {
+	for (uint i = 0; i < _lights.size(); i++) {
 		_lights[i].enable(i);
 	}
 
@@ -710,7 +710,7 @@ bool InGameScene::loadLights(const Common::Path &path) {
 	debug("--- Scene lights ---");
 	debug("Shadow: %s no:%d far:%.02f near:%.02f fov:%.02f", _shadowColor.dump().c_str(), _shadowLightNo, _shadowFarPlane, _shadowNearPlane, _shadowFov);
 	debug("Global: %s", TeLight::globalAmbient().dump().c_str());
-	for (unsigned int i = 0; i < _lights.size(); i++) {
+	for (uint i = 0; i < _lights.size(); i++) {
 		debug("%s", _lights[i].dump().c_str());
 	}
 	debug("---  end lights  ---");
@@ -827,7 +827,7 @@ void InGameScene::loadBlockers() {
 	if (nblockers > 1024)
 		error("Improbable number of blockers %d", nblockers);
 	_blockers.resize(nblockers);
-	for (unsigned int i = 0; i < nblockers; i++) {
+	for (uint i = 0; i < nblockers; i++) {
 		_blockers[i]._s = Te3DObject2::deserializeString(blockersfile);
 		TeVector2f32::deserialize(blockersfile, _blockers[i]._pts[0]);
 		TeVector2f32::deserialize(blockersfile, _blockers[i]._pts[1]);
@@ -839,9 +839,9 @@ void InGameScene::loadBlockers() {
 		if (nrectblockers > 1024)
 			error("Improbable number of rectblockers %d", nrectblockers);
 		_rectBlockers.resize(nrectblockers);
-		for (unsigned int i = 0; i < nrectblockers; i++) {
+		for (uint i = 0; i < nrectblockers; i++) {
 			_rectBlockers[i]._s = Te3DObject2::deserializeString(blockersfile);
-			for (unsigned int j = 0; j < 4l; j++) {
+			for (uint j = 0; j < 4l; j++) {
 				TeVector2f32::deserialize(blockersfile, _rectBlockers[i]._pts[j]);
 			}
 			_rectBlockers[i]._enabled = true;
@@ -925,7 +925,7 @@ void InGameScene::onMainWindowSizeChanged() {
 	TeCamera *mainWinCam = g_engine->getApplication()->mainWindowCamera();
 	_viewportSize = mainWinCam->viewportSize();
 	Common::Array<TeIntrusivePtr<TeCamera>> &cams = cameras();
-	for (unsigned int i = 0; i < cams.size(); i++) {
+	for (uint i = 0; i < cams.size(); i++) {
 		cams[i]->viewport(0, 0, _viewportSize.getX(), _viewportSize.getY());
 	}
 }
@@ -1048,7 +1048,7 @@ void InGameScene::unloadCharacter(const Common::String &name) {
 		// TODO: deleteLater() something here..
 		_character = nullptr;
 	}
-	for (unsigned int i = 0; i < _characters.size(); i++) {
+	for (uint i = 0; i < _characters.size(); i++) {
 		Character *c = _characters[i];
 		if (c && c->_model->name() == name) {
 			c->removeAnim();
@@ -1065,10 +1065,10 @@ void InGameScene::unloadCharacter(const Common::String &name) {
 }
 
 void InGameScene::unloadObject(const Common::String &name) {
-	for (unsigned int i = 0; i < _object3Ds.size(); i++) {
+	for (uint i = 0; i < _object3Ds.size(); i++) {
 		if (_object3Ds[i]->model()->name() == name) {
 			// Remove from the scene models.
-			for (unsigned int j = 0; j < models().size(); j++) {
+			for (uint j = 0; j < models().size(); j++) {
 				if (models()[j] == _object3Ds[i]->model())	{
 					models().remove_at(j);
 					break;
@@ -1154,7 +1154,7 @@ void InGameScene::update() {
 		_waitTime = -1.0;
 		_waitTimeTimer.stop();
 		bool resumed = false;
-		for (unsigned int i = 0; i < game->yieldedCallbacks().size(); i++) {
+		for (uint i = 0; i < game->yieldedCallbacks().size(); i++) {
 			Game::YieldedCallback &yc = game->yieldedCallbacks()[i];
 			if (yc._luaFnName == "OnWaitFinished") {
 				TeLuaThread *thread = yc._luaThread;
@@ -1184,7 +1184,7 @@ void InGameScene::update() {
 
 bool InGameScene::AnimObject::onFinished() {
 	Game *game = g_engine->getGame();
-	for (unsigned int i = 0; i < game->yieldedCallbacks().size(); i++) {
+	for (uint i = 0; i < game->yieldedCallbacks().size(); i++) {
 		Game::YieldedCallback &yc = game->yieldedCallbacks()[i];
 		if (yc._luaFnName == "OnFinishedAnim" && yc._luaParam == _name) {
 			TeLuaThread *thread = yc._luaThread;

@@ -168,7 +168,7 @@ Common::Path TeCore::findFile(const Common::Path &path) {
 				return testPath;
 
 			// also try the other way around
- 			if (!lang.empty() && !suffix.empty()) {
+			if (!lang.empty() && !suffix.empty()) {
 				testPath = dir.join(lang).joinInPlace(suffix).join(fname);
 				if (Common::File::exists(testPath) || Common::FSNode(testPath).exists())
 					return testPath;

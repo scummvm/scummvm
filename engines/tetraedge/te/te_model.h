@@ -96,7 +96,7 @@ public:
 	int findModelBone(const Common::String &bname);
 	int findOrAddWeights(const Common::Array<weightElement> &weights);
 	void forceMatrix(const TeMatrix4x4 &matrix);
-	TeTRS getBone(TeIntrusivePtr<TeModelAnimation> anim, unsigned int num);
+	TeTRS getBone(TeIntrusivePtr<TeModelAnimation> anim, uint num);
 
 	/* Align the stream to the nearest 4 byte boudary*/
 	static void loadAlign(Common::SeekableReadStream &stream);
@@ -113,7 +113,7 @@ public:
 
 	void saveBone(Common::SeekableWriteStream &stream, unsigned long boneno);
 	void saveMesh(Common::SeekableWriteStream &stream, const TeMesh &mesh);
-	void saveModel(Common::SeekableWriteStream &stream, unsigned int num);
+	void saveModel(Common::SeekableWriteStream &stream, uint num);
 	void saveWeights(Common::SeekableWriteStream &stream, const Common::Array<weightElement> weights);
 
 	void setAnim(TeIntrusivePtr<TeModelAnimation> &anim, bool repeat);
@@ -135,7 +135,7 @@ public:
 	void setTexturePath(const Common::Path &path) { _texturePath = path; }
 
 protected:
-	TeMatrix4x4 lerpElementsMatrix(unsigned int weightNum, const Common::Array<TeMatrix4x4> &matricies);
+	TeMatrix4x4 lerpElementsMatrix(uint weightNum, const Common::Array<TeMatrix4x4> &matricies);
 	void optimize();
 
 	Common::Path _texturePath;

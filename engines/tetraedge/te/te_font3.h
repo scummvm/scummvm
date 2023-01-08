@@ -65,12 +65,12 @@ public:
 	bool load(const Common::Path &path);
 	void unload();
 
-	GlyphData glyph(unsigned int size, unsigned int charcode);
+	GlyphData glyph(uint size, uint charcode);
 
-	float ascender(unsigned int pxSize);
-	float descender(unsigned int pxSize);
-	float height(unsigned int pxSize);
-	TeVector3f32 kerning(unsigned int pxSize, unsigned int isocode1, unsigned int isocode2);
+	float ascender(uint pxSize);
+	float descender(uint pxSize);
+	float height(uint pxSize);
+	TeVector3f32 kerning(uint pxSize, uint isocode1, uint isocode2);
 	TeIntrusivePtr<Te3DTexture> getFontSizeData(int size) const {
 		return _fontSizeData[size];
 	}
@@ -84,12 +84,12 @@ public:
 
 private:
 	void init();
-	Graphics::Font *getAtSize(unsigned int size);
+	Graphics::Font *getAtSize(uint size);
 
 	Common::File _fontFile;
-	Common::HashMap<unsigned int, Graphics::Font *> _fonts;
+	Common::HashMap<uint, Graphics::Font *> _fonts;
 	Common::Path _loadedPath;
-	Common::HashMap<unsigned int, TeIntrusivePtr<Te3DTexture>> _fontSizeData;
+	Common::HashMap<uint, TeIntrusivePtr<Te3DTexture>> _fontSizeData;
 };
 
 } // end namespace Tetraedge

@@ -67,10 +67,10 @@ public:
 	int findBone(const Common::String &bname);
 	int firstFrame() const;
 	TeMatrix4x4 getMatrix(const Common::String &name, unsigned long frame, bool param_5);
-	TeQuaternion getNMORotation(unsigned long param_3, float param_4) const;
-	TeVector3f32 getNMOTranslation(unsigned long param_3, float param_4) const;
-	TeTRS getTRS(const Common::String &boneName, unsigned long frame, bool param_5);
-	TeTRS getTRS(unsigned long boneNo, unsigned long frame, bool param_5) const;
+	TeQuaternion getNMORotation(unsigned long boneNo, float amount) const;
+	TeVector3f32 getNMOTranslation(unsigned long boneNo, float amount) const;
+	TeTRS getTRS(const Common::String &boneName, unsigned long frame, bool forceUseFbx);
+	TeTRS getTRS(unsigned long boneNo, unsigned long frame, bool forceUseFbx) const;
 	int lastFrame() const;
 	bool load(const Common::Path &path);
 	bool load(Common::SeekableReadStream &stream);
@@ -79,7 +79,7 @@ public:
 	void resizeFBXArrays(unsigned long len);
 	void resizeNMOArrays(unsigned long len);
 	void save(Common::SeekableWriteStream &stream);
-	void saveBone(Common::SeekableWriteStream &stream, uint param_2);
+	void saveBone(Common::SeekableWriteStream &stream, uint boneNo);
 	void setBoneName(uint boneNo, const Common::String &bname);
 	void setFrameLimits(int framemin, int framemax) {
 		_firstFrame = framemin;
@@ -93,13 +93,12 @@ public:
 
 	int curFrame2() const { return _curFrame2; }
 	float speed() const { return _speed; }
-
-	TeIntrusivePtr<TeModel> _model;
-	int _firstFrame;
-	int _lastFrame;
-	Common::Path _loadedPath;
+	const Common::Path &loadedPath() const { return _loadedPath; }
 
 private:
+	TeIntrusivePtr<TeModel> _model;
+	Common::Path _loadedPath;
+
 	Common::Array<Common::Array<TeTRS>> _fbxArrays;
 	Common::Array<Common::Array<NMOTranslation>> _nmoTransArrays;
 	Common::Array<Common::Array<NMORotation>> _nmoRotArrays;
@@ -107,11 +106,16 @@ private:
 	Common::Array<Common::String> _boneNames;
 	int _curFrame;
 	int _curFrame2;
-	bool _curFrameValFresh;
+	int _firstFrame;
+	int _lastFrame;
 	int _repeatNum;
+
+	bool _curFrameValFresh;
 	bool _finishedSignalPending;
+
 	int _useNMOArrays;
 	int _numNMOFrames;
+
 	float _speed;
 
 };

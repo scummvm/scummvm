@@ -53,7 +53,7 @@ public:
 	long numberOfRow() const;
 
 	TeImage *optimisedTileImage(Common::Array<TeImage> &images, const TeVector2s32 &size,
-								  const Common::SharedPtr<TePalette> &pal, enum TeImage::Format format);
+								const Common::SharedPtr<TePalette> &pal, enum TeImage::Format format);
 
 	void release();
 	void save() {};

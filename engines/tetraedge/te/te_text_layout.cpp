@@ -125,7 +125,7 @@ void TeTextLayout::setText(const Common::String &val) {
 	}
 	if (parser.style().size())
 		_base.setAlignStyle(_alignNameToEnum(parser.style()));
-	for (unsigned int offset : parser.lineBreaks())
+	for (uint offset : parser.lineBreaks())
 		_base.insertNewLine(offset);
 	_sizeChanged = true;
 }

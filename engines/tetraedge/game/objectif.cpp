@@ -166,7 +166,7 @@ void Objectif::update() {
 		removeChildren();
 
 		int last_i = -1;
-		for (unsigned int i = 0; i < _tasks.size(); i++) {
+		for (uint i = 0; i < _tasks.size(); i++) {
 			if (!_tasks[i]._taskFlag)
 				continue;
 			if (last_i != -1 && _tasks[i]._headTask == _tasks[last_i]._headTask)
@@ -174,7 +174,7 @@ void Objectif::update() {
 			last_i = i;
 			createChildLayout(tasks, _tasks[i]._headTask, false);
 			// Creating the subtasks for this head
-			for (unsigned int j = 0; j < _tasks.size(); j++) {
+			for (uint j = 0; j < _tasks.size(); j++) {
 				if (_tasks[j]._taskFlag && _tasks[j]._headTask == _tasks[i]._headTask && _tasks[j]._subTask != "")
 					createChildLayout(tasks, _tasks[j]._subTask, true);
 			}

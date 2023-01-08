@@ -36,7 +36,7 @@ bool GameSound::onSoundStopped() {
 		return false;
 
 	Common::Array<Game::YieldedCallback> &callbacks = game->yieldedCallbacks();
-	for (unsigned int i = 0; i < callbacks.size(); i++) {
+	for (uint i = 0; i < callbacks.size(); i++) {
 		if (callbacks[i]._luaFnName == "OnFreeSoundFinished" && callbacks[i]._luaParam == _name) {
 			TeLuaThread *thread = callbacks[i]._luaThread;
 			callbacks.remove_at(i);

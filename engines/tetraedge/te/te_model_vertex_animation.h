@@ -56,7 +56,7 @@ public:
 	void destroy();
 
 	const Common::String &head() const { return _head; }
-	TeVector3f32 getKeyVertex(unsigned long keyno, unsigned int vertexno);
+	TeVector3f32 getKeyVertex(unsigned long keyno, uint vertexno);
 	const Common::Array<TeVector3f32> &getVertices();
 
 	bool load(Common::ReadStream &stream);

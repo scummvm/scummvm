@@ -149,7 +149,7 @@ Common::Error TeLuaContext::syncState(Common::Serializer &s) {
 				lua_settop(_luaState, -2);
 				break;
 			}
-			unsigned int vtype = lua_type(_luaState, -1);
+			uint vtype = lua_type(_luaState, -1);
 			Common::String name = lua_tolstring(_luaState, -2, nullptr);
 			if (vtype == LUA_TBOOLEAN) {
 				TeLuaSaveVarType stype = Boolean;

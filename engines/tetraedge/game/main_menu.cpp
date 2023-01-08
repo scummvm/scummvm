@@ -199,7 +199,7 @@ bool MainMenu::onContinueGameButtonValidated() {
 	tryDisableButton("quitButton");
 
 	if (_confirmingTuto)
-	  return false;
+		return false;
 
 	app->captureFade();
 	leave();

@@ -345,17 +345,17 @@ void Te3DObject2::deserializeVectorArray(Common::ReadStream &stream, Common::Arr
 	if (nentries > 1000000)
 		error("TeFreeMoveZone improbable number of vectors %d", nentries);
 	dest.resize(nentries);
-	for (unsigned int i = 0; i < nentries; i++)
+	for (uint i = 0; i < nentries; i++)
 		TeVector3f32::deserialize(stream, dest[i]);
 }
 
 /*static*/
-void Te3DObject2::deserializeUintArray(Common::ReadStream &stream, Common::Array<unsigned int> &dest) {
+void Te3DObject2::deserializeUintArray(Common::ReadStream &stream, Common::Array<uint> &dest) {
 	uint32 nentries = stream.readUint32LE();
 	if (nentries > 1000000)
 		error("TeFreeMoveZone improbable number of ints %d", nentries);
 	dest.resize(nentries);
-	for (unsigned int i = 0; i < nentries; i++)
+	for (uint i = 0; i < nentries; i++)
 		dest[i] = stream.readUint32LE();
 }
 

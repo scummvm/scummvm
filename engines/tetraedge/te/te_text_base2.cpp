@@ -95,7 +95,7 @@ void TeTextBase2::build() {
 	img.create(_size._x, _size._y, nullpal, TeImage::RGBA8);
 	img.fill(_globalColor.r(), _globalColor.g(), _globalColor.b(), 0);
 
-	for (unsigned int i = 0; i < _wrappedLines.size(); i++) {
+	for (uint i = 0; i < _wrappedLines.size(); i++) {
 		drawLine(img, _wrappedLines[i], lineoffsets[i]);
 	}
 
@@ -155,12 +155,12 @@ void TeTextBase2::clearText() {
 	_valueWasSet = true;
 }
 
-void TeTextBase2::computeNbSpaces(Line &line, unsigned int startOffset, unsigned int endOffset) {
+void TeTextBase2::computeNbSpaces(Line &line, uint startOffset, uint endOffset) {
 	// only needed if we implement Justify
 	error("TODO: Implement TeTextBase2::computeNbSpaces");
 }
 
-TeColor TeTextBase2::currentColor(unsigned int offset) const {
+TeColor TeTextBase2::currentColor(uint offset) const {
 	if (_colors.size() == 0)
 		return _globalColor;
 	int closest_off = -1;
@@ -177,7 +177,7 @@ TeColor TeTextBase2::currentColor(unsigned int offset) const {
 	return result;
 }
 
-TeIntrusivePtr<TeFont3> TeTextBase2::currentFont(unsigned int offset) {
+TeIntrusivePtr<TeFont3> TeTextBase2::currentFont(uint offset) {
 	if (_fonts.size() == 0)
 		return TeIntrusivePtr<TeFont3>();
 	int closest_off = -1;
@@ -207,7 +207,7 @@ void TeTextBase2::draw() {
 	//	warning("TODO: Implement TeTextBase2::draw strikethrough support");
 }
 
-void TeTextBase2::drawEmptyChar(unsigned int offset) {
+void TeTextBase2::drawEmptyChar(uint offset) {
 	error("TODO: Implement TeTextBase2::drawEmptychar");
 }
 
@@ -219,31 +219,31 @@ void TeTextBase2::drawLine(TeImage &img, const Common::String &str, int yoffset)
 	font->draw(img, str, _fontSize, yoffset, TeColor(0, 0, 0, 255), _alignStyle);
 }
 
-unsigned int TeTextBase2::endOfWord(unsigned int offset) const {
+uint TeTextBase2::endOfWord(uint offset) const {
 	while (offset < _text.size() && !newLines(offset) && !isASpace(offset))
 		offset++;
 	return offset;
 }
 
-void TeTextBase2::insertNewLine(unsigned int offset) {
+void TeTextBase2::insertNewLine(uint offset) {
 	_lineBreaks.push_back(offset);
 }
 
-bool TeTextBase2::isASpace(unsigned int offset) const {
+bool TeTextBase2::isASpace(uint offset) const {
 	char c = _text[offset];
 	return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
 }
 
-int TeTextBase2::newLines(unsigned int offset) const {
+int TeTextBase2::newLines(uint offset) const {
 	int result = 0;
-	for (unsigned int off : _lineBreaks) {
+	for (uint off : _lineBreaks) {
 		if (off == offset)
 			result++;
 	}
 	return result;
 }
 
-int TeTextBase2::nextNonSpaceChar(unsigned int offset) {
+int TeTextBase2::nextNonSpaceChar(uint offset) {
 	while (isASpace(offset))
 		offset++;
 	return offset; // TODO: or offset - 1?
@@ -254,12 +254,12 @@ void TeTextBase2::setAlignStyle(TeFont3::AlignStyle style) {
 	_valueWasSet = true;
 }
 
-void TeTextBase2::setColor(unsigned int offset, const TeColor &color) {
+void TeTextBase2::setColor(uint offset, const TeColor &color) {
 	_colors.setVal(offset, color);
 	_valueWasSet = true;
 }
 
-void TeTextBase2::setFont(unsigned int offset, const TeIntrusivePtr<TeFont3> &newfont) {
+void TeTextBase2::setFont(uint offset, const TeIntrusivePtr<TeFont3> &newfont) {
 	_fonts.setVal(offset, newfont);
 	_valueWasSet = true;
 }

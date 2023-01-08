@@ -90,11 +90,11 @@ public:
 
 	void setColor(const TeColor &col) override;
 	void setColor(uint idx, const TeColor &col);
-	void setConf(unsigned long vertexCount, unsigned long indexCount, enum Mode mode, unsigned int materialCount, unsigned int materialIndexCount);
-	void setIndex(unsigned int idx, unsigned int val);
-	void setNormal(unsigned int idx, const TeVector3f32 &val);
-	void setTextureUV(unsigned int idx, const TeVector2f32 &val);
-	void setVertex(unsigned int idx, const TeVector3f32 &val);
+	void setConf(unsigned long vertexCount, unsigned long indexCount, enum Mode mode, uint materialCount, uint materialIndexCount);
+	void setIndex(uint idx, uint val);
+	void setNormal(uint idx, const TeVector3f32 &val);
+	void setTextureUV(uint idx, const TeVector2f32 &val);
+	void setVertex(uint idx, const TeVector3f32 &val);
 	void sortFaces();
 
 	void update(const Common::Array<TeMatrix4x4> *matricies1, const Common::Array<TeMatrix4x4> *matricies2);
@@ -115,11 +115,11 @@ public:
 	void setHasAlpha(bool val) { _hasAlpha = val; }
 
 	Common::Array<TeMaterial> &materials() { return _materials; }
-	void setUpdatedVertex(unsigned int idx, const TeVector3f32 &val) { _updatedVerticies[idx] = val; }
-	void setUpdatedNormal(unsigned int idx, const TeVector3f32 &val) { _updatedNormals[idx] = val; }
+	void setUpdatedVertex(uint idx, const TeVector3f32 &val) { _updatedVerticies[idx] = val; }
+	void setUpdatedNormal(uint idx, const TeVector3f32 &val) { _updatedNormals[idx] = val; }
 
-	const TeVector3f32 &preUpdatedVertex(unsigned int idx) const { return _verticies[idx]; }
-	const TeVector3f32 &preUpdatedNormal(unsigned int idx) const { return _normals[idx]; }
+	const TeVector3f32 &preUpdatedVertex(uint idx) const { return _verticies[idx]; }
+	const TeVector3f32 &preUpdatedNormal(uint idx) const { return _normals[idx]; }
 
 private:
 	Common::Array<unsigned char> _materialIndexes;
@@ -134,7 +134,7 @@ private:
 	Common::Array<TeColor> _colors;
 	Common::Array<TeMaterial> _materials;
 
-	unsigned int _glMeshMode;
+	uint _glMeshMode;
 
 	bool _matrixForced;
 	TeMatrix4x4 _forcedMatrix;

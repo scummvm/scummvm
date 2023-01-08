@@ -41,11 +41,11 @@ public:
 
 	bool pointInTriangle(const TeVector2f32 &p1, const TeVector2f32 &p2, const TeVector2f32 &p3, const TeVector2f32 &p4) const;
 
-	void setLastTriangleHit(unsigned int lastHit) { _lastTriangleHit = lastHit; }
-	void setNbTriangles(unsigned int num);
+	void setLastTriangleHit(uint lastHit) { _lastTriangleHit = lastHit; }
+	void setNbTriangles(uint num);
 
-	void setTriangle(unsigned int num, const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32 &v3);
-	void triangle(unsigned int num, TeVector3f32 &v1out, TeVector3f32 &v2out, TeVector3f32 &v3out) const;
+	void setTriangle(uint num, const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32 &v3);
+	void triangle(uint num, TeVector3f32 &v1out, TeVector3f32 &v2out, TeVector3f32 &v3out) const;
 
 	static void serialize(Common::WriteStream &stream, const TePickMesh2 &mesh);
 	static void deserialize(Common::ReadStream &stream, TePickMesh2 &mesh);
@@ -55,7 +55,7 @@ public:
 
 protected:
 	Common::Array<TeVector3f32> _verticies;
-	unsigned int _lastTriangleHit;
+	uint _lastTriangleHit;
 
 };
 

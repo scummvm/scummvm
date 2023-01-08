@@ -42,7 +42,7 @@ TeLuaThread::TeLuaThread(TeLuaContext *context) : _resumeCount(0), _lastResumeRe
 
 TeLuaThread::~TeLuaThread() {
 	luaL_unref(_luaThread, LUA_REGISTRYINDEX, _bottomRef);
-	unsigned int i;
+	uint i;
 	for (i = 0; i < _threadList.size(); i++)
 		if (_threadList[i] == this)
 			break;

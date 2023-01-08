@@ -38,10 +38,10 @@ void TePickMesh2::draw() {
 	if (!worldVisible())
 		return;
 
-	const unsigned int nverticies = _verticies.size();
+	const uint nverticies = _verticies.size();
 	TeMesh mesh;
 	mesh.setConf(nverticies, nverticies, TeMesh::MeshMode_Triangles, 0, 0);
-	for (unsigned int i = 0; i < nverticies; i++) {
+	for (uint i = 0; i < nverticies; i++) {
 		mesh.setIndex(i, i);
 		mesh.setVertex(i, _verticies[i]);
 	}
@@ -84,7 +84,7 @@ bool TePickMesh2::intersect(const TeVector3f32 &origin, const TeVector3f32 &dir,
 	}
 
 	float lastHitDist = FLT_MAX;
-	for (unsigned int i = 0; i < _verticies.size() / 3; i++) {
+	for (uint i = 0; i < _verticies.size() / 3; i++) {
 		const TeVector3f32 triv1 = worldTrans * _verticies[i * 3 + 0];
 		const TeVector3f32 triv2 = worldTrans * _verticies[i * 3 + 1];
 		const TeVector3f32 triv3 = worldTrans * _verticies[i * 3 + 2];
@@ -140,12 +140,12 @@ bool TePickMesh2::pointInTriangle(const TeVector2f32 &p1, const TeVector2f32 &p2
 	return f1 != f2;
 }
 
-void TePickMesh2::setNbTriangles(unsigned int num) {
+void TePickMesh2::setNbTriangles(uint num) {
 	_verticies.resize(num * 3);
 	_lastTriangleHit = 0;
 }
 
-void TePickMesh2::setTriangle(unsigned int num, const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32 &v3) {
+void TePickMesh2::setTriangle(uint num, const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32 &v3) {
 	assert(num <= _verticies.size() / 3);
 	_verticies[num * 3 + 0] = v1;
 	_verticies[num * 3 + 1] = v2;
@@ -167,7 +167,7 @@ void TePickMesh2::deserialize(Common::ReadStream &stream, TePickMesh2 &mesh) {
 	mesh._verticies.resize(ntriangles * 3);
 	mesh._lastTriangleHit = 0;
 
-	for (unsigned int i = 0; i < ntriangles * 3; i++) {
+	for (uint i = 0; i < ntriangles * 3; i++) {
 		TeVector3f32 vec;
 		TeVector3f32::deserialize(stream, vec);
 		mesh._verticies[i] = vec;

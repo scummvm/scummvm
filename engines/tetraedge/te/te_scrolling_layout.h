@@ -41,7 +41,7 @@ public:
 	void setInertiaAnimationCurve(const Common::Array<float> &curve) {
 		_inertiaAnimationCurve = curve;
 	}
-	void setAutoScrollDelay(unsigned int val) {
+	void setAutoScrollDelay(uint val) {
 		_autoScrollDelay = val;
 	}
 	void setAutoScrollLoop(int loop) {
