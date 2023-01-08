@@ -32,6 +32,9 @@ class StdioStream;
  */
 class DrivePOSIXFilesystemNode : public POSIXFilesystemNode {
 protected:
+	virtual AbstractFSNode *makeNode() const {
+		return new DrivePOSIXFilesystemNode(_config);
+	}
 	AbstractFSNode *makeNode(const Common::String &path) const override {
 		return new DrivePOSIXFilesystemNode(path, _config);
 	}
@@ -66,9 +69,11 @@ public:
 	bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const override;
 	AbstractFSNode *getParent() const override;
 
+protected:
+	const Config &_config;
+
 private:
 	bool _isPseudoRoot;
-	const Config &_config;
 
 	DrivePOSIXFilesystemNode *getChildWithKnownType(const Common::String &n, bool isDirectoryFlag) const;
 	bool isDrive(const Common::String &path) const;
