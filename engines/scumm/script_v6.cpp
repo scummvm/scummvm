@@ -1063,7 +1063,6 @@ void ScummEngine_v6::o6_setCameraAt() {
 		int x, y;
 
 		camera._follows = 0;
-		VAR(VAR_CAMERA_FOLLOWED_ACTOR) = 0;
 
 		y = pop();
 		x = pop();

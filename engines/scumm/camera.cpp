@@ -169,6 +169,7 @@ void ScummEngine::moveCamera() {
 void ScummEngine::cameraMoved() {
 	int screenLeft;
 	if (_game.version >= 7) {
+		clampCameraPos(&camera._cur);
 		assert(camera._cur.x >= (_screenWidth / 2) && camera._cur.y >= (_screenHeight / 2));
 	} else {
 		if (camera._cur.x < (_screenWidth / 2)) {
@@ -222,23 +223,15 @@ void ScummEngine_v7::setCameraAt(int pos_x, int pos_y) {
 	clampCameraPos(&camera._cur);
 
 	camera._dest = camera._cur;
-	VAR(VAR_CAMERA_DEST_X) = camera._dest.x;
-	VAR(VAR_CAMERA_DEST_Y) = camera._dest.y;
 
 	assert(camera._cur.x >= (_screenWidth / 2) && camera._cur.y >= (_screenHeight / 2));
 
 	if (camera._cur.x != old.x || camera._cur.y != old.y) {
-		if (VAR(VAR_SCROLL_SCRIPT)) {
+		if (VAR(VAR_SCROLL_SCRIPT) && _game.version != 8) {
 			VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 			VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
 			runScript(VAR(VAR_SCROLL_SCRIPT), 0, 0, 0);
 		}
-
-		// Even though cameraMoved() is called automatically, we may
-		// need to know at once that the camera has moved, or text may
-		// be printed at the wrong coordinates. See bugs #1195 and
-		// #1579
-		cameraMoved();
 	}
 }
 
@@ -248,7 +241,6 @@ void ScummEngine_v7::setCameraFollows(Actor *a, bool setCamera) {
 	int ax, ay;
 
 	camera._follows = a->_number;
-	VAR(VAR_CAMERA_FOLLOWED_ACTOR) = a->_number;
 
 	if (!a->isInCurrentRoom()) {
 		startScene(a->getRoom(), 0, 0);
@@ -345,9 +337,19 @@ void ScummEngine_v7::moveCamera() {
 
 	cameraMoved();
 
-	if (camera._cur.x != old.x || camera._cur.y != old.y) {
+	if (_game.id != GID_FT) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 		VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
+		VAR(VAR_CAMERA_DEST_X) = camera._dest.x;
+		VAR(VAR_CAMERA_DEST_Y) = camera._dest.y;
+		VAR(VAR_CAMERA_FOLLOWED_ACTOR) = camera._follows;
+	}
+
+	if (camera._cur.x != old.x || camera._cur.y != old.y) {
+		if (_game.id == GID_FT) {
+			VAR(VAR_CAMERA_POS_X) = camera._cur.x;
+			VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
+		}
 
 		if (VAR(VAR_SCROLL_SCRIPT))
 			runScript(VAR(VAR_SCROLL_SCRIPT), 0, 0, 0);
@@ -355,7 +357,7 @@ void ScummEngine_v7::moveCamera() {
 }
 
 void ScummEngine_v7::panCameraTo(int x, int y) {
-	VAR(VAR_CAMERA_FOLLOWED_ACTOR) = camera._follows = 0;
+	camera._follows = 0;
 	VAR(VAR_CAMERA_DEST_X) = camera._dest.x = x;
 	VAR(VAR_CAMERA_DEST_Y) = camera._dest.y = y;
 }

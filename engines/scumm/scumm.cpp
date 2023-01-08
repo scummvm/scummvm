@@ -2623,7 +2623,7 @@ void ScummEngine_v90he::scummLoop(int delta) {
 #endif
 
 void ScummEngine::scummLoop_updateScummVars() {
-	if (_game.version >= 7) {
+	if (_game.version == 7) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 		VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
 	} else if (_game.platform == Common::kPlatformNES) {
