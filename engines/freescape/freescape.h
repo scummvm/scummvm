@@ -327,6 +327,8 @@ public:
 	virtual Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream);
 	Graphics::Surface *_savedScreen;
 
+	void pauseEngineIntern(bool pause) override;
+
 	// Timers
 	bool startCountdown(uint32 delay);
 	void removeTimers();
