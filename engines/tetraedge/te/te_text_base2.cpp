@@ -32,8 +32,13 @@ namespace Tetraedge {
 TeTextBase2::TeTextBase2() : _drawRect(0, 0), _size(0, 0),
 _alignStyle(TeFont3::AlignLeft), _interLine(0.0f), _globalColor(0xff, 0xff, 0xff, 0xff),
 _wrapMode(WrapModeFixed), _strikethrough(false), _fontSize(10), _valueWasSet(true) {
-	_mesh.setglTexEnvBlend();
-	_mesh.setShouldDraw(true);
+	_mesh = TeMesh::makeInstance();
+	_mesh->setglTexEnvBlend();
+	_mesh->setShouldDraw(true);
+}
+
+TeTextBase2::~TeTextBase2() {
+	delete _mesh;
 }
 
 #ifdef DUMP_RENDERED_FONTS
@@ -99,7 +104,7 @@ void TeTextBase2::build() {
 		drawLine(img, _wrappedLines[i], lineoffsets[i]);
 	}
 
-	TeIntrusivePtr<Te3DTexture> texture = new Te3DTexture();
+	TeIntrusivePtr<Te3DTexture> texture = Te3DTexture::makeInstance();
 	texture->load(img);
 
 #if DUMP_RENDERED_FONTS
@@ -109,32 +114,32 @@ void TeTextBase2::build() {
 	Image::writePNG(dumpFile, img);
 #endif
 
-	_mesh.setConf(4, 4, TeMesh::MeshMode_TriangleStrip, 0, 0);
-	_mesh.defaultMaterial(texture);
-	_mesh.setglTexEnvBlend();
-	_mesh.setShouldDraw(true);
-	_mesh.setColor(_globalColor);
-	_mesh.setVertex(0, TeVector3f32(_size._x * -0.5f, _size._y * -0.5f, 0.0f));
-	_mesh.setTextureUV(0, TeVector2f32(0, 1));
-	_mesh.setNormal(0, TeVector3f32(0.0f, 0.0f, 1.0f));
-	_mesh.setColor(0, _globalColor);
-	_mesh.setVertex(1, TeVector3f32(_size._x * 0.5f, _size._y * -0.5f, 0.0f));
-	_mesh.setTextureUV(1, TeVector2f32(1, 1));
-	_mesh.setNormal(1, TeVector3f32(0.0f, 0.0f, 1.0f));
-	_mesh.setColor(1, _globalColor);
-	_mesh.setVertex(2, TeVector3f32(_size._x * 0.5f, _size._y * 0.5f, 0.0f));
-	_mesh.setTextureUV(2, TeVector2f32(1, 0));
-	_mesh.setNormal(2, TeVector3f32(0.0f, 0.0f, 1.0f));
-	_mesh.setColor(2, _globalColor);
-	_mesh.setVertex(3, TeVector3f32(_size._x * -0.5f, _size._y * 0.5f, 0.0f));
-	_mesh.setTextureUV(3, TeVector2f32(0, 0));
-	_mesh.setNormal(3, TeVector3f32(0.0f, 0.0f, 1.0f));
-	_mesh.setColor(3, _globalColor);
-	_mesh.setIndex(0, 0);
-	_mesh.setIndex(1, 1);
-	_mesh.setIndex(2, 3);
-	_mesh.setIndex(3, 2);
-	_mesh.setHasAlpha(true);
+	_mesh->setConf(4, 4, TeMesh::MeshMode_TriangleStrip, 0, 0);
+	_mesh->defaultMaterial(texture);
+	_mesh->setglTexEnvBlend();
+	_mesh->setShouldDraw(true);
+	_mesh->setColor(_globalColor);
+	_mesh->setVertex(0, TeVector3f32(_size._x * -0.5f, _size._y * -0.5f, 0.0f));
+	_mesh->setTextureUV(0, TeVector2f32(0, 1));
+	_mesh->setNormal(0, TeVector3f32(0.0f, 0.0f, 1.0f));
+	_mesh->setColor(0, _globalColor);
+	_mesh->setVertex(1, TeVector3f32(_size._x * 0.5f, _size._y * -0.5f, 0.0f));
+	_mesh->setTextureUV(1, TeVector2f32(1, 1));
+	_mesh->setNormal(1, TeVector3f32(0.0f, 0.0f, 1.0f));
+	_mesh->setColor(1, _globalColor);
+	_mesh->setVertex(2, TeVector3f32(_size._x * 0.5f, _size._y * 0.5f, 0.0f));
+	_mesh->setTextureUV(2, TeVector2f32(1, 0));
+	_mesh->setNormal(2, TeVector3f32(0.0f, 0.0f, 1.0f));
+	_mesh->setColor(2, _globalColor);
+	_mesh->setVertex(3, TeVector3f32(_size._x * -0.5f, _size._y * 0.5f, 0.0f));
+	_mesh->setTextureUV(3, TeVector2f32(0, 0));
+	_mesh->setNormal(3, TeVector3f32(0.0f, 0.0f, 1.0f));
+	_mesh->setColor(3, _globalColor);
+	_mesh->setIndex(0, 0);
+	_mesh->setIndex(1, 1);
+	_mesh->setIndex(2, 3);
+	_mesh->setIndex(3, 2);
+	_mesh->setHasAlpha(true);
 }
 
 void TeTextBase2::clear() {
@@ -201,7 +206,7 @@ void TeTextBase2::draw() {
 	if (_valueWasSet)
 		build();
 
-	_mesh.draw();
+	_mesh->draw();
 
 	//if (_strikethrough)
 	//	warning("TODO: Implement TeTextBase2::draw strikethrough support");

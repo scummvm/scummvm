@@ -19,40 +19,32 @@
  *
  */
 
-#ifndef TETRAEDGE_GAME_CHARACTERS_SHADOW_H
-#define TETRAEDGE_GAME_CHARACTERS_SHADOW_H
+#ifndef TETRAEDGE_GAME_CHARACTERS_SHADOW_OPENGL_H
+#define TETRAEDGE_GAME_CHARACTERS_SHADOW_OPENGL_H
 
-#include "tetraedge/game/in_game_scene.h"
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+
+#include "tetraedge/game/characters_shadow.h"
 
 namespace Tetraedge {
 
 class InGameScene;
 
-class CharactersShadow {
+class CharactersShadowOpenGL : public CharactersShadow {
 public:
-	CharactersShadow();
-	virtual ~CharactersShadow() {};
+	CharactersShadowOpenGL() {};
 
-	void create(InGameScene *scene);
-	void createTexture(InGameScene *scene);
-	void destroy();
-	virtual void draw(InGameScene *scene) = 0;
-	//void drawTexture(); // empty?
-
-	// Make an instance which is correct for the preferred renderer
-	static CharactersShadow *makeInstance();
+	void draw(InGameScene *scene) override;
 
 protected:
-	virtual void createInternal() = 0;
-	virtual void createTextureInternal(InGameScene *scene) = 0;
-	virtual void deleteTexture() = 0;
+	virtual void createInternal() override;
+	virtual void createTextureInternal(InGameScene *scene) override;
+	virtual void deleteTexture() override;
 
-	uint _glTex;
-	int _texSize;
-	TeIntrusivePtr<TeCamera> _camera;
-	static Te3DObject2 *_camTarget;
 };
 
 } // end namespace Tetraedge
 
-#endif // TETRAEDGE_GAME_CHARACTERS_SHADOW_H
+#endif // USE_OPENGL
+
+#endif // TETRAEDGE_GAME_CHARACTERS_SHADOW_OPENGL_H

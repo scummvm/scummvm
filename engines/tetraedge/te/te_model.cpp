@@ -113,13 +113,13 @@ void TeModel::draw() {
 			//debug("   rotation   %s", rotation().dump().c_str());
 			debug("   worldRot   %s", worldRotation().dump().c_str());
 		}*/
-		for (TeMesh &mesh : _meshes) {
+		for (auto &mesh : _meshes) {
 			// TODO: Set some flag (_drawWires?) in mesh to this->field_0x158??
-			mesh.draw();
+			mesh->draw();
 		}
 		renderer->popMatrix();
 		// Note: no corresponding enableAll - they can be enabled inside TeMaterial::apply
-		TeLight::disableAll();
+		renderer->disableAllLights();
 	}
 }
 
@@ -162,8 +162,8 @@ void TeModel::removeAnim() {
 
 void TeModel::setColor(const TeColor &col) {
 	Te3DObject2::setColor(col);
-	for (TeMesh &mesh : _meshes) {
-		mesh.setColor(col);
+	for (auto &mesh : _meshes) {
+		mesh->setColor(col);
 	}
 }
 
@@ -236,7 +236,7 @@ void TeModel::update() {
 		}
 
 		for (uint m = 0; m < _meshes.size(); m++) {
-			TeMesh &mesh = _meshes[m];
+			TeMesh &mesh = *_meshes[m];
 			if (!mesh.visible())
 				continue;
 
@@ -297,14 +297,14 @@ void TeModel::update() {
 		}
 	} else {
 		// No bones..
-		for (TeMesh &mesh : _meshes) {
+		for (auto &mesh : _meshes) {
 			if (!_modelVertexAnim) {
-				mesh.update(nullptr, nullptr);
+				mesh->update(nullptr, nullptr);
 			} else {
-				if (mesh.name() != _modelVertexAnim->head()) {
-					mesh.update(nullptr, nullptr);
+				if (mesh->name() != _modelVertexAnim->head()) {
+					mesh->update(nullptr, nullptr);
 				} else {
-					mesh.update(_modelVertexAnim);
+					mesh->update(_modelVertexAnim);
 				}
 			}
 		}
@@ -313,10 +313,10 @@ void TeModel::update() {
 
 TeModel::MeshBlender::MeshBlender(const Common::String &name, const Common::String &meshName, float amount, TeModel *model) :
 _name(name), _amount(amount) {
-	Common::Array<TeMesh> &meshes = model->_meshes;
+	const auto &meshes = model->_meshes;
 	uint i = 0;
 	for (; i < meshes.size(); i++) {
-		if (meshes[i].name().contains(meshName))
+		if (meshes[i]->name().contains(meshName))
 			break;
 	}
 	_meshNo = i;
@@ -356,6 +356,9 @@ bool TeModel::load(Common::SeekableReadStream &stream) {
 	if (meshCount > 100000)
 		error("TeModel::load: Unexpected number of meshes %d", meshCount);
 	_meshes.resize(meshCount);
+	for (uint i = 0; i < meshCount; i++)
+		_meshes[i].reset(TeMesh::makeInstance());
+
 	uint32 weightCount = stream.readUint32LE();
 	if (weightCount > 100000)
 		error("TeModel::load: Unexpected number of weights %d", weightCount);
@@ -385,7 +388,7 @@ bool TeModel::load(Common::SeekableReadStream &stream) {
 	}
 
 	for (uint m = 0; m < _meshes.size(); m++) {
-		if (!loadMesh(stream, _meshes[m])) {
+		if (!loadMesh(stream, *_meshes[m])) {
 			error("[TeModel::load] Error on meshes loading.");
 		}
 	}
@@ -552,19 +555,19 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 }
 
 void TeModel::setQuad(const TeIntrusivePtr<Te3DTexture> &tex, const Common::Array<TeVector3f32> &verts, const TeColor &col) {
-	TeMesh mesh;
-	mesh.setConf(4, 4, TeMesh::MeshMode_TriangleStrip, 0, 0);
-	mesh.defaultMaterial(tex);
+	Common::SharedPtr<TeMesh> mesh(TeMesh::makeInstance());
+	mesh->setConf(4, 4, TeMesh::MeshMode_TriangleStrip, 0, 0);
+	mesh->defaultMaterial(tex);
 
 	for (int i = 0; i < 2; i++) {
 		float f = (i == 0 ? 0.0f : 1.0f);
 		for (int j = 0; j < 2; j++) {
 			int index = i * 2 + j;
-			mesh.setVertex(index, verts[i * 2 + j]);
-			mesh.setTextureUV(index, TeVector2f32(f, (j == 0 ? 0.0f : 1.0f)));
-			mesh.setIndex(index, index);
+			mesh->setVertex(index, verts[i * 2 + j]);
+			mesh->setTextureUV(index, TeVector2f32(f, (j == 0 ? 0.0f : 1.0f)));
+			mesh->setIndex(index, index);
 			if (col.a() != 0)
-				mesh.setColor(index, col);
+				mesh->setColor(index, col);
 		}
 	}
 
@@ -573,7 +576,7 @@ void TeModel::setQuad(const TeIntrusivePtr<Te3DTexture> &tex, const Common::Arra
 	TeVector3f32 v3 = TeVector3f32::crossProduct(v1, v2);
 	v3.normalize();
 	for (int i = 0; i < 4; i++) {
-		mesh.setNormal(i, v3);
+		mesh->setNormal(i, v3);
 	}
 	_meshes.push_back(mesh);
 }
@@ -593,9 +596,9 @@ void TeModel::setVertexAnim(TeIntrusivePtr<TeModelVertexAnimation> &anim, bool r
 }
 
 void TeModel::setVisibleByName(const Common::String &name, bool vis) {
-	for (TeMesh &mesh : _meshes) {
-		if (mesh.name().contains(name)) {
-			mesh.setVisible(vis);
+	for (auto &mesh : _meshes) {
+		if (mesh->name().contains(name)) {
+			mesh->setVisible(vis);
 		}
 	}
 }

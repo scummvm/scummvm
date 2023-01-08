@@ -95,7 +95,7 @@ bool TeTiledTexture::load(const TeImage &img) {
 
 			Tile *tiledata = tile(TeVector2s32(row, col));
 			if (!_skipBlank || (int)tileimage->countPixelsOfColor(TeColor(0, 0, 0, 0)) != (tileimage->h * tileimage->w)) {
-				tiledata->_texture = new Te3DTexture();
+				tiledata->_texture = Te3DTexture::makeInstance();
 				tiledata->_texture->load(*tileimage);
 				tiledata->_vec2 = TeVector3f32
 						((float)tiledata->_texture->width() / (float)_totalSize._x,

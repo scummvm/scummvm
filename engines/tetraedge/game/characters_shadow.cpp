@@ -19,21 +19,22 @@
  *
  */
 
-#include "graphics/opengl/system_headers.h"
-
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/character.h"
 #include "tetraedge/game/characters_shadow.h"
+#include "tetraedge/game/characters_shadow_opengl.h"
+#include "tetraedge/game/characters_shadow_tinygl.h"
 #include "tetraedge/te/te_light.h"
 #include "tetraedge/te/te_renderer.h"
 #include "tetraedge/te/te_3d_texture.h"
+
 
 namespace Tetraedge {
 
 /*static*/
 Te3DObject2 *CharactersShadow::_camTarget = nullptr;
 
-CharactersShadow::CharactersShadow() {
+CharactersShadow::CharactersShadow() : _glTex(0), _texSize(0) {
 }
 
 void CharactersShadow::create(InGameScene *scene) {
@@ -46,14 +47,9 @@ void CharactersShadow::create(InGameScene *scene) {
 	_camera->setPerspectiveVal(1.0);
 	_camera->setName("_shadowCam");
 	_camera->viewport(0, 0, _texSize, _texSize);
-	Te3DTexture::unbind();
-	glGenTextures(1, &_glTex);
-	glBindTexture(GL_TEXTURE_2D, _glTex);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, _texSize, _texSize, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, nullptr);
+
+	createInternal();
+
 	renderer->disableTexture();
 }
 
@@ -70,28 +66,15 @@ void CharactersShadow::createTexture(InGameScene *scene) {
 	_camera->setFov((float)(scene->shadowFov() * M_PI / 180.0));
 	_camera->setOrthoPlanes(scene->shadowNearPlane(), scene->shadowFarPlane());
 	_camera->apply();
-
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	renderer->clearBuffer(TeRenderer::ColorAndDepth);
-
-	for (Character *character : scene->_characters) {
-		character->_model->draw();
-	}
-	scene->_character->_model->draw();
-	Te3DTexture::unbind();
-	glBindTexture(GL_TEXTURE_2D, _glTex);
-	glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, _texSize, _texSize);
-	renderer->clearBuffer(TeRenderer::ColorAndDepth);
+	
+	createTextureInternal(scene);
 
 	TeCamera::restore();
 	TeCamera::restore();
 }
 
 void CharactersShadow::destroy() {
-	TeRenderer *renderer = g_engine->getRenderer();
-	renderer->disableTexture();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDeleteTextures(1, &_glTex);
+	deleteTexture();
 	if (_camera)
 		_camera = nullptr;
 	if (_camTarget) {
@@ -100,70 +83,20 @@ void CharactersShadow::destroy() {
 	}
 }
 
-void CharactersShadow::draw(InGameScene *scene) {
-	TeRenderer *renderer = g_engine->getRenderer();
-	glDepthMask(false);
-	renderer->disableZBuffer();
-	renderer->enableTexture();
-	glBindTexture(GL_TEXTURE_2D, _glTex);
-	Te3DTexture::unbind();
-	glBindTexture(GL_TEXTURE_2D, _glTex);
-	glEnable(GL_BLEND);
-	renderer->setCurrentColor(scene->shadowColor());
+/*static*/
+CharactersShadow *CharactersShadow::makeInstance() {
+	Graphics::RendererType r = g_engine->preferredRendererType();
 
-	TeMatrix4x4 matrix;
-	matrix.translate(TeVector3f32(0.5f, 0.5f, 0.5f));
-	matrix.scale(TeVector3f32(0.5f, 0.5f, 0.5f));
-	matrix = matrix * _camera->projectionMatrix();
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+	if (r == Graphics::kRendererTypeOpenGL)
+		return new CharactersShadowOpenGL();
+#endif
 
-	TeMatrix4x4 cammatrix = _camera->worldTransformationMatrix();
-	cammatrix.inverse();
-
-	matrix = matrix * cammatrix;
-
-	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-
-	float f[4];
-	for (uint i = 0; i < 4; i++)
-		f[i] = matrix(i, 0);
-
-	glTexGenfv(GL_S, GL_EYE_PLANE, f);
-	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-
-	for (uint i = 0; i < 4; i++)
-		f[i] = matrix(i, 1);
-
-	glTexGenfv(GL_T, GL_EYE_PLANE, f);
-	glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-
-	for (uint i = 0; i < 4; i++)
-		f[i] = matrix(i, 2);
-
-	glTexGenfv(GL_R, GL_EYE_PLANE, f);
-	glTexGeni(GL_Q, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-
-	for (uint i = 0; i < 4; i++)
-		f[i] = matrix(i, 3);
-
-	glTexGenfv(GL_Q, GL_EYE_PLANE, f);
-
-	Te3DTexture::unbind();
-	glBindTexture(GL_TEXTURE_2D, _glTex);
-	glEnable(GL_BLEND);
-	renderer->setCurrentColor(scene->shadowColor());
-
-	for (TeIntrusivePtr<TeModel> model : scene->zoneModels()) {
-		if (model->meshes().size() > 0 && model->meshes()[0].materials().empty()) {
-			model->meshes()[0].defaultMaterial(TeIntrusivePtr<Te3DTexture>());
-			model->meshes()[0].materials()[0]._enableSomethingDefault0 = true;
-			model->meshes()[0].materials()[0]._diffuseColor = scene->shadowColor();
-		}
-		model->draw();
-	}
-
-	renderer->disableTexture();
-	glDepthMask(true);
-	renderer->enableZBuffer();
+#if defined(USE_TINYGL)
+	if (r == Graphics::kRendererTypeTinyGL)
+		return new CharactersShadowTinyGL();
+#endif
+	error("Couldn't create CharactersShadow for selected renderer");
 }
 
 } // end namespace Tetraedge

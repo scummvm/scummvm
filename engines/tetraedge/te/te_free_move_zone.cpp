@@ -274,18 +274,18 @@ void TeFreeMoveZone::draw() {
 	TeRenderer *renderer = g_engine->getRenderer();
 	renderer->enableWireFrame();
 	TePickMesh2::draw();
-	TeMesh mesh;
-	mesh.setConf(_borders.size(), _borders.size(), TeMesh::MeshMode_Lines, 0, 0);
+	Common::SharedPtr<TeMesh> mesh(TeMesh::makeInstance());
+	mesh->setConf(_borders.size(), _borders.size(), TeMesh::MeshMode_Lines, 0, 0);
 	for (uint i = 0; i < _borders.size(); i++) {
-		mesh.setIndex(i, i);
-		mesh.setVertex(i, verticies()[_borders[i]]);
+		mesh->setIndex(i, i);
+		mesh->setVertex(i, verticies()[_borders[i]]);
 	}
 
 	const TeColor prevColor = renderer->currentColor();
 	renderer->pushMatrix();
 	renderer->multiplyMatrix(worldTransformationMatrix());
 	renderer->setCurrentColor(TeColor(0, 0x80, 0xff, 0xff));
-	mesh.draw();
+	mesh->draw();
 	renderer->popMatrix();
 	renderer->setCurrentColor(prevColor);
 

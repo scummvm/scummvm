@@ -207,7 +207,9 @@ void TeTiledSurface::setColorKeyTolerence(float val) {
 void TeTiledSurface::setTiledTexture(const TeIntrusivePtr<TeTiledTexture> &texture) {
 	_tiledTexture = texture;
 	if (texture) {
-		_meshes.resize(texture->numberOfColumns() * texture->numberOfRow());
+		_meshes.clear();
+		for (uint i = 0; i < texture->numberOfColumns() * texture->numberOfRow(); i++)
+			_meshes.push_back(Common::SharedPtr<TeMesh>(TeMesh::makeInstance()));
 
 		setAccessName(texture->getAccessName().append(".surface"));
 		updateSurface();
@@ -242,7 +244,7 @@ void TeTiledSurface::updateSurface() {
 	int meshno = 0;
 	for (long row = 0; row < rows; row++) {
 		for (long col = 0; col < cols; col++) {
-			TeMesh &mesh = _meshes[meshno];
+			TeMesh &mesh = *_meshes[meshno];
 			mesh.setConf(4, 4, TeMesh::MeshMode_TriangleStrip, 0, 0);
 
 			mesh.setShouldDraw(_shouldDraw);

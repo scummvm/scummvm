@@ -19,18 +19,17 @@
  *
  */
 
-#include "graphics/opengl/system_headers.h"
-
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/te/te_renderer.h"
 #include "tetraedge/te/te_light.h"
 #include "tetraedge/te/te_mesh.h"
+#include "tetraedge/te/te_mesh_opengl.h"
+#include "tetraedge/te/te_mesh_tinygl.h"
 #include "tetraedge/te/te_material.h"
 
 namespace Tetraedge {
 
-TeMesh::TeMesh() : _matrixForced(false), _glMeshMode(GL_POINTS),
-_hasAlpha(false), _gltexEnvMode(GL_MODULATE), _initialMaterialIndexCount(0),
+TeMesh::TeMesh() : _matrixForced(false), _hasAlpha(false), _initialMaterialIndexCount(0),
 _drawWires(false), _shouldDraw(true) {
 }
 
@@ -66,158 +65,6 @@ void TeMesh::destroy() {
 	_matricies.clear();
 }
 
-void TeMesh::draw() {
-	if (!worldVisible())
-		return;
-
-	TeRenderer *renderer = g_engine->getRenderer();
-	renderer->pushMatrix();
-	if (_matrixForced)
-		renderer->multiplyMatrix(_forcedMatrix);
-	else
-		renderer->multiplyMatrix(worldTransformationMatrix());
-
-	/*
-	debug("Draw mesh %p (%s, %d verts %d norms %d indexes %d materials %d updated)", this, name().empty() ? "no name" : name().c_str(), _verticies.size(), _normals.size(), _indexes.size(), _materials.size(), _updatedVerticies.size());
-	debug("   renderMatrix %s", renderer->currentMatrix().toString().c_str());
-	if (!_materials.empty())
-		debug("   material   %s", _materials[0].dump().c_str());
-	debug("   position   %s", position().dump().c_str());
-	debug("   worldPos   %s", worldPosition().dump().c_str());
-	debug("   scale      %s", scale().dump().c_str());
-	debug("   worldScale %s", worldScale().dump().c_str());
-	debug("   rotation   %s", rotation().dump().c_str());
-	debug("   worldRot   %s", worldRotation().dump().c_str());
-	*/
-
-	Common::Array<TeVector3f32> &normals = (_updatedVerticies.empty() ? _normals : _updatedNormals);
-	Common::Array<TeVector3f32> &verticies = (_updatedVerticies.empty() ? _verticies : _updatedVerticies);
-	if (renderer->shadowMode() != TeRenderer::ShadowMode1) {
-		if (_faceCounts.empty()) {
-			if (hasAlpha(0) && _shouldDraw) {
-				renderer->addTransparentMesh(*this, 0, 0, 0);
-				renderer->popMatrix();
-				return;
-			}
-		} else {
-			assert(_faceCounts.size() == _materials.size());
-			int totalFaceCount = 0;
-			for (uint i = 0; i < _faceCounts.size(); i++) {
-				if (!_faceCounts[i])
-					continue;
-				if (hasAlpha(i)) {
-					renderer->addTransparentMesh(*this, totalFaceCount, _faceCounts[i], i);
-				}
-				totalFaceCount += _faceCounts[i];
-			}
-		}
-	}
-
-	renderer->setMatrixMode(TeRenderer::MM_GL_MODELVIEW);
-	renderer->pushMatrix();
-	renderer->loadCurrentMatrixToGL();
-	glEnableClientState(GL_VERTEX_ARRAY);
-	if (!normals.empty())
-		glEnableClientState(GL_NORMAL_ARRAY);
-
-	if (!_colors.empty())
-		glEnableClientState(GL_COLOR_ARRAY);
-
-	glVertexPointer(3, GL_FLOAT, 12, verticies.data());
-	if (!normals.empty())
-		glNormalPointer(GL_FLOAT, 12, normals.data());
-
-	if (!_uvs.empty() && renderer->shadowMode() != TeRenderer::ShadowMode2)
-		glTexCoordPointer(2, GL_FLOAT, 8, _uvs.data());
-
-	if (!_colors.empty())
-		glColorPointer(4, GL_UNSIGNED_BYTE, 4, _colors.data());
-
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, _gltexEnvMode);
-	if (renderer->scissorEnabled()) {
-		glEnable(GL_SCISSOR_TEST);
-		uint scissorx = renderer->scissorX();
-		uint scissory = renderer->scissorY();
-		uint scissorwidth = renderer->scissorWidth();
-		uint scissorheight = renderer->scissorHeight();
-		glScissor(scissorx, scissory, scissorwidth, scissorheight);
-	}
-
-	if (_faceCounts.empty()) {
-		if (!_materials.empty())
-			_materials[0].apply();
-
-		glDrawElements(_glMeshMode, _indexes.size(), GL_UNSIGNED_SHORT, _indexes.data());
-		if (!_materials.empty()) {
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-			renderer->disableTexture();
-		}
-	} else {
-		int totalFaceCount = 0;
-		assert(_faceCounts.size() == _materials.size());
-		for (uint i = 0; i < _materials.size(); i++) {
-			if (!_faceCounts[i])
-				continue;
-			if (!hasAlpha(i) || renderer->shadowMode() == TeRenderer::ShadowMode1 || !_shouldDraw) {
-				_materials[i].apply();
-				glDrawElements(_glMeshMode, _faceCounts[i] * 3, GL_UNSIGNED_SHORT, _indexes.data() + totalFaceCount * 3);
-				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-				renderer->disableTexture();
-			}
-			totalFaceCount += _faceCounts[i];
-		}
-	}
-
-	if (!renderer->scissorEnabled())
-		glDisable(GL_SCISSOR_TEST);
-
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
-
-	//renderer->setCurrentColor(renderer->currentColor()); // pointless?
-
-	if (_drawWires && !normals.empty()) {
-		TeLight::disableAll();
-		glBegin(GL_LINES);
-		renderer->setCurrentColor(TeColor(255, 255, 255, 255));
-		for (uint i = 0; i < verticies.size(); i++) {
-			glVertex3f(verticies[i].x(), verticies[i].y(), verticies[i].z());
-			glVertex3f(verticies[i].x() + normals[i].x(),
-					verticies[i].y() + normals[i].y(),
-					verticies[i].z() + normals[i].z());
-		}
-		glEnd();
-	}
-
-	renderer->setMatrixMode(TeRenderer::MM_GL_MODELVIEW);
-	renderer->popMatrix();
-	renderer->popMatrix();
-}
-
-TeMesh::Mode TeMesh::getMode() const {
-	// Do the reverse translation of setConf... why? I dunno.. the game does that..
-	switch(_glMeshMode) {
-	case GL_POINTS:
-		return MeshMode_Points;
-	case GL_LINES:
-		return MeshMode_Lines;
-	case GL_LINE_LOOP:
-		return MeshMode_LineLoop;
-	case GL_LINE_STRIP:
-		return MeshMode_LineStrip;
-	case GL_TRIANGLES:
-		return MeshMode_Triangles;
-	case GL_TRIANGLE_STRIP:
-		return MeshMode_TriangleStrip;
-	case GL_TRIANGLE_FAN:
-		return MeshMode_TriangleFan;
-	default:
-		return MeshMode_None;
-	}
-}
-
 bool TeMesh::hasAlpha(uint idx) {
 	// Note: I don't understand this logic, but it's what the game does..
 	bool hasGlobalAlpha = _hasAlpha && !_colors.empty();
@@ -246,10 +93,6 @@ TeVector3f32 TeMesh::normal(uint idx) const {
 void TeMesh::resizeUpdatedTables(unsigned long newSize) {
 	_updatedVerticies.resize(newSize);
 	_updatedNormals.resize(newSize);
-}
-
-void TeMesh::setglTexEnvBlend() {
-	_gltexEnvMode = GL_BLEND;
 }
 
 void TeMesh::setColor(const TeColor &col) {
@@ -282,31 +125,7 @@ void TeMesh::setConf(unsigned long vertexCount, unsigned long indexCount, enum M
 	_indexes.resize(indexCount);
 	_materials.resize(materialCount);
 	_matricies.resize(vertexCount);
-	switch(mode) {
-	case MeshMode_Points:
-		_glMeshMode = GL_POINTS;
-		break;
-	case MeshMode_Lines:
-		_glMeshMode = GL_LINES;
-		break;
-	case MeshMode_LineLoop:
-		_glMeshMode = GL_LINE_LOOP;
-		break;
-	case MeshMode_LineStrip:
-		_glMeshMode = GL_LINE_STRIP;
-		break;
-	case MeshMode_Triangles:
-		_glMeshMode = GL_TRIANGLES;
-		break;
-	case MeshMode_TriangleStrip:
-		_glMeshMode = GL_TRIANGLE_STRIP;
-		break;
-	case MeshMode_TriangleFan:
-		_glMeshMode = GL_TRIANGLE_FAN;
-		break;
-	default:
-		error("Setting invalid mesh mode.");
-	}
+	setMode(mode);
 }
 
 void TeMesh::setIndex(uint idx, uint val) {
@@ -403,26 +222,21 @@ void TeMesh::updateTo(const Common::Array<TeMatrix4x4> *matricies1, const Common
 	}
 }
 
-/*
-TeMesh &TeMesh::operator=(const TeMesh &other) {
-	copy(other);
-	return *this;
+/*static*/
+TeMesh *TeMesh::makeInstance() {
+	Graphics::RendererType r = g_engine->preferredRendererType();
+
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+	if (r == Graphics::kRendererTypeOpenGL)
+		return new TeMeshOpenGL();
+#endif
+
+#if defined(USE_TINYGL)
+	if (r == Graphics::kRendererTypeTinyGL)
+		return new TeMeshTinyGL();
+#endif
+	error("Couldn't create TeMesh for selected renderer");
+
 }
-
-void TeMesh::copy(const TeMesh &other) {
-	destroy();
-	_drawWires = false;
-	_hasAlpha = other._hasAlpha;
-	_shouldDraw = other._shouldDraw;
-	_verticies = other._verticies;
-	_normals = other._normals;
-	_uvs = other._uvs;
-	_colors = other._colors;
-
-	_glMeshMode = other._glMeshMode;
-	_gltexEnvMode = other._gltexEnvMode;
-	_matrixForced = other._matrixForced;
-	_forceMatrix = other._forceMatrix;
-}*/
 
 } // end namespace Tetraedge

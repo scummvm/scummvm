@@ -39,19 +39,18 @@ class TeCamera;
 class TeLight {
 public:
 	TeLight();
+	virtual ~TeLight() {};
 
 	TeVector3f32 directionVector() const;
-	void disable(uint lightno);
-	void enable(uint lightno);
-	static void disableAll();
-	static void enableAll();
+	virtual void disable(uint lightno) = 0;
+	virtual void enable(uint lightno) = 0;
 
-	void draw(TeCamera &camera);
+	virtual void draw(TeCamera &camera) = 0;
 
 	void transformDirPoint(const TeVector3f32 &pt1, TeVector3f32 &pt2);
 	void transformSpotPoint(TeVector3f32 &pt1);
 
-	void update(uint lightno);
+	virtual void update(uint lightno) = 0;
 	static void updateGlobal();
 	static void setGlobalAmbient(const TeColor &col) { _globalAmbientColor = col; }
 	static const TeColor &globalAmbient() { return _globalAmbientColor; }
@@ -75,7 +74,9 @@ public:
 
 	Common::String dump() const;
 
-private:
+	static TeLight *makeInstance();
+
+protected:
 	TeVector3f32 _position3d;
 	TeVector2f32 _positionRadial;
 

@@ -43,7 +43,7 @@ public:
 	TeMaterial(const TeMaterial &other) = default;
 	TeMaterial(TeIntrusivePtr<Te3DTexture> texture, Mode mode);
 
-	void apply() const;
+	// Note: apply() function from original moved to TeRenderer to remove OGL specific code from here
 	void defaultValues();
 	static void deserialize(Common::SeekableReadStream &stream, TeMaterial &material, const Common::Path &path);
 	static void serialize(Common::SeekableWriteStream &stream, TeMaterial &material);

@@ -76,7 +76,7 @@ public:
 	TeModel();
 	virtual ~TeModel();
 
-	void addMesh(const TeMesh &mesh) {
+	void addMesh(Common::SharedPtr<TeMesh> mesh) {
 		_meshes.push_back(mesh);
 	}
 	TeIntrusivePtr<TeModelAnimation> anim() {
@@ -128,7 +128,7 @@ public:
 
 	TeSignal2Param<const Common::String &, TeMatrix4x4 &> &bonesUpdatedSignal() { return _bonesUpdatedSignal; }
 	Common::Array<BonesBlender *> &boneBlenders() { return _boneBlenders; }
-	Common::Array<TeMesh> &meshes() { return _meshes; }
+	Common::Array<Common::SharedPtr<TeMesh>> &meshes() { return _meshes; }
 	TeIntrusivePtr<TeTiledTexture> tiledTexture() { return _tiledTexture; }
 
 	void setEnableLights(bool val) { _enableLights = val; }
@@ -153,7 +153,7 @@ protected:
 	Common::Array<TeMatrix4x4> _boneMatricies;
 	Common::Array<TeMatrix4x4> _lerpedElements;
 	Common::Array<Common::Array<weightElement>> _weightElements;
-	Common::Array<TeMesh> _meshes;
+	Common::Array<Common::SharedPtr<TeMesh>> _meshes;
 
 	TeQuaternion _boneRotation;
 

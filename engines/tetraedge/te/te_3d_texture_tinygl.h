@@ -19,40 +19,42 @@
  *
  */
 
-#ifndef TETRAEDGE_GAME_CHARACTERS_SHADOW_H
-#define TETRAEDGE_GAME_CHARACTERS_SHADOW_H
+#ifndef TETRAEDGE_TE_TE_3D_TEXTURE_TINYGL_H
+#define TETRAEDGE_TE_TE_3D_TEXTURE_TINYGL_H
 
-#include "tetraedge/game/in_game_scene.h"
+#if defined(USE_TINYGL)
+
+#include "tetraedge/te/te_3d_texture.h"
 
 namespace Tetraedge {
 
-class InGameScene;
-
-class CharactersShadow {
+class Te3DTextureTinyGL : public Te3DTexture {
 public:
-	CharactersShadow();
-	virtual ~CharactersShadow() {};
+	Te3DTextureTinyGL();
+	virtual ~Te3DTextureTinyGL();
 
-	void create(InGameScene *scene);
-	void createTexture(InGameScene *scene);
-	void destroy();
-	virtual void draw(InGameScene *scene) = 0;
-	//void drawTexture(); // empty?
+	void bind() const override;
+	void copyCurrentRender(uint xoffset, uint yoffset, uint x, uint y) override;
+	void create() override;
+	void destroy() override;
+	void forceTexData(uint gltexture, uint xsize, uint ysize) override;
 
-	// Make an instance which is correct for the preferred renderer
-	static CharactersShadow *makeInstance();
+	bool load(const TeImage &img) override;
 
-protected:
-	virtual void createInternal() = 0;
-	virtual void createTextureInternal(InGameScene *scene) = 0;
-	virtual void deleteTexture() = 0;
+	static void unbind();
+	bool unload() override;
+	void update(const TeImage &img, uint xoff, uint yoff) override;
 
-	uint _glTex;
-	int _texSize;
-	TeIntrusivePtr<TeCamera> _camera;
-	static Te3DObject2 *_camTarget;
+	void writeTo(Graphics::Surface &surf) override;
+
+private:
+	uint _glTexture;
+	//uint _glPixelFormat;
+
 };
 
 } // end namespace Tetraedge
 
-#endif // TETRAEDGE_GAME_CHARACTERS_SHADOW_H
+#endif // USE_TINYGL
+
+#endif // TETRAEDGE_TE_TE_3D_TEXTURE_TINYGL_H

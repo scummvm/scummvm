@@ -80,6 +80,26 @@ public:
 		return retval;
 	}
 
+	template<class T> TeIntrusivePtr<T> getResourceOrMakeInstance(Common::Path &path) {
+		for (TeIntrusivePtr<TeResource> &resource : this->_resources) {
+			if (resource->getAccessName() == path) {
+				return TeIntrusivePtr<T>(dynamic_cast<T *>(resource.get()));
+			}
+		}
+
+		TeIntrusivePtr<T> retval;
+		// Note: original search logic here abstracted away in our version..
+		TeCore *core = g_engine->getCore();
+		path = core->findFile(path);
+		retval = T::makeInstance();
+
+		if (retval.get()) {
+			retval->load(path);
+			addResource(retval.get());
+		}
+		return retval;
+	}
+
 private:
 	Common::Array<TeIntrusivePtr<TeResource>> _resources;
 

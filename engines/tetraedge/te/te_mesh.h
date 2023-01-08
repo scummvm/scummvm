@@ -43,7 +43,8 @@ class TeModelVertexAnimation;
 class TeMesh : public Te3DObject2 {
 public:
 	TeMesh();
-	TeMesh(const TeMesh &other) = default;
+	
+	virtual ~TeMesh() {};
 
 	enum Mode {
 		MeshMode_None = 0,
@@ -65,12 +66,13 @@ public:
 	void create();
 	void defaultMaterial(const TeIntrusivePtr<Te3DTexture> &texture);
 	void destroy();
-	void draw() override;
 	void facesPerMaterial(uint idx, unsigned short value);
 	unsigned short facesPerMaterial(uint idx) const { return _faceCounts[idx]; }
 	void forceMatrix(const TeMatrix4x4 &matrix);
 	byte getFaceMaterial(uint idx);
-	TeMesh::Mode getMode() const;
+	virtual uint32 getTexEnvMode() const = 0;
+	virtual TeMesh::Mode getMode() const = 0;
+	virtual void setMode(enum Mode mode) = 0;
 	bool hasAlpha(uint idx);
 	bool hasColor() const { return !_colors.empty(); }
 	bool hasUvs() const { return !_uvs.empty(); }
@@ -82,8 +84,6 @@ public:
 	void matrixIndex(uint num, unsigned short val);
 	unsigned short matrixIndex(uint num) const { return _matricies[num]; }
 	TeVector3f32 normal(uint idx) const;
-
-	TeMesh &operator=(const TeMesh &other) = default;
 
 	void optimizeVerticies();
 	void resizeUpdatedTables(unsigned long newSize);
@@ -108,10 +108,9 @@ public:
 	uint numIndexes() const { return _indexes.size(); }
 	uint numVerticies() const { return _verticies.size(); }
 	bool shouldDrawMaybe() const { return _shouldDraw; }
-	uint32 gltexEnvMode() const { return _gltexEnvMode; }
 
 	void setShouldDraw(bool val) { _shouldDraw = val; }
-	void setglTexEnvBlend();
+	virtual void setglTexEnvBlend() = 0;
 	void setHasAlpha(bool val) { _hasAlpha = val; }
 
 	Common::Array<TeMaterial> &materials() { return _materials; }
@@ -121,7 +120,9 @@ public:
 	const TeVector3f32 &preUpdatedVertex(uint idx) const { return _verticies[idx]; }
 	const TeVector3f32 &preUpdatedNormal(uint idx) const { return _normals[idx]; }
 
-private:
+	static TeMesh *makeInstance();
+
+protected:
 	Common::Array<unsigned char> _materialIndexes;
 	Common::Array<TeVector3f32> _verticies;
 	Common::Array<TeVector3f32> _normals;
@@ -134,16 +135,12 @@ private:
 	Common::Array<TeColor> _colors;
 	Common::Array<TeMaterial> _materials;
 
-	uint _glMeshMode;
-
 	bool _matrixForced;
 	TeMatrix4x4 _forcedMatrix;
 	bool _hasAlpha;
 	uint _initialMaterialIndexCount;
 	bool _drawWires;
 	bool _shouldDraw;
-
-	uint32 _gltexEnvMode;
 
 };
 

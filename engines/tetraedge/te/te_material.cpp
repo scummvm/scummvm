@@ -20,7 +20,6 @@
  */
 
 #include "common/textconsole.h"
-#include "graphics/opengl/system_headers.h"
 
 #include "tetraedge/tetraedge.h"
 
@@ -62,99 +61,6 @@ Common::String TeMaterial::dump() const {
 			  (int)_mode,
 			 _texture ? _texture->getAccessName().toString().c_str() : "None",
 			  _shininess, _enableLights ? "on" : "off");
-}
-
-void TeMaterial::apply() const {
-	//debug("TeMaterial::apply (%s)", dump().c_str());
-	static const float constColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	TeRenderer *renderer = g_engine->getRenderer();
-	if (renderer->shadowMode() == TeRenderer::ShadowMode0) {
-		if (_enableLights)
-			TeLight::enableAll();
-		else
-			TeLight::disableAll();
-
-		if (_texture) {
-			renderer->enableTexture();
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			_texture->bind();
-		}
-
-		glDisable(GL_ALPHA_TEST);
-		if (_mode == MaterialMode0) {
-			glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, constColor);
-			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
-			glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
-			glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_TEXTURE);
-			glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR);
-			glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE);
-			glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_CONSTANT);
-			glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
-		} else {
-			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-			if (_mode != MaterialMode1) {
-				glEnable(GL_ALPHA_TEST);
-				glAlphaFunc(GL_GREATER, 0.5);
-			}
-		}
-		const float ambient[4] = { _ambientColor.r() / 255.0f, _ambientColor.g() / 255.0f,
-			_ambientColor.b() / 255.0f, _ambientColor.a() / 255.0f };
-		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
-
-		const float specular[4] = { _specularColor.r() / 255.0f, _specularColor.g() / 255.0f,
-			_specularColor.b() / 255.0f, _specularColor.a() / 255.0f };
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-
-		const float emission[4] = { _emissionColor.r() / 255.0f, _emissionColor.g() / 255.0f,
-			_emissionColor.b() / 255.0f, _emissionColor.a() / 255.0f };
-		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emission);
-
-		glMaterialf(GL_FRONT, GL_SHININESS, _shininess);
-
-		const float diffuse[4] = { _diffuseColor.r() / 255.0f, _diffuseColor.g() / 255.0f,
-			_diffuseColor.b() / 255.0f, _diffuseColor.a() / 255.0f };
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
-
-		renderer->setCurrentColor(_diffuseColor);
-	} else if (renderer->shadowMode() == TeRenderer::ShadowMode1) {
-		// NOTE: Diverge from original here, it sets 255.0 but the
-		// colors should be scaled -1.0 .. 1.0.
-		static const float fullColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-		TeLight::disableAll();
-		glDisable(GL_ALPHA_TEST);
-		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, fullColor);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, fullColor);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, fullColor);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, fullColor);
-	}
-
-	//warning("TODO: Work out what TeMaterial::_enableSomethingDefault0 actually is.");
-	if (!_enableSomethingDefault0) {
-		glDisable(GL_TEXTURE_GEN_S);
-		glDisable(GL_TEXTURE_GEN_T);
-		glDisable(GL_TEXTURE_GEN_R);
-		glDisable(GL_TEXTURE_GEN_Q);
-	} else {
-		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		glEnable(GL_TEXTURE_GEN_S);
-		glEnable(GL_TEXTURE_GEN_T);
-		glEnable(GL_TEXTURE_GEN_R);
-		glEnable(GL_TEXTURE_GEN_Q);
-		glEnable(GL_TEXTURE_2D);
-		TeLight::disableAll();
-		glDisable(GL_ALPHA_TEST);
-		renderer->enableTexture();
-		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-		const float diffuse[4] = { _diffuseColor.r() / 255.0f, _diffuseColor.g() / 255.0f,
-			_diffuseColor.b() / 255.0f, _diffuseColor.a() / 255.0f };
-
-		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, diffuse);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, diffuse);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, diffuse);
-	}
 }
 
 bool TeMaterial::operator==(const TeMaterial &other) const {

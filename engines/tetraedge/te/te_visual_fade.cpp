@@ -101,7 +101,7 @@ void TeVisualFade::init() {
 	if (_texturePtr) {
 		_texturePtr->destroy();
 	} else {
-		_texturePtr = new Te3DTexture();
+		_texturePtr = Te3DTexture::makeInstance();
 	}
 	_texturePtr->create();
 	// create an image the size of the window, no palette, format 6.

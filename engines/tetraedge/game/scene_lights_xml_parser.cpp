@@ -56,7 +56,7 @@ bool SceneLightsXmlParser::parserCallback_Ambient(ParserNode *node) {
 	if (_parent == Parent_Global) {
 		TeLight::setGlobalAmbient(col);
 	} else {
-		_lights->back().setAmbient(col);
+		_lights->back()->setAmbient(col);
 	}
 	return true;
 }
@@ -68,13 +68,13 @@ bool SceneLightsXmlParser::parserCallback_Lights(ParserNode *node) {
 
 bool SceneLightsXmlParser::parserCallback_Light(ParserNode *node) {
 	_parent = Parent_Light;
-	_lights->push_back(TeLight());
+	_lights->push_back(Common::SharedPtr<TeLight>(TeLight::makeInstance()));
 	TeLightType ltype = TeLightType::LightTypeDirectional;
 	if (node->values["Type"] == "Spot")
 		ltype = TeLightType::LightTypeSpot;
 	else if (node->values["Type"] == "Point")
 		ltype = TeLightType::LightTypePoint;
-	_lights->back().setType(ltype);
+	_lights->back()->setType(ltype);
 	return true;
 }
 
@@ -82,14 +82,14 @@ bool SceneLightsXmlParser::parserCallback_Position(ParserNode *node) {
 	float x = atof(node->values["x"].c_str());
 	float y = atof(node->values["y"].c_str());
 	float z = atof(node->values["z"].c_str());
-	_lights->back().setPosition3d(TeVector3f32(x, y, z));
+	_lights->back()->setPosition3d(TeVector3f32(x, y, z));
 	return true;
 }
 
 bool SceneLightsXmlParser::parserCallback_Direction(ParserNode *node) {
 	float h = (atof(node->values["h"].c_str()) * M_PI) / 180.0;
 	float v = (atof(node->values["v"].c_str()) * M_PI) / 180.0;
-	_lights->back().setPositionRadial(TeVector2f32(h, v));
+	_lights->back()->setPositionRadial(TeVector2f32(h, v));
 	return true;
 }
 
@@ -98,7 +98,7 @@ bool SceneLightsXmlParser::parserCallback_Diffuse(ParserNode *node) {
 	if (!parseCol(node, col))
 		return false;
 
-	_lights->back().setDiffuse(col);
+	_lights->back()->setDiffuse(col);
 	return true;
 }
 
@@ -107,7 +107,7 @@ bool SceneLightsXmlParser::parserCallback_Specular(ParserNode *node) {
 	if (!parseCol(node, col))
 		return false;
 
-	_lights->back().setSpecular(col);
+	_lights->back()->setSpecular(col);
 	return true;
 }
 
@@ -117,9 +117,9 @@ bool SceneLightsXmlParser::parserCallback_Attenuation(ParserNode *node) {
 	float q = atof(node->values["quadratic"].c_str());
 	if (c < 0 || l < 0 || q < 0)
 		warning("Loaded invalid lighting attenuation vals %f %f %f", c, l, q);
-	_lights->back().setConstAtten(c);
-	_lights->back().setLinearAtten(l);
-	_lights->back().setQuadraticAtten(q);
+	_lights->back()->setConstAtten(c);
+	_lights->back()->setLinearAtten(l);
+	_lights->back()->setQuadraticAtten(q);
 	return true;
 }
 
@@ -127,7 +127,7 @@ bool SceneLightsXmlParser::parserCallback_Cutoff(ParserNode *node) {
 	float cutoff = atof(node->values["value"].c_str());
 	if (cutoff < 0.0f || (cutoff > 90.0f && cutoff != 180.0f))
 		warning("Loaded invalid lighting cutoff value %f", cutoff);
-	_lights->back().setCutoff((cutoff * M_PI) / 180.0);
+	_lights->back()->setCutoff((cutoff * M_PI) / 180.0);
 	return true;
 }
 
@@ -135,12 +135,12 @@ bool SceneLightsXmlParser::parserCallback_Exponent(ParserNode *node) {
 	float expon = atof(node->values["value"].c_str());
 	if (expon < 0.0f || expon > 128.0f)
 		warning("Loaded invalid lighting exponent value %f", expon);
-	_lights->back().setExponent(expon);
+	_lights->back()->setExponent(expon);
 	return true;
 }
 
 bool SceneLightsXmlParser::parserCallback_DisplaySize(ParserNode *node) {
-	_lights->back().setDisplaySize(atof(node->values["value"].c_str()));
+	_lights->back()->setDisplaySize(atof(node->values["value"].c_str()));
 	return true;
 }
 

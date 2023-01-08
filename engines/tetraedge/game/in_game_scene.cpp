@@ -220,17 +220,18 @@ void InGameScene::close() {
 
 void InGameScene::convertPathToMesh(TeFreeMoveZone *zone) {
 	TeIntrusivePtr<TeModel> model = new TeModel();
-	model->meshes().resize(1);
+	model->meshes().clear();
+	model->meshes().push_back(Common::SharedPtr<TeMesh>(TeMesh::makeInstance()));
 	model->setName("shadowReceiving");
 	model->setPosition(zone->position());
 	model->setRotation(zone->rotation());
 	model->setScale(zone->scale());
 	unsigned long nverticies = zone->verticies().size();
-	model->meshes()[0].setConf(nverticies, nverticies, TeMesh::MeshMode_Triangles, 0, 0);
+	model->meshes()[0]->setConf(nverticies, nverticies, TeMesh::MeshMode_Triangles, 0, 0);
 	for (uint i = 0; i < nverticies; i++) {
-		model->meshes()[0].setIndex(i, i);
-		model->meshes()[0].setVertex(i, zone->verticies()[i]);
-		model->meshes()[0].setNormal(i, TeVector3f32(0, 0, 1));
+		model->meshes()[0]->setIndex(i, i);
+		model->meshes()[0]->setVertex(i, zone->verticies()[i]);
+		model->meshes()[0]->setNormal(i, TeVector3f32(0, 0, 1));
 	}
 	_zoneModels.push_back(model);
 }
@@ -293,7 +294,7 @@ void InGameScene::deserializeModel(Common::ReadStream &stream, TeIntrusivePtr<Te
 	TeVector2f32 vec2;
 	TeQuaternion rot;
 	TeColor col;
-	TeMesh mesh;
+	Common::SharedPtr<TeMesh> mesh(TeMesh::makeInstance());
 
 	assert(pickmesh);
 
@@ -312,30 +313,30 @@ void InGameScene::deserializeModel(Common::ReadStream &stream, TeIntrusivePtr<Te
 	if (indexcount > 100000 || vertexcount > 100000)
 		error("InGameScene::deserializeModel: Unxpected counts %d %d", indexcount, vertexcount);
 
-	mesh.setConf(vertexcount, indexcount, TeMesh::MeshMode_Triangles, 0, 0);
+	mesh->setConf(vertexcount, indexcount, TeMesh::MeshMode_Triangles, 0, 0);
 	for (uint i = 0; i < indexcount; i++)
-		mesh.setIndex(i, stream.readUint32LE());
+		mesh->setIndex(i, stream.readUint32LE());
 
 	for (uint i = 0; i < vertexcount; i++) {
 		TeVector3f32::deserialize(stream, vec);
-		mesh.setVertex(i, vec);
+		mesh->setVertex(i, vec);
 	}
 	for (uint i = 0; i < vertexcount; i++) {
 		TeVector3f32::deserialize(stream, vec);
-		mesh.setNormal(i, vec);
+		mesh->setNormal(i, vec);
 	}
 	for (uint i = 0; i < vertexcount; i++) {
 		TeVector2f32::deserialize(stream, vec2);
-		mesh.setTextureUV(i, vec2);
+		mesh->setTextureUV(i, vec2);
 	}
 	for (uint i = 0; i < vertexcount; i++) {
 		col.deserialize(stream);
-		mesh.setColor(i, col);
+		mesh->setColor(i, col);
 	}
 
 	pickmesh->setNbTriangles(indexcount / 3);
 	for (uint i = 0; i < indexcount; i++) {
-		vec = mesh.vertex(mesh.index(i));
+		vec = mesh->vertex(mesh->index(i));
 		pickmesh->verticies()[i] = vec;
 	}
 	model->addMesh(mesh);
@@ -368,7 +369,7 @@ void InGameScene::draw() {
 
 	TeLight::updateGlobal();
 	for (uint i = 0; i < _lights.size(); i++)
-		_lights[i].update(i);
+		_lights[i]->update(i);
 
 	TeCamera::restore();
 }
@@ -556,9 +557,9 @@ bool InGameScene::load(const Common::Path &path) {
 		}
 	}
 	if (!_lights.empty()) {
-		TeLight::disableAll();
+		g_engine->getRenderer()->disableAllLights();
 		for (uint i = 0; i < _lights.size(); i++) {
-			_lights[i].disable(i);
+			_lights[i]->disable(i);
 		}
 		_lights.clear();
 	}
@@ -661,7 +662,7 @@ bool InGameScene::load(const Common::Path &path) {
 	for (TeFreeMoveZone *zone : _freeMoveZones) {
 		convertPathToMesh(zone);
 	}
-	_charactersShadow = new CharactersShadow();
+	_charactersShadow = CharactersShadow::makeInstance();
 	_charactersShadow->create(this);
 	onMainWindowSizeChanged();
 
@@ -701,9 +702,9 @@ bool InGameScene::loadLights(const Common::Path &path) {
 	_shadowNearPlane = parser.getShadowNearPlane();
 	_shadowFov = parser.getShadowFov();
 
-	TeLight::enableAll();
+	g_engine->getRenderer()->enableAllLights();
 	for (uint i = 0; i < _lights.size(); i++) {
-		_lights[i].enable(i);
+		_lights[i]->enable(i);
 	}
 
 #if DEBUG_LIGHTS
@@ -752,9 +753,9 @@ bool InGameScene::loadObjectMaterials(const Common::String &name) {
 
 		Common::Path mpath = _loadedPath.getParent().join(name).join(obj._name + ".png");
 		if (img.load(mpath)) {
-			Te3DTexture *tex = new Te3DTexture();
+			Te3DTexture *tex = Te3DTexture::makeInstance();
 			tex->load(img);
-			obj._model->meshes()[0].defaultMaterial(tex);
+			obj._model->meshes()[0]->defaultMaterial(tex);
 			retval = true;
 		}
 	}
@@ -960,7 +961,7 @@ TeLight *InGameScene::shadowLight() {
 	if (_shadowLightNo == -1) {
 		return nullptr;
 	}
-	return &_lights[_shadowLightNo];
+	return _lights[_shadowLightNo].get();
 }
 
 void InGameScene::setImagePathMarker(const Common::String &markerName, const Common::String &path) {

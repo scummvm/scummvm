@@ -19,40 +19,34 @@
  *
  */
 
-#ifndef TETRAEDGE_GAME_CHARACTERS_SHADOW_H
-#define TETRAEDGE_GAME_CHARACTERS_SHADOW_H
+#ifndef TETRAEDGE_TE_TE_LIGHT_TINYGL_H
+#define TETRAEDGE_TE_TE_LIGHT_TINYGL_H
 
-#include "tetraedge/game/in_game_scene.h"
+#if defined(USE_TINYGL)
+
+#include "tetraedge/te/te_light.h"
 
 namespace Tetraedge {
 
-class InGameScene;
-
-class CharactersShadow {
+class TeLightTinyGL : public TeLight {
 public:
-	CharactersShadow();
-	virtual ~CharactersShadow() {};
+	TeLightTinyGL();
 
-	void create(InGameScene *scene);
-	void createTexture(InGameScene *scene);
-	void destroy();
-	virtual void draw(InGameScene *scene) = 0;
-	//void drawTexture(); // empty?
+	void disable(uint lightno) override;
+	void enable(uint lightno) override;
 
-	// Make an instance which is correct for the preferred renderer
-	static CharactersShadow *makeInstance();
+	void draw(TeCamera &camera) override;
 
-protected:
-	virtual void createInternal() = 0;
-	virtual void createTextureInternal(InGameScene *scene) = 0;
-	virtual void deleteTexture() = 0;
+	void update(uint lightno) override;
+	static void updateGlobal();
 
-	uint _glTex;
-	int _texSize;
-	TeIntrusivePtr<TeCamera> _camera;
-	static Te3DObject2 *_camTarget;
+	static void disableAll();
+	static void enableAll();
+
 };
 
 } // end namespace Tetraedge
 
-#endif // TETRAEDGE_GAME_CHARACTERS_SHADOW_H
+#endif // USE_TINYGL
+
+#endif // TETRAEDGE_TE_TE_LIGHT_TINYGL_H
