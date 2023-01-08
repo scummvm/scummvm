@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-08 00:31+0000\n"
-"PO-Revision-Date: 2023-01-08 00:14+0000\n"
+"PO-Revision-Date: 2023-01-08 00:43+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -219,20 +219,18 @@ msgstr "FEHLER %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:184 gui/downloadpacksdialog.cpp:239
-#, fuzzy, c-format
-#| msgid "Downloading icons list..."
+#, c-format
 msgid "Downloading %S list..."
-msgstr "Icon-Liste wird geladen..."
+msgstr "Liste %S wird geladen..."
 
 #: gui/downloadpacksdialog.cpp:198
 msgid "Clear Cache"
 msgstr "Cache leeren"
 
 #: gui/downloadpacksdialog.cpp:249
-#, fuzzy, c-format
-#| msgid "Downloading icons list... %d entries"
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "Icon-Liste wird heruntergeladen... %d Einträge"
+msgstr "Liste %S wird heruntergeladen... %d Einträge"
 
 #: gui/downloadpacksdialog.cpp:259
 #, c-format
@@ -262,10 +260,9 @@ msgstr "FEHLER: Kein Icon-Pfad gesetzt"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:425
-#, fuzzy, c-format
-#| msgid "No new icons packs available"
+#, c-format
 msgid "No new %S available"
-msgstr "Keine neuen Icon-Packs verfügbar"
+msgstr "Kein neues Pack verfügbar"
 
 #: gui/downloadpacksdialog.cpp:461
 #, c-format
@@ -1216,16 +1213,12 @@ msgid "Shader Path:"
 msgstr "Shader-Pfad:"
 
 #: gui/options.cpp:1580
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Shaders"
-msgstr "Updates suchen:"
+msgstr "Shader aktualisieren"
 
 #: gui/options.cpp:1580
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of shader packs"
-msgstr "Suche nach Aktualisierungen..."
+msgstr "Suche nach Aktualisierungen von Shader-Packs"
 
 #: gui/options.cpp:1586 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
@@ -1660,10 +1653,8 @@ msgid "Update Icons"
 msgstr "Icons aktualisieren"
 
 #: gui/options.cpp:2521
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of icon packs"
-msgstr "Suche nach Aktualisierungen..."
+msgstr "Suche nach Aktualisierungen von Icon-Packs"
 
 #: gui/options.cpp:2528
 msgid "Autosave:"
@@ -2014,11 +2005,11 @@ msgstr ""
 
 #: gui/options.cpp:3113
 msgid "icon packs"
-msgstr ""
+msgstr "Icon-Packs"
 
 #: gui/options.cpp:3121
 msgid "shader packs"
-msgstr ""
+msgstr "Shader-Packs"
 
 #: gui/options.cpp:3243
 msgid ""
@@ -2243,14 +2234,16 @@ msgstr "Geben Sie eine Beschreibung für Speicherplatz %d ein:"
 #: gui/shaderbrowser-dialog.cpp:52
 msgid "Choose shader from the list below (or pick a file instead)"
 msgstr ""
+"Wähle Shader aus der untenstehenden Liste aus (oder wähle stattdessen eine "
+"Datei)"
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick file instead..."
-msgstr ""
+msgstr "Datei auswählen..."
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick shader from file system"
-msgstr ""
+msgstr "Shader-Datei vom Dateisystem auswählen"
 
 #: gui/shaderbrowser-dialog.cpp:137
 msgid "Select shader"
@@ -6622,11 +6615,11 @@ msgstr ""
 
 #: engines/neverhood/dialogs.cpp:63
 msgid "Repeat useful Willie's hint"
-msgstr ""
+msgstr "Nützlichen Hinweis von Willie wiederholen"
 
 #: engines/neverhood/dialogs.cpp:64
 msgid "Repeat actual useful hint by Willie"
-msgstr ""
+msgstr "Wiederhole den tatsächlich sinnvollen Hinweis von Willie"
 
 #. I18N: NHC is a file extension
 #: engines/neverhood/dialogs.cpp:83
