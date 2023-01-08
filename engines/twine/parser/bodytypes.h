@@ -56,7 +56,7 @@ struct BodyBone {
 	uint16 vertex;
 	int16 firstVertex;
 	int16 numVertices;
-	int32 numOfShades;
+	int32 numNormals;
 	BoneFrame initalBoneState;
 
 	inline bool isRoot() const {
@@ -64,18 +64,18 @@ struct BodyBone {
 	}
 };
 
-struct BodyShade {
-	int16 col1;
-	int16 col2;
-	int16 col3;
-	uint16 unk4;
+struct BodyNormal {
+	int16 x;
+	int16 y;
+	int16 z;
+	uint16 prenormalizedRange;
 };
 
 struct BodyPolygon {
 	Common::Array<uint16> indices;
-	Common::Array<uint16> intensities;
+	Common::Array<uint16> normals;
 	int8 materialType = 0;
-	int16 color = 0;
+	int16 intensity = 0; // color1 / color2
 };
 
 }

@@ -58,9 +58,9 @@ void Renderer::init(int32 w, int32 h) {
 }
 
 IVec3 &Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) { // ProjettePoint
-	if (_isUsingOrthoProjection) {
-		_projPos.x = ((cX - cZ) * 24) / ISO_SCALE + _orthoProjPos.x;
-		_projPos.y = (((cX + cZ) * 12) - cY * 30) / ISO_SCALE + _orthoProjPos.y;
+	if (_isUsingIsoProjection) {
+		_projPos.x = ((cX - cZ) * 24) / ISO_SCALE + _projectionCenter.x;
+		_projPos.y = (((cX + cZ) * 12) - cY * 30) / ISO_SCALE + _projectionCenter.y;
 		_projPos.z = cZ - cY - cX;
 		return _projPos;
 	}
@@ -81,21 +81,21 @@ IVec3 &Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) { // Proj
 		posZ = 0x7FFF;
 	}
 
-	_projPos.x = (cX * _cameraScaleX) / posZ + _orthoProjPos.x;
-	_projPos.y = (-cY * _cameraScaleY) / posZ + _orthoProjPos.y;
+	_projPos.x = (cX * _cameraScaleX) / posZ + _projectionCenter.x;
+	_projPos.y = (-cY * _cameraScaleY) / posZ + _projectionCenter.y;
 	_projPos.z = posZ;
 	return _projPos;
 }
 
 void Renderer::setCameraPosition(int32 x, int32 y, int32 depthOffset, int32 scaleX, int32 scaleY) {
-	_orthoProjPos.x = x;
-	_orthoProjPos.y = y;
+	_projectionCenter.x = x;
+	_projectionCenter.y = y;
 
 	_cameraDepthOffset = depthOffset;
 	_cameraScaleX = scaleX;
 	_cameraScaleY = scaleY;
 
-	_isUsingOrthoProjection = false;
+	_isUsingIsoProjection = false;
 }
 
 void Renderer::setBaseTranslation(int32 x, int32 y, int32 z) {
@@ -105,11 +105,11 @@ void Renderer::setBaseTranslation(int32 x, int32 y, int32 z) {
 }
 
 void Renderer::setOrthoProjection(int32 x, int32 y, int32 z) {
-	_orthoProjPos.x = x;
-	_orthoProjPos.y = y;
-	_orthoProjPos.z = z;
+	_projectionCenter.x = x;
+	_projectionCenter.y = y;
+	_projectionCenter.z = z;
 
-	_isUsingOrthoProjection = true;
+	_isUsingIsoProjection = true;
 }
 
 void Renderer::baseMatrixTranspose() {
@@ -163,10 +163,10 @@ IVec3 Renderer::getCameraAnglePositions(int32 x, int32 y, int32 z) {
 	return IVec3(vx, vy, vz);
 }
 
-IVec3 Renderer::translateGroup(int32 x, int32 y, int32 z) {
-	const int32 vx = (_shadeMatrix.row1.x * x + _shadeMatrix.row1.y * y + _shadeMatrix.row1.z * z) / SCENE_SIZE_HALF;
-	const int32 vy = (_shadeMatrix.row2.x * x + _shadeMatrix.row2.y * y + _shadeMatrix.row2.z * z) / SCENE_SIZE_HALF;
-	const int32 vz = (_shadeMatrix.row3.x * x + _shadeMatrix.row3.y * y + _shadeMatrix.row3.z * z) / SCENE_SIZE_HALF;
+IVec3 Renderer::translateGroup(const IMatrix3x3 &matrix, int32 x, int32 y, int32 z) {
+	const int32 vx = (matrix.row1.x * x + matrix.row1.y * y + matrix.row1.z * z) / SCENE_SIZE_HALF;
+	const int32 vy = (matrix.row2.x * x + matrix.row2.y * y + matrix.row2.z * z) / SCENE_SIZE_HALF;
+	const int32 vz = (matrix.row3.x * x + matrix.row3.y * y + matrix.row3.z * z) / SCENE_SIZE_HALF;
 	return IVec3(vx, vy, vz);
 }
 
@@ -379,8 +379,9 @@ void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
 	_cameraAngleZ = angleZ;*/
 	const int32 normalUnit = 64;
 	const IVec3 renderAngle(angleX, angleY, angleZ);
-	applyRotation(&_shadeMatrix, &_baseMatrix, renderAngle);
-	_lightNorm = translateGroup(0, 0, normalUnit - 5);
+	IMatrix3x3 matrix;
+	applyRotation(&matrix, &_baseMatrix, renderAngle);
+	_lightNorm = translateGroup(matrix, 0, 0, normalUnit - 5);
 }
 
 static FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
@@ -1364,7 +1365,7 @@ void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 colo
 	}
 }
 
-bool Renderer::prepareCircle(int32 x, int32 y, int32 radius) {
+bool Renderer::computeSphere(int32 x, int32 y, int32 radius) {
 	if (radius <= 0) {
 		return false;
 	}
@@ -1462,7 +1463,7 @@ bool Renderer::prepareCircle(int32 x, int32 y, int32 radius) {
 
 uint8 *Renderer::prepareSpheres(const Common::Array<BodySphere> &spheres, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData) {
 	for (const BodySphere &sphere : spheres) {
-		CmdRenderSphere *cmd = (CmdRenderSphere *)renderBufferPtr;
+		CmdRenderSphere *cmd = (CmdRenderSphere *)(void*)renderBufferPtr;
 		cmd->color = sphere.color;
 		cmd->polyRenderType = sphere.fillType;
 		cmd->radius = sphere.radius;
@@ -1484,7 +1485,7 @@ uint8 *Renderer::prepareSpheres(const Common::Array<BodySphere> &spheres, int32 
 
 uint8 *Renderer::prepareLines(const Common::Array<BodyLine> &lines, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData) {
 	for (const BodyLine &line : lines) {
-		CmdRenderLine *cmd = (CmdRenderLine *)renderBufferPtr;
+		CmdRenderLine *cmd = (CmdRenderLine *)(void*)renderBufferPtr;
 		cmd->colorIndex = line.color;
 		const int32 point1Index = line.vertex1;
 		const int32 point2Index = line.vertex2;
@@ -1511,37 +1512,36 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 		const uint8 materialType = polygon.materialType;
 		const uint8 numVertices = polygon.indices.size();
 		assert(numVertices <= 16);
-		const int16 colorIndex = polygon.color;
 
 		int16 zMax = -32000;
 
-		CmdRenderPolygon *destinationPolygon = (CmdRenderPolygon *)renderBufferPtr;
+		CmdRenderPolygon *destinationPolygon = (CmdRenderPolygon *)(void*)renderBufferPtr;
 		destinationPolygon->numVertices = numVertices;
 		destinationPolygon->top = SCENE_SIZE_MAX;
 		destinationPolygon->bottom = SCENE_SIZE_MIN;
 
 		renderBufferPtr += sizeof(CmdRenderPolygon);
 
-		ComputedVertex *const vertices = (ComputedVertex *)renderBufferPtr;
+		ComputedVertex *const vertices = (ComputedVertex *)(void*)renderBufferPtr;
 		renderBufferPtr += destinationPolygon->numVertices * sizeof(ComputedVertex);
 
 		ComputedVertex *vertex = vertices;
 
 		if (materialType >= MAT_GOURAUD) {
 			destinationPolygon->renderType = polygon.materialType - (MAT_GOURAUD - POLYGONTYPE_GOURAUD);
-			destinationPolygon->colorIndex = polygon.color;
+			destinationPolygon->colorIndex = polygon.intensity;
 
 			for (int16 idx = 0; idx < numVertices; ++idx) {
-				const int16 shadeEntry = polygon.intensities[idx];
-				const int16 shadeValue = colorIndex + modelData->shadeTable[shadeEntry];
-				const int16 vertexIndex = polygon.indices[idx];
+				const uint16 shadeEntry = polygon.normals[idx];
+				const int16 shadeValue = polygon.intensity + modelData->normalTable[shadeEntry];
+				const uint16 vertexIndex = polygon.indices[idx];
 				const I16Vec3 *point = &modelData->flattenPoints[vertexIndex];
 
 				vertex->intensity = shadeValue;
 				vertex->x = clamp(point->x, 0, maxWidth);
 				vertex->y = clamp(point->y, 0, maxHeight);
-				destinationPolygon->top = MIN<int>(destinationPolygon->top, vertex->y);
-				destinationPolygon->bottom = MAX<int>(destinationPolygon->bottom, vertex->y);
+				destinationPolygon->top = MIN<int16>(destinationPolygon->top, vertex->y);
+				destinationPolygon->bottom = MAX<int16>(destinationPolygon->bottom, vertex->y);
 				zMax = MAX(zMax, point->z);
 				++vertex;
 			}
@@ -1549,24 +1549,24 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 			if (materialType >= MAT_FLAT) {
 				// only 1 shade value is used
 				destinationPolygon->renderType = materialType - MAT_FLAT;
-				const int16 shadeEntry = polygon.intensities[0];
-				const int16 shadeValue = colorIndex + modelData->shadeTable[shadeEntry];
+				const uint16 normalIndex = polygon.normals[0];
+				const int16 shadeValue = polygon.intensity + modelData->normalTable[normalIndex];
 				destinationPolygon->colorIndex = shadeValue;
 			} else {
 				// no shade is used
 				destinationPolygon->renderType = materialType;
-				destinationPolygon->colorIndex = colorIndex;
+				destinationPolygon->colorIndex = polygon.intensity;
 			}
 
 			for (int16 idx = 0; idx < numVertices; ++idx) {
-				const int16 vertexIndex = polygon.indices[idx];
+				const uint16 vertexIndex = polygon.indices[idx];
 				const I16Vec3 *point = &modelData->flattenPoints[vertexIndex];
 
 				vertex->intensity = destinationPolygon->colorIndex;
 				vertex->x = clamp(point->x, 0, maxWidth);
 				vertex->y = clamp(point->y, 0, maxHeight);
-				destinationPolygon->top = MIN<int>(destinationPolygon->top, vertex->y);
-				destinationPolygon->bottom = MAX<int>(destinationPolygon->bottom, vertex->y);
+				destinationPolygon->top = MIN<int16>(destinationPolygon->top, vertex->y);
+				destinationPolygon->bottom = MAX<int16>(destinationPolygon->bottom, vertex->y);
 				zMax = MAX(zMax, point->z);
 				++vertex;
 			}
@@ -1597,14 +1597,14 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 	uint8 *renderBufferPtr = _renderCoordinatesBuffer;
 	renderBufferPtr = preparePolygons(bodyData.getPolygons(), numOfPrimitives, renderCmds, renderBufferPtr, modelData);
 	renderBufferPtr = prepareLines(bodyData.getLines(), numOfPrimitives, renderCmds, renderBufferPtr, modelData);
-	renderBufferPtr = prepareSpheres(bodyData.getSpheres(), numOfPrimitives, renderCmds, renderBufferPtr, modelData);
+	prepareSpheres(bodyData.getSpheres(), numOfPrimitives, renderCmds, renderBufferPtr, modelData);
 
 	if (numOfPrimitives == 0) {
 		return false;
 	}
 	const RenderCommand *cmds = depthSortRenderCommands(numOfPrimitives);
 
-	int16 primitiveCounter = numOfPrimitives;
+	int32 primitiveCounter = numOfPrimitives;
 
 	do {
 		int16 type = cmds->renderType;
@@ -1612,7 +1612,7 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 
 		switch (type) {
 		case RENDERTYPE_DRAWLINE: {
-			const CmdRenderLine *lineCoords = (const CmdRenderLine *)pointer;
+			const CmdRenderLine *lineCoords = (const CmdRenderLine *)(const void*)pointer;
 			const int32 x1 = lineCoords->x1;
 			const int32 y1 = lineCoords->y1;
 			const int32 x2 = lineCoords->x2;
@@ -1621,16 +1621,16 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 			break;
 		}
 		case RENDERTYPE_DRAWPOLYGON: {
-			const CmdRenderPolygon *header = (const CmdRenderPolygon *)pointer;
-			ComputedVertex *vertices = (ComputedVertex *)(pointer + sizeof(CmdRenderPolygon));
+			const CmdRenderPolygon *header = (const CmdRenderPolygon *)(const void*)pointer;
+			ComputedVertex *vertices = (ComputedVertex *)(void*)(pointer + sizeof(CmdRenderPolygon));
 			renderPolygons(*header, vertices, header->top, header->bottom);
 			break;
 		}
 		case RENDERTYPE_DRAWSPHERE: {
-			CmdRenderSphere *sphere = (CmdRenderSphere *)pointer;
+			const CmdRenderSphere *sphere = (const CmdRenderSphere *)(const void*)pointer;
 			int32 radius = sphere->radius;
 
-			if (_isUsingOrthoProjection) {
+			if (_isUsingIsoProjection) {
 				// * sqrt(sx+sy) / 512 (isometric scale)
 				radius = (radius * 34) / ISO_SCALE;
 			} else {
@@ -1661,7 +1661,7 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 
 			radius -= 3;
 
-			if (prepareCircle(sphere->x, sphere->y, radius)) {
+			if (computeSphere(sphere->x, sphere->y, radius)) {
 				const int32 vsize = 2 * radius;
 				fillVertices(sphere->y - radius, vsize, sphere->polyRenderType, sphere->color);
 			}
@@ -1714,15 +1714,15 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 	const I16Vec3 *pointPtr = &modelData->computedPoints[0];
 	I16Vec3 *pointPtrDest = &modelData->flattenPoints[0];
 
-	if (_isUsingOrthoProjection) { // use standard projection
+	if (_isUsingIsoProjection) { // use standard projection
 		do {
 			const int32 coX = pointPtr->x + renderPos.x;
 			const int32 coY = pointPtr->y + renderPos.y;
 			const int32 coZ = -(pointPtr->z + renderPos.z);
 
 			// TODO: use projectPositionOnScreen()
-			pointPtrDest->x = (coX + coZ) * 24 / ISO_SCALE + _orthoProjPos.x;
-			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / ISO_SCALE + _orthoProjPos.y;
+			pointPtrDest->x = (coX + coZ) * 24 / ISO_SCALE + _projectionCenter.x;
+			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / ISO_SCALE + _projectionCenter.y;
 			pointPtrDest->z = coZ - coX - coY;
 
 			if (pointPtrDest->x < modelRect.left) {
@@ -1756,7 +1756,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 
 			// X projection
 			{
-				coX = _orthoProjPos.x + ((coX * _cameraScaleX) / coZ);
+				coX = _projectionCenter.x + ((coX * _cameraScaleX) / coZ);
 
 				if (coX > 0xFFFF) {
 					coX = 0x7FFF;
@@ -1775,7 +1775,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 
 			// Y projection
 			{
-				coY = _orthoProjPos.y + ((-coY * _cameraScaleY) / coZ);
+				coY = _projectionCenter.y + ((-coY * _cameraScaleY) / coZ);
 
 				if (coY > 0xFFFF) {
 					coY = 0x7FFF;
@@ -1806,10 +1806,10 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 		} while (--numOfPrimitives);
 	}
 
-	int32 numOfShades = bodyData.getShades().size();
+	int32 numNormals = bodyData.getNormals().size();
 
-	if (numOfShades) { // process normal data
-		uint16 *currentShadeDestination = (uint16 *)modelData->shadeTable;
+	if (numNormals) { // process normal data
+		uint16 *currentShadeDestination = (uint16 *)modelData->normalTable;
 		IMatrix3x3 *lightMatrix = &_matricesTable[0];
 
 		numOfPrimitives = numBones;
@@ -1817,37 +1817,33 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 		int shadeIndex = 0;
 		int boneIdx = 0;
 		do { // for each element
-			numOfShades = bodyData.getBone(boneIdx).numOfShades;
+			numNormals = bodyData.getBone(boneIdx).numNormals;
 
-			if (numOfShades) {
-				int32 numShades = numOfShades;
+			if (numNormals) {
+				const IMatrix3x3 matrix = *lightMatrix * _lightNorm;
 
-				_shadeMatrix = *lightMatrix * _lightNorm;
+				for (int32 i = 0; i < numNormals; ++i) { // for each normal
+					const BodyNormal &normalPtr = bodyData.getNormal(shadeIndex);
 
-				do { // for each normal
-					const BodyShade &shadePtr = bodyData.getShade(shadeIndex);
+					const int32 x = (int32)normalPtr.x;
+					const int32 y = (int32)normalPtr.y;
+					const int32 z = (int32)normalPtr.z;
 
-					const int32 col1 = (int32)shadePtr.col1;
-					const int32 col2 = (int32)shadePtr.col2;
-					const int32 col3 = (int32)shadePtr.col3;
+					int32 intensity = 0;
+					intensity += matrix.row1.x * x + matrix.row1.y * y + matrix.row1.z * z;
+					intensity += matrix.row2.x * x + matrix.row2.y * y + matrix.row2.z * z;
+					intensity += matrix.row3.x * x + matrix.row3.y * y + matrix.row3.z * z;
 
-					int32 color = 0;
-					color += _shadeMatrix.row1.x * col1 + _shadeMatrix.row1.y * col2 + _shadeMatrix.row1.z * col3;
-					color += _shadeMatrix.row2.x * col1 + _shadeMatrix.row2.y * col2 + _shadeMatrix.row2.z * col3;
-					color += _shadeMatrix.row3.x * col1 + _shadeMatrix.row3.y * col2 + _shadeMatrix.row3.z * col3;
-
-					int32 shade = 0;
-
-					if (color > 0) {
-						color >>= 14;
-						color /= shadePtr.unk4;
-						shade = (uint16)color;
+					if (intensity > 0) {
+						intensity >>= 14;
+						intensity /= normalPtr.prenormalizedRange;
+					} else {
+						intensity = 0;
 					}
 
-					*currentShadeDestination = shade;
-					currentShadeDestination++;
+					*currentShadeDestination++ = (uint16)intensity;
 					++shadeIndex;
-				} while (--numShades);
+				};
 			}
 
 			++boneIdx;
@@ -1871,7 +1867,7 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 	modelRect.bottom = SCENE_SIZE_MIN;
 
 	IVec3 renderPos;
-	if (_isUsingOrthoProjection) {
+	if (_isUsingIsoProjection) {
 		renderPos.x = x;
 		renderPos.y = y;
 		renderPos.z = z;

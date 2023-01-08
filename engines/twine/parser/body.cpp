@@ -28,7 +28,7 @@ namespace TwinE {
 void BodyData::reset() {
 	_vertices.clear();
 	_bones.clear();
-	_shades.clear();
+	_normals.clear();
 	_polygons.clear();
 	_spheres.clear();
 	_lines.clear();
@@ -66,7 +66,7 @@ void BodyData::loadBones(Common::SeekableReadStream &stream) {
 		boneframe.y = stream.readSint16LE();
 		boneframe.z = stream.readSint16LE();
 		/*int16 unk1 =*/ stream.readSint16LE();
-		const int16 numOfShades = stream.readSint16LE();
+		const int16 numNormals = stream.readSint16LE();
 		/*int16 unk2 =*/ stream.readSint16LE();
 		/*int32 field_18 =*/ stream.readSint32LE();
 		/*int32 y =*/ stream.readSint32LE();
@@ -79,7 +79,7 @@ void BodyData::loadBones(Common::SeekableReadStream &stream) {
 		bone.firstVertex = firstPoint;
 		bone.numVertices = numPoints;
 		bone.initalBoneState = boneframe;
-		bone.numOfShades = numOfShades;
+		bone.numNormals = numNormals;
 
 		// assign the bone index to the vertices
 		for (int j = 0; j < numPoints; ++j) {
@@ -91,19 +91,19 @@ void BodyData::loadBones(Common::SeekableReadStream &stream) {
 	}
 }
 
-void BodyData::loadShades(Common::SeekableReadStream &stream) {
-	const uint16 numShades = stream.readUint16LE();
+void BodyData::loadNormals(Common::SeekableReadStream &stream) {
+	const uint16 numNormals = stream.readUint16LE();
 	if (stream.eos())
 		return;
 
-	_shades.reserve(numShades);
-	for (uint16 i = 0; i < numShades; ++i) {
-		BodyShade shape;
-		shape.col1 = stream.readSint16LE();
-		shape.col2 = stream.readSint16LE();
-		shape.col3 = stream.readSint16LE();
-		shape.unk4 = stream.readUint16LE();
-		_shades.push_back(shape);
+	_normals.reserve(numNormals);
+	for (uint16 i = 0; i < numNormals; ++i) {
+		BodyNormal shape;
+		shape.x = stream.readSint16LE();
+		shape.y = stream.readSint16LE();
+		shape.z = stream.readSint16LE();
+		shape.prenormalizedRange = stream.readUint16LE();
+		_normals.push_back(shape);
 	}
 }
 
@@ -118,21 +118,22 @@ void BodyData::loadPolygons(Common::SeekableReadStream &stream) {
 		poly.materialType = stream.readByte();
 		const uint8 numVertices = stream.readByte();
 
-		poly.color = stream.readSint16LE();
-		int16 intensity = -1;
+		poly.intensity = stream.readSint16LE();
+		int16 normal = -1;
 		if (poly.materialType == MAT_FLAT || poly.materialType == MAT_GRANIT) {
-			intensity = stream.readSint16LE();
+			// only one shade value is used
+			normal = stream.readSint16LE();
 		}
 
 		poly.indices.reserve(numVertices);
-		poly.intensities.reserve(numVertices);
+		poly.normals.reserve(numVertices);
 		for (int k = 0; k < numVertices; ++k) {
 			if (poly.materialType >= MAT_GOURAUD) {
-				intensity = stream.readSint16LE();
+				normal = stream.readSint16LE();
 			}
 			const uint16 vertexIndex = stream.readUint16LE() / 6;
 			poly.indices.push_back(vertexIndex);
-			poly.intensities.push_back(intensity);
+			poly.normals.push_back(normal);
 		}
 
 		_polygons.push_back(poly);
@@ -185,10 +186,12 @@ bool BodyData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
 		bbox.mins.z = stream.readSint16LE();
 		bbox.maxs.z = stream.readSint16LE();
 
-		stream.seek(0x1A);
+		const uint16 offset = stream.readUint16LE();
+		stream.skip(offset);
+
 		loadVertices(stream);
 		loadBones(stream);
-		loadShades(stream);
+		loadNormals(stream);
 		loadPolygons(stream);
 		loadLines(stream);
 		loadSpheres(stream);

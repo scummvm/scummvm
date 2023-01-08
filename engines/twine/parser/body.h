@@ -36,7 +36,7 @@ class BodyData : public Parser {
 private:
 	void loadVertices(Common::SeekableReadStream &stream);
 	void loadBones(Common::SeekableReadStream &stream);
-	void loadShades(Common::SeekableReadStream &stream);
+	void loadNormals(Common::SeekableReadStream &stream);
 	void loadPolygons(Common::SeekableReadStream &stream);
 	void loadLines(Common::SeekableReadStream &stream);
 	void loadSpheres(Common::SeekableReadStream &stream);
@@ -44,7 +44,7 @@ private:
 	Common::Array<BodyPolygon> _polygons;
 	Common::Array<BodyVertex> _vertices;
 	Common::Array<BodySphere> _spheres;
-	Common::Array<BodyShade> _shades;
+	Common::Array<BodyNormal> _normals;
 	Common::Array<BodyLine> _lines;
 	Common::Array<BodyBone> _bones;
 
@@ -91,12 +91,12 @@ public:
 		return _spheres;
 	}
 
-	const Common::Array<BodyShade> &getShades() const {
-		return _shades;
+	const Common::Array<BodyNormal> &getNormals() const {
+		return _normals;
 	}
 
-	const BodyShade &getShade(int16 shadeIdx) const {
-		return _shades[shadeIdx];
+	const BodyNormal &getNormal(int16 normalIdx) const {
+		return _normals[normalIdx];
 	}
 
 	const Common::Array<BodyLine> &getLines() const {

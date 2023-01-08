@@ -68,7 +68,7 @@ bool isPolygonVisible(const ComputedVertex *vertices);
 struct CmdRenderPolygon {
 	uint8 renderType = 0;
 	uint8 numVertices = 0;
-	int16 colorIndex = 0;
+	int16 colorIndex = 0; // intensity
 	int16 top = 0;
 	int16 bottom = 0;
 	// followed by Vertex array
@@ -146,13 +146,13 @@ private:
 	struct ModelData {
 		I16Vec3 computedPoints[800];
 		I16Vec3 flattenPoints[800];
-		int16 shadeTable[500]{0};
+		int16 normalTable[500]{0};
 	};
 
 	ModelData _modelData;
 
 	bool renderAnimatedModel(ModelData *modelData, const BodyData &bodyData, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos, Common::Rect &modelRect);
-	bool prepareCircle(int32 x, int32 y, int32 radius);
+	bool computeSphere(int32 x, int32 y, int32 radius);
 	bool renderModelElements(int32 numOfPrimitives, const BodyData &bodyData, RenderCommand **renderCmds, ModelData *modelData, Common::Rect &modelRect);
 	IVec3 getCameraAnglePositions(int32 x, int32 y, int32 z);
 	inline IVec3 getCameraAnglePositions(const IVec3 &vec) {
@@ -163,10 +163,10 @@ private:
 	void processRotatedElement(IMatrix3x3 *targetMatrix, const Common::Array<BodyVertex>& vertices, int32 rotX, int32 rotY, int32 rotZ, const BodyBone &bone, ModelData *modelData);
 	void applyPointsTranslation(const Common::Array<BodyVertex>& vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *translationMatrix, const IVec3 &angleVec, const IVec3 &destPos);
 	void processTranslatedElement(IMatrix3x3 *targetMatrix, const Common::Array<BodyVertex>& vertices, int32 rotX, int32 rotY, int32 rotZ, const BodyBone &bone, ModelData *modelData);
-	IVec3 translateGroup(int32 x, int32 y, int32 z);
+	IVec3 translateGroup(const IMatrix3x3 &matrix, int32 x, int32 y, int32 z);
 
 	IVec3 _baseTransPos;
-	IVec3 _orthoProjPos;
+	IVec3 _projectionCenter;
 
 	int32 _cameraDepthOffset = 0;
 	int32 _cameraScaleX = 0;
@@ -174,7 +174,6 @@ private:
 
 	IMatrix3x3 _baseMatrix;
 	IMatrix3x3 _matricesTable[30 + 1];
-	IMatrix3x3 _shadeMatrix;
 	IVec3 _lightNorm;
 	IVec3 _baseRotPos;
 
@@ -197,7 +196,7 @@ private:
 	int16* _tabx1 = nullptr;
 	int16* _tabVerticD = nullptr;
 
-	bool _isUsingOrthoProjection = false;
+	bool _isUsingIsoProjection = false;
 
 	void renderPolygonsCopper(int vtop, int32 vsize, uint16 color) const;
 	void renderPolygonsBopper(int vtop, int32 vsize, uint16 color) const;
