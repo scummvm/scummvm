@@ -244,6 +244,9 @@ endif
 
 ifeq ($(BACKEND),android)
 MODULE_OBJS += \
+	fs/android/android-fs-factory.o \
+	fs/android/android-posix-fs.o \
+	fs/android/android-saf-fs.o \
 	graphics/android/android-graphics.o \
 	graphics3d/android/android-graphics3d.o \
 	graphics3d/android/texture.o \

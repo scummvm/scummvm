@@ -70,6 +70,7 @@
 #include "backends/graphics3d/android/android-graphics3d.h"
 #include "backends/platform/android/jni-android.h"
 #include "backends/platform/android/android.h"
+#include "backends/fs/android/android-fs-factory.h"
 
 const char *android_log_tag = "ScummVM";
 
@@ -144,8 +145,6 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_trackball_scale(2),
 	_joystick_scale(10) {
 
-	_fsFactory = new POSIXFilesystemFactory();
-
 	LOGI("Running on: [%s] [%s] [%s] [%s] [%s] SDK:%s ABI:%s",
 			getSystemProperty("ro.product.manufacturer").c_str(),
 			getSystemProperty("ro.product.model").c_str(),
@@ -160,6 +159,12 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 
 	int sdkVersion = JNI::getAndroidSDKVersionId();
 	LOGI("SDK Version: %d", sdkVersion);
+
+	AndroidFilesystemFactory &fsFactory = AndroidFilesystemFactory::instance();
+	if (sdkVersion >= 21) {
+		fsFactory.initSAF();
+	}
+	_fsFactory = &fsFactory;
 }
 
 OSystem_Android::~OSystem_Android() {
@@ -178,8 +183,8 @@ OSystem_Android::~OSystem_Android() {
 	_audiocdManager = 0;
 	delete _mixer;
 	_mixer = 0;
-	delete _fsFactory;
 	_fsFactory = 0;
+	AndroidFilesystemFactory::destroy();
 	delete _timerManager;
 	_timerManager = 0;
 

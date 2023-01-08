@@ -97,10 +97,9 @@ jmethodID JNI::_MID_getSysArchives = 0;
 jmethodID JNI::_MID_getAllStorageLocations = 0;
 jmethodID JNI::_MID_initSurface = 0;
 jmethodID JNI::_MID_deinitSurface = 0;
-jmethodID JNI::_MID_createDirectoryWithSAF = 0;
-jmethodID JNI::_MID_createFileWithSAF = 0;
-jmethodID JNI::_MID_closeFileWithSAF = 0;
-jmethodID JNI::_MID_isDirectoryWritableWithSAF = 0;
+jmethodID JNI::_MID_getNewSAFTree = 0;
+jmethodID JNI::_MID_getSAFTrees = 0;
+jmethodID JNI::_MID_findSAFTree = 0;
 
 jmethodID JNI::_MID_EGL10_eglSwapBuffers = 0;
 
@@ -692,10 +691,10 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
 	FIND_METHOD(, deinitSurface, "()V");
 	FIND_METHOD(, showSAFRevokePermsControl, "(Z)V");
-	FIND_METHOD(, createDirectoryWithSAF, "(Ljava/lang/String;)Z");
-	FIND_METHOD(, createFileWithSAF, "(Ljava/lang/String;)Ljava/lang/String;");
-	FIND_METHOD(, closeFileWithSAF, "(Ljava/lang/String;)V");
-	FIND_METHOD(, isDirectoryWritableWithSAF, "(Ljava/lang/String;)Z");
+	FIND_METHOD(, getNewSAFTree,
+	            "(ZZLjava/lang/String;Ljava/lang/String;)Lorg/scummvm/scummvm/SAFFSTree;");
+	FIND_METHOD(, getSAFTrees, "()[Lorg/scummvm/scummvm/SAFFSTree;");
+	FIND_METHOD(, findSAFTree, "(Ljava/lang/String;)Lorg/scummvm/scummvm/SAFFSTree;");
 
 	_jobj_egl = env->NewGlobalRef(egl);
 	_jobj_egl_display = env->NewGlobalRef(egl_display);
@@ -964,73 +963,75 @@ Common::Array<Common::String> JNI::getAllStorageLocations() {
 	return res;
 }
 
-bool JNI::createDirectoryWithSAF(const Common::String &dirPath) {
+jobject JNI::getNewSAFTree(bool folder, bool writable, const Common::String &initURI,
+                           const Common::String &prompt) {
 	JNIEnv *env = JNI::getEnv();
-	jstring javaDirPath = env->NewStringUTF(dirPath.c_str());
+	jstring javaInitURI = env->NewStringUTF(initURI.c_str());
+	jstring javaPrompt = env->NewStringUTF(prompt.c_str());
 
-	bool created = env->CallBooleanMethod(_jobj, _MID_createDirectoryWithSAF, javaDirPath);
+	jobject tree = env->CallObjectMethod(_jobj, _MID_getNewSAFTree,
+	                                     folder, writable, javaInitURI, javaPrompt);
 
 	if (env->ExceptionCheck()) {
-		LOGE("JNI - Failed to create directory with SAF enhanced method");
+		LOGE("getNewSAFTree: error");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
-		created = false;
+
+		return nullptr;
 	}
 
-	return created;
+	env->DeleteLocalRef(javaInitURI);
+	env->DeleteLocalRef(javaPrompt);
+
+	return tree;
 }
 
-Common::U32String JNI::createFileWithSAF(const Common::String &filePath) {
+Common::Array<jobject> JNI::getSAFTrees() {
+	Common::Array<jobject> res;
+
 	JNIEnv *env = JNI::getEnv();
-	jstring javaFilePath = env->NewStringUTF(filePath.c_str());
 
-	jstring hackyFilenameJSTR = (jstring)env->CallObjectMethod(_jobj, _MID_createFileWithSAF, javaFilePath);
-
+	jobjectArray array =
+	    (jobjectArray)env->CallObjectMethod(_jobj, _MID_getSAFTrees);
 
 	if (env->ExceptionCheck()) {
-		LOGE("JNI - Failed to create file with SAF enhanced method");
+		LOGE("getSAFTrees: error");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
-		hackyFilenameJSTR = env->NewStringUTF("");
+
+		return res;
 	}
 
-	Common::U32String hackyFilenameStr = convertFromJString(env, hackyFilenameJSTR);
+	jsize size = env->GetArrayLength(array);
+	for (jsize i = 0; i < size; ++i) {
+		jobject tree = env->GetObjectArrayElement(array, i);
+		res.push_back(tree);
+	}
+	env->DeleteLocalRef(array);
 
-	env->DeleteLocalRef(hackyFilenameJSTR);
-
-	return hackyFilenameStr;
+	return res;
 }
 
-void JNI::closeFileWithSAF(const Common::String &hackyFilename) {
+jobject JNI::findSAFTree(const Common::String &name) {
 	JNIEnv *env = JNI::getEnv();
-	jstring javaHackyFilename = env->NewStringUTF(hackyFilename.c_str());
 
-	env->CallVoidMethod(_jobj, _MID_closeFileWithSAF, javaHackyFilename);
+	jstring nameObj = env->NewStringUTF(name.c_str());
+
+	jobject tree = env->CallObjectMethod(_jobj, _MID_findSAFTree, nameObj);
+
+	env->DeleteLocalRef(nameObj);
 
 	if (env->ExceptionCheck()) {
-		LOGE("JNI - Failed to close file with SAF enhanced method");
+		LOGE("findSAFTree: error");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
-	}
-}
 
-bool JNI::isDirectoryWritableWithSAF(const Common::String &dirPath) {
-	JNIEnv *env = JNI::getEnv();
-	jstring javaDirPath = env->NewStringUTF(dirPath.c_str());
-
-	bool isWritable = env->CallBooleanMethod(_jobj, _MID_isDirectoryWritableWithSAF, javaDirPath);
-
-	if (env->ExceptionCheck()) {
-		LOGE("JNI - Failed to check if directory is writable SAF enhanced method");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-		isWritable = false;
+		return nullptr;
 	}
 
-	return isWritable;
+	return tree;
 }
 #endif
