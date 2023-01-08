@@ -206,7 +206,6 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	if (areaID != _startArea || entranceID != _startEntrance) {
 		g_system->warpMouse(_crossairPosition.x, _crossairPosition.y);
-		_lastMousePos = _crossairPosition;
 		rotate(0, 0);
 	}
 }
@@ -1496,7 +1495,6 @@ void DrillerEngine::initGameState() {
 	_noClipMode = false;
 	_shootingFrames = 0;
 	_underFireFrames = 0;
-	_lastMousePos = Common::Point(0, 0);
 	_yaw = 0;
 	_pitch = 0;
 

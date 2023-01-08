@@ -119,7 +119,6 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_fontLoaded = false;
 	_dataBundle = nullptr;
 
-	_lastMousePos = Common::Point(0, 0);
 	_lastFrame = 0;
 	_nearClipPlane = 2;
 	_farClipPlane = 8192 + 1802; // Added some extra distance to avoid flickering
@@ -461,31 +460,7 @@ void FreescapeEngine::processInput() {
 				break;
 			}
 
-			if (mousePos.x <= 5 || mousePos.x >= _screenW - 5) {
-				g_system->warpMouse(_screenW / 2, mousePos.y);
-
-				_lastMousePos.x = _screenW / 2;
-				_lastMousePos.y = mousePos.y;
-				if (mousePos.x <= 5)
-					mousePos.x = _lastMousePos.x + 3;
-				else
-					mousePos.x = _lastMousePos.x - 3;
-
-				mousePos.y = _lastMousePos.y;
-
-			} else if (mousePos.y <= 5 || mousePos.y >= _screenH - 5) {
-				g_system->warpMouse(mousePos.x, _screenH / 2);
-				_lastMousePos.x = mousePos.x;
-				_lastMousePos.y = _screenH / 2;
-				if (mousePos.y <= 5)
-					mousePos.y = _lastMousePos.y + 3;
-				else
-					mousePos.y = _lastMousePos.y - 3;
-
-				mousePos.x = _lastMousePos.x;
-			}
-			rotate(_lastMousePos, mousePos);
-			_lastMousePos = mousePos;
+			rotate(event.relMouse.x / 10., event.relMouse.y / 10.);
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
@@ -560,7 +535,7 @@ Common::Error FreescapeEngine::run() {
 	bool endGame = false;
 	// Draw first frame
 
-	rotate(_lastMousePos, _lastMousePos);
+	rotate(0, 0);
 	drawFrame();
 	_gfx->flipBuffer();
 	g_system->updateScreen();

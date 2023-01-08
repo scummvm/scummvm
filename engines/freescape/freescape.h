@@ -192,7 +192,6 @@ public:
 	void rotate(float xoffset, float yoffset);
 	// Input state
 	float _lastFrame;
-	Common::Point _lastMousePos;
 
 	// Interaction
 	void shoot();
