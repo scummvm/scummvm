@@ -815,7 +815,7 @@ bool Renderer::computePoly(int16 polyRenderType, const ComputedVertex *vertices,
 	return true;
 }
 
-void Renderer::renderPolygonsCopper(int vtop, int32 vsize, uint16 color) const {
+void Renderer::svgaPolyCopper(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
@@ -853,7 +853,7 @@ void Renderer::renderPolygonsCopper(int vtop, int32 vsize, uint16 color) const {
 	}
 }
 
-void Renderer::renderPolygonsBopper(int vtop, int32 vsize, uint16 color) const {
+void Renderer::svgaPolyBopper(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
@@ -894,7 +894,7 @@ void Renderer::renderPolygonsBopper(int vtop, int32 vsize, uint16 color) const {
 	}
 }
 
-void Renderer::renderPolygonsFlat(int vtop, int32 vsize, uint16 color) const {
+void Renderer::svgaPolyTriste(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
@@ -924,7 +924,7 @@ void Renderer::renderPolygonsFlat(int vtop, int32 vsize, uint16 color) const {
 
 #define ROL16(x, b) (((x) << (b)) | ((x) >> (16 - (b))))
 
-void Renderer::renderPolygonsTele(int vtop, int32 vsize, uint16 color) const {
+void Renderer::svgaPolyTele(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
@@ -959,7 +959,7 @@ void Renderer::renderPolygonsTele(int vtop, int32 vsize, uint16 color) const {
 	}
 }
 
-void Renderer::renderPolygonsTrans(int vtop, int32 vsize, uint16 color) const {
+void Renderer::svgaPolyTrans(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
@@ -983,7 +983,7 @@ void Renderer::renderPolygonsTrans(int vtop, int32 vsize, uint16 color) const {
 }
 
 // Used e.g for the legs of the horse or the ears of most characters
-void Renderer::renderPolygonsTrame(int vtop, int32 vsize, uint16 color) const {
+void Renderer::svgaPolyTrame(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
@@ -1020,7 +1020,7 @@ void Renderer::renderPolygonsTrame(int vtop, int32 vsize, uint16 color) const {
 	}
 }
 
-void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
+void Renderer::svgaPolyGouraud(int vtop, int32 vsize) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int16 *ptr2 = &_colorProgressionBuffer[vtop];
@@ -1104,7 +1104,7 @@ void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
 }
 
 // used for the most of the heads of the characters and the horse body
-void Renderer::renderPolygonsDither(int vtop, int32 vsize) const {
+void Renderer::svgaPolyDith(int vtop, int32 vsize) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int16 *ptr2 = &_colorProgressionBuffer[vtop];
@@ -1237,7 +1237,7 @@ void Renderer::renderPolygonsDither(int vtop, int32 vsize) const {
 	}
 }
 
-void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint16 color) const {
+void Renderer::svgaPolyMarbre(int vtop, int32 vsize, uint16 color) const {
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
 
@@ -1279,7 +1279,7 @@ void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint16 color) const {
 	}
 }
 
-void Renderer::renderPolygonsSimplified(int vtop, int32 vsize, uint16 color) const {
+void Renderer::svgaPolyTriche(int vtop, int32 vsize, uint16 color) const {
 	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int16 *ptr2 = &_colorProgressionBuffer[vtop];
@@ -1319,45 +1319,45 @@ void Renderer::renderPolygons(const CmdRenderPolygon &polygon, ComputedVertex *v
 void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 color) {
 	switch (renderType) {
 	case POLYGONTYPE_FLAT:
-		renderPolygonsFlat(vtop, vsize, color);
+		svgaPolyTriste(vtop, vsize, color);
 		break;
 	case POLYGONTYPE_TELE:
 		if (_engine->_cfgfile.PolygonDetails == 0) {
-			renderPolygonsFlat(vtop, vsize, color);
+			svgaPolyTriste(vtop, vsize, color);
 		} else {
-			renderPolygonsTele(vtop, vsize, color);
+			svgaPolyTele(vtop, vsize, color);
 		}
 		break;
 	case POLYGONTYPE_COPPER:
-		renderPolygonsCopper(vtop, vsize, color);
+		svgaPolyCopper(vtop, vsize, color);
 		break;
 	case POLYGONTYPE_BOPPER:
-		renderPolygonsBopper(vtop, vsize, color);
+		svgaPolyBopper(vtop, vsize, color);
 		break;
 	case POLYGONTYPE_TRANS:
-		renderPolygonsTrans(vtop, vsize, color);
+		svgaPolyTrans(vtop, vsize, color);
 		break;
 	case POLYGONTYPE_TRAME: // raster
-		renderPolygonsTrame(vtop, vsize, color);
+		svgaPolyTrame(vtop, vsize, color);
 		break;
 	case POLYGONTYPE_GOURAUD:
 		if (_engine->_cfgfile.PolygonDetails == 0) {
-			renderPolygonsSimplified(vtop, vsize, color);
+			svgaPolyTriche(vtop, vsize, color);
 		} else {
-			renderPolygonsGouraud(vtop, vsize);
+			svgaPolyGouraud(vtop, vsize);
 		}
 		break;
 	case POLYGONTYPE_DITHER:
 		if (_engine->_cfgfile.PolygonDetails == 0) {
-			renderPolygonsSimplified(vtop, vsize, color);
+			svgaPolyTriche(vtop, vsize, color);
 		} else if (_engine->_cfgfile.PolygonDetails == 1) {
-			renderPolygonsGouraud(vtop, vsize);
+			svgaPolyGouraud(vtop, vsize);
 		} else {
-			renderPolygonsDither(vtop, vsize);
+			svgaPolyDith(vtop, vsize);
 		}
 		break;
 	case POLYGONTYPE_MARBLE:
-		renderPolygonsMarble(vtop, vsize, color);
+		svgaPolyMarbre(vtop, vsize, color);
 		break;
 	default:
 		warning("RENDER WARNING: Unsupported render type %d", renderType);

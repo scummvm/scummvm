@@ -198,16 +198,16 @@ private:
 
 	bool _isUsingIsoProjection = false;
 
-	void renderPolygonsCopper(int vtop, int32 vsize, uint16 color) const;
-	void renderPolygonsBopper(int vtop, int32 vsize, uint16 color) const;
-	void renderPolygonsFlat(int vtop, int32 vsize, uint16 color) const;
-	void renderPolygonsTele(int vtop, int32 vsize, uint16 color) const;
-	void renderPolygonsTrans(int vtop, int32 vsize, uint16 color) const;
-	void renderPolygonsTrame(int vtop, int32 vsize, uint16 color) const;
-	void renderPolygonsGouraud(int vtop, int32 vsize) const;
-	void renderPolygonsDither(int vtop, int32 vsize) const;
-	void renderPolygonsMarble(int vtop, int32 vsize, uint16 color) const;
-	void renderPolygonsSimplified(int vtop, int32 vsize, uint16 color) const;
+	void svgaPolyCopper(int vtop, int32 vsize, uint16 color) const;
+	void svgaPolyBopper(int vtop, int32 vsize, uint16 color) const;
+	void svgaPolyTriste(int vtop, int32 vsize, uint16 color) const;
+	void svgaPolyTele(int vtop, int32 vsize, uint16 color) const;
+	void svgaPolyTrans(int vtop, int32 vsize, uint16 color) const;
+	void svgaPolyTrame(int vtop, int32 vsize, uint16 color) const;
+	void svgaPolyGouraud(int vtop, int32 vsize) const;
+	void svgaPolyDith(int vtop, int32 vsize) const;
+	void svgaPolyMarbre(int vtop, int32 vsize, uint16 color) const;
+	void svgaPolyTriche(int vtop, int32 vsize, uint16 color) const;
 	bool computePoly(int16 polyRenderType, const ComputedVertex *vertices, int32 numVertices);
 
 	const RenderCommand *depthSortRenderCommands(int32 numOfPrimitives);
