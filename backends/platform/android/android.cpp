@@ -154,6 +154,12 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 			getSystemProperty("ro.build.display.id").c_str(),
 			getSystemProperty("ro.build.version.sdk").c_str(),
 			getSystemProperty("ro.product.cpu.abi").c_str());
+	// JNI::getAndroidSDKVersionId() should be identical to the result from ("ro.build.version.sdk"),
+	// though getting it via JNI is maybe the most reliable option (?)
+	// Also __system_property_get which is used by getSystemProperty() is being deprecated in recent NDKs
+
+	int sdkVersion = JNI::getAndroidSDKVersionId();
+	LOGI("SDK Version: %d", sdkVersion);
 }
 
 OSystem_Android::~OSystem_Android() {
