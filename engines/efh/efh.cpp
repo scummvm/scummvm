@@ -538,6 +538,7 @@ void EfhEngine::initMapMonsters() {
 
 void EfhEngine::loadMapArrays(int idx) {
 	debugC(6, kDebugEngine, "loadMapArrays %d", idx);
+	debug("TODO : rewrite the pre-loadign of data and loadMapArrays in order to avoid to lose info when changing map");
 
 	uint8 *mapSpecialTilePtr = &_mapArr[idx][2];
 
@@ -2342,28 +2343,6 @@ void EfhEngine::sub1CAB6(int16 charId) {
 		if (counter == 0)
 			displayFctFullScreen();
 	}
-}
-
-int16 EfhEngine::getTeamMonsterAnimId() {
-	debug("getTeamMonsterAnimId");
-
-	int16 retVal = 0xFF;
-	for (uint counter = 0; counter < 5; ++counter) {
-		int16 monsterId = _teamMonsterIdArray[counter];
-		if (monsterId == -1)
-			continue;
-
-		if (!checkMonsterMovementType(monsterId, false))
-			continue;
-
-		retVal = kEncounters[_mapMonsters[monsterId]._monsterRef]._animId;
-		break;
-	}
-
-	if (retVal == 0xFF)
-		retVal = kEncounters[_mapMonsters[_teamMonsterIdArray[0]]._monsterRef]._animId;
-
-	return retVal;
 }
 
 int16 EfhEngine::countMonsterGroupMembers(int16 monsterGroup) {

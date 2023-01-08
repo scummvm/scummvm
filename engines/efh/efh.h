@@ -363,7 +363,6 @@ private:
 	void redrawScreenForced();
 	int16 selectMonsterGroup();
 	void sub1CAB6(int16 charId);
-	int16 getTeamMonsterAnimId();
 	int16 countMonsterGroupMembers(int16 monsterGroup);
 	void sub1D8C2(int16 charId, int16 damage);
 	int16 getXPLevel(int32 xp);
@@ -404,6 +403,7 @@ private:
 	bool hasAdequateDefense(int16 monsterId, uint8 attackType);
 	bool hasAdequateDefense_2(int16 charId, uint8 attackType);
 	void sub1BE9A(int16 monsterId);
+	int16 getTeamMonsterAnimId();
 
 	// Files
 	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);
@@ -479,7 +479,7 @@ private:
 	// Script
 	uint8 *script_readNumberArray(uint8 *buffer, int16 destArraySize, int16 *destArray);
 	uint8 *script_getNumber(uint8 *srcBuffer, int16 *retBuf);
-	int16 script_parse(Common::String str, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag);
+	int16 script_parse(Common::String str, int16 posX, int16 posY, int16 maxX, int16 maxY, bool scriptExecuteFlag);
 
 	// Sound
 	void generateSound1(int arg0, int arg2, int duration);
