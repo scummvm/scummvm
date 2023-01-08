@@ -1642,4 +1642,26 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 	// sub1BE9A - last loop counter1_monsterId - End
 }
 
+int16 EfhEngine::getTeamMonsterAnimId() {
+	debugC(6, kDebugFight, "getTeamMonsterAnimId");
+
+	int16 retVal = 0xFF;
+	for (uint counter = 0; counter < 5; ++counter) {
+		int16 monsterId = _teamMonsterIdArray[counter];
+		if (monsterId == -1)
+			continue;
+
+		if (!checkMonsterMovementType(monsterId, false))
+			continue;
+
+		retVal = kEncounters[_mapMonsters[monsterId]._monsterRef]._animId;
+		break;
+	}
+
+	if (retVal == 0xFF)
+		retVal = kEncounters[_mapMonsters[_teamMonsterIdArray[0]]._monsterRef]._animId;
+
+	return retVal;
+}
+
 } // End of namespace Efh

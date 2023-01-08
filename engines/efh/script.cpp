@@ -54,13 +54,14 @@ uint8 *EfhEngine::script_getNumber(uint8 *srcBuffer, int16 *retBuf) {
 	return buffer;
 }
 
-int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag) {
-	debug("script_parse %s %d-%d %d-%d %s", stringBuffer.c_str(), posX, posY, maxX, maxY, flag ? "True" : "False");
+int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 posY, int16 maxX, int16 maxY, bool scriptExecuteFlag) {
+	debug("script_parse stringBuffer %d-%d %d-%d %s", posX, posY, maxX, maxY, scriptExecuteFlag ? "True" : "False");
+	debugC(6, kDebugScript, "%s", stringBuffer.c_str());
 
 	bool doneFlag = false;
-	int16 var_F2 = -1;
+	bool noTextFlag = true;
 	int16 retVal = 0xFF;
-	int16 var_EE = 0xFF;
+	int16 joiningNpcId = 0xFF;
 	uint16 curLineNb = 0;
 	int16 numbLines = (1 + maxY - posY) / 9;
 	int16 width = maxX - posX;
@@ -74,28 +75,28 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 
 	while (!doneFlag) {
 		uint8 curChar = *buffer;
-		if (curChar != 0x5E && curChar != 0x20 && curChar != 0 && curChar != 0x7C) {
-			var_F2 = 0;
+		if (curChar != 0x5E && curChar != 0x20 && curChar != 0 && curChar != 0x7C) { // '^', ' ', NUL, '|'
+			noTextFlag = false;
 			nextWord[curWordPos++] = curChar;
 			++buffer;
 			continue;
 		}
 
-		if (curChar != 0x5E) {
+		if (curChar != 0x5E) { // '^'
 			if (curChar == 0)
 				doneFlag = true;
-			else if (curChar == 0x7C)
-				var_F2 = 0;
+			else if (curChar == 0x7C) // '|'
+				noTextFlag = false;
 
 			nextWord[curWordPos] = 0;
 			int16 widthNextWord = getStringWidth(nextWord);
 			int16 widthCurrentLine = spaceWidth + getStringWidth(curLine.c_str());
 
-			if (widthCurrentLine + widthNextWord > width || curChar == 0x7C) {
+			if (widthCurrentLine + widthNextWord > width || curChar == 0x7C) { // '|'
 				if (curLineNb >= numbLines) {
 					doneFlag = true;
 				} else {
-					if (var_F2 == 0)
+					if (!noTextFlag)
 						displayStringAtTextPos(curLine);
 
 					curLine = Common::String(nextWord) + " ";
@@ -111,7 +112,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			continue;
 		}
 
-		// At this point, curChar == 0x5E
+		// At this point, curChar == 0x5E '^'
 		++buffer;
 		int16 opCode = 0;
 		buffer = script_getNumber(buffer, &opCode);
@@ -122,7 +123,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x00:
 			// Enter room { full Place Id, posX, posY }
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				if (_largeMapFlag) {
 					_largeMapFlag = false;
 					_techDataId_MapPosX = _mapPosX;
@@ -137,7 +138,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x01:
 			// Exit room { }
-			if (flag) {
+			if (scriptExecuteFlag) {
 				_largeMapFlag = true;
 				_oldMapPosX = _mapPosX = _techDataId_MapPosX;
 				_oldMapPosY = _mapPosY = _techDataId_MapPosY;
@@ -148,7 +149,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x02:
 			// Change map. { map number, posX, posY }
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				writeTechAndMapFiles();
 				_oldMapPosX = _mapPosX = scriptNumberArray[1];
 				_oldMapPosY = _mapPosY = scriptNumberArray[2];
@@ -161,7 +162,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x03:
 			buffer = script_readNumberArray(buffer, 4, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				int16 rangeX = scriptNumberArray[2] - scriptNumberArray[0];
 				int16 rangeY = scriptNumberArray[3] - scriptNumberArray[1];
 
@@ -173,7 +174,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x04:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				_mapPosX = scriptNumberArray[0];
 				_mapPosY = scriptNumberArray[1];
 				_word2C880 = true;
@@ -182,7 +183,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x05:
 			buffer = script_readNumberArray(buffer, 4, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				int16 npcId = _teamCharId[scriptNumberArray[0]];
 				if (npcId != -1) {
 					int16 scoreId = scriptNumberArray[1];
@@ -193,7 +194,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x06:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				int16 npcId = _teamCharId[scriptNumberArray[0]];
 				if (npcId != -1) {
 					int16 scoreId = scriptNumberArray[1];
@@ -202,19 +203,19 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			}
 			break;
 		case 0x07:
-			if (flag) {
+			if (scriptExecuteFlag) {
 				totalPartyKill();
 			}
 			break;
 		case 0x08:
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
-			if (flag && scriptNumberArray[0] != -1) {
+			if (scriptExecuteFlag && scriptNumberArray[0] != -1) {
 				_npcBuf[_teamCharId[scriptNumberArray[0]]]._hitPoints = 0;
 			}
 			break;
 		case 0x09:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				int16 npcId = _teamCharId[scriptNumberArray[0]];
 				if (npcId != -1) {
 					_npcBuf[npcId]._hitPoints += getRandom(scriptNumberArray[1]);
@@ -225,7 +226,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x0A:
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				int16 npcId = _teamCharId[scriptNumberArray[0]];
 				if (npcId != -1) {
 					_npcBuf[npcId]._hitPoints = _npcBuf[npcId]._maxHP;
@@ -234,7 +235,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x0B:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				int16 npcId = _teamCharId[scriptNumberArray[0]];
 				if (npcId != -1) {
 					_npcBuf[npcId]._hitPoints -= getRandom(scriptNumberArray[1]);
@@ -245,7 +246,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x0C:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				int16 scriptItemId = scriptNumberArray[0];
 				bool found = false;
 				for (int counter = 0; counter < _teamSize && !found; ++counter) {
@@ -262,7 +263,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x0D:
 			// Put item in inventory { objectId }
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				int16 scriptObjectId = scriptNumberArray[0];
 				for (int counter = 0; counter < _teamSize; ++counter) {
 					if (giveItemTo(_teamCharId[counter], scriptObjectId, 0xFF))
@@ -272,7 +273,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x0E:
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				int16 scriptItemId = scriptNumberArray[0];
 				bool found = false;
 				for (int counter = 0; counter < _teamSize && !found; ++counter) {
@@ -292,7 +293,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x0F:
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				if (isNpcATeamMember(scriptNumberArray[0]))
 					retVal = scriptNumberArray[1];
 				else
@@ -301,17 +302,17 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x10:
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
-			if (flag)
+			if (scriptExecuteFlag)
 				retVal = scriptNumberArray[0];
 
 			break;
 		case 0x11:
-			if (flag)
+			if (scriptExecuteFlag)
 				_unk2C8AA = 0;
 			break;
 		case 0x12:
 			// Disable special tile
-			if (flag) {
+			if (scriptExecuteFlag) {
 				int16 tileId = findMapSpecialTileIndex(_mapPosX, _mapPosY);
 				if (tileId != -1)
 					_mapSpecialTile[tileId]._posX = 0xFF;
@@ -319,7 +320,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x13:
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
-			if (flag && _largeMapFlag) {
+			if (scriptExecuteFlag && _largeMapFlag) {
 				_word2C87A = true;
 				loadPlacesFile(scriptNumberArray[0], false);
 				transitionMap(scriptNumberArray[1], scriptNumberArray[2]);
@@ -330,16 +331,16 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x14:
 			// Add character to team { charId }
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				int16 scriptNpcId = scriptNumberArray[0];
 				if (!isNpcATeamMember(scriptNpcId))
-					var_EE = scriptNpcId;
+					joiningNpcId = scriptNpcId;
 				retVal = -1;
 			}
 			break;
 		case 0x15:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				_oldMapPosX = _mapPosX = scriptNumberArray[0];
 				_oldMapPosY = _mapPosY = scriptNumberArray[1];
 				_largeMapFlag = true;
@@ -348,7 +349,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x16:
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				int16 scriptNpcId = scriptNumberArray[0];
 				// TODO: This "if" is useless, it's doing just the same loop and if statement. Consider removing it.
 				if (isNpcATeamMember(scriptNpcId)) {
@@ -363,14 +364,14 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x17:
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
-			if (flag) {
-				int16 var110 = scriptNumberArray[0];
-				displayAnimFrames(var110, true);
+			if (scriptExecuteFlag) {
+				int16 animId = scriptNumberArray[0];
+				displayAnimFrames(animId, true);
 			}
 			break;
 		case 0x18:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				bool found = false;
 				int16 scriptRandomItemId = getRandom(scriptNumberArray[1] - scriptNumberArray[0] + 1) + scriptNumberArray[0] - 1;
 				int16 counter;
@@ -408,7 +409,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x19:
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				if (_largeMapFlag) {
 					_mapGameMap[scriptNumberArray[0]][scriptNumberArray[1]] = scriptNumberArray[2] & 0xFF;
 				} else {
@@ -418,7 +419,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x1A:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				int16 tileId = findMapSpecialTileIndex(scriptNumberArray[0], scriptNumberArray[1]);
 				if (tileId != -1) {
 					// Disable tile
@@ -428,7 +429,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x1B:
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				int16 tileId = findMapSpecialTileIndex(scriptNumberArray[0], scriptNumberArray[1]);
 				if (tileId != -1) {
 					// Disable tile
@@ -440,20 +441,20 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x1C:
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				_history[scriptNumberArray[0]] = 0xFF;
 			}
 			break;
 		case 0x1D:
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				_history[scriptNumberArray[0]] = 0;
 			}
 			break;
 		case 0x1E:
 			// Dialog with condition { historyId, dialogId1, dialogId2 }
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
-			if (flag) {
+			if (scriptExecuteFlag) {
 				if (_history[scriptNumberArray[0]] == 0)
 					retVal = scriptNumberArray[2];
 				else
@@ -462,12 +463,12 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x1F:
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
-			if (flag)
+			if (scriptExecuteFlag)
 				_unk2C8AA = scriptNumberArray[0];
 
 			break;
 		case 0x20:
-			if (flag) {
+			if (scriptExecuteFlag) {
 				handleWinSequence();
 				_system->quit();
 			}
@@ -476,14 +477,14 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		}
 	}
 
-	if (curLine.size() >= 0 && curLineNb < numbLines && var_F2 == 0)
+	if (curLine.size() >= 0 && curLineNb < numbLines && !noTextFlag)
 		displayStringAtTextPos(curLine);
 
-	if (var_EE != 0xFF) {
+	if (joiningNpcId != 0xFF) {
 		displayLowStatusScreen(true);
 		int16 teamSlot = handleCharacterJoining();
 		if (teamSlot > -1) {
-			_teamCharId[teamSlot] = var_EE;
+			_teamCharId[teamSlot] = joiningNpcId;
 		}
 		refreshTeamSize();
 	}
