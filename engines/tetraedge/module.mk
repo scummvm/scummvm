@@ -112,7 +112,6 @@ MODULE_OBJS := \
 	te/te_vector3f32.o \
 	te/te_visual_fade.o \
 	te/te_xml_gui.o \
-	console.o \
 	metaengine.o
 
 # This module can be built as a plugin
