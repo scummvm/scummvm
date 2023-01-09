@@ -182,12 +182,12 @@ public:
  */
 class SpriteDrawer {
 private:
-	byte *_data;
-	size_t _filesize;
+	byte *_data = nullptr;
+	size_t _filesize = 0;
 protected:
-	byte *_destTop, *_destBottom;
-	byte *_destLeft, *_destRight;
-	int _pitch;
+	byte *_destTop = nullptr, *_destBottom = nullptr;
+	byte *_destLeft = nullptr, *_destRight = nullptr;
+	int _pitch = 0;
 private:
 	/**
 	 * Scale a co-ordinate value based on the passed scaling mask
@@ -223,7 +223,7 @@ public:
 
 class SpriteDrawer1 : public SpriteDrawer {
 private:
-	byte _offset, _mask;
+	byte _offset = 0, _mask = 0;
 protected:
 	/**
 	 * Output a pixel
@@ -242,8 +242,8 @@ public:
  */
 class SpriteDrawer2 : public SpriteDrawer {
 private:
-	uint16 _mask1, _mask2;
-	uint16 _random1, _random2;
+	uint16 _mask1 = 0, _mask2 = 0;
+	uint16 _random1 = 0, _random2 = 0;
 private:
 	/**
 	 * Output a pixel
@@ -261,9 +261,9 @@ public:
  */
 class SpriteDrawer3 : public SpriteDrawer {
 private:
-	uint16 _offset, _mask;
+	uint16 _offset = 0, _mask = 0;
 	byte _palette[256 * 3];
-	bool _hasPalette;
+	bool _hasPalette = false;
 private:
 	/**
 	 * Output a pixel
@@ -278,7 +278,7 @@ public:
 
 class SpriteDrawer4 : public SpriteDrawer {
 private:
-	byte _threshold;
+	byte _threshold = 0;
 protected:
 	/**
 	 * Output a pixel
@@ -296,7 +296,7 @@ public:
  */
 class SpriteDrawer5 : public SpriteDrawer {
 private:
-	uint16 _threshold, _random1, _random2;
+	uint16 _threshold = 0, _random1 = 0, _random2 = 0;
 protected:
 	/**
 	 * Output a pixel
@@ -311,7 +311,7 @@ public:
 
 class SpriteDrawer6 : public SpriteDrawer {
 private:
-	byte _mask;
+	byte _mask = 0;
 protected:
 	/**
 	 * Output a pixel

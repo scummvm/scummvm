@@ -1195,7 +1195,7 @@ bool Scripts::cmdAlterHed(ParamsIterator &params) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 
-	HeadData::HeadEntry &he = map._headData[party._mazePosition.y][party._mazePosition.x];
+	HeadData::HeadEntry &he = map._headData[party._mazePosition.y % 16][party._mazePosition.x % 16];
 	he._left = params.readByte();
 	he._right = params.readByte();
 

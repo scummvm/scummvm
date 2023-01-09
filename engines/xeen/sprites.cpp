@@ -160,10 +160,13 @@ void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPo
 		break;
 	}
 
-	// Sprites can consist of separate background & foreground
-	drawer->draw(dest, _index[frame]._offset1, destPos, r, flags, scale);
-	if (_index[frame]._offset2)
-		drawer->draw(dest, _index[frame]._offset2, destPos, r, flags, scale);
+	// WORKAROUND: Crash clicking Vertigo well in Clouds
+	if (frame < (int)_index.size()) {
+		// Sprites can consist of separate background & foreground
+		drawer->draw(dest, _index[frame]._offset1, destPos, r, flags, scale);
+		if (_index[frame]._offset2)
+			drawer->draw(dest, _index[frame]._offset2, destPos, r, flags, scale);
+	}
 
 	delete drawer;
 }
