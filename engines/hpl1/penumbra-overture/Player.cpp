@@ -524,17 +524,21 @@ void cPlayer::AddCollideScript(eGameCollideScriptType aType, const tString &asFu
 //-----------------------------------------------------------------------
 
 void cPlayer::RemoveCollideScriptWithChildEntity(iGameEntity *apEntity) {
-	for (auto& kv : m_mapCollideCallbacks) {
-		cGameCollideScript *pCallback = kv.second;
+	tGameCollideScriptMapIt it = m_mapCollideCallbacks.begin();
+	for (; it != m_mapCollideCallbacks.end();) {
+		cGameCollideScript *pCallback = it->second;
+		tGameCollideScriptMapIt currentIt = it;
+		++it;
 
 		if (pCallback && pCallback->mpEntity == apEntity) {
-			if (mbUpdatingCollisionCallbacks)
+			if (mbUpdatingCollisionCallbacks) {
 				pCallback->mbDeleteMe = true;
-			else
+			} else {
 				hplDelete(pCallback);
+				m_mapCollideCallbacks.erase(currentIt);
+			}
 		}
 	}
-	m_mapCollideCallbacks.clear();
 }
 
 //-----------------------------------------------------------------------
