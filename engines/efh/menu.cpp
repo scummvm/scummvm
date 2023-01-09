@@ -733,58 +733,61 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
 				displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
-			} else if (hasObjectEquipped(charId, objectId)) {
+				break;
+			}
+
+			if (hasObjectEquipped(charId, objectId)) {
 				displayString_3("Item is Equipped!  Trade anyway?", false, charId, windowId, menuId, curMenuLine);
 				if (!getValidationFromUser())
 					validationFl = false;
 				displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
-
-				if (validationFl) {
-					bool givenFl;
-					int16 destCharId;
-					do {
-						if (_teamCharId[2] != -1) {
-							displayString_3("Who will you give the item to?", false, charId, windowId, menuId, curMenuLine);
-							destCharId = selectOtherCharFromTeam();
-							var2 = false;
-						} else if (_teamCharId[1]) {
-							destCharId = 0x1A;
-							var2 = false;
-						} else {
-							var2 = true;
-							if (_teamCharId[0] == charId)
-								destCharId = 1;
-							else
-								destCharId = 0;
-						}
-
-						if (destCharId != 0x1A && destCharId != 0x1B) {
-							givenFl = giveItemTo(_teamCharId[destCharId], objectId, charId);
-							if (!givenFl) {
-								displayString_3("That character cannot carry anymore!", false, charId, windowId, menuId, curMenuLine);
-								getLastCharAfterAnimCount(_guessAnimationAmount);
-							}
-						} else {
-							if (destCharId == 0x1A) {
-								displayString_3("No one to trade with!", false, charId, windowId, menuId, curMenuLine);
-								getLastCharAfterAnimCount(_guessAnimationAmount);
-								destCharId = 0x1B;
-							}
-							givenFl = false;
-						}
-					} while (!givenFl && !var2 && destCharId != 0x1B);
-
-					if (givenFl) {
-						removeObject(charId, objectId);
-						if (gameMode == 2) {
-							restoreAnimImageSetId();
-							_statusMenuActive = false;
-							return 0x7D00;
-						}
+			}
+			
+			if (validationFl) {
+				bool givenFl;
+				int16 destCharId;
+				do {
+					if (_teamCharId[2] != -1) {
+						displayString_3("Who will you give the item to?", false, charId, windowId, menuId, curMenuLine);
+						destCharId = selectOtherCharFromTeam();
+						var2 = false;
+					} else if (_teamCharId[1] == -1) {
+						destCharId = 0x1A;
+						var2 = false;
+					} else {
+						var2 = true;
+						if (_teamCharId[0] == charId)
+							destCharId = 1;
+						else
+							destCharId = 0;
 					}
 
-					displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
+					if (destCharId != 0x1A && destCharId != 0x1B) {
+						givenFl = giveItemTo(_teamCharId[destCharId], objectId, charId);
+						if (!givenFl) {
+							displayString_3("That character cannot carry anymore!", false, charId, windowId, menuId, curMenuLine);
+							getLastCharAfterAnimCount(_guessAnimationAmount);
+						}
+					} else {
+						if (destCharId == 0x1A) {
+							displayString_3("No one to trade with!", false, charId, windowId, menuId, curMenuLine);
+							getLastCharAfterAnimCount(_guessAnimationAmount);
+							destCharId = 0x1B;
+						}
+						givenFl = false;
+					}
+				} while (!givenFl && !var2 && destCharId != 0x1B);
+
+				if (givenFl) {
+					removeObject(charId, objectId);
+					if (gameMode == 2) {
+						restoreAnimImageSetId();
+						_statusMenuActive = false;
+						return 0x7D00;
+					}
 				}
+
+				displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
 			}
 			break;
 		case 4:
