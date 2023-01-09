@@ -199,7 +199,7 @@ Archive *Window::openMainArchive(const Common::String movie) {
 	// If the archive is already open, don't reopen it;
 	// just init from the existing archive. This prevents errors that
 	// can happen when trying to load the same archive more than once.
-	if (g_director->_allOpenResFiles.contains(movie)) {
+	if (g_director->_allOpenResFiles.contains(movie) && SearchMan.hasFile(movie)) {
 		_mainArchive = g_director->_allOpenResFiles.getVal(movie);
 
 		if (g_director->getPlatform() == Common::kPlatformWindows) {
