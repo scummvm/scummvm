@@ -25,6 +25,19 @@
 #include "common/scummsys.h"
 
 namespace Efh {
+enum EfhMenuItems {
+	kEfhMenuEquip = 0,
+	kEfhMenuUse = 1,
+	kEfhMenuGive = 2,
+	kEfhMenuTrade = 3,
+	kEfhMenuDrop = 4,
+	kEfhMenuInfo = 5,
+	kEfhMenuPassive = 6,
+	kEfhMenuActive = 7,
+	kEfhMenuLeave = 8,
+	kEfhMenuInvalid = 9
+};
+
 struct Font {
 	uint8 _lines[8];
 };
