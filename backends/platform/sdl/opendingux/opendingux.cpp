@@ -37,17 +37,31 @@
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/keymapper.h"
 
+#ifdef MIYOO
+#define SCUMM_DIR	"/mnt/.scummvm"
+#define CONFIG_FILE	"/mnt/.scummvmrc"
+#define SAVE_PATH	"/mnt/.scummvm/saves"
+#define LOG_FILE	"/mnt/.scummvm/scummvm.log"
+#else
 #define SCUMM_DIR	"~/.scummvm"
 #define CONFIG_FILE	"~/.scummvmrc"
 #define SAVE_PATH	"~/.scummvm/saves"
 #define LOG_FILE	"~/.scummvm/scummvm.log"
+#endif
 #define JOYSTICK_DIR	"/sys/devices/platform/joystick"
 
 static const Common::KeyTableEntry odKeyboardButtons[] = {
+#ifdef MIYOO
+	{ "JOY_A",		Common::KEYCODE_LALT,		_s("A")			},
+	{ "JOY_B",		Common::KEYCODE_LCTRL,		_s("B")			},
+	{ "JOY_X",		Common::KEYCODE_LSHIFT,		_s("X")			},
+	{ "JOY_Y",		Common::KEYCODE_SPACE,		_s("Y")			},
+#else
 	{ "JOY_A",		Common::KEYCODE_LCTRL,		_s("A")			},
 	{ "JOY_B",		Common::KEYCODE_LALT,		_s("B")			},
 	{ "JOY_X",		Common::KEYCODE_SPACE,		_s("X")			},
 	{ "JOY_Y",		Common::KEYCODE_LSHIFT,		_s("Y")			},
+#endif
 	{ "JOY_BACK",		Common::KEYCODE_ESCAPE,		_s("Select")		},
 	{ "JOY_START",		Common::KEYCODE_RETURN,		_s("Start")		},
 	{ "JOY_LEFT_SHOULDER",	Common::KEYCODE_TAB,		_s("L")			},
@@ -56,6 +70,13 @@ static const Common::KeyTableEntry odKeyboardButtons[] = {
 	{ "JOY_DOWN",		Common::KEYCODE_DOWN,		_s("D-pad Down")	},
 	{ "JOY_LEFT",		Common::KEYCODE_LEFT,		_s("D-pad Left")	},
 	{ "JOY_RIGHT",		Common::KEYCODE_RIGHT,		_s("D-pad Right")	},
+#ifdef MIYOO
+	{ "JOY_LEFT_STICK",     Common::KEYCODE_PAGEUP,		_s("L2")		},
+	{ "JOY_RIGHT_STICK",    Common::KEYCODE_PAGEDOWN,	_s("R2")		},
+	{ "JOY_LEFT_TRIGGER",	Common::KEYCODE_RALT,		_s("L3")	 	},
+	{ "JOY_RIGHT_TRIGGER",	Common::KEYCODE_RSHIFT,		_s("R3")	 	},
+	{ "JOY_GUIDE",		Common::KEYCODE_RCTRL,		_s("Menu")	 	},
+#endif
 	{nullptr,			Common::KEYCODE_INVALID,	nullptr			}
 };
 
