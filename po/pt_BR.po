@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-08 19:42+0000\n"
-"PO-Revision-Date: 2023-01-03 18:34+0000\n"
+"PO-Revision-Date: 2023-01-10 00:34+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -218,20 +218,18 @@ msgstr "ERRO %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:186 gui/downloadpacksdialog.cpp:241
-#, fuzzy, c-format
-#| msgid "Downloading icons list..."
+#, c-format
 msgid "Downloading %S list..."
-msgstr "Baixando lista de ícones..."
+msgstr "Baixando lista de %S..."
 
 #: gui/downloadpacksdialog.cpp:200
 msgid "Clear Cache"
 msgstr "Limpar Cache"
 
 #: gui/downloadpacksdialog.cpp:251
-#, fuzzy, c-format
-#| msgid "Downloading icons list... %d entries"
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "Baixando lista de ícones... %d registros"
+msgstr "Baixando lista de %S... %d registros"
 
 #: gui/downloadpacksdialog.cpp:261
 #, c-format
@@ -261,10 +259,9 @@ msgstr "ERRO: Diretório de ícones não foi definido"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:427
-#, fuzzy, c-format
-#| msgid "No new icons packs available"
+#, c-format
 msgid "No new %S available"
-msgstr "Não há novos ícones disponíveis"
+msgstr "Nenhum novo %S disponível"
 
 #: gui/downloadpacksdialog.cpp:463
 #, c-format
@@ -1214,16 +1211,12 @@ msgid "Shader Path:"
 msgstr "Sombreamentos:"
 
 #: gui/options.cpp:1580
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Shaders"
-msgstr "Atualizar:"
+msgstr "Atualizar Shaders"
 
 #: gui/options.cpp:1580
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of shader packs"
-msgstr "Procurar por Atualizações..."
+msgstr "Procura atualizações para pacotes de shaders"
 
 #: gui/options.cpp:1586 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
@@ -1651,10 +1644,8 @@ msgid "Update Icons"
 msgstr "Atualizar Ícones"
 
 #: gui/options.cpp:2521
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of icon packs"
-msgstr "Procurar por Atualizações..."
+msgstr "Procura atualizações para pacotes ícones"
 
 #: gui/options.cpp:2528
 msgid "Autosave:"
@@ -2008,11 +1999,11 @@ msgstr "Selecione o diretório /root/ para o Gerenciador de Arquivos"
 
 #: gui/options.cpp:3113
 msgid "icon packs"
-msgstr ""
+msgstr "pacotes de ícone"
 
 #: gui/options.cpp:3124
 msgid "shader packs"
-msgstr ""
+msgstr "pacotes de shader"
 
 #: gui/options.cpp:3246
 msgid ""
@@ -2234,15 +2225,15 @@ msgstr "Entre com uma descrição para a posição %d:"
 
 #: gui/shaderbrowser-dialog.cpp:52
 msgid "Choose shader from the list below (or pick a file instead)"
-msgstr ""
+msgstr "Escolha o shader na lista abaixo (ou selecione um arquivo)"
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick file instead..."
-msgstr ""
+msgstr "Escolher arquivo..."
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick shader from file system"
-msgstr ""
+msgstr "Escolher shader a partir do sistema de arquivo"
 
 #: gui/shaderbrowser-dialog.cpp:137
 msgid "Select shader"
@@ -5068,16 +5059,12 @@ msgid "Sensors will not shoot the player"
 msgstr "Sensores não atirarão no jogador"
 
 #: engines/freescape/metaengine.cpp:90
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable falling"
-msgstr "Desabilitar menu de salvar"
+msgstr "Desabilitar queda"
 
 #: engines/freescape/metaengine.cpp:91
-#, fuzzy
-#| msgid "Player ammo will never decrease."
 msgid "Player cannot fall over edges"
-msgstr "A munição do jogador nunca diminuirá."
+msgstr "Jogador não cairá das beiradas"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
