@@ -1168,7 +1168,6 @@ static Vertex *merge_point(PathfindingState *s, const Common::Point &v) {
  */
 static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	SegManager *segMan = s->_segMan;
-	int i;
 	reg_t points = readSelector(segMan, polygon, SELECTOR(points));
 	int size = readSelectorValue(segMan, polygon, SELECTOR(size));
 
@@ -1200,21 +1199,9 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 		return nullptr;
 	}
 
-	int skip = 0;
-
-	// WORKAROUND: broken polygon in lsl1sci, room 350, after opening elevator
-	// Polygon has 17 points but size is set to 19
-	if ((size == 19) && g_sci->getGameId() == GID_LSL1) {
-		if ((s->currentRoomNumber() == 350)
-		&& (readPoint(pointList, 18) == Common::Point(108, 137))) {
-			debug(1, "Applying fix for broken polygon in lsl1sci, room 350");
-			size = 17;
-		}
-	}
-
 	Polygon *poly = new Polygon(readSelectorValue(segMan, polygon, SELECTOR(type)));
 
-	for (i = skip; i < size; i++) {
+	for (int i = 0; i < size; i++) {
 		Vertex *vertex = new Vertex(readPoint(pointList, i));
 		poly->vertices.insertHead(vertex);
 	}

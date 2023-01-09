@@ -8228,8 +8228,33 @@ static const SciScriptPatcherEntry longbowSignatures[] = {
 };
 
 // ===========================================================================
-// Leisure Suit Larry 1 (Spanish)
+// Leisure Suit Larry 1
+
+// Pushing the penthouse elevator button in room 350 causes a broken polygon to
+//  be used for pathfinding. openObstacle:points is set to a local array of 17
+//  points but its size property is incorrectly set to 19. We fix the size so
+//  that the interpreter doesn't use the wrong values for pathfinding.
 //
+// Applies to: All versions
+// Responsible method: rm350:init
+static const uint16 larry1SignatureElevatorPolygon[] = {
+	SIG_MAGICDWORD,
+	0x5b, 0x02, 0x1f,                // lea 02 1f
+	0x36,                            // push
+	0x39, SIG_SELECTOR8(size),       // pushi size
+	0x78,                            // push1
+	0x39, 0x13,                      // pushi 13 [ incorrect size ]
+	0x72, SIG_ADDTOOFFSET(+2),       // lofsa openObstacle
+	0x4a, 0x0c,                      // send 0c [ openObstacle points: @local31 size: 19 ]
+	SIG_END
+};
+
+static const uint16 larry1PatchElevatorPolygon[] = {
+	PATCH_ADDTOOFFSET(+7),
+	0x39, 0x11,                      // pushi 11 [ correct size ]
+	PATCH_END
+};
+
 // It seems originally the Spanish version of Larry 1 used some beta code at
 // least for the man wearing a barrel, who walks around in front of the casino.
 // The script inside the resource files even uses a class, that does not exist
@@ -8345,10 +8370,11 @@ static const uint16 larry1PatchBuyApple[] = {
 	PATCH_END
 };
 
-//          script, description,                                signature                     patch
+//          script, description,                                signature                       patch
 static const SciScriptPatcherEntry larry1Signatures[] = {
-	{  true,   300, "Spanish: buy apple from barrel man",    1, larry1SignatureBuyApple,      larry1PatchBuyApple },
-	{  true,   803, "disable speed test",                    1, sci01SpeedTestLocalSignature, sci01SpeedTestLocalPatch },
+	{  true,   300, "Spanish: buy apple from barrel man",    1, larry1SignatureBuyApple,        larry1PatchBuyApple },
+	{  true,   350, "elevator polygon size",                 1, larry1SignatureElevatorPolygon, larry1PatchElevatorPolygon },
+	{  true,   803, "disable speed test",                    1, sci01SpeedTestLocalSignature,   sci01SpeedTestLocalPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
