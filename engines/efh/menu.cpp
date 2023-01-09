@@ -514,7 +514,7 @@ int16 EfhEngine::displayString_3(Common::String str, bool delayFl, int16 charId,
 }
 
 int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
-	debug("handleStatusMenu %d %d", gameMode, charId);
+	debugC(3, kDebugEngine, "handleStatusMenu %d %d", gameMode, charId);
 
 	int16 menuId = kEfhMenuInvalid;
 	int16 selectedLine = -1;
@@ -718,8 +718,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 						displayString_3("Not a Combat Option !", true, charId, windowId, menuId, curMenuLine);
 					} else {
 						removeObject(charId, objectId);
-						int16 var8 = sub22293(_mapPosX, _mapPosY, charId, itemId, 3, -1);
-						if (var8 != 0) {
+						if (sub22293(_mapPosX, _mapPosY, charId, itemId, 3, -1)) {
 							_statusMenuActive = false;
 							return -1;
 						}
@@ -809,8 +808,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 						return 0x7D00;
 					}
 
-					bool var8 = sub22293(_mapPosX, _mapPosY, charId, itemId, 1, -1);
-					if (var8) {
+					if (sub22293(_mapPosX, _mapPosY, charId, itemId, 1, -1)) {
 						_statusMenuActive = false;
 						return -1;
 					}
@@ -818,41 +816,14 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			}
 			break;
 		case kEfhMenuInfo:
-			objectId = _menuStatItemArr[selectedLine];
-			if (gameMode == 2) {
-				displayString_3("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
-			} else {
-				bool var8 = sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1);
-				if (var8) {
-					_statusMenuActive = false;
-					return -1;
-				}
-			}
-			break;
 		case kEfhMenuPassive:
-			// Identical to case 5?
-			objectId = _menuStatItemArr[selectedLine];
-			if (gameMode == 2) {
-				displayString_3("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
-			} else {
-				bool var8 = sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1);
-				if (var8) {
-					_statusMenuActive = false;
-					return -1;
-				}
-			}
-			break;
 		case kEfhMenuActive:
-			// Identical to case 5?
 			objectId = _menuStatItemArr[selectedLine];
 			if (gameMode == 2) {
 				displayString_3("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
-			} else {
-				bool var8 = sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1);
-				if (var8) {
-					_statusMenuActive = false;
-					return -1;
-				}
+			} else if (sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1)) {
+				_statusMenuActive = false;
+				return -1;
 			}
 			break;
 		default:
