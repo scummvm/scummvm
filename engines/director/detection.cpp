@@ -80,7 +80,7 @@ public:
 	DirectorMetaEngineDetection() : AdvancedMetaEngineDetection(Director::gameDescriptions, sizeof(Director::DirectorGameDescription), directorGames) {
 		_maxScanDepth = 5;
 		_directoryGlobs = Director::directoryGlobs;
-		_flags = kADFlagMatchFullPaths;
+		_flags = kADFlagMatchFullPaths | kADFlagCanPlayUnknownVariants;
 
 		// initialize customTarget hashmap here
 		for (int i = 0; customTargetList[i].name != nullptr; i++)
@@ -102,8 +102,6 @@ public:
 	const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
 	}
-
-	bool canPlayUnknownVariants() const override { return true; }
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extraInfo) const override;
 };

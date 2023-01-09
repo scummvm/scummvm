@@ -56,6 +56,7 @@ public:
 		_guiOptions = GUIO3(GAMEOPTION_DYNAMIC_MIDI, GAMEOPTION_LAUNCH_DEBUG, GAMEOPTION_ENABLE_SHORT_TRANSITIONS);
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
+		_flags = kADFlagCanPlayUnknownVariants;
 	}
 
 	const char *getName() const override {
@@ -69,8 +70,6 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "mTropolis (C) mFactory/Quark";
 	}
-
-	bool canPlayUnknownVariants() const override { return true; }
 };
 
 REGISTER_PLUGIN_STATIC(MTROPOLIS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, MTropolisMetaEngineDetection);

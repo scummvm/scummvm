@@ -264,7 +264,7 @@ DetectedGames AdvancedMetaEngineDetection::detectGames(const Common::FSList &fsl
 	for (uint i = 0; i < matches.size(); i++) {
 		DetectedGame game = toDetectedGame(matches[i]);
 
-		if (game.hasUnknownFiles && !canPlayUnknownVariants()) {
+		if (game.hasUnknownFiles && !(_flags & kADFlagCanPlayUnknownVariants)) {
 			game.canBeAdded = false;
 		}
 
@@ -387,7 +387,7 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 
 	ADDetectedGame agdDesc;
 	for (uint i = 0; i < matches.size(); i++) {
-		if (matches[i].desc->gameId == gameid && (!matches[i].hasUnknownFiles || canPlayUnknownVariants())) {
+		if (matches[i].desc->gameId == gameid && (!matches[i].hasUnknownFiles || (_flags & kADFlagCanPlayUnknownVariants))) {
 			agdDesc = matches[i];
 			break;
 		}

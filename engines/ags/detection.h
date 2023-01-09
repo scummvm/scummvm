@@ -91,10 +91,6 @@ public:
 	DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) override;
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra = nullptr) const override;
-
-	bool canPlayUnknownVariants() const override {
-		return true;
-	}
 };
 
 #endif

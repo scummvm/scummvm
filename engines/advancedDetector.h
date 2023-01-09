@@ -242,7 +242,7 @@ enum ADFlags {
 	 * extracted from the entries.
 	 */
 	 kADFlagMatchFullPaths = (1 << 1),
-	 
+
 	/**
 	 * If set, the engine's fallback detection results are used instead of the
 	 * partial matches found in the detection table.
@@ -251,7 +251,14 @@ enum ADFlags {
 	 * should always be used. If fallback detection fails, then partial matches
 	 * are still used.
 	 */
-	 kADFlagPreferFallbackDetection = (1 << 2)
+	 kADFlagPreferFallbackDetection = (1 << 2),
+
+	 /**
+	  * Indicates engine's ability to play a variant of a game with unknown files.
+	  * This will leave the detection entries with partial matches in the list
+	  * of detected games.
+	  */
+	kADFlagCanPlayUnknownVariants = (1 << 3),
 };
 
 
@@ -422,12 +429,6 @@ protected:
 	 * @return A list of @ref ADGameDescription pointers corresponding to the matched games.
 	 */
 	virtual ADDetectedGames detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, uint32 skipADFlags = 0, bool skipIncomplete = false);
-
-	/**
-	 * @return True if variant of a game with unknown files can be played with the engine and false otherwise.
-	 * By default this is false.
-	 */
-	virtual bool canPlayUnknownVariants() const { return false; }
 
 	/**
 	 * Iterate over all @ref ADFileBasedFallback records inside @p fileBasedFallback
