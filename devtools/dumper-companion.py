@@ -318,7 +318,7 @@ def extract_volume(args: argparse.Namespace) -> int:
                     ">III", f.read(12)
                 )
                 f.seek(32, 1)
-                partition_type = f.read(32).decode("ascii").strip("\0")
+                partition_type = f.read(32).decode("ascii").split("\0")[0]
                 if partition_num <= num_partitions and partition_type != "Apple_HFS":
                     # Move onto the next partition
                     partition_num += 1
