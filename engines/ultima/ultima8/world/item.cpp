@@ -1811,7 +1811,7 @@ void Item::animateItem() {
 	case 4:
 		// Randomly start animating, with chance of 1/(animdata + 2)
 		// once animating, go through all frames.
-		if (_frame || rs.getRandomNumber(anim_data + 1)) {
+		if (_frame || rs.getRandomNumber(anim_data + 1) == 0) {
 			_frame++;
 			if (shp && _frame >= shp->frameCount())
 				_frame = 0;
