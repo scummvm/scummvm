@@ -184,9 +184,6 @@ void FreescapeEngine::drawBorder() {
 }
 
 void FreescapeEngine::drawTitle() {
-	if (!_title)
-		return;
-
 	_gfx->setViewport(_fullscreenViewArea);
 	if (isSpectrum()) {
 		Graphics::Surface *title = new Graphics::Surface();
@@ -514,7 +511,8 @@ Common::Error FreescapeEngine::run() {
 	int saveSlot = ConfMan.getInt("save_slot");
 	centerCrossair();
 
-	if (_title) {
+	if (_title && \
+	  !(isDemo() && isDOS() && isDriller())) { // This should be moved to a Driller specific code
 		if (saveSlot == -1) {
 			drawTitle();
 			_gfx->flipBuffer();
@@ -524,7 +522,7 @@ Common::Error FreescapeEngine::run() {
 	}
 
 	loadBorder(); // Border is load unmodified
-	if (_border && (isDOS() || isSpectrum())) {
+	if (_border && ((isDOS() && !isDemo()) || isSpectrum())) { // This should be moved to a Driller specific code
 		if (saveSlot == -1) {
 			drawBorder();
 			_gfx->flipBuffer();
