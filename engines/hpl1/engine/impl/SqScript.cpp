@@ -42,11 +42,9 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cSqScript::cSqScript(const tString &asName, asIScriptEngine *apScriptEngine,
-					 cScriptOutput *apScriptOutput, int alHandle)
+cSqScript::cSqScript(const tString &asName, asIScriptEngine *apScriptEngine, int alHandle)
 	: iScript(asName) {
 	mpScriptEngine = apScriptEngine;
-	mpScriptOutput = apScriptOutput;
 	mlHandle = alHandle;
 
 	mpContext = mpScriptEngine->CreateContext();
@@ -85,16 +83,10 @@ bool cSqScript::CreateFromFile(const tString &asFileName) {
 	}
 
 	if (_module->Build() < 0) {
-		Error("Couldn't build script '%s'!\n", asFileName.c_str());
-		Log("------- SCRIPT OUTPUT BEGIN --------------------------\n");
-		mpScriptOutput->Display();
-		mpScriptOutput->Clear();
-		Log("------- SCRIPT OUTPUT END ----------------------------\n");
-
+		Hpl1::logError(Hpl1::kDebugSaves, "Couldn't build script '%s'!\n", asFileName.c_str());
 		hplDeleteArray(pCharBuffer);
 		return false;
 	}
-	mpScriptOutput->Clear();
 
 	hplDeleteArray(pCharBuffer);
 	return true;
@@ -150,47 +142,6 @@ char *cSqScript::LoadCharBuffer(const tString &asFileName, int &alLength) {
 		return nullptr;
 	}
 	return pBuffer;
-}
-
-//-----------------------------------------------------------------------
-
-//////////////////////////////////////////////////////////////////////////
-// STATIC PRIVATE METHODS
-//////////////////////////////////////////////////////////////////////////
-
-//-----------------------------------------------------------------------
-
-//-----------------------------------------------------------------------
-
-void cScriptOutput::AddMessage(const asSMessageInfo *msg) {
-	char sMess[1024];
-
-	tString type = "ERR ";
-	if (msg->type == asMSGTYPE_WARNING)
-		type = "WARN";
-	else if (msg->type == asMSGTYPE_INFORMATION)
-		type = "INFO";
-
-	snprintf(sMess, 1024, "%s (%d, %d) : %s : %s\n", msg->section, msg->row, msg->col, type.c_str(), msg->message);
-
-	msMessage += sMess;
-}
-
-void cScriptOutput::Display() {
-	if (msMessage.size() > 500) {
-		while (msMessage.size() > 500) {
-			tString sSub = msMessage.substr(0, 500);
-			msMessage = msMessage.substr(500);
-			Log(sSub.c_str());
-		}
-		Log(msMessage.c_str());
-	} else {
-		Log(msMessage.c_str());
-	}
-}
-
-void cScriptOutput::Clear() {
-	msMessage = "";
 }
 
 } // namespace hpl

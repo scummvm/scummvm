@@ -32,11 +32,23 @@
 
 namespace hpl {
 
+static void scriptEngineLog(const asSMessageInfo *msg) {
+	switch (msg->type) {
+		case asMSGTYPE_ERROR:
+			Hpl1::logError(Hpl1::kDebugScripts, "%s (%d, %d) : %s\n", msg->section, msg->row, msg->col, msg->message);
+			break;
+		case asMSGTYPE_WARNING:
+			Hpl1::logWarning(Hpl1::kDebugScripts, "%s (%d, %d) : %s\n", msg->section, msg->row, msg->col, msg->message);
+			break;
+		case asMSGTYPE_INFORMATION:
+			Hpl1::logInfo(Hpl1::kDebugScripts, "%s (%d, %d) : %s\n", msg->section, msg->row, msg->col, msg->message);
+	}
+}
+
 LowLevelSystem::LowLevelSystem() {
 	_scriptEngine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
 	RegisterScriptArray(_scriptEngine, true);
-	_scriptOutput = hplNew(cScriptOutput, ());
-	_scriptEngine->SetMessageCallback(asMETHOD(cScriptOutput, AddMessage), _scriptOutput, asCALL_THISCALL);
+	_scriptEngine->SetMessageCallback(asFunctionPtr(scriptEngineLog), nullptr, asCALL_CDECL);
 	RegisterStdString(_scriptEngine);
 	_handleCount = 0;
 }
@@ -44,10 +56,7 @@ LowLevelSystem::LowLevelSystem() {
 LowLevelSystem::~LowLevelSystem() {
 	/*Release all runnings contexts */
 	cleanupRegisteredString();
-	_scriptOutput->Display();
 	_scriptEngine->Release();
-	hplDelete(_scriptOutput);
-
 	// perhaps not the best thing to skip :)
 	// if(gpLogWriter)	hplDelete(gpLogWriter);
 	// gpLogWriter = NULL;
@@ -372,14 +381,13 @@ cDate LowLevelSystem::getDate() {
 }
 
 iScript *LowLevelSystem::createScript(const tString &name) {
-	return hplNew(cSqScript, (name, _scriptEngine, _scriptOutput, _handleCount++));
+	return hplNew(cSqScript, (name, _scriptEngine, _handleCount++));
 }
 
 bool LowLevelSystem::addScriptFunc(const tString &funcDecl, asGENFUNC_t pFunc, int callConv) {
 	if (_scriptEngine->RegisterGlobalFunction(funcDecl.c_str(),
 											  asFUNCTION(pFunc), callConv) < 0) {
-		Error("Couldn't add func '%s'\n", funcDecl.c_str());
-		_scriptOutput->Display();
+		Hpl1::logError(Hpl1::kDebugScripts, "Couldn't add script function '%s'\n", funcDecl.c_str());
 		return false;
 	}
 

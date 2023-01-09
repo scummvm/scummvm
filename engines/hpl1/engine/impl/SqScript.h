@@ -33,24 +33,9 @@
 
 namespace hpl {
 
-class cScriptOutput // : public  asIOutputStream
-{
-public:
-	cScriptOutput() : msMessage("") {}
-	~cScriptOutput() {}
-
-	void AddMessage(const asSMessageInfo *msg);
-	void Display();
-	void Clear();
-
-private:
-	tString msMessage;
-};
-
 class cSqScript : public iScript {
 public:
-	cSqScript(const tString &asName, asIScriptEngine *apScriptEngine,
-			  cScriptOutput *apScriptOutput, int alHandle);
+	cSqScript(const tString &asName, asIScriptEngine *apScriptEngine, int alHandle);
 	~cSqScript();
 
 	bool CreateFromFile(const tString &asFileName);
@@ -64,7 +49,6 @@ public:
 private:
 	asIScriptEngine *mpScriptEngine;
 	asIScriptModule *_module;
-	cScriptOutput *mpScriptOutput;
 
 	asIScriptContext *mpContext;
 

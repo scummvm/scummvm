@@ -92,8 +92,6 @@ extern void SetWindowCaption(const tString &name);
 
 extern unsigned long GetApplicationTime();
 
-class cScriptOutput;
-
 class LowLevelSystem {
 public:
 	LowLevelSystem();
@@ -139,7 +137,6 @@ public:
 	void sleep(const unsigned int millisecs);
 private:
 	asIScriptEngine *_scriptEngine;
-	cScriptOutput *_scriptOutput;
 	int _handleCount;
 };
 
