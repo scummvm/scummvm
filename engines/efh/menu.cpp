@@ -485,8 +485,8 @@ void EfhEngine::displayWindowAndStatusMenu(int16 charId, int16 windowId, int16 m
 	}
 }
 
-int16 EfhEngine::displayString_3(Common::String str, bool animFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
-	debug("displayString_3 %s %s %d %d %d %d", str.c_str(), animFl ? "True" : "False", charId, windowId, menuId, curMenuLine);
+int16 EfhEngine::displayString_3(Common::String str, bool delayFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
+	debug("displayString_3 %s %s %d %d %d %d", str.c_str(), delayFl ? "True" : "False", charId, windowId, menuId, curMenuLine);
 
 	int16 retVal = 0;
 
@@ -496,13 +496,16 @@ int16 EfhEngine::displayString_3(Common::String str, bool animFl, int16 charId, 
 
 		if (counter == 0) {
 			script_parse(str, 28, 122, 105, 166, false);
-			displayFctFullScreen();
 		} else {
 			retVal = script_parse(str, 28, 122, 105, 166, true);
 		}
+		// The original is only calling displayFctFullScreen when counter = 0, but it's related to the screen buffers which aren't used in ScummVM implementation
+		// Calling it once fix the almost unreadable text displayed otherwise.
+		// Maybe a refactoring to remove those 0..1 loop would be useful at some point.
+		displayFctFullScreen();
 	}
 
-	if (animFl) {
+	if (delayFl) {
 		getLastCharAfterAnimCount(_guessAnimationAmount);
 		displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
 	}
@@ -874,7 +877,7 @@ void EfhEngine::unequipItem(int16 charId, int16 objectId, int16 windowId, int16 
 
 	int16 itemId = _npcBuf[charId]._inventory[objectId]._ref;
 
-	if (isItemCursed(itemId)) {
+	if (!isItemCursed(itemId)) {
 		_npcBuf[charId]._inventory[objectId]._stat1 &= 0x7F;
 	} else {
 		// Original message. "Cursed item can't be unequipped" would make more sense, imho
