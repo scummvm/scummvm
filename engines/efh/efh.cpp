@@ -996,9 +996,9 @@ bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int16 fromCharId) {
 			_npcBuf[charId]._inventory[newObjectId]._curHitPoints = _items[objectId]._defense;
 			_npcBuf[charId]._inventory[newObjectId]._stat1 = _items[objectId]._uses;
 		} else {
-			_npcBuf[charId]._inventory[newObjectId]._ref = _npcBuf[fromCharId]._inventory[newObjectId]._ref;
-			_npcBuf[charId]._inventory[newObjectId]._curHitPoints = _npcBuf[fromCharId]._inventory[newObjectId]._curHitPoints;
-			_npcBuf[charId]._inventory[newObjectId]._stat1 = _npcBuf[fromCharId]._inventory[newObjectId].getUsesLeft(); // not equipped as the upper bit isn't set (0x80)
+			_npcBuf[charId]._inventory[newObjectId]._ref = _npcBuf[fromCharId]._inventory[objectId]._ref;
+			_npcBuf[charId]._inventory[newObjectId]._curHitPoints = _npcBuf[fromCharId]._inventory[objectId]._curHitPoints;
+			_npcBuf[charId]._inventory[newObjectId]._stat1 = _npcBuf[fromCharId]._inventory[objectId].getUsesLeft(); // not equipped as the upper bit isn't set (0x80)
 		}
 
 		return true;
