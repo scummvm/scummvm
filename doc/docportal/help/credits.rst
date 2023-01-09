@@ -598,6 +598,15 @@ Hopkins
    * - Paul Gilbert
      -
 
+Hpl1
+^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Emanuele Grisenti
+     -
+
 Hugo
 ^^^^
 
@@ -1705,6 +1714,8 @@ Miscellaneous
      - ARM assembly routines for nice speedups on several ports; improvements to the sound mixer
    * - Trembyle
      - Archivist
+   * - Lothar Serra Mari
+     - Tackling Tremendously Tedious Tasks(tm); ScummVM's Seal of Approval (Awp?!)
 
 Website (code)
 **************

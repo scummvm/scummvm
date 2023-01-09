@@ -245,6 +245,9 @@ ScummVM Team
        Arnaud Boutonne
        Paul Gilbert
 
+    Hpl1:
+       Emanuele Grisenti
+
     Hugo:
        Arnaud Boutonne
        Oystein Eftevaag
@@ -682,6 +685,9 @@ ScummVM Team
                                         speedups on several ports;
                                         improvements to the sound mixer
        Trembyle                       - Archivist
+       Lothar Serra Mari              - Tackling Tremendously Tedious
+                                        Tasks(tm); ScummVM's Seal of Approval
+                                        (Awp?!)
 
   Website (code)
   --------------

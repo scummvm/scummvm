@@ -682,6 +682,7 @@ begin_credits("Credits");
 				add_person("Coen Rampen", "NMIError", "Sound improvements");
 				add_person("Robin Watts", "robinwatts", "ARM assembly routines for nice speedups on several ports; improvements to the sound mixer");
 				add_person("", "Trembyle", "Archivist");
+				add_person("Lothar Serra Mari", "rootfather", "Tackling Tremendously Tedious Tasks(tm); ScummVM's Seal of Approval (Awp?!)");
 			end_section();
 		end_section();
 
