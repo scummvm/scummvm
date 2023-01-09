@@ -466,7 +466,7 @@ private:
 	void displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 npcId);
 	void prepareStatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool refreshFl);
 	void displayWindowAndStatusMenu(int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
-	int16 displayString_3(Common::String str, bool delayFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
+	int16 displayStringInSmallWindowWithBorder(Common::String str, bool delayFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine);
 	int16 handleStatusMenu(int16 gameMode, int16 charId);
 	void unequipItem(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
 	void tryToggleEquipped(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);

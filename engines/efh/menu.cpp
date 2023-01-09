@@ -485,8 +485,8 @@ void EfhEngine::displayWindowAndStatusMenu(int16 charId, int16 windowId, int16 m
 	}
 }
 
-int16 EfhEngine::displayString_3(Common::String str, bool delayFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
-	debug("displayString_3 %s %s %d %d %d %d", str.c_str(), delayFl ? "True" : "False", charId, windowId, menuId, curMenuLine);
+int16 EfhEngine::displayStringInSmallWindowWithBorder(Common::String str, bool delayFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
+	debug("displayStringInSmallWindowWithBorder %s %s %d %d %d %d", str.c_str(), delayFl ? "True" : "False", charId, windowId, menuId, curMenuLine);
 
 	int16 retVal = 0;
 
@@ -706,16 +706,16 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			objectId = _menuStatItemArr[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
-				displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
+				displayStringInSmallWindowWithBorder("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
 			} else if (hasObjectEquipped(charId, objectId)) {
-				displayString_3("Item is Equipped!  Give anyway?", false, charId, windowId, menuId, curMenuLine);
+				displayStringInSmallWindowWithBorder("Item is Equipped!  Give anyway?", false, charId, windowId, menuId, curMenuLine);
 				if (!getValidationFromUser())
 					validationFl = false;
 				displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
 
 				if (validationFl) {
 					if (gameMode == 2) {
-						displayString_3("Not a Combat Option !", true, charId, windowId, menuId, curMenuLine);
+						displayStringInSmallWindowWithBorder("Not a Combat Option !", true, charId, windowId, menuId, curMenuLine);
 					} else {
 						removeObject(charId, objectId);
 						if (sub22293(_mapPosX, _mapPosY, charId, itemId, 3, -1)) {
@@ -731,12 +731,12 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			objectId = _menuStatItemArr[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
-				displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
+				displayStringInSmallWindowWithBorder("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
 				break;
 			}
 
 			if (hasObjectEquipped(charId, objectId)) {
-				displayString_3("Item is Equipped!  Trade anyway?", false, charId, windowId, menuId, curMenuLine);
+				displayStringInSmallWindowWithBorder("Item is Equipped!  Trade anyway?", false, charId, windowId, menuId, curMenuLine);
 				if (!getValidationFromUser())
 					validationFl = false;
 				displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
@@ -747,7 +747,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				int16 destCharId;
 				do {
 					if (_teamCharId[2] != -1) {
-						displayString_3("Who will you give the item to?", false, charId, windowId, menuId, curMenuLine);
+						displayStringInSmallWindowWithBorder("Who will you give the item to?", false, charId, windowId, menuId, curMenuLine);
 						destCharId = selectOtherCharFromTeam();
 						var2 = false;
 					} else if (_teamCharId[1] == -1) {
@@ -764,12 +764,12 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					if (destCharId != 0x1A && destCharId != 0x1B) {
 						givenFl = giveItemTo(_teamCharId[destCharId], objectId, charId);
 						if (!givenFl) {
-							displayString_3("That character cannot carry anymore!", false, charId, windowId, menuId, curMenuLine);
+							displayStringInSmallWindowWithBorder("That character cannot carry anymore!", false, charId, windowId, menuId, curMenuLine);
 							getLastCharAfterAnimCount(_guessAnimationAmount);
 						}
 					} else {
 						if (destCharId == 0x1A) {
-							displayString_3("No one to trade with!", false, charId, windowId, menuId, curMenuLine);
+							displayStringInSmallWindowWithBorder("No one to trade with!", false, charId, windowId, menuId, curMenuLine);
 							getLastCharAfterAnimCount(_guessAnimationAmount);
 							destCharId = 0x1B;
 						}
@@ -793,9 +793,9 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			objectId = _menuStatItemArr[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
-				displayString_3("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
+				displayStringInSmallWindowWithBorder("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
 			} else if (hasObjectEquipped(charId, objectId)) {
-				displayString_3("Item Is Equipped!  Drop Anyway?", false, charId, windowId, menuId, curMenuLine);
+				displayStringInSmallWindowWithBorder("Item Is Equipped!  Drop Anyway?", false, charId, windowId, menuId, curMenuLine);
 				if (!getValidationFromUser())
 					validationFl = false;
 				displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
@@ -820,7 +820,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 		case kEfhMenuActive:
 			objectId = _menuStatItemArr[selectedLine];
 			if (gameMode == 2) {
-				displayString_3("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
+				displayStringInSmallWindowWithBorder("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
 			} else if (sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1)) {
 				_statusMenuActive = false;
 				return -1;
@@ -857,7 +857,7 @@ void EfhEngine::unequipItem(int16 charId, int16 objectId, int16 windowId, int16 
 		_npcBuf[charId]._inventory[objectId]._stat1 &= 0x7F;
 	} else {
 		// Original message. "Cursed item can't be unequipped" would make more sense, imho
-		displayString_3("Cursed Item Already Equipped!", true, charId, windowId, menuId, curMenuLine);
+		displayStringInSmallWindowWithBorder("Cursed Item Already Equipped!", true, charId, windowId, menuId, curMenuLine);
 	}
 }
 
@@ -901,7 +901,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 	switch (_items[itemId]._specialEffect - 1) {
 	case 0: // "Demonic Powers", "MindDomination", "Guilt Trip", "Sleep Grenade", "SleepGrenader"
 		if (argA == 2) {
-			displayString_3("The item emits a low droning hum...", false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder("The item emits a low droning hum...", false, charId, teamMonsterId, menuId, curMenuLine);
 		} else {
 			int16 victims = 0;
 			_messageToBePrinted += "  The item emits a low droning hum...";
@@ -940,7 +940,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		break;
 	case 1: // "Chilling Touch", "Guilt", "Petrify Rod", "Elmer's Gun"
 		if (argA == 2) {
-			displayString_3("The item grows very cold for a moment...", false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder("The item grows very cold for a moment...", false, charId, teamMonsterId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += "  The item emits a blue beam...";
 			int16 victim = 0;
@@ -981,7 +981,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		break;
 	case 2:
 		if (argA == 2) {
-			displayString_3("A serene feeling passes through the air...", false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder("A serene feeling passes through the air...", false, charId, teamMonsterId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += "  The combat pauses...as there is a moment of forgiveness...";
 			_unk2C8AA = 0;
@@ -991,7 +991,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		break;
 	case 4: // "Unholy Sinwave", "Holy Water"
 		if (argA == 2) {
-			displayString_3("A dark sense fills your soul...then fades!", false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder("A dark sense fills your soul...then fades!", false, charId, teamMonsterId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += "  A dark gray fiery whirlwind surrounds the poor victim...the power fades and death abounds!";
 			if (getRandom(100) < 50) {
@@ -1015,7 +1015,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		break;
 	case 5: // "Lucifer'sTouch", "Book of Death", "Holy Cross"
 		if (argA == 2) {
-			displayString_3("A dark sense fills your soul...then fades!", false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder("A dark sense fills your soul...then fades!", false, charId, teamMonsterId, menuId, curMenuLine);
 		} else {
 			if (getRandom(100) < 50) {
 				_messageToBePrinted += "  A dark fiery whirlwind surrounds the poor victim...the power fades and all targeted die!";
@@ -1036,7 +1036,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		break;
 	case 12: // "Terror Gaze", "Servitude Rod", "Despair Ankh", "ConfusionPrism", "Pipe of Peace", "Red Cape", "Peace Symbol", "Hell Badge"
 		if (argA == 2) {
-			displayString_3("There is no apparent affect!", false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder("There is no apparent affect!", false, charId, teamMonsterId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += "  The magic sparkles brilliant hues in the air!";
 			setMapMonsterAggressivenessAndMovementType(teamMonsterId, _items[itemId]._field17_attackTypeDefense, true);
@@ -1046,7 +1046,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 	case 14: { // "Feathered Cap"
 		int16 varAA;
 		if (argA == 2) {
-			displayString_3("Who will use the item?", false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder("Who will use the item?", false, charId, teamMonsterId, menuId, curMenuLine);
 			varAA = selectOtherCharFromTeam();
 		} else {
 			varAA = teamMonsterId;
@@ -1055,7 +1055,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		if (varAA != 0x1B) {
 			buffer1 = "  The magic makes the user as quick and agile as a bird!";
 			if (argA == 2) {
-				displayString_3(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
+				displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 			} else {
 				_messageToBePrinted += buffer1;
 			}
@@ -1069,7 +1069,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 	case 15: { // "Regal Crown"
 		int16 teamCharId;
 		if (argA == 2) {
-			displayString_3("Who will use the item?", false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder("Who will use the item?", false, charId, teamMonsterId, menuId, curMenuLine);
 			teamCharId = selectOtherCharFromTeam();
 		} else {
 			teamCharId = teamMonsterId;
@@ -1078,7 +1078,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		if (teamCharId != 0x1B) {
 			buffer1 = "  The magic makes the user invisible!";
 			if (argA == 2) {
-				displayString_3(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
+				displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 			} else {
 				_messageToBePrinted += buffer1;
 			}
@@ -1099,7 +1099,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 			totalPartyKill();
 			buffer1 = "The entire party vanishes in a flash... only to appear in stone !";
 			if (argA == 2) {
-				displayString_3(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
+				displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 			} else {
 				_messageToBePrinted += buffer1;
 				retVal = true;
@@ -1108,7 +1108,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 			if (tileFactId == 0 || tileFactId == 0x48) {
 				buffer1 = "The entire party vanishes in a flash...but re-appears, as if nothing happened!";
 				if (argA == 2) {
-					displayString_3(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
+					displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 				} else {
 					_messageToBePrinted += buffer1;
 					retVal = true;
@@ -1116,7 +1116,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 			} else {
 				buffer1 = "The entire party vanishes in a flash...only to appear elsewhere!";
 				if (argA == 2) {
-					displayString_3(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
+					displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 				} else {
 					_messageToBePrinted += buffer1;
 					retVal = true;
@@ -1134,7 +1134,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 			totalPartyKill();
 			buffer1 = "The entire party vanishes in a flash... only to appear in stone !";
 			if (argA == 2) {
-				displayString_3(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
+				displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 			} else {
 				_messageToBePrinted += buffer1;
 				retVal = true;
@@ -1143,7 +1143,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 			if (tileFactId == 0 || tileFactId == 0x48) {
 				buffer1 = "The entire party vanishes in a flash...but re-appears, as if nothing happened!";
 				if (argA == 2) {
-					displayString_3(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
+					displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 				} else {
 					_messageToBePrinted += buffer1;
 					retVal = true;
@@ -1151,7 +1151,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 			} else {
 				buffer1 = "The entire party vanishes in a flash...only to appear elsewhere!";
 				if (argA == 2) {
-					displayString_3(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
+					displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 				} else {
 					_messageToBePrinted += buffer1;
 					retVal = true;
@@ -1163,7 +1163,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 	} break;
 	case 18:
 		if (argA == 2) {
-			displayString_3("The item makes a loud noise!", false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder("The item makes a loud noise!", false, charId, teamMonsterId, menuId, curMenuLine);
 		} else {
 			int16 teamCharId = teamMonsterId;
 			if (teamCharId != 0x1B) {
@@ -1182,7 +1182,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 	case 19: // "Junk"
 		buffer1 = "  * The item breaks!";
 		if (argA == 2) {
-			displayString_3(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += buffer1;
 		}
@@ -1218,7 +1218,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		}
 		buffer1 += "'";
 		if (argA == 2) {
-			displayString_3(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += buffer1;
 			retVal = true;
@@ -1229,7 +1229,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 	case 24: {
 		int16 teamCharId;
 		if (argA == 2) {
-			displayString_3("Who will use this item?", false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder("Who will use this item?", false, charId, teamMonsterId, menuId, curMenuLine);
 			teamCharId = selectOtherCharFromTeam();
 		} else
 			teamCharId = teamMonsterId;
@@ -1247,7 +1247,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 				buffer1 = Common::String::format("%s increased 1 point!", kSkillArray[varAE]);
 
 			if (argA == 2) {
-				displayString_3(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
+				displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 			} else {
 				_messageToBePrinted += buffer1;
 				retVal = true;
@@ -1259,7 +1259,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 	case 25: {
 		int16 teamCharId;
 		if (argA == 2) {
-			displayString_3("Who will use this item?", false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder("Who will use this item?", false, charId, teamMonsterId, menuId, curMenuLine);
 			teamCharId = selectOtherCharFromTeam();
 		} else
 			teamCharId = teamMonsterId;
@@ -1277,7 +1277,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 				buffer1 = Common::String::format("%s lowered 1 point!", kSkillArray[varAE]);
 
 			if (argA == 2) {
-				displayString_3(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
+				displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 			} else {
 				_messageToBePrinted += buffer1;
 				retVal = true;
@@ -1289,7 +1289,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 	case 26: // "Black Sphere"
 		buffer1 = "The entire party collapses, dead!!!";
 		if (argA == 2) {
-			displayString_3(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += buffer1;
 			retVal = true;
@@ -1300,7 +1300,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 	case 27: { // "Magic Pyramid", "Razor Blade"
 		int16 teamCharId;
 		if (argA == 2) {
-			displayString_3("Who will use the item?", false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder("Who will use the item?", false, charId, teamMonsterId, menuId, curMenuLine);
 			teamCharId = selectOtherCharFromTeam();
 		} else {
 			teamCharId = teamMonsterId;
@@ -1310,7 +1310,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 			_npcBuf[_teamCharId[teamCharId]]._hitPoints = 0;
 			buffer1 = Common::String::format("%s collapses, dead!!!", _npcBuf[_teamCharId[teamCharId]]._name);
 			if (argA == 2) {
-				displayString_3(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
+				displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 			} else {
 				_messageToBePrinted += buffer1;
 				retVal = true;
@@ -1321,7 +1321,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 	} break;
 	case 28: // "Bugle"
 		if (argA == 2) {
-			displayString_3("The item makes a loud noise!", false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder("The item makes a loud noise!", false, charId, teamMonsterId, menuId, curMenuLine);
 		} else {
 			int16 teamCharId = teamMonsterId;
 			if (teamCharId != 0x1B) {
@@ -1340,7 +1340,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 	case 29: { // "Healing Spray", "Healing Elixir", "Curing Potion", "Magic Potion"
 		int16 teamCharId;
 		if (argA == 2) {
-			displayString_3("Who will use the item?", false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder("Who will use the item?", false, charId, teamMonsterId, menuId, curMenuLine);
 			teamCharId = selectOtherCharFromTeam();
 		} else {
 			teamCharId = teamMonsterId;
@@ -1359,7 +1359,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		}
 
 		if (argA == 2) {
-			displayString_3(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += buffer1;
 			retVal = true;
@@ -1370,7 +1370,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 	case 30: {
 		int16 teamCharId;
 		if (argA == 2) {
-			displayString_3("Who will use the item?", false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder("Who will use the item?", false, charId, teamMonsterId, menuId, curMenuLine);
 			teamCharId = selectOtherCharFromTeam();
 		} else {
 			teamCharId = teamMonsterId;
@@ -1389,7 +1389,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		}
 
 		if (argA == 2) {
-			displayString_3(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
+			displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += buffer1;
 			retVal = true;
@@ -1421,7 +1421,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 				buffer1 = "  * The item breaks!";
 				if (argA == 2) {
 					getLastCharAfterAnimCount(_guessAnimationAmount);
-					displayString_3(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
+					displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 				} else {
 					_messageToBePrinted += buffer1;
 				}
