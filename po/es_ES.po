@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-08 19:42+0000\n"
-"PO-Revision-Date: 2023-01-09 10:48+0000\n"
+"PO-Revision-Date: 2023-01-09 10:49+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1215,7 +1215,7 @@ msgstr "Actualizar shaders"
 
 #: gui/options.cpp:1580
 msgid "Check for updates of shader packs"
-msgstr "Buscar actualizaciones de paquetes de shaders..."
+msgstr "Buscar actualizaciones de paquetes de shaders"
 
 #: gui/options.cpp:1586 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
@@ -1648,7 +1648,7 @@ msgstr "Actualizar iconos"
 
 #: gui/options.cpp:2521
 msgid "Check for updates of icon packs"
-msgstr "Buscar actualizaciones de paquetes de iconos..."
+msgstr "Buscar actualizaciones de paquetes de iconos"
 
 #: gui/options.cpp:2528
 msgid "Autosave:"
