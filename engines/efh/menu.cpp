@@ -241,15 +241,15 @@ void EfhEngine::prepareStatusRightWindowIndexes(int16 menuId, int16 charId) {
 	_menuItemCounter = 0;
 
 	switch (menuId) {
-	case 5:
+	case kEfhMenuInfo:
 		minId = 26;
 		maxId = 36;
 		break;
-	case 6:
+	case kEfhMenuPassive:
 		minId = 15;
 		maxId = 25;
 		break;
-	case 7:
+	case kEfhMenuActive:
 		minId = 0;
 		maxId = 14;
 		break;
@@ -419,40 +419,40 @@ void EfhEngine::displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 
 	displayCenteredString("(ESCape Aborts)", 144, 310, 175);
 	_textColor = 0x0E;
 	switch (menuId) {
-	case 0:
+	case kEfhMenuEquip:
 		displayCenteredString("Select Item to Equip", 144, 310, 15);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
-	case 1:
+	case kEfhMenuUse:
 		displayCenteredString("Select Item to Use", 144, 310, 15);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
-	case 2:
+	case kEfhMenuGive:
 		displayCenteredString("Select Item to Give", 144, 310, 15);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
-	case 3:
+	case kEfhMenuTrade:
 		displayCenteredString("Select Item to Trade", 144, 310, 15);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
-	case 4:
+	case kEfhMenuDrop:
 		displayCenteredString("Select Item to Drop", 144, 310, 15);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
-	case 5:
+	case kEfhMenuInfo:
 		displayCenteredString("Character Information", 144, 310, 15);
 		displayCharacterInformationOrSkills(curMenuLine, npcId);
 		break;
-	case 6:
+	case kEfhMenuPassive:
 		displayCenteredString("Passive Skills", 144, 310, 15);
 		displayCharacterInformationOrSkills(curMenuLine, npcId);
 		break;
-	case 7:
+	case kEfhMenuActive:
 		displayCenteredString("Active Skills", 144, 310, 15);
 		displayCharacterInformationOrSkills(curMenuLine, npcId);
 		break;
-	case 8:
-	case 9:
+	case kEfhMenuLeave:
+	case kEfhMenuInvalid:
 		displayCenteredString("Character Summary", 144, 310, 15);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
@@ -516,11 +516,11 @@ int16 EfhEngine::displayString_3(Common::String str, bool delayFl, int16 charId,
 int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 	debug("handleStatusMenu %d %d", gameMode, charId);
 
-	int16 menuId = 9;
+	int16 menuId = kEfhMenuInvalid;
 	int16 selectedLine = -1;
 	int16 windowId = -1;
 	int16 curMenuLine = -1;
-	bool var10 = false;
+	bool selectionDoneFl = false;
 	bool var2 = false;
 
 	saveAnimImageSetId();
@@ -534,50 +534,50 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 		if (windowId != -1)
 			prepareStatusMenu(windowId, menuId, curMenuLine, charId, true);
 		else
-			windowId = 0;
+			windowId = kEfhMenuEquip;
 
 		do {
 			Common::KeyCode var19 = handleAndMapInput(false);
 			if (_menuDepth == 0) {
 				switch (var19) {
 				case Common::KEYCODE_ESCAPE:
-					windowId = 8;
+					windowId = kEfhMenuLeave;
 					var19 = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_a:
-					windowId = 7;
+					windowId = kEfhMenuActive;
 					var19 = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_d:
-					windowId = 4;
+					windowId = kEfhMenuDrop;
 					var19 = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_e:
-					windowId = 0;
+					windowId = kEfhMenuEquip;
 					var19 = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_g:
-					windowId = 2;
+					windowId = kEfhMenuGive;
 					var19 = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_i:
-					windowId = 5;
+					windowId = kEfhMenuInfo;
 					var19 = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_l:
-					windowId = 8;
+					windowId = kEfhMenuLeave;
 					var19 = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_p:
-					windowId = 6;
+					windowId = kEfhMenuPassive;
 					var19 = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_t:
-					windowId = 3;
+					windowId = kEfhMenuTrade;
 					var19 = Common::KEYCODE_RETURN;
 					break;
 				case Common::KEYCODE_u:
-					windowId = 1;
+					windowId = kEfhMenuUse;
 					var19 = Common::KEYCODE_RETURN;
 					break;
 				// case 0xFB: Joystick button 2
@@ -601,8 +601,8 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				// case 0xFA: Joystick button 1
 				if (_menuDepth == 0) {
 					menuId = windowId;
-					if (menuId > 7)
-						var10 = true;
+					if (menuId >= kEfhMenuLeave)
+						selectionDoneFl = true;
 					else {
 						_menuDepth = 1;
 						curMenuLine = 0;
@@ -611,18 +611,18 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					if (_menuItemCounter == 0) {
 						_menuDepth = 0;
 						curMenuLine = -1;
-						menuId = 9;
+						menuId = kEfhMenuInvalid;
 						prepareStatusMenu(windowId, menuId, curMenuLine, charId, true);
 					} else {
 						selectedLine = curMenuLine;
-						var10 = true;
+						selectionDoneFl = true;
 					}
 				}
 				break;
 			case Common::KEYCODE_ESCAPE:
 				_menuDepth = 0;
 				curMenuLine = -1;
-				menuId = 9;
+				menuId = kEfhMenuInvalid;
 				prepareStatusMenu(windowId, menuId, curMenuLine, charId, true);
 				break;
 			case Common::KEYCODE_2:
@@ -634,8 +634,8 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			case Common::KEYCODE_KP6:
 				// Original checks joystick axis: case 0xCC, 0xCF
 				if (_menuDepth == 0) {
-					if (++windowId > 8)
-						windowId = 0;
+					if (++windowId > kEfhMenuLeave)
+						windowId = kEfhMenuEquip;
 				} else if (_menuDepth == 1) {
 					if (_menuItemCounter != 0) {
 						++curMenuLine;
@@ -653,8 +653,8 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			case Common::KEYCODE_KP8:
 				// Original checks joystick axis: case 0xC7, 0xCA
 				if (_menuDepth == 0) {
-					if (--windowId < 0)
-						windowId = 8;
+					if (--windowId < kEfhMenuEquip)
+						windowId = kEfhMenuLeave;
 				} else if (_menuDepth == 1) {
 					if (_menuItemCounter != 0) {
 						--curMenuLine;
@@ -669,14 +669,14 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 
 			prepareStatusMenu(windowId, menuId, curMenuLine, charId, true);
 
-		} while (!var10);
+		} while (!selectionDoneFl); // Loop until a menu entry is confirmed by the user by pressing the enter key 
 
 		bool validationFl = true;
 
 		int16 objectId;
 		int16 itemId;
 		switch (menuId) {
-		case 0:
+		case kEfhMenuEquip:
 			objectId = _menuStatItemArr[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref; // CHECKME: Useless?
 			tryToggleEquipped(charId, objectId, windowId, menuId, curMenuLine);
@@ -686,7 +686,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				return 0x7D00;
 			}
 			break;
-		case 1:
+		case kEfhMenuUse:
 			objectId = _menuStatItemArr[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (gameMode == 2) {
@@ -702,7 +702,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 
 			useObject(charId, objectId, windowId, menuId, curMenuLine, 2);
 			break;
-		case 2:
+		case kEfhMenuGive:
 			objectId = _menuStatItemArr[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
@@ -728,7 +728,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			}
 
 			break;
-		case 3:
+		case kEfhMenuTrade:
 			objectId = _menuStatItemArr[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
@@ -790,7 +790,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
 			}
 			break;
-		case 4:
+		case kEfhMenuDrop:
 			objectId = _menuStatItemArr[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
@@ -817,7 +817,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				}
 			}
 			break;
-		case 5:
+		case kEfhMenuInfo:
 			objectId = _menuStatItemArr[selectedLine];
 			if (gameMode == 2) {
 				displayString_3("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
@@ -829,7 +829,8 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				}
 			}
 			break;
-		case 6: // Identical to case 5?
+		case kEfhMenuPassive:
+			// Identical to case 5?
 			objectId = _menuStatItemArr[selectedLine];
 			if (gameMode == 2) {
 				displayString_3("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
@@ -841,7 +842,8 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				}
 			}
 			break;
-		case 7: // Identical to case 5?
+		case kEfhMenuActive:
+			// Identical to case 5?
 			objectId = _menuStatItemArr[selectedLine];
 			if (gameMode == 2) {
 				displayString_3("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
@@ -857,15 +859,15 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			break;
 		}
 
-		if (menuId != 8) {
-			var10 = false;
+		if (menuId != kEfhMenuLeave) {
+			selectionDoneFl = false;
 			_menuDepth = 0;
-			menuId = 9;
+			menuId = kEfhMenuInvalid;
 			selectedLine = -1;
 			curMenuLine = -1;
 		}
 
-		if (menuId == 8) {
+		if (menuId == kEfhMenuLeave) {
 			restoreAnimImageSetId();
 			_statusMenuActive = false;
 			return 0x7FFF;
