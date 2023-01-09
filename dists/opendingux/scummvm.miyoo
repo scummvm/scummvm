@@ -1,0 +1,4 @@
+title=ScummVM
+description=Interpreter for several adventure games
+exec=/mnt/games/scummvm/scummvm
+clock=702
