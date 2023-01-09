@@ -5997,7 +5997,6 @@ EOF
 	cc_check $DISCORD_CFLAGS $DISCORD_LIBS -ldiscord-rpc && _discord=yes
 fi
 if test "$_discord" = yes ; then
-	append_var LIBS "$DISCORD_LIBS -ldiscord-rpc"
 	append_var INCLUDES "$DISCORD_CFLAGS"
 fi
 define_in_config_if_yes "$_discord" 'USE_DISCORD'
