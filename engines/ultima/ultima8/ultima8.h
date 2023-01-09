@@ -299,10 +299,9 @@ public:
 		return _avatarMoverProcess;
 	}
 
-	/**
-	 * Get a random number
-	 */
-	uint getRandomNumber(uint maxVal) { return _randomSource.getRandomNumber(maxVal); }
+	Common::RandomSource &getRandomSource() {
+		return _randomSource;
+	}
 
 	/**
 	 * Notifies the engine that the sound settings may have changed

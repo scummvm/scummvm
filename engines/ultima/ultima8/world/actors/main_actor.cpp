@@ -510,6 +510,7 @@ uint16 MainActor::getDamageType() const {
 }
 
 int MainActor::getDamageAmount() const {
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 	int damage = 0;
 
 	if (getLastAnim() == Animation::kick) {
@@ -523,7 +524,7 @@ int MainActor::getDamageAmount() const {
 			kick_bonus = si->_armourInfo[legs->getFrame()]._kickAttackBonus;
 		}
 
-		damage = (getRandom() % (getStr() / 2 + 1)) + kick_bonus;
+		damage = rs.getRandomNumber(getStr() / 2) + kick_bonus;
 
 		return damage;
 
@@ -541,14 +542,14 @@ int MainActor::getDamageAmount() const {
 		int base = si->_weaponInfo->_baseDamage;
 		int mod = si->_weaponInfo->_damageModifier;
 
-		damage = (getRandom() % (mod + 1)) + base + getStr() / 5;
+		damage = rs.getRandomNumber(mod) + base + getStr() / 5;
 
 		return damage;
 	}
 
 	// no weapon?
 
-	damage = (getRandom() % (getStr() / 2 + 1)) + 1;
+	damage = rs.getRandomNumber(getStr() / 2) + 1;
 
 	return damage;
 }
@@ -604,8 +605,10 @@ void MainActor::accumulateStr(int n) {
 	// already max?
 	if (_strength == 25) return; //!! constant
 
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+
 	_accumStr += n;
-	if (_accumStr >= 650 || getRandom() % (650 - _accumStr) == 0) { //!! constant
+	if (_accumStr >= 650 || rs.getRandomNumber(650 - _accumStr) == 0) { //!! constant
 		_strength++;
 		_accumStr = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
@@ -618,8 +621,10 @@ void MainActor::accumulateDex(int n) {
 	// already max?
 	if (_dexterity == 25) return; //!! constant
 
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+
 	_accumDex += n;
-	if (_accumDex >= 650 || getRandom() % (650 - _accumDex) == 0) { //!! constant
+	if (_accumDex >= 650 || rs.getRandomNumber(650 - _accumDex) == 0) { //!! constant
 		_dexterity++;
 		_accumDex = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
@@ -632,8 +637,10 @@ void MainActor::accumulateInt(int n) {
 	// already max?
 	if (_intelligence == 25) return; //!! constant
 
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+
 	_accumInt += n;
-	if (_accumInt >= 650 || getRandom() % (650 - _accumInt) == 0) { //!! constant
+	if (_accumInt >= 650 || rs.getRandomNumber(650 - _accumInt) == 0) { //!! constant
 		_intelligence++;
 		_accumInt = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();

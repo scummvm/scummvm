@@ -102,12 +102,14 @@ SuperSpriteProcess::SuperSpriteProcess(int shape, int frame, int sx, int sy, int
 
 		if (rng > 0x50)
 			rng = 0x50;
-		int xoff = -rng + (getRandom() % (rng * 2 + 1));
-		int yoff = -rng + (getRandom() % (rng * 2 + 1));
+
+		Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+		int xoff = rs.getRandomNumberRngSigned(-rng, rng);
+		int yoff = rs.getRandomNumberRngSigned(-rng, rng);
 		rng /= 3;
 		if (rng > 0x18)
 			rng = 0x18;
-		int zoff = -rng + (getRandom() % (rng * 2 + 1));
+		int zoff = rs.getRandomNumberRngSigned(-rng, rng);
 
 		_destpt.move(xoff, yoff, zoff);
 		if (_destpt.z > 0xfa)

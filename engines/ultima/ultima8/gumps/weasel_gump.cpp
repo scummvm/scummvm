@@ -92,7 +92,8 @@ static void _closeIfExists(Gump *gump) {
 }
 
 static const char *_getRandomMovie(const char **movies, int nmovies) {
-	int offset = Ultima8Engine::get_instance()->getRandomNumber(nmovies - 1);
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+	int offset = rs.getRandomNumber(nmovies - 1);
 	return movies[offset];
 }
 }

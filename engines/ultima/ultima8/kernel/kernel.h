@@ -164,11 +164,6 @@ private:
 	static Kernel *_kernel;
 };
 
-
-extern const uint U8_RAND_MAX;
-extern uint getRandom();
-
-
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

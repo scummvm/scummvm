@@ -25,6 +25,7 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -57,12 +58,13 @@ void GuardProcess::run() {
 		return;
 
 	if (!a->canSeeControlledActor(false)) {
-		if (getRandom() % 2) {
-			DelayProcess *dp = new DelayProcess(30 * (1 + (getRandom() % 3)));
+		Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+		if (rs.getRandomBit()) {
+			DelayProcess *dp = new DelayProcess(30 * rs.getRandomNumberRng(1, 3));
 			Kernel::get_instance()->addProcess(dp);
 			waitFor(dp);
 		} else {
-			Animation::Sequence anim = Animation::absAnim(getRandom() % 2 ? Animation::lookLeftCru : Animation::lookRightCru);
+			Animation::Sequence anim = Animation::absAnim(rs.getRandomBit() ? Animation::lookLeftCru : Animation::lookRightCru);
 			uint16 animproc = a->doAnim(anim, dir_current);
 			a->doAnimAfter(Animation::stand, dir_current, animproc);
 		}

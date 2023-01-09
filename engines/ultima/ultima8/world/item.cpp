@@ -1209,6 +1209,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 	if (!firetypedat)
 		return 0;
 
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 	int damage = firetypedat->getRandomDamage();
 
 	const Item *blocker = nullptr;
@@ -1245,7 +1246,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		spriteframe = 0x46;
 		break;
 	case 0xe:
-		spriteframe = 0x47 + getRandom() % 5;
+		spriteframe = 0x47 + rs.getRandomNumber(4);
 		break;
 	case 0xf:
 	case 0x12: // No Regret only
@@ -1779,14 +1780,15 @@ void Item::animateItem() {
 	if (!info->_animType)
 		return;
 
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 	uint32 anim_data = info->_animData;
 	const Shape *shp = getShapeObject();
 
 	switch (info->_animType) {
 	case 2:
 		// Randomly change frame
-		if ((getRandom() & 1) && shp)
-			_frame = getRandom() % shp->frameCount();
+		if (rs.getRandomBit() && shp)
+			_frame = rs.getRandomNumber(shp->frameCount() - 1);
 		break;
 
 	case 1:
@@ -1794,7 +1796,7 @@ void Item::animateItem() {
 		// animdata 0 = always increment
 		// animdata 1 = 50 % chance of changing
 		// animdata 2+ = loop in frame blocks of size animdata
-		if (anim_data == 0 || (anim_data == 1 && (getRandom() & 1))) {
+		if (anim_data == 0 || (anim_data == 1 && rs.getRandomBit())) {
 			_frame++;
 			if (shp && _frame >= shp->frameCount())
 				_frame = 0;
@@ -1809,7 +1811,7 @@ void Item::animateItem() {
 	case 4:
 		// Randomly start animating, with chance of 1/(animdata + 2)
 		// once animating, go through all frames.
-		if (_frame || getRandom() % (anim_data + 2)) {
+		if (_frame || rs.getRandomNumber(anim_data + 1)) {
 			_frame++;
 			if (shp && _frame >= shp->frameCount())
 				_frame = 0;
@@ -1825,7 +1827,7 @@ void Item::animateItem() {
 		// animdata 0 = stick on frame 0, else loop from 1 to count
 		// animdata 1 = same as 0, but with 50% chance of change
 		// animdata 2+ = same, but loop in frame blocks of size animdata
-		if (anim_data == 0 || (anim_data == 1 && (getRandom() & 1))) {
+		if (anim_data == 0 || (anim_data == 1 && rs.getRandomBit())) {
 			if (!_frame)
 				break;
 			_frame++;
@@ -2150,6 +2152,7 @@ void Item::hurl(int xs, int ys, int zs, int grav) {
 
 
 void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 	Process *p;
 	int damage_divisor = 1;
 
@@ -2166,7 +2169,7 @@ void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 		int32 cx, cy, cz;
 		getCentre(cx, cy, cz);
 		static const int expshapes[] = {0x31C, 0x31F, 0x326, 0x320, 0x321, 0x324, 0x323, 0x325};
-		int rnd = getRandom();
+		int rnd = rs.getRandomNumber(UINT_MAX);
 		int spriteno;
 		// NOTE: The game does some weird 32-bit stuff to decide what
 		// shapenum to use.  Just simplified to a random.
@@ -2194,10 +2197,10 @@ void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 	if (audioproc) {
 		int sfx;
 		if (GAME_IS_CRUSADER) {
-			sfx = (getRandom() % 2) ? 28 : 108;
+			sfx = rs.getRandomBit() ? 28 : 108;
 			audioproc->stopSFX(-1, _objId);
 		} else {
-			sfx = (getRandom() % 2) ? 31 : 158;
+			sfx = rs.getRandomBit() ? 31 : 158;
 		}
 		audioproc->playSFX(sfx, 0x60, 0, 0);
 	}
@@ -2227,7 +2230,7 @@ void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 
 			item->getLocation(xv, yv, zv);
 			Direction dir = Direction_GetWorldDir(xv - xv, yv - yv, dirmode_8dirs); //!! CHECKME
-			item->receiveHit(0, dir, 6 + (getRandom() % 6),
+			item->receiveHit(0, dir, rs.getRandomNumberRng(6, 11),
 							 WeaponInfo::DMG_BLUNT | WeaponInfo::DMG_FIRE);
 		}
 	} else {
@@ -2327,8 +2330,9 @@ void Item::receiveHitCru(uint16 other, Direction dir, int damage, uint16 type) {
 	static const int hurl_x_factor[] = {  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2, -2, -2, -2, -1 };
 	static const int hurl_y_factor[] = { -2, -2, -2, -1,  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2 };
 
-	int xhurl = 10 + getRandom() % 15;
-	int yhurl = 10 + getRandom() % 15;
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+	int xhurl = rs.getRandomNumberRng(10, 24);
+	int yhurl = rs.getRandomNumberRng(10, 24);
 	hurl(-xhurl * hurl_x_factor[(int)dir], -yhurl * hurl_y_factor[(int)dir], 0, 2); //!! constants
 }
 

@@ -500,9 +500,12 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 		tx = _draggingPos[0];
 		ty = _draggingPos[1];
 		int inaccuracy = 4 * (30 - avatar->getDex());
-		if (inaccuracy < 20) inaccuracy = 20; // just in case dex > 25
-		tx += (getRandom() % inaccuracy) - (getRandom() % inaccuracy);
-		ty += (getRandom() % inaccuracy) - (getRandom() % inaccuracy);
+		if (inaccuracy < 20)
+			inaccuracy = 20; // just in case dex > 25
+
+		Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+		tx += rs.getRandomNumberRngSigned(-inaccuracy, inaccuracy);
+		ty += rs.getRandomNumberRngSigned(-inaccuracy, inaccuracy);
 		MissileTracker t(item, tx, ty, _draggingPos[2],
 		                 speed, 4);
 		t.launchItem();

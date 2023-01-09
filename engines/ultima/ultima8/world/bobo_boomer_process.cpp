@@ -25,6 +25,7 @@
 #include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/fire_type.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -46,8 +47,9 @@ void BoboBoomerProcess::run() {
 	const FireType *firetype = GameData::get_instance()->getFireType(4);
 	assert(firetype);
 
-	int32 randx = static_cast<int32>(getRandom() % 15) - 7;
-	int32 randy = static_cast<int32>(getRandom() % 15) - 7;
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+	int32 randx = rs.getRandomNumberRngSigned(-7, 7);
+	int32 randy = rs.getRandomNumberRngSigned(-7, 7);
 	Point3 pt(_x + randx * 32, _y + randy * 32, _z);
 	firetype->makeBulletSplashShapeAndPlaySound(pt.x, pt.y, pt.z);
 
@@ -62,7 +64,7 @@ void BoboBoomerProcess::run() {
 		return;
 	}
 
-	int sleep = (getRandom() % 15) + 5;
+	int sleep = rs.getRandomNumberRng(5, 20);
 	Process *wait = new DelayProcess(sleep);
 	Kernel::get_instance()->addProcess(wait);
 	waitFor(wait);

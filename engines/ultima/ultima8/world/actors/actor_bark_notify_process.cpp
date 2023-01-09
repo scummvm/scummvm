@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima8/world/actors/actor_bark_notify_process.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/kernel/kernel.h"
@@ -61,7 +62,8 @@ void ActorBarkNotifyProcess::run() {
 
 	// wait a short while (1-2.5 seconds) before doing the next animation
 	// (or even if not doing the animation)
-	Process *delayproc = new DelayProcess(30 + (getRandom() % 45));
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+	Process *delayproc = new DelayProcess(rs.getRandomNumberRng(30, 75));
 	ProcId delaypid = Kernel::get_instance()->addProcess(delayproc);
 
 	if (doAnim)

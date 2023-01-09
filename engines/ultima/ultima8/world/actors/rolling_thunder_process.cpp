@@ -92,7 +92,8 @@ void RollingThunderProcess::run() {
 	if (!target)
 		return;
 
-	Animation::Sequence anim = (getRandom() % 2) ? Animation::combatRollLeft : Animation::combatRollRight;
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+	Animation::Sequence anim = rs.getRandomBit() ? Animation::combatRollLeft : Animation::combatRollRight;
 
 	Direction actordir = actor->getDir();
 	Direction outdir = actordir;
@@ -132,7 +133,7 @@ void RollingThunderProcess::run() {
 		if (outdir != actordir) {
 			animpid = actor->turnTowardDir(outdir, animpid);
 		}
-		int attackcount = (getRandom() % 3) + 1;
+		int attackcount = rs.getRandomNumberRng(1, 3);
 		for (int i = 0; i < attackcount; i++) {
 			animpid = actor->doAnimAfter(Animation::attack, outdir, animpid);
 		}

@@ -23,6 +23,7 @@
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -80,13 +81,14 @@ bool DamageInfo::applyToItem(Item *item, uint16 points) const {
 		if (item)
 			item->destroy();
 	} else if (!explodeDestroysItem()) {
+		Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 		if (frameDataIsAbsolute()) {
 			int frameval = 1;
 			if (_data[1])
 				frameval++;
 			if (_data[2])
 				frameval++;
-			item->setFrame(_data[getRandom() % frameval]);
+			item->setFrame(_data[rs.getRandomNumber(frameval - 1)]);
 		} else {
 			int frameoff = 0;
 			for (int i = 0; i < 3; i++)
@@ -96,7 +98,7 @@ bool DamageInfo::applyToItem(Item *item, uint16 points) const {
 				item->destroy();
 			} else {
 				uint32 frame = item->getFrame();
-				item->setFrame(frame + _data[getRandom() % frameoff]);
+				item->setFrame(frame + _data[rs.getRandomNumber(frameoff - 1)]);
 			}
 		}
 	}

@@ -156,8 +156,10 @@ void CameraProcess::terminate() {
 
 void CameraProcess::run() {
 	if (_earthquake) {
-		_eqX = (getRandom() % (_earthquake * 2 + 1)) - _earthquake;
-		_eqY = (getRandom() % (_earthquake * 2 + 1)) - _earthquake;
+		Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+
+		_eqX = rs.getRandomNumberRngSigned(-_earthquake, _earthquake);
+		_eqY = rs.getRandomNumberRngSigned(-_earthquake, _earthquake);
 	} else {
 		_eqX = 0;
 		_eqY = 0;

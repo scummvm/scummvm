@@ -2404,8 +2404,8 @@ uint32 UCMachine::I_urandom(const uint8 *args, unsigned int /*argsize*/) {
 	if (num <= 1) return 0;
 
 	// return random integer between 0 (incl.) to num (excl.)
-
-	return (getRandom() % num);
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+	return rs.getRandomNumber(num - 1);
 }
 
 uint32 UCMachine::I_rndRange(const uint8 *args, unsigned int /*argsize*/) {
@@ -2416,7 +2416,8 @@ uint32 UCMachine::I_rndRange(const uint8 *args, unsigned int /*argsize*/) {
 	if (hi <= lo)
 		return lo;
 
-	return (lo + (getRandom() % (hi - lo + 1)));
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+	return rs.getRandomNumberRng(lo, hi);
 }
 
 } // End of namespace Ultima8

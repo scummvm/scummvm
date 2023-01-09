@@ -73,8 +73,10 @@ void LoiterProcess::run() {
 	int32 x, y, z;
 	a->getLocation(x, y, z);
 
-	x += 32 * ((getRandom() % 20) - 10);
-	y += 32 * ((getRandom() % 20) - 10);
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+
+	x += 32 * rs.getRandomNumberRngSigned(-10, 10);
+	y += 32 * rs.getRandomNumberRngSigned(-10, 10);
 
 	Process *pfp;
 	if (GAME_IS_U8)
@@ -87,7 +89,7 @@ void LoiterProcess::run() {
 	bool hasidle1 = a->hasAnim(Animation::idle1);
 	bool hasidle2 = a->hasAnim(Animation::idle2);
 
-	if ((hasidle1 || hasidle2) && ((getRandom() % 3) == 0)) {
+	if ((hasidle1 || hasidle2) && (rs.getRandomNumber(2) == 0)) {
 		Animation::Sequence idleanim;
 
 		if (!hasidle1) {
@@ -95,7 +97,7 @@ void LoiterProcess::run() {
 		} else if (!hasidle2) {
 			idleanim = Animation::idle1;
 		} else {
-			if (getRandom() % 2)
+			if (rs.getRandomBit())
 				idleanim = Animation::idle1;
 			else
 				idleanim = Animation::idle2;
@@ -108,7 +110,7 @@ void LoiterProcess::run() {
 
 	} else {
 		// wait 4-7 sec
-		DelayProcess *dp = new DelayProcess(30 * (4 + (getRandom() % 3)));
+		DelayProcess *dp = new DelayProcess(30 * rs.getRandomNumberRng(4, 7));
 		Kernel::get_instance()->addProcess(dp);
 		dp->waitFor(pfp);
 

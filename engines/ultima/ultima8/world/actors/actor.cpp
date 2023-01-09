@@ -137,18 +137,19 @@ bool Actor::loadMonsterStatsU8() {
 	if (!mi)
 		return false;
 
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 	uint16 hp;
 	if (mi->_maxHp <= mi->_minHp)
 		hp = mi->_minHp;
 	else
-		hp = mi->_minHp + getRandom() % (mi->_maxHp - mi->_minHp);
+		hp = rs.getRandomNumberRng(mi->_minHp, mi->_maxHp);
 	setHP(hp);
 
 	uint16 dex;
 	if (mi->_maxDex <= mi->_minDex)
 		dex = mi->_minDex;
 	else
-		dex = mi->_minDex + getRandom() % (mi->_maxDex - mi->_minDex);
+		dex = rs.getRandomNumberRng(mi->_minDex, mi->_maxDex);
 	setDex(dex);
 
 	uint8 new_alignment = mi->_alignment;
@@ -166,6 +167,7 @@ bool Actor::giveTreasure() {
 	if (!mi)
 		return false;
 
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 	const Std::vector<TreasureInfo> &treasure = mi->_treasure;
 
 	for (unsigned int i = 0; i < treasure.size(); ++i) {
@@ -181,7 +183,7 @@ bool Actor::giveTreasure() {
 
 		// check chance
 		if (ti._chance < 0.999 &&
-		        (static_cast<double>(getRandom()) / U8_RAND_MAX) > ti._chance) {
+		        rs.getRandomNumber(1000) > ti._chance * 1000) {
 			continue;
 		}
 
@@ -190,7 +192,7 @@ bool Actor::giveTreasure() {
 		if (ti._minCount >= ti._maxCount)
 			count = ti._minCount;
 		else
-			count = ti._minCount + (getRandom() % (ti._maxCount - ti._minCount));
+			count = rs.getRandomNumberRng(ti._minCount, ti._maxCount);
 
 		if (!ti._special.empty()) {
 			if (ti._special == "weapon") {
@@ -203,7 +205,7 @@ bool Actor::giveTreasure() {
 					int chance = si->_weaponInfo->_treasureChance;
 					if (!chance) continue;
 
-					int r = getRandom() % 100;
+					int r = rs.getRandomNumber(99);
 
 					debugC(kDebugActor, "weapon (%u) chance: %d/%d", s, r, chance);
 
@@ -227,13 +229,13 @@ bool Actor::giveTreasure() {
 				int frameNum;
 				uint16 qualityNum;
 
-				if (getRandom() % 10 < 8) {
+				if (rs.getRandomNumber(9) < 8) {
 					// wand
-					if (getRandom() % 10 < 4) {
+					if (rs.getRandomNumber(9) < 4) {
 						// charged
 						frameNum = 0;
-						qualityNum = 3 + (getRandom() % 4) + // charges
-						          ((1 + (getRandom() % 4)) << 8); // spell
+						qualityNum = rs.getRandomNumberRng(3, 6) + // charges
+									 (rs.getRandomNumberRng(1, 4) << 8);  // spell
 					} else {
 						frameNum = 15;
 						qualityNum = 0;
@@ -246,13 +248,13 @@ bool Actor::giveTreasure() {
 					item->randomGumpLocation();
 				}
 
-				if (getRandom() % 10 < 6) {
+				if (rs.getRandomNumber(9) < 6) {
 					// rod
-					if (getRandom() % 10 < 2) {
+					if (rs.getRandomNumber(9) < 2) {
 						// charged
 						frameNum = 3;
-						qualityNum = 3 + (getRandom() % 4) + // charges
-						          ((1 + (getRandom() % 7)) << 8); // spell
+						qualityNum = rs.getRandomNumberRng(3, 6) + // charges
+									 (rs.getRandomNumberRng(1, 7) << 8); // spell
 					} else {
 						frameNum = 16;
 						qualityNum = 0;
@@ -265,15 +267,15 @@ bool Actor::giveTreasure() {
 					item->randomGumpLocation();
 				}
 
-				if (getRandom() % 10 < 5) {
+				if (rs.getRandomNumber(9) < 5) {
 					// symbol
-					if (getRandom() % 10 < 5) {
+					if (rs.getRandomNumber(9) < 5) {
 						// charged
 						frameNum = 12;
-						uint8 spell = 1 + (getRandom() % 11);
+						uint8 spell = rs.getRandomNumberRng(1, 11);
 						qualityNum = spell << 8;
 						if (spell < 4) {
-							qualityNum += 3 + (getRandom() % 4);
+							qualityNum += rs.getRandomNumberRng(3, 6);
 						} else {
 							// symbol can only have one charge of anything
 							// other than ignite/extinguish
@@ -291,13 +293,13 @@ bool Actor::giveTreasure() {
 					item->randomGumpLocation();
 				}
 
-				if (getRandom() % 10 < 2) {
+				if (rs.getRandomNumber(9) < 2) {
 					// demon talisman
-					if (getRandom() % 10 < 2) {
+					if (rs.getRandomNumber(9) < 2) {
 						// charged
 						frameNum = 9;
-						qualityNum = 1 + (getRandom() % 2) +  // charges
-						          ((10 + (getRandom() % 2)) << 8); // spell
+						qualityNum = rs.getRandomNumberRng(1, 2) +  // charges
+									 (rs.getRandomNumberRng(10, 11) << 8); // spell
 					} else {
 						frameNum = 18;
 						qualityNum = 0;
@@ -350,11 +352,11 @@ bool Actor::giveTreasure() {
 		// we need to produce a number of items
 		for (int j = 0; (int)j < count; ++j) {
 			// pick shape
-			int n = getRandom() % ti._shapes.size();
+			int n = rs.getRandomNumber(ti._shapes.size() - 1);
 			uint32 shapeNum = ti._shapes[n];
 
 			// pick frame
-			n = getRandom() % ti._frames.size();
+			n = rs.getRandomNumber(ti._frames.size() - 1);
 			uint32 frameNum = ti._frames[n];
 
 			const ShapeInfo *si = GameData::get_instance()->getMainShapes()->
@@ -759,7 +761,8 @@ uint16 Actor::setActivityCru(int activity) {
 		|| hasActorFlags(ACT_WEAPONREADY) || activity == 0)
 		return 0;
 
-	if ((World::get_instance()->getGameDifficulty() == 4) && (getRandom() % 2 == 0)) {
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+	if ((World::get_instance()->getGameDifficulty() == 4) && rs.getRandomBit()) {
 		if (activity == 5)
 			activity = 0xa;
 		if (activity == 9)
@@ -875,12 +878,13 @@ int Actor::getDamageAmount() const {
 	const ShapeInfo *si = getShapeInfo();
 	if (si->_monsterInfo) {
 
-		int min = static_cast<int>(si->_monsterInfo->_minDmg);
-		int max = static_cast<int>(si->_monsterInfo->_maxDmg);
+		uint min = si->_monsterInfo->_minDmg;
+		uint max = si->_monsterInfo->_maxDmg;
 
-		int damage = (getRandom() % (max - min + 1)) + min;
+		Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+		uint damage = rs.getRandomNumberRng(min, max);
 
-		return damage;
+		return static_cast<int>(damage);
 	} else {
 		return 1;
 	}
@@ -1038,11 +1042,12 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 				kernel->killProcesses(_objId, PathfinderProcess::PATHFINDER_PROC_TYPE, true);
 				doAnim(static_cast<Animation::Sequence>(0x37), dir_current);
 			} else if (shape == 0x4e6 || shape == 0x338 || shape == 0x385 || shape == 899) {
-				if (!(getRandom() % 3)) {
+				Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+				if (rs.getRandomNumber(2)) {
 					// Randomly stun the NPC for these damage types.
 					// CHECK ME: is this time accurate?
 					Process *attack = kernel->findProcess(_objId, AttackProcess::ATTACK_PROC_TYPE);
-					uint stun = ((getRandom() % 10) + 8) * 60;
+					uint stun = rs.getRandomNumberRng(8, 17) * 60;
 					if (attack && stun) {
 						Process *delay = new DelayProcess(stun);
 						kernel->addProcess(delay);
@@ -1054,7 +1059,7 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 	}
 }
 
-#define RAND_ELEM(array) (array[getRandom() % ARRAYSIZE(array)])
+#define RAND_ELEM(array) (array[rs.getRandomNumber(ARRAYSIZE(array) - 1)])
 
 void Actor::tookHitCru() {
 	AudioProcess *audio = AudioProcess::get_instance();
@@ -1063,9 +1068,10 @@ void Actor::tookHitCru() {
 	if (!audio)
 		return;
 
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 	if (lastanim == Animation::lookLeftCru || lastanim == Animation::lookRightCru) {
 		if (canSeeControlledActor(true)) {
-			if (getRandom() % 4)
+			if (rs.getRandomNumber(3) != 0)
 				setActivity(5);
 			else
 				setActivity(10);
@@ -1090,7 +1096,7 @@ void Actor::tookHitCru() {
 					return;
 			}
 
-			audio->playSFX(sounds[getRandom() % nsounds], 0x80, _objId, 1);
+			audio->playSFX(sounds[rs.getRandomNumber(nsounds - 1)], 0x80, _objId, 1);
 		}
 	} else if (GAME_IS_REGRET) {
 		switch (getShape()) {
@@ -1116,7 +1122,7 @@ void Actor::tookHitCru() {
 					return;
 			}
 
-			audio->playSFX(sounds[getRandom() % nsounds], 0x80, _objId, 1);
+			audio->playSFX(sounds[rs.getRandomNumber(nsounds - 1)], 0x80, _objId, 1);
 			return;
 		}
 		case 0x385:
@@ -1196,6 +1202,7 @@ void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_
 		debugC(kDebugActor, "Damage: %d", damage);
 	}
 
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 	if (damage >= 4 && _objId == 1 && attacker) {
 		// play blood sprite
 		int start = 0, end = 12;
@@ -1206,7 +1213,7 @@ void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_
 
 		int32 xv, yv, zv;
 		getLocation(xv, yv, zv);
-		zv += (getRandom() % 24);
+		zv += rs.getRandomNumber(23);
 		Process *sp = new SpriteProcess(620, start, end, 1, 1, xv, yv, zv);
 		Kernel::get_instance()->addProcess(sp);
 	}
@@ -1259,9 +1266,9 @@ void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_
 
 		int sfx;
 		if (damage)
-			sfx = 50 + (getRandom() % 2); // constants!
+			sfx = rs.getRandomNumberRng(50, 51); // constants!
 		else
-			sfx = 20 + (getRandom() % 3); // constants!
+			sfx = rs.getRandomNumberRng(20, 22); // constants!
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(sfx, 0x60, _objId, 0);
 		return;
@@ -1339,6 +1346,7 @@ ProcId Actor::dieU8(uint16 damageType) {
 		destroyContents();
 	giveTreasure();
 
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 	const ShapeInfo *shapeinfo = getShapeInfo();
 	const MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
@@ -1348,7 +1356,7 @@ ProcId Actor::dieU8(uint16 damageType) {
 
 		debugC(kDebugActor, "Actor::die: scheduling resurrection");
 
-		int timeout = ((getRandom() % 25) + 5) * 30; // 5-30 seconds
+		int timeout = rs.getRandomNumberRng(5, 30) * 30; // 5-30 seconds
 
 		Process *resproc = new ResurrectionProcess(this);
 		Kernel::get_instance()->addProcess(resproc);
@@ -1376,19 +1384,19 @@ ProcId Actor::dieU8(uint16 damageType) {
 
 		for (int i = 0; i < count; ++i) {
 			Item *piece = ItemFactory::createItem(mi->_explode,
-												  getRandom() % framecount,
+												  rs.getRandomNumber(framecount - 1),
 												  0, // qual
 												  Item::FLG_FAST_ONLY, //flags,
 												  0, // npcnum
 												  0, // mapnum
 												  0, true // ext. flags, _objId
 												 );
-			piece->move(_x - 128 + 32 * (getRandom() % 6),
-						_y - 128 + 32 * (getRandom() % 6),
-						_z + getRandom() % 8); // move to near actor's position
-			piece->hurl(-25 + (getRandom() % 50),
-						-25 + (getRandom() % 50),
-						10 + (getRandom() % 10),
+			piece->move(_x + 32 * rs.getRandomNumberRngSigned(-4, 4),
+						_y + 32 * rs.getRandomNumberRngSigned(-4, 4),
+						_z + rs.getRandomNumber(7)); // move to near actor's position
+			piece->hurl(rs.getRandomNumberRngSigned(-25, 25),
+						rs.getRandomNumberRngSigned(-25, 25),
+						rs.getRandomNumberRngSigned(10, 20),
 						4); // (wrong?) CONSTANTS!
 		}
 	}
@@ -1445,19 +1453,20 @@ ProcId Actor::dieCru(uint16 damageType, uint16 damagePts, Direction srcDir) {
 					setShape(0x576);
 					setToStartOfAnim(Animation::walk);
 
-					int num_random_steps = getRandom() % 9;
+					Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+					int num_random_steps = rs.getRandomNumber(8);
 					// switch to an 8-dir value
 					if (rundir % 2)
 						rundir = static_cast<Direction>((rundir + 1) % 16);
 
 					for (int i = 0; i < num_random_steps; i++) {
-						rundir = Direction_TurnByDelta(rundir, (int)(getRandom() % 3) - 1, dirmode_8dirs);
+						rundir = Direction_TurnByDelta(rundir, rs.getRandomNumberRngSigned(-1, 1), dirmode_8dirs);
 						lastanim = doAnimAfter(Animation::walk, rundir, lastanim);
 					}
 
 					lastanim = doAnimAfter(Animation::fallBackwardsCru, dir_current, lastanim);
 
-					int num_random_falls = (getRandom() % 3) + 1;
+					int num_random_falls = rs.getRandomNumberRng(1, 3);
 					for (int i = 0; i < num_random_falls; i++) {
 						lastanim = doAnimAfter(Animation::fallForwardsCru, dir_current, lastanim);
 					}
@@ -1553,11 +1562,12 @@ ProcId Actor::dieCru(uint16 damageType, uint16 damagePts, Direction srcDir) {
 			fall_random_dir = true;
 		}
 
+		Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 		if (!hasAnim(Animation::fallForwardsCru)) {
 			lastanim = doAnimAfter(Animation::fallBackwardsCru, dir_current, lastanim);
 		} else {
 			if (fall_random_dir) {
-				fall_backwards = (getRandom() % 2) == 0;
+				fall_backwards = rs.getRandomBit() == 0;
 			}
 			if (fall_backwards) {
 				lastanim = doAnimAfter(Animation::fallBackwardsCru, dir_current, lastanim);
@@ -1572,12 +1582,12 @@ ProcId Actor::dieCru(uint16 damageType, uint16 damagePts, Direction srcDir) {
 			static const uint16 MALE_DEATH_SFX[] = { 0x88, 0x8C, 0x8F };
 			static const uint16 FEMALE_DEATH_SFX[] = { 0xD8, 0x10 };
 			if (damageType == 0xf) {
-				sfxno = FADING_SCREAM_SFX[getRandom() % 2];
+				sfxno = FADING_SCREAM_SFX[rs.getRandomNumber(1)];
 			} else {
 				if (hasExtFlags(EXT_FEMALE)) {
-					sfxno = FEMALE_DEATH_SFX[getRandom() % 2];
+					sfxno = FEMALE_DEATH_SFX[rs.getRandomNumber(1)];
 				} else {
-					sfxno = MALE_DEATH_SFX[getRandom() % 3];
+					sfxno = MALE_DEATH_SFX[rs.getRandomNumber(2)];
 				}
 			}
 			AudioProcess::get_instance()->playSFX(sfxno, 0x10, _objId, 0, true);
@@ -1661,12 +1671,13 @@ int Actor::calculateAttackDamage(uint16 other, int damage, uint16 damage_type) {
 		damage = 0;
 	}
 
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 	bool slayer = false;
 
 	// _special attacks
 	if (damage && damage_type) {
 		if (damage_type & WeaponInfo::DMG_SLAYER) {
-			if (getRandom() % 10 == 0) {
+			if (rs.getRandomNumber(9) == 0) {
 				slayer = true;
 				damage = 255; // instant kill
 			}
@@ -1720,7 +1731,7 @@ int Actor::calculateAttackDamage(uint16 other, int damage, uint16 damage_type) {
 		if (defenddex <= 0) defenddex = 1;
 
 		if (hasActorFlags(ACT_STUNNED) ||
-		        (getRandom() % (attackdex + 3) > getRandom() % defenddex)) {
+		        (rs.getRandomNumber(attackdex + 2) > rs.getRandomNumber(defenddex -1))) {
 			hit = true;
 		}
 

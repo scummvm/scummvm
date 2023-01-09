@@ -150,6 +150,8 @@ void U8AvatarMoverProcess::handleCombatMode() {
 		return;
 	}
 
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+
 	if (_mouseButton[0].isUnhandledDoubleClick()) {
 		_mouseButton[0].setState(MBS_HANDLED);
 		_mouseButton[0]._lastDown = 0;
@@ -165,8 +167,8 @@ void U8AvatarMoverProcess::handleCombatMode() {
 			_lastAttack = Kernel::get_instance()->getFrameNum();
 
 			// attacking gives str/dex
-			avatar->accumulateStr(1 + (getRandom() % 2));
-			avatar->accumulateDex(2 + (getRandom() % 2));
+			avatar->accumulateStr(rs.getRandomNumberRng(1, 2));
+			avatar->accumulateDex(rs.getRandomNumberRng(2, 3));
 		}
 
 		return;
@@ -197,8 +199,8 @@ void U8AvatarMoverProcess::handleCombatMode() {
 			_lastAttack = Kernel::get_instance()->getFrameNum();
 
 			// kicking gives str/dex
-			avatar->accumulateStr(1 + (getRandom() % 2));
-			avatar->accumulateDex(2 + (getRandom() % 2));
+			avatar->accumulateStr(rs.getRandomNumberRng(1, 2));
+			avatar->accumulateDex(rs.getRandomNumberRng(2, 3));
 		}
 
 		return;
@@ -608,17 +610,19 @@ void U8AvatarMoverProcess::handleNormalMode() {
 	// idle
 	_idleTime = currentIdleTime + 1;
 
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+
 	// currently shaking head?
 	if (lastanim == Animation::lookLeft || lastanim == Animation::lookRight) {
-		if ((getRandom() % 1500) + 30 < _idleTime) {
+		if (rs.getRandomNumber(1500) + 30 < _idleTime) {
 			_lastHeadShakeAnim = lastanim;
 			waitFor(avatar->doAnim(Animation::stand, direction));
 			_idleTime = 1;
 			return;
 		}
 	} else {
-		if ((getRandom() % 3000) + 150 < _idleTime) {
-			if (getRandom() % 5 == 0)
+		if (rs.getRandomNumber(3000) + 150 < _idleTime) {
+			if (rs.getRandomNumber(4) == 0)
 				nextanim = _lastHeadShakeAnim;
 			else if (_lastHeadShakeAnim == Animation::lookLeft)
 				nextanim = Animation::lookRight;

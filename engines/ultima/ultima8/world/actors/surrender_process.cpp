@@ -38,11 +38,7 @@ static const uint16 SCIENTIST_SUR_SNDS[] = {0xe3, 0xe4, 0xec, 0xf6};
 static const uint16 HARDHAT_SUR_SNDS[] = {0xde, 0xdf, 0x8a, 0x8b};
 static const uint16 FEMALE_SUR_SNDS[] = {0xd6, 0xff, 0xd7};
 
-static inline int32 randomOf(int32 max) {
-	return (max > 0 ? getRandom() % max : 0);
-}
-
-#define RANDOM_ELEM(array) (array[getRandom() % ARRAYSIZE(array)])
+#define RANDOM_ELEM(array) (array[rs.getRandomNumber(ARRAYSIZE(array) - 1)])
 
 SurrenderProcess::SurrenderProcess() :
 	_playedSound(false), _soundDelayTicks(480), _soundTimestamp(0)
@@ -59,8 +55,9 @@ SurrenderProcess::SurrenderProcess(Actor *actor) :
 		actor->doAnim(Animation::surrender, actor->getDir());
 
 	if (GAME_IS_REGRET) {
-		_soundDelayTicks = (10 + randomOf(15)) * 60;
-		if (randomOf(3) == 0)
+		Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+		_soundDelayTicks = rs.getRandomNumberRng(10, 24) * 60;
+		if (rs.getRandomNumber(2) == 0)
 			_soundTimestamp = Kernel::get_instance()->getTickNum();
 	}
 
@@ -114,6 +111,7 @@ int16 SurrenderProcess::checkRandomSoundRemorse() {
 
 	_playedSound = true;
 
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 	int16 soundno = -1;
 
 	switch (a->getShape()) {

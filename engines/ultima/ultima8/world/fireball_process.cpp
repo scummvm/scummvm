@@ -68,7 +68,8 @@ void FireballProcess::run() {
 		return;
 	}
 
-	if (_age > 300 && (getRandom() % 20 == 0)) {
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+	if (_age > 300 && rs.getRandomNumber(19) == 0) {
 		// chance of 5% to disappear every frame after 10 seconds
 		terminate();
 		return;
@@ -135,7 +136,7 @@ void FireballProcess::run() {
 		Actor *hit = getActor(hititem);
 		if (hit) {
 			// hit an actor: deal damage and explode
-			hit->receiveHit(0, Direction_Invert(targetdir), 5 + (getRandom() % 5),
+			hit->receiveHit(0, Direction_Invert(targetdir), rs.getRandomNumberRng(5, 9),
 			                WeaponInfo::DMG_FIRE);
 			terminate();
 			return;

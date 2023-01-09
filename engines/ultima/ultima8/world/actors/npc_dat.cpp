@@ -90,7 +90,8 @@ uint16 NPCDat::randomlyGetStrongerWeaponTypes(uint shapeno) {
 	// and other differences as noted.
 	// Some shapes are only valid in each game, but that's ok.
 
-	int rnd = getRandom();
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+	int rnd = rs.getRandomNumber(UINT_MAX);
 
 	switch (shapeno) {
 	case 899:	/* shape 899 - android */

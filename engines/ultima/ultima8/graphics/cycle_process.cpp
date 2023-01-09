@@ -20,7 +20,7 @@
  */
 
 #include "ultima/ultima8/graphics/cycle_process.h"
-#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -106,14 +106,16 @@ void CycleProcess::run() {
 	// move color 1 -> color 7
 	copyColor(paldata + 3 * 7, tmpcol);
 
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+
 	// Step 2: Cycle 7 other colors 8~14 by increasing their value
 	// until they hit max, then reset.
 	for (int i = 0; i < 7; i++) {
 		bool wrapped = cycleColor(_cycleColData[i], CYCLE_COL_FLAGS[i]);
 		if (CYCLE_RANDOMIZE[i] && wrapped) {
-			_cycleColData[i][0] += (getRandom() % 10);
-			_cycleColData[i][1] += (getRandom() % 10);
-			_cycleColData[i][2] += (getRandom() % 10);
+			_cycleColData[i][0] += rs.getRandomNumber(9);
+			_cycleColData[i][1] += rs.getRandomNumber(9);
+			_cycleColData[i][2] += rs.getRandomNumber(9);
 		}
 		uint8 *dstptr = paldata + (i + 8) * 3;
 		copyColor(dstptr, _cycleColData[i]);

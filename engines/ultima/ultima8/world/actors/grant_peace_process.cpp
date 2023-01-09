@@ -32,6 +32,7 @@
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -78,6 +79,7 @@ void GrantPeaceProcess::run() {
 		return;
 	}
 
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 	bool hit = false;
 
 	if (target->getDefenseType() & WeaponInfo::DMG_UNDEAD) {
@@ -131,9 +133,9 @@ void GrantPeaceProcess::run() {
 
 				int dir = caster->getDirToItemCentre(*t);
 
-				t->hurl(((getRandom() % 5) + 5) * x_fact[dir],
-				        ((getRandom() % 5) + 5) * y_fact[dir],
-				        ((getRandom() % 5) + 5),
+				t->hurl(engine->getRandomNumber(5, 9) * x_fact[dir],
+				        engine->getRandomNumber(5, 9) * y_fact[dir],
+				        engine->getRandomNumber(5, 9),
 				        4);
 #endif
 			}
@@ -146,7 +148,7 @@ void GrantPeaceProcess::run() {
 		if (!target->hasActorFlags(Actor::ACT_DEAD |
 								   Actor::ACT_IMMORTAL |
 								   Actor::ACT_INVINCIBLE)) {
-			if (getRandom() % 10 == 0) {
+			if (rs.getRandomNumber(9) == 0) {
 				target->receiveHit(_itemNum, dir_current, target->getHP(),
 				                   (WeaponInfo::DMG_MAGIC |
 				                    WeaponInfo::DMG_PIERCE |
@@ -164,7 +166,7 @@ void GrantPeaceProcess::run() {
 		// calling intrinsic...
 		PaletteFaderProcess::I_lightningBolt(0, 0);
 		int sfx;
-		switch (getRandom() % 3) {
+		switch (rs.getRandomNumber(2)) {
 		case 0:
 			sfx = 91;
 			break;

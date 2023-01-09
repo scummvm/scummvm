@@ -20,6 +20,7 @@
  */
 
 #include "ultima/ultima.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/actors/combat_process.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/current_map.h"
@@ -95,10 +96,11 @@ void CombatProcess::run() {
 
 		debugC(kDebugActor, "[COMBAT %u] _target (%u) in range", _itemNum, _target);
 
+		Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 		bool hasidle1 = a->hasAnim(Animation::idle1);
 		bool hasidle2 = a->hasAnim(Animation::idle2);
 
-		if ((hasidle1 || hasidle2) && (getRandom() % 5) == 0) {
+		if ((hasidle1 || hasidle2) && rs.getRandomNumber(4) == 0) {
 			// every once in a while, act threatening instead of attacking
 			// TODO: maybe make frequency depend on monster type
 			Animation::Sequence idleanim;
@@ -108,7 +110,7 @@ void CombatProcess::run() {
 			} else if (!hasidle2) {
 				idleanim = Animation::idle1;
 			} else {
-				if (getRandom() % 2)
+				if (rs.getRandomBit())
 					idleanim = Animation::idle1;
 				else
 					idleanim = Animation::idle2;
@@ -279,7 +281,8 @@ void CombatProcess::waitForTarget() {
 	const MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 
-	if (mi && mi->_shifter && a->getMapNum() != 43 && (getRandom() % 2) == 0) {
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+	if (mi && mi->_shifter && a->getMapNum() != 43 && rs.getRandomBit()) {
 		// changelings (except the ones at the U8 endgame pentagram)
 
 		// shift into a tree if nobody is around

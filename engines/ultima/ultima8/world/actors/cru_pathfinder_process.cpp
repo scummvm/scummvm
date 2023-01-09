@@ -58,7 +58,8 @@ CruPathfinderProcess::CruPathfinderProcess(Actor *actor, Item *target, int maxst
 	assert(actor && target);
 	_itemNum = actor->getObjId();
 	_type = PathfinderProcess::PATHFINDER_PROC_TYPE;
-	_randomFlag = (getRandom() % 2) != 0;
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+	_randomFlag = rs.getRandomBit() != 0;
 	_targetItem = target->getObjId();
 	target->getLocation(_targetX, _targetY, _targetZ);
 
@@ -85,7 +86,8 @@ CruPathfinderProcess::CruPathfinderProcess(Actor *actor, int32 x, int32 y, int32
 	assert(actor);
 	_itemNum = actor->getObjId();
 	_type = PathfinderProcess::PATHFINDER_PROC_TYPE;
-	_randomFlag = (getRandom() % 2) != 0;
+	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
+	_randomFlag = rs.getRandomBit() != 0;
 
 	int32 ax, ay, az;
 	actor->getLocation(ax, ay, az);
