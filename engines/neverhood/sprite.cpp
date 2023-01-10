@@ -418,7 +418,7 @@ void AnimatedSprite::AnimatedSpriteSubtitles::draw() {
 		_backref->_subtitles->renderFrame(_backref->_currFrameIndex, subCenterX - getDrawRect().x);
 		const Graphics::Surface *bottom = _backref->_subtitles->getBottomSubs();
 		if (bottom) {
-			_vm->_screen->drawSurface2(bottom, _drawRect, _clipRect, true, ++_version, nullptr, _backref->_subtitles->kSubtitleAlpha);
+			_vm->_screen->drawSurface2(bottom, _drawRect, _clipRect, true, ++_version, nullptr, _backref->_subtitles->getSubtitleAlpha());
 		}
 		if (_backref->_subtitles->getTopSubs())
 			warning("Top subs are unsupported");

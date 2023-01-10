@@ -43,8 +43,8 @@ public:
 	const Graphics::Surface *getBottomSubs() const { return _haveBottomSubs ? &_bottomSubs : nullptr; }
 	const Graphics::Surface *getTopSubs() const { return _haveTopSubs ? &_topSubs : nullptr; }
 	bool isValid() const { return _isValid && !_subtitles.empty(); }
+	byte getSubtitleAlpha() const { return _alphaColor; }
 
-	static const byte kSubtitleAlpha = 0x77;
 	static const int kSubtitleCharHeight = 16;
 	static const int kSubtitleCharWidth = 8;
 
@@ -57,6 +57,7 @@ private:
 	bool _haveBottomSubs;
 	bool _haveTopSubs;
 	int64 _currentFrame;
+	byte _alphaColor;
 };
 
 } // End of namespace Neverhood

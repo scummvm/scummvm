@@ -19,14 +19,18 @@
  *
  */
 
+#include "graphics/palette.h"
+
 #include "neverhood/resource.h"
 #include "neverhood/resourceman.h"
+#include "neverhood/screen.h"
 #include "neverhood/subtitles.h"
 
 namespace Neverhood {
 
 namespace {
-void drawSubtitles(Graphics::Surface *surf, const Common::String &str, const SubtitleGlyph *subfont, int x0) {
+void drawSubtitles(Graphics::Surface *surf, const Common::String &str, const SubtitleGlyph *subfont,
+		   int x0, byte outlineColor, byte alphaColor) {
 	if (!surf || surf->h < SubtitlePlayer::kSubtitleCharHeight || !subfont)
 		return;
 
@@ -35,8 +39,8 @@ void drawSubtitles(Graphics::Surface *surf, const Common::String &str, const Sub
 	int lastx = MIN<int>(str.size() * SubtitlePlayer::kSubtitleCharWidth + x0 + 1, surf->w);
 	for (int16 yc = 0; yc < SubtitlePlayer::kSubtitleCharHeight; yc++) {
 		byte *dest = dest0 + yc * surf->pitch;
-		memset(dest, SubtitlePlayer::kSubtitleAlpha, x0 + 2);
-		memset(dest + lastx, SubtitlePlayer::kSubtitleAlpha, surf->w - lastx);
+		memset(dest, alphaColor, x0 + 2);
+		memset(dest + lastx, alphaColor, surf->w - lastx);
 	}
 
 	for (int i = 0; i < (int)str.size() && i * SubtitlePlayer::kSubtitleCharWidth < surf->w; i++) {
@@ -46,19 +50,19 @@ void drawSubtitles(Graphics::Surface *surf, const Common::String &str, const Sub
 			byte *row = dest;
 
 			// Outline of leftmost pixel
-			if (*row == SubtitlePlayer::kSubtitleAlpha && (subfont[c].bitmap[yc] & 0x80))
-				*row = 0x00;
+			if (*row == alphaColor && (subfont[c].bitmap[yc] & 0x80))
+				*row = outlineColor;
 			row++;
 			for (int16 xc = 0; xc < SubtitlePlayer::kSubtitleCharWidth; xc++, row++) {
 				if ((subfont[c].bitmap[yc] << xc) & 0x80)
 					*row = 0xff;
 				else if ((subfont[c].outline[yc] << xc) & 0x80)
-					*row = 0x00;
+					*row = outlineColor;
 				else if (xc != 0)
-					*row = SubtitlePlayer::kSubtitleAlpha;
+					*row = alphaColor;
 			}
 			// Outline of rightmost pixel
-			*row = (subfont[c].bitmap[yc] & 0x1) ? 0x00 : SubtitlePlayer::kSubtitleAlpha;
+			*row = (subfont[c].bitmap[yc] & 0x1) ? outlineColor : alphaColor;
 			dest += surf->pitch;
 		}
 	}
@@ -104,6 +108,14 @@ void SubtitlePlayer::renderFrame(uint frameNumber, int centerX) {
 	_haveBottomSubs = false;
 	_haveTopSubs = false;
 
+	Graphics::PaletteLookup palLookup(_vm->_screen->getPaletteData(), 256);
+
+	byte outlineColor = palLookup.findBestColor(0, 0, 0);
+	_alphaColor = 0x77;
+
+	if (_alphaColor == outlineColor)
+		_alphaColor++;
+
 	// TODO: Optimize this
 	for (uint i = 0; i < _subtitles.size(); i++) {
 		if (frameNumber < _subtitles[i].fromFrame || frameNumber > _subtitles[i].toFrame)
@@ -115,10 +127,10 @@ void SubtitlePlayer::renderFrame(uint frameNumber, int centerX) {
 		int startX = MAX(MIN(centerX - width / 2, screenWidth - width), 0);
 
 		if (_subtitles[i].isTop) {
-			drawSubtitles(&_topSubs, curStr, subFont, startX);
+			drawSubtitles(&_topSubs, curStr, subFont, startX, outlineColor, _alphaColor);
 			_haveTopSubs = true;
 		} else {
-			drawSubtitles(&_bottomSubs, curStr, subFont, startX);
+			drawSubtitles(&_bottomSubs, curStr, subFont, startX, outlineColor, _alphaColor);
 			_haveBottomSubs = true;
 		}
 	}
