@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-08 19:42+0000\n"
+"POT-Creation-Date: 2023-01-10 17:34+0000\n"
 "PO-Revision-Date: 2023-01-08 13:20+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -4566,8 +4566,7 @@ msgstr "Автор перекладу проти того, щоб його пе�
 #: engines/sci/detection_tables.h:5201 engines/sherlock/detection_tables.h:223
 #: engines/stark/detection.cpp:319 engines/teenagent/detection.cpp:117
 #: engines/toltecs/detection.cpp:210 engines/trecision/detection.cpp:201
-#: engines/zvision/detection_tables.h:129
-#: engines/zvision/detection_tables.h:149
+#: engines/zvision/detection_tables.h:127
 msgid "Missing game code"
 msgstr "Відсутній код для гри"
 
@@ -5515,12 +5514,12 @@ msgstr ""
 msgid "Demo plays simple animations without using Westwood's Engine."
 msgstr "Демо грає прості анімації без використання движка Westwood."
 
-#: engines/kyra/detection_tables.h:1365
+#: engines/kyra/detection_tables.h:1352
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr "Ви додали гру неправильно. Будь ласка, додайте кореневу папку гри."
 
 #. I18N: The file in the game directory needs to be extracted
-#: engines/kyra/detection_tables.h:1381
+#: engines/kyra/detection_tables.h:1368
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."

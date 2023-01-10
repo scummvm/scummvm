@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-08 19:42+0000\n"
+"POT-Creation-Date: 2023-01-10 17:34+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4551,8 +4551,7 @@ msgstr "패치 제작자가 번역물이 ScummVM에서 구동되길 원하지 �
 #: engines/sci/detection_tables.h:5201 engines/sherlock/detection_tables.h:223
 #: engines/stark/detection.cpp:319 engines/teenagent/detection.cpp:117
 #: engines/toltecs/detection.cpp:210 engines/trecision/detection.cpp:201
-#: engines/zvision/detection_tables.h:129
-#: engines/zvision/detection_tables.h:149
+#: engines/zvision/detection_tables.h:127
 msgid "Missing game code"
 msgstr "게임 코드 없음"
 
@@ -5534,12 +5533,12 @@ msgstr "이 비공식 번역에 언어 고유의 게임 코드나 리소스가 �
 msgid "Demo plays simple animations without using Westwood's Engine."
 msgstr "데모는 Westwood의 엔진을 사용하지 않고 간단한 애니메이션을 재생합니다."
 
-#: engines/kyra/detection_tables.h:1365
+#: engines/kyra/detection_tables.h:1352
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr "게임을 잘못 추가했습니다. 게임의 루트 폴더를 추가해 주십시오."
 
 #. I18N: The file in the game directory needs to be extracted
-#: engines/kyra/detection_tables.h:1381
+#: engines/kyra/detection_tables.h:1368
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
