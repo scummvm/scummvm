@@ -272,20 +272,20 @@ bool EfhEngine::handleFight(int16 monsterId) {
 									// handleFight - Add reaction text - start
 									if (var62 != 0 && originalDamage > 0 && getRandom(100) <= 35 && _npcBuf[_teamCharId[var7E]]._hitPoints > 0) {
 										if (_npcBuf[_teamCharId[var7E]]._hitPoints - 5 <= originalDamage) {
-											addReactionText(0);
+											addReactionText(kEfhReactionReels);
 										} else if (_npcBuf[_teamCharId[var7E]]._hitPoints < _npcBuf[_teamCharId[var7E]]._maxHP / 8) {
-											addReactionText(1);
+											addReactionText(kEfhReactionCriesOut);
 										} else if (_npcBuf[_teamCharId[var7E]]._hitPoints < _npcBuf[_teamCharId[var7E]]._maxHP / 4) {
-											addReactionText(2);
+											addReactionText(kEfhReactionFalters);
 										} else if (_npcBuf[_teamCharId[var7E]]._hitPoints < _npcBuf[_teamCharId[var7E]]._maxHP / 2) {
-											addReactionText(3);
+											addReactionText(kEfhReactionWinces);
 										} else if (_npcBuf[_teamCharId[var7E]]._hitPoints < _npcBuf[_teamCharId[var7E]]._maxHP / 3) {
 											// CHECKME: Doesn't make any sense to check /3 after /2... I don't get it
-											addReactionText(4);
+											addReactionText(kEfhReactionScreams);
 										} else if (_npcBuf[_teamCharId[var7E]]._maxHP / 8 >= originalDamage) {
-											addReactionText(5);
+											addReactionText(kEfhReactionChortles);
 										} else if (originalDamage == 0 && getRandom(100) < 35) {
-											addReactionText(6);
+											addReactionText(kEfhReactionLaughs);
 										}
 									}
 									// handleFight - Add reaction text - end
@@ -439,7 +439,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 	int16 var54;
 	int16 teamMemberId;
 	if (_items[teamCharItemId]._range < 3) {
-		teamMemberId = sub1DEC8(monsterGroupNumber);
+		teamMemberId = getWeakestMobster(monsterGroupNumber);
 		var54 = teamMemberId + 1;
 	} else {
 		teamMemberId = 0;
@@ -551,20 +551,20 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						// Action A - Add reaction text - Start
 						if (hitCount != 0 && originalDamage > 0 && getRandom(100) <= 35 && _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] > 0) {
 							if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] - 5 <= originalDamage) {
-								addReactionText(0);
+								addReactionText(kEfhReactionReels);
 							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] < hitPointsBefore / 8) {
-								addReactionText(1);
+								addReactionText(kEfhReactionCriesOut);
 							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] < hitPointsBefore / 4) {
-								addReactionText(2);
+								addReactionText(kEfhReactionFalters);
 							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] < hitPointsBefore / 2) {
-								addReactionText(3);
+								addReactionText(kEfhReactionWinces);
 							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] < hitPointsBefore / 3) {
 								// CHECKME: Doesn't make any sense to check /3 after /2... I don't get it
-								addReactionText(4);
+								addReactionText(kEfhReactionScreams);
 							} else if (hitPointsBefore / 8 >= originalDamage) {
-								addReactionText(5);
+								addReactionText(kEfhReactionChortles);
 							} else if (originalDamage == 0 && getRandom(100) < 35) {
-								addReactionText(6);
+								addReactionText(kEfhReactionLaughs);
 							}
 						}
 						// Action A - Add reaction text - End
@@ -1210,12 +1210,12 @@ bool EfhEngine::characterSearchesMonsterCorpse(int16 charId, int16 monsterId) {
 }
 
 void EfhEngine::addReactionText(int16 id) {
-	debug("addReactionText %d", id);
+	debugC(3, kDebugFight, "addReactionText %d", id);
 
 	int16 rand3 = getRandom(3);
 
 	switch (id) {
-	case 0:
+	case kEfhReactionReels:
 		switch (rand3) {
 		case 1:
 			_messageToBePrinted += Common::String::format("  %s%s reels from the blow!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
@@ -1230,7 +1230,7 @@ void EfhEngine::addReactionText(int16 id) {
 			break;
 		}
 		break;
-	case 1:
+	case kEfhReactionCriesOut:
 		switch (rand3) {
 		case 1:
 			_messageToBePrinted += Common::String::format("  %s%s cries out in agony!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
@@ -1245,7 +1245,7 @@ void EfhEngine::addReactionText(int16 id) {
 			break;
 		}
 		break;
-	case 2:
+	case kEfhReactionFalters:
 		switch (rand3) {
 		case 1:
 			_messageToBePrinted += Common::String::format("  %s%s is staggering!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
@@ -1260,7 +1260,7 @@ void EfhEngine::addReactionText(int16 id) {
 			break;
 		}
 		break;
-	case 3:
+	case kEfhReactionWinces:
 		switch (rand3) {
 		case 1:
 			_messageToBePrinted += Common::String::format("  %s%s winces from the pain!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
@@ -1275,7 +1275,7 @@ void EfhEngine::addReactionText(int16 id) {
 			break;
 		}
 		break;
-	case 4:
+	case kEfhReactionScreams:
 		switch (rand3) {
 		case 1:
 			_messageToBePrinted += Common::String::format("  %s%s screams!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
@@ -1290,7 +1290,7 @@ void EfhEngine::addReactionText(int16 id) {
 			break;
 		}
 		break;
-	case 5:
+	case kEfhReactionChortles:
 		switch (rand3) {
 		case 1:
 			_messageToBePrinted += Common::String::format("  %s%s chortles!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
@@ -1305,7 +1305,7 @@ void EfhEngine::addReactionText(int16 id) {
 			break;
 		}
 		break;
-	case 6:
+	case kEfhReactionLaughs:
 		switch (rand3) {
 		case 1:
 			_messageToBePrinted += Common::String::format("  %s%s laughs at the feeble attack!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
@@ -1386,10 +1386,10 @@ void EfhEngine::sub1C4CA(bool whiteFl) {
 	}
 }
 
-int16 EfhEngine::sub1DEC8(int16 groupNumber) {
-	debug("sub1DEC8 %d", groupNumber);
+int16 EfhEngine::getWeakestMobster(int16 groupNumber) {
+	debugC(3, kDebugFight, "getWeakestMobster %d", groupNumber);
 
-	int16 var4 = -1;
+	int16 weakestMobsterId = -1;
 	int16 monsterId = _teamMonsterIdArray[groupNumber];
 
 	if (monsterId == -1)
@@ -1397,23 +1397,24 @@ int16 EfhEngine::sub1DEC8(int16 groupNumber) {
 
 	for (uint counter = 0; counter < 9; ++counter) {
 		if (isMonsterActive(groupNumber, counter)) {
-			var4 = counter;
+			weakestMobsterId = counter;
 			break;
 		}
 	}
 
-	for (int16 counter = var4 + 1; counter < 9; ++counter) {
+	for (int16 counter = weakestMobsterId + 1; counter < 9; ++counter) {
 		if (!isMonsterActive(groupNumber, counter))
 			continue;
 
-		if (_mapMonsters[monsterId]._hitPoints[var4] > _mapMonsters[monsterId]._hitPoints[counter])
-			var4 = counter;
+		if (_mapMonsters[monsterId]._hitPoints[weakestMobsterId] > _mapMonsters[monsterId]._hitPoints[counter])
+			weakestMobsterId = counter;
 	}
 
-	if (_mapMonsters[monsterId]._hitPoints[var4] <= 0)
+	// Useless check, as the
+	if (_mapMonsters[monsterId]._hitPoints[weakestMobsterId] <= 0)
 		return -1;
 
-	return var4;
+	return weakestMobsterId;
 }
 
 int16 EfhEngine::getCharacterScore(int16 charId, int16 itemId) {
@@ -1499,24 +1500,25 @@ int16 EfhEngine::getCharacterScore(int16 charId, int16 itemId) {
 }
 
 bool EfhEngine::checkSpecialItemsOnCurrentPlace(int16 itemId) {
-	debug("checkSpecialItemsOnCurrentPlace %d", itemId);
+	debugC(3, kDebugFight, "checkSpecialItemsOnCurrentPlace %d", itemId);
 
+	bool retVal = true;
 	switch (_techDataArr[_techId][_techDataId_MapPosX * 64 + _techDataId_MapPosY]) {
 	case 1:
 		if ((itemId >= 0x58 && itemId <= 0x68) || (itemId >= 0x86 && itemId <= 0x89) || (itemId >= 0x74 && itemId <= 0x76) || itemId == 0x8C)
-			return false;
-		return true;
+			retVal = false;
 	case 2:
 		if ((itemId >= 0x61 && itemId <= 0x63) || (itemId >= 0x74 && itemId <= 0x76) || (itemId >= 0x86 && itemId <= 0x89) || itemId == 0x5B || itemId == 0x5E || itemId == 0x66 || itemId == 0x68 || itemId == 0x8C)
-			return false;
-		return true;
+			retVal = false;
 	default:
-		return true;
+		break;
 	}
+
+	return retVal;
 }
 
 bool EfhEngine::hasAdequateDefense(int16 monsterId, uint8 attackType) {
-	debug("hasAdequateDefense %d %d", monsterId, attackType);
+	debugC(3, kDebugFight, "hasAdequateDefense %d %d", monsterId, attackType);
 
 	int16 itemId = _mapMonsters[monsterId]._weaponItemId;
 

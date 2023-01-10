@@ -396,7 +396,7 @@ private:
 	bool characterSearchesMonsterCorpse(int16 charId, int16 monsterId);
 	void addReactionText(int16 id);
 	void sub1C4CA(bool WhiteFl);
-	int16 sub1DEC8(int16 groupNumber);
+	int16 getWeakestMobster(int16 groupNumber);
 	int16 getCharacterScore(int16 charId, int16 itemId);
 	bool checkSpecialItemsOnCurrentPlace(int16 itemId);
 	bool hasAdequateDefense(int16 monsterId, uint8 attackType);
