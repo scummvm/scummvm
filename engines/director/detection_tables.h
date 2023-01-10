@@ -4488,9 +4488,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("multimediastudio", "Demo", "Cartoon Studio", "9414302660bf6b78d3866199d3476128", 288891, 403),
 
 	// English version is D3
-	MACGAME1_l("murdertaylor", "", "Taylor French", "dc839fb9e2f8e6bfc4f4f995c57df495", 291683, Common::DE_DEU, 400),
-	WINGAME1_l("murdertaylor", "", "TF.EXE", "d7a97fbe1daf2bc5fdecee2725c297cd", 952741, Common::DE_DEU, 400),
-	WINGAME1_l("murdertaylor", "", "JOURNA.EXE", "e6504ba65562c9950806c0dd395e3adb", 688299, Common::KO_KOR, 400),
+	MACGAME2_l("murdertaylor", "", "Taylor French", "dc839fb9e2f8e6bfc4f4f995c57df495", 291427,
+								   "S4.dir",		"b5547cc66a7eb4820805eaa48e43717c", 924798, Common::DE_DEU, 404),
+	WINGAME2_l("murdertaylor", "", "TF.EXE",		"d7a97fbe1daf2bc5fdecee2725c297cd", 952741,
+								   "S4.DIR",		"b5547cc66a7eb4820805eaa48e43717c", 924798, Common::DE_DEU, 404),
+	WINGAME1_l("murdertaylor", "", "JOURNA.EXE",	"e6504ba65562c9950806c0dd395e3adb", 688299, Common::KO_KOR, 400),
 
 	WINDEMO1("musiccentral96", "Demo", "MC96DEMO.EXE", "6b30dbea5949e64edd66427290b0fd8c", 690031, 404),
 
@@ -4532,7 +4534,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("newslinks", "Demo", "NEWS.EXE", "22900fa6922d71b1f880aa3cc0bbad1a", 16526563, 404),
 
 	// Published by Corel CD Home. Later released as Nikolai's Knights.
-	WINGAME1("nikolaiknights", "Corel", "KNIGHTS.EXE", "5ab667a256a0c334e9adca78564dbc5d", 740436, 404),
+	// Original Mac filename is In the Time of the Knights™
+	MACGAME2("nikolaiknights", "Corel", "xn--In the Time of the Knights-jf8p", "da0da5d543b237051975ad70bec129f4", 488222,
+										"1_TIME.DXR", "75d8d359ae371ba60967177e8f3ce48b", 1720524, 404),
+	WINGAME2("nikolaiknights", "Corel", "KNIGHTS.EXE", "5ab667a256a0c334e9adca78564dbc5d", 740436,
+										"1_TIME.DXR", "75d8d359ae371ba60967177e8f3ce48b", 1720524, 404),
 
 	// Later released as Nikolai's Toys
 	// Original Mac filename is NN’nN Toy Makers™
@@ -4545,8 +4551,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is Visual日本地理DEMO
 	MACDEMO1_l("nihonchiri", "Demo", "Visual Nihon Chiri DEMO", "8b138db44d4421cc7294a9dc792ccf1b", 306940, Common::JA_JPN, 402),
 
-	MACGAME1("nile", "", "Nile Passage to Egypt", "9765ad17bce6a2b40dd7f48377e82436", 512734, 400),
-	WINGAME1("nile", "", "NILE.EXE", "9b00cbba14f0a2e0445784ebacf62c78", 2846777, 400),
+	MACGAME1("nile", "", "Nile Passage to Egypt", "9765ad17bce6a2b40dd7f48377e82436", 512734, 404),
+	WINGAME2("nile", "", "NILE.EXE",	 "9b00cbba14f0a2e0445784ebacf62c78", 2846777,
+						 "NILEGO23.DIR", "1a306c36ff503a93bde94252acc24ea6", 2259356, 404),
 
 	// Full game is D5
 	WINDEMO1("nine", "Demo", "NINEDEMO.EXE", "d7596e7f6e8bc7c95d4217ff431a2f02", 711181, 404),
@@ -4559,7 +4566,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2_l("niningashi", "Demo", "S.EXE",			"0c8a24a885123f20992c0c74d8c5062c", 768683,
 									 "MAIN.DXR",		"8af3de22d679eb4e192429ca682bb974", 1119286, Common::JA_JPN, 404),
 
-	WINDEMO1t("nixon", "Demo", "NIXON.EXE", "2136d259b08bff165dea5085938abd12", 3193595, 404),
+	WINDEMO2t("nixon", "Demo", "NIXON.EXE",  "2136d259b08bff165dea5085938abd12", 3193595,
+							   "WATERGAT.E", "2ac9de0cd93580da85993f842eed8417", 3106294, 404),
 
 	// Pregnancy demo is from ADAM v1.11 for Mac and NMM v1.0
 	// Windows demo from Life's Greatest Mysteries v1.01
@@ -4573,7 +4581,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2t_l("noahsark", "Demo", "GO.EXE", "bf8926c2275b8e83f237812a18964dbd", 747005,
 									"NOADATA/NOAW08H.DXR", "c66f86fe178c6a0bb9c5165202c0f8c3", 2991026, Common::JA_JPN, 404),
 
-	WINGAME1("noddytoytown", "", "NODDY.EXE", "d16d57c823205e32759e1771bfdbb330", 4505770, 404),
+	WINGAME1("noddytoytown", "", "MNWG/NODDY.EXE", "d16d57c823205e32759e1771bfdbb330", 4505770, 404),
 
 	WINDEMO1("noir", "Demo", "NOIRDEMO.EXE", "a9690aa58c6da36b7a6bf88fd4c81ffc", 10949309, 404),
 
