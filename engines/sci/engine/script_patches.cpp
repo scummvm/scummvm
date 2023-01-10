@@ -10903,6 +10903,28 @@ static const uint16 laurabow2PatchMuseumMusicVolume[] = {
 	PATCH_END
 };
 
+// In the news room (230) there are two reporters on the left, but one of them
+//  responds to Ask with the other's message, talker, and voice. The script
+//  passes the wrong noun to lb2Messager:say.
+//
+// We fix this by patching both doVerb methods to pass their noun property so
+//  that they both respond to Ask with their own message.
+//
+// Applies to: All versions
+// Responsible Methods: personS:doVerb, personT:doVerb
+static const uint16 laurabow2SignatureReporterMessage[] = {
+	0x39, 0x0d,                         // pushi 0d [ noun ]
+	SIG_MAGICDWORD,
+	0x39, 0x06,                         // pushi 06 [ verb ]
+	0x39, 0x2e,                         // pushi 2e [ cond ]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchReporterMessage[] = {
+	0x67, 0x1a,                         // pTos noun
+	PATCH_END
+};
+
 // LB2CD reduces the music volume significantly during the introduction when
 //  characters talk while disembarking the ship in room 120. This is done so
 //  that their speech can be heard but it also occurs in text-only mode.
@@ -11051,6 +11073,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,    26, "CD: fix act 4 wrong music",                      1, laurabow2CDSignatureFixAct4WrongMusic,          laurabow2CDPatchFixAct4WrongMusic },
 	{  true,    90, "CD: fix yvette's tut response",                  1, laurabow2CDSignatureFixYvetteTutResponse,       laurabow2CDPatchFixYvetteTutResponse },
 	{  true,   110, "CD: fix intro music",                            1, laurabow2CDSignatureFixIntroMusic,              laurabow2CDPatchFixIntroMusic },
+	{  true,   230, "CD/Floppy: reporter message",                    2, laurabow2SignatureReporterMessage,              laurabow2PatchReporterMessage },
 	{  true,   350, "CD/Floppy: museum party fix entering south 1/2", 1, laurabow2SignatureMuseumPartyFixEnteringSouth1, laurabow2PatchMuseumPartyFixEnteringSouth1 },
 	{  true,   350, "CD/Floppy: museum party fix entering south 2/2", 1, laurabow2SignatureMuseumPartyFixEnteringSouth2, laurabow2PatchMuseumPartyFixEnteringSouth2 },
 	{ false,   355, "CD: fix museum actor loops",                     2, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
