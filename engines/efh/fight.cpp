@@ -203,7 +203,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 
 									++var62;
 
-									if (hasAdequateDefense_2(_teamCharId[var7E], _items[monsterWeaponItemId]._attackType))
+									if (hasAdequateDefenseNPC(_teamCharId[var7E], _items[monsterWeaponItemId]._attackType))
 										continue;
 
 									int16 var7C = getRandom(_items[monsterWeaponItemId]._damage);
@@ -1526,10 +1526,10 @@ bool EfhEngine::hasAdequateDefense(int16 monsterId, uint8 attackType) {
 	return _items[itemId]._field17_attackTypeDefense == attackType;
 }
 
-bool EfhEngine::hasAdequateDefense_2(int16 charId, uint8 attackType) {
-	debug("hasAdequateDefense_2 %d %d", charId, attackType);
+bool EfhEngine::hasAdequateDefenseNPC(int16 charId, uint8 attackType) {
+	debugC(3, kDebugFight, "hasAdequateDefenseNPC %d %d", charId, attackType);
 
-	int16 itemId = _npcBuf[charId]._unkItemId;
+	int16 itemId = _npcBuf[charId]._defaultDefenseItemId;
 
 	if (_items[itemId]._specialEffect == 0 && _items[itemId]._field17_attackTypeDefense == attackType)
 		return true;
