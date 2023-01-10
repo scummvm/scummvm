@@ -265,14 +265,21 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		g_sci->_soundCmd->updateSci0Cues();
 	}
 
-	// Wait a bit if a "fast cast" game is polling kGetEvent while a message is
-	// being said or displayed. This prevents fast cast mode from maxing out
-	// CPU by polling from an inner loop when the fast cast global is set.
-	// Fixes bugs #5091, #5326
-	if (getSciVersion() <= SCI_VERSION_1_1 &&
-		g_sci->_gfxAnimate->isFastCastEnabled() &&
-		!s->variables[VAR_GLOBAL][kGlobalVarFastCast].isNull()) {
-		g_system->delayMillis(10);
+	// If we're in a SCI16 unthrottled inner loop then delay a bit.
+	// This prevents the CPU from maxing out and prevents inner loop animations
+	// from running too fast. "Fast cast" games poll kGetEvent from an inner
+	// loop while they display or say a message. This can be detected by testing
+	// the fast cast global. Other inner loops can be detected by counting the
+	// kGetEvent calls since the last kGameIsRestarting(0) or kWait call.
+	// For example, some versions of Dialog:doit poll without calling kWait(1).
+	// See above for similar SCI32 code that counts calls between kFrameout.
+	// Fixes bugs #5091, #5326, #14020
+	if (getSciVersion() <= SCI_VERSION_1_1) {
+		if (++s->_eventCounter > 2 ||
+			(g_sci->_gfxAnimate->isFastCastEnabled() &&
+			!s->variables[VAR_GLOBAL][kGlobalVarFastCast].isNull())) {
+			g_system->delayMillis(10);
+		}
 	}
 
 	return s->r_acc;

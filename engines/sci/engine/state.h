@@ -116,10 +116,8 @@ public:
 	uint16 wait(uint16 ticks);
 	void sleep(uint16 ticks);
 
-#ifdef ENABLE_SCI32
-	uint32 _eventCounter; /**< total times kGetEvent was invoked since the last call to kFrameOut */
-#endif
-	uint32 _paletteSetIntensityCounter; /**< total times kPaletteSetIntensity was invoked since the last call to kGameIsRestarting or kWait */
+	uint32 _eventCounter; /**< total times kGetEvent was invoked since the last call to kGameIsRestarting(0) or kWait or kFrameOut */
+	uint32 _paletteSetIntensityCounter; /**< total times kPaletteSetIntensity was invoked since the last call to kGameIsRestarting(0) or kWait */
 	uint32 _throttleLastTime; /**< last time kAnimate was invoked */
 	bool _throttleTrigger;
 

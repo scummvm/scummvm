@@ -157,6 +157,7 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 
 	s->speedThrottler(neededSleep);
 
+	s->_eventCounter = 0;
 	s->_paletteSetIntensityCounter = 0;
 	return make_reg(0, previousRestartingFlag);
 }
