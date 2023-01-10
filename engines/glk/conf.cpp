@@ -62,8 +62,18 @@ WindowStyleStatic G_STYLES[style_NUMSTYLES] = {
 Conf *g_conf;
 
 Conf::Conf(InterpreterType interpType) : _interpType(interpType), _graphics(true),
-		_width(640), _height(400), _screenFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
-		_rows(25), _cols(60), _lockRows(0), _lockCols(0), _wPaddingX(0), _wPaddingY(0),
+#ifndef USE_HIGHRES
+		_width(320), _height(200),
+#else
+		_width(640), _height(400),
+#endif
+		_screenFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
+#ifndef USE_HIGHRES
+		_rows(12), _cols(30),
+#else
+		_rows(25), _cols(60),
+#endif
+		_lockRows(0), _lockCols(0), _wPaddingX(0), _wPaddingY(0),
 		_wBorderX(0), _wBorderY(0), _tMarginX(7), _tMarginY(7), _gamma(1.0),
 		_borderColor(0), _borderSave(0),
 		_windowColor(parseColor(WHITE)), _windowSave(parseColor(WHITE)),
