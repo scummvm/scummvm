@@ -122,6 +122,15 @@ Common::SeekableReadStream *ResourceMan::createNhcStream(uint32 fileHash, uint32
 	return nullptr;
 }
 
+bool ResourceMan::nhcExists(uint32 fileHash, uint32 type) {
+	ResourceFileEntry *entry = findEntry(fileHash);
+	if (!entry)
+		return false;
+	if (entry->nhcArchiveEntry && entry->nhcArchive && entry->nhcArchiveEntry->type == type)
+		return true;
+	return false;
+}
+
 void ResourceMan::queryResource(uint32 fileHash, ResourceHandle &resourceHandle) {
 	ResourceFileEntry *firstEntry;
 	resourceHandle._resourceFileEntry = findEntry(fileHash, &firstEntry);

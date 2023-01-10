@@ -47,7 +47,7 @@
 namespace Neverhood {
 
 NeverhoodEngine::NeverhoodEngine(OSystem *syst, const ADGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc), _haveSubtitles(false) {
+		Engine(syst), _gameDescription(gameDesc), _haveSubtitles(false), _nhcOffsetFont(false) {
 	// Setup mixer
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");
@@ -102,6 +102,16 @@ Common::Error NeverhoodEngine::run() {
 
 	Common::String nhcFile = ConfMan.get("nhc_file");
 	if (!nhcFile.empty() && _res->addNhcArchive("language/" + nhcFile + ".nhc")) {
+		uint32 fontSpecHash = calcHash("asRecFont");
+		if (_res->nhcExists(fontSpecHash, kResTypeData)) {
+			DataResource fontData(this);
+			fontData.load(fontSpecHash);
+
+			_nhcOffsetFont = (fontData.getPoint(calcHash("meNumRows")).x == 14
+			    && fontData.getPoint(calcHash("meFirstChar")).x == 32
+			    && fontData.getPoint(calcHash("meCharHeight")).x == 34
+			    && fontData.getPointArray(calcHash("meTracking"))->size() == 224);
+		}
 		if (ConfMan.getBool("subtitles")) {
 			Common::SeekableReadStream *s = _res->createNhcStream(0x544E4F46, kResNhcTypeSubFont);
 			if (s && s->size() >= 4096) {
