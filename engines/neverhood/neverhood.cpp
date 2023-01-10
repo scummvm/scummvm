@@ -70,6 +70,7 @@ Common::Error NeverhoodEngine::run() {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "language");
 
 	_isSaveAllowed = false;
 
@@ -101,7 +102,7 @@ Common::Error NeverhoodEngine::run() {
 	}
 
 	Common::String nhcFile = ConfMan.get("nhc_file");
-	if (!nhcFile.empty() && _res->addNhcArchive("language/" + nhcFile + ".nhc")) {
+	if (!nhcFile.empty() && _res->addNhcArchive(nhcFile + ".nhc")) {
 		uint32 fontSpecHash = calcHash("asRecFont");
 		if (_res->nhcExists(fontSpecHash, kResTypeData)) {
 			DataResource fontData(this);

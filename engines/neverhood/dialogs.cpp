@@ -63,13 +63,20 @@ NeverhoodOptionsWidget::NeverhoodOptionsWidget(GuiObject *boss, const Common::St
 		"NeverhoodGameOptionsDialog.RepeatWillieHint", _("Repeat useful Willie's hint"),
 		_("Repeat actual useful hint by Willie"));
 
-	Common::String path = ConfMan.get("path", _domain);
-	Common::FSDirectory dir(path);
-	Common::FSDirectory *langdir = dir.getSubDirectory("language");
+	Common::FSDirectory dir(ConfMan.get("path", _domain));
+	Common::String extraPath(ConfMan.get("extrapath", _domain));
+	Common::FSDirectory extraDir(extraPath);
+	Common::Array<Common::FSDirectory *> langdirs = { &dir, dir.getSubDirectory("language") };
+	if (!extraPath.empty()) {
+		langdirs.push_back(&extraDir);
+		langdirs.push_back(extraDir.getSubDirectory("language"));
+	}
 	_nhcFiles.push_back("");
-	if (langdir) {
+	for (Common::Array<Common::FSDirectory *>::const_iterator langdir = langdirs.begin(); langdir != langdirs.end(); langdir++) {
 		Common::ArchiveMemberList nhcFileList;
-		langdir->listMatchingMembers(nhcFileList, "*.nhc");
+		if (!(*langdir))
+			continue;
+		(*langdir)->listMatchingMembers(nhcFileList, "*.nhc");
 
 		for (Common::ArchiveMemberList::iterator iter = nhcFileList.begin(); iter != nhcFileList.end(); ++iter) {
 			Common::String nhcFileName = (*iter)->getName();
