@@ -518,7 +518,7 @@ Common::Error HadeschEngine::run() {
 		}
 	}
 
-	if (_cdScenesPath == "") {
+	if (_cdScenesPath.empty()) {
 		debug("Cannot find OL.POD");
 		return Common::kUnsupportedGameidError;
 	}
