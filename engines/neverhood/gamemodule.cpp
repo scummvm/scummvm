@@ -142,6 +142,17 @@ void GameModule::handleAsciiKey(char key) {
 		debug(2, "GameModule::handleAsciiKey()");
 		sendMessage(_childObject, 0x000A, (uint32)key);
 	}
+
+	if (key == '\n' || key == '\r') {
+		if (!_currentCheat.empty() && _childObject) {
+			uint32 cheatHash = calcHash(_currentCheat.c_str());
+			debug(2, "GameModule: cheat=\"%s\" (0x%08x)", _currentCheat.c_str(), cheatHash);
+			sendMessage(_childObject, NM_CHEAT, cheatHash);
+		} else if (!_currentCheat.empty())
+			debug(2, "GameModule: cheat=\"%s\" but no child", _currentCheat.c_str());
+		_currentCheat.clear();
+	} else if (key)
+		_currentCheat += key;
 }
 
 void GameModule::handleKeyDown(Common::KeyCode keyCode) {

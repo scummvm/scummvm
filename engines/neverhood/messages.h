@@ -32,6 +32,7 @@ enum NeverhoodMessage {
 	NM_MOUSE_SHOW               = 0x101E,
 	NM_KEYPRESS_SPACE           = 0x0009,
 	NM_KEYPRESS_ESC             = 0x000C,
+	NM_CHEAT                    = 0x000D,
 	NM_ANIMATION_START          = 0x100D,
 	NM_SCENE_LEAVE              = 0x1019,
 	NM_PRIORITY_CHANGE          = 0x1022,
