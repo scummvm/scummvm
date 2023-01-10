@@ -114,7 +114,7 @@ void NPCStruct::init() {
 	field_6B = 0;
 	field_6C = 0;
 	field_6D = 0;
-	_unkItemId = 0;
+	_defaultDefenseItemId = 0;
 	field_6F = 0;
 	field_70 = 0;
 	field_71 = 0;

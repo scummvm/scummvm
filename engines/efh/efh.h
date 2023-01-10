@@ -154,7 +154,7 @@ struct NPCStruct {
 	uint8 field_6B;
 	uint8 field_6C;
 	uint8 field_6D;
-	uint8 _unkItemId;
+	uint8 _defaultDefenseItemId;
 	uint8 field_6F;
 	uint8 field_70;
 	uint8 field_71;
@@ -400,7 +400,7 @@ private:
 	int16 getCharacterScore(int16 charId, int16 itemId);
 	bool checkSpecialItemsOnCurrentPlace(int16 itemId);
 	bool hasAdequateDefense(int16 monsterId, uint8 attackType);
-	bool hasAdequateDefense_2(int16 charId, uint8 attackType);
+	bool hasAdequateDefenseNPC(int16 charId, uint8 attackType);
 	void sub1BE9A(int16 monsterId);
 	int16 getTeamMonsterAnimId();
 

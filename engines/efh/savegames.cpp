@@ -198,7 +198,7 @@ void EfhEngine::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_npcBuf[i].field_6B);
 		s.syncAsByte(_npcBuf[i].field_6C);
 		s.syncAsByte(_npcBuf[i].field_6D);
-		s.syncAsByte(_npcBuf[i]._unkItemId);
+		s.syncAsByte(_npcBuf[i]._defaultDefenseItemId);
 		s.syncAsByte(_npcBuf[i].field_6F);
 		s.syncAsByte(_npcBuf[i].field_70);
 		s.syncAsByte(_npcBuf[i].field_71);

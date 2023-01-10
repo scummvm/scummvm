@@ -295,7 +295,7 @@ void EfhEngine::loadNPCS() {
 		_npcBuf[i].field_6B = f.readByte();
 		_npcBuf[i].field_6C = f.readByte();
 		_npcBuf[i].field_6D = f.readByte();
-		_npcBuf[i]._unkItemId = f.readByte();
+		_npcBuf[i]._defaultDefenseItemId = f.readByte();
 		_npcBuf[i].field_6F = f.readByte();
 		_npcBuf[i].field_70 = f.readByte();
 		_npcBuf[i].field_71 = f.readByte();
