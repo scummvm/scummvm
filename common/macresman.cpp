@@ -279,7 +279,7 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 		// This could be a MacBinary file that still has a
 		// resource fork; if it is, it needs to get opened as MacBinary
 		// and not treated as raw.
-		SeekableReadStream *stream = archive.createReadStreamForMember(fileName);
+		stream = archive.createReadStreamForMember(fileName);
 		bool isMacBinaryFile = false;
 		if (stream) {
 			isMacBinaryFile = isMacBinary(*stream);
