@@ -668,12 +668,16 @@ void Scene1005::drawTextToBackground() {
 	} else {
 		TextResource textResource(_vm);
 		const char *textStart, *textEnd;
-		int16 y = 36;
+		int16 x = 188, y = 36;
 		FontSurface *fontSurface = FontSurface::createFontSurface(_vm, getGlobalVar(V_ENTRANCE_OPEN) ? 0x283CE401 : 0xC6604282);
 		textResource.load(0x80283101);
 		textStart = textResource.getString(textIndex, textEnd);
+		if (_vm->shouldOffsetFontNhc()) {
+			x += 15;
+			y += 18;
+		}
 		while (textStart < textEnd) {
-			fontSurface->drawString(_background->getSurface(), 188, y, (const byte*)textStart);
+			fontSurface->drawString(_background->getSurface(), x, y, (const byte*)textStart);
 			y += 36;
 			textStart += strlen(textStart) + 1;
 		}

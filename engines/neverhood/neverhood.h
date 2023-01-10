@@ -138,6 +138,7 @@ public:
 	void toggleSoundUpdate(bool state) { _updateSound = state; }
 	void toggleMusic(bool state) { _enableMusic = state; }
 	bool musicIsEnabled() { return _enableMusic; }
+	bool shouldOffsetFontNhc() const { return _nhcOffsetFont; }
 
 	const SubtitleGlyph *getSubfont() const {
 		return _haveSubtitles ? _subFont : nullptr;
@@ -146,6 +147,7 @@ public:
 private:
 	bool _updateSound;
 	bool _enableMusic;
+	bool _nhcOffsetFont;
 
 	SubtitleGlyph _subFont[256];
 	bool _haveSubtitles;

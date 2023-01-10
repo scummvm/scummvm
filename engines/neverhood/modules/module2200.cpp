@@ -1455,7 +1455,11 @@ void Scene2208::drawRow(int16 rowIndex) {
 		_background->getSurface()->copyFrom(_backgroundSurface->getSurface(), 0, y, sourceRect);
 		if (rowIndex < (int)_strings.size()) {
 			const char *text = _strings[rowIndex];
-			_fontSurface->drawString(_background->getSurface(), 95, y, (const byte*)text);
+			int16 x = 95;
+			if (_vm->shouldOffsetFontNhc()) {
+				x += 15;
+			}
+			_fontSurface->drawString(_background->getSurface(), x, y, (const byte*)text);
 		}
 	}
 }
