@@ -322,33 +322,43 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 			errors |= OSystem::kTransactionFullscreenFailed;
 
 			_videoMode.fullscreen = _oldVideoMode.fullscreen;
-		} else if (_videoMode.aspectRatioCorrection != _oldVideoMode.aspectRatioCorrection) {
+		}
+
+		if (_videoMode.aspectRatioCorrection != _oldVideoMode.aspectRatioCorrection) {
 			errors |= OSystem::kTransactionAspectRatioFailed;
 
 			_videoMode.aspectRatioCorrection = _oldVideoMode.aspectRatioCorrection;
-		} else if (_videoMode.scalerIndex != _oldVideoMode.scalerIndex) {
+		}
+
+		if (_videoMode.scalerIndex != _oldVideoMode.scalerIndex) {
 			errors |= OSystem::kTransactionModeSwitchFailed;
 
 			_videoMode.scalerIndex = _oldVideoMode.scalerIndex;
 			_videoMode.scaleFactor = _oldVideoMode.scaleFactor;
+		}
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-		} else if (_videoMode.stretchMode != _oldVideoMode.stretchMode) {
+		if (_videoMode.stretchMode != _oldVideoMode.stretchMode) {
 			errors |= OSystem::kTransactionStretchModeSwitchFailed;
 
 			_videoMode.stretchMode = _oldVideoMode.stretchMode;
+		}
 #endif
-		} else if (_videoMode.filtering != _oldVideoMode.filtering) {
+		if (_videoMode.filtering != _oldVideoMode.filtering) {
 			errors |= OSystem::kTransactionFilteringFailed;
 
 			_videoMode.filtering = _oldVideoMode.filtering;
+		}
 #ifdef USE_RGB_COLOR
-		} else if (_videoMode.format != _oldVideoMode.format) {
+		if (_videoMode.format != _oldVideoMode.format) {
 			errors |= OSystem::kTransactionFormatNotSupported;
 
 			_videoMode.format = _oldVideoMode.format;
 			_screenFormat = _videoMode.format;
+		}
 #endif
-		} else if (_videoMode.screenWidth != _oldVideoMode.screenWidth || _videoMode.screenHeight != _oldVideoMode.screenHeight) {
+
+		if (_videoMode.screenWidth != _oldVideoMode.screenWidth || _videoMode.screenHeight != _oldVideoMode.screenHeight) {
 			errors |= OSystem::kTransactionSizeChangeFailed;
 
 			_videoMode.screenWidth = _oldVideoMode.screenWidth;
@@ -357,20 +367,11 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 			_videoMode.overlayHeight = _oldVideoMode.overlayHeight;
 		}
 
-		if (_videoMode.fullscreen == _oldVideoMode.fullscreen &&
-			_videoMode.aspectRatioCorrection == _oldVideoMode.aspectRatioCorrection &&
-			_videoMode.scalerIndex == _oldVideoMode.scalerIndex &&
-			_videoMode.scaleFactor == _oldVideoMode.scaleFactor &&
-			_videoMode.filtering == _oldVideoMode.filtering &&
-			_videoMode.screenWidth == _oldVideoMode.screenWidth &&
-			_videoMode.screenHeight == _oldVideoMode.screenHeight) {
-
-			// Our new video mode would now be exactly the same as the
-			// old one. Since we still can not assume SDL_SetVideoMode
-			// to be working fine, we need to invalidate the old video
-			// mode, so loadGFXMode would error out properly.
-			_oldVideoMode.setup = false;
-		}
+		// Our new video mode would now be exactly the same as the
+		// old one. Since we still can not assume SDL_SetVideoMode
+		// to be working fine, we need to invalidate the old video
+		// mode, so loadGFXMode would error out properly.
+		_oldVideoMode.setup = false;
 	}
 
 #ifdef USE_RGB_COLOR
