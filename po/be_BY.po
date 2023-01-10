@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-10 17:34+0000\n"
+"POT-Creation-Date: 2023-01-10 20:17+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -179,8 +179,8 @@ msgstr ""
 #: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:102
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:926
 #: engines/scumm/scumm.cpp:1094 engines/scumm/scumm.cpp:1120
-#: engines/scumm/scumm.cpp:1142 engines/scumm/scumm.cpp:1453
-#: engines/scumm/scumm.cpp:1922 engines/scumm/scumm.cpp:1938
+#: engines/scumm/scumm.cpp:1142 engines/scumm/scumm.cpp:1459
+#: engines/scumm/scumm.cpp:1928 engines/scumm/scumm.cpp:1944
 #: engines/sky/compact.cpp:140 engines/sword1/animation.cpp:529
 #: engines/sword1/animation.cpp:560 engines/sword1/animation.cpp:568
 #: engines/sword1/control.cpp:888 engines/sword1/logic.cpp:1634
@@ -4348,7 +4348,7 @@ msgstr "Узнавіць"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2700
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2706
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4359,7 +4359,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2687
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2693
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4370,7 +4370,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2716
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2722
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7809,6 +7809,16 @@ msgid ""
 "available."
 msgstr ""
 
+#: engines/scumm/metaengine.cpp:674
+#, fuzzy
+msgid "Enable low latency audio mode"
+msgstr "Уключыць рэжым гелія"
+
+#: engines/scumm/metaengine.cpp:675
+msgid ""
+"Allows the game to use low latency audio, at the cost of sound accuracy."
+msgstr ""
+
 #: engines/scumm/scumm.cpp:261
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
@@ -7844,14 +7854,14 @@ msgstr ""
 "прачытаць\n"
 "дадзеныя пра інструменты. Музыка будзе выключана."
 
-#: engines/scumm/scumm.cpp:1450
+#: engines/scumm/scumm.cpp:1456
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1920
+#: engines/scumm/scumm.cpp:1926
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -7860,13 +7870,13 @@ msgstr ""
 "Рэжым \"роднага\" MIDI патрабуе абнаўленне Roland Upgrade ад\n"
 "LucasArts, але бракуе %s. Пераключаюся на AdLib."
 
-#: engines/scumm/scumm.cpp:1936
+#: engines/scumm/scumm.cpp:1942
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:3276
+#: engines/scumm/scumm.cpp:3282
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
