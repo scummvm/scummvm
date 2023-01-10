@@ -38,6 +38,16 @@ enum EfhMenuItems {
 	kEfhMenuInvalid = 9
 };
 
+enum EfhReactionType {
+	kEfhReactionReels = 0,
+	kEfhReactionCriesOut = 1,
+	kEfhReactionFalters = 2,
+	kEfhReactionWinces = 3,
+	kEfhReactionScreams = 4,
+	kEfhReactionChortles = 5,
+	kEfhReactionLaughs = 6
+};
+
 struct Font {
 	uint8 _lines[8];
 };
