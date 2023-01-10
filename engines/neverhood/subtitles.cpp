@@ -32,10 +32,10 @@ void drawSubtitles(Graphics::Surface *surf, const Common::String &str, const Sub
 
 	byte *dest0 = (byte*)surf->getBasePtr(0, 0);
 
-	int lastx = MIN<int>(str.size() * SubtitlePlayer::kSubtitleCharWidth + x0, surf->w);
+	int lastx = MIN<int>(str.size() * SubtitlePlayer::kSubtitleCharWidth + x0 + 1, surf->w);
 	for (int16 yc = 0; yc < SubtitlePlayer::kSubtitleCharHeight; yc++) {
 		byte *dest = dest0 + yc * surf->pitch;
-		memset(dest, SubtitlePlayer::kSubtitleAlpha, x0);
+		memset(dest, SubtitlePlayer::kSubtitleAlpha, x0 + 2);
 		memset(dest + lastx, SubtitlePlayer::kSubtitleAlpha, surf->w - lastx);
 	}
 
@@ -44,14 +44,21 @@ void drawSubtitles(Graphics::Surface *surf, const Common::String &str, const Sub
 		byte *dest = dest0 + i * SubtitlePlayer::kSubtitleCharWidth + x0;
 		for (int16 yc = 0; yc < SubtitlePlayer::kSubtitleCharHeight; yc++) {
 			byte *row = dest;
+
+			// Outline of leftmost pixel
+			if (*row == SubtitlePlayer::kSubtitleAlpha && (subfont[c].bitmap[yc] & 0x80))
+				*row = 0x00;
+			row++;
 			for (int16 xc = 0; xc < SubtitlePlayer::kSubtitleCharWidth; xc++, row++) {
 				if ((subfont[c].bitmap[yc] << xc) & 0x80)
 					*row = 0xff;
 				else if ((subfont[c].outline[yc] << xc) & 0x80)
 					*row = 0x00;
-				else
+				else if (xc != 0)
 					*row = SubtitlePlayer::kSubtitleAlpha;
 			}
+			// Outline of rightmost pixel
+			*row = (subfont[c].bitmap[yc] & 0x1) ? 0x00 : SubtitlePlayer::kSubtitleAlpha;
 			dest += surf->pitch;
 		}
 	}
@@ -102,9 +109,9 @@ void SubtitlePlayer::renderFrame(uint frameNumber, int centerX) {
 		if (frameNumber < _subtitles[i].fromFrame || frameNumber > _subtitles[i].toFrame)
 			continue;
 		Common::String curStr = _subtitles[i].text;
-		if ((int)curStr.size() > screenWidth / SubtitlePlayer::kSubtitleCharWidth)
+		if ((int)curStr.size() > (screenWidth - 2) / SubtitlePlayer::kSubtitleCharWidth)
 			curStr = curStr.substr(0, screenWidth / SubtitlePlayer::kSubtitleCharWidth - 3) + "...";
-		int width = curStr.size() * SubtitlePlayer::kSubtitleCharWidth;
+		int width = curStr.size() * SubtitlePlayer::kSubtitleCharWidth + 2;
 		int startX = MAX(MIN(centerX - width / 2, screenWidth - width), 0);
 
 		if (_subtitles[i].isTop) {
