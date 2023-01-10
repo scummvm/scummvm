@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-10 20:17+0000\n"
-"PO-Revision-Date: 2023-01-09 10:49+0000\n"
+"PO-Revision-Date: 2023-01-10 21:11+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -7872,15 +7872,15 @@ msgstr ""
 "modificados de audio en caso de que estén disponibles."
 
 #: engines/scumm/metaengine.cpp:674
-#, fuzzy
-#| msgid "Enable the debug mode"
 msgid "Enable low latency audio mode"
-msgstr "Activa el modo de depuración"
+msgstr "Modo de audio con baja latencia"
 
 #: engines/scumm/metaengine.cpp:675
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy."
 msgstr ""
+"Permite que el juego tenga una menor latencia de audio a costa de perder "
+"fidelidad en el sonido."
 
 #: engines/scumm/scumm.cpp:261
 msgid ""
