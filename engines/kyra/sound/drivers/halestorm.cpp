@@ -114,8 +114,9 @@ private:
 		}
 	}
 	uint8 *crtbuf() {
-		uint8 *tptr = new uint8[len + sizeof(int)];
-		lifes = (int*)(tptr + len);
+		uint32 uplen = (len + sizeof(int) - 1) & ~(sizeof(int) - 1);
+		uint8 *tptr = new uint8[uplen + sizeof(int)];
+		lifes = (int*)(tptr + uplen);
 		ptr = tptr;
 		*lifes = 1;
 		DEBUG_BUFFERS_COUNT++;
