@@ -464,6 +464,13 @@ uint32 DiskplayerScene::handleMessage(int messageNum, const MessageParam &param,
 				}
 			}
 			break;
+		case NM_CHEAT:
+			if (param.asInteger() == 0x2C034A29 && !_dropKey && !_hasAllDisks) { // "itsshowtime"
+				for (uint i = 0; i < 20; i++)
+					setSubVar(VA_HAS_TAPE, i, 1);
+				sendMessage(_parentModule, 0x1009, 0);
+			}
+			break;
 		case NM_ANIMATION_UPDATE:
 			tuneIn();
 			break;

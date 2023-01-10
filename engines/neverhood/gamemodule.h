@@ -68,6 +68,7 @@ protected:
 	bool _restartGameRequested;
 	bool _canRequestMainMenu;
 	bool _mainMenuRequested;
+	Common::String _currentCheat;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void createModuleByHash(uint32 nameHash);
 	void updateModule();
