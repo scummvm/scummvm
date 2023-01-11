@@ -633,7 +633,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 					}
 				}
 			}
-			_engine->_text->initTextBank(TextBankId::Options_and_menus);
+			_engine->_text->initDial(TextBankId::Options_and_menus);
 			startMillis = _engine->_system->getMillis();
 			_engine->_screens->loadMenuImage(false);
 		}
@@ -715,7 +715,7 @@ int32 Menu::volumeMenu() {
 }
 
 void Menu::inGameOptionsMenu() {
-	_engine->_text->initTextBank(TextBankId::Options_and_menus);
+	_engine->_text->initDial(TextBankId::Options_and_menus);
 	_optionsMenuState.setButtonTextId(0, TextId::kReturnGame);
 	_engine->saveFrontBuffer();
 	optionsMenu();
@@ -824,7 +824,7 @@ bool Menu::init() {
 
 EngineState Menu::run() {
 	FrameMarker frame(_engine);
-	_engine->_text->initTextBank(TextBankId::Options_and_menus);
+	_engine->_text->initDial(TextBankId::Options_and_menus);
 
 	if (_engine->isLBA1()) {
 		_engine->_music->playTrackMusic(9); // LBA's Theme
@@ -889,7 +889,7 @@ int32 Menu::giveupMenu() {
 	int32 menuId;
 	do {
 		FrameMarker frame(_engine);
-		_engine->_text->initTextBank(TextBankId::Options_and_menus);
+		_engine->_text->initDial(TextBankId::Options_and_menus);
 		menuId = processMenu(localMenu);
 		switch (menuId) {
 		case (int32)TextId::kContinue:
@@ -1120,7 +1120,7 @@ void Menu::processBehaviourMenu(bool behaviourMenu) {
 	TextBankId tmpTextBank = _engine->_scene->_sceneTextBank;
 	_engine->_scene->_sceneTextBank = TextBankId::None;
 
-	_engine->_text->initTextBank(TextBankId::Options_and_menus);
+	_engine->_text->initDial(TextBankId::Options_and_menus);
 
 	// quick actions to change behaviour don't show the menu in classic edition
 	if (!behaviourMenu && _engine->isLba1Classic()) {
@@ -1259,7 +1259,7 @@ void Menu::processInventoryMenu() {
 	const int32 top = _engine->height() / 2 - 210;
 	drawInventoryItems(left, top);
 
-	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
+	_engine->_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
 
 	_engine->_text->setFontCrossColor(COLOR_BRIGHT_BLUE);
 	_engine->_text->initDialogueBox();

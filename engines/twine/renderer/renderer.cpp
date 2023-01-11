@@ -76,24 +76,24 @@ IVec3 &Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) { // Proj
 	cY -= _baseRotPos.y;
 	cZ = _baseRotPos.z - cZ;
 
-	int32 posZ = cZ + _cameraDepthOffset;
+	int32 posZ = cZ + _kFactor;
 	if (posZ <= 0) {
 		posZ = 0x7FFF;
 	}
 
-	_projPos.x = (cX * _cameraScaleX) / posZ + _projectionCenter.x;
-	_projPos.y = (-cY * _cameraScaleY) / posZ + _projectionCenter.y;
+	_projPos.x = (cX * _lFactorX) / posZ + _projectionCenter.x;
+	_projPos.y = (-cY * _lFactorY) / posZ + _projectionCenter.y;
 	_projPos.z = posZ;
 	return _projPos;
 }
 
-void Renderer::setCameraPosition(int32 x, int32 y, int32 depthOffset, int32 scaleX, int32 scaleY) {
+void Renderer::setProjection(int32 x, int32 y, int32 kfact, int32 lfactx, int32 lfacty) {
 	_projectionCenter.x = x;
 	_projectionCenter.y = y;
 
-	_cameraDepthOffset = depthOffset;
-	_cameraScaleX = scaleX;
-	_cameraScaleY = scaleY;
+	_kFactor = kfact;
+	_lFactorX = lfactx;
+	_lFactorY = lfacty;
 
 	_isUsingIsoProjection = false;
 }
@@ -104,10 +104,10 @@ void Renderer::setBaseTranslation(int32 x, int32 y, int32 z) {
 	_baseTransPos.z = z;
 }
 
-void Renderer::setOrthoProjection(int32 x, int32 y, int32 z) {
+void Renderer::setIsoProjection(int32 x, int32 y, int32 scale) {
 	_projectionCenter.x = x;
 	_projectionCenter.y = y;
-	_projectionCenter.z = z;
+	_projectionCenter.z = scale; // not used - IsoScale is always 512
 
 	_isUsingIsoProjection = true;
 }
@@ -1634,11 +1634,11 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 				// * sqrt(sx+sy) / 512 (isometric scale)
 				radius = (radius * 34) / ISO_SCALE;
 			} else {
-				int32 delta = _cameraDepthOffset + sphere->z;
+				int32 delta = _kFactor + sphere->z;
 				if (delta == 0) {
 					break;
 				}
-				radius = (sphere->radius * _cameraScaleX) / delta;
+				radius = (sphere->radius * _lFactorX) / delta;
 			}
 
 			radius += 3;
@@ -1748,7 +1748,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 			int32 coY = pointPtr->y + renderPos.y;
 			int32 coZ = -(pointPtr->z + renderPos.z);
 
-			coZ += _cameraDepthOffset;
+			coZ += _kFactor;
 
 			if (coZ <= 0) {
 				coZ = 0x7FFFFFFF;
@@ -1756,7 +1756,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 
 			// X projection
 			{
-				coX = _projectionCenter.x + ((coX * _cameraScaleX) / coZ);
+				coX = _projectionCenter.x + ((coX * _lFactorX) / coZ);
 
 				if (coX > 0xFFFF) {
 					coX = 0x7FFF;
@@ -1775,7 +1775,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 
 			// Y projection
 			{
-				coY = _projectionCenter.y + ((-coY * _cameraScaleY) / coZ);
+				coY = _projectionCenter.y + ((-coY * _lFactorY) / coZ);
 
 				if (coY > 0xFFFF) {
 					coY = 0x7FFF;
@@ -1904,7 +1904,7 @@ void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 ang
 	const int32 ypos = (boxBottom + boxTop) / 2;
 	const int32 xpos = (boxRight + boxLeft) / 2;
 
-	setOrthoProjection(xpos, ypos, 0);
+	setIsoProjection(xpos, ypos, 0);
 	_engine->_interface->setClip(rect);
 
 	Common::Rect dummy;
@@ -1921,7 +1921,7 @@ void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 ang
 }
 
 void Renderer::renderInventoryItem(int32 x, int32 y, const BodyData &bodyData, int32 angle, int32 param) {
-	setCameraPosition(x, y, 128, 200, 200);
+	setProjection(x, y, 128, 200, 200);
 	setCameraAngle(0, 0, 0, 60, 0, 0, param);
 
 	Common::Rect dummy;

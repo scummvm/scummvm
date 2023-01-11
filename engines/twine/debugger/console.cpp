@@ -356,14 +356,14 @@ bool TwinEConsole::doListMenuText(int argc, const char **argv) {
 		textBankId = (TextBankId)atoi(argv[1]);
 	}
 	const TextBankId oldTextBankId = _engine->_text->textBank();
-	_engine->_text->initTextBank(textBankId);
+	_engine->_text->initDial(textBankId);
 	for (int32 i = 0; i < 1000; ++i) {
 		char buf[256];
 		if (_engine->_text->getMenuText((TextId)i, buf, sizeof(buf))) {
 			debugPrintf("%4i: %s\n", i, buf);
 		}
 	}
-	_engine->_text->initTextBank(oldTextBankId);
+	_engine->_text->initDial(oldTextBankId);
 	return true;
 }
 

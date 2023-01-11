@@ -57,7 +57,7 @@ void MenuOptions::newGame() {
 	_engine->_text->_drawTextBoxBackground = false;
 	_engine->_text->_renderTextTriangle = true;
 
-	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
+	_engine->_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->textClipFull();
 	_engine->_text->setFontCrossColor(COLOR_WHITE);
 
@@ -233,7 +233,7 @@ public:
 };
 
 bool MenuOptions::enterText(TextId textIdx, char *textTargetBuf, size_t bufSize) {
-	_engine->_text->initTextBank(TextBankId::Options_and_menus);
+	_engine->_text->initDial(TextBankId::Options_and_menus);
 	char buffer[256];
 	_engine->_text->getMenuText(textIdx, buffer, sizeof(buffer));
 	_engine->_text->setFontColor(COLOR_WHITE);
@@ -350,7 +350,7 @@ int MenuOptions::chooseSave(TextId textIdx, bool showEmptySlots) {
 		return -1;
 	}
 
-	_engine->_text->initTextBank(TextBankId::Options_and_menus);
+	_engine->_text->initDial(TextBankId::Options_and_menus);
 
 	MenuSettings saveFiles;
 	saveFiles.addButton(TextId::kReturnMenu);

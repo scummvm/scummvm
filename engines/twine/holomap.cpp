@@ -90,7 +90,7 @@ bool Holomap::loadLocations() {
 		return false;
 	}
 
-	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
+	_engine->_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
 	for (int32 i = 0; i < _numLocations; i++) {
 		_locations[i].angleX = (int16)ClampAngle(stream.readSint16LE());
 		_locations[i].angleY = (int16)ClampAngle(stream.readSint16LE());
@@ -306,7 +306,7 @@ void Holomap::renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, Ani
 		}
 	}
 	const Common::Rect rect(0, _engine->height() - 280, 200, _engine->height() - 1);
-	_engine->_renderer->setCameraPosition(rect.width() / 2, _engine->height() - 80, 128, 900, 900);
+	_engine->_renderer->setProjection(rect.width() / 2, _engine->height() - 80, 128, 900, 900);
 	_engine->_renderer->setCameraAngle(0, 0, 0, 60, 128, 0, distance(30000));
 	_engine->_renderer->setLightVector(-60, 128, 0);
 	// background of the vehicle
@@ -338,7 +338,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	ScopedEngineFreeze timeFreeze(_engine);
 	const int32 cameraPosX = _engine->width() / 2 + 80;
 	const int32 cameraPosY = _engine->height() / 2;
-	_engine->_renderer->setCameraPosition(cameraPosX, cameraPosY, 128, 1024, 1024);
+	_engine->_renderer->setProjection(cameraPosX, cameraPosY, 128, 1024, 1024);
 	_engine->_renderer->setCameraAngle(0, 0, 0, data->pos.x, data->pos.y, data->pos.z, distance(zDistanceTrajectory));
 
 	constexpr TwineResource holomapImageRes(Resources::HQR_RESS_FILE, RESSHQR_HOLOIMG);
@@ -384,7 +384,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 		renderHolomapVehicle(frameNumber, move, animTimerData, bodyData, animData);
 
 		// now render the holomap path
-		_engine->_renderer->setCameraPosition(cameraPosX, cameraPosY, 128, 1024, 1024);
+		_engine->_renderer->setProjection(cameraPosX, cameraPosY, 128, 1024, 1024);
 		_engine->_renderer->setCameraAngle(0, 0, 0, data->pos.x, data->pos.y, data->pos.z, distance(zDistanceTrajectory));
 		_engine->_renderer->setLightVector(data->pos.x, data->pos.y, 0);
 
@@ -516,11 +516,11 @@ void Holomap::processHolomap() {
 
 	initHoloDatas();
 
-	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
+	_engine->_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->setFontCrossColor(COLOR_9);
 	const int32 cameraPosX = _engine->width() / 2;
 	const int32 cameraPosY = scale(190);
-	_engine->_renderer->setCameraPosition(cameraPosX, cameraPosY, 128, 1024, 1024);
+	_engine->_renderer->setProjection(cameraPosX, cameraPosY, 128, 1024, 1024);
 
 	constexpr TwineResource holomapImageRes(Resources::HQR_RESS_FILE, RESSHQR_HOLOIMG);
 	uint8 *holomapImagePtr = nullptr;

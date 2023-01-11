@@ -162,7 +162,7 @@ public:
 	 * Initialize dialogue
 	 * @param bankIdx Text bank index
 	 */
-	void initTextBank(TextBankId bankIdx);
+	void initDial(TextBankId bankIdx);
 	void initSceneTextBank();
 	inline TextBankId textBank() const {
 		return _currentBankIdx;
@@ -224,7 +224,7 @@ public:
 
 	/**
 	 * Get dialogue text into text buffer from the currently loaded text bank
-	 * @sa initTextBank()
+	 * @sa initDial()
 	 * @param index dialogue index
 	 */
 	bool getText(TextId index);

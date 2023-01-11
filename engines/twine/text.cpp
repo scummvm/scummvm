@@ -148,7 +148,7 @@ bool Text::stopVox(const TextEntry *text) {
 	return true;
 }
 
-void Text::initTextBank(TextBankId bankIdx) {
+void Text::initDial(TextBankId bankIdx) {
 	// don't load if we already have the dialogue text bank loaded
 	if (bankIdx == _currentBankIdx) {
 		return;
@@ -159,7 +159,7 @@ void Text::initTextBank(TextBankId bankIdx) {
 }
 
 void Text::initSceneTextBank() {
-	initTextBank((TextBankId)((int)_engine->_scene->_sceneTextBank + (int)TextBankId::Citadel_Island));
+	initDial((TextBankId)((int)_engine->_scene->_sceneTextBank + (int)TextBankId::Citadel_Island));
 }
 
 void Text::drawCharacter(int32 x, int32 y, uint8 character) {

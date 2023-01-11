@@ -630,7 +630,7 @@ void TwinEEngine::processActorSamplePosition(int32 actorIdx) {
 void TwinEEngine::processBookOfBu() {
 	_screens->fadeToBlack(_screens->_paletteRGBA);
 	_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 15, 16));
-	_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
+	_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
 	_text->_drawTextBoxBackground = false;
 	_text->textClipFull();
 	_text->setFontCrossColor(COLOR_WHITE);
@@ -649,7 +649,7 @@ void TwinEEngine::processBookOfBu() {
 }
 
 void TwinEEngine::processBonusList() {
-	_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
+	_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
 	_text->textClipFull();
 	_text->setFontCrossColor(COLOR_WHITE);
 	const bool tmpFlagDisplayText = _cfgfile.FlagDisplayText;

@@ -166,11 +166,11 @@ private:
 	IVec3 translateGroup(const IMatrix3x3 &matrix, int32 x, int32 y, int32 z);
 
 	IVec3 _baseTransPos;
-	IVec3 _projectionCenter;
+	IVec3 _projectionCenter{320, 200, 0};
 
-	int32 _cameraDepthOffset = 0;
-	int32 _cameraScaleX = 0;
-	int32 _cameraScaleY = 0;
+	int32 _kFactor = 128;
+	int32 _lFactorX = 1024;
+	int32 _lFactorY = 840;
 
 	IMatrix3x3 _baseMatrix;
 	IMatrix3x3 _matricesTable[30 + 1];
@@ -253,7 +253,6 @@ public:
 
 	IVec3 &projectPositionOnScreen(int32 cX, int32 cY, int32 cZ);
 
-	void setCameraPosition(int32 x, int32 y, int32 depthOffset, int32 scaleX, int32 scaleY);
 	void setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6);
 	IVec3 updateCameraAnglePositions(int zShift = 0);
 	void setBaseTranslation(int32 x, int32 y, int32 z);
@@ -263,7 +262,8 @@ public:
 		return setAngleCamera(rot.x, rot.y, rot.z, transpose);
 	}
 
-	void setOrthoProjection(int32 x, int32 y, int32 z);
+	void setProjection(int32 x, int32 y, int32 depthOffset, int32 scaleX, int32 scaleY);
+	void setIsoProjection(int32 x, int32 y, int32 scale);
 
 	bool renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const BodyData &bodyData, Common::Rect &modelRect);
 

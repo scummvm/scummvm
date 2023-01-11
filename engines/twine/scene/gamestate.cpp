@@ -56,7 +56,7 @@ GameState::GameState(TwinEEngine *engine) : _engine(engine) {
 }
 
 void GameState::initEngineProjections() {
-	_engine->_renderer->setOrthoProjection(_engine->width() / 2 - 9, _engine->height() / 2, 512);
+	_engine->_renderer->setIsoProjection(_engine->width() / 2 - 9, _engine->height() / 2, 512);
 	_engine->_renderer->setBaseTranslation(0, 0, 0);
 	_engine->_renderer->setAngleCamera(ANGLE_0, ANGLE_0, ANGLE_0);
 	_engine->_renderer->setLightVector(_engine->_scene->_alphaLight, _engine->_scene->_betaLight, ANGLE_0);
@@ -347,7 +347,7 @@ void GameState::processFoundItem(InventoryItems item) {
 
 	// process vox play
 	_engine->_music->stopMusic();
-	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
+	_engine->_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
 
 	_engine->_interface->resetClip();
 	_engine->_text->initItemFoundText(item);
@@ -497,7 +497,7 @@ void GameState::processGameoverAnimation() {
 
 	_engine->_sound->stopSamples();
 	_engine->_music->stopMidiMusic(); // stop fade music
-	_engine->_renderer->setCameraPosition(_engine->width() / 2, _engine->height() / 2, 128, 200, 200);
+	_engine->_renderer->setProjection(_engine->width() / 2, _engine->height() / 2, 128, 200, 200);
 	int32 startLbaTime = _engine->_lbaTime;
 	const Common::Rect &rect = _engine->centerOnScreen(_engine->width() / 2, _engine->height() / 2);
 	_engine->_interface->setClip(rect);
