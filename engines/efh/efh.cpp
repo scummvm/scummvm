@@ -885,8 +885,8 @@ void EfhEngine::refreshTeamSize() {
 	debugC(6, kDebugEngine, "refreshTeamSize");
 
 	_teamSize = 0;
-	for (uint counter = 0; counter < 3; ++counter) {
-		if (_teamCharId[counter] != -1)
+	for (uint charId = 0; charId < 3; ++charId) {
+		if (_teamCharId[charId] != -1)
 			++_teamSize;
 	}
 }
@@ -894,8 +894,8 @@ void EfhEngine::refreshTeamSize() {
 bool EfhEngine::isNpcATeamMember(int16 id) {
 	debugC(6, kDebugEngine,"isNpcATeamMember %d", id);
 
-	for (int counter = 0; counter < _teamSize; ++counter) {
-		if (_teamCharId[counter] == id)
+	for (int charId = 0; charId < _teamSize; ++charId) {
+		if (_teamCharId[charId] == id)
 			return true;
 	}
 
@@ -1916,10 +1916,10 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 		}
 		break;
 	case 4:
-		for (int counter = 0; counter < _teamSize; ++counter) {
-			for (uint charId = 0; charId < 10; ++charId) {
-				if (_npcBuf[_teamCharId[counter]]._inventory[charId]._ref == _npcBuf[npcId].field11_NpcId) {
-					removeObject(_teamCharId[counter], charId);
+		for (int charId = 0; charId < _teamSize; ++charId) {
+			for (uint inventoryId = 0; inventoryId < 10; ++inventoryId) {
+				if (_npcBuf[_teamCharId[charId]]._inventory[inventoryId]._ref == _npcBuf[npcId].field11_NpcId) {
+					removeObject(_teamCharId[charId], inventoryId);
 					displayMonsterAnim(monsterId);
 					displayImp1Text(_npcBuf[npcId].field14_textId);
 					displayAnimFrames(0xFE, true);
@@ -1937,9 +1937,9 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 		}
 		break;
 	case 6:
-		for (int counter = 0; counter < _teamSize; ++counter) {
-			for (uint charId = 0; charId < 10; ++charId) {
-				if (_npcBuf[_teamCharId[counter]]._inventory[charId]._ref == _npcBuf[npcId].field11_NpcId) {
+		for (int charId = 0; charId < _teamSize; ++charId) {
+			for (uint inventoryId = 0; inventoryId < 10; ++inventoryId) {
+				if (_npcBuf[_teamCharId[charId]]._inventory[inventoryId]._ref == _npcBuf[npcId].field11_NpcId) {
 					displayMonsterAnim(monsterId);
 					displayImp1Text(_npcBuf[npcId].field14_textId);
 					displayAnimFrames(0xFE, true);
@@ -1949,9 +1949,9 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 		}
 		break;
 	case 7:
-		for (int counter = 0; counter < _teamSize; ++counter) {
-			if (_npcBuf[npcId].field11_NpcId == _teamCharId[counter]) {
-				removeCharacterFromTeam(counter);
+		for (int charId = 0; charId < _teamSize; ++charId) {
+			if (_npcBuf[npcId].field11_NpcId == _teamCharId[charId]) {
+				removeCharacterFromTeam(charId);
 				displayMonsterAnim(monsterId);
 				displayImp1Text(_npcBuf[npcId].field14_textId);
 				displayAnimFrames(0xFE, true);
@@ -1960,11 +1960,11 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 		}
 		break;
 	case 8:
-		for (int counter = 0; counter < _teamSize; ++counter) {
-			if (_npcBuf[npcId].field11_NpcId == _teamCharId[counter]) {
+		for (int charId = 0; charId < _teamSize; ++charId) {
+			if (_npcBuf[npcId].field11_NpcId == _teamCharId[charId]) {
 				displayMonsterAnim(monsterId);
 				_enemyNamePt2 = _npcBuf[npcId]._name;
-				_characterNamePt2 = _npcBuf[_teamCharId[counter]]._name;
+				_characterNamePt2 = _npcBuf[_teamCharId[charId]]._name;
 				Common::String buffer = Common::String::format("%s asks that %s leave your party.", _enemyNamePt2.c_str(), _characterNamePt2.c_str());
 				for (uint i = 0; i < 2; ++i) {
 					clearBottomTextZone(0);
@@ -1978,7 +1978,7 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 				setTextColorRed();
 				Common::KeyCode input = mapInputCode(waitForKey());
 				if (input == Common::KEYCODE_y) {
-					removeCharacterFromTeam(counter);
+					removeCharacterFromTeam(charId);
 					displayImp1Text(_npcBuf[npcId].field14_textId);
 				}
 				displayAnimFrames(0xFE, true);
@@ -1987,8 +1987,8 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 		}
 		break;
 	case 9:
-		for (int counter = 0; counter < _teamSize; ++counter) {
-			if (_npcBuf[npcId].field11_NpcId == _teamCharId[counter]) {
+		for (int charId = 0; charId < _teamSize; ++charId) {
+			if (_npcBuf[npcId].field11_NpcId == _teamCharId[charId]) {
 				displayMonsterAnim(monsterId);
 				displayImp1Text(_npcBuf[npcId].field14_textId);
 				displayAnimFrames(0xFE, true);
