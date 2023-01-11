@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-11 12:58+0000\n"
+"POT-Creation-Date: 2023-01-11 13:46+0000\n"
 "PO-Revision-Date: 2022-08-02 15:16+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -2332,11 +2332,11 @@ msgstr "Гуляць"
 msgid "Saves"
 msgstr "Заховы"
 
-#: base/main.cpp:722
+#: base/main.cpp:726
 msgid "Error running game:"
 msgstr "Памылка запуску гульні:"
 
-#: base/main.cpp:769
+#: base/main.cpp:773
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Ня знойдзена рухавікоў для запуску гэтай гульні"
 
