@@ -387,6 +387,9 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "shrmess",			"Schoolhouse Rock!: 1st-4th Grade Math Essentials" },
 	{ "simpsonsplayer",		"The Simpsons Cartoon Player" },
 	{ "simpsonsstudio",		"The Simpsons Cartoon Studio" },
+	{ "sinkha",				"Sinkha: The 3D Multimedia Novel" },
+	{ "sinkha1",			"Sinkha: Hyleyn" },
+	{ "sinkha2",			"Sinkha: Atmosphere / Planet of the Clouds" },
 	{ "sitfarm",			"Sitting on the Farm" },
 	{ "skeeto10",			"Skipper & Skeeto: Fun in the Park" }, // Magnus & Myggen
 	{ "skippy",             "Skippy and the Curse of the Temple of Ock" },
@@ -6292,6 +6295,21 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Created by Tony Clemens, Desktop Wizard (1997)
 	WINGAME1("simpsontrivia", "v3.1", "Simpsons Trivia.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 2355677, 501),
 
+	// Created by Virtual Views / Marco Patrito
+	// Published in the US by Mojave, St George, Utah (1995)
+	// Plays in English, Italian, Spanish, French, German
+	// French version from covermount of PC Fun Nº38 from PressImage, 10ᵉ Paris
+	// Mac filename is ' Sinkha '
+	MACGAME1("sinkha", "",		"xn-- Sinkha -",   "cb91232ecece0045461d236d5914c03d", 719033, 501),
+	WINGAME2("sinkha", "",		"SINKHA.EXE",	   "3460ad87d2ba57104e2810a77b53c220", 1393825,
+								"SINKHA.DXR",	   "b8516633b5124711a8c550a2ed539255", 745484, 500),
+	WINGAME2_l("sinkha", "",	"SINKHA.EXE",	   "3460ad87d2ba57104e2810a77b53c220", 1393825,
+								"SINKHA.DXR",	   "363580346c873a70fe1098175b99aa81", 709524, Common::FR_FRA, 500),
+
+	MACGAME1("sinkha", "Music and Animation", "Music&Animation", "08d6f6e39fbd8388faf57f602acaebcc", 705445, 500),
+	WINGAME2("sinkha", "Music and Animation", "MUSIC.EXE",		 "3460ad87d2ba57104e2810a77b53c220", 1393827,
+											  "MUS_ANIM.DXR",    "2e31baec8a4957593db517bbf46c6740", 1141212, 500),
+
 	// Developed by Mary Boies Software, published by Creative Wonders
 	// Windows version also found in Middle School Advantage 2001 bundle
 	MACGAME1("slamdunktyping", "",     "Mac Install/Slam Dunk Typing/Slam Dunk Typing", "5683c6b3956a3bca7fb5fc5bbb237984", 718945, 501),
@@ -8058,6 +8076,35 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("sethi2", "",		   "Sethi_Incas.exe", "0c81c84ca4966313ad27d47daba44537", 2158774, Common::FR_FRA, 851),
 	MACGAME1_l("sethi3", "Classic OS", "Start Me OS9",    "789536da81694518f494945bb161ace9", 179887,  Common::DE_DEU, 851),
 
+	// Published by Virtual Views, Turin (2003) in English, French, Italian
+	// Players were posted online throughout the decade for compatibility with later OS versions
+	// FIXME: Needs confirmation
+	MACGAME1("sinkha1", "", "HYLEYN",	  "08c9ea94f6469e71ae0c71987bbf6323", 157809, 850),
+	WINGAME1("sinkha1", "", "HYLEYN.exe", "c163f36141579ee374f7b4b2bddee95a", 2117678, 850),
+
+	// Players for Classic Mac OS / Win9x, available here:
+	// http://www.sinkha.com/dfiles/players/HY_MOSC.sit.bin
+	// http://www.sinkha.com/dfiles/players/HY_WIN1.zip
+	MACGAME2("sinkha1", "Classic", "START",		 "12f06b96b6e1e721d22a4e60e938effc", 157815,
+								   "ME/MAA.cxt", "3f79a60e8f8a884f67855a5c1f0e66b5", 835098, 850),
+	WINGAME2("sinkha1", "98 - XP SP1", "START_(Win_98-ME-2000-XP_sp1).exe", "c163f36141579ee374f7b4b2bddee95a", 2117678,
+									   "ME/MAA.cxt",						"3f79a60e8f8a884f67855a5c1f0e66b5", 835098, 850),
+
+	// Published in 2007 (see notes for episode 1)
+	// Episodes 2 and 3 were sold together on one CD
+	// Episode selection is available after starting game
+	// FIXME: Needs confirmation
+	WINGAME2("sinkha2", "", "START.exe", "c163f36141579ee374f7b4b2bddee95a", 2117422,
+							"Init.dxr",  "40ef7beccb79c1a17a54752d833fc672", 769420, 850),
+
+	// Players for Classic Mac OS / Win9x, available here:
+	// http://www.sinkha.com/dfiles/players/ATM_MOSC.sit.bin
+	// http://www.sinkha.com/dfiles/players/ATM_WIN1.zip
+	MACGAME2("sinkha2", "Classic", "START",		 "12f06b96b6e1e721d22a4e60e938effc", 238342,
+								   "ME/MAA.cxt", "26f7dcd7a5690910f2116205f54cb44b", 759494, 850),
+	WINGAME2("sinkha2", "98 - XP SP1", "START_(Win_98-ME-2000-XP_sp1).exe", "c163f36141579ee374f7b4b2bddee95a", 2117678,
+									   "ME/MAA.cxt",						"26f7dcd7a5690910f2116205f54cb44b", 759494, 850),
+
 	WINGAME1_l("skeeto10", "", "mm7main.exe", "0c81c84ca4966313ad27d47daba44537", 12051446, Common::DA_DNK, 851),
 
 	// Dutch demos found on Flipper & Lopaka compilation
@@ -8433,6 +8480,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("shellwhirl", "", "Shell Whirl", "a171b7a952d1ac68ae3cd419d6dfc674", 313545, 1010),
 	WINGAME1("shellwhirl", "", "Shell Whirl.exe", "bcf64185ce848b7b70858d62945f48a8", 3779090, 1010),
 
+	// Players for newer OSes, available here:
+	// http://www.sinkha.com/dfiles/players/HY_MOSX1.zip
+	// http://www.sinkha.com/dfiles/players/ATM_MOSX1.zip
+	MACGAME2("sinkha1", "OS X 10.1-10.4", "START.osx",	"5af79c7672a0db0bc2ddacb9dee4d86c", 3121400,
+										  "ME/MAA.cxt", "3f79a60e8f8a884f67855a5c1f0e66b5", 835098, 1000),
+	MACGAME2("sinkha2", "OS X 10.1-10.4", "START.osx",	"5af79c7672a0db0bc2ddacb9dee4d86c", 3121400,
+										  "ME/MAA.cxt", "26f7dcd7a5690910f2116205f54cb44b", 759494, 1000),
+
 	// 2006 remaster originally released on GameTap, also released on Steam
 	WINGAME1t("spelunx", "", "Spelunx.exe", "965e31ec421fa6dfe8ea157ef38ebd42", 2800981, 1010),
 
@@ -8450,6 +8505,21 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("pixelineskolevik", "", "Pixeline - Vikingerne.exe",	"b162d633891f0ab2e2fc6ba6164df337", 5909524, Common::DA_DNK, 1100),
 	// Win executable on Mac partition
 	WINGAME1t_l("pixelineskolevik", "", "Pixeline - Vikingerne.exe", "52d593de1aae5db1f2ef1c503af20833", 7568472, Common::DA_DNK, 1100),
+
+	// Players for newer OSes, available here:
+	// http://www.sinkha.com/dfiles/players/HY_MOSX2.zip
+	// http://www.sinkha.com/dfiles/players/HY_WIN2.zip
+	MACGAME2("sinkha1", "OS X 10.4-10.5", "START.app/Contents/MacOS/start", "f74a89f3d1d3d7fe55df0fa3c8c125a3", 68550,
+										  "ME/MAA.cxt",						"3f79a60e8f8a884f67855a5c1f0e66b5", 835098, 1100),
+	WINGAME2("sinkha1", "XP SP2 - Vista", "START_(Win_XP_sp2-Vista).exe",   "3d6ccc7532d94fa518988e9685e45ba9", 4355622,
+										  "ME/MAA.cxt",						"3f79a60e8f8a884f67855a5c1f0e66b5", 835098, 1100),
+
+	// http://www.sinkha.com/dfiles/players/ATM_MOSX2.zip
+	// http://www.sinkha.com/dfiles/players/ATM_WIN2.zip
+	MACGAME2("sinkha2", "OS X 10.4-10.5", "START.app/Contents/MacOS/start", "f74a89f3d1d3d7fe55df0fa3c8c125a3", 68550,
+										  "ME/MAA.cxt",						"26f7dcd7a5690910f2116205f54cb44b", 759494, 1100),
+	WINGAME2("sinkha2", "XP SP2 - Vista", "START_(Win_XP_sp2-Vista).exe",   "3d6ccc7532d94fa518988e9685e45ba9", 4355622,
+										  "ME/MAA.cxt",						"26f7dcd7a5690910f2116205f54cb44b", 759494, 1100),
 
 	{ AD_TABLE_END_MARKER, GID_GENERIC, 0 }
 
