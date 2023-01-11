@@ -1191,7 +1191,7 @@ void EfhEngine::getXPAndSearchCorpse(int16 charId, Common::String namePt1, Commo
 }
 
 bool EfhEngine::characterSearchesMonsterCorpse(int16 charId, int16 monsterId) {
-	debug("characterSearchesMonsterCorpse %d %d", charId, monsterId);
+	debugC(3, kDebugFight, "characterSearchesMonsterCorpse %d %d", charId, monsterId);
 
 	int16 rndVal = getRandom(100);
 	if (kEncounters[_mapMonsters[monsterId]._monsterRef]._dropOccurrencePct < rndVal)
@@ -1199,7 +1199,7 @@ bool EfhEngine::characterSearchesMonsterCorpse(int16 charId, int16 monsterId) {
 
 	rndVal = getRandom(5) - 1;
 	int16 itemId = kEncounters[_mapMonsters[monsterId]._monsterRef]._dropItemId[rndVal];
-	if (itemId == -1)
+	if (itemId == -1 || itemId == 0)
 		return false;
 
 	if (!giveItemTo(charId, itemId, 0xFF))
