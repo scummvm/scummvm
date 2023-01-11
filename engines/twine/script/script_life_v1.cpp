@@ -1769,7 +1769,7 @@ static int32 lANIM_SET(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ANIM_SET(%i)", (int)animIdx);
 
 	ctx.actor->_genAnim = AnimationTypes::kAnimNone;
-	ctx.actor->_previousAnimIdx = -1;
+	ctx.actor->_anim = -1;
 	engine->_animations->initAnim(animIdx, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, ctx.actorIdx);
 
 	return 0;

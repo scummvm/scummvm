@@ -72,7 +72,7 @@ public:
 	 * @param bodyData Body model data
 	 * @param animTimerDataPtr Animation time data
 	 */
-	void setAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr);
+	void setAnimObjet(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr);
 
 	/**
 	 * Set new body animation
@@ -88,14 +88,14 @@ public:
 	 * @param animIdx Entity animation index
 	 * @param actorIdx Actor index
 	 */
-	int32 getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx = OWN_ACTOR_SCENE_INDEX);
+	int32 searchAnim(AnimationTypes animIdx, int32 actorIdx = OWN_ACTOR_SCENE_INDEX);
 
 	/**
 	 * Stock animation - copy the next keyFrame from a different buffer
 	 * @param bodyData Body model data
 	 * @param animTimerDataPtr Animation time data
 	 */
-	void stockAnimation(const BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr);
+	void stockInterAnim(const BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr);
 
 	/**
 	 * Initialize animation

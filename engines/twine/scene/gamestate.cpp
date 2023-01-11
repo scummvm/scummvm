@@ -357,12 +357,12 @@ void GameState::processFoundItem(InventoryItems item) {
 
 	_engine->_text->initVoxToPlayTextId((TextId)item);
 
-	const int32 bodyAnimIdx = _engine->_animations->getBodyAnimIndex(AnimationTypes::kFoundItem);
+	const int32 bodyAnimIdx = _engine->_animations->searchAnim(AnimationTypes::kFoundItem);
 	const AnimData &currentAnimData = _engine->_resources->_animData[bodyAnimIdx];
 
 	AnimTimerDataStruct tmpAnimTimer = _engine->_scene->_sceneHero->_animTimerData;
 
-	_engine->_animations->stockAnimation(bodyData, &_engine->_scene->_sceneHero->_animTimerData);
+	_engine->_animations->stockInterAnim(bodyData, &_engine->_scene->_sceneHero->_animTimerData);
 
 	uint currentAnimState = 0;
 

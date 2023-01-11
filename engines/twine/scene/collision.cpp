@@ -444,7 +444,7 @@ void Collision::receptionObj(int actorIdx) {
 
 		_engine->_scene->_startYFalling = 0;
 	} else {
-		_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationAllThen, _engine->_actor->_processActorPtr->_animExtra, actorIdx);
+		_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationAllThen, _engine->_actor->_processActorPtr->_nextGenAnim, actorIdx);
 	}
 
 	_engine->_actor->_processActorPtr->_dynamicFlags.bIsFalling = 0;

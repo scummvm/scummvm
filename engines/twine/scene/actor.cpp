@@ -90,7 +90,7 @@ void Actor::loadHeroEntities() {
 	loadBehaviourEntity(sceneHero, _heroEntityNORMAL, _heroAnimIdxNORMAL, FILE3DHQR_HERONORMAL);
 
 	_engine->_animations->_currentActorAnimExtraPtr = AnimationTypes::kStanding;
-	sceneHero->_animExtraPtr = _engine->_animations->_currentActorAnimExtraPtr;
+	sceneHero->_ptrAnimAction = _engine->_animations->_currentActorAnimExtraPtr;
 }
 
 void Actor::setBehaviour(HeroBehaviourType behaviour) {
@@ -126,7 +126,7 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 	initModelActor(bodyIdx, OWN_ACTOR_SCENE_INDEX);
 
 	sceneHero->_genAnim = AnimationTypes::kAnimNone;
-	sceneHero->_animType = AnimType::kAnimationTypeLoop;
+	sceneHero->_flagAnim = AnimType::kAnimationTypeLoop;
 
 	_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, OWN_ACTOR_SCENE_INDEX);
 }
@@ -242,8 +242,8 @@ void Actor::initActor(int16 actorIdx) {
 		debug(1, "Init actor %i with model %i", actorIdx, (int)actor->_genBody);
 		initModelActor(actor->_genBody, actorIdx);
 
-		actor->_previousAnimIdx = -1;
-		actor->_animType = AnimType::kAnimationTypeLoop;
+		actor->_anim = -1;
+		actor->_flagAnim = AnimType::kAnimationTypeLoop;
 
 		if (actor->_body != -1) {
 			_engine->_animations->initAnim(actor->_genAnim, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
@@ -286,12 +286,12 @@ void Actor::hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit, 
 
 	if (actor->_armor <= strengthOfHit) {
 		if (actor->_genAnim == AnimationTypes::kBigHit || actor->_genAnim == AnimationTypes::kHit2) {
-			const int32 tmpAnimPos = actor->_animPosition;
-			if (actor->_animExtra != AnimationTypes::kStanding) {
+			if (actor->_nextGenAnim != AnimationTypes::kStanding) {
+				const int32 tmpAnimPos = actor->_frame;
 				_engine->_animations->processAnimActions(actorIdxAttacked);
+				actor->_frame = tmpAnimPos;
 			}
 
-			actor->_animPosition = tmpAnimPos;
 		} else {
 			if (angle != -1) {
 				_engine->_movements->setActorAngleSafe(angle, angle, ANGLE_0, &actor->_move);

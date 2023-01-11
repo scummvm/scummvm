@@ -93,7 +93,7 @@ struct DynamicFlagsStruct {
 	uint16 bWaitHitFrame : 1;            // 0x0001 WAIT_HIT_FRAME - wait for hit frame
 	uint16 bIsHitting : 1;               // 0x0002 OK_HIT - hit frame anim
 	uint16 bAnimEnded : 1;               // 0x0004 ANIM_END - anim ended in the current loop (will be looped in the next engine loop)
-	uint16 bAnimFrameReached : 1;        // 0x0008 NEW_FRAME - new frame anim reached
+	uint16 bAnimNewFrame : 1;        // 0x0008 NEW_FRAME - new frame anim reached
 	uint16 bIsDrawn : 1;                 // 0x0010 WAS_DRAWN - actor has been drawn in this loop
 	uint16 bIsDead : 1;                  // 0x0020 OBJ_DEAD - is dead
 	uint16 bIsSpriteMoving : 1;          // 0x0040 AUTO_STOP_DOOR - door is opening or closing (wait to reach the destination position)
@@ -170,8 +170,8 @@ public:
 	int32 _body = -1; // costumeIndex - index into bodyTable
 	BodyType _genBody = BodyType::btNormal;
 	AnimationTypes _genAnim = AnimationTypes::kAnimNone;
-	AnimationTypes _animExtra = AnimationTypes::kStanding;
-	AnimationTypes _animExtraPtr = AnimationTypes::kAnimNone;
+	AnimationTypes _nextGenAnim = AnimationTypes::kStanding;
+	AnimationTypes _ptrAnimAction = AnimationTypes::kAnimNone;
 	int32 _sprite = 0;
 	EntityData *_entityDataPtr = nullptr;
 
@@ -222,12 +222,12 @@ public:
 	int32 _carryBy = -1;
 	int32 _zone = -1;
 
-	int32 _lastRotationAngle = ANGLE_0;
+	int32 _animStepBeta = ANGLE_0;
 	IVec3 _animStep;
-	int32 _previousAnimIdx = -1;
+	int32 _anim = -1;
 	int32 _doorWidth = 0;
-	int32 _animPosition = 0;
-	AnimType _animType = AnimType::kAnimationTypeLoop;
+	int32 _frame = 0;
+	AnimType _flagAnim = AnimType::kAnimationTypeLoop;
 	int32 _spriteActorRotation = 0;
 	uint8 _brickSound = 0U; // CodeJeu
 

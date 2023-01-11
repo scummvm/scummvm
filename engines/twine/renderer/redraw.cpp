@@ -345,9 +345,9 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw) {
 	const int32 actorIdx = drawCmd.actorIdx;
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (actor->_previousAnimIdx >= 0) {
-		const AnimData &animData = _engine->_resources->_animData[actor->_previousAnimIdx];
-		_engine->_animations->setModelAnimation(actor->_animPosition, animData, _engine->_resources->_bodyData[actor->_body], &actor->_animTimerData);
+	if (actor->_anim >= 0) {
+		const AnimData &animData = _engine->_resources->_animData[actor->_anim];
+		_engine->_animations->setModelAnimation(actor->_frame, animData, _engine->_resources->_bodyData[actor->_body], &actor->_animTimerData);
 	}
 
 	const IVec3 &delta = actor->posObj() - _engine->_grid->_camera;
