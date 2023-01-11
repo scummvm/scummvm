@@ -29,7 +29,7 @@ template<typename Pixel>
 void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	// Spot the case when it can all be done in 1 hit
-	int BytesPerPixel = sizeof(Pixel);
+	const int BytesPerPixel = sizeof(Pixel);
 	if ((srcPitch == BytesPerPixel * (uint)width) && (dstPitch == BytesPerPixel * (uint)width)) {
 		memcpy(dstPtr, srcPtr, BytesPerPixel * width * height);
 		return;
@@ -45,7 +45,9 @@ void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 void Scaler::scale(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
 	                           uint32 dstPitch, int width, int height, int x, int y) {
 	if (_factor == 1) {
-		if (_format.bytesPerPixel == 2) {
+		if (_format.bytesPerPixel == 1) {
+			Normal1x<uint8>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		} else if (_format.bytesPerPixel == 2) {
 			Normal1x<uint16>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 		} else {
 			Normal1x<uint32>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
