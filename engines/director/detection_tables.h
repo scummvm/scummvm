@@ -4901,6 +4901,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("shanghai", "Demo", "SHGMDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400),
 
 	WINDEMO1t_l("shinshofukei", "Autodemo", "SINSYOU.EXE", "daa65f2f0459fef6725d8a94a68c7ab0", 761098, Common::JA_JPN, 404),
+	// Original filename is '心象風景'
+	MACGAME1_l("shinshofukei", "", "xn--15t91mv19ahjk", "r:8b138db44d4421cc7294a9dc792ccf1b", 502617, Common::JA_JPN, 404),
+	WINGAME1t_l("shinshofukei", "", "SINSYO2.EXE", "bb16588758a1ebd5df9fa8ecdd6bc249", 1296944, Common::JA_JPN, 404),
 
 	WINDEMO1("shramerica", "Demo", "SHRAMER.EXE", "b50e77a25088cfe1cb88ee2dc4d3a9c9", 1335269, 404),
 	WINDEMO1("shrgrammar", "Demo", "SHRGRAM.EXE", "c3ee0462fe5935cf1eabfbdecfe33f03", 698575, 404),
