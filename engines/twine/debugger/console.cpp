@@ -46,6 +46,7 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("play_midi", WRAP_METHOD(TwinEConsole, doPlayMidi));
 	registerCmd("play_music", WRAP_METHOD(TwinEConsole, doPlayMusic));
 	registerCmd("change_scene", WRAP_METHOD(TwinEConsole, doChangeScene));
+	registerCmd("change_chapter", WRAP_METHOD(TwinEConsole, doChangeChapter));
 	registerCmd("toggle_scenery_view", WRAP_METHOD(TwinEConsole, doToggleSceneryView));
 	registerCmd("magic_points", WRAP_METHOD(TwinEConsole, doAddMagicPoints));
 	registerCmd("dumpfile", WRAP_METHOD(TwinEConsole, doDumpFile));
@@ -421,6 +422,16 @@ bool TwinEConsole::doChangeScene(int argc, const char **argv) {
 	_engine->_scene->_needChangeScene = atoi(argv[1]);
 	_engine->_scene->_heroPositionType = ScenePositionType::kScene;
 	_engine->_scene->changeScene();
+	return true;
+}
+
+bool TwinEConsole::doChangeChapter(int argc, const char **argv) {
+	if (argc <= 1) {
+		debugPrintf("Expected to get a chapter index as first parameter\n");
+		return true;
+	}
+	debugPrintf("Old chapter was: %i\n", _engine->_gameState->_gameChapter);
+	_engine->_gameState->_gameChapter = (int16)atoi(argv[1]);
 	return true;
 }
 

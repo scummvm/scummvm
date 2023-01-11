@@ -1033,6 +1033,7 @@ static int32 lMESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lINC_CHAPTER(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::INC_CHAPTER()");
 	engine->_gameState->_gameChapter++;
+	debug("Switched chapter to %i", engine->_gameState->_gameChapter);
 	return 0;
 }
 
