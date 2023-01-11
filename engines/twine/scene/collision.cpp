@@ -234,51 +234,42 @@ void Collision::handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, Acto
 bool Collision::checkValidObjPos(int32 actorIdx) {
 	const ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
-	const int16 x0 = actor->posObj().x + actor->_boundingBox.mins.x;
-	const int16 x1 = actor->posObj().x + actor->_boundingBox.maxs.x;
-	const int16 y0 = actor->posObj().y + actor->_boundingBox.mins.y;
-	const int16 y1 = actor->posObj().y + actor->_boundingBox.maxs.y;
-	const int16 z0 = actor->posObj().z + actor->_boundingBox.mins.z;
-	const int16 z1 = actor->posObj().z + actor->_boundingBox.maxs.z;
+	const IVec3 m0 = actor->posObj() + actor->_boundingBox.mins;
+	const IVec3 m1 = actor->posObj() + actor->_boundingBox.maxs;
 
-	if (x0 < 0 || x0 > SIZE_BRICK_XZ * 63) {
+	if (m0.x < 0 || m0.x > SIZE_BRICK_XZ * 63) {
 		return false;
 	}
-	if (x1 < 0 || x1 > SIZE_BRICK_XZ * 63) {
+	if (m1.x < 0 || m1.x > SIZE_BRICK_XZ * 63) {
 		return false;
 	}
-	if (z0 < 0 || z0 > SIZE_BRICK_XZ * 63) {
+	if (m0.z < 0 || m0.z > SIZE_BRICK_XZ * 63) {
 		return false;
 	}
-	if (z1 < 0 || z1 > SIZE_BRICK_XZ * 63) {
+	if (m1.z < 0 || m1.z > SIZE_BRICK_XZ * 63) {
 		return false;
 	}
 
 	Grid *grid = _engine->_grid;
-	if (grid->worldColBrickFull(x0, y0, z0, actor->_boundingBox.maxs.y, actorIdx) != ShapeType::kNone) {
+	if (grid->worldColBrickFull(m0.x, m0.y, m0.z, actor->_boundingBox.maxs.y, actorIdx) != ShapeType::kNone) {
 		return false;
 	}
-	if (grid->worldColBrickFull(x1, y0, z0, actor->_boundingBox.maxs.y, actorIdx) != ShapeType::kNone) {
+	if (grid->worldColBrickFull(m1.x, m0.y, m0.z, actor->_boundingBox.maxs.y, actorIdx) != ShapeType::kNone) {
 		return false;
 	}
-	if (grid->worldColBrickFull(x1, y0, z1, actor->_boundingBox.maxs.y, actorIdx) != ShapeType::kNone) {
+	if (grid->worldColBrickFull(m1.x, m0.y, m1.z, actor->_boundingBox.maxs.y, actorIdx) != ShapeType::kNone) {
 		return false;
 	}
-	if (grid->worldColBrickFull(x0, y0, z1, actor->_boundingBox.maxs.y, actorIdx) != ShapeType::kNone) {
+	if (grid->worldColBrickFull(m0.x, m0.y, m1.z, actor->_boundingBox.maxs.y, actorIdx) != ShapeType::kNone) {
 		return false;
 	}
 
 	for (int32 n = 0; n < _engine->_scene->_sceneNumActors; ++n) {
 		const ActorStruct *actorTest = _engine->_scene->getActor(n);
 		if (n != actorIdx && actorTest->_body != -1 && !actor->_staticFlags.bIsHidden && actorTest->_carryBy != actorIdx) {
-			const int16 xt0 = actorTest->posObj().x + actorTest->_boundingBox.mins.x;
-			const int16 xt1 = actorTest->posObj().x + actorTest->_boundingBox.maxs.x;
-			const int16 yt0 = actorTest->posObj().y + actorTest->_boundingBox.mins.y;
-			const int16 yt1 = actorTest->posObj().y + actorTest->_boundingBox.maxs.y;
-			const int16 zt0 = actorTest->posObj().z + actorTest->_boundingBox.mins.z;
-			const int16 zt1 = actorTest->posObj().z + actorTest->_boundingBox.maxs.z;
-
-			if (x0 < xt1 && x1 > xt0 && y0 < yt1 && y1 > yt0 && z0 < zt1 && z1 > zt0) {
+			const IVec3 &t0 = actorTest->posObj() + actorTest->_boundingBox.mins;
+			const IVec3 &t1 = actorTest->posObj() + actorTest->_boundingBox.maxs;
+			if (m0.x < t1.x && m1.x > t0.x && m0.y < t1.y && m1.y > t0.y && m0.z < t1.z && m1.z > t0.z) {
 				return false;
 			}
 		}
