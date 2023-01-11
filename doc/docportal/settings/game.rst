@@ -50,7 +50,7 @@ The Game tab also shows settings unique to the game engine for the selected game
 To find out which engine powers your game, have a look at the ScummVM Supported Games `wiki page
 <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ or :ref:`group <group>` games by Engine in the Launcher. 
 
-Engines: ADL_ | AGI_ | AGOS_ | Bladerunner_ | Buried_ | CGE_ | CGE2_ | Chewy_ | Cine_ | Drascula_ | Dreamweb_ | FREESCAPE_ | Griffon_ | GrimE_ | HDB_ | Hopkins_ | Hypno_ | Kyra_ | Lure_ | MADE_ | MADS_ | MTROPOLIS_ | MYST3_ | Neverhood_ | SCI_ | SCUMM_ | Sherlock_ | Sky_ | Stark_ | Supernova_ | Sword2_ | Sword25_ | Toltecs_ | Trecision_ | Ultima_ | Wintermute_ | Xeen_ | ZVision_ 
+Engines: ADL_ | AGI_ | AGOS_ | Bladerunner_ | Buried_ | CGE_ | CGE2_ | Chewy_ | Cine_ | Drascula_ | Dreamweb_ | Freescape_ | Griffon_ | GrimE_ | HDB_ | Hopkins_ | Hypno_ | Kyra_ | Lure_ | MADE_ | MADS_ | mTropolis_ | Myst3_ | Neverhood_ | SCI_ | SCUMM_ | Sherlock_ | Sky_ | Stark_ | Supernova_ | Sword2_ | Sword25_ | Toltecs_ | Trecision_ | Ultima_ | Wintermute_ | Xeen_ | ZVision_ 
 
 
 
@@ -374,40 +374,54 @@ Enable Text to Speech for Subtitles
 
 ,,,,,,,,,,
 
-.. FREESCAPE:
-	FREESCAPE
-	**********
+.. _Freescape:
 
-	Prerecorded sounds
-		Use high-quality pre-recorded sounds instead of pc speaker emulation
+Freescape
+**********
 
-		*prerecorded_sounds*
+.. _prerecorded:
 
-	Extended timer
-		Starts the game timer at 99:59:59.
+Prerecorded sounds
+	Uses high-quality pre-recorded sounds instead of PC speaker emulation.
 
-		*extended_timer*
+	*prerecorded_sounds*
 
-	Automatic drilling
-		Allows successful drilling in any area in Driller.
+.. _extended:
 
-		*automatic_drilling*
+Extended timer
+	Starts the game timer at 99:59:59.
 
-	Disable demo mode	
-		Ensures demo mode is never activated.
+	*extended_timer*
 
-		*disable_demo_mode*
+.. _drill:
 
-	Disable sensors
-		Sensors will not shoot the player.
+Automatic drilling
+	Allows successful drilling in any area in Driller.
 
-		*disable_sensors*
+	*automatic_drilling*
 
-	Disable falling
-		Player cannot fall over edges.
+.. _demo:
 
-		*disable_falling*
+Disable demo mode	
+	Ensures demo mode is never activated.
 
+	*disable_demo_mode*
+
+.. _sensors:
+
+Disable sensors
+	Ensures sensors do not shoot the player.
+
+	*disable_sensors*
+
+.. _falling:
+
+Disable falling
+	Stops player from falling over edges.
+
+	*disable_falling*
+
+,,,,,,,,,
 
 .. _Griffon:
 
@@ -437,6 +451,8 @@ Show FPS
 	Shows the current FPS-rate while playing.
 
 	*show_fps*
+
+,,,,,,,,,,,
 
 .. _Groovie:
 
@@ -750,64 +766,68 @@ Transitions (Riven only)
 
 ,,,,,,,,
 
-.. 
-	.. _MTROPOLIS:
+.. _mTropolis:
 
-	MTROPOLIS
-	************
+mTropolis
+************
 
-	.. _widescreen:
+.. _widescreen:
 
-	16:9 widescreen mod
-		Removes letterboxing and moves some display elements, improving coverage on widescreen displays.
+16:9 widescreen mod
+	Removes letterboxing and moves some display elements, improving coverage on widescreen displays.
 
-		*mtropolis_mod_obsidian_widescreen*
+	*mtropolis_mod_obsidian_widescreen*
 
-	.. _dynamicmidi:
+.. _dynamicmidi:
 
-	Improved music mixing
-		Enables dynamic MIDI mixer, improving music quality.
+Improved music mixing
+	Enables dynamic MIDI mixer, improving music quality.
 
-		*mtropolis_mod_dynamic_midi*
+	*mtropolis_mod_dynamic_midi*
 
-	.. _saveatcheckpoints:
+.. _saveatcheckpoints:
 
-	Autosave at progress points
-		Automatically saves the game at major progress points.
+Autosave at progress points
+	Automatically saves the game at major progress points.
 
-		*mtropolis_mod_auto_save_at_checkpoints*
+	*mtropolis_mod_auto_save_at_checkpoints*
 
-	.. _shorttransitions:
+.. _shorttransitions:
 
-	Enable short transitions
-		Plays short transitions that would normally be skipped on fast CPUs.
+Enable short transitions
+	Plays short transitions that would normally be skipped on fast CPUs.
 
-		*mtropolis_mod_minimum_transition_duration*
+	*mtropolis_mod_minimum_transition_duration*
 
-	Enable subtitles for important sound effects
-		Enables subtitles for important sound effects.  This may reduce the difficulty of sound recognition puzzles and minigames.
+.. _sfxsubs:
 
-		*mtropolis_mod_sound_gameplay_subtitles*
+Enable subtitles for important sound effects
+	Enables subtitles for important sound effects.  This may reduce the difficulty of sound recognition puzzles and minigames.
 
-	.. _debugger:
+	*mtropolis_mod_sound_gameplay_subtitles*
 
-	Start with debugger
-		Starts the game with the debug overlay active.
+.. _debugger:
 
-		*mtropolis_debug_at_start*
+Start with debugger
+	Starts the game with the debug overlay active.
 
+	*mtropolis_debug_at_start*
 
-	.. _MYST3:
+,,,,,,,,,,,,,,
 
-	MYST3
+.. _Myst3:
+
+	Myst3
 	*******
+
+.. _widescreen_mod:
 
 	Widescreen mod
 		Enables widescreen rendering in fullscreen mode.
 
 		*widescreen_mod*
 		
-	
+,,,,,,,,,,,,,,,,	
 
 .. _Neverhood:
 
