@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-11 13:46+0000\n"
-"PO-Revision-Date: 2022-12-05 05:34+0000\n"
+"PO-Revision-Date: 2023-01-11 22:34+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -216,20 +216,18 @@ msgstr "ERROR %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:186 gui/downloadpacksdialog.cpp:241
-#, fuzzy, c-format
-#| msgid "Downloading icons list..."
+#, c-format
 msgid "Downloading %S list..."
-msgstr "S'està baixant la llista d'icones..."
+msgstr "S'està baixant la llista %S..."
 
 #: gui/downloadpacksdialog.cpp:200
 msgid "Clear Cache"
 msgstr "Neteja la memòria cau"
 
 #: gui/downloadpacksdialog.cpp:251
-#, fuzzy, c-format
-#| msgid "Downloading icons list... %d entries"
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "S'està baixant la llista d'icones... %d elements"
+msgstr "S'està baixant la llista %S... %d elements"
 
 #: gui/downloadpacksdialog.cpp:261
 #, c-format
@@ -259,10 +257,9 @@ msgstr "ERROR: No s'ha definit cap camí per les icones"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:427
-#, fuzzy, c-format
-#| msgid "No new icons packs available"
+#, c-format
 msgid "No new %S available"
-msgstr "No hi ha disponibles nous paquets d'icones"
+msgstr "No hi ha nou %S disponible"
 
 #: gui/downloadpacksdialog.cpp:463
 #, c-format
@@ -795,10 +792,8 @@ msgid "Select Group by"
 msgstr "Selecciona grup per"
 
 #: gui/launcher.cpp:217 gui/launcher.cpp:799
-#, fuzzy
-#| msgid "Group by:"
 msgid "Group:"
-msgstr "Agrupa per:"
+msgstr "Agrupa:"
 
 #: gui/launcher.cpp:219
 msgid "Select a criteria to group the entries"
@@ -1217,16 +1212,12 @@ msgid "Shader Path:"
 msgstr "Camí del shader:"
 
 #: gui/options.cpp:1580
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Shaders"
-msgstr "Comprovació d'actualitzacions:"
+msgstr "Actualitza \"shaders\""
 
 #: gui/options.cpp:1580
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of shader packs"
-msgstr "Comprova si hi ha actualitzacions..."
+msgstr "Comprova si hi ha actualitzacions dels paquets de \"shader\""
 
 #: gui/options.cpp:1586 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
@@ -1597,21 +1588,16 @@ msgid "GUI renderer:"
 msgstr "Render GUI:"
 
 #: gui/options.cpp:2458
-#, fuzzy
-#| msgid "Always return to the launcher when leaving a game"
 msgid "Return to the launcher when leaving a game"
-msgstr "Torna sempre al llançador en sortir d'un joc"
+msgstr "Torna al llançador en sortir d'un joc"
 
 #: gui/options.cpp:2459
-#, fuzzy
-#| msgid ""
-#| "Always return to the launcher when leaving a game instead of closing "
-#| "ScummVM."
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
 msgstr ""
-"Torna sempre al llançador en sortir d'un joc en lloc de tancar ScummVM."
+"Torna al llançador en sortir d'un joc en lloc de tancar ScummVM\n"
+"(aquesta característica no és compatible amb tots els jocs)."
 
 #: gui/options.cpp:2466
 msgid "Ask for confirmation on exit"
@@ -1660,10 +1646,8 @@ msgid "Update Icons"
 msgstr "Actualitza les icones"
 
 #: gui/options.cpp:2521
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of icon packs"
-msgstr "Comprova si hi ha actualitzacions..."
+msgstr "Comprova si hi ha actualitzacions dels paquets d'icones"
 
 #: gui/options.cpp:2528
 msgid "Autosave:"
@@ -3780,7 +3764,7 @@ msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:361
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr ""
+msgstr "Mode d'ampliació desactivat. S'està tornant al llançador..."
 
 #: backends/platform/3ds/osystem-events.cpp:395
 msgid "Hover Mode"
@@ -3805,26 +3789,30 @@ msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
 msgstr ""
+"El mode d'ampliació només es pot activar\n"
+" quan ambdues pantalles estiguin activades."
 
 #: backends/platform/3ds/osystem-events.cpp:413
 msgid "In-game resolution too small to magnify."
-msgstr ""
+msgstr "La resolució en el joc és massa petita pel mode d'ampliació."
 
 #: backends/platform/3ds/osystem-events.cpp:419
 msgid "Magnify Mode On. Switching to Hover Mode..."
 msgstr ""
+"Mode d'ampliació activat. S'està canviant al mode en passar per sobre..."
 
 #: backends/platform/3ds/osystem-events.cpp:421
 msgid "Magnify Mode On"
-msgstr ""
+msgstr "Mode d'ampliació activat"
 
 #: backends/platform/3ds/osystem-events.cpp:428
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
 msgstr ""
+"Mode d'ampliació desactivat. S'està reactivant el mode d'arrossegament..."
 
 #: backends/platform/3ds/osystem-events.cpp:430
 msgid "Magnify Mode Off"
-msgstr ""
+msgstr "Mode d'ampliació desactivat"
 
 #: backends/platform/android/options.cpp:93
 msgid "Show On-screen control"
@@ -3832,7 +3820,7 @@ msgstr "Mostra el control En-pantalla"
 
 #: backends/platform/android/options.cpp:94
 msgid "Choose the preferred touch mode:"
-msgstr ""
+msgstr "Trieu el mode tàctil preferit:"
 
 #: backends/platform/android/options.cpp:96
 msgid "In menus"
@@ -3867,7 +3855,7 @@ msgstr "En jocs 3D"
 #. I18N: Show a button to revoke Storage Access Framework permissions for Android
 #: backends/platform/android/options.cpp:128
 msgid "Show SAF revoke permissions overlay button"
-msgstr ""
+msgstr "Mostra el botó de revocació de permisos del SAF"
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
@@ -4225,6 +4213,7 @@ msgstr "No s'ha d'emular els artefactes NTSC per al text"
 #: engines/agi/detection_tables.h:310
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
 msgstr ""
+"Els primers jocs d'AGI per a Tandy Color Computer encara no són compatibles."
 
 #: engines/agi/font.cpp:1096
 msgid ""
@@ -4232,6 +4221,10 @@ msgid ""
 "If you have such file in other AGI (Sierra) game, you can copy it to the "
 "game directory"
 msgstr ""
+"No s'ha pogut obrir/utilitzar el fitxer 'hgc_font' per al tipus de lletra "
+"d'alta resolució d'Hèrcules.\n"
+"Si teniu aquest fitxer en un altre joc AGI (Sierra), el podeu copiar al "
+"directori del joc"
 
 #: engines/agi/metaengine.cpp:119 engines/chewy/metaengine.cpp:36
 #: engines/cine/metaengine.cpp:42 engines/drascula/metaengine.cpp:38
@@ -4274,32 +4267,38 @@ msgstr "Compatibilitat amb ratolí"
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
+"Activa la compatibilitat amb el ratolí. Permet utilitzar el ratolí per al "
+"moviment i en els menús del joc."
 
 #: engines/agi/metaengine.cpp:155
 msgid "Use Hercules hires font"
-msgstr ""
+msgstr "Utilitza el tipus de lletra d'alta resolució Hercules"
 
 #: engines/agi/metaengine.cpp:156
 msgid "Uses Hercules hires font, when font file is available."
 msgstr ""
+"Utilitza el tipus de lletra d'alta resolució Hercules, quan el fitxer de "
+"tipus de lletra està disponible."
 
 #: engines/agi/metaengine.cpp:167
 msgid "Pause when entering commands"
-msgstr ""
+msgstr "Pausa en introduir ordres"
 
 #: engines/agi/metaengine.cpp:168
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
+"Mostra una finestra de l'indicador d'ordres i posa el joc en pausa (com en "
+"els jocs SCI) en lloc d'un indicador en temps real."
 
 #: engines/agi/metaengine.cpp:179
 msgid "Add speed menu"
-msgstr ""
+msgstr "Afegeix un menú de velocitat"
 
 #: engines/agi/metaengine.cpp:180
 msgid "Add game speed menu (similar to PC version)"
-msgstr ""
+msgstr "Afegeix un menú de velocitat del joc (similar a la versió per a PC)"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
@@ -4343,6 +4342,8 @@ msgstr "Restaura"
 #: engines/agos/saveload.cpp:139
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
+"La càrrega ràpida o desament de la partida no està s'admet en aquesta "
+"ubicació"
 
 #: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2706
 #, c-format
@@ -4384,7 +4385,7 @@ msgstr "No s'ha trobat el fitxer d'escena '%s'!"
 
 #: engines/agos/metaengine.cpp:42
 msgid "AdLib OPL3 mode"
-msgstr ""
+msgstr "Mode AdLib OPL3"
 
 #: engines/agos/metaengine.cpp:43
 msgid ""
@@ -4392,10 +4393,13 @@ msgid ""
 "this will prevent cut-off notes, add extra notes or instruments and/or add "
 "stereo."
 msgstr ""
+"Quan se seleccioni AdLib, s'utilitzaran les característiques OPL3. Depenent "
+"del joc, això evitarà tallar notes, afegir notes o instruments addicionals i/"
+"o afegir estèreo."
 
 #: engines/agos/metaengine.cpp:53 engines/agos/metaengine.cpp:64
 msgid "Use DOS version music tempos"
-msgstr ""
+msgstr "Utilitza els tempos de música de versió DOS"
 
 #: engines/agos/metaengine.cpp:54 engines/agos/metaengine.cpp:65
 msgid ""
@@ -4403,6 +4407,9 @@ msgid ""
 "version of the game. Otherwise, the faster tempos of the Windows version "
 "will be used."
 msgstr ""
+"En seleccionar aquesta opció es reproduirà la música utilitzant els tempos "
+"utilitzats per la versió DOS del joc. En cas contrari, s'utilitzaran els "
+"tempos més ràpids de la versió de Windows."
 
 #: engines/agos/metaengine.cpp:75 engines/sci/detection_options.h:93
 msgid "Prefer digital sound effects"
@@ -4418,7 +4425,7 @@ msgstr "Desactiva els efectes d'esvaïment"
 
 #: engines/agos/metaengine.cpp:87
 msgid "Don't fade every screen to black when leaving a room."
-msgstr ""
+msgstr "No esvaeixis cada pantalla a negre quan surtis d'una habitació."
 
 #: engines/agos/metaengine.cpp:170
 msgid "AGOS 2 support is not compiled in"
@@ -4453,18 +4460,23 @@ msgstr "Força el text suavitzat"
 #: engines/ags/dialogs.cpp:78
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
+"Utilitza l'antialiàsing per a dibuixar el text encara que el joc no ho demani"
 
 #: engines/ags/ags.cpp:132
 msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
 "supported."
 msgstr ""
+"El joc seleccionat utilitza una versió anterior a 2.5 del motor AGS, que no "
+"és compatible."
 
 #: engines/ags/ags.cpp:140
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."
 msgstr ""
+"El joc seleccionat té un fitxer de dades més gran que 2Gb, el qual encara no "
+"és compatible amb la vostra versió de ScummVM."
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -4492,7 +4504,7 @@ msgstr "Canvia a Olmec"
 
 #: engines/asylum/metaengine.cpp:145
 msgid "Bring up the In-Game Menu"
-msgstr ""
+msgstr "Mostra el menú intern del joc"
 
 #: engines/asylum/metaengine.cpp:151
 msgid "Open character inventory"
@@ -4505,6 +4517,8 @@ msgid ""
 "WARNING: Attempt to load saved game from a previous version: Version %s / "
 "Build %d"
 msgstr ""
+"AVÍS: S'ha intentat carregar una partida desada des d'una versió anterior: "
+"Versió %s / Compilació %d"
 
 #: engines/asylum/asylum.cpp:201 engines/cine/saveload.cpp:863
 msgid "Load anyway"
@@ -4516,7 +4530,7 @@ msgstr "No s'han pogut inicialitzar els recursos"
 
 #: engines/bladerunner/bladerunner.cpp:1166
 msgid "A required game resource was not found"
-msgstr ""
+msgstr "No s'ha trobat el recurs del joc requerit"
 
 #: engines/bladerunner/bladerunner.cpp:2748
 msgid ""
@@ -4524,6 +4538,9 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
+"AVÍS: Aquesta partida s'ha desat en el mode Contingut restaurat, però esteu "
+"jugant en el mode Contingut original. El mode s'ajustarà a Contingut "
+"restaurat per a aquesta sessió fins que sortiu del joc."
 
 #: engines/bladerunner/bladerunner.cpp:2750
 msgid ""
@@ -4531,10 +4548,13 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
+"AVÍS: Aquesta partida s'ha desat en el mode Contingut original, però esteu "
+"jugant en el mode Contingut restaurat. El mode s'ajustarà al Contingut "
+"original per a aquesta sessió fins que sortiu del joc."
 
 #: engines/bladerunner/bladerunner.cpp:2752
 msgid "Continue"
-msgstr ""
+msgstr "Continua"
 
 #: engines/bladerunner/detection_tables.h:90
 #: engines/bladerunner/detection_tables.h:101
@@ -5015,10 +5035,8 @@ msgid "Sensors will not shoot the player"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:90
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable falling"
-msgstr "Desactiva el menú de desar"
+msgstr "Desactiva la caiguda"
 
 #: engines/freescape/metaengine.cpp:91
 msgid "Player cannot fall over edges"
@@ -6385,10 +6403,8 @@ msgstr ""
 
 #. I18N: NHC is a file extension
 #: engines/neverhood/dialogs.cpp:83
-#, fuzzy
-#| msgid "Enable font replacement"
 msgid "NHC replacement:"
-msgstr "Activa la substitució del tipus de lletra"
+msgstr "Substitució de NHC:"
 
 #: engines/neverhood/dialogs.cpp:89
 msgid "<original>"
@@ -7544,10 +7560,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:674
-#, fuzzy
-#| msgid "Enable the debug mode"
 msgid "Enable low latency audio mode"
-msgstr "Habilita el mode de depuració"
+msgstr "Activa el mode d'àudio de latència baixa"
 
 #: engines/scumm/metaengine.cpp:675
 msgid ""
