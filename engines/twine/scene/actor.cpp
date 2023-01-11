@@ -288,6 +288,7 @@ void Actor::hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit, 
 		if (actor->_genAnim == AnimationTypes::kBigHit || actor->_genAnim == AnimationTypes::kHit2) {
 			if (actor->_nextGenAnim != AnimationTypes::kStanding) {
 				const int32 tmpAnimPos = actor->_frame;
+				actor->_frame = 1;
 				_engine->_animations->processAnimActions(actorIdxAttacked);
 				actor->_frame = tmpAnimPos;
 			}
