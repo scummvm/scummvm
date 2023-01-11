@@ -707,13 +707,13 @@ void TwinEEngine::processInventoryAction() {
 	case kiPenguin: {
 		ActorStruct *penguin = _scene->getActor(_scene->_mecaPenguinIdx);
 
-		const IVec3 &destPos = _movements->rotateActor(0, 800, _scene->_sceneHero->_angle);
+		const IVec3 &destPos = _movements->rotate(0, 800, _scene->_sceneHero->_beta);
 
 		penguin->_pos = _scene->_sceneHero->_pos;
 		penguin->_pos.x += destPos.x;
 		penguin->_pos.z += destPos.z;
 
-		penguin->_angle = _scene->_sceneHero->_angle;
+		penguin->_beta = _scene->_sceneHero->_beta;
 
 		if (_collision->checkValidObjPos(_scene->_mecaPenguinIdx)) {
 			penguin->setLife(kActorMaxLife);
@@ -721,7 +721,7 @@ void TwinEEngine::processInventoryAction() {
 			_actor->initModelActor(BodyType::btNormal, _scene->_mecaPenguinIdx);
 			penguin->_dynamicFlags.bIsDead = 0;
 			penguin->setBrickShape(ShapeType::kNone);
-			_movements->initRealAngleConst(penguin->_angle, penguin->_angle, penguin->_speed, &penguin->_move);
+			_movements->initRealAngleConst(penguin->_beta, penguin->_beta, penguin->_speed, &penguin->_moveAngle);
 			_gameState->removeItem(InventoryItems::kiPenguin);
 			penguin->_delayInMillis = _lbaTime + TO_SECONDS(30);
 		}
@@ -733,7 +733,7 @@ void TwinEEngine::processInventoryAction() {
 		break;
 	}
 	case kiCloverLeaf:
-		if (_scene->_sceneHero->_life < kActorMaxLife) {
+		if (_scene->_sceneHero->_lifePoint < kActorMaxLife) {
 			if (_gameState->_inventoryNumLeafs > 0) {
 				_scene->_sceneHero->setLife(kActorMaxLife);
 				_gameState->setMagicPoints(_gameState->_magicLevelIdx * 20);
@@ -794,7 +794,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 	} else {
 		// Process give up menu - Press ESC
-		if (_input->toggleAbortAction() && _scene->_sceneHero->_life > 0 && _scene->_sceneHero->_body != -1 && !_scene->_sceneHero->_staticFlags.bIsHidden) {
+		if (_input->toggleAbortAction() && _scene->_sceneHero->_lifePoint > 0 && _scene->_sceneHero->_body != -1 && !_scene->_sceneHero->_staticFlags.bIsHidden) {
 			ScopedEngineFreeze scopedFreeze(this);
 			exitSceneryView();
 			const int giveUp = _menu->giveupMenu();
@@ -928,7 +928,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			continue;
 		}
 
-		if (actor->_life == 0) {
+		if (actor->_lifePoint == 0) {
 			if (IS_HERO(a)) {
 				_animations->initAnim(AnimationTypes::kLandDeath, AnimType::kAnimationSet, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 				actor->_controlMode = ControlMode::kNoMove;
@@ -998,7 +998,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			}
 		}
 
-		if (actor->_life <= 0) {
+		if (actor->_lifePoint <= 0) {
 			if (IS_HERO(a)) {
 				if (actor->_dynamicFlags.bAnimEnded) {
 					if (_gameState->_inventoryNumLeafs > 0) { // use clover leaf automaticaly
@@ -1021,7 +1021,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 						_gameState->setLeafs(1);
 						_gameState->setMaxMagicPoints();
 						_actor->_heroBehaviour = _actor->_previousHeroBehaviour;
-						actor->_angle = _actor->_previousHeroAngle;
+						actor->_beta = _actor->_previousHeroAngle;
 						actor->setLife(kActorMaxLife);
 
 						if (_scene->_previousSceneIdx != _scene->_currentSceneIdx) {

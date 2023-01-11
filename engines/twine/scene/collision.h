@@ -52,7 +52,7 @@ public:
 	 * @param actorIdx1 Actor 1 index
 	 * @param actorIdx2 Actor 2 index
 	 */
-	bool standingOnActor(int32 actorIdx1, int32 actorIdx2) const;
+	bool checkZvOnZv(int32 actorIdx1, int32 actorIdx2) const;
 
 	int32 clampedLerp(int32 start, int32 end, int32 maxDelay, int32 delay) const;
 

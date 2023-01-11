@@ -1911,7 +1911,7 @@ void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 ang
 	if (angle == -1) {
 		const int16 newAngle = move.getRealAngle(_engine->_lbaTime);
 		if (move.numOfStep == 0) {
-			_engine->_movements->setActorAngleSafe(newAngle, newAngle - ANGLE_90, ANGLE_17, &move);
+			_engine->_movements->initRealAngle(newAngle, newAngle - ANGLE_90, ANGLE_17, &move);
 		}
 		renderIsoModel(0, y, 0, ANGLE_0, newAngle, ANGLE_0, bodyData, dummy);
 	} else {

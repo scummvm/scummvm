@@ -142,7 +142,7 @@ public:
 	 * @param stepAngle number of steps
 	 * @param movePtr time pointer to update
 	 */
-	void setActorAngleSafe(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr);
+	void initRealAngle(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr);
 
 	/**
 	 * Clear actors safe angle
@@ -178,7 +178,7 @@ public:
 	 * @param z Actor current Z coordinate
 	 * @param angle Actor angle to rotate
 	 */
-	IVec3 rotateActor(int32 x, int32 z, int32 angle);
+	IVec3 rotate(int32 x, int32 z, int32 angle);
 
 	/**
 	 * Move actor around the scene

@@ -204,7 +204,7 @@ bool Scene::loadSceneLBA2() {
 		act->_oldPos = act->posObj();
 		act->_strengthOfHit = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
-		act->_angle = (int16)stream.readUint16LE();
+		act->_beta = (int16)stream.readUint16LE();
 		act->_speed = (int16)stream.readUint16LE();
 		act->_controlMode = (ControlMode)stream.readByte();
 		act->_cropLeft = stream.readSint16LE();
@@ -337,7 +337,7 @@ bool Scene::loadSceneLBA1() {
 		act->_strengthOfHit = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
 		act->_bonusParameter.givenNothing = 0;
-		act->_angle = (int16)stream.readUint16LE();
+		act->_beta = (int16)stream.readUint16LE();
 		act->_speed = (int16)stream.readUint16LE();
 		act->_controlMode = (ControlMode)stream.readUint16LE();
 		act->_cropLeft = stream.readSint16LE();
@@ -570,7 +570,7 @@ void Scene::changeScene() {
 
 	if (_previousSceneIdx != SCENE_CEILING_GRID_FADE_1 && _previousSceneIdx != _needChangeScene) {
 		_engine->_actor->_previousHeroBehaviour = _engine->_actor->_heroBehaviour;
-		_engine->_actor->_previousHeroAngle = _sceneHero->_angle;
+		_engine->_actor->_previousHeroAngle = _sceneHero->_beta;
 		_engine->autoSave();
 	}
 
@@ -719,7 +719,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 		    (currentZ >= zone->mins.z && currentZ <= zone->maxs.z)) {
 			switch (zone->type) {
 			case ZoneType::kCube:
-				if (IS_HERO(actorIdx) && actor->_life > 0) {
+				if (IS_HERO(actorIdx) && actor->_lifePoint > 0) {
 					_needChangeScene = zone->num;
 					_zoneHeroPos.x = actor->_pos.x - zone->mins.x + zone->infoData.ChangeScene.x;
 					_zoneHeroPos.y = actor->_pos.y - zone->mins.y + zone->infoData.ChangeScene.y;
@@ -774,7 +774,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 				break;
 			case ZoneType::kLadder:
 				if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour != HeroBehaviourType::kProtoPack && (actor->_genAnim == AnimationTypes::kForward || actor->_genAnim == AnimationTypes::kTopLadder || actor->_genAnim == AnimationTypes::kClimbLadder)) {
-					IVec3 destPos = _engine->_movements->rotateActor(actor->_boundingBox.mins.x, actor->_boundingBox.mins.z, actor->_angle + ANGLE_360 + ANGLE_135);
+					IVec3 destPos = _engine->_movements->rotate(actor->_boundingBox.mins.x, actor->_boundingBox.mins.z, actor->_beta + ANGLE_360 + ANGLE_135);
 					destPos.x += actor->_processActor.x;
 					destPos.z += actor->_processActor.z;
 

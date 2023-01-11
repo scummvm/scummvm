@@ -191,8 +191,8 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	_engine->_scene->_newHeroPos.x = file->readSint16LE();
 	_engine->_scene->_newHeroPos.y = file->readSint16LE();
 	_engine->_scene->_newHeroPos.z = file->readSint16LE();
-	_engine->_scene->_sceneHero->_angle = ToAngle(file->readSint16LE());
-	_engine->_actor->_previousHeroAngle = _engine->_scene->_sceneHero->_angle;
+	_engine->_scene->_sceneHero->_beta = ToAngle(file->readSint16LE());
+	_engine->_actor->_previousHeroAngle = _engine->_scene->_sceneHero->_beta;
 	_engine->_scene->_sceneHero->_genBody = (BodyType)file->readByte();
 
 	const byte numHolomapFlags = file->readByte(); // number of holomap locations
@@ -249,7 +249,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeByte(sceneIdx);
 	file->writeByte(_gameChapter);
 	file->writeByte((byte)_engine->_actor->_heroBehaviour);
-	file->writeByte(_engine->_scene->_sceneHero->_life);
+	file->writeByte(_engine->_scene->_sceneHero->_lifePoint);
 	file->writeSint16LE(_inventoryNumKashes);
 	file->writeByte(_magicLevelIdx);
 	file->writeByte(_magicPoint);
@@ -259,7 +259,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeSint16LE(_engine->_scene->_newHeroPos.x);
 	file->writeSint16LE(_engine->_scene->_newHeroPos.y);
 	file->writeSint16LE(_engine->_scene->_newHeroPos.z);
-	file->writeSint16LE(FromAngle(_engine->_scene->_sceneHero->_angle));
+	file->writeSint16LE(FromAngle(_engine->_scene->_sceneHero->_beta));
 	file->writeByte((uint8)_engine->_scene->_sceneHero->_genBody);
 
 	// number of holomap locations

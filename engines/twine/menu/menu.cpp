@@ -915,7 +915,7 @@ int32 Menu::giveupMenu() {
 void Menu::drawHealthBar(int32 left, int32 right, int32 top, int32 barLeftPadding, int32 barHeight) {
 	_engine->_grid->drawSprite(left, top + 3, _engine->_resources->_spriteData[SPRITEHQR_LIFEPOINTS]);
 	const int32 barLeft = left + barLeftPadding;
-	const int32 healthBarRight = _engine->_screens->lerp(barLeft, right, 50, _engine->_scene->_sceneHero->_life);
+	const int32 healthBarRight = _engine->_screens->lerp(barLeft, right, 50, _engine->_scene->_sceneHero->_lifePoint);
 	const int32 barBottom = top + barHeight;
 	_engine->_interface->drawFilledRect(Common::Rect(barLeft, top, healthBarRight, barBottom), COLOR_91);
 	drawRectBorders(Common::Rect(barLeft, top, right, barBottom));
@@ -1113,7 +1113,7 @@ void Menu::processBehaviourMenu(bool behaviourMenu) {
 	_engine->_actor->_heroAnimIdx[(byte)HeroBehaviourType::kAggressive] = _engine->_actor->_heroAnimIdxAGGRESSIVE;
 	_engine->_actor->_heroAnimIdx[(byte)HeroBehaviourType::kDiscrete] = _engine->_actor->_heroAnimIdxDISCRETE;
 
-	_engine->_movements->setActorAngleSafe(_engine->_scene->_sceneHero->_angle, _engine->_scene->_sceneHero->_angle - ANGLE_90, ANGLE_17, &_moveMenu);
+	_engine->_movements->initRealAngle(_engine->_scene->_sceneHero->_beta, _engine->_scene->_sceneHero->_beta - ANGLE_90, ANGLE_17, &_moveMenu);
 
 	_engine->saveFrontBuffer();
 
@@ -1130,7 +1130,7 @@ void Menu::processBehaviourMenu(bool behaviourMenu) {
 	} else {
 		const int32 left = _engine->width() / 2 - 220;
 		const int32 top = _engine->height() / 2 - 140;
-		drawBehaviourMenu(left, top, _engine->_scene->_sceneHero->_angle);
+		drawBehaviourMenu(left, top, _engine->_scene->_sceneHero->_beta);
 
 		HeroBehaviourType tmpHeroBehaviour = _engine->_actor->_heroBehaviour;
 
@@ -1178,9 +1178,9 @@ void Menu::processBehaviourMenu(bool behaviourMenu) {
 			_engine->_actor->_heroBehaviour = (HeroBehaviourType)heroBehaviour;
 
 			if (tmpHeroBehaviour != _engine->_actor->_heroBehaviour) {
-				drawBehaviour(left, top, tmpHeroBehaviour, _engine->_scene->_sceneHero->_angle, true);
+				drawBehaviour(left, top, tmpHeroBehaviour, _engine->_scene->_sceneHero->_beta, true);
 				tmpHeroBehaviour = _engine->_actor->_heroBehaviour;
-				_engine->_movements->setActorAngleSafe(_engine->_scene->_sceneHero->_angle, _engine->_scene->_sceneHero->_angle - ANGLE_90, ANGLE_17, &_moveMenu);
+				_engine->_movements->initRealAngle(_engine->_scene->_sceneHero->_beta, _engine->_scene->_sceneHero->_beta - ANGLE_90, ANGLE_17, &_moveMenu);
 				const int tmpAnimIdx = _engine->_actor->_heroAnimIdx[(byte)_engine->_actor->_heroBehaviour];
 				_engine->_animations->setAnimObjet(_behaviourAnimState[(byte)_engine->_actor->_heroBehaviour], _engine->_resources->_animData[tmpAnimIdx], *_behaviourEntity, &_behaviourAnimData[(byte)_engine->_actor->_heroBehaviour]);
 			}

@@ -61,9 +61,9 @@ void Actor::restartHeroScene() {
 	sceneHero->_labelIdx = -1;
 	sceneHero->_offsetLife = 0;
 	sceneHero->_zone = -1;
-	sceneHero->_angle = _previousHeroAngle;
+	sceneHero->_beta = _previousHeroAngle;
 
-	_engine->_movements->setActorAngleSafe(sceneHero->_angle, sceneHero->_angle, ANGLE_0, &sceneHero->_move);
+	_engine->_movements->initRealAngle(sceneHero->_beta, sceneHero->_beta, ANGLE_0, &sceneHero->_moveAngle);
 	setBehaviour(_previousHeroBehaviour);
 
 	_cropBottomScreen = 0;
@@ -231,7 +231,7 @@ void Actor::initActor(int16 actorIdx) {
 
 		initSpriteActor(actorIdx);
 
-		_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, ANGLE_0, &actor->_move);
+		_engine->_movements->initRealAngle(ANGLE_0, ANGLE_0, ANGLE_0, &actor->_moveAngle);
 
 		if (actor->_staticFlags.bUsesClipping) {
 			actor->_animStep = actor->posObj();
@@ -249,7 +249,7 @@ void Actor::initActor(int16 actorIdx) {
 			_engine->_animations->initAnim(actor->_genAnim, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 		}
 
-		_engine->_movements->setActorAngleSafe(actor->_angle, actor->_angle, ANGLE_0, &actor->_move);
+		_engine->_movements->initRealAngle(actor->_beta, actor->_beta, ANGLE_0, &actor->_moveAngle);
 	}
 
 	actor->_offsetTrack = -1;
@@ -269,12 +269,12 @@ void Actor::resetActor(int16 actorIdx) {
 	memset(&actor->_dynamicFlags, 0, sizeof(DynamicFlagsStruct));
 	memset(&actor->_bonusParameter, 0, sizeof(BonusParameter));
 
-	_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, ANGLE_0, &actor->_move);
+	_engine->_movements->initRealAngle(ANGLE_0, ANGLE_0, ANGLE_0, &actor->_moveAngle);
 }
 
-void Actor::hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit, int32 angle) {
+void Actor::hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 hitforce, int32 angle) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdxAttacked);
-	if (actor->_life <= 0) {
+	if (actor->_lifePoint <= 0) {
 		return;
 	}
 
@@ -284,7 +284,7 @@ void Actor::hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit, 
 
 	actor->_hitBy = actorIdx;
 
-	if (actor->_armor <= strengthOfHit) {
+	if (actor->_armor <= hitforce) {
 		if (actor->_genAnim == AnimationTypes::kBigHit || actor->_genAnim == AnimationTypes::kHit2) {
 			if (actor->_nextGenAnim != AnimationTypes::kStanding) {
 				const int32 tmpAnimPos = actor->_frame;
@@ -295,7 +295,7 @@ void Actor::hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit, 
 
 		} else {
 			if (angle != -1) {
-				_engine->_movements->setActorAngleSafe(angle, angle, ANGLE_0, &actor->_move);
+				_engine->_movements->initRealAngle(angle, angle, ANGLE_0, &actor->_moveAngle);
 			}
 
 			if (_engine->getRandomNumber() & 1) {
@@ -311,9 +311,9 @@ void Actor::hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit, 
 			_engine->_movements->_lastJoyFlag = true;
 		}
 
-		actor->_life -= strengthOfHit;
-		if (actor->_life < 0) {
-			actor->_life = 0;
+		actor->_lifePoint -= hitforce;
+		if (actor->_lifePoint < 0) {
+			actor->_lifePoint = 0;
 		}
 	} else {
 		_engine->_animations->initAnim(AnimationTypes::kHit, AnimType::kAnimationInsert, AnimationTypes::kAnimInvalid, actorIdxAttacked);

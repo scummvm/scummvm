@@ -296,7 +296,7 @@ void Holomap::drawHoloObj(const IVec3 &angle, int32 x, int32 y) {
 void Holomap::renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, AnimTimerDataStruct &animTimerData, BodyData &bodyData, AnimData &animData) {
 	const int16 newAngle = move.getRealAngle(_engine->_lbaTime);
 	if (move.numOfStep == 0) {
-		_engine->_movements->setActorAngleSafe(ANGLE_0, -ANGLE_90, 500, &move);
+		_engine->_movements->initRealAngle(ANGLE_0, -ANGLE_90, 500, &move);
 	}
 
 	if (_engine->_animations->setModelAnimation(frameNumber, animData, bodyData, &animTimerData)) {

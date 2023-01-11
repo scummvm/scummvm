@@ -135,11 +135,11 @@ void Extra::initFly(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32 x,
 
 	extra->lastPos = extra->pos;
 
-	IVec3 destPos = _engine->_movements->rotateActor(x, 0, xAngle);
+	IVec3 destPos = _engine->_movements->rotate(x, 0, xAngle);
 
 	extra->destPos.y = -destPos.z;
 
-	destPos = _engine->_movements->rotateActor(0, destPos.x, yAngle);
+	destPos = _engine->_movements->rotate(0, destPos.x, yAngle);
 
 	extra->destPos.x = destPos.x;
 	extra->destPos.z = destPos.z;
@@ -406,7 +406,7 @@ void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int
 	renderRect.top = 0x7D00;
 	renderRect.bottom = -0x7D00;
 
-	IVec3 destPos = _engine->_movements->rotateActor(shapeX, shapeZ, angle);
+	IVec3 destPos = _engine->_movements->rotate(shapeX, shapeZ, angle);
 
 	const int32 computedX = destPos.x + x;
 	const int32 computedY = destPos.z + y;
@@ -441,7 +441,7 @@ void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int
 		_engine->_renderer->_projPos.x = currentX;
 		_engine->_renderer->_projPos.y = currentY;
 
-		destPos = _engine->_movements->rotateActor(shapeX, shapeZ, angle);
+		destPos = _engine->_movements->rotate(shapeX, shapeZ, angle);
 
 		currentX = destPos.x + x;
 		currentY = destPos.z + y;
@@ -626,10 +626,10 @@ void Extra::gereExtras() {
 				pos = 1;
 			}
 
-			IVec3 destPos = _engine->_movements->rotateActor(pos, 0, angle2);
+			IVec3 destPos = _engine->_movements->rotate(pos, 0, angle2);
 			extra->pos.y -= destPos.z;
 
-			destPos = _engine->_movements->rotateActor(0, destPos.x, tmpAngle);
+			destPos = _engine->_movements->rotate(0, destPos.x, tmpAngle);
 			extra->pos.x += destPos.x;
 			extra->pos.z += destPos.z;
 
@@ -676,10 +676,10 @@ void Extra::gereExtras() {
 				pos = 1;
 			}
 
-			IVec3 destPos = _engine->_movements->rotateActor(pos, 0, angle2);
+			IVec3 destPos = _engine->_movements->rotate(pos, 0, angle2);
 			extra->pos.y -= destPos.z;
 
-			destPos = _engine->_movements->rotateActor(0, destPos.x, tmpAngle);
+			destPos = _engine->_movements->rotate(0, destPos.x, tmpAngle);
 			extra->pos.x += destPos.x;
 			extra->pos.z += destPos.z;
 

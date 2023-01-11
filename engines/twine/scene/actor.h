@@ -180,7 +180,7 @@ public:
 	int32 _strengthOfHit = 0;
 	int32 _hitBy = -1;
 	BonusParameter _bonusParameter;
-	int32 _angle = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise (BETA in original sources)
+	int32 _beta = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise (BETA in original sources)
 	int32 _speed = 40; // speed of movement
 	ControlMode _controlMode = ControlMode::kNoMove;
 	int32 _delayInMillis = 0;
@@ -192,7 +192,7 @@ public:
 	int32 _bonusAmount = 0;
 	int32 _talkColor = COLOR_BLACK;
 	int32 _armor = 1;
-	int32 _life = kActorMaxLife;
+	int32 _lifePoint = kActorMaxLife;
 
 	/** Process actor coordinate Nxw, Nyw, Nzw */
 	IVec3 _processActor;
@@ -232,7 +232,7 @@ public:
 	uint8 _brickSound = 0U; // CodeJeu
 
 	BoundingBox _boundingBox; // Xmin, YMin, Zmin, Xmax, Ymax, Zmax
-	ActorMoveStruct _move;
+	ActorMoveStruct _moveAngle;
 	AnimTimerDataStruct _animTimerData;
 };
 
@@ -241,13 +241,13 @@ inline const IVec3 &ActorStruct::posObj() const {
 }
 
 inline void ActorStruct::addLife(int32 val) {
-	setLife(_life + val);
+	setLife(_lifePoint + val);
 }
 
 inline void ActorStruct::setLife(int32 val) {
-	_life = val;
-	if (_life > kActorMaxLife) {
-		_life = kActorMaxLife;
+	_lifePoint = val;
+	if (_lifePoint > kActorMaxLife) {
+		_lifePoint = kActorMaxLife;
 	}
 }
 

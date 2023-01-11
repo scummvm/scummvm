@@ -40,7 +40,7 @@ namespace TwinE {
 Collision::Collision(TwinEEngine *engine) : _engine(engine) {
 }
 
-bool Collision::standingOnActor(int32 actorIdx1, int32 actorIdx2) const {
+bool Collision::checkZvOnZv(int32 actorIdx1, int32 actorIdx2) const {
 	const ActorStruct *actor1 = _engine->_scene->getActor(actorIdx1);
 	const ActorStruct *actor2 = _engine->_scene->getActor(actorIdx2);
 
@@ -194,16 +194,16 @@ void Collision::handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, Acto
 		actorTest->_animStep.y = 0;
 
 		if (actorTest->_staticFlags.bUseMiniZv) {
-			if (newAngle >= ANGLE_45 && newAngle < ANGLE_135 && actor->_angle >= ANGLE_45 && actor->_angle < ANGLE_135) {
+			if (newAngle >= ANGLE_45 && newAngle < ANGLE_135 && actor->_beta >= ANGLE_45 && actor->_beta < ANGLE_135) {
 				actorTest->_animStep.x = SIZE_BRICK_XZ / 4 + SIZE_BRICK_XZ / 8;
 			}
-			if (newAngle >= ANGLE_135 && newAngle < ANGLE_225 && actor->_angle >= ANGLE_135 && actor->_angle < ANGLE_225) {
+			if (newAngle >= ANGLE_135 && newAngle < ANGLE_225 && actor->_beta >= ANGLE_135 && actor->_beta < ANGLE_225) {
 				actorTest->_animStep.z = -SIZE_BRICK_XZ / 4 + SIZE_BRICK_XZ / 8;
 			}
-			if (newAngle >= ANGLE_225 && newAngle < ANGLE_315 && actor->_angle >= ANGLE_225 && actor->_angle < ANGLE_315) {
+			if (newAngle >= ANGLE_225 && newAngle < ANGLE_315 && actor->_beta >= ANGLE_225 && actor->_beta < ANGLE_315) {
 				actorTest->_animStep.x = -SIZE_BRICK_XZ / 4 + SIZE_BRICK_XZ / 8;
 			}
-			if ((newAngle >= ANGLE_315 || newAngle < ANGLE_45) && (actor->_angle >= ANGLE_315 || actor->_angle < ANGLE_45)) {
+			if ((newAngle >= ANGLE_315 || newAngle < ANGLE_45) && (actor->_beta >= ANGLE_315 || actor->_beta < ANGLE_45)) {
 				actorTest->_animStep.z = SIZE_BRICK_XZ / 4 + SIZE_BRICK_XZ / 8;
 			}
 		} else {
@@ -307,12 +307,12 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 				actor->_collision = a; // mark as collision with actor a
 
 				if (actorTest->_staticFlags.bIsCarrierActor) {
-					if (actor->_dynamicFlags.bIsFalling || standingOnActor(actorIdx, a)) {
+					if (actor->_dynamicFlags.bIsFalling || checkZvOnZv(actorIdx, a)) {
 						processActor.y = maxsTest.y - actor->_boundingBox.mins.y + 1;
 						actor->_carryBy = a;
 						continue;
 					}
-				} else if (standingOnActor(actorIdx, a)) {
+				} else if (checkZvOnZv(actorIdx, a)) {
 					_engine->_actor->hitObj(actorIdx, a, 1, -1);
 				}
 				handlePushing(minsTest, maxsTest, actor, actorTest);
@@ -321,7 +321,7 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 	}
 
 	if (actor->_dynamicFlags.bIsHitting) {
-		const IVec3 &destPos = _engine->_movements->rotateActor(0, 200, actor->_angle);
+		const IVec3 &destPos = _engine->_movements->rotate(0, 200, actor->_beta);
 		mins = processActor + actor->_boundingBox.mins;
 		mins.x += destPos.x;
 		mins.z += destPos.z;
@@ -338,7 +338,7 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 				const IVec3 minsTest = actorTest->posObj() + actorTest->_boundingBox.mins;
 				const IVec3 maxsTest = actorTest->posObj() + actorTest->_boundingBox.maxs;
 				if (mins.x < maxsTest.x && maxs.x > minsTest.x && mins.y < maxsTest.y && maxs.y > minsTest.y && mins.z < maxsTest.z && maxs.z > minsTest.z) {
-					_engine->_actor->hitObj(actorIdx, a, actor->_strengthOfHit, actor->_angle + ANGLE_180);
+					_engine->_actor->hitObj(actorIdx, a, actor->_strengthOfHit, actor->_beta + ANGLE_180);
 					actor->_dynamicFlags.bIsHitting = 0;
 				}
 			}

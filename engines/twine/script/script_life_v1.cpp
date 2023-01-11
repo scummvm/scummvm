@@ -138,7 +138,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 	int32 conditionOpcode = ctx.stream.readByte();
 	switch (conditionOpcode) {
 	case kcCOL:
-		if (ctx.actor->_life <= 0) {
+		if (ctx.actor->_lifePoint <= 0) {
 			engine->_scene->_currentScriptValue = -1;
 		} else {
 			engine->_scene->_currentScriptValue = ctx.actor->_collision;
@@ -147,7 +147,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		break;
 	case kcCOL_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
-		if (engine->_scene->getActor(actorIdx)->_life <= 0) {
+		if (engine->_scene->getActor(actorIdx)->_lifePoint <= 0) {
 			engine->_scene->_currentScriptValue = -1;
 		} else {
 			engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_collision;
@@ -247,7 +247,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 
 		if (IS_HERO(targetActorIdx)) {
 			if (engine->_actor->_heroBehaviour == HeroBehaviourType::kDiscrete) {
-				int32 heroAngle = ClampAngle(ctx.actor->_angle + ANGLE_360 + ANGLE_45 - newAngle + ANGLE_360);
+				int32 heroAngle = ClampAngle(ctx.actor->_beta + ANGLE_360 + ANGLE_45 - newAngle + ANGLE_360);
 
 				if (ABS(heroAngle) <= ANGLE_90) {
 					engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
@@ -258,7 +258,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 				engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
 			}
 		} else {
-			int32 heroAngle = ClampAngle(ctx.actor->_angle + ANGLE_360 + ANGLE_45 - newAngle + ANGLE_360);
+			int32 heroAngle = ClampAngle(ctx.actor->_beta + ANGLE_360 + ANGLE_45 - newAngle + ANGLE_360);
 
 			if (ABS(heroAngle) <= ANGLE_90) {
 				engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
@@ -294,12 +294,12 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 	}
 	case kcLIFE_POINT:
 		debugCN(3, kDebugLevels::kDebugScripts, "life_point(");
-		engine->_scene->_currentScriptValue = ctx.actor->_life;
+		engine->_scene->_currentScriptValue = ctx.actor->_lifePoint;
 		break;
 	case kcLIFE_POINT_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
 		debugCN(3, kDebugLevels::kDebugScripts, "life_point_obj(%i, ", actorIdx);
-		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_life;
+		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_lifePoint;
 		break;
 	}
 	case kcNUM_LITTLE_KEYS:
@@ -1059,7 +1059,7 @@ static int32 lSET_DOOR_LEFT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 distance = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_LEFT(%i)", (int)distance);
 
-	ctx.actor->_angle = ANGLE_270;
+	ctx.actor->_beta = ANGLE_270;
 	ctx.actor->_pos.x = ctx.actor->_animStep.x - distance;
 	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
@@ -1075,7 +1075,7 @@ static int32 lSET_DOOR_RIGHT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 distance = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_RIGHT(%i)", (int)distance);
 
-	ctx.actor->_angle = ANGLE_90;
+	ctx.actor->_beta = ANGLE_90;
 	ctx.actor->_pos.x = ctx.actor->_animStep.x + distance;
 	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
@@ -1091,7 +1091,7 @@ static int32 lSET_DOOR_UP(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 distance = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_UP(%i)", (int)distance);
 
-	ctx.actor->_angle = ANGLE_180;
+	ctx.actor->_beta = ANGLE_180;
 	ctx.actor->_pos.z = ctx.actor->_animStep.z - distance;
 	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
@@ -1107,7 +1107,7 @@ static int32 lSET_DOOR_DOWN(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 distance = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_DOWN(%i)", (int)distance);
 
-	ctx.actor->_angle = ANGLE_0;
+	ctx.actor->_beta = ANGLE_0;
 	ctx.actor->_pos.z = ctx.actor->_animStep.z + distance;
 	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
@@ -1301,7 +1301,7 @@ static int32 lSUB_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
 	otherActor->addLife(-lifeValue);
-	if (otherActor->_life < 0) {
+	if (otherActor->_lifePoint < 0) {
 		otherActor->setLife(0);
 	}
 
@@ -1316,7 +1316,7 @@ static int32 lHIT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const int32 strengthOfHit = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::HIT_OBJ(%i, %i)", (int)otherActorIdx, (int)strengthOfHit);
-	engine->_actor->hitObj(ctx.actorIdx, otherActorIdx, strengthOfHit, engine->_scene->getActor(otherActorIdx)->_angle);
+	engine->_actor->hitObj(ctx.actorIdx, otherActorIdx, strengthOfHit, engine->_scene->getActor(otherActorIdx)->_beta);
 	return 0;
 }
 
@@ -1556,7 +1556,7 @@ static int32 lFULL_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lBETA(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 newAngle = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BETA(%i)", (int)newAngle);
-	ctx.actor->_angle = ToAngle(newAngle);
+	ctx.actor->_beta = ToAngle(newAngle);
 	engine->_movements->clearRealAngle(ctx.actor);
 	return 0;
 }
@@ -1810,7 +1810,7 @@ static int32 lTHE_END(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_scene->_currentSceneIdx = LBA1SceneId::Polar_Island_Final_Battle;
 	engine->_actor->_heroBehaviour = engine->_actor->_previousHeroBehaviour;
 	engine->_scene->_newHeroPos.x = -1;
-	engine->_scene->_sceneHero->_angle = engine->_actor->_previousHeroAngle;
+	engine->_scene->_sceneHero->_beta = engine->_actor->_previousHeroAngle;
 	engine->autoSave();
 	return 1; // break;
 }
