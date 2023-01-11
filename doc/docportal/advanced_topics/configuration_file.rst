@@ -131,6 +131,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 	- 16384
 	- 32768"
 		":ref:`audio_override <aoverride>`",boolean,true,
+		":ref:`automatic_drilling <drill>`",boolean,false,
 		":ref:`auto_savenames <autoname>`",boolean,false,
 		":ref:`autosave_period <autosave>`", integer, 300,
 		auto_savenames,boolean,false, Automatically generates names for saved games
@@ -156,7 +157,10 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`description <description>`",string,,
 		desired_screen_aspect_ratio,string,auto,
 		dimuse_tempo,integer,10,"Sets internal Digital iMuse tempo per second; 0 - 100"
+		":ref:`disable_demo_mode <demo>`",boolean,false,
 		":ref:`disable_dithering <dither>`",boolean,false,
+		":ref:`disable_falling <falling>`",boolean,false,
+		":ref:`disable_sensors <sensors>`",boolean,false,
 		":ref:`disable_stamina_drain <stamina>`",boolean,false,
 		":ref:`displaytext <displaytext>`",boolean,true,
 		":ref:`dos_music_tempo <dostempo>`",boolean,true,"If set to false, plays the Windows version music tempo."
@@ -179,6 +183,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`enable_video_upscale <upscale>`",boolean,true,
 		":ref:`enable_tts <ttsenabled>`",boolean,false,
 		enable_unsupported_game_warning,boolean,true, Shows a warning when adding a game that is unsupported.
+		":ref:`extended_timer <extended>`",boolean,false,
 		extra,string, ,"Shows additional information about a game, such as version"
 		":ref:`english_speech <english>`",boolean,false,
 		":ref:`extrapath <extra>`",string,None,
@@ -326,6 +331,12 @@ There are many recognized configuration keys. In the table below, each key is ei
 	- fluidsynth
 	- mt32
 	- timidity "
+		":ref:`mtropolis_debug_at_start <debugger>`",boolean,false,
+		":ref:`mtropolis_mod_auto_save_at_checkpoints <saveatcheckpoints>`",boolean,true,
+		":ref:`mtropolis_mod_dynamic_midi <dynamicmidi>`",boolean,true,
+		":ref:`mtropolis_mod_minimum_transition_duration <shorttransitions>`",boolean,true,
+		":ref:`mtropolis_mod_obsidian_widescreen <widescreen>`",boolean,false,
+		":ref:`mtropolis_mod_sound_gameplay_subtitles <sfxsubs>`",boolean,false,
 		":ref:`multi_midi <multi>`",boolean,,
 		":ref:`music_driver [scummvm] <device>`",string,auto,"
 	- null
@@ -394,6 +405,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`platform <platform>`",string,,
 		":ref:`portaits_on <portraits>`",boolean,true,
 		":ref:`prefer_digitalsfx <dsfx>`",boolean,true,
+		":ref:`prerecorded_sounds <prerecorded>`",boolean,true,
 		":ref:`renderer <renderer>`",string,default,"
 	- opengl
 	- opengl_shaders
@@ -489,6 +501,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`vsync <vsync>`",boolean,true,
 		":ref:`wallcollision <wall>`",boolean,false,
 		":ref:`water_effects <water>`",boolean,,
+		":ref:`widescreen_mod <widescreen_mod>`",boolean,false,
 		":ref:`window_style <style>`",boolean,true,
 		":ref:`windows_cursors <wincursors>`",boolean,false,
 		":ref:`zip_mode <zip>`",boolean,,
