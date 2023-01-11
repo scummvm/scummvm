@@ -144,6 +144,34 @@ DrillerEngine::~DrillerEngine() {
 	delete _drillBase;
 }
 
+void DrillerEngine::titleScreen() {
+	if (isDOS() && isDemo()) // Demo will not show any title screen
+		return;
+
+	if (isAmiga() || isAtariST()) // These releases has their own screens
+		return;
+
+	if (_title) {
+		drawTitle();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(3000);
+	}
+}
+void DrillerEngine::borderScreen() {
+	if (isDOS() && isDemo()) // Demo will not show the border
+		return;
+
+	if (isAmiga() || isAtariST()) // These releases has their own screens
+		return;
+
+	if (_border) {
+		drawBorder();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(3000);
+	}
+}
 
 void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	int prevAreaID = _currentArea ? _currentArea->getAreaID(): -1;

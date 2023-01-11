@@ -107,6 +107,9 @@ public:
 	Common::Rect _fullscreenViewArea;
 	void centerCrossair();
 
+	virtual void borderScreen();
+	virtual void titleScreen();
+
 	virtual void loadBorder();
 	virtual void processBorder();
 	void drawBorder();
@@ -376,6 +379,9 @@ public:
 	bool checkIfGameEnded() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
+
+	void borderScreen() override;
+	void titleScreen() override;
 
 	void processBorder() override;
 	void loadAssets() override;

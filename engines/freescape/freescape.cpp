@@ -510,26 +510,11 @@ Common::Error FreescapeEngine::run() {
 	// Simple main event loop
 	int saveSlot = ConfMan.getInt("save_slot");
 	centerCrossair();
-
-	if (_title && \
-	  !(isDemo() && isDOS() && isDriller())) { // This should be moved to a Driller specific code
-		if (saveSlot == -1) {
-			drawTitle();
-			_gfx->flipBuffer();
-			g_system->updateScreen();
-			g_system->delayMillis(3000);
-		}
-	}
-
+	if (saveSlot == -1)
+		titleScreen();
 	loadBorder(); // Border is load unmodified
-	if (_border && ((isDOS() && !isDemo()) || isSpectrum())) { // This should be moved to a Driller specific code
-		if (saveSlot == -1) {
-			drawBorder();
-			_gfx->flipBuffer();
-			g_system->updateScreen();
-			g_system->delayMillis(3000);
-		}
-	}
+	if (saveSlot == -1)
+		borderScreen();
 	processBorder(); // Border is processed to use during the game
 
 	if (saveSlot >= 0) { // load the savegame
@@ -570,6 +555,9 @@ Common::Error FreescapeEngine::run() {
 
 	return Common::kNoError;
 }
+
+void FreescapeEngine::titleScreen() {}
+void FreescapeEngine::borderScreen() {}
 
 void FreescapeEngine::loadBorder() {
 	if (_border)
