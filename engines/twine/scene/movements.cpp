@@ -279,7 +279,7 @@ bool Movements::processAttackExecution(int actorIdx) {
 		}
 	} else if (_engine->_gameState->hasItem(InventoryItems::kiUseSabre)) {
 		if (actor->_genBody != BodyType::btSabre) {
-			_engine->_actor->initModelActor(BodyType::btSabre, actorIdx);
+			_engine->_actor->initBody(BodyType::btSabre, actorIdx);
 		}
 
 		_engine->_animations->initAnim(AnimationTypes::kSabreAttack, AnimType::kAnimationThen, AnimationTypes::kStanding, actorIdx);

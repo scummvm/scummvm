@@ -123,7 +123,7 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 	sceneHero->_body = -1;
 	sceneHero->_genBody = BodyType::btNone;
 
-	initModelActor(bodyIdx, OWN_ACTOR_SCENE_INDEX);
+	initBody(bodyIdx, OWN_ACTOR_SCENE_INDEX);
 
 	sceneHero->_genAnim = AnimationTypes::kAnimNone;
 	sceneHero->_flagAnim = AnimType::kAnimationTypeLoop;
@@ -149,7 +149,7 @@ TextId Actor::getTextIdForBehaviour() const {
 	return (TextId)(int32)_heroBehaviour;
 }
 
-int32 Actor::initBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox) {
+int32 Actor::searchBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox) {
 	if (bodyIdx == BodyType::btNone) {
 		return -1;
 	}
@@ -163,7 +163,7 @@ int32 Actor::initBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorB
 	return body->hqrBodyIndex;
 }
 
-void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
+void Actor::initBody(BodyType bodyIdx, int16 actorIdx) {
 	ActorStruct *localActor = _engine->_scene->getActor(actorIdx);
 	if (localActor->_staticFlags.bIsSpriteActor) {
 		return;
@@ -176,7 +176,7 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 	}
 
 	ActorBoundingBox actorBoundingBox;
-	const int32 newBody = initBody(bodyIdx, actorIdx, actorBoundingBox);
+	const int32 newBody = searchBody(bodyIdx, actorIdx, actorBoundingBox);
 	if (newBody == -1) {
 		localActor->_genBody = BodyType::btNone;
 		localActor->_body = -1;
@@ -217,6 +217,11 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 		localActor->_boundingBox.mins.z = -size;
 		localActor->_boundingBox.maxs.z = size;
 	}
+#if 0
+	if (oldbody != -1 && localActor->_anim != -1) {
+		copyInterAnim(_engine->_resources->_bodyData[oldbody], _engine->_resources->_bodyData[localActor->_body]);
+	}
+#endif
 }
 
 void Actor::initActor(int16 actorIdx) {
@@ -240,7 +245,7 @@ void Actor::initActor(int16 actorIdx) {
 		actor->_body = -1;
 
 		debug(1, "Init actor %i with model %i", actorIdx, (int)actor->_genBody);
-		initModelActor(actor->_genBody, actorIdx);
+		initBody(actor->_genBody, actorIdx);
 
 		actor->_anim = -1;
 		actor->_flagAnim = AnimType::kAnimationTypeLoop;

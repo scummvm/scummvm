@@ -634,7 +634,7 @@ static int32 lELSE(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lBODY(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const BodyType bodyIdx = (BodyType)ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BODY(%i)", (int)bodyIdx);
-	engine->_actor->initModelActor(bodyIdx, ctx.actorIdx);
+	engine->_actor->initBody(bodyIdx, ctx.actorIdx);
 	return 0;
 }
 
@@ -646,7 +646,7 @@ static int32 lBODY_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const BodyType otherBodyIdx = (BodyType)ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BODY_OBJ(%i, %i)", (int)otherActorIdx, (int)otherBodyIdx);
-	engine->_actor->initModelActor(otherBodyIdx, otherActorIdx);
+	engine->_actor->initBody(otherBodyIdx, otherActorIdx);
 	return 0;
 }
 

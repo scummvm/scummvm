@@ -672,7 +672,7 @@ void TwinEEngine::processInventoryAction() {
 		break;
 	case kiMagicBall:
 		if (_gameState->_usingSabre) {
-			_actor->initModelActor(BodyType::btNormal, OWN_ACTOR_SCENE_INDEX);
+			_actor->initBody(BodyType::btNormal, OWN_ACTOR_SCENE_INDEX);
 		}
 		_gameState->_usingSabre = false;
 		break;
@@ -681,7 +681,7 @@ void TwinEEngine::processInventoryAction() {
 			if (_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {
 				_actor->setBehaviour(HeroBehaviourType::kNormal);
 			}
-			_actor->initModelActor(BodyType::btSabre, OWN_ACTOR_SCENE_INDEX);
+			_actor->initBody(BodyType::btSabre, OWN_ACTOR_SCENE_INDEX);
 			_animations->initAnim(AnimationTypes::kSabreUnknown, AnimType::kAnimationThen, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 
 			_gameState->_usingSabre = true;
@@ -718,7 +718,7 @@ void TwinEEngine::processInventoryAction() {
 		if (_collision->checkValidObjPos(_scene->_mecaPenguinIdx)) {
 			penguin->setLife(kActorMaxLife);
 			penguin->_genBody = BodyType::btNone;
-			_actor->initModelActor(BodyType::btNormal, _scene->_mecaPenguinIdx);
+			_actor->initBody(BodyType::btNormal, _scene->_mecaPenguinIdx);
 			penguin->_dynamicFlags.bIsDead = 0;
 			penguin->setBrickShape(ShapeType::kNone);
 			_movements->initRealAngleConst(penguin->_beta, penguin->_beta, penguin->_speed, &penguin->_moveAngle);

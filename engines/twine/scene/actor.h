@@ -275,7 +275,7 @@ private:
 	 * @param bodyIdx 3D actor body index
 	 * @param actorIdx 3D actor index
 	 */
-	int32 initBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox);
+	int32 searchBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox);
 
 	void loadBehaviourEntity(ActorStruct *actor, EntityData &entityData, int16 &bodyAnimIndex, int32 index);
 
@@ -327,7 +327,7 @@ public:
 	 * @param bodyIdx 3D actor body index
 	 * @param actorIdx 3D actor index
 	 */
-	void initModelActor(BodyType bodyIdx, int16 actorIdx);
+	void initBody(BodyType bodyIdx, int16 actorIdx);
 
 	/**
 	 * Initialize actors

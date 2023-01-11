@@ -92,7 +92,7 @@ static int32 mNOP(TwinEEngine *engine, MoveScriptContext &ctx) {
  */
 static int32 mBODY(TwinEEngine *engine, MoveScriptContext &ctx) {
 	BodyType bodyIdx = (BodyType)ctx.stream.readByte();
-	engine->_actor->initModelActor(bodyIdx, ctx.actorIdx);
+	engine->_actor->initBody(bodyIdx, ctx.actorIdx);
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::BODY(%i)", (int)bodyIdx);
 	return 0;
 }
@@ -407,7 +407,7 @@ static int32 mWAIT_NUM_SECOND(TwinEEngine *engine, MoveScriptContext &ctx) {
  */
 static int32 mNO_BODY(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::NO_BODY()");
-	engine->_actor->initModelActor(BodyType::btNone, ctx.actorIdx);
+	engine->_actor->initBody(BodyType::btNone, ctx.actorIdx);
 	return 0;
 }
 
