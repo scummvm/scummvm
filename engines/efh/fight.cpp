@@ -1040,30 +1040,30 @@ int16 EfhEngine::sub1C956(int16 charId, int16 unkFied18Val, bool arg4) {
 }
 
 bool EfhEngine::sub1CB27() {
-	debug("sub1CB27");
+	debugC(3, kDebugFight, "sub1CB27");
+	warning("To be renamed: sub1CB27");
 
-	bool var4 = false;
-	for (int counter1 = 0; counter1 < _teamSize; ++counter1) {
-		_teamLastAction[counter1] = 0;
-		if (!isTeamMemberStatusNormal(counter1))
+	bool retVal = false;
+	for (int charId = 0; charId < _teamSize; ++charId) {
+		_teamLastAction[charId] = 0;
+		if (!isTeamMemberStatusNormal(charId))
 			continue;
 
-		var4 = true;
+		retVal = true;
 		do {
-			drawCombatScreen(_teamCharId[counter1], false, true);
-			Common::KeyCode var1 = handleAndMapInput(true);
-			switch (var1) {
+			drawCombatScreen(_teamCharId[charId], false, true);
+			switch (handleAndMapInput(true)) {
 			case Common::KEYCODE_a: // Attack
-				_teamLastAction[counter1] = 'A';
-				_teamNextAttack[counter1] = sub1C956(_teamCharId[counter1], 9, true);
-				if (_teamNextAttack[counter1] == -1)
-					_teamLastAction[counter1] = 0;
+				_teamLastAction[charId] = 'A';
+				_teamNextAttack[charId] = sub1C956(_teamCharId[charId], 9, true);
+				if (_teamNextAttack[charId] == -1)
+					_teamLastAction[charId] = 0;
 				break;
 			case Common::KEYCODE_d: // Defend
-				_teamLastAction[counter1] = 'D';
+				_teamLastAction[charId] = 'D';
 				break;
 			case Common::KEYCODE_h: // Hide
-				_teamLastAction[counter1] = 'H';
+				_teamLastAction[charId] = 'H';
 				break;
 			case Common::KEYCODE_r: // Run
 				for (int counter2 = 0; counter2 < _teamSize; ++counter2) {
@@ -1071,16 +1071,16 @@ bool EfhEngine::sub1CB27() {
 				}
 				return true;
 			case Common::KEYCODE_s: { // Status
-				int16 var8 = handleStatusMenu(2, _teamCharId[counter1]);
-				sub1CAB6(_teamCharId[counter1]);
+				int16 var8 = handleStatusMenu(2, _teamCharId[charId]);
+				sub1CAB6(_teamCharId[charId]);
 				if (var8 > 999) {
 					if (var8 == 0x7D00)
-						_teamLastAction[counter1] = 'S';
+						_teamLastAction[charId] = 'S';
 				} else {
-					_teamLastAction[counter1] = 'U';
-					_word31780[counter1] = var8;
-					int16 var6 = _npcBuf[_teamCharId[counter1]]._inventory[var8]._ref;
-					switch (var6 - 1) {
+					_teamLastAction[charId] = 'U';
+					_word31780[charId] = var8;
+					int16 invEffect = _items[_npcBuf[_teamCharId[charId]]._inventory[var8]._ref]._specialEffect;
+					switch (invEffect - 1) {
 					case 0:
 					case 1:
 					case 2:
@@ -1093,7 +1093,7 @@ bool EfhEngine::sub1CB27() {
 					case 10:
 					case 12:
 					case 13:
-						_teamNextAttack[counter1] = sub1C956(_teamCharId[counter1], 9, false);
+						_teamNextAttack[charId] = sub1C956(_teamCharId[charId], 9, false);
 						break;
 
 					case 9:
@@ -1108,13 +1108,13 @@ bool EfhEngine::sub1CB27() {
 					case 29:
 					case 30:
 						displayBoxWithText("Select Character:", 3, 1, false);
-						_teamNextAttack[counter1] = selectOtherCharFromTeam();
+						_teamNextAttack[charId] = selectOtherCharFromTeam();
 						break;
 
 					case 16:
 					case 17:
 					case 26:
-						_teamNextAttack[counter1] = 0xC8;
+						_teamNextAttack[charId] = 0xC8;
 						break;
 
 					case 19:
@@ -1123,6 +1123,8 @@ bool EfhEngine::sub1CB27() {
 					case 22:
 					case 23:
 					default:
+						_word31780[charId] = var8;
+						_teamNextAttack[charId] = -1;
 						break;
 					}
 				}
@@ -1131,15 +1133,15 @@ bool EfhEngine::sub1CB27() {
 			case Common::KEYCODE_t: // Terrain
 				redrawScreenForced();
 				getInputBlocking();
-				drawCombatScreen(_teamCharId[counter1], false, true);
+				drawCombatScreen(_teamCharId[charId], false, true);
 				break;
 			default:
 				break;
 			}
-		} while (_teamLastAction[counter1] == 0);
+		} while (_teamLastAction[charId] == 0);
 	}
 
-	return var4;
+	return retVal;
 }
 
 void EfhEngine::drawCombatScreen(int16 charId, bool whiteFl, bool drawFl) {
