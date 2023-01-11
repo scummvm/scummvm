@@ -939,6 +939,8 @@ darkenFill(PixelType *ptr, PixelType *end) {
 	if (!g_system->hasFeature(OSystem::kFeatureOverlaySupportsAlpha)) {
 		// !kFeatureOverlaySupportsAlpha (but might have alpha bits)
 
+		mask |= _alphaMask;
+
 		while (ptr != end) {
 			*ptr = ((*ptr & ~mask) >> 2) | _alphaMask;
 			++ptr;
@@ -966,6 +968,8 @@ darkenFillClip(PixelType *ptr, PixelType *end, int x, int y) {
 
 	if (!g_system->hasFeature(OSystem::kFeatureOverlaySupportsAlpha)) {
 		// !kFeatureOverlaySupportsAlpha (but might have alpha bits)
+
+		mask |= _alphaMask;
 
 		while (ptr != end) {
 			if (IS_IN_CLIP(x, y)) *ptr = ((*ptr & ~mask) >> 2) | _alphaMask;
