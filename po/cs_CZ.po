@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-10 22:52+0000\n"
+"POT-Creation-Date: 2023-01-11 12:58+0000\n"
 "PO-Revision-Date: 2022-05-01 15:27+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -3200,27 +3200,27 @@ msgid "Resolution: %dx%d"
 msgstr "Rozlišení: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:717
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2450
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2347
 msgid "Enabled aspect ratio correction"
 msgstr "Povolena korekce poměru stran"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:719
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2456
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2353
 msgid "Disabled aspect ratio correction"
 msgstr "Zakázána korekce poměru stran"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:732
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2472
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2369
 msgid "Filtering enabled"
 msgstr "Filtrování povoleno"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:734
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2474
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2371
 msgid "Filtering disabled"
 msgstr "Filtrování zakázáno"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2501
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2398
 #, fuzzy
 msgid "Stretch mode"
 msgstr "Režim protažení:"
@@ -3229,7 +3229,7 @@ msgstr "Režim protažení:"
 msgid "SDL Surface"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2416
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2313
 msgid "Active graphics filter:"
 msgstr "Aktivní grafický filtr:"
 
