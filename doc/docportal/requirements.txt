@@ -3,3 +3,4 @@ sphinx-panels==0.6.0
 sphinx<5
 docutils==0.17
 sphinx_rtd_theme==1.0.0
+sphinx-mdinclude==0.5.3
