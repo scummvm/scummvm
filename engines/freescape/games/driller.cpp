@@ -133,7 +133,17 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_initialTankShield = 50;
 	_initialJetEnergy = 29;
 	_initialJetShield = 34;
+
+	Math::Vector3d drillBaseOrigin = Math::Vector3d(0, 0, 0);
+	Math::Vector3d drillBaseSize = Math::Vector3d(3, 2, 3);
+	_drillBase = new GeometricObject(kCubeType, 0, 0, drillBaseOrigin, drillBaseSize, nullptr, nullptr, FCLInstructionVector(), "");
+	assert(!_drillBase->isDestroyed() && !_drillBase->isInvisible());
 }
+
+DrillerEngine::~DrillerEngine() {
+	delete _drillBase;
+}
+
 
 void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	int prevAreaID = _currentArea ? _currentArea->getAreaID(): -1;
@@ -1315,8 +1325,8 @@ Math::Vector3d DrillerEngine::drillPosition() {
 
 	Object *obj = (GeometricObject *)_areaMap[255]->objectWithID(255); // Drill base
 	assert(obj);
-	position.setValue(0, position.x() - obj->getSize().x() / 2);
-	position.setValue(2, position.z() - obj->getSize().z() / 2);
+	position.setValue(0, position.x() - 128);
+	position.setValue(2, position.z() - 128);
 	return position;
 }
 
@@ -1331,15 +1341,26 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 	int16 id;
 	int heightLastObject;
 
+	origin.setValue(0, origin.x() + 128);
+	origin.setValue(1, origin.y() - 5);
+	origin.setValue(2, origin.z() + 128);
+
+	_drillBase->setOrigin(origin);
+	if (_currentArea->checkCollisions(_drillBase->_boundingBox).empty())
+		return false;
+
+	origin.setValue(0, origin.x() - 128);
+	origin.setValue(2, origin.z() - 128);
+
 	id = 255;
 	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
 	assert(obj);
 	obj = (GeometricObject *)obj->duplicate();
-	origin.setValue(1, origin.y() - 5);
+	origin.setValue(1, origin.y() + 6);
 	obj->setOrigin(origin);
 
 	// This bounding box is too large and can result in the drill to float next to a wall
-	if (_currentArea->checkCollisions(obj->_boundingBox).empty())
+	if (!_currentArea->checkCollisions(obj->_boundingBox).empty())
 		return false;
 
 	origin.setValue(1, origin.y() + 15);

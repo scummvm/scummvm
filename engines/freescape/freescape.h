@@ -358,6 +358,7 @@ enum DrillerReleaseFlags {
 class DrillerEngine : public FreescapeEngine {
 public:
 	DrillerEngine(OSystem *syst, const ADGameDescription *gd);
+	~DrillerEngine();
 
 	uint32 _initialJetEnergy;
 	uint32 _initialJetShield;
@@ -388,6 +389,7 @@ public:
 private:
 	void loadGlobalObjects(Common::SeekableReadStream *file, int offset);
 	bool drillDeployed(Area *area);
+	GeometricObject *_drillBase;
 	Math::Vector3d drillPosition();
 	void addDrill(const Math::Vector3d position, bool gasFound);
 	bool checkDrill(const Math::Vector3d position);
