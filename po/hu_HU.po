@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-10 22:52+0000\n"
-"PO-Revision-Date: 2023-01-08 13:19+0000\n"
+"PO-Revision-Date: 2023-01-11 11:34+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -7773,15 +7773,15 @@ msgstr ""
 "hangfájlokra, ha rendelkezésre állnak."
 
 #: engines/scumm/metaengine.cpp:674
-#, fuzzy
-#| msgid "Enable the debug mode"
 msgid "Enable low latency audio mode"
-msgstr "Debug mód engedélyezve"
+msgstr "Engedélyezd az alacsony késleltetésű hangmódot"
 
 #: engines/scumm/metaengine.cpp:675
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy."
 msgstr ""
+"Lehetővé teszi a játéknak, hogy alacsony késleltetésű hangot használjon a "
+"hangpontosság árán."
 
 #: engines/scumm/scumm.cpp:261
 msgid ""
