@@ -14,23 +14,6 @@ All settings can also be changed in the :doc:`../advanced_topics/configuration_f
 
 ,,,,,,,,,,,,,,,,,
 
-.. _theme:
-
-Theme
-	Changes the visual appearance of the ScummVM Launcher
-
-	*gui_theme*
-
-GUI scale
-	Scale the ScummVM GUI to be bigger or smaller. Using a larger scale can help to make the text easier to read when using ScummVM on a big screen.
-
-	*gui_scale*
-
-GUI renderer
-	Defines how the ScummVM GUI is rendered; normal or antialiased.
-
-	*gui_renderer*
-
 .. _autosave:
 
 Autosave
@@ -38,50 +21,10 @@ Autosave
 
 	*autosave_period*
 
+Random seed
+	Every time you start ScummVM, a random seed is generated. Use this option to set a fixed seed, which ensures that random events in games play out the same way every time. 
 
-GUI language
-	Chooses the language of the ScummVM Launcher.
-
-	*gui_language*
-
-.. _guilanguage:
-
-Switch the ScummVM GUI language to the game language
-	If ticked, the Launcher language is the same as the game language.
-
-	*gui_use_game_language*
-
-.. _guibrowser:
-
-Use native system file browser
-	Uses the system file browser instead of the ScummVM browser.
-
-	*gui_browser_native*
-
-.. _guireturn:
-
-Always return to the launcher when leaving a game
-	If ticked, removes the **Quit** option from the Global Main Menu. Only the **Return to Launcher** option remains.
-
-	*gui_return_to_launcher_at_exit*
-
-.. _guiconfirm:
-
-Ask for confirmation on exit
-	If ticked, a confirmation dialog appears when you choose **Quit** or **Return to Launcher** from the Global Main Menu.
-
-	*confirm_exit*
-
-.. _updateicons:
-
-Update Icons
-	Click on the Update Icons button to download new or updated artwork for game icons. ScummVM will scan to find applicable icons; once these have been found, click on the **Download** button in the pop up window to start the download. Click the **Hide** button to close the window and continue the download in the background. Use the **Cancel download** button to cancel the download.
-
-.. figure:: ../images/settings/update_icons.png
-
-	The Update Icons window
-
-	The icon packs can also be downloaded manually from https://downloads.scummvm.org/frs/icons/ and must be placed in the :ref:`Icon Path <iconspath>`. The packs are incremental and you need all of them to have all the available icons and not just the most recent pack.
-
+	*random_seed*
+	
 Enable Discord Integration
 	Use this option to automatically check for updates to ScummVM. Click the Check now button to manually check for updates.
