@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-10 22:52+0000\n"
-"PO-Revision-Date: 2023-01-08 13:20+0000\n"
+"PO-Revision-Date: 2023-01-11 11:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -7673,15 +7673,13 @@ msgid ""
 msgstr "可能なら、BGM・SE・スピーチクリップを改造ファイルに置き換えて下さい。"
 
 #: engines/scumm/metaengine.cpp:674
-#, fuzzy
-#| msgid "Enable the debug mode"
 msgid "Enable low latency audio mode"
-msgstr "デバッグモードを有効にする"
+msgstr "低遅延オーディオを有効化"
 
 #: engines/scumm/metaengine.cpp:675
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy."
-msgstr ""
+msgstr "オーディオが低遅延になりますが、正確さは低下します。"
 
 #: engines/scumm/scumm.cpp:261
 msgid ""
