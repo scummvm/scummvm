@@ -29,17 +29,22 @@
       :glob:
       :hidden:
 
-      settings/game
-      settings/backend
-      settings/graphics
-      settings/control
-      settings/keymaps
-      settings/audio
-      settings/paths
-      settings/misc
-      settings/cloud
-      settings/lan
       settings/accessibility
+      settings/audio
+      settings/backend
+      settings/cloud
+      settings/control
+      settings/game
+      settings/gui
+      settings/graphics
+      settings/keymaps
+      settings/lan
+      settings/misc
+      settings/paths
+      
+      
+      
+    
 
 
 .. toctree::
