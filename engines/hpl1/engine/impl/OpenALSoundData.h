@@ -32,6 +32,9 @@
 #include "hpl1/engine/system/SystemTypes.h"
 
 #include "common/str.h"
+#include "audio/audiostream.h"
+#include "common/ptr.h"
+
 namespace hpl {
 
 class cLowLevelSoundOpenAL;
@@ -48,7 +51,9 @@ public:
 	bool IsStream() { return mbStream; }
 
 private:
-	Common::String _filename;
+	Common::SharedPtr<byte> _audioData = nullptr;
+	uint32 _audioDataSize = 0;
+	uint _format = 0;
 	cLowLevelSoundOpenAL *_lowLevelSound;
 };
 

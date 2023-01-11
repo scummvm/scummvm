@@ -27,11 +27,21 @@
 
 #include "hpl1/engine/impl/OpenALSoundData.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/vorbis.h"
+#include "audio/decoders/wave.h"
+#include "common/memstream.h"
 #include "hpl1/debug.h"
 #include "hpl1/engine/impl/OpenALSoundChannel.h"
 #include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/system/low_level_system.h"
+
 namespace hpl {
+
+enum DataFormat {
+	kWav,
+	kOgg,
+	kNone,
+};
 
 //////////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS
@@ -56,16 +66,53 @@ cOpenALSoundData::~cOpenALSoundData() {
 
 //-----------------------------------------------------------------------
 
+static uint audioDataFormat(const tString &filename) {
+	if (filename.hasSuffix("wav"))
+		return kWav;
+	else if (filename.hasSuffix("ogg"))
+		return kOgg;
+	return kNone;
+}
+
 bool cOpenALSoundData::CreateFromFile(const tString &filename) {
-	_filename = filename;
+	if (_audioData) {
+		Hpl1::logWarning(Hpl1::kDebugAudio, "overriding previous sound data with new audio at '%s'\n", filename.c_str());
+	}
+	Common::File file;
+	if (!file.open(filename)) {
+		Hpl1::logWarning(Hpl1::kDebugFilePath | Hpl1::kDebugResourceLoading | Hpl1::kDebugAudio, "Audio file '%s' could not be opened\n", filename.c_str());
+		return false;
+	}
+	if (file.err() || file.size() < 0) {
+		Hpl1::logError(Hpl1::kDebugResourceLoading | Hpl1::kDebugAudio, "error reading file '%s'\n", filename.c_str());
+		return false;
+	}
+	_format = audioDataFormat(filename);
+	_audioDataSize = file.size();
+	_audioData.reset(Common::SharedPtr<byte>((byte *)malloc(_audioDataSize), free));
+	file.read(_audioData.get(), _audioDataSize);
 	return true;
 }
 
 //-----------------------------------------------------------------------
 
+static Audio::SeekableAudioStream *createAudioStream(Common::MemoryReadStream *data, uint format) {
+	switch (format) {
+	case kOgg:
+		return Audio::makeVorbisStream(data, DisposeAfterUse::YES);
+	case kWav:
+		return Audio::makeWAVStream(data, DisposeAfterUse::YES);
+	}
+	return nullptr;
+}
+
 iSoundChannel *cOpenALSoundData::CreateChannel(int priority) {
 	IncUserCount();
-	return hplNew(cOpenALSoundChannel, (this, Audio::SeekableAudioStream::openStreamFile(_filename.substr(0, _filename.size() - 4)), mpSoundManger, _lowLevelSound, priority));
+	if (!_audioData)
+		return nullptr;
+	auto *dataStream = new Common::MemoryReadStream(_audioData, _audioDataSize);
+	auto *audioStream = createAudioStream(dataStream, _format);
+	return new cOpenALSoundChannel(this, audioStream, mpSoundManger, _lowLevelSound, priority);
 }
 
 } // namespace hpl
