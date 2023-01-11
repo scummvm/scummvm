@@ -93,7 +93,7 @@ void WetEngine::loadAssets() {
 	}
 	_difficulty = ""; // No difficulty selection in demo
 
-	if (_variant == "Demo" || _variant == "DemoHebrew")
+	if (_variant == "Demo" || _variant == "DemoHebrew" || _variant == "M&MCD")
 		loadAssetsDemoDisc();
 	else if (_variant == "Gen4")
 		loadAssetsGen4();
@@ -110,7 +110,7 @@ void WetEngine::loadAssets() {
 
 void WetEngine::loadAssetsDemoDisc() {
 
-	bool encrypted = _variant == "Demo" ? true : false;
+	bool encrypted = _variant == "Demo" || _variant == "M&MCD" ? true : false;
 	LibFile *missions = loadLib("", "wetlands/c_misc/missions.lib", encrypted);
 	Common::ArchiveMemberList files;
 	if (missions->listMembers(files) == 0)
@@ -153,19 +153,30 @@ void WetEngine::loadAssetsDemoDisc() {
 	_levels["<start>"] = start;
 
 	Transition *intro;
-	if (_variant == "Demo")
+	if (_variant == "Demo" || _variant == "M&MCD")
 		intro = new Transition("c31");
 	else if (_variant == "DemoHebrew")
 		intro = new Transition("c31.mis");
 	else
 		error("Unsupported language");
 
-	intro->intros.push_back("movie/nw_logo.smk");
-	intro->intros.push_back("movie/hypnotix.smk");
-	intro->intros.push_back("movie/wetlogo.smk");
-	intro->frameImage = "wetlands/c_misc/c.s";
-	intro->frameNumber = 0;
+	if (_variant == "M&MCD") {
+		intro->intros.push_back("wetlands/c_misc/nw_logo.smk");
+		intro->intros.push_back("wetlands/c_misc/h.s");
+		intro->intros.push_back("wetlands/c_misc/w.s");
+		intro->frameImage = "wetlands/c_misc/c.s";
+		intro->frameNumber = 0;
+	} else {
+		intro->intros.push_back("movie/nw_logo.smk");
+		intro->intros.push_back("movie/hypnotix.smk");
+		intro->intros.push_back("movie/wetlogo.smk");
+		intro->frameImage = "wetlands/c_misc/c.s";
+		intro->frameNumber = 0;
+	}
 	_levels["<intro>"] = intro;
+
+	if (_variant == "M&MCD") // This variant has no selector
+		_levels["<start>"] = intro;
 
 	Transition *movies = new Transition("<quit>");
 	movies->intros.push_back("movie/nw_logo.smk");
@@ -189,7 +200,7 @@ void WetEngine::loadAssetsDemoDisc() {
 	_levels["<movies>"] = movies;
 	ArcadeShooting *arc;
 
-	if (_variant == "Demo") {
+	if (_variant == "Demo" || _variant == "M&MCD") {
 		loadArcadeLevel("c31.mi_", "c52", "c52", "wetlands");
 		if (_restoredContentEnabled) {
 			arc = (ArcadeShooting*) _levels["c31.mi_"];
@@ -556,7 +567,7 @@ void WetEngine::loadAssetsFullGame() {
 }
 
 void WetEngine::showCredits() {
-	if (!isDemo() || (_variant == "Demo" && _language == Common::EN_USA)) {
+	if (!isDemo() || ((_variant == "Demo" || _variant == "M&MCD") && _language == Common::EN_USA)) {
 		MVideo video("c_misc/credits.smk", Common::Point(0, 0), false, true, false);
 		runIntro(video);
 	}

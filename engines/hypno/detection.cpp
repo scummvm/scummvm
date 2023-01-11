@@ -153,6 +153,16 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
+		"wetlands", // Might and Magic Trilogy CD (November 1995) - Chapters 31/52 demo
+		"M&MCD",
+		AD_ENTRY2s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 642231,
+				"missions.lib", "7e3e5b23ade5ef0df88e9d31f5d669e6", 10188),
+		Common::EN_USA,
+		Common::kPlatformDOS,
+		ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
 		"wetlands", // Non Interactive: PC Review 49 (November 1995)
 		"NonInteractive",
 		AD_ENTRY2s("playsmks.exe", "edc5b0c0caf3d5b01d344cb555d9a085", 422607,

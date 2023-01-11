@@ -408,9 +408,9 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 		}
 	}
 
-	if (isDemo() && _variant != "Demo" && _restoredContentEnabled) {
+	if (isDemo() && _variant != "Demo" && _variant != "M&MCD" && _restoredContentEnabled) {
 		showDemoScore();
-	} else if (!isDemo() || _variant == "Demo" || _variant == "Gen4") {
+	} else if (!isDemo() || _variant == "Demo" || _variant == "M&MCD" || _variant == "Gen4") {
 		byte *palette;
 		Graphics::Surface *frame = decodeFrame("c_misc/zones.smk", 12, &palette);
 		loadPalette(palette, 0, 256);
@@ -555,7 +555,7 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 	resetStatistics();
 	_checkpoint = _currentLevel;
 	MVideo *video;
-	if (!isDemo()) {
+	if (!isDemo() || ((_variant == "Demo" || _variant == "M&MCD") && _restoredContentEnabled)) {
 
 		saveProfile(_name, int(arc->id));
 		byte *palette;
