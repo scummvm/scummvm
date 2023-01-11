@@ -50,7 +50,7 @@ The Game tab also shows settings unique to the game engine for the selected game
 To find out which engine powers your game, have a look at the ScummVM Supported Games `wiki page
 <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ or :ref:`group <group>` games by Engine in the Launcher. 
 
-Engines: ADL_ | AGI_ | AGOS_ | BLADERUNNER_ | CGE_ | CINE_ | DRASCULA_ | DREAMWEB_ | HDB_ | HOPKINS_ | KYRA_ | LURE_ | MADS_ | MTROPOLIS_ | NEVERHOOD_ | SCI_ | SCUMM_ | SHERLOCK_ | SKY_ | SUPERNOVA_ | TOLTECS_ | WINTERMUTE_ | XEEN_ |
+Engines: ADL_ | AGI_ | AGOS_ | Bladerunner_ | Buried_ | CGE_ | CGE2_ | Chewy_ | Cine_ | Drascula_ | Dreamweb_ | FREESCAPE_ | Griffon_ | GrimE_ | HDB_ | Hopkins_ | Hypno_ | Kyra_ | Lure_ | MADE_ | MADS_ | MTROPOLIS_ | MYST3_ | Neverhood_ | SCI_ | SCUMM_ | Sherlock_ | Sky_ | Stark_ | Supernova_ | Sword2_ | Sword25_ | Toltecs_ | Trecision_ | Ultima_ | Wintermute_ | Xeen_ | ZVision_ 
 
 
 
@@ -145,6 +145,34 @@ Add speed menu
 AGOS
 ******
 
+.. _opl3mode:
+
+AdLib OPL3 Mode
+	OPL3 features are used when AdLib is selected. Depending on the game, this prevents cut-off notes, adds extra notes or instruments, and/or adds stereo.
+
+	*opl3_mode*
+
+.. _dostempo:
+
+Use DOS version music tempos
+	Plays music using the tempo of the DOS version of the game (slower than the Windows version)
+
+	*dos_music_tempos*
+
+
+
+Use Windows version music tempos	
+	Plays music using the tempo of the Windows version of the game (faster than the DOS version)
+
+	*dos_music_tempos*
+
+.. _prefer_digitalsfx:
+
+Prefer digital sound effects	
+	Uses digital sound effects instead of synthesized ones. 
+
+	*prefer_digitalsfx*
+
 .. _fadeout:
 
 Disable fade-out effects
@@ -156,7 +184,7 @@ Disable fade-out effects
 
 .. _BLADERUNNER:
 
-BLADERUNNER
+Bladerunner
 ******************
 
 .. _sitcom:
@@ -194,12 +222,41 @@ Disable McCoy's quick stamina drain
 
 	*disable_stamina_drain*
 
+.. _crawlsubs:
+
+Show subtitles during text crawl 
+	During the intro cutscene, show subtitles during the text crawl.
+
+	*use_crawl_subs*
+
+.. _spanishcredits:
+
+Fix credits for voice actors
+	Updates the end credits with corrected credits for the Spanish voice actors.
+
+	*correct_spanish_credits*
+	
+
 ,,,,,,,,
+
+.. _Buried:
+
+Buried
+********
+
+.. _allowskip:
+
+Skip support
+	Allows the user to skip cutscenes.
+
+	*skip_support*
+
+,,,,,,,,,,
 
 .. _CGE:
 
 CGE
-*******
+*********
 
 .. _blind:
 
@@ -208,19 +265,58 @@ Color Blind Mode
 
 	*enable_color_blind*
 
+.. _tts:
+
+Enable Text to Speech
+	Uses TTS to read text in the game, if it is available. 
+
+	*tts_enabled*
+
 ,,,,,,
 
-.. _CINE:
+.. _CGE2:
 
-CHEWY
+CGE2
+******
+
+Color Blind Mode
+	Enables Color Blind Mode by default.
+
+	*enable_color_blind*
+
+.. _tts_objects:
+
+Enable Test to Speech for Objects and Options
+	Uses TTS to read descriptions, if TTS is available. 
+
+	*tts_enabled_objects*
+
+.. _tts_speech:
+
+Enable Test to Speech for Subtitles
+	Uses TTS to read subtitles, if TTS is available. 
+
+	*tts_enabled_speech*
+
+,,,,,,,,,,,
+
+.. _Chewy:
+
+Chewy
 *********
+
+.. _originalmenu:
 
 Use original save/load screen
 	Uses the original save/load screens instead of the ScummVM screens.
 
 	*original_menus*
 
-CINE
+,,,,,,,,,,
+
+.. _Cine:
+
+Cine
 *********
 
 Use original save/load screen
@@ -237,9 +333,9 @@ Use transparent dialog boxes in 16 color scenes
 
 ,,,,,,,,,
 
-.. _DRASCULA:
+.. _Drascula:
 
-DRASCULA
+Drascula
 *************
 
 Use original save/load screens
@@ -249,9 +345,9 @@ Use original save/load screens
 
 ,,,,,,,,,,
 
-.. _DREAMWEB:
+.. _Dreamweb:
 
-DREAMWEB
+Dreamweb
 **********
 
 Use original save/load screens
@@ -266,7 +362,127 @@ Use bright palette mode
 
 	*bright_palette*
 
+Enable Text to Speech for Objects, Options, and the Bible Quote
+	Uses TTS to read descriptions (if TTS is available).
+
+	*tts_enabled_objects*
+
+Enable Text to Speech for Subtitles
+	Use TTS to read subtitles (if TTS is available)
+
+	*tts_enabled_speech*
+
 ,,,,,,,,,,
+
+.. FREESCAPE:
+	FREESCAPE
+	**********
+
+	Prerecorded sounds
+		Use high-quality pre-recorded sounds instead of pc speaker emulation
+
+		*prerecorded_sounds*
+
+	Extended timer
+		Starts the game timer at 99:59:59.
+
+		*extended_timer*
+
+	Automatic drilling
+		Allows successful drilling in any area in Driller.
+
+		*automatic_drilling*
+
+	Disable demo mode	
+		Ensures demo mode is never activated.
+
+		*disable_demo_mode*
+
+	Disable sensors
+		Sensors will not shoot the player.
+
+		*disable_sensors*
+
+	Disable falling
+		Player cannot fall over edges.
+
+		*disable_falling*
+
+
+.. _Griffon:
+
+Griffon
+***********
+
+Enable Text to Speech
+	Uses TTS to read descriptions (if TTS is available)
+
+	*tts_enabled*
+
+,,,,,,,,,,,,,,
+
+.. _GrimE:
+
+GrimE
+*****
+
+.. _datausr:
+
+Load user patch (unsupported)
+	Loads a user patch. Please note that the ScummVM team doesn't provide support for using such patches.
+
+	*datausr_load*
+
+Show FPS
+	Shows the current FPS-rate while playing.
+
+	*show_fps*
+
+.. _Groovie:
+
+Groovie
+********
+.. _fastmovie:
+
+Fast movie speed
+	Plays movies at an increased speed.
+
+	*fast_movie_speed*
+
+Use original save/load screens
+	Uses the original save/load screens instead of the ScummVM ones.
+	
+	*originalsaveload*
+
+.. _ai:
+
+Easier AI
+	Decreases the difficulty of AI puzzles.
+
+	*easier_ai*
+
+.. _creditsmusic:
+
+Updated Credits Music
+	Play the song The Final Hour during the credits instead of reusing MIDI songs
+
+	*credits_music*
+
+.. _hotspots:
+
+Slim Left/Right Hotspots
+	Shrinks the hotspots on the left and right sides for exiting puzzles.
+
+	*slim_hotspots*
+
+.. _speedrun:
+
+Speedrun Mode
+	Affects the controls for fast forwarding the game.
+
+	*speedrun_mode*
+
+,,,,,,,,,
 
 .. _HDB:
 
@@ -282,9 +498,9 @@ Enable cheat mode
 
 ,,,,,,,,,,
 
-.. _HOPKINS:
+.. _Hopkins:
 
-HOPKINS
+Hopkins
 *************
 
 .. _gore:
@@ -296,9 +512,50 @@ Gore Mode
 
 ,,,,,,,,,,
 
-.. _KYRA:
+.. _Hypno:
 
-KYRA
+Hypno
+********
+.. _cheats:
+
+Enable original cheats
+	Allows cheats by using the C key.
+
+	*cheats*
+
+.. _infH:
+
+Enable infinite health cheat
+	Player health will never decrease (except for game over scenes).
+	
+	*infiniteHealth*
+
+.. _infA:
+
+Enable infinite ammo cheat
+	Player ammo will never decrease.
+
+	*infiniteAmmo*
+
+.. _unlock: 
+
+Unlock all levels
+	All levels are available to play.
+
+	*unlockAllLevels*
+
+.. _restored:
+
+Enable restored content
+	Adds additional content that is not enabled the original implementation.
+
+	*restored*
+
+,,,,,,,,,,,,,
+
+.. _Kyra:
+
+Kyra
 ********
 
 .. _studio:
@@ -324,8 +581,8 @@ Enable helium mode
 
 .. _smooth:
 
-Enable smooth scrolling when walking
-	Makes scrolling smoother when changing from one screen to another.
+Smooth scrolling
+	Makes scrolling smoother when walking.
 
 	*smooth_scrolling*
 
@@ -335,6 +592,8 @@ Enable floating cursors
 	Changes the cursor when it floats to the edge of the screen to a directional arrow. Click to walk in that direction.
 
 	*floating_cursors*
+
+.. _autoname:
 
 Suggest save names
 	Fills in an autogenerated save game description into the input prompt.
@@ -357,9 +616,9 @@ Fight Button L/R Swap
 
 ,,,,,,,,,,
 
-.. _LURE:
+.. _Lure:
 
-LURE
+Lure
 ******
 
 
@@ -369,6 +628,20 @@ TTS Narrator
 	Uses text-to-speech to read the descriptions, if text-to-speech is available.
 
 	*tts_narrator*
+
+,,,,,,,,,,
+
+.. _MADE:
+
+MADE
+******
+
+.. _digitalmusic: 
+
+Play a digital soundtrack during the opening movie
+	Uses a digital soundtrack during the introduction, instead of MIDI music. 
+
+	*intro_music_digital*
 
 ,,,,,,,,,,
 
@@ -405,60 +678,140 @@ Naughty game mode
 
 	*NaughtyMode*
 
-.. _gdither:
+TTS Narrator
+	Use TTS to read the descriptions (if TTS is available).
 
-Graphics dithering
-	Enables graphics dithering.
+	*tts_narrator*
 
-	*GraphicsDithering*
 
-,,,,,,,,,,
-
-.. _MTROPOLIS:
-
-MTROPOLIS
-*******
-
-.. _widescreen:
-
-16:9 widescreen mod
-	Removes letterboxing and moves some display elements, improving coverage on widescreen displays.
-
-	*mtropolis_mod_obsidian_widescreen*
-
-.. _dynamicmidi:
-
-Improved music mixing
-	Enables dynamic MIDI mixer, improving music quality.
-
-	*mtropolis_mod_dynamic_midi*
-
-.. _saveatcheckpoints:
-
-Autosave at progress points
-	Automatically saves the game at major progress points.
-
-	*mtropolis_mod_auto_save_at_checkpoints*
-
-.. _shorttransitions:
-
-Enable short transitions
-	Plays short transitions that would normally be skipped on fast CPUs.
-
-	*mtropolis_mod_minimum_transition_duration*
-
-.. _debugger:
-
-Start with debugger
-	Starts the game with the debug overlay active.
-
-	*mtropolis_debug_at_start*
 
 ,,,,,,,,,,
 
-.. _NEVERHOOD:
+.. _Mohawk:
 
-NEVERHOOD
+Mohawk
+*********
+
+.. _zip:
+
+Zip Mode activated
+	When activated, clicking on an item or area with the lightning bolt cursor takes you directly there, skipping intermediate screens. You can only 'Zip' to a precise area you've already been.
+
+	*zip_mode*
+
+.. _tmode:
+
+Transitions enabled
+	Toggle screen transitions on or off. Turning off screen transitions will enable you to navigate more quickly through the game.
+
+	*transition_mode*
+
+.. _flyby:
+
+Play the Myst fly by movie
+	The Myst fly by movie was not played by the original engine.
+
+	*playmystflyby*
+
+.. _fuzzy:
+
+Improve Selenitic Age puzzle accessibility
+	Allows solving Selenitic Age audio puzzles with more error margin.
+
+	*fuzzy_logic*
+
+.. _cdrom:
+
+Simulate loading times of old CD drives
+	Simulate loading times of old CD-ROM drives by adding a random delay during scene transitions.
+
+	*cdromdelay*
+
+.. _water:
+
+Water Effect Enabled
+	Toggles the use of QuickTime videos for visual effects related to water surfaces (ripples, waves, etc.).
+
+	*water_effects*
+
+.. _tspeed:
+
+Transitions (Riven only)
+	Adjusts the speed of screen transitions. Disabling screen transitions will enable you to navigate more quickly through the game.
+
+	Options:
+		- Disabled
+		- Fastest
+		- Normal
+		- Best 
+
+	*transition_mode*
+
+
+,,,,,,,,
+
+.. 
+	.. _MTROPOLIS:
+
+	MTROPOLIS
+	************
+
+	.. _widescreen:
+
+	16:9 widescreen mod
+		Removes letterboxing and moves some display elements, improving coverage on widescreen displays.
+
+		*mtropolis_mod_obsidian_widescreen*
+
+	.. _dynamicmidi:
+
+	Improved music mixing
+		Enables dynamic MIDI mixer, improving music quality.
+
+		*mtropolis_mod_dynamic_midi*
+
+	.. _saveatcheckpoints:
+
+	Autosave at progress points
+		Automatically saves the game at major progress points.
+
+		*mtropolis_mod_auto_save_at_checkpoints*
+
+	.. _shorttransitions:
+
+	Enable short transitions
+		Plays short transitions that would normally be skipped on fast CPUs.
+
+		*mtropolis_mod_minimum_transition_duration*
+
+	Enable subtitles for important sound effects
+		Enables subtitles for important sound effects.  This may reduce the difficulty of sound recognition puzzles and minigames.
+
+		*mtropolis_mod_sound_gameplay_subtitles*
+
+	.. _debugger:
+
+	Start with debugger
+		Starts the game with the debug overlay active.
+
+		*mtropolis_debug_at_start*
+
+
+	.. _MYST3:
+
+	MYST3
+	*******
+
+	Widescreen mod
+		Enables widescreen rendering in fullscreen mode.
+
+		*widescreen_mod*
+		
+	
+
+.. _Neverhood:
+
+Neverhood
 ************
 
 Use original save/load screens
@@ -480,12 +833,19 @@ Scale the making of videos to full screen
 
 	*scalemakingofvideos*
 
+.. _hint:
+
+Repeat useful Willie's hint
+	Repeats actual useful hint by Willie.
+
+	*repeatwilliehint*
+
 ,,,,,,,,,,
 
-.. _QUEEN:
+.. _Queen:
 
-QUEEN
-*****
+Queen
+*******
 
 Alternate intro
 	Plays the alternate intro for Flight of the Amazon Queen.
@@ -537,7 +897,7 @@ Use high-quality "LarryScale" cel scaling
 .. _dsfx:
 
 Prefer digital sound effects
-	Prefers digital (sampled) sound effects instead of synthesized ones.
+	Uses digital (sampled) sound effects instead of synthesized ones.
 
 	*prefer_digitalsfx*
 
@@ -546,12 +906,6 @@ Use original save/load screens
 
 	*originalsaveload*
 
-.. _fb01:
-
-Use IMF/Yamaha FB-01 for MIDI output
-	Uses an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI output.
-
-	*native_fb01*
 
 .. _cd:
 
@@ -588,6 +942,44 @@ Enable content censoring
 
 	*enable_censoring*
 
+.. _rgb:
+
+Use RGB rendering
+	Use RGB rendering to improve screen transitions.
+
+	*rgb_rendering*
+
+.. _palette:
+
+Use per-resource modified palettes
+	Use custom per-resource palettes to improve visuals
+
+	*palette_mods*
+
+.. _beard:
+
+Enable bearded musicians
+	Enable graphics that were disabled for legal reasons
+
+	*enable_bearded_musicians*
+
+.. _midimode:
+
+MIDI Mode
+	When using external MIDI devices, such as through USB-MIDI, select your device here. 
+
+	*midi_mode*
+
+	Options:
+		- Standard - GM/MT-32
+			- *Standard*
+		- Roland D-110/D-10/D-20
+			- *D110*
+		- YamahaFB01
+			- *FB01*
+
+
+
 ,,,,,,,,,,
 
 .. _SCUMM:
@@ -609,6 +1001,31 @@ Use NES Classic Palette
 
 	*mm_nes_classic_palette*
 
+.. _trim: 
+
+Trim FM-TOWNS games to 200 pixels height
+	Cuts the extra 40 pixels at the bottom of the screen, to make it standard 200 pixels height, allowing the use of aspect ratio correction.
+	*trim_fmtowns_to_200_pixels*
+
+.. _macmusic:
+
+Play simplified music
+	This music was presumably intended for low-end Macs, and uses only one channel.
+
+	*mac_v3_low_quality_music*
+
+Enable smooth scrolling
+	Uses smooth scrolling instead of the normal 8-pixels steps scrolling.
+
+	*smooth_scroll*
+
+.. _semi:
+
+Allow semi-smooth scrolling
+	Allow scrolling to be less smooth during the fast camera movement in the intro
+
+	*semi_smooth_scroll*
+
 .. _enhancements:
 
 Enable game-specific enhancements
@@ -616,11 +1033,25 @@ Enable game-specific enhancements
 
 	*enable_enhancements*
 
+.. _aoverride:
+
+Load modded audio
+	Replaces music, sound effects, and speech clips with modded audio files, if available.
+
+	*audio_override*
+
+.. _originalgui:
+
+Enable the original GUI and Menu
+	Allows the game to use the in-engine graphical interface and the original save/load menu.
+
+	*original_gui*
+
 ,,,,,,,,,,
 
-.. _SHERLOCK:
+.. _Sherlock:
 
-SHERLOCK
+Sherlock
 *********
 
 Use original load/save screens
@@ -670,9 +1101,9 @@ TTS Narrator
 
 ,,,,,,,,,,
 
-.. _SKY:
+.. _Sky:
 
-SKY
+Sky
 ******
 
 .. _altintro:
@@ -684,9 +1115,37 @@ Floppy intro
 
 ,,,,,,,,,,
 
-.. _SUPERNOVA:
+.. _Stark:
 
-SUPERNOVA
+Stark
+********
+
+.. _assets:
+
+Load modded assets
+	Enables loading of external replacement assets.
+
+	*enable_assets_mod*
+
+.. _linearfilter:
+
+Enable linear filtering of the backgrounds images
+	When linear filtering is enabled the background graphics are smoother in full screen mode, at the cost of some details.
+
+	*use_linear_filtering*
+
+.. _fontantialias:
+
+Enable font anti-aliasing
+	Creates smoother text.
+
+	*enable_font_antialiasing*
+
+,,,,,,,,,,,,
+
+.. _Supernova:
+
+Supernova
 **********
 
 .. _improved:
@@ -696,11 +1155,42 @@ Improved mode
 
 	*improved*
 
+Enable Text to Speech
+	Use TTS to read descriptions (if TTS is available).
+
+	*tts_enabled*
+
 ,,,,,,,,,,
 
-.. _TOLTECS:
+.. _Sword2:
 
-TOLTECS
+Sword2
+********
+
+Show object labels
+	Shows labels for objects on mouse hover
+
+	*object_labels*
+
+,,,,,,,,,,,
+
+.. _Sword25:
+
+Sword25
+**********
+
+.. _english:
+
+Use English speech
+	Use English speech instead of German for every language other than German.
+
+	*english_speech*
+
+,,,,,,,,,,,,,
+
+.. _Toltecs:
+
+Toltecs
 **************
 
 Use original save/load screens
@@ -710,9 +1200,181 @@ Use original save/load screens
 
 ,,,,,,,,,,
 
-.. _WINTERMUTE:
+.. _Trecision:
 
-WINTERMUTE
+Trecision
+***********
+
+Use original save/load screens
+	Use the original save/load screens instead of the ScummVM ones.
+
+	*originalsaveload*
+
+,,,,,,,,,,,,,,
+
+.. _TwinE:
+
+TwineE
+*******
+
+.. _wall:
+
+Enable wall collisions
+	Enables the original wall collision damage.
+
+	*wallcollision*
+
+.. _debugmode:
+
+Enable debug mode
+	Enables the debug mode. 
+
+	*debug*
+
+.. _usecd:
+
+Enable audio CD
+	Enables the original audio cd track.
+
+	*usecd*
+
+.. _sound:
+
+Enable sound
+	Enable the sound for the game
+
+	*sound*
+
+.. _voice:
+
+Enable voices
+	Enable the voices for the game
+
+	*voice*
+
+.. _displaytext:
+
+Enable text
+	Enable the text for the game
+
+	*displaytext*
+
+.. _movie:
+
+Enable movies
+	Enable the cutscenes for the game.
+
+	*movie*
+
+.. _mouse:
+
+Enable mouse
+	Enables the mouse for the UI.
+
+	*mouse*
+
+.. _usa:
+
+Use the USA version
+	Enables the USA specific version flags. 
+
+	*version*
+
+.. _highres:
+
+Enable high resolution
+	Enables a higher resolution for the game
+
+	*usehighres*
+
+TTS Narrator
+	Use TTS to read the descriptions (if TTS is available)
+
+	*tts_narrator*
+
+,,,,,,,,
+
+.. _Ultima:
+
+Ultima
+********
+
+Use original save/load screens
+	Use the original save/load screens instead of the ScummVM ones.
+
+	*originalsaveload*
+
+.. _frameskip:
+
+Enable frame skipping
+	Allow the game to skip animation frames when running too slow.
+
+	*frameSkip*
+
+.. _framelimit:
+
+Enable frame limiting
+	Limits the speed of the game to prevent running too fast.
+
+	*frameLimit*
+
+.. _cheat:
+
+Enable cheats
+	Allows cheats by commands and a menu when player is clicked.
+
+	*cheat*
+
+Enable high resolution
+	Enable a higher resolution for the game
+
+	*usehighres*
+
+.. _footsteps:
+
+Play foot step sounds
+	Plays a sound when the player moves.
+
+	*footsteps*
+
+.. _jump:
+
+Enable jump to mouse position
+	Jumping while not moving targets the mouse cursor instead of direction.
+
+	*targetedjump*
+
+.. _fontoverride:
+
+Enable font replacement
+	Replaces game fonts with rendered fonts
+
+	*font_override*
+
+Enable font anti-aliasing
+	Results in smoother text. 
+
+	*font_antialiasing*
+
+.. _silencer:
+
+Camera moves with Silencer
+	Camera tracks the player movement rather than snapping to defined positions.
+
+	*camera_on_player*
+
+.. _christmas:
+
+Always enable Christmas easter-egg
+	Enables the Christmas music at any time of year.
+
+	*always_christmas*
+
+,,,,,,,
+
+.. _Wintermute:
+
+Wintermute
 **************
 
 .. _fps:
@@ -729,11 +1391,18 @@ Sprite bilinear filtering (SLOW)
 
 	*bilinear_filtering*
 
+.. _2d:
+
+Force to use 2D renderer (2D games only)
+	Forces ScummVM to use 2D renderer while running 2D games.
+
+	*force_2d_renderer*
+
 ,,,,,,,,,,
 
-.. _XEEN:
+.. _Xeen:
 
-XEEN
+Xeen
 ******
 
 .. _cost:
@@ -749,3 +1418,43 @@ More durable armor
 	Armor won't break until character is at -80HP, instead of the default -10HP.
 
 	*DurableArmor*
+
+,,,,,,,,,,,,,
+
+.. _ZVision:
+
+ZVision
+*********
+
+Use original save/load screens
+	Use the original save/load screens instead of the ScummVM ones
+
+	*originalsaveload*
+
+.. _double:
+
+Double FPS
+	Increases framerate from 30 to 60 FPS.
+
+	*doublefps*
+
+.. _venus:
+
+Enable Venus
+	Enables the Venus help system.
+
+	*venusenabled*
+
+.. _noanim:
+
+Disable animation while turning
+	Disables animation while turning in panorama mode.
+
+	*noanimwhileturning*
+
+.. _mpeg:
+
+Use high resolution MPEG video	
+	Use MPEG video from the DVD version instead of lower resolution AVI.
+
+	*mpegmovies*
