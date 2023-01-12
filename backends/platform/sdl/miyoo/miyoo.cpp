@@ -54,10 +54,17 @@
 #define JOYSTICK_DIR	"/sys/devices/platform/joystick"
 
 static const Common::KeyTableEntry odKeyboardButtons[] = {
+#ifdef MIYOOMINI
+	{ "JOY_A",		Common::KEYCODE_SPACE,		_s("A")			},
+	{ "JOY_B",		Common::KEYCODE_LCTRL,		_s("B")			},
+	{ "JOY_X",		Common::KEYCODE_LSHIFT,		_s("X")			},
+	{ "JOY_Y",		Common::KEYCODE_LALT,		_s("Y")			},
+#else
 	{ "JOY_A",		Common::KEYCODE_LALT,		_s("A")			},
 	{ "JOY_B",		Common::KEYCODE_LCTRL,		_s("B")			},
 	{ "JOY_X",		Common::KEYCODE_LSHIFT,		_s("X")			},
 	{ "JOY_Y",		Common::KEYCODE_SPACE,		_s("Y")			},
+#endif
 	{ "JOY_BACK",		Common::KEYCODE_ESCAPE,		_s("Select")		},
 	{ "JOY_START",		Common::KEYCODE_RETURN,		_s("Start")		},
 	{ "JOY_LEFT_SHOULDER",	Common::KEYCODE_TAB,		_s("L")			},
