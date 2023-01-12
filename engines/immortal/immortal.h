@@ -162,6 +162,20 @@ struct Door {
 	uint8 _on 		   = 0;
 };
 
+// Universe is a set of properties for the entire level, nor just the room
+struct Univ {
+	uint16  _rectX 	   = 0;
+	uint16  _rectY 	   = 0;
+	uint16  _numAnims  = 0;
+	uint16  _numCols   = 0;
+	uint16  _numRows   = 0;
+	uint16  _numChrs   = 0;
+	uint16  _num2Cols  = 0;
+	uint16  _num2Rows  = 0;
+	uint16  _num2Cells = 0;
+	uint16  _num2Chrs  = 0;
+};
+
 struct ImmortalGameDescription;
 
 // Forward declaration because we will need the Disk and Room classes
@@ -224,6 +238,7 @@ public:
 	const uint16 kChrLen	  = (kChrW / 2) * kChrH;
 	const uint16 kChrBMW	  = kChrW / 2;
 	const uint16 kLCutaway    = 4;
+	const uint16 kLDrawSolid  = 32 * ((3 * 16) + 5);
 
 	const uint16 kChrDy[19] = {kChr0, kChrH, kChrH2, kChrH, kChrH2,
 							   kChrH2, kChrH, kChrH2, kChrH2, kChr0,
@@ -242,6 +257,14 @@ public:
 									  0, 0, 0, 0, 0, 0,
 									  0, 0, 0, 0, 0, 0,
 									  0, 0, 0, 0, 0, 0};
+
+	const uint16 kTBlisterCorners[60] = {7, 1, 1, 1, 1, 1, 5, 3, 1, 1, 1, 1, 1, 3, 5, 3, 5, 1, 1, 1,
+										 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 8, 8, 8, 8, 16, 16, 16, 16, 8,
+										 8, 8, 8, 16, 16, 16, 16, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+
+	const uint16 kTLogicalCorners[19] = {1, 1, 1, 1, 16, 8, 1, 8,
+										 16, 1, 1, 8, 1, 16, 8, 16,
+										 1, 16, 8};
 
 	// Disk offsets
 	const int kPaletteOffset    = 21205;				// This is the byte position of the palette data in the disk
@@ -382,22 +405,15 @@ public:
 	CArray2D<Motive>	   _programPtrs;
 	Common::Array<ObjType> _objTypePtrs;
 
-	// Universe members
-	uint16  _univRectX = 0;
-	uint16  _univRectY = 0;
-	uint16  _numAnims  = 0;
-	uint16  _numCols   = 0;
-	uint16  _numRows   = 0;
-	uint16  _numChrs   = 0;
-	uint16  _num2Cols  = 0;
-	uint16  _num2Rows  = 0;
-	uint16  _num2Cells = 0;
-	uint16  _num2Chrs  = 0;
-	Common::Array<uint16> _univ;						// This doesn't really need to exist in the way that it did in the source, but for now it will be utilized essentially the same way
-	uint16 *_CNM;
-	Common::Array<uint16> _LCNM;
+	// Universe members in order of their original memory layout
+	uint16 *_logicalCNM;								// As confusing as this is, we get Logical CNM from the .CNM file, and we get the CNM from the .UNV file
 	uint16 *_modCNM;
-	uint16 *_modLCNM;
+	uint16 *_modLogicalCNM;
+	  Univ *_univ;										// Pointer to the struct that contains the universe properties
+	Common::SeekableReadStream *_dataBuffer;			// This contains the CNM and the CBM
+	uint16 *_CNM;										// Stands for CHARACTER NUMBER MAP
+	  byte *_CBM;										// Stands for CHARACTER BIT MAP (?)
+	  byte *_oldCBM;
 
 	uint16  _myCNM[(kViewPortCW + 1)][(kViewPortCH + 1)];
 	uint16  _myModCNM[(kViewPortCW + 1)][(kViewPortCH + 1)];
@@ -534,7 +550,7 @@ GenericSprite _genSprites[6];
 	 */
 
 	// Main
-	int mungeCBM(int numChrs);
+	int mungeCBM();
 	void storeAddr();
 	void mungeSolid();
 	void mungeLRHC();
