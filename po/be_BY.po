@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-12 07:45+0000\n"
+"POT-Creation-Date: 2023-01-12 13:39+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -3208,27 +3208,27 @@ msgid "Resolution: %dx%d"
 msgstr "Адрозненне: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:717
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2476
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2477
 msgid "Enabled aspect ratio correction"
 msgstr "Карэкцыя суадносін бакоў уключана"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:719
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2482
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2483
 msgid "Disabled aspect ratio correction"
 msgstr "Карэкцыя суадносін бакоў выключана"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:732
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2498
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2499
 msgid "Filtering enabled"
 msgstr "Фільтрацыя ўключана"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:734
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2500
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2501
 msgid "Filtering disabled"
 msgstr "Фільтрацыя выключана"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2527
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2528
 msgid "Stretch mode"
 msgstr "Рэжым расцягу"
 
@@ -3236,7 +3236,7 @@ msgstr "Рэжым расцягу"
 msgid "SDL Surface"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2442
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2443
 msgid "Active graphics filter:"
 msgstr "Актыўны графічны фільтр:"
 

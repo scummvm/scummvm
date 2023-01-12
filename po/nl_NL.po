@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-12 07:45+0000\n"
+"POT-Creation-Date: 2023-01-12 13:39+0000\n"
 "PO-Revision-Date: 2022-07-13 06:51+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -3225,27 +3225,27 @@ msgid "Resolution: %dx%d"
 msgstr "Resolutie: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:717
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2476
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2477
 msgid "Enabled aspect ratio correction"
 msgstr "Pixelverhoudingcorrectie ingeschakeld"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:719
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2482
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2483
 msgid "Disabled aspect ratio correction"
 msgstr "Pixelverhoudingcorrectie uitgeschakeld"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:732
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2498
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2499
 msgid "Filtering enabled"
 msgstr "Filteren aangezet"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:734
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2500
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2501
 msgid "Filtering disabled"
 msgstr "Filteren uitgeschakeld"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2527
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2528
 msgid "Stretch mode"
 msgstr "Uitrekmodus"
 
@@ -3253,7 +3253,7 @@ msgstr "Uitrekmodus"
 msgid "SDL Surface"
 msgstr "SDL Oppervlak"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2442
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2443
 msgid "Active graphics filter:"
 msgstr "Actieve grafische filter:"
 
