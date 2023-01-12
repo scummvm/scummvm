@@ -127,7 +127,7 @@ static int findGames(Game *games, int max, bool use_ini)
 	Common::ConfigManager::Domain *appDomain =
 	  ConfMan.getDomain(Common::ConfigManager::kApplicationDomain);
 	Common::ConfigManager::Domain savedAppDomain = *appDomain;
-	ConfMan.loadDefaultConfigFile();
+	ConfMan.loadDefaultConfigFile("");
 	*appDomain = savedAppDomain;
 	const Common::ConfigManager::DomainMap &game_domains = ConfMan.getGameDomains();
 	for(Common::ConfigManager::DomainMap::const_iterator i =
