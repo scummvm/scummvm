@@ -189,6 +189,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 	unloadGFXMode();
 	delete _scaler;
+	delete _mouseScaler;
 	if (_mouseOrigSurface) {
 		SDL_FreeSurface(_mouseOrigSurface);
 		if (_mouseOrigSurface == _mouseSurface) {
