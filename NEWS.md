@@ -150,7 +150,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Adjust item quantity slider to behave closer to the original.
 
  Xeen:
-   - Several crash fixes for Clouds of Xeen
+   - Several crash fixes for Clouds of Xeen.
 
  3DS port:
    - Update relocation parser to support PREL31 that are emitted by new compiler.
