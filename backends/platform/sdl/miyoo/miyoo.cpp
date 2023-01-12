@@ -40,10 +40,17 @@
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/keymapper.h"
 
+#ifdef MIYOOMINI
+#define SCUMM_DIR	"/mnt/SDCARD/.scummvm"
+#define CONFIG_FILE	"/mnt/SDCARD/.scummvmrc"
+#define SAVE_PATH	"/mnt/SDCARD/.scummvm/saves"
+#define LOG_FILE	"/mnt/SDCARD/.scummvm/scummvm.log"
+#else
 #define SCUMM_DIR	"/mnt/.scummvm"
 #define CONFIG_FILE	"/mnt/.scummvmrc"
 #define SAVE_PATH	"/mnt/.scummvm/saves"
 #define LOG_FILE	"/mnt/.scummvm/scummvm.log"
+#endif
 #define JOYSTICK_DIR	"/sys/devices/platform/joystick"
 
 static const Common::KeyTableEntry odKeyboardButtons[] = {
