@@ -29,14 +29,16 @@ namespace Networking {
 Host::Host(ENetHost *host) {
 	_host = host;
 	_serverPeer = nullptr;
-	_recentEvent = nullptr;
+	_recentHost = "";
+	_recentPort = 0;
 	_recentPacket = nullptr;
 }
 
 Host::Host(ENetHost *host, ENetPeer *serverPeer) {
 	_host = host;
 	_serverPeer = serverPeer;
-	_recentEvent = nullptr;
+	_recentHost = "";
+	_recentPort = 0;
 	_recentPacket = nullptr;
 }
 
@@ -49,7 +51,14 @@ Host::~Host() {
 uint8 Host::service(int timeout) {
 	ENetEvent event;
 	enet_host_service(_host, &event, timeout);
-	_recentEvent = &event;
+
+	if (event.type > ENET_EVENT_TYPE_NONE) {
+		char hostName[50];
+		if (enet_address_get_host_ip(&event.peer->address, hostName, 50) == 0)
+			_recentHost = Common::String(hostName);
+		_recentPort = event.peer->address.port;
+	}
+
 	if (event.type == ENET_EVENT_TYPE_RECEIVE) {
 		if (_recentPacket)
 			destroyPacket();
@@ -82,19 +91,11 @@ void Host::disconnectPeer(int peerIndex) {
 }
 
 Common::String Host::getHost() {
-	if (!_recentEvent)
-		return "";
-
-	char _hostName[50];
-	if (enet_address_get_host_ip(&_recentEvent->peer->address, _hostName, 50) == 0)
-		return Common::String(_hostName);
-	return "";
+	return _recentHost;
 }
 
 int Host::getPort() {
-	if (!_recentEvent || !_recentEvent->peer)
-		return 0;
-	return _recentEvent->peer->address.port;
+	return _recentPort;
 }
 
 int Host::getPeerIndexFromHost(Common::String host, int port) {
