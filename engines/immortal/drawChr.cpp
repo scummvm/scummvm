@@ -23,12 +23,15 @@
 
 namespace Immortal {
 
-// These functions are not yet implemented
-int ImmortalEngine::mungeCBM(int numChrs) {
-	return 0;
+int ImmortalEngine::mungeCBM() {
+
+	return 0;//_CNM - pDraw;
 }
 
-void ImmortalEngine::storeAddr() {}
+void ImmortalEngine::storeAddr() {
+
+}
+
 void ImmortalEngine::mungeSolid() {}
 void ImmortalEngine::mungeLRHC() {}
 void ImmortalEngine::mungeLLHC() {}
@@ -39,5 +42,18 @@ void ImmortalEngine::drawULHC(int chr, int x, int y) {}
 void ImmortalEngine::drawURHC(int chr, int x, int y) {}
 void ImmortalEngine::drawLLHC(int chr, int x, int y) {}
 void ImmortalEngine::drawLRHC(int chr, int x, int y) {}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 } // namespace immortal

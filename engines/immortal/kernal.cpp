@@ -482,13 +482,19 @@ int ImmortalEngine::loadUniv(char mazeNum) {
 	}
 	debug("Size of maze CNM: %ld", mazeCNM->size());
 
-	// The logical CNM contains the contents of mazeN.CNM, with every entry being multiplied by two (why are these byte indexes instead of word indexes in the file?)
+	// The logical CNM contains the contents of mazeN.CNM, with every entry being bitshifted left once
+	_logicalCNM = (uint16 *) malloc(mazeCNM->size());
 	mazeCNM->seek(0);
-	for (int i = 0; i < mazeCNM->size(); i++) {
-		_LCNM.push_back(mazeCNM->readUint16LE() << 1);
+	mazeCNM->read(_logicalCNM, mazeCNM->size());
+	for (int i = 0; i < (mazeCNM->size()); i++) {
+		_logicalCNM[i] <<= 1;
 	}
 
-	// Next we load the mazeN.UNV file, which contains the compressed data but is not itself compressed (again, a little silly)
+	// This is where the source defines the location of the pointers for modCNM, lModCNM, and then the universe properties
+	// So in similar fasion, here we will create the struct for universe
+	_univ = new Univ();
+
+	// Next we load the mazeN.UNV file, which contains the compressed data for multiple things
 	Common::String sUNV = "MAZE" + Common::String(mazeNum) + ".UNV";
 	Common::SeekableReadStream *mazeUNV = loadIFF(sUNV);
 	if (!mazeUNV) {
@@ -497,17 +503,29 @@ int ImmortalEngine::loadUniv(char mazeNum) {
 	}
 	debug("Size of maze UNV: %ld", mazeUNV->size());
 
+	// This is also where the pointer to CNM is defined, because it is 26 bytes after the pointer to Univ. However for our purposes
+	// These are separate
+
+	// After which, we set data length to be the total size of the file
 	lData = mazeUNV->size();
 
+	// The first data we need is found at index 20
 	mazeUNV->seek(0x20);
-	_univRectX = mazeUNV->readUint16LE() << 1;
-	_numCols   = _univRectX >> 6;
-	_num2Cols  = _numCols << 1;
+
+	// The view port of the level is longer than it is wide, so there are more columns than rows
+	// numCols = rectX / 64 (charW)
+	_univ->_rectX 	 = mazeUNV->readUint16LE() << 1;
+	_univ->_numCols  = _univ->_rectX >> 6;
+	_univ->_num2Cols = _univ->_numCols << 1;
 
 	// univRectY is mazeUNV[22]
-	_univRectY = mazeUNV->readUint16LE();
-	_numRows   = _univRectY >> 5;
-	_num2Rows  = _numRows << 1;
+	// numRows = rectY / 32 (charH)
+	_univ->_rectY 	 = mazeUNV->readUint16LE();
+	_univ->_numRows  = _univ->_rectY >> 5;
+	_univ->_num2Rows = _univ->_numRows << 1;
+
+	// Technically this is done right after decompressing the data, but it is more relevant here for now
+	_univ->_num2Cells = _univ->_num2Cols * _univ->_numRows;
 
 	// If there are animations (are there ever?), the univ data is expanded from 26 to include them
 	if (mazeUNV->readUint16LE() != 0) {
@@ -515,44 +533,40 @@ int ImmortalEngine::loadUniv(char mazeNum) {
 		lStuff += mazeUNV->readUint16LE();
 	}
 
-	// This is probably not how _univ is actually populated, but just to make sure I don't forget about, let's make sure it has the data
-	mazeUNV->seek(0);
-	for (int i = 0; i < lStuff; i++) {
-		_univ.push_back(mazeUNV->readUint16LE());
-	}
-
-	// lData is everything from the .UNV file after the universe variables
+	// lData is everything from the .UNV file after the universe properties
 	lData -= lStuff;
 
-	// The data to uncompress is after the universe data in the file
+	// At this point in the source, the data after universe properties is moved to the end of the heap
+
+	// We then uncompress all of that data, into the place in the heap where the CNM is supposed to be (the Maze Heap)
 	mazeUNV->seek(lStuff);
-	Common::SeekableReadStream *pCNM = unCompress((Common::File *) mazeUNV, lData);
-
-	// Now we move the data of the uncompressed CNM into it's actual location
-	// This data type will likely change, it's just unclear how the munge functions work currently
-	_CNM = (uint16 *)malloc(pCNM->size());
-	pCNM->seek(0);
-	pCNM->read(_CNM, pCNM->size());
-
-	_num2Cells = _num2Cols * _numRows;
-	_numChrs = 0;
+	_dataBuffer = unCompress((Common::File *) mazeUNV, lData);
+	debug("size of uncompressed CNM/CBM data %ld", _dataBuffer->size());
 
 	// Check every entry in the CNM, with the highest number being the highest number of chrs?
-	for (int i = 0; i < _num2Cells; i++) {
-		if (_CNM[i] >= _numChrs) {
-			_numChrs = _CNM[i];
+	_univ->_numChrs = 0;
+	_dataBuffer->seek(0);
+	for (int i = 0; i < _univ->_num2Cells; i++) {
+		uint16 chr = _dataBuffer->readUint16LE();
+		if (chr >= _univ->_numChrs) {
+			_univ->_numChrs = chr;
 		}
 	}
 
-	// Inc one more time being 0 counts
-	_numChrs++;
-	_num2Chrs = _numChrs << 1;
+	_dataBuffer->seek(0);
+	_univ->_numChrs++;							// Inc one more time being 0 counts
+	_univ->_num2Chrs = _univ->_numChrs << 1;
 
-	int lCNMCBM = mungeCBM(_num2Chrs);
+	//int lCNMCBM = mungeCBM(_univ->_num2Chrs);
+	int lCNMCBM = mungeCBM();
+
+	debug("nchrs %04X, n2cells %04X, univX %04X, univY %04X, cols %04X, rows %04X, lstuff %04X", _univ->_numChrs, _univ->_num2Cells, _univ->_rectX, _univ->_rectY, _univ->_numCols, _univ->_numRows, lStuff);
 
 	// We don't actually want to blister any rooms yet, so we give it a POV of (0,0)
 	makeBlisters(0, 0);
-	return _LCNM.size() + /*_modCNM.size()*/ + /*_modLCNM.size()*/ + _univ.size() + lCNMCBM;
+
+	// We return the final size of everything by adding logicalCNM + modCNM + modLogicalCNM + univ + length of expanded CNM/CBM
+	return mazeCNM->size() /*+ _modCNM.size() + _modLCNM.size()*/ + lStuff + lCNMCBM;
 }
 
 void ImmortalEngine::makeBlisters(int povX, int povY) {
