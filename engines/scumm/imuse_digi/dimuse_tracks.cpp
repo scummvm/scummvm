@@ -261,6 +261,7 @@ void IMuseDigital::tracksLowLatencyCallback() {
 		// We use a separate queue cardinality handling, since SMUSH audio and iMUSE audio can overlap...
 		bool canQueueBufs = (int)_internalMixer->getStream(idx)->numQueuedStreams() < (_maxQueuedStreams + 1);
 		bool canQueueFtSmush = (int)_internalMixer->getStream(-1)->numQueuedStreams() < (_maxQueuedStreams + 1);
+		canQueueFtSmush &= _internalMixer->getStream(-1) != nullptr;
 
 		if (canQueueBufs) {
 			if (track)
