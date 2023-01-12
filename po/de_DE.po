@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-12 13:39+0000\n"
-"PO-Revision-Date: 2023-01-10 21:24+0000\n"
+"PO-Revision-Date: 2023-01-12 18:21+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -221,7 +221,7 @@ msgstr "FEHLER %d: %s"
 #: gui/downloadpacksdialog.cpp:186 gui/downloadpacksdialog.cpp:241
 #, c-format
 msgid "Downloading %S list..."
-msgstr "Liste %S wird geladen..."
+msgstr "Liste der %S wird geladen..."
 
 #: gui/downloadpacksdialog.cpp:200
 msgid "Clear Cache"
@@ -230,7 +230,7 @@ msgstr "Cache leeren"
 #: gui/downloadpacksdialog.cpp:251
 #, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "Liste %S wird heruntergeladen... %d Einträge"
+msgstr "Liste der %S wird heruntergeladen... %d Einträge gefunden"
 
 #: gui/downloadpacksdialog.cpp:261
 #, c-format
@@ -1102,7 +1102,7 @@ msgstr "Klein"
 #: gui/options.cpp:1067 gui/options.cpp:1574
 msgctxt "shader"
 msgid "None"
-msgstr "Nichts"
+msgstr "Keine"
 
 #: gui/options.cpp:485 gui/options.cpp:969 gui/options.cpp:1135
 #: gui/options.cpp:1289 gui/options.cpp:1718
@@ -1218,7 +1218,7 @@ msgstr "Shader aktualisieren"
 
 #: gui/options.cpp:1580
 msgid "Check for updates of shader packs"
-msgstr "Suche nach Aktualisierungen von Shader-Packs"
+msgstr "Suche nach aktualisierten Shader-Packs"
 
 #: gui/options.cpp:1586 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
@@ -1654,7 +1654,7 @@ msgstr "Icons aktualisieren"
 
 #: gui/options.cpp:2521
 msgid "Check for updates of icon packs"
-msgstr "Suche nach Aktualisierungen von Icon-Packs"
+msgstr "Suche nach aktualisierten Icon-Packs"
 
 #: gui/options.cpp:2528
 msgid "Autosave:"
@@ -2894,7 +2894,7 @@ msgstr "OpenGL mit Shader"
 #: graphics/renderer.cpp:44
 msgctxt "lowres"
 msgid "OpenGL with shaders"
-msgstr "OpenGL mit Shadern"
+msgstr "OpenGL mit Shader"
 
 #: audio/adlib.cpp:2303
 msgid "AdLib emulator"
