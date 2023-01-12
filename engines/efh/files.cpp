@@ -220,7 +220,7 @@ void EfhEngine::loadTechMapImp(int16 fileId) {
 }
 
 void EfhEngine::loadPlacesFile(uint16 fullPlaceId, bool forceReloadFl) {
-	debug("loadPlacesFile %d %s", fullPlaceId, forceReloadFl ? "True" : "False");
+	debugC(2, kDebugEngine, "loadPlacesFile %d %s", fullPlaceId, forceReloadFl ? "True" : "False");
 
 	if (fullPlaceId == 0xFF)
 		return;
