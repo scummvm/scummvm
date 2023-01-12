@@ -78,7 +78,7 @@ void RegionManager::saveRegions(Common::WriteStream *stream) {
 		stream->writeUint16BE((*it)->y2);
 		stream->writeUint16BE((*it)->sX);
 		stream->writeUint16BE((*it)->sY);
-		stream->writeUint16BE((*it)->di);
+		stream->writeSint16BE((*it)->di);
 		g_sludge->_objMan->saveObjectRef((*it)->thisType, stream);
 	}
 }
@@ -94,7 +94,7 @@ void RegionManager::loadRegions(Common::SeekableReadStream *stream) {
 		newRegion->y2 = stream->readUint16BE();
 		newRegion->sX = stream->readUint16BE();
 		newRegion->sY = stream->readUint16BE();
-		newRegion->di = stream->readUint16BE();
+		newRegion->di = stream->readSint16BE();
 		newRegion->thisType = g_sludge->_objMan->loadObjectRef(stream);
 	}
 }
