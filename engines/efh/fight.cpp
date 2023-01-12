@@ -280,11 +280,12 @@ bool EfhEngine::handleFight(int16 monsterId) {
 										} else if (_npcBuf[_teamCharId[var7E]]._hitPoints < _npcBuf[_teamCharId[var7E]]._maxHP / 2) {
 											addReactionText(kEfhReactionWinces);
 										} else if (_npcBuf[_teamCharId[var7E]]._hitPoints < _npcBuf[_teamCharId[var7E]]._maxHP / 3) {
-											// CHECKME: Doesn't make any sense to check /3 after /2... I don't get it
+											// CHECKME: Doesn't make any sense to check /3 after /2... I don't get it. Looks like an original bug
 											addReactionText(kEfhReactionScreams);
 										} else if (_npcBuf[_teamCharId[var7E]]._maxHP / 8 >= originalDamage) {
 											addReactionText(kEfhReactionChortles);
 										} else if (originalDamage == 0 && getRandom(100) < 35) {
+											// CHECKME: "originalDamage == 0" is always false as it's checked beforehand. Looks like another original bug
 											addReactionText(kEfhReactionLaughs);
 										}
 									}
@@ -559,11 +560,12 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] < hitPointsBefore / 2) {
 								addReactionText(kEfhReactionWinces);
 							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] < hitPointsBefore / 3) {
-								// CHECKME: Doesn't make any sense to check /3 after /2... I don't get it
+								// CHECKME: Doesn't make any sense to check /3 after /2... I don't get it. Looks like an original bug
 								addReactionText(kEfhReactionScreams);
 							} else if (hitPointsBefore / 8 >= originalDamage) {
 								addReactionText(kEfhReactionChortles);
 							} else if (originalDamage == 0 && getRandom(100) < 35) {
+								// CHECKME: "originalDamage == 0" is always false as it's checked beforehand. Looks like another original bug
 								addReactionText(kEfhReactionLaughs);
 							}
 						}

@@ -2029,10 +2029,10 @@ void EfhEngine::displayImp1Text(int16 textId) {
 
 	int16 charCounter = 0;
 	int16 stringIdx = 0;
-	bool textComplete = false;
-	bool maxReached = false;
 
 	if (textId <= 0xFE) {
+		bool textComplete = false;
+		bool maxReached = false;
 		// Clear temp text on the lower left part of the screen
 		if (_tempTextPtr) {
 			_tempTextPtr = nullptr;
@@ -2265,8 +2265,8 @@ void EfhEngine::computeInitiatives() {
 	debugC(6, kDebugEngine, "computeInitiatives");
 
 	for (int counter = 0; counter < 3; ++counter) {
-		if (_teamCharId[counter] != -1 && counter < _teamSize) {
-			_initiatives[counter]._id = counter + 1000;
+		if (counter < _teamSize && _teamCharId[counter] != -1) {
+			_initiatives[counter]._id = counter + 1000; // Magic value added to detect it's a member of the team
 			_initiatives[counter]._initiative = _npcBuf[_teamCharId[counter]]._infoScore[3]; // "Agility"
 		} else {
 			_initiatives[counter]._id = -1;
