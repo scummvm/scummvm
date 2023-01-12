@@ -672,8 +672,19 @@ void GridWidget::loadFlagIcons() {
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path, _flagIconWidth, _flagIconHeight);
 		if (gfx) {
 			_languageIcons[l->id] = gfx;
+			continue;
+		} // if no .svg, try .png
+		path = Common::String::format("icons/flags/%s.png", l->code);
+		gfx = loadSurfaceFromFile(path);
+		if (gfx) {
+			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, _flagIconWidth, _flagIconHeight, true);
+			_languageIcons[l->id] = scGfx;
+			if (gfx != scGfx) {
+				gfx->free();
+				delete gfx;
+			}
 		} else {
-			_languageIcons[l->id] = nullptr;
+			_languageIcons[l->id] = nullptr; // nothing found, set no nullptr
 		}
 	}
 }
