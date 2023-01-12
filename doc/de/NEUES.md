@@ -25,8 +25,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für einen Modus zur automatischen Erkennung zu ScummVM hinzugefügt.
      Dazu wird die ScummVM-Programmdatei in 'scummvm-auto' umbenannt oder eine leere Datei mit dem
      Dateinamen 'scummvm-autorun' im ScummVM-Programmverzeichnis abgelegt.
-   - Unterstützung für zusätzliche Kommandozeilenparameter, die automatisch ausgeführt werden, hinzugefügt.
+   - Unterstützung für zusätzliche Kommandozeilenparameter, die automatisch genutzt werden, hinzugefügt.
      Die Anweisungen werden zeilenweise in einer Datei namens 'scummvm-autorun' abgelegt.
+   - Unterstützung für eine Konfigurationsdatei mit Anweisungen hinzugefügt, die dann gelten,
+     wenn keine reguläre Konfigurationsdatei existiert. Die Datei wird über --initial-cfg=DATEI oder
+     -i übergeben.
 
  AGI:
    - Unterstützung der französischen Übersetzungen verbessert.
@@ -141,6 +144,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Die Minimap kann nun gespeichert und in ihrer Größe verändert werden.
    - Der Curor verhält sich nun originalgetreuer.
    - Der Schieberegler für die Item-Anzahl verhält sich nun originalgetreuer.
+
+ Xeen:
+   - Fehlerkorrekturen für mehrere Abstürze in Clouds of Xeen.
 
  3DS-Portierung:
    - Der Relocation-Parser wurde um Unterstützung für PREL31, welches von neuen Compilern verwendet wird, erweitert.
