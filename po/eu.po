@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-11 13:46+0000\n"
+"POT-Creation-Date: 2023-01-12 07:27+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -2372,11 +2372,11 @@ msgstr "Jolastu"
 msgid "Saves"
 msgstr "Gorde"
 
-#: base/main.cpp:726
+#: base/main.cpp:733
 msgid "Error running game:"
 msgstr "Jokoa exekutatzean errorea:"
 
-#: base/main.cpp:773
+#: base/main.cpp:780
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Ezin izan da aukeraturiko jokoa exekutatzeko gai den motorerik aurkitu"
 
@@ -3224,29 +3224,29 @@ msgid "Resolution: %dx%d"
 msgstr "Bereizmena: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:717
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2347
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2475
 msgid "Enabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa gaituta"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:719
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2353
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2481
 msgid "Disabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa desgaituta"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:732
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2369
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2497
 #, fuzzy
 msgid "Filtering enabled"
 msgstr "Klikatzea gaituta"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:734
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2371
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2499
 #, fuzzy
 msgid "Filtering disabled"
 msgstr "Klikatzea desgaituta"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2398
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2526
 #, fuzzy
 msgid "Stretch mode"
 msgstr "Helio modua"
@@ -3255,7 +3255,7 @@ msgstr "Helio modua"
 msgid "SDL Surface"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2313
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2441
 msgid "Active graphics filter:"
 msgstr "Filtro grafiko aktiboa:"
 

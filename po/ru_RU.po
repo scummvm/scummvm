@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-11 13:46+0000\n"
+"POT-Creation-Date: 2023-01-12 07:27+0000\n"
 "PO-Revision-Date: 2023-01-10 20:51+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -2332,11 +2332,11 @@ msgstr "Играть"
 msgid "Saves"
 msgstr "Сохранения"
 
-#: base/main.cpp:726
+#: base/main.cpp:733
 msgid "Error running game:"
 msgstr "Ошибка запуска игры:"
 
-#: base/main.cpp:773
+#: base/main.cpp:780
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Не могу найти движок для запуска выбранной игры"
 
@@ -3189,27 +3189,27 @@ msgid "Resolution: %dx%d"
 msgstr "Разрешение: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:717
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2347
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2475
 msgid "Enabled aspect ratio correction"
 msgstr "Коррекция соотношения сторон включена"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:719
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2353
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2481
 msgid "Disabled aspect ratio correction"
 msgstr "Коррекция соотношения сторон выключена"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:732
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2369
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2497
 msgid "Filtering enabled"
 msgstr "Фильтрация включена"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:734
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2371
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2499
 msgid "Filtering disabled"
 msgstr "Фильтрация выключена"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2398
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2526
 msgid "Stretch mode"
 msgstr "Режим растягивания"
 
@@ -3217,7 +3217,7 @@ msgstr "Режим растягивания"
 msgid "SDL Surface"
 msgstr "Поверхность SDL"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2313
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2441
 msgid "Active graphics filter:"
 msgstr "Активный графический фильтр:"
 

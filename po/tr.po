@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-11 13:46+0000\n"
+"POT-Creation-Date: 2023-01-12 07:27+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -2365,11 +2365,11 @@ msgstr ""
 msgid "Saves"
 msgstr "Kaydet"
 
-#: base/main.cpp:726
+#: base/main.cpp:733
 msgid "Error running game:"
 msgstr "Çalıştırılan oyunda hata:"
 
-#: base/main.cpp:773
+#: base/main.cpp:780
 msgid "Could not find any engine capable of running the selected game"
 msgstr "ScummVM bu oyunu çalıştırabilecek bir motor bulamadı"
 
@@ -3201,29 +3201,29 @@ msgid "Resolution: %dx%d"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:717
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2347
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2475
 #, fuzzy
 msgid "Enabled aspect ratio correction"
 msgstr "Görüntü oranı düzeltme"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:719
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2353
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2481
 #, fuzzy
 msgid "Disabled aspect ratio correction"
 msgstr "Görüntü oranı düzeltme"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:732
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2369
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2497
 msgid "Filtering enabled"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:734
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2371
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2499
 msgid "Filtering disabled"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2398
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2526
 #, fuzzy
 msgid "Stretch mode"
 msgstr "Çekiştirme modu:"
@@ -3232,7 +3232,7 @@ msgstr "Çekiştirme modu:"
 msgid "SDL Surface"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2313
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2441
 msgid "Active graphics filter:"
 msgstr ""
 

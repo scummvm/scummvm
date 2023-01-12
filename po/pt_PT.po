@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-11 13:46+0000\n"
+"POT-Creation-Date: 2023-01-12 07:27+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -2343,11 +2343,11 @@ msgstr "Jogar"
 msgid "Saves"
 msgstr "Jogos Guardados"
 
-#: base/main.cpp:726
+#: base/main.cpp:733
 msgid "Error running game:"
 msgstr "Erro a executar o jogo:"
 
-#: base/main.cpp:773
+#: base/main.cpp:780
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Não foi encontrado nenhum motor capaz de executar o jogo selecionado"
 
@@ -3179,27 +3179,27 @@ msgid "Resolution: %dx%d"
 msgstr "Resolução: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:717
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2347
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2475
 msgid "Enabled aspect ratio correction"
 msgstr "Correção da taxa de proporção ativada"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:719
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2353
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2481
 msgid "Disabled aspect ratio correction"
 msgstr "Correção da taxa de proporção desativada"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:732
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2369
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2497
 msgid "Filtering enabled"
 msgstr "Filtragem ativada"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:734
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2371
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2499
 msgid "Filtering disabled"
 msgstr "Filtragem desativada"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2398
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2526
 msgid "Stretch mode"
 msgstr "Redimensionamento"
 
@@ -3207,7 +3207,7 @@ msgstr "Redimensionamento"
 msgid "SDL Surface"
 msgstr "SDL Surface"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2313
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2441
 msgid "Active graphics filter:"
 msgstr "Filtro gráfico ativo:"
 
