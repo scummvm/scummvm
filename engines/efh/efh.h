@@ -401,7 +401,7 @@ private:
 	bool checkSpecialItemsOnCurrentPlace(int16 itemId);
 	bool hasAdequateDefense(int16 monsterId, uint8 attackType);
 	bool hasAdequateDefenseNPC(int16 charId, uint8 attackType);
-	void sub1BE9A(int16 monsterId);
+	void addNewOpponents(int16 monsterId);
 	int16 getTeamMonsterAnimId();
 
 	// Files
