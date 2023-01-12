@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-12 13:39+0000\n"
+"POT-Creation-Date: 2023-01-12 22:12+0000\n"
 "PO-Revision-Date: 2023-01-10 20:51+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -2129,7 +2129,7 @@ msgstr "Записати"
 msgid "Playback"
 msgstr "Відтворити"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:231
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:233
 msgid "Edit"
 msgstr "Редагувати"
 
@@ -2326,11 +2326,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "Очистити значення"
 
-#: gui/widgets/grid.cpp:225
+#: gui/widgets/grid.cpp:227
 msgid "Play"
 msgstr "Грати"
 
-#: gui/widgets/grid.cpp:228
+#: gui/widgets/grid.cpp:230
 msgid "Saves"
 msgstr "Зберігання"
 

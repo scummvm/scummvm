@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-12 13:39+0000\n"
+"POT-Creation-Date: 2023-01-12 22:12+0000\n"
 "PO-Revision-Date: 2023-01-11 11:34+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -2111,7 +2111,7 @@ msgstr "Felvétel"
 msgid "Playback"
 msgstr "Visszajátszás"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:231
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:233
 msgid "Edit"
 msgstr "Javít"
 
@@ -2308,11 +2308,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "Érték törlése"
 
-#: gui/widgets/grid.cpp:225
+#: gui/widgets/grid.cpp:227
 msgid "Play"
 msgstr "Játék"
 
-#: gui/widgets/grid.cpp:228
+#: gui/widgets/grid.cpp:230
 msgid "Saves"
 msgstr "Mentések"
 

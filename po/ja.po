@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-12 13:39+0000\n"
+"POT-Creation-Date: 2023-01-12 22:12+0000\n"
 "PO-Revision-Date: 2023-01-11 11:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -2098,7 +2098,7 @@ msgstr "記録"
 msgid "Playback"
 msgstr "再生"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:231
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:233
 msgid "Edit"
 msgstr "編集"
 
@@ -2292,11 +2292,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "クリア"
 
-#: gui/widgets/grid.cpp:225
+#: gui/widgets/grid.cpp:227
 msgid "Play"
 msgstr "再生"
 
-#: gui/widgets/grid.cpp:228
+#: gui/widgets/grid.cpp:230
 msgid "Saves"
 msgstr "セーブ"
 

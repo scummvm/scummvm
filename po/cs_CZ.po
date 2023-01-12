@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-12 13:39+0000\n"
+"POT-Creation-Date: 2023-01-12 22:12+0000\n"
 "PO-Revision-Date: 2022-05-01 15:27+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -2147,7 +2147,7 @@ msgstr "Nahrát"
 msgid "Playback"
 msgstr "Přehrát"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:231
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:233
 msgid "Edit"
 msgstr "Upravit"
 
@@ -2344,11 +2344,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "Vyčistit hodnotu"
 
-#: gui/widgets/grid.cpp:225
+#: gui/widgets/grid.cpp:227
 msgid "Play"
 msgstr "Hrát"
 
-#: gui/widgets/grid.cpp:228
+#: gui/widgets/grid.cpp:230
 #, fuzzy
 msgid "Saves"
 msgstr "Uložit"
