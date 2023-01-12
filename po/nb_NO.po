@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-12 07:27+0000\n"
-"PO-Revision-Date: 2023-01-04 11:28+0000\n"
+"PO-Revision-Date: 2023-01-12 12:17+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -217,20 +217,18 @@ msgstr "FEIL %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:186 gui/downloadpacksdialog.cpp:241
-#, fuzzy, c-format
-#| msgid "Downloading icons list..."
+#, c-format
 msgid "Downloading %S list..."
-msgstr "Laster ned ikonliste ..."
+msgstr "Laster ned liste over %S ..."
 
 #: gui/downloadpacksdialog.cpp:200
 msgid "Clear Cache"
 msgstr "Tøm mellomlager"
 
 #: gui/downloadpacksdialog.cpp:251
-#, fuzzy, c-format
-#| msgid "Downloading icons list... %d entries"
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "Laster ned ikonliste ... %d oppføringer"
+msgstr "Laster ned liste over %S ... %d oppføringer"
 
 #: gui/downloadpacksdialog.cpp:261
 #, c-format
@@ -260,10 +258,9 @@ msgstr "FEIL: Ikon filbane for ikoner valgt"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:427
-#, fuzzy, c-format
-#| msgid "No new icons packs available"
+#, c-format
 msgid "No new %S available"
-msgstr "Ingen nye ikonpakker tilgjengelig"
+msgstr "Ingen nye %S tilgjengelig"
 
 #: gui/downloadpacksdialog.cpp:463
 #, c-format
@@ -1210,16 +1207,12 @@ msgid "Shader Path:"
 msgstr "Shaderbane:"
 
 #: gui/options.cpp:1580
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Shaders"
-msgstr "Oppdateringssjekk:"
+msgstr "Oppdater shadere"
 
 #: gui/options.cpp:1580
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of shader packs"
-msgstr "Sjekk for oppdateringer..."
+msgstr "Sjekk for oppdateringer av shaderpakker"
 
 #: gui/options.cpp:1586 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
@@ -1645,10 +1638,8 @@ msgid "Update Icons"
 msgstr "Oppdater ikoner"
 
 #: gui/options.cpp:2521
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of icon packs"
-msgstr "Sjekk for oppdateringer..."
+msgstr "Sjekk for ikonpakke-oppdateringer"
 
 #: gui/options.cpp:2528
 msgid "Autosave:"
@@ -1999,11 +1990,11 @@ msgstr "Velg mappe for filbehandler /root/"
 
 #: gui/options.cpp:3113
 msgid "icon packs"
-msgstr ""
+msgstr "ikonpakker"
 
 #: gui/options.cpp:3124
 msgid "shader packs"
-msgstr ""
+msgstr "shaderpakker"
 
 #: gui/options.cpp:3246
 msgid ""
@@ -2225,15 +2216,15 @@ msgstr "Skriv inn en beskrivelse for lagringsspor %d:"
 
 #: gui/shaderbrowser-dialog.cpp:52
 msgid "Choose shader from the list below (or pick a file instead)"
-msgstr ""
+msgstr "Velg shader fra listen under (eller velg en fil)"
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick file instead..."
-msgstr ""
+msgstr "Velg en fil ..."
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick shader from file system"
-msgstr ""
+msgstr "Velg shader fra filsystem"
 
 #: gui/shaderbrowser-dialog.cpp:137
 msgid "Select shader"
@@ -5060,16 +5051,12 @@ msgid "Sensors will not shoot the player"
 msgstr "Sensorer skyter ikke spilleren"
 
 #: engines/freescape/metaengine.cpp:90
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable falling"
-msgstr "Skru av lagringsmeny"
+msgstr "Skru av fall"
 
 #: engines/freescape/metaengine.cpp:91
-#, fuzzy
-#| msgid "Player ammo will never decrease."
 msgid "Player cannot fall over edges"
-msgstr "Spillerens ammunisjon minsker aldri."
+msgstr "Spilleren kan ikke falle over kanter"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -7828,15 +7815,14 @@ msgstr ""
 "tilgjengelig."
 
 #: engines/scumm/metaengine.cpp:674
-#, fuzzy
-#| msgid "Enable the debug mode"
 msgid "Enable low latency audio mode"
-msgstr "Aktiver debug-modusen"
+msgstr "Aktiver lydmodus for lav forsinkelse"
 
 #: engines/scumm/metaengine.cpp:675
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy."
 msgstr ""
+"Lar spillet bruke lyd med lav forsinkelse, på bekostning av lydpresisjon."
 
 #: engines/scumm/scumm.cpp:261
 msgid ""
