@@ -906,24 +906,24 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 			int16 victims = 0;
 			_messageToBePrinted += "  The item emits a low droning hum...";
 			if (getRandom(100) < 50) {
-				for (uint ctrEffectId = 0; ctrEffectId < 9; ++ctrEffectId) {
-					if (isMonsterActive(teamMonsterId, ctrEffectId)) {
+				for (uint ctrMobsterId = 0; ctrMobsterId < 9; ++ctrMobsterId) {
+					if (isMonsterActive(teamMonsterId, ctrMobsterId)) {
 						++victims;
-						_teamMonsterEffects[teamMonsterId]._effect[ctrEffectId] = 1;
-						_teamMonsterEffects[teamMonsterId]._duration[ctrEffectId] = getRandom(8);
+						_teamMonsterEffects[teamMonsterId]._effect[ctrMobsterId] = 1;
+						_teamMonsterEffects[teamMonsterId]._duration[ctrMobsterId] = getRandom(8);
 					}
 				}
 			} else {
 				int16 NumberOfTargets = getRandom(9);
-				for (uint ctrEffectId = 0; ctrEffectId < 9; ++ctrEffectId) {
+				for (uint ctrMobsterId = 0; ctrMobsterId < 9; ++ctrMobsterId) {
 					if (NumberOfTargets == 0)
 						break;
 
-					if (isMonsterActive(teamMonsterId, ctrEffectId)) {
+					if (isMonsterActive(teamMonsterId, ctrMobsterId)) {
 						++victims;
 						--NumberOfTargets;
-						_teamMonsterEffects[teamMonsterId]._effect[ctrEffectId] = 1;
-						_teamMonsterEffects[teamMonsterId]._duration[ctrEffectId] = getRandom(8);
+						_teamMonsterEffects[teamMonsterId]._effect[ctrMobsterId] = 1;
+						_teamMonsterEffects[teamMonsterId]._duration[ctrMobsterId] = getRandom(8);
 					}
 				}
 			}
@@ -954,15 +954,15 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 				}
 			} else {
 				int16 varAC = getRandom(9);
-				for (uint ctrEffectId = 0; ctrEffectId < 9; ++ctrEffectId) {
+				for (uint ctrMobsterId = 0; ctrMobsterId < 9; ++ctrMobsterId) {
 					if (varAC == 0)
 						break;
 
-					if (isMonsterActive(teamMonsterId, ctrEffectId)) {
+					if (isMonsterActive(teamMonsterId, ctrMobsterId)) {
 						++victim;
 						--varAC;
-						_teamMonsterEffects[teamMonsterId]._effect[ctrEffectId] = 2;
-						_teamMonsterEffects[teamMonsterId]._duration[ctrEffectId] = getRandom(8);
+						_teamMonsterEffects[teamMonsterId]._effect[ctrMobsterId] = 2;
+						_teamMonsterEffects[teamMonsterId]._duration[ctrMobsterId] = getRandom(8);
 					}
 				}
 			}

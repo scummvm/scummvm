@@ -158,9 +158,9 @@ bool EfhEngine::handleFight(int16 monsterId) {
 					}
 				}
 			} else if (checkMonsterMovementType(monsterGroupIdOrMonsterId, true)) {
-				// handleFight - Loop on var86 - Start
-				for (uint var86 = 0; var86 < 9; ++var86) {
-					if (isMonsterActive(monsterGroupIdOrMonsterId, var86)) {
+				// handleFight - Loop on mobsterId - Start
+				for (uint ctrMobsterId = 0; ctrMobsterId < 9; ++ctrMobsterId) {
+					if (isMonsterActive(monsterGroupIdOrMonsterId, ctrMobsterId)) {
 						int16 monsterWeaponItemId = _mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._weaponItemId;
 						if (monsterWeaponItemId == 0xFF)
 							monsterWeaponItemId = 0x3F;
@@ -337,9 +337,9 @@ bool EfhEngine::handleFight(int16 monsterId) {
 							}
 							// handleFight - Loop on var7E - End
 						}
-					} else if (_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._hitPoints[var86] > 0 && _teamMonsterEffects[monsterGroupIdOrMonsterId]._effect[var86]) {
-						--_teamMonsterEffects[monsterGroupIdOrMonsterId]._duration[var86];
-						if (_teamMonsterEffects[monsterGroupIdOrMonsterId]._duration[var86] <= 0) {
+					} else if (_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._hitPoints[ctrMobsterId] > 0 && _teamMonsterEffects[monsterGroupIdOrMonsterId]._effect[ctrMobsterId]) {
+						--_teamMonsterEffects[monsterGroupIdOrMonsterId]._duration[ctrMobsterId];
+						if (_teamMonsterEffects[monsterGroupIdOrMonsterId]._duration[ctrMobsterId] <= 0) {
 							_enemyNamePt2 = kEncounters[_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._monsterRef]._name;
 							int16 var70 = kEncounters[_mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._monsterRef]._nameArticle;
 							if (var70 == 2)
@@ -347,7 +347,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 							else
 								_enemyNamePt1 = "";
 
-							switch (_teamMonsterEffects[monsterGroupIdOrMonsterId]._effect[var86]) {
+							switch (_teamMonsterEffects[monsterGroupIdOrMonsterId]._effect[ctrMobsterId]) {
 							case 1:
 								_messageToBePrinted = Common::String::format("%s%s wakes up!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str());
 								break;
@@ -358,12 +358,12 @@ bool EfhEngine::handleFight(int16 monsterId) {
 								_messageToBePrinted = Common::String::format("%s%s recovers!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str());
 								break;
 							}
-							_teamMonsterEffects[monsterGroupIdOrMonsterId]._effect[var86] = 0;
+							_teamMonsterEffects[monsterGroupIdOrMonsterId]._effect[ctrMobsterId] = 0;
 							displayBoxWithText(_messageToBePrinted, 1, 2, true);
 						}
 					}
 				}
-				// handleFight - Loop on var86 - End
+				// handleFight - Loop on mobsterId - End
 			}
 		}
 
@@ -452,8 +452,8 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 			if (_teamMonsterIdArray[groupId] == -1)
 				continue;
 
-			for (int16 mobsterCounter = teamMemberId; mobsterCounter < var54; ++mobsterCounter) {
-				if (isMonsterActive(groupId, mobsterCounter) && var6E) {
+			for (int16 ctrMobsterId = teamMemberId; ctrMobsterId < var54; ++ctrMobsterId) {
+				if (isMonsterActive(groupId, ctrMobsterId) && var6E) {
 					bool noticedFl;
 					if (!checkMonsterMovementType(groupId, true)) {
 						setMapMonsterAggressivenessAndMovementType(groupId, 9, true);
@@ -467,7 +467,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 					int16 monsterId = _teamMonsterIdArray[groupId];
 					int16 characterPronoun = kEncounters[_mapMonsters[monsterId]._monsterRef]._nameArticle;
 					int16 charScore = getCharacterScore(_teamCharId[teamCharId], teamCharItemId);
-					int16 hitPointsBefore = _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter];
+					int16 hitPointsBefore = _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId];
 					int16 hitCount = 0;
 					int16 originalDamage = 0;
 					int16 damagePointsAbsorbed = 0;
@@ -500,7 +500,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						hitCount = 0;
 
 					if (hitCount > 0) {
-						_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] -= originalDamage;
+						_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] -= originalDamage;
 						if (hitCount > 1) {
 							_attackBuffer = Common::String::format("%d times ", hitCount);
 						} else {
@@ -531,7 +531,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 							_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s, but does no damage!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[verbId], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str());
 						} else if (hitPoints == 1) {
 							_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s for 1 point", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[verbId], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str());
-							if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] <= 0) {
+							if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] <= 0) {
 								getDeathTypeDescription(groupId, teamCharId + 1000);
 								getXPAndSearchCorpse(_teamCharId[teamCharId], _enemyNamePt1, _enemyNamePt2, _teamMonsterIdArray[groupId]);
 							} else {
@@ -539,7 +539,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 							}
 						} else {
 							_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s for %d points", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[verbId], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str(), hitPoints);
-							if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] <= 0) {
+							if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] <= 0) {
 								getDeathTypeDescription(groupId, teamCharId + 1000);
 								getXPAndSearchCorpse(_teamCharId[teamCharId], _enemyNamePt1, _enemyNamePt2, _teamMonsterIdArray[groupId]);
 							} else {
@@ -549,16 +549,16 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						// Action A - Check damages - End
 
 						// Action A - Add reaction text - Start
-						if (hitCount != 0 && originalDamage > 0 && getRandom(100) <= 35 && _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] > 0) {
-							if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] - 5 <= originalDamage) {
+						if (hitCount != 0 && originalDamage > 0 && getRandom(100) <= 35 && _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] > 0) {
+							if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] - 5 <= originalDamage) {
 								addReactionText(kEfhReactionReels);
-							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] < hitPointsBefore / 8) {
+							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] < hitPointsBefore / 8) {
 								addReactionText(kEfhReactionCriesOut);
-							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] < hitPointsBefore / 4) {
+							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] < hitPointsBefore / 4) {
 								addReactionText(kEfhReactionFalters);
-							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] < hitPointsBefore / 2) {
+							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] < hitPointsBefore / 2) {
 								addReactionText(kEfhReactionWinces);
-							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] < hitPointsBefore / 3) {
+							} else if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] < hitPointsBefore / 3) {
 								// CHECKME: Doesn't make any sense to check /3 after /2... I don't get it
 								addReactionText(kEfhReactionScreams);
 							} else if (hitPointsBefore / 8 >= originalDamage) {
@@ -570,7 +570,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						// Action A - Add reaction text - End
 
 						// Action A - Add armor absorb text - Start
-						if (var76 && hitCount && _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] > 0) {
+						if (var76 && hitCount && _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] > 0) {
 							if (damagePointsAbsorbed <= 1)
 								_messageToBePrinted += Common::String::format("  %s%s's armor absorbs 1 point!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 							else
@@ -600,15 +600,15 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 						// Action A - Check item durability - End
 
 						// Action A - Check effect - Start
-						if (_items[teamCharItemId]._specialEffect == 1 && _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] > 0) {
+						if (_items[teamCharItemId]._specialEffect == 1 && _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] > 0) {
 							if (getRandom(100) < 35) {
-								_teamMonsterEffects[groupId]._effect[mobsterCounter] = 1;
-								_teamMonsterEffects[groupId]._duration[mobsterCounter] = getRandom(10);
+								_teamMonsterEffects[groupId]._effect[ctrMobsterId] = 1;
+								_teamMonsterEffects[groupId]._duration[ctrMobsterId] = getRandom(10);
 								_messageToBePrinted += Common::String::format("  %s%s falls asleep!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 							}
-						} else if (_items[teamCharItemId]._specialEffect == 2 && _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[mobsterCounter] > 0) {
-							_teamMonsterEffects[groupId]._effect[mobsterCounter] = 2;
-							_teamMonsterEffects[groupId]._duration[mobsterCounter] = getRandom(10);
+						} else if (_items[teamCharItemId]._specialEffect == 2 && _mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] > 0) {
+							_teamMonsterEffects[groupId]._effect[ctrMobsterId] = 2;
+							_teamMonsterEffects[groupId]._duration[ctrMobsterId] = getRandom(10);
 							_messageToBePrinted += Common::String::format("  %s%s is frozen!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
 						}
 						// Action A - Check effect - End
@@ -706,10 +706,10 @@ bool EfhEngine::isMonsterAlreadyFighting(int16 monsterId, int16 teamMonsterId) {
 
 void EfhEngine::resetTeamMonsterEffects() {
 	debugC(6, kDebugFight, "resetTeamMonsterEffects");
-	for (uint ctrMonsterId = 0; ctrMonsterId < 5; ++ctrMonsterId) {
-		for (uint ctrEffectId = 0; ctrEffectId < 9; ++ctrEffectId) {
-			_teamMonsterEffects[ctrMonsterId]._effect[ctrEffectId] = 0;
-			_teamMonsterEffects[ctrMonsterId]._duration[ctrEffectId] = 0;
+	for (uint ctrGroupId = 0; ctrGroupId < 5; ++ctrGroupId) {
+		for (uint ctrMobsterId = 0; ctrMobsterId < 9; ++ctrMobsterId) {
+			_teamMonsterEffects[ctrGroupId]._effect[ctrMobsterId] = 0;
+			_teamMonsterEffects[ctrGroupId]._duration[ctrMobsterId] = 0;
 		}
 	}
 }
@@ -1554,26 +1554,26 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 	debug("sub1BE9A %d", monsterId);
 
 	// sub1BE9A - 1rst loop counter1_monsterId - Start
-	for (uint counter1 = 0; counter1 < 5; ++counter1) {
-		if (countMonsterGroupMembers(counter1))
+	for (uint ctrGroupId = 0; ctrGroupId < 5; ++ctrGroupId) {
+		if (countMonsterGroupMembers(ctrGroupId))
 			continue;
 
-		for (uint counter2 = 0; counter2 < 9; ++counter2) {
-			_mapMonsters[_teamMonsterIdArray[counter1]]._hitPoints[counter2] = 0;
-			_teamMonsterEffects[counter1]._effect[counter2] = 0;
-			_teamMonsterEffects[counter1]._duration[counter2] = 0;
+		for (uint ctrMobster = 0; ctrMobster < 9; ++ctrMobster) {
+			_mapMonsters[_teamMonsterIdArray[ctrGroupId]]._hitPoints[ctrMobster] = 0;
+			_teamMonsterEffects[ctrGroupId]._effect[ctrMobster] = 0;
+			_teamMonsterEffects[ctrGroupId]._duration[ctrMobster] = 0;
 		}
 
-		_teamMonsterIdArray[counter1] = -1;
+		_teamMonsterIdArray[ctrGroupId] = -1;
 
 		// CHECKME: counter1 is not incrementing, which is very, very suspicious as we are copying over and over to the same destination
 		// if the purpose is compact the array, it should be handle differently
-		for (uint counter2 = counter1 + 1; counter2 < 5; ++counter2) {
-			for (uint var8 = 0; var8 < 9; ++var8) {
-				_teamMonsterEffects[counter1]._effect[var8] = _teamMonsterEffects[counter2]._effect[var8];
-				_teamMonsterEffects[counter1]._duration[var8] = _teamMonsterEffects[counter2]._duration[var8];
+		for (uint counter2 = ctrGroupId + 1; counter2 < 5; ++counter2) {
+			for (uint ctrMobsterId = 0; ctrMobsterId < 9; ++ctrMobsterId) {
+				_teamMonsterEffects[ctrGroupId]._effect[ctrMobsterId] = _teamMonsterEffects[counter2]._effect[ctrMobsterId];
+				_teamMonsterEffects[ctrGroupId]._duration[ctrMobsterId] = _teamMonsterEffects[counter2]._duration[ctrMobsterId];
 			}
-			_teamMonsterIdArray[counter1] = _teamMonsterIdArray[counter2];
+			_teamMonsterIdArray[ctrGroupId] = _teamMonsterIdArray[counter2];
 		}
 	}
 	// sub1BE9A - 1rst loop counter1_monsterId - End
@@ -1620,8 +1620,8 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 						// The original at this point was doing a loop on counter1, which is not a good idea as
 						// it was resetting the counter1 to 9 whatever its value before the loop.
 						// I therefore decided to use another counter as it looks like an original misbehavior/bug.
-						for (uint ctrEffectId = 0; ctrEffectId < 9; ++ctrEffectId) {
-							_teamMonsterEffects[teamMonsterId]._effect[ctrEffectId] = 0;
+						for (uint ctrMobsterId = 0; ctrMobsterId < 9; ++ctrMobsterId) {
+							_teamMonsterEffects[teamMonsterId]._effect[ctrMobsterId] = 0;
 						}
 
 						if (++teamMonsterId >= 5)
