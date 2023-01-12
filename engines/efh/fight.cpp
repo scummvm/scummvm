@@ -368,7 +368,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 		}
 
 		handleMapMonsterMoves();
-		sub1BE9A(monsterId);
+		addNewOpponents(monsterId);
 	}
 
 	resetTeamMonsterIdArray();
@@ -1550,10 +1550,10 @@ bool EfhEngine::hasAdequateDefenseNPC(int16 charId, uint8 attackType) {
 }
 
 // The parameter isn't used in the original
-void EfhEngine::sub1BE9A(int16 monsterId) {
-	debug("sub1BE9A %d", monsterId);
+void EfhEngine::addNewOpponents(int16 monsterId) {
+	debugC(3, kDebugFight, "addNewOpponents %d", monsterId);
 
-	// sub1BE9A - 1rst loop counter1_monsterId - Start
+	// addNewOpponents - 1rst loop counter1_monsterId - Start
 	for (uint ctrGroupId = 0; ctrGroupId < 5; ++ctrGroupId) {
 		if (countMonsterGroupMembers(ctrGroupId))
 			continue;
@@ -1566,7 +1566,7 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 
 		_teamMonsterIdArray[ctrGroupId] = -1;
 
-		// CHECKME: counter1 is not incrementing, which is very, very suspicious as we are copying over and over to the same destination
+		// CHECKME: ctrGroupId is not incrementing, which is very, very suspicious as we are copying over and over to the same destination
 		// if the purpose is compact the array, it should be handle differently
 		for (uint counter2 = ctrGroupId + 1; counter2 < 5; ++counter2) {
 			for (uint ctrMobsterId = 0; ctrMobsterId < 9; ++ctrMobsterId) {
@@ -1576,7 +1576,7 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 			_teamMonsterIdArray[ctrGroupId] = _teamMonsterIdArray[counter2];
 		}
 	}
-	// sub1BE9A - 1rst loop counter1_monsterId - End
+	// addNewOpponents - 1rst loop counter1_monsterId - End
 
 	int16 teamMonsterId = -1;
 	for (uint counter1 = 0; counter1 < 5; ++counter1) {
@@ -1587,7 +1587,7 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 	}
 
 	if (teamMonsterId != -1) {
-		// sub1BE9A - loop var2 - Start
+		// addNewOpponents - loop var2 - Start
 		for (int var2 = 1; var2 < 3; ++var2) {
 			if (teamMonsterId >= 5)
 				break;
@@ -1599,8 +1599,8 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 				if (((_mapMonsters[ctrMapMonsterId]._possessivePronounSHL6 & 0x3F) == 0x3F && !isNpcATeamMember(_mapMonsters[ctrMapMonsterId]._npcId)) || (_mapMonsters[ctrMapMonsterId]._possessivePronounSHL6 & 0x3F) <= 0x3D) {
 					if (checkIfMonsterOnSameLargeMapPlace(ctrMapMonsterId)) {
 						bool monsterActiveFound = false;
-						for (uint ctrSubId = 0; ctrSubId < 9; ++ctrSubId) {
-							if (_mapMonsters[ctrMapMonsterId]._hitPoints[ctrSubId] > 0) {
+						for (uint ctrMobsterId = 0; ctrMobsterId < 9; ++ctrMobsterId) {
+							if (_mapMonsters[ctrMapMonsterId]._hitPoints[ctrMobsterId] > 0) {
 								monsterActiveFound = true;
 								break;
 							}
@@ -1630,20 +1630,20 @@ void EfhEngine::sub1BE9A(int16 monsterId) {
 				}
 			}
 		}
-		// sub1BE9A - loop var2 - End
+		// addNewOpponents - loop var2 - End
 	}
 
 	if (teamMonsterId == -1 || teamMonsterId > 4)
 		return;
 
-	// sub1BE9A - last loop counter1_monsterId - Start
+	// addNewOpponents - last loop counter1_monsterId - Start
 	for (int16 ctrTeamMonsterId = teamMonsterId; ctrTeamMonsterId < 5; ++ctrTeamMonsterId) {
 		_teamMonsterIdArray[ctrTeamMonsterId] = -1;
 		for (uint ctrEffectId = 0; ctrEffectId < 9; ++ctrEffectId) {
 			_teamMonsterEffects[ctrTeamMonsterId]._effect[ctrEffectId] = (int16)0x8000;
 		}
 	}
-	// sub1BE9A - last loop counter1_monsterId - End
+	// addNewOpponents - last loop counter1_monsterId - End
 }
 
 int16 EfhEngine::getTeamMonsterAnimId() {
