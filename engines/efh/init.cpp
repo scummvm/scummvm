@@ -145,9 +145,9 @@ uint8 MapMonster::getPronoun() {
 }
 
 void TeamMonsterEffect::init() {
-	for (int i = 0; i < 9; ++i) {
-		_effect[i] = 0;
-		_duration[i] = 0;
+	for (int ctrMobsterId = 0; ctrMobsterId < 9; ++ctrMobsterId) {
+		_effect[ctrMobsterId] = 0;
+		_duration[ctrMobsterId] = 0;
 	}
 }
 
