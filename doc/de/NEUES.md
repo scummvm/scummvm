@@ -64,7 +64,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Neverhood:
    - Unterstützung für die japanische Version von Neverhood hinzugefügt.
-   - Unterstützung für die Übersetzungen von Ctpax-Che@ter & Rigel hinzugefügt.
+   - Unterstützung für die Übersetzungen von -=CHE@TER=- & Rigel hinzugefügt.
 
  Plumbers:
    - Absturz in der Windows-Version behoben.
