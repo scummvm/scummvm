@@ -675,7 +675,7 @@ void GridWidget::loadFlagIcons() {
 		if (gfx) {
 			_languageIcons[l->id] = gfx;
 			continue;
-		} // if no .svg, try .png
+		} // if no .svg flag is available, search for a .png
 		path = Common::String::format("icons/flags/%s.png", l->code);
 		gfx = loadSurfaceFromFile(path);
 		if (gfx) {
@@ -686,7 +686,7 @@ void GridWidget::loadFlagIcons() {
 				delete gfx;
 			}
 		} else {
-			_languageIcons[l->id] = nullptr; // nothing found, set no nullptr
+			_languageIcons[l->id] = nullptr; // nothing found, set to nullptr
 		}
 	}
 }
