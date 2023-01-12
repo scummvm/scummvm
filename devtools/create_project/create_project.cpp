@@ -1078,6 +1078,7 @@ const Feature s_features[] = {
 	{ "fluidlite",   "USE_FLUIDLITE", true, false, "FluidLite support" },
 	{   "libcurl",     "USE_LIBCURL", true, true,  "libcurl support" },
 	{    "sdlnet",     "USE_SDL_NET", true, true,  "SDL_net support" },
+	{      "enet",        "USE_ENET", true, true,  "ENet support" },
 	{   "discord",     "USE_DISCORD", true, false, "Discord support" },
 	{ "retrowave",   "USE_RETROWAVE", true, false, "RetroWave OPL3 support" },
 

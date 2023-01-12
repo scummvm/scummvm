@@ -64,7 +64,8 @@ public:
 private:
 	ENetHost *_host;
 	ENetPeer *_serverPeer; // Only used for clients.
-	ENetEvent *_recentEvent;
+	Common::String _recentHost;
+	int _recentPort;
 	ENetPacket *_recentPacket;
 
 

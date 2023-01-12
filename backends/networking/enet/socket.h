@@ -23,8 +23,11 @@
 #define BACKENDS_NETWORKING_ENET_SOCKET_H
 
 #ifdef WIN32
-// TODO: Test me.
-#include <winsock2.h>
+// Including winsock2.h will result in errors, we have to define
+// SOCKET ourselves.
+#include <basetsd.h>
+typedef UINT_PTR SOCKET;
+
 typedef SOCKET ENetSocket;
 #else
 typedef int ENetSocket;
