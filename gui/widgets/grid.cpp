@@ -132,7 +132,9 @@ void GridItemWidget::drawWidget() {
 	// Draw Flag
 	const Graphics::ManagedSurface *flagGfx = _grid->languageToSurface(_activeEntry->language);
 	if (flagGfx) {
-		Common::Point p(_x + thumbWidth - flagGfx->w - 5, _y + 5);
+		// SVG and PNG can resize differently so it's better to use thumbWidth as reference to
+		// ensure all flags are aligned
+		Common::Point p(_x + thumbWidth - (thumbWidth / 5), _y + 5);
 		g_gui.theme()->drawSurface(p, *flagGfx, true);
 	}
 
