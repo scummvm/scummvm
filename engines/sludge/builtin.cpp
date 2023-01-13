@@ -877,7 +877,7 @@ builtIn(launch) {
 		(newTextA[4] == ':' || (newTextA[4] == 's' && newTextA[5] == ':'))) {
 
 		// IT'S A WEBSITE!
-		bool success = g_sludge->_system->openUrl(newText);
+		bool success = g_sludge->_system->openUrl(newTextA);
 		fun->reg.setVariable(SVT_INT, success);
 		return BR_CONTINUE;
 	}
