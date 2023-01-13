@@ -2,8 +2,7 @@
 Graphics
 ===============
 
-Use the Graphics tab to change how games look when they are played.
-
+Use the Graphics tab to change how games look when they are played. 
 
 **To change settings globally:**
 
@@ -26,15 +25,14 @@ All settings can also be changed in the :doc:`../advanced_topics/configuration_f
 .. _gfxmode:
 
 Graphics mode
-	Change the graphics backend used to render the ScummVM window on the screen. Different graphics modes have different options available (such as scalers and stretch modes).
+	Changes the graphics backend used to render the ScummVM window on the screen. Different graphics modes have different options available (such as scalers and stretch modes).
 
 	*gfx_mode*
-
 
 .. _render:
 
 Render mode
-	Changes how the game is rendered.
+	Changes how the game is rendered. This is only applicable to certain games which were released on multiple systems, and will reproduce what the game looked like on that system. 
 
 	*render_mode*
 
@@ -47,10 +45,28 @@ Stretch mode
 
 .. _scalers:
 
-Scalers
+Scaler
 	Changes the resolution of the game, while also selecting which filter is used to scale up the resolution. For example, a 2x scaler will take a 320x200 resolution game and scale it up to 640x400.
 
 	*scaler* and *scale_factor*
+
+Shaders
+	Similar to render mode, but applicable to all games, shaders are graphics filters that change the way a game looks. Select the **Shader** button, select a shader from the list and then select **Choose**. Alternatively, select **Pick file instead...** to browse your computer for shaders to use. ScummVM only accepts GLSL files in the .glslp format. 
+
+.. figure:: ../images/settings/shader_picker.png
+
+	The shader picker
+
+	Once back in the Graphics tab, select **Apply** to apply the chosen shader. A test pattern pops up to preview the chosen shader, along with a confirmation dialog. Choose **Yes** to keep the new shader, or **No** to revert to previous settings. ScummVM reverts to the previous setting in 10 seconds if no action is taken; this is a safety feature. 
+
+.. figure:: ../images/settings/test_pattern.png
+
+	The shader test pattern
+
+Update Shaders
+	Click on the Update Shaders button to download new or updated shaders. ScummVM will scan to find applicable shader packs; once these have been found, click on the **Download** button in the pop up window to start the download. Click the **Hide** button to close the window and continue the download in the background. Use the **Cancel download** button to cancel the download. Select **Clear Cache** to delete downloaded shaders.
+
+	The shader packs can also be downloaded manually from https://downloads.scummvm.org/frs/icons/ and must be placed in the :ref:`Icon Path <iconspath>`. 
 
 .. _ratio:
 

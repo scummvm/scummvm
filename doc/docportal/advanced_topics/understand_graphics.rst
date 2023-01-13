@@ -205,6 +205,15 @@ Below are some of the common render modes, to illustrate how the render mode set
 
     Maniac Mansion with Amiga (32 color) render mode
 
+Shaders
+------------
+
+Shaders change the way a game is rendered, and can be used to make a game look exactly how you remember it from years past - right down to the border of your Gameboy console and its old LCD screen, or your CRT monitor. Alternatively, use shaders simply to improve the overall look and feel of a game. 
+
+The shaders included in the ScummVM pack are curated from the Libretro repository, and are grouped according to effect. For an overview of specific shaders, see the `Libretro documentation <https://docs.libretro.com/shader/introduction/>`_
+
+
+
 Filter graphics
 ----------------
 
