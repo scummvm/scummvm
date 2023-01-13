@@ -112,7 +112,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 		displayAnimFrames(varInt, true);
 		for (int counter = 0; counter < _teamSize; ++counter) {
 			_teamPctVisible[counter] = 100;
-			_word32482[counter] = 65;
+			_teamPctDodgeMiss[counter] = 65;
 		}
 
 		if (!sub1CB27()) {
@@ -190,7 +190,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 								int16 ennemyPronoun = kEncounters[_mapMonsters[varInt]._monsterRef]._nameArticle;
 								int16 characterPronoun = _npcBuf[_teamCharId[var7E]].getPronoun();
 								varInt = _items[monsterWeaponItemId].field_13;
-								_word32482[var7E] += (varInt * 5);
+								_teamPctDodgeMiss[var7E] += (varInt * 5);
 								int16 var62 = 0;
 								int16 hitPoints = 0;
 								int16 originalDamage = 0;
@@ -198,7 +198,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 								int16 var64 = _mapMonsters[_teamMonsterIdArray[monsterGroupIdOrMonsterId]]._npcId * _items[monsterWeaponItemId]._attacks;
 								for (int var84 = 0; var84 < var64; ++var84) {
 									// handleFight - Loop var84 on var64 (objectId) - Start
-									if (getRandom(100) > _word32482[var7E])
+									if (getRandom(100) > _teamPctDodgeMiss[var7E])
 										continue;
 
 									++var62;
@@ -627,9 +627,12 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 }
 
 void EfhEngine::handleFight_lastAction_D(int16 teamCharId) {
-	debug("handleFight_lastAction_D %d", teamCharId);
+	// Fight - Action 'D' - Defend
+	// In the original, this function is part of handleFight.
+	// It has been split for readability purposes.
+	debugC(3, kDebugFight, "handleFight_lastAction_D %d", teamCharId);
 
-	_word32482[teamCharId] -= 40;
+	_teamPctDodgeMiss[teamCharId] -= 40;
 	_enemyNamePt2 = _npcBuf[_teamCharId[teamCharId]]._name;
 
 	uint8 pronoun = _npcBuf[_teamCharId[teamCharId]].getPronoun();
@@ -644,10 +647,10 @@ void EfhEngine::handleFight_lastAction_D(int16 teamCharId) {
 }
 
 void EfhEngine::handleFight_lastAction_H(int16 teamCharId) {
-	debugC(3, kDebugFight, "handleFight_lastAction_H %d", teamCharId);
-
+	// Fight - Action 'H' - Hide
 	// In the original, this function is part of handleFight.
 	// It has been split for readability purposes.
+	debugC(3, kDebugFight, "handleFight_lastAction_H %d", teamCharId);
 
 	_teamPctVisible[teamCharId] -= 50;
 	_enemyNamePt2 = _npcBuf[_teamCharId[teamCharId]]._name;
@@ -663,11 +666,11 @@ void EfhEngine::handleFight_lastAction_H(int16 teamCharId) {
 }
 
 bool EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
-	debug("handleFight_lastAction_U %d", teamCharId);
-
 	// Fight - Action 'U' - Use Item
 	// In the original, this function is part of handleFight.
 	// It has been split for readability purposes.
+	debugC(3, kDebugFight, "handleFight_lastAction_U %d", teamCharId);
+
 	int16 itemId = _npcBuf[_teamCharId[teamCharId]]._inventory[_word31780[teamCharId]]._ref;
 	_enemyNamePt2 = _npcBuf[_teamCharId[teamCharId]]._name;
 	_nameBuffer = _items[itemId]._name;

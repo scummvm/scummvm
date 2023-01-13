@@ -252,7 +252,7 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 		_teamCharStatus[i]._status = 0;
 		_teamCharStatus[i]._duration = 0;
 		_teamPctVisible[i] = 0;
-		_word32482[i] = 0;
+		_teamPctDodgeMiss[i] = 0;
 		_teamNextAttack[i] = -1;
 		_word31780[i] = 0;
 		_teamLastAction[i] = 0;

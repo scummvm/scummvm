@@ -470,7 +470,7 @@ private:
 	int16 handleStatusMenu(int16 gameMode, int16 charId);
 	void unequipItem(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
 	void tryToggleEquipped(int16 charId, int16 objectId, int16 windowId, int16 menuId, int16 curMenuLine);
-	int16 useObject(int16 charId, int16 objectId, int16 teamMonsterId, int16 menuId, int16 curMenuLine, int16 argA);
+	int16 useObject(int16 charId, int16 objectId, int16 teamMonsterId, int16 menuId, int16 curMenuLine, int16 gameMode);
 
 	// Savegames
 	void synchronize(Common::Serializer &s);
@@ -603,7 +603,7 @@ private:
 	int16 _menuDepth;
 	int16 _menuItemCounter;
 	int16 _teamPctVisible[3];
-	int16 _word32482[3];
+	int16 _teamPctDodgeMiss[3];
 	int16 _teamNextAttack[3];
 	int16 _word31780[3];
 
