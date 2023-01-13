@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-12 22:12+0000\n"
-"PO-Revision-Date: 2022-07-13 06:51+0000\n"
+"PO-Revision-Date: 2023-01-13 14:37+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -215,20 +215,18 @@ msgstr "FOUT %d:%s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:186 gui/downloadpacksdialog.cpp:241
-#, fuzzy, c-format
-#| msgid "Downloading icons list..."
+#, c-format
 msgid "Downloading %S list..."
-msgstr "Downloaden van iconen lijst..."
+msgstr "Lijst van %S downloaden..."
 
 #: gui/downloadpacksdialog.cpp:200
 msgid "Clear Cache"
 msgstr "Cache leegmaken"
 
 #: gui/downloadpacksdialog.cpp:251
-#, fuzzy, c-format
-#| msgid "Downloading icons list... %d entries"
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "Downloaden van iconen lijst... %d stuks"
+msgstr "Lijst van %S downloaden... %d stuks"
 
 #: gui/downloadpacksdialog.cpp:261
 #, c-format
@@ -258,10 +256,9 @@ msgstr "ERROR: Geen iconen pad geconfigureerd"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:427
-#, fuzzy, c-format
-#| msgid "No new icons packs available"
+#, c-format
 msgid "No new %S available"
-msgstr "Geen nieuwe iconen pack beschikbaar"
+msgstr "Geen nieuwe %S beschikbaar"
 
 #: gui/downloadpacksdialog.cpp:463
 #, c-format
@@ -755,7 +752,7 @@ msgstr "Eerste letter"
 #: gui/launcher.cpp:101
 msgctxt "group"
 msgid "Initial"
-msgstr ""
+msgstr "Initieel"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
@@ -792,10 +789,8 @@ msgid "Select Group by"
 msgstr "Selecteer Groeperen met"
 
 #: gui/launcher.cpp:217 gui/launcher.cpp:799
-#, fuzzy
-#| msgid "Group by:"
 msgid "Group:"
-msgstr "Groepeer op:"
+msgstr "Groep:"
 
 #: gui/launcher.cpp:219
 msgid "Select a criteria to group the entries"
@@ -1102,8 +1097,6 @@ msgstr "Klein"
 #: gui/options.cpp:449 gui/options.cpp:738 gui/options.cpp:830
 #: gui/options.cpp:835 gui/options.cpp:858 gui/options.cpp:863
 #: gui/options.cpp:1067 gui/options.cpp:1574
-#, fuzzy
-#| msgid "None"
 msgctxt "shader"
 msgid "None"
 msgstr "Geen"
@@ -1139,10 +1132,8 @@ msgid "the filtering setting could not be changed"
 msgstr "de filterinstelling kon niet veranderd worden"
 
 #: gui/options.cpp:843
-#, fuzzy
-#| msgid "the stretch mode could not be changed"
 msgid "the shader could not be changed"
-msgstr "de uitrekmodus kon niet veranderd worden"
+msgstr "de shader kon niet veranderd worden"
 
 #: gui/options.cpp:1369
 msgid "Touchpad mouse mode"
@@ -1205,35 +1196,25 @@ msgid "Scaler:"
 msgstr "Schaler:"
 
 #: gui/options.cpp:1571
-#, fuzzy
-#| msgid "Shader"
 msgid "Shader:"
-msgstr "Shader"
+msgstr "Shader:"
 
 #: gui/options.cpp:1571 gui/options.cpp:1573 gui/options.cpp:1574
-#, fuzzy
-#| msgid "Specifies path to additional data used by the game"
 msgid "Specifies path to the shader used for scaling the game screen"
-msgstr "Specificeer pad naar additionele data voor het spel"
+msgstr "Specificeer pad naar the shader voor het schalen van het spelscherm"
 
 #: gui/options.cpp:1573
-#, fuzzy
-#| msgid "Save Path:"
 msgctxt "lowres"
 msgid "Shader Path:"
-msgstr "Bewaar Pad:"
+msgstr "Shader Pad:"
 
 #: gui/options.cpp:1580
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Shaders"
-msgstr "Update controle:"
+msgstr "Werk Shaders bij"
 
 #: gui/options.cpp:1580
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of shader packs"
-msgstr "Controleren op updates..."
+msgstr "Controleer op updates van shader packs"
 
 #: gui/options.cpp:1586 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
@@ -1602,22 +1583,17 @@ msgid "GUI renderer:"
 msgstr "GUI renderer:"
 
 #: gui/options.cpp:2458
-#, fuzzy
-#| msgid "Always return to the launcher when leaving a game"
 msgid "Return to the launcher when leaving a game"
-msgstr "Altijd teruggaan naar het startmenu bij het verlaten van een spel"
+msgstr "Teruggaan naar het startmenu bij het verlaten van een spel"
 
 #: gui/options.cpp:2459
-#, fuzzy
-#| msgid ""
-#| "Always return to the launcher when leaving a game instead of closing "
-#| "ScummVM."
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
 msgstr ""
 "Altijd teruggaan naar het startmenu bij het verlaten van een spel in plaats "
-"van ScummVM afsluiten."
+"van ScummVM afsluiten\n"
+"(deze functie word niet door alle spellen ondersteund)."
 
 #: gui/options.cpp:2466
 msgid "Ask for confirmation on exit"
@@ -1668,10 +1644,8 @@ msgid "Update Icons"
 msgstr "Bijwerken Iconen"
 
 #: gui/options.cpp:2521
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of icon packs"
-msgstr "Controleren op updates..."
+msgstr "Controleer op updates van icon packs"
 
 #: gui/options.cpp:2528
 msgid "Autosave:"
@@ -2026,12 +2000,14 @@ msgid "Select directory for Files Manager /root/"
 msgstr "Selecteer map voor Bestanden Manager /root/"
 
 #: gui/options.cpp:3113
+#, fuzzy
 msgid "icon packs"
-msgstr ""
+msgstr "icon packs"
 
 #: gui/options.cpp:3124
+#, fuzzy
 msgid "shader packs"
-msgstr ""
+msgstr "shader packs"
 
 #: gui/options.cpp:3246
 msgid ""
@@ -2094,11 +2070,13 @@ msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
 msgstr ""
+"Een test patron zou zichtbaar moeten zijn.\n"
+"Wilt u deze shader schaler behouden?"
 
 #: gui/options.cpp:3734
 #, c-format
 msgid "Reverting automatically in %d seconds"
-msgstr ""
+msgstr "Automatisch herstel in %d seconds"
 
 #: gui/predictivedialog.cpp:66
 msgid "Enter Text"
@@ -2190,7 +2168,7 @@ msgstr "Draai op de achtergrond"
 #: gui/saveload-dialog.cpp:126
 #, c-format
 msgid "%s (%s %S / %s %S, %s / %s files)"
-msgstr ""
+msgstr "%s (%s %S / %s %S, %s / %s bestanden)"
 
 #: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:632
 msgid "No date saved"
@@ -4957,13 +4935,7 @@ msgid "Ok"
 msgstr "Ok"
 
 #: engines/dragons/dragons.cpp:1803
-#, fuzzy, c-format
-#| msgid ""
-#| "Error: The file '%s' hasn't been extracted properly.\n"
-#| "Please refer to the wiki page\n"
-#| "https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos for "
-#| "details on how to properly extract the DTSPEECH.XA and *.STR files from "
-#| "your game disc."
+#, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"
 "Please refer to the wiki page\n"
@@ -4972,19 +4944,11 @@ msgid ""
 msgstr ""
 "Fout: Het bestand '%s' is er niet goed uit gehaald.\n"
 "Kijk a.u.b. op de wiki pagina\n"
-"https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos voor "
-"instructies hoe de \"DTSPEECH.XA\" en *.STR bestanden op de juiste manier "
-"van de disc gehaald moeten worden."
+"%s voor instructies hoe de \"DTSPEECH.XA\" en *.STR bestanden op de juiste "
+"manier van de disc gehaald moeten worden."
 
 #: engines/dragons/metaengine.cpp:122
-#, fuzzy, c-format
-#| msgid ""
-#| "Error: It appears that the game data files were extracted incorrectly.\n"
-#| "\n"
-#| "You should only extract STR and XA files using the special method. The "
-#| "rest should be copied normally from your game CD.\n"
-#| "\n"
-#| " See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
+#, c-format
 msgid ""
 "Error: It appears that the game data files were extracted incorrectly.\n"
 "\n"
@@ -4999,7 +4963,7 @@ msgstr ""
 "U zou alleen de STR en XA bestanden er moeten uithalen via de speciale "
 "methode. De rest dient gewoon van de spel CD gekopieerd te worden.\n"
 "\n"
-"Zie https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
+"Zie %s"
 
 #: engines/dragons/metaengine.cpp:137
 msgid "Action"
@@ -5108,10 +5072,8 @@ msgid "Disable falling"
 msgstr "Bewaar menu uitschakelen"
 
 #: engines/freescape/metaengine.cpp:91
-#, fuzzy
-#| msgid "Player ammo will never decrease."
 msgid "Player cannot fall over edges"
-msgstr "Munitie van speler zal niet verminderen."
+msgstr "Speler kan niet van de rand af vallen"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -5321,12 +5283,7 @@ msgstr ""
 "%s"
 
 #: engines/grim/md5check.cpp:567
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not open the file %s for checking.\n"
-#| "It may be missing or you may not have the rights to open it.\n"
-#| "Go to https://wiki.scummvm.org/index.php/Datafiles to see a list of the "
-#| "needed files."
+#, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
 "It may be missing or you may not have the rights to open it.\n"
@@ -5335,8 +5292,7 @@ msgstr ""
 "Kon bestand %s niet openen voor integriteitscontrole.\n"
 "Misschien ontbreekt het of heeft u niet de juiste permissies om het te "
 "openen.\n"
-"Ga naar https://wiki.residualvm.org/index.php/Datafiles voor een overzicht "
-"van de benodigde bestanden."
+"Ga naar %s voor een overzicht van de benodigde bestanden."
 
 #: engines/grim/md5checkdialog.cpp:41
 msgid ""
@@ -5375,12 +5331,7 @@ msgid "Escape from Monkey Island support is not compiled in"
 msgstr "Ondersteuning voor Escape from Monkey Island is niet meegecompileerd"
 
 #: engines/grim/resource.cpp:102
-#, fuzzy, c-format
-#| msgid ""
-#| "The original patch of Grim Fandango\n"
-#| "is missing. Please download it from\n"
-#| "https://downloads.scummvm.org/frs/extras/patches/gfupd101.exe\n"
-#| "and put it in the game data files directory"
+#, c-format
 msgid ""
 "The original patch of Grim Fandango\n"
 "is missing. Please download it from\n"
@@ -5389,18 +5340,11 @@ msgid ""
 msgstr ""
 "De originele patch voor Grim Fandango ontbreekt.\n"
 "Download deze van\n"
-"https://downloads.scummvm.org/frs/extras/patches/gfupd101.exe\n"
+"%s\n"
 "en plaats deze bij de spelbestanden"
 
 #: engines/grim/resource.cpp:107
-#, fuzzy, c-format
-#| msgid ""
-#| "The original patch of Escape from Monkey Island is missing. \n"
-#| "Please download it from https://downloads.scummvm.org/frs/extras/"
-#| "patches/\n"
-#| "and put it in the game data files directory.\n"
-#| "Pay attention to download the correct version according to the game's "
-#| "language"
+#, c-format
 msgid ""
 "The original patch of Escape from Monkey Island is missing. \n"
 "Please download it from %s\n"
@@ -5409,9 +5353,9 @@ msgid ""
 "language!"
 msgstr ""
 "De originele patch voor Escape from Monkey Island ontbreekt. \n"
-"Download deze van https://downloads.scummvm.org/frs/extras/patches/\n"
+"Download deze van %s\n"
 "en plaats deze bij de spelbestanden. \n"
-"Let erop dat u de versie downloadt voor de correcte taal"
+"Let erop dat u de versie downloadt voor de correcte taal!"
 
 #: engines/grim/emi/sound/emisound.cpp:655
 msgid ""
@@ -6347,9 +6291,8 @@ msgid "Start with debugger"
 msgstr "Start de debugger"
 
 #: engines/mtropolis/metaengine.cpp:108
-#, fuzzy
 msgid "Starts with the debugger dashboard active."
-msgstr "Start de debugger"
+msgstr "Start met de debugger dashboard actief."
 
 #: engines/mtropolis/metaengine.cpp:160
 #, fuzzy
@@ -6361,9 +6304,8 @@ msgid "Force any playing movies to end"
 msgstr ""
 
 #: engines/mtropolis/saveload.cpp:142
-#, fuzzy
 msgid "Failed to read version information from save file"
-msgstr "Laden van opgeslagen spel mislukt."
+msgstr "Versie informatie uitlezen uit het opgeslagen bestand is niet gelukt"
 
 #: engines/mtropolis/saveload.cpp:150
 msgid ""
@@ -6413,14 +6355,7 @@ msgid "Enable widescreen rendering in fullscreen mode."
 msgstr "Zet breedbeeld rendering in volscherm modus aan."
 
 #: engines/myst3/myst3.cpp:363
-#, fuzzy, c-format
-#| msgid ""
-#| "This version of Myst III has not been updated with the latest official "
-#| "patch.\n"
-#| "Please install the official update corresponding to your game's "
-#| "language.\n"
-#| "The updates can be downloaded from:\n"
-#| "https://www.scummvm.org/frs/extras/patches/"
+#, c-format
 msgid ""
 "This version of Myst III has not been updated with the latest official "
 "patch.\n"
@@ -6428,12 +6363,12 @@ msgid ""
 "The updates can be downloaded from:\n"
 "%s"
 msgstr ""
-"Deze versie van Myst III is niet bijgewerkt met de nieuwste officiële "
-"patch.\n"
+"Deze versie van Myst III is niet bijgewerkt met de nieuwste officiële patch."
+"\n"
 "Installeer alstublieft de officiële update die overeenkomt met de taal van "
 "uw spel.\n"
 "De update kan gevonden worden op:\n"
-"https://www.scummvm.org/frs/extras/patches/"
+"%s"
 
 #: engines/myst3/myst3.cpp:1577 engines/pegasus/pegasus.cpp:748
 msgid "Invalid file name for saving"
@@ -6652,10 +6587,8 @@ msgstr ""
 
 #. I18N: NHC is a file extension
 #: engines/neverhood/dialogs.cpp:83
-#, fuzzy
-#| msgid "Enable font replacement"
 msgid "NHC replacement:"
-msgstr "Lettertypes vervangen"
+msgstr "NHC vervangen:"
 
 #: engines/neverhood/dialogs.cpp:89
 #, fuzzy
