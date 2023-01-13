@@ -1018,6 +1018,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Quest for Ladies (demo v1.1 Apr 1)", "3f6e02f16e1154a0daf296c8895edd97"),
 	FANMADE("Quest for Ladies (demo v1.1 Apr 6)", "f75e7b6a0769a3fa926eea0854711591"),
 	FANMADE("Quest for Piracy 1 - Enter the Silver Pirate (v0.15)", "d23f5c2a26f6dc60c686f8a2436ea4a6"),
+	FANMADE_L("Quest for the Toilet", "402d71a73f5eb236ad569f80695d3db2", Common::IT_ITA),
 	FANMADE("Quest for a Record Deal", "f4fbd7abf056d2d3204f790da5ac89ab"),
 	FANMADE("Ralph's Quest (v0.1)", "5cf56378aa01a26ec30f25295f0750ca"),
 	FANMADE_L("Residence 44 Quest (v0.99)", "7c5cc64200660c70240053b33d379d7d", Common::NL_NLD),
