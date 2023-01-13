@@ -37,7 +37,7 @@ void GraphicsManager::setBrightnessLevel(int brightnessLevel) {
 unsigned lastFrom, lastTo;
 
 void GraphicsManager::transitionFader() {
-	blendColor(&_renderSurface, TS_ARGB(_brightnessLevel, 255, 255, 255), Graphics::BLEND_MULTIPLY);
+	blendColor(&_renderSurface, TS_ARGB(255 - _brightnessLevel, 0, 0, 0), Graphics::BLEND_NORMAL);
 }
 
 void GraphicsManager::transitionCrossFader() {
