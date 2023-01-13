@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-12 22:12+0000\n"
-"PO-Revision-Date: 2023-01-13 14:37+0000\n"
+"PO-Revision-Date: 2023-01-13 15:50+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -2000,12 +2000,10 @@ msgid "Select directory for Files Manager /root/"
 msgstr "Selecteer map voor Bestanden Manager /root/"
 
 #: gui/options.cpp:3113
-#, fuzzy
 msgid "icon packs"
 msgstr "icon packs"
 
 #: gui/options.cpp:3124
-#, fuzzy
 msgid "shader packs"
 msgstr "shader packs"
 
@@ -2230,20 +2228,20 @@ msgstr "Geef een omschrijving voor slot %d:"
 #: gui/shaderbrowser-dialog.cpp:52
 msgid "Choose shader from the list below (or pick a file instead)"
 msgstr ""
+"Selecteer shader van de lijst hieronder (of kies in plaats daarvan een "
+"bestand)"
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick file instead..."
-msgstr ""
+msgstr "Selecteer een bestaand in plaats daarvan..."
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick shader from file system"
-msgstr ""
+msgstr "Selecteer een shader uit het bestanden systeem"
 
 #: gui/shaderbrowser-dialog.cpp:137
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select shader"
-msgstr "Selecteer een thema"
+msgstr "Selecteer shader"
 
 #: gui/themebrowser.cpp:44
 msgid "Select a Theme"
@@ -4210,7 +4208,7 @@ msgstr "Emuleer geen NTSC artefacten voor tekst"
 
 #: engines/agi/detection_tables.h:310
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
-msgstr ""
+msgstr "Vroege AGI spellen voor Tandy Color Computer zijn nog niet ondersteund."
 
 #: engines/agi/font.cpp:1096
 msgid ""
@@ -4413,13 +4411,12 @@ msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Geef de voorkeur aan digitale geluidseffecten boven gesynthetiseerde"
 
 #: engines/agos/metaengine.cpp:86
-#, fuzzy
 msgid "Disable fade-out effects"
-msgstr "Automatisch opslaan uitschakelen"
+msgstr "Fade-out effecten uitschakelen"
 
 #: engines/agos/metaengine.cpp:87
 msgid "Don't fade every screen to black when leaving a room."
-msgstr ""
+msgstr "Niet elk scherm uitfaden bij het verlaten van een kamer."
 
 #: engines/agos/metaengine.cpp:170
 msgid "AGOS 2 support is not compiled in"
@@ -4497,7 +4494,7 @@ msgstr "Schakel naar Olmec"
 
 #: engines/asylum/metaengine.cpp:145
 msgid "Bring up the In-Game Menu"
-msgstr ""
+msgstr "Toon het Spel Menu"
 
 #: engines/asylum/metaengine.cpp:151
 msgid "Open character inventory"
@@ -4660,12 +4657,12 @@ msgstr "Toon ondertitels in de intro cutscene tijdens de schuivende tekst"
 
 #: engines/bladerunner/metaengine.cpp:111
 msgid "Fix credits for voice actors"
-msgstr ""
+msgstr "Fix credits voor stem acteurs"
 
 #: engines/bladerunner/metaengine.cpp:112
 msgid ""
 "Updates the end credits with corrected credits for the Spanish voice actors"
-msgstr ""
+msgstr "Corrigeer de eind credits voor de Spaanse stemacteurs"
 
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 #: engines/bladerunner/metaengine.cpp:199
@@ -4746,9 +4743,8 @@ msgstr "Scroll Omlaag"
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
 #: engines/bladerunner/metaengine.cpp:311
-#, fuzzy
 msgid "Toggle Clue Privacy"
-msgstr "Dempen aan-/uitzetten"
+msgstr "Clue Privacy aan-/uitzetten"
 
 #. I18N: This keymap opens KIA's SAVE GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4813,10 +4809,8 @@ msgid "Skip support"
 msgstr "Support overslaan"
 
 #: engines/buried/metaengine.cpp:41
-#, fuzzy
-#| msgid "Allow text and cutscenes to be skipped"
 msgid "Allow cutscenes to be skipped"
-msgstr "Toestaan om tekst en cutscenes over te slaan"
+msgstr "Toestaan om cutscenes over te slaan"
 
 #: engines/buried/saveload.cpp:66
 msgid ""
@@ -4862,10 +4856,8 @@ msgstr ""
 "Gebruik TTS voor het oplezen van tekst in het spel (als TTS beschikbaar is)"
 
 #: engines/cge2/metaengine.cpp:55
-#, fuzzy
-#| msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgid "Enable Text to Speech for Objects and Options"
-msgstr "Zet spreek tekst aan voor Objecten, Opties en Bijbel Citaat"
+msgstr "Zet tekst-naar-spraak aan voor Objecten en Opties"
 
 #: engines/cge2/metaengine.cpp:56 engines/dreamweb/metaengine.cpp:62
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:40
@@ -5023,53 +5015,48 @@ msgstr "Zet spreek tekst aan voor Objecten, Opties en Bijbel Citaat"
 
 #: engines/freescape/metaengine.cpp:35
 msgid "Prerecorded sounds"
-msgstr ""
+msgstr "Opgenomen geluiden"
 
 #: engines/freescape/metaengine.cpp:36
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
+"Gebruik hoge kwaliteit opgenomen geluiden in plaats van PC speaker emulatie"
 
 #: engines/freescape/metaengine.cpp:46
 msgid "Extended timer"
-msgstr ""
+msgstr "Extended timer"
 
 #: engines/freescape/metaengine.cpp:47
 msgid "Start the game timer at 99:59:59"
-msgstr ""
+msgstr "Start de spel timer met 99:59:59"
 
 #: engines/freescape/metaengine.cpp:57
 msgid "Automatic drilling"
-msgstr ""
+msgstr "Automatisch boren"
 
 #: engines/freescape/metaengine.cpp:58
 msgid "Allow to succefully drill in any part of the area in Driller"
-msgstr ""
+msgstr "Boor met succes op elke plek van het gebied in Driller"
 
 #: engines/freescape/metaengine.cpp:68
-#, fuzzy
-#| msgid "Enable debug mode"
 msgid "Disable demo mode"
-msgstr "Zet debug modus aan"
+msgstr "Debug modus uitschakelen"
 
 #: engines/freescape/metaengine.cpp:69
 msgid "Never activate demo mode"
-msgstr ""
+msgstr "Nooit demo modus activeren"
 
 #: engines/freescape/metaengine.cpp:79
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable sensors"
-msgstr "Bewaar menu uitschakelen"
+msgstr "Sensors uitschakelen"
 
 #: engines/freescape/metaengine.cpp:80
 msgid "Sensors will not shoot the player"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:90
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable falling"
-msgstr "Bewaar menu uitschakelen"
+msgstr "Vallen uitschakelen"
 
 #: engines/freescape/metaengine.cpp:91
 msgid "Player cannot fall over edges"
@@ -5414,10 +5401,8 @@ msgid "Shrinks the hotspots on the left and right sides for exiting puzzles"
 msgstr ""
 
 #: engines/groovie/metaengine.cpp:109
-#, fuzzy
-#| msgid "Hover Mode"
 msgid "Speedrun Mode"
-msgstr "Zweef Modus"
+msgstr "Speedrun Modus"
 
 #: engines/groovie/metaengine.cpp:110
 msgid "Affects the controls for fast forwarding the game"
@@ -6237,9 +6222,8 @@ msgstr ""
 "bestaat niet meer."
 
 #: engines/mtropolis/metaengine.cpp:52
-#, fuzzy
 msgid "16:9 widescreen mod"
-msgstr "Breedbeeld aanpassing"
+msgstr "16:9 Breedbeeld aanpassing"
 
 #: engines/mtropolis/metaengine.cpp:53
 msgid ""
@@ -6266,9 +6250,8 @@ msgid "Automatically saves the game after completing puzzles and chapters."
 msgstr ""
 
 #: engines/mtropolis/metaengine.cpp:85
-#, fuzzy
 msgid "Enable short transitions"
-msgstr "Discord integratie inschakelen"
+msgstr "Korte overgangen inschakelen"
 
 #: engines/mtropolis/metaengine.cpp:86
 msgid ""
@@ -6286,18 +6269,16 @@ msgid ""
 msgstr ""
 
 #: engines/mtropolis/metaengine.cpp:107
-#, fuzzy
 msgid "Start with debugger"
-msgstr "Start de debugger"
+msgstr "Start met debugger"
 
 #: engines/mtropolis/metaengine.cpp:108
 msgid "Starts with the debugger dashboard active."
 msgstr "Start met de debugger dashboard actief."
 
 #: engines/mtropolis/metaengine.cpp:160
-#, fuzzy
 msgid "Toggle debug overlay"
-msgstr "Dempen aan-/uitzetten"
+msgstr "Debug overlay aan-/uitzetten"
 
 #: engines/mtropolis/metaengine.cpp:165
 msgid "Force any playing movies to end"
@@ -6313,15 +6294,12 @@ msgid ""
 msgstr ""
 
 #: engines/mtropolis/saveload.cpp:166
-#, fuzzy
-#| msgid ""
-#| "Saved game was created with a newer version of ScummVM. Unable to load."
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
 msgstr ""
-"Opgeslagen spel is gemaakt met een nieuwere versie van ScummVM. Laden is "
-"niet mogelijk."
+"Opgeslagen spel is gemaakt met een eerdere niet compatible versie van "
+"ScummVM. Laden is niet mogelijk."
 
 #: engines/mtropolis/saveload.cpp:174
 msgid "Failed to load save, an error occurred when reading the save game data."
@@ -6332,10 +6310,8 @@ msgid "An internal error occurred while attempting to write save game data"
 msgstr ""
 
 #: engines/mtropolis/saveload.cpp:242
-#, fuzzy
-#| msgid ", error while mounting the share"
 msgid "An error occurred while writing the save game"
-msgstr ", fout tijdens het mounten van de share"
+msgstr "Iets ging fout tijdens het opgeslaan van het spel"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -6591,10 +6567,8 @@ msgid "NHC replacement:"
 msgstr "NHC vervangen:"
 
 #: engines/neverhood/dialogs.cpp:89
-#, fuzzy
-#| msgid "Original Save"
 msgid "<original>"
-msgstr "Origineel opgeslagen spel"
+msgstr "<orgineel>"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -6704,10 +6678,8 @@ msgstr ""
 "Gebruik een alternatieve versie van de intro (alleen voor de CD versie)"
 
 #: engines/queen/metaengine.cpp:47
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Improved font"
-msgstr "Verbeterde modus"
+msgstr "Verbeterde lettertype"
 
 #: engines/queen/metaengine.cpp:48
 msgid "Use an easier to read custom font"
@@ -7153,10 +7125,8 @@ msgstr ""
 "versies van hetzelfde spel."
 
 #: engines/scumm/dialogs.cpp:1051 engines/scumm/metaengine.cpp:665
-#, fuzzy
-#| msgid "Enable the original audio cd track"
 msgid "Enable the original GUI and Menu"
-msgstr "Gebruik de originele audio CD geluidsspoor"
+msgstr "Gebruik de originele GUI en Menu"
 
 #: engines/scumm/dialogs.cpp:1051 engines/scumm/metaengine.cpp:666
 msgid ""
@@ -7550,10 +7520,8 @@ msgstr "Schop"
 
 #. I18N: The name of the 'Shift' key on a PC keyboard
 #: engines/scumm/help.cpp:238
-#, fuzzy
-#| msgid "Shift key"
 msgid "Shift"
-msgstr "Shift toets"
+msgstr "Shift"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/help.cpp:240
@@ -7845,10 +7813,8 @@ msgstr ""
 "bestanden als die er zijn."
 
 #: engines/scumm/metaengine.cpp:674
-#, fuzzy
-#| msgid "Enable the debug mode"
 msgid "Enable low latency audio mode"
-msgstr "Gebruik de debug modus"
+msgstr "Lage latency geluid modus inschakelen"
 
 #: engines/scumm/metaengine.cpp:675
 msgid ""
@@ -9138,10 +9104,8 @@ msgid "Toggle subtitles"
 msgstr "Ondertitels aan-/uitzetten"
 
 #: engines/wintermute/keymapper_tables.h:1409
-#, fuzzy
-#| msgid "Hide Others"
 msgid "Hide hints"
-msgstr "Verberg Anderen"
+msgstr "Hints verbergen"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1464
