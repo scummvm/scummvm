@@ -6,7 +6,7 @@ From the Launcher
 ==================
 The settings are arranged by subject, on different tabs:
 
-:doc:`Game tab <../settings/game>` | :doc:`Graphics tab <../settings/graphics>` | :doc:`Control tab <../settings/control>` | :doc:`Keymaps tab <../settings/keymaps>` | :doc:`Audio tab <../settings/audio>` | :doc:`Volume tab <../settings/audio>` | :doc:`Midi tab <../settings/audio>` | :doc:`MT-32 tab <../settings/audio>` | :doc:`Paths tab <../settings/paths>` | :doc:`Misc tab <../settings/misc>` | :doc:`Cloud tab <../settings/cloud>` | :doc:`LAN tab <../settings/lan>` | :doc:`Accessibility tab <../settings/accessibility>`
+:doc:`Game tab <../settings/game>` | :doc:`Graphics tab <../settings/graphics>` | :doc:`Control tab <../settings/control>` | :doc:`Keymaps tab <../settings/keymaps>` | :doc:`Audio tab <../settings/audio>` | :doc:`Volume tab <../settings/audio>` | :doc:`Midi tab <../settings/audio>` | :doc:`MT-32 tab <../settings/audio>` | :doc:`Paths tab <../settings/paths>` | :doc:`GUI tab <../settings/gui>` | :doc:`Misc tab <../settings/misc>` | :doc:`Cloud tab <../settings/cloud>` | :doc:`LAN tab <../settings/lan>` | :doc:`Accessibility tab <../settings/accessibility>`
 
 To change a setting globally, so that it affects all games, select the **Global Options** button to open the menu, and then select the tab containing the setting you would like to change.
 
