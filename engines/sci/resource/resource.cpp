@@ -3028,20 +3028,12 @@ reg_t ResourceManager::findGameObject(const bool addSci11ScriptOffset, const boo
 	SciSpan<const byte>::const_iterator offsetPtr;
 
 	if (getSciVersion() <= SCI_VERSION_1_LATE) {
-		SciSpan<const byte> buf = (getSciVersion() == SCI_VERSION_0_EARLY) ? script->subspan(2) : *script;
+		offsetPtr = findSci0ExportsBlock(*script);
+		if (offsetPtr == script->cend())
+			error("Unable to find exports block from script 0");
+		offsetPtr += 4 + 2;
 
-		// Check if the first block is the exports block (in most cases, it is)
-		bool exportsIsFirst = buf.getUint16LEAt(4) == 7;
-		if (exportsIsFirst) {
-			offsetPtr = buf.subspan(4 + 2).cbegin();
-		} else {
-			offsetPtr = findSci0ExportsBlock(*script);
-			if (offsetPtr == buf.cend())
-				error("Unable to find exports block from script 0");
-			offsetPtr += 4 + 2;
-		}
-
-		int16 offset = !isSci11Mac() ? offsetPtr.getUint16LE() : offsetPtr.getUint16BE();
+		uint16 offset = !isSci11Mac() ? offsetPtr.getUint16LE() : offsetPtr.getUint16BE();
 		return make_reg(1, offset);
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
 		offsetPtr = script->cbegin() + 4 + 2 + 2;
