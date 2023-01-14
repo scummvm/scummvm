@@ -28,7 +28,6 @@
 
 #include "tetraedge/te/te_renderer.h"
 #include "tetraedge/te/te_renderer_opengl.h"
-#include "tetraedge/te/te_light.h"
 #include "tetraedge/te/te_light_opengl.h"
 #include "tetraedge/te/te_mesh_opengl.h"
 
@@ -141,33 +140,15 @@ Common::String TeRendererOpenGL::renderer() {
 }
 
 
-static bool compareTransparentMeshProperties(const TeRenderer::TransparentMeshProperties &p1,
-											const TeRenderer::TransparentMeshProperties &p2) {
-	return (p1._zOrder < p2._zOrder);
-}
-
 void TeRendererOpenGL::renderTransparentMeshes() {
 	if (!_numTransparentMeshes)
 		return;
 
 	glDepthMask(GL_FALSE);
-	//dumpTransparentMeshProps();
 
-	Common::sort(_transparentMeshProps.begin(), _transparentMeshProps.end(),
-		 compareTransparentMeshProperties);
-
-	int vertsDrawn = 0;
-	for (uint i = 0; i < _transparentMeshProps.size(); i++) {
-		const uint vcount = _transparentMeshProps[i]._vertexCount;
-		for (uint j = 0; j < vcount; j++)
-			_transparentMeshVertexNums[vertsDrawn + j] = (short)(_transparentMeshProps[i]._sourceTransparentMesh + j);
-		vertsDrawn += vcount;
-	}
-
+	// Note: some code moved to optimiseTransparentMeshProperties to minimise
+	// non-OGL-speicifc code.
 	optimiseTransparentMeshProperties();
-
-	//dumpTransparentMeshProps();
-	//dumpTransparentMeshData();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
@@ -182,7 +163,7 @@ void TeRendererOpenGL::renderTransparentMeshes() {
 	TeMaterial lastMaterial;
 	TeMatrix4x4 lastMatrix;
 
-	vertsDrawn = 0;
+	int vertsDrawn = 0;
 	for (uint i = 0; i < _transparentMeshProps.size(); i++) {
 		const TransparentMeshProperties &meshProperties = _transparentMeshProps[i];
 		if (!meshProperties._shouldDraw)
@@ -377,7 +358,7 @@ void TeRendererOpenGL::applyMaterial(const TeMaterial &m) {
 		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, fullColor);
 	}
 
-	//warning("TODO: Work out what TeMaterial::_enableSomethingDefault0 actually is.");
+	// TODO: Work out what TeMaterial::_enableSomethingDefault0 actually is.
 	if (!m._enableSomethingDefault0) {
 		glDisable(GL_TEXTURE_GEN_S);
 		glDisable(GL_TEXTURE_GEN_T);

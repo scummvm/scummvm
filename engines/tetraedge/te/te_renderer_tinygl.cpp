@@ -158,23 +158,10 @@ void TeRendererTinyGL::renderTransparentMeshes() {
 		return;
 
 	tglDepthMask(TGL_FALSE);
-	//dumpTransparentMeshProps();
 
-	Common::sort(_transparentMeshProps.begin(), _transparentMeshProps.end(),
-		 compareTransparentMeshProperties);
-
-	int vertsDrawn = 0;
-	for (uint i = 0; i < _transparentMeshProps.size(); i++) {
-		const uint vcount = _transparentMeshProps[i]._vertexCount;
-		for (uint j = 0; j < vcount; j++)
-			_transparentMeshVertexNums[vertsDrawn + j] = (short)(_transparentMeshProps[i]._sourceTransparentMesh + j);
-		vertsDrawn += vcount;
-	}
-
+	// Note: some code moved to optimiseTransparentMeshProperties to minimise
+	// non-OGL-speicifc code.
 	optimiseTransparentMeshProperties();
-
-	//dumpTransparentMeshProps();
-	//dumpTransparentMeshData();
 
 	tglEnableClientState(TGL_VERTEX_ARRAY);
 	tglEnableClientState(TGL_NORMAL_ARRAY);
@@ -189,7 +176,7 @@ void TeRendererTinyGL::renderTransparentMeshes() {
 	TeMaterial lastMaterial;
 	TeMatrix4x4 lastMatrix;
 
-	vertsDrawn = 0;
+	int vertsDrawn = 0;
 	for (uint i = 0; i < _transparentMeshProps.size(); i++) {
 		const TransparentMeshProperties &meshProperties = _transparentMeshProps[i];
 		if (!meshProperties._shouldDraw)
