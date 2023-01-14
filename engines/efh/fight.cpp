@@ -736,16 +736,16 @@ bool EfhEngine::isTeamMemberStatusNormal(int16 teamMemberId) {
 	return false;
 }
 
-void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
-	debug("getDeathTypeDescription %d %d", attackerId, victimId);
+void EfhEngine::getDeathTypeDescription(int16 victimId, int16 attackerId) {
+	debugC(3, kDebugFight, "getDeathTypeDescription %d %d", victimId, attackerId);
 
 	uint8 pronoun;
 
-	if (attackerId > 999) {
-		int16 charId = _teamCharId[attackerId - 1000];
+	if (victimId >= 1000) { // Magic value for team members
+		int16 charId = _teamCharId[victimId - 1000];
 		pronoun = _npcBuf[charId].getPronoun();
 	} else {
-		int16 charId = _teamMonsterIdArray[attackerId];
+		int16 charId = _teamMonsterIdArray[victimId];
 		pronoun = _mapMonsters[charId].getPronoun();
 	}
 
@@ -755,27 +755,25 @@ void EfhEngine::getDeathTypeDescription(int16 attackerId, int16 victimId) {
 	int16 deathType;
 	if (getRandom(100) < 20) {
 		deathType = 0;
-	} else {
-		if (victimId >= 1000) {
-			int16 charId = _teamCharId[victimId - 1000];
-			if (charId == -1)
-				deathType = 0;
-			else {
-				int16 exclusiveItemId = getEquippedExclusiveType(charId, 9, true);
-				if (exclusiveItemId == 0x7FFF)
-					deathType = 0;
-				else
-					deathType = _items[exclusiveItemId]._attackType + 1;
-			}
-		} else if (_teamMonsterIdArray[victimId] == -1)
+	} else if (attackerId >= 1000) {
+		int16 charId = _teamCharId[attackerId - 1000];
+		if (charId == -1)
 			deathType = 0;
 		else {
-			int16 itemId = _mapMonsters[_teamMonsterIdArray[victimId]]._weaponItemId;
-			deathType = _items[itemId]._attackType;
+			int16 exclusiveItemId = getEquippedExclusiveType(charId, 9, true);
+			if (exclusiveItemId == 0x7FFF)
+				deathType = 0;
+			else
+				deathType = _items[exclusiveItemId]._attackType + 1;
 		}
+	} else if (_teamMonsterIdArray[attackerId] == -1)
+		deathType = 0;
+	else {
+		int16 itemId = _mapMonsters[_teamMonsterIdArray[attackerId]]._weaponItemId;
+		deathType = _items[itemId]._attackType + 1;
 	}
 
-	int16 rndDescrForDeathType = getRandom((3)) - 1;
+	int16 rndDescrForDeathType = getRandom((3)) - 1; // [0..2]
 	Common::String tmpStr = "DUDE IS TOAST!";
 	switch (deathType) {
 	case 0:
