@@ -145,6 +145,34 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{},
 	},
 
+	// Inherit the earth - Win32 Demo version 2, compressed
+	{
+		{
+			"ite",
+			"Win Demo 2",
+			{
+				{"itedemo.exe",		0,	"d2ea5ccf8554fef4576718c06f34e5e5", 17472512},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO0()
+		},
+		GID_ITE,
+		GF_INSTALLER,
+		ITE_DEFAULT_SCENE,
+		RESOURCELIST_ITE,
+		FONTLIST_ITE_WIN_DEMO,
+		PATCHLIST_ITE,
+		INTROLIST_ITE_DEFAULT,
+		{
+			{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac", 1951395},
+			{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb", 70051},
+			AD_LISTEND
+		},
+	},
+
 	// Inherit the earth - Win32 Demo version 3, compressed
 	{
 		{
@@ -198,6 +226,35 @@ static const SAGAGameDescription gameDescriptions[] = {
 		PATCHLIST_ITE,
 		INTROLIST_ITE_DEFAULT,
 		{},
+	},
+
+	// Inherit the earth - Win32 Demo version 1
+	// Non-interactive demo, compressed
+	{
+		{
+			"ite",
+			"Demo 1",
+			{
+				{"itedemo.exe",		0,	"e49c52d06add732f3736f64d3e79a223", 7823872},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO0()
+		},
+		GID_ITE,
+		GF_8BIT_UNSIGNED_PCM | GF_INSTALLER,
+		ITE_DEFAULT_SCENE,
+		RESOURCELIST_ITE,
+		FONTLIST_ITE_WIN_DEMO,
+		PATCHLIST_ITE,
+		INTROLIST_ITE_DEFAULT,
+		{
+			{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac", 1327323},
+			{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb", 38613},
+			AD_LISTEND
+		},
 	},
 
 
