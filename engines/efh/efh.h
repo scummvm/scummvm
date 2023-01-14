@@ -388,7 +388,7 @@ private:
 	void initFight(int16 monsterId);
 	void resetTeamMonsterIdArray();
 	bool isTeamMemberStatusNormal(int16 id);
-	void getDeathTypeDescription(int16 attackerId, int16 victimId);
+	void getDeathTypeDescription(int16 victimId, int16 attackerId);
 	int16 sub1C956(int16 charId, int16 unkFied18Val, bool arg4);
 	bool sub1CB27();
 	void drawCombatScreen(int16 charId, bool whiteFl, bool drawFl);
