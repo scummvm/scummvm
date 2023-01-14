@@ -1527,6 +1527,10 @@ void Actor::setDirection(int direction) {
 	if (_costume == 0)
 		return;
 
+	// Verified for v3-v6 and HE
+	if (!isInCurrentRoom() && _vm->_game.version >= 3 && _vm->_game.version <= 6)
+		return;
+
 	// Update the costume for the new direction (and mark the actor for redraw)
 	aMask = 0x8000;
 	for (i = 0; i < 16; i++, aMask >>= 1) {
@@ -2612,37 +2616,49 @@ void Actor_v0::startAnimActor(int f) {
 }
 
 void Actor::animateActor(int anim) {
-	int cmd, dir;
+	int chore, dir;
 
 	if (_vm->_game.version >= 7 && !((_vm->_game.id == GID_FT) && (_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))) {
 
 		if (anim == 0xFF)
 			anim = 2000;
 
-		cmd = anim / 1000;
+		chore = anim / 1000;
 		dir = anim % 1000;
 
 	} else {
+		// Format of the input parameter:
+		// - The 2 least significant bits are the direction
+		// - The rest is the chore command to execute
+		chore = anim >> 2;
+		dir = oldDirToNewDir(anim & 3);
 
-		cmd = anim / 4;
-		dir = oldDirToNewDir(anim % 4);
-
-		// Convert into old cmd code
-		cmd = 0x3F - cmd + 2;
+		// Convert into old chore code
+		chore = 0x3F - chore + 2;
 
 	}
 
-	switch (cmd) {
+	switch (chore) {
 	case 2:				// stop walking
-		startAnimActor(_standFrame);
-		stopActorMoving();
+		if (isInCurrentRoom() ||
+			!(_vm->_game.version >= 3 && _vm->_game.version <= 6)) {
+			startAnimActor(_standFrame);
+			stopActorMoving();
+		}
 		break;
 	case 3:				// change direction immediatly
-		_moving &= ~MF_TURN;
+		if (isInCurrentRoom() ||
+			!(_vm->_game.version >= 3 && _vm->_game.version <= 6)) {
+			_moving &= ~MF_TURN;
+		}
+
 		setDirection(dir);
 		break;
 	case 4:				// turn to new direction
-		turnToDirection(dir);
+		if (isInCurrentRoom() ||
+			!(_vm->_game.version >= 3 && _vm->_game.version <= 6)) {
+			turnToDirection(dir);
+		}
 		break;
 	case 64:
 		if (_vm->_game.version == 0) {
@@ -2653,7 +2669,7 @@ void Actor::animateActor(int anim) {
 		// fall through
 	default:
 		if (_vm->_game.version <= 2)
-			startAnimActor(anim / 4);
+			startAnimActor(chore);
 		else
 			startAnimActor(anim);
 	}

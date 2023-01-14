@@ -1203,15 +1203,7 @@ void ScummEngine_v6::o6_faceActor() {
 void ScummEngine_v6::o6_animateActor() {
 	int anim = pop();
 	int act = pop();
-	if (_game.id == GID_TENTACLE && _roomResource == 57 &&
-		vm.slot[_currentScript].number == 19 && act == 593) {
-		// WORKAROUND bug #813: This very odd case (animateActor(593,250))
-		// occurs in DOTT, in the cutscene after George cuts down the "cherry
-		// tree" and the tree Laverne is trapped in vanishes...
-		// Not sure if this means animateActor somehow also must work for objects
-		// (593 is the time machine in room 57), or if this is simply a script bug.
-		act = 6;
-	}
+
 	if (_game.id == GID_SAMNMAX && _roomResource == 35 &&
 		vm.slot[_currentScript].number == 202 && act == 4 && anim == 14) {
 		// WORKAROUND bug #2068 (Animation glitch at World of Fish).
@@ -1221,6 +1213,7 @@ void ScummEngine_v6::o6_animateActor() {
 			stopTalk();
 		}
 	}
+
 	if (_game.id == GID_SAMNMAX && _roomResource == 47 && vm.slot[_currentScript].number == 202 &&
 		act == 2 && anim == 249 && _enableEnhancements) {
 		// WORKAROUND for bug #3832: parts of Bruno are left on the screen when he
@@ -1232,8 +1225,13 @@ void ScummEngine_v6::o6_animateActor() {
 			a->putActor(0, 0, 0);
 	}
 
-	Actor *a = derefActor(act, "o6_animateActor");
-	a->animateActor(anim);
+	// Since there have been cases of the scripts sending garbage data
+	// as the actor number (see bug #813), we handle these cases cleanly
+	// by not crashing ScummVM and returning a nullptr Actor instead.
+	Actor *a = derefActorSafe(act, "o6_animateActor");
+	if (a) {
+		a->animateActor(anim);
+	}
 }
 
 void ScummEngine_v6::o6_doSentence() {
