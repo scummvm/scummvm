@@ -129,9 +129,13 @@ Common::Path TeCore::findFile(const Common::Path &path) {
 		nullptr, // no suffix
 		"PC-MacOSX",
 		"PC-PS3-Android-MacOSX",
+		"PC-MacOSX-Android-iPhone-iPad",
 		"PC-MacOSX-Xbox360-PS3",
 		"PC-MacOSX-PS3-Xbox360",
 		"PC-MacOSX-Xbox360-PS3/PC-MacOSX",
+		"PC-MacOSX-MacOSXAppStore-Android-iPhone-iPad",
+		"PC-MacOSX-MacOSXAppStore-Xbox360-Android-iPad-iPhone",
+		"Android-iPhone-iPad-PC-MacOSX",
 		"Full",
 		"Part1-Full",
 		"Part2-Full-Part1",

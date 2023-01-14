@@ -34,7 +34,12 @@ Confirm::Confirm() {
 
 void Confirm::enter(const Common::String &guiPath, const Common::String &y) {
 	_gui.load(guiPath);
-	TeLayout *backgroundLayout = _gui.layoutChecked("background");
+	TeLayout *backgroundLayout = _gui.layout("background");
+	if (!backgroundLayout) {
+		warning("confirm script not loaded, default to Yes.");
+		onButtonYes();
+		return;
+	}
 	backgroundLayout->setRatioMode(TeILayout::RATIO_MODE_NONE);
 
 	Application *app = g_engine->getApplication();
