@@ -62,6 +62,7 @@ void MidiParser_GMF::parseNextEvent(EventInfo &info) {
 		info.ext.type = MidiDriver::MIDI_META_END_OF_TRACK;
 		info.length = 0;
 		info.ext.data = parsePos;
+		info.noop = false;
 
 		_position._playPos = parsePos;
 		return;
@@ -86,6 +87,7 @@ void MidiParser_GMF::parseNextEvent(EventInfo &info) {
 		_position._playPos = parsePos;
 	} else {
 		// Processing of the other events is the same as the SMF format.
+		info.noop = false;
 		MidiParser_SMF::parseNextEvent(info);
 	}
 }

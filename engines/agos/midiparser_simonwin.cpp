@@ -55,6 +55,7 @@ void MidiParser_SimonWin::parseNextEvent(EventInfo &info) {
 		_position._playPos = parsePos;
 	} else {
 		// Processing of the other events is the same as the SMF format.
+		info.noop = false;
 		MidiParser_SMF::parseNextEvent(info);
 	}
 }
