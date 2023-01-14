@@ -144,7 +144,7 @@ void Application::create() {
 	int i = 0;
 	Common::Path textFilePath;
 	while (i < ARRAYSIZE(allLangs)) {
-		textFilePath = textsPath.join(core->language() + ".xml");
+		textFilePath = core->findFile(textsPath.join(core->language() + ".xml"));
 		if (Common::File::exists(textFilePath))
 			break;
 		core->language(allLangs[i]);
