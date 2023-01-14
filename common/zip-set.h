@@ -27,17 +27,19 @@
 namespace Common {
 
 /**
- * Scan the given firectory for a set of versioned zip packs and put then
+ * Scan the given directory for a set of versioned zip packs and put them
  * into the provided SearchSet
  *
  * There are 2 types of files: defaultFile, that could potentially sit
- * in themepath or even built-in into an executable, and so called pack files
- * typically containing creation date in them.
+ * in the themepath or even be built-in into the executable; and so called
+ * pack files typically containing creation date in their names.
  *
  * These files are put in the SearchSet in a sorted way, thus, the latter
  * packs have higher priority.
  *
  * Example: gui-icons.dat, gui-icons-20211112.dat, gui-icons-20220602.dat
+ *
+ * Used by: icons packs and shader packs
  *
  * @param[out] searchSet    The SearchSet to modify
  * @param[in]  defaultFile  Name of the default file
