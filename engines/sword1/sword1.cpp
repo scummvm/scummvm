@@ -285,8 +285,7 @@ const CdFile SwordEngine::_pcCdFileList[] = {
 	{ "text.clu", FLAG_CD1 | FLAG_DEMO },
 	{ "1m14a.wav", FLAG_DEMO },
 	{ "speech1.clu", FLAG_SPEECH1 },
-	{ "speech2.clu", FLAG_SPEECH2 },
-	{ "speech.clu", FLAG_SPEECH | FLAG_DEMO } // Spanish Demo
+	{ "speech2.clu", FLAG_SPEECH2 }
 #ifdef USE_FLAC
 	, { "speech1.clf", FLAG_SPEECH1 },
 	{ "speech2.clf", FLAG_SPEECH2 }
@@ -438,8 +437,8 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 void SwordEngine::checkCdFiles() { // check if we're running from cd, hdd or what...
 	bool fileExists[30];
 	bool isFullVersion = false; // default to demo version
-	bool missingTypes[9] = { false, false, false, false, false, false, false, false, false };
-	bool foundTypes[9] = { false, false, false, false, false, false, false, false, false };
+	bool missingTypes[8] = { false, false, false, false, false, false, false, false };
+	bool foundTypes[8] = { false, false, false, false, false, false, false, false };
 	bool cd2FilesFound = false;
 	_systemVars.runningFromCd = false;
 	_systemVars.playSpeech = true;
@@ -571,7 +570,7 @@ void SwordEngine::checkCdFiles() { // check if we're running from cd, hdd or wha
 	_systemVars.isDemo = (_features & ADGF_DEMO) != 0;
 
 	// Spanish demo has proper speech.clu and uses normal sound and var mapping
-	_systemVars.isSpanishDemo = (_systemVars.isDemo && foundTypes[TYPE_SPEECH]) != 0;
+	_systemVars.isSpanishDemo = (_systemVars.isDemo && Common::parseLanguage(ConfMan.get("language")) == Common::ES_ESP) != 0;
 }
 
 Common::Error SwordEngine::go() {
