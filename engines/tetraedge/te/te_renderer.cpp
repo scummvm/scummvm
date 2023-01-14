@@ -226,9 +226,30 @@ void TeRenderer::multiplyMatrix(const TeMatrix4x4 &matrix) {
 	_matriciesStacks[_matrixMode].multiplyMatrix(matrix);
 }
 
+
+static bool compareTransparentMeshProperties(const TeRenderer::TransparentMeshProperties &p1,
+											const TeRenderer::TransparentMeshProperties &p2) {
+	return (p1._zOrder < p2._zOrder);
+}
+
 void TeRenderer::optimiseTransparentMeshProperties() {
 	if (_transparentMeshProps.size() <= 1)
 		return;
+
+	// Note: this first bit of logic is in renderTransparentMeshes in the
+	// original game, but was moved here to split out OGL-specific code.
+	//dumpTransparentMeshProps();
+
+	Common::sort(_transparentMeshProps.begin(), _transparentMeshProps.end(),
+		 compareTransparentMeshProperties);
+
+	int vertTotal = 0;
+	for (uint i = 0; i < _transparentMeshProps.size(); i++) {
+		const uint vcount = _transparentMeshProps[i]._vertexCount;
+		for (uint j = 0; j < vcount; j++)
+			_transparentMeshVertexNums[vertTotal + j] = (short)(_transparentMeshProps[i]._sourceTransparentMesh + j);
+		vertTotal += vcount;
+	}
 
 	uint i = 0;
 	for (uint other = 1; other < _transparentMeshProps.size(); other++) {
@@ -249,6 +270,9 @@ void TeRenderer::optimiseTransparentMeshProperties() {
 		}
 		i = nextI;
 	}
+
+	//dumpTransparentMeshProps();
+	//dumpTransparentMeshData();
 }
 
 void TeRenderer::popMatrix() {

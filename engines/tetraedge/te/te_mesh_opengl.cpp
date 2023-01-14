@@ -56,8 +56,6 @@ void TeMeshOpenGL::draw() {
 	debug("   worldRot   %s", worldRotation().dump().c_str());
 	*/
 
-	Common::Array<TeVector3f32> &normals = (_updatedVerticies.empty() ? _normals : _updatedNormals);
-	Common::Array<TeVector3f32> &verticies = (_updatedVerticies.empty() ? _verticies : _updatedVerticies);
 	if (renderer->shadowMode() != TeRenderer::ShadowMode1) {
 		if (_faceCounts.empty()) {
 			if (hasAlpha(0) && _shouldDraw) {
@@ -82,6 +80,9 @@ void TeMeshOpenGL::draw() {
 	renderer->setMatrixMode(TeRenderer::MM_GL_MODELVIEW);
 	renderer->pushMatrix();
 	renderer->loadCurrentMatrixToGL();
+
+	const Common::Array<TeVector3f32> &normals = (_updatedVerticies.empty() ? _normals : _updatedNormals);
+	const Common::Array<TeVector3f32> &verticies = (_updatedVerticies.empty() ? _verticies : _updatedVerticies);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	if (!normals.empty())
 		glEnableClientState(GL_NORMAL_ARRAY);

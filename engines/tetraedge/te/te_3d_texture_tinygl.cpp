@@ -103,12 +103,8 @@ void Te3DTextureTinyGL::destroy() {
 }
 
 void Te3DTextureTinyGL::forceTexData(uint gltexture, uint xsize, uint ysize) {
-	if (_glTexture != 0xffffffff) {
-		if (_createdTexture)
-			tglDeleteTextures(1, &_glTexture);
-		_createdTexture = false;
-		_loaded = false;
-	}
+	if (_glTexture != 0xffffffff)
+		destroy();
 	_glTexture = gltexture;
 	_width = xsize;
 	_height = ysize;
@@ -145,16 +141,8 @@ bool Te3DTextureTinyGL::load(const TeImage &img) {
 
 	const void *imgdata = img.getPixels();
 	if (_format == TeImage::RGB8) {
-		/*GLenum glpxformat = GL_RGB;
-		if (_glPixelFormat != GL_INVALID_ENUM) {
-			glpxformat = _glPixelFormat;
-		}*/
 		tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, img.pitch / 3, img.h, 0, TGL_RGB, TGL_UNSIGNED_BYTE, imgdata);
 	} else if (_format == TeImage::RGBA8) {
-		/*GLenum glpxformat = GL_RGBA8;
-		if (_glPixelFormat != GL_INVALID_ENUM) {
-			glpxformat = _glPixelFormat;
-		}*/
 		tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, img.w, img.h, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, imgdata);
 	} else {
 		warning("Te3DTexture::load can't send image format %d to GL.", _format);
