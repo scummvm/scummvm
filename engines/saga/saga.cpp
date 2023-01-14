@@ -355,9 +355,9 @@ Common::Error SagaEngine::run() {
 			filenames.push_back(gameArchiveDescription->fileName);
 		Common::Archive *archive = nullptr;
 		if (filenames.size() == 1 && filenames[0].hasSuffix(".exe"))
-			archive = Common::makeZipArchive(filenames[0]);
+			archive = Common::makeZipArchive(filenames[0], true);
 		else
-			archive = Common::makeArjArchive(filenames);
+			archive = Common::makeArjArchive(filenames, true);
 		if (!archive)
 			error("Error opening archive");
 		SearchMan.add("archive", archive, DisposeAfterUse::YES);
