@@ -738,6 +738,7 @@ void SurfaceSdlGraphicsManager::getDefaultResolution(uint &w, uint &h) {
 	SDL_Rect const* const*availableModes = SDL_ListModes(&p, SDL_FULLSCREEN|SDL_HWSURFACE);
 	w = availableModes[0]->w;
 	h = availableModes[0]->h;
+	if (h > w) h /= 2;
 #else
 	w = 320;
 	h = 200;
