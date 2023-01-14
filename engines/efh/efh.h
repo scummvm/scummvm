@@ -389,7 +389,7 @@ private:
 	void resetTeamMonsterIdArray();
 	bool isTeamMemberStatusNormal(int16 id);
 	void getDeathTypeDescription(int16 victimId, int16 attackerId);
-	int16 sub1C956(int16 charId, int16 unkFied18Val, bool arg4);
+	int16 determineTeamTarget(int16 charId, int16 unkFied18Val, bool checkDistanceFl);
 	bool sub1CB27();
 	void drawCombatScreen(int16 charId, bool whiteFl, bool drawFl);
 	void getXPAndSearchCorpse(int16 charId, Common::String namePt1, Common::String namePt2, int16 monsterId);
