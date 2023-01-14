@@ -2169,7 +2169,7 @@ void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 		int32 cx, cy, cz;
 		getCentre(cx, cy, cz);
 		static const int expshapes[] = {0x31C, 0x31F, 0x326, 0x320, 0x321, 0x324, 0x323, 0x325};
-		int rnd = rs.getRandomNumber(UINT_MAX);
+		uint rnd = rs.getRandomNumber(UINT_MAX);
 		int spriteno;
 		// NOTE: The game does some weird 32-bit stuff to decide what
 		// shapenum to use.  Just simplified to a random.
