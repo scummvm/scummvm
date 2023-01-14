@@ -135,7 +135,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 			int16 monsterGroupIdOrMonsterId = _initiatives[counter]._id;
 			if (monsterGroupIdOrMonsterId == -1)
 				continue;
-			if (monsterGroupIdOrMonsterId > 999) { // Team Member
+			if (monsterGroupIdOrMonsterId >= 1000) { // Magic number which determines if it's a Team Member
 				monsterGroupIdOrMonsterId -= 1000;
 				if (!isTeamMemberStatusNormal(monsterGroupIdOrMonsterId)) {
 					handleFight_checkEndEffect(monsterGroupIdOrMonsterId);
@@ -379,7 +379,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 }
 
 void EfhEngine::handleFight_checkEndEffect(int16 charId) {
-	debug("handleFight_checkEndEffect %d", charId);
+	debugC(3, kDebugFight, "handleFight_checkEndEffect %d", charId);
 
 	// In the original, this function is part of handleFight.
 	// It has been split for readability purposes.
@@ -984,7 +984,7 @@ void EfhEngine::getDeathTypeDescription(int16 victimId, int16 attackerId) {
 }
 
 int16 EfhEngine::determineTeamTarget(int16 charId, int16 unkFied18Val, bool checkDistanceFl) {
-	debug("determineTeamTarget %d %d %d", charId, unkFied18Val, checkDistanceFl);
+	debugC(3, kDebugFight, "determineTeamTarget %d %d %d", charId, unkFied18Val, checkDistanceFl);
 
 	int16 retVal = -1;
 

@@ -1008,13 +1008,13 @@ bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int16 fromCharId) {
 }
 
 int16 EfhEngine::chooseCharacterToReplace() {
-	debug("chooseCharacterToReplace");
+	debugC(3, kDebugEngine, "chooseCharacterToReplace");
 
 	Common::KeyCode maxVal = (Common::KeyCode)(Common::KEYCODE_0 + _teamSize);
 	Common::KeyCode input;
 	for (;;) {
 		input = waitForKey();
-		if (input == Common::KEYCODE_ESCAPE || input == Common::KEYCODE_0 || (input > Common::KEYCODE_1 && input <= maxVal))
+		if (input == Common::KEYCODE_ESCAPE || input == Common::KEYCODE_0 || (input > Common::KEYCODE_1 && input < maxVal))
 			break;
 	}
 
@@ -1025,7 +1025,7 @@ int16 EfhEngine::chooseCharacterToReplace() {
 }
 
 int16 EfhEngine::handleCharacterJoining() {
-	debug("handleCharacterJoining");
+	debugC(3, kDebugEngine, "handleCharacterJoining");
 
 	for (uint counter = 0; counter < 3; ++counter) {
 		if (_teamCharId[counter] == -1) {
