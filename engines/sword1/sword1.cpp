@@ -21,7 +21,6 @@
 
 #include "sword1/sword1.h"
 
-#include "sword1/detection.h"
 #include "sword1/resman.h"
 #include "sword1/objectman.h"
 #include "sword1/mouse.h"
@@ -36,6 +35,7 @@
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 
+#include "engines/advancedDetector.h"
 #include "engines/util.h"
 
 #include "gui/message.h"
@@ -44,11 +44,11 @@ namespace Sword1 {
 
 SystemVars SwordEngine::_systemVars;
 
-SwordEngine::SwordEngine(OSystem *syst, const SwordGameDescription *gameDesc)
+SwordEngine::SwordEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst) {
 
-	_features = gameDesc->features;
-	_systemVars.platform = gameDesc->desc.platform;
+	_features = gameDesc->flags;
+	_systemVars.platform = gameDesc->platform;
 
 	// Add default file directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -487,8 +487,8 @@ void SwordEngine::checkCdFiles() { // check if we're running from cd, hdd or wha
 		}
 	}
 
-	if (((_features & GF_DEMO) == 0) != isFullVersion) // shouldn't happen...
-		warning("Your Broken Sword 1 version looks like a %s version but you are starting it as a %s version", isFullVersion ? "full" : "demo", (_features & GF_DEMO) ? "demo" : "full");
+	if (((_features & ADGF_DEMO) == 0) != isFullVersion) // shouldn't happen...
+		warning("Your Broken Sword 1 version looks like a %s version but you are starting it as a %s version", isFullVersion ? "full" : "demo", (_features & ADGF_DEMO) ? "demo" : "full");
 
 	if (foundTypes[TYPE_SPEECH1]) // we found some kind of speech1 file (.clu, .cl3, .clv)
 		missingTypes[TYPE_SPEECH1] = false; // so we don't care if there's a different kind missing
@@ -567,7 +567,7 @@ void SwordEngine::checkCdFiles() { // check if we're running from cd, hdd or wha
 		_systemVars.isDemo = true;
 	*/
 	// make the demo flag depend on the Gamesettings for now, and not on what the datafiles look like
-	_systemVars.isDemo = (_features & GF_DEMO) != 0;
+	_systemVars.isDemo = (_features & ADGF_DEMO) != 0;
 
 	// Spanish demo has proper speech.clu and uses normal sound and var mapping
 	_systemVars.isSpanishDemo = (_systemVars.isDemo && foundTypes[TYPE_SPEECH]) != 0;

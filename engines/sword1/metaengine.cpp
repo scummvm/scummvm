@@ -24,7 +24,6 @@
 
 #include "sword1/sword1.h"
 #include "sword1/control.h"
-#include "sword1/detection.h"
 #include "sword1/obsolete.h"
 
 #include "common/savefile.h"
@@ -79,8 +78,7 @@ bool Sword1::SwordEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error SwordMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Sword1::SwordGameDescription *gd = (const Sword1::SwordGameDescription *)desc;
-	*engine = new Sword1::SwordEngine(syst, gd);
+	*engine = new Sword1::SwordEngine(syst, desc);
 	return Common::kNoError;
 }
 
