@@ -702,9 +702,10 @@ typedef HashMap<String, Array<ArjFileChunk>, IgnoreCase_Hash, IgnoreCase_EqualTo
 class ArjArchive : public MemcachingCaseInsensitiveArchive {
 	ArjHeadersMap _headers;
 	Array<String> _arjFilenames;
+	bool _flattenTree;
 
 public:
-	ArjArchive(const Array<String> &names);
+	ArjArchive(const Array<String> &names, bool flattenTree);
 	virtual ~ArjArchive();
 
 	// Archive implementation
@@ -713,7 +714,7 @@ public:
 	const ArchiveMemberPtr getMember(const Path &path) const override;
 	Common::SharedArchiveContents readContentsForPath(const Common::String& translated) const override;
 	Common::String translatePath(const Common::Path &path) const override {
-		return path.toString();
+		return _flattenTree ? path.getLastComponent().toString() : path.toString();
 	}
 };
 
@@ -726,7 +727,7 @@ ArjArchive::~ArjArchive() {
        }
 }
 
-ArjArchive::ArjArchive(const Array<String> &filenames) : _arjFilenames(filenames) {
+ArjArchive::ArjArchive(const Array<String> &filenames, bool flattenTree) : _arjFilenames(filenames), _flattenTree(flattenTree) {
 	for (uint i = 0; i < _arjFilenames.size(); i++) {
 		File arjFile;
 
@@ -750,7 +751,13 @@ ArjArchive::ArjArchive(const Array<String> &filenames) : _arjFilenames(filenames
 		delete header;
 
 		while ((header = readHeader(arjFile)) != nullptr) {
-			_headers[header->filename].push_back(ArjFileChunk(header, i));
+			const char *name = header->filename;
+
+			if (_flattenTree)
+				for (const char *p = header->filename; *p; p++)
+					if (*p == '\\' || *p == '/')
+						name = p + 1;
+			_headers[name].push_back(ArjFileChunk(header, i));
 			arjFile.seek(header->compSize, SEEK_CUR);
 		}
 	}
@@ -841,12 +848,12 @@ Common::SharedArchiveContents ArjArchive::readContentsForPath(const Common::Stri
 	return Common::SharedArchiveContents(uncompressedData, uncompressedSize);
 }
 
-Archive *makeArjArchive(const String &name) {
-	return new ArjArchive({name});
+Archive *makeArjArchive(const String &name, bool flattenTree) {
+	return new ArjArchive({name}, flattenTree);
 }
 
-Archive *makeArjArchive(const Array<String> &names) {
-	return new ArjArchive(names);
+Archive *makeArjArchive(const Array<String> &names, bool flattenTree) {
+	return new ArjArchive(names, flattenTree);
 }
 
 } // End of namespace Common

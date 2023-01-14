@@ -49,12 +49,12 @@ class Archive;
  *
  * May return 0 in case of a failure.
  */
-Archive *makeArjArchive(const String &name);
+Archive *makeArjArchive(const String &name, bool flattenTree = false);
 
 /**
  * Similar to previous but for multi-volume archives
  */
-Archive *makeArjArchive(const Array<String> &names);
+Archive *makeArjArchive(const Array<String> &names, bool flattenTree = false);
 
 /** @} */
 
