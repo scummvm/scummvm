@@ -429,7 +429,7 @@ static uLong unzlocal_SearchCentralDir(Common::SeekableReadStream &fin) {
 	 Else, the return value is a unzFile Handle, usable with other function
 	   of this unzip package.
 */
-unzFile unzOpen(Common::SeekableReadStream *stream) {
+unzFile unzOpen(Common::SeekableReadStream *stream, bool flattenTree) {
 	if (!stream)
 		return nullptr;
 
@@ -523,7 +523,14 @@ unzFile unzOpen(Common::SeekableReadStream *stream) {
 		fe.cur_file_info = us->cur_file_info;
 		fe.cur_file_info_internal = us->cur_file_info_internal;
 
-		us->_hash[Common::String(szCurrentFileName)] = fe;
+		const char *name = szCurrentFileName;
+
+		if (flattenTree)
+			for (const char *p = szCurrentFileName; *p; p++)
+				if (*p == '\\' || *p == '/')
+					name = p + 1;
+
+		us->_hash[Common::String(name)] = fe;
 
 		// Move to the next file
 		err = unzGoToNextFile((unzFile)us);
@@ -964,9 +971,10 @@ namespace Common {
 class ZipArchive : public MemcachingCaseInsensitiveArchive {
 	unzFile _zipFile;
 	Common::CRC32 _crc;
+	bool _flattenTree;
 
 public:
-	ZipArchive(unzFile zipFile);
+	ZipArchive(unzFile zipFile, bool flattenTree);
 
 
 	~ZipArchive();
@@ -976,7 +984,7 @@ public:
 	const ArchiveMemberPtr getMember(const Path &path) const override;
 	Common::SharedArchiveContents readContentsForPath(const Common::String& translated) const override;
 	Common::String translatePath(const Common::Path &path) const override {
-		return path.toString();
+		return _flattenTree ? path.getLastComponent().toString() : path.toString();
 	}
 };
 
@@ -998,7 +1006,7 @@ public:
 };
 */
 
-ZipArchive::ZipArchive(unzFile zipFile) : _zipFile(zipFile), _crc() {
+ZipArchive::ZipArchive(unzFile zipFile, bool flattenTree) : _zipFile(zipFile), _crc(), _flattenTree(flattenTree) {
 	assert(_zipFile);
 }
 
@@ -1039,24 +1047,24 @@ Common::SharedArchiveContents ZipArchive::readContentsForPath(const Common::Stri
 	return unzOpenCurrentFile(_zipFile, _crc);
 }
 
-Archive *makeZipArchive(const String &name) {
-	return makeZipArchive(SearchMan.createReadStreamForMember(name));
+Archive *makeZipArchive(const String &name, bool flattenTree) {
+	return makeZipArchive(SearchMan.createReadStreamForMember(name), flattenTree);
 }
 
-Archive *makeZipArchive(const FSNode &node) {
-	return makeZipArchive(node.createReadStream());
+Archive *makeZipArchive(const FSNode &node, bool flattenTree) {
+	return makeZipArchive(node.createReadStream(), flattenTree);
 }
 
-Archive *makeZipArchive(SeekableReadStream *stream) {
+Archive *makeZipArchive(SeekableReadStream *stream, bool flattenTree) {
 	if (!stream)
 		return nullptr;
-	unzFile zipFile = unzOpen(stream);
+	unzFile zipFile = unzOpen(stream, flattenTree);
 	if (!zipFile) {
 		// stream gets deleted by unzOpen() call if something
 		// goes wrong.
 		return nullptr;
 	}
-	return new ZipArchive(zipFile);
+	return new ZipArchive(zipFile, flattenTree);
 }
 
 } // End of namespace Common
