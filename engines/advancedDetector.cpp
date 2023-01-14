@@ -943,6 +943,7 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 
 Common::StringArray AdvancedMetaEngineDetection::getPathsFromEntry(const ADGameDescription *g) {
 	Common::StringArray result;
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> unique;
 
 	for (const ADGameFileDescription *fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 		if (!strchr(fileDesc->fileName, '/'))
@@ -954,7 +955,10 @@ Common::StringArray AdvancedMetaEngineDetection::getPathsFromEntry(const ADGameD
 			Common::String component = tok.nextToken();
 
 			if (!tok.empty()) { // If it is not the last component
-				result.push_back(component);
+				if (!unique.contains(component))
+					result.push_back(component);
+
+				unique[component] = true;
 			}
 		}
 	}
