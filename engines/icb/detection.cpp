@@ -37,7 +37,7 @@ static const IcbGameDescription gameDescriptions[] = {
 			// In Cold Blood
 			// English GOG Version
 			"icb",
-			"GOG",
+			"GOG.com",
 			AD_ENTRY2s("g/speech.clu", "ced60009bdffa9a1055863bf10d2e79e", 7683040, "g/g", "ebe9e5377ee9d231e7a7e33666eb517b", 63892),
 			Common::EN_ANY,
 			Common::kPlatformWindows,

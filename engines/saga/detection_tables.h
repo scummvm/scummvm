@@ -384,7 +384,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{
 		{
 			"ite",
-			"GOG CD Mac v1.1",
+			"GOG.com CD Mac v1.1",
 			{
 				{"ite_i.rsc",					GAME_RESOURCEFILE,	"a6433e34b97b15e64fe8214651012db9", 8927165},
 				{"scripts_i.rsc",				GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", 335927},
