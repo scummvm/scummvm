@@ -225,7 +225,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 	// Little Big Adventure - GOG Version
 	// LBA.GOG
 	// 11 October 2011 at 17:30
-	TWINE_DETECTION_ENTRY("lba", "GOG Version", AD_ENTRY1s("LBA.GOG", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496), Common::kPlatformDOS, ADGF_NO_FLAGS),
+	TWINE_DETECTION_ENTRY("lba", "GOG.com Version", AD_ENTRY1s("LBA.GOG", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496), Common::kPlatformDOS, ADGF_NO_FLAGS),
 
 	{
 		"lba",
@@ -278,21 +278,21 @@ static const ADGameDescription twineGameDescriptions[] = {
 	// Little Big Adventure - GOG Version 3.2.0 (56122)
 	// TLBA1C.exe
 	// 1st June 2022 02:18
-	TWINE_DETECTION_ENTRY("lba", "GOG Classic Version", AD_ENTRY1s("TLBA1C.exe", "e377d036e997acbf543bc3023ce72be6", 4404224), Common::kPlatformWindows, TwinE::TF_LBA1_CLASSIC),
+	TWINE_DETECTION_ENTRY("lba", "GOG.com Classic Version", AD_ENTRY1s("TLBA1C.exe", "e377d036e997acbf543bc3023ce72be6", 4404224), Common::kPlatformWindows, TwinE::TF_LBA1_CLASSIC),
 
 	// Little Big Adventure - GOG Version 3.2.1 (56604)
 	// TLBA1C.exe
 	// 17 Jun 2022 00:30
-	TWINE_DETECTION_ENTRY("lba", "GOG Classic Version", AD_ENTRY1s("TLBA1C.exe", "e86192e4a491805dc011dda5ca83c608", 4404736), Common::kPlatformWindows, TwinE::TF_LBA1_CLASSIC),
+	TWINE_DETECTION_ENTRY("lba", "GOG.com Classic Version", AD_ENTRY1s("TLBA1C.exe", "e86192e4a491805dc011dda5ca83c608", 4404736), Common::kPlatformWindows, TwinE::TF_LBA1_CLASSIC),
 
 	// Little Big Adventure - GOG Version 3.2.2
 	// TLBA1C.exe
 	// 1 Jul 2022
-	TWINE_DETECTION_ENTRY("lba", "GOG Classic Version", AD_ENTRY1s("TLBA1C.exe", "76b227e87038c17a3376b1c681f15474", 4402688), Common::kPlatformWindows, TwinE::TF_LBA1_CLASSIC),
+	TWINE_DETECTION_ENTRY("lba", "GOG.com Classic Version", AD_ENTRY1s("TLBA1C.exe", "76b227e87038c17a3376b1c681f15474", 4402688), Common::kPlatformWindows, TwinE::TF_LBA1_CLASSIC),
 
 	// Little Big Adventure - GOG Version 3.2.3.1 (58613)
 	// TLBA1C.exe
-	TWINE_DETECTION_ENTRY("lba", "GOG Classic Version", AD_ENTRY1s("TLBA1C.exe", "252216e83f83dc770fafc7fd787a6da5", 4432896), Common::kPlatformWindows, TwinE::TF_LBA1_CLASSIC),
+	TWINE_DETECTION_ENTRY("lba", "GOG.com Classic Version", AD_ENTRY1s("TLBA1C.exe", "252216e83f83dc770fafc7fd787a6da5", 4432896), Common::kPlatformWindows, TwinE::TF_LBA1_CLASSIC),
 
 	// FAN Translations - http://lba.fishos.net/bit/index.html
 

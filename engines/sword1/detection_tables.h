@@ -140,7 +140,7 @@ static const ADGameDescription gameDescriptions[] = {
 
 	{
 		"sword1",
-		"GoG.com",
+		"GOG.com",
 		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088292,
 				   "clusters/swordres.rif", "5463362dc77b6efc36e46ac84998bd2f", 59788,
 				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3193159,

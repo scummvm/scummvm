@@ -73,7 +73,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// The Longest Journey
 	// GOG edition
 	{
-		"tlj", "GOG",
+		"tlj", "GOG.com",
 		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
 				   "chapters.ini",	"5b5a1f1dd2297d9ce0d3d12216d5d2c5", 485),
 		Common::EN_ANY,

@@ -1645,32 +1645,32 @@ static const WMEGameDescription gameDescriptions[] = {
 					"data_hd.dcp", "da3508bd60025bac35211fb6fc959d88", 5655554), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (HD Ready Version) (GOG) (English)
-	WME_WINENTRY("juliastars", "HD Ready Version/GOG",
+	WME_WINENTRY("juliastars", "HD Ready Version/GOG.com",
 		WME_ENTRY2s("data_sd.dcp", "da1f147a5f2ee6eb0750678a8b955c93", 4526792,
 					"data_sd.dcp", "da1f147a5f2ee6eb0750678a8b955c93", 4526792), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (Full HD Version) (GOG) (English)
-	WME_WINENTRY("juliastars", "Full HD Version/GOG",
+	WME_WINENTRY("juliastars", "Full HD Version/GOG.com",
 		WME_ENTRY2s("data_hd.dcp", "91dcb65523da943f22fca0c025a2ce8e", 5281911,
 					"data_hd.dcp", "91dcb65523da943f22fca0c025a2ce8e", 5281911), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (HD Ready Version) (GOG) (German)
-	WME_WINENTRY("juliastars", "HD Ready Version/GOG",
+	WME_WINENTRY("juliastars", "HD Ready Version/GOG.com",
 		WME_ENTRY2s("data_sd.dcp", "070d13b70e35cd95855ddc1687446631", 4526795,
 					"german_sd.dcp", "85eb39225083465225c30261a6bcd63e", 123326134), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (Full HD Version) (GOG) (German)
-	WME_WINENTRY("juliastars", "Full HD Version/GOG",
+	WME_WINENTRY("juliastars", "Full HD Version/GOG.com",
 		WME_ENTRY2s("data_hd.dcp", "7973ca635255d3791123fd750cb848f2", 5281925,
 					"german_hd.dcp", "19a771b1a933b71b889026d53734b0c0", 152500044), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (HD Ready Version) (GOG) (Spanish fanmade translation)
-	WME_WINENTRY("juliastars", "HD Ready Version/GOG",
+	WME_WINENTRY("juliastars", "HD Ready Version/GOG.com",
 		WME_ENTRY2s("data_sd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935,
 					"data_sd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (Full HD Version) (GOG) (Spanish fanmade translation)
-	WME_WINENTRY("juliastars", "Full HD Version/GOG",
+	WME_WINENTRY("juliastars", "Full HD Version/GOG.com",
 		WME_ENTRY2s("data_hd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935,
 					"data_hd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
 
@@ -1679,7 +1679,7 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "fe995e26253f6e0a925dd7850fce17a9", 26459827), Common::EN_ANY, ADGF_UNSTABLE, WME_LITE),
 
 	// J.U.L.I.A.: Untold (GOG)
-	WME_WINENTRY("juliauntold", "GOG",
+	WME_WINENTRY("juliauntold", "GOG.com",
 		WME_ENTRY1s("data.dcp", "b0aefd82647a26425fe3ee21aabb6283", 26462676), Common::EN_ANY, ADGF_UNSTABLE, WME_LITE),
 
 	// Klaymen Episodes: Pilot
