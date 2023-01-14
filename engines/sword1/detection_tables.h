@@ -22,9 +22,6 @@
 
 namespace Sword1 {
 
-#define AD_ENTRY4s(f1, x1, s1, f2, x2, s2, f3, x3, s3, f4, x4, s4) {{f1, 0, x1, s1}, {f2, 0, x2, s2}, {f3, 0, x3, s3}, {f4, 0, x4, s4}, AD_LISTEND}
-
-
 static const ADGameDescription gameDescriptions[] = {
 	{
 		"sword1",
