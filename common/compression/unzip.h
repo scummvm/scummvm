@@ -45,7 +45,7 @@ class SeekableReadStream;
  *
  * May return 0 in case of a failure.
  */
-Archive *makeZipArchive(const String &name);
+Archive *makeZipArchive(const String &name, bool flattenTree = false);
 
 /**
  * This factory method creates an Archive instance corresponding to the content
@@ -53,7 +53,7 @@ Archive *makeZipArchive(const String &name);
  *
  * May return 0 in case of a failure.
  */
-Archive *makeZipArchive(const FSNode &node);
+Archive *makeZipArchive(const FSNode &node, bool flattenTree = false);
 
 /**
  * This factory method creates an Archive instance corresponding to the content
@@ -63,7 +63,7 @@ Archive *makeZipArchive(const FSNode &node);
  *
  * May return 0 in case of a failure. In this case stream will still be deleted.
  */
-Archive *makeZipArchive(SeekableReadStream *stream);
+Archive *makeZipArchive(SeekableReadStream *stream, bool flattenTree = false);
 
 /** @} */
 
