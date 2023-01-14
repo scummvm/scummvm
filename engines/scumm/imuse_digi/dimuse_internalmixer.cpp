@@ -40,10 +40,10 @@ IMuseDigiInternalMixer::IMuseDigiInternalMixer(Audio::Mixer *mixer, int sampleRa
 		_separateStreams[i] = nullptr;
 	}
 
+	_isEarlyDiMUSE = isEarlyDiMUSE;
+
 	if (!_lowLatencyMode || _isEarlyDiMUSE)
 		_stream = Audio::makeQueuingAudioStream(_sampleRate, _mixer->getOutputStereo());
-
-	_isEarlyDiMUSE = isEarlyDiMUSE;
 
 	_radioChatter = 0;
 	_amp8Table = nullptr;
