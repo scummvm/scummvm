@@ -135,8 +135,7 @@ void Sword2MetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Sword2::Sword2GameDescription *gd = (const Sword2::Sword2GameDescription *)desc;
-	*engine = new Sword2::Sword2Engine(syst, gd);
+	*engine = new Sword2::Sword2Engine(syst, desc);
 	return Common::kNoError;
 }
 

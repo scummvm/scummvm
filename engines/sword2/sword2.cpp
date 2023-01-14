@@ -49,7 +49,7 @@ namespace Sword2 {
 
 Common::Platform Sword2Engine::_platform;
 
-Sword2Engine::Sword2Engine(OSystem *syst, const Sword2GameDescription *gameDesc) : Engine(syst), _rnd("sword2") {
+Sword2Engine::Sword2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _rnd("sword2") {
 	// Add default file directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "clusters");
@@ -58,8 +58,8 @@ Sword2Engine::Sword2Engine(OSystem *syst, const Sword2GameDescription *gameDesc)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "smacks");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "streams"); // PSX video
 
-	_features = gameDesc->features;
-	Sword2Engine::_platform = gameDesc->desc.platform;
+	_features = gameDesc->flags;
+	Sword2Engine::_platform = gameDesc->platform;
 
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");
@@ -216,7 +216,7 @@ Common::Error Sword2Engine::run() {
 	setupPersistentResources();
 	initializeFontResourceFlags();
 
-	if (_features & GF_DEMO)
+	if (_features & ADGF_DEMO)
 		_logic->writeVar(DEMO, 1);
 	else
 		_logic->writeVar(DEMO, 0);

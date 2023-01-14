@@ -453,7 +453,7 @@ Common::File *ResourceManager::openCluFile(uint16 fileNum) {
 		// playing a demo, then we're in trouble if the file
 		// can't be found!
 
-		if ((_vm->_features & GF_DEMO) || _resFiles[fileNum].cd == 0)
+		if ((_vm->_features & ADGF_DEMO) || _resFiles[fileNum].cd == 0)
 			error("Could not find '%s'", _resFiles[fileNum].fileName);
 
 		askForCD(_resFiles[fileNum].cd);

@@ -298,7 +298,7 @@ void Sound::queueFx(int32 res, int32 type, int32 delay, int32 volume, int32 pan)
 			// Check that we really have a WAV file here, alas this
 			// check is useless with psx demo game, because psx audio files
 			// are headerless and there is no way to check the type
-			if (!(Sword2Engine::isPsx() && (_vm->_features & GF_DEMO)))
+			if (!(Sword2Engine::isPsx() && (_vm->_features & ADGF_DEMO)))
 				assert(_vm->_resman->fetchType(data) == WAV_FILE);
 
 			uint32 len = _vm->_resman->fetchLen(res);

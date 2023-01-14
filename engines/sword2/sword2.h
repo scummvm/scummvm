@@ -146,7 +146,7 @@ protected:
 	void pauseEngineIntern(bool pause) override;
 
 public:
-	Sword2Engine(OSystem *syst, const Sword2GameDescription *gameDesc);
+	Sword2Engine(OSystem *syst, const ADGameDescription *gameDesc);
 	~Sword2Engine() override;
 
 	int getFramesPerSecond();
