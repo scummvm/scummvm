@@ -352,7 +352,7 @@ inline bool SortItem::below(const SortItem &si2) const {
 	}
 	// Mixed, or non flat
 	else {
-		// Inv items always drawn first if their z-bottom is equal or higher. 
+		// Inv items always drawn first if their z-bottom is equal or higher.
 		// This is a bit of a hack as 2 places in Crusader there are keycards
 		// on tables but their z position is the bottom z of the table.
 		if (si1._invitem) {
@@ -376,6 +376,18 @@ inline bool SortItem::below(const SortItem &si2) const {
 	// same z-position may have different heights (think of a mouse sorting vs the Avatar).
 	if (si1._z != si2._z)
 		return si1._z < si2._z;
+
+	// Land always gets drawn first
+	if (si1._land != si2._land)
+		return si1._land > si2._land;
+
+	// Land always gets drawn before roof
+	if (si1._land && si2._land && si1._roof != si2._roof)
+		return si1._roof < si2._roof;
+
+	// Roof always gets drawn first
+	if (si1._roof != si2._roof)
+		return si1._roof > si2._roof;
 
 	// Partial in X + Y front
 	if (si1._x + si1._y != si2._x + si2._y)
