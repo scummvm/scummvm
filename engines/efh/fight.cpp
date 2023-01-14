@@ -983,31 +983,32 @@ void EfhEngine::getDeathTypeDescription(int16 victimId, int16 attackerId) {
 	_messageToBePrinted += tmpStr;
 }
 
-int16 EfhEngine::sub1C956(int16 charId, int16 unkFied18Val, bool arg4) {
-	debug("sub1C956 %d %d %d", charId, unkFied18Val, arg4);
+int16 EfhEngine::determineTeamTarget(int16 charId, int16 unkFied18Val, bool checkDistanceFl) {
+	debug("determineTeamTarget %d %d %d", charId, unkFied18Val, checkDistanceFl);
 
-	int16 varE = -1;
+	int16 retVal = -1;
 
 	int16 curItemId = getEquippedExclusiveType(charId, unkFied18Val, true);
-	int16 range = 0;
+	int16 rangeType = 0;
+	int16 realRange = 0;
 	if (curItemId != 0x7FFF)
-		range = _items[curItemId]._range;
+		rangeType = _items[curItemId]._range;
 
-	switch (range) {
+	switch (rangeType) {
 	case 3:
 	case 2:
-		++range;
+		++realRange;
 		// no break on purpose
 	case 1:
-		++range;
+		++realRange;
 		// no break on purpose
 	case 0:
-		++range;
+		++realRange;
 		break;
 	case 4:
 		return 100;
 	default:
-		return varE;
+		return retVal;
 	}
 
 	do {
@@ -1020,26 +1021,25 @@ int16 EfhEngine::sub1C956(int16 charId, int16 unkFied18Val, bool arg4) {
 				displayFctFullScreen();
 		}
 
-		if (_teamMonsterIdArray[1] == -1)
-			varE = 0;
-		else
-			varE = selectMonsterGroup();
+		retVal = (_teamMonsterIdArray[1] == -1) ? 0 : selectMonsterGroup();
 
-		if (!arg4) {
-			if (varE == 27) // Esc
-				varE = 0;
-		} else if (varE != 27) {
-			int16 monsterGroupDistance = computeMonsterGroupDistance(_teamMonsterIdArray[varE]);
-			if (monsterGroupDistance > range) {
-				varE = 27;
+		if (!checkDistanceFl) {
+			if (retVal == 27) // Esc
+				retVal = 0;
+		} else if (retVal != 27) {
+			int16 monsterGroupDistance = computeMonsterGroupDistance(_teamMonsterIdArray[retVal]);
+			if (monsterGroupDistance > realRange) {
+				retVal = 27;
+				displayBoxWithText("That Group Is Out Of Range!", 3, 1, false);
+				getLastCharAfterAnimCount(_guessAnimationAmount);
 			}
 		}
-	} while (varE == -1);
+	} while (retVal == -1);
 
-	if (varE == 27)
-		varE = -1;
+	if (retVal == 27)
+		retVal = -1;
 
-	return varE;
+	return retVal;
 }
 
 bool EfhEngine::sub1CB27() {
@@ -1058,7 +1058,7 @@ bool EfhEngine::sub1CB27() {
 			switch (handleAndMapInput(true)) {
 			case Common::KEYCODE_a: // Attack
 				_teamLastAction[charId] = 'A';
-				_teamNextAttack[charId] = sub1C956(_teamCharId[charId], 9, true);
+				_teamNextAttack[charId] = determineTeamTarget(_teamCharId[charId], 9, true);
 				if (_teamNextAttack[charId] == -1)
 					_teamLastAction[charId] = 0;
 				break;
@@ -1096,7 +1096,7 @@ bool EfhEngine::sub1CB27() {
 					case 10:
 					case 12:
 					case 13:
-						_teamNextAttack[charId] = sub1C956(_teamCharId[charId], 9, false);
+						_teamNextAttack[charId] = determineTeamTarget(_teamCharId[charId], 9, false);
 						break;
 
 					case 9:
