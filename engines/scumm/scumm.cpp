@@ -231,10 +231,12 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		ConfMan.setBool("subtitles", true);
 
 	// TODO Detect subtitle only versions of scumm6 games
-	if (ConfMan.getBool("speech_mute"))
-		_voiceMode = 2;
-	else
-		_voiceMode = ConfMan.getBool("subtitles");
+	if (!isUsingOriginalGUI()) {
+		if (ConfMan.getBool("speech_mute"))
+			_voiceMode = 2;
+		else
+			_voiceMode = ConfMan.getBool("subtitles");
+	}
 
 	if (ConfMan.hasKey("render_mode")) {
 		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
@@ -1231,7 +1233,7 @@ Common::Error ScummEngine::init() {
 	resetScumm();
 	resetScummVars();
 
-	if (_game.version >= 5 && _game.version <= 7) {
+	if (_game.version >= 5 && _game.version <= 7 && _game.id != GID_DIG) {
 		_sound->setupSound();
 		// In case of talkie edition without sfx file, enable subtitles
 		if (!_sound->hasSfxFile() && !ConfMan.getBool("subtitles"))
@@ -1261,6 +1263,26 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 			_macCursorFile = macResourceFile;
 		} else if (_game.id == GID_MONKEY) {
 			macInstrumentFile = macResourceFile;
+		}
+	}
+
+	// Sync the voice mode options from the outside world (the ScummVM audio options tab)
+	if (_game.version >= 5 && _game.version <= 8) {
+		if (ConfMan.hasKey("subtitles", _targetName) && ConfMan.hasKey("speech_mute", _targetName)) {
+			bool speechMute = ConfMan.getBool("speech_mute", _targetName);
+			bool subtitles = ConfMan.getBool("subtitles", _targetName);
+
+			int resultingVoiceMode = 2; // Subtitles only
+
+			if (!speechMute && !subtitles) { // Voice only
+				resultingVoiceMode = 0;
+			} else if (!speechMute && subtitles) { // Text and voice
+				resultingVoiceMode = 1;
+			}
+
+			ConfMan.setInt("original_gui_text_status", resultingVoiceMode);
+			ConfMan.flushToDisk();
+			syncSoundSettings();
 		}
 	}
 
