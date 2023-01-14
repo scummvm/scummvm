@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-12 22:12+0000\n"
+"POT-Creation-Date: 2023-01-14 11:56+0000\n"
 "PO-Revision-Date: 2022-10-27 02:33+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -176,9 +176,9 @@ msgstr "לא ניתן ליצור תיקיה להורדה - קובץ באותו �
 #: engines/groovie/script.cpp:660 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:102
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:926
-#: engines/scumm/scumm.cpp:1094 engines/scumm/scumm.cpp:1120
-#: engines/scumm/scumm.cpp:1142 engines/scumm/scumm.cpp:1459
-#: engines/scumm/scumm.cpp:1928 engines/scumm/scumm.cpp:1944
+#: engines/scumm/scumm.cpp:1096 engines/scumm/scumm.cpp:1122
+#: engines/scumm/scumm.cpp:1144 engines/scumm/scumm.cpp:1481
+#: engines/scumm/scumm.cpp:1950 engines/scumm/scumm.cpp:1966
 #: engines/sky/compact.cpp:140 engines/sword1/animation.cpp:529
 #: engines/sword1/animation.cpp:560 engines/sword1/animation.cpp:568
 #: engines/sword1/control.cpp:888 engines/sword1/logic.cpp:1634
@@ -4259,7 +4259,7 @@ msgstr "שחזור"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "שמירת המשחק או טעינה מהירה לא נתמכות במיקום זה"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2706
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2728
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4270,7 +4270,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2693
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2715
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4281,7 +4281,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2722
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2744
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7663,7 +7663,7 @@ msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:261
+#: engines/scumm/scumm.cpp:263
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -7674,7 +7674,7 @@ msgstr ""
 "שאינה מאפשרת תיקון יחס ממדים.\n"
 "ניתן להשיג תיקון יחס ממדים על ידי חיתוך הרזולוציה ל-320x200, בלשונית 'מנוע'."
 
-#: engines/scumm/scumm.cpp:1093
+#: engines/scumm/scumm.cpp:1095
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
@@ -7682,7 +7682,7 @@ msgstr ""
 "לא ניתן למצוא את קובץ הריצה 'Indy' עבור מקינטוש. גופנים בהפרדה גבוהה\n"
 "כבויים."
 
-#: engines/scumm/scumm.cpp:1119
+#: engines/scumm/scumm.cpp:1121
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
@@ -7690,7 +7690,7 @@ msgstr ""
 "לא ניתן למצוא את קובץ הריצה 'Loom' עבור מקינטוש. מוזיקה וגרסת הפרדה גבוהה\n"
 "עבור גופנים וסמן העכבר כבויים."
 
-#: engines/scumm/scumm.cpp:1141
+#: engines/scumm/scumm.cpp:1143
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -7698,7 +7698,7 @@ msgstr ""
 "לא ניתן למצוא את ההפעלה מקינטוש 'אי הקופים' כדי לקרוא את\n"
 "מכשירים מ. המוסיקה תושבת."
 
-#: engines/scumm/scumm.cpp:1456
+#: engines/scumm/scumm.cpp:1478
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -7708,7 +7708,7 @@ msgstr ""
 "הדחיסה עבור משחק זה כבר אינה נתמכת, השמע ינוטרל.\n"
 "נא להעתיק את המשחק מהמדיה המקורית ללא הדחיסה."
 
-#: engines/scumm/scumm.cpp:1926
+#: engines/scumm/scumm.cpp:1948
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -7717,7 +7717,7 @@ msgstr ""
 "תמיכת MIDI מקומית דורשת את שדרוג הרולנד מ- LucasArts,\n"
 "אבל %s חסר. במקום זאת משתמשים ב- AdLib."
 
-#: engines/scumm/scumm.cpp:1942
+#: engines/scumm/scumm.cpp:1964
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -7725,7 +7725,7 @@ msgstr ""
 "גרסה זו של אי הקופים 1 ידועה כחסרה\n"
 "משאבים מסוים שנדרשים עבור MT-32. משתמשים ב-AdLib במקום."
 
-#: engines/scumm/scumm.cpp:3282
+#: engines/scumm/scumm.cpp:3304
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "

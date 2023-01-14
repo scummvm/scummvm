@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-12 22:12+0000\n"
+"POT-Creation-Date: 2023-01-14 11:56+0000\n"
 "PO-Revision-Date: 2023-01-01 19:47+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -178,9 +178,9 @@ msgstr ""
 #: engines/groovie/script.cpp:660 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:102
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:926
-#: engines/scumm/scumm.cpp:1094 engines/scumm/scumm.cpp:1120
-#: engines/scumm/scumm.cpp:1142 engines/scumm/scumm.cpp:1459
-#: engines/scumm/scumm.cpp:1928 engines/scumm/scumm.cpp:1944
+#: engines/scumm/scumm.cpp:1096 engines/scumm/scumm.cpp:1122
+#: engines/scumm/scumm.cpp:1144 engines/scumm/scumm.cpp:1481
+#: engines/scumm/scumm.cpp:1950 engines/scumm/scumm.cpp:1966
 #: engines/sky/compact.cpp:140 engines/sword1/animation.cpp:529
 #: engines/sword1/animation.cpp:560 engines/sword1/animation.cpp:568
 #: engines/sword1/control.cpp:888 engines/sword1/logic.cpp:1634
@@ -4317,7 +4317,7 @@ msgstr "Lataa tallenne"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "Pelin pikalataus tai tallennus ei ole tuettu tässä sijainnissa"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2706
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2728
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4328,7 +4328,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2693
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2715
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4339,7 +4339,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2722
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2744
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7784,7 +7784,7 @@ msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:261
+#: engines/scumm/scumm.cpp:263
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -7796,7 +7796,7 @@ msgstr ""
 "Kuvasuhteen korjaus saadaan mahdolliseksi trimmaamalla resoluution 320x200:"
 "aan 'Pelimoottori'-välilehdellä."
 
-#: engines/scumm/scumm.cpp:1093
+#: engines/scumm/scumm.cpp:1095
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
@@ -7804,7 +7804,7 @@ msgstr ""
 "\"Indy\":n Macintosh ohjelmatiedostoa ei löydetty. Korkearesoluutioiset\n"
 "versiot fontista eivät ole tuettuina."
 
-#: engines/scumm/scumm.cpp:1119
+#: engines/scumm/scumm.cpp:1121
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
@@ -7813,7 +7813,7 @@ msgstr ""
 "korkearesoluutioiset\n"
 "versiot fontista ja osoittimesta eivät ole tuettuina."
 
-#: engines/scumm/scumm.cpp:1141
+#: engines/scumm/scumm.cpp:1143
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -7821,7 +7821,7 @@ msgstr ""
 "\"Monkey Island\":in Macintosh ohjelmatiedostoa ei löydetty\n"
 "instrumenttien lukemiseksi. Emme soita musiikkia."
 
-#: engines/scumm/scumm.cpp:1456
+#: engines/scumm/scumm.cpp:1478
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -7831,7 +7831,7 @@ msgstr ""
 "pakkaukset eivät enää ole tuettuja tässä pelissä, joten äänet eivät kuulu.\n"
 "Ole hyvä ja asenna peli uudelleen sopivien äänitiedostojen kera."
 
-#: engines/scumm/scumm.cpp:1926
+#: engines/scumm/scumm.cpp:1948
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -7840,7 +7840,7 @@ msgstr ""
 "Suora MIDI tuki vaatii Roland päivityksen LucasArtsilta, mutta\n"
 "%s puuttuu. Käytetään AdLibia sen sijaan."
 
-#: engines/scumm/scumm.cpp:1942
+#: engines/scumm/scumm.cpp:1964
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -7849,7 +7849,7 @@ msgstr ""
 "vaadittuja käytön mahdollistavia osasia MT-32:lle. Otetaan sen sijasta "
 "käyttöön AdLib."
 
-#: engines/scumm/scumm.cpp:3282
+#: engines/scumm/scumm.cpp:3304
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
