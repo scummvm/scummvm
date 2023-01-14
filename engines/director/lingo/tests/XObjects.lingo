@@ -35,3 +35,7 @@ set FileIO = "test"
 showGlobals() -- FileIO should be listed
 clearGlobals()
 scummVMAssert(voidp(FileIO)) -- FileIO should be cleared
+
+-- test path handling for opening FileIO on win
+openXLib("C:\fileio.dll")
+scummVMAsset(objectp(FileIO))
