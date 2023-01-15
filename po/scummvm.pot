@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-14 11:56+0000\n"
+"POT-Creation-Date: 2023-01-15 09:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -256,7 +256,7 @@ msgstr ""
 #, c-format
 msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
-"icon files. Do you want to proceed?"
+"%S. Do you want to proceed?"
 msgstr ""
 
 #: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
