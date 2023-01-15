@@ -854,22 +854,22 @@ int Insane::smush_changeState(int state) {
 }
 
 void Insane::queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename,
-							  int32 arg_C, int32 arg_10, int32 startFrame, int32 numFrames) {
+							  int32 videoFlags, int32 arg_10, int32 startFrame, int32 numFrames) {
 	int32 tmp;
 
-	debugC(DEBUG_INSANE, "queueSceneSwitch(%d, *, %s, %d, %d, %d, %d)", sceneId, filename, arg_C, arg_10,
+	debugC(DEBUG_INSANE, "queueSceneSwitch(%d, *, %s, %d, %d, %d, %d)", sceneId, filename, videoFlags, arg_10,
 		  startFrame, numFrames);
 	if (_needSceneSwitch || _sceneData1Loaded)
 		return;
 
 	if (fluPtr) {
-		tmp = ((int)startFrame/30+1)*30;
+		tmp = ((int)startFrame / 30 + 1) * 30;
 		if (tmp >= numFrames)
 			tmp = 0;
 
-		smush_setupSanWithFlu(filename, arg_C|32, -1, -1, 0, fluPtr, tmp);
+		smush_setupSanWithFlu(filename, videoFlags | 32, -1, -1, 0, fluPtr, tmp);
 	} else {
-		smush_setupSanFromStart(filename, arg_C|32, -1, -1, 0);
+		smush_setupSanFromStart(filename, videoFlags | 32, -1, -1, 0);
 	}
 	_needSceneSwitch = true;
 	_temp2SceneId = sceneId;
@@ -877,7 +877,8 @@ void Insane::queueSceneSwitch(int32 sceneId, byte *fluPtr, const char *filename,
 
 void Insane::smush_rewindCurrentSan(int arg_0, int arg_4, int arg_8) {
 	debugC(DEBUG_INSANE, "smush_rewindCurrentSan(%d, %d, %d)", arg_0, arg_4, arg_8);
-	_smush_setupsan2 = arg_0;
+	_smush_curSanFlags = arg_0;
+	syncCurrentSanFlags();
 
 	smush_setupSanFile(nullptr, 0, 0);
 	_smush_isSanFileSetup = 1;
@@ -1429,7 +1430,8 @@ int32 Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32
 	if (READ_BE_UINT32(fluPtr) == MKTAG('F','L','U','P'))
 		tmp += 8;
 
-	_smush_setupsan2 = setupsan2;
+	_smush_curSanFlags = setupsan2;
+	syncCurrentSanFlags();
 
 	if (tmp[2] <= 1) {
 		/* 0x300 -- palette, 0x8 -- header */
@@ -1456,11 +1458,12 @@ int32 Insane::smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32
 	return offset;
 }
 
-void Insane::smush_setupSanFromStart(const char *filename, int32 setupsan2, int32 step1,
+void Insane::smush_setupSanFromStart(const char *filename, int32 videoFlags, int32 step1,
 									 int32 step2, int32 setupsan1) {
 	debugC(DEBUG_INSANE, "Insane::smush_setupFromStart(%s)", filename);
 	_smush_setupsan1 = setupsan1;
-	_smush_setupsan2 = setupsan2;
+	_smush_curSanFlags = videoFlags;
+	syncCurrentSanFlags();
 	smush_setupSanFile(filename, 0, 0);
 	_smush_isSanFileSetup = 1;
 	smush_setFrameSteps(step1, step2);
@@ -1477,6 +1480,10 @@ void Insane::smush_setupSanFile(const char *filename, int32 offset, int32 contFr
 	debugC(DEBUG_INSANE, "Insane::smush_setupSanFile(%s, %x, %d)", (filename ? filename : "(null)"), offset, contFrame);
 
 	_player->seekSan(filename, offset, contFrame);
+}
+
+void Insane::syncCurrentSanFlags() {
+	_player->setCurVideoFlags(_smush_curSanFlags);
 }
 
 }

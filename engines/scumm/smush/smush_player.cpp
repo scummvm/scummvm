@@ -940,16 +940,41 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleAnimHeader()");
 	assert(subSize >= 0x300 + 6);
+	byte *headerContent = (byte *)malloc(subSize * sizeof(byte));
 
-	/* _version = */ b.readUint16LE();
-	_nbframes = b.readUint16LE();
-	b.readUint16LE();
+	if (headerContent) {
+		// Fill out the header
+		b.read(headerContent, subSize);
 
-	if (_skipPalette)
-		return;
+		byte headerMajorVersion = headerContent[0];
+		byte headerMinorVersion = headerContent[1];
 
-	readPalette(_pal, b);
-	setDirtyColors(0, 255);
+		_nbframes = READ_LE_UINT16(&headerContent[2]);
+
+		// Video files might contain framerate overrides
+		if (_vm->_game.id == GID_FT || (_vm->_game.id == GID_DIG && _vm->_game.features & GF_DEMO)) {
+			if (headerMajorVersion > 1) {
+				uint16 speed = READ_LE_UINT16(&headerContent[6 + 0x300]);
+				if ((_curVideoFlags & 8) == 0 && speed != 0) {
+					debug(5, "SmushPlayer::handleAnimHeader(): header version %d.%d, video speed override %d fps (cur speed %d)",
+						  headerMajorVersion,
+						  headerMinorVersion,
+						  speed,
+						  _speed);
+
+					_speed = speed;
+				}
+			}
+		}
+
+		if (!_skipPalette) {
+			byte *palettePtr = &headerContent[6];
+			memcpy(_pal, palettePtr, sizeof(_pal));
+			setDirtyColors(0, 255);
+		}
+
+		free(headerContent);
+	}
 }
 
 void SmushPlayer::setupAnim(const char *file) {
@@ -958,6 +983,10 @@ void SmushPlayer::setupAnim(const char *file) {
 			readString("mineroad.trs");
 	} else
 		readString(file);
+}
+
+void SmushPlayer::setCurVideoFlags(int16 flags) {
+	_curVideoFlags = flags;
 }
 
 SmushFont *SmushPlayer::getFont(int font) {

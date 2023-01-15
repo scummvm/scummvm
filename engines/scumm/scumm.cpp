@@ -1430,10 +1430,7 @@ void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 		}
 	}
 
-	if (_game.id == GID_DIG && (_game.features & GF_DEMO))
-		_smushFrameRate = 15;
-	else
-		_smushFrameRate = (_game.id == GID_FT) ? 10 : 12;
+	_smushFrameRate = (_game.id == GID_FT) ? 10 : 12;
 
 	ScummEngine::setupScumm(macResourceFile);
 

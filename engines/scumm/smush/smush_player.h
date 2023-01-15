@@ -187,6 +187,8 @@ public:
 	void processDispatches(int16 feedSize);
 	bool isAudioCallbackEnabled();
 	byte *getVideoPalette();
+	void setCurVideoFlags(int16 flags);
+
 
 protected:
 	int _width, _height;
@@ -195,6 +197,7 @@ protected:
 	bool _paused;
 	uint32 _pauseStartTime;
 	uint32 _pauseTime;
+	int16 _curVideoFlags = 0;
 
 	void insanity(bool);
 	void setPalette(const byte *palette);
