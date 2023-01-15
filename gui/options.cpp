@@ -1437,16 +1437,25 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 	uint16 ySmallStep = yStep / 3;
 	uint16 yPos = lineHeight + yStep * 3;
 
-	uint16 commentDelta = g_system->getOverlayWidth() <= 320 ? 25 : 30; // textline left tabbing
-	uint16 progressBarWidth = 240;
+	uint16 width;
+	uint16 textline_numchars;  // max number of chars in textline
+	uint16 progressBarWidth;
+	uint16 commentDelta = g_system->getOverlayWidth() <= 320 ? 20 : 30; // textline left tabbing
 	float scale_factor = g_gui.getScaleFactor();
 
-	uint16 width = 440 + 800 * (scale_factor - 1);
-	uint16 textline_numchars = 70 + 80 * (scale_factor - 1);
-	commentDelta *= scale_factor;
-
-	if (g_system->getOverlayWidth() - width < 100)
-		width = g_system->getOverlayWidth() - 100 * scale_factor; // clamp width to at least 100px smaller than overlay to prevent glitchy scrollbars
+	if (g_system->getOverlayWidth() > 320) { // hires
+		width = 440 + 800 * (scale_factor - 1);
+		textline_numchars = 70 + 80 * (scale_factor - 1);
+		progressBarWidth = 240;
+		commentDelta *= scale_factor;
+		if (g_system->getOverlayWidth() - width < 100) {
+			width = g_system->getOverlayWidth() - 100 * scale_factor; // clamp width to at least 100px smaller than overlay to prevent glitchy scrollbars
+		}
+	} else { // lores
+		width = 250 + 480 * (scale_factor - 1);
+		textline_numchars = 40 + 60 * (scale_factor - 1);
+		progressBarWidth = 130;
+	}
 
 	for (int16 viewAchieved = 1; viewAchieved >= 0; viewAchieved--) {
 		// run this twice, first view all achieved, then view all non-hidden & non-achieved
@@ -1478,8 +1487,7 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 				uint16 str_chars = descr->comment.size(), printed_chars = 0, i = 0;
 				Common::U32String comment_line(descr->comment);
 				while ((str_chars - printed_chars) > textline_numchars) { // check if string needs to go on multiple lines
-					for (i = (printed_chars + textline_numchars - 1); comment_line[i] != ' ' && i > 0; i--)
-						; // find a space to avoid breaking words
+					for (i = (printed_chars + textline_numchars - 1); comment_line[i] != ' ' && i > 0; i--) {}; // find a space to avoid breaking words
 					new StaticTextWidget(scrollContainer, lineHeight + commentDelta, yPos, width - commentDelta, yStep, Common::U32String(comment_line.begin() + (!printed_chars ? 0 : (printed_chars + 1)), comment_line.begin() + i), Graphics::kTextAlignStart, Common::U32String(), ThemeEngine::kFontStyleNormal);
 					yPos += yStep;
 					printed_chars = i;
