@@ -1,10 +1,6 @@
 OD_EXE_STRIPPED := scummvm_stripped$(EXEEXT)
 bundle = od-opk
-ifeq ($(OPENDINGUX_TARGET), rg99)
-OPKNAME = rg99_rs90
-else
 OPKNAME = $(OPENDINGUX_TARGET)
-endif
 
 all: $(OD_EXE_STRIPPED)
 
@@ -15,7 +11,7 @@ $(bundle): all
 	$(MKDIR) $(bundle)
 	$(CP) $(DIST_FILES_DOCS) $(bundle)/
 
-ifneq ($(OPENDINGUX_TARGET), rg99)
+ifneq ($(OPENDINGUX_TARGET), rs90)
 	$(MKDIR) $(bundle)/themes
 	$(CP) $(DIST_FILES_THEMES) $(bundle)/themes/
 endif
@@ -23,7 +19,7 @@ endif
 ifdef DIST_FILES_ENGINEDATA
 	$(MKDIR) $(bundle)/engine-data
 	$(CP) $(DIST_FILES_ENGINEDATA) $(bundle)/engine-data/
-ifeq ($(OPENDINGUX_TARGET), rg99)
+ifeq ($(OPENDINGUX_TARGET), rs90)
 	$(CP) $(srcdir)/dists/opendingux/fonts_mini.dat $(bundle)/engine-data/fonts.dat
 endif
 endif
@@ -44,12 +40,6 @@ endif
 ifdef dualopk
 	$(CP) $(srcdir)/dists/opendingux/startGame.$(OPENDINGUX_TARGET).desktop $(bundle)/
 	$(CP) $(srcdir)/dists/opendingux/scummvm.sh $(bundle)/
-endif
-ifeq ($(OPENDINGUX_TARGET), rg99)
-	$(CP) $(srcdir)/dists/opendingux/startUI.rs90.desktop $(bundle)/
-ifdef dualopk
-	$(CP) $(srcdir)/dists/opendingux/startGame.rs90.desktop $(bundle)/
-endif
 endif
 
 	$(CP) $(srcdir)/backends/platform/sdl/opendingux/README.OPENDINGUX $(bundle)/README.man.txt
