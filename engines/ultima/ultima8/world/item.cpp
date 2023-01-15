@@ -3252,8 +3252,6 @@ uint32 Item::I_getFootpadData(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UC_PTR(zptr);
 	if (!item) return 0;
 
-	// TODO: Data is packed differently in Crusader - check that this still works.
-
 	uint8 buf[2];
 	int32 x, y, z;
 	item->getFootpadData(x, y, z);
