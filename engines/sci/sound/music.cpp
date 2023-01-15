@@ -137,9 +137,15 @@ void SciMusic::init() {
 		_pMidiDrv = MidiPlayer_PC9801_create(_soundVersion);
 		break;
 	default:
-		if (ConfMan.getInt("midi_mode") == kMidiModeFB01
+		int midiMode;
+		midiMode = ConfMan.getInt("midi_mode");
+		if (midiMode == kMidiModeFB01
 		    || (ConfMan.hasKey("native_fb01") && ConfMan.getBool("native_fb01")))
 			_pMidiDrv = MidiPlayer_Fb01_create(_soundVersion);
+		else if (midiMode == kMidiModeMT540)
+			_pMidiDrv = MidiPlayer_Casio_create(_soundVersion, MusicType::MT_MT540);
+		else if (midiMode == kMidiModeCT460)
+			_pMidiDrv = MidiPlayer_Casio_create(_soundVersion, MusicType::MT_CT460);
 		else
 			_pMidiDrv = MidiPlayer_Midi_create(_soundVersion);
 	}

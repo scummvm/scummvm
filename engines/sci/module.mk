@@ -79,6 +79,7 @@ MODULE_OBJS := \
 	sound/drivers/adlib.o \
 	sound/drivers/amigamac0.o \
 	sound/drivers/amigamac1.o \
+	sound/drivers/casio.o \
 	sound/drivers/cms.o \
 	sound/drivers/fb01.o \
 	sound/drivers/fmtowns.o \

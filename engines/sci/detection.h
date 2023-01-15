@@ -150,7 +150,9 @@ enum SciVersion {
 enum kMidiMode {
 	kMidiModeStandard,
 	kMidiModeFB01,
-	kMidiModeD110
+	kMidiModeD110,
+	kMidiModeMT540,
+	kMidiModeCT460
 };
 
 } // End of namespace Sci
