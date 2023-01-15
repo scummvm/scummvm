@@ -324,7 +324,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 				_word2C87A = true;
 				loadPlacesFile(scriptNumberArray[0], false);
 				transitionMap(scriptNumberArray[1], scriptNumberArray[2]);
-				sub2455E(scriptNumberArray[0], scriptNumberArray[1], scriptNumberArray[2]);
+				setSpecialTechZone(scriptNumberArray[0], scriptNumberArray[1], scriptNumberArray[2]);
 				retVal = -1;
 			}
 			break;

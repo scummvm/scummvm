@@ -322,7 +322,7 @@ private:
 	void drawText(uint8 *impPtr, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag);
 	void displayMiddleLeftTempText(uint8 *impArray, bool flag);
 	void transitionMap(int16 centerX, int16 centerY);
-	void sub2455E(int16 arg0, int16 arg1, int16 arg2);
+	void setSpecialTechZone(int16 unkId, int16 arg1, int16 arg2);
 	int16 findMapSpecialTileIndex(int16 posX, int16 posY);
 	bool isPosOutOfMap(int16 mapPosX, int16 mapPosY);
 	void goSouth();
@@ -360,7 +360,6 @@ private:
 	int8 checkTileStatus(int16 mapPosX, int16 mapPosY, bool arg4);
 	void computeInitiatives();
 	void redrawScreenForced();
-	int16 selectMonsterGroup();
 	void sub1CAB6(int16 charId);
 	int16 countMonsterGroupMembers(int16 monsterGroup);
 	void sub1D8C2(int16 charId, int16 damage);
@@ -403,6 +402,7 @@ private:
 	bool hasAdequateDefenseNPC(int16 charId, uint8 attackType);
 	void addNewOpponents(int16 monsterId);
 	int16 getTeamMonsterAnimId();
+	int16 selectMonsterGroup();
 
 	// Files
 	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);

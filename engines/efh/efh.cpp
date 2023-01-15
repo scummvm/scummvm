@@ -1102,7 +1102,7 @@ void EfhEngine::displayMiddleLeftTempText(uint8 *impArray, bool flag) {
 }
 
 void EfhEngine::transitionMap(int16 centerX, int16 centerY) {
-	debug("transitionMap %d %d", centerX, centerY);
+	debugC(2, kDebugEngine, "transitionMap %d %d", centerX, centerY);
 
 	_drawHeroOnMapFl = false;
 	int16 minX = centerX - 11;
@@ -1117,7 +1117,9 @@ void EfhEngine::transitionMap(int16 centerX, int16 centerY) {
 		for (uint counterY = 0; counterY <= 23; ++counterY) {
 			int16 curX = counterX + minX;
 			int16 curY = counterY + minY;
-			_mapGameMap[curX][curY] = _curPlace[counterX][counterY];
+
+			if (curX < 64 && curY < 64)
+				_mapGameMap[curX][curY] = _curPlace[counterX][counterY];
 		}
 		drawScreen();
 	}
@@ -1126,7 +1128,9 @@ void EfhEngine::transitionMap(int16 centerX, int16 centerY) {
 		for (uint counterY = 0; counterY <= 23; ++counterY) {
 			int16 curX = counterX + minX;
 			int16 curY = counterY + minY;
-			_mapGameMap[curX][curY] = _curPlace[counterX][counterY];
+
+			if (curX < 64 && curY < 64)
+				_mapGameMap[curX][curY] = _curPlace[counterX][counterY];
 		}
 		drawScreen();
 	}
@@ -1135,25 +1139,25 @@ void EfhEngine::transitionMap(int16 centerX, int16 centerY) {
 	_drawHeroOnMapFl = true;
 }
 
-void EfhEngine::sub2455E(int16 arg0, int16 arg2, int16 arg4) {
-	debug("sub2455E %d %d %d", arg0, arg2, arg4);
+void EfhEngine::setSpecialTechZone(int16 unkId, int16 centerX, int16 centerY) {
+	debugC(2, kDebugEngine, "setSpecialTechZone %d %d %d", unkId, centerX, centerY);
 
-	uint8 varD = kByte2C7D0[arg0];
-	int16 varC = arg2 - 11;
-	int16 varA = arg4 - 11;
+	if (unkId < 0 || unkId >= 60)
+		error("setSpecialTechZone - unexpected value for unkId: %d", unkId);
 
-	if (varC < 0)
-		varC = 0;
+	uint8 zoneValue = kByte2C7D0[unkId];
 
-	if (varA < 0)
-		varA = 0;
+	// Added a CLIP as a safeguard to avoid any value larger than 64
+	int16 minX = CLIP(centerX - 11, 0, 64);
+	int16 minY = CLIP(centerY - 11, 0, 64);
 
-	int16 var8 = varC + 23;
-	int16 var6 = varA + 23;
 
-	for (int16 var4 = varC; var4 <= var8; ++var4) {
-		for (int16 var2 = varA; var2 <= var6; ++var2) {
-			WRITE_LE_INT16(&_techDataArr[_techId][var2 + var4 * 64], varD);
+	int16 maxX = CLIP(minX + 23, 0, 64);
+	int16 maxY = CLIP(minY + 23,0, 64);
+
+	for (int16 counterX = minX; counterX <= maxX; ++counterX) {
+		for (int16 counterY = minY; counterY <= maxY; ++counterY) {
+			_techDataArr[_techId][counterY + counterX * 64] = zoneValue;
 		}
 	}
 }
@@ -2296,41 +2300,13 @@ void EfhEngine::computeInitiatives() {
 }
 
 void EfhEngine::redrawScreenForced() {
-	debug("redrawScreenForced");
+	debugC(3, kDebugEngine,"redrawScreenForced");
 
 	for (uint counter = 0; counter < 2; ++counter) {
 		drawScreen();
 		if (counter == 0)
 			displayFctFullScreen();
 	}
-}
-
-int16 EfhEngine::selectMonsterGroup() {
-	debug("selectMonsterGroup");
-
-	int16 retVal = -1;
-
-	while (retVal == -1) {
-		Common::KeyCode input = handleAndMapInput(true);
-		switch (input) {
-		case Common::KEYCODE_ESCAPE:
-			retVal = 27;
-			break;
-		case Common::KEYCODE_a:
-		case Common::KEYCODE_b:
-		case Common::KEYCODE_c:
-		case Common::KEYCODE_d:
-		case Common::KEYCODE_e:
-			retVal = input - Common::KEYCODE_a;
-			if (_teamMonsterIdArray[retVal] == -1)
-				retVal = -1;
-			break;
-		default:
-			break;
-		}
-	}
-
-	return retVal;
 }
 
 void EfhEngine::sub1CAB6(int16 charId) {
