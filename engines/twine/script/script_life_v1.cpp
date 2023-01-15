@@ -57,37 +57,38 @@ static int32 lTextYPos;
 
 /** Script condition command opcodes */
 enum LifeScriptConditions {
-	/*0x00*/ kcCOL = 0,              /*<! Current actor collision with another actor. (Parameter = Actor Index) */
-	/*0x01*/ kcCOL_OBJ = 1,          /*<! Actor collision with the actor passed as parameter. (Parameter = Actor Index, Parameter = Actor Index) */
-	/*0x02*/ kcDISTANCE = 2,         /*<! Distance between the current actor and the actor passed as parameter. (Parameter = Actor Index, Parameter = Distance between) */
-	/*0x03*/ kcZONE = 3,             /*<! Current actor tread on zone passed as parameter. (Parameter = Zone Index) */
-	/*0x04*/ kcZONE_OBJ = 4,         /*<! The actor passed as parameter will tread on zone passed as parameter. (Parameter = Actor Index, Parameter = Zone Index) */
-	/*0x05*/ kcBODY = 5,             /*<! Body of the current actor. (Parameter = Body Index) */
-	/*0x06*/ kcBODY_OBJ = 6,         /*<! Body of the actor passed as parameter. (Parameter = Body Index) */
-	/*0x07*/ kcANIM = 7,             /*<! Body Animation of the current actor. (Parameter = Animation Index) */
-	/*0x08*/ kcANIM_OBJ = 8,         /*<! Body Animation of the actor passed as parameter. (Parameter = Animation Index) */
-	/*0x09*/ kcL_TRACK = 9,          /*<! Current actor track. (Parameter = Track Index) */
-	/*0x0A*/ kcL_TRACK_OBJ = 10,     /*<! Track of the actor passed as parameter. (Parameter = Track Index) */
-	/*0x0B*/ kcFLAG_CUBE = 11,       /*<! Game Cube Flags. (Parameter = Cube Flag Index, Parameter = 0 (not set), = 1 (set))k */
-	/*0x0C*/ kcCONE_VIEW = 12,       /*<! The actor passed as parameter have a "vision in circle". (Parameter = Actor Index, Parameter = Distance) */
-	/*0x0D*/ kcHIT_BY = 13,          /*<! Current actor hited by the actor passed as parameter. (Parameter = Actor Index) */
-	/*0x0E*/ kcACTION = 14,          /*<! Execute action (boolean value, e.g. when hiding in the waste of the 2nd scene to escape the prison) */
-	/*0x0F*/ kcFLAG_GAME = 15,       /*<! Game Flags (See further list). (Parameter = Flag Index, Parameter = 0 (not set), = 1 (set)) */
-	/*0x10*/ kcLIFE_POINT = 16,      /*<! Current actor life points. (Parameter = Life points) */
-	/*0x11*/ kcLIFE_POINT_OBJ = 17,  /*<! Life points of the current actor passed as parameter. (Parameter = Life points) */
-	/*0x12*/ kcNUM_LITTLE_KEYS = 18, /*<! Number of keys. (Parameter = Number of keys) */
-	/*0x13*/ kcNUM_GOLD_PIECES = 19, /*<! Coins/Gold Amount. (Parameter = Coins/Gold amount) */
-	/*0x14*/ kcBEHAVIOUR = 20,       /*<! Hero behaviour. (Parameter = Behaviour Index) */
-	/*0x15*/ kcCHAPTER = 21,         /*<! Story Chapters. (Parameter = Chapter Index) */
-	/*0x16*/ kcDISTANCE_3D = 22,     /*<! Distance between the actor passed as parameter and the current actor. (Parameter = Actor Index, Parameter = Distance) */
-	/*0x17*/ kcMAGIC_LEVEL = 23,
-	/*0x18*/ kcMAGIC_POINTS = 24,
-	/*0x19*/ kcUSE_INVENTORY = 25, /*<! Use inventory object. (Parameter = Object Index in the inventory, Paramenter = 0 (Not in Inventory), = 1 (In the Inventory)) */
-	/*0x1A*/ kcCHOICE = 26,        /*<! Menu choice. (Parameter = Text Index in the current Text Bank) */
-	/*0x1B*/ kcFUEL = 27,          /*<! Amount of fuel gas the Hero have in his inventory. (Parameter = Gas amount) */
-	/*0x1C*/ kcCARRIED_BY = 28,    /*<! The current is carried by the actor passed as paramenter. (Parameter = Actor Index) */
-	/*0x1D*/ kcCDROM = 29,         /*<! CDROM audio tracks. (Parameter = Audio Tracks Index) */
-	// lba2
+	// lba1 and lba2
+	kcCOL = 0,              /*<! Current actor collision with another actor. (Parameter = Actor Index) */
+	kcCOL_OBJ = 1,          /*<! Actor collision with the actor passed as parameter. (Parameter = Actor Index, Parameter = Actor Index) */
+	kcDISTANCE = 2,         /*<! Distance between the current actor and the actor passed as parameter. (Parameter = Actor Index, Parameter = Distance between) */
+	kcZONE = 3,             /*<! Current actor tread on zone passed as parameter. (Parameter = Zone Index) */
+	kcZONE_OBJ = 4,         /*<! The actor passed as parameter will tread on zone passed as parameter. (Parameter = Actor Index, Parameter = Zone Index) */
+	kcBODY = 5,             /*<! Body of the current actor. (Parameter = Body Index) */
+	kcBODY_OBJ = 6,         /*<! Body of the actor passed as parameter. (Parameter = Body Index) */
+	kcANIM = 7,             /*<! Body Animation of the current actor. (Parameter = Animation Index) */
+	kcANIM_OBJ = 8,         /*<! Body Animation of the actor passed as parameter. (Parameter = Animation Index) */
+	kcL_TRACK = 9,          /*<! Current actor track. (Parameter = Track Index) */
+	kcL_TRACK_OBJ = 10,     /*<! Track of the actor passed as parameter. (Parameter = Track Index) */
+	kcFLAG_CUBE = 11,       /*<! Game Cube Flags. (Parameter = Cube Flag Index, Parameter = 0 (not set), = 1 (set))k */
+	kcCONE_VIEW = 12,       /*<! The actor passed as parameter have a "vision in circle". (Parameter = Actor Index, Parameter = Distance) */
+	kcHIT_BY = 13,          /*<! Current actor hited by the actor passed as parameter. (Parameter = Actor Index) */
+	kcACTION = 14,          /*<! Execute action (boolean value, e.g. when hiding in the waste of the 2nd scene to escape the prison) */
+	kcFLAG_GAME = 15,       /*<! Game Flags (See further list). (Parameter = Flag Index, Parameter = 0 (not set), = 1 (set)) */
+	kcLIFE_POINT = 16,      /*<! Current actor life points. (Parameter = Life points) */
+	kcLIFE_POINT_OBJ = 17,  /*<! Life points of the current actor passed as parameter. (Parameter = Life points) */
+	kcNUM_LITTLE_KEYS = 18, /*<! Number of keys. (Parameter = Number of keys) */
+	kcNUM_GOLD_PIECES = 19, /*<! Coins/Gold Amount. (Parameter = Coins/Gold amount) */
+	kcBEHAVIOUR = 20,       /*<! Hero behaviour. (Parameter = Behaviour Index) */
+	kcCHAPTER = 21,         /*<! Story Chapters. (Parameter = Chapter Index) */
+	kcDISTANCE_3D = 22,     /*<! Distance between the actor passed as parameter and the current actor. (Parameter = Actor Index, Parameter = Distance) */
+	kcMAGIC_LEVEL = 23,
+	kcMAGIC_POINTS = 24,
+	kcUSE_INVENTORY = 25, /*<! Use inventory object. (Parameter = Object Index in the inventory, Paramenter = 0 (Not in Inventory), = 1 (In the Inventory)) */
+	kcCHOICE = 26,        /*<! Menu choice. (Parameter = Text Index in the current Text Bank) */
+	kcFUEL = 27,          /*<! Amount of fuel gas the Hero have in his inventory. (Parameter = Gas amount) */
+	kcCARRIED_BY = 28,    /*<! The current is carried by the actor passed as paramenter. (Parameter = Actor Index) */
+	kcCDROM = 29,         /*<! CDROM audio tracks. (Parameter = Audio Tracks Index) */
+	// lba2 only
 	kcLADDER = 30,
 	kcRND = 31,
 	kcRAIL = 32,
@@ -106,11 +107,18 @@ enum LifeScriptConditions {
 	kcANGLE_OBJ = 45
 };
 
+enum class ReturnType {
+	RET_S8 = 0,
+	RET_S16 = 1,
+	RET_STRING = 2,
+	RET_U8 = 4
+};
+
 /**
  * Returns @c 1 Condition value size (1 byte), @c 2 Condition value size (2 bytes)
  */
-static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 conditionValueSize = 1;
+static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) { // DoFuncLife
+	ReturnType conditionValueSize = ReturnType::RET_U8;
 	int32 conditionOpcode = ctx.stream.readByte();
 	switch (conditionOpcode) {
 	case kcCOL:
@@ -134,7 +142,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 	case kcDISTANCE: {
 		int32 actorIdx = ctx.stream.readByte();
 		debugCN(3, kDebugLevels::kDebugScripts, "distance(%i, ", actorIdx);
-		conditionValueSize = 2;
+		conditionValueSize = ReturnType::RET_S16;
 		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
 		if (!otherActor->_dynamicFlags.bIsDead) {
 			if (ABS(ctx.actor->_pos.y - otherActor->_pos.y) >= 1500) {
@@ -205,7 +213,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		debugCN(3, kDebugLevels::kDebugScripts, "cone_view(%i, ", targetActorIdx);
 		ActorStruct *targetActor = engine->_scene->getActor(targetActorIdx);
 
-		conditionValueSize = 2;
+		conditionValueSize = ReturnType::RET_S16;
 
 		if (targetActor->_dynamicFlags.bIsDead) {
 			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
@@ -284,7 +292,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		break;
 	case kcNUM_GOLD_PIECES:
 		debugCN(3, kDebugLevels::kDebugScripts, "num_gold_pieces(");
-		conditionValueSize = 2;
+		conditionValueSize = ReturnType::RET_S16;
 		engine->_scene->_currentScriptValue = engine->_gameState->_inventoryNumKashes;
 		break;
 	case kcBEHAVIOUR:
@@ -303,7 +311,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		debugCN(3, kDebugLevels::kDebugScripts, "distance_3d(%i, ", targetActorIdx);
 		targetActor = engine->_scene->getActor(targetActorIdx);
 
-		conditionValueSize = 2;
+		conditionValueSize = ReturnType::RET_S16;
 
 		if (!targetActor->_dynamicFlags.bIsDead) {
 			// Returns int32, so we check for integer overflow
@@ -351,7 +359,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 	}
 	case kcCHOICE:
 		debugCN(3, kDebugLevels::kDebugScripts, "choice(");
-		conditionValueSize = 2;
+		conditionValueSize = ReturnType::RET_S16;
 		engine->_scene->_currentScriptValue = (int16)engine->_gameState->_choiceAnswer;
 		break;
 	case kcFUEL:
@@ -367,6 +375,24 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		debugCN(3, kDebugLevels::kDebugScripts, "cdrom(");
 		engine->_scene->_currentScriptValue = engine->isCDROM();
 		break;
+	case kcLADDER:
+	case kcRND:
+	case kcRAIL:
+	case kcBETA:
+	case kcBETA_OBJ:
+	case kcCARRY_OBJ_BY:
+	case kcANGLE:
+	case kcDISTANCE_MESSAGE:
+	case kcHIT_OBJ_BY:
+	case kcREAL_ANGLE:
+	case kcDEMO:
+	case kcCOL_DECORS:
+	case kcCOL_DECORS_OBJ:
+	case kcPROCESSOR:
+	case kcOBJECT_DISPLAYED:
+	case kcANGLE_OBJ:
+		error("lba2 not yet implemented");
+		break;
 	default:
 		error("Actor condition opcode %d", conditionOpcode);
 		break;
@@ -378,16 +404,35 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 /**
  * Returns @c -1 Need implementation, @c 0 Condition false, @c 1 Condition true
  */
-static int32 processLifeOperators(TwinEEngine *engine, LifeScriptContext &ctx, int32 valueSize) {
+static int32 processLifeOperators(TwinEEngine *engine, LifeScriptContext &ctx, ReturnType valueType) { // DoTest
 	const int32 operatorCode = ctx.stream.readByte();
 
 	int32 conditionValue;
-	if (valueSize == 1) {
-		conditionValue = ctx.stream.readByte();
-	} else if (valueSize == 2) {
+	if (valueType == ReturnType::RET_S8) {
+		conditionValue = ctx.stream.readSByte();
+	} else if (valueType == ReturnType::RET_S16) {
 		conditionValue = ctx.stream.readSint16LE();
+	} else if (valueType == ReturnType::RET_U8) {
+		conditionValue = ctx.stream.readByte();
+	} else if (valueType == ReturnType::RET_STRING) {
+#if 0
+		const Common::String &str = ctx.stream.readString();
+		// TODO: this String is the inventory item description or the behaviour text - translated
+		// not sure why this was useful... or whether it was ever used
+		const int valueword = scummvm_stricmp(String, str.c_str());
+		switch (operatorCode) {
+		default:
+			return 0;
+		case kEqualTo:
+			return (valueword == 0);
+		case kNotEqualTo:
+			return (valueword != 0);
+		}
+#else
+		error("String return type is not yet supported");
+#endif
 	} else {
-		error("Unknown operator value size %d", valueSize);
+		error("Unknown operator value size %d", (int)valueType);
 	}
 
 	switch (operatorCode) {
@@ -470,9 +515,9 @@ static int32 lNOP(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x02
  */
 static int32 lSNIF(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int32 valueSize = processLifeConditions(engine, ctx);
+	const ReturnType valueType = processLifeConditions(engine, ctx);
 	debugCN(3, kDebugLevels::kDebugScripts, "LIFE::IF(");
-	if (!processLifeOperators(engine, ctx, valueSize)) {
+	if (!processLifeOperators(engine, ctx, valueType)) {
 		ctx.setOpcode(0x0D); // SWIF
 	}
 	const int16 offset = ctx.stream.readSint16LE();
@@ -498,8 +543,8 @@ static int32 lOFFSET(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lNEVERIF(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugCN(3, kDebugLevels::kDebugScripts, "LIFE::IF(");
-	const int32 valueSize = processLifeConditions(engine, ctx);
-	processLifeOperators(engine, ctx, valueSize);
+	const ReturnType valueType = processLifeConditions(engine, ctx);
+	processLifeOperators(engine, ctx, valueType);
 	const int16 offset = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, ", %i)", offset);
 	ctx.stream.seek(offset); // condition offset
@@ -540,8 +585,8 @@ static int32 lRETURN(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lIF(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugCN(3, kDebugLevels::kDebugScripts, "LIFE::IF(");
-	const int32 valueSize = processLifeConditions(engine, ctx);
-	if (!processLifeOperators(engine, ctx, valueSize)) {
+	const ReturnType valueType = processLifeConditions(engine, ctx);
+	if (!processLifeOperators(engine, ctx, valueType)) {
 		const int16 offset = ctx.stream.readSint16LE();
 		debugC(3, kDebugLevels::kDebugScripts, ", %i)", offset);
 		ctx.stream.seek(offset); // condition offset
@@ -559,8 +604,8 @@ static int32 lIF(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSWIF(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugCN(3, kDebugLevels::kDebugScripts, "LIFE::SWIF(");
-	const int32 valueSize = processLifeConditions(engine, ctx);
-	if (!processLifeOperators(engine, ctx, valueSize)) {
+	const ReturnType valueType = processLifeConditions(engine, ctx);
+	if (!processLifeOperators(engine, ctx, valueType)) {
 		const int16 offset = ctx.stream.readSint16LE();
 		debugC(3, kDebugLevels::kDebugScripts, ", %i)", offset);
 		ctx.stream.seek(offset); // condition offset
@@ -579,8 +624,8 @@ static int32 lSWIF(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lONEIF(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugCN(3, kDebugLevels::kDebugScripts, "LIFE::ONEIF(");
-	const int32 valueSize = processLifeConditions(engine, ctx);
-	if (!processLifeOperators(engine, ctx, valueSize)) {
+	const ReturnType valueType = processLifeConditions(engine, ctx);
+	if (!processLifeOperators(engine, ctx, valueType)) {
 		const int16 offset = ctx.stream.readSint16LE();
 		debugC(3, kDebugLevels::kDebugScripts, ", %i)", offset);
 		ctx.stream.seek(offset); // condition offset
@@ -1164,8 +1209,8 @@ static int32 lBRICK_COL(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lOR_IF(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugCN(3, kDebugLevels::kDebugScripts, "LIFE::OR_IF(");
-	const int32 valueSize = processLifeConditions(engine, ctx);
-	if (processLifeOperators(engine, ctx, valueSize)) {
+	const ReturnType valueType = processLifeConditions(engine, ctx);
+	if (processLifeOperators(engine, ctx, valueType)) {
 		const int16 offset = ctx.stream.readSint16LE();
 		ctx.stream.seek(offset); // condition offset
 		debugC(3, kDebugLevels::kDebugScripts, ", %i)", offset);
