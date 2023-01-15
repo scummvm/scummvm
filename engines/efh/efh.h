@@ -361,7 +361,6 @@ private:
 	void computeInitiatives();
 	void redrawScreenForced();
 	int16 countMonsterGroupMembers(int16 monsterGroup);
-	void handleDamageOnArmor(int16 charId, int16 damage);
 	int16 getXPLevel(int32 xp);
 	bool isItemCursed(int16 itemId);
 	bool hasObjectEquipped(int16 charId, int16 objectId);
@@ -403,6 +402,7 @@ private:
 	int16 getTeamMonsterAnimId();
 	int16 selectMonsterGroup();
 	void redrawCombatScreenWithTempText(int16 charId);
+	void handleDamageOnArmor(int16 charId, int16 damage);
 
 	// Files
 	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);
