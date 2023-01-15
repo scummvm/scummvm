@@ -125,7 +125,12 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für die chinesische Version von Beneath a Steel Sky hinzugefügt.
 
  Sword1:
-   - Unterstützung für die russische Übersetzung von ND hinzugefügt.
+   - Unterstützung für die russische Übersetzung von Novy Disk hinzugefügt.
+   - Ein Fehler beim Start der Windows-Demo-Versionen wurde korrigiert.
+   - Die Spiele-Erkennung nutzt nun MD5-Checksummen. Teile uns deine nicht erkannten Versionen mit!
+
+ Sword2:
+   - Die Spiele-Erkennung nutzt nun MD5-Checksummen. Teile uns deine nicht erkannten Versionen mit!
 
  Toon:
    - Die Spiel-Menüs verhalten sich nun wie im Original.
