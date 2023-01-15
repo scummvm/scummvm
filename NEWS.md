@@ -129,7 +129,12 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Chinese Beneath a Steel Sky.
 
  Sword1:
-   - Support ND Russian translation.
+   - Support Novy Disk Russian translation.
+   - Fixed launching various demos.
+   - Switched detection to md5-based. Submit your unrecognized versions!
+
+ Sword2:
+   - Switched detection to md5-based. Submit your unrecognized versions!
 
  Toon:
    - Made game menus behave like in the original.
