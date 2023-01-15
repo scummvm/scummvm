@@ -762,13 +762,13 @@ void Scene::checkZoneSce(int32 actorIdx) {
 				}
 				break;
 			case ZoneType::kObject:
-				if (IS_HERO(actorIdx) && _engine->_movements->shouldTriggerZoneAction()) {
+				if (IS_HERO(actorIdx) && _engine->_movements->shouldExecuteAction()) {
 					_engine->_animations->initAnim(AnimationTypes::kAction, AnimType::kAnimationThen, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 					processZoneExtraBonus(zone);
 				}
 				break;
 			case ZoneType::kText:
-				if (IS_HERO(actorIdx) && _engine->_movements->shouldTriggerZoneAction()) {
+				if (IS_HERO(actorIdx) && _engine->_movements->shouldExecuteAction()) {
 					ScopedEngineFreeze scopedFreeze(_engine);
 					_engine->exitSceneryView();
 					_engine->_text->setFontCrossColor(zone->infoData.DisplayText.textColor);

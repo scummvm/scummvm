@@ -113,6 +113,9 @@ private:
 	void processManualMovementExecution(int actorIdx);
 	void processManualRotationExecution(int actorIdx);
 
+	/**
+	 * This is true if the player hits the action button. E.g. in the second prison scene when you hide in the waste.
+	 */
 	bool _actionNormal = false;
 
 public:
@@ -123,7 +126,7 @@ public:
 	/**
 	 * Hero executes the current action of the trigger zone
 	 */
-	bool shouldTriggerZoneAction() const;
+	bool shouldExecuteAction() const;
 
 	bool _lastJoyFlag = false;
 
@@ -192,7 +195,7 @@ public:
 	void doDir(int32 actorIdx);
 };
 
-inline bool Movements::shouldTriggerZoneAction() const {
+inline bool Movements::shouldExecuteAction() const {
 	return _actionNormal;
 }
 
