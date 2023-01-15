@@ -1066,6 +1066,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	public void onStop() {
 //		Log.d(ScummVM.LOG_TAG, "onStop");
 
+		SAFFSTree.clearCaches();
 		super.onStop();
 	}
 

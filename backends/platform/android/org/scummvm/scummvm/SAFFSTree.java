@@ -66,6 +66,15 @@ public class SAFFSTree {
 		return _trees.get(name);
 	}
 
+	public static void clearCaches() {
+		if (_trees == null) {
+			return;
+		}
+		for (SAFFSTree tree : _trees.values()) {
+			tree.clearCache();
+		}
+	}
+
 	public static class SAFFSNode {
 		public static final int DIRECTORY = 1;
 		public static final int WRITABLE  = 2;
@@ -120,12 +129,17 @@ public class SAFFSTree {
 		_root = new SAFFSNode(null, "", DocumentsContract.getTreeDocumentId(treeUri), 0);
 		// Update flags and get name
 		_treeName = stat(_root);
-		_cache.put("/", _root);
-		_cache.put("", _root);
+		clearCache();
 	}
 
 	public String getTreeId() {
 		return Uri.encode(DocumentsContract.getTreeDocumentId(_treeUri));
+	}
+
+	private void clearCache() {
+		_cache.clear();
+		_cache.put("/", _root);
+		_cache.put("", _root);
 	}
 
 	private static String[] normalizePath(String path) {
