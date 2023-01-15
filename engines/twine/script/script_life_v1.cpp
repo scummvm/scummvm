@@ -82,11 +82,28 @@ enum LifeScriptConditions {
 	/*0x16*/ kcDISTANCE_3D = 22,     /*<! Distance between the actor passed as parameter and the current actor. (Parameter = Actor Index, Parameter = Distance) */
 	/*0x17*/ kcMAGIC_LEVEL = 23,
 	/*0x18*/ kcMAGIC_POINTS = 24,
-	/*0x19*/ kcUSE_INVENTORY = 25,   /*<! Use inventory object. (Parameter = Object Index in the inventory, Paramenter = 0 (Not in Inventory), = 1 (In the Inventory)) */
-	/*0x1A*/ kcCHOICE = 26,          /*<! Menu choice. (Parameter = Text Index in the current Text Bank) */
-	/*0x1B*/ kcFUEL = 27,            /*<! Amount of fuel gas the Hero have in his inventory. (Parameter = Gas amount) */
-	/*0x1C*/ kcCARRIED_BY = 28,      /*<! The current is carried by the actor passed as paramenter. (Parameter = Actor Index) */
-	/*0x1D*/ kcCDROM = 29            /*<! CDROM audio tracks. (Parameter = Audio Tracks Index) */
+	/*0x19*/ kcUSE_INVENTORY = 25, /*<! Use inventory object. (Parameter = Object Index in the inventory, Paramenter = 0 (Not in Inventory), = 1 (In the Inventory)) */
+	/*0x1A*/ kcCHOICE = 26,        /*<! Menu choice. (Parameter = Text Index in the current Text Bank) */
+	/*0x1B*/ kcFUEL = 27,          /*<! Amount of fuel gas the Hero have in his inventory. (Parameter = Gas amount) */
+	/*0x1C*/ kcCARRIED_BY = 28,    /*<! The current is carried by the actor passed as paramenter. (Parameter = Actor Index) */
+	/*0x1D*/ kcCDROM = 29,         /*<! CDROM audio tracks. (Parameter = Audio Tracks Index) */
+	// lba2
+	kcLADDER = 30,
+	kcRND = 31,
+	kcRAIL = 32,
+	kcBETA = 33,
+	kcBETA_OBJ = 34,
+	kcCARRY_OBJ_BY = 35,
+	kcANGLE = 36,
+	kcDISTANCE_MESSAGE = 37,
+	kcHIT_OBJ_BY = 38,
+	kcREAL_ANGLE = 39,
+	kcDEMO = 40,
+	kcCOL_DECORS = 41,
+	kcCOL_DECORS_OBJ = 42,
+	kcPROCESSOR = 43,
+	kcOBJECT_DISPLAYED = 44,
+	kcANGLE_OBJ = 45
 };
 
 /**
