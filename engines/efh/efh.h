@@ -361,7 +361,7 @@ private:
 	void computeInitiatives();
 	void redrawScreenForced();
 	int16 countMonsterGroupMembers(int16 monsterGroup);
-	void sub1D8C2(int16 charId, int16 damage);
+	void handleDamageOnArmor(int16 charId, int16 damage);
 	int16 getXPLevel(int32 xp);
 	bool isItemCursed(int16 itemId);
 	bool hasObjectEquipped(int16 charId, int16 objectId);
@@ -388,7 +388,7 @@ private:
 	bool isTeamMemberStatusNormal(int16 id);
 	void getDeathTypeDescription(int16 victimId, int16 attackerId);
 	int16 determineTeamTarget(int16 charId, int16 unkFied18Val, bool checkDistanceFl);
-	bool sub1CB27();
+	bool getTeamAttackRoundPlans();
 	void drawCombatScreen(int16 charId, bool whiteFl, bool drawFl);
 	void getXPAndSearchCorpse(int16 charId, Common::String namePt1, Common::String namePt2, int16 monsterId);
 	bool characterSearchesMonsterCorpse(int16 charId, int16 monsterId);

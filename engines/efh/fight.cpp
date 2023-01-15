@@ -115,7 +115,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 			_teamPctDodgeMiss[counter] = 65;
 		}
 
-		if (!sub1CB27()) {
+		if (!getTeamAttackRoundPlans()) {
 			resetTeamMonsterIdArray();
 			_ongoingFightFl = false;
 			totalPartyKill();
@@ -299,7 +299,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 											_messageToBePrinted += Common::String::format("  %s%s's armor absorbs %d points!", _characterNamePt1.c_str(), _characterNamePt2.c_str(), damagePointsAbsorbed);
 
 										varInt = (originalDamage + damagePointsAbsorbed) / 10;
-										sub1D8C2(_teamCharId[var7E], varInt);
+										handleDamageOnArmor(_teamCharId[var7E], varInt);
 									}
 									// handleFight - Check armor - end
 
@@ -1042,9 +1042,8 @@ int16 EfhEngine::determineTeamTarget(int16 charId, int16 unkFied18Val, bool chec
 	return retVal;
 }
 
-bool EfhEngine::sub1CB27() {
-	debugC(3, kDebugFight, "sub1CB27");
-	warning("To be renamed: sub1CB27");
+bool EfhEngine::getTeamAttackRoundPlans() {
+	debugC(3, kDebugFight, "getTeamAttackRoundPlans");
 
 	bool retVal = false;
 	for (int charId = 0; charId < _teamSize; ++charId) {
