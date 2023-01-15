@@ -23,8 +23,38 @@
 #define TWINE_SCRIPTMOVE_H
 
 #include "common/scummsys.h"
+#include "twine/scene/actor.h"
 
 namespace TwinE {
+
+struct MoveScriptContext {
+	int32 actorIdx;
+	ActorStruct *actor;
+	int32 numRepeatSample = 1;
+
+	Common::MemorySeekableReadWriteStream stream;
+
+	MoveScriptContext(int32 _actorIdx, ActorStruct *_actor) : actorIdx(_actorIdx), actor(_actor), stream(actor->_moveScript, actor->_moveScriptSize) {
+		assert(actor->_offsetTrack >= 0);
+		stream.skip(actor->_offsetTrack);
+	}
+
+	void undo(int32 bytes) {
+		assert(bytes >= 0);
+		// the additional 1 byte is for the opcode
+		stream.rewind(bytes + 1);
+	}
+};
+
+/**
+ * Returns @c -1 Need implementation, @c 0 Condition false, @c 1 - Condition true
+ */
+typedef int32 ScriptMoveFunc(TwinEEngine *engine, MoveScriptContext &ctx);
+
+struct ScriptMoveFunction {
+	const char *name;
+	ScriptMoveFunc *function;
+};
 
 class ScriptMove {
 public:

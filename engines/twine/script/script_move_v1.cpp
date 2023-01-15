@@ -35,38 +35,6 @@
 
 namespace TwinE {
 
-struct MoveScriptContext {
-	int32 actorIdx;
-	ActorStruct *actor;
-	int32 numRepeatSample = 1;
-
-	Common::MemorySeekableReadWriteStream stream;
-
-	MoveScriptContext(int32 _actorIdx, ActorStruct *_actor) : actorIdx(_actorIdx), actor(_actor), stream(actor->_moveScript, actor->_moveScriptSize) {
-		assert(actor->_offsetTrack >= 0);
-		stream.skip(actor->_offsetTrack);
-	}
-
-	void undo(int32 bytes) {
-		assert(bytes >= 0);
-		// the additional 1 byte is for the opcode
-		stream.rewind(bytes + 1);
-	}
-};
-
-/**
- * Returns @c -1 Need implementation, @c 0 Condition false, @c 1 - Condition true
- */
-typedef int32 ScriptMoveFunc(TwinEEngine *engine, MoveScriptContext &ctx);
-
-struct ScriptMoveFunction {
-	const char *name;
-	ScriptMoveFunc *function;
-};
-
-#define MAPFUNC(name, func) \
-	{ name, func }
-
 /**
  * End of Actor Move Script
  * @note Opcode @c 0x00
@@ -657,41 +625,41 @@ static int32 mANGLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 }
 
 static const ScriptMoveFunction function_map[] = {
-	/*0x00*/ MAPFUNC("END", mEND),
-	/*0x01*/ MAPFUNC("NOP", mNOP),
-	/*0x02*/ MAPFUNC("BODY", mBODY),
-	/*0x03*/ MAPFUNC("ANIM", mANIM),
-	/*0x04*/ MAPFUNC("GOTO_POINT", mGOTO_POINT),
-	/*0x05*/ MAPFUNC("WAIT_ANIM", mWAIT_ANIM),
-	/*0x06*/ MAPFUNC("LOOP", mLOOP),
-	/*0x07*/ MAPFUNC("ANGLE", mANGLE),
-	/*0x08*/ MAPFUNC("POS_POINT", mPOS_POINT),
-	/*0x09*/ MAPFUNC("LABEL", mLABEL),
-	/*0x0A*/ MAPFUNC("GOTO", mGOTO),
-	/*0x0B*/ MAPFUNC("STOP", mSTOP),
-	/*0x0C*/ MAPFUNC("GOTO_SYM_POINT", mGOTO_SYM_POINT),
-	/*0x0D*/ MAPFUNC("WAIT_NUM_ANIM", mWAIT_NUM_ANIM),
-	/*0x0E*/ MAPFUNC("SAMPLE", mSAMPLE),
-	/*0x0F*/ MAPFUNC("GOTO_POINT_3D", mGOTO_POINT_3D),
-	/*0x10*/ MAPFUNC("SPEED", mSPEED),
-	/*0x11*/ MAPFUNC("BACKGROUND", mBACKGROUND),
-	/*0x12*/ MAPFUNC("WAIT_NUM_SECOND", mWAIT_NUM_SECOND),
-	/*0x13*/ MAPFUNC("NO_BODY", mNO_BODY),
-	/*0x14*/ MAPFUNC("BETA", mBETA),
-	/*0x15*/ MAPFUNC("OPEN_LEFT", mOPEN_LEFT),
-	/*0x16*/ MAPFUNC("OPEN_RIGHT", mOPEN_RIGHT),
-	/*0x17*/ MAPFUNC("OPEN_UP", mOPEN_UP),
-	/*0x18*/ MAPFUNC("OPEN_DOWN", mOPEN_DOWN),
-	/*0x19*/ MAPFUNC("CLOSE", mCLOSE),
-	/*0x1A*/ MAPFUNC("WAIT_DOOR", mWAIT_DOOR),
-	/*0x1B*/ MAPFUNC("SAMPLE_RND", mSAMPLE_RND),
-	/*0x1C*/ MAPFUNC("SAMPLE_ALWAYS", mSAMPLE_ALWAYS),
-	/*0x1D*/ MAPFUNC("SAMPLE_STOP", mSAMPLE_STOP),
-	/*0x1E*/ MAPFUNC("PLAY_FLA", mPLAY_FLA),
-	/*0x1F*/ MAPFUNC("REPEAT_SAMPLE", mREPEAT_SAMPLE),
-	/*0x20*/ MAPFUNC("SIMPLE_SAMPLE", mSIMPLE_SAMPLE),
-	/*0x21*/ MAPFUNC("FACE_HERO", mFACE_HERO),
-	/*0x22*/ MAPFUNC("ANGLE_RND", mANGLE_RND)};
+	/*0x00*/ {"END", mEND},
+	/*0x01*/ {"NOP", mNOP},
+	/*0x02*/ {"BODY", mBODY},
+	/*0x03*/ {"ANIM", mANIM},
+	/*0x04*/ {"GOTO_POINT", mGOTO_POINT},
+	/*0x05*/ {"WAIT_ANIM", mWAIT_ANIM},
+	/*0x06*/ {"LOOP", mLOOP},
+	/*0x07*/ {"ANGLE", mANGLE},
+	/*0x08*/ {"POS_POINT", mPOS_POINT},
+	/*0x09*/ {"LABEL", mLABEL},
+	/*0x0A*/ {"GOTO", mGOTO},
+	/*0x0B*/ {"STOP", mSTOP},
+	/*0x0C*/ {"GOTO_SYM_POINT", mGOTO_SYM_POINT},
+	/*0x0D*/ {"WAIT_NUM_ANIM", mWAIT_NUM_ANIM},
+	/*0x0E*/ {"SAMPLE", mSAMPLE},
+	/*0x0F*/ {"GOTO_POINT_3D", mGOTO_POINT_3D},
+	/*0x10*/ {"SPEED", mSPEED},
+	/*0x11*/ {"BACKGROUND", mBACKGROUND},
+	/*0x12*/ {"WAIT_NUM_SECOND", mWAIT_NUM_SECOND},
+	/*0x13*/ {"NO_BODY", mNO_BODY},
+	/*0x14*/ {"BETA", mBETA},
+	/*0x15*/ {"OPEN_LEFT", mOPEN_LEFT},
+	/*0x16*/ {"OPEN_RIGHT", mOPEN_RIGHT},
+	/*0x17*/ {"OPEN_UP", mOPEN_UP},
+	/*0x18*/ {"OPEN_DOWN", mOPEN_DOWN},
+	/*0x19*/ {"CLOSE", mCLOSE},
+	/*0x1A*/ {"WAIT_DOOR", mWAIT_DOOR},
+	/*0x1B*/ {"SAMPLE_RND", mSAMPLE_RND},
+	/*0x1C*/ {"SAMPLE_ALWAYS", mSAMPLE_ALWAYS},
+	/*0x1D*/ {"SAMPLE_STOP", mSAMPLE_STOP},
+	/*0x1E*/ {"PLAY_FLA", mPLAY_FLA},
+	/*0x1F*/ {"REPEAT_SAMPLE", mREPEAT_SAMPLE},
+	/*0x20*/ {"SIMPLE_SAMPLE", mSIMPLE_SAMPLE},
+	/*0x21*/ {"FACE_HERO", mFACE_HERO},
+	/*0x22*/ {"ANGLE_RND", mANGLE_RND}};
 
 ScriptMoveV1::ScriptMoveV1(TwinEEngine *engine) : _engine(engine) {
 }

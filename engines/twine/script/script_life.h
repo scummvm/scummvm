@@ -23,8 +23,50 @@
 #define TWINE_SCRIPTLIFE_H
 
 #include "common/scummsys.h"
+#include "twine/scene/actor.h"
 
 namespace TwinE {
+
+struct LifeScriptContext {
+	int32 actorIdx;
+	ActorStruct *actor;
+	Common::MemorySeekableReadWriteStream stream;
+	uint8 *opcodePtr; // local opcode script pointer
+
+	LifeScriptContext(int32 _actorIdx, ActorStruct *_actor) : actorIdx(_actorIdx), actor(_actor), stream(_actor->_lifeScript, _actor->_lifeScriptSize) {
+		assert(actor->_offsetLife >= 0);
+		stream.skip(_actor->_offsetLife);
+		updateOpcodePos();
+	}
+
+	void setOpcode(uint8 opcode) {
+		*opcodePtr = opcode;
+	}
+
+	void updateOpcodePos() {
+		opcodePtr = actor->_lifeScript + stream.pos();
+	}
+};
+
+/**
+ * Returns @c -1 Need implementation, @c 0 Condition false, @c 1 - Condition true
+ */
+typedef int32 ScriptLifeFunc(TwinEEngine *engine, LifeScriptContext &ctx);
+
+struct ScriptLifeFunction {
+	const char *name;
+	ScriptLifeFunc *function;
+};
+
+/** Script condition operators */
+enum LifeScriptOperators {
+	/*==*/kEqualTo = 0,
+	/*> */kGreaterThan = 1,
+	/*< */kLessThan = 2,
+	/*>=*/kGreaterThanOrEqualTo = 3,
+	/*<=*/kLessThanOrEqualTo = 4,
+	/*!=*/kNotEqualTo = 5
+};
 
 class ScriptLife {
 public:
