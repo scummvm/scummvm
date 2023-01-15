@@ -151,14 +151,17 @@ void Scene::setBonusParameterFlags(ActorStruct *act, uint16 bonusFlags) {
 bool Scene::loadSceneLBA2() {
 	Common::MemoryReadStream stream(_currentScene, _currentSceneSize);
 	_sceneTextBank = (TextBankId)stream.readByte();
-	_currentGameOverScene = stream.readByte();
-	stream.skip(4);
+	/*int8 currentCubeX =*/ stream.readSByte();
+	/*int8 currentCubeY =*/ stream.readSByte();
+	/*int8 shadowLevel =*/ stream.readSByte();
+	/*int8 modeLabyrinthe =*/ stream.readSByte();
+	_isOutsideScene = stream.readByte();
+
+	/*uint8 n =*/ stream.readByte();
 
 	_alphaLight = ClampAngle((int16)stream.readUint16LE());
 	_betaLight = ClampAngle((int16)stream.readUint16LE());
 	debug(2, "Using %i and %i as light vectors", _alphaLight, _betaLight);
-
-	_isOutsideScene = stream.readByte();
 
 	for (int i = 0; i < 4; ++i) {
 		_sampleAmbiance[i] = stream.readUint16LE();
@@ -185,6 +188,8 @@ bool Scene::loadSceneLBA2() {
 	_sceneHero->_lifeScriptSize = (int16)stream.readUint16LE();
 	_sceneHero->_lifeScript = _currentScene + stream.pos();
 	stream.skip(_sceneHero->_lifeScriptSize);
+
+	/*uint32 checksum =*/ stream.readUint32LE();
 
 	_sceneNumActors = (int16)stream.readUint16LE();
 	int cnt = 1;
