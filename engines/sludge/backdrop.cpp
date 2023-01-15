@@ -430,6 +430,9 @@ bool GraphicsManager::loadHSI(int num, Common::SeekableReadStream *stream, int x
 		return false;
 	}
 
+	if (!_backdropExists)
+		_backdropSurface.fillRect(Common::Rect(x, y, x + tmp.w, y + tmp.h), _renderSurface.format.ARGBToColor(0, 0, 0, 0));
+
 	// copy surface loaded to backdrop
 	Graphics::TransparentSurface tmp_trans(tmp, false);
 	tmp_trans.blit(_backdropSurface, x, y);
