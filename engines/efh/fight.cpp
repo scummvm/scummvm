@@ -1671,4 +1671,32 @@ int16 EfhEngine::getTeamMonsterAnimId() {
 	return retVal;
 }
 
+int16 EfhEngine::selectMonsterGroup() {
+	debugC(3, kDebugFight, "selectMonsterGroup");
+
+	int16 retVal = -1;
+
+	while (retVal == -1) {
+		Common::KeyCode input = handleAndMapInput(true);
+		switch (input) {
+		case Common::KEYCODE_ESCAPE:
+			retVal = 27;
+			break;
+		case Common::KEYCODE_a:
+		case Common::KEYCODE_b:
+		case Common::KEYCODE_c:
+		case Common::KEYCODE_d:
+		case Common::KEYCODE_e:
+			retVal = input - Common::KEYCODE_a;
+			if (_teamMonsterIdArray[retVal] == -1)
+				retVal = -1;
+			break;
+		default:
+			break;
+		}
+	}
+
+	return retVal;
+}
+
 } // End of namespace Efh
