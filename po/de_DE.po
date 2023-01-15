@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-15 09:55+0000\n"
-"PO-Revision-Date: 2023-01-15 10:30+0000\n"
+"PO-Revision-Date: 2023-01-15 10:31+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1667,7 +1667,7 @@ msgstr "Autospeichern:"
 
 #: gui/options.cpp:2541
 msgid "Random seed:"
-msgstr "Seed für Zufallsgenerator:"
+msgstr "RNG-Seed:"
 
 #: gui/options.cpp:2541
 msgid "Seed for initializing all random number generators"
