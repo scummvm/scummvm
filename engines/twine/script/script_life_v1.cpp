@@ -363,8 +363,9 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		engine->_scene->_currentScriptValue = ctx.actor->_carryBy;
 		break;
 	case kcCDROM:
+		// used in lba1 scenes 80 and 117
 		debugCN(3, kDebugLevels::kDebugScripts, "cdrom(");
-		engine->_scene->_currentScriptValue = 1;
+		engine->_scene->_currentScriptValue = engine->isCDROM();
 		break;
 	default:
 		error("Actor condition opcode %d", conditionOpcode);

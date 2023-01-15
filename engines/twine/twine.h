@@ -251,6 +251,7 @@ public:
 	void pushMouseCursorVisible();
 	void popMouseCursorVisible();
 
+	bool isCDROM() const { return true; /* TODO */}
 	bool isLBA1() const { return _gameType == TwineGameType::GType_LBA; }
 	bool isLBA2() const { return _gameType == TwineGameType::GType_LBA2; }
 	bool isLBASlideShow() const { return _gameType == TwineGameType::GType_LBASHOW; }
