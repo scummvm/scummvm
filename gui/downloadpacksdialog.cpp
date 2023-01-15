@@ -460,7 +460,7 @@ void DownloadPacksDialog::clearCache() {
 	Common::String sizeUnits;
 	Common::String size = getHumanReadableBytes(totalSize, sizeUnits);
 
-	GUI::MessageDialog dialog(Common::U32String::format(_("You are about to remove %s %s of data, deleting all previously downloaded icon files. Do you want to proceed?"), size.c_str(), sizeUnits.c_str()), _("Proceed"), _("Cancel"));
+	GUI::MessageDialog dialog(Common::U32String::format(_("You are about to remove %s %s of data, deleting all previously downloaded %S. Do you want to proceed?"), size.c_str(), sizeUnits.c_str(), _packname.c_str()), _("Proceed"), _("Cancel"));
 	if (dialog.runModal() == ::GUI::kMessageOK) {
 
 		// Build list of previously downloaded icon files
