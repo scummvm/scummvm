@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-15 13:39+0000\n"
+"POT-Creation-Date: 2023-01-15 18:22+0000\n"
 "PO-Revision-Date: 2023-01-13 15:50+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -6690,17 +6690,17 @@ msgid "Use an easier to read custom font"
 msgstr ""
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:818
+#: engines/saga/detection_tables.h:875
 msgid "Windows Trial version is not supported"
 msgstr "Windows Probeerversie wordt niet ondersteund"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:845
+#: engines/saga/detection_tables.h:902
 msgid "macOS Trial version is not supported"
 msgstr "macOS Probeerversie wordt niet ondersteund"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
-#: engines/saga/detection_tables.h:871
+#: engines/saga/detection_tables.h:928
 msgid "Pocket PC Trial version is not supported"
 msgstr "Pocket PC Probeerversie wordt niet ondersteund"
 
