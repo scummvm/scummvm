@@ -1316,6 +1316,9 @@ void Insane::ouchSoundEnemy() {
 			smlayer_startVoice(245);
 		}
 		break;
+	case EN_ROTT3:
+		smlayer_startVoice(230);
+		break;
 	case EN_VULTM2:
 		smlayer_startVoice(180);
 		break;
