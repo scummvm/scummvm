@@ -2589,6 +2589,9 @@ void Insane::actor12Reaction(int32 buttons) {
 	tmp = _actor[1].x + _actor[1].act[2].tilt - 17;
 	tmp2 = _actor[1].y + _actor[1].y1 - 98;
 
+	if (_actor[1].lost && (_vm->_game.features & GF_DEMO))
+		tmp2 += 98;
+
 	if (_actor[1].act[2].room)
 		smlayer_putActor(1, 2, tmp, tmp2, _smlayer_room2);
 	else
