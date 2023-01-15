@@ -125,6 +125,19 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 
+	{ // 25th Anniversary rerelease
+		"sword1",
+		"25th Anniversary",
+		AD_ENTRY4s("scripts.clu",        "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "swordres.rif",       "d21d6321ee2dbb2d7d7ca2d2a940c34a", 58916,
+				   "text.clu",           "76f93f5feecc8915435105478f3c6615", 2704592,
+				   "smackshi/intro.smk", "d82a7869ace8fcecaa519c04c4bfc483", 13233268),
+		Common::EN_GRB,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
 	{
 		"sword1",
 		"Rerelease",
