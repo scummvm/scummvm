@@ -395,28 +395,33 @@ void DrillerEngine::loadAssetsDemo() {
 }
 
 
-Common::SeekableReadStream *parseEDSK(const Common::String filename) {
+byte *parseEDSK(const Common::String filename, int &size) {
 	debugC(1, kFreescapeDebugParser, "Trying to parse edsk file: %s", filename.c_str());
 	Common::File file;
 	file.open(filename);
 	if (!file.isOpen())
 		error("Failed to open %s", filename.c_str());
 
-	int size = file.size();
-	byte *edskBuffer = (byte *)malloc(size);
-	file.read(edskBuffer, size);
+	int totalSize = file.size();
+	byte *edskBuffer = (byte *)malloc(totalSize);
+	file.read(edskBuffer, totalSize);
 	file.close();
 
 	// We don't know the final size, but we allocate enough
-	byte *memBuffer = (byte *)malloc(size); 
+	byte *memBuffer = (byte *)malloc(totalSize);
 
 	byte nsides = edskBuffer[49];
 	assert(nsides == 1);
 	int ntracks = 0;
 	int i = 256;
 	int j = 0;
-	while (i + 1 < size) {
+	while (i + 1 < totalSize) {
 		byte ssize = edskBuffer[i + 0x14];
+		debug("i: %x ssize: %d, number: %d", i, ssize, edskBuffer[i + 0x10]);
+		assert(ssize == 3 || edskBuffer[i + 0x0] == 'T');
+		assert(ssize == 3 || edskBuffer[i + 0x1] == 'r');
+		assert(ssize == 3 || edskBuffer[i + 0x2] == 'a');
+		//assert(ssize == 3 || ntracks == edskBuffer[i + 0x10]);
 		int start = i + 0x100;
 		debugC(1, kFreescapeDebugParser, "sector size: %d", ssize);
 		if (ssize == 2) {
@@ -424,18 +429,19 @@ Common::SeekableReadStream *parseEDSK(const Common::String filename) {
 		} else if (ssize == 5) {
 			i = i + 8 * 512 + 256;
 		} else if (ssize == 0) {
-			i = size - 1;
+			i = totalSize - 1;
 		} else if (ssize == 3) {
 			break; // Not sure
 		} else {
 			error("ssize: %d", ssize);
 		}
 		int osize = i - start;
-		debugC(1, kFreescapeDebugParser, "copying track %d start: %x size: %x", ntracks, start, osize);
+		debugC(1, kFreescapeDebugParser, "copying track %d start: %x size: %x, dest: %x", ntracks, start, osize, j);
 		memcpy(memBuffer + j, edskBuffer + start, osize);
 		j = j + osize;
 		ntracks++;
 	}
+	size = j;
 
 	if (0) { // Useful to debug where exactly each object is located in memory once it is parsed
 		i = 0;
@@ -448,9 +454,8 @@ Common::SeekableReadStream *parseEDSK(const Common::String filename) {
 			debugN("\n");
 		}
 	}
-
 	free(edskBuffer);
-	return (new Common::MemoryReadStream(memBuffer, size));
+	return memBuffer;
 }
 
 
@@ -557,11 +562,45 @@ void DrillerEngine::loadAssetsFullGame() {
 			error("Unknown ZX spectrum variant");
 	} else if (isCPC()) {
 		loadBundledImages();
-		Common::SeekableReadStream *stream;
-		if (_variant & GF_CPC_VIRTUALWORLDS)
-			stream = parseEDSK("virtualworlds.A.cpc.edsk");
-		else
-			stream = parseEDSK("driller.cpc.edsk");
+		byte *memBuffer;
+		int memSize = 0;
+		if (_variant & GF_CPC_VIRTUALWORLDS) {
+			memBuffer = parseEDSK("virtualworlds.A.cpc.edsk", memSize);
+
+			// Deofuscation / loader code
+			for (int j = 0; j < 0x200; j++) {
+				memBuffer[0x14000 + j] = memBuffer[0x14200 + j];
+				memBuffer[0x14200 + j] = memBuffer[0x13400 + j];
+				memBuffer[0x14400 + j] = memBuffer[0x13800 + j];
+				memBuffer[0x14600 + j] = memBuffer[0x13c00 + j];
+			}
+
+			for (int j = 0; j < 0x200; j++) {
+				memBuffer[0x13c00 + j] = memBuffer[0x13a00 + j];
+				memBuffer[0x13a00 + j] = memBuffer[0x13600 + j];
+				memBuffer[0x13800 + j] = memBuffer[0x13200 + j];
+				memBuffer[0x13600 + j] = memBuffer[0x12e00 + j];
+				memBuffer[0x12e00 + j] = memBuffer[0x13000 + j];
+				memBuffer[0x13000 + j] = memBuffer[0x12200 + j];
+				memBuffer[0x13200 + j] = memBuffer[0x12600 + j];
+				memBuffer[0x13400 + j] = memBuffer[0x12a00 + j];
+			}
+
+			for (int i = 6; i >= 0; i--) {
+				//debug("copying 0x200 bytes to %x from %x", 0x12000 + 0x200*i, 0x11400 + 0x400*i);
+				for (int j = 0; j < 0x200; j++) {
+					memBuffer[0x12000 + 0x200*i + j] = memBuffer[0x11400 + 0x400*i + j];
+				}
+			}
+
+			for (int j = 0; j < 0x200; j++) {
+				memBuffer[0x11c00 + j] = memBuffer[0x11e00 + j];
+				memBuffer[0x11e00 + j] = memBuffer[0x11000 + j];
+			}
+		} else
+			memBuffer = parseEDSK("driller.cpc.edsk", memSize);
+		assert(memSize > 0);
+		Common::SeekableReadStream *stream = new Common::MemoryReadStream((const byte*)memBuffer, memSize);
 
 		if (_variant & GF_CPC_RETAIL) {
 			loadMessagesFixedSize(stream, 0xb0f7, 14, 20);
@@ -574,7 +613,7 @@ void DrillerEngine::loadAssetsFullGame() {
 			load8bitBinary(stream, 0xaccb, 4);
 			loadGlobalObjects(stream, 0xacb2 - 0x3fab);
 		} else if (_variant & _variant & GF_CPC_VIRTUALWORLDS) {
-			error("Not implemented yet");
+			load8bitBinary(stream, 0x11acb, 4);
 		} else if (_variant & GF_CPC_BUDGET) {
 			loadMessagesFixedSize(stream, 0x9ef7, 14, 20);
 			loadFonts(stream, 0xd914);
@@ -843,7 +882,7 @@ void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
 		drawStringInSurface(message, 191, 180, back, front, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
-	} else {
+	} else if (_messagesList.size() > 0) {
 		if (_currentArea->_gasPocketRadius == 0)
 			message = _messagesList[2];
 		else if (_drillStatusByArea[_currentArea->getAreaID()])
