@@ -190,7 +190,28 @@ enum class ActionType : uint8 {
 	ACTION_THROW_3D_ALPHA = 19,
 	ACTION_THROW_3D_SEARCH = 20,
 	ACTION_THROW_3D_MAGIC = 21,
-	ACTION_LAST
+	// lba2
+	ACTION_SUPER_HIT = 22,
+	ACTION_THROW_OBJ_3D = 23,
+	ACTION_PATH = 24,
+	ACTION_FLOW = 25,
+	ACTION_FLOW_3D = 26,
+	ACTION_THROW_DART = 27,
+	ACTION_SHIELD = 28,
+	ACTION_SAMPLE_MAGIC = 29,
+	ACTION_THROW_3D_CONQUE = 30,
+	ACTION_ZV_ANIMIT = 31,
+	ACTION_IMPACT = 32,
+	ACTION_RENVOIE = 33,
+	ACTION_RENVOYABLE = 34,
+	ACTION_TRANSPARENT = 35,
+	ACTION_SCALE = 36,
+	ACTION_LEFT_JUMP = 37,
+	ACTION_RIGHT_JUMP = 38,
+	ACTION_NEW_SAMPLE = 39,
+	ACTION_IMPACT_3D = 40,
+	ACTION_THROW_MAGIC_EXTRA = 41,
+	ACTION_THROW_FOUDRE = 42
 };
 
 enum class ShapeType {
@@ -221,7 +242,14 @@ enum class ControlMode {
 	kFollow2 = 4,
 	kTrackAttack = 5,
 	kSameXZ = 6,
-	kRandom = 7
+	kRandom = 7, // kPinguin in lba2
+	// lba2
+	kWagon = 8,
+	kCircle = 9, // Beta = Tangent lines to circles
+	kCircle2 = 10,
+	kSameXYBeta = 11,
+	kBuggy = 12,
+	kBuggyManual = 13
 };
 
 enum class AnimationTypes {
