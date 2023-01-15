@@ -137,8 +137,8 @@ class Renderer;
 class Resources;
 class Scene;
 class Screens;
-class ScriptLife;
-class ScriptMove;
+class ScriptLifeV1;
+class ScriptMoveV1;
 class Holomap;
 class Sound;
 class Text;
@@ -205,8 +205,8 @@ private:
 	EngineState _state = EngineState::Menu;
 	Common::String _queuedFlaMovie;
 
-	ScriptLife *_scriptLife;
-	ScriptMove *_scriptMove;
+	ScriptLifeV1 *_scriptLife;
+	ScriptMoveV1 *_scriptMove;
 
 	Common::RandomSource _rnd;
 	Common::Language _gameLang;

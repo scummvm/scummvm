@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef TWINE_SCRIPTLIFE_H
-#define TWINE_SCRIPTLIFE_H
+#ifndef TWINE_SCRIPTLIFEV1_H
+#define TWINE_SCRIPTLIFEV1_H
 
 #include "common/scummsys.h"
 
@@ -31,12 +31,12 @@ namespace TwinE {
 
 class TwinEEngine;
 
-class ScriptLife {
+class ScriptLifeV1 {
 private:
 	TwinEEngine *_engine;
 
 public:
-	ScriptLife(TwinEEngine *engine);
+	ScriptLifeV1(TwinEEngine *engine);
 
 	/**
 	 * Process actor life script

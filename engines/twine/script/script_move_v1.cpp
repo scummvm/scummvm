@@ -693,10 +693,10 @@ static const ScriptMoveFunction function_map[] = {
 	/*0x21*/ MAPFUNC("FACE_HERO", mFACE_HERO),
 	/*0x22*/ MAPFUNC("ANGLE_RND", mANGLE_RND)};
 
-ScriptMove::ScriptMove(TwinEEngine *engine) : _engine(engine) {
+ScriptMoveV1::ScriptMoveV1(TwinEEngine *engine) : _engine(engine) {
 }
 
-void ScriptMove::doTrack(int32 actorIdx) {
+void ScriptMoveV1::doTrack(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	int32 end = -2;

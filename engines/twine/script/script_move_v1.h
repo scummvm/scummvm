@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef TWINE_SCRIPTMOVE_H
-#define TWINE_SCRIPTMOVE_H
+#ifndef TWINE_SCRIPTMOVEV1_H
+#define TWINE_SCRIPTMOVEV1_H
 
 #include "common/scummsys.h"
 
@@ -28,11 +28,11 @@ namespace TwinE {
 
 class TwinEEngine;
 
-class ScriptMove {
+class ScriptMoveV1 {
 private:
 	TwinEEngine *_engine;
 public:
-	ScriptMove(TwinEEngine *engine);
+	ScriptMoveV1(TwinEEngine *engine);
 
 	/**
 	 * Process actor move script

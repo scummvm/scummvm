@@ -2030,11 +2030,11 @@ static const ScriptLifeFunction function_map[] = {
 	/*0x68*/ MAPFUNC("CLEAR_TEXT", lCLEAR_TEXT),
 	/*0x69*/ MAPFUNC("BRUTAL_EXIT", lBRUTAL_EXIT)};
 
-ScriptLife::ScriptLife(TwinEEngine *engine) : _engine(engine) {
+ScriptLifeV1::ScriptLifeV1(TwinEEngine *engine) : _engine(engine) {
 	lTextYPos = 0;
 }
 
-void ScriptLife::doLife(int32 actorIdx) {
+void ScriptLifeV1::doLife(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	int32 end = -2;
 

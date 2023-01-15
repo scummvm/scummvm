@@ -189,8 +189,13 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 	_resources = new Resources(this);
 	_scene = new Scene(this);
 	_screens = new Screens(this);
-	_scriptLife = new ScriptLife(this);
-	_scriptMove = new ScriptMove(this);
+	if (isLBA1()) {
+		_scriptLife = new ScriptLifeV1(this);
+		_scriptMove = new ScriptMoveV1(this);
+	} else {
+		_scriptLife = nullptr;
+		_scriptMove = nullptr;
+	}
 	_holomap = new Holomap(this);
 	_sound = new Sound(this);
 	_text = new Text(this);
