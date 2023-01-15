@@ -121,6 +121,13 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed Roland MT-32 support in Sam & Max.
    - Implemented original GUI and save menus for LucasArts games (DOS, Windows,
      Amiga, Macintosh, FM-Towns, SegaCD, Atari ST, NES and Commodore 64 versions).
+   - Fixed minor timing issues for the SMUSH video engine, mostly affecting
+     Full Throttle.
+   - Added a low latency audio mode to Full Throttle, The Dig and The Curse of
+     Monkey Island; this can improve audio performance expecially in non-desktop
+     devices.
+   - Implemented reloading CD audio for Monkey Island 1 and Loom (CD versions),
+     when reloading a save state.
 
  Sherlock:
    - Added support for Chinese Rose Tattoo.
