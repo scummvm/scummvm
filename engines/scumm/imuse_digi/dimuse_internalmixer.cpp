@@ -44,6 +44,8 @@ IMuseDigiInternalMixer::IMuseDigiInternalMixer(Audio::Mixer *mixer, int sampleRa
 
 	if (!_lowLatencyMode || _isEarlyDiMUSE)
 		_stream = Audio::makeQueuingAudioStream(_sampleRate, _mixer->getOutputStereo());
+	else
+		_stream = nullptr;
 
 	_radioChatter = 0;
 	_amp8Table = nullptr;
