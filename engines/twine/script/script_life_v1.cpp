@@ -46,6 +46,9 @@
 #include "twine/text.h"
 #include "twine/twine.h"
 
+// SCENE_SIZE_MAX
+#define MAX_TARGET_ACTOR_DISTANCE 0x7D00
+
 namespace TwinE {
 
 // the y position for lTEXT opcode - see lCLEAR (used in credits scene)
