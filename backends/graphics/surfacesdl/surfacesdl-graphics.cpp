@@ -738,6 +738,7 @@ void SurfaceSdlGraphicsManager::getDefaultResolution(uint &w, uint &h) {
 	SDL_Rect const* const*availableModes = SDL_ListModes(&p, SDL_FULLSCREEN|SDL_HWSURFACE);
 	w = availableModes[0]->w;
 	h = availableModes[0]->h;
+	if (h > w) h /= 2; // RG99 has a 320x480 screen, gui should render at 320x240 to look correct
 #else
 	w = 320;
 	h = 200;
