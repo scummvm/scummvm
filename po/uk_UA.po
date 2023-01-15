@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-15 13:39+0000\n"
-"PO-Revision-Date: 2023-01-10 20:51+0000\n"
+"PO-Revision-Date: 2023-01-15 18:34+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -264,16 +264,13 @@ msgid "No new %S available"
 msgstr "Не знайдено нових %S"
 
 #: gui/downloadpacksdialog.cpp:463
-#, fuzzy, c-format
-#| msgid ""
-#| "You are about to remove %s %s of data, deleting all previously downloaded "
-#| "icon files. Do you want to proceed?"
+#, c-format
 msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
-"Ви збираєтесь видалити %s%s даних, і видалити всі попередньо завантажені "
-"іконки. Чи ви насправді хочете продовжити?"
+"Ви збираєтесь видалити %s%s даних, і видалити всі попередньо завантажені %S. "
+"Чи ви насправді хочете продовжити?"
 
 #: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
 msgid "Proceed"
