@@ -2321,8 +2321,8 @@ int16 EfhEngine::countMonsterGroupMembers(int16 monsterGroup) {
 	return result;
 }
 
-void EfhEngine::sub1D8C2(int16 charId, int16 damage) {
-	debug("sub1D8C2 %d %d", charId, damage);
+void EfhEngine::handleDamageOnArmor(int16 charId, int16 damage) {
+	debugC(3, kDebugEngine, "handleDamageOnArmor %d %d", charId, damage);
 
 	int16 destroyCounter = 0;
 	int16 pronoun = _npcBuf[charId].getPronoun();
@@ -2347,12 +2347,12 @@ void EfhEngine::sub1D8C2(int16 charId, int16 damage) {
 			removeObject(charId, objectId);
 
 			if (destroyCounter == 0) {
-				destroyCounter = 1;
 				_messageToBePrinted += Common::String::format(", but %s ", kPossessive[pronoun]) + buffer2;
 			} else {
-				++destroyCounter;
 				_messageToBePrinted += Common::String(", ") + buffer2;
 			}
+
+			++destroyCounter;
 		}
 
 		if (remainingDamage > 0)
