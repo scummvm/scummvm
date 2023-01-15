@@ -155,7 +155,8 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #endif
 	}
 
-	_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
+	_mouseLastRect.x = _mouseLastRect.y = _mouseLastRect.w = _mouseLastRect.h = 0;
+	_mouseNextRect.x = _mouseNextRect.y = _mouseNextRect.w = _mouseNextRect.h = 0;
 
 #ifdef USE_SDL_DEBUG_FOCUSRECT
 	if (ConfMan.hasKey("use_sdl_debug_focusrect"))
@@ -1169,7 +1170,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	// When building with SDL2, the shake offset is added to the active rect instead,
 	// so this isn't needed there.
 	if (_currentShakeXOffset != _gameScreenShakeXOffset ||
-		(_cursorNeedsRedraw && _mouseBackup.x <= _currentShakeXOffset)) {
+		(_cursorNeedsRedraw && _mouseLastRect.x <= _currentShakeXOffset)) {
 		SDL_Rect blackrect = {0, 0, (Uint16)(_gameScreenShakeXOffset * _videoMode.scaleFactor), (Uint16)(_videoMode.screenHeight * _videoMode.scaleFactor)};
 
 		if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
@@ -1182,7 +1183,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		_forceRedraw = true;
 	}
 	if (_currentShakeYOffset != _gameScreenShakeYOffset ||
-		(_cursorNeedsRedraw && _mouseBackup.y <= _currentShakeYOffset)) {
+		(_cursorNeedsRedraw && _mouseLastRect.y <= _currentShakeYOffset)) {
 		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_gameScreenShakeYOffset * _videoMode.scaleFactor)};
 
 		if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
@@ -1245,12 +1246,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		_needRestoreAfterOverlay = _useOldSrc;
 	}
 
-	// Add the area covered by the mouse cursor to the list of dirty rects if
-	// we have to redraw the mouse, or if the cursor is alpha-blended since
-	// alpha-blended cursors will happily blend into themselves if the surface
-	// under the cursor is not reset first
-	if (_cursorNeedsRedraw || _cursorFormat.aBits() > 1)
-		undrawMouse();
+	undrawMouse();
 
 #ifdef USE_OSD
 	updateOSD();
@@ -1291,7 +1287,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	}
 
 	// Only draw anything if necessary
-	if (actualDirtyRects > 0 || _cursorNeedsRedraw) {
+	if (actualDirtyRects > 0) {
 		SDL_Rect *r;
 		SDL_Rect dst;
 		uint32 bpp, srcPitch, dstPitch;
@@ -2167,65 +2163,67 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 }
 
 void SurfaceSdlGraphicsManager::undrawMouse() {
-	const int x = _mouseBackup.x;
-	const int y = _mouseBackup.y;
+	_mouseLastRect = _mouseNextRect;
 
-	// When we switch bigger overlay off mouse jumps. Argh!
-	// This is intended to prevent undrawing offscreen mouse
-	if (!_overlayInGUI && (x >= _videoMode.screenWidth || y >= _videoMode.screenHeight))
-		return;
+	int hotX, hotY;
+	const Common::Point virtualCursor = convertWindowToVirtual(_cursorX, _cursorY);
 
-	if (_mouseBackup.w != 0 && _mouseBackup.h != 0)
-		addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h, _overlayInGUI);
+	// The offsets must be applied, since the call to convertWindowToVirtual()
+	// counteracts the move of the view port.
+
+	_mouseNextRect.x = virtualCursor.x + _gameScreenShakeXOffset;
+	_mouseNextRect.y = virtualCursor.y + _gameScreenShakeYOffset;
+
+	if (!_overlayInGUI) {
+		_mouseNextRect.w = _mouseCurState.vW;
+		_mouseNextRect.h = _mouseCurState.vH;
+		hotX = _mouseCurState.vHotX;
+		hotY = _mouseCurState.vHotY;
+	} else {
+		_mouseNextRect.w = _mouseCurState.rW;
+		_mouseNextRect.h = _mouseCurState.rH;
+		hotX = _mouseCurState.rHotX;
+		hotY = _mouseCurState.rHotY;
+	}
+
+	// Add the area covered by the mouse cursor to the list of dirty rects if
+	// we have to redraw the mouse, or if the cursor is alpha-blended since
+	// alpha-blended cursors will happily blend into themselves if the surface
+	// under the cursor is not reset first
+	//
+	// The mouse is undrawn using virtual coordinates, i.e. they may be
+	// scaled and aspect-ratio corrected.
+
+	if (_mouseLastRect.w != 0 && _mouseLastRect.h != 0)
+		addDirtyRect(_mouseLastRect.x - hotX, _mouseLastRect.y - hotY, _mouseLastRect.w, _mouseLastRect.h, _overlayInGUI);
+
+	if (_mouseNextRect.w != 0 && _mouseNextRect.h != 0)
+		addDirtyRect(_mouseNextRect.x - hotX, _mouseNextRect.y - hotY, _mouseNextRect.w, _mouseNextRect.h, _overlayInGUI);
 }
 
 void SurfaceSdlGraphicsManager::drawMouse() {
 	if (!_cursorVisible || !_mouseSurface || !_mouseCurState.w || !_mouseCurState.h) {
-		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
+		_mouseLastRect.x = _mouseLastRect.y = _mouseLastRect.w = _mouseLastRect.h = 0;
+		_mouseNextRect.x = _mouseNextRect.y = _mouseNextRect.w = _mouseNextRect.h = 0;
 		return;
 	}
 
 	SDL_Rect dst;
 	int scale;
-	int hotX, hotY;
-
-	const Common::Point virtualCursor = convertWindowToVirtual(_cursorX, _cursorY);
-
-	dst.x = virtualCursor.x;
-	dst.y = virtualCursor.y;
 
 	if (!_overlayInGUI) {
 		scale = _videoMode.scaleFactor;
-		dst.w = _mouseCurState.vW;
-		dst.h = _mouseCurState.vH;
-		hotX = _mouseCurState.vHotX;
-		hotY = _mouseCurState.vHotY;
 	} else {
 		scale = 1;
-		dst.w = _mouseCurState.rW;
-		dst.h = _mouseCurState.rH;
-		hotX = _mouseCurState.rHotX;
-		hotY = _mouseCurState.rHotY;
 	}
-
-	// The offsets must be applied, since the call to convertWindowToVirtual()
-	// counteracts the move of the view port.
-	dst.x += _gameScreenShakeXOffset;
-	dst.y += _gameScreenShakeYOffset;
-
-	// The mouse is undrawn using virtual coordinates, i.e. they may be
-	// scaled and aspect-ratio corrected.
-
-	_mouseBackup.x = dst.x - hotX;
-	_mouseBackup.y = dst.y - hotY;
-	_mouseBackup.w = dst.w;
-	_mouseBackup.h = dst.h;
 
 	// We draw the pre-scaled cursor image, so now we need to adjust for
 	// scaling, shake position and aspect ratio correction manually.
 
-	dst.x += _currentShakeXOffset;
-	dst.y += _currentShakeYOffset;
+	dst.x = _mouseNextRect.x + _currentShakeXOffset;
+	dst.y = _mouseNextRect.y + _currentShakeYOffset;
+	dst.w = _mouseNextRect.w;
+	dst.h = _mouseNextRect.h;
 
 	if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
 		dst.y = real2Aspect(dst.y);
@@ -2240,11 +2238,6 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 
 	if (SDL_BlitSurface(_mouseSurface, nullptr, _hwScreen, &dst) != 0)
 		error("SDL_BlitSurface failed: %s", SDL_GetError());
-
-	// The screen will be updated using real surface coordinates, i.e.
-	// they will not be scaled or aspect-ratio corrected.
-
-	addDirtyRect(dst.x, dst.y, dst.w, dst.h, _overlayInGUI, true);
 }
 
 #pragma mark -
