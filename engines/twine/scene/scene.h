@@ -159,6 +159,8 @@ public:
 	int32 _currentSceneIdx = LBA1SceneId::Citadel_Island_Prison;
 	int32 _previousSceneIdx = LBA1SceneId::Citadel_Island_Prison;
 
+	int32 _planet = -1;
+
 	int32 _holomapTrajectory = -1;
 
 	TextBankId _sceneTextBank = TextBankId::None;

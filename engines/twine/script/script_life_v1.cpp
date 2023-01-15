@@ -47,7 +47,7 @@
 #include "twine/twine.h"
 
 // SCENE_SIZE_MAX
-#define MAX_TARGET_ACTOR_DISTANCE 0x7D00
+#define MAX_TARGET_ACTOR_DISTANCE 32000
 
 namespace TwinE {
 
@@ -95,16 +95,16 @@ enum LifeScriptConditions {
 	kcBETA = 33,
 	kcBETA_OBJ = 34,
 	kcCARRY_OBJ_BY = 35,
-	kcANGLE = 36,
+	kcANGLE = 36,            /*<! meansure the angle between two actors */
 	kcDISTANCE_MESSAGE = 37,
 	kcHIT_OBJ_BY = 38,
-	kcREAL_ANGLE = 39,
+	kcREAL_ANGLE = 39,       /*<! meansure the angle between two actors */
 	kcDEMO = 40,
 	kcCOL_DECORS = 41,
 	kcCOL_DECORS_OBJ = 42,
 	kcPROCESSOR = 43,
 	kcOBJECT_DISPLAYED = 44,
-	kcANGLE_OBJ = 45
+	kcANGLE_OBJ = 45         /*<! meansure the angle between two actors */
 };
 
 enum class ReturnType {
@@ -118,7 +118,7 @@ enum class ReturnType {
  * Returns @c 1 Condition value size (1 byte), @c 2 Condition value size (2 bytes)
  */
 static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) { // DoFuncLife
-	ReturnType conditionValueSize = ReturnType::RET_U8;
+	ReturnType conditionValueSize = engine->isLBA1() ? ReturnType::RET_U8 : ReturnType::RET_S8;
 	int32 conditionOpcode = ctx.stream.readByte();
 	switch (conditionOpcode) {
 	case kcCOL:
@@ -193,6 +193,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	}
 	case kcL_TRACK:
 		debugCN(3, kDebugLevels::kDebugScripts, "track(");
+		conditionValueSize = ReturnType::RET_U8;
 		engine->_scene->_currentScriptValue = ctx.actor->_labelIdx;
 		break;
 	case kcL_TRACK_OBJ: {
@@ -204,6 +205,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	case kcFLAG_CUBE: {
 		int32 flagIdx = ctx.stream.readByte();
 		debugCN(3, kDebugLevels::kDebugScripts, "flag_cube(%i, ", flagIdx);
+		conditionValueSize = ReturnType::RET_U8;
 		engine->_scene->_currentScriptValue = engine->_scene->_sceneFlags[flagIdx];
 		break;
 	}
@@ -256,6 +258,12 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		debugCN(3, kDebugLevels::kDebugScripts, "hit_by(");
 		engine->_scene->_currentScriptValue = ctx.actor->_hitBy;
 		break;
+	case kcHIT_OBJ_BY: {
+		int32 actorIdx = ctx.stream.readByte();
+		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_hitBy;
+		debugCN(3, kDebugLevels::kDebugScripts, "hit_by(%i, ", actorIdx);
+		break;
+	}
 	case kcACTION:
 		debugCN(3, kDebugLevels::kDebugScripts, "action(");
 		engine->_scene->_currentScriptValue = engine->_movements->shouldExecuteAction() ? 1 : 0;
@@ -278,6 +286,9 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	}
 	case kcLIFE_POINT:
 		debugCN(3, kDebugLevels::kDebugScripts, "life_point(");
+		if (engine->isLBA2()) {
+			conditionValueSize = ReturnType::RET_S16;
+		}
 		engine->_scene->_currentScriptValue = ctx.actor->_lifePoint;
 		break;
 	case kcLIFE_POINT_OBJ: {
@@ -293,7 +304,11 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	case kcNUM_GOLD_PIECES:
 		debugCN(3, kDebugLevels::kDebugScripts, "num_gold_pieces(");
 		conditionValueSize = ReturnType::RET_S16;
-		engine->_scene->_currentScriptValue = engine->_gameState->_inventoryNumKashes;
+		if (engine->_scene->_planet > 2) {
+			engine->_scene->_currentScriptValue = engine->_gameState->_zlitosPieces;
+		} else {
+			engine->_scene->_currentScriptValue = engine->_gameState->_goldPieces;
+		}
 		break;
 	case kcBEHAVIOUR:
 		debugCN(3, kDebugLevels::kDebugScripts, "behaviour(");
@@ -364,6 +379,9 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		break;
 	case kcFUEL:
 		debugCN(3, kDebugLevels::kDebugScripts, "fuel(");
+		if (engine->isLBA2()) {
+			conditionValueSize = ReturnType::RET_S16;
+		}
 		engine->_scene->_currentScriptValue = engine->_gameState->_inventoryNumGas;
 		break;
 	case kcCARRIED_BY:
@@ -375,24 +393,165 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		debugCN(3, kDebugLevels::kDebugScripts, "cdrom(");
 		engine->_scene->_currentScriptValue = engine->isCDROM();
 		break;
-	case kcLADDER:
-	case kcRND:
-	case kcRAIL:
-	case kcBETA:
-	case kcBETA_OBJ:
-	case kcCARRY_OBJ_BY:
-	case kcANGLE:
-	case kcDISTANCE_MESSAGE:
-	case kcHIT_OBJ_BY:
-	case kcREAL_ANGLE:
-	case kcDEMO:
-	case kcCOL_DECORS:
-	case kcCOL_DECORS_OBJ:
-	case kcPROCESSOR:
-	case kcOBJECT_DISPLAYED:
-	case kcANGLE_OBJ:
-		error("lba2 not yet implemented");
+	case kcCARRY_OBJ_BY: {
+		int32 actorIdx = ctx.stream.readByte();
+		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_carryBy;
+		debugCN(3, kDebugLevels::kDebugScripts, "carried_by(%i, ", actorIdx);
 		break;
+	}
+	case kcRND: {
+		int32 val = ctx.stream.readByte();
+		engine->_scene->_currentScriptValue = engine->getRandomNumber(val);
+		conditionValueSize = ReturnType::RET_U8;
+		break;
+	}
+	case kcBETA:
+		engine->_scene->_currentScriptValue = ctx.actor->_beta;
+		conditionValueSize = ReturnType::RET_S16;
+		break;
+	case kcBETA_OBJ: {
+		int32 actorIdx = ctx.stream.readByte();
+		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_beta;
+		conditionValueSize = ReturnType::RET_S16;
+		break;
+	}
+	case kcDEMO:
+		engine->_scene->_currentScriptValue = engine->isDemo() ? 1 : 0; // TODO: slide demo is 2
+		break;
+	case kcOBJECT_DISPLAYED: {
+		int32 actorIdx = ctx.stream.readByte();
+		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_dynamicFlags.bIsDrawn ? 1 : 0;
+		break;
+	}
+	case kcPROCESSOR:
+		// TODO psx = 2, pentium = 0, 486 = 1
+		engine->_scene->_currentScriptValue = 0;
+		break;
+	case kcANGLE: {
+		conditionValueSize = ReturnType::RET_S16;
+		int32 actorIdx = ctx.stream.readByte();
+		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
+		if (otherActor->_dynamicFlags.bIsDead) {
+			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
+			break;
+		}
+		int32 angle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->posObj(), otherActor->posObj());
+		engine->_scene->_currentScriptValue = ClampAngle(ctx.actor->_beta - angle);
+		if (engine->_scene->_currentScriptValue > ANGLE_180) {
+			engine->_scene->_currentScriptValue = ANGLE_360 - engine->_scene->_currentScriptValue;
+		}
+		break;
+	}
+	case kcANGLE_OBJ: {
+		conditionValueSize = ReturnType::RET_S16;
+		int32 actorIdx = ctx.stream.readByte();
+		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
+		if (otherActor->_dynamicFlags.bIsDead) {
+			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
+			break;
+		}
+		int32 angle = engine->_movements->getAngleAndSetTargetActorDistance(otherActor->posObj(), ctx.actor->posObj());
+		engine->_scene->_currentScriptValue = ClampAngle(otherActor->_beta - angle);
+		if (engine->_scene->_currentScriptValue > ANGLE_180) {
+			engine->_scene->_currentScriptValue = ANGLE_360 - engine->_scene->_currentScriptValue;
+		}
+		break;
+	}
+	case kcREAL_ANGLE: {
+		conditionValueSize = ReturnType::RET_S16;
+		int32 actorIdx = ctx.stream.readByte();
+		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
+		if (otherActor->_dynamicFlags.bIsDead) {
+			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
+			break;
+		}
+		int32 angle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->posObj(), otherActor->posObj());
+		engine->_scene->_currentScriptValue = ClampAngle(ctx.actor->_beta - angle);
+		if (engine->_scene->_currentScriptValue > ANGLE_180) {
+			engine->_scene->_currentScriptValue = ANGLE_360 - engine->_scene->_currentScriptValue;
+		} else {
+			engine->_scene->_currentScriptValue = -engine->_scene->_currentScriptValue;
+		}
+		break;
+	}
+	case kcCOL_DECORS:
+		if (ctx.actor->_dynamicFlags.bIsDead) {
+			engine->_scene->_currentScriptValue = 255;
+			break;
+		}
+		engine->_scene->_currentScriptValue = (uint8)ctx.actor->brickShape();
+		conditionValueSize = ReturnType::RET_U8;
+		break;
+	case kcCOL_DECORS_OBJ: {
+		int32 actorIdx = ctx.stream.readByte();
+		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
+		if (otherActor->_dynamicFlags.bIsDead) {
+			engine->_scene->_currentScriptValue = 255;
+			break;
+		}
+		engine->_scene->_currentScriptValue = (uint8)otherActor->brickShape();
+		conditionValueSize = ReturnType::RET_U8;
+		break;
+	}
+	case kcLADDER: {
+		int32 num = ctx.stream.readByte();
+		int n = 0;
+		engine->_scene->_currentScriptValue = 2;
+		while (engine->_scene->_currentScriptValue == 2 && n < engine->_scene->_sceneNumZones) {
+			const ZoneStruct &zone = engine->_scene->_sceneZones[n];
+			if (zone.type == ZoneType::kLadder && zone.num == num) {
+				engine->_scene->_currentScriptValue = zone.infoData.generic.info1;
+			}
+			++n;
+		}
+		break;
+	}
+	case kcRAIL: {
+		int32 num = ctx.stream.readByte();
+		int n = 0;
+		engine->_scene->_currentScriptValue = 2;
+		while (engine->_scene->_currentScriptValue == 2 && n < engine->_scene->_sceneNumZones) {
+			const ZoneStruct &zone = engine->_scene->_sceneZones[n];
+			if (zone.type == ZoneType::kRail && zone.num == num) {
+				engine->_scene->_currentScriptValue = zone.infoData.generic.info1;
+			}
+			n++;
+		}
+		break;
+	}
+	case kcDISTANCE_MESSAGE: {
+		int32 actorIdx = ctx.stream.readByte();
+		conditionValueSize = ReturnType::RET_S16;
+		ActorStruct *otherActor = engine->_scene->getActor(actorIdx);
+
+		if (otherActor->_dynamicFlags.bIsDead) {
+			engine->_scene->_currentScriptValue = 32000;
+			break;
+		}
+
+		if (ABS(otherActor->posObj().y - ctx.actor->posObj().y) < 1500) {
+			int32 angle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->posObj(),
+																				otherActor->posObj());
+			angle = ClampAngle(ctx.actor->_beta - angle + (ANGLE_22_5 * MUL_ANGLE));
+
+				// 320: CONE_VIEW
+			if (angle <= (448 * MUL_ANGLE))  {
+				int32 distance = getDistance2D(ctx.actor->posObj(),
+											   otherActor->posObj());
+
+				if (distance > MAX_TARGET_ACTOR_DISTANCE) {
+					engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
+				} else {
+					engine->_scene->_currentScriptValue = distance;
+				}
+			} else {
+				engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
+			}
+		} else {
+			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
+		}
+		break;
+	}
 	default:
 		error("Actor condition opcode %d", conditionOpcode);
 		break;
@@ -969,7 +1128,7 @@ static int32 lUSE_ONE_LITTLE_KEY(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x28
  */
 static int32 lGIVE_GOLD_PIECES(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int16 oldNumKashes = engine->_gameState->_inventoryNumKashes;
+	const int16 oldNumKashes = engine->_gameState->_goldPieces;
 	bool hideRange = false;
 	const int16 kashes = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::GIVE_GOLD_PIECES(%i)", (int)kashes);
@@ -982,7 +1141,7 @@ static int32 lGIVE_GOLD_PIECES(TwinEEngine *engine, LifeScriptContext &ctx) {
 		OverlayListStruct *overlay = &engine->_redraw->overlayList[i];
 		if (overlay->info0 != -1 && overlay->type == OverlayType::koNumberRange) {
 			overlay->info0 = engine->_collision->clampedLerp(overlay->info1, overlay->info0, TO_SECONDS(2), overlay->lifeTime - engine->_lbaTime - TO_SECONDS(1));
-			overlay->info1 = engine->_gameState->_inventoryNumKashes;
+			overlay->info1 = engine->_gameState->_goldPieces;
 			overlay->lifeTime = engine->_lbaTime + TO_SECONDS(3);
 			hideRange = true;
 			break;
@@ -990,7 +1149,7 @@ static int32 lGIVE_GOLD_PIECES(TwinEEngine *engine, LifeScriptContext &ctx) {
 	}
 
 	if (!hideRange) {
-		engine->_redraw->addOverlay(OverlayType::koNumberRange, oldNumKashes, 50, 20, engine->_gameState->_inventoryNumKashes, OverlayPosType::koNormal, 3);
+		engine->_redraw->addOverlay(OverlayType::koNumberRange, oldNumKashes, 50, 20, engine->_gameState->_goldPieces, OverlayPosType::koNormal, 3);
 	}
 
 	return 0;

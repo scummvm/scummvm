@@ -352,7 +352,11 @@ enum class ZoneType {
 	kGrid = 3,     // Set disappearing Grid fragment
 	kObject = 4,   // Give bonus
 	kText = 5,     // Displays text message
-	kLadder = 6    // Hero can climb on it
+	kLadder = 6,   // Hero can climb on it
+	// lba2
+	kEscalator = 7,
+	kHit = 8,
+	kRail = 9
 };
 
 #define SCENE_CEILING_GRID_FADE_1 (-1)
@@ -644,6 +648,9 @@ struct TwineImage {
 #define ANGLE_2 8 // 1.67
 #define ANGLE_1 5 // 1.75
 #define ANGLE_0 0
+
+// lba2
+#define	MUL_ANGLE 4
 
 #define VIEW_X0 (-50)
 #define VIEW_Y0 (-30)

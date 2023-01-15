@@ -89,7 +89,7 @@ void GameState::initHeroVars() {
 
 	_inventoryNumLeafsBox = 2;
 	_inventoryNumLeafs = 2;
-	_inventoryNumKashes = 0;
+	_goldPieces = 0;
 	_inventoryNumKeys = 0;
 	_magicPoint = 0;
 
@@ -123,7 +123,7 @@ void GameState::initEngineVars() {
 	_inventoryNumLeafs = 0;
 	_inventoryNumLeafsBox = 2;
 	_magicPoint = 0;
-	_inventoryNumKashes = 0;
+	_goldPieces = 0;
 	_inventoryNumKeys = 0;
 	_inventoryNumGas = 0;
 
@@ -250,7 +250,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeByte(_gameChapter);
 	file->writeByte((byte)_engine->_actor->_heroBehaviour);
 	file->writeByte(_engine->_scene->_sceneHero->_lifePoint);
-	file->writeSint16LE(_inventoryNumKashes);
+	file->writeSint16LE(_goldPieces);
 	file->writeByte(_magicLevelIdx);
 	file->writeByte(_magicPoint);
 	file->writeByte(_inventoryNumLeafsBox);
@@ -573,11 +573,11 @@ void GameState::handleLateGameItems() {
 }
 
 int16 GameState::setKashes(int16 value) {
-	_inventoryNumKashes = CLIP<int16>(value, 0, 999);
-	if (_engine->_gameState->_inventoryNumKashes >= 500) {
+	_goldPieces = CLIP<int16>(value, 0, 999);
+	if (_engine->_gameState->_goldPieces >= 500) {
 		_engine->unlockAchievement("LBA_ACH_011");
 	}
-	return _inventoryNumKashes;
+	return _goldPieces;
 }
 
 int16 GameState::setKeys(int16 value) {
@@ -590,7 +590,7 @@ void GameState::addKeys(int16 val) {
 }
 
 void GameState::addKashes(int16 val) {
-	setKashes(_inventoryNumKashes + val);
+	setKashes(_goldPieces + val);
 }
 
 int16 GameState::setMagicPoints(int16 val) {

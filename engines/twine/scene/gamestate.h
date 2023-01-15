@@ -107,7 +107,8 @@ public:
 	/** Store the number of inventory keys */
 	int16 _inventoryNumKeys = 0;
 	/** Store the number of inventory kashes */
-	int16 _inventoryNumKashes = 0;
+	int16 _goldPieces = 0;
+	int16 _zlitosPieces = 0;
 	/** Store the number of inventory clover leafs boxes */
 	int16 _inventoryNumLeafsBox = 0;
 	/** Store the number of inventory clover leafs */

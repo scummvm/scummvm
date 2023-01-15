@@ -961,7 +961,7 @@ void Menu::drawSpriteAndString(int32 left, int32 top, const SpriteData &spriteDa
 }
 
 void Menu::drawCoins(int32 left, int32 top) {
-	const Common::String &inventoryNumKashes = Common::String::format("%d", _engine->_gameState->_inventoryNumKashes);
+	const Common::String &inventoryNumKashes = Common::String::format("%d", _engine->_gameState->_goldPieces);
 	drawSpriteAndString(left, top, _engine->_resources->_spriteData[SPRITEHQR_KASHES], inventoryNumKashes);
 }
 
