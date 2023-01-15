@@ -486,7 +486,7 @@ void EfhEngine::displayWindowAndStatusMenu(int16 charId, int16 windowId, int16 m
 }
 
 int16 EfhEngine::displayStringInSmallWindowWithBorder(Common::String str, bool delayFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
-	debug("displayStringInSmallWindowWithBorder %s %s %d %d %d %d", str.c_str(), delayFl ? "True" : "False", charId, windowId, menuId, curMenuLine);
+	debugC(3, kDebugEngine, "displayStringInSmallWindowWithBorder %s %s %d %d %d %d", str.c_str(), delayFl ? "True" : "False", charId, windowId, menuId, curMenuLine);
 
 	int16 retVal = 0;
 
@@ -500,7 +500,7 @@ int16 EfhEngine::displayStringInSmallWindowWithBorder(Common::String str, bool d
 			retVal = script_parse(str, 28, 122, 105, 166, true);
 		}
 		// The original is only calling displayFctFullScreen when counter = 0, but it's related to the screen buffers which aren't used in ScummVM implementation
-		// Calling it once fix the almost unreadable text displayed otherwise.
+		// Calling it once fixes the (almost) unreadable text displayed otherwise.
 		// Maybe a refactoring to remove those 0..1 loop would be useful at some point.
 		displayFctFullScreen();
 	}

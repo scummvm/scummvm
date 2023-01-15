@@ -2309,18 +2309,6 @@ void EfhEngine::redrawScreenForced() {
 	}
 }
 
-void EfhEngine::sub1CAB6(int16 charId) {
-	debug("sub1CAB6 %d", charId);
-
-	for (uint counter = 0; counter < 2; ++counter) {
-		drawGameScreenAndTempText(false);
-		displayLowStatusScreen(false);
-		drawCombatScreen(charId, false, false);
-		if (counter == 0)
-			displayFctFullScreen();
-	}
-}
-
 int16 EfhEngine::countMonsterGroupMembers(int16 monsterGroup) {
 	debugC(9, kDebugEngine, "countMonsterGroupMembers %d", monsterGroup);
 

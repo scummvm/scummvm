@@ -254,7 +254,7 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 		_teamPctVisible[i] = 0;
 		_teamPctDodgeMiss[i] = 0;
 		_teamNextAttack[i] = -1;
-		_word31780[i] = 0;
+		_teamLastInventoryUsed[i] = 0;
 		_teamLastAction[i] = 0;
 	}
 

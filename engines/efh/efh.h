@@ -360,7 +360,6 @@ private:
 	int8 checkTileStatus(int16 mapPosX, int16 mapPosY, bool arg4);
 	void computeInitiatives();
 	void redrawScreenForced();
-	void sub1CAB6(int16 charId);
 	int16 countMonsterGroupMembers(int16 monsterGroup);
 	void sub1D8C2(int16 charId, int16 damage);
 	int16 getXPLevel(int32 xp);
@@ -403,6 +402,7 @@ private:
 	void addNewOpponents(int16 monsterId);
 	int16 getTeamMonsterAnimId();
 	int16 selectMonsterGroup();
+	void redrawCombatScreenWithTempText(int16 charId);
 
 	// Files
 	int32 readFileToBuffer(Common::String &filename, uint8 *destBuffer);
@@ -605,7 +605,7 @@ private:
 	int16 _teamPctVisible[3];
 	int16 _teamPctDodgeMiss[3];
 	int16 _teamNextAttack[3];
-	int16 _word31780[3];
+	int16 _teamLastInventoryUsed[3];
 
 	int16 _menuStatItemArr[15];
 	TeamMonsterEffect _teamMonsterEffects[5];
