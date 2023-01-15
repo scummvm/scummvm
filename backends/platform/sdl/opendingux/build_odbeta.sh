@@ -12,29 +12,21 @@ fi
 case $target in
 
         gcw0)
-	target2=$target
 	libc=uclibc
         ;;
 
-        lepus)
-	target2=$target
-	libc=musl
-        ;;
-
-        rg99 | rs90)
-	target2=rs90
-        target=rg99
+        lepus | rs90)
 	libc=musl
         ;;
 
         *)
-        echo "please provide a valid target for the build: gcw0, lepus, rg99 or rs90"
+        echo "please provide a valid target for the build: gcw0, lepus or rs90"
         exit 1
         ;;
 esac
 
-TOOLCHAIN=/opt/$target2-toolchain
-SYSROOT=$TOOLCHAIN/mipsel-$target2-linux-$libc
+TOOLCHAIN=/opt/$target-toolchain
+SYSROOT=$TOOLCHAIN/mipsel-$target-linux-$libc
 
 export PATH=$TOOLCHAIN/usr/bin:$SYSROOT/usr/include:$TOOLCHAIN/bin:$PATH
 export CXX=mipsel-linux-g++

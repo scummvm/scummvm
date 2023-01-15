@@ -15,7 +15,9 @@ Running Linux on an x86/amd64 machine:
 2. git clone the ScummVM repository
 
 3. Run 'backends/platform/sdl/opendingux/build_odbeta.sh x'
-   where x=gcw0|lepus|rg99
+   where x=gcw0|lepus|rs90
+
+   the rs90 build applies to the rg99
 
    Or if you want a dual opk with one launcher capable of starting games directly
    for e.g. simplemenu integration :
