@@ -190,7 +190,7 @@ public:
 	/** Initialize engine 3D projections */
 	void initEngineProjections();
 
-	void processFoundItem(InventoryItems item);
+	void doFoundObj(InventoryItems item);
 
 	void giveUp();
 	bool loadGame(Common::SeekableReadStream *file);

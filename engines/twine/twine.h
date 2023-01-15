@@ -52,6 +52,7 @@ namespace TwinE {
 /** Default frames per second */
 #define DEFAULT_FRAMES_PER_SECOND 20
 #define DEFAULT_HZ (1000 / DEFAULT_FRAMES_PER_SECOND)
+// TODO: for lba2 this is given in milliseconds
 #define TO_SECONDS(x) (DEFAULT_HZ * (x))
 
 #define ORIGINAL_WIDTH 640

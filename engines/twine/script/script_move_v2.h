@@ -30,6 +30,22 @@ class TwinEEngine;
 
 class ScriptMoveV2 : public ScriptMove {
 public:
+	static int32 mWAIT_NB_DIZIEME(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mSPRITE(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mWAIT_NB_SECOND_RND(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mSET_FRAME(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mSET_FRAME_3DS(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mSET_START_3DS(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mSET_END_3DS(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mSTART_ANIM_3DS(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mSTOP_ANIM_3DS(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mWAIT_ANIM_3DS(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mWAIT_FRAME_3DS(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mWAIT_NB_DIZIEME_RND(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mDECALAGE(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mFREQUENCE(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mVOLUME(TwinEEngine *engine, MoveScriptContext &ctx);
+
 	ScriptMoveV2(TwinEEngine *engine);
 };
 

@@ -63,6 +63,45 @@ private:
 	size_t _functionMapSize;
 
 public:
+	static int32 mEMPTY(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mEND(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mNOP(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mBODY(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mANIM(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mGOTO_POINT(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mWAIT_ANIM(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mLOOP(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mANGLE(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mPOS_POINT(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mLABEL(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mGOTO(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mSTOP(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mWAIT_NUM_ANIM(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mSAMPLE(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mGOTO_POINT_3D(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mSPEED(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mBACKGROUND(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mWAIT_NUM_SECOND(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mNO_BODY(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mBETA(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mOPEN_GENERIC(TwinEEngine *engine, MoveScriptContext &ctx, int32 angle);
+	static int32 mOPEN_LEFT(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mOPEN_RIGHT(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mOPEN_UP(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mOPEN_DOWN(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mCLOSE(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mWAIT_DOOR(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mSAMPLE_RND(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mSAMPLE_ALWAYS(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mSAMPLE_STOP(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mPLAY_FLA(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mREPEAT_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mSIMPLE_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mFACE_HERO(TwinEEngine *engine, MoveScriptContext &ctx);
+	static int32 mANGLE_RND(TwinEEngine *engine, MoveScriptContext &ctx);
+
+public:
 	ScriptMove(TwinEEngine *engine, const ScriptMoveFunction* functionMap, size_t entries);
 	virtual ~ScriptMove() {}
 	/**

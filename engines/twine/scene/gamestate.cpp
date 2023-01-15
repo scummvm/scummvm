@@ -303,7 +303,7 @@ void GameState::setGameFlag(uint8 index, uint8 value) {
 	}
 }
 
-void GameState::processFoundItem(InventoryItems item) {
+void GameState::doFoundObj(InventoryItems item) {
 	ScopedEngineFreeze freeze(_engine);
 	_engine->_grid->centerOnActor(_engine->_scene->_sceneHero);
 
