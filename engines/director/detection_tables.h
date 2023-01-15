@@ -1139,6 +1139,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "previewreprise",		"Preview & Reprise: Haruhiko Shono" },
 	{ "pyrethrum1",			"除虫菊Vol.1" },
 	{ "randomdot",			"Random Dots" },
+	{ "sailormoonart",		"美少女戦士セーラームーン CD-ROM原画集" }, // Pretty Soldier Sailor Moon CD-ROM Art Collection
 	{ "sakurascr",			"さくらのSCRセレクタ" },							// Sakura's SCR Selector
 	{ "satodesign",			"The Art of Computer Designing: A Black and White Approach" },
 	{ "satohomosexual",		"Homosexual" },
@@ -4870,6 +4871,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("sabotenman", "Auto Mode", "AUTOMODE.EXE", "67388a4076d1ba021dc7aa551798754e", 754423, Common::JA_JPN, 404),
 
 	WINGAME1t("sagasoftworks", "", "__ENTER.EXE", "87718e74da6c30b5dc22e5564b4524d5", 696703, 404),
+
+	MACGAME1_l("sailormoonart", "", "SAILORMOON", "b06606b4d174b85d41b265bd366959d6", 290450, Common::JA_JPN, 402),
 
 	// Found on Sakhr Arabic Grammar v1.1
 	// Product catalogue for Sakhr Software Co., Heliopolis, Egypt
