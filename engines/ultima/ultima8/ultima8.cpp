@@ -1128,13 +1128,6 @@ void Ultima8Engine::setupCoreGumps() {
 bool Ultima8Engine::newGame(int saveSlot) {
 	debugN(MM_INFO, "Starting New Game (slot %d)... \n", saveSlot);
 
-	// First validate we still have a save file for the slot
-	if (saveSlot != -1) {
-		SaveStateDescriptor desc = getMetaEngine()->querySaveMetaInfos(_targetName.c_str(), saveSlot);
-		if (desc.getSaveSlot() != saveSlot)
-			saveSlot = -1;
-	}
-
 	resetEngine();
 
 	setupCoreGumps();
