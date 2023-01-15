@@ -37,6 +37,8 @@
 #include "twine/detection.h"
 #include "twine/input.h"
 #include "twine/scene/actor.h"
+#include "twine/script/script_life.h"
+#include "twine/script/script_move.h"
 
 namespace TwinE {
 
@@ -205,8 +207,8 @@ private:
 	EngineState _state = EngineState::Menu;
 	Common::String _queuedFlaMovie;
 
-	ScriptLifeV1 *_scriptLife;
-	ScriptMoveV1 *_scriptMove;
+	ScriptLife *_scriptLife;
+	ScriptMove *_scriptMove;
 
 	Common::RandomSource _rnd;
 	Common::Language _gameLang;

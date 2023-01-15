@@ -19,30 +19,21 @@
  *
  */
 
-#ifndef TWINE_SCRIPTLIFEV1_H
-#define TWINE_SCRIPTLIFEV1_H
+#ifndef TWINE_SCRIPTMOVE_H
+#define TWINE_SCRIPTMOVE_H
 
-#include "twine/script/script_life.h"
+#include "common/scummsys.h"
 
 namespace TwinE {
 
-// SCENE_SIZE_MAX
-#define MAX_TARGET_ACTOR_DISTANCE 0x7D00
-
-class TwinEEngine;
-
-class ScriptLifeV1 : public ScriptLife {
-private:
-	TwinEEngine *_engine;
-
+class ScriptMove {
 public:
-	ScriptLifeV1(TwinEEngine *engine);
-
+	virtual ~ScriptMove() {}
 	/**
-	 * Process actor life script
+	 * Process actor move script
 	 * @param actorIdx Current processed actor index
 	 */
-	void doLife(int32 actorIdx) override;
+	virtual void doTrack(int32 actorIdx) = 0;
 };
 
 } // namespace TwinE

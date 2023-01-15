@@ -22,13 +22,13 @@
 #ifndef TWINE_SCRIPTMOVEV1_H
 #define TWINE_SCRIPTMOVEV1_H
 
-#include "common/scummsys.h"
+#include "twine/script/script_move.h"
 
 namespace TwinE {
 
 class TwinEEngine;
 
-class ScriptMoveV1 {
+class ScriptMoveV1 : public ScriptMove {
 private:
 	TwinEEngine *_engine;
 public:
@@ -38,7 +38,7 @@ public:
 	 * Process actor move script
 	 * @param actorIdx Current processed actor index
 	 */
-	void doTrack(int32 actorIdx);
+	void doTrack(int32 actorIdx) override;
 };
 
 } // namespace TwinE
