@@ -671,7 +671,7 @@ bool EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
 	// It has been split for readability purposes.
 	debugC(3, kDebugFight, "handleFight_lastAction_U %d", teamCharId);
 
-	int16 itemId = _npcBuf[_teamCharId[teamCharId]]._inventory[_word31780[teamCharId]]._ref;
+	int16 itemId = _npcBuf[_teamCharId[teamCharId]]._inventory[_teamLastInventoryUsed[teamCharId]]._ref;
 	_enemyNamePt2 = _npcBuf[_teamCharId[teamCharId]]._name;
 	_nameBuffer = _items[itemId]._name;
 	int16 pronoun = _npcBuf[_teamCharId[teamCharId]].getPronoun();
@@ -681,7 +681,7 @@ bool EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
 		_enemyNamePt1 = "";
 
 	_messageToBePrinted = Common::String::format("%s%s uses %s %s!  ", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPossessive[pronoun], _nameBuffer.c_str());
-	bool retVal = useObject(_teamCharId[teamCharId], _word31780[teamCharId], _teamNextAttack[teamCharId], teamCharId, 0, 3);
+	bool retVal = useObject(_teamCharId[teamCharId], _teamLastInventoryUsed[teamCharId], _teamNextAttack[teamCharId], teamCharId, 0, 3);
 	displayBoxWithText(_messageToBePrinted, 1, 2, true);
 
 	return retVal;
@@ -1074,15 +1074,15 @@ bool EfhEngine::sub1CB27() {
 				}
 				return true;
 			case Common::KEYCODE_s: { // Status
-				int16 var8 = handleStatusMenu(2, _teamCharId[charId]);
-				sub1CAB6(_teamCharId[charId]);
-				if (var8 > 999) {
-					if (var8 == 0x7D00)
+				int16 lastInvId = handleStatusMenu(2, _teamCharId[charId]);
+				redrawCombatScreenWithTempText(_teamCharId[charId]);
+				if (lastInvId >= 999) {
+					if (lastInvId == 0x7D00) // Result of Equip, Give and Drop in combat mode(2)
 						_teamLastAction[charId] = 'S';
 				} else {
 					_teamLastAction[charId] = 'U';
-					_word31780[charId] = var8;
-					int16 invEffect = _items[_npcBuf[_teamCharId[charId]]._inventory[var8]._ref]._specialEffect;
+					_teamLastInventoryUsed[charId] = lastInvId;
+					int16 invEffect = _items[_npcBuf[_teamCharId[charId]]._inventory[lastInvId]._ref]._specialEffect;
 					switch (invEffect - 1) {
 					case 0:
 					case 1:
@@ -1126,7 +1126,7 @@ bool EfhEngine::sub1CB27() {
 					case 22:
 					case 23:
 					default:
-						_word31780[charId] = var8;
+						_teamLastInventoryUsed[charId] = lastInvId;
 						_teamNextAttack[charId] = -1;
 						break;
 					}
@@ -1697,6 +1697,18 @@ int16 EfhEngine::selectMonsterGroup() {
 	}
 
 	return retVal;
+}
+
+void EfhEngine::redrawCombatScreenWithTempText(int16 charId) {
+	debugC(3, kDebugFight, "redrawCombatScreenWithTempText %d", charId);
+
+	for (uint counter = 0; counter < 2; ++counter) {
+		drawGameScreenAndTempText(false);
+		displayLowStatusScreen(false);
+		drawCombatScreen(charId, false, false);
+		if (counter == 0)
+			displayFctFullScreen();
+	}
 }
 
 } // End of namespace Efh
