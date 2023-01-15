@@ -373,7 +373,7 @@ protected:
 			{ }
 	};
 
-	SDL_Rect _mouseBackup;
+	SDL_Rect _mouseLastRect, _mouseNextRect;
 	MousePos _mouseCurState;
 #ifdef USE_RGB_COLOR
 	uint32 _mouseKeyColor;
