@@ -117,6 +117,12 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Roland MT-32 in Sam & Max korrigiert.
    - Unterstützung für die originale Benutzeroberfläche und die Speicher-Menüs von LucasArts-Spielen hinzugefügt (DOS, Windows, Amiga, Macintosh, FM-Towns, Atari ST, Sega CD, NES- und Commodore 64-Versionen).
    - Unterstützung für die originale Benutzeroberfläche für die SegaCD-Version von MI1 hinzugefügt.
+   - Einige kleinere Timing-Probleme in der SMUSH-Video-Engine korrigiert, die hauptsächlich
+     Full Throttle betreffen.
+   - Audiomodus mit niedriger Latenz für Full Throttle, The Dig und The Curse of Monkey Island
+     hinzugefügt. Dieser Modus kann die Audio-Performance gerade auf mobilen Geräten verbessern.
+   - Die CD-Audiowiedergabe wird in den CD-Versionen von Monkey Island 1 und Loom
+     nach dem Laden eines Spielstands nun korrekt fortgesetzt.
 
  Sherlock:
    - Unterstützung für die chinesische Version von Rose Tattoo hinzugefügt.
