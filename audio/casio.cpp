@@ -31,29 +31,36 @@ void MidiDriver_Casio::ActiveNote::clear() {
 	source = 0x7F;
 	channel = 0xFF;
 	note = 0xFF;
+	sustained = false;
 }
 
-const uint8 MidiDriver_Casio::INSTRUMENT_REMAPPING_CT460_TO_MT540[30] {
-	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x0E, 0x0A, 0x07,
-	0x09, 0x1B, 0x0F, 0x10, 0x11, 0x14, 0x08, 0x15, 0x0B, 0x0C,
-	0x0D, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1C, 0x1D, 0x12, 0x13
+const int MidiDriver_Casio::CASIO_CHANNEL_POLYPHONY[] = { 6, 4, 2, 4 };
+
+const uint8 MidiDriver_Casio::INSTRUMENT_REMAPPING_CT460_TO_MT540[] {
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x10, 0x0C, 0x07,
+	0x0B, 0x1B, 0x11, 0x08, 0x09, 0x14, 0x0A, 0x15, 0x0D, 0x0E,
+	0x0F, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1C, 0x1D, 0x12, 0x13
 };
 
-const uint8 MidiDriver_Casio::INSTRUMENT_REMAPPING_MT540_TO_CT460[30] {
-	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x09, 0x10, 0x0A,
-	0x08, 0x12, 0x13, 0x14, 0x07, 0x0C, 0x0D, 0x0E, 0x1C, 0x1D,
+const uint8 MidiDriver_Casio::INSTRUMENT_REMAPPING_MT540_TO_CT460[] {
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x09, 0x0D, 0x0E,
+	0x10, 0x0A, 0x08, 0x12, 0x13, 0x14, 0x07, 0x0C, 0x1C, 0x1D,
 	0x0F, 0x11, 0x15, 0x16, 0x17, 0x18, 0x19, 0x0B, 0x1A, 0x1B
 };
 
-const uint8 MidiDriver_Casio::RHYTHM_INSTRUMENT_MT540 = 0x10;
+const uint8 MidiDriver_Casio::RHYTHM_INSTRUMENT_MT540 = 0x08;
 const uint8 MidiDriver_Casio::RHYTHM_INSTRUMENT_CT460 = 0x0D;
+const uint8 MidiDriver_Casio::BASS_INSTRUMENT_MT540 = 0x12;
+const uint8 MidiDriver_Casio::BASS_INSTRUMENT_CT460 = 0x1C;
 
 MidiDriver_Casio::MidiDriver_Casio(MusicType midiType) : _midiType(midiType), _driver(nullptr),
-		_deviceType(MT_CT460), _isOpen(false), _rhythmNoteRemapping(nullptr) {
+		_deviceType(MT_CT460), _isOpen(false), _rhythmNoteRemapping(nullptr), _sendUntrackedNoteOff(true) {
 	if (!(_midiType == MT_MT540 || _midiType == MT_CT460)) {
-		error("MidiDriver_Casio - Unsupported music data type %i", midiType);
+		error("MidiDriver_Casio - Unsupported music data type %i", _midiType);
 	}
 	Common::fill(_instruments, _instruments + ARRAYSIZE(_instruments), 0);
+	Common::fill(_rhythmChannel, _rhythmChannel + ARRAYSIZE(_rhythmChannel), false);
+	Common::fill(_sustain, _sustain + ARRAYSIZE(_sustain), false);
 }
 
 MidiDriver_Casio::~MidiDriver_Casio() {
@@ -128,6 +135,7 @@ void MidiDriver_Casio::close() {
 	if (_driver && _isOpen) {
 		stopAllNotes();
 
+		_driver->setTimerCallback(nullptr, nullptr);
 		_driver->close();
 		_isOpen = false;
 	}
@@ -181,6 +189,9 @@ void MidiDriver_Casio::processEvent(int8 source, uint32 b, uint8 outputChannel) 
 	case MIDI_COMMAND_PROGRAM_CHANGE:
 		programChange(outputChannel, op1, source);
 		break;
+	case MIDI_COMMAND_CONTROL_CHANGE:
+		controlChange(outputChannel, op1, op2, source);
+		break;
 	default:
 		warning("MidiDriver_Casio::processEvent - Received unsupported event %02x", command);
 		break;
@@ -197,15 +208,24 @@ void MidiDriver_Casio::noteOff(byte outputChannel, byte command, byte note, byte
 	_mutex.lock();
 
 	// Remove this note from the active note registry.
+	bool foundActiveNote = false;
 	for (int i = 0; i < ARRAYSIZE(_activeNotes); i++) {
 		if (_activeNotes[i].channel == outputChannel && _activeNotes[i].note == mappedNote &&
-				_activeNotes[i].source == source) {
-			_activeNotes[i].clear();
+				_activeNotes[i].source == source && !_activeNotes[i].sustained) {
+			foundActiveNote = true;
+			if (outputChannel < 4 && _sustain[outputChannel]) {
+				_activeNotes[i].sustained = true;
+			} else {
+				_activeNotes[i].clear();
+			}
 			break;
 		}
 	}
 
 	_mutex.unlock();
+
+	if (!foundActiveNote && !_sendUntrackedNoteOff)
+		return;
 
 	_driver->send(command | outputChannel, mappedNote, velocity);
 }
@@ -257,9 +277,12 @@ int8 MidiDriver_Casio::mapNote(byte outputChannel, byte note) {
 byte MidiDriver_Casio::calculateVelocity(int8 source, byte velocity) {
 	byte calculatedVelocity = velocity;
 	// Apply volume settings to velocity.
+	// The Casio devices do not apply note velocity, so the only volume control
+	// possible is setting the velocity to 0 if one of the volume settings is 0.
 	if (source >= 0) {
 		// Scale to source volume.
-		calculatedVelocity = (velocity * _sources[source].volume) / _sources[source].neutralVolume;
+		if (_sources[source].volume == 0)
+			calculatedVelocity = 0;
 	}
 	if (_userVolumeScaling) {
 		if (_userMute) {
@@ -267,28 +290,34 @@ byte MidiDriver_Casio::calculateVelocity(int8 source, byte velocity) {
 		} else {
 			// Scale to user volume.
 			uint16 userVolume = _sources[source].type == SOURCE_TYPE_SFX ? _userSfxVolume : _userMusicVolume;
-			calculatedVelocity = (calculatedVelocity * userVolume) >> 8;
+			if (userVolume == 0)
+				calculatedVelocity = 0;
 		}
 	}
-	// Source volume scaling might clip volume, so reduce to maximum,
-	return MIN(calculatedVelocity, static_cast<byte>(0x7F));
+
+	return calculatedVelocity;
 }
 
-void MidiDriver_Casio::programChange(byte outputChannel, byte patchId, int8 source) {
+void MidiDriver_Casio::programChange(byte outputChannel, byte patchId, int8 source, bool applyRemapping) {
 	if (outputChannel < 4)
 		// Register the new instrument.
 		_instruments[outputChannel] = patchId;
 
 	// Apply instrument mapping.
-	byte mappedInstrument = mapInstrument(patchId);
+	byte mappedInstrument = mapInstrument(patchId, applyRemapping);
+
+	if (outputChannel < 4) {
+		_rhythmChannel[outputChannel] =
+			mappedInstrument == (_deviceType == MT_MT540 ? RHYTHM_INSTRUMENT_MT540 : RHYTHM_INSTRUMENT_CT460);
+	}
 
 	_driver->send(MIDI_COMMAND_PROGRAM_CHANGE | outputChannel | (mappedInstrument << 8));
 }
 
-byte MidiDriver_Casio::mapInstrument(byte program) {
+byte MidiDriver_Casio::mapInstrument(byte program, bool applyRemapping) {
 	byte mappedInstrument = program;
 
-	if (_instrumentRemapping)
+	if (applyRemapping && _instrumentRemapping)
 		// Apply custom instrument mapping.
 		mappedInstrument = _instrumentRemapping[program];
 
@@ -304,15 +333,39 @@ byte MidiDriver_Casio::mapInstrument(byte program) {
 	return mappedInstrument;
 }
 
+void MidiDriver_Casio::controlChange(byte outputChannel, byte controllerNumber, byte controllerValue, int8 source) {
+	if (outputChannel >= 4)
+		return;
+
+	if (controllerNumber == MIDI_CONTROLLER_SUSTAIN) {
+		_sustain[outputChannel] = controllerValue >= 0x40;
+
+		if (!_sustain[outputChannel]) {
+			// Remove sustained notes if sustain is turned off.
+
+			_mutex.lock();
+
+			for (int i = 0; i < ARRAYSIZE(_activeNotes); i++) {
+				if (_activeNotes[i].channel == outputChannel && _activeNotes[i].sustained) {
+					_activeNotes[i].clear();
+				}
+			}
+
+			_mutex.unlock();
+		}
+
+		_driver->send(MIDI_COMMAND_CONTROL_CHANGE | outputChannel | (controllerNumber << 8) | (controllerValue << 16));
+	} else {
+		// No other controllers are supported.
+		//warning("MidiDriver_Casio::controlChange - Received event for unsupported controller %02x", controllerNumber);
+	}
+}
+
 bool MidiDriver_Casio::isRhythmChannel(uint8 outputChannel) {
 	if (outputChannel >= 4)
 		return false;
 
-	// Check if the current instrument on the channel is the rhythm instrument.
-	byte currentInstrument = mapInstrument(_instruments[outputChannel]);
-	byte rhythmInstrument = _deviceType == MT_MT540 ? RHYTHM_INSTRUMENT_MT540 : RHYTHM_INSTRUMENT_CT460;
-
-	return currentInstrument == rhythmInstrument;
+	return _rhythmChannel[outputChannel];
 }
 
 void MidiDriver_Casio::stopAllNotes(bool stopSustainedNotes) {
@@ -322,12 +375,20 @@ void MidiDriver_Casio::stopAllNotes(bool stopSustainedNotes) {
 void MidiDriver_Casio::stopAllNotes(uint8 source, uint8 channel) {
 	_mutex.lock();
 
+	// Turn off sustain.
+	for (int i = 0; i < 4; i++) {
+		if (channel == 0xFF || i == channel) {
+			controlChange(i, MIDI_CONTROLLER_SUSTAIN, 0, source > 127 ? -1 : source);
+		}
+	}
+
 	// Send note off events for all notes in the active note registry for this
 	// source and channel.
 	for (int i = 0; i < ARRAYSIZE(_activeNotes); i++) {
 		if (_activeNotes[i].note != 0xFF && (source == 0xFF || _activeNotes[i].source == source) &&
 				(channel == 0xFF || _activeNotes[i].channel == channel)) {
-			noteOff(_activeNotes[i].channel, MIDI_COMMAND_NOTE_OFF, _activeNotes[i].note, 0, _activeNotes[i].source);
+			_driver->send(MIDI_COMMAND_NOTE_OFF | _activeNotes[i].channel, _activeNotes[i].note, 0);
+			_activeNotes[i].clear();
 		}
 	}
 

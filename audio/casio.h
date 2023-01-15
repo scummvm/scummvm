@@ -65,6 +65,9 @@ protected:
 		// The MIDI note number of the playing note
 		// (0xFF if no note is tracked).
 		uint8 note;
+		// True if this note is sustained (turned off but held due to the
+		// sustain controller).
+		bool sustained;
 
 		ActiveNote();
 
@@ -73,6 +76,9 @@ protected:
 	};
 
 public:
+	// The maximum polyphony for each output channel.
+	static const int CASIO_CHANNEL_POLYPHONY[4];
+
 	// Array for remapping instrument numbers from CT-460/CSM-1 to MT-540.
 	static const uint8 INSTRUMENT_REMAPPING_CT460_TO_MT540[30];
 	// Array for remapping instrument numbers from MT-540 to CT-460/CSM-1.
@@ -82,6 +88,12 @@ public:
 	static const uint8 RHYTHM_INSTRUMENT_MT540;
 	// The instrument number used for rhythm sounds on the CT-460 and CSM-1.
 	static const uint8 RHYTHM_INSTRUMENT_CT460;
+
+	// The instrument number used for the bass instruments on the MT-540.
+	static const uint8 BASS_INSTRUMENT_MT540;
+	// The instrument number used for the bass instruments on the CT-460 and
+	// CSM-1.
+	static const uint8 BASS_INSTRUMENT_CT460;
 
 	/**
 	 * Constructs a new Casio MidiDriver instance.
@@ -162,8 +174,19 @@ protected:
 	 * @param outputChannel The MIDI channel on which the event should be sent.
 	 * @param patchId The instrument that should be set.
 	 * @param source The source sending the MIDI event.
+	 * @param applyRemapping True if the instrument remapping
+	 * (_instrumentRemapping) should be applied.
 	 */
-	virtual void programChange(byte outputChannel, byte patchId, int8 source);
+	virtual void programChange(byte outputChannel, byte patchId, int8 source, bool applyRemapping = true);
+	/**
+	 * Processes a MIDI control change event.
+	 *
+	 * @param outputChannel The MIDI channel on which the event should be sent.
+	 * @param controllerNumber The controller for which the value should be set.
+	 * @param controllerValue The controller value that should be set.
+	 * @param source The source sending the MIDI event.
+	 */
+	virtual void controlChange(byte outputChannel, byte controllerNumber, byte controllerValue, int8 source);
 
 	/**
 	 * Maps the specified note to a different note according to the rhythm note
@@ -188,14 +211,17 @@ protected:
 	/**
 	 * Maps the specified instrument to the instrument value that should be
 	 * sent to the MIDI device. This applies the current instrument remapping
-	 * (if present) and maps MT-540 instruments to CT-460/CSM-1 instruments
-	 * (or the other way around) if necessary.
+	 * (if present and if applyRemapping is specified) and maps MT-540
+	 * instruments to CT-460/CSM-1 instruments (or the other way around) if
+	 * necessary.
 	 * 
 	 * @param program The instrument that should be mapped.
+	 * @param applyRemapping True if the instrument remapping
+	 * (_instrumentRemapping) should be applied.
 	 * @return The mapped instrument, or the specified instrument if no mapping
 	 * was necessary.
 	 */
-	virtual byte mapInstrument(byte program);
+	virtual byte mapInstrument(byte program, bool applyRemapping = true);
 	/**
 	 * Returns whether the specified MIDI channel is a rhythm channel. On the
 	 * Casio devices, the rhythm channel is not fixed but is created by setting
@@ -205,7 +231,7 @@ protected:
 	 * @return True if the specified channel is a rhythm channel, false
 	 * otherwise.
 	 */
-	bool isRhythmChannel(uint8 outputChannel);
+	virtual bool isRhythmChannel(uint8 outputChannel);
 	// This implementation does nothing, because source volume is applied to
 	// note velocity and cannot be applied immediately.
 	void applySourceVolume(uint8 source) override;
@@ -225,13 +251,26 @@ protected:
 	// instrument number as specified in the program change events (before
 	// remapping is applied).
 	byte _instruments[4];
+	// Indicates if each output channel is currently a rhythm channel (i.e. it
+	// has the rhythm instrument set).
+	bool _rhythmChannel[4];
 	// Tracks the notes currently active on the MIDI device.
 	ActiveNote _activeNotes[32];
+	// Tracks the sustain controller status of the output channels.
+	bool _sustain[4];
 
 	// Optional remapping for rhythm notes. Should point to a 128 byte array
 	// which maps the rhythm note numbers in the input MIDI data to the rhythm
 	// note numbers used by the output device.
 	byte *_rhythmNoteRemapping;
+
+	// If true the driver will send note off events for notes which are not in
+	// the active note registry. Typically this should be true to prevent
+	// hanging notes in case there are more active notes than can be stored in
+	// the active note registry. Can be set to false if these note offs are not
+	// desirable, f.e. because the driver will be receiving note off events
+	// without corresponding note on events.
+	bool _sendUntrackedNoteOff;
 
 	// Mutex for operations on active notes.
 	Common::Mutex _mutex;
