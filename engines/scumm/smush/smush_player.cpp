@@ -952,18 +952,16 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 		_nbframes = READ_LE_UINT16(&headerContent[2]);
 
 		// Video files might contain framerate overrides
-		if (_vm->_game.id == GID_FT || (_vm->_game.id == GID_DIG && _vm->_game.features & GF_DEMO)) {
-			if (headerMajorVersion > 1) {
-				uint16 speed = READ_LE_UINT16(&headerContent[6 + 0x300]);
-				if ((_curVideoFlags & 8) == 0 && speed != 0) {
-					debug(5, "SmushPlayer::handleAnimHeader(): header version %d.%d, video speed override %d fps (cur speed %d)",
-						  headerMajorVersion,
-						  headerMinorVersion,
-						  speed,
-						  _speed);
+		if (headerMajorVersion > 1) {
+			uint16 speed = READ_LE_UINT16(&headerContent[6 + 0x300]);
+			if ((_curVideoFlags & 8) == 0 && speed != 0) {
+				debug(5, "SmushPlayer::handleAnimHeader(): header version %d.%d, video speed override %d fps (cur speed %d)",
+						headerMajorVersion,
+						headerMinorVersion,
+						speed,
+						_speed);
 
-					_speed = speed;
-				}
+				_speed = speed;
 			}
 		}
 

@@ -1430,6 +1430,8 @@ void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 		}
 	}
 
+	// This is just an initialization, most SMUSH videos do have
+	// their own framerate value embedded in their ANIM header...
 	_smushFrameRate = (_game.id == GID_FT) ? 10 : 12;
 
 	ScummEngine::setupScumm(macResourceFile);
