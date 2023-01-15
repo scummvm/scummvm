@@ -137,6 +137,7 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 		case kInputJoystickButtonUp:
 			event.type = Common::EVENT_JOYBUTTON_UP;
 			event.joystick.button = internalEvent.value1;
+			break;
 
 		case kInputChanged:
 			event.type = Common::EVENT_INPUT_CHANGED;
