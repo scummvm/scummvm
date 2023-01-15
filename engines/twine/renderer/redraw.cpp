@@ -166,7 +166,7 @@ void Redraw::addOverlay(OverlayType type, int16 info0, int16 x, int16 y, int16 i
 			overlay->y = y;
 			overlay->info1 = info1;
 			overlay->posType = posType;
-			overlay->lifeTime = _engine->_lbaTime + TO_SECONDS(lifeTime);
+			overlay->lifeTime = _engine->_lbaTime + _engine->toSeconds(lifeTime);
 			break;
 		}
 	}
@@ -280,7 +280,7 @@ int32 Redraw::fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos) 
 			continue;
 		}
 		if ((extra->type & ExtraType::TIME_OUT) && (extra->type & ExtraType::FLASH)) {
-			if (_engine->_lbaTime >= extra->spawnTime + extra->payload.lifeTime - TO_SECONDS(3)) {
+			if (_engine->_lbaTime >= extra->spawnTime + extra->payload.lifeTime - _engine->toSeconds(3)) {
 				if ((_engine->_lbaTime + extra->spawnTime) & 8) {
 					continue;
 				}
@@ -768,7 +768,7 @@ void Redraw::setRenderText(const Common::String &text) {
 	if (_text.empty()) {
 		_textDisappearTime = -1;
 	} else {
-		_textDisappearTime = _engine->_lbaTime + TO_SECONDS(1);
+		_textDisappearTime = _engine->_lbaTime + _engine->toSeconds(1);
 	}
 }
 

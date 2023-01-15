@@ -241,7 +241,7 @@ int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle
 		initFly(extra, xAngle, yAngle, 40, ToAngle(15));
 
 		extra->strengthOfHit = 0;
-		extra->payload.lifeTime = TO_SECONDS(20);
+		extra->payload.lifeTime = _engine->toSeconds(20);
 		extra->info1 = bonusAmount;
 		return i;
 	}

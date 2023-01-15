@@ -503,15 +503,15 @@ void GameState::processGameoverAnimation() {
 	_engine->_interface->setClip(rect);
 
 	Common::Rect dummy;
-	while (!_engine->_input->toggleAbortAction() && (_engine->_lbaTime - startLbaTime) <= TO_SECONDS(10)) {
+	while (!_engine->_input->toggleAbortAction() && (_engine->_lbaTime - startLbaTime) <= _engine->toSeconds(10)) {
 		FrameMarker frame(_engine, 66);
 		_engine->readKeys();
 		if (_engine->shouldQuit()) {
 			return;
 		}
 
-		const int32 zoom = _engine->_collision->clampedLerp(40000, 3200, TO_SECONDS(10), _engine->_lbaTime - startLbaTime);
-		const int32 angle = _engine->_screens->lerp(1, LBAAngles::ANGLE_360, TO_SECONDS(2), (_engine->_lbaTime - startLbaTime) % TO_SECONDS(2));
+		const int32 zoom = _engine->_collision->clampedLerp(40000, 3200, _engine->toSeconds(10), _engine->_lbaTime - startLbaTime);
+		const int32 angle = _engine->_screens->lerp(1, LBAAngles::ANGLE_360, _engine->toSeconds(2), (_engine->_lbaTime - startLbaTime) % _engine->toSeconds(2));
 
 		_engine->blitWorkToFront(rect);
 		_engine->_renderer->setCameraAngle(0, 0, 0, 0, -angle, 0, zoom);

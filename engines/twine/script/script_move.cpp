@@ -361,7 +361,7 @@ int32 ScriptMove::mWAIT_NUM_SECOND(TwinEEngine *engine, MoveScriptContext &ctx) 
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::WAIT_NUM_SECOND(%i, %i)", (int)numSeconds, currentTime);
 
 	if (currentTime == 0) {
-		currentTime = engine->_lbaTime + TO_SECONDS(numSeconds);
+		currentTime = engine->_lbaTime + engine->toSeconds(numSeconds);
 		ctx.stream.rewind(4);
 		ctx.stream.writeSint32LE(currentTime);
 	}

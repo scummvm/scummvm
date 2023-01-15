@@ -737,7 +737,7 @@ void TwinEEngine::processInventoryAction() {
 			penguin->setBrickShape(ShapeType::kNone);
 			_movements->initRealAngleConst(penguin->_beta, penguin->_beta, penguin->_speed, &penguin->_moveAngle);
 			_gameState->removeItem(InventoryItems::kiPenguin);
-			penguin->_delayInMillis = _lbaTime + TO_SECONDS(30);
+			penguin->_delayInMillis = _lbaTime + toSeconds(30);
 		}
 		break;
 	}
@@ -759,6 +759,13 @@ void TwinEEngine::processInventoryAction() {
 	}
 
 	_redraw->redrawEngineActions(true);
+}
+
+int32 TwinEEngine::toSeconds(int x) const {
+	if (isLBA1()) {
+		return DEFAULT_HZ * x;
+	}
+	return x * 1000;
 }
 
 void TwinEEngine::processOptionsMenu() {
