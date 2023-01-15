@@ -661,36 +661,7 @@ static const ScriptMoveFunction function_map[] = {
 	/*0x21*/ {"FACE_HERO", mFACE_HERO},
 	/*0x22*/ {"ANGLE_RND", mANGLE_RND}};
 
-ScriptMoveV1::ScriptMoveV1(TwinEEngine *engine) : _engine(engine) {
-}
-
-void ScriptMoveV1::doTrack(int32 actorIdx) {
-	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-
-	int32 end = -2;
-
-	MoveScriptContext ctx(actorIdx, actor);
-	debugC(3, kDebugLevels::kDebugScripts, "MOVE::BEGIN(%i)", actorIdx);
-	do {
-		const byte scriptOpcode = ctx.stream.readByte();
-		if (scriptOpcode < ARRAYSIZE(function_map)) {
-			debugC(3, kDebugLevels::kDebugScripts, "MOVE::EXEC(%s, %i)", function_map[scriptOpcode].name, actorIdx);
-			end = function_map[scriptOpcode].function(_engine, ctx);
-		} else {
-			error("Actor %d with wrong offset/opcode - Offset: %d/%d (opcode: %u)", actorIdx, (int)ctx.stream.pos() - 1, (int)ctx.stream.size(), scriptOpcode);
-		}
-
-		if (end < 0) {
-			warning("Actor %d Life script [%s] not implemented", actorIdx, function_map[scriptOpcode].name);
-		} else if (end == 1) {
-			debugC(3, kDebugLevels::kDebugScripts, "MOVE::BREAK(%i)", actorIdx);
-		}
-
-		if (ctx.actor->_offsetTrack != -1) {
-			actor->_offsetTrack = ctx.stream.pos();
-		}
-	} while (end != 1);
-	debugC(3, kDebugLevels::kDebugScripts, "MOVE::END(%i)", actorIdx);
+ScriptMoveV1::ScriptMoveV1(TwinEEngine *engine) : ScriptMove(engine, function_map, ARRAYSIZE(function_map)) {
 }
 
 } // namespace TwinE

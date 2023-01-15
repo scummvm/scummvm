@@ -29,16 +29,8 @@ namespace TwinE {
 class TwinEEngine;
 
 class ScriptMoveV1 : public ScriptMove {
-private:
-	TwinEEngine *_engine;
 public:
 	ScriptMoveV1(TwinEEngine *engine);
-
-	/**
-	 * Process actor move script
-	 * @param actorIdx Current processed actor index
-	 */
-	void doTrack(int32 actorIdx) override;
 };
 
 } // namespace TwinE

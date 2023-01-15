@@ -1986,33 +1986,8 @@ static const ScriptLifeFunction function_map[] = {
 	/*0x68*/ {"CLEAR_TEXT", lCLEAR_TEXT},
 	/*0x69*/ {"BRUTAL_EXIT", lBRUTAL_EXIT}};
 
-ScriptLifeV1::ScriptLifeV1(TwinEEngine *engine) : _engine(engine) {
+ScriptLifeV1::ScriptLifeV1(TwinEEngine *engine) : ScriptLife(engine, function_map, ARRAYSIZE(function_map)) {
 	lTextYPos = 0;
-}
-
-void ScriptLifeV1::doLife(int32 actorIdx) {
-	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	int32 end = -2;
-
-	LifeScriptContext ctx(actorIdx, actor);
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BEGIN(%i)", actorIdx);
-	do {
-		const byte scriptOpcode = ctx.stream.readByte();
-		if (scriptOpcode < ARRAYSIZE(function_map)) {
-			debugC(3, kDebugLevels::kDebugScripts, "LIFE::EXEC(%s, %i)", function_map[scriptOpcode].name, actorIdx);
-			end = function_map[scriptOpcode].function(_engine, ctx);
-		} else {
-			error("Actor %d with wrong offset/opcode - Offset: %d/%d (opcode: %i)", actorIdx, (int)ctx.stream.pos() - 1, (int)ctx.stream.size(), scriptOpcode);
-		}
-
-		if (end < 0) {
-			warning("Actor %d Life script [%s] not implemented", actorIdx, function_map[scriptOpcode].name);
-		} else if (end == 1) {
-			debugC(3, kDebugLevels::kDebugScripts, "LIFE::BREAK(%i)", actorIdx);
-		}
-		ctx.updateOpcodePos();
-	} while (end != 1);
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::END(%i)", actorIdx);
 }
 
 } // namespace TwinE

@@ -32,17 +32,8 @@ namespace TwinE {
 class TwinEEngine;
 
 class ScriptLifeV1 : public ScriptLife {
-private:
-	TwinEEngine *_engine;
-
 public:
 	ScriptLifeV1(TwinEEngine *engine);
-
-	/**
-	 * Process actor life script
-	 * @param actorIdx Current processed actor index
-	 */
-	void doLife(int32 actorIdx) override;
 };
 
 } // namespace TwinE

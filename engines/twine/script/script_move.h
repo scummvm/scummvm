@@ -57,13 +57,19 @@ struct ScriptMoveFunction {
 };
 
 class ScriptMove {
+private:
+	TwinEEngine *_engine;
+	const ScriptMoveFunction* _functionMap;
+	size_t _functionMapSize;
+
 public:
+	ScriptMove(TwinEEngine *engine, const ScriptMoveFunction* functionMap, size_t entries);
 	virtual ~ScriptMove() {}
 	/**
 	 * Process actor move script
 	 * @param actorIdx Current processed actor index
 	 */
-	virtual void doTrack(int32 actorIdx) = 0;
+	void doTrack(int32 actorIdx);
 };
 
 } // namespace TwinE

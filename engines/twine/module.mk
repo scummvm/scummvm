@@ -35,6 +35,8 @@ MODULE_OBJS := \
 	scene/movements.o \
 	scene/scene.o \
 	\
+	script/script_life.o \
+	script/script_move.o \
 	script/script_life_v1.o \
 	script/script_move_v1.o \
 	\

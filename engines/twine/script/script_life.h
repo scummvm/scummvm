@@ -69,13 +69,20 @@ enum LifeScriptOperators {
 };
 
 class ScriptLife {
+private:
+	TwinEEngine *_engine;
+	const ScriptLifeFunction* _functionMap;
+	size_t _functionMapSize;
+
 public:
+	ScriptLife(TwinEEngine *engine, const ScriptLifeFunction* functionMap, size_t entries);
+
 	virtual ~ScriptLife() {}
 	/**
 	 * Process actor life script
 	 * @param actorIdx Current processed actor index
 	 */
-	virtual void doLife(int32 actorIdx) = 0;
+	void doLife(int32 actorIdx);
 };
 
 } // namespace TwinE
