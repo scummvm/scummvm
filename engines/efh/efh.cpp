@@ -2381,7 +2381,7 @@ bool EfhEngine::isMonsterActive(int16 groupId, int16 id) {
 }
 
 int16 EfhEngine::getTileFactId(int16 mapPosX, int16 mapPosY) {
-	debug("getTileFactId %d-%d", mapPosX, mapPosY);
+	debugC(3, kDebugEngine, "getTileFactId %d-%d", mapPosX, mapPosY);
 
 	int16 curTileInfo = getMapTileInfo(mapPosX, mapPosY);
 	int16 imageSetId = _currentTileBankImageSetId[curTileInfo / 72] * 72;
@@ -2391,13 +2391,13 @@ int16 EfhEngine::getTileFactId(int16 mapPosX, int16 mapPosY) {
 }
 
 void EfhEngine::setCharacterObjectToBroken(int16 charId, int16 objectId) {
-	debug("setCharacterObjectToBroken %d %d", charId, objectId);
+	debugC(3, kDebugEngine, "setCharacterObjectToBroken %d %d", charId, objectId);
 
 	_npcBuf[charId]._inventory[objectId]._ref = 0x7FFF;
 }
 
 int16 EfhEngine::selectOtherCharFromTeam() {
-	debug("selectOtherCharFromTeam");
+	debugC(3, kDebugEngine, "selectOtherCharFromTeam");
 
 	Common::KeyCode maxVal = (Common::KeyCode) (Common::KEYCODE_0 + _teamSize);
 	Common::KeyCode input = Common::KEYCODE_INVALID;
