@@ -362,7 +362,7 @@ void SuperSpriteProcess::hitAndFinish() {
 
 		if (ifx > 2 && ify > 2 && ifz > 2) {
 			int32 ixsize = (ifx - 2) * 16;
-			int32 iysize = (ifx - 2) * 16;
+			int32 iysize = (ify - 2) * 16;
 			if (pt.x < ix - ixsize)
 				pt.x = ix - ixsize;
 			if (pt.y < iy - iysize)
