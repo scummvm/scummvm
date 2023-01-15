@@ -194,16 +194,16 @@ void Collision::handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, Acto
 		actorTest->_animStep.y = 0;
 
 		if (actorTest->_staticFlags.bUseMiniZv) {
-			if (newAngle >= ANGLE_45 && newAngle < ANGLE_135 && actor->_beta >= ANGLE_45 && actor->_beta < ANGLE_135) {
+			if (newAngle >= LBAAngles::ANGLE_45 && newAngle < LBAAngles::ANGLE_135 && actor->_beta >= LBAAngles::ANGLE_45 && actor->_beta < LBAAngles::ANGLE_135) {
 				actorTest->_animStep.x = SIZE_BRICK_XZ / 4 + SIZE_BRICK_XZ / 8;
 			}
-			if (newAngle >= ANGLE_135 && newAngle < ANGLE_225 && actor->_beta >= ANGLE_135 && actor->_beta < ANGLE_225) {
+			if (newAngle >= LBAAngles::ANGLE_135 && newAngle < LBAAngles::ANGLE_225 && actor->_beta >= LBAAngles::ANGLE_135 && actor->_beta < LBAAngles::ANGLE_225) {
 				actorTest->_animStep.z = -SIZE_BRICK_XZ / 4 + SIZE_BRICK_XZ / 8;
 			}
-			if (newAngle >= ANGLE_225 && newAngle < ANGLE_315 && actor->_beta >= ANGLE_225 && actor->_beta < ANGLE_315) {
+			if (newAngle >= LBAAngles::ANGLE_225 && newAngle < LBAAngles::ANGLE_315 && actor->_beta >= LBAAngles::ANGLE_225 && actor->_beta < LBAAngles::ANGLE_315) {
 				actorTest->_animStep.x = -SIZE_BRICK_XZ / 4 + SIZE_BRICK_XZ / 8;
 			}
-			if ((newAngle >= ANGLE_315 || newAngle < ANGLE_45) && (actor->_beta >= ANGLE_315 || actor->_beta < ANGLE_45)) {
+			if ((newAngle >= LBAAngles::ANGLE_315 || newAngle < LBAAngles::ANGLE_45) && (actor->_beta >= LBAAngles::ANGLE_315 || actor->_beta < LBAAngles::ANGLE_45)) {
 				actorTest->_animStep.z = SIZE_BRICK_XZ / 4 + SIZE_BRICK_XZ / 8;
 			}
 		} else {
@@ -214,16 +214,16 @@ void Collision::handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, Acto
 
 	if ((actorTest->_boundingBox.maxs.x - actorTest->_boundingBox.mins.x == actorTest->_boundingBox.maxs.z - actorTest->_boundingBox.mins.z) &&
 		(actor->_boundingBox.maxs.x - actor->_boundingBox.mins.x == actor->_boundingBox.maxs.z - actor->_boundingBox.mins.z)) {
-		if (newAngle >= ANGLE_45 && newAngle < ANGLE_135) {
+		if (newAngle >= LBAAngles::ANGLE_45 && newAngle < LBAAngles::ANGLE_135) {
 			processActor.x = minsTest.x - actor->_boundingBox.maxs.x;
 		}
-		if (newAngle >= ANGLE_135 && newAngle < ANGLE_225) {
+		if (newAngle >= LBAAngles::ANGLE_135 && newAngle < LBAAngles::ANGLE_225) {
 			processActor.z = maxsTest.z - actor->_boundingBox.mins.z;
 		}
-		if (newAngle >= ANGLE_225 && newAngle < ANGLE_315) {
+		if (newAngle >= LBAAngles::ANGLE_225 && newAngle < LBAAngles::ANGLE_315) {
 			processActor.x = maxsTest.x - actor->_boundingBox.mins.x;
 		}
-		if (newAngle >= ANGLE_315 || newAngle < ANGLE_45) {
+		if (newAngle >= LBAAngles::ANGLE_315 || newAngle < LBAAngles::ANGLE_45) {
 			processActor.z = minsTest.z - actor->_boundingBox.maxs.z;
 		}
 	} else if (!actor->_dynamicFlags.bIsFalling) {
@@ -329,7 +329,7 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 				const IVec3 minsTest = actorTest->posObj() + actorTest->_boundingBox.mins;
 				const IVec3 maxsTest = actorTest->posObj() + actorTest->_boundingBox.maxs;
 				if (mins.x < maxsTest.x && maxs.x > minsTest.x && mins.y < maxsTest.y && maxs.y > minsTest.y && mins.z < maxsTest.z && maxs.z > minsTest.z) {
-					_engine->_actor->hitObj(actorIdx, a, actor->_strengthOfHit, actor->_beta + ANGLE_180);
+					_engine->_actor->hitObj(actorIdx, a, actor->_strengthOfHit, actor->_beta + LBAAngles::ANGLE_180);
 					actor->_dynamicFlags.bIsHitting = 0;
 				}
 			}

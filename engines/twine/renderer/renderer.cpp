@@ -119,9 +119,9 @@ void Renderer::baseMatrixTranspose() {
 }
 
 IVec3 Renderer::setAngleCamera(int32 x, int32 y, int32 z, bool transpose) {
-	const double Xradians = (double)((ANGLE_90 - x) % ANGLE_360) * 2 * M_PI / ANGLE_360;
-	const double Yradians = (double)((ANGLE_90 - y) % ANGLE_360) * 2 * M_PI / ANGLE_360;
-	const double Zradians = (double)((ANGLE_90 - z) % ANGLE_360) * 2 * M_PI / ANGLE_360;
+	const double Xradians = (double)((LBAAngles::ANGLE_90 - x) % LBAAngles::ANGLE_360) * 2 * M_PI / LBAAngles::ANGLE_360;
+	const double Yradians = (double)((LBAAngles::ANGLE_90 - y) % LBAAngles::ANGLE_360) * 2 * M_PI / LBAAngles::ANGLE_360;
+	const double Zradians = (double)((LBAAngles::ANGLE_90 - z) % LBAAngles::ANGLE_360) * 2 * M_PI / LBAAngles::ANGLE_360;
 
 	_baseMatrix.row1.x = (int32)(sin(Zradians) * sin(Yradians) * SCENE_SIZE_HALFF);
 	_baseMatrix.row1.y = (int32)(-cos(Zradians) * SCENE_SIZE_HALFF);
@@ -190,19 +190,19 @@ IVec3 Renderer::getHolomapRotation(const int32 angleX, const int32 angleY, const
 	int32 rotX = angleX * 2 + 1000;
 
 	int32 rotY;
-	if (angleY == ANGLE_0) {
-		rotY = ANGLE_0;
+	if (angleY == LBAAngles::ANGLE_0) {
+		rotY = LBAAngles::ANGLE_0;
 	} else {
-		rotY = -shadeAngleTable[ClampAngle(angleY)] * rotX / SCENE_SIZE_HALF;
-		rotX = shadeAngleTable[ClampAngle(angleY + ANGLE_90)] * rotX / SCENE_SIZE_HALF;
+		rotY = -lba1ShadeAngleTable[ClampAngle(angleY)] * rotX / SCENE_SIZE_HALF;
+		rotX = lba1ShadeAngleTable[ClampAngle(angleY + LBAAngles::ANGLE_90)] * rotX / SCENE_SIZE_HALF;
 	}
 
 	int32 rotZ;
-	if (angleZ == ANGLE_0) {
-		rotZ = ANGLE_0;
+	if (angleZ == LBAAngles::ANGLE_0) {
+		rotZ = LBAAngles::ANGLE_0;
 	} else {
-		rotZ = -shadeAngleTable[ClampAngle(angleZ)] * rotX / SCENE_SIZE_HALF;
-		rotX = shadeAngleTable[ClampAngle(angleZ + ANGLE_90)] * rotX / SCENE_SIZE_HALF;
+		rotZ = -lba1ShadeAngleTable[ClampAngle(angleZ)] * rotX / SCENE_SIZE_HALF;
+		rotX = lba1ShadeAngleTable[ClampAngle(angleZ + LBAAngles::ANGLE_90)] * rotX / SCENE_SIZE_HALF;
 	}
 
 	const int32 row1X = _baseMatrix.row1.x * rotX;
@@ -227,9 +227,9 @@ void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *current
 
 	if (angleVec.x) {
 		int32 angle = angleVec.x;
-		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
-		angle += ANGLE_90;
-		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
+		int32 angleVar2 = lba1ShadeAngleTable[ClampAngle(angle)];
+		angle += LBAAngles::ANGLE_90;
+		int32 angleVar1 = lba1ShadeAngleTable[ClampAngle(angle)];
 
 		matrix1.row1.x = currentMatrix->row1.x;
 		matrix1.row2.x = currentMatrix->row2.x;
@@ -247,9 +247,9 @@ void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *current
 
 	if (angleVec.z) {
 		int32 angle = angleVec.z;
-		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
-		angle += ANGLE_90;
-		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
+		int32 angleVar2 = lba1ShadeAngleTable[ClampAngle(angle)];
+		angle += LBAAngles::ANGLE_90;
+		int32 angleVar1 = lba1ShadeAngleTable[ClampAngle(angle)];
 
 		matrix2.row1.z = matrix1.row1.z;
 		matrix2.row2.z = matrix1.row2.z;
@@ -267,9 +267,9 @@ void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *current
 
 	if (angleVec.y) {
 		int32 angle = angleVec.y;
-		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
-		angle += ANGLE_90;
-		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
+		int32 angleVar2 = lba1ShadeAngleTable[ClampAngle(angle)];
+		angle += LBAAngles::ANGLE_90;
+		int32 angleVar1 = lba1ShadeAngleTable[ClampAngle(angle)];
 
 		targetMatrix->row1.y = matrix2.row1.y;
 		targetMatrix->row2.y = matrix2.row2.y;
@@ -1911,11 +1911,11 @@ void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 ang
 	if (angle == -1) {
 		const int16 newAngle = move.getRealAngle(_engine->_lbaTime);
 		if (move.numOfStep == 0) {
-			_engine->_movements->initRealAngle(newAngle, newAngle - ANGLE_90, ANGLE_17, &move);
+			_engine->_movements->initRealAngle(newAngle, newAngle - LBAAngles::ANGLE_90, LBAAngles::ANGLE_17, &move);
 		}
-		renderIsoModel(0, y, 0, ANGLE_0, newAngle, ANGLE_0, bodyData, dummy);
+		renderIsoModel(0, y, 0, LBAAngles::ANGLE_0, newAngle, LBAAngles::ANGLE_0, bodyData, dummy);
 	} else {
-		renderIsoModel(0, y, 0, ANGLE_0, angle, ANGLE_0, bodyData, dummy);
+		renderIsoModel(0, y, 0, LBAAngles::ANGLE_0, angle, LBAAngles::ANGLE_0, bodyData, dummy);
 	}
 	_engine->_interface->resetClip();
 }
@@ -1925,7 +1925,7 @@ void Renderer::renderInventoryItem(int32 x, int32 y, const BodyData &bodyData, i
 	setCameraAngle(0, 0, 0, 60, 0, 0, param);
 
 	Common::Rect dummy;
-	renderIsoModel(0, 0, 0, ANGLE_0, angle, ANGLE_0, bodyData, dummy);
+	renderIsoModel(0, 0, 0, LBAAngles::ANGLE_0, angle, LBAAngles::ANGLE_0, bodyData, dummy);
 }
 
 void Renderer::fillHolomapTriangle(int16 *pDest, int32 x0, int32 y0, int32 x1, int32 y1) {

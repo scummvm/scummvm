@@ -68,10 +68,10 @@ int16 Animations::applyAnimStepRotation(int32 deltaTime, int32 keyFrameLength, i
 
 	int16 computedAngle;
 	if (angleDiff) {
-		if (angleDiff < -ANGLE_180) {
-			angleDiff += ANGLE_360;
-		} else if (angleDiff > ANGLE_180) {
-			angleDiff -= ANGLE_360;
+		if (angleDiff < -LBAAngles::ANGLE_180) {
+			angleDiff += LBAAngles::ANGLE_360;
+		} else if (angleDiff > LBAAngles::ANGLE_180) {
+			angleDiff -= LBAAngles::ANGLE_360;
 		}
 
 		computedAngle = lastAngle + (angleDiff * deltaTime) / keyFrameLength;
@@ -455,7 +455,7 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType flag, AnimationTypes 
 
 	processAnimActions(actorIdx);
 
-	actor->_animStepBeta = ANGLE_0;
+	actor->_animStepBeta = LBAAngles::LBAAngles::ANGLE_0;
 	actor->_animStep = IVec3();
 
 	return true;
@@ -501,18 +501,18 @@ void Animations::doAnim(int32 actorIdx) {
 				processActor.x = actor->_pos.x + destPos.x;
 				processActor.z = actor->_pos.z + destPos.z;
 
-				_engine->_movements->setActorAngle(ANGLE_0, actor->_speed, ANGLE_17, &actor->_moveAngle);
+				_engine->_movements->setActorAngle(LBAAngles::LBAAngles::ANGLE_0, actor->_speed, LBAAngles::LBAAngles::ANGLE_17, &actor->_moveAngle);
 
 				if (actor->_dynamicFlags.bIsSpriteMoving) {
 					if (actor->_doorWidth) { // open door
 						if (getDistance2D(processActor.x, processActor.z, actor->_animStep.x, actor->_animStep.z) >= actor->_doorWidth) {
-							if (actor->_beta == ANGLE_0) { // down
+							if (actor->_beta == LBAAngles::LBAAngles::ANGLE_0) { // down
 								processActor.z = actor->_animStep.z + actor->_doorWidth;
-							} else if (actor->_beta == ANGLE_90) { // right
+							} else if (actor->_beta == LBAAngles::LBAAngles::ANGLE_90) { // right
 								processActor.x = actor->_animStep.x + actor->_doorWidth;
-							} else if (actor->_beta == ANGLE_180) { // up
+							} else if (actor->_beta == LBAAngles::LBAAngles::ANGLE_180) { // up
 								processActor.z = actor->_animStep.z - actor->_doorWidth;
-							} else if (actor->_beta == ANGLE_270) { // left
+							} else if (actor->_beta == LBAAngles::LBAAngles::ANGLE_270) { // left
 								processActor.x = actor->_animStep.x - actor->_doorWidth;
 							}
 
@@ -522,19 +522,19 @@ void Animations::doAnim(int32 actorIdx) {
 					} else { // close door
 						bool updatePos = false;
 
-						if (actor->_beta == ANGLE_0) { // down
+						if (actor->_beta == LBAAngles::LBAAngles::ANGLE_0) { // down
 							if (processActor.z <= actor->_animStep.z) {
 								updatePos = true;
 							}
-						} else if (actor->_beta == ANGLE_90) { // right
+						} else if (actor->_beta == LBAAngles::LBAAngles::ANGLE_90) { // right
 							if (processActor.x <= actor->_animStep.x) {
 								updatePos = true;
 							}
-						} else if (actor->_beta == ANGLE_180) { // up
+						} else if (actor->_beta == LBAAngles::LBAAngles::ANGLE_180) { // up
 							if (processActor.z >= actor->_animStep.z) {
 								updatePos = true;
 							}
-						} else if (actor->_beta == ANGLE_270) { // left
+						} else if (actor->_beta == LBAAngles::LBAAngles::ANGLE_270) { // left
 							if (processActor.x >= actor->_animStep.x) {
 								updatePos = true;
 							}
@@ -625,7 +625,7 @@ void Animations::doAnim(int32 actorIdx) {
 					actor->_dynamicFlags.bAnimEnded = 1;
 				}
 
-				actor->_animStepBeta = ANGLE_0;
+				actor->_animStepBeta = LBAAngles::LBAAngles::ANGLE_0;
 
 				actor->_animStep = IVec3();
 			}
@@ -697,7 +697,7 @@ void Animations::doAnim(int32 actorIdx) {
 
 		// process wall hit while running
 		if (collision->_causeActorDamage && !actor->_dynamicFlags.bIsFalling && IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_genAnim == AnimationTypes::kForward) {
-			IVec3 destPos = _engine->_movements->rotate(actor->_boundingBox.mins.x, actor->_boundingBox.mins.z, actor->_beta + ANGLE_360 + ANGLE_135);
+			IVec3 destPos = _engine->_movements->rotate(actor->_boundingBox.mins.x, actor->_boundingBox.mins.z, actor->_beta + LBAAngles::LBAAngles::ANGLE_360 + LBAAngles::LBAAngles::ANGLE_135);
 
 			destPos.x += processActor.x;
 			destPos.z += processActor.z;

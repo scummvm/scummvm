@@ -63,7 +63,7 @@ void Actor::restartHeroScene() {
 	sceneHero->_zone = -1;
 	sceneHero->_beta = _previousHeroAngle;
 
-	_engine->_movements->initRealAngle(sceneHero->_beta, sceneHero->_beta, ANGLE_0, &sceneHero->_moveAngle);
+	_engine->_movements->initRealAngle(sceneHero->_beta, sceneHero->_beta, LBAAngles::ANGLE_0, &sceneHero->_moveAngle);
 	setBehaviour(_previousHeroBehaviour);
 
 	_cropBottomScreen = 0;
@@ -236,7 +236,7 @@ void Actor::initActor(int16 actorIdx) {
 
 		initSpriteActor(actorIdx);
 
-		_engine->_movements->initRealAngle(ANGLE_0, ANGLE_0, ANGLE_0, &actor->_moveAngle);
+		_engine->_movements->initRealAngle(LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, &actor->_moveAngle);
 
 		if (actor->_staticFlags.bUsesClipping) {
 			actor->_animStep = actor->posObj();
@@ -254,7 +254,7 @@ void Actor::initActor(int16 actorIdx) {
 			_engine->_animations->initAnim(actor->_genAnim, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 		}
 
-		_engine->_movements->initRealAngle(actor->_beta, actor->_beta, ANGLE_0, &actor->_moveAngle);
+		_engine->_movements->initRealAngle(actor->_beta, actor->_beta, LBAAngles::ANGLE_0, &actor->_moveAngle);
 	}
 
 	actor->_offsetTrack = -1;
@@ -274,7 +274,7 @@ void Actor::resetActor(int16 actorIdx) {
 	memset(&actor->_dynamicFlags, 0, sizeof(DynamicFlagsStruct));
 	memset(&actor->_bonusParameter, 0, sizeof(BonusParameter));
 
-	_engine->_movements->initRealAngle(ANGLE_0, ANGLE_0, ANGLE_0, &actor->_moveAngle);
+	_engine->_movements->initRealAngle(LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, &actor->_moveAngle);
 }
 
 void Actor::hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 hitforce, int32 angle) {
@@ -300,7 +300,7 @@ void Actor::hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 hitforce, int32
 
 		} else {
 			if (angle != -1) {
-				_engine->_movements->initRealAngle(angle, angle, ANGLE_0, &actor->_moveAngle);
+				_engine->_movements->initRealAngle(angle, angle, LBAAngles::ANGLE_0, &actor->_moveAngle);
 			}
 
 			if (_engine->getRandomNumber() & 1) {
@@ -345,13 +345,13 @@ void Actor::giveExtraBonus(int32 actorIdx) {
 		return;
 	}
 	if (actor->_dynamicFlags.bIsDead) {
-		_engine->_extra->addExtraBonus(actor->posObj(), ANGLE_90, ANGLE_0, bonusSprite, actor->_bonusAmount);
+		_engine->_extra->addExtraBonus(actor->posObj(), LBAAngles::ANGLE_90, LBAAngles::ANGLE_0, bonusSprite, actor->_bonusAmount);
 		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->posObj(), actorIdx);
 	} else {
 		const ActorStruct *sceneHero = _engine->_scene->_sceneHero;
 		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->posObj(), sceneHero->posObj());
 		const IVec3 pos(actor->_pos.x, actor->_pos.y + actor->_boundingBox.maxs.y, actor->_pos.z);
-		_engine->_extra->addExtraBonus(pos, ANGLE_70, angle, bonusSprite, actor->_bonusAmount);
+		_engine->_extra->addExtraBonus(pos, LBAAngles::ANGLE_70, angle, bonusSprite, actor->_bonusAmount);
 		_engine->_sound->playSample(Samples::ItemPopup, 1, pos, actorIdx);
 	}
 }

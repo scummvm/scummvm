@@ -571,7 +571,7 @@ void Scene::changeScene() {
 	_sceneHero->_pos = _newHeroPos;
 	_startYFalling = _newHeroPos.y;
 
-	_engine->_renderer->setLightVector(_alphaLight, _betaLight, ANGLE_0);
+	_engine->_renderer->setLightVector(_alphaLight, _betaLight, LBAAngles::ANGLE_0);
 
 	if (_previousSceneIdx != SCENE_CEILING_GRID_FADE_1 && _previousSceneIdx != _needChangeScene) {
 		_engine->_actor->_previousHeroBehaviour = _engine->_actor->_heroBehaviour;
@@ -596,7 +596,7 @@ void Scene::changeScene() {
 	_engine->_grid->_useCellingGrid = -1;
 	_engine->_grid->_cellingGridIdx = -1;
 	_engine->_screens->_fadePalette = false;
-	_engine->_renderer->setLightVector(_alphaLight, _betaLight, ANGLE_0);
+	_engine->_renderer->setLightVector(_alphaLight, _betaLight, LBAAngles::ANGLE_0);
 
 	_needChangeScene = SCENE_CEILING_GRID_FADE_1;
 	_enableGridTileRendering = true;
@@ -693,7 +693,7 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 	const int32 x = (zone->maxs.x + zone->mins.x) / 2;
 	const int32 z = (zone->maxs.z + zone->mins.z) / 2;
 	const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(x, z, _sceneHero->_pos.x, _sceneHero->_pos.z);
-	const int32 index = _engine->_extra->addExtraBonus(x, zone->maxs.y, z, ANGLE_63, angle, bonusSprite, amount);
+	const int32 index = _engine->_extra->addExtraBonus(x, zone->maxs.y, z, LBAAngles::ANGLE_63, angle, bonusSprite, amount);
 
 	if (index != -1) {
 		_engine->_extra->_extraList[index].type |= ExtraType::TIME_IN;
@@ -723,6 +723,8 @@ void Scene::checkZoneSce(int32 actorIdx) {
 		    (currentY >= zone->mins.y && currentY <= zone->maxs.y) &&
 		    (currentZ >= zone->mins.z && currentZ <= zone->maxs.z)) {
 			switch (zone->type) {
+			default:
+				error("lba2 zone types not yet implemented");
 			case ZoneType::kCube:
 				if (IS_HERO(actorIdx) && actor->_lifePoint > 0) {
 					_needChangeScene = zone->num;
@@ -779,7 +781,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 				break;
 			case ZoneType::kLadder:
 				if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour != HeroBehaviourType::kProtoPack && (actor->_genAnim == AnimationTypes::kForward || actor->_genAnim == AnimationTypes::kTopLadder || actor->_genAnim == AnimationTypes::kClimbLadder)) {
-					IVec3 destPos = _engine->_movements->rotate(actor->_boundingBox.mins.x, actor->_boundingBox.mins.z, actor->_beta + ANGLE_360 + ANGLE_135);
+					IVec3 destPos = _engine->_movements->rotate(actor->_boundingBox.mins.x, actor->_boundingBox.mins.z, actor->_beta + LBAAngles::ANGLE_360 + LBAAngles::ANGLE_135);
 					destPos.x += actor->_processActor.x;
 					destPos.z += actor->_processActor.z;
 

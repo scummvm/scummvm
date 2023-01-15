@@ -1113,7 +1113,7 @@ void Menu::processBehaviourMenu(bool behaviourMenu) {
 	_engine->_actor->_heroAnimIdx[(byte)HeroBehaviourType::kAggressive] = _engine->_actor->_heroAnimIdxAGGRESSIVE;
 	_engine->_actor->_heroAnimIdx[(byte)HeroBehaviourType::kDiscrete] = _engine->_actor->_heroAnimIdxDISCRETE;
 
-	_engine->_movements->initRealAngle(_engine->_scene->_sceneHero->_beta, _engine->_scene->_sceneHero->_beta - ANGLE_90, ANGLE_17, &_moveMenu);
+	_engine->_movements->initRealAngle(_engine->_scene->_sceneHero->_beta, _engine->_scene->_sceneHero->_beta - LBAAngles::ANGLE_90, LBAAngles::ANGLE_17, &_moveMenu);
 
 	_engine->saveFrontBuffer();
 
@@ -1180,7 +1180,7 @@ void Menu::processBehaviourMenu(bool behaviourMenu) {
 			if (tmpHeroBehaviour != _engine->_actor->_heroBehaviour) {
 				drawBehaviour(left, top, tmpHeroBehaviour, _engine->_scene->_sceneHero->_beta, true);
 				tmpHeroBehaviour = _engine->_actor->_heroBehaviour;
-				_engine->_movements->initRealAngle(_engine->_scene->_sceneHero->_beta, _engine->_scene->_sceneHero->_beta - ANGLE_90, ANGLE_17, &_moveMenu);
+				_engine->_movements->initRealAngle(_engine->_scene->_sceneHero->_beta, _engine->_scene->_sceneHero->_beta - LBAAngles::ANGLE_90, LBAAngles::ANGLE_17, &_moveMenu);
 				const int tmpAnimIdx = _engine->_actor->_heroAnimIdx[(byte)_engine->_actor->_heroBehaviour];
 				_engine->_animations->setAnimObjet(_behaviourAnimState[(byte)_engine->_actor->_heroBehaviour], _engine->_resources->_animData[tmpAnimIdx], *_behaviourEntity, &_behaviourAnimData[(byte)_engine->_actor->_heroBehaviour]);
 			}
@@ -1214,7 +1214,7 @@ void Menu::drawItem(int32 left, int32 top, int32 item) {
 	_engine->_interface->drawFilledRect(rect, color);
 
 	if (item < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)item) && (!_engine->_gameState->inventoryDisabled() || item == InventoryItems::kiCloverLeaf)) {
-		_itemAngle[item] += ANGLE_2;
+		_itemAngle[item] += LBAAngles::ANGLE_2;
 		_engine->_interface->setClip(rect);
 		_engine->_renderer->renderInventoryItem(itemX, itemY, _engine->_resources->_inventoryTable[item], _itemAngle[item], 15000);
 		_engine->_interface->resetClip();
@@ -1245,7 +1245,7 @@ void Menu::processInventoryMenu() {
 
 	_engine->saveFrontBuffer();
 
-	_engine->_renderer->setLightVector(ANGLE_315, ANGLE_334, ANGLE_0);
+	_engine->_renderer->setLightVector(LBAAngles::ANGLE_315, LBAAngles::ANGLE_334, LBAAngles::ANGLE_0);
 
 	_inventorySelectedColor = COLOR_68;
 

@@ -233,9 +233,9 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 
 		if (IS_HERO(targetActorIdx)) {
 			if (engine->_actor->_heroBehaviour == HeroBehaviourType::kDiscrete) {
-				int32 heroAngle = ClampAngle(ctx.actor->_beta + ANGLE_360 + ANGLE_45 - newAngle + ANGLE_360);
+				int32 heroAngle = ClampAngle(ctx.actor->_beta + LBAAngles::ANGLE_360 + LBAAngles::ANGLE_45 - newAngle + LBAAngles::ANGLE_360);
 
-				if (ABS(heroAngle) <= ANGLE_90) {
+				if (ABS(heroAngle) <= LBAAngles::ANGLE_90) {
 					engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
 				} else {
 					engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
@@ -244,9 +244,9 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 				engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
 			}
 		} else {
-			int32 heroAngle = ClampAngle(ctx.actor->_beta + ANGLE_360 + ANGLE_45 - newAngle + ANGLE_360);
+			int32 heroAngle = ClampAngle(ctx.actor->_beta + LBAAngles::ANGLE_360 + LBAAngles::ANGLE_45 - newAngle + LBAAngles::ANGLE_360);
 
-			if (ABS(heroAngle) <= ANGLE_90) {
+			if (ABS(heroAngle) <= LBAAngles::ANGLE_90) {
 				engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
 			} else {
 				engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
@@ -437,8 +437,8 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		}
 		int32 angle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->posObj(), otherActor->posObj());
 		engine->_scene->_currentScriptValue = ClampAngle(ctx.actor->_beta - angle);
-		if (engine->_scene->_currentScriptValue > ANGLE_180) {
-			engine->_scene->_currentScriptValue = ANGLE_360 - engine->_scene->_currentScriptValue;
+		if (engine->_scene->_currentScriptValue > LBAAngles::ANGLE_180) {
+			engine->_scene->_currentScriptValue = LBAAngles::ANGLE_360 - engine->_scene->_currentScriptValue;
 		}
 		break;
 	}
@@ -452,8 +452,8 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		}
 		int32 angle = engine->_movements->getAngleAndSetTargetActorDistance(otherActor->posObj(), ctx.actor->posObj());
 		engine->_scene->_currentScriptValue = ClampAngle(otherActor->_beta - angle);
-		if (engine->_scene->_currentScriptValue > ANGLE_180) {
-			engine->_scene->_currentScriptValue = ANGLE_360 - engine->_scene->_currentScriptValue;
+		if (engine->_scene->_currentScriptValue > LBAAngles::ANGLE_180) {
+			engine->_scene->_currentScriptValue = LBAAngles::ANGLE_360 - engine->_scene->_currentScriptValue;
 		}
 		break;
 	}
@@ -467,8 +467,8 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		}
 		int32 angle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->posObj(), otherActor->posObj());
 		engine->_scene->_currentScriptValue = ClampAngle(ctx.actor->_beta - angle);
-		if (engine->_scene->_currentScriptValue > ANGLE_180) {
-			engine->_scene->_currentScriptValue = ANGLE_360 - engine->_scene->_currentScriptValue;
+		if (engine->_scene->_currentScriptValue > LBAAngles::ANGLE_180) {
+			engine->_scene->_currentScriptValue = LBAAngles::ANGLE_360 - engine->_scene->_currentScriptValue;
 		} else {
 			engine->_scene->_currentScriptValue = -engine->_scene->_currentScriptValue;
 		}
@@ -532,10 +532,10 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		if (ABS(otherActor->posObj().y - ctx.actor->posObj().y) < 1500) {
 			int32 angle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->posObj(),
 																				otherActor->posObj());
-			angle = ClampAngle(ctx.actor->_beta - angle + (ANGLE_22_5 * MUL_ANGLE));
+			angle = ClampAngle(ctx.actor->_beta - angle + LBAAngles::ANGLE_90);
 
-				// 320: CONE_VIEW
-			if (angle <= (448 * MUL_ANGLE))  {
+			// 320: CONE_VIEW
+			if (angle <= LBAAngles::ANGLE_157_5)  {
 				int32 distance = getDistance2D(ctx.actor->posObj(),
 											   otherActor->posObj());
 
@@ -1240,7 +1240,7 @@ static int32 lSET_DOOR_LEFT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 distance = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_LEFT(%i)", (int)distance);
 
-	ctx.actor->_beta = ANGLE_270;
+	ctx.actor->_beta = LBAAngles::ANGLE_270;
 	ctx.actor->_pos.x = ctx.actor->_animStep.x - distance;
 	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
@@ -1256,7 +1256,7 @@ static int32 lSET_DOOR_RIGHT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 distance = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_RIGHT(%i)", (int)distance);
 
-	ctx.actor->_beta = ANGLE_90;
+	ctx.actor->_beta = LBAAngles::ANGLE_90;
 	ctx.actor->_pos.x = ctx.actor->_animStep.x + distance;
 	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
@@ -1272,7 +1272,7 @@ static int32 lSET_DOOR_UP(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 distance = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_UP(%i)", (int)distance);
 
-	ctx.actor->_beta = ANGLE_180;
+	ctx.actor->_beta = LBAAngles::ANGLE_180;
 	ctx.actor->_pos.z = ctx.actor->_animStep.z - distance;
 	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
@@ -1288,7 +1288,7 @@ static int32 lSET_DOOR_DOWN(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 distance = ctx.stream.readSint16LE();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_DOWN(%i)", (int)distance);
 
-	ctx.actor->_beta = ANGLE_0;
+	ctx.actor->_beta = LBAAngles::ANGLE_0;
 	ctx.actor->_pos.z = ctx.actor->_animStep.z + distance;
 	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
@@ -2039,7 +2039,7 @@ static int32 lPROJ_3D(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	engine->_renderer->setProjection(engine->width() / 2, engine->height() / 2, 128, 1024, 1024);
 	engine->_renderer->setCameraAngle(0, 1500, 0, 25, -128, 0, 13000);
-	engine->_renderer->setLightVector(ANGLE_315, ANGLE_334, ANGLE_0);
+	engine->_renderer->setLightVector(LBAAngles::ANGLE_315, LBAAngles::ANGLE_334, LBAAngles::ANGLE_0);
 
 	engine->_text->initDial(TextBankId::Credits);
 

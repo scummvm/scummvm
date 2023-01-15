@@ -153,10 +153,10 @@ void Holomap::initHoloDatas() {
 void Holomap::computeCoorGlobe(Common::SeekableReadStream *holomapSurfaceStream) {
 	int holomapSurfaceArrayIdx = 0;
 	_engine->_renderer->setAngleCamera(0, 0, 0);
-	for (int alpha = -ANGLE_90; alpha <= ANGLE_90; alpha += ANGLE_11_25) {
+	for (int alpha = -LBAAngles::ANGLE_90; alpha <= LBAAngles::ANGLE_90; alpha += LBAAngles::ANGLE_11_25) {
 		const int32 rot = holomapSurfaceStream->readByte();
 		holomapSurfaceStream->seek(-1, SEEK_CUR);
-		for (int beta = 0; beta < ANGLE_360; beta += ANGLE_11_25) {
+		for (int beta = 0; beta < LBAAngles::ANGLE_360; beta += LBAAngles::ANGLE_11_25) {
 			const int32 rotX = holomapSurfaceStream->readByte();
 			const IVec3 &rotVec = _engine->_renderer->getHolomapRotation(rotX, alpha, beta);
 			_holomapSurface[holomapSurfaceArrayIdx].x = rotVec.x;
@@ -175,21 +175,21 @@ void Holomap::computeCoorGlobe(Common::SeekableReadStream *holomapSurfaceStream)
 
 void Holomap::computeCoorMapping() {
 	int projectedIndex = 0;
-	for (int32 alpha = -ANGLE_90; alpha <= ANGLE_90; alpha += ANGLE_11_25) {
-		for (int32 beta = 0; beta < ANGLE_360; beta += ANGLE_11_25) {
-			_projectedSurfacePositions[projectedIndex].x2 = _engine->_screens->lerp(0, 255 * ANGLE_90 + 255, ANGLE_360 - 1, beta);
-			if (alpha == ANGLE_90) {
-				_projectedSurfacePositions[projectedIndex].y2 = 255 * ANGLE_90 + 255;
+	for (int32 alpha = -LBAAngles::ANGLE_90; alpha <= LBAAngles::ANGLE_90; alpha += LBAAngles::ANGLE_11_25) {
+		for (int32 beta = 0; beta < LBAAngles::ANGLE_360; beta += LBAAngles::ANGLE_11_25) {
+			_projectedSurfacePositions[projectedIndex].x2 = _engine->_screens->lerp(0, 255 * LBAAngles::ANGLE_90 + 255, LBAAngles::ANGLE_360 - 1, beta);
+			if (alpha == LBAAngles::ANGLE_90) {
+				_projectedSurfacePositions[projectedIndex].y2 = 255 * LBAAngles::ANGLE_90 + 255;
 			} else {
-				_projectedSurfacePositions[projectedIndex].y2 = ((alpha + ANGLE_90) * ANGLE_90) / 2;
+				_projectedSurfacePositions[projectedIndex].y2 = ((alpha + LBAAngles::ANGLE_90) * LBAAngles::ANGLE_90) / 2;
 			}
 			++projectedIndex;
 		}
-		_projectedSurfacePositions[projectedIndex].x2 = 255 * ANGLE_90 + 255;
-		if (alpha == ANGLE_90) {
-			_projectedSurfacePositions[projectedIndex].y2 = 255 * ANGLE_90 + 255;
+		_projectedSurfacePositions[projectedIndex].x2 = 255 * LBAAngles::ANGLE_90 + 255;
+		if (alpha == LBAAngles::ANGLE_90) {
+			_projectedSurfacePositions[projectedIndex].y2 = 255 * LBAAngles::ANGLE_90 + 255;
 		} else {
-			_projectedSurfacePositions[projectedIndex].y2 = ((alpha + ANGLE_90) * ANGLE_90) / 2;
+			_projectedSurfacePositions[projectedIndex].y2 = ((alpha + LBAAngles::ANGLE_90) * LBAAngles::ANGLE_90) / 2;
 		}
 		++projectedIndex;
 	}
@@ -199,11 +199,11 @@ void Holomap::computeGlobeProj() {
 	int holomapSortArrayIdx = 0;
 	int holomapSurfaceArrayIdx = 0;
 	_projectedSurfaceIndex = 0;
-	for (int32 alpha = -ANGLE_90; alpha <= ANGLE_90; alpha += ANGLE_11_25) {
-		for (int32 beta = 0; beta < ANGLE_11_25; ++beta) {
+	for (int32 alpha = -LBAAngles::ANGLE_90; alpha <= LBAAngles::ANGLE_90; alpha += LBAAngles::ANGLE_11_25) {
+		for (int32 beta = 0; beta < LBAAngles::ANGLE_11_25; ++beta) {
 			IVec3 *vec = &_holomapSurface[holomapSurfaceArrayIdx++];
 			const IVec3 &destPos = _engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
-			if (alpha != ANGLE_90) {
+			if (alpha != LBAAngles::ANGLE_90) {
 				_holomapSort[holomapSortArrayIdx].z = (int16)destPos.z;
 				_holomapSort[holomapSortArrayIdx].projectedPosIdx = _projectedSurfaceIndex;
 				++holomapSortArrayIdx;
@@ -226,7 +226,7 @@ void Holomap::computeGlobeProj() {
 	Common::sort(_holomapSort, _holomapSort + ARRAYSIZE(_holomapSort), [](const HolomapSort &a, const HolomapSort &b) { return a.z < b.z; });
 }
 
-#define SURFACE_POS_OFFSET ((ANGLE_360 / ANGLE_11_25) + 1)
+#define SURFACE_POS_OFFSET ((LBAAngles::ANGLE_360 / LBAAngles::ANGLE_11_25) + 1)
 void Holomap::drawHoloMap(uint8 *holomapImage, uint32 holomapImageSize) {
 	computeGlobeProj();
 	for (int32 i = 0; i < ARRAYSIZE(_holomapSort); ++i) {
@@ -289,14 +289,14 @@ void Holomap::drawHoloObj(const IVec3 &angle, int32 x, int32 y) {
 	_engine->_renderer->setBaseRotationPos(0, 0, distance(zDistanceTrajectory));
 	_engine->_interface->resetClip();
 	Common::Rect dirtyRect;
-	_engine->_renderer->renderIsoModel(destPos, x, y, ANGLE_0, _engine->_resources->_holomapPointModelPtr, dirtyRect);
+	_engine->_renderer->renderIsoModel(destPos, x, y, LBAAngles::ANGLE_0, _engine->_resources->_holomapPointModelPtr, dirtyRect);
 	_engine->copyBlockPhys(dirtyRect);
 }
 
 void Holomap::renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, AnimTimerDataStruct &animTimerData, BodyData &bodyData, AnimData &animData) {
 	const int16 newAngle = move.getRealAngle(_engine->_lbaTime);
 	if (move.numOfStep == 0) {
-		_engine->_movements->initRealAngle(ANGLE_0, -ANGLE_90, 500, &move);
+		_engine->_movements->initRealAngle(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_90, 500, &move);
 	}
 
 	if (_engine->_animations->setModelAnimation(frameNumber, animData, bodyData, &animTimerData)) {
@@ -312,7 +312,7 @@ void Holomap::renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, Ani
 	// background of the vehicle
 	_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
 	Common::Rect dummy;
-	_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, newAngle, ANGLE_0, bodyData, dummy);
+	_engine->_renderer->renderIsoModel(0, 0, 0, LBAAngles::ANGLE_0, newAngle, LBAAngles::ANGLE_0, bodyData, dummy);
 	_engine->copyBlockPhys(rect);
 }
 
@@ -493,7 +493,7 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			const int32 angleX = _locations[drawList.actorIdx].angleX;
 			const int32 angleY = _locations[drawList.actorIdx].angleY;
 			Common::Rect dummy;
-			_engine->_renderer->renderIsoModel(drawList.x, drawList.y, drawList.z, angleX, angleY, ANGLE_0, *bodyData, dummy);
+			_engine->_renderer->renderIsoModel(drawList.x, drawList.y, drawList.z, angleX, angleY, LBAAngles::ANGLE_0, *bodyData, dummy);
 		}
 	}
 }
@@ -566,21 +566,21 @@ void Holomap::processHolomap() {
 		}
 
 		if (_engine->_input->isActionActive(TwinEActionType::HolomapDown)) {
-			xRot += ANGLE_2;
+			xRot += LBAAngles::ANGLE_2;
 			automove = true;
 			time = _engine->_lbaTime;
 		} else if (_engine->_input->isActionActive(TwinEActionType::HolomapUp)) {
-			xRot -= ANGLE_2;
+			xRot -= LBAAngles::ANGLE_2;
 			automove = true;
 			time = _engine->_lbaTime;
 		}
 
 		if (_engine->_input->isActionActive(TwinEActionType::HolomapRight)) {
-			yRot += ANGLE_2;
+			yRot += LBAAngles::ANGLE_2;
 			automove = true;
 			time = _engine->_lbaTime;
 		} else if (_engine->_input->isActionActive(TwinEActionType::HolomapLeft)) {
-			yRot -= ANGLE_2;
+			yRot -= LBAAngles::ANGLE_2;
 			automove = true;
 			time = _engine->_lbaTime;
 		}

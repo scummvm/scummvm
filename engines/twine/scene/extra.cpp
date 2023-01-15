@@ -94,7 +94,7 @@ int32 Extra::extraSearch(int32 actorIdx, int32 x, int32 y, int32 z, int32 sprite
 		extra->destPos.z = maxSpeed;
 		extra->strengthOfHit = strengthOfHit;
 
-		_engine->_movements->setActorAngle(ANGLE_0, maxSpeed, ANGLE_17, &extra->trackActorMove);
+		_engine->_movements->setActorAngle(LBAAngles::ANGLE_0, maxSpeed, LBAAngles::ANGLE_17, &extra->trackActorMove);
 		const ActorStruct *actor = _engine->_scene->getActor(targetActor);
 		extra->angle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos, actor->posObj());
 		return i;
@@ -166,7 +166,7 @@ int32 Extra::initSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) {
 			extra->pos.y = y;
 			extra->pos.z = z;
 
-			initFly(extra, _engine->getRandomNumber(ANGLE_90) + ANGLE_45, _engine->getRandomNumber(ANGLE_360), 50, 20);
+			initFly(extra, _engine->getRandomNumber(LBAAngles::ANGLE_90) + LBAAngles::ANGLE_45, _engine->getRandomNumber(LBAAngles::ANGLE_360), 50, 20);
 
 			extra->strengthOfHit = 0;
 			extra->payload.lifeTime = 100;
@@ -290,7 +290,7 @@ int32 Extra::addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spr
 		extra->spawnTime = targetActorIdx;
 		extra->destPos.z = finalAngle;
 		extra->strengthOfHit = strengthOfHit;
-		_engine->_movements->setActorAngle(ANGLE_0, finalAngle, ANGLE_17, &extra->trackActorMove);
+		_engine->_movements->setActorAngle(LBAAngles::ANGLE_0, finalAngle, LBAAngles::ANGLE_17, &extra->trackActorMove);
 		const ActorStruct *actor = _engine->_scene->getActor(targetActorIdx);
 		extra->angle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos, actor->posObj());
 
@@ -326,7 +326,7 @@ int32 Extra::extraSearchKey(int32 actorIdx, int32 x, int32 y, int32 z, int32 spr
 		extra->payload.extraIdx = extraIdx;
 		extra->destPos.z = 4000;
 		extra->strengthOfHit = 0;
-		_engine->_movements->setActorAngle(ANGLE_0, 4000, ANGLE_17, &extra->trackActorMove);
+		_engine->_movements->setActorAngle(LBAAngles::ANGLE_0, 4000, LBAAngles::ANGLE_17, &extra->trackActorMove);
 		extra->angle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos, _extraList[extraIdx].pos);
 
 		return i;
@@ -482,7 +482,7 @@ void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y, Common::Rect &ren
 
 	switch (specialType) {
 	case ExtraSpecialType::kHitStars:
-		drawSpecialShape(hitStarsShape, x, y, COLOR_WHITE, (_engine->_lbaTime * 32) & ANGLE_270, 4, renderRect);
+		drawSpecialShape(hitStarsShape, x, y, COLOR_WHITE, (_engine->_lbaTime * 32) & LBAAngles::ANGLE_270, 4, renderRect);
 		break;
 	case ExtraSpecialType::kExplodeCloud: {
 		int32 cloudTime = 1 + _engine->_lbaTime - extra->spawnTime;
@@ -491,7 +491,7 @@ void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y, Common::Rect &ren
 			cloudTime = 32;
 		}
 
-		drawSpecialShape(explodeCloudShape, x, y, COLOR_WHITE, ANGLE_0, cloudTime, renderRect);
+		drawSpecialShape(explodeCloudShape, x, y, COLOR_WHITE, LBAAngles::ANGLE_0, cloudTime, renderRect);
 		break;
 	}
 	}
@@ -607,7 +607,7 @@ void Extra::gereExtras() {
 			const int32 tmpAngle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos, actor->posObj());
 			const int32 angle = ClampAngle(tmpAngle - extra->angle);
 
-			if (angle > ANGLE_140 && angle < ANGLE_210) {
+			if (angle > LBAAngles::ANGLE_140 && angle < LBAAngles::ANGLE_210) {
 				if (extra->strengthOfHit) {
 					_engine->_actor->hitObj(actorIdx, actorIdxAttacked, extra->strengthOfHit, -1);
 				}
@@ -633,7 +633,7 @@ void Extra::gereExtras() {
 			extra->pos.x += destPos.x;
 			extra->pos.z += destPos.z;
 
-			_engine->_movements->setActorAngle(ANGLE_0, extra->destPos.z, ANGLE_17, &extra->trackActorMove);
+			_engine->_movements->setActorAngle(LBAAngles::ANGLE_0, extra->destPos.z, LBAAngles::ANGLE_17, &extra->trackActorMove);
 
 			if (actorIdxAttacked == _engine->_collision->extraCheckObjCol(extra, actorIdx)) {
 				if (i == _engine->_gameState->_magicBall) {
@@ -652,7 +652,7 @@ void Extra::gereExtras() {
 			const int32 tmpAngle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos, extraKey->pos);
 			const int32 angle = ClampAngle(tmpAngle - extra->angle);
 
-			if (angle > ANGLE_140 && angle < ANGLE_210) {
+			if (angle > LBAAngles::ANGLE_140 && angle < LBAAngles::ANGLE_210) {
 				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->_sceneHero->posObj(), OWN_ACTOR_SCENE_INDEX);
 
 				if (extraKey->info1 > 1) {
@@ -683,7 +683,7 @@ void Extra::gereExtras() {
 			extra->pos.x += destPos.x;
 			extra->pos.z += destPos.z;
 
-			_engine->_movements->setActorAngle(ANGLE_0, extra->destPos.z, ANGLE_17, &extra->trackActorMove);
+			_engine->_movements->setActorAngle(LBAAngles::ANGLE_0, extra->destPos.z, LBAAngles::ANGLE_17, &extra->trackActorMove);
 
 			if (extraIdx == _engine->_collision->extraCheckExtraCol(extra, _engine->_gameState->_magicBall)) {
 				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->_sceneHero->posObj(), OWN_ACTOR_SCENE_INDEX);

@@ -70,6 +70,7 @@
 #include "twine/scene/scene.h"
 #include "twine/script/script_life_v1.h"
 #include "twine/script/script_move_v1.h"
+#include "twine/shared.h"
 #include "twine/slideshow.h"
 #include "twine/text.h"
 
@@ -170,6 +171,12 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/music/ogg");
 		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/midi_mp3/ogg");
 #endif
+	}
+
+	if (isLBA2()) {
+		LBAAngles::lba2();
+	} else {
+		LBAAngles::lba1();
 	}
 
 	_actor = new Actor(this);
@@ -914,7 +921,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		_loopActorStep = 1;
 	}
 
-	_movements->setActorAngle(ANGLE_0, -ANGLE_90, ANGLE_1, &_loopMovePtr);
+	_movements->setActorAngle(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_90, LBAAngles::ANGLE_1, &_loopMovePtr);
 	_disableScreenRecenter = false;
 
 	_scene->processEnvironmentSound();
@@ -1076,7 +1083,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 bool TwinEEngine::gameEngineLoop() {
 	_redraw->_firstTime = true;
 	_screens->_fadePalette = true;
-	_movements->setActorAngle(ANGLE_0, -ANGLE_90, ANGLE_1, &_loopMovePtr);
+	_movements->setActorAngle(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_90, LBAAngles::ANGLE_1, &_loopMovePtr);
 
 	while (_sceneLoopState == SceneLoopState::Continue) {
 		if (runGameEngine()) {

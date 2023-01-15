@@ -64,7 +64,7 @@ void Movements::initRealAngle(int16 startAngle, int16 endAngle, int16 stepAngle,
 }
 
 void Movements::clearRealAngle(ActorStruct *actorPtr) {
-	initRealAngle(actorPtr->_beta, actorPtr->_beta, ANGLE_0, &actorPtr->_moveAngle);
+	initRealAngle(actorPtr->_beta, actorPtr->_beta, LBAAngles::ANGLE_0, &actorPtr->_moveAngle);
 }
 
 void Movements::setActorAngle(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr) {
@@ -114,9 +114,9 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 
 	const int32 destAngle = (difZ * SCENE_SIZE_HALF) / _targetActorDistance;
 
-	int32 startAngle = ANGLE_0;
-	//	stopAngle  = ANGLE_90;
-	const int16 *shadeAngleTab3(&shadeAngleTable[ANGLE_135]);
+	int32 startAngle = LBAAngles::ANGLE_0;
+	//	stopAngle  = LBAAngles::ANGLE_90;
+	const int16 *shadeAngleTab3(&lba1ShadeAngleTable[LBAAngles::ANGLE_135]);
 	while (shadeAngleTab3[startAngle] > destAngle) {
 		startAngle++;
 	}
@@ -127,14 +127,14 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 		}
 	}
 
-	int32 finalAngle = ANGLE_45 + startAngle;
+	int32 finalAngle = LBAAngles::ANGLE_45 + startAngle;
 
 	if (difX <= 0) {
 		finalAngle = -finalAngle;
 	}
 
 	if (flag) {
-		finalAngle = -finalAngle + ANGLE_90;
+		finalAngle = -finalAngle + LBAAngles::ANGLE_90;
 	}
 
 	return ClampAngle(finalAngle);
@@ -354,11 +354,11 @@ void Movements::processManualRotationExecution(int actorIdx) {
 	}
 	int16 tempAngle;
 	if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
-		tempAngle = ANGLE_90;
+		tempAngle = LBAAngles::ANGLE_90;
 	} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
-		tempAngle = -ANGLE_90;
+		tempAngle = -LBAAngles::ANGLE_90;
 	} else {
-		tempAngle = ANGLE_0;
+		tempAngle = LBAAngles::ANGLE_0;
 	}
 
 	initRealAngleConst(actor->_beta, actor->_beta + tempAngle, actor->_speed, &actor->_moveAngle);
@@ -400,7 +400,7 @@ void Movements::processRandomAction(int actorIdx) {
 	}
 
 	if (actor->brickCausesDamage()) {
-		const int32 angle = ClampAngle(actor->_beta + (_engine->getRandomNumber() & (ANGLE_180 - 1)) - ANGLE_90 + ANGLE_180);
+		const int32 angle = ClampAngle(actor->_beta + (_engine->getRandomNumber() & (LBAAngles::ANGLE_180 - 1)) - LBAAngles::ANGLE_90 + LBAAngles::ANGLE_180);
 		initRealAngleConst(actor->_beta, angle, actor->_speed, &actor->_moveAngle);
 		actor->_delayInMillis = _engine->getRandomNumber(300) + _engine->_lbaTime + 300;
 		_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
@@ -409,7 +409,7 @@ void Movements::processRandomAction(int actorIdx) {
 	if (!actor->_moveAngle.numOfStep) {
 		_engine->_animations->initAnim(AnimationTypes::kForward, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 		if (_engine->_lbaTime > actor->_delayInMillis) {
-			const int32 angle = ClampAngle(actor->_beta + (_engine->getRandomNumber() & (ANGLE_180 - 1)) - ANGLE_90);
+			const int32 angle = ClampAngle(actor->_beta + (_engine->getRandomNumber() & (LBAAngles::ANGLE_180 - 1)) - LBAAngles::ANGLE_90);
 			initRealAngleConst(actor->_beta, angle, actor->_speed, &actor->_moveAngle);
 			actor->_delayInMillis = _engine->getRandomNumber(300) + _engine->_lbaTime + 300;
 		}
@@ -441,11 +441,11 @@ void Movements::doDir(int32 actorIdx) {
 			return;
 		}
 
-		int16 tempAngle = ANGLE_0;
+		int16 tempAngle = LBAAngles::ANGLE_0;
 		if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
-			tempAngle = ANGLE_90;
+			tempAngle = LBAAngles::ANGLE_90;
 		} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
-			tempAngle = -ANGLE_90;
+			tempAngle = -LBAAngles::ANGLE_90;
 		}
 
 		initRealAngleConst(actor->_beta, actor->_beta + tempAngle, actor->_speed, &actor->_moveAngle);

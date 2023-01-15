@@ -54,7 +54,7 @@ private:
 	/** Rotation by anim and not by engine */
 	int16 _processRotationByAnim = 0; // processActorVar5
 	/** Last rotation angle */
-	int16 _processLastRotationAngle = ANGLE_0; // processActorVar6
+	int16 _processLastRotationAngle = 0; // processActorVar6
 
 	/** Current step coordinates */
 	IVec3 _currentStep;

@@ -218,7 +218,7 @@ static int32 mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::GOTO_SYM_POINT(%i)", (int)engine->_scene->_currentScriptValue);
 
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
-	const int32 newAngle = ANGLE_180 + engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->_pos, sp);
+	const int32 newAngle = LBAAngles::ANGLE_180 + engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->_pos, sp);
 
 	if (ctx.actor->_staticFlags.bIsSpriteActor) {
 		ctx.actor->_beta = newAngle;
@@ -311,7 +311,7 @@ static int32 mSPEED(TwinEEngine *engine, MoveScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::SPEED(%i)", (int)ctx.actor->_speed);
 
 	if (ctx.actor->_staticFlags.bIsSpriteActor) {
-		engine->_movements->setActorAngle(ANGLE_0, ctx.actor->_speed, ANGLE_17, &ctx.actor->_moveAngle);
+		engine->_movements->setActorAngle(LBAAngles::ANGLE_0, ctx.actor->_speed, LBAAngles::ANGLE_17, &ctx.actor->_moveAngle);
 	}
 
 	return 0;
@@ -404,7 +404,7 @@ static int32 mOPEN_GENERIC(TwinEEngine *engine, MoveScriptContext &ctx, int32 an
 		ctx.actor->_doorWidth = doorStatus;
 		ctx.actor->_dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->_speed = 1000;
-		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->_moveAngle);
+		engine->_movements->setActorAngle(LBAAngles::ANGLE_0, LBAAngles::ANGLE_351, LBAAngles::ANGLE_17, &ctx.actor->_moveAngle);
 	}
 	if (engine->_scene->_currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->_actorIdx == 16) {
 		engine->unlockAchievement("LBA_ACH_009");
@@ -417,7 +417,7 @@ static int32 mOPEN_GENERIC(TwinEEngine *engine, MoveScriptContext &ctx, int32 an
  * @note Opcode @c 0x15
  */
 static int32 mOPEN_LEFT(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return mOPEN_GENERIC(engine, ctx, ANGLE_270);
+	return mOPEN_GENERIC(engine, ctx, LBAAngles::ANGLE_270);
 }
 
 /**
@@ -425,7 +425,7 @@ static int32 mOPEN_LEFT(TwinEEngine *engine, MoveScriptContext &ctx) {
  * @note Opcode @c 0x16
  */
 static int32 mOPEN_RIGHT(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return mOPEN_GENERIC(engine, ctx, ANGLE_90);
+	return mOPEN_GENERIC(engine, ctx, LBAAngles::ANGLE_90);
 
 }
 
@@ -434,7 +434,7 @@ static int32 mOPEN_RIGHT(TwinEEngine *engine, MoveScriptContext &ctx) {
  * @note Opcode @c 0x17
  */
 static int32 mOPEN_UP(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return mOPEN_GENERIC(engine, ctx, ANGLE_180);
+	return mOPEN_GENERIC(engine, ctx, LBAAngles::ANGLE_180);
 
 }
 
@@ -443,7 +443,7 @@ static int32 mOPEN_UP(TwinEEngine *engine, MoveScriptContext &ctx) {
  * @note Opcode @c 0x18
  */
 static int32 mOPEN_DOWN(TwinEEngine *engine, MoveScriptContext &ctx) {
-	return mOPEN_GENERIC(engine, ctx, ANGLE_0);
+	return mOPEN_GENERIC(engine, ctx, LBAAngles::ANGLE_0);
 }
 
 /**
@@ -456,7 +456,7 @@ static int32 mCLOSE(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->_doorWidth = 0;
 		ctx.actor->_dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->_speed = -1000;
-		engine->_movements->setActorAngle(ANGLE_0, -ANGLE_351, ANGLE_17, &ctx.actor->_moveAngle);
+		engine->_movements->setActorAngle(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_351, LBAAngles::ANGLE_17, &ctx.actor->_moveAngle);
 	}
 	return 0;
 }
@@ -593,7 +593,7 @@ static int32 mFACE_HERO(TwinEEngine *engine, MoveScriptContext &ctx) {
 static int32 mANGLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 val1 = ctx.stream.readSint16LE();
 	const int16 val2 = ctx.stream.readSint16LE();
-	debugC(3, kDebugLevels::kDebugScripts, "MOVE::ANGLE_RND(%i, %i)", (int)val1, (int)val2);
+	debugC(3, kDebugLevels::kDebugScripts, "MOVE::LBAAngles::ANGLE_RND(%i, %i)", (int)val1, (int)val2);
 	if (ctx.actor->_staticFlags.bIsSpriteActor) {
 		return 0;
 	}
@@ -602,10 +602,10 @@ static int32 mANGLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 
 	if (engine->_scene->_currentScriptValue == -1 && ctx.actor->_moveAngle.numOfStep == 0) {
 		if (engine->getRandomNumber() & 1) {
-			const int32 newAngle = ctx.actor->_beta + ANGLE_90 + (ABS(val1) >> 1);
+			const int32 newAngle = ctx.actor->_beta + LBAAngles::ANGLE_90 + (ABS(val1) >> 1);
 			engine->_scene->_currentScriptValue = ClampAngle(newAngle - engine->getRandomNumber(val1));
 		} else {
-			const int32 newAngle = ctx.actor->_beta - ANGLE_90 + (ABS(val1) >> 1);
+			const int32 newAngle = ctx.actor->_beta - LBAAngles::ANGLE_90 + (ABS(val1) >> 1);
 			engine->_scene->_currentScriptValue = ClampAngle(newAngle - engine->getRandomNumber(val1));
 		}
 
@@ -659,7 +659,7 @@ static const ScriptMoveFunction function_map[] = {
 	{"REPEAT_SAMPLE", mREPEAT_SAMPLE},
 	{"SIMPLE_SAMPLE", mSIMPLE_SAMPLE},
 	{"FACE_HERO", mFACE_HERO},
-	{"ANGLE_RND", mANGLE_RND}
+	{"LBAAngles::ANGLE_RND", mANGLE_RND}
 #if 0 // lba2
 	,
 	{"REM", mREM},

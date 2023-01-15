@@ -23,6 +23,61 @@
 
 namespace TwinE {
 
+int32 LBAAngles::ANGLE_360;
+int32 LBAAngles::ANGLE_351;
+int32 LBAAngles::ANGLE_334;
+int32 LBAAngles::ANGLE_315;
+int32 LBAAngles::ANGLE_270;
+int32 LBAAngles::ANGLE_225;
+int32 LBAAngles::ANGLE_210;
+int32 LBAAngles::ANGLE_180;
+int32 LBAAngles::ANGLE_157_5;
+int32 LBAAngles::ANGLE_140;
+int32 LBAAngles::ANGLE_135;
+int32 LBAAngles::ANGLE_90;
+int32 LBAAngles::ANGLE_70;
+int32 LBAAngles::ANGLE_63;
+int32 LBAAngles::ANGLE_45;
+int32 LBAAngles::ANGLE_22_5;
+int32 LBAAngles::ANGLE_17;
+int32 LBAAngles::ANGLE_11_25;
+int32 LBAAngles::ANGLE_2;
+int32 LBAAngles::ANGLE_1;
+int32 LBAAngles::ANGLE_0;
+
+void LBAAngles::init(int factor) {
+	ANGLE_360 = 1024 * factor;
+	ANGLE_351 = 1000 * factor;
+	ANGLE_334 = 950 * factor;
+	ANGLE_315 = 896 * factor;
+	ANGLE_270 = 768 * factor;
+	ANGLE_225 = 640 * factor;
+	ANGLE_210 = 600 * factor;
+	ANGLE_180 = 512 * factor;
+	ANGLE_157_5 = 448 * factor;
+	ANGLE_140 = 400 * factor;
+	ANGLE_135 = 384 * factor;
+	ANGLE_90 = 256 * factor;
+	ANGLE_70 = 200 * factor;
+	ANGLE_63 = 180 * factor;
+	ANGLE_45 = 128 * factor;
+	ANGLE_22_5 = 64 * factor;
+	ANGLE_17 = 50 * factor;
+	ANGLE_11_25 = 32 * factor;
+	ANGLE_2 = 8 * factor;
+	ANGLE_1 = 5 * factor;
+	ANGLE_0 = 0 * factor;
+}
+
+void LBAAngles::lba1() {
+	init(1);
+}
+
+void LBAAngles::lba2() {
+	init(4);
+}
+
+
 int32 getDistance2D(int32 x1, int32 z1, int32 x2, int32 z2) {
 	return (int32)sqrt((float)((x2 - x1) * (x2 - x1) + (z2 - z1) * (z2 - z1)));
 }

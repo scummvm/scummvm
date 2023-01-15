@@ -222,7 +222,7 @@ public:
 	int32 _carryBy = -1;
 	int32 _zone = -1;
 
-	int32 _animStepBeta = ANGLE_0;
+	int32 _animStepBeta = 0;
 	IVec3 _animStep;
 	int32 _anim = -1;
 	int32 _doorWidth = 0;

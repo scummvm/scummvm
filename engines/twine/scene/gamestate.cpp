@@ -58,8 +58,8 @@ GameState::GameState(TwinEEngine *engine) : _engine(engine) {
 void GameState::initEngineProjections() {
 	_engine->_renderer->setIsoProjection(_engine->width() / 2 - 9, _engine->height() / 2, 512);
 	_engine->_renderer->setBaseTranslation(0, 0, 0);
-	_engine->_renderer->setAngleCamera(ANGLE_0, ANGLE_0, ANGLE_0);
-	_engine->_renderer->setLightVector(_engine->_scene->_alphaLight, _engine->_scene->_betaLight, ANGLE_0);
+	_engine->_renderer->setAngleCamera(LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0);
+	_engine->_renderer->setLightVector(_engine->_scene->_alphaLight, _engine->_scene->_betaLight, LBAAngles::ANGLE_0);
 }
 
 void GameState::initGameStateVars() {
@@ -104,8 +104,8 @@ void GameState::initEngineVars() {
 	debug(2, "Init engine variables");
 	_engine->_interface->resetClip();
 
-	_engine->_scene->_alphaLight = ANGLE_315;
-	_engine->_scene->_betaLight = ANGLE_334;
+	_engine->_scene->_alphaLight = LBAAngles::ANGLE_315;
+	_engine->_scene->_betaLight = LBAAngles::ANGLE_334;
 	initEngineProjections();
 	initGameStateVars();
 	initHeroVars();
@@ -323,7 +323,7 @@ void GameState::processFoundItem(InventoryItems item) {
 	BodyData &bodyData = _engine->_resources->_bodyData[_engine->_scene->_sceneHero->_body];
 	const IVec3 bodyPos = _engine->_scene->_sceneHero->_pos - itemCamera;
 	Common::Rect modelRect;
-	_engine->_renderer->renderIsoModel(bodyPos, ANGLE_0, ANGLE_45, ANGLE_0, bodyData, modelRect);
+	_engine->_renderer->renderIsoModel(bodyPos, LBAAngles::ANGLE_0, LBAAngles::ANGLE_45, LBAAngles::ANGLE_0, bodyData, modelRect);
 	_engine->_interface->setClip(modelRect);
 
 	const int32 itemX = (_engine->_scene->_sceneHero->_pos.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
@@ -369,7 +369,7 @@ void GameState::processFoundItem(InventoryItems item) {
 	_engine->_redraw->_numOfRedrawBox = 0;
 
 	ScopedKeyMap uiKeyMap(_engine, uiKeyMapId);
-	int16 itemAngle = ANGLE_0;
+	int16 itemAngle = LBAAngles::ANGLE_0;
 	for (;;) {
 		FrameMarker frame(_engine, 66);
 		_engine->_interface->resetClip();
@@ -379,7 +379,7 @@ void GameState::processFoundItem(InventoryItems item) {
 
 		_engine->_interface->setClip(boxRect);
 
-		itemAngle += ANGLE_2;
+		itemAngle += LBAAngles::ANGLE_2;
 
 		_engine->_renderer->renderInventoryItem(_engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, _engine->_resources->_inventoryTable[item], itemAngle, 10000);
 
@@ -395,7 +395,7 @@ void GameState::processFoundItem(InventoryItems item) {
 			}
 		}
 
-		_engine->_renderer->renderIsoModel(bodyPos, ANGLE_0, ANGLE_45, ANGLE_0, bodyData, modelRect);
+		_engine->_renderer->renderIsoModel(bodyPos, LBAAngles::ANGLE_0, LBAAngles::ANGLE_45, LBAAngles::ANGLE_0, bodyData, modelRect);
 		_engine->_interface->setClip(modelRect);
 		_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 		_engine->_redraw->addRedrawArea(modelRect);
@@ -511,11 +511,11 @@ void GameState::processGameoverAnimation() {
 		}
 
 		const int32 zoom = _engine->_collision->clampedLerp(40000, 3200, TO_SECONDS(10), _engine->_lbaTime - startLbaTime);
-		const int32 angle = _engine->_screens->lerp(1, ANGLE_360, TO_SECONDS(2), (_engine->_lbaTime - startLbaTime) % TO_SECONDS(2));
+		const int32 angle = _engine->_screens->lerp(1, LBAAngles::ANGLE_360, TO_SECONDS(2), (_engine->_lbaTime - startLbaTime) % TO_SECONDS(2));
 
 		_engine->blitWorkToFront(rect);
 		_engine->_renderer->setCameraAngle(0, 0, 0, 0, -angle, 0, zoom);
-		_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, ANGLE_0, ANGLE_0, gameOverPtr, dummy);
+		_engine->_renderer->renderIsoModel(0, 0, 0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, gameOverPtr, dummy);
 
 		_engine->_lbaTime++;
 	}
@@ -523,7 +523,7 @@ void GameState::processGameoverAnimation() {
 	_engine->_sound->playSample(Samples::Explode);
 	_engine->blitWorkToFront(rect);
 	_engine->_renderer->setCameraAngle(0, 0, 0, 0, 0, 0, 3200);
-	_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, ANGLE_0, ANGLE_0, gameOverPtr, dummy);
+	_engine->_renderer->renderIsoModel(0, 0, 0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, gameOverPtr, dummy);
 
 	_engine->delaySkip(2000);
 
