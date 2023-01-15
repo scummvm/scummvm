@@ -38,7 +38,9 @@ MODULE_OBJS := \
 	script/script_life.o \
 	script/script_move.o \
 	script/script_life_v1.o \
+	script/script_life_v2.o \
 	script/script_move_v1.o \
+	script/script_move_v2.o \
 	\
 	resources/hqr.o \
 	resources/lzss.o \

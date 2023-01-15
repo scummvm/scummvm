@@ -69,7 +69,9 @@
 #include "twine/scene/movements.h"
 #include "twine/scene/scene.h"
 #include "twine/script/script_life_v1.h"
+#include "twine/script/script_life_v2.h"
 #include "twine/script/script_move_v1.h"
+#include "twine/script/script_move_v2.h"
 #include "twine/shared.h"
 #include "twine/slideshow.h"
 #include "twine/text.h"
@@ -200,8 +202,8 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 		_scriptLife = new ScriptLifeV1(this);
 		_scriptMove = new ScriptMoveV1(this);
 	} else {
-		_scriptLife = nullptr;
-		_scriptMove = nullptr;
+		_scriptLife = new ScriptLifeV2(this);
+		_scriptMove = new ScriptMoveV2(this);
 	}
 	_holomap = new Holomap(this);
 	_sound = new Sound(this);
