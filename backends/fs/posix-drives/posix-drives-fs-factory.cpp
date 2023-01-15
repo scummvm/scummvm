@@ -55,4 +55,16 @@ AbstractFSNode *DrivesPOSIXFilesystemFactory::makeFileNodePath(const Common::Str
 	return new DrivePOSIXFilesystemNode(path, _config);
 }
 
+bool DrivesPOSIXFilesystemFactory::StaticDrivesConfig::getDrives(AbstractFSList &list, bool hidden) const {
+	for (uint i = 0; i < drives.size(); i++) {
+		list.push_back(_factory->makeFileNodePath(drives[i]));
+	}
+	return true;
+}
+
+bool DrivesPOSIXFilesystemFactory::StaticDrivesConfig::isDrive(const Common::String &path) const {
+	DrivesArray::const_iterator drive = Common::find(drives.begin(), drives.end(), path);
+	return drive != drives.end();
+}
+
 #endif

@@ -36,6 +36,8 @@
  */
 class DrivesPOSIXFilesystemFactory : public FilesystemFactory {
 public:
+	DrivesPOSIXFilesystemFactory() : _config(this) { }
+
 	/**
 	 * Add a drive to the top-level directory
 	 */
@@ -56,7 +58,20 @@ protected:
 	AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
 
 private:
-	DrivePOSIXFilesystemNode::Config _config;
+	typedef Common::Array<Common::String> DrivesArray;
+	struct StaticDrivesConfig : public DrivePOSIXFilesystemNode::Config {
+		StaticDrivesConfig(const DrivesPOSIXFilesystemFactory *factory) : _factory(factory) { }
+
+		bool getDrives(AbstractFSList &list, bool hidden) const override;
+		bool isDrive(const Common::String &path) const override;
+
+		DrivesArray drives;
+
+	private:
+		const DrivesPOSIXFilesystemFactory *_factory;
+	};
+
+	StaticDrivesConfig _config;
 };
 
 #endif

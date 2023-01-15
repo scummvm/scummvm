@@ -40,8 +40,6 @@ protected:
 	}
 
 public:
-	typedef Common::Array<Common::String> DrivesArray;
-
 	enum BufferingMode {
 		/** IO buffering is fully disabled */
 		kBufferingModeDisabled,
@@ -52,11 +50,15 @@ public:
 	};
 
 	struct Config {
-		DrivesArray drives;
+		// Use the default stdio buffer size
+		Config() : bufferingMode(kBufferingModeStdio), bufferSize(0) { }
+		virtual ~Config() { }
+
+		virtual bool getDrives(AbstractFSList &list, bool hidden) const = 0;
+		virtual bool isDrive(const Common::String &path) const = 0;
+
 		BufferingMode bufferingMode;
 		uint32 bufferSize;
-
-		Config();
 	};
 
 	DrivePOSIXFilesystemNode(const Common::String &path, const Config &config);
