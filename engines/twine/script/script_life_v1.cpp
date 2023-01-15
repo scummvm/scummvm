@@ -112,7 +112,7 @@ enum LifeScriptConditions {
 	/*0x0B*/ kcFLAG_CUBE = 11,       /*<! Game Cube Flags. (Parameter = Cube Flag Index, Parameter = 0 (not set), = 1 (set))k */
 	/*0x0C*/ kcCONE_VIEW = 12,       /*<! The actor passed as parameter have a "vision in circle". (Parameter = Actor Index, Parameter = Distance) */
 	/*0x0D*/ kcHIT_BY = 13,          /*<! Current actor hited by the actor passed as parameter. (Parameter = Actor Index) */
-	/*0x0E*/ kcACTION = 14,          /*<! Hero action behavior. (Parameter = Behaviour Index) */
+	/*0x0E*/ kcACTION = 14,          /*<! Execute action (boolean value, e.g. when hiding in the waste of the 2nd scene to escape the prison) */
 	/*0x0F*/ kcFLAG_GAME = 15,       /*<! Game Flags (See further list). (Parameter = Flag Index, Parameter = 0 (not set), = 1 (set)) */
 	/*0x10*/ kcLIFE_POINT = 16,      /*<! Current actor life points. (Parameter = Life points) */
 	/*0x11*/ kcLIFE_POINT_OBJ = 17,  /*<! Life points of the current actor passed as parameter. (Parameter = Life points) */
