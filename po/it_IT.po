@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-15 09:55+0000\n"
-"PO-Revision-Date: 2023-01-10 21:23+0000\n"
+"PO-Revision-Date: 2023-01-15 12:02+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -262,16 +262,13 @@ msgid "No new %S available"
 msgstr "Nessun nuovo %S disponibile"
 
 #: gui/downloadpacksdialog.cpp:463
-#, fuzzy, c-format
-#| msgid ""
-#| "You are about to remove %s %s of data, deleting all previously downloaded "
-#| "icon files. Do you want to proceed?"
+#, c-format
 msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
-"Verranno eliminati %s.%s di dati, corrispondenti a tutte le icone scaricate "
-"in precedenza. Sei sicuro di voler procedere?"
+"Verranno eliminati %s.%s di dati, relativi a %S scaricate/i in precedenza. "
+"Sei sicuro di voler procedere?"
 
 #: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
 msgid "Proceed"
