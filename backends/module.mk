@@ -350,6 +350,11 @@ MODULE_OBJS += \
 	mixer/null/null-mixer.o
 endif
 
+ifdef OPENDINGUX
+MODULE_OBJS += \
+	graphics/opendingux/opendingux-graphics.o
+endif
+
 ifeq ($(BACKEND),openpandora)
 MODULE_OBJS += \
 	events/openpandora/op-events.o \
