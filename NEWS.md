@@ -14,6 +14,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Driller/Space Station Oblivion (DOS/EGA, Amiga and AtariST versions).
    - Added support for Halls of the Dead: Faery Tale Adventure II.
 
+ New platforms:
+   - RetroMini RS90 under OpenDingux beta.
+   - 1st generation Miyoo (New BittBoy, Pocket Go and PowKiddy Q90-V90-Q20)
+     under TriForceX MiyooCFW.
+
  General:
    - Reduced amount of false positives in Mass Add.
    - Updated the Roland MT-32 emulation code to Munt mt32emu 2.7.0.
