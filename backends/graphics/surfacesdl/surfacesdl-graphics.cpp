@@ -1486,11 +1486,30 @@ bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &filename) c
 	Graphics::PixelFormat format = convertSDLPixelFormat(_hwScreen->format);
 	Graphics::Surface data;
 	data.init(_hwScreen->w, _hwScreen->h, _hwScreen->pitch, _hwScreen->pixels, format);
+
+	bool success;
+
+	SDL_Palette *sdlPalette = _hwScreen->format->palette;
+	if (sdlPalette) {
+		byte palette[256 * 3];
+		for (int i = 0; i < sdlPalette->ncolors; i++) {
+			palette[(i * 3) + 0] = sdlPalette->colors[i].r;
+			palette[(i * 3) + 1] = sdlPalette->colors[i].g;
+			palette[(i * 3) + 2] = sdlPalette->colors[i].b;
+		}
+
 #ifdef USE_PNG
-	const bool success = Image::writePNG(out, data);
+		success = Image::writePNG(out, data, palette);
 #else
-	const bool success = Image::writeBMP(out, data);
+		success = Image::writeBMP(out, data, palette);
 #endif
+	} else {
+#ifdef USE_PNG
+		success = Image::writePNG(out, data);
+#else
+		success = Image::writeBMP(out, data);
+#endif
+	}
 
 	SDL_UnlockSurface(_hwScreen);
 

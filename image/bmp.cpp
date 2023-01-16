@@ -153,7 +153,7 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input) {
+bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const byte *palette) {
 #ifdef SCUMM_LITTLE_ENDIAN
 	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 16, 8, 0, 0);
 #else
@@ -166,7 +166,7 @@ bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input) {
 	if (input.format == requiredFormat_3byte) {
 		surface = &input;
 	} else {
-		surface = tmp = input.convertTo(requiredFormat_3byte);
+		surface = tmp = input.convertTo(requiredFormat_3byte, palette);
 	}
 
 	int dstPitch = surface->w * 3;
