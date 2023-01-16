@@ -141,7 +141,7 @@ void GridItemWidget::drawWidget() {
 	// Draw Demo Overlay
 	const Graphics::ManagedSurface *demoGfx = _grid->demoToSurface(_activeEntry->extra);
 	if (demoGfx) {
-		Common::Point p(_x + ((thumbWidth - demoGfx->w)/2) , _y + (thumbHeight - demoGfx->h - 10));
+		Common::Point p(_x, _y);
 		g_gui.theme()->drawSurface(p, *demoGfx, true);
 	}
 
@@ -710,7 +710,12 @@ void GridWidget::loadPlatformIcons() {
 }
 
 void GridWidget::loadExtraIcons() {  // for now only the demo icon is available
-	Graphics::ManagedSurface *gfx = loadSurfaceFromFile("icons/extra/demo.png");
+	Graphics::ManagedSurface *gfx = loadSurfaceFromFile("icons/extra/demo.svg", _extraIconWidth, _extraIconHeight);
+	if (gfx) {
+		_extraIcons[0] = gfx;
+		return;
+	} // if no .svg file is available, search for a .png
+	gfx = loadSurfaceFromFile("icons/extra/demo.png");
 	if (gfx) {
 		const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, _extraIconWidth, _extraIconHeight, true);
 		_extraIcons[0] = scGfx;
@@ -941,8 +946,8 @@ void GridWidget::reflowLayout() {
 	_flagIconWidth = _thumbnailWidth / 4;
 	_flagIconHeight = _flagIconWidth / 2;
 	_platformIconHeight = _platformIconWidth = _thumbnailWidth / 6;
-	_extraIconWidth = _thumbnailWidth / 2;
-	_extraIconHeight = _extraIconWidth / 4;
+	_extraIconWidth = _thumbnailWidth;
+	_extraIconHeight = _thumbnailHeight;
 
 	if ((oldThumbnailHeight != _thumbnailHeight) || (oldThumbnailWidth != _thumbnailWidth)) {
 		unloadSurfaces(_extraIcons);
