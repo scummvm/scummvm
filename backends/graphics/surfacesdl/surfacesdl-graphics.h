@@ -100,6 +100,7 @@ protected:
 	// PaletteManager API
 	void setPalette(const byte *colors, uint start, uint num) override;
 	void grabPalette(byte *colors, uint start, uint num) const override;
+	virtual void initGraphicsSurface();
 
 	/**
 	 * Convert from the SDL pixel format to Graphics::PixelFormat

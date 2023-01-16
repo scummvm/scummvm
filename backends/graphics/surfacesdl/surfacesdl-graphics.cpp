@@ -907,6 +907,25 @@ void SurfaceSdlGraphicsManager::setupHardwareSize() {
 	}
 }
 
+void SurfaceSdlGraphicsManager::initGraphicsSurface() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	Uint32 flags = SDL_SWSURFACE;
+#else
+	Uint32 flags = _videoMode.isHwPalette ? (SDL_HWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF) : SDL_SWSURFACE;
+#endif
+#ifndef RS90
+	if (_videoMode.fullscreen)
+		flags |= SDL_FULLSCREEN;
+#endif
+	_hwScreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, _videoMode.isHwPalette ? 8 : 16,
+				     flags);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	_isDoubleBuf = false;
+#else
+	_isDoubleBuf = flags & SDL_DOUBLEBUF;
+#endif
+}
+
 bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	_forceRedraw = true;
 
@@ -963,22 +982,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 		}
 #endif
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-		Uint32 flags = SDL_SWSURFACE;
-#else
-		Uint32 flags = _videoMode.isHwPalette ? (SDL_HWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF) : SDL_SWSURFACE;
-#endif
-#ifndef RS90
-		if (_videoMode.fullscreen)
-			flags |= SDL_FULLSCREEN;
-#endif
-		_hwScreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, _videoMode.isHwPalette ? 8 : 16,
-					       flags);
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-		_isDoubleBuf = false;
-#else
-		_isDoubleBuf = flags & SDL_DOUBLEBUF;
-#endif
+		initGraphicsSurface();
 	}
 
 #ifdef USE_RGB_COLOR
