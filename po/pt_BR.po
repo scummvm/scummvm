@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-16 17:10+0000\n"
-"PO-Revision-Date: 2023-01-16 09:34+0000\n"
+"PO-Revision-Date: 2023-01-17 09:34+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -1132,10 +1132,8 @@ msgid "the filtering setting could not be changed"
 msgstr "a configuração de filtragem não pôde ser alterada"
 
 #: gui/options.cpp:842
-#, fuzzy
-#| msgid "the fullscreen setting could not be changed"
 msgid "the vsync setting could not be changed"
-msgstr "a configuração de tela cheia não pôde ser alterada"
+msgstr "a configuração de sincronização vertical não pôde ser alterada"
 
 #: gui/options.cpp:859
 msgid "the shader could not be changed"
