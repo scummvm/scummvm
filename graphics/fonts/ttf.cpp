@@ -721,7 +721,7 @@ void TTFFont::drawChar(Surface * dst, uint32 chr, int x, int y, uint32 color,
 
 	uint8 *dstPos = (uint8 *)dst->getBasePtr(x, y);
 
-	if (dst->format.bytesPerPixel == 1) {
+	if (dst->format.isCLUT8()) {
 		for (int cy = 0; cy < h; ++cy) {
 			uint8 *rDst = dstPos;
 			const uint8 *src = srcPos;
@@ -739,6 +739,8 @@ void TTFFont::drawChar(Surface * dst, uint32 chr, int x, int y, uint32 color,
 			dstPos += dst->pitch;
 			srcPos += glyph.image.pitch;
 		}
+	} else if (dst->format.bytesPerPixel == 1) {
+		renderGlyph<uint8>(dstPos, dst->pitch, srcPos, glyph.image.pitch, w, h, color, dst->format, transparentColor);
 	} else if (dst->format.bytesPerPixel == 2) {
 		renderGlyph<uint16>(dstPos, dst->pitch, srcPos, glyph.image.pitch, w, h, color, dst->format, transparentColor);
 	} else if (dst->format.bytesPerPixel == 4) {
