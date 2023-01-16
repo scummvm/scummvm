@@ -177,10 +177,11 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	bool skipCompression = false;
 	uint32 bytesNeed = _pitch * _surface->h;
 	if (_bitsPerPixel != 1) {
-		bytesNeed = _surface->w * _surface->h * _bitsPerPixel / 8;
 		if (_version < kFileVer300) {
+			bytesNeed = _surface->w * _surface->h * _bitsPerPixel / 8;
 			skipCompression = stream.size() >= bytesNeed;
 		} else if (_version < kFileVer400) {
+			bytesNeed = _surface->w * _surface->h * _bitsPerPixel / 8;
 			// for D3, looks like it will round up the _surface->w to align 2
 			// not sure whether D2 will have the same logic.
 			// check lzone-mac data/r-c/tank.a-1 and lzone-mac data/r-a/station-b.01.
