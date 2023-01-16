@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-15 21:20+0000\n"
+"POT-Creation-Date: 2023-01-16 09:31+0000\n"
 "PO-Revision-Date: 2022-11-27 15:23+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -3264,27 +3264,27 @@ msgid "Resolution: %dx%d"
 msgstr "Ανάλυση: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:717
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2477
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2478
 msgid "Enabled aspect ratio correction"
 msgstr "Ενεργοποιήθηκε η διόρθωση αναλογίας διαστάσεων"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:719
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2483
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2484
 msgid "Disabled aspect ratio correction"
 msgstr "Απενεργοποιήθηκε η διόρθωση αναλογίας διαστάσεων"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:732
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2499
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2500
 msgid "Filtering enabled"
 msgstr "Ενεργοποίηση φιλτραρίσματος"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:734
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2501
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2502
 msgid "Filtering disabled"
 msgstr "Απενεργοποίηση φιλτραρίσματος"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2528
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2529
 msgid "Stretch mode"
 msgstr "Λειτουργία επέκτασης εικόνας"
 
@@ -3292,7 +3292,7 @@ msgstr "Λειτουργία επέκτασης εικόνας"
 msgid "SDL Surface"
 msgstr "Επιφάνεια SDL"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2443
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2444
 msgid "Active graphics filter:"
 msgstr "Ενεργό φίλτρο γραφικών:"
 
