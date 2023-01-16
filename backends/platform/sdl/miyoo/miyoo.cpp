@@ -25,7 +25,7 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 
-#include "backends/platform/sdl/opendingux/opendingux.h"
+#include "backends/platform/sdl/miyoo/miyoo.h"
 
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs.h"
@@ -37,17 +37,17 @@
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/keymapper.h"
 
-#define SCUMM_DIR	"~/.scummvm"
-#define CONFIG_FILE	"~/.scummvmrc"
-#define SAVE_PATH	"~/.scummvm/saves"
-#define LOG_FILE	"~/.scummvm/scummvm.log"
+#define SCUMM_DIR	"/mnt/.scummvm"
+#define CONFIG_FILE	"/mnt/.scummvmrc"
+#define SAVE_PATH	"/mnt/.scummvm/saves"
+#define LOG_FILE	"/mnt/.scummvm/scummvm.log"
 #define JOYSTICK_DIR	"/sys/devices/platform/joystick"
 
 static const Common::KeyTableEntry odKeyboardButtons[] = {
-	{ "JOY_A",		Common::KEYCODE_LCTRL,		_s("A")			},
-	{ "JOY_B",		Common::KEYCODE_LALT,		_s("B")			},
-	{ "JOY_X",		Common::KEYCODE_SPACE,		_s("X")			},
-	{ "JOY_Y",		Common::KEYCODE_LSHIFT,		_s("Y")			},
+	{ "JOY_A",		Common::KEYCODE_LALT,		_s("A")			},
+	{ "JOY_B",		Common::KEYCODE_LCTRL,		_s("B")			},
+	{ "JOY_X",		Common::KEYCODE_LSHIFT,		_s("X")			},
+	{ "JOY_Y",		Common::KEYCODE_SPACE,		_s("Y")			},
 	{ "JOY_BACK",		Common::KEYCODE_ESCAPE,		_s("Select")		},
 	{ "JOY_START",		Common::KEYCODE_RETURN,		_s("Start")		},
 	{ "JOY_LEFT_SHOULDER",	Common::KEYCODE_TAB,		_s("L")			},
@@ -56,6 +56,11 @@ static const Common::KeyTableEntry odKeyboardButtons[] = {
 	{ "JOY_DOWN",		Common::KEYCODE_DOWN,		_s("D-pad Down")	},
 	{ "JOY_LEFT",		Common::KEYCODE_LEFT,		_s("D-pad Left")	},
 	{ "JOY_RIGHT",		Common::KEYCODE_RIGHT,		_s("D-pad Right")	},
+	{ "JOY_LEFT_STICK",     Common::KEYCODE_PAGEUP,		_s("L2")		},
+	{ "JOY_RIGHT_STICK",    Common::KEYCODE_PAGEDOWN,	_s("R2")		},
+	{ "JOY_LEFT_TRIGGER",	Common::KEYCODE_RALT,		_s("L3")	 	},
+	{ "JOY_RIGHT_TRIGGER",	Common::KEYCODE_RSHIFT,		_s("R3")	 	},
+	{ "JOY_GUIDE",		Common::KEYCODE_RCTRL,		_s("Menu")	 	},
 	{nullptr,			Common::KEYCODE_INVALID,	nullptr			}
 };
 
@@ -70,7 +75,7 @@ static const Common::AxisTableEntry odJoystickAxes[] = {
 	{ nullptr,	       0,				    Common::kAxisTypeFull, nullptr	       }
 };
 
-Common::KeymapperDefaultBindings *OSystem_SDL_Opendingux::getKeymapperDefaultBindings() {
+Common::KeymapperDefaultBindings *OSystem_SDL_Miyoo::getKeymapperDefaultBindings() {
 	Common::KeymapperDefaultBindings *keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
 
 	if (!Posix::assureDirectoryExists(JOYSTICK_DIR)) {
@@ -91,7 +96,7 @@ Common::KeymapperDefaultBindings *OSystem_SDL_Opendingux::getKeymapperDefaultBin
 	return keymapperDefaultBindings;
 }
 
-void OSystem_SDL_Opendingux::init() {
+void OSystem_SDL_Miyoo::init() {
 
 	_fsFactory = new POSIXFilesystemFactory();
 	if (!Posix::assureDirectoryExists(SCUMM_DIR)) {
@@ -102,7 +107,7 @@ void OSystem_SDL_Opendingux::init() {
 	OSystem_SDL::init();
 }
 
-void OSystem_SDL_Opendingux::initBackend() {
+void OSystem_SDL_Miyoo::initBackend() {
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
 	ConfMan.registerDefault("themepath", "./themes");
@@ -137,15 +142,6 @@ void OSystem_SDL_Opendingux::initBackend() {
 	if (!ConfMan.hasKey("kbdmouse_speed")) {
 		ConfMan.setInt("kbdmouse_speed", 2);
 	}
-#ifdef LEPUS
-	if (!ConfMan.hasKey("output_rate")) {
-		ConfMan.set("output_rate", "22050");
-	}
-#elif RS90
-	if (!ConfMan.hasKey("output_rate")) {
-                ConfMan.set("output_rate", "11025");
-        }
-#endif
 	// Create the savefile manager
 	if (_savefileManager == nullptr) {
 		_savefileManager = new DefaultSaveFileManager(SAVE_PATH);
@@ -154,16 +150,16 @@ void OSystem_SDL_Opendingux::initBackend() {
 	OSystem_SDL::initBackend();
 }
 
-Common::String OSystem_SDL_Opendingux::getDefaultConfigFileName() {
+Common::String OSystem_SDL_Miyoo::getDefaultConfigFileName() {
 	return CONFIG_FILE;
 
 }
 
-Common::String OSystem_SDL_Opendingux::getDefaultLogFileName() {
+Common::String OSystem_SDL_Miyoo::getDefaultLogFileName() {
 	return LOG_FILE;
 }
 
-bool OSystem_SDL_Opendingux::hasFeature(Feature f) {
+bool OSystem_SDL_Miyoo::hasFeature(Feature f) {
 	switch (f) {
 	case kFeatureFullscreenMode:
 	case kFeatureAspectRatioCorrection:
@@ -175,15 +171,15 @@ bool OSystem_SDL_Opendingux::hasFeature(Feature f) {
 	}
 }
 
-void OSystem_SDL_Opendingux::setFeatureState(Feature f, bool enable) {
+void OSystem_SDL_Miyoo::setFeatureState(Feature f, bool enable) {
 	OSystem_SDL::setFeatureState(f, enable);
 	}
 
-bool OSystem_SDL_Opendingux::getFeatureState(Feature f) {
+bool OSystem_SDL_Miyoo::getFeatureState(Feature f) {
 	return OSystem_SDL::getFeatureState(f);
 }
 
-Common::HardwareInputSet *OSystem_SDL_Opendingux::getHardwareInputSet() {
+Common::HardwareInputSet *OSystem_SDL_Miyoo::getHardwareInputSet() {
 	using namespace Common;
 
 	CompositeHardwareInputSet *inputSet = new CompositeHardwareInputSet();

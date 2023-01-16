@@ -1,0 +1,28 @@
+[ScummVM-Miyoo README]
+
+Controls
+========
+Dpad - Mouse
+Dpad+R - Slow Mouse
+A - Left mouse click
+B - Right mouse click
+X - Escape
+X+R - Return
+Y - Period
+Y+R - Space
+L - Game Menu (F5)
+R - Shift
+Start - Global Menu
+Select - Virtual Keyboard
+Select+R - AGI predictive input dialog
+D-pad - Keypad cursor keys
+D-Pad+R - Diagonal cursor keys
+
+Troubleshooting
+===============
+In case you need to submit a bugreport, you may find the log file at the
+following path:
+
+     SDCARD/.scummvm/scummvm.log
+
+The log file is being overwritten at every ScummVM run.

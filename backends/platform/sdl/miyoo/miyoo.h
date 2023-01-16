@@ -19,34 +19,24 @@
  *
  */
 
-#include "common/scummsys.h"
+#ifndef PLATFORM_SDL_MIYOO_H
+#define PLATFORM_SDL_MIYOO_H
 
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(MAEMO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3) && !defined(PSP2) && !defined(NINTENDO_SWITCH)  && !defined(__EMSCRIPTEN__) && !defined(MIYOO)
+#include "backends/platform/sdl/sdl.h"
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
+class OSystem_SDL_Miyoo : public OSystem_SDL {
+public:
+	void init() override;
+	void initBackend() override;
+	bool hasFeature(Feature f) override;
+	void setFeatureState(Feature f, bool enable) override;
+	bool getFeatureState(Feature f) override;
+	Common::HardwareInputSet *getHardwareInputSet() override;
+	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
-int main(int argc, char *argv[]) {
-
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
-	assert(g_system);
-
-	// Pre initialize the backend
-	g_system->init();
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-
-	// Free OSystem
-	g_system->destroy();
-
-	return res;
-}
+protected:
+	Common::String getDefaultConfigFileName() override;
+	Common::String getDefaultLogFileName() override;
+};
 
 #endif
