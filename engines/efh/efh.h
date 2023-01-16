@@ -362,7 +362,7 @@ private:
 	void computeInitiatives();
 	void redrawScreenForced();
 	int16 countMonsterGroupMembers(int16 monsterGroup);
-	int16 getXPLevel(int32 xp);
+	uint16 getXPLevel(uint32 xp);
 	bool isItemCursed(int16 itemId);
 	bool hasObjectEquipped(int16 charId, int16 objectId);
 	void setMapMonsterAggressivenessAndMovementType(int16 id, uint8 mask, bool groupFl);

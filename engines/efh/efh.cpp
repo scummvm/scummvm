@@ -2284,10 +2284,10 @@ int16 EfhEngine::countMonsterGroupMembers(int16 monsterGroup) {
 	return result;
 }
 
-int16 EfhEngine::getXPLevel(int32 xp) {
-	debugC(6, kDebugEngine, "getXPLevel %ld", xp);
+uint16 EfhEngine::getXPLevel(uint32 xp) {
+	debugC(6, kDebugEngine, "getXPLevel %u", xp);
 
-	int16 level = 0;
+	uint16 level = 0;
 	int16 nextLevelXP = 1500;
 
 	int32 wrkXp = xp;

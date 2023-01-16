@@ -284,7 +284,7 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 	buffer1 = Common::String::format("Level: %d", getXPLevel(_npcBuf[npcId]._xp));
 	setTextPos(146, 36);
 	displayStringAtTextPos(buffer1);
-	buffer1 = Common::String::format("XP: %lu", _npcBuf[npcId]._xp);
+	buffer1 = Common::String::format("XP: %u", _npcBuf[npcId]._xp);
 	setTextPos(227, 36);
 	displayStringAtTextPos(buffer1);
 	buffer1 = Common::String::format("Speed: %d", _npcBuf[npcId]._speed);
