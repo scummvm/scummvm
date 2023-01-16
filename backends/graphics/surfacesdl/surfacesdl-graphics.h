@@ -420,6 +420,7 @@ protected:
 	virtual void blitCursor();
 
 	virtual void internUpdateScreen();
+	virtual void updateScreen(SDL_Rect *dirtyRectList, int actualDirtyRects);
 
 	virtual bool loadGFXMode();
 	virtual void unloadGFXMode();

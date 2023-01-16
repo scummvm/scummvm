@@ -25,6 +25,9 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 
+#ifdef MIYOOMINI
+#include "backends/graphics/miyoo/miyoomini-graphics.h"
+#endif
 #include "backends/platform/sdl/miyoo/miyoo.h"
 
 #include "backends/fs/posix/posix-fs-factory.h"
@@ -146,6 +149,13 @@ void OSystem_SDL_Miyoo::initBackend() {
 	if (_savefileManager == nullptr) {
 		_savefileManager = new DefaultSaveFileManager(SAVE_PATH);
 	}
+
+#ifdef MIYOOMINI
+	if (!_eventSource)
+		_eventSource = new SdlEventSource();
+	if (!_graphicsManager)
+		_graphicsManager = new MiyooMiniGraphicsManager(_eventSource, _window);
+#endif
 
 	OSystem_SDL::initBackend();
 }

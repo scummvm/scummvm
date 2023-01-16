@@ -1144,6 +1144,10 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 	internUpdateScreen();
 }
 
+void SurfaceSdlGraphicsManager::updateScreen(SDL_Rect *dirtyRectList, int actualDirtyRects) {
+	SDL_UpdateRects(_hwScreen, actualDirtyRects, dirtyRectList);
+}
+
 void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
 	int height, width;
@@ -1447,7 +1451,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 
 		// Finally, blit all our changes to the screen
 		if (!_displayDisabled) {
-			SDL_UpdateRects(_hwScreen, actualDirtyRects, _dirtyRectList);
+			updateScreen(_dirtyRectList, actualDirtyRects);
 		}
 	}
 
