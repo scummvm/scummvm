@@ -34,7 +34,7 @@
 namespace Tetraedge {
 
 /*static*/
-TeColor TeLight::_globalAmbientColor;
+uint32 TeLight::_globalAmbientColor;
 
 TeLight::TeLight() : _colAmbient(0, 0, 0, 0xff), _colDiffuse(0, 0, 0, 0xff), _colSpecular(0xff, 0xff, 0xff, 0xff),
 _constAtten(1.0f), _linearAtten(0.0f), _quadraticAtten(0.0f), _cutoff(0.0f), _exponent(0.0f), _type(LightTypePoint),

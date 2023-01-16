@@ -52,8 +52,8 @@ public:
 
 	virtual void update(uint lightno) = 0;
 	static void updateGlobal();
-	static void setGlobalAmbient(const TeColor &col) { _globalAmbientColor = col; }
-	static const TeColor &globalAmbient() { return _globalAmbientColor; }
+	static void setGlobalAmbient(const TeColor &col) { _globalAmbientColor = col.getPacked32(); }
+	static TeColor globalAmbient() { return TeColor(_globalAmbientColor); }
 
 	void setSpecular(const TeColor &col) { _colSpecular = col; }
 	void setDiffuse(const TeColor &col) { _colDiffuse = col; }
@@ -86,7 +86,7 @@ protected:
 
 	enum TeLightType _type;
 
-	static TeColor _globalAmbientColor;
+	static uint32 _globalAmbientColor;
 
 	float _constAtten;
 	float _linearAtten;

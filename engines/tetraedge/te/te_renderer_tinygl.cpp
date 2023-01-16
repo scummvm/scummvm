@@ -147,12 +147,6 @@ Common::String TeRendererTinyGL::renderer() {
 }
 
 
-static bool compareTransparentMeshProperties(const TeRenderer::TransparentMeshProperties &p1,
-											const TeRenderer::TransparentMeshProperties &p2) {
-	return (p1._zOrder < p2._zOrder);
-}
-
-
 void TeRendererTinyGL::renderTransparentMeshes() {
 	if (!_numTransparentMeshes)
 		return;
@@ -313,7 +307,7 @@ void TeRendererTinyGL::shadowMode(enum ShadowMode mode) {
 
 void TeRendererTinyGL::applyMaterial(const TeMaterial &m) {
 	//debug("TeMaterial::apply (%s)", dump().c_str());
-	static const float constColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	//static const float constColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	if (_shadowMode == TeRenderer::ShadowMode0) {
 		if (m._enableLights)
 			TeLightTinyGL::enableAll();

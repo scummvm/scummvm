@@ -39,7 +39,7 @@ private:
 	bool updateDisplay(uint oldval, uint newval);
 
 	bool _entered;
-	uint _val;
+	//uint _val;
 };
 
 } // end namespace Tetraedge

@@ -96,7 +96,7 @@ private:
 	uint _viewportH;
 
 	int _transformA;
-	int _transformB;
+	//int _transformB; // never used?
 
 	float _orthogonalParamL;
 	float _orthogonalParamR;

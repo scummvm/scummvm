@@ -152,7 +152,7 @@ TeImage *TeTiledTexture::optimisedTileImage(Common::Array<TeImage> &images, cons
 	images.resize(images.size() + 1);
 	TeImage &newImg = images.back();
 	Common::SharedPtr<TePalette> nullPal;
-	newImg.create((uint)size._x, (uint)size._y, nullPal, format);
+	newImg.createImg((uint)size._x, (uint)size._y, nullPal, format);
 	return &newImg;
 }
 

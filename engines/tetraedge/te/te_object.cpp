@@ -56,7 +56,7 @@ void TeObject::cleanup() {
 	if (_pendingDeleteList && _pendingDeleteList->size()) {
 		warning("Leaking %d objects on shutdown.", _pendingDeleteList->size());
 		for (auto *obj : (*_pendingDeleteList)) {
-			debug("Leaked %p", obj);
+			debug("Leaked %p", (void *)obj);
 		}
 	}
 	delete _pendingDeleteList;

@@ -43,12 +43,13 @@ unsigned long TeImage::countPixelsOfColor(const TeColor &col) const {
 	error("TODO: Implement TeImage::countPixelsOfColor");
 }
 
+/*
 void TeImage::create() {
 	// Never used, but in original seems to do the same as destroy??
 	destroy();
-}
+}*/
 
-void TeImage::create(uint xsize, uint ysize, Common::SharedPtr<TePalette> &pal,
+void TeImage::createImg(uint xsize, uint ysize, Common::SharedPtr<TePalette> &pal,
 			Format teformat, uint bufxsize, uint bufysize) {
 	_teFormat = teformat;
 	Graphics::PixelFormat pxformat = ((teformat == TeImage::RGB8) ?
@@ -99,7 +100,7 @@ bool TeImage::load(const Common::Path &path) {
 	}
 
 	Common::SharedPtr<TePalette> nullpal;
-	create(codec->width(), codec->height(), nullpal, codec->imageFormat(), codec->width(), codec->height());
+	createImg(codec->width(), codec->height(), nullpal, codec->imageFormat(), codec->width(), codec->height());
 
 	if (!codec->update(0, *this)) {
 		error("TeImage::load: Failed to update from %s.", path.toString().c_str());
