@@ -226,7 +226,7 @@ void TeMesh::updateTo(const Common::Array<TeMatrix4x4> *matricies1, const Common
 TeMesh *TeMesh::makeInstance() {
 	Graphics::RendererType r = g_engine->preferredRendererType();
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_GAME)
 	if (r == Graphics::kRendererTypeOpenGL)
 		return new TeMeshOpenGL();
 #endif
