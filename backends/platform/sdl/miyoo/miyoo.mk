@@ -30,17 +30,16 @@ ifdef DYNAMIC_MODULES
 	$(CP) $(PLUGINS) $(bundle)/$(G2X_CATEGORY)/scummvm/plugins/
 endif
 	$(CP) $(EXECUTABLE) $(bundle)/$(G2X_CATEGORY)/scummvm/scummvm
-	$(CP) $(srcdir)/dists/opendingux/scummvm.png $(bundle)/$(G2X_CATEGORY)/scummvm
-	$(CP) $(srcdir)/backends/platform/sdl/opendingux/README.OPENDINGUX $(bundle)/$(G2X_CATEGORY)/scummvm/README.man.txt
+	$(CP) $(srcdir)/backends/platform/sdl/miyoo/README.MIYOO $(bundle)/$(G2X_CATEGORY)/scummvm/README.man.txt
 	echo >> $(bundle)/$(G2X_CATEGORY)/scummvm/README.man.txt
 	echo '[General README]' >> $(bundle)/$(G2X_CATEGORY)/scummvm/README.man.txt
 	echo >> $(bundle)/$(G2X_CATEGORY)/scummvm/README.man.txt
 	cat $(srcdir)/README.md | sed -e 's/\[/⟦/g' -e 's/\]/⟧/g' -e '/^1\.1)/,$$ s/^[0-9][0-9]*\.[0-9][0-9]*.*/\[&\]/' >> $(bundle)/$(G2X_CATEGORY)/scummvm/README.man.txt
 	echo '[General README]' >> $(bundle)/$(G2X_CATEGORY)/scummvm/README.man.txt
 	$(MKDIR) -p $(bundle)/gmenu2x/sections/$(G2X_CATEGORY)
-	$(CP) $(srcdir)/dists/opendingux/scummvm.miyoo $(bundle)/gmenu2x/sections/$(G2X_CATEGORY)/scummvm
+	$(CP) $(srcdir)/dists/miyoo/scummvm.miyoo $(bundle)/gmenu2x/sections/$(G2X_CATEGORY)/scummvm
 	$(STRIP) $(bundle)/$(G2X_CATEGORY)/scummvm/scummvm
 
 sd-zip: $(bundle)
-	$(RM) scummvm_$(OPENDINGUX_TARGET).zip
-	cd $(bundle) && zip -r ../scummvm_$(OPENDINGUX_TARGET).zip $(G2X_CATEGORY) gmenu2x
+	$(RM) scummvm_$(MIYOO_TARGET).zip
+	cd $(bundle) && zip -r ../scummvm_$(MIYOO_TARGET).zip $(G2X_CATEGORY) gmenu2x

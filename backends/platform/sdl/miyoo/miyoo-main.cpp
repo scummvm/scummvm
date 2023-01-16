@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,21 +20,15 @@
  *
  */
 
-#include "common/scummsys.h"
-
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(MAEMO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3) && !defined(PSP2) && !defined(NINTENDO_SWITCH)  && !defined(__EMSCRIPTEN__) && !defined(MIYOO)
-
-#include "backends/platform/sdl/posix/posix.h"
+#include "backends/platform/sdl/miyoo/miyoo.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
 
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
+	g_system = new OSystem_SDL_Miyoo();
 	assert(g_system);
 
-	// Pre initialize the backend
 	g_system->init();
 
 #ifdef DYNAMIC_MODULES
@@ -48,5 +43,3 @@ int main(int argc, char *argv[]) {
 
 	return res;
 }
-
-#endif

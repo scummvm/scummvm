@@ -41,6 +41,12 @@ MODULE_OBJS += \
 	riscos/riscos.o
 endif
 
+ifdef MIYOO
+MODULE_OBJS += \
+	miyoo/miyoo-main.o \
+	miyoo/miyoo.o
+endif
+
 ifdef MORPHOS
 MODULE_OBJS += \
 	morphos/morphos-main.o \

@@ -3519,7 +3519,7 @@ if test -n "$_host"; then
 		miyoo)
 			_sysroot=`$CXX --print-sysroot`
 			_sdlpath=$_sysroot/usr/bin
-			append_var DEFINES  "-DMIYOO -DREDUCE_MEMORY_USAGE -DDINGUX -DOPENDINGUX -DUNCACHED_PLUGINS"
+			append_var DEFINES  "-DMIYOO -DREDUCE_MEMORY_USAGE -DUNCACHED_PLUGINS"
 			append_var CXXFLAGS "-march=armv5te -mtune=arm926ej-s -ffast-math -fomit-frame-pointer -ffunction-sections -fdata-sections"
 			append_var LDFLAGS  "-march=armv5te -mtune=arm926ej-s -ffast-math -fomit-frame-pointer -ffunction-sections -fdata-sections"
 			append_var LDFLAGS  "-O3 -Wl,--as-needed,--gc-sections"
@@ -3538,10 +3538,10 @@ if test -n "$_host"; then
 			_nuked_opl=no
 			_curl=no
 			_optimization_level=-O3
-			_backend="opendingux"
-			_port_mk="backends/platform/sdl/opendingux/miyoo.mk"
-			add_line_to_config_mk 'OPENDINGUX = 1'
-			add_line_to_config_mk "OPENDINGUX_TARGET = miyoo"
+			_backend="miyoo"
+			_port_mk="backends/platform/sdl/miyoo/miyoo.mk"
+			add_line_to_config_mk 'MIYOO = 1'
+			add_line_to_config_mk "MIYOO_TARGET = miyoo"
 			;;
 		n64)
 			append_var CXXFLAGS "-mno-extern-sdata"
