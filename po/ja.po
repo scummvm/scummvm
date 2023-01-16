@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-15 21:20+0000\n"
-"PO-Revision-Date: 2023-01-11 11:34+0000\n"
+"PO-Revision-Date: 2023-01-16 09:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -260,16 +260,11 @@ msgid "No new %S available"
 msgstr "新しい利用可能な%Sなし"
 
 #: gui/downloadpacksdialog.cpp:463
-#, fuzzy, c-format
-#| msgid ""
-#| "You are about to remove %s %s of data, deleting all previously downloaded "
-#| "icon files. Do you want to proceed?"
+#, c-format
 msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
-msgstr ""
-"データ%s %sと、ダウンロードした全てのアイコンファイルが削除されます。続行しま"
-"すか?"
+msgstr "データ%s %sを削除すると、既にダウンロードされた%Sの全てが削除されます。続行しますか?"
 
 #: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
 msgid "Proceed"
