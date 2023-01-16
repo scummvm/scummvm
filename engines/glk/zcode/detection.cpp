@@ -121,8 +121,8 @@ bool ZCodeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			++p;
 
 		if (!p->_gameId) {
-			// Generic .dat/.zip files don't get reported as matches unless they have a known md5
-			if (filename.hasSuffixIgnoreCase(".dat") || filename.hasSuffixIgnoreCase(".zip") || emptyBlorb)
+			// Generic .dat/.data/.zip files don't get reported as matches unless they have a known md5
+			if (filename.hasSuffixIgnoreCase(".dat") || filename.hasSuffixIgnoreCase(".data") || filename.hasSuffixIgnoreCase(".zip") || emptyBlorb)
 				continue;
 
 			const PlainGameDescriptor &desc = ZCODE_GAME_LIST[0];
