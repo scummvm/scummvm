@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-16 17:10+0000\n"
-"PO-Revision-Date: 2023-01-15 10:31+0000\n"
+"PO-Revision-Date: 2023-01-16 18:24+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1135,10 +1135,8 @@ msgid "the filtering setting could not be changed"
 msgstr "Die Filtereinstellung konnte nicht geändert werden"
 
 #: gui/options.cpp:842
-#, fuzzy
-#| msgid "the fullscreen setting could not be changed"
 msgid "the vsync setting could not be changed"
-msgstr "Vollbildeinstellung konnte nicht geändert werden"
+msgstr "Die VSync-Einstellung konnte nicht geändert werden"
 
 #: gui/options.cpp:859
 msgid "the shader could not be changed"
