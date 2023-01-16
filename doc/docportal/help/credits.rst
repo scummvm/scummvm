@@ -1167,6 +1167,15 @@ TeenAgent
    * - Vladimir Menshakov
      -
 
+Tetraedge
+^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Matthew Duggan
+     -
+
 Tinsel
 ^^^^^^
 
