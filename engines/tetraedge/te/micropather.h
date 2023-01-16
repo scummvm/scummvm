@@ -345,7 +345,8 @@ namespace micropather
 	};
 
 	struct CacheData {
-		CacheData() : nBytesAllocated(0), nBytesUsed(0), memoryFraction(0), hit(0), miss(0), hitFraction(0) {}
+		CacheData() { reset(); }
+
 		int nBytesAllocated;
 		int nBytesUsed;
 		float memoryFraction;
@@ -353,6 +354,16 @@ namespace micropather
 		int hit;
 		int miss;
 		float hitFraction;
+
+		void reset() {
+			nBytesAllocated = 0;
+			nBytesUsed = 0;
+			memoryFraction = 0;
+
+			hit = 0;
+			miss = 0;
+			hitFraction = 0;
+		}
 	};
 
 	/**

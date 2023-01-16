@@ -855,7 +855,9 @@ const PathCache::Item* PathCache::Find( void* start, void* end )
 
 void MicroPather::GetCacheData( CacheData* data )
 {
-	memset( data, 0, sizeof(*data) );
+	if (data) {
+		data->reset();
+	}
 
 	if ( pathCache ) {
 		data->nBytesAllocated = pathCache->AllocatedBytes();
