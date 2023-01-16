@@ -123,7 +123,7 @@ MODULE_OBJS += \
 	te/te_renderer_tinygl.o
 endif
 
-ifdef USE_OPENGL
+ifdef USE_OPENGL_GAME
 MODULE_OBJS += \
 	game/characters_shadow_opengl.o \
 	te/te_3d_texture_opengl.o \
