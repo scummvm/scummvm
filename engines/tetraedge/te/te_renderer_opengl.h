@@ -53,6 +53,7 @@ public:
 	void shadowMode(enum ShadowMode mode) override;
 	Common::String vendor() override;
 	void applyMaterial(const TeMaterial &m) override;
+	void updateGlobalLight() override;
 
 protected:
 

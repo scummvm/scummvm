@@ -53,6 +53,7 @@ public:
 	void setViewport(int x, int y, int w, int h) override;
 	void shadowMode(enum ShadowMode mode) override;
 	void applyMaterial(const TeMaterial &m) override;
+	void updateGlobalLight() override;
 	Common::String vendor() override;
 
 protected:
