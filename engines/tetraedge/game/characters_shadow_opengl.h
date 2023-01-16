@@ -22,7 +22,7 @@
 #ifndef TETRAEDGE_GAME_CHARACTERS_SHADOW_OPENGL_H
 #define TETRAEDGE_GAME_CHARACTERS_SHADOW_OPENGL_H
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_GAME)
 
 #include "tetraedge/game/characters_shadow.h"
 

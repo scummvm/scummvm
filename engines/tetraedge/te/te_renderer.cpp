@@ -339,7 +339,7 @@ void TeRenderer::translate(float x, float y, float z) {
 TeRenderer *TeRenderer::makeInstance() {
 	Graphics::RendererType r = g_engine->preferredRendererType();
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL_GAME)
 	if (r == Graphics::kRendererTypeOpenGL)
 		return new TeRendererOpenGL();
 #endif
