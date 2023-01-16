@@ -34,7 +34,6 @@ const DebugChannelDef TetraedgeMetaEngineDetection::debugFlagList[] = {
 TetraedgeMetaEngineDetection::TetraedgeMetaEngineDetection() : AdvancedMetaEngineDetection(Tetraedge::GAME_DESCRIPTIONS,
 	sizeof(ADGameDescription), Tetraedge::GAME_NAMES) {
 	_flags = kADFlagMatchFullPaths;
-	_maxScanDepth = 3;
 }
 
 REGISTER_PLUGIN_STATIC(TETRAEDGE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, TetraedgeMetaEngineDetection);
