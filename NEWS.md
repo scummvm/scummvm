@@ -92,6 +92,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCI:
    - Improved text rendering for Macintosh titles.
+   - Added support for Casio MT-540, CT-460 and CSM-1 MIDI devices for the SCI0
+     games that originally supported it.
 
  SCUMM:
    - Added support for CGA, CGA Composite, CGA black & white and Hercules modes
