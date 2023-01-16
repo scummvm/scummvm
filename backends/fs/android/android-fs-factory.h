@@ -37,11 +37,13 @@ class AndroidFilesystemFactory final : public FilesystemFactory,
 protected:
 	AndroidFilesystemFactory();
 public:
-	void initSAF();
 	AbstractFSNode *makeRootFileNode() const override;
 	AbstractFSNode *makeCurrentDirectoryFileNode() const override;
 	AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
 
+	void initSAF();
+	bool hasSAF() const { return _withSAF; }
+	void getSAFTrees(AbstractFSList &list, bool allowSAFadd) const;
 private:
 	struct Config : public DrivePOSIXFilesystemNode::Config {
 		Config(const AndroidFilesystemFactory *factory);

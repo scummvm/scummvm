@@ -87,7 +87,6 @@ public:
 	static Graphics::Surface *getBitmapResource(BitmapResources resource);
 	static void setTouchMode(int touchMode);
 	static int getTouchMode();
-	static void showSAFRevokePermsControl(bool enable);
 	static void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 	static jint getAndroidSDKVersionId();
 
@@ -138,7 +137,6 @@ private:
 	static jmethodID _MID_getBitmapResource;
 	static jmethodID _MID_setTouchMode;
 	static jmethodID _MID_getTouchMode;
-	static jmethodID _MID_showSAFRevokePermsControl;
 	static jmethodID _MID_getSysArchives;
 	static jmethodID _MID_getAllStorageLocations;
 	static jmethodID _MID_initSurface;

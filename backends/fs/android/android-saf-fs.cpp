@@ -64,6 +64,7 @@ jmethodID AndroidSAFFilesystemNode::_MID_createDirectory = 0;
 jmethodID AndroidSAFFilesystemNode::_MID_createFile = 0;
 jmethodID AndroidSAFFilesystemNode::_MID_createReadStream = 0;
 jmethodID AndroidSAFFilesystemNode::_MID_createWriteStream = 0;
+jmethodID AndroidSAFFilesystemNode::_MID_removeTree = 0;
 
 jfieldID AndroidSAFFilesystemNode::_FID__treeName = 0;
 jfieldID AndroidSAFFilesystemNode::_FID__root = 0;
@@ -106,6 +107,7 @@ void AndroidSAFFilesystemNode::initJNI() {
 	FIND_METHOD(, createFile, "(" SAFFSNodeSig "Ljava/lang/String;)" SAFFSNodeSig);
 	FIND_METHOD(, createReadStream, "(" SAFFSNodeSig ")I");
 	FIND_METHOD(, createWriteStream, "(" SAFFSNodeSig ")I");
+	FIND_METHOD(, removeTree, "()V");
 
 	FIND_FIELD(, _treeName, "Ljava/lang/String;");
 	FIND_FIELD(, _root, SAFFSNodeSig);
@@ -491,6 +493,21 @@ bool AndroidSAFFilesystemNode::createDirectory() {
 	cacheData(true);
 
 	return true;
+}
+
+void AndroidSAFFilesystemNode::removeTree() {
+	assert(_safParent == nullptr);
+
+	JNIEnv *env = JNI::getEnv();
+
+	env->CallVoidMethod(_safTree, _MID_removeTree);
+
+	if (env->ExceptionCheck()) {
+		LOGE("SAFFSTree::removeTree failed");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
 }
 
 void AndroidSAFFilesystemNode::cacheData(bool force) {

@@ -41,6 +41,7 @@ protected:
 	static jmethodID _MID_createFile;
 	static jmethodID _MID_createReadStream;
 	static jmethodID _MID_createWriteStream;
+	static jmethodID _MID_removeTree;
 
 	static jfieldID _FID__treeName;
 	static jfieldID _FID__root;
@@ -131,6 +132,11 @@ public:
 	Common::SeekableWriteStream *createWriteStream() override;
 	bool createDirectory() override;
 
+	/**
+	 * Removes the SAF tree.
+	 * Only works on the root node
+	 */
+	void removeTree();
 protected:
 	/**
 	 * Creates an non-existent AndroidSAFFilesystemNode given its tree, parent node and name

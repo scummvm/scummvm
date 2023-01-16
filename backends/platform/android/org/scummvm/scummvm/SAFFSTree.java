@@ -11,6 +11,7 @@ import java.util.Map;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.UriPermission;
 import android.database.Cursor;
 import android.net.Uri;
@@ -340,6 +341,19 @@ public class SAFFSTree {
 
 	public int createWriteStream(SAFFSNode node) {
 		return createStream(node, "wt");
+	}
+
+	public void removeTree() {
+		final ContentResolver resolver = _context.getContentResolver();
+
+		String treeId = getTreeId();
+
+		resolver.releasePersistableUriPermission(_treeUri,
+			Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+		if (_trees == null || _trees.remove(treeId) == null) {
+			loadSAFTrees(_context);
+		}
 	}
 
 	private SAFFSNode createDocument(SAFFSNode node, String name, String mimeType) {
