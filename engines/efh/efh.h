@@ -177,6 +177,7 @@ struct NPCStruct {
 
 	void init();
 	uint8 getPronoun();
+	void synchronize(Common::Serializer &s);
 };
 
 struct FontDescr {
@@ -537,10 +538,16 @@ private:
 	Common::String _attackBuffer;
 	Common::String _messageToBePrinted;
 
-	uint8 *_mapBitmapRefArr[19];
-	MapSpecialTileStruct _mapSpecialTile[100];
-	MapMonster _mapMonsters[64];
-	uint8 _mapGameMap[64][64];
+	struct BitmapRef {
+		int8 _setId1;
+		int8 _setId2;
+	};
+
+	BitmapRef _mapBitmapRefArr[19];
+	
+	MapSpecialTileStruct _mapSpecialTiles[19][100];
+	MapMonster _mapMonsters[19][64];
+	uint8 _mapGameMaps[19][64][64];
 
 	uint8 _defaultBoxColor;
 	FontDescr _fontDescr;

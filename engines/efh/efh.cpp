@@ -506,13 +506,13 @@ void EfhEngine::initMapMonsters() {
 	debugC(3, kDebugEngine, "initMapMonsters");
 
 	for (uint monsterId = 0; monsterId < 64; ++monsterId) {
-		if (_mapMonsters[monsterId]._fullPlaceId == 0xFF)
+		if (_mapMonsters[_techId][monsterId]._fullPlaceId == 0xFF)
 			continue;
 
 		for (uint counter = 0; counter < 9; ++counter)
-			_mapMonsters[monsterId]._hitPoints[counter] = 0;
+			_mapMonsters[_techId][monsterId]._hitPoints[counter] = 0;
 
-		uint8 groupSize = _mapMonsters[monsterId]._groupSize;
+		uint8 groupSize = _mapMonsters[_techId][monsterId]._groupSize;
 		if (groupSize == 0)
 			groupSize = getRandom(10) - 1;
 
@@ -521,60 +521,23 @@ void EfhEngine::initMapMonsters() {
 		
 		for (uint counter = 0; counter < groupSize; ++counter) {
 			uint rand100 = getRandom(100);
-			uint16 pictureRef = kEncounters[_mapMonsters[monsterId]._monsterRef]._pictureRef;
+			uint16 pictureRef = kEncounters[_mapMonsters[_techId][monsterId]._monsterRef]._pictureRef;
 
 			if (rand100 <= 25) {
 				uint16 delta = getRandom(pictureRef / 2);
-				_mapMonsters[monsterId]._hitPoints[counter] = pictureRef - delta;
+				_mapMonsters[_techId][monsterId]._hitPoints[counter] = pictureRef - delta;
 			} else if (rand100 <= 75) {
-				_mapMonsters[monsterId]._hitPoints[counter] = pictureRef;
+				_mapMonsters[_techId][monsterId]._hitPoints[counter] = pictureRef;
 			} else {
 				uint16 delta = getRandom(pictureRef / 2);
-				_mapMonsters[monsterId]._hitPoints[counter] = pictureRef + delta;
+				_mapMonsters[_techId][monsterId]._hitPoints[counter] = pictureRef + delta;
 			}
 		}
 	}
 }
 
 void EfhEngine::loadMapArrays(int idx) {
-	debugC(6, kDebugEngine, "loadMapArrays %d", idx);
-	debug("TODO : rewrite the pre-loading of data and loadMapArrays in order to avoid to lose info when changing map");
-
-	uint8 *mapSpecialTilePtr = &_mapArr[idx][2];
-
-	for (int i = 0; i < 100; ++i) {
-		_mapSpecialTile[i]._placeId = mapSpecialTilePtr[9 * i];
-		_mapSpecialTile[i]._posX = mapSpecialTilePtr[9 * i + 1];
-		_mapSpecialTile[i]._posY = mapSpecialTilePtr[9 * i + 2];
-		_mapSpecialTile[i]._field3 = mapSpecialTilePtr[9 * i + 3];
-		_mapSpecialTile[i]._triggerId = mapSpecialTilePtr[9 * i + 4];
-		_mapSpecialTile[i]._field5_textId = READ_LE_UINT16(&mapSpecialTilePtr[9 * i + 5]);
-		_mapSpecialTile[i]._field7_textId = READ_LE_UINT16(&mapSpecialTilePtr[9 * i + 7]);
-	}
-
-	uint8 *mapMonstersPtr = &_mapArr[idx][902];
-
-	for (int i = 0; i < 64; ++i) {
-		_mapMonsters[i]._possessivePronounSHL6 = mapMonstersPtr[29 * i];
-		_mapMonsters[i]._npcId = mapMonstersPtr[29 * i + 1];
-		_mapMonsters[i]._fullPlaceId = mapMonstersPtr[29 * i + 2];
-		_mapMonsters[i]._posX = mapMonstersPtr[29 * i + 3];
-		_mapMonsters[i]._posY = mapMonstersPtr[29 * i + 4];
-		_mapMonsters[i]._weaponItemId = mapMonstersPtr[29 * i + 5];
-		_mapMonsters[i]._maxDamageAbsorption = mapMonstersPtr[29 * i + 6];
-		_mapMonsters[i]._monsterRef = mapMonstersPtr[29 * i + 7];
-		_mapMonsters[i]._additionalInfo = mapMonstersPtr[29 * i + 8];
-		_mapMonsters[i]._talkTextId = mapMonstersPtr[29 * i + 9];
-		_mapMonsters[i]._groupSize = mapMonstersPtr[29 * i + 10];
-		for (int j = 0; j < 9; ++j)
-			_mapMonsters[i]._hitPoints[j] = READ_LE_INT16(&mapMonstersPtr[29 * i + 11 + j * 2]);
-	}
-
-	uint8 *mapPtr = &_mapArr[idx][2758];
-	for (int i = 0; i < 64; ++i) {
-		for (int j = 0; j < 64; ++j)
-			_mapGameMap[i][j] = *mapPtr++;
-	}
+	// No longer required as everything is in memory. 
 }
 
 void EfhEngine::saveAnimImageSetId() {
@@ -703,7 +666,7 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 map
 		int16 drawPosX = 128;
 		for (int16 counterX = minX; counterX <= maxX; ++counterX) {
 			if (largeMapFl) {
-				int16 curTile = _mapGameMap[counterX][counterY];
+				int16 curTile = _mapGameMaps[_techId][counterX][counterY];
 				displayRawDataAtPos(_imageSetSubFilesArray[curTile], drawPosX, drawPosY);
 			} else {
 				int16 curTile = _curPlace[counterX][counterY];
@@ -723,26 +686,26 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 map
 
 	if (drawMonstersFl) {
 		for (uint var16 = 0; var16 < 64; ++var16) {
-			if ((_largeMapFlag && _mapMonsters[var16]._fullPlaceId == 0xFE) || (!_largeMapFlag && _mapMonsters[var16]._fullPlaceId == _fullPlaceId)){
+			if ((_largeMapFlag && _mapMonsters[_techId][var16]._fullPlaceId == 0xFE) || (!_largeMapFlag && _mapMonsters[_techId][var16]._fullPlaceId == _fullPlaceId)){
 				bool var4 = false;
-				int16 posX = _mapMonsters[var16]._posX;
-				int16 posY = _mapMonsters[var16]._posY;
+				int16 posX = _mapMonsters[_techId][var16]._posX;
+				int16 posY = _mapMonsters[_techId][var16]._posY;
 
 				if (posX < minX || posX > maxX || posY < minY || posY > maxY)
 					continue;
 
 				for (uint counterY = 0; counterY < 9 && !var4; ++counterY) {
-					if (_mapMonsters[var16]._hitPoints[counterY] > 0)
+					if (_mapMonsters[_techId][var16]._hitPoints[counterY] > 0)
 						var4 = true;
 				}
 
 				if (!var4)
 					continue;
 
-				int16 var6 = 148 + kEncounters[_mapMonsters[var16]._monsterRef]._animId;
-				int16 var1 = _mapMonsters[var16]._possessivePronounSHL6 & 0x3F;
+				int16 var6 = 148 + kEncounters[_mapMonsters[_techId][var16]._monsterRef]._animId;
+				int16 var1 = _mapMonsters[_techId][var16]._possessivePronounSHL6 & 0x3F;
 
-				if (var1 == 0x3F && isNpcATeamMember(_mapMonsters[var16]._npcId))
+				if (var1 == 0x3F && isNpcATeamMember(_mapMonsters[_techId][var16]._npcId))
 					continue;
 
 				int16 drawPosX = 128 + (posX - minX) * 16;
@@ -1119,7 +1082,7 @@ void EfhEngine::transitionMap(int16 centerX, int16 centerY) {
 			int16 curY = counterY + minY;
 
 			if (curX < 64 && curY < 64)
-				_mapGameMap[curX][curY] = _curPlace[counterX][counterY];
+				_mapGameMaps[_techId][curX][curY] = _curPlace[counterX][counterY];
 		}
 		drawScreen();
 	}
@@ -1130,7 +1093,7 @@ void EfhEngine::transitionMap(int16 centerX, int16 centerY) {
 			int16 curY = counterY + minY;
 
 			if (curX < 64 && curY < 64)
-				_mapGameMap[curX][curY] = _curPlace[counterX][counterY];
+				_mapGameMaps[_techId][curX][curY] = _curPlace[counterX][counterY];
 		}
 		drawScreen();
 	}
@@ -1168,7 +1131,7 @@ int16 EfhEngine::findMapSpecialTileIndex(int16 posX, int16 posY) {
 	uint16 searchPlaceId = _largeMapFlag ? 0xFE : _fullPlaceId;
 	
 	for (uint counter = 0; counter < 100; ++counter) {
-		if (_mapSpecialTile[counter]._posX == posX && _mapSpecialTile[counter]._posY == posY && _mapSpecialTile[counter]._placeId == searchPlaceId)
+		if (_mapSpecialTiles[_techId][counter]._posX == posX && _mapSpecialTiles[_techId][counter]._posY == posY && _mapSpecialTiles[_techId][counter]._placeId == searchPlaceId)
 			return counter;
 	}
 
@@ -1371,13 +1334,13 @@ void EfhEngine::computeMapAnimation() {
 				continue;
 
 			if (_largeMapFlag) {
-				uint8 curTile = _mapGameMap[counterX][counterY];
+				uint8 curTile = _mapGameMaps[_techId][counterX][counterY];
 				if (curTile >= 1 && curTile <= 0xF) {
 					if (getRandom(100) < 50)
-						_mapGameMap[counterX][counterY] += 0xC5;
+						_mapGameMaps[_techId][counterX][counterY] += 0xC5;
 				} else if (curTile >= 0xC6 && curTile <= 0xD5) {
 					if (getRandom(100) < 50)
-						_mapGameMap[counterX][counterY] -= 0xC5;
+						_mapGameMaps[_techId][counterX][counterY] -= 0xC5;
 				}
 			} else {
 				uint8 curTile = _curPlace[counterX][counterY];
@@ -1414,10 +1377,10 @@ int8 EfhEngine::checkMonsterMoveCollisionAndTileTexture(int16 monsterId) {
 	debugC(3, kDebugEngine,"checkMonsterMoveCollisionAndTileTexture %d", monsterId);
 
 	int16 maxSize = _largeMapFlag ? 63 : 23;
-	if (_mapMonsters[monsterId]._posX < 0 || _mapMonsters[monsterId]._posY < 0 || _mapMonsters[monsterId]._posX > maxSize || _mapMonsters[monsterId]._posY > maxSize)
+	if (_mapMonsters[_techId][monsterId]._posX < 0 || _mapMonsters[_techId][monsterId]._posY < 0 || _mapMonsters[_techId][monsterId]._posX > maxSize || _mapMonsters[_techId][monsterId]._posY > maxSize)
 		return 0;
 
-	if (_mapMonsters[monsterId]._posX == _mapPosX && _mapMonsters[monsterId]._posY == _mapPosY)
+	if (_mapMonsters[_techId][monsterId]._posX == _mapPosX && _mapMonsters[_techId][monsterId]._posY == _mapPosY)
 		return 0;
 
 	for (int counter = 0; counter < 64; ++counter) {
@@ -1427,43 +1390,43 @@ int8 EfhEngine::checkMonsterMoveCollisionAndTileTexture(int16 monsterId) {
 		if (!checkMapMonsterAvailability(counter))
 			continue;
 
-		if (_mapMonsters[monsterId]._fullPlaceId == _mapMonsters[counter]._fullPlaceId
-		 && _mapMonsters[monsterId]._posX == _mapMonsters[counter]._posX
-		 && _mapMonsters[monsterId]._posY == _mapMonsters[counter]._posY)
+		if (_mapMonsters[_techId][monsterId]._fullPlaceId == _mapMonsters[_techId][counter]._fullPlaceId
+		 && _mapMonsters[_techId][monsterId]._posX == _mapMonsters[_techId][counter]._posX
+		 && _mapMonsters[_techId][monsterId]._posY == _mapMonsters[_techId][counter]._posY)
 			return 0;
 	}
 
-	return checkTileStatus(_mapMonsters[monsterId]._posX, _mapMonsters[monsterId]._posY, false);
+	return checkTileStatus(_mapMonsters[_techId][monsterId]._posX, _mapMonsters[_techId][monsterId]._posY, false);
 }
 
 bool EfhEngine::moveMonsterAwayFromTeam(int16 monsterId) {
 	debugC(6, kDebugEngine, "moveMonsterAwayFromTeam %d", monsterId);
 
-	if (_mapMonsters[monsterId]._posX < _mapPosX) {
-		--_mapMonsters[monsterId]._posX;
-		if (_mapMonsters[monsterId]._posY < _mapPosY)
-			--_mapMonsters[monsterId]._posY;
-		else if (_mapMonsters[monsterId]._posY > _mapPosY)
-			++_mapMonsters[monsterId]._posY;
+	if (_mapMonsters[_techId][monsterId]._posX < _mapPosX) {
+		--_mapMonsters[_techId][monsterId]._posX;
+		if (_mapMonsters[_techId][monsterId]._posY < _mapPosY)
+			--_mapMonsters[_techId][monsterId]._posY;
+		else if (_mapMonsters[_techId][monsterId]._posY > _mapPosY)
+			++_mapMonsters[_techId][monsterId]._posY;
 
 		return true;
 	}
 
-	if (_mapMonsters[monsterId]._posX > _mapPosX) {
-		++_mapMonsters[monsterId]._posX;
-		if (_mapMonsters[monsterId]._posY < _mapPosY)
-			--_mapMonsters[monsterId]._posY;
-		else if (_mapMonsters[monsterId]._posY > _mapPosY)
-			++_mapMonsters[monsterId]._posY;
+	if (_mapMonsters[_techId][monsterId]._posX > _mapPosX) {
+		++_mapMonsters[_techId][monsterId]._posX;
+		if (_mapMonsters[_techId][monsterId]._posY < _mapPosY)
+			--_mapMonsters[_techId][monsterId]._posY;
+		else if (_mapMonsters[_techId][monsterId]._posY > _mapPosY)
+			++_mapMonsters[_techId][monsterId]._posY;
 
 		return true;
 	}
 
 	// Original checks for posX equality, which is the only possible option at this point => skipped
-	if (_mapMonsters[monsterId]._posY < _mapPosY)
-		--_mapMonsters[monsterId]._posY;
-	else if (_mapMonsters[monsterId]._posY > _mapPosY)
-		++_mapMonsters[monsterId]._posY;
+	if (_mapMonsters[_techId][monsterId]._posY < _mapPosY)
+		--_mapMonsters[_techId][monsterId]._posY;
+	else if (_mapMonsters[_techId][monsterId]._posY > _mapPosY)
+		++_mapMonsters[_techId][monsterId]._posY;
 	else
 		return false;
 
@@ -1473,31 +1436,31 @@ bool EfhEngine::moveMonsterAwayFromTeam(int16 monsterId) {
 bool EfhEngine::moveMonsterTowardsTeam(int16 monsterId) {
 	debugC(6, kDebugEngine, "moveMonsterTowardsTeam %d", monsterId);
 
-	if (_mapMonsters[monsterId]._posX < _mapPosX) {
-		++_mapMonsters[monsterId]._posX;
-		if (_mapMonsters[monsterId]._posY < _mapPosY)
-			++_mapMonsters[monsterId]._posY;
-		else if (_mapMonsters[monsterId]._posY > _mapPosY)
-			--_mapMonsters[monsterId]._posY;
+	if (_mapMonsters[_techId][monsterId]._posX < _mapPosX) {
+		++_mapMonsters[_techId][monsterId]._posX;
+		if (_mapMonsters[_techId][monsterId]._posY < _mapPosY)
+			++_mapMonsters[_techId][monsterId]._posY;
+		else if (_mapMonsters[_techId][monsterId]._posY > _mapPosY)
+			--_mapMonsters[_techId][monsterId]._posY;
 
 		return true;
 	}
 
-	if (_mapMonsters[monsterId]._posX > _mapPosX) {
-		--_mapMonsters[monsterId]._posX;
-		if (_mapMonsters[monsterId]._posY < _mapPosY)
-			++_mapMonsters[monsterId]._posY;
-		else if (_mapMonsters[monsterId]._posY > _mapPosY)
-			--_mapMonsters[monsterId]._posY;
+	if (_mapMonsters[_techId][monsterId]._posX > _mapPosX) {
+		--_mapMonsters[_techId][monsterId]._posX;
+		if (_mapMonsters[_techId][monsterId]._posY < _mapPosY)
+			++_mapMonsters[_techId][monsterId]._posY;
+		else if (_mapMonsters[_techId][monsterId]._posY > _mapPosY)
+			--_mapMonsters[_techId][monsterId]._posY;
 
 		return true;
 	}
 
 	// Original checks for posX equality, which is the only possible option at this point => skipped
-	if (_mapMonsters[monsterId]._posY < _mapPosY)
-		++_mapMonsters[monsterId]._posY;
-	else if (_mapMonsters[monsterId]._posY > _mapPosY)
-		--_mapMonsters[monsterId]._posY;
+	if (_mapMonsters[_techId][monsterId]._posY < _mapPosY)
+		++_mapMonsters[_techId][monsterId]._posY;
+	else if (_mapMonsters[_techId][monsterId]._posY > _mapPosY)
+		--_mapMonsters[_techId][monsterId]._posY;
 	else
 		return false;
 
@@ -1511,39 +1474,39 @@ bool EfhEngine::moveMonsterGroupOther(int16 monsterId, int16 direction) {
 
 	switch (direction - 1) {
 	case 0:
-		--_mapMonsters[monsterId]._posY;
+		--_mapMonsters[_techId][monsterId]._posY;
 		retVal = true;
 		break;
 	case 1:
-		--_mapMonsters[monsterId]._posY;
-		++_mapMonsters[monsterId]._posX;
+		--_mapMonsters[_techId][monsterId]._posY;
+		++_mapMonsters[_techId][monsterId]._posX;
 		retVal = true;
 		break;
 	case 2:
-		++_mapMonsters[monsterId]._posX;
+		++_mapMonsters[_techId][monsterId]._posX;
 		retVal = true;
 		break;
 	case 3:
-		++_mapMonsters[monsterId]._posX;
-		++_mapMonsters[monsterId]._posY;
+		++_mapMonsters[_techId][monsterId]._posX;
+		++_mapMonsters[_techId][monsterId]._posY;
 		retVal = true;
 		break;
 	case 4:
-		++_mapMonsters[monsterId]._posY;
+		++_mapMonsters[_techId][monsterId]._posY;
 		retVal = true;
 		break;
 	case 5:
-		++_mapMonsters[monsterId]._posY;
-		--_mapMonsters[monsterId]._posX;
+		++_mapMonsters[_techId][monsterId]._posY;
+		--_mapMonsters[_techId][monsterId]._posX;
 		retVal = true;
 		break;
 	case 6:
-		--_mapMonsters[monsterId]._posX;
+		--_mapMonsters[_techId][monsterId]._posX;
 		retVal = true;
 		break;
 	case 7:
-		--_mapMonsters[monsterId]._posX;
-		--_mapMonsters[monsterId]._posY;
+		--_mapMonsters[_techId][monsterId]._posX;
+		--_mapMonsters[_techId][monsterId]._posY;
 		retVal = true;
 		break;
 	default:
@@ -1572,8 +1535,8 @@ bool EfhEngine::moveMonsterGroupRandom(int16 monsterId) {
 int16 EfhEngine::computeMonsterGroupDistance(int16 monsterId) {
 	debugC(2, kDebugEngine, "computeMonsterGroupDistance %d", monsterId);
 
-	int16 monsterPosX = _mapMonsters[monsterId]._posX;
-	int16 monsterPosY = _mapMonsters[monsterId]._posY;
+	int16 monsterPosX = _mapMonsters[_techId][monsterId]._posX;
+	int16 monsterPosY = _mapMonsters[_techId][monsterId]._posY;
 
 	int16 deltaX = monsterPosX - _mapPosX;
 	int16 deltaY = monsterPosY - _mapPosY;
@@ -1600,10 +1563,10 @@ bool EfhEngine::checkMonsterMovementType(int16 id, bool teamFlag) {
 	if (teamFlag)
 		monsterId = _teamMonsterIdArray[id];
 
-	if ((_mapMonsters[monsterId]._additionalInfo & 0xF) >= 8)
+	if ((_mapMonsters[_techId][monsterId]._additionalInfo & 0xF) >= 8)
 		return true;
 
-	if (_unk2C8AA != 0 && (_mapMonsters[monsterId]._additionalInfo & 0x80) != 0)
+	if (_unk2C8AA != 0 && (_mapMonsters[_techId][monsterId]._additionalInfo & 0x80) != 0)
 		return true;
 
 	return false;
@@ -1616,7 +1579,7 @@ bool EfhEngine::checkTeamWeaponRange(int16 monsterId) {
 		return true;
 
 	for (uint counter = 0; counter < 5; ++counter) {
-		if (_teamMonsterIdArray[counter] == monsterId && checkMonsterMovementType(monsterId, false) && checkWeaponRange(monsterId, _mapMonsters[monsterId]._weaponItemId))
+		if (_teamMonsterIdArray[counter] == monsterId && checkMonsterMovementType(monsterId, false) && checkWeaponRange(monsterId, _mapMonsters[_techId][monsterId]._weaponItemId))
 			return false;
 	}
 
@@ -1626,10 +1589,10 @@ bool EfhEngine::checkTeamWeaponRange(int16 monsterId) {
 bool EfhEngine::checkIfMonsterOnSameLargeMapPlace(int16 monsterId) {
 	debugC(6, kDebugEngine, "checkIfMonsterOnSameLargeMapPlace %d", monsterId);
 
-	if (_largeMapFlag && _mapMonsters[monsterId]._fullPlaceId == 0xFE)
+	if (_largeMapFlag && _mapMonsters[_techId][monsterId]._fullPlaceId == 0xFE)
 		return true;
 
-	if (!_largeMapFlag && _mapMonsters[monsterId]._fullPlaceId == _fullPlaceId)
+	if (!_largeMapFlag && _mapMonsters[_techId][monsterId]._fullPlaceId == _fullPlaceId)
 		return true;
 
 	return false;
@@ -1638,7 +1601,7 @@ bool EfhEngine::checkIfMonsterOnSameLargeMapPlace(int16 monsterId) {
 bool EfhEngine::checkMonsterWeaponRange(int16 monsterId) {
 	debugC(6, kDebugEngine, "checkMonsterWeaponRange %d", monsterId);
 
-	return checkWeaponRange(monsterId, _mapMonsters[monsterId]._weaponItemId);
+	return checkWeaponRange(monsterId, _mapMonsters[_techId][monsterId]._weaponItemId);
 }
 
 void EfhEngine::handleMapMonsterMoves() {
@@ -1662,8 +1625,8 @@ void EfhEngine::handleMapMonsterMoves() {
 		if (!checkIfMonsterOnSameLargeMapPlace(monsterId))
 			continue;
 
-		int16 previousPosX = _mapMonsters[monsterId]._posX;
-		int16 previousPosY = _mapMonsters[monsterId]._posY;
+		int16 previousPosX = _mapMonsters[_techId][monsterId]._posX;
+		int16 previousPosY = _mapMonsters[_techId][monsterId]._posY;
 
 		if (previousPosX < minDisplayedMapX || previousPosX > maxDisplayedMapX || previousPosY < minDisplayedMapY || previousPosY > maxDisplayedMapY)
 			continue;
@@ -1671,12 +1634,12 @@ void EfhEngine::handleMapMonsterMoves() {
 		bool monsterMovedFl = false;
 		int16 lastRangeCheck = 0;
 
-		int8 monsterMoveType = _mapMonsters[monsterId]._additionalInfo & 0xF; // 0000 1111
+		int8 monsterMoveType = _mapMonsters[_techId][monsterId]._additionalInfo & 0xF; // 0000 1111
 
-		if (_unk2C8AA != 0 && (_mapMonsters[monsterId]._additionalInfo & 0x80)) // 1000 0000
+		if (_unk2C8AA != 0 && (_mapMonsters[_techId][monsterId]._additionalInfo & 0x80)) // 1000 0000
 			monsterMoveType = 9;
 
-		int16 randomModPct = _mapMonsters[monsterId]._additionalInfo & 0x70; // 0111 0000
+		int16 randomModPct = _mapMonsters[_techId][monsterId]._additionalInfo & 0x70; // 0111 0000
 		randomModPct >>= 4; // Max 7 (0111)
 
 		int16 retryCounter = randomModPct;
@@ -1788,13 +1751,13 @@ void EfhEngine::handleMapMonsterMoves() {
 					int8 checkMoveFl = checkMonsterMoveCollisionAndTileTexture(monsterId);
 
 					if (checkMoveFl == 0) { // Blocked
-						_mapMonsters[monsterId]._posX = previousPosX;
-						_mapMonsters[monsterId]._posY = previousPosY;
+						_mapMonsters[_techId][monsterId]._posX = previousPosX;
+						_mapMonsters[_techId][monsterId]._posY = previousPosY;
 						monsterMovedFl = false;
 						--retryCounter;
 					} else if (checkMoveFl == 2) { // Wall
-						_mapMonsters[monsterId]._posX = previousPosX;
-						_mapMonsters[monsterId]._posY = previousPosY;
+						_mapMonsters[_techId][monsterId]._posX = previousPosX;
+						_mapMonsters[_techId][monsterId]._posY = previousPosY;
 					}
 				}
 
@@ -1815,11 +1778,11 @@ void EfhEngine::handleMapMonsterMoves() {
 bool EfhEngine::checkMapMonsterAvailability(int16 monsterId) {
 	debugC(6, kDebugEngine, "checkMapMonsterAvailability %d", monsterId);
 
-	if (_mapMonsters[monsterId]._fullPlaceId == 0xFF)
+	if (_mapMonsters[_techId][monsterId]._fullPlaceId == 0xFF)
 		return false;
 
 	for (uint counter = 0; counter < 9; ++counter) {
-		if (_mapMonsters[monsterId]._hitPoints[counter] > 0)
+		if (_mapMonsters[_techId][monsterId]._hitPoints[counter] > 0)
 			return true;
 	}
 
@@ -1829,7 +1792,7 @@ bool EfhEngine::checkMapMonsterAvailability(int16 monsterId) {
 void EfhEngine::displayMonsterAnim(int16 monsterId) {
 	debugC(6, kDebugEngine, "displayMonsterAnim %d", monsterId);
 
-	int16 animId = kEncounters[_mapMonsters[monsterId]._monsterRef]._animId;
+	int16 animId = kEncounters[_mapMonsters[_techId][monsterId]._monsterRef]._animId;
 	displayAnimFrames(animId, true);
 }
 
@@ -1841,7 +1804,7 @@ int16 EfhEngine::countAliveMonsters(int16 id) {
 	int16 count = 0;
 
 	for (uint counter = 0; counter < 9; ++counter) {
-		if (_mapMonsters[id]._hitPoints[counter] > 0)
+		if (_mapMonsters[_techId][id]._hitPoints[counter] > 0)
 			++count;
 	}
 
@@ -1860,7 +1823,7 @@ bool EfhEngine::checkMonsterGroupDistance1OrLess(int16 monsterId) {
 bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 	debugC(6, kDebugEngine, "handleTalk %d %d %d", monsterId, arg2, itemId);
 
-	if (_mapMonsters[monsterId]._fullPlaceId == 0xFF)
+	if (_mapMonsters[_techId][monsterId]._fullPlaceId == 0xFF)
 		return false;
 
 	if (countAliveMonsters(monsterId) < 1)
@@ -1872,20 +1835,20 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 	if (!checkMonsterGroupDistance1OrLess(monsterId))
 		return false;
 
-	if ((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) != 0x3F) {
-		if (_mapMonsters[monsterId]._talkTextId == 0xFF || arg2 != 5) {
+	if ((_mapMonsters[_techId][monsterId]._possessivePronounSHL6 & 0x3F) != 0x3F) {
+		if (_mapMonsters[_techId][monsterId]._talkTextId == 0xFF || arg2 != 5) {
 			return false;
 		}
 		displayMonsterAnim(monsterId);
-		displayImp1Text(_mapMonsters[monsterId]._talkTextId);
+		displayImp1Text(_mapMonsters[_techId][monsterId]._talkTextId);
 		displayAnimFrames(0xFE, true);
 		return true;
 	}
 
-	if (isNpcATeamMember(_mapMonsters[monsterId]._npcId))
+	if (isNpcATeamMember(_mapMonsters[_techId][monsterId]._npcId))
 		return false;
 
-	int16 npcId = _mapMonsters[monsterId]._npcId;
+	int16 npcId = _mapMonsters[_techId][monsterId]._npcId;
 	switch (_npcBuf[npcId].field_10 - 0xEE) {
 	case 0:
 		if (arg2 == 4 && _npcBuf[npcId].field11_NpcId == itemId) {
@@ -2154,35 +2117,35 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 		if (imageSetId != -1 && *_imp2PtrArray[imageSetId] != 0x30)
 			displayMiddleLeftTempText(_imp2PtrArray[imageSetId], true);
 	} else if (arg8 == 0) {
-		if (_mapSpecialTile[tileId]._field3 == 0xFF) {
-			displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
+		if (_mapSpecialTiles[_techId][tileId]._field3 == 0xFF) {
+			displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 			return true;
 		}
 
-		if (_mapSpecialTile[tileId]._field3 == 0xFE) {
+		if (_mapSpecialTiles[_techId][tileId]._field3 == 0xFE) {
 			for (int counter = 0; counter < _teamSize; ++counter) {
 				if (_teamCharId[counter] == -1)
 					continue;
-				if (_teamCharId[counter] == _mapSpecialTile[tileId]._triggerId) {
-					displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
+				if (_teamCharId[counter] == _mapSpecialTiles[_techId][tileId]._triggerId) {
+					displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 					return true;
 				}
 			}
-		} else if (_mapSpecialTile[tileId]._field3 == 0xFD) {
+		} else if (_mapSpecialTiles[_techId][tileId]._field3 == 0xFD) {
 			for (int counter = 0; counter < _teamSize; ++counter) {
 				if (_teamCharId[counter] == -1)
 					continue;
 
 				for (uint var2 = 0; var2 < 10; ++var2) {
-					if (_npcBuf[_teamCharId[counter]]._inventory[var2]._ref == _mapSpecialTile[tileId]._triggerId) {
-						displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
+					if (_npcBuf[_teamCharId[counter]]._inventory[var2]._ref == _mapSpecialTiles[_techId][tileId]._triggerId) {
+						displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 						return true;
 					}
 				}
 			}
 		// original makes a useless check on (_mapSpecialTile[tileId]._field3 > 0x7F)
-		} else if (_mapSpecialTile[tileId]._field3 <= 0x77) {
-			int16 var6 = _mapSpecialTile[tileId]._field3;
+		} else if (_mapSpecialTiles[_techId][tileId]._field3 <= 0x77) {
+			int16 var6 = _mapSpecialTiles[_techId][tileId]._field3;
 			for (int counter = 0; counter < _teamSize; ++counter) {
 				if (_teamCharId[counter] == -1)
 					continue;
@@ -2191,26 +2154,26 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 					// CHECKME : the whole loop doesn't make much sense as it's using var6 instead of var2, plus _activeScore is an array of 15 bytes, not 0x77...
 					// Also, 39 correspond to the size of activeScore + passiveScore + infoScore + the 2 remaining bytes of the struct
 					warning("sub22293 - _activeScore[%d]", var6);
-					if (_npcBuf[_teamCharId[counter]]._activeScore[var6] >= _mapSpecialTile[tileId]._triggerId) {
-						displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
+					if (_npcBuf[_teamCharId[counter]]._activeScore[var6] >= _mapSpecialTiles[_techId][tileId]._triggerId) {
+						displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 						return true;
 					}
 				}
 			}
 		}
-	} else if ((_mapSpecialTile[tileId]._field3 == 0xFA && arg8 == 1) || (_mapSpecialTile[tileId]._field3 == 0xFC && arg8 == 2) || (_mapSpecialTile[tileId]._field3 == 0xFB && arg8 == 3)) {
-		if (_mapSpecialTile[tileId]._triggerId == itemId) {
-			displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
+	} else if ((_mapSpecialTiles[_techId][tileId]._field3 == 0xFA && arg8 == 1) || (_mapSpecialTiles[_techId][tileId]._field3 == 0xFC && arg8 == 2) || (_mapSpecialTiles[_techId][tileId]._field3 == 0xFB && arg8 == 3)) {
+		if (_mapSpecialTiles[_techId][tileId]._triggerId == itemId) {
+			displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 			return true;
 		}
 	} else if (arg8 == 4) {
-		int16 var6 = _mapSpecialTile[tileId]._field3;
+		int16 var6 = _mapSpecialTiles[_techId][tileId]._field3;
 		if (var6 >= 0x78 && var6 <= 0xEF) {
 			var6 -= 0x78;
 			warning("sub22293 - _activeScore[%d]", var6);
 			// The 2 checks on var6 are useless, as [0x78..0xEF] - 0x78 => [0x00..0x77]
-			if (var6 >= 0 && var6 <= 0x8B && var6 == itemId && _mapSpecialTile[tileId]._triggerId <= _npcBuf[charId]._activeScore[itemId]) {
-				displayImp1Text(_mapSpecialTile[tileId]._field5_textId);
+			if (var6 >= 0 && var6 <= 0x8B && var6 == itemId && _mapSpecialTiles[_techId][tileId]._triggerId <= _npcBuf[charId]._activeScore[itemId]) {
+				displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 				return true;
 			}
 		}
@@ -2222,10 +2185,10 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 	}
 
 	// CHECKME: there's suspiciously no check on tileId
-	if ((arg8 == 4 && _mapSpecialTile[tileId]._field3 < 0xFA) || arg8 != 4) {
-		if (_mapSpecialTile[tileId]._field7_textId > 0xFE)
+	if ((arg8 == 4 && _mapSpecialTiles[_techId][tileId]._field3 < 0xFA) || arg8 != 4) {
+		if (_mapSpecialTiles[_techId][tileId]._field7_textId > 0xFE)
 			return false;
-		displayImp1Text(_mapSpecialTile[tileId]._field7_textId);
+		displayImp1Text(_mapSpecialTiles[_techId][tileId]._field7_textId);
 		return true;
 	}
 
@@ -2250,7 +2213,7 @@ int8 EfhEngine::checkTileStatus(int16 mapPosX, int16 mapPosY, bool arg4) {
 	if (_tileFact[tileFactId]._tileId != 0xFF && !_dbgForceMonsterBlock) {
 		if ((arg4) || (!arg4 && tileFactId != 128 && tileFactId != 121)) {
 			if (_largeMapFlag) {
-				_mapGameMap[mapPosX][mapPosY] = _tileFact[tileFactId]._tileId;
+				_mapGameMaps[_techId][mapPosX][mapPosY] = _tileFact[tileFactId]._tileId;
 			} else {
 				_curPlace[mapPosX][mapPosY] = _tileFact[tileFactId]._tileId;
 			}
@@ -2284,7 +2247,7 @@ void EfhEngine::computeInitiatives() {
 			_initiatives[counter + 3]._initiative = -1;
 		} else {
 			_initiatives[counter + 3]._id = counter;
-			_initiatives[counter + 3]._initiative = _mapMonsters[_teamMonsterIdArray[counter]]._npcId + getRandom(20);
+			_initiatives[counter + 3]._initiative = _mapMonsters[_techId][_teamMonsterIdArray[counter]]._npcId + getRandom(20);
 		}
 	}
 
@@ -2368,14 +2331,14 @@ void EfhEngine::setMapMonsterAggressivenessAndMovementType(int16 id, uint8 mask,
 	}
 
 	mask &= 0x0F;
-	_mapMonsters[monsterId]._additionalInfo &= 0xF0;
-	_mapMonsters[monsterId]._additionalInfo |= mask;
+	_mapMonsters[_techId][monsterId]._additionalInfo &= 0xF0;
+	_mapMonsters[_techId][monsterId]._additionalInfo |= mask;
 }
 
 bool EfhEngine::isMonsterActive(int16 groupId, int16 id) {
 	debugC(5, kDebugEngine, "isMonsterActive %d %d", groupId, id);
 
-	if (_mapMonsters[_teamMonsterIdArray[groupId]]._hitPoints[id] > 0 && _teamMonsterEffects[groupId]._effect[id] == 0)
+	if (_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[id] > 0 && _teamMonsterEffects[groupId]._effect[id] == 0)
 		return true;
 	return false;
 }
@@ -2420,15 +2383,15 @@ bool EfhEngine::checkMonsterCollision() {
 		if (!checkMapMonsterAvailability(monsterId))
 			continue;
 
-		if (!(_largeMapFlag && _mapMonsters[monsterId]._fullPlaceId == 0xFE)
-		 && !(!_largeMapFlag && _mapMonsters[monsterId]._fullPlaceId == _fullPlaceId))
+		if (!(_largeMapFlag && _mapMonsters[_techId][monsterId]._fullPlaceId == 0xFE)
+		 && !(!_largeMapFlag && _mapMonsters[_techId][monsterId]._fullPlaceId == _fullPlaceId))
 			continue;
 
-		if ((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) > 0x3D
-		 && ((_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) != 0x3F || isNpcATeamMember(_mapMonsters[monsterId]._npcId)))
+		if ((_mapMonsters[_techId][monsterId]._possessivePronounSHL6 & 0x3F) > 0x3D
+		 && ((_mapMonsters[_techId][monsterId]._possessivePronounSHL6 & 0x3F) != 0x3F || isNpcATeamMember(_mapMonsters[_techId][monsterId]._npcId)))
 			continue;
 
-		if (_mapMonsters[monsterId]._posX != _mapPosX || _mapMonsters[monsterId]._posY != _mapPosY)
+		if (_mapMonsters[_techId][monsterId]._posX != _mapPosX || _mapMonsters[_techId][monsterId]._posY != _mapPosY)
 			continue;
 
 		_mapPosX = _oldMapPosX;
@@ -2439,7 +2402,7 @@ bool EfhEngine::checkMonsterCollision() {
 
 		int16 mobsterCount = 0;
 		for (uint mobsterCounter = 0; mobsterCounter < 9; ++mobsterCounter) {
-			if (_mapMonsters[monsterId]._hitPoints[mobsterCounter])
+			if (_mapMonsters[_techId][monsterId]._hitPoints[mobsterCounter])
 				++mobsterCount;
 		}
 
@@ -2448,18 +2411,18 @@ bool EfhEngine::checkMonsterCollision() {
 		do {
 			for (uint displayCounter = 0; displayCounter < 2; ++displayCounter) {
 				Common::String dest;
-				switch (_mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F) {
+				switch (_mapMonsters[_techId][monsterId]._possessivePronounSHL6 & 0x3F) {
 				case 0x3E:
 					buffer = "(NOT DEFINED)";
 					dest = "(NOT DEFINED)";
 					break;
 				case 0x3F:
 					// Special character name
-					dest = _npcBuf[_mapMonsters[monsterId]._npcId]._name;
+					dest = _npcBuf[_mapMonsters[_techId][monsterId]._npcId]._name;
 					buffer = Common::String("with ") + dest;
 					break;
 				default:
-					dest = kEncounters[_mapMonsters[monsterId]._monsterRef]._name;
+					dest = kEncounters[_mapMonsters[_techId][monsterId]._monsterRef]._name;
 					if (mobsterCount > 1)
 						dest += "s";
 
@@ -2544,8 +2507,10 @@ void EfhEngine::loadImageSetToTileBank(int16 tileBankId, int16 imageSetId) {
 
 	_currentTileBankImageSetId[bankId] = setId;
 
-	if (bankId == 0 || bankId == 1)
-		_mapBitmapRefArr[_techId][bankId] = setId;
+	if (bankId == 0)
+		_mapBitmapRefArr[_techId]._setId1 = setId;
+	else if (bankId == 1)
+		_mapBitmapRefArr[_techId]._setId2 = setId;
 
 	int16 ptrIndex = bankId * 72;
 	loadImageSet(setId, _tileBank[bankId], &_imageSetSubFilesArray[ptrIndex], _hiResImageBuf);
@@ -2628,7 +2593,7 @@ uint8 EfhEngine::getMapTileInfo(int16 mapPosX, int16 mapPosY) {
 	debugC(3, kDebugEngine, "getMapTileInfo %d-%d", mapPosX, mapPosY);
 
 	if (_largeMapFlag)
-		return _mapGameMap[mapPosX][mapPosY];
+		return _mapGameMaps[_techId][mapPosX][mapPosY];
 
 	return _curPlace[mapPosX][mapPosY];
 }
