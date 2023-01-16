@@ -350,6 +350,13 @@ MODULE_OBJS += \
 	mixer/null/null-mixer.o
 endif
 
+ifdef MIYOO
+ifeq ($(MIYOO_TARGET), miyoomini)
+MODULE_OBJS += \
+	graphics/miyoo/miyoomini-graphics.o
+endif
+endif
+
 ifdef OPENDINGUX
 MODULE_OBJS += \
 	graphics/opendingux/opendingux-graphics.o
