@@ -126,7 +126,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private EditableSurfaceView _main_surface = null;
 	private ImageView _toggleTouchModeKeyboardBtnIcon = null;
 	private ImageView _openMenuBtnIcon = null;
-	private ImageView _revokeSafPermissionsBtnIcon = null;
 
 	public View _screenKeyboard = null;
 	static boolean keyboardWithoutTextInputShown = false;
@@ -642,19 +641,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 	};
 
-	public final View.OnClickListener revokeSafPermissionsBtnOnClickListener = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			runOnUiThread(new Runnable() {
-				public void run() {
-					clearStorageAccessFrameworkTreeUri();
-					SAFFSTree.loadSAFTrees(ScummVMActivity.this);
-					_scummvm.displayMessageOnOSD(getString(R.string.saf_revoke_done));
-				}
-			});
-		}
-	};
-
 	private class MyScummVM extends ScummVM {
 
 		public MyScummVM(SurfaceHolder holder, final MyScummVMDestroyedCallback destroyedCallback) {
@@ -795,15 +781,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
-		protected void showSAFRevokePermsControl(final boolean enable) {
-			runOnUiThread(new Runnable() {
-				public void run() {
-					showSAFRevokePermissionsBtnIcon(enable);
-				}
-			});
-		}
-
-		@Override
 		protected String[] getSysArchives() {
 			Log.d(ScummVM.LOG_TAG, "Adding to Search Archive: " + _actualScummVMDataDir.getPath());
 			if (_externalPathAvailableForReadAccess) {
@@ -904,11 +881,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		buttonLayout.addView(_openMenuBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
 		buttonLayout.bringChildToFront(_openMenuBtnIcon);
 
-		_revokeSafPermissionsBtnIcon = new ImageView(this);
-		_revokeSafPermissionsBtnIcon.setImageResource(R.drawable.ic_lock_icon);
-		buttonLayout.addView(_revokeSafPermissionsBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
-		buttonLayout.bringChildToFront(_revokeSafPermissionsBtnIcon);
-
 		_main_surface.setFocusable(true);
 		_main_surface.setFocusableInTouchMode(true);
 		_main_surface.requestFocus();
@@ -1008,7 +980,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			_toggleTouchModeKeyboardBtnIcon.setOnClickListener(touchModeKeyboardBtnOnClickListener);
 			_toggleTouchModeKeyboardBtnIcon.setOnLongClickListener(touchModeKeyboardBtnOnLongClickListener);
 			_openMenuBtnIcon.setOnClickListener(menuBtnOnClickListener);
-			_revokeSafPermissionsBtnIcon.setOnClickListener(revokeSafPermissionsBtnOnClickListener);
 
 			// Keyboard visibility listener - mainly to hide system UI if keyboard is shown and we return from Suspend to the Activity
 			setKeyboardVisibilityListener(this);
@@ -1094,7 +1065,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			hideScreenKeyboard();
 		}
 		showToggleKeyboardBtnIcon(false);
-		showSAFRevokePermissionsBtnIcon(false);
 	}
 
 
@@ -1250,19 +1220,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 		if (_toggleTouchModeKeyboardBtnIcon != null ) {
 			_toggleTouchModeKeyboardBtnIcon.setVisibility(show ? View.VISIBLE : View.GONE);
-		}
-	}
-
-	// Show or hide the semi-transparent overlay button
-	// for revoking SAF permissions
-	// This is independent of the toggle keyboard icon and menu icon (which appear together currently in showToggleKeyboardBtnIcon())
-	private void showSAFRevokePermissionsBtnIcon(boolean show) {
-		if (_revokeSafPermissionsBtnIcon != null ) {
-			if (show) {
-				_revokeSafPermissionsBtnIcon.setVisibility(View.VISIBLE);
-			} else {
-				_revokeSafPermissionsBtnIcon.setVisibility(View.GONE);
-			}
 		}
 	}
 
@@ -2203,18 +2160,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		getContentResolver().takePersistableUriPermission(resultURI, grant);
 
 		return resultURI;
-	}
-
-	// A method to revoke SAF granted stored permissions
-	public void clearStorageAccessFrameworkTreeUri() {
-		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-			return;
-		}
-
-		for (UriPermission permission : getContentResolver().getPersistedUriPermissions()) {
-			getContentResolver().releasePersistableUriPermission(permission.getUri(),
-					Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-		}
 	}
 
 	// -------------------------------------------------------------------------------------------

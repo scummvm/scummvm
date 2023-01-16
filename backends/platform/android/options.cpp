@@ -36,15 +36,22 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include "backends/fs/android/android-fs-factory.h"
+#include "backends/fs/android/android-saf-fs.h"
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/jni-android.h"
 
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
 #include "gui/widget.h"
+#include "gui/widgets/list.h"
 #include "gui/widgets/popup.h"
 
 #include "common/translation.h"
+
+enum {
+	kRemoveCmd = 'RemS',
+};
 
 class AndroidOptionsWidget final : public GUI::OptionsContainerWidget {
 public:
@@ -60,6 +67,7 @@ public:
 private:
 	// OptionsContainerWidget API
 	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	GUI::CheckboxWidget *_onscreenCheckbox;
 	GUI::StaticTextWidget *_preferredTouchModeDesc;
@@ -69,13 +77,30 @@ private:
 	GUI::PopUpWidget *_preferredTM2DGamesPopUp;
 	GUI::StaticTextWidget *_preferredTM3DGamesDesc;
 	GUI::PopUpWidget *_preferredTM3DGamesPopUp;
-	GUI::CheckboxWidget *_onscreenSAFRevokeCheckbox;
 
 	bool _enabled;
 
 
 	uint32 loadTouchMode(const Common::String &setting, bool acceptDefault, uint32 defaultValue);
 	void saveTouchMode(const Common::String &setting, uint32 touchMode);
+};
+
+class SAFRemoveDialog : public GUI::Dialog {
+public:
+	SAFRemoveDialog();
+	virtual ~SAFRemoveDialog();
+
+	void open() override;
+	void reflowLayout() override;
+
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+
+protected:
+	GUI::ListWidget   *_safList;
+	AbstractFSList    _safTrees;
+
+	void clearListing();
+	void updateListing();
 };
 
 enum {
@@ -122,10 +147,9 @@ AndroidOptionsWidget::AndroidOptionsWidget(GuiObject *boss, const Common::String
 	_preferredTM2DGamesPopUp->appendEntry(_("Gamepad emulation"), kTouchModeGamepad);
 	_preferredTM3DGamesPopUp->appendEntry(_("Gamepad emulation"), kTouchModeGamepad);
 
-	if (inAppDomain) {
+	if (inAppDomain && AndroidFilesystemFactory::instance().hasSAF()) {
 		// Only show this checkbox in Options (via Options... in the launcher), and not at game domain level (via Edit Game...)
-		// I18N: Show a button to revoke Storage Access Framework permissions for Android
-		_onscreenSAFRevokeCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.SAFRevokePermsControl", _("Show SAF revoke permissions overlay button"));
+		(new GUI::ButtonWidget(widgetsBoss(), "AndroidOptionsDialog.ForgetSAFButton", _("Forget SAF authorization"), Common::U32String(), kRemoveCmd))->setTarget(this);
 	}
 }
 
@@ -158,11 +182,26 @@ void AndroidOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::S
 			.addWidget("TM3DGamesText", "OptionsLabel")
 			.addWidget("TM3DGames", "PopUp")
 		.closeLayout();
-	if (inAppDomain) {
-		layouts.addWidget("SAFRevokePermsControl", "Checkbox");
+	if (inAppDomain && AndroidFilesystemFactory::instance().hasSAF()) {
+		layouts.addWidget("ForgetSAFButton", "WideButton");
 	}
 	layouts.closeLayout()
 	    .closeDialog();
+}
+
+void AndroidOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	case kRemoveCmd: {
+		if (!AndroidFilesystemFactory::instance().hasSAF()) {
+			break;
+		}
+		SAFRemoveDialog removeDlg;
+		removeDlg.runModal();
+		break;
+	}
+	default:
+		GUI::OptionsContainerWidget::handleCommand(sender, cmd, data);
+	}
 }
 
 uint32 AndroidOptionsWidget::loadTouchMode(const Common::String &setting, bool acceptDefault, uint32 defaultValue) {
@@ -193,10 +232,6 @@ void AndroidOptionsWidget::load() {
 	}
 	_preferredTM2DGamesPopUp->setSelectedTag(loadTouchMode("touch_mode_2d_games", !inAppDomain, kTouchModeTouchpad));
 	_preferredTM3DGamesPopUp->setSelectedTag(loadTouchMode("touch_mode_3d_games", !inAppDomain, kTouchModeGamepad));
-
-	if (inAppDomain) {
-		_onscreenSAFRevokeCheckbox->setState(ConfMan.getBool("onscreen_saf_revoke_btn", _domain));
-	}
 }
 
 void AndroidOptionsWidget::saveTouchMode(const Common::String &setting, uint32 touchMode) {
@@ -228,10 +263,6 @@ bool AndroidOptionsWidget::save() {
 		}
 		saveTouchMode("touch_mode_2d_games", _preferredTM2DGamesPopUp->getSelectedTag());
 		saveTouchMode("touch_mode_3d_games", _preferredTM3DGamesPopUp->getSelectedTag());
-
-		if (inAppDomain) {
-			ConfMan.setBool("onscreen_saf_revoke_btn", _onscreenSAFRevokeCheckbox->getState(), _domain);
-		}
 	} else {
 		ConfMan.removeKey("onscreen_control", _domain);
 
@@ -240,10 +271,6 @@ bool AndroidOptionsWidget::save() {
 		}
 		ConfMan.removeKey("touch_mode_2d_games", _domain);
 		ConfMan.removeKey("touch_mode_3d_games", _domain);
-
-		if (inAppDomain) {
-			ConfMan.removeKey("onscreen_saf_revoke_btn", _domain);
-		}
 	}
 
 	return true;
@@ -272,10 +299,6 @@ void AndroidOptionsWidget::setEnabled(bool e) {
 	_preferredTM2DGamesPopUp->setEnabled(e);
 	_preferredTM3DGamesDesc->setEnabled(e);
 	_preferredTM3DGamesPopUp->setEnabled(e);
-
-	if (inAppDomain) {
-		_onscreenSAFRevokeCheckbox->setEnabled(e);
-	}
 }
 
 
@@ -320,5 +343,103 @@ void OSystem_Android::applyTouchSettings(bool _3dMode, bool overlayShown) {
 
 void OSystem_Android::applyBackendSettings() {
 	JNI::showKeyboardControl(ConfMan.getBool("onscreen_control"));
-	JNI::showSAFRevokePermsControl(ConfMan.getBool("onscreen_saf_revoke_btn"));
+}
+
+SAFRemoveDialog::SAFRemoveDialog() : GUI::Dialog("SAFBrowser") {
+
+	// Add file list
+	_safList = new GUI::ListWidget(this, "SAFBrowser.List");
+	_safList->setNumberingMode(GUI::kListNumberingOff);
+	_safList->setEditable(false);
+
+	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
+
+	// Buttons
+	new GUI::ButtonWidget(this, "SAFBrowser.Close", _("Close"), Common::U32String(), GUI::kCloseCmd);
+	new GUI::ButtonWidget(this, "SAFBrowser.Remove", _("Remove"), Common::U32String(), kRemoveCmd);
+}
+
+SAFRemoveDialog::~SAFRemoveDialog() {
+	clearListing();
+}
+
+void SAFRemoveDialog::open() {
+	// Call super implementation
+	Dialog::open();
+
+	updateListing();
+}
+
+void SAFRemoveDialog::reflowLayout() {
+	GUI::ThemeEval &layouts = *g_gui.xmlEval();
+	layouts.addDialog(_name, "GlobalOptions", -1, -1, 16)
+	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
+	            .addPadding(16, 16, 16, 16)
+	            .addWidget("List", "")
+		    .addLayout(GUI::ThemeLayout::kLayoutVertical)
+			.addPadding(0, 0, 16, 0)
+			.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+				.addPadding(0, 0, 0, 0)
+				.addWidget("Remove", "Button")
+				.addSpace(-1)
+				.addWidget("Close", "Button")
+			.closeLayout()
+		    .closeLayout()
+		.closeLayout()
+	.closeDialog();
+
+	layouts.setVar("Dialog.SAFBrowser.Shading", 1);
+
+	Dialog::reflowLayout();
+}
+
+void SAFRemoveDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	case kRemoveCmd:
+	{
+		int id = _safList->getSelected();
+		if (id == -1) {
+			break;
+		}
+
+		AndroidSAFFilesystemNode *node = reinterpret_cast<AndroidSAFFilesystemNode *>(_safTrees[id]);
+		node->removeTree();
+
+		updateListing();
+		break;
+	}
+	default:
+		GUI::Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
+void SAFRemoveDialog::clearListing() {
+	for (AbstractFSList::iterator it = _safTrees.begin(); it != _safTrees.end(); it++) {
+		delete *it;
+	}
+	_safTrees.clear();
+}
+
+void SAFRemoveDialog::updateListing() {
+	int oldSel = _safList->getSelected();
+
+	clearListing();
+
+	AndroidFilesystemFactory::instance().getSAFTrees(_safTrees, false);
+
+	Common::U32StringArray list;
+	list.reserve(_safTrees.size());
+	for (AbstractFSList::iterator it = _safTrees.begin(); it != _safTrees.end(); it++) {
+		list.push_back((*it)->getDisplayName());
+	}
+
+	_safList->setList(list);
+	if (oldSel >= 0 && (size_t)oldSel < list.size()) {
+		_safList->setSelected(oldSel);
+	} else {
+		_safList->scrollTo(0);
+	}
+
+	// Finally, redraw
+	g_gui.scheduleTopDialogRedraw();
 }

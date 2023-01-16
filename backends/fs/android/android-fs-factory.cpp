@@ -70,20 +70,16 @@ AndroidFilesystemFactory::Config::Config(const AndroidFilesystemFactory *factory
 	_storages(JNI::getAllStorageLocations()) {
 }
 
-bool AndroidFilesystemFactory::Config::getDrives(AbstractFSList &list, bool hidden) const {
-	Common::Array<jobject> trees;
-	if (_factory->_withSAF) {
-		trees = JNI::getSAFTrees();
+void AndroidFilesystemFactory::getSAFTrees(AbstractFSList &list, bool allowSAFadd) const {
+	if (!_withSAF) {
+		// Nothing if no SAF
+		return;
 	}
 
-	list.reserve(trees.size() + _storages.size() / 2);
+	Common::Array<jobject> trees = JNI::getSAFTrees();
 
-	// For SAF
-	if (_factory->_withSAF) {
-		list.push_back(new AddSAFFakeNode());
-	}
+	list.reserve(trees.size() + (allowSAFadd ? 1 : 0));
 
-	// If _withSAF is false, trees will be empty
 	for (Common::Array<jobject>::iterator it = trees.begin(); it != trees.end(); it++) {
 		AbstractFSNode *node = AndroidSAFFilesystemNode::makeFromTree(*it);
 		if (!node) {
@@ -92,6 +88,18 @@ bool AndroidFilesystemFactory::Config::getDrives(AbstractFSList &list, bool hidd
 
 		list.push_back(node);
 	}
+
+	if (allowSAFadd) {
+		list.push_back(new AddSAFFakeNode());
+	}
+
+}
+
+bool AndroidFilesystemFactory::Config::getDrives(AbstractFSList &list, bool hidden) const {
+	// For SAF
+	_factory->getSAFTrees(list, true);
+
+	list.reserve(list.size() + _storages.size() / 2);
 
 	// For old POSIX way
 	for (Common::Array<Common::String>::const_iterator it = _storages.begin(); it != _storages.end(); ++it) {

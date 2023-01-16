@@ -92,7 +92,6 @@ jmethodID JNI::_MID_showKeyboardControl = 0;
 jmethodID JNI::_MID_getBitmapResource = 0;
 jmethodID JNI::_MID_setTouchMode = 0;
 jmethodID JNI::_MID_getTouchMode = 0;
-jmethodID JNI::_MID_showSAFRevokePermsControl = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
 jmethodID JNI::_MID_getAllStorageLocations = 0;
 jmethodID JNI::_MID_initSurface = 0;
@@ -504,19 +503,6 @@ int JNI::getTouchMode() {
 	return mode;
 }
 
-void JNI::showSAFRevokePermsControl(bool enable) {
-	JNIEnv *env = JNI::getEnv();
-
-	env->CallVoidMethod(_jobj, _MID_showSAFRevokePermsControl, enable);
-
-	if (env->ExceptionCheck()) {
-		LOGE("Error trying to show the revoke SAF permissions button");
-
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-	}
-}
-
 // The following adds assets folder to search set.
 // However searching and retrieving from "assets" on Android this is slow
 // so we also make sure to add the "path" directory, with a higher priority
@@ -690,7 +676,6 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
 	FIND_METHOD(, deinitSurface, "()V");
-	FIND_METHOD(, showSAFRevokePermsControl, "(Z)V");
 	FIND_METHOD(, getNewSAFTree,
 	            "(ZZLjava/lang/String;Ljava/lang/String;)Lorg/scummvm/scummvm/SAFFSTree;");
 	FIND_METHOD(, getSAFTrees, "()[Lorg/scummvm/scummvm/SAFFSTree;");
@@ -1034,4 +1019,5 @@ jobject JNI::findSAFTree(const Common::String &name) {
 
 	return tree;
 }
+
 #endif
