@@ -140,6 +140,63 @@ uint8 NPCStruct::getPronoun() {
 	return _possessivePronounSHL6 >> 6;
 }
 
+void NPCStruct::synchronize(Common::Serializer &s) {
+	for (int idx = 0; idx < 11; ++idx)
+		s.syncAsByte(_name[idx]);
+
+	s.syncAsByte(fieldB_textId);
+	s.syncAsByte(field_C);
+	s.syncAsByte(field_D);
+	s.syncAsByte(fieldE_textId);
+	s.syncAsByte(field_F);
+	s.syncAsByte(field_10);
+	s.syncAsByte(field11_NpcId);
+	s.syncAsSint16LE(field12_textId);
+	s.syncAsSint16LE(field14_textId);
+	s.syncAsSint32LE(_xp);
+	for (int idx = 0; idx < 15; ++idx)
+		s.syncAsByte(_activeScore[idx]);
+
+	for (int idx = 0; idx < 11; ++idx)
+		s.syncAsByte(_passiveScore[idx]);
+
+	for (int idx = 0; idx < 11; ++idx)
+		s.syncAsByte(_infoScore[idx]);
+
+	s.syncAsByte(field_3F);
+	s.syncAsByte(field_40);
+	for (int idx = 0; idx < 10; ++idx) {
+		s.syncAsSint16LE(_inventory[idx]._ref);
+		s.syncAsByte(_inventory[idx]._stat1);
+		s.syncAsByte(_inventory[idx]._curHitPoints);
+	}
+	s.syncAsByte(_possessivePronounSHL6);
+	s.syncAsByte(_speed);
+	s.syncAsByte(field_6B);
+	s.syncAsByte(field_6C);
+	s.syncAsByte(field_6D);
+	s.syncAsByte(_defaultDefenseItemId);
+	s.syncAsByte(field_6F);
+	s.syncAsByte(field_70);
+	s.syncAsByte(field_71);
+	s.syncAsByte(field_72);
+	s.syncAsByte(field_73);
+	s.syncAsSint16LE(_hitPoints);
+	s.syncAsSint16LE(_maxHP);
+	s.syncAsByte(field_78);
+	s.syncAsSint16LE(field_79);
+	s.syncAsSint16LE(field_7B);
+	s.syncAsByte(field_7D);
+	s.syncAsByte(field_7E);
+	s.syncAsByte(field_7F);
+	s.syncAsByte(field_80);
+	s.syncAsByte(field_81);
+	s.syncAsByte(field_82);
+	s.syncAsByte(field_83);
+	s.syncAsByte(field_84);
+	s.syncAsByte(field_85);
+}
+
 uint8 MapMonster::getPronoun() {
 	return _possessivePronounSHL6 >> 6;
 }
@@ -182,8 +239,10 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	_videoMode = 0;
 	_graphicsStruct = nullptr;
 
-	for (int i = 0; i < 19; ++i)
-		_mapBitmapRefArr[i] = nullptr;
+	for (int i = 0; i < 19; ++i) {
+		_mapBitmapRefArr[i]._setId1 = 0;
+		_mapBitmapRefArr[i]._setId2 = 0;
+	}
 
 	_defaultBoxColor = 0;
 
@@ -229,7 +288,7 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 
 	for (int i = 0; i < 100; ++i) {
 		_imp1PtrArray[i] = nullptr;
-		_mapSpecialTile[i].init();
+		_mapSpecialTiles[_techId][i].init();
 	}
 
 	for (int i = 0; i < 432; ++i)
@@ -320,9 +379,9 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	for (int i = 0; i < 19; ++i) {
 		memset(_techDataArr[i], 0, ARRAYSIZE(_techDataArr[i]));
 		memset(_mapArr[i], 0, ARRAYSIZE(_mapArr[i]));
+		memset(_mapMonsters[i], 0, ARRAYSIZE(_mapMonsters[i]));
+		memset(_mapGameMaps[i], 0, ARRAYSIZE(_mapGameMaps[i]));
 	}
-	memset(_mapMonsters, 0, ARRAYSIZE(_mapMonsters));
-	memset(_mapGameMap, 0, ARRAYSIZE(_mapGameMap));
 	memset(_imageSetSubFilesArray, 0, ARRAYSIZE(_imageSetSubFilesArray));
 	_regenCounter = 0;
 

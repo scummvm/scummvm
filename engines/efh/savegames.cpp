@@ -151,11 +151,37 @@ void EfhEngine::synchronize(Common::Serializer &s) {
 		for (int j = 0; j < size; ++j)
 			s.syncAsByte(_techDataArr[i][j]);
 
-		size = ARRAYSIZE(_mapArr[i]);
-		for (int j = 0; j < size; ++j)
-			s.syncAsByte(_mapArr[i][j]);
+		s.syncAsByte(_mapBitmapRefArr[i]._setId1);
+		s.syncAsByte(_mapBitmapRefArr[i]._setId2);
+		for (int idx = 0; idx < 100; ++idx) {
+			s.syncAsByte(_mapSpecialTiles[i][idx]._placeId);
+			s.syncAsByte(_mapSpecialTiles[i][idx]._posX);
+			s.syncAsByte(_mapSpecialTiles[i][idx]._posY);
+			s.syncAsByte(_mapSpecialTiles[i][idx]._field3);
+			s.syncAsByte(_mapSpecialTiles[i][idx]._triggerId);
+			s.syncAsUint16LE(_mapSpecialTiles[i][idx]._field5_textId);
+			s.syncAsUint16LE(_mapSpecialTiles[i][idx]._field7_textId);
+		}
 
-		_mapBitmapRefArr[i] = &_mapArr[i][0];
+		for (int idx = 0; idx < 64; ++idx) {
+			s.syncAsByte(_mapMonsters[i][idx]._possessivePronounSHL6);
+			s.syncAsByte(_mapMonsters[i][idx]._npcId);
+			s.syncAsByte(_mapMonsters[i][idx]._fullPlaceId);
+			s.syncAsByte(_mapMonsters[i][idx]._posX);
+			s.syncAsByte(_mapMonsters[i][idx]._posY);
+			s.syncAsByte(_mapMonsters[i][idx]._weaponItemId);
+			s.syncAsByte(_mapMonsters[i][idx]._maxDamageAbsorption);
+			s.syncAsByte(_mapMonsters[i][idx]._monsterRef);
+			s.syncAsByte(_mapMonsters[i][idx]._additionalInfo);
+			s.syncAsByte(_mapMonsters[i][idx]._talkTextId);
+			s.syncAsByte(_mapMonsters[i][idx]._groupSize);
+			for (int j = 0; j < 9; ++j)
+				s.syncAsSint16LE(_mapMonsters[i][idx]._hitPoints[j]);
+		}
+		
+		size = ARRAYSIZE(_mapArr[i]);
+		for (int j = 2758; j < size; ++j)
+			s.syncAsByte(_mapArr[i][j]);
 	}
 
 	// Dialog flags
@@ -164,62 +190,9 @@ void EfhEngine::synchronize(Common::Serializer &s) {
 
 	// NPCs
 	for (int i = 0; i < 99; ++i) {
-		for (int idx = 0; idx < 11; ++idx)
-			s.syncAsByte(_npcBuf[i]._name[idx]);
-
-		s.syncAsByte(_npcBuf[i].fieldB_textId);
-		s.syncAsByte(_npcBuf[i].field_C);
-		s.syncAsByte(_npcBuf[i].field_D);
-		s.syncAsByte(_npcBuf[i].fieldE_textId);
-		s.syncAsByte(_npcBuf[i].field_F);
-		s.syncAsByte(_npcBuf[i].field_10);
-		s.syncAsByte(_npcBuf[i].field11_NpcId);
-		s.syncAsSint16LE(_npcBuf[i].field12_textId);
-		s.syncAsSint16LE(_npcBuf[i].field14_textId);
-		s.syncAsSint32LE(_npcBuf[i]._xp);
-		for (int idx = 0; idx < 15; ++idx)
-			s.syncAsByte(_npcBuf[i]._activeScore[idx]);
-
-		for (int idx = 0; idx < 11; ++idx)
-			s.syncAsByte(_npcBuf[i]._passiveScore[idx]);
-
-		for (int idx = 0; idx < 11; ++idx)
-			s.syncAsByte(_npcBuf[i]._infoScore[idx]);
-
-		s.syncAsByte(_npcBuf[i].field_3F);
-		s.syncAsByte(_npcBuf[i].field_40);
-		for (int idx = 0; idx < 10; ++idx) {
-			s.syncAsSint16LE(_npcBuf[i]._inventory[idx]._ref);
-			s.syncAsByte(_npcBuf[i]._inventory[idx]._stat1);
-			s.syncAsByte(_npcBuf[i]._inventory[idx]._curHitPoints);
-		}
-		s.syncAsByte(_npcBuf[i]._possessivePronounSHL6);
-		s.syncAsByte(_npcBuf[i]._speed);
-		s.syncAsByte(_npcBuf[i].field_6B);
-		s.syncAsByte(_npcBuf[i].field_6C);
-		s.syncAsByte(_npcBuf[i].field_6D);
-		s.syncAsByte(_npcBuf[i]._defaultDefenseItemId);
-		s.syncAsByte(_npcBuf[i].field_6F);
-		s.syncAsByte(_npcBuf[i].field_70);
-		s.syncAsByte(_npcBuf[i].field_71);
-		s.syncAsByte(_npcBuf[i].field_72);
-		s.syncAsByte(_npcBuf[i].field_73);
-		s.syncAsSint16LE(_npcBuf[i]._hitPoints);
-		s.syncAsSint16LE(_npcBuf[i]._maxHP);
-		s.syncAsByte(_npcBuf[i].field_78);
-		s.syncAsSint16LE(_npcBuf[i].field_79);
-		s.syncAsSint16LE(_npcBuf[i].field_7B);
-		s.syncAsByte(_npcBuf[i].field_7D);
-		s.syncAsByte(_npcBuf[i].field_7E);
-		s.syncAsByte(_npcBuf[i].field_7F);
-		s.syncAsByte(_npcBuf[i].field_80);
-		s.syncAsByte(_npcBuf[i].field_81);
-		s.syncAsByte(_npcBuf[i].field_82);
-		s.syncAsByte(_npcBuf[i].field_83);
-		s.syncAsByte(_npcBuf[i].field_84);
-		s.syncAsByte(_npcBuf[i].field_85);
+		_npcBuf[i].synchronize(s);
 	}
-
+		
 	s.syncAsByte(_saveAuthorized);
 }
 

@@ -315,7 +315,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			if (scriptExecuteFlag) {
 				int16 tileId = findMapSpecialTileIndex(_mapPosX, _mapPosY);
 				if (tileId != -1)
-					_mapSpecialTile[tileId]._posX = 0xFF;
+					_mapSpecialTiles[_techId][tileId]._posX = 0xFF;
 			}
 			break;
 		case 0x13:
@@ -402,7 +402,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 				int16 tileId = findMapSpecialTileIndex(_mapPosX, _mapPosY);
 				if (tileId != -1) {
 					// Disable special tile
-					_mapSpecialTile[tileId]._posX = 0xFF;
+					_mapSpecialTiles[_techId][tileId]._posX = 0xFF;
 				}
 				_redrawNeededFl = true;
 			}
@@ -411,7 +411,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
 			if (scriptExecuteFlag) {
 				if (_largeMapFlag) {
-					_mapGameMap[scriptNumberArray[0]][scriptNumberArray[1]] = scriptNumberArray[2] & 0xFF;
+					_mapGameMaps[_techId][scriptNumberArray[0]][scriptNumberArray[1]] = scriptNumberArray[2] & 0xFF;
 				} else {
 					_curPlace[scriptNumberArray[0]][scriptNumberArray[1]] = scriptNumberArray[2] & 0xFF;
 				}
@@ -423,7 +423,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 				int16 tileId = findMapSpecialTileIndex(scriptNumberArray[0], scriptNumberArray[1]);
 				if (tileId != -1) {
 					// Disable tile
-					_mapSpecialTile[tileId]._posX = 0xFF;
+					_mapSpecialTiles[_techId][tileId]._posX = 0xFF;
 				}
 			}
 			break;
@@ -433,10 +433,10 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 				int16 tileId = findMapSpecialTileIndex(scriptNumberArray[0], scriptNumberArray[1]);
 				if (tileId != -1) {
 					// Disable tile
-					_mapSpecialTile[tileId]._posX = 0xFF;
+					_mapSpecialTiles[_techId][tileId]._posX = 0xFF;
 				}
-				_mapSpecialTile[scriptNumberArray[2]]._posX = scriptNumberArray[0];
-				_mapSpecialTile[scriptNumberArray[2]]._posY = scriptNumberArray[1];
+				_mapSpecialTiles[_techId][scriptNumberArray[2]]._posX = scriptNumberArray[0];
+				_mapSpecialTiles[_techId][scriptNumberArray[2]]._posY = scriptNumberArray[1];
 			}
 			break;
 		case 0x1C:

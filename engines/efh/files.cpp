@@ -211,8 +211,8 @@ void EfhEngine::loadTechMapImp(int16 fileId) {
 	// The purpose is to properly load the misc map data in arrays in order to use them without being a pain afterwards
 	loadMapArrays(_techId);
 
-	loadImageSetToTileBank(1, _mapBitmapRefArr[_techId][0] + 1);
-	loadImageSetToTileBank(2, _mapBitmapRefArr[_techId][1] + 1);
+	loadImageSetToTileBank(1, _mapBitmapRefArr[_techId]._setId1 + 1);
+	loadImageSetToTileBank(2, _mapBitmapRefArr[_techId]._setId2 + 1);
 
 	initMapMonsters();
 	readImpFile(_techId, true);
@@ -323,16 +323,54 @@ void EfhEngine::loadNPCS() {
  * This is required in order to implement a clean savegame feature
  */
 void EfhEngine::preLoadMaps() {
-	for (int i = 0; i < 19; ++i) {
-		Common::String fileName = Common::String::format("tech.%d", i);
+	for (int idx = 0; idx < 19; ++idx) {
+		Common::String fileName = Common::String::format("tech.%d", idx);
 		readFileToBuffer(fileName, _hiResImageBuf);
-		uncompressBuffer(_hiResImageBuf, _techDataArr[i]);
+		uncompressBuffer(_hiResImageBuf, _techDataArr[idx]);
 
-		fileName = Common::String::format("map.%d", i);
+		fileName = Common::String::format("map.%d", idx);
 		readFileToBuffer(fileName, _hiResImageBuf);
-		uncompressBuffer(_hiResImageBuf, _mapArr[i]);
+		uncompressBuffer(_hiResImageBuf, _mapArr[idx]);
 
-		_mapBitmapRefArr[i] = &_mapArr[i][0];
+		_mapBitmapRefArr[idx]._setId1 = _mapArr[idx][0];
+		_mapBitmapRefArr[idx]._setId2 = _mapArr[idx][1];
+
+		uint8 *mapSpecialTilePtr = &_mapArr[idx][2];
+
+		for (int i = 0; i < 100; ++i) {
+			_mapSpecialTiles[idx][i]._placeId = mapSpecialTilePtr[9 * i];
+			_mapSpecialTiles[idx][i]._posX = mapSpecialTilePtr[9 * i + 1];
+			_mapSpecialTiles[idx][i]._posY = mapSpecialTilePtr[9 * i + 2];
+			_mapSpecialTiles[idx][i]._field3 = mapSpecialTilePtr[9 * i + 3];
+			_mapSpecialTiles[idx][i]._triggerId = mapSpecialTilePtr[9 * i + 4];
+			_mapSpecialTiles[idx][i]._field5_textId = READ_LE_UINT16(&mapSpecialTilePtr[9 * i + 5]);
+			_mapSpecialTiles[idx][i]._field7_textId = READ_LE_UINT16(&mapSpecialTilePtr[9 * i + 7]);
+		}
+
+		uint8 *mapMonstersPtr = &_mapArr[idx][902];
+		for (int i = 0; i < 64; ++i) {
+			_mapMonsters[idx][i]._possessivePronounSHL6 = mapMonstersPtr[29 * i];
+			_mapMonsters[idx][i]._npcId = mapMonstersPtr[29 * i + 1];
+			_mapMonsters[idx][i]._fullPlaceId = mapMonstersPtr[29 * i + 2];
+			_mapMonsters[idx][i]._posX = mapMonstersPtr[29 * i + 3];
+			_mapMonsters[idx][i]._posY = mapMonstersPtr[29 * i + 4];
+			_mapMonsters[idx][i]._weaponItemId = mapMonstersPtr[29 * i + 5];
+			_mapMonsters[idx][i]._maxDamageAbsorption = mapMonstersPtr[29 * i + 6];
+			_mapMonsters[idx][i]._monsterRef = mapMonstersPtr[29 * i + 7];
+			_mapMonsters[idx][i]._additionalInfo = mapMonstersPtr[29 * i + 8];
+			_mapMonsters[idx][i]._talkTextId = mapMonstersPtr[29 * i + 9];
+			_mapMonsters[idx][i]._groupSize = mapMonstersPtr[29 * i + 10];
+			for (int j = 0; j < 9; ++j)
+				_mapMonsters[idx][i]._hitPoints[j] = READ_LE_INT16(&mapMonstersPtr[29 * i + 11 + j * 2]);
+		}
+
+		uint8 *mapPtr = &_mapArr[idx][2758];
+		for (int i = 0; i < 64; ++i) {
+			for (int j = 0; j < 64; ++j)
+				_mapGameMaps[idx][i][j] = *mapPtr++;
+		}
+		
+
 	}
 }
 
