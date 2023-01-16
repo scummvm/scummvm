@@ -179,9 +179,10 @@ void EfhEngine::synchronize(Common::Serializer &s) {
 				s.syncAsSint16LE(_mapMonsters[i][idx]._hitPoints[j]);
 		}
 		
-		size = ARRAYSIZE(_mapArr[i]);
-		for (int j = 2758; j < size; ++j)
-			s.syncAsByte(_mapArr[i][j]);
+		for (int x = 0; x < 64; ++x) {
+			for (int y = 0; y < 64; ++y)
+				s.syncAsByte(_mapGameMaps[i][x][y]);
+		}
 	}
 
 	// Dialog flags
