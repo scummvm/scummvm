@@ -66,11 +66,6 @@ void TeLight::transformSpotPoint(TeVector3f32 &pt) {
 	pt += _position3d;
 }
 
-/*static*/
-void TeLight::updateGlobal() {
-	// TOOD: Call correct global.
-}
-
 Common::String TeLight::dump() const {
 	const char *ltype;
 	switch (_type) {

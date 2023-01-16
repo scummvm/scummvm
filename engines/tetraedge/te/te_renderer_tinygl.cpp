@@ -404,6 +404,9 @@ void TeRendererTinyGL::applyMaterial(const TeMaterial &m) {
 	}
 }
 
+void TeRendererTinyGL::updateGlobalLight() {
+	TeLightTinyGL::updateGlobal();
+}
 
 Common::String TeRendererTinyGL::vendor() {
 	return "TinyGL vendor";

@@ -51,7 +51,6 @@ public:
 	void transformSpotPoint(TeVector3f32 &pt1);
 
 	virtual void update(uint lightno) = 0;
-	static void updateGlobal();
 	static void setGlobalAmbient(const TeColor &col) { _globalAmbientColor = col.getPacked32(); }
 	static TeColor globalAmbient() { return TeColor(_globalAmbientColor); }
 

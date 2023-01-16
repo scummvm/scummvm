@@ -367,7 +367,7 @@ void InGameScene::draw() {
 	}
 #endif
 
-	TeLight::updateGlobal();
+	g_engine->getRenderer()->updateGlobalLight();
 	for (uint i = 0; i < _lights.size(); i++)
 		_lights[i]->update(i);
 

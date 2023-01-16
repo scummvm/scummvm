@@ -386,6 +386,10 @@ void TeRendererOpenGL::applyMaterial(const TeMaterial &m) {
 	}
 }
 
+void TeRendererOpenGL::updateGlobalLight() {
+	TeLightOpenGL::updateGlobal();
+}
+
 Common::String TeRendererOpenGL::vendor() {
 	return Common::String((const char *)glGetString(GL_VENDOR));
 }
