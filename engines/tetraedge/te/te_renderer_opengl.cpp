@@ -31,6 +31,8 @@
 #include "tetraedge/te/te_light_opengl.h"
 #include "tetraedge/te/te_mesh_opengl.h"
 
+#if defined(USE_OPENGL_GAME)
+
 namespace Tetraedge {
 
 TeRendererOpenGL::TeRendererOpenGL() {
@@ -395,3 +397,5 @@ Common::String TeRendererOpenGL::vendor() {
 }
 
 } // end namespace Tetraedge
+
+#endif // USE_OPENGL_GAME
