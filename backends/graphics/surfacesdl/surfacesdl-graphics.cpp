@@ -1980,7 +1980,7 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 		assert(!_mouseOrigSurface);
 
 		// Allocate bigger surface because scalers will read past the boudaries.
-		_mouseOrigSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
+		_mouseOrigSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,
 						_mouseCurState.w + _maxExtraPixels * 2,
 						_mouseCurState.h + _maxExtraPixels * 2,
 						_cursorFormat.bytesPerPixel * 8,
@@ -2074,7 +2074,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 		if (_mouseSurface)
 			SDL_FreeSurface(_mouseSurface);
 
-		_mouseSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
+		_mouseSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,
 						_mouseCurState.rW,
 						_mouseCurState.rH,
 						_mouseOrigSurface->format->BitsPerPixel,
@@ -2260,7 +2260,7 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg
 		height = _hwScreen->h;
 
 	_osdMessageSurface = SDL_CreateRGBSurface(
-		SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCALPHA,
+		SDL_SWSURFACE,
 		width, height, _hwScreen->format->BitsPerPixel, _hwScreen->format->Rmask, _hwScreen->format->Gmask, _hwScreen->format->Bmask, _hwScreen->format->Amask
 	);
 
@@ -2334,7 +2334,7 @@ void SurfaceSdlGraphicsManager::displayActivityIconOnOSD(const Graphics::Surface
 		const Graphics::PixelFormat &iconFormat = icon->format;
 
 		_osdIconSurface = SDL_CreateRGBSurface(
-				SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCALPHA,
+				SDL_SWSURFACE,
 				icon->w, icon->h, iconFormat.bytesPerPixel * 8,
 				((0xFF >> iconFormat.rLoss) << iconFormat.rShift),
 				((0xFF >> iconFormat.gLoss) << iconFormat.gShift),
