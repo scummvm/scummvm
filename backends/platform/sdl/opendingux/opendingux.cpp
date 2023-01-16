@@ -25,6 +25,7 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 
+#include "backends/graphics/opendingux/opendingux-graphics.h"
 #include "backends/platform/sdl/opendingux/opendingux.h"
 
 #include "backends/fs/posix/posix-fs-factory.h"
@@ -103,7 +104,11 @@ void OSystem_SDL_Opendingux::init() {
 }
 
 void OSystem_SDL_Opendingux::initBackend() {
+#ifdef RS90
+	ConfMan.registerDefault("fullscreen", false);
+#else
 	ConfMan.registerDefault("fullscreen", true);
+#endif
 	ConfMan.registerDefault("aspect_ratio", true);
 	ConfMan.registerDefault("themepath", "./themes");
 	ConfMan.registerDefault("extrapath", "./engine-data");
@@ -150,6 +155,11 @@ void OSystem_SDL_Opendingux::initBackend() {
 	if (_savefileManager == nullptr) {
 		_savefileManager = new DefaultSaveFileManager(SAVE_PATH);
 	}
+
+	if (!_eventSource)
+		_eventSource = new SdlEventSource();
+	if (!_graphicsManager)
+		_graphicsManager = new OpenDinguxGraphicsManager(_eventSource, _window);
 
 	OSystem_SDL::initBackend();
 }

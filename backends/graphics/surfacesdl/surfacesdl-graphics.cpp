@@ -172,11 +172,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_scaler = nullptr;
 	_maxExtraPixels = ScalerMan.getMaxExtraPixels();
 
-#ifdef RS90
-	_videoMode.fullscreen = false;
-#else
 	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
-#endif
 	_videoMode.filtering = ConfMan.getBool("filtering");
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_videoMode.stretchMode = STRETCH_FIT;
@@ -731,30 +727,8 @@ int SurfaceSdlGraphicsManager::getStretchMode() const {
 #endif
 
 void SurfaceSdlGraphicsManager::getDefaultResolution(uint &w, uint &h) {
-#ifdef RS90
-	SDL_PixelFormat p;
-	p.BitsPerPixel = 16;
-	p.BytesPerPixel = 2;
-	p.Rloss = 3;
-	p.Gloss = 2;
-	p.Bloss = 3;
-	p.Rshift = 11;
-	p.Gshift = 5;
-	p.Bshift = 0;
-	p.Rmask = 0xf800;
-	p.Gmask = 0x07e0;
-	p.Bmask = 0x001f;
-	p.colorkey = 0;
-	p.alpha = 0;
-	// Only native screen resolution is supported in RGB565 fullscreen hwsurface.
-	SDL_Rect const* const*availableModes = SDL_ListModes(&p, SDL_FULLSCREEN|SDL_HWSURFACE);
-	w = availableModes[0]->w;
-	h = availableModes[0]->h;
-	if (h > w) h /= 2; // RG99 has a 320x480 screen, gui should render at 320x240 to look correct
-#else
 	w = 320;
 	h = 200;
-#endif
 }
 
 void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
@@ -885,13 +859,6 @@ void SurfaceSdlGraphicsManager::fixupResolutionForAspectRatio(AspectRatio desire
 }
 
 void SurfaceSdlGraphicsManager::setupHardwareSize() {
-#ifdef RS90
-	_videoMode.isHwPalette = true;
-	_videoMode.scaleFactor = 1;
-#else
-	_videoMode.isHwPalette = false;
-#endif
-
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
@@ -913,10 +880,8 @@ void SurfaceSdlGraphicsManager::initGraphicsSurface() {
 #else
 	Uint32 flags = _videoMode.isHwPalette ? (SDL_HWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF) : SDL_SWSURFACE;
 #endif
-#ifndef RS90
 	if (_videoMode.fullscreen)
 		flags |= SDL_FULLSCREEN;
-#endif
 	_hwScreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, _videoMode.isHwPalette ? 8 : 16,
 				     flags);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -929,6 +894,8 @@ void SurfaceSdlGraphicsManager::initGraphicsSurface() {
 bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	_forceRedraw = true;
 
+	// Init isHwPalette. Allow setupHardwareSize to override it.
+	_videoMode.isHwPalette = false;
 	setupHardwareSize();
 
 	//
