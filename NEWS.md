@@ -18,6 +18,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - RetroMini RS90 under OpenDingux beta.
    - 1st generation Miyoo (New BittBoy, Pocket Go and PowKiddy Q90-V90-Q20)
      under TriForceX MiyooCFW.
+   - Miyoo mini
 
  General:
    - Reduced amount of false positives in Mass Add.
