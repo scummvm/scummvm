@@ -6429,7 +6429,9 @@ echocheck "OpenGL for game"
 if test "$_opengl_can_compile" = "yes"; then
 	if test "$_opengl_mode" = "gles"; then
 		# GLES 1.x is not supported for 3D games
-		_opengl_game_classic=no
+		if test "$_opengl_game_classic" != "no"; then
+			_opengl_game_classic=yes
+		fi
 		_opengl_game_shaders=no
 	elif test "$_opengl_mode" = "gles2"; then
 		# GLES2 doesn't support GL classic

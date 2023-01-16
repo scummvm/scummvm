@@ -187,9 +187,10 @@ void Context::initialize(ContextType contextType) {
 			OESDepth24 = true;
 		} else if (token == "GL_SGIS_texture_edge_clamp") {
 			textureEdgeClampSupported = true;
-		} else if (token == "GL_SGIS_texture_border_clamp") {
+		} else if (token == "GL_ARB_texture_border_clamp" || token == "GL_SGIS_texture_border_clamp" || token == "GL_OES_texture_border_clamp" ||
+		           token == "GL_EXT_texture_border_clamp" || token == "GL_NV_texture_border_clamp") {
 			textureBorderClampSupported = true;
-		} else if (token == "GL_ARB_texture_mirrored_repeat") {
+		} else if (token == "GL_ARB_texture_mirrored_repeat" || token == "GL_OES_texture_mirrored_repeat" || token == "GL_IBM_texture_mirrored_repeat") {
 			textureMirrorRepeatSupported = true;
 		} else if (token == "GL_SGIS_texture_lod" || token == "GL_APPLE_texture_max_level") {
 			textureMaxLevelSupported = true;
@@ -234,7 +235,9 @@ void Context::initialize(ContextType contextType) {
 		// So if we use GLAD we can check for ARB extensions and expect a GLSL of 1.00
 #ifdef USE_GLAD
 		shadersSupported = ARBShaderObjects && ARBShadingLanguage100 && ARBVertexShader && ARBFragmentShader;
-		glslVersion = 100;
+		if (shadersSupported) {
+			glslVersion = 100;
+		}
 #endif
 		// We don't expect GLES to support shaders recent enough for engines
 
@@ -291,7 +294,11 @@ void Context::initialize(ContextType contextType) {
 		warning("OpenGL: Unknown context initialized");
 	}
 
+#if !USE_FORCED_GLES
 	const char *glslVersionString = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
+#else
+	const char *glslVersionString = NULL;
+#endif
 
 	// Log features supported by GL context.
 	debug(5, "OpenGL version: %s", verString);

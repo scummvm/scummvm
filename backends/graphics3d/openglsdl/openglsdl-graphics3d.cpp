@@ -79,6 +79,9 @@ OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSour
 		DEFAULT_GL_MINOR = 3,
 #endif
 
+		DEFAULT_GLES_MAJOR = 1,
+		DEFAULT_GLES_MINOR = 1,
+
 		DEFAULT_GLES2_MAJOR = 2,
 		DEFAULT_GLES2_MINOR = 0
 	};
@@ -88,6 +91,11 @@ OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSour
 	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
 	_glContextMajor = DEFAULT_GLES2_MAJOR;
 	_glContextMinor = DEFAULT_GLES2_MINOR;
+#elif USE_FORCED_GLES
+	_glContextType = OpenGL::kContextGLES;
+	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
+	_glContextMajor = DEFAULT_GLES_MAJOR;
+	_glContextMinor = DEFAULT_GLES_MINOR;
 #else
 	bool noDefaults = false;
 
@@ -620,7 +628,8 @@ void OpenGLSdlGraphics3dManager::drawOverlay() {
 	_surfaceRenderer->restorePreviousState();
 }
 
-OpenGL::FrameBuffer *OpenGLSdlGraphics3dManager::createFramebuffer(uint width, uint height) {
+OpenGL::BaseFrameBuffer *OpenGLSdlGraphics3dManager::createFramebuffer(uint width, uint height) {
+#if !USE_FORCED_GLES
 #if !USE_FORCED_GLES2
 	if (_antialiasing && OpenGLContext.framebufferObjectMultisampleSupported) {
 		return new OpenGL::MultiSampleFrameBuffer(width, height, _antialiasing);
@@ -629,6 +638,9 @@ OpenGL::FrameBuffer *OpenGLSdlGraphics3dManager::createFramebuffer(uint width, u
 	{
 		return new OpenGL::FrameBuffer(width, height);
 	}
+#else
+	return nullptr;
+#endif
 }
 
 void OpenGLSdlGraphics3dManager::updateScreen() {

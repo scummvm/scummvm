@@ -30,14 +30,21 @@
 
 namespace OpenGL {
 
-class FrameBuffer : public TextureGL {
+class BaseFrameBuffer : public TextureGL {
+public:
+	virtual void attach() = 0;
+	virtual void detach() = 0;
+};
+
+#if !USE_FORCED_GLES
+class FrameBuffer : public BaseFrameBuffer {
 public:
 	FrameBuffer(uint width, uint height);
 	FrameBuffer(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);
 	virtual ~FrameBuffer();
 
-	virtual void attach();
-	virtual void detach();
+	void attach() override;
+	void detach() override;
 
 protected:
 	GLuint getFrameBufferName() const { return _frameBuffer; }
@@ -54,8 +61,8 @@ public:
 	MultiSampleFrameBuffer(uint width, uint height, int samples);
 	virtual ~MultiSampleFrameBuffer();
 
-	virtual void attach();
-	virtual void detach();
+	void attach() override;
+	void detach() override;
 
 private:
 	void init();
@@ -64,6 +71,7 @@ private:
 	GLuint _msDepthId;
 	GLuint _msSamples;
 };
+#endif
 #endif
 
 } // End of namespace OpenGL

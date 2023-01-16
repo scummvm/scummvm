@@ -84,13 +84,13 @@ FixedSurfaceRenderer::~FixedSurfaceRenderer() {
 
 void FixedSurfaceRenderer::prepareState() {
 	// Save current state
-	glPushAttrib(GL_TRANSFORM_BIT | GL_VIEWPORT_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_SCISSOR_BIT | GL_PIXEL_MODE_BIT | GL_TEXTURE_BIT);
+	// glPushAttrib(GL_TRANSFORM_BIT | GL_VIEWPORT_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_SCISSOR_BIT | GL_PIXEL_MODE_BIT | GL_TEXTURE_BIT);
 
 	// prepare view
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	glOrtho(0, 1.0, 1.0, 0, 0, 1);
+	glOrthof(0, 1.0, 1.0, 0, 0, 1);
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
@@ -128,13 +128,13 @@ void FixedSurfaceRenderer::render(const TextureGL *tex, const Math::Rect2d &dest
 	vertices[1].y = offsetY;
 	vertices[1].u = texcropX;
 	vertices[1].v = texTop;
-	vertices[2].x = offsetX + sizeX;
+	vertices[2].x = offsetX;
 	vertices[2].y = offsetY + sizeY;
-	vertices[2].u = texcropX;
+	vertices[2].u = 0.0f;
 	vertices[2].v = texBottom;
-	vertices[3].x = offsetX;
+	vertices[3].x = offsetX + sizeX;
 	vertices[3].y = offsetY + sizeY;
-	vertices[3].u = 0.0f;
+	vertices[3].u = texcropX;
 	vertices[3].v = texBottom;
 
 	glColor4f(1.0, 1.0, 1.0, 1.0);
@@ -147,7 +147,7 @@ void FixedSurfaceRenderer::render(const TextureGL *tex, const Math::Rect2d &dest
 	glVertexPointer(2, GL_FLOAT, sizeof(SurfaceVertex), &vertices[0].x);
 	glTexCoordPointer(2, GL_FLOAT, sizeof(SurfaceVertex), &vertices[0].u);
 
-	glDrawArrays(GL_QUADS, 0, 4);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -163,7 +163,7 @@ void FixedSurfaceRenderer::restorePreviousState() {
 	glMatrixMode(GL_TEXTURE);
 	glPopMatrix();
 
-	glPopAttrib();
+	// glPopAttrib();
 
 	_flipY = false;
 	_alphaBlending = false;

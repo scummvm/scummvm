@@ -37,6 +37,8 @@
 
 namespace OpenGL {
 
+#if !USE_FORCED_GLES
+
 static bool usePackedBuffer() {
 	return OpenGLContext.packedDepthStencilSupported;
 }
@@ -183,6 +185,7 @@ void MultiSampleFrameBuffer::detach() {
 }
 
 #endif // !USE_FORCED_GLES2
+#endif // !USE_FORCED_GLES
 
 } // End of namespace OpenGL
 
