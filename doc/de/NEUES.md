@@ -14,6 +14,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Driller/Space Station Oblivion (DOS/EGA, Amiga und Atari ST-Versionen) hinzugefügt.
    - Unterstützung für Halls of the Dead: Faery Tale Adventure II hinzugefügt.
 
+ Neue Plattformen:
+   - RetroMini RS90 mit OpenDingux Beta-Firmware.
+   - Erste Generation von Miyoo (New BittBoy, Pocket Go und PowKiddy Q90-V90-Q20)
+     mit der TriForceX MiyooCFW.
+
  Allgemein:
    - Anzahl an falsch-positiven Einträgen reduziert, wenn das Gerät nach Spielen durchsucht wird.
    - Code der Roland MT-32-Emulation auf Munt mt32emu 2.7.0 aktualisiert.
