@@ -43,8 +43,12 @@ TeColor::TeColor(uint16 shortcol) {
 TeColor::TeColor(byte r, byte g, byte b, byte a) : _c{r, g, b, a} {
 }
 
-uint32 TeColor::getPacked() {
+uint32 TeColor::getPacked() const {
 	return (g() & 0xf8) << 2 | (r() & 0xf8) << 7 | (b() >> 3);
+}
+
+uint32 TeColor::getPacked32() const {
+	return (r() << 24) | (g() << 16) | (b() << 8) | a();
 }
 
 bool TeColor::serialize(Common::WriteStream &stream) const {

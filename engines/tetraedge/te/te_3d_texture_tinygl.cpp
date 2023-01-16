@@ -192,7 +192,7 @@ void Te3DTextureTinyGL::update(const TeImage &img, uint xoff, uint yoff) {
 	tglPixelStorei(TGL_UNPACK_SKIP_PIXELS, 0);
 	tglPixelStorei(TGL_UNPACK_ALIGNMENT, 1);
 
-	const void *imgdata = img.getPixels();
+	//const void *imgdata = img.getPixels();
 	if (_format == TeImage::RGB8) {
 		//TODO: Come up with equivalent for TGL.
 		//tglTexSubImage2D(TGL_TEXTURE_2D, 0, xoff, yoff, img.w, img.h, TGL_RGB, TGL_UNSIGNED_BYTE, imgdata);

@@ -1123,6 +1123,7 @@ bool Game::onMouseClick(const Common::Point &pt) {
 	return false;
 }
 
+#if ENABLE_CUSTOM_CURSOR_CHECKS
 // Note: None of these cursor files seem to be actually shipped with the game
 // but the logic is reproduced here just in case there's some different
 // version that uses them.
@@ -1144,6 +1145,7 @@ static const char cursorsTable[][2][80] = {
 	{"Type04", "pictures/Type04.png"},
 	{"Type05", "pictures/Type05.png"}
 };
+#endif
 
 bool Game::onMouseMove() {
 	if (!_entered)

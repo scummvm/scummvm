@@ -44,7 +44,8 @@ public:
 	const byte &b() const { return _c[2]; };
 	const byte &a() const { return _c[3]; };
 
-	uint32 getPacked();
+	uint32 getPacked() const;
+	uint32 getPacked32() const;
 
 	bool serialize(Common::WriteStream &stream) const;
 	bool deserialize(Common::ReadStream &stream);

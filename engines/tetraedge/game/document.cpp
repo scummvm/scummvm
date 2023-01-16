@@ -23,7 +23,7 @@
 
 namespace Tetraedge {
 
-Document::Document(DocumentsBrowser *browser) : _browser(browser) {
+Document::Document(DocumentsBrowser *browser) /*: _browser(browser)*/ {
 
 }
 

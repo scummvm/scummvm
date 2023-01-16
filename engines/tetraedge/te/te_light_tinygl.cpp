@@ -119,8 +119,9 @@ void TeLightTinyGL::update(uint lightno) {
 
 /*static*/
 void TeLightTinyGL::updateGlobal() {
-	const float col[4] = {_globalAmbientColor.r() / 255.0f,
-			_globalAmbientColor.g() / 255.0f, _globalAmbientColor.b() / 255.0f, 1.0};
+	const TeColor globalAmbient(_globalAmbientColor);
+	const float col[4] = {globalAmbient.r() / 255.0f,
+			globalAmbient.g() / 255.0f, globalAmbient.b() / 255.0f, 1.0};
 	tglLightModelfv(TGL_LIGHT_MODEL_AMBIENT, col);
 }
 

@@ -64,7 +64,7 @@ public:
 
 private:
 	bool _sizeSet;
-	bool _allowFloatTranslate;
+	//bool _allowFloatTranslate;
 
 };
 

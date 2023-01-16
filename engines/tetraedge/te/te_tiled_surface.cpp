@@ -103,7 +103,7 @@ bool TeTiledSurface::load(const Common::Path &path) {
 			}
 
 			Common::SharedPtr<TePalette> nullpal;
-			img.create(_codec->width(), _codec->height(), nullpal, _imgFormat, bufx, bufy);
+			img.createImg(_codec->width(), _codec->height(), nullpal, _imgFormat, bufx, bufy);
 
 			if (_codec->update(0, img)) {
 #if DUMP_LOADED_IMAGES
@@ -168,7 +168,7 @@ bool TeTiledSurface::onFrameAnimCurrentFrameChanged() {
 	int bufxsize = MIN(vidSize._x + 4, optimisedSize._x);
 
 	Common::SharedPtr<TePalette> nullPal;
-	img.create(vidSize._x, vidSize._y, nullPal, _imgFormat, bufxsize, bufysize);
+	img.createImg(vidSize._x, vidSize._y, nullPal, _imgFormat, bufxsize, bufysize);
 	if (_codec->update(_frameAnim.lastFrameShown(), img))
 		update(img);
 	return _codec->isAtEnd();
