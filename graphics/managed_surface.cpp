@@ -290,15 +290,17 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 
 	bool isSameFormat = (destFormat == srcFormat);
 	if (!isSameFormat) {
-		// When the pixel format differs, the destination must be non-paletted
-		assert(destFormat.bytesPerPixel == 2 || destFormat.bytesPerPixel == 3 || destFormat.bytesPerPixel == 4);
-		assert(srcFormat.bytesPerPixel == 2 || srcFormat.bytesPerPixel == 3 || srcFormat.bytesPerPixel == 4
-			|| (srcFormat.bytesPerPixel == 1 && srcPalette));
+		assert(destFormat.bytesPerPixel == 1 || destFormat.bytesPerPixel == 2 || destFormat.bytesPerPixel == 3 || destFormat.bytesPerPixel == 4);
+		assert(srcFormat.bytesPerPixel == 1 || srcFormat.bytesPerPixel == 2 || srcFormat.bytesPerPixel == 3 || srcFormat.bytesPerPixel == 4);
+		if (srcFormat.bytesPerPixel == 1) {
+			// When the pixel format differs, the destination must be non-paletted
+			assert(!destFormat.isCLUT8() || srcPalette);
+		}
 	}
 
 
 	uint32 alphaMask = 0;
-	if (srcFormat.bytesPerPixel == 1) {
+	if (srcFormat.isCLUT8()) {
 		alphaMask = 0xff000000u;
 	} else {
 		if (srcFormat.aBits() > 0)
@@ -314,7 +316,7 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 
 		// For paletted format, assume the palette is the same and there is no transparency.
 		// We can thus do a straight copy of the pixels.
-		if (destFormat.bytesPerPixel == 1 && noScale) {
+		if (destFormat.isCLUT8() && noScale) {
 			int width = srcRect.width();
 			if (destRect.left + width > w)
 				width = w - destRect.left;
@@ -335,19 +337,21 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 
 			const byte *srcVal = &srcP[scaleXCtr / SCALE_THRESHOLD * srcFormat.bytesPerPixel];
 			byte *destVal = &destP[xCtr * destFormat.bytesPerPixel];
-			if (destFormat.bytesPerPixel == 1) {
+			if (destFormat.isCLUT8()) {
 				*destVal = *srcVal;
 				continue;
 			}
 
 			uint32 col = 0;
-			if (srcFormat.bytesPerPixel == 1) {
+			if (srcFormat.isCLUT8()) {
 				assert(srcPalette != nullptr);	// Catch the cases when palette is missing
 				// Get the palette color
 				col = srcPalette[*srcVal];
 			} else {
 				// Use the src's pixel format to split up the source pixel
-				if (srcFormat.bytesPerPixel == 2)
+				if (srcFormat.bytesPerPixel == 1)
+					col = *reinterpret_cast<const uint8 *>(srcVal);
+				else if (srcFormat.bytesPerPixel == 2)
 					col = *reinterpret_cast<const uint16 *>(srcVal);
 				else if (srcFormat.bytesPerPixel == 4)
 					col = *reinterpret_cast<const uint32 *>(srcVal);
@@ -371,7 +375,7 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 				byte aDest = 0, rDest = 0, gDest = 0, bDest = 0;
 
 				// Different format or partially transparent
-				if (srcFormat.bytesPerPixel == 1) {
+				if (srcFormat.isCLUT8()) {
 					rSrc = col & 0xff;
 					gSrc = (col >> 8) & 0xff;
 					bSrc = (col >> 16) & 0xff;
@@ -388,7 +392,9 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 				} else {
 					// Partially transparent, so calculate new pixel colors
 					uint32 destColor;
-					if (destFormat.bytesPerPixel == 2)
+					if (destFormat.bytesPerPixel == 1)
+						destColor = *reinterpret_cast<uint8 *>(destVal);
+					else if (destFormat.bytesPerPixel == 2)
 						destColor = *reinterpret_cast<uint16 *>(destVal);
 					else if (destFormat.bytesPerPixel == 4)
 						destColor = *reinterpret_cast<uint32 *>(destVal);
@@ -417,7 +423,9 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 				destPixel = destFormat.ARGBToColor(aDest, rDest, gDest, bDest);
 			}
 
-			if (destFormat.bytesPerPixel == 2)
+			if (destFormat.bytesPerPixel == 1)
+				*(uint8 *)destVal = destPixel;
+			else if (destFormat.bytesPerPixel == 2)
 				*(uint16 *)destVal = destPixel;
 			else if (destFormat.bytesPerPixel == 4)
 				*(uint32 *)destVal = destPixel;
@@ -546,7 +554,7 @@ void transBlitPixel(TSRC srcVal, TDEST &destVal, const Graphics::PixelFormat &sr
 		uint32 overrideColor, uint32 srcAlpha, const uint32 *srcPalette, const byte *lookup) {
 	// Decode and re-encode each pixel
 	byte aSrc, rSrc, gSrc, bSrc;
-	if (srcFormat.bytesPerPixel == 1) {
+	if (srcFormat.isCLUT8()) {
 		assert(srcPalette != nullptr);	// Catch the cases when palette is missing
 
 		// Get the palette color
@@ -705,13 +713,15 @@ void ManagedSurface::transBlitFromInner(const Surface &src, const Common::Rect &
 			error("Surface::transBlitFrom: mask dimensions do not match src");
 	}
 
-	HANDLE_BLIT(1, 1, byte, byte)
-	HANDLE_BLIT(1, 2, byte, uint16)
-	HANDLE_BLIT(1, 4, byte, uint32)
+	HANDLE_BLIT(1, 1, uint8,  uint8)
+	HANDLE_BLIT(1, 2, uint8,  uint16)
+	HANDLE_BLIT(1, 4, uint8,  uint32)
+	HANDLE_BLIT(2, 1, uint16, uint8)
 	HANDLE_BLIT(2, 2, uint16, uint16)
-	HANDLE_BLIT(4, 4, uint32, uint32)
 	HANDLE_BLIT(2, 4, uint16, uint32)
+	HANDLE_BLIT(4, 1, uint32, uint8)
 	HANDLE_BLIT(4, 2, uint32, uint16)
+	HANDLE_BLIT(4, 4, uint32, uint32)
 	error("Surface::transBlitFrom: bytesPerPixel must be 1, 2, or 4");
 
 	// Mark the affected area
