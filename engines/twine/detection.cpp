@@ -222,6 +222,10 @@ static const ADGameDescription twineGameDescriptions[] = {
 	// 8 Sep 2014 at 15:56
 	TWINE_DETECTION_ENTRY("lba", "DotEmu", AD_ENTRY1s("text.hqr", "a374c93450dd2bb874b7167a63974e8d", 377224), Common::kPlatformAndroid, TwinE::TF_DOTEMU_ENHANCED),
 
+	// Potentially the DotEmu release for windows from steam
+	// see https://bugs.scummvm.org/ticket/13885
+	TWINE_DETECTION_ENTRY("lba", "DotEmu", AD_ENTRY1s("LBA.EXE", "615a9a0c3dae2c3b5fca0dee4d84dc72", 931328), Common::kPlatformWindows, TwinE::TF_DOTEMU_ENHANCED),
+
 	// Little Big Adventure - GOG Version
 	// LBA.GOG
 	// 11 October 2011 at 17:30
