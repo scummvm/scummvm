@@ -817,8 +817,8 @@ Start with debugger
 
 .. _Myst3:
 
-	Myst3
-	*******
+Myst3
+*******
 
 .. _widescreen_mod:
 

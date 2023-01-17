@@ -35,8 +35,8 @@
       settings/cloud
       settings/control
       settings/game
-      settings/gui
       settings/graphics
+      settings/gui
       settings/keymaps
       settings/lan
       settings/misc
