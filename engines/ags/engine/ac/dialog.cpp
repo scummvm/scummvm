@@ -764,7 +764,7 @@ void DialogOptions::Redraw() {
 		parserInput->Width -= bullet_wid;
 		parserInput->X += bullet_wid;
 
-		parserInput->Draw(ds);
+		parserInput->Draw(ds, parserInput->X, parserInput->Y);
 		parserInput->IsActivated = false;
 	}
 
