@@ -272,7 +272,6 @@ void GraphicsManager::pasteSpriteToBackDrop(int x1, int y1, Sprite &single, cons
 		_zBuffer->originalNum = num;
 	}
 
-	//TODO: shader: useLightTexture
 	x1 -= single.xhot;
 	y1 -= single.yhot;
 	Graphics::TransparentSurface tmp(single.surface, false);
@@ -290,10 +289,9 @@ void GraphicsManager::burnSpriteToBackDrop(int x1, int y1, Sprite &single, const
 		_zBuffer->originalNum = num;
 	}
 
-	//TODO: shader: useLightTexture
 	x1 -= single.xhot;
 	y1 -= single.yhot - 1;
-	Graphics::TransparentSurface tmp(single.surface, false);
+	Graphics::TransparentSurface tmp(single.burnSurface, false);
 	tmp.blit(_backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
 			TS_RGB(_currentBurnR, _currentBurnG, _currentBurnB));
 }
