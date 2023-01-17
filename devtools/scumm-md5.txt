@@ -48,7 +48,7 @@
 maniac	Maniac Mansion
 	2d624d1b214f7faf0094daea65c6d1a6	1188	en	2gs	Apple II	-	-
 
-	2cb46375dd5cdfd023e2f07e0a21b530	-1	en	C64	C64	Demo	-	Robert Crossfield
+	2cb46375dd5cdfd023e2f07e0a21b530	783	en	C64	C64	Demo	-	Robert Crossfield
 	afa3a401fcad723f0b9ead41b18a4afc	1188	en	C64	C64	-	-	Both Activision (PAL, 1987) and Lucasfilm (NTSC, 1989) are identical
 	eea4d9ac2fb6f145945a308e8866915b	1188	en	C64	C64	-	-	Eagle Soft Incorporated crack
 	439a7f4adf510489981ac52308e7d7a2	1188	de	C64	C64	-	-
