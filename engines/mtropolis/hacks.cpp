@@ -433,7 +433,7 @@ void addObsidianImprovedWidescreen(const MTropolisGameDescription &desc, Hacks &
 			// Bureau documents
 			// 100 area (booths)
 			0x4e2d9e,
-			0x4de654,
+			0x4dfa22,
 
 			// 199 area (booths hint room)
 			0x4e2555,
@@ -530,7 +530,7 @@ void addObsidianImprovedWidescreen(const MTropolisGameDescription &desc, Hacks &
 			0x4e55cc,
 
 			// 500 area (Immediate Action)
-			0x4a2e7b,
+			0x4e2e7b,
 			0x4e0710,
 
 			// 800 area (bookshelves)
