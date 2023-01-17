@@ -392,7 +392,7 @@ private:
 	void getXPAndSearchCorpse(int16 charId, Common::String namePt1, Common::String namePt2, int16 monsterId);
 	bool characterSearchesMonsterCorpse(int16 charId, int16 monsterId);
 	void addReactionText(int16 id);
-	void sub1C4CA(bool WhiteFl);
+	void displayEncounterInfo(bool WhiteFl);
 	int16 getWeakestMobster(int16 groupNumber);
 	int16 getCharacterScore(int16 charId, int16 itemId);
 	bool checkSpecialItemsOnCurrentPlace(int16 itemId);
