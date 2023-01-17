@@ -84,16 +84,10 @@ Bitmap *create_textual_image(const char *text, int asspch, int isThought,
 	else if (use_thought_gui)
 		usingGui = _GP(game).options[OPT_THOUGHTGUI];
 
-	int padding = get_textwindow_padding(usingGui);
+	const int padding = get_textwindow_padding(usingGui);
 	const int paddingScaled = get_fixed_pixel_size(padding);
  	// Just in case screen size is not neatly divisible by 320x200
 	const int paddingDoubledScaled = get_fixed_pixel_size(padding * 2);
-
-	// FIXME: Fixes the display of the F1 help dialog in La Croix Pan,
-	// since it was previously incorrectly wrapping on the 's' at the end
-	// of the 'Cursors' word. May be due to minor differences in width calcs
-	if (padding == 3 && ConfMan.get("gameid") == "lacroixpan")
-		padding = 0;
 
 	// WORKAROUND: Guard Duty specifies a wii of 100,000, which is larger
 	// than can be supported by ScummVM's surface classes
