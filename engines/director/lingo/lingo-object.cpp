@@ -1087,7 +1087,7 @@ bool TextCastMember::setField(int field, const Datum &d) {
 		return true;
 		break;
 	case kTheText:
-		setText(d.asString());
+		setRawText(d.asString());
 		return true;
 	case kTheTextAlign:
 		{

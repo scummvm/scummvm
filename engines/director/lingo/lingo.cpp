@@ -1494,7 +1494,7 @@ void Lingo::varAssign(const Datum &var, const Datum &value) {
 			}
 			switch (member->_type) {
 			case kCastText:
-				((TextCastMember *)member)->setText(value.asString());
+				((TextCastMember *)member)->setRawText(value.asString());
 				break;
 			default:
 				warning("varAssign: Unhandled cast type %d", member->_type);

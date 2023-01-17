@@ -1254,6 +1254,7 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 	_fgpalinfo3 = stxt->_style.b;
 	_ftext = stxt->_ftext;
 	_ptext = stxt->_ptext;
+	_rtext = stxt->_rtext;
 
 	// Rectifying _fontId in case of a fallback font
 	Graphics::MacFont macFont(_fontId, _fontSize, _textSlant);
@@ -1323,19 +1324,21 @@ void TextCastMember::importRTE(byte *text) {
 	//assert(rteList.size() == 3);
 	//child0 is probably font data.
 	//child1 is the raw text.
-	_ptext = _ftext = Common::String((char*)text);
+	_rtext = _ptext = _ftext = Common::String((char*)text);
 	//child2 is positional?
 }
 
-void TextCastMember::setText(const Common::U32String &text) {
+void TextCastMember::setRawText(const Common::String &text) {
 	// Do nothing if text did not change
-	if (_ptext.equals(text))
+	if (_rtext.equals(text))
 		return;
+
+	_rtext = text;
+	_ptext = Common::U32String(text);
 
 	// If text has changed, use the cached formatting from first STXT in this castmember.
 	Common::U32String formatting = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", _fontId, _textSlant, _fontSize, _fgpalinfo1, _fgpalinfo2, _fgpalinfo3);
-	_ptext = text;
-	_ftext = formatting + text;
+	_ftext = formatting + _ptext;
 	_modified = true;
 }
 
@@ -1359,6 +1362,10 @@ int TextCastMember::getTextSize() {
 
 Common::U32String TextCastMember::getText() {
 	return _ptext;
+}
+
+Common::String TextCastMember::getRawText() {
+	return _rtext;
 }
 
 void TextCastMember::setTextSize(int textSize) {

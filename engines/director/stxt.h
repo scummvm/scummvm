@@ -54,6 +54,7 @@ public:
 	Cast *_cast;
 	Common::U32String _ftext;
 	Common::U32String _ptext;
+	Common::String _rtext;
 	TextType _textType;
 	TextAlignType _textAlign;
 	SizeType _textShadow;
