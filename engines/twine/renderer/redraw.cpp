@@ -359,7 +359,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 		}
 	}
 
-	if (!_engine->_renderer->renderIsoModel(delta.x, delta.y, delta.z, LBAAngles::ANGLE_0, actor->_beta, LBAAngles::ANGLE_0, _engine->_resources->_bodyData[actor->_body], renderRect)) {
+	if (!_engine->_renderer->affObjetIso(delta.x, delta.y, delta.z, LBAAngles::ANGLE_0, actor->_beta, LBAAngles::ANGLE_0, _engine->_resources->_bodyData[actor->_body], renderRect)) {
 		_engine->_interface->resetClip();
 		return;
 	}
@@ -726,10 +726,10 @@ void Redraw::renderOverlays() {
 
 				const BodyData &bodyPtr = _engine->_resources->_inventoryTable[item];
 				_overlayRotation += 1; // overlayRotation += 8;
-				_engine->_renderer->renderInventoryItem(40, 40, bodyPtr, _overlayRotation, 16000);
+				_engine->_renderer->draw3dObject(40, 40, bodyPtr, _overlayRotation, 16000);
 				_engine->_menu->drawRectBorders(rect);
 				addRedrawArea(rect);
-				_engine->_gameState->initEngineProjections();
+				_engine->_gameState->init3DGame();
 				_engine->_interface->resetClip();
 				break;
 			}

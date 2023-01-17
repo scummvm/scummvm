@@ -65,16 +65,16 @@ IVec3 &Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) { // Proj
 		return _projPos;
 	}
 
-	if (_baseRotPos.z - cZ < 0) {
+	if (_cameraRot.z - cZ < 0) {
 		_projPos.x = 0;
 		_projPos.y = 0;
 		_projPos.z = 0;
 		return _projPos;
 	}
 
-	cX -= _baseRotPos.x;
-	cY -= _baseRotPos.y;
-	cZ = _baseRotPos.z - cZ;
+	cX -= _cameraRot.x;
+	cY -= _cameraRot.y;
+	cZ = _cameraRot.z - cZ;
 
 	int32 posZ = cZ + _kFactor;
 	if (posZ <= 0) {
@@ -98,10 +98,10 @@ void Renderer::setProjection(int32 x, int32 y, int32 kfact, int32 lfactx, int32 
 	_isUsingIsoProjection = false;
 }
 
-void Renderer::setBaseTranslation(int32 x, int32 y, int32 z) {
-	_baseTransPos.x = x;
-	_baseTransPos.y = y;
-	_baseTransPos.z = z;
+void Renderer::setPosCamera(int32 x, int32 y, int32 z) {
+	_cameraPos.x = x;
+	_cameraPos.y = y;
+	_cameraPos.z = z;
 }
 
 void Renderer::setIsoProjection(int32 x, int32 y, int32 scale) {
@@ -112,116 +112,92 @@ void Renderer::setIsoProjection(int32 x, int32 y, int32 scale) {
 	_isUsingIsoProjection = true;
 }
 
-void Renderer::baseMatrixTranspose() {
-	SWAP(_baseMatrix.row1.y, _baseMatrix.row2.x);
-	SWAP(_baseMatrix.row1.z, _baseMatrix.row3.x);
-	SWAP(_baseMatrix.row2.z, _baseMatrix.row3.y);
+void Renderer::flipMatrix() {
+	SWAP(_matrixWorld.row1.y, _matrixWorld.row2.x);
+	SWAP(_matrixWorld.row1.z, _matrixWorld.row3.x);
+	SWAP(_matrixWorld.row2.z, _matrixWorld.row3.y);
 }
 
-IVec3 Renderer::setAngleCamera(int32 x, int32 y, int32 z, bool transpose) {
+IVec3 Renderer::setInverseAngleCamera(int32 x, int32 y, int32 z) {
+	setAngleCamera(x, y, z);
+	flipMatrix();
+	_cameraRot = longWorldRot(_cameraPos.x, _cameraPos.y, _cameraPos.z);
+	return _cameraRot;
+}
+
+IVec3 Renderer::setAngleCamera(int32 x, int32 y, int32 z) {
 	const double Xradians = (double)((LBAAngles::ANGLE_90 - x) % LBAAngles::ANGLE_360) * 2 * M_PI / LBAAngles::ANGLE_360;
 	const double Yradians = (double)((LBAAngles::ANGLE_90 - y) % LBAAngles::ANGLE_360) * 2 * M_PI / LBAAngles::ANGLE_360;
 	const double Zradians = (double)((LBAAngles::ANGLE_90 - z) % LBAAngles::ANGLE_360) * 2 * M_PI / LBAAngles::ANGLE_360;
 
-	_baseMatrix.row1.x = (int32)(sin(Zradians) * sin(Yradians) * SCENE_SIZE_HALFF);
-	_baseMatrix.row1.y = (int32)(-cos(Zradians) * SCENE_SIZE_HALFF);
-	_baseMatrix.row1.z = (int32)(sin(Zradians) * cos(Yradians) * SCENE_SIZE_HALFF);
-	_baseMatrix.row2.x = (int32)(cos(Zradians) * sin(Xradians) * SCENE_SIZE_HALFF);
-	_baseMatrix.row2.y = (int32)(sin(Zradians) * sin(Xradians) * SCENE_SIZE_HALFF);
-	_baseMatrix.row3.x = (int32)(cos(Zradians) * cos(Xradians) * SCENE_SIZE_HALFF);
-	_baseMatrix.row3.y = (int32)(sin(Zradians) * cos(Xradians) * SCENE_SIZE_HALFF);
+	_matrixWorld.row1.x = (int32)(sin(Zradians) * sin(Yradians) * SCENE_SIZE_HALFF);
+	_matrixWorld.row1.y = (int32)(-cos(Zradians) * SCENE_SIZE_HALFF);
+	_matrixWorld.row1.z = (int32)(sin(Zradians) * cos(Yradians) * SCENE_SIZE_HALFF);
+	_matrixWorld.row2.x = (int32)(cos(Zradians) * sin(Xradians) * SCENE_SIZE_HALFF);
+	_matrixWorld.row2.y = (int32)(sin(Zradians) * sin(Xradians) * SCENE_SIZE_HALFF);
+	_matrixWorld.row3.x = (int32)(cos(Zradians) * cos(Xradians) * SCENE_SIZE_HALFF);
+	_matrixWorld.row3.y = (int32)(sin(Zradians) * cos(Xradians) * SCENE_SIZE_HALFF);
 
-	int32 matrixElem = _baseMatrix.row2.x;
+	int32 matrixElem = _matrixWorld.row2.x;
 
-	_baseMatrix.row2.x = (int32)(sin(Yradians) * matrixElem + SCENE_SIZE_HALFF * cos(Yradians) * cos(Xradians));
-	_baseMatrix.row2.z = (int32)(cos(Yradians) * matrixElem - SCENE_SIZE_HALFF * sin(Yradians) * cos(Xradians));
+	_matrixWorld.row2.x = (int32)(sin(Yradians) * matrixElem + SCENE_SIZE_HALFF * cos(Yradians) * cos(Xradians));
+	_matrixWorld.row2.z = (int32)(cos(Yradians) * matrixElem - SCENE_SIZE_HALFF * sin(Yradians) * cos(Xradians));
 
-	matrixElem = _baseMatrix.row3.x;
+	matrixElem = _matrixWorld.row3.x;
 
-	_baseMatrix.row3.x = (int32)(sin(Yradians) * matrixElem - SCENE_SIZE_HALFF * sin(Xradians) * cos(Yradians));
-	_baseMatrix.row3.z = (int32)(cos(Yradians) * matrixElem + SCENE_SIZE_HALFF * sin(Xradians) * sin(Yradians));
+	_matrixWorld.row3.x = (int32)(sin(Yradians) * matrixElem - SCENE_SIZE_HALFF * sin(Xradians) * cos(Yradians));
+	_matrixWorld.row3.z = (int32)(cos(Yradians) * matrixElem + SCENE_SIZE_HALFF * sin(Xradians) * sin(Yradians));
 
-	if (transpose) {
-		baseMatrixTranspose();
-	}
-	_baseRotPos = getBaseRotationPosition(_baseTransPos.x, _baseTransPos.y, _baseTransPos.z);
+	_cameraRot = longWorldRot(_cameraPos.x, _cameraPos.y, _cameraPos.z);
 
-	return _baseRotPos;
+	return _cameraRot;
 }
 
-IVec3 Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
-	const int32 vx = (_baseMatrix.row1.x * x + _baseMatrix.row1.y * y + _baseMatrix.row1.z * z) / SCENE_SIZE_HALF;
-	const int32 vy = (_baseMatrix.row2.x * x + _baseMatrix.row2.y * y + _baseMatrix.row2.z * z) / SCENE_SIZE_HALF;
-	const int32 vz = (_baseMatrix.row3.x * x + _baseMatrix.row3.y * y + _baseMatrix.row3.z * z) / SCENE_SIZE_HALF;
+IVec3 Renderer::longWorldRot(int32 x, int32 y, int32 z) {
+	const int32 vx = (_matrixWorld.row1.x * x + _matrixWorld.row1.y * y + _matrixWorld.row1.z * z) / SCENE_SIZE_HALF;
+	const int32 vy = (_matrixWorld.row2.x * x + _matrixWorld.row2.y * y + _matrixWorld.row2.z * z) / SCENE_SIZE_HALF;
+	const int32 vz = (_matrixWorld.row3.x * x + _matrixWorld.row3.y * y + _matrixWorld.row3.z * z) / SCENE_SIZE_HALF;
 	return IVec3(vx, vy, vz);
 }
 
-IVec3 Renderer::getCameraAnglePositions(int32 x, int32 y, int32 z) {
-	const int32 vx = (_baseMatrix.row1.x * x + _baseMatrix.row2.x * y + _baseMatrix.row3.x * z) / SCENE_SIZE_HALF;
-	const int32 vy = (_baseMatrix.row1.y * x + _baseMatrix.row2.y * y + _baseMatrix.row3.y * z) / SCENE_SIZE_HALF;
-	const int32 vz = (_baseMatrix.row1.z * x + _baseMatrix.row2.z * y + _baseMatrix.row3.z * z) / SCENE_SIZE_HALF;
+IVec3 Renderer::longInverseRot(int32 x, int32 y, int32 z) {
+	const int32 vx = (_matrixWorld.row1.x * x + _matrixWorld.row2.x * y + _matrixWorld.row3.x * z) / SCENE_SIZE_HALF;
+	const int32 vy = (_matrixWorld.row1.y * x + _matrixWorld.row2.y * y + _matrixWorld.row3.y * z) / SCENE_SIZE_HALF;
+	const int32 vz = (_matrixWorld.row1.z * x + _matrixWorld.row2.z * y + _matrixWorld.row3.z * z) / SCENE_SIZE_HALF;
 	return IVec3(vx, vy, vz);
 }
 
-IVec3 Renderer::translateGroup(const IMatrix3x3 &matrix, int32 x, int32 y, int32 z) {
+IVec3 Renderer::rot(const IMatrix3x3 &matrix, int32 x, int32 y, int32 z) {
 	const int32 vx = (matrix.row1.x * x + matrix.row1.y * y + matrix.row1.z * z) / SCENE_SIZE_HALF;
 	const int32 vy = (matrix.row2.x * x + matrix.row2.y * y + matrix.row2.z * z) / SCENE_SIZE_HALF;
 	const int32 vz = (matrix.row3.x * x + matrix.row3.y * y + matrix.row3.z * z) / SCENE_SIZE_HALF;
 	return IVec3(vx, vy, vz);
 }
 
-void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6) {
-	_baseTransPos.x = transPosX;
-	_baseTransPos.y = transPosY;
-	_baseTransPos.z = transPosZ;
+void Renderer::setFollowCamera(int32 transPosX, int32 transPosY, int32 transPosZ, int32 cameraAlpha, int32 cameraBeta, int32 cameraGamma, int32 cameraZoom) {
+	_cameraPos.x = transPosX;
+	_cameraPos.y = transPosY;
+	_cameraPos.z = transPosZ;
 
-	setAngleCamera(rotPosX, rotPosY, rotPosZ);
+	setAngleCamera(cameraAlpha, cameraBeta, cameraGamma);
+	_cameraRot.z += cameraZoom;
 
-	_baseRotPos.z += param6;
-
-	_baseTransPos = updateCameraAnglePositions();
+	_cameraPos = longInverseRot(_cameraRot.x, _cameraRot.y, _cameraRot.z);
 }
 
-IVec3 Renderer::updateCameraAnglePositions(int zShift) {
-	return getCameraAnglePositions(_baseRotPos.x, _baseRotPos.y, _baseRotPos.z + zShift);
-}
+IVec3 Renderer::getHolomapRotation(const int32 x, const int32 y, const int32 angle) const {
+	if (angle) {
+		const int32 nSin = lba1ShadeAngleTable[ClampAngle(angle)];
+		const int32 nCos = lba1ShadeAngleTable[ClampAngle((angle + LBAAngles::ANGLE_90))];
 
-IVec3 Renderer::getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const {
-	int32 rotX = angleX * 2 + 1000;
-
-	int32 rotY;
-	if (angleY == LBAAngles::ANGLE_0) {
-		rotY = LBAAngles::ANGLE_0;
-	} else {
-		rotY = -lba1ShadeAngleTable[ClampAngle(angleY)] * rotX / SCENE_SIZE_HALF;
-		rotX = lba1ShadeAngleTable[ClampAngle(angleY + LBAAngles::ANGLE_90)] * rotX / SCENE_SIZE_HALF;
+		const int32 x0 = ((x * nCos) + (y * nSin)) >> 14;
+		const int32 y0 = ((y * nCos) - (x * nSin)) >> 14;
+		return IVec3(x0, y0, 0);
 	}
-
-	int32 rotZ;
-	if (angleZ == LBAAngles::ANGLE_0) {
-		rotZ = LBAAngles::ANGLE_0;
-	} else {
-		rotZ = -lba1ShadeAngleTable[ClampAngle(angleZ)] * rotX / SCENE_SIZE_HALF;
-		rotX = lba1ShadeAngleTable[ClampAngle(angleZ + LBAAngles::ANGLE_90)] * rotX / SCENE_SIZE_HALF;
-	}
-
-	const int32 row1X = _baseMatrix.row1.x * rotX;
-	const int32 row1Y = _baseMatrix.row1.y * rotY;
-	const int32 row1Z = _baseMatrix.row1.z * rotZ;
-	const int32 row2X = _baseMatrix.row2.x * rotX;
-	const int32 row2Y = _baseMatrix.row2.y * rotY;
-	const int32 row2Z = _baseMatrix.row2.z * rotZ;
-	const int32 row3X = _baseMatrix.row3.x * rotX;
-	const int32 row3Y = _baseMatrix.row3.y * rotY;
-	const int32 row3Z = _baseMatrix.row3.z * rotZ;
-	IVec3 vec;
-	vec.x = (row1X + row1Y + row1Z) / SCENE_SIZE_HALF;
-	vec.y = (row2X + row2Y + row2Z) / SCENE_SIZE_HALF;
-	vec.z = (row3X + row3Y + row3Z) / SCENE_SIZE_HALF;
-	return vec;
+	return IVec3(x, y, 0);
 }
 
-void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *currentMatrix, const IVec3 &angleVec) {
+void Renderer::rotMatIndex2(IMatrix3x3 *targetMatrix, const IMatrix3x3 *currentMatrix, const IVec3 &angleVec) {
 	IMatrix3x3 matrix1;
 	IMatrix3x3 matrix2;
 
@@ -316,7 +292,7 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const Common::Arr
 	IVec3 destPos;
 	// if its the first point
 	if (bone.isRoot()) {
-		currentMatrix = &_baseMatrix;
+		currentMatrix = &_matrixWorld;
 	} else {
 		const int32 pointIdx = bone.vertex;
 		const int32 matrixIndex = bone.parent;
@@ -326,7 +302,7 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const Common::Arr
 		destPos = modelData->computedPoints[pointIdx];
 	}
 
-	applyRotation(targetMatrix, currentMatrix, renderAngle);
+	rotMatIndex2(targetMatrix, currentMatrix, renderAngle);
 
 	if (!numOfPoints) {
 		warning("RENDER WARNING: No points in this model!");
@@ -359,7 +335,7 @@ void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const Common::
 	IVec3 destPos;
 
 	if (bone.isRoot()) { // base point
-		*targetMatrix = _baseMatrix;
+		*targetMatrix = _matrixWorld;
 	} else { // dependent
 		const int32 pointsIdx = bone.vertex;
 		destPos = modelData->computedPoints[pointsIdx];
@@ -373,15 +349,11 @@ void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const Common::
 }
 
 void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
-	// TODO: RECHECK THIS
-	/*_cameraAngleX = angleX;
-	_cameraAngleY = angleY;
-	_cameraAngleZ = angleZ;*/
 	const int32 normalUnit = 64;
 	const IVec3 renderAngle(angleX, angleY, angleZ);
 	IMatrix3x3 matrix;
-	applyRotation(&matrix, &_baseMatrix, renderAngle);
-	_lightNorm = translateGroup(matrix, 0, 0, normalUnit - 5);
+	rotMatIndex2(&matrix, &_matrixWorld, renderAngle);
+	_normalLight = rot(matrix, 0, 0, normalUnit - 5);
 }
 
 static FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
@@ -1820,7 +1792,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 			numNormals = bodyData.getBone(boneIdx).numNormals;
 
 			if (numNormals) {
-				const IMatrix3x3 matrix = *lightMatrix * _lightNorm;
+				const IMatrix3x3 matrix = *lightMatrix * _normalLight;
 
 				for (int32 i = 0; i < numNormals; ++i) { // for each normal
 					const BodyNormal &normalPtr = bodyData.getNormal(shadeIndex);
@@ -1854,7 +1826,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 	return renderModelElements(numOfPrimitives, bodyData, &renderCmds, modelData, modelRect);
 }
 
-bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const BodyData &bodyData, Common::Rect &modelRect) {
+bool Renderer::affObjetIso(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const BodyData &bodyData, Common::Rect &modelRect) {
 	IVec3 renderAngle;
 	renderAngle.x = angleX;
 	renderAngle.y = angleY;
@@ -1872,7 +1844,7 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 		renderPos.y = y;
 		renderPos.z = z;
 	} else {
-		renderPos = getBaseRotationPosition(x, y, z) - _baseRotPos;
+		renderPos = longWorldRot(x, y, z) - _cameraRot;
 	}
 
 	if (!bodyData.isAnimated()) {
@@ -1913,19 +1885,19 @@ void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 ang
 		if (move.numOfStep == 0) {
 			_engine->_movements->initRealAngle(newAngle, newAngle - LBAAngles::ANGLE_90, LBAAngles::ANGLE_17, &move);
 		}
-		renderIsoModel(0, y, 0, LBAAngles::ANGLE_0, newAngle, LBAAngles::ANGLE_0, bodyData, dummy);
+		affObjetIso(0, y, 0, LBAAngles::ANGLE_0, newAngle, LBAAngles::ANGLE_0, bodyData, dummy);
 	} else {
-		renderIsoModel(0, y, 0, LBAAngles::ANGLE_0, angle, LBAAngles::ANGLE_0, bodyData, dummy);
+		affObjetIso(0, y, 0, LBAAngles::ANGLE_0, angle, LBAAngles::ANGLE_0, bodyData, dummy);
 	}
 	_engine->_interface->resetClip();
 }
 
-void Renderer::renderInventoryItem(int32 x, int32 y, const BodyData &bodyData, int32 angle, int32 param) {
+void Renderer::draw3dObject(int32 x, int32 y, const BodyData &bodyData, int32 angle, int32 cameraZoom) {
 	setProjection(x, y, 128, 200, 200);
-	setCameraAngle(0, 0, 0, 60, 0, 0, param);
+	setFollowCamera(0, 0, 0, 60, 0, 0, cameraZoom);
 
 	Common::Rect dummy;
-	renderIsoModel(0, 0, 0, LBAAngles::ANGLE_0, angle, LBAAngles::ANGLE_0, bodyData, dummy);
+	affObjetIso(0, 0, 0, LBAAngles::ANGLE_0, angle, LBAAngles::ANGLE_0, bodyData, dummy);
 }
 
 void Renderer::fillHolomapTriangle(int16 *pDest, int32 x0, int32 y0, int32 x1, int32 y1) {

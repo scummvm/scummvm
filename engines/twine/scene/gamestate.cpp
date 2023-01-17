@@ -55,9 +55,9 @@ GameState::GameState(TwinEEngine *engine) : _engine(engine) {
 	Common::fill(&_gameChoices[0], &_gameChoices[10], TextId::kNone);
 }
 
-void GameState::initEngineProjections() {
-	_engine->_renderer->setIsoProjection(_engine->width() / 2 - 9, _engine->height() / 2, 512);
-	_engine->_renderer->setBaseTranslation(0, 0, 0);
+void GameState::init3DGame() {
+	_engine->_renderer->setIsoProjection(_engine->width() / 2 - 8 - 1, _engine->height() / 2, SIZE_BRICK_XZ);
+	_engine->_renderer->setPosCamera(0, 0, 0);
 	_engine->_renderer->setAngleCamera(LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0);
 	_engine->_renderer->setLightVector(_engine->_scene->_alphaLight, _engine->_scene->_betaLight, LBAAngles::ANGLE_0);
 }
@@ -106,7 +106,7 @@ void GameState::initEngineVars() {
 
 	_engine->_scene->_alphaLight = LBAAngles::ANGLE_315;
 	_engine->_scene->_betaLight = LBAAngles::ANGLE_334;
-	initEngineProjections();
+	init3DGame();
 	initGameStateVars();
 	initHeroVars();
 
@@ -381,12 +381,12 @@ void GameState::doFoundObj(InventoryItems item) {
 
 		itemAngle += LBAAngles::ANGLE_2;
 
-		_engine->_renderer->renderInventoryItem(_engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, _engine->_resources->_inventoryTable[item], itemAngle, 10000);
+		_engine->_renderer->draw3dObject(_engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, _engine->_resources->_inventoryTable[item], itemAngle, 10000);
 
 		_engine->_menu->drawRectBorders(boxRect);
 		_engine->_redraw->addRedrawArea(boxRect);
 		_engine->_interface->resetClip();
-		initEngineProjections();
+		init3DGame();
 
 		if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, bodyData, &_engine->_scene->_sceneHero->_animTimerData)) {
 			currentAnimState++; // keyframe
@@ -438,7 +438,7 @@ void GameState::doFoundObj(InventoryItems item) {
 		}
 	}
 
-	initEngineProjections();
+	init3DGame();
 	_engine->_text->initSceneTextBank();
 	_engine->_text->stopVox(_engine->_text->_currDialTextEntry);
 
@@ -502,6 +502,7 @@ void GameState::processGameoverAnimation() {
 	const Common::Rect &rect = _engine->centerOnScreen(_engine->width() / 2, _engine->height() / 2);
 	_engine->_interface->setClip(rect);
 
+	int32 zoom = 50000;
 	Common::Rect dummy;
 	while (!_engine->_input->toggleAbortAction() && (_engine->_lbaTime - startLbaTime) <= _engine->toSeconds(10)) {
 		FrameMarker frame(_engine, 66);
@@ -510,26 +511,26 @@ void GameState::processGameoverAnimation() {
 			return;
 		}
 
-		const int32 zoom = _engine->_collision->clampedLerp(40000, 3200, _engine->toSeconds(10), _engine->_lbaTime - startLbaTime);
+		zoom = _engine->_collision->clampedLerp(40000, 3200, _engine->toSeconds(10), _engine->_lbaTime - startLbaTime);
 		const int32 angle = _engine->_screens->lerp(1, LBAAngles::ANGLE_360, _engine->toSeconds(2), (_engine->_lbaTime - startLbaTime) % _engine->toSeconds(2));
 
 		_engine->blitWorkToFront(rect);
-		_engine->_renderer->setCameraAngle(0, 0, 0, 0, -angle, 0, zoom);
-		_engine->_renderer->renderIsoModel(0, 0, 0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, gameOverPtr, dummy);
+		_engine->_renderer->setFollowCamera(0, 0, 0, 0, -angle, 0, zoom);
+		_engine->_renderer->affObjetIso(0, 0, 0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, gameOverPtr, dummy);
 
 		_engine->_lbaTime++;
 	}
 
 	_engine->_sound->playSample(Samples::Explode);
 	_engine->blitWorkToFront(rect);
-	_engine->_renderer->setCameraAngle(0, 0, 0, 0, 0, 0, 3200);
-	_engine->_renderer->renderIsoModel(0, 0, 0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, gameOverPtr, dummy);
+	_engine->_renderer->setFollowCamera(0, 0, 0, 0, 0, 0, zoom);
+	_engine->_renderer->affObjetIso(0, 0, 0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, gameOverPtr, dummy);
 
 	_engine->delaySkip(2000);
 
 	_engine->_interface->resetClip();
 	_engine->restoreFrontBuffer();
-	initEngineProjections();
+	init3DGame();
 
 	_engine->_lbaTime = tmpLbaTime;
 }

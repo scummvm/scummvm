@@ -684,7 +684,7 @@ void TwinEEngine::processInventoryAction() {
 
 	switch (_loopInventoryItem) {
 	case kiHolomap:
-		_holomap->processHolomap();
+		_holomap->holoMap();
 		_screens->_fadePalette = true;
 		break;
 	case kiMagicBall:
@@ -898,7 +898,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		// Draw holomap
 		if (_input->toggleActionIfActive(TwinEActionType::OpenHolomap) && _gameState->hasItem(InventoryItems::kiHolomap) && !_gameState->inventoryDisabled()) {
-			_holomap->processHolomap();
+			_holomap->holoMap();
 			_screens->_fadePalette = true;
 			_redraw->redrawEngineActions(true);
 		}

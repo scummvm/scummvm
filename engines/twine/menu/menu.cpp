@@ -1192,7 +1192,7 @@ void Menu::processBehaviourMenu(bool behaviourMenu) {
 
 		_engine->_lbaTime = tmpTime;
 
-		_engine->_gameState->initEngineProjections();
+		_engine->_gameState->init3DGame();
 	}
 	_engine->_actor->setBehaviour(_engine->_actor->_heroBehaviour);
 
@@ -1216,7 +1216,7 @@ void Menu::drawItem(int32 left, int32 top, int32 item) {
 	if (item < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)item) && (!_engine->_gameState->inventoryDisabled() || item == InventoryItems::kiCloverLeaf)) {
 		_itemAngle[item] += LBAAngles::ANGLE_2;
 		_engine->_interface->setClip(rect);
-		_engine->_renderer->renderInventoryItem(itemX, itemY, _engine->_resources->_inventoryTable[item], _itemAngle[item], 15000);
+		_engine->_renderer->draw3dObject(itemX, itemY, _engine->_resources->_inventoryTable[item], _itemAngle[item], 15000);
 		_engine->_interface->resetClip();
 		if (item == InventoryItems::kGasItem) {
 			_engine->_text->setFontColor(COLOR_WHITE);
@@ -1356,7 +1356,7 @@ void Menu::processInventoryMenu() {
 	_engine->_scene->_alphaLight = tmpAlphaLight;
 	_engine->_scene->_betaLight = tmpBetaLight;
 
-	_engine->_gameState->initEngineProjections();
+	_engine->_gameState->init3DGame();
 
 	_engine->_text->initSceneTextBank();
 

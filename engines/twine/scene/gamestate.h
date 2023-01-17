@@ -188,7 +188,7 @@ public:
 	void initEngineVars();
 
 	/** Initialize engine 3D projections */
-	void initEngineProjections();
+	void init3DGame();
 
 	void doFoundObj(InventoryItems item);
 

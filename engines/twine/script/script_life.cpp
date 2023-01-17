@@ -2024,7 +2024,7 @@ int32 ScriptLife::lPLAY_CD_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLife::lPROJ_ISO(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::PROJ_ISO()");
-	engine->_gameState->initEngineProjections();
+	engine->_gameState->init3DGame();
 	return 0;
 }
 
@@ -2039,7 +2039,7 @@ int32 ScriptLife::lPROJ_3D(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_scene->_enableGridTileRendering = false;
 
 	engine->_renderer->setProjection(engine->width() / 2, engine->height() / 2, 128, 1024, 1024);
-	engine->_renderer->setCameraAngle(0, 1500, 0, 25, -128, 0, 13000);
+	engine->_renderer->setFollowCamera(0, 1500, 0, 25, -128, 0, 13000);
 	engine->_renderer->setLightVector(LBAAngles::ANGLE_315, LBAAngles::ANGLE_334, LBAAngles::ANGLE_0);
 
 	engine->_text->initDial(TextBankId::Credits);

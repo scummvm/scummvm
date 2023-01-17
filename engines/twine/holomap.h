@@ -84,9 +84,9 @@ private:
 	uint8 _paletteHolomap[NUMOFCOLORS * 3]{0};
 
 	void drawHolomapText(int32 centerx, int32 top, const char *title);
-	int32 getNextHolomapLocation(int32 currentLocation, int32 dir) const;
+	int32 searchNextArrow(int32 currentLocation, int32 dir) const;
 
-	void renderLocations(int xRot, int yRot, int zRot, bool lower);
+	void drawListPos(int xRot, int yRot, int zRot, bool lower);
 
 	/**
 	 * Renders a holomap path with single path points appearing slowly one after another
@@ -129,7 +129,7 @@ public:
 	void initHoloDatas();
 
 	/** Main holomap process loop */
-	void processHolomap();
+	void holoMap();
 };
 
 } // namespace TwinE
