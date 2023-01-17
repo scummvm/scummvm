@@ -60,11 +60,18 @@ void Overlay_SetText(ScriptOverlay *scover, int wii, int fontid, int text_color,
 	int xx = game_to_data_coord(_GP(screenover)[ovri].x);
 	int yy = game_to_data_coord(_GP(screenover)[ovri].y);
 
-	RemoveOverlay(scover->overlayId);
+	// FIXME: a refactor needed!
+	// these calls to RemoveOverlay and CreateOverlay below are potentially dangerous,
+	// because they may allocate new script objects too under certain conditions.
+	// This did not happen because users only had access to custom overlay pointers before,
+	// but now they also may access internal overlays (such as Say text and portrait).
 	const int disp_type = scover->overlayId;
+	RemoveOverlay(scover->overlayId);
 
-	if (CreateTextOverlay(xx, yy, wii, fontid, text_color, get_translation(text), disp_type) != scover->overlayId)
+	int new_ovrid = CreateTextOverlay(xx, yy, wii, fontid, text_color, get_translation(text), disp_type);
+	if (new_ovrid != disp_type)
 		quit("SetTextOverlay internal error: inconsistent type ids");
+	scover->overlayId = new_ovrid;
 }
 
 int Overlay_GetX(ScriptOverlay *scover) {
