@@ -56,6 +56,7 @@ namespace Image {
  *  - Hugo
  *  - Mohawk
  *  - Petka
+ *  - TwinE
  *  - Wintermute
  *  - Ultima8
  * @{

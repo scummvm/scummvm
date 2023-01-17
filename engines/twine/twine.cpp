@@ -548,6 +548,9 @@ void TwinEEngine::playIntro() {
 			abort |= _screens->loadBitmapDelay("TLBA1C_640_480_256.bmp", 3);
 		}
 	} else {
+		if (isDotEmuEnhanced()) {
+			abort |= _screens->loadBitmapDelay("splash_1.png", 3);
+		}
 		abort |= _screens->adelineLogo();
 
 		if (isLBA1()) {
@@ -555,14 +558,14 @@ void TwinEEngine::playIntro() {
 			if (!abort && _cfgfile.Version == EUROPE_VERSION) {
 				// Little Big Adventure screen
 				abort |= _screens->loadImageDelay(_resources->lbaLogo(), 3);
-				if (!abort) {
+				if (!abort && !isDotEmuEnhanced()) {
 					// Electronic Arts Logo
 					abort |= _screens->loadImageDelay(_resources->eaLogo(), 2);
 				}
 			} else if (!abort && _cfgfile.Version == USA_VERSION) {
 				// Relentless screen
 				abort |= _screens->loadImageDelay(_resources->relentLogo(), 3);
-				if (!abort) {
+				if (!abort && !isDotEmuEnhanced()) {
 					// Electronic Arts Logo
 					abort |= _screens->loadImageDelay(_resources->eaLogo(), 2);
 				}

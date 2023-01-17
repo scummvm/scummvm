@@ -21,10 +21,13 @@
 
 #include "twine/renderer/screens.h"
 #include "common/file.h"
+#include "common/str.h"
 #include "common/system.h"
 #include "graphics/managed_surface.h"
 #include "graphics/surface.h"
 #include "image/bmp.h"
+#include "image/image_decoder.h"
+#include "image/png.h"
 #include "twine/audio/music.h"
 #include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
@@ -99,30 +102,58 @@ bool Screens::loadImageDelay(TwineImage image, int32 seconds) {
 	return false;
 }
 
-bool Screens::loadBitmapDelay(const char *image, int32 seconds) {
+template<class ImageDecoder>
+static bool loadImageDelayViaDecoder(TwinEEngine *engine, const Common::String &fileName, int32 seconds) {
+	ImageDecoder decoder;
 	Common::File fileHandle;
-	if (!fileHandle.open(image)) {
-		warning("Failed to open %s", image);
+	if (!fileHandle.open(fileName)) {
+		warning("Failed to open %s", fileName.c_str());
+		return false;
+	}
+	if (!decoder.loadStream(fileHandle)) {
+		warning("Failed to load %s", fileName.c_str());
+		return false;
+	}
+	const Graphics::Surface *src = decoder.getSurface();
+	if (src == nullptr) {
+		warning("Failed to decode %s", fileName.c_str());
+		return false;
+	}
+	Graphics::ManagedSurface &target = engine->_frontVideoBuffer;
+	Common::Rect rect(src->w, src->h);
+	engine->setPalette(decoder.getPaletteStartIndex(), decoder.getPaletteColorCount(), decoder.getPalette());
+	target.transBlitFrom(*src, rect, target.getBounds(), 0, false, 0, 0xff, nullptr, true);
+	if (engine->delaySkip(1000 * seconds)) {
+		return true;
+	}
+	return false;
+}
+
+bool Screens::loadBitmapDelay(const char *image, int32 seconds) {
+	Common::String filename(image);
+	size_t extPos = filename.rfind(".");
+	if (extPos == Common::String::npos) {
+		warning("Failed to extract extension %s", image);
 		return false;
 	}
 
-	Image::BitmapDecoder bitmap;
-	if (!bitmap.loadStream(fileHandle)) {
-		warning("Failed to load %s", image);
-		return false;
+	struct ImageLoader {
+		const char *extension;
+		bool (*loadImageDelay)(TwinEEngine *engine, const Common::String &fileName, int32 seconds);
+	};
+
+	static const ImageLoader s_imageLoaders[] = {
+		{ "bmp", loadImageDelayViaDecoder<Image::BitmapDecoder> },
+		{ "png", loadImageDelayViaDecoder<Image::PNGDecoder> },
+		{ nullptr, nullptr }
+	};
+	const Common::String &ext = filename.substr(extPos + 1);
+	for (const ImageLoader *loader = s_imageLoaders; loader->extension; ++loader) {
+		if (!scumm_stricmp(loader->extension, ext.c_str())) {
+			return loader->loadImageDelay(_engine, filename, seconds);
+		}
 	}
-	const Graphics::Surface *src = bitmap.getSurface();
-	if (src == nullptr) {
-		warning("Failed to decode %s", image);
-		return false;
-	}
-	Graphics::ManagedSurface &target = _engine->_frontVideoBuffer;
-	Common::Rect rect(src->w, src->h);
-	_engine->setPalette(bitmap.getPaletteStartIndex(), bitmap.getPaletteColorCount(), bitmap.getPalette());
-	target.transBlitFrom(*src, rect, target.getBounds(), 0, false, 0, 0xff, nullptr, true);
-	if (_engine->delaySkip(1000 * seconds)) {
-		return true;
-	}
+	warning("Failed to find suitable image handler %s", image);
 	return false;
 }
 
