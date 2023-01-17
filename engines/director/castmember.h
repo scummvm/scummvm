@@ -284,7 +284,6 @@ public:
 	TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version, uint8 flags1 = 0, bool asButton = false);
 	void setColors(uint32 *fgcolor, uint32 *bgcolor) override;
 
-	void setText(const Common::U32String &text);
 	Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 
 	bool isEditable() override { return _editable; }
@@ -334,10 +333,13 @@ public:
 
 	Common::U32String _ftext;
 	Common::U32String _ptext;
+	Common::String _rtext;
 	void importStxt(const Stxt *stxt);
 	void importRTE(byte *text);
 
 	Common::U32String getText();
+	Common::String getRawText();
+	void setRawText(const Common::String &text);
 
 private:
 	uint32 _bgcolor;
