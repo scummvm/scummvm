@@ -30,7 +30,6 @@ SYSROOT=$TOOLCHAIN/mipsel-$target-linux-$libc
 
 export PATH=$TOOLCHAIN/usr/bin:$SYSROOT/usr/include:$TOOLCHAIN/bin:$PATH
 export CXX=mipsel-linux-g++
-export CXXFLAGS="-funsigned-char" # workaround for a scummvm tolower() bug when adding games
 
 ./configure --host=opendingux-$target --enable-release --disable-detection-full --default-dynamic --enable-plugins
 
