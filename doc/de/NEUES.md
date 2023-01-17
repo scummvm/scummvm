@@ -163,6 +163,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Xeen:
    - Fehlerkorrekturen für mehrere Abstürze in Clouds of Xeen.
+   - Shops werden nun erst nach der Verabschiedung verlassen.
+   - Die Karte wird nun nicht mehr neu geladen, wenn die Erstellung eines Charakters abgeschlossen ist.
 
  3DS-Portierung:
    - Der Relocation-Parser wurde um Unterstützung für PREL31, welches von neuen Compilern verwendet wird, erweitert.
