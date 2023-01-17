@@ -67,17 +67,17 @@ struct DisplayVars {
 	int fulltxtheight = 0; // total height of all the text
 } disp;
 
-// Pass yy = -1 to find Y co-ord automatically
-// allowShrink = 0 for none, 1 for leftwards, 2 for rightwards
-// pass blocking=2 to create permanent overlay
-ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp_type, int usingfont,
-		int asspch, int isThought, int allowShrink, bool overlayPositionFixed, bool roomlayer) {
+// Generates a textual image and returns a disposable bitmap
+Bitmap *create_textual_image(const char *text, int asspch, int isThought,
+							 int &xx, int &yy, int &adjustedXX, int &adjustedYY, int wii, int usingfont, int allowShrink,
+							 bool &alphaChannel) {
+	//
+	// Configure the textual image
+	//
 	const bool use_speech_textwindow = (asspch < 0) && (_GP(game).options[OPT_SPEECHTYPE] >= 2);
 	const bool use_thought_gui = (isThought) && (_GP(game).options[OPT_THOUGHTGUI] > 0);
 
-	bool alphaChannel = false;
-	char todis[STD_BUFFER_SIZE];
-	snprintf(todis, STD_BUFFER_SIZE - 1, "%s", text);
+	alphaChannel = false;
 	int usingGui = -1;
 	if (use_speech_textwindow)
 		usingGui = _GP(play).speech_textwindow_gui;
@@ -85,8 +85,9 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 		usingGui = _GP(game).options[OPT_THOUGHTGUI];
 
 	int padding = get_textwindow_padding(usingGui);
-	int paddingScaled = get_fixed_pixel_size(padding);
-	int paddingDoubledScaled = get_fixed_pixel_size(padding * 2); // Just in case screen size does is not neatly divisible by 320x200
+	const int paddingScaled = get_fixed_pixel_size(padding);
+ 	// Just in case screen size is not neatly divisible by 320x200
+	const int paddingDoubledScaled = get_fixed_pixel_size(padding * 2);
 
 	// FIXME: Fixes the display of the F1 help dialog in La Croix Pan,
 	// since it was previously incorrectly wrapping on the 's' at the end
@@ -98,41 +99,20 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 	// than can be supported by ScummVM's surface classes
 	wii = MIN(wii, 8000);
 
+	// Make message copy, because ensure_text_valid_for_font() may modify it
+	char todis[STD_BUFFER_SIZE];
+	snprintf(todis, STD_BUFFER_SIZE - 1, "%s", text);
 	ensure_text_valid_for_font(todis, usingfont);
 	break_up_text_into_lines(todis, _GP(Lines), wii - 2 * padding, usingfont);
 	disp.linespacing = get_font_linespacing(usingfont);
 	disp.fulltxtheight = get_text_lines_surf_height(usingfont, _GP(Lines).Count());
 
-	// AGS 2.x: If the screen is faded out, fade in again when displaying a message box.
-	if (!asspch && (_G(loaded_game_file_version) <= kGameVersion_272))
-		_GP(play).screen_is_faded_out = 0;
-
-	// if it's a normal message box and the game was being skipped,
-	// ensure that the screen is up to date before the message box
-	// is drawn on top of it
-	// TODO: is this really necessary anymore?
-	if ((_GP(play).skip_until_char_stops >= 0) && (disp_type == DISPLAYTEXT_MESSAGEBOX))
-		render_graphics();
-
-	EndSkippingUntilCharStops();
-
 	if (_GP(topBar).wantIt) {
-		// ensure that the window is wide enough to display
-		// any top bar text
+		// ensure that the window is wide enough to display any top bar text
 		int topBarWid = get_text_width_outlined(_GP(topBar).text, _GP(topBar).font);
 		topBarWid += data_to_game_coord(_GP(play).top_bar_borderwidth + 2) * 2;
 		if (_G(longestline) < topBarWid)
 			_G(longestline) = topBarWid;
-		// the top bar should behave like DisplaySpeech wrt blocking
-		disp_type = DISPLAYTEXT_SPEECH;
-	}
-
-	if (asspch > 0) {
-		// update the all_buttons_disabled variable in advance
-		// of the adjust_x/y_for_guis calls
-		_GP(play).disabled_user_interface++;
-		update_gui_disabled_status();
-		_GP(play).disabled_user_interface--;
 	}
 
 	const Rect &ui_view = _GP(play).GetUIViewport();
@@ -170,11 +150,8 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 			xx = (ui_view.GetWidth() - wii) - 5;
 	} else if (xx < 0) xx = ui_view.GetWidth() / 2 - wii / 2;
 
-	int extraHeight = paddingDoubledScaled;
+	const int extraHeight = paddingDoubledScaled;
 	color_t text_color = MakeColor(15);
-	if (disp_type < DISPLAYTEXT_NORMALOVERLAY)
-		remove_screen_overlay(_GP(play).text_overlay_on); // remove any previous blocking texts
-
 	const int bmp_width = MAX(2, wii);
 	const int bmp_height = MAX(2, disp.fulltxtheight + extraHeight);
 	Bitmap *text_window_ds = BitmapHelper::CreateTransparentBitmap(
@@ -184,11 +161,11 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 	const bool wantFreeScreenop = true;
 
 	//
-	// Creating displayed graphic
+	// Create the textual image (may also adjust some params in the process)
 	//
 	// may later change if usingGUI, needed to avoid changing original coordinates
-	int adjustedXX = xx;
-	int adjustedYY = yy;
+	adjustedXX = xx;
+	adjustedYY = yy;
 
 	if ((strlen(todis) < 1) || (strcmp(todis, "  ") == 0) || (wii == 0));
 	// if it's an empty speech line, don't draw anything
@@ -245,6 +222,58 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 			wouttext_aligned(text_window_ds, xoffs, yoffs + ee * disp.linespacing, oriwid, usingfont, text_color, _GP(Lines)[ee].GetCStr(), _GP(play).text_align);
 	}
 
+	return text_window_ds;
+}
+
+// Pass yy = -1 to find Y co-ord automatically
+// allowShrink = 0 for none, 1 for leftwards, 2 for rightwards
+// pass blocking=2 to create permanent overlay
+ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp_type, int usingfont,
+							 int asspch, int isThought, int allowShrink, bool overlayPositionFixed, bool roomlayer) {
+	//
+	// Prepare for the message display
+	//
+
+	// AGS 2.x: If the screen is faded out, fade in again when displaying a message box.
+	if (!asspch && (_G(loaded_game_file_version) <= kGameVersion_272))
+		_GP(play).screen_is_faded_out = 0;
+
+	// if it's a normal message box and the game was being skipped,
+	// ensure that the screen is up to date before the message box
+	// is drawn on top of it
+	// TODO: is this really necessary anymore?
+	if ((_GP(play).skip_until_char_stops >= 0) && (disp_type == DISPLAYTEXT_MESSAGEBOX))
+		render_graphics();
+
+	// TODO: should this really be called regardless of message type?
+	// _display_main may be called even for custom textual overlays
+	EndSkippingUntilCharStops();
+
+	if (asspch > 0) {
+		// update the all_buttons_disabled variable in advance
+		// of the adjust_x/y_for_guis calls
+		_GP(play).disabled_user_interface++;
+		update_gui_disabled_status();
+		_GP(play).disabled_user_interface--;
+	}
+
+	if (_GP(topBar).wantIt) {
+		// the top bar should behave like DisplaySpeech wrt blocking
+		disp_type = DISPLAYTEXT_SPEECH;
+	}
+
+	// remove any previous blocking texts if necessary
+	if (disp_type < DISPLAYTEXT_NORMALOVERLAY)
+		remove_screen_overlay(_GP(play).text_overlay_on);
+
+	int adjustedXX, adjustedYY;
+	bool alphaChannel;
+	Bitmap *text_window_ds = create_textual_image(text, asspch, isThought, xx, yy, adjustedXX, adjustedYY, wii, usingfont, allowShrink, alphaChannel);
+
+	//
+	// Configure and create an overlay object
+	//
+
 	int ovrtype;
 	switch (disp_type) {
 	case DISPLAYTEXT_SPEECH: ovrtype = OVER_TEXTSPEECH; break;
@@ -256,6 +285,7 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 	size_t nse = add_screen_overlay(roomlayer, xx, yy, ovrtype, text_window_ds, adjustedXX - xx, adjustedYY - yy, alphaChannel);
 	// we should not delete text_window_ds here, because it is now owned by Overlay
 
+	// If it's a non-blocking overlay type, then we're done here
 	if (disp_type >= DISPLAYTEXT_NORMALOVERLAY) {
 		return &_GP(screenover)[nse];
 	}
@@ -263,6 +293,7 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 	//
 	// Wait for the blocking text to timeout or until skipped by another command
 	//
+
 	if (disp_type == DISPLAYTEXT_MESSAGEBOX) {
 		// If fast-forwarding, then skip immediately
 		if (_GP(play).fast_forward) {
@@ -272,7 +303,7 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 			return nullptr;
 		}
 
-		int countdown = GetTextDisplayTime(todis);
+		int countdown = GetTextDisplayTime(text);
 		int skip_setting = user_to_internal_skip_speech((SkipSpeechStyle)_GP(play).skip_display);
 		// Loop until skipped
 		while (true) {
@@ -354,6 +385,10 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 
 		GameLoopUntilNoOverlay();
 	}
+
+	//
+	// Post-message cleanup
+	//
 
 	ags_clear_input_buffer();
 	_GP(play).messagetime = -1;
