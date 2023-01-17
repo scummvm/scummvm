@@ -168,6 +168,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Xeen:
    - Several crash fixes for Clouds of Xeen.
+   - Wait until farewell finishes before leaving shops.
+   - Don't reload map after leaving character creation.
 
  3DS port:
    - Update relocation parser to support PREL31 that are emitted by new compiler.
