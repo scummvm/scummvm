@@ -85,7 +85,7 @@ int Net::addUser(char *shortName, char *longName) {
 		new Common::Callback<Net, Common::JSONValue *>(this, &Net::addUserCallback),
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::addUserErrorCallback));
 
-	char *buf = (char *)malloc(MAX_PACKET_SIZE);
+	char *buf = new char[MAX_PACKET_SIZE];
 	snprintf(buf, MAX_PACKET_SIZE, "{\"shortname\":\"%s\",\"longname\":\"%s\",\"sessionid\":%d}", shortName, longName, _sessionid);
 	rq.setPostData((byte *)buf, strlen(buf));
 	rq.setContentType("application/json");
@@ -145,7 +145,7 @@ int Net::createSession(char *name) {
 		new Common::Callback<Net, Common::JSONValue *>(this, &Net::createSessionCallback),
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::createSessionErrorCallback));
 
-	char *buf = (char *)malloc(MAX_PACKET_SIZE);
+	char *buf = new char[MAX_PACKET_SIZE];
 	snprintf(buf, MAX_PACKET_SIZE, "{\"name\":\"%s\"}", name);
 	rq.setPostData((byte *)buf, strlen(buf));
 	rq.setContentType("application/json");
@@ -207,7 +207,7 @@ int Net::endSession() {
 		new Common::Callback<Net, Common::JSONValue *>(this, &Net::endSessionCallback),
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::endSessionErrorCallback));
 
-	char *buf = (char *)malloc(MAX_PACKET_SIZE);
+	char *buf = new char[MAX_PACKET_SIZE];
 	snprintf(buf, MAX_PACKET_SIZE, "{\"sessionid\":%d, \"userid\":%d}", _sessionid, _myUserId);
 	rq.setPostData((byte *)buf, strlen(buf));
 	rq.setContentType("application/json");
@@ -239,7 +239,7 @@ void Net::disableSessionJoining() {
 		nullptr,
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::disableSessionJoiningErrorCallback));
 
-	char *buf = (char *)malloc(MAX_PACKET_SIZE);
+	char *buf = new char[MAX_PACKET_SIZE];
 	snprintf(buf, MAX_PACKET_SIZE, "{\"sessionid\":%d}", _sessionid);
 	rq->setPostData((byte *)buf, strlen(buf));
 	rq->setContentType("application/json");
@@ -292,7 +292,7 @@ bool Net::destroyPlayer(int32 playerDPID) {
 		nullptr,
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::destroyPlayerErrorCallback));
 
-	char *buf = (char *)malloc(MAX_PACKET_SIZE);
+	char *buf = new char[MAX_PACKET_SIZE];
 	snprintf(buf, MAX_PACKET_SIZE, "{\"sessionid\":%d, \"userid\":%d}", _sessionid, playerDPID);
 	rq->setPostData((byte *)buf, strlen(buf));
 	rq->setContentType("application/json");
@@ -593,7 +593,7 @@ bool Net::remoteReceiveData() {
 		new Common::Callback<Net, Common::JSONValue *>(this, &Net::remoteReceiveDataCallback),
 		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::remoteReceiveDataErrorCallback));
 
-	char *buf = (char *)malloc(MAX_PACKET_SIZE);
+	char *buf = new char[MAX_PACKET_SIZE];
 	snprintf(buf, MAX_PACKET_SIZE, "{\"sessionid\":%d, \"playerid\":%d}", _sessionid, _myUserId);
 	rq.setPostData((byte *)buf, strlen(buf));
 	rq.setContentType("application/json");

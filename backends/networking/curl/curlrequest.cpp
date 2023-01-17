@@ -35,7 +35,7 @@ CurlRequest::CurlRequest(DataCallback cb, ErrorCallback ecb, Common::String url)
 
 CurlRequest::~CurlRequest() {
 	delete _stream;
-	delete _bytesBuffer;
+	delete[] _bytesBuffer;
 }
 
 NetworkReadStream *CurlRequest::makeStream() {
@@ -126,7 +126,7 @@ void CurlRequest::setBuffer(byte *buffer, uint32 size) {
 		warning("CurlRequest: added POST fields would be ignored, because buffer added");
 
 	if (_bytesBuffer)
-		delete _bytesBuffer;
+		delete[] _bytesBuffer;
 
 	_bytesBuffer = buffer;
 	_bytesBufferSize = size;
