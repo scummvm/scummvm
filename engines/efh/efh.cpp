@@ -173,15 +173,13 @@ Common::Error EfhEngine::run() {
 			if (input == Common::KEYCODE_y) {
 				displayMenuAnswerString("-> Yes <-", 24, 296, 169);
 				getInput(2);
-				saveEfhGame();
-				clearBottomTextZone_2(0);
-				displayLowStatusScreen(true);
+				saveGameDialog();
 			} else {
 				displayMenuAnswerString("-> No!!! <-", 24, 296, 169);
 				getInput(2);
-				clearBottomTextZone_2(0);
-				displayLowStatusScreen(true);
 			}
+			clearBottomTextZone_2(0);
+			displayLowStatusScreen(true);
 
 			}
 			break;
@@ -196,16 +194,13 @@ Common::Error EfhEngine::run() {
 			if (input == Common::KEYCODE_y) {
 				displayMenuAnswerString("-> Yes <-", 24, 296, 169);
 				getInput(2);
-//				loadEfhGame();
-				saveEfhGame();
-				clearBottomTextZone_2(0);
-				displayLowStatusScreen(true);
+				loadGameDialog();
 			} else {
 				displayMenuAnswerString("-> No!!! <-", 24, 296, 169);
 				getInput(2);
-				clearBottomTextZone_2(0);
-				displayLowStatusScreen(true);
 			}
+			clearBottomTextZone_2(0);
+			displayLowStatusScreen(true);
 
 		} break;
 		default:
@@ -291,7 +286,7 @@ void EfhEngine::songDelay(int delay) {
 }
 
 void EfhEngine::playNote(int frequencyIndex, int totalDelay) {
-	debug("playNote %d %ld", frequencyIndex, totalDelay);
+	debug("playNote %d %d", frequencyIndex, totalDelay);
 }
 
 Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
@@ -2582,11 +2577,6 @@ void EfhEngine::loadEfhGame() {
 
 	_lastMainPlaceId = 0xFFFF;
 	loadPlacesFile(_fullPlaceId, true);
-}
-
-void EfhEngine::saveEfhGame() {
-	warning("STUB - saveEfhGame");
-	openMainMenuDialog();
 }
 
 uint8 EfhEngine::getMapTileInfo(int16 mapPosX, int16 mapPosY) {

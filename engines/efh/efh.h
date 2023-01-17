@@ -300,7 +300,6 @@ private:
 	void restoreAnimImageSetId();
 	void checkProtection();
 	void loadEfhGame();
-	void saveEfhGame();
 	void copyCurrentPlaceToBuffer(int16 id);
 	uint8 getMapTileInfo(int16 mapPosX, int16 mapPosY);
 	void writeTechAndMapFiles();
