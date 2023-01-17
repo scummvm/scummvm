@@ -28,7 +28,7 @@
 namespace Tetraedge {
 
 template<class T> static T linearInterpolation(T &obj1, T &obj2, double amount) {
-	amount = CLIP(amount, 0.0, 1.0);
+	amount = CLIP<double>(amount, 0.0, 1.0);
 	return (obj1 * (1.0 - amount)) + (obj2 * amount);
 }
 
