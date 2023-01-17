@@ -1156,7 +1156,7 @@ void EfhEngine::drawCombatScreen(int16 charId, bool whiteFl, bool drawFl) {
 			drawColoredRect(200, 112, 278, 132, 0);
 			displayCenteredString("'T' for Terrain", 128, 303, 117);
 			displayBoxWithText("", 1, 0, false);
-			sub1C4CA(whiteFl);
+			displayEncounterInfo(whiteFl);
 			displayCombatMenu(charId);
 			displayLowStatusScreen(false);
 		}
@@ -1329,8 +1329,8 @@ void EfhEngine::addReactionText(int16 id) {
 	}
 }
 
-void EfhEngine::sub1C4CA(bool whiteFl) {
-	debugC(5, kDebugFight, "sub1C4CA %s", whiteFl ? "True" : "False");
+void EfhEngine::displayEncounterInfo(bool whiteFl) {
+	debugC(5, kDebugFight, "displayEncounterInfo %s", whiteFl ? "True" : "False");
 
 	int16 textPosY = 20;
 	for (uint counter = 0; counter < 5; ++counter) {
