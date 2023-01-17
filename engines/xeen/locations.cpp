@@ -490,6 +490,9 @@ void BlacksmithLocation::farewell() {
 	if (_ccNum) {
 		sound.stopSound();
 		sound.playVoice("come1.voc", 1);
+
+		while (sound.isSoundPlaying() && !g_vm->shouldExit())
+			g_vm->_events->pollEventsAndWait();
 	}
 }
 
@@ -812,6 +815,8 @@ void TavernLocation::farewell() {
 
 	sound.stopSound();
 	sound.playVoice(_ccNum ? "gdluck1.voc" : "goodbye.voc");
+	while (sound.isSoundPlaying() && !g_vm->shouldExit())
+		g_vm->_events->pollEventsAndWait();
 
 	map.mazeData()._mazeNumber = party._mazeId;
 }
