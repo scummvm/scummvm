@@ -42,7 +42,7 @@ jobs:
         uses: lukka/run-vcpkg@v7
         id: runvcpkg
         with:
-          vcpkgGitCommitId: be5c4ef68b51142ba705f0678b45d284977de677
+          vcpkgGitCommitId: fd766eba2b4cf59c7123d46189be373e2cee959d
           vcpkgTriplet: '${{ matrix.triplet }}'
           vcpkgArguments: '${{ matrix.vcpkgPackages }}'
 #      - name: Upload libs
