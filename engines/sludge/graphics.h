@@ -167,7 +167,7 @@ public:
 	// Colors
 	void setBlankColor(int r, int g, int b) { _currentBlankColour = _renderSurface.format.RGBToColor(r & 255, g & 255, b & 255);};
 	void setBurnColor(int r, int g, int b) {
-		_currentBurnG = r;
+		_currentBurnR = r;
 		_currentBurnG = g;
 		_currentBurnB = b;
 	}
