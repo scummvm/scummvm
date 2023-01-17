@@ -53,25 +53,41 @@ void Overlay_Remove(ScriptOverlay *sco) {
 	sco->Remove();
 }
 
-void Overlay_SetText(ScriptOverlay *scover, int wii, int fontid, int text_color, const char *text) {
+void Overlay_SetText(ScriptOverlay *scover, int width, int fontid, int text_color, const char *text) {
 	int ovri = find_overlay_of_type(scover->overlayId);
 	if (ovri < 0)
 		quit("!Overlay.SetText: invalid overlay ID specified");
-	int xx = game_to_data_coord(_GP(screenover)[ovri].x);
-	int yy = game_to_data_coord(_GP(screenover)[ovri].y);
+	auto &over = _GP(screenover)[ovri];
+	const int x = over.x;
+	const int y = over.y;
 
-	// FIXME: a refactor needed!
-	// these calls to RemoveOverlay and CreateOverlay below are potentially dangerous,
-	// because they may allocate new script objects too under certain conditions.
-	// This did not happen because users only had access to custom overlay pointers before,
-	// but now they also may access internal overlays (such as Say text and portrait).
-	const int disp_type = scover->overlayId;
-	RemoveOverlay(scover->overlayId);
+	// TODO: find a nice way to refactor and share these code pieces
+	// from CreateTextOverlay
+	width = data_to_game_coord(width);
+	// allow DisplaySpeechBackground to be shrunk
+	int allow_shrink = (x == OVR_AUTOPLACE) ? 1 : 0;
 
-	int new_ovrid = CreateTextOverlay(xx, yy, wii, fontid, text_color, get_translation(text), disp_type);
-	if (new_ovrid != disp_type)
-		quit("SetTextOverlay internal error: inconsistent type ids");
-	scover->overlayId = new_ovrid;
+	// from Overlay_CreateTextCore
+	if (width < 8) width = _GP(play).GetUIViewport().GetWidth() / 2;
+
+	if (text_color == 0) text_color = 16;
+
+	// Recreate overlay image
+	int dummy_x = x, dummy_y = y, adj_x = x, adj_y = y;
+	bool has_alpha = false;
+	// NOTE: we pass text_color negated to let optionally use textwindow (if applicable)
+	// this is a generic ugliness of _display_main args, need to refactor later.
+	Bitmap *image = create_textual_image(get_translation(text), -text_color, 0, dummy_x, dummy_y, adj_x, adj_y,
+										 width, fontid, allow_shrink, has_alpha);
+
+	// Update overlay properties
+	over.SetImage(image);
+	over.SetAlphaChannel(has_alpha);
+	over.x = x;
+	over.y = y;
+	over.offsetX = adj_x - dummy_x;
+	over.offsetY = adj_y - dummy_y;
+	over.ddb = nullptr; // is generated during first draw pass
 }
 
 int Overlay_GetX(ScriptOverlay *scover) {
