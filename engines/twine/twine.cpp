@@ -1159,6 +1159,10 @@ void TwinEEngine::setPalette(const uint32 *palette) {
 }
 
 void TwinEEngine::setPalette(uint startColor, uint numColors, const byte *palette) {
+	if (numColors == 0 || palette == nullptr) {
+		warning("Could not set palette");
+		return;
+	}
 	_frontVideoBuffer.setPalette(palette, startColor, numColors);
 }
 

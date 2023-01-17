@@ -24,6 +24,7 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "graphics/managed_surface.h"
+#include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "image/bmp.h"
 #include "image/image_decoder.h"
@@ -121,8 +122,17 @@ static bool loadImageDelayViaDecoder(TwinEEngine *engine, const Common::String &
 	}
 	Graphics::ManagedSurface &target = engine->_frontVideoBuffer;
 	Common::Rect rect(src->w, src->h);
-	engine->setPalette(decoder.getPaletteStartIndex(), decoder.getPaletteColorCount(), decoder.getPalette());
-	target.transBlitFrom(*src, rect, target.getBounds(), 0, false, 0, 0xff, nullptr, true);
+	if (decoder.getPaletteColorCount() == 0) {
+		uint8 pal[PALETTE_SIZE];
+		engine->_frontVideoBuffer.getPalette(pal, 0, 256);
+		Graphics::Surface *source = decoder.getSurface()->convertTo(target.format, nullptr, 0, pal, 256);
+		target.blitFrom(*source, rect, target.getBounds());
+		source->free();
+		delete source;
+	} else {
+		engine->setPalette(decoder.getPaletteStartIndex(), decoder.getPaletteColorCount(), decoder.getPalette());
+		target.transBlitFrom(*src, rect, target.getBounds(), 0, false, 0, 0xff, nullptr, true);
+	}
 	if (engine->delaySkip(1000 * seconds)) {
 		return true;
 	}
