@@ -72,8 +72,8 @@ void mgetgraphpos() {
 		_G(real_mouse_y) = CLIP(_G(real_mouse_y) + rel_y, _GP(mouse).ControlRect.Top, _GP(mouse).ControlRect.Bottom);
 	} else {
 		// Save real cursor coordinates provided by system
-		_G(real_mouse_x) = _G(sys_mouse_x);
-		_G(real_mouse_y) = _G(sys_mouse_y);
+		_G(real_mouse_x) = CLIP((int)_G(sys_mouse_x), _GP(mouse).ControlRect.Left, _GP(mouse).ControlRect.Right);
+		_G(real_mouse_y) = CLIP((int)_G(sys_mouse_y), _GP(mouse).ControlRect.Top, _GP(mouse).ControlRect.Bottom);
 	}
 
 	// Set new in-game cursor position
