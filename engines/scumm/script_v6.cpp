@@ -1204,11 +1204,13 @@ void ScummEngine_v6::o6_animateActor() {
 	int anim = pop();
 	int act = pop();
 
-	if (_game.id == GID_SAMNMAX && _roomResource == 35 &&
-		vm.slot[_currentScript].number == 202 && act == 4 && anim == 14) {
+	if (_game.id == GID_SAMNMAX && _roomResource == 35 && vm.slot[_currentScript].number == 202 &&
+		act == 4 && anim == 14 && _enableEnhancements) {
 		// WORKAROUND bug #2068 (Animation glitch at World of Fish).
 		// Before starting animation 14 of the fisherman, make sure he isn't
-		// talking anymore. This appears to be a bug in the original game as well.
+		// talking anymore, otherwise the fishing line may appear twice when Max
+		// grabs it and subtitles (at a slow speed) and voices are both enabled.
+		// This bug exists in the original game as well.
 		if (getTalkingActor() == 4) {
 			stopTalk();
 		}
