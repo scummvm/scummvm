@@ -94,12 +94,12 @@ SkipSpeechStyle internal_skip_speech_to_user(int internal_val) {
 bool init_voicepak(const String &name) {
 	if (_GP(usetup).no_speech_pack) return false; // voice-over disabled
 
-	_GP(play).voice_avail = false;
 	String speech_file = name.IsEmpty() ? "speech.vox" : String::FromFormat("sp_%s.vox", name.GetCStr());
 	if (_GP(ResPaths).SpeechPak.Name.CompareNoCase(speech_file) == 0)
 		return true; // same pak already assigned
 
 	// First remove existing voice packs
+	_GP(play).voice_avail = false;
 	_GP(AssetMgr)->RemoveLibrary(_GP(ResPaths).SpeechPak.Path);
 	_GP(AssetMgr)->RemoveLibrary(_GP(ResPaths).VoiceDirSub);
 
