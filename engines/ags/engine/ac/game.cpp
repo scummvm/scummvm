@@ -144,9 +144,10 @@ void Game_SetAudioTypeVolume(int audioType, int volume, int changeType) {
 	if ((audioType < 0) || ((size_t)audioType >= _GP(game).audioClipTypes.size()))
 		quitprintf("!Game.SetAudioTypeVolume: invalid audio type: %d", audioType);
 
-	Debug::Printf("Game.SetAudioTypeVolume: type: %d, volume: %d, change: %d", audioType, volume, changeType);
-	if ((changeType == VOL_CHANGEEXISTING) ||
-	        (changeType == VOL_BOTH)) {
+	const char *change_str[3]{"existing", "future", "all"};
+	Debug::Printf("Game.SetAudioTypeVolume: type: %d, volume: %d, change: %s", audioType, volume,
+				  change_str[changeType - VOL_CHANGEEXISTING]);
+	if ((changeType == VOL_CHANGEEXISTING) || (changeType == VOL_BOTH)) {
 		for (int aa = 0; aa < _GP(game).numGameChannels; aa++) {
 			ScriptAudioClip *clip = AudioChannel_GetPlayingClip(&_G(scrAudioChannel)[aa]);
 			if ((clip != nullptr) && (clip->type == audioType)) {
@@ -164,7 +165,6 @@ void Game_SetAudioTypeVolume(int audioType, int volume, int changeType) {
 		// update queued clip volumes
 		update_queued_clips_volume(audioType, volume);
 	}
-
 }
 
 int Game_GetMODPattern() {
