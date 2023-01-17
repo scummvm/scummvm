@@ -41,6 +41,9 @@ std::chrono::microseconds GetFrameDuration() {
 }
 
 int setTimerFps(int new_fps) {
+	assert(new_fps >= 0);
+	if (new_fps <= 0)
+		return _G(framerate);
 	int old_fps = _G(framerate);
 	_G(tick_duration) = std::chrono::microseconds(1000000LL / new_fps);
 	_G(framerate) = new_fps;
