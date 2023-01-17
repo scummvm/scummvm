@@ -21,6 +21,8 @@ Autosave
 
 	*autosave_period*
 
+.. _seed:
+
 Random seed
 	Every time you start ScummVM, a random seed is generated. Use this option to set a fixed seed, which ensures that random events in games play out the same way every time. 
 
