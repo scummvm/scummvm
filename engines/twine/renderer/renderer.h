@@ -234,7 +234,7 @@ public:
 
 	IVec3 _projPos;
 
-	void setBaseRotationPos(int32 x, int32 y, int32 z);
+	void setCameraRotation(int32 x, int32 y, int32 z);
 	IVec3 getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const;
 
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
@@ -288,7 +288,7 @@ public:
 	void renderHolomapVertices(const ComputedVertex vertexCoordinates[3], const ComputedVertex textureCoordinates[3], uint8 *holomapImage, uint32 holomapImageSize);
 };
 
-inline void Renderer::setBaseRotationPos(int32 x, int32 y, int32 z) {
+inline void Renderer::setCameraRotation(int32 x, int32 y, int32 z) {
 	_cameraRot.x = x;
 	_cameraRot.y = y;
 	_cameraRot.z = z;

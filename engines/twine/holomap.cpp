@@ -293,7 +293,7 @@ void Holomap::drawHoloObj(const IVec3 &angle, int32 x, int32 y) {
 	const IVec3 &destPos = _engine->_renderer->longWorldRot(0, 0, 1000);
 	_engine->_renderer->setPosCamera(0, 0, 0);
 	_engine->_renderer->setBaseRotation(angle);
-	_engine->_renderer->setBaseRotationPos(0, 0, distance(zDistanceTrajectory));
+	_engine->_renderer->setCameraRotation(0, 0, distance(zDistanceTrajectory));
 	_engine->_interface->resetClip();
 	Common::Rect dirtyRect;
 	_engine->_renderer->renderIsoModel(destPos, x, y, LBAAngles::ANGLE_0, _engine->_resources->_holomapPointModelPtr, dirtyRect);
@@ -456,13 +456,16 @@ void Holomap::drawListPos(int xRot, int yRot, int zRot, bool lower) {
 			continue;
 		}
 		const Location &loc = _locations[locationIdx];
-		_engine->_renderer->setAngleCamera(loc.angleX, loc.angleY, 0);
-		const IVec3 &destPos = _engine->_renderer->longWorldRot(0, 0, loc.size + 1000);
-		const IVec3 &destPos2 = _engine->_renderer->longWorldRot(0, 0, 1500);
+		const IVec3 &cameraRot = _engine->_renderer->setAngleCamera(loc.angleX, loc.angleY, 0);
+		IVec3 m = _engine->_renderer->worldRotatePoint(IVec3(0, 0, 1000 + loc.size));
+		m.x = cameraRot.x;
+		const IVec3 &m1 = _engine->_renderer->worldRotatePoint(IVec3(0, 0, 1500));
 		_engine->_renderer->setInverseAngleCamera(xRot, yRot, zRot);
-		_engine->_renderer->setBaseRotationPos(0, 0, distance(ZOOM_BIG_HOLO));
-		const IVec3 &destPos3 = _engine->_renderer->worldRotatePoint(destPos);
-		const IVec3 &destPos4 = _engine->_renderer->worldRotatePoint(destPos2);
+		_engine->_renderer->setCameraRotation(0, 0, distance(ZOOM_BIG_HOLO));
+
+		const IVec3 &destPos3 = _engine->_renderer->worldRotatePoint(m);
+		const IVec3 &destPos4 = _engine->_renderer->worldRotatePoint(m1);
+
 		bool visible;
 		if (lower) {
 			visible = destPos3.z <= destPos4.z;
@@ -480,9 +483,9 @@ void Holomap::drawListPos(int xRot, int yRot, int zRot, bool lower) {
 		drawList.posValue = destPos3.z;
 		drawList.actorIdx = locationIdx;
 		drawList.type = flags;
-		drawList.x = destPos.x;
-		drawList.y = destPos.y;
-		drawList.z = destPos.z;
+		drawList.x = m.x;
+		drawList.y = m.y;
+		drawList.z = m.z;
 		++n;
 	}
 	_engine->_redraw->sortDrawingList(drawListArray, n);
@@ -618,7 +621,7 @@ void Holomap::holoMap() {
 			_engine->_renderer->setLightVector(xRot, yRot, 0);
 			drawListPos(xRot, yRot, 0, false);
 			_engine->_renderer->setInverseAngleCamera(xRot, yRot, 0);
-			_engine->_renderer->setBaseRotationPos(0, 0, distance(ZOOM_BIG_HOLO));
+			_engine->_renderer->setCameraRotation(0, 0, distance(ZOOM_BIG_HOLO));
 			drawHoloMap(holomapImagePtr, holomapImageSize);
 			drawListPos(xRot, yRot, 0, true);
 			drawHolomapText(_engine->width() / 2, 25, "HoloMap");
