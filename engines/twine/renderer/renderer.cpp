@@ -49,6 +49,10 @@ void Renderer::init(int32 w, int32 h) {
 	_polyTabSize = _engine->height() * 6;
 	_polyTab = (int16 *)malloc(_polyTabSize * sizeof(int16));
 	_colorProgressionBuffer = (int16 *)malloc(_polyTabSize * sizeof(int16));
+
+	memset(_polyTab, 0, sizeof(_polyTabSize * sizeof(int16)));
+	memset(_colorProgressionBuffer, 0, sizeof(_polyTabSize * sizeof(int16)));
+
 	_tabVerticG = &_polyTab[_engine->height() * 0];
 	_tabVerticD = &_polyTab[_engine->height() * 1];
 	_tabx0 = &_polyTab[_engine->height() * 2];
@@ -600,7 +604,7 @@ int16 Renderer::bottomClip(int16 polyRenderType, ComputedVertex** offTabPoly, in
 	return newNbPoints;
 }
 
-int32 Renderer::computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabPoly, int32 numVertices) {
+int32 Renderer::computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabPoly, int32 numVertices, int &vtop, int &vbottom) {
 	const Common::Rect &clip = _engine->_interface->_clip;
 	if (clip.isEmpty()) {
 		return numVertices;
@@ -693,10 +697,13 @@ int32 Renderer::computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabP
 		}
 	}
 
+	vtop = minsy;
+	vbottom = maxsy;
+
 	return clippedNumVertices;
 }
 
-bool Renderer::computePoly(int16 polyRenderType, const ComputedVertex *vertices, int32 numVertices) {
+bool Renderer::computePoly(int16 polyRenderType, const ComputedVertex *vertices, int32 numVertices, int &vtop, int &vbottom) {
 	const int16 *polyTabBegin = _polyTab;
 	const int16 *polyTabEnd = &_polyTab[_polyTabSize - 1];
 	const int16 *colProgressBufStart = _colorProgressionBuffer;
@@ -710,7 +717,7 @@ bool Renderer::computePoly(int16 polyRenderType, const ComputedVertex *vertices,
 
 	ComputedVertex *offTabPoly[] = {_clippedPolygonVertices1, _clippedPolygonVertices2};
 
-	numVertices = computePolyMinMax(polyRenderType, offTabPoly, numVertices);
+	numVertices = computePolyMinMax(polyRenderType, offTabPoly, numVertices, vtop, vbottom);
 	if (numVertices == 0) {
 		return false;
 	}
@@ -1282,7 +1289,7 @@ void Renderer::svgaPolyTriche(int vtop, int32 vsize, uint16 color) const {
 }
 
 void Renderer::renderPolygons(const CmdRenderPolygon &polygon, ComputedVertex *vertices, int vtop, int vbottom) {
-	if (computePoly(polygon.renderType, vertices, polygon.numVertices)) {
+	if (computePoly(polygon.renderType, vertices, polygon.numVertices, vtop, vbottom)) {
 		const int32 vsize = vbottom - vtop + 1;
 		fillVertices(vtop, vsize, polygon.renderType, polygon.colorIndex);
 	}
@@ -1337,7 +1344,7 @@ void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 colo
 	}
 }
 
-bool Renderer::computeSphere(int32 x, int32 y, int32 radius) {
+bool Renderer::computeSphere(int32 x, int32 y, int32 radius, int &vtop, int &vbottom) {
 	if (radius <= 0) {
 		return false;
 	}
@@ -1426,6 +1433,9 @@ bool Renderer::computeSphere(int32 x, int32 y, int32 radius) {
 
 			++r;
 		}
+
+		vtop = top;
+		vbottom = bottom;
 
 		return true;
 	}
@@ -1633,8 +1643,10 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 
 			radius -= 3;
 
-			if (computeSphere(sphere->x, sphere->y, radius)) {
-				const int32 vsize = 2 * radius;
+			int vtop = -1;
+			int vbottom = -1;
+			if (computeSphere(sphere->x, sphere->y, radius, vtop, vbottom)) {
+				const int32 vsize = vbottom - vtop;
 				fillVertices(sphere->y - radius, vsize, sphere->polyRenderType, sphere->color);
 			}
 			break;

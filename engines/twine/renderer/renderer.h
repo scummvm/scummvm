@@ -152,7 +152,7 @@ private:
 	ModelData _modelData;
 
 	bool renderAnimatedModel(ModelData *modelData, const BodyData &bodyData, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos, Common::Rect &modelRect);
-	bool computeSphere(int32 x, int32 y, int32 radius);
+	bool computeSphere(int32 x, int32 y, int32 radius, int &vtop, int &vbottom);
 	bool renderModelElements(int32 numOfPrimitives, const BodyData &bodyData, RenderCommand **renderCmds, ModelData *modelData, Common::Rect &modelRect);
 	IVec3 longInverseRot(int32 x, int32 y, int32 z);
 	inline IVec3 getCameraAnglePositions(const IVec3 &vec) {
@@ -208,7 +208,7 @@ private:
 	void svgaPolyDith(int vtop, int32 vsize) const;
 	void svgaPolyMarbre(int vtop, int32 vsize, uint16 color) const;
 	void svgaPolyTriche(int vtop, int32 vsize, uint16 color) const;
-	bool computePoly(int16 polyRenderType, const ComputedVertex *vertices, int32 numVertices);
+	bool computePoly(int16 polyRenderType, const ComputedVertex *vertices, int32 numVertices, int &vtop, int &vbottom);
 
 	const RenderCommand *depthSortRenderCommands(int32 numOfPrimitives);
 	uint8 *preparePolygons(const Common::Array<BodyPolygon>& polygons, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData);
@@ -225,7 +225,7 @@ private:
 	int16 rightClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices);
 	int16 topClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices);
 	int16 bottomClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices);
-	int32 computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabPoly, int32 numVertices);
+	int32 computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabPoly, int32 numVertices, int &vtop, int &vbottom);
 public:
 	Renderer(TwinEEngine *engine);
 	~Renderer();
