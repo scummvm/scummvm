@@ -108,7 +108,7 @@ void RunInventoryInteraction(int iit, int modd) {
 		run_event_block_inv(iit, 3);
 	} else if (modd == MODE_TALK)
 		run_event_block_inv(iit, 2);
-	else // other click on invnetory
+	else // other click on inventory
 		run_event_block_inv(iit, 4);
 }
 
