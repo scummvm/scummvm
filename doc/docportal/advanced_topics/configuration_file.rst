@@ -101,6 +101,15 @@ Example of a configuration file
     path=C:\amiga_mi2\
     music_driver=windows
 
+
+Default configuration file option
+=====================================
+
+An initial (default) configuration file can be specified via the :doc:`command line <../advanced_topics/command_line>` using the ``--i`` or ``--initial-cfg`` option. ScummVM uses this default file if the configuration file is missing from its usual location, such as after initial install, or if the user deletes their configuration file. 
+
+Setting an initial configuration file in this way allows default settings to easily be bundled with a game. The alternatives are to use the command line for all settings, which has fewer options and in some cases means the user can't change settings, or to install a default configuration file to a writable location and using the ``--config`` option, which is harder to deploy, and leaves the user with no way to restore default settings except re-installing the game. 
+
+
 .. _configuration_keys:
 
 Configuration keys
@@ -390,11 +399,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`original_gui <originalgui>`",boolean,true,
 		":ref:`original_menus <originalmenu>`",boolean,false,
 		":ref:`originalsaveload <osl>`",boolean,false,
-		":ref:`output_channels <outputchannels>`",integer,,"
-	Supported values are:
-
-	- 1
-	- 2"
+		outputchannels,integer,,"Allows the user to specify the number of audio output channels; 1 for mono or 2 for stereo"
 		":ref:`output_rate <outputrate>`",integer,,"
 	Sensible values are:
 
@@ -511,6 +516,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 .. _screenshotpath:
 
 Screenshot path
+====================
 	The default location for the screenshotpath depends on your system.
 
 
