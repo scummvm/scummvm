@@ -126,11 +126,10 @@ bool EfhEngine::handleDeathMenu() {
 		Common::KeyCode input = waitForKey();
 		switch (input) {
 		case Common::KEYCODE_l:
-			// SaveEfhGame opens the GUI save/load screen. It's not possible to save at this point (_saveAuthorizd is false).
 			// If the user actually loads a savegame, it'll get _saveAuthorized from the savegame (always true) and will set 'found' to true.
 			// If 'found' remains false, it means the user cancelled the loading and still needs to take a decision
 			// Original is calling loadEfhGame() because there's only one savegame, so it's not ambiguous
-			saveEfhGame();
+			loadGameDialog();
 			found = _saveAuthorized;
 			break;
 		case Common::KEYCODE_q:
