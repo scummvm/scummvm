@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-17 10:49+0000\n"
+"POT-Creation-Date: 2023-01-17 21:51+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3185,27 +3185,27 @@ msgid "Resolution: %dx%d"
 msgstr "해상도: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2480
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2484
 msgid "Enabled aspect ratio correction"
 msgstr "화면 종횡비 보정 활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:726
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2486
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2490
 msgid "Disabled aspect ratio correction"
 msgstr "화면 종횡비 보정 비활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:739
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2502
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2506
 msgid "Filtering enabled"
 msgstr "필터링 활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:741
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2508
 msgid "Filtering disabled"
 msgstr "필터링 비활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:767
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2531
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2535
 msgid "Stretch mode"
 msgstr "확대 모드"
 
@@ -3213,7 +3213,7 @@ msgstr "확대 모드"
 msgid "SDL Surface"
 msgstr "SDL Surface"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2446
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2450
 msgid "Active graphics filter:"
 msgstr "활성 그래픽 필터:"
 
