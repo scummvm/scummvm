@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-17 10:48+0000\n"
+"POT-Creation-Date: 2023-01-17 10:49+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -3230,29 +3230,29 @@ msgid "Resolution: %dx%d"
 msgstr "Bereizmena: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2509
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2480
 msgid "Enabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa gaituta"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:726
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2515
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2486
 msgid "Disabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa desgaituta"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:739
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2531
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2502
 #, fuzzy
 msgid "Filtering enabled"
 msgstr "Klikatzea gaituta"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:741
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2533
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
 #, fuzzy
 msgid "Filtering disabled"
 msgstr "Klikatzea desgaituta"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:767
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2560
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2531
 #, fuzzy
 msgid "Stretch mode"
 msgstr "Helio modua"
@@ -3261,7 +3261,7 @@ msgstr "Helio modua"
 msgid "SDL Surface"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2475
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2446
 msgid "Active graphics filter:"
 msgstr "Filtro grafiko aktiboa:"
 
