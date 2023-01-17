@@ -2669,7 +2669,7 @@ void Actor::animateActor(int anim) {
 		// fall through
 	default:
 		if (_vm->_game.version <= 2)
-			startAnimActor(chore);
+			startAnimActor(anim >> 2);
 		else
 			startAnimActor(anim);
 	}
