@@ -130,9 +130,9 @@ void TeModel::forceMatrix(const TeMatrix4x4 &matrix) {
 
 TeTRS TeModel::getBone(TeIntrusivePtr<TeModelAnimation> anim, uint num) {
 	if (anim) {
-		int bone = anim->findBone(_bones[num]._name);
-		if (bone != -1)
-			return anim->getTRS(bone, anim->curFrame2(), false);
+		int boneNo = anim->findBone(_bones[num]._name);
+		if (boneNo != -1)
+			return anim->getTRS(boneNo, anim->curFrame2(), false);
 	}
 	return _bones[num]._trs;
 }
