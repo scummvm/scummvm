@@ -128,7 +128,7 @@ enum TeLuaSaveVarType {
 	String = 4
 };
 
-#define DEBUG_SAVELOAD 1
+#define TETRAEDGE_LUA_DEBUG_SAVELOAD
 
 Common::Error TeLuaContext::syncState(Common::Serializer &s) {
 	// Save/Load globals.  The format of saving is:
@@ -136,7 +136,7 @@ Common::Error TeLuaContext::syncState(Common::Serializer &s) {
 	// Vals can be string, number (uint32), or boolean (byte)
 	// The type of "None" (0) is the end of the list (and has no name/val).
 	if (s.isSaving()) {
-#if DEBUG_SAVELOAD
+#ifdef TETRAEDGE_LUA_DEBUG_SAVELOAD
 		debug("TeLuaContext::syncState: --- Saving globals: ---");
 #endif
 		lua_pushvalue(_luaState, LUA_GLOBALSINDEX);
@@ -157,7 +157,7 @@ Common::Error TeLuaContext::syncState(Common::Serializer &s) {
 				s.syncString(name);
 				bool val = lua_toboolean(_luaState, -1);
 				s.syncAsByte(val);
-#if DEBUG_SAVELOAD
+#ifdef TETRAEDGE_LUA_DEBUG_SAVELOAD
 				debug("TeLuaContext::syncState: bool %s = %s", name.c_str(), val ? "true" : "false");
 #endif
 			} else if (vtype == LUA_TNUMBER) {
@@ -166,7 +166,7 @@ Common::Error TeLuaContext::syncState(Common::Serializer &s) {
 				s.syncString(name);
 				double val = lua_tonumber(_luaState, -1);
 				s.syncAsDoubleLE(val);
-#if DEBUG_SAVELOAD
+#ifdef TETRAEDGE_LUA_DEBUG_SAVELOAD
 				debug("TeLuaContext::syncState: num %s = %f", name.c_str(), val);
 #endif
 			} else if (vtype == LUA_TSTRING) {
@@ -175,7 +175,7 @@ Common::Error TeLuaContext::syncState(Common::Serializer &s) {
 				s.syncString(name);
 				Common::String val = lua_tostring(_luaState, -1);
 				s.syncString(val);
-#if DEBUG_SAVELOAD
+#ifdef TETRAEDGE_LUA_DEBUG_SAVELOAD
 				debug("TeLuaContext::syncState: str %s = '%s'", name.c_str(), val.c_str());
 #endif
 			}
@@ -183,7 +183,7 @@ Common::Error TeLuaContext::syncState(Common::Serializer &s) {
 			nextresult = lua_next(_luaState, -2);
 		}
 	} else {
-#if DEBUG_SAVELOAD
+#ifdef TETRAEDGE_LUA_DEBUG_SAVELOAD
 		debug("TeLuaContext::syncState: --- Loading globals: --- ");
 #endif
 		// loading
@@ -197,7 +197,7 @@ Common::Error TeLuaContext::syncState(Common::Serializer &s) {
 					byte b = 0;
 					s.syncAsByte(b);
 					lua_pushboolean(_luaState, b);
-#if DEBUG_SAVELOAD
+#ifdef TETRAEDGE_LUA_DEBUG_SAVELOAD
 					debug("TeLuaContext::syncState: bool %s = %s", name.c_str(), b ? "true" : "false");
 #endif
 					break;
@@ -206,7 +206,7 @@ Common::Error TeLuaContext::syncState(Common::Serializer &s) {
 					float d = 0;
 					s.syncAsDoubleLE(d);
 					lua_pushnumber(_luaState, d);
-#if DEBUG_SAVELOAD
+#ifdef TETRAEDGE_LUA_DEBUG_SAVELOAD
 					debug("TeLuaContext::syncState: num %s = %f", name.c_str(), d);
 #endif
 					break;
@@ -215,7 +215,7 @@ Common::Error TeLuaContext::syncState(Common::Serializer &s) {
 					Common::String str;
 					s.syncString(str);
 					lua_pushstring(_luaState, str.c_str());
-#if DEBUG_SAVELOAD
+#ifdef TETRAEDGE_LUA_DEBUG_SAVELOAD
 					debug("TeLuaContext::syncState: str %s = '%s'", name.c_str(), str.c_str());
 #endif
 					break;
@@ -228,7 +228,7 @@ Common::Error TeLuaContext::syncState(Common::Serializer &s) {
 		}
 	}
 
-#if DEBUG_SAVELOAD
+#ifdef TETRAEDGE_LUA_DEBUG_SAVELOAD
 	debug("TeLuaContext::syncState: -------- end --------");
 #endif
 

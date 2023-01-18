@@ -495,25 +495,25 @@ bool Inventory::updateLayout() {
 	return false;
 }
 
-//#define DEBUG_SAVELOAD 1
+//#define TETRAEDGE_DEBUG_SAVELOAD
 
 Common::Error Inventory::syncState(Common::Serializer &s) {
 	uint nitems = _invObjects.size();
 	s.syncAsUint32LE(nitems);
 	if (s.isLoading()) {
-#if DEBUG_SAVELOAD
+#ifdef TETRAEDGE_DEBUG_SAVELOAD
 		debug("Inventory::syncState: --- Loading %d inventory items: ---", nitems);
 #endif
 		for (uint i = 0; i < nitems; i++) {
 			Common::String objname;
 			s.syncString(objname);
 			addObject(objname);
-#if DEBUG_SAVELOAD
+#ifdef TETRAEDGE_DEBUG_SAVELOAD
 			debug("Inventory::syncState: 	%s", objname.c_str());
 #endif
 		}
 	} else if (nitems) {
-#if DEBUG_SAVELOAD
+#ifdef TETRAEDGE_DEBUG_SAVELOAD
 		debug("Inventory::syncState: --- Saving %d inventory items: --- ", _invObjects.size());
 #endif
 		// Add items in reverse order as the "addObject" on load will
@@ -523,13 +523,13 @@ Common::Error Inventory::syncState(Common::Serializer &s) {
 			iter--;
 			Common::String objname = (*iter)->name();
 			s.syncString(objname);
-#if DEBUG_SAVELOAD
+#ifdef TETRAEDGE_DEBUG_SAVELOAD
 			debug("Inventory::syncState: 	%s", objname.c_str());
 #endif
 		}
 	}
 
-#if DEBUG_SAVELOAD
+#ifdef TETRAEDGE_DEBUG_SAVELOAD
 	debug("Inventory::syncState: -------- end --------");
 #endif
 	return Common::kNoError;

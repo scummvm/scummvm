@@ -42,8 +42,8 @@
 #include "tetraedge/te/te_lua_script.h"
 #include "tetraedge/te/te_lua_thread.h"
 
-//#define DEBUG_PATHFINDING 1
-//#define DEBUG_LIGHTS 1
+//#define TETRAEDGE_DEBUG_PATHFINDING
+//#define TETRAEDGE_DEBUG_LIGHTS
 
 namespace Tetraedge {
 
@@ -350,7 +350,7 @@ void InGameScene::draw() {
 
 	currentCamera()->apply();
 
-#if DEBUG_PATHFINDING
+#ifdef TETRAEDGE_DEBUG_PATHFINDING
 	if (_character && _character->curve()) {
 		_character->curve()->setVisible(true);
 		_character->curve()->draw();
@@ -707,7 +707,7 @@ bool InGameScene::loadLights(const Common::Path &path) {
 		_lights[i]->enable(i);
 	}
 
-#if DEBUG_LIGHTS
+#ifdef TETRAEDGE_DEBUG_LIGHTS
 	debug("--- Scene lights ---");
 	debug("Shadow: %s no:%d far:%.02f near:%.02f fov:%.02f", _shadowColor.dump().c_str(), _shadowLightNo, _shadowFarPlane, _shadowNearPlane, _shadowFov);
 	debug("Global: %s", TeLight::globalAmbient().dump().c_str());

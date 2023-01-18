@@ -40,7 +40,7 @@
 #include "tetraedge/te/te_input_mgr.h"
 #include "tetraedge/te/te_sound_manager.h"
 
-//#define DUMP_LAYOUTS 1
+//#define TETRAEDGE_DUMP_LAYOUTS
 
 namespace Tetraedge {
 
@@ -403,7 +403,7 @@ void Application::drawFront() {
 	g_engine->getRenderer()->loadIdentityMatrix();
 }
 
-#if DUMP_LAYOUTS
+#ifdef TETRAEDGE_DUMP_LAYOUTS
 static int renderCount = 0;
 static void dumpLayout(TeLayout *layout, Common::String indent = "++") {
 	assert(layout);
@@ -459,7 +459,7 @@ void Application::performRender() {
 	game->scene().drawPath();
 	g_system->updateScreen();
 
-#if DUMP_LAYOUTS
+#ifdef TETRAEDGE_DUMP_LAYOUTS
 	renderCount++;
 	if (renderCount % 100 == 0) {
 		debug("\n--------------------\nFrame %d back layout: ", renderCount);

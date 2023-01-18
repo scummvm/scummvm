@@ -19,9 +19,9 @@
  *
  */
 
-//#define DUMP_RENDERED_FONTS 1
+//#define TETRAEDGE_DUMP_RENDERED_FONTS
 
-#ifdef DUMP_RENDERED_FONTS
+#ifdef TETRAEDGE_DUMP_RENDERED_FONTS
 #include "image/png.h"
 #endif
 
@@ -41,7 +41,7 @@ TeTextBase2::~TeTextBase2() {
 	delete _mesh;
 }
 
-#ifdef DUMP_RENDERED_FONTS
+#ifdef TETRAEDGE_DUMP_RENDERED_FONTS
 static int dumpCount = 0;
 #endif
 
@@ -107,7 +107,7 @@ void TeTextBase2::build() {
 	TeIntrusivePtr<Te3DTexture> texture = Te3DTexture::makeInstance();
 	texture->load(img);
 
-#if DUMP_RENDERED_FONTS
+#ifdef TETRAEDGE_DUMP_RENDERED_FONTS
 	Common::DumpFile dumpFile;
 	dumpFile.open(Common::String::format("/tmp/rendered-font-dump-%04d.png", dumpCount));
 	dumpCount++;

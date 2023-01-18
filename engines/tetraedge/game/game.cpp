@@ -1123,7 +1123,7 @@ bool Game::onMouseClick(const Common::Point &pt) {
 	return false;
 }
 
-#if ENABLE_CUSTOM_CURSOR_CHECKS
+#ifdef TETRAEDGE_ENABLE_CUSTOM_CURSOR_CHECKS
 // Note: None of these cursor files seem to be actually shipped with the game
 // but the logic is reproduced here just in case there's some different
 // version that uses them.
@@ -1169,7 +1169,7 @@ bool Game::onMouseMove() {
 	//
 	// So maybe all this is useless?
 
-#if ENABLE_CUSTOM_CURSOR_CHECKS
+#ifdef TETRAEDGE_ENABLE_CUSTOM_CURSOR_CHECKS
 	TeVector2s32 mouseLoc = g_engine->getInputMgr()->lastMousePos();
 	bool skipFullSearch = false;
 
@@ -1212,7 +1212,7 @@ bool Game::onMouseMove() {
 
 	if (!checkedCursor)
 		app->mouseCursorLayout().load(DEFAULT_CURSOR);
-#endif // ENABLE_CUSTOM_CURSOR_CHECKS
+#endif
 	return false;
 }
 

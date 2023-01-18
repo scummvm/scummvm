@@ -25,9 +25,9 @@
 #include "tetraedge/te/te_frame_anim.h"
 #include "tetraedge/te/te_resource_manager.h"
 
-//#define DUMP_LOADED_IMAGES 1
+//#define TETRAEDGE_DUMP_LOADED_IMAGES
 
-#ifdef DUMP_LOADED_IMAGES
+#ifdef TETRAEDGE_DUMP_LOADED_IMAGES
 #include "image/png.h"
 #endif
 
@@ -106,7 +106,7 @@ bool TeTiledSurface::load(const Common::Path &path) {
 			img.createImg(_codec->width(), _codec->height(), nullpal, _imgFormat, bufx, bufy);
 
 			if (_codec->update(0, img)) {
-#if DUMP_LOADED_IMAGES
+#ifdef TETRAEDGE_DUMP_LOADED_IMAGES
 				static int dumpCount = 0;
 				Common::DumpFile dumpFile;
 				dumpFile.open(Common::String::format("/tmp/dump-tiledsurf-%s-%04d.png", name().c_str(), dumpCount));
