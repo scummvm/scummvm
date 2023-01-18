@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-17 21:51+0000\n"
+"POT-Creation-Date: 2023-01-18 20:43+0000\n"
 "PO-Revision-Date: 2023-01-15 18:34+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -6838,6 +6838,14 @@ msgstr "Roland D-110 / D-10 / D-20"
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
+#: engines/sci/detection_options.h:255
+msgid "Casio MT-540"
+msgstr ""
+
+#: engines/sci/detection_options.h:259
+msgid "Casio CT-460 / CSM-1"
+msgstr ""
+
 #: engines/sci/detection_tables.h:4492
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr "Неповна версія гри. Ви мусите скопіювати дані з усіх CD."
@@ -6990,7 +6998,7 @@ msgstr ""
 "збережено: 'qfg1-' для Quest for Glory1, 'qfg2-' для Quest for Glory 2. "
 "Наприклад: 'qfg2-thief.sav'."
 
-#: engines/sci/sound/music.cpp:160
+#: engines/sci/sound/music.cpp:166
 msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
@@ -6998,7 +7006,7 @@ msgstr ""
 "Для вибраного аудіодрайвера потрібні такі файли:\n"
 "\n"
 
-#: engines/sci/sound/music.cpp:163
+#: engines/sci/sound/music.cpp:169
 msgid ""
 "\n"
 "\n"
