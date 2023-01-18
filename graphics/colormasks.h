@@ -288,7 +288,7 @@ struct ColorMasks<8888> {
 
 template<>
 struct ColorMasks<-8888> {
-	enum {
+	enum : uint {
 		kBytesPerPixel = 4,
 
 		kAlphaBits  = 8,
