@@ -616,6 +616,10 @@ void Holomap::holoMap() {
 		if (redraw) {
 			redraw = false;
 			const Common::Rect &rect = _engine->centerOnScreenX(scale(300), 0, scale(330));
+			// clip reduces the bad effect of https://bugs.scummvm.org/ticket/12074
+			// but it's not part of the original code
+			_engine->_interface->saveClip();
+			_engine->_interface->setClip(rect);
 			_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
 			_engine->_renderer->setInverseAngleCamera(xRot, yRot, 0);
 			_engine->_renderer->setLightVector(xRot, yRot, 0);
@@ -624,6 +628,7 @@ void Holomap::holoMap() {
 			_engine->_renderer->setCameraRotation(0, 0, distance(ZOOM_BIG_HOLO));
 			drawHoloMap(holomapImagePtr, holomapImageSize);
 			drawListPos(xRot, yRot, 0, true);
+			_engine->_interface->loadClip();
 			drawHolomapText(_engine->width() / 2, 25, "HoloMap");
 			if (automove) {
 				// draw cursor
