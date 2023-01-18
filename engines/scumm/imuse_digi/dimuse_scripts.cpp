@@ -483,7 +483,7 @@ void IMuseDigital::playFtMusic(const char *songName, int transitionType, int vol
 					// WORKAROUND for bug in the original: at the beginning of the game, going in
 					// and out of the bar a couple of times breaks and temporarily stops the music
 					// Here, we override the fade out, just like the remastered does
-					if (oldSoundId == soundId && soundId == 622) {
+					if (oldSoundId == soundId && soundId == 622 && _vm->_enableEnhancements) {
 						diMUSEFadeParam(soundId, DIMUSE_P_VOLUME, volume, 200);
 					}
 				} else if (diMUSEStartStream(soundId, 126, DIMUSE_BUFFER_MUSIC)) {
