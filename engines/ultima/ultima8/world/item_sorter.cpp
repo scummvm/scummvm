@@ -128,20 +128,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	si->_yFar = si->_y - yd;
 	si->_zTop = si->_z + zd;
 
-	// Screenspace bounding box left extent    (LNT x coord)
-	si->_sxLeft = (si->_xLeft - si->_y) / 4 - _camSx;
-	// Screenspace bounding box right extent   (RFT x coord)
-	si->_sxRight = (si->_x - si->_yFar) / 4 - _camSx;
-
-	// Screenspace bounding box top x coord    (LFT x coord)
-	si->_sxTop = (si->_xLeft - si->_yFar) / 4 - _camSx;
-	// Screenspace bounding box top extent     (LFT y coord)
-	si->_syTop = (si->_xLeft + si->_yFar) / 8 - si->_zTop - _camSy;
-
-	// Screenspace bounding box bottom x coord (RNB x coord)
-	si->_sxBot = (si->_x - si->_y) / 4 - _camSx;
-	// Screenspace bounding box bottom extent  (RNB y coord)
-	si->_syBot = (si->_x + si->_y) / 8 - si->_z - _camSy;
+	si->calculateBoxBounds(_camSx, _camSy);
 
 	// Real Screenspace coords
 	si->_sx = si->_sxBot - frame->_xoff;   // Left
@@ -420,7 +407,8 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 	// We then check to see if the item has a point where the trace goes.
 	// Finally we then set the selected SortItem if it's '_order' is highest
 
-	if (!selected) for (it = _items; it != nullptr; it = it->_next) {
+	if (!selected) {
+		for (it = _items; it != nullptr; it = it->_next) {
 			if (!it->_itemNum) continue;
 
 			// Doesn't Overlap
@@ -440,6 +428,7 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 			// Ok now check against selected
 			if (!selected || (it->_order > selected->_order)) selected = it;
 		}
+	}
 
 	if (selected) {
 

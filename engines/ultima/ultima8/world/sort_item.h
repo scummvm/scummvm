@@ -217,6 +217,9 @@ struct SortItem {
 
 	// Functions
 
+	// Calculate screenspace box bounds at center point from worldspace bounds
+	inline void calculateBoxBounds(int32 sx, int32 sy);
+
 	// Screenspace check to see if this overlaps si2
 	inline bool overlap(const SortItem &si2) const;
 
@@ -233,6 +236,23 @@ struct SortItem {
 
 	Common::String dumpInfo() const;
 };
+
+inline void SortItem::calculateBoxBounds(int32 sx, int32 sy) {
+	// Screenspace bounding box left extent    (LNT x coord)
+	_sxLeft = (_xLeft - _y) / 4 - sx;
+	// Screenspace bounding box right extent   (RFT x coord)
+	_sxRight = (_x - _yFar) / 4 - sx;
+
+	// Screenspace bounding box top x coord    (LFT x coord)
+	_sxTop = (_xLeft - _yFar) / 4 - sx;
+	// Screenspace bounding box top extent     (LFT y coord)
+	_syTop = (_xLeft + _yFar) / 8 - _zTop - sy;
+
+	// Screenspace bounding box bottom x coord (RNB x coord)
+	_sxBot = (_x - _y) / 4 - sx;
+	// Screenspace bounding box bottom extent  (RNB y coord)
+	_syBot = (_x + _y) / 8 - _z - sy;
+}
 
 inline bool SortItem::overlap(const SortItem &si2) const {
 	const int point_top_diff[2] = { _sxTop - si2._sxBot, _syTop - si2._syBot };

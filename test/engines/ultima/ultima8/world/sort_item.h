@@ -154,4 +154,23 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(si1.below(si2));
 		TS_ASSERT(!si2.below(si1));
 	}
+
+	/* Overlapping non-flat occludes flat */
+	void test_basic_occludes() {
+		Ultima::Ultima8::SortItem si1(nullptr);
+		Ultima::Ultima8::SortItem si2(nullptr);
+
+		si1._xLeft = si2._xLeft = 0;
+		si1._yFar = si2._yFar = 0;
+		si1._z = si2._z = 0;
+		si1._y = si2._y = 128;
+		si1._x = si2._x = 128;
+		si1._zTop = 16;
+		si2._zTop = 0;
+		si1.calculateBoxBounds(0, 0);
+		si2.calculateBoxBounds(0, 0);
+
+		TS_ASSERT(si1.occludes(si2));
+		TS_ASSERT(!si2.occludes(si1));
+	}
 };
