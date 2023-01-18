@@ -74,8 +74,8 @@ static const int8 _stereoVolumeTable[284] = {
 int IMuseDigiInternalMixer::init(int bytesPerSample, int numChannels, uint8 *mixBuf, int mixBufSize, int sizeSampleKB, int mixChannelsNum) {
 	int amplitudeValue;
 	int waveMixChannelsCount;
-	int softLdenominator;
-	int softLnumerator;
+	uint softLdenominator;
+	uint softLnumerator;
 	int softLcurValue;
 	int zeroCenterOffset;
 
