@@ -257,14 +257,3 @@ struct Story {
 } // namespace immortal
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
