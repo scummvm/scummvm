@@ -993,24 +993,22 @@ void ScummEngine::runExitScript() {
 	if (VAR_EXIT_SCRIPT2 != 0xFF && VAR(VAR_EXIT_SCRIPT2))
 		runScript(VAR(VAR_EXIT_SCRIPT2), 0, 0, nullptr);
 
-#ifdef ENABLE_SCUMM_7_8
 	// WORKAROUND: Once the water has been diverted to the grate, but
 	// before Maggie has been freed, the spider lair (room 44) will play
-        // the sound of trickling water (sound 215). It doesn't seem to trigger
-        // the first time you enter the room, only but if you leave and
-        // re-enter it. Which is probably why it's so rarely noticed.
-        //
-        // The sound is not stopped when you leave the room, so it will keep
-        // playing even where it makes no sense. This also happens with the
-        // original interpreter.
-        //
-        // The same sound effect is also used in the underwater cavern (room
-        // 33), so we do the same fade out as in that room's exit script.
+	// the sound of trickling water (sound 215). It doesn't seem to trigger
+	// the first time you enter the room, only but if you leave and
+	// re-enter it. Which is probably why it's so rarely noticed.
+	//
+	// The sound is not stopped when you leave the room, so it will keep
+	// playing even where it makes no sense. This also happens with the
+	// original interpreter.
+	//
+	// The same sound effect is also used in the underwater cavern (room
+	// 33), so we do the same fade out as in that room's exit script.
 	if (_game.id == GID_DIG && _currentRoom == 44 && _enableEnhancements) {
 		int scriptCmds[] = { 14, 215, 0x600, 0, 30, 0, 0, 0 };
 		_sound->soundKludge(scriptCmds, ARRAYSIZE(scriptCmds));
 	}
-#endif
 }
 
 void ScummEngine::runEntryScript() {
