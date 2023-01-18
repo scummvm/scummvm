@@ -401,11 +401,7 @@ int8_t MFLUtil::ReadEncInt8(Stream *in, int &rand_val) {
 int32_t MFLUtil::ReadEncInt32(Stream *in, int &rand_val) {
 	int val;
 	ReadEncArray(&val, sizeof(int32_t), 1, in, rand_val);
-#if AGS_PLATFORM_ENDIAN_BIG
-	return AGS::Shared::BitByteOperations::SwapBytesInt32(val);
-#else
-	return val;
-#endif
+	return BBOp::Int32FromLE(val);
 }
 
 void MFLUtil::ReadEncString(char *buffer, size_t max_len, Stream *in, int &rand_val) {
