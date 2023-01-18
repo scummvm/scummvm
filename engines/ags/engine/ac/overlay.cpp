@@ -81,12 +81,8 @@ void Overlay_SetText(ScriptOverlay *scover, int width, int fontid, int text_colo
 										 width, fontid, allow_shrink, has_alpha);
 
 	// Update overlay properties
-	over.SetImage(image);
+	over.SetImage(image, adj_x - dummy_x, adj_y - dummy_y);
 	over.SetAlphaChannel(has_alpha);
-	over.x = x;
-	over.y = y;
-	over.offsetX = adj_x - dummy_x;
-	over.offsetY = adj_y - dummy_y;
 	over.ddb = nullptr; // is generated during first draw pass
 }
 
@@ -390,17 +386,15 @@ size_t add_screen_overlay_impl(bool roomlayer, int x, int y, int type, int sprnu
 	}
 	ScreenOverlay over;
 	if (piccy) {
-		over.SetImage(piccy);
+		over.SetImage(piccy, pic_offx, pic_offy);
 		over.SetAlphaChannel(has_alpha);
 	} else {
-		over.SetSpriteNum(sprnum);
+		over.SetSpriteNum(sprnum, pic_offx, pic_offy);
 		over.SetAlphaChannel((_GP(game).SpriteInfos[sprnum].Flags & SPF_ALPHACHANNEL) != 0);
 	}
 	over.ddb = nullptr; // is generated during first draw pass
 	over.x = x;
 	over.y = y;
-	over.offsetX = pic_offx;
-	over.offsetY = pic_offy;
 	// by default draw speech and portraits over GUI, and the rest under GUI
 	over.zorder = (roomlayer || type == OVER_TEXTMSG || type == OVER_PICTURE || type == OVER_TEXTSPEECH) ?
 		INT_MAX : INT_MIN;

@@ -99,8 +99,8 @@ struct ScreenOverlay {
 	int GetSpriteNum() const {
 		return _sprnum;
 	}
-	void SetImage(Shared::Bitmap *pic);
-	void SetSpriteNum(int sprnum);
+	void SetImage(Shared::Bitmap *pic, int offx = 0, int offy = 0);
+	void SetSpriteNum(int sprnum, int offx = 0, int offy = 0);
 	// Tells if Overlay has graphically changed recently
 	bool HasChanged() const {
 		return _hasChanged;
