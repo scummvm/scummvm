@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-18 20:43+0000\n"
-"PO-Revision-Date: 2023-01-17 09:34+0000\n"
+"PO-Revision-Date: 2023-01-19 11:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -6745,11 +6745,11 @@ msgstr "ヤマハ FB-01"
 
 #: engines/sci/detection_options.h:255
 msgid "Casio MT-540"
-msgstr ""
+msgstr "Casio MT-540"
 
 #: engines/sci/detection_options.h:259
 msgid "Casio CT-460 / CSM-1"
-msgstr ""
+msgstr "Casio CT-460 / CSM-1"
 
 #: engines/sci/detection_tables.h:4492
 msgid "Incomplete game detected. You have to copy data from all the CDs."
