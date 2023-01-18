@@ -719,7 +719,11 @@ void ScummEngine_v6::o6_jump() {
 
 	// WORKAROUND bug #4464: Talking to the guard at the bigfoot party, after
 	// he's let you inside, will cause the game to hang, if you end the conversation.
-	// This is a script bug, due to a missing jump in one segment of the script.
+	// This is a script bug, due to a missing jump in one segment of the script,
+	// and it also happens with the original interpreters.
+	//
+	// Intentionally not using `_enableEnhancements`, since having the game hang
+	// is not useful to anyone.
 	if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 101 && readVar(0x8000 + 97) == 1 && offset == 1) {
 		offset = -18;
 	}
